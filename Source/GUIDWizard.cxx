@@ -10,7 +10,7 @@
 #include <CFKit/GUIDWizard.hpp>
 #include <NewKit/Ref.hpp>
 
-// begin of ascii 'seeable' characters. (A, C, C, 1, 2)
+// begin of ascii 'readable' characters. (A, C, C, 1, 2)
 #define kAsciiBegin 47
 
 // @brief Size of UUID.
@@ -21,9 +21,7 @@ namespace hCore::XRN::Version1
     auto make_sequence(const ArrayList<UShort>& uuidSeq) -> Ref<GUIDSequence*>
     {
         GUIDSequence *seq = new GUIDSequence();
-
-        if (!seq)
-            return {};
+        MUST_PASS(seq);
 
         Ref<GUIDSequence*> sequenceReference{seq, true};
 
