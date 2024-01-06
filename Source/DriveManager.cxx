@@ -25,7 +25,11 @@ namespace hCore
     	}	
     }
 	
-    DriveTraits& DriveSelector::GetMounted() { MUST_PASS(fDrive != nullptr); return *fDrive; }
+    DriveTraits& DriveSelector::GetMounted()
+    {
+        MUST_PASS(fDrive != nullptr);
+        return *fDrive;
+    }
     
     bool DriveSelector::Mount(DriveTraits* drive)
     {

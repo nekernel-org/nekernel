@@ -11,6 +11,9 @@
 #include <NewKit/PageManager.hpp>
 #include <NewKit/Panic.hpp>
 
+/// @file Heap.cxx
+/// @brief hCore Process Heap Manager
+/// @note if you want to look at kernel allocs, please look for KHeap.cxx
 /// bugs: 0
 
 namespace hCore
