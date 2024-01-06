@@ -1,0 +1,9 @@
+bootloader roadmap:
+
+- Rom is being mapped.
+- Move boot code to link address (8M)
+- Decompress kernel using newboot_decompress_pef()
+- Find start image.
+- Run image at 8M page zero.
+
+- Amlal

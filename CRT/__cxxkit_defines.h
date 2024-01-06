@@ -1,0 +1,89 @@
+/*
+ *	========================================================
+ *
+ *	hCore
+ * 	Copyright Mahrouss Logic, all rights reserved.
+ * 	
+ * 	========================================================
+ */
+
+#ifndef __CXKIT_DEF_H
+#define __CXKIT_DEF_H
+
+typedef __SIZE_TYPE__ size_t;
+
+#ifdef __LP64__
+typedef long int ssize_t;
+#else
+typedef int ssize_t;
+#endif // __LP64__
+
+typedef size_t ptrdiff_t;
+typedef size_t uintptr_t;
+typedef void* voidptr_t;
+typedef void* any_t;
+typedef char* caddr_t;
+
+#ifndef NULL
+#define NULL ((voidptr_t)0)
+#endif // !null
+
+#ifdef __GNUC__
+#	include <CRT/__cxxkit_alloca.h>
+#	define __cxxkit_alloca(sz) __cxxkit_alloca_gcc(sz)
+#elif defined(__HISYS__)
+
+#   define __alloca(SZ) __cxxkit_alloca(SZ)
+
+#   define __deref(ptr) (*(PTR))
+
+#   define __libexport __lib(export)
+#   define __libimport __lib(import)
+
+#ifdef __cplusplus
+#   define __init_decl() extern "C" {
+#   define __fini_decl() };
+#else
+#   define __init_decl()
+#   define __fini_decl()
+#endif
+#endif
+
+#if __has_builtin(__builtin_alloca)
+#   define alloca(sz) __builtin_alloca(sz)
+#ifdef __alloca
+#   undef __alloca
+#endif
+#define __alloca alloca
+#else
+#   warning alloca not detected
+#endif
+
+typedef long long off_t;
+typedef unsigned long long uoff_t;
+
+typedef union 
+{
+	struct 
+	{
+		unsigned int mantisa : 23;
+		unsigned int exponent : 8;
+		unsigned int sign : 1;
+	};
+	
+	float f;
+} __attribute__((packed)) float_cast_t;
+
+typedef union 
+{
+    struct 
+    {
+      unsigned long int mantisa : 52;
+      unsigned int exponent : 11;
+      unsigned int sign : 1;
+    };
+    
+    double f;
+} __attribute__((packed)) double_cast_t;
+
+#endif /* __CXKIT_DEF_H */

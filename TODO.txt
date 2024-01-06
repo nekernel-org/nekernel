@@ -1,0 +1,4 @@
+- We need preemptive multi-threading. [ X ]
+- We then need sync primitives. [ X ]
+- We also need a system library for the OS. [ X ]
+- We need a bootloader [ 1/2 ]

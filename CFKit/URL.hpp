@@ -1,0 +1,35 @@
+/*
+ *	========================================================
+ *
+ *	hCore
+ * 	Copyright Mahrouss Logic, all rights reserved.
+ *
+ * 	========================================================
+ */
+
+#ifndef _INC_URL_HPP__
+#define _INC_URL_HPP__
+
+#include <NewKit/Defines.hpp>
+#include <NewKit/String.hpp>
+
+namespace hCore
+{
+    class Url final
+    {
+    public:
+        explicit Url(StringView &strUrl);
+        ~Url();
+
+    public:
+        Ref<ErrorOr<StringView>> Location() noexcept;
+        Ref<ErrorOr<StringView>> Protocol() noexcept;
+
+    private:
+        Ref<StringView> m_urlView;
+
+    };
+
+} // namespace hCore
+
+#endif /* ifndef _INC_URL_HPP__ */

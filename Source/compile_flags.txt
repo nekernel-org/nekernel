@@ -1,0 +1,4 @@
+-nostdlib
+-ffreestanding
+-std=c++20
+-I../
