@@ -56,7 +56,7 @@ namespace hCore
     namespace Utils
     {
         /// \brief Much like Mac OS's UPP.
-        /// It cover other architecture code.
+        /// It handles different kind of code.
         /// PowerPC <-> AMD64 for example.
         typedef struct UniversalProcedureTable
         {

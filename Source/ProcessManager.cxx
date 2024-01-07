@@ -261,7 +261,7 @@ namespace hCore
 
         SizeT ret = process_ref.Run();
 
-        kcout << StringBuilder::FromInt("ProcessHelper::Run() iterated over: % processes\r\n", ret);
+        kcout << StringBuilder::FromInt("ProcessHelper::StartScheduling() iterated over: % processes\r\n", ret);
 
         return true;
     }

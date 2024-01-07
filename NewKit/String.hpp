@@ -59,10 +59,10 @@ namespace hCore
             return m_Data;
         }
 
-      private:
-        Char *m_Data{nullptr};
-        Size m_Sz{0};
-        Size m_Cur{0};
+    private:
+        Char *m_Data{ nullptr };
+        Size m_Sz{ 0 };
+        Size m_Cur{ 0 };
 
         friend class StringBuilder;
 
