@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#pragma once
+#include "API.hxx"
 
 struct Files32FileHdr
 {
@@ -34,3 +34,38 @@ struct Files32FileHdr
 
 // @brief Array of unused bits.
 #define kFilesU { 0x40, 0x80 }
+
+struct Files32FileGroup {
+    Files32FileHdr* fHdr{ nullptr };
+
+    Files32FileGroup* fUpper{ nullptr };
+    Files32FileGroup* fLower{ nullptr };
+    Files32FileGroup* fPrev{ nullptr };
+    Files32FileGroup* fNext{ nullptr };
+} kRootGroup = nullptr;
+
+extern "C" Assert(bool expr);
+extern "C" void* AllocPtr(long sz);
+
+namespace detail
+{
+template <typename Cls>
+Cls* new_class()
+{
+    Cls* cls = (Cls*)AllocPtr(sizeof(Cls));
+    *cls = Cls();
+
+    return cls;
+}
+}
+
+namespace mpt
+{
+bool filesystem_init(void)
+{
+    kRootGroup = detail::new_class<Files32FileGroup>();
+    Assert(kRootGroup != nullptr);
+
+    return true;
+}
+}
