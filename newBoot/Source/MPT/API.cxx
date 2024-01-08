@@ -9,7 +9,7 @@
 
 #include "API.hxx"
 
-struct Files32FileHdr
+struct Files32FileHdr final
 {
     char Filename[32];
     char Ext[3];
@@ -35,7 +35,8 @@ struct Files32FileHdr
 // @brief Array of unused bits.
 #define kFilesU { 0x40, 0x80 }
 
-struct Files32FileGroup {
+struct Files32FileGroup final
+{
     Files32FileHdr* fHdr{ nullptr };
 
     Files32FileGroup* fUpper{ nullptr };
@@ -49,23 +50,30 @@ extern "C" void* AllocPtr(long sz);
 
 namespace detail
 {
-template <typename Cls>
-Cls* new_class()
-{
-    Cls* cls = (Cls*)AllocPtr(sizeof(Cls));
-    *cls = Cls();
+    template <typename Cls>
+    Cls* new_class()
+    {
+        Cls* cls = (Cls*)AllocPtr(sizeof(Cls));
+        *cls = Cls();
 
-    return cls;
+        return cls;
+    }
 }
-}
+
+/* @brief external inits */
+extern "C" int init_ata_mpt(void);
+extern "C" int init_mpt(void);
 
 namespace mpt
 {
-bool filesystem_init(void)
-{
-    kRootGroup = detail::new_class<Files32FileGroup>();
-    Assert(kRootGroup != nullptr);
+    bool filesystem_init(void) noexcept
+    {
+        kRootGroup = detail::new_class<Files32FileGroup>();
+        Assert(kRootGroup != nullptr);
 
-    return true;
-}
+        Assert(init_ata_mpt() == 1);
+        Assert(init_mpt() == 1);
+
+        return true;
+    }
 }

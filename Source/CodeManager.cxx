@@ -23,9 +23,9 @@ namespace hCore
         UInt32 rt_get_pef_platform(void)
         {
 #ifdef __powerpc
-            return kPefArchPower;
+            return kPefArchPOWER;
 #elif defined(__arc__)
-	    return kPefArchARC;
+	    return kPefArch64x0;
 #elif defined(__x86_64__)
             return kPefArchAMD64;
 #else

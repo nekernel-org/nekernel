@@ -25,10 +25,10 @@ namespace hCore
     {
         if (kMounted)
         {
-                auto mount = kMounted;
-                kMounted = nullptr;
+            auto mount = kMounted;
+            kMounted = nullptr;
 
-                return mount;
+            return mount;
         }
 
         return nullptr;
@@ -39,7 +39,6 @@ namespace hCore
         if (pMount)
         {
             kMounted = pMount;
-
             return true;
         }
         

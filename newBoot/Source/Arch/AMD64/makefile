@@ -22,6 +22,7 @@ CCFLAGS		= -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE
 build-crt0-bios:
 	$(CC) $(CCFLAGS) BIOSRuntime.cxx
 	$(CC) $(CCFLAGS) ATA.cxx
+	$(CC) $(CCFLAGS) Processor.cxx
 	$(ASM) $(ASMFLAGS) BIOSRuntime0.asm
 	
 	$(LD) --oformat $(FMT) ATA.o -o $(ATAMOD)

@@ -1,6 +1,6 @@
 ;; Copyright Mahrouss Logic, all rights reserved
 
-extern __STACK
+extern __runtime_stack
 global NBRuntimeZero
 
 bits 16
@@ -36,7 +36,7 @@ NBProtectedMode:
 	mov   gs, ax
 	mov   ss, ax
 
-	mov   esp, __STACK
+	mov   esp, __runtime_stack
 	jmp   0x8000000
 
 NBLoopOne:

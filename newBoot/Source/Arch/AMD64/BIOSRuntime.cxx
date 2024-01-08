@@ -5,4 +5,4 @@
 #include <BootKit/Boot.hpp>
 #include "ATA.hxx"
 
-extern "C" char __STACK[4096] = { 0 };
+extern "C" char __runtime_stack[4096] = { 0 };

@@ -157,10 +157,16 @@ extern "C" UInt32 in32(UInt16 port)
     return value;
 }
 
-extern "C" void rt_halt() { asm volatile("hlt"); }
+extern "C" int init_ata_mpt(void)
+{
+    for (int i = 0; i < 255; ++i)
+    {
+        if (ATAInitDriver(i, ATA_MASTER))
+        {
+            ATAInitDriver(i, ATA_SLAVE);
+            return 1;
+        }
+    }
 
-extern "C" void rt_cli() { asm volatile("cli"); }
-
-extern "C" void rt_sti() { asm volatile("sti"); }
-
-extern "C" void rt_cld() { asm volatile("cld"); }
+    return 0;
+}

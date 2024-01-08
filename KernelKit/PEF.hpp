@@ -31,8 +31,8 @@ namespace hCore
         kPefArchIntel86S,
         kPefArchAMD64,
         kPefArchRISCV,
-        kPefArchARC, /* Advanced RISC architecture. */
-        kPefArchPower,
+        kPefArch64x0, /* 64x000. */
+        kPefArchPOWER,
         kPefArchInvalid = 0xFF,
     };
 
