@@ -8,6 +8,7 @@
  */
 
 #include "API.hxx"
+#include "Detail.hxx"
 
 struct Files32FileHdr final
 {
@@ -45,21 +46,6 @@ struct Files32FileGroup final
     Files32FileGroup* fNext{ nullptr };
 } kRootGroup = nullptr;
 
-extern "C" Assert(bool expr);
-extern "C" void* AllocPtr(long sz);
-
-namespace detail
-{
-    template <typename Cls>
-    Cls* new_class()
-    {
-        Cls* cls = (Cls*)AllocPtr(sizeof(Cls));
-        *cls = Cls();
-
-        return cls;
-    }
-}
-
 /* @brief external inits */
 extern "C" int init_ata_mpt(void);
 extern "C" int init_mpt(void);
@@ -69,10 +55,10 @@ namespace mpt
     bool filesystem_init(void) noexcept
     {
         kRootGroup = detail::new_class<Files32FileGroup>();
-        Assert(kRootGroup != nullptr);
 
-        Assert(init_ata_mpt() == 1);
-        Assert(init_mpt() == 1);
+        assert(kRootGroup != nullptr);
+        assert(init_ata_mpt() == detail::okay);
+        assert(init_mpt() == detail::okay);
 
         return true;
     }
