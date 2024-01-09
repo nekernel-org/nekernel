@@ -12,6 +12,7 @@
 #include <ArchKit/Arch.hpp>
 
 //! This file handles multi processing in hCore.
+//! Multi processing is needed for File I/O, networking and scheduling.
 
 namespace hCore
 {
@@ -77,10 +78,10 @@ namespace hCore
 
     //! @brief Constructor and destructor
 
-	///! @brief Default constructor.
+    ///! @brief Default constructor.
     SMPManager::SMPManager() = default;
 
-	///! @brief Default destructor.
+    ///! @brief Default destructor.
     SMPManager::~SMPManager() = default;
 
     Ref<SMPManager> SMPManager::Shared()
