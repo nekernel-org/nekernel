@@ -27,4 +27,10 @@ public:
     FileType* Read(const char* path) { return _Manager::Read(path); }
     FileType* Write(FileType* path) { return _Manager::Write(path); }
 
+    // little sanity test
+    operator bool()
+    {
+        return DiskError != 0 && DiskSize > 0;
+    }
+
 };

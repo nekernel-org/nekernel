@@ -9,7 +9,6 @@
 
 #include <NewKit/Heap.hpp>
 #include <NewKit/PageManager.hpp>
-#include <NewKit/Panic.hpp>
 
 /// @file Heap.cxx
 /// @brief hCore Process Heap Manager
@@ -21,7 +20,7 @@ namespace hCore
     class HeapManager final
     {
     public:
-        static Size& GetCount() { return s_NumPools; }
+        static SizeT& GetCount() { return s_NumPools; }
         static Ref<Pmm>& GetPmm() { return s_Pmm; }
         static Boolean& IsEnabled() { return s_PoolsAreEnabled; }
         static Array<Ref<PTEWrapper*>, kPoolMaxSz>& The() { return s_Pool; }
@@ -162,7 +161,7 @@ namespace hCore
 
     /// @brief free a pool pointer.
     /// @param ptr The pool pointer to free.
-    /// @return 
+    /// @return status code
     Int32 pool_free_ptr(voidPtr ptr)
     {
         if (!HeapManager::IsEnabled())
