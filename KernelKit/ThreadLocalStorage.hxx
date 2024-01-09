@@ -14,9 +14,9 @@
 
 //! @brief TLS implementation in C++
 
-#define kRTLMag0 'V'
+#define kRTLMag0 'h'
 #define kRTLMag1 'C'
-#define kRTLMag2 'S'
+#define kRTLMag2 'o'
 
 template <typename T>
 T* hcore_tls_new_ptr(void);

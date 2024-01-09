@@ -21,7 +21,7 @@ typedef hCore::UInt16 OSScsiPacket[12];
 extern const OSScsiPacket kCDRomPacketTemplate;
 
 #define f_kDriveSectorSize 2048
-#define f_kDriveSize(last_lba) (last_lba + 1) * f_kDriveSectorSize
+#define f_kDriveSize(last_lba) ((last_lba + 1) * f_kDriveSectorSize)
 
 
 		  
