@@ -207,3 +207,13 @@ namespace hCore
         return str;
     }
 } // namespace hCore
+
+extern "C" void memset(void* dst, char src, size_t len)
+{
+    hCore::rt_set_memory(dst, src, len);
+}
+
+extern "C" void memcpy(void* dst, void* src, size_t len)
+{
+    hCore::rt_copy_memory(src, dst, len);
+}

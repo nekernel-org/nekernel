@@ -16,14 +16,19 @@ namespace hCore
     
     NewFilesystemManager::~NewFilesystemManager() = default;
 
-    bool NewFilesystemManager::Remove(const char* node)
+    /**
+     * Unallocates a file from disk.
+     * @param node_name it's path.
+     * @return operation status boolean.
+     */
+    bool NewFilesystemManager::Remove(const char* node_name)
     {
-        if (node == nullptr ||
-            *node == 0)
+        if (node_name == nullptr ||
+            *node_name == 0)
             return false;
 
-        if (auto catalog = fIO->GetCatalog(node);
-            catalog->Flags == kFlagCatalog)
+        if (auto catalog = fIO->GetCatalog(node_name);
+            catalog)
             return fIO->RemoveCatalog(*catalog);
         
         return false;

@@ -5,16 +5,16 @@ ASM			= nasm
 ASMFLAGS	= -f elf64
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
-KERNEL		= hKernel.bin
+KERNEL		= hKernel.elf
 
 # The kernel entrypoint
 ENTRY		= __KernelMain
 
 # Where the text segment is.
-TEXT		= 0x8000000
+TEXT		= 0x400000
 
 # we want a flat binary 
-FMT			= binary
+FMT			= elf64
 
 .PHONY: kernel-build
 kernel-build:

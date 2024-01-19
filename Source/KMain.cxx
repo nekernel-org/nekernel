@@ -13,7 +13,6 @@
 
 extern "C" void __KernelMain(hCore::VoidPtr this_image)
 {
-    hCore::Detail::serial_init();
     MUST_PASS(hCore::initialize_hardware_components());
 
     hCore::IFilesystemManager::Mount(new hCore::NewFilesystemManager());

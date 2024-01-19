@@ -56,6 +56,10 @@ struct NewBootBlock
 #define kFlagUnallocated 0x0F
 #define kFlagCatalog     0xFF
 
+#define kKindCatalog 1
+#define kKindDirectory 2
+#define kKindSymlink 3
+
 struct NewCatalog
 {
     hCore::Char Name[kNameLen];
