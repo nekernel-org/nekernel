@@ -16,14 +16,6 @@
 
 namespace hCore
 {
-    // @brief wakes up thread.
-    // wakes up thread from hang.
-    extern void rt_wakeup_thread(HAL::StackFrame* stack);
-    
-    // @brief makes thread sleep.
-    // hooks and hangs thread to prevent code from executing.
-    extern void rt_hang_thread(HAL::StackFrame* stack);
-
     // A ProcessorCore class takes care of it's owned hardware thread.
     // It has a stack for it's core.
 

@@ -8,10 +8,10 @@ ASMFLAGS	= -f elf64
 KERNEL		= hKernel.elf
 
 # The kernel entrypoint
-ENTRY		= __KernelMain
+ENTRY		= --script=Linker/PowerPC.ld
 
 # Where the text segment is.
-TEXT		= 0x400000
+TEXT		= 0xc0000000
 
 # we want a flat binary 
 FMT			= elf64
@@ -24,7 +24,7 @@ kernel-build:
 
 .PHONY: kernel-link
 kernel-link:
-	$(LD) -e $(ENTRY) -Ttext $(TEXT) --oformat $(FMT) Obj/*.o -o $(KERNEL)
+	$(LD) -e $(ENTRY) Obj/*.o -o $(KERNEL)
 
 .PHONY: all
 all: kernel-build kernel-link

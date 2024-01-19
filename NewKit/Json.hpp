@@ -32,9 +32,11 @@ namespace hCore
 
         HCORE_COPY_DEFAULT(JsonType);
 
+      private:
         StringView fKey;
         StringView fValue;
 
+      public:
         StringView& AsKey() { return fKey; }
         StringView& AsValue() { return fValue; }
 

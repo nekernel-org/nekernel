@@ -31,14 +31,14 @@ namespace HAL
 
 // @brief wakes up thread.
 // wakes up thread from hang.
-extern void rt_wakeup_thread(HAL::StackFrame* stack)
+void rt_wakeup_thread(HAL::StackFrame* stack)
 {
 
 }
 
 // @brief makes thread sleep.
 // hooks and hangs thread to prevent code from executing.
-extern void rt_hang_thread(HAL::StackFrame* stack)
+void rt_hang_thread(HAL::StackFrame* stack)
 {
 
 }

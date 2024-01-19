@@ -7,9 +7,6 @@
  * 	========================================================
  */
 
-#include <FSKit/NewFS.hxx>
-#include <NewKit/Utils.hpp>
-
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/DriveManager.hpp>
 

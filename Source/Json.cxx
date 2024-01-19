@@ -1,3 +1,12 @@
+/*
+*	========================================================
+*
+*	hCore
+* 	Copyright Mahrouss Logic, all rights reserved.
+*
+* 	========================================================
+*/
+
 #include <NewKit/Json.hpp>
 
 using namespace hCore;

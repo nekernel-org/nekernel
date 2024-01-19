@@ -108,6 +108,14 @@ namespace hCore
         ThreadID m_CurrentThread;
 
     };
+
+    // @brief wakes up thread.
+    // wakes up thread from hang.
+    void rt_wakeup_thread(HAL::StackFrame* stack);
+
+    // @brief makes thread sleep.
+    // hooks and hangs thread to prevent code from executing.
+    void rt_hang_thread(HAL::StackFrame* stack);
 } // namespace hCore
 
 #endif // !_INC_SMP_MANAGER_HPP

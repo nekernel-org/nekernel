@@ -26,4 +26,5 @@ namespace hCore
     inline constexpr OSErr kErrorThreadLocalStorage = 41;
     inline constexpr OSErr kErrorMath = 42;
     inline constexpr OSErr kErrorNoNetwork = 43;
+    inline constexpr OSErr kErrorHeapOutOfMemory = 44;
 }
