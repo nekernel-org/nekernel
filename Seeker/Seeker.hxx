@@ -29,17 +29,17 @@ enum
 
 enum
 {
-    kHardDrv    = 'hardv',
-    kOpticalDrv = 'optic',
-    kUsbDrv     = 'usbdr',
+    kHardDrv    = 110,
+    kOpticalDrv = 111,
+    kUsbDrv     = 112,
 };
 
 enum
 {
-    kLangUs     = 'lanus',
-    kLangUk     = 'lanuk',
-    kLangFr     = 'lanfr',
-    kLangNl     = 'lannl',
+    kLangUs     = 113,
+    kLangUk     = 114,
+    kLangFr     = 115,
+    kLangNl     = 116,
 };
 
 #define kResourceExt    ".rsc"
