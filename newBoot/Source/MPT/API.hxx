@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	newBoot
- * 	Copyright Mahrouss Logic, all rights reserved.
+ * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */

@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	hCore
- * 	Copyright Mahrouss Logic, all rights reserved.
+ * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  *	File: PermissionSelector.cpp
  * 	Purpose: Permission primitives and types.

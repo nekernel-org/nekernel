@@ -2,12 +2,12 @@
  *	========================================================
  *
  *	NetBoot
- * 	Copyright Mahrouss Logic, all rights reserved.
+ * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */
 
-extern "C" void __dmain(const char* ip, long iplen)
+extern "C" void __Module(const char* ip, long iplen)
 {
     
 }

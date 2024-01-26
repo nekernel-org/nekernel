@@ -2,7 +2,7 @@
 *	========================================================
 *
 *	hCore
-* 	Copyright Mahrouss Logic, all rights reserved.
+* 	Copyright 2024 Mahrouss Logic, all rights reserved.
 *
 * 	========================================================
 */
@@ -11,4 +11,5 @@
 
 using namespace hCore;
 
-JsonType JsonType::kUndefined(1, 1);
+/// @brief Undefined object, is null in length.
+JsonType JsonType::kUndefined(0, 0);

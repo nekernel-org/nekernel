@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	hCore
- * 	Copyright Mahrouss Logic, all rights reserved.
+ * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */
@@ -203,6 +203,6 @@ namespace hCore
             return false;
         }
 
-        return thePool < thePtr < (theLimit);
+        return ((thePool) < (thePtr) < (theLimit));
     }
 } // namespace hCore

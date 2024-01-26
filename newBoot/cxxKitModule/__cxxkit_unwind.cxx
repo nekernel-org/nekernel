@@ -1,6 +1,6 @@
 namespace cxxkit
 {
-	///! @brief C++ ABI pushes
+	///! @brief C++ ABI unwinding
 	///! finis array (r1)
 	///! n of finis (r2)
 	void __unwind(void(**finis)(void), int cnt)

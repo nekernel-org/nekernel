@@ -1,4 +1,4 @@
-;; Copyright Mahrouss Logic, all rights reserved
+;; Copyright 2024 Mahrouss Logic, all rights reserved
 
 extern __runtime_stack
 global NBRuntimeZero
