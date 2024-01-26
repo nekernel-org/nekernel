@@ -1,6 +1,6 @@
-CC			= clang
-LD			= ld.lld
-CCFLAGS		= --target=ppc64le -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__hCore__ -I./ -I$(HOME)/
+CC			= x86_64-elf-gcc
+LD			= x86_64-elf-ld
+CCFLAGS		= -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__hCore__ -I./ -I$(HOME)/
 ASM			= nasm
 ASMFLAGS	= -f elf64
 
@@ -8,27 +8,27 @@ ASMFLAGS	= -f elf64
 KERNEL		= hKernel.elf
 
 # The kernel entrypoint
-ENTRY		= --script=Linker/PowerPC.ld
-
-# Where the text segment is.
-TEXT		= 0xc0000000
+SCRIPT		= --script=Linker/AMD64.ld
 
 # we want a flat binary 
 FMT			= elf64
 
 .PHONY: kernel-build
 kernel-build:
-	$(CC) $(CCFLAGS) Source/*.cxx HALKit/PowerPC/PCI/*.cxx Source/Network/*.cpp\
-		Source/Storage/*.cxx HALKit/PowerPC/*.cpp HALKit/PowerPC/*.s
-	mv *.o Obj/
+	$(CC) $(CCFLAGS) Source/*.cxx HALKit/AMD64/PCI/*.cpp Source/Network/*.cpp\
+		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
+	$(ASM) -f elf64 HALKit/AMD64/DebugManager.asm
+	$(ASM) -f elf64 HALKit/AMD64/SMPCoreManager.asm
+	mv *.o HALKit/AMD64/*.o Obj/
 
 .PHONY: kernel-link
 kernel-link:
-	$(LD) -e $(ENTRY) Obj/*.o -o $(KERNEL)
+	$(LD) $(SCRIPT) Obj/*.o -o $(KERNEL)
+	cp $(KERNEL) Root/System
 
 .PHONY: all
 all: kernel-build kernel-link
-	echo "[hKernel] you can now link it!"
+	@echo "[hKernel] JOB DONE."
 
 .PHONY: kernel-clean
 kernel-clean:

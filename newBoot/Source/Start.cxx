@@ -11,7 +11,7 @@
 
 extern "C" void __AppMain(void)
 {
-    BTextWriter writer;
+    BKTextWriter writer;
     writer.WriteString("Starting hCore...", kBlack, kWhite, 0, 0);
     
     const char* args[] = { "/hCore.bin" };

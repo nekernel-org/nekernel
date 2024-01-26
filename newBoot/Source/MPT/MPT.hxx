@@ -23,7 +23,7 @@ struct MasterPartitionTable final
 
 enum
 {
-    kPartEfi = 'efi',
-    kPartEpm = 'epm',
-    kPartEbr = 'ebr',
+    kPartEfi = 0x10,
+    kPartEpm = 0x11,
+    kPartEbr = 0x12,
 };

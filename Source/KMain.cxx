@@ -11,7 +11,7 @@
 #include <KernelKit/CodeManager.hpp>
 #include <ArchKit/Arch.hpp>
 
-extern "C" void __KernelMain(hCore::VoidPtr this_image)
+extern "C" void Main(hCore::VoidPtr this_image)
 {
     MUST_PASS(hCore::initialize_hardware_components());
 

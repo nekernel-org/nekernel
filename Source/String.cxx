@@ -7,7 +7,6 @@
  * 	========================================================
  */
 
-#include <NewKit/KHeap.hpp>
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
@@ -103,7 +102,6 @@ namespace hCore
 
         if (!to_str(result, sizeof(int), i))
         {
-            delete[] ret;
             return ("-1");
         }
 
@@ -211,7 +209,6 @@ namespace hCore
         if (lhs && rhs &&
             cur < string_length(lhs))
         {
-            SizeT sz_lhs = string_length(lhs);
             SizeT sz_rhs = string_length(rhs);
 
             rt_copy_memory(rhs, lhs + cur, sz_rhs);

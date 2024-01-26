@@ -10,22 +10,6 @@
 #include "API.hxx"
 #include "Detail.hxx"
 
-struct Files32FileHdr final
-{
-    char Filename[32];
-    char Ext[3];
-    char Attr;
-    char Case;
-    char CreateMs;
-    unsigned short Create;
-    unsigned short CreateDate;
-    unsigned short LastAccess;
-    unsigned short Timestamp;
-    unsigned short Datestamp;
-    unsigned short StartLba;
-    unsigned int   SizeFile;
-};
-
 #define kFilesR 0x01 /* read-only */
 #define kFilesH 0x02 /* hidden */
 #define kFilesS 0x04 /* system */
@@ -36,29 +20,50 @@ struct Files32FileHdr final
 // @brief Array of unused bits.
 #define kFilesU { 0x40, 0x80 }
 
-struct Files32FileGroup final
+namespace mpt::detail
 {
-    Files32FileHdr* fHdr{ nullptr };
+    struct Files32FileHdr final
+    {
+        char Filename[32];
+        char Ext[3];
+        char Attr;
+        char Case;
+        char CreateMs;
+        unsigned short Create;
+        unsigned short CreateDate;
+        unsigned short LastAccess;
+        unsigned short Timestamp;
+        unsigned short Datestamp;
+        unsigned short StartLba;
+        unsigned int   SizeFile;
+    };
 
-    Files32FileGroup* fUpper{ nullptr };
-    Files32FileGroup* fLower{ nullptr };
-    Files32FileGroup* fPrev{ nullptr };
-    Files32FileGroup* fNext{ nullptr };
-} kRootGroup = nullptr;
+    struct Files32FileGroup final
+    {
+        Files32FileHdr* fHdr{ nullptr };
 
-/* @brief external inits */
-extern "C" int init_ata_mpt(void);
-extern "C" int init_mpt(void);
+        Files32FileGroup* fUpper{ nullptr };
+        Files32FileGroup* fLower{ nullptr };
+        Files32FileGroup* fPrev{ nullptr };
+        Files32FileGroup* fNext{ nullptr };
+    };
+
+    /* @brief external inits */
+    extern "C" int init_ata_mpt(void);
+    extern "C" int init_mpt(void);
+
+    Files32FileGroup* kRootGroup = nullptr;
+}
 
 namespace mpt
 {
-    bool filesystem_init(void) noexcept
+    bool init_mpt() noexcept
     {
-        kRootGroup = detail::new_class<Files32FileGroup>();
+        detail::kRootGroup = detail::new_class<detail::Files32FileGroup>();
 
-        assert(kRootGroup != nullptr);
-        assert(init_ata_mpt() == detail::okay);
-        assert(init_mpt() == detail::okay);
+        assert(detail::kRootGroup != nullptr);
+        assert(detail::init_ata_mpt() == detail::okay);
+        assert(detail::init_mpt() == detail::okay);
 
         return true;
     }

@@ -23,7 +23,7 @@ long long int BStrLen(const char* ptr)
     return cnt;
 }
 
-void BTextWriter::WriteString(
+void BKTextWriter::WriteString(
         const char* str,
         unsigned char forecolour,
         unsigned char backcolour,
@@ -41,7 +41,7 @@ void BTextWriter::WriteString(
     }
 }
 
-void BTextWriter::WriteCharacter(
+void BKTextWriter::WriteCharacter(
 	            char c,
                     unsigned char forecolour,
                     unsigned char backcolour,

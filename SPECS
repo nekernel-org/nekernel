@@ -4,7 +4,7 @@
 
 - ABI/Format: Portable Executable Format.
 - Architecture: Microkernel.
-- Language: C++/C/Assembly (AMD64, ARC, X86S, ARM64)
+- Language: C++/C/Assembly (AMD64, X64000, X86S, ARM64)
 
 ===================================
 1: The hCore Microkernel

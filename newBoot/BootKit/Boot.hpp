@@ -22,9 +22,13 @@ enum
 	kSegmentBss  = 6,
 };
 
-class BTextWriter final
+/**
+ * @brief BootKit Text Writer class
+ * Writes to VGA.
+ */
+class BKTextWriter final
 {
-    volatile UInt16* fWhere;
+    volatile UInt16* fWhere{ nullptr };
 
 public:
     void WriteString(const char* c,
@@ -40,12 +44,12 @@ public:
                         int y);
 
 public:
-    BTextWriter() = default;
-    ~BTextWriter() = default;
+    BKTextWriter() = default;
+    ~BKTextWriter() = default;
 
 public:
-    BTextWriter& operator=(const BTextWriter&) = default;
-    BTextWriter(const BTextWriter&) = default;
+    BKTextWriter& operator=(const BKTextWriter&) = default;
+    BKTextWriter(const BKTextWriter&) = default;
 
 };
 
@@ -68,3 +72,6 @@ enum
     kYellow,
     kWhite,
 };
+
+#define BK_START_KERNEL (0x00080000)
+

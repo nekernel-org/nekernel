@@ -7,6 +7,13 @@
 * 	========================================================
 */
 
+/*
+ *
+ * @file Processor.cxx
+ * @brief Processor Specific Functions.
+ *
+ */
+
 extern "C" void rt_halt(void) { asm volatile("hlt"); }
 
 extern "C" void rt_cli(void) { asm volatile("cli"); }
