@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <Seeker/Seeker.hxx>
+#include <SeekerSrv/Seeker.hxx>
 
 extern "C" Void DrawDesktopService(Void);
 extern "C" Void DrawWindowService(Void);

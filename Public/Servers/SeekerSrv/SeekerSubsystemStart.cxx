@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <Seeker/Seeker.hxx>
+#include <SeekerSrv/Seeker.hxx>
 
 extern "C" Void   __InitCxxGlobals(Void);
 extern "C" Void   __InitCommonCtrls(Void);

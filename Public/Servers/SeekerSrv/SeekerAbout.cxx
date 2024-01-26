@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <Seeker/Seeker.hxx>
+#include <SeekerSrv/Seeker.hxx>
 
 HandlePtr SeekerAboutDlg(Void)
 {

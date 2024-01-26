@@ -7,14 +7,14 @@
  * 	========================================================
  */
 
-#include <Seeker/Seeker.hxx>
+#include <SeekerSrv/Seeker.hxx>
 
-// Source code of the Seeker Window.
+// Source code of the SeekerSrv Window.
 
-// @brief Opens a Seeker window.
+// @brief Opens a SeekerSrv window.
 extern "C" VoidPtr SeekerOpenExplorer(const WideCString startCategory)
 {
-    auto win = WindowCreate(L"Seeker", L"OSSeekerWnd", nullptr);
+    auto win = WindowCreate(L"SeekerSrv", L"OSSeekerWnd", nullptr);
 
     if (win)
     {
@@ -30,7 +30,7 @@ extern "C" VoidPtr SeekerOpenExplorer(const WideCString startCategory)
     return nullptr;
 }
 
-// @brief Closes a Seeker window.
+// @brief Closes a SeekerSrv window.
 extern "C" Void SeekerCloseExplorer(VoidPtr handle)
 {
     if (RtIsValidHeapPtr(handle))

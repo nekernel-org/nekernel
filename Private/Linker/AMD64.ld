@@ -1,6 +1,6 @@
 OUTPUT_FORMAT("elf64-x86-64")
 
-ENTRY(Main)
+ENTRY(KMain)
 
 PHDRS {
     null    PT_NULL    FLAGS(0) ;

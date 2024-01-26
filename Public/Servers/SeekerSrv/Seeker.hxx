@@ -12,8 +12,8 @@
 
 #include <CompilerKit/Compiler.hpp>
 
-/* @brief Seeker SDK. */
-/* Seeker helps with GUI developement. */
+/* @brief SeekerSrv SDK. */
+/* SeekerSrv helps with GUI developement. */
 
 enum
 {
@@ -45,7 +45,7 @@ enum
 #define kResourceExt    ".rsc"
 #define kExecutableExt  ".exe"
 #define kLibExt         ".lib"
-#define kShLibExt       ".dlib"
+#define kShLibExt       ".lib"
 
 typedef void Void;
 typedef void* VoidPtr;
@@ -59,13 +59,13 @@ typedef __SIZE_TYPE__ SizeT;
 
 struct SeekerProtocol;
 
-// @brief Opens a Seeker window.
+// @brief Opens a SeekerSrv window.
 extern "C" VoidPtr SeekerOpenExplorer(const WideCString startCategory);
 
-// @brief Closes a Seeker window.
+// @brief Closes a SeekerSrv window.
 extern "C" Void SeekerCloseExplorer(VoidPtr handle);
 
-// @brief Make Seeker connect to endpoint.
+// @brief Make SeekerSrv connect to endpoint.
 extern "C" Void SeekerExplorerConnectToNetwork(VoidPtr handle,
                                                 const WideCString endpoint, 
                                                 struct SeekerProtocol* proto);
@@ -81,7 +81,7 @@ extern "C" VoidPtr SeekerSearch(VoidPtr handle,
 
 #define kProtocolStrLen 8
 
-// @brief Seeker Location Protocol.
+// @brief SeekerSrv Location Protocol.
 // @brief takes a handler class to handle server response.
 struct SeekerProtocol
 {

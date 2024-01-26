@@ -11,12 +11,12 @@
 #include <KernelKit/CodeManager.hpp>
 #include <ArchKit/Arch.hpp>
 
-extern "C" void Main(hCore::VoidPtr this_image)
+extern "C" void KMain(hCore::VoidPtr this_image)
 {
     MUST_PASS(hCore::initialize_hardware_components());
 
     hCore::IFilesystemManager::Mount(new hCore::NewFilesystemManager());
-    hCore::PEFLoader img("/System/Seeker.out");
+    hCore::PEFLoader img("/System/SeekerSrv.out");
 
     if (!hCore::Utils::execute_from_image(img))
     {

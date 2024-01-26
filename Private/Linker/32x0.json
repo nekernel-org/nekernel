@@ -1,0 +1,6 @@
+{
+  "executable_type": "kernel",
+  "output_name": "hKernel.out",
+  "start_proc": "KMain",
+  "format": "PEF"
+}

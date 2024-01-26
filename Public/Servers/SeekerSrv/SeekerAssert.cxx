@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <Seeker/Seeker.hxx>
+#include <SeekerSrv/Seeker.hxx>
 
 extern "C" Void RtDialogAssert(const bool expr, const wchar_t* file, const wchar_t* expression)
 {
