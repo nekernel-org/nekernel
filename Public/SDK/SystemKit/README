@@ -1,0 +1,12 @@
+SystemKit
+=========
+
+The h-core system API.
+
+Contains
+========
+
+- Memory Manager for applications.
+- Image (GIF/PNG) support.
+- Messaging API for Inter process support.
+- File I/O

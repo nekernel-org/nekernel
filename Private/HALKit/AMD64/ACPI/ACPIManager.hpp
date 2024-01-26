@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	hCore 	Date Added: 20/02/2023
- * 	Copyright XPX Corp, all rights reserved.
+ * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */

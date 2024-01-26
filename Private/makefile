@@ -1,6 +1,6 @@
 CC			= x86_64-elf-gcc
 LD			= x86_64-elf-ld
-CCFLAGS		= -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__hCore__ -I./ -I$(HOME)/
+CCFLAGS		= -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__hCore__ -I../ -I./ -I$(HOME)/
 ASM			= nasm
 ASMFLAGS	= -f elf64
 

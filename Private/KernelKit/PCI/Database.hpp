@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	hCore
- * 	Copyright XPX Corp, all rights reserved.
+ * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */

@@ -11,6 +11,8 @@
 #include <KernelKit/ProcessManager.hpp>
 #include <ArchKit/Arch.hpp>
 
+/// BUGS: 0
+
 //! This file handles multi processing in hCore.
 //! Multi processing is needed for File I/O, networking and scheduling.
 
@@ -37,6 +39,8 @@ namespace hCore
 
     bool ProcessorCore::IsBusy() noexcept { return m_Busy; }
 
+    /// @brief Get processor stack frame.
+
     HAL::StackFrame* ProcessorCore::StackFrame() noexcept
     {
         MUST_PASS(m_Stack);
@@ -46,6 +50,8 @@ namespace hCore
     void ProcessorCore::Busy(const bool busy) noexcept { m_Busy = busy; }
 
     ProcessorCore::operator bool() { return m_Stack; }
+
+    /// @brief Wakeup the processor.
 
     void ProcessorCore::Wake(const bool wakeup) noexcept
     {
@@ -111,9 +117,11 @@ namespace hCore
 
             m_ThreadList[idx].Leak().Leak().Busy(true);	
 
-            bool ret  = rt_do_context_switch(rt_get_current_context(), stack) == 0;
+            bool ret = rt_do_context_switch(rt_get_current_context(), stack) == 0;
         
             m_ThreadList[idx].Leak().Leak().Busy(false);
+
+            return ret;
         }
 
         return false;
