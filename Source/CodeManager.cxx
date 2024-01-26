@@ -20,11 +20,11 @@ namespace hCore
 {
     namespace Detail
     {
-        UInt32 rt_get_pef_platform(void)
+        UInt32 rt_get_pef_platform(void) noexcept
         {
-#ifdef __powerpc
-            return kPefArchPOWER;
-#elif defined(__arc__)
+#ifdef __32x0__
+            return kPefArch32x0;
+#elif defined(__64x0__)
 	    return kPefArch64x0;
 #elif defined(__x86_64__)
             return kPefArchAMD64;

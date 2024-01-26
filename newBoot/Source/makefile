@@ -1,13 +1,9 @@
-CC=fcc
-CCFLAGS=-I ../ -ffreestanding -nostdlib
-ASM=fasm
-ASMFLAGS=/ARC /PEF
+CC=gcc
+CCFLAGS=-I../ -I../../ -std=c++20 -ffreestanding -nostdlib -c
 
 .PHONY: arch-arc
 arch-arc:
-	${CC} ${CCFLAGS} Boot.cpp Start.cpp -c
-	${ASM} ${ASMFLAGS} Arch/ARC/XPM.asm
-	${ASM} ${ASMFLAGS} Arch/ARC/Crt0.asm
+	${CC} ${CCFLAGS} Start.cxx
 
 CC_GNU=x86_64-elf-gcc
 LD_GNU=x86_64-elf-ld
@@ -16,7 +12,7 @@ FLAG_GNU=-I../ -I../../../efiSDK/inc -c -ffreestanding -fno-rtti -fno-exceptions
 .PHONY: arch-amd64
 arch-amd64:
 	$(CC_GNU) $(FLAG_GNU) Arch/AMD64/BootAMD64.cxx *.cxx
-	$(LD_GNU) *.o -e __AppMain  -Ttext 0x000 --oformat binary -o BootloaderStage2.bin
+	$(LD_GNU) *.o -e Main  -Ttext 0x000 --oformat binary -o BootloaderStage2.bin
 
 .PHONY: clean
 clean:

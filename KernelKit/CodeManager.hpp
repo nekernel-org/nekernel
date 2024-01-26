@@ -56,16 +56,15 @@ namespace hCore
     namespace Utils
     {
         /// \brief Much like Mac OS's UPP.
+        /// This is read-only by design.
         /// It handles different kind of code.
         /// PowerPC <-> AMD64 for example.
         typedef struct UniversalProcedureTable
         {
-        public:
-            Char symbolName[kPefNameLen];
-            VoidPtr symbolPtr;
-            SizeT symbolArchitecture;
-
-        } UniversalProcedureTableType;
+            const Char NAME[kPefNameLen];
+            const VoidPtr TRAP;
+            const SizeT ARCH;
+        } __attribute__((packed)) UniversalProcedureTableType;
 
         bool execute_from_image(PEFLoader& exec);
     }

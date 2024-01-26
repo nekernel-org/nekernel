@@ -15,7 +15,7 @@
 namespace hCore
 {
     NetworkDevice::NetworkDevice(void (*out)(NetworkDeviceCommand), void (*in)(NetworkDeviceCommand), void(*on_cleanup)(void))
-            : IDevice<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup)
+            : DeviceInterface<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup)
     {
 #ifdef __DEBUG__
         kcout << "NetworkDevice init.\r\n";

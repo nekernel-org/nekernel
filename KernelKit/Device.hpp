@@ -19,37 +19,37 @@
 namespace hCore
 {
     template<typename T>
-    class IDevice;
+    class DeviceInterface;
 
     template<typename T>
-    class IDevice
+    class DeviceInterface
     {
     public:
-        IDevice(void (*Out)(T), void (*In)(T))
+        explicit DeviceInterface(void (*Out)(T), void (*In)(T))
             : m_Out(Out), m_In(In) {}
 
-        virtual ~IDevice() = default;
+        virtual ~DeviceInterface() = default;
 
     public:
-        IDevice &operator=(const IDevice<T> &) = default;
-        IDevice(const IDevice<T> &) = default;
+        DeviceInterface &operator=(const DeviceInterface<T> &) = default;
+        DeviceInterface(const DeviceInterface<T> &) = default;
 
     public:
-        IDevice<T> &operator<<(T Data)
+        DeviceInterface<T> &operator<<(T Data)
         {
             m_Out(Data);
             return *this;
         }
 
-        IDevice<T> &operator>>(T Data)
+        DeviceInterface<T> &operator>>(T Data)
         {
             m_In(Data);
             return *this;
         }
 
-        virtual const char *Name() const
+        virtual const char* Name() const
         {
-            return ("IDevice");
+            return ("DeviceInterface");
         }
 
         operator bool() { return m_Out && m_In; }

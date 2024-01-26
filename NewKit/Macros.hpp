@@ -38,7 +38,7 @@
 #endif // #ifndef ATTRIBUTE
 
 #ifndef __hCore__
-#define __hCore__ (20230208)
+#define __hCore__ (202401)
 #endif // !__hCore__
 
 #ifndef EXTERN_C

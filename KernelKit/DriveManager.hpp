@@ -64,7 +64,7 @@ namespace hCore
 #define kPacketZip    "file/x-zip"
     
     //! drive as a device.
-    typedef IDevice<DriveTraits> Drive;
+    typedef DeviceInterface<DriveTraits> Drive;
     typedef Drive* DrivePtr;
 
     class DriveSelector final

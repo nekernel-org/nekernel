@@ -7,8 +7,8 @@
  *      ========================================================
  */
 
-#ifndef __SUPPORTKIT_SHARED_OBJECT_CORE_HXX__
-#define __SUPPORTKIT_SHARED_OBJECT_CORE_HXX__
+#ifndef __KERNELKIT_SHARED_OBJECT_CORE_HXX__
+#define __KERNELKIT_SHARED_OBJECT_CORE_HXX__
 
 #include <NewKit/Defines.hpp>
 #include <KernelKit/Loader.hpp>
@@ -54,4 +54,4 @@ namespace hCore
 	}
 }
 
-#endif /* ifndef __SUPPORTKIT_SHARED_OBJECT_CORE_HXX__ */
+#endif /* ifndef __KERNELKIT_SHARED_OBJECT_CORE_HXX__ */

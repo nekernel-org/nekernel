@@ -15,10 +15,11 @@
 
 __rt_debug_record_table:
     db "DebugMgr/hCore", 0xa, 0xd, 0
-    resb 16
-    dw 0x5566
+    ;; User Data goes there
+    resb 64
 __rt_debug_int_3:
     push 0x6677 ;; Debug check error
+;; then halt and goes back to L0, thens halts...
 L0:
     hlt
     jmp $

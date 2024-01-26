@@ -17,7 +17,7 @@ namespace hCore
 {
     struct NetworkDeviceCommand;
 
-    class NetworkDevice final : public IDevice<NetworkDeviceCommand>
+    class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand>
     {
     public:
         NetworkDevice(void(*out)(NetworkDeviceCommand), void(*in)(NetworkDeviceCommand),

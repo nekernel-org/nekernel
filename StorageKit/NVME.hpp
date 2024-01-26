@@ -16,13 +16,13 @@ namespace hCore
 {
     class NVMEPacket;
 
-    class NVMEDevice : public IDevice<NVMEPacket>
+    class NVMEDevice : public DeviceInterface<NVMEPacket>
     {
     public:
         NVMEDevice(void(*Out)(NVMEPacket outpacket),
                    void(*In)(NVMEPacket inpacket),
                    void(*Cleanup)(void))
-            : IDevice(Out, In), fCleanup(Cleanup)
+            : DeviceInterface(Out, In), fCleanup(Cleanup)
         {}
 
         virtual ~NVMEDevice()

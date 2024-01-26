@@ -16,10 +16,10 @@
 namespace hCore
 {
     // @brief Emulates a VT100 terminal.
-    class TerminalDevice final : public IDevice<const char*>
+    class TerminalDevice final : public DeviceInterface<const char*>
     {
     public:
-        TerminalDevice(void (*print)(const char *), void (*get)(const char *)) : IDevice<const char*>(print, get) {}
+        TerminalDevice(void (*print)(const char *), void (*get)(const char *)) : DeviceInterface<const char*>(print, get) {}
         virtual ~TerminalDevice() {}
 
         /// @brief returns device name (terminal name)

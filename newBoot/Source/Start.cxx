@@ -9,11 +9,9 @@
 
 #include <BootKit/Boot.hpp>
 
-extern "C" void __AppMain(void)
+extern "C" void Main(void)
 {
     BKTextWriter writer;
-    writer.WriteString("Starting hCore...", kBlack, kWhite, 0, 0);
-    
-    const char* args[] = { "/hCore.bin" };
-    const char* envp[] = { "/"  };
+    writer.WriteString("Booting Kernel...", kBlack, kWhite, 0, 0);
+
 }

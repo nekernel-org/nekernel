@@ -32,7 +32,7 @@ namespace hCore
         kPefArchAMD64,
         kPefArchRISCV,
         kPefArch64x0, /* 64x000. */
-        kPefArchPOWER,
+        kPefArch32x0,
         kPefArchInvalid = 0xFF,
     };
 
