@@ -11,4 +11,4 @@
 
 #include <SystemKit/Defines.hpp>
 
-#define ZIPKIT_VERSION "1.0.0"
+#define ZIPKIT_VERSION "1.0.1"

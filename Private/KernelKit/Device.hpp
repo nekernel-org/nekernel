@@ -35,22 +35,19 @@ namespace hCore
         DeviceInterface(const DeviceInterface<T> &) = default;
 
     public:
-        DeviceInterface<T> &operator<<(T Data)
+        DeviceInterface<T>& operator<<(T Data)
         {
             m_Out(Data);
             return *this;
         }
 
-        DeviceInterface<T> &operator>>(T Data)
+        DeviceInterface<T>& operator>>(T Data)
         {
             m_In(Data);
             return *this;
         }
 
-        virtual const char* Name() const
-        {
-            return ("DeviceInterface");
-        }
+        virtual const char* Name() const { return "DeviceInterface"; }
 
         operator bool() { return m_Out && m_In; }
         bool operator!() { return !m_Out && !m_In; }

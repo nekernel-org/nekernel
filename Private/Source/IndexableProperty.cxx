@@ -9,7 +9,7 @@
 
 //! @brief hCore NewFS Indexer.
 
-#include <FSKit/FilesystemIndexer.hxx>
+#include <FSKit/IndexableProperty.hxx>
 #include <CompilerKit/Compiler.hpp>
 #include <NewKit/MutableArray.hpp>
 #include <NewKit/Utils.hpp>

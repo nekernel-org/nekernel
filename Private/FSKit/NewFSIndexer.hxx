@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <FSKit/FilesystemIndexer.hxx>
+#include <FSKit/IndexableProperty.hxx>
 #include <NewKit/MutableArray.hpp>
 
 namespace hCore

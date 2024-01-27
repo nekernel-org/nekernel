@@ -175,7 +175,7 @@ namespace hCore
         virtual bool WriteCatalog(NewCatalog& catalog, voidPtr data) = 0;
         virtual bool RemoveCatalog(NewCatalog& catalog) = 0;
 
-        void FormatDrive(DriveTraits& drive);
+        virtual bool Format(DriveTraits& drive) = 0;
 
     };
 

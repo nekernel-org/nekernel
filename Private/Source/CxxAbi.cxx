@@ -29,7 +29,8 @@ extern "C" void __stack_chk_fail()
     hCore::panic(RUNTIME_CHECK_POINTER);
 }
 
-extern "C" int __cxa_atexit(void (*f)(void *), void *arg, void *dso) {
+extern "C" int __cxa_atexit(void (*f)(void *), void *arg, void *dso)
+{
     if (__atexit_func_count >= DSO_MAX_OBJECTS)
         return -1;
 
@@ -42,11 +43,15 @@ extern "C" int __cxa_atexit(void (*f)(void *), void *arg, void *dso) {
     return 0;
 }
 
-extern "C" void __cxa_finalize(void *f) {
+extern "C" void __cxa_finalize(void *f)
+{
     uarch_t i = __atexit_func_count;
-    if (!f) {
-        while (i--) {
-            if (__atexit_funcs[i].destructor_func) {
+    if (!f)
+    {
+        while (i--)
+        {
+            if (__atexit_funcs[i].destructor_func)
+            {
                 (*__atexit_funcs[i].destructor_func)(__atexit_funcs[i].obj_ptr);
             };
         }
@@ -54,26 +59,32 @@ extern "C" void __cxa_finalize(void *f) {
         return;
     }
 
-    while (i--) {
-        if (__atexit_funcs[i].destructor_func) {
+    while (i--)
+    {
+        if (__atexit_funcs[i].destructor_func)
+        {
             (*__atexit_funcs[i].destructor_func)(__atexit_funcs[i].obj_ptr);
             __atexit_funcs[i].destructor_func = 0;
         };
     }
 }
 
-namespace cxxabiv1 {
-    extern "C" int __cxa_guard_acquire(__guard *g) {
+namespace cxxabiv1
+{
+    extern "C" int __cxa_guard_acquire(__guard *g)
+    {
         (void) g;
         return 0;
     }
 
-    extern "C" int __cxa_guard_release(__guard *g) {
+    extern "C" int __cxa_guard_release(__guard *g)
+    {
         *(char *) g = 1;
         return 0;
     }
 
-    extern "C" void __cxa_guard_abort(__guard *g) {
+    extern "C" void __cxa_guard_abort(__guard *g)
+    {
         (void) g;
     }
 } // namespace cxxabiv1
@@ -83,6 +94,18 @@ namespace cxxabiv1 {
 namespace cxxkit
 {
     extern "C" void __unwind(void(**finis)(void), int cnt)
+    {
+        for (int i = 0; i < cnt; ++i)
+            (finis[i])();
+    }
+
+    extern "C" void __init_local(void(**init)(void), int cnt)
+    {
+        for (int i = 0; i < cnt; ++i)
+            (init[i])();
+    }
+
+    extern "C" void __fini_local(void(**finis)(void), int cnt)
     {
         for (int i = 0; i < cnt; ++i)
             (finis[i])();

@@ -9,7 +9,7 @@
 
 #pragma once
 
-// TODO: integrate MeFS compression.
+// TODO: integrate NewFS compression.
 
 // MeFS catalog is compressed.
 #define kCatalogFlagZip 255
