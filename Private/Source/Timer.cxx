@@ -13,16 +13,17 @@
 
 using namespace hCore;
 
+Int32 HardwareTimerInterface::Wait() noexcept { return H_UNIMPLEMENTED; }
+
 HardwareTimer::HardwareTimer(Int64 seconds) : fWaitFor(seconds) {}
 HardwareTimer::~HardwareTimer() { fWaitFor = 0; }
 
-Int32 HardwareTimer::Wait()
+Int32 HardwareTimer::Wait() noexcept
 {
     if (fWaitFor < 1)
         return -1;
 
-    while (*fDigitalTimer < (*fDigitalTimer + fWaitFor))
-        ;
+    while (*fDigitalTimer < (*fDigitalTimer + fWaitFor)) {}
 
     return 0;
 }

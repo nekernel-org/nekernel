@@ -136,7 +136,7 @@ namespace hCore
         ErrorOr<Int64> WriteAll(const VoidPtr data) noexcept
         {
             if (data == nullptr)
-                return ErrorOr<Int64>(ME_INVALID_DATA);
+                return ErrorOr<Int64>(H_INVALID_DATA);
 
             auto man = FSClass::GetMounted();
 
@@ -146,7 +146,7 @@ namespace hCore
                 return ErrorOr<Int64>(0);
             }
 
-            return ErrorOr<Int64>(ME_INVALID_DATA);
+            return ErrorOr<Int64>(H_INVALID_DATA);
         }
 
         VoidPtr ReadAll() noexcept

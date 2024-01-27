@@ -59,14 +59,14 @@ namespace hCore
         /// This is read-only by design.
         /// It handles different kind of code.
         /// PowerPC <-> AMD64 for example.
-        typedef struct UniversalProcedureTable
+        typedef struct UniversalProcedureTable final
         {
             const Char NAME[kPefNameLen];
             const VoidPtr TRAP;
             const SizeT ARCH;
         } __attribute__((packed)) UniversalProcedureTableType;
 
-        bool execute_from_image(PEFLoader& exec);
+        bool execute_from_image(PEFLoader& exec) noexcept;
     }
 }
 

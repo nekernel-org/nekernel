@@ -30,4 +30,4 @@ namespace hCore
     bool PermissionSelector::operator!=(const PermissionSelector& lhs) { return lhs.fRing != this->fRing; }
 
     const RingKind& PermissionSelector::Ring() noexcept { return this->fRing; }
-}
+} // namespace hCore

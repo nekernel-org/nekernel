@@ -16,24 +16,24 @@
 
 namespace hCore
 {
-    class ITimer;
     class HardwareTimer;
+    class HardwareTimerInterface;
 
-    class ITimer
+    class HardwareTimerInterface
     {
     public:
-        ITimer() = default;
-        virtual ~ITimer() = default;
+        HardwareTimerInterface() = default;
+        virtual ~HardwareTimerInterface() = default;
 
     public:
-        HCORE_COPY_DEFAULT(ITimer);
+        HCORE_COPY_DEFAULT(HardwareTimerInterface);
 
     public:
-        virtual Int32 Wait() { return ME_UNIMPLEMENTED; }
+        virtual Int32 Wait() noexcept;
 
     };
 
-    class HardwareTimer final : public ITimer
+    class HardwareTimer final : public HardwareTimerInterface
     {
     public:
         explicit HardwareTimer(Int64 seconds);
@@ -43,7 +43,7 @@ namespace hCore
         HCORE_COPY_DEFAULT(HardwareTimer);
 
     public:
-        Int32 Wait() override;
+        Int32 Wait() noexcept override;
 
     public:
         IntPtr* fDigitalTimer{ nullptr };

@@ -115,14 +115,14 @@ namespace hCore
         if (auto sym = this->FindSymbol("__start", kPefCode); sym)
             return ErrorOr<VoidPtr>(sym);
 
-        return ErrorOr<VoidPtr>(ME_EXEC_ERROR);
+        return ErrorOr<VoidPtr>(H_EXEC_ERROR);
     }
 
     bool PEFLoader::IsLoaded() noexcept { return !fBad && fCachedBlob; }
 
     namespace Utils
     {
-        bool execute_from_image(PEFLoader& exec)
+        bool execute_from_image(PEFLoader& exec) noexcept
         {
             auto errOrStart = exec.LoadStart();
 
