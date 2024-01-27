@@ -82,13 +82,15 @@ namespace hCore
     ///! @brief Default destructor.
     SMPManager::~SMPManager() = default;
 
+    /// @brief Shared singleton function
     Ref<SMPManager> SMPManager::Shared()
     {
         static SMPManager manager;
         return { manager };
     }
 
-    HAL::StackFramePtr SMPManager::GetStack() noexcept
+    /// @brief Get Stack Frame of Core
+    HAL::StackFramePtr SMPManager::GetStackFrame() noexcept
     {
         if (m_ThreadList[m_CurrentThread].Leak() &&
             ProcessHelper::GetCurrentPID() == m_ThreadList[m_CurrentThread].Leak().Leak().m_PID)
@@ -97,7 +99,7 @@ namespace hCore
         return nullptr;
     }
 
-    // @brief Finds and switch to a free core.
+    /// @brief Finds and switch to a free core.
     bool SMPManager::Switch(HAL::StackFrame* stack)
     {
         if (stack == nullptr)
@@ -108,7 +110,7 @@ namespace hCore
 	    	// stack != nullptr -> if core is used, then continue.
             if (!m_ThreadList[idx].Leak() ||
 				!m_ThreadList[idx].Leak().Leak().IsWakeup() ||
-                !m_ThreadList[idx].Leak().Leak().IsBusy())
+                m_ThreadList[idx].Leak().Leak().IsBusy())
                 continue;
 
             m_ThreadList[idx].Leak().Leak().m_ID = idx;
@@ -117,7 +119,7 @@ namespace hCore
 
             m_ThreadList[idx].Leak().Leak().Busy(true);	
 
-            bool ret = rt_do_context_switch(rt_get_current_context(), stack) == 0;
+            Boolean ret = (rt_do_context_switch(rt_get_current_context(), stack) == 0);
         
             m_ThreadList[idx].Leak().Leak().Busy(false);
 
@@ -127,9 +129,22 @@ namespace hCore
         return false;
     }
 
+    /**
+     * Index hart
+     * @param idx
+     * @return
+     */
     Ref<ProcessorCore> SMPManager::operator[](const SizeT& idx) { return m_ThreadList[idx].Leak(); }
 
+    /**
+     * Check if thread pool isn't empty.
+     * @return
+     */
     SMPManager::operator bool() noexcept { return !m_ThreadList.Empty(); }
 
+    /**
+     * Reverse operator bool
+     * @return
+     */
     bool SMPManager::operator!() noexcept { return m_ThreadList.Empty(); }
 } // namespace hCore

@@ -91,7 +91,7 @@ namespace hCore
 
     public:
         bool Switch(HAL::StackFrame* the);
-        HAL::StackFramePtr GetStack() noexcept;
+        HAL::StackFramePtr GetStackFrame() noexcept;
 
     public:
         Ref<ProcessorCore> operator[](const SizeT& idx);

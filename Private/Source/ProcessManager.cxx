@@ -50,7 +50,7 @@ namespace hCore
             return ptr;
         }
 
-        //! TODO: Disk to RAM allocation
+        //! TODO: Disk allocation
 
         return nullptr;
     }
@@ -66,18 +66,18 @@ namespace hCore
             if (&_pool[index] > &_pool_ptr[sz])
                 continue;
 
-            if (_pool[index] != _pool_ptr[index])
-                return false;
+            if (_pool[index] == _pool_ptr[index])
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     /* @brief free pointer from usage. */
     Boolean Process::Delete(VoidPtr ptr, const SizeT& sz)
     {
         if (sz < 1 ||
-        this->PoolCursor == this->Pool)
+            this->PoolCursor == this->Pool)
             return false;
 
         if (rt_in_pool_region(ptr, this->PoolCursor, this->UsedMemory))
