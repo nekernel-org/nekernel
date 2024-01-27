@@ -1,7 +1,7 @@
 /*
  *      ========================================================
  *
- *      newBoot
+ *      NewBoot
  *      Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  *      ========================================================
@@ -16,17 +16,17 @@ typedef EFI_STATUS(*EfiMainType)(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *Syste
 EFI_STATUS main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) 
 {
     InitializeLib(ImageHandle, SystemTable);
-    Print(L"newBoot: Booting from XPM...\r\n");
+    Print(L"NewBoot: Booting from EPM...\r\n");
 
-	newboot_init_xpm();
+	newboot_init_epm();
 	    
     //! these two should execute a program if any on it.
-    newboot_mount_drive("xpm:///system/");
-    newboot_mount_drive("xpm:///efi/");
+    newboot_mount_drive("epm:///system/");
+    newboot_mount_drive("epm:///efi/");
 
 	newboot_fini_xpm();
     
-    Print(L"newBoot: No auto-mount found.\r\n");
+    Print(L"NewBoot: No auto-mount found.\r\n");
 
     return EFI_LOAD_ERROR;
 }

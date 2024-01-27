@@ -12,6 +12,11 @@
 
 namespace hCore
 {
+    char* RawIPAddress::Address()
+    {
+        return m_Addr;
+    }
+
     RawIPAddress::RawIPAddress(char bytes[4])
     {
         rt_copy_memory(bytes, m_Addr, 4);
@@ -86,19 +91,19 @@ namespace hCore
         return true;
     }
 
-    ErrorOr<StringView> IPHelper::ToStringView(Ref<RawIPAddress6> ipv6)
+    ErrorOr<StringView> IPFactory::ToStringView(Ref<RawIPAddress6> ipv6)
     {
         auto str = StringBuilder::Construct(ipv6.Leak().Address());
         return str;
     }
 
-    ErrorOr<StringView> IPHelper::ToStringView(Ref<RawIPAddress> ipv4)
+    ErrorOr<StringView> IPFactory::ToStringView(Ref<RawIPAddress> ipv4)
     {
         auto str = StringBuilder::Construct(ipv4.Leak().Address());
         return str;
     }
 
-    bool IPHelper::IpCheckV4(const char *ip)
+    bool IPFactory::IpCheckVersion4(const char *ip)
     {
         int cnter = 0;
 

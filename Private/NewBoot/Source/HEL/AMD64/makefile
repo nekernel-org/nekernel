@@ -31,3 +31,7 @@ build-crt0-bios:
 .PHONY: all
 all: build-crt0-bios
 	@echo "Done (CRT-0)"
+
+.PHONY: clean
+clean:
+	rm -f $(wildcard *.o) $(wildcard *.bin)

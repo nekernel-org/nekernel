@@ -11,7 +11,7 @@ FLAG_GNU=-I../ -I../../../efiSDK/inc -c -ffreestanding -fno-rtti -fno-exceptions
 
 .PHONY: arch-amd64
 arch-amd64:
-	$(CC_GNU) $(FLAG_GNU) Arch/AMD64/BootAMD64.cxx *.cxx
+	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/BootAMD64.cxx *.cxx
 	$(LD_GNU) *.o -e Main  -Ttext 0x000 --oformat binary -o BootloaderStage2.bin
 
 .PHONY: clean

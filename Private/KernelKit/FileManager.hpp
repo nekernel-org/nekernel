@@ -77,10 +77,13 @@ namespace hCore
 
     };
 
+    /**
+     * @brief Child of IFilesystemManager, takes care of managing NewFS disks.
+     */
     class NewFilesystemManager final : public IFilesystemManager
     {
     public:
-        NewFilesystemManager();
+        explicit NewFilesystemManager();
         ~NewFilesystemManager() override;
 
     public:
@@ -113,6 +116,11 @@ namespace hCore
 
     };
 
+    /**
+     * Usable FileStream
+     * @tparam Encoding file encoding (char, wchar_t...)
+     * @tparam FSClass Filesystem contract who takes care of it.
+     */
     template <typename Encoding = char, typename FSClass = NewFilesystemManager>
     class FileStream final
     {

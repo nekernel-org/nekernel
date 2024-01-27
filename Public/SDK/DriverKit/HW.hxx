@@ -9,24 +9,23 @@
 
 #pragma once
 
-#include <CompilerKit/Compiler.hpp>
-#include <NewKit/Defines.hpp>
+#include <Private/CompilerKit/Compiler.hpp>
+#include <Private/NewKit/Defines.hpp>
 
 namespace h-core
 {
-    // h-core HardWare Interface.
-    // Purpose: Provides a gentle way to initialize, dispose, send and receive hardware data.
-    class HWInterface
+    /// @brief Provides a gentle way to initialize, dispose, send and receive hardware data.
+    class HardwareInterface
     {
     public:
-        HWInterface() = default;
-        virtual ~HWInterface() = default;
+        explicit HardwareInterface() ={ this->Initialize(); }
+        virtual ~HardwareInterface() { this->Dispose(); }
 
     public:
-        HCORE_COPY_DEFAULT(HWInterface);
+        HCORE_COPY_DEFAULT(HardwareInterface);
 
     public:
-        virtual const char* Name() { return "Unimplemented Hardware."; }
+        virtual const char* Name() { return "Generic HW."; }
 
     public:
         virtual void Initialize() {}
@@ -42,3 +41,5 @@ namespace h-core
 
     };
 }
+
+// last rev 1/27/24

@@ -13,7 +13,7 @@
 
 // this files handles paging.
 
-static hCore::UIntPtr kPagePtr = 0x0900000;
+static hCore::UIntPtr kPagePtr = kPagePtrAddress;
 static hCore::SizeT kPageCnt = 0UL;
 
 namespace hCore

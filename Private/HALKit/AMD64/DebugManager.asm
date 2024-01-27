@@ -8,7 +8,6 @@
 ;; */
 
 [global rt_debug_fence]
-[global rt_debug_fence_end]
 [global __rt_debug_int_3]
 
 ;; //////////////////////////////////////////////////// ;;
@@ -25,8 +24,10 @@ L0:
     jmp $
 
 rt_debug_fence:
-    push __rt_debug_record_table
+	mov [__rt_debug_record_table], rsi
+    push rsi
     jmp [rbx]
-rt_debug_fence_end:
+    pop rsi
+	ret
 
 ;; //////////////////////////////////////////////////// ;;

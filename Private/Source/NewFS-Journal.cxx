@@ -7,7 +7,6 @@
  * 	========================================================
  */
 
-
 #include <FSKit/NewFS.hxx>
 #include <KernelKit/DebugOutput.hpp>
 
