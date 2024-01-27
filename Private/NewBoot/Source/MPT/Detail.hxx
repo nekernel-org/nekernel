@@ -22,19 +22,7 @@ namespace detail
 
     inline void hang() const
     {
-        while (1)
-        {}
-    }
-
-    extern "C" void* new_ptr(long sz);
-
-    template <typename Cls>
-    inline Cls* new_class()
-    {
-        Cls* cls = (Cls*)new_ptr(sizeof(Cls));
-        *cls = Cls();
-
-        return cls;
+        while (1) {}
     }
 
     enum

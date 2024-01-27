@@ -9,8 +9,8 @@
 
 #pragma once
 
-// @brief 255 size partition header.
-// we use that to gather information about this hard drive.
+/// @brief 255 size partition header.
+/// we use that to gather information about this hard drive.
 
 struct MasterPartitionTable final
 {
@@ -27,3 +27,4 @@ enum
     kPartEpm = 0x11,
     kPartEbr = 0x12,
 };
+

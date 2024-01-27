@@ -9,9 +9,9 @@
 
 #pragma once
 
-namespace mpt
-{
-    /// initializes the Master Partition Table and the Files32 filesystem.
-    /// \return status, assert(fail) is also triggered, use filesystem_hook_error if you want to catch it.
-    bool init_mpt() noexcept;
-}
+#ifdef __MPT_NEED_ATA_SUPPORT
+extern "C" int init_ata_mpt(void);
+#endif // __MPT_NEED_ATA_SUPPORT
+
+#include <MPT/Detail.hxx>
+#include <MPT/MPT.hxx>
