@@ -7,9 +7,9 @@ bits 32
 
 __BIOSLoadRegister:
     cmp [ebp - 4], 0
-    jmp __LoadGDT
+    jmp __BIOSLoadGDT
     ret
-__LoadGDT:
+__BIOSLoadGDT:
     lgdt [ebp - 8]
     ret
 
