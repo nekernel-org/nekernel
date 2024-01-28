@@ -374,7 +374,7 @@
 #endif
 
 
-#if defined (__h-core__)
+#if defined (__hCore__)
 #  ifdef ZLIB_DLL
 #    ifdef ZLIB_INTERNAL
 #      define ZEXPORT

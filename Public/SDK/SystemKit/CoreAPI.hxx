@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
-#include <SystemKit/SystemKit.hxx>
+#ifdef MUST_PASS
+#undef MUST_PASS
+#endif
 
-using namespace hCore;
-
-#define ZIPKIT_VERSION "1.0.1"
+// unused by user side, it's a kernel thing.
+#define MUST_PASS(e) ((void)e)
