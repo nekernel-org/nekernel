@@ -24,7 +24,7 @@ typedef struct EfiTableHeader
 
 struct EfiSimpleTextOutputProtocol;
 
-typedef UInt64 (*EfiTextString)(struct EfiSimpleTextOutputProtocol *self, Int16 *string);
+typedef UInt64 (*EfiTextString)(struct EfiSimpleTextOutputProtocol *self, const wchar_t *string);
 
 typedef struct EfiSimpleTextOutputProtocol
 {
@@ -56,3 +56,5 @@ typedef struct EfiSystemTable
     UInt64 numberOfTableEntries;
     UInt64 configurationTable;
 } EfiSystemTable;
+
+#define EfiMain efi_main
