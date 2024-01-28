@@ -1,6 +1,6 @@
 OUTPUT_FORMAT("elf64-x86-64")
 
-ENTRY(KMain)
+ENTRY(Main)
 
 PHDRS {
     null    PT_NULL    FLAGS(0) ;
@@ -19,8 +19,10 @@ SECTIONS {
     . += CONSTANT(MAXPAGESIZE);
 
      .init : {
+        __SYSTEM_INIT = .;
        	*(.initl)
-     } :init
+        __SYSTEM_FINI = .;
+     }
 
     __SYSTEM_INIT_END = .;
 

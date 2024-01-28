@@ -10,7 +10,7 @@
 #ifndef __PARTITION_MAP__
 #define __PARTITION_MAP__
 
-#define UUID_LEN 37
+inline constexpr int kUUIDLen = 37;
 
 /* the first 512 > x > 1024 bytes of a disk contains this headers. */
 
@@ -22,7 +22,7 @@ struct __attribute__((packed)) BootBlock
 {
     char magic[4];
     char name[32];
-    char uuid[UUID_LEN];
+    char uuid[kUUIDLen];
     int version;
     long long int num_blocks;
     long long int sector_sz;
@@ -46,34 +46,31 @@ struct __attribute__((packed)) PartitionBlock
 };
 
 /* @brief AMD64 magic for EPM */
-#define PM_MAGIC_X86 "EPMAM"
+#define kMagic86 "EPMAM"
 
 /* @brief RISC-V magic for EPM */
-#define PM_MAGIC_RV "EPMRV"
+#define kMagicRISCV "EPMRV"
 
 /* @brief ARM magic for EPM */
-#define PM_MAGIC_ARM "EPMAR"
+#define kMagicARM "EPMAR"
 
 /* @brief 64x0 magic for EPM */
-#define PM_MAGIC_64x0 "EPM64"
+#define kMagic64k "EPM64"
 
 /* @brief 32x0 magic for EPM */
-#define PM_MAGIC_32x0 "EPM32"
+#define kMagic32k "EPM32"
 
-#define PM_MAX_BLKS 128
-
-#define PM_BOOT_BLK_SZ sizeof(struct boot_block)
-#define PM_PART_BLK_SZ sizeof(struct part_block)
+#define kMaxBlks 128
 
 //! version types.
 //! use in boot block version field.
 
 enum
 {
-    EPM_MPUNIX = 0xcf,
-    EPM_LINUX = 0x8f,
-    EPM_BSD = 0x9f,
-    EPM_HCORE = 0x1f,
+    kEPMMpUx = 0xcf,
+    kEPMLinux = 0x8f,
+    kEPMBSD = 0x9f,
+    kEPMHCore = 0x1f,
 };
 
 /// END SPECS
@@ -82,9 +79,9 @@ typedef struct BootBlock BootBlockType;
 typedef struct PartitionBlock PartitionBlockType;
 
 #ifdef __x86_64__
-#define PM_MAG PM_MAGIC_X86
+#define kMag kMagic86
 #else
-#define PM_MAG "?"
+#define kMag "EPM??"
 #endif
 
 #endif // ifndef __PARTITION_MAP__

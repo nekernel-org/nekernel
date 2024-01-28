@@ -19,6 +19,7 @@ Programs are load using the PEF. PEF is a multiplatform container
 for executables/shared libraries. Dwarf is used for debugging.
 
 hCore has SMP in it's core with a preemptive multi-threaded scheduler.
+It also supports dynamic loading of symbols and has a rich driver system.
 
 ====================================
 2: The GUI Kit

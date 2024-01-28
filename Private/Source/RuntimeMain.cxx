@@ -13,14 +13,15 @@
 #include <KernelKit/FileManager.hpp>
 #include <NewKit/Json.hpp>
 
-extern void (*__SYSTEM_INIT_END)();
-extern void (**init)();
+/// PRIVATE SYMBOLS EXPORTED BY GCC.
+extern "C" void (*__SYSTEM_FINI)();
+extern "C" void (**__SYSTEM_INIT)();
 
 extern "C" void RuntimeMain()
 {
-    for (hCore::SizeT index_init = 0UL; init[index_init] != __SYSTEM_INIT_END; ++index_init)
+    for (hCore::SizeT index_init = 0UL; __SYSTEM_INIT[index_init] != __SYSTEM_FINI; ++index_init)
     {
-        init[index_init]();
+        __SYSTEM_INIT[index_init]();
     }
 
     MUST_PASS(hCore::init_hal());

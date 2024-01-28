@@ -123,7 +123,7 @@ class Process final
   public:
     void AssignStart(UIntPtr &imageStart) noexcept;
 
-  private:
+  public:
     Char Name[kProcessLen] = {"hCore Process"};
     ProcessSubsystem SubSystem;
     ProcessSelector Selector;

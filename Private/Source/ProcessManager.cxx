@@ -25,6 +25,10 @@
 
 namespace hCore
 {
+/***********************************************************************************/
+/// Exit Code stuff
+/***********************************************************************************/
+
 static Int32 kExitCode = 0;
 
 const Int32 &rt_get_exit_code() noexcept
@@ -32,9 +36,11 @@ const Int32 &rt_get_exit_code() noexcept
     return kExitCode;
 }
 
+/***********************************************************************************/
+
 void Process::Crash()
 {
-    kcout << this->Name << ": Crashed.";
+    kcout << this->Name << ": Crashed\n";
     this->Exit(-1);
 }
 
@@ -42,6 +48,8 @@ void Process::Wake(const bool should_wakeup)
 {
     this->Status = should_wakeup ? ProcessStatus::kRunning : ProcessStatus::kFrozen;
 }
+
+/***********************************************************************************/
 
 VoidPtr Process::New(const SizeT &sz)
 {
@@ -64,6 +72,8 @@ VoidPtr Process::New(const SizeT &sz)
 
     return nullptr;
 }
+
+/***********************************************************************************/
 
 /* @brief checks if runtime pointer is in region. */
 bool rt_in_pool_region(VoidPtr pool_ptr, VoidPtr pool, const SizeT &sz)
@@ -121,6 +131,8 @@ const ProcessStatus &Process::GetStatus()
 {
     return this->Status;
 }
+
+/***********************************************************************************/
 
 /**
 @brief Affinity is the time slot allowed for the process.

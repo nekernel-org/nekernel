@@ -23,6 +23,7 @@ kernel-build:
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
 	$(ASM) -f elf64 HALKit/AMD64/DebugManager.asm
 	$(ASM) -f elf64 HALKit/AMD64/SMPCoreManager.asm
+	$(ASM) -f elf64 HALKit/AMD64/StartSequence.asm
 	mv *.o HALKit/AMD64/*.o Obj/
 
 

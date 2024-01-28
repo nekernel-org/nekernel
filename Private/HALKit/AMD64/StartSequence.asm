@@ -10,6 +10,7 @@
 [bits 64]
 [global Main]
 [extern RuntimeMain]
+[extern __SYSTEM_STACK_END]
 
 section .text
 
@@ -30,5 +31,6 @@ L0:
     jmp $
 
 MainBIOS:
-    cli hlt
+    cli
+    hlt
     jmp $

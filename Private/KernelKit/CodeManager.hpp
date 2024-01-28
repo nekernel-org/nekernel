@@ -10,6 +10,7 @@
 #ifndef _INC_CODE_MANAGER_
 #define _INC_CODE_MANAGER_
 
+#include "NewKit/Defines.hpp"
 #include <KernelKit/PEF.hpp>
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/String.hpp>
@@ -26,6 +27,7 @@ class PEFLoader : public Loader
     explicit PEFLoader() = delete;
 
   public:
+    explicit PEFLoader(const VoidPtr blob);
     explicit PEFLoader(const char *path);
     ~PEFLoader() override;
 

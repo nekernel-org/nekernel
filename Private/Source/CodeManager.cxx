@@ -7,138 +7,156 @@
  * 	========================================================
  */
 
-#include <KernelKit/FileManager.hpp>
+#include "NewKit/Defines.hpp"
+#include "NewKit/Panic.hpp"
 #include <KernelKit/CodeManager.hpp>
 #include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/FileManager.hpp>
 #include <KernelKit/ProcessManager.hpp>
-#include <NewKit/KHeap.hpp>
-#include <NewKit/String.hpp>
-#include <NewKit/OwnPtr.hpp>
 #include <NewKit/ErrorID.hpp>
+#include <NewKit/KHeap.hpp>
+#include <NewKit/OwnPtr.hpp>
+#include <NewKit/String.hpp>
 
 namespace hCore
 {
-    namespace Detail
-    {
-        UInt32 rt_get_pef_platform(void) noexcept
-        {
+namespace Detail
+{
+UInt32 rt_get_pef_platform(void) noexcept
+{
 #ifdef __32x0__
-            return kPefArch32x0;
+    return kPefArch32x0;
 #elif defined(__64x0__)
-	    return kPefArch64x0;
+    return kPefArch64x0;
 #elif defined(__x86_64__)
-            return kPefArchAMD64;
+    return kPefArchAMD64;
 #else
-            return kPefArchInvalid;
+    return kPefArchInvalid;
 #endif // __POWER || __x86_64__
-        }
-    }
+}
+} // namespace Detail
 
-    PEFLoader::PEFLoader(const char* path)
-        : fCachedBlob(nullptr), fBad(false)
+PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(nullptr)
+{
+    fCachedBlob = blob;
+    fBad = false;
+
+    MUST_PASS(fCachedBlob);
+}
+
+PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false)
+{
+    OwnPtr<FileStream<char>> file;
+
+    file.New(const_cast<Char *>(path));
+
+    if (StringBuilder::Equals(file->MIME(), this->MIME()))
     {
-        OwnPtr<FileStream<char>> file;
-		
-        file.New(const_cast<Char*>(path));
+        fPath = StringBuilder::Construct(path).Leak();
 
-        if (StringBuilder::Equals(file->MIME(), this->MIME()))
-        {
-        	fPath = StringBuilder::Construct(path).Leak();
-        	
-            fCachedBlob = file->ReadAll();
+        fCachedBlob = file->ReadAll();
 
-            PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
+        PEFContainer *container = reinterpret_cast<PEFContainer *>(fCachedBlob);
 
-            auto fFree = [&]() -> void {
-                kcout << "CodeManager: Warning: Bad executable, program will not be started!\n";
-                fBad = true;
+        auto fFree = [&]() -> void {
+            kcout << "CodeManager: Warning: Bad executable, program will not be started!\n";
+            fBad = true;
 
-                kernel_delete_ptr(fCachedBlob);
-                
-                fCachedBlob = nullptr;
-            };
-
-            if (container->Cpu == Detail::rt_get_pef_platform() &&
-                container->Magic[0] == kPefMagic[0] &&
-                container->Magic[1] == kPefMagic[1] &&
-                container->Magic[2] == kPefMagic[2] &&
-                container->Abi == kPefAbi)
-            {
-                if (container->Kind != kPefKindObject &&
-                    container->Kind != kPefKindDebug)
-                {
-                    kcout << "CodeManager: Info: Good executable. can proceed.\n";
-                    return;
-                }
-            }
-
-            fFree();
-        }
-    }
-
-    PEFLoader::~PEFLoader()
-    {
-        if (fCachedBlob)
             kernel_delete_ptr(fCachedBlob);
-    }
 
-    VoidPtr PEFLoader::FindSymbol(const char* name, Int32 kind)
-    {
-        if (!fCachedBlob ||
-            fBad)
-            return nullptr;
+            fCachedBlob = nullptr;
+        };
 
-        PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
-
-        PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>((UIntPtr)fCachedBlob + sizeof(PEFContainer));
-
-        for (SizeT index = 0; index < container->Count; ++index)
+        if (container->Cpu == Detail::rt_get_pef_platform() && container->Magic[0] == kPefMagic[0] &&
+            container->Magic[1] == kPefMagic[1] && container->Magic[2] == kPefMagic[2] && container->Abi == kPefAbi)
         {
-            kcout << "Iterating over container at index: " << StringBuilder::FromInt("%", index) << ", name: " << container_header->Name << "\n";
-
-            if (StringBuilder::Equals(container_header->Name, name))
+            if (container->Kind != kPefKindObject && container->Kind != kPefKindDebug)
             {
-                kcout << "Found potential container, checking for validity.\n";
-
-                if (container_header->Kind == kind)
-                    return static_cast<UIntPtr*>(fCachedBlob) + container_header->Offset;
-
-                continue;
+                kcout << "CodeManager: Info: Good executable. can proceed.\n";
+                return;
             }
         }
 
+        fFree();
+    }
+}
+
+PEFLoader::~PEFLoader()
+{
+    if (fCachedBlob)
+        kernel_delete_ptr(fCachedBlob);
+}
+
+VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind)
+{
+    if (!fCachedBlob || fBad)
         return nullptr;
-    }
 
-    ErrorOr<VoidPtr> PEFLoader::LoadStart()
+    PEFContainer *container = reinterpret_cast<PEFContainer *>(fCachedBlob);
+
+    PEFCommandHeader *container_header =
+        reinterpret_cast<PEFCommandHeader *>((UIntPtr)fCachedBlob + sizeof(PEFContainer));
+
+    for (SizeT index = 0; index < container->Count; ++index)
     {
-        if (auto sym = this->FindSymbol("__start", kPefCode); sym)
-            return ErrorOr<VoidPtr>(sym);
+        kcout << "Iterating over container at index: " << StringBuilder::FromInt("%", index)
+              << ", name: " << container_header->Name << "\n";
 
-        return ErrorOr<VoidPtr>(H_EXEC_ERROR);
-    }
-
-    bool PEFLoader::IsLoaded() noexcept { return !fBad && fCachedBlob; }
-
-    namespace Utils
-    {
-        bool execute_from_image(PEFLoader& exec) noexcept
+        if (StringBuilder::Equals(container_header->Name, name))
         {
-            auto errOrStart = exec.LoadStart();
+            kcout << "Found potential container, checking for validity.\n";
 
-            if (errOrStart.Error() != 0)
-                return false;
+            if (container_header->Kind == kind)
+                return static_cast<UIntPtr *>(fCachedBlob) + container_header->Offset;
 
-            Process proc(errOrStart.Leak().Leak());
-            Ref<Process> refProc = proc;
-
-            return ProcessManager::Shared().Leak().Add(refProc);
+            continue;
         }
     }
 
-    const char* PEFLoader::Path() { return fPath.Leak().CData(); }
+    return nullptr;
+}
 
-    const char* PEFLoader::Format() { return "PEF"; }
+ErrorOr<VoidPtr> PEFLoader::LoadStart()
+{
+    if (auto sym = this->FindSymbol("__start", kPefCode); sym)
+        return ErrorOr<VoidPtr>(sym);
 
-    const char* PEFLoader::MIME() { return "application/x-exec"; }
+    return ErrorOr<VoidPtr>(H_EXEC_ERROR);
+}
+
+bool PEFLoader::IsLoaded() noexcept
+{
+    return !fBad && fCachedBlob;
+}
+
+namespace Utils
+{
+bool execute_from_image(PEFLoader &exec) noexcept
+{
+    auto errOrStart = exec.LoadStart();
+
+    if (errOrStart.Error() != 0)
+        return false;
+
+    Process proc(errOrStart.Leak().Leak());
+    Ref<Process> refProc = proc;
+
+    return ProcessManager::Shared().Leak().Add(refProc);
+}
+} // namespace Utils
+
+const char *PEFLoader::Path()
+{
+    return fPath.Leak().CData();
+}
+
+const char *PEFLoader::Format()
+{
+    return "PEF";
+}
+
+const char *PEFLoader::MIME()
+{
+    return "application/x-exec";
+}
 } // namespace hCore
