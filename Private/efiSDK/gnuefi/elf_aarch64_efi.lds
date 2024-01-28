@@ -1,6 +1,6 @@
 OUTPUT_FORMAT("elf64-littleaarch64", "elf64-littleaarch64", "elf64-littleaarch64")
 OUTPUT_ARCH(aarch64)
-ENTRY(_start)
+ENTRY(__main)
 SECTIONS
 {
   . = 0;

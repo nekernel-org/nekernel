@@ -36,9 +36,9 @@
 	.text
 	.align 4
 
-	.globl _start
-	.type _start,%function
-_start:
+	.globl __main
+	.type __main,%function
+__main:
 	pushl %ebp
 	movl %esp,%ebp
 

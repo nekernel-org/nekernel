@@ -8,7 +8,9 @@ build.ninja
 cmake_install.cmake
 qtcsettings.cmake
 
-*.xpm
+x86_64/
+
+*.epm
 *.app
 
 *.com

@@ -1220,7 +1220,7 @@ Date:   Tue Jun 25 08:47:03 2013 -0400
 
 	* gnuefi/elf_ia32_efi.lds: Drop unneeded ".rel.reloc" section.
 
-	* gnuefi/crt0-efi-ia32.S (_start): Exit if _relocate() returns with
+	* gnuefi/crt0-efi-ia32.S (__main): Exit if _relocate() returns with
 	non-zero exit status.
 
 	* inc/ia32/efibind.h [__GNUC__]: Force 8-byte alignment for 64-bit
@@ -1271,7 +1271,7 @@ Date:   Tue Jun 25 08:47:03 2013 -0400
 	* gnuefi/elf_ia64_efi.lds: Add .sdata section for small data and
 	put __gp in the "middle" of it.
 
-	* gnuefi/crt0-efi-ia64.S (_start): Use movl/add to load
+	* gnuefi/crt0-efi-ia64.S (__main): Use movl/add to load
 	gp-relative addresses that could be out of the range of the addl
 	offset.
 	* gnuefi/reloc_ia64.S (_relocate): Ditto.

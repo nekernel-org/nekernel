@@ -324,7 +324,7 @@ found in gnuefi/reloc_ia64.S.
 
 The self-relocator operates as follows: the startup code invokes it
 right after EFI has handed off control to the EFI binary at symbol
-"_start".  Upon activation, the self-relocator searches the .dynamic
+"__main".  Upon activation, the self-relocator searches the .dynamic
 section (whose starting address is given by symbol _DYNAMIC) for the
 dynamic relocation information, which can be found in the DT_REL,
 DT_RELSZ, and DT_RELENT entries of the dynamic table (DT_RELA,
@@ -367,11 +367,11 @@ in gnuefi/crt0-efi-ia64.S crafts one manually by with the code:
 
 	        .section .plabel, "a"
 	_start_plabel:
-	        data8   _start
+	        data8   __main
 	        data8   __gp
 
-this places the procedure label for entry point _start in a section
-called ".plabel".  Now, the only problem is that _start and __gp need
+this places the procedure label for entry point __main in a section
+called ".plabel".  Now, the only problem is that __main and __gp need
 to be relocated _before_ EFI hands control over to the EFI binary.
 Fortunately, PE32+ defines a section called ".reloc" that can achieve
 this.  Thus, in addition to manually crafting the function descriptor,

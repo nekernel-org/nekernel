@@ -13,7 +13,7 @@ __LoadGDT:
     lgdt [ebp - 8]
     ret
 
-;; This memory resides in the BIOS Memory Region BMR (0x9000-0x9000 + 4096)
+;; This memory resides in the BIOS Memory Region BMR (0x9000-(0x9000 + 0x1000))
 ;; It contains bootloader data.
 
 __BIOSAlloc:

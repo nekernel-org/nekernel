@@ -37,8 +37,8 @@
 	.psr lsb
 	.lsb
 
-	.proc _start
-_start:
+	.proc __main
+__main:
 	alloc loc0=ar.pfs,2,2,2,0
 	mov loc1=rp
 	movl out0=@gprel(ImageBase)	// out0 <- ImageBase (ldbase)
@@ -64,7 +64,7 @@ _start:
 	;;
 	br.ret.sptk.few rp
 
-	.endp _start
+	.endp __main
 
 
 	// PE32+ wants a PLABEL, not the code address of the entry point:
@@ -73,7 +73,7 @@ _start:
 	.global _start_plabel
 	.section .plabel, "a"
 _start_plabel:
-	data8	_start
+	data8	__main
 	data8	__gp
 
 	// hand-craft a .reloc section for the plabel:

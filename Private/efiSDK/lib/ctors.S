@@ -8,7 +8,9 @@
  * end/END definitions, and the fact that they're mergeable, they can also
  * have NULLs which aren't guaranteed to be at the end.
  */
-	.section .init_array,"aw",%init_array
+
+#if defined(__ELF__) && defined(__linux__)
+.section .init_array,"aw",%init_array
 	.p2align 3, 0
 	.globl __init_array_start
 __init_array_start:
@@ -38,7 +40,5 @@ __fini_array_start:
 __fini_array_end:
 	.p2align 3, 0
 
-#if defined(__ELF__) && defined(__linux__)
 	.section .note.GNU-stack,"",%progbits
 #endif
-

@@ -19,9 +19,9 @@
 	.text
 	.align		12
 
-	.globl _start
-	.type _start,%function
-_start:
+	.globl __main
+	.type __main,%function
+__main:
 	stp		x29, x30, [sp, #-32]!
 	mov		x29, sp
 

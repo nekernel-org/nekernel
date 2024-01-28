@@ -13,13 +13,13 @@
 
 using namespace hCore;
 
-typedef void* PEFImage;
+typedef void *PEFImage;
 
 enum
 {
-	kSegmentCode = 2,
-	kSegmentData = 4,
-	kSegmentBss  = 6,
+    kSegmentCode = 2,
+    kSegmentData = 4,
+    kSegmentBss = 6,
 };
 
 /**
@@ -28,29 +28,20 @@ enum
  */
 class BKTextWriter final
 {
-    volatile UInt16* fWhere{ nullptr };
+    volatile UInt16 *fWhere{nullptr};
 
-public:
-    void WriteString(const char* c,
-                     unsigned char forecolour,
-                     unsigned char backcolour,
-                     int x,
-                     int y);
+  public:
+    void WriteString(const char *c, unsigned char forecolour, unsigned char backcolour, int x, int y);
 
-    void WriteCharacter(char c,
-                        unsigned char forecolour,
-                        unsigned char backcolour,
-                        int x,
-                        int y);
+    void WriteCharacter(char c, unsigned char forecolour, unsigned char backcolour, int x, int y);
 
-public:
+  public:
     BKTextWriter() = default;
     ~BKTextWriter() = default;
 
-public:
-    BKTextWriter& operator=(const BKTextWriter&) = default;
-    BKTextWriter(const BKTextWriter&) = default;
-
+  public:
+    BKTextWriter &operator=(const BKTextWriter &) = default;
+    BKTextWriter(const BKTextWriter &) = default;
 };
 
 enum
@@ -73,5 +64,6 @@ enum
     kWhite,
 };
 
-#define BK_START_KERNEL (0x00080000)
+#define BK_START_KERNEL (0x10000000)
 
+long long int BStrLen(const char *ptr);

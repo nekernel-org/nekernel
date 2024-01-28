@@ -51,7 +51,7 @@ optional_header:
 	.4byte	_text_size - ImageBase		// SizeOfCode
 	.4byte	_alldata_size - ImageBase		// SizeOfInitializedData
 	.4byte	0				// SizeOfUninitializedData
-	.4byte	_start - ImageBase		// AddressOfEntryPoint
+	.4byte	__main - ImageBase		// AddressOfEntryPoint
 	.4byte	_text - ImageBase		// BaseOfCode
 
 extra_header_fields:
@@ -151,9 +151,9 @@ section_table:
 	.4byte	0x40000040		// Characteristics (section flags)
 
 	.text
-	.globl _start
-	.type _start,%function
-_start:
+	.globl __main
+	.type __main,%function
+__main:
 	addi		sp, sp, -24
 	sd		a0, 0(sp)
 	sd		a1, 8(sp)

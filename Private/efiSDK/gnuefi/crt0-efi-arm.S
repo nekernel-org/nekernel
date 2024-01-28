@@ -45,11 +45,11 @@ optional_header:
 	.2byte	0x10b				// PE32+ format
 	.byte	0x02				// MajorLinkerVersion
 	.byte	0x14				// MinorLinkerVersion
-	.4byte	_etext - _start		// SizeOfCode
+	.4byte	_etext - __main		// SizeOfCode
 	.4byte	_alldata_size - ImageBase		// SizeOfInitializedData
 	.4byte	0				// SizeOfUninitializedData
-	.4byte	_start - ImageBase		// AddressOfEntryPoint
-	.4byte	_start - ImageBase		// BaseOfCode
+	.4byte	__main - ImageBase		// AddressOfEntryPoint
+	.4byte	__main - ImageBase		// BaseOfCode
 	.4byte	_reloc - ImageBase		// BaseOfData
 
 extra_header_fields:
@@ -67,7 +67,7 @@ extra_header_fields:
 	.4byte	_image_end - ImageBase		// SizeOfImage
 
 	// Everything before the kernel image is considered part of the header
-	.4byte	_start - ImageBase		// SizeOfHeaders
+	.4byte	__main - ImageBase		// SizeOfHeaders
 	.4byte	0				// CheckSum
 	.2byte	EFI_SUBSYSTEM			// Subsystem
 	.2byte	0				// DllCharacteristics
@@ -100,10 +100,10 @@ extra_header_fields:
 section_table:
 
 	.ascii	".text\0\0\0"
-	.4byte	_evtext - _start // VirtualSize
-	.4byte	_start - ImageBase	// VirtualAddress
-	.4byte	_etext - _start		// SizeOfRawData
-	.4byte	_start - ImageBase	// PointerToRawData
+	.4byte	_evtext - __main // VirtualSize
+	.4byte	__main - ImageBase	// VirtualAddress
+	.4byte	_etext - __main		// SizeOfRawData
+	.4byte	__main - ImageBase	// PointerToRawData
 	.4byte	0		// PointerToRelocations (0 for executables)
 	.4byte	0		// PointerToLineNumbers (0 for executables)
 	.2byte	0		// NumberOfRelocations  (0 for executables)
@@ -149,9 +149,9 @@ section_table:
 	.4byte	0x40000040		// Characteristics (section flags)
 
 .balign 256
-.globl	_start
-.type _start,%function
-_start:
+.globl	__main
+.type __main,%function
+__main:
 	stmfd		sp!, {r0-r2, lr}
 
 	mov		r2, r0

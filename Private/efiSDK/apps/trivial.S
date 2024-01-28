@@ -1,8 +1,8 @@
 	.text
 	.align 4
 
-	.globl _start
-_start:
+	.globl __main
+__main:
 #if 0
         pushl %ebp
         movl %esp,%ebp

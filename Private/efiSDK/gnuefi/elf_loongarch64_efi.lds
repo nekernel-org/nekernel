@@ -1,6 +1,6 @@
 OUTPUT_FORMAT("elf64-loongarch", "elf64-loongarch", "elf64-loongarch")
 OUTPUT_ARCH(loongarch)
-ENTRY(_start)
+ENTRY(__main)
 SECTIONS
 {
   .text 0x0 : {

@@ -34,12 +34,13 @@
     THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
     SUCH DAMAGE.
 */
+
 	.text
 	.align 4
 
-	.globl _start
-	.type _start,%function
-_start:
+	.globl __main
+
+__main:
 	subq $8, %rsp
 	pushq %rcx
 	pushq %rdx
@@ -60,11 +61,11 @@ _start:
 	call _entry
 	addq $8, %rsp
 
-.exit:	
+.exit:
   	ret
 
  	// hand-craft a dummy .reloc section so EFI knows it's a relocatable executable:
- 
+
  	.data
 dummy:	.4byte	0
 

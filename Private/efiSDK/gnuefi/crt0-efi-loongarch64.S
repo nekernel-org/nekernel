@@ -48,11 +48,11 @@ optional_header:
 	.2byte	0x20b				// PE32+ format
 	.byte	0x02				// MajorLinkerVersion
 	.byte	0x14				// MinorLinkerVersion
-	.4byte	_edata - _start			// SizeOfCode
+	.4byte	_edata - __main			// SizeOfCode
 	.4byte	0				// SizeOfInitializedData
 	.4byte	0				// SizeOfUninitializedData
-	.4byte	_start - ImageBase		// AddressOfEntryPoint
-	.4byte	_start - ImageBase		// BaseOfCode
+	.4byte	__main - ImageBase		// AddressOfEntryPoint
+	.4byte	__main - ImageBase		// BaseOfCode
 
 extra_header_fields:
 	.8byte	0				// ImageBase
@@ -69,7 +69,7 @@ extra_header_fields:
 	.4byte	_edata - ImageBase		// SizeOfImage
 
 	// Everything before the kernel image is considered part of the header
-	.4byte	_start - ImageBase		// SizeOfHeaders
+	.4byte	__main - ImageBase		// SizeOfHeaders
 	.4byte	0				// CheckSum
 	.2byte	EFI_SUBSYSTEM			// Subsystem
 	.2byte	0				// DllCharacteristics
@@ -123,10 +123,10 @@ section_table:
 	.byte	0
 	.byte	0
 	.byte	0        		// end of 0 padding of section name
-	.4byte	_edata - _start		// VirtualSize
-	.4byte	_start - ImageBase	// VirtualAddress
-	.4byte	_edata - _start		// SizeOfRawData
-	.4byte	_start - ImageBase	// PointerToRawData
+	.4byte	_edata - __main		// VirtualSize
+	.4byte	__main - ImageBase	// VirtualAddress
+	.4byte	_edata - __main		// SizeOfRawData
+	.4byte	__main - ImageBase	// PointerToRawData
 
 	.4byte	0			// PointerToRelocations (0 for executables)
 	.4byte	0			// PointerToLineNumbers (0 for executables)
@@ -136,9 +136,9 @@ section_table:
 
 	.align  4
 
-	.globl	_start
-	.type	_start, @function
-_start:
+	.globl	__main
+	.type	__main, @function
+__main:
 	addi.d	  $sp, $sp, -24
 	st.d	  $ra, $sp, 0
 	st.d	  $a0, $sp, 8
@@ -158,4 +158,4 @@ _start:
 0:	ld.d	  $ra, $sp, 0
 	addi.d	  $sp, $sp, 24
 	jr	      $ra
-	.end	  _start
+	.end	  __main

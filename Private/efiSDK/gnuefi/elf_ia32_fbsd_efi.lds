@@ -1,6 +1,6 @@
 OUTPUT_FORMAT("elf32-i386-freebsd", "elf32-i386-freebsd", "elf32-i386-freebsd")
 OUTPUT_ARCH(i386)
-ENTRY(_start)
+ENTRY(__main)
 SECTIONS
 {
   . = 0;
