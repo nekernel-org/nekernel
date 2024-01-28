@@ -33,6 +33,9 @@ CWindowLookAndFeel interface takes care of that.
 ===================================
 
 We use C++ for this API, use it when dealing with C++ code. For C use RTKit.
+It is the unstable APIs with RTKit, they change a lot.
+
+Use the App Subsystem to create apps.
 
 ===================================
 4: The RunTime Kit
