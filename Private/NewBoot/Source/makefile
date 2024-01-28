@@ -10,8 +10,12 @@ FLAG_GNU=-fshort-wchar -fPIC -D__DBG__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I.
 .PHONY: arch-amd64
 arch-amd64:
 	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx
-	$(LD_GNU) *.o -filealign:16 --subsystem=10 -ffreestanding -shared -o HCORELDR.EXE
+	$(LD_GNU) *.o -e efi_main -filealign:16 -shared --subsystem=10 -ffreestanding -o HCORELDR.EXE
+	cp HCORELDR.EXE CDROM/EFI/BOOT/BOOTX64.EFI
 
+.PHONY: efi-debug
+efi-debug:
+	qemu-system-x86_64 -bios OVMF.fd -net none -drive file=fat:rw:CDROM,format=raw -d int
 
 .PHONY: clean
 clean:
