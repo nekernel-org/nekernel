@@ -5,13 +5,17 @@ ASM			= nasm
 ASMFLAGS	= -f elf64
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
-KERNEL		= hKernel.elf
+KERNEL		= hKernel.efi
 
 # The kernel entrypoint
 SCRIPT		= --script=Linker/AMD64.ld
 
-# we want a flat binary 
+# we want a flat binary
 FMT			= elf64
+
+.PHONY: kernel-no
+kernel-no:
+	@echo "Use make all instead."
 
 .PHONY: kernel-build
 kernel-build:
@@ -21,9 +25,13 @@ kernel-build:
 	$(ASM) -f elf64 HALKit/AMD64/SMPCoreManager.asm
 	mv *.o HALKit/AMD64/*.o Obj/
 
+
+OBJCOPY = x86_64-elf-objcopy
+
 .PHONY: kernel-link
 kernel-link:
 	$(LD) $(SCRIPT) Obj/*.o -o $(KERNEL)
+	$(OBJCOPY) -j .text -j .sdata -j .data -j .dynamic -j .dynsym  -j .rel -j .rela -j .rel.* -j .rela.* -j .reloc --target efi-app-x86_64 --subsystem=10 $(KERNEL) $(KERNEL)
 	cp $(KERNEL) Root/System
 
 .PHONY: all

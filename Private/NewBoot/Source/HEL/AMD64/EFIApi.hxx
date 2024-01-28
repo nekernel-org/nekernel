@@ -18,8 +18,19 @@ void newboot_mount_drive(const char *name);
 void newboot_boot_file(const char *path);
 
 /// @brief initializes epm library.
-void newboot_init_epm(void);
+void newboot_init_epm(EFI_HANDLE pImage);
 
 /// @brief frees the epm library, called when newboot_auto_mount/newboot_boot_file
 /// succeeds.
 void newboot_fini_epm(void);
+
+namespace HEL
+{
+struct HandoverHeader final
+{
+    int magic;
+    int type;
+    int arch;
+    // WIP
+};
+} // namespace HEL

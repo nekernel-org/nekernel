@@ -19,11 +19,10 @@ EFI_STATUS main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     Print(L"NewBoot: Booting from EPM...\r\n");
 
     // init
-    newboot_init_epm();
+    newboot_init_epm(ImageHandle);
 
     //! these two should execute a program if any on it.
     newboot_mount_drive("epm:///system/");
-    newboot_mount_drive("epm:///efi/");
 
     // bye
     newboot_fini_epm();

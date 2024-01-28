@@ -13,5 +13,5 @@
 extern "C" int init_ata_mpt(void);
 #endif // __MPT_NEED_ATA_SUPPORT
 
-#include <MPT/Detail.hxx>
-#include <MPT/MPT.hxx>
+#include "Detail.hxx"
+#include "MPT.hxx"
