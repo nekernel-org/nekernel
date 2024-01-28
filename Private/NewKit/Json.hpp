@@ -13,95 +13,101 @@
 // last-rev: 5/11/23
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/String.hpp>
 #include <NewKit/Stream.hpp>
+#include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
 #include <CompilerKit/Compiler.hpp>
 
 namespace hCore
 {
-    class JsonType final
+class JsonType final
+{
+  public:
+    explicit JsonType() : hCore::JsonType(1, 1)
     {
-    public:
-        explicit JsonType(SizeT lhsLen, SizeT rhsLen)
-            : fKey(lhsLen), fValue(rhsLen)
-        {}
+    }
 
-        ~JsonType() = default;
-
-        HCORE_COPY_DEFAULT(JsonType);
-
-      private:
-        StringView fKey;
-        StringView fValue;
-
-      public:
-        StringView& AsKey() { return fKey; }
-        StringView& AsValue() { return fValue; }
-
-        static JsonType kUndefined;
-
-    };
-    
-    struct JsonStreamTraits final
+    explicit JsonType(SizeT lhsLen, SizeT rhsLen) : fKey(lhsLen), fValue(rhsLen)
     {
-        JsonType In(const char* full_array)
+    }
+
+    ~JsonType() = default;
+
+    HCORE_COPY_DEFAULT(JsonType);
+
+  private:
+    StringView fKey;
+    StringView fValue;
+
+  public:
+    StringView &AsKey()
+    {
+        return fKey;
+    }
+
+    StringView &AsValue()
+    {
+        return fValue;
+    }
+
+    static JsonType kUndefined;
+};
+
+struct JsonStreamTraits final
+{
+    JsonType In(const char *full_array)
+    {
+        SizeT len = string_length(full_array);
+
+        if (full_array[0] == '\"' && full_array[len - 1] == ',' || full_array[len - 1] == '\"')
         {
-            SizeT len = string_length(full_array);
+            Boolean probe_key = true;
 
-            if (full_array[0] == '\"' &&
-                full_array[len - 1] == ',' ||
-                full_array[len - 1] == '\"')
+            SizeT key_len = 0;
+            SizeT value_len = 0;
+
+            for (SizeT i = 1; i < len; i++)
             {
-                Boolean probe_key = true;
+                if (full_array[i] == ' ')
+                    continue;
 
-                SizeT key_len = 0;
-                SizeT value_len = 0;
+                JsonType type(255, 255);
 
-                for (SizeT i = 1; i < len; i++)
+                if (probe_key)
                 {
-                    if (full_array[i] == ' ')
-                        continue;
+                    type.AsKey().Data()[key_len] = full_array[i];
+                    ++key_len;
 
-                    JsonType type(255, 255);
-                    
-                    if (probe_key)
+                    if (full_array[i] == '\"')
                     {
-                        type.AsKey().Data()[key_len] = full_array[i];
-                        ++key_len;
+                        probe_key = false;
+                        type.AsKey().Data()[key_len] = 0;
 
-                        if (full_array[i] == '\"')
-                        {
-                            probe_key = false;
-                            type.AsKey().Data()[key_len] = 0;
-                            
-                            ++i;
-                        }
-                    }
-                    else
-                    {
-                        type.AsValue().Data()[value_len] = full_array[i];
-                        ++value_len;
-
-                        if (full_array[i] == '\"')
-                        {
-                            type.AsValue().Data()[value_len] = 0;
-                        }     
+                        ++i;
                     }
                 }
-                
+                else
+                {
+                    type.AsValue().Data()[value_len] = full_array[i];
+                    ++value_len;
+
+                    if (full_array[i] == '\"')
+                    {
+                        type.AsValue().Data()[value_len] = 0;
+                    }
+                }
             }
-
-            return JsonType::kUndefined;
         }
 
-        JsonType Out(JsonType& out)
-        {
-            return out;
-        }
-        
-    };
+        return JsonType::kUndefined;
+    }
 
-    using JsonStream = Stream<JsonStreamTraits, JsonType>;
-}
+    JsonType Out(JsonType &out)
+    {
+        return out;
+    }
+};
+
+using JsonStream = Stream<JsonStreamTraits, JsonType>;
+} // namespace hCore

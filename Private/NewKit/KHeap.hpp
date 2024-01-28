@@ -18,6 +18,6 @@
 
 namespace hCore
 {
-    Int32 kernel_delete_ptr(voidPtr ptr);
-    voidPtr kernel_new_ptr(const SizeT& sz, const bool rw, const bool user);
+Int32 kernel_delete_ptr(voidPtr allocatedPtr);
+voidPtr kernel_new_ptr(const SizeT &sz, const bool rw, const bool user);
 } // namespace hCore

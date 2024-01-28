@@ -44,7 +44,7 @@ void rt_hang_thread(HAL::StackFrame* stack)
 }
 
 // @brief main HAL entrypoint
-void initialize_hardware_components()
+void init_hal()
 {
 
 }

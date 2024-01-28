@@ -14,7 +14,7 @@
 
 namespace hCore
 {
-    void runtime_check(bool bExpression, const char *file, const char *line);
+void runtime_check(bool bExpression, const char *file, const char *line);
 }
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)
@@ -41,21 +41,23 @@ enum RUNTIME_CHECK
 
 namespace hCore
 {
-    class DumpManager final
+class DumpManager final
+{
+  public:
+    static void Dump(void)
     {
-    public:
-        static void Dump(void)
-        {
-            // TODO:
-        }
-    };
+        // TODO:
+    }
+};
 
-    void panic(const Int &id);
+void panic(const Int &id);
 } // namespace hCore
 
 #ifdef TRY
 #undef TRY
 #endif
+
+#define INIT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
 
 #define TRY(FN)                                                                                                        \
     if (!FN())                                                                                                         \

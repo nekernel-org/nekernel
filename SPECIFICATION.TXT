@@ -10,9 +10,9 @@
 1: The hCore Microkernel
 ===================================
 
-hCore mounts NewFS by default, 
+hCore mounts NewFS by default,
 a journal filesystem meant for GUI use.
-It makes use of a concept named 'Fork' 
+It makes use of a concept named 'Fork'
 It contains data about a specific 'Catalog'
 
 Programs are load using the PEF. PEF is a multiplatform container
@@ -41,3 +41,13 @@ It is a C API, they're mostly system calls, use this to make hCore
 optimizations.
 
 
+===================================
+5: The New Filesystem
+===================================
+
+Based on HFS+ design of catalogs and forks, it is designed with journaling and recovery in mind.
+It's going to take advantage of the disk hardware.
+
+Such as RAID for NVME.
+
+SPECS:

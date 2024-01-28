@@ -10,11 +10,11 @@
 #ifndef _INC_LOADER_PEF_HPP
 #define _INC_LOADER_PEF_HPP
 
-#include <NewKit/Defines.hpp>
-#include <KernelKit/Loader.hpp>
 #include <CompilerKit/Compiler.hpp>
+#include <KernelKit/Loader.hpp>
+#include <NewKit/Defines.hpp>
 
-#define kPefMagic    "PEF"
+#define kPefMagic "PEF"
 #define kPefMagicFat "FEP"
 
 #define kPefMagicLen 3
@@ -26,68 +26,69 @@
 
 namespace hCore
 {
-    enum
-    {
-        kPefArchIntel86S,
-        kPefArchAMD64,
-        kPefArchRISCV,
-        kPefArch64x0, /* 64x000. */
-        kPefArch32x0,
-        kPefArchInvalid = 0xFF,
-    };
+enum
+{
+    kPefArchIntel86S,
+    kPefArchAMD64,
+    kPefArchRISCV,
+    kPefArch64x0, /* 64x000. */
+    kPefArch32x0,
+    kPefArchInvalid = 0xFF,
+};
 
-    enum
-    {
-        kPefKindExec = 1, /* .exe */
-        kPefKindSharedObject = 2, /* .lib */
-        kPefKindObject = 4, /* .obj */
-        kPefKindDebug = 5, /* .debug */
-    };
+enum
+{
+    kPefKindExec = 1,         /* .exe */
+    kPefKindSharedObject = 2, /* .lib */
+    kPefKindObject = 4,       /* .obj */
+    kPefKindDebug = 5,        /* .debug */
+};
 
-    typedef struct PEFContainer final
-    {
-        Char Magic[kPefMagicLen];
-        UInt32 Linker;
-        UInt32 Version;
-        UInt32 Kind;
-        UInt32 Abi;
-        UInt32 Cpu;
-        UInt32 SubCpu; /* Cpu specific information */
-        UIntPtr Start;
-        SizeT HdrSz; /* Size of header */
-        SizeT Count; /* container header count */
-    } __attribute__((packed)) PEFContainer;
+typedef struct PEFContainer final
+{
+    Char Magic[kPefMagicLen];
+    UInt32 Linker;
+    UInt32 Version;
+    UInt32 Kind;
+    UInt32 Abi;
+    UInt32 Cpu;
+    UInt32 SubCpu; /* Cpu specific information */
+    UIntPtr Start;
+    SizeT HdrSz; /* Size of header */
+    SizeT Count; /* container header count */
+} __attribute__((packed)) PEFContainer;
 
-    /* First PEFCommandHeader starts after PEFContainer */
-    /* Last container is __exec_end */
+/* First PEFCommandHeader starts after PEFContainer */
+/* Last container is __exec_end */
 
-    /* PEF executable section and commands. */
+/* PEF executable section and commands. */
 
-    typedef struct PEFCommandHeader final
-    {
-        Char Name[kPefNameLen]; /* container name */
-        UInt32 Flags; /* container flags */
-        UInt16 Kind; /* container kind */
-        UIntPtr Offset; /* content offset */
-        SizeT Size; /* content Size */
-    } __attribute__((packed)) PEFCommandHeader;
+typedef struct PEFCommandHeader final
+{
+    Char Name[kPefNameLen]; /* container name */
+    UInt32 Flags;           /* container flags */
+    UInt16 Kind;            /* container kind */
+    UIntPtr Offset;         /* content offset */
+    SizeT Size;             /* content Size */
+} __attribute__((packed)) PEFCommandHeader;
 
-    enum
-    {
-        kPefCode = 0xC,
-        kPefData = 0xD,
-        kPefZero = 0xE,
-        kPefLinkerID = 0x1,
-    };
-}
+enum
+{
+    kPefCode = 0xC,
+    kPefData = 0xD,
+    kPefZero = 0xE,
+    kPefLinkerID = 0x1,
+};
+} // namespace hCore
 
-#define kPefExt ".o"
-#define kPefDylibExt ".so"
-#define kPefObjectExt ".o"
-#define kPefDebugExt ".dbg"
+#define kPefExt ".cm"
+#define kPefDylibExt ".dlib"
+#define kPefLibExt ".lib"
+#define kPefObjectExt ".obj"
+#define kPefDebugExt ".cmdbg"
 
 // hCore System Binary Interface.
-#define kPefAbi     (0xDEAD2)
+#define kPefAbi (0xDEAD2)
 
 #define kPefStart "__start"
 

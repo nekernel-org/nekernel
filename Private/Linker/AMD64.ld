@@ -10,10 +10,9 @@ PHDRS {
 }
 
 SECTIONS {
-    . = 0x00080000;
+    . = 1M;
 
     .text : {
-	  	KEEP(*(.multiboot))
         *(.text .text.*)
     } :text
 
@@ -21,7 +20,9 @@ SECTIONS {
 
      .init : {
        	*(.initl)
-     }
+     } :init
+
+    __SYSTEM_INIT_END = .;
 
     . += CONSTANT(MAXPAGESIZE);
 
@@ -41,4 +42,7 @@ SECTIONS {
         *(COMMON)
         *(.bss .bss.*)
     } :data
+
+    __SYSTEM_STACK_PTR = .;
+    __SYSTEM_STACK_END = . + 0x4000;
 }

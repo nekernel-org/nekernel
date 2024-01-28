@@ -7,6 +7,7 @@
  * 	========================================================
  */
 
+#include "NewKit/Panic.hpp"
 #include <KernelKit/ProcessManager.hpp>
 #include <KernelKit/SMPManager.hpp>
 #include <NewKit/KHeap.hpp>
@@ -121,19 +122,25 @@ const ProcessStatus &Process::GetStatus()
     return this->Status;
 }
 
+/**
+@brief Affinity is the time slot allowed for the process.
+*/
 const AffinityKind &Process::GetAffinity()
 {
     return this->Affinity;
 }
 
+/**
+@brief Standard exit proc.
+*/
 void Process::Exit(Int32 exit_code)
 {
     if (this->ProcessId != ProcessManager::Shared().Leak().GetCurrent().Leak().ProcessId)
-        return;
+        panic(RUNTIME_CHECK_PROCESS);
 
     if (this->Ring == (Int32)ProcessSelector::kRingKernel &&
         ProcessManager::Shared().Leak().GetCurrent().Leak().Ring > 0)
-        return;
+        panic(RUNTIME_CHECK_PROCESS);
 
     kExitCode = exit_code;
 
@@ -200,6 +207,7 @@ SizeT ProcessManager::Run() noexcept
     for (; processIndex < this->m_Headers.Count(); ++processIndex)
     {
         auto process = this->m_Headers[processIndex];
+
         MUST_PASS(
             process); //! no need for a MUST_PASS(process.Leak());, it is recursive because of the nature of the class;
 

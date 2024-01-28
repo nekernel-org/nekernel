@@ -71,7 +71,7 @@ namespace hCore
         return hash;
     }
 
-    bool initialize_hardware_components();
+    bool init_hal();
 } // namespace hCore
 
 #define kMaxSyscalls 0x100

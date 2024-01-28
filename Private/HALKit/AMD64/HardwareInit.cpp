@@ -13,7 +13,7 @@
 
 namespace hCore
 {
-    bool initialize_hardware_components()
+    bool init_hal()
     {
         // TODO: Hardware Specific stuff.
 

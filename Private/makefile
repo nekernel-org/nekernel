@@ -36,7 +36,7 @@ kernel-link:
 
 .PHONY: all
 all: kernel-build kernel-link
-	@echo "[hKernel] JOB DONE."
+	@echo "[hKernel] Job is done."
 
 .PHONY: kernel-clean
 kernel-clean:

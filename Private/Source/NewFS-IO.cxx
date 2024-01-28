@@ -1,15 +1,14 @@
 /*
-*	========================================================
-*
-*	hCore
-* 	Copyright 2024 Mahrouss Logic, all rights reserved.
-*
-* 	========================================================
-*/
+ *	========================================================
+ *
+ *	hCore
+ * 	Copyright 2024 Mahrouss Logic, all rights reserved.
+ *
+ * 	========================================================
+ */
 
 #include <FSKit/NewFS.hxx>
-#include <Private/KernelKit/FileManager.hpp>
-#include <Private/KernelKit/DriveManager.hpp>
+#include <KernelKit/DriveManager.hpp>
+#include <KernelKit/FileManager.hpp>
 
 /// bugs 0
-

@@ -16,114 +16,111 @@
 
 namespace hCore
 {
-    static Ref<PTEWrapper*> kWrapperList[kMaxWrappers];
-    static SizeT kWrapperCount = 0UL;
-    static Ref<PTEWrapper*> kLastWrapper;
-    static Pmm kPmm;
+static Ref<PTEWrapper *> kWrapperList[kMaxWrappers];
+static SizeT kWrapperCount = 0UL;
+static Ref<PTEWrapper *> kLastWrapper;
+static Pmm kPmm;
 
-    namespace Detail
+namespace Detail
+{
+static voidPtr find_ptr(const SizeT &sz, const bool rw, const bool user)
+{
+    for (SizeT indexWrapper = 0; indexWrapper < kMaxWrappers; ++indexWrapper)
     {
-        static voidPtr try_find_ptr(const SizeT &sz, const bool rw, const bool user)
+        if (!kWrapperList[indexWrapper]->Present())
         {
-            for (SizeT indexWrapper = 0; indexWrapper < kMaxWrappers; ++indexWrapper)
-            {
-                if (!kWrapperList[indexWrapper]->Present())
-                {
-                    kWrapperList[indexWrapper]->Reclaim(); /* very straight-forward as you can see. */
-                    return reinterpret_cast<voidPtr>(kWrapperList[indexWrapper]->VirtualAddress());
-                }
-            }
-
-            return nullptr;
+            kWrapperList[indexWrapper]->Reclaim(); /* very straight-forward as you can see. */
+            return reinterpret_cast<voidPtr>(kWrapperList[indexWrapper]->VirtualAddress());
         }
-    } // namespace Detail
+    }
 
-    /// @brief manual allocation
-    /// @param sz size of pointer
-    /// @param rw read write (true to enable it)
-    /// @param user is it accesible by user processes?
-    /// @return the pointer
-    VoidPtr kernel_new_ptr(const SizeT& sz, const bool rw, const bool user)
-    {
-        if (kWrapperCount < sz)
-            return nullptr;
+    return nullptr;
+}
+} // namespace Detail
 
-        if (auto ptr = Detail::try_find_ptr(sz, rw, user);
-            ptr)
-            return ptr;
-
-        Ref<PTEWrapper*> wrapper = kPmm.RequestPage(user, rw);
-
-        if (wrapper)
-        {
-            kLastWrapper = wrapper;
-
-            kWrapperList[kWrapperCount] = wrapper;
-            ++kWrapperCount;
-
-            return reinterpret_cast<voidPtr>(wrapper->VirtualAddress());
-        }
-
+/// @brief manual allocation
+/// @param sz size of pointer
+/// @param rw read write (true to enable it)
+/// @param user is it accesible by user processes?
+/// @return the pointer
+VoidPtr kernel_new_ptr(const SizeT &sz, const bool rw, const bool user)
+{
+    if (kWrapperCount < sz)
         return nullptr;
+
+    if (auto ptr = Detail::find_ptr(sz, rw, user); ptr)
+        return ptr;
+
+    Ref<PTEWrapper *> wrapper = kPmm.RequestPage(user, rw);
+
+    if (wrapper)
+    {
+        kLastWrapper = wrapper;
+
+        kWrapperList[kWrapperCount] = wrapper;
+        ++kWrapperCount;
+
+        return reinterpret_cast<voidPtr>(wrapper->VirtualAddress());
     }
 
-    /// @brief Declare pointer as free.
-    /// @param ptr the pointer.
-    /// @return 
-    Int32 kernel_delete_ptr(voidPtr ptr)
+    return nullptr;
+}
+
+/// @brief Declare pointer as free.
+/// @param ptr the pointer.
+/// @return
+Int32 kernel_delete_ptr(voidPtr ptr)
+{
+    if (ptr)
     {
-        if (ptr)
+        const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
+
+        if (kLastWrapper && virtualAddress == kLastWrapper->VirtualAddress())
         {
-            const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
-
-            if (kLastWrapper &&
-            virtualAddress == kLastWrapper->VirtualAddress())
-            {
-                return kPmm.FreePage(kLastWrapper);
-            }
-
-            Ref<PTEWrapper*> wrapper;
-
-            for (SizeT indexWrapper = 0; indexWrapper < kWrapperCount; ++indexWrapper)
-            {
-                if (kWrapperList[indexWrapper]->VirtualAddress() == virtualAddress)
-                {
-                    wrapper = kWrapperList[indexWrapper];
-                    return kPmm.FreePage(wrapper);
-                }
-            }
+            return kPmm.FreePage(kLastWrapper);
         }
 
-        return -1;
+        Ref<PTEWrapper *> wrapper;
+
+        for (SizeT indexWrapper = 0; indexWrapper < kWrapperCount; ++indexWrapper)
+        {
+            if (kWrapperList[indexWrapper]->VirtualAddress() == virtualAddress)
+            {
+                wrapper = kWrapperList[indexWrapper];
+                return kPmm.FreePage(wrapper);
+            }
+        }
     }
 
-    /// @brief find pointer in kernel heap
-    /// @param ptr the pointer
-    /// @return if it exists.
-    Boolean kernel_valid_ptr(voidPtr ptr)
-    {
-        if (ptr)
-        {
-            const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
+    return -1;
+}
 
-            if (kLastWrapper &&
-                virtualAddress == kLastWrapper->VirtualAddress())
+/// @brief find pointer in kernel heap
+/// @param ptr the pointer
+/// @return if it exists.
+Boolean kernel_valid_ptr(voidPtr ptr)
+{
+    if (ptr)
+    {
+        const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
+
+        if (kLastWrapper && virtualAddress == kLastWrapper->VirtualAddress())
+        {
+            return true;
+        }
+
+        Ref<PTEWrapper *> wrapper;
+
+        for (SizeT indexWrapper = 0; indexWrapper < kWrapperCount; ++indexWrapper)
+        {
+            if (kWrapperList[indexWrapper]->VirtualAddress() == virtualAddress)
             {
+                wrapper = kWrapperList[indexWrapper];
                 return true;
             }
-
-            Ref<PTEWrapper*> wrapper;
-
-            for (SizeT indexWrapper = 0; indexWrapper < kWrapperCount; ++indexWrapper)
-            {
-                if (kWrapperList[indexWrapper]->VirtualAddress() == virtualAddress)
-                {
-                    wrapper = kWrapperList[indexWrapper];
-                    return true;
-                }
-            }
         }
-
-        return false;
     }
+
+    return false;
+}
 } // namespace hCore

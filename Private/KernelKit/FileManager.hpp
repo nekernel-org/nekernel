@@ -223,14 +223,14 @@ template <typename Encoding = char, typename FSClass = NewFilesystemManager> cla
     }
 
   public:
-    const char *MIME() noexcept
+    char *MIME() noexcept
     {
-        return fMime;
+        return const_cast<char *>(fMime);
     }
 
   private:
     NodePtr fFile;
-    Char *fMime{"application-type/*"};
+    const Char *fMime{"application-type/*"};
 };
 
 using FileStreamUTF8 = FileStream<char>;
