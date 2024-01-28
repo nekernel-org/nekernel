@@ -1,4 +1,4 @@
-CC=g++
+CC=x86_64-elf-g++
 CCFLAGS=-c -ffreestanding -fno-rtti -fno-exceptions -std=c++20
 ASM=nasm
 ASMFLAGS=-f elf64
