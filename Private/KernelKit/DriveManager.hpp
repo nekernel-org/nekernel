@@ -20,68 +20,67 @@
 
 namespace hCore
 {
-    enum
+enum
+{
+    kInvalidDrive = -1,
+    kBlockDevice = 0xAD,
+    kMassStorage = 0xDA,
+    kFloppyDisc = 0xCD,
+    kOpticalDisc = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
+    kReadOnly = 0x10,    // Read only drive
+    kXPMDrive = 0x11,    // eXplicit Partition Map.
+    kXPTDrive = 0x12,    // GPT w/ XPM partition.
+    kMBRDrive = 0x13,    // IBM PC classic partition scheme
+};
+
+typedef Int64 DriveID;
+
+// Mounted drive.
+struct DriveTraits final
+{
+    char fName[kDriveNameLen]; // /system, /boot...
+    Int32 fKind;               // fMassStorage, fFloppy, fOpticalDisc.
+    DriveID fId;               // Drive id.
+    Int32 fFlags;              // fReadOnly, fXPMDrive, fXPTDrive
+
+    //! disk mount, unmount operations
+    void (*fMount)(void);
+    void (*fUnmount)(void);
+
+    bool (*fReady)(void); //! is drive ready?
+
+    //! for StorageKit.
+    struct DrivePacket final
     {
-        kInvalidDrive = -1,
-        kBlockDevice = 0xAD,
-        kMassStorage = 0xDA,
-        kFloppyDisc = 0xCD,
-        kOpticalDisc = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
-        kReadOnly = 0x10, // Read only drive
-        kXPMDrive = 0x11, // eXplicit Partition Map.
-        kXPTDrive = 0x12, // GPT w/ XPM partition.
-    	kMBRDrive = 0x13, // IBM PC classic partition scheme
-    };
-
-    typedef Int64 DriveID;
-
-    // Mounted drive.
-    struct DriveTraits final
-    {
-        char fName[kDriveNameLen]; // /system, /boot...
-        Int32 fKind; // fMassStorage, fFloppy, fOpticalDisc.
-        DriveID fId; // Drive id.
-        Int32 fFlags; // fReadOnly, fXPMDrive, fXPTDrive
-
-		//! disk mount, unmount operations
-		void(*fMount)(void);
-		void(*fUnmount)(void);
-
-        bool(*fReady)(void); //! is drive ready?
-    	
-		//! for StorageKit.
-		struct 
-		{
-			voidPtr fPacketContent; // packet body.
-			Char fPacketMime[32]; //! identify what we're sending.
-			SizeT fPacketSize; // packet size
-		} fPacket;
-    };
+        voidPtr fPacketContent; // packet body.
+        Char fPacketMime[32];   //! identify what we're sending.
+        SizeT fPacketSize;      // packet size
+    } fPacket;
+};
 
 #define kPacketBinary "file/x-binary"
 #define kPacketSource "file/x-source"
-#define kPacketASCII  "file/x-ascii"
-#define kPacketZip    "file/x-zip"
-    
-    //! drive as a device.
-    typedef DeviceInterface<DriveTraits> Drive;
-    typedef Drive* DrivePtr;
+#define kPacketASCII "file/x-ascii"
+#define kPacketZip "file/x-zip"
 
-    class DriveSelector final
-    {
-    public:
-    	explicit DriveSelector();
-    	~DriveSelector();
-    	
-    public:
-    	HCORE_COPY_DEFAULT(DriveSelector);
+//! drive as a device.
+typedef DeviceInterface<DriveTraits> Drive;
+typedef Drive *DrivePtr;
 
-    	DriveTraits& GetMounted();
-    	bool Mount(DriveTraits* drive);
-		DriveTraits* Unmount();
+class DriveSelector final
+{
+  public:
+    explicit DriveSelector();
+    ~DriveSelector();
 
-    private:
-    	DriveTraits* fDrive;
-    	
-    };
-}
+  public:
+    HCORE_COPY_DEFAULT(DriveSelector);
+
+    DriveTraits &GetMounted();
+    bool Mount(DriveTraits *drive);
+    DriveTraits *Unmount();
+
+  private:
+    DriveTraits *fDrive;
+};
+} // namespace hCore

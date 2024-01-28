@@ -11,5 +11,5 @@
 
 #include <NewKit/Defines.hpp>
 
-#define KERNELKIT_VERSION "1.0.0"
-#define KERNELKIT_RELEASE "Baldur"
+#define KERNELKIT_VERSION "1.0.1"
+#define KERNELKIT_RELEASE "Cairo"
