@@ -13,7 +13,7 @@ ASMFLAGS	= -f elf64
 KERNEL		= hKernel.efi
 
 # The kernel entrypoint
-SCRIPT		= --script=Linker/AMD64.ld
+SCRIPT		= --script=Linker/Platforms/PC.lds
 
 # we want a flat binary
 FMT			= elf64

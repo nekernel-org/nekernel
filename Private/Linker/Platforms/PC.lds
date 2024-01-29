@@ -13,6 +13,7 @@ SECTIONS {
     . = 0x10000000;
 
     .text : {
+        *(.NewBoot)
         *(.text .text.*)
     } :text
 

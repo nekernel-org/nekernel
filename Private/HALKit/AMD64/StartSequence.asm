@@ -8,18 +8,28 @@
 ;; */
 
 [bits 64]
+
+;; Global symbol of this unit
 [global Main]
+[global MainUnsupported]
+
+;; External symbols needed by this unit.
 [extern RuntimeMain]
 [extern __SYSTEM_STACK_END]
 
+%define kTypeKernel 100
+%define kArchAmd64 122
+
+section .NewBoot
+
+HandoverMagic: dq 0xBAD55
+HandoverType: dw kTypeKernel
+HandoverArch: dw kArchAmd64
+;; This NewBootStart points to Main.
+HandoverStart: dq Main
+
 section .text
 
-NewBootMagic: dw 0x55FF66
-NewBootKernel: db "h-core", 0
-NewBootVersion: dw 1
-
-;; This NewBootStart points to Main.
-NewBootStart:
 ;; Just a simple setup, we'd also need to tell some before
 Main:
     mov rsp, __SYSTEM_STACK_END
@@ -30,7 +40,9 @@ L0:
     hlt
     jmp $
 
-MainBIOS:
+;; @brief this one is jumped on when an unsupported then gets through the boot stage.
+;; @note: must be ISA compatible!
+MainUnsupported:
     cli
     hlt
     jmp $
