@@ -15,14 +15,14 @@
 
 using namespace hCore;
 
-class MeFile final
+class HFile final
 {
   public:
-    explicit MeFile(const char *path);
-    ~MeFile();
+    explicit HFile(const char *path);
+    ~HFile();
 
   public:
-    HCORE_COPY_DEFAULT(MeFile);
+    HCORE_COPY_DEFAULT(HFile);
 
   public:
     void *Read(SizeT off, SizeT sz);
@@ -36,6 +36,6 @@ class MeFile final
     void SetMIME(const char *mime);
 };
 
-typedef MeFile *MeFilePtr;
+typedef HFile *HFilePtr;
 
 #endif // ifndef _SYSTEM_KIT_HCORE_FILE_HPP

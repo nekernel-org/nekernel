@@ -11,7 +11,9 @@
 
 // TODO: integrate NewFS compression.
 
-// MeFS catalog is compressed.
-#define kCatalogFlagZip 255
-// MeFS catalog has password.
-#define kCatalogPassword 256
+// NewFS catalog is compressed.
+#define kNewFSIsZip 255
+
+// NewFS catalog has password attached to it.
+#define kNewFSHasPassword 256
+

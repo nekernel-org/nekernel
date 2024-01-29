@@ -30,7 +30,7 @@ class ZipStream final
     HCORE_COPY_DEFAULT(ZipStream);
 
   public:
-    MeFilePtr FlushToFile(const char *name);
+    HFilePtr FlushToFile(const char *name);
     void *Deflate(const char *name);
     void Inflate(const char *name, void *data);
 

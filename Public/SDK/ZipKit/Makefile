@@ -1,4 +1,9 @@
-CC=x86_64-elf-g++
+##################################################
+# ; (C) Mahrouss Logic, 2024, all rights reserved.
+# This is the ZipKit Makefile.
+##################################################
+
+CC=x86_64-w64-mingw32-g++
 CCFLAGS=-c -ffreestanding -fno-rtti -fno-exceptions -std=c++20
 ASM=nasm
 ASMFLAGS=-f elf64

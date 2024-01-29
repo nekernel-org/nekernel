@@ -14,9 +14,9 @@
 
 using namespace hCore;
 
-class MeMemoryException;
+class HMemoryException;
 
-typedef void *MeHeapPtr;
+typedef VoidPtr HHeapPtr;
 
 enum
 {
@@ -27,34 +27,34 @@ enum
     kHeapNoFlags = 0
 };
 
-class MeHeap final
+class HHeap final
 {
   private:
-    explicit MeHeap();
+    explicit HHeap();
 
   public:
-    ~MeHeap();
+    ~HHeap();
 
   public:
-    HCORE_COPY_DEFAULT(MeHeap);
+    HCORE_COPY_DEFAULT(HHeap);
 
   public:
-    static MeHeap *Shared() noexcept;
+    static HHeap *Shared() noexcept;
 
   public:
-    void Dispose(MeHeapPtr me) noexcept;
-    SizeT Tell(MeHeapPtr me) noexcept;
-    MeHeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
+    void Delete(HHeapPtr me) noexcept;
+    SizeT Tell(HHeapPtr me) noexcept;
+    HHeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
 };
 
-class MeMemoryException final
+class HMemoryException final
 {
   public:
-    MeMemoryException() = default;
-    ~MeMemoryException() = default;
+    HMemoryException() = default;
+    ~HMemoryException() = default;
 
   public:
-    HCORE_COPY_DEFAULT(MeMemoryException);
+    HCORE_COPY_DEFAULT(HMemoryException);
 
   public:
     const char *Name();
@@ -64,5 +64,5 @@ class MeMemoryException final
     const char *mReason{"Memory error!"};
 
   private:
-    friend MeHeap;
+    friend HHeap;
 };

@@ -16,22 +16,22 @@
 
 namespace ZipKit
 {
-ZipStream::ZipStream() : fSharedData(MeHeap::Shared()->New(kInitialSz, kHeapExpandable)), fSharedSz(kInitialSz)
+ZipStream::ZipStream() : fSharedData(HHeap::Shared()->New(kInitialSz, kHeapExpandable)), fSharedSz(kInitialSz)
 {
 }
 
 ZipStream::~ZipStream() noexcept
 {
     if (fSharedData)
-        MeHeap::Shared()->Dispose(fSharedData);
+        HHeap::Shared()->Delete(fSharedData);
 }
 
-MeFilePtr ZipStream::FlushToFile(const char *name)
+HFilePtr ZipStream::FlushToFile(const char *name)
 {
-    MeFilePtr fp = new MeFile(name);
+    HFilePtr fp = new HFile(name);
     MUST_PASS(fp);
 
-    this->fSharedSz = MeHeap::Shared()->Tell(this->fSharedData);
+    this->fSharedSz = HHeap::Shared()->Tell(this->fSharedData);
 
     fp->SetMIME("application/x-bzip");
     fp->Write(this->fSharedData, this->fSharedSz);
