@@ -10,62 +10,58 @@
 #pragma once
 
 #ifndef KIB
-#	define KIB(X) ((X)*1024)
+#define KIB(X) ((X) * 1024)
 #endif
 
 #ifndef MIB
-#	define MIB(X) (KIB(X) * 1024)
+#define MIB(X) (KIB(X) * 1024)
 #endif
 
 #ifndef GIB
-#	define GIB(X) (MIB(X) * 1024)
+#define GIB(X) (MIB(X) * 1024)
 #endif
 
 #ifndef TIB
-#	define TIB(X) (GIB(X) * 1024)
+#define TIB(X) (GIB(X) * 1024)
 #endif
 
 #ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a) (((sizeof(a) / sizeof(*(a))) / (static_cast<hCore::Size>(!(sizeof(a) % sizeof(*(a)))))))
+#define ARRAY_SIZE(a)            \
+  (((sizeof(a) / sizeof(*(a))) / \
+    (static_cast<hCore::Size>(!(sizeof(a) % sizeof(*(a)))))))
 #endif
 
 #ifndef ALIGN
 #define ALIGN(X) __attribute__((aligned(X)))
-#endif // #ifndef ALIGN
+#endif  // #ifndef ALIGN
 
 #ifndef ATTRIBUTE
 #define ATTRIBUTE(X) __attribute__((X))
-#endif // #ifndef ATTRIBUTE
+#endif  // #ifndef ATTRIBUTE
 
 #ifndef __HCORE__
 #define __HCORE__ (202401)
-#endif // !__HCORE__
+#endif  // !__HCORE__
 
 #ifndef EXTERN_C
-#define EXTERN_C()                                                                                                     \
-    extern "C"                                                                                                         \
-    {
-#define END_EXTERN_C()                                                                                                 \
-    }                                                                                                                  \
-    ;
+#define EXTERN_C() extern "C" {
+#define END_EXTERN_C() \
+  }                    \
+  ;
 #endif
 
 #ifndef MAKE_ENUM
-#define MAKE_ENUM(NAME)                                                                                                \
-    enum NAME                                                                                                          \
-    {
+#define MAKE_ENUM(NAME) enum NAME {
 #endif
 
 #ifndef END_ENUM
-#define END_ENUM()                                                                                                     \
-    }                                                                                                                  \
-    ;
+#define END_ENUM() \
+  }                \
+  ;
 #endif
 
 #ifndef MAKE_STRING_ENUM
-#define MAKE_STRING_ENUM(NAME)                                                                                         \
-    namespace NAME                                                                                                     \
-    {
+#define MAKE_STRING_ENUM(NAME) namespace NAME {
 #endif
 
 #ifndef ENUM_STRING
@@ -78,9 +74,11 @@
 
 #ifndef Alloca
 #define Alloca(Sz) __builtin_alloca(Sz)
-#endif // #ifndef Alloca
+#endif  // #ifndef Alloca
 
 #ifndef CantReach
 #define CantReach() __builtin_unreachable()
 #endif
 
+#define kBadPtr 0xFBFBFBFBFBFBFBFB
+#define kmaxAddr 0xFFFFFFFFFFFFFFFF
