@@ -22,6 +22,21 @@ hCore::SizeT BStrLen(const char *ptr) {
   return cnt;
 }
 
+hCore::SizeT BSetMem(char *src, const char byte, const hCore::SizeT len) {
+  hCore::SizeT cnt = 0UL;
+
+  while (*src != 0) {
+    if (cnt > len) break;
+
+    *src = byte;
+    ++src;
+
+    ++cnt;
+  }
+
+  return cnt;
+}
+
 /**
 @brief puts wrapper over VGA.
 */

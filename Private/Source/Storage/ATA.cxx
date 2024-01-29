@@ -10,8 +10,12 @@
 #include <ArchKit/Arch.hpp>
 #include <StorageKit/ATA.hpp>
 
-//! @brief Driver for ATA, listens to a specific address for data to come.
-//! mapped by NewFirmware.
+#include "NewKit/Utils.hpp"
+
+//! @brief ATA DMA Driver
+//! mapped by UEFI.
+
+/// bugs 0
 
 #define kATAError 2
 
@@ -51,10 +55,13 @@ const char* ata_read_28(ULong lba) {
   return buffer;
 }
 
-const char* ata_read_48(ULong lba) {
-  static char buffer[512];
+#define kBufferLen 512
 
-  UIntPtr* packet = (UIntPtr*)kPrdt.Leak()->PhysicalAddress();
+const char* ata_read_48(ULong lba) {
+  static char buffer[kBufferLen];
+  rt_set_memory(buffer, 0, kBufferLen);
+
+  UIntPtr* packet = reinterpret_cast<UIntPtr*>(kPrdt.Leak()->PhysicalAddress());
 
   packet[0] = k48BitRead;
   packet[1] = (UIntPtr)&buffer;
@@ -65,11 +72,11 @@ const char* ata_read_48(ULong lba) {
   return buffer;
 }
 
-Int32 ata_write_48(ULong lba, const char* text) {
-  UIntPtr* packet = (UIntPtr*)kPrdt.Leak()->PhysicalAddress();
+Int32 ata_write_48(ULong lba, const char* buffer) {
+  UIntPtr* packet = reinterpret_cast<UIntPtr*>(kPrdt.Leak()->PhysicalAddress());
 
   packet[0] = k48BitWrite;
-  packet[1] = (UIntPtr)&text;
+  packet[1] = (UIntPtr)&buffer;
   packet[2] = lba;
 
   rt_wait_for_io();

@@ -2,55 +2,30 @@
 0: Generic Information
 ===================================
 
-- ABI/Format: Portable Executable Format.
+- ABI/Format: PEF/PE32+.
 - Architecture: Microkernel.
-- Language: C++/C/Assembly (AMD64, X64000, X86S, ARM64)
+- Language: C++/(Assembly (AMD64, X64000, X86S, ARM64))
 
 ===================================
 1: The HCore Microkernel
 ===================================
 
-HCore mounts NewFS by default, a journal filesystem meant for GUI use.
-It makes use of a concept named 'Fork'
-It contains data about a specific 'Catalog'
-
-Programs are load using the PEF. PEF is a multiplatform container
-for executables/shared libraries. Dwarf is used for debugging.
-
-HCore has SMP in it's core with a preemptive multi-threaded scheduler.
-It also supports dynamic loading of symbols and has a rich driver system.
-
-====================================
-2: The GUI Kit
-====================================
-
-We have a Look and Feel system, to support custom application themes.
-CWindowLookAndFeel interface takes care of that.
+- Drive Abstraction.
+- SMP, Preemptive MT.
+- Separation of Files/Devices.
+- Networking.
+- Hardware Abstraction Layer.
+- Native Filesystem support (NewFS).
+- Program Loader.
+- TLS.
+- Dynamic Libraries.
+- Cross platform code (it has to work for each platform)
 
 ===================================
-3: The System Kit
+2: The Filesystem
 ===================================
 
-We use C++ for this API, use it when dealing with C++ code. For C use RTKit.
-It is the unstable APIs with RTKit, they change a lot.
-
-Use the App Subsystem to create apps.
-
-===================================
-4: The RunTime Kit
-===================================
-
-It is a C API, they're mostly system calls, use this to make hCore
-optimizations.
-
-
-===================================
-5: The New Filesystem
-===================================
-
-Based on HFS+ design of catalogs and forks, it is designed with journaling and recovery in mind.
-It's going to take advantage of the disk hardware.
-
-Such as RAID for NVME.
-
-SPECS:
+- Catalog based with forks.
+- Large storage support.
+- Long file names.
+- UNIX path style.

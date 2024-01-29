@@ -67,7 +67,7 @@ static Int crc_byte(Int crc, UChar byte) {
   return crc;
 }
 
-Int crc32(const Char *byte, Int len) {
+Int ke_crc32(const Char *byte, Int len) noexcept {
   Int checksum = 0;
 
   for (UChar index = 1; index < len; ++index)

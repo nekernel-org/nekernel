@@ -8,16 +8,13 @@
  */
 
 #include <BootKit/Boot.hxx>
-#include <BootKit/Processor.hxx>
-#include <BootKit/Protocol.hxx>
 
 // don't remove EfiGUID, it will call initializer_list!
 
 EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
                          EfiSystemTable* SystemTable) {
-  EfiCharType* string = L"HCoreLdr: Initializing...\r\n";
-
-  SystemTable->ConOut->OutputString(SystemTable->ConOut, string);
+  SystemTable->ConOut->OutputString(SystemTable->ConOut,
+                                    L"HCoreLdr: Initializing Kernel...\r\n");
 
   EfiLoadImageProtocol* protocol;
   EfiGUID guid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
@@ -42,7 +39,7 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
         SystemTable->ConOut, L"HCoreLdr: Could not exit Boot Services!\r\n");
 
     SystemTable->ConOut->OutputString(SystemTable->ConOut,
-                                      L"HCoreLdr: Hanging...\r\n");
+                                      L"HCoreLdr: Entering limbo state...\r\n");
 
     while (true) {
       rt_cli();

@@ -18,13 +18,12 @@
 namespace hCore {
 class ACPIManager {
  public:
-  ACPIManager(voidPtr rsdptr);
+  explicit ACPIManager(voidPtr rsdptr);
 
  public:
   ~ACPIManager() = default;
 
   ACPIManager &operator=(const ACPIManager &) = default;
-
   ACPIManager(const ACPIManager &) = default;
 
  public:

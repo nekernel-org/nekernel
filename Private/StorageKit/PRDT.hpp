@@ -13,42 +13,35 @@
 
 #define PRDT_TRANSFER_SIZE (sizeof(hCore::UShort))
 
-namespace hCore
-{
-    class PRDT final
-    {
-    public:
-        PRDT() = delete;
-        explicit PRDT(const UIntPtr &physAddr);
-        ~PRDT();
+namespace hCore {
+class PRDT final {
+ public:
+  PRDT() = delete;
+  explicit PRDT(const UIntPtr &physAddr);
+  ~PRDT();
 
-        PRDT &operator=(const PRDT &) = default;
-        PRDT(const PRDT &) = default;
+  PRDT &operator=(const PRDT &) = default;
+  PRDT(const PRDT &) = default;
 
-    public:
-        const UInt &Low();
-        const UShort &High();
-        const UIntPtr &PhysicalAddress();
+ public:
+  const UInt &Low();
+  const UShort &High();
+  const UIntPtr &PhysicalAddress();
 
-    public:
-        PRDT &operator=(const UIntPtr& prdtAddress);
+ public:
+  PRDT &operator=(const UIntPtr &prdtAddress);
 
-    public:
-        operator bool()
-        {
-            return m_PrdtAddr != 0;
-        }
+ public:
+  operator bool() { return m_PrdtAddr != 0; }
 
-    private:
-        union
-        {
-            UInt m_Low;
-            UShort m_High;
-        };
+ private:
+  union {
+    UInt m_Low;
+    UShort m_High;
+  };
 
-        UIntPtr m_PrdtAddr;
+  UIntPtr m_PrdtAddr;
+};
 
-    };
-
-    using PhysicalAddress = PRDT; // here
-} // namespace hCore
+using PhysicalAddress = PRDT;  // here
+}  // namespace hCore

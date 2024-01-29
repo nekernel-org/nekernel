@@ -55,8 +55,11 @@ struct HandoverInformationHeader {
   SizeT f_VirtualSize;
   voidPtr f_PhysicalStart;
   SizeT f_PhysicalSize;
-  voidPtr f_FirmwareVendorName;
+  Char f_FirmwareVendorName[32];
   SizeT f_FirmwareVendorLen;
+  voidPtr f_RsdPtr;
+  voidPtr f_SmBIOS;
+  voidPtr f_RTC;
 };
 
 /**

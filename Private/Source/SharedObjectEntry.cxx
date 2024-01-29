@@ -17,13 +17,16 @@
 using namespace hCore;
 
 /***********************************************************************************/
+/// @file SharedObjectEntry.cxx
+/// @brief Shared Object Init code.
+/***********************************************************************************/
+
+/***********************************************************************************/
+/* @brief Allocate new library to be added to the lookup table.
+ */
+/***********************************************************************************/
 
 extern "C" SharedObject *__LibMain(VoidPtr image) {
-  /***********************************************************************************/
-  /* Allocate new library to be added to the lookup table.
-   */
-  /***********************************************************************************/
-
   SharedObject *library = hcore_tls_new_class<SharedObject>();
 
   if (!library) {
@@ -44,9 +47,10 @@ extern "C" SharedObject *__LibMain(VoidPtr image) {
 
   library->Get()->fImageObject =
       ProcessManager::Shared().Leak().GetCurrent().Leak().Image;
+
   library->Get()->fImageEntrypointOffset = library->Load<VoidPtr>(kPefStart);
 
-  kcout << "__LibMain: Done allocating Shared Library...\n";
+  kcout << "__LibMain: Done jumping to library...\n";
 
   return library;
 }
