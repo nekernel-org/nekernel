@@ -9,6 +9,11 @@
 
 #include <HALKit/AMD64/Processor.hpp>
 
+/**
+ * @file Processor.cpp
+ * @brief This file is about processor specific functions (in/out...)
+ */
+
 namespace hCore::HAL
 {
 void out8(UInt16 port, UInt8 value)

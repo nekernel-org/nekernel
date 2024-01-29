@@ -17,10 +17,10 @@ using namespace hCore;
 
 struct HandoverHeader final
 {
-    Int32 magic;
-    Int32 type;
-    Int32 arch;
-    // WIP
+    Int32 targetMagic;
+    Int32 targetType;
+    Int32 targetArch;
+    UIntPtr protocolHeaderTable;
 };
 } // namespace HEL
 

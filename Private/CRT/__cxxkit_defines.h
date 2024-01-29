@@ -7,8 +7,8 @@
  * 	========================================================
  */
 
-#ifndef __CXKIT_DEF_H
-#define __CXKIT_DEF_H
+#ifndef __CXKIT_DEF__
+#define __CXKIT_DEF__
 
 typedef __SIZE_TYPE__ size_t;
 
@@ -66,7 +66,7 @@ typedef char *caddr_t;
 typedef long long off_t;
 typedef unsigned long long uoff_t;
 
-typedef union {
+typedef union float_cast {
     struct
     {
         unsigned int mantissa : 23;
@@ -77,7 +77,7 @@ typedef union {
     float f;
 } __attribute__((packed)) float_cast_t;
 
-typedef union {
+typedef union double_cast {
     struct
     {
         unsigned long long int mantissa : 52;
@@ -88,4 +88,4 @@ typedef union {
     double f;
 } __attribute__((packed)) double_cast_t;
 
-#endif /* __CXKIT_DEF_H */
+#endif /* __CXKIT_DEF__ */

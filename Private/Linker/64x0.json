@@ -1,6 +1,6 @@
 {
   "executable_type": "kernel",
-  "output_name": "hKernel.out",
-  "start_proc": "KMain",
+  "output_name": "hKernel.efi",
+  "start_proc": "Main",
   "format": "PEF"
 }

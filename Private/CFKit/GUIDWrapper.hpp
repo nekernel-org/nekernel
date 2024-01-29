@@ -20,40 +20,43 @@
 // eXtensible Resource Information
 namespace hCore::XRN
 {
-    union GUIDSequence
+union GUIDSequence {
+    alignas(8) UShort u8[16];
+    alignas(8) UShort u16[8];
+    alignas(8) UInt u32[4];
+    alignas(8) ULong u64[2];
+
+    struct
     {
-        alignas(8) UShort u8[16];
-        alignas(8) UShort u16[8];
-        alignas(8) UInt   u32[4];
-        alignas(8) ULong  u64[2];
-
-        struct 
-        {
-            alignas(8) UInt m_Ms1;
-            UShort          m_Ms2;
-            UShort          m_Ms3;
-            UChar           m_Ms4[8];
-        };
+        alignas(8) UInt m_Ms1;
+        UShort m_Ms2;
+        UShort m_Ms3;
+        UChar m_Ms4[8];
     };
+};
 
-    class GUID final
+class GUID final
+{
+  public:
+    explicit GUID() = default;
+    ~GUID() = default;
+
+  public:
+    GUID &operator=(const GUID &) = default;
+    GUID(const GUID &) = default;
+
+  public:
+    GUIDSequence &operator->() noexcept
     {
-    public:
-        explicit GUID() = default;
-        ~GUID() = default;
+        return m_UUID;
+    }
 
-	public:
-        GUID &operator=(const GUID &) = default;
-        GUID(const GUID &) = default;
+    GUIDSequence &Leak() noexcept
+    {
+        return m_UUID;
+    }
 
-    public:
-        GUIDSequence &operator->()
-        {
-            return m_UUID;
-        }
-
-    private:
-        GUIDSequence m_UUID;
-        
-    };
+  private:
+    GUIDSequence m_UUID;
+};
 } // namespace hCore::XRN
