@@ -7,13 +7,14 @@
  * 	========================================================
  */
 
-#include <BootKit/Boot.hpp>
+#include <BootKit/Boot.hxx>
 
 constexpr hCore::UInt32 kVGABaseAddress = 0xb8000;
 
-long long int BStrLen(const char *ptr)
+hCore::SizeT BStrLen(const char *ptr)
 {
     long long int cnt = 0;
+
     while (*ptr != 0)
     {
         ++ptr;

@@ -66,4 +66,4 @@ enum
 
 #define BK_START_KERNEL (0x10000000)
 
-long long int BStrLen(const char *ptr);
+hCore::SizeT BStrLen(const char *ptr);

@@ -29,21 +29,21 @@ typedef UInt64 (*EfiTextString)(struct EfiSimpleTextOutputProtocol *self, const 
 typedef struct EfiSimpleTextOutputProtocol
 {
     UInt64 reset;
-    EfiTextString output_string;
-    UInt64 test_string;
-    UInt64 query_mode;
-    UInt64 set_mode;
-    UInt64 set_attribute;
-    UInt64 clear_screen;
-    UInt64 set_cursor_position;
-    UInt64 enable_cursor;
+    EfiTextString outputString;
+    UInt64 testString;
+    UInt64 queryMode;
+    UInt64 setMode;
+    UInt64 setAttribute;
+    UInt64 clearScreen;
+    UInt64 setCursorPosition;
+    UInt64 enableCursor;
     UInt64 mode;
 } EfiSimpleTextOutputProtocol;
 
 typedef struct EfiSystemTable
 {
     EfiTableHeader hdr;
-    Int16 *firmwareVendor;
+    wchar_t *firmwareVendor;
     UInt32 firmwareRevision;
     VoidPtr consoleInHandle;
     UInt64 conIn;

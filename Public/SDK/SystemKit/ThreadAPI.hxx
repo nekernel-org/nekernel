@@ -22,11 +22,11 @@ namespace hCore
 /// Located in GS on AMD64, Virtual Address 0x10000 (64x0, 32x0, ARM64)
 struct ThreadInformationBlock final
 {
-    const Char TIB_NAME[255]; // Module Name
-    const UIntPtr TIB_START;  // Start Address
-    const UIntPtr TIB_ALLOC;  // Allocation Heap
-    const UIntPtr TIB_STACK;  // Stack Pointer.
-    const Int32 TIB_ARCH;     // Architecture and/or platform.
+    const Char TIB_NAME[255];      // Module Name
+    const UIntPtr TIB_START_CODE;  // Start Address
+    const UIntPtr TIB_START_ALLOC; // Allocation Heap
+    const UIntPtr TIB_START_STACK; // Stack Pointer.
+    const Int32 TIB_ARCH;          // Architecture and/or platform.
 };
 
 enum
