@@ -2,5 +2,6 @@
 - We then need sync primitives. [ X ]
 - We also need a system library for the OS. [ X ]
 - We need a bootloader for AMD64 [ X ]
+    - Implement Boot Services [ WiP ]
     - Load Handover and kernel into memory [  ]
     - Jump to kernel [  ]

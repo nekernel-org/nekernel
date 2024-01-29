@@ -21,5 +21,5 @@ extern "C" int EfiMain(void *ImageHandle, EfiSystemTable *SystemTable)
         rt_halt();
     }
 
-    return 0;
+    return kEfiOk;
 }
