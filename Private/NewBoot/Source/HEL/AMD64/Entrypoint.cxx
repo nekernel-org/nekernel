@@ -15,12 +15,12 @@
 
 EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
                          EfiSystemTable* SystemTable) {
-  SystemTable->ConOut->OutputString(SystemTable->ConOut,
-                                    L"HCoreLdr: Starting \\EPM\\HCore...\r\n");
+  EfiCharType* string = L"HCoreLdr: Initializing...\r\n";
 
-  EfiLoadImageProtocol* protocol{};
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, string);
 
-  EfiGUID guid = EfiGUID EFI_LOADED_IMAGE_PROTOCOL_GUID;
+  EfiLoadImageProtocol* protocol;
+  EfiGUID guid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
 
   SystemTable->BootServices->LocateProtocol(&guid, nullptr,
                                             (VoidPtr*)&protocol);
@@ -39,10 +39,22 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
 
   if (SystemTable->BootServices->ExitBootServices(ImageHandle, 0) != kEfiOk) {
     SystemTable->ConOut->OutputString(
-        SystemTable->ConOut,
-        L"HCoreLdr: Could not Exit UEFI!\r\nHanging...\r\n");
+        SystemTable->ConOut, L"HCoreLdr: Could not exit Boot Services!\r\n");
 
-    return kEfiFail;
+    SystemTable->ConOut->OutputString(SystemTable->ConOut,
+                                      L"HCoreLdr: Hanging...\r\n");
+
+    while (true) {
+      rt_cli();
+      rt_halt();
+    }
+  }
+
+  // TODO: Jump Code
+
+  while (true) {
+    rt_cli();
+    rt_halt();
   }
 
   return kEfiOk;

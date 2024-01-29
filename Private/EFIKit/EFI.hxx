@@ -383,16 +383,16 @@ typedef struct EfiSystemTable {
   EfiTableHeader SystemHeader;
   WideChar *FirmwareVendor;
   UInt32 FirmwareRevision;
-  VoidPtr ConsoleInHandle;
-  UInt64 ConIn;
-  VoidPtr ConsoleOutHandle;
+  EfiHandlePtr ConsoleInHandle;
+  VoidPtr ConIn;
+  EfiHandlePtr ConsoleOutHandle;
   EfiSimpleTextOutputProtocol *ConOut;
-  VoidPtr StandardErrorHandle;
-  UInt64 StdErr;
-  UInt64 RuntimeServices;
+  EfiHandlePtr StandardErrorHandle;
+  VoidPtr StdErr;
+  VoidPtr RuntimeServices;
   EfiBootServices *BootServices;
   UInt64 NumberOfTableEntries;
-  UInt64 ConfigurationTable;
+  VoidPtr ConfigurationTable;
 } EfiSystemTable;
 
 #define EfiMain efi_main

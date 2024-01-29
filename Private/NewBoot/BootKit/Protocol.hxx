@@ -11,6 +11,13 @@
 
 #include <EFIKit/EFI.hxx>
 
+/* useful macros */
+
+#define kHandoverMagic 0xBAD55
+
+#define kBaseHandoverStruct 0x80000000
+#define kHandoverStructSz sizeof(HEL::HandoverHeader)
+
 namespace hCore::HEL {
 /**
     @brief the kind of executable we're loading.
@@ -31,15 +38,29 @@ enum {
   kArchCount = 2,
 };
 
+/**
+@brief The first struct that we read when inspecting The executable
+it tells us more about it and IS format independent.
+*/
 struct __attribute__((packed)) HandoverHeader final {
-  Int32 targetMagic;
-  Int32 targetType;
-  Int32 targetArch;
-  UIntPtr startAddress;
+  Int32 f_TargetMagic;
+  Int32 f_TargetType;
+  Int32 f_TargetArch;
+  UIntPtr f_TargetStartAddress;
 };
+
+struct HandoverInformationHeader {
+  HandoverHeader* f_Header;
+  voidPtr f_VirtualStart;
+  SizeT f_VirtualSize;
+  voidPtr f_PhysicalStart;
+  SizeT f_PhysicalSize;
+  voidPtr f_FirmwareVendorName;
+  SizeT f_FirmwareVendorLen;
+};
+
+/**
+    @brief Handover Jump Proc
+*/
+typedef UInt64 (*HandoverProc)(HandoverInformationHeader* pHandover);
 }  // namespace hCore::HEL
-
-#define kHandoverMagic 0xBAD55
-
-#define kBaseHandoverStruct 0x80000000
-#define kHandoverStructSz sizeof(HEL::HandoverHeader)

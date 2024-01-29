@@ -13,23 +13,20 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-namespace hCore
-{
-    class Url final
-    {
-    public:
-        explicit Url(StringView &strUrl);
-        ~Url();
+namespace hCore {
+class Url final {
+ public:
+  explicit Url(StringView &strUrl);
+  ~Url();
 
-    public:
-        Ref<ErrorOr<StringView>> Location() noexcept;
-        Ref<ErrorOr<StringView>> Protocol() noexcept;
+ public:
+  Ref<ErrorOr<StringView>> Location() noexcept;
+  Ref<ErrorOr<StringView>> Protocol() noexcept;
 
-    private:
-        Ref<StringView> m_urlView;
+ private:
+  Ref<StringView> m_urlView;
+};
 
-    };
-
-} // namespace hCore
+}  // namespace hCore
 
 #endif /* ifndef _INC_URL_HPP__ */

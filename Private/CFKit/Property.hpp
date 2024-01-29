@@ -15,32 +15,29 @@
 #include <NewKit/Function.hpp>
 #include <NewKit/String.hpp>
 
-namespace hCore
-{
-    using PropertyId = Int;
+namespace hCore {
+using PropertyId = Int;
 
-    class Property
-    {
-    public:
-        explicit Property(const StringView &sw)
-            : m_sName(sw) {}
+class Property {
+ public:
+  explicit Property(const StringView &sw) : m_sName(sw) {}
 
-        virtual ~Property() = default;
+  virtual ~Property() = default;
 
-    public:
-        Property &operator=(const Property &) = default;
-        Property(const Property &) = default;
+ public:
+  Property &operator=(const Property &) = default;
+  Property(const Property &) = default;
 
-        bool StringEquals(StringView &name);
-        const PropertyId &GetPropertyById();
+  bool StringEquals(StringView &name);
+  const PropertyId &GetPropertyById();
 
-    private:
-        Ref<StringView> m_sName;
-        PropertyId m_Action;
+ private:
+  Ref<StringView> m_sName;
+  PropertyId m_Action;
+};
 
-    };
+template <SSizeT N>
+using PropertyArray = Array<Property, N>;
+}  // namespace hCore
 
-    template<SSizeT N> using PropertyArray = Array<Property, N>;
-} // namespace hCore
-
-#endif // !_INC_PLIST_HPP__
+#endif  // !_INC_PLIST_HPP__
