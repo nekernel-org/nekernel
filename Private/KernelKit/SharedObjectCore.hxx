@@ -10,8 +10,8 @@
 #ifndef __KERNELKIT_SHARED_OBJECT_CORE_HXX__
 #define __KERNELKIT_SHARED_OBJECT_CORE_HXX__
 
-#include "CodeManager.hpp"
-#include "PEF.hpp"
+#include <KernelKit/CodeManager.hpp>
+#include <KernelKit/PEF.hpp>
 #include <KernelKit/Loader.hpp>
 #include <NewKit/Defines.hpp>
 

@@ -7,7 +7,8 @@
  * 	========================================================
  */
 
-#pragma once
+#ifndef __EFI__
+#define __EFI__
 
 /**
 @brief HCore Implementation of UEFI protocols.
@@ -17,12 +18,15 @@
 
 using namespace hCore;
 
+typedef VoidPtr EfiHandlePtr;
+
 struct EfiTableHeader;
 struct EfiLoadFileProtocol;
 struct EfiSimpleTextOutputProtocol;
 struct EfiDevicePathProtocol;
+struct EfiBootServices;
 
-/// What's boot policy?
+/// What's BootBolicy?
 /// If TRUE, indicates that the request originates from the boot manager, and that the boot manager is attempting to
 /// load FilePath as a boot selection. If FALSE, then FilePath must match an exact file to be loaded.
 
@@ -113,64 +117,124 @@ typedef enum EfiMemoryType
     EfiMaxMemoryType,
 } EfiMemoryType;
 
-typedef UInt64 (*EfiAllocatePool)(EfiMemoryType PoolType, UInt32 Size, Void **Buffer);
-typedef UInt64 (*EfiFreePool)(Void *Buffer);
+typedef UInt64 (*EfiAllocatePool)(EfiMemoryType PoolType, UInt32 Size, VoidPtr *Buffer);
+typedef UInt64 (*EfiFreePool)(VoidPtr Buffer);
 
 typedef struct EfiTableHeader
 {
-    UInt64 signature;
-    UInt32 revision;
-    UInt32 headerSize;
-    UInt32 crc32;
-    UInt32 reserved;
+    UInt64 Signature;
+    UInt32 Revision;
+    UInt32 HeaderSize;
+    UInt32 Crc32;
+    UInt32 Reserved;
 } EfiTableHeader;
 
 typedef struct EfiLoadFileProtocol
 {
-    EfiLoadFile loadFile;
+    EfiLoadFile LoadFile;
 } EfiLoadFileProtocol;
 
 typedef struct EfiDevicePathProtocol
 {
-    UInt8 type;
-    UInt8 subType;
-    UInt8 lenData[2];
+    UInt8 Type;
+    UInt8 SubType;
+    UInt8 LengthData[2];
 } EfiDevicePathProtocol;
+
+typedef UInt64 (*EfiExitBootServices)(VoidPtr ImageHandle, UInt32 MapKey);
+
+/**
+@name EfiBootServices
+@brief UEFI Boot Services record, it contains functions necessary to a firmware level application.
+*/
+typedef struct EfiBootServices
+{
+    EfiTableHeader SystemTable;
+    UIntPtr RaiseTPL;
+    UIntPtr RestoreTPL;
+    UIntPtr AllocatePages;
+    UIntPtr FreePages;
+    UIntPtr GetMemoryMap;
+    EfiAllocatePool AllocatePool;
+    EfiFreePool FreePool;
+    UIntPtr CreateEvent;
+    UIntPtr SetTimer;
+    UIntPtr WaitForEvent;
+    UIntPtr SignalEvent;
+    UIntPtr CloseEvent;
+    UIntPtr CheckEvent;
+    UIntPtr InstallProtocolInterface;
+    UIntPtr ReinstallProtocolInterface;
+    UIntPtr UninstallProtocolInterface;
+    UIntPtr HandleProtocol;
+    VoidPtr Reserved;
+    UIntPtr RegisterProtocolNotify;
+    UIntPtr LocateHandle;
+    UIntPtr LocateDevicePath;
+    UIntPtr InstallConfigurationTable;
+    UIntPtr LoadImage;
+    UIntPtr StartImage;
+    UIntPtr Exit;
+    UIntPtr UnloadImage;
+    EfiExitBootServices ExitBootServices;
+    UIntPtr GetNextMonotonicCount;
+    UIntPtr Stall;
+    UIntPtr SetWatchdogTimer;
+    UIntPtr ConnectController;
+    UIntPtr DisconnectController;
+    UIntPtr OpenProtocol;
+    UIntPtr CloseProtocol;
+    UIntPtr OpenProtocolInformation;
+    UIntPtr ProtocolsPerHandle;
+    UIntPtr LocateHandleBuffer;
+    UIntPtr LocateProtocol;
+    UIntPtr InstallMultipleProtocolInterfaces;
+    UIntPtr UninstallMultipleProtocolInterfaces;
+    UIntPtr CalculateCrc32;
+    UIntPtr CopyMem;
+    UIntPtr SetMem;
+    UIntPtr CreateEventEx;
+} EfiBootServices;
 
 #define kEntireDevPath 0xFF
 #define kThisInstancePath 0x01
 
 typedef struct EfiSimpleTextOutputProtocol
 {
-    UInt64 reset;
-    EfiTextString outputString;
-    UInt64 testString;
-    UInt64 queryMode;
-    UInt64 setMode;
-    UInt64 setAttribute;
-    UInt64 clearScreen;
-    UInt64 setCursorPosition;
-    UInt64 enableCursor;
-    UInt64 mode;
+    UInt64 Reset;
+    EfiTextString OutputString;
+    UInt64 TestString;
+    UInt64 QueryMode;
+    UInt64 SetMode;
+    UInt64 SetAttribute;
+    UInt64 ClearScreen;
+    UInt64 SetCursorPosition;
+    UInt64 EnableCursor;
+    UInt64 Mode;
 } EfiSimpleTextOutputProtocol;
 
 typedef struct EfiSystemTable
 {
-    EfiTableHeader hdr;
-    WideChar *firmwareVendor;
-    UInt32 firmwareRevision;
-    VoidPtr consoleInHandle;
-    UInt64 conIn;
-    VoidPtr consoleOutHandle;
-    EfiSimpleTextOutputProtocol *conOut;
-    VoidPtr standardErrorHandle;
-    UInt64 stdErr;
-    UInt64 runtimeServices;
-    UInt64 bootServices;
-    UInt64 numberOfTableEntries;
-    UInt64 configurationTable;
+    EfiTableHeader SystemHeader;
+    WideChar *FirmwareVendor;
+    UInt32 FirmwareRevision;
+    VoidPtr ConsoleInHandle;
+    UInt64 ConIn;
+    VoidPtr ConsoleOutHandle;
+    EfiSimpleTextOutputProtocol *ConOut;
+    VoidPtr StandardErrorHandle;
+    UInt64 StdErr;
+    UInt64 RuntimeServices;
+    EfiBootServices *BootServices;
+    UInt64 NumberOfTableEntries;
+    UInt64 ConfigurationTable;
 } EfiSystemTable;
 
 #define EfiMain efi_main
 
 #define kEfiOk 0
+#define kEfiFail -1
+
+#define EFI_EXTERN_C extern "C"
+
+#endif // __EFI__

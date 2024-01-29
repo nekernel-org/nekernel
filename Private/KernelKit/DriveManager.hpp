@@ -28,8 +28,8 @@ enum
     kFloppyDisc = 0xCD,
     kOpticalDisc = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
     kReadOnly = 0x10,    // Read only drive
-    kXPMDrive = 0x11,    // eXplicit Partition Map.
-    kXPTDrive = 0x12,    // GPT w/ XPM partition.
+    kEPMDrive = 0x11,    // Explicit Partition Map.
+    kEPTDrive = 0x12,    // ESP w/ EPM partition.
     kMBRDrive = 0x13,    // IBM PC classic partition scheme
 };
 

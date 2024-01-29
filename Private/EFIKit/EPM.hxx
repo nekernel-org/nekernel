@@ -10,7 +10,9 @@
 #ifndef __PARTITION_MAP__
 #define __PARTITION_MAP__
 
-inline constexpr int kUUIDLen = 37;
+inline consteval int kUUIDLen = 37;
+inline consteval int kNameLen = 32;
+inline consteval int kMagicLen = 4;
 
 /* the first 512 > x > 1024 bytes of a disk contains this headers. */
 
@@ -20,8 +22,8 @@ inline constexpr int kUUIDLen = 37;
  */
 struct __attribute__((packed)) BootBlock
 {
-    char magic[4];
-    char name[32];
+    char magic[kMagicLen];
+    char name[kNameLen];
     char uuid[kUUIDLen];
     int version;
     long long int num_blocks;

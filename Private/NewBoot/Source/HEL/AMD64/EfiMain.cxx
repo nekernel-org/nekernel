@@ -11,14 +11,15 @@
 #include <BootKit/Processor.hxx>
 #include <BootKit/Protocol.hxx>
 
-extern "C" int EfiMain(void *ImageHandle, EfiSystemTable *SystemTable)
+EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle, EfiSystemTable *SystemTable)
 {
-    SystemTable->conOut->outputString(SystemTable->conOut, L"HCoreLdr: Starting HCore...\r\n");
+    SystemTable->ConOut->OutputString(SystemTable->ConOut, L"HCoreLdr: Starting \\EPM\\HCore...\r\n");
 
-    while (true)
+    if (SystemTable->BootServices->ExitBootServices(ImageHandle, kBaseHandoverStruct) != kEfiOk)
     {
-        rt_cli();
-        rt_halt();
+        SystemTable->ConOut->OutputString(SystemTable->ConOut, L"HCoreLdr: Could not Exit UEFI!\r\nHanging...\r\n");
+
+        return kEfiFail;
     }
 
     return kEfiOk;

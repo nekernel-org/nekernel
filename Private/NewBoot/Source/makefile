@@ -1,5 +1,6 @@
 ##################################################
 # ; (C) Mahrouss Logic, 2024, all rights reserved.
+# This is the bootloader makefile.
 ##################################################
 
 CC_GNU=x86_64-w64-mingw32-g++

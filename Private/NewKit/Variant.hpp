@@ -25,7 +25,7 @@ namespace hCore
         };
 
     public:
-        Variant() = delete;
+        explicit Variant() = delete;
 
     public:
         Variant &operator=(const Variant &) = default;
