@@ -10,7 +10,7 @@
 #include "NewKit/Panic.hpp"
 #include <KernelKit/ProcessManager.hpp>
 #include <KernelKit/SMPManager.hpp>
-#include <NewKit/KHeap.hpp>
+#include <NewKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
 
 #define kPoolAlign (4)

@@ -11,13 +11,13 @@
 
 // last-rev 5/03/23
 // file: KHeap.hpp
-// description: page allocation for kernel.
+// description: heap allocation for the kernel.
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/Pmm.hpp>
 
 namespace hCore
 {
-Int32 kernel_delete_ptr(voidPtr allocatedPtr);
-voidPtr kernel_new_ptr(const SizeT &sz, const bool rw, const bool user);
+    Int32 kernel_delete_ptr(voidPtr allocatedPtr);
+    voidPtr kernel_new_ptr(const SizeT &sz, const bool rw, const bool user);
 } // namespace hCore

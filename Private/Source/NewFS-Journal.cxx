@@ -14,54 +14,46 @@
 
 #define kOpCache (4)
 
-namespace hCore
-{
-	typedef Boolean(*NewFSRunner)(VoidPtr delegate);
-	
-    class NewFSJournalRunner final
-    {
-    public:
-    	NewFSRunner fLoadRoutine{ nullptr };
-    	NewFSRunner fCacheRoutine{ nullptr };
-    	NewFSRunner fUnloadRoutine{ nullptr };
-    	
-    	explicit NewFSJournalRunner(NewFSRunner load_runner)
-    		: fLoadRoutine(load_runner)
-    	{
-    		MUST_PASS(fLoadRoutine);
-    		
-    		fLoadRoutine(this);
-    	}
-    	
-    	~NewFSJournalRunner() noexcept
-    	{
-    		MUST_PASS(fUnloadRoutine);
-    		
-    		fUnloadRoutine(this);
-    	}
-    
-    	HCORE_COPY_DEFAULT(NewFSJournalRunner);
-    	
-    public:
-    	Boolean Run(const Int32& operation, VoidPtr class_ptr)
-    	{	
-    		switch (operation)
-    		{
-    		case kOpCache:
-    		{
-			if (!class_ptr)
-			{
-				kcout << "Miss for class_ptr at NewFSJournalManager::Run(class_ptr) " << __FILE__ << "\n";
-				return false;
-			}			
+namespace hCore {
+typedef Boolean (*NewFSRunner)(VoidPtr delegate);
 
-    			MUST_PASS(fCacheRoutine);
-    			return fCacheRoutine(class_ptr);
-    		}	
-    		};
-    	
-    		return false;
-    	}
-    	
+class NewFSJournalRunner final {
+ public:
+  NewFSRunner fLoadRoutine{nullptr};
+  NewFSRunner fCacheRoutine{nullptr};
+  NewFSRunner fUnloadRoutine{nullptr};
+
+  explicit NewFSJournalRunner(NewFSRunner load_runner)
+      : fLoadRoutine(load_runner) {
+    MUST_PASS(fLoadRoutine);
+
+    fLoadRoutine(this);
+  }
+
+  ~NewFSJournalRunner() noexcept {
+    MUST_PASS(fUnloadRoutine);
+
+    fUnloadRoutine(this);
+  }
+
+  HCORE_COPY_DEFAULT(NewFSJournalRunner);
+
+ public:
+  Boolean Run(const Int32& operation, VoidPtr class_ptr) {
+    switch (operation) {
+      case kOpCache: {
+        if (!class_ptr) {
+          kcout << "Miss for class_ptr at NewFSJournalManager::Run(class_ptr) "
+                << __FILE__ << "\n";
+          return false;
+        }
+
+        MUST_PASS(fCacheRoutine);
+        return fCacheRoutine(class_ptr);
+      }
     };
-} // namespace hCore
+
+    return false;
+  }
+};
+}  // namespace hCore

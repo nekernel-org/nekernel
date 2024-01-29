@@ -13,7 +13,7 @@
 #include <ArchKit/Arch.hpp>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/PermissionSelector.hxx>
-#include <NewKit/Heap.hpp>
+#include <NewKit/UserHeap.hpp>
 #include <NewKit/LockDelegate.hpp>
 #include <NewKit/MutableArray.hpp>
 

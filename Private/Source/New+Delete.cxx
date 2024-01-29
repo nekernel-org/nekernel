@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <NewKit/KHeap.hpp>
+#include <NewKit/KernelHeap.hpp>
 #include <NewKit/New.hpp>
 
 void* operator new[](size_t sz) 

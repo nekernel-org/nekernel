@@ -7,144 +7,137 @@
  * 	========================================================
  */
 
-#include <KernelKit/SMPManager.hpp>
-#include <KernelKit/ProcessManager.hpp>
 #include <ArchKit/Arch.hpp>
+#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/SMPManager.hpp>
 
 /// BUGS: 0
 
 //! This file handles multi processing in hCore.
 //! Multi processing is needed for File I/O, networking and scheduling.
 
-namespace hCore
-{
-    // A ProcessorCore class takes care of it's owned hardware thread.
-    // It has a stack for it's core.
+namespace hCore {
+// A ProcessorCore class takes care of it's owned hardware thread.
+// It has a stack for it's core.
 
-    // @brief constructor
-    ProcessorCore::ProcessorCore() = default;
+// @brief constructor
+ProcessorCore::ProcessorCore() = default;
 
-    // @brief destructor
-    ProcessorCore::~ProcessorCore() = default;
-   
-    //! @brief returns the id
+// @brief destructor
+ProcessorCore::~ProcessorCore() = default;
 
-    const ThreadID& ProcessorCore::ID() noexcept { return m_ID; }
-    
-    //! @brief returns the kind
+//! @brief returns the id
 
-    const ThreadKind& ProcessorCore::Kind() noexcept { return m_Kind; }
+const ThreadID& ProcessorCore::ID() noexcept { return m_ID; }
 
-    //! @brief is the core busy?
+//! @brief returns the kind
 
-    bool ProcessorCore::IsBusy() noexcept { return m_Busy; }
+const ThreadKind& ProcessorCore::Kind() noexcept { return m_Kind; }
 
-    /// @brief Get processor stack frame.
+//! @brief is the core busy?
 
-    HAL::StackFrame* ProcessorCore::StackFrame() noexcept
-    {
-        MUST_PASS(m_Stack);
-        return m_Stack;
-    }
+bool ProcessorCore::IsBusy() noexcept { return m_Busy; }
 
-    void ProcessorCore::Busy(const bool busy) noexcept { m_Busy = busy; }
+/// @brief Get processor stack frame.
 
-    ProcessorCore::operator bool() { return m_Stack; }
+HAL::StackFrame* ProcessorCore::StackFrame() noexcept {
+  MUST_PASS(m_Stack);
+  return m_Stack;
+}
 
-    /// @brief Wakeup the processor.
+void ProcessorCore::Busy(const bool busy) noexcept { m_Busy = busy; }
 
-    void ProcessorCore::Wake(const bool wakeup) noexcept
-    {
-        m_Wakeup = wakeup;
+ProcessorCore::operator bool() { return m_Stack; }
 
-        if (!m_Wakeup)
-            rt_hang_thread(m_Stack);
-        else
-            rt_wakeup_thread(m_Stack);
-    }
+/// @brief Wakeup the processor.
 
-    bool ProcessorCore::Switch(HAL::StackFrame* stack)
-    {
-        if (stack == nullptr)
-            return false;
+void ProcessorCore::Wake(const bool wakeup) noexcept {
+  m_Wakeup = wakeup;
 
-        return rt_do_context_switch(m_Stack, stack) == 0;
-    }
+  if (!m_Wakeup)
+    rt_hang_thread(m_Stack);
+  else
+    rt_wakeup_thread(m_Stack);
+}
 
-	///! @brief Tells if processor is waked up.
-    bool ProcessorCore::IsWakeup() noexcept { return m_Wakeup; }
+bool ProcessorCore::Switch(HAL::StackFrame* stack) {
+  if (stack == nullptr) return false;
 
-    //! @brief Constructor and destructor
+  return rt_do_context_switch(m_Stack, stack) == 0;
+}
 
-    ///! @brief Default constructor.
-    SMPManager::SMPManager() = default;
+///! @brief Tells if processor is waked up.
+bool ProcessorCore::IsWakeup() noexcept { return m_Wakeup; }
 
-    ///! @brief Default destructor.
-    SMPManager::~SMPManager() = default;
+//! @brief Constructor and destructor
 
-    /// @brief Shared singleton function
-    Ref<SMPManager> SMPManager::Shared()
-    {
-        static SMPManager manager;
-        return { manager };
-    }
+///! @brief Default constructor.
+SMPManager::SMPManager() = default;
 
-    /// @brief Get Stack Frame of Core
-    HAL::StackFramePtr SMPManager::GetStackFrame() noexcept
-    {
-        if (m_ThreadList[m_CurrentThread].Leak() &&
-            ProcessHelper::GetCurrentPID() == m_ThreadList[m_CurrentThread].Leak().Leak().m_PID)
-            return m_ThreadList[m_CurrentThread].Leak().Leak().m_Stack;
+///! @brief Default destructor.
+SMPManager::~SMPManager() = default;
 
-        return nullptr;
-    }
+/// @brief Shared singleton function
+Ref<SMPManager> SMPManager::Shared() {
+  static SMPManager manager;
+  return {manager};
+}
 
-    /// @brief Finds and switch to a free core.
-    bool SMPManager::Switch(HAL::StackFrame* stack)
-    {
-        if (stack == nullptr)
-            return false;
+/// @brief Get Stack Frame of Core
+HAL::StackFramePtr SMPManager::GetStackFrame() noexcept {
+  if (m_ThreadList[m_CurrentThread].Leak() &&
+      ProcessHelper::GetCurrentPID() ==
+          m_ThreadList[m_CurrentThread].Leak().Leak().m_PID)
+    return m_ThreadList[m_CurrentThread].Leak().Leak().m_Stack;
 
-        for (SizeT idx = 0; idx < kMaxHarts; ++idx)
-        {
-	    	// stack != nullptr -> if core is used, then continue.
-            if (!m_ThreadList[idx].Leak() ||
-				!m_ThreadList[idx].Leak().Leak().IsWakeup() ||
-                m_ThreadList[idx].Leak().Leak().IsBusy())
-                continue;
+  return nullptr;
+}
 
-            m_ThreadList[idx].Leak().Leak().m_ID = idx;
-			m_ThreadList[idx].Leak().Leak().m_Stack = stack;
-            m_ThreadList[idx].Leak().Leak().m_PID = ProcessHelper::GetCurrentPID();
+/// @brief Finds and switch to a free core.
+bool SMPManager::Switch(HAL::StackFrame* stack) {
+  if (stack == nullptr) return false;
 
-            m_ThreadList[idx].Leak().Leak().Busy(true);	
+  for (SizeT idx = 0; idx < kMaxHarts; ++idx) {
+    // stack != nullptr -> if core is used, then continue.
+    if (!m_ThreadList[idx].Leak() ||
+        !m_ThreadList[idx].Leak().Leak().IsWakeup() ||
+        m_ThreadList[idx].Leak().Leak().IsBusy())
+      continue;
 
-            Boolean ret = (rt_do_context_switch(rt_get_current_context(), stack) == 0);
-        
-            m_ThreadList[idx].Leak().Leak().Busy(false);
+    m_ThreadList[idx].Leak().Leak().m_ID = idx;
+    m_ThreadList[idx].Leak().Leak().m_Stack = stack;
+    m_ThreadList[idx].Leak().Leak().m_PID = ProcessHelper::GetCurrentPID();
 
-            return ret;
-        }
+    m_ThreadList[idx].Leak().Leak().Busy(true);
 
-        return false;
-    }
+    Boolean ret = (rt_do_context_switch(rt_get_current_context(), stack) == 0);
 
-    /**
-     * Index hart
-     * @param idx
-     * @return
-     */
-    Ref<ProcessorCore> SMPManager::operator[](const SizeT& idx) { return m_ThreadList[idx].Leak(); }
+    m_ThreadList[idx].Leak().Leak().Busy(false);
 
-    /**
-     * Check if thread pool isn't empty.
-     * @return
-     */
-    SMPManager::operator bool() noexcept { return !m_ThreadList.Empty(); }
+    return ret;
+  }
 
-    /**
-     * Reverse operator bool
-     * @return
-     */
-    bool SMPManager::operator!() noexcept { return m_ThreadList.Empty(); }
-} // namespace hCore
+  return false;
+}
+
+/**
+ * Index hart
+ * @param idx
+ * @return
+ */
+Ref<ProcessorCore> SMPManager::operator[](const SizeT& idx) {
+  return m_ThreadList[idx].Leak();
+}
+
+/**
+ * Check if thread pool isn't empty.
+ * @return
+ */
+SMPManager::operator bool() noexcept { return !m_ThreadList.Empty(); }
+
+/**
+ * Reverse operator bool
+ * @return
+ */
+bool SMPManager::operator!() noexcept { return m_ThreadList.Empty(); }
+}  // namespace hCore

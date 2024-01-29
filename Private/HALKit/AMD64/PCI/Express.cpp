@@ -9,5 +9,4 @@
 
 #include <KernelKit/PCI/Express.hpp>
 
-namespace hCore {
-}
+namespace hCore {}

@@ -13,7 +13,7 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/New.hpp>
 #include <NewKit/Json.hpp>
-#include <NewKit/Heap.hpp>
+#include <NewKit/UserHeap.hpp>
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/ArrayList.hpp>
 #include <NewKit/Array.hpp>

@@ -13,35 +13,30 @@
 
 //! @brief File manager for hCore.
 
-namespace hCore
-{
-    static IFilesystemManager* kMounted = nullptr;
-    
-    /// @brief FilesystemManager getter.
-    /// @return The mounted filesystem.
-    IFilesystemManager* IFilesystemManager::GetMounted() { return kMounted; }
+namespace hCore {
+static IFilesystemManager* kMounted = nullptr;
 
-    IFilesystemManager* IFilesystemManager::Unmount()
-    {
-        if (kMounted)
-        {
-            auto mount = kMounted;
-            kMounted = nullptr;
+/// @brief FilesystemManager getter.
+/// @return The mounted filesystem.
+IFilesystemManager* IFilesystemManager::GetMounted() { return kMounted; }
 
-            return mount;
-        }
+IFilesystemManager* IFilesystemManager::Unmount() {
+  if (kMounted) {
+    auto mount = kMounted;
+    kMounted = nullptr;
 
-        return nullptr;
-    }
+    return mount;
+  }
 
-    bool IFilesystemManager::Mount(IFilesystemManager* pMount)
-    {
-        if (pMount)
-        {
-            kMounted = pMount;
-            return true;
-        }
-        
-        return false;
-    }
+  return nullptr;
 }
+
+bool IFilesystemManager::Mount(IFilesystemManager* pMount) {
+  if (pMount) {
+    kMounted = pMount;
+    return true;
+  }
+
+  return false;
+}
+}  // namespace hCore

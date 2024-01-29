@@ -10,84 +10,69 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Pmm.hpp>
 
-namespace hCore
-{
-    Pmm::Pmm() = default;
+namespace hCore {
+Pmm::Pmm() = default;
 
-    Pmm::Pmm(Ref<PageManager*> &pm) : m_PageManager(pm)
-    {
-        MUST_PASS(pm.Leak());
-        kcout << "[PMM] New PhysicalMemoryManager\r\n";
-    }
+Pmm::Pmm(Ref<PageManager *> &pm) : m_PageManager(pm) {
+  MUST_PASS(pm.Leak());
+  kcout << "[PMM] New PhysicalMemoryManager\r\n";
+}
 
-    Pmm::~Pmm() = default;
+Pmm::~Pmm() = default;
 
-    /* If this returns Null pointer, enter emergency mode */
-    Ref<PTEWrapper*> Pmm::RequestPage(Boolean user, Boolean readWrite)
-    {
-        if (m_PageManager)
-        {
-            PTEWrapper *pt = m_PageManager.Leak()->Request(user, readWrite, true);
+/* If this returns Null pointer, enter emergency mode */
+Ref<PTEWrapper *> Pmm::RequestPage(Boolean user, Boolean readWrite) {
+  if (m_PageManager) {
+    PTEWrapper *pt = m_PageManager.Leak()->Request(user, readWrite, true);
 
-            if (pt)
-                return Ref<PTEWrapper*>(pt);
+    if (pt) return Ref<PTEWrapper *>(pt);
 
-            return {};
-        }
+    return {};
+  }
 
-        kcout << "[Pmm::RequestPage] Ref<PTEWrapper*> could not be created! "
-                 "m_PageManager is nullptr!\r\n";
+  kcout << "[Pmm::RequestPage] Ref<PTEWrapper*> could not be created! "
+           "m_PageManager is nullptr!\r\n";
 
-        return {};
-    }
+  return {};
+}
 
-    Boolean Pmm::FreePage(Ref<PTEWrapper*> PageRef)
-    {
-        if (!PageRef)
-            return false;
+Boolean Pmm::FreePage(Ref<PTEWrapper *> PageRef) {
+  if (!PageRef) return false;
 
-        PageRef->m_Present = false;
+  PageRef->m_Present = false;
 
-        return true;
-    }
+  return true;
+}
 
-    Boolean Pmm::TogglePresent(Ref<PTEWrapper*> PageRef, Boolean Enable)
-    {
-        if (!PageRef)
-            return false;
+Boolean Pmm::TogglePresent(Ref<PTEWrapper *> PageRef, Boolean Enable) {
+  if (!PageRef) return false;
 
-        PageRef->m_Present = Enable;
+  PageRef->m_Present = Enable;
 
-        return true;
-    }
+  return true;
+}
 
-    Boolean Pmm::ToggleUser(Ref<PTEWrapper*> PageRef, Boolean Enable)
-    {
-        if (!PageRef)
-            return false;
+Boolean Pmm::ToggleUser(Ref<PTEWrapper *> PageRef, Boolean Enable) {
+  if (!PageRef) return false;
 
-        PageRef->m_Rw = Enable;
+  PageRef->m_Rw = Enable;
 
-        return true;
-    }
+  return true;
+}
 
-    Boolean Pmm::ToggleRw(Ref<PTEWrapper*> PageRef, Boolean Enable)
-    {
-        if (!PageRef)
-            return false;
+Boolean Pmm::ToggleRw(Ref<PTEWrapper *> PageRef, Boolean Enable) {
+  if (!PageRef) return false;
 
-        PageRef->m_Rw = Enable;
+  PageRef->m_Rw = Enable;
 
-        return true;
-    }
+  return true;
+}
 
-    Boolean Pmm::ToggleShare(Ref<PTEWrapper*> PageRef, Boolean Enable)
-    {
-        if (!PageRef)
-            return false;
+Boolean Pmm::ToggleShare(Ref<PTEWrapper *> PageRef, Boolean Enable) {
+  if (!PageRef) return false;
 
-        PageRef->m_Shareable = Enable;
+  PageRef->m_Shareable = Enable;
 
-        return true;
-    }
-} // namespace hCore
+  return true;
+}
+}  // namespace hCore

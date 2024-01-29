@@ -9,7 +9,4 @@
 
 #include <CFKit/GUIDWrapper.hpp>
 
-namespace hCore::XRN
-{
-    
-}
+namespace hCore::XRN {}

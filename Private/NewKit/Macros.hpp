@@ -37,9 +37,9 @@
 #define ATTRIBUTE(X) __attribute__((X))
 #endif // #ifndef ATTRIBUTE
 
-#ifndef __hCore__
-#define __hCore__ (202401)
-#endif // !__hCore__
+#ifndef __HCORE__
+#define __HCORE__ (202401)
+#endif // !__HCORE__
 
 #ifndef EXTERN_C
 #define EXTERN_C()                                                                                                     \

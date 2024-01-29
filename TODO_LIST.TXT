@@ -3,5 +3,7 @@
 - We also need a system library for the OS. [ X ]
 - We need a bootloader for AMD64 [ X ]
     - Implement Boot Services [ X ]
-    - Load Handover and kernel into memory [  ]
+    - Design Handover [ X ]
+    - Load kernel into memory [  ]
     - Jump to kernel [  ]
+- Add Native Subsystem and GUI [ ]

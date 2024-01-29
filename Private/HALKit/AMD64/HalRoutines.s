@@ -24,4 +24,3 @@ rt_wait_for_io:
 rt_get_current_context:
     mov %rbp, %rax
     ret
-

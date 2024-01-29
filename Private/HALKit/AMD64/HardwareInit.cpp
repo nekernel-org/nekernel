@@ -11,12 +11,10 @@
 
 // bugs = 0
 
-namespace hCore
-{
-    bool init_hal()
-    {
-        // TODO: Hardware Specific stuff.
+namespace hCore {
+bool init_hal() {
+  // TODO: Hardware Specific stuff.
 
-        return true;
-    }
+  return true;
 }
+}  // namespace hCore

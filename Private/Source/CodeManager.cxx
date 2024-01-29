@@ -14,7 +14,7 @@
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/ProcessManager.hpp>
 #include <NewKit/ErrorID.hpp>
-#include <NewKit/KHeap.hpp>
+#include <NewKit/KernelHeap.hpp>
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/String.hpp>
 

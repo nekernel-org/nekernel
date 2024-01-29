@@ -14,5 +14,3 @@ _fini:
 	push %rbp
 	movq %rsp, %rbp
 	/* gcc will nicely put the contents of crtbegin.o's .fini section here. */
-
-

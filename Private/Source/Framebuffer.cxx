@@ -9,31 +9,28 @@
 
 #include <KernelKit/Framebuffer.hpp>
 
-namespace hCore
-{
-    Framebuffer::Framebuffer(hCore::Ref<FramebufferContext*> &addr)
-            : m_FrameBufferAddr(addr), m_Colour(FramebufferColorKind::RGB32)
-    {}
+namespace hCore {
+Framebuffer::Framebuffer(hCore::Ref<FramebufferContext*>& addr)
+    : m_FrameBufferAddr(addr), m_Colour(FramebufferColorKind::RGB32) {}
 
-    Framebuffer::~Framebuffer() = default;
+Framebuffer::~Framebuffer() = default;
 
-    volatile UIntPtr* Framebuffer::operator[](const UIntPtr& width_and_height)
-    {
-        if (m_FrameBufferAddr)
-            return reinterpret_cast<volatile hCore::UIntPtr*>(m_FrameBufferAddr->m_Base + width_and_height);
+volatile UIntPtr* Framebuffer::operator[](const UIntPtr& width_and_height) {
+  if (m_FrameBufferAddr)
+    return reinterpret_cast<volatile hCore::UIntPtr*>(
+        m_FrameBufferAddr->m_Base + width_and_height);
 
-        return nullptr;
-    }
+  return nullptr;
+}
 
-    Ref<FramebufferContext*>& Framebuffer::Leak() { return m_FrameBufferAddr; } 
+Ref<FramebufferContext*>& Framebuffer::Leak() { return m_FrameBufferAddr; }
 
-    Framebuffer::operator bool() { return m_FrameBufferAddr; }
+Framebuffer::operator bool() { return m_FrameBufferAddr; }
 
-    const FramebufferColorKind& Framebuffer::Color(const FramebufferColorKind& colour)
-    {
-        if (colour != FramebufferColorKind::INVALID)
-            m_Colour = colour;
+const FramebufferColorKind& Framebuffer::Color(
+    const FramebufferColorKind& colour) {
+  if (colour != FramebufferColorKind::INVALID) m_Colour = colour;
 
-        return m_Colour;
-    }
-} // namespace hCore
+  return m_Colour;
+}
+}  // namespace hCore

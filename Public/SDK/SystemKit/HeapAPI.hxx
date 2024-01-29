@@ -18,51 +18,48 @@ class HMemoryException;
 
 typedef VoidPtr HHeapPtr;
 
-enum
-{
-    kHeapExpandable = 2,
-    kHeapNoExecute = 4,
-    kHeapShared = 6,
-    kHeapReadOnly = 8,
-    kHeapNoFlags = 0
+enum {
+  kHeapExpandable = 2,
+  kHeapNoExecute = 4,
+  kHeapShared = 6,
+  kHeapReadOnly = 8,
+  kHeapNoFlags = 0
 };
 
-class HHeap final
-{
-  private:
-    explicit HHeap();
+class HHeap final {
+ private:
+  explicit HHeap();
 
-  public:
-    ~HHeap();
+ public:
+  ~HHeap();
 
-  public:
-    HCORE_COPY_DEFAULT(HHeap);
+ public:
+  HCORE_COPY_DEFAULT(HHeap);
 
-  public:
-    static HHeap *Shared() noexcept;
+ public:
+  static HHeap *Shared() noexcept;
 
-  public:
-    void Delete(HHeapPtr me) noexcept;
-    SizeT Tell(HHeapPtr me) noexcept;
-    HHeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
+ public:
+  void Delete(HHeapPtr me) noexcept;
+  SizeT Tell(HHeapPtr me) noexcept;
+  HHeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
 };
 
-class HMemoryException final
-{
-  public:
-    HMemoryException() = default;
-    ~HMemoryException() = default;
+class HMemoryException final {
+ public:
+  HMemoryException() = default;
+  ~HMemoryException() = default;
 
-  public:
-    HCORE_COPY_DEFAULT(HMemoryException);
+ public:
+  HCORE_COPY_DEFAULT(HMemoryException);
 
-  public:
-    const char *Name();
-    const char *Reason();
+ public:
+  const char *Name();
+  const char *Reason();
 
-  private:
-    const char *mReason{"Memory error!"};
+ private:
+  const char *mReason{"Memory error!"};
 
-  private:
-    friend HHeap;
+ private:
+  friend HHeap;
 };

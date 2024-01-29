@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include <NewKit/KHeap.hpp>
+#include <NewKit/KernelHeap.hpp>
 
 typedef __SIZE_TYPE__ size_t; // gcc will complain about that
 

@@ -9,6 +9,4 @@
 
 #include <KernelKit/PCI/Database.hpp>
 
-namespace hCore
-{
-}
+namespace hCore {}

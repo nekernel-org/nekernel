@@ -18,38 +18,37 @@ using namespace hCore;
 
 /***********************************************************************************/
 
-extern "C" SharedObject *__LibMain(VoidPtr image)
-{
-    /***********************************************************************************/
-    /* Allocate new library to be added to the lookup table. 						   */
-    /***********************************************************************************/
+extern "C" SharedObject *__LibMain(VoidPtr image) {
+  /***********************************************************************************/
+  /* Allocate new library to be added to the lookup table.
+   */
+  /***********************************************************************************/
 
-    SharedObject *library = hcore_tls_new_class<SharedObject>();
+  SharedObject *library = hcore_tls_new_class<SharedObject>();
 
-    if (!library)
-    {
-        kcout << "__LibMain: Out of Memory!\n";
-        ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
+  if (!library) {
+    kcout << "__LibMain: Out of Memory!\n";
+    ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 
-        return nullptr;
-    }
+    return nullptr;
+  }
 
-    library->Mount(hcore_tls_new_class<SharedObject::SharedObjectTraits>());
+  library->Mount(hcore_tls_new_class<SharedObject::SharedObjectTraits>());
 
-    if (!library->Get())
-    {
-        kcout << "__LibMain: Out of Memory!\n";
-        ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
+  if (!library->Get()) {
+    kcout << "__LibMain: Out of Memory!\n";
+    ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 
-        return nullptr;
-    }
+    return nullptr;
+  }
 
-    library->Get()->fImageObject = ProcessManager::Shared().Leak().GetCurrent().Leak().Image;
-    library->Get()->fImageEntrypointOffset = library->Load<VoidPtr>(kPefStart);
+  library->Get()->fImageObject =
+      ProcessManager::Shared().Leak().GetCurrent().Leak().Image;
+  library->Get()->fImageEntrypointOffset = library->Load<VoidPtr>(kPefStart);
 
-    kcout << "__LibMain: Done allocating Shared Library...\n";
+  kcout << "__LibMain: Done allocating Shared Library...\n";
 
-    return library;
+  return library;
 }
 
 /***********************************************************************************/

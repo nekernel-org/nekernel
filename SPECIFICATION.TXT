@@ -7,18 +7,17 @@
 - Language: C++/C/Assembly (AMD64, X64000, X86S, ARM64)
 
 ===================================
-1: The hCore Microkernel
+1: The HCore Microkernel
 ===================================
 
-hCore mounts NewFS by default,
-a journal filesystem meant for GUI use.
+HCore mounts NewFS by default, a journal filesystem meant for GUI use.
 It makes use of a concept named 'Fork'
 It contains data about a specific 'Catalog'
 
 Programs are load using the PEF. PEF is a multiplatform container
 for executables/shared libraries. Dwarf is used for debugging.
 
-hCore has SMP in it's core with a preemptive multi-threaded scheduler.
+HCore has SMP in it's core with a preemptive multi-threaded scheduler.
 It also supports dynamic loading of symbols and has a rich driver system.
 
 ====================================

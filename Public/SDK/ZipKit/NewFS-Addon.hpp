@@ -16,4 +16,3 @@
 
 // NewFS catalog has password attached to it.
 #define kNewFSHasPassword 256
-

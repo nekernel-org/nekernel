@@ -10,53 +10,43 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/DriveManager.hpp>
 
-namespace hCore
-{
-DriveSelector::DriveSelector() : fDrive(nullptr)
-{
+namespace hCore {
+DriveSelector::DriveSelector() : fDrive(nullptr) {}
+
+DriveSelector::~DriveSelector() {
+  if (fDrive) {
+    this->Unmount();
+  }
 }
 
-DriveSelector::~DriveSelector()
-{
-    if (fDrive)
-    {
-        this->Unmount();
-    }
+DriveTraits &DriveSelector::GetMounted() {
+  MUST_PASS(fDrive != nullptr);
+  return *fDrive;
 }
 
-DriveTraits &DriveSelector::GetMounted()
-{
-    MUST_PASS(fDrive != nullptr);
-    return *fDrive;
+bool DriveSelector::Mount(DriveTraits *drive) {
+  if (drive && drive->fReady() && fDrive == nullptr) {
+    fDrive = drive;
+    fDrive->fMount();
+
+    kcout << "[Mount] drive: " << fDrive->fName << "\n";
+
+    return true;
+  }
+
+  return false;
 }
 
-bool DriveSelector::Mount(DriveTraits *drive)
-{
-    if (drive && drive->fReady() && fDrive == nullptr)
-    {
-        fDrive = drive;
-        fDrive->fMount();
+DriveTraits *DriveSelector::Unmount() {
+  if (!fDrive) return nullptr;
 
-        kcout << "[Mount] drive: " << fDrive->fName << "\n";
+  auto drivePointer = fDrive;
 
-        return true;
-    }
+  fDrive->fUnmount();
+  fDrive = nullptr;
 
-    return false;
+  kcout << "[Unmount] drive: " << drivePointer->fName << "\n";
+
+  return drivePointer;
 }
-
-DriveTraits *DriveSelector::Unmount()
-{
-    if (!fDrive)
-        return nullptr;
-
-    auto drivePointer = fDrive;
-
-    fDrive->fUnmount();
-    fDrive = nullptr;
-
-    kcout << "[Unmount] drive: " << drivePointer->fName << "\n";
-
-    return drivePointer;
-}
-} // namespace hCore
+}  // namespace hCore

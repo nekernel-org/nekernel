@@ -10,137 +10,114 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageManager.hpp>
 
-namespace hCore
-{
-    PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable, UIntPtr VirtAddr)
-            : m_Rw(Rw),
-              m_User(User),
-              m_ExecDisable(ExecDisable),
-              m_VirtAddr(VirtAddr),
-              m_Cache(false),
-              m_Shareable(false),
-              m_Wt(false),
-              m_Present(true),
-              m_Accessed(false)
-    {
-        // special case for the null region.
-        if (VirtAddr == 0)
-        {
-            m_Wt = false;
-            m_Rw = false;
-            m_Cache = false;
-            m_Shareable = false;
-        }
-    }
+namespace hCore {
+PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
+                       UIntPtr VirtAddr)
+    : m_Rw(Rw),
+      m_User(User),
+      m_ExecDisable(ExecDisable),
+      m_VirtAddr(VirtAddr),
+      m_Cache(false),
+      m_Shareable(false),
+      m_Wt(false),
+      m_Present(true),
+      m_Accessed(false) {
+  // special case for the null region.
+  if (VirtAddr == 0) {
+    m_Wt = false;
+    m_Rw = false;
+    m_Cache = false;
+    m_Shareable = false;
+  }
+}
 
-    PTEWrapper::~PTEWrapper()
-    {
-        PTE* raw = reinterpret_cast<PTE*>(m_VirtAddr);
+PTEWrapper::~PTEWrapper() {
+  PTE *raw = reinterpret_cast<PTE *>(m_VirtAddr);
 
-        MUST_PASS(raw);
-        MUST_PASS(!raw->Accessed);
+  MUST_PASS(raw);
+  MUST_PASS(!raw->Accessed);
 
-        if (raw->Present)
-            raw->Present = false;
-    }
+  if (raw->Present) raw->Present = false;
+}
 
-    void PTEWrapper::FlushTLB(Ref<PageManager> &pm)
-    {
-        pm.Leak().FlushTLB(this->m_VirtAddr);
-    }
+void PTEWrapper::FlushTLB(Ref<PageManager> &pm) {
+  pm.Leak().FlushTLB(this->m_VirtAddr);
+}
 
-    void PageManager::FlushTLB(UIntPtr VirtAddr)
-    {
-        if (VirtAddr == kBadAddress)
-            return;
+void PageManager::FlushTLB(UIntPtr VirtAddr) {
+  if (VirtAddr == kBadAddress) return;
 
-        flush_tlb(VirtAddr);
-    }
+  flush_tlb(VirtAddr);
+}
 
-    bool PTEWrapper::Reclaim()
-    {
-        if (!this->m_Present)
-        {
-            this->m_Present = true;
-            return true;
-        }
+bool PTEWrapper::Reclaim() {
+  if (!this->m_Present) {
+    this->m_Present = true;
+    return true;
+  }
 
-        return false;
-    }
+  return false;
+}
 
-    PTEWrapper *PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable)
-    {
-        PTEWrapper *PageTableEntry =
-                reinterpret_cast<PTEWrapper*>(hCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User));
+PTEWrapper *PageManager::Request(Boolean Rw, Boolean User,
+                                 Boolean ExecDisable) {
+  PTEWrapper *PageTableEntry = reinterpret_cast<PTEWrapper *>(
+      hCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User));
 
-        if (PageTableEntry == nullptr) {
-            kcout << "PTEWrapper : Page table is nullptr!, kernel_new_ptr failed!";
-            return nullptr;
-        }
+  if (PageTableEntry == nullptr) {
+    kcout << "PTEWrapper : Page table is nullptr!, kernel_new_ptr failed!";
+    return nullptr;
+  }
 
-        *PageTableEntry = PTEWrapper{Rw, User, ExecDisable, Detail::create_page_wrapper(Rw, User)};
-        return PageTableEntry;
-    }
+  *PageTableEntry =
+      PTEWrapper{Rw, User, ExecDisable, Detail::create_page_wrapper(Rw, User)};
+  return PageTableEntry;
+}
 
-    bool PageManager::Free(Ref<PTEWrapper*> &wrapper)
-    {
-        if (wrapper) {
-            if (!Detail::page_disable(wrapper->VirtualAddress()))
-                return false;
+bool PageManager::Free(Ref<PTEWrapper *> &wrapper) {
+  if (wrapper) {
+    if (!Detail::page_disable(wrapper->VirtualAddress())) return false;
 
-            this->FlushTLB(wrapper->VirtualAddress());
-            return true;
-        }
+    this->FlushTLB(wrapper->VirtualAddress());
+    return true;
+  }
 
-        return false;
-    }
+  return false;
+}
 
-    const UIntPtr &PTEWrapper::VirtualAddress()
-    {
-        return m_VirtAddr;
-    }
+const UIntPtr &PTEWrapper::VirtualAddress() { return m_VirtAddr; }
 
-    bool PTEWrapper::Shareable()
-    {
-        auto raw = reinterpret_cast<PTE*>(m_VirtAddr);
+bool PTEWrapper::Shareable() {
+  auto raw = reinterpret_cast<PTE *>(m_VirtAddr);
 
-        if (raw->Present)
-        {
-            m_Shareable = raw->Shared;
-            return m_Shareable;
-        }
-        else
-        {
-            kcout << "[PTEWrapper::Shareable] page is not present!";
-            return false;
-        }
-    }
+  if (raw->Present) {
+    m_Shareable = raw->Shared;
+    return m_Shareable;
+  } else {
+    kcout << "[PTEWrapper::Shareable] page is not present!";
+    return false;
+  }
+}
 
-    bool PTEWrapper::Present()
-    {
-        auto raw = reinterpret_cast<PTE*>(m_VirtAddr);
+bool PTEWrapper::Present() {
+  auto raw = reinterpret_cast<PTE *>(m_VirtAddr);
 
-        if (raw->Present)
-        {
-            m_Present = raw->Present;
-            return m_Present;
-        }
-        else
-        {
-            kcout << "[PTEWrapper::Present] page is not present!";
-            return false;
-        }
-    }
+  if (raw->Present) {
+    m_Present = raw->Present;
+    return m_Present;
+  } else {
+    kcout << "[PTEWrapper::Present] page is not present!";
+    return false;
+  }
+}
 
-    bool PTEWrapper::Access()
-    {
-        auto raw = reinterpret_cast<PTE*>(m_VirtAddr);
+bool PTEWrapper::Access() {
+  auto raw = reinterpret_cast<PTE *>(m_VirtAddr);
 
-        if (raw->Present)
-        {
-            m_Accessed = raw->Accessed;
-        }
+  if (raw->Present) {
+    m_Accessed = raw->Accessed;
+  }
 
-        return m_Accessed;
-    }
-} // namespace hCore
+  return m_Accessed;
+}
+}  // namespace hCore

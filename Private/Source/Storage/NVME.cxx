@@ -9,10 +9,6 @@
 
 #include <StorageKit/NVME.hpp>
 
-namespace hCore
-{
-    const char *NVMEDevice::Name() const
-    {
-        return ("NVMEDevice");
-    }
-} // namespace hCore
+namespace hCore {
+const char *NVMEDevice::Name() const { return ("NVMEDevice"); }
+}  // namespace hCore
