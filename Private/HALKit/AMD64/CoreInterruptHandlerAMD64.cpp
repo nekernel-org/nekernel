@@ -22,7 +22,7 @@ extern "C" void idt_handle_system_call(HCore::UIntPtr rsp) {
 extern "C" void idt_handle_gpf(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
-  HCore::kcout << HCore::StringBuilder::FromInt("sp{%}", rsp);
+  HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
       << "General Protection Fault, Caused by "
@@ -32,7 +32,7 @@ extern "C" void idt_handle_gpf(HCore::UIntPtr rsp) {
 }
 
 extern "C" void idt_handle_scheduler(HCore::UIntPtr rsp) {
-  HCore::kcout << HCore::StringBuilder::FromInt("sp{%}", rsp);
+  HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
       << "Will be scheduled back later "
@@ -45,7 +45,7 @@ extern "C" void idt_handle_scheduler(HCore::UIntPtr rsp) {
 }
 
 extern "C" void idt_handle_pf(HCore::UIntPtr rsp) {
-  HCore::kcout << HCore::StringBuilder::FromInt("sp{%}", rsp);
+  HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
@@ -57,7 +57,7 @@ extern "C" void idt_handle_pf(HCore::UIntPtr rsp) {
 }
 
 extern "C" void idt_handle_math(HCore::UIntPtr rsp) {
-  HCore::kcout << HCore::StringBuilder::FromInt("sp{%}", rsp);
+  HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 

@@ -17,7 +17,7 @@ inline EfiBootServices* BS = nullptr;
 
 namespace Detail {
 /**
-@brief Stop Execution of Bootloader.
+@brief Stop Execution of program.
 @param SystemTable EFI System Table.
 */
 Void Stop(EfiSystemTable* SystemTable) noexcept {

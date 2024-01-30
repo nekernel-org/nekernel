@@ -9,69 +9,44 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
-
 #include <ArchKit/Arch.hpp>
 #include <NewKit/Array.hpp>
+#include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore
-{
-template<SizeT Sz>
-class IOArray final
-{
-  public:
-    IOArray() = delete;
+namespace HCore {
+template <SizeT Sz>
+class IOArray final {
+ public:
+  IOArray() = delete;
 
-    IOArray(nullPtr) = delete;
+  IOArray(nullPtr) = delete;
 
-    explicit IOArray(Array <UShort, Sz> &ports) : m_Ports(ports) {}
-    ~IOArray() {}
+  explicit IOArray(Array<UShort, Sz> &ports) : m_Ports(ports) {}
+  ~IOArray() {}
 
-    IOArray &operator=(const IOArray &) = default;
+  IOArray &operator=(const IOArray &) = default;
 
-    IOArray(const IOArray &) = default;
+  IOArray(const IOArray &) = default;
 
-    operator bool() {
-        return !m_Ports.Empty();
-    }
+  operator bool() { return !m_Ports.Empty(); }
 
-  public:
-    template<typename T>
-    T In(SizeT index) {
-        switch (sizeof(T)) {
-#ifdef __x86_64__
-        case 4:
-            return HAL::in32(m_Ports[index].Leak());
-        case 2:
-            return HAL::in16(m_Ports[index].Leak());
-        case 1:
-            return HAL::in8(m_Ports[index].Leak());
-#endif
-        default:
-            return 0xFFFF;
-        }
-    }
+ public:
+  template <typename T>
+  T In(SizeT index);
 
-    template<typename T>
-    void Out(SizeT index, T value) {
-        switch (sizeof(T)) {
-#ifdef __x86_64__
-        case 4:
-            HAL::out32(m_Ports[index].Leak(), value);
-        case 2:
-            HAL::out16(m_Ports[index].Leak(), value);
-        case 1:
-            HAL::out8(m_Ports[index].Leak(), value);
-#endif
-        default:
-            break;
-        }
-    }
+  template <typename T>
+  void Out(SizeT index, T value);
 
-  private:
-    Array <UShort, Sz> m_Ports;
+ private:
+  Array<UShort, Sz> m_Ports;
 };
 
 using IOArray16 = IOArray<16>;
-} // namespace HCore
+}  // namespace HCore
+
+#ifdef __x86_64__
+#include <KernelKit/PCI/IO-Impl-AMD64.inl>
+#else
+#error Please provide platform specific code for the I/O
+#endif  // ifdef __x86_64__

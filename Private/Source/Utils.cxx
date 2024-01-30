@@ -119,7 +119,7 @@ Int rt_to_lower(Int character) {
   return character;
 }
 
-bool to_str(Char *str, Int limit, Int base) {
+bool rt_to_string(Char *str, Int limit, Int base) {
   if (limit == 0) return false;
 
   Int copy_limit = limit;

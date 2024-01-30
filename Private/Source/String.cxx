@@ -77,7 +77,7 @@ const char *StringBuilder::FromInt(const char *fmt, int i) {
 
   Char result[8];
 
-  if (!to_str(result, sizeof(int), i)) {
+  if (!rt_to_string(result, sizeof(int), i)) {
     return ("-1");
   }
 

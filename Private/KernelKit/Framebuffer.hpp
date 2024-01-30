@@ -7,8 +7,8 @@
  * 	========================================================
  */
 
-#ifndef _INC_FB_HPP__
-#define _INC_FB_HPP__
+#ifndef __INC_FB_HPP__
+#define __INC_FB_HPP__
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
@@ -56,4 +56,4 @@ namespace HCore
     };
 } // namespace HCore
 
-#endif /* ifndef _INC_FB_HPP__ */
+#endif /* ifndef __INC_FB_HPP__ */
