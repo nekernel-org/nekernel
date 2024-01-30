@@ -8,12 +8,12 @@ CCFLAGS=-c -ffreestanding -fno-rtti -fno-exceptions -std=c++20
 ASM=nasm
 ASMFLAGS=-f elf64
 
-.PHONY: build_zipkit
-build_zipkit:
+.PHONY: build-zipkit
+build-zipkit:
 	$(CC) -I../ -I../../../Private/ $(CCFLAGS) *.cxx
 
 .PHONY: all
-all: build_zipkit
+all: build-zipkit
 	@echo "Done."
 
 .PHONY: clean

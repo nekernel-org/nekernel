@@ -68,7 +68,7 @@ enum {
   kWhite,
 };
 
-#define BK_START_KERNEL (0x80000000)
+#define BK_START_KERNEL (0x8000000)
 
 HCore::SizeT BStrLen(const char *ptr);
 HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len);

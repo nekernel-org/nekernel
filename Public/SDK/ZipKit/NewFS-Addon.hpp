@@ -9,10 +9,10 @@
 
 #pragma once
 
-// TODO: integrate NewFS compression.
+/// TODO: integrate NewFS compression.
 
-// NewFS catalog is compressed.
+/// @brief NewFS catalog is compressed.
 #define kNewFSIsZip 255
 
-// NewFS catalog has password attached to it.
+/// @brief NewFS catalog has password attached to it.
 #define kNewFSHasPassword 256
