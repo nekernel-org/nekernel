@@ -58,21 +58,13 @@ UInt kCrcTbl[kCrcCnt] = {
     0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d};
 
-static Int crc_byte(Int crc, UChar byte) {
-  crc = (crc >> 8) ^
-        kCrcTbl[(byte) ^ (crc & 0x000000FF)];  // shift 8 bytes to the right
+/// @brief calculate CRC32 of series of byte.
+Int ke_calculate_crc32(const Char *p, Int len) noexcept {
+  UInt32 crc = 0xffffffff;
 
-  // XOR polynomial XOR the crc
-  // without the 2 highest bytes
-  return crc;
-}
+  while (len-- != 0) crc = kCrcTbl[((UInt8)crc ^ *(p++))] ^ (crc >> 8);
 
-Int ke_crc32(const Char *byte, Int len) noexcept {
-  Int checksum = 0;
-
-  for (UChar index = 1; index < len; ++index)
-    checksum = crc_byte(checksum, byte[index]);
-
-  return checksum;
+  // return (~crc); also works
+  return (crc ^ 0xffffffff);
 }
 }  // namespace hCore

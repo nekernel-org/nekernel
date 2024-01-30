@@ -15,7 +15,7 @@
 #define kCrcCnt (256)
 
 namespace hCore {
-Int ke_crc32(const Char* crc, Int len);
+Int ke_calculate_crc32(const Char* crc, Int len) noexcept;
 }  // namespace hCore
 
 #endif  // !__CRC32_H__

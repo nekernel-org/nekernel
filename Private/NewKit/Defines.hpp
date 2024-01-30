@@ -23,8 +23,7 @@
 #endif
 #endif
 
-namespace hCore
-{
+namespace hCore {
 using voidPtr = void *;
 using VoidPtr = void *;
 using nullPtr = decltype(nullptr);
@@ -67,25 +66,23 @@ using Void = void;
 
 using Lba = SSizeT;
 
-enum class Endian : UChar
-{
-    kLittle,
-    kBig
-};
+enum class Endian : UChar { kLittle, kBig };
 
-template <typename Args> Args &&forward(Args &arg)
-{
-    return static_cast<Args &&>(arg);
+template <typename Args>
+Args &&forward(Args &arg) {
+  return static_cast<Args &&>(arg);
 }
 
-template <typename Args> Args &&move(Args &&arg)
-{
-    return static_cast<Args &&>(arg);
+template <typename Args>
+Args &&move(Args &&arg) {
+  return static_cast<Args &&>(arg);
 }
-} // namespace hCore
+}  // namespace hCore
 
-#define DEDUCE_ENDIAN(address, value)                                                                                  \
-    (((reinterpret_cast<hCore::Char *>(address)[0]) == (value)) ? (hCore::Endian::kBig) : (hCore::Endian::kLittle))
+#define DEDUCE_ENDIAN(address, value)                         \
+  (((reinterpret_cast<hCore::Char *>(address)[0]) == (value)) \
+       ? (hCore::Endian::kBig)                                \
+       : (hCore::Endian::kLittle))
 
 #define Yes (true)
 #define No (false)

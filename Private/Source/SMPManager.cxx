@@ -121,9 +121,9 @@ bool SMPManager::Switch(HAL::StackFrame* stack) {
 }
 
 /**
- * Index hart
- * @param idx
- * @return
+ * Index Hardware thread
+ * @param idx the index
+ * @return the reference to the hardware thread.
  */
 Ref<ProcessorCore> SMPManager::operator[](const SizeT& idx) {
   return m_ThreadList[idx].Leak();

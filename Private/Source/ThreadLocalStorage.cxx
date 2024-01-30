@@ -10,6 +10,11 @@
 #include <KernelKit/ProcessManager.hpp>
 #include <KernelKit/ThreadLocalStorage.hxx>
 
+/***********************************************************************************/
+/// @file ThreadLocalStorage.cxx
+/// @brief TLS implementation in kernel.
+/***********************************************************************************/
+
 using namespace hCore;
 
 /**

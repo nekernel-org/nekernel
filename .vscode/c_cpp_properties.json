@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "name": "HCore",
+      "includePath": [
+        "${workspaceFolder}/Private/**",
+        "${workspaceFolder}/Private/NewBoot/*",
+        "${workspaceFolder}/Private/acpiSDK/source/include/*"
+      ],
+      "defines": ["__HCORE__", "__HAVE_HCORE_APIS__"],
+      "cStandard": "c17",
+      "cppStandard": "c++20",
+      "intelliSenseMode": "gcc-x64"
+    }
+  ],
+  "version": 4
+}

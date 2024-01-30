@@ -7,4 +7,5 @@
     - Load kernel into memory [  ]
     - Jump to kernel [  ]
 - Context switch x87/SSE/AVX registers [ ]
+- Framebuffer and ATA support [ ]
 - Native Subsystem and GUI [ ]
