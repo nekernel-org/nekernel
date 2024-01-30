@@ -36,7 +36,7 @@ struct ExecHeader final {
 #define kMagPE32 0x010b
 #define kMagPE64 0x020b
 
-struct ExecOptionalHeader {
+struct ExecOptionalHeader final {
   U16 mMagic;  // 0x010b - PE32, 0x020b - PE32+ (64 bit)
   U8 mMajorLinkerVersion;
   U8 mMinorLinkerVersion;

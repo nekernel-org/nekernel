@@ -9,8 +9,8 @@
 
 /*
  *
- * @file Processor.cxx
- * @brief Processor Specific Functions.
+ * @file Platform.cxx
+ * @brief Platform Specific Functions.
  *
  */
 

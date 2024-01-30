@@ -8,8 +8,9 @@
  */
 
 #include <BootKit/BootKit.hxx>
+#include <EFIKit/EFILib.hxx>
 
-constexpr HCore::UInt32 kVGABaseAddress = 0xb8000;
+#include "EFIKit/EFI.hxx"
 
 HCore::SizeT BStrLen(const char *ptr) {
   long long int cnt = 0;
@@ -40,29 +41,18 @@ HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len) {
 /**
 @brief puts wrapper over VGA.
 */
-void BKTextWriter::WriteString(const char *str, unsigned char forecolour,
-                               unsigned char backcolour, int x, int y) {
+void BTextWriter::WriteString(const CharacterType *str) {
   if (*str == 0 || !str) return;
 
-  for (SizeT idx = 0; idx < BStrLen(str); ++idx) {
-    this->WriteCharacter(str[idx], forecolour, backcolour, x, y);
-    ++x;
-  }
+  ST->ConOut->OutputString(ST->ConOut, str);
 }
 
 /**
 @brief putc wrapper over VGA.
 */
-void BKTextWriter::WriteCharacter(char c, unsigned char forecolour,
-                                  unsigned char backcolour, int x, int y) {
-  UInt16 attrib = (backcolour << 4) | (forecolour & 0x0F);
-
-  // Video Graphics Array
-  // Reads at kVGABaseAddress
-  // Decodes UInt16, gets attributes (back colour, fore colour)
-  // Gets character, send it to video display with according colour in the
-  // registry.
-
-  fWhere = (volatile UInt16 *)kVGABaseAddress + (y * 80 + x);
-  *fWhere = c | (attrib << 8);
+void BTextWriter::WriteCharacter(CharacterType c) {
+  EfiCharType str[2];
+  str[0] = c;
+  str[1] = 0;
+  ST->ConOut->OutputString(ST->ConOut, str);
 }

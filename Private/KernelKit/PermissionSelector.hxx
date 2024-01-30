@@ -14,47 +14,43 @@
 #include <NewKit/Defines.hpp>
 
 // kernel mode user.
-#define kMachineUser "machine"
+#define kMachineUser "Machine"
 
 // user mode users.
-#define kSuperUser "super"
-#define kGuestUser "guest"
+#define kSuperUser "Admin"
+#define kGuestUser "Guest"
 
 // hash 'user@host:password' -> base64 encoded data
 // use this data to then fetch specific data.
 
-namespace HCore
-{
-    enum class RingKind
-    {
-        kRingUser = 3,
-        kRingDriver = 2,
-        kRingKernel = 0,
-        kUnknown = -1,
-    };
+namespace HCore {
+enum class RingKind {
+  kRingUser = 3,
+  kRingDriver = 2,
+  kRingKernel = 0,
+  kUnknown = -1,
+};
 
-    class PermissionSelector final
-    {
-    private:
-        explicit PermissionSelector(const Int32& sel);
-        explicit PermissionSelector(const RingKind& kind);
+class PermissionSelector final {
+ private:
+  explicit PermissionSelector(const Int32& sel);
+  explicit PermissionSelector(const RingKind& kind);
 
-        ~PermissionSelector();
+  ~PermissionSelector();
 
-    public:
-        HCORE_COPY_DEFAULT(PermissionSelector)
+ public:
+  HCORE_COPY_DEFAULT(PermissionSelector)
 
-    public:
-        bool operator==(const PermissionSelector& lhs);
-        bool operator!=(const PermissionSelector& lhs);
+ public:
+  bool operator==(const PermissionSelector& lhs);
+  bool operator!=(const PermissionSelector& lhs);
 
-    public:
-        const RingKind& Ring() noexcept;
+ public:
+  const RingKind& Ring() noexcept;
 
-    private:
-        RingKind fRing;
-
-    };
-}
+ private:
+  RingKind fRing;
+};
+}  // namespace HCore
 
 #endif /* ifndef _INC_PERMISSION_SEL_HPP */

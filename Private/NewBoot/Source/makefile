@@ -12,8 +12,8 @@ FLAG_GNU=-fshort-wchar -fPIC -D__DBG__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I.
 invalid-recipe:
 	@echo "invalid-recipe: Use make arch-<arch> all instead."
 
-.PHONY: arch-amd64
-arch-amd64:
+.PHONY: bootloader-amd64
+bootloader-amd64:
 	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx
 	$(LD_GNU) *.o -e efi_main -filealign:16 -shared --subsystem=10 -ffreestanding -o HCoreLdr.exe
 	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI

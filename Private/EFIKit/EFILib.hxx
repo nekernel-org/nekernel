@@ -15,12 +15,12 @@
 inline EfiSystemTable* ST = nullptr;
 inline EfiBootServices* BS = nullptr;
 
-namespace Detail {
+namespace EFI {
 /**
 @brief Stop Execution of program.
 @param SystemTable EFI System Table.
 */
-Void Stop(EfiSystemTable* SystemTable) noexcept {
+inline Void Stop(EfiSystemTable* SystemTable) noexcept {
   while (true) {
     rt_cli();
     rt_halt();
@@ -43,7 +43,7 @@ inline void KeRuntimeStop(const EfiCharType* File,
   ST->ConOut->OutputString(ST->ConOut, Reason);
   ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
 
-  Detail::Stop(ST);
+  EFI::Stop(ST);
 }
 
 #ifdef __BOOTLOADER__

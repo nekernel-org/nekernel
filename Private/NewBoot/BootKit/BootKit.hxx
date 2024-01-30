@@ -18,7 +18,8 @@
 
 using namespace HCore;
 
-typedef void *PEFImage;
+typedef VoidPtr PEFImagePtr;
+typedef VoidPtr PEImagePtr;
 
 enum {
   kSegmentCode = 2,
@@ -26,49 +27,26 @@ enum {
   kSegmentBss = 6,
 };
 
+typedef wchar_t CharacterType;
+
 /**
  * @brief BootKit Text Writer class
  * Writes to VGA.
  */
-class BKTextWriter final {
-  volatile UInt16 *fWhere{nullptr};
+class BTextWriter final {
+ public:
+  void WriteString(const CharacterType *str);
+
+  void WriteCharacter(CharacterType c);
 
  public:
-  void WriteString(const char *c, unsigned char forecolour,
-                   unsigned char backcolour, int x, int y);
-
-  void WriteCharacter(char c, unsigned char forecolour,
-                      unsigned char backcolour, int x, int y);
+  BTextWriter() = default;
+  ~BTextWriter() = default;
 
  public:
-  BKTextWriter() = default;
-  ~BKTextWriter() = default;
-
- public:
-  BKTextWriter &operator=(const BKTextWriter &) = default;
-  BKTextWriter(const BKTextWriter &) = default;
+  BTextWriter &operator=(const BTextWriter &) = default;
+  BTextWriter(const BTextWriter &) = default;
 };
-
-enum {
-  kBlack,
-  kBlue,
-  kGreen,
-  kCyan,
-  kRed,
-  kMagenta,
-  kBrown,
-  kLightGray,
-  kDarkGray,
-  kLightBlue,
-  kLightGreen,
-  kLightCyan,
-  kLightRed,
-  kLightMagenta,
-  kYellow,
-  kWhite,
-};
-
-#define BK_START_KERNEL (0x8000000)
 
 HCore::SizeT BStrLen(const char *ptr);
 HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len);
