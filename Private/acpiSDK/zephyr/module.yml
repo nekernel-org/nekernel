@@ -1,4 +1,0 @@
-name: acpica
-build:
-  cmake-ext: True
-  kconfig-ext: True
