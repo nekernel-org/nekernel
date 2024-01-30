@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #ifndef _INC_LOADER_PEF_HPP
 #define _INC_LOADER_PEF_HPP
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <KernelKit/Loader.hpp>
 #include <NewKit/Defines.hpp>
 
@@ -24,7 +24,7 @@
 
 // @brief Preferred Executable Format, a format designed for any computer.
 
-namespace hCore
+namespace HCore
 {
 enum
 {
@@ -79,7 +79,7 @@ enum
     kPefZero = 0xE,
     kPefLinkerID = 0x1,
 };
-} // namespace hCore
+} // namespace HCore
 
 #define kPefExt ".cm"
 #define kPefDylibExt ".dlib"
@@ -87,7 +87,7 @@ enum
 #define kPefObjectExt ".obj"
 #define kPefDebugExt ".cmdbg"
 
-// hCore System Binary Interface.
+// HCore System Binary Interface.
 #define kPefAbi (0xDEAD2)
 
 #define kPefStart "__start"

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-namespace hCore {
+namespace HCore {
 class Url final {
  public:
   explicit Url(StringView &strUrl);
@@ -27,6 +27,6 @@ class Url final {
   Ref<StringView> m_urlView;
 };
 
-}  // namespace hCore
+}  // namespace HCore
 
 #endif /* ifndef _INC_URL_HPP__ */

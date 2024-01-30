@@ -2,7 +2,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore
+namespace HCore
 {
     Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len);
     Int rt_move_memory(const voidPtr src, voidPtr dst, Size len);
@@ -29,4 +29,4 @@ namespace hCore
     Int to_lower(Int c);
     voidPtr string_in_string(const char* in, const char* needle);
     char* string_from_char(char* str, const char chr);
-} // namespace hCore
+} // namespace HCore

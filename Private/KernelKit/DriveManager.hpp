@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <KernelKit/Device.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
@@ -17,7 +17,7 @@
 #define kDriveInvalidID -1
 #define kDriveNameLen 32
 
-namespace hCore {
+namespace HCore {
 enum {
   kInvalidDrive = -1,
   kBlockDevice = 0xAD,
@@ -77,4 +77,4 @@ class DriveSelector final {
  private:
   DriveTraits *fDrive;
 };
-}  // namespace hCore
+}  // namespace HCore

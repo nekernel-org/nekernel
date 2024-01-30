@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 
 // bugs = 0
 
-using namespace hCore;
+using namespace HCore;
 
 Int32 HardwareTimerInterface::Wait() noexcept { return H_UNIMPLEMENTED; }
 

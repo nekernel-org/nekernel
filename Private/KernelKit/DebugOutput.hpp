@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Stream.hpp>
 
-namespace hCore
+namespace HCore
 {
     // @brief Emulates a VT100 terminal.
     class TerminalDevice final : public DeviceInterface<const char*>
@@ -37,4 +37,4 @@ namespace hCore
     }
 
     extern TerminalDevice kcout;
-} // namespace hCore
+} // namespace HCore

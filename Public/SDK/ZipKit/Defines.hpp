@@ -12,6 +12,6 @@
 #include <NewKit/Defines.hpp>
 #include <SystemKit/SystemKit.hxx>
 
-using namespace hCore;
+using namespace HCore;
 
 #define ZIPKIT_VERSION "1.0.1"

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	NewKit
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #include <NetworkKit/IP.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace hCore {
+namespace HCore {
 char* RawIPAddress::Address() { return m_Addr; }
 
 RawIPAddress::RawIPAddress(char bytes[4]) { rt_copy_memory(bytes, m_Addr, 4); }
@@ -34,7 +34,8 @@ bool RawIPAddress::operator!=(const RawIPAddress& ipv4) {
 char& RawIPAddress::operator[](const Size& index) {
   kcout << "[RawIPAddress::operator[]] Fetching Index...\r\n";
 
-  if (index > 4) panic(RUNTIME_CHECK_EXPRESSION);
+  static char IP_PLACEHOLDER = '0';
+  if (index > 4) return IP_PLACEHOLDER;
 
   return m_Addr[index];
 }
@@ -46,7 +47,8 @@ RawIPAddress6::RawIPAddress6(char bytes[8]) {
 char& RawIPAddress6::operator[](const Size& index) {
   kcout << "[RawIPAddress6::operator[]] Fetching Index...\r\n";
 
-  if (index > 8) panic(RUNTIME_CHECK_EXPRESSION);
+  static char IP_PLACEHOLDER = '0';
+  if (index > 8) return IP_PLACEHOLDER;
 
   return m_Addr[index];
 }
@@ -92,4 +94,4 @@ bool IPFactory::IpCheckVersion4(const char* ip) {
 
   return true;
 }
-}  // namespace hCore
+}  // namespace HCore

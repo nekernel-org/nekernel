@@ -1,7 +1,7 @@
 /*
 *	========================================================
 *
-*	hCore
+*	HCore
 * 	Copyright 2024 Mahrouss Logic, all rights reserved.
 *
 * 	========================================================
@@ -15,7 +15,7 @@
 #include <StorageKit/PRDT.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-namespace hCore
+namespace HCore
 {
     enum class PATAType
     {
@@ -101,4 +101,4 @@ namespace hCore
         }
 
     };
-} // namespace hCore
+} // namespace HCore

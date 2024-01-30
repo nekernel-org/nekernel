@@ -1,7 +1,7 @@
 ;; /*
 ;; *	========================================================
 ;; *
-;; *	hCore
+;; *	HCore
 ;; * 	Copyright 2024 Mahrouss Logic, all rights reserved.
 ;; *
 ;; * 	========================================================
@@ -13,7 +13,7 @@
 ;; //////////////////////////////////////////////////// ;;
 
 __rt_debug_record_table:
-    db "DebugMgr/hCore", 0xa, 0xd, 0
+    db "DebugMgr/HCore", 0xa, 0xd, 0
     ;; User Data goes there
     resb 64
 __rt_debug_int_3:

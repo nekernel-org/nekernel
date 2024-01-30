@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -16,7 +16,7 @@
 #define IsActiveLow(flag) (flag & 2)
 #define IsLevelTriggered(flag) (flag & 8)
 
-namespace hCore::HAL {
+namespace HCore::HAL {
 extern "C" UChar in8(UInt16 port);
 extern "C" UShort in16(UInt16 port);
 extern "C" UInt in32(UInt16 port);
@@ -112,12 +112,12 @@ class IDTLoader final {
 };
 
 void system_get_cores(voidPtr rsdPtr);
-}  // namespace hCore::HAL
+}  // namespace HCore::HAL
 
-extern "C" void idt_handle_system_call(hCore::UIntPtr rsp);
-extern "C" void idt_handle_generic(hCore::UIntPtr rsp);
-extern "C" void load_idt(hCore::voidPtr ptr);
-extern "C" void load_gdt(hCore::voidPtr ptr);
-extern "C" void idt_handle_gpf(hCore::UIntPtr rsp);
-extern "C" void idt_handle_math(hCore::UIntPtr rsp);
-extern "C" void idt_handle_pf(hCore::UIntPtr rsp);
+extern "C" void idt_handle_system_call(HCore::UIntPtr rsp);
+extern "C" void idt_handle_generic(HCore::UIntPtr rsp);
+extern "C" void load_idt(HCore::voidPtr ptr);
+extern "C" void load_gdt(HCore::voidPtr ptr);
+extern "C" void idt_handle_gpf(HCore::UIntPtr rsp);
+extern "C" void idt_handle_math(HCore::UIntPtr rsp);
+extern "C" void idt_handle_pf(HCore::UIntPtr rsp);

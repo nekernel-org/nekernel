@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 #include <KernelKit/Device.hpp>
 #include <NewKit/OwnPtr.hpp>
 
-namespace hCore
+namespace HCore
 {
     class NVMEPacket;
 
@@ -45,4 +45,4 @@ namespace hCore
 
 
     };
-} // namespace hCore
+} // namespace HCore

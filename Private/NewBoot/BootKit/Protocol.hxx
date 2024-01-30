@@ -18,7 +18,7 @@
 #define kBaseHandoverStruct 0x80000000
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
-namespace hCore::HEL {
+namespace HCore::HEL {
 /**
     @brief the kind of executable we're loading.
 */
@@ -66,4 +66,4 @@ struct HandoverInformationHeader {
     @brief Handover Jump Proc
 */
 typedef UInt64 (*HandoverProc)(HandoverInformationHeader* pHandover);
-}  // namespace hCore::HEL
+}  // namespace HCore::HEL

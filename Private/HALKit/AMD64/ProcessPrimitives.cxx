@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 
 #include "NewKit/Defines.hpp"
 
-using namespace hCore;
+using namespace HCore;
 
 Void Process::AssignStart(UIntPtr &imageStart) noexcept {
   if (imageStart == 0) this->Crash();

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore 	Date Added: 20/02/2023
+ *	HCore 	Date Added: 20/02/2023
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -15,7 +15,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore {
+namespace HCore {
 class ACPIManager {
  public:
   explicit ACPIManager(voidPtr rsdptr);
@@ -44,6 +44,6 @@ class ACPIManager {
   SSizeT m_Entries;  // number of entries, -1 tells that no invalid entries were
                      // found.
 };
-}  // namespace hCore
+}  // namespace HCore
 
 #endif  // !_INC_ACPI_H

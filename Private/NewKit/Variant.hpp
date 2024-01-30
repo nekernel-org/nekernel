@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-namespace hCore
+namespace HCore
 {
     class Variant final
     {
@@ -46,4 +46,4 @@ namespace hCore
         VariantKind m_Kind{VariantKind::kUndefined};
 
     };
-} // namespace hCore
+} // namespace HCore

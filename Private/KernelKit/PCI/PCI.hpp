@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -17,7 +17,7 @@
 #define PCI_FUNC_COUNT (8)
 #define PCI_BUS_COUNT (255)
 
-namespace hCore::PCI {
+namespace HCore::PCI {
 // model
     struct DeviceHeader {
         UInt16 VendorId;
@@ -53,4 +53,4 @@ namespace hCore::PCI {
         Detail::BAR BAR4;
         Detail::BAR BAR5;
     };
-} // namespace hCore::PCI
+} // namespace HCore::PCI

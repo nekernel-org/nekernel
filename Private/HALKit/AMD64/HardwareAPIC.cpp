@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 
 // bugs = 0
 
-namespace hCore {
+namespace HCore {
 // @brief wakes up thread.
 // wakes up thread from hang.
 void rt_wakeup_thread(HAL::StackFrame* stack) {
@@ -39,4 +39,4 @@ void rt_hang_thread(HAL::StackFrame* stack) {
 
   __asm__ volatile("sti");
 }
-}  // namespace hCore
+}  // namespace HCore

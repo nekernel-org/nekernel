@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -23,7 +23,7 @@
 #define kPoolMaxSz 4096
 #define kPoolMag   0x5500A1
 
-namespace hCore
+namespace HCore
 {
     enum
     {
@@ -44,4 +44,4 @@ namespace hCore
     VoidPtr pool_new_ptr(Int32 flags);
     Int32 pool_free_ptr(voidPtr pointer);
     Boolean pool_ptr_exists(UIntPtr thePool, UIntPtr thePtr, SizeT theLimit);
-} // namespace hCore
+} // namespace HCore

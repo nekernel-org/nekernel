@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,10 +11,10 @@
 
 // bugs = 0
 
-namespace hCore {
+namespace HCore {
 bool init_hal() {
   // TODO: Hardware Specific stuff.
 
   return true;
 }
-}  // namespace hCore
+}  // namespace HCore

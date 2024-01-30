@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,11 +10,11 @@
 #include <ArchKit/Arch.hpp>
 #include <NewKit/Array.hpp>
 
-hCore::Array<void (*)(hCore::Int32 id, hCore::HAL::StackFrame *), kMaxSyscalls>
+HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *), kMaxSyscalls>
     kSyscalls;
 
-extern "C" void rt_syscall_handle(hCore::HAL::StackFrame *stack) {
-  for (hCore::SizeT index = 0UL; index < kMaxSyscalls; ++index) {
+extern "C" void rt_syscall_handle(HCore::HAL::StackFrame *stack) {
+  for (HCore::SizeT index = 0UL; index < kMaxSyscalls; ++index) {
     (kSyscalls[index].Leak().Leak())(stack->ID, stack);
   }
 }

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -15,7 +15,7 @@
 /// @note if you want to look at kernel allocs, please look for KHeap.cxx
 /// bugs: 0
 
-namespace hCore {
+namespace HCore {
 class HeapManager final {
  public:
   static SizeT& GetCount() { return s_NumPools; }
@@ -185,4 +185,4 @@ Boolean pool_ptr_exists(UIntPtr thePool, UIntPtr thePtr, SizeT theLimit) {
 
   return ((thePool) < (thePtr) < (theLimit));
 }
-}  // namespace hCore
+}  // namespace HCore

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,7 +9,7 @@
 
 #include <NewKit/Json.hpp>
 
-using namespace hCore;
+using namespace HCore;
 
 /// @brief Undefined object, is null in length.
-INIT(hCore::JsonType::kUndefined, hCore::JsonType);
+INIT(HCore::JsonType::kUndefined, HCore::JsonType);

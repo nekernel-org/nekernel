@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,11 +10,11 @@
 #pragma once
 
 #include <ArchKit/Arch.hpp>
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 
 #include <NewKit/ErrorID.hpp>
 
-namespace hCore
+namespace HCore
 {
 class HardwareTimer;
 class HardwareTimerInterface;
@@ -65,4 +65,4 @@ inline Int64 Milliseconds(Int64 time)
 
     return 1000 / Seconds(time);
 }
-} // namespace hCore
+} // namespace HCore

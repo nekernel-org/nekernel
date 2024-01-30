@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,7 +9,7 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/CxxAbi.hpp>
-#include <NewKit/Panic.hpp>
+#include <NewKit/RuntimeCheck.hpp>
 
 #ifdef __GNUC__
 
@@ -18,13 +18,11 @@ void *__dso_handle;
 atexit_func_entry_t __atexit_funcs[DSO_MAX_OBJECTS];
 uarch_t __atexit_func_count;
 
-extern "C" void __cxa_pure_virtual() {
-  hCore::kcout << "[__cxa_pure_virtual] Placeholder\n";
-}
+extern "C" void __cxa_pure_virtual() { HCore::kcout << "[C++] Placeholder\n"; }
 
 extern "C" void __stack_chk_fail() {
-  hCore::kcout << "[__stack_chk_fail] Buffer overflow detected\n";
-  hCore::panic(RUNTIME_CHECK_POINTER);
+  HCore::kcout << "[HCoreKrnl] Buffer overflow detected\n";
+  HCore::ke_stop(RUNTIME_CHECK_POINTER);
 }
 
 extern "C" int __cxa_atexit(void (*f)(void *), void *arg, void *dso) {

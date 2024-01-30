@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	NewKit
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 // network devices implementation.
 // PPPNetworkService, TCPNetworkDevice, UDPNetworkService
 
-namespace hCore {
+namespace HCore {
 NetworkDevice::NetworkDevice(void (*out)(NetworkDeviceCommand),
                              void (*in)(NetworkDeviceCommand),
                              void (*on_cleanup)(void))
@@ -29,4 +29,4 @@ NetworkDevice::~NetworkDevice() {
 
   if (fCleanup) fCleanup();
 }
-}  // namespace hCore
+}  // namespace HCore

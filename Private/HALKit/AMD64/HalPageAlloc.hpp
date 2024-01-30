@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -21,15 +21,15 @@
 
 #define kPagePtrAddress 0x0900000
 
-extern "C" void flush_tlb(hCore::UIntPtr VirtualAddr);
-extern "C" void write_cr3(hCore::UIntPtr pde);
-extern "C" void write_cr0(hCore::UIntPtr bit);
+extern "C" void flush_tlb(HCore::UIntPtr VirtualAddr);
+extern "C" void write_cr3(HCore::UIntPtr pde);
+extern "C" void write_cr0(HCore::UIntPtr bit);
 
-extern "C" hCore::UIntPtr read_cr0();
-extern "C" hCore::UIntPtr read_cr2();
-extern "C" hCore::UIntPtr read_cr3();
+extern "C" HCore::UIntPtr read_cr0();
+extern "C" HCore::UIntPtr read_cr2();
+extern "C" HCore::UIntPtr read_cr3();
 
-namespace hCore::HAL {
+namespace HCore::HAL {
 struct PageTable64 {
   bool Present : 1;
   bool Rw : 1;
@@ -37,13 +37,13 @@ struct PageTable64 {
   bool Wt : 1;
   bool Cache : 1;
   bool Accessed : 1;
-  hCore::Int32 Reserved : 6;
-  hCore::UIntPtr PhysicalAddress : 36;
-  hCore::Int32 Reserved1 : 15;
+  HCore::Int32 Reserved : 6;
+  HCore::UIntPtr PhysicalAddress : 36;
+  HCore::Int32 Reserved1 : 15;
   bool ExecDisable : 1;
 };
 
 PageTable64 *hal_alloc_page(SizeT sz, Boolean rw, Boolean user);
 
 UIntPtr hal_create_page(Boolean rw, Boolean user);
-}  // namespace hCore::HAL
+}  // namespace HCore::HAL

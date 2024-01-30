@@ -2,7 +2,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,9 +11,9 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/Panic.hpp>
+#include <NewKit/RuntimeCheck.hpp>
 
-namespace hCore
+namespace HCore
 {
     template <typename T>
     class Ref final
@@ -85,4 +85,4 @@ namespace hCore
         Ref<T> m_Ref{nullptr};
         
     };
-} // namespace hCore
+} // namespace HCore

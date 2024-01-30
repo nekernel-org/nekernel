@@ -2,7 +2,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,16 +12,16 @@
 
 // last-rev: 30/01/24
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Stream.hpp>
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace hCore {
+namespace HCore {
 class JsonType final {
  public:
-  explicit JsonType() : hCore::JsonType(1, 1) {}
+  explicit JsonType() : HCore::JsonType(1, 1) {}
 
   explicit JsonType(SizeT lhsLen, SizeT rhsLen)
       : fKey(lhsLen), fValue(rhsLen) {}
@@ -86,4 +86,4 @@ struct JsonStreamTraits final {
 };
 
 using JsonStream = Stream<JsonStreamTraits, JsonType>;
-}  // namespace hCore
+}  // namespace HCore

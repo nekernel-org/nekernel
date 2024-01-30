@@ -18,7 +18,7 @@
 #include <NewKit/Defines.hpp>
 #include <cstdint>
 
-using namespace hCore;
+using namespace HCore;
 
 // Forwar decls
 

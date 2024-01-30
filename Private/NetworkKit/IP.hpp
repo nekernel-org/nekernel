@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -14,7 +14,7 @@
 #include <NewKit/String.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore
+namespace HCore
 {
 class RawIPAddress6;
 class RawIPAddress;
@@ -84,4 +84,4 @@ class IPFactory final
     static bool IpCheckVersion4(const char *ip);
 
 };
-} // namespace hCore
+} // namespace HCore

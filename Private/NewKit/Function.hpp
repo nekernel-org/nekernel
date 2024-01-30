@@ -3,7 +3,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore
+namespace HCore
 {
     template <typename T, typename... Args>
     class Function final
@@ -44,6 +44,6 @@ namespace hCore
         T (*m_Fn)(Args... args);
 
     };
-} // namespace hCore
+} // namespace HCore
 
 #endif // !_INC_FUNCTION_HPP__

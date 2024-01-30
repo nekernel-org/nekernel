@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,13 +12,13 @@
 #include <NewKit/PageAllocator.hpp>
 
 // empty for now.
-namespace hCore::Detail {
+namespace HCore::Detail {
 UIntPtr create_page_wrapper(Boolean rw, Boolean user) {
   auto addr = HAL::hal_create_page(rw, user);
 
   if (addr == kBadAddress) {
     kcout << "[create_page_wrapper] kBadAddress returned\n";
-    panic(RUNTIME_CHECK_POINTER);
+    ke_stop(RUNTIME_CHECK_POINTER);
   }
 
   return addr;
@@ -47,4 +47,4 @@ bool page_disable(UIntPtr VirtualAddr) {
 
   return false;
 }
-}  // namespace hCore::Detail
+}  // namespace HCore::Detail

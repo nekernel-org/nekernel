@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -21,7 +21,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace hCore
+namespace HCore
 {
 //! @brief Process identifier.
 typedef Int64 ProcessID;
@@ -124,7 +124,7 @@ class Process final
     void AssignStart(UIntPtr &imageStart) noexcept;
 
   public:
-    Char Name[kProcessLen] = {"hCore Process"};
+    Char Name[kProcessLen] = {"HCore Process"};
     ProcessSubsystem SubSystem;
     ProcessSelector Selector;
     HAL::StackFrame *StackFrame{nullptr};
@@ -228,7 +228,7 @@ class ProcessHelper final
 };
 
 const Int32 &rt_get_exit_code() noexcept;
-} // namespace hCore
+} // namespace HCore
 
 #include <KernelKit/ThreadLocalStorage.hxx>
 

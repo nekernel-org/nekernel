@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #pragma once
 
 #include <KernelKit/DriveManager.hpp>
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Defines.hpp>
 
 #define kInvalidFork -1
@@ -33,23 +33,23 @@ enum
 
 struct NewBootBlock
 {
-    hCore::Char Ident[kIdentLen];
+    HCore::Char Ident[kIdentLen];
 
-    hCore::Char Kernel[kNameLen];
-    hCore::Char GUI[kNameLen];
+    HCore::Char Kernel[kNameLen];
+    HCore::Char GUI[kNameLen];
 
-    hCore::Int64 NumParts;
-    hCore::Int64 FreeSectors;
-    hCore::Int64 SectorCount;
-    hCore::Int64 SectorSz;
+    HCore::Int64 NumParts;
+    HCore::Int64 FreeSectors;
+    HCore::Int64 SectorCount;
+    HCore::Int64 SectorSz;
 
-    hCore::Int64 DiskSize;
-    hCore::Int32 DiskKind;
+    HCore::Int64 DiskSize;
+    HCore::Int32 DiskKind;
 
-    hCore::Lba FirstPartBlock;
-    hCore::Lba LastPartBlock;
+    HCore::Lba FirstPartBlock;
+    HCore::Lba LastPartBlock;
 
-    hCore::Char Pad[kPadLen];
+    HCore::Char Pad[kPadLen];
 };
 
 #define kFlagDeleted     0xF0
@@ -62,31 +62,31 @@ struct NewBootBlock
 
 struct NewCatalog
 {
-    hCore::Char Name[kNameLen];
+    HCore::Char Name[kNameLen];
 
-    hCore::Int32 Flags;
-    hCore::Int32 Kind;
+    HCore::Int32 Flags;
+    HCore::Int32 Kind;
 
-    hCore::Lba FirstFork;
-    hCore::Lba LastFork;
+    HCore::Lba FirstFork;
+    HCore::Lba LastFork;
 };
 
 struct NewFork
 {
-    hCore::Int32 Flags;
-    hCore::Int32 Kind;
+    HCore::Int32 Flags;
+    HCore::Int32 Kind;
 
-    hCore::Int64 ID;
+    HCore::Int64 ID;
 
-    hCore::Int64 ResourceId;
-    hCore::Int32 ResourceKind;
-    hCore::Int32 ResourceFlags;
+    HCore::Int64 ResourceId;
+    HCore::Int32 ResourceKind;
+    HCore::Int32 ResourceFlags;
 
-    hCore::Lba DataOffset;
-    hCore::SizeT DataSize;
+    HCore::Lba DataOffset;
+    HCore::SizeT DataSize;
     
-    hCore::Lba NextSibling;
-    hCore::Lba PreviousSibling;
+    HCore::Lba NextSibling;
+    HCore::Lba PreviousSibling;
 };
 
 #define kResourceTypeDialog 10
@@ -98,24 +98,24 @@ struct NewFork
 
 struct NewPartitionBlock
 {
-    hCore::Char PartitionName[kPartLen];
-    hCore::Char JsonPath[kConfigLen];
+    HCore::Char PartitionName[kPartLen];
+    HCore::Char JsonPath[kConfigLen];
 
-    hCore::Int32 Flags;
-    hCore::Int32 Kind;
+    HCore::Int32 Flags;
+    HCore::Int32 Kind;
 
-    hCore::Lba StartCatalog;
-    hCore::SizeT CatalogCount;
+    HCore::Lba StartCatalog;
+    HCore::SizeT CatalogCount;
 
-    hCore::SizeT DiskSize;
+    HCore::SizeT DiskSize;
 
-    hCore::SizeT FreeCatalog;
-    hCore::SizeT FreeSectors;
+    HCore::SizeT FreeCatalog;
+    HCore::SizeT FreeSectors;
 
-    hCore::SizeT SectorCount;
-    hCore::SizeT SectorSize;
+    HCore::SizeT SectorCount;
+    HCore::SizeT SectorSize;
 
-    hCore::Char Pad[kPadLen];
+    HCore::Char Pad[kPadLen];
 };
 
 #define kCatalogKindFile        1
@@ -143,9 +143,9 @@ struct NewPartitionBlock
 #define kFilesystemEOF          0xFF11
 
 #define kFilesystemBitWidth     sizeof(UInt16)
-#define kFilesystemLbaType      hCore::Lba
+#define kFilesystemLbaType      HCore::Lba
 
-namespace hCore
+namespace HCore
 {
     ///
     /// \name NewFSImpl

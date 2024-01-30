@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore {
+namespace HCore {
 MAKE_STRING_ENUM(HYPERVISOR)
 ENUM_STRING(Qemu, "TCGTCGTCGTCG");
 ENUM_STRING(KVM, " KVMKVMKVM  ");
@@ -25,4 +25,4 @@ ENUM_STRING(Bhyve, "bhyve bhyve ");
 ENUM_STRING(Qnx, " QNXQVMBSQG ");
 
 END_STRING_ENUM()
-}  // namespace hCore
+}  // namespace HCore

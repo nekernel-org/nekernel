@@ -4,7 +4,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -20,7 +20,7 @@
 #define kBadAddress (0)
 #endif // #ifndef kBadAddress
 
-namespace hCore
+namespace HCore
 {
 class PageManager;
 
@@ -78,4 +78,4 @@ struct PageManager final
     friend PTEWrapper;
     friend class Pmm;
 };
-} // namespace hCore
+} // namespace HCore

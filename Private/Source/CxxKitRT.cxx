@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 #include <KernelKit/OSErr.hpp>
 #include <NewKit/Utils.hpp>
 
-using namespace hCore;
+using namespace HCore;
 
 // unimplemented _HintTell
 void _HintTell(_HintMessage* ppMsg, _HintId* pId) {

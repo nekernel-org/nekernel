@@ -1,7 +1,7 @@
 /*
  * ========================================================
  *
- * hCore
+ * HCore
  * Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  *  ========================================================
@@ -14,7 +14,7 @@
 #include <KernelKit/ThreadLocalStorage.hxx>
 #include <NewKit/Defines.hpp>
 
-using namespace hCore;
+using namespace HCore;
 
 /***********************************************************************************/
 /// @file SharedObjectEntry.cxx

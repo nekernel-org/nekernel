@@ -2,7 +2,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore
+namespace HCore
 {
     template <typename StreamTraits, typename Kind>
     class Stream final
@@ -58,4 +58,4 @@ namespace hCore
         Ref<Kind> m_Kind;
 
     };
-} // namespace hCore
+} // namespace HCore

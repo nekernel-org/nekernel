@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #ifndef _INC_PERMISSION_SEL_HPP
 #define _INC_PERMISSION_SEL_HPP
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Defines.hpp>
 
 // kernel mode user.
@@ -23,7 +23,7 @@
 // hash 'user@host:password' -> base64 encoded data
 // use this data to then fetch specific data.
 
-namespace hCore
+namespace HCore
 {
     enum class RingKind
     {

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -28,7 +28,7 @@
 
 // after that we have start of additional data.
 
-namespace hCore {
+namespace HCore {
 typedef Char rt_debug_type[255];
 
 class DebuggerPorts final {
@@ -56,4 +56,4 @@ void rt_debug_listen(DebuggerPorts* theHook) noexcept {
     if (HAL::in16(theHook->fPort[i] != kDebugUnboundPort)) theHook->fBoundCnt++;
   }
 }
-}  // namespace hCore
+}  // namespace HCore

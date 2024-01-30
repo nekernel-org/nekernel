@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,9 +11,9 @@
 #include <NewKit/ErrorID.hpp>
 #include <NewKit/Utils.hpp>
 
-//! @brief File manager for hCore.
+//! @brief File manager for HCore.
 
-namespace hCore {
+namespace HCore {
 static IFilesystemManager* kMounted = nullptr;
 
 /// @brief FilesystemManager getter.
@@ -39,4 +39,4 @@ bool IFilesystemManager::Mount(IFilesystemManager* pMount) {
 
   return false;
 }
-}  // namespace hCore
+}  // namespace HCore

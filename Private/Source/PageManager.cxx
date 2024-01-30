@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageManager.hpp>
 
-namespace hCore {
+namespace HCore {
 PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
                        UIntPtr VirtAddr)
     : m_Rw(Rw),
@@ -62,7 +62,7 @@ bool PTEWrapper::Reclaim() {
 PTEWrapper *PageManager::Request(Boolean Rw, Boolean User,
                                  Boolean ExecDisable) {
   PTEWrapper *PageTableEntry = reinterpret_cast<PTEWrapper *>(
-      hCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User));
+      HCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User));
 
   if (PageTableEntry == nullptr) {
     kcout << "PTEWrapper : Page table is nullptr!, kernel_new_ptr failed!";
@@ -120,4 +120,4 @@ bool PTEWrapper::Access() {
 
   return m_Accessed;
 }
-}  // namespace hCore
+}  // namespace HCore

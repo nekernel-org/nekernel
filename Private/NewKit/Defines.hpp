@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -14,7 +14,7 @@
 #define NEWKIT_VERSION "1.0.0"
 
 #if !defined(_INC_NO_STDC_HEADERS) && defined(__GNUC__)
-#include <CRT/__cxxkit_defines.h>
+#include <CRT/__cxxkit_defines.hxx>
 #endif
 
 #ifdef __has_feature
@@ -23,7 +23,7 @@
 #endif
 #endif
 
-namespace hCore {
+namespace HCore {
 using voidPtr = void *;
 using VoidPtr = void *;
 using nullPtr = decltype(nullptr);
@@ -77,14 +77,14 @@ template <typename Args>
 Args &&move(Args &&arg) {
   return static_cast<Args &&>(arg);
 }
-}  // namespace hCore
+}  // namespace HCore
 
 #define DEDUCE_ENDIAN(address, value)                         \
-  (((reinterpret_cast<hCore::Char *>(address)[0]) == (value)) \
-       ? (hCore::Endian::kBig)                                \
-       : (hCore::Endian::kLittle))
+  (((reinterpret_cast<HCore::Char *>(address)[0]) == (value)) \
+       ? (HCore::Endian::kBig)                                \
+       : (HCore::Endian::kLittle))
 
 #define Yes (true)
 #define No (false)
 
-#define VoidStar hCore::voidPtr
+#define VoidStar HCore::voidPtr

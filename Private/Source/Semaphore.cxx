@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 #include <KernelKit/Semaphore.hpp>
 #include <KernelKit/Timer.hpp>
 
-namespace hCore {
+namespace HCore {
 bool Semaphore::Unlock() noexcept {
   if (fLockingProcess) fLockingProcess = nullptr;
 
@@ -41,4 +41,4 @@ void Semaphore::Sync() noexcept {
   while (fLockingProcess) {
   }
 }
-}  // namespace hCore
+}  // namespace HCore

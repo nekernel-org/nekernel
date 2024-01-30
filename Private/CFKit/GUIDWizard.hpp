@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -18,7 +18,7 @@
 #include <NewKit/Stream.hpp>
 #include <NewKit/String.hpp>
 
-namespace hCore::XRN::Version1 {
+namespace HCore::XRN::Version1 {
 Ref<GUIDSequence*> make_sequence(const ArrayList<UShort>& seq);
-ErrorOr<Ref<hCore::StringView>> try_guid_to_string(Ref<GUIDSequence*>& guid);
-}  // namespace hCore::XRN::Version1
+ErrorOr<Ref<HCore::StringView>> try_guid_to_string(Ref<GUIDSequence*>& guid);
+}  // namespace HCore::XRN::Version1

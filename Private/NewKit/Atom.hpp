@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore
+namespace HCore
 {
 template <typename T> class Atom final
 {
@@ -45,4 +45,4 @@ template <typename T> class Atom final
   private:
     T m_ArrayOfAtoms;
 };
-} // namespace hCore
+} // namespace HCore

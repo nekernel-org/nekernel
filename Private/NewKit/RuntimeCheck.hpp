@@ -2,7 +2,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,13 +12,13 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore
+namespace HCore
 {
 void runtime_check(bool bExpression, const char *file, const char *line);
 }
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)
-#define MUST_PASS(EXPR) hCore::runtime_check(EXPR, __FILE__, " %d -> ")
+#define MUST_PASS(EXPR) HCore::runtime_check(EXPR, __FILE__, " %d -> ")
 #define assert(EXPR) MUST_PASS(EXPR, RUNTIME_CHECK_EXPRESSION)
 
 enum RUNTIME_CHECK
@@ -39,7 +39,7 @@ enum RUNTIME_CHECK
     RUNTIME_CHECK_BOOTSTRAP,
 };
 
-namespace hCore
+namespace HCore
 {
 class DumpManager final
 {
@@ -50,8 +50,8 @@ class DumpManager final
     }
 };
 
-void panic(const Int &id);
-} // namespace hCore
+void ke_stop(const Int &id);
+} // namespace HCore
 
 #ifdef TRY
 #undef TRY

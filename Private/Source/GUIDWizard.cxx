@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -16,7 +16,7 @@
 // @brief Size of UUID.
 #define kUUIDSize 32
 
-namespace hCore::XRN::Version1 {
+namespace HCore::XRN::Version1 {
 auto make_sequence(const ArrayList<UShort>& uuidSeq) -> Ref<GUIDSequence*> {
   GUIDSequence* seq = new GUIDSequence();
   MUST_PASS(seq);
@@ -54,4 +54,4 @@ auto try_guid_to_string(Ref<GUIDSequence*>& seq) -> ErrorOr<Ref<StringView>> {
 
   return ErrorOr<Ref<StringView>>{-1};
 }
-}  // namespace hCore::XRN::Version1
+}  // namespace HCore::XRN::Version1

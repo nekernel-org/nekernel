@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -29,7 +29,7 @@ typedef char *caddr_t;
 #endif // !null
 
 #ifdef __GNUC__
-#include <CRT/__cxxkit_alloca.h>
+#include <CRT/__cxxkit_alloca.hxx>
 #define __cxxkit_alloca(sz) __cxxkit_alloca_gcc(sz)
 #elif defined(__HISYS__)
 

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -14,7 +14,7 @@
  * @brief This file is about processor specific functions (in/out...)
  */
 
-namespace hCore::HAL {
+namespace HCore::HAL {
 void out8(UInt16 port, UInt8 value) {
   asm volatile("outb %%al, %1" : : "a"(value), "Nd"(port) : "memory");
 }
@@ -55,4 +55,4 @@ void rt_cli() { asm volatile("cli"); }
 void rt_sti() { asm volatile("sti"); }
 
 void rt_cld() { asm volatile("cld"); }
-}  // namespace hCore::HAL
+}  // namespace HCore::HAL

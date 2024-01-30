@@ -11,7 +11,7 @@
 
 #define Z_SOLO 1
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <ZipKit/Defines.hpp>
 #include <ZipKit/zlib.hpp>
 

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/DriveManager.hpp>
 
-namespace hCore {
+namespace HCore {
 DriveSelector::DriveSelector() : fDrive(nullptr) {}
 
 DriveSelector::~DriveSelector() {
@@ -49,4 +49,4 @@ DriveTraits *DriveSelector::Unmount() {
 
   return drivePointer;
 }
-}  // namespace hCore
+}  // namespace HCore

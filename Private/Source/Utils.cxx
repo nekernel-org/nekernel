@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,7 +9,7 @@
 
 #include <NewKit/Utils.hpp>
 
-namespace hCore {
+namespace HCore {
 Int string_compare(const Char *src, const Char *cmp, Size size) {
   Int32 counter = 0;
 
@@ -163,12 +163,12 @@ char *string_from_char(char *str, const char chr) {
 
   return str;
 }
-}  // namespace hCore
+}  // namespace HCore
 
 extern "C" void memset(void *dst, char src, size_t len) {
-  hCore::rt_set_memory(dst, src, len);
+  HCore::rt_set_memory(dst, src, len);
 }
 
 extern "C" void memcpy(void *dst, void *src, size_t len) {
-  hCore::rt_copy_memory(src, dst, len);
+  HCore::rt_copy_memory(src, dst, len);
 }

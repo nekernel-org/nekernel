@@ -16,7 +16,7 @@
 
 #include <NewKit/Defines.hpp>
 
-using namespace hCore;
+using namespace HCore;
 
 typedef void *PEFImage;
 
@@ -70,8 +70,8 @@ enum {
 
 #define BK_START_KERNEL (0x80000000)
 
-hCore::SizeT BStrLen(const char *ptr);
-hCore::SizeT BSetMem(char *src, const char byte, const hCore::SizeT len);
+HCore::SizeT BStrLen(const char *ptr);
+HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len);
 
 /***********************************************************************************/
 /// Include other APIs.

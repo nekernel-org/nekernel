@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace hCore {
+namespace HCore {
 Char *StringView::Data() { return m_Data; }
 
 const Char *StringView::CData() { return m_Data; }
@@ -191,4 +191,4 @@ StringView &StringView::operator+=(const StringView &rhs) {
 
   return *this;
 }
-}  // namespace hCore
+}  // namespace HCore

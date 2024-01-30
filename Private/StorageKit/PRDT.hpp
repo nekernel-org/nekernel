@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,9 +11,9 @@
 #include <KernelKit/PCI/Dma.hpp>
 #include <KernelKit/PCI/Iterator.hpp>
 
-#define PRDT_TRANSFER_SIZE (sizeof(hCore::UShort))
+#define PRDT_TRANSFER_SIZE (sizeof(HCore::UShort))
 
-namespace hCore {
+namespace HCore {
 class PRDT final {
  public:
   PRDT() = delete;
@@ -44,4 +44,4 @@ class PRDT final {
 };
 
 using PhysicalAddress = PRDT;  // here
-}  // namespace hCore
+}  // namespace HCore

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -17,7 +17,7 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
 
-#include "NewKit/Panic.hpp"
+#include "NewKit/RuntimeCheck.hpp"
 
 ///! bugs = 0
 
@@ -27,7 +27,7 @@
  * For MT see SMPManager. */
 /***********************************************************************************/
 
-namespace hCore {
+namespace HCore {
 /***********************************************************************************/
 /// Exit Code stuff
 /***********************************************************************************/
@@ -122,11 +122,11 @@ const AffinityKind &Process::GetAffinity() { return this->Affinity; }
 void Process::Exit(Int32 exit_code) {
   if (this->ProcessId !=
       ProcessManager::Shared().Leak().GetCurrent().Leak().ProcessId)
-    panic(RUNTIME_CHECK_PROCESS);
+    ke_stop(RUNTIME_CHECK_PROCESS);
 
   if (this->Ring == (Int32)ProcessSelector::kRingKernel &&
       ProcessManager::Shared().Leak().GetCurrent().Leak().Ring > 0)
-    panic(RUNTIME_CHECK_PROCESS);
+    ke_stop(RUNTIME_CHECK_PROCESS);
 
   kExitCode = exit_code;
 
@@ -283,4 +283,4 @@ bool ProcessHelper::Switch(HAL::StackFrame *the_stack, const PID &new_pid) {
 
   return false;
 }
-}  // namespace hCore
+}  // namespace HCore

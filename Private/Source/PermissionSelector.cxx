@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  *	File: PermissionSelector.cpp
@@ -11,9 +11,9 @@
  */
 
 #include <KernelKit/PermissionSelector.hxx>
-#include <NewKit/Panic.hpp>
+#include <NewKit/RuntimeCheck.hpp>
 
-namespace hCore {
+namespace HCore {
 PermissionSelector::PermissionSelector(const Int32 &sel)
     : fRing((RingKind)sel) {
   MUST_PASS(sel > 0);
@@ -33,4 +33,4 @@ bool PermissionSelector::operator!=(const PermissionSelector &lhs) {
 }
 
 const RingKind &PermissionSelector::Ring() noexcept { return this->fRing; }
-}  // namespace hCore
+}  // namespace HCore

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore
+namespace HCore
 {
     typedef Int32 OSErr;
 

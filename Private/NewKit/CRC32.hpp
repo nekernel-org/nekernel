@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore 	Date Added: 13/02/2023
+ *	HCore 	Date Added: 13/02/2023
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -14,8 +14,8 @@
 
 #define kCrcCnt (256)
 
-namespace hCore {
+namespace HCore {
 Int ke_calculate_crc32(const Char* crc, Int len) noexcept;
-}  // namespace hCore
+}  // namespace HCore
 
 #endif  // !__CRC32_H__

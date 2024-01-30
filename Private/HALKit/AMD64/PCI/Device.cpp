@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,29 +10,29 @@
 #include <ArchKit/Arch.hpp>
 #include <KernelKit/PCI/Device.hpp>
 
-hCore::UInt LumiaPCIReadRaw(hCore::UInt bar, hCore::UShort bus,
-                            hCore::UShort dev, hCore::UShort fun) {
-  hCore::UInt target = 0x80000000 | ((hCore::UInt)bus << 16) |
-                       ((hCore::UInt)dev << 11) | ((hCore::UInt)fun << 8) |
+HCore::UInt LumiaPCIReadRaw(HCore::UInt bar, HCore::UShort bus,
+                            HCore::UShort dev, HCore::UShort fun) {
+  HCore::UInt target = 0x80000000 | ((HCore::UInt)bus << 16) |
+                       ((HCore::UInt)dev << 11) | ((HCore::UInt)fun << 8) |
                        (bar & 0xFC);
 
-  hCore::HAL::out32((hCore::UShort)hCore::PCI::PciConfigKind::ConfigAddress,
+  HCore::HAL::out32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigAddress,
                     target);
 
-  return hCore::HAL::in32((hCore::UShort)hCore::PCI::PciConfigKind::ConfigData);
+  return HCore::HAL::in32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigData);
 }
 
-void LumiaPCISetCfgTarget(hCore::UInt bar, hCore::UShort bus, hCore::UShort dev,
-                          hCore::UShort fun) {
-  hCore::UInt target = 0x80000000 | ((hCore::UInt)bus << 16) |
-                       ((hCore::UInt)dev << 11) | ((hCore::UInt)fun << 8) |
+void LumiaPCISetCfgTarget(HCore::UInt bar, HCore::UShort bus, HCore::UShort dev,
+                          HCore::UShort fun) {
+  HCore::UInt target = 0x80000000 | ((HCore::UInt)bus << 16) |
+                       ((HCore::UInt)dev << 11) | ((HCore::UInt)fun << 8) |
                        (bar & ~3);
 
-  hCore::HAL::out32((hCore::UShort)hCore::PCI::PciConfigKind::ConfigAddress,
+  HCore::HAL::out32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigAddress,
                     target);
 }
 
-namespace hCore::PCI {
+namespace HCore::PCI {
 Device::Device(UShort bus, UShort device, UShort func, UShort bar)
     : m_Bus(bus), m_Device(device), m_Function(func), m_Bar(bar) {}
 
@@ -109,4 +109,4 @@ UShort Device::Vendor() {
 }
 
 Device::operator bool() { return VendorId() != (UShort)PciConfigKind::Invalid; }
-}  // namespace hCore::PCI
+}  // namespace HCore::PCI

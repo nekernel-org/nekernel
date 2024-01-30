@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -14,7 +14,7 @@
 
 #define __aligned __attribute__((aligned(4)))
 
-namespace hCore::HAL {
+namespace HCore::HAL {
 typedef UIntPtr Reg;
 
 struct __aligned StackFrame {
@@ -37,8 +37,8 @@ inline void rt_halt() {
 }
 
 inline void rt_cli() {}
-}  // namespace hCore::HAL
+}  // namespace HCore::HAL
 
-extern "C" void int_handle_math(hCore::UIntPtr sp);
-extern "C" void int_handle_pf(hCore::UIntPtr sp);
+extern "C" void int_handle_math(HCore::UIntPtr sp);
+extern "C" void int_handle_pf(HCore::UIntPtr sp);
 extern "C" void* __ppc_alloca(size_t sz);

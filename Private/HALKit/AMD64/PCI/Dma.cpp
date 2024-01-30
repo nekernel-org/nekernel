@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,7 +9,7 @@
 
 #include <KernelKit/PCI/Dma.hpp>
 
-namespace hCore {
+namespace HCore {
 DMAWrapper::operator bool() { return m_Address; }
 
 bool DMAWrapper::operator!() { return !m_Address; }
@@ -63,4 +63,4 @@ DMAWrapper &DMAWrapper::operator=(voidPtr Ptr) {
   m_Address = Ptr;
   return *this;
 }
-}  // namespace hCore
+}  // namespace HCore

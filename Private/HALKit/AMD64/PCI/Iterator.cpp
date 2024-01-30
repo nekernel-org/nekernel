@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 #define PCI_ITERATOR_FIND_AND_UNWRAP(DEV, SZ) \
   if (DEV.Leak()) return DEV.Leak();
 
-namespace hCore::PCI {
+namespace HCore::PCI {
 Iterator::Iterator(const Types::PciDeviceKind &type) {
   // probe devices.
   for (int bus = 0; bus < ME_BUS_COUNT; ++bus) {
@@ -34,4 +34,4 @@ Ref<PCI::Device> Iterator::operator[](const Size &sz) {
   PCI_ITERATOR_FIND_AND_UNWRAP(m_Devices[sz], sz);
   return {};
 }
-}  // namespace hCore::PCI
+}  // namespace HCore::PCI

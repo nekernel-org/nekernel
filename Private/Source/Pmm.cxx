@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Pmm.hpp>
 
-namespace hCore {
+namespace HCore {
 Pmm::Pmm() = default;
 
 Pmm::Pmm(Ref<PageManager *> &pm) : m_PageManager(pm) {
@@ -75,4 +75,4 @@ Boolean Pmm::ToggleShare(Ref<PTEWrapper *> PageRef, Boolean Enable) {
 
   return true;
 }
-}  // namespace hCore
+}  // namespace HCore

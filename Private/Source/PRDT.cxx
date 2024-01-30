@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 #include <NewKit/String.hpp>
 #include <StorageKit/PRDT.hpp>
 
-namespace hCore {
+namespace HCore {
 PRDT::PRDT(const UIntPtr& physAddr) : m_PrdtAddr(physAddr) {
   MUST_PASS(physAddr);
   kcout << "PRDT::PRDT() {}\r\n";
@@ -32,4 +32,4 @@ PRDT& PRDT::operator=(const UIntPtr& prdtAddress) {
   m_PrdtAddr = prdtAddress;
   return *this;
 }
-}  // namespace hCore
+}  // namespace HCore

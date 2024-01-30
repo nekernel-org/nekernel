@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 #include <KernelKit/PCI/Device.hpp>
 #include <NewKit/Defines.hpp>
 
-namespace hCore {
+namespace HCore {
     namespace Types {
         // https://wiki.osdev.org/PCI
         enum class PciDeviceKind : UChar {
@@ -35,4 +35,4 @@ namespace hCore {
             Invalid = Unassgined,
         };
     } // namespace Types
-} // namespace hCore
+} // namespace HCore

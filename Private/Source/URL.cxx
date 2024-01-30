@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 
 // Bugs = 0
 
-namespace hCore {
+namespace HCore {
 Url::Url(StringView &strUrl) : m_urlView(strUrl, false) {}
 
 Url::~Url() = default;
@@ -84,4 +84,4 @@ Ref<ErrorOr<StringView>> Url::Protocol() noexcept {
 
   return Ref<ErrorOr<StringView>>(loc);
 }
-}  // namespace hCore
+}  // namespace HCore

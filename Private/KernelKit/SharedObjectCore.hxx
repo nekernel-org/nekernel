@@ -1,7 +1,7 @@
 /*
  *      ========================================================
  *
- *      hCore
+ *      HCore
  *      Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  *      ========================================================
@@ -15,7 +15,7 @@
 #include <KernelKit/Loader.hpp>
 #include <NewKit/Defines.hpp>
 
-namespace hCore
+namespace HCore
 {
 class SharedObject final
 {
@@ -90,6 +90,6 @@ inline void hcore_pure_call(void)
     // virtual placeholder.
     return;
 }
-} // namespace hCore
+} // namespace HCore
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_CORE_HXX__ */

@@ -2,7 +2,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -18,7 +18,7 @@
 #include <NewKit/ArrayList.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/Ref.hpp>
-#include <NewKit/Panic.hpp>
+#include <NewKit/RuntimeCheck.hpp>
 #include <NewKit/Stream.hpp>
 #include <NewKit/Utils.hpp>
 #include <NewKit/MutableArray.hpp>

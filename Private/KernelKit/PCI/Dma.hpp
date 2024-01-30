@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -15,7 +15,7 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore
+namespace HCore
 {
 enum class DmaKind
 {
@@ -76,6 +76,6 @@ class DMAFactory final
   public:
     static OwnPtr<IOBuf<Char *>> Construct(OwnPtr<DMAWrapper> &dma);
 };
-} // namespace hCore
+} // namespace HCore
 
 #include <KernelKit/PCI/Dma.inl>

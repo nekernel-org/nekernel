@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,9 +10,9 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 
-namespace hCore
+namespace HCore
 {
 	class Process;
 

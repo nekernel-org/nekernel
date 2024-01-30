@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Defines.hpp>
 
-using namespace hCore;
+using namespace HCore;
 
 class HMemoryException;
 
@@ -58,7 +58,7 @@ class HMemoryException final {
   const char *Reason();
 
  private:
-  const char *mReason{"Memory error!"};
+  const char *mReason{"HeapAPI: Memory Exception!"};
 
  private:
   friend HHeap;

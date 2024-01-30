@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -18,7 +18,7 @@
 #define NULL_GUID "XRN:{........-....-M...-N...-............}"
 
 // eXtensible Resource Information
-namespace hCore::XRN {
+namespace HCore::XRN {
 union GUIDSequence {
   alignas(8) UShort u8[16];
   alignas(8) UShort u16[8];
@@ -50,4 +50,4 @@ class GUID final {
  private:
   GUIDSequence m_UUID;
 };
-}  // namespace hCore::XRN
+}  // namespace HCore::XRN

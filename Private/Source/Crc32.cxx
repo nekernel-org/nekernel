@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 // @file CRC32.cpp
 // @brief Checksum implementation.
 
-namespace hCore {
+namespace HCore {
 UInt kCrcTbl[kCrcCnt] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
     0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -67,4 +67,4 @@ Int ke_calculate_crc32(const Char *p, Int len) noexcept {
   // return (~crc); also works
   return (crc ^ 0xffffffff);
 }
-}  // namespace hCore
+}  // namespace HCore

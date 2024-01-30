@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -14,7 +14,7 @@
 
 #define kMaxWrappers (4096 * 8)
 
-namespace hCore {
+namespace HCore {
 static Ref<PTEWrapper *> kWrapperList[kMaxWrappers];
 static SizeT kWrapperCount = 0UL;
 static Ref<PTEWrapper *> kLastWrapper;
@@ -106,4 +106,4 @@ Boolean kernel_valid_ptr(voidPtr ptr) {
 
   return false;
 }
-}  // namespace hCore
+}  // namespace HCore

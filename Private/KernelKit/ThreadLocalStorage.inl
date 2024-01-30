@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 template <typename T>
 inline T* hcore_tls_new_ptr(void)
 {
-    using namespace hCore;
+    using namespace HCore;
 
     auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
 
@@ -27,7 +27,7 @@ inline bool hcore_tls_delete_ptr(T* ptr)
     if (!ptr)
             return false;
 
-    using namespace hCore;
+    using namespace HCore;
 
     auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
     ptr->~T();
@@ -42,7 +42,7 @@ T* hcore_tls_new_class(Args&&... args)
 
     if (ptr)
     {
-            *ptr = T(hCore::forward(args)...);
+            *ptr = T(HCore::forward(args)...);
             return ptr;
     }
 

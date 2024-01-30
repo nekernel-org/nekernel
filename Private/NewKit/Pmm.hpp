@@ -2,7 +2,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 #include <NewKit/PageManager.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore
+namespace HCore
 {
     class Pmm;
     class PTEWrapper;
@@ -42,4 +42,4 @@ namespace hCore
         Ref<PageManager*> m_PageManager;
     
     };
-} // namespace hCore
+} // namespace HCore

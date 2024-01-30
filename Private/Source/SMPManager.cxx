@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,10 +13,10 @@
 
 /// BUGS: 0
 
-//! This file handles multi processing in hCore.
+//! This file handles multi processing in HCore.
 //! Multi processing is needed for File I/O, networking and scheduling.
 
-namespace hCore {
+namespace HCore {
 // A ProcessorCore class takes care of it's owned hardware thread.
 // It has a stack for it's core.
 
@@ -140,4 +140,4 @@ SMPManager::operator bool() noexcept { return !m_ThreadList.Empty(); }
  * @return
  */
 bool SMPManager::operator!() noexcept { return m_ThreadList.Empty(); }
-}  // namespace hCore
+}  // namespace HCore

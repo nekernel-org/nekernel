@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,14 +9,14 @@
 
 #pragma once
 
-/* hCore */
+/* HCore */
 /* File: KernelKit/Device.hpp */
 /* Device abstraction utilities. */
 
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore
+namespace HCore
 {
     template<typename T>
     class DeviceInterface;
@@ -91,4 +91,4 @@ namespace hCore
         kDeviceCD,
         kDeviceSwap,
     };
-} // namespace hCore
+} // namespace HCore

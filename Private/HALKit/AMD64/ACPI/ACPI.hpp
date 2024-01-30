@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore 	Date Added: 13/02/2023
+ *	HCore 	Date Added: 13/02/2023
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore {
+namespace HCore {
 class SDT {
  public:
   Char Signature[4];
@@ -60,6 +60,6 @@ class Address {
   UInt8 Reserved;
   UIntPtr Address;
 };
-}  // namespace hCore
+}  // namespace HCore
 
 #endif  // !_INC_ACPI_MANAGER_H

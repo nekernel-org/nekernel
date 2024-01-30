@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 #include <StorageKit/ATA.hpp>
 #include <StorageKit/NVME.hpp>
 
-typedef hCore::UInt16 OSScsiPacket[12];
+typedef HCore::UInt16 OSScsiPacket[12];
 
 extern const OSScsiPacket kCDRomPacketTemplate;
 

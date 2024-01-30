@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,9 +12,9 @@
 
 extern "C" void flush_tlb() {}
 extern "C" void rt_wait_for_io() {}
-extern "C" hCore::HAL::StackFrame* rt_get_current_context() {}
+extern "C" HCore::HAL::StackFrame* rt_get_current_context() {}
 
-namespace hCore {
+namespace HCore {
 namespace HAL {
 UIntPtr hal_create_page(bool rw, bool user) { return 0; }
 
@@ -44,5 +44,5 @@ void system_io_print(const char* bytes) {
   }
 }
 
-TerminalDevice kcout(hCore::system_io_print, nullptr);
-}  // namespace hCore
+TerminalDevice kcout(HCore::system_io_print, nullptr);
+}  // namespace HCore

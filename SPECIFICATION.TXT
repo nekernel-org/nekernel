@@ -18,6 +18,7 @@
 - Native Filesystem support (NewFS).
 - Program Loader.
 - TLS.
+- Canary bird.
 - Dynamic Libraries.
 - Cross platform code (it has to work for each platform)
 

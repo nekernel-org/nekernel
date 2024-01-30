@@ -1,7 +1,7 @@
 /*
  * ========================================================
  *
- * hCore
+ * HCore
  * Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  *  ========================================================
@@ -15,7 +15,7 @@
 /// @brief TLS implementation in kernel.
 /***********************************************************************************/
 
-using namespace hCore;
+using namespace HCore;
 
 /**
  * Check for cookie inside TIB.
@@ -34,7 +34,7 @@ Boolean hcore_tls_check(VoidPtr ptr) {
 }
 
 /**
- * System call implementation in hCore
+ * System call implementation in HCore
  * @param ptr
  * @return
  */

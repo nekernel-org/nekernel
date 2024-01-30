@@ -1,14 +1,14 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */
 #pragma once
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 
@@ -47,7 +47,7 @@
 
 // FIXME: this is a shitty algorithm, which is consumer hungry.
 // Remove and occurences of that, and remove that class.
-namespace hCore
+namespace HCore
 {
 template <typename T> class MutableArray;
 
@@ -145,7 +145,7 @@ template <typename T, T _PlaceHolderValue> class NullableMutableArray
     MutableLinkedList<T> *m_FirstNode{nullptr};
 
     /* Number of nodes inside of this dynamic array. */
-    hCore::SizeT m_NodeCount{0};
+    HCore::SizeT m_NodeCount{0};
 
   private:
     // don't remove that
@@ -220,6 +220,6 @@ class MutableArray : public NullableMutableArray<voidPtr, nullptr>
     MutableLinkedList<T> *m_FirstNode{nullptr};
 
     /* Number of nodes inside of this dynamic array. */
-    hCore::SizeT m_NodeCount{0};
+    HCore::SizeT m_NodeCount{0};
 };
-} // namespace hCore
+} // namespace HCore

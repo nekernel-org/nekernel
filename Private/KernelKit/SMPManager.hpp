@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,13 +10,13 @@
 #ifndef _INC_SMP_MANAGER_HPP
 #define _INC_SMP_MANAGER_HPP
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <ArchKit/Arch.hpp>
 #include <NewKit/Ref.hpp>
 
 #define kMaxHarts 8
 
-namespace hCore
+namespace HCore
 {
     using ThreadID = UInt32;
 
@@ -116,6 +116,6 @@ namespace hCore
     // @brief makes thread sleep.
     // hooks and hangs thread to prevent code from executing.
     void rt_hang_thread(HAL::StackFrame* stack);
-} // namespace hCore
+} // namespace HCore
 
 #endif // !_INC_SMP_MANAGER_HPP

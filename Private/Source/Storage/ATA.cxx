@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -19,7 +19,7 @@
 
 #define kATAError 2
 
-namespace hCore {
+namespace HCore {
 Ref<PRDT*> kPrdt = nullptr;
 
 bool set_prdt_struct(Ref<PRDT*>& refCtrl) {
@@ -95,4 +95,4 @@ Int32 ata_write_28(ULong lba, const char* text) {
 
   return packet[1] == 2 ? kATAError : 0;
 }
-}  // namespace hCore
+}  // namespace HCore

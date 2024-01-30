@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -15,7 +15,7 @@
 #include <NewKit/Array.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore
+namespace HCore
 {
 template<SizeT Sz>
 class IOArray final
@@ -74,4 +74,4 @@ class IOArray final
 };
 
 using IOArray16 = IOArray<16>;
-} // namespace hCore
+} // namespace HCore

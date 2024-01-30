@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -15,7 +15,7 @@
 #define kLockDone (200U)    /* job is done */
 #define kLockTimedOut (100U) /* has timed out */
 
-namespace hCore
+namespace HCore
 {
 template <Size N>
 class LockDelegate final
@@ -57,4 +57,4 @@ class LockDelegate final
   private:
     Atom<UInt> m_LockStatus;
 };
-} // namespace hCore
+} // namespace HCore

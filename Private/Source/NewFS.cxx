@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 #include <FSKit/NewFS.hxx>
 #include <KernelKit/FileManager.hpp>
 
-namespace hCore {
+namespace HCore {
 NewFilesystemManager::NewFilesystemManager() = default;
 
 NewFilesystemManager::~NewFilesystemManager() = default;
@@ -40,4 +40,4 @@ NodePtr NewFilesystemManager::CreateDirectory(const char* path) {
 NodePtr NewFilesystemManager::CreateAlias(const char* path) {
   return node_cast(fIO->CreateCatalog(path, 0, kCatalogKindAlias));
 }
-}  // namespace hCore
+}  // namespace HCore

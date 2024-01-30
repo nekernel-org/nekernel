@@ -1,13 +1,13 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */
 
-namespace hCore
+namespace HCore
 {
     template<class T>
     T* DMAWrapper::operator->()

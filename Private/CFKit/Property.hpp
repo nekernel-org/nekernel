@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -15,7 +15,7 @@
 #include <NewKit/Function.hpp>
 #include <NewKit/String.hpp>
 
-namespace hCore {
+namespace HCore {
 using PropertyId = Int;
 
 class Property {
@@ -38,6 +38,6 @@ class Property {
 
 template <SSizeT N>
 using PropertyArray = Array<Property, N>;
-}  // namespace hCore
+}  // namespace HCore
 
 #endif  // !_INC_PLIST_HPP__

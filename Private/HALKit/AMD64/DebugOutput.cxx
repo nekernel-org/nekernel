@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace hCore {
+namespace HCore {
 enum CommStatus {
   kStateReady = 0xCF,
   kStateTransmit = 0xFC,
@@ -39,7 +39,7 @@ bool serial_init() {
 
   // Check if serial is faulty (i.e: not same byte as sent)
   if (HAL::in8(PORT) != 0xAE) {
-    panic(RUNTIME_CHECK_HANDSHAKE);
+    ke_stop(RUNTIME_CHECK_HANDSHAKE);
   }
 
   kReady = kStateReady;
@@ -69,5 +69,5 @@ void system_io_print(const char *bytes) {
   Detail::kState = kStateReady;
 }
 
-TerminalDevice kcout(hCore::system_io_print, nullptr);
-}  // namespace hCore
+TerminalDevice kcout(HCore::system_io_print, nullptr);
+}  // namespace HCore

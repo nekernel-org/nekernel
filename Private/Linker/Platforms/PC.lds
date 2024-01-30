@@ -10,7 +10,7 @@ PHDRS {
 }
 
 SECTIONS {
-    . = 0x80000000;
+    . = 8M;
 
     .text : {
         *(.NewBoot)

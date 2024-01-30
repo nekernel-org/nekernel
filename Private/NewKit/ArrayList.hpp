@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore
+namespace HCore
 {
     template <typename T>
     class ArrayList final
@@ -57,4 +57,4 @@ namespace hCore
     {
         return ArrayList<ValueType>{val};
     }
-} // namespace hCore
+} // namespace HCore

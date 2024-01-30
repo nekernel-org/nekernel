@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 #include <KernelKit/Device.hpp>
 #include <NetworkKit/IP.hpp>
 
-namespace hCore
+namespace HCore
 {
     struct NetworkDeviceCommand;
 
@@ -48,6 +48,6 @@ namespace hCore
     using TCPNetworkDevice = NetworkDevice;
     using UDPNetworkDevice = NetworkDevice;
     using PPPNetworkDevice = NetworkDevice;
-} // namespace hCore
+} // namespace HCore
 
 #endif // !_INC_NETWORKDEVICE_HPP__

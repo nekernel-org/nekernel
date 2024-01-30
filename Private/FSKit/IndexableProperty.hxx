@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 #include <CFKit/Property.hpp>
 #include <KernelKit/DriveManager.hpp>
 
-namespace hCore
+namespace HCore
 {
     namespace Indexer
     {

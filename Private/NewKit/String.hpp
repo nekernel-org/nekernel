@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,9 +11,9 @@
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorOr.hpp>
-#include <NewKit/Panic.hpp>
+#include <NewKit/RuntimeCheck.hpp>
 
-namespace hCore {
+namespace HCore {
 class StringView final {
  public:
   explicit StringView() = default;
@@ -63,4 +63,4 @@ struct StringBuilder final {
   static const char *Format(const char *fmt, const char *from);
   static bool Equals(const char *lhs, const char *rhs);
 };
-}  // namespace hCore
+}  // namespace HCore

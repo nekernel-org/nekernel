@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,7 +11,7 @@
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/String.hpp>
 
-namespace hCore {
+namespace HCore {
 ACPIManager::ACPIManager(voidPtr rsdPtr) : m_Rsdp(rsdPtr), m_Entries(0) {
   RSDP *_rsdPtr = reinterpret_cast<RSDP *>(this->m_Rsdp);
 
@@ -37,7 +37,7 @@ ErrorOr<voidPtr> ACPIManager::Find(const char *signature) {
   for (Size index = 0; index < num; ++index) {
     SDT *sdt = reinterpret_cast<SDT *>(xsdt + sizeof(SDT) + index * 8);
 
-    if (!Checksum(sdt->Signature, 4)) panic(RUNTIME_CHECK_ACPI);
+    if (!Checksum(sdt->Signature, 4)) ke_stop(RUNTIME_CHECK_ACPI);
 
     if (StringBuilder::Equals(const_cast<const char *>(sdt->Signature),
                               signature))
@@ -66,4 +66,4 @@ void rt_shutdown_acpi_qemu_30_plus(void) { HAL::out16(0x604, 0x2000); }
 void rt_shutdown_acpi_virtualbox(void) { HAL::out16(0x4004, 0x3400); }
 
 /// you'll have to parse the MADT otherwise!
-}  // namespace hCore
+}  // namespace HCore

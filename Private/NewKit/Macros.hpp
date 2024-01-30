@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -28,7 +28,7 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a)            \
   (((sizeof(a) / sizeof(*(a))) / \
-    (static_cast<hCore::Size>(!(sizeof(a) % sizeof(*(a)))))))
+    (static_cast<HCore::Size>(!(sizeof(a) % sizeof(*(a)))))))
 #endif
 
 #ifndef ALIGN

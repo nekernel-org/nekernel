@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 #include <FSKit/IndexableProperty.hxx>
 #include <NewKit/MutableArray.hpp>
 
-namespace hCore {
+namespace HCore {
 namespace Indexer {
 class INewFSIterator;
 
@@ -51,4 +51,4 @@ class INewFSIterator {
   MutableArray<IndexableProperty> fProps;
 };
 }  // namespace Indexer
-}  // namespace hCore
+}  // namespace HCore

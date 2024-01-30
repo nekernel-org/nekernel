@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Defines.hpp>
 
-namespace hCore
+namespace HCore
 {
 template <typename T, Size N> 
 class Array final
@@ -58,4 +58,4 @@ private:
     T m_Array[N];
     
 };
-} // namespace hCore
+} // namespace HCore

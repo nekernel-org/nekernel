@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -14,7 +14,7 @@
 
 #define kOpCache (4)
 
-namespace hCore {
+namespace HCore {
 typedef Boolean (*NewFSRunner)(VoidPtr delegate);
 
 class NewFSJournalRunner final {
@@ -56,4 +56,4 @@ class NewFSJournalRunner final {
     return false;
   }
 };
-}  // namespace hCore
+}  // namespace HCore

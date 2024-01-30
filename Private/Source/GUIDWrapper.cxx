@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,4 +9,4 @@
 
 #include <CFKit/GUIDWrapper.hpp>
 
-namespace hCore::XRN {}
+namespace HCore::XRN {}

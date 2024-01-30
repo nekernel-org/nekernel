@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -27,7 +27,7 @@
 /// refer to first enum.
 #define kFileOpsCount 4
 
-namespace hCore
+namespace HCore
 {
 enum
 {
@@ -242,6 +242,6 @@ FileStream<Encoding, Class>::FileStream(const Encoding *path) : fFile(Class::Get
 }
 
 template <typename Encoding, typename Class> FileStream<Encoding, Class>::~FileStream() = default;
-} // namespace hCore
+} // namespace HCore
 
-#define node_cast(PTR) reinterpret_cast<hCore::NodePtr>(PTR)
+#define node_cast(PTR) reinterpret_cast<HCore::NodePtr>(PTR)

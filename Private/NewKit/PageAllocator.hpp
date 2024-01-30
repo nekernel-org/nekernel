@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/PageManager.hpp>
 
-namespace hCore
+namespace HCore
 {
 namespace Detail
 {
@@ -61,4 +61,4 @@ bool page_disable(UIntPtr addr);
 } // namespace Detail
 
 // TODO: SwapVirtualMemoryDevice class!
-} // namespace hCore
+} // namespace HCore

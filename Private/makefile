@@ -10,7 +10,7 @@ ASM			= nasm
 ASMFLAGS	= -f elf64
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
-KERNEL		= hKernel.efi
+KERNEL		= HCoreKrnl.efi
 
 # The kernel entrypoint
 SCRIPT		= --script=Linker/Platforms/PC.lds
@@ -20,7 +20,7 @@ FMT			= elf64
 
 .PHONY: invalid-recipe
 invalid-recipe:
-	@echo "invalid-recipe: Use make all instead."
+	@echo "[HCoreKrnl] invalid-recipe: Use make all instead."
 
 .PHONY: h-core
 h-core:
@@ -42,7 +42,7 @@ link:
 
 .PHONY: all
 all: h-core link
-	@echo "[hKernel] HCore is linked."
+	@echo "[HCoreKrnl] HCore is linked."
 
 .PHONY: clean
 clean:

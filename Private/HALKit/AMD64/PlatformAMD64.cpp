@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,7 +9,7 @@
 
 #include <ArchKit/Arch.hpp>
 
-namespace hCore::HAL {
+namespace HCore::HAL {
 namespace Detail {
 struct RegisterAMD64 final {
   UIntPtr base;
@@ -44,4 +44,4 @@ void IDTLoader::Load(Register64 &idt) {
 void GDTLoader::Load(Ref<Register64> &gdt) { GDTLoader::Load(gdt.Leak()); }
 
 void IDTLoader::Load(Ref<Register64> &idt) { IDTLoader::Load(idt.Leak()); }
-}  // namespace hCore::HAL
+}  // namespace HCore::HAL

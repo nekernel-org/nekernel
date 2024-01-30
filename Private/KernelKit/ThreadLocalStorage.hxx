@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -30,11 +30,11 @@ typedef char rt_cookie_type[3];
 /// Located in GS on AMD64, Virtual Address 0x10000 (64x0, 32x0, ARM64)
 struct ThreadInformationBlock final
 {
-    hCore::Char Name[255];     // Module Name
-    hCore::UIntPtr StartCode;  // Start Address
-    hCore::UIntPtr StartData;  // Allocation Heap
-    hCore::UIntPtr StartStack; // Stack Pointer.
-    hCore::Int32 Arch;         // Architecture and/or platform.
+    HCore::Char Name[255];     // Module Name
+    HCore::UIntPtr StartCode;  // Start Address
+    HCore::UIntPtr StartData;  // Allocation Heap
+    HCore::UIntPtr StartStack; // Stack Pointer.
+    HCore::Int32 Arch;         // Architecture and/or platform.
     rt_cookie_type Cookie;     // Not shown in public header, this is the way we tell something went wrong.
 };
 
@@ -42,7 +42,7 @@ struct ThreadInformationBlock final
 extern void rt_install_tib(ThreadInformationBlock *pTib);
 
 ///! @brief Cookie Sanity check.
-hCore::Boolean hcore_tls_check(ThreadInformationBlock *ptr);
+HCore::Boolean hcore_tls_check(ThreadInformationBlock *ptr);
 
 #include "ThreadLocalStorage.inl"
 

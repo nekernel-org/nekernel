@@ -9,4 +9,4 @@
 #include <SystemKit/HeapAPI.hxx>
 #include <SystemKit/ThreadAPI.hxx>
 
-using namespace hCore;
+using namespace HCore;

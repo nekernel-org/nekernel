@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -23,7 +23,7 @@
 #   error Unknown architecture
 #endif
 
-namespace hCore
+namespace HCore
 {
     class SystemCallDefaultImpl final
     {
@@ -72,15 +72,15 @@ namespace hCore
     }
 
     bool init_hal();
-} // namespace hCore
+} // namespace HCore
 
 #define kMaxSyscalls 0x100
 #define kSyscallGate 0x21
 
-extern hCore::Array<void (*)(hCore::Int32 id, hCore::HAL::StackFrame *), kMaxSyscalls> kSyscalls;
+extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *), kMaxSyscalls> kSyscalls;
 
 extern "C" void rt_wait_for_io();
-extern "C" void rt_syscall_handle(hCore::HAL::StackFrame *stack);
-extern "C" hCore::HAL::StackFrame* rt_get_current_context();
-extern "C" int rt_do_context_switch(hCore::HAL::StackFrame* stackLeft, hCore::HAL::StackFrame* stackRight);
+extern "C" void rt_syscall_handle(HCore::HAL::StackFrame *stack);
+extern "C" HCore::HAL::StackFrame* rt_get_current_context();
+extern "C" int rt_do_context_switch(HCore::HAL::StackFrame* stackLeft, HCore::HAL::StackFrame* stackRight);
 

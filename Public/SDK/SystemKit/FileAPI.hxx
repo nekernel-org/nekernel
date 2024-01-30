@@ -10,10 +10,10 @@
 #ifndef _SYSTEM_KIT_HCORE_FILE_HPP
 #define _SYSTEM_KIT_HCORE_FILE_HPP
 
-#include <CompilerKit/Compiler.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Defines.hpp>
 
-using namespace hCore;
+using namespace HCore;
 
 class HFile final {
  public:

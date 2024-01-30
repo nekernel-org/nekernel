@@ -9,9 +9,9 @@
 
 #include <BootKit/Boot.hxx>
 
-constexpr hCore::UInt32 kVGABaseAddress = 0xb8000;
+constexpr HCore::UInt32 kVGABaseAddress = 0xb8000;
 
-hCore::SizeT BStrLen(const char *ptr) {
+HCore::SizeT BStrLen(const char *ptr) {
   long long int cnt = 0;
 
   while (*ptr != 0) {
@@ -22,8 +22,8 @@ hCore::SizeT BStrLen(const char *ptr) {
   return cnt;
 }
 
-hCore::SizeT BSetMem(char *src, const char byte, const hCore::SizeT len) {
-  hCore::SizeT cnt = 0UL;
+HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len) {
+  HCore::SizeT cnt = 0UL;
 
   while (*src != 0) {
     if (cnt > len) break;

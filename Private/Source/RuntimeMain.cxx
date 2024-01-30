@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -17,17 +17,17 @@ extern "C" void (*__SYSTEM_FINI)();
 extern "C" void (**__SYSTEM_INIT)();
 
 extern "C" void RuntimeMain() {
-  for (hCore::SizeT index_init = 0UL;
+  for (HCore::SizeT index_init = 0UL;
        __SYSTEM_INIT[index_init] != __SYSTEM_FINI; ++index_init) {
     __SYSTEM_INIT[index_init]();
   }
 
-  MUST_PASS(hCore::init_hal());
+  MUST_PASS(HCore::init_hal());
 
-  hCore::IFilesystemManager::Mount(new hCore::NewFilesystemManager());
-  hCore::PEFLoader img("/System/Seeker.cm");
+  HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
+  HCore::PEFLoader img("/System/Seeker.cm");
 
-  if (!hCore::Utils::execute_from_image(img)) {
-    hCore::panic(RUNTIME_CHECK_BOOTSTRAP);
+  if (!HCore::Utils::execute_from_image(img)) {
+    HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
   }
 }

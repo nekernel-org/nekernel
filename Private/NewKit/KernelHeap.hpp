@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -16,7 +16,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Pmm.hpp>
 
-namespace hCore {
+namespace HCore {
 Int32 kernel_delete_ptr(voidPtr allocatedPtr);
 voidPtr kernel_new_ptr(const SizeT &sz, const bool rw, const bool user);
-}  // namespace hCore
+}  // namespace HCore

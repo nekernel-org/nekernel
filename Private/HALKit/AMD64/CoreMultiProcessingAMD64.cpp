@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -14,7 +14,7 @@
 
 //! NOTE: fGSI stands 'Field Global System Interrupt'
 
-namespace hCore::HAL {
+namespace HCore::HAL {
 constexpr Int32 kThreadAPIC = 0;
 constexpr Int32 kThreadLAPIC = 1;
 constexpr Int32 kThreadIOAPIC = 2;
@@ -122,6 +122,6 @@ void system_get_cores(voidPtr rsdPtr) {
     ++counter;
   }
 }
-}  // namespace hCore::HAL
+}  // namespace HCore::HAL
 
 ///////////////////////////////////////////////////////////////////////////////////////

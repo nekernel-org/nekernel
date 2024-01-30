@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -10,7 +10,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace hCore::PCI
+namespace HCore::PCI
 {
     enum class PciConfigKind : UShort
     {
@@ -77,8 +77,8 @@ namespace hCore::PCI
         UShort m_Bar;
 
     };
-} // namespace hCore::PCI
+} // namespace HCore::PCI
 
 
-extern "C" void LumiaPCISetCfgTarget(hCore::UInt bar);
-extern "C" hCore::UInt LumiaPCIReadRaw(hCore::UInt bar);
+extern "C" void LumiaPCISetCfgTarget(HCore::UInt bar);
+extern "C" HCore::UInt LumiaPCIReadRaw(HCore::UInt bar);

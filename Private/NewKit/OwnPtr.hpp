@@ -2,7 +2,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -11,10 +11,10 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/Panic.hpp>
+#include <NewKit/RuntimeCheck.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore
+namespace HCore
 {
 template <typename T> class OwnPtr;
 
@@ -64,4 +64,4 @@ template <typename T, typename... Args> OwnPtr<T> make_ptr(Args... args)
 
     return ret;
 }
-} // namespace hCore
+} // namespace HCore

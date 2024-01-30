@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,7 +9,7 @@
 
 #include <NewKit/Variant.hpp>
 
-namespace hCore {
+namespace HCore {
 const Char* Variant::ToString() {
   if (m_Ptr == nullptr) {
     return ("Memory:{Nullptr}");
@@ -25,4 +25,4 @@ const Char* Variant::ToString() {
   }
 }
 
-}  // namespace hCore
+}  // namespace HCore

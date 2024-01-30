@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -13,7 +13,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace hCore
+namespace HCore
 {
     enum class FramebufferColorKind : UChar
     {
@@ -54,6 +54,6 @@ namespace hCore
         FramebufferColorKind m_Colour;
 
     };
-} // namespace hCore
+} // namespace HCore
 
 #endif /* ifndef _INC_FB_HPP__ */

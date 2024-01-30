@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	hCore
+ *	HCore
  * 	Copyright 2024 Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
@@ -9,14 +9,14 @@
 
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/Panic.hpp>
+#include <NewKit/RuntimeCheck.hpp>
 
 // this files handles paging.
 
-static hCore::UIntPtr kPagePtr = kPagePtrAddress;
-static hCore::SizeT kPageCnt = 0UL;
+static HCore::UIntPtr kPagePtr = kPagePtrAddress;
+static HCore::SizeT kPageCnt = 0UL;
 
-namespace hCore {
+namespace HCore {
 namespace HAL {
 static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
     -> PageTable64 * {
@@ -53,4 +53,4 @@ auto hal_create_page(Boolean rw, Boolean user) -> UIntPtr {
   return reinterpret_cast<UIntPtr>(new_pte);
 }
 }  // namespace HAL
-}  // namespace hCore
+}  // namespace HCore
