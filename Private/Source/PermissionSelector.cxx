@@ -13,6 +13,8 @@
 #include <KernelKit/PermissionSelector.hxx>
 #include <NewKit/RuntimeCheck.hpp>
 
+/// bugs 0
+
 namespace HCore {
 PermissionSelector::PermissionSelector(const Int32 &sel)
     : fRing((RingKind)sel) {

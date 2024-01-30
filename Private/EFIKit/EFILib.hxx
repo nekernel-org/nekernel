@@ -12,6 +12,8 @@
 
 #include <EFIKit/EFI.hxx>
 
+#include "NewKit/Defines.hpp"
+
 inline EfiSystemTable* ST = nullptr;
 inline EfiBootServices* BS = nullptr;
 
@@ -26,7 +28,16 @@ inline Void Stop(EfiSystemTable* SystemTable) noexcept {
     rt_halt();
   }
 }
-}  // namespace Detail
+
+/**
+@brief Exit EFI API to let the OS load correctly.
+Bascially frees everything we have in the EFI side.
+*/
+inline void ExitBootServices(EfiSystemTable* SystemTable, UInt64 MapKey,
+                             EfiHandlePtr ImageHandle) noexcept {
+  SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
+}
+}  // namespace EFI
 
 inline void KeInitEFI(EfiSystemTable* SystemTable) noexcept {
   ST = SystemTable;
@@ -47,7 +58,7 @@ inline void KeRuntimeStop(const EfiCharType* File,
 }
 
 #ifdef __BOOTLOADER__
-#include <BootKit/Processor.hxx>
+#include <BootKit/Platform.hxx>
 #endif  // IF TARGET=BOOTLOADER
 
 #endif /* ifndef __EFI_LIB__ */

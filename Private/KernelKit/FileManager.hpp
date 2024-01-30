@@ -10,70 +10,65 @@
 #pragma once
 
 #include <FSKit/NewFS.hxx>
+#include <NewKit/ErrorID.hpp>
 #include <NewKit/Ref.hpp>
 #include <NewKit/Stream.hpp>
 
-#include <NewKit/ErrorID.hpp>
-#include <NewKit/Ref.hpp>
-
 /// Main filesystem abstraction manager.
 
-#define kBootFolder "/boot"
-#define kBinFolder "/bin"
-#define kShLibsFolder "/lib"
+#define kBootFolder "/Boot"
+#define kBinFolder "/Programs"
+#define kShLibsFolder "/Library"
 
 #define kSectorSz 512
 
 /// refer to first enum.
 #define kFileOpsCount 4
 
-namespace HCore
-{
-enum
-{
-    kFileWriteAll = 100,
-    kFileReadAll = 101,
-    kFileReadChunk = 102,
-    kFileWriteChunk = 103,
+namespace HCore {
+enum {
+  kFileWriteAll = 100,
+  kFileReadAll = 101,
+  kFileReadChunk = 102,
+  kFileWriteChunk = 103,
 };
 
 typedef VoidPtr NodePtr;
 
-class IFilesystemManager
-{
-  public:
-    IFilesystemManager() = default;
-    virtual ~IFilesystemManager() = default;
+class IFilesystemManager {
+ public:
+  IFilesystemManager() = default;
+  virtual ~IFilesystemManager() = default;
 
-  public:
-    HCORE_COPY_DEFAULT(IFilesystemManager);
+ public:
+  HCORE_COPY_DEFAULT(IFilesystemManager);
 
-  public:
-    static bool Mount(IFilesystemManager *pMount);
-    static IFilesystemManager *Unmount();
-    static IFilesystemManager *GetMounted();
+ public:
+  static bool Mount(IFilesystemManager *pMount);
+  static IFilesystemManager *Unmount();
+  static IFilesystemManager *GetMounted();
 
-  public:
-    virtual NodePtr Create(const char *path) = 0;
-    virtual NodePtr CreateAlias(const char *path) = 0;
-    virtual NodePtr CreateDirectory(const char *path) = 0;
+ public:
+  virtual NodePtr Create(const char *path) = 0;
+  virtual NodePtr CreateAlias(const char *path) = 0;
+  virtual NodePtr CreateDirectory(const char *path) = 0;
 
-  public:
-    virtual bool Remove(const char *path) = 0;
+ public:
+  virtual bool Remove(const char *path) = 0;
 
-  public:
-    virtual NodePtr Open(const char *path, const char *r) = 0;
+ public:
+  virtual NodePtr Open(const char *path, const char *r) = 0;
 
-  public:
-    virtual void Write(NodePtr node, VoidPtr data, Int32 flags) = 0;
-    virtual VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) = 0;
+ public:
+  virtual void Write(NodePtr node, VoidPtr data, Int32 flags) = 0;
+  virtual VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) = 0;
 
-  public:
-    virtual bool Seek(NodePtr node, SizeT off) = 0;
+ public:
+  virtual bool Seek(NodePtr node, SizeT off) = 0;
 
-  public:
-    virtual SizeT Tell(NodePtr node) = 0;
-    virtual bool Rewind(NodePtr node) = 0;
+ public:
+  virtual SizeT Tell(NodePtr node) = 0;
+  virtual bool Rewind(NodePtr node) = 0;
 };
 
 #define kNPos (SizeT)0xFFFFFF;
@@ -81,74 +76,62 @@ class IFilesystemManager
 /**
  * @brief Child of IFilesystemManager, takes care of managing NewFS disks.
  */
-class NewFilesystemManager final : public IFilesystemManager
-{
-  public:
-    explicit NewFilesystemManager();
-    ~NewFilesystemManager() override;
+class NewFilesystemManager final : public IFilesystemManager {
+ public:
+  explicit NewFilesystemManager();
+  ~NewFilesystemManager() override;
 
-  public:
-    HCORE_COPY_DEFAULT(NewFilesystemManager);
+ public:
+  HCORE_COPY_DEFAULT(NewFilesystemManager);
 
-  public:
-    NodePtr Create(const char *path) override;
-    NodePtr CreateAlias(const char *path) override;
-    NodePtr CreateDirectory(const char *path) override;
+ public:
+  NodePtr Create(const char *path) override;
+  NodePtr CreateAlias(const char *path) override;
+  NodePtr CreateDirectory(const char *path) override;
 
-  public:
-    bool Remove(const char *node) override;
+ public:
+  bool Remove(const char *node) override;
 
-  public:
-    NodePtr Open(const char *path, const char *r) override
-    {
-        if (!path || *path == 0)
-            return nullptr;
+ public:
+  NodePtr Open(const char *path, const char *r) override {
+    if (!path || *path == 0) return nullptr;
 
-        if (!r || *r == 0)
-            return nullptr;
+    if (!r || *r == 0) return nullptr;
 
-        return this->Open(path, r);
-    }
+    return this->Open(path, r);
+  }
 
-  public:
-    Void Write(NodePtr node, VoidPtr data, Int32 flags) override
-    {
-        this->Write(node, data, flags);
-    }
+ public:
+  Void Write(NodePtr node, VoidPtr data, Int32 flags) override {
+    this->Write(node, data, flags);
+  }
 
-    VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override
-    {
-        return this->Read(node, flags, sz);
-    }
+  VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override {
+    return this->Read(node, flags, sz);
+  }
 
-  public:
-    bool Seek(NodePtr node, SizeT off) override
-    {
-        if (!node || off == 0)
-            return false;
+ public:
+  bool Seek(NodePtr node, SizeT off) override {
+    if (!node || off == 0) return false;
 
-        return this->Seek(node, off);
-    }
+    return this->Seek(node, off);
+  }
 
-  public:
-    SizeT Tell(NodePtr node) override
-    {
-        if (!node)
-            return kNPos;
+ public:
+  SizeT Tell(NodePtr node) override {
+    if (!node) return kNPos;
 
-        return this->Tell(node);
-    }
+    return this->Tell(node);
+  }
 
-    bool Rewind(NodePtr node) override
-    {
-        if (!node)
-            return false;
+  bool Rewind(NodePtr node) override {
+    if (!node) return false;
 
-        return this->Seek(node, 0);
-    }
+    return this->Seek(node, 0);
+  }
 
-  public:
-    NewFSImpl *fIO{nullptr};
+ public:
+  NewFSImpl *fIO{nullptr};
 };
 
 /**
@@ -156,92 +139,80 @@ class NewFilesystemManager final : public IFilesystemManager
  * @tparam Encoding file encoding (char, wchar_t...)
  * @tparam FSClass Filesystem contract who takes care of it.
  */
-template <typename Encoding = char, typename FSClass = NewFilesystemManager> class FileStream final
-{
-  public:
-    explicit FileStream(const Encoding *path);
-    ~FileStream();
+template <typename Encoding = char, typename FSClass = NewFilesystemManager>
+class FileStream final {
+ public:
+  explicit FileStream(const Encoding *path);
+  ~FileStream();
 
-  public:
-    FileStream &operator=(const FileStream &);
-    FileStream(const FileStream &);
+ public:
+  FileStream &operator=(const FileStream &);
+  FileStream(const FileStream &);
 
-  public:
-    ErrorOr<Int64> WriteAll(const VoidPtr data) noexcept
-    {
-        if (data == nullptr)
-            return ErrorOr<Int64>(H_INVALID_DATA);
+ public:
+  ErrorOr<Int64> WriteAll(const VoidPtr data) noexcept {
+    if (data == nullptr) return ErrorOr<Int64>(H_INVALID_DATA);
 
-        auto man = FSClass::GetMounted();
+    auto man = FSClass::GetMounted();
 
-        if (man)
-        {
-            man->Write(fFile, data, kFileWriteAll);
-            return ErrorOr<Int64>(0);
-        }
-
-        return ErrorOr<Int64>(H_INVALID_DATA);
+    if (man) {
+      man->Write(fFile, data, kFileWriteAll);
+      return ErrorOr<Int64>(0);
     }
 
-    VoidPtr ReadAll() noexcept
-    {
-        auto man = FSClass::GetMounted();
+    return ErrorOr<Int64>(H_INVALID_DATA);
+  }
 
-        if (man)
-        {
-            VoidPtr ret = man->Read(fFile, kFileReadAll, 0);
-            return ret;
-        }
+  VoidPtr ReadAll() noexcept {
+    auto man = FSClass::GetMounted();
 
-        return nullptr;
+    if (man) {
+      VoidPtr ret = man->Read(fFile, kFileReadAll, 0);
+      return ret;
     }
 
-    voidPtr Read(SizeT offset, SizeT sz)
-    {
-        auto man = FSClass::GetMounted();
+    return nullptr;
+  }
 
-        if (man)
-        {
-            man->Seek(fFile, offset);
-            auto ret = man->Read(fFile, kFileReadChunk, sz);
+  voidPtr Read(SizeT offset, SizeT sz) {
+    auto man = FSClass::GetMounted();
 
-            return ret;
-        }
+    if (man) {
+      man->Seek(fFile, offset);
+      auto ret = man->Read(fFile, kFileReadChunk, sz);
 
-        return nullptr;
+      return ret;
     }
 
-    void Write(SizeT offset, voidPtr data, SizeT sz)
-    {
-        auto man = FSClass::GetMounted();
+    return nullptr;
+  }
 
-        if (man)
-        {
-            man->Seek(fFile, offset);
-            man->Write(fFile, data, sz, kFileReadChunk);
-        }
+  void Write(SizeT offset, voidPtr data, SizeT sz) {
+    auto man = FSClass::GetMounted();
+
+    if (man) {
+      man->Seek(fFile, offset);
+      man->Write(fFile, data, sz, kFileReadChunk);
     }
+  }
 
-  public:
-    char *MIME() noexcept
-    {
-        return const_cast<char *>(fMime);
-    }
+ public:
+  char *MIME() noexcept { return const_cast<char *>(fMime); }
 
-  private:
-    NodePtr fFile;
-    const Char *fMime{"application-type/*"};
+ private:
+  NodePtr fFile;
+  const Char *fMime{"application-type/*"};
 };
 
 using FileStreamUTF8 = FileStream<char>;
 using FileStreamUTF16 = FileStream<wchar_t>;
 
 template <typename Encoding, typename Class>
-FileStream<Encoding, Class>::FileStream(const Encoding *path) : fFile(Class::GetMounted()->Open(path, "r+"))
-{
-}
+FileStream<Encoding, Class>::FileStream(const Encoding *path)
+    : fFile(Class::GetMounted()->Open(path, "r+")) {}
 
-template <typename Encoding, typename Class> FileStream<Encoding, Class>::~FileStream() = default;
-} // namespace HCore
+template <typename Encoding, typename Class>
+FileStream<Encoding, Class>::~FileStream() = default;
+}  // namespace HCore
 
 #define node_cast(PTR) reinterpret_cast<HCore::NodePtr>(PTR)

@@ -31,16 +31,15 @@ typedef wchar_t CharacterType;
 
 /**
  * @brief BootKit Text Writer class
- * Writes to VGA.
+ * Writes to UEFI StdOut.
  */
 class BTextWriter final {
  public:
-  void WriteString(const CharacterType *str);
-
-  void WriteCharacter(CharacterType c);
+  BTextWriter &WriteString(const CharacterType *str);
+  BTextWriter &WriteCharacter(CharacterType c);
 
  public:
-  BTextWriter() = default;
+  explicit BTextWriter() = default;
   ~BTextWriter() = default;
 
  public:
@@ -51,9 +50,23 @@ class BTextWriter final {
 HCore::SizeT BStrLen(const char *ptr);
 HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len);
 
+/**
+ * @brief BootKit File Reader class
+ * Reads using the UEFI Simple File protocol.
+ */
+class BFileReader final {
+ public:
+  explicit BFileReader() = default;
+  ~BFileReader() = default;
+
+ public:
+  BFileReader &operator=(const BFileReader &) = default;
+  BFileReader(const BFileReader &) = default;
+};
+
 /***********************************************************************************/
 /// Include other APIs.
 /***********************************************************************************/
 
-#include <BootKit/Processor.hxx>
+#include <BootKit/Platform.hxx>
 #include <BootKit/Protocol.hxx>

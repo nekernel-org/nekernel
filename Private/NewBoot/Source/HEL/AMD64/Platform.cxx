@@ -14,7 +14,7 @@
  *
  */
 
-#include <BootKit/Processor.hxx>
+#include <BootKit/Platform.hxx>
 
 extern "C" void rt_halt(void) { asm volatile("hlt"); }
 

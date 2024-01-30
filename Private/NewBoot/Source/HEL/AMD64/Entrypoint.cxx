@@ -19,10 +19,14 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
   KeInitEFI(SystemTable);
 
   BTextWriter writer;
-  writer.WriteString(L"HCoreLdr: Booting from disk...\r\n");
+  writer.WriteString(L"HCoreLdr: Booting from disk...").WriteString(L"\r\n");
+
+  UInt64 mapKey = 0;
 
   // TODO: Jump Code
 
+  EFI::ExitBootServices(SystemTable, mapKey, ImageHandle);
   EFI::Stop(SystemTable);
+
   return kEfiOk;
 }

@@ -10,7 +10,7 @@
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/EFILib.hxx>
 
-#include "EFIKit/EFI.hxx"
+/// bugs 0
 
 HCore::SizeT BStrLen(const char *ptr) {
   long long int cnt = 0;
@@ -41,18 +41,22 @@ HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len) {
 /**
 @brief puts wrapper over VGA.
 */
-void BTextWriter::WriteString(const CharacterType *str) {
-  if (*str == 0 || !str) return;
+BTextWriter &BTextWriter::WriteString(const CharacterType *str) {
+  if (*str == 0 || !str) return *this;
 
   ST->ConOut->OutputString(ST->ConOut, str);
+
+  return *this;
 }
 
 /**
 @brief putc wrapper over VGA.
 */
-void BTextWriter::WriteCharacter(CharacterType c) {
+BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
   EfiCharType str[2];
   str[0] = c;
   str[1] = 0;
   ST->ConOut->OutputString(ST->ConOut, str);
+
+  return *this;
 }
