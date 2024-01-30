@@ -107,13 +107,13 @@ const Char *alloc_string(const Char *text) {
   return string;
 }
 
-Int to_uppercase(Int character) {
+Int rt_to_uppercase(Int character) {
   if (character >= 'a' && character <= 'z') return character - 0x20;
 
   return character;
 }
 
-Int to_lower(Int character) {
+Int rt_to_lower(Int character) {
   if (character >= 'A' && character <= 'Z') return character + 0x20;
 
   return character;
@@ -143,7 +143,7 @@ Boolean is_space(Char chr) { return chr == ' '; }
 
 Boolean is_newln(Char chr) { return chr == '\n'; }
 
-voidPtr string_in_string(const char *in, const char *needle) {
+voidPtr rt_string_in_string(const char *in, const char *needle) {
   for (size_t i = 0; i < string_length(in); ++i) {
     if (string_compare(in + i, needle, string_length(needle)) == 0)
       return reinterpret_cast<voidPtr>(const_cast<char *>(in + i));
@@ -154,7 +154,7 @@ voidPtr string_in_string(const char *in, const char *needle) {
 
 // @brief Checks for a string start at the character.
 
-char *string_from_char(char *str, const char chr) {
+char *rt_string_from_char(char *str, const char chr) {
   while (*str != chr) {
     ++str;
 

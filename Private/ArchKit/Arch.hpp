@@ -71,7 +71,7 @@ namespace HCore
         return hash;
     }
 
-    bool init_hal();
+    bool ke_init_hal();
 } // namespace HCore
 
 #define kMaxSyscalls 0x100

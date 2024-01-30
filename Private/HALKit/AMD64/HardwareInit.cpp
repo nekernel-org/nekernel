@@ -12,7 +12,7 @@
 // bugs = 0
 
 namespace HCore {
-bool init_hal() {
+bool ke_init_hal() {
   // TODO: Hardware Specific stuff.
 
   return true;

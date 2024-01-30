@@ -65,7 +65,7 @@ PTEWrapper *PageManager::Request(Boolean Rw, Boolean User,
       HCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User));
 
   if (PageTableEntry == nullptr) {
-    kcout << "PTEWrapper : Page table is nullptr!, kernel_new_ptr failed!";
+    kcout << "PTEWrapper : Page table is nullptr!, ke_new_ke_heap failed!";
     return nullptr;
   }
 

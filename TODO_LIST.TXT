@@ -9,3 +9,12 @@
 - Context switch x87/SSE/AVX registers [ ]
 - Framebuffer and ATA support [ ]
 - Native Subsystem and GUI [ ]
+
+Status:
+
+HCoreLdr: Working.
+HCoreKrnl: Not run yet.
+
+Prioritize:
+HCoreLdr: Protocol and API.
+HCoreKrnl: Complying to specs.

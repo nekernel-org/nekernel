@@ -7,39 +7,28 @@
  *      ========================================================
  */
 
-#include <BootKit/Boot.hxx>
+#define __BOOTLOADER__ 1
 
-namespace Detail {
-/**
-@brief Stop Execution of Bootloader.
-@param SystemTable EFI System Table.
-*/
-Void Stop(EfiSystemTable* SystemTable) noexcept {
-  SystemTable->ConOut->OutputString(SystemTable->ConOut,
-                                    L"HCoreLdr: Hanging...\r\n");
-
-  while (true) {
-    rt_cli();
-    rt_halt();
-  }
-}
-}  // namespace Detail
+#include <BootKit/BootKit.hxx>
+#include <EFIKit/EFILib.hxx>
 
 // don't remove EfiGUID, it will call initializer_list!
 
 EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
                          EfiSystemTable* SystemTable) {
+  KeInitEFI(SystemTable);
+
   SystemTable->ConOut->OutputString(SystemTable->ConOut,
                                     L"HCoreLdr: Initializing...\r\n");
 
   EfiLoadImageProtocol* protocol = nullptr;
   EfiGUID guid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
 
-  Int32 status_code = SystemTable->BootServices->OpenProtocol(
+  Int32 statusCode = SystemTable->BootServices->OpenProtocol(
       ImageHandle, &guid, (VoidPtr*)&protocol, ImageHandle, nullptr,
       EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 
-  if (status_code != kEfiOk) {
+  if (statusCode != kEfiOk) {
     SystemTable->ConOut->OutputString(
         SystemTable->ConOut,
         L"HCoreLdr: Could not locate EfiLoadImageProtocol! Aborting...\r\n");

@@ -132,7 +132,7 @@ void Process::Exit(Int32 exit_code) {
 
   if (this->Ring != (Int32)ProcessSelector::kRingDriver &&
       this->Ring != (Int32)ProcessSelector::kRingKernel) {
-    pool_free_ptr(this->Pool);
+    ke_free_heap(this->Pool);
 
     this->PoolCursor = nullptr;
 
@@ -141,9 +141,9 @@ void Process::Exit(Int32 exit_code) {
   }
 
   //! Delete image if not done already.
-  if (this->Image) kernel_delete_ptr(this->Image);
+  if (this->Image) ke_delete_ke_heap(this->Image);
 
-  if (this->StackFrame) kernel_delete_ptr((VoidPtr)this->StackFrame);
+  if (this->StackFrame) ke_delete_ke_heap((VoidPtr)this->StackFrame);
 
   ProcessManager::Shared().Leak().Remove(this->ProcessId);
 }
@@ -153,12 +153,12 @@ bool ProcessManager::Add(Ref<Process> &process) {
 
   kcout << "ProcessManager::Add(Ref<Process>& process)\r\n";
 
-  process.Leak().Pool = pool_new_ptr(kPoolUser | kPoolRw);
+  process.Leak().Pool = ke_new_heap(kPoolUser | kPoolRw);
   process.Leak().ProcessId = this->m_Headers.Count();
   process.Leak().PoolCursor = process.Leak().Pool;
 
   process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame *>(
-      kernel_new_ptr(sizeof(HAL::StackFrame), true, false));
+      ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
 
   MUST_PASS(process.Leak().StackFrame);
 

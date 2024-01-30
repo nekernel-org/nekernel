@@ -21,27 +21,24 @@
 // description: memory pool for user programs.
 
 #define kPoolMaxSz 4096
-#define kPoolMag   0x5500A1
+#define kPoolMag 0x5500A1
 
-namespace HCore
-{
-    enum
-    {
-        kPoolHypervisor = 0x2,
-        kPoolShared = 0x4,
-        kPoolUser = 0x6,
-        kPoolRw = 0x8,
-    };
+namespace HCore {
+enum {
+  kPoolHypervisor = 0x2,
+  kPoolShared = 0x4,
+  kPoolUser = 0x6,
+  kPoolRw = 0x8,
+};
 
-    struct HeapHeader final
-    {
-        UInt32 Magic;
-        Int32 Flags;
-        Boolean Free;
-        UIntPtr Pad;
-    };
+struct HeapHeader final {
+  UInt32 Magic;
+  Int32 Flags;
+  Boolean Free;
+  UIntPtr Pad;
+};
 
-    VoidPtr pool_new_ptr(Int32 flags);
-    Int32 pool_free_ptr(voidPtr pointer);
-    Boolean pool_ptr_exists(UIntPtr thePool, UIntPtr thePtr, SizeT theLimit);
-} // namespace HCore
+Void ke_init_heap();
+VoidPtr ke_new_heap(Int32 flags);
+Int32 ke_free_heap(voidPtr pointer);
+}  // namespace HCore

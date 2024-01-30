@@ -124,7 +124,7 @@ static bool ke_check_and_free_heap(const SizeT& index, voidPtr ptr) {
 /// @brief Creates a new pool pointer.
 /// @param flags the flags attached to it.
 /// @return a pool pointer with selected permissions.
-voidPtr pool_new_ptr(Int32 flags) {
+voidPtr ke_new_heap(Int32 flags) {
   if (!HeapManager::IsEnabled()) return nullptr;
 
   if (HeapManager::GetCount() > kPoolMaxSz) return nullptr;
@@ -140,7 +140,7 @@ voidPtr pool_new_ptr(Int32 flags) {
     auto& ref = HeapManager::GetCount();
     ++ref;  // increment the number of addresses we have now.
 
-    kcout << "[pool_new_ptr] New Address found!\r\n";
+    kcout << "[ke_new_heap] New Address found!\r\n";
 
     // finally make the pool address.
     return ke_make_heap(
@@ -153,7 +153,7 @@ voidPtr pool_new_ptr(Int32 flags) {
 /// @brief free a pool pointer.
 /// @param ptr The pool pointer to free.
 /// @return status code
-Int32 pool_free_ptr(voidPtr ptr) {
+Int32 ke_free_heap(voidPtr ptr) {
   if (!HeapManager::IsEnabled()) return -1;
 
   if (ptr) {
@@ -171,18 +171,10 @@ Int32 pool_free_ptr(voidPtr ptr) {
   return -1;
 }
 
-/// @brief Checks if pointer is valid.
-/// @param thePool the pool pointer.
-/// @param thePtr the pointer.
-/// @param theLimit the last address of the pool.
-/// @return if it is valid.
-Boolean pool_ptr_exists(UIntPtr thePool, UIntPtr thePtr, SizeT theLimit) {
-  if (HeapManager::GetCount() < 1) return false;
-
-  if (thePool == 0 || thePtr == 0 || theLimit == 0) {
-    return false;
-  }
-
-  return ((thePool) < (thePtr) < (theLimit));
+/// @brief Init HeapManager, set GetCount to zero and IsEnabled to true.
+/// @return 
+Void ke_init_heap() {
+  HeapManager::GetCount() = 0UL;
+  HeapManager::IsEnabled() = true;
 }
 }  // namespace HCore

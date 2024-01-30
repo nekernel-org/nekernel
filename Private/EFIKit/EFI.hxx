@@ -11,12 +11,11 @@
 #define __EFI__
 
 /**
-@brief HCore Implementation of UEFI protocols.
+@brief HCore Implementation of EFI.
 @author Amlal El Mahrouss
 */
 
 #include <NewKit/Defines.hpp>
-#include <cstdint>
 
 using namespace HCore;
 
@@ -30,11 +29,12 @@ struct EfiBootServices;
 struct EfiMemoryDescriptor;
 struct EfiSystemTable;
 
-// Types
-
+/// @brief Core Handle Type
+/// This is like NT's Win32 HANDLE type.
 typedef struct {
 } *EfiHandlePtr;
 
+/* UEFI uses wide characters by default. */
 typedef WideChar EfiCharType;
 
 /// What's BootBolicy?

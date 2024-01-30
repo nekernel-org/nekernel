@@ -40,7 +40,7 @@ static voidPtr find_ptr(const SizeT &sz, const bool rw, const bool user) {
 /// @param rw read write (true to enable it)
 /// @param user is it accesible by user processes?
 /// @return the pointer
-VoidPtr kernel_new_ptr(const SizeT &sz, const bool rw, const bool user) {
+VoidPtr ke_new_ke_heap(const SizeT &sz, const bool rw, const bool user) {
   if (kWrapperCount < sz) return nullptr;
 
   if (auto ptr = Detail::find_ptr(sz, rw, user); ptr) return ptr;
@@ -62,7 +62,7 @@ VoidPtr kernel_new_ptr(const SizeT &sz, const bool rw, const bool user) {
 /// @brief Declare pointer as free.
 /// @param ptr the pointer.
 /// @return
-Int32 kernel_delete_ptr(voidPtr ptr) {
+Int32 ke_delete_ke_heap(voidPtr ptr) {
   if (ptr) {
     const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
 
@@ -105,5 +105,14 @@ Boolean kernel_valid_ptr(voidPtr ptr) {
   }
 
   return false;
+}
+
+/// @brief The Kernel heap initializer function.
+/// @return 
+Void ke_init_ke_heap() noexcept
+{
+  kWrapperCount = 0UL;
+  Ref<PTEWrapper *> kLastWrapper = Ref<PTEWrapper*>(nullptr);
+  Pmm kPmm = Pmm();
 }
 }  // namespace HCore

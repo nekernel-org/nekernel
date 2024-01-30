@@ -57,7 +57,7 @@ PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
                "started!\n";
       fBad = true;
 
-      kernel_delete_ptr(fCachedBlob);
+      ke_delete_ke_heap(fCachedBlob);
 
       fCachedBlob = nullptr;
     };
@@ -78,7 +78,7 @@ PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
 }
 
 PEFLoader::~PEFLoader() {
-  if (fCachedBlob) kernel_delete_ptr(fCachedBlob);
+  if (fCachedBlob) ke_delete_ke_heap(fCachedBlob);
 }
 
 VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {

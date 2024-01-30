@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <BootKit/Boot.hxx>
+#include <BootKit/BootKit.hxx>
 
 constexpr HCore::UInt32 kVGABaseAddress = 0xb8000;
 

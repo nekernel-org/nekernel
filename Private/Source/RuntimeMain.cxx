@@ -11,6 +11,8 @@
 #include <KernelKit/CodeManager.hpp>
 #include <KernelKit/FileManager.hpp>
 #include <NewKit/Json.hpp>
+#include <NewKit/KernelHeap.hpp>
+#include <NewKit/UserHeap.hpp>
 
 /// PRIVATE SYMBOLS EXPORTED BY GCC.
 extern "C" void (*__SYSTEM_FINI)();
@@ -22,7 +24,10 @@ extern "C" void RuntimeMain() {
     __SYSTEM_INIT[index_init]();
   }
 
-  MUST_PASS(HCore::init_hal());
+  MUST_PASS(HCore::ke_init_hal());
+
+  HCore::ke_init_heap();
+  HCore::ke_init_ke_heap();
 
   HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
   HCore::PEFLoader img("/System/Seeker.cm");

@@ -25,8 +25,8 @@ namespace HCore
     Boolean to_str(Char *buf, Int limit, Int base);
     Boolean is_newln(Char chr);
     Boolean is_space(Char chr);
-    Int to_uppercase(Int c);
-    Int to_lower(Int c);
-    voidPtr string_in_string(const char* in, const char* needle);
-    char* string_from_char(char* str, const char chr);
+    Int rt_to_uppercase(Int c);
+    Int rt_to_lower(Int c);
+    voidPtr rt_string_in_string(const char* in, const char* needle);
+    char* rt_string_from_char(char* str, const char chr);
 } // namespace HCore

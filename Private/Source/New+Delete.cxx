@@ -15,7 +15,7 @@ void* operator new[](size_t sz)
 	if (sz == 0)
 		++sz;
 
-	return HCore::kernel_new_ptr(sz, true, false); 
+	return HCore::ke_new_ke_heap(sz, true, false); 
 }
 
 void* operator new(size_t sz) 
@@ -23,7 +23,7 @@ void* operator new(size_t sz)
 	if (sz == 0)
 		++sz;
 
-	return HCore::kernel_new_ptr(sz, true, false); 
+	return HCore::ke_new_ke_heap(sz, true, false); 
 }
 
 void operator delete[](void* ptr) 
@@ -31,7 +31,7 @@ void operator delete[](void* ptr)
     if (ptr == nullptr)
         return;
 
-    HCore::kernel_delete_ptr(ptr); 
+    HCore::ke_delete_ke_heap(ptr); 
 }
 
 void operator delete(void* ptr)
@@ -39,7 +39,7 @@ void operator delete(void* ptr)
     if (ptr == nullptr)
         return;
 
-    HCore::kernel_delete_ptr(ptr); 
+    HCore::ke_delete_ke_heap(ptr); 
 }
 
 void operator delete(void* ptr, size_t sz)
@@ -49,6 +49,6 @@ void operator delete(void* ptr, size_t sz)
 
     (void)sz;
 
-    HCore::kernel_delete_ptr(ptr); 
+    HCore::ke_delete_ke_heap(ptr); 
 }
 

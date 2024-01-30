@@ -17,6 +17,7 @@
 #include <NewKit/Pmm.hpp>
 
 namespace HCore {
-Int32 kernel_delete_ptr(voidPtr allocatedPtr);
-voidPtr kernel_new_ptr(const SizeT &sz, const bool rw, const bool user);
+Void ke_init_ke_heap() noexcept;
+Int32 ke_delete_ke_heap(voidPtr allocatedPtr);
+voidPtr ke_new_ke_heap(const SizeT &sz, const bool rw, const bool user);
 }  // namespace HCore

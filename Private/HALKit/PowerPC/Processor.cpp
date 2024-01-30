@@ -30,7 +30,7 @@ void rt_wakeup_thread(HAL::StackFrame* stack) {}
 void rt_hang_thread(HAL::StackFrame* stack) {}
 
 // @brief main HAL entrypoint
-void init_hal() {}
+void ke_init_hal() {}
 
 void system_io_print(const char* bytes) {
   if (!bytes) return;

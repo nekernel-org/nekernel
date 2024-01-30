@@ -43,7 +43,7 @@ static ErrorOr<StringView> url_extract_location(const char *url) {
   for (; i < string_length(url); ++i) {
     if (!scheme_found) {
       for (int y = 0; kProtosCount; ++y) {
-        if (string_in_string(view.CData(), kProtos[y])) {
+        if (rt_string_in_string(view.CData(), kProtos[y])) {
           i += string_length(kProtos[y]) + kUrlOutSz;
           scheme_found = true;
 
