@@ -7,7 +7,8 @@
  * 	========================================================
  */
 
-#pragma once
+#ifndef __DRIVE_MANAGER__
+#define __DRIVE_MANAGER__
 
 #include <CompilerKit/CompilerKit.hpp>
 #include <KernelKit/Device.hpp>
@@ -78,3 +79,5 @@ class DriveSelector final {
   DriveTraits *fDrive;
 };
 }  // namespace HCore
+
+#endif /* ifndef __DRIVE_MANAGER__ */

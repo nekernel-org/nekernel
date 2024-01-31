@@ -39,6 +39,8 @@ enum {
   kPefKindSharedObject = 2, /* .lib */
   kPefKindObject = 4,       /* .obj */
   kPefKindDebug = 5,        /* .debug */
+  kPefKindDriver = 6,
+  kPefKindCount,
 };
 
 typedef struct PEFContainer final {

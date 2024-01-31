@@ -16,7 +16,7 @@ extern "C" void idt_handle_system_call(HCore::UIntPtr rsp) {
   rt_syscall_handle(sf);
 
   HCore::kcout << "System Call with ID: "
-               << HCore::StringBuilder::FromInt("syscall{%}", sf->SID);
+               << HCore::StringBuilder::FromInt("syscall{%}", sf->R15);
 }
 
 extern "C" void idt_handle_gpf(HCore::UIntPtr rsp) {
@@ -78,4 +78,13 @@ extern "C" void idt_handle_generic(HCore::UIntPtr rsp) {
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
+}
+
+extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp) {
+  HCore::HAL::rt_cli();
+
+  HCore::HAL::StackFramePtr sf = (HCore::HAL::StackFramePtr)rsp;
+
+  HCore::HAL::rt_sti();
+  return rsp;
 }

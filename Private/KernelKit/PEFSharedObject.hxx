@@ -7,15 +7,19 @@
  *      ========================================================
  */
 
-#ifndef __KERNELKIT_SHARED_OBJECT_CORE_HXX__
-#define __KERNELKIT_SHARED_OBJECT_CORE_HXX__
+#ifndef __KERNELKIT_SHARED_OBJECT_HXX__
+#define __KERNELKIT_SHARED_OBJECT_HXX__
 
-#include <KernelKit/CodeManager.hpp>
 #include <KernelKit/Loader.hpp>
 #include <KernelKit/PEF.hpp>
+#include <KernelKit/PEFCodeManager.hxx>
 #include <NewKit/Defines.hpp>
 
 namespace HCore {
+  /**
+   * @brief Shared Library class
+   * Load library from this class
+   */
 class SharedObject final {
  public:
   struct SharedObjectTraits final {
@@ -40,6 +44,10 @@ class SharedObject final {
 
  public:
   void Mount(SharedObjectTraits *to_mount) {
+    if (!to_mount ||
+        !to_mount->fImageObject)
+        return;
+
     fMounted = to_mount;
 
     if (fLoader && to_mount) {
@@ -82,4 +90,4 @@ inline void hcore_pure_call(void) {
 }
 }  // namespace HCore
 
-#endif /* ifndef __KERNELKIT_SHARED_OBJECT_CORE_HXX__ */
+#endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */

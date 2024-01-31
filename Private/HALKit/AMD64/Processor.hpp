@@ -62,8 +62,7 @@ struct __attribute__((packed)) StackFrame {
   Reg R12;
   Reg R13;
   Reg R14;
-  Reg R15;  // Reserved: Multi Processor manager (Hal)
-  Reg SID;  // Reserved: system call id (Hal)
+  Reg R15;
 };
 
 typedef StackFrame *StackFramePtr;
