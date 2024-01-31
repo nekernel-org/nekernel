@@ -27,7 +27,7 @@ HFilePtr ZipStream::FlushToFile(const char *name) {
   HFilePtr fp = new HFile(name);
   MUST_PASS(fp);
 
-  this->fSharedSz = HHeap::Shared()->Tell(this->fSharedData);
+  this->fSharedSz = HHeap::Shared()->Size(this->fSharedData);
 
   fp->SetMIME("application/x-bzip");
   fp->Write(this->fSharedData, this->fSharedSz);

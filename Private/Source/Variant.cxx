@@ -21,7 +21,7 @@ const Char* Variant::ToString() {
     case VariantKind::kPointer:
       return ("Memory:{Pointer}");
     default:
-      return ("Class:{Undefined}");
+      return ("Memory:{Undefined}");
   }
 }
 

@@ -24,11 +24,11 @@ class HFile final {
   HCORE_COPY_DEFAULT(HFile);
 
  public:
-  void *Read(SizeT off, SizeT sz);
-  void Write(void *buf, SizeT off, SizeT sz);
+  voidPtr Read(SizeT off, SizeT sz);
+  void Write(voidPtr buf, SizeT off, SizeT sz);
   void Seek(SizeT off);
-  void *Read(SizeT sz);
-  void Write(void *buf, SizeT sz);
+  voidPtr Read(SizeT sz);
+  void Write(voidPtr buf, SizeT sz);
   void Rewind();
 
  public:

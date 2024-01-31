@@ -14,3 +14,5 @@
 #pragma once
 
 /// @brief System Call Interface
+
+#include <SystemKit/CoreAPI.hxx>

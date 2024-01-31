@@ -20,11 +20,11 @@ namespace HCore {
 /// @brief Thread Information Block for Local Storage.
 /// Located in GS on AMD64, Virtual Address 0x10000 (64x0, 32x0, ARM64)
 struct ThreadInformationBlock final {
-  const Char NAME[255];         // Module Name
-  const UIntPtr START_ADDRESS;  // Start Address
-  const UIntPtr START_ALLOC;    // Allocation Heap
-  const UIntPtr START_STACK;    // Stack Pointer.
-  const Int32 ARCH;             // Architecture and/or platform.
+  const Char Name[255];        // Module Name
+  const UIntPtr StartAddress;  // Start Address
+  const UIntPtr StartHeap;     // Allocation Heap
+  const UIntPtr StartStack;    // Stack Pointer.
+  const Int32 ARCH;            // Architecture and/or platform.
 };
 
 enum {

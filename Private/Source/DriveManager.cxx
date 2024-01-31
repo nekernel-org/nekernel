@@ -29,7 +29,7 @@ bool DriveSelector::Mount(DriveTraits *drive) {
     fDrive = drive;
     fDrive->fMount();
 
-    kcout << "[Mount] drive: " << fDrive->fName << "\n";
+    kcout << "Mount drive: " << fDrive->fName << "\n";
 
     return true;
   }
@@ -45,7 +45,7 @@ DriveTraits *DriveSelector::Unmount() {
   fDrive->fUnmount();
   fDrive = nullptr;
 
-  kcout << "[Unmount] drive: " << drivePointer->fName << "\n";
+  kcout << "Unmount drive: " << drivePointer->fName << "\n";
 
   return drivePointer;
 }

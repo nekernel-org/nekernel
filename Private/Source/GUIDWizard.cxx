@@ -12,9 +12,8 @@
 
 // begin of ascii 'readable' characters. (A, C, C, 1, 2)
 #define kAsciiBegin 47
-
 // @brief Size of UUID.
-#define kUUIDSize 32
+#define kUUIDSize 37
 
 namespace HCore::XRN::Version1 {
 auto make_sequence(const ArrayList<UShort>& uuidSeq) -> Ref<GUIDSequence*> {

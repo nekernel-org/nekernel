@@ -41,7 +41,7 @@ class HHeap final {
 
  public:
   void Delete(HHeapPtr me) noexcept;
-  SizeT Tell(HHeapPtr me) noexcept;
+  SizeT Size(HHeapPtr me) noexcept;
   HHeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
 };
 
