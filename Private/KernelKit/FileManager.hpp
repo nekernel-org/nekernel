@@ -7,6 +7,14 @@
  * 	========================================================
  */
 
+/* -------------------------------------------
+
+ Revision History:
+
+     31/01/24: Update documentation (amlel)
+
+ ------------------------------------------- */
+
 #pragma once
 
 #include <FSKit/NewFS.hxx>
@@ -35,6 +43,10 @@ enum {
 
 typedef VoidPtr NodePtr;
 
+/**
+    @brief Filesystem Manager Interface class
+    @brief Used to provide common I/O for a specific filesystem.
+*/
 class IFilesystemManager {
  public:
   IFilesystemManager() = default;
@@ -71,10 +83,11 @@ class IFilesystemManager {
   virtual bool Rewind(NodePtr node) = 0;
 };
 
-#define kNPos (SizeT)0xFFFFFF;
+/** @brief invalid position. (n-pos) */
+#define kNPos (SizeT)(-1);
 
 /**
- * @brief Child of IFilesystemManager, takes care of managing NewFS disks.
+ * @brief Based of IFilesystemManager, takes care of managing NewFS disks.
  */
 class NewFilesystemManager final : public IFilesystemManager {
  public:

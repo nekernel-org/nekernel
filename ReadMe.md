@@ -1,4 +1,4 @@
-# h-core
+# h-core (codename: SuperTrouper)
 
 ## Microkernel and it's components source code.
 
