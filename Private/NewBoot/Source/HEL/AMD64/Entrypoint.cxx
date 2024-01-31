@@ -26,7 +26,7 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
   // TODO: Jump Code
 
   EFI::ExitBootServices(SystemTable, mapKey, ImageHandle);
-  EFI::Stop(SystemTable);
+  EFI::Stop();
 
   return kEfiOk;
 }

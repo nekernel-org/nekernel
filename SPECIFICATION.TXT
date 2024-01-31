@@ -1,8 +1,8 @@
 ===================================
-0: Generic Information
+0: General Information
 ===================================
 
-- ABI/Format: PEF/PE32+.
+- ABI and Format: PEF/PE32+.
 - Architecture: Microkernel.
 - Language: C++/(Assembly (AMD64, X64000, X86S, ARM64))
 

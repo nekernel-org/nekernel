@@ -1,14 +1,14 @@
-.globl load_idt
-.globl load_gdt
+.globl rt_load_idt
+.globl rt_load_gdt
 .globl rt_wait_for_io
 .globl rt_get_current_context
 
 .section .text
-load_gdt:
+rt_load_gdt:
     lgdt (%rdi)
     ret
 
-load_idt:
+rt_load_idt:
     lidt (%rdi)
     sti
     ret

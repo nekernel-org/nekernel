@@ -12,17 +12,14 @@
 
 #include <EFIKit/EFI.hxx>
 
-#include "NewKit/Defines.hpp"
-
 inline EfiSystemTable* ST = nullptr;
 inline EfiBootServices* BS = nullptr;
 
 namespace EFI {
 /**
 @brief Stop Execution of program.
-@param SystemTable EFI System Table.
 */
-inline Void Stop(EfiSystemTable* SystemTable) noexcept {
+inline Void Stop() noexcept {
   while (true) {
     rt_cli();
     rt_halt();
@@ -35,11 +32,15 @@ Bascially frees everything we have in the EFI side.
 */
 inline void ExitBootServices(EfiSystemTable* SystemTable, UInt64 MapKey,
                              EfiHandlePtr ImageHandle) noexcept {
+  if (!SystemTable) return;
+
   SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
 }
 }  // namespace EFI
 
 inline void KeInitEFI(EfiSystemTable* SystemTable) noexcept {
+  if (!SystemTable) return;
+
   ST = SystemTable;
   BS = ST->BootServices;
 }
@@ -54,7 +55,7 @@ inline void KeRuntimeStop(const EfiCharType* File,
   ST->ConOut->OutputString(ST->ConOut, Reason);
   ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
 
-  EFI::Stop(ST);
+  EFI::Stop();
 }
 
 #ifdef __BOOTLOADER__

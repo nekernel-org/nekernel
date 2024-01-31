@@ -13,45 +13,45 @@
 
 /// BUGS: 0
 
-//! This file handles multi processing in HCore.
-//! Multi processing is needed for File I/O, networking and scheduling.
+///! @brief This file handles multi processing in HCore.
+///! @brief Multi processing is needed for multi-tasking operations.
 
 namespace HCore {
-// A ProcessorCore class takes care of it's owned hardware thread.
+// A HardwareThread class takes care of it's owned hardware thread.
 // It has a stack for it's core.
 
 // @brief constructor
-ProcessorCore::ProcessorCore() = default;
+HardwareThread::HardwareThread() = default;
 
 // @brief destructor
-ProcessorCore::~ProcessorCore() = default;
+HardwareThread::~HardwareThread() = default;
 
 //! @brief returns the id
 
-const ThreadID& ProcessorCore::ID() noexcept { return m_ID; }
+const ThreadID& HardwareThread::ID() noexcept { return m_ID; }
 
 //! @brief returns the kind
 
-const ThreadKind& ProcessorCore::Kind() noexcept { return m_Kind; }
+const ThreadKind& HardwareThread::Kind() noexcept { return m_Kind; }
 
 //! @brief is the core busy?
 
-bool ProcessorCore::IsBusy() noexcept { return m_Busy; }
+bool HardwareThread::IsBusy() noexcept { return m_Busy; }
 
 /// @brief Get processor stack frame.
 
-HAL::StackFrame* ProcessorCore::StackFrame() noexcept {
+HAL::StackFrame* HardwareThread::StackFrame() noexcept {
   MUST_PASS(m_Stack);
   return m_Stack;
 }
 
-void ProcessorCore::Busy(const bool busy) noexcept { m_Busy = busy; }
+void HardwareThread::Busy(const bool busy) noexcept { m_Busy = busy; }
 
-ProcessorCore::operator bool() { return m_Stack; }
+HardwareThread::operator bool() { return m_Stack; }
 
 /// @brief Wakeup the processor.
 
-void ProcessorCore::Wake(const bool wakeup) noexcept {
+void HardwareThread::Wake(const bool wakeup) noexcept {
   m_Wakeup = wakeup;
 
   if (!m_Wakeup)
@@ -60,14 +60,14 @@ void ProcessorCore::Wake(const bool wakeup) noexcept {
     rt_wakeup_thread(m_Stack);
 }
 
-bool ProcessorCore::Switch(HAL::StackFrame* stack) {
+bool HardwareThread::Switch(HAL::StackFrame* stack) {
   if (stack == nullptr) return false;
 
   return rt_do_context_switch(m_Stack, stack) == 0;
 }
 
 ///! @brief Tells if processor is waked up.
-bool ProcessorCore::IsWakeup() noexcept { return m_Wakeup; }
+bool HardwareThread::IsWakeup() noexcept { return m_Wakeup; }
 
 //! @brief Constructor and destructor
 
@@ -125,7 +125,7 @@ bool SMPManager::Switch(HAL::StackFrame* stack) {
  * @param idx the index
  * @return the reference to the hardware thread.
  */
-Ref<ProcessorCore> SMPManager::operator[](const SizeT& idx) {
+Ref<HardwareThread> SMPManager::operator[](const SizeT& idx) {
   return m_ThreadList[idx].Leak();
 }
 

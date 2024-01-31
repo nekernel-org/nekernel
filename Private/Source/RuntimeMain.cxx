@@ -19,6 +19,7 @@ extern "C" void (*__SYSTEM_FINI)();
 extern "C" void (**__SYSTEM_INIT)();
 
 extern "C" void RuntimeMain() {
+  /// Init C++ globals
   for (HCore::SizeT index_init = 0UL;
        __SYSTEM_INIT[index_init] != __SYSTEM_FINI; ++index_init) {
     __SYSTEM_INIT[index_init]();
@@ -30,7 +31,7 @@ extern "C" void RuntimeMain() {
   HCore::ke_init_ke_heap();
 
   HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
-  HCore::PEFLoader img("/System/Seeker.cm");
+  HCore::PEFLoader img("/System/Shell.exe");
 
   if (!HCore::Utils::execute_from_image(img)) {
     HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

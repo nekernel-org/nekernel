@@ -25,7 +25,7 @@ void GDTLoader::Load(Register64 &gdt) {
   reg->limit = gdt.Limit;
 
   rt_cli();
-  load_gdt(reg);
+  rt_load_gdt(reg);
   rt_sti();
 }
 
@@ -37,7 +37,7 @@ void IDTLoader::Load(Register64 &idt) {
   reg->limit = idt.Limit;
 
   rt_cli();
-  load_idt(reg);
+  rt_load_idt(reg);
   rt_sti();
 }
 

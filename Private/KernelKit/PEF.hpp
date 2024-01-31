@@ -7,8 +7,8 @@
  * 	========================================================
  */
 
-#ifndef __PEF_HPP__
-#define __PEF_HPP__
+#ifndef __PEF__
+#define __PEF__
 
 #include <CompilerKit/CompilerKit.hpp>
 #include <KernelKit/Loader.hpp>
@@ -86,4 +86,4 @@ enum {
 
 #define kPefStart "__start"
 
-#endif /* ifndef __PEF_HPP__ */
+#endif /* ifndef __PEF__ */

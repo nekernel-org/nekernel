@@ -1,6 +1,6 @@
-.globl __AssemblerStart
+.globl Main
 .align 4
 .text
 
-__AssemblerStart:
-	b __AssemblerStart
+Main:
+	b Main

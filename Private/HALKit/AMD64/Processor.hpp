@@ -86,15 +86,24 @@ using InterruptDescriptorArray = Array<InterruptDescriptor, 256>;
 
 class SegmentDescriptor final {
  public:
-  UIntPtr Base;
-  UIntPtr BaseMiddle;
-  UIntPtr BaseHigh;
+  UInt16 Base;
+  UInt8 BaseMiddle;
+  UInt8 BaseHigh;
 
   UShort Limit;
   UChar Gran;
-  UChar AB;
+  UChar AccessByte;
+};
 
-  operator bool() { return Base > Limit; }
+/***
+ * @brief Segment Boolean operations
+ */
+class SegmentDescriptorComparator final {
+ public:
+  bool IsValid(SegmentDescriptor &seg) { return seg.Base > seg.Limit; }
+  bool Equals(SegmentDescriptor &seg, SegmentDescriptor &segRight) {
+    return seg.Base == segRight.Base && seg.Limit == segRight.Limit;
+  }
 };
 
 using SegmentArray = Array<SegmentDescriptor, 6>;
@@ -116,8 +125,9 @@ void system_get_cores(voidPtr rsdPtr);
 
 extern "C" void idt_handle_system_call(HCore::UIntPtr rsp);
 extern "C" void idt_handle_generic(HCore::UIntPtr rsp);
-extern "C" void load_idt(HCore::voidPtr ptr);
-extern "C" void load_gdt(HCore::voidPtr ptr);
 extern "C" void idt_handle_gpf(HCore::UIntPtr rsp);
 extern "C" void idt_handle_math(HCore::UIntPtr rsp);
 extern "C" void idt_handle_pf(HCore::UIntPtr rsp);
+
+extern "C" void rt_load_idt(HCore::voidPtr ptr);
+extern "C" void rt_load_gdt(HCore::voidPtr ptr);
