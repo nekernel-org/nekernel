@@ -18,16 +18,13 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
                          EfiSystemTable* SystemTable) {
   KeInitEFI(SystemTable);
 
-  SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
-  SystemTable->ConOut->SetAttribute(SystemTable->ConOut, kEFIYellow);
-
   BTextWriter writer;
   writer.WriteString(L"HCoreLdr: Booting from \\Volume0\\...")
       .WriteString(L"\r\n");
 
   UInt64 mapKey = 0;
 
-  BFileReader reader(L"\\MAHROUSS\\Root\\System\\HCoreKrnl.efi\0");
+  BFileReader reader(L"\\MAHROUSS\\Root\\System\\HCoreKrnl.exe\0");
   auto blob = reader.ReadAll();
 
   if (!blob)

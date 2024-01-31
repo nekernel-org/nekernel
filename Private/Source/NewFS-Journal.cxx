@@ -27,13 +27,13 @@ class NewFSJournalRunner final {
       : fLoadRoutine(load_runner) {
     MUST_PASS(fLoadRoutine);
 
-    fLoadRoutine(this);
+    // load runner
+    if (fLoadRoutine) fLoadRoutine(this);
   }
 
+  /// @brief Unload journal runner
   ~NewFSJournalRunner() noexcept {
-    MUST_PASS(fUnloadRoutine);
-
-    fUnloadRoutine(this);
+    if (fUnloadRoutine) fUnloadRoutine(this);
   }
 
   HCORE_COPY_DEFAULT(NewFSJournalRunner);

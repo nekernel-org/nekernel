@@ -10,7 +10,7 @@ ASM			= nasm
 ASMFLAGS	= -f elf64
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
-KERNEL		= HCoreKrnl.efi
+KERNEL		= HCoreKrnl.exe
 
 # The kernel entrypoint
 SCRIPT		= --script=Linker/Platforms/PC.lds

@@ -47,7 +47,7 @@ class HHeap final {
 
 class HMemoryException final {
  public:
-  HMemoryException() = default;
+  explicit HMemoryException() = default;
   ~HMemoryException() = default;
 
  public:

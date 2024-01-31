@@ -43,6 +43,9 @@ inline void KeInitEFI(EfiSystemTable* SystemTable) noexcept {
 
   ST = SystemTable;
   BS = ST->BootServices;
+
+  ST->ConOut->ClearScreen(SystemTable->ConOut);
+  ST->ConOut->SetAttribute(SystemTable->ConOut, kEFIYellow);
 }
 
 inline void KeRuntimeStop(const EfiCharType* ErrorCode,
