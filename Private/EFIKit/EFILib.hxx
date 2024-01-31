@@ -45,13 +45,13 @@ inline void KeInitEFI(EfiSystemTable* SystemTable) noexcept {
   BS = ST->BootServices;
 }
 
-inline void KeRuntimeStop(const EfiCharType* File,
+inline void KeRuntimeStop(const EfiCharType* ErrorCode,
                           const EfiCharType* Reason) noexcept {
   ST->ConOut->OutputString(ST->ConOut, L"*** STOP ***\r\n");
 
-  ST->ConOut->OutputString(ST->ConOut, L"*** File:");
-  ST->ConOut->OutputString(ST->ConOut, File);
-  ST->ConOut->OutputString(ST->ConOut, L", Reason:");
+  ST->ConOut->OutputString(ST->ConOut, L"*** ErrorCode: ");
+  ST->ConOut->OutputString(ST->ConOut, ErrorCode);
+  ST->ConOut->OutputString(ST->ConOut, L", Reason: ");
   ST->ConOut->OutputString(ST->ConOut, Reason);
   ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
 

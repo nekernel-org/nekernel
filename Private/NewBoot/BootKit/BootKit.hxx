@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	NewBoot
- * 	Copyright 2024 Mahrouss Logic, all rights reserved.
+ * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */
@@ -56,8 +56,10 @@ HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len);
  */
 class BFileReader final {
  public:
-  explicit BFileReader() = default;
+  explicit BFileReader(const char *path);
   ~BFileReader() = default;
+
+  HCore::VoidPtr ReadAll();
 
  public:
   BFileReader &operator=(const BFileReader &) = default;

@@ -45,6 +45,11 @@ typedef WideChar EfiCharType;
 typedef UInt64 (*EfiTextString)(struct EfiSimpleTextOutputProtocol *This,
                                 const WideChar *OutputString);
 
+typedef UInt64 (*EfiTextAttrib)(struct EfiSimpleTextOutputProtocol *This,
+                                const WideChar Attribute);
+
+typedef UInt64 (*EfiTextClear)(struct EfiSimpleTextOutputProtocol *This);
+
 typedef UInt64 (*EfiLoadFile)(EfiLoadFileProtocol *This,
                               EfiDevicePathProtocol *FilePath,
                               Boolean BootPolicy, UInt32 *BufferSize,
@@ -364,16 +369,16 @@ typedef struct EfiBootServices {
 @brief PrintF like protocol.
 */
 typedef struct EfiSimpleTextOutputProtocol {
-  UInt64 Reset;
+  VoidPtr Reset;
   EfiTextString OutputString;
-  UInt64 TestString;
-  UInt64 QueryMode;
-  UInt64 SetMode;
-  UInt64 SetAttribute;
-  UInt64 ClearScreen;
-  UInt64 SetCursorPosition;
-  UInt64 EnableCursor;
-  UInt64 Mode;
+  VoidPtr TestString;
+  VoidPtr QueryMode;
+  VoidPtr SetMode;
+  EfiTextAttrib SetAttribute;
+  EfiTextClear ClearScreen;
+  VoidPtr SetCursorPosition;
+  VoidPtr EnableCursor;
+  VoidPtr Mode;
 } EfiSimpleTextOutputProtocol;
 
 /**
@@ -412,5 +417,7 @@ typedef struct EfiIPV4 {
 typedef struct EfiIPV6 {
   UInt8 Addr[16];
 } EfiIPV6;
+
+#define kEFIYellow 0x0E
 
 #endif  // __EFI__

@@ -3,7 +3,7 @@
  *	========================================================
  *
  *	HCore
- * 	Copyright 2024 Mahrouss Logic, all rights reserved.
+ * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */

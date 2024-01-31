@@ -11,6 +11,10 @@
 #ifndef _INC_ACPI_MANAGER_H
 #define _INC_ACPI_MANAGER_H
 
+/**
+    https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
+*/
+
 #include <NewKit/Defines.hpp>
 
 namespace HCore {

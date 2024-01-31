@@ -20,5 +20,6 @@ extern "C" void rt_halt();
 extern "C" void rt_cli();
 extern "C" void rt_sti();
 extern "C" void rt_cld();
+extern "C" void rt_std();
 
 #endif /* ifdef __x86_64__ */

@@ -10,7 +10,7 @@ FLAG_GNU=-fshort-wchar -fPIC -D__DBG__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I.
 
 .PHONY: invalid-recipe
 invalid-recipe:
-	@echo "invalid-recipe: Use make arch-<arch> all instead."
+	@echo "invalid-recipe: Use make bootloader-<arch> all instead."
 
 .PHONY: bootloader-amd64
 bootloader-amd64:

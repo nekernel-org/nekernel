@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	NewBoot
- * 	Copyright 2024 Mahrouss Logic, all rights reserved.
+ * 	Copyright Mahrouss Logic, all rights reserved.
  *
  * 	========================================================
  */
@@ -16,10 +16,12 @@
 
 #include <BootKit/Platform.hxx>
 
-extern "C" void rt_halt(void) { asm volatile("hlt"); }
+extern "C" void rt_halt() { asm volatile("hlt"); }
 
-extern "C" void rt_cli(void) { asm volatile("cli"); }
+extern "C" void rt_cli() { asm volatile("cli"); }
 
-extern "C" void rt_sti(void) { asm volatile("sti"); }
+extern "C" void rt_sti() { asm volatile("sti"); }
 
-extern "C" void rt_cld(void) { asm volatile("cld"); }
+extern "C" void rt_cld() { asm volatile("cld"); }
+
+extern "C" void rt_std() { asm volatile("std"); }
