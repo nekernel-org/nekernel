@@ -58,6 +58,7 @@ ke_handle_irq:
 
     mov rdi, rsp
     call rt_handle_interrupts
+    mov rsp, rax
 
     pop r15
     pop r14
