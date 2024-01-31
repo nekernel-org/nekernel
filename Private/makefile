@@ -22,8 +22,8 @@ FMT			= elf64
 invalid-recipe:
 	@echo "[HCoreKrnl] invalid-recipe: Use make all instead."
 
-.PHONY: h-core
-h-core:
+.PHONY: h-core-amd64
+h-core-amd64:
 	$(CC) $(CCFLAGS) Source/*.cxx HALKit/AMD64/PCI/*.cpp Source/Network/*.cpp\
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
 	$(ASM) -f elf64 HALKit/AMD64/DebugManager.asm
@@ -35,8 +35,8 @@ h-core:
 
 OBJCOPY = x86_64-elf-objcopy
 
-.PHONY: link
-link:
+.PHONY: link-amd64
+link-amd64:
 	$(LD) $(SCRIPT) Obj/*.o -o $(KERNEL)
 	$(OBJCOPY) -j .text -j .sdata -j .data -j .dynamic -j .dynsym  -j .rel -j .rela -j .rel.* -j .rela.* -j .reloc --target efi-app-x86_64 --subsystem=10 $(KERNEL) $(KERNEL)
 	cp $(KERNEL) Root/System
