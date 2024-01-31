@@ -10,12 +10,14 @@
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/EFILib.hxx>
 
+#include "NewKit/Defines.hpp"
+
 /// bugs 0
 
-HCore::SizeT BStrLen(const char *ptr) {
-  long long int cnt = 0;
+HCore::SizeT BStrLen(const CharacterType *ptr) {
+  HCore::SizeT cnt = 0;
 
-  while (*ptr != 0) {
+  while (*ptr != (CharacterType)0) {
     ++ptr;
     ++cnt;
   }
@@ -23,7 +25,12 @@ HCore::SizeT BStrLen(const char *ptr) {
   return cnt;
 }
 
-HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len) {
+/**
+    @biref set memory
+*/
+
+HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
+                     const HCore::SizeT len) {
   HCore::SizeT cnt = 0UL;
 
   while (*src != 0) {
@@ -59,4 +66,30 @@ BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
   ST->ConOut->OutputString(ST->ConOut, str);
 
   return *this;
+}
+
+/***
+    @brief File Reader constructor.
+*/
+BFileReader::BFileReader(const CharacterType *path) {
+  if (path != nullptr) {
+    SizeT index = 0UL;
+    for (; path[index] != L'0'; ++index) {
+      mPath[index] = path[index];
+    }
+
+    mPath[index] = 0;
+  }
+}
+
+/**
+@brief this reads all of the buffer.
+*/
+HCore::VoidPtr BFileReader::ReadAll() {
+  BTextWriter writer;
+  writer.WriteString(L"*** PE/COFF: Reading ")
+      .WriteString(mPath)
+      .WriteString(L" *** \r\n");
+
+  return nullptr;
 }

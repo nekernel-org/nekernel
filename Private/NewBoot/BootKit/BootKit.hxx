@@ -47,8 +47,9 @@ class BTextWriter final {
   BTextWriter(const BTextWriter &) = default;
 };
 
-HCore::SizeT BStrLen(const char *ptr);
-HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len);
+HCore::SizeT BStrLen(const CharacterType *ptr);
+HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
+                     const HCore::SizeT len);
 
 /**
  * @brief BootKit File Reader class
@@ -56,7 +57,7 @@ HCore::SizeT BSetMem(char *src, const char byte, const HCore::SizeT len);
  */
 class BFileReader final {
  public:
-  explicit BFileReader(const char *path);
+  explicit BFileReader(const CharacterType *path);
   ~BFileReader() = default;
 
   HCore::VoidPtr ReadAll();
@@ -64,6 +65,9 @@ class BFileReader final {
  public:
   BFileReader &operator=(const BFileReader &) = default;
   BFileReader(const BFileReader &) = default;
+
+ private:
+  CharacterType mPath[255];
 };
 
 /***********************************************************************************/

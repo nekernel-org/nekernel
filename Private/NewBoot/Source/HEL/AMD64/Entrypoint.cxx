@@ -27,9 +27,11 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
 
   UInt64 mapKey = 0;
 
-  // TODO: Jump Code
+  BFileReader reader(L"\\MAHROUSS\\Root\\System\\HCoreKrnl.efi\0");
+  auto blob = reader.ReadAll();
 
-  KeRuntimeStop(L"HCoreLdr", L"Couldn't find HCoreKrnl.exe! Aborting...");
+  if (!blob)
+    KeRuntimeStop(L"HCoreLdr", L"Couldn't find HCoreKrnl.exe! Aborting...");
 
   EFI::ExitBootServices(SystemTable, mapKey, ImageHandle);
   EFI::Stop();
