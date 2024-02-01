@@ -13,47 +13,45 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore
-{
-    enum class FramebufferColorKind : UChar
-    {
-        RGB32,
-        RGB16,
-        RGB8,
-        INVALID,
-    };
+namespace HCore {
+enum class FramebufferColorKind : UChar {
+  RGB32,
+  RGB16,
+  RGB8,
+  INVALID,
+};
 
-    class FramebufferContext final
-    {
-    public:
-        UIntPtr m_Base;
-        UIntPtr m_Bpp;
-        UInt m_Width;
-        UInt m_Height;
+class FramebufferContext final {
+ public:
+  UIntPtr m_Base;
+  UIntPtr m_Bpp;
+  UInt m_Width;
+  UInt m_Height;
+};
 
-    };
+class Framebuffer final {
+ public:
+  Framebuffer(Ref<FramebufferContext *> &addr) : m_FrameBufferAddr(addr) {}
+  ~Framebuffer() {}
 
-    class Framebuffer final
-    {
-    public:
-        Framebuffer(Ref<FramebufferContext*> &addr);
-        ~Framebuffer();
+  Framebuffer &operator=(const Framebuffer &) = delete;
+  Framebuffer(const Framebuffer &) = default;
 
-        Framebuffer &operator=(const Framebuffer &) = delete;
-        Framebuffer(const Framebuffer &) = default;
+  volatile UIntPtr *operator[](const UIntPtr &width_and_height);
 
-        volatile UIntPtr* operator[](const UIntPtr &width_and_height);
-   		operator bool();
+  operator bool() {
+    return m_FrameBufferAddr && m_Colour != FramebufferColorKind::INVALID;
+  }
 
-        const FramebufferColorKind& Color(const FramebufferColorKind &colour = FramebufferColorKind::INVALID);
+  const FramebufferColorKind &Color(
+      const FramebufferColorKind &colour = FramebufferColorKind::INVALID);
 
-		Ref<FramebufferContext*>& Leak();
+  Ref<FramebufferContext *> &Leak();
 
-    private:
-        Ref<FramebufferContext*> m_FrameBufferAddr;
-        FramebufferColorKind m_Colour;
-
-    };
-} // namespace HCore
+ private:
+  Ref<FramebufferContext *> m_FrameBufferAddr;
+  FramebufferColorKind m_Colour;
+};
+}  // namespace HCore
 
 #endif /* ifndef __INC_FB_HPP__ */

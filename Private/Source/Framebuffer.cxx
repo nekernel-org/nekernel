@@ -1,36 +1,34 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+    File: Framebuffer.cxx
+    Purpose: EFI C++ library
+
+    Revision History:
+
+    01/02/24: Added file (amlel)
+
+------------------------------------------- */
 
 #include <KernelKit/Framebuffer.hpp>
 
-namespace HCore {
-Framebuffer::Framebuffer(HCore::Ref<FramebufferContext*>& addr)
-    : m_FrameBufferAddr(addr), m_Colour(FramebufferColorKind::RGB32) {}
+using namespace HCore;
 
-Framebuffer::~Framebuffer() = default;
-
-volatile UIntPtr* Framebuffer::operator[](const UIntPtr& width_and_height) {
-  if (m_FrameBufferAddr)
-    return reinterpret_cast<volatile HCore::UIntPtr*>(
-        m_FrameBufferAddr->m_Base + width_and_height);
-
-  return nullptr;
+volatile UIntPtr *Framebuffer::operator[](const UIntPtr &width_and_height) {
+  return (UIntPtr *)(m_FrameBufferAddr->m_Base * width_and_height);
 }
 
-Ref<FramebufferContext*>& Framebuffer::Leak() { return m_FrameBufferAddr; }
-
-Framebuffer::operator bool() { return m_FrameBufferAddr; }
-
-const FramebufferColorKind& Framebuffer::Color(
-    const FramebufferColorKind& colour) {
-  if (colour != FramebufferColorKind::INVALID) m_Colour = colour;
+const FramebufferColorKind &Framebuffer::Color(
+    const FramebufferColorKind &colour) {
+  if (m_Colour != FramebufferColorKind::INVALID &&
+      colour != FramebufferColorKind::INVALID) {
+    m_Colour = colour;
+  }
 
   return m_Colour;
 }
-}  // namespace HCore
+
+Ref<FramebufferContext *> &Framebuffer::Leak() {
+  return this->m_FrameBufferAddr;
+}
