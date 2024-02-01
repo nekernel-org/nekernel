@@ -25,10 +25,10 @@ extern "C" void RuntimeMain() {
     __SYSTEM_INIT[index_init]();
   }
 
-  MUST_PASS(HCore::ke_init_hal());
-
   HCore::ke_init_heap();
   HCore::ke_init_ke_heap();
+
+  MUST_PASS(HCore::ke_init_hal());
 
   HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
   HCore::PEFLoader img("/System/Shell.exe");
