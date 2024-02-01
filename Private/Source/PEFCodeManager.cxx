@@ -7,9 +7,9 @@
  * 	========================================================
  */
 
-#include <KernelKit/CodeManager.hpp>
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/FileManager.hpp>
+#include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessManager.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorID.hpp>

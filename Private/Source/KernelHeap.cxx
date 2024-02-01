@@ -9,6 +9,8 @@
 
 #include <NewKit/KernelHeap.hpp>
 
+#include "NewKit/PageManager.hpp"
+
 //! @file KernelHeap.cpp
 //! @brief Kernel allocator.
 
@@ -48,6 +50,8 @@ VoidPtr ke_new_ke_heap(const SizeT &sz, const bool rw, const bool user) {
   Ref<PTEWrapper *> wrapper = kPmm.RequestPage(user, rw);
 
   if (wrapper) {
+    wrapper->NoExecute(true);
+
     kLastWrapper = wrapper;
 
     kWrapperList[kWrapperCount] = wrapper;
@@ -67,15 +71,27 @@ Int32 ke_delete_ke_heap(voidPtr ptr) {
     const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
 
     if (kLastWrapper && virtualAddress == kLastWrapper->VirtualAddress()) {
-      return kPmm.FreePage(kLastWrapper);
+      if (kPmm.FreePage(kLastWrapper)) {
+        kLastWrapper->NoExecute(false);
+        return true;
+      }
+
+      return false;
     }
 
-    Ref<PTEWrapper *> wrapper;
+    Ref<PTEWrapper *> wrapper{nullptr};
 
     for (SizeT indexWrapper = 0; indexWrapper < kWrapperCount; ++indexWrapper) {
       if (kWrapperList[indexWrapper]->VirtualAddress() == virtualAddress) {
         wrapper = kWrapperList[indexWrapper];
-        return kPmm.FreePage(wrapper);
+
+        // if page is no more, then mark it also as non executable.
+        if (kPmm.FreePage(wrapper)) {
+          wrapper->NoExecute(false);
+          return true;
+        }
+
+        return false;
       }
     }
   }
@@ -108,11 +124,10 @@ Boolean kernel_valid_ptr(voidPtr ptr) {
 }
 
 /// @brief The Kernel heap initializer function.
-/// @return 
-Void ke_init_ke_heap() noexcept
-{
+/// @return
+Void ke_init_ke_heap() noexcept {
   kWrapperCount = 0UL;
-  Ref<PTEWrapper *> kLastWrapper = Ref<PTEWrapper*>(nullptr);
+  Ref<PTEWrapper *> kLastWrapper = Ref<PTEWrapper *>(nullptr);
   Pmm kPmm = Pmm();
 }
 }  // namespace HCore

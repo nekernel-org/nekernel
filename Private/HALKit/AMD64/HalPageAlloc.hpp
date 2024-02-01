@@ -19,7 +19,7 @@
 #define PTE_ALIGN (4096)
 #endif  //! PTE_ALIGN
 
-#define kPagePtrAddress 0x0900000
+#define kPagePtrAddress 0x9000000
 
 extern "C" void flush_tlb(HCore::UIntPtr VirtualAddr);
 extern "C" void write_cr3(HCore::UIntPtr pde);

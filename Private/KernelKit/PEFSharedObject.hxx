@@ -16,10 +16,13 @@
 #include <NewKit/Defines.hpp>
 
 namespace HCore {
-  /**
-   * @brief Shared Library class
-   * Load library from this class
-   */
+/// @brief Pure implementation, missing method/function handler.
+extern "C" void __mh_purecall(void);
+
+/**
+ * @brief Shared Library class
+ * Load library from this class
+ */
 class SharedObject final {
  public:
   struct SharedObjectTraits final {
@@ -44,9 +47,7 @@ class SharedObject final {
 
  public:
   void Mount(SharedObjectTraits *to_mount) {
-    if (!to_mount ||
-        !to_mount->fImageObject)
-        return;
+    if (!to_mount || !to_mount->fImageObject) return;
 
     fMounted = to_mount;
 
@@ -65,17 +66,18 @@ class SharedObject final {
   };
 
   template <typename SymbolType>
-  SymbolType Load(const char *symbol_name) {
-    auto ret = reinterpret_cast<SymbolType>(
-        fLoader->FindSymbol(symbol_name, kPefCode));
+  SymbolType Load(const char *symbol_name, SizeT len, Int32 kind) {
+    if (symbol_name == nullptr || *symbol_name == 0) return nullptr;
+    if (len > kPathLen || len < 1) return nullptr;
 
-    if (!ret)
-      ret = reinterpret_cast<SymbolType>(
-          fLoader->FindSymbol(symbol_name, kPefData));
+    auto ret =
+        reinterpret_cast<SymbolType>(fLoader->FindSymbol(symbol_name, kind));
 
-    if (!ret)
-      ret = reinterpret_cast<SymbolType>(
-          fLoader->FindSymbol(symbol_name, kPefZero));
+    if (!ret) {
+      if (kind == kPefCode) return (VoidPtr)__mh_purecall;
+
+      return nullptr;
+    }
 
     return ret;
   }
@@ -84,10 +86,7 @@ class SharedObject final {
   PEFLoader *fLoader{nullptr};
 };
 
-inline void hcore_pure_call(void) {
-  // virtual placeholder.
-  return;
-}
+typedef SharedObject *SharedObjectPtr;
 }  // namespace HCore
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */

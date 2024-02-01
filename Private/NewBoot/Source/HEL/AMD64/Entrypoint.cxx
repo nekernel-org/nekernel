@@ -19,7 +19,9 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
   KeInitEFI(SystemTable);
 
   BTextWriter writer;
-  writer.WriteString(L"HCoreLdr: Booting from \\Volume0\\...")
+  writer.WriteString(L"HCoreLdr: Firmware: ")
+      .WriteString(SystemTable->FirmwareVendor)
+      .WriteString(L"\r\nHCoreLdr: Booting on \\Volume0\\ (FAT32)")
       .WriteString(L"\r\n");
 
   UInt64 mapKey = 0;

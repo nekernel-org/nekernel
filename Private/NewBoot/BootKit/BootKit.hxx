@@ -62,11 +62,23 @@ class BFileReader final {
 
   HCore::VoidPtr ReadAll();
 
+  enum {
+    kOperationOkay,
+    kNotSupported,
+    kEmptyDirectory,
+    kNoSuchEntry,
+    kIsDirectory,
+    kCount,
+  };
+
+  Int32 &Error() { return mErrorCode; }
+
  public:
   BFileReader &operator=(const BFileReader &) = default;
   BFileReader(const BFileReader &) = default;
 
  private:
+  Int32 mErrorCode{kOperationOkay};
   CharacterType mPath[255];
 };
 

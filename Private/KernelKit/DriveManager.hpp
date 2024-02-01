@@ -29,11 +29,12 @@ enum {
   kEPMDrive = 0x11,     // Explicit Partition Map.
   kEPTDrive = 0x12,     // ESP w/ EPM partition.
   kMBRDrive = 0x13,     // IBM PC classic partition scheme
+  kDriveCnt = 9,
 };
 
 typedef Int64 DriveID;
 
-// Mounted drive.
+/// @brief Mounted drive traits.
 struct DriveTraits final {
   char fName[kDriveNameLen];  // /System, /Boot, /USBDevice...
   Int32 fKind;                // fMassStorage, fFloppy, fOpticalDisc.
