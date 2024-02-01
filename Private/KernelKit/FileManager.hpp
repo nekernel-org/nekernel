@@ -39,6 +39,7 @@ enum {
   kFileReadAll = 101,
   kFileReadChunk = 102,
   kFileWriteChunk = 103,
+  kFileIOCnt = (kFileWriteChunk - kFileWriteAll) + 1,
 };
 
 typedef VoidPtr NodePtr;

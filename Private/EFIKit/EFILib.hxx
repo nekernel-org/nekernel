@@ -61,6 +61,15 @@ inline void KeRuntimeStop(const EfiCharType* ErrorCode,
   EFI::Stop();
 }
 
+enum {
+  kPartEPM,
+  kPartGPT,
+  kPartMBR,
+  kPartCnt,
+};
+
+class EFIPartitionManager final {};
+
 #ifdef __BOOTLOADER__
 #include <BootKit/Platform.hxx>
 #endif  // IF TARGET=BOOTLOADER

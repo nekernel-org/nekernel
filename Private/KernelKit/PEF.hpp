@@ -31,6 +31,7 @@ enum {
   kPefArchRISCV,
   kPefArch64x0, /* 64x000. */
   kPefArch32x0,
+  kPefArchCount = (kPefArch32x0 - kPefArchIntel86S) + 1,
   kPefArchInvalid = 0xFF,
 };
 

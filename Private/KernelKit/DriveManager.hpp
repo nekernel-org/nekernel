@@ -29,6 +29,7 @@ enum {
   kEPMDrive = 0x11,     // Explicit Partition Map.
   kEPTDrive = 0x12,     // ESP w/ EPM partition.
   kMBRDrive = 0x13,     // IBM PC classic partition scheme
+  kDriveCnt = 9,
 };
 
 typedef Int64 DriveID;
