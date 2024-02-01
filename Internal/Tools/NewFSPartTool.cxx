@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: MakeNewFS.cpp
-    Purpose:
+    Purpose: Partition a drive with a NewFS/EPM filesystem in it.
 
     Revision History:
 
@@ -16,4 +16,11 @@
 /// @brief NewFS partition program.
 /***********************************************************************************/
 
-int main() { return 0; }
+#include <iostream>
+
+int main() {
+  std::cout
+      << "NewFSPartTool: Make a NewFS partition image from a directory!\n"
+      << "Copyright Mahrouss Logic, all rights reserved. (INTERNAL TOOL)\n";
+  return 0;
+}

@@ -17,7 +17,6 @@ bootloader-amd64:
 	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx
 	$(LD_GNU) *.o -e efi_main -filealign:16 -shared --subsystem=10 -ffreestanding -o HCoreLdr.exe
 	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
-	cp -r ../../Root ./CDROM/MAHROUSS
 
 .PHONY: run-efi-debug
 run-efi-debug:

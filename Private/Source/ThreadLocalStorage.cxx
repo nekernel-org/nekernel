@@ -42,7 +42,7 @@ Boolean hcore_tls_check(VoidPtr ptr) {
  */
 Void hcore_tls_check_syscall_impl(ThreadInformationBlock ptr) noexcept {
   if (!hcore_tls_check(ptr.Cookie)) {
-    kcout << "TLS: Verification failure, crashing...\n";
+    kcout << "TLS: Verification failure, Crashing...\n";
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
   }
 
