@@ -68,7 +68,11 @@ enum {
   kPartCnt,
 };
 
-class EFIPartitionManager final {};
+typedef EfiHandlePtr* EfiFilesystemHandlePtr;
+
+EfiFilesystemHandlePtr EfiMountVolume(const EfiCharType* MountPath,
+                                      Int32 PartitionType);
+Boolean EfiUnmountVolume(EfiFilesystemHandlePtr Handle);
 
 #ifdef __BOOTLOADER__
 #include <BootKit/Platform.hxx>

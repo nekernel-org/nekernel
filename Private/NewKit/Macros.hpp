@@ -65,7 +65,7 @@
 #endif
 
 #ifndef ENUM_STRING
-#define ENUM_STRING(NAME, VAL) constexpr const char *NAME = VAL
+#define ENUM_STRING(NAME, VAL) inline constexpr const char *NAME = VAL
 #endif
 
 #ifndef END_STRING_ENUM
@@ -76,9 +76,13 @@
 #define Alloca(Sz) __builtin_alloca(Sz)
 #endif  // #ifndef Alloca
 
-#ifndef CantReach
-#define CantReach() __builtin_unreachable()
+#ifndef CANT_REACH
+#define CANT_REACH() __builtin_unreachable()
 #endif
 
 #define kBadPtr 0xFBFBFBFBFBFBFBFB
-#define kmaxAddr 0xFFFFFFFFFFFFFFFF
+#define kMaxAddr 0xFFFFFFFFFFFFFFFF
+#define kPathLen 255
+
+#define PACKED ATTRIBUTE(packed)
+#define NO_EXEC ATTRIBUTE(noexec)
