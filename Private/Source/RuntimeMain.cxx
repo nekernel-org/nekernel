@@ -14,7 +14,7 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
 
-/// PRIVATE SYMBOLS EXPORTED BY GCC.
+/// PRIVATE SYMBOLS EXPORTED BY C++ COMPILER.
 extern "C" void (*__SYSTEM_FINI)();
 extern "C" void (**__SYSTEM_INIT)();
 

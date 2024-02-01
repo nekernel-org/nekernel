@@ -10,8 +10,6 @@
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/EFILib.hxx>
 
-#include "NewKit/Defines.hpp"
-
 /// bugs 0
 
 HCore::SizeT BStrLen(const CharacterType *ptr) {
