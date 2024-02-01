@@ -85,7 +85,19 @@ bool PageManager::Free(Ref<PTEWrapper *> &wrapper) {
   return false;
 }
 
+////////////////////////////
+
+// VIRTUAL ADDRESS
+
+////////////////////////////
+
 const UIntPtr &PTEWrapper::VirtualAddress() { return m_VirtAddr; }
+
+////////////////////////////
+
+// PAGE GETTERS
+
+////////////////////////////
 
 bool PTEWrapper::Shareable() {
   auto raw = reinterpret_cast<PTE *>(m_VirtAddr);
@@ -120,4 +132,13 @@ bool PTEWrapper::Access() {
 
   return m_Accessed;
 }
+
+////////////////////////////
+
+// NO EXECUTE PROTECTION
+
+////////////////////////////
+
+void PTEWrapper::NoExecute(const bool enable) { this->m_ExecDisable = enable; }
+const bool &PTEWrapper::NoExecute() { return this->m_ExecDisable; }
 }  // namespace HCore

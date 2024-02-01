@@ -11,11 +11,8 @@
 #include <NewKit/Pmm.hpp>
 
 namespace HCore {
-Pmm::Pmm() = default;
-
-Pmm::Pmm(Ref<PageManager *> &pm) : m_PageManager(pm) {
-  MUST_PASS(pm.Leak());
-  kcout << "[PMM] New PhysicalMemoryManager\r\n";
+Pmm::Pmm() : m_PageManager() {
+  kcout << "[PMM] Allocate PageMemoryManager\r\n";
 }
 
 Pmm::~Pmm() = default;
@@ -23,7 +20,7 @@ Pmm::~Pmm() = default;
 /* If this returns Null pointer, enter emergency mode */
 Ref<PTEWrapper *> Pmm::RequestPage(Boolean user, Boolean readWrite) {
   if (m_PageManager) {
-    PTEWrapper *pt = m_PageManager.Leak()->Request(user, readWrite, true);
+    PTEWrapper *pt = m_PageManager.Leak().Request(user, readWrite, true);
 
     if (pt) return Ref<PTEWrapper *>(pt);
 
