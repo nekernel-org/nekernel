@@ -52,8 +52,8 @@ Boolean ATAInitDriver(UInt8 Bus, UInt8 Drive, UInt16& OutBus,
   OutBus = (Bus == ATA_PRIMARY) ? BATADevice::kPrimary : BATADevice::kSecondary;
   OutMaster = (Bus == ATA_PRIMARY);
 
-  char cl = in8(Bus + ATA_CYL_LOW); /* get the "signature bytes" */
-  char ch = in8(Bus + ATA_CYL_HIGH);
+  unsigned cl = in16(Bus + ATA_CYL_LOW); /* get the "signature bytes" */
+  unsigned ch = in16(Bus + ATA_CYL_HIGH);
 
   /* differentiate ATA, ATAPI, SATA and SATAPI */
   if (cl == 0x14 && ch == 0xEB)
