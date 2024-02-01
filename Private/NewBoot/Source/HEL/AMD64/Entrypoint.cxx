@@ -9,6 +9,7 @@
 
 #define __BOOTLOADER__ 1
 
+#include <BootKit/Arch/ATA.hxx>
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/EFILib.hxx>
 
@@ -19,9 +20,9 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
   KeInitEFI(SystemTable);
 
   BTextWriter writer;
+
   writer.WriteString(L"HCoreLdr: Firmware: ")
       .WriteString(SystemTable->FirmwareVendor)
-      .WriteString(L"\r\nHCoreLdr: Booting on \\Volume0\\ (FAT32)")
       .WriteString(L"\r\n");
 
   UInt64 mapKey = 0;

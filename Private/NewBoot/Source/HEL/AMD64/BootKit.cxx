@@ -10,6 +10,8 @@
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/EFILib.hxx>
 
+#include "BootKit/Arch/ATA.hxx"
+
 /// bugs 0
 
 HCore::SizeT BStrLen(const CharacterType *ptr) {
@@ -85,7 +87,7 @@ BFileReader::BFileReader(const CharacterType *path) {
 */
 HCore::VoidPtr BFileReader::ReadAll() {
   BTextWriter writer;
-  writer.WriteString(L"*** PE/COFF: Reading ")
+  writer.WriteString(L"*** BFileReader::ReadAll: Reading ")
       .WriteString(mPath)
       .WriteString(L" *** \r\n");
 

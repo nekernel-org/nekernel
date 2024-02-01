@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <BootKit/Arch/ATA.hxx>
 #include <NewKit/Defines.hpp>
 
 using namespace HCore;
@@ -27,7 +28,7 @@ enum {
   kSegmentBss = 6,
 };
 
-typedef wchar_t CharacterType;
+typedef WideChar CharacterType;
 
 /**
  * @brief BootKit Text Writer class
@@ -80,6 +81,9 @@ class BFileReader final {
  private:
   Int32 mErrorCode{kOperationOkay};
   CharacterType mPath[255];
+
+ private:
+  ATAHelper mHelper;
 };
 
 /***********************************************************************************/
