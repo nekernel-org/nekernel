@@ -7,6 +7,12 @@
  * 	========================================================
  */
 
+/**
+    @brief The Explicit Partition Map use is to tell how many NewFS and other
+   EPM compatible fs. We have in this computer.
+
+*/
+
 #ifndef __PARTITION_MAP__
 #define __PARTITION_MAP__
 
@@ -20,31 +26,29 @@ inline consteval int kMagicLen = 4;
  * @brief The EPM bootloader block.
  * boot code info
  */
-struct __attribute__((packed)) BootBlock
-{
-    char magic[kMagicLen];
-    char name[kNameLen];
-    char uuid[kUUIDLen];
-    int version;
-    long long int num_blocks;
-    long long int sector_sz;
-    long long int sector_start;
+struct __attribute__((packed)) BootBlock {
+  char magic[kMagicLen];
+  char name[kNameLen];
+  char uuid[kUUIDLen];
+  int version;
+  long long int num_blocks;
+  long long int sector_sz;
+  long long int sector_start;
 };
 
 /**
  * @brief The EPM partition block.
  * used to explain a partition inside a media.
  */
-struct __attribute__((packed)) PartitionBlock
-{
-    char name[32];
-    int magic;
-    long long int sector_end;
-    long long int sector_sz;
-    long long int sector_start;
-    short type;
-    int version;
-    char fs[16]; /* ffs_2 */
+struct __attribute__((packed)) PartitionBlock {
+  char name[32];
+  int magic;
+  long long int sector_end;
+  long long int sector_sz;
+  long long int sector_start;
+  short type;
+  int version;
+  char fs[16]; /* ffs_2 */
 };
 
 /* @brief AMD64 magic for EPM */
@@ -67,12 +71,11 @@ struct __attribute__((packed)) PartitionBlock
 //! version types.
 //! use in boot block version field.
 
-enum
-{
-    kEPMMpUx = 0xcf,
-    kEPMLinux = 0x8f,
-    kEPMBSD = 0x9f,
-    kEPMHCore = 0x1f,
+enum {
+  kEPMMpUx = 0xcf,
+  kEPMLinux = 0x8f,
+  kEPMBSD = 0x9f,
+  kEPMHCore = 0x1f,
 };
 
 /// END SPECS
@@ -86,4 +89,4 @@ typedef struct PartitionBlock PartitionBlockType;
 #define kMag "EPM??"
 #endif
 
-#endif // ifndef __PARTITION_MAP__
+#endif  // ifndef __PARTITION_MAP__
