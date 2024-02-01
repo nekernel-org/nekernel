@@ -11,7 +11,7 @@
 
 #include <BootKit/Arch/ATA.hxx>
 #include <BootKit/BootKit.hxx>
-#include <EFIKit/EFILib.hxx>
+#include <EFIKit/Api.hxx>
 
 // don't remove EfiGUID, it will call initializer_list!
 
@@ -27,7 +27,9 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
 
   UInt64 mapKey = 0;
 
-  BFileReader reader(L"\\MAHROUSS\\Root\\System\\HCoreKrnl.exe\0");
+  CharacterType bytes[1024];
+
+  BFileReader reader(L"\\Root\\System\\HCoreKrnl.exe\0");
   auto blob = reader.ReadAll();
 
   if (!blob)

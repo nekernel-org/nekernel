@@ -8,9 +8,7 @@
  */
 
 #include <BootKit/BootKit.hxx>
-#include <EFIKit/EFILib.hxx>
-
-#include "BootKit/Arch/ATA.hxx"
+#include <EFIKit/Api.hxx>
 
 /// bugs 0
 

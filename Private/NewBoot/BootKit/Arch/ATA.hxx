@@ -95,6 +95,9 @@ using namespace HCore;
 #define ATA_PRIMARY 0x00
 #define ATA_SECONDARY 0x01
 
+#define ATA_CYL_LOW 4
+#define ATA_CYL_HIGH 5
+
 // IO Direction
 #define ATA_READ 0x00
 #define ATA_WRITE 0x013
@@ -114,25 +117,25 @@ UInt16 ATAReadLba(UInt32 Lba, UInt8 Bus, Boolean Master);
 Void ATAWriteLba(UInt16 Byte, UInt32 Lba, UInt8 Bus, Boolean Master);
 Boolean ATAIsDetected(Void);
 
-class ATAHelper final {
+class BATADevice final {
  public:
   enum {
     kPrimary = ATA_PRIMARY,
     kSecondary = ATA_SECONDARY,
   };
 
-  explicit ATAHelper() noexcept;
+  explicit BATADevice() noexcept;
 
-  HCORE_COPY_DEFAULT(ATAHelper);
+  HCORE_COPY_DEFAULT(BATADevice);
 
   struct ATATraits final {
     SizeT mBase{1024};
-    UInt8 mBus{kPrimary};
+    UInt16 mBus{kPrimary};
     Boolean mMaster{false};
   };
 
-  ATAHelper& Read(WideChar*, const SizeT&);
-  ATAHelper& Write(WideChar*, const SizeT&);
+  BATADevice& Read(WideChar*, const SizeT&);
+  BATADevice& Write(WideChar*, const SizeT&);
 
   ATATraits& Traits();
 
