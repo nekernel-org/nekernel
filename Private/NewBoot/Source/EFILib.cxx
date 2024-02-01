@@ -2,8 +2,8 @@
 
     Copyright Mahrouss Logic
 
-    File: EFILib.hxx
-    Purpose: EFI C++ library
+    File: EFI.cxx
+    Purpose: EFI Library for NewBoot.
 
     Revision History:
 

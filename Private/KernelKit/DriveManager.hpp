@@ -34,7 +34,7 @@ enum {
 
 typedef Int64 DriveID;
 
-// Mounted drive.
+/// @brief Mounted drive traits.
 struct DriveTraits final {
   char fName[kDriveNameLen];  // /System, /Boot, /USBDevice...
   Int32 fKind;                // fMassStorage, fFloppy, fOpticalDisc.
