@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <NewKit/CRC32.hpp>
+#include <NewKit/Crc32.hpp>
 
 // @file CRC32.cpp
 // @brief Checksum implementation.
@@ -58,9 +58,9 @@ UInt kCrcTbl[kCrcCnt] = {
     0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d};
 
-/// @brief calculate CRC32 of series of byte.
-Int ke_calculate_crc32(const Char *p, Int len) noexcept {
-  UInt32 crc = 0xffffffff;
+/// @brief calculate CRC32 of pointer.
+UInt ke_calculate_crc32(const Char *p, UInt len) noexcept {
+  UInt crc = 0xffffffff;
 
   while (len-- != 0) crc = kCrcTbl[((UInt8)crc ^ *(p++))] ^ (crc >> 8);
 
