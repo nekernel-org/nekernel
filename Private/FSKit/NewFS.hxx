@@ -21,18 +21,19 @@
 #define kIdent "NewFS"
 #define kPadLen 16
 
-#define kFilesystemVersion 1
+#define kNewFSVersion 1
 
 enum {
-  kHardDrive = 0xC0,          // Hard Drive
-  kOpticalDrive = 0x0C,       // Blu-Ray/DVD
-  kMassStorageDevice = 0xCC,  // USB
-  kUnknowmn = 0xFF,           // unknown device or unsupported (floppy)
+  kNewFSHardDrive = 0xC0,          // Hard Drive
+  kNewFSOpticalDrive = 0x0C,       // Blu-Ray/DVD
+  kNewFSMassStorageDevice = 0xCC,  // USB
+  kNewFSUnknowmn = 0xFF,           // unknown device or unsupported (floppy)
+  kNewFSDriveCount = 4,
 };
 
 struct PACKED NewBootBlock final {
-  HCore::Char Ident[kIdentLen];
-  HCore::Char Shell[kNameLen];
+  HCore::WideChar Ident[kIdentLen];
+  HCore::WideChar Shell[kNameLen];
 
   HCore::Int64 NumParts;
   HCore::Int64 FreeSectors;
@@ -45,7 +46,7 @@ struct PACKED NewBootBlock final {
   HCore::Lba FirstPartBlock;
   HCore::Lba LastPartBlock;
 
-  HCore::Char Pad[kPadLen];
+  HCore::WideChar Pad[kPadLen];
 };
 
 #define kFlagDeleted 0xF0
@@ -55,9 +56,10 @@ struct PACKED NewBootBlock final {
 #define kKindCatalog 1
 #define kKindDirectory 2
 #define kKindSymlink 3
+#define kKindPartition 4
 
 struct PACKED NewCatalog final {
-  HCore::Char Name[kNameLen];
+  HCore::WideChar Name[kNameLen];
 
   HCore::Int32 Flags;
   HCore::Int32 Kind;
@@ -91,8 +93,8 @@ struct PACKED NewFork final {
 #define kPartLen 32
 
 struct PACKED NewPartitionBlock final {
-  HCore::Char PartitionName[kPartLen];
-  HCore::Char JsonPath[kConfigLen];
+  HCore::WideChar Ident[kIdentLen];
+  HCore::WideChar PartitionName[kPartLen];
 
   HCore::Int32 Flags;
   HCore::Int32 Kind;
@@ -184,8 +186,7 @@ class MeFilesystemHelper final {
 };
 }  // namespace HCore
 
-#define kNewFSAddressAsLba 5
-#define kNewFSAddressAsCHS 6
+#define kNewFSAddressAsLba 1024
 
 // FSControl() syscall
 // FSOpen, FSClose, FSWhereAt, FSSetCursor, FSNodeSize, FSWrite, FSRead syscalls

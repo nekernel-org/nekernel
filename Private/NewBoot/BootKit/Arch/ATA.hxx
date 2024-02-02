@@ -127,13 +127,14 @@ class BATADevice final {
   };
 
   explicit BATADevice() noexcept;
+  ~BATADevice() = default;
 
   HCORE_COPY_DEFAULT(BATADevice);
 
   struct ATATraits final {
     SizeT mBase{1024};
     UInt16 mBus{kPrimary};
-    Boolean mMaster{false};
+    Boolean mMaster{true};
   };
 
   operator bool() { return ATAIsDetected(); }
@@ -154,3 +155,5 @@ enum {
   kATADeviceSATA_PI,
   kATADeviceCount,
 };
+
+#define kATASectorSz 512

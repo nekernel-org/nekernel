@@ -16,9 +16,9 @@
 #ifndef __PARTITION_MAP__
 #define __PARTITION_MAP__
 
-inline consteval int kUUIDLen = 37;
-inline consteval int kNameLen = 32;
-inline consteval int kMagicLen = 4;
+#define kUUIDLen 37
+#define kNameLen 32
+#define kMagicLen 4
 
 /* the first 512 > x > 1024 bytes of a disk contains this headers. */
 

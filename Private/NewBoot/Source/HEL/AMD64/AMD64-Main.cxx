@@ -33,6 +33,8 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
     KeRuntimeStop(L"HCoreLdr_NoSuchKernel",
                   L"Couldn't find HCoreKrnl.exe! Aborting...");
 
+  writer.WriteString(L"HCoreLdr: Running HCoreKrnl.exe...\r\n");
+
   EFI::ExitBootServices(SystemTable, mapKey, ImageHandle);
   EFI::Stop();
 

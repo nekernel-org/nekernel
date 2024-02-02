@@ -114,9 +114,7 @@ Void ATAReadLba(UInt32 Lba, UInt8 Bus, Boolean Master, CharacterType* Buf,
 
   ATAPoll(IO);
 
-  for (SizeT index = 0UL; index < 256; ++index) {
-    Buf[index + Offset] = In16(IO + ATA_REG_DATA);
-  }
+  Buf[Offset] = In16(IO + ATA_REG_DATA);
 
   ATAWait(IO);
 }
@@ -140,12 +138,12 @@ Void ATAWriteLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
 
   ATAPoll(IO);
 
-  for (SizeT index = 0UL; index < 256; ++index) {
-    Out16(IO + ATA_REG_DATA, Buf[index + Offset]);
-  }
+  Out16(IO + ATA_REG_DATA, Buf[Offset]);
 
   ATAWait(IO);
 }
+
+Boolean ATAIsDetected(Void) { return kATADetected; }
 
 /***
  *
@@ -155,10 +153,8 @@ Void ATAWriteLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
  *
  */
 
-Boolean ATAIsDetected(Void) { return kATADetected; }
-
 /**
- * @brief Init ATA driver.
+ * @brief ATA Device constructor.
  * @param void none.
  */
 BATADevice::BATADevice() noexcept {
@@ -189,13 +185,9 @@ BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& Sz) {
 
   if (!Buf || Sz < 1) return *this;
 
-  SizeT Off = 0;
-
   for (SizeT i = 0UL; i < Sz; ++i) {
     ATAReadLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
-               Buf, Off);
-
-    Off += 512;
+               Buf, i);
   }
 
   return *this;
@@ -217,7 +209,7 @@ BATADevice& BATADevice::Write(CharacterType* Buf, const SizeT& Sz) {
     ATAWriteLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
                 Buf, Off);
 
-    Off += 512;
+    Off += kATASectorSz;
   }
 
   return *this;

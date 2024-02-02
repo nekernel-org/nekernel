@@ -48,6 +48,8 @@ class BTextWriter final {
   BTextWriter(const BTextWriter &) = default;
 };
 
+HCore::SizeT BCopyMem(CharacterType *dest, CharacterType *src,
+                      const HCore::SizeT len);
 HCore::SizeT BStrLen(const CharacterType *ptr);
 HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
                      const HCore::SizeT len);
@@ -80,8 +82,7 @@ class BFileReader final {
 
  private:
   Int32 mErrorCode{kOperationOkay};
-  CharacterType mPath[255];
-  BATADevice mDevice;
+  CharacterType mPath[kPathLen];
 };
 
 /***********************************************************************************/

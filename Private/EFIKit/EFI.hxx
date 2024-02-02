@@ -268,6 +268,13 @@ typedef struct EfiDevicePathProtocol {
   UInt8 LengthData[2];
 } EfiDevicePathProtocol;
 
+typedef struct EfiFileDevicePathProtocol {
+  UInt8 Type;
+  UInt8 SubType;
+  UInt8 LengthData[2];
+  WideChar Path[kPathLen];
+} EfiFileDevicePathProtocol;
+
 typedef UInt64 EfiPhysicalAddress;
 typedef UIntPtr EfiVirtualAddress;
 
@@ -423,5 +430,15 @@ typedef struct EfiIPV6 {
 #ifdef __x86_64
 #define __EFI_x86_64__ 1
 #endif  // __x86_64
+
+enum {
+  kEFIHwDevicePath = 0x1,
+  kEFIAcpiDevicePath,
+  kEFIMessaingDevicePath,
+  kEFIMediaDevicePath,
+  kEFIBiosBootPath,
+  kEFIEndOfPath,
+  kEFICount,
+};
 
 #endif  // __EFI__

@@ -7,8 +7,8 @@
  * 	========================================================
  */
 
-#ifndef __EFI_LIB__
-#define __EFI_LIB__
+#ifndef __EFI_API__
+#define __EFI_API__
 
 #include <EFIKit/EFI.hxx>
 
@@ -72,4 +72,4 @@ enum {
 #include <BootKit/Platform.hxx>
 #endif  // IF TARGET=BOOTLOADER
 
-#endif /* ifndef __EFI_LIB__ */
+#endif /* ifndef __EFI_API__ */
