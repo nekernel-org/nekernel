@@ -19,6 +19,10 @@
 
 using namespace HCore;
 
+#ifndef EPI_API
+#define EFI_API __attribute__((stdcall))
+#endif  // ifndef EPI_API
+
 // Forwar decls
 
 struct EfiTableHeader;
@@ -28,10 +32,13 @@ struct EfiDevicePathProtocol;
 struct EfiBootServices;
 struct EfiMemoryDescriptor;
 struct EfiSystemTable;
+struct EfiGUID;
+struct EfiFileDevicePathProtocol;
+struct EfiHandle;
 
 /// @brief Core Handle Type
 /// This is like NT's Win32 HANDLE type.
-typedef struct {
+typedef struct EfiHandle {
 } *EfiHandlePtr;
 
 /* UEFI uses wide characters by default. */
@@ -42,21 +49,26 @@ typedef WideChar EfiCharType;
 /// that the boot manager is attempting to load FilePath as a boot selection. If
 /// FALSE, then FilePath must match an exact file to be loaded.
 
-typedef UInt64 (*EfiTextString)(struct EfiSimpleTextOutputProtocol *This,
-                                const WideChar *OutputString);
+typedef UInt64(EFI_API *EfiTextString)(struct EfiSimpleTextOutputProtocol *This,
+                                       const WideChar *OutputString);
 
-typedef UInt64 (*EfiTextAttrib)(struct EfiSimpleTextOutputProtocol *This,
-                                const WideChar Attribute);
+typedef UInt64(EFI_API *EfiTextAttrib)(struct EfiSimpleTextOutputProtocol *This,
+                                       const WideChar Attribute);
 
-typedef UInt64 (*EfiTextClear)(struct EfiSimpleTextOutputProtocol *This);
+typedef UInt64(EFI_API *EfiTextClear)(struct EfiSimpleTextOutputProtocol *This);
 
-typedef UInt64 (*EfiLoadFile)(EfiLoadFileProtocol *This,
-                              EfiDevicePathProtocol *FilePath,
-                              Boolean BootPolicy, UInt32 *BufferSize,
-                              Void *Buffer);
+typedef UInt64(EFI_API *EfiLoadFile)(EfiLoadFileProtocol *This,
+                                     EfiFileDevicePathProtocol *FilePath,
+                                     Boolean BootPolicy, UInt32 *BufferSize,
+                                     Void *Buffer);
 
-typedef UInt64 (*EfiCopyMem)(VoidPtr DstBuf, VoidPtr SrcBuf, SizeT Length);
-typedef UInt64 (*EfiSetMem)(VoidPtr DstBuf, Char Byte, SizeT Length);
+typedef UInt64(EFI_API *EfiCopyMem)(VoidPtr DstBuf, VoidPtr SrcBuf,
+                                    SizeT Length);
+typedef UInt64(EFI_API *EfiSetMem)(VoidPtr DstBuf, Char Byte, SizeT Length);
+
+typedef UInt64(EFI_API *EfiLocateDevicePath)(EfiGUID *Protocol,
+                                             EfiDevicePathProtocol **DevicePath,
+                                             EfiHandlePtr Device);
 
 /// EFI pool helpers, taken from iPXE.
 
@@ -192,13 +204,13 @@ typedef struct EfiMemoryDescriptor {
   UInt64 Attribute;
 } EfiMemoryDescriptor;
 
-typedef UInt64 (*EfiAllocatePool)(EfiMemoryType PoolType, UInt32 Size,
-                                  VoidPtr *Buffer);
+typedef UInt64(EFI_API *EfiAllocatePool)(EfiMemoryType PoolType, UInt32 Size,
+                                         VoidPtr *Buffer);
 
-typedef UInt64 (*EfiFreePool)(VoidPtr Buffer);
+typedef UInt64(EFI_API *EfiFreePool)(VoidPtr Buffer);
 
-typedef UInt64 (*EfiCalculateCrc32)(VoidPtr Data, UInt32 DataSize,
-                                    UInt32 *CrcOut);
+typedef UInt64(EFI_API *EfiCalculateCrc32)(VoidPtr Data, UInt32 DataSize,
+                                           UInt32 *CrcOut);
 
 /**
 @brief Present in every header, used to identify a UEFI structure.
@@ -226,6 +238,13 @@ typedef struct EfiTableHeader {
   }
 
 #define EFI_LOADED_IMAGE_PROTOCOL_REVISION 0x1000
+
+#define EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID         \
+  {                                                  \
+    0x0964e5b22, 0x6459, 0x11d2, {                   \
+      0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
+    }                                                \
+  }
 
 #define EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL_GUID   \
   {                                                  \
@@ -265,26 +284,29 @@ typedef struct EfiLoadFileProtocol {
 typedef struct EfiDevicePathProtocol {
   UInt8 Type;
   UInt8 SubType;
-  UInt8 LengthData[2];
+  UInt8 Length[2];
 } EfiDevicePathProtocol;
 
 typedef struct EfiFileDevicePathProtocol {
-  UInt8 Type;
-  UInt8 SubType;
-  UInt8 LengthData[2];
+  EfiDevicePathProtocol Proto;
+
+  ///
+  ///   File Path of this struct
+  ///
   WideChar Path[kPathLen];
 } EfiFileDevicePathProtocol;
 
 typedef UInt64 EfiPhysicalAddress;
 typedef UIntPtr EfiVirtualAddress;
 
-typedef UInt64 (*EfiExitBootServices)(VoidPtr ImageHandle, UInt32 MapKey);
+typedef UInt64(EFI_API *EfiExitBootServices)(VoidPtr ImageHandle,
+                                             UInt32 MapKey);
 
-typedef UInt64 (*EfiAllocatePages)(EfiAllocateType AllocType,
-                                   EfiMemoryType MemType,
-                                   EfiPhysicalAddress *Memory);
+typedef UInt64(EFI_API *EfiAllocatePages)(EfiAllocateType AllocType,
+                                          EfiMemoryType MemType,
+                                          EfiPhysicalAddress *Memory);
 
-typedef UInt64 (*EfiFreePages)(EfiPhysicalAddress *Memory, UInt32 Pages);
+typedef UInt64(EFI_API *EfiFreePages)(EfiPhysicalAddress *Memory, UInt32 Pages);
 
 /**
  * @brief GUID type, something you can also find in CFKit.
@@ -308,13 +330,15 @@ typedef struct EfiGUID {
 #define EFI_OPEN_PROTOCOL_BY_DRIVER 0x00000010
 #define EFI_OPEN_PROTOCOL_EXCLUSIVE 0x00000020
 
-typedef UInt64 (*EfiLocateProtocol)(EfiGUID *Protocol, VoidPtr Registration,
-                                    VoidPtr *Interface);
+typedef UInt64(EFI_API *EfiLocateProtocol)(EfiGUID *Protocol,
+                                           VoidPtr Registration,
+                                           VoidPtr *Interface);
 
-typedef UInt64 (*EfiOpenProtocol)(EfiHandlePtr Handle, EfiGUID *Guid,
-                                  VoidPtr *Interface, EfiHandlePtr AgentHandle,
-                                  EfiHandlePtr ControllerHandle,
-                                  UInt32 Attributes);
+typedef UInt64(EFI_API *EfiOpenProtocol)(EfiHandlePtr Handle, EfiGUID *Guid,
+                                         VoidPtr *Interface,
+                                         EfiHandlePtr AgentHandle,
+                                         EfiHandlePtr ControllerHandle,
+                                         UInt32 Attributes);
 
 /**
 @name EfiBootServices
@@ -343,7 +367,7 @@ typedef struct EfiBootServices {
   VoidPtr Reserved;
   UIntPtr RegisterProtocolNotify;
   UIntPtr LocateHandle;
-  UIntPtr LocateDevicePath;
+  EfiLocateDevicePath LocateDevicePath;
   UIntPtr InstallConfigurationTable;
   UIntPtr LoadImage;
   UIntPtr StartImage;
@@ -432,13 +456,13 @@ typedef struct EfiIPV6 {
 #endif  // __x86_64
 
 enum {
-  kEFIHwDevicePath = 0x1,
-  kEFIAcpiDevicePath,
-  kEFIMessaingDevicePath,
-  kEFIMediaDevicePath,
-  kEFIBiosBootPath,
-  kEFIEndOfPath,
-  kEFICount,
+  kEFIHwDevicePath = 0x01,
+  kEFIAcpiDevicePath = 0x02,
+  kEFIMessaingDevicePath = 0x03,
+  kEFIMediaDevicePath = 0x04,
+  kEFIBiosBootPath = 0x05,
+  kEFIEndOfPath = 0x06,
+  kEFICount = 6,
 };
 
 #endif  // __EFI__

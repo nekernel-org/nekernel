@@ -15,6 +15,7 @@
 #pragma once
 
 #include <BootKit/Arch/ATA.hxx>
+#include <EFIKit/EFI.hxx>
 #include <NewKit/Defines.hpp>
 
 using namespace HCore;
@@ -63,7 +64,7 @@ class BFileReader final {
   explicit BFileReader(const CharacterType *path);
   ~BFileReader() = default;
 
-  HCore::VoidPtr ReadAll();
+  HCore::VoidPtr ReadAll(SizeT &size);
 
   enum {
     kOperationOkay,

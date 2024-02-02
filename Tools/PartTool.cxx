@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: MakeNewFS.cpp
+    File: PartTool.cpp
     Purpose: Partition a drive with a NewFS/EPM filesystem in it.
 
     Revision History:
@@ -12,7 +12,7 @@
 ------------------------------------------- */
 
 /***********************************************************************************/
-/// @file MakeNewFS.cxx
+/// @file PartTool.cxx
 /// @brief NewFS partition program.
 /***********************************************************************************/
 

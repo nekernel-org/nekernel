@@ -7,6 +7,7 @@
  *      ========================================================
  */
 
+#include "EFIKit/EFI.hxx"
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -26,10 +27,13 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
 
   UInt64 mapKey = 0;
 
-  BFileReader reader(L"\\Root\\System\\HCoreKrnl.exe\0");
-  auto blob = reader.ReadAll();
+  BFileReader reader(L"EFI\\BOOT\\HCoreKrnl.exe");
 
-  if (!blob)
+  SizeT sz = 0UL;
+
+  auto blob = reader.ReadAll(sz);
+
+  if (!blob || sz < 1)
     KeRuntimeStop(L"HCoreLdr_NoSuchKernel",
                   L"Couldn't find HCoreKrnl.exe! Aborting...");
 

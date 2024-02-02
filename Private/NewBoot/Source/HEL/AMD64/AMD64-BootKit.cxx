@@ -11,6 +11,9 @@
 #include <EFIKit/Api.hxx>
 #include <FSKit/NewFS.hxx>
 
+#include "EFIKit/EFI.hxx"
+#include "NewKit/Macros.hpp"
+
 /// bugs 0
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +92,7 @@ BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
 BFileReader::BFileReader(const CharacterType *path) {
   if (path != nullptr) {
     SizeT index = 0UL;
-    for (; path[index] != L'0'; ++index) {
+    for (; path[index] != L'\0'; ++index) {
       mPath[index] = path[index];
     }
 
@@ -99,21 +102,61 @@ BFileReader::BFileReader(const CharacterType *path) {
 
 /**
 @brief this reads all of the buffer.
+@param size, new buffer size.
 */
-HCore::VoidPtr BFileReader::ReadAll() {
+HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
   BTextWriter writer;
   writer.WriteString(L"*** BFileReader::ReadAll: Reading ")
       .WriteString(mPath)
       .WriteString(L" *** \r\n");
 
-  EfiFileDevicePathProtocol loadFile{0};
-  loadFile.LengthData[0] = 0xFF;
-  loadFile.LengthData[1] = 0;
+  EfiHandlePtr handleFile = nullptr;
+  EfiLoadFileProtocol *loadFile = nullptr;
 
-  loadFile.Type = kEFIMediaDevicePath;
-  loadFile.SubType = 0;  // from all drives.
+  EfiGUID loadFileGUID = EfiGUID(EFI_LOAD_FILE_PROTOCOL_GUID);
 
-  BCopyMem(loadFile.Path, mPath, kPathLen);
+  BS->LocateProtocol(&loadFileGUID, nullptr, (VoidPtr *)&loadFile);
+
+  if (loadFile) {
+    writer.WriteString(L"HCoreLdr: Loading: ")
+        .WriteString(mPath)
+        .WriteString(L"\r\n");
+
+    UInt32 bufSz = KIB(350);
+    VoidPtr buf = nullptr;
+
+    BS->AllocatePool(EfiLoaderCode, bufSz, &buf);
+
+    if (!buf) return nullptr;
+
+    EfiFileDevicePathProtocol filePath{0};
+    filePath.Proto.Length[0] = (sizeof(EfiDevicePathProtocol));
+    filePath.Proto.Length[1] = (sizeof(EfiDevicePathProtocol) + kPathLen) >> 8;
+
+    filePath.Proto.Type = kEFIMediaDevicePath;
+    filePath.Proto.SubType = kEFIMediaDevicePath;  // from all drives.
+
+    BCopyMem(filePath.Path, mPath, kPathLen);
+
+    auto err = loadFile->LoadFile(loadFile, &filePath, false, (UInt32 *)&bufSz,
+                                  (VoidPtr *)&buf);
+
+    size = bufSz;
+
+    if (buf) {
+      writer.WriteString(L"HCoreLdr: Loaded: ")
+          .WriteString(mPath)
+          .WriteString(L"\r\n");
+    } else {
+      writer.WriteString(L"HCoreLdr: Error: ")
+          .WriteString(mPath)
+          .WriteString(L" , EFI-Code: ")
+          .WriteCharacter(err + 48)
+          .WriteString(L"\r\n");
+    }
+
+    return buf;
+  }
 
   return nullptr;
 }
