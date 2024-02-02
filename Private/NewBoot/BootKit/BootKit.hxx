@@ -81,8 +81,6 @@ class BFileReader final {
  private:
   Int32 mErrorCode{kOperationOkay};
   CharacterType mPath[255];
-
- private:
   BATADevice mDevice;
 };
 
