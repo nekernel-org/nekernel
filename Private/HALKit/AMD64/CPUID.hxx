@@ -76,3 +76,4 @@ typedef enum {
   CPU_FEATURE_EDX_IA64 = 1 << 30,
   CPU_FEATURE_EDX_PBE = 1 << 31
 } CPU_FEATURE;
+

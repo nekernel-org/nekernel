@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <NewKit/Array.hpp>
 
 HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *), kMaxSyscalls>

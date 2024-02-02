@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <KernelKit/ProcessManager.hpp>
 #include <KernelKit/SMPManager.hpp>
 

@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <HALKit/AMD64/Processor.hpp>
 #include <KernelKit/PermissionSelector.hxx>
 

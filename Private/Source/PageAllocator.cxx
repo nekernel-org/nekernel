@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageAllocator.hpp>
 

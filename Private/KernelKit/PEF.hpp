@@ -22,7 +22,11 @@
 #define kPefVersion 1
 #define kPefNameLen 64
 
-// @brief Preferred Executable Format, a format designed for any computer.
+/// @brief Preferred Executable Format, a format designed 
+/// for RISC/CISC Von-neumann processor types.
+
+/// The PEF also uses the x64 PE calling convention and ABI.
+/// It's just that the container are different.
 
 namespace HCore {
 enum {

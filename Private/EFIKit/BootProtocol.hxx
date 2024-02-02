@@ -71,6 +71,8 @@ struct HandoverInformationHeader {
   voidPtr f_RsdPtr;
   voidPtr f_SmBIOS;
   voidPtr f_RTC;
+  voidPtr f_GOP;
+  voidPtr f_GOPSize;
 };
 
 /**

@@ -14,6 +14,8 @@
 section .text
 
 rt_do_context_switch:
+	mov rcx, r15
+	
 	mov [r15+0], rax
 	mov [r15+8], rbx
 	mov [r15+16], rcx

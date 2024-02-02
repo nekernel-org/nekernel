@@ -86,3 +86,6 @@
 
 #define PACKED ATTRIBUTE(packed)
 #define NO_EXEC ATTRIBUTE(noexec)
+
+#define EXTERN extern
+#define STATIC static

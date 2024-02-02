@@ -10,7 +10,7 @@
 #ifndef _INC_SMP_MANAGER_HPP
 #define _INC_SMP_MANAGER_HPP
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Ref.hpp>
 

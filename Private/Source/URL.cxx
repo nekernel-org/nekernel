@@ -18,7 +18,7 @@ Url::Url(StringView &strUrl) : m_urlView(strUrl, false) {}
 
 Url::~Url() = default;
 
-constexpr const char *kProtos[] = {
+constexpr const char *kURLProtocols[] = {
     "https",   // http with the secure.
     "http",    // http without the secure
     "file",    // filesystem protocol
@@ -43,8 +43,8 @@ static ErrorOr<StringView> url_extract_location(const char *url) {
   for (; i < string_length(url); ++i) {
     if (!scheme_found) {
       for (int y = 0; kProtosCount; ++y) {
-        if (rt_string_in_string(view.CData(), kProtos[y])) {
-          i += string_length(kProtos[y]) + kUrlOutSz;
+        if (rt_string_in_string(view.CData(), kURLProtocols[y])) {
+          i += string_length(kURLProtocols[y]) + kUrlOutSz;
           scheme_found = true;
 
           break;

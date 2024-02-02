@@ -23,7 +23,7 @@ namespace HCore
         kRead48,
         kWrite28,
         kWrite48,
-        kUnknown
+        kATAUnknown
     };
 
     const char* ata_read_28(ULong lba);
@@ -90,7 +90,7 @@ namespace HCore
 
                return {};
            }
-           case PATAType::kUnknown:
+           case PATAType::kATAUnknown:
            {
                kcout << "ErrorOr<CT> ata_read<CT, Command>: Unknown ATA Command...\n";
                return {};

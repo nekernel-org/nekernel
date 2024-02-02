@@ -10,7 +10,7 @@
 //! @file DebuggerPort.cxx
 //! @brief UART debug via packets.
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 
 #define kDebugMaxPorts 16
 

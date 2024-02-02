@@ -8,12 +8,12 @@
  */
 
 #include <HALKit/AMD64/HalPageAlloc.hpp>
-#include <NewKit/Defines.hpp>
 #include <NewKit/RuntimeCheck.hpp>
+#include <NewKit/Defines.hpp>
 
 // this files handles paging.
 
-static HCore::UIntPtr kPagePtr = kPagePtrAddress;
+static HCore::UIntPtr kPagePtr = 0;
 static HCore::SizeT kPageCnt = 0UL;
 
 namespace HCore {
@@ -23,6 +23,7 @@ static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
   char *ptr = &(reinterpret_cast<char *>(kPagePtr))[kPageCnt + 1];
 
   PageTable64 *pte = reinterpret_cast<PageTable64 *>(ptr);
+
   pte->Rw = rw;
   pte->User = user;
   pte->Present = true;
@@ -52,5 +53,9 @@ auto hal_create_page(Boolean rw, Boolean user) -> UIntPtr {
 
   return reinterpret_cast<UIntPtr>(new_pte);
 }
+
+UIntPtr& hal_get_page_ptr() noexcept { return kPagePtr; }
+
+void hal_set_page_ptr(const UIntPtr& newPagePtr) noexcept { kPagePtr = newPagePtr; }
 }  // namespace HAL
 }  // namespace HCore

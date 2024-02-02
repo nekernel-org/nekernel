@@ -1,11 +1,13 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+    File: GUIDWizard.cxx
+    Purpose: GUID helper code
+
+    Revision History:
+
+------------------------------------------- */
 
 #include <CFKit/GUIDWizard.hpp>
 #include <NewKit/Ref.hpp>

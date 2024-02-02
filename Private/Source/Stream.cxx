@@ -1,10 +1,12 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+    File: Stream.cxx
+    Purpose: Stream object
+
+    Revision History:
+
+------------------------------------------- */
 
 #include <NewKit/Stream.hpp>

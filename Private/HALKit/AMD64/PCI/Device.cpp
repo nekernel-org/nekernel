@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <KernelKit/PCI/Device.hpp>
 
 HCore::UInt LumiaPCIReadRaw(HCore::UInt bar, HCore::UShort bus,

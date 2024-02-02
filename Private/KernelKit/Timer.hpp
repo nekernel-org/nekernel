@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hpp>
 
 #include <NewKit/ErrorID.hpp>

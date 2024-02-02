@@ -19,8 +19,6 @@
 #define PTE_ALIGN (4096)
 #endif  //! PTE_ALIGN
 
-#define kPagePtrAddress 0x9000000
-
 extern "C" void flush_tlb(HCore::UIntPtr VirtualAddr);
 extern "C" void write_cr3(HCore::UIntPtr pde);
 extern "C" void write_cr0(HCore::UIntPtr bit);
@@ -44,6 +42,7 @@ struct PageTable64 {
 };
 
 PageTable64 *hal_alloc_page(SizeT sz, Boolean rw, Boolean user);
-
+UIntPtr& hal_get_page_ptr() noexcept;
+void hal_set_page_ptr(const UIntPtr& newPagePtr) noexcept;
 UIntPtr hal_create_page(Boolean rw, Boolean user);
 }  // namespace HCore::HAL

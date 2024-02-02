@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <StorageKit/ATA.hpp>
 
 //! @brief ATA DMA Driver

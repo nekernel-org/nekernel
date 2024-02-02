@@ -84,3 +84,8 @@ extern "C" void rt_syscall_handle(HCore::HAL::StackFrame* stackFrame);
 extern "C" HCore::HAL::StackFrame* rt_get_current_context();
 extern "C" int rt_do_context_switch(HCore::HAL::StackFrame* stackFrame);
 
+inline HCore::VoidPtr kKernelVirtualStart;
+inline HCore::UIntPtr kKernelVirtualSize;
+
+inline HCore::VoidPtr kKernelPhysicalStart;
+inline HCore::UIntPtr kKernelPhysicalSize;

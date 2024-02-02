@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>

@@ -11,25 +11,30 @@
 #include <NewKit/UserHeap.hpp>
 
 /// @file Heap.cxx
-/// @brief Heap Manager, user mode allocator.
-/// @note if you want to look at kernel allocs, please look for KHeap.cxx
+/// @brief Heap Manager, Process heap allocator.
+/// @note if you want to look at the kernel allocator, please look for KernelHeap.cxx
 /// bugs: 0
 
 namespace HCore {
+/**
+ * @brief Heap Manager class, takes care of allocating the process pools.
+ * @note This rely on Virtual Memory! Consider adding good vmem support when
+ * @note porting to a new arch.
+ */
 class HeapManager final {
  public:
-  static SizeT& GetCount() { return s_NumPools; }
-  static Ref<Pmm>& GetPmm() { return s_Pmm; }
-  static Boolean& IsEnabled() { return s_PoolsAreEnabled; }
-  static Array<Ref<PTEWrapper*>, kPoolMaxSz>& The() { return s_Pool; }
+  STATIC SizeT& Count() { return s_NumPools; }
+  STATIC Ref<Pmm>& Leak() { return s_Pmm; }
+  STATIC Boolean& IsEnabled() { return s_PoolsAreEnabled; }
+  STATIC Array<Ref<PTEWrapper*>, kPoolMaxSz>& The() { return s_Pool; }
 
  private:
-  static Size s_NumPools;
-  static Ref<Pmm> s_Pmm;
+  STATIC Size s_NumPools;
+  STATIC Ref<Pmm> s_Pmm;
 
  private:
-  static Boolean s_PoolsAreEnabled;
-  static Array<Ref<PTEWrapper*>, kPoolMaxSz> s_Pool;
+  STATIC Boolean s_PoolsAreEnabled;
+  STATIC Array<Ref<PTEWrapper*>, kPoolMaxSz> s_Pool;
 };
 
 //! declare fields
@@ -39,16 +44,16 @@ Ref<Pmm> HeapManager::s_Pmm;
 Boolean HeapManager::s_PoolsAreEnabled = true;
 Array<Ref<PTEWrapper*>, kPoolMaxSz> HeapManager::s_Pool;
 
-static voidPtr ke_find_unused_heap(Int flags);
-static void ke_free_heap_internal(voidPtr vaddr);
-static voidPtr ke_make_heap(voidPtr vaddr, Int flags);
-static bool ke_check_and_free_heap(const SizeT& index, voidPtr ptr);
+STATIC voidPtr ke_find_unused_heap(Int flags);
+STATIC void ke_free_heap_internal(voidPtr vaddr);
+STATIC voidPtr ke_make_heap(voidPtr vaddr, Int flags);
+STATIC Boolean ke_check_and_free_heap(const SizeT& index, voidPtr ptr);
 
-static voidPtr ke_find_unused_heap(Int flags) {
+STATIC voidPtr ke_find_unused_heap(Int flags) {
   for (SizeT index = 0; index < kPoolMaxSz; ++index) {
     if (HeapManager::The()[index] &&
         !HeapManager::The()[index].Leak().Leak().Leak()->Present()) {
-      HeapManager::GetPmm().Leak().TogglePresent(
+      HeapManager::Leak().Leak().TogglePresent(
           HeapManager::The()[index].Leak().Leak(), true);
       kcout << "[ke_find_unused_heap] Done, trying now to make a pool\r\n";
 
@@ -64,7 +69,7 @@ static voidPtr ke_find_unused_heap(Int flags) {
   return nullptr;
 }
 
-static voidPtr ke_make_heap(voidPtr virtualAddress, Int flags) {
+STATIC voidPtr ke_make_heap(voidPtr virtualAddress, Int flags) {
   if (virtualAddress) {
     HeapHeader* pool_hdr = reinterpret_cast<HeapHeader*>(virtualAddress);
 
@@ -86,7 +91,7 @@ static voidPtr ke_make_heap(voidPtr virtualAddress, Int flags) {
   return nullptr;
 }
 
-static void ke_free_heap_internal(voidPtr virtualAddress) {
+STATIC void ke_free_heap_internal(voidPtr virtualAddress) {
   HeapHeader* pool_hdr = reinterpret_cast<HeapHeader*>(
       reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(HeapHeader));
 
@@ -98,23 +103,29 @@ static void ke_free_heap_internal(voidPtr virtualAddress) {
   }
 }
 
-static bool ke_check_and_free_heap(const SizeT& index, voidPtr ptr) {
+/**
+ * @brief Check for the ptr and frees it.
+ * 
+ * @param index Where to look at.
+ * @param ptr The ptr to check.
+ * @return Boolean true if successful. 
+ */
+STATIC Boolean ke_check_and_free_heap(const SizeT& index, voidPtr ptr) {
   if (HeapManager::The()[index]) {
-    // ErrorOr<>::operator bool
-    if (!HeapManager::The()[index].Leak().Leak().IsStrong()) {
-      // we want them to be weak
-      // because we allocated it.
-      if (HeapManager::The()[index].Leak().Leak().Leak()->VirtualAddress() ==
-          (UIntPtr)ptr) {
-        HeapManager::GetPmm().Leak().FreePage(
-            HeapManager::The()[index].Leak().Leak());
-        --HeapManager::GetCount();
+    // ErrorOr<>::operator Boolean
+    /// if address matches
+    /// -> Free Pool.
+    if (HeapManager::The()[index].Leak().Leak().Leak()->VirtualAddress() ==
+        (UIntPtr)ptr) {
+      HeapManager::Leak().Leak().FreePage(
+          HeapManager::The()[index].Leak().Leak());
 
-        ke_free_heap_internal(ptr);
-        ptr = nullptr;
+      --HeapManager::Count();
 
-        return true;
-      }
+      ke_free_heap_internal(ptr);
+      ptr = nullptr;
+
+      return true;
     }
   }
 
@@ -127,20 +138,20 @@ static bool ke_check_and_free_heap(const SizeT& index, voidPtr ptr) {
 voidPtr ke_new_heap(Int32 flags) {
   if (!HeapManager::IsEnabled()) return nullptr;
 
-  if (HeapManager::GetCount() > kPoolMaxSz) return nullptr;
+  if (HeapManager::Count() > kPoolMaxSz) return nullptr;
 
   if (voidPtr ret = ke_find_unused_heap(flags)) return ret;
 
   // this wasn't set to true
-  auto ref_page = HeapManager::GetPmm().Leak().RequestPage(
+  auto ref_page = HeapManager::Leak().Leak().RequestPage(
       ((flags & kPoolUser)), (flags & kPoolRw));
+
   if (ref_page) {
     ///! reserve page.
-    HeapManager::The()[HeapManager::GetCount()].Leak() = ref_page;
-    auto& ref = HeapManager::GetCount();
-    ++ref;  // increment the number of addresses we have now.
+    HeapManager::The()[HeapManager::Count()].Leak() = ref_page;
+    auto& ref = HeapManager::Count();
 
-    kcout << "[ke_new_heap] New Address found!\r\n";
+    ++ref;  // increment the number of addresses we have now.
 
     // finally make the pool address.
     return ke_make_heap(
@@ -157,7 +168,7 @@ Int32 ke_free_heap(voidPtr ptr) {
   if (!HeapManager::IsEnabled()) return -1;
 
   if (ptr) {
-    SizeT base = HeapManager::GetCount();
+    SizeT base = HeapManager::Count();
 
     if (ke_check_and_free_heap(base, ptr)) return 0;
 
@@ -171,10 +182,10 @@ Int32 ke_free_heap(voidPtr ptr) {
   return -1;
 }
 
-/// @brief Init HeapManager, set GetCount to zero and IsEnabled to true.
-/// @return 
+/// @brief Init HeapManager, set Count to zero and IsEnabled to true.
+/// @return
 Void ke_init_heap() {
-  HeapManager::GetCount() = 0UL;
+  HeapManager::Count() = 0UL;
   HeapManager::IsEnabled() = true;
 }
 }  // namespace HCore

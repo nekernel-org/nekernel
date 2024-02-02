@@ -10,7 +10,7 @@
 #ifndef __PROCESS_MANAGER__
 #define __PROCESS_MANAGER__
 
-#include <ArchKit/Arch.hpp>
+#include <ArchKit/ArchKit.hpp>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/PermissionSelector.hxx>
 #include <NewKit/LockDelegate.hpp>

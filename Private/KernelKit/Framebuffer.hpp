@@ -37,7 +37,7 @@ class Framebuffer final {
   Framebuffer &operator=(const Framebuffer &) = delete;
   Framebuffer(const Framebuffer &) = default;
 
-  volatile UIntPtr *operator[](const UIntPtr &width_and_height);
+  volatile UIntPtr *operator[](const UIntPtr &pos);
 
   operator bool() {
     return m_FrameBufferAddr && m_Colour != FramebufferColorKind::INVALID;

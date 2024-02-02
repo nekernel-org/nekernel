@@ -28,7 +28,8 @@ enum class RingKind {
   kRingUser = 3,
   kRingDriver = 2,
   kRingKernel = 0,
-  kUnknown = -1,
+  kRingUnknown = -1,
+  kRingCount = 4,
 };
 
 class PermissionSelector final {
