@@ -179,6 +179,11 @@ BATADevice::BATADevice() noexcept {
   }
 }
 
+/**
+    @brief Read Buf from disk
+    @param Sz Sector size
+    @param Buf buffer
+*/
 BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& Sz) {
   if (!ATAIsDetected()) return *this;
 
@@ -196,6 +201,11 @@ BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& Sz) {
   return *this;
 }
 
+/**
+    @brief Write Buf into disk
+    @param Sz Sector size
+    @param Buf buffer
+*/
 BATADevice& BATADevice::Write(CharacterType* Buf, const SizeT& Sz) {
   if (!ATAIsDetected()) return *this;
 

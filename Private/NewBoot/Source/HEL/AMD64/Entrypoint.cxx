@@ -9,7 +9,6 @@
 
 #define __BOOTLOADER__ 1
 
-#include <BootKit/Arch/ATA.hxx>
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
 
