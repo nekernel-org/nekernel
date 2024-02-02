@@ -121,8 +121,8 @@ Void ATAReadLba(UInt32 Lba, UInt8 Bus, Boolean Master, CharacterType* Buf,
   ATAWait(IO);
 }
 
-Void ATAWriteLba(UInt16 Byte, UInt32 Lba, UInt8 Bus, Boolean Master,
-                 wchar_t* Buf, SizeT Offset) {
+Void ATAWriteLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
+                 SizeT Offset) {
   UInt16 IO = Bus;
 
   ATASelect(IO + ATA_REG_HDDEVSEL,
@@ -186,10 +186,11 @@ BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& Sz) {
 
   SizeT Off = 0;
 
-  for (SizeT i = 0UL; i < (Sz / 512); ++i) {
+  for (SizeT i = 0UL; i < Sz; ++i) {
     ATAReadLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
                Buf, Off);
-    Off += 256;
+
+    Off += 512;
   }
 
   return *this;
@@ -203,10 +204,10 @@ BATADevice& BATADevice::Write(CharacterType* Buf, const SizeT& Sz) {
   SizeT Off = 0UL;
 
   for (SizeT i = 0UL; i < Sz; ++i) {
-    ATAWriteLba(Buf[i], this->Leak().mBase + i, this->Leak().mBus,
-                this->Leak().mMaster, Buf, Off);
+    ATAWriteLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
+                Buf, Off);
 
-    Off += 256;
+    Off += 512;
   }
 
   return *this;

@@ -115,15 +115,15 @@ Boolean ATAInitDriver(UInt8 Bus, UInt8 Drv);
 Void ATAWait(UInt16 IO);
 Void ATAReadLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
                 SizeT Offset);
-Void ATAWriteLba(UInt16 Byte, UInt32 Lba, UInt8 Bus, Boolean Master,
-                 wchar_t* Buf, SizeT Offset);
+Void ATAWriteLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
+                 SizeT Offset);
 Boolean ATAIsDetected(Void);
 
 class BATADevice final {
  public:
   enum {
-    kPrimary = ATA_PRIMARY,
-    kSecondary = ATA_SECONDARY,
+    kPrimary = ATA_PRIMARY_IO,
+    kSecondary = ATA_SECONDARY_IO,
   };
 
   explicit BATADevice() noexcept;
@@ -138,8 +138,8 @@ class BATADevice final {
 
   operator bool() { return ATAIsDetected(); }
 
-  BATADevice& Read(WideChar*, const SizeT&);
-  BATADevice& Write(WideChar*, const SizeT&);
+  BATADevice& Read(WideChar* Buf, const SizeT& SecCount);
+  BATADevice& Write(WideChar* Buf, const SizeT& SecCount);
 
   ATATraits& Leak();
 
