@@ -14,6 +14,7 @@
  *
  */
 
+#include <BootKit/BootKit.hxx>
 #include <BootKit/Platform.hxx>
 #include <EFIKit/Api.hxx>
 
@@ -27,6 +28,6 @@ extern "C" void rt_cld() { asm volatile("cld"); }
 
 extern "C" void rt_std() { asm volatile("std"); }
 
-/// @brief Stack check
+/// @brief Stack Checker, leave empty.
 
 extern "C" void ___chkstk_ms(void) {}

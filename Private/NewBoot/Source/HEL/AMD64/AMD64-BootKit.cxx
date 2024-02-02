@@ -11,9 +11,6 @@
 #include <EFIKit/Api.hxx>
 #include <FSKit/NewFS.hxx>
 
-#include "EFIKit/EFI.hxx"
-#include "NewKit/Macros.hpp"
-
 /// bugs 0
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +110,7 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
   EfiHandlePtr handleFile = nullptr;
   EfiLoadFileProtocol *loadFile = nullptr;
 
-  EfiGUID loadFileGUID = EfiGUID(EFI_LOAD_FILE2_PROTOCOL_GUID);
+  EfiGUID loadFileGUID = EfiGUID(EFI_LOAD_FILE_PROTOCOL_GUID);
 
   BS->LocateProtocol(&loadFileGUID, nullptr, (VoidPtr *)&loadFile);
 
@@ -128,21 +125,30 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
     BS->AllocatePool(EfiLoaderCode, sizeof(UInt32), (VoidPtr *)&bufSz);
     *bufSz = KIB(324);
 
+    if (!bufSz) {
+      return nullptr;
+    }
+
     BS->AllocatePool(EfiLoaderCode, *bufSz, &buf);
 
-    if (!buf) return nullptr;
+    if (!buf) {
+      BS->FreePool(bufSz);
+      bufSz = nullptr;
+
+      return nullptr;
+    }
 
     EfiFileDevicePathProtocol filePath{0};
 
-    filePath.Proto.Length[0] = sizeof(EfiDevicePathProtocol);
-    filePath.Proto.Length[1] = BStrLen(mPath);
+    filePath.Proto.Length[0] = sizeof(EfiDevicePathProtocol) + BStrLen(mPath);
+    filePath.Proto.Length[1] = 0;
 
     filePath.Proto.Type = kEFIMediaDevicePath;
     filePath.Proto.SubType = kEFIMediaDevicePath;  // from all drives.
 
     BCopyMem(filePath.Path, mPath, BStrLen(mPath));
 
-    auto err = loadFile->LoadFile(loadFile, &filePath, false, &bufSz, &buf);
+    auto err = loadFile->LoadFile(loadFile, &filePath, true, bufSz, buf);
 
     size = *bufSz;
 
@@ -158,7 +164,7 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
         case 2: {
           writer.WriteString(L"HCoreLdr: Error: ")
               .WriteString(mPath)
-              .WriteString(L", Code: Invalid-Parameter")
+              .WriteString(L", EFI-Code: Invalid-Parameter")
               .WriteString(L"\r\n");
 
           break;
@@ -166,7 +172,7 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
         case 14: {
           writer.WriteString(L"HCoreLdr: Error: ")
               .WriteString(mPath)
-              .WriteString(L" , EFI-Code: Not-Found")
+              .WriteString(L", EFI-Code: Not-Found")
               .WriteString(L"\r\n");
 
           break;
@@ -174,7 +180,7 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
         default: {
           writer.WriteString(L"HCoreLdr: Error: ")
               .WriteString(mPath)
-              .WriteString(L" , EFI-Code: Unknown-Error")
+              .WriteString(L", EFI-Code: Unknown-Error")
               .WriteString(L"\r\n");
 
           break;

@@ -12,8 +12,8 @@
 
 #include <EFIKit/EFI.hxx>
 
-inline EfiSystemTable* ST = nullptr;
-inline EfiBootServices* BS = nullptr;
+inline EfiSystemTable *ST = nullptr;
+inline EfiBootServices *BS = nullptr;
 
 namespace EFI {
 /**
@@ -30,7 +30,7 @@ inline Void Stop() noexcept {
 @brief Exit EFI API to let the OS load correctly.
 Bascially frees everything we have in the EFI side.
 */
-inline void ExitBootServices(EfiSystemTable* SystemTable, UInt64 MapKey,
+inline void ExitBootServices(EfiSystemTable *SystemTable, UInt64 MapKey,
                              EfiHandlePtr ImageHandle) noexcept {
   if (!SystemTable) return;
 
@@ -38,7 +38,7 @@ inline void ExitBootServices(EfiSystemTable* SystemTable, UInt64 MapKey,
 }
 }  // namespace EFI
 
-inline void KeInitEFI(EfiSystemTable* SystemTable) noexcept {
+inline void KeInitEFI(EfiSystemTable *SystemTable) noexcept {
   if (!SystemTable) return;
 
   ST = SystemTable;
@@ -48,8 +48,8 @@ inline void KeInitEFI(EfiSystemTable* SystemTable) noexcept {
   ST->ConOut->SetAttribute(SystemTable->ConOut, kEFIYellow);
 }
 
-inline void KeRuntimeStop(const EfiCharType* ErrorCode,
-                          const EfiCharType* Reason) noexcept {
+inline void KeRuntimeStop(const EfiCharType *ErrorCode,
+                          const EfiCharType *Reason) noexcept {
   ST->ConOut->OutputString(ST->ConOut, L"*** STOP ***\r\n");
 
   ST->ConOut->OutputString(ST->ConOut, L"*** ErrorCode: ");
@@ -69,7 +69,9 @@ enum {
 };
 
 #ifdef __BOOTLOADER__
+
 #include <BootKit/Platform.hxx>
-#endif  // IF TARGET=BOOTLOADER
+
+#endif  // ifdef __BOOTLOADER__
 
 #endif /* ifndef __EFI_API__ */

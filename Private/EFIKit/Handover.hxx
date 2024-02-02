@@ -8,7 +8,7 @@
  */
 
 /**
- * @file BootProtocol.hxx
+ * @file Handover.hxx
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
  * @brief Handover protocol.
  * @version 0.1

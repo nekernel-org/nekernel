@@ -59,8 +59,8 @@ typedef UInt64(EFI_API *EfiTextClear)(struct EfiSimpleTextOutputProtocol *This);
 
 typedef UInt64(EFI_API *EfiLoadFile)(EfiLoadFileProtocol *This,
                                      EfiFileDevicePathProtocol *FilePath,
-                                     Boolean BootPolicy, UInt32 **BufferSize,
-                                     VoidPtr *Buffer);
+                                     Boolean BootPolicy, UInt32 *BufferSize,
+                                     VoidPtr Buffer);
 
 typedef UInt64(EFI_API *EfiCopyMem)(VoidPtr DstBuf, VoidPtr SrcBuf,
                                     SizeT Length);
@@ -471,5 +471,11 @@ enum {
   kEFIEndOfPath = 0x06,
   kEFICount = 6,
 };
+
+#define END_DEVICE_PATH_TYPE 0x7f
+#define END_ENTIRE_DEVICE_PATH_SUBTYPE 0xFF
+#define END_INSTANCE_DEVICE_PATH_SUBTYPE 0x01
+
+#define kEfiOffsetOf(T, F) __builtin_offsetof(T, F)
 
 #endif  // __EFI__

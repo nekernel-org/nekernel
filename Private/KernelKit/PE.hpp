@@ -26,7 +26,7 @@ typedef char CHAR;
 
 #define kPeMagic 0x00004550
 
-typedef struct PACKED ExecHeader final {
+typedef struct ExecHeader final {
   U32 mMagic;  // PE\0\0 or 0x00004550
   U16 mMachine;
   U16 mNumberOfSections;
@@ -35,12 +35,12 @@ typedef struct PACKED ExecHeader final {
   U32 mNumberOfSymbols;
   U16 mSizeOfOptionalHeader;
   U16 mCharacteristics;
-} ExecHeader, *ExecHeaderPtr;
+} PACKED ExecHeader, *ExecHeaderPtr;
 
 #define kMagPE32 0x010b
 #define kMagPE64 0x020b
 
-typedef PACKED struct ExecOptionalHeader final {
+typedef struct ExecOptionalHeader final {
   U16 mMagic;  // 0x010b - PE32, 0x020b - PE32+ (64 bit)
   U8 mMajorLinkerVersion;
   U8 mMinorLinkerVersion;
@@ -71,9 +71,9 @@ typedef PACKED struct ExecOptionalHeader final {
   U32 mSizeOfHeapCommit;
   U32 mLoaderFlags;
   U32 mNumberOfRvaAndSizes;
-} ExecOptionalHeader, *ExecOptionalHeaderPtr;
+} PACKED ExecOptionalHeader, *ExecOptionalHeaderPtr;
 
-typedef PACKED struct ExecSectionHeader final {
+typedef struct ExecSectionHeader final {
   CHAR mName[8];
   U32 mVirtualSize;
   U32 mVirtualAddress;
@@ -84,7 +84,7 @@ typedef PACKED struct ExecSectionHeader final {
   U16 mNumberOfRelocations;
   U16 mNumberOfLinenumbers;
   U32 mCharacteristics;
-} ExecSectionHeader, *ExecSectionHeaderPtr;
+} PACKED ExecSectionHeader, *ExecSectionHeaderPtr;
 
 enum kExecDataDirParams {
   kExecExport,
@@ -92,7 +92,7 @@ enum kExecDataDirParams {
   kExecCnt,
 };
 
-typedef PACKED struct ExecExportDirectory {
+typedef struct ExecExportDirectory {
   U32 mCharacteristics;
   U32 mTimeDateStamp;
   U16 mMajorVersion;
@@ -104,9 +104,9 @@ typedef PACKED struct ExecExportDirectory {
   U32 mAddressOfFunctions;  // export table rva
   U32 mAddressOfNames;
   U32 mAddressOfNameOrdinal;  // ordinal table rva
-} ExecExportDirectory, *ExecExportDirectoryPtr;
+} PACKED ExecExportDirectory, *ExecExportDirectoryPtr;
 
-typedef PACKED struct ExecImportDirectory {
+typedef struct ExecImportDirectory {
   union {
     U32 mCharacteristics;
     U32 mOriginalFirstThunk;
@@ -115,6 +115,6 @@ typedef PACKED struct ExecImportDirectory {
   U32 mForwarderChain;
   U32 mNameRva;
   U32 mThunkTableRva;
-} ExecImportDirectory, *ExecImportDirectoryPtr;
+} PACKED ExecImportDirectory, *ExecImportDirectoryPtr;
 
 #endif /* ifndef __PE__ */
