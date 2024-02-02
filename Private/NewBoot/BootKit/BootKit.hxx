@@ -20,8 +20,8 @@
 
 using namespace HCore;
 
-typedef VoidPtr PEFImagePtr;
-typedef VoidPtr PEImagePtr;
+typedef Char *PEFImagePtr;
+typedef Char *PEImagePtr;
 
 enum {
   kSegmentCode = 2,
@@ -84,6 +84,7 @@ class BFileReader final {
  private:
   Int32 mErrorCode{kOperationOkay};
   CharacterType mPath[kPathLen];
+  VoidPtr mHandle{nullptr};
 };
 
 /***********************************************************************************/

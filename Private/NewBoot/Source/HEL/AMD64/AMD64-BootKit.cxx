@@ -122,38 +122,57 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
         .WriteString(mPath)
         .WriteString(L"\r\n");
 
-    UInt32 bufSz = KIB(350);
+    UInt32 *bufSz = nullptr;
     VoidPtr buf = nullptr;
 
-    BS->AllocatePool(EfiLoaderCode, bufSz, &buf);
+    BS->AllocatePool(EfiLoaderCode, sizeof(UInt32), (VoidPtr *)&bufSz);
+    *bufSz = 0;
+
+    BS->AllocatePool(EfiLoaderCode, *bufSz, &buf);
 
     if (!buf) return nullptr;
 
     EfiFileDevicePathProtocol filePath{0};
-    filePath.Proto.Length[0] = (sizeof(EfiDevicePathProtocol));
-    filePath.Proto.Length[1] = (sizeof(EfiDevicePathProtocol) + kPathLen) >> 8;
 
     filePath.Proto.Type = kEFIMediaDevicePath;
     filePath.Proto.SubType = kEFIMediaDevicePath;  // from all drives.
 
     BCopyMem(filePath.Path, mPath, kPathLen);
 
-    auto err = loadFile->LoadFile(loadFile, &filePath, false, (UInt32 *)&bufSz,
-                                  (VoidPtr *)&buf);
+    auto err = loadFile->LoadFile(loadFile, &filePath, true, bufSz, buf);
 
-    size = bufSz;
+    size = *bufSz;
 
-    if (buf) {
+    if (err == kEfiOk) {
       writer.WriteString(L"HCoreLdr: Loaded: ")
           .WriteString(mPath)
           .WriteString(L"\r\n");
     } else {
-      writer.WriteString(L"HCoreLdr: Error: ")
-          .WriteString(mPath)
-          .WriteString(L" , EFI-Code: ")
-          .WriteCharacter(err + 48)
-          .WriteString(L"\r\n");
+      BS->FreePool(buf);
+      buf = nullptr;
+
+      switch (err) {
+        case 2: {
+          writer.WriteString(L"HCoreLdr: Error: ")
+              .WriteString(mPath)
+              .WriteString(L", Code: Invalid-Parameter")
+              .WriteString(L"\r\n");
+
+          break;
+        }
+        case 14: {
+          writer.WriteString(L"HCoreLdr: Error: ")
+              .WriteString(mPath)
+              .WriteString(L" , EFI-Code: Not-Found")
+              .WriteString(L"\r\n");
+
+          break;
+        }
+      }
     }
+
+    BS->FreePool(bufSz);
+    bufSz = nullptr;
 
     return buf;
   }

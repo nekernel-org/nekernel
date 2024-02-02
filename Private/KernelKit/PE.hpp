@@ -21,9 +21,12 @@ typedef HCore::UInt16 U16;
 typedef HCore::UInt8 U8;
 typedef char CHAR;
 
+#define kMagMz0 'M'
+#define kMagMz1 'Z'
+
 #define kPeMagic 0x00004550
 
-struct ExecHeader final {
+typedef struct PACKED ExecHeader final {
   U32 mMagic;  // PE\0\0 or 0x00004550
   U16 mMachine;
   U16 mNumberOfSections;
@@ -32,12 +35,12 @@ struct ExecHeader final {
   U32 mNumberOfSymbols;
   U16 mSizeOfOptionalHeader;
   U16 mCharacteristics;
-};
+} ExecHeader, *ExecHeaderPtr;
 
 #define kMagPE32 0x010b
 #define kMagPE64 0x020b
 
-typedef struct ExecOptionalHeader final {
+typedef PACKED struct ExecOptionalHeader final {
   U16 mMagic;  // 0x010b - PE32, 0x020b - PE32+ (64 bit)
   U8 mMajorLinkerVersion;
   U8 mMinorLinkerVersion;
@@ -70,7 +73,7 @@ typedef struct ExecOptionalHeader final {
   U32 mNumberOfRvaAndSizes;
 } ExecOptionalHeader, *ExecOptionalHeaderPtr;
 
-typedef struct ExecSectionHeader final {
+typedef PACKED struct ExecSectionHeader final {
   CHAR mName[8];
   U32 mVirtualSize;
   U32 mVirtualAddress;
@@ -89,7 +92,7 @@ enum kExecDataDirParams {
   kExecCnt,
 };
 
-typedef struct ExecExportDirectory {
+typedef PACKED struct ExecExportDirectory {
   U32 mCharacteristics;
   U32 mTimeDateStamp;
   U16 mMajorVersion;
@@ -103,7 +106,7 @@ typedef struct ExecExportDirectory {
   U32 mAddressOfNameOrdinal;  // ordinal table rva
 } ExecExportDirectory, *ExecExportDirectoryPtr;
 
-typedef struct ExecImportDirectory {
+typedef PACKED struct ExecImportDirectory {
   union {
     U32 mCharacteristics;
     U32 mOriginalFirstThunk;
