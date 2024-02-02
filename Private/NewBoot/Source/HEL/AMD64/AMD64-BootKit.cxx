@@ -113,7 +113,7 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
   EfiHandlePtr handleFile = nullptr;
   EfiLoadFileProtocol *loadFile = nullptr;
 
-  EfiGUID loadFileGUID = EfiGUID(EFI_LOAD_FILE_PROTOCOL_GUID);
+  EfiGUID loadFileGUID = EfiGUID(EFI_LOAD_FILE2_PROTOCOL_GUID);
 
   BS->LocateProtocol(&loadFileGUID, nullptr, (VoidPtr *)&loadFile);
 
@@ -126,7 +126,7 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
     VoidPtr buf = nullptr;
 
     BS->AllocatePool(EfiLoaderCode, sizeof(UInt32), (VoidPtr *)&bufSz);
-    *bufSz = 0;
+    *bufSz = KIB(324);
 
     BS->AllocatePool(EfiLoaderCode, *bufSz, &buf);
 
@@ -134,12 +134,15 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
 
     EfiFileDevicePathProtocol filePath{0};
 
+    filePath.Proto.Length[0] = sizeof(EfiDevicePathProtocol);
+    filePath.Proto.Length[1] = BStrLen(mPath);
+
     filePath.Proto.Type = kEFIMediaDevicePath;
     filePath.Proto.SubType = kEFIMediaDevicePath;  // from all drives.
 
-    BCopyMem(filePath.Path, mPath, kPathLen);
+    BCopyMem(filePath.Path, mPath, BStrLen(mPath));
 
-    auto err = loadFile->LoadFile(loadFile, &filePath, true, bufSz, buf);
+    auto err = loadFile->LoadFile(loadFile, &filePath, false, &bufSz, &buf);
 
     size = *bufSz;
 
@@ -164,6 +167,14 @@ HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
           writer.WriteString(L"HCoreLdr: Error: ")
               .WriteString(mPath)
               .WriteString(L" , EFI-Code: Not-Found")
+              .WriteString(L"\r\n");
+
+          break;
+        }
+        default: {
+          writer.WriteString(L"HCoreLdr: Error: ")
+              .WriteString(mPath)
+              .WriteString(L" , EFI-Code: Unknown-Error")
               .WriteString(L"\r\n");
 
           break;

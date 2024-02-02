@@ -59,8 +59,8 @@ typedef UInt64(EFI_API *EfiTextClear)(struct EfiSimpleTextOutputProtocol *This);
 
 typedef UInt64(EFI_API *EfiLoadFile)(EfiLoadFileProtocol *This,
                                      EfiFileDevicePathProtocol *FilePath,
-                                     Boolean BootPolicy, UInt32 *BufferSize,
-                                     Void *Buffer);
+                                     Boolean BootPolicy, UInt32 **BufferSize,
+                                     VoidPtr *Buffer);
 
 typedef UInt64(EFI_API *EfiCopyMem)(VoidPtr DstBuf, VoidPtr SrcBuf,
                                     SizeT Length);
@@ -227,6 +227,13 @@ typedef struct EfiTableHeader {
   {                                                  \
     0x56EC3091, 0x954C, 0x11d2, {                    \
       0x8e, 0x3f, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
+    }                                                \
+  }
+
+#define EFI_LOAD_FILE2_PROTOCOL_GUID                 \
+  {                                                  \
+    0x4006c0c1, 0xfcb3, 0x403e, {                    \
+      0x99, 0x6d, 0x4a, 0x6c, 0x87, 0x24, 0xe0, 0x6d \
     }                                                \
   }
 
