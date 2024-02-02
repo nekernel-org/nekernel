@@ -27,4 +27,6 @@ extern "C" void rt_cld() { asm volatile("cld"); }
 
 extern "C" void rt_std() { asm volatile("std"); }
 
-extern "C" void ___chkstk_ms(void) { EFI::Stop(); }
+/// @brief Stack check
+
+extern "C" void ___chkstk_ms(void) {}

@@ -127,6 +127,7 @@ class BATADevice final {
   };
 
   explicit BATADevice() noexcept;
+  ~BATADevice() = default;
 
   HCORE_COPY_DEFAULT(BATADevice);
 

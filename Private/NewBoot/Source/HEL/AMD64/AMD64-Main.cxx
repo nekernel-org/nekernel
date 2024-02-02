@@ -7,7 +7,6 @@
  *      ========================================================
  */
 
-#include "NewKit/Defines.hpp"
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
