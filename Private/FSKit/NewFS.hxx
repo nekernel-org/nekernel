@@ -30,7 +30,7 @@ enum {
   kUnknowmn = 0xFF,           // unknown device or unsupported (floppy)
 };
 
-struct NewBootBlock final {
+struct PACKED NewBootBlock final {
   HCore::Char Ident[kIdentLen];
   HCore::Char Shell[kNameLen];
 
@@ -56,7 +56,7 @@ struct NewBootBlock final {
 #define kKindDirectory 2
 #define kKindSymlink 3
 
-struct NewCatalog final {
+struct PACKED NewCatalog final {
   HCore::Char Name[kNameLen];
 
   HCore::Int32 Flags;
@@ -66,7 +66,7 @@ struct NewCatalog final {
   HCore::Lba LastFork;
 };
 
-struct NewFork {
+struct PACKED NewFork final {
   HCore::Int32 Flags;
   HCore::Int32 Kind;
 
@@ -90,7 +90,7 @@ struct NewFork {
 #define kConfigLen 64
 #define kPartLen 32
 
-struct NewPartitionBlock final {
+struct PACKED NewPartitionBlock final {
   HCore::Char PartitionName[kPartLen];
   HCore::Char JsonPath[kConfigLen];
 

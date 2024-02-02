@@ -8,7 +8,7 @@
  */
 
 #include <BootKit/BootKit.hxx>
-#include <EFIKit/EFILib.hxx>
+#include <EFIKit/Api.hxx>
 
 /// bugs 0
 
@@ -85,7 +85,7 @@ BFileReader::BFileReader(const CharacterType *path) {
 */
 HCore::VoidPtr BFileReader::ReadAll() {
   BTextWriter writer;
-  writer.WriteString(L"*** PE/COFF: Reading ")
+  writer.WriteString(L"*** BFileReader::ReadAll: Reading ")
       .WriteString(mPath)
       .WriteString(L" *** \r\n");
 

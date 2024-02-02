@@ -17,13 +17,13 @@
 #define IsLevelTriggered(flag) (flag & 8)
 
 namespace HCore::HAL {
-extern "C" UChar in8(UInt16 port);
-extern "C" UShort in16(UInt16 port);
-extern "C" UInt in32(UInt16 port);
+extern "C" UChar In8(UInt16 port);
+extern "C" UShort In16(UInt16 port);
+extern "C" UInt In32(UInt16 port);
 
-extern "C" void out16(UShort port, UShort byte);
-extern "C" void out8(UShort port, UChar byte);
-extern "C" void out32(UShort port, UInt byte);
+extern "C" void Out16(UShort port, UShort byte);
+extern "C" void Out8(UShort port, UChar byte);
+extern "C" void Out32(UShort port, UInt byte);
 
 extern "C" void rt_wait_for_io();
 extern "C" void rt_halt();

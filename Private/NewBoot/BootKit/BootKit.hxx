@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <BootKit/Arch/ATA.hxx>
 #include <NewKit/Defines.hpp>
 
 using namespace HCore;
@@ -27,7 +28,7 @@ enum {
   kSegmentBss = 6,
 };
 
-typedef wchar_t CharacterType;
+typedef WideChar CharacterType;
 
 /**
  * @brief BootKit Text Writer class
@@ -80,6 +81,7 @@ class BFileReader final {
  private:
   Int32 mErrorCode{kOperationOkay};
   CharacterType mPath[255];
+  BATADevice mDevice;
 };
 
 /***********************************************************************************/
@@ -88,3 +90,44 @@ class BFileReader final {
 
 #include <BootKit/Platform.hxx>
 #include <BootKit/Protocol.hxx>
+
+/***********************************************************************************/
+/// Provide some useful processor features.
+/***********************************************************************************/
+
+#ifdef __EFI_x86_64__
+
+inline void Out8(UInt16 port, UInt8 value) {
+  asm volatile("outb %%al, %1" : : "a"(value), "Nd"(port) : "memory");
+}
+
+inline void Out16(UInt16 port, UInt16 value) {
+  asm volatile("outw %%ax, %1" : : "a"(value), "Nd"(port) : "memory");
+}
+
+inline void Out32(UInt16 port, UInt32 value) {
+  asm volatile("outl %%eax, %1" : : "a"(value), "Nd"(port) : "memory");
+}
+
+inline UInt8 In8(UInt16 port) {
+  UInt8 value = 0UL;
+  asm volatile("inb %1, %%al" : "=a"(value) : "Nd"(port) : "memory");
+
+  return value;
+}
+
+inline UInt16 In16(UInt16 port) {
+  UInt16 value = 0UL;
+  asm volatile("inw %1, %%ax" : "=a"(value) : "Nd"(port) : "memory");
+
+  return value;
+}
+
+inline UInt32 In32(UInt16 port) {
+  UInt32 value = 0UL;
+  asm volatile("inl %1, %%eax" : "=a"(value) : "Nd"(port) : "memory");
+
+  return value;
+}
+
+#endif  // __EFI_x86_64__

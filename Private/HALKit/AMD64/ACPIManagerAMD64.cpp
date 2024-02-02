@@ -59,11 +59,11 @@ bool ACPIManager::Checksum(const char *checksum, SSizeT len) {
   return chr == 0;
 }
 
-void rt_shutdown_acpi_qemu_20(void) { HAL::out16(0xb004, 0x2000); }
+void rt_shutdown_acpi_qemu_20(void) { HAL::Out16(0xb004, 0x2000); }
 
-void rt_shutdown_acpi_qemu_30_plus(void) { HAL::out16(0x604, 0x2000); }
+void rt_shutdown_acpi_qemu_30_plus(void) { HAL::Out16(0x604, 0x2000); }
 
-void rt_shutdown_acpi_virtualbox(void) { HAL::out16(0x4004, 0x3400); }
+void rt_shutdown_acpi_virtualbox(void) { HAL::Out16(0x4004, 0x3400); }
 
 /// you'll have to parse the MADT otherwise!
 }  // namespace HCore

@@ -7,7 +7,8 @@
 
     Revision History:
 
-    30/01/24: Added file (amlel)
+    30/01/24: Add file. (amlel)
+    02/02/24: Update I/O routines. (amlel)
 
 ------------------------------------------- */
 
@@ -17,11 +18,11 @@ template <typename T>
 T IOArray<Sz>::In(SizeT index) {
   switch (sizeof(T)) {
     case 4:
-      return HAL::in32(m_Ports[index].Leak());
+      return HAL::In32(m_Ports[index].Leak());
     case 2:
-      return HAL::in16(m_Ports[index].Leak());
+      return HAL::In16(m_Ports[index].Leak());
     case 1:
-      return HAL::in8(m_Ports[index].Leak());
+      return HAL::In8(m_Ports[index].Leak());
     default:
       return 0xFFFF;
   }
@@ -33,11 +34,11 @@ void IOArray<Sz>::Out(SizeT index, T value) {
   switch (sizeof(T)) {
 #ifdef __x86_64__
     case 4:
-      HAL::out32(m_Ports[index].Leak(), value);
+      HAL::Out32(m_Ports[index].Leak(), value);
     case 2:
-      HAL::out16(m_Ports[index].Leak(), value);
+      HAL::Out16(m_Ports[index].Leak(), value);
     case 1:
-      HAL::out8(m_Ports[index].Leak(), value);
+      HAL::Out8(m_Ports[index].Leak(), value);
 #endif
     default:
       break;

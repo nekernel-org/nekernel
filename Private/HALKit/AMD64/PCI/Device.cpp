@@ -16,10 +16,10 @@ HCore::UInt LumiaPCIReadRaw(HCore::UInt bar, HCore::UShort bus,
                        ((HCore::UInt)dev << 11) | ((HCore::UInt)fun << 8) |
                        (bar & 0xFC);
 
-  HCore::HAL::out32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigAddress,
+  HCore::HAL::Out32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigAddress,
                     target);
 
-  return HCore::HAL::in32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigData);
+  return HCore::HAL::In32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigData);
 }
 
 void LumiaPCISetCfgTarget(HCore::UInt bar, HCore::UShort bus, HCore::UShort dev,
@@ -28,7 +28,7 @@ void LumiaPCISetCfgTarget(HCore::UInt bar, HCore::UShort bus, HCore::UShort dev,
                        ((HCore::UInt)dev << 11) | ((HCore::UInt)fun << 8) |
                        (bar & ~3);
 
-  HCore::HAL::out32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigAddress,
+  HCore::HAL::Out32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigAddress,
                     target);
 }
 
@@ -42,10 +42,10 @@ UInt Device::Read(UInt bar, Size sz) {
   LumiaPCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
 
   if (sz == 4)
-    return HAL::in32((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
+    return HAL::In32((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
   if (sz == 2)
-    return HAL::in16((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
-  if (sz == 1) return HAL::in8((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
+    return HAL::In16((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
+  if (sz == 1) return HAL::In8((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
 
   return 0xFFFF;
 }
@@ -54,11 +54,11 @@ void Device::Write(UInt bar, UIntPtr data, Size sz) {
   LumiaPCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
 
   if (sz == 4)
-    HAL::out32((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UInt)data);
+    HAL::Out32((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UInt)data);
   if (sz == 2)
-    HAL::out16((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UShort)data);
+    HAL::Out16((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UShort)data);
   if (sz == 1)
-    HAL::out8((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UChar)data);
+    HAL::Out8((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UChar)data);
 }
 
 UShort Device::DeviceId() {

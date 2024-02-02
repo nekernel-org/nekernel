@@ -418,6 +418,10 @@ typedef struct EfiIPV6 {
   UInt8 Addr[16];
 } EfiIPV6;
 
-#define kEFIYellow 0x0E
+#define kEFIYellow (0x01 | 0x02 | 0x04 | 0x08)
+
+#ifdef __x86_64
+#define __EFI_x86_64__ 1
+#endif  // __x86_64
 
 #endif  // __EFI__

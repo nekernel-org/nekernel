@@ -20,7 +20,8 @@
 
 int main() {
   std::cout
-      << "NewFSPartTool: Make a NewFS partition image from a directory!\n"
+      << "PartTool: build a NewFS partition image from a directory!\n"
       << "Copyright Mahrouss Logic, all rights reserved. (INTERNAL TOOL)\n";
+
   return 0;
 }

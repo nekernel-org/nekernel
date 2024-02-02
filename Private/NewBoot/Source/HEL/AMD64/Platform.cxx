@@ -15,8 +15,7 @@
  */
 
 #include <BootKit/Platform.hxx>
-
-#include "EFIKit/EFILib.hxx"
+#include <EFIKit/Api.hxx>
 
 extern "C" void rt_halt() { asm volatile("hlt"); }
 
