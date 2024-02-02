@@ -93,35 +93,39 @@ class BFileReader final {
 #include <BootKit/Platform.hxx>
 #include <BootKit/Protocol.hxx>
 
+/***********************************************************************************/
+/// Provide some useful processor features.
+/***********************************************************************************/
+
 #ifdef __EFI_x86_64__
 
-inline void out8(UInt16 port, UInt8 value) {
+inline void Out8(UInt16 port, UInt8 value) {
   asm volatile("outb %%al, %1" : : "a"(value), "Nd"(port) : "memory");
 }
 
-inline void out16(UInt16 port, UInt16 value) {
+inline void Out16(UInt16 port, UInt16 value) {
   asm volatile("outw %%ax, %1" : : "a"(value), "Nd"(port) : "memory");
 }
 
-inline void out32(UInt16 port, UInt32 value) {
+inline void Out32(UInt16 port, UInt32 value) {
   asm volatile("outl %%eax, %1" : : "a"(value), "Nd"(port) : "memory");
 }
 
-inline UInt8 in8(UInt16 port) {
+inline UInt8 In8(UInt16 port) {
   UInt8 value = 0UL;
   asm volatile("inb %1, %%al" : "=a"(value) : "Nd"(port) : "memory");
 
   return value;
 }
 
-inline UInt16 in16(UInt16 port) {
+inline UInt16 In16(UInt16 port) {
   UInt16 value = 0UL;
   asm volatile("inw %1, %%ax" : "=a"(value) : "Nd"(port) : "memory");
 
   return value;
 }
 
-inline UInt32 in32(UInt16 port) {
+inline UInt32 In32(UInt16 port) {
   UInt32 value = 0UL;
   asm volatile("inl %1, %%eax" : "=a"(value) : "Nd"(port) : "memory");
 

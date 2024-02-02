@@ -27,8 +27,6 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
 
   UInt64 mapKey = 0;
 
-  CharacterType bytes[1024];
-
   BFileReader reader(L"\\Root\\System\\HCoreKrnl.exe\0");
   auto blob = reader.ReadAll();
 

@@ -113,8 +113,10 @@ using namespace HCore;
 
 Boolean ATAInitDriver(UInt8 Bus, UInt8 Drv);
 Void ATAWait(UInt16 IO);
-UInt16 ATAReadLba(UInt32 Lba, UInt8 Bus, Boolean Master);
-Void ATAWriteLba(UInt16 Byte, UInt32 Lba, UInt8 Bus, Boolean Master);
+Void ATAReadLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
+                SizeT Offset);
+Void ATAWriteLba(UInt16 Byte, UInt32 Lba, UInt8 Bus, Boolean Master,
+                 wchar_t* Buf, SizeT Offset);
 Boolean ATAIsDetected(Void);
 
 class BATADevice final {
@@ -134,11 +136,21 @@ class BATADevice final {
     Boolean mMaster{false};
   };
 
+  operator bool() { return ATAIsDetected(); }
+
   BATADevice& Read(WideChar*, const SizeT&);
   BATADevice& Write(WideChar*, const SizeT&);
 
-  ATATraits& Traits();
+  ATATraits& Leak();
 
  private:
   ATATraits mTraits;
+};
+
+enum {
+  kATADevicePATA,
+  kATADeviceSATA,
+  kATADevicePATA_PI,
+  kATADeviceSATA_PI,
+  kATADeviceCount,
 };
