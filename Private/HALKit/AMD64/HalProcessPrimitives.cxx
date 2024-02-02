@@ -9,8 +9,6 @@
 
 #include <KernelKit/ProcessManager.hpp>
 
-#include "NewKit/Defines.hpp"
-
 using namespace HCore;
 
 Void Process::AssignStart(UIntPtr &imageStart) noexcept {

@@ -9,42 +9,41 @@
 
 //! @brief Allocates a pointer from the process's tls.
 
+#ifndef __PROCESS_MANAGER__
+#include <KernelKit/ProcessManager.hpp>
+#endif
+
 template <typename T>
-inline T* hcore_tls_new_ptr(void)
-{
-    using namespace HCore;
+inline T* hcore_tls_new_ptr(void) {
+  using namespace HCore;
 
-    auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
+  auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
 
-    T* pointer = (T*)ref_process.Leak().New(sizeof(T));
-    return pointer;
+  T* pointer = (T*)ref_process.Leak().New(sizeof(T));
+  return pointer;
 }
 
 //! @brief TLS delete implementation.
 template <typename T>
-inline bool hcore_tls_delete_ptr(T* ptr)
-{
-    if (!ptr)
-            return false;
+inline bool hcore_tls_delete_ptr(T* ptr) {
+  if (!ptr) return false;
 
-    using namespace HCore;
+  using namespace HCore;
 
-    auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
-    ptr->~T();
+  auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
+  ptr->~T();
 
-    return ref_process.Leak().Delete(ptr, sizeof(T));
+  return ref_process.Leak().Delete(ptr, sizeof(T));
 }
 
 template <typename T, typename... Args>
-T* hcore_tls_new_class(Args&&... args)
-{
-    T* ptr = hcore_tls_new_ptr<T>();
+T* hcore_tls_new_class(Args&&... args) {
+  T* ptr = hcore_tls_new_ptr<T>();
 
-    if (ptr)
-    {
-            *ptr = T(HCore::forward(args)...);
-            return ptr;
-    }
+  if (ptr) {
+    *ptr = T(HCore::forward(args)...);
+    return ptr;
+  }
 
-    return nullptr;
+  return nullptr;
 }

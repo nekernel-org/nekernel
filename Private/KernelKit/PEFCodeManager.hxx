@@ -14,8 +14,6 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/String.hpp>
 
-#include "NewKit/Defines.hpp"
-
 namespace HCore {
 ///
 /// \name PEFLoader

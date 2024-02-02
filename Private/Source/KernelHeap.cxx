@@ -9,8 +9,6 @@
 
 #include <NewKit/KernelHeap.hpp>
 
-#include "NewKit/PageManager.hpp"
-
 //! @file KernelHeap.cpp
 //! @brief Kernel allocator.
 

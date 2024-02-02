@@ -20,12 +20,9 @@ uarch_t __atexit_func_count;
 
 extern "C" void __cxa_pure_virtual() { HCore::kcout << "[C++] Placeholder\n"; }
 
-extern "C" void __stack_chk_fail() {
-  HCore::kcout << "[HCoreKrnl] Buffer overflow detected\n";
-  HCore::ke_stop(RUNTIME_CHECK_POINTER);
-}
+extern "C" void ___chkstk_ms() {}
 
-extern "C" int __cxa_atexit(void (*f)(void *), void *arg, void *dso) {
+extern "C" int atexit(void (*f)(void *), void *arg, void *dso) {
   if (__atexit_func_count >= DSO_MAX_OBJECTS) return -1;
 
   __atexit_funcs[__atexit_func_count].destructor_func = f;

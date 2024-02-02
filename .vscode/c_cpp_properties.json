@@ -4,12 +4,12 @@
       "name": "HCore",
       "includePath": [
         "${workspaceFolder}/Private/**",
-        "${workspaceFolder}/Private/NewBoot/*",
-        "${workspaceFolder}/Private/acpiSDK/source/include/*"
+        "${workspaceFolder}/Private/NewBoot/*"
       ],
       "defines": ["__HCORE__", "__HAVE_HCORE_APIS__"],
       "cStandard": "c17",
       "cppStandard": "c++20",
+      "compilerPath": "/opt/homebrew/bin/x86_64-elf-g++",
       "intelliSenseMode": "gcc-x64"
     }
   ],

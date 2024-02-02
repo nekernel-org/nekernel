@@ -14,6 +14,6 @@ And execute:
 make all
 ```
 
-You'd also need The MultiProcessor UNIX SDK tools, to build and link the components. For Tools look at `Public/Tools`
+You'd also need The SDK and MinGW, to build and link the components. For Tools look at `Public/Tools`
 
 ##### Copyright 2024, Mahrouss Logic, all rights reserved.

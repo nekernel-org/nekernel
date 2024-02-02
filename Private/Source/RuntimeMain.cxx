@@ -15,18 +15,8 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
 
-/// PRIVATE SYMBOLS EXPORTED BY C++ COMPILER.
-extern "C" void (*__SYSTEM_FINI)();
-extern "C" void (**__SYSTEM_INIT)();
-
 extern "C" void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
-  /// Init C++ globals
-  for (HCore::SizeT index_init = 0UL;
-       __SYSTEM_INIT[index_init] != __SYSTEM_FINI; ++index_init) {
-    __SYSTEM_INIT[index_init]();
-  }
-
   HCore::ke_init_heap();
   HCore::ke_init_ke_heap();
 

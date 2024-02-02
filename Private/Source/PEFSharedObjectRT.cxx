@@ -14,8 +14,6 @@
 #include <KernelKit/ThreadLocalStorage.hxx>
 #include <NewKit/Defines.hpp>
 
-#include "NewKit/RuntimeCheck.hpp"
-
 /* -------------------------------------------
 
  Revision History:

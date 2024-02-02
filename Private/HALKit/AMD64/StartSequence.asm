@@ -32,17 +32,8 @@ section .text
 
 ;; Just a simple setup, we'd also need to tell some before
 Main:
-    mov rsp, __SYSTEM_STACK_END
-    mov ebp, RuntimeMain
     jmp RuntimeMain
 L0:
-    cli
-    hlt
-    jmp $
-
-;; @brief this one is jumped on when an unsupported then gets through the boot stage.
-;; @note: must be ISA compatible!
-MainUnsupported:
     cli
     hlt
     jmp $

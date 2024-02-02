@@ -63,7 +63,9 @@ void HardwareThread::Wake(const bool wakeup) noexcept {
 bool HardwareThread::Switch(HAL::StackFrame* stack) {
   if (stack == nullptr) return false;
 
-  return rt_do_context_switch(m_Stack, stack) == 0;
+  m_Stack = stack;
+
+  return rt_do_context_switch(m_Stack) == 0;
 }
 
 ///! @brief Tells if processor is waked up.
@@ -110,7 +112,7 @@ bool SMPManager::Switch(HAL::StackFrame* stack) {
 
     m_ThreadList[idx].Leak().Leak().Busy(true);
 
-    Boolean ret = (rt_do_context_switch(rt_get_current_context(), stack) == 0);
+    Boolean ret = (rt_do_context_switch(stack) == 0);
 
     m_ThreadList[idx].Leak().Leak().Busy(false);
 

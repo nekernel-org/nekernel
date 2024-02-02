@@ -53,8 +53,7 @@ PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
     PEFContainer *container = reinterpret_cast<PEFContainer *>(fCachedBlob);
 
     auto fFree = [&]() -> void {
-      kcout << "CodeManager: Warning: Bad executable, program will not be "
-               "started!\n";
+      kcout << "CodeManager: Warning: Executable format error!\n";
       fBad = true;
 
       ke_delete_ke_heap(fCachedBlob);

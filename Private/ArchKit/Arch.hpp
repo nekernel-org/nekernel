@@ -80,7 +80,7 @@ namespace HCore
 extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *), kMaxSyscalls> kSyscalls;
 
 extern "C" void rt_wait_for_io();
-extern "C" void rt_syscall_handle(HCore::HAL::StackFrame *stack);
+extern "C" void rt_syscall_handle(HCore::HAL::StackFrame* stackFrame);
 extern "C" HCore::HAL::StackFrame* rt_get_current_context();
-extern "C" int rt_do_context_switch(HCore::HAL::StackFrame* stackLeft, HCore::HAL::StackFrame* stackRight);
+extern "C" int rt_do_context_switch(HCore::HAL::StackFrame* stackFrame);
 

@@ -7,7 +7,8 @@
  * 	========================================================
  */
 
-#pragma once
+#ifndef __PROCESS_MANAGER__
+#define __PROCESS_MANAGER__
 
 #include <ArchKit/Arch.hpp>
 #include <KernelKit/FileManager.hpp>
@@ -211,3 +212,5 @@ const Int32 &rt_get_exit_code() noexcept;
 #include <KernelKit/ThreadLocalStorage.hxx>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#endif /* ifndef __PROCESS_MANAGER__ */

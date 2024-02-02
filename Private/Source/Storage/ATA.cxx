@@ -10,8 +10,6 @@
 #include <ArchKit/Arch.hpp>
 #include <StorageKit/ATA.hpp>
 
-#include "NewKit/Utils.hpp"
-
 //! @brief ATA DMA Driver
 //! mapped by UEFI.
 
