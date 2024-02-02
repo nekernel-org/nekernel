@@ -9,10 +9,27 @@
 
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
+#include <FSKit/NewFS.hxx>
 
 /// bugs 0
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+HCore::SizeT BCopyMem(CharacterType *dest, CharacterType *src,
+                      const HCore::SizeT len) {
+  if (!dest || !src) return 0;
+
+  SizeT index = 0UL;
+  for (; index < len; ++index) {
+    dest[index] = src[index];
+  }
+
+  return index;
+}
+
 HCore::SizeT BStrLen(const CharacterType *ptr) {
+  if (!ptr) return 0;
+
   HCore::SizeT cnt = 0;
 
   while (*ptr != (CharacterType)0) {
@@ -23,12 +40,10 @@ HCore::SizeT BStrLen(const CharacterType *ptr) {
   return cnt;
 }
 
-/**
-    @biref set memory
-*/
-
 HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
                      const HCore::SizeT len) {
+  if (!src) return 0;
+
   HCore::SizeT cnt = 0UL;
 
   while (*src != 0) {
@@ -43,9 +58,8 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
   return cnt;
 }
 
-/**
-@brief puts wrapper over VGA.
-*/
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 BTextWriter &BTextWriter::WriteString(const CharacterType *str) {
   if (*str == 0 || !str) return *this;
 
@@ -65,6 +79,9 @@ BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
 
   return *this;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /***
     @brief File Reader constructor.
@@ -88,6 +105,15 @@ HCore::VoidPtr BFileReader::ReadAll() {
   writer.WriteString(L"*** BFileReader::ReadAll: Reading ")
       .WriteString(mPath)
       .WriteString(L" *** \r\n");
+
+  EfiFileDevicePathProtocol loadFile{0};
+  loadFile.LengthData[0] = 0xFF;
+  loadFile.LengthData[1] = 0;
+
+  loadFile.Type = kEFIMediaDevicePath;
+  loadFile.SubType = 0;  // from all drives.
+
+  BCopyMem(loadFile.Path, mPath, kPathLen);
 
   return nullptr;
 }

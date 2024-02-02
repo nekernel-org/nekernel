@@ -7,6 +7,7 @@
  *      ========================================================
  */
 
+#include "NewKit/Defines.hpp"
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -32,6 +33,8 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
   if (!blob)
     KeRuntimeStop(L"HCoreLdr_NoSuchKernel",
                   L"Couldn't find HCoreKrnl.exe! Aborting...");
+
+  writer.WriteString(L"HCoreLdr: Running HCoreKrnl.exe...\r\n");
 
   EFI::ExitBootServices(SystemTable, mapKey, ImageHandle);
   EFI::Stop();
