@@ -35,6 +35,8 @@ struct EfiSystemTable;
 struct EfiGUID;
 struct EfiFileDevicePathProtocol;
 struct EfiHandle;
+struct EfiGraphicsOutputProtocol;
+struct EfiBitmask;
 
 /// @brief Core Handle Type
 /// This is like NT's Win32 HANDLE type.
@@ -247,6 +249,13 @@ typedef struct EfiTableHeader {
     }                                                \
   }
 
+#define EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID            \
+  {                                                  \
+    0x9042a9de, 0x23dc, 0x4a38, {                    \
+      0x96, 0xfb, 0x7a, 0xde, 0xd0, 0x80, 0x51, 0x6a \
+    }                                                \
+  }
+
 #define EFI_LOADED_IMAGE_PROTOCOL_REVISION 0x1000
 
 #define EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID         \
@@ -271,6 +280,74 @@ typedef struct EfiTableHeader {
   }
 
 typedef UInt64(EfiImageUnload)(EfiHandlePtr ImageHandle);
+
+enum {
+  kPixelRedGreenBlueReserved8BitPerColor,
+  kPixelBlueGreenRedReserved8BitPerColor,
+  kPixelBitMask,
+  kPixelBltOnly,
+  kPixelFormatMax
+};
+
+typedef struct EfiBitmask {
+  UInt32 RedMask;
+  UInt32 GreenMask;
+  UInt32 BlueMask;
+  UInt32 ReservedMask;
+} EfiBitmask;
+
+typedef struct {
+  UInt8 Blue;
+  UInt8 Green;
+  UInt8 Red;
+  UInt8 Reserved;
+} EfiGraphicsOutputBltPixel;
+
+typedef enum EfiGraphicsOutputProtocolBltOperation {
+  EfiBltVideoFill,
+  EfiBltVideoToBltBuffer,
+  EfiBltBufferToVideo,
+  EfiBltVideoToVideo,
+  EfiGraphicsOutputBltOperationMax
+} EfiGraphicsOutputProtocolBltOperation;
+
+typedef struct EfiGraphicsOutputProtocolModeInformation {
+  UInt32 Version;
+  UInt32 HorizontalResolution;
+  UInt32 VerticalResolution;
+  UInt32 PixelFormat;
+  EfiBitmask PixelInformation;
+  UInt32 PixelsPerScanLine;
+} EfiGraphicsOutputProtocolModeInformation;
+
+typedef UInt64(EFI_API *EfiGraphicsOutputProtocolQueryMode)(
+    EfiGraphicsOutputProtocol *This, UInt32 ModeNumber, UInt32 *SizeOfInfo,
+    EfiGraphicsOutputProtocolModeInformation **Info);
+
+typedef UInt64(EFI_API *EfiGraphicsOutputProtocolSetMode)(EfiGraphicsOutputProtocol *This,
+                                       UInt32 ModeNumber);
+
+typedef UInt64(EFI_API *EfiGraphicsOutputProtocolBlt)(
+    EfiGraphicsOutputProtocol *This, EfiGraphicsOutputBltPixel *BltBuffer,
+    EfiGraphicsOutputProtocolBltOperation BltOperation, UInt32 SourceX,
+    UInt32 SourceY, UInt32 DestinationX, UInt32 DestinationY, UInt32 Width,
+    UInt32 Height, UInt32 Delta);
+
+typedef struct {
+  UInt32                                    MaxMode;
+  UInt32                                    Mode;
+  EfiGraphicsOutputProtocolModeInformation      *Info;
+  UInt32                                      SizeOfInfo;
+  UIntPtr                      FrameBufferBase;
+  UInt32                                     FrameBufferSize;
+} EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE;
+
+typedef struct EfiGraphicsOutputProtocol {
+  EfiGraphicsOutputProtocolQueryMode QueryMode;
+  EfiGraphicsOutputProtocolSetMode SetMode;
+  EfiGraphicsOutputProtocolBlt Blt;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *Mode;
+} EfiGraphicsOutputProtocol;
 
 typedef struct EfiLoadImageProtocol {
   UInt32 Revision;

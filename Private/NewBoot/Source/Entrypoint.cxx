@@ -7,6 +7,7 @@
  *      ========================================================
  */
 
+#include "EFIKit/EFI.hxx"
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -14,11 +15,25 @@
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
 
-// don't remove EfiGUID, it will call initializer_list!
+STATIC Void DrawBackground() {
+  EfiGUID gopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  EfiGraphicsOutputProtocol* gop = nullptr;
 
-EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
+  BS->LocateProtocol(&gopGuid, nullptr, (void**)&gop);
+
+  for (int w = 0; w < gop->Mode->Info->VerticalResolution; ++w) {
+    for (int h = 0; h < gop->Mode->Info->HorizontalResolution; ++h) {
+      *((UInt32*)(gop->Mode->FrameBufferBase +
+                  4 * gop->Mode->Info->PixelsPerScanLine * w + 4 * h)) =
+          RGB(20, 20, 20);
+    }
+  }
+}
+
+EFI_EXTERN_C Int EfiMain(EfiHandlePtr ImageHandle,
                          EfiSystemTable* SystemTable) {
   InitEFI(SystemTable);
+  DrawBackground();
 
   BTextWriter writer;
 

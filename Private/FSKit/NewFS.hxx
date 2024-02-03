@@ -188,5 +188,9 @@ class MeFilesystemHelper final {
 
 #define kNewFSAddressAsLba 1024
 
-// FSControl() syscall
-// FSOpen, FSClose, FSWhereAt, FSSetCursor, FSNodeSize, FSWrite, FSRead syscalls
+enum {
+  kNewFSPartGPT,
+  kNewFSPartEPM,
+  kNewFSPartUDF,
+  kNewFSPartCount,
+};

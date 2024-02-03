@@ -86,6 +86,7 @@ class BImageReader final {
   CharacterType mPath[kPathLen];
   BTextWriter mWriter;
   BATADevice mDevice;
+  bool mCached{false};
 };
 
 /***********************************************************************************/
@@ -133,5 +134,17 @@ inline UInt32 In32(UInt16 port) {
 
   return value;
 }
+
+/***********************************************************************************/
+/// Framebuffer.
+/***********************************************************************************/
+
+#define RGB(R, G, B) (UInt32)(0x##R##G##B)
+
+const UInt32 kRgbRed = 0x000000FF;
+const UInt32 kRgbGreen = 0x0000FF00;
+const UInt32 kRgbBlue = 0x00FF0000;
+const UInt32 kRgbBlack = 0x00000000;
+const UInt32 kRgbWhite = 0x00FFFFFF;
 
 #endif  // __EFI_x86_64__

@@ -66,5 +66,7 @@ HCore::VoidPtr BImageReader::Fetch(SizeT &size) {
 
   /// get file catalog with mPath inside it.
 
+  this->mCached = true;
+
   return nullptr;
 }

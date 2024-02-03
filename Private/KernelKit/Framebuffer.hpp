@@ -52,6 +52,22 @@ class Framebuffer final {
   Ref<FramebufferContext *> m_FrameBufferAddr;
   FramebufferColorKind m_Colour;
 };
+
+/***********************************************************************************/
+/// Framebuffer utils.
+/***********************************************************************************/
+
+const UInt32 kRgbRed = 0x000000FF;
+const UInt32 kRgbGreen = 0x0000FF00;
+const UInt32 kRgbBlue = 0x00FF0000;
+const UInt32 kRgbBlack = 0x00000000;
+const UInt32 kRgbWhite = 0x00FFFFFF;
 }  // namespace HCore
+
+/***********************************************************************************/
+/// Framebuffer macros.
+/***********************************************************************************/
+
+#define RGB(R, G, B) (UInt32)(0x##R##G##B)
 
 #endif /* ifndef __INC_FB_HPP__ */
