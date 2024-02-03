@@ -19,6 +19,8 @@
 
 using namespace HCore;
 
+/* we always use stdcall in EFI, the pascal way of calling functions. */
+
 #ifndef EPI_API
 #define EFI_API __attribute__((stdcall))
 #endif  // ifndef EPI_API
@@ -40,8 +42,7 @@ struct EfiBitmask;
 
 /// @brief Core Handle Type
 /// This is like NT's Win32 HANDLE type.
-typedef struct EfiHandle {
-} *EfiHandlePtr;
+typedef struct EfiHandle {} *EfiHandlePtr;
 
 /* UEFI uses wide characters by default. */
 typedef WideChar EfiCharType;

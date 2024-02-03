@@ -17,23 +17,25 @@
 #define kInvalidCatalog -1
 #define kNameLen 256
 
-#define kNewFSIdentLen 6
-#define kNewFSIdent "NewFS"
+#define kNewFSIdentLen 4
+#define kNewFSIdent "HCFS"
 #define kPadLen 16
 
 #define kNewFSVersion 1
+
+typedef HCore::WideChar NewCharType;
 
 enum {
   kNewFSHardDrive = 0xC0,          // Hard Drive
   kNewFSOpticalDrive = 0x0C,       // Blu-Ray/DVD
   kNewFSMassStorageDevice = 0xCC,  // USB
-  kNewFSUnknowmn = 0xFF,           // unknown device or unsupported (floppy)
+  kNewFSUnknown = 0xFF,            // unknown device or unsupported (floppy)
   kNewFSDriveCount = 4,
 };
 
 struct PACKED NewBootBlock final {
-  HCore::WideChar Ident[kNewFSIdentLen];
-  HCore::WideChar Shell[kNameLen];
+  NewCharType Ident[kNewFSIdentLen];
+  NewCharType Shell[kNameLen];
 
   HCore::Int64 NumParts;
   HCore::Int64 FreeSectors;
@@ -59,7 +61,7 @@ struct PACKED NewBootBlock final {
 #define kKindPartition 4
 
 struct PACKED NewCatalog final {
-  HCore::WideChar Name[kNameLen];
+  NewCharType Name[kNameLen];
 
   HCore::Int32 Flags;
   HCore::Int32 Kind;
@@ -93,8 +95,8 @@ struct PACKED NewFork final {
 #define kPartLen 32
 
 struct PACKED NewPartitionBlock final {
-  HCore::WideChar Ident[kNewFSIdentLen];
-  HCore::WideChar PartitionName[kPartLen];
+  NewCharType Ident[kNewFSIdentLen];
+  NewCharType PartitionName[kPartLen];
 
   HCore::Int32 Flags;
   HCore::Int32 Kind;
@@ -129,31 +131,31 @@ struct PACKED NewPartitionBlock final {
 #define kCatalogKindDevice 9
 #define kCatalogKindLock 10
 
-#define kFilesystemSeparator '/'
+#define kFilesystemSeparator '\\'
 
 #define kFilesystemUpDir ".."
-#define kFilesystemRoot "/"
+#define kFilesystemRoot "\\"
 
 #define kFilesystemLE '\r'
-#define kFilesystemEOF 0xFF11
+#define kFilesystemEOF (-1)
 
-#define kFilesystemBitWidth sizeof(HCore::WideChar)
+#define kFilesystemBitWidth sizeof(NewCharType)
 #define kFilesystemLbaType HCore::Lba
 
 namespace HCore {
 ///
-/// \name NewFSImpl
-/// NewFS filesystem operations. (catalog creation, remove removal, root
+/// \name NewFSImplementation
+/// \brief HCFS filesystem operations. (catalog creation, remove removal, root
 /// fork...)
 ///
 
-class NewFSImpl {
+class NewFSImplementation {
  public:
-  explicit NewFSImpl() = default;
-  virtual ~NewFSImpl() = default;
+  explicit NewFSImplementation() = default;
+  virtual ~NewFSImplementation() = default;
 
  public:
-  HCORE_COPY_DEFAULT(NewFSImpl);
+  HCORE_COPY_DEFAULT(NewFSImplementation);
 
   virtual NewFork* ForkFrom(NewCatalog& catalog, const Int64& id) = 0;
 

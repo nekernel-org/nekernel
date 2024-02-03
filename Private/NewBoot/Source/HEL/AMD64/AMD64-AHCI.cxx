@@ -17,3 +17,5 @@
  * @copyright Copyright (c) 2024 Mahrouss Logic
  *
  */
+
+#include <BootKit/Arch/AHCI.hxx>

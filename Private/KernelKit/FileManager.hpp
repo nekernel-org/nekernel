@@ -145,7 +145,7 @@ class NewFilesystemManager final : public IFilesystemManager {
   }
 
  public:
-  NewFSImpl *fIO{nullptr};
+  NewFSImplementation *fImpl{nullptr};
 };
 
 /**

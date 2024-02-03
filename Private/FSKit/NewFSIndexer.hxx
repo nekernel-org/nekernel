@@ -32,11 +32,11 @@ class INewFSIterator {
   HCORE_COPY_DEFAULT(INewFSIterator);
 
  public:
-  void Add(IndexableProperty& indexProp) { fProps.Add(indexProp); }
+  void Append(IndexableProperty& indexProp) { fProps.Add(indexProp); }
 
-  void Remove(const SizeT& indexProp) { fProps.Remove(indexProp); }
+  MutableArray<IndexableProperty>& Leak() { return fProps; }
 
-  Boolean FindLinear(IndexProperty& filters) {
+  Boolean Find(IndexProperty& filters) {
     for (size_t i = 0; i < fProps.Count(); ++i) {
       if (StringBuilder::Equals(fProps[i].Leak().LeakProperty().Path,
                                 filters.Path)) {

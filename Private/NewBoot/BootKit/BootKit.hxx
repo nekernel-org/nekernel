@@ -85,7 +85,7 @@ class BFileReader final {
   Int32 mErrorCode{kOperationOkay};
   CharacterType mPath[kPathLen];
   BTextWriter mWriter;
-  BATADevice mDevice;
+  BDeviceATA mDevice;
   bool mCached{false};
 };
 

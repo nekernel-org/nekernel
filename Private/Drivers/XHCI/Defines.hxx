@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: Defines.hxx
-    Purpose: XHCI (and backwards) defines.
+    Purpose: XHCI (and backwards) header.
 
     Revision History:
 
@@ -15,6 +15,8 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
+
+using namespace HCore;
 
 #define kUSBCommand (UInt16)0x0
 #define kUSBStatus (UInt16)0x2

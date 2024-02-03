@@ -10,8 +10,8 @@
 1: The HCore Microkernel
 ===================================
 
-- Drive Abstraction.
-- SMP, Preemptive MT.
+- Drive/Device Abstraction.
+- SMP, Preemptive Multi Threading.
 - Separation of Files/Devices.
 - Networking.
 - Hardware Abstraction Layer.

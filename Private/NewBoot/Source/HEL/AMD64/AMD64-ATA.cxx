@@ -22,8 +22,6 @@
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
 
-#include "BootKit/Platform.hxx"
-
 /// bugs: 0
 
 #define kATADataLen 256
@@ -94,7 +92,7 @@ ATAInit_Retry:
 
   writer.WriteString(L"\r\n");
 
-  OutBus = (Bus == ATA_PRIMARY) ? BATADevice::kPrimary : BATADevice::kSecondary;
+  OutBus = (Bus == ATA_PRIMARY) ? BDeviceATA::kPrimary : BDeviceATA::kSecondary;
   OutMaster = (Bus == ATA_PRIMARY) ? ATA_MASTER : ATA_SLAVE;
 
   Out8(Bus + ATA_REG_HDDEVSEL, 0xA0 | ATA_MASTER << 4);
@@ -172,12 +170,13 @@ Void ATAWriteLba(UInt32 Lba, UInt8 IO, UInt8 Master, wchar_t* Buf,
   }
 }
 
-Boolean ATAIsDetected(Void) { return kATADetected; }
+/// @check is ATA detected?
+Boolean IsATADetected(Void) { return kATADetected; }
 
 /***
  *
  *
- * ATA Device class.
+ * @brief ATA Device class.
  *
  *
  */
@@ -186,8 +185,8 @@ Boolean ATAIsDetected(Void) { return kATADetected; }
  * @brief ATA Device constructor.
  * @param void none.
  */
-BATADevice::BATADevice() noexcept {
-  if (ATAIsDetected()) return;
+BDeviceATA::BDeviceATA() noexcept {
+  if (IsATADetected()) return;
 
   if (ATAInitDriver(ATA_PRIMARY_IO, true, this->Leak().mBus,
                     this->Leak().mMaster) ||
@@ -209,8 +208,8 @@ BATADevice::BATADevice() noexcept {
     @param Sz Sector size
     @param Buf buffer
 */
-BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& SectorSz) {
-  if (!ATAIsDetected()) {
+BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
+  if (!IsATADetected()) {
     Leak().mErr = true;
     return *this;
   }
@@ -232,8 +231,8 @@ BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& SectorSz) {
     @param Sz Sector size
     @param Buf buffer
 */
-BATADevice& BATADevice::Write(CharacterType* Buf, const SizeT& SectorSz) {
-  if (!ATAIsDetected()) {
+BDeviceATA& BDeviceATA::Write(CharacterType* Buf, const SizeT& SectorSz) {
+  if (!IsATADetected()) {
     Leak().mErr = true;
     return *this;
   }
@@ -256,6 +255,6 @@ BATADevice& BATADevice::Write(CharacterType* Buf, const SizeT& SectorSz) {
 
 /**
  * @brief ATA Config getter.
- * @return BATADevice::ATATraits& the drive config.
+ * @return BDeviceATA::ATATraits& the drive config.
  */
-BATADevice::ATATraits& BATADevice::Leak() { return mTraits; }
+BDeviceATA::ATATraits& BDeviceATA::Leak() { return mTraits; }
