@@ -66,6 +66,9 @@ typedef UInt64(EFI_API *EfiCopyMem)(VoidPtr DstBuf, VoidPtr SrcBuf,
                                     SizeT Length);
 typedef UInt64(EFI_API *EfiSetMem)(VoidPtr DstBuf, Char Byte, SizeT Length);
 
+typedef UInt64(EFI_API *EfiHandleProtocol)(EfiHandlePtr Handle, EfiGUID *Guid,
+                                           VoidPtr *Device);
+
 typedef UInt64(EFI_API *EfiLocateDevicePath)(EfiGUID *Protocol,
                                              EfiDevicePathProtocol **DevicePath,
                                              EfiHandlePtr Device);
@@ -260,6 +263,13 @@ typedef struct EfiTableHeader {
     }                                                \
   }
 
+#define EFI_DEVICE_PATH_PROTOCOL_GUID               \
+  {                                                 \
+    0x9576e91, 0x6d3f, 0x11d2, {                    \
+      0x8e, 0x39, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
+    }                                               \
+  }
+
 typedef UInt64(EfiImageUnload)(EfiHandlePtr ImageHandle);
 
 typedef struct EfiLoadImageProtocol {
@@ -370,7 +380,7 @@ typedef struct EfiBootServices {
   UIntPtr InstallProtocolInterface;
   UIntPtr ReinstallProtocolInterface;
   UIntPtr UninstallProtocolInterface;
-  UIntPtr HandleProtocol;
+  EfiHandleProtocol HandleProtocol;
   VoidPtr Reserved;
   UIntPtr RegisterProtocolNotify;
   UIntPtr LocateHandle;

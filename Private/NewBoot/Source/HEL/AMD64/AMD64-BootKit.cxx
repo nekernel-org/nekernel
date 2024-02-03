@@ -60,6 +60,9 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+@brief puts wrapper over EFI.
+*/
 BTextWriter &BTextWriter::WriteString(const CharacterType *str) {
   if (*str == 0 || !str) return *this;
 
@@ -69,7 +72,7 @@ BTextWriter &BTextWriter::WriteString(const CharacterType *str) {
 }
 
 /**
-@brief putc wrapper over VGA.
+@brief putc wrapper over EFI.
 */
 BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
   EfiCharType str[2];
@@ -80,13 +83,13 @@ BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
   return *this;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /***
     @brief File Reader constructor.
 */
-BFileReader::BFileReader(const CharacterType *path) {
+BImageReader::BImageReader(const CharacterType *path) {
   if (path != nullptr) {
     SizeT index = 0UL;
     for (; path[index] != L'\0'; ++index) {
@@ -101,97 +104,16 @@ BFileReader::BFileReader(const CharacterType *path) {
 @brief this reads all of the buffer.
 @param size, new buffer size.
 */
-HCore::VoidPtr BFileReader::ReadAll(SizeT &size) {
+HCore::VoidPtr BImageReader::Fetch(SizeT &size) {
   BTextWriter writer;
-  writer.WriteString(L"*** BFileReader::ReadAll: Reading ")
+  writer.WriteString(L"*** BImageReader::Fetch: Fetching... ")
       .WriteString(mPath)
       .WriteString(L" *** \r\n");
 
-  EfiHandlePtr handleFile = nullptr;
-  EfiLoadFileProtocol *loadFile = nullptr;
+  EfiLoadImageProtocol *proto = nullptr;
+  EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
-  EfiGUID loadFileGUID = EfiGUID(EFI_LOAD_FILE_PROTOCOL_GUID);
-
-  BS->LocateProtocol(&loadFileGUID, nullptr, (VoidPtr *)&loadFile);
-
-  if (loadFile) {
-    writer.WriteString(L"HCoreLdr: Loading: ")
-        .WriteString(mPath)
-        .WriteString(L"\r\n");
-
-    UInt32 *bufSz = nullptr;
-    VoidPtr buf = nullptr;
-
-    BS->AllocatePool(EfiLoaderCode, sizeof(UInt32), (VoidPtr *)&bufSz);
-    *bufSz = KIB(324);
-
-    if (!bufSz) {
-      return nullptr;
-    }
-
-    BS->AllocatePool(EfiLoaderCode, *bufSz, &buf);
-
-    if (!buf) {
-      BS->FreePool(bufSz);
-      bufSz = nullptr;
-
-      return nullptr;
-    }
-
-    EfiFileDevicePathProtocol filePath{0};
-
-    filePath.Proto.Length[0] = sizeof(EfiDevicePathProtocol) + BStrLen(mPath);
-    filePath.Proto.Length[1] = 0;
-
-    filePath.Proto.Type = kEFIMediaDevicePath;
-    filePath.Proto.SubType = kEFIMediaDevicePath;  // from all drives.
-
-    BCopyMem(filePath.Path, mPath, BStrLen(mPath));
-
-    auto err = loadFile->LoadFile(loadFile, &filePath, true, bufSz, buf);
-
-    size = *bufSz;
-
-    if (err == kEfiOk) {
-      writer.WriteString(L"HCoreLdr: Loaded: ")
-          .WriteString(mPath)
-          .WriteString(L"\r\n");
-    } else {
-      BS->FreePool(buf);
-      buf = nullptr;
-
-      switch (err) {
-        case 2: {
-          writer.WriteString(L"HCoreLdr: Error: ")
-              .WriteString(mPath)
-              .WriteString(L", EFI-Code: Invalid-Parameter")
-              .WriteString(L"\r\n");
-
-          break;
-        }
-        case 14: {
-          writer.WriteString(L"HCoreLdr: Error: ")
-              .WriteString(mPath)
-              .WriteString(L", EFI-Code: Not-Found")
-              .WriteString(L"\r\n");
-
-          break;
-        }
-        default: {
-          writer.WriteString(L"HCoreLdr: Error: ")
-              .WriteString(mPath)
-              .WriteString(L", EFI-Code: Unknown-Error")
-              .WriteString(L"\r\n");
-
-          break;
-        }
-      }
-    }
-
-    BS->FreePool(bufSz);
-    bufSz = nullptr;
-
-    return buf;
+  if (BS->LocateProtocol(&guidImg, nullptr, (VoidPtr *)&proto) == kEfiOk) {
   }
 
   return nullptr;

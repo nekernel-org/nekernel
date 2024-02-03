@@ -17,7 +17,7 @@
 
 EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
                          EfiSystemTable* SystemTable) {
-  KeInitEFI(SystemTable);
+  InitEFI(SystemTable);
 
   BTextWriter writer;
 
@@ -27,11 +27,10 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
 
   UInt64 mapKey = 0;
 
-  BFileReader reader(L"HCoreKrnl.exe");
+  BImageReader img(L"HCoreKrnl.exe");
 
   SizeT sz = 0UL;
-
-  PEImagePtr blob = (PEImagePtr)reader.ReadAll(sz);
+  PEImagePtr blob = (PEImagePtr)img.Fetch(sz);
 
   if (!blob || sz < 1)
     KeRuntimeStop(L"HCoreLdr_NoSuchKernel", L"Couldn't find HCoreKrnl.exe!");
@@ -40,11 +39,11 @@ EFI_EXTERN_C int EfiMain(EfiHandlePtr ImageHandle,
 
   if (blob[0] == kMagMz0 && blob[1] == kMagMz1) {
     writer.WriteString(L"HCoreLdr: Running HCoreKrnl.exe...\r\n");
+    /// Load Image here
   } else {
     KeRuntimeStop(L"HCoreLdr_NotPE", L"Not a PE file! Aborting...");
   }
 
-  EFI::ExitBootServices(SystemTable, mapKey, ImageHandle);
   EFI::Stop();
 
   return kEfiOk;

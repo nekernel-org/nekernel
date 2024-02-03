@@ -8,7 +8,7 @@
  */
 
 #include <ArchKit/ArchKit.hpp>
-#include <EFIKit/BootProtocol.hxx>
+#include <EFIKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <NewKit/Json.hpp>

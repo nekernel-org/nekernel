@@ -9,8 +9,7 @@
 
 /**
     @brief The Explicit Partition Map use is to tell how many NewFS and other
-   EPM compatible fs. We have in this computer.
-
+    EPM compatible Filesystems. We have in this computer.
 */
 
 #ifndef __PARTITION_MAP__

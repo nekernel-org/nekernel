@@ -2,20 +2,19 @@
 
     Copyright Mahrouss Logic
 
-    File: USBRegs.hxx
-    Purpose: USB registers
+    File: Defines.hxx
+    Purpose: XHCI (and backwards) defines.
 
     Revision History:
 
     01/02/24: Added file (amlel)
+    03/02/24: Update filename to Defines.hxx (amlel)
 
 ------------------------------------------- */
 
 #pragma once
 
-typedef __UINT16_TYPE__ UInt16;
-typedef __UINT32_TYPE__ UInt32;
-typedef __UINT8_TYPE__ UInt8;
+#include <NewKit/Defines.hpp>
 
 #define kUSBCommand (UInt16)0x0
 #define kUSBStatus (UInt16)0x2

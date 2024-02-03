@@ -30,15 +30,14 @@ inline Void Stop() noexcept {
 @brief Exit EFI API to let the OS load correctly.
 Bascially frees everything we have in the EFI side.
 */
-inline void ExitBootServices(EfiSystemTable *SystemTable, UInt64 MapKey,
-                             EfiHandlePtr ImageHandle) noexcept {
-  if (!SystemTable) return;
+inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
+  if (!ST) return;
 
-  SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
+  ST->BootServices->ExitBootServices(ImageHandle, MapKey);
 }
 }  // namespace EFI
 
-inline void KeInitEFI(EfiSystemTable *SystemTable) noexcept {
+inline void InitEFI(EfiSystemTable *SystemTable) noexcept {
   if (!SystemTable) return;
 
   ST = SystemTable;
@@ -52,7 +51,7 @@ inline void KeRuntimeStop(const EfiCharType *ErrorCode,
                           const EfiCharType *Reason) noexcept {
   ST->ConOut->OutputString(ST->ConOut, L"*** STOP ***\r\n");
 
-  ST->ConOut->OutputString(ST->ConOut, L"*** ErrorCode: ");
+  ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
   ST->ConOut->OutputString(ST->ConOut, ErrorCode);
   ST->ConOut->OutputString(ST->ConOut, L", Reason: ");
   ST->ConOut->OutputString(ST->ConOut, Reason);

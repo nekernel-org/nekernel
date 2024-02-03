@@ -14,5 +14,5 @@
 #pragma once
 
 #include <KernelKit/PEFCodeManager.hxx>
-// #include <KernelKit/PECodeManager.hpp>
+// #include <KernelKit/PECodeManager.hxx>
 #include <KernelKit/PEFSharedObject.hxx>

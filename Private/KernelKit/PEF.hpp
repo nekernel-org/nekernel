@@ -1,11 +1,15 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+    File: PEF.hpp
+    Purpose: Preferred Executable Format for HCore.
+
+    Revision History:
+
+    ?/?/23: Added file (amlel)
+
+------------------------------------------- */
 
 #ifndef __PEF__
 #define __PEF__
@@ -22,7 +26,7 @@
 #define kPefVersion 1
 #define kPefNameLen 64
 
-/// @brief Preferred Executable Format, a format designed 
+/// @brief Preferred Executable Format, a format designed
 /// for RISC/CISC Von-neumann processor types.
 
 /// The PEF also uses the x64 PE calling convention and ABI.

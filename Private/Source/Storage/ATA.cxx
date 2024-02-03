@@ -11,7 +11,7 @@
 #include <StorageKit/ATA.hpp>
 
 //! @brief ATA DMA Driver
-//! mapped by UEFI.
+//! @todo: Rework into a proper ATA DMA.
 
 /// bugs 0
 

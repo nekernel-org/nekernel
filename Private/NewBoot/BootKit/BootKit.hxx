@@ -56,15 +56,15 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
                      const HCore::SizeT len);
 
 /**
- * @brief BootKit File Reader class
+ * @brief BootKit Image Reader class
  * Reads using the UEFI Simple File protocol.
  */
-class BFileReader final {
+class BImageReader final {
  public:
-  explicit BFileReader(const CharacterType *path);
-  ~BFileReader() = default;
+  explicit BImageReader(const CharacterType *path);
+  ~BImageReader() = default;
 
-  HCore::VoidPtr ReadAll(SizeT &size);
+  HCore::VoidPtr Fetch(SizeT &size);
 
   enum {
     kOperationOkay,
@@ -78,8 +78,8 @@ class BFileReader final {
   Int32 &Error() { return mErrorCode; }
 
  public:
-  BFileReader &operator=(const BFileReader &) = default;
-  BFileReader(const BFileReader &) = default;
+  BImageReader &operator=(const BImageReader &) = default;
+  BImageReader(const BImageReader &) = default;
 
  private:
   Int32 mErrorCode{kOperationOkay};
