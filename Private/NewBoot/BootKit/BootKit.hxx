@@ -84,7 +84,8 @@ class BImageReader final {
  private:
   Int32 mErrorCode{kOperationOkay};
   CharacterType mPath[kPathLen];
-  VoidPtr mHandle{nullptr};
+  BTextWriter mWriter;
+  BATADevice mDevice;
 };
 
 /***********************************************************************************/
@@ -121,7 +122,7 @@ inline UInt8 In8(UInt16 port) {
 
 inline UInt16 In16(UInt16 port) {
   UInt16 value = 0UL;
-  asm volatile("inw %1, %%ax" : "=a"(value) : "Nd"(port) : "memory");
+  asm volatile("in %%dx, %%ax" : "=a"(value) : "d"(port));
 
   return value;
 }

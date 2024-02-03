@@ -13,41 +13,38 @@
 #include <KernelKit/Device.hpp>
 #include <NetworkKit/IP.hpp>
 
-namespace HCore
-{
-    struct NetworkDeviceCommand;
+namespace HCore {
+struct NetworkDeviceCommand;
 
-    class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand>
-    {
-    public:
-        NetworkDevice(void(*out)(NetworkDeviceCommand), void(*in)(NetworkDeviceCommand),
-                               void(*on_cleanup)(void) = nullptr);
+class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand> {
+ public:
+  NetworkDevice(void (*out)(NetworkDeviceCommand),
+                void (*in)(NetworkDeviceCommand),
+                void (*on_cleanup)(void) = nullptr);
 
-        ~NetworkDevice() override;
+  ~NetworkDevice() override;
 
-    public:
-        NetworkDevice &operator=(const NetworkDevice &) = default;
-        NetworkDevice(const NetworkDevice &) = default;
+ public:
+  NetworkDevice &operator=(const NetworkDevice &) = default;
+  NetworkDevice(const NetworkDevice &) = default;
 
-    public:
-        const char* Name() const override { return ("NetworkDevice"); }
+ public:
+  const char *Name() const override { return ("NetworkDevice"); }
 
-    private:
-        void(*fCleanup)(void);
+ private:
+  void (*fCleanup)(void);
+};
 
-    };
+struct NetworkDeviceCommand {
+  UInt32 Command;
+  UInt32 VLan;
+  UInt32 DmaLow;
+  UInt32 DmaHigh;
+};
 
-    struct NetworkDeviceCommand
-    {
-        UInt32 Command;
-        UInt32 VLan;
-        UInt32 DmaLow;
-        UInt32 DmaHigh;
-    };
+using TCPNetworkDevice = NetworkDevice;
+using UDPNetworkDevice = NetworkDevice;
+using PPPNetworkDevice = NetworkDevice;
+}  // namespace HCore
 
-    using TCPNetworkDevice = NetworkDevice;
-    using UDPNetworkDevice = NetworkDevice;
-    using PPPNetworkDevice = NetworkDevice;
-} // namespace HCore
-
-#endif // !_INC_NETWORKDEVICE_HPP__
+#endif  // !_INC_NETWORKDEVICE_HPP__

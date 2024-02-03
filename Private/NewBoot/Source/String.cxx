@@ -1,11 +1,15 @@
-/*
- *	========================================================
- *
- *	NewBoot
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+    File: String.cxx
+    Purpose: NewBoot string library
+
+    Revision History:
+
+
+
+------------------------------------------- */
 
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
@@ -81,40 +85,4 @@ BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
   ST->ConOut->OutputString(ST->ConOut, str);
 
   return *this;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/***
-    @brief File Reader constructor.
-*/
-BImageReader::BImageReader(const CharacterType *path) {
-  if (path != nullptr) {
-    SizeT index = 0UL;
-    for (; path[index] != L'\0'; ++index) {
-      mPath[index] = path[index];
-    }
-
-    mPath[index] = 0;
-  }
-}
-
-/**
-@brief this reads all of the buffer.
-@param size, new buffer size.
-*/
-HCore::VoidPtr BImageReader::Fetch(SizeT &size) {
-  BTextWriter writer;
-  writer.WriteString(L"*** BImageReader::Fetch: Fetching... ")
-      .WriteString(mPath)
-      .WriteString(L" *** \r\n");
-
-  EfiLoadImageProtocol *proto = nullptr;
-  EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
-
-  if (BS->LocateProtocol(&guidImg, nullptr, (VoidPtr *)&proto) == kEfiOk) {
-  }
-
-  return nullptr;
 }

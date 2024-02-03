@@ -23,6 +23,8 @@
 
 /// bugs: 0
 
+extern "C" Void ATAWaitForIO(Void);
+
 static Boolean kATADetected = false;
 static Int32 kATADeviceType = kATADeviceCount;
 
@@ -67,19 +69,19 @@ Boolean ATAInitDriver(UInt8 Bus, UInt8 Drive, UInt16& OutBus,
 
   /* differentiate ATA, ATAPI, SATA and SATAPI */
   if (cl == 0x14 && ch == 0xEB) {
-    writer.WriteString(L"HCoreLdr: PATAPI drive detected.\r\n");
+    writer.WriteString(L"HCoreLdr: PATAPI: drive detected.\r\n");
     kATADeviceType = kATADevicePATA_PI;
   }
   if (cl == 0x69 && ch == 0x96) {
-    writer.WriteString(L"HCoreLdr: SATAPI drive detected.\r\n");
+    writer.WriteString(L"HCoreLdr: SATAPI: drive detected.\r\n");
     kATADeviceType = kATADeviceSATA_PI;
   }
   if (cl == 0 && ch == 0) {
-    writer.WriteString(L"HCoreLdr: PATA drive detected.\r\n");
+    writer.WriteString(L"HCoreLdr: PATA: drive detected.\r\n");
     kATADeviceType = kATADevicePATA;
   }
   if (cl == 0x3c && ch == 0xc3) {
-    writer.WriteString(L"HCoreLdr: SATA drive detected.\r\n");
+    writer.WriteString(L"HCoreLdr: SATA: drive detected.\r\n");
     kATADeviceType = kATADeviceSATA;
   }
 
@@ -95,52 +97,50 @@ void ATAWait(UInt16 IO) {
 
 void ATAPoll(UInt16 IO) { ATAWait(IO); }
 
-Void ATAReadLba(UInt32 Lba, UInt8 Bus, Boolean Master, CharacterType* Buf,
+Void ATAReadLba(UInt32 Lba, UInt8 IO, Boolean Master, CharacterType* Buf,
                 SizeT Offset) {
-  UInt16 IO = Bus;
+  rt_cli();
+  ATAWaitForIO();
 
-  ATASelect(IO + ATA_REG_HDDEVSEL,
-            (Master ? ATA_MASTER : ATA_SLAVE) | Lba >> 24 & 0xF);
+  Lba &= 0x00FFFFFF;
 
-  ATASelect(IO + 1, 0);
+  UInt8 Command = (Master ? 0xE0 : 0xF0);
 
-  Out8(IO + ATA_REG_SEC_COUNT0, 1);
+  Out8(IO + ATA_REG_HDDEVSEL, Command | ((Lba >> 24)));
+  Out8(IO + ATA_REG_SEC_COUNT0, 0x1);
 
   Out8(IO + ATA_REG_LBA0, (UInt8)Lba);
-  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba >> 8));
-  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba >> 16));
+  Out8(IO + ATA_REG_LBA1, (UInt8)Lba >> 8);
+  Out8(IO + ATA_REG_LBA2, (UInt8)Lba >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  ATAPoll(IO);
+  Buf[Offset] = In16(IO);
 
-  Buf[Offset] = In16(IO + ATA_REG_DATA);
-
-  ATAWait(IO);
+  ATAWaitForIO();
+  rt_sti();
 }
 
-Void ATAWriteLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
+Void ATAWriteLba(UInt32 Lba, UInt8 IO, Boolean Master, wchar_t* Buf,
                  SizeT Offset) {
-  UInt16 IO = Bus;
+  rt_cli();
+  ATAWaitForIO();
+  Lba &= 0x00FFFFFF;
 
-  ATASelect(IO + ATA_REG_HDDEVSEL,
-            (Master ? ATA_MASTER : ATA_SLAVE) | Lba >> 24 & 0xF);
+  UInt8 Command = (Master ? 0xE0 : 0xF0);
 
-  ATASelect(IO + 1, 0);
-
-  Out8(IO + ATA_REG_SEC_COUNT0, 1);
+  Out8(IO + ATA_REG_HDDEVSEL, Command | ((Lba >> 24)));
+  Out8(IO + ATA_REG_SEC_COUNT0, 0x1);
 
   Out8(IO + ATA_REG_LBA0, (UInt8)Lba);
-  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba >> 8));
-  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba >> 16));
+  Out8(IO + ATA_REG_LBA1, (UInt8)Lba >> 8);
+  Out8(IO + ATA_REG_LBA2, (UInt8)Lba >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  ATAPoll(IO);
-
-  Out16(IO + ATA_REG_DATA, Buf[Offset]);
-
-  ATAWait(IO);
+  Out16(IO, Buf[Offset]);
+  ATAWaitForIO();
+  rt_sti();
 }
 
 Boolean ATAIsDetected(Void) { return kATADetected; }
@@ -171,7 +171,7 @@ BATADevice::BATADevice() noexcept {
     kATADetected = true;
 
     BTextWriter writer;
-    writer.WriteString(L"BATADevice::BATADevice: OnLine\r\n");
+    writer.WriteString(L"HCoreLdr: Driver: OnLine.\r\n");
   }
 }
 
@@ -180,12 +180,12 @@ BATADevice::BATADevice() noexcept {
     @param Sz Sector size
     @param Buf buffer
 */
-BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& Sz) {
+BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& SectorSz) {
   if (!ATAIsDetected()) return *this;
 
-  if (!Buf || Sz < 1) return *this;
+  if (!Buf || SectorSz > kATASectorSz || SectorSz < 1) return *this;
 
-  for (SizeT i = 0UL; i < Sz; ++i) {
+  for (SizeT i = 0UL; i < SectorSz; ++i) {
     ATAReadLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
                Buf, i);
   }
@@ -198,14 +198,14 @@ BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& Sz) {
     @param Sz Sector size
     @param Buf buffer
 */
-BATADevice& BATADevice::Write(CharacterType* Buf, const SizeT& Sz) {
+BATADevice& BATADevice::Write(CharacterType* Buf, const SizeT& SectorSz) {
   if (!ATAIsDetected()) return *this;
 
-  if (!Buf || Sz < 1) return *this;
+  if (!Buf || SectorSz > kATASectorSz || SectorSz < 1) return *this;
 
   SizeT Off = 0UL;
 
-  for (SizeT i = 0UL; i < Sz; ++i) {
+  for (SizeT i = 0UL; i < SectorSz; ++i) {
     ATAWriteLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
                 Buf, Off);
 

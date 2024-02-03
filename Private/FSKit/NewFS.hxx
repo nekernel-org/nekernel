@@ -17,8 +17,8 @@
 #define kInvalidCatalog -1
 #define kNameLen 256
 
-#define kIdentLen 6
-#define kIdent "NewFS"
+#define kNewFSIdentLen 6
+#define kNewFSIdent "NewFS"
 #define kPadLen 16
 
 #define kNewFSVersion 1
@@ -32,7 +32,7 @@ enum {
 };
 
 struct PACKED NewBootBlock final {
-  HCore::WideChar Ident[kIdentLen];
+  HCore::WideChar Ident[kNewFSIdentLen];
   HCore::WideChar Shell[kNameLen];
 
   HCore::Int64 NumParts;
@@ -93,7 +93,7 @@ struct PACKED NewFork final {
 #define kPartLen 32
 
 struct PACKED NewPartitionBlock final {
-  HCore::WideChar Ident[kIdentLen];
+  HCore::WideChar Ident[kNewFSIdentLen];
   HCore::WideChar PartitionName[kPartLen];
 
   HCore::Int32 Flags;

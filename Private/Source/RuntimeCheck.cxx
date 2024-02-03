@@ -12,7 +12,7 @@
 #include <NewKit/RuntimeCheck.hpp>
 #include <NewKit/String.hpp>
 
-extern "C" [[noreturn]] void wait_for_debugger() {
+extern "C" [[noreturn]] void ke_wait_for_debugger() {
   while (true) {
     HCore::HAL::rt_cli();
     HCore::HAL::rt_halt();
@@ -63,10 +63,13 @@ void ke_stop(const HCore::Int &id) {
   };
 
   DumpManager::Dump();
-  wait_for_debugger();
+
+#ifdef __DEBUG__
+  ke_wait_for_debugger();
+#endif  // ifdef __DEBUG__
 }
 
-void runtime_check(bool expr, const char *file, const char *line) {
+void ke_runtime_check(bool expr, const char *file, const char *line) {
   if (!expr) {
 #ifdef __DEBUG__
     kcout << "[KERNEL] Check Failed!\n";

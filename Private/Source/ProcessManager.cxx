@@ -202,7 +202,7 @@ SizeT ProcessManager::Run() noexcept {
       ProcessHelper::Switch(m_CurrentProcess.Leak().StackFrame,
                             m_CurrentProcess.Leak().ProcessId);
     } else {
-      // otherwise increment the micro-time.
+      // otherwise increment the P-time.
       ++m_CurrentProcess.Leak().PTime;
     }
   }

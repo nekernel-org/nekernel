@@ -21,7 +21,7 @@ Int string_compare(const Char *src, const Char *cmp, Size size) {
 }
 
 void rt_zero_memory(voidPtr pointer, Size len) {
-  rt_set_memory((voidPtr)pointer, 0, len);
+  rt_set_memory(pointer, 0, len);
 }
 
 Size string_length(const Char *str, SizeT _len) {

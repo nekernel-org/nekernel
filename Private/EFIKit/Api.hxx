@@ -33,7 +33,31 @@ Bascially frees everything we have in the EFI side.
 inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
   if (!ST) return;
 
+  ST->ConOut->OutputString(ST->ConOut, L"EFI: Exit Boot services...\r\n");
   ST->BootServices->ExitBootServices(ImageHandle, MapKey);
+}
+
+enum {
+  kPartEPM,
+  kPartGPT,
+  kPartMBR,
+  kPartCnt,
+};
+
+/***
+ * @brief Raise Hard kernel error.
+ */
+inline void RaiseHardError(const EfiCharType *ErrorCode,
+                           const EfiCharType *Reason) noexcept {
+  ST->ConOut->OutputString(ST->ConOut, L"*** STOP ***\r\n");
+
+  ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
+  ST->ConOut->OutputString(ST->ConOut, ErrorCode);
+  ST->ConOut->OutputString(ST->ConOut, L", Reason: ");
+  ST->ConOut->OutputString(ST->ConOut, Reason);
+  ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
+
+  EFI::Stop();
 }
 }  // namespace EFI
 
@@ -46,26 +70,6 @@ inline void InitEFI(EfiSystemTable *SystemTable) noexcept {
   ST->ConOut->ClearScreen(SystemTable->ConOut);
   ST->ConOut->SetAttribute(SystemTable->ConOut, kEFIYellow);
 }
-
-inline void KeRuntimeStop(const EfiCharType *ErrorCode,
-                          const EfiCharType *Reason) noexcept {
-  ST->ConOut->OutputString(ST->ConOut, L"*** STOP ***\r\n");
-
-  ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
-  ST->ConOut->OutputString(ST->ConOut, ErrorCode);
-  ST->ConOut->OutputString(ST->ConOut, L", Reason: ");
-  ST->ConOut->OutputString(ST->ConOut, Reason);
-  ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
-
-  EFI::Stop();
-}
-
-enum {
-  kPartEPM,
-  kPartGPT,
-  kPartMBR,
-  kPartCnt,
-};
 
 #ifdef __BOOTLOADER__
 
