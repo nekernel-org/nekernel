@@ -111,12 +111,6 @@ using namespace HCore;
 #define ATA_ADDRESS3(x) (x + 5)
 #define ATA_COMMAND(x) (x + 7)
 
-Boolean ATAInitDriver(UInt8 Bus, UInt8 Drv);
-Void ATAWait(UInt16 IO);
-Void ATAReadLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
-                SizeT Offset);
-Void ATAWriteLba(UInt32 Lba, UInt8 Bus, Boolean Master, wchar_t* Buf,
-                 SizeT Offset);
 Boolean ATAIsDetected(Void);
 
 class BATADevice final {
@@ -134,7 +128,10 @@ class BATADevice final {
   struct ATATraits final {
     SizeT mBase{1024};
     UInt16 mBus{kPrimary};
-    Boolean mMaster{true};
+    UInt8 mMaster{0};
+    Boolean mErr{false};
+
+    operator bool() { return !mErr; }
   };
 
   operator bool() { return ATAIsDetected(); }

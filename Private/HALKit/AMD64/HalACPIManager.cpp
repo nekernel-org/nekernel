@@ -47,6 +47,11 @@ ErrorOr<voidPtr> ACPIManager::Find(const char *signature) {
   return ErrorOr<voidPtr>{-1};
 }
 
+/***
+    @brief check SDT header
+    @param checksum the header to checksum
+    @param len the length of it.
+*/
 bool ACPIManager::Checksum(const char *checksum, SSizeT len) {
   if (len == 0) return -1;
 
@@ -65,5 +70,5 @@ void rt_shutdown_acpi_qemu_30_plus(void) { HAL::Out16(0x604, 0x2000); }
 
 void rt_shutdown_acpi_virtualbox(void) { HAL::Out16(0x4004, 0x3400); }
 
-/// you'll have to parse the MADT otherwise!
+/// You have to parse the MADT!
 }  // namespace HCore

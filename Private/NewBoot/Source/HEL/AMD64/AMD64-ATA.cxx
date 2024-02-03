@@ -14,133 +14,162 @@
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) 2024
+ * @copyright Copyright (c) 2024 Mahrouss Logic
  *
  */
 
 #include <BootKit/Arch/ATA.hxx>
 #include <BootKit/BootKit.hxx>
+#include <EFIKit/Api.hxx>
+
+#include "BootKit/Platform.hxx"
 
 /// bugs: 0
 
-extern "C" Void ATAWaitForIO(Void);
+#define kATADataLen 256
 
 static Boolean kATADetected = false;
 static Int32 kATADeviceType = kATADeviceCount;
+static CharacterType kATAData[kATADataLen] = {0};
 
-void ATASelect(UInt8 Bus, Boolean isMaster) {
-  if (Bus == ATA_PRIMARY)
-    Out8(ATA_PRIMARY_IO + ATA_REG_HDDEVSEL,
-         isMaster ? ATA_PRIMARY_SEL : ATA_SECONDARY_SEL);
-  else
-    Out8(ATA_SECONDARY_IO + ATA_REG_HDDEVSEL,
-         isMaster ? ATA_PRIMARY_SEL : ATA_SECONDARY_SEL);
-}
+STATIC Boolean ATAWaitForIO(UInt16 IO) {
+  for (int i = 0; i < 4; i++) In8(IO + ATA_REG_STATUS);
 
-Boolean ATAInitDriver(UInt8 Bus, UInt8 Drive, UInt16& OutBus,
-                      Boolean& OutMaster) {
-  BTextWriter writer;
+ATAWaitForIO_Retry:
+  auto statRdy = In8(IO + ATA_REG_STATUS);
 
-  UInt16 IO = (Bus == ATA_PRIMARY) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
+  if ((statRdy & ATA_SR_BSY)) goto ATAWaitForIO_Retry;
 
-  ATASelect(Bus, Drive);
+ATAWaitForIO_Retry2:
+  statRdy = In8(IO + ATA_REG_STATUS);
 
-  Out8(IO + ATA_REG_SEC_COUNT0, 0);
-  Out8(IO + ATA_REG_LBA0, 0);
-  Out8(IO + ATA_REG_LBA1, 0);
-  Out8(IO + ATA_REG_LBA2, 0);
+  if (statRdy & ATA_SR_ERR) return false;
 
-  Out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
-
-  UInt8 status = In8(IO + ATA_REG_STATUS);
-
-  if (status & ATA_SR_ERR) {
-#ifdef __DEBUG__
-    writer.WriteString(L"HCoreLdr: Init ATA: Bad Drive!\r\n");
-#endif  // ifdef __DEBUG__
-    return false;
-  }
-
-  OutBus = (Bus == ATA_PRIMARY) ? BATADevice::kPrimary : BATADevice::kSecondary;
-  OutMaster = (Bus == ATA_PRIMARY);
-
-  unsigned cl = In16(Bus + ATA_CYL_LOW); /* get the "signature bytes" */
-  unsigned ch = In16(Bus + ATA_CYL_HIGH);
-
-  /* differentiate ATA, ATAPI, SATA and SATAPI */
-  if (cl == 0x14 && ch == 0xEB) {
-    writer.WriteString(L"HCoreLdr: PATAPI: drive detected.\r\n");
-    kATADeviceType = kATADevicePATA_PI;
-  }
-  if (cl == 0x69 && ch == 0x96) {
-    writer.WriteString(L"HCoreLdr: SATAPI: drive detected.\r\n");
-    kATADeviceType = kATADeviceSATA_PI;
-  }
-  if (cl == 0 && ch == 0) {
-    writer.WriteString(L"HCoreLdr: PATA: drive detected.\r\n");
-    kATADeviceType = kATADevicePATA;
-  }
-  if (cl == 0x3c && ch == 0xc3) {
-    writer.WriteString(L"HCoreLdr: SATA: drive detected.\r\n");
-    kATADeviceType = kATADeviceSATA;
-  }
+  if (!(statRdy & ATA_SR_DRDY)) goto ATAWaitForIO_Retry2;
 
   return true;
 }
 
-/*** @brief
- * This polls the ATA drive.
- */
-void ATAWait(UInt16 IO) {
-  for (int i = 0; i < 4000; i++) In8(IO + ATA_REG_ALT_STATUS);
+Void ATASelect(UInt16 Bus) {
+  if (Bus == ATA_PRIMARY_IO)
+    Out8(Bus + ATA_REG_HDDEVSEL, ATA_PRIMARY_SEL);
+  else
+    Out8(Bus + ATA_REG_HDDEVSEL, ATA_SECONDARY_SEL);
 }
 
-void ATAPoll(UInt16 IO) { ATAWait(IO); }
+Boolean ATAInitDriver(UInt16 Bus, UInt8 Drive, UInt16& OutBus,
+                      UInt8& OutMaster) {
+  BTextWriter writer;
 
-Void ATAReadLba(UInt32 Lba, UInt8 IO, Boolean Master, CharacterType* Buf,
+  UInt16 IO = Bus;
+
+  // Bus init, NEIN bit.
+  Out8(IO + 1, 1);
+
+  ATASelect(IO);
+
+  // identify until it's good.
+ATAInit_Retry:
+  auto statRdy = In8(IO + ATA_REG_STATUS);
+
+  if (statRdy & ATA_SR_ERR) {
+    return false;
+  }
+  if ((statRdy & ATA_SR_BSY)) goto ATAInit_Retry;
+
+  Out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
+
+  for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
+    kATAData[indexData] = In16(IO + ATA_REG_DATA);
+  }
+
+  writer.WriteString(L"HCoreLdr: Drive: ");
+
+  /// fetch drive info
+
+  for (SizeT indexData = 0; indexData < kATADataLen; indexData += 1) {
+    writer.WriteCharacter(kATAData[indexData + 1])
+        .WriteCharacter(kATAData[indexData]);
+  }
+
+  writer.WriteString(L"\r\n");
+
+  OutBus = (Bus == ATA_PRIMARY) ? BATADevice::kPrimary : BATADevice::kSecondary;
+  OutMaster = (Bus == ATA_PRIMARY) ? ATA_MASTER : ATA_SLAVE;
+
+  Out8(Bus + ATA_REG_HDDEVSEL, 0xA0 | ATA_MASTER << 4);
+
+  In8(Bus + ATA_REG_CONTROL);
+  In8(Bus + ATA_REG_CONTROL);
+  In8(Bus + ATA_REG_CONTROL);
+  In8(Bus + ATA_REG_CONTROL);
+
+  unsigned cl = In8(Bus + ATA_CYL_LOW); /* get the "signature bytes" */
+  unsigned ch = In8(Bus + ATA_CYL_HIGH);
+
+  /* differentiate ATA, ATAPI, SATA and SATAPI */
+  if (cl == 0x14 && ch == 0xEB) {
+    writer.WriteString(L"HCoreLdr: PATAPI drive detected.\r\n");
+    kATADeviceType = kATADevicePATA_PI;
+  }
+  if (cl == 0x69 && ch == 0x96) {
+    writer.WriteString(L"HCoreLdr: SATAPI drive detected.\r\n");
+    kATADeviceType = kATADeviceSATA_PI;
+  }
+
+  if (cl == 0 && ch == 0) {
+    writer.WriteString(L"HCoreLdr: PATA drive detected.\r\n");
+    kATADeviceType = kATADevicePATA;
+  }
+
+  if (cl == 0x3c && ch == 0xc3) {
+    writer.WriteString(L"HCoreLdr: SATA drive detected.\r\n");
+    kATADeviceType = kATADeviceSATA;
+  }
+
+  Out8(IO + ATA_REG_CONTROL, 0x02);
+
+  return true;
+}
+
+Void ATAReadLba(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
                 SizeT Offset) {
-  rt_cli();
-  ATAWaitForIO();
-
-  Lba &= 0x00FFFFFF;
-
   UInt8 Command = (Master ? 0xE0 : 0xF0);
 
-  Out8(IO + ATA_REG_HDDEVSEL, Command | ((Lba >> 24)));
+  Out8(IO + ATA_REG_HDDEVSEL,
+       (Command << 4) | (((Lba & 0x0f000000) >> 24) & 0x0f));
   Out8(IO + ATA_REG_SEC_COUNT0, 0x1);
+  Out8(IO + ATA_REG_FEATURES, 0);
 
-  Out8(IO + ATA_REG_LBA0, (UInt8)Lba);
-  Out8(IO + ATA_REG_LBA1, (UInt8)Lba >> 8);
-  Out8(IO + ATA_REG_LBA2, (UInt8)Lba >> 16);
+  Out8(IO + ATA_REG_LBA0, (UInt8)(Lba & 0x000000ff));
+  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba & 0x0000ff00) >> 8);
+  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba & 0x00ff0000) >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  Buf[Offset] = In16(IO);
-
-  ATAWaitForIO();
-  rt_sti();
+  for (SizeT i = 0; i < 256; ++i) {
+    Buf[Offset + i] = In16(IO + ATA_REG_DATA);
+  }
 }
 
-Void ATAWriteLba(UInt32 Lba, UInt8 IO, Boolean Master, wchar_t* Buf,
+Void ATAWriteLba(UInt32 Lba, UInt8 IO, UInt8 Master, wchar_t* Buf,
                  SizeT Offset) {
-  rt_cli();
-  ATAWaitForIO();
-  Lba &= 0x00FFFFFF;
-
   UInt8 Command = (Master ? 0xE0 : 0xF0);
 
-  Out8(IO + ATA_REG_HDDEVSEL, Command | ((Lba >> 24)));
+  Out8(IO + ATA_REG_HDDEVSEL,
+       (Command << 4) | (((Lba & 0x0f000000) >> 24) & 0x0f));
   Out8(IO + ATA_REG_SEC_COUNT0, 0x1);
+  Out8(IO + ATA_REG_FEATURES, 0);
 
-  Out8(IO + ATA_REG_LBA0, (UInt8)Lba);
-  Out8(IO + ATA_REG_LBA1, (UInt8)Lba >> 8);
-  Out8(IO + ATA_REG_LBA2, (UInt8)Lba >> 16);
+  Out8(IO + ATA_REG_LBA0, (UInt8)(Lba & 0x000000ff));
+  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba & 0x0000ff00) >> 8);
+  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba & 0x00ff0000) >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  Out16(IO, Buf[Offset]);
-  ATAWaitForIO();
-  rt_sti();
+  for (SizeT i = 0; i < 256; ++i) {
+    Out16(IO + ATA_REG_DATA, Buf[Offset + i]);
+  }
 }
 
 Boolean ATAIsDetected(Void) { return kATADetected; }
@@ -160,13 +189,13 @@ Boolean ATAIsDetected(Void) { return kATADetected; }
 BATADevice::BATADevice() noexcept {
   if (ATAIsDetected()) return;
 
-  if (ATAInitDriver(ATA_PRIMARY, true, this->Leak().mBus,
+  if (ATAInitDriver(ATA_PRIMARY_IO, true, this->Leak().mBus,
                     this->Leak().mMaster) ||
-      ATAInitDriver(ATA_PRIMARY, false, this->Leak().mBus,
+      ATAInitDriver(ATA_PRIMARY_IO, false, this->Leak().mBus,
                     this->Leak().mMaster) ||
-      ATAInitDriver(ATA_SECONDARY, true, this->Leak().mBus,
+      ATAInitDriver(ATA_SECONDARY_IO, true, this->Leak().mBus,
                     this->Leak().mMaster) ||
-      ATAInitDriver(ATA_SECONDARY, false, this->Leak().mBus,
+      ATAInitDriver(ATA_SECONDARY_IO, false, this->Leak().mBus,
                     this->Leak().mMaster)) {
     kATADetected = true;
 
@@ -181,9 +210,14 @@ BATADevice::BATADevice() noexcept {
     @param Buf buffer
 */
 BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& SectorSz) {
-  if (!ATAIsDetected()) return *this;
+  if (!ATAIsDetected()) {
+    Leak().mErr = true;
+    return *this;
+  }
 
-  if (!Buf || SectorSz > kATASectorSz || SectorSz < 1) return *this;
+  Leak().mErr = false;
+
+  if (!Buf || SectorSz < 1) return *this;
 
   for (SizeT i = 0UL; i < SectorSz; ++i) {
     ATAReadLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
@@ -199,9 +233,14 @@ BATADevice& BATADevice::Read(CharacterType* Buf, const SizeT& SectorSz) {
     @param Buf buffer
 */
 BATADevice& BATADevice::Write(CharacterType* Buf, const SizeT& SectorSz) {
-  if (!ATAIsDetected()) return *this;
+  if (!ATAIsDetected()) {
+    Leak().mErr = true;
+    return *this;
+  }
 
-  if (!Buf || SectorSz > kATASectorSz || SectorSz < 1) return *this;
+  Leak().mErr = false;
+
+  if (!Buf || SectorSz < 1) return *this;
 
   SizeT Off = 0UL;
 

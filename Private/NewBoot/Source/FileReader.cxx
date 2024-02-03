@@ -2,8 +2,9 @@
 
     Copyright Mahrouss Logic
 
-    File: String.cxx
-    Purpose: NewBoot string library
+    File: FileReader.cxx
+    Purpose: NewBoot FileReader,
+    Read complete file and store it in a buffer.
 
     Revision History:
 
@@ -14,8 +15,6 @@
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
 #include <FSKit/NewFS.hxx>
-
-#include "NewKit/Defines.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -28,7 +27,7 @@
 /***
     @brief File Reader constructor.
 */
-BImageReader::BImageReader(const CharacterType *path) {
+BFileReader::BFileReader(const CharacterType *path) {
   if (path != nullptr) {
     SizeT index = 0UL;
     for (; path[index] != L'\0'; ++index) {
@@ -43,30 +42,13 @@ BImageReader::BImageReader(const CharacterType *path) {
     @brief this reads all of the buffer.
     @param size, new buffer size.
 */
-HCore::VoidPtr BImageReader::Fetch(SizeT &size) {
-  mWriter.WriteString(L"HCoreLdr: Fetch-Image: ")
+HCore::VoidPtr BFileReader::Fetch(SizeT &size) {
+  mWriter.WriteString(L"HCoreLdr: Fetch-File: ")
       .WriteString(mPath)
       .WriteString(L"\r\n");
 
-  CharacterType bootBlockBytes[kATASectorSz] = {0};
-
-  mDevice.Leak().mBase = kNewFSAddressAsLba;
-  mDevice.Leak().mMaster = true;
-
-  mDevice.Read(bootBlockBytes, kATASectorSz);
-
-  NewBootBlock *bootBlock = (NewBootBlock *)bootBlockBytes;
-
-  for (SizeT index = 0UL; index < kNewFSIdentLen; ++index) {
-    if (bootBlock->Ident[index] != kNewFSIdent[index]) {
-      mWriter.WriteString(L"HCoreLdr: NewFS: Not found.\r\n");
-      return nullptr;
-    }
-  }
-
-  /// get file catalog with mPath inside it.
-
   this->mCached = true;
+  this->mErrorCode = kNotSupported;
 
   return nullptr;
 }

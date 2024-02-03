@@ -12,6 +12,7 @@
 
 extern "C" void flush_tlb() {}
 extern "C" void rt_wait_for_io() {}
+
 extern "C" HCore::HAL::StackFrame* rt_get_current_context() {}
 
 namespace HCore {
@@ -32,7 +33,7 @@ void rt_hang_thread(HAL::StackFrame* stack) {}
 // @brief main HAL entrypoint
 void ke_init_hal() {}
 
-void system_io_print(const char* bytes) {
+void ke_com_print(const char* bytes) {
   if (!bytes) return;
 
   SizeT index = 0;
@@ -44,5 +45,5 @@ void system_io_print(const char* bytes) {
   }
 }
 
-TerminalDevice kcout(HCore::system_io_print, nullptr);
+TerminalDevice kcout(HCore::ke_com_print, nullptr);
 }  // namespace HCore

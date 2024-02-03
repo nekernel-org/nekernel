@@ -56,13 +56,13 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
                      const HCore::SizeT len);
 
 /**
- * @brief BootKit Image Reader class
- * Reads using the UEFI Simple File protocol.
+ * @brief BootKit File Reader class
+ * Reads using the New Filesystem Boot partition.
  */
-class BImageReader final {
+class BFileReader final {
  public:
-  explicit BImageReader(const CharacterType *path);
-  ~BImageReader() = default;
+  explicit BFileReader(const CharacterType *path);
+  ~BFileReader() = default;
 
   HCore::VoidPtr Fetch(SizeT &size);
 
@@ -78,8 +78,8 @@ class BImageReader final {
   Int32 &Error() { return mErrorCode; }
 
  public:
-  BImageReader &operator=(const BImageReader &) = default;
-  BImageReader(const BImageReader &) = default;
+  BFileReader &operator=(const BFileReader &) = default;
+  BFileReader(const BFileReader &) = default;
 
  private:
   Int32 mErrorCode{kOperationOkay};
@@ -115,21 +115,21 @@ inline void Out32(UInt16 port, UInt32 value) {
 }
 
 inline UInt8 In8(UInt16 port) {
-  UInt8 value = 0UL;
+  UInt8 value;
   asm volatile("inb %1, %%al" : "=a"(value) : "Nd"(port) : "memory");
 
   return value;
 }
 
 inline UInt16 In16(UInt16 port) {
-  UInt16 value = 0UL;
-  asm volatile("in %%dx, %%ax" : "=a"(value) : "d"(port));
+  UInt16 value;
+  asm volatile("inw %%dx, %%ax" : "=a"(value) : "d"(port));
 
   return value;
 }
 
 inline UInt32 In32(UInt16 port) {
-  UInt32 value = 0UL;
+  UInt32 value;
   asm volatile("inl %1, %%eax" : "=a"(value) : "Nd"(port) : "memory");
 
   return value;

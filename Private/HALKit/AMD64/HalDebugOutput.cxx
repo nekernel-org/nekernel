@@ -53,8 +53,9 @@ bool serial_init() {
 }
 }  // namespace Detail
 
-void system_io_print(const char *bytes) {
+void ke_io_print(const char *bytes) {
   if (!bytes || Detail::kState != kStateReady) return;
+  if (*bytes == 0) return;
 
   Detail::kState = kStateTransmit;
 
@@ -69,5 +70,5 @@ void system_io_print(const char *bytes) {
   Detail::kState = kStateReady;
 }
 
-TerminalDevice kcout(HCore::system_io_print, nullptr);
+TerminalDevice kcout(HCore::ke_io_print, nullptr);
 }  // namespace HCore

@@ -8,7 +8,7 @@ LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
 ASM			= nasm
 ASMFLAGS	= -f win64
-LDFLAGS		= -e Main -filealign:16 -shared --subsystem=10 
+LDFLAGS		= -e Main -filealign:16 -shared --subsystem=10
 LDOBJ		= Obj/*.obj
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
@@ -31,8 +31,9 @@ h-core-amd64:
 	$(CC) $(CCFLAGS) Source/*.cxx HALKit/AMD64/PCI/*.cpp Source/Network/*.cpp\
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptRouting.asm
-	$(ASM) $(ASMFLAGS) HALKit/AMD64/SMPCoreManager.asm
-	$(ASM) $(ASMFLAGS) HALKit/AMD64/StartSequence.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalStartSequence.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInstallTIB.asm
 	$(MOVEALL)
 
 OBJCOPY = x86_64-elf-objcopy

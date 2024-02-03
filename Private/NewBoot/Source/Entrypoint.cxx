@@ -7,7 +7,6 @@
  *      ========================================================
  */
 
-#include "EFIKit/EFI.hxx"
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -25,7 +24,7 @@ STATIC Void DrawBackground() {
     for (int h = 0; h < gop->Mode->Info->HorizontalResolution; ++h) {
       *((UInt32*)(gop->Mode->FrameBufferBase +
                   4 * gop->Mode->Info->PixelsPerScanLine * w + 4 * h)) =
-          RGB(20, 20, 20);
+          RGB(10, 10, 10);
     }
   }
 }
@@ -43,7 +42,7 @@ EFI_EXTERN_C Int EfiMain(EfiHandlePtr ImageHandle,
 
   UInt64 mapKey = 0;
 
-  BImageReader img(L"HCoreKrnl.exe");
+  BFileReader img(L"HCoreKrnl.exe");
 
   SizeT sz = 0UL;
   PEImagePtr blob = (PEImagePtr)img.Fetch(sz);

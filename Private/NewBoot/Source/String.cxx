@@ -61,28 +61,3 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
 
   return cnt;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
-@brief puts wrapper over EFI.
-*/
-BTextWriter &BTextWriter::WriteString(const CharacterType *str) {
-  if (*str == 0 || !str) return *this;
-
-  ST->ConOut->OutputString(ST->ConOut, str);
-
-  return *this;
-}
-
-/**
-@brief putc wrapper over EFI.
-*/
-BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
-  EfiCharType str[2];
-  str[0] = c;
-  str[1] = 0;
-  ST->ConOut->OutputString(ST->ConOut, str);
-
-  return *this;
-}
