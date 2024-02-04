@@ -16,6 +16,7 @@
 #include <EFIKit/Api.hxx>
 
 #include "EFIKit/EFI.hxx"
+#include "NewKit/Defines.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -64,17 +65,13 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle) {
   EfiLoadImageProtocol* img = nullptr;
   EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
-  if (BS->OpenProtocol(ImageHandle, &guidImg, (void**)&img, ImageHandle,
-                       nullptr,
-                       EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL) != kEfiOk) {
+  if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk) {
     mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol")
         .WriteString(L"\r\n");
     this->mErrorCode = kNotSupported;
   }
 
-  if (BS->OpenProtocol(img->DeviceHandle, &guidEfp, (void**)&efp, ImageHandle,
-                       nullptr,
-                       EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL) != kEfiOk) {
+  if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk) {
     mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol")
         .WriteString(L"\r\n");
     this->mErrorCode = kNotSupported;
@@ -122,13 +119,14 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle) {
   mWriter.WriteString(L"HCoreLdr: Fetch-Info: In-Progress...")
       .WriteString(L"\r\n");
 
-  UInt8* blob = nullptr;
+  VoidPtr blob = nullptr;
 
   mWriter.WriteString(L"HCoreLdr: Fetch-Info: OK...").WriteString(L"\r\n");
 
-  UInt64 sz = info.FileSize;
+  UInt32* sz = nullptr;
 
-  if (BS->AllocatePool(EfiBootServicesData, sz, (VoidPtr*)&blob) != kEfiOk) {
+  if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&sz) !=
+      kEfiOk) {
     mWriter
         .WriteString(
             L"HCoreLdr: Fetch: Failed to call AllocatePool "
@@ -140,12 +138,26 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle) {
     return nullptr;
   }
 
-  BSetMem((CharacterType*)blob, 0, sz);
+  *sz = info.FileSize;
+
+  if (BS->AllocatePool(EfiLoaderData, *sz, (VoidPtr*)&blob) != kEfiOk) {
+    mWriter
+        .WriteString(
+            L"HCoreLdr: Fetch: Failed to call AllocatePool "
+            L"correctly!")
+        .WriteString(L"\r\n");
+
+    kernelFile->Close(kernelFile);
+
+    return nullptr;
+  }
+
+  BSetMem((CharacterType*)blob, 0, *sz);
 
   mWriter.WriteString(L"HCoreLdr: Fetch-File: In-Progress...")
       .WriteString(L"\r\n");
 
-  kernelFile->Read(kernelFile, &sz, blob);
+  kernelFile->Read(kernelFile, sz, blob);
 
   mWriter.WriteString(L"HCoreLdr: Fetch-File: OK").WriteString(L"\r\n");
 

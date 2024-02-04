@@ -600,9 +600,6 @@ enum {
 #define kEFIDirectory 0x10
 #define kEFIArchive 0x20
 
-typedef EfiStatusType(EFI_API *EfiRead)(struct EfiFileProtocol *, UInt64 *,
-                                        VoidPtr);
-
 struct EfiFileProtocol final {
   UInt64 Revision;
 
@@ -611,23 +608,17 @@ struct EfiFileProtocol final {
 
   EfiStatusType (*Close)(struct EfiFileProtocol *);
 
-  void (*Unused1)();
+  EfiStatusType (*Delete)(struct EfiFileProtocol *This);
 
-  EfiRead Read;
+  EfiStatusType (*Read)(struct EfiFileProtocol *This, UInt32 *BufSize,
+                        VoidPtr BufOut);
 
-  void (*Unused2)();
-  void (*Unused3)();
-  void (*Unused4)();
+  EfiStatusType (*GetPosition)(EfiFileProtocol *This, UInt64 *Position);
+
+  EfiStatusType (*SetPosition)(EfiFileProtocol *This, UInt64 *Position);
 
   EfiStatusType (*GetInfo)(struct EfiFileProtocol *, struct EfiGUID *, UInt32 *,
                            void *);
-
-  void (*Unused6)();
-  void (*Unused7)();
-  void (*Unused8)();
-  void (*Unused9)();
-  void (*Unused10)();
-  void (*Unused11)();
 };
 
 typedef struct EfiTime {

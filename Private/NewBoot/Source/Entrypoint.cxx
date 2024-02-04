@@ -14,7 +14,7 @@
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
 
-STATIC Void DrawBackground() {
+STATIC Void InitGfx() noexcept {
   EfiGUID gopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
   EfiGraphicsOutputProtocol* gop = nullptr;
 
@@ -32,9 +32,13 @@ STATIC Void DrawBackground() {
 EFI_EXTERN_C Int EfiMain(EfiHandlePtr ImageHandle,
                          EfiSystemTable* SystemTable) {
   InitEFI(SystemTable);
-  DrawBackground();
+  InitGfx();
 
   BTextWriter writer;
+
+  writer.WriteString(L"HCoreLdr: ")
+      .WriteString(L"Copyright Mahrouss-Logic Corporation.")
+      .WriteString(L"\r\n");
 
   writer.WriteString(L"HCoreLdr: Firmware: ")
       .WriteString(SystemTable->FirmwareVendor)
