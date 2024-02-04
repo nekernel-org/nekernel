@@ -64,7 +64,7 @@ class BFileReader final {
   explicit BFileReader(const CharacterType *path);
   ~BFileReader();
 
-  HCore::VoidPtr Fetch(EfiHandlePtr ImageHandle, SizeT &Sz);
+  Void Fetch(EfiHandlePtr ImageHandle);
 
   enum {
     kOperationOkay,
@@ -76,6 +76,7 @@ class BFileReader final {
   };
 
   Int32 &Error() { return mErrorCode; }
+  VoidPtr Blob() { return mBlob; }
 
  public:
   BFileReader &operator=(const BFileReader &) = default;
@@ -86,7 +87,6 @@ class BFileReader final {
   VoidPtr mBlob{nullptr};
   CharacterType mPath[kPathLen];
   BTextWriter mWriter;
-  BDeviceATA mDevice;
   bool mCached{false};
 };
 
@@ -136,6 +136,10 @@ inline UInt32 In32(UInt16 port) {
   return value;
 }
 
+extern "C" VoidPtr __cr3();
+
+#endif  // __EFI_x86_64__
+
 /***********************************************************************************/
 /// Framebuffer.
 /***********************************************************************************/
@@ -148,4 +152,25 @@ const UInt32 kRgbBlue = 0x00FF0000;
 const UInt32 kRgbBlack = 0x00000000;
 const UInt32 kRgbWhite = 0x00FFFFFF;
 
-#endif  // __EFI_x86_64__
+/** QT GOP. */
+inline EfiGraphicsOutputProtocol *kGop;
+
+/**
+@brief Init the QuickTemplate GUI framework.
+*/
+inline Void InitQT() noexcept {
+  EfiGUID gopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  kGop = nullptr;
+
+  extern EfiBootServices *BS;
+
+  BS->LocateProtocol(&gopGuid, nullptr, (VoidPtr *)&kGop);
+
+  for (int w = 0; w < kGop->Mode->Info->VerticalResolution; ++w) {
+    for (int h = 0; h < kGop->Mode->Info->HorizontalResolution; ++h) {
+      *((UInt32 *)(kGop->Mode->FrameBufferBase +
+                   4 * kGop->Mode->Info->PixelsPerScanLine * w + 4 * h)) =
+          RGB(10, 10, 10);
+    }
+  }
+}

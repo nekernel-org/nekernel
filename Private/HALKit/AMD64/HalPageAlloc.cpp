@@ -54,8 +54,8 @@ auto hal_create_page(Boolean rw, Boolean user) -> UIntPtr {
   return reinterpret_cast<UIntPtr>(new_pte);
 }
 
-UIntPtr& hal_get_page_ptr() noexcept { return kPagePtr; }
+UIntPtr& hal_page_base() noexcept { return kPagePtr; }
 
-void hal_set_page_ptr(const UIntPtr& newPagePtr) noexcept { kPagePtr = newPagePtr; }
+void hal_page_base(const UIntPtr& newPagePtr) noexcept { kPagePtr = newPagePtr; }
 }  // namespace HAL
 }  // namespace HCore

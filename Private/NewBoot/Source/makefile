@@ -17,6 +17,7 @@ invalid-recipe:
 .PHONY: bootloader-amd64
 bootloader-amd64:
 	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx *.cxx
+	$(ASM) $(FLAG_ASM) HEl/AMD64/AMD64-VirtualMemory.asm
 	$(LD_GNU) *.o HEL/AMD64/*.obj -e efi_main -filealign:16 -shared --subsystem=10 -ffreestanding -o HCoreLdr.exe
 	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	cp ../../HCoreKrnl.exe CDROM/EFI/BOOT/HCOREKRNL.EXE
@@ -28,7 +29,7 @@ make-disk:
 .PHONY: run-efi-debug
 run-efi-debug:
 	wget https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
-	qemu-system-x86_64 -m 8G -M q35 -bios OVMF.fd -drive file=os.epm,index=0,if=ide,format=qcow2 -drive file=fat:rw:CDROM,index=1,format=raw -d int
+	qemu-system-x86_64 -m 8G -M q35 -bios OVMF.fd -drive file=os.epm,index=0,if=ide,format=qcow2 -drive file=fat:rw:CDROM,index=1,format=raw -serial stdio
 
 .PHONY: clean
 clean:

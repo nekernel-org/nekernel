@@ -31,3 +31,13 @@ extern "C" void rt_std() { asm volatile("std"); }
 /// @brief Stack Checker, leave empty.
 
 extern "C" void ___chkstk_ms(void) {}
+
+namespace EFI {
+Void Stop() noexcept {
+  while (true) {
+    rt_cli();
+    rt_halt();
+  }
+}
+
+}  // namespace EFI

@@ -33,7 +33,7 @@ void rt_hang_thread(HAL::StackFrame* stack) {}
 // @brief main HAL entrypoint
 void ke_init_hal() {}
 
-void ke_com_print(const char* bytes) {
+void ke_com_print(const Char* bytes) {
   if (!bytes) return;
 
   SizeT index = 0;

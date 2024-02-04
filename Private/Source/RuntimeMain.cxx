@@ -17,16 +17,16 @@
 
 extern "C" void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
-  HCore::ke_init_heap();
-  HCore::ke_init_ke_heap();
-
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
   kKernelVirtualStart = HandoverHeader->f_VirtualStart;
 
   kKernelPhysicalSize = HandoverHeader->f_VirtualSize;
   kKernelPhysicalStart = HandoverHeader->f_VirtualStart;
 
-  HCore::HAL::hal_set_page_ptr((HCore::UIntPtr)kKernelVirtualStart);
+  HCore::HAL::hal_page_base((HCore::UIntPtr)kKernelVirtualStart);
+
+  HCore::ke_init_ke_heap();
+  HCore::ke_init_heap();
 
   MUST_PASS(HCore::ke_init_hal());
 

@@ -19,12 +19,7 @@ namespace EFI {
 /**
 @brief Stop Execution of program.
 */
-inline Void Stop() noexcept {
-  while (true) {
-    rt_cli();
-    rt_halt();
-  }
-}
+Void Stop() noexcept;
 
 /**
 @brief Exit EFI API to let the OS load correctly.

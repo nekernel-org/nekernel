@@ -43,7 +43,9 @@ NodePtr NewFilesystemManager::CreateAlias(const char* path) {
 }
 
 const char* NewFilesystemHelper::Root() { return kFilesystemRoot; }
+
 const char* NewFilesystemHelper::UpDir() { return kFilesystemUpDir; }
+
 const char NewFilesystemHelper::Separator() { return kFilesystemSeparator; }
 }  // namespace HCore
 

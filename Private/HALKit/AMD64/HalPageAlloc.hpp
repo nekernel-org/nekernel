@@ -12,11 +12,11 @@
 #include <NewKit/Defines.hpp>
 
 #ifndef PTE_MAX
-#define PTE_MAX (512)
+#define PTE_MAX (0x200)
 #endif  //! PTE_MAX
 
 #ifndef PTE_ALIGN
-#define PTE_ALIGN (4096)
+#define PTE_ALIGN (0x1000)
 #endif  //! PTE_ALIGN
 
 extern "C" void flush_tlb(HCore::UIntPtr VirtualAddr);
@@ -41,8 +41,12 @@ struct PageTable64 {
   bool ExecDisable : 1;
 };
 
-PageTable64 *hal_alloc_page(SizeT sz, Boolean rw, Boolean user);
-UIntPtr& hal_get_page_ptr() noexcept;
-void hal_set_page_ptr(const UIntPtr& newPagePtr) noexcept;
+struct PageDirectory64 final {
+  PageTable64 ALIGN(PTE_ALIGN) Pte[PTE_MAX];
+};
+
+PageTable64* hal_alloc_page(SizeT sz, Boolean rw, Boolean user);
+UIntPtr& hal_page_base() noexcept;
+void hal_page_base(const UIntPtr& newPagePtr) noexcept;
 UIntPtr hal_create_page(Boolean rw, Boolean user);
 }  // namespace HCore::HAL

@@ -14,9 +14,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
-
-#include "EFIKit/EFI.hxx"
-#include "NewKit/Defines.hpp"
+#include <EFIKit/Handover.hxx>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -50,7 +48,7 @@ BFileReader::~BFileReader() {
     @brief this reads all of the buffer.
     @param ImageHandle used internally.
 */
-HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle, SizeT& imageSz) {
+Void BFileReader::Fetch(EfiHandlePtr ImageHandle) {
   mWriter.WriteString(L"HCoreLdr: Fetch-File: ")
       .WriteString(mPath)
       .WriteString(L"\r\n");
@@ -75,7 +73,7 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle, SizeT& imageSz) {
     mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol")
         .WriteString(L"\r\n");
     this->mErrorCode = kNotSupported;
-    return nullptr;
+    return;
   }
 
   /// Start doing disk I/O
@@ -84,7 +82,7 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle, SizeT& imageSz) {
     mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Volume")
         .WriteString(L"\r\n");
     this->mErrorCode = kNotSupported;
-    return nullptr;
+    return;
   }
 
   /// Open kernel.
@@ -97,14 +95,14 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle, SizeT& imageSz) {
         .WriteString(mPath)
         .WriteString(L"\r\n");
     this->mErrorCode = kNotSupported;
-    return nullptr;
+    return;
   }
 
   if (kernelFile->Revision < EFI_FILE_PROTOCOL_REVISION2) {
     mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: Invalid-Revision: ")
         .WriteString(mPath)
         .WriteString(L"\r\n");
-    return nullptr;
+    return;
   }
 
   /// File FAT info.
@@ -120,64 +118,31 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle, SizeT& imageSz) {
         .WriteString(mPath)
         .WriteString(L"\r\n");
     this->mErrorCode = kNotSupported;
-    return nullptr;
+    return;
   }
 
   mWriter.WriteString(L"HCoreLdr: Fetch-Info: In-Progress...")
       .WriteString(L"\r\n");
 
-  VoidPtr blob = nullptr;
+  VoidPtr blob = (VoidPtr)kHandoverStartKernel;
 
   mWriter.WriteString(L"HCoreLdr: Fetch-Info: OK...").WriteString(L"\r\n");
 
-  UInt32* sz = nullptr;
+  UInt32 sz = info.FileSize;
 
-  if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&sz) !=
-      kEfiOk) {
-    mWriter
-        .WriteString(
-            L"HCoreLdr: Fetch: Failed to call AllocatePool "
-            L"correctly!")
-        .WriteString(L"\r\n");
+  BSetMem((CharacterType*)blob, 0, sz);
 
-    kernelFile->Close(kernelFile);
-
-    return nullptr;
-  }
-
-  *sz = info.FileSize;
-  imageSz = *sz;
-
-  if (BS->AllocatePool(EfiLoaderData, *sz, (VoidPtr*)&blob) != kEfiOk) {
-    mWriter
-        .WriteString(
-            L"HCoreLdr: Fetch: Failed to call AllocatePool "
-            L"correctly!")
-        .WriteString(L"\r\n");
-
-    kernelFile->Close(kernelFile);
-
-    return nullptr;
-  }
-
-  BSetMem((CharacterType*)blob, 0, *sz);
-
-  mWriter.WriteString(L"HCoreLdr: Fetch-File: In-Progress...")
-      .WriteString(info.FileName)
-      .WriteString(L"\r\n");
-
-  auto resultEfiRead = kernelFile->Read(kernelFile, sz, blob);
+  auto resultEfiRead = kernelFile->Read(kernelFile, &sz, blob);
   kernelFile->Close(kernelFile);
 
-  if (resultEfiRead == kEfiOk)
-    mWriter.WriteString(L"HCoreLdr: Fetch-File: OK").WriteString(L"\r\n");
-  else
-    return nullptr;
+  if (resultEfiRead != kEfiOk) return;
 
-  this->mCached = true;
-  this->mErrorCode = kOperationOkay;
+  mCached = true;
+  mErrorCode = kOperationOkay;
 
-  this->mBlob = blob;
+  mBlob = blob;
 
-  return blob;
+  // We are done!
+
+  mWriter.WriteString(L"HCoreLdr: Fetch: OK.").WriteString(L"\r\n");
 }

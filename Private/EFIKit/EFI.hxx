@@ -518,7 +518,7 @@ typedef struct EfiSimpleTextOutputProtocol {
   VoidPtr Mode;
 } EfiSimpleTextOutputProtocol;
 
-typedef UInt64 EfiStatusType;
+typedef UInt32 EfiStatusType;
 
 typedef UInt64(EFI_API *EfiOpenVolume)(struct EfiSimpleFilesystemProtocol *,
                                        struct EfiFileProtocol **);
@@ -603,10 +603,11 @@ enum {
 struct EfiFileProtocol final {
   UInt64 Revision;
 
-  EfiStatusType (*Open)(struct EfiFileProtocol *, struct EfiFileProtocol **,
-                        EfiCharType *, UInt64, UInt64);
+  EfiStatusType (*Open)(struct EfiFileProtocol *This,
+                        struct EfiFileProtocol **Out, EfiCharType *CharType,
+                        UInt64 OpenMode, UInt64 Attrib);
 
-  EfiStatusType (*Close)(struct EfiFileProtocol *);
+  EfiStatusType (*Close)(struct EfiFileProtocol *This);
 
   EfiStatusType (*Delete)(struct EfiFileProtocol *This);
 
@@ -659,7 +660,7 @@ struct EfiFileInfo final {
   EfiTime EditTime;
   UInt64 Attribute;
   // Do not touch that, it's EFI specific.
-  WideChar FileName[255];
+  WideChar FileName[1];
 };
 
 #define EFI_FILE_PROTOCOL_REVISION 0x00010000
