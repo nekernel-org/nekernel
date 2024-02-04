@@ -14,8 +14,8 @@
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
 
-EFI_EXTERN_C Int EfiMain(EfiHandlePtr ImageHandle,
-                         EfiSystemTable* SystemTable) {
+EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
+                                 EfiSystemTable* SystemTable) {
   InitEFI(SystemTable);
   InitQT();
 
@@ -29,7 +29,7 @@ EFI_EXTERN_C Int EfiMain(EfiHandlePtr ImageHandle,
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
 
-  BFileReader img(L"\\EFI\\BOOT\\HCOREKRNL.EXE");
+  BFileReader img(L"HCOREKRNL.EXE");
   img.Fetch(ImageHandle);
 
   VoidPtr blob = img.Blob();

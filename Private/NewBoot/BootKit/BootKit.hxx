@@ -166,10 +166,12 @@ inline Void InitQT() noexcept {
 
   BS->LocateProtocol(&gopGuid, nullptr, (VoidPtr *)&kGop);
 
-  for (int w = 0; w < kGop->Mode->Info->VerticalResolution; ++w) {
-    for (int h = 0; h < kGop->Mode->Info->HorizontalResolution; ++h) {
+  UInt16 kStride = 4;
+
+  for (int x = 0; x < kGop->Mode->Info->VerticalResolution; ++x) {
+    for (int y = 0; y < kGop->Mode->Info->HorizontalResolution; ++y) {
       *((UInt32 *)(kGop->Mode->FrameBufferBase +
-                   4 * kGop->Mode->Info->PixelsPerScanLine * w + 4 * h)) =
+                   4 * kGop->Mode->Info->PixelsPerScanLine * x + kStride * y)) =
           RGB(10, 10, 10);
     }
   }

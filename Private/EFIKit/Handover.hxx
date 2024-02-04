@@ -26,7 +26,7 @@
 
 #define kHandoverMagic 0xBADCC
 
-#define kHandoverStartKernel 0xFFFF800000000000
+#define kHandoverStartKernel 0xffffffff10000000
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
 namespace HCore::HEL {

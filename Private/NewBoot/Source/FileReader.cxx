@@ -16,6 +16,10 @@
 #include <EFIKit/Api.hxx>
 #include <EFIKit/Handover.hxx>
 
+#include "EFIKit/EFI.hxx"
+#include "KernelKit/PE.hpp"
+#include "NewKit/Defines.hpp"
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //
@@ -85,18 +89,18 @@ Void BFileReader::Fetch(EfiHandlePtr ImageHandle) {
     return;
   }
 
-  /// Open kernel.
+  EfiFileProtocol* kernelFile = nullptr;
 
-  EfiFileProtocol* kernelFile;
-
-  if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead,
-                   kEFIReadOnly | kEFIHidden | kEFISystem) != kEfiOk) {
+  if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
+      kEfiOk) {
     mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Path: ")
         .WriteString(mPath)
         .WriteString(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
+
+  rootFs->Close(rootFs);
 
   if (kernelFile->Revision < EFI_FILE_PROTOCOL_REVISION2) {
     mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: Invalid-Revision: ")
@@ -108,12 +112,13 @@ Void BFileReader::Fetch(EfiHandlePtr ImageHandle) {
   /// File FAT info.
 
   UInt32 szInfo = sizeof(EfiFileInfo);
-  EfiFileInfo info{0};
+  EfiFileInfo* info = nullptr;
+
+  BS->AllocatePool(EfiLoaderData, szInfo, (void**)&info);
 
   guidEfp = EfiGUID(EFI_FILE_INFO_GUID);
 
-  if (kernelFile->GetInfo(kernelFile, &guidEfp, &szInfo, (void*)&info) !=
-      kEfiOk) {
+  if (kernelFile->GetInfo(kernelFile, &guidEfp, &szInfo, info) != kEfiOk) {
     mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Path: ")
         .WriteString(mPath)
         .WriteString(L"\r\n");
@@ -126,23 +131,26 @@ Void BFileReader::Fetch(EfiHandlePtr ImageHandle) {
 
   VoidPtr blob = (VoidPtr)kHandoverStartKernel;
 
-  mWriter.WriteString(L"HCoreLdr: Fetch-Info: OK...").WriteString(L"\r\n");
+  if (BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1,
+                        (EfiPhysicalAddress*)&blob) != kEfiOk) {
+    EFI::RaiseHardError(L"HCoreLdr_PageError", L"Allocation error.");
+  }
 
-  UInt32 sz = info.FileSize;
+  UInt32* sz = nullptr;
 
-  BSetMem((CharacterType*)blob, 0, sz);
+  BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&sz);
 
-  auto resultEfiRead = kernelFile->Read(kernelFile, &sz, blob);
-  kernelFile->Close(kernelFile);
+  *sz = info->FileSize;
 
-  if (resultEfiRead != kEfiOk) return;
+  mWriter.WriteString(L"HCoreLdr: Fetch-Info: Read...").WriteString(L"\r\n");
+
+  kernelFile->Read(kernelFile, sz, blob);
+
+  mWriter.WriteString(L"HCoreLdr: Fetch-Info: Success...").WriteString(L"\r\n");
 
   mCached = true;
   mErrorCode = kOperationOkay;
-
   mBlob = blob;
 
   // We are done!
-
-  mWriter.WriteString(L"HCoreLdr: Fetch: OK.").WriteString(L"\r\n");
 }

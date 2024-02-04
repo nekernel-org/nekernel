@@ -24,7 +24,7 @@ using namespace HCore;
 /* we always use stdcall in EFI, the pascal way of calling functions. */
 
 #ifndef EPI_API
-#define EFI_API __attribute__((stdcall))
+#define EFI_API __attribute__((ms_abi))
 #endif  // ifndef EPI_API
 
 // Forwar decls
@@ -42,6 +42,8 @@ struct EfiHandle;
 struct EfiGraphicsOutputProtocol;
 struct EfiBitmask;
 struct EfiFileProtocol;
+
+typedef UInt64 EfiStatusType;
 
 /// @brief Core Handle Type
 /// This is like NT's Win32 HANDLE type.
@@ -409,7 +411,7 @@ typedef UInt64(EFI_API *EfiExitBootServices)(VoidPtr ImageHandle,
                                              UInt32 MapKey);
 
 typedef UInt64(EFI_API *EfiAllocatePages)(EfiAllocateType AllocType,
-                                          EfiMemoryType MemType,
+                                          EfiMemoryType MemType, UInt32 Count,
                                           EfiPhysicalAddress *Memory);
 
 typedef UInt64(EFI_API *EfiFreePages)(EfiPhysicalAddress *Memory, UInt32 Pages);
@@ -482,7 +484,8 @@ typedef struct EfiBootServices {
   EfiExitBootServices ExitBootServices;
   UIntPtr GetNextMonotonicCount;
   UIntPtr Stall;
-  UIntPtr SetWatchdogTimer;
+  EfiStatusType(EFI_API *SetWatchdogTimer)(UInt32 Timeout, UInt64 WatchdogCode,
+                                           UInt32 DataSize, EfiCharType *Data);
   UIntPtr ConnectController;
   UIntPtr DisconnectController;
   EfiOpenProtocol OpenProtocol;
@@ -517,8 +520,6 @@ typedef struct EfiSimpleTextOutputProtocol {
   VoidPtr EnableCursor;
   VoidPtr Mode;
 } EfiSimpleTextOutputProtocol;
-
-typedef UInt32 EfiStatusType;
 
 typedef UInt64(EFI_API *EfiOpenVolume)(struct EfiSimpleFilesystemProtocol *,
                                        struct EfiFileProtocol **);
@@ -600,35 +601,85 @@ enum {
 #define kEFIDirectory 0x10
 #define kEFIArchive 0x20
 
-struct EfiFileProtocol final {
+typedef struct EfiIOToken {
+  //
+  // If Event is NULL, then blocking I/O is performed.
+  // If Event is not NULL and non-blocking I/O is supported, then non-blocking
+  // I/O is performed, and Event will be signaled when the read request is
+  // completed. The caller must be prepared to handle the case where the
+  // callback associated with Event occurs before the original asynchronous I/O
+  // request call returns.
+  //
+  UInt64 Event;
+
+  //
+  // Defines whether or not the signaled event encountered an error.
+  //
+  UInt64 Status;
+
+  //
+  // For OpenEx():  Not Used, ignored.
+  // For ReadEx():  On input, the size of the Buffer. On output, the amount of
+  // data returned in Buffer.
+  //                In both cases, the size is measured in bytes.
+  // For WriteEx(): On input, the size of the Buffer. On output, the amount of
+  // data actually written.
+  //                In both cases, the size is measured in bytes.
+  // For FlushEx(): Not used, ignored.
+  //
+  UInt32 BufferSize;
+
+  //
+  // For OpenEx():  Not Used, ignored.
+  // For ReadEx():  The buffer into which the data is read.
+  // For WriteEx(): The buffer of data to write.
+  // For FlushEx(): Not Used, ignored.
+  //
+  Void *Buffer;
+} EfiIOToken;
+
+typedef struct EfiFileProtocol {
   UInt64 Revision;
 
-  EfiStatusType (*Open)(struct EfiFileProtocol *This,
-                        struct EfiFileProtocol **Out, EfiCharType *CharType,
-                        UInt64 OpenMode, UInt64 Attrib);
+  EfiStatusType(EFI_API *Open)(struct EfiFileProtocol *This,
+                               struct EfiFileProtocol **Out,
+                               EfiCharType *CharType, UInt64 OpenMode,
+                               UInt64 Attrib);
 
-  EfiStatusType (*Close)(struct EfiFileProtocol *This);
+  EfiStatusType(EFI_API *Close)(struct EfiFileProtocol *This);
 
-  EfiStatusType (*Delete)(struct EfiFileProtocol *This);
+  EfiStatusType(EFI_API *Delete)(struct EfiFileProtocol *This);
 
-  EfiStatusType (*Read)(struct EfiFileProtocol *This, UInt32 *BufSize,
-                        VoidPtr BufOut);
+  EfiStatusType(EFI_API *Read)(struct EfiFileProtocol *This, UInt32 *BufSize,
+                               VoidPtr BufOut);
 
-  EfiStatusType (*Write)(struct EfiFileProtocol *This, UInt32 *BufSize,
-                         VoidPtr BufOut);
+  EfiStatusType(EFI_API *Write)(struct EfiFileProtocol *This, UInt32 *BufSize,
+                                VoidPtr BufOut);
 
-  EfiStatusType (*GetPosition)(EfiFileProtocol *This, UInt64 *Position);
+  EfiStatusType(EFI_API *GetPosition)(EfiFileProtocol *This, UInt64 *Position);
 
-  EfiStatusType (*SetPosition)(EfiFileProtocol *This, UInt64 *Position);
+  EfiStatusType(EFI_API *SetPosition)(EfiFileProtocol *This, UInt64 *Position);
 
-  EfiStatusType (*GetInfo)(struct EfiFileProtocol *, struct EfiGUID *, UInt32 *,
-                           void *);
+  EfiStatusType(EFI_API *GetInfo)(struct EfiFileProtocol *, struct EfiGUID *,
+                                  UInt32 *, void *);
 
-  EfiStatusType (*SetInfo)(struct EfiFileProtocol *, struct EfiGUID *, UInt32 *,
-                           void *);
+  EfiStatusType(EFI_API *SetInfo)(struct EfiFileProtocol *, struct EfiGUID *,
+                                  UInt32 *, void *);
 
-  EfiStatusType (*Flush)(EfiFileProtocol *);
-};
+  EfiStatusType(EFI_API *Flush)(EfiFileProtocol *);
+
+  EfiStatusType(EFI_API *OpenEx)(EfiFileProtocol *This,
+                                 EfiFileProtocol **OutHandle, EfiCharType *Path,
+                                 UInt64 Mode, UInt64 Attrib,
+                                 struct EfiIOToken *Token);
+
+  EfiStatusType(EFI_API *ReadEx)(EfiFileProtocol *This,
+                                 struct EfiIOToken *Token);
+  EfiStatusType(EFI_API *WriteEx)(EfiFileProtocol *This,
+                                  struct EfiIOToken *Token);
+  EfiStatusType(EFI_API *FlushEx)(EfiFileProtocol *This,
+                                  struct EfiIOToken *Token);
+} EfiFileProtocol;
 
 typedef struct EfiTime {
   UInt16 Year;
@@ -656,7 +707,7 @@ struct EfiFileInfo final {
   UInt64 FileSize;
   UInt64 PhysicalSize;
   EfiTime CreateTime;
-  EfiTime LastAccessTome;
+  EfiTime LastAccessTime;
   EfiTime EditTime;
   UInt64 Attribute;
   // Do not touch that, it's EFI specific.
@@ -667,4 +718,4 @@ struct EfiFileInfo final {
 #define EFI_FILE_PROTOCOL_REVISION2 0x00020000
 #define EFI_FILE_PROTOCOL_LATEST_REVISION EFI_FILE_PROTOCOL_REVISION2
 
-#endif  // __EFI__
+#endif  // ifndef __EFI__
