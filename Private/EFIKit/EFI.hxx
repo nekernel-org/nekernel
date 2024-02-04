@@ -12,6 +12,8 @@
 
 /**
 @brief HCore Implementation of EFI.
+@note This API is in WiP, so it's not 'pretty', just deal with it. We'll be
+improving that later.
 @author Amlal El Mahrouss
 */
 
@@ -39,10 +41,12 @@ struct EfiFileDevicePathProtocol;
 struct EfiHandle;
 struct EfiGraphicsOutputProtocol;
 struct EfiBitmask;
+struct EfiFileProtocol;
 
 /// @brief Core Handle Type
 /// This is like NT's Win32 HANDLE type.
-typedef struct EfiHandle {} *EfiHandlePtr;
+typedef struct EfiHandle {
+} *EfiHandlePtr;
 
 /* UEFI uses wide characters by default. */
 typedef WideChar EfiCharType;
@@ -280,6 +284,13 @@ typedef struct EfiTableHeader {
     }                                               \
   }
 
+#define EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID         \
+  {                                                  \
+    0x0964e5b22, 0x6459, 0x11d2, {                   \
+      0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
+    }                                                \
+  }
+
 typedef UInt64(EfiImageUnload)(EfiHandlePtr ImageHandle);
 
 enum {
@@ -325,8 +336,8 @@ typedef UInt64(EFI_API *EfiGraphicsOutputProtocolQueryMode)(
     EfiGraphicsOutputProtocol *This, UInt32 ModeNumber, UInt32 *SizeOfInfo,
     EfiGraphicsOutputProtocolModeInformation **Info);
 
-typedef UInt64(EFI_API *EfiGraphicsOutputProtocolSetMode)(EfiGraphicsOutputProtocol *This,
-                                       UInt32 ModeNumber);
+typedef UInt64(EFI_API *EfiGraphicsOutputProtocolSetMode)(
+    EfiGraphicsOutputProtocol *This, UInt32 ModeNumber);
 
 typedef UInt64(EFI_API *EfiGraphicsOutputProtocolBlt)(
     EfiGraphicsOutputProtocol *This, EfiGraphicsOutputBltPixel *BltBuffer,
@@ -335,12 +346,12 @@ typedef UInt64(EFI_API *EfiGraphicsOutputProtocolBlt)(
     UInt32 Height, UInt32 Delta);
 
 typedef struct {
-  UInt32                                    MaxMode;
-  UInt32                                    Mode;
-  EfiGraphicsOutputProtocolModeInformation      *Info;
-  UInt32                                      SizeOfInfo;
-  UIntPtr                      FrameBufferBase;
-  UInt32                                     FrameBufferSize;
+  UInt32 MaxMode;
+  UInt32 Mode;
+  EfiGraphicsOutputProtocolModeInformation *Info;
+  UInt32 SizeOfInfo;
+  UIntPtr FrameBufferBase;
+  UInt32 FrameBufferSize;
 } EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE;
 
 typedef struct EfiGraphicsOutputProtocol {
@@ -507,6 +518,16 @@ typedef struct EfiSimpleTextOutputProtocol {
   VoidPtr Mode;
 } EfiSimpleTextOutputProtocol;
 
+typedef UInt64 EfiStatusType;
+
+typedef UInt64(EFI_API *EfiOpenVolume)(struct EfiSimpleFilesystemProtocol *,
+                                       struct EfiFileProtocol **);
+
+struct EfiSimpleFilesystemProtocol {
+  UInt64 Revision;
+  EfiOpenVolume OpenVolume;
+};
+
 /**
 @brief The Structure that they give you when booting.
 */
@@ -565,5 +586,81 @@ enum {
 #define END_INSTANCE_DEVICE_PATH_SUBTYPE 0x01
 
 #define kEfiOffsetOf(T, F) __builtin_offsetof(T, F)
+
+/// File I/O macros
+
+#define kEFIFileRead 0x0000000000000001
+#define kEFIFileWrite 0x0000000000000002
+#define kEFIFileCreate 0x0000000000000000
+
+#define kEFIReadOnly 0x01
+#define kEFIHidden 0x02
+#define kEFISystem 0x04
+#define kEFIReserved 0x08
+#define kEFIDirectory 0x10
+#define kEFIArchive 0x20
+
+typedef EfiStatusType(EFI_API *EfiRead)(struct EfiFileProtocol *, UInt64 *,
+                                        VoidPtr);
+
+struct EfiFileProtocol final {
+  UInt64 Revision;
+
+  EfiStatusType (*Open)(struct EfiFileProtocol *, struct EfiFileProtocol **,
+                        EfiCharType *, UInt64, UInt64);
+
+  EfiStatusType (*Close)(struct EfiFileProtocol *);
+
+  void (*Unused1)();
+
+  EfiRead Read;
+
+  void (*Unused2)();
+  void (*Unused3)();
+  void (*Unused4)();
+
+  EfiStatusType (*GetInfo)(struct EfiFileProtocol *, struct EfiGUID *, UInt32 *,
+                           void *);
+
+  void (*Unused6)();
+  void (*Unused7)();
+  void (*Unused8)();
+  void (*Unused9)();
+  void (*Unused10)();
+  void (*Unused11)();
+};
+
+typedef struct EfiTime {
+  UInt16 Year;
+  UInt8 Month;
+  UInt8 Day;
+  UInt8 Hour;
+  UInt8 Minute;
+  UInt8 Second;
+  UInt8 Pad1;
+  UInt32 Nanosecond;
+  Int16 TimeZone;
+  UInt8 Daylight;
+  UInt8 Pad2;
+} EfiTime;
+
+#define EFI_FILE_INFO_GUID                           \
+  {                                                  \
+    0x09576e92, 0x6d3f, 0x11d2, {                    \
+      0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
+    }                                                \
+  }
+
+struct EfiFileInfo final {
+  UInt64 Size;
+  UInt64 FileSize;
+  UInt64 PhysicalSize;
+  EfiTime CreateTime;
+  EfiTime LastAccessTome;
+  EfiTime EditTime;
+  UInt64 Attribute;
+  // Do not touch that, it's EFI specific.
+  WideChar FileName[];
+};
 
 #endif  // __EFI__

@@ -7,10 +7,13 @@
  * 	========================================================
  */
 
-#include <FSKit/NewFS.hxx>
 #include <KernelKit/DriveManager.hpp>
 #include <KernelKit/FileManager.hpp>
 
-/// @brief this implements NewFS with Device Abstraction in mind.
+#ifdef __USE_NEWFS__
+
+/// @brief This implements NewFS with Device Abstraction in mind.
 
 /// bugs 0
+
+#endif  // ifdef __USE_NEWFS__

@@ -7,9 +7,12 @@
  * 	========================================================
  */
 
-#include <FSKit/NewFS.hxx>
 #include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/FileManager.hpp>
 
+#ifdef __USE_NEWFS__
+
+//! bugs: 0
 //! @brief Journaling for NewFS.
 
 #define kOpCache (4)
@@ -57,3 +60,5 @@ class NewFSJournalRunner final {
   }
 };
 }  // namespace HCore
+
+#endif  // ifdef __USE_NEWFS__

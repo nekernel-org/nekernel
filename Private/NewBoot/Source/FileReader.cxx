@@ -14,7 +14,8 @@
 
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
-#include <FSKit/NewFS.hxx>
+
+#include "EFIKit/EFI.hxx"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,7 +28,7 @@
 /***
     @brief File Reader constructor.
 */
-BFileReader::BFileReader(const CharacterType *path) {
+BFileReader::BFileReader(const CharacterType* path) {
   if (path != nullptr) {
     SizeT index = 0UL;
     for (; path[index] != L'\0'; ++index) {
@@ -38,17 +39,122 @@ BFileReader::BFileReader(const CharacterType *path) {
   }
 }
 
+BFileReader::~BFileReader() {
+  if (this->mBlob) {
+    BS->FreePool(this->mBlob);
+  }
+}
+
 /**
     @brief this reads all of the buffer.
-    @param size, new buffer size.
+    @param ImageHandle used internally.
 */
-HCore::VoidPtr BFileReader::Fetch(SizeT &size) {
+HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle) {
   mWriter.WriteString(L"HCoreLdr: Fetch-File: ")
       .WriteString(mPath)
       .WriteString(L"\r\n");
 
-  this->mCached = true;
-  this->mErrorCode = kNotSupported;
+  /// Load protocols with their GUIDs.
 
-  return nullptr;
+  EfiGUID guidEfp = EfiGUID(EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID);
+
+  EfiSimpleFilesystemProtocol* efp = nullptr;
+  EfiFileProtocol* rootFs = nullptr;
+
+  EfiLoadImageProtocol* img = nullptr;
+  EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
+
+  if (BS->OpenProtocol(ImageHandle, &guidImg, (void**)&img, ImageHandle,
+                       nullptr,
+                       EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL) != kEfiOk) {
+    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol")
+        .WriteString(L"\r\n");
+    this->mErrorCode = kNotSupported;
+  }
+
+  if (BS->OpenProtocol(img->DeviceHandle, &guidEfp, (void**)&efp, ImageHandle,
+                       nullptr,
+                       EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL) != kEfiOk) {
+    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol")
+        .WriteString(L"\r\n");
+    this->mErrorCode = kNotSupported;
+    return nullptr;
+  }
+
+  /// Start doing disk I/O
+
+  if (efp->OpenVolume(efp, &rootFs) != kEfiOk) {
+    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Volume")
+        .WriteString(L"\r\n");
+    this->mErrorCode = kNotSupported;
+    return nullptr;
+  }
+
+  /// Open kernel.
+
+  EfiFileProtocol* kernelFile;
+
+  if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead,
+                   kEFIReadOnly | kEFIHidden | kEFISystem) != kEfiOk) {
+    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Path: ")
+        .WriteString(mPath)
+        .WriteString(L"\r\n");
+    this->mErrorCode = kNotSupported;
+    return nullptr;
+  }
+
+  /// File FAT info.
+
+  UInt32 szInfo = sizeof(EfiFileInfo);
+  EfiFileInfo info{0};
+
+  guidEfp = EfiGUID(EFI_FILE_INFO_GUID);
+
+  if (kernelFile->GetInfo(kernelFile, &guidEfp, &szInfo, (void*)&info) !=
+      kEfiOk) {
+    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Path: ")
+        .WriteString(mPath)
+        .WriteString(L"\r\n");
+    this->mErrorCode = kNotSupported;
+    return nullptr;
+  }
+
+  mWriter.WriteString(L"HCoreLdr: Fetch-Info: In-Progress...")
+      .WriteString(L"\r\n");
+
+  UInt8* blob = nullptr;
+
+  mWriter.WriteString(L"HCoreLdr: Fetch-Info: OK...").WriteString(L"\r\n");
+
+  UInt64 sz = info.FileSize;
+
+  if (BS->AllocatePool(EfiBootServicesData, sz, (VoidPtr*)&blob) != kEfiOk) {
+    mWriter
+        .WriteString(
+            L"HCoreLdr: Fetch: Failed to call AllocatePool "
+            L"correctly!")
+        .WriteString(L"\r\n");
+
+    kernelFile->Close(kernelFile);
+
+    return nullptr;
+  }
+
+  BSetMem((CharacterType*)blob, 0, sz);
+
+  mWriter.WriteString(L"HCoreLdr: Fetch-File: In-Progress...")
+      .WriteString(L"\r\n");
+
+  kernelFile->Read(kernelFile, &sz, blob);
+
+  mWriter.WriteString(L"HCoreLdr: Fetch-File: OK").WriteString(L"\r\n");
+
+  kernelFile->Close(kernelFile);
+
+  this->mCached = true;
+  this->mErrorCode = kOperationOkay;
+
+  this->mBlob = blob;
+
+  return blob;
 }

@@ -38,12 +38,4 @@ class BDeviceAHCI final {
   AHCITraits mTraits;
 };
 
-enum {
-  kATADevicePATA,
-  kATADeviceSATA,
-  kATADevicePATA_PI,
-  kATADeviceSATA_PI,
-  kATADeviceCount,
-};
-
-#define kATASectorSz 512
+#define kAHCISectorSz 512

@@ -7,8 +7,9 @@
  * 	========================================================
  */
 
-#include <FSKit/NewFS.hxx>
 #include <KernelKit/FileManager.hpp>
+
+#ifdef __USE_NEWFS__
 
 namespace HCore {
 NewFilesystemManager::NewFilesystemManager() = default;
@@ -40,4 +41,10 @@ NodePtr NewFilesystemManager::CreateDirectory(const char* path) {
 NodePtr NewFilesystemManager::CreateAlias(const char* path) {
   return node_cast(fImpl->CreateCatalog(path, 0, kCatalogKindAlias));
 }
+
+const char* NewFilesystemHelper::Root() { return kFilesystemRoot; }
+const char* NewFilesystemHelper::UpDir() { return kFilesystemUpDir; }
+const char NewFilesystemHelper::Separator() { return kFilesystemSeparator; }
 }  // namespace HCore
+
+#endif  // ifdef __USE_NEWFS__

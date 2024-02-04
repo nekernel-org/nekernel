@@ -12,8 +12,8 @@
 
 /// @file Heap.cxx
 /// @brief Heap Manager, Process heap allocator.
-/// @note if you want to look at the kernel allocator, please look for KernelHeap.cxx
-/// bugs: 0
+/// @note if you want to look at the kernel allocator, please look for
+/// KernelHeap.cxx bugs: 0
 
 namespace HCore {
 /**
@@ -105,10 +105,10 @@ STATIC void ke_free_heap_internal(voidPtr virtualAddress) {
 
 /**
  * @brief Check for the ptr and frees it.
- * 
+ *
  * @param index Where to look at.
  * @param ptr The ptr to check.
- * @return Boolean true if successful. 
+ * @return Boolean true if successful.
  */
 STATIC Boolean ke_check_and_free_heap(const SizeT& index, voidPtr ptr) {
   if (HeapManager::The()[index]) {
@@ -143,8 +143,8 @@ voidPtr ke_new_heap(Int32 flags) {
   if (voidPtr ret = ke_find_unused_heap(flags)) return ret;
 
   // this wasn't set to true
-  auto ref_page = HeapManager::Leak().Leak().RequestPage(
-      ((flags & kPoolUser)), (flags & kPoolRw));
+  auto ref_page = HeapManager::Leak().Leak().RequestPage(((flags & kPoolUser)),
+                                                         (flags & kPoolRw));
 
   if (ref_page) {
     ///! reserve page.
@@ -152,6 +152,8 @@ voidPtr ke_new_heap(Int32 flags) {
     auto& ref = HeapManager::Count();
 
     ++ref;  // increment the number of addresses we have now.
+
+    ref_page->NoExecute(true);
 
     // finally make the pool address.
     return ke_make_heap(

@@ -21,7 +21,7 @@ static Ref<PTEWrapper *> kLastWrapper;
 static Pmm kPmm;
 
 namespace Detail {
-static voidPtr find_ptr(const SizeT &sz, const bool rw, const bool user) {
+STATIC voidPtr ke_find_heap(const SizeT &sz, const bool rw, const bool user) {
   for (SizeT indexWrapper = 0; indexWrapper < kMaxWrappers; ++indexWrapper) {
     if (!kWrapperList[indexWrapper]->Present()) {
       kWrapperList[indexWrapper]
@@ -35,21 +35,19 @@ static voidPtr find_ptr(const SizeT &sz, const bool rw, const bool user) {
 }
 }  // namespace Detail
 
-/// @brief manual allocation
+/// @brief Page allocation routine.
 /// @param sz size of pointer
 /// @param rw read write (true to enable it)
 /// @param user is it accesible by user processes?
 /// @return the pointer
-VoidPtr ke_new_ke_heap(const SizeT &sz, const bool rw, const bool user) {
-  if (kWrapperCount < sz) return nullptr;
+VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
+  if (sz == 0) ++sz;
 
-  if (auto ptr = Detail::find_ptr(sz, rw, user); ptr) return ptr;
+  if (auto ptr = Detail::ke_find_heap(sz, rw, user); ptr) return ptr;
 
   Ref<PTEWrapper *> wrapper = kPmm.RequestPage(user, rw);
 
   if (wrapper) {
-    wrapper->NoExecute(true);
-
     kLastWrapper = wrapper;
 
     kWrapperList[kWrapperCount] = wrapper;

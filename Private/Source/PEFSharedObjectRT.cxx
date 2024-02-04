@@ -66,7 +66,7 @@ extern "C" SharedObject *__LibInit() {
   library->Get()->fImageEntrypointOffset =
       library->Load<VoidPtr>(kPefStart, string_length(kPefStart, 0), kPefCode);
 
-  kcout << "__LibInit: Task was successful... Returning library...\n";
+  kcout << "__LibInit: Task was successful!\n";
 
   return library;
 }
@@ -93,6 +93,8 @@ extern "C" Void __LibFini(SharedObjectPtr lib, bool *successful) {
   delete lib;
 
   lib = nullptr;
+
+  kcout << "__LibFini: Task was successful!\n";
 
   *successful = true;
 }

@@ -17,7 +17,10 @@
 
 #pragma once
 
+#ifdef __USE_NEWFS__
 #include <FSKit/NewFS.hxx>
+#endif  // __USE_NEWFS__
+
 #include <NewKit/ErrorID.hpp>
 #include <NewKit/Ref.hpp>
 #include <NewKit/Stream.hpp>
@@ -87,6 +90,7 @@ class IFilesystemManager {
 /** @brief invalid position. (n-pos) */
 #define kNPos (SizeT)(-1);
 
+#ifdef __USE_NEWFS__
 /**
  * @brief Based of IFilesystemManager, takes care of managing NewFS disks.
  */
@@ -148,12 +152,14 @@ class NewFilesystemManager final : public IFilesystemManager {
   NewFSImplementation *fImpl{nullptr};
 };
 
+#endif  // ifdef __USE_NEWFS__
+
 /**
  * Usable FileStream
  * @tparam Encoding file encoding (char, wchar_t...)
  * @tparam FSClass Filesystem contract who takes care of it.
  */
-template <typename Encoding = char, typename FSClass = NewFilesystemManager>
+template <typename Encoding = char, typename FSClass = IFilesystemManager>
 class FileStream final {
  public:
   explicit FileStream(const Encoding *path);

@@ -40,6 +40,8 @@ enum {
 };
 
 const char* ata_read_28(ULong lba) {
+  if (!kPrdt) return nullptr;
+
   static char buffer[512];
 
   UIntPtr* packet = (UIntPtr*)kPrdt.Leak()->PhysicalAddress();
@@ -56,6 +58,8 @@ const char* ata_read_28(ULong lba) {
 #define kBufferLen 512
 
 const char* ata_read_48(ULong lba) {
+  if (!kPrdt) return nullptr;
+
   static char buffer[kBufferLen];
   rt_set_memory(buffer, 0, kBufferLen);
 
@@ -71,6 +75,8 @@ const char* ata_read_48(ULong lba) {
 }
 
 Int32 ata_write_48(ULong lba, const char* buffer) {
+  if (!kPrdt) return kATAError;
+
   UIntPtr* packet = reinterpret_cast<UIntPtr*>(kPrdt.Leak()->PhysicalAddress());
 
   packet[0] = k48BitWrite;
@@ -83,6 +89,8 @@ Int32 ata_write_48(ULong lba, const char* buffer) {
 }
 
 Int32 ata_write_28(ULong lba, const char* text) {
+  if (!kPrdt) return kATAError;
+
   UIntPtr* packet = (UIntPtr*)kPrdt.Leak()->PhysicalAddress();
 
   packet[0] = k28BitWrite;

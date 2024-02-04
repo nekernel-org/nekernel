@@ -9,80 +9,64 @@
 
 #pragma once
 
+#include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Function.hpp>
-#include <NewKit/Array.hpp>
 
 #ifdef __x86_64__
-#   include <HALKit/AMD64/Hypervisor.hpp>
-#   include <HALKit/AMD64/Processor.hpp>
-#   include <HALKit/AMD64/HalPageAlloc.hpp>
+#include <HALKit/AMD64/HalPageAlloc.hpp>
+#include <HALKit/AMD64/Hypervisor.hpp>
+#include <HALKit/AMD64/Processor.hpp>
 #elif defined(__powerpc64__)
-#   include <HALKit/PowerPC/Processor.hpp>
+#include <HALKit/PowerPC/Processor.hpp>
 #else
-#   error Unknown architecture
+#error Unknown architecture
 #endif
 
-namespace HCore
-{
-    class SystemCallDefaultImpl final
-    {
-    public:
-        static Int32 Exec() { return 0; }
+namespace HCore {
+template <SSizeT ID>
+class SystemCall {
+ public:
+  explicit SystemCall() { kcout << "SystemCall::SystemCall"; }
 
-    };
+  virtual ~SystemCall() { kcout << "SystemCall::~SystemCall"; }
 
-    template <SSizeT ID>
-    class SystemCall
-    {
-    public:
-        explicit SystemCall()
-        {
-            kcout << "SystemCall::SystemCall";
-        }
+  SystemCall &operator=(const SystemCall &) = default;
+  SystemCall(const SystemCall &) = default;
 
-        virtual ~SystemCall()
-        {
-            kcout << "SystemCall::~SystemCall";
-        }
+  // Should not be called alone!
+  virtual bool Exec() const {
+    kcout << "SystemCall->Exec<RET>()";
+    return false;
+  }
+};
 
-        SystemCall &operator=(const SystemCall &) = default;
-        SystemCall(const SystemCall &) = default;
+constexpr static inline SSizeT syscall_hash(const char *seed, int mul) {
+  SSizeT hash = 0;
 
-        // Should not be called alone!
-        virtual bool Exec() const
-        {
-            kcout << "SystemCall->Exec<RET>()";
-            return false;
-        }
+  for (SSizeT idx = 0; seed[idx] != 0; ++idx) {
+    hash += seed[idx];
+    hash ^= mul;
+  }
 
-    };
+  return hash;
+}
 
-    constexpr static inline SSizeT syscall_hash(const char *seed, int mul)
-    {
-        SSizeT hash = 0;
-
-        for (SSizeT idx = 0; seed[idx] != 0; ++idx)
-        {
-            hash += seed[idx];
-            hash ^= mul;
-        }
-
-        return hash;
-    }
-
-    bool ke_init_hal();
-} // namespace HCore
+bool ke_init_hal();
+}  // namespace HCore
 
 #define kMaxSyscalls 0x100
 #define kSyscallGate 0x21
 
-extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *), kMaxSyscalls> kSyscalls;
+extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *),
+                    kMaxSyscalls>
+    kSyscalls;
 
-extern "C" void rt_wait_for_io();
-extern "C" void rt_syscall_handle(HCore::HAL::StackFrame* stackFrame);
-extern "C" HCore::HAL::StackFrame* rt_get_current_context();
-extern "C" int rt_do_context_switch(HCore::HAL::StackFrame* stackFrame);
+extern "C" HCore::Void rt_wait_for_io();
+extern "C" HCore::Void rt_syscall_handle(HCore::HAL::StackFramePtr stackFrame);
+extern "C" HCore::HAL::StackFramePtr rt_get_current_context();
+extern "C" HCore::Int32 rt_do_context_switch(
+    HCore::HAL::StackFramePtr stackFrame);
 
 inline HCore::VoidPtr kKernelVirtualStart;
 inline HCore::UIntPtr kKernelVirtualSize;

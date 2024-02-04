@@ -13,6 +13,13 @@
 #include <KernelKit/DriveManager.hpp>
 #include <NewKit/Defines.hpp>
 
+#include "KernelKit/FileManager.hpp"
+
+/**
+    @brief NewFS or HCFS
+    HCore FileSystem.
+*/
+
 #define kInvalidFork -1
 #define kInvalidCatalog -1
 #define kNameLen 256
@@ -68,20 +75,26 @@ struct PACKED NewCatalog final {
 
   HCore::Lba FirstFork;
   HCore::Lba LastFork;
+
+  HCore::Lba SiblingRecords[12];
+};
+
+#define kNewFSMaxEntries 256
+
+struct PACKED NewCatalogRecord final {
+  HCore::Lba Entries[kNewFSMaxEntries];
 };
 
 struct PACKED NewFork final {
   HCore::Int32 Flags;
   HCore::Int32 Kind;
 
-  HCore::Int64 ID;
-
   HCore::Int64 ResourceId;
   HCore::Int32 ResourceKind;
   HCore::Int32 ResourceFlags;
 
-  HCore::Lba DataOffset;
-  HCore::SizeT DataSize;
+  HCore::Lba DataOffset;  // Where to look for this data?
+  HCore::SizeT DataSize;  // Data size according using sector count.
 
   HCore::Lba NextSibling;
   HCore::Lba PreviousSibling;
@@ -136,7 +149,8 @@ struct PACKED NewPartitionBlock final {
 #define kFilesystemUpDir ".."
 #define kFilesystemRoot "\\"
 
-#define kFilesystemLE '\r'
+#define kFilesystemCR '\r'
+#define kFilesystemLF '\n'
 #define kFilesystemEOF (-1)
 
 #define kFilesystemBitWidth sizeof(NewCharType)
@@ -176,15 +190,15 @@ class NewFSImplementation {
 };
 
 ///
-/// \name MeFilesystemHelper
-/// Filesystem helper and utils.
+/// \name NewFilesystemHelper
+/// \brief Filesystem helper and utils.
 ///
 
-class MeFilesystemHelper final {
+class NewFilesystemHelper final {
  public:
-  static const char* Root() { return kFilesystemRoot; }
-  static const char* UpDir() { return kFilesystemUpDir; }
-  static const char Separator() { return kFilesystemSeparator; }
+  static const char* Root();
+  static const char* UpDir();
+  static const char Separator();
 };
 }  // namespace HCore
 

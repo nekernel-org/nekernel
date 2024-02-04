@@ -10,39 +10,37 @@
 #pragma once
 
 #include <CFKit/Property.hpp>
+#include <CompilerKit/CompilerKit.hpp>
 #include <KernelKit/DriveManager.hpp>
 
-namespace HCore
-{
-    namespace Indexer
-    {
-        struct IndexProperty final
-        {
-        public:
-            Char Drive[kDriveNameLen];
-            Char Path[256];
-            Char From[256];
-            Char To[256];
+namespace HCore {
+namespace Indexer {
+struct IndexProperty final {
+ public:
+  Char Drive[kDriveNameLen];
+  Char Path[256];
+  Char From[256];
+  Char To[256];
+};
 
-        };
-        
-        class IndexableProperty final : public Property
-        {
-        public:
-            explicit IndexableProperty() : Property(StringBuilder::Construct("IndexableProperty").Leak().Leak()) {}
-            ~IndexableProperty() override = default;
+class IndexableProperty final : public Property {
+ public:
+  explicit IndexableProperty()
+      : Property(StringBuilder::Construct("IndexableProperty").Leak().Leak()) {}
+  ~IndexableProperty() override = default;
 
-        public:
-            IndexProperty& LeakProperty() noexcept;
+  HCORE_COPY_DEFAULT(IndexableProperty);
 
-        public:
-            void AddFlag(Int16 flag);
-            void RemoveFlag(Int16 flag);
+ public:
+  IndexProperty& LeakProperty() noexcept;
 
-        private:
-            IndexProperty fIndex;
-            UInt32 fFlags;
+ public:
+  void AddFlag(Int16 flag);
+  void RemoveFlag(Int16 flag);
 
-        };
-    }
-}
+ private:
+  IndexProperty fIndex;
+  UInt32 fFlags;
+};
+}  // namespace Indexer
+}  // namespace HCore

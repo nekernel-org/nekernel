@@ -17,9 +17,14 @@
 
 using namespace HCore;
 
-// forward decl
+// Forward declarations of structs.
 
 struct HbaPort;
+struct FisData;
+struct FisRegD2H;
+struct FisRegH2D;
+
+// Enum types
 
 typedef enum {
   FIS_TYPE_REG_H2D = 0x27,    // Register FIS - host to device
@@ -40,7 +45,7 @@ typedef enum {
   AHCI_ATA_CMD_WRITE_DMA_EX = 0x35
 } AHCI_FIS_COMMAND;
 
-typedef struct FisRegH2d {
+typedef struct FisRegH2D final {
   // DWORD 0
   UInt8 fisType;  // FIS_TYPE_REG_H2D
 
@@ -71,9 +76,9 @@ typedef struct FisRegH2d {
 
   // DWORD 4
   UInt8 reserved1[4];  // Reserved
-} FisRegH2d;
+} FisRegH2D;
 
-typedef struct FisRegD2h {
+typedef struct FisRegD2H final {
   // DWORD 0
   UInt8 fisType;  // FIS_TYPE_REG_D2H
 
@@ -104,9 +109,9 @@ typedef struct FisRegD2h {
 
   // DWORD 4
   UInt8 rsv4[4];  // Reserved
-} FisRegD2h;
+} FisRegD2H;
 
-typedef struct FisData {
+typedef struct FisData final {
   // DWORD 0
   UInt8 fisType;  // FIS_TYPE_DATA
 
@@ -119,7 +124,7 @@ typedef struct FisData {
   UInt32 data[1];  // Payload
 } FisData;
 
-typedef struct FisPioSetup {
+typedef struct FisPioSetup final {
   // DWORD 0
   UInt8 fisType;  // FIS_TYPE_PIO_SETUP
 
@@ -148,14 +153,14 @@ typedef struct FisPioSetup {
   UInt8 countLow;   // Count register, 7:0
   UInt8 countHigh;  // Count register, 15:8
   UInt8 rsv3;       // Reserved
-  UInt8 e_status;   // New value of status register
+  UInt8 eStatus;    // New value of status register
 
   // DWORD 4
   UInt16 tc;      // Transfer count
   UInt8 rsv4[2];  // Reserved
 } FisPioSetup;
 
-typedef struct FisDmaSetup {
+typedef struct FisDmaSetup final {
   // DWORD 0
   UInt8 fisType;  // FIS_TYPE_DMA_SETUP
 
@@ -186,7 +191,7 @@ typedef struct FisDmaSetup {
   UInt32 reserved3;  // Reserved
 } FisDmaSetup;
 
-typedef struct FisDevBits {
+typedef struct FisDevBits final {
   // DWORD 0
   UInt8 fisType;  // FIS_TYPE_DMA_SETUP (A1h)
 
@@ -206,11 +211,12 @@ typedef struct FisDevBits {
   UInt32 act;
 } FisDevBits;
 
-#ifndef AHCI_GHC_AE
-#define AHCI_GHC_AE (31)
-#endif  //! AHCI_GHC_AE
+/// \brief Enable AHCI device bit in GHC register.
+#ifndef kAhciGHC_AE
+#define kAhciGHC_AE (31)
+#endif  //! ifndef kAhciGHC_AE
 
-typedef struct HbaPort {
+typedef struct HbaPort final {
   UInt32 clb;            // 0x00, command list base address, 1K-byte aligned
   UInt32 clbu;           // 0x04, command list base address upper 32 bits
   UInt32 fb;             // 0x08, FIS base address, 256-byte aligned
@@ -232,7 +238,7 @@ typedef struct HbaPort {
   UInt32 vendor[4];      // 0x70 ~ 0x7F, vendor specific
 } HbaPort;
 
-typedef struct HbaMem {
+typedef struct HbaMem final {
   // 0x00 - 0x2B, Generic Host Control
   UInt32 cap;      // 0x00, Host capability
   UInt32 ghc;      // 0x04, Global host control
@@ -252,7 +258,7 @@ typedef struct HbaMem {
   HbaPort ports[1];  // 1 ~ 32
 } HbaMem;
 
-typedef struct HbaCmdHeader {
+typedef struct HbaCmdHeader final {
   // DW0
   UInt8 cfl : 5;           // Command FIS length in DWORDS, 2 ~ 16
   UInt8 atapi : 1;         // ATAPI
@@ -274,7 +280,7 @@ typedef struct HbaCmdHeader {
   UInt32 reserved1[4];  // Reserved
 } HbaCmdHeader;
 
-typedef struct HbaFis {
+typedef struct HbaFis final {
   // 0x00
   FisDmaSetup dsfis;  // DMA Setup FIS
   UInt8 pad0[4];
@@ -282,7 +288,7 @@ typedef struct HbaFis {
   FisPioSetup psfis;  // PIO Setup FIS
   UInt8 pad1[12];
   // 0x40
-  FisRegD2h rfis;  // Register – Device to Host FIS
+  FisRegD2H rfis;  // Register – Device to Host FIS
   UInt8 pad2[4];
   // 0x58
   FisDevBits sdbfis;  // Set Device Bit FIS
@@ -292,7 +298,7 @@ typedef struct HbaFis {
   UInt8 rsv[0x100 - 0xA0];
 } HbaFis;
 
-typedef struct HbaPrdtEntry {
+typedef struct HbaPrdtEntry final {
   UInt32 dba;        // Data base address
   UInt32 dbau;       // Data base address upper 32 bits
   UInt32 reserved0;  // Reserved
@@ -302,7 +308,7 @@ typedef struct HbaPrdtEntry {
   UInt32 interruptBit : 1;  // Interrupt on completion
 } HbaPrdtEntry;
 
-typedef struct HbaCmdTbl {
+typedef struct HbaCmdTbl final {
   UInt8 cfis[64];  // Command FIS
   UInt8 acmd[16];  // ATAPI command, 12 or 16 bytes
   UInt8 rsv[48];   // Reserved

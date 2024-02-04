@@ -71,6 +71,7 @@ ATAInit_Retry:
   auto statRdy = In8(IO + ATA_REG_STATUS);
 
   if (statRdy & ATA_SR_ERR) {
+    writer.WriteString(L"HCoreLdr: Probe error.\r\n");
     return false;
   }
   if ((statRdy & ATA_SR_BSY)) goto ATAInit_Retry;

@@ -7,4 +7,4 @@
  * 	========================================================
  */
 
-#include <KernelKit/OSErr.hpp>
+#include <KernelKit/HError.hpp>

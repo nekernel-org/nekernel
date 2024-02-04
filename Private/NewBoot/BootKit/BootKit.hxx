@@ -62,9 +62,9 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
 class BFileReader final {
  public:
   explicit BFileReader(const CharacterType *path);
-  ~BFileReader() = default;
+  ~BFileReader();
 
-  HCore::VoidPtr Fetch(SizeT &size);
+  HCore::VoidPtr Fetch(EfiHandlePtr ImageHandle);
 
   enum {
     kOperationOkay,
@@ -83,6 +83,7 @@ class BFileReader final {
 
  private:
   Int32 mErrorCode{kOperationOkay};
+  VoidPtr mBlob{nullptr};
   CharacterType mPath[kPathLen];
   BTextWriter mWriter;
   BDeviceATA mDevice;

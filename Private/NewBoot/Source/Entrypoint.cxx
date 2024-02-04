@@ -7,7 +7,6 @@
  *      ========================================================
  */
 
-#include "BootKit/Arch/ATA.hxx"
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -43,26 +42,18 @@ EFI_EXTERN_C Int EfiMain(EfiHandlePtr ImageHandle,
 
   UInt64 mapKey = 0;
 
-  BFileReader img(L"HCoreKrnl.exe");
+  BFileReader img(L"\\EFI\\BOOT\\HCoreKrnl.exe");
 
-  SizeT sz = 0UL;
-  PEImagePtr blob = (PEImagePtr)img.Fetch(sz);
+  PEImagePtr blob = (PEImagePtr)img.Fetch(ImageHandle);
 
-  if (!blob || sz < 1)
+  if (!blob)
     EFI::RaiseHardError(L"HCoreLdr_NoSuchKernel",
                         L"Couldn't find HCoreKrnl.exe!");
 
-  ExecHeaderPtr headerPtr = (ExecHeaderPtr)blob;
+  writer.WriteString(L"HCoreLdr: Running HCoreKrnl.exe...\r\n");
 
-  if (blob[0] == kMagMz0 && blob[1] == kMagMz1) {
-    writer.WriteString(L"HCoreLdr: Running HCoreKrnl.exe...\r\n");
-    /// Load Image here
-  } else {
-    EFI::RaiseHardError(L"HCoreLdr_NotPE", L"Not a PE file! Aborting...");
-  }
-
-  EFI::Stop();
   EFI::ExitBootServices(mapKey, ImageHandle);
+  EFI::Stop();
 
   return kEfiOk;
 }

@@ -13,7 +13,6 @@
 
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
-#include <FSKit/NewFS.hxx>
 
 /// bugs 0
 
