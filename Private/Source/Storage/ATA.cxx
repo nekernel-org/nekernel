@@ -10,8 +10,10 @@
 #include <ArchKit/ArchKit.hpp>
 #include <StorageKit/ATA.hpp>
 
+#define kBufferLen 512
+
 //! @brief ATA DMA Driver
-//! @todo: Rework into a proper ATA DMA.
+//! The idea is to let a driver do the transfer.
 
 /// bugs 0
 
@@ -42,25 +44,24 @@ enum {
 const char* ata_read_28(ULong lba) {
   if (!kPrdt) return nullptr;
 
-  static char buffer[512];
+  char* buffer = reinterpret_cast<char*>(Alloca(sizeof(char) * kBufferLen));
+  rt_set_memory(buffer, 0, kBufferLen);
 
-  UIntPtr* packet = (UIntPtr*)kPrdt.Leak()->PhysicalAddress();
+  UIntPtr* packet = reinterpret_cast<UIntPtr*>(kPrdt.Leak()->PhysicalAddress());
 
   packet[0] = k28BitRead;
   packet[1] = (UIntPtr)&buffer;
-  packet[2] = lba;
+  packet[4] = lba;
 
   rt_wait_for_io();
 
   return buffer;
 }
 
-#define kBufferLen 512
-
 const char* ata_read_48(ULong lba) {
   if (!kPrdt) return nullptr;
 
-  static char buffer[kBufferLen];
+  char* buffer = reinterpret_cast<char*>(Alloca(sizeof(char) * kBufferLen));
   rt_set_memory(buffer, 0, kBufferLen);
 
   UIntPtr* packet = reinterpret_cast<UIntPtr*>(kPrdt.Leak()->PhysicalAddress());

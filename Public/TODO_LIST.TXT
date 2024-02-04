@@ -4,7 +4,8 @@
 - We need a bootloader for AMD64/ARM [ X ]
     - Implement Boot Services [ X ]
     - Design Handover [ X ]
-    - Load kernel into memory [ ]
+    - Load kernel into memory [ X ]
+    - Fix bug in kernel loader, which causes a 06 #UD.
     - Jump to kernel [ ]
 - Context switch x87/SSE/AVX registers [ ]
 - Framebuffer and ATA support [ ]

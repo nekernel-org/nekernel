@@ -81,15 +81,13 @@ class IOBuf final {
 
 ///! @brief Device types enum.
 enum {
-  kDeviceIde,
-  kDeviceNetwork,
-  kDevicePrinter,
-  kDeviceGSDB,
-  kDeviceScsi,
-  kDeviceSata,
-  kDeviceUsb,
-  kDeviceCD,
-  kDeviceSwap,
-  kDeviceCnt,
+  kDeviceTypeIDE,
+  kDeviceTypeEthernet,
+  kDeviceTypeWiFi,
+  kDeviceTypeRS232,
+  kDeviceTypeSCSI,
+  kDeviceTypeSHCI,
+  kDeviceTypeUSB,
+  kDeviceTypeCount,
 };
 }  // namespace HCore
