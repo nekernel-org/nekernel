@@ -50,7 +50,7 @@ BFileReader::~BFileReader() {
     @brief this reads all of the buffer.
     @param ImageHandle used internally.
 */
-HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle) {
+HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle, SizeT& imageSz) {
   mWriter.WriteString(L"HCoreLdr: Fetch-File: ")
       .WriteString(mPath)
       .WriteString(L"\r\n");
@@ -100,6 +100,13 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle) {
     return nullptr;
   }
 
+  if (kernelFile->Revision < EFI_FILE_PROTOCOL_REVISION2) {
+    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: Invalid-Revision: ")
+        .WriteString(mPath)
+        .WriteString(L"\r\n");
+    return nullptr;
+  }
+
   /// File FAT info.
 
   UInt32 szInfo = sizeof(EfiFileInfo);
@@ -139,6 +146,7 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle) {
   }
 
   *sz = info.FileSize;
+  imageSz = *sz;
 
   if (BS->AllocatePool(EfiLoaderData, *sz, (VoidPtr*)&blob) != kEfiOk) {
     mWriter
@@ -155,13 +163,16 @@ HCore::VoidPtr BFileReader::Fetch(EfiHandlePtr ImageHandle) {
   BSetMem((CharacterType*)blob, 0, *sz);
 
   mWriter.WriteString(L"HCoreLdr: Fetch-File: In-Progress...")
+      .WriteString(info.FileName)
       .WriteString(L"\r\n");
 
-  kernelFile->Read(kernelFile, sz, blob);
-
-  mWriter.WriteString(L"HCoreLdr: Fetch-File: OK").WriteString(L"\r\n");
-
+  auto resultEfiRead = kernelFile->Read(kernelFile, sz, blob);
   kernelFile->Close(kernelFile);
+
+  if (resultEfiRead == kEfiOk)
+    mWriter.WriteString(L"HCoreLdr: Fetch-File: OK").WriteString(L"\r\n");
+  else
+    return nullptr;
 
   this->mCached = true;
   this->mErrorCode = kOperationOkay;

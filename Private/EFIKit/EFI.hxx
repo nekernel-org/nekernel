@@ -613,12 +613,20 @@ struct EfiFileProtocol final {
   EfiStatusType (*Read)(struct EfiFileProtocol *This, UInt32 *BufSize,
                         VoidPtr BufOut);
 
+  EfiStatusType (*Write)(struct EfiFileProtocol *This, UInt32 *BufSize,
+                         VoidPtr BufOut);
+
   EfiStatusType (*GetPosition)(EfiFileProtocol *This, UInt64 *Position);
 
   EfiStatusType (*SetPosition)(EfiFileProtocol *This, UInt64 *Position);
 
   EfiStatusType (*GetInfo)(struct EfiFileProtocol *, struct EfiGUID *, UInt32 *,
                            void *);
+
+  EfiStatusType (*SetInfo)(struct EfiFileProtocol *, struct EfiGUID *, UInt32 *,
+                           void *);
+
+  EfiStatusType (*Flush)(EfiFileProtocol *);
 };
 
 typedef struct EfiTime {
@@ -651,7 +659,11 @@ struct EfiFileInfo final {
   EfiTime EditTime;
   UInt64 Attribute;
   // Do not touch that, it's EFI specific.
-  WideChar FileName[];
+  WideChar FileName[255];
 };
+
+#define EFI_FILE_PROTOCOL_REVISION 0x00010000
+#define EFI_FILE_PROTOCOL_REVISION2 0x00020000
+#define EFI_FILE_PROTOCOL_LATEST_REVISION EFI_FILE_PROTOCOL_REVISION2
 
 #endif  // __EFI__

@@ -46,9 +46,11 @@ EFI_EXTERN_C Int EfiMain(EfiHandlePtr ImageHandle,
 
   UInt64 mapKey = 0;
 
-  BFileReader img(L"\\EFI\\BOOT\\HCoreKrnl.exe");
+  BFileReader img(L"\\EFI\\BOOT\\HCOREKRNL.EXE");
 
-  PEImagePtr blob = (PEImagePtr)img.Fetch(ImageHandle);
+  SizeT imageSz = 0;
+
+  PEImagePtr blob = (PEImagePtr)img.Fetch(ImageHandle, imageSz);
 
   if (!blob)
     EFI::RaiseHardError(L"HCoreLdr_NoSuchKernel",

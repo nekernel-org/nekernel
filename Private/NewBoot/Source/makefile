@@ -19,7 +19,7 @@ bootloader-amd64:
 	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx *.cxx
 	$(LD_GNU) *.o HEL/AMD64/*.obj -e efi_main -filealign:16 -shared --subsystem=10 -ffreestanding -o HCoreLdr.exe
 	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
-	cp ../../HCoreKrnl.exe CDROM/EFI/BOOT/HCoreKrnl.exe
+	cp ../../HCoreKrnl.exe CDROM/EFI/BOOT/HCOREKRNL.EXE
 
 .PHONY: make-disk
 make-disk:
