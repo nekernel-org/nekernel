@@ -54,7 +54,7 @@ enum {
 it tells us more about it and IS format independent.
 */
 struct __attribute__((packed)) HandoverHeader final {
-  Int32 f_TargetMagic;
+  UInt64 f_TargetMagic;
   Int32 f_TargetType;
   Int32 f_TargetArch;
   UIntPtr f_TargetStartAddress;
