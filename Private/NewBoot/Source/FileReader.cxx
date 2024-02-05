@@ -17,6 +17,7 @@
 #include <EFIKit/Handover.hxx>
 
 #include "EFIKit/EFI.hxx"
+#include "NewKit/Defines.hpp"
 #include "NewKit/Macros.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,7 @@
 /***
     @brief File Reader constructor.
 */
-BFileReader::BFileReader(const CharacterType* path) {
+BFileReader::BFileReader(const CharacterType* path, EfiHandlePtr ImageHandle) {
   if (path != nullptr) {
     SizeT index = 0UL;
     for (; path[index] != L'\0'; ++index) {
@@ -39,29 +40,6 @@ BFileReader::BFileReader(const CharacterType* path) {
 
     mPath[index] = 0;
   }
-}
-
-BFileReader::~BFileReader() {
-  if (this->mBlob) {
-    BS->FreePool(this->mBlob);
-  }
-
-  if (this->mFile) {
-    this->mFile->Close(this->mFile);
-    this->mFile = nullptr;
-  }
-
-  BSetMem(this->mPath, 0, kPathLen);
-}
-
-/**
-    @brief this reads all of the buffer.
-    @param ImageHandle used internally.
-*/
-Void BFileReader::ReadAll(EfiHandlePtr ImageHandle) {
-  mWriter.WriteString(L"HCoreLdr: ReadAll: ")
-      .WriteString(mPath)
-      .WriteString(L"\r\n");
 
   /// Load protocols with their GUIDs.
 
@@ -108,27 +86,53 @@ Void BFileReader::ReadAll(EfiHandlePtr ImageHandle) {
 
   rootFs->Close(rootFs);
 
-  /// File FAT info.
+  mSizeFile = 0;
+  mFile = kernelFile;
+  mErrorCode = kNotSupported;
+}
+
+BFileReader::~BFileReader() {
+  if (this->mBlob) {
+    BS->FreePool(this->mBlob);
+  }
+
+  if (this->mFile) {
+    this->mFile->Close(this->mFile);
+    this->mFile = nullptr;
+  }
+
+  BSetMem(this->mPath, 0, kPathLen);
+}
+
+/**
+    @brief this reads all of the buffer.
+    @param ImageHandle used internally.
+*/
+Void BFileReader::ReadAll() {
+  mWriter.WriteString(L"HCoreLdr: ReadAll: ")
+      .WriteString(mPath)
+      .WriteString(L"\r\n");
+
+  mWriter.WriteString(L"HCoreLdr: ReadAll: FETCH: ")
+      .WriteString(mPath)
+      .WriteString(L"\r\n");
 
   /// Allocate Handover page.
 
-  VoidPtr blob = (VoidPtr)kHandoverStartKernel;
+  UInt8* blob = (UInt8*)kHandoverStartKernel;
 
   if (BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1,
                         (EfiPhysicalAddress*)&blob) != kEfiOk) {
     EFI::RaiseHardError(L"HCoreLdr_PageError", L"Allocation error.");
   }
 
-  mSizeFile = KIB(kMaxReadSize);
-  mFile = kernelFile;
-  mErrorCode = kOperationOkay;
   mBlob = blob;
+  mSizeFile = KIB(kMaxReadSize);
 
-  mWriter.WriteString(L"HCoreLdr: ReadAll: FETCH: ")
-      .WriteString(mPath)
-      .WriteString(L"\r\n");
+  if (mFile->Read(mFile, &mSizeFile, mBlob) != kEfiOk) return;
 
-  mFile->Read(mFile, &mSizeFile, mBlob);
+  mSizeFile = KIB(kMaxReadSize);
+  mErrorCode = kOperationOkay;
 
   mWriter.WriteString(L"HCoreLdr: ReadAll: OK: ")
       .WriteString(mPath)

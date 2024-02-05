@@ -25,15 +25,19 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
 
-  BFileReader img(L"HCOREKRNL.EXE");
-  img.ReadAll(ImageHandle);
+  BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
 
-  VoidPtr blob = img.Blob();
+  UInt8 buf[1024] = {0};
+  UInt32 bufSz = 1024;
 
-  if (!blob) {
+  img.File()->Read(img.File(), &bufSz, buf);
+
+  if (buf[0] != kMagMz0 || buf[1] != kMagMz1) {
     EFI::RaiseHardError(L"HCoreLdr_NoBlob", L"No Such blob.");
     return kEfiFail;
   }
+
+  writer.WriteString(L"MZ header found... Loading HCOREKRNL.EXE...\r\n");
 
   UInt64 MapKey = 0;
 

@@ -61,10 +61,10 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
  */
 class BFileReader final {
  public:
-  explicit BFileReader(const CharacterType *path);
+  explicit BFileReader(const CharacterType *path, EfiHandlePtr ImageHandle);
   ~BFileReader();
 
-  Void ReadAll(EfiHandlePtr ImageHandle);
+  Void ReadAll();
 
   enum {
     kOperationOkay,

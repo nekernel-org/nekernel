@@ -10,19 +10,19 @@
 #pragma once
 
 #ifndef KIB
-#define KIB(X) ((X) * 1024)
+#define KIB(X) ((X) << 10)
 #endif
 
 #ifndef MIB
-#define MIB(X) (KIB(X) * 1024)
+#define MIB(X) (KIB(X) << 20)
 #endif
 
 #ifndef GIB
-#define GIB(X) (MIB(X) * 1024)
+#define GIB(X) (MIB(X) << 30)
 #endif
 
 #ifndef TIB
-#define TIB(X) (GIB(X) * 1024)
+#define TIB(X) (GIB(X) << 40)
 #endif
 
 #ifndef ARRAY_SIZE
