@@ -57,7 +57,7 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
 
 /**
  * @brief BootKit File Reader class
- * Reads using the New Filesystem Boot partition.
+ * Reads the Firmware Boot partition and filesystem.
  */
 class BFileReader final {
  public:
