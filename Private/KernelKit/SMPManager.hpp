@@ -22,13 +22,13 @@ namespace HCore {
 using ThreadID = UInt32;
 
 enum ThreadKind {
-  kSystemReserved,  // System reserved thread, well user can't use it
-  kStandard,        // user thread, cannot be used by kernel
-  kFallback,  // fallback thread, cannot be used by user if not clear or used by
-              // kernel.
-  kBoot,      // The core we booted from, the mama.
-  kInvalidThread,
-  kThreadCount,
+  kHartSystemReserved,  // System reserved thread, well user can't use it
+  kHartStandard,        // user thread, cannot be used by kernel
+  kHartFallback,  // fallback thread, cannot be used by user if not clear or
+                  // used by kernel.
+  kHartBoot,      // The core we booted from, the mama.
+  kInvalidHart,
+  kHartCount,
 };
 
 ///
@@ -105,8 +105,6 @@ class SMPManager final {
  private:
   Array<HardwareThread, kMaxHarts> m_ThreadList;
   ThreadID m_CurrentThread{0};
-  SizeT m_UsedThreads{0};
-  SizeT m_MaxThreads{0};
 };
 
 // @brief wakes up thread.

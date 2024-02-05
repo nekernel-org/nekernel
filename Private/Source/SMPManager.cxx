@@ -60,8 +60,10 @@ void HardwareThread::Wake(const bool wakeup) noexcept {
     rt_wakeup_thread(m_Stack);
 }
 
+extern bool rt_check_stack(HAL::StackFramePtr stackPtr);
+
 bool HardwareThread::Switch(HAL::StackFrame* stack) {
-  if (stack == nullptr) return false;
+  if (!rt_check_stack(stack)) return false;
 
   m_Stack = stack;
 
@@ -129,12 +131,12 @@ bool SMPManager::Switch(HAL::StackFrame* stack) {
  */
 Ref<HardwareThread> SMPManager::operator[](const SizeT& idx) {
   if (idx == 0) {
-    if (m_ThreadList[idx].Leak().Leak().Kind() != kSystemReserved) {
-      m_ThreadList[idx].Leak().Leak().m_Kind = kBoot;
+    if (m_ThreadList[idx].Leak().Leak().Kind() != kHartSystemReserved) {
+      m_ThreadList[idx].Leak().Leak().m_Kind = kHartBoot;
     }
   } else if (idx >= kMaxHarts) {
     HardwareThread fakeThread;
-    fakeThread.m_Kind = kInvalidThread;
+    fakeThread.m_Kind = kInvalidHart;
 
     return {fakeThread};
   }

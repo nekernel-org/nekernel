@@ -11,6 +11,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
+#include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
 
@@ -21,28 +22,40 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BTextWriter writer;
 
+#ifndef __DEBUG__
+
+  writer.WriteString(
+      L"MahroussLogic (R) HCore Version 1.0.0 (Release Channel)\r\n");
+
+#else
+
+  writer.WriteString(
+      L"MahroussLogic (R) HCore Version 1.0.0 (Insiders Channel)\r\n");
+
+#endif
+
   writer.WriteString(L"HCoreLdr: Firmware Vendor: ")
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
 
   BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
+  img.ReadAll();
 
-  UInt8 buf[1024] = {0};
-  UInt32 bufSz = 1024;
+  if (img.Error() == BFileReader::kOperationOkay) {
+    VoidPtr blob = img.Blob();
 
-  img.File()->Read(img.File(), &bufSz, buf);
+    UInt64 MapKey = 0;
 
-  if (buf[0] != kMagMz0 || buf[1] != kMagMz1) {
-    EFI::RaiseHardError(L"HCoreLdr_NoBlob", L"No Such blob.");
-    return kEfiFail;
+    EFI::ExitBootServices(MapKey, ImageHandle);
+    EFI::Stop();
+
+    return kEfiOk;
   }
 
-  writer.WriteString(L"HCoreLdr: Loading HCOREKRNL.EXE...\r\n");
+  writer.WriteString(
+      L"HCoreLdr: Missing HCOREKRNL.EXE! Your system is damaged.\r\n");
 
-  UInt64 MapKey = 0;
-
-  EFI::ExitBootServices(MapKey, ImageHandle);
   EFI::Stop();
 
-  return kEfiOk;
+  return kEfiFail;
 }

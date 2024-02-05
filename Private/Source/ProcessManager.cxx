@@ -233,7 +233,7 @@ bool ProcessHelper::CanBeScheduled(Ref<Process> &process) {
   if (process.Leak().GetStatus() == ProcessStatus::kStarting) {
     if (process.Leak().PTime < static_cast<Int>(kMinMicroTime)) {
       process.Leak().Status = ProcessStatus::kRunning;
-      process.Leak().Affinity = AffinityKind::kStandard;
+      process.Leak().Affinity = AffinityKind::kHartStandard;
 
       return true;
     }
@@ -271,7 +271,7 @@ bool ProcessHelper::Switch(HAL::StackFrame *the_stack, const PID &new_pid) {
   if (!the_stack || new_pid < 0) return false;
 
   for (SizeT index = 0UL; index < kMaxHarts; ++index) {
-    if (SMPManager::Shared().Leak()[index].Leak().Kind() == kInvalidThread)
+    if (SMPManager::Shared().Leak()[index].Leak().Kind() == kInvalidHart)
       continue;
 
     if (SMPManager::Shared().Leak()[index].Leak().StackFrame() == the_stack) {
@@ -281,9 +281,9 @@ bool ProcessHelper::Switch(HAL::StackFrame *the_stack, const PID &new_pid) {
 
     if (SMPManager::Shared().Leak()[index].Leak().IsBusy()) continue;
 
-    if (SMPManager::Shared().Leak()[index].Leak().Kind() != ThreadKind::kBoot ||
+    if (SMPManager::Shared().Leak()[index].Leak().Kind() != ThreadKind::kHartBoot ||
         SMPManager::Shared().Leak()[index].Leak().Kind() !=
-            ThreadKind::kSystemReserved) {
+            ThreadKind::kHartSystemReserved) {
       SMPManager::Shared().Leak()[index].Leak().Busy(true);
       ProcessHelper::GetCurrentPID() = new_pid;
 

@@ -78,7 +78,7 @@ class BFileReader final {
   Int32 &Error() { return mErrorCode; }
   VoidPtr Blob() { return mBlob; }
   EfiFileProtocol *File() { return mFile; }
-  UInt32 &Size() { return mSizeFile; }
+  UInt64 &Size() { return mSizeFile; }
 
  public:
   BFileReader &operator=(const BFileReader &) = default;
@@ -90,7 +90,7 @@ class BFileReader final {
   CharacterType mPath[kPathLen];
   BTextWriter mWriter;
   EfiFileProtocol *mFile{nullptr};
-  UInt32 mSizeFile{0};
+  UInt64 mSizeFile{0};
 };
 
 #define kMaxReadSize (320)
@@ -157,27 +157,21 @@ const UInt32 kRgbBlue = 0x00FF0000;
 const UInt32 kRgbBlack = 0x00000000;
 const UInt32 kRgbWhite = 0x00FFFFFF;
 
-/** QT GOP. */
+/** QT GOP and related. */
 inline EfiGraphicsOutputProtocol *kGop;
+inline UInt16 kStride;
+inline EfiGUID kGopGuid;
 
 /**
 @brief Init the QuickTemplate GUI framework.
 */
 inline Void InitQT() noexcept {
-  EfiGUID gopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
   kGop = nullptr;
 
   extern EfiBootServices *BS;
 
-  BS->LocateProtocol(&gopGuid, nullptr, (VoidPtr *)&kGop);
+  BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr *)&kGop);
 
-  UInt16 kStride = 4;
-
-  for (int x = 0; x < kGop->Mode->Info->VerticalResolution; ++x) {
-    for (int y = 0; y < kGop->Mode->Info->HorizontalResolution; ++y) {
-      *((UInt32 *)(kGop->Mode->FrameBufferBase +
-                   4 * kGop->Mode->Info->PixelsPerScanLine * x + kStride * y)) =
-          RGB(19, 19, 19);
-    }
-  }
+  kStride = 4;
 }

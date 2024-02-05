@@ -232,6 +232,8 @@ class FileStream final {
 using FileStreamUTF8 = FileStream<char>;
 using FileStreamUTF16 = FileStream<wchar_t>;
 
+typedef UInt64 CursorType;
+
 template <typename Encoding, typename Class>
 FileStream<Encoding, Class>::FileStream(const Encoding *path,
                                         const Encoding *restrict_type)

@@ -27,7 +27,7 @@ typedef char CHAR;
 #define kPeMagic 0x00004550
 
 typedef struct ExecHeader final {
-  U32 mMagic;  // PE\0\0 or 0x00004550
+  U8 mMagic[4];  // PE\0\0 or 0x00004550
   U16 mMachine;
   U16 mNumberOfSections;
   U32 mTimeDateStamp;

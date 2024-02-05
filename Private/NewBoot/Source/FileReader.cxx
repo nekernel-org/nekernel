@@ -113,10 +113,6 @@ Void BFileReader::ReadAll() {
       .WriteString(mPath)
       .WriteString(L"\r\n");
 
-  mWriter.WriteString(L"HCoreLdr: ReadAll: FETCH: ")
-      .WriteString(mPath)
-      .WriteString(L"\r\n");
-
   /// Allocate Handover page.
 
   UInt8* blob = (UInt8*)kHandoverStartKernel;
@@ -131,10 +127,5 @@ Void BFileReader::ReadAll() {
 
   if (mFile->Read(mFile, &mSizeFile, mBlob) != kEfiOk) return;
 
-  mSizeFile = KIB(kMaxReadSize);
   mErrorCode = kOperationOkay;
-
-  mWriter.WriteString(L"HCoreLdr: ReadAll: OK: ")
-      .WriteString(mPath)
-      .WriteString(L"\r\n");
 }

@@ -650,10 +650,10 @@ typedef struct EfiFileProtocol {
 
   EfiStatusType(EFI_API *Delete)(struct EfiFileProtocol *This);
 
-  EfiStatusType(EFI_API *Read)(struct EfiFileProtocol *This, UInt32 *BufSize,
+  EfiStatusType(EFI_API *Read)(struct EfiFileProtocol *This, UInt64 *BufSize,
                                VoidPtr BufOut);
 
-  EfiStatusType(EFI_API *Write)(struct EfiFileProtocol *This, UInt32 *BufSize,
+  EfiStatusType(EFI_API *Write)(struct EfiFileProtocol *This, UInt64 *BufSize,
                                 VoidPtr BufOut);
 
   EfiStatusType(EFI_API *GetPosition)(EfiFileProtocol *This, UInt64 *Position);
@@ -680,6 +680,8 @@ typedef struct EfiFileProtocol {
   EfiStatusType(EFI_API *FlushEx)(EfiFileProtocol *This,
                                   struct EfiIOToken *Token);
 } EfiFileProtocol;
+
+typedef UInt64 EfiCursorType;
 
 typedef struct EfiTime {
   UInt16 Year;

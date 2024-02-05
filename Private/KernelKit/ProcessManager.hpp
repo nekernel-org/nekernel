@@ -17,7 +17,7 @@
 #include <NewKit/MutableArray.hpp>
 #include <NewKit/UserHeap.hpp>
 
-#define kMinMicroTime AffinityKind::kStandard
+#define kMinMicroTime AffinityKind::kHartStandard
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +48,7 @@ enum class AffinityKind : Int32 {
   kInvalid = 300,
   kVeryHigh = 250,
   kHigh = 200,
-  kStandard = 150,
+  kHartStandard = 150,
   kLowUsage = 100,
   kVeryLowUsage = 50,
 };

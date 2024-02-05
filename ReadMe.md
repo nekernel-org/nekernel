@@ -1,6 +1,12 @@
 # h-core (codename: SuperTrouper)
 
-## Microkernel and it's components source code.
+## uKernel and components source code.
+
+You need:
+
+- The GCC toolchain (MinGW) for the kernel and bootloader.
+- HintKit for Compilation check.
+- Netwide Assembler to output COFF object code.
 
 Start by cloning the repo:
 
