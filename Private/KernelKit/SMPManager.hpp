@@ -14,6 +14,8 @@
 #include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Ref.hpp>
 
+#include "NewKit/Defines.hpp"
+
 #define kMaxHarts 8
 
 namespace HCore {
@@ -25,6 +27,8 @@ enum ThreadKind {
   kFallback,  // fallback thread, cannot be used by user if not clear or used by
               // kernel.
   kBoot,      // The core we booted from, the mama.
+  kInvalidThread,
+  kThreadCount,
 };
 
 ///
@@ -100,7 +104,9 @@ class SMPManager final {
 
  private:
   Array<HardwareThread, kMaxHarts> m_ThreadList;
-  ThreadID m_CurrentThread;
+  ThreadID m_CurrentThread{0};
+  SizeT m_UsedThreads{0};
+  SizeT m_MaxThreads{0};
 };
 
 // @brief wakes up thread.

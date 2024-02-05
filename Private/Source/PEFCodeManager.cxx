@@ -43,7 +43,7 @@ PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(nullptr) {
 PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
   OwnPtr<FileStream<char>> file;
 
-  file.New(const_cast<Char *>(path));
+  file.New(const_cast<Char *>(path), kRestrictRB);
 
   if (StringBuilder::Equals(file->MIME(), this->MIME())) {
     fPath = StringBuilder::Construct(path).Leak();

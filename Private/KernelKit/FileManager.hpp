@@ -162,7 +162,7 @@ class NewFilesystemManager final : public IFilesystemManager {
 template <typename Encoding = char, typename FSClass = IFilesystemManager>
 class FileStream final {
  public:
-  explicit FileStream(const Encoding *path);
+  explicit FileStream(const Encoding *path, const Encoding *restrict_type);
   ~FileStream();
 
  public:
@@ -224,12 +224,18 @@ class FileStream final {
   const Char *fMime{"application-type/*"};
 };
 
+#define kRestrictRW "r+"
+#define kRestrictRWB "r+b"
+#define kRestrictR "r"
+#define kRestrictRB "rb"
+
 using FileStreamUTF8 = FileStream<char>;
 using FileStreamUTF16 = FileStream<wchar_t>;
 
 template <typename Encoding, typename Class>
-FileStream<Encoding, Class>::FileStream(const Encoding *path)
-    : fFile(Class::GetMounted()->Open(path, "r+")) {}
+FileStream<Encoding, Class>::FileStream(const Encoding *path,
+                                        const Encoding *restrict_type)
+    : fFile(Class::GetMounted()->Open(path, restrict_type)) {}
 
 template <typename Encoding, typename Class>
 FileStream<Encoding, Class>::~FileStream() = default;

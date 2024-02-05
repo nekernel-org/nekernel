@@ -128,6 +128,17 @@ bool SMPManager::Switch(HAL::StackFrame* stack) {
  * @return the reference to the hardware thread.
  */
 Ref<HardwareThread> SMPManager::operator[](const SizeT& idx) {
+  if (idx == 0) {
+    if (m_ThreadList[idx].Leak().Leak().Kind() != kSystemReserved) {
+      m_ThreadList[idx].Leak().Leak().m_Kind = kBoot;
+    }
+  } else if (idx >= kMaxHarts) {
+    HardwareThread fakeThread;
+    fakeThread.m_Kind = kInvalidThread;
+
+    return {fakeThread};
+  }
+
   return m_ThreadList[idx].Leak();
 }
 

@@ -241,6 +241,9 @@ bool ProcessHelper::CanBeScheduled(Ref<Process> &process) {
   return process.Leak().PTime > static_cast<Int>(kMinMicroTime);
 }
 
+/**
+ * @brief Scheduler spin code.
+ */
 bool ProcessHelper::StartScheduling() {
   if (ProcessHelper::CanBeScheduled(
           ProcessManager::Shared().Leak().GetCurrent())) {
@@ -256,7 +259,7 @@ bool ProcessHelper::StartScheduling() {
   SizeT ret = process_ref.Run();
 
   kcout << StringBuilder::FromInt(
-      "ProcessHelper::StartScheduling() iterated over: % processes\r\n", ret);
+      "ProcessHelper::StartScheduling() Iterated over: % processes.\r\n", ret);
 
   return true;
 }
@@ -265,6 +268,9 @@ bool ProcessHelper::Switch(HAL::StackFrame *the_stack, const PID &new_pid) {
   if (!the_stack || new_pid < 0) return false;
 
   for (SizeT index = 0UL; index < kMaxHarts; ++index) {
+    if (SMPManager::Shared().Leak()[index].Leak().Kind() == kInvalidThread)
+      continue;
+
     if (SMPManager::Shared().Leak()[index].Leak().StackFrame() == the_stack) {
       SMPManager::Shared().Leak()[index].Leak().Busy(false);
       continue;
