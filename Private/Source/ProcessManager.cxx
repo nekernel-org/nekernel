@@ -133,8 +133,9 @@ void Process::Exit(Int32 exit_code) {
 
   if (this->Ring != (Int32)ProcessSelector::kRingDriver &&
       this->Ring != (Int32)ProcessSelector::kRingKernel) {
-    ke_free_heap(this->Pool);
+    if (this->Pool) ke_free_heap(this->Pool);
 
+    this->Pool = nullptr;
     this->PoolCursor = nullptr;
 
     this->FreeMemory = kPoolMaxSz;
@@ -143,8 +144,10 @@ void Process::Exit(Int32 exit_code) {
 
   //! Delete image if not done already.
   if (this->Image) ke_delete_ke_heap(this->Image);
-
   if (this->StackFrame) ke_delete_ke_heap((VoidPtr)this->StackFrame);
+
+  this->Image = nullptr;
+  this->StackFrame = nullptr;
 
   ProcessManager::Shared().Leak().Remove(this->ProcessId);
 }

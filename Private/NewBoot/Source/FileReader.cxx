@@ -110,21 +110,6 @@ Void BFileReader::ReadAll(EfiHandlePtr ImageHandle) {
 
   /// File FAT info.
 
-  UInt32 szInfo = sizeof(EfiFileInfo);
-  EfiFileInfo* info = nullptr;
-
-  BS->AllocatePool(EfiLoaderData, szInfo, (void**)&info);
-
-  guidEfp = EfiGUID(EFI_FILE_INFO_GUID);
-
-  if (kernelFile->GetInfo(kernelFile, &guidEfp, &szInfo, info) != kEfiOk) {
-    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Path: ")
-        .WriteString(mPath)
-        .WriteString(L"\r\n");
-    this->mErrorCode = kNotSupported;
-    return;
-  }
-
   /// Allocate Handover page.
 
   VoidPtr blob = (VoidPtr)kHandoverStartKernel;
@@ -134,12 +119,16 @@ Void BFileReader::ReadAll(EfiHandlePtr ImageHandle) {
     EFI::RaiseHardError(L"HCoreLdr_PageError", L"Allocation error.");
   }
 
-  mSizeFile = info->FileSize;
+  mSizeFile = KIB(kMaxReadSize);
   mFile = kernelFile;
   mErrorCode = kOperationOkay;
   mBlob = blob;
 
-  this->File()->Read(this->File(), &mSizeFile, this->Blob());
+  mWriter.WriteString(L"HCoreLdr: ReadAll: FETCH: ")
+      .WriteString(mPath)
+      .WriteString(L"\r\n");
+
+  mFile->Read(mFile, &mSizeFile, mBlob);
 
   mWriter.WriteString(L"HCoreLdr: ReadAll: OK: ")
       .WriteString(mPath)

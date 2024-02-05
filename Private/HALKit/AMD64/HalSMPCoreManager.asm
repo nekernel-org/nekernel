@@ -15,7 +15,7 @@ section .text
 
 rt_do_context_switch:
 	mov rcx, r15
-	
+
 	mov [r15+0], rax
 	mov [r15+8], rbx
 	mov [r15+16], rcx
@@ -32,4 +32,7 @@ rt_do_context_switch:
 	mov [r15+104], r13
 	mov [r15+112], r14
 	mov [r15+120], r15
+
+	;; Set APIC address of current core.
+
 	ret
