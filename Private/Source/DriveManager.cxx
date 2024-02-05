@@ -25,11 +25,15 @@ DriveTraits &DriveSelector::GetMounted() {
 }
 
 bool DriveSelector::Mount(DriveTraits *drive) {
-  if (drive && drive->fReady() && fDrive == nullptr) {
+  if (drive && drive->fReady()) {
+    if (fDrive != nullptr) {
+      this->Unmount();
+    }
+
     fDrive = drive;
     fDrive->fMount();
 
-    kcout << "Mount drive: " << fDrive->fName << "\n";
+    kcout << "[Krnl] mounted: " << fDrive->fName << "\n";
 
     return true;
   }
@@ -40,12 +44,12 @@ bool DriveSelector::Mount(DriveTraits *drive) {
 DriveTraits *DriveSelector::Unmount() {
   if (!fDrive) return nullptr;
 
-  auto drivePointer = fDrive;
+  DriveTraits *drivePointer = fDrive;
 
   fDrive->fUnmount();
   fDrive = nullptr;
 
-  kcout << "Unmount drive: " << drivePointer->fName << "\n";
+  kcout << "[Krnl] unmounted: " << fDrive->fName << "\n";
 
   return drivePointer;
 }

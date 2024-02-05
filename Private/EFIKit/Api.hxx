@@ -48,8 +48,12 @@ inline void RaiseHardError(const EfiCharType *ErrorCode,
 
   ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
   ST->ConOut->OutputString(ST->ConOut, ErrorCode);
+
+#ifdef __DEBUG__
   ST->ConOut->OutputString(ST->ConOut, L", Reason: ");
   ST->ConOut->OutputString(ST->ConOut, Reason);
+#endif  // ifdef __DEBUG__
+
   ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
 
   EFI::Stop();

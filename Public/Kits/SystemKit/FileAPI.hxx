@@ -32,7 +32,8 @@ class HFile final {
   void Rewind();
 
  public:
-  void SetMIME(const char *mime);
+  const char *MIME();
+  void MIME(const char *mime);
 };
 
 typedef HFile *HFilePtr;

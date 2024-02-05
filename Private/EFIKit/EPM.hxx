@@ -8,7 +8,7 @@
  */
 
 /**
-    @brief The Explicit Partition Map use is to tell how many NewFS and other
+    @brief The Explicit Partition Map is used to tell how many NewFS and other
     EPM compatible Filesystems. We have in this computer.
 */
 

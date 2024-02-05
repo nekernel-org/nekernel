@@ -24,3 +24,8 @@
 
 #define STDCALL __attribute__((stdcall))
 #define CDECL __attribute__((cdecl))
+#define MSCALL __attribute__((ms_abi))
+
+typedef __UINT16_TYPE__ WORD;
+typedef __UINT32_TYPE__ DWORD;
+typedef __UINT64_TYPE__ QWORD;

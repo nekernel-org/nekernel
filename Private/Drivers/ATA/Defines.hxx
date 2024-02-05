@@ -86,6 +86,8 @@ using namespace HCore;
 #define ATA_REG_ALT_STATUS 0x0C
 #define ATA_REG_DEV_ADDRESS 0x0D
 
+#define ATA_REG_NEIN 0x01
+
 #define ATA_PRIMARY_IO 0x1F0
 #define ATA_SECONDARY_IO 0x170
 #define ATA_PRIMARY_DCR_AS 0x3F6

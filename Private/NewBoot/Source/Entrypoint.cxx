@@ -21,18 +21,19 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BTextWriter writer;
 
-  writer.WriteString(L"HCoreLdr: ")
-      .WriteString(L"Copyright Mahrouss-Logic Corporation.")
-      .WriteString(L"\r\n");
-
-  writer.WriteString(L"HCoreLdr: Firmware: ")
+  writer.WriteString(L"HCoreLdr: Firmware Vendor: ")
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
 
   BFileReader img(L"HCOREKRNL.EXE");
-  img.Fetch(ImageHandle);
+  img.ReadAll(ImageHandle);
 
   VoidPtr blob = img.Blob();
+
+  if (!blob) {
+    EFI::RaiseHardError(L"HCoreLdr_NoBlob", L"No Such blob.");
+    return kEfiFail;
+  }
 
   UInt64 MapKey = 0;
 

@@ -9,7 +9,7 @@ CCFLAGS		= -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__USE_NEWFS_
 ASM			= nasm
 ASMFLAGS	= -f win64
 LDFLAGS		= -e Main -shared --subsystem=10
-LDOBJ		= Obj/*.obj
+LDOBJ		= $(wildcard Obj/*.obj)
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
 KERNEL		= HCoreKrnl.exe

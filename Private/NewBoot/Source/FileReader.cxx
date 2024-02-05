@@ -17,8 +17,7 @@
 #include <EFIKit/Handover.hxx>
 
 #include "EFIKit/EFI.hxx"
-#include "KernelKit/PE.hpp"
-#include "NewKit/Defines.hpp"
+#include "NewKit/Macros.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -46,14 +45,21 @@ BFileReader::~BFileReader() {
   if (this->mBlob) {
     BS->FreePool(this->mBlob);
   }
+
+  if (this->mFile) {
+    this->mFile->Close(this->mFile);
+    this->mFile = nullptr;
+  }
+
+  BSetMem(this->mPath, 0, kPathLen);
 }
 
 /**
     @brief this reads all of the buffer.
     @param ImageHandle used internally.
 */
-Void BFileReader::Fetch(EfiHandlePtr ImageHandle) {
-  mWriter.WriteString(L"HCoreLdr: Fetch-File: ")
+Void BFileReader::ReadAll(EfiHandlePtr ImageHandle) {
+  mWriter.WriteString(L"HCoreLdr: ReadAll: ")
       .WriteString(mPath)
       .WriteString(L"\r\n");
 
@@ -102,13 +108,6 @@ Void BFileReader::Fetch(EfiHandlePtr ImageHandle) {
 
   rootFs->Close(rootFs);
 
-  if (kernelFile->Revision < EFI_FILE_PROTOCOL_REVISION2) {
-    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: Invalid-Revision: ")
-        .WriteString(mPath)
-        .WriteString(L"\r\n");
-    return;
-  }
-
   /// File FAT info.
 
   UInt32 szInfo = sizeof(EfiFileInfo);
@@ -126,8 +125,7 @@ Void BFileReader::Fetch(EfiHandlePtr ImageHandle) {
     return;
   }
 
-  mWriter.WriteString(L"HCoreLdr: Fetch-Info: In-Progress...")
-      .WriteString(L"\r\n");
+  /// Allocate Handover page.
 
   VoidPtr blob = (VoidPtr)kHandoverStartKernel;
 
@@ -136,21 +134,14 @@ Void BFileReader::Fetch(EfiHandlePtr ImageHandle) {
     EFI::RaiseHardError(L"HCoreLdr_PageError", L"Allocation error.");
   }
 
-  UInt32* sz = nullptr;
-
-  BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&sz);
-
-  *sz = info->FileSize;
-
-  mWriter.WriteString(L"HCoreLdr: Fetch-Info: Read...").WriteString(L"\r\n");
-
-  kernelFile->Read(kernelFile, sz, blob);
-
-  mWriter.WriteString(L"HCoreLdr: Fetch-Info: Success...").WriteString(L"\r\n");
-
-  mCached = true;
+  mSizeFile = info->FileSize;
+  mFile = kernelFile;
   mErrorCode = kOperationOkay;
   mBlob = blob;
 
-  // We are done!
+  this->File()->Read(this->File(), &mSizeFile, this->Blob());
+
+  mWriter.WriteString(L"HCoreLdr: ReadAll: OK: ")
+      .WriteString(mPath)
+      .WriteString(L"\r\n");
 }

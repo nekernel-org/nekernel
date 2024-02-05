@@ -57,14 +57,16 @@ Void ATASelect(UInt16 Bus) {
 
 Boolean ATAInitDriver(UInt16 Bus, UInt8 Drive, UInt16& OutBus,
                       UInt8& OutMaster) {
+  if (IsATADetected()) return false;
+
   BTextWriter writer;
 
   UInt16 IO = Bus;
 
-  // Bus init, NEIN bit.
-  Out8(IO + 1, 1);
-
   ATASelect(IO);
+
+  // Bus init, NEIN bit.
+  Out8(IO + ATA_REG_NEIN, 1);
 
   // identify until it's good.
 ATAInit_Retry:
@@ -72,24 +74,28 @@ ATAInit_Retry:
 
   if (statRdy & ATA_SR_ERR) {
     writer.WriteString(
-        L"HCoreLdr: ATA: Hard-drive error, not an IDE drive.\r\n");
+        L"HCoreLdr: ATA: Select error, not an IDE based hard-drive.\r\n");
+
     return false;
   }
+
   if ((statRdy & ATA_SR_BSY)) goto ATAInit_Retry;
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
+
+  BSetMem(kATAData, 0, kATADataLen);
 
   for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
     kATAData[indexData] = In16(IO + ATA_REG_DATA);
   }
 
-  writer.WriteString(L"HCoreLdr: Drive: ");
+  writer.WriteString(L"HCoreLdr: Model: ");
 
   /// fetch drive info
 
   for (SizeT indexData = 0; indexData < kATADataLen; indexData += 1) {
-    writer.WriteCharacter(kATAData[indexData + 1])
-        .WriteCharacter(kATAData[indexData]);
+    writer.WriteCharacter(kATAData[indexData + ATA_IDENT_MODEL + 1])
+        .WriteCharacter(kATAData[indexData + ATA_IDENT_MODEL]);
   }
 
   writer.WriteString(L"\r\n");

@@ -64,7 +64,7 @@ class BFileReader final {
   explicit BFileReader(const CharacterType *path);
   ~BFileReader();
 
-  Void Fetch(EfiHandlePtr ImageHandle);
+  Void ReadAll(EfiHandlePtr ImageHandle);
 
   enum {
     kOperationOkay,
@@ -77,6 +77,8 @@ class BFileReader final {
 
   Int32 &Error() { return mErrorCode; }
   VoidPtr Blob() { return mBlob; }
+  EfiFileProtocol *File() { return mFile; }
+  UInt32 &Size() { return mSizeFile; }
 
  public:
   BFileReader &operator=(const BFileReader &) = default;
@@ -87,7 +89,8 @@ class BFileReader final {
   VoidPtr mBlob{nullptr};
   CharacterType mPath[kPathLen];
   BTextWriter mWriter;
-  bool mCached{false};
+  EfiFileProtocol *mFile{nullptr};
+  UInt32 mSizeFile{0};
 };
 
 /***********************************************************************************/
@@ -172,7 +175,7 @@ inline Void InitQT() noexcept {
     for (int y = 0; y < kGop->Mode->Info->HorizontalResolution; ++y) {
       *((UInt32 *)(kGop->Mode->FrameBufferBase +
                    4 * kGop->Mode->Info->PixelsPerScanLine * x + kStride * y)) =
-          RGB(10, 10, 10);
+          RGB(19, 19, 19);
     }
   }
 }

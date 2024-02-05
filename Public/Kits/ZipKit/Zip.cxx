@@ -29,7 +29,7 @@ HFilePtr ZipStream::FlushToFile(const char *name) {
 
   this->fSharedSz = HHeap::Shared()->Size(this->fSharedData);
 
-  fp->SetMIME("application/x-bzip");
+  fp->MIME("application/x-bzip");
   fp->Write(this->fSharedData, this->fSharedSz);
 
   return fp;

@@ -14,6 +14,7 @@
 namespace HCore {
 typedef Int32 HError;
 
+inline constexpr HError kErrorSuccess = 0;
 inline constexpr HError kErrorExecutable = 33;
 inline constexpr HError kErrorExecutableLib = 34;
 inline constexpr HError kErrorFileNotFound = 35;
@@ -27,3 +28,6 @@ inline constexpr HError kErrorMath = 42;
 inline constexpr HError kErrorNoNetwork = 43;
 inline constexpr HError kErrorHeapOutOfMemory = 44;
 }  // namespace HCore
+
+#define KernIsOk(HERR) (HERR == HCore::kErrorSuccess)
+#define KernHasFailed(HERR) (HERR != HCore::kErrorSuccess)
