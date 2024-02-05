@@ -13,8 +13,6 @@
 #include <KernelKit/DriveManager.hpp>
 #include <NewKit/Defines.hpp>
 
-#include "KernelKit/FileManager.hpp"
-
 /**
     @brief NewFS or HCFS
     HCore FileSystem.
@@ -24,8 +22,8 @@
 #define kInvalidCatalog -1
 #define kNameLen 256
 
-#define kNewFSIdentLen 4
-#define kNewFSIdent "HCFS"
+#define kNewFSIdentLen 6
+#define kNewFSIdent "  HCFS"
 #define kPadLen 16
 
 #define kNewFSVersion 1
@@ -173,20 +171,22 @@ class NewFSImplementation {
 
   virtual NewFork* ForkFrom(NewCatalog& catalog, const Int64& id) = 0;
 
-  virtual NewCatalog* RootCatalog(void) = 0;
-  virtual NewCatalog* NextCatalog(NewCatalog& cur) = 0;
-  virtual NewCatalog* PrevCatalog(NewCatalog& cur) = 0;
+  virtual NewCatalog* RootCatalog() = 0;
+  virtual NewCatalog* NextCatalog(_Input _Output NewCatalog& cur) = 0;
+  virtual NewCatalog* PrevCatalog(_Input _Output NewCatalog& cur) = 0;
 
-  virtual NewCatalog* GetCatalog(const char* name) = 0;
+  virtual NewCatalog* GetCatalog(_Input const char* name) = 0;
 
-  virtual NewCatalog* CreateCatalog(const char* name, const Int32& flags,
-                                    const Int32& kind) = 0;
-  virtual NewCatalog* CreateCatalog(const char* name) = 0;
+  virtual NewCatalog* CreateCatalog(_Input const char* name,
+                                    _Input const Int32& flags,
+                                    _Input const Int32& kind) = 0;
+  virtual NewCatalog* CreateCatalog(_Input const char* name) = 0;
 
-  virtual bool WriteCatalog(NewCatalog& catalog, voidPtr data) = 0;
-  virtual bool RemoveCatalog(NewCatalog& catalog) = 0;
+  virtual bool WriteCatalog(_Input _Output NewCatalog& catalog,
+                            voidPtr data) = 0;
+  virtual bool RemoveCatalog(_Input NewCatalog& catalog) = 0;
 
-  virtual bool Format(DriveTraits& drive) = 0;
+  virtual bool Format(_Input _Output DriveTraits& drive) = 0;
 };
 
 ///

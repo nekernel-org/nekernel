@@ -5,11 +5,11 @@
 
 .section .text
 rt_load_gdt:
-    lgdt (%rdi)
+    lgdt (%rcx)
     ret
 
 rt_load_idt:
-    lidt (%rdi)
+    lidt (%rcx)
     sti
     ret
 

@@ -12,7 +12,7 @@
 [global rt_install_tib]
 
 rt_install_tib:
-	mov rsi, gs
+	mov rcx, gs
 	ret
 
 ;; //////////////////////////////////////////////////// ;;
