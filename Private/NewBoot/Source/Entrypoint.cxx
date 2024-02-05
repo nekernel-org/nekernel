@@ -37,7 +37,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     return kEfiFail;
   }
 
-  writer.WriteString(L"MZ header found... Loading HCOREKRNL.EXE...\r\n");
+  writer.WriteString(L"HCoreLdr: Loading HCOREKRNL.EXE...\r\n");
 
   UInt64 MapKey = 0;
 

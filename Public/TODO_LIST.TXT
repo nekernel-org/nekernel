@@ -5,7 +5,7 @@
     - Implement Boot Services [ X ]
     - Design Handover [ X ]
     - Load kernel into memory [ X ]
-    - Fix bug in kernel loader, which causes a 06 #UD.
+    - Fix bug in kernel loader, which causes a 06 #UD. [ X ]
     - Jump to kernel [ ]
 - Context switch x87/SSE/AVX registers [ ]
 - Framebuffer and ATA support [ ]
