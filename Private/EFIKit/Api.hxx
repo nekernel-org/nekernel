@@ -11,6 +11,8 @@
 #define __EFI_API__
 
 #include <EFIKit/EFI.hxx>
+#include <KernelKit/MSDOS.hpp>
+#include <KernelKit/PE.hpp>
 
 inline EfiSystemTable *ST = nullptr;
 inline EfiBootServices *BS = nullptr;
@@ -28,7 +30,7 @@ Bascially frees everything we have in the EFI side.
 inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
   if (!ST) return;
 
-  ST->ConOut->OutputString(ST->ConOut, L"EFI: Exit BootServices...\r\n");
+  ST->ConOut->OutputString(ST->ConOut, L"HCoreLdr: Exit BootServices...\r\n");
   ST->BootServices->ExitBootServices(ImageHandle, MapKey);
 }
 
@@ -38,6 +40,8 @@ enum {
   kPartMBR,
   kPartCnt,
 };
+
+inline UInt32 Platform() noexcept { return kPEMachineAMD64; }
 
 /***
  * @brief Raise Hard kernel error.

@@ -27,7 +27,7 @@ typedef char CHAR;
 #define kPeMagic 0x00004550
 
 typedef struct ExecHeader final {
-  U8 mMagic[4];  // PE\0\0 or 0x00004550
+  U32 mMagic;  // PE\0\0 or 0x00004550
   U16 mMachine;
   U16 mNumberOfSections;
   U32 mTimeDateStamp;
@@ -35,10 +35,13 @@ typedef struct ExecHeader final {
   U32 mNumberOfSymbols;
   U16 mSizeOfOptionalHeader;
   U16 mCharacteristics;
-} PACKED ExecHeader, *ExecHeaderPtr;
+} ALIGN(8) ExecHeader, *ExecHeaderPtr;
 
 #define kMagPE32 0x010b
 #define kMagPE64 0x020b
+
+#define kPEMachineAMD64 0x8664
+#define kPEMachineARM64 0xaa64
 
 typedef struct ExecOptionalHeader final {
   U16 mMagic;  // 0x010b - PE32, 0x020b - PE32+ (64 bit)
@@ -71,7 +74,7 @@ typedef struct ExecOptionalHeader final {
   U32 mSizeOfHeapCommit;
   U32 mLoaderFlags;
   U32 mNumberOfRvaAndSizes;
-} PACKED ExecOptionalHeader, *ExecOptionalHeaderPtr;
+} ExecOptionalHeader, *ExecOptionalHeaderPtr;
 
 typedef struct ExecSectionHeader final {
   CHAR mName[8];
@@ -84,7 +87,7 @@ typedef struct ExecSectionHeader final {
   U16 mNumberOfRelocations;
   U16 mNumberOfLinenumbers;
   U32 mCharacteristics;
-} PACKED ExecSectionHeader, *ExecSectionHeaderPtr;
+} ExecSectionHeader, *ExecSectionHeaderPtr;
 
 enum kExecDataDirParams {
   kExecExport,
@@ -104,7 +107,7 @@ typedef struct ExecExportDirectory {
   U32 mAddressOfFunctions;  // export table rva
   U32 mAddressOfNames;
   U32 mAddressOfNameOrdinal;  // ordinal table rva
-} PACKED ExecExportDirectory, *ExecExportDirectoryPtr;
+} ExecExportDirectory, *ExecExportDirectoryPtr;
 
 typedef struct ExecImportDirectory {
   union {
@@ -115,6 +118,6 @@ typedef struct ExecImportDirectory {
   U32 mForwarderChain;
   U32 mNameRva;
   U32 mThunkTableRva;
-} PACKED ExecImportDirectory, *ExecImportDirectoryPtr;
+} ExecImportDirectory, *ExecImportDirectoryPtr;
 
 #endif /* ifndef __PE__ */

@@ -7,7 +7,7 @@
  * 	========================================================
  */
 
-//! @brief HCore NewFS Indexer.
+//! @brief Filesystem Indexer.
 
 #include <CompilerKit/CompilerKit.hpp>
 #include <FSKit/IndexableProperty.hxx>

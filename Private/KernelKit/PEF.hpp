@@ -63,7 +63,7 @@ typedef struct PEFContainer final {
   UIntPtr Start;
   SizeT HdrSz; /* Size of header */
   SizeT Count; /* container header count */
-} __attribute__((packed)) PEFContainer;
+} PACKED PEFContainer;
 
 /* First PEFCommandHeader starts after PEFContainer */
 /* Last container is __exec_end */
@@ -76,7 +76,7 @@ typedef struct PEFCommandHeader final {
   UInt16 Kind;            /* container kind */
   UIntPtr Offset;         /* content offset */
   SizeT Size;             /* content Size */
-} __attribute__((packed)) PEFCommandHeader;
+} PACKED PEFCommandHeader;
 
 enum {
   kPefCode = 0xC,

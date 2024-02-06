@@ -92,10 +92,6 @@ BFileReader::BFileReader(const CharacterType* path, EfiHandlePtr ImageHandle) {
 }
 
 BFileReader::~BFileReader() {
-  if (this->mBlob) {
-    BS->FreePool(this->mBlob);
-  }
-
   if (this->mFile) {
     this->mFile->Close(this->mFile);
     this->mFile = nullptr;
@@ -115,17 +111,21 @@ Void BFileReader::ReadAll() {
 
   /// Allocate Handover page.
 
-  UInt8* blob = (UInt8*)kHandoverStartKernel;
+  if (mBlob == nullptr) {
+    UInt8* blob = (UInt8*)kHandoverStartKernel;
 
-  if (BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1,
-                        (EfiPhysicalAddress*)&blob) != kEfiOk) {
-    EFI::RaiseHardError(L"HCoreLdr_PageError", L"Allocation error.");
+    if (BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1,
+                          (EfiPhysicalAddress*)&blob) != kEfiOk) {
+      EFI::RaiseHardError(L"HCoreLdr_PageError", L"Allocation error.");
+    }
+
+    mBlob = blob;
   }
 
-  mBlob = blob;
-  mSizeFile = KIB(kMaxReadSize);
+  mErrorCode = kNotSupported;
 
-  if (mFile->Read(mFile, &mSizeFile, mBlob) != kEfiOk) return;
+  if (mFile->Read(mFile, &mSizeFile, (VoidPtr)((UIntPtr)mBlob)) != kEfiOk)
+    return;
 
   mErrorCode = kOperationOkay;
 }

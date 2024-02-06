@@ -100,12 +100,16 @@ enum class ProcessSelector : Int {
 using ImagePtr = VoidPtr;
 using HeapPtr = VoidPtr;
 
-// @brief Process header structure.
+// @name Process
+// @brief Process Information Header (PIH)
+// Holds information about the running process.
+// Thread execution is being abstracted away.
 class Process final {
  public:
   explicit Process(VoidPtr startImage = nullptr) : Image(startImage) {
     MUST_PASS(startImage);
   }
+
   ~Process() = default;
 
   HCORE_COPY_DEFAULT(Process)

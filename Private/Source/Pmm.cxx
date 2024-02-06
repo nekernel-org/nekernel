@@ -23,8 +23,6 @@ Ref<PTEWrapper *> Pmm::RequestPage(Boolean user, Boolean readWrite) {
     PTEWrapper *pt = m_PageManager.Leak().Request(user, readWrite, true);
 
     if (pt) return Ref<PTEWrapper *>(pt);
-
-    return {};
   }
 
   kcout << "[Pmm::RequestPage] Ref<PTEWrapper*> could not be created! "

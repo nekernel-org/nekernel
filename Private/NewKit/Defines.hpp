@@ -57,6 +57,9 @@ using IntFast = __INT_FAST32_TYPE__;
 using IntFast64 = __INT_FAST64_TYPE__;
 using PtrDiff = __PTRDIFF_TYPE__;
 
+typedef UIntPtr *Ptr64;
+typedef UInt32 *Ptr32;
+
 using Utf8Char = char8_t;
 using Utf16Char = char16_t;
 using WideChar = wchar_t;

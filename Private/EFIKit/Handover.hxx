@@ -53,15 +53,15 @@ enum {
 @brief The first struct that we read when inspecting The executable
 it tells us more about it and IS format independent.
 */
-struct __attribute__((packed)) HandoverHeader final {
+typedef struct HandoverHeader final {
   UInt64 f_TargetMagic;
   Int32 f_TargetType;
   Int32 f_TargetArch;
   UIntPtr f_TargetStartAddress;
-};
+} __attribute__((packed)) HandoverHeader, *HandoverHeaderPtr;
 
 struct HandoverInformationHeader {
-  HandoverHeader* f_Header;
+  HandoverHeaderPtr f_Header;
   voidPtr f_VirtualStart;
   SizeT f_VirtualSize;
   voidPtr f_PhysicalStart;

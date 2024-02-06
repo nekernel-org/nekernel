@@ -20,7 +20,7 @@ typedef HCore::UInt32 DosWord;
 typedef HCore::Long DosLong;
 
 typedef struct _DosHeader {
-  DosWord eMagic;
+  HCore::UInt8 eMagic[2];
   DosWord eMagLen;
   DosWord ePagesCount;
   DosWord eCrlc;

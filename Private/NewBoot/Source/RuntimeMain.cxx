@@ -15,6 +15,16 @@
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
 
+namespace Detail {
+constexpr Int32 kReadSz = 2048;
+
+auto FindPEHeader(DosHeaderPtr ptrDos) -> ExecHeaderPtr {
+  if (!ptrDos) return nullptr;
+
+  return (ExecHeaderPtr)(&ptrDos->eLfanew + 1);
+}
+}  // namespace Detail
+
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
   InitEFI(SystemTable);
@@ -39,21 +49,33 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .WriteString(L"\r\n");
 
   BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
+
+  img.Size() = Detail::kReadSz;
   img.ReadAll();
 
   if (img.Error() == BFileReader::kOperationOkay) {
-    VoidPtr blob = img.Blob();
+    UInt8* blob = (UInt8*)img.Blob();
 
-    UInt64 MapKey = 0;
+    DosHeaderPtr ptrDos = reinterpret_cast<DosHeaderPtr>(blob);
+    ExecHeaderPtr ptrHdr = Detail::FindPEHeader(ptrDos);
 
-    EFI::ExitBootServices(MapKey, ImageHandle);
-    EFI::Stop();
+    if (ptrDos->eMagic[0] == kMagMz0 && ptrDos->eMagic[1] == kMagMz1 &&
+        ptrHdr->mMachine == EFI::Platform() && ptrHdr->mMagic == kPeMagic) {
+      UInt64 MapKey = 0;
 
-    return kEfiOk;
+      writer.WriteString(L"HCoreLdr: Booting...").WriteString(L"\r\n");
+
+      EFI::ExitBootServices(MapKey, ImageHandle);
+
+      // Launch PE app.
+
+      EFI::Stop();
+
+      return kEfiOk;
+    }
   }
 
-  writer.WriteString(
-      L"HCoreLdr: Missing HCOREKRNL.EXE! Your system is damaged.\r\n");
+  writer.WriteString(L"HCoreLdr: Error! HCOREKRNL.EXE missing or invalid!\r\n");
 
   EFI::Stop();
 
