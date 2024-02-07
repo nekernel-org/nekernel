@@ -16,7 +16,7 @@
 #include <NewKit/Ref.hpp>
 
 namespace Detail {
-constexpr Int32 kReadSz = 2048;
+constexpr Int32 kBufferReadSz = 2048;
 
 auto FindPEHeader(DosHeaderPtr ptrDos) -> ExecHeaderPtr {
   if (!ptrDos) return nullptr;
@@ -50,7 +50,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
 
-  img.Size() = Detail::kReadSz;
+  img.Size() = Detail::kBufferReadSz;
   img.ReadAll();
 
   if (img.Error() == BFileReader::kOperationOkay) {
@@ -64,8 +64,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       if (ptrHdr->mNumberOfSections > 1) {
         UInt64 MapKey = 0;
 
-        writer.WriteString(L"HCoreLdr: Booting...").WriteString(L"\r\n");
-
         EFI::ExitBootServices(MapKey, ImageHandle);
 
         // Launch PE app.
@@ -74,14 +72,11 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         return kEfiOk;
       } else {
-        writer.WriteString(
-            L"HCoreLdr: Error! HCOREKRNL.EXE is missing critical "
-            L"components!\r\n");
+        writer.WriteString(L"HCoreLdr: Error-Code: HLDR-0001\r\n");
       }
     }
   } else {
-    writer.WriteString(
-        L"HCoreLdr: Error! HCOREKRNL.EXE is not an executable!\r\n");
+    writer.WriteString(L"HCoreLdr: Error-Code: HLDR-0002\r\n");
   }
 
   EFI::Stop();

@@ -11,6 +11,7 @@
 #include <NewKit/ErrorID.hpp>
 #include <NewKit/Utils.hpp>
 
+/// BUGS: 0
 //! @brief File manager for HCore.
 
 namespace HCore {

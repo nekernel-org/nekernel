@@ -24,12 +24,8 @@ bootloader-amd64:
 	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	cp ../../HCoreKrnl.exe CDROM/HCOREKRNL.EXE
 
-.PHONY: make-disk
-make-disk:
-	qemu-img create -f qcow2 os.epm 1M
-
-.PHONY: run-efi-debug
-run-efi-debug:
+.PHONY: run-efi-amd64
+run-efi-amd64:
 	wget https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 	qemu-system-x86_64 -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=os.epm,index=0,if=ide,format=qcow2 -drive file=fat:rw:CDROM,index=1,format=raw -serial stdio
 

@@ -11,4 +11,6 @@
 #include <EFIKit/Api.hxx>
 #include <EFIKit/EFI.hxx>
 
+/// BUGS: 0
+
 /// @brief EFI API

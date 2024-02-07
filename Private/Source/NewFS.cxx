@@ -11,6 +11,8 @@
 
 #ifdef __USE_NEWFS__
 
+/// BUGS: 0
+
 namespace HCore {
 NewFilesystemManager::NewFilesystemManager() = default;
 

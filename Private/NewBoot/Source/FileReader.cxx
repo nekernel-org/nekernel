@@ -16,9 +16,7 @@
 #include <EFIKit/Api.hxx>
 #include <EFIKit/Handover.hxx>
 
-#include "EFIKit/EFI.hxx"
-#include "NewKit/Defines.hpp"
-#include "NewKit/Macros.hpp"
+/// BUGS: 0
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //

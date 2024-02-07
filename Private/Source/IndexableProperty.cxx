@@ -14,6 +14,8 @@
 #include <NewKit/MutableArray.hpp>
 #include <NewKit/Utils.hpp>
 
+/// BUGS: 0
+
 #define kMaxLenIndexer 256
 
 namespace HCore {
