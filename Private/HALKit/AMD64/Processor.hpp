@@ -1,17 +1,27 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+    File: Prcoessor.hxx
+    Purpose: AMD processor abstraction.
+
+    Revision History:
+
+    30/01/24: Added file (amlel)
+
+------------------------------------------- */
 
 #pragma once
 
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Utils.hpp>
+
+#ifdef kCPUBackendName
+#undef kCPUBackendName
+#endif  // ifdef kCPUBackendName
+
+#define kCPUBackendName "AMD64"
 
 #define IsActiveLow(flag) (flag & 2)
 #define IsLevelTriggered(flag) (flag & 8)
