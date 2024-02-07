@@ -54,28 +54,35 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   img.ReadAll();
 
   if (img.Error() == BFileReader::kOperationOkay) {
-    UInt8* blob = (UInt8*)img.Blob();
+    BlobType blob = (BlobType)img.Blob();
 
     DosHeaderPtr ptrDos = reinterpret_cast<DosHeaderPtr>(blob);
     ExecHeaderPtr ptrHdr = Detail::FindPEHeader(ptrDos);
 
     if (ptrDos->eMagic[0] == kMagMz0 && ptrDos->eMagic[1] == kMagMz1 &&
         ptrHdr->mMachine == EFI::Platform() && ptrHdr->mMagic == kPeMagic) {
-      UInt64 MapKey = 0;
+      if (ptrHdr->mNumberOfSections > 1) {
+        UInt64 MapKey = 0;
 
-      writer.WriteString(L"HCoreLdr: Booting...").WriteString(L"\r\n");
+        writer.WriteString(L"HCoreLdr: Booting...").WriteString(L"\r\n");
 
-      EFI::ExitBootServices(MapKey, ImageHandle);
+        EFI::ExitBootServices(MapKey, ImageHandle);
 
-      // Launch PE app.
+        // Launch PE app.
 
-      EFI::Stop();
+        EFI::Stop();
 
-      return kEfiOk;
+        return kEfiOk;
+      } else {
+        writer.WriteString(
+            L"HCoreLdr: Error! HCOREKRNL.EXE is missing critical "
+            L"components!\r\n");
+      }
     }
+  } else {
+    writer.WriteString(
+        L"HCoreLdr: Error! HCOREKRNL.EXE is not an executable!\r\n");
   }
-
-  writer.WriteString(L"HCoreLdr: Error! HCOREKRNL.EXE missing or invalid!\r\n");
 
   EFI::Stop();
 

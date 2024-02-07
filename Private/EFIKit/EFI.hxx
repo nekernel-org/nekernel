@@ -679,7 +679,7 @@ typedef struct EfiFileProtocol {
                                   struct EfiIOToken *Token);
   EfiStatusType(EFI_API *FlushEx)(EfiFileProtocol *This,
                                   struct EfiIOToken *Token);
-} EfiFileProtocol;
+} EfiFileProtocol, *EfiFileProtocolPtr;
 
 typedef UInt64 EfiCursorType;
 

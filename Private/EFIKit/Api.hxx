@@ -31,7 +31,13 @@ inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
   if (!ST) return;
 
   ST->ConOut->OutputString(ST->ConOut, L"HCoreLdr: Exit BootServices...\r\n");
-  ST->BootServices->ExitBootServices(ImageHandle, MapKey);
+
+  /// The MapKey may be invalid.
+  /// If so, then hang the computer.
+  if (ST->BootServices->ExitBootServices(ImageHandle, MapKey) != kEfiOk) {
+    ST->ConOut->OutputString(ST->ConOut, L"HCoreLdr: Hanging...\r\n");
+    EFI::Stop();
+  }
 }
 
 enum {

@@ -77,7 +77,7 @@ class BFileReader final {
 
   Int32 &Error() { return mErrorCode; }
   VoidPtr Blob() { return mBlob; }
-  EfiFileProtocol *File() { return mFile; }
+  EfiFileProtocolPtr File() { return mFile; }
   UInt64 &Size() { return mSizeFile; }
 
  public:
@@ -92,6 +92,8 @@ class BFileReader final {
   EfiFileProtocol *mFile{nullptr};
   UInt64 mSizeFile{0};
 };
+
+typedef UInt8 *BlobType;
 
 #define kMaxReadSize (320)
 
