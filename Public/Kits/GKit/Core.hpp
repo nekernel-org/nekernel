@@ -8,6 +8,7 @@
     Revision History:
 
     31/01/24: Added file (amlel)
+    08/02/24: Update Form to GForm. (amlel)
 
 ------------------------------------------- */
 
@@ -33,7 +34,7 @@ class GBoolean {
 
   HCore::Boolean m_Value;
 
-  friend class Form;
+  friend class GForm;
 
  public:
   static const GBoolean Construct(HCore::StringView& sw, HCore::Boolean value) {
@@ -51,7 +52,7 @@ class GAction {
   HCore::StringView m_Name;
   void (*m_Action)(T&&... args);
 
-  friend class Form;
+  friend class GForm;
 
  public:
   static const GAction Construct(HCore::StringView& sw,
@@ -68,7 +69,7 @@ class GVector2 {
 
   HCore::Array<HCore::Int, 3> m_Vec2;
 
-  friend class Form;
+  friend class GForm;
 
  public:
   static const GVector2 Construct(HCore::StringView& sw,
@@ -82,7 +83,7 @@ class GVector2 {
 
 class GNumber {
   HCore::Int m_Number{0};
-  friend class Form;
+  friend class GForm;
 
  public:
   static const GNumber Construct(HCore::Int& number) {
@@ -101,7 +102,7 @@ class GString {
 
   HCore::StringView* m_Content;
 
-  friend class Form;
+  friend class GForm;
 
  public:
   static const GString Construct(HCore::StringView& value) {

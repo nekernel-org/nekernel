@@ -9,6 +9,12 @@
 
 #pragma once
 
+/** ---------------------------------------------------
+
+    * THIS FILE CONTAINS CODE FOR X86_64 PAGING.
+
+------------------------------------------------------- */
+
 #include <NewKit/Defines.hpp>
 
 #ifndef PTE_MAX
@@ -23,9 +29,9 @@ extern "C" void flush_tlb(HCore::UIntPtr VirtualAddr);
 extern "C" void write_cr3(HCore::UIntPtr pde);
 extern "C" void write_cr0(HCore::UIntPtr bit);
 
-extern "C" HCore::UIntPtr read_cr0();
-extern "C" HCore::UIntPtr read_cr2();
-extern "C" HCore::UIntPtr read_cr3();
+extern "C" HCore::UIntPtr read_cr0();  // @brief CPU control register.
+extern "C" HCore::UIntPtr read_cr2();  // @brief Fault address.
+extern "C" HCore::UIntPtr read_cr3();  // @brief Page table.
 
 namespace HCore::HAL {
 struct PageTable64 {
@@ -41,6 +47,26 @@ struct PageTable64 {
   bool ExecDisable : 1;
 };
 
+namespace Detail {
+enum class ControlRegisterBits {
+  ProtectedModeEnable = 0,
+  MonitorCoProcessor = 1,
+  Emulation = 2,
+  TaskSwitched = 3,
+  ExtensionType = 4,
+  NumericError = 5,
+  WriteProtect = 16,
+  AlignementMask = 18,
+  NotWriteThrough = 29,
+  CacheDisable = 30,
+  Paging = 31,
+};
+
+inline UInt8 control_register_cast(ControlRegisterBits reg) {
+  return static_cast<UInt8>(reg);
+}
+}  // namespace Detail
+
 struct PageDirectory64 final {
   PageTable64 ALIGN(PTE_ALIGN) Pte[PTE_MAX];
 };
@@ -50,3 +76,8 @@ UIntPtr& hal_page_base() noexcept;
 void hal_page_base(const UIntPtr& newPagePtr) noexcept;
 UIntPtr hal_create_page(Boolean rw, Boolean user);
 }  // namespace HCore::HAL
+
+namespace HCore {
+typedef HAL::PageTable64 PTE;
+typedef HAL::PageDirectory64 PDE;
+}  // namespace HCore

@@ -10,6 +10,10 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageManager.hpp>
 
+#ifdef __x86_64__
+#include <HALKit/AMD64/HalPageAlloc.hpp>
+#endif  // ifdef __x86_64__
+
 //! null deref will throw (Page Zero detected, aborting program!)
 #define kProtectedRegionEnd 512
 
@@ -37,9 +41,7 @@ PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
 
 PTEWrapper::~PTEWrapper() {
   PTE *raw = reinterpret_cast<PTE *>(m_VirtAddr);
-
   MUST_PASS(raw);
-  MUST_PASS(!raw->Accessed);
 
   if (raw->Present) raw->Present = false;
 }
@@ -107,10 +109,13 @@ bool PTEWrapper::Shareable() {
   auto raw = reinterpret_cast<PTE *>(m_VirtAddr);
 
   if (raw->Present) {
-    m_Shareable = raw->Shared;
+    m_Shareable = raw->Rw;
+    kcout << m_Shareable ? "[PTEWrapper::Shareable] page is sharable!\n"
+                         : "[PTEWrapper::Shareable] page is not sharable!\n";
+
     return m_Shareable;
   } else {
-    kcout << "[PTEWrapper::Shareable] page is not present!";
+    kcout << "[PTEWrapper::Shareable] page is not present!\n";
     return false;
   }
 }

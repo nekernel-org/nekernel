@@ -54,6 +54,6 @@ class GFrame {
 
  private:
   HCore::MutableArray<GFrame*> m_Frames;
-  GFrame* m_ParentFrame;
+  GFrame* m_ParentFrame{nullptr};
 };
 }  // namespace HCore

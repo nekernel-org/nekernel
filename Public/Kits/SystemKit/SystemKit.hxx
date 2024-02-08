@@ -4,6 +4,12 @@
 
 #pragma once
 
+/** ---------------------------------------------------
+
+    * THIS FILE CONTAINS CODE FOR THE STANDARD HCORE API.
+
+------------------------------------------------------- */
+
 #include <SystemKit/CoreAPI.hxx>
 #include <SystemKit/FileAPI.hxx>
 #include <SystemKit/HeapAPI.hxx>

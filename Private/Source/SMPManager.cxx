@@ -109,13 +109,24 @@ bool SMPManager::Switch(HAL::StackFrame* stack) {
         m_ThreadList[idx].Leak().Leak().IsBusy())
       continue;
 
-    m_ThreadList[idx].Leak().Leak().m_ID = idx;
-    m_ThreadList[idx].Leak().Leak().m_Stack = stack;
-    m_ThreadList[idx].Leak().Leak().m_PID = ProcessHelper::GetCurrentPID();
+    // to avoid any null deref.
+    if (!stack, m_ThreadList[idx].Leak().Leak().m_Stack) continue;
 
     m_ThreadList[idx].Leak().Leak().Busy(true);
 
-    rt_do_context_switch(stack);
+    m_ThreadList[idx].Leak().Leak().m_ID = idx;
+
+    m_ThreadList[idx].Leak().Leak().Busy(true);
+
+    /// I figured out this:
+    /// Allocate stack
+    /// Set APIC base to stack
+    /// Do stuff and relocate stack based on this code.
+    /// - Amlel
+    rt_copy_memory(stack, m_ThreadList[idx].Leak().Leak().m_Stack,
+                   sizeof(HAL::StackFrame));
+
+    m_ThreadList[idx].Leak().Leak().m_PID = ProcessHelper::GetCurrentPID();
 
     m_ThreadList[idx].Leak().Leak().Busy(false);
 
