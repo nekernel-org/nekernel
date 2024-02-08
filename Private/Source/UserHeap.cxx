@@ -10,14 +10,15 @@
 #include <NewKit/PageManager.hpp>
 #include <NewKit/UserHeap.hpp>
 
-/// @file Heap.cxx
-/// @brief Heap Manager, Process heap allocator.
+/// @file UserHeap.cxx
+/// @brief User Heap Manager, Process heap allocator.
 /// @note if you want to look at the kernel allocator, please look for
-/// KernelHeap.cxx bugs: 0
+/// KernelHeap.cxx
+/// BUGS: 0
 
 namespace HCore {
 /**
- * @brief Heap Manager class, takes care of allocating the process pools.
+ * @brief User Heap Manager class, takes care of allocating the process pools.
  * @note This rely on Virtual Memory! Consider adding good vmem support when
  * @note porting to a new arch.
  */

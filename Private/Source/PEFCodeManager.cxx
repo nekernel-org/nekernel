@@ -97,7 +97,8 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
       kcout << "Found potential container, checking for validity.\n";
 
       if (container_header->Kind == kind)
-        return static_cast<UIntPtr *>(fCachedBlob) + container_header->Offset;
+        return (VoidPtr)(static_cast<UIntPtr *>(fCachedBlob) +
+                         container_header->Offset);
 
       continue;
     }
@@ -107,7 +108,7 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
 }
 
 ErrorOr<VoidPtr> PEFLoader::LoadStart() {
-  if (auto sym = this->FindSymbol("__start", kPefCode); sym)
+  if (auto sym = this->FindSymbol(kPefStart, kPefCode); sym)
     return ErrorOr<VoidPtr>(sym);
 
   return ErrorOr<VoidPtr>(H_EXEC_ERROR);
@@ -132,5 +133,5 @@ const char *PEFLoader::Path() { return fPath.Leak().CData(); }
 
 const char *PEFLoader::Format() { return "PEF"; }
 
-const char *PEFLoader::MIME() { return "application/x-exec"; }
+const char *PEFLoader::MIME() { return "application/x-hcore-exec"; }
 }  // namespace HCore

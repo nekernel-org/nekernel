@@ -118,7 +118,7 @@ class Process final {
   void AssignStart(UIntPtr &imageStart) noexcept;
 
  public:
-  Char Name[kProcessLen] = {"CoreProcess"};
+  Char Name[kProcessLen] = {"Process"};
   ProcessSubsystem SubSystem{0};
   ProcessSelector Selector{ProcessSelector::kRingUser};
   HAL::StackFramePtr StackFrame{nullptr};
