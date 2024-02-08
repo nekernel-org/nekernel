@@ -10,6 +10,9 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageManager.hpp>
 
+//! null deref will throw (Page Zero detected, aborting program!)
+#define kProtectedRegionEnd 512
+
 namespace HCore {
 PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
                        UIntPtr VirtAddr)
@@ -23,11 +26,12 @@ PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
       m_Present(true),
       m_Accessed(false) {
   // special case for the null region.
-  if (VirtAddr == 0) {
+  if (VirtAddr <= kProtectedRegionEnd) {
     m_Wt = false;
     m_Rw = false;
     m_Cache = false;
     m_Shareable = false;
+    m_ExecDisable = true;
   }
 }
 

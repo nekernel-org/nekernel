@@ -56,7 +56,7 @@ struct JsonStreamTraits final {
       for (SizeT i = 1; i < len; i++) {
         if (full_array[i] == ' ') continue;
 
-        JsonType type(255, 255);
+        JsonType type(kPathLen, kPathLen);
 
         if (probe_key) {
           type.AsKey().Data()[key_len] = full_array[i];
