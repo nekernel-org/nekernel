@@ -14,10 +14,19 @@
 
 #pragma once
 
+#include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 #include <NewKit/String.hpp>
+
+#define $() HCore::GApplication::Shared()->Document()
+
+#ifdef __EXPORT_LIB
+#define G_API __attribute__((container(".EXPORT")))
+#else
+#define G_API __attribute__((container(".IMPORT")))
+#endif  // ifdef __EXPORT_LIB
 
 namespace HCore {
 template <typename... T>
@@ -27,8 +36,11 @@ class GString;
 class GNumber;
 class GVector2;
 class GBoolean;
+class GDocument;
+class GApplication;
+class GFrame;
 
-class GBoolean {
+class G_API GBoolean {
  private:
   explicit GBoolean() : m_Value(false) {}
 
@@ -46,7 +58,7 @@ class GBoolean {
 };
 
 template <typename... T>
-class GAction {
+class G_API GAction {
   explicit GAction(HCore::StringView& sw) { m_Name = sw; }
 
   HCore::StringView m_Name;
@@ -64,7 +76,7 @@ class GAction {
   }
 };
 
-class GVector2 {
+class G_API GVector2 {
   explicit GVector2(HCore::StringView& sw) : m_Vec2() {}
 
   HCore::Array<HCore::Int, 3> m_Vec2;
@@ -81,7 +93,7 @@ class GVector2 {
   }
 };
 
-class GNumber {
+class G_API GNumber {
   HCore::Int m_Number{0};
   friend class GForm;
 
@@ -94,7 +106,7 @@ class GNumber {
   }
 };
 
-class GString {
+class G_API GString {
   explicit GString(HCore::StringView& content) {
     m_Content = new HCore::StringView();
     *m_Content = content;
@@ -109,5 +121,40 @@ class GString {
     GString str{value};
     return str;
   }
+};
+
+class G_API GApplication final {
+ public:
+  explicit GApplication() = default;
+  ~GApplication() = default;
+
+  HCORE_COPY_DEFAULT(GApplication);
+
+  GDocument* Document() noexcept { return nullptr; }
+
+  GApplication* Shared() noexcept {
+    STATIC GApplication* gApp = nullptr;
+
+    if (!gApp) gApp = new GApplication();
+
+    return gApp;
+  }
+};
+
+class G_API GDocument final {
+ public:
+  explicit GDocument(StringView& sv) : mString(GString::Construct(sv)) {}
+  ~GDocument() = default;
+
+  HCORE_COPY_DEFAULT(GDocument);
+
+  GFrame** GetAddressOf() noexcept { return &mFrame; }
+  GFrame* Get() noexcept { return mFrame; }
+
+  GString& Name() { return mString; }
+
+ private:
+  GFrame* mFrame{nullptr};
+  GString mString;
 };
 }  // namespace HCore

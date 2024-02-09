@@ -1,4 +1,4 @@
 {
-    "pluginName": "internetBoot",
-    "description": "internetBoot your device from the network."
+  "pluginName": "interBoot",
+  "description": "Boot your device from your network infra."
 }

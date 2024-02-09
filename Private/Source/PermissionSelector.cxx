@@ -5,7 +5,7 @@
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  *	File: PermissionSelector.cpp
- * 	Purpose: Permission primitive type.
+ * 	Purpose: Permission selectors.
  *
  * 	========================================================
  */

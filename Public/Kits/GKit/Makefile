@@ -10,7 +10,7 @@ ASMFLAGS=-f elf64
 
 .PHONY: build-gkit
 build-gkit:
-	$(CC) -I../ -I../../../Private/ $(CCFLAGS) *.cxx
+	$(CC) -I../ -I$(HOME) -I../../../Private/ $(CCFLAGS) *.cxx
 
 .PHONY: all
 all: build-gkit

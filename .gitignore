@@ -8,8 +8,6 @@ build.ninja
 cmake_install.cmake
 qtcsettings.cmake
 
-MAHROUSS/
-
 x86_64/
 
 *.epm

@@ -7,7 +7,9 @@
  * 	========================================================
  */
 
-extern "C" void __Module(const char* ip, long iplen)
-{
-    
+#include <EFIKit/Api.hxx>
+#include <EFIKit/EFI.hxx>
+
+extern "C" Int32 EfiMain(EfiHandlePtr handle, EfiSystemTable* SystemTable) {
+  return kEfiOk;
 }

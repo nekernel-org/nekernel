@@ -16,7 +16,7 @@
 namespace HCore {
 class PRDT final {
  public:
-  PRDT() = delete;
+  explicit PRDT() = delete;
   explicit PRDT(const UIntPtr &physAddr);
   ~PRDT();
 
