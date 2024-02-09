@@ -17,6 +17,8 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
 
+#include "KernelKit/HError.hpp"
+
 ///! bugs = 0
 
 /***********************************************************************************/
@@ -38,8 +40,7 @@ const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
 
 void Process::Crash() {
   kcout << this->Name << ": Crashed, ExitCode: -1\n";
-
-  // TODO: Bug check the system.
+  MUST_PASS(ke_bug_check());
 
   this->Exit(-1);
 }
@@ -281,7 +282,8 @@ bool ProcessHelper::Switch(HAL::StackFrame *the_stack, const PID &new_pid) {
 
     if (SMPManager::Shared().Leak()[index].Leak().IsBusy()) continue;
 
-    if (SMPManager::Shared().Leak()[index].Leak().Kind() != ThreadKind::kHartBoot ||
+    if (SMPManager::Shared().Leak()[index].Leak().Kind() !=
+            ThreadKind::kHartBoot ||
         SMPManager::Shared().Leak()[index].Leak().Kind() !=
             ThreadKind::kHartSystemReserved) {
       SMPManager::Shared().Leak()[index].Leak().Busy(true);

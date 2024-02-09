@@ -27,6 +27,8 @@ inline constexpr HError kErrorThreadLocalStorage = 41;
 inline constexpr HError kErrorMath = 42;
 inline constexpr HError kErrorNoNetwork = 43;
 inline constexpr HError kErrorHeapOutOfMemory = 44;
+
+Boolean ke_bug_check(void) noexcept;
 }  // namespace HCore
 
 #define KernIsOk(HERR) (HERR == HCore::kErrorSuccess)
