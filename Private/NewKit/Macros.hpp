@@ -89,5 +89,3 @@
 
 #define EXTERN extern
 #define STATIC static
-
-#include <HintKit/CompilerHint.hxx>

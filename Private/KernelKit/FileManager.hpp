@@ -21,6 +21,8 @@
 #include <FSKit/NewFS.hxx>
 #endif  // __USE_NEWFS__
 
+#include <CompilerKit/CompilerKit.hpp>
+#include <HintKit/CompilerHint.hxx>
 #include <NewKit/ErrorID.hpp>
 #include <NewKit/Ref.hpp>
 #include <NewKit/Stream.hpp>

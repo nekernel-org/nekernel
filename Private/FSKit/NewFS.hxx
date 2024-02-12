@@ -1,21 +1,26 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+    File: NewFS.hxx
+    Purpose:
+
+    Revision History:
+
+    ?/?/?: Added file (amlel)
+    12/02/24: Add UUID macro for EPM and GPT partition schemes.
+
+------------------------------------------- */
 
 #pragma once
 
 #include <CompilerKit/CompilerKit.hpp>
+#include <HintKit/CompilerHint.hxx>
 #include <KernelKit/DriveManager.hpp>
 #include <NewKit/Defines.hpp>
 
 /**
-    @brief NewFS or HCFS
-    HCore FileSystem.
+    @brief HCore File System implementation.
 */
 
 #define kInvalidFork -1
@@ -25,6 +30,9 @@
 #define kNewFSIdentLen 6
 #define kNewFSIdent "  HCFS"
 #define kPadLen 16
+
+//! On EPM and GPT disks.
+#define kNewFSUUID "DD997393-9CCE-4288-A8D5-C0FDE3908DBE"
 
 #define kNewFSVersion 1
 

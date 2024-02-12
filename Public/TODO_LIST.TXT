@@ -6,7 +6,7 @@
     - Design Handover [ X ]
     - Load kernel into memory [ X ]
     - Fix bug in kernel loader, which causes a 06 #UD. [ X ]
-    - Jump to kernel [ ]
+    - Load Stage 2 bootloader [ ]
 - Context switch x87/SSE/AVX registers [ ]
 - Framebuffer and ATA support [ ]
 - Native Subsystem and GUI [ ]

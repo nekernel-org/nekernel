@@ -13,6 +13,6 @@
 
 #pragma once
 
+#include <KernelKit/PECodeManager.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
-// #include <KernelKit/PECodeManager.hxx>
 #include <KernelKit/PEFSharedObject.hxx>
