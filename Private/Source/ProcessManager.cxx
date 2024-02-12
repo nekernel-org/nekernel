@@ -12,12 +12,11 @@
 /// @brief Process Scheduler API.
 /***********************************************************************************/
 
+#include <KernelKit/HError.hpp>
 #include <KernelKit/ProcessManager.hpp>
 #include <KernelKit/SMPManager.hpp>
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
-
-#include "KernelKit/HError.hpp"
 
 ///! bugs = 0
 
