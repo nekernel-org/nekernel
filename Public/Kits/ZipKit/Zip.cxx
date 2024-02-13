@@ -25,11 +25,11 @@ ZipStream::~ZipStream() noexcept {
 
 HFilePtr ZipStream::FlushToFile(const char *name) {
   HFilePtr fp = new HFile(name);
-  MUST_PASS(fp);
+  CA_MUST_PASS(fp);
 
   this->fSharedSz = HHeap::Shared()->Size(this->fSharedData);
 
-  fp->MIME("application/x-bzip");
+  fp->MIME(kZipKitMime);
   fp->Write(this->fSharedData, this->fSharedSz);
 
   return fp;

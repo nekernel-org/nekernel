@@ -16,3 +16,5 @@
 
 /// @brief NewFS catalog has password attached to it.
 #define kNewFSHasPassword 256
+
+class ShellInterface;

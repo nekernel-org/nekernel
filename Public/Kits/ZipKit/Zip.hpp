@@ -39,3 +39,5 @@ class ZipStream final {
   z_stream fStream;
 };
 }  // namespace ZipKit
+
+#define kZipKitMime "application/x-bzip"
