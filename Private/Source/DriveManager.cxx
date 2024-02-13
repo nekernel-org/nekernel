@@ -33,7 +33,7 @@ bool DriveSelector::Mount(DriveTraits *drive) {
     fDrive = drive;
     fDrive->fMount();
 
-    kcout << "[Krnl] mounted: " << fDrive->fName << "\n";
+    kcout << "Mount: " << fDrive->fName << "\n";
 
     return true;
   }
@@ -49,7 +49,7 @@ DriveTraits *DriveSelector::Unmount() {
   fDrive->fUnmount();
   fDrive = nullptr;
 
-  kcout << "[Krnl] unmounted: " << fDrive->fName << "\n";
+  kcout << "Unmount: " << fDrive->fName << "\n";
 
   return drivePointer;
 }

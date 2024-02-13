@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: GFrame.hpp
+    File: Frame.hpp
     Purpose:
 
     Revision History:
@@ -18,7 +18,7 @@
 #include <NewKit/MutableArray.hpp>
 
 namespace HCore {
-class GFrame {
+class G_API GFrame {
  public:
   explicit GFrame(GFrame* parent = nullptr) : m_ParentFrame(parent) {}
   ~GFrame() {}

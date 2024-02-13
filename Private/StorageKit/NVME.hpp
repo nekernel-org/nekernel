@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <KernelKit/Device.hpp>
+#include <KernelKit/DeviceManager.hpp>
 #include <NewKit/OwnPtr.hpp>
 
 namespace HCore {
@@ -36,5 +36,15 @@ class NVMEDevice : public DeviceInterface<NVMEPacket> {
 
  private:
   void (*fCleanup)(void);
+};
+
+class NVMEPacket {
+  UIntPtr DataPtr;
+  SizeT DataSz;
+  UInt64 DriveID;
+
+  Boolean ErrorSet;
+  Boolean BusySet;
+  Boolean ReadySet;
 };
 }  // namespace HCore

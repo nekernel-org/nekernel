@@ -10,7 +10,7 @@
 #ifndef _INC_NETWORKDEVICE_HPP__
 #define _INC_NETWORKDEVICE_HPP__
 
-#include <KernelKit/Device.hpp>
+#include <KernelKit/DeviceManager.hpp>
 #include <NetworkKit/IP.hpp>
 
 namespace HCore {
