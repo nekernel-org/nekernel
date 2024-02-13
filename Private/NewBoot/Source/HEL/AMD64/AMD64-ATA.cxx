@@ -14,7 +14,7 @@
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) 2024 Mahrouss Logic
+ * @copyright Copyright (c) Mahrouss Logic
  *
  */
 

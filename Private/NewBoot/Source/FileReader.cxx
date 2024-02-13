@@ -19,11 +19,12 @@
 /// BUGS: 0
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//
-//  @brief BImageReader class
-//
-//
+///
+///
+///  @name BFileReader class
+///  @brief Reads the file as a blob.
+///
+///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /***
@@ -102,11 +103,7 @@ BFileReader::~BFileReader() {
     @brief this reads all of the buffer.
     @param ImageHandle used internally.
 */
-Void BFileReader::ReadAll() {
-  mWriter.WriteString(L"HCoreLdr: ReadAll: ")
-      .WriteString(mPath)
-      .WriteString(L"\r\n");
-
+Void BFileReader::Read() {
   /// Allocate Handover page.
 
   if (mBlob == nullptr) {

@@ -11,19 +11,19 @@
 #include <KernelKit/ProcessManager.hpp>
 #include <KernelKit/SMPManager.hpp>
 
-/// BUGS: 0
+///! BUGS: 0
 
 ///! @brief This file handles multi processing in HCore.
 ///! @brief Multi processing is needed for multi-tasking operations.
 
 namespace HCore {
-// A HardwareThread class takes care of it's owned hardware thread.
-// It has a stack for it's core.
+///! A HardwareThread class takes care of it's owned hardware thread.
+///! It has a stack for it's core.
 
-// @brief constructor
+///! @brief constructor
 HardwareThread::HardwareThread() = default;
 
-// @brief destructor
+///! @brief destructor
 HardwareThread::~HardwareThread() = default;
 
 //! @brief returns the id
@@ -110,13 +110,13 @@ bool SMPManager::Switch(HAL::StackFrame* stack) {
       continue;
 
     // to avoid any null deref.
-    if (!stack, m_ThreadList[idx].Leak().Leak().m_Stack) continue;
+    if (!m_ThreadList[idx].Leak().Leak().m_Stack) continue;
+    if (m_ThreadList[idx].Leak().Leak().m_Stack->Rsp == 0) continue;
+    if (m_ThreadList[idx].Leak().Leak().m_Stack->Rbp == 0) continue;
 
     m_ThreadList[idx].Leak().Leak().Busy(true);
 
     m_ThreadList[idx].Leak().Leak().m_ID = idx;
-
-    m_ThreadList[idx].Leak().Leak().Busy(true);
 
     /// I figured out this:
     /// Allocate stack

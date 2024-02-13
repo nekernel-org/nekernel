@@ -91,3 +91,9 @@ Args &&move(Args &&arg) {
 #define No (false)
 
 #define VoidStar HCore::voidPtr
+
+#ifdef INIT
+#undef INIT
+#endif  // ifdef INIT
+
+#define INIT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)

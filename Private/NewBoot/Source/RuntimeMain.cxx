@@ -48,10 +48,14 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
 
+  writer.WriteString(L"HCoreLdr: Reading: ")
+      .WriteString(L"HCOREKRNL.EXE")
+      .WriteString(L"\r\n");
+
   BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
 
   img.Size() = Detail::kBufferReadSz;
-  img.ReadAll();
+  img.Read();
 
   if (img.Error() == BFileReader::kOperationOkay) {
     BlobType blob = (BlobType)img.Blob();

@@ -48,7 +48,7 @@ PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
   if (StringBuilder::Equals(file->MIME(), this->MIME())) {
     fPath = StringBuilder::Construct(path).Leak();
 
-    fCachedBlob = file->ReadAll();
+    fCachedBlob = file->Read();
 
     PEFContainer *container = reinterpret_cast<PEFContainer *>(fCachedBlob);
 

@@ -185,7 +185,7 @@ class FileStream final {
     return ErrorOr<Int64>(H_INVALID_DATA);
   }
 
-  VoidPtr ReadAll() noexcept {
+  VoidPtr Read() noexcept {
     auto man = FSClass::GetMounted();
 
     if (man) {

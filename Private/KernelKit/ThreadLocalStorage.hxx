@@ -29,14 +29,16 @@ T *hcore_tls_new_class(Args &&...args);
 
 typedef HCore::Char rt_cookie_type[3];
 
+#define kTIBNameLen 256
+
 /// @brief Thread Information Block for Local Storage.
 /// Located in GS on AMD64, Virtual Address 0x10000 (64x0, 32x0, ARM64)
 struct ThreadInformationBlock final {
-  HCore::Char Name[kNameLen];  // Module Name
-  HCore::UIntPtr StartCode;    // Start Address
-  HCore::UIntPtr StartData;    // Allocation Heap
-  HCore::UIntPtr StartStack;   // Stack Pointer.
-  HCore::Int32 Arch;           // Architecture and/or platform.
+  HCore::Char Name[kTIBNameLen];  // Module Name
+  HCore::UIntPtr StartCode;       // Start Address
+  HCore::UIntPtr StartData;       // Allocation Heap
+  HCore::UIntPtr StartStack;      // Stack Pointer.
+  HCore::Int32 Arch;              // Architecture and/or platform.
   rt_cookie_type Cookie;  // Not shown in public header, this is the way we tell
                           // something went wrong.
 };

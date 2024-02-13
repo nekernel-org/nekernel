@@ -52,8 +52,6 @@ void ke_stop(const Int &id);
 #undef TRY
 #endif
 
-#define INIT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
-
 #define TRY(FN)       \
   if (!FN()) {        \
     MUST_PASS(false); \
