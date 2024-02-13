@@ -27,16 +27,24 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 #ifndef __DEBUG__
 
   writer.WriteString(
-      L"MahroussLogic (R) HCore Version 1.0.0 (Release Channel)\r\n");
+      L"MahroussLogic (R) HCore Version 1.00 (Release Channel)\r\n");
 
 #else
 
   writer.WriteString(
-      L"MahroussLogic (R) HCore Version 1.0.0 (Insiders Channel)\r\n");
+      L"MahroussLogic (R) HCore Version 1.00 (Insiders Channel)\r\n");
 
 #endif
 
-  writer.WriteString(L"HCoreLdr: Firmware Vendor: ")
+  const char strDate[] = __DATE__;
+
+  writer.WriteString(L"Build Date: ");
+
+  for (auto& ch : strDate) {
+    writer.WriteCharacter(ch);
+  }
+
+  writer.WriteString(L"\r\nHCoreLdr: Firmware Vendor: ")
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
 
