@@ -11,6 +11,7 @@
 #define __EFI_API__
 
 #include <EFIKit/EFI.hxx>
+#include <EFIKit/Handover.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hpp>
 
@@ -27,7 +28,9 @@ Void Stop() noexcept;
 @brief Exit EFI API to let the OS load correctly.
 Bascially frees everything we have in the EFI side.
 */
-inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
+inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle,
+                             HEL::HandoverProc &handOver,
+                             HEL::HandoverInformationHeader *hdr) noexcept {
   if (!ST) return;
 
   /// The MapKey may be invalid.
@@ -35,6 +38,8 @@ inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
   if (ST->BootServices->ExitBootServices(ImageHandle, MapKey) != kEfiOk) {
     EFI::Stop();
   }
+
+  return handOver(hdr);
 }
 
 enum {
