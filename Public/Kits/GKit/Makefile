@@ -4,13 +4,14 @@
 ##################################################
 
 CC=x86_64-w64-mingw32-g++
-CCFLAGS=-c -ffreestanding -fno-rtti -fno-exceptions -std=c++20
+CCFLAGS=-shared -ffreestanding -fno-rtti -fno-exceptions -std=c++20
 ASM=nasm
 ASMFLAGS=-f elf64
+OUTPUT=GKit.dll
 
 .PHONY: build-gkit
 build-gkit:
-	$(CC) -I../ -I$(HOME) -I../../../Private/ $(CCFLAGS) *.cxx
+	$(CC) -I../ -I$(HOME) -I../../../Private/ $(CCFLAGS) *.cxx -o $(OUTPUT)
 
 .PHONY: all
 all: build-gkit
