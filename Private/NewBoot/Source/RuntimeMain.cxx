@@ -15,15 +15,7 @@
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace Detail {
-constexpr Int32 kBufferReadSz = 2048;
-
-auto FindPEHeader(DosHeaderPtr ptrDos) -> ExecHeaderPtr {
-  if (!ptrDos) return nullptr;
-
-  return (ExecHeaderPtr)(&ptrDos->eLfanew + 1);
-}
-}  // namespace Detail
+#define kBufferReadSz 2048
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
@@ -54,17 +46,17 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
 
-  img.Size() = Detail::kBufferReadSz;
+  img.Size() = kBufferReadSz;
   img.Read();
 
   if (img.Error() == BFileReader::kOperationOkay) {
     BlobType blob = (BlobType)img.Blob();
 
-    DosHeaderPtr ptrDos = reinterpret_cast<DosHeaderPtr>(blob);
-    ExecHeaderPtr ptrHdr = Detail::FindPEHeader(ptrDos);
+    ExecHeaderPtr ptrHdr = reinterpret_cast<ExecHeaderPtr>(
+        HCore::rt_find_exec_header(reinterpret_cast<DosHeaderPtr>(blob)));
 
-    if (ptrDos->eMagic[0] == kMagMz0 && ptrDos->eMagic[1] == kMagMz1 &&
-        ptrHdr->mMachine == EFI::Platform() && ptrHdr->mMagic == kPeMagic) {
+    if (ptrHdr && ptrHdr->mMachine == EFI::Platform() &&
+        ptrHdr->mMagic == kPeMagic) {
       if (ptrHdr->mNumberOfSections > 1) {
         UInt64 MapKey = 0;
 
