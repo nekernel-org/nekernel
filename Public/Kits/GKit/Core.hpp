@@ -132,12 +132,12 @@ class G_API GApplication final {
 
   GDocument* Document() noexcept { return nullptr; }
 
-  GApplication* Shared() noexcept {
-    STATIC GApplication* gApp = nullptr;
+  static GApplication* Shared() noexcept {
+    STATIC GApplication* kApp = nullptr;
 
-    if (!gApp) gApp = new GApplication();
+    if (!kApp) kApp = new GApplication();
 
-    return gApp;
+    return kApp;
   }
 };
 

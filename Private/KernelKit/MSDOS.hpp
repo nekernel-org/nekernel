@@ -16,6 +16,8 @@
 
 #include <NewKit/Defines.hpp>
 
+#include "PE.hpp"
+
 typedef HCore::UInt32 DosWord;
 typedef HCore::Long DosLong;
 
@@ -40,5 +42,16 @@ typedef struct _DosHeader {
   DosWord eRes2[10];
   DosLong eLfanew;
 } DosHeader, *DosHeaderPtr;
+
+namespace HCore {
+/// @brief Find the PE header inside the the blob.
+inline auto rt_find_exec_header(DosHeaderPtr ptrDos) -> VoidPtr {
+  if (!ptrDos) return nullptr;
+  if (ptrDos->eMagic[0] != kMagMz0) return nullptr;
+  if (ptrDos->eMagic[0] != kMagMz1) return nullptr;
+
+  return (VoidPtr)(&ptrDos->eLfanew + 1);
+}
+}  // namespace HCore
 
 #endif /* ifndef __MSDOS_EXEC__ */

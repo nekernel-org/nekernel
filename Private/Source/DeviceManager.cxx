@@ -7,4 +7,4 @@
  * 	========================================================
  */
 
-#include <KernelKit/Device.hpp>
+#include <KernelKit/DeviceManager.hpp>

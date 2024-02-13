@@ -11,7 +11,7 @@
 #define __DRIVE_MANAGER__
 
 #include <CompilerKit/CompilerKit.hpp>
-#include <KernelKit/Device.hpp>
+#include <KernelKit/DeviceManager.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <KernelKit/Device.hpp>
+#include <KernelKit/DeviceManager.hpp>
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Stream.hpp>
 

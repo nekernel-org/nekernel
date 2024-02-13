@@ -8,6 +8,8 @@ build.ninja
 cmake_install.cmake
 qtcsettings.cmake
 
+LOOK.CSS
+
 x86_64/
 
 *.epm
