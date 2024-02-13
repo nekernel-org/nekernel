@@ -17,7 +17,7 @@ git clone git@github.com:Mahrouss-Logic/h-core.git
 And execute:
 
 ```
-make all
+make h-core-<cpu>-<hardware>
 ```
 
 You'd also need The SDK and MinGW, to build and link the components. For Tools look at `Public/Tools`
