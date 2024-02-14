@@ -416,10 +416,10 @@ typedef UInt64(EFI_API *EfiAllocatePages)(EfiAllocateType AllocType,
 
 typedef UInt64(EFI_API *EfiFreePages)(EfiPhysicalAddress *Memory, UInt32 Pages);
 
-typedef UInt64(EFI_API *EfiGetMemoryMap)(UInt64 *MapSize,
+typedef UInt64(EFI_API *EfiGetMemoryMap)(UInt32 *MapSize,
                                          EfiMemoryDescriptor *DescPtr,
-                                         UInt64 *MapKey, UInt64 *DescSize,
-                                         UInt64 *DescVersion);
+                                         UInt32 *MapKey, UInt32 *DescSize,
+                                         UInt32 *DescVersion);
 
 /**
  * @brief GUID type, something you can also find in CFKit.

@@ -15,6 +15,16 @@
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
 
+#ifdef __x86_64__
+
+#include <HALKit/AMD64/HalPageAlloc.hpp>
+
+#else
+
+#error Unknown CPU.
+
+#endif
+
 #define kBufferReadSz 2048
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
@@ -36,7 +46,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   const char strDate[] = __DATE__;
 
-  writer.WriteString(L"HCoreLdr: Build-Date");
+  writer.WriteString(L"HCoreLdr: Build date: ");
 
   for (auto& ch : strDate) {
     writer.WriteCharacter(ch);
@@ -46,13 +56,9 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
 
-  writer.WriteString(L"HCoreLdr: Reading: ")
-      .WriteString(L"HCOREKRNL.EXE")
-      .WriteString(L"\r\n");
-
   BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
 
-  img.Size() = kBufferReadSz;
+  img.Size(kBufferReadSz);
   img.Read();
 
   if (img.Error() == BFileReader::kOperationOkay) {
@@ -78,7 +84,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         writer.WriteString(L"HCoreLdr: Init [0/2]...\r\n");
 
         if (!codePtr) {
-          EFI::RaiseHardError(L"HCoreLdr-BadAlloc", L"Bad alloc!");
+          EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
+                              L"Bad Alloc! (AllocatePool)");
         }
 
         img.File()->Read(img.File(), &codeSz, codePtr);
@@ -93,7 +100,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         BS->AllocatePool(EfiLoaderCode, sizeofData, &dataPtr);
 
         if (!dataPtr) {
-          EFI::RaiseHardError(L"HCoreLdr-BadAlloc", L"Bad alloc!");
+          EFI::RaiseHardError(L"HCoreLdr: BadAlloc", L"(AllocatePool)");
         }
 
         writer.WriteString(L"HCoreLdr: Init [1/2]...\r\n");
@@ -102,19 +109,30 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         img.File()->Read(img.File(), &sizeofData, dataPtr);
 
-        UInt64 MapKey = 0;
-        UInt64 Size = 0;
+        UInt32 MapKey = 0;
+        UInt32* Size = 0;
         EfiMemoryDescriptor* Descriptor = nullptr;
-        UInt64 SzDesc = 0;
-        UInt64 RevDesc = 0;
+        UInt32 SzDesc = 0;
+        UInt32 RevDesc = 0;
 
-        BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
-                         (VoidPtr*)&Descriptor);
-
-        if (BS->GetMemoryMap(&Size, Descriptor, &MapKey, &SzDesc, &RevDesc) !=
+        if (BS->AllocatePool(EfiLoaderData, sizeof(UInt64), (VoidPtr*)&Size) !=
             kEfiOk) {
-          EFI::RaiseHardError(L"HCoreLdr: Bad-Call",
-                              L"Bad call! (GetMemoryMap)");
+          EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
+                              L"Bad Alloc! (AllocatePool)");
+        }
+
+        *Size = sizeof(EfiMemoryDescriptor);
+
+        if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
+                             (VoidPtr*)&Descriptor) != kEfiOk) {
+          EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
+                              L"Bad Alloc! (AllocatePool)");
+        }
+
+        if (BS->GetMemoryMap(Size, Descriptor, &MapKey, &SzDesc, &RevDesc) !=
+            kEfiOk) {
+          EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
+                              L"Bad Alloc! (GetMemoryMap)");
         }
 
         writer.WriteString(L"HCoreLdr: Init [2/2]...\r\n");
@@ -124,16 +142,19 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         BS->AllocatePool(EfiLoaderData, sizeof(HEL::HandoverInformationHeader),
                          (VoidPtr*)&handoverHdrPtr);
 
-        HEL::HandoverProc fn = reinterpret_cast<HEL::HandoverProc>(
-            (UIntPtr)optHdr->mAddressOfEntryPoint);
-
         handoverHdrPtr->f_GOP = (voidPtr)kGop->Mode->FrameBufferBase;
         handoverHdrPtr->f_GOPSize = kGop->Mode->FrameBufferSize;
 
-        handoverHdrPtr->f_PhysicalStart = (voidPtr)Descriptor->PhysicalStart;
-        handoverHdrPtr->f_PhysicalSize = Descriptor->NumberOfPages;
-        handoverHdrPtr->f_VirtualStart = (voidPtr)Descriptor->VirtualStart;
-        handoverHdrPtr->f_VirtualSize = 0; /* not known */
+        handoverHdrPtr->f_PhysicalStart =
+            reinterpret_cast<voidPtr>(Descriptor->PhysicalStart);
+        handoverHdrPtr->f_PhysicalSize = Descriptor->NumberOfPages * kPTESize;
+
+        handoverHdrPtr->f_VirtualStart =
+            reinterpret_cast<voidPtr>(Descriptor->VirtualStart);
+
+        handoverHdrPtr->f_VirtualSize =
+            Descriptor->NumberOfPages; /* # of pages */
+
         handoverHdrPtr->f_FirmwareVendorLen =
             BStrLen(SystemTable->FirmwareVendor);
 
@@ -141,9 +162,10 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  SystemTable->FirmwareVendor,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
-        EFI::ExitBootServices(MapKey, ImageHandle, fn, handoverHdrPtr);
+        handoverHdrPtr->f_HeapCommitSize = optHdr->mSizeOfHeapCommit;
+        handoverHdrPtr->f_StackCommitSize = optHdr->mSizeOfStackCommit;
 
-        // Launch PE app.
+        EFI::ExitBootServices(MapKey, ImageHandle);
 
         EFI::Stop();
 

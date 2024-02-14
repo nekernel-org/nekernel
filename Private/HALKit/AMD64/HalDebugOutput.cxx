@@ -60,7 +60,7 @@ void ke_io_print(const char *bytes) {
   Detail::kState = kStateTransmit;
 
   SizeT index = 0;
-  SizeT len = string_length(bytes, 256);
+  SizeT len = rt_string_len(bytes, 256);
 
   while (index < len) {
     HAL::Out8(Detail::PORT, bytes[index]);

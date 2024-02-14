@@ -3,3 +3,4 @@
 -std=c++20
 -I../
 -I$(HOME)/
+-D__USE_NEWFS__

@@ -73,6 +73,8 @@ struct HandoverInformationHeader {
   voidPtr f_RTC;
   voidPtr f_GOP;
   SizeT f_GOPSize;
+  SizeT f_HeapCommitSize;
+  SizeT f_StackCommitSize;
 };
 
 /**

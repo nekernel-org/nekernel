@@ -10,7 +10,7 @@
 #include <NewKit/Utils.hpp>
 
 namespace HCore {
-Int string_compare(const Char *src, const Char *cmp, Size size) {
+Int rt_string_cmp(const Char *src, const Char *cmp, Size size) {
   Int32 counter = 0;
 
   for (Size index = 0; index < size; ++index) {
@@ -24,7 +24,7 @@ void rt_zero_memory(voidPtr pointer, Size len) {
   rt_set_memory(pointer, 0, len);
 }
 
-Size string_length(const Char *str, SizeT _len) {
+Size rt_string_len(const Char *str, SizeT _len) {
   if (*str == '\0') return 0;
 
   Size len{0};
@@ -39,7 +39,7 @@ Size string_length(const Char *str, SizeT _len) {
   return len;
 }
 
-Size string_length(const Char *str) {
+Size rt_string_len(const Char *str) {
   if (*str == '\0') return 0;
 
   Size len{0};
@@ -98,12 +98,12 @@ Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
 const Char *alloc_string(const Char *text) {
   if (!text) return nullptr;
 
-  const Char *string = new Char[string_length(text)];
+  const Char *string = new Char[rt_string_len(text)];
   if (!string) return nullptr;
 
   voidPtr vText = reinterpret_cast<voidPtr>(const_cast<char *>(text));
   voidPtr vStr = reinterpret_cast<voidPtr>(const_cast<char *>(string));
-  rt_copy_memory(vText, vStr, string_length(text));
+  rt_copy_memory(vText, vStr, rt_string_len(text));
   return string;
 }
 
@@ -144,8 +144,8 @@ Boolean is_space(Char chr) { return chr == ' '; }
 Boolean is_newln(Char chr) { return chr == '\n'; }
 
 voidPtr rt_string_in_string(const char *in, const char *needle) {
-  for (size_t i = 0; i < string_length(in); ++i) {
-    if (string_compare(in + i, needle, string_length(needle)) == 0)
+  for (size_t i = 0; i < rt_string_len(in); ++i) {
+    if (rt_string_cmp(in + i, needle, rt_string_len(needle)) == 0)
       return reinterpret_cast<voidPtr>(const_cast<char *>(in + i));
   }
 

@@ -96,8 +96,8 @@ static Madt kApicMadtList[256];
 Madt* system_find_core(Madt* madt) {
   madt = madt + sizeof(Madt);
 
-  if (string_compare(madt->fMag, kApicSignature,
-                     string_length(kApicSignature)) == 0)
+  if (rt_string_cmp(madt->fMag, kApicSignature,
+                    rt_string_len(kApicSignature)) == 0)
     return madt;
 
   return nullptr;

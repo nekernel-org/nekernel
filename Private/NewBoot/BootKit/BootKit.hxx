@@ -80,6 +80,11 @@ class BFileReader final {
   EfiFileProtocolPtr File() { return mFile; }
   UInt64 &Size() { return mSizeFile; }
 
+  UInt64 &Size(const UInt64 &Sz) {
+    mSizeFile = Sz;
+    return mSizeFile;
+  }
+
  public:
   BFileReader &operator=(const BFileReader &) = default;
   BFileReader(const BFileReader &) = default;

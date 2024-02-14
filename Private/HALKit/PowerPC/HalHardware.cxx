@@ -13,7 +13,7 @@
 extern "C" void flush_tlb() {}
 extern "C" void rt_wait_for_io() {}
 
-extern "C" HCore::HAL::StackFrame* rt_get_current_context() {}
+extern "C" HCore::HAL::StackFrame* rt_get_current_context() { return nullptr; }
 
 namespace HCore {
 namespace HAL {
@@ -37,7 +37,7 @@ void ke_com_print(const Char* bytes) {
   if (!bytes) return;
 
   SizeT index = 0;
-  SizeT len = string_length(bytes, 256);
+  SizeT len = rt_string_len(bytes, 256);
 
   while (index < len) {
     // TODO

@@ -8,7 +8,7 @@ LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__USE_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
 ASM			= nasm
 ASMFLAGS	= -f win64
-LDFLAGS		= -e Main -shared --subsystem=10
+LDFLAGS		= -e Main -shared --subsystem=17
 LDOBJ		= $(wildcard Obj/*.obj)
 
 # This file is the kernel, responsible of task management, memory, drivers and more.

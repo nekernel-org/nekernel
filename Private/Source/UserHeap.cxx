@@ -46,7 +46,7 @@ Boolean HeapManager::s_PoolsAreEnabled = true;
 Array<Ref<PTEWrapper*>, kPoolMaxSz> HeapManager::s_Pool;
 
 STATIC VoidPtr ke_find_unused_heap(Int flags);
-STATIC void ke_free_heap_internal(VoidPtr vaddr);
+STATIC Void ke_free_heap_internal(VoidPtr vaddr);
 STATIC VoidPtr ke_make_heap(VoidPtr vaddr, Int flags);
 STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr);
 
@@ -92,7 +92,7 @@ STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
   return nullptr;
 }
 
-STATIC void ke_free_heap_internal(VoidPtr virtualAddress) {
+STATIC Void ke_free_heap_internal(VoidPtr virtualAddress) {
   HeapHeader* poolHdr = reinterpret_cast<HeapHeader*>(
       reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(HeapHeader));
 
