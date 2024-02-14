@@ -75,7 +75,7 @@ STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
     HeapHeader* poolHdr = reinterpret_cast<HeapHeader*>(virtualAddress);
 
     if (!poolHdr->Free) {
-      kcout << "[ke_make_heap] poolHdr->Free, Pool already exists\n";
+      kcout << "[ke_make_heap] poolHdr->Free, HeapPtr already exists\n";
       return nullptr;
     }
 
@@ -115,7 +115,7 @@ STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr) {
   if (HeapManager::The()[index]) {
     // ErrorOr<>::operator Boolean
     /// if (address matches)
-    ///     -> Free Pool.
+    ///     -> Free heap.
     if (HeapManager::The()[index].Leak().Leak().Leak()->VirtualAddress() ==
         (UIntPtr)ptr) {
       HeapManager::Leak().Leak().FreePage(

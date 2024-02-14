@@ -89,3 +89,7 @@
 
 #define EXTERN extern
 #define STATIC static
+
+#ifndef self
+#define self this
+#endif

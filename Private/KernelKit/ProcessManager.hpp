@@ -130,17 +130,25 @@ class Process final {
   ProcessStatus Status;
 
   // Memory, images.
-  HeapPtr PoolCursor{nullptr};
+  HeapPtr HeapCursor{nullptr};
   ImagePtr Image{nullptr};
-  HeapPtr Pool{nullptr};
+  HeapPtr HeapPtr{nullptr};
 
   // memory usage
   SizeT UsedMemory{0};
   SizeT FreeMemory{0};
 
+  enum {
+    ExecutableType,
+    DLLType,
+    DriverType,
+    TypeCount,
+  };
+
   ProcessTime PTime;
   PID ProcessId{-1};
   Int32 Ring{3};
+  Int32 Kind{0};
 
  public:
   //! @brief boolean operator, check status.
