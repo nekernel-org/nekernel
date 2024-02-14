@@ -31,10 +31,6 @@ section .text
 
 ;; Just a simple setup, we'd also need to tell some before
 Main:
-    push rcx
-    jmp RuntimeMain
-    pop rcx
-L0:
     cli
     hlt
     jmp $

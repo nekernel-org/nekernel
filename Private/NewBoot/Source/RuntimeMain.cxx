@@ -7,6 +7,7 @@
  * ========================================================
  */
 
+#include "EFIKit/EFI.hxx"
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -25,7 +26,7 @@
 
 #endif
 
-#define kBufferReadSz 2048
+#define kBufferReadSz 4096
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
@@ -73,41 +74,34 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         ExecOptionalHeaderPtr optHdr = reinterpret_cast<ExecOptionalHeaderPtr>(
             ptrHdr + sizeof(ExecHeader));
 
-        UInt64 baseCode = optHdr->mBaseOfCode;
-        UInt64 codeSz = optHdr->mSizeOfCode;
-        VoidPtr codePtr = nullptr;
+        UInt64 baseSec = ptrHdr->mNumberOfSections;
+        img.File()->SetPosition(img.File(), &baseSec);
 
-        img.File()->SetPosition(img.File(), &baseCode);
+        baseSec = ptrHdr->mNumberOfSections;
+        ExecSectionHeaderPtr headers =
+            (ExecSectionHeaderPtr)(&ptrHdr->mCharacteristics + 1);
 
-        BS->AllocatePool(EfiLoaderCode, codeSz, &codePtr);
+        for (int i = 0u; i < ptrHdr->mNumberOfSections; ++i) {
+          auto& hdr = headers[i];
 
-        writer.WriteString(L"HCoreLdr: Init [0/2]...\r\n");
+          if (hdr.mName[0] != '.') continue;
 
-        if (!codePtr) {
-          EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
-                              L"Bad Alloc! (AllocatePool)");
+          writer.WriteString(L"HCoreLdr: Mapping: ");
+          for (auto ch : hdr.mName) writer.WriteCharacter(ch);
+
+          writer.WriteString(L"\r\n");
+
+          UInt64 addr = hdr.mVirtualAddress;
+
+          BS->AllocatePages(AllocateAnyPages, EfiLoaderCode, 1, &addr);
+
+          UInt64 pos = (optHdr->mImageBase + optHdr->mBaseOfData) +
+                       hdr.mPointerToRawData;
+
+          img.File()->SetPosition(img.File(), &pos);
+          img.Size(hdr.mSizeOfRawData);
+          img.File()->Read(img.File(), &img.Size(), (VoidPtr)addr);
         }
-
-        img.File()->Read(img.File(), &codeSz, codePtr);
-
-        /// GET DATA
-
-        UInt64 baseData = optHdr->mBaseOfData;
-        UInt64 sizeofData =
-            optHdr->mSizeOfInitializedData + optHdr->mSizeOfUninitializedData;
-        VoidPtr dataPtr = nullptr;
-
-        BS->AllocatePool(EfiLoaderCode, sizeofData, &dataPtr);
-
-        if (!dataPtr) {
-          EFI::RaiseHardError(L"HCoreLdr: BadAlloc", L"(AllocatePool)");
-        }
-
-        writer.WriteString(L"HCoreLdr: Init [1/2]...\r\n");
-
-        img.File()->SetPosition(img.File(), &baseData);
-
-        img.File()->Read(img.File(), &sizeofData, dataPtr);
 
         UInt32 MapKey = 0;
         UInt32* Size = 0;
@@ -134,8 +128,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
           EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
                               L"Bad Alloc! (GetMemoryMap)");
         }
-
-        writer.WriteString(L"HCoreLdr: Init [2/2]...\r\n");
 
         HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
 
@@ -166,6 +158,12 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         handoverHdrPtr->f_StackCommitSize = optHdr->mSizeOfStackCommit;
 
         EFI::ExitBootServices(MapKey, ImageHandle);
+
+        HCore::HEL::HandoverProc proc =
+            reinterpret_cast<HCore::HEL::HandoverProc>(
+                optHdr->mAddressOfEntryPoint);
+
+        proc(handoverHdrPtr);
 
         EFI::Stop();
 
