@@ -138,7 +138,7 @@ void Process::Exit(Int32 exit_code) {
     this->Pool = nullptr;
     this->PoolCursor = nullptr;
 
-    this->FreeMemory = kPoolMaxSz;
+    this->FreeMemory = 0UL;  // TODO: fill available heap.
     this->UsedMemory = 0UL;
   }
 
