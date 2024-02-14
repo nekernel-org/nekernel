@@ -86,11 +86,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
           if (hdr.mName[0] != '.') continue;
 
-          writer.WriteString(L"HCoreLdr: Mapping: ");
-          for (auto ch : hdr.mName) writer.WriteCharacter(ch);
-
-          writer.WriteString(L"\r\n");
-
           UInt64 addr = hdr.mVirtualAddress;
 
           BS->AllocatePages(AllocateAnyPages, EfiLoaderCode, 1, &addr);
