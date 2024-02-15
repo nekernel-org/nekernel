@@ -7,7 +7,6 @@
  * ========================================================
  */
 
-#include "EFIKit/EFI.hxx"
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -17,16 +16,13 @@
 #include <NewKit/Ref.hpp>
 
 #ifdef __x86_64__
-
 #include <HALKit/AMD64/HalPageAlloc.hpp>
-
 #else
-
 #error Unknown CPU.
+#endif  // ifdef __x86_64__
 
-#endif
-
-#define kBufferReadSz 4096
+#define kBufferReadSz \
+  (sizeof(DosHeader) + sizeof(ExecHeader) + sizeof(ExecOptionalHeader))
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
@@ -49,9 +45,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   writer.WriteString(L"HCoreLdr: Build date: ");
 
-  for (auto& ch : strDate) {
-    writer.WriteCharacter(ch);
-  }
+  for (auto& ch : strDate) writer.WriteCharacter(ch);
 
   writer.WriteString(L"\r\nHCoreLdr: Firmware Vendor: ")
       .WriteString(SystemTable->FirmwareVendor)
@@ -81,22 +75,13 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         ExecSectionHeaderPtr headers =
             (ExecSectionHeaderPtr)(&ptrHdr->mCharacteristics + 1);
 
-        for (int i = 0u; i < ptrHdr->mNumberOfSections; ++i) {
-          auto& hdr = headers[i];
+        EfiPhysicalAddress base = optHdr->mImageBase + optHdr->mBaseOfData;
+        BS->AllocatePages(AllocateAddress, EfiLoaderCode, 1, &base);
 
-          if (hdr.mName[0] != '.') continue;
+        UInt64 codeSz = optHdr->mSizeOfCode;
+        img.File()->Read(img.File(), &codeSz, (VoidPtr)&base);
 
-          UInt64 addr = hdr.mVirtualAddress;
-
-          BS->AllocatePages(AllocateAnyPages, EfiLoaderCode, 1, &addr);
-
-          UInt64 pos = (optHdr->mImageBase + optHdr->mBaseOfData) +
-                       hdr.mPointerToRawData;
-
-          img.File()->SetPosition(img.File(), &pos);
-          img.Size(hdr.mSizeOfRawData);
-          img.File()->Read(img.File(), &img.Size(), (VoidPtr)addr);
-        }
+        // TODO ExecReader class
 
         UInt32 MapKey = 0;
         UInt32* Size = 0;
@@ -151,6 +136,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         handoverHdrPtr->f_HeapCommitSize = optHdr->mSizeOfHeapCommit;
         handoverHdrPtr->f_StackCommitSize = optHdr->mSizeOfStackCommit;
+
+        writer.WriteString(L"HCoreLdr: Exit...\r\n");
 
         EFI::ExitBootServices(MapKey, ImageHandle);
 

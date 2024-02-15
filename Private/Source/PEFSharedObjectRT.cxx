@@ -20,6 +20,7 @@
 
      01/02/24: Rework shared library ABI, except a __LibInit and __LibFini
  (amlel)
+    15/02/24: Breaking changes, changed the name of the routines. (amlel)
 
  ------------------------------------------- */
 
@@ -31,14 +32,13 @@ using namespace HCore;
 /***********************************************************************************/
 
 /***********************************************************************************/
-/* @brief Allocates a new library. */
+/* @brief Library runtime initializer. */
 /***********************************************************************************/
 
-extern "C" SharedObject *__LibInit() {
-  SharedObject *library = hcore_tls_new_class<SharedObject>();
+extern "C" SharedObjectPtr ke_library_init(void) {
+  SharedObjectPtr library = hcore_tls_new_class<SharedObject>();
 
   if (!library) {
-    kcout << "__LibInit: Out of Memory!\n";
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 
     return nullptr;
@@ -47,7 +47,6 @@ extern "C" SharedObject *__LibInit() {
   library->Mount(hcore_tls_new_class<SharedObject::SharedObjectTraits>());
 
   if (!library->Get()) {
-    kcout << "__LibInit: Out of Memory!\n";
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 
     return nullptr;
@@ -57,7 +56,6 @@ extern "C" SharedObject *__LibInit() {
       ProcessManager::Shared().Leak().GetCurrent().Leak().Image;
 
   if (!library->Get()->fImageObject) {
-    kcout << "__LibInit: Invalid image!\n";
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 
     return nullptr;
@@ -66,25 +64,20 @@ extern "C" SharedObject *__LibInit() {
   library->Get()->fImageEntrypointOffset =
       library->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart, 0), kPefCode);
 
-  kcout << "__LibInit: Task is successful!\n";
-
   return library;
 }
 
 /***********************************************************************************/
-
-/***********************************************************************************/
-/* @brief Frees the library. */
+/* @brief Ends the library. */
 /* @note Please check if the lib got freed! */
 /* @param SharedObjectPtr the library to free. */
 /***********************************************************************************/
 
-extern "C" Void __LibFini(SharedObjectPtr lib, bool *successful) {
+extern "C" Void ke_library_free(SharedObjectPtr lib, bool *successful) {
   MUST_PASS(successful);
 
   // sanity check (will also trigger a bug check)
   if (lib == nullptr) {
-    kcout << "__LibFini: Invalid image!\n";
     *successful = false;
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
   }
@@ -93,8 +86,6 @@ extern "C" Void __LibFini(SharedObjectPtr lib, bool *successful) {
   delete lib;
 
   lib = nullptr;
-
-  kcout << "__LibFini: Task is successful!\n";
 
   *successful = true;
 }
