@@ -68,45 +68,33 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         ExecOptionalHeaderPtr optHdr = reinterpret_cast<ExecOptionalHeaderPtr>(
             ptrHdr + sizeof(ExecHeader));
 
-        UInt64 baseSec = ptrHdr->mNumberOfSections;
-        img.File()->SetPosition(img.File(), &baseSec);
-
-        baseSec = ptrHdr->mNumberOfSections;
-        ExecSectionHeaderPtr headers =
-            (ExecSectionHeaderPtr)(&ptrHdr->mCharacteristics + 1);
-
-        EfiPhysicalAddress base = optHdr->mImageBase + optHdr->mBaseOfData;
-        BS->AllocatePages(AllocateAddress, EfiLoaderCode, 1, &base);
-
-        UInt64 codeSz = optHdr->mSizeOfCode;
-        img.File()->Read(img.File(), &codeSz, (VoidPtr)&base);
-
-        // TODO ExecReader class
-
         UInt32 MapKey = 0;
-        UInt32* Size = 0;
-        EfiMemoryDescriptor* Descriptor = nullptr;
+        UInt32* Size;
+        EfiMemoryDescriptor* Descriptor;
         UInt32 SzDesc = 0;
         UInt32 RevDesc = 0;
 
         if (BS->AllocatePool(EfiLoaderData, sizeof(UInt64), (VoidPtr*)&Size) !=
             kEfiOk) {
-          EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
-                              L"Bad Alloc! (AllocatePool)");
+          EFI::RaiseHardError(
+              L"HCoreLdr-BadAlloc",
+              L"The bootloader ran out of memory! Please check your specs.");
         }
 
         *Size = sizeof(EfiMemoryDescriptor);
 
         if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
                              (VoidPtr*)&Descriptor) != kEfiOk) {
-          EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
-                              L"Bad Alloc! (AllocatePool)");
+          EFI::RaiseHardError(
+              L"HCoreLdr-BadAlloc",
+              L"The bootloader ran out of memory! Please check your specs.");
         }
 
         if (BS->GetMemoryMap(Size, Descriptor, &MapKey, &SzDesc, &RevDesc) !=
             kEfiOk) {
-          EFI::RaiseHardError(L"HCoreLdr-BadAlloc",
-                              L"Bad Alloc! (GetMemoryMap)");
+          EFI::RaiseHardError(
+              L"HCoreLdr-GetMemoryMap",
+              L"GetMemoryMap returned a value which isn't kEfiOk!");
         }
 
         HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
@@ -134,10 +122,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  SystemTable->FirmwareVendor,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
-        handoverHdrPtr->f_HeapCommitSize = optHdr->mSizeOfHeapCommit;
-        handoverHdrPtr->f_StackCommitSize = optHdr->mSizeOfStackCommit;
-
-        writer.WriteString(L"HCoreLdr: Exit...\r\n");
+        writer.WriteString(L"HCoreLdr: Leaving it to kernel...\r\n");
 
         EFI::ExitBootServices(MapKey, ImageHandle);
 
