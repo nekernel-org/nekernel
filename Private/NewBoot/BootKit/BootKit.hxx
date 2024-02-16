@@ -64,7 +64,7 @@ class BFileReader final {
   explicit BFileReader(const CharacterType *path, EfiHandlePtr ImageHandle);
   ~BFileReader();
 
-  Void Read();
+  Void ReadAll();
 
   enum {
     kOperationOkay,

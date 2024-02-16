@@ -21,7 +21,7 @@
 #error Unknown CPU.
 #endif  // ifdef __x86_64__
 
-#define kBufferReadSz \
+#define kHeadersSz \
   (sizeof(DosHeader) + sizeof(ExecHeader) + sizeof(ExecOptionalHeader))
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
@@ -53,8 +53,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
 
-  img.Size(kBufferReadSz);
-  img.Read();
+  img.Size(kHeadersSz);
+  img.ReadAll();
 
   if (img.Error() == BFileReader::kOperationOkay) {
     BlobType blob = (BlobType)img.Blob();
