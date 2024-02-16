@@ -17,13 +17,17 @@
 
 #include <NewKit/Defines.hpp>
 
-#ifndef PTE_MAX
-#define PTE_MAX (0x200)
-#endif  //! PTE_MAX
+#ifndef kPTEMax
+#define kPTEMax (0x200)
+#endif  //! kPTEMax
 
-#ifndef PTE_ALIGN
-#define PTE_ALIGN (0x1000)
-#endif  //! PTE_ALIGN
+#ifndef kPTEAlign
+#define kPTEAlign (0x1000)
+#endif  //! kPTEAlign
+
+#ifndef kPTESize
+#define kPTESize (0x1000)
+#endif  // !kPTESize
 
 extern "C" void flush_tlb(HCore::UIntPtr VirtualAddr);
 extern "C" void write_cr3(HCore::UIntPtr pde);
@@ -68,7 +72,7 @@ inline UInt8 control_register_cast(ControlRegisterBits reg) {
 }  // namespace Detail
 
 struct PageDirectory64 final {
-  PageTable64 ALIGN(PTE_ALIGN) Pte[PTE_MAX];
+  PageTable64 ALIGN(kPTEAlign) Pte[kPTEMax];
 };
 
 PageTable64* hal_alloc_page(SizeT sz, Boolean rw, Boolean user);

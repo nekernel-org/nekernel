@@ -44,7 +44,7 @@ class JsonType final {
 
 struct JsonStreamTraits final {
   JsonType In(const char *full_array) {
-    SizeT len = string_length(full_array);
+    SizeT len = rt_string_len(full_array);
 
     if (full_array[0] == '\"' && full_array[len - 1] == ',' ||
         full_array[len - 1] == '\"') {

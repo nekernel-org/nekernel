@@ -416,6 +416,11 @@ typedef UInt64(EFI_API *EfiAllocatePages)(EfiAllocateType AllocType,
 
 typedef UInt64(EFI_API *EfiFreePages)(EfiPhysicalAddress *Memory, UInt32 Pages);
 
+typedef UInt64(EFI_API *EfiGetMemoryMap)(UInt32 *MapSize,
+                                         EfiMemoryDescriptor *DescPtr,
+                                         UInt32 *MapKey, UInt32 *DescSize,
+                                         UInt32 *DescVersion);
+
 /**
  * @brief GUID type, something you can also find in CFKit.
  */
@@ -459,7 +464,7 @@ typedef struct EfiBootServices {
   UIntPtr RestoreTPL;
   EfiAllocatePages AllocatePages;
   EfiFreePages FreePages;
-  UIntPtr GetMemoryMap;
+  EfiGetMemoryMap GetMemoryMap;
   EfiAllocatePool AllocatePool;
   EfiFreePool FreePool;
   UIntPtr CreateEvent;
@@ -719,5 +724,7 @@ struct EfiFileInfo final {
 #define EFI_FILE_PROTOCOL_REVISION 0x00010000
 #define EFI_FILE_PROTOCOL_REVISION2 0x00020000
 #define EFI_FILE_PROTOCOL_LATEST_REVISION EFI_FILE_PROTOCOL_REVISION2
+
+#define EFI_EXTRA_DESCRIPTOR_SIZE 8
 
 #endif  // ifndef __EFI__

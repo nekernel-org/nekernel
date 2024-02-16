@@ -61,22 +61,22 @@ typedef struct HandoverHeader final {
 } __attribute__((packed)) HandoverHeader, *HandoverHeaderPtr;
 
 struct HandoverInformationHeader {
-  HandoverHeaderPtr f_Header;
+  HandoverHeader f_Header;
   voidPtr f_VirtualStart;
   SizeT f_VirtualSize;
   voidPtr f_PhysicalStart;
   SizeT f_PhysicalSize;
-  Char f_FirmwareVendorName[32];
+  WideChar f_FirmwareVendorName[32];
   SizeT f_FirmwareVendorLen;
   voidPtr f_RsdPtr;
   voidPtr f_SmBIOS;
   voidPtr f_RTC;
   voidPtr f_GOP;
-  voidPtr f_GOPSize;
+  SizeT f_GOPSize;
 };
 
 /**
     @brief Handover Jump Proc
 */
-typedef UInt64 (*HandoverProc)(HandoverInformationHeader* pHandover);
+typedef void (*HandoverProc)(HandoverInformationHeader* pHandover);
 }  // namespace HCore::HEL

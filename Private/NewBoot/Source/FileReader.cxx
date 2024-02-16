@@ -103,7 +103,7 @@ BFileReader::~BFileReader() {
     @brief this reads all of the buffer.
     @param ImageHandle used internally.
 */
-Void BFileReader::Read() {
+Void BFileReader::ReadAll() {
   /// Allocate Handover page.
 
   if (mBlob == nullptr) {

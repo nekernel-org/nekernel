@@ -48,7 +48,7 @@ namespace HCore {
 inline auto rt_find_exec_header(DosHeaderPtr ptrDos) -> VoidPtr {
   if (!ptrDos) return nullptr;
   if (ptrDos->eMagic[0] != kMagMz0) return nullptr;
-  if (ptrDos->eMagic[0] != kMagMz1) return nullptr;
+  if (ptrDos->eMagic[1] != kMagMz1) return nullptr;
 
   return (VoidPtr)(&ptrDos->eLfanew + 1);
 }

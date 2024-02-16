@@ -30,11 +30,7 @@ Bascially frees everything we have in the EFI side.
 inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
   if (!ST) return;
 
-  /// The MapKey may be invalid.
-  /// If so, then hang the computer.
-  if (ST->BootServices->ExitBootServices(ImageHandle, MapKey) != kEfiOk) {
-    EFI::Stop();
-  }
+  ST->BootServices->ExitBootServices(ImageHandle, MapKey);
 }
 
 enum {
@@ -84,5 +80,7 @@ inline void InitEFI(EfiSystemTable *SystemTable) noexcept {
 #include <BootKit/Platform.hxx>
 
 #endif  // ifdef __BOOTLOADER__
+
+#define kHCoreSubsystem 17
 
 #endif /* ifndef __EFI_API__ */

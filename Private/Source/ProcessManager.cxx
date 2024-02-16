@@ -18,6 +18,8 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
 
+#include "NewKit/RuntimeCheck.hpp"
+
 ///! bugs = 0
 
 /***********************************************************************************/
@@ -54,10 +56,9 @@ void Process::Wake(const bool should_wakeup) {
 VoidPtr Process::New(const SizeT &sz) {
   if (this->FreeMemory < 1) return nullptr;
 
-  // RAM allocation
-  if (this->PoolCursor) {
-    VoidPtr ptr = this->PoolCursor;
-    this->PoolCursor = (VoidPtr)((UIntPtr)this->PoolCursor + (sizeof(sz)));
+  if (this->HeapCursor) {
+    VoidPtr ptr = this->HeapCursor;
+    this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor + (sizeof(sz)));
 
     ++this->UsedMemory;
     --this->FreeMemory;
@@ -86,13 +87,13 @@ bool rt_in_pool_region(VoidPtr pool_ptr, VoidPtr pool, const SizeT &sz) {
 
 /* @brief free pointer from usage. */
 Boolean Process::Delete(VoidPtr ptr, const SizeT &sz) {
-  if (sz < 1 || this->PoolCursor == this->Pool) return false;
+  if (sz < 1 || this->HeapCursor == this->HeapPtr) return false;
 
   // also check for the amount of allocations we've done so far.
   if (this->UsedMemory < 1) return false;
 
-  if (rt_in_pool_region(ptr, this->PoolCursor, this->UsedMemory)) {
-    this->PoolCursor = (VoidPtr)((UIntPtr)this->PoolCursor - (sizeof(sz)));
+  if (rt_in_pool_region(ptr, this->HeapCursor, this->UsedMemory)) {
+    this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor - (sizeof(sz)));
     rt_zero_memory(ptr, sz);
 
     ++this->FreeMemory;
@@ -131,14 +132,13 @@ void Process::Exit(Int32 exit_code) {
 
   kExitCode = exit_code;
 
-  if (this->Ring != (Int32)ProcessSelector::kRingDriver &&
-      this->Ring != (Int32)ProcessSelector::kRingKernel) {
-    if (this->Pool) ke_free_heap(this->Pool);
+  if (this->Ring != (Int32)ProcessSelector::kRingDriver) {
+    if (this->HeapPtr) ke_free_heap(this->HeapPtr);
 
-    this->Pool = nullptr;
-    this->PoolCursor = nullptr;
+    this->HeapPtr = nullptr;
+    this->HeapCursor = nullptr;
 
-    this->FreeMemory = kPoolMaxSz;
+    this->FreeMemory = 0UL;  // TODO: fill available heap.
     this->UsedMemory = 0UL;
   }
 
@@ -155,11 +155,13 @@ void Process::Exit(Int32 exit_code) {
 bool ProcessManager::Add(Ref<Process> &process) {
   if (!process) return false;
 
+  if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel) return false;
+
   kcout << "ProcessManager::Add(Ref<Process>& process)\r\n";
 
-  process.Leak().Pool = ke_new_heap(kPoolUser | kPoolRw);
+  process.Leak().HeapPtr = ke_new_heap(kPoolUser | kPoolRw);
   process.Leak().ProcessId = this->m_Headers.Count();
-  process.Leak().PoolCursor = process.Leak().Pool;
+  process.Leak().HeapCursor = process.Leak().HeapPtr;
 
   process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame *>(
       ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
@@ -171,6 +173,17 @@ bool ProcessManager::Add(Ref<Process> &process) {
   process.Leak().AssignStart(imageStart);
 
   this->m_Headers.Add(process);
+
+  if (!imageStart && process.Leak().Kind == Process::ExecutableType) {
+    process.Leak().Crash();
+  }
+
+  if (!imageStart && process.Leak().Kind == Process::DriverType) {
+    if (process.Leak().Ring == 3)
+      process.Leak().Crash();
+    else
+      ke_stop(RUNTIME_CHECK_PROCESS);
+  }
 
   return true;
 }

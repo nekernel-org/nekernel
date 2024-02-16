@@ -82,7 +82,7 @@ ErrorOr<StringView> IPFactory::ToStringView(Ref<RawIPAddress> ipv4) {
 bool IPFactory::IpCheckVersion4(const char* ip) {
   int cnter = 0;
 
-  for (Size base = 0; base < string_length(ip); ++base) {
+  for (Size base = 0; base < rt_string_len(ip); ++base) {
     if (ip[base] == '.') {
       cnter = 0;
     } else {

@@ -64,7 +64,7 @@ class BFileReader final {
   explicit BFileReader(const CharacterType *path, EfiHandlePtr ImageHandle);
   ~BFileReader();
 
-  Void Read();
+  Void ReadAll();
 
   enum {
     kOperationOkay,
@@ -79,6 +79,11 @@ class BFileReader final {
   VoidPtr Blob() { return mBlob; }
   EfiFileProtocolPtr File() { return mFile; }
   UInt64 &Size() { return mSizeFile; }
+
+  UInt64 &Size(const UInt64 &Sz) {
+    mSizeFile = Sz;
+    return mSizeFile;
+  }
 
  public:
   BFileReader &operator=(const BFileReader &) = default;
