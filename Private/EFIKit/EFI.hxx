@@ -82,6 +82,15 @@ typedef UInt64(EFI_API *EfiLocateDevicePath)(EfiGUID *Protocol,
                                              EfiDevicePathProtocol **DevicePath,
                                              EfiHandlePtr Device);
 
+typedef UInt64(EFI_API *EfiStartImage)(EfiHandlePtr Handle, VoidPtr ArgsSize,
+                                       VoidPtr ArgsPtr);
+
+typedef UInt64(EFI_API *EfiLoadImage)(Boolean BootPolicy,
+                                      EfiHandlePtr ParentHandle,
+                                      EfiFileDevicePathProtocol *DeviceFile,
+                                      VoidPtr buffer, SizeT size,
+                                      EfiHandlePtr *ppHandle);
+
 /// EFI pool helpers, taken from iPXE.
 
 typedef enum EfiMemoryType {
@@ -460,51 +469,51 @@ firmware level application.
 */
 typedef struct EfiBootServices {
   EfiTableHeader SystemTable;
-  UIntPtr RaiseTPL;
-  UIntPtr RestoreTPL;
+  VoidPtr RaiseTPL;
+  VoidPtr RestoreTPL;
   EfiAllocatePages AllocatePages;
   EfiFreePages FreePages;
   EfiGetMemoryMap GetMemoryMap;
   EfiAllocatePool AllocatePool;
   EfiFreePool FreePool;
-  UIntPtr CreateEvent;
-  UIntPtr SetTimer;
-  UIntPtr WaitForEvent;
-  UIntPtr SignalEvent;
-  UIntPtr CloseEvent;
-  UIntPtr CheckEvent;
-  UIntPtr InstallProtocolInterface;
-  UIntPtr ReinstallProtocolInterface;
-  UIntPtr UninstallProtocolInterface;
+  VoidPtr CreateEvent;
+  VoidPtr SetTimer;
+  VoidPtr WaitForEvent;
+  VoidPtr SignalEvent;
+  VoidPtr CloseEvent;
+  VoidPtr CheckEvent;
+  VoidPtr InstallProtocolInterface;
+  VoidPtr ReinstallProtocolInterface;
+  VoidPtr UninstallProtocolInterface;
   EfiHandleProtocol HandleProtocol;
   VoidPtr Reserved;
-  UIntPtr RegisterProtocolNotify;
-  UIntPtr LocateHandle;
+  VoidPtr RegisterProtocolNotify;
+  VoidPtr LocateHandle;
   EfiLocateDevicePath LocateDevicePath;
-  UIntPtr InstallConfigurationTable;
-  UIntPtr LoadImage;
-  UIntPtr StartImage;
-  UIntPtr Exit;
-  UIntPtr UnloadImage;
+  VoidPtr InstallConfigurationTable;
+  EfiLoadImage LoadImage;
+  EfiStartImage StartImage;
+  VoidPtr Exit;
+  VoidPtr UnloadImage;
   EfiExitBootServices ExitBootServices;
-  UIntPtr GetNextMonotonicCount;
-  UIntPtr Stall;
+  VoidPtr GetNextMonotonicCount;
+  VoidPtr Stall;
   EfiStatusType(EFI_API *SetWatchdogTimer)(UInt32 Timeout, UInt64 WatchdogCode,
                                            UInt32 DataSize, EfiCharType *Data);
-  UIntPtr ConnectController;
-  UIntPtr DisconnectController;
+  VoidPtr ConnectController;
+  VoidPtr DisconnectController;
   EfiOpenProtocol OpenProtocol;
-  UIntPtr CloseProtocol;
-  UIntPtr OpenProtocolInformation;
-  UIntPtr ProtocolsPerHandle;
-  UIntPtr LocateHandleBuffer;
+  VoidPtr CloseProtocol;
+  VoidPtr OpenProtocolInformation;
+  VoidPtr ProtocolsPerHandle;
+  VoidPtr LocateHandleBuffer;
   EfiLocateProtocol LocateProtocol;
-  UIntPtr InstallMultipleProtocolInterfaces;
-  UIntPtr UninstallMultipleProtocolInterfaces;
+  VoidPtr InstallMultipleProtocolInterfaces;
+  VoidPtr UninstallMultipleProtocolInterfaces;
   EfiCalculateCrc32 CalculateCrc32;
   EfiCopyMem CopyMem;
   EfiSetMem SetMem;
-  UIntPtr CreateEventEx;
+  VoidPtr CreateEventEx;
 } EfiBootServices;
 
 #define kEntireDevPath 0xFF

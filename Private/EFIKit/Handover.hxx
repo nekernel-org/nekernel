@@ -61,7 +61,6 @@ typedef struct HandoverHeader final {
 } __attribute__((packed)) HandoverHeader, *HandoverHeaderPtr;
 
 struct HandoverInformationHeader {
-  HandoverHeader f_Header;
   voidPtr f_VirtualStart;
   SizeT f_VirtualSize;
   voidPtr f_PhysicalStart;
