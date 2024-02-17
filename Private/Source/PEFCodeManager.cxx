@@ -18,6 +18,8 @@
 #include <NewKit/RuntimeCheck.hpp>
 #include <NewKit/String.hpp>
 
+#include "KernelKit/PEF.hpp"
+
 namespace HCore {
 namespace Detail {
 UInt32 rt_get_pef_platform(void) noexcept {
@@ -88,12 +90,34 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
   PEFCommandHeader *container_header = reinterpret_cast<PEFCommandHeader *>(
       (UIntPtr)fCachedBlob + sizeof(PEFContainer));
 
+  ErrorOr<StringView> errOrSym;
+
+  switch (kind) {
+    case kPefCode: {
+      errOrSym = StringBuilder::Construct(".text");
+      break;
+    }
+    case kPefData: {
+      errOrSym = StringBuilder::Construct(".data");
+      break;
+    }
+    case kPefZero: {
+      errOrSym = StringBuilder::Construct(".page_zero");
+      break;
+    }
+    default:
+      return nullptr;
+  }
+
+  errOrSym.Leak().Leak() += name;
+
   for (SizeT index = 0; index < container->Count; ++index) {
     kcout << "Iterating over container at index: "
           << StringBuilder::FromInt("%", index)
           << ", name: " << container_header->Name << "\n";
 
-    if (StringBuilder::Equals(container_header->Name, name)) {
+    if (StringBuilder::Equals(container_header->Name,
+                              errOrSym.Leak().Leak().CData())) {
       kcout << "Found potential container, checking for validity.\n";
 
       if (container_header->Kind == kind)
