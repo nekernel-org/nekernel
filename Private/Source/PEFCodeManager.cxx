@@ -19,6 +19,7 @@
 #include <NewKit/String.hpp>
 
 #include "KernelKit/PEF.hpp"
+#include "NewKit/Utils.hpp"
 
 namespace HCore {
 namespace Detail {
@@ -94,37 +95,37 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
 
   switch (kind) {
     case kPefCode: {
-      errOrSym = StringBuilder::Construct(".text");
+      errOrSym = StringBuilder::Construct(".text$");
       break;
     }
     case kPefData: {
-      errOrSym = StringBuilder::Construct(".data");
+      errOrSym = StringBuilder::Construct(".data$");
       break;
     }
     case kPefZero: {
-      errOrSym = StringBuilder::Construct(".page_zero");
+      errOrSym = StringBuilder::Construct(".page_zero$");
       break;
     }
     default:
       return nullptr;
   }
 
+  char *unconstSymbol = const_cast<char *>(name);
+
+  for (SizeT i = 0UL; i < rt_string_len(name, 0); ++i) {
+    if (unconstSymbol[i] == ' ') {
+      unconstSymbol[i] = '$';
+    }
+  }
+
   errOrSym.Leak().Leak() += name;
 
   for (SizeT index = 0; index < container->Count; ++index) {
-    kcout << "Iterating over container at index: "
-          << StringBuilder::FromInt("%", index)
-          << ", name: " << container_header->Name << "\n";
-
     if (StringBuilder::Equals(container_header->Name,
                               errOrSym.Leak().Leak().CData())) {
-      kcout << "Found potential container, checking for validity.\n";
-
       if (container_header->Kind == kind)
         return (VoidPtr)(static_cast<UIntPtr *>(fCachedBlob) +
                          container_header->Offset);
-
-      continue;
     }
   }
 
