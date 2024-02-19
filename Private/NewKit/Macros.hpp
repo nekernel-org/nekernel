@@ -44,10 +44,7 @@
 #endif  // !__HCORE__
 
 #ifndef EXTERN_C
-#define EXTERN_C() extern "C" {
-#define END_EXTERN_C() \
-  }                    \
-  ;
+#define EXTERN_C extern "C"
 #endif
 
 #ifndef MAKE_ENUM
