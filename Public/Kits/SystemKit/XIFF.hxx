@@ -11,12 +11,14 @@
 
 ------------------------------------------------------- */
 
+#include <NewKit/Defines.hpp>
+
 /***
  * @brief Generic XIFF header
  * Used by XIFF based containers.
  */
 
-struct XiffHeader {
+struct PACKED XiffHeader {
   unsigned char mag[5];      // XIFF string (includes \0)
   unsigned int size;         // overall size of header (XiffHeader) in bytes
   unsigned int format_type;  // format type. generic
