@@ -18,7 +18,7 @@
 #ifdef __x86_64__
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #else
-#error Unknown CPU.
+#error This CPU is unknown.
 #endif  // ifdef __x86_64__
 
 #define kHeadersSz \
@@ -43,7 +43,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   const char strDate[] = __DATE__;
 
-  writer.WriteString(L"HCoreLdr: Build date: ");
+  writer.WriteString(L"HCoreLdr: Build: ");
 
   for (auto& ch : strDate) writer.WriteCharacter(ch);
 
@@ -64,7 +64,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
     if (ptrHdr && ptrHdr->mMachine == EFI::Platform() &&
         ptrHdr->mMagic == kPeMagic) {
-      if (ptrHdr->mNumberOfSections > 1) {
+      /// sections must be at least 3.
+      if (ptrHdr->mNumberOfSections >= 3) {
         ExecOptionalHeaderPtr optHdr = reinterpret_cast<ExecOptionalHeaderPtr>(
             ptrHdr + sizeof(ExecHeader));
 
@@ -122,15 +123,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  SystemTable->FirmwareVendor,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
-        writer.WriteString(L"HCoreLdr: Leaving it to kernel...\r\n");
-
-        EFI::ExitBootServices(MapKey, ImageHandle);
-
-        HCore::HEL::HandoverProc proc =
-            reinterpret_cast<HCore::HEL::HandoverProc>(
-                optHdr->mAddressOfEntryPoint);
-
-        proc(handoverHdrPtr);
+        writer.WriteString(L"HCoreLdr: Booting HCore...\r\n");
 
         EFI::Stop();
 

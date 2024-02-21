@@ -28,11 +28,17 @@ class TerminalDevice final : public DeviceInterface<const Char *> {
 
   TerminalDevice &operator=(const TerminalDevice &) = default;
   TerminalDevice(const TerminalDevice &) = default;
+
+  static TerminalDevice Shared() noexcept;
 };
 
 namespace Detail {
 bool serial_init();
 }
-
-extern TerminalDevice kcout;
 }  // namespace HCore
+
+#ifdef kcout
+#undef kcout
+#endif  // ifdef kcout
+
+#define kcout TerminalDevice::Shared()

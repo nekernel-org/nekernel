@@ -10,6 +10,8 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageManager.hpp>
 
+#include "NewKit/String.hpp"
+
 #ifdef __x86_64__
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #endif  // ifdef __x86_64__
@@ -47,6 +49,13 @@ PTEWrapper::~PTEWrapper() {
 }
 
 void PTEWrapper::FlushTLB(Ref<PageManager> &pm) {
+  volatile PTE *virtAddr = static_cast<volatile PTE *>(virtAddr);
+
+  virtAddr->Present = this->m_Present;
+  virtAddr->ExecDisable = this->m_ExecDisable;
+  virtAddr->Rw = this->m_Rw;
+  virtAddr->User = this->m_User;
+
   pm.Leak().FlushTLB(this->m_VirtAddr);
 }
 
@@ -74,6 +83,8 @@ PTEWrapper *PageManager::Request(Boolean Rw, Boolean User,
     kcout << "PTEWrapper : Page table is nullptr!, ke_new_ke_heap failed!";
     return nullptr;
   }
+
+  PageTableEntry->NoExecute(ExecDisable);
 
   *PageTableEntry =
       PTEWrapper{Rw, User, ExecDisable, Detail::create_page_wrapper(Rw, User)};

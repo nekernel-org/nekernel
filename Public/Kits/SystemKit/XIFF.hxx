@@ -2,7 +2,8 @@
  (C) Mahrouss Logic
     ===========================================*/
 
-#pragma once
+#ifndef __XIFF__
+#define __XIFF__
 
 /** ---------------------------------------------------
 
@@ -31,3 +32,5 @@ struct PACKED XiffHeader {
 #define kXIFFAudio "XAFF"
 #define kXIFFInstaller "XnFF"
 #define kXIFFGeneric "XIFF"
+
+#endif  // ifndef __XIFF__

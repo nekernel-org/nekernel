@@ -11,22 +11,24 @@
 #include <NewKit/Pmm.hpp>
 
 namespace HCore {
-Pmm::Pmm() : m_PageManager() {
-  kcout << "[PMM] Allocate PageMemoryManager\r\n";
-}
+Pmm::Pmm() : m_PageManager() { kcout << "[PMM] Allocate PageMemoryManager"; }
 
 Pmm::~Pmm() = default;
 
 /* If this returns Null pointer, enter emergency mode */
 Ref<PTEWrapper *> Pmm::RequestPage(Boolean user, Boolean readWrite) {
-  if (m_PageManager) {
-    PTEWrapper *pt = m_PageManager.Leak().Request(user, readWrite, true);
+  PTEWrapper *pt = m_PageManager.Leak().Request(user, readWrite, false);
 
-    if (pt) return Ref<PTEWrapper *>(pt);
+  if (pt) {
+    pt->m_Present = true;
+    pt->FlushTLB(m_PageManager);
+
+    kcout << "[PMM]: Allocation was successful.";
+
+    return Ref<PTEWrapper *>(pt);
   }
 
-  kcout << "[Pmm::RequestPage] Ref<PTEWrapper*> could not be created! "
-           "m_PageManager is nullptr!\r\n";
+  kcout << "[PMM]: Allocation failure.";
 
   return {};
 }

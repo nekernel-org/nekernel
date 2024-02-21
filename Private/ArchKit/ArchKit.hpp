@@ -62,11 +62,10 @@ extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *),
                     kMaxSyscalls>
     kSyscalls;
 
-extern "C" HCore::Void rt_wait_for_io();
-extern "C" HCore::Void rt_syscall_handle(HCore::HAL::StackFramePtr stackFrame);
-extern "C" HCore::HAL::StackFramePtr rt_get_current_context();
-extern "C" HCore::Void rt_do_context_switch(
-    HCore::HAL::StackFramePtr stackFrame);
+EXTERN_C HCore::Void rt_wait_for_io();
+EXTERN_C HCore::Void rt_syscall_handle(HCore::HAL::StackFramePtr stackFrame);
+EXTERN_C HCore::HAL::StackFramePtr rt_get_current_context();
+EXTERN_C HCore::Void rt_do_context_switch(HCore::HAL::StackFramePtr stackFrame);
 
 inline HCore::VoidPtr kKernelVirtualStart;
 inline HCore::UIntPtr kKernelVirtualSize;

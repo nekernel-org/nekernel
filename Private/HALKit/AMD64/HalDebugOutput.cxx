@@ -42,7 +42,7 @@ bool serial_init() {
     ke_stop(RUNTIME_CHECK_HANDSHAKE);
   }
 
-  kReady = kStateReady;
+  kState = kStateReady;
 
   // If serial is not faulty set it in normal operation mode
   // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
@@ -54,6 +54,8 @@ bool serial_init() {
 }  // namespace Detail
 
 void ke_io_print(const char *bytes) {
+  Detail::serial_init();
+
   if (!bytes || Detail::kState != kStateReady) return;
   if (*bytes == 0) return;
 
@@ -67,8 +69,14 @@ void ke_io_print(const char *bytes) {
     ++index;
   }
 
+  HAL::Out8(Detail::PORT, '\r');
+  HAL::Out8(Detail::PORT, '\n');
   Detail::kState = kStateReady;
 }
 
-TerminalDevice kcout(HCore::ke_io_print, nullptr);
+TerminalDevice TerminalDevice::Shared() noexcept {
+  TerminalDevice out(HCore::ke_io_print, nullptr);
+  return out;
+}
+
 }  // namespace HCore

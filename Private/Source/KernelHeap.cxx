@@ -9,6 +9,8 @@
 
 #include <NewKit/KernelHeap.hpp>
 
+#include "KernelKit/DebugOutput.hpp"
+
 //! @file KernelHeap.cpp
 //! @brief Kernel allocator.
 
@@ -18,7 +20,7 @@ namespace HCore {
 static Ref<PTEWrapper *> kWrapperList[kMaxWrappers];
 static SizeT kWrapperCount = 0UL;
 static Ref<PTEWrapper *> kLastWrapper;
-static Pmm kPmm;
+static PageManager kPageManager;
 
 namespace Detail {
 STATIC voidPtr ke_find_heap(const SizeT &sz, const bool rw, const bool user) {
@@ -45,7 +47,7 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 
   if (auto ptr = Detail::ke_find_heap(sz, rw, user); ptr) return ptr;
 
-  Ref<PTEWrapper *> wrapper = kPmm.RequestPage(user, rw);
+  Ref<PTEWrapper *> wrapper = kPageManager.Request(user, rw, false);
 
   if (wrapper) {
     kLastWrapper = wrapper;
@@ -67,7 +69,7 @@ Int32 ke_delete_ke_heap(voidPtr ptr) {
     const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
 
     if (kLastWrapper && virtualAddress == kLastWrapper->VirtualAddress()) {
-      if (kPmm.FreePage(kLastWrapper)) {
+      if (kPageManager.Free(kLastWrapper)) {
         kLastWrapper->NoExecute(false);
         return true;
       }
@@ -82,7 +84,7 @@ Int32 ke_delete_ke_heap(voidPtr ptr) {
         wrapper = kWrapperList[indexWrapper];
 
         // if page is no more, then mark it also as non executable.
-        if (kPmm.FreePage(wrapper)) {
+        if (kPageManager.Free(wrapper)) {
           wrapper->NoExecute(false);
           return true;
         }
@@ -124,6 +126,7 @@ Boolean kernel_valid_ptr(voidPtr ptr) {
 Void ke_init_ke_heap() noexcept {
   kWrapperCount = 0UL;
   Ref<PTEWrapper *> kLastWrapper = Ref<PTEWrapper *>(nullptr);
-  Pmm kPmm = Pmm();
+
+  kcout << "KernelHeap: Init [OK]\r\n";
 }
 }  // namespace HCore

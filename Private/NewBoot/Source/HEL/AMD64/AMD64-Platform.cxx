@@ -18,6 +18,8 @@
 #include <BootKit/Platform.hxx>
 #include <EFIKit/Api.hxx>
 
+#ifndef __BUNDLE_KERNEL__
+
 extern "C" void rt_halt() { asm volatile("hlt"); }
 
 extern "C" void rt_cli() { asm volatile("cli"); }
@@ -31,6 +33,8 @@ extern "C" void rt_std() { asm volatile("std"); }
 /// @brief Stack Checker, leave empty.
 
 extern "C" void ___chkstk_ms(void) {}
+
+#endif
 
 namespace EFI {
 Void Stop() noexcept {
