@@ -15,8 +15,6 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
 
-#include "NewKit/Utils.hpp"
-
 EXTERN_C void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
   /// Setup kernel globals.
