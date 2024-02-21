@@ -25,7 +25,7 @@ extern "C" [[noreturn]] void ke_wait_for_debugger() {
 namespace HCore {
 void ke_stop(const HCore::Int &id) {
   kcout << "*** STOP *** \r\n";
-  kcout << "*** HCoreKrnl.exe has trigerred a runtime breakpoint. *** \r\n";
+  kcout << "*** HCoreKrnl.exe has trigerred a runtime stop. *** \r\n";
 
   switch (id) {
     case RUNTIME_CHECK_PROCESS: {
@@ -72,9 +72,8 @@ void ke_stop(const HCore::Int &id) {
 void ke_runtime_check(bool expr, const char *file, const char *line) {
   if (!expr) {
 #ifdef __DEBUG__
-    kcout << "[KERNEL] Check Failed!\n";
-    kcout << "[KERNEL] File: " << file << "\n";
-    kcout << "[KERNEL] Where: " << line << "\n";
+    kcout << "Krnl: File: " << file << "\n";
+    kcout << "Krnl: Line: " << line << "\n";
 
 #endif  // __DEBUG__
 

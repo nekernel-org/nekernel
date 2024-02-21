@@ -31,7 +31,6 @@ void GDTLoader::Load(Register64 &gdt) {
 
 void IDTLoader::Load(Register64 &idt) {
   Detail::RegisterAMD64 *reg = new Detail::RegisterAMD64();
-  MUST_PASS(reg);
 
   reg->base = idt.Base;
   reg->limit = idt.Limit;

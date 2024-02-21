@@ -18,7 +18,7 @@ bool ke_init_hal() {
   HCore::HAL::Register64 kIdtRegister;
 
   kIdtRegister.Base = (UIntPtr)__EXEC_IVT;
-  kIdtRegister.Limit = sizeof(HAL::Register64) * 256;
+  kIdtRegister.Limit = sizeof(HAL::Register64) * 255;
 
   HAL::IDTLoader idt;
   idt.Load(kIdtRegister);

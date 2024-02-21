@@ -90,3 +90,5 @@
 #ifndef self
 #define self this
 #endif
+
+#define STRINGIFY(X) #X

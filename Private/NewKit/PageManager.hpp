@@ -27,6 +27,7 @@ class PTEWrapper final {
  public:
   explicit PTEWrapper(Boolean Rw = false, Boolean User = false,
                       Boolean ExecDisable = false, UIntPtr Address = 0);
+
   ~PTEWrapper();
 
   PTEWrapper &operator=(const PTEWrapper &) = default;

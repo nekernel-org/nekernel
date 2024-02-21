@@ -9,6 +9,8 @@
 
 #include <NewKit/KernelHeap.hpp>
 
+#include "KernelKit/DebugOutput.hpp"
+
 //! @file KernelHeap.cpp
 //! @brief Kernel allocator.
 
@@ -47,16 +49,12 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 
   Ref<PTEWrapper *> wrapper = kPageManager.Request(user, rw, false);
 
-  if (wrapper) {
-    kLastWrapper = wrapper;
+  kLastWrapper = wrapper;
 
-    kWrapperList[kWrapperCount] = wrapper;
-    ++kWrapperCount;
+  kWrapperList[kWrapperCount] = wrapper;
+  ++kWrapperCount;
 
-    return reinterpret_cast<voidPtr>(wrapper->VirtualAddress());
-  }
-
-  return nullptr;
+  return reinterpret_cast<voidPtr>(wrapper->VirtualAddress());
 }
 
 /// @brief Declare pointer as free.
@@ -124,7 +122,5 @@ Boolean kernel_valid_ptr(voidPtr ptr) {
 Void ke_init_ke_heap() noexcept {
   kWrapperCount = 0UL;
   Ref<PTEWrapper *> kLastWrapper = Ref<PTEWrapper *>(nullptr);
-
-  kcout << "KernelHeap: Init [OK]\r\n";
 }
 }  // namespace HCore

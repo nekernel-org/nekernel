@@ -17,7 +17,9 @@ void ke_runtime_check(bool bExpression, const char *file, const char *line);
 }
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)
-#define MUST_PASS(EXPR) HCore::ke_runtime_check(EXPR, __FILE__, " %d -> ")
+#define __MUST_PASS(EXPR, FILE, LINE) \
+  HCore::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
+#define MUST_PASS(EXPR) __MUST_PASS(EXPR, __FILE__, __LINE__)
 #define assert(EXPR) MUST_PASS(EXPR, RUNTIME_CHECK_EXPRESSION)
 
 enum RUNTIME_CHECK {

@@ -33,7 +33,7 @@ IFilesystemManager* IFilesystemManager::Unmount() {
 }
 
 bool IFilesystemManager::Mount(IFilesystemManager* pMount) {
-  if (pMount) {
+  if (kMounted == nullptr) {
     kMounted = pMount;
     return true;
   }

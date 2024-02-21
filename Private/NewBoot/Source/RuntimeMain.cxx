@@ -125,6 +125,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         writer.WriteString(L"HCoreLdr: Booting HCore...\r\n");
 
+        EFI::ExitBootServices(MapKey, ImageHandle);
+
         EFI::Stop();
 
         return kEfiOk;

@@ -10,8 +10,6 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageManager.hpp>
 
-#include "NewKit/String.hpp"
-
 #ifdef __x86_64__
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #endif  // ifdef __x86_64__
@@ -45,7 +43,8 @@ PTEWrapper::~PTEWrapper() {
   PTE *raw = reinterpret_cast<PTE *>(m_VirtAddr);
   MUST_PASS(raw);
 
-  if (raw->Present) raw->Present = false;
+  raw->Present = false;
+  raw->Rw = false;
 }
 
 void PTEWrapper::FlushTLB(Ref<PageManager> &pm) {
@@ -80,14 +79,14 @@ PTEWrapper *PageManager::Request(Boolean Rw, Boolean User,
       HCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User));
 
   if (PageTableEntry == nullptr) {
-    kcout << "PTEWrapper : Page table is nullptr!, ke_new_ke_heap failed!";
+    kcout << "PTEWrapper : Page table is nullptr!, ke_new_ke_heap failed!\n";
     return nullptr;
   }
 
   PageTableEntry->NoExecute(ExecDisable);
 
-  *PageTableEntry =
-      PTEWrapper{Rw, User, ExecDisable, Detail::create_page_wrapper(Rw, User)};
+  *PageTableEntry = PTEWrapper{Rw, User, ExecDisable,
+                               reinterpret_cast<UIntPtr>(PageTableEntry)};
   return PageTableEntry;
 }
 
@@ -116,42 +115,11 @@ const UIntPtr &PTEWrapper::VirtualAddress() { return m_VirtAddr; }
 
 ////////////////////////////
 
-bool PTEWrapper::Shareable() {
-  auto raw = reinterpret_cast<PTE *>(m_VirtAddr);
+bool PTEWrapper::Shareable() { return m_Shareable; }
 
-  if (raw->Present) {
-    m_Shareable = raw->Rw;
-    kcout << m_Shareable ? "[PTEWrapper::Shareable] page is sharable!\n"
-                         : "[PTEWrapper::Shareable] page is not sharable!\n";
+bool PTEWrapper::Present() { return m_Present; }
 
-    return m_Shareable;
-  } else {
-    kcout << "[PTEWrapper::Shareable] page is not present!\n";
-    return false;
-  }
-}
-
-bool PTEWrapper::Present() {
-  auto raw = reinterpret_cast<PTE *>(m_VirtAddr);
-
-  if (raw->Present) {
-    m_Present = raw->Present;
-    return m_Present;
-  } else {
-    kcout << "[PTEWrapper::Present] page is not present!";
-    return false;
-  }
-}
-
-bool PTEWrapper::Access() {
-  auto raw = reinterpret_cast<PTE *>(m_VirtAddr);
-
-  if (raw->Present) {
-    m_Accessed = raw->Accessed;
-  }
-
-  return m_Accessed;
-}
+bool PTEWrapper::Access() { return m_Accessed; }
 
 ////////////////////////////
 

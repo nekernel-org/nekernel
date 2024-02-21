@@ -76,8 +76,6 @@ struct PageDirectory64 final {
 };
 
 PageTable64* hal_alloc_page(SizeT sz, Boolean rw, Boolean user);
-UIntPtr& hal_page_base() noexcept;
-void hal_page_base(const UIntPtr& newPagePtr) noexcept;
 UIntPtr hal_create_page(Boolean rw, Boolean user);
 }  // namespace HCore::HAL
 

@@ -24,9 +24,6 @@ EXTERN_C void RuntimeMain(
   kKernelPhysicalSize = HandoverHeader->f_VirtualSize;
   kKernelPhysicalStart = HandoverHeader->f_VirtualStart;
 
-  /// Setup base page.
-  HCore::HAL::hal_page_base((HCore::UIntPtr)kKernelVirtualStart);
-
   /// Init memory managers.
   HCore::ke_init_ke_heap();
   HCore::ke_init_heap();
@@ -35,7 +32,7 @@ EXTERN_C void RuntimeMain(
   MUST_PASS(HCore::ke_init_hal());
 
   /// Mount a New partition.
-  HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
+  // HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
   HCore::PEFLoader img("/System/HCoreShell.exe");
 
   /// Run the shell.

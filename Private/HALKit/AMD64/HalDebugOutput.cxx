@@ -69,8 +69,6 @@ void ke_io_print(const char *bytes) {
     ++index;
   }
 
-  HAL::Out8(Detail::PORT, '\r');
-  HAL::Out8(Detail::PORT, '\n');
   Detail::kState = kStateReady;
 }
 
