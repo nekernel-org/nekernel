@@ -10,7 +10,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/FileManager.hpp>
 
-#ifdef __USE_NEWFS__
+#ifdef __FSKIT_NEWFS__
 
 //! bugs: 0
 //! @brief Journaling for NewFS.
@@ -61,4 +61,4 @@ class NewFSJournalRunner final {
 };
 }  // namespace HCore
 
-#endif  // ifdef __USE_NEWFS__
+#endif  // ifdef __FSKIT_NEWFS__

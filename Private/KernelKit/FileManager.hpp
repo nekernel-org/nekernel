@@ -17,9 +17,9 @@
 
 #pragma once
 
-#ifdef __USE_NEWFS__
+#ifdef __FSKIT_NEWFS__
 #include <FSKit/NewFS.hxx>
-#endif  // __USE_NEWFS__
+#endif  // __FSKIT_NEWFS__
 
 #include <CompilerKit/CompilerKit.hpp>
 #include <HintKit/CompilerHint.hxx>
@@ -92,7 +92,7 @@ class IFilesystemManager {
 /** @brief invalid position. (n-pos) */
 #define kNPos (SizeT)(-1);
 
-#ifdef __USE_NEWFS__
+#ifdef __FSKIT_NEWFS__
 /**
  * @brief Based of IFilesystemManager, takes care of managing NewFS disks.
  */
@@ -154,7 +154,7 @@ class NewFilesystemManager final : public IFilesystemManager {
   NewFSImplementation *fImpl{nullptr};
 };
 
-#endif  // ifdef __USE_NEWFS__
+#endif  // ifdef __FSKIT_NEWFS__
 
 /**
  * Usable FileStream

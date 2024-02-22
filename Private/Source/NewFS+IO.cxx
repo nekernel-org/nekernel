@@ -16,10 +16,10 @@
 
 ------------------------------------------------------- */
 
-#ifdef __USE_NEWFS__
+#ifdef __FSKIT_NEWFS__
 
 /// @brief This implements NewFS with Device Abstraction in mind.
 
 /// bugs 0
 
-#endif  // ifdef __USE_NEWFS__
+#endif  // ifdef __FSKIT_NEWFS__

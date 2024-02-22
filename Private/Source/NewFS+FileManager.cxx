@@ -9,7 +9,7 @@
 
 #include <KernelKit/FileManager.hpp>
 
-#ifdef __USE_NEWFS__
+#ifdef __FSKIT_NEWFS__
 
 /// BUGS: 0
 
@@ -51,4 +51,4 @@ const char* NewFilesystemHelper::UpDir() { return kFilesystemUpDir; }
 const char NewFilesystemHelper::Separator() { return kFilesystemSeparator; }
 }  // namespace HCore
 
-#endif  // ifdef __USE_NEWFS__
+#endif  // ifdef __FSKIT_NEWFS__
