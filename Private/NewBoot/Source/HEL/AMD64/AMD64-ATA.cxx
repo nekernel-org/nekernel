@@ -85,13 +85,14 @@ ATAInit_Retry:
 
   BSetMem(kATAData, 0, kATADataLen);
 
+  /// fetch serial info
+  /// model, speed, number of sectors...
+
   for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
     kATAData[indexData] = In16(IO + ATA_REG_DATA);
   }
 
   writer.WriteString(L"HCoreLdr: Model: ");
-
-  /// fetch drive info
 
   for (SizeT indexData = 0; indexData < kATADataLen; indexData += 1) {
     writer.WriteCharacter(kATAData[indexData + ATA_IDENT_MODEL + 1])
