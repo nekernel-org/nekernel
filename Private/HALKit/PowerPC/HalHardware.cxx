@@ -44,6 +44,4 @@ void ke_com_print(const Char* bytes) {
     ++index;
   }
 }
-
-TerminalDevice kcout(HCore::ke_com_print, nullptr);
 }  // namespace HCore

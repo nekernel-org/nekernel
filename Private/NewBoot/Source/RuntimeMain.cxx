@@ -24,6 +24,10 @@
 #define kHeadersSz \
   (sizeof(DosHeader) + sizeof(ExecHeader) + sizeof(ExecOptionalHeader))
 
+#ifdef __BUNDLE_KERNEL__
+EXTERN_C EFI_API void RuntimeMain(HEL::HandoverInformationHeader* HIH);
+#endif
+
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
   InitEFI(SystemTable);
@@ -31,25 +35,41 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BTextWriter writer;
 
+#ifdef __BUNDLE_KERNEL__
+  writer.WriteString(L"HCoreLite: ");
+#else
+  writer.WriteString(L"HCoreLdr:");
+#endif
+
 #ifndef __DEBUG__
 
-  writer.WriteString(L"HCoreLdr: Version 1.00 (Release Channel)\r\n");
+  writer.WriteString(L"Version 1.00 (Release Channel)\r\n");
 
 #else
 
-  writer.WriteString(L"HCoreLdr: Version 1.00 (Insiders Channel)\r\n");
+  writer.WriteString(L"Version 1.00 (Insiders Channel)\r\n");
 
 #endif
 
   const char strDate[] = __DATE__;
 
+#ifdef __BUNDLE_KERNEL__
+  writer.WriteString(L"HCoreLite: Build: ");
+#else
   writer.WriteString(L"HCoreLdr: Build: ");
+#endif
 
   for (auto& ch : strDate) writer.WriteCharacter(ch);
 
+#ifdef __BUNDLE_KERNEL__
+  writer.WriteString(L"\r\nHCoreLite: Firmware Vendor: ")
+      .WriteString(SystemTable->FirmwareVendor)
+      .WriteString(L"\r\n");
+#else
   writer.WriteString(L"\r\nHCoreLdr: Firmware Vendor: ")
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
+#endif
 
   BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
 
@@ -75,7 +95,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         UInt32 SzDesc = 0;
         UInt32 RevDesc = 0;
 
-        if (BS->AllocatePool(EfiLoaderData, sizeof(UInt64), (VoidPtr*)&Size) !=
+        if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&Size) !=
             kEfiOk) {
           EFI::RaiseHardError(
               L"HCoreLdr-BadAlloc",
@@ -108,7 +128,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         handoverHdrPtr->f_PhysicalStart =
             reinterpret_cast<voidPtr>(Descriptor->PhysicalStart);
-        handoverHdrPtr->f_PhysicalSize = Descriptor->NumberOfPages * kPTESize;
+        handoverHdrPtr->f_PhysicalSize = Descriptor->NumberOfPages;
 
         handoverHdrPtr->f_VirtualStart =
             reinterpret_cast<voidPtr>(Descriptor->VirtualStart);
@@ -123,9 +143,21 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  SystemTable->FirmwareVendor,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
-        writer.WriteString(L"HCoreLdr: Booting HCore...\r\n");
+#ifdef __BUNDLE_KERNEL__
+        writer.WriteString(L"HCoreLite: Exit Boot...").WriteString(L"\r\n");
+#else
+        writer.WriteString(L"HCoreLdr: Load File succeeded, running it...")
+            .WriteString(L"\r\n");
+#endif
 
         EFI::ExitBootServices(MapKey, ImageHandle);
+
+#ifdef __BUNDLE_KERNEL__
+        RuntimeMain(handoverHdrPtr);
+#else
+        // Load HCoreKrnl.exe (TODO)
+
+#endif  // ifdef __BUNDLE_KERNEL__
 
         EFI::Stop();
 

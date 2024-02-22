@@ -9,8 +9,6 @@
 
 #include <NewKit/KernelHeap.hpp>
 
-#include "KernelKit/DebugOutput.hpp"
-
 //! @file KernelHeap.cpp
 //! @brief Kernel allocator.
 

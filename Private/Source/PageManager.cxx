@@ -41,7 +41,6 @@ PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
 
 PTEWrapper::~PTEWrapper() {
   PTE *raw = reinterpret_cast<PTE *>(m_VirtAddr);
-  MUST_PASS(raw);
 
   raw->Present = false;
   raw->Rw = false;
@@ -77,11 +76,6 @@ PTEWrapper *PageManager::Request(Boolean Rw, Boolean User,
                                  Boolean ExecDisable) {
   PTEWrapper *PageTableEntry = reinterpret_cast<PTEWrapper *>(
       HCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User));
-
-  if (PageTableEntry == nullptr) {
-    kcout << "PTEWrapper : Page table is nullptr!, ke_new_ke_heap failed!\n";
-    return nullptr;
-  }
 
   PageTableEntry->NoExecute(ExecDisable);
 

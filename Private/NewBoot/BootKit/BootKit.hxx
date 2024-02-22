@@ -14,6 +14,10 @@
 
 #pragma once
 
+class BTextWriter;
+class BFileReader;
+class BFileRunner;
+
 #include <BootKit/Arch/ATA.hxx>
 #include <EFIKit/EFI.hxx>
 #include <NewKit/Defines.hpp>

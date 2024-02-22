@@ -22,14 +22,15 @@ namespace HCore {
 namespace HAL {
 static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
     -> PageTable64 * {
-  PageTable64 *pte = reinterpret_cast<PageTable64 *>(
-      (UIntPtr)kKernelVirtualStart + kPageCnt + kPagePad);
+  PageTable64 *pte =
+      reinterpret_cast<PageTable64 *>((UIntPtr)kKernelVirtualStart);
 
   pte->Rw = rw;
   pte->User = user;
   pte->Present = true;
 
-  kKernelVirtualStart = (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz);
+  kKernelVirtualStart =
+      (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz + kPagePad);
   return pte;
 }
 
