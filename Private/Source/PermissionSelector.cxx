@@ -11,7 +11,7 @@
  */
 
 #include <KernelKit/PermissionSelector.hxx>
-#include <NewKit/RuntimeCheck.hpp>
+#include <NewKit/KernelCheck.hpp>
 
 /// bugs 0
 

@@ -99,6 +99,8 @@ BFileReader::~BFileReader() {
   BSetMem(this->mPath, 0, kPathLen);
 }
 
+#define hTransferBufferAddress 0xffffffff10000000
+
 /**
     @brief this reads all of the buffer.
     @param ImageHandle used internally.
@@ -107,7 +109,7 @@ Void BFileReader::ReadAll() {
   /// Allocate Handover page.
 
   if (mBlob == nullptr) {
-    UInt8* blob = (UInt8*)kHandoverStartKernel;
+    UInt8* blob = (UInt8*)hTransferBufferAddress;
 
     if (BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1,
                           (EfiPhysicalAddress*)&blob) != kEfiOk) {

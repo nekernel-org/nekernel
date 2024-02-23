@@ -11,6 +11,7 @@
 
 #ifdef __FSKIT_NEWFS__
 
+/// @brief NewFS File manager.
 /// BUGS: 0
 
 namespace HCore {
@@ -18,11 +19,6 @@ NewFilesystemManager::NewFilesystemManager() = default;
 
 NewFilesystemManager::~NewFilesystemManager() = default;
 
-/**
- * Unallocates a file from disk.
- * @param node_name it's path.
- * @return operation status boolean.
- */
 bool NewFilesystemManager::Remove(const char* node_name) {
   if (node_name == nullptr || *node_name == 0) return false;
 

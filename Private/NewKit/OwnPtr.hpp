@@ -11,8 +11,8 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
+#include <NewKit/KernelCheck.hpp>
 #include <NewKit/Ref.hpp>
-#include <NewKit/RuntimeCheck.hpp>
 
 namespace HCore {
 template <typename T>

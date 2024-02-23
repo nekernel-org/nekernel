@@ -18,8 +18,6 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
 
-#include "NewKit/RuntimeCheck.hpp"
-
 ///! bugs = 0
 
 /***********************************************************************************/

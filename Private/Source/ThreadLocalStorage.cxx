@@ -29,7 +29,7 @@ Boolean hcore_tls_check(VoidPtr ptr) {
 
   const char* _ptr = (const char*)ptr;
 
-  kcout << "TLS: Checking for cookie...\n";
+  kcout << "Krnl\\TLS: Checking for cookie...\n";
 
   return _ptr[0] == kCookieMag0 && _ptr[1] == kCookieMag1 &&
          _ptr[2] == kCookieMag2;
@@ -42,9 +42,9 @@ Boolean hcore_tls_check(VoidPtr ptr) {
  */
 Void hcore_tls_check_syscall_impl(ThreadInformationBlock ptr) noexcept {
   if (!hcore_tls_check(ptr.Cookie)) {
-    kcout << "TLS: Verification failure, Crashing...\n";
+    kcout << "Krnl\\TLS: Verification failure, Crashing...\n";
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
   }
 
-  kcout << "TLS: Verification succeeded! Keeping on...\n";
+  kcout << "Krnl\\TLS: Verification succeeded! Keeping on...\n";
 }

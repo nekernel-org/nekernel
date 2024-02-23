@@ -11,8 +11,8 @@
  * @file Handover.hxx
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
  * @brief Handover protocol.
- * @version 0.1
- * @date 2024-02-02
+ * @version 0.2
+ * @date 2024-02-23
  *
  * @copyright Copyright (c) 2024, Mahrouss Logic
  *
@@ -26,7 +26,6 @@
 
 #define kHandoverMagic 0xBADCC
 
-#define kHandoverStartKernel 0xffffffff10000000
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
 namespace HCore::HEL {

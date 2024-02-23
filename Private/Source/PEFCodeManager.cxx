@@ -13,9 +13,9 @@
 #include <KernelKit/ProcessManager.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorID.hpp>
+#include <NewKit/KernelCheck.hpp>
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/OwnPtr.hpp>
-#include <NewKit/RuntimeCheck.hpp>
 #include <NewKit/String.hpp>
 
 #include "KernelKit/PEF.hpp"

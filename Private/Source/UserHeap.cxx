@@ -182,11 +182,4 @@ Int32 ke_free_heap(VoidPtr ptr) {
 
   return -1;
 }
-
-/// @brief Init HeapManager, set Count to zero and IsEnabled to true.
-/// @return
-Void ke_init_heap() {
-  HeapManager::Count() = 0UL;
-  HeapManager::IsEnabled() = true;
-}
 }  // namespace HCore

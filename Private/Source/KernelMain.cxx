@@ -24,16 +24,12 @@ EXTERN_C void RuntimeMain(
   kKernelPhysicalSize = HandoverHeader->f_VirtualSize;
   kKernelPhysicalStart = HandoverHeader->f_VirtualStart;
 
-  /// Init memory managers.
-  HCore::ke_init_ke_heap();
-  HCore::ke_init_heap();
-
   /// Init the HAL.
   MUST_PASS(HCore::ke_init_hal());
 
   /// Mount a New partition.
   // HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
-  HCore::PEFLoader img("/System/HCoreShell.exe");
+  HCore::PEFLoader img("C:/System/HCoreShell.exe");
 
   /// Run the shell.
   if (!HCore::Utils::execute_from_image(img)) {

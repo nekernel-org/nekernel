@@ -9,7 +9,7 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/DebugOutput.hpp>
-#include <NewKit/RuntimeCheck.hpp>
+#include <NewKit/KernelCheck.hpp>
 #include <NewKit/String.hpp>
 
 extern "C" [[noreturn]] void ke_wait_for_debugger() {

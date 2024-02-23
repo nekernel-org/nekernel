@@ -38,7 +38,6 @@ struct HeapHeader final {
   UIntPtr Pad;
 };
 
-Void ke_init_heap();
 VoidPtr ke_new_heap(Int32 flags);
 Int32 ke_free_heap(voidPtr pointer);
 }  // namespace HCore

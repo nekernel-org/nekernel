@@ -10,7 +10,7 @@
 #include <ArchKit/ArchKit.hpp>
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/RuntimeCheck.hpp>
+#include <NewKit/KernelCheck.hpp>
 
 // this files handles paging.
 
