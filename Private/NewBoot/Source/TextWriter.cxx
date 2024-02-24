@@ -40,3 +40,23 @@ BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
 
   return *this;
 }
+
+BTextWriter &BTextWriter::WriteString(const Long &x) {
+  int y = x / 16;
+  int h = x % 16;
+
+  if (y) this->WriteString(y);
+
+  /* fail if the hex number is not base-16 */
+  if (h > 15) {
+    this->WriteCharacter('?');
+    return *this;
+  }
+
+  if (y < 0) y = -y;
+
+  const char g_numbers[17] = "0123456789ABCDEF";
+
+  this->WriteCharacter(g_numbers[h]);
+  return *this;
+}

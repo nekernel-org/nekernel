@@ -22,6 +22,7 @@ bootloader-amd64:
 	$(ASM) $(FLAG_ASM) HEl/AMD64/AMD64-VirtualMemory.asm
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o HCoreLdr.exe
 	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
+	cp ../../HCoreKrnl.dll CDROM/HCOREKRNL.DLL
 
 .PHONY: run-efi-amd64
 run-efi-amd64:

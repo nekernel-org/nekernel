@@ -72,7 +72,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .WriteString(L"\r\n");
 #endif
 
-  BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
+  BFileReader img(L"HCOREKRNL.DLL", ImageHandle);
 
   img.Size(kHeadersSz);
   img.ReadAll();
@@ -89,6 +89,13 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       if (ptrHdr->mNumberOfSections >= 3) {
         ExecOptionalHeaderPtr optHdr = reinterpret_cast<ExecOptionalHeaderPtr>(
             ptrHdr + sizeof(ExecHeader));
+
+        if (optHdr->mSubsystem != 0xAFAF) {
+          writer.WriteString(L"HCoreLdr: This is not an HCore app: Subsystem: ")
+              .WriteString(optHdr->mSubsystem)
+              .WriteString(L"\r\n");
+          EFI::Stop();
+        }
 
         UInt32 MapKey = 0;
         UInt32* Size;
@@ -157,7 +164,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 #ifdef __BUNDLE_KERNEL__
         RuntimeMain(handoverHdrPtr);
 #else
-        // Load HCoreKrnl.exe (TODO)
+        // Load HCoreKrnl.dll (TODO)
 
 #endif  // ifdef __BUNDLE_KERNEL__
 

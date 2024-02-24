@@ -41,6 +41,7 @@ typedef WideChar CharacterType;
  */
 class BTextWriter final {
  public:
+  BTextWriter &WriteString(const Long &num);
   BTextWriter &WriteString(const CharacterType *str);
   BTextWriter &WriteCharacter(CharacterType c);
 

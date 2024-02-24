@@ -35,7 +35,7 @@ EXTERN_C void RuntimeMain(
     HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
 
     // Open file from first hard-drive.
-    HCore::PEFLoader img("A:/System/HCoreShell.exe");
+    HCore::PEFLoader img("A:/System/HCoreServer.exe");
 
     /// Run the shell.
     if (!HCore::Utils::execute_from_image(img)) {
@@ -43,6 +43,6 @@ EXTERN_C void RuntimeMain(
     }
   } else {
     HCore::kcout << "HCoreKrnl: Setup is starting...\n";
-    HCore::kcout << "HCoreKrnl: Mounting drive A:...\n";
+    HCore::kcout << "HCoreKrnl: Mounting drive A: ...\n";
   }
 }

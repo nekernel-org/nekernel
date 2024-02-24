@@ -25,7 +25,7 @@ extern "C" [[noreturn]] void ke_wait_for_debugger() {
 namespace HCore {
 void ke_stop(const HCore::Int &id) {
   kcout << "*** STOP *** \r\n";
-  kcout << "*** HCoreKrnl.exe has trigerred a runtime stop. *** \r\n";
+  kcout << "*** HCoreKrnl.dll has trigerred a runtime stop. *** \r\n";
 
   switch (id) {
     case RUNTIME_CHECK_PROCESS: {
