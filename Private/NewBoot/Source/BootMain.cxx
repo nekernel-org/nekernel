@@ -10,7 +10,6 @@
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
-#include <EFIKit/Api.hxx>
 #include <HALKit/AMD64/ACPI/ACPI.hpp>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hpp>

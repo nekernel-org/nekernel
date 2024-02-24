@@ -9,5 +9,5 @@
 
 #pragma once
 
-#include <EFIKit/EFI.hxx>
-#include <EFIKit/Handover.hxx>
+#include <FirmwareKit/EFI.hxx>
+#include <FirmwareKit/Handover.hxx>

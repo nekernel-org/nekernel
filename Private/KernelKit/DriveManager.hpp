@@ -11,7 +11,9 @@
 #define __DRIVE_MANAGER__
 
 #include <CompilerKit/CompilerKit.hpp>
+#include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/DeviceManager.hpp>
+#include <KernelKit/HError.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
@@ -41,17 +43,15 @@ struct DriveTraits final {
   DriveID fId;                // Drive id.
   Int32 fFlags;               // fReadOnly, fXPMDrive, fXPTDrive
 
-  //! disk mount, unmount operations
-  void (*fMount)(void);
-  void (*fUnmount)(void);
-
-  bool (*fReady)(void);  //! is drive ready?
+  Handle fDriveHandle;
 
   //! for StorageKit.
   struct DrivePacket final {
     voidPtr fPacketContent;  // packet body.
     Char fPacketMime[32];    //! identify what we're sending.
     SizeT fPacketSize;       // packet size
+    UInt32 fPacketCRC32;     // sanity crc, in case if good is set to false
+    Boolean fPacketGood;
   } fPacket;
 };
 
@@ -61,23 +61,44 @@ struct DriveTraits final {
 #define kPacketZip "file/x-zip"
 
 //! drive as a device.
-typedef DeviceInterface<DriveTraits> Drive;
-typedef Drive *DrivePtr;
+typedef DeviceInterface<DriveTraits> DriveDevice;
+typedef DriveDevice* DriveDevicePtr;
 
-class DriveSelector final {
+class Mountpoint final {
  public:
-  explicit DriveSelector();
-  ~DriveSelector();
+  explicit Mountpoint() = default;
+  ~Mountpoint() = default;
+
+  HCORE_COPY_DEFAULT(Mountpoint);
 
  public:
-  HCORE_COPY_DEFAULT(DriveSelector);
+  DriveDevicePtr A() { return mA; }
+  DriveDevicePtr B() { return mB; }
+  DriveDevicePtr C() { return mC; }
+  DriveDevicePtr D() { return mD; }
 
-  DriveTraits &GetMounted();
-  bool Mount(DriveTraits *drive);
-  DriveTraits *Unmount();
+  DriveDevicePtr* GetAddressOf(int index) {
+    switch (index) {
+      case 0:
+        return &mA;
+      case 1:
+        return &mB;
+      case 2:
+        return &mC;
+      case 3:
+        return &mD;
+      default: {
+        GetLastError() = kErrorNoSuchDisk;
+        kcout << "Krnl\\Mountpoint: Check HError.\n";
+        break;
+      }
+    }
+
+    return nullptr;
+  }
 
  private:
-  DriveTraits *fDrive;
+  DriveDevicePtr mA, mB, mC, mD;
 };
 }  // namespace HCore
 

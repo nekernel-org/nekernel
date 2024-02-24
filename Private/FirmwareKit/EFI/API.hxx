@@ -10,7 +10,7 @@
 #ifndef __EFI_API__
 #define __EFI_API__
 
-#include <EFIKit/EFI.hxx>
+#include <FirmwareKit/EFI.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hpp>
 

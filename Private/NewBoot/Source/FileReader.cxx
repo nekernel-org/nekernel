@@ -13,8 +13,7 @@
 ------------------------------------------- */
 
 #include <BootKit/BootKit.hxx>
-#include <EFIKit/Api.hxx>
-#include <EFIKit/Handover.hxx>
+#include <FirmwareKit/Handover.hxx>
 
 /// BUGS: 0
 

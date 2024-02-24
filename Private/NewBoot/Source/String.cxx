@@ -12,7 +12,6 @@
 ------------------------------------------- */
 
 #include <BootKit/BootKit.hxx>
-#include <EFIKit/Api.hxx>
 
 /// bugs 0
 

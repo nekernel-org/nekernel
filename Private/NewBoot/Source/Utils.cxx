@@ -8,8 +8,7 @@
  */
 
 #include <BootKit/BootKit.hxx>
-#include <EFIKit/Api.hxx>
-#include <EFIKit/EFI.hxx>
+#include <FirmwareKit/EFI.hxx>
 
 /// BUGS: 0
 

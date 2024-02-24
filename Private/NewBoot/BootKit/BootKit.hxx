@@ -19,7 +19,7 @@ class BFileReader;
 class BFileRunner;
 
 #include <BootKit/Arch/ATA.hxx>
-#include <EFIKit/EFI.hxx>
+#include <FirmwareKit/EFI.hxx>
 #include <NewKit/Defines.hpp>
 
 using namespace HCore;

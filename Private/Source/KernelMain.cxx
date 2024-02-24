@@ -8,7 +8,7 @@
  */
 
 #include <ArchKit/ArchKit.hpp>
-#include <EFIKit/Handover.hxx>
+#include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
 #include <KernelKit/PEFCodeManager.hxx>

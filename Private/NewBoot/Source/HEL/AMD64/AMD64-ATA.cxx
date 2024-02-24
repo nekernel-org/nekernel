@@ -20,7 +20,6 @@
 
 #include <BootKit/Arch/ATA.hxx>
 #include <BootKit/BootKit.hxx>
-#include <EFIKit/Api.hxx>
 
 /// bugs: 0
 

@@ -14,9 +14,9 @@
 #ifndef __PARTITION_MAP__
 #define __PARTITION_MAP__
 
-#define kUUIDLen 37
-#define kNameLen 32
-#define kMagicLen 4
+#define kEPMUUIDLength 37
+#define kEPMNameLength 32
+#define kEPMMagicLength 4
 
 /* the first 512 > x > 1024 bytes of a disk contains this headers. */
 
@@ -25,9 +25,9 @@
  * boot code info
  */
 struct __attribute__((packed)) BootBlock {
-  char magic[kMagicLen];
-  char name[kNameLen];
-  char uuid[kUUIDLen];
+  char magic[kEPMMagicLength];
+  char name[kEPMNameLength];
+  char uuid[kEPMUUIDLength];
   int version;
   long long int num_blocks;
   long long int sector_sz;

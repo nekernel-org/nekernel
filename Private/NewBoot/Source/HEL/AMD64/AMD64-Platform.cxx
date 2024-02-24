@@ -16,7 +16,6 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Platform.hxx>
-#include <EFIKit/Api.hxx>
 
 #ifndef __BUNDLE_KERNEL__
 

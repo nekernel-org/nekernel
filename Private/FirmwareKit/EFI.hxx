@@ -7,4 +7,5 @@
  * 	========================================================
  */
 
-#include <EFIKit/EFI.hxx>
+#include <FirmwareKit/EFI/API.hxx>
+#include <FirmwareKit/EFI/EFI.hxx>

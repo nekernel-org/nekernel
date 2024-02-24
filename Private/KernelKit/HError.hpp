@@ -27,6 +27,7 @@ inline constexpr HError kErrorThreadLocalStorage = 41;
 inline constexpr HError kErrorMath = 42;
 inline constexpr HError kErrorNoNetwork = 43;
 inline constexpr HError kErrorHeapOutOfMemory = 44;
+inline constexpr HError kErrorNoSuchDisk = 45;
 
 Boolean ke_bug_check(void) noexcept;
 }  // namespace HCore
