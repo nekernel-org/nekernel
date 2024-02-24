@@ -17,6 +17,8 @@ template <typename T>
 inline T* hcore_tls_new_ptr(void) {
   using namespace HCore;
 
+  MUST_PASS(ProcessManager::Shared().Leak().GetCurrent());
+
   auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
 
   T* pointer = (T*)ref_process.Leak().New(sizeof(T));
@@ -30,9 +32,11 @@ inline bool hcore_tls_delete_ptr(T* ptr) {
 
   using namespace HCore;
 
-  auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
+  MUST_PASS(ProcessManager::Shared().Leak().GetCurrent());
+
   ptr->~T();
 
+  auto ref_process = ProcessManager::Shared().Leak().GetCurrent();
   return ref_process.Leak().Delete(ptr, sizeof(T));
 }
 
