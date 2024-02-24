@@ -90,13 +90,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         ExecOptionalHeaderPtr optHdr = reinterpret_cast<ExecOptionalHeaderPtr>(
             ptrHdr + sizeof(ExecHeader));
 
-        if (optHdr->mSubsystem != 0xAFAF) {
-          writer.WriteString(L"HCoreLdr: This is not an HCore app: Subsystem: ")
-              .WriteString(optHdr->mSubsystem)
-              .WriteString(L"\r\n");
-          EFI::Stop();
-        }
-
         UInt32 MapKey = 0;
         UInt32* Size;
         EfiMemoryDescriptor* Descriptor;
