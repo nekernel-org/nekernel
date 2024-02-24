@@ -20,6 +20,6 @@
 
 /// @brief This implements NewFS with Device Abstraction in mind.
 
-/// bugs 0
+/// BUGS: 0
 
 #endif  // ifdef __FSKIT_NEWFS__

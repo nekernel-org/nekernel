@@ -12,7 +12,7 @@ LDFLAGS		= -e Main -shared --subsystem=17
 LDOBJ		= $(wildcard Obj/*.obj)
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
-KERNEL		= HCoreKrnl.exe
+KERNEL		= HCoreKrnl.dll
 
 # The kernel entrypoint
 SCRIPT		= --script=Linker/Platforms/PC.lds

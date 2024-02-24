@@ -22,7 +22,7 @@ bootloader-amd64:
 	$(ASM) $(FLAG_ASM) HEl/AMD64/AMD64-VirtualMemory.asm
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o HCoreKrnl.exe
 	cp HCoreKrnl.exe CDROM/EFI/BOOT/BOOTX64.EFI
-	cp HCoreKrnl.exe CDROM/HCOREKRNL.EXE
+	cp HCoreKrnl.exe CDROM/HCOREKRNL.DLL
 	cp ../../Root/System/LookAndFeel.css CDROM/LOOK.CSS
 
 .PHONY: run-efi-amd64

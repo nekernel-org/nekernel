@@ -11,6 +11,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <EFIKit/Api.hxx>
+#include <HALKit/AMD64/ACPI/ACPI.hpp>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
@@ -144,10 +145,11 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
 #ifdef __BUNDLE_KERNEL__
+        handoverHdrPtr->f_LiteEdition = true;
         writer.WriteString(L"HCoreLite: Exit Boot...").WriteString(L"\r\n");
 #else
-        writer.WriteString(L"HCoreLdr: Load File succeeded, running it...")
-            .WriteString(L"\r\n");
+        handoverHdrPtr->f_LiteEdition = false;
+        writer.WriteString(L"HCoreLdr: Exit Boot...").WriteString(L"\r\n");
 #endif
 
         EFI::ExitBootServices(MapKey, ImageHandle);

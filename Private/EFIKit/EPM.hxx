@@ -8,8 +8,7 @@
  */
 
 /**
-    @brief The Explicit Partition Map is used to tell how many NewFS and other
-    EPM compatible Filesystems. We have in this computer.
+    @brief The Explicit Partition Map scheme.
 */
 
 #ifndef __PARTITION_MAP__

@@ -23,22 +23,26 @@ STATIC Ref<PTEWrapper *> kLastWrapper;
 STATIC PageManager kPageManager;
 
 namespace Detail {
-/// @brief
+/// @brief Kernel heap information block.
+/// Located before the address.
+/// | HIB |                ADDRESS                |
 struct HeapInformationBlock final {
-  Int16 hMagic;
+  UInt16 hMagic;
   Boolean hPresent;
-  Int64 hSize;
   Int32 hCRC32;
-  VoidPtr hPtr;
+  Int64 hSizeAddress;
+  VoidPtr hAddress;
 };
 
-STATIC voidPtr ke_find_heap(const SizeT &sz, const bool rw, const bool user) {
+typedef HeapInformationBlock *HeapInformationBlockPtr;
+
+STATIC VoidPtr ke_find_heap(const SizeT &sz, const bool rw, const bool user) {
   for (SizeT indexWrapper = 0; indexWrapper < kHeapMaxWrappers;
        ++indexWrapper) {
     if (!kWrapperList[indexWrapper]->Present()) {
       kWrapperList[indexWrapper]
           ->Reclaim(); /* very straight-forward as you can see. */
-      return reinterpret_cast<voidPtr>(
+      return reinterpret_cast<VoidPtr>(
           kWrapperList[indexWrapper]->VirtualAddress());
     }
   }
@@ -61,35 +65,35 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 
   kLastWrapper = wrapper;
 
-  Detail::HeapInformationBlock *heapInfo =
-      reinterpret_cast<Detail::HeapInformationBlock *>(
+  Detail::HeapInformationBlockPtr heapInfo =
+      reinterpret_cast<Detail::HeapInformationBlockPtr>(
           wrapper->VirtualAddress());
 
-  heapInfo->hSize = sz;
+  heapInfo->hSizeAddress = sz;
   heapInfo->hMagic = kHeapMagic;
   heapInfo->hCRC32 = ke_calculate_crc32((Char *)wrapper->VirtualAddress(), sz);
-  heapInfo->hPtr = (VoidPtr)wrapper->VirtualAddress();
+  heapInfo->hAddress = (VoidPtr)wrapper->VirtualAddress();
 
   kWrapperList[kHeapCount] = wrapper;
   ++kHeapCount;
 
-  return reinterpret_cast<voidPtr>(wrapper->VirtualAddress() +
+  return reinterpret_cast<VoidPtr>(wrapper->VirtualAddress() +
                                    sizeof(Detail::HeapInformationBlock));
 }
 
 /// @brief Declare pointer as free.
 /// @param ptr the pointer.
 /// @return
-Int32 ke_delete_ke_heap(voidPtr ptr) {
+Int32 ke_delete_ke_heap(VoidPtr ptr) {
   if (ptr) {
-    Detail::HeapInformationBlock *virtualAddress =
-        reinterpret_cast<Detail::HeapInformationBlock *>(ptr) -
+    Detail::HeapInformationBlockPtr virtualAddress =
+        reinterpret_cast<Detail::HeapInformationBlockPtr>(ptr) -
         sizeof(Detail::HeapInformationBlock);
 
-    if (kLastWrapper &&
-        (UIntPtr)virtualAddress->hPtr == kLastWrapper->VirtualAddress()) {
+    if (kLastWrapper && virtualAddress->hMagic == kHeapMagic &&
+        (UIntPtr)virtualAddress->hAddress == kLastWrapper->VirtualAddress()) {
       if (kPageManager.Free(kLastWrapper)) {
-        virtualAddress->hSize = 0UL;
+        virtualAddress->hSizeAddress = 0UL;
         virtualAddress->hPresent = false;
         kLastWrapper->NoExecute(false);
         return true;
@@ -102,12 +106,12 @@ Int32 ke_delete_ke_heap(voidPtr ptr) {
 
     for (SizeT indexWrapper = 0; indexWrapper < kHeapCount; ++indexWrapper) {
       if (kWrapperList[indexWrapper]->VirtualAddress() ==
-          (UIntPtr)virtualAddress->hPtr) {
+          (UIntPtr)virtualAddress->hAddress) {
         wrapper = kWrapperList[indexWrapper];
 
         // if page is no more, then mark it also as non executable.
         if (kPageManager.Free(wrapper)) {
-          virtualAddress->hSize = 0UL;
+          virtualAddress->hSizeAddress = 0UL;
           virtualAddress->hPresent = false;
 
           wrapper->NoExecute(false);
@@ -126,7 +130,7 @@ Int32 ke_delete_ke_heap(voidPtr ptr) {
 /// @brief find pointer in kernel heap
 /// @param ptr the pointer
 /// @return if it exists.
-Boolean kernel_valid_ptr(voidPtr ptr) {
+Boolean kernel_valid_ptr(VoidPtr ptr) {
   if (ptr) {
     const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
 

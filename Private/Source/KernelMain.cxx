@@ -17,6 +17,9 @@
 
 EXTERN_C void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
+  HCore::kcout << "HCoreKrnl: (R) Version 1.00, (C) MahroussLogic all rights "
+                  "reserved.\n";
+
   /// Setup kernel globals.
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
   kKernelVirtualStart = HandoverHeader->f_VirtualStart;
@@ -27,12 +30,19 @@ EXTERN_C void RuntimeMain(
   /// Init the HAL.
   MUST_PASS(HCore::ke_init_hal());
 
-  /// Mount a New partition.
-  // HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
-  HCore::PEFLoader img("C:/System/HCoreShell.exe");
+  if (!HandoverHeader->f_LiteEdition) {
+    /// Mount a New partition.
+    HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
 
-  /// Run the shell.
-  if (!HCore::Utils::execute_from_image(img)) {
-    HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+    // Open file from first hard-drive.
+    HCore::PEFLoader img("A:/System/HCoreShell.exe");
+
+    /// Run the shell.
+    if (!HCore::Utils::execute_from_image(img)) {
+      HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+    }
+  } else {
+    HCore::kcout << "HCoreKrnl: Setup is starting...\n";
+    HCore::kcout << "HCoreKrnl: Mounting drive A:...\n";
   }
 }

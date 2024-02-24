@@ -27,7 +27,7 @@ using namespace HCore;
 #define EFI_API __attribute__((ms_abi))
 #endif  // ifndef EPI_API
 
-// Forwar decls
+// Forward decls
 
 struct EfiTableHeader;
 struct EfiLoadFileProtocol;
@@ -243,6 +243,13 @@ typedef struct EfiTableHeader {
   UInt32 Crc32;
   UInt32 Reserved;
 } EfiTableHeader;
+
+#define EFI_ACPI_TABLE_PROTOCOL_GUID                 \
+  {                                                  \
+    0xffe06bdd, 0x6107, 0x46a6, {                    \
+      0x7b, 0xb2, 0x5a, 0x9c, 0x7e, 0xc5, 0x27, 0x5c \
+    }                                                \
+  }
 
 #define EFI_LOAD_FILE_PROTOCOL_GUID                  \
   {                                                  \
@@ -559,7 +566,10 @@ typedef struct EfiSystemTable {
   VoidPtr RuntimeServices;
   EfiBootServices *BootServices;
   UInt64 NumberOfTableEntries;
-  VoidPtr ConfigurationTable;
+  struct {
+    EfiGUID VendorGUID;
+    VoidPtr VendorTable;
+  } *ConfigurationTable;
 } EfiSystemTable;
 
 #define EfiMain efi_main

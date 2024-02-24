@@ -80,6 +80,11 @@ template <typename Args>
 Args &&move(Args &&arg) {
   return static_cast<Args &&>(arg);
 }
+
+/// Handle type.
+typedef struct {
+  UIntPtr _Unused;
+} *Handle;
 }  // namespace HCore
 
 #define DEDUCE_ENDIAN(address, value)                         \

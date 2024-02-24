@@ -10,7 +10,7 @@
 /**
  * @file Handover.hxx
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
- * @brief Handover protocol.
+ * @brief The handover boot protocol.
  * @version 0.2
  * @date 2024-02-23
  *
@@ -66,11 +66,12 @@ struct HandoverInformationHeader {
   SizeT f_PhysicalSize;
   WideChar f_FirmwareVendorName[32];
   SizeT f_FirmwareVendorLen;
-  voidPtr f_RsdPtr;
-  voidPtr f_SmBIOS;
-  voidPtr f_RTC;
-  voidPtr f_GOP;
+  VoidPtr f_AcpiTable;
+  VoidPtr f_SmBIOS;
+  VoidPtr f_RTC;
+  VoidPtr f_GOP;
   SizeT f_GOPSize;
+  Boolean f_LiteEdition;
 };
 
 /**

@@ -12,5 +12,5 @@
 using namespace HCore;
 
 namespace HCore {
-Boolean ke_bug_check(void) noexcept { return true; }
+Boolean ke_bug_check(void) noexcept { return false; }
 }  // namespace HCore

@@ -31,5 +31,8 @@ inline constexpr HError kErrorHeapOutOfMemory = 44;
 Boolean ke_bug_check(void) noexcept;
 }  // namespace HCore
 
-#define KernIsOk(HERR) (HERR == HCore::kErrorSuccess)
-#define KernHasFailed(HERR) (HERR != HCore::kErrorSuccess)
+#define IsOk(HERR) (HERR == HCore::kErrorSuccess)
+#define HasFailed(HERR) (HERR != HCore::kErrorSuccess)
+#define GetLastError() LastError
+
+inline HCore::HError LastError = 0;

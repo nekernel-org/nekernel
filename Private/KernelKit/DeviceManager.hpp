@@ -24,6 +24,8 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Ref.hpp>
 
+#include "NewKit/KernelCheck.hpp"
+
 namespace HCore {
 template <typename T>
 class DeviceInterface;
@@ -61,10 +63,18 @@ class DeviceInterface {
   void (*m_In)(T Data);
 };
 
+///
+///
+/// @brief Input Output Buffer
+/// Used mainly to communicate between hardware.
+///
 template <typename T>
 class IOBuf final {
  public:
-  explicit IOBuf(T Dat) : m_Data(Dat) {}
+  explicit IOBuf(T Dat) : m_Data(Dat) {
+    // at least pass something valid when instancating this struct.
+    MUST_PASS(Dat);
+  }
 
   IOBuf &operator=(const IOBuf<T> &) = default;
   IOBuf(const IOBuf<T> &) = default;
@@ -72,8 +82,15 @@ class IOBuf final {
   ~IOBuf() = default;
 
  public:
-  T operator->() const { return m_Data; }
-  T &operator[](Size index) const { return m_Data[index]; }
+  template <typename R>
+  R operator->() const {
+    return m_Data;
+  }
+
+  template <typename R>
+  R &operator[](Size index) const {
+    return m_Data[index];
+  }
 
  private:
   T m_Data;

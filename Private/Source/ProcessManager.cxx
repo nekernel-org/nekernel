@@ -21,9 +21,7 @@
 ///! bugs = 0
 
 /***********************************************************************************/
-/* This file handles
- * The preemptive multitasking of the OS.
- * For MT see SMPManager. */
+/* This file handles the process scheduling.
 /***********************************************************************************/
 
 namespace HCore {
@@ -39,7 +37,7 @@ const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
 
 void Process::Crash() {
   kcout << this->Name << ": Crashed, ExitCode: -1\n";
-  MUST_PASS(ke_bug_check());
+  MUST_PASS(!ke_bug_check());
 
   this->Exit(-1);
 }
