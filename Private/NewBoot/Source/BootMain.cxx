@@ -131,8 +131,13 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         BS->AllocatePool(EfiLoaderData, sizeof(HEL::HandoverInformationHeader),
                          (VoidPtr*)&handoverHdrPtr);
 
-        handoverHdrPtr->f_GOP = (voidPtr)kGop->Mode->FrameBufferBase;
-        handoverHdrPtr->f_GOPSize = kGop->Mode->FrameBufferSize;
+        handoverHdrPtr->f_GOP.f_The = kGop->Mode->FrameBufferBase;
+        handoverHdrPtr->f_GOP.f_Width = kGop->Mode->Info->VerticalResolution;
+        handoverHdrPtr->f_GOP.f_Height = kGop->Mode->Info->HorizontalResolution;
+        handoverHdrPtr->f_GOP.f_PixelPerLine =
+            kGop->Mode->Info->PixelsPerScanLine;
+        handoverHdrPtr->f_GOP.f_PixelFormat = kGop->Mode->Info->PixelFormat;
+        handoverHdrPtr->f_GOP.f_Size = kGop->Mode->FrameBufferSize;
 
         handoverHdrPtr->f_PhysicalStart =
             reinterpret_cast<voidPtr>(Descriptor->PhysicalStart);
@@ -152,10 +157,16 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
 #ifdef __BUNDLE_KERNEL__
-        handoverHdrPtr->f_LiteEdition = true;
+        handoverHdrPtr->f_Magic = 0x55DDFF;
+        handoverHdrPtr->f_Version = 0x1011;
+        handoverHdrPtr->f_Bootloader = 0x11;  // HCoreLite
+
         writer.WriteString(L"HCoreLite: Exit Boot...").WriteString(L"\r\n");
 #else
-        handoverHdrPtr->f_LiteEdition = false;
+        handoverHdrPtr->f_Magic = 0xFF55DD;
+        handoverHdrPtr->f_Version = 0x1011;
+        handoverHdrPtr->f_Bootloader = 0xDD;  // HCoreLdr
+
         writer.WriteString(L"HCoreLdr: Exit Boot...").WriteString(L"\r\n");
 #endif
 

@@ -68,6 +68,6 @@ const UInt32 kRgbWhite = 0x00FFFFFF;
 /// Framebuffer macros.
 /***********************************************************************************/
 
-#define RGB(R, G, B) (UInt32)(0x##R##G##B)
+#define RGB(R, G, B) (HCore::UInt32)(0x##R##G##B)
 
 #endif /* ifndef __INC_FB_HPP__ */

@@ -82,8 +82,9 @@ Args &&move(Args &&arg) {
 }
 
 /// Handle type.
-typedef struct {
+typedef struct _Handle {
   UIntPtr _Unused;
+  void Release(_Handle *);
 } *Handle;
 }  // namespace HCore
 

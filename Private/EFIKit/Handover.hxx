@@ -60,18 +60,29 @@ typedef struct HandoverHeader final {
 } __attribute__((packed)) HandoverHeader, *HandoverHeaderPtr;
 
 struct HandoverInformationHeader {
+  UInt64 f_Magic;
+  UInt64 f_Version;
+  UInt64 f_Bootloader;
+
   voidPtr f_VirtualStart;
   SizeT f_VirtualSize;
   voidPtr f_PhysicalStart;
   SizeT f_PhysicalSize;
   WideChar f_FirmwareVendorName[32];
   SizeT f_FirmwareVendorLen;
-  VoidPtr f_AcpiTable;
-  VoidPtr f_SmBIOS;
-  VoidPtr f_RTC;
-  VoidPtr f_GOP;
-  SizeT f_GOPSize;
-  Boolean f_LiteEdition;
+  struct {
+    VoidPtr f_AcpiTable;
+    VoidPtr f_SmBIOS;
+    VoidPtr f_RTC;
+  } f_HardwareTables;
+  struct {
+    UIntPtr f_The;
+    SizeT f_Size;
+    UInt32 f_Width;
+    UInt32 f_Height;
+    UInt32 f_PixelFormat;
+    UInt32 f_PixelPerLine;
+  } f_GOP;
 };
 
 /**
