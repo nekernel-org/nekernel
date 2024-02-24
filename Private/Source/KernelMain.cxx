@@ -13,6 +13,7 @@
 #include <KernelKit/Framebuffer.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/Rsrc/HCore.hxx>
+#include <KernelKit/Rsrc/Util.hxx>
 #include <NewKit/Json.hpp>
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
@@ -48,48 +49,15 @@ EXTERN_C void RuntimeMain(
     ** This draws the background.
     */
 
-    for (HCore::SizeT i = 0ul; i < HandoverHeader->f_GOP.f_Width; ++i) {
-      for (HCore::SizeT u = 0ul; u < HandoverHeader->f_GOP.f_Height; ++u) {
-        *(((volatile HCore::UInt32*)(HandoverHeader->f_GOP.f_The +
-                                     4 * HandoverHeader->f_GOP.f_PixelPerLine *
-                                         i +
-                                     4 * u))) = RGB(20, 20, 20);
-      }
-    }
+    DrawResource(HCoreLogo, HandoverHeader, HCORELOGO_WIDTH, HCORELOGO_HEIGHT,
+                 10, 10);
 
     /**
      ** This draws the HCore resource icon..
      */
 
-    HCore::SizeT uA = 0;
-
-    for (HCore::SizeT i = 10ul; i < HCORELOGO_WIDTH + 10; ++i) {
-      for (HCore::SizeT u = 10ul; u < HCORELOGO_HEIGHT + 10; ++u) {
-        if (HCoreLogo[uA] == 0) {
-          *(((volatile HCore::UInt32*)(HandoverHeader->f_GOP.f_The +
-                                       4 *
-                                           HandoverHeader->f_GOP
-                                               .f_PixelPerLine *
-                                           i +
-                                       4 * u))) |= HCoreLogo[uA];
-        } else {
-          *(((volatile HCore::UInt32*)(HandoverHeader->f_GOP.f_The +
-                                       4 *
-                                           HandoverHeader->f_GOP
-                                               .f_PixelPerLine *
-                                           i +
-                                       4 * u))) = HCoreLogo[uA];
-        }
-
-        ++uA;
-      }
-    }
-
     /**
     This mounts the NewFS drive.
     */
-
-    HCore::kcout << "HCoreKrnl: Setup is starting...\n";
-    HCore::kcout << "HCoreKrnl: Mounting drive A: ...\n";
   }
 }
