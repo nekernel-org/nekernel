@@ -20,6 +20,36 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
 
+extern "C" HCore::UIntPtr __EXEC_IVT;
+
+namespace Detail {
+using namespace HCore;
+
+Void PowerOnSelfTest() {
+  kcout << "POST: Starting PowerOn-Self Test...\r\n";
+  asm("int $0x21");
+  kcout << "POST: Done\r\n";
+}
+
+struct PACKED HC_GDT_ENTRY final {
+  UInt16 Limit0;
+  UInt16 Base0;
+  UInt8 Base1;
+  UInt8 AccessByte;
+  UInt8 Limit1_Flags;
+  UInt8 Base2;
+};
+
+struct PACKED ALIGN(0x1000) HC_GDT final {
+  HC_GDT_ENTRY Null;
+  HC_GDT_ENTRY KernCode;
+  HC_GDT_ENTRY KernData;
+  HC_GDT_ENTRY UserNull;
+  HC_GDT_ENTRY UserCode;
+  HC_GDT_ENTRY UserData;
+};
+}  // namespace Detail
+
 EXTERN_C void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
   HCore::kcout << "HCoreKrnl: (R) Version 1.00, (C) MahroussLogic all rights "
@@ -31,6 +61,32 @@ EXTERN_C void RuntimeMain(
 
   kKernelPhysicalSize = HandoverHeader->f_VirtualSize;
   kKernelPhysicalStart = HandoverHeader->f_VirtualStart;
+
+  static Detail::HC_GDT GDT = {
+      {0, 0, 0, 0x00, 0x00, 0},  // null entry
+      {0, 0, 0, 0x9a, 0xa0, 0},  // kernel code
+      {0, 0, 0, 0x92, 0xa0, 0},  // kernel data
+      {0, 0, 0, 0x00, 0x00, 0},  // null entry
+      {0, 0, 0, 0x9a, 0xa0, 0},  // user code
+      {0, 0, 0, 0x92, 0xa0, 0},  // user data
+  };
+
+  HCore::HAL::Register64 gdtBase;
+
+  gdtBase.Base = (HCore::UIntPtr)&GDT;
+  gdtBase.Limit = sizeof(Detail::HC_GDT) - 1;
+
+  HCore::HAL::GDTLoader gdt;
+  gdt.Load(gdtBase);
+
+  HCore::VoidPtr IDT = new HCore::VoidPtr;
+
+  HCore::HAL::Register64 idtBase;
+  idtBase.Base = (HCore::UIntPtr)IDT;
+  idtBase.Limit = 0x0FFF;
+
+  HCore::HAL::IDTLoader idt;
+  idt.Load(idtBase);
 
   if (HandoverHeader->f_Bootloader == 0xDD) {
     /// Mount a New partition.
@@ -57,6 +113,8 @@ EXTERN_C void RuntimeMain(
 
     DrawResource(PoweredByAward, HandoverHeader, POWEREDBYAWARD_HEIGHT,
                  POWEREDBYAWARD_WIDTH, POWEREDBYAWARD_WIDTH + 20, 10);
+
+    Detail::PowerOnSelfTest();
 
     /**
      ** This draws the HCore resource icon..

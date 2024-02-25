@@ -138,5 +138,5 @@ extern "C" void idt_handle_gpf(HCore::UIntPtr rsp);
 extern "C" void idt_handle_math(HCore::UIntPtr rsp);
 extern "C" void idt_handle_pf(HCore::UIntPtr rsp);
 
-extern "C" void rt_load_idt(HCore::voidPtr ptr);
-extern "C" void rt_load_gdt(HCore::voidPtr ptr);
+extern "C" void rt_load_idt(HCore::HAL::Register64 ptr);
+extern "C" void rt_load_gdt(HCore::HAL::Register64 ptr);

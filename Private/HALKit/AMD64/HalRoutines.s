@@ -6,7 +6,17 @@
 .section .text
 rt_load_gdt:
     lgdt (%rcx)
-    ret
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    mov %ax, %ss
+    pop %rdi
+    mov $0x08, %rax
+    push %rax
+    push %rdi
+    retfq
 
 rt_load_idt:
     lidt (%rcx)

@@ -10,21 +10,13 @@
 #include <ArchKit/ArchKit.hpp>
 
 namespace HCore::HAL {
-namespace Detail {
-struct PACKED RegisterAMD64 final {
-  UIntPtr base;
-  UShort limit;
-};
-}  // namespace Detail
-
 void GDTLoader::Load(Register64 &gdt) {
-  Detail::RegisterAMD64 *gdtReg = new Detail::RegisterAMD64();
-  MUST_PASS(gdtReg);
+  Register64 gdtReg;
 
-  gdtReg->base = gdt.Base;
-  gdtReg->limit = gdt.Limit;
+  gdtReg.Base = gdt.Base;
+  gdtReg.Limit = gdt.Limit;
 
-  rt_load_gdt((VoidPtr)gdtReg);
+  rt_load_gdt(gdtReg);
 }
 
 namespace Detail::AMD64 {
@@ -49,15 +41,16 @@ struct InterruptDescriptorAMD64 final {
 
 extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp);
 
-static ALIGN(
-    0x10) Detail::AMD64::InterruptDescriptorAMD64 kIdtRegs[kMaxSyscalls];
+static ALIGN(0x10)
+    Detail::AMD64::InterruptDescriptorAMD64 kIdtRegs[kKernelMaxSystemCalls];
 static HAL::Register64 kRegIdt;
 
 void IDTLoader::Load(Register64 &idt) {
   for (auto i = 0; i < 32; i++) {
     kIdtRegs[i].Selector = kGdtSelector;
     kIdtRegs[i].Ist = 0x00;
-    kIdtRegs[i].TypeAttributes = kInterruptGate | kRing0 | kIdtPresent;
+    kIdtRegs[i].TypeAttributes =
+        kInterruptGate | kTrapGate | kRing0 | kIdtPresent;
     kIdtRegs[i].OffsetLow = (((UIntPtr *)idt.Base)[i]) & 0xFFFF;
     kIdtRegs[i].OffsetMid = (((UIntPtr *)idt.Base)[i] >> 16) & 0xFFFF;
     kIdtRegs[i].OffsetHigh = (((UIntPtr *)idt.Base)[i] >> 32) & 0xFFFF;
@@ -75,9 +68,13 @@ void IDTLoader::Load(Register64 &idt) {
   kRegIdt.Base = (UIntPtr)kIdtRegs;
   kRegIdt.Limit = sizeof(Detail::AMD64::InterruptDescriptorAMD64) * idt.Limit;
 
-  rt_load_idt((VoidPtr)&kRegIdt);
+  kcout << "HCoreKrnl: Installing Interrupt vector...\n";
 
-  kcout << "Krnl: IDT loaded\n";
+  rt_load_idt(kRegIdt);
+
+  asm volatile("sti");
+
+  kcout << "HCoreKrnl: Interrupt Vector installed.\n";
 }
 
 void GDTLoader::Load(Ref<Register64> &gdt) { GDTLoader::Load(gdt.Leak()); }

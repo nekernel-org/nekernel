@@ -16,10 +16,14 @@ extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp) {
 
   HCore::HAL::StackFramePtr sf = (HCore::HAL::StackFramePtr)rsp;
 
-  rt_syscall_handle(sf);
+  if (sf->IntNum == 0x21) {
+    rt_syscall_handle(sf);
+  }
 
-  HCore::kcout << "Krnl\\rt_handle_interrupts: Done\r\n";
+  HCore::HAL::Out8(0x20, 0x20);
+  HCore::HAL::Out8(0xa0, 0x20);
 
   HCore::HAL::rt_sti();
+
   return rsp;
 }

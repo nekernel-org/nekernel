@@ -20,7 +20,6 @@ HCoreInterrupt%1:
     cli
     push %1
     jmp ke_handle_irq
-    iretq
 %endmacro
 
 %macro IntNormal 1
@@ -29,7 +28,6 @@ HCoreInterrupt%1:
     push  0
     push  %1
     jmp ke_handle_irq
-    iretq
 %endmacro
 
 ; This file handles the core interrupt table
@@ -78,7 +76,7 @@ ke_handle_irq:
     pop rbx
     pop rax
 
-    retf
+    iretq
 
 section .data
 
@@ -115,11 +113,7 @@ section .data
     IntExp   30
     IntNormal 31
 
-    %assign i 32
-    %rep 224
-        IntNormal i
-    %assign i i+1
-    %endrep
+section .data
 
 __EXEC_IVT:
     %assign i 0
@@ -128,25 +122,10 @@ __EXEC_IVT:
     %assign i i+1
     %endrep
 
-section .text
+    %assign i 32
+    %rep 224
+        IntNormal i
+    %assign i i+1
+    %endrep
 
-[bits 64]
-
-extern rt_load_gdt
-
-global Main
-extern RuntimeMain
-extern MainLong
-
-;; Just a simple setup, we'd also need to tell some before
-Main:
-    push rcx
-    jmp MainLong
-
-MainLong:
-    jmp RuntimeMain
-    pop rcx
-L0:
-    cli
-    hlt
-    jmp $
+    ret
