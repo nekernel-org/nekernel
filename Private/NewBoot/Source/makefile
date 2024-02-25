@@ -7,7 +7,7 @@ CC_GNU=x86_64-w64-mingw32-g++
 LD_GNU=x86_64-w64-mingw32-ld
 LD_FLAGS=-e efi_main -shared --subsystem=10 -ffreestanding
 ASM=nasm
-OBJ=$(wildcard *.obj) $(wildcard *.o) $(wildcard HEL/AMD64/*.obj) $(wildcard HEL/AMD64/*.o)
+OBJ=$(wildcard *.obj) $(wildcard *.o) $(wildcard ../../Obj/*.obj) $(wildcard HEL/AMD64/*.obj) $(wildcard HEL/AMD64/*.o)
 
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -O0 -D__DEBUG__ -fPIC -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c  -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
@@ -20,8 +20,8 @@ invalid-recipe:
 bootloader-amd64:
 	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx *.cxx
 	$(ASM) $(FLAG_ASM) HEl/AMD64/AMD64-VirtualMemory.asm
-	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o HCoreLdr.exe
-	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
+	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o HCoreKrnl.exe
+	cp HCoreKrnl.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	cp ../../HCoreKrnl.dll CDROM/HCOREKRNL.DLL
 
 .PHONY: run-efi-amd64

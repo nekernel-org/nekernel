@@ -86,7 +86,7 @@ BFileReader::BFileReader(const CharacterType* path, EfiHandlePtr ImageHandle) {
 
   mSizeFile = 0;
   mFile = kernelFile;
-  mErrorCode = kNotSupported;
+  mErrorCode = kOperationOkay;
 }
 
 BFileReader::~BFileReader() {
@@ -106,6 +106,8 @@ BFileReader::~BFileReader() {
 */
 Void BFileReader::ReadAll() {
   /// Allocate Handover page.
+
+  if (this->mErrorCode != kOperationOkay) return;
 
   if (mBlob == nullptr) {
     UInt8* blob = (UInt8*)hTransferBufferAddress;

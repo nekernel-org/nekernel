@@ -55,7 +55,7 @@ constexpr static inline SSizeT syscall_hash(const char *seed, int mul) {
 bool ke_init_hal();
 }  // namespace HCore
 
-#define kMaxSyscalls (0x100 - 1)
+#define kMaxSyscalls (0xFFFF)
 #define kSyscallGate 0x21
 
 extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *),

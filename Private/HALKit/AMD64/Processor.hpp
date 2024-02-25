@@ -41,12 +41,10 @@ extern "C" void rt_cli();
 extern "C" void rt_sti();
 extern "C" void rt_cld();
 
-class Register64 {
+class PACKED Register64 {
  public:
-  UIntPtr Base;
   UShort Limit;
-
-  operator bool() { return Base > Limit; }
+  UIntPtr Base;
 };
 
 using RawRegister = UInt64;
@@ -57,6 +55,7 @@ using interruptTrap = UIntPtr(UIntPtr sp);
 typedef UIntPtr Reg;
 
 struct PACKED StackFrame {
+  Reg ExceptionZ;
   Reg IntNum;
   Reg Rax;
   Reg Rbx;

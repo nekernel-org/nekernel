@@ -17,6 +17,7 @@
 
 %macro IntExp 1
 HCoreInterrupt%1:
+    cli
     push %1
     jmp ke_handle_irq
     iretq
@@ -24,6 +25,7 @@ HCoreInterrupt%1:
 
 %macro IntNormal 1
 HCoreInterrupt%1:
+    cli
     push  0
     push  %1
     jmp ke_handle_irq
@@ -58,7 +60,7 @@ ke_handle_irq:
 
     mov rdi, rsp
     call rt_handle_interrupts
-    mov rsp, rax
+    add rsp, 8
 
     pop r15
     pop r14
@@ -76,8 +78,7 @@ ke_handle_irq:
     pop rbx
     pop rax
 
-
-    ret
+    retf
 
 section .data
 
@@ -126,3 +127,26 @@ __EXEC_IVT:
         IntDecl i
     %assign i i+1
     %endrep
+
+section .text
+
+[bits 64]
+
+extern rt_load_gdt
+
+global Main
+extern RuntimeMain
+extern MainLong
+
+;; Just a simple setup, we'd also need to tell some before
+Main:
+    push rcx
+    jmp MainLong
+
+MainLong:
+    jmp RuntimeMain
+    pop rcx
+L0:
+    cli
+    hlt
+    jmp $

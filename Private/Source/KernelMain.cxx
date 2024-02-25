@@ -13,6 +13,7 @@
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/Rsrc/Award.hxx>
 #include <KernelKit/Rsrc/HCore.hxx>
 #include <KernelKit/Rsrc/Util.hxx>
 #include <NewKit/Json.hpp>
@@ -31,9 +32,6 @@ EXTERN_C void RuntimeMain(
   kKernelPhysicalSize = HandoverHeader->f_VirtualSize;
   kKernelPhysicalStart = HandoverHeader->f_VirtualStart;
 
-  /// Init the HAL.
-  MUST_PASS(HCore::ke_init_hal());
-
   if (HandoverHeader->f_Bootloader == 0xDD) {
     /// Mount a New partition.
     HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
@@ -50,8 +48,15 @@ EXTERN_C void RuntimeMain(
     ** This draws the background.
     */
 
-    DrawResource(HCoreLogo, HandoverHeader, HCORELOGO_WIDTH, HCORELOGO_HEIGHT,
+    ResourceInit();
+
+    DrawResource(HCoreLogo, HandoverHeader, HCORELOGO_HEIGHT, HCORELOGO_WIDTH,
                  10, 10);
+
+    ResourceClear();
+
+    DrawResource(PoweredByAward, HandoverHeader, POWEREDBYAWARD_HEIGHT,
+                 POWEREDBYAWARD_WIDTH, POWEREDBYAWARD_WIDTH + 20, 10);
 
     /**
      ** This draws the HCore resource icon..
@@ -60,5 +65,7 @@ EXTERN_C void RuntimeMain(
     /**
     This mounts the NewFS drive.
     */
+
+    HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
   }
 }

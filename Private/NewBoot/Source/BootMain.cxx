@@ -21,12 +21,10 @@
 #error This CPU is unknown.
 #endif  // ifdef __x86_64__
 
-#define kHeadersSz \
+#define kBootReadSize \
   (sizeof(DosHeader) + sizeof(ExecHeader) + sizeof(ExecOptionalHeader))
 
-#ifdef __BUNDLE_KERNEL__
-EXTERN_C EFI_API void RuntimeMain(HEL::HandoverInformationHeader* HIH);
-#endif
+EXTERN_C EFI_API void Main(HEL::HandoverInformationHeader* HIH);
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
@@ -35,11 +33,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BTextWriter writer;
 
-#ifdef __BUNDLE_KERNEL__
-  writer.WriteString(L"HCoreLite: ");
-#else
   writer.WriteString(L"HCoreLdr: ");
-#endif
 
 #ifndef __DEBUG__
 
@@ -53,27 +47,17 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   const char strDate[] = __DATE__;
 
-#ifdef __BUNDLE_KERNEL__
-  writer.WriteString(L"HCoreLite: Build: ");
-#else
   writer.WriteString(L"HCoreLdr: Build: ");
-#endif
 
   for (auto& ch : strDate) writer.WriteCharacter(ch);
 
-#ifdef __BUNDLE_KERNEL__
-  writer.WriteString(L"\r\nHCoreLite: Firmware Vendor: ")
-      .WriteString(SystemTable->FirmwareVendor)
-      .WriteString(L"\r\n");
-#else
   writer.WriteString(L"\r\nHCoreLdr: Firmware Vendor: ")
       .WriteString(SystemTable->FirmwareVendor)
       .WriteString(L"\r\n");
-#endif
 
   BFileReader img(L"HCOREKRNL.DLL", ImageHandle);
 
-  img.Size(kHeadersSz);
+  img.Size(kBootReadSize);
   img.ReadAll();
 
   if (img.Error() == BFileReader::kOperationOkay) {
@@ -148,28 +132,29 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  SystemTable->FirmwareVendor,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
-#ifdef __BUNDLE_KERNEL__
-        handoverHdrPtr->f_Magic = 0x55DDFF;
-        handoverHdrPtr->f_Version = 0x1011;
-        handoverHdrPtr->f_Bootloader = 0x11;  // HCoreLite
+        BFileReader systemIni(L"SYSTEM.INI", ImageHandle);
 
-        writer.WriteString(L"HCoreLite: Exit Boot...").WriteString(L"\r\n");
-#else
-        handoverHdrPtr->f_Magic = 0xFF55DD;
-        handoverHdrPtr->f_Version = 0x1011;
-        handoverHdrPtr->f_Bootloader = 0xDD;  // HCoreLdr
+        systemIni.Size(4096);
+        systemIni.ReadAll();
 
-        writer.WriteString(L"HCoreLdr: Exit Boot...").WriteString(L"\r\n");
-#endif
+        bool isIniNotFound = (systemIni.Blob() == nullptr);
 
         EFI::ExitBootServices(MapKey, ImageHandle);
 
-#ifdef __BUNDLE_KERNEL__
-        RuntimeMain(handoverHdrPtr);
-#else
-        // Load HCoreKrnl.dll (TODO)
+        if (isIniNotFound) {
+          handoverHdrPtr->f_Magic = 0x55DDFF;
+          handoverHdrPtr->f_Version = 0x1011;
+          handoverHdrPtr->f_Bootloader = 0x11;  // Installer
 
-#endif  // ifdef __BUNDLE_KERNEL__
+          Main(handoverHdrPtr);
+
+        } else {
+          handoverHdrPtr->f_Magic = 0xFF55DD;
+          handoverHdrPtr->f_Version = 0x1011;
+          handoverHdrPtr->f_Bootloader = 0xDD;  // System present
+
+          // TODO: read .NewBoot section.
+        }
 
         EFI::Stop();
 

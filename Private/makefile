@@ -28,11 +28,11 @@ MOVEALL=./MoveAll.sh
 
 .PHONY: h-core-amd64
 h-core-amd64:
-	$(CC) $(CCFLAGS) Source/*.cxx HALKit/AMD64/PCI/*.cpp Source/Network/*.cpp\
+	$(CC) $(CCFLAGS) Source/*.cxx HALKit/AMD64/PCI/*.cpp Source/Network/*.cxx\
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptRouting.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
-	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalStartSequence.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalNewBoot.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInstallTIB.asm
 	$(MOVEALL)
 

@@ -10,18 +10,24 @@
 #ifndef __EFI_API__
 #define __EFI_API__
 
-#include <FirmwareKit/EFI.hxx>
+#include <FirmwareKit/EFI/EFI.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hpp>
 
 inline EfiSystemTable *ST = nullptr;
 inline EfiBootServices *BS = nullptr;
 
+extern "C" void rt_cli();
+
 namespace EFI {
 /**
 @brief Stop Execution of program.
 */
-Void Stop() noexcept;
+inline Void Stop() noexcept {
+  while (1) {
+    rt_cli();
+  }
+}
 
 /**
 @brief Exit EFI API to let the OS load correctly.

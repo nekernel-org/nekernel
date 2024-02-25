@@ -10,11 +10,11 @@
 [bits 64]
 
 ;; Global symbol of this unit
-[global Main]
+[global MainLong]
 [global MainUnsupported]
 
 ;; External symbols needed by this unit.
-[extern RuntimeMain]
+[extern Main]
 
 %define kTypeKernel 100
 %define kArchAmd64 122
@@ -26,15 +26,3 @@ HandoverType: dw kTypeKernel
 HandoverArch: dw kArchAmd64
 ;; This NewBootStart points to Main.
 HandoverStart: dq Main
-
-section .text
-
-;; Just a simple setup, we'd also need to tell some before
-Main:
-    push rcx
-    jmp RuntimeMain
-    pop rcx
-L0:
-    cli
-    hlt
-    jmp $
