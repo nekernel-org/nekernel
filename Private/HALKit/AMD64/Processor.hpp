@@ -56,7 +56,8 @@ using interruptTrap = UIntPtr(UIntPtr sp);
 
 typedef UIntPtr Reg;
 
-struct __attribute__((packed)) StackFrame {
+struct PACKED StackFrame {
+  Reg IntNum;
   Reg Rax;
   Reg Rbx;
   Reg Rcx;

@@ -10,7 +10,6 @@ rt_load_gdt:
 
 rt_load_idt:
     lidt (%rcx)
-    sti
     ret
 
 .section .text

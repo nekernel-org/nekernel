@@ -25,7 +25,7 @@ extern "C" void idt_handle_gpf(HCore::UIntPtr rsp) {
   HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
-      << "General Protection Fault, Caused by "
+      << "General Protection Fault, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
@@ -50,7 +50,7 @@ extern "C" void idt_handle_pf(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "Segmentation Fault, Caused by "
+      << "Segmentation Fault, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
@@ -62,7 +62,7 @@ extern "C" void idt_handle_math(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "Math error, Caused by "
+      << "Math error, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
@@ -74,17 +74,8 @@ extern "C" void idt_handle_generic(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "Processor error, Caused by "
+      << "Execution error, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
-}
-
-extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp) {
-  HCore::HAL::rt_cli();
-
-  HCore::HAL::StackFramePtr sf = (HCore::HAL::StackFramePtr)rsp;
-
-  HCore::HAL::rt_sti();
-  return rsp;
 }

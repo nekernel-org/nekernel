@@ -11,18 +11,10 @@
 
 // bugs = 0
 
-extern "C" HCore::VoidPtr __EXEC_IVT;
+extern "C" HCore::UIntPtr* __EXEC_IVT;
+
+extern void rt_wait_for_io(void);
 
 namespace HCore {
-bool ke_init_hal() {
-  HCore::HAL::Register64 kIdtRegister;
-
-  kIdtRegister.Base = (UIntPtr)__EXEC_IVT;
-  kIdtRegister.Limit = sizeof(HAL::Register64) * 255;
-
-  HAL::IDTLoader idt;
-  idt.Load(kIdtRegister);
-
-  return true;
-}
+bool ke_init_hal() { return true; }
 }  // namespace HCore

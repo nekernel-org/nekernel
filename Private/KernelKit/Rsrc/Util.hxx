@@ -1,7 +1,10 @@
 #ifndef __RSRC_UTIL__
 #define __RSRC_UTIL__
 
-/// @brief draws a resource icon.
+// Last Rev
+// Sat Feb 24 CET 2024
+
+/// @brief draws a resource.
 #define DrawResource(ImgPtr, HandoverHeader, Width, Height, BaseX, BaseY) \
   HCore::SizeT uA = 0;                                                    \
                                                                           \

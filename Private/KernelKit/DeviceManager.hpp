@@ -24,7 +24,8 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Ref.hpp>
 
-#include "NewKit/KernelCheck.hpp"
+// Last Rev
+// Sat Feb 24 CET 2024
 
 namespace HCore {
 template <typename T>

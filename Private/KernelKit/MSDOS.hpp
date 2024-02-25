@@ -14,9 +14,11 @@
 #ifndef __MSDOS_EXEC__
 #define __MSDOS_EXEC__
 
+#include <KernelKit/PE.hpp>
 #include <NewKit/Defines.hpp>
 
-#include "PE.hpp"
+// Last Rev
+// Sat Feb 24 CET 2024
 
 typedef HCore::UInt32 DosWord;
 typedef HCore::Long DosLong;

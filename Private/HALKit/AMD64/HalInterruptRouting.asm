@@ -19,6 +19,7 @@
 HCoreInterrupt%1:
     push %1
     jmp ke_handle_irq
+    iretq
 %endmacro
 
 %macro IntNormal 1
@@ -26,6 +27,7 @@ HCoreInterrupt%1:
     push  0
     push  %1
     jmp ke_handle_irq
+    iretq
 %endmacro
 
 ; This file handles the core interrupt table
@@ -38,8 +40,6 @@ global __EXEC_IVT
 section .text
 
 ke_handle_irq:
-    cld
-
     push rax
     push rbx
     push rcx
@@ -75,6 +75,7 @@ ke_handle_irq:
     pop rcx
     pop rbx
     pop rax
+
 
     ret
 

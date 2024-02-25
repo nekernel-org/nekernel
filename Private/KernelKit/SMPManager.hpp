@@ -14,7 +14,8 @@
 #include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Ref.hpp>
 
-#include "NewKit/Defines.hpp"
+// Last Rev
+// Sat Feb 24 CET 2024
 
 #define kMaxHarts 8
 

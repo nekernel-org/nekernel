@@ -5,8 +5,6 @@
 
 CC=x86_64-w64-mingw32-g++
 CCFLAGS=-shared -ffreestanding -fno-rtti -fno-exceptions -std=c++20
-ASM=nasm
-ASMFLAGS=-f elf64
 OUTPUT=GKit.dll
 
 .PHONY: build-gkit

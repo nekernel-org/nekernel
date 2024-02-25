@@ -38,16 +38,16 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 #ifdef __BUNDLE_KERNEL__
   writer.WriteString(L"HCoreLite: ");
 #else
-  writer.WriteString(L"HCoreLdr:");
+  writer.WriteString(L"HCoreLdr: ");
 #endif
 
 #ifndef __DEBUG__
 
-  writer.WriteString(L"Version 1.00 (Release Channel)\r\n");
+  writer.WriteString(L"Version 1.12 (Release Channel)\r\n");
 
 #else
 
-  writer.WriteString(L"Version 1.00 (Insiders Channel)\r\n");
+  writer.WriteString(L"Version 1.12 (Insiders Channel)\r\n");
 
 #endif
 

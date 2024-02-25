@@ -14,10 +14,9 @@
 HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *), kMaxSyscalls>
     kSyscalls;
 
-// IDT System Call Handler.
-// NOTE: don't trust the user.
+/// @brief Interrupt system call handler.
 extern "C" void rt_syscall_handle(HCore::HAL::StackFrame *stack) {
   for (HCore::SizeT index = 0UL; index < kMaxSyscalls; ++index) {
-    (kSyscalls[index].Leak().Leak())(stack->R15, stack);
+    if (kSyscalls[index]) (kSyscalls[index].Leak().Leak())(stack->R15, stack);
   }
 }

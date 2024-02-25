@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: Core.hpp
+    File: Core.hxx
     Purpose:
 
     Revision History:
@@ -23,9 +23,9 @@
 #define $() HCore::GApplication::Shared()->Document()
 
 #ifdef __EXPORT_LIB
-#define G_API __attribute__((container(".EXPORT")))
+#define G_API __attribute__((pef_container(".EXPORT")))
 #else
-#define G_API __attribute__((container(".IMPORT")))
+#define G_API __attribute__((pef_container(".IMPORT")))
 #endif  // ifdef __EXPORT_LIB
 
 namespace HCore {
@@ -157,4 +157,29 @@ class G_API GDocument final {
   GFrame* mFrame{nullptr};
   GString mString;
 };
+
+class GException final {
+ public:
+  explicit GException() = default;
+  ~GException() = default;
+
+ public:
+  HCORE_COPY_DEFAULT(GException);
+
+ public:
+  const char* Name() { return "GUI Error"; }
+  const char* Reason() { return mReason; }
+
+ private:
+  const char* mReason{"CoreAPI: GUI Exception!"};
+};
+
+template <typename GFrameType, typename GFrameBase>
+inline GFrameType* frame_cast(GFrameBase* Frame) {
+  if (!dynamic_cast<GFrameType*>(Frame)) {
+    throw GException();
+  }
+
+  return dynamic_cast<GFrameType*>(Frame);
+}
 }  // namespace HCore

@@ -11,4 +11,4 @@
 
 ------------------------------------------- */
 
-#include <GKit/Core.hpp>
+#include <GKit/Core.hxx>

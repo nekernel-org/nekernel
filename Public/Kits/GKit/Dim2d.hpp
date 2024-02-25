@@ -14,7 +14,7 @@
 #ifndef __GORG__DIM2D_HPP__
 #define __GORG__DIM2D_HPP__
 
-#include <GKit/Core.hpp>
+#include <GKit/Core.hxx>
 
 namespace HCore {
 class Dim2d final {

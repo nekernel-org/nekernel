@@ -18,9 +18,6 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/String.hpp>
 
-#include "KernelKit/PEF.hpp"
-#include "NewKit/Utils.hpp"
-
 namespace HCore {
 namespace Detail {
 UInt32 rt_get_pef_platform(void) noexcept {

@@ -26,6 +26,7 @@
 #define CA_CDECL __attribute__((cdecl))
 #define CA_MSCALL __attribute__((ms_abi))
 
+typedef __UINT8_TYPE__ BYTE;
 typedef __UINT16_TYPE__ WORD;
 typedef __UINT32_TYPE__ DWORD;
 typedef __UINT64_TYPE__ QWORD;

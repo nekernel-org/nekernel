@@ -11,6 +11,6 @@
 
 ------------------------------------------- */
 
-#include <GKit/Frame.hpp>
+#include <GKit/Frame.hxx>
 
 namespace HCore {}

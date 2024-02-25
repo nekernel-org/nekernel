@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: Frame.hpp
+    File: Frame.hxx
     Purpose:
 
     Revision History:
@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <GKit/Core.hpp>
+#include <GKit/Core.hxx>
 #include <GKit/Dim2d.hpp>
 #include <NewKit/MutableArray.hpp>
 

@@ -54,8 +54,8 @@ BTextWriter &BTextWriter::WriteString(const Long &x) {
 
   if (y < 0) y = -y;
 
-  const char g_numbers[17] = "0123456789ABCDEF";
+  const char NUMBERS[17] = "0123456789ABCDEF";
 
-  this->WriteCharacter(g_numbers[h]);
+  this->WriteCharacter(NUMBERS[h]);
   return *this;
 }

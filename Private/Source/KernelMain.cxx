@@ -8,6 +8,7 @@
  */
 
 #include <ArchKit/ArchKit.hpp>
+#include <Drivers/PS2/Mouse.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>

@@ -19,8 +19,30 @@
 
 namespace HCore {
 
-class PS2Mouse {
-  explicit PS2Mouse() = default;
+class PS2Mouse final {
+ public:
+  explicit PS2Mouse() {
+    HAL::Out8(0x64, 0xa8);
+    this->Wait();
+    auto stat = HAL::In8(0x60);
+
+    stat |= 0b10;
+
+    this->Wait();
+
+    HAL::Out8(0x64, 0x60);
+
+    this->Wait();
+
+    HAL::Out8(0x60, stat);
+
+    this->Write(0xF6);
+    this->Read();
+
+    this->Write(0xF4);
+    this->Read();
+  }
+
   ~PS2Mouse() = default;
 
   HCORE_COPY_DEFAULT(PS2Mouse);
@@ -30,20 +52,29 @@ class PS2Mouse {
     Int32 X, Y;
   };
 
-  PS2MouseTraits Read() noexcept {
-    PS2MouseTraits stat;
-
-    return stat;
-  }
+  Boolean operator>>(PS2MouseTraits& stat) noexcept { return true; }
 
  private:
-  UInt8 Wait() {
+  Bool Wait() noexcept {
     while (!(HAL::In8(0x64) & 1)) {
       asm("pause");
     }  // wait until we can read
 
     // return the ack bit.
     return HAL::In8(0x64);
+  }
+
+  Void Write(UInt8 port) {
+    this->Wait();
+    HAL::Out8(0x64, 0xD4);
+    this->Wait();
+
+    HAL::Out8(0x60, port);
+  }
+
+  UInt8 Read() {
+    this->Wait();
+    return HAL::In8(0x60);
   }
 };
 }  // namespace HCore

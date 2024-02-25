@@ -15,11 +15,9 @@
 
 /// TODO: Stylesheets for GUI.
 
-#include <GKit/Core.hpp>
+#include <GKit/Core.hxx>
 #include <GKit/Dim2d.hpp>
 #include <NewKit/MutableArray.hpp>
-
-#include "NewKit/String.hpp"
 
 namespace HCore {
 class G_API Stylesheet final {

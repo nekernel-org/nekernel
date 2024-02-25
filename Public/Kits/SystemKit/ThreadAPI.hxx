@@ -24,7 +24,7 @@ struct ThreadInformationBlock final {
   const UIntPtr StartAddress;  // Start Address
   const UIntPtr StartHeap;     // Allocation Heap
   const UIntPtr StartStack;    // Stack Pointer.
-  const Int32 ARCH;            // Architecture and/or platform.
+  const Int32 Arch;            // Architecture and/or platform.
 };
 
 enum {

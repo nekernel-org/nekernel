@@ -35,9 +35,7 @@ void IDTLoader::Load(Register64 &idt) {
   reg->base = idt.Base;
   reg->limit = idt.Limit;
 
-  rt_cli();
   rt_load_idt(reg);
-  rt_sti();
 }
 
 void GDTLoader::Load(Ref<Register64> &gdt) { GDTLoader::Load(gdt.Leak()); }
