@@ -44,7 +44,7 @@ link-amd64:
 	cp $(KERNEL) Root/System
 
 .PHONY: all
-all: h-core link
+all: h-core-amd64 link-amd64
 	@echo "[HCoreKrnl] HCore is linked."
 
 .PHONY: clean
