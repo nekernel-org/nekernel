@@ -24,7 +24,7 @@
 #define kBootReadSize \
   (sizeof(DosHeader) + sizeof(ExecHeader) + sizeof(ExecOptionalHeader))
 
-EXTERN_C EFI_API void Main(HEL::HandoverInformationHeader* HIH);
+EXTERN_C EFI_API void RuntimeMain(HEL::HandoverInformationHeader* HIH);
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
@@ -138,7 +138,9 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
           handoverHdrPtr->f_Version = 0x1011;
           handoverHdrPtr->f_Bootloader = 0x11;  // Installer
 
-          Main(handoverHdrPtr);
+          writer.Write(L"HCoreLdr: Jumping to HCore...\r\n");
+
+          RuntimeMain(handoverHdrPtr);
 
         } else {
           handoverHdrPtr->f_Magic = 0xFF55DD;

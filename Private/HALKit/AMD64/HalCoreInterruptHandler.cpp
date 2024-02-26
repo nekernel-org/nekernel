@@ -33,9 +33,9 @@ static const char* kExceptionMessage[32] = {
     "Machine check",
     "Reserved",
     "Reserved",
-    "System Process Switch Issued",
-    "System was interrupted by kernel",
-    "System hang by kernel",
+    "Reserved",
+    "Reserved",
+    "Reservedl",
     "Reserved",
     "Reserved",
     "Reserved",
@@ -46,24 +46,9 @@ static const char* kExceptionMessage[32] = {
     "Reserved",
 };
 
-extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr& rsp) {
-  HCore::HAL::rt_cli();
+/// @brief System call interrupt (like DOS and NT)
+#define kKernelSyscallInterrupt (0x21)
 
-  HCore::HAL::StackFramePtr sf = (HCore::HAL::StackFramePtr)rsp;
-
-  if (sf->IntNum == 0x21) {
-    rt_syscall_handle(sf);
-  }
-
-  if (sf->IntNum < 32) {
-    HCore::kcout << "Exception:" << kExceptionMessage[sf->IntNum] << "\n";
-  }
-
-  if (sf->IntNum >= 40) HCore::HAL::Out8(0x20, 0x20);  // ACK MASTER
-
-  HCore::HAL::Out8(0xA0, 0x20);  // ACK SLAVE
-
-  HCore::HAL::rt_sti();
-
+EXTERN_C HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr rsp) {
   return rsp;
 }

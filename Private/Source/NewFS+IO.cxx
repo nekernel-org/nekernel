@@ -27,6 +27,15 @@
 
 using namespace HCore;
 
+enum {
+  kHCFSSubDriveA,
+  kHCFSSubDriveB,
+  kHCFSSubDriveC,
+  kHCFSSubDriveD,
+  kHCFSSubDriveInvalid,
+  kHCFSSubDriveCount,
+};
+
 Int32 KeHCFSRead(Mountpoint* Mnt, DriveTraits& DrvTraits, Int32 DrvIndex) {
   if (!Mnt) return -1;
 

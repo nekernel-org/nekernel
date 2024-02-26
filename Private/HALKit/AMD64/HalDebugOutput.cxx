@@ -72,7 +72,7 @@ void ke_io_print(const char* bytes) {
   Detail::kState = kStateReady;
 }
 
-TerminalDevice& TerminalDevice::Shared() noexcept {
+TerminalDevice TerminalDevice::Shared() noexcept {
   static TerminalDevice out(HCore::ke_io_print, nullptr);
   return out;
 }

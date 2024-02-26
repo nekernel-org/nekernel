@@ -17,68 +17,30 @@
 
 %macro IntExp 1
 HCoreInterrupt%1:
-    push 1
+    cli
     push %1
-    jmp ke_handle_irq
-    iretq
+    call ke_handle_irq
 %endmacro
 
 %macro IntNormal 1
 HCoreInterrupt%1:
+    cli
     push  0
     push  %1
-    jmp ke_handle_irq
-    iretq
+    call ke_handle_irq
 %endmacro
 
 ; This file handles the core interrupt table
 ; Last edited 31/01/24
 
 extern rt_handle_interrupts
-global rt_install_idt
 global __EXEC_IVT
 
 section .text
 
 ke_handle_irq:
-    push rax
-    push rbx
-    push rcx
-    push rdx
-    push rsi
-    push rdi
-    push rbp
-    push r8
-    push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
-
-    mov rcx, rsp
-    call rt_handle_interrupts
-    add rsp, 8
-
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
-    pop r9
-    pop r8
-    pop rbp
-    pop rdi
-    pop rsi
-    pop rdx
-    pop rcx
-    pop rbx
-    pop rax
-
     sti
-    retf
+    iretq
 
 __IVT:
     IntNormal 0
@@ -114,18 +76,18 @@ __IVT:
     IntExp   30
     IntNormal 31
     IntNormal 32
-
-    %assign i 33
-    %rep 223
-        IntNormal i
-    %assign i i+1
-    %endrep
-
-section .data
-
+    
 __EXEC_IVT:
     %assign i 0
-    %rep 256
+    %rep 32
         IntDecl i
     %assign i i+1
     %endrep
+
+section .text
+
+global PowerOnSelfTest
+
+PowerOnSelfTest:
+    int 0x21
+    ret

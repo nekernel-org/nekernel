@@ -25,12 +25,7 @@ extern "C" HCore::VoidPtr __EXEC_IVT;
 namespace Detail {
 using namespace HCore;
 
-/// @brief kernel POST.
-Void PowerOnSelfTest() {
-  kcout << "POST: Starting PowerOn-Self Test...\r\n";
-  asm("int $0x21");  // dummy 21h interrupt.
-  kcout << "POST: Successfuly Done!\r\n";
-}
+extern "C" void PowerOnSelfTest();
 
 /**
     @brief Global descriptor table entry, either null, code or data.
@@ -56,8 +51,7 @@ struct PACKED ALIGN(0x1000) HC_GDT final {
 
 EXTERN_C void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
-  HCore::kcout << "HCoreKrnl: (R) Version 1.00, (C) MahroussLogic all rights "
-                  "reserved.\n";
+
 
   /// Setup kernel globals.
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
@@ -85,7 +79,7 @@ EXTERN_C void RuntimeMain(
 
   HCore::HAL::Register64 idtBase;
   idtBase.Base = (HCore::UIntPtr)__EXEC_IVT;
-  idtBase.Limit = 0x0FFF;
+  idtBase.Limit = kKernelMaxSystemCalls;
 
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);

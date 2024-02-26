@@ -61,13 +61,7 @@ void IDTLoader::Load(Register64 &idt) {
   kRegIdt.Limit =
       sizeof(Detail::AMD64::InterruptDescriptorAMD64) * idt.Limit - 1;
 
-  kcout << "HCoreKrnl: Installing Interrupt vector...\n";
-
   rt_load_idt(kRegIdt);
-
-  rt_sti();
-
-  kcout << "HCoreKrnl: Interrupt Vector installed.\n";
 }
 
 void GDTLoader::Load(Ref<Register64> &gdt) { GDTLoader::Load(gdt.Leak()); }

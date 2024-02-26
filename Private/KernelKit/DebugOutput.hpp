@@ -30,11 +30,11 @@ class TerminalDevice final : public DeviceInterface<const Char *> {
 
   HCORE_COPY_DEFAULT(TerminalDevice);
 
-  static TerminalDevice &Shared() noexcept;
+  static TerminalDevice Shared() noexcept;
 };
 
-inline TerminalDevice &EndLine() {
-  TerminalDevice &selfTerm = TerminalDevice::Shared();
+inline TerminalDevice EndLine() {
+  TerminalDevice selfTerm = TerminalDevice::Shared();
   selfTerm << "\n";
   return selfTerm;
 }
