@@ -72,7 +72,7 @@ ATAInit_Retry:
   auto statRdy = In8(IO + ATA_REG_STATUS);
 
   if (statRdy & ATA_SR_ERR) {
-    writer.WriteString(
+    writer.Write(
         L"HCoreLdr: ATA: Select error, not an IDE based hard-drive.\r\n");
 
     return false;
@@ -91,14 +91,14 @@ ATAInit_Retry:
     kATAData[indexData] = In16(IO + ATA_REG_DATA);
   }
 
-  writer.WriteString(L"HCoreLdr: Model: ");
+  writer.Write(L"HCoreLdr: Model: ");
 
   for (SizeT indexData = 0; indexData < kATADataLen; indexData += 1) {
     writer.WriteCharacter(kATAData[indexData + ATA_IDENT_MODEL + 1])
         .WriteCharacter(kATAData[indexData + ATA_IDENT_MODEL]);
   }
 
-  writer.WriteString(L"\r\n");
+  writer.Write(L"\r\n");
 
   OutBus = (Bus == ATA_PRIMARY) ? BDeviceATA::kPrimary : BDeviceATA::kSecondary;
   OutMaster = (Bus == ATA_PRIMARY) ? ATA_MASTER : ATA_SLAVE;
@@ -115,21 +115,21 @@ ATAInit_Retry:
 
   /* differentiate ATA, ATAPI, SATA and SATAPI */
   if (cl == 0x14 && ch == 0xEB) {
-    writer.WriteString(L"HCoreLdr: PATAPI drive detected.\r\n");
+    writer.Write(L"HCoreLdr: PATAPI drive detected.\r\n");
     kATADeviceType = kATADevicePATA_PI;
   }
   if (cl == 0x69 && ch == 0x96) {
-    writer.WriteString(L"HCoreLdr: SATAPI drive detected.\r\n");
+    writer.Write(L"HCoreLdr: SATAPI drive detected.\r\n");
     kATADeviceType = kATADeviceSATA_PI;
   }
 
   if (cl == 0 && ch == 0) {
-    writer.WriteString(L"HCoreLdr: PATA drive detected.\r\n");
+    writer.Write(L"HCoreLdr: PATA drive detected.\r\n");
     kATADeviceType = kATADevicePATA;
   }
 
   if (cl == 0x3c && ch == 0xc3) {
-    writer.WriteString(L"HCoreLdr: SATA drive detected.\r\n");
+    writer.Write(L"HCoreLdr: SATA drive detected.\r\n");
     kATADeviceType = kATADeviceSATA;
   }
 
@@ -207,7 +207,7 @@ BDeviceATA::BDeviceATA() noexcept {
     kATADetected = true;
 
     BTextWriter writer;
-    writer.WriteString(L"HCoreLdr: Driver: OnLine.\r\n");
+    writer.Write(L"HCoreLdr: Driver: OnLine.\r\n");
   }
 }
 

@@ -11,6 +11,8 @@
 #include <KernelKit/ProcessManager.hpp>
 #include <NewKit/String.hpp>
 
+#include "KernelKit/DebugOutput.hpp"
+
 extern "C" void idt_handle_system_call(HCore::UIntPtr rsp) {
   HCore::HAL::StackFrame *sf = reinterpret_cast<HCore::HAL::StackFrame *>(rsp);
   rt_syscall_handle(sf);
@@ -35,12 +37,13 @@ extern "C" void idt_handle_scheduler(HCore::UIntPtr rsp) {
   HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
-      << "Will be scheduled back later "
-      << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
+      << "HCoreKrnl: Will be scheduled back later "
+      << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName()
+      << HCore::EndLine();
 
   /// schedule another process.
   if (!HCore::ProcessHelper::StartScheduling()) {
-    HCore::kcout << "Let's continue schedule this process...\r\n";
+    HCore::kcout << "HCoreKrnl: Continue schedule this process...\r\n";
   }
 }
 

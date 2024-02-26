@@ -33,27 +33,19 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BTextWriter writer;
 
-  writer.WriteString(L"HCoreLdr: ");
+  writer.Write(L"HCoreLdr: ");
 
-#ifndef __DEBUG__
-
-  writer.WriteString(L"Version 1.12 (Release Channel)\r\n");
-
-#else
-
-  writer.WriteString(L"Version 1.12 (Insiders Channel)\r\n");
-
-#endif
+  writer.Write(BVersionString::Shared()).Write(L"\r\n");
 
   const char strDate[] = __DATE__;
 
-  writer.WriteString(L"HCoreLdr: Build: ");
+  writer.Write(L"HCoreLdr: Build: ");
 
   for (auto& ch : strDate) writer.WriteCharacter(ch);
 
-  writer.WriteString(L"\r\nHCoreLdr: Firmware Vendor: ")
-      .WriteString(SystemTable->FirmwareVendor)
-      .WriteString(L"\r\n");
+  writer.Write(L"\r\nHCoreLdr: Firmware Vendor: ")
+      .Write(SystemTable->FirmwareVendor)
+      .Write(L"\r\n");
 
   BFileReader img(L"HCOREKRNL.DLL", ImageHandle);
 
@@ -160,13 +152,13 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         return kEfiOk;
       } else {
-        writer.WriteString(L"HCoreLdr: Error-Code: HLDR-0001\r\n");
+        writer.Write(L"HCoreLdr: Error-Code: HLDR-0001\r\n");
       }
     } else {
-      writer.WriteString(L"HCoreLdr: Error-Code: HLDR-0002\r\n");
+      writer.Write(L"HCoreLdr: Error-Code: HLDR-0002\r\n");
     }
   } else {
-    writer.WriteString(L"HCoreLdr: Error-Code: HLDR-0003\r\n");
+    writer.Write(L"HCoreLdr: Error-Code: HLDR-0003\r\n");
   }
 
   EFI::Stop();

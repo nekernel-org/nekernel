@@ -13,6 +13,8 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Stream.hpp>
 
+#include "CompilerKit/CompilerKit.hpp"
+
 namespace HCore {
 // @brief Emulates a VT100 terminal.
 class TerminalDevice final : public DeviceInterface<const Char *> {
@@ -26,11 +28,16 @@ class TerminalDevice final : public DeviceInterface<const Char *> {
   /// @return string type (const char*)
   virtual const char *Name() const override { return ("TerminalDevice"); }
 
-  TerminalDevice &operator=(const TerminalDevice &) = default;
-  TerminalDevice(const TerminalDevice &) = default;
+  HCORE_COPY_DEFAULT(TerminalDevice);
 
-  static TerminalDevice Shared() noexcept;
+  static TerminalDevice &Shared() noexcept;
 };
+
+inline TerminalDevice &EndLine() {
+  TerminalDevice &selfTerm = TerminalDevice::Shared();
+  selfTerm << "\n";
+  return selfTerm;
+}
 
 namespace Detail {
 bool serial_init();

@@ -53,7 +53,7 @@ bool serial_init() {
 }
 }  // namespace Detail
 
-void ke_io_print(const char *bytes) {
+void ke_io_print(const char* bytes) {
   Detail::serial_init();
 
   if (!bytes || Detail::kState != kStateReady) return;
@@ -72,8 +72,8 @@ void ke_io_print(const char *bytes) {
   Detail::kState = kStateReady;
 }
 
-TerminalDevice TerminalDevice::Shared() noexcept {
-  TerminalDevice out(HCore::ke_io_print, nullptr);
+TerminalDevice& TerminalDevice::Shared() noexcept {
+  static TerminalDevice out(HCore::ke_io_print, nullptr);
   return out;
 }
 

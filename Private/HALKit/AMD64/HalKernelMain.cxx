@@ -20,17 +20,21 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
 
-extern "C" HCore::UIntPtr __EXEC_IVT;
+extern "C" HCore::VoidPtr __EXEC_IVT;
 
 namespace Detail {
 using namespace HCore;
 
+/// @brief kernel POST.
 Void PowerOnSelfTest() {
   kcout << "POST: Starting PowerOn-Self Test...\r\n";
-  asm("int $0x21");
-  kcout << "POST: Done\r\n";
+  asm("int $0x21");  // dummy 21h interrupt.
+  kcout << "POST: Successfuly Done!\r\n";
 }
 
+/**
+    @brief Global descriptor table entry, either null, code or data.
+*/
 struct PACKED HC_GDT_ENTRY final {
   UInt16 Limit0;
   UInt16 Base0;
@@ -79,17 +83,15 @@ EXTERN_C void RuntimeMain(
   HCore::HAL::GDTLoader gdt;
   gdt.Load(gdtBase);
 
-  HCore::VoidPtr IDT = new HCore::VoidPtr;
-
   HCore::HAL::Register64 idtBase;
-  idtBase.Base = (HCore::UIntPtr)IDT;
+  idtBase.Base = (HCore::UIntPtr)__EXEC_IVT;
   idtBase.Limit = 0x0FFF;
 
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
 
   if (HandoverHeader->f_Bootloader == 0xDD) {
-    /// Mount a New partition.
+    /// Mounts a NewFS partition.
     HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
 
     // Open file from first hard-drive.
@@ -110,9 +112,6 @@ EXTERN_C void RuntimeMain(
                  10, 10);
 
     ResourceClear();
-
-    DrawResource(PoweredByAward, HandoverHeader, POWEREDBYAWARD_HEIGHT,
-                 POWEREDBYAWARD_WIDTH, POWEREDBYAWARD_WIDTH + 20, 10);
 
     Detail::PowerOnSelfTest();
 

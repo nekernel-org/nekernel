@@ -17,17 +17,18 @@
 
 %macro IntExp 1
 HCoreInterrupt%1:
-    cli
+    push 1
     push %1
     jmp ke_handle_irq
+    iretq
 %endmacro
 
 %macro IntNormal 1
 HCoreInterrupt%1:
-    cli
     push  0
     push  %1
     jmp ke_handle_irq
+    iretq
 %endmacro
 
 ; This file handles the core interrupt table
@@ -56,7 +57,7 @@ ke_handle_irq:
     push r14
     push r15
 
-    mov rdi, rsp
+    mov rcx, rsp
     call rt_handle_interrupts
     add rsp, 8
 
@@ -76,10 +77,10 @@ ke_handle_irq:
     pop rbx
     pop rax
 
-    iretq
+    sti
+    retf
 
-section .data
-
+__IVT:
     IntNormal 0
     IntNormal 1
     IntNormal 2
@@ -112,6 +113,13 @@ section .data
     IntNormal 29
     IntExp   30
     IntNormal 31
+    IntNormal 32
+
+    %assign i 33
+    %rep 223
+        IntNormal i
+    %assign i i+1
+    %endrep
 
 section .data
 
@@ -121,11 +129,3 @@ __EXEC_IVT:
         IntDecl i
     %assign i i+1
     %endrep
-
-    %assign i 32
-    %rep 224
-        IntNormal i
-    %assign i i+1
-    %endrep
-
-    ret

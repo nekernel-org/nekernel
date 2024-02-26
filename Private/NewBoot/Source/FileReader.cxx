@@ -50,14 +50,12 @@ BFileReader::BFileReader(const CharacterType* path, EfiHandlePtr ImageHandle) {
   EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
   if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk) {
-    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol")
-        .WriteString(L"\r\n");
+    mWriter.Write(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
   }
 
   if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk) {
-    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol")
-        .WriteString(L"\r\n");
+    mWriter.Write(L"HCoreLdr: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -65,8 +63,7 @@ BFileReader::BFileReader(const CharacterType* path, EfiHandlePtr ImageHandle) {
   /// Start doing disk I/O
 
   if (efp->OpenVolume(efp, &rootFs) != kEfiOk) {
-    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Volume")
-        .WriteString(L"\r\n");
+    mWriter.Write(L"HCoreLdr: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -75,9 +72,9 @@ BFileReader::BFileReader(const CharacterType* path, EfiHandlePtr ImageHandle) {
 
   if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
       kEfiOk) {
-    mWriter.WriteString(L"HCoreLdr: Fetch-Protocol: No-Such-Path: ")
-        .WriteString(mPath)
-        .WriteString(L"\r\n");
+    mWriter.Write(L"HCoreLdr: Fetch-Protocol: No-Such-Path: ")
+        .Write(mPath)
+        .Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }

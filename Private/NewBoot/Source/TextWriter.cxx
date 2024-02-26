@@ -20,7 +20,7 @@
 /**
 @brief puts wrapper over EFI ConOut.
 */
-BTextWriter &BTextWriter::WriteString(const CharacterType *str) {
+BTextWriter &BTextWriter::Write(const CharacterType *str) {
   if (*str == 0 || !str) return *this;
 
   ST->ConOut->OutputString(ST->ConOut, str);
@@ -40,11 +40,11 @@ BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
   return *this;
 }
 
-BTextWriter &BTextWriter::WriteString(const Long &x) {
+BTextWriter &BTextWriter::Write(const Long &x) {
   int y = x / 16;
   int h = x % 16;
 
-  if (y) this->WriteString(y);
+  if (y) this->Write(y);
 
   /* fail if the hex number is not base-16 */
   if (h > 15) {

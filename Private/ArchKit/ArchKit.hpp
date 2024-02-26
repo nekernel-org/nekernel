@@ -55,7 +55,7 @@ constexpr static inline SSizeT syscall_hash(const char *seed, int mul) {
 bool ke_init_hal();
 }  // namespace HCore
 
-#define kKernelMaxSystemCalls (0xFFF)
+#define kKernelMaxSystemCalls (256)
 
 extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *),
                     kKernelMaxSystemCalls>

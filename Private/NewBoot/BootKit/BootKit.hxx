@@ -17,8 +17,10 @@
 class BTextWriter;
 class BFileReader;
 class BFileRunner;
+class BVersionString;
 
 #include <BootKit/Arch/ATA.hxx>
+#include <CompilerKit/Version.hxx>
 #include <FirmwareKit/EFI.hxx>
 #include <NewKit/Defines.hpp>
 
@@ -41,8 +43,8 @@ typedef WideChar CharacterType;
  */
 class BTextWriter final {
  public:
-  BTextWriter &WriteString(const Long &num);
-  BTextWriter &WriteString(const CharacterType *str);
+  BTextWriter &Write(const Long &num);
+  BTextWriter &Write(const CharacterType *str);
   BTextWriter &WriteCharacter(CharacterType c);
 
  public:
@@ -187,3 +189,8 @@ inline Void InitQT() noexcept {
 
   kStride = 4;
 }
+
+class BVersionString final {
+ public:
+  static const CharacterType *Shared() { return BOOTLOADER_VERSION; }
+};

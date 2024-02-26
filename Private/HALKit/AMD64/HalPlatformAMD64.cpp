@@ -32,47 +32,40 @@ struct InterruptDescriptorAMD64 final {
 };
 }  // namespace Detail::AMD64
 
-#define kInterruptGate 0xE
-#define kTrapGate 0xF
-#define kRing0 (0 << 5)
-#define kRing3 (3 << 5)
-#define kIdtPresent (1 << 7)
+#define kInterruptGate 0x8E
+#define kTrapGate 0x8F
+#define kTaskGate 0x85
 #define kGdtSelector 0x08
 
 extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp);
 
 static ALIGN(0x10)
     Detail::AMD64::InterruptDescriptorAMD64 kIdtRegs[kKernelMaxSystemCalls];
+
 static HAL::Register64 kRegIdt;
 
 void IDTLoader::Load(Register64 &idt) {
+  VoidPtr *baseIdt = (VoidPtr *)idt.Base;
+
   for (auto i = 0; i < 32; i++) {
     kIdtRegs[i].Selector = kGdtSelector;
-    kIdtRegs[i].Ist = 0x00;
-    kIdtRegs[i].TypeAttributes =
-        kInterruptGate | kTrapGate | kRing0 | kIdtPresent;
-    kIdtRegs[i].OffsetLow = (((UIntPtr *)idt.Base)[i]) & 0xFFFF;
-    kIdtRegs[i].OffsetMid = (((UIntPtr *)idt.Base)[i] >> 16) & 0xFFFF;
-    kIdtRegs[i].OffsetHigh = (((UIntPtr *)idt.Base)[i] >> 32) & 0xFFFF;
+    kIdtRegs[i].Ist = 001;
+    kIdtRegs[i].TypeAttributes = kTrapGate;
+    kIdtRegs[i].OffsetLow = (UIntPtr)baseIdt & 0xFFFF;
+    kIdtRegs[i].OffsetMid = (UIntPtr)baseIdt >> 16 & 0xFFFF;
+    kIdtRegs[i].OffsetHigh = (UIntPtr)baseIdt >> 32 & 0xFFFFFFFF;
     kIdtRegs[i].Zero = 0;
   }
 
-  kIdtRegs[0x21].Selector = kGdtSelector;
-  kIdtRegs[0x21].Ist = 0x00;
-  kIdtRegs[0x21].TypeAttributes = kInterruptGate | kRing3 | kIdtPresent;
-  kIdtRegs[0x21].OffsetLow = (((UIntPtr *)idt.Base)[0x21]) & 0xFFFF;
-  kIdtRegs[0x21].OffsetMid = (((UIntPtr *)idt.Base)[0x21] >> 16) & 0xFFFF;
-  kIdtRegs[0x21].OffsetHigh = (((UIntPtr *)idt.Base)[0x21] >> 32) & 0xFFFF;
-  kIdtRegs[0x21].Zero = 0;
-
-  kRegIdt.Base = (UIntPtr)kIdtRegs;
-  kRegIdt.Limit = sizeof(Detail::AMD64::InterruptDescriptorAMD64) * idt.Limit;
+  kRegIdt.Base = (UIntPtr)&kIdtRegs[0];
+  kRegIdt.Limit =
+      sizeof(Detail::AMD64::InterruptDescriptorAMD64) * idt.Limit - 1;
 
   kcout << "HCoreKrnl: Installing Interrupt vector...\n";
 
   rt_load_idt(kRegIdt);
 
-  asm volatile("sti");
+  rt_sti();
 
   kcout << "HCoreKrnl: Interrupt Vector installed.\n";
 }
