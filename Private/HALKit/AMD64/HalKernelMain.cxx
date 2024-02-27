@@ -20,12 +20,10 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
 
-EXTERN_C HCore::VoidPtr __EXEC_IVT;
-
 namespace Detail {
 using namespace HCore;
 
-EXTERN_C void PowerOnSelfTest();
+EXTERN_C void PowerOnSelfTest(void);
 
 /**
     @brief Global descriptor table entry, either null, code or data.
@@ -77,14 +75,14 @@ EXTERN_C void RuntimeMain(
   HCore::HAL::GDTLoader gdt;
   gdt.Load(gdtBase);
 
+  HCore::UIntPtr* kInterruptVectorTable = new HCore::UIntPtr[kKernelIdtSize];
+  
   HCore::HAL::Register64 idtBase;
-  idtBase.Base = (HCore::UIntPtr)__EXEC_IVT;
-  idtBase.Limit = kKernelMaxSystemCalls;
+  idtBase.Base = (HCore::UIntPtr)kInterruptVectorTable;
+  idtBase.Limit = kKernelIdtSize * sizeof(HCore::Detail::AMD64::InterruptDescriptorAMD64) - 1;
 
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
-
-  HCore::kcout << "TESTING\n";
 
   if (HandoverHeader->f_Bootloader == 0xDD) {
     /// Mounts a NewFS partition.

@@ -11,7 +11,7 @@
 #include <KernelKit/ProcessManager.hpp>
 #include <NewKit/String.hpp>
 
-static const char* kExceptionMessage[32] = {
+static const char* kExceptionMessages[32] = {
     "Division by zero",
     "Debug Breakpoint",
     "Non-maskable interrupt",
@@ -49,12 +49,15 @@ static const char* kExceptionMessage[32] = {
 /// @brief System call interrupt (like DOS and NT)
 #define kKernelSyscallInterrupt (0x21)
 
-extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp) {
-  HCore::HAL::rt_cli();
-
+EXTERN_C HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp) {
   HCore::HAL::StackFramePtr sf = (HCore::HAL::StackFramePtr)rsp;
 
-  HCore::HAL::rt_sti();
+  if (sf->IntNum < 32) {
+
+  } else if (sf->IntNum == 0x21) {
+    
+  }
+
   return rsp;
 }
 

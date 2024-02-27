@@ -9,59 +9,34 @@
 
 #include <ArchKit/ArchKit.hpp>
 
+EXTERN_C HCore::UIntPtr ke_handle_irq;
+
 namespace HCore::HAL {
+static Register64 kRegGdt;
+
 void GDTLoader::Load(Register64 &gdt) {
-  Register64 gdtReg;
+  kRegGdt.Base = gdt.Base;
+  kRegGdt.Limit = gdt.Limit;
 
-  gdtReg.Base = gdt.Base;
-  gdtReg.Limit = gdt.Limit;
-
-  rt_load_gdt(gdtReg);
+  rt_load_gdt(kRegGdt);
 }
-
-namespace Detail::AMD64 {
-struct InterruptDescriptorAMD64 final {
-  UInt16 OffsetLow;  // offset bits 0..15
-  UInt16 Selector;   // a code segment selector in GDT or LDT
-  UInt8
-      Ist;  // bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.
-  UInt8 TypeAttributes;  // gate type, dpl, and p fields
-  UInt16 OffsetMid;      // offset bits 16..31
-  UInt32 OffsetHigh;     // offset bits 32..63
-  UInt32 Zero;           // reserved
-};
-}  // namespace Detail::AMD64
-
-#define kInterruptGate 0x8E
-#define kTrapGate 0x8F
-#define kTaskGate 0x85
-#define kGdtSelector 0xa0
-
-extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp);
-
-static ALIGN(0x10)
-    Detail::AMD64::InterruptDescriptorAMD64 kIdtRegs[kKernelMaxSystemCalls];
 
 static HAL::Register64 kRegIdt;
 
 void IDTLoader::Load(Register64 &idt) {
-  VoidPtr *baseIdt = (VoidPtr *)idt.Base;
+  volatile ::HCore::Detail::AMD64::InterruptDescriptorAMD64* baseIdt = (::HCore::Detail::AMD64::InterruptDescriptorAMD64 *)idt.Base;
 
-  for (auto i = 0; i < 32; i++) {
-    kIdtRegs[i].Selector = kGdtSelector;
-    kIdtRegs[i].Ist = 001;
-    kIdtRegs[i].TypeAttributes = kTrapGate;
-    kIdtRegs[i].OffsetLow = (UIntPtr)baseIdt & 0xFFFF;
-    kIdtRegs[i].OffsetMid = (UIntPtr)baseIdt >> 16 & 0xFFFF;
-    kIdtRegs[i].OffsetHigh = (UIntPtr)baseIdt >> 32 & 0xFFFFFFFF;
-    kIdtRegs[i].Zero = 0;
+  for (auto i = 0; i < kKernelIdtSize; i++) {
+    baseIdt[i].Selector = kGdtCodeSelector;
+    baseIdt[i].Ist = 00;
+    baseIdt[i].TypeAttributes = kInterruptGate;
+    baseIdt[i].OffsetLow = (UInt16)((UInt32) ke_handle_irq & 0x000000000000ffff);
+    baseIdt[i].OffsetMid = (UInt16)(((UInt32) ke_handle_irq & 0x00000000ffff0000) >> 16);
+    baseIdt[i].OffsetHigh = (UInt32)((UInt32) ke_handle_irq & 0xffffffff00000000) >> 32;
+    baseIdt[i].Zero = 0;
   }
 
-  kRegIdt.Base = (UIntPtr)&kIdtRegs[0];
-  kRegIdt.Limit =
-      sizeof(Detail::AMD64::InterruptDescriptorAMD64) * idt.Limit - 1;
-
-  rt_load_idt(kRegIdt);
+  rt_load_idt(idt);
 }
 
 void GDTLoader::Load(Ref<Register64> &gdt) { GDTLoader::Load(gdt.Leak()); }

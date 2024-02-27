@@ -26,6 +26,25 @@
 #define IsActiveLow(flag) (flag & 2)
 #define IsLevelTriggered(flag) (flag & 8)
 
+#define kInterruptGate 0b10001110
+#define kTrapGate 0b10001111
+#define kTaskGate 0b10001100
+#define kGdtCodeSelector 0x08
+
+namespace HCore {
+namespace Detail::AMD64 {
+struct InterruptDescriptorAMD64 final {
+  UInt16 OffsetLow;  // offset bits 0..15
+  UInt16 Selector;   // a code segment selector in GDT or LDT
+  UInt8  Ist;  // bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.
+  UInt8 TypeAttributes;  // gate type, dpl, and p fields
+  UInt16 OffsetMid;      // offset bits 16..31
+  UInt32 OffsetHigh;     // offset bits 32..63
+  UInt32 Zero;           // reserved
+};
+}  // namespace Detail::AMD64
+} // namespace HCore
+
 namespace HCore::HAL {
 extern "C" UChar In8(UInt16 port);
 extern "C" UShort In16(UInt16 port);
@@ -140,3 +159,5 @@ extern "C" void idt_handle_pf(HCore::UIntPtr rsp);
 
 extern "C" void rt_load_idt(HCore::HAL::Register64 ptr);
 extern "C" void rt_load_gdt(HCore::HAL::Register64 ptr);
+
+#define kKernelIdtSize 256

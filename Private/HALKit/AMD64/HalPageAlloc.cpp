@@ -16,7 +16,7 @@
 
 static HCore::SizeT kPageCnt = 0UL;
 
-#define kPagePad 512
+#define kKernelPagingPadding 4096
 
 namespace HCore {
 namespace HAL {
@@ -30,7 +30,7 @@ static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
   pte->Present = true;
 
   kKernelVirtualStart =
-      (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz + kPagePad);
+      (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz + kKernelPagingPadding);
   return pte;
 }
 
