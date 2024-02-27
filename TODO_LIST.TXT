@@ -6,10 +6,13 @@
     - Design Handover [ X ]
     - Load kernel into memory [ X ]
     - Fix bug in kernel loader, which causes a 06 #UD. [ X ]
-    - Load Stage 2 bootloader [ ]
-- Context switch x87/SSE/AVX registers [ ]
-- Framebuffer and ATA support [ ]
+    - Load Kernel [ X ]
+    - Add IDT [ X ]
+    - AHCI driver [ ]
+- Context switch x87/SSE/AVX registers [ 1/2 ]
+- Framebuffer and AHCI support [ X ]
 - Native Subsystem and GUI [ ]
+- Make installer [ ]
 
 Status:
 
