@@ -30,3 +30,15 @@ typedef __UINT8_TYPE__ BYTE;
 typedef __UINT16_TYPE__ WORD;
 typedef __UINT32_TYPE__ DWORD;
 typedef __UINT64_TYPE__ QWORD;
+
+#ifdef __x86_64__
+#   define _M_AMD64
+#endif 
+
+#ifdef __aarch64__
+#   define _M_AARCH64
+#endif 
+
+#ifdef __powerpc64__
+#   define _M_PPC64
+#endif 

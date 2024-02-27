@@ -15,6 +15,8 @@
 
 using namespace HCore;
 
+/// @brief OC class, translated to C++
+
 class HFile final {
  public:
   explicit HFile(const char *path);

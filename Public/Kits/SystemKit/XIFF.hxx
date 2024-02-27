@@ -19,13 +19,13 @@
  * Used by XIFF based containers.
  */
 
-struct PACKED XiffHeader {
-  unsigned char mag[5];      // XIFF string (includes \0)
-  unsigned int size;         // overall size of header (XiffHeader) in bytes
-  unsigned int format_type;  // format type. generic
-  unsigned char specific_mag[4];      // The sub header magic
-  unsigned int specific_size;         // length of the format data
-  unsigned int specific_format_type;  // format type. generic
+struct PACKED XiffHeader final {
+  unsigned char f_Mag[5];      // XIFF string (includes \0)
+  unsigned int f_Size;         // overall size of header (XiffHeader) in bytes
+  unsigned int f_FormatType;  // format type. generic
+  unsigned char f_SpecificMag[4];      // The sub header magic
+  unsigned int f_SpecificSize;         // length of the format data
+  unsigned int f_SpecificFormatType;  // format type. generic
 };
 
 #define kXIFFVideo "XVFF"

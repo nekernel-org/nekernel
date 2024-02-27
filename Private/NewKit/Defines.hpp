@@ -81,10 +81,14 @@ Args &&move(Args &&arg) {
   return static_cast<Args &&>(arg);
 }
 
-/// Handle type.
+typedef UIntPtr _HandleCls;
+
+/// @brief Looks like an objc class, because it takes inspiration from it.
 typedef struct _Handle {
-  UIntPtr _Unused;
+  _HandleCls _Cls;
   void Release(_Handle *);
+  _Handle* Init();
+  _Handle* Sel(_Handle*, ...);
 } *Handle;
 }  // namespace HCore
 
