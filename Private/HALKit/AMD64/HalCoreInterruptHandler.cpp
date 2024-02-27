@@ -35,7 +35,7 @@ static const char* kExceptionMessages[32] = {
     "Reserved",
     "Reserved",
     "Reserved",
-    "Reservedl",
+    "Reserved",
     "Reserved",
     "Reserved",
     "Reserved",
@@ -49,16 +49,24 @@ static const char* kExceptionMessages[32] = {
 /// @brief System call interrupt (like DOS and NT)
 #define kKernelSyscallInterrupt (0x21)
 
-EXTERN_C HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp) {
-  HCore::HAL::StackFramePtr sf = (HCore::HAL::StackFramePtr)rsp;
+extern "C" {
+
+HCore::UIntPtr rt_handle_interrupts(HCore::HAL::StackFramePtr sf) {
+  HCore::HAL::rt_cli();
 
   if (sf->IntNum < 32) {
-
   } else if (sf->IntNum == 0x21) {
-    
   }
 
-  return rsp;
+  if ((sf->IntNum - 32) >= 12) {
+    HCore::HAL::Out8(0xA0, 0x20);
+  }
+
+  HCore::HAL::Out8(0x20, 0x20);
+
+  HCore::HAL::rt_sti();
+
+  return (HCore::UIntPtr)sf;
 }
 
-
+}

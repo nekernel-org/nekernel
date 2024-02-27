@@ -5,7 +5,7 @@
 
 CC			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
+CCFLAGS		= -c -ffreestanding -D__DEBUG__ -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
 ASM			= nasm
 ASMFLAGS	= -f win64
 LDFLAGS		= -e Main -shared --subsystem=17  -ffreestanding
@@ -38,17 +38,15 @@ h-core-amd64:
 
 OBJCOPY=x86_64-w64-mingw32-objcopy 
 FONTFLAGS=-b binary
-KERNELFONT=./SSFN/amiga.sfn
 
 .PHONY: link-amd64
 link-amd64:
-	$(LD) $(FONTFLAGS) $(KERNELFONT) -o console_sfn.exe
-	$(LD) $(LDFLAGS) $(LDOBJ) console_sfn.exe -o $(KERNEL)
+	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
 	cp $(KERNEL) Root/System
 
 .PHONY: all
 all: h-core-amd64 link-amd64
-	@echo "[HCoreKrnl] HCore is linked."
+	@echo "[HCoreKrnl] HCore is Linked now."
 
 .PHONY: clean
 clean:

@@ -43,8 +43,6 @@ struct DriveTraits final {
   DriveID fId;                // Drive id.
   Int32 fFlags;               // fReadOnly, fXPMDrive, fXPTDrive
 
-  Handle fDriveHandle;
-
   //! for StorageKit.
   struct DrivePacket final {
     voidPtr fPacketContent;  // packet body.

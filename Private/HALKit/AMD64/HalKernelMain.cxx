@@ -23,7 +23,7 @@
 namespace Detail {
 using namespace HCore;
 
-EXTERN_C void PowerOnSelfTest(void);
+EXTERN_C void ke_power_on_self_test(void);
 
 /**
     @brief Global descriptor table entry, either null, code or data.
@@ -72,14 +72,20 @@ EXTERN_C void RuntimeMain(
   gdtBase.Base = (HCore::UIntPtr)&GDT;
   gdtBase.Limit = sizeof(Detail::HC_GDT) - 1;
 
+  /// load gdt and far jump to rax.
+
   HCore::HAL::GDTLoader gdt;
   gdt.Load(gdtBase);
 
-  HCore::UIntPtr* kInterruptVectorTable = new HCore::UIntPtr[kKernelIdtSize];
+  /// load idt buffer
+
+  constexpr HCore::Int IDT_SIZE = 4095;
+
+  HCore::UIntPtr* kInterruptVectorTable = new HCore::UIntPtr[IDT_SIZE];
   
   HCore::HAL::Register64 idtBase;
   idtBase.Base = (HCore::UIntPtr)kInterruptVectorTable;
-  idtBase.Limit = kKernelIdtSize * sizeof(HCore::Detail::AMD64::InterruptDescriptorAMD64) - 1;
+  idtBase.Limit = IDT_SIZE;
 
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
@@ -100,8 +106,11 @@ EXTERN_C void RuntimeMain(
     ** This does the POST.
     */
 
-    Detail::PowerOnSelfTest();
+    HCore::kcout << "FOOBAR." << HCore::EndLine();
 
+    Detail::ke_power_on_self_test();
+
+    HCore::kcout << "FOOBAR." << HCore::EndLine();
     /**
      ** This draws the HCore resource icon..
      */

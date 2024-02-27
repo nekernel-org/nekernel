@@ -15,15 +15,15 @@
 ; Last edited 31/01/24
 
 extern rt_handle_interrupts
-global PowerOnSelfTest
+global ke_power_on_self_test
 global ke_handle_irq
 
 section .text
 
 ke_handle_irq:
-    cli
+    cld
 
-push rax
+    push rax
     push rbx
     push rcx
     push rdx
@@ -59,11 +59,12 @@ push rax
     pop rbx
     pop rax
 
-    sti
+    std
     iretq
 
 ;; this one is doing a POST for us.
 ;; testing interrupts.
-PowerOnSelfTest:
+ke_power_on_self_test:
     int 0x21
+    int 0xe
     ret

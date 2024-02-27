@@ -26,14 +26,14 @@
 #define IsActiveLow(flag) (flag & 2)
 #define IsLevelTriggered(flag) (flag & 8)
 
-#define kInterruptGate 0b10001110
-#define kTrapGate 0b10001111
+#define kInterruptGate 0x8E
+#define kTrapGate 0xEF
 #define kTaskGate 0b10001100
 #define kGdtCodeSelector 0x08
 
 namespace HCore {
 namespace Detail::AMD64 {
-struct InterruptDescriptorAMD64 final {
+struct PACKED InterruptDescriptorAMD64 final {
   UInt16 OffsetLow;  // offset bits 0..15
   UInt16 Selector;   // a code segment selector in GDT or LDT
   UInt8  Ist;  // bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.

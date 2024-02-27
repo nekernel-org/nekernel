@@ -21,19 +21,34 @@ void GDTLoader::Load(Register64 &gdt) {
   rt_load_gdt(kRegGdt);
 }
 
-static HAL::Register64 kRegIdt;
+static volatile HAL::Register64 kRegIdt;
 
 void IDTLoader::Load(Register64 &idt) {
-  volatile ::HCore::Detail::AMD64::InterruptDescriptorAMD64* baseIdt = (::HCore::Detail::AMD64::InterruptDescriptorAMD64 *)idt.Base;
+  // Remap PIC.
+  HAL::Out8(0x20, 0x11);
+  HAL::Out8(0xA0, 0x11);
+  HAL::Out8(0x21, 0x20);
+  HAL::Out8(0xA1, 0x28);
+  HAL::Out8(0x21, 0x04);
+  HAL::Out8(0xA1, 0x02);
+  HAL::Out8(0x21, 0x01);
+  HAL::Out8(0xA1, 0x01);
+  HAL::Out8(0x21, 0x0);
+  HAL::Out8(0xA1, 0x0);
+
+  volatile ::HCore::Detail::AMD64::InterruptDescriptorAMD64 *baseIdt =
+      (::HCore::Detail::AMD64::InterruptDescriptorAMD64 *)idt.Base;
 
   for (auto i = 0; i < kKernelIdtSize; i++) {
     baseIdt[i].Selector = kGdtCodeSelector;
-    baseIdt[i].Ist = 00;
+    baseIdt[i].Ist = 0x0;
     baseIdt[i].TypeAttributes = kInterruptGate;
-    baseIdt[i].OffsetLow = (UInt16)((UInt32) ke_handle_irq & 0x000000000000ffff);
-    baseIdt[i].OffsetMid = (UInt16)(((UInt32) ke_handle_irq & 0x00000000ffff0000) >> 16);
-    baseIdt[i].OffsetHigh = (UInt32)((UInt32) ke_handle_irq & 0xffffffff00000000) >> 32;
-    baseIdt[i].Zero = 0;
+    baseIdt[i].OffsetLow = (UInt16)((UInt32)ke_handle_irq & 0x000000000000ffff);
+    baseIdt[i].OffsetMid =
+        (UInt16)(((UInt32)ke_handle_irq & 0x00000000ffff0000) >> 16);
+    baseIdt[i].OffsetHigh =
+        (UInt32)(((UInt32)ke_handle_irq & 0xffffffff00000000) >> 32);
+    baseIdt[i].Zero = 0x0;
   }
 
   rt_load_idt(idt);
