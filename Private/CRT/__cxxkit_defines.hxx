@@ -7,8 +7,8 @@
  * 	========================================================
  */
 
-#ifndef __CXKIT_DEF__
-#define __CXKIT_DEF__
+#ifndef __CXXKIT_DEF__
+#define __CXXKIT_DEF__
 
 typedef __SIZE_TYPE__ size_t;
 
@@ -88,4 +88,4 @@ typedef union double_cast {
     double f;
 } __attribute__((packed)) double_cast_t;
 
-#endif /* __CXKIT_DEF__ */
+#endif /* __CXXKIT_DEF__ */

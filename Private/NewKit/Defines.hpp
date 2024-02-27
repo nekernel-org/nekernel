@@ -69,7 +69,7 @@ using Void = void;
 
 using Lba = SSizeT;
 
-enum class Endian : UChar { kLittle, kBig };
+enum class Endian : UChar { kEndianLittle, kEndianBig, kEndianMixed, kCount };
 
 template <typename Args>
 Args &&forward(Args &arg) {
@@ -80,22 +80,12 @@ template <typename Args>
 Args &&move(Args &&arg) {
   return static_cast<Args &&>(arg);
 }
-
-typedef UIntPtr _HandleCls;
-
-/// @brief Looks like an objc class, because it takes inspiration from it.
-typedef struct _Handle {
-  _HandleCls _Cls;
-  void Release(_Handle *);
-  _Handle* Init();
-  _Handle* Sel(_Handle*, ...);
-} *Handle;
 }  // namespace HCore
 
 #define DEDUCE_ENDIAN(address, value)                         \
   (((reinterpret_cast<HCore::Char *>(address)[0]) == (value)) \
-       ? (HCore::Endian::kBig)                                \
-       : (HCore::Endian::kLittle))
+       ? (HCore::Endian::kEndianBig)                                \
+       : (HCore::Endian::kEndianLittle))
 
 #define Yes (true)
 #define No (false)
