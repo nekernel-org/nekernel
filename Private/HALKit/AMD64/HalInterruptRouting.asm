@@ -17,14 +17,14 @@
 
 %macro IntExp 1
 HCoreInterrupt%1:
-    cli
+    cld
     push %1
     call ke_handle_irq
 %endmacro
 
 %macro IntNormal 1
 HCoreInterrupt%1:
-    cli
+    cld
     push  0
     push  %1
     call ke_handle_irq
@@ -42,7 +42,6 @@ ke_handle_irq:
     sti
     iretq
 
-__IVT:
     IntNormal 0
     IntNormal 1
     IntNormal 2

@@ -32,5 +32,4 @@ rt_wait_for_io:
         ret
 
 rt_get_current_context:
-    mov %rbp, %rax
-    ret
+    retfq
