@@ -35,7 +35,7 @@ struct InterruptDescriptorAMD64 final {
 #define kInterruptGate 0x8E
 #define kTrapGate 0x8F
 #define kTaskGate 0x85
-#define kGdtSelector 0x08
+#define kGdtSelector 0xa0
 
 extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp);
 

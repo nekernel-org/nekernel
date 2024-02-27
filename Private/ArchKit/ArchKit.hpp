@@ -71,3 +71,7 @@ inline HCore::UIntPtr kKernelVirtualSize;
 
 inline HCore::VoidPtr kKernelPhysicalStart;
 inline HCore::UIntPtr kKernelPhysicalSize;
+
+#include <FirmwareKit/Handover.hxx>
+
+inline HCore::HEL::HandoverInformationHeader* kHandoverHeader;

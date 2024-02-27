@@ -36,11 +36,14 @@ h-core-amd64:
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInstallTIB.asm
 	$(MOVEALL)
 
-OBJCOPY = x86_64-elf-objcopy
+OBJCOPY=x86_64-w64-mingw32-objcopy 
+FONTFLAGS=-b binary
+KERNELFONT=./SSFN/amiga.sfn
 
 .PHONY: link-amd64
 link-amd64:
-	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
+	$(LD) $(FONTFLAGS) $(KERNELFONT) -o console_sfn.exe
+	$(LD) $(LDFLAGS) $(LDOBJ) console_sfn.exe -o $(KERNEL)
 	cp $(KERNEL) Root/System
 
 .PHONY: all

@@ -17,10 +17,15 @@ atexit_func_entry_t __atexit_funcs[DSO_MAX_OBJECTS];
 uarch_t __atexit_func_count;
 
 extern "C" void __cxa_pure_virtual() {
-  HCore::kcout << "Krnl\\Abi: Placeholder method.\n";
+  HCore::kcout << "HCoreKrnl: Placeholder method.\n";
 }
 
-extern "C" void ___chkstk_ms() {}
+extern "C" void ___chkstk_ms() {
+  while (1) {
+    asm ("cli");
+    asm ("hlt");
+  }
+}
 
 extern "C" int atexit(void (*f)(void *), void *arg, void *dso) {
   if (__atexit_func_count >= DSO_MAX_OBJECTS) return -1;

@@ -49,6 +49,13 @@ static const char* kExceptionMessage[32] = {
 /// @brief System call interrupt (like DOS and NT)
 #define kKernelSyscallInterrupt (0x21)
 
-EXTERN_C HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr rsp) {
+extern "C" HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr &rsp) {
+  HCore::HAL::rt_cli();
+
+  HCore::HAL::StackFramePtr sf = (HCore::HAL::StackFramePtr)rsp;
+
+  HCore::HAL::rt_sti();
   return rsp;
 }
+
+

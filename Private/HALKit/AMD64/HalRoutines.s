@@ -30,6 +30,3 @@ rt_wait_for_io:
         jmp .loop2
     .loop2:
         ret
-
-rt_get_current_context:
-    retfq

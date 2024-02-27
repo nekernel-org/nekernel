@@ -24,7 +24,7 @@
 #define kBootReadSize \
   (sizeof(DosHeader) + sizeof(ExecHeader) + sizeof(ExecOptionalHeader))
 
-EXTERN_C EFI_API void RuntimeMain(HEL::HandoverInformationHeader* HIH);
+EXTERN_C void Main(HEL::HandoverInformationHeader* HIH);
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
@@ -126,21 +126,21 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         BFileReader systemIni(L"SYSTEM.INI", ImageHandle);
 
-        systemIni.Size(4096);
+        systemIni.Size(1);
         systemIni.ReadAll();
 
         bool isIniNotFound = (systemIni.Blob() == nullptr);
-
-        EFI::ExitBootServices(MapKey, ImageHandle);
 
         if (isIniNotFound) {
           handoverHdrPtr->f_Magic = 0x55DDFF;
           handoverHdrPtr->f_Version = 0x1011;
           handoverHdrPtr->f_Bootloader = 0x11;  // Installer
 
-          writer.Write(L"HCoreLdr: Jumping to HCore...\r\n");
+          writer.Write(L"HCoreLdr: Loading HCore...\r\n");
 
-          RuntimeMain(handoverHdrPtr);
+          EFI::ExitBootServices(MapKey, ImageHandle);
+
+          Main(handoverHdrPtr);
 
         } else {
           handoverHdrPtr->f_Magic = 0xFF55DD;

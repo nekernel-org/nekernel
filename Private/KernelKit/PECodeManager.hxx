@@ -18,3 +18,7 @@
 // LAST REV: Mon Feb 12 13:52:01 CET 2024
 
 ////////////////////////////////////////////////////
+
+#include <KernelKit/PE.hpp>
+#include <NewKit/ErrorOr.hpp>
+#include <NewKit/String.hpp>

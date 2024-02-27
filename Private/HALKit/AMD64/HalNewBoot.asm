@@ -26,17 +26,14 @@ HandoverStart: dq Main
 
 section .text
 
-extern rt_load_gdt
-extern rt_load_ivt
-
 global Main
 extern RuntimeMain
-extern MainLong
 
 ;; Just a simple setup, we'd also need to tell some before
 Main:
     push rcx
-    jmp RuntimeMain
+    call RuntimeMain
+    pop rcx
 L0:
     cli
     hlt

@@ -17,7 +17,7 @@ namespace HCore {
 /// This interface is used to make loader contracts (MSCOFF, PEF).
 class Loader {
  public:
-  Loader() = default;
+  explicit Loader() = default;
   virtual ~Loader() = default;
 
   HCORE_COPY_DEFAULT(Loader);

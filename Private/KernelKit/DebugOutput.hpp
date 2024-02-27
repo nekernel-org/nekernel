@@ -38,10 +38,6 @@ inline TerminalDevice EndLine() {
   selfTerm << "\n";
   return selfTerm;
 }
-
-namespace Detail {
-bool serial_init();
-}
 }  // namespace HCore
 
 #ifdef kcout

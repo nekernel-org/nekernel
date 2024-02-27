@@ -20,12 +20,12 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
 
-extern "C" HCore::VoidPtr __EXEC_IVT;
+EXTERN_C HCore::VoidPtr __EXEC_IVT;
 
 namespace Detail {
 using namespace HCore;
 
-extern "C" void PowerOnSelfTest();
+EXTERN_C void PowerOnSelfTest();
 
 /**
     @brief Global descriptor table entry, either null, code or data.
@@ -51,7 +51,7 @@ struct PACKED ALIGN(0x1000) HC_GDT final {
 
 EXTERN_C void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
-
+  kHandoverHeader = HandoverHeader;
 
   /// Setup kernel globals.
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
@@ -84,6 +84,8 @@ EXTERN_C void RuntimeMain(
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
 
+  HCore::kcout << "TESTING\n";
+
   if (HandoverHeader->f_Bootloader == 0xDD) {
     /// Mounts a NewFS partition.
     HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
@@ -97,15 +99,8 @@ EXTERN_C void RuntimeMain(
     }
   } else {
     /**
-    ** This draws the background.
+    ** This does the POST.
     */
-
-    ResourceInit();
-
-    DrawResource(HCoreLogo, HandoverHeader, HCORELOGO_HEIGHT, HCORELOGO_WIDTH,
-                 10, 10);
-
-    ResourceClear();
 
     Detail::PowerOnSelfTest();
 
