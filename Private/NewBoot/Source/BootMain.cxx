@@ -131,13 +131,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         ST->ConOut->ClearScreen(ST->ConOut);
 
-        writer.Write(
-                L"Warning: This computer program is protected by copyright "
-                L"law and international treaties.\r\nUnauthorized reproduction "
-                L"or distribution of this program, or any portion of it,\r\nmay "
-                L"result in severe civil and criminal penalties,\r\nand will be "
-                L"prosecuted to the maximum extent possible under the law.\r\n");
-
         EFI::ExitBootServices(MapKey, ImageHandle);
 
         bool isIniNotFound = (systemIni.Blob() == nullptr);

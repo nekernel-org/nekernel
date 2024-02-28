@@ -13,8 +13,7 @@
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/Rsrc/Award.hxx>
-#include <KernelKit/Rsrc/HCore.hxx>
+#include <KernelKit/Rsrc/Splash.hxx>
 #include <KernelKit/Rsrc/Util.hxx>
 #include <NewKit/Json.hpp>
 #include <NewKit/KernelHeap.hpp>
@@ -90,6 +89,10 @@ EXTERN_C void RuntimeMain(
 
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
+
+  KeInitRsrc();
+  KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH, ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2.5), ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2.5));
+  KeClearRsrc();
 
   Detail::_ke_power_on_self_test();
 
