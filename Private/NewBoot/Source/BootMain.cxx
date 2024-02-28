@@ -33,7 +33,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BTextWriter writer;
 
-  writer.Write(L"HCoreLdr: ");
+  writer.Write(L"MahroussLogic (R) HCoreLdr: ");
 
   writer.Write(BVersionString::Shared()).Write(L"\r\n");
 
@@ -47,7 +47,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
-  BFileReader img(L"HCOREKRNL.DLL", ImageHandle);
+  BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
 
   img.Size(kBootReadSize);
   img.ReadAll();
@@ -129,16 +129,23 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         systemIni.Size(1);
         systemIni.ReadAll();
 
+        ST->ConOut->ClearScreen(ST->ConOut);
+
+        writer.Write(
+                L"Warning: This computer program is protected by copyright "
+                L"law and international treaties.\r\nUnauthorized reproduction "
+                L"or distribution of this program, or any portion of it,\r\nmay "
+                L"result in severe civil and criminal penalties,\r\nand will be "
+                L"prosecuted to the maximum extent possible under the law.\r\n");
+
+        EFI::ExitBootServices(MapKey, ImageHandle);
+
         bool isIniNotFound = (systemIni.Blob() == nullptr);
 
         if (isIniNotFound) {
           handoverHdrPtr->f_Magic = 0x55DDFF;
           handoverHdrPtr->f_Version = 0x1011;
           handoverHdrPtr->f_Bootloader = 0x11;  // Installer
-
-          writer.Write(L"HCoreLdr: Loading HCore...\r\n");
-
-          EFI::ExitBootServices(MapKey, ImageHandle);
 
           Main(handoverHdrPtr);
 

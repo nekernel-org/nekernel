@@ -16,10 +16,10 @@
 /// @brief NewFS partition program.
 /***********************************************************************************/
 
-#include <iostream>
+#include <ConOut.hxx>
 
 int main() {
-  std::cout
+  HCore::cout
       << "PartTool: build a NewFS partition image from a directory!\n"
       << "Copyright Mahrouss Logic, all rights reserved. (INTERNAL TOOL)\n";
 

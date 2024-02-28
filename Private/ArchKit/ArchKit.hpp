@@ -61,7 +61,7 @@ extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *),
                     kKernelMaxSystemCalls>
     kSyscalls;
 
-EXTERN_C HCore::Void rt_wait_for_io();
+EXTERN_C HCore::Void rt_wait_400ns();
 EXTERN_C HCore::Void rt_syscall_handle(HCore::HAL::StackFramePtr stackFrame);
 EXTERN_C HCore::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C HCore::Void rt_do_context_switch(HCore::HAL::StackFramePtr stackFrame);

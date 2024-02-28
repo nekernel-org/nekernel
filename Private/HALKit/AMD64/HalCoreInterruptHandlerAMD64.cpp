@@ -39,7 +39,7 @@ extern "C" void idt_handle_scheduler(HCore::UIntPtr rsp) {
   HCore::kcout
       << "HCoreKrnl: Will be scheduled back later "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName()
-      << HCore::EndLine();
+      << HCore::end_line();
 
   /// schedule another process.
   if (!HCore::ProcessHelper::StartScheduling()) {

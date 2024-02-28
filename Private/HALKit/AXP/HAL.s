@@ -1,7 +1,7 @@
-.globl rt_wait_for_io
+.globl rt_wait_400ns
 
 .section .text
-rt_wait_for_io:
+rt_wait_400ns:
     jmp .L
 .L:
 	jmp .L2

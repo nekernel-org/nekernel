@@ -5,20 +5,17 @@
 
 CC			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -c -ffreestanding -D__DEBUG__ -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
+CCFLAGS		= -c -ffreestanding -O0 -fPIC -D__DEBUG__ -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
 ASM			= nasm
 ASMFLAGS	= -f win64
-LDFLAGS		= -e Main -shared --subsystem=17  -ffreestanding
+LDFLAGS		= -e Main --subsystem=17
 LDOBJ		= $(wildcard Obj/*.obj)
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
-KERNEL		= HCoreKrnl.dll
+KERNEL		= HCoreKrnl.exe
 
 # The kernel entrypoint
 SCRIPT		= --script=Linker/Platforms/PC.lds
-
-# we want a flat binary
-FMT			= elf64
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -37,7 +34,6 @@ h-core-amd64:
 	$(MOVEALL)
 
 OBJCOPY=x86_64-w64-mingw32-objcopy 
-FONTFLAGS=-b binary
 
 .PHONY: link-amd64
 link-amd64:

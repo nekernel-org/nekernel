@@ -14,23 +14,23 @@
 static const char* kExceptionMessages[32] = {
     "Division by zero",
     "Debug Breakpoint",
-    "Non-maskable interrupt",
+    "Non-maskable Interrupt",
     "Breakpoint",
-    "Detected overflow",
-    "Out-of-bounds",
-    "Invalid opcode",
-    "No coprocessor",
-    "Double fault",
-    "Coprocessor segment overrun",
+    "Detected Overflow",
+    "Out-Of-Bounds",
+    "Invalid Opcode",
+    "No Coprocessor",
+    "Double Fault",
+    "Coprocessor Segment Overrun",
     "Bad TSS",
-    "Segment not found",
-    "Stack error.",
+    "Segment Not Found",
+    "Stack Error",
     "General Protection Fault",
     "Page Fault",
-    "Invalid interrupt",
-    "Coprocessor fault",
-    "Alignment check",
-    "Machine check",
+    "Invalid Interrupt",
+    "Coprocessor Fault",
+    "Alignment Check",
+    "Machine Check",
     "Reserved",
     "Reserved",
     "Reserved",
@@ -49,13 +49,14 @@ static const char* kExceptionMessages[32] = {
 /// @brief System call interrupt (like DOS and NT)
 #define kKernelSyscallInterrupt (0x21)
 
-extern "C" {
+EXTERN_C {
 
 HCore::UIntPtr rt_handle_interrupts(HCore::HAL::StackFramePtr sf) {
-  HCore::HAL::rt_cli();
+  MUST_PASS(sf);
 
   if (sf->IntNum < 32) {
   } else if (sf->IntNum == 0x21) {
+    rt_syscall_handle(sf);
   }
 
   if ((sf->IntNum - 32) >= 12) {
@@ -63,8 +64,6 @@ HCore::UIntPtr rt_handle_interrupts(HCore::HAL::StackFramePtr sf) {
   }
 
   HCore::HAL::Out8(0x20, 0x20);
-
-  HCore::HAL::rt_sti();
 
   return (HCore::UIntPtr)sf;
 }

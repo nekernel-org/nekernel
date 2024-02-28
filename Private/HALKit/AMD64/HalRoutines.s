@@ -1,30 +1,10 @@
 .globl rt_load_idt
 .globl rt_load_gdt
-.globl rt_wait_for_io
+.globl rt_wait_400ns
 .globl rt_get_current_context
 
 .section .text
-rt_load_gdt:
-    lgdt (%rcx)
-    mov $0x10, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-    mov %ax, %ss
-    pop %rdi
-    mov $0x08, %rax
-    push %rax
-    push %rdi
-    retfq
-
-rt_load_idt:
-    lidt (%rcx)
-    sti
-    ret
-
-.section .text
-rt_wait_for_io:
+rt_wait_400ns:
     jmp .loop
     .loop:
         jmp .loop2

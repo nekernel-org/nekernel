@@ -22,6 +22,8 @@ namespace HCore {
 namespace HAL {
 static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
     -> PageTable64 * {
+  MUST_PASS(sz != 0);
+
   PageTable64 *pte =
       reinterpret_cast<PageTable64 *>((UIntPtr)kKernelVirtualStart);
 
@@ -29,8 +31,8 @@ static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
   pte->User = user;
   pte->Present = true;
 
-  kKernelVirtualStart =
-      (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz + kKernelPagingPadding);
+  kKernelVirtualStart = (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz +
+                                  kKernelPagingPadding);
   return pte;
 }
 

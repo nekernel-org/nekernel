@@ -33,7 +33,7 @@ class TerminalDevice final : public DeviceInterface<const Char *> {
   static TerminalDevice Shared() noexcept;
 };
 
-inline TerminalDevice EndLine() {
+inline TerminalDevice end_line() {
   TerminalDevice selfTerm = TerminalDevice::Shared();
   selfTerm << "\n";
   return selfTerm;
@@ -45,3 +45,5 @@ inline TerminalDevice EndLine() {
 #endif  // ifdef kcout
 
 #define kcout TerminalDevice::Shared()
+#define endl end_line()
+

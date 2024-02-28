@@ -15,12 +15,12 @@ namespace HCore {
 // @brief wakes up thread.
 // wakes up thread from hang.
 void rt_wakeup_thread(HAL::StackFrame* stack) {
-  __asm__ volatile("cli");
+  HAL::rt_cli();
 
   stack->Rbp = stack->R15;
   stack->Rsi = stack->Rbp;
 
-  __asm__ volatile("sti");
+  HAL::rt_sti();
 }
 
 static void __rt_hang_proc(void) {

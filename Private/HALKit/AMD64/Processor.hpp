@@ -36,29 +36,30 @@ namespace Detail::AMD64 {
 struct PACKED InterruptDescriptorAMD64 final {
   UInt16 OffsetLow;  // offset bits 0..15
   UInt16 Selector;   // a code segment selector in GDT or LDT
-  UInt8  Ist;  // bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.
+  UInt8
+      Ist;  // bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.
   UInt8 TypeAttributes;  // gate type, dpl, and p fields
   UInt16 OffsetMid;      // offset bits 16..31
   UInt32 OffsetHigh;     // offset bits 32..63
   UInt32 Zero;           // reserved
 };
 }  // namespace Detail::AMD64
-} // namespace HCore
+}  // namespace HCore
 
 namespace HCore::HAL {
-extern "C" UChar In8(UInt16 port);
-extern "C" UShort In16(UInt16 port);
-extern "C" UInt In32(UInt16 port);
+EXTERN_C UChar In8(UInt16 port);
+EXTERN_C UShort In16(UInt16 port);
+EXTERN_C UInt In32(UInt16 port);
 
-extern "C" void Out16(UShort port, UShort byte);
-extern "C" void Out8(UShort port, UChar byte);
-extern "C" void Out32(UShort port, UInt byte);
+EXTERN_C void Out16(UShort port, UShort byte);
+EXTERN_C void Out8(UShort port, UChar byte);
+EXTERN_C void Out32(UShort port, UInt byte);
 
-extern "C" void rt_wait_for_io();
-extern "C" void rt_halt();
-extern "C" void rt_cli();
-extern "C" void rt_sti();
-extern "C" void rt_cld();
+EXTERN_C void rt_wait_400ns();
+EXTERN_C void rt_halt();
+EXTERN_C void rt_cli();
+EXTERN_C void rt_sti();
+EXTERN_C void rt_cld();
 
 class PACKED Register64 {
  public:
@@ -74,7 +75,6 @@ using interruptTrap = UIntPtr(UIntPtr sp);
 typedef UIntPtr Reg;
 
 struct PACKED StackFrame {
-  Reg ExceptionZ;
   Reg IntNum;
   Reg Rax;
   Reg Rbx;
@@ -151,13 +151,15 @@ class IDTLoader final {
 void system_get_cores(voidPtr rsdPtr);
 }  // namespace HCore::HAL
 
-extern "C" void idt_handle_system_call(HCore::UIntPtr rsp);
-extern "C" void idt_handle_generic(HCore::UIntPtr rsp);
-extern "C" void idt_handle_gpf(HCore::UIntPtr rsp);
-extern "C" void idt_handle_math(HCore::UIntPtr rsp);
-extern "C" void idt_handle_pf(HCore::UIntPtr rsp);
+EXTERN_C void idt_handle_system_call(HCore::UIntPtr rsp);
+EXTERN_C void idt_handle_generic(HCore::UIntPtr rsp);
+EXTERN_C void idt_handle_gpf(HCore::UIntPtr rsp);
+EXTERN_C void idt_handle_math(HCore::UIntPtr rsp);
+EXTERN_C void idt_handle_pf(HCore::UIntPtr rsp);
 
-extern "C" void rt_load_idt(HCore::HAL::Register64 ptr);
-extern "C" void rt_load_gdt(HCore::HAL::Register64 ptr);
+EXTERN_C void rt_load_idt(HCore::HAL::Register64 ptr);
+EXTERN_C void rt_load_gdt(HCore::HAL::Register64 ptr);
 
+/// @brief Maximum size of the IDT.
 #define kKernelIdtSize 256
+

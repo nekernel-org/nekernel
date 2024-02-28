@@ -62,6 +62,10 @@ struct DriveTraits final {
 typedef DeviceInterface<DriveTraits> DriveDevice;
 typedef DriveDevice* DriveDevicePtr;
 
+/**
+ * @brief Abstracted hard-drive container class.
+ * @note This class has all of it's drive set to nullptr, allocate them using GetAddressOf(index).
+ */
 class Mountpoint final {
  public:
   explicit Mountpoint() = default;
@@ -87,7 +91,7 @@ class Mountpoint final {
         return &mD;
       default: {
         GetLastError() = kErrorNoSuchDisk;
-        kcout << "Krnl\\Mountpoint: Check HError.\n";
+        kcout << "HCoreKrnl\\Mountpoint: Check HError.\n";
         break;
       }
     }
@@ -96,7 +100,7 @@ class Mountpoint final {
   }
 
  private:
-  DriveDevicePtr mA, mB, mC, mD;
+  DriveDevicePtr mA, mB, mC, mD = nullptr;
 };
 }  // namespace HCore
 

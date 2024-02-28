@@ -53,7 +53,7 @@ const char* ata_read_28(ULong lba) {
   packet[1] = (UIntPtr)&buffer;
   packet[4] = lba;
 
-  rt_wait_for_io();
+  rt_wait_400ns();
 
   return buffer;
 }
@@ -70,7 +70,7 @@ const char* ata_read_48(ULong lba) {
   packet[1] = (UIntPtr)&buffer;
   packet[4] = lba;
 
-  rt_wait_for_io();
+  rt_wait_400ns();
 
   return buffer;
 }
@@ -84,7 +84,7 @@ Int32 ata_write_48(ULong lba, const char* buffer) {
   packet[1] = (UIntPtr)&buffer;
   packet[2] = lba;
 
-  rt_wait_for_io();
+  rt_wait_400ns();
 
   return packet[1] == 2 ? kATAError : 0;
 }
@@ -98,7 +98,7 @@ Int32 ata_write_28(ULong lba, const char* text) {
   packet[1] = (UIntPtr)&text;
   packet[2] = lba;
 
-  rt_wait_for_io();
+  rt_wait_400ns();
 
   return packet[1] == 2 ? kATAError : 0;
 }

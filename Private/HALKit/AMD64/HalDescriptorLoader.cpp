@@ -9,10 +9,8 @@
 
 #include <ArchKit/ArchKit.hpp>
 
-EXTERN_C HCore::UIntPtr ke_handle_irq;
-
 namespace HCore::HAL {
-static Register64 kRegGdt;
+STATIC Register64 kRegGdt;
 
 void GDTLoader::Load(Register64 &gdt) {
   kRegGdt.Base = gdt.Base;
@@ -21,37 +19,58 @@ void GDTLoader::Load(Register64 &gdt) {
   rt_load_gdt(kRegGdt);
 }
 
-static volatile HAL::Register64 kRegIdt;
+STATIC HAL::Register64 kRegIdt;
 
 void IDTLoader::Load(Register64 &idt) {
+  UInt8 a1, a2;
+
+  a1 = HAL::In8(0x21);  // save masks
+  a2 = HAL::In8(0xA1);
+
   // Remap PIC.
   HAL::Out8(0x20, 0x11);
+  HAL::rt_wait_400ns();
   HAL::Out8(0xA0, 0x11);
+  HAL::rt_wait_400ns();
   HAL::Out8(0x21, 0x20);
+  HAL::rt_wait_400ns();
   HAL::Out8(0xA1, 0x28);
+  HAL::rt_wait_400ns();
   HAL::Out8(0x21, 0x04);
+  HAL::rt_wait_400ns();
   HAL::Out8(0xA1, 0x02);
+  HAL::rt_wait_400ns();
   HAL::Out8(0x21, 0x01);
+  HAL::rt_wait_400ns();
   HAL::Out8(0xA1, 0x01);
-  HAL::Out8(0x21, 0x0);
-  HAL::Out8(0xA1, 0x0);
+  HAL::rt_wait_400ns();
+  HAL::Out8(0x21, a1);
+  HAL::rt_wait_400ns();
+  HAL::Out8(0xA1, a2);
 
-  volatile ::HCore::Detail::AMD64::InterruptDescriptorAMD64 *baseIdt =
-      (::HCore::Detail::AMD64::InterruptDescriptorAMD64 *)idt.Base;
+  volatile ::HCore::UIntPtr *baseIdt = (::HCore::UIntPtr *)idt.Base;
+
+  MUST_PASS(baseIdt[0]);
+
+  ::HCore::Detail::AMD64::InterruptDescriptorAMD64 *kInterruptVectorTable =
+      new ::HCore::Detail::AMD64::InterruptDescriptorAMD64[kKernelIdtSize];
 
   for (auto i = 0; i < kKernelIdtSize; i++) {
-    baseIdt[i].Selector = kGdtCodeSelector;
-    baseIdt[i].Ist = 0x0;
-    baseIdt[i].TypeAttributes = kInterruptGate;
-    baseIdt[i].OffsetLow = (UInt16)((UInt32)ke_handle_irq & 0x000000000000ffff);
-    baseIdt[i].OffsetMid =
-        (UInt16)(((UInt32)ke_handle_irq & 0x00000000ffff0000) >> 16);
-    baseIdt[i].OffsetHigh =
-        (UInt32)(((UInt32)ke_handle_irq & 0xffffffff00000000) >> 32);
-    baseIdt[i].Zero = 0x0;
+    kInterruptVectorTable[i].Selector = kGdtCodeSelector;
+    kInterruptVectorTable[i].Ist = 0x0;
+    kInterruptVectorTable[i].TypeAttributes = kInterruptGate;
+    kInterruptVectorTable[i].OffsetLow = (baseIdt[i] & 0xFF);
+    kInterruptVectorTable[i].OffsetMid = ((baseIdt[i] & 0xFFFF) >> 16);
+    kInterruptVectorTable[i].OffsetHigh = ((baseIdt[i] & 0xFFFFFFFF) >> 32);
+    kInterruptVectorTable[i].Zero = 0x0;
   }
 
-  rt_load_idt(idt);
+  kRegIdt.Base = (UIntPtr)&kInterruptVectorTable[0];
+  kRegIdt.Limit = sizeof(::HCore::Detail::AMD64::InterruptDescriptorAMD64) *
+                  kKernelIdtSize -
+              1;
+
+  rt_load_idt(kRegIdt);
 }
 
 void GDTLoader::Load(Ref<Register64> &gdt) { GDTLoader::Load(gdt.Leak()); }

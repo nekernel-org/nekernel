@@ -11,6 +11,6 @@
 #include <KernelKit/DebugOutput.hpp>
 
 extern "C" void flush_tlb() {}
-extern "C" void rt_wait_for_io() {}
+extern "C" void rt_wait_400ns() {}
 
 extern "C" HCore::HAL::StackFramePtr rt_get_current_context() { return nullptr; }

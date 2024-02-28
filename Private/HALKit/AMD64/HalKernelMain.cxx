@@ -20,10 +20,15 @@
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
 
+///! @brief Disk contains HCore files.
+#define kInstalledMedia 0xDD
+
+EXTERN_C VoidStar kInterruptVectorTable[];
+
 namespace Detail {
 using namespace HCore;
 
-EXTERN_C void ke_power_on_self_test(void);
+EXTERN_C void _ke_power_on_self_test(void);
 
 /**
     @brief Global descriptor table entry, either null, code or data.
@@ -55,16 +60,16 @@ EXTERN_C void RuntimeMain(
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
   kKernelVirtualStart = HandoverHeader->f_VirtualStart;
 
-  kKernelPhysicalSize = HandoverHeader->f_VirtualSize;
-  kKernelPhysicalStart = HandoverHeader->f_VirtualStart;
+  kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
+  kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 
   static Detail::HC_GDT GDT = {
       {0, 0, 0, 0x00, 0x00, 0},  // null entry
-      {0, 0, 0, 0x9a, 0xa0, 0},  // kernel code
-      {0, 0, 0, 0x92, 0xa0, 0},  // kernel data
+      {0, 0, 0, 0x9a, 0xaf, 0},  // kernel code
+      {0, 0, 0, 0x92, 0xaf, 0},  // kernel data
       {0, 0, 0, 0x00, 0x00, 0},  // null entry
-      {0, 0, 0, 0x9a, 0xa0, 0},  // user code
-      {0, 0, 0, 0x92, 0xa0, 0},  // user data
+      {0, 0, 0, 0x9a, 0xaf, 0},  // user code
+      {0, 0,  0, 0x92, 0xaf, 0},  // user data
   };
 
   HCore::HAL::Register64 gdtBase;
@@ -79,19 +84,15 @@ EXTERN_C void RuntimeMain(
 
   /// load idt buffer
 
-  constexpr HCore::Int IDT_SIZE = 4095;
-
-  HCore::UIntPtr* kInterruptVectorTable = new HCore::UIntPtr[IDT_SIZE];
-  
   HCore::HAL::Register64 idtBase;
   idtBase.Base = (HCore::UIntPtr)kInterruptVectorTable;
-  idtBase.Limit = IDT_SIZE;
+  idtBase.Limit = 0;
 
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
 
-  if (HandoverHeader->f_Bootloader == 0xDD) {
-    /// Mounts a NewFS partition.
+  if (HandoverHeader->f_Bootloader == kInstalledMedia) {
+    /// Mounts a NewFS block.
     HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
 
     // Open file from first hard-drive.
@@ -106,15 +107,8 @@ EXTERN_C void RuntimeMain(
     ** This does the POST.
     */
 
-    HCore::kcout << "FOOBAR." << HCore::EndLine();
-
-    Detail::ke_power_on_self_test();
-
-    HCore::kcout << "FOOBAR." << HCore::EndLine();
-    /**
-     ** This draws the HCore resource icon..
-     */
-
+    Detail::_ke_power_on_self_test();
+    
     /**
     This mounts the NewFS drive.
     */

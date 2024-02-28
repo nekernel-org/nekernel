@@ -11,13 +11,13 @@
 #include <HALKit/AMD64/Processor.hpp>
 #include <KernelKit/PermissionSelector.hxx>
 
-HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *),
-             kKernelMaxSystemCalls>
-    kSyscalls;
+typedef HCore::Void (*rt_syscall_proc)(HCore::Int32 id, HCore::HAL::StackFramePtr);
+
+HCore::Array<rt_syscall_proc, kKernelMaxSystemCalls> kSyscalls;
 
 /// @brief Interrupt system call handler.
-extern "C" void rt_syscall_handle(HCore::HAL::StackFrame *stack) {
-  for (HCore::SizeT index = 0UL; index < kKernelMaxSystemCalls; ++index) {
-    if (kSyscalls[index]) (kSyscalls[index].Leak().Leak())(stack->R15, stack);
+extern "C" void rt_syscall_handle(HCore::HAL::StackFramePtr stack) {
+  if (stack->R15 < kKernelMaxSystemCalls && kSyscalls[stack->R15] != 0) {
+    (kSyscalls[stack->R15].Leak().Leak())(stack->R15, stack);
   }
 }
