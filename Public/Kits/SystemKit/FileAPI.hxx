@@ -15,7 +15,7 @@
 
 using namespace HCore;
 
-/// @brief OC class, translated to C++
+/// @brief SOM class, translated to C++
 
 class HFile final {
  public:

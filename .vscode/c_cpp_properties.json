@@ -4,7 +4,8 @@
       "name": "HCore",
       "includePath": [
         "${workspaceFolder}/Private/**",
-        "${workspaceFolder}/Private/NewBoot/*"
+        "${workspaceFolder}/Private/NewBoot/**",
+        "${workspaceFolder}/Public/Kits/**",
       ],
       "defines": ["__HCORE__", "__HAVE_HCORE_APIS__", "__FSKIT_NEWFS__"],
       "cStandard": "c17",

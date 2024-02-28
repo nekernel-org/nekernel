@@ -61,11 +61,16 @@ EXTERN_C void rt_cli();
 EXTERN_C void rt_sti();
 EXTERN_C void rt_cld();
 
-class PACKED Register64 {
- public:
+struct PACKED Register64 final {
   UShort Limit;
   UIntPtr Base;
 };
+
+struct PACKED RegisterGDT final {
+  UShort Limit;
+  UIntPtr Base;
+};
+
 
 using RawRegister = UInt64;
 
@@ -75,23 +80,8 @@ using interruptTrap = UIntPtr(UIntPtr sp);
 typedef UIntPtr Reg;
 
 struct PACKED StackFrame {
-  Reg IntNum;
-  Reg Rax;
-  Reg Rbx;
-  Reg Rcx;
-  Reg Rdx;
-  Reg Rsi;
-  Reg Rdi;
-  Reg Rbp;
-  Reg Rsp;
-  Reg R8;
-  Reg R9;
-  Reg R10;
-  Reg R11;
-  Reg R12;
-  Reg R13;
-  Reg R14;
-  Reg R15;
+    Reg IntNum, ErrCode;
+    Reg Rdi, Rsi, Rbp, Rsp, Rbx, Rdx, Rcx, Rax;
 };
 
 typedef StackFrame *StackFramePtr;
@@ -138,8 +128,8 @@ using SegmentArray = Array<SegmentDescriptor, 6>;
 
 class GDTLoader final {
  public:
-  static void Load(Register64 &gdt);
-  static void Load(Ref<Register64> &gdt);
+  static void Load(RegisterGDT &gdt);
+  static void Load(Ref<RegisterGDT> &gdt);
 };
 
 class IDTLoader final {
@@ -158,7 +148,7 @@ EXTERN_C void idt_handle_math(HCore::UIntPtr rsp);
 EXTERN_C void idt_handle_pf(HCore::UIntPtr rsp);
 
 EXTERN_C void rt_load_idt(HCore::HAL::Register64 ptr);
-EXTERN_C void rt_load_gdt(HCore::HAL::Register64 ptr);
+EXTERN_C void rt_load_gdt(HCore::HAL::RegisterGDT ptr);
 
 /// @brief Maximum size of the IDT.
 #define kKernelIdtSize 256

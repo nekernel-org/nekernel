@@ -9,6 +9,7 @@
 
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
+#include <KernelKit/DebugOutput.hpp>
 
 namespace HCore {
 Char *StringView::Data() { return m_Data; }

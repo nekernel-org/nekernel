@@ -11,17 +11,7 @@
 #include <KernelKit/ProcessManager.hpp>
 #include <NewKit/String.hpp>
 
-#include "KernelKit/DebugOutput.hpp"
-
-extern "C" void idt_handle_system_call(HCore::UIntPtr rsp) {
-  HCore::HAL::StackFrame *sf = reinterpret_cast<HCore::HAL::StackFrame *>(rsp);
-  rt_syscall_handle(sf);
-
-  HCore::kcout << "System Call with ID: "
-               << HCore::StringBuilder::FromInt("syscall{%}", sf->R15);
-}
-
-extern "C" void idt_handle_gpf(HCore::UIntPtr rsp) {
+EXTERN_C void idt_handle_gpf(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);

@@ -50,22 +50,24 @@ static const char* kExceptionMessages[32] = {
 #define kKernelSyscallInterrupt (0x21)
 
 EXTERN_C {
+  HCore::Void rt_handle_interrupts(
+      HCore::HAL::StackFramePtr stack) {
+    switch (stack->IntNum) {
+      case kKernelSyscallInterrupt: {
+        HCore::kcout << "HCoreKrnl: System call raised, checking.."
+                     << HCore::end_line();
+        rt_syscall_handle(nullptr);
+        break;
+      }
 
-HCore::UIntPtr rt_handle_interrupts(HCore::HAL::StackFramePtr sf) {
-  MUST_PASS(sf);
+      default:
+        break;
+    }
 
-  if (sf->IntNum < 32) {
-  } else if (sf->IntNum == 0x21) {
-    rt_syscall_handle(sf);
+    if ((stack->IntNum - 32) >= 12) {
+      HCore::HAL::Out8(0xA0, 0x20);
+    }
+
+    HCore::HAL::Out8(0x20, 0x20);
   }
-
-  if ((sf->IntNum - 32) >= 12) {
-    HCore::HAL::Out8(0xA0, 0x20);
-  }
-
-  HCore::HAL::Out8(0x20, 0x20);
-
-  return (HCore::UIntPtr)sf;
-}
-
 }

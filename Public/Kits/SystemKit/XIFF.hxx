@@ -12,7 +12,7 @@
 
 ------------------------------------------------------- */
 
-#include <NewKit/Defines.hpp>
+#include <SystemKit/CoreAPI.hxx>
 
 /***
  * @brief Generic XIFF header
@@ -20,17 +20,17 @@
  */
 
 struct PACKED XiffHeader final {
-  unsigned char f_Mag[5];      // XIFF string (includes \0)
-  unsigned int f_Size;         // overall size of header (XiffHeader) in bytes
-  unsigned int f_FormatType;  // format type. generic
-  unsigned char f_SpecificMag[4];      // The sub header magic
-  unsigned int f_SpecificSize;         // length of the format data
-  unsigned int f_SpecificFormatType;  // format type. generic
+  BYTE f_Mag[5];      // XIFF string (includes \0)
+  DWORD f_Size;         // overall size of header (XiffHeader) in bytes
+  DWORD f_FormatType;  // format type. generic
+  BYTE f_SpecificMag[4];      // The sub header magic
+  DWORD f_SpecificSize;         // length of the format data
+  DWORD f_SpecificFormatType;  // format type. generic
 };
 
-#define kXIFFVideo "XVFF"
-#define kXIFFAudio "XAFF"
-#define kXIFFInstaller "XnFF"
-#define kXIFFGeneric "XIFF"
+#define kXIFFContainerVideo "XVFF"
+#define kXIFFContainerAudio "XAFF"
+#define kXIFFContainerInstaller "XnFF"
+#define kXIFFContainerGeneric "XIFF"
 
 #endif  // ifndef __XIFF__

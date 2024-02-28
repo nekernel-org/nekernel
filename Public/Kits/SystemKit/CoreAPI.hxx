@@ -31,6 +31,9 @@ typedef __UINT16_TYPE__ WORD;
 typedef __UINT32_TYPE__ DWORD;
 typedef __UINT64_TYPE__ QWORD;
 
+typedef __WCHAR_TYPE__ WCHAR;
+typedef WCHAR* PWCHAR;
+
 #ifdef __x86_64__
 #   define _M_AMD64
 #endif 

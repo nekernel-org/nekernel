@@ -12,7 +12,7 @@
 #include <CompilerKit/CompilerKit.hpp>
 #include <NewKit/Defines.hpp>
 
-/// @brief OC class, translated to C++
+/// @brief SOM class, translated to C++
 
 using namespace HCore;
 

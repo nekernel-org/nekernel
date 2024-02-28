@@ -23,7 +23,7 @@
 ///! @brief Disk contains HCore files.
 #define kInstalledMedia 0xDD
 
-EXTERN_C VoidStar kInterruptVectorTable[];
+EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
 
 namespace Detail {
 using namespace HCore;
@@ -69,10 +69,10 @@ EXTERN_C void RuntimeMain(
       {0, 0, 0, 0x92, 0xaf, 0},  // kernel data
       {0, 0, 0, 0x00, 0x00, 0},  // null entry
       {0, 0, 0, 0x9a, 0xaf, 0},  // user code
-      {0, 0,  0, 0x92, 0xaf, 0},  // user data
+      {0, 0, 0, 0x92, 0xaf, 0},  // user data
   };
 
-  HCore::HAL::Register64 gdtBase;
+  HCore::HAL::RegisterGDT gdtBase;
 
   gdtBase.Base = (HCore::UIntPtr)&GDT;
   gdtBase.Limit = sizeof(Detail::HC_GDT) - 1;
@@ -91,6 +91,10 @@ EXTERN_C void RuntimeMain(
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
 
+  Detail::_ke_power_on_self_test();
+
+  HCore::kcout << "HCoreKrnl: System Call issued, everything is OK...\r\n";
+
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
     /// Mounts a NewFS block.
     HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
@@ -98,21 +102,17 @@ EXTERN_C void RuntimeMain(
     // Open file from first hard-drive.
     HCore::PEFLoader img("A:/System/HCoreServer.exe");
 
-    /// Run the shell.
-    if (!HCore::Utils::execute_from_image(img)) {
-      HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
-    }
+    /// Run the server executive.
+    HCore::Utils::execute_from_image(img);
   } else {
     /**
     ** This does the POST.
     */
 
-    Detail::_ke_power_on_self_test();
-    
     /**
     This mounts the NewFS drive.
     */
-
-    HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
   }
+
+  HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

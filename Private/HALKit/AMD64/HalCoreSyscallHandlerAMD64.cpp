@@ -16,8 +16,10 @@ typedef HCore::Void (*rt_syscall_proc)(HCore::Int32 id, HCore::HAL::StackFramePt
 HCore::Array<rt_syscall_proc, kKernelMaxSystemCalls> kSyscalls;
 
 /// @brief Interrupt system call handler.
-extern "C" void rt_syscall_handle(HCore::HAL::StackFramePtr stack) {
-  if (stack->R15 < kKernelMaxSystemCalls && kSyscalls[stack->R15] != 0) {
-    (kSyscalls[stack->R15].Leak().Leak())(stack->R15, stack);
+EXTERN_C void rt_syscall_handle(HCore::HAL::StackFramePtr stack) {
+  if (!stack) return;
+
+  if (stack->Rcx < kKernelMaxSystemCalls && kSyscalls[stack->Rcx] != 0) {
+    (kSyscalls[stack->Rcx].Leak().Leak())(stack->Rcx, stack);
   }
 }

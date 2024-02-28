@@ -17,8 +17,7 @@ namespace HCore {
 void rt_wakeup_thread(HAL::StackFrame* stack) {
   HAL::rt_cli();
 
-  stack->Rbp = stack->R15;
-  stack->Rsi = stack->Rbp;
+    // TODO
 
   HAL::rt_sti();
 }
@@ -33,9 +32,7 @@ static void __rt_hang_proc(void) {
 void rt_hang_thread(HAL::StackFrame* stack) {
   __asm__ volatile("cli");
 
-  stack->R15 = stack->Rbp;
-  stack->Rbp = (HAL::Reg)&__rt_hang_proc;
-  stack->Rsp = stack->Rbp;
+    // TODO
 
   __asm__ volatile("sti");
 }

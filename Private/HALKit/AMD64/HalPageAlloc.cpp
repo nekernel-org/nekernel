@@ -25,11 +25,13 @@ static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
   MUST_PASS(sz != 0);
 
   PageTable64 *pte =
-      reinterpret_cast<PageTable64 *>((UIntPtr)kKernelVirtualStart);
+      &reinterpret_cast<PageDirectory64 *>((UIntPtr)kKernelVirtualStart)->Pte[0];
 
   pte->Rw = rw;
   pte->User = user;
   pte->Present = true;
+
+  write_cr3((UIntPtr)kKernelVirtualStart);
 
   kKernelVirtualStart = (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz +
                                   kKernelPagingPadding);
@@ -38,16 +40,20 @@ static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
 
 auto hal_alloc_page(SizeT sz, Boolean rw, Boolean user) -> PageTable64 * {
   for (SizeT i = 0; i < kPageCnt; ++i) {
-    PageTable64 *pte = reinterpret_cast<PageTable64 *>(
+    PageDirectory64 *pte = reinterpret_cast<PageDirectory64 *>(
         (UIntPtr)kKernelVirtualStart + kPageCnt);
 
-    if (!pte->Present) {
-      pte->User = user;
-      pte->Rw = rw;
-      pte->Present = true;
+    for (size_t indexPte = 0; indexPte < kPTEMax; ++indexPte)
+    {
+        if (!pte->Pte[indexPte].Present) {
+            pte->Pte[indexPte].User = user;
+            pte->Pte[indexPte].Rw = rw;
+            pte->Pte[indexPte].Present = true;
 
-      return pte;
+            return &(pte->Pte[indexPte]);
+        }
     }
+    
   }
 
   return hal_try_alloc_new_page(sz, rw, user);

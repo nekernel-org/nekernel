@@ -11,22 +11,62 @@
 
 [bits 64]
 
-%macro IntDecl 1
-    dq __HCR_INT_%1
-%endmacro
-
 %macro IntExp 1
 __HCR_INT_%1:
-    push 0
+    cli
+
+    push 1
     push %1
-    call ke_handle_irq
+
+    push   rax
+    push   rcx
+    push   rdx
+    push   rbx
+    push   rbp
+    push   rsi
+    push   rdi
+
+    jmp rt_handle_interrupts
+
+    pop      rdi
+    pop      rsi
+    pop      rbp
+    pop      rbx
+    pop      rdx
+    pop      rcx
+    pop      rax
+
+    add rsp, 16
+    sti
     iretq
 %endmacro
 
 %macro IntNormal 1
 __HCR_INT_%1:
+    cli
+
+    push 0
     push %1
-    call ke_handle_irq
+
+    push   rax
+    push   rcx
+    push   rdx
+    push   rbx
+    push   rbp
+    push   rsi
+    push   rdi
+
+    jmp rt_handle_interrupts
+
+    pop      rdi
+    pop      rsi
+    pop      rbp
+    pop      rbx
+    pop      rdx
+    pop      rcx
+    pop      rax
+
+    sti
     iretq
 %endmacro
 
@@ -39,47 +79,6 @@ global ke_handle_irq
 global kInterruptVectorTable
 
 section .text
-
-ke_handle_irq:
-    push rax
-    push rbx
-    push rcx
-    push rdx
-    push rsi
-    push rdi
-    push rbp
-    push r8
-    push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
-
-    mov rcx, rsp
-    call rt_handle_interrupts
-    mov rsp, rcx
-
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
-    pop r9
-    pop r8
-    pop rbp
-    pop rdi
-    pop rsi
-    pop rdx
-    pop rcx
-    pop rbx
-    pop rax
-
-    ret
-
-section .data
 
 IntNormal 0
 IntNormal 1
@@ -114,24 +113,11 @@ IntNormal 29
 IntExp   30
 IntNormal 31
 
-%assign i 32
-%rep 255
-    IntNormal i
-%assign i i+1
-%endrep
-
-section .text
-
 ;; this one is doing a POST for us.
 ;; testing interrupts.
 _ke_power_on_self_test:
-    int 0x21
-    int 0x21
-    int 0x21
-    int 0x21
-    int 0x21
-    int 0x21
-    int 0x21
+    mov rcx, 0x80
+    mov rdx, 0x01
     int 0x21
 
     ret
@@ -155,17 +141,14 @@ rt_reload_segments:
 
 global rt_load_idt
 
-section .text
-
 rt_load_idt:
     lidt [rcx]
+    sti
     ret
-
-section .data
 
 kInterruptVectorTable:
     %assign i 0
-    %rep 255
-        IntDecl i
+    %rep 32
+        dq __HCR_INT_%+i
     %assign i i+1
     %endrep

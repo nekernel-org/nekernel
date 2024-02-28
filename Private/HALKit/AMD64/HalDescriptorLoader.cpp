@@ -10,9 +10,9 @@
 #include <ArchKit/ArchKit.hpp>
 
 namespace HCore::HAL {
-STATIC Register64 kRegGdt;
+STATIC RegisterGDT kRegGdt;
 
-void GDTLoader::Load(Register64 &gdt) {
+void GDTLoader::Load(RegisterGDT &gdt) {
   kRegGdt.Base = gdt.Base;
   kRegGdt.Limit = gdt.Limit;
 
@@ -20,6 +20,9 @@ void GDTLoader::Load(Register64 &gdt) {
 }
 
 STATIC HAL::Register64 kRegIdt;
+
+STATIC ::HCore::Detail::AMD64::InterruptDescriptorAMD64
+    kInterruptVectorTable[kKernelIdtSize];
 
 void IDTLoader::Load(Register64 &idt) {
   UInt8 a1, a2;
@@ -48,32 +51,30 @@ void IDTLoader::Load(Register64 &idt) {
   HAL::rt_wait_400ns();
   HAL::Out8(0xA1, a2);
 
-  volatile ::HCore::UIntPtr *baseIdt = (::HCore::UIntPtr *)idt.Base;
+  volatile ::HCore::UIntPtr **baseIdt = (volatile ::HCore::UIntPtr **)idt.Base;
 
   MUST_PASS(baseIdt[0]);
 
-  ::HCore::Detail::AMD64::InterruptDescriptorAMD64 *kInterruptVectorTable =
-      new ::HCore::Detail::AMD64::InterruptDescriptorAMD64[kKernelIdtSize];
-
-  for (auto i = 0; i < kKernelIdtSize; i++) {
+  for (UInt16 i = 0; i < 32; i++) {
     kInterruptVectorTable[i].Selector = kGdtCodeSelector;
     kInterruptVectorTable[i].Ist = 0x0;
     kInterruptVectorTable[i].TypeAttributes = kInterruptGate;
-    kInterruptVectorTable[i].OffsetLow = (baseIdt[i] & 0xFF);
-    kInterruptVectorTable[i].OffsetMid = ((baseIdt[i] & 0xFFFF) >> 16);
-    kInterruptVectorTable[i].OffsetHigh = ((baseIdt[i] & 0xFFFFFFFF) >> 32);
+    kInterruptVectorTable[i].OffsetLow = ((UIntPtr)baseIdt[i] & 0xFFFF);
+    kInterruptVectorTable[i].OffsetMid = (((UIntPtr)baseIdt[i] >> 16) & 0xFFFF);
+    kInterruptVectorTable[i].OffsetHigh =
+        (((UIntPtr)baseIdt[i] >> 32) & 0xFFFFFFFF);
     kInterruptVectorTable[i].Zero = 0x0;
   }
 
-  kRegIdt.Base = (UIntPtr)&kInterruptVectorTable[0];
+  kRegIdt.Base = (UIntPtr)kInterruptVectorTable;
   kRegIdt.Limit = sizeof(::HCore::Detail::AMD64::InterruptDescriptorAMD64) *
-                  kKernelIdtSize -
-              1;
+                      kKernelIdtSize -
+                  1;
 
   rt_load_idt(kRegIdt);
 }
 
-void GDTLoader::Load(Ref<Register64> &gdt) { GDTLoader::Load(gdt.Leak()); }
+void GDTLoader::Load(Ref<RegisterGDT> &gdt) { GDTLoader::Load(gdt.Leak()); }
 
 void IDTLoader::Load(Ref<Register64> &idt) { IDTLoader::Load(idt.Leak()); }
 }  // namespace HCore::HAL
