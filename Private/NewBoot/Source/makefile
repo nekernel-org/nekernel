@@ -10,7 +10,7 @@ ASM=nasm
 OBJ=$(wildcard *.o) $(wildcard ../../Obj/*.obj) $(wildcard HEL/AMD64/*.obj)
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -fPIC -D__DEBUG__ -maccumulate-outgoing-args -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
+FLAG_GNU=-fshort-wchar -fPIC -D__DEBUG__ -mgeneral-regs-only -mno-red-zone -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
 
 .PHONY: invalid-recipe
 invalid-recipe:

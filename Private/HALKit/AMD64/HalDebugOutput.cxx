@@ -29,6 +29,8 @@ static int kState = kStateInvalid;
 /// @return 
 bool serial_init() noexcept {
 #ifdef __DEBUG__
+  if (kState == kStateReady) return true;
+
   HAL::Out8(PORT + 1, 0x00);  // Disable all interrupts
   HAL::Out8(PORT + 3, 0x80);  // Enable DLAB (set baud rate divisor)
   HAL::Out8(PORT + 0, 0x03);  // Set divisor to 3 (lo byte) 38400 baud

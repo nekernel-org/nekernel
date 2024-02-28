@@ -91,12 +91,12 @@ EXTERN_C void RuntimeMain(
   idt.Load(idtBase);
 
   KeInitRsrc();
-  KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH, ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2.5), ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2.5));
+  KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH, ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2), ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
   KeClearRsrc();
 
   Detail::_ke_power_on_self_test();
 
-  HCore::kcout << "HCoreKrnl: System Call issued, everything is OK...\r\n";
+  HCore::kcout << "HCoreKrnl: POST done, everything is OK...\r\n";
 
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
     /// Mounts a NewFS block.

@@ -50,13 +50,18 @@ static const char* kExceptionMessages[32] = {
 #define kKernelSyscallInterrupt (0x21)
 
 EXTERN_C {
-  HCore::Void rt_handle_interrupts(
-      HCore::HAL::StackFramePtr stack) {
+  HCore::Void rt_handle_interrupts(HCore::HAL::StackFramePtr stack) {
+    HCore::kcout << "HCoreKrnl: Interrupting Hart...\r\n";
+
+    if (stack->IntNum < 32) {
+        HCore::kcout << "HCoreKrnl: " << kExceptionMessages[stack->IntNum] << HCore::end_line();
+    }
+
     switch (stack->IntNum) {
       case kKernelSyscallInterrupt: {
         HCore::kcout << "HCoreKrnl: System call raised, checking.."
                      << HCore::end_line();
-        rt_syscall_handle(nullptr);
+        rt_syscall_handle(stack);
         break;
       }
 
@@ -65,9 +70,11 @@ EXTERN_C {
     }
 
     if ((stack->IntNum - 32) >= 12) {
+      HCore::kcout << "HCoreKrnl: EOI Master PIC...\r\n";
       HCore::HAL::Out8(0xA0, 0x20);
     }
 
+    HCore::kcout << "HCoreKrnl: EOI Slave PIC...\r\n";
     HCore::HAL::Out8(0x20, 0x20);
   }
 }

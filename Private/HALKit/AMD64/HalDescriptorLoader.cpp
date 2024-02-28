@@ -55,7 +55,7 @@ void IDTLoader::Load(Register64 &idt) {
 
   MUST_PASS(baseIdt[0]);
 
-  for (UInt16 i = 0; i < 32; i++) {
+  for (UInt16 i = 0; i < kKernelIdtSize; i++) {
     kInterruptVectorTable[i].Selector = kGdtCodeSelector;
     kInterruptVectorTable[i].Ist = 0x0;
     kInterruptVectorTable[i].TypeAttributes = kInterruptGate;

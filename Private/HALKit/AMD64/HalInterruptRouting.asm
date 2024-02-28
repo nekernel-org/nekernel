@@ -12,61 +12,20 @@
 [bits 64]
 
 %macro IntExp 1
+align 4
+global __HCR_INT_%1 
 __HCR_INT_%1:
-    cli
+    cld
 
-    push 1
-    push %1
-
-    push   rax
-    push   rcx
-    push   rdx
-    push   rbx
-    push   rbp
-    push   rsi
-    push   rdi
-
-    jmp rt_handle_interrupts
-
-    pop      rdi
-    pop      rsi
-    pop      rbp
-    pop      rbx
-    pop      rdx
-    pop      rcx
-    pop      rax
-
-    add rsp, 16
-    sti
     iretq
 %endmacro
 
 %macro IntNormal 1
+align 4
+global __HCR_INT_%1 
 __HCR_INT_%1:
-    cli
+    cld
 
-    push 0
-    push %1
-
-    push   rax
-    push   rcx
-    push   rdx
-    push   rbx
-    push   rbp
-    push   rsi
-    push   rdi
-
-    jmp rt_handle_interrupts
-
-    pop      rdi
-    pop      rsi
-    pop      rbp
-    pop      rbx
-    pop      rdx
-    pop      rcx
-    pop      rax
-
-    sti
     iretq
 %endmacro
 
@@ -113,11 +72,21 @@ IntNormal 29
 IntExp   30
 IntNormal 31
 
+%assign i 32
+%rep 224
+    IntNormal i
+%assign i i+1
+%endrep
+
 ;; this one is doing a POST for us.
 ;; testing interrupts.
 _ke_power_on_self_test:
-    mov rcx, 0x80
+    mov rcx, 0x00
     mov rdx, 0x01
+    
+    int 0x21
+    int 0x21
+    int 0x21
     int 0x21
 
     ret
@@ -148,7 +117,7 @@ rt_load_idt:
 
 kInterruptVectorTable:
     %assign i 0
-    %rep 32
+    %rep 256
         dq __HCR_INT_%+i
     %assign i i+1
     %endrep
