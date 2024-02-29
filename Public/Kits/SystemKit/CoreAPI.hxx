@@ -35,13 +35,17 @@ typedef __WCHAR_TYPE__ WCHAR;
 typedef WCHAR* PWCHAR;
 
 #ifdef __x86_64__
-#   define _M_AMD64
+#   define _M_AMD64 2
 #endif 
 
 #ifdef __aarch64__
-#   define _M_AARCH64
+#   define _M_AARCH64 3
 #endif 
 
 #ifdef __powerpc64__
-#   define _M_PPC64
+#   define _M_PPC64 4 
+#endif 
+
+#ifdef __64x0__
+#   define _M_64000 5 
 #endif 
