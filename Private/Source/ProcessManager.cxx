@@ -36,7 +36,7 @@ const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
 /***********************************************************************************/
 
 void Process::Crash() {
-  kcout << this->Name << ": Crashed, ExitCode: -1\n";
+  kcout << "ProcessManager: Crashed, ExitCode: -1.\r\n";
   MUST_PASS(!ke_bug_check());
 
   this->Exit(-1);

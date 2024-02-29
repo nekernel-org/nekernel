@@ -12,7 +12,8 @@
 [global rt_install_tib]
 
 rt_install_tib:
-	mov rcx, gs
+	mov rcx, gs ;; TIB -> Thread Information Block
+	mov rdx, fs ;; PIB -> Process Information Block
 	ret
 
 ;; //////////////////////////////////////////////////// ;;

@@ -82,6 +82,8 @@ typedef UIntPtr Reg;
 struct PACKED StackFrame {
     Reg IntNum, ErrCode;
     Reg Rdi, Rsi, Rbp, Rsp, Rbx, Rdx, Rcx, Rax;
+    Reg R8, R9, R10, R11, R12, R13, R14, R15;
+    Reg Gs, Fs;
 };
 
 typedef StackFrame *StackFramePtr;

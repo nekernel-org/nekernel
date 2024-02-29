@@ -34,3 +34,5 @@
   }
 
 #endif
+
+#define $rsrc import

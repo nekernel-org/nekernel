@@ -8,43 +8,9 @@
  */
 
 #include <ArchKit/ArchKit.hpp>
-#include <KernelKit/ProcessManager.hpp>
 #include <NewKit/String.hpp>
 
-static const char* kExceptionMessages[32] = {
-    "Division by zero",
-    "Debug Breakpoint",
-    "Non-maskable Interrupt",
-    "Breakpoint",
-    "Detected Overflow",
-    "Out-Of-Bounds",
-    "Invalid Opcode",
-    "No Coprocessor",
-    "Double Fault",
-    "Coprocessor Segment Overrun",
-    "Bad TSS",
-    "Segment Not Found",
-    "Stack Error",
-    "General Protection Fault",
-    "Page Fault",
-    "Invalid Interrupt",
-    "Coprocessor Fault",
-    "Alignment Check",
-    "Machine Check",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-};
+/// BUGS = 1
 
 /// @brief System call interrupt (like DOS and NT)
 #define kKernelSyscallInterrupt (0x21)
@@ -52,10 +18,6 @@ static const char* kExceptionMessages[32] = {
 EXTERN_C {
   HCore::Void rt_handle_interrupts(HCore::HAL::StackFramePtr stack) {
     HCore::kcout << "HCoreKrnl: Interrupting Hart...\r\n";
-
-    if (stack->IntNum < 32) {
-        HCore::kcout << "HCoreKrnl: " << kExceptionMessages[stack->IntNum] << HCore::end_line();
-    }
 
     switch (stack->IntNum) {
       case kKernelSyscallInterrupt: {

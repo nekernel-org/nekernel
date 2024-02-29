@@ -27,7 +27,9 @@ bool hcore_tls_delete_ptr(T *ptr);
 template <typename T, typename... Args>
 T *hcore_tls_new_class(Args &&...args);
 
-typedef HCore::Char rt_cookie_type[3];
+#define kTLSCookieLen 3
+
+typedef HCore::Char* rt_cookie_type;
 
 #define kTIBNameLen 256
 
@@ -44,10 +46,13 @@ struct ThreadInformationBlock final {
 };
 
 /// @brief TLS install TIB
-extern void rt_install_tib(ThreadInformationBlock *pTib);
+EXTERN_C void rt_install_tib(ThreadInformationBlock *pTib, HCore::VoidPtr pPib);
 
 ///! @brief Cookie Sanity check.
 HCore::Boolean hcore_tls_check(ThreadInformationBlock *ptr);
+
+/// @brief TLS check system call
+EXTERN_C HCore::Void hcore_tls_check_syscall_impl(HCore::HAL::StackFramePtr stackPtr) noexcept;
 
 #include <KernelKit/ThreadLocalStorage.inl>
 

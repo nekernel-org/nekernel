@@ -1,7 +1,7 @@
 {
   "configurations": [
     {
-      "name": "HCore",
+      "name": "HCore (Mac)",
       "includePath": [
         "${workspaceFolder}/Private/**",
         "${workspaceFolder}/Private/NewBoot/**",
@@ -10,8 +10,19 @@
       "defines": ["__HCORE__", "__HAVE_HCORE_APIS__", "__FSKIT_NEWFS__"],
       "cStandard": "c17",
       "cppStandard": "c++20",
-      "compilerPath": "/opt/homebrew/bin/x86_64-elf-g++",
+      "compilerPath": "/opt/homebrew/bin/x86_64-w64-mingw32-gcc",
       "intelliSenseMode": "gcc-x64"
+    },    
+    {
+      "name": "HCore Tools (Mac)",
+      "includePath": [
+        "${workspaceFolder}/Private/Tools/**"
+      ],
+      "defines": [],
+      "cStandard": "c17",
+      "cppStandard": "c++20",
+      "compilerPath": "/usr/bin/gcc",
+      "intelliSenseMode": "gcc-arm64"
     }
   ],
   "version": 4

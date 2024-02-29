@@ -16,12 +16,10 @@
 /// @brief NewFS partition program.
 /***********************************************************************************/
 
-#include <ConOut.hxx>
+#include <disk_api.h>
 
-int main() {
-  HCore::cout
-      << "PartTool: build a NewFS partition image from a directory!\n"
-      << "Copyright Mahrouss Logic, all rights reserved. (INTERNAL TOOL)\n";
+int main(void) {
+  printf("%s\n", "makeHCFS, brought to you by Amlal El Mahrouss.");
 
   return 0;
 }

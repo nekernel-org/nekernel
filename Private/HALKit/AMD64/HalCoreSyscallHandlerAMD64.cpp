@@ -11,7 +11,7 @@
 #include <HALKit/AMD64/Processor.hpp>
 #include <KernelKit/PermissionSelector.hxx>
 
-typedef HCore::Void (*rt_syscall_proc)(HCore::Int32 id, HCore::HAL::StackFramePtr);
+typedef HCore::Void (*rt_syscall_proc)(HCore::HAL::StackFramePtr);
 
 HCore::Array<rt_syscall_proc, kKernelMaxSystemCalls> kSyscalls;
 
@@ -20,6 +20,6 @@ EXTERN_C void rt_syscall_handle(HCore::HAL::StackFramePtr stack) {
   if (!stack) return;
 
   if (stack->Rcx < kKernelMaxSystemCalls && kSyscalls[stack->Rcx] != 0) {
-    (kSyscalls[stack->Rcx].Leak().Leak())(stack->Rcx, stack);
+    (kSyscalls[stack->Rcx].Leak().Leak())(stack);
   }
 }

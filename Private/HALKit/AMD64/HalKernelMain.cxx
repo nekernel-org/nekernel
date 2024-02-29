@@ -13,11 +13,12 @@
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/Rsrc/Splash.hxx>
 #include <KernelKit/Rsrc/Util.hxx>
 #include <NewKit/Json.hpp>
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
+#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/Rsrc/Splash.rsrc>
 
 ///! @brief Disk contains HCore files.
 #define kInstalledMedia 0xDD
@@ -94,27 +95,31 @@ EXTERN_C void RuntimeMain(
   KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH, ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2), ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
   KeClearRsrc();
 
+  /// START POST
+
   Detail::_ke_power_on_self_test();
+  HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 
   HCore::kcout << "HCoreKrnl: POST done, everything is OK...\r\n";
 
-  if (HandoverHeader->f_Bootloader == kInstalledMedia) {
-    /// Mounts a NewFS block.
-    HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
+  /// END POST
 
+  /// Mounts a NewFS block.
+  HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
+
+  /// We already have an install of HCore.
+  if (HandoverHeader->f_Bootloader == kInstalledMedia) {
     // Open file from first hard-drive.
     HCore::PEFLoader img("A:/System/HCoreServer.exe");
 
     /// Run the server executive.
     HCore::Utils::execute_from_image(img);
   } else {
-    /**
-    ** This does the POST.
-    */
+    // Open file from first hard-drive.
+    HCore::PEFLoader img("A:/System/HCoreInstallWizard.exe");
 
-    /**
-    This mounts the NewFS drive.
-    */
+    /// Run the server executive.
+    HCore::Utils::execute_from_image(img);
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

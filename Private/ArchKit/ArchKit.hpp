@@ -57,7 +57,7 @@ bool ke_init_hal();
 
 #define kKernelMaxSystemCalls (256)
 
-extern HCore::Array<void (*)(HCore::Int32 id, HCore::HAL::StackFrame *),
+extern HCore::Array<void (*)(HCore::HAL::StackFrame *),
                     kKernelMaxSystemCalls>
     kSyscalls;
 

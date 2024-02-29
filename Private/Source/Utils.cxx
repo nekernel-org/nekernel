@@ -81,7 +81,6 @@ Int rt_move_memory(const voidPtr src, voidPtr dst, Size len) {
 
 Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
   if (len < 1) return -2;
-  if (!src || !dst) return -1;
 
   char *srcChr = reinterpret_cast<char *>(src);
   char *dstChar = reinterpret_cast<char *>(dst);
@@ -89,10 +88,12 @@ Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
 
   while (index < len) {
     dstChar[index] = srcChr[index];
-    index++;
+    ++index;
   }
 
-  return 0;
+  dstChar[index] = 0;
+
+  return index;
 }
 
 const Char *alloc_string(const Char *text) {

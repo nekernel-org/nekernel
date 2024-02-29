@@ -23,9 +23,9 @@
     @brief HCore File System implementation.
 */
 
-#define kInvalidFork -1
-#define kInvalidCatalog -1
-#define kNameLen 256
+#define kNewFSInvalidFork -1
+#define kNewFSInvalidCatalog -1
+#define kNewFSNodeNameLen 256
 
 #define kNewFSIdentLen 6
 #define kNewFSIdent "  HCFS"
@@ -34,7 +34,8 @@
 //! On EPM and GPT disks.
 #define kNewFSUUID "DD997393-9CCE-4288-A8D5-C0FDE3908DBE"
 
-#define kNewFSVersion 1
+#define kNewFSVersionInteger 0x11
+#define kNewFSVerionString   "1.1"
 
 typedef HCore::WideChar NewCharType;
 
@@ -48,7 +49,7 @@ enum {
 
 struct PACKED NewBootBlock final {
   NewCharType Ident[kNewFSIdentLen];
-  NewCharType Shell[kNameLen];
+  NewCharType Shell[kNewFSNodeNameLen];
 
   HCore::Int64 NumParts;
   HCore::Int64 FreeSectors;
@@ -74,7 +75,7 @@ struct PACKED NewBootBlock final {
 #define kKindPartition 4
 
 struct PACKED NewCatalog final {
-  NewCharType Name[kNameLen];
+  NewCharType Name[kNewFSNodeNameLen];
 
   HCore::Int32 Flags;
   HCore::Int32 Kind;
