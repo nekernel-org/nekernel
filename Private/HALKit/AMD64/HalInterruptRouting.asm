@@ -81,9 +81,6 @@ IntNormal 31
 ;; this one is doing a POST for us.
 ;; testing interrupts.
 _ke_power_on_self_test:
-    mov rcx, 0x00
-    mov rdx, 0x01
-    
     int 0x21
     int 0x21
     int 0x21

@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 //! @file DebuggerPort.cxx
 //! @brief UART debug via packets.

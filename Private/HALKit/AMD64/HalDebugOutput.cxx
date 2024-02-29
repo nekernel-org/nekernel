@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/DebugOutput.hpp>
@@ -58,7 +55,7 @@ bool serial_init() noexcept {
 }
 }  // namespace Detail
 
-void ke_io_print(const char* bytes) {
+EXTERN_C void ke_io_print(const char* bytes) {
   Detail::serial_init();
 
   if (!bytes || Detail::kState != kStateReady) return;

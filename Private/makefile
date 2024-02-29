@@ -3,9 +3,9 @@
 # This is the microkernel makefile.
 ##################################################
 
-CC			= x86_64-w64-mingw32-g++
+CC			= x86_64-w64-mingw32-gcc
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -c -ffreestanding -fPIC -fmodules-ts -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
+CCFLAGS		= -c -ffreestanding -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
 ASM			= nasm
 ASMFLAGS	= -f win64
 LDFLAGS		= -e Main --subsystem=17
@@ -25,7 +25,7 @@ MOVEALL=./MoveAll.sh
 
 .PHONY: h-core-amd64
 h-core-amd64:
-	$(CC) $(CCFLAGS) Source/*.cxx HALKit/AMD64/PCI/*.cpp Source/Network/*.cxx\
+	$(CC) $(CCFLAGS) Source/*.cxx HALKit/AMD64/PCI/*.cxx Source/Network/*.cxx\
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptRouting.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm

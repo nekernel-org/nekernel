@@ -30,3 +30,11 @@
 - Large storage support.
 - Long file names.
 - UNIX path style.
+
+==================================
+3: The Executives
+===================================
+
+- Kernel -> ke_init_x
+- RunTime -> rt_copy_mem
+- Hal -> HalFooBar

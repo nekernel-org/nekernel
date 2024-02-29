@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/New.hpp>

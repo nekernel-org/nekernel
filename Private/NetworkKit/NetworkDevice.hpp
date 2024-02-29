@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #ifndef _INC_NETWORKDEVICE_HPP__
 #define _INC_NETWORKDEVICE_HPP__

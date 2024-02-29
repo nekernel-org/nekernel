@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
 
@@ -23,17 +20,18 @@ void rt_wakeup_thread(HAL::StackFrame* stack) {
 }
 
 static void __rt_hang_proc(void) {
-  while (1)
-    ;
+  while (1) {
+
+  }
 }
 
 // @brief makes thread sleep.
 // hooks and hangs thread to prevent code from executing.
 void rt_hang_thread(HAL::StackFrame* stack) {
-  __asm__ volatile("cli");
+  HAL::rt_cli();
 
     // TODO
 
-  __asm__ volatile("sti");
+  HAL::rt_sti();
 }
 }  // namespace HCore

@@ -4,7 +4,4 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/DriveManager.hpp>
-
-namespace HCore {}  // namespace HCore
+#include <KernelKit/PCI/IO.hpp>

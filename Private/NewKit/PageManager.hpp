@@ -1,14 +1,11 @@
 // a way to create and find our pages.
 // I'm thinking about a separate way of getting a paged area.
 
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #pragma once
 

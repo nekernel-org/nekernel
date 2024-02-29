@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #pragma once
 
@@ -57,12 +54,14 @@ bool ke_init_hal();
 
 #define kKernelMaxSystemCalls (256)
 
-extern HCore::Array<void (*)(HCore::HAL::StackFrame *),
+typedef HCore::Void (*rt_syscall_proc)(HCore::HAL::StackFramePtr);
+
+extern HCore::Array<rt_syscall_proc,
                     kKernelMaxSystemCalls>
     kSyscalls;
 
 EXTERN_C HCore::Void rt_wait_400ns();
-EXTERN_C HCore::Void rt_syscall_handle(HCore::HAL::StackFramePtr stackFrame);
+EXTERN_C HCore::Void ATTRIBUTE(interrupt) rt_syscall_handle(HCore::HAL::StackFramePtr stackFrame);
 EXTERN_C HCore::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C HCore::Void rt_do_context_switch(HCore::HAL::StackFramePtr stackFrame);
 

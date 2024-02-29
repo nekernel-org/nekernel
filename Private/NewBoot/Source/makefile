@@ -10,7 +10,7 @@ ASM=nasm
 OBJ=$(wildcard *.o) $(wildcard ../../Obj/*.obj) $(wildcard HEL/AMD64/*.obj)
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -fPIC -D__DEBUG__ -mgeneral-regs-only -mno-red-zone -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
+FLAG_GNU=-fshort-wchar -D__DEBUG__ -mgeneral-regs-only -mno-red-zone -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -27,7 +27,7 @@ bootloader-amd64:
 
 .PHONY: run-efi-amd64
 run-efi-amd64:
-	qemu-system-x86_64 -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -serial stdio
+	qemu-system-x86_64 -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -d int
 
 .PHONY: download-edk
 download-edk:

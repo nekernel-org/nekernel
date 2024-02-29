@@ -1,16 +1,13 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/PCI/Device.hpp>
 
-HCore::UInt LumiaPCIReadRaw(HCore::UInt bar, HCore::UShort bus,
+HCore::UInt HCorePCIReadRaw(HCore::UInt bar, HCore::UShort bus,
                             HCore::UShort dev, HCore::UShort fun) {
   HCore::UInt target = 0x80000000 | ((HCore::UInt)bus << 16) |
                        ((HCore::UInt)dev << 11) | ((HCore::UInt)fun << 8) |
@@ -22,7 +19,7 @@ HCore::UInt LumiaPCIReadRaw(HCore::UInt bar, HCore::UShort bus,
   return HCore::HAL::In32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigData);
 }
 
-void LumiaPCISetCfgTarget(HCore::UInt bar, HCore::UShort bus, HCore::UShort dev,
+void HCorePCISetCfgTarget(HCore::UInt bar, HCore::UShort bus, HCore::UShort dev,
                           HCore::UShort fun) {
   HCore::UInt target = 0x80000000 | ((HCore::UInt)bus << 16) |
                        ((HCore::UInt)dev << 11) | ((HCore::UInt)fun << 8) |
@@ -39,7 +36,7 @@ Device::Device(UShort bus, UShort device, UShort func, UShort bar)
 Device::~Device() {}
 
 UInt Device::Read(UInt bar, Size sz) {
-  LumiaPCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
+  HCorePCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
 
   if (sz == 4)
     return HAL::In32((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
@@ -51,7 +48,7 @@ UInt Device::Read(UInt bar, Size sz) {
 }
 
 void Device::Write(UInt bar, UIntPtr data, Size sz) {
-  LumiaPCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
+  HCorePCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
 
   if (sz == 4)
     HAL::Out32((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UInt)data);
@@ -62,31 +59,31 @@ void Device::Write(UInt bar, UIntPtr data, Size sz) {
 }
 
 UShort Device::DeviceId() {
-  return (UShort)(LumiaPCIReadRaw(0x0 >> 16, m_Bus, m_Device, m_Function));
+  return (UShort)(HCorePCIReadRaw(0x0 >> 16, m_Bus, m_Device, m_Function));
 }
 
 UShort Device::VendorId() {
-  return (UShort)(LumiaPCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
+  return (UShort)(HCorePCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
 }
 
 UShort Device::InterfaceId() {
-  return (UShort)(LumiaPCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
+  return (UShort)(HCorePCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
 }
 
 UChar Device::Class() {
-  return (UChar)(LumiaPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 24);
+  return (UChar)(HCorePCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 24);
 }
 
 UChar Device::Subclass() {
-  return (UChar)(LumiaPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 16);
+  return (UChar)(HCorePCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 16);
 }
 
 UChar Device::ProgIf() {
-  return (UChar)(LumiaPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 8);
+  return (UChar)(HCorePCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 8);
 }
 
 UChar Device::HeaderType() {
-  return (UChar)(LumiaPCIReadRaw(0xC, m_Bus, m_Device, m_Function) >> 16);
+  return (UChar)(HCorePCIReadRaw(0xC, m_Bus, m_Device, m_Function) >> 16);
 }
 
 void Device::EnableMmio() {

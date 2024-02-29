@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	HCore
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
 #include <Drivers/PS2/Mouse.hxx>
@@ -98,9 +95,8 @@ EXTERN_C void RuntimeMain(
   /// START POST
 
   Detail::_ke_power_on_self_test();
-  HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
-
-  HCore::kcout << "HCoreKrnl: POST done, everything is OK...\r\n";
+  
+  HCore::kcout << "HCoreKrnl: Everything is OK...\r\n";
 
   /// END POST
 
@@ -109,14 +105,10 @@ EXTERN_C void RuntimeMain(
 
   /// We already have an install of HCore.
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
-    // Open file from first hard-drive.
-    HCore::PEFLoader img("A:/System/HCoreServer.exe");
-
-    /// Run the server executive.
-    HCore::Utils::execute_from_image(img);
+    /// TODO: Parse system configuration.
   } else {
     // Open file from first hard-drive.
-    HCore::PEFLoader img("A:/System/HCoreInstallWizard.exe");
+    HCore::PEFLoader img("/System/HCoreInstallWizard.exe");
 
     /// Run the server executive.
     HCore::Utils::execute_from_image(img);
