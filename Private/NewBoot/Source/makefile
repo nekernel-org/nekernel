@@ -13,7 +13,7 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -DkBootKrnlSections=9 -D__DEBUG__ -mgeneral-regs-only -mno-red-zone -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
+FLAG_GNU=-fshort-wchar -DkBootKrnlSections=9 -mgeneral-regs-only -mno-red-zone -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
 
 .PHONY: invalid-recipe
 invalid-recipe:
