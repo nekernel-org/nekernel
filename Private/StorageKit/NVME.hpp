@@ -40,8 +40,6 @@ class NVMEPacket {
   SizeT DataSz;
   UInt64 DriveID;
 
-  Boolean ErrorSet;
-  Boolean BusySet;
-  Boolean ReadySet;
+  UInt8 Bits;
 };
 }  // namespace HCore

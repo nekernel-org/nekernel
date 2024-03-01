@@ -9,11 +9,11 @@
 /// @brief Process Scheduler API.
 /***********************************************************************************/
 
-#include <KernelKit/HError.hpp>
 #include <KernelKit/ProcessManager.hpp>
 #include <KernelKit/SMPManager.hpp>
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
+#include <KernelKit/HError.hpp>
 
 ///! bugs = 0
 
@@ -251,7 +251,7 @@ bool ProcessHelper::CanBeScheduled(Ref<Process> &process) {
 }
 
 /**
- * @brief Scheduler spin code.
+ * @brief Spin scheduler
  */
 bool ProcessHelper::StartScheduling() {
   if (ProcessHelper::CanBeScheduled(

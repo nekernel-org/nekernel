@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	h-core
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #ifndef _SYSTEM_KIT_HCORE_FILE_HPP
 #define _SYSTEM_KIT_HCORE_FILE_HPP

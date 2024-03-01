@@ -1,15 +1,11 @@
-/*
- *	========================================================
- *
- *	HCore
- *  Date Added: 13/02/2023
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
 
-#ifndef _INC_ACPI_MANAGER_H
-#define _INC_ACPI_MANAGER_H
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
+
+#ifndef __ACPI__
+#define __ACPI__
 
 /**
     https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
@@ -68,4 +64,4 @@ class Address {
 };
 }  // namespace HCore
 
-#endif  // !_INC_ACPI_MANAGER_H
+#endif  // !__ACPI__

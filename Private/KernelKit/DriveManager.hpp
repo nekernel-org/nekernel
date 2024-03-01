@@ -31,13 +31,13 @@ enum {
   kDriveCnt = 9,
 };
 
-typedef Int64 DriveID;
+typedef Int64 rt_drive_id_type;
 
 /// @brief Mounted drive traits.
 struct DriveTraits final {
-  char fName[kDriveNameLen];  // /System, /Boot, /USBDevice...
+  Char fName[kDriveNameLen];  // /System, /Boot, //./Devices/USB...
   Int32 fKind;                // fMassStorage, fFloppy, fOpticalDisc.
-  DriveID fId;                // Drive id.
+  rt_drive_id_type fId;                // Drive id.
   Int32 fFlags;               // fReadOnly, fXPMDrive, fXPTDrive
 
   //! for StorageKit.
@@ -77,6 +77,8 @@ class Mountpoint final {
   DriveDevicePtr D() { return mD; }
 
   DriveDevicePtr* GetAddressOf(int index) {
+    DbgLastError() = kErrorSuccess;
+
     switch (index) {
       case 0:
         return &mA;
@@ -87,8 +89,9 @@ class Mountpoint final {
       case 3:
         return &mD;
       default: {
-        GetLastError() = kErrorNoSuchDisk;
+        DbgLastError() = kErrorNoSuchDisk;
         kcout << "HCoreKrnl\\Mountpoint: Check HError.\n";
+        
         break;
       }
     }

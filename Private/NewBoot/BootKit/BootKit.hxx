@@ -42,8 +42,10 @@ typedef WideChar CharacterType;
  * Writes to UEFI StdOut.
  */
 class BTextWriter final {
+  BTextWriter &_Write(const Long &num);
  public:
   BTextWriter &Write(const Long &num);
+  BTextWriter &Write(const UChar *str);
   BTextWriter &Write(const CharacterType *str);
   BTextWriter &WriteCharacter(CharacterType c);
 

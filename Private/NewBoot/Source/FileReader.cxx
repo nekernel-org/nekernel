@@ -107,14 +107,11 @@ Void BFileReader::ReadAll() {
   if (this->mErrorCode != kOperationOkay) return;
 
   if (mBlob == nullptr) {
-    UInt8* blob = (UInt8*)hTransferBufferAddress;
-
-    if (BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1,
-                          (EfiPhysicalAddress*)&blob) != kEfiOk) {
+    if (auto err = BS->AllocatePool(EfiLoaderCode, mSizeFile,
+                          (VoidPtr*)&mBlob) != kEfiOk) {
+      mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
       EFI::RaiseHardError(L"HCoreLdr_PageError", L"Allocation error.");
     }
-
-    mBlob = blob;
   }
 
   mErrorCode = kNotSupported;

@@ -16,10 +16,11 @@
 
 #include <NewKit/Defines.hpp>
 
+typedef HCore::UIntPtr U64;
 typedef HCore::UInt32 U32;
 typedef HCore::UInt16 U16;
 typedef HCore::UInt8 U8;
-typedef char CHAR;
+typedef U8 BYTE;
 
 #define kMagMz0 'M'
 #define kMagMz1 'Z'
@@ -47,13 +48,12 @@ typedef struct ExecOptionalHeader final {
   U16 mMagic;  // 0x010b - PE32, 0x020b - PE32+ (64 bit)
   U8 mMajorLinkerVersion;
   U8 mMinorLinkerVersion;
-  U32 mSizeOfCode;
-  U32 mSizeOfInitializedData;
-  U32 mSizeOfUninitializedData;
+  U64 mSizeOfCode;
+  U64 mSizeOfInitializedData;
+  U64 mSizeOfUninitializedData;
   U32 mAddressOfEntryPoint;
   U32 mBaseOfCode;
-  U32 mBaseOfData;
-  U32 mImageBase;
+  U64 mImageBase;
   U32 mSectionAlignment;
   U32 mFileAlignment;
   U16 mMajorOperatingSystemVersion;
@@ -63,21 +63,21 @@ typedef struct ExecOptionalHeader final {
   U16 mMajorSubsystemVersion;
   U16 mMinorSubsystemVersion;
   U32 mWin32VersionValue;
-  U32 mSizeOfImage;
-  U32 mSizeOfHeaders;
+  U64 mSizeOfImage;
+  U64 mSizeOfHeaders;
   U32 mCheckSum;
   U16 mSubsystem;
   U16 mDllCharacteristics;
-  U32 mSizeOfStackReserve;
-  U32 mSizeOfStackCommit;
-  U32 mSizeOfHeapReserve;
-  U32 mSizeOfHeapCommit;
+  U64 mSizeOfStackReserve;
+  U64 mSizeOfStackCommit;
+  U64 mSizeOfHeapReserve;
+  U64 mSizeOfHeapCommit;
   U32 mLoaderFlags;
   U32 mNumberOfRvaAndSizes;
 } ExecOptionalHeader, *ExecOptionalHeaderPtr;
 
 typedef struct ExecSectionHeader final {
-  CHAR mName[8];
+  BYTE mName[8];
   U32 mVirtualSize;
   U32 mVirtualAddress;
   U32 mSizeOfRawData;

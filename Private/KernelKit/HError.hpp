@@ -29,8 +29,8 @@ inline constexpr HError kErrorNoSuchDisk = 45;
 Boolean ke_bug_check(void) noexcept;
 }  // namespace HCore
 
-#define IsOk(HERR) (HERR == HCore::kErrorSuccess)
-#define HasFailed(HERR) (HERR != HCore::kErrorSuccess)
-#define GetLastError() LastError
+#define DbgOk() (kLastError == HCore::kErrorSuccess)
+#define DbgFailed() (kLastError != HCore::kErrorSuccess)
+#define DbgLastError() kLastError
 
-inline HCore::HError LastError = 0;
+inline HCore::HError kLastError = 0;

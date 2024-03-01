@@ -10,7 +10,6 @@
 #define __BOOTLOADER__ 1
 
 #include <BootKit/BootKit.hxx>
-#include <HALKit/AMD64/ACPI/ACPI.hpp>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hpp>
 #include <NewKit/Ref.hpp>
@@ -21,10 +20,16 @@
 #error This CPU is unknown.
 #endif  // ifdef __x86_64__
 
+#ifndef kBootKrnlSections
+#error Please provide the amount of sections the kernel has.
+#endif  // !kBootKrnlSections
+
 #define kBootReadSize \
   (sizeof(DosHeader) + sizeof(ExecHeader) + sizeof(ExecOptionalHeader))
 
 EXTERN_C void Main(HEL::HandoverInformationHeader* HIH);
+
+typedef void (*bt_main_type)(HEL::HandoverInformationHeader* HIH);
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
@@ -47,13 +52,13 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
-  BFileReader img(L"HCOREKRNL.EXE", ImageHandle);
+  BFileReader kernelImg(L"HCOREKRNL.EXE", ImageHandle);
 
-  img.Size(kBootReadSize);
-  img.ReadAll();
+  kernelImg.Size(kBootReadSize);
+  kernelImg.ReadAll();
 
-  if (img.Error() == BFileReader::kOperationOkay) {
-    BlobType blob = (BlobType)img.Blob();
+  if (kernelImg.Error() == BFileReader::kOperationOkay) {
+    BlobType blob = (BlobType)kernelImg.Blob();
 
     ExecHeaderPtr ptrHdr = reinterpret_cast<ExecHeaderPtr>(
         HCore::rt_find_exec_header(reinterpret_cast<DosHeaderPtr>(blob)));
@@ -61,9 +66,78 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     if (ptrHdr && ptrHdr->mMachine == EFI::Platform() &&
         ptrHdr->mMagic == kPeMagic) {
       /// sections must be at least 3.
-      if (ptrHdr->mNumberOfSections >= 3) {
+      if (ptrHdr->mNumberOfSections == kBootKrnlSections) {
         ExecOptionalHeaderPtr optHdr = reinterpret_cast<ExecOptionalHeaderPtr>(
-            ptrHdr + sizeof(ExecHeader));
+            (UIntPtr)&ptrHdr->mCharacteristics + 1);
+
+        BFileReader systemIni(L"KERNEL.CFG", ImageHandle);
+
+        systemIni.Size(1);
+        systemIni.ReadAll();
+
+        bt_main_type kernelMain =
+            (bt_main_type)(UIntPtr)optHdr->mAddressOfEntryPoint;
+
+        SizeT heapSize = optHdr->mSizeOfHeapReserve;
+        SizeT stackSize = optHdr->mSizeOfStackReserve;
+
+        UInt64 posSeek = 0;
+
+        /****
+         * 
+         *  LOAD KERNEL CODE
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * LOAD KERNEL CODE
+        */
+
+        kernelImg.File()->SetPosition(kernelImg.File(), &posSeek);
+        kernelImg.Size(kBootReadSize +
+                       ptrHdr->mNumberOfSections * sizeof(ExecSectionHeader));
+
+        kernelImg.ReadAll();
+
+        writer.Write(L"HCoreLdr: Number of sections: ")
+            .Write(ptrHdr->mNumberOfSections)
+            .Write(L"\r\n");
+        writer.Write(L"HCoreLdr: Size of sections: ")
+            .Write(ptrHdr->mNumberOfSections * sizeof(ExecSectionHeader))
+            .Write(L"\r\n");
+
+        volatile ALIGN(kPTEAlign) ExecSectionHeader* blobKrnl =
+            (ExecSectionHeader*)(reinterpret_cast<DosHeaderPtr>(blob) +
+                                 reinterpret_cast<DosHeaderPtr>(blob)->eLfanew +
+                                 ptrHdr->mSizeOfOptionalHeader +
+                                 (sizeof(ExecHeader) +
+                                  sizeof(ExecOptionalHeader) + sizeof(U32)));
+
+        while (blobKrnl->mCharacteristics != 0x00000020) {
+          blobKrnl = blobKrnl + sizeof(ExecSectionHeader);
+        }
+
+        writer.Write(L"HCoreLdr: Exec Timestamp: ")
+            .Write(ptrHdr->mTimeDateStamp)
+            .Write(L"\r\n");
+
+        for (size_t i = 0; i < ptrHdr->mNumberOfSections; i++) {
+          writer.Write(L"HCoreLdr: Virtual-Size: ")
+              .Write(blobKrnl[i].mVirtualSize)
+              .Write(L"\r\n");
+          writer.Write(L"HCoreLdr: Virtual-Address: ")
+              .Write(blobKrnl[i].mVirtualAddress)
+              .Write(L"\r\n");
+          writer.Write(L"HCoreLdr: Raw-Address: ")
+              .Write(blobKrnl[i].mPointerToRawData)
+              .Write(L"\r\n");
+          writer.Write(L"HCoreLdr: Raw-Size: ")
+              .Write(blobKrnl[i].mSizeOfRawData)
+              .Write(L"\r\n");
+        }
 
         UInt32 MapKey = 0;
         UInt32* Size;
@@ -78,6 +152,12 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
               L"The bootloader ran out of memory! Please check your specs.");
         }
 
+        /****
+         * 
+         *  LOAD KERNEL CODE
+         *
+        */
+
         *Size = sizeof(EfiMemoryDescriptor);
 
         if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
@@ -87,12 +167,22 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
               L"The bootloader ran out of memory! Please check your specs.");
         }
 
+        /****
+         * 
+         *  GET MEMORY MAP OF COMPUTER.
+         * 
+        */
+
         if (BS->GetMemoryMap(Size, Descriptor, &MapKey, &SzDesc, &RevDesc) !=
             kEfiOk) {
           EFI::RaiseHardError(
               L"HCoreLdr-GetMemoryMap",
               L"GetMemoryMap returned a value which isn't kEfiOk!");
         }
+
+#ifndef __DEBUG__
+        ST->ConOut->ClearScreen(ST->ConOut);
+#endif
 
         HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
 
@@ -124,30 +214,24 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  SystemTable->FirmwareVendor,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
-        BFileReader systemIni(L"SYSTEM.INI", ImageHandle);
-
-        systemIni.Size(1);
-        systemIni.ReadAll();
-
-        ST->ConOut->ClearScreen(ST->ConOut);
-
         EFI::ExitBootServices(MapKey, ImageHandle);
 
         bool isIniNotFound = (systemIni.Blob() == nullptr);
 
         if (isIniNotFound) {
-          handoverHdrPtr->f_Magic = 0x55DDFF;
+          handoverHdrPtr->f_Magic = kHandoverMagic;
           handoverHdrPtr->f_Version = 0x1011;
           handoverHdrPtr->f_Bootloader = 0x11;  // Installer
 
           Main(handoverHdrPtr);
-
         } else {
-          handoverHdrPtr->f_Magic = 0xFF55DD;
+          handoverHdrPtr->f_Magic = kHandoverMagic;
           handoverHdrPtr->f_Version = 0x1011;
           handoverHdrPtr->f_Bootloader = 0xDD;  // System present
 
-          // TODO: read .NewBoot section.
+          MUST_PASS(kernelMain);
+
+          kernelMain(handoverHdrPtr);
         }
 
         EFI::Stop();

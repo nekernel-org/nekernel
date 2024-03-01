@@ -28,6 +28,20 @@ BTextWriter &BTextWriter::Write(const CharacterType *str) {
   return *this;
 }
 
+BTextWriter &BTextWriter::Write(const UChar *str) {
+  if (*str == 0 || !str) return *this;
+
+  CharacterType strTmp[2];
+  strTmp[1] = 0;
+  
+  for (size_t i = 0; str[i] != 0; i++) {
+    strTmp[0] = str[i];
+    ST->ConOut->OutputString(ST->ConOut, strTmp);
+  }
+
+  return *this;
+}
+
 /**
 @brief putc wrapper over EFI ConOut.
 */
@@ -41,10 +55,17 @@ BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
 }
 
 BTextWriter &BTextWriter::Write(const Long &x) {
+  this->Write(L"0x");
+  this->_Write(x);
+
+  return *this;
+}
+
+BTextWriter &BTextWriter::_Write(const Long &x) {
   int y = x / 16;
   int h = x % 16;
 
-  if (y) this->Write(y);
+  if (y) this->_Write(y);
 
   /* fail if the hex number is not base-16 */
   if (h > 15) {

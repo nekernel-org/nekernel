@@ -3,12 +3,13 @@
     Copyright Mahrouss Logic
 
 ------------------------------------------- */
+
 #pragma once
 
 #include <KernelKit/PCI/Dma.hpp>
 #include <KernelKit/PCI/Iterator.hpp>
 
-#define PRDT_TRANSFER_SIZE (sizeof(HCore::UShort))
+#define kPrdtTransferSize (sizeof(HCore::UShort))
 
 namespace HCore {
 class PRDT final {

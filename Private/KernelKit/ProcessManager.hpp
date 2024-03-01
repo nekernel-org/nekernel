@@ -155,7 +155,7 @@ class Process final {
   void Crash();
 
   //! @brief Exits program.
-  void Exit(Int32 exit_code = 0);
+  void Exit(Int32 exitCode = 0);
 
   //! @brief TLS Allocate
   VoidPtr New(const SizeT &sz);

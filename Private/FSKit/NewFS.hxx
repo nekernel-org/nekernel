@@ -151,17 +151,18 @@ struct PACKED NewPartitionBlock final {
 #define kCatalogKindDevice 9
 #define kCatalogKindLock 10
 
-#define kFilesystemSeparator '\\'
+#define kFilesystemSeparator '/'
 
 #define kFilesystemUpDir ".."
-#define kFilesystemRoot "\\"
+#define kFilesystemRoot "/"
 
 #define kFilesystemCR '\r'
 #define kFilesystemLF '\n'
 #define kFilesystemEOF (-1)
 
-#define kFilesystemBitWidth sizeof(NewCharType)
-#define kFilesystemLbaType HCore::Lba
+#define kFilesystemBitWidth (sizeof(NewCharType))
+#define kFilesystemLbaType (HCore::Lba)
+#define kNewFSAddressAsLba (1024)
 
 namespace HCore {
 ///
@@ -210,8 +211,6 @@ class NewFilesystemHelper final {
   static const char Separator();
 };
 }  // namespace HCore
-
-#define kNewFSAddressAsLba 1024
 
 enum {
   kNewFSPartGPT,

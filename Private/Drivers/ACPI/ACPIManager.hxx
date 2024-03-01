@@ -1,27 +1,21 @@
-/*
- *	========================================================
- *
- *	HCore
- *  Date Added: 20/02/2023
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
 
-#ifndef _INC_ACPI_H
-#define _INC_ACPI_H
+    Copyright Mahrouss Logic
 
-#include <HALKit/AMD64/ACPI/ACPI.hpp>
+------------------------------------------- */
+
+#ifndef __ACPI_MANAGER__
+#define __ACPI_MANAGER__
+
+#include <Drivers/ACPI/ACPI.hpp>
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
 namespace HCore {
-class ACPIManager {
+class ACPIManager final {
  public:
   explicit ACPIManager(voidPtr rsdptr);
-
- public:
   ~ACPIManager() = default;
 
   ACPIManager &operator=(const ACPIManager &) = default;
@@ -47,4 +41,4 @@ class ACPIManager {
 };
 }  // namespace HCore
 
-#endif  // !_INC_ACPI_H
+#endif  // !__ACPI_MANAGER__
