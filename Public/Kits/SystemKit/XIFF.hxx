@@ -14,13 +14,16 @@
 
 #include <SystemKit/CoreAPI.hxx>
 
+/// @brief four-character code for XIFF.
+#define kFourCCLength_XIFF 4
+
 /***
  * @brief Generic XIFF header
  * Used by XIFF based containers.
  */
 
 struct PACKED XiffHeader final {
-  BYTE f_Mag[5];      // XIFF string (includes \0)
+  BYTE f_Mag[kFourCCLength_XIFF];      // XIFF string (includes \0)
   DWORD f_Size;         // overall size of header (XiffHeader) in bytes
   DWORD f_FormatType;  // format type. generic
   BYTE f_SpecificMag[4];      // The sub header magic
