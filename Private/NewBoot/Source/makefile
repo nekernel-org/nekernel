@@ -9,6 +9,9 @@ LD_FLAGS=-e efi_main --subsystem=10
 ASM=nasm
 OBJ=$(wildcard *.o) $(wildcard ../../Obj/*.obj) $(wildcard HEL/AMD64/*.obj)
 
+REM=rm
+REM_FLAG=-f
+
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -DkBootKrnlSections=9 -D__DEBUG__ -mgeneral-regs-only -mno-red-zone -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
 
@@ -35,4 +38,4 @@ download-edk:
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) HCoreLdr.exe OVMF.fd
+	$(REM) $(REM_FLAG) $(OBJ) HCoreLdr.exe HCoreKrnl.exe OVMF.fd
