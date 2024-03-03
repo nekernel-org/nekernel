@@ -7,8 +7,6 @@
  * ========================================================
  */
 
-#define __BOOTLOADER__ 1
-
 #include <BootKit/BootKit.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hpp>
@@ -21,7 +19,7 @@
 #endif  // ifdef __x86_64__
 
 #ifndef kBootKrnlSections
-#error Please provide the amount of sections the kernel has.
+#error [NewBoot/HCoreLdr] Please provide the amount of sections the kernel has.
 #endif  // !kBootKrnlSections
 
 #define kBootReadSize \
@@ -33,10 +31,12 @@ typedef void (*bt_main_type)(HEL::HandoverInformationHeader* HIH);
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
-  InitEFI(SystemTable);
-  InitQT();
+  InitEFI(SystemTable); // Init the efi library.
+  InitQT(); // Quick Toolkit for UI
 
   BTextWriter writer;
+
+  /// Splash screen stuff
 
   writer.Write(L"MahroussLogic (R) HCoreLdr: ");
 
@@ -51,6 +51,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   writer.Write(L"\r\nHCoreLdr: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
+
+  /// Read Kernel blob.
 
   BFileReader kernelImg(L"HCOREKRNL.EXE", ImageHandle);
 
@@ -70,6 +72,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         ExecOptionalHeaderPtr optHdr = reinterpret_cast<ExecOptionalHeaderPtr>(
             (UIntPtr)&ptrHdr->mCharacteristics + 1);
 
+        // first check for kernel.cfg inside ESP/EPM.
         BFileReader systemIni(L"KERNEL.CFG", ImageHandle);
 
         systemIni.Size(1);
@@ -83,18 +86,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         UInt64 posSeek = 0;
 
-        /****
-         * 
-         *  LOAD KERNEL CODE
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * LOAD KERNEL CODE
-        */
+        // load sections here
 
         kernelImg.File()->SetPosition(kernelImg.File(), &posSeek);
         kernelImg.Size(kBootReadSize +
