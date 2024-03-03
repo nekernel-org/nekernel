@@ -9,8 +9,11 @@ LD_FLAGS=-e efi_main --subsystem=10
 ASM=nasm
 OBJ=$(wildcard *.o) $(wildcard ../../Obj/*.obj) $(wildcard HEL/AMD64/*.obj)
 
+REM=rm
+REM_FLAG=-f
+
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -DkBootKrnlSections=9 -D__DEBUG__ -mgeneral-regs-only -mno-red-zone -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -I./ -I$(HOME)/
+FLAG_GNU=-fshort-wchar -DkBootKrnlSections=9 -mgeneral-regs-only -mno-red-zone -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -D__BOOTLOADER__ -I./ -I$(HOME)/
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -19,7 +22,7 @@ invalid-recipe:
 .PHONY: bootloader-amd64
 bootloader-amd64:
 	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx *.cxx
-	$(ASM) $(FLAG_ASM) HEl/AMD64/AMD64-VirtualMemory.asm
+	$(ASM) $(FLAG_ASM) HEL/AMD64/AMD64-VirtualMemory.asm
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o HCoreLdr.exe
 	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	cp HCoreLdr.exe CDROM/EFI/BOOT/HCORELDR.EFI
@@ -35,4 +38,4 @@ download-edk:
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) HCoreLdr.exe OVMF.fd
+	$(REM) $(REM_FLAG) $(OBJ) HCoreLdr.exe HCoreKrnl.exe OVMF.fd
