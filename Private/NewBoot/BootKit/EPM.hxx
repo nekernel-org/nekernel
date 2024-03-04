@@ -9,4 +9,4 @@
 
 #pragma once
 
-#include <EFIKit/EPM.hxx>
+#include <FirmwareKit/EPM.hxx>

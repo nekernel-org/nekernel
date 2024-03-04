@@ -11,6 +11,8 @@
 
 //! NOTE: fGSI stands 'Field Global System Interrupt'
 
+///////////////////////////////////////////////////////////////////////////////////////
+
 namespace HCore::HAL {
 constexpr Int32 kThreadAPIC = 0;
 constexpr Int32 kThreadLAPIC = 1;
