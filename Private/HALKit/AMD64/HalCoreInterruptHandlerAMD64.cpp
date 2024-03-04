@@ -14,13 +14,13 @@ EXTERN_C void idt_handle_gpf(HCore::UIntPtr rsp) {
   HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
-      << "General Protection Fault, caused by "
+      << "HCoreKrnl: General Protection Fault, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 }
 
-extern "C" void idt_handle_scheduler(HCore::UIntPtr rsp) {
+EXTERN_C void idt_handle_scheduler(HCore::UIntPtr rsp) {
   HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
@@ -34,37 +34,37 @@ extern "C" void idt_handle_scheduler(HCore::UIntPtr rsp) {
   }
 }
 
-extern "C" void idt_handle_pf(HCore::UIntPtr rsp) {
+EXTERN_C void idt_handle_pf(HCore::UIntPtr rsp) {
   HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "Segmentation Fault, caused by "
+      << "HCoreKrnl: Segmentation Fault, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 }
 
-extern "C" void idt_handle_math(HCore::UIntPtr rsp) {
+EXTERN_C void idt_handle_math(HCore::UIntPtr rsp) {
   HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "Math error, caused by "
+      << "HCoreKrnl: Math error, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
 }
 
-extern "C" void idt_handle_generic(HCore::UIntPtr rsp) {
+EXTERN_C void idt_handle_generic(HCore::UIntPtr rsp) {
   HCore::kcout << HCore::StringBuilder::FromInt("sp{%}", rsp);
 
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "Execution error, caused by "
+      << "HCoreKrnl: Execution error, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();

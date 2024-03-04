@@ -10,7 +10,7 @@
 
 namespace HCore {
 ACPIManager::ACPIManager(voidPtr rsdPtr) : m_Rsdp(rsdPtr), m_Entries(0) {
-  RSDP *_rsdPtr = reinterpret_cast<RSDP *>(this->m_Rsdp);
+  volatile RSDP *_rsdPtr = reinterpret_cast<volatile RSDP *>(this->m_Rsdp);
 
   MUST_PASS(_rsdPtr);
   MUST_PASS(_rsdPtr->Revision >= 2);
@@ -19,6 +19,7 @@ ACPIManager::ACPIManager(voidPtr rsdPtr) : m_Rsdp(rsdPtr), m_Entries(0) {
 void ACPIManager::Shutdown() {}
 void ACPIManager::Reset() {}
 
+/// @brief Finds a descriptor table inside ACPI XSDT.
 ErrorOr<voidPtr> ACPIManager::Find(const char *signature) {
   MUST_PASS(m_Rsdp);
 
@@ -60,6 +61,8 @@ bool ACPIManager::Checksum(const char *checksum, SSizeT len) {
 
   return chr == 0;
 }
+
+/// Custom to the virtual machine, you'll need to parse the MADT instead.
 
 void rt_shutdown_acpi_qemu_20(void) { HAL::Out16(0xb004, 0x2000); }
 
