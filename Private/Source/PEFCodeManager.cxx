@@ -152,5 +152,5 @@ const char *PEFLoader::Path() { return fPath.Leak().CData(); }
 
 const char *PEFLoader::Format() { return "PEF"; }
 
-const char *PEFLoader::MIME() { return "application/x-hcore-exec"; }
+const char *PEFLoader::MIME() { return kPefApplicationMime; }
 }  // namespace HCore

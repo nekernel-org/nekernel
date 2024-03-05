@@ -15,15 +15,13 @@
 #define __PE__
 
 #include <NewKit/Defines.hpp>
+#include <KernelKit/PE.hpp>
 
 typedef HCore::UIntPtr U64;
 typedef HCore::UInt32 U32;
 typedef HCore::UInt16 U16;
 typedef HCore::UInt8 U8;
 typedef U8 BYTE;
-
-#define kMagMz0 'M'
-#define kMagMz1 'Z'
 
 #define kPeMagic 0x00004550
 

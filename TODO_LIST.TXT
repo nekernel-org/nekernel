@@ -8,7 +8,7 @@
     - Fix bug in kernel loader, which causes a 06 #UD. [ X ]
     - Load Kernel [ X ]
     - Add IDT [ X ]
-    - AHCI driver [  ]
+    - AHCI driver [ WiP ]
 - Context switch x87/SSE/AVX registers [ X ]
 - Framebuffer and AHCI support [ X ]
 - Native Subsystem and GUI [ ]

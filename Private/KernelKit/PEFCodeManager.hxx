@@ -11,6 +11,8 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/String.hpp>
 
+#define kPefApplicationMime "application/x-hcore-exec"
+
 namespace HCore {
 ///
 /// \name PEFLoader
@@ -58,7 +60,7 @@ typedef struct UniversalProcedureTable final {
   const Char NAME[kPefNameLen];
   const VoidPtr TRAP;
   const SizeT ARCH;
-} __attribute__((packed)) UniversalProcedureTableType;
+} PACKED UniversalProcedureTableType;
 
 bool execute_from_image(PEFLoader &exec) noexcept;
 }  // namespace Utils
