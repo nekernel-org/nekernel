@@ -5,7 +5,7 @@
 
 CC			= x86_64-w64-mingw32-gcc
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -c -ffreestanding -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ -I$(HOME)/
+CCFLAGS		= -c -ffreestanding -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ 
 ASM			= nasm
 ASMFLAGS	= -f win64
 LDFLAGS		= -e Main --subsystem=17
