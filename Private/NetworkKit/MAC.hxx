@@ -14,7 +14,7 @@ namespace HCore {
 class MacAddressGetter;
 
 /// \brief This retrieves the MAC address of the device.
-/// \note Checks on \Mount\Devices\MacAddr
+/// \note Listens for the current NIC.
 class MacAddressGetter final {
  public:
   explicit MacAddressGetter() = default;
