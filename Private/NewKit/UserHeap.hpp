@@ -28,13 +28,6 @@ enum {
   kPoolRw = 0x8,
 };
 
-struct HeapHeader final {
-  UInt32 Magic;
-  Int32 Flags;
-  Boolean Free;
-  UIntPtr Pad;
-};
-
 VoidPtr ke_new_heap(Int32 flags);
 Int32 ke_free_heap(voidPtr pointer);
 }  // namespace HCore

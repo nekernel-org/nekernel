@@ -15,6 +15,17 @@
 
 namespace HCore {
 /**
+ * @brief Process Heap Header
+ * @note Allocated per process, do not allocate twice!
+*/
+struct HeapHeader final {
+  UInt32 Magic;
+  Int32 Flags;
+  Boolean Free;
+  UIntPtr Pad;
+};
+
+/**
  * @brief User Heap Manager class, takes care of allocating the process pools.
  * @note This rely on Virtual Memory! Consider adding good vmem support when
  * @note porting to a new arch.
