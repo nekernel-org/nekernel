@@ -12,7 +12,7 @@ namespace HCore {
 NetworkDevice::NetworkDevice(void (*out)(NetworkDeviceCommand),
                              void (*in)(NetworkDeviceCommand),
                              void (*on_cleanup)(void))
-    : DeviceInterface<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup) {_
+    : DeviceInterface<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup) {
   kcout << "NK: NetworkDevice initialize.\r\n";
 
   MUST_PASS(out && in && on_cleanup);
