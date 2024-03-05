@@ -12,12 +12,16 @@
 
 namespace HCore {
 struct NetworkDeviceCommand;
+class NetworkDevice;
 
+/**
+* \brief Network device interface, establishes a connection to the NIC.
+*/
 class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand> {
  public:
   NetworkDevice(void (*out)(NetworkDeviceCommand),
                 void (*in)(NetworkDeviceCommand),
-                void (*on_cleanup)(void) = nullptr);
+                void (*onCleanup)(void) = nullptr);
 
   ~NetworkDevice() override;
 
@@ -26,13 +30,13 @@ class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand> {
   NetworkDevice(const NetworkDevice &) = default;
 
  public:
-  const char *Name() const override { return ("NetworkDevice"); }
+  const char *Name() const override { return "NetworkDevice"; }
 
  private:
   void (*fCleanup)(void);
 };
 
-struct NetworkDeviceCommand {
+struct PACKED NetworkDeviceCommand final {
   UInt32 Command;
   UInt32 VLan;
   UInt32 DmaLow;
@@ -43,5 +47,7 @@ using TCPNetworkDevice = NetworkDevice;
 using UDPNetworkDevice = NetworkDevice;
 using PPPNetworkDevice = NetworkDevice;
 }  // namespace HCore
+
+#include <NetworkKit/NetworkDevice.inl>
 
 #endif  // !_INC_NETWORKDEVICE_HPP__
