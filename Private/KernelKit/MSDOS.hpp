@@ -20,6 +20,9 @@
 // Last Rev
 // Sat Feb 24 CET 2024
 
+#define kMagMz0 'M'
+#define kMagMz1 'Z'
+
 typedef HCore::UInt32 DosWord;
 typedef HCore::Long DosLong;
 

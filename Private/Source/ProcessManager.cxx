@@ -251,7 +251,7 @@ bool ProcessHelper::CanBeScheduled(Ref<Process> &process) {
 }
 
 /**
- * @brief Spin scheduler
+ * @brief Spin scheduler class.
  */
 bool ProcessHelper::StartScheduling() {
   if (ProcessHelper::CanBeScheduled(
@@ -260,15 +260,15 @@ bool ProcessHelper::StartScheduling() {
     return false;
   }
 
-  auto process_ref = ProcessManager::Shared().Leak();
+  auto processRef = ProcessManager::Shared().Leak();
 
-  if (!process_ref)
+  if (!processRef)
     return false;  // we have nothing to schedule. simply return.
 
-  SizeT ret = process_ref.Run();
+  SizeT ret = processRef.Run();
 
   kcout << StringBuilder::FromInt(
-      "ProcessHelper::StartScheduling() Iterated over: % processes.\r\n", ret);
+      "ProcessHelper::StartScheduling() Iterated over: {%} processes.\r\n", ret);
 
   return true;
 }
