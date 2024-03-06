@@ -35,5 +35,6 @@ struct PACKED XiffHeader final {
 #define kXIFFContainerAudio "XAFF"
 #define kXIFFContainerInstaller "XnFF"
 #define kXIFFContainerGeneric "XIFF"
+#define kXIFFContainerBinary "XEFF"
 
 #endif  // ifndef __XIFF__
