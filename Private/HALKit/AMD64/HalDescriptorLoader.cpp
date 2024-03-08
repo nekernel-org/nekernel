@@ -10,6 +10,8 @@ namespace HCore::HAL {
 STATIC RegisterGDT kRegGdt;
 
 void GDTLoader::Load(RegisterGDT &gdt) {
+  MUST_PASS(gdt.Base != 0);
+
   kRegGdt.Base = gdt.Base;
   kRegGdt.Limit = gdt.Limit;
 
@@ -23,6 +25,7 @@ STATIC ::HCore::Detail::AMD64::InterruptDescriptorAMD64
 
 void IDTLoader::Load(Register64 &idt) {
   volatile ::HCore::UIntPtr **baseIdt = (volatile ::HCore::UIntPtr **)idt.Base;
+  MUST_PASS(baseIdt);
 
   MUST_PASS(baseIdt[0]);
 

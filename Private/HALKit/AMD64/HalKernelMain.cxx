@@ -96,8 +96,6 @@ EXTERN_C void RuntimeMain(
 
   Detail::_ke_power_on_self_test();
   
-  HCore::kcout << "HCoreKrnl: Everything is OK...\r\n";
-
   /// END POST
 
   /// Mounts a NewFS block.
@@ -107,8 +105,11 @@ EXTERN_C void RuntimeMain(
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
     /// TODO: Parse system configuration.
   } else {
+    HCore::kcout << "HCoreKrnl: Running setup...\r\n";
     // Open file from first hard-drive.
     HCore::PEFLoader img("/System/HCoreInstallWizard.exe");
+
+    MUST_PASS(img.IsLoaded());
 
     /// Run the server executive.
     HCore::Utils::execute_from_image(img);

@@ -56,6 +56,7 @@ bool serial_init() noexcept {
 }  // namespace Detail
 
 EXTERN_C void ke_io_print(const char* bytes) {
+#ifdef __DEBUG__
   Detail::serial_init();
 
   if (!bytes || Detail::kState != kStateReady) return;
@@ -67,13 +68,12 @@ EXTERN_C void ke_io_print(const char* bytes) {
   SizeT len = rt_string_len(bytes, 256);
 
   while (index < len) {
-#ifdef __DEBUG__
     HAL::Out8(Detail::PORT, bytes[index]);
-#endif // __DEBUG__
     ++index;
   }
 
   Detail::kState = kStateReady;
+#endif // __DEBUG__
 }
 
 TerminalDevice TerminalDevice::Shared() noexcept {
