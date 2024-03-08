@@ -118,4 +118,6 @@ typedef struct ExecImportDirectory {
   U32 mThunkTableRva;
 } ExecImportDirectory, *ExecImportDirectoryPtr;
 
+#define kPeStart "__hcore_subsys_start"
+
 #endif /* ifndef __PE__ */

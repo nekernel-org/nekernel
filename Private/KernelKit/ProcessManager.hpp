@@ -9,6 +9,7 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/FileManager.hpp>
+#include <KernelKit/ProcessTeam.hpp>
 #include <KernelKit/PermissionSelector.hxx>
 #include <NewKit/LockDelegate.hpp>
 #include <NewKit/MutableArray.hpp>
@@ -191,11 +192,13 @@ class ProcessManager final {
 
   HCORE_COPY_DEFAULT(ProcessManager)
 
-  operator bool() { return m_Headers.Count() > 0; }
-  bool operator!() { return m_Headers.Count() == 0; }
+  operator bool() { return mTeam.AsArray().Count() > 0; }
+  bool operator!() { return mTeam.AsArray().Count() == 0; }
 
-  bool Add(Ref<Process> &Header);
-  bool Remove(SizeT Header);
+  ProcessTeam& CurrentTeam() { return mTeam; }
+
+  SizeT Add(Ref<Process> &headerRef);
+  bool Remove(SizeT headerIndex);
 
   Ref<Process> &GetCurrent();
   SizeT Run() noexcept;
@@ -203,8 +206,7 @@ class ProcessManager final {
   static Ref<ProcessManager> Shared();
 
  private:
-  MutableArray<Ref<Process>> m_Headers;
-  Ref<Process> m_CurrentProcess;
+  ProcessTeam mTeam;
 };
 
 /*

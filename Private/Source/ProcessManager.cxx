@@ -145,15 +145,15 @@ void Process::Exit(Int32 exit_code) {
   ProcessManager::Shared().Leak().Remove(this->ProcessId);
 }
 
-bool ProcessManager::Add(Ref<Process> &process) {
-  if (!process) return false;
+SizeT ProcessManager::Add(Ref<Process> &process) {
+  if (!process) return -1;
 
-  if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel) return false;
+  if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel) return -1;
 
   kcout << "ProcessManager::Add(Ref<Process>& process)\r\n";
 
   process.Leak().HeapPtr = ke_new_heap(kPoolUser | kPoolRw);
-  process.Leak().ProcessId = this->m_Headers.Count();
+  process.Leak().ProcessId = mTeam.AsArray().Count();
   process.Leak().HeapCursor = process.Leak().HeapPtr;
 
   process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame *>(
@@ -165,7 +165,7 @@ bool ProcessManager::Add(Ref<Process> &process) {
 
   process.Leak().AssignStart(imageStart);
 
-  this->m_Headers.Add(process);
+  mTeam.AsArray().Add(process);
 
   if (!imageStart && process.Leak().Kind == Process::ExecutableType) {
     process.Leak().Crash();
@@ -178,23 +178,23 @@ bool ProcessManager::Add(Ref<Process> &process) {
       ke_stop(RUNTIME_CHECK_PROCESS);
   }
 
-  return true;
+  return mTeam.AsArray().Count() - 1;
 }
 
 bool ProcessManager::Remove(SizeT process) {
-  if (process > this->m_Headers.Count()) return false;
+  if (process > mTeam.AsArray().Count()) return false;
 
   kcout << "ProcessManager::Remove(SizeT process)\r\n";
 
-  return this->m_Headers.Remove(process);
+  return mTeam.AsArray().Remove(process);
 }
 
 SizeT ProcessManager::Run() noexcept {
   SizeT processIndex = 0;  //! we store this guy to tell the scheduler how many
                            //! things we have scheduled.
 
-  for (; processIndex < this->m_Headers.Count(); ++processIndex) {
-    auto process = this->m_Headers[processIndex];
+  for (; processIndex < mTeam.AsArray().Count(); ++processIndex) {
+    auto process = mTeam.AsArray()[processIndex];
 
     MUST_PASS(process);  //! no need for a MUST_PASS(process.Leak());, it is
                          //! recursive because of the nature of the class;
@@ -208,6 +208,7 @@ SizeT ProcessManager::Run() noexcept {
       // set the current process.
       m_CurrentProcess = unwrapped_process;
 
+      // tell helper to find a core to schedule on.
       ProcessHelper::Switch(m_CurrentProcess.Leak().StackFrame,
                             m_CurrentProcess.Leak().ProcessId);
     } else {
@@ -227,7 +228,7 @@ Ref<ProcessManager> ProcessManager::Shared() {
 Ref<Process> &ProcessManager::GetCurrent() { return m_CurrentProcess; }
 
 PID &ProcessHelper::GetCurrentPID() {
-  kcout << "ProcessHelper::GetCurrentPID\r\n";
+  kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r\n";
   return ProcessManager::Shared().Leak().GetCurrent().Leak().ProcessId;
 }
 
@@ -268,7 +269,7 @@ bool ProcessHelper::StartScheduling() {
   SizeT ret = processRef.Run();
 
   kcout << StringBuilder::FromInt(
-      "ProcessHelper::StartScheduling() Iterated over: {%} processes.\r\n", ret);
+      "ProcessHelper::StartScheduling() Iterated over: % jobs.\r\n", ret);
 
   return true;
 }
@@ -288,7 +289,7 @@ bool ProcessHelper::Switch(HAL::StackFrame *the_stack, const PID &new_pid) {
     if (SMPManager::Shared().Leak()[index].Leak().IsBusy()) continue;
 
     if (SMPManager::Shared().Leak()[index].Leak().Kind() !=
-            ThreadKind::kHartBoot ||
+            ThreadKind::kHartBoot &&
         SMPManager::Shared().Leak()[index].Leak().Kind() !=
             ThreadKind::kHartSystemReserved) {
       SMPManager::Shared().Leak()[index].Leak().Busy(true);
