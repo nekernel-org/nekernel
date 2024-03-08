@@ -8,7 +8,7 @@
 
     Revision History:
 
-
+    Fix stupid implementation for a more smarter one.
 
 ------------------------------------------- */
 
@@ -92,10 +92,11 @@ BFileReader::~BFileReader() {
     this->mFile = nullptr;
   }
 
+  if (this->mBlob)
+    BS->FreePool(mBlob);
+
   BSetMem(this->mPath, 0, kPathLen);
 }
-
-#define hTransferBufferAddress 0xffffffff10000000
 
 /**
     @brief this reads all of the buffer.

@@ -24,6 +24,10 @@
 ////////////////////////////////////////////////////
 
 namespace HCore {
+class Process;
+class ProcessTeam;
+class ProcessManager;
+
 //! @brief Process identifier.
 typedef Int64 ProcessID;
 
@@ -178,6 +182,24 @@ class Process final {
  private:
   friend ProcessManager;
   friend ProcessHelper;
+};
+
+/// \brief Processs Team (contains multiple processes inside it.)
+/// Equivalent to a process batch
+class ProcessTeam final {
+public:
+    explicit ProcessTeam() = default;
+    ~ProcessTeam() = default;
+
+    HCORE_COPY_DEFAULT(ProcessTeam);
+
+    MutableArray<Ref<Process>>& AsArray() { return mProcessList; }
+    Ref<Process>& AsRef() { return mCurrentProcess; }
+
+public:
+    MutableArray<Ref<Process>> mProcessList;
+    Ref<Process> mCurrentProcess;
+
 };
 
 using ProcessPtr = Process *;

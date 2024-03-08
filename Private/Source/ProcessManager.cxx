@@ -206,14 +206,14 @@ SizeT ProcessManager::Run() noexcept {
       unwrapped_process.PTime = 0;
 
       // set the current process.
-      m_CurrentProcess = unwrapped_process;
+      mTeam.AsRef() = unwrapped_process;
 
       // tell helper to find a core to schedule on.
-      ProcessHelper::Switch(m_CurrentProcess.Leak().StackFrame,
-                            m_CurrentProcess.Leak().ProcessId);
+      ProcessHelper::Switch(mTeam.AsRef().Leak().StackFrame,
+                            mTeam.AsRef().Leak().ProcessId);
     } else {
       // otherwise increment the P-time.
-      ++m_CurrentProcess.Leak().PTime;
+      ++mTeam.AsRef().Leak().PTime;
     }
   }
 
@@ -225,7 +225,7 @@ Ref<ProcessManager> ProcessManager::Shared() {
   return {ref};
 }
 
-Ref<Process> &ProcessManager::GetCurrent() { return m_CurrentProcess; }
+Ref<Process> &ProcessManager::GetCurrent() { return mTeam.AsRef(); }
 
 PID &ProcessHelper::GetCurrentPID() {
   kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r\n";

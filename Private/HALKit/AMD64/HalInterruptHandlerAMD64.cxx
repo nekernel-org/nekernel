@@ -18,7 +18,6 @@
 EXTERN_C ATTRIBUTE(naked) HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr rsp)
 {
     HCore::HAL::StackFramePtr stackPtr = reinterpret_cast<HCore::HAL::StackFramePtr>(rsp);
-    HCORE_UNUSED(stackPtr);
 
     if (stackPtr->IntNum == kInterruptId ||
         stackPtr->IntNum == kInterruptIdAlt) {

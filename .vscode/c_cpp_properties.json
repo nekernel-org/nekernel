@@ -5,12 +5,25 @@
       "includePath": [
         "${workspaceFolder}/Private/**",
         "${workspaceFolder}/Private/NewBoot/**",
-        "${workspaceFolder}/Public/Kits/**",
+        "${workspaceFolder}/Public/Kits/**"
       ],
       "defines": ["__HCORE__", "__HAVE_HCORE_APIS__", "__FSKIT_NEWFS__", "kBootKrnlSections"],
       "cStandard": "c17",
       "cppStandard": "c++20",
       "compilerPath": "/opt/homebrew/bin/x86_64-w64-mingw32-gcc",
+      "intelliSenseMode": "gcc-x64"
+    },
+    {
+      "name": "HCore (Win)",
+      "includePath": [
+        "${workspaceFolder}/Private/**",
+        "${workspaceFolder}/Private/NewBoot/**",
+        "${workspaceFolder}/Public/Kits/**"
+      ],
+      "defines": ["__HCORE__", "__HAVE_HCORE_APIS__", "__FSKIT_NEWFS__", "kBootKrnlSections"],
+      "cStandard": "c17",
+      "cppStandard": "c++20",
+      "compilerPath": "C:/cygwin64/bin/x86_64-w64-mingw32-gcc.exe",
       "intelliSenseMode": "gcc-x64"
     },    
     {

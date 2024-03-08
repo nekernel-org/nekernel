@@ -5,8 +5,14 @@
 
 CC_GNU=x86_64-w64-mingw32-g++
 LD_GNU=x86_64-w64-mingw32-ld
+
+ifeq ($(shell uname), Darwin)
+EMU=qemu-system-x86_64
+else
+EMU=qemu-system-x86_64w.exe
+endif
+
 LD_FLAGS=-e efi_main --subsystem=10
-ASM=nasm
 OBJ=$(wildcard *.o) $(wildcard ../../Obj/*.obj) $(wildcard HEL/AMD64/*.obj)
 
 REM=rm
@@ -22,7 +28,6 @@ invalid-recipe:
 .PHONY: bootloader-amd64
 bootloader-amd64:
 	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx *.cxx
-	$(ASM) $(FLAG_ASM) HEL/AMD64/AMD64-VirtualMemory.asm
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o HCoreLdr.exe
 	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	cp HCoreLdr.exe CDROM/EFI/BOOT/HCORELDR.EFI
@@ -30,7 +35,7 @@ bootloader-amd64:
 
 .PHONY: run-efi-amd64
 run-efi-amd64:
-	qemu-system-x86_64 -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -d int
+	$(EMU) -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -d int
 
 .PHONY: download-edk
 download-edk:

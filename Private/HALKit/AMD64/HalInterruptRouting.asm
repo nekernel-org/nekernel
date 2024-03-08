@@ -12,7 +12,6 @@
 [bits 64]
 
 %macro IntExp 1
-align 4
 global __HCR_INT_%1 
 __HCR_INT_%1:
     cld
@@ -21,7 +20,6 @@ __HCR_INT_%1:
 %endmacro
 
 %macro IntNormal 1
-align 4
 global __HCR_INT_%1 
 __HCR_INT_%1:
     cld

@@ -52,16 +52,6 @@ class PEFLoader : public Loader {
 };
 
 namespace Utils {
-/// \brief Much like Mac OS's UPP.
-/// This is read-only by design.
-/// It handles different kind of code.
-/// ARM <-> AMD64 for example.
-typedef struct UniversalProcedureTable final {
-  const Char NAME[kPefNameLen];
-  const VoidPtr TRAP;
-  const SizeT ARCH;
-} PACKED UniversalProcedureTableType;
-
 bool execute_from_image(PEFLoader &exec) noexcept;
 }  // namespace Utils
 }  // namespace HCore

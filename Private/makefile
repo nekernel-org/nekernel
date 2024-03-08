@@ -6,7 +6,17 @@
 CC			= x86_64-w64-mingw32-gcc
 LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -c -ffreestanding -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__HAVE_HCORE_APIS__ -D__HCORE__ -I../ -I./ 
-ASM			= nasm
+
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Darwin)
+ASM = nasm
+else
+# Otherwise Windows NT.
+ASM = $(WINASM)
+endif
+
+# Add assembler, linker, and object files variables.
 ASMFLAGS	= -f win64
 LDFLAGS		= -e Main --subsystem=17
 LDOBJ		= $(wildcard Obj/*.obj)
