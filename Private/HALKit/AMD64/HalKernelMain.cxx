@@ -74,12 +74,12 @@ EXTERN_C void RuntimeMain(
   gdtBase.Base = (HCore::UIntPtr)&GDT;
   gdtBase.Limit = sizeof(Detail::HC_GDT) - 1;
 
-  /// load gdt and far jump to rax.
+  /// Load GDT.
 
   HCore::HAL::GDTLoader gdt;
   gdt.Load(gdtBase);
 
-  /// load idt buffer
+  /// Load IDT.
 
   HCore::HAL::Register64 idtBase;
   idtBase.Base = (HCore::UIntPtr)kInterruptVectorTable;
@@ -89,7 +89,11 @@ EXTERN_C void RuntimeMain(
   idt.Load(idtBase);
 
   KeInitRsrc();
-  KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH, ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2), ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
+
+  KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH, 
+            ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2), 
+            ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
+
   KeClearRsrc();
 
   /// START POST
