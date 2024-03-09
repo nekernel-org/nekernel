@@ -16,7 +16,7 @@
 /// @return the stackframe pointer.
 EXTERN_C ATTRIBUTE(naked) HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr sf)
 {
-    volatile HCore::HAL::StackFramePtr stackPtr = reinterpret_cast<volatile HCore::HAL::StackFramePtr>(sf);
+    HCore::HAL::StackFramePtr stackPtr = reinterpret_cast<HCore::HAL::StackFramePtr>(sf);
     MUST_PASS(stackPtr);
 
     switch (stackPtr->IntNum)
