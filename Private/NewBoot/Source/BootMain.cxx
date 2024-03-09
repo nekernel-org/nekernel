@@ -32,7 +32,7 @@ typedef void (*bt_main_type)(HEL::HandoverInformationHeader* HIH);
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
   InitEFI(SystemTable); // Init the efi library.
-  InitQT(); // Quick Toolkit for UI
+  InitGOP(); // Quick Toolkit for UI
 
   BTextWriter writer;
 

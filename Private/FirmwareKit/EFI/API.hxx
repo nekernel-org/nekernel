@@ -79,6 +79,7 @@ inline void InitEFI(EfiSystemTable *SystemTable) noexcept {
   ST->ConOut->SetAttribute(SystemTable->ConOut, kEFIYellow);
 
   ST->BootServices->SetWatchdogTimer(0, 0, 0, nullptr);
+  ST->ConOut->EnableCursor(ST->ConOut, false);
 }
 
 #ifdef __BOOTLOADER__

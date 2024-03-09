@@ -177,9 +177,9 @@ inline UInt16 kStride;
 inline EfiGUID kGopGuid;
 
 /**
-@brief Init the QuickTemplate GUI framework.
+@brief Inits the QuickTemplate GUI framework.
 */
-inline Void InitQT() noexcept {
+inline Void InitGOP() noexcept {
   kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
   kGop = nullptr;
 

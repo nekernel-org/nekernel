@@ -469,6 +469,8 @@ typedef UInt64(EFI_API *EfiOpenProtocol)(EfiHandlePtr Handle, EfiGUID *Guid,
                                          EfiHandlePtr ControllerHandle,
                                          UInt32 Attributes);
 
+typedef UInt64(EFI_API *EfiEnableCursor)(EfiSimpleTextOutputProtocol* This, Boolean Visible);
+
 /**
 @name EfiBootServices
 @brief UEFI Boot Services record, it contains functions necessary to a
@@ -538,7 +540,7 @@ typedef struct EfiSimpleTextOutputProtocol {
   EfiTextAttrib SetAttribute;
   EfiTextClear ClearScreen;
   VoidPtr SetCursorPosition;
-  VoidPtr EnableCursor;
+  EfiEnableCursor EnableCursor;
   VoidPtr Mode;
 } EfiSimpleTextOutputProtocol;
 
