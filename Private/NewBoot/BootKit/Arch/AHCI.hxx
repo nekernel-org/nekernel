@@ -24,10 +24,10 @@ class BDeviceAHCI final {
     HCore::Boolean mErr{false};
     HCore::Boolean mDetected{false};
 
-    operator bool() { return !mErr; }
+    operator bool() { return !this->mErr; }
   };
 
-  operator bool() { return Leak().mDetected; }
+  operator bool() { return this->Leak().mDetected; }
 
   BDeviceAHCI& Read(HCore::WideChar* Buf, const HCore::SizeT& SecCount);
   BDeviceAHCI& Write(HCore::WideChar* Buf, const HCore::SizeT& SecCount);

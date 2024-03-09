@@ -104,7 +104,7 @@ Madt* system_find_core(Madt* madt) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void system_get_cores(voidPtr rsdPtr) {
+void hal_system_get_cores(voidPtr rsdPtr) {
   auto acpi = ACPIManager(rsdPtr);
   kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 

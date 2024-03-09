@@ -22,33 +22,6 @@
 
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
 
-namespace Detail {
-using namespace HCore;
-
-EXTERN_C void _ke_power_on_self_test(void);
-
-/**
-    @brief Global descriptor table entry, either null, code or data.
-*/
-struct PACKED HC_GDT_ENTRY final {
-  UInt16 Limit0;
-  UInt16 Base0;
-  UInt8 Base1;
-  UInt8 AccessByte;
-  UInt8 Limit1_Flags;
-  UInt8 Base2;
-};
-
-struct PACKED ALIGN(0x1000) HC_GDT final {
-  HC_GDT_ENTRY Null;
-  HC_GDT_ENTRY KernCode;
-  HC_GDT_ENTRY KernData;
-  HC_GDT_ENTRY UserNull;
-  HC_GDT_ENTRY UserCode;
-  HC_GDT_ENTRY UserData;
-};
-}  // namespace Detail
-
 EXTERN_C void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
   kHandoverHeader = HandoverHeader;
@@ -60,7 +33,7 @@ EXTERN_C void RuntimeMain(
   kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 
-  static Detail::HC_GDT GDT = {
+  STATIC HCore::HAL::Detail::HCoreGDT GDT = {
       {0, 0, 0, 0x00, 0x00, 0},  // null entry
       {0, 0, 0, 0x9a, 0xaf, 0},  // kernel code
       {0, 0, 0, 0x92, 0xaf, 0},  // kernel data
@@ -71,8 +44,8 @@ EXTERN_C void RuntimeMain(
 
   HCore::HAL::RegisterGDT gdtBase;
 
-  gdtBase.Base = (HCore::UIntPtr)&GDT;
-  gdtBase.Limit = sizeof(Detail::HC_GDT) - 1;
+  gdtBase.Base = reinterpret_cast<HCore::UIntPtr>(&GDT);
+  gdtBase.Limit = sizeof(HCore::HAL::Detail::HCoreGDT) - 1;
 
   /// Load GDT.
 
@@ -98,7 +71,7 @@ EXTERN_C void RuntimeMain(
 
   /// START POST
 
-  Detail::_ke_power_on_self_test();
+  HCore::HAL::Detail::_ke_power_on_self_test();
   
   /// END POST
 

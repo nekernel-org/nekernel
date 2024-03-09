@@ -140,7 +140,34 @@ class IDTLoader final {
   static void Load(Ref<Register64> &idt);
 };
 
-void system_get_cores(voidPtr rsdPtr);
+Void hal_system_get_cores(VoidPtr rsdPtr);
+
+/// @brief Processor specific structures.
+namespace Detail {
+EXTERN_C void _ke_power_on_self_test(void);
+
+/**
+    @brief Global descriptor table entry, either null, code or data.
+*/
+
+struct PACKED HCoreGDTRecord final {
+  UInt16 Limit0;
+  UInt16 Base0;
+  UInt8 Base1;
+  UInt8 AccessByte;
+  UInt8 Limit1_Flags;
+  UInt8 Base2;
+};
+
+struct PACKED ALIGN(0x1000) HCoreGDT final {
+  HCoreGDTRecord Null;
+  HCoreGDTRecord KernCode;
+  HCoreGDTRecord KernData;
+  HCoreGDTRecord UserNull;
+  HCoreGDTRecord UserCode;
+  HCoreGDTRecord UserData;
+};
+}  // namespace Detail
 }  // namespace HCore::HAL
 
 EXTERN_C void idt_handle_system_call(HCore::UIntPtr rsp);
