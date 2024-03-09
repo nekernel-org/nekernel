@@ -106,7 +106,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  reinterpret_cast<DosHeaderPtr>(blob)->eLfanew +
                                  ptrHdr->mSizeOfOptionalHeader +
                                  (sizeof(ExecHeader) +
-                                  sizeof(ExecOptionalHeader) + sizeof(U32)));
+                                  sizeof(ExecOptionalHeader) + sizeof(UInt32)));
 
         while (blobKrnl->mCharacteristics != 0x00000020) {
           blobKrnl = blobKrnl + sizeof(ExecSectionHeader);
