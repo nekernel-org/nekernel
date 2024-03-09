@@ -9,21 +9,26 @@
 
 #include <ArchKit/ArchKit.hpp>
 
-/// @brief Interrupt handler 21h, 10h 
-/// @param rsp stack pointer.
-
-#define kInterruptIdAlt 0x10
 #define kInterruptId    0x21
 
-EXTERN_C ATTRIBUTE(naked) HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr rsp)
+/// @brief Runtime interrupt handler
+/// @param sf The stack frame pushed by the isr.
+/// @return the stackframe pointer.
+EXTERN_C ATTRIBUTE(naked) HCore::UIntPtr rt_handle_interrupts(HCore::UIntPtr sf)
 {
-    HCore::HAL::StackFramePtr stackPtr = reinterpret_cast<HCore::HAL::StackFramePtr>(rsp);
+    volatile HCore::HAL::StackFramePtr stackPtr = reinterpret_cast<volatile HCore::HAL::StackFramePtr>(sf);
+    MUST_PASS(stackPtr);
 
-    if (stackPtr->IntNum == kInterruptId ||
-        stackPtr->IntNum == kInterruptIdAlt) {
-        /// Do system call TODO
-        
+    switch (stackPtr->IntNum)
+    {
+    case kInterruptId:
+    {
+        /* TODO: HcOpenDevice and such syscalls. */
+        break;
+    }
+    default:
+        break;
     }
 
-    return rsp;
+    return sf;
 }

@@ -9,6 +9,7 @@
 
 #include <FirmwareKit/EFI.hxx>
 
-extern "C" Int32 EfiMain(EfiHandlePtr handle, EfiSystemTable* SystemTable) {
+EXTERN_C Int32 EfiMain(EfiHandlePtr handle, EfiSystemTable* SystemTable) 
+{
   return kEfiOk;
 }

@@ -34,7 +34,7 @@ Main:
     push rcx
     call RuntimeMain
     pop rcx
-L0:
+MainLoop:
     cli
     hlt
     jmp $

@@ -13,7 +13,7 @@ namespace HCore {
 namespace Indexer {
 class INewFSIterator;
 
-using IndexElement = voidPtr;
+using IndexElement = VoidPtr;
 
 ///
 /// @name INewFSIterator
@@ -22,7 +22,7 @@ using IndexElement = voidPtr;
 
 class INewFSIterator {
  public:
-  INewFSIterator() = default;
+  explicit INewFSIterator() = default;
   virtual ~INewFSIterator() = default;
 
  public:

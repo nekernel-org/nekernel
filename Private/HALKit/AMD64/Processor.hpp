@@ -23,8 +23,8 @@
 
 #define kCPUBackendName "AMD64"
 
-#define IsActiveLow(flag) (flag & 2)
-#define IsLevelTriggered(flag) (flag & 8)
+#define IsActiveLow(FLG) (FLG & 2)
+#define IsLevelTriggered(FLG) (FLG & 8)
 
 #define kInterruptGate 0x8E
 #define kTrapGate 0xEF

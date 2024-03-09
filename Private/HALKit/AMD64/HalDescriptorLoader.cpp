@@ -25,11 +25,12 @@ STATIC ::HCore::Detail::AMD64::InterruptDescriptorAMD64
 
 void IDTLoader::Load(Register64 &idt) {
   volatile ::HCore::UIntPtr **baseIdt = (volatile ::HCore::UIntPtr **)idt.Base;
+  
   MUST_PASS(baseIdt);
-
-  MUST_PASS(baseIdt[0]);
-
+  
   for (UInt16 i = 0; i < kKernelIdtSize; i++) {
+    MUST_PASS(baseIdt[i]);
+
     kInterruptVectorTable[i].Selector = kGdtCodeSelector;
     kInterruptVectorTable[i].Ist = 0x0;
     kInterruptVectorTable[i].TypeAttributes = kInterruptGate;
@@ -40,10 +41,9 @@ void IDTLoader::Load(Register64 &idt) {
     kInterruptVectorTable[i].Zero = 0x0;
   }
 
-  kRegIdt.Base = (UIntPtr)kInterruptVectorTable;
+  kRegIdt.Base = reinterpret_cast<UIntPtr>(kInterruptVectorTable);
   kRegIdt.Limit = sizeof(::HCore::Detail::AMD64::InterruptDescriptorAMD64) *
-                      kKernelIdtSize -
-                  1;
+                  (kKernelIdtSize - 1);
 
   rt_load_idt(kRegIdt);
 
