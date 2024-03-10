@@ -13,8 +13,8 @@
 
 #pragma once
 
-#include <GKit/Core.hxx>
-#include <GKit/Dim2d.hxx>
+#include <System.Graphics/Core.hxx>
+#include <System.Graphics/Dim2d.hxx>
 #include <NewKit/MutableArray.hpp>
 
 namespace HCore {

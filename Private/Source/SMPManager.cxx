@@ -164,4 +164,8 @@ SMPManager::operator bool() noexcept { return !m_ThreadList.Empty(); }
  * @return
  */
 bool SMPManager::operator!() noexcept { return m_ThreadList.Empty(); }
+
+/// @brief Returns the amount of core present.
+/// @return the number of cores.
+SizeT SMPManager::Count() noexcept { return m_ThreadList.Count(); }
 }  // namespace HCore

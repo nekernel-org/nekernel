@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	h-core
- * 	Copyright, Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 /**
     @brief The Explicit Partition Map scheme.
@@ -36,7 +33,7 @@ struct __attribute__((packed)) BootBlock {
 
 /**
  * @brief The EPM partition block.
- * used to explain a partition inside a media.
+ * used to describe a partition inside a media.
  */
 struct __attribute__((packed)) PartitionBlock {
   char name[32];

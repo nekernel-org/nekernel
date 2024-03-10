@@ -13,7 +13,7 @@
 
 #pragma once
 
-typedef enum {
+enum {
   CPU_FEATURE_ECX_SSE3 = 1 << 0,
   CPU_FEATURE_ECX_PCLMUL = 1 << 1,
   CPU_FEATURE_ECX_DTES64 = 1 << 2,
@@ -75,5 +75,6 @@ typedef enum {
   CPU_FEATURE_EDX_TM = 1 << 29,
   CPU_FEATURE_EDX_IA64 = 1 << 30,
   CPU_FEATURE_EDX_PBE = 1 << 31
-} CPU_FEATURE;
+};
 
+typedef int CPU_FEATURE;

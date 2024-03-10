@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: Frame.cpp
+    File: Core.cpp
     Purpose:
 
     Revision History:
@@ -11,8 +11,4 @@
 
 ------------------------------------------- */
 
-#include <GKit/Frame.hxx>
-
-namespace HCore {
-
-} // namespace HCore
+#include <System.Graphics/Core.hxx>

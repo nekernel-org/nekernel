@@ -7,14 +7,12 @@
  * 	========================================================
  */
 
-#include <ZipKit/Zip.hpp>
-
-// very hacky thing because of gcc...
-#include <SystemKit/CoreAPI.hxx>
+#include <System.Zip/Zip.hpp>
+#include <System.Core/CoreAPI.hxx>
 
 #define kInitialSz 4096
 
-namespace ZipKit {
+namespace System::Zip {
 ZipStream::ZipStream()
     : fSharedData(HHeap::Shared()->New(kInitialSz, kHeapExpandable)),
       fSharedSz(kInitialSz) {}
@@ -74,4 +72,4 @@ void ZipStream::Inflate(const char *name, void *data) {
   inflate(&inflate_stream, Z_NO_FLUSH);
   inflateEnd(&inflate_stream);
 }
-}  // namespace ZipKit
+}  // namespace System.Zip

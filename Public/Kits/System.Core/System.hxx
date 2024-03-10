@@ -10,9 +10,9 @@
 
 ------------------------------------------------------- */
 
-#include <SystemKit/CoreAPI.hxx>
-#include <SystemKit/FileAPI.hxx>
-#include <SystemKit/HeapAPI.hxx>
-#include <SystemKit/ThreadAPI.hxx>
+#include <System.Core/CoreAPI.hxx>
+#include <System.Core/FileAPI.hxx>
+#include <System.Core/HeapAPI.hxx>
+#include <System.Core/ThreadAPI.hxx>
 
 using namespace HCore;

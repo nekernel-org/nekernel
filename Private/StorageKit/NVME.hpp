@@ -35,11 +35,11 @@ class NVMEDevice : public DeviceInterface<NVMEPacket> {
   void (*fCleanup)(void);
 };
 
-class NVMEPacket {
+class NVMEPacket final {
   UIntPtr DataPtr;
-  SizeT DataSz;
-  UInt64 DriveID;
-
-  UInt8 Bits;
+  SizeT   DataSz;
+  UInt8   Namespace;
+  Lba     Begin;
+  Lba     End;
 };
 }  // namespace HCore

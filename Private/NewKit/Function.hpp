@@ -35,6 +35,7 @@ namespace HCore
         {
             return m_Fn;
         }
+        
         bool operator!()
         {
             return !m_Fn;

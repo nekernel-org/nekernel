@@ -6,6 +6,8 @@
 
 #pragma once
 
+/// @brief kernel errors.
+
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Defines.hpp>
 

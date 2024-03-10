@@ -15,8 +15,8 @@ template <typename T, Size N>
 class Array final
 {
 public:
-    Array() {}
-    ~Array() {}
+    explicit Array() = default;
+    ~Array() = default;
 
     Array &operator=(const Array &) = default;
     Array(const Array &) = default;
@@ -39,6 +39,18 @@ public:
         }
 
         return true;
+    }
+
+    SizeT Count() const
+    {
+        SizeT cntElems = 0UL;
+        for (auto Val : m_Array)
+        {
+            if (Val)
+                ++cntElems;
+        }
+
+        return cntElems;
     }
 
     const T *CData()

@@ -274,10 +274,16 @@ bool ProcessHelper::StartScheduling() {
   return true;
 }
 
+/**
+ * \brief Does a context switch in a CPU.
+ * \param the_stack the stackframe of the running app.
+ * \param new_pid the process's PID.
+*/
+
 bool ProcessHelper::Switch(HAL::StackFrame *the_stack, const PID &new_pid) {
   if (!the_stack || new_pid < 0) return false;
 
-  for (SizeT index = 0UL; index < kMaxHarts; ++index) {
+  for (SizeT index = 0UL; index < SMPManager::Shared().Leak().Count(); ++index) {
     if (SMPManager::Shared().Leak()[index].Leak().Kind() == kInvalidHart)
       continue;
 

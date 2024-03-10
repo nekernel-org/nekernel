@@ -15,7 +15,7 @@
 #ifndef __DIM2D__
 #define __DIM2D__
 
-#include <GKit/Core.hxx>
+#include <System.Graphics/Core.hxx>
 
 namespace HCore {
 class G_API Dim2d final {

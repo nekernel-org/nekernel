@@ -1,11 +1,8 @@
-/*
- * ========================================================
- *
- *      NewBoot
- *      Copyright Mahrouss Logic, all rights reserved.
- *
- * ========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #include <BootKit/BootKit.hxx>
 #include <KernelKit/MSDOS.hpp>

@@ -100,17 +100,22 @@ class SMPManager final {
   /// @return the reference to the smp manager.
   static Ref<SMPManager> Shared();
 
+ public:
+  /// @brief Returns the amount of threads present in the system.
+  /// @returns SizeT the amount of cores present.
+  SizeT Count() noexcept;
+
  private:
   Array<HardwareThread, kMaxHarts> m_ThreadList;
   ThreadID m_CurrentThread{0};
 };
 
-// @brief wakes up thread.
-// wakes up thread from hang.
+/// @brief wakes up thread.
+/// wakes up thread from hang.
 void rt_wakeup_thread(HAL::StackFrame* stack);
 
-// @brief makes thread sleep.
-// hooks and hangs thread to prevent code from executing.
+/// @brief makes thread sleep.
+/// hooks and hangs thread to prevent code from executing.
 void rt_hang_thread(HAL::StackFrame* stack);
 }  // namespace HCore
 

@@ -28,13 +28,13 @@
   (zlib format), rfc1951 (deflate format) and rfc1952 (gzip format).
 */
 
-// ZipKit is based on zlib, free software from Jean-loup Gailly and Mark Adler
+// System.Zip is based on zlib, free software from Jean-loup Gailly and Mark Adler
 // (c) Western Company Corporation, all rights reserved.
 
 #ifndef ZLIB_H
 #define ZLIB_H
 
-#include <ZipKit/zconf.hpp>
+#include <System.Zip/zconf.hpp>
 
 #ifdef __cplusplus
 extern "C" {

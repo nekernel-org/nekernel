@@ -35,7 +35,7 @@ using namespace HCore;
 /* @brief Library runtime initializer. */
 /***********************************************************************************/
 
-extern "C" SharedObjectPtr ke_library_init(void) {
+EXTERN_C SharedObjectPtr rt_library_init(void) {
   SharedObjectPtr library = hcore_tls_new_class<SharedObject>();
 
   if (!library) {
@@ -73,7 +73,7 @@ extern "C" SharedObjectPtr ke_library_init(void) {
 /* @param SharedObjectPtr the library to free. */
 /***********************************************************************************/
 
-extern "C" Void ke_library_free(SharedObjectPtr lib, bool *successful) {
+EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool *successful) {
   MUST_PASS(successful);
 
   // sanity check (will also trigger a bug check)

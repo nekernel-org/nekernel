@@ -12,10 +12,10 @@
 #define Z_SOLO 1
 
 #include <CompilerKit/CompilerKit.hpp>
-#include <ZipKit/Defines.hpp>
-#include <ZipKit/zlib.hpp>
+#include <System.Zip/Defines.hpp>
+#include <System.Zip/zlib.hpp>
 
-namespace ZipKit {
+namespace System::Zip {
 class ZipStream;
 
 class ZipStream final {
@@ -38,6 +38,6 @@ class ZipStream final {
  private:
   z_stream fStream;
 };
-}  // namespace ZipKit
+}  // namespace System.Zip
 
 #define kZipKitMime "application/x-bzip"

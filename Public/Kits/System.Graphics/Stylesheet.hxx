@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: Stylesheet.hpp
+    File: Stylesheet.hxx
     Purpose:
 
     Revision History:
@@ -15,17 +15,17 @@
 
 /// TODO: Stylesheets for GUI.
 
-#include <GKit/Core.hxx>
-#include <GKit/Dim2d.hxx>
+#include <System.Graphics/Core.hxx>
+#include <System.Graphics/Dim2d.hxx>
 #include <NewKit/MutableArray.hpp>
 
 namespace HCore {
-class G_API Stylesheet final {
+class G_API GStylesheet final {
  public:
-  explicit Stylesheet() = default;
-  ~Stylesheet() = default;
+  explicit GStylesheet() = default;
+  ~GStylesheet() = default;
 
-  HCORE_COPY_DEFAULT(Stylesheet);
+  HCORE_COPY_DEFAULT(GStylesheet);
 
   MutableArray<StringView>& Props() { return mProps; }
 
@@ -35,8 +35,8 @@ class G_API Stylesheet final {
 
 class StylesheetParser final {
  public:
-  static MutableArray<Stylesheet> FromBlob(WideChar* Blob, SizeT BlobSz) {
-    MutableArray<Stylesheet> stylesheet;
+  static MutableArray<GStylesheet> FromBlob(WideChar* Blob, SizeT BlobSz) {
+    MutableArray<GStylesheet> stylesheet;
 
     if (!Blob || BlobSz < 1) return stylesheet;
 

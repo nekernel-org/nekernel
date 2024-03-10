@@ -9,9 +9,6 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
-#include <SystemKit/SystemKit.hxx>
-
-using namespace HCore;
+#include <System.Core/System.hxx>
 
 #define ZIPKIT_VERSION "1.0.1"

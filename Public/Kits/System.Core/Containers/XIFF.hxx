@@ -12,7 +12,7 @@
 
 ------------------------------------------------------- */
 
-#include <SystemKit/CoreAPI.hxx>
+#include <System.Core/CoreAPI.hxx>
 
 /// @brief four-character code for XIFF.
 #define kFourCCLength_XIFF 4
