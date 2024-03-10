@@ -35,7 +35,7 @@ MOVEALL=./MoveAll.sh
 
 .PHONY: h-core-amd64
 h-core-amd64:
-	$(CC) $(CCFLAGS) Source/*.cxx HALKit/AMD64/PCI/*.cxx Source/Network/*.cxx\
+	$(CC) $(CCFLAGS) $(DEBUG) Source/*.cxx HALKit/AMD64/PCI/*.cxx Source/Network/*.cxx\
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptRouting.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
@@ -48,7 +48,6 @@ OBJCOPY=x86_64-w64-mingw32-objcopy
 .PHONY: link-amd64
 link-amd64:
 	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
-	cp $(KERNEL) Root/System
 
 .PHONY: all
 all: h-core-amd64 link-amd64

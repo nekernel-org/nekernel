@@ -103,6 +103,7 @@ enum {
   kDeviceTypeSCSI,
   kDeviceTypeSHCI,
   kDeviceTypeUSB,
+  kDeviceTypeMedia,
   kDeviceTypeCount,
 };
 }  // namespace HCore

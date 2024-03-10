@@ -11,9 +11,9 @@
 
 namespace HCore {
 enum CommStatus {
+  kStateInvalid,
   kStateReady = 0xCF,
   kStateTransmit = 0xFC,
-  kStateInvalid,
   kStateCnt = 3
 };
 
@@ -26,7 +26,9 @@ static int kState = kStateInvalid;
 /// @return 
 bool serial_init() noexcept {
 #ifdef __DEBUG__
-  if (kState == kStateReady) return true;
+  if (kState == kStateReady ||
+      kState == kStateTransmit)
+    return true;
 
   HAL::Out8(PORT + 1, 0x00);  // Disable all interrupts
   HAL::Out8(PORT + 3, 0x80);  // Enable DLAB (set baud rate divisor)
@@ -76,8 +78,49 @@ EXTERN_C void ke_io_print(const char* bytes) {
 #endif // __DEBUG__
 }
 
+EXTERN_C void ke_io_read(const char* bytes) {
+#ifdef __DEBUG__
+  Detail::serial_init();
+
+  if (!bytes || Detail::kState != kStateReady) return;
+
+  Detail::kState = kStateTransmit;
+
+  SizeT index = 0;
+
+  // send zero.
+  HAL::Out8(Detail::PORT, 00);
+
+  // get that zero.
+  auto in = HAL::In8(Detail::PORT);
+
+  while (in != '\n') {
+    // if zero -> ignore.
+    if (in == 0) {
+      ++index;
+      in = HAL::In8(Detail::PORT);
+    
+      continue;
+    }
+
+    ((char*)bytes)[index] = in;
+
+    if (in == 0)
+      break;
+    
+    ++index;
+    in = HAL::In8(Detail::PORT);
+  }
+
+  ((char*)bytes)[index] = 0;
+
+  Detail::kState = kStateReady;
+#endif // __DEBUG__
+}
+
 TerminalDevice TerminalDevice::Shared() noexcept {
-  TerminalDevice out(HCore::ke_io_print, nullptr);
+  TerminalDevice out(HCore::ke_io_print, HCore::ke_io_read);
+  
   return out;
 }
 

@@ -30,4 +30,6 @@
 
 
 
+#include <CompilerKit/Version.hxx>
+
 #endif /* ifndef _INC_CL_HPP */

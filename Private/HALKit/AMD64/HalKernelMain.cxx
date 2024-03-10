@@ -75,21 +75,17 @@ EXTERN_C void RuntimeMain(
   
   /// END POST
 
-  /// Mounts a NewFS block.
-  HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
-
   /// We already have an install of HCore.
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
+    /// Mounts a NewFS block.
+    HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
+    
     /// TODO: Parse system configuration.
   } else {
     HCore::kcout << "HCoreKrnl: Running setup...\r\n";
-    // Open file from first hard-drive.
-    HCore::PEFLoader img("/System/HCoreInstallWizard.exe");
 
-    MUST_PASS(img.IsLoaded());
-
-    /// Run the server executive.
-    HCore::Utils::execute_from_image(img);
+    //HCore::Forms::SetupWizardControl wizard;
+    //wizard.ShowDialog();
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

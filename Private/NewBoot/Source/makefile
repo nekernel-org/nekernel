@@ -35,7 +35,7 @@ bootloader-amd64:
 
 .PHONY: run-efi-amd64
 run-efi-amd64:
-	$(EMU) -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -d int
+	$(EMU) -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -serial stdio
 
 .PHONY: download-edk
 download-edk:

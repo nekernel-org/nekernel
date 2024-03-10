@@ -8,32 +8,11 @@
 //! @brief UART debug via packets.
 
 #include <ArchKit/ArchKit.hpp>
-
-#define kDebugMaxPorts 16
-
-#define kDebugUnboundPort 0xFFFF
-
-#define kDebugMag0 'X'
-#define kDebugMag1 'D'
-#define kDebugMag2 'B'
-#define kDebugMag3 'G'
-
-#define kDebugSourceFile 0
-#define kDebugLine 33
-#define kDebugTeam 43
-#define kDebugEOP 49
+#include <KernelKit/DebugOutput.hpp>
 
 // after that we have start of additional data.
 
 namespace HCore {
-typedef Char rt_debug_type[255];
-
-class DebuggerPorts final {
- public:
-  Int16 fPort[kDebugMaxPorts];
-  Int16 fBoundCnt;
-};
-
 void rt_debug_listen(DebuggerPorts* theHook) noexcept {
   if (theHook == nullptr) return;
 
