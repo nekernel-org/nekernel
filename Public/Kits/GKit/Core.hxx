@@ -22,10 +22,10 @@
 
 #define $() HCore::GApplication::Shared()->Document()
 
-#ifdef __EXPORT_LIB
-#define G_API __attribute__((pef_container(".EXPORT")))
-#else
+#ifdef __IMPORT_LIB
 #define G_API __attribute__((pef_container(".IMPORT")))
+#else
+#define G_API __attribute__((pef_container(".EXPORT")))
 #endif  // ifdef __EXPORT_LIB
 
 namespace HCore {

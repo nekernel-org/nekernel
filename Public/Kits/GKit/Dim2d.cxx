@@ -11,7 +11,7 @@
 
 ------------------------------------------- */
 
-#include <GKit/Dim2d.hpp>
+#include <GKit/Dim2d.hxx>
 
 namespace HCore {
 HCore::UInt& Dim2d::X() { return m_X; }

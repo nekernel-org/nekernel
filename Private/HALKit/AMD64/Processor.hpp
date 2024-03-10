@@ -60,6 +60,7 @@ EXTERN_C void rt_halt();
 EXTERN_C void rt_cli();
 EXTERN_C void rt_sti();
 EXTERN_C void rt_cld();
+EXTERN_C void rt_std();
 
 struct PACKED Register64 final {
   UShort Limit;

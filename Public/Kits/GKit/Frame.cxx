@@ -13,4 +13,6 @@
 
 #include <GKit/Frame.hxx>
 
-namespace HCore {}
+namespace HCore {
+
+} // namespace HCore

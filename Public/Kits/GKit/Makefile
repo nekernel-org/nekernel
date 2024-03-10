@@ -5,7 +5,7 @@
 
 CC=x86_64-w64-mingw32-g++
 CCFLAGS=-shared -ffreestanding -fno-rtti -fno-exceptions -std=c++20
-OUTPUT=GKit.dll
+OUTPUT=System.Graphics.dll
 
 .PHONY: build-gkit
 build-gkit:
@@ -13,7 +13,7 @@ build-gkit:
 
 .PHONY: all
 all: build-gkit
-	@echo "[GKit] done."
+	@echo "[System.Graphics.dll] Build done."
 
 .PHONY: clean
 clean:

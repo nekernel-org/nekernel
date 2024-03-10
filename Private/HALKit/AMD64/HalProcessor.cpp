@@ -52,4 +52,6 @@ void rt_cli() { asm volatile("cli"); }
 void rt_sti() { asm volatile("sti"); }
 
 void rt_cld() { asm volatile("cld"); }
+
+void rt_std() { asm volatile("std"); }
 }  // namespace HCore::HAL

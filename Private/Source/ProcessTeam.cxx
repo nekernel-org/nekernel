@@ -9,8 +9,11 @@
 /// @brief Process Team API.
 /***********************************************************************************/
 
-#include <KernelKit/ProcessManager.hpp>
-#include <KernelKit/SMPManager.hpp>
 #include <KernelKit/ProcessTeam.hpp>
+
+namespace HCore {
+MutableArray<Ref<Process>>& ProcessTeam::AsArray() { return mProcessList; }
+Ref<Process>& ProcessTeam::AsRef() { return mCurrentProcess; }
+} // namespace HCore
 
 // last rev 05-03-24

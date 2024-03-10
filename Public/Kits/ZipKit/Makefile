@@ -7,7 +7,7 @@ CC=x86_64-w64-mingw32-g++
 CCFLAGS=-shared -ffreestanding -fno-rtti -fno-exceptions -std=c++20
 ASM=nasm
 ASMFLAGS=-f elf64
-OUTPUT=ZipKit.dll
+OUTPUT=System.Zip.dll
 
 .PHONY: build-zipkit
 build-zipkit:
@@ -15,7 +15,7 @@ build-zipkit:
 
 .PHONY: all
 all: build-zipkit
-	@echo "Done."
+	@echo "[System.Zip.dll] Done."
 
 .PHONY: clean
 clean:

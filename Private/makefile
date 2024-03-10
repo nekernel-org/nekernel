@@ -13,7 +13,7 @@ ifeq ($(UNAME), Darwin)
 ASM = nasm
 else
 # Otherwise Windows NT.
-ASM = $(WINASM)
+ASM = nasm.exe
 endif
 
 # Add assembler, linker, and object files variables.

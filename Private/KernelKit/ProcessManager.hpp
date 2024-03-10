@@ -193,8 +193,8 @@ public:
 
     HCORE_COPY_DEFAULT(ProcessTeam);
 
-    MutableArray<Ref<Process>>& AsArray() { return mProcessList; }
-    Ref<Process>& AsRef() { return mCurrentProcess; }
+    MutableArray<Ref<Process>>& AsArray();
+    Ref<Process>& AsRef();
 
 public:
     MutableArray<Ref<Process>> mProcessList;

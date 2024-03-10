@@ -16,7 +16,7 @@
 /// TODO: Stylesheets for GUI.
 
 #include <GKit/Core.hxx>
-#include <GKit/Dim2d.hpp>
+#include <GKit/Dim2d.hxx>
 #include <NewKit/MutableArray.hpp>
 
 namespace HCore {
