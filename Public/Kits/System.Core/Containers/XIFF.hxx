@@ -31,6 +31,8 @@ struct PACKED XiffHeader final {
   DWORD f_SpecificFormatType;  // format type. generic
 };
 
+typedef struct XiffHeader XiffHeader;
+
 #define kXIFFContainerVideo "XVFF"
 #define kXIFFContainerAudio "XAFF"
 #define kXIFFContainerInstaller "XnFF"

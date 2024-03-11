@@ -7,7 +7,7 @@
 //! @brief Allocates a pointer from the process's tls.
 
 #ifndef __PROCESS_MANAGER__
-#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 #endif
 
 template <typename T>

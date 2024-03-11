@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 #include <KernelKit/SMPManager.hpp>
 
 ///! BUGS: 0

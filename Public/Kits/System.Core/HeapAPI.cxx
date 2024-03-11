@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <System.Core/HeapAPI.hxx>
-#include <System.Core/HcHeapAPI.h>
+#include <System.Core/hcore.h>
 
 using namespace HCore;
 
@@ -24,7 +24,10 @@ HHeap* HHeap::Shared() noexcept {
 
 void HHeap::Delete(HHeapPtr me) noexcept { HcFreeProcessHeap(kObjectHeap, me); }
 
-SizeT HHeap::Size(HHeapPtr me) noexcept { return HcProcessHeapSize(kObjectHeap, me); }
+SizeT HHeap::Size(HHeapPtr me) noexcept { 
+    CA_MUST_PASS(me);
+    return HcProcessHeapSize(kObjectHeap, me); 
+}
 
 HHeapPtr HHeap::New(const SizeT &sz, const Int32 flags) {
     SizeT _sz = sz;

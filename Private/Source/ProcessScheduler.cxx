@@ -9,11 +9,10 @@
 /// @brief Process Scheduler API.
 /***********************************************************************************/
 
-#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 #include <KernelKit/SMPManager.hpp>
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
-#include <KernelKit/HError.hpp>
 
 ///! bugs = 0
 
@@ -126,7 +125,7 @@ void Process::Exit(Int32 exit_code) {
   kExitCode = exit_code;
 
   if (this->Ring != (Int32)ProcessSelector::kRingDriver) {
-    if (this->HeapPtr) ke_free_heap(this->HeapPtr);
+    if (this->HeapPtr) rt_free_heap(this->HeapPtr);
 
     this->HeapPtr = nullptr;
     this->HeapCursor = nullptr;
@@ -152,7 +151,7 @@ SizeT ProcessManager::Add(Ref<Process> &process) {
 
   kcout << "ProcessManager::Add(Ref<Process>& process)\r\n";
 
-  process.Leak().HeapPtr = ke_new_heap(kPoolUser | kPoolRw);
+  process.Leak().HeapPtr = rt_new_heap(kPoolUser | kPoolRw);
   process.Leak().ProcessId = mTeam.AsArray().Count();
   process.Leak().HeapCursor = process.Leak().HeapPtr;
 
@@ -163,7 +162,7 @@ SizeT ProcessManager::Add(Ref<Process> &process) {
 
   UIntPtr imageStart = reinterpret_cast<UIntPtr>(process.Leak().Image);
 
-  process.Leak().AssignStart(imageStart);
+  process.Leak().SetStart(imageStart);
 
   mTeam.AsArray().Add(process);
 

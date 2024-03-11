@@ -144,7 +144,7 @@ STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr) {
 /// @brief Creates a new pool pointer.
 /// @param flags the flags attached to it.
 /// @return a pool pointer with selected permissions.
-VoidPtr ke_new_heap(Int32 flags) {
+VoidPtr rt_new_heap(Int32 flags) {
   if (!HeapManager::IsEnabled()) return nullptr;
 
   if (HeapManager::Count() > kPoolMaxSz) return nullptr;
@@ -173,7 +173,7 @@ VoidPtr ke_new_heap(Int32 flags) {
 /// @brief free a pool pointer.
 /// @param ptr The pool pointer to free.
 /// @return status code
-Int32 ke_free_heap(VoidPtr ptr) {
+Int32 rt_free_heap(VoidPtr ptr) {
   if (!HeapManager::IsEnabled()) return -1;
 
   if (ptr) {

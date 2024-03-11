@@ -18,4 +18,7 @@
 #define _StrictCheckInput
 #define _StrictCheckOutput
 
+#define _InOut
+#define _StrictInOut
+
 #endif // ifndef __HINTKIT_COMPILER_HINT_HXX__

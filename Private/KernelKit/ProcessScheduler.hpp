@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __PROCESS_MANAGER__
-#define __PROCESS_MANAGER__
+#ifndef __PROCESS_SCHEDULER__
+#define __PROCESS_SCHEDULER__
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/FileManager.hpp>
@@ -121,7 +121,7 @@ class Process final {
   HCORE_COPY_DEFAULT(Process)
 
  public:
-  void AssignStart(UIntPtr &imageStart) noexcept;
+  void SetStart(UIntPtr &imageStart) noexcept;
 
  public:
   Char Name[kProcessLen] = {"Process"};
@@ -168,13 +168,14 @@ class Process final {
   //! @brief TLS Free.
   Boolean Delete(VoidPtr ptr, const SizeT &sz);
 
-  //! @brief Process name getter, example: "C RunTime"
-  const Char *GetName();
-
   //! @brief Wakes up threads.
   void Wake(const bool wakeup = false);
 
+  // Process getters.
  public:
+  //! @brief Process name getter, example: "C RunTime"
+  const Char *GetName();
+
   const ProcessSelector &GetSelector();
   const ProcessStatus &GetStatus();
   const AffinityKind &GetAffinity();
@@ -254,4 +255,4 @@ const Int32 &rt_get_exit_code() noexcept;
 
 ////////////////////////////////////////////////////
 
-#endif /* ifndef __PROCESS_MANAGER__ */
+#endif /* ifndef __PROCESS_SCHEDULER__ */

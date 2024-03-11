@@ -14,7 +14,7 @@
 #include <NewKit/Json.hpp>
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
-#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 #include <KernelKit/Rsrc/Splash.rsrc>
 
 ///! @brief Disk contains HCore files.

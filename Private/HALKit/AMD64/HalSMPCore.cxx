@@ -4,10 +4,10 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 
 using namespace HCore;
-Void Process::AssignStart(UIntPtr &imageStart) noexcept {
+Void Process::SetStart(UIntPtr &imageStart) noexcept {
   if (imageStart == 0) this->Crash();
 
   this->StackFrame->Rbp = imageStart;

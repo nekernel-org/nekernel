@@ -7,7 +7,7 @@
  *  ========================================================
  */
 
-#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 #include <KernelKit/ThreadLocalStorage.hxx>
 
 /// bugs 0

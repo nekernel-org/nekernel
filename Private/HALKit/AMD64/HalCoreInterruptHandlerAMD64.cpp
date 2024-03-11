@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <KernelKit/ProcessManager.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 #include <NewKit/String.hpp>
 
 EXTERN_C void idt_handle_gpf(HCore::UIntPtr rsp) {

@@ -23,10 +23,15 @@
 #define CA_CDECL __attribute__((cdecl))
 #define CA_MSCALL __attribute__((ms_abi))
 
+#define CA_PASCALL CA_STDCALL
+
 typedef __UINT8_TYPE__ BYTE;
 typedef __UINT16_TYPE__ WORD;
 typedef __UINT32_TYPE__ DWORD;
 typedef __UINT64_TYPE__ QWORD;
+
+typedef void* PVOID;
+typedef void VOID;
 
 typedef __WCHAR_TYPE__ WCHAR;
 typedef WCHAR* PWCHAR;
@@ -46,3 +51,6 @@ typedef WCHAR* PWCHAR;
 #ifdef __64x0__
 #   define _M_64000 5 
 #endif 
+
+#define CA_STATIC static
+#define CA_INLINE inline

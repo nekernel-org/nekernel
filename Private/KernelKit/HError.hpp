@@ -7,6 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
+#include <NewKit/ErrorID.hpp>
 
 namespace HCore {
 typedef Int32 HError;
@@ -25,6 +26,8 @@ inline constexpr HError kErrorMath = 42;
 inline constexpr HError kErrorNoNetwork = 43;
 inline constexpr HError kErrorHeapOutOfMemory = 44;
 inline constexpr HError kErrorNoSuchDisk = 45;
+inline constexpr HError kErrorFileExists = 46;
+inline constexpr HError kErrorUnimplemented = 0;
 
 Boolean ke_bug_check(void) noexcept;
 }  // namespace HCore

@@ -20,7 +20,7 @@ class HardwareTimerInterface
 {
   public:
     /// @brief Default constructor
-    HardwareTimerInterface() = default;
+    explicit HardwareTimerInterface() = default;
     virtual ~HardwareTimerInterface() = default;
 
   public:
