@@ -68,20 +68,28 @@ using Lba = SSizeT;
 
 enum class Endian : UChar { kEndianLittle, kEndianBig, kEndianMixed, kCount };
 
+/// @brief Forward object.
+/// @tparam Args the object type.
+/// @param arg the object.
+/// @return object's rvalue
 template <typename Args>
-Args &&forward(Args &arg) {
+inline Args &&forward(Args &arg) {
   return static_cast<Args &&>(arg);
 }
 
+/// @brief Move object.
+/// @tparam Args the object type.
+/// @param arg the object.
+/// @return object's rvalue
 template <typename Args>
-Args &&move(Args &&arg) {
+inline Args &&move(Args &&arg) {
   return static_cast<Args &&>(arg);
 }
 }  // namespace HCore
 
 #define DEDUCE_ENDIAN(address, value)                         \
   (((reinterpret_cast<HCore::Char *>(address)[0]) == (value)) \
-       ? (HCore::Endian::kEndianBig)                                \
+       ? (HCore::Endian::kEndianBig)                          \
        : (HCore::Endian::kEndianLittle))
 
 #define Yes (true)
