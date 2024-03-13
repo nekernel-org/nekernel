@@ -11,6 +11,8 @@
 
 [bits 64]
 
+%define kInterruptId    0x21
+
 %macro IntExp 1
 global __HCR_INT_%1 
 __HCR_INT_%1:
@@ -30,10 +32,11 @@ __HCR_INT_%1:
 ; This file handles the core interrupt table
 ; Last edited 31/01/24
 
-extern rt_handle_interrupts
 global _ke_power_on_self_test
 global ke_handle_irq
 global kInterruptVectorTable
+
+extern ke_io_print
 
 section .text
 
@@ -68,10 +71,34 @@ IntNormal 27
 IntNormal 28
 IntNormal 29
 IntExp   30
-IntNormal 31
 
-%assign i 32
-%rep 224
+IntNormal 31
+IntNormal 32
+
+__HCR_INT_33:
+    cli
+
+    push rax
+
+    mov rcx, kSystemCallLabelEnter
+    call ke_io_print
+
+    pop rax
+
+    push rax
+
+    ;; Find and execute system call TODO
+
+    mov rcx, kSystemCallLabelExit
+    call ke_io_print
+
+    pop rax
+
+    sti
+    iretq
+
+%assign i 34
+%rep 222
     IntNormal i
 %assign i i+1
 %endrep
@@ -79,6 +106,7 @@ IntNormal 31
 ;; this one is doing a POST for us.
 ;; testing interrupts.
 _ke_power_on_self_test:
+    mov rcx, 0
     int 0x21
     int 0x21
     int 0x21
@@ -110,9 +138,16 @@ rt_load_idt:
     sti
     ret
 
+section .data
+
 kInterruptVectorTable:
     %assign i 0
     %rep 256
         dq __HCR_INT_%+i
     %assign i i+1
     %endrep
+
+kSystemCallLabelEnter:
+    db "HCoreKrnl.exe: SystemCall: Enter", 0xa, 0xd, 0
+kSystemCallLabelExit:
+    db "HCoreKrnl.exe: SystemCall: Exit", 0xa, 0xd, 0

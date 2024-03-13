@@ -18,8 +18,8 @@ static IFilesystemManager* kMounted = nullptr;
 /// @return The mounted filesystem.
 IFilesystemManager* IFilesystemManager::GetMounted() { return kMounted; }
 
-/// @brief Unmount drive
-/// @return the unmounted drive.
+/// @brief Unmount filesystem.
+/// @return the unmounted filesystem.
 IFilesystemManager* IFilesystemManager::Unmount() {
   if (kMounted) {
     auto mount = kMounted;
@@ -31,7 +31,7 @@ IFilesystemManager* IFilesystemManager::Unmount() {
   return nullptr;
 }
 
-/// @brief Mount filesystem
+/// @brief Mount filesystem.
 /// @param pMount the filesystem to mount.
 /// @return if it succeeded true, otherwise false.
 bool IFilesystemManager::Mount(IFilesystemManager* pMount) {

@@ -27,35 +27,52 @@ void ke_stop(const HCore::Int &id) {
   switch (id) {
     case RUNTIME_CHECK_PROCESS: {
       kcout << "*** CAUSE: RUNTIME_CHECK_PROCESS *** \r\n";
+      kcout << "*** WHAT: BAD DRIVER. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_ACPI: {
       kcout << "*** CAUSE: RUNTIME_CHECK_ACPI *** \r\n";
+      kcout << "*** WHAT: ACPI DEFECT. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_POINTER: {
       kcout << "*** CAUSE: RUNTIME_CHECK_POINTER *** \r\n";
+      kcout << "*** WHAT: BAD POINTER. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_BAD_BEHAVIOR: {
       kcout << "*** CAUSE: RUNTIME_CHECK_BAD_BEHAVIOR *** \r\n";
+      kcout << "*** WHAT: KERNEL BECAME UNSTABLE. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_BOOTSTRAP: {
       kcout << "*** CAUSE: RUNTIME_CHECK_BOOTSTRAP *** \r\n";
+      kcout << "*** WHAT: BAD BOOT. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_HANDSHAKE: {
       kcout << "*** CAUSE: RUNTIME_CHECK_HANDSHAKE *** \r\n";
+      kcout << "*** WHAT: BAD HANDSHAKE. *** \r\n";
       break;
     }
-    case RUNTIME_CHECK_LD: {
-      kcout << "*** CAUSE: RUNTIME_CHECK_LD *** \r\n";
+    case RUNTIME_CHECK_IPC: {
+      kcout << "*** CAUSE: RUNTIME_CHECK_IPC *** \r\n";
+      kcout << "*** WHAT: RICH CALL VIOLATION. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_INVALID_PRIVILEGE: {
       kcout << "*** CAUSE: RUNTIME_CHECK_INVALID_PRIVILEGE *** \r\n";
+      kcout << "*** WHAT: RING-0 POLICY VIOLATION. *** \r\n";
       break;
+    case RUNTIME_CHECK_UNEXCPECTED: {
+      kcout << "*** CAUSE: RUNTIME_CHECK_UNEXCPECTED *** \r\n";
+      kcout << "*** WHAT: CATASROPHIC FAILURE! *** \r\n";
+      break;
+    }
+    default: {
+      kcout << "*** CAUSE: RUNTIME_CHECK_GENERIC *** \r\n";
+      break;
+    }
     }
   };
 
