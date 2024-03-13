@@ -1,11 +1,8 @@
-/*
- *	========================================================
- *
- *	HintKit
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #ifndef __HINTKIT_COMPILER_HINT_HXX__
 #define __HINTKIT_COMPILER_HINT_HXX__

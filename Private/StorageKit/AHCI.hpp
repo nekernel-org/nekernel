@@ -12,8 +12,21 @@
 namespace HCore {
 class AHCIPacket;
 
-class AHCIDevice : public DeviceInterface<AHCIPacket> {
+class AHCIDeviceInterface : public DeviceInterface<AHCIPacket> {
  public:
+   explicit AHCIDeviceInterface(void (*Out)(AHCIPacket outpacket),
+                      void (*In)(AHCIPacket inpacket), void (*Cleanup)(void));
+
+  virtual ~AHCIDeviceInterface();
+
+ public:
+  AHCIDeviceInterface &operator=(const AHCIDeviceInterface &) = default;
+  AHCIDeviceInterface(const AHCIDeviceInterface &) = default;
+
+  const char *Name() const override;
+
+  private:
+  void (*fCleanup)(void);
 };
 
 class AHCIPacket final {

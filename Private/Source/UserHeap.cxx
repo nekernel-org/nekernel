@@ -7,6 +7,8 @@
 #include <NewKit/PageManager.hpp>
 #include <NewKit/UserHeap.hpp>
 
+#define kHeapHeaderPaddingSz 16
+
 /// @file UserHeap.cxx
 /// @brief User Heap Manager, Process heap allocator.
 /// @note if you want to look at the kernel allocator, please look for
@@ -19,10 +21,10 @@ namespace HCore {
  * @note Allocated per process, do not allocate twice!
 */
 struct HeapHeader final {
-  UInt32 Magic;
-  Int32 Flags;
-  Boolean Free;
-  UIntPtr Pad;
+  UInt32 fMagic;
+  Int32 fFlags;
+  Boolean fFree;
+  UInt8 fPadding[kHeapHeaderPaddingSz];
 };
 
 /**
@@ -82,14 +84,14 @@ STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
   if (virtualAddress) {
     HeapHeader* poolHdr = reinterpret_cast<HeapHeader*>(virtualAddress);
 
-    if (!poolHdr->Free) {
-      kcout << "[ke_make_heap] poolHdr->Free, HeapPtr already exists\n";
+    if (!poolHdr->fFree) {
+      kcout << "[ke_make_heap] poolHdr->fFree, HeapPtr already exists\n";
       return nullptr;
     }
 
-    poolHdr->Flags = flags;
-    poolHdr->Magic = kPoolMag;
-    poolHdr->Free = false;
+    poolHdr->fFlags = flags;
+    poolHdr->fMagic = kPoolMag;
+    poolHdr->fFree = false;
 
     kcout << "[ke_make_heap] New allocation has been done.\n";
     return reinterpret_cast<VoidPtr>(
@@ -104,9 +106,9 @@ STATIC Void ke_free_heap_internal(VoidPtr virtualAddress) {
   HeapHeader* poolHdr = reinterpret_cast<HeapHeader*>(
       reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(HeapHeader));
 
-  if (poolHdr->Magic == kPoolMag) {
-    poolHdr->Free = false;
-    poolHdr->Flags = 0;
+  if (poolHdr->fMagic == kPoolMag) {
+    poolHdr->fFree = false;
+    poolHdr->fFlags = 0;
 
     kcout << "[ke_free_heap_internal] Successfully marked header as free!\r\n";
   }

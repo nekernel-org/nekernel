@@ -7,5 +7,5 @@
 #include <StorageKit/NVME.hpp>
 
 namespace HCore {
-const char *NVMEDevice::Name() const { return ("NVMEDevice"); }
+const char *NVMEDeviceInterface::Name() const { return ("NVMEDeviceInterface"); }
 }  // namespace HCore

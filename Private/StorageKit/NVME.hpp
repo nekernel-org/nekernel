@@ -12,21 +12,21 @@
 namespace HCore {
 class NVMEPacket;
 
-class NVMEDevice : public DeviceInterface<NVMEPacket> {
+class NVMEDeviceInterface : public DeviceInterface<NVMEPacket> {
  public:
-  explicit NVMEDevice(void (*Out)(NVMEPacket outpacket),
+  explicit NVMEDeviceInterface(void (*Out)(NVMEPacket outpacket),
                       void (*In)(NVMEPacket inpacket), void (*Cleanup)(void))
       : DeviceInterface(Out, In), fCleanup(Cleanup) {}
 
-  virtual ~NVMEDevice() {
+  virtual ~NVMEDeviceInterface() {
     if (fCleanup) fCleanup();
   }
 
  public:
-  NVMEDevice &operator=(const NVMEDevice &) = default;
-  NVMEDevice(const NVMEDevice &) = default;
+  NVMEDeviceInterface &operator=(const NVMEDeviceInterface &) = default;
+  NVMEDeviceInterface(const NVMEDeviceInterface &) = default;
 
-  virtual const char *Name() const;
+  const char *Name() const override;
 
  public:
   OwnPtr<NVMEPacket> operator()(UInt32 dmaLow, UInt32 dmaHigh, SizeT sz);
