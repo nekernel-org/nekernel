@@ -11,7 +11,7 @@
 
 #define Z_SOLO 1
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <System.Zip/Defines.hpp>
 #include <System.Zip/zlib.hpp>
 
@@ -27,7 +27,7 @@ class ZipStream final {
   HCORE_COPY_DEFAULT(ZipStream);
 
  public:
-  HFilePtr FlushToFile(const char *name);
+  FilePtr FlushToFile(const char *name);
   void *Deflate(const char *name);
   void Inflate(const char *name, void *data);
 

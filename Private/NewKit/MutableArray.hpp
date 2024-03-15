@@ -5,7 +5,7 @@
 ------------------------------------------- */
 #pragma once
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 

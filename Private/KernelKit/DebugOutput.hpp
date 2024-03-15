@@ -7,7 +7,7 @@
 #pragma once
 
 #include <KernelKit/DeviceManager.hpp>
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Stream.hpp>
 

@@ -6,7 +6,7 @@
 
 //! @brief Filesystem Indexer.
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <FSKit/IndexableProperty.hxx>
 #include <NewKit/MutableArray.hpp>
 #include <NewKit/Utils.hpp>

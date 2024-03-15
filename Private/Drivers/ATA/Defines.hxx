@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
 using namespace HCore;

@@ -126,7 +126,7 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
   return nullptr;
 }
 
-ErrorOr<VoidPtr> PEFLoader::LoadStart() {
+ErrorOr<VoidPtr> PEFLoader::FindStart() {
   if (auto sym = this->FindSymbol(kPefStart, kPefCode); sym)
     return ErrorOr<VoidPtr>(sym);
 
@@ -137,7 +137,7 @@ bool PEFLoader::IsLoaded() noexcept { return !fBad && fCachedBlob; }
 
 namespace Utils {
 bool execute_from_image(PEFLoader &exec) noexcept {
-  auto errOrStart = exec.LoadStart();
+  auto errOrStart = exec.FindStart();
 
   if (errOrStart.Error() != 0) return false;
 

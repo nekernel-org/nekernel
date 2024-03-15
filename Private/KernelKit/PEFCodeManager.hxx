@@ -18,7 +18,7 @@ namespace HCore {
 /// \name PEFLoader
 /// \brief PEF loader class.
 ///
-class PEFLoader : public Loader {
+class PEFLoader : public LoaderInterface {
  private:
   explicit PEFLoader() = delete;
 
@@ -39,7 +39,7 @@ class PEFLoader : public Loader {
   const char *MIME() override;
 
  public:
-  ErrorOr<VoidPtr> LoadStart() override;
+  ErrorOr<VoidPtr> FindStart() override;
   VoidPtr FindSymbol(const char *name, Int32 kind) override;
 
  public:

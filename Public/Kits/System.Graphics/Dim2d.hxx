@@ -17,7 +17,7 @@
 
 #include <System.Graphics/Core.hxx>
 
-namespace HCore {
+namespace System::Graphics {
 class G_API Dim2d final {
  public:
   explicit Dim2d() = delete;
@@ -33,6 +33,6 @@ class G_API Dim2d final {
   HCore::UInt m_X{0};
   HCore::UInt m_Y{0};
 };
-}  // namespace HCore
+}  // namespace System::Graphics
 
 #endif /* ifndef __DIM2D__ */

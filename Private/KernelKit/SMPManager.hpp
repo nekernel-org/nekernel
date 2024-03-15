@@ -8,7 +8,7 @@
 #define _INC_SMP_MANAGER_HPP
 
 #include <ArchKit/ArchKit.hpp>
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Ref.hpp>
 
 // Last Rev

@@ -7,7 +7,7 @@
 #ifndef _INC_PERMISSION_SEL_HPP
 #define _INC_PERMISSION_SEL_HPP
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
 // kernel mode user.

@@ -13,8 +13,8 @@
 
 #include <System.Graphics/Dim2d.hxx>
 
-namespace HCore {
+namespace System::Graphics {
 HCore::UInt& Dim2d::X() { return m_X; }
 
 HCore::UInt& Dim2d::Y() { return m_Y; }
-}  // namespace HCore
+}  // namespace System::Graphics

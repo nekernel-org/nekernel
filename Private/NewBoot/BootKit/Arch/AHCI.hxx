@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <Drivers/AHCI/Defines.hxx>
 
 class BDeviceAHCI final {

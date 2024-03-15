@@ -8,28 +8,29 @@
 #include <System.Core/hcore.h>
 
 using namespace HCore;
+using namespace System;
 
 STATIC HcObjectPtr kObjectHeap;
 
-HHeap* HHeap::Shared() noexcept {
-    static HHeap* heap = nullptr;
+Heap* Heap::Shared() noexcept {
+    static Heap* heap = nullptr;
 
     if (!heap) {
-        heap = new HHeap();
+        heap = new Heap();
         kObjectHeap = HcGetProcessHeap();
     }
 
     return heap;
 }
 
-void HHeap::Delete(HHeapPtr me) noexcept { HcFreeProcessHeap(kObjectHeap, me); }
+void Heap::Delete(HeapPtr me) noexcept { HcFreeProcessHeap(kObjectHeap, me); }
 
-SizeT HHeap::Size(HHeapPtr me) noexcept { 
+SizeT Heap::Size(HeapPtr me) noexcept { 
     CA_MUST_PASS(me);
     return HcProcessHeapSize(kObjectHeap, me); 
 }
 
-HHeapPtr HHeap::New(const SizeT &sz, const Int32 flags) {
+HeapPtr Heap::New(const SizeT &sz, const Int32 flags) {
     SizeT _sz = sz;
     if (!_sz) ++_sz;
 

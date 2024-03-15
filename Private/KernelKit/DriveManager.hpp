@@ -7,7 +7,7 @@
 #ifndef __DRIVE_MANAGER__
 #define __DRIVE_MANAGER__
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/DeviceManager.hpp>
 #include <KernelKit/HError.hpp>
@@ -37,7 +37,7 @@ typedef Int64 rt_drive_id_type;
 struct DriveTraits final {
   Char fName[kDriveNameLen];  // /System, /Boot, //./Devices/USB...
   Int32 fKind;                // fMassStorage, fFloppy, fOpticalDisc.
-  rt_drive_id_type fId;                // Drive id.
+  rt_drive_id_type fId;       // Drive id.
   Int32 fFlags;               // fReadOnly, fXPMDrive, fXPTDrive
 
   //! for StorageKit.
@@ -61,7 +61,8 @@ typedef DriveDevice* DriveDevicePtr;
 
 /**
  * @brief Abstracted hard-drive container class.
- * @note This class has all of it's drive set to nullptr, allocate them using GetAddressOf(index).
+ * @note This class has all of it's drive set to nullptr, allocate them using
+ * GetAddressOf(index).
  */
 class Mountpoint final {
  public:
@@ -91,7 +92,7 @@ class Mountpoint final {
       default: {
         DbgLastError() = kErrorNoSuchDisk;
         kcout << "HCoreKrnl\\Mountpoint: Check HError.\n";
-        
+
         break;
       }
     }

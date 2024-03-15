@@ -7,7 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 
 namespace HCore
 {

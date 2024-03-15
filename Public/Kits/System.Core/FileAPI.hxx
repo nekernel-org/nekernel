@@ -7,20 +7,21 @@
 #ifndef _SYSTEM_KIT_HCORE_FILE_HPP
 #define _SYSTEM_KIT_HCORE_FILE_HPP
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
 using namespace HCore;
 
 /// @brief SOM class, translated to C++
 
-class HFile final {
+namespace System {
+class File final {
  public:
-  explicit HFile(const char *path);
-  ~HFile();
+  explicit File(const char *path);
+  ~File();
 
  public:
-  HCORE_COPY_DEFAULT(HFile);
+  HCORE_COPY_DEFAULT(File);
 
  public:
   voidPtr Read(SizeT off, SizeT sz);
@@ -35,6 +36,7 @@ class HFile final {
   void MIME(const char *mime);
 };
 
-typedef HFile *HFilePtr;
+typedef File *FilePtr;
+} // namespace System
 
 #endif  // ifndef _SYSTEM_KIT_HCORE_FILE_HPP

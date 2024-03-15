@@ -14,18 +14,18 @@
 
 namespace System::Zip {
 ZipStream::ZipStream()
-    : fSharedData(HHeap::Shared()->New(kInitialSz, kHeapExpandable)),
+    : fSharedData(System::Heap::Shared()->New(kInitialSz, kHeapExpandable)),
       fSharedSz(kInitialSz) {}
 
 ZipStream::~ZipStream() noexcept {
-  if (fSharedData) HHeap::Shared()->Delete(fSharedData);
+  if (fSharedData) System::Heap::Shared()->Delete(fSharedData);
 }
 
-HFilePtr ZipStream::FlushToFile(const char *name) {
-  HFilePtr fp = new HFile(name);
+FilePtr ZipStream::FlushToFile(const char *name) {
+  FilePtr fp = new File(name);
   CA_MUST_PASS(fp);
 
-  this->fSharedSz = HHeap::Shared()->Size(this->fSharedData);
+  this->fSharedSz = System::Heap::Shared()->Size(this->fSharedData);
 
   fp->MIME(kZipKitMime);
   fp->Write(this->fSharedData, this->fSharedSz);

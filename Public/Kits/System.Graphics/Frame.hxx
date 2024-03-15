@@ -17,7 +17,7 @@
 #include <System.Graphics/Dim2d.hxx>
 #include <NewKit/MutableArray.hpp>
 
-namespace HCore {
+namespace System::Graphics {
 class G_API GFrame {
  public:
   explicit GFrame(GFrame* parent = nullptr) : m_ParentFrame(parent) {}
@@ -56,4 +56,4 @@ class G_API GFrame {
   HCore::MutableArray<GFrame*> m_Frames;
   GFrame* m_ParentFrame{nullptr};
 };
-}  // namespace HCore
+}  // namespace System::Graphics

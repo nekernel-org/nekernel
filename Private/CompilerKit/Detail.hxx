@@ -4,8 +4,7 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_CL_HPP
-#define _INC_CL_HPP
+#pragma once
 
 #include <NewKit/Defines.hpp>
 
@@ -28,8 +27,3 @@
     KLASS &operator=(KLASS &&) = default;                                                                              \
     KLASS(KLASS &&) = default;
 
-
-
-#include <CompilerKit/Version.hxx>
-
-#endif /* ifndef _INC_CL_HPP */

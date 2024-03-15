@@ -14,8 +14,8 @@
 #ifndef __PEF__
 #define __PEF__
 
-#include <CompilerKit/CompilerKit.hpp>
-#include <KernelKit/Loader.hpp>
+#include <CompilerKit/CompilerKit.hxx>
+#include <KernelKit/LoaderInterface.hpp>
 #include <NewKit/Defines.hpp>
 
 #define kPefMagic "PEF"

@@ -6,16 +6,17 @@
 
 #pragma once
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
 /// @brief SOM class, translated to C++
 
 using namespace HCore;
 
-class HMemoryException;
+namespace System {
+class MemoryException;
 
-typedef VoidPtr HHeapPtr;
+typedef VoidPtr HeapPtr;
 
 enum {
   kHeapExpandable = 2,
@@ -25,32 +26,32 @@ enum {
   kHeapNoFlags = 0
 };
 
-class HHeap final {
+class Heap final {
  private:
-  explicit HHeap();
+  explicit Heap();
 
  public:
-  ~HHeap();
+  ~Heap();
 
  public:
-  HCORE_COPY_DEFAULT(HHeap);
+  HCORE_COPY_DEFAULT(Heap);
 
  public:
-  static HHeap *Shared() noexcept;
+  static Heap *Shared() noexcept;
 
  public:
-  void Delete(HHeapPtr me) noexcept;
-  SizeT Size(HHeapPtr me) noexcept;
-  HHeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
+  void Delete(HeapPtr me) noexcept;
+  SizeT Size(HeapPtr me) noexcept;
+  HeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
 };
 
-class HMemoryException final {
+class MemoryException final {
  public:
-  explicit HMemoryException() = default;
-  ~HMemoryException() = default;
+  explicit MemoryException() = default;
+  ~MemoryException() = default;
 
  public:
-  HCORE_COPY_DEFAULT(HMemoryException);
+  HCORE_COPY_DEFAULT(MemoryException);
 
  public:
   const char *Name();
@@ -60,5 +61,6 @@ class HMemoryException final {
   const char *mReason{"HeapAPI: Memory Exception!"};
 
  private:
-  friend HHeap;
+  friend Heap;
 };
+} // namespace System

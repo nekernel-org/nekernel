@@ -43,9 +43,17 @@ struct PACKED NetworkDeviceCommand final {
   UInt32 DmaHigh;
 };
 
+/// @brief TCP device.
 using TCPNetworkDevice = NetworkDevice;
+
+/// @brief UDP device.
 using UDPNetworkDevice = NetworkDevice;
+
+/// @brief PPP device.
 using PPPNetworkDevice = NetworkDevice;
+
+/// @brief HPC device.
+using HPCNetworkDevice = NetworkDevice;
 }  // namespace HCore
 
 #include <NetworkKit/NetworkDevice.inl>

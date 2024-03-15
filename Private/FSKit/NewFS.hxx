@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
 #include <KernelKit/DriveManager.hpp>
 #include <NewKit/Defines.hpp>

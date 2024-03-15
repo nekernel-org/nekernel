@@ -7,7 +7,7 @@
 #pragma once
 
 #include <ArchKit/ArchKit.hpp>
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 
 #include <NewKit/ErrorID.hpp>
 

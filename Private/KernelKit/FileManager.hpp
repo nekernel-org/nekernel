@@ -18,7 +18,7 @@
 #include <FSKit/NewFS.hxx>
 #endif  // __FSKIT_NEWFS__
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
 #include <NewKit/ErrorID.hpp>
 #include <NewKit/Ref.hpp>

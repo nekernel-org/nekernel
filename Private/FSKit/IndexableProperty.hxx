@@ -7,7 +7,7 @@
 #pragma once
 
 #include <CFKit/Property.hpp>
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DriveManager.hpp>
 
 namespace HCore {

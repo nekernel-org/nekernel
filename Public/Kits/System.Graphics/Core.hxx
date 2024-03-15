@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
@@ -28,7 +28,7 @@
 #define G_API __attribute__((pef_container(".EXPORT")))
 #endif  // ifdef __EXPORT_LIB
 
-namespace HCore {
+namespace System::Graphics {
 template <typename... T>
 class GAction;
 
@@ -143,7 +143,7 @@ class G_API GApplication final {
 
 class G_API GDocument final {
  public:
-  explicit GDocument(StringView& sv) : mString(GString::Construct(sv)) {}
+  explicit GDocument(HCore::StringView& sv) : mString(GString::Construct(sv)) {}
   ~GDocument() = default;
 
   HCORE_COPY_DEFAULT(GDocument);
@@ -182,4 +182,4 @@ inline GFrameType* frame_cast(GFrameBase* Frame) {
 
   return dynamic_cast<GFrameType*>(Frame);
 }
-}  // namespace HCore
+}  // namespace System::Graphics

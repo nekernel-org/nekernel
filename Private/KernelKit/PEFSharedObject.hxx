@@ -10,7 +10,7 @@
 #ifndef __KERNELKIT_SHARED_OBJECT_HXX__
 #define __KERNELKIT_SHARED_OBJECT_HXX__
 
-#include <KernelKit/Loader.hpp>
+#include <KernelKit/LoaderInterface.hpp>
 #include <KernelKit/PEF.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <NewKit/Defines.hpp>

@@ -9,7 +9,7 @@
 
 // last-rev: 30/01/24
 
-#include <CompilerKit/CompilerKit.hpp>
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Stream.hpp>
 #include <NewKit/String.hpp>

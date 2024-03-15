@@ -13,6 +13,6 @@
 
 #include <System.Graphics/Frame.hxx>
 
-namespace HCore {
+namespace System::Graphics {
 
-} // namespace HCore
+} // namespace System::Graphics
