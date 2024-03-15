@@ -27,15 +27,15 @@
 #define kNewFSInvalidCatalog -1
 #define kNewFSNodeNameLen 256
 
-#define kNewFSIdentLen 6
+#define kNewFSIdentLen 8
 #define kNewFSIdent "  HCFS"
 #define kPadLen 16
 
 //! On EPM and GPT disks.
 #define kNewFSUUID "DD997393-9CCE-4288-A8D5-C0FDE3908DBE"
 
-#define kNewFSVersionInteger 0x11
-#define kNewFSVerionString   "1.1"
+#define kNewFSVersionInteger 0x120
+#define kNewFSVerionString   "1.2.0"
 
 typedef HCore::WideChar NewCharType;
 
