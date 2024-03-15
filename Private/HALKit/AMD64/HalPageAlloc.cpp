@@ -11,15 +11,15 @@
 
 // this files handles paging.
 
-static HCore::SizeT kPageCnt = 0UL;
+STATIC HCore::SizeT kPageCnt = 0UL;
 
-#define kKernelPagingPadding 4096
+#define kKernelPagingPadding (4096)
 
 namespace HCore {
 namespace HAL {
 static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
     -> PageTable64 * {
-  MUST_PASS(sz != 0);
+  MUST_PASS(sz > 0);
 
   PageTable64 *pte =
       &reinterpret_cast<PageDirectory64 *>((UIntPtr)kKernelVirtualStart)->Pte[0];
@@ -32,6 +32,7 @@ static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
 
   kKernelVirtualStart = (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz +
                                   kKernelPagingPadding);
+
   return pte;
 }
 
