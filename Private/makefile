@@ -21,7 +21,7 @@ SCRIPT		= --script=Linker/Platforms/PC.lds
 
 .PHONY: invalid-recipe
 invalid-recipe:
-	@echo "[HCoreKrnl] invalid-recipe: Use make all instead."
+	@echo "Use a specific target."
 
 MOVEALL=./MoveAll.sh
 
