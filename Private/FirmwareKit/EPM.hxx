@@ -11,6 +11,8 @@
 #ifndef __PARTITION_MAP__
 #define __PARTITION_MAP__
 
+#include <NewKit/Defines.hpp>
+
 #define kEPMUUIDLength 37
 #define kEPMNameLength 32
 #define kEPMMagicLength 4
@@ -21,7 +23,7 @@
  * @brief The EPM bootloader block.
  * boot code info
  */
-struct __attribute__((packed)) BootBlock {
+struct PACKED BootBlock {
   char magic[kEPMMagicLength];
   char name[kEPMNameLength];
   char uuid[kEPMUUIDLength];
@@ -35,7 +37,7 @@ struct __attribute__((packed)) BootBlock {
  * @brief The EPM partition block.
  * used to describe a partition inside a media.
  */
-struct __attribute__((packed)) PartitionBlock {
+struct PACKED PartitionBlock {
   char name[32];
   int magic;
   long long int sector_end;

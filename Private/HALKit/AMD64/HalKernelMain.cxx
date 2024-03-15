@@ -74,18 +74,16 @@ EXTERN_C void RuntimeMain(
   HCore::HAL::Detail::_ke_power_on_self_test();
   
   /// END POST
+  
+  /// Mounts a NewFS block.
+  HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
 
   /// We already have an install of HCore.
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
-    /// Mounts a NewFS block.
-    HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
-    
+    HCore::kcout << "HCoreKrnl: Running kernel...\r\n";
     /// TODO: Parse system configuration.
   } else {
     HCore::kcout << "HCoreKrnl: Running setup...\r\n";
-
-    //HCore::Forms::SetupWizardControl wizard;
-    //wizard.ShowDialog();
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

@@ -35,7 +35,18 @@
       "cStandard": "c17",
       "cppStandard": "c++20",
       "compilerPath": "/usr/bin/gcc",
-      "intelliSenseMode": "gcc-arm64"
+      "intelliSenseMode": "macos-gcc-arm64"
+    },    
+    {
+      "name": "HCore Tools (Win)",
+      "includePath": [
+        "${workspaceFolder}/Private/Tools/**"
+      ],
+      "defines": [],
+      "cStandard": "c17",
+      "cppStandard": "c++20",
+      "compilerPath": "C:/cygwin64/bin/x86_64-w64-mingw32-gcc.exe",
+      "intelliSenseMode": "windows-gcc-x64"
     }
   ],
   "version": 4

@@ -16,10 +16,11 @@
 /// @brief NewFS partition program.
 /***********************************************************************************/
 
-#include <disk_api.h>
+#include <make_hcfs.hxx>
 
 int main(void) {
-  printf("%s\n", "makeHCFS, brought to you by Amlal El Mahrouss.");
+  printf("%s\n", "HCFS Partition Tool, brought to you by Amlal El Mahrouss.");
+  printf("%s\n", "Copyright Mahrouss Logic, all rights reserved.");
 
   return 0;
 }

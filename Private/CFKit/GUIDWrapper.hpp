@@ -12,7 +12,7 @@
 
 /* GUID for C++ Components */
 
-#define NULL_GUID "XRN:{........-....-M...-N...-............}"
+#define kXRNNil "@{........-....-M...-N...-............}"
 
 // eXtensible Resource Information
 namespace HCore::XRN {
@@ -41,7 +41,6 @@ class GUID final {
 
  public:
   GUIDSequence &operator->() noexcept { return m_UUID; }
-
   GUIDSequence &Leak() noexcept { return m_UUID; }
 
  private:

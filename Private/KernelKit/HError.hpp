@@ -14,7 +14,7 @@ typedef Int32 HError;
 
 inline constexpr HError kErrorSuccess = 0;
 inline constexpr HError kErrorExecutable = 33;
-inline constexpr HError kErrorExecutableLib = 34;
+inline constexpr HError kErrorExecutableLib = 34; // no such library!!!
 inline constexpr HError kErrorFileNotFound = 35;
 inline constexpr HError kErrorDirectoryNotFound = 36;
 inline constexpr HError kErrorDiskReadOnly = 37;
@@ -27,6 +27,8 @@ inline constexpr HError kErrorNoNetwork = 43;
 inline constexpr HError kErrorHeapOutOfMemory = 44;
 inline constexpr HError kErrorNoSuchDisk = 45;
 inline constexpr HError kErrorFileExists = 46;
+inline constexpr HError kErrorFormatFailed = 47;
+inline constexpr HError kErrorNetworkTimeout = 48;
 inline constexpr HError kErrorUnimplemented = 0;
 
 Boolean ke_bug_check(void) noexcept;

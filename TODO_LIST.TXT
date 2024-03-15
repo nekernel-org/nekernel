@@ -11,8 +11,8 @@
     - AHCI driver [ WiP ]
 - Context switch x87/SSE/AVX registers [ X ]
 - Framebuffer and AHCI support [ X ]
-- Native Subsystem and GUI [ ]
-- Make installer [ ]
+- HCore API and HCore Forms. [ ]
+- Make installer form class [ ]
 
 Status:
 

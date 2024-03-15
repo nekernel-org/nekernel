@@ -21,10 +21,10 @@ class LoaderInterface {
   HCORE_COPY_DEFAULT(LoaderInterface);
 
  public:
-  virtual const char* Format() = 0;
-  virtual const char* MIME() = 0;
-  virtual const char* Path() = 0;
-  virtual ErrorOr<VoidPtr> FindStart() = 0;
-  virtual VoidPtr FindSymbol(const char* name, Int32 kind) = 0;
+  virtual _Output const char* Format() = 0;
+  virtual _Output const char* MIME() = 0;
+  virtual _Output const char* Path() = 0;
+  virtual _Output ErrorOr<VoidPtr> FindStart() = 0;
+  virtual _Output VoidPtr FindSymbol(_Input const char* name, _Input Int32 kind) = 0;
 };
 }  // namespace HCore

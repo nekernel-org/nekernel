@@ -437,7 +437,7 @@ typedef UInt64(EFI_API *EfiGetMemoryMap)(UInt32 *MapSize,
 /**
  * @brief GUID type, something you can also find in CFKit.
  */
-typedef struct EfiGUID {
+typedef struct EfiGUID final {
   UInt32 Data1;
   UInt16 Data2;
   UInt16 Data3;

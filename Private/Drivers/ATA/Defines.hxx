@@ -115,4 +115,4 @@ using namespace HCore;
 #define ATA_ADDRESS1(x) (x + 3)
 #define ATA_ADDRESS2(x) (x + 4)
 #define ATA_ADDRESS3(x) (x + 5)
-#define ATA_COMMAND(x) (x + 7)
+#define ATA_COMMAND(x)  (x + 7)

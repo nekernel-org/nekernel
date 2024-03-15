@@ -28,11 +28,11 @@
 #define kNewFSNodeNameLen 256
 
 #define kNewFSIdentLen 8
-#define kNewFSIdent "  HCFS"
+#define kNewFSIdent "  NEFS"
 #define kPadLen 16
 
 //! On EPM and GPT disks.
-#define kNewFSUUID "DD997393-9CCE-4288-A8D5-C0FDE3908DBE"
+#define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
 #define kNewFSVersionInteger 0x120
 #define kNewFSVerionString   "1.2.0"
@@ -47,17 +47,19 @@ enum {
   kNewFSDriveCount = 4,
 };
 
+/// @brief NewFS filesystem block.
+/// @author Amlal El Mahrouss.
 struct PACKED NewBootBlock final {
   NewCharType Ident[kNewFSIdentLen];
   NewCharType Shell[kNewFSNodeNameLen];
 
-  HCore::Int64 NumParts;
+  HCore::Int64 NumParts; // number of sub-partitions.
   HCore::Int64 FreeSectors;
   HCore::Int64 SectorCount;
   HCore::Int64 SectorSz;
 
-  HCore::Int64 DiskSize;
-  HCore::Int32 DiskKind;
+  HCore::Int64 DiskSize; // size of media.
+  HCore::Int32 DiskKind; // kind of disk.
 
   HCore::Lba FirstPartBlock;
   HCore::Lba LastPartBlock;
@@ -73,6 +75,8 @@ struct PACKED NewBootBlock final {
 #define kKindDirectory 2
 #define kKindSymlink 3
 #define kKindPartition 4
+#define kKindDevice 5
+#define kKindNetwork 6
 
 struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];

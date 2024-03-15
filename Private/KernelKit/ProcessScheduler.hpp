@@ -16,6 +16,7 @@
 #include <NewKit/UserHeap.hpp>
 
 #define kMinMicroTime AffinityKind::kHartStandard
+#define kPIDInvalid (-1)
 
 ////////////////////////////////////////////////////
 
