@@ -64,26 +64,26 @@ class IFilesystemManager {
   static IFilesystemManager *GetMounted();
 
  public:
-  virtual NodePtr Create(const char *path) = 0;
-  virtual NodePtr CreateAlias(const char *path) = 0;
-  virtual NodePtr CreateDirectory(const char *path) = 0;
+  virtual NodePtr Create(_Input const char *path) = 0;
+  virtual NodePtr CreateAlias(_Input const char *path) = 0;
+  virtual NodePtr CreateDirectory(_Input const char *path) = 0;
 
  public:
-  virtual bool Remove(const char *path) = 0;
+  virtual bool Remove(_Input const char *path) = 0;
 
  public:
-  virtual NodePtr Open(const char *path, const char *r) = 0;
+  virtual NodePtr Open(_Input const char *path, _Input const char *r) = 0;
 
  public:
-  virtual void Write(NodePtr node, VoidPtr data, Int32 flags) = 0;
-  virtual VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) = 0;
+  virtual void Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags) = 0;
+  virtual _Output VoidPtr Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT sz) = 0;
 
  public:
-  virtual bool Seek(NodePtr node, SizeT off) = 0;
+  virtual bool Seek(_Input NodePtr node, _Input SizeT off) = 0;
 
  public:
-  virtual SizeT Tell(NodePtr node) = 0;
-  virtual bool Rewind(NodePtr node) = 0;
+  virtual SizeT Tell(_Input NodePtr node) = 0;
+  virtual bool Rewind(_Input NodePtr node) = 0;
 };
 
 /** @brief invalid position. (n-pos) */
@@ -148,7 +148,7 @@ class NewFilesystemManager final : public IFilesystemManager {
   }
 
  public:
-  NewFSImplementation *fImpl{nullptr};
+  NewFSParser *fImpl{nullptr};
 };
 
 #endif  // ifdef __FSKIT_NEWFS__

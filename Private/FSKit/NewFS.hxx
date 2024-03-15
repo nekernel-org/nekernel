@@ -162,40 +162,51 @@ struct PACKED NewPartitionBlock final {
 
 #define kFilesystemBitWidth (sizeof(NewCharType))
 #define kFilesystemLbaType (HCore::Lba)
-#define kNewFSAddressAsLba (1024)
+
+/// Start After the PM headers, pad 1024 bytes.
+#define kNewFSAddressAsLba (1024U)
 
 namespace HCore {
 ///
-/// \name NewFSImplementation
-/// \brief HCFS filesystem operations. (catalog creation, remove removal, root
-/// fork...)
+/// \name NewFSParser
+/// \brief NewFS parser class. (catalog creation, remove removal, root, forks...)
+/// Designed like the DOM.
 ///
 
-class NewFSImplementation {
+class NewFSParser {
  public:
-  explicit NewFSImplementation() = default;
-  virtual ~NewFSImplementation() = default;
+  explicit NewFSParser() = default;
+  virtual ~NewFSParser() = default;
 
  public:
-  HCORE_COPY_DEFAULT(NewFSImplementation);
+  HCORE_COPY_DEFAULT(NewFSParser);
 
-  virtual NewFork* ForkFrom(NewCatalog& catalog, const Int64& id) = 0;
+ public:
+  virtual _Output NewFork* ForkFrom(NewCatalog& catalog, const Int64& id) = 0;
 
-  virtual NewCatalog* RootCatalog() = 0;
-  virtual NewCatalog* NextCatalog(_Input _Output NewCatalog& cur) = 0;
-  virtual NewCatalog* PrevCatalog(_Input _Output NewCatalog& cur) = 0;
+  virtual _Output NewCatalog* FindCatalog(const char* catalogName) = 0;
 
-  virtual NewCatalog* GetCatalog(_Input const char* name) = 0;
+  virtual _Output NewCatalog* RootCatalog() = 0;
 
-  virtual NewCatalog* CreateCatalog(_Input const char* name,
+  virtual _Output NewCatalog* NextCatalog(_Input _Output NewCatalog& cur) = 0;
+
+  virtual _Output NewCatalog* PrevCatalog(_Input _Output NewCatalog& cur) = 0;
+
+  virtual _Output NewCatalog* GetCatalog(_Input const char* name) = 0;
+
+  virtual _Output NewCatalog* CreateCatalog(_Input const char* name,
                                     _Input const Int32& flags,
                                     _Input const Int32& kind) = 0;
-  virtual NewCatalog* CreateCatalog(_Input const char* name) = 0;
+
+  virtual _Output NewCatalog* CreateCatalog(_Input const char* name) = 0;
 
   virtual bool WriteCatalog(_Input _Output NewCatalog& catalog,
                             voidPtr data) = 0;
-  virtual bool RemoveCatalog(_Input NewCatalog& catalog) = 0;
+  virtual bool RemoveCatalog(_Input _Output NewCatalog& catalog) = 0;
 
+  /// @brief Make a EPM+NewFS drive out of the disk.
+  /// @param drive The drive to write on.
+  /// @return If it was sucessful, see DbgLastError().
   virtual bool Format(_Input _Output DriveTraits& drive) = 0;
 };
 

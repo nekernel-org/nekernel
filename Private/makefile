@@ -43,7 +43,15 @@ link-amd64:
 
 .PHONY: all
 all: h-core-amd64 link-amd64
-	@echo "[HCoreKrnl] HCore is Linked now."
+	@echo "Fully built."
+
+
+.PHONY: help
+help:
+	@echo "=== HELP ==="
+	@echo "all: Build kernel and link it."
+	@echo "link-amd64: Link kernel. (PC AMD64)"
+	@echo "h-core-amd64: Build kernel. (PC AMD64)"
 
 .PHONY: clean
 clean:
