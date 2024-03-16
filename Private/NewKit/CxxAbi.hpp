@@ -9,7 +9,7 @@
 
 #ifdef __GNUC__
 
-#define DSO_MAX_OBJECTS (128)
+#define kDSOMaxObjects (128)
 
 struct atexit_func_entry_t
 {

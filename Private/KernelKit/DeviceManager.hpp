@@ -62,7 +62,6 @@ class DeviceInterface {
 };
 
 ///
-///
 /// @brief Input Output Buffer
 /// Used mainly to communicate between hardware.
 ///
@@ -94,7 +93,7 @@ class IOBuf final {
   T m_Data;
 };
 
-///! @brief Device types enum.
+///! @brief Device enum types.
 enum {
   kDeviceTypeIDE,
   kDeviceTypeEthernet,

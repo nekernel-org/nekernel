@@ -6,6 +6,6 @@
         movq %r30, %cr3
         ret
 
-    read_cr0:
+    hal_read_cr0:
         movq %r30, %cr0
         ret

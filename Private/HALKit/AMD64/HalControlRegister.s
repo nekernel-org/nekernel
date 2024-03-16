@@ -4,36 +4,36 @@
 
 ------------------------------------------- */
 
-.globl write_cr3
-.globl write_cr0
-.globl read_cr2
-.globl read_cr3
-.globl read_cr0
-.globl flush_tlb
+.globl hal_write_cr3
+.globl hal_write_cr0
+.globl hal_read_cr2
+.globl hal_read_cr3
+.globl hal_read_cr0
+.globl hal_flush_tlb
 
 .section .text
 
-flush_tlb:
+hal_flush_tlb:
     invlpg (%rcx)
     ret
 
-read_cr3:
+hal_read_cr3:
     movq %rax, %cr3
     ret
 
-read_cr0:
+hal_read_cr0:
     movq %rax, %cr0
     ret
 
-read_cr2:
+hal_read_cr2:
     movq %rax, %cr2
     ret
 
-write_cr3:
+hal_write_cr3:
     movq %cr3, %rdi
     ret
 
-write_cr0:
+hal_write_cr0:
     movq %cr0, %rdi
     ret
 

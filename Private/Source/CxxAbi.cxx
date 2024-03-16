@@ -8,9 +8,8 @@
 #include <NewKit/CxxAbi.hpp>
 #include <NewKit/KernelCheck.hpp>
 
-void *__dso_handle;
+atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
 
-atexit_func_entry_t __atexit_funcs[DSO_MAX_OBJECTS];
 uarch_t __atexit_func_count;
 
 extern "C" void __cxa_pure_virtual() {
@@ -25,7 +24,7 @@ extern "C" void ___chkstk_ms() {
 }
 
 extern "C" int atexit(void (*f)(void *), void *arg, void *dso) {
-  if (__atexit_func_count >= DSO_MAX_OBJECTS) return -1;
+  if (__atexit_func_count >= kDSOMaxObjects) return -1;
 
   __atexit_funcs[__atexit_func_count].destructor_func = f;
   __atexit_funcs[__atexit_func_count].obj_ptr = arg;

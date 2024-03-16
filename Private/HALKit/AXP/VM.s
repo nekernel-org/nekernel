@@ -1,5 +1,5 @@
-.global flush_tlb
+.global hal_flush_tlb
 
 .section .text
-flush_tlb:
+hal_flush_tlb:
 	swppal

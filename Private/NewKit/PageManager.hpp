@@ -32,7 +32,7 @@ class PTEWrapper final {
 
  public:
   void FlushTLB(Ref<PageManager> &pm);
-  const UIntPtr &VirtualAddress();
+  const UIntPtr VirtualAddress();
 
   void NoExecute(const bool enable = false);
   const bool &NoExecute();

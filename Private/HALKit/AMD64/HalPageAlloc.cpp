@@ -12,52 +12,49 @@
 // this files handles paging.
 
 STATIC HCore::SizeT kPageCnt = 0UL;
+STATIC HCore::Boolean kAllocationInProgress = false;
 
-#define kKernelPagingPadding (4096)
+#define kKernelPagingPadding kPTEAlign
 
 namespace HCore {
 namespace HAL {
-static auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
+/// @brief Allocates a new page of memory.
+/// @param sz the size of it.
+/// @param rw read/write flag.
+/// @param user user flag.
+/// @return the page table of it.
+STATIC auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
     -> PageTable64 * {
+  kAllocationInProgress = true;
   MUST_PASS(sz > 0);
 
-  PageTable64 *pte =
-      &reinterpret_cast<PageDirectory64 *>((UIntPtr)kKernelVirtualStart)->Pte[0];
+  PageTable64 *pte = reinterpret_cast<PageTable64 *>(kKernelVirtualStart);
 
   pte->Rw = rw;
   pte->User = user;
   pte->Present = true;
+  pte->PhysicalAddress = (UIntPtr)kKernelPhysicalStart;
 
-  write_cr3((UIntPtr)kKernelVirtualStart);
+  kKernelVirtualStart = (VoidPtr)((UIntPtr)kKernelVirtualStart + kKernelPagingPadding);
+  kKernelPhysicalStart = (VoidPtr)((UIntPtr)kKernelPhysicalStart + kKernelPagingPadding);
 
-  kKernelVirtualStart = (VoidPtr)((UIntPtr)kKernelVirtualStart + kPageCnt + sz +
-                                  kKernelPagingPadding);
+  ++kPageCnt;
 
+  kAllocationInProgress = false;
   return pte;
 }
 
 auto hal_alloc_page(SizeT sz, Boolean rw, Boolean user) -> PageTable64 * {
-  for (SizeT i = 0; i < kPageCnt; ++i) {
-    PageDirectory64 *pte = reinterpret_cast<PageDirectory64 *>(
-        (UIntPtr)kKernelVirtualStart + kPageCnt);
+  if (sz == 0)
+    ++sz;
 
-    for (size_t indexPte = 0; indexPte < kPTEMax; ++indexPte)
-    {
-        if (!pte->Pte[indexPte].Present) {
-            pte->Pte[indexPte].User = user;
-            pte->Pte[indexPte].Rw = rw;
-            pte->Pte[indexPte].Present = true;
-
-            return &(pte->Pte[indexPte]);
-        }
-    }
-    
-  }
-
+  /// allocate new page.
   return hal_try_alloc_new_page(sz, rw, user);
 }
 
 auto hal_create_page(Boolean rw, Boolean user) -> UIntPtr {
+  while (kAllocationInProgress) {}
+
   PageTable64 *new_pte = hal_alloc_page(sizeof(PageTable64), rw, user);
   MUST_PASS(new_pte);
 

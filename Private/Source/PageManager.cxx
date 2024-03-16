@@ -57,7 +57,7 @@ void PTEWrapper::FlushTLB(Ref<PageManager> &pm) {
 void PageManager::FlushTLB(UIntPtr VirtAddr) {
   if (VirtAddr == kBadAddress) return;
 
-  flush_tlb(VirtAddr);
+  hal_flush_tlb(VirtAddr);
 }
 
 bool PTEWrapper::Reclaim() {
@@ -94,11 +94,11 @@ bool PageManager::Free(Ref<PTEWrapper *> &wrapper) {
 
 ////////////////////////////
 
-// VIRTUAL ADDRESS
+// VIRTUAL ADDRESS GETTER (SKIP PTE)
 
 ////////////////////////////
 
-const UIntPtr &PTEWrapper::VirtualAddress() { return m_VirtAddr; }
+const UIntPtr PTEWrapper::VirtualAddress() { return (m_VirtAddr + sizeof(PTE)); }
 
 ////////////////////////////
 

@@ -11,22 +11,22 @@
 
 namespace HCore {
 namespace Indexer {
-class INewFSIterator;
+class NewFSIteratorInterface;
 
 using IndexElement = VoidPtr;
 
 ///
-/// @name INewFSIterator
+/// @name NewFSIteratorInterface
 /// @brief Stores relevant information for file indexing.
 ///
 
-class INewFSIterator {
+class NewFSIteratorInterface {
  public:
-  explicit INewFSIterator() = default;
-  virtual ~INewFSIterator() = default;
+  explicit NewFSIteratorInterface() = default;
+  virtual ~NewFSIteratorInterface() = default;
 
  public:
-  HCORE_COPY_DEFAULT(INewFSIterator);
+  HCORE_COPY_DEFAULT(NewFSIteratorInterface);
 
  public:
   void Append(IndexableProperty& indexProp) { fProps.Add(indexProp); }

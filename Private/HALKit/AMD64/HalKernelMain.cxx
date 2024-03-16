@@ -31,7 +31,7 @@ STATIC HCore::Void ke_page_protect_nullptr(HCore::Void) {
     pageDirNull->Pte[indexPte].Rw = false;
   }
 
-  flush_tlb(reinterpret_cast<HCore::UIntPtr>(pageDirNull));
+  hal_flush_tlb(reinterpret_cast<HCore::UIntPtr>(pageDirNull));
 }
 }  // namespace Detail
 
@@ -43,7 +43,7 @@ EXTERN_C void RuntimeMain(
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
   kKernelVirtualStart = HandoverHeader->f_VirtualStart;
 
-  kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
+  kKernelPhysicalSize = HandoverHeader->f_PhysicalSize - kPTEAlign;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 
   STATIC HCore::HAL::Detail::HCoreGDT GDT = {
@@ -95,10 +95,9 @@ EXTERN_C void RuntimeMain(
 
   /// We already have an install of HCore.
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
-    HCore::kcout << "HCoreKrnl.exe: Running kernel...\r\n";
     /// TODO: Parse system configuration.
   } else {
-    HCore::kcout << "HCoreKrnl.exe: Running setup...\r\n";
+    /// TODO: Install hcore on host.
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

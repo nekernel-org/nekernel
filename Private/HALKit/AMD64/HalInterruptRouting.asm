@@ -128,56 +128,16 @@ __HCR_INT_33:
     sti
     iretq
 
-__HCR_INT_34:
-    cld
-
-    iretq
-
-
-__HCR_INT_35:
-    cld
-
-    iretq
-
-__HCR_INT_36:
-    cld
-
-    iretq
-
-__HCR_INT_37:
-    cld
-
-    iretq
-
-__HCR_INT_38:
-    cld
-
-    iretq
-
-__HCR_INT_39:
-    cld
-
-    iretq
-
-__HCR_INT_40:
-    cld
-
-    iretq
-
-__HCR_INT_41:
-    cld
-
-    iretq
-
-__HCR_INT_42:
-    cld
-
-    iretq
-
-__HCR_INT_43:
-    cld
-
-    iretq
+IntNormal 34
+IntNormal 35
+IntNormal 36
+IntNormal 37
+IntNormal 38
+IntNormal 39
+IntNormal 40
+IntNormal 41
+IntNormal 42
+IntNormal 43
 
 __HCR_INT_44:
     cli
@@ -200,10 +160,8 @@ __HCR_INT_44:
     sti
     iretq
 
-__HCR_INT_45:
-    cld 
 
-    iretq
+IntNormal 45
 
 IntNormal 46
 IntNormal 47

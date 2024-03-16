@@ -17,14 +17,14 @@ class BDeviceAHCI final {
   HCORE_COPY_DEFAULT(BDeviceAHCI);
 
   struct AHCITraits final {
-    HCore::SizeT mBase{1024};
-    HCore::Boolean mErr{false};
-    HCore::Boolean mDetected{false};
+    HCore::SizeT   fBase{1024};
+    HCore::Boolean fError{false};
+    HCore::Boolean fDetected{false};
 
-    operator bool() { return !this->mErr; }
+    operator bool() { return !this->fError; }
   };
 
-  operator bool() { return this->Leak().mDetected; }
+  operator bool() { return this->Leak().fDetected; }
 
   BDeviceAHCI& Read(HCore::WideChar* Buf, const HCore::SizeT& SecCount);
   BDeviceAHCI& Write(HCore::WideChar* Buf, const HCore::SizeT& SecCount);
