@@ -7,6 +7,7 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.hxx>
+#include <HintKit/CompilerHint.hxx>
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorOr.hpp>
 

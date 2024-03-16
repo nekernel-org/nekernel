@@ -14,7 +14,9 @@
 
 namespace HCore
 {
-template <Size N>
+/// @brief Locking delegate class, hangs until limit.
+/// @tparam N 
+template <SizeT N>
 class LockDelegate final
 {
   public:
@@ -24,6 +26,7 @@ class LockDelegate final
     explicit LockDelegate(Boolean *expr)
     {
         auto spin = 0U;
+    
         while (spin != N)
         {
             if (*expr)
@@ -46,6 +49,7 @@ class LockDelegate final
     {
         return m_LockStatus[kLockDone] == kLockDone;
     }
+
     bool HasTimedOut()
     {
         return m_LockStatus[kLockTimedOut] != kLockTimedOut;

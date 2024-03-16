@@ -50,18 +50,18 @@ typedef VoidPtr NodePtr;
     @brief Filesystem Manager Interface class
     @brief Used to provide common I/O for a specific filesystem.
 */
-class IFilesystemManager {
+class FilesystemManagerInterface {
  public:
-  IFilesystemManager() = default;
-  virtual ~IFilesystemManager() = default;
+  FilesystemManagerInterface() = default;
+  virtual ~FilesystemManagerInterface() = default;
 
  public:
-  HCORE_COPY_DEFAULT(IFilesystemManager);
+  HCORE_COPY_DEFAULT(FilesystemManagerInterface);
 
  public:
-  static bool Mount(IFilesystemManager *pMount);
-  static IFilesystemManager *Unmount();
-  static IFilesystemManager *GetMounted();
+  static bool Mount(FilesystemManagerInterface *pMount);
+  static FilesystemManagerInterface *Unmount();
+  static FilesystemManagerInterface *GetMounted();
 
  public:
   virtual NodePtr Create(_Input const char *path) = 0;
@@ -91,9 +91,9 @@ class IFilesystemManager {
 
 #ifdef __FSKIT_NEWFS__
 /**
- * @brief Based of IFilesystemManager, takes care of managing NewFS disks.
+ * @brief Based of FilesystemManagerInterface, takes care of managing NewFS disks.
  */
-class NewFilesystemManager final : public IFilesystemManager {
+class NewFilesystemManager final : public FilesystemManagerInterface {
  public:
   explicit NewFilesystemManager();
   ~NewFilesystemManager() override;
@@ -158,7 +158,7 @@ class NewFilesystemManager final : public IFilesystemManager {
  * @tparam Encoding file encoding (char, wchar_t...)
  * @tparam FSClass Filesystem contract who takes care of it.
  */
-template <typename Encoding = char, typename FSClass = IFilesystemManager>
+template <typename Encoding = char, typename FSClass = FilesystemManagerInterface>
 class FileStream final {
  public:
   explicit FileStream(const Encoding *path, const Encoding *restrict_type);

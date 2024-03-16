@@ -31,9 +31,12 @@ extern RuntimeMain
 
 ;; Just a simple setup, we'd also need to tell some before
 Main:
+    push rax
     push rcx
     call RuntimeMain
     pop rcx
+    pop rax
+;; Go to sleep.
 MainLoop:
     cli
     hlt

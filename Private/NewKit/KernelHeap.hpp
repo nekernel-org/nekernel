@@ -7,7 +7,7 @@
 #pragma once
 
 // last-rev 30/01/24
-// file: KHeap.hpp
+// file: KernelHeap.hpp
 // description: heap allocation for the kernel.
 
 #include <NewKit/Defines.hpp>

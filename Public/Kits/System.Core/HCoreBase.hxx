@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <System.Core/CoreAPI.hxx>
+#include <System.Core/Defs.hxx>
 
 typedef struct HcObject {
   void(*Release)(void);

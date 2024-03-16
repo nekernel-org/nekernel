@@ -11,10 +11,10 @@
 EXTERN_C void idt_handle_gpf(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
-  HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
+  HCore::kcout << "HCoreKrnl.exe: Stack Pointer: " << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
-      << "HCoreKrnl: General Protection Fault, caused by "
+      << "HCoreKrnl.exe: General Protection Fault, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
@@ -24,13 +24,13 @@ EXTERN_C void idt_handle_scheduler(HCore::UIntPtr rsp) {
   HCore::kcout << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
-      << "HCoreKrnl: Will be scheduled back later "
+      << "HCoreKrnl.exe: Will be scheduled back later "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName()
       << HCore::end_line();
 
   /// schedule another process.
   if (!HCore::ProcessHelper::StartScheduling()) {
-    HCore::kcout << "HCoreKrnl: Continue schedule this process...\r\n";
+    HCore::kcout << "HCoreKrnl.exe: Continue schedule this process...\r\n";
   }
 }
 
@@ -40,7 +40,7 @@ EXTERN_C void idt_handle_pf(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "HCoreKrnl: Segmentation Fault, caused by "
+      << "HCoreKrnl.exe: Segmentation Fault, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
@@ -52,7 +52,7 @@ EXTERN_C void idt_handle_math(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "HCoreKrnl: Math error, caused by "
+      << "HCoreKrnl.exe: Math error, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
@@ -64,7 +64,7 @@ EXTERN_C void idt_handle_generic(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
   HCore::kcout
-      << "HCoreKrnl: Execution error, caused by "
+      << "HCoreKrnl.exe: Execution error, caused by "
       << HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().GetName();
 
   HCore::ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();

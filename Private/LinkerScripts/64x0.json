@@ -1,6 +1,6 @@
 {
   "executable_type": "kernel",
-  "output_name": "HCoreKrnl.efi",
+  "output_name": "HCoreKrnl.exe",
   "start_proc": "Main",
   "format": "PEF"
 }

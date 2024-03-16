@@ -14,10 +14,25 @@
 #undef CA_MUST_PASS
 #endif
 
-// unused by user side, it's a kernel thing.
-#define CA_MUST_PASS(e) ((void)e)
+#define CA_UNREFERENCED_PARAMETER(e) ((void)e)
+
+/// Assertion macros.
+
+#ifdef _DEBUG
+#define CA_MUST_PASS(e) __assert(e)
+#else
+#define CA_MUST_PASS(e) CA_UNREFERENCED_PARAMETER(e)
+#endif
+
+#ifdef __cplusplus
 
 #define CA_EXTERN_C extern "C"
+
+#else
+
+#define CA_EXTERN_C extern
+
+#endif
 
 #define CA_STDCALL __attribute__((stdcall))
 #define CA_CDECL __attribute__((cdecl))
@@ -54,3 +69,9 @@ typedef WCHAR* PWCHAR;
 
 #define CA_STATIC static
 #define CA_INLINE inline
+
+#ifdef __cplusplus
+#define CA_CONSTEXPR constexpr
+#else
+#define CA_CONSTEXPR
+#endif // __cplusplus

@@ -1,5 +1,5 @@
-.globl rt_load_idt
-.globl rt_load_gdt
+.globl hal_load_idt
+.globl hal_load_gdt
 .globl rt_wait_400ns
 .globl rt_get_current_context
 

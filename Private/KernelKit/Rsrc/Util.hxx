@@ -33,4 +33,31 @@
     }                                                                       \
   }
 
+/// @brief cleans a resource.
+#define KeClearZone(_Height, _Width, BaseX, BaseY) \
+                                                                            \
+  for (HCore::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
+    for (HCore::SizeT u = BaseY; u < _Width + BaseY; ++u) {                 \
+        *(((volatile HCore::UInt32*)(kHandoverHeader->f_GOP.f_The +          \
+                                     4 *                                    \
+                                         kHandoverHeader->f_GOP              \
+                                             .f_PixelPerLine *              \
+                                         i +                                \
+                                     4 * u))) = RGB(0, 0, 0);                 \
+    }                                                                         \
+  }
+
+#define KeDrawZone(_Clr, _Height, _Width, BaseX, BaseY) \
+                                                                            \
+  for (HCore::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
+    for (HCore::SizeT u = BaseY; u < _Width + BaseY; ++u) {                 \
+        *(((volatile HCore::UInt32*)(kHandoverHeader->f_GOP.f_The +          \
+                                     4 *                                    \
+                                         kHandoverHeader->f_GOP              \
+                                             .f_PixelPerLine *              \
+                                         i +                                \
+                                     4 * u))) = _Clr;                 \
+    }                                                                         \
+  }
+
 #endif

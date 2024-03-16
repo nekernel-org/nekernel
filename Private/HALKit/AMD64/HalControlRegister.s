@@ -14,9 +14,7 @@
 .section .text
 
 flush_tlb:
-    mov %rsi, %cr3
-    mov %cr3, %rsi
-    xor %rax, %rax
+    invlpg (%rcx)
     ret
 
 read_cr3:

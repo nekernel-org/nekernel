@@ -11,7 +11,7 @@
 #endif
 
 template <typename T>
-inline T* hcore_tls_new_ptr(void) {
+inline T* tls_new_ptr(void) {
   using namespace HCore;
 
   MUST_PASS(ProcessManager::Shared().Leak().GetCurrent());
@@ -24,7 +24,7 @@ inline T* hcore_tls_new_ptr(void) {
 
 //! @brief TLS delete implementation.
 template <typename T>
-inline bool hcore_tls_delete_ptr(T* ptr) {
+inline bool tls_delete_ptr(T* ptr) {
   if (!ptr) return false;
 
   using namespace HCore;
@@ -38,8 +38,8 @@ inline bool hcore_tls_delete_ptr(T* ptr) {
 }
 
 template <typename T, typename... Args>
-T* hcore_tls_new_class(Args&&... args) {
-  T* ptr = hcore_tls_new_ptr<T>();
+T* tls_new_class(Args&&... args) {
+  T* ptr = tls_new_ptr<T>();
 
   if (ptr) {
     *ptr = T(HCore::forward(args)...);

@@ -5,22 +5,35 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <Drivers/PS2/Mouse.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/Rsrc/Splash.rsrc>
 #include <KernelKit/Rsrc/Util.hxx>
 #include <NewKit/Json.hpp>
 #include <NewKit/KernelHeap.hpp>
 #include <NewKit/UserHeap.hpp>
-#include <KernelKit/ProcessScheduler.hpp>
-#include <KernelKit/Rsrc/Splash.rsrc>
 
 ///! @brief Disk contains HCore files.
 #define kInstalledMedia 0xDD
 
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
+EXTERN_C HCore::Void _ke_init_mouse();
+EXTERN_C HCore::Void _hal_mouse_draw();
+
+namespace Detail {
+STATIC HCore::Void ke_page_protect_nullptr(HCore::Void) {
+  HCore::HAL::PageDirectory64* pageDirNull = nullptr;
+
+  for (HCore::SizeT indexPte = 0; indexPte < kPTEMax; ++indexPte) {
+    pageDirNull->Pte[indexPte].Rw = false;
+  }
+
+  flush_tlb(reinterpret_cast<HCore::UIntPtr>(pageDirNull));
+}
+}  // namespace Detail
 
 EXTERN_C void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
@@ -61,29 +74,31 @@ EXTERN_C void RuntimeMain(
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
 
+  Detail::ke_page_protect_nullptr();
+
   KeInitRsrc();
 
-  KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH, 
-            ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2), 
-            ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
+  KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH,
+             ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2),
+             ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
 
   KeClearRsrc();
 
   /// START POST
 
   HCore::HAL::Detail::_ke_power_on_self_test();
-  
+
   /// END POST
-  
+
   /// Mounts a NewFS block.
-  HCore::IFilesystemManager::Mount(new HCore::NewFilesystemManager());
+  HCore::FilesystemManagerInterface::Mount(new HCore::NewFilesystemManager());
 
   /// We already have an install of HCore.
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
-    HCore::kcout << "HCoreKrnl: Running kernel...\r\n";
+    HCore::kcout << "HCoreKrnl.exe: Running kernel...\r\n";
     /// TODO: Parse system configuration.
   } else {
-    HCore::kcout << "HCoreKrnl: Running setup...\r\n";
+    HCore::kcout << "HCoreKrnl.exe: Running setup...\r\n";
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

@@ -14,7 +14,7 @@ atexit_func_entry_t __atexit_funcs[DSO_MAX_OBJECTS];
 uarch_t __atexit_func_count;
 
 extern "C" void __cxa_pure_virtual() {
-  HCore::kcout << "HCoreKrnl: Placeholder method.\n";
+  HCore::kcout << "HCoreKrnl.exe: Placeholder method.\n";
 }
 
 extern "C" void ___chkstk_ms() {

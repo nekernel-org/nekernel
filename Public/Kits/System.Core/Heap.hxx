@@ -6,17 +6,13 @@
 
 #pragma once
 
+#include <System.Core/Defs.hxx>
 #include <CompilerKit/CompilerKit.hxx>
-#include <NewKit/Defines.hpp>
-
-/// @brief SOM class, translated to C++
-
-using namespace HCore;
 
 namespace System {
 class MemoryException;
 
-typedef VoidPtr HeapPtr;
+typedef PVOID HeapPtr;
 
 enum {
   kHeapExpandable = 2,
@@ -58,7 +54,7 @@ class MemoryException final {
   const char *Reason();
 
  private:
-  const char *mReason{"HeapAPI: Memory Exception!"};
+  const char *mReason{"System.Core: Process Heap Exception: Catastrophic failure!"};
 
  private:
   friend Heap;

@@ -22,7 +22,7 @@
 
 #define $() HCore::GApplication::Shared()->Document()
 
-#ifdef __IMPORT_LIB
+#ifndef __EXPORT_LIB
 #define G_API __attribute__((pef_container(".IMPORT")))
 #else
 #define G_API __attribute__((pef_container(".EXPORT")))
@@ -167,11 +167,11 @@ class GException final {
   HCORE_COPY_DEFAULT(GException);
 
  public:
-  const char* Name() { return "GUI Error"; }
+  const char* Name() { return "User Interface error."; }
   const char* Reason() { return mReason; }
 
  private:
-  const char* mReason{"CoreAPI: GUI Exception!"};
+  const char* mReason{"System.Graphics: User Interface error. Check HError."};
 };
 
 template <typename GFrameType, typename GFrameBase>

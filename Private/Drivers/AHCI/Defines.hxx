@@ -230,7 +230,7 @@ typedef struct HbaPort final {
   HCore::UInt32 serr;           // 0x30, SATA error (SCR1:SError)
   HCore::UInt32 sact;           // 0x34, SATA active (SCR3:SActive)
   HCore::UInt32 ci;             // 0x38, command issue
-  HCore::UInt32 sntf;           // 0x3C, SATA notification (SCR4:SNotification)
+  HCore::UInt32 sntf;           // 0x20, SATA notification (SCR4:SNotification)
   HCore::UInt32 fbs;            // 0x40, FIS-based switch control
   HCore::UInt32 reserved1[11];  // 0x44 ~ 0x6F, Reserved
   HCore::UInt32 vendor[4];      // 0x70 ~ 0x7F, vendor specific

@@ -16,16 +16,16 @@
 
 /**
  * @brief Framebuffer object implementation.
- * 
+ *
  */
 
 using namespace HCore;
 
 /**
  * @brief Get Pixel at
- * 
- * @param pos position of pixel. 
- * @return volatile* 
+ *
+ * @param pos position of pixel.
+ * @return volatile*
  */
 volatile UIntPtr *Framebuffer::operator[](const UIntPtr &pos) {
   return (UIntPtr *)(m_FrameBufferAddr->m_Base * pos);

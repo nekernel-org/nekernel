@@ -16,13 +16,13 @@
 #define kCookieMag2 'o'
 
 template <typename T>
-T *hcore_tls_new_ptr(void);
+T *tls_new_ptr(void);
 
 template <typename T>
-bool hcore_tls_delete_ptr(T *ptr);
+bool tls_delete_ptr(T *ptr);
 
 template <typename T, typename... Args>
-T *hcore_tls_new_class(Args &&...args);
+T *tls_new_class(Args &&...args);
 
 #define kTLSCookieLen 3
 
@@ -46,10 +46,10 @@ struct ThreadInformationBlock final {
 EXTERN_C void rt_install_tib(ThreadInformationBlock *pTib, HCore::VoidPtr pPib);
 
 ///! @brief Cookie Sanity check.
-HCore::Boolean hcore_tls_check(ThreadInformationBlock *ptr);
+HCore::Boolean tls_check(ThreadInformationBlock *ptr);
 
 /// @brief TLS check system call
-EXTERN_C HCore::Void hcore_tls_check_syscall_impl(HCore::HAL::StackFramePtr stackPtr) noexcept;
+EXTERN_C HCore::Void tls_check_syscall_impl(HCore::HAL::StackFramePtr stackPtr) noexcept;
 
 #include <KernelKit/ThreadLocalStorage.inl>
 

@@ -12,15 +12,15 @@
 //! @brief File manager for HCore.
 
 namespace HCore {
-static IFilesystemManager* kMounted = nullptr;
+static FilesystemManagerInterface* kMounted = nullptr;
 
 /// @brief FilesystemManager getter.
 /// @return The mounted filesystem.
-IFilesystemManager* IFilesystemManager::GetMounted() { return kMounted; }
+FilesystemManagerInterface* FilesystemManagerInterface::GetMounted() { return kMounted; }
 
 /// @brief Unmount filesystem.
 /// @return the unmounted filesystem.
-IFilesystemManager* IFilesystemManager::Unmount() {
+FilesystemManagerInterface* FilesystemManagerInterface::Unmount() {
   if (kMounted) {
     auto mount = kMounted;
     kMounted = nullptr;
@@ -34,7 +34,7 @@ IFilesystemManager* IFilesystemManager::Unmount() {
 /// @brief Mount filesystem.
 /// @param pMount the filesystem to mount.
 /// @return if it succeeded true, otherwise false.
-bool IFilesystemManager::Mount(IFilesystemManager* pMount) {
+bool FilesystemManagerInterface::Mount(FilesystemManagerInterface* pMount) {
   if (kMounted == nullptr) {
     kMounted = pMount;
     return true;

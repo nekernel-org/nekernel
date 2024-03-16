@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <System.Core/HeapAPI.hxx>
-#include <System.Core/hcore.h>
+#include <System.Core/Heap.hxx>
+#include <System.Core/System.Core.hxx>
 
 using namespace HCore;
 using namespace System;

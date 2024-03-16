@@ -36,7 +36,7 @@ using namespace HCore;
 /***********************************************************************************/
 
 EXTERN_C SharedObjectPtr rt_library_init(void) {
-  SharedObjectPtr library = hcore_tls_new_class<SharedObject>();
+  SharedObjectPtr library = tls_new_class<SharedObject>();
 
   if (!library) {
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
@@ -44,7 +44,7 @@ EXTERN_C SharedObjectPtr rt_library_init(void) {
     return nullptr;
   }
 
-  library->Mount(hcore_tls_new_class<SharedObject::SharedObjectTraits>());
+  library->Mount(tls_new_class<SharedObject::SharedObjectTraits>());
 
   if (!library->Get()) {
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();

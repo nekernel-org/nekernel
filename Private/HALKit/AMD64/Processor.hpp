@@ -177,9 +177,9 @@ EXTERN_C void idt_handle_gpf(HCore::UIntPtr rsp);
 EXTERN_C void idt_handle_math(HCore::UIntPtr rsp);
 EXTERN_C void idt_handle_pf(HCore::UIntPtr rsp);
 
-EXTERN_C void rt_load_idt(HCore::HAL::Register64 ptr);
-EXTERN_C void rt_load_gdt(HCore::HAL::RegisterGDT ptr);
+EXTERN_C void hal_load_idt(HCore::HAL::Register64 ptr);
+EXTERN_C void hal_load_gdt(HCore::HAL::RegisterGDT ptr);
 
 /// @brief Maximum size of the IDT.
-#define kKernelIdtSize 256
-
+#define kKernelIdtSize        0x100
+#define kKernelInterruptId    0x21

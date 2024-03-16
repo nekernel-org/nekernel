@@ -11,7 +11,7 @@
 
 [bits 64]
 
-%define kInterruptId    0x21
+%define kInterruptId 0x21
 
 %macro IntExp 1
 global __HCR_INT_%1 
@@ -36,13 +36,18 @@ global _ke_power_on_self_test
 global ke_handle_irq
 global kInterruptVectorTable
 
+extern _hal_mouse_handler
+extern idt_handle_gpf
+extern idt_handle_pf
 extern ke_io_print
 
 section .text
 
 IntNormal 0
 IntNormal 1
+
 IntNormal 2
+
 IntNormal 3
 IntNormal 4
 IntNormal 5
@@ -52,9 +57,35 @@ IntExp   8
 IntNormal 9
 IntExp   10
 IntExp   11
-IntExp   12
+
+__HCR_INT_12:
+    cli
+
+    push rax
+
+    mov rcx, rsp
+    call idt_handle_gpf
+
+    pop rax
+
+    sti
+    iretq
+
 IntExp   13
-IntExp   14
+
+__HCR_INT_14:
+    cli
+
+    push rax
+
+    mov rcx, rsp
+    call idt_handle_pf
+
+    pop rax
+
+    sti
+    iretq
+    
 IntNormal 15
 IntNormal 16
 IntExp 17
@@ -97,8 +128,101 @@ __HCR_INT_33:
     sti
     iretq
 
-%assign i 34
-%rep 222
+__HCR_INT_34:
+    cld
+
+    iretq
+
+
+__HCR_INT_35:
+    cld
+
+    iretq
+
+__HCR_INT_36:
+    cld
+
+    iretq
+
+__HCR_INT_37:
+    cld
+
+    iretq
+
+__HCR_INT_38:
+    cld
+
+    iretq
+
+__HCR_INT_39:
+    cld
+
+    iretq
+
+__HCR_INT_40:
+    cld
+
+    iretq
+
+__HCR_INT_41:
+    cld
+
+    iretq
+
+__HCR_INT_42:
+    cld
+
+    iretq
+
+__HCR_INT_43:
+    cld
+
+    iretq
+
+__HCR_INT_44:
+    cli
+
+    push rax
+
+    call _hal_mouse_handler
+
+    pop rax
+
+    push rax
+
+    ;; Find and execute system call TODO
+
+    mov rcx, kMouseLabelExit
+    call ke_io_print
+
+    pop rax
+
+    sti
+    iretq
+
+__HCR_INT_45:
+    cld 
+
+    iretq
+
+IntNormal 46
+IntNormal 47
+IntNormal 48
+IntNormal 49
+IntNormal 50
+IntNormal 51
+IntNormal 52
+IntNormal 53
+IntNormal 54
+IntNormal 55
+IntNormal 56
+IntNormal 57
+IntNormal 58
+IntNormal 59
+IntNormal 60
+
+%assign i 61
+%rep 195
     IntNormal i
 %assign i i+1
 %endrep
@@ -114,9 +238,9 @@ _ke_power_on_self_test:
 
     ret
 
-[global rt_load_gdt]
+[global hal_load_gdt]
 
-rt_load_gdt:
+hal_load_gdt:
     lgdt [rcx]
     push 0x08
     lea rax, [rel rt_reload_segments]
@@ -131,9 +255,9 @@ rt_reload_segments:
     mov ss, ax
     ret
 
-global rt_load_idt
+global hal_load_idt
 
-rt_load_idt:
+hal_load_idt:
     lidt [rcx]
     sti
     ret
@@ -148,6 +272,8 @@ kInterruptVectorTable:
     %endrep
 
 kSystemCallLabelEnter:
-    db "HCoreKrnl.exe: SystemCall: Enter", 0xa, 0xd, 0
+    db "HCoreKrnl.exe: SystemCall: Enter.", 0xa, 0xd, 0
 kSystemCallLabelExit:
-    db "HCoreKrnl.exe: SystemCall: Exit", 0xa, 0xd, 0
+    db "HCoreKrnl.exe: SystemCall: Exit.", 0xa, 0xd, 0
+kMouseLabelExit:
+    db "HCoreKrnl.exe: KernelMouse: Acknowledge Interrupt.", 0xa, 0xd, 0

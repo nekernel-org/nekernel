@@ -26,13 +26,13 @@
 #define kPTESize (0x1000)
 #endif  // !kPTESize
 
-extern "C" void flush_tlb(HCore::UIntPtr VirtualAddr);
-extern "C" void write_cr3(HCore::UIntPtr pde);
-extern "C" void write_cr0(HCore::UIntPtr bit);
+EXTERN_C void flush_tlb(HCore::UIntPtr pde);
+EXTERN_C void write_cr3(HCore::UIntPtr pde);
+EXTERN_C void write_cr0(HCore::UIntPtr bit);
 
-extern "C" HCore::UIntPtr read_cr0();  // @brief CPU control register.
-extern "C" HCore::UIntPtr read_cr2();  // @brief Fault address.
-extern "C" HCore::UIntPtr read_cr3();  // @brief Page table.
+EXTERN_C HCore::UIntPtr read_cr0();  // @brief CPU control register.
+EXTERN_C HCore::UIntPtr read_cr2();  // @brief Fault address.
+EXTERN_C HCore::UIntPtr read_cr3();  // @brief Page table.
 
 namespace HCore::HAL {
 struct PageTable64 {

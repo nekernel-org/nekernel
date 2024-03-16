@@ -8,7 +8,7 @@
  */
 
 #include <System.Zip/Zip.hpp>
-#include <System.Core/CoreAPI.hxx>
+#include <System.Core/Defs.hxx>
 
 #define kInitialSz 4096
 
