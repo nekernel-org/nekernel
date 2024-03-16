@@ -9,6 +9,7 @@
 
     ?/?/?: Added file (amlel)
     12/02/24: Add UUID macro for EPM and GPT partition schemes.
+    3/16/24: Add mandatory sector size, kNewFSMinimumSectorSz is set to 2048 by default.
 
 ------------------------------------------- */
 
@@ -27,17 +28,19 @@
 #define kNewFSInvalidCatalog -1
 #define kNewFSNodeNameLen 256
 
+#define kNewFSMinimumSectorSz 2048
+
 #define kNewFSIdentLen 8
 #define kNewFSIdent "  NEFS"
-#define kPadLen 16
+#define kNewFSPadLen 16
 
 //! On EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
-#define kNewFSVersionInteger 0x120
-#define kNewFSVerionString   "1.2.0"
+#define kNewFSVersionInteger 0x121
+#define kNewFSVerionString   "1.2.1"
 
-typedef HCore::WideChar NewCharType;
+typedef HCore::Char NewCharType;
 
 enum {
   kNewFSHardDrive = 0xC0,          // Hard Drive
@@ -64,7 +67,7 @@ struct PACKED NewBootBlock final {
   HCore::Lba FirstPartBlock;
   HCore::Lba LastPartBlock;
 
-  HCore::WideChar Pad[kPadLen];
+  NewCharType Pad[kNewFSPadLen];
 };
 
 #define kFlagDeleted 0xF0
@@ -136,7 +139,7 @@ struct PACKED NewPartitionBlock final {
   HCore::SizeT SectorCount;
   HCore::SizeT SectorSize;
 
-  HCore::Char Pad[kPadLen];
+  HCore::Char Pad[kNewFSPadLen];
 };
 
 #define kCatalogKindFile 1
@@ -160,8 +163,7 @@ struct PACKED NewPartitionBlock final {
 #define kFilesystemUpDir ".."
 #define kFilesystemRoot "/"
 
-#define kFilesystemCR '\r'
-#define kFilesystemLF '\n'
+#define kFilesystemLF '\r'
 #define kFilesystemEOF (-1)
 
 #define kFilesystemBitWidth (sizeof(NewCharType))
@@ -174,7 +176,7 @@ namespace HCore {
 ///
 /// \name NewFSParser
 /// \brief NewFS parser class. (catalog creation, remove removal, root, forks...)
-/// Designed like the DOM.
+/// Designed like the DOM, detects the filesystem automatically.
 ///
 
 class NewFSParser {
