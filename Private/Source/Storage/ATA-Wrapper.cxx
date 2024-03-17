@@ -27,7 +27,7 @@ bool set_prdt_struct(Ref<PRDT*>& refCtrl) {
     return true;
   }
 
-  kcout << "[set_prdt_struct] [WARNING] Tried to change PRDT.\n";
+  kcout << "[set_prdt_struct] [WARNING] Trying to change PRDT.\n";
   return false;
 }
 
@@ -64,7 +64,7 @@ const char* ata_read_48(ULong lba) {
   UIntPtr* packet = reinterpret_cast<UIntPtr*>(kPrdt.Leak()->PhysicalAddress());
 
   packet[0] = k48BitRead;
-  packet[1] = (UIntPtr)&buffer;
+  packet[1] = (UIntPtr)buffer;
   packet[4] = lba;
 
   rt_wait_400ns();
@@ -78,7 +78,7 @@ Int32 ata_write_48(ULong lba, const char* buffer) {
   UIntPtr* packet = reinterpret_cast<UIntPtr*>(kPrdt.Leak()->PhysicalAddress());
 
   packet[0] = k48BitWrite;
-  packet[1] = (UIntPtr)&buffer;
+  packet[1] = (UIntPtr)buffer;
   packet[2] = lba;
 
   rt_wait_400ns();
@@ -86,13 +86,13 @@ Int32 ata_write_48(ULong lba, const char* buffer) {
   return packet[1] == 2 ? kATAError : 0;
 }
 
-Int32 ata_write_28(ULong lba, const char* text) {
+Int32 ata_write_28(ULong lba, const char* buffer) {
   if (!kPrdt) return kATAError;
 
   UIntPtr* packet = (UIntPtr*)kPrdt.Leak()->PhysicalAddress();
 
   packet[0] = k28BitWrite;
-  packet[1] = (UIntPtr)&text;
+  packet[1] = (UIntPtr)buffer;
   packet[2] = lba;
 
   rt_wait_400ns();

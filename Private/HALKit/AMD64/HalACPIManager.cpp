@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <Drivers/ACPI/ACPIManager.hxx>
+#include <Builtins/ACPI/ACPIManager.hxx>
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/String.hpp>
 

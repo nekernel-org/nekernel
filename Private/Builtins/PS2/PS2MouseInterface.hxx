@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: PS2KernelMouse.hxx
+    File: PS2MouseInterface.hxx
     Purpose: PS/2 mouse.
 
     Revision History:
@@ -18,13 +18,13 @@
 #include <NewKit/Defines.hpp>
 
 namespace HCore {
-/// @brief Enabled for kernel purposes, kernel mouse.
-class PS2KernelMouse final {
+/// @brief PS/2 Mouse driver interface
+class PS2MouseInterface final {
  public:
-  explicit PS2KernelMouse() = default;
-  ~PS2KernelMouse() = default;
+  explicit PS2MouseInterface() = default;
+  ~PS2MouseInterface() = default;
 
-  HCORE_COPY_DEFAULT(PS2KernelMouse);
+  HCORE_COPY_DEFAULT(PS2MouseInterface);
 
  public:
   Void Init() noexcept {

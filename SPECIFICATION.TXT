@@ -15,11 +15,11 @@
 - Separation of Files/Devices.
 - Networking.
 - Hardware Abstraction Layer.
-- Native Filesystem support (NewFS).
-- Program Loader.
+- Native Filesystem support (NewFS, FAT32 and HCFS).
+- Program Loaders.
 - Thread Local Storage.
 - Semaphore, Locks, Timers.
-- Canary bird.
+- Canary mechanisms.
 - Dynamic Libraries.
 - Cross Platform.
 - Permission Selectors.
@@ -40,3 +40,14 @@
 - Kernel -> ke_init_x
 - RunTime -> rt_copy_mem
 - Hal -> hal_foo_bar
+
+===================================
+4: The HCore Bootloader
+===================================
+
+- Capable of booting from a network drive.
+- Loads a PE file which is the kernel
+- Sanity checks, based on the number of sections. 
+- Handover compliant.
+- Does check for a valid invalid of HCore (useful in the case of recovering)
+

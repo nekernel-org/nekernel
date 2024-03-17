@@ -7,7 +7,7 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.hxx>
-#include <Drivers/AHCI/Defines.hxx>
+#include <Builtins/AHCI/Defines.hxx>
 
 class BDeviceSATA final {
  public:
@@ -35,4 +35,4 @@ class BDeviceSATA final {
   AHCITraits mTraits;
 };
 
-#define kAHCISectorSz 512
+#define kAHCISectorSz 4096

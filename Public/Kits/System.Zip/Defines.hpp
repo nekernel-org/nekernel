@@ -11,4 +11,4 @@
 
 #include <System.Core/System.hxx>
 
-#define ZIPKIT_VERSION "1.0.1"
+#define ZIPKIT_VERSION "1.01"

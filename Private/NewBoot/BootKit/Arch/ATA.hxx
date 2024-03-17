@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <Drivers/ATA/Defines.hxx>
+#include <Builtins/ATA/Defines.hxx>
 
 class BDeviceATA final {
  public:
@@ -48,4 +48,3 @@ enum {
   kATADeviceCount,
 };
 
-#define kATASectorSz 512

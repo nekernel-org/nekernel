@@ -179,6 +179,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                  SystemTable->FirmwareVendor,
                  handoverHdrPtr->f_FirmwareVendorLen);
 
+        handoverHdrPtr->f_HardwareTables.f_VendorTables = ST->ConfigurationTable->VendorTable;
+
         EFI::ExitBootServices(MapKey, ImageHandle);
 
         bool isIniNotFound = (systemIni.Blob() == nullptr);

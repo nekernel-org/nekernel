@@ -261,7 +261,7 @@ BDeviceATA& BDeviceATA::Write(CharacterType* Buf, const SizeT& SectorSz) {
     boot_ata_write(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
                 Buf, Off);
 
-    Off += kATASectorSz;
+    Off += kATASectorSize;
     
     boot_ata_wait_io(this->Leak().mBus);
   }

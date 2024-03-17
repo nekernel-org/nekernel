@@ -60,7 +60,7 @@ typedef struct USBInterruptEnableRegister final {
 /*
     Some terminology:
 
-    Frame Number: Number of processed entry of Frame List.
+    Frame Number: Number of processed entry of the Frame List.
     Frame List Base Address:
     32-bit physical adress of Frame List. Remember that first 12 bytes are
    always 0. The Frame List must contain 1024 entries.

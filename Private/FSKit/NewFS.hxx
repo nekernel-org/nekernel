@@ -28,7 +28,7 @@
 #define kNewFSInvalidCatalog -1
 #define kNewFSNodeNameLen 256
 
-#define kNewFSMinimumSectorSz 2048
+#define kNewFSMinimumSectorSz 4096
 
 #define kNewFSIdentLen 8
 #define kNewFSIdent " NewFS"

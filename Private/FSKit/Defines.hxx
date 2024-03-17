@@ -8,4 +8,4 @@
 
 #include <NewKit/Defines.hpp>
 
-#define FSKIT_VERSION "1.0.0"
+#define FSKIT_VERSION "1.00"

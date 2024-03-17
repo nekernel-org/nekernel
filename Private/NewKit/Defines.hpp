@@ -8,7 +8,7 @@
 
 #include <NewKit/Macros.hpp>
 
-#define NEWKIT_VERSION "1.0.0"
+#define NEWKIT_VERSION "1.00"
 
 #if !defined(_INC_NO_STDC_HEADERS) && defined(__GNUC__)
 #include <CRT/__cxxkit_defines.hxx>

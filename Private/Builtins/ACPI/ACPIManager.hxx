@@ -7,7 +7,7 @@
 #ifndef __ACPI_MANAGER__
 #define __ACPI_MANAGER__
 
-#include <Drivers/ACPI/ACPI.hpp>
+#include <Builtins/ACPI/ACPI.hpp>
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
@@ -15,7 +15,7 @@
 namespace HCore {
 class ACPIManager final {
  public:
-  explicit ACPIManager(voidPtr rsdptr);
+  explicit ACPIManager(voidPtr rsdPtr);
   ~ACPIManager() = default;
 
   ACPIManager &operator=(const ACPIManager &) = default;
@@ -41,4 +41,4 @@ class ACPIManager final {
 };
 }  // namespace HCore
 
-#endif  // !__ACPI_MANAGER__
+#endif // !__ACPI_MANAGER__

@@ -30,8 +30,6 @@
 #define kBinFolder "/Programs"
 #define kShLibsFolder "/Library"
 
-#define kSectorSz 512
-
 /// refer to first enum.
 #define kFileOpsCount 4
 
