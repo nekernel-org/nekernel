@@ -31,7 +31,7 @@
 #define kNewFSMinimumSectorSz 2048
 
 #define kNewFSIdentLen 8
-#define kNewFSIdent "  NEFS"
+#define kNewFSIdent " NewFS"
 #define kNewFSPadLen 16
 
 //! On EPM and GPT disks.
@@ -39,6 +39,47 @@
 
 #define kNewFSVersionInteger 0x121
 #define kNewFSVerionString   "1.2.1"
+
+#define kNewFSCatalogKindFile 1
+#define kNewFSCatalogKindDir 2
+#define kNewFSCatalogKindAlias 3
+
+//! shared between network or
+//! other filesystems. Export forks as .zip when copying.
+#define kNewFSCatalogKindShared 4
+
+#define kNewFSCatalogKindResource 5
+#define kNewFSCatalogKindExecutable 6
+
+#define kNewFSCatalogKindPage 8
+
+#define kNewFSCatalogKindDevice 9
+#define kNewFSCatalogKindLock 10
+
+#define kNewFSSeparator '/'
+
+#define kNewFSUpDir ".."
+#define kNewFSRoot "/"
+
+#define kNewFSLF '\r'
+#define kNewFSEOF (-1)
+
+#define kNewFSBitWidth (sizeof(NewCharType))
+#define kNewFSLbaType (HCore::Lba)
+
+/// Start After the PM headers, pad 1024 bytes.
+#define kNewFSAddressAsLba (1024U)
+
+#define kResourceTypeDialog 10
+#define kResourceTypeString 11
+#define kResourceTypeMenu 12
+
+#define kConfigLen 64
+#define kPartLen 32
+
+#define kNewFSFlagDeleted 0xF0
+#define kNewFSFlagUnallocated 0x0F
+#define kNewFSFlagCatalog 0xFF
 
 typedef HCore::Char NewCharType;
 
@@ -70,17 +111,6 @@ struct PACKED NewBootBlock final {
   NewCharType Pad[kNewFSPadLen];
 };
 
-#define kFlagDeleted 0xF0
-#define kFlagUnallocated 0x0F
-#define kFlagCatalog 0xFF
-
-#define kKindCatalog 1
-#define kKindDirectory 2
-#define kKindSymlink 3
-#define kKindPartition 4
-#define kKindDevice 5
-#define kKindNetwork 6
-
 struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
 
@@ -90,16 +120,13 @@ struct PACKED NewCatalog final {
   HCore::Lba FirstFork;
   HCore::Lba LastFork;
 
-  HCore::Lba SiblingRecords[12];
-};
-
-#define kNewFSMaxEntries 256
-
-struct PACKED NewCatalogRecord final {
-  HCore::Lba Entries[kNewFSMaxEntries];
+  HCore::Lba NextSibling;
+  HCore::Lba PrevSibling;
 };
 
 struct PACKED NewFork final {
+  NewCharType  Name[kNewFSNodeNameLen];
+
   HCore::Int32 Flags;
   HCore::Int32 Kind;
 
@@ -107,19 +134,12 @@ struct PACKED NewFork final {
   HCore::Int32 ResourceKind;
   HCore::Int32 ResourceFlags;
 
-  HCore::Lba DataOffset;  // Where to look for this data?
-  HCore::SizeT DataSize;  // Data size according using sector count.
+  HCore::Lba   DataOffset;  //8 Where to look for this data?
+  HCore::SizeT DataSize;  /// Data size according using sector count.
 
   HCore::Lba NextSibling;
   HCore::Lba PreviousSibling;
 };
-
-#define kResourceTypeDialog 10
-#define kResourceTypeString 11
-#define kResourceTypeMenu 12
-
-#define kConfigLen 64
-#define kPartLen 32
 
 struct PACKED NewPartitionBlock final {
   NewCharType Ident[kNewFSIdentLen];
@@ -141,36 +161,6 @@ struct PACKED NewPartitionBlock final {
 
   HCore::Char Pad[kNewFSPadLen];
 };
-
-#define kCatalogKindFile 1
-#define kCatalogKindDir 2
-#define kCatalogKindAlias 3
-
-//! shared between network or
-//! other filesystems. Export forks as .zip when copying.
-#define kCatalogKindShared 4
-
-#define kCatalogKindResource 5
-#define kCatalogKindExecutable 6
-
-#define kCatalogKindPage 8
-
-#define kCatalogKindDevice 9
-#define kCatalogKindLock 10
-
-#define kFilesystemSeparator '/'
-
-#define kFilesystemUpDir ".."
-#define kFilesystemRoot "/"
-
-#define kFilesystemLF '\r'
-#define kFilesystemEOF (-1)
-
-#define kFilesystemBitWidth (sizeof(NewCharType))
-#define kFilesystemLbaType (HCore::Lba)
-
-/// Start After the PM headers, pad 1024 bytes.
-#define kNewFSAddressAsLba (1024U)
 
 namespace HCore {
 ///

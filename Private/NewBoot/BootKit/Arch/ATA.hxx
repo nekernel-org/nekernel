@@ -8,8 +8,6 @@
 
 #include <Drivers/ATA/Defines.hxx>
 
-Boolean IsATADetected(Void);
-
 class BDeviceATA final {
  public:
   enum {
@@ -31,7 +29,7 @@ class BDeviceATA final {
     operator bool() { return !mErr; }
   };
 
-  operator bool() { return IsATADetected(); }
+  operator bool();
 
   BDeviceATA& Read(WideChar* Buf, const SizeT& SecCount);
   BDeviceATA& Write(WideChar* Buf, const SizeT& SecCount);

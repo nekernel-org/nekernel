@@ -26,22 +26,22 @@ bool NewFilesystemManager::Remove(const char* node_name) {
 }
 
 NodePtr NewFilesystemManager::Create(const char* path) {
-  return node_cast(fImpl->CreateCatalog(path, 0, kCatalogKindFile));
+  return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindFile));
 }
 
 NodePtr NewFilesystemManager::CreateDirectory(const char* path) {
-  return node_cast(fImpl->CreateCatalog(path, 0, kCatalogKindDir));
+  return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindDir));
 }
 
 NodePtr NewFilesystemManager::CreateAlias(const char* path) {
-  return node_cast(fImpl->CreateCatalog(path, 0, kCatalogKindAlias));
+  return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindAlias));
 }
 
-const char* NewFilesystemHelper::Root() { return kFilesystemRoot; }
+const char* NewFilesystemHelper::Root() { return kNewFSRoot; }
 
-const char* NewFilesystemHelper::UpDir() { return kFilesystemUpDir; }
+const char* NewFilesystemHelper::UpDir() { return kNewFSUpDir; }
 
-const char NewFilesystemHelper::Separator() { return kFilesystemSeparator; }
+const char NewFilesystemHelper::Separator() { return kNewFSSeparator; }
 }  // namespace HCore
 
 #endif  // ifdef __FSKIT_NEWFS__

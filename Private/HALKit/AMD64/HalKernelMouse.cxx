@@ -62,6 +62,11 @@ EXTERN_C void _hal_mouse_handler()
     default:
         break;
     }
+
+    // Notify PIC controller that we're done with it's interrupt.
+
+    HCore::HAL::Out8(0x20, 0x20);
+    HCore::HAL::Out8(0xA0, 0x20);
 #endif
 }
 
@@ -114,9 +119,21 @@ EXTERN_C void _hal_mouse_draw()
 
 /// @brief Inital kernel mouse initializer
 /// @param  
-EXTERN_C void _ke_init_mouse(void)
+EXTERN_C void _hal_init_mouse(void)
 {
 #ifdef __DEBUG__
     kMousePS2.Init();
+
+    auto pic1Port = 0x20;
+    auto pic2Port = 0xA0;
+
+    auto mask = 1 << 12;
+    auto currentMask = HCore::HAL::In8(pic1Port + 1);
+    auto newMask = currentMask & ~mask;
+    HCore::HAL::Out8(pic1Port + 1, newMask);
+
+    currentMask = HCore::HAL::In8(pic2Port + 1);
+    newMask = currentMask & ~mask;
+    HCore::HAL::Out8(pic2Port + 1, newMask);
 #endif
 }

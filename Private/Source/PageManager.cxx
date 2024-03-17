@@ -44,14 +44,14 @@ PTEWrapper::~PTEWrapper() {
 }
 
 void PTEWrapper::FlushTLB(Ref<PageManager> &pm) {
-  volatile PTE *virtAddr = static_cast<volatile PTE *>(virtAddr);
+  PTE* ptIndex = (PTE*)((m_VirtAddr >> 12) & 0x1FF);
+  ptIndex->Wt = m_Wt;
+  ptIndex->Rw = m_Rw;
+  ptIndex->Cache = m_Cache;
+  ptIndex->Present = m_Present;
+  ptIndex->ExecDisable = m_ExecDisable;
 
-  virtAddr->Present = this->m_Present;
-  virtAddr->ExecDisable = this->m_ExecDisable;
-  virtAddr->Rw = this->m_Rw;
-  virtAddr->User = this->m_User;
-
-  pm.Leak().FlushTLB(this->m_VirtAddr);
+  pm.Leak().FlushTLB((UIntPtr)ptIndex);
 }
 
 void PageManager::FlushTLB(UIntPtr VirtAddr) {
@@ -71,8 +71,9 @@ bool PTEWrapper::Reclaim() {
 
 PTEWrapper *PageManager::Request(Boolean Rw, Boolean User,
                                  Boolean ExecDisable) {
+  // Store PTE wrapper right after PTE.
   PTEWrapper *PageTableEntry = reinterpret_cast<PTEWrapper *>(
-      HCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User));
+      HCore::HAL::hal_alloc_page(sizeof(PTEWrapper), Rw, User) + sizeof(PTE));
 
   PageTableEntry->NoExecute(ExecDisable);
 
@@ -92,19 +93,7 @@ bool PageManager::Free(Ref<PTEWrapper *> &wrapper) {
   return false;
 }
 
-////////////////////////////
-
-// VIRTUAL ADDRESS GETTER (SKIP PTE)
-
-////////////////////////////
-
-const UIntPtr PTEWrapper::VirtualAddress() { return (m_VirtAddr + sizeof(PTE)); }
-
-////////////////////////////
-
-// PAGE GETTERS
-
-////////////////////////////
+const UIntPtr PTEWrapper::VirtualAddress() { return (m_VirtAddr + sizeof(PTE) + sizeof(PTEWrapper)); }
 
 bool PTEWrapper::Shareable() { return m_Shareable; }
 
@@ -112,12 +101,7 @@ bool PTEWrapper::Present() { return m_Present; }
 
 bool PTEWrapper::Access() { return m_Accessed; }
 
-////////////////////////////
-
-// NO EXECUTE PROTECTION
-
-////////////////////////////
-
 void PTEWrapper::NoExecute(const bool enable) { this->m_ExecDisable = enable; }
+
 const bool &PTEWrapper::NoExecute() { return this->m_ExecDisable; }
 }  // namespace HCore

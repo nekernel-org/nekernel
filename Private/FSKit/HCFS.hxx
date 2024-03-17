@@ -12,8 +12,13 @@
 #include <FirmwareKit/EPM.hxx>
 
 #define kHCFSIdentLen 8
+#define kHCFSIdent "  HCFS"
 #define kHCFSNameLen 256
 #define kHCFSPadLen 16
+
+#define kHCFSFlagDeleted 0xF0
+#define kHCFSFlagUnallocated 0x0F
+#define kHCFSFlagCatalog 0xFF
 
 #define kHCFSGuid "@{0771b3c9-b977-440a-a9ca-396b6d3f07b5}"
 
@@ -32,6 +37,7 @@ typedef struct HCFSBTree final {
   HCore::Char fReserved[384];
 } PACKED HCFSBTree;
 
+/// @brief Catalog file for HCFS.
 typedef struct HCFSCatalog {
 	HCore::Char fCatalogName[kHCFSNameLen];
 	HCore::UInt32 fCatalogKind;
@@ -47,6 +53,11 @@ typedef struct HCFSCatalog {
 
   HCore::Char fReserved[152];
 } HCFSCatalog;
+
+#define kHCFSCatalogKindFile 1
+#define kHCFSCatalogKindDirectory 2
+#define kHCFSCatalogKindJunction 3
+#define kHCFSCatalogKindNetwork 4
 
 enum {
   kHCFSHardDrive = 0xC0,          // Hard Drive

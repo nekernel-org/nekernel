@@ -60,6 +60,9 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 
   Ref<PTEWrapper *> wrapper = kPageManager.Request(user, rw, false);
 
+  Ref<PageManager> refMan(kPageManager);
+  wrapper->FlushTLB(refMan);
+
   kLastWrapper = wrapper;
 
   Detail::HeapInformationBlockPtr heapInfo =

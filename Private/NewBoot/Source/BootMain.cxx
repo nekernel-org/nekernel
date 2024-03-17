@@ -35,9 +35,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   /// Splash screen stuff
 
-  writer.Write(L"MahroussLogic (R) HCoreLdr: ");
-
-  writer.Write(BVersionString::Shared()).Write(L"\r\n");
+  writer.Write(L"MahroussLogic (R) HCoreLdr: ")
+        .Write(BVersionString::Shared()).Write(L"\r\n");
 
   const char strDate[] = __DATE__;
 
@@ -98,34 +97,11 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
             .Write(ptrHdr->mNumberOfSections * sizeof(ExecSectionHeader))
             .Write(L"\r\n");
 
-        volatile ALIGN(kPTEAlign) ExecSectionHeader* blobKrnl =
-            (ExecSectionHeader*)(reinterpret_cast<DosHeaderPtr>(blob) +
-                                 reinterpret_cast<DosHeaderPtr>(blob)->eLfanew +
-                                 ptrHdr->mSizeOfOptionalHeader +
-                                 (sizeof(ExecHeader) +
-                                  sizeof(ExecOptionalHeader) + sizeof(UInt32)));
-
-        while (blobKrnl->mCharacteristics != 0x00000020) {
-          blobKrnl = blobKrnl + sizeof(ExecSectionHeader);
-        }
-
-        writer.Write(L"HCoreLdr: Exec Timestamp: ")
-            .Write(ptrHdr->mTimeDateStamp)
-            .Write(L"\r\n");
+        ExecSectionHeader* blobKrnl =
+            (ExecSectionHeader*)(&optHdr + sizeof(ExecOptionalHeader) + sizeof(UInt32));
 
         for (size_t i = 0; i < ptrHdr->mNumberOfSections; i++) {
-          writer.Write(L"HCoreLdr: Virtual-Size: ")
-              .Write(blobKrnl[i].mVirtualSize)
-              .Write(L"\r\n");
-          writer.Write(L"HCoreLdr: Virtual-Address: ")
-              .Write(blobKrnl[i].mVirtualAddress)
-              .Write(L"\r\n");
-          writer.Write(L"HCoreLdr: Raw-Address: ")
-              .Write(blobKrnl[i].mPointerToRawData)
-              .Write(L"\r\n");
-          writer.Write(L"HCoreLdr: Raw-Size: ")
-              .Write(blobKrnl[i].mSizeOfRawData)
-              .Write(L"\r\n");
+          // TODO: parse PE information here.
         }
 
         UInt32 MapKey = 0;
@@ -143,7 +119,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         /****
          * 
-         *  LOAD KERNEL CODE
+         *  Load kernel into memory.
          *
         */
 
@@ -158,7 +134,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
         /****
          * 
-         *  GET MEMORY MAP OF COMPUTER.
+         *  Get machine memory map.
          * 
         */
 

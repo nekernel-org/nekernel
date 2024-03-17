@@ -15,4 +15,4 @@
  *
  */
 
-#include <BootKit/Arch/AHCI.hxx>
+#include <BootKit/Arch/SATA.hxx>

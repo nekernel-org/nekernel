@@ -44,9 +44,6 @@ STATIC Void RemapPIC(Void) noexcept {
   HAL::Out8(0x21, a1);
   HAL::rt_wait_400ns();
   HAL::Out8(0xA1, a2);
-
-  HAL::Out8(0x21, 0xfd);
-  HAL::Out8(0xa1, 0xff);
 }
 } // namespace Detail
 

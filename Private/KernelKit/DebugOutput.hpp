@@ -55,7 +55,40 @@ inline TerminalDevice carriage_return() {
   return selfTerm;
 }
 
-inline TerminalDevice get_buffer(Char* buf) {
+namespace Detail {
+inline TerminalDevice _write_number_hex(const Long &x, TerminalDevice& term) {
+  int y = x / 16;
+  int h = x % 16;
+
+  if (y) _write_number_hex(y, term);
+
+  /* fail if the hex number is not base-16 */
+  if (h > 15) {
+    _write_number_hex('?', term);
+    return term;
+  }
+
+  if (y < 0) y = -y;
+
+  const char NUMBERS[17] = "0123456789ABCDEF";
+
+  Char buf[2];
+  buf[0] = NUMBERS[h];
+  buf[1] = 0;
+
+  term << buf;
+  return term;
+}
+} // namespace Detail
+
+inline TerminalDevice hex_number(const Long &x) {
+  TerminalDevice selfTerm = TerminalDevice::Shared();
+  Detail::_write_number_hex(x, selfTerm);
+
+  return selfTerm;
+}
+
+inline TerminalDevice get_console_in(Char* buf) {
   TerminalDevice selfTerm = TerminalDevice::Shared();
   selfTerm >> buf;
   return selfTerm;

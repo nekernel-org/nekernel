@@ -84,6 +84,8 @@
 #define EXTERN extern
 #define STATIC static
 
+#define CONST const
+
 #ifndef self
 #define self this
 #endif

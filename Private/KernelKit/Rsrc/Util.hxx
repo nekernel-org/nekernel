@@ -5,6 +5,7 @@
 // Sat Feb 24 CET 2024
 
 #define KeInitRsrc() HCore::SizeT uA = 0
+
 #define KeClearRsrc() uA = 0
 
 /// @brief draws a resource.
@@ -33,6 +34,7 @@
     }                                                                       \
   }
 
+
 /// @brief cleans a resource.
 #define KeClearZone(_Height, _Width, BaseX, BaseY) \
                                                                             \
@@ -47,6 +49,7 @@
     }                                                                         \
   }
 
+
 #define KeDrawZone(_Clr, _Height, _Width, BaseX, BaseY) \
                                                                             \
   for (HCore::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
@@ -59,5 +62,6 @@
                                      4 * u))) = _Clr;                 \
     }                                                                         \
   }
+
 
 #endif

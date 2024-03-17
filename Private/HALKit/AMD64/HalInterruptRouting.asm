@@ -58,7 +58,9 @@ IntNormal 9
 IntExp   10
 IntExp   11
 
-__HCR_INT_12:
+IntExp 12
+
+__HCR_INT_13:
     cli
 
     push rax
@@ -70,8 +72,6 @@ __HCR_INT_12:
 
     sti
     iretq
-
-IntExp   13
 
 __HCR_INT_14:
     cli

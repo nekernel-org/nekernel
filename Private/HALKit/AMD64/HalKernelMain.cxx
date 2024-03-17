@@ -20,18 +20,17 @@
 #define kInstalledMedia 0xDD
 
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
-EXTERN_C HCore::Void _ke_init_mouse();
+EXTERN_C HCore::Void _hal_init_mouse();
+EXTERN_C HCore::Void _hal_mouse_handler();
 EXTERN_C HCore::Void _hal_mouse_draw();
 
 namespace Detail {
 STATIC HCore::Void ke_page_protect_nullptr(HCore::Void) {
-  HCore::HAL::PageDirectory64* pageDirNull = nullptr;
+  HCore::PTEWrapper wrapper(false, false, false, 0);
+  HCore::PageManager pageManager;
+  HCore::Ref<HCore::PageManager> refMan(pageManager);
 
-  for (HCore::SizeT indexPte = 0; indexPte < kPTEMax; ++indexPte) {
-    pageDirNull->Pte[indexPte].Rw = false;
-  }
-
-  hal_flush_tlb(reinterpret_cast<HCore::UIntPtr>(pageDirNull));
+  wrapper.FlushTLB(refMan);
 }
 }  // namespace Detail
 
@@ -74,8 +73,6 @@ EXTERN_C void RuntimeMain(
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
 
-  Detail::ke_page_protect_nullptr();
-
   KeInitRsrc();
 
   KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH,
@@ -87,6 +84,7 @@ EXTERN_C void RuntimeMain(
   /// START POST
 
   HCore::HAL::Detail::_ke_power_on_self_test();
+  Detail::ke_page_protect_nullptr();
 
   /// END POST
 
@@ -98,6 +96,12 @@ EXTERN_C void RuntimeMain(
     /// TODO: Parse system configuration.
   } else {
     /// TODO: Install hcore on host.
+  }
+
+  _hal_init_mouse();
+
+  while (1) {
+    _hal_mouse_draw();
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

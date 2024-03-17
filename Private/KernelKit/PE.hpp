@@ -19,24 +19,23 @@
 
 namespace Detail
 {
-  typedef HCore::UIntPtr U64;
-  typedef HCore::UInt32 U32;
-  typedef HCore::UInt16 U16;
-  typedef HCore::UInt8 U8;
-  typedef Detail::U8 BYTE;
+  typedef HCore::UIntPtr PE_QWORD;
+  typedef HCore::UInt32 PE_DWORD;
+  typedef HCore::UInt16 PE_WORD;
+  typedef HCore::UChar PE_BYTE;
 } // namespace Detail
 
 #define kPeMagic 0x00004550
 
 typedef struct ExecHeader final {
-  Detail::U32 mMagic;  // PE\0\0 or 0x00004550
-  Detail::U16 mMachine;
-  Detail::U16 mNumberOfSections;
-  Detail::U32 mTimeDateStamp;
-  Detail::U32 mPointerToSymbolTable;
-  Detail::U32 mNumberOfSymbols;
-  Detail::U16 mSizeOfOptionalHeader;
-  Detail::U16 mCharacteristics;
+  Detail::PE_DWORD mMagic;  // PE\0\0 or 0x00004550
+  Detail::PE_WORD mMachine;
+  Detail::PE_WORD mNumberOfSections;
+  Detail::PE_DWORD mTimeDateStamp;
+  Detail::PE_DWORD mPointerToSymbolTable;
+  Detail::PE_DWORD mNumberOfSymbols;
+  Detail::PE_WORD mSizeOfOptionalHeader;
+  Detail::PE_WORD mCharacteristics;
 } ALIGN(8) ExecHeader, *ExecHeaderPtr;
 
 #define kMagPE32 0x010b
@@ -46,48 +45,48 @@ typedef struct ExecHeader final {
 #define kPEMachineARM64 0xaa64
 
 typedef struct ExecOptionalHeader final {
-  Detail::U16 mMagic;  // 0x010b - PE32, 0x020b - PE32+ (64 bit)
-  Detail::U8 mMajorLinkerVersion;
-  Detail::U8 mMinorLinkerVersion;
-  Detail::U64 mSizeOfCode;
-  Detail::U64 mSizeOfInitializedData;
-  Detail::U64 mSizeOfUninitializedData;
-  Detail::U32 mAddressOfEntryPoint;
-  Detail::U32 mBaseOfCode;
-  Detail::U64 mImageBase;
-  Detail::U32 mSectionAlignment;
-  Detail::U32 mFileAlignment;
-  Detail::U16 mMajorOperatingSystemVersion;
-  Detail::U16 mMinorOperatingSystemVersion;
-  Detail::U16 mMajorImageVersion;
-  Detail::U16 mMinorImageVersion;
-  Detail::U16 mMajorSubsystemVersion;
-  Detail::U16 mMinorSubsystemVersion;
-  Detail::U32 mWin32VersionValue;
-  Detail::U64 mSizeOfImage;
-  Detail::U64 mSizeOfHeaders;
-  Detail::U32 mCheckSum;
-  Detail::U16 mSubsystem;
-  Detail::U16 mDllCharacteristics;
-  Detail::U64 mSizeOfStackReserve;
-  Detail::U64 mSizeOfStackCommit;
-  Detail::U64 mSizeOfHeapReserve;
-  Detail::U64 mSizeOfHeapCommit;
-  Detail::U32 mLoaderFlags;
-  Detail::U32 mNumberOfRvaAndSizes;
+  Detail::PE_WORD mMagic;  // 0x010b - PE32, 0x020b - PE32+ (64 bit)
+  Detail::PE_BYTE mMajorLinkerVersion;
+  Detail::PE_BYTE mMinorLinkerVersion;
+  Detail::PE_QWORD mSizeOfCode;
+  Detail::PE_QWORD mSizeOfInitializedData;
+  Detail::PE_QWORD mSizeOfUninitializedData;
+  Detail::PE_DWORD mAddressOfEntryPoint;
+  Detail::PE_DWORD mBaseOfCode;
+  Detail::PE_QWORD mImageBase;
+  Detail::PE_DWORD mSectionAlignment;
+  Detail::PE_DWORD mFileAlignment;
+  Detail::PE_WORD mMajorOperatingSystemVersion;
+  Detail::PE_WORD mMinorOperatingSystemVersion;
+  Detail::PE_WORD mMajorImageVersion;
+  Detail::PE_WORD mMinorImageVersion;
+  Detail::PE_WORD mMajorSubsystemVersion;
+  Detail::PE_WORD mMinorSubsystemVersion;
+  Detail::PE_DWORD mWin32VersionValue;
+  Detail::PE_QWORD mSizeOfImage;
+  Detail::PE_QWORD mSizeOfHeaders;
+  Detail::PE_DWORD mCheckSum;
+  Detail::PE_WORD mSubsystem;
+  Detail::PE_WORD mDllCharacteristics;
+  Detail::PE_QWORD mSizeOfStackReserve;
+  Detail::PE_QWORD mSizeOfStackCommit;
+  Detail::PE_QWORD mSizeOfHeapReserve;
+  Detail::PE_QWORD mSizeOfHeapCommit;
+  Detail::PE_DWORD mLoaderFlags;
+  Detail::PE_DWORD mNumberOfRvaAndSizes;
 } ExecOptionalHeader, *ExecOptionalHeaderPtr;
 
 typedef struct ExecSectionHeader final {
-  Detail::BYTE mName[8];
-  Detail::U32 mVirtualSize;
-  Detail::U32 mVirtualAddress;
-  Detail::U32 mSizeOfRawData;
-  Detail::U32 mPointerToRawData;
-  Detail::U32 mPointerToRelocations;
-  Detail::U32 mPointerToLinenumbers;
-  Detail::U16 mNumberOfRelocations;
-  Detail::U16 mNumberOfLinenumbers;
-  Detail::U32 mCharacteristics;
+  CONST Detail::PE_BYTE mName[8];
+  Detail::PE_DWORD mVirtualSize;
+  Detail::PE_DWORD mVirtualAddress;
+  Detail::PE_DWORD mSizeOfRawData;
+  Detail::PE_DWORD mPointerToRawData;
+  Detail::PE_DWORD mPointerToRelocations;
+  Detail::PE_DWORD mPointerToLinenumbers;
+  Detail::PE_WORD mNumberOfRelocations;
+  Detail::PE_WORD mNumberOfLinenumbers;
+  Detail::PE_DWORD mCharacteristics;
 } ExecSectionHeader, *ExecSectionHeaderPtr;
 
 enum kExecDataDirParams {
@@ -98,28 +97,28 @@ enum kExecDataDirParams {
 };
 
 typedef struct ExecExportDirectory {
-  Detail::U32 mCharacteristics;
-  Detail::U32 mTimeDateStamp;
-  Detail::U16 mMajorVersion;
-  Detail::U16 mMinorVersion;
-  Detail::U32 mName;
-  Detail::U32 mBase;
-  Detail::U32 mNumberOfFunctions;
-  Detail::U32 mNumberOfNames;
-  Detail::U32 mAddressOfFunctions;  // export table rva
-  Detail::U32 mAddressOfNames;
-  Detail::U32 mAddressOfNameOrdinal;  // ordinal table rva
+  Detail::PE_DWORD mCharacteristics;
+  Detail::PE_DWORD mTimeDateStamp;
+  Detail::PE_WORD mMajorVersion;
+  Detail::PE_WORD mMinorVersion;
+  Detail::PE_DWORD mName;
+  Detail::PE_DWORD mBase;
+  Detail::PE_DWORD mNumberOfFunctions;
+  Detail::PE_DWORD mNumberOfNames;
+  Detail::PE_DWORD mAddressOfFunctions;  // export table rva
+  Detail::PE_DWORD mAddressOfNames;
+  Detail::PE_DWORD mAddressOfNameOrdinal;  // ordinal table rva
 } ExecExportDirectory, *ExecExportDirectoryPtr;
 
 typedef struct ExecImportDirectory {
   union {
-    Detail::U32 mCharacteristics;
-    Detail::U32 mOriginalFirstThunk;
+    Detail::PE_DWORD mCharacteristics;
+    Detail::PE_DWORD mOriginalFirstThunk;
   };
-  Detail::U32 mTimeDateStamp;
-  Detail::U32 mForwarderChain;
-  Detail::U32 mNameRva;
-  Detail::U32 mThunkTableRva;
+  Detail::PE_DWORD mTimeDateStamp;
+  Detail::PE_DWORD mForwarderChain;
+  Detail::PE_DWORD mNameRva;
+  Detail::PE_DWORD mThunkTableRva;
 } ExecImportDirectory, *ExecImportDirectoryPtr;
 
 #define kPeStart "__hcore_subsys_start"

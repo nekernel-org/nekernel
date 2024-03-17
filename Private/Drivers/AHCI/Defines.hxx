@@ -313,10 +313,4 @@ typedef struct HbaCmdTbl final {
   HbaPrdtEntry prdtEntries[1];  // Physical region descriptor table entries, 0 ~ 65535
 } HbaCmdTbl;
 
-/*
- *
- *
- *
- *
- *
- */
+/* EOF */

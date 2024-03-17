@@ -26,7 +26,9 @@ static Boolean kATADetected = false;
 static Int32 kATADeviceType = kATADeviceCount;
 static CharacterType kATAData[kATADataLen] = {0};
 
-STATIC Boolean ATAWaitForIO(UInt16 IO) {
+Boolean boot_ata_detected(Void);
+
+STATIC Boolean boot_ata_wait_io(UInt16 IO) {
   for (int i = 0; i < 4; i++) In8(IO + ATA_REG_STATUS);
 
 ATAWaitForIO_Retry:
@@ -51,9 +53,9 @@ Void ATASelect(UInt16 Bus) {
     Out8(Bus + ATA_REG_HDDEVSEL, ATA_SECONDARY_SEL);
 }
 
-Boolean ATAInitDriver(UInt16 Bus, UInt8 Drive, UInt16& OutBus,
+Boolean boot_ata_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus,
                       UInt8& OutMaster) {
-  if (IsATADetected()) return false;
+  if (boot_ata_detected()) return false;
 
   BTextWriter writer;
 
@@ -135,7 +137,7 @@ ATAInit_Retry:
   return true;
 }
 
-Void ATAReadLba(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
+Void boot_ata_read(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
                 SizeT Offset) {
   UInt8 Command = (Master ? 0xE0 : 0xF0);
 
@@ -150,12 +152,12 @@ Void ATAReadLba(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  for (SizeT i = 0; i < 256; ++i) {
-    Buf[Offset + i] = In16(IO + ATA_REG_DATA);
+  for (SizeT IndexOff = 0; IndexOff < 256; ++IndexOff) {
+    Buf[Offset + IndexOff] = In16(IO + ATA_REG_DATA);
   }
 }
 
-Void ATAWriteLba(UInt32 Lba, UInt8 IO, UInt8 Master, wchar_t* Buf,
+Void boot_ata_write(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
                  SizeT Offset) {
   UInt8 Command = (Master ? 0xE0 : 0xF0);
 
@@ -170,13 +172,13 @@ Void ATAWriteLba(UInt32 Lba, UInt8 IO, UInt8 Master, wchar_t* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  for (SizeT i = 0; i < 256; ++i) {
-    Out16(IO + ATA_REG_DATA, Buf[Offset + i]);
+  for (SizeT IndexOff = 0; IndexOff < 256; ++IndexOff) {
+    Out16(IO + ATA_REG_DATA, Buf[Offset + IndexOff]);
   }
 }
 
 /// @check is ATA detected?
-Boolean IsATADetected(Void) { return kATADetected; }
+Boolean boot_ata_detected(Void) { return kATADetected; }
 
 /***
  *
@@ -191,15 +193,15 @@ Boolean IsATADetected(Void) { return kATADetected; }
  * @param void none.
  */
 BDeviceATA::BDeviceATA() noexcept {
-  if (IsATADetected()) return;
+  if (boot_ata_detected()) return;
 
-  if (ATAInitDriver(ATA_PRIMARY_IO, true, this->Leak().mBus,
+  if (boot_ata_init(ATA_PRIMARY_IO, true, this->Leak().mBus,
                     this->Leak().mMaster) ||
-      ATAInitDriver(ATA_PRIMARY_IO, false, this->Leak().mBus,
+      boot_ata_init(ATA_PRIMARY_IO, false, this->Leak().mBus,
                     this->Leak().mMaster) ||
-      ATAInitDriver(ATA_SECONDARY_IO, true, this->Leak().mBus,
+      boot_ata_init(ATA_SECONDARY_IO, true, this->Leak().mBus,
                     this->Leak().mMaster) ||
-      ATAInitDriver(ATA_SECONDARY_IO, false, this->Leak().mBus,
+      boot_ata_init(ATA_SECONDARY_IO, false, this->Leak().mBus,
                     this->Leak().mMaster)) {
     kATADetected = true;
 
@@ -207,6 +209,10 @@ BDeviceATA::BDeviceATA() noexcept {
     writer.Write(L"HCoreLdr: Driver: OnLine.\r\n");
   }
 }
+/**
+ * @brief Is ATA detected?
+*/
+BDeviceATA::operator bool() { return boot_ata_detected(); }
 
 /**
     @brief Read Buf from disk
@@ -214,7 +220,7 @@ BDeviceATA::BDeviceATA() noexcept {
     @param Buf buffer
 */
 BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
-  if (!IsATADetected()) {
+  if (!boot_ata_detected()) {
     Leak().mErr = true;
     return *this;
   }
@@ -224,8 +230,11 @@ BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
   if (!Buf || SectorSz < 1) return *this;
 
   for (SizeT i = 0UL; i < SectorSz; ++i) {
-    ATAReadLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
+    boot_ata_read(this->Leak().mBase + i, 
+                  this->Leak().mBus, this->Leak().mMaster,
                Buf, i);
+
+    boot_ata_wait_io(this->Leak().mBus);
   }
 
   return *this;
@@ -237,7 +246,7 @@ BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
     @param Buf buffer
 */
 BDeviceATA& BDeviceATA::Write(CharacterType* Buf, const SizeT& SectorSz) {
-  if (!IsATADetected()) {
+  if (!boot_ata_detected()) {
     Leak().mErr = true;
     return *this;
   }
@@ -249,10 +258,12 @@ BDeviceATA& BDeviceATA::Write(CharacterType* Buf, const SizeT& SectorSz) {
   SizeT Off = 0UL;
 
   for (SizeT i = 0UL; i < SectorSz; ++i) {
-    ATAWriteLba(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
+    boot_ata_write(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
                 Buf, Off);
 
     Off += kATASectorSz;
+    
+    boot_ata_wait_io(this->Leak().mBus);
   }
 
   return *this;

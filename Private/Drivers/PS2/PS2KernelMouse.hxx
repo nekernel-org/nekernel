@@ -32,25 +32,30 @@ class PS2KernelMouse final {
 
     this->Write(0xFF);
 
+    HAL::Out8(0x64, 0xA8);
+
     this->Wait();
 
     HAL::Out8(0x64, 0x20);
 
-    this->Wait();
+    this->WaitInput();
 
-    auto status = HAL::In8(0x60);
+    UInt8 dataStatus = HAL::In8(0x60);
 
-    status |= 0x12;
-
-    this->Wait();
-    
-    HAL::Out8(0x64, 0x60);
+    dataStatus |= 0b10;
 
     this->Wait();
-    
-    HAL::Out8(0x60, status);
 
-    HCore::kcout << "HCoreKrnl.exe: PS/2 mouse is OK.\r\n";
+    HAL::Out8(0x60, dataStatus);
+
+    this->Write(0xF6);
+    auto f6Dat = this->Read();
+
+    this->Write(0xF4);
+    auto f4Dat = this->Read();
+
+    HCore::kcout << "HCoreKrnl.exe: PS/2 mouse is OK: " << hex_number(f6Dat);
+    HCore::kcout << ", " << hex_number(f4Dat) << end_line();
   }
 
   private:
