@@ -14,7 +14,7 @@ namespace HCore {
 template <typename T>
 class Ref final {
  public:
-  Ref() = default;
+  explicit Ref() = default;
   ~Ref() = default;
 
  public:
@@ -47,7 +47,7 @@ class NonNullRef final {
   NonNullRef() = delete;
   NonNullRef(nullPtr) = delete;
 
-  NonNullRef(T *ref) : m_Ref(ref, true) {}
+  explicit NonNullRef(T *ref) : m_Ref(ref, true) {}
 
   Ref<T> &operator->() {
     MUST_PASS(m_Ref);
