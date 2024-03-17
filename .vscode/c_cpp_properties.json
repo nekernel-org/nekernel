@@ -1,7 +1,7 @@
 {
   "configurations": [
     {
-      "name": "HCore (Mac)",
+      "name": "HCore (Macintosh MinGW)",
       "includePath": [
         "${workspaceFolder}/Private/**",
         "${workspaceFolder}/Private/NewBoot/**",
@@ -14,7 +14,7 @@
       "intelliSenseMode": "gcc-x64"
     },
     {
-      "name": "HCore (Win)",
+      "name": "HCore (Windows MinGW)",
       "includePath": [
         "${workspaceFolder}/Private/**",
         "${workspaceFolder}/Private/NewBoot/**",

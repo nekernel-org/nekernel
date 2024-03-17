@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: Core.cpp
+    File: Core.cxx
     Purpose:
 
     Revision History:

@@ -14,12 +14,10 @@
 #undef CA_MUST_PASS
 #endif
 
-#define CA_UNREFERENCED_PARAMETER(e) ((void)e)
-
-/// Assertion macros.
+#include <ObjectKit/Object.hxx>
 
 #ifdef _DEBUG
-#define CA_MUST_PASS(e) __assert(e)
+#define CA_MUST_PASS(e) { if (!e) { __assert_chk_fail() } }
 #else
 #define CA_MUST_PASS(e) CA_UNREFERENCED_PARAMETER(e)
 #endif
@@ -33,6 +31,8 @@
 #define CA_EXTERN_C extern
 
 #endif
+
+CA_EXTERN_C void __assert_chk_fail(void);
 
 #define CA_STDCALL __attribute__((stdcall))
 #define CA_CDECL __attribute__((cdecl))
@@ -50,6 +50,8 @@ typedef void VOID;
 
 typedef __WCHAR_TYPE__ WCHAR;
 typedef WCHAR* PWCHAR;
+
+#define CA_UNREFERENCED_PARAMETER(e) ((VOID)e)
 
 #ifdef __x86_64__
 #   define _M_AMD64 2
@@ -75,3 +77,16 @@ typedef WCHAR* PWCHAR;
 #else
 #define CA_CONSTEXPR
 #endif // __cplusplus
+
+CA_INLINE ObjectPtr kInstanceObject;
+
+enum {
+    kProcessHeapCallAlloc = 1,
+    kProcessHeapCallFree,
+    kProcessHeapCallSize,
+    kProcessHeapCallCheck,
+    kProcessHeapCallAllocStack,
+    kProcessHeapCallOpenHandle,
+    kProcessHeapCallCloseHandle,
+    kProcessHeapCallsCnt,
+};

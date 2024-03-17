@@ -35,8 +35,8 @@ typedef struct XiffHeader XiffHeader;
 
 #define kXIFFContainerVideo "XVFF"
 #define kXIFFContainerAudio "XAFF"
-#define kXIFFContainerInstaller "XnFF"
+#define kXIFFContainerInstaller "XNFF"
 #define kXIFFContainerGeneric "XIFF"
-#define kXIFFContainerBinary "XEFF"
+#define kXIFFContainerBinary "XBFF"
 
 #endif  // ifndef __XIFF__

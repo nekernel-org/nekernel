@@ -1,21 +1,18 @@
-/*
- *	========================================================
- *
- *	h-core
- * 	Copyright Mahrouss Logic, all rights reserved.
- *
- * 	========================================================
- */
+/* -------------------------------------------
+
+    Copyright Mahrouss Logic
+
+------------------------------------------- */
 
 #include <System.Zip/Zip.hpp>
 #include <System.Core/Defs.hxx>
 
-#define kInitialSz 4096
+#define kZipInitialSize 4096
 
 namespace System::Zip {
 ZipStream::ZipStream()
-    : fSharedData(System::Heap::Shared()->New(kInitialSz, kHeapExpandable)),
-      fSharedSz(kInitialSz) {}
+    : fSharedData(System::Heap::Shared()->New(kZipInitialSize, kHeapExpandable)),
+      fSharedSz(kZipInitialSize) {}
 
 ZipStream::~ZipStream() noexcept {
   if (fSharedData) System::Heap::Shared()->Delete(fSharedData);

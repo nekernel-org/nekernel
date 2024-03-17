@@ -1,5 +1,5 @@
 ##################################################
-# ; (C) Mahrouss Logic, 2024, all rights reserved.
+# (C) Mahrouss Logic, 2024, all rights reserved.
 # This is the System.Zip Makefile.
 ##################################################
 
@@ -9,12 +9,12 @@ ASM=nasm
 ASMFLAGS=-f elf64
 OUTPUT=System.Zip.dll
 
-.PHONY: build-zipkit
-build-zipkit:
+.PHONY: build-zip
+build-zip:
 	$(CC) -I../ -I../../../Private/ $(CCFLAGS) *.cxx -o $(OUTPUT)
 
 .PHONY: all
-all: build-zipkit
+all: build-zip
 	@echo "[System.Zip.dll] Done."
 
 .PHONY: clean

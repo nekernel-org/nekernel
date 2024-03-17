@@ -12,17 +12,15 @@
 #define kObjectGlobalNamespaceSystem "HCORE_ROOT\\"
 #define kObjectGlobalNamespaceUser "HCORE_USER_ROOT\\"
 
-namespace HCore {
 /// \brief Object handle.
 typedef struct Object final {
-  WideChar ObjectName[255];
-  Int32 ObjectType;
-  WideChar ObjectNamespace[255];
+  HCore::WideChar ObjectName[255];
+  HCore::Int32 ObjectType;
+  HCore::WideChar ObjectNamespace[255];
 
-  Void(*Release)(struct Object* Self);
-  Void(*Invoke)(struct Object* Self, Int32 Sel, ...);
-  Void(*QueryInterface)(VoidPtr* Dst, SizeT SzDst, XRN::GUIDSequence GuidOf);
-} Ojbect, *ObjectPtr;
-} // namespace HCore
+  HCore::Void(*Release)(struct Object* Self);
+  HCore::IntPtr(*Invoke)(struct Object* Self, HCore::Int32 Sel, ...);
+  HCore::Void(*QueryInterface)(HCore::VoidPtr* Dst, HCore::SizeT SzDst, HCore::XRN::GUIDSequence GuidOf);
+} Object, *ObjectPtr;
 
 #define object_cast reinterpret_cast

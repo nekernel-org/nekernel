@@ -7,32 +7,29 @@
 #include <System.Core/Heap.hxx>
 #include <System.Core/System.Core.hxx>
 
-using namespace HCore;
 using namespace System;
-
-STATIC HcObjectPtr kObjectHeap;
 
 Heap* Heap::Shared() noexcept {
     static Heap* heap = nullptr;
 
     if (!heap) {
         heap = new Heap();
-        kObjectHeap = HcGetProcessHeap();
+        kInstanceObject = HcGetProcessObject();
     }
 
     return heap;
 }
 
-void Heap::Delete(HeapPtr me) noexcept { HcFreeProcessHeap(kObjectHeap, me); }
+void Heap::Delete(HeapPtr me) noexcept { HcFreeProcessHeap(kInstanceObject, me); }
 
 SizeT Heap::Size(HeapPtr me) noexcept { 
     CA_MUST_PASS(me);
-    return HcProcessHeapSize(kObjectHeap, me); 
+    return HcProcessHeapSize(kInstanceObject, me); 
 }
 
 HeapPtr Heap::New(const SizeT &sz, const Int32 flags) {
     SizeT _sz = sz;
     if (!_sz) ++_sz;
 
-    return HcAllocateProcessHeap(kObjectHeap, _sz, flags); 
+    return HcAllocateProcessHeap(kInstanceObject, _sz, flags); 
 }

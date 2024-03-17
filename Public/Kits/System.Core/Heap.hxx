@@ -10,6 +10,8 @@
 #include <CompilerKit/CompilerKit.hxx>
 
 namespace System {
+using namespace HCore;
+
 class MemoryException;
 
 typedef PVOID HeapPtr;
@@ -24,10 +26,10 @@ enum {
 
 class Heap final {
  private:
-  explicit Heap();
+  explicit Heap() = default;
 
  public:
-  ~Heap();
+  ~Heap() = default;
 
  public:
   HCORE_COPY_DEFAULT(Heap);

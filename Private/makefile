@@ -1,5 +1,5 @@
 ##################################################
-# ; (C) Mahrouss Logic, 2024, all rights reserved.
+# (C) Mahrouss Logic, 2024, all rights reserved.
 # This is the microkernel makefile.
 ##################################################
 
