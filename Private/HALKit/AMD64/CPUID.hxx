@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    File: CPUID.hpp
+    File: CPUID.hxx
     Purpose: CPUID flags.
 
     Revision History:

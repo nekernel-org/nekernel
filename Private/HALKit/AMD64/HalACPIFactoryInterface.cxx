@@ -4,23 +4,23 @@
 
 ------------------------------------------- */
 
-#include <Builtins/ACPI/ACPIManager.hxx>
+#include <Builtins/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/String.hpp>
 
 namespace HCore {
-ACPIManager::ACPIManager(voidPtr rsdPtr) : m_Rsdp(rsdPtr), m_Entries(0) {
+ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr) : m_Rsdp(rsdPtr), m_Entries(0) {
   volatile RSDP *_rsdPtr = reinterpret_cast<volatile RSDP *>(this->m_Rsdp);
 
   MUST_PASS(_rsdPtr);
   MUST_PASS(_rsdPtr->Revision >= 2);
 }
 
-void ACPIManager::Shutdown() {}
-void ACPIManager::Reset() {}
+void ACPIFactoryInterface::Shutdown() {}
+void ACPIFactoryInterface::Reboot() {}
 
 /// @brief Finds a descriptor table inside ACPI XSDT.
-ErrorOr<voidPtr> ACPIManager::Find(const char *signature) {
+ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
   MUST_PASS(m_Rsdp);
 
   if (!signature) return ErrorOr<voidPtr>{-2};
@@ -50,7 +50,7 @@ ErrorOr<voidPtr> ACPIManager::Find(const char *signature) {
     @param checksum the header to checksum
     @param len the length of it.
 */
-bool ACPIManager::Checksum(const char *checksum, SSizeT len) {
+bool ACPIFactoryInterface::Checksum(const char *checksum, SSizeT len) {
   if (len == 0) return -1;
 
   char chr = 0;

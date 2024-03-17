@@ -13,20 +13,28 @@
 #include <NewKit/Ref.hpp>
 
 namespace HCore {
-class ACPIManager final {
+class ACPIFactoryInterface final {
  public:
-  explicit ACPIManager(voidPtr rsdPtr);
-  ~ACPIManager() = default;
+  explicit ACPIFactoryInterface(voidPtr rsdPtr);
+  ~ACPIFactoryInterface() = default;
 
-  ACPIManager &operator=(const ACPIManager &) = default;
-  ACPIManager(const ACPIManager &) = default;
+  ACPIFactoryInterface &operator=(const ACPIFactoryInterface &) = default;
+  ACPIFactoryInterface(const ACPIFactoryInterface &) = default;
 
  public:
   void Shutdown();  // shutdown
-  void Reset();     // soft-reboot
+  void Reboot();     // soft-reboot
 
+  public:
+  /// @brief Descriptor find factory.
+  /// @param signature The signature of the descriptor table (MADT, ACPI...)
+  /// @return the blob inside an ErrorOr object.
   ErrorOr<voidPtr> Find(const char *signature);
 
+  /// @brief Checksum factory.
+  /// @param checksum the data to checksum
+  /// @param len it's size
+  /// @return if it succeed
   bool Checksum(const char *checksum, SSizeT len);  // watch for collides!
 
  public:

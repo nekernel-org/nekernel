@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <Builtins/ACPI/ACPIManager.hxx>
+#include <Builtins/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -39,10 +39,11 @@ struct ProcessorInfoAMD64 final {
   } Selector;
 };
 
-static voidPtr kApicMadt = nullptr;
-static const char* kApicSignature = "APIC";
+STATIC voidPtr kApicMadt = nullptr;
+STATIC const char* kApicSignature = "APIC";
 
-struct Madt final {
+/// @brief Multiple APIC descriptor table.
+struct MadtType final {
   char fMag[4];
   Int32 fLength;
   char fRev;
@@ -90,10 +91,10 @@ struct MadtLocalApicAddressOverride final {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static Madt kApicMadtList[256];
+STATIC MadtType kApicMadtList[256];
 
-Madt* system_find_core(Madt* madt) {
-  madt = madt + sizeof(Madt);
+MadtType* system_find_core(MadtType* madt) {
+  madt = madt + sizeof(MadtType);
 
   if (rt_string_cmp(madt->fMag, kApicSignature,
                     rt_string_len(kApicSignature)) == 0)
@@ -105,13 +106,13 @@ Madt* system_find_core(Madt* madt) {
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void hal_system_get_cores(voidPtr rsdPtr) {
-  auto acpi = ACPIManager(rsdPtr);
+  auto acpi = ACPIFactoryInterface(rsdPtr);
   kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 
   MUST_PASS(kApicMadt);  // MADT must exist.
 
   SizeT counter = 0UL;
-  Madt* offset = system_find_core((Madt*)kApicMadt);
+  MadtType* offset = system_find_core((MadtType*)kApicMadt);
   //! now find core addresses.
   while (offset != nullptr) {
     // calls rt_copy_memory in NewC++

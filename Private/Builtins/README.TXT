@@ -12,5 +12,5 @@ These are HCore builtins device drivers.
 Maintainers
 ===========
 
-ACPIManager: Amlal EL Mahrouss
+ACPIFactoryInterface: Amlal EL Mahrouss
 AHCI: Amlal EL Mahrouss
