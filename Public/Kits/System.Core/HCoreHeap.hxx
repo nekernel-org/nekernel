@@ -11,3 +11,10 @@ CA_EXTERN_C PVOID HcAllocateProcessHeap(ObjectPtr refObj, QWORD sz, DWORD flags)
 CA_EXTERN_C VOID HcFreeProcessHeap(ObjectPtr refObj, PVOID ptr);
 CA_EXTERN_C QWORD HcProcessHeapSize(ObjectPtr refObj, PVOID ptr);
 CA_EXTERN_C QWORD HcProcessHeapExists(ObjectPtr refObj, PVOID ptr);
+
+enum HcAllocationKind {
+    kStandardAllocation = 0xC,
+    kArrayAllocation = 0xD,
+};
+
+#define kAllocationTypes 2

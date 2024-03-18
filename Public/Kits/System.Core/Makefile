@@ -4,7 +4,7 @@
 ##################################################
 
 CC=x86_64-w64-mingw32-g++
-CCFLAGS=-shared -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -Xlinker --subsystem=17
+CCFLAGS=-shared -ffreestanding -nostdlib -fno-rtti -fno-exceptions -std=c++20 -Xlinker --subsystem=17
 OUTPUT=System.Core.dll
 
 .PHONY: build-core

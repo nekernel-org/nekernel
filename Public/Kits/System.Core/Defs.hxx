@@ -45,11 +45,28 @@ typedef __UINT16_TYPE__ WORD;
 typedef __UINT32_TYPE__ DWORD;
 typedef __UINT64_TYPE__ QWORD;
 
+typedef char CHAR;
+typedef CHAR* PCHAR;
+
 typedef void* PVOID;
 typedef void VOID;
 
+typedef __UINTPTR_TYPE__ UINT_PTR;
+typedef __INTPTR_TYPE__ INT_PTR;
+typedef __UINT64_TYPE__ UINT64;
+typedef __INT64_TYPE__ INT64;
+typedef __UINT32_TYPE__ UINT32;
+typedef __INT32_TYPE__ INT32;
+
 typedef __WCHAR_TYPE__ WCHAR;
 typedef WCHAR* PWCHAR;
+
+typedef bool BOOL;
+
+#define TRUE true
+#define FALSE false
+
+#define PTR *
 
 #define CA_UNREFERENCED_PARAMETER(e) ((VOID)e)
 
@@ -90,3 +107,5 @@ enum {
     kProcessHeapCallCloseHandle,
     kProcessHeapCallsCnt,
 };
+
+#include <System.Core/HintBase.hxx>

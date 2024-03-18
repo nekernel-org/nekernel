@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_NETWORKDEVICE_HPP__
-#define _INC_NETWORKDEVICE_HPP__
+#ifndef __NETWORK_DEVICE__
+#define __NETWORK_DEVICE__
 
 #include <KernelKit/DeviceManager.hpp>
 #include <NetworkKit/IP.hpp>
@@ -30,17 +30,18 @@ class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand> {
   NetworkDevice(const NetworkDevice &) = default;
 
  public:
-  const char *Name() const override { return "NetworkDevice"; }
+  const char *Name() const override;
 
  private:
   void (*fCleanup)(void);
 };
 
 struct PACKED NetworkDeviceCommand final {
-  UInt32 Command;
-  UInt32 VLan;
-  UInt32 DmaLow;
-  UInt32 DmaHigh;
+  UInt32 CommandName;
+  UInt32 CommandType;
+  UInt32 CommandFlags;
+  VoidPtr CommandBuffer;
+  SizeT CommandSizeBuffer;
 };
 
 /// @brief TCP device.
@@ -58,4 +59,4 @@ using HPCNetworkDevice = NetworkDevice;
 
 #include <NetworkKit/NetworkDevice.inl>
 
-#endif  // !_INC_NETWORKDEVICE_HPP__
+#endif  // !__NETWORK_DEVICE__

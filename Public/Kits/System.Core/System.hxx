@@ -13,6 +13,6 @@
 #include <System.Core/Defs.hxx>
 #include <System.Core/File.hxx>
 #include <System.Core/Heap.hxx>
-#include <System.Core/ThreadAPI.hxx>
+#include <System.Core/Threading.hxx>
 
 using namespace HCore;

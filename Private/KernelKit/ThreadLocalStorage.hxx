@@ -38,7 +38,8 @@ struct ThreadInformationBlock final {
   HCore::UIntPtr StartData;       // Allocation Heap
   HCore::UIntPtr StartStack;      // Stack Pointer.
   HCore::Int32 Arch;              // Architecture and/or platform.
-  rt_cookie_type Cookie;  // Not shown in public header, this is the way we tell
+  HCore::Int32 ID;                // Thread execution ID.
+  rt_cookie_type Cookie;  // Not shown in public header, location of the cookie header is store here, this is the way we tell
                           // something went wrong.
 };
 
@@ -46,7 +47,7 @@ struct ThreadInformationBlock final {
 EXTERN_C void rt_install_tib(ThreadInformationBlock *pTib, HCore::VoidPtr pPib);
 
 ///! @brief Cookie Sanity check.
-HCore::Boolean tls_check(ThreadInformationBlock *ptr);
+HCore::Boolean tls_check_tib(ThreadInformationBlock *ptr);
 
 /// @brief TLS check system call
 EXTERN_C HCore::Void tls_check_syscall_impl(HCore::HAL::StackFramePtr stackPtr) noexcept;

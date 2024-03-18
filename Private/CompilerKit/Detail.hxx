@@ -6,7 +6,9 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#ifdef __KERNEL__
+#   include <NewKit/Defines.hpp>
+#endif // ifdef __KERNEL__
 
 #define HCORE_COPY_DELETE(KLASS)                                                                                         \
     KLASS &operator=(const KLASS &) = delete;                                                                          \

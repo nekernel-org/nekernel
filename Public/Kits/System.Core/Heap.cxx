@@ -20,7 +20,10 @@ Heap* Heap::Shared() noexcept {
     return heap;
 }
 
-void Heap::Delete(HeapPtr me) noexcept { HcFreeProcessHeap(kInstanceObject, me); }
+void Heap::Delete(HeapPtr me) noexcept { 
+    CA_MUST_PASS(me);
+    HcFreeProcessHeap(kInstanceObject, me); 
+}
 
 SizeT Heap::Size(HeapPtr me) noexcept { 
     CA_MUST_PASS(me);

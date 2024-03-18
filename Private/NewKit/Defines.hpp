@@ -8,7 +8,11 @@
 
 #include <NewKit/Macros.hpp>
 
-#define NEWKIT_VERSION "1.00"
+#ifndef __KERNEL__
+# error You are not compiling the kernel.
+#endif
+
+#define NEWKIT_VERSION "1.01"
 
 #if !defined(_INC_NO_STDC_HEADERS) && defined(__GNUC__)
 #include <CRT/__cxxkit_defines.hxx>

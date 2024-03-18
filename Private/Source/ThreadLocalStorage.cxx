@@ -25,12 +25,12 @@ using namespace HCore;
  * @return if the cookie is enabled.
  */
 
-Boolean tls_check(VoidPtr ptr) {
+Boolean tls_check_tib(VoidPtr ptr) {
   if (!ptr) return false;
 
   const char* _ptr = (const char*)ptr;
 
-  kcout << "HCoreKrnl\\TLS: Checking for cookie...\n";
+  kcout << "HCoreKrnl\\TLS: Checking for a valid cookie...\n";
 
   return _ptr[0] == kCookieMag0 && _ptr[1] == kCookieMag1 &&
          _ptr[2] == kCookieMag2;
@@ -44,7 +44,7 @@ Boolean tls_check(VoidPtr ptr) {
 EXTERN_C Void tls_check_syscall_impl(HCore::HAL::StackFramePtr stackPtr) noexcept {
   ThreadInformationBlock* tib = (ThreadInformationBlock*)stackPtr->Gs;
 
-  if (!tls_check(tib->Cookie)) {
+  if (!tls_check_tib(tib->Cookie)) {
     kcout << "HCoreKrnl\\TLS: Verification failed, Crashing...\n";
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
   }
