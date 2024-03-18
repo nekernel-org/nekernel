@@ -31,6 +31,15 @@ volatile UIntPtr *Framebuffer::operator[](const UIntPtr &pos) {
   return (UIntPtr *)(m_FrameBufferAddr->m_Base * pos);
 }
 
+/// @brief Boolean operator.
+Framebuffer::operator bool() {
+  return m_FrameBufferAddr.Leak()->m_Base != 0 && m_Colour != FramebufferColorKind::INVALID &&
+        m_FrameBufferAddr.Leak()->m_Base != kBadPtr;
+}
+
+/// @brief Set color kind of framebuffer.
+/// @param colour 
+/// @return 
 const FramebufferColorKind &Framebuffer::Color(
     const FramebufferColorKind &colour) {
   if (m_Colour != FramebufferColorKind::INVALID &&
@@ -41,6 +50,8 @@ const FramebufferColorKind &Framebuffer::Color(
   return m_Colour;
 }
 
+/// @brief Leak fraembuffer context.
+/// @return The reference of the framebuffer context.
 Ref<FramebufferContext *> &Framebuffer::Leak() {
   return this->m_FrameBufferAddr;
 }

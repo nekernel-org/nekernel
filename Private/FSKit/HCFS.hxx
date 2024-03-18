@@ -8,6 +8,11 @@
 
 #pragma once
 
+/**
+    @brief HCore File System.
+    @author Amlal EL Mahrouss
+*/
+
 #include <NewKit/Defines.hpp>
 #include <FirmwareKit/EPM.hxx>
 

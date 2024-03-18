@@ -12,15 +12,25 @@
 #define kObjectGlobalNamespaceSystem "HCORE_ROOT\\"
 #define kObjectGlobalNamespaceUser "HCORE_USER_ROOT\\"
 
+enum {
+  kObjectTypeProcess,
+  kObjectTypeFile,
+  kObjectTypeDevice,
+  kObjectTypeNetwork,
+  kObjectTypeInvalid,
+  kObjectTypeCount,
+};
+
 /// \brief Object handle.
+/// \author Amlal El Mahrouss
 typedef struct Object final {
-  HCore::WideChar ObjectName[255];
+  HCore::Char ObjectName[255];
   HCore::Int32 ObjectType;
-  HCore::WideChar ObjectNamespace[255];
+  HCore::Char ObjectNamespace[255];
 
   HCore::Void(*Release)(struct Object* Self);
   HCore::IntPtr(*Invoke)(struct Object* Self, HCore::Int32 Sel, ...);
-  HCore::Void(*QueryInterface)(HCore::VoidPtr* Dst, HCore::SizeT SzDst, HCore::XRN::GUIDSequence GuidOf);
+  HCore::Void(*Query)(struct Object* Self, HCore::VoidPtr* Dst, HCore::SizeT SzDst, HCore::XRN::GUIDSequence GuidOf);
 } Object, *ObjectPtr;
 
 #define object_cast reinterpret_cast

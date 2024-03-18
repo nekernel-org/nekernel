@@ -10,7 +10,6 @@
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <System.Zip/Defines.hpp>
-#include <System.Zip/zlib.hpp>
 
 namespace System::Zip {
 class ZipStream;
@@ -26,14 +25,12 @@ class ZipStream final {
  public:
   FilePtr FlushToFile(const char *name);
   void *Deflate(const char *name);
-  void Inflate(const char *name, void *data);
+  void Inflate(const char *name, BYTE *data, QWORD sz);
 
  private:
   VoidPtr fSharedData{nullptr};
   SizeT fSharedSz{0};
 
- private:
-  z_stream fStream;
 };
 }  // namespace System.Zip
 

@@ -20,7 +20,7 @@ class BDeviceATA final {
 
   HCORE_COPY_DEFAULT(BDeviceATA);
 
-  struct ATATraits final {
+  struct ATATrait final {
     SizeT mBase{1024};
     UInt16 mBus{kPrimary};
     UInt8 mMaster{0};
@@ -34,10 +34,10 @@ class BDeviceATA final {
   BDeviceATA& Read(WideChar* Buf, const SizeT& SecCount);
   BDeviceATA& Write(WideChar* Buf, const SizeT& SecCount);
 
-  ATATraits& Leak();
+  ATATrait& Leak();
 
  private:
-  ATATraits mTraits;
+  ATATrait mTrait;
 };
 
 enum {

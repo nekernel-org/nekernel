@@ -32,11 +32,11 @@ FilesystemManagerInterface* FilesystemManagerInterface::Unmount() {
 }
 
 /// @brief Mount filesystem.
-/// @param pMount the filesystem to mount.
+/// @param mountPtr the filesystem to mount.
 /// @return if it succeeded true, otherwise false.
-bool FilesystemManagerInterface::Mount(FilesystemManagerInterface* pMount) {
+bool FilesystemManagerInterface::Mount(FilesystemManagerInterface* mountPtr) {
   if (kMounted == nullptr) {
-    kMounted = pMount;
+    kMounted = mountPtr;
     return true;
   }
 

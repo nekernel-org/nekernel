@@ -12,7 +12,7 @@
 
 namespace HCore
 {
-    template <typename StreamTraits, typename Kind>
+    template <typename StreamTrait, typename Kind>
     class Stream final
     {
     public:
@@ -26,21 +26,21 @@ namespace HCore
         Stream(const Stream &) = default;
 
         template <typename Data>
-        friend Stream<StreamTraits, Kind> &operator>>(Stream<StreamTraits, Kind> &Ks, Ref<Data>& Buf)
+        friend Stream<StreamTrait, Kind> &operator>>(Stream<StreamTrait, Kind> &Ks, Ref<Data>& Buf)
         {
             Ks.m_Kind = Ks.m_Stream->In(Buf);
             return *Ks;
         }
 
         template <typename Data>
-        friend Stream<StreamTraits, Kind> &operator<<(Stream<StreamTraits, Kind> &Ks, Ref<Data>& Buf)
+        friend Stream<StreamTrait, Kind> &operator<<(Stream<StreamTrait, Kind> &Ks, Ref<Data>& Buf)
         {
             Ks.m_Kind = Buf;
             Ks.m_Stream->Out(Buf.Leak());
             return *Ks;
         }
 
-        Ref<StreamTraits> &AsStreamTraits()
+        Ref<StreamTrait> &AsStreamTrait()
         {
             return m_Stream;
         }
@@ -51,7 +51,7 @@ namespace HCore
         }
 
       private:
-        Ref<StreamTraits> m_Stream;
+        Ref<StreamTrait> m_Stream;
         Ref<Kind> m_Kind;
 
     };

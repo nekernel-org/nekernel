@@ -5,6 +5,6 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/DriveManager.hpp>
+#include <KernelKit/DriveManager.hxx>
 
 namespace HCore {}  // namespace HCore

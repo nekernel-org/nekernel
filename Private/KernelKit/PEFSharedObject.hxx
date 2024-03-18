@@ -25,7 +25,7 @@ extern "C" void __mh_purecall(void);
  */
 class SharedObject final {
  public:
-  struct SharedObjectTraits final {
+  struct SharedObjectTrait final {
     VoidPtr fImageObject;
     VoidPtr fImageEntrypointOffset;
   };
@@ -38,15 +38,15 @@ class SharedObject final {
   HCORE_COPY_DEFAULT(SharedObject);
 
  private:
-  SharedObjectTraits *fMounted{nullptr};
+  SharedObjectTrait *fMounted{nullptr};
 
  public:
-  SharedObjectTraits **GetAddressOf() { return &fMounted; }
+  SharedObjectTrait **GetAddressOf() { return &fMounted; }
 
-  SharedObjectTraits *Get() { return fMounted; }
+  SharedObjectTrait *Get() { return fMounted; }
 
  public:
-  void Mount(SharedObjectTraits *to_mount) {
+  void Mount(SharedObjectTrait *to_mount) {
     if (!to_mount || !to_mount->fImageObject) return;
 
     fMounted = to_mount;

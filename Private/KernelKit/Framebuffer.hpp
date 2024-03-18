@@ -28,7 +28,7 @@ class FramebufferContext final {
 
 class Framebuffer final {
  public:
-  Framebuffer(Ref<FramebufferContext *> &addr) : m_FrameBufferAddr(addr) {}
+  explicit Framebuffer(Ref<FramebufferContext *> &addr) : m_FrameBufferAddr(addr) {}
   ~Framebuffer() {}
 
   Framebuffer &operator=(const Framebuffer &) = delete;
@@ -36,10 +36,8 @@ class Framebuffer final {
 
   volatile UIntPtr *operator[](const UIntPtr &pos);
 
-  operator bool() {
-    return m_FrameBufferAddr && m_Colour != FramebufferColorKind::INVALID;
-  }
-
+  operator bool();
+  
   const FramebufferColorKind &Color(
       const FramebufferColorKind &colour = FramebufferColorKind::INVALID);
 

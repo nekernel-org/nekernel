@@ -96,7 +96,7 @@ inline TerminalDevice get_console_in(Char* buf) {
 
 typedef Char rt_debug_type[255];
 
-class DebuggerPorts final {
+class DebuggerPortHeader final {
  public:
   Int16 fPort[kDebugMaxPorts];
   Int16 fBoundCnt;

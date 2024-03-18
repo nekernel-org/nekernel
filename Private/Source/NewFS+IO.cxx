@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DriveManager.hpp>
+#include <KernelKit/DriveManager.hxx>
 #include <KernelKit/FileManager.hpp>
 
 /** ---------------------------------------------------
@@ -33,54 +33,54 @@ enum {
   kHCFSSubDriveCount,
 };
 
-Int32 KeHCFSRead(Mountpoint* Mnt, DriveTraits& DrvTraits, Int32 DrvIndex) {
+Int32 ke_newfs_read(Mountpoint* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   switch (DrvIndex) {
     case 0: {
-      NEWFS_READ(A, DrvTraits, Mnt);
+      NEWFS_READ(A, DrvTrait, Mnt);
       break;
     }
     case 1: {
-      NEWFS_READ(B, DrvTraits, Mnt);
+      NEWFS_READ(B, DrvTrait, Mnt);
       break;
     }
     case 2: {
-      NEWFS_READ(C, DrvTraits, Mnt);
+      NEWFS_READ(C, DrvTrait, Mnt);
       break;
     }
     case 3: {
-      NEWFS_READ(D, DrvTraits, Mnt);
+      NEWFS_READ(D, DrvTrait, Mnt);
       break;
     }
   }
 
-  return DrvTraits.fPacket.fPacketGood;
+  return DrvTrait.fPacket.fPacketGood;
 }
 
-Int32 KeHCFSWrite(Mountpoint* Mnt, DriveTraits& DrvTraits, Int32 DrvIndex) {
+Int32 ke_newfs_write(Mountpoint* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   switch (DrvIndex) {
     case 0: {
-      NEWFS_WRITE(A, DrvTraits, Mnt);
+      NEWFS_WRITE(A, DrvTrait, Mnt);
       break;
     }
     case 1: {
-      NEWFS_WRITE(B, DrvTraits, Mnt);
+      NEWFS_WRITE(B, DrvTrait, Mnt);
       break;
     }
     case 2: {
-      NEWFS_WRITE(C, DrvTraits, Mnt);
+      NEWFS_WRITE(C, DrvTrait, Mnt);
       break;
     }
     case 3: {
-      NEWFS_WRITE(D, DrvTraits, Mnt);
+      NEWFS_WRITE(D, DrvTrait, Mnt);
       break;
     }
   }
 
-  return DrvTraits.fPacket.fPacketGood;
+  return DrvTrait.fPacket.fPacketGood;
 }
 
 #endif  // ifdef __FSKIT_NEWFS__

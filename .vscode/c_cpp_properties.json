@@ -7,7 +7,7 @@
         "${workspaceFolder}/Private/NewBoot/**",
         "${workspaceFolder}/Public/Kits/**"
       ],
-      "defines": ["__HCORE__", "__HAVE_HCORE_APIS__", "__FSKIT_NEWFS__", "kBootKrnlSections"],
+      "defines": ["__HCORE__", "Z_PREFIX", "__HAVE_HCORE_APIS__", "__FSKIT_NEWFS__", "kBootKrnlSections"],
       "cStandard": "c17",
       "cppStandard": "c++20",
       "compilerPath": "/opt/homebrew/bin/x86_64-w64-mingw32-gcc",
@@ -20,7 +20,7 @@
         "${workspaceFolder}/Private/NewBoot/**",
         "${workspaceFolder}/Public/Kits/**"
       ],
-      "defines": ["__HCORE__", "__HAVE_HCORE_APIS__", "__FSKIT_NEWFS__", "kBootKrnlSections"],
+      "defines": ["__HCORE__", "Z_PREFIX", "__HAVE_HCORE_APIS__", "__FSKIT_NEWFS__", "kBootKrnlSections"],
       "cStandard": "c17",
       "cppStandard": "c++20",
       "compilerPath": "C:/cygwin64/bin/x86_64-w64-mingw32-gcc.exe",

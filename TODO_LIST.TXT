@@ -1,7 +1,7 @@
 - We need preemptive multi-threading. [ X ]
 - We then need sync primitives. [ X ]
 - We also need a system library for the OS. [ X ]
-- We need a bootloader for AMD64/ARM [ X ]
+- We need a bootloader for AMD64 [ X ]
     - Implement Boot Services [ X ]
     - Design Handover [ X ]
     - Load kernel into memory [ X ]
@@ -10,15 +10,16 @@
     - Add IDT [ X ]
     - AHCI driver [ WiP ]
 - Context switch x87/SSE/AVX registers [ X ]
-- Framebuffer and AHCI support [ X ]
+- Framebuffer [ X ]
+- AHCI support [ ]
 - HCore API and HCore Forms. [ ]
 - Make installer form class [ ]
 
 Status:
 
-HCoreLdr: Working.
+NewBoot: Working.
 HCoreKrnl: Not run yet.
 
 Prioritize:
-HCoreLdr: Protocol and API.
+NewBoot: Protocol and API.
 HCoreKrnl: Complying to specs.

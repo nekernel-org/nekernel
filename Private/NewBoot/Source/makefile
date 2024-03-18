@@ -6,6 +6,10 @@
 CC_GNU=x86_64-w64-mingw32-g++
 LD_GNU=x86_64-w64-mingw32-ld
 
+ADD_FILE=touch
+COPY=cp
+HTTP_GET=wget
+
 ifeq ($(shell uname), Darwin)
 EMU=qemu-system-x86_64
 else
@@ -26,12 +30,15 @@ invalid-recipe:
 	@echo "invalid-recipe: Use make bootloader-<arch> all instead."
 
 .PHONY: bootloader-amd64
-bootloader-amd64:
-	$(CC_GNU) $(FLAG_GNU) HEL/AMD64/*.cxx *.cxx
-	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o HCoreLdr.exe
-	cp HCoreLdr.exe CDROM/EFI/BOOT/BOOTX64.EFI
-	cp HCoreLdr.exe CDROM/EFI/BOOT/HCORELDR.EFI
-	cp ../../HCoreKrnl.exe CDROM/HCOREKRNL.EXE
+bootloader-amd64: compile-amd64
+	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
+	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
+	$(COPY) NewBoot.exe CDROM/EFI/BOOT/HCORELDR.EFI
+	$(ADD_FILE) CDROM/.HCORE
+
+.PHONY: compile-amd64
+compile-amd64:
+	$(CC_GNU) $(FLAG_GNU) $(wildcard HEL/AMD64/*.cxx) $(wildcard *.cxx)
 
 .PHONY: run-efi-amd64
 run-efi-amd64:
@@ -39,8 +46,8 @@ run-efi-amd64:
 
 .PHONY: download-edk
 download-edk:
-	wget https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
+	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 .PHONY: clean
 clean:
-	$(REM) $(REM_FLAG) $(OBJ) HCoreLdr.exe HCoreKrnl.exe OVMF.fd
+	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe HCoreKrnl.exe OVMF.fd

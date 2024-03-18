@@ -8,7 +8,7 @@
 
 #include <CFKit/Property.hpp>
 #include <CompilerKit/CompilerKit.hxx>
-#include <KernelKit/DriveManager.hpp>
+#include <KernelKit/DriveManager.hxx>
 
 namespace HCore {
 namespace Indexer {

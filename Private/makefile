@@ -26,7 +26,7 @@ invalid-recipe:
 MOVEALL=./MoveAll.sh
 
 .PHONY: h-core-amd64
-h-core-amd64:
+h-core-amd64: clean
 	$(CC) $(CCFLAGS) $(DEBUG) Source/*.cxx HALKit/AMD64/PCI/*.cxx Source/Network/*.cxx\
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptRouting.asm

@@ -33,30 +33,34 @@ enum {
 
 typedef Int64 rt_drive_id_type;
 
-/// @brief Mounted drive traits.
-struct DriveTraits final {
+/// @brief Media drive trait type.
+struct DriveTrait final {
   Char fName[kDriveNameLen];  // /System, /Boot, //./Devices/USB...
   Int32 fKind;                // fMassStorage, fFloppy, fOpticalDisc.
   rt_drive_id_type fId;       // Drive id.
   Int32 fFlags;               // fReadOnly, fXPMDrive, fXPTDrive
 
-  //! for StorageKit.
+  /// @brief Packet drive (StorageKit compilant.)
   struct DrivePacket final {
-    voidPtr fPacketContent;  // packet body.
-    Char fPacketMime[32];    //! identify what we're sending.
+    VoidPtr fPacketContent;  // packet body.
+    Char fPacketMime[kDriveNameLen];    //! identify what we're sending.
     SizeT fPacketSize;       // packet size
     UInt32 fPacketCRC32;     // sanity crc, in case if good is set to false
     Boolean fPacketGood;
   } fPacket;
+
+  Void (*fInput)(DrivePacket* packetPtr);
+  Void (*fOutput)(DrivePacket* packetPtr);
+  Void (*fVerify)(DrivePacket* packetPtr);
 };
 
-#define kPacketBinary "file/x-binary"
-#define kPacketSource "file/x-source"
-#define kPacketASCII "file/x-ascii"
-#define kPacketZip "file/x-zip"
+#define kDrivePacketBinary "file/x-binary"
+#define kDrivePacketSource "file/x-source"
+#define kDrivePacketASCII "file/x-ascii"
+#define kDrivePacketZip "file/x-zip"
 
 //! drive as a device.
-typedef DeviceInterface<DriveTraits> DriveDevice;
+typedef DeviceInterface<DriveTrait> DriveDevice;
 typedef DriveDevice* DriveDevicePtr;
 
 /**

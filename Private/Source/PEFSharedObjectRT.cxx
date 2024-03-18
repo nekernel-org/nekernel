@@ -18,7 +18,7 @@
 
  Revision History:
 
-     01/02/24: Rework shared library ABI, except a __LibInit and __LibFini
+     01/02/24: Rework shared library ABI, except a rt_library_init and rt_library_free
  (amlel)
     15/02/24: Breaking changes, changed the name of the routines. (amlel)
 
@@ -44,7 +44,7 @@ EXTERN_C SharedObjectPtr rt_library_init(void) {
     return nullptr;
   }
 
-  library->Mount(tls_new_class<SharedObject::SharedObjectTraits>());
+  library->Mount(tls_new_class<SharedObject::SharedObjectTrait>());
 
   if (!library->Get()) {
     ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();

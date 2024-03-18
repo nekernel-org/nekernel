@@ -17,11 +17,12 @@
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
-#include <KernelKit/DriveManager.hpp>
+#include <KernelKit/DriveManager.hxx>
 #include <NewKit/Defines.hpp>
 
 /**
-    @brief HCore File System implementation.
+    @brief New File System.
+    @author Amlal EL Mahrouss
 */
 
 #define kNewFSInvalidFork -1
@@ -111,6 +112,7 @@ struct PACKED NewBootBlock final {
   NewCharType Pad[kNewFSPadLen];
 };
 
+/// @brief File catalog type.
 struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
 
@@ -124,6 +126,7 @@ struct PACKED NewCatalog final {
   HCore::Lba PrevSibling;
 };
 
+/// @brief File fork type.
 struct PACKED NewFork final {
   NewCharType  Name[kNewFSNodeNameLen];
 
@@ -141,6 +144,7 @@ struct PACKED NewFork final {
   HCore::Lba PreviousSibling;
 };
 
+/// @brief Partition block type
 struct PACKED NewPartitionBlock final {
   NewCharType Ident[kNewFSIdentLen];
   NewCharType PartitionName[kPartLen];
@@ -198,12 +202,13 @@ class NewFSParser {
 
   virtual bool WriteCatalog(_Input _Output NewCatalog& catalog,
                             voidPtr data) = 0;
+                            
   virtual bool RemoveCatalog(_Input _Output NewCatalog& catalog) = 0;
 
   /// @brief Make a EPM+NewFS drive out of the disk.
   /// @param drive The drive to write on.
   /// @return If it was sucessful, see DbgLastError().
-  virtual bool Format(_Input _Output DriveTraits& drive) = 0;
+  virtual bool Format(_Input _Output DriveTrait& drive) = 0;
 };
 
 ///

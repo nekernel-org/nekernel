@@ -13,7 +13,7 @@
 // after that we have start of additional data.
 
 namespace HCore {
-void rt_debug_listen(DebuggerPorts* theHook) noexcept {
+void rt_debug_listen(DebuggerPortHeader* theHook) noexcept {
   if (theHook == nullptr) return;
 
   for (UInt32 i = 0U; i < kDebugMaxPorts; ++i) {

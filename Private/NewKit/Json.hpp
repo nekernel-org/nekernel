@@ -39,7 +39,7 @@ class JsonType final {
   static JsonType kUndefined;
 };
 
-struct JsonStreamTraits final {
+struct JsonStreamTrait final {
   JsonType In(const char *full_array) {
     SizeT len = rt_string_len(full_array);
 
@@ -82,5 +82,5 @@ struct JsonStreamTraits final {
   JsonType Out(JsonType &out) { return out; }
 };
 
-using JsonStream = Stream<JsonStreamTraits, JsonType>;
+using JsonStream = Stream<JsonStreamTrait, JsonType>;
 }  // namespace HCore
