@@ -9,7 +9,7 @@
 /// @brief Process Team API.
 /***********************************************************************************/
 
-#include <KernelKit/ProcessTeam.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 
 namespace HCore {
 MutableArray<Ref<Process>>& ProcessTeam::AsArray() { return mProcessList; }

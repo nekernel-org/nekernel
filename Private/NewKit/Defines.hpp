@@ -8,10 +8,6 @@
 
 #include <NewKit/Macros.hpp>
 
-#ifndef __KERNEL__
-# error You are not compiling the kernel.
-#endif
-
 #define NEWKIT_VERSION "1.01"
 
 #if !defined(_INC_NO_STDC_HEADERS) && defined(__GNUC__)
@@ -20,7 +16,9 @@
 
 #ifdef __has_feature
 #if !__has_feature(cxx_nullptr)
+#if !__has_nullptr
 #error You must at least have nullptr featured on your C++ compiler.
+#endif
 #endif
 #endif
 
@@ -89,6 +87,28 @@ template <typename Args>
 inline Args &&move(Args &&arg) {
   return static_cast<Args &&>(arg);
 }
+
+/// @brief Encoding class
+class Encoder final {
+public:
+  explicit Encoder() = default;
+  ~Encoder() = default;
+
+  Encoder &operator=(const Encoder &) = default;
+  Encoder(const Encoder &) = default;
+
+public:
+  template <typename T>
+  Char* AsBytes(T type) {
+    return reinterpret_cast<Char*>(type);
+  }
+
+  template <typename T, typename Y>
+  Y As(T type) {
+    return reinterpret_cast<Y>(type);
+  }
+
+};
 }  // namespace HCore
 
 #define DEDUCE_ENDIAN(address, value)                         \

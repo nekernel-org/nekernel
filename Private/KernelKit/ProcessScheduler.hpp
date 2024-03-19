@@ -9,7 +9,6 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/FileManager.hpp>
-#include <KernelKit/ProcessTeam.hpp>
 #include <KernelKit/PermissionSelector.hxx>
 #include <NewKit/LockDelegate.hpp>
 #include <NewKit/MutableArray.hpp>

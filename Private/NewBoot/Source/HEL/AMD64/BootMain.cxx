@@ -45,7 +45,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   for (auto& ch : strDate) writer.WriteCharacter(ch);
 
-  writer.Write(L"\r\nHCoreLdr: Firmware Vendor: ")
+  writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 

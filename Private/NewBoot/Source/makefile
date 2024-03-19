@@ -33,7 +33,7 @@ invalid-recipe:
 bootloader-amd64: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
-	$(COPY) NewBoot.exe CDROM/EFI/BOOT/HCORELDR.EFI
+	$(COPY) NewBoot.exe CDROM/EFI/BOOT/NEWBOOT.EFI
 	$(ADD_FILE) CDROM/.HCORE
 
 .PHONY: compile-amd64

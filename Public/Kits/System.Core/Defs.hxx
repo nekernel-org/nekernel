@@ -14,7 +14,7 @@
 #undef CA_MUST_PASS
 #endif
 
-#include <ObjectKit/Object.hxx>
+#include <ObjectKit/ObjectKit.hxx>
 
 #ifdef _DEBUG
 #define CA_MUST_PASS(e) { if (!e) { __assert_chk_fail() } }
@@ -97,15 +97,15 @@ typedef bool BOOL;
 
 CA_INLINE ObjectPtr kInstanceObject;
 
-enum {
-    kProcessHeapCallAlloc = 1,
-    kProcessHeapCallFree,
-    kProcessHeapCallSize,
-    kProcessHeapCallCheck,
-    kProcessHeapCallAllocStack,
-    kProcessHeapCallOpenHandle,
-    kProcessHeapCallCloseHandle,
-    kProcessHeapCallsCnt,
+enum HcProcessCall {
+    kProcessCallAllocPtr = 1,
+    kProcessCallFreePtr,
+    kProcessCallSizePtr,
+    kProcessCallCheckPtr,
+    kProcessCallAllocStack,
+    kProcessCallOpenHandle,
+    kProcessCallCloseHandle,
+    kProcessCallsCount = 7,
 };
 
 #include <System.Core/HintBase.hxx>

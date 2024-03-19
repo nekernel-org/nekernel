@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_SMP_MANAGER_HPP
-#define _INC_SMP_MANAGER_HPP
+#ifndef __SMP_MANAGER__
+#define __SMP_MANAGER__
 
 #include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hxx>
@@ -112,11 +112,11 @@ class SMPManager final {
 
 /// @brief wakes up thread.
 /// wakes up thread from hang.
-void rt_wakeup_thread(HAL::StackFrame* stack);
+Void rt_wakeup_thread(HAL::StackFramePtr stack);
 
 /// @brief makes thread sleep.
 /// hooks and hangs thread to prevent code from executing.
-void rt_hang_thread(HAL::StackFrame* stack);
+Void rt_hang_thread(HAL::StackFramePtr stack);
 }  // namespace HCore
 
-#endif  // !_INC_SMP_MANAGER_HPP
+#endif  // !__SMP_MANAGER__

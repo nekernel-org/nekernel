@@ -14,7 +14,6 @@ Heap* Heap::Shared() noexcept {
 
     if (!heap) {
         heap = new Heap();
-        kInstanceObject = HcGetProcessObject();
     }
 
     return heap;

@@ -107,7 +107,7 @@ Void BFileReader::ReadAll() {
     if (auto err = BS->AllocatePool(EfiLoaderCode, mSizeFile,
                           (VoidPtr*)&mBlob) != kEfiOk) {
       mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
-      EFI::RaiseHardError(L"HCoreLdr_PageError", L"Allocation error.");
+      EFI::RaiseHardError(L"NewBoot_PageError", L"Allocation error.");
     }
   }
 

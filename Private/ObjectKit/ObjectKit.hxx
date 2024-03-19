@@ -18,7 +18,8 @@ enum {
   kObjectTypeDevice,
   kObjectTypeNetwork,
   kObjectTypeInvalid,
-  kObjectTypeCount,
+  KObjectTypeUserDefined = 0xCF,
+  kObjectTypeCount = 5,
 };
 
 /// \brief Object handle.

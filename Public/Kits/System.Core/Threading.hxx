@@ -14,17 +14,16 @@
 #include <System.Core/Defs.hxx>
 
 /// @brief Thread Information Block variant for scheduling.
-struct ThreadInformationBlock final {
-  const CHAR Name[255];        // Module Name
+struct PACKED ThreadInformationBlock final {
   const UINT_PTR StartAddress;  // Start Address
   const UINT_PTR StartHeap;     // Allocation Heap
   const UINT_PTR StartStack;    // Stack Pointer.
-  const DWORD Arch;            // Architecture and/or platform.
-  const WORD TID;          // Execution Thread ID.
+  const WORD ThreadID;          // Execution Thread ID.
 };
 
 ThreadInformationBlock* HcCreateThread(_Input PVOID Start, 
-              _Optional _InOut PVOID HeapOpt, _Optional _InOut PVOID StackOpt);
+              _Optional _InOut PVOID HeapOpt, 
+              _Optional _InOut PVOID StackOpt);
 
 BOOL HcDestroyThread(_Input ThreadInformationBlock* TIB);
 
