@@ -6,8 +6,22 @@
 
 #pragma once
 
-#include <System.Core/Defs.hxx>
 #include <CompilerKit/CompilerKit.hxx>
+#include <System.Core/Defs.hxx>
+
+#define kAllocationTypes 2
+
+CA_EXTERN_C PVOID HcAllocateProcessHeap(ObjectPtr refObj, QWORD sz,
+                                        DWORD flags);
+CA_EXTERN_C BOOL HcProcessHeapExists(ObjectPtr refObj, PVOID ptr);
+CA_EXTERN_C QWORD HcProcessHeapSize(ObjectPtr refObj, PVOID ptr);
+CA_EXTERN_C VOID HcFreeProcessHeap(ObjectPtr refObj, PVOID ptr);
+CA_EXTERN_C ObjectPtr HcGetProcessObject(void);
+
+enum HcAllocationKind {
+  kStandardAllocation = 0xC,
+  kArrayAllocation = 0xD,
+};
 
 namespace System {
 using namespace HCore;
@@ -29,7 +43,7 @@ class Heap final {
   explicit Heap() = default;
 
  public:
-  ~Heap() = default;
+  ~Heap();
 
  public:
   HCORE_COPY_DEFAULT(Heap);
@@ -56,9 +70,10 @@ class MemoryException final {
   const char *Reason();
 
  private:
-  const char *mReason{"System.Core: Process Heap Exception: Catastrophic failure!"};
+  const char *mReason{
+      "System.Core: Process Heap Exception: Catastrophic failure!"};
 
  private:
   friend Heap;
 };
-} // namespace System
+}  // namespace System

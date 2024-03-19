@@ -4,12 +4,11 @@
 
 #pragma once
 
-/// Core API
-#include <System.Core/HCoreBase.hxx>
-
 /// Process Heap API
-#include <System.Core/HCoreHeap.hxx>
+#include <System.Core/Heap.hxx>
 
 /// File API & Device API.
+#include <System.Core/File.hxx>
 
 /// Process & Threading API
+#include <System.Core/Threading.hxx>

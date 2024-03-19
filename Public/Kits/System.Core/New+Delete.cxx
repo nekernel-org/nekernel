@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <System.Core/HCoreHeap.hxx>
+#include <System.Core/Heap.hxx>
 
 void* operator new[](size_t sz) 
 {

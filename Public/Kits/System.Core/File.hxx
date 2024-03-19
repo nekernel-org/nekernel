@@ -25,10 +25,10 @@ class File final {
 
  public:
   voidPtr Read(SizeT off, SizeT sz);
-  void Write(voidPtr buf, SizeT off, SizeT sz);
+  void Write(VoidPtr buf, SizeT off, SizeT sz);
   void Seek(SizeT off);
   voidPtr Read(SizeT sz);
-  void Write(voidPtr buf, SizeT sz);
+  void Write(VoidPtr buf, SizeT sz);
   void Rewind();
 
  public:

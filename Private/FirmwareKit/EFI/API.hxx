@@ -14,14 +14,15 @@
 inline EfiSystemTable *ST = nullptr;
 inline EfiBootServices *BS = nullptr;
 
-extern "C" void rt_cli();
+EXTERN_C void rt_cli();
+EXTERN_C void rt_hlt();
 
 namespace EFI {
-/**
-@brief Stop Execution of program.
-*/
+/// @brief Halt and clear interrupts.
+/// @return 
 inline Void Stop() noexcept {
   while (1) {
+    rt_hlt();
     rt_cli();
   }
 }

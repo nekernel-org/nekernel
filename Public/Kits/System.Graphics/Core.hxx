@@ -171,7 +171,7 @@ class GException final {
   const char* Reason() { return mReason; }
 
  private:
-  const char* mReason{"System.Graphics: User Interface error. Check HError."};
+  const char* mReason{"System.Graphics: Graphics exception. Check HError."};
 };
 
 template <typename GFrameType, typename GFrameBase>

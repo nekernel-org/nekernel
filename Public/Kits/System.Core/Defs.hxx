@@ -108,4 +108,21 @@ enum HcProcessCall {
     kProcessCallsCount = 7,
 };
 
-#include <System.Core/HintBase.hxx>
+#include <System.Core/Hint.hxx>
+
+class Exception {
+ public:
+  explicit Exception() = default;
+  virtual ~Exception() = default;
+
+ public:
+  HCORE_COPY_DEFAULT(Exception);
+
+ public:
+  const char *Name();
+  const char *Reason();
+
+ private:
+  const char *mReason{
+      "System.Core: System Exception: Catastrophic failure!"};
+};

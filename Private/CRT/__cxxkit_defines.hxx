@@ -28,14 +28,12 @@ typedef char *caddr_t;
 #ifdef __GNUC__
 #include <CRT/__cxxkit_alloca.hxx>
 #define __cxxkit_alloca(sz) __cxxkit_alloca_gcc(sz)
-#elif defined(__HISYS__)
+#elif defined(__MPCC__)
 
-#define __alloca(SZ) __cxxkit_alloca(SZ)
+#define __alloca(sz) __cxxkit_alloca(sz)
+#endif
 
-#define __deref(ptr) (*(PTR))
-
-#define __libexport __lib(export)
-#define __libimport __lib(import)
+#define __deref(ptr) (*(ptr))
 
 #ifdef __cplusplus
 #define __init_decl()                                                                                                  \
@@ -47,7 +45,6 @@ typedef char *caddr_t;
 #else
 #define __init_decl()
 #define __fini_decl()
-#endif
 #endif
 
 #if __has_builtin(__builtin_alloca)

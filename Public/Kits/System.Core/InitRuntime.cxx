@@ -2,7 +2,7 @@
  (C) Mahrouss Logic
     ===========================================*/
 
-#include <System.Core/HCoreHeap.hxx>
+#include <System.Core/Heap.hxx>
 
 /// @brief Inits the C runtime
 /// @return if it was succesful or not.

@@ -34,4 +34,4 @@ typedef struct Object final {
   HCore::Void(*Query)(struct Object* Self, HCore::VoidPtr* Dst, HCore::SizeT SzDst, HCore::XRN::GUIDSequence GuidOf);
 } Object, *ObjectPtr;
 
-#define object_cast reinterpret_cast
+#define object_cast reinterpret_cast<ObjectPtr>

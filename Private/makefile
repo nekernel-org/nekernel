@@ -11,7 +11,7 @@ ASM 		= nasm
 # Add assembler, linker, and object files variables.
 ASMFLAGS	= -f win64
 LDFLAGS		= -e Main --subsystem=17
-LDOBJ		= $(wildcard Obj/*.obj)
+LDOBJ		= $(wildcard Objects/*.obj)
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
 KERNEL		= HCoreKrnl.exe
@@ -19,14 +19,14 @@ KERNEL		= HCoreKrnl.exe
 # The kernel entrypoint
 SCRIPT		= --script=Linker/Platforms/PC.lds
 
-.PHONY: invalid-recipe
-invalid-recipe:
+.PHONY: error
+error:
 	@echo "Use a specific target."
 
 MOVEALL=./MoveAll.sh
 
-.PHONY: h-core-amd64
-h-core-amd64: clean
+.PHONY: h-core-amd64-pc
+h-core-amd64-pc: clean
 	$(CC) $(CCFLAGS) $(DEBUG) Source/*.cxx HALKit/AMD64/PCI/*.cxx Source/Network/*.cxx\
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptRouting.asm
@@ -37,12 +37,12 @@ h-core-amd64: clean
 
 OBJCOPY=x86_64-w64-mingw32-objcopy 
 
-.PHONY: link-amd64
-link-amd64:
+.PHONY: link-amd64-pc
+link-amd64-pc:
 	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
 
 .PHONY: all
-all: h-core-amd64 link-amd64
+all: h-core-amd64-pc link-amd64-pc
 	@echo "Fully built."
 
 

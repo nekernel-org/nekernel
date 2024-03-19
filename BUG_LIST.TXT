@@ -1,1 +1,1 @@
-- PS/2 Mouse doesn't raise interrupt on qemu q35, pc machines.
+- PS/2 Mouse doesn't raise interrupt on qemu q35, pc machines. [WontFix]

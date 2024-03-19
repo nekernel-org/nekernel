@@ -1,6 +1,6 @@
-# h-core (codename: SuperTrouper)
+# HCore (codename: SuperTrouper)
 
-## uKernel and components source code.
+## MicroKernel and Executives source code.
 
 You need:
 

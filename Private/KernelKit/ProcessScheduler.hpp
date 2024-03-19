@@ -156,10 +156,10 @@ class Process final {
   //! @brief boolean operator, check status.
   operator bool() { return Status != ProcessStatus::kDead; }
 
-  //! @brief Crash program, exits with code ~0.
+  //! @brief Crash app, exits with code ~0.
   void Crash();
 
-  //! @brief Exits program.
+  //! @brief Exits app.
   void Exit(Int32 exitCode = 0);
 
   //! @brief TLS Allocate

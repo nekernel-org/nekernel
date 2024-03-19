@@ -17,7 +17,7 @@ EMU=qemu-system-x86_64w.exe
 endif
 
 LD_FLAGS=-e efi_main --subsystem=10
-OBJ=$(wildcard *.o) $(wildcard ../../Obj/*.obj) $(wildcard HEL/AMD64/*.obj)
+OBJ=$(wildcard *.o) $(wildcard ../../Objects/*.obj) $(wildcard HEL/AMD64/*.obj)
 
 REM=rm
 REM_FLAG=-f

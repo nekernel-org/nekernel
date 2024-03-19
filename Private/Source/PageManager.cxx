@@ -11,8 +11,8 @@
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #endif  // ifdef __x86_64__
 
-//! null deref will throw (Page Zero detected, aborting program!)
-#define kProtectedRegionEnd 512
+//! null deref will throw (Page Zero detected, aborting app!)
+#define kProtectedRegionEnd (512)
 
 namespace HCore {
 PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
