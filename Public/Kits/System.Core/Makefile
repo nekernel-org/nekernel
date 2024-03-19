@@ -7,9 +7,9 @@ CC=x86_64-w64-mingw32-g++
 CCFLAGS=-shared -ffreestanding -nostdlib -fno-rtti -fno-exceptions -std=c++20 -Xlinker --subsystem=17
 OUTPUT=System.Core.dll
 
-.PHONY: build-core
-build-core:
-	$(CC) -I../ -I$(HOME) -I../../../Private/ $(CCFLAGS) $(wildcard *.cxx) $(wildcard *.s) -o $(OUTPUT)
+.PHONY: build-core-amd64
+build-core-amd64:
+	$(CC) -I../ -I$(HOME) -I../../../Private/ $(CCFLAGS) $(wildcard *.cxx) $(wildcard AMD64/*.s) -o $(OUTPUT)
 
 .PHONY: all
 all: build-core

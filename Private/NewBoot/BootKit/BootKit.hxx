@@ -154,6 +154,10 @@ inline UInt32 In32(UInt16 port) {
   return value;
 }
 
+inline Void rt_hlt() {
+  asm volatile("hlt");
+}
+
 #endif  // __EFI_x86_64__
 
 /***********************************************************************************/

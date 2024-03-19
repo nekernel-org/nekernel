@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <NewKit/Utils.hpp>
+#include <KernelKit/DebugOutput.hpp>
 
 namespace HCore {
 Int rt_string_cmp(const Char *src, const Char *cmp, Size size) {
@@ -36,13 +37,17 @@ Size rt_string_len(const Char *str, SizeT _len) {
   return len;
 }
 
-Size rt_string_len(const Char *str) {
-  if (*str == '\0') return 0;
+Size rt_string_len(const Char *ptr) {
+  if (!ptr) return 0;
 
-  Size len{0};
-  while (str[len] != '\0') ++len;
+  SizeT cnt = 0;
 
-  return len;
+  while (*ptr != (Char)0) {
+    ++ptr;
+    ++cnt;
+  }
+
+  return cnt;
 }
 
 voidPtr rt_set_memory(voidPtr src, char value, Size len) {
@@ -70,7 +75,7 @@ Int rt_move_memory(const voidPtr src, voidPtr dst, Size len) {
     dstChar[index] = srcChr[index];
     srcChr[index] = 0;
 
-    index++;
+    ++index;
   }
 
   return 0;

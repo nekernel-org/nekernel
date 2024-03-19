@@ -1,41 +1,47 @@
-/* -------------------------------------------
-
-    Copyright Mahrouss Logic
-
-------------------------------------------- */
+/** ===========================================
+ (C) Mahrouss Logic
+    ===========================================*/
 
 #include <System.Core/Heap.hxx>
-#include <System.Core/System.Core.hxx>
 
-using namespace System;
-
-/// @brief Shared instance of the heap.
+/// @brief Allocate from the user's heap.
+/// @param refObj Process object.
+/// @param sz size of object.
+/// @param flags flags.
 /// @return 
-Heap* Heap::Shared() noexcept {
-  static Heap* heap = nullptr;
-
-  if (!heap) {
-    heap = new Heap();
-  }
-
-  return heap;
+CA_EXTERN_C PVOID HcAllocateProcessHeap(ObjectPtr refObj, QWORD sz, DWORD flags)
+{
+    CA_MUST_PASS(sz);
+    CA_MUST_PASS(flags);
+    
+    return (PVOID)refObj->Invoke(refObj, kProcessCallAllocPtr, sz, flags);
 }
 
-Heap::~Heap() { delete this; }
-
-void Heap::Delete(HeapPtr me) noexcept {
-  CA_MUST_PASS(me);
-  HcFreeProcessHeap(kInstanceObject, me);
+/// @brief Free pointer from the user's heap.
+/// @param refObj Process object.
+/// @param ptr the pointer to free.
+CA_EXTERN_C VOID HcFreeProcessHeap(ObjectPtr refObj, PVOID ptr)
+{
+    CA_MUST_PASS(ptr);
+    CA_UNREFERENCED_PARAMETER(refObj->Invoke(refObj, kProcessCallFreePtr, ptr));
 }
 
-SizeT Heap::Size(HeapPtr me) noexcept {
-  CA_MUST_PASS(me);
-  return HcProcessHeapSize(kInstanceObject, me);
+/// @brief Get pointer size.
+/// @param refObj Process object.
+/// @param ptr the pointer to find.
+/// @return the size.
+CA_EXTERN_C QWORD HcProcessHeapSize(ObjectPtr refObj, PVOID ptr)
+{
+    CA_MUST_PASS(ptr);
+    return refObj->Invoke(refObj, kProcessCallSizePtr, ptr);
 }
 
-HeapPtr Heap::New(const SizeT& sz, const Int32 flags) {
-  SizeT _sz = sz;
-  if (!_sz) ++_sz;
-
-  return HcAllocateProcessHeap(kInstanceObject, _sz, flags);
+/// @brief Check if the pointer exists.
+/// @param refObj Process object.
+/// @param ptr the pointer to check.
+/// @return if it exists
+CA_EXTERN_C BOOL HcProcessHeapExists(ObjectPtr refObj, PVOID ptr)
+{
+    CA_MUST_PASS(ptr);
+    return refObj->Invoke(refObj, kProcessCallCheckPtr, ptr);
 }

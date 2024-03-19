@@ -11,9 +11,9 @@
 
 //! @brief TLS implementation in C++
 
-#define kCookieMag0 'h'
+#define kCookieMag0 'H'
 #define kCookieMag1 'C'
-#define kCookieMag2 'o'
+#define kCookieMag2 'R'
 
 template <typename T>
 T *tls_new_ptr(void);

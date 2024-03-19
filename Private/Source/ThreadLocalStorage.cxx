@@ -21,14 +21,14 @@ using namespace HCore;
 
 /**
  * Check for cookie inside TIB.
- * @param ptr
+ * @param tib the TIB to check.
  * @return if the cookie is enabled.
  */
 
 Boolean tls_check_tib(ThreadInformationBlock* tib) {
   if (!tib) return false;
 
-  HCore::Encoder encoder;
+  Encoder encoder;
   const char* tibAsBytes = encoder.AsBytes(tib);
 
   kcout << "HCoreKrnl\\TLS: Checking for a valid cookie...\n";

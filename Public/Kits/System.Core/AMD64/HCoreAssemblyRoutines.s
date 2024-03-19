@@ -7,7 +7,8 @@
 .globl HcGetProcessObject
 .globl __assert_chk_fail
 
-/* Process Heap getter */
+/* @brief Process object getter */
+/* @throws: ApptError: appartement error. */
 HcGetProcessObject:
     mov $0x10, %rcx /* sysGetProcessObject */
     int $0x21

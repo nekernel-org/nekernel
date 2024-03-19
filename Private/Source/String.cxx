@@ -60,8 +60,7 @@ ErrorOr<StringView> StringBuilder::Construct(const Char *data) {
 
   StringView view(rt_string_len(data));
 
-  rt_copy_memory(reinterpret_cast<voidPtr>(const_cast<Char *>(data)),
-                 reinterpret_cast<voidPtr>(view.Data()), view.Length());
+  view += data;
 
   return ErrorOr<StringView>(view);
 }
@@ -165,16 +164,16 @@ const char *StringBuilder::Format(const char *fmt, const char *fmt2) {
 }
 
 static void string_append(char *lhs, char *rhs, int cur) {
-  if (lhs && rhs && cur < rt_string_len(lhs)) {
+  if (lhs && rhs) {
     SizeT sz_rhs = rt_string_len(rhs);
+
+    if (sz_rhs == 0) return;
 
     rt_copy_memory(rhs, lhs + cur, sz_rhs);
   }
 }
 
 StringView &StringView::operator+=(const Char *rhs) {
-  if (rt_string_len(rhs) > rt_string_len(this->m_Data)) return *this;
-
   string_append(this->m_Data, const_cast<char *>(rhs), this->m_Cur);
   this->m_Cur += rt_string_len(rhs);
 

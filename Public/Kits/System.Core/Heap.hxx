@@ -40,7 +40,7 @@ enum {
 
 class Heap final {
  private:
-  explicit Heap() = default;
+  explicit Heap();
 
  public:
   ~Heap();
@@ -55,25 +55,5 @@ class Heap final {
   void Delete(HeapPtr me) noexcept;
   SizeT Size(HeapPtr me) noexcept;
   HeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
-};
-
-class MemoryException final {
- public:
-  explicit MemoryException() = default;
-  ~MemoryException() = default;
-
- public:
-  HCORE_COPY_DEFAULT(MemoryException);
-
- public:
-  const char *Name();
-  const char *Reason();
-
- private:
-  const char *mReason{
-      "System.Core: Process Heap Exception: Catastrophic failure!"};
-
- private:
-  friend Heap;
 };
 }  // namespace System

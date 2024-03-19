@@ -205,7 +205,8 @@ public:
 
 using ProcessPtr = Process *;
 
-//! @brief Kernel scheduler..
+/// @brief Process manager class.
+/// The main class which you call to schedule an app.
 class ProcessManager final {
  private:
   explicit ProcessManager() = default;

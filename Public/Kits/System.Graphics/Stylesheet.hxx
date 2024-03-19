@@ -35,12 +35,13 @@ class G_API GStylesheet final {
 
 class StylesheetParser final {
  public:
-  static MutableArray<GStylesheet> FromBlob(WideChar* Blob, SizeT BlobSz) {
+  static MutableArray<GStylesheet> FromBlob(Char* Blob, SizeT BlobSz) {
     MutableArray<GStylesheet> stylesheet;
 
     if (!Blob || BlobSz < 1) return stylesheet;
 
     for (auto BlobIndex = 0UL; BlobIndex < BlobSz; ++BlobIndex) {
+      
     }
 
     return stylesheet;

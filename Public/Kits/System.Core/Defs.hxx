@@ -88,6 +88,7 @@ typedef bool BOOL;
 
 #define CA_STATIC static
 #define CA_INLINE inline
+#define CA_CONST const
 
 #ifdef __cplusplus
 #define CA_CONSTEXPR constexpr
@@ -110,19 +111,19 @@ enum HcProcessCall {
 
 #include <System.Core/Hint.hxx>
 
-class Exception {
+class SystemException {
  public:
-  explicit Exception() = default;
-  virtual ~Exception() = default;
+  explicit SystemException() = default;
+  virtual ~SystemException() = default;
 
  public:
-  HCORE_COPY_DEFAULT(Exception);
+  HCORE_COPY_DEFAULT(SystemException);
 
  public:
-  const char *Name();
-  const char *Reason();
+  virtual const char *Name() = 0;
+  virtual const char *Reason() = 0;
 
  private:
   const char *mReason{
-      "System.Core: System Exception: Catastrophic failure!"};
+      "System.Core: SystemException: Catastrophic failure!"};
 };
