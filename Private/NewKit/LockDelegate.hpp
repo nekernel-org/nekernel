@@ -10,12 +10,15 @@
 #include <NewKit/Defines.hpp>
 
 #define kLockDone (200U)    /* job is done */
-#define kLockTimedOut (100U) /* has timed out */
+#define kLockTimedOut (100U) /* job has timed out */
 
 namespace HCore
 {
+/// @brief Lock condition pointer.
+typedef Boolean* LockPtr;
+
 /// @brief Locking delegate class, hangs until limit.
-/// @tparam N 
+/// @tparam N the amount of cycles to wait.
 template <SizeT N>
 class LockDelegate final
 {
@@ -23,7 +26,7 @@ class LockDelegate final
     LockDelegate() = delete;
 
   public:
-    explicit LockDelegate(Boolean *expr)
+    explicit LockDelegate(LockPtr expr)
     {
         auto spin = 0U;
     

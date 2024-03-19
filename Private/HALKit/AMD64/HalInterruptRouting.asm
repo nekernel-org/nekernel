@@ -188,7 +188,6 @@ IntNormal 60
 ;; this one is doing a POST for us.
 ;; testing interrupts.
 _ke_power_on_self_test:
-    mov rcx, 0
     int 0x21
     int 0x21
     int 0x21
