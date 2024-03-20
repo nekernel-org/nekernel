@@ -20,12 +20,11 @@ constexpr const char *kURLProtocols[] = {
     "http",    // http without the secure
     "file",    // filesystem protocol
     "ftp",     // file transfer protocol
-    "krnlconf",  // system settings
-    "guisys",     // remote shell (gui)
+    "sysconf",  // system settings
 };
 
-constexpr const int kUrlOutSz = 3;  //! ://
-constexpr const int kProtosCount = 6;
+constexpr const int kUrlOutSz = 3;  //! such as: ://
+constexpr const int kProtosCount = 5;
 constexpr const int kRangeSz = 4096;
 
 static ErrorOr<StringView> url_extract_location(const char *url) {

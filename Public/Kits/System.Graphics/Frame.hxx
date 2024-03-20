@@ -15,6 +15,7 @@
 
 #include <System.Graphics/Core.hxx>
 #include <System.Graphics/Dim2d.hxx>
+#include <System.Core/Defs.hxx>
 #include <NewKit/MutableArray.hpp>
 
 namespace System::Graphics {
@@ -29,7 +30,7 @@ class G_API GFrame {
   virtual void Update() {
     if (m_Frames.Count() == 0) return;
 
-    for (int x = 0; x < m_Frames.Count(); ++x) {
+    for (DWORD x = 0; x < m_Frames.Count(); ++x) {
       if (!m_Frames[x]->ShouldBeUpdated()) continue;
 
       m_Frames[x]->Update();
@@ -41,7 +42,7 @@ class G_API GFrame {
   virtual void UpdateInput() {
     if (m_Frames.Count() == 0) return;
 
-    for (int x = 0; x < m_Frames.Count(); ++x) {
+    for (DWORD x = 0; x < m_Frames.Count(); ++x) {
       if (!m_Frames[x]->ShouldBeUpdated()) continue;
 
       m_Frames[x]->UpdateInput();
@@ -50,7 +51,7 @@ class G_API GFrame {
 
   virtual bool ShouldBeUpdated() { return false; }
 
-  virtual void Paint() = 0;
+  virtual void Paint() {}
 
  private:
   HCore::MutableArray<GFrame*> m_Frames;

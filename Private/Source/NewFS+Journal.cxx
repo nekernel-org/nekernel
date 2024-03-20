@@ -9,21 +9,22 @@
 
 #ifdef __FSKIT_NEWFS__
 
-//! bugs: 0
+//! BUGS: 0
 //! @brief Journaling for NewFS.
 
-#define kOpCache (4)
+#define kNewFSOpLog (4)
 
-namespace HCore {
-typedef Boolean (*NewFSRunner)(VoidPtr delegate);
+namespace HCore::Detail {
+typedef Boolean (*NewFSRunnerType)(VoidPtr delegate);
 
+/// @brief Journal thread class.
 class NewFSJournalRunner final {
  public:
-  NewFSRunner fLoadRoutine{nullptr};
-  NewFSRunner fCacheRoutine{nullptr};
-  NewFSRunner fUnloadRoutine{nullptr};
+  NewFSRunnerType fLoadRoutine{nullptr};
+  NewFSRunnerType fCacheRoutine{nullptr};
+  NewFSRunnerType fUnloadRoutine{nullptr};
 
-  explicit NewFSJournalRunner(NewFSRunner load_runner)
+  explicit NewFSJournalRunner(NewFSRunnerType load_runner)
       : fLoadRoutine(load_runner) {
     MUST_PASS(fLoadRoutine);
 
@@ -39,23 +40,25 @@ class NewFSJournalRunner final {
   HCORE_COPY_DEFAULT(NewFSJournalRunner);
 
  public:
-  Boolean Run(const Int32& operation, VoidPtr class_ptr) {
+  Boolean Run(const Int32& operation, VoidPtr classPtr) {
     switch (operation) {
-      case kOpCache: {
-        if (!class_ptr) {
-          kcout << "Miss for class_ptr at NewFSJournalManager::Run(class_ptr) "
+      case kNewFSOpLog: {
+        if (!classPtr) {
+          kcout << "HCoreKrnl.exe: Miss for classPtr at NewFSJournalManager::Run(classPtr) "
                 << __FILE__ << "\n";
           return false;
         }
 
         MUST_PASS(fCacheRoutine);
-        return fCacheRoutine(class_ptr);
+        return fCacheRoutine(classPtr);
       }
     };
 
     return false;
   }
 };
-}  // namespace HCore
+}  // namespace HCore::Detail
+
+using namespace HCore;
 
 #endif  // ifdef __FSKIT_NEWFS__

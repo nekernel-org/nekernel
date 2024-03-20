@@ -26,7 +26,7 @@ UInt32 rt_get_pef_platform(void) noexcept {
   return kPefArchAMD64;
 #else
   return kPefArchInvalid;
-#endif  // __POWER || __x86_64__
+#endif  // __32x0__ || __64x0__ || __x86_64__
 }
 }  // namespace Detail
 
