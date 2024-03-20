@@ -10,23 +10,23 @@
 #include <NewKit/ArrayList.hpp>
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/PageManager.hpp>
-#include <NewKit/Pmm.hpp>
 #include <NewKit/Ref.hpp>
+#include <NewKit/Pmm.hpp>
 
-/// last-rev 5/11/23
+/// @version 5/11/23
 /// @file UserHeap.hpp
 /// @brief memory heap for user programs.
 
-#define kPoolMaxSz (4096)
-#define kPoolMag (0x5500A1)
+#define kUserHeapMaxSz (4096)
+#define kUserHeapMag (0x5500A1)
 
 namespace HCore {
 typedef enum {
-  kPoolHypervisor = 0x2,
-  kPoolShared = 0x4,
-  kPoolUser = 0x6,
-  kPoolRw = 0x8,
-} kPoolFlags;
+  kUserHeapHypervisor = 0x2,
+  kUserHeapShared = 0x4,
+  kUserHeapUser = 0x6,
+  kUserHeapRw = 0x8,
+} kUserHeapFlags;
 
 /// @brief Allocate a process heap, no zero out is done here.
 /// @param flags 

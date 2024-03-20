@@ -13,26 +13,13 @@
 #include <KernelKit/Rsrc/Splash.rsrc>
 #include <KernelKit/Rsrc/Util.hxx>
 #include <NewKit/Json.hpp>
-#include <NewKit/KernelHeap.hpp>
-#include <NewKit/UserHeap.hpp>
+#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/UserHeap.hpp>
 
 ///! @brief Disk contains HCore files.
 #define kInstalledMedia 0xDD
 
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
-EXTERN_C HCore::Void _hal_init_mouse();
-EXTERN_C HCore::Void _hal_mouse_handler();
-EXTERN_C HCore::Void _hal_mouse_draw();
-
-namespace Detail {
-STATIC HCore::Void ke_page_protect_nullptr(HCore::Void) {
-  HCore::PTEWrapper wrapper(false, false, false, 0);
-  HCore::PageManager pageManager;
-  HCore::Ref<HCore::PageManager> refMan(pageManager);
-
-  wrapper.FlushTLB(refMan);
-}
-}  // namespace Detail
 
 EXTERN_C void RuntimeMain(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
@@ -42,8 +29,10 @@ EXTERN_C void RuntimeMain(
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
   kKernelVirtualStart = HandoverHeader->f_VirtualStart;
 
-  kKernelPhysicalSize = HandoverHeader->f_PhysicalSize - kPTEAlign;
+  kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
+
+  hal_write_cr3((HCore::UIntPtr)kKernelVirtualStart);
 
   STATIC HCore::HAL::Detail::HCoreGDT GDT = {
       {0, 0, 0, 0x00, 0x00, 0},  // null entry
@@ -84,7 +73,6 @@ EXTERN_C void RuntimeMain(
   /// START POST
 
   HCore::HAL::Detail::_ke_power_on_self_test();
-  Detail::ke_page_protect_nullptr();
 
   /// END POST
 
@@ -96,12 +84,6 @@ EXTERN_C void RuntimeMain(
     /// TODO: Parse system configuration.
   } else {
     /// TODO: Install hcore on host.
-  }
-
-  _hal_init_mouse();
-
-  while (1) {
-    _hal_mouse_draw();
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

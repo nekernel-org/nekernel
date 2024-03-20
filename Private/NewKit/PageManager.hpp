@@ -31,7 +31,7 @@ class PTEWrapper final {
   PTEWrapper(const PTEWrapper &) = default;
 
  public:
-  void FlushTLB(Ref<PageManager> &pm);
+  void Flush();
   const UIntPtr VirtualAddress();
 
   void NoExecute(const bool enable = false);
@@ -67,7 +67,7 @@ struct PageManager final {
   PageManager(const PageManager &) = default;
 
  public:
-  PTEWrapper *Request(Boolean Rw, Boolean User, Boolean ExecDisable);
+  PTEWrapper Request(Boolean Rw, Boolean User, Boolean ExecDisable);
   bool Free(Ref<PTEWrapper *> &wrapper);
 
  private:

@@ -152,6 +152,8 @@ Void boot_ata_read(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
+  boot_ata_wait_io(IO);
+
   for (SizeT IndexOff = 0; IndexOff < 256; ++IndexOff) {
     Buf[Offset + IndexOff] = In16(IO + ATA_REG_DATA);
   }
@@ -171,6 +173,8 @@ Void boot_ata_write(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
   Out8(IO + ATA_REG_LBA2, (UInt8)(Lba & 0x00ff0000) >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
+
+  boot_ata_wait_io(IO);
 
   for (SizeT IndexOff = 0; IndexOff < 256; ++IndexOff) {
     Out16(IO + ATA_REG_DATA, Buf[Offset + IndexOff]);
@@ -225,7 +229,7 @@ BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
     return *this;
   }
 
-  Leak().mErr = false;
+  this->Leak().mErr = false;
 
   if (!Buf || SectorSz < 1) return *this;
 
@@ -233,8 +237,6 @@ BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
     boot_ata_read(this->Leak().mBase + i, 
                   this->Leak().mBus, this->Leak().mMaster,
                Buf, i);
-
-    boot_ata_wait_io(this->Leak().mBus);
   }
 
   return *this;
@@ -262,15 +264,13 @@ BDeviceATA& BDeviceATA::Write(CharacterType* Buf, const SizeT& SectorSz) {
                 Buf, Off);
 
     Off += kATASectorSize;
-    
-    boot_ata_wait_io(this->Leak().mBus);
   }
 
   return *this;
 }
 
 /**
- * @brief ATA Config getter.
+ * @brief ATA trait getter.
  * @return BDeviceATA::ATATrait& the drive config.
  */
 BDeviceATA::ATATrait& BDeviceATA::Leak() { return mTrait; }

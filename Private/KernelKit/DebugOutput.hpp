@@ -83,6 +83,8 @@ inline TerminalDevice _write_number_hex(const Long &x, TerminalDevice& term) {
 
 inline TerminalDevice hex_number(const Long &x) {
   TerminalDevice selfTerm = TerminalDevice::Shared();
+
+  selfTerm << "0x";
   Detail::_write_number_hex(x, selfTerm);
 
   return selfTerm;

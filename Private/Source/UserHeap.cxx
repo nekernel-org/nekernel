@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <NewKit/PageManager.hpp>
-#include <NewKit/UserHeap.hpp>
+#include <KernelKit/UserHeap.hpp>
 
 #define kHeapHeaderPaddingSz 16
 
@@ -37,7 +37,7 @@ class HeapManager final {
   STATIC SizeT& Count() { return s_NumPools; }
   STATIC Ref<Pmm>& Leak() { return s_Pmm; }
   STATIC Boolean& IsEnabled() { return s_PoolsAreEnabled; }
-  STATIC Array<Ref<PTEWrapper*>, kPoolMaxSz>& The() { return s_Pool; }
+  STATIC Array<Ref<PTEWrapper>, kUserHeapMaxSz>& The() { return s_Pool; }
 
  private:
   STATIC Size s_NumPools;
@@ -45,7 +45,7 @@ class HeapManager final {
 
  private:
   STATIC Boolean s_PoolsAreEnabled;
-  STATIC Array<Ref<PTEWrapper*>, kPoolMaxSz> s_Pool;
+  STATIC Array<Ref<PTEWrapper>, kUserHeapMaxSz> s_Pool;
 };
 
 //! declare fields
@@ -53,7 +53,7 @@ class HeapManager final {
 SizeT HeapManager::s_NumPools = 0UL;
 Ref<Pmm> HeapManager::s_Pmm;
 Boolean HeapManager::s_PoolsAreEnabled = true;
-Array<Ref<PTEWrapper*>, kPoolMaxSz> HeapManager::s_Pool;
+Array<Ref<PTEWrapper>, kUserHeapMaxSz> HeapManager::s_Pool;
 
 STATIC VoidPtr ke_find_unused_heap(Int flags);
 STATIC Void ke_free_heap_internal(VoidPtr vaddr);
@@ -61,9 +61,9 @@ STATIC VoidPtr ke_make_heap(VoidPtr vaddr, Int flags);
 STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr);
 
 STATIC VoidPtr ke_find_unused_heap(Int flags) {
-  for (SizeT index = 0; index < kPoolMaxSz; ++index) {
+  for (SizeT index = 0; index < kUserHeapMaxSz; ++index) {
     if (HeapManager::The()[index] &&
-        !HeapManager::The()[index].Leak().Leak().Leak()->Present()) {
+        !HeapManager::The()[index].Leak().Leak().Leak().Present()) {
       HeapManager::Leak().Leak().TogglePresent(
           HeapManager::The()[index].Leak().Leak(), true);
       kcout << "[ke_find_unused_heap] Done, trying now to make a pool\r\n";
@@ -72,7 +72,7 @@ STATIC VoidPtr ke_find_unused_heap(Int flags) {
                               .Leak()
                               .Leak()
                               .Leak()
-                              ->VirtualAddress(),
+                              .VirtualAddress(),
                           flags);
     }
   }
@@ -90,7 +90,7 @@ STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
     }
 
     poolHdr->fFlags = flags;
-    poolHdr->fMagic = kPoolMag;
+    poolHdr->fMagic = kUserHeapMag;
     poolHdr->fFree = false;
 
     kcout << "[ke_make_heap] New allocation has been done.\n";
@@ -106,7 +106,7 @@ STATIC Void ke_free_heap_internal(VoidPtr virtualAddress) {
   HeapHeader* poolHdr = reinterpret_cast<HeapHeader*>(
       reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(HeapHeader));
 
-  if (poolHdr->fMagic == kPoolMag) {
+  if (poolHdr->fMagic == kUserHeapMag) {
     poolHdr->fFree = false;
     poolHdr->fFlags = 0;
 
@@ -126,7 +126,7 @@ STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr) {
     // ErrorOr<>::operator Boolean
     /// if (address matches)
     ///     -> Free heap.
-    if (HeapManager::The()[index].Leak().Leak().Leak()->VirtualAddress() ==
+    if (HeapManager::The()[index].Leak().Leak().Leak().VirtualAddress() ==
         (UIntPtr)ptr) {
       HeapManager::Leak().Leak().FreePage(
           HeapManager::The()[index].Leak().Leak());
@@ -149,13 +149,13 @@ STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr) {
 VoidPtr rt_new_heap(Int32 flags) {
   if (!HeapManager::IsEnabled()) return nullptr;
 
-  if (HeapManager::Count() > kPoolMaxSz) return nullptr;
+  if (HeapManager::Count() > kUserHeapMaxSz) return nullptr;
 
   if (VoidPtr ret = ke_find_unused_heap(flags)) return ret;
 
   // this wasn't set to true
-  auto ref_page = HeapManager::Leak().Leak().RequestPage(((flags & kPoolUser)),
-                                                         (flags & kPoolRw));
+  auto ref_page = HeapManager::Leak().Leak().RequestPage(((flags & kUserHeapUser)),
+                                                         (flags & kUserHeapRw));
 
   if (ref_page) {
     ///! reserve page.
@@ -166,7 +166,7 @@ VoidPtr rt_new_heap(Int32 flags) {
 
     // finally make the pool address.
     return ke_make_heap(
-        reinterpret_cast<VoidPtr>(ref_page.Leak()->VirtualAddress()), flags);
+        reinterpret_cast<VoidPtr>(ref_page.Leak().VirtualAddress()), flags);
   }
 
   return nullptr;
@@ -183,7 +183,7 @@ Int32 rt_free_heap(VoidPtr ptr) {
 
     if (ke_check_and_free_heap(base, ptr)) return 0;
 
-    for (SizeT index = 0; index < kPoolMaxSz; ++index) {
+    for (SizeT index = 0; index < kUserHeapMaxSz; ++index) {
       if (ke_check_and_free_heap(index, ptr)) return 0;
 
       --base;

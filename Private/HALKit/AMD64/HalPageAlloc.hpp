@@ -72,7 +72,7 @@ struct PageDirectory64 final {
   PageTable64 ALIGN(kPTEAlign) Pte[kPTEMax];
 };
 
-PageTable64* hal_alloc_page(SizeT sz, Boolean rw, Boolean user);
+VoidPtr hal_alloc_page(SizeT sz, Boolean rw, Boolean user);
 UIntPtr hal_create_page(Boolean rw, Boolean user);
 }  // namespace HCore::HAL
 

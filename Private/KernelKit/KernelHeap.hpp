@@ -11,7 +11,6 @@
 // description: heap allocation for the kernel.
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/Pmm.hpp>
 
 namespace HCore {
 Int32 ke_delete_ke_heap(voidPtr allocatedPtr);

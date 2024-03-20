@@ -11,7 +11,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorID.hpp>
 #include <NewKit/KernelCheck.hpp>
-#include <NewKit/KernelHeap.hpp>
+#include <KernelKit/KernelHeap.hpp>
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/String.hpp>
 

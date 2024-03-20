@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/LockDelegate.hpp>
+#include <KernelKit/LockDelegate.hpp>

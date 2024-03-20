@@ -18,7 +18,7 @@ hal_flush_tlb:
     ret
 
 hal_read_cr3:
-    movq %rax, %cr3
+    movq %cr3, %rax
     ret
 
 hal_read_cr0:

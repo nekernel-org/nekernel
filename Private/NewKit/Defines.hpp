@@ -99,12 +99,12 @@ public:
 
 public:
   template <typename T>
-  Char* AsBytes(T type) {
+  Char* AsBytes(T type) noexcept {
     return reinterpret_cast<Char*>(type);
   }
 
   template <typename T, typename Y>
-  Y As(T type) {
+  Y As(T type) noexcept {
     return reinterpret_cast<Y>(type);
   }
 

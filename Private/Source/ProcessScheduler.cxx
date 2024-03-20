@@ -11,7 +11,7 @@
 
 #include <KernelKit/ProcessScheduler.hpp>
 #include <KernelKit/SMPManager.hpp>
-#include <NewKit/KernelHeap.hpp>
+#include <KernelKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
 
 ///! bugs = 0
@@ -68,7 +68,7 @@ bool rt_in_pool_region(VoidPtr pool_ptr, VoidPtr pool, const SizeT &sz) {
   Char *_pool_ptr = (Char *)pool_ptr;
   Char *_pool = (Char *)pool;
 
-  for (SizeT index = sz; _pool[sz] != 0x55; --index) {
+  for (SizeT index = sz; _pool[sz] != kUserHeapMag; --index) {
     if (&_pool[index] > &_pool_ptr[sz]) continue;
 
     if (_pool[index] == _pool_ptr[index]) return true;
@@ -151,7 +151,7 @@ SizeT ProcessManager::Add(Ref<Process> &process) {
 
   kcout << "ProcessManager::Add(Ref<Process>& process)\r\n";
 
-  process.Leak().HeapPtr = rt_new_heap(kPoolUser | kPoolRw);
+  process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
   process.Leak().ProcessId = mTeam.AsArray().Count();
   process.Leak().HeapCursor = process.Leak().HeapPtr;
 

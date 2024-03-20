@@ -10,9 +10,9 @@
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/PermissionSelector.hxx>
-#include <NewKit/LockDelegate.hpp>
+#include <KernelKit/LockDelegate.hpp>
 #include <NewKit/MutableArray.hpp>
-#include <NewKit/UserHeap.hpp>
+#include <KernelKit/UserHeap.hpp>
 
 #define kMinMicroTime AffinityKind::kHartStandard
 #define kPIDInvalid (-1)

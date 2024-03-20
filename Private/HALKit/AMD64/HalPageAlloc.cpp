@@ -24,27 +24,37 @@ namespace HAL {
 /// @param user user flag.
 /// @return the page table of it.
 STATIC auto hal_try_alloc_new_page(SizeT sz, Boolean rw, Boolean user)
-    -> PageTable64 * {
-  kAllocationInProgress = true;
+    -> VoidPtr {
   MUST_PASS(sz > 0);
 
-  PageTable64 *pte = reinterpret_cast<PageTable64 *>(kKernelVirtualStart);
+  kAllocationInProgress = true;
+  PDE* cr3 = (PDE*)hal_read_cr3();
 
-  pte->Rw = rw;
-  pte->User = user;
-  pte->Present = true;
-  pte->PhysicalAddress = (UIntPtr)kKernelPhysicalStart;
+  kcout << "HCoreKrnl.exe: CR3: " << hex_number((UIntPtr)cr3) << endl;
 
-  kKernelVirtualStart = (VoidPtr)((UIntPtr)kKernelVirtualStart + kKernelPagingPadding);
-  kKernelPhysicalStart = (VoidPtr)((UIntPtr)kKernelPhysicalStart + kKernelPagingPadding);
+  for (size_t i = 0; i < kPTESize; ++i)
+  {
+    if (cr3->Pte[i].Present) continue;
+    kcout << "HCoreKrnl.exe: Page index: " << hex_number(i) << endl;
 
-  ++kPageCnt;
+    cr3->Pte[i].Rw = rw;
+    cr3->Pte[i].User = user;
+    cr3->Pte[i].Present = true;
 
+    ++kPageCnt;
+
+    kAllocationInProgress = false;
+    kcout << "HCoreKrnl.exe: Allocation done for: " << hex_number(i) << endl;
+    return (VoidPtr)cr3->Pte[i].PhysicalAddress;
+  }
+  
   kAllocationInProgress = false;
-  return pte;
+  return nullptr;
 }
 
-auto hal_alloc_page(SizeT sz, Boolean rw, Boolean user) -> PageTable64 * {
+auto hal_alloc_page(SizeT sz, Boolean rw, Boolean user) -> VoidPtr {
+  while (kAllocationInProgress) {}
+
   if (sz == 0)
     ++sz;
 
@@ -53,12 +63,7 @@ auto hal_alloc_page(SizeT sz, Boolean rw, Boolean user) -> PageTable64 * {
 }
 
 auto hal_create_page(Boolean rw, Boolean user) -> UIntPtr {
-  while (kAllocationInProgress) {}
-
-  PageTable64 *new_pte = hal_alloc_page(sizeof(PageTable64), rw, user);
-  MUST_PASS(new_pte);
-
-  return reinterpret_cast<UIntPtr>(new_pte);
+  return reinterpret_cast<UIntPtr>(hal_alloc_page(sizeof(PageTable64), rw, user));
 }
 }  // namespace HAL
 }  // namespace HCore

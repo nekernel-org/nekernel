@@ -6,7 +6,7 @@
 ------------------------------------------- */
 #pragma once
 
-#include <NewKit/KernelHeap.hpp>
+#include <KernelKit/KernelHeap.hpp>
 
 typedef __SIZE_TYPE__ size_t; // gcc will complain about that
 
