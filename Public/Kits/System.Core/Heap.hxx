@@ -56,4 +56,24 @@ class Heap final {
   SizeT Size(HeapPtr me) noexcept;
   HeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
 };
+
+
+/// @brief heap exception
+/// Throws when the heap pointer isn't found or invalid.
+class HeapException : public SystemException {
+ public:
+  explicit HeapException() = default;
+  virtual ~HeapException() = default;
+
+ public:
+  HCORE_COPY_DEFAULT(HeapException);
+
+ public:
+  const char *Name() override { return "HeapException"; }
+  const char *Reason() override { return mReason; }
+
+ private:
+  const char *mReason{"System.Core: HeapException: Catastrophic failure!"};
+};
+
 }  // namespace System

@@ -27,7 +27,7 @@ EXTERN_C void RuntimeMain(
 
   /// Setup kernel globals.
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
-  kKernelVirtualStart = HandoverHeader->f_VirtualStart;
+  kKernelVirtualStart = (HandoverHeader->f_VirtualStart + kVirtualAddressStartOffset);
 
   kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
@@ -76,6 +76,7 @@ EXTERN_C void RuntimeMain(
 
   /// Mounts a NewFS block.
   HCore::FilesystemManagerInterface::Mount(new HCore::NewFilesystemManager());
+  HCore::ke_delete_ke_heap(HCore::FilesystemManagerInterface::Unmount());
 
   /// We already have an install of HCore.
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {

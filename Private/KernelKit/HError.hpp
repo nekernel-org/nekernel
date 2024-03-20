@@ -29,6 +29,7 @@ inline constexpr HError kErrorNoSuchDisk = 45;
 inline constexpr HError kErrorFileExists = 46;
 inline constexpr HError kErrorFormatFailed = 47;
 inline constexpr HError kErrorNetworkTimeout = 48;
+inline constexpr HError kErrorInternal = 49;
 inline constexpr HError kErrorUnimplemented = 0;
 
 Boolean ke_bug_check(void) noexcept;

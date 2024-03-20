@@ -6,8 +6,9 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/KernelHeap.hpp>
-#include <NewKit/Crc32.hpp>
 #include <NewKit/PageManager.hpp>
+#include <KernelKit/HError.hpp>
+#include <NewKit/Crc32.hpp>
 
 //! @file KernelHeap.cxx
 //! @brief Kernel allocator.
@@ -16,14 +17,13 @@
 
 namespace HCore {
 STATIC SizeT kHeapCount = 0UL;
-STATIC Ref<PTEWrapper> kHeapLastWrapper;
 STATIC PageManager kHeapPageManager;
 
 namespace Detail {
 /// @brief Kernel heap information block.
 /// Located before the address bytes.
 /// | HIB |  ADDRESS  |
-struct HeapInformationBlock final {
+struct PACKED HeapInformationBlock final {
   UInt16 hMagic;
   Boolean hPresent;
   Int32 hCRC32;
@@ -43,9 +43,6 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
   if (sz == 0) ++sz;
 
   auto wrapper = kHeapPageManager.Request(rw, user, false);
-  kHeapLastWrapper = wrapper;
-
-  kcout << "HCoreKrnl.exe: Populating HIB...\r\n";
 
   Detail::HeapInformationBlockPtr heapInfo =
       reinterpret_cast<Detail::HeapInformationBlockPtr>(
@@ -58,8 +55,6 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 
   ++kHeapCount;
 
-  kcout << "HCoreKrnl.exe: Return address...\r\n";
-
   return reinterpret_cast<VoidPtr>(wrapper.VirtualAddress() +
                                    sizeof(Detail::HeapInformationBlock));
 }
@@ -68,23 +63,31 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 /// @param ptr the pointer.
 /// @return
 Int32 ke_delete_ke_heap(VoidPtr ptr) {
-  if (ptr) {
-    Detail::HeapInformationBlockPtr virtualAddress =
-        reinterpret_cast<Detail::HeapInformationBlockPtr>(ptr) -
-        sizeof(Detail::HeapInformationBlock);
+  if (kHeapCount < 1) return -kErrorInternal;
 
-    if (kHeapLastWrapper && virtualAddress->hMagic == kHeapMagic &&
-        virtualAddress->hAddress == kHeapLastWrapper.Leak().VirtualAddress()) {
-      virtualAddress->hSizeAddress = 0UL;
-      virtualAddress->hPresent = false;
+  Detail::HeapInformationBlockPtr virtualAddress =
+      reinterpret_cast<Detail::HeapInformationBlockPtr>(ptr -
+      sizeof(Detail::HeapInformationBlock));
 
-      --kHeapCount;
-
-      return true;
+  if (virtualAddress && virtualAddress->hMagic == kHeapMagic) {
+    if (virtualAddress->hCRC32 != 0) {
+      if (virtualAddress->hCRC32 !=
+          ke_calculate_crc32((Char *)virtualAddress->hAddress,
+                             virtualAddress->hSizeAddress))
+        ke_stop(RUNTIME_CHECK_POINTER);
     }
+
+    virtualAddress->hSizeAddress = 0UL;
+    virtualAddress->hPresent = false;
+    virtualAddress->hAddress = 0;
+    virtualAddress->hCRC32 = 0;
+    virtualAddress->hMagic = 0;
+
+    --kHeapCount;
+    return 0;
   }
 
-  return -1;
+  return -kErrorInternal;
 }
 
 /// @brief Check if pointer is a valid kernel pointer.
@@ -95,8 +98,8 @@ Boolean ke_is_valid_ptr(VoidPtr ptr) {
 
   if (ptr) {
     Detail::HeapInformationBlockPtr virtualAddress =
-        reinterpret_cast<Detail::HeapInformationBlockPtr>(ptr) -
-        sizeof(Detail::HeapInformationBlock);
+        reinterpret_cast<Detail::HeapInformationBlockPtr>(ptr -
+      sizeof(Detail::HeapInformationBlock));
 
     if (virtualAddress->hPresent && virtualAddress->hMagic == kHeapMagic) {
       return true;

@@ -7,7 +7,7 @@
 #pragma once
 
 #ifndef __cplusplus
-#error This API is meant to be used with C++
+#error This API is meant to be used with C++.
 #endif
 
 #ifdef CA_MUST_PASS
@@ -38,7 +38,7 @@ CA_EXTERN_C void __assert_chk_fail(void);
 #define CA_CDECL __attribute__((cdecl))
 #define CA_MSCALL __attribute__((ms_abi))
 
-#define CA_PASCALL CA_STDCALL
+#define CA_PASCAL CA_STDCALL
 
 typedef __UINT8_TYPE__ BYTE;
 typedef __UINT16_TYPE__ WORD;
@@ -61,12 +61,15 @@ typedef __INT32_TYPE__ INT32;
 typedef __WCHAR_TYPE__ WCHAR;
 typedef WCHAR* PWCHAR;
 
-typedef bool BOOL;
+typedef CHAR BOOL;
 
-#define TRUE true
-#define FALSE false
+#define TRUE 1
+#define FALSE 0
 
 #define PTR *
+
+#define FAR __far
+#define NEAR __near
 
 #define CA_UNREFERENCED_PARAMETER(e) ((VOID)e)
 
@@ -123,7 +126,61 @@ class SystemException {
   virtual const char *Name() = 0;
   virtual const char *Reason() = 0;
 
+};
+
+/// @brief Object exception
+/// Throws when the object isn't found.
+class ObjectNotFoundException : public SystemException {
+ public:
+  explicit ObjectNotFoundException() = default;
+  virtual ~ObjectNotFoundException() = default;
+
+ public:
+  HCORE_COPY_DEFAULT(ObjectNotFoundException);
+
+ public:
+  const char *Name() override { return "ObjectNotFoundException"; } 
+  const char *Reason() override { return mReason; }
+
  private:
   const char *mReason{
-      "System.Core: SystemException: Catastrophic failure!"};
+      "System.Core: ObjectNotFoundException: Catastrophic failure!"};
+};
+
+/// @brief pointer exception
+/// Throws when the object isn't found.
+class PointerException : public SystemException {
+ public:
+  explicit PointerException() = default;
+  virtual ~PointerException() = default;
+
+ public:
+  HCORE_COPY_DEFAULT(PointerException);
+
+ public:
+  const char *Name() override { return "PointerException"; } 
+  const char *Reason() override { return mReason; }
+
+ private:
+  const char *mReason{
+      "System.Core: PointerException: Catastrophic failure!"};
+};
+
+/// @brief pointer exception
+/// Throws when the object isn't found.
+class NullPointerException : public SystemException {
+ public:
+  explicit NullPointerException() = default;
+  virtual ~NullPointerException() = default;
+
+ public:
+  HCORE_COPY_DEFAULT(NullPointerException);
+
+ public:
+  const char *Name() override { return "NullPointerException"; } 
+  const char *Reason() override { return mReason; }
+
+ private:
+  const char *mReason{
+      "System.Core: NullPointerException: Catastrophic failure!"};
 };

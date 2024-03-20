@@ -32,12 +32,12 @@ void ke_stop(const HCore::Int &id) {
     }
     case RUNTIME_CHECK_ACPI: {
       kcout << "*** CAUSE: RUNTIME_CHECK_ACPI *** \r\n";
-      kcout << "*** WHAT: ACPI DEFECT. *** \r\n";
+      kcout << "*** WHAT: ACPI ERROR, UNSTABLE STATE. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_POINTER: {
       kcout << "*** CAUSE: RUNTIME_CHECK_POINTER *** \r\n";
-      kcout << "*** WHAT: BAD POINTER. *** \r\n";
+      kcout << "*** WHAT: HEAP ERROR, UNSTABLE STATE. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_BAD_BEHAVIOR: {

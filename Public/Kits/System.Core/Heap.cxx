@@ -21,7 +21,10 @@ Heap* Heap::Shared() noexcept {
   return heap;
 }
 
-Heap::Heap() {  }
+Heap::Heap() {
+  CA_MUST_PASS(HcProcessHeapExists(kInstanceObject, (VoidPtr)this));
+}
+
 Heap::~Heap() { delete this; }
 
 void Heap::Delete(HeapPtr me) noexcept {

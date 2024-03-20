@@ -20,25 +20,10 @@
 #error Unknown architecture
 #endif
 
+#define kVirtualAddressStartOffset 0x100
+
 namespace HCore {
-template <SSizeT ID>
-class SystemCall {
- public:
-  explicit SystemCall() { kcout << "SystemCall::SystemCall"; }
-
-  virtual ~SystemCall() { kcout << "SystemCall::~SystemCall"; }
-
-  SystemCall &operator=(const SystemCall &) = default;
-  SystemCall(const SystemCall &) = default;
-
-  // Should not be called alone!
-  virtual bool Exec() const {
-    kcout << "SystemCall->Exec<RET>()";
-    return false;
-  }
-};
-
-constexpr static inline SSizeT syscall_hash(const char *seed, int mul) {
+constexpr static inline SSizeT rt_hash_seed(const char *seed, int mul) {
   SSizeT hash = 0;
 
   for (SSizeT idx = 0; seed[idx] != 0; ++idx) {
@@ -48,8 +33,6 @@ constexpr static inline SSizeT syscall_hash(const char *seed, int mul) {
 
   return hash;
 }
-
-bool ke_init_hal();
 }  // namespace HCore
 
 #define kKernelMaxSystemCalls (256)
@@ -61,7 +44,6 @@ extern HCore::Array<rt_syscall_proc,
     kSyscalls;
 
 EXTERN_C HCore::Void rt_wait_400ns();
-EXTERN_C HCore::Void ATTRIBUTE(interrupt) rt_syscall_handle(HCore::HAL::StackFramePtr stackFrame);
 EXTERN_C HCore::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C HCore::Void rt_do_context_switch(HCore::HAL::StackFramePtr stackFrame);
 

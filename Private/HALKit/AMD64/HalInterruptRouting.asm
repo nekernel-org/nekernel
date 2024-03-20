@@ -111,16 +111,7 @@ __HCR_INT_33:
 
     push rax
 
-    mov rcx, kSystemCallLabelEnter
-    call ke_io_print
-
-    pop rax
-
-    push rax
-
-    ;; Find and execute system call TODO
-
-    mov rcx, kSystemCallLabelExit
+    mov rcx, kSystemCallLabel
     call ke_io_print
 
     pop rax
@@ -228,9 +219,7 @@ kInterruptVectorTable:
     %assign i i+1
     %endrep
 
-kSystemCallLabelEnter:
-    db "HCoreKrnl.exe: SystemCall: Enter.", 0xa, 0xd, 0
-kSystemCallLabelExit:
-    db "HCoreKrnl.exe: SystemCall: Exit.", 0xa, 0xd, 0
+kSystemCallLabel:
+    db "HCoreKrnl.exe: SystemCall: Enter SCM.", 0xa, 0xd, 0
 kMouseLabelExit:
     db "HCoreKrnl.exe: KernelMouse: Acknowledge Interrupt.", 0xa, 0xd, 0

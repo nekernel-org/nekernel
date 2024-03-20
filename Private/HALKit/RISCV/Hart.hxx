@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: Hart.hxx
-    Purpose: RISC-V hart abstraction.
+    Purpose: RISC-V hardware threads.
 
     Revision History:
 
