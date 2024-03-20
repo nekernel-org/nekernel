@@ -32,8 +32,6 @@ EXTERN_C void RuntimeMain(
   kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 
-  hal_write_cr3((HCore::UIntPtr)kKernelVirtualStart);
-
   STATIC HCore::HAL::Detail::HCoreGDT GDT = {
       {0, 0, 0, 0x00, 0x00, 0},  // null entry
       {0, 0, 0, 0x9a, 0xaf, 0},  // kernel code

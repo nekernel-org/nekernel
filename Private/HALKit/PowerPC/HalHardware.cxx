@@ -9,8 +9,7 @@
 
 namespace HCore {
 namespace HAL {
-UIntPtr hal_create_page(bool rw, bool user) { return 0; }
-UIntPtr hal_alloc_page(UIntPtr offset, bool rw, bool user) { return 0; }
+UIntPtr hal_alloc_page(bool rw, bool user) { return 0; }
 }  // namespace HAL
 
 // @brief wakes up thread.

@@ -19,11 +19,12 @@ typedef Boolean (*NewFSRunnerType)(VoidPtr delegate);
 
 /// @brief Journal thread class.
 class NewFSJournalRunner final {
- public:
+ private:
   NewFSRunnerType fLoadRoutine{nullptr};
   NewFSRunnerType fCacheRoutine{nullptr};
   NewFSRunnerType fUnloadRoutine{nullptr};
 
+ public:
   explicit NewFSJournalRunner(NewFSRunnerType load_runner)
       : fLoadRoutine(load_runner) {
     MUST_PASS(fLoadRoutine);
@@ -44,7 +45,8 @@ class NewFSJournalRunner final {
     switch (operation) {
       case kNewFSOpLog: {
         if (!classPtr) {
-          kcout << "HCoreKrnl.exe: Miss for classPtr at NewFSJournalManager::Run(classPtr) "
+          kcout << "HCoreKrnl.exe: Miss for classPtr at "
+                   "NewFSJournalManager::Run(classPtr) "
                 << __FILE__ << "\n";
           return false;
         }

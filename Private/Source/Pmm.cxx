@@ -30,7 +30,6 @@ Boolean Pmm::FreePage(Ref<PTEWrapper> PageRef) {
   if (!PageRef) return false;
 
   PageRef.Leak().m_Present = false;
-  PageRef.Leak().Flush();
 
   return true;
 }

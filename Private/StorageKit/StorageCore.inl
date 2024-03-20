@@ -16,25 +16,25 @@ namespace HCore {
 typedef Char* SKStr;
 
 ///! @brief Storage context, reads and write file according to the descriptor
-///! layout.
-class StorageContext {
+///layout.
+class StorageInterface {
  public:
-  explicit StorageContext() = default;
-  ~StorageContext() = default;
+  explicit StorageInterface() = default;
+  virtual ~StorageInterface() = default;
 
-  StorageContext& operator=(const StorageContext&) = default;
-  StorageContext(const StorageContext&) = default;
+  StorageInterface& operator=(const StorageInterface&) = default;
+  StorageInterface(const StorageInterface&) = default;
 
  public:
-  bool Write(VoidPtr fileDescriptor, SizeT sizeFileDescriptor);
-
   struct PacketDescriptor final {
     VoidPtr fFilePtr;
     SizeT fFilePtrSz;
+    Lba fBase;
+    UInt32 fDriveId;
   };
 
-  PacketDescriptor* Read(const SKStr name);
-  Int32 Write(PacketDescriptor* packet, const SKStr name);
+  virtual PacketDescriptor* Read(const SKStr name) = 0;
+  virtual Int32 Write(PacketDescriptor* packet, const SKStr name) = 0;
 };
 }  // namespace HCore
 

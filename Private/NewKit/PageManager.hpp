@@ -31,7 +31,6 @@ class PTEWrapper final {
   PTEWrapper(const PTEWrapper &) = default;
 
  public:
-  void Flush();
   const UIntPtr VirtualAddress();
 
   void NoExecute(const bool enable = false);

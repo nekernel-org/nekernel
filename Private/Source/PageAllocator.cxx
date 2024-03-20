@@ -8,10 +8,10 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageAllocator.hpp>
 
-// empty for now.
+/// @brief Internal namespace, used internally by kernel.
 namespace HCore::Detail {
-UIntPtr create_page_wrapper(Boolean rw, Boolean user) {
-  auto addr = HAL::hal_create_page(rw, user);
+VoidPtr create_page_wrapper(Boolean rw, Boolean user) {
+  auto addr = HAL::hal_alloc_page(rw, user);
 
   if (addr == kBadAddress) {
     kcout << "[create_page_wrapper] kBadAddress returned\n";

@@ -47,7 +47,7 @@ void ke_stop(const HCore::Int &id) {
     }
     case RUNTIME_CHECK_BOOTSTRAP: {
       kcout << "*** CAUSE: RUNTIME_CHECK_BOOTSTRAP *** \r\n";
-      kcout << "*** WHAT: BAD BOOT. *** \r\n";
+      kcout << "*** WHAT: INVALID BOOT SEQUENCE. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_HANDSHAKE: {
