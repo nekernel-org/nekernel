@@ -95,7 +95,7 @@ Int32 ke_delete_ke_heap(VoidPtr ptr) {
       if (kPageManager.Free(kLastWrapper)) {
         virtualAddress->hSizeAddress = 0UL;
         virtualAddress->hPresent = false;
-        kLastWrapper->NoExecute(false);
+
         return true;
       }
 
@@ -114,8 +114,6 @@ Int32 ke_delete_ke_heap(VoidPtr ptr) {
           virtualAddress->hSizeAddress = 0UL;
           virtualAddress->hPresent = false;
 
-          wrapper->NoExecute(false);
-
           return true;
         }
 
@@ -127,27 +125,18 @@ Int32 ke_delete_ke_heap(VoidPtr ptr) {
   return -1;
 }
 
-/// @brief find pointer in kernel heap
+/// @brief Check if pointer is a valid kernel pointer.
 /// @param ptr the pointer
 /// @return if it exists.
-Boolean kernel_valid_ptr(VoidPtr ptr) {
+Boolean ke_is_valid_ptr(VoidPtr ptr) {
   if (ptr) {
-    const UIntPtr virtualAddress = reinterpret_cast<UIntPtr>(ptr);
+    Detail::HeapInformationBlockPtr virtualAddress =
+        reinterpret_cast<Detail::HeapInformationBlockPtr>(ptr) -
+        sizeof(Detail::HeapInformationBlock);
 
-    if (kLastWrapper &&
-        virtualAddress == (kLastWrapper->VirtualAddress() +
-                           sizeof(Detail::HeapInformationBlock))) {
+    if (virtualAddress->hPresent &&
+        virtualAddress->hMagic == kHeapMagic) {
       return true;
-    }
-
-    Ref<PTEWrapper *> wrapper;
-
-    for (SizeT indexWrapper = 0; indexWrapper < kHeapCount; ++indexWrapper) {
-      if ((kLastWrapper->VirtualAddress() +
-           sizeof(Detail::HeapInformationBlock)) == virtualAddress) {
-        wrapper = kWrapperList[indexWrapper];
-        return true;
-      }
     }
   }
 

@@ -15,5 +15,6 @@
 
 namespace HCore {
 Int32 ke_delete_ke_heap(voidPtr allocatedPtr);
+Boolean ke_is_valid_ptr(VoidPtr ptr);
 voidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user);
 }  // namespace HCore
