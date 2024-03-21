@@ -6,7 +6,7 @@
 
 /***********************************************************************************/
 /// @file ProcessManager.cxx
-/// @brief Process Scheduler API.
+/// @brief ProcessHeader Scheduler API.
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hpp>
@@ -31,21 +31,21 @@ const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
 
 /***********************************************************************************/
 
-void Process::Crash() {
+void ProcessHeader::Crash() {
   kcout << "ProcessManager: Crashed, ExitCode: -1.\r\n";
   MUST_PASS(!ke_bug_check());
 
   this->Exit(-1);
 }
 
-void Process::Wake(const bool should_wakeup) {
+void ProcessHeader::Wake(const bool should_wakeup) {
   this->Status =
       should_wakeup ? ProcessStatus::kRunning : ProcessStatus::kFrozen;
 }
 
 /***********************************************************************************/
 
-VoidPtr Process::New(const SizeT &sz) {
+VoidPtr ProcessHeader::New(const SizeT &sz) {
   if (this->FreeMemory < 1) return nullptr;
 
   if (this->HeapCursor) {
@@ -78,7 +78,7 @@ bool rt_in_pool_region(VoidPtr pool_ptr, VoidPtr pool, const SizeT &sz) {
 }
 
 /* @brief free pointer from usage. */
-Boolean Process::Delete(VoidPtr ptr, const SizeT &sz) {
+Boolean ProcessHeader::Delete(VoidPtr ptr, const SizeT &sz) {
   if (sz < 1 || this->HeapCursor == this->HeapPtr) return false;
 
   // also check for the amount of allocations we've done so far.
@@ -97,23 +97,23 @@ Boolean Process::Delete(VoidPtr ptr, const SizeT &sz) {
   return false;
 }
 
-const Char *Process::GetName() { return this->Name; }
+const Char *ProcessHeader::GetName() { return this->Name; }
 
-const ProcessSelector &Process::GetSelector() { return this->Selector; }
+const ProcessSelector &ProcessHeader::GetSelector() { return this->Selector; }
 
-const ProcessStatus &Process::GetStatus() { return this->Status; }
+const ProcessStatus &ProcessHeader::GetStatus() { return this->Status; }
 
 /***********************************************************************************/
 
 /**
 @brief Affinity is the time slot allowed for the process.
 */
-const AffinityKind &Process::GetAffinity() { return this->Affinity; }
+const AffinityKind &ProcessHeader::GetAffinity() { return this->Affinity; }
 
 /**
 @brief Standard exit proc.
 */
-void Process::Exit(Int32 exit_code) {
+void ProcessHeader::Exit(Int32 exit_code) {
   if (this->ProcessId !=
       ProcessManager::Shared().Leak().GetCurrent().Leak().ProcessId)
     ke_stop(RUNTIME_CHECK_PROCESS);
@@ -144,12 +144,12 @@ void Process::Exit(Int32 exit_code) {
   ProcessManager::Shared().Leak().Remove(this->ProcessId);
 }
 
-SizeT ProcessManager::Add(Ref<Process> &process) {
+SizeT ProcessManager::Add(Ref<ProcessHeader> &process) {
   if (!process) return -1;
 
   if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel) return -1;
 
-  kcout << "ProcessManager::Add(Ref<Process>& process)\r\n";
+  kcout << "ProcessManager::Add(Ref<ProcessHeader>& process)\r\n";
 
   process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
   process.Leak().ProcessId = mTeam.AsArray().Count();
@@ -166,11 +166,11 @@ SizeT ProcessManager::Add(Ref<Process> &process) {
 
   mTeam.AsArray().Add(process);
 
-  if (!imageStart && process.Leak().Kind == Process::ExecutableType) {
+  if (!imageStart && process.Leak().Kind == ProcessHeader::ExecutableType) {
     process.Leak().Crash();
   }
 
-  if (!imageStart && process.Leak().Kind == Process::DriverType) {
+  if (!imageStart && process.Leak().Kind == ProcessHeader::DriverType) {
     if (process.Leak().Ring == 3)
       process.Leak().Crash();
     else
@@ -224,14 +224,14 @@ Ref<ProcessManager> ProcessManager::Shared() {
   return {ref};
 }
 
-Ref<Process> &ProcessManager::GetCurrent() { return mTeam.AsRef(); }
+Ref<ProcessHeader> &ProcessManager::GetCurrent() { return mTeam.AsRef(); }
 
 PID &ProcessHelper::GetCurrentPID() {
   kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r\n";
   return ProcessManager::Shared().Leak().GetCurrent().Leak().ProcessId;
 }
 
-bool ProcessHelper::CanBeScheduled(Ref<Process> &process) {
+bool ProcessHelper::CanBeScheduled(Ref<ProcessHeader> &process) {
   if (process.Leak().Status == ProcessStatus::kFrozen ||
       process.Leak().Status == ProcessStatus::kDead)
     return false;

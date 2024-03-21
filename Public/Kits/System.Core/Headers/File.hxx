@@ -7,35 +7,34 @@
 #ifndef __FILE_API__
 #define __FILE_API__
 
-#include <CompilerKit/CompilerKit.hxx>
-#include <NewKit/Defines.hpp>
+#include <System.Core/Headers/Defs.hxx>
 
 /// @brief SOM class, translated to C++
 
 namespace System {
-class File final {
+class FileInterface final {
  public:
-  explicit File(const char *path) {
+  explicit FileInterface(const char *path) {
     mHandle = kInstanceObject->Invoke(kInstanceObject, kProcessCallOpenHandle,
                                       0, path);
   }
 
-  ~File() {
+  ~FileInterface() {
     kInstanceObject->Invoke(kInstanceObject, kProcessCallCloseHandle, 0,
                             mHandle);
   }
 
  public:
-  HCORE_COPY_DEFAULT(File);
+  CA_COPY_DEFAULT(FileInterface);
 
  public:
-  voidPtr Read(UIntPtr off, SizeT sz) { return (VoidPtr)kInstanceObject->Invoke(kInstanceObject, mHandle, 2, off, sz);  }
-  voidPtr Read(SizeT sz) { return (VoidPtr)kInstanceObject->Invoke(kInstanceObject, mHandle, 3, sz);  }
+  PtrVoidType Read(UIntPtrType off, SizeType sz) { return (PtrVoidType)kInstanceObject->Invoke(kInstanceObject, mHandle, 2, off, sz);  }
+  PtrVoidType Read(SizeType sz) { return (PtrVoidType)kInstanceObject->Invoke(kInstanceObject, mHandle, 3, sz);  }
 
-  void Write(VoidPtr buf, UIntPtr off, SizeT sz) { kInstanceObject->Invoke(kInstanceObject, mHandle, 4, buf, off, sz);  }
-  void Write(VoidPtr buf, SizeT sz) { kInstanceObject->Invoke(kInstanceObject, mHandle, 5, buf, sz); }
+  void Write(PtrVoidType buf, UIntPtrType off, SizeType sz) { kInstanceObject->Invoke(kInstanceObject, mHandle, 4, buf, off, sz);  }
+  void Write(PtrVoidType buf, SizeType sz) { kInstanceObject->Invoke(kInstanceObject, mHandle, 5, buf, sz); }
   
-  void Seek(UIntPtr off) { kInstanceObject->Invoke(kInstanceObject, mHandle, 5); }
+  void Seek(UIntPtrType off) { kInstanceObject->Invoke(kInstanceObject, mHandle, 5); }
   void Rewind() { kInstanceObject->Invoke(kInstanceObject, mHandle, 6); }
 
  public:
@@ -43,10 +42,10 @@ class File final {
   void MIME(const char *mime);
 
  private:
-  IntPtr mHandle;
+  IntPtrType mHandle;
 };
 
-typedef File *FilePtr;
+typedef FileInterface *FilePtr;
 
 /// @brief file exception
 /// Throws when the file isn't found or invalid.
@@ -56,7 +55,7 @@ class FileException : public SystemException {
   virtual ~FileException() = default;
 
  public:
-  HCORE_COPY_DEFAULT(FileException);
+  CA_COPY_DEFAULT(FileException);
 
  public:
   const char *Name() override { return "FileException"; }

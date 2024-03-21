@@ -2,11 +2,11 @@
  (C) Mahrouss Logic
     ===========================================*/
 
-#include <System.Core/Heap.hxx>
+#include <System.Core/Headers/Heap.hxx>
 
-/// @brief Inits the process runtime
+/// @brief Inits the DLL.
 /// @return if it was succesful or not.
-DWORD HcInitRuntime(VOID) {
+DWordType __DllMain(VoidType) {
   kInstanceObject = HcGetInstanceObject();
   CA_MUST_PASS(kInstanceObject);
 

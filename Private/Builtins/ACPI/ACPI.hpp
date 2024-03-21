@@ -9,7 +9,6 @@
 
 /**
     https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
-    https://wiki.osdev.org/RSDT
 */
 
 #include <NewKit/Defines.hpp>

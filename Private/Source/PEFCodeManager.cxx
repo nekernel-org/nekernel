@@ -141,8 +141,8 @@ bool execute_from_image(PEFLoader &exec) noexcept {
 
   if (errOrStart.Error() != 0) return false;
 
-  Process proc(errOrStart.Leak().Leak());
-  Ref<Process> refProc = proc;
+  ProcessHeader proc(errOrStart.Leak().Leak());
+  Ref<ProcessHeader> refProc = proc;
 
   return ProcessManager::Shared().Leak().Add(refProc);
 }

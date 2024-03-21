@@ -12,7 +12,7 @@
 
 ------------------------------------------------------- */
 
-#include <System.Core/Defs.hxx>
+#include <System.Core/Headers/Defs.hxx>
 
 /// @brief four-character code for XIFF.
 #define kFourCCLength_XIFF 4
@@ -29,12 +29,12 @@
  */
 
 struct PACKED XiffHeader final {
-  BYTE f_Magic[kFourCCLength_XIFF];     // XIFF string (includes \0)
-  DWORD f_Size;                       // overall size of header (XiffHeader) in bytes
-  DWORD f_FormatType;                 // format type. generic
-  BYTE f_SpecificMag[kFourCCLength_XIFF];              // The sub header magic
-  DWORD f_SpecificSize;               // length of the format data
-  DWORD f_SpecificFormatType;         // format type. generic
+  ByteType f_Magic[kFourCCLength_XIFF];     // XIFF string (includes \0)
+  DWordType f_Size;                       // overall size of header (XiffHeader) in bytes
+  DWordType f_FormatType;                 // format type. generic
+  ByteType f_SpecificMag[kFourCCLength_XIFF];              // The sub header magic
+  DWordType f_SpecificSize;               // length of the format data
+  DWordType f_SpecificFormatType;         // format type. generic
 };
 
 typedef struct XiffHeader XiffHeader;

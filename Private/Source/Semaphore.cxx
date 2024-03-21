@@ -15,7 +15,7 @@ bool Semaphore::Unlock() noexcept {
   return fLockingProcess == nullptr;
 }
 
-bool Semaphore::Lock(Process* process) {
+bool Semaphore::Lock(ProcessHeader* process) {
   if (!process || fLockingProcess) return false;
 
   fLockingProcess = process;
@@ -25,7 +25,7 @@ bool Semaphore::Lock(Process* process) {
 
 bool Semaphore::IsLocked() const { return fLockingProcess; }
 
-bool Semaphore::LockOrWait(Process* process, const Int64& seconds) {
+bool Semaphore::LockOrWait(ProcessHeader* process, const Int64& seconds) {
   if (process == nullptr) return false;
 
   HardwareTimer timer(Seconds(seconds));

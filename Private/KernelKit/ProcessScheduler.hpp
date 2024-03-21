@@ -9,10 +9,10 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/FileManager.hpp>
-#include <KernelKit/PermissionSelector.hxx>
 #include <KernelKit/LockDelegate.hpp>
-#include <NewKit/MutableArray.hpp>
+#include <KernelKit/PermissionSelector.hxx>
 #include <KernelKit/UserHeap.hpp>
+#include <NewKit/MutableArray.hpp>
 
 #define kMinMicroTime AffinityKind::kHartStandard
 #define kPIDInvalid (-1)
@@ -24,22 +24,22 @@
 ////////////////////////////////////////////////////
 
 namespace HCore {
-class Process;
+class ProcessHeader;
 class ProcessTeam;
 class ProcessManager;
 
-//! @brief Process identifier.
+//! @brief ProcessHeader identifier.
 typedef Int64 ProcessID;
 
-//! @brief Process name length.
+//! @brief ProcessHeader name length.
 inline constexpr SizeT kProcessLen = 256U;
 
 //! @brief Forward declaration.
-class Process;
+class ProcessHeader;
 class ProcessManager;
 class ProcessHelper;
 
-//! @brief Process status enum.
+//! @brief ProcessHeader status enum.
 enum class ProcessStatus : Int32 {
   kStarting,
   kRunning,
@@ -106,25 +106,25 @@ enum class ProcessSelector : Int {
 using ImagePtr = VoidPtr;
 using HeapPtr = VoidPtr;
 
-// @name Process
-// @brief Process Information Header (PIH)
+// @name ProcessHeader
+// @brief Process Header (PH)
 // Holds information about the running process.
 // Thread execution is being abstracted away.
-class Process final {
+class ProcessHeader final {
  public:
-  explicit Process(VoidPtr startImage = nullptr) : Image(startImage) {
+  explicit ProcessHeader(VoidPtr startImage = nullptr) : Image(startImage) {
     MUST_PASS(startImage);
   }
 
-  ~Process() = default;
+  ~ProcessHeader() = default;
 
-  HCORE_COPY_DEFAULT(Process)
+  HCORE_COPY_DEFAULT(ProcessHeader)
 
  public:
   void SetStart(UIntPtr &imageStart) noexcept;
 
  public:
-  Char Name[kProcessLen] = {"Process"};
+  Char Name[kProcessLen] = {"HCore Process"};
   ProcessSubsystem SubSystem{0};
   ProcessSelector Selector{ProcessSelector::kRingUser};
   HAL::StackFramePtr StackFrame{nullptr};
@@ -171,9 +171,9 @@ class Process final {
   //! @brief Wakes up threads.
   void Wake(const bool wakeup = false);
 
-  // Process getters.
+  // ProcessHeader getters.
  public:
-  //! @brief Process name getter, example: "C RunTime"
+  //! @brief ProcessHeader name getter, example: "C RunTime"
   const Char *GetName();
 
   const ProcessSelector &GetSelector();
@@ -188,24 +188,23 @@ class Process final {
 /// \brief Processs Team (contains multiple processes inside it.)
 /// Equivalent to a process batch
 class ProcessTeam final {
-public:
-    explicit ProcessTeam() = default;
-    ~ProcessTeam() = default;
+ public:
+  explicit ProcessTeam() = default;
+  ~ProcessTeam() = default;
 
-    HCORE_COPY_DEFAULT(ProcessTeam);
+  HCORE_COPY_DEFAULT(ProcessTeam);
 
-    MutableArray<Ref<Process>>& AsArray();
-    Ref<Process>& AsRef();
+  MutableArray<Ref<ProcessHeader>> &AsArray();
+  Ref<ProcessHeader> &AsRef();
 
-public:
-    MutableArray<Ref<Process>> mProcessList;
-    Ref<Process> mCurrentProcess;
-
+ public:
+  MutableArray<Ref<ProcessHeader>> mProcessList;
+  Ref<ProcessHeader> mCurrentProcess;
 };
 
-using ProcessPtr = Process *;
+using ProcessPtr = ProcessHeader *;
 
-/// @brief Process manager class.
+/// @brief ProcessHeader manager class.
 /// The main class which you call to schedule an app.
 class ProcessManager final {
  private:
@@ -219,12 +218,12 @@ class ProcessManager final {
   operator bool() { return mTeam.AsArray().Count() > 0; }
   bool operator!() { return mTeam.AsArray().Count() == 0; }
 
-  ProcessTeam& CurrentTeam() { return mTeam; }
+  ProcessTeam &CurrentTeam() { return mTeam; }
 
-  SizeT Add(Ref<Process> &headerRef);
+  SizeT Add(Ref<ProcessHeader> &headerRef);
   bool Remove(SizeT headerIndex);
 
-  Ref<Process> &GetCurrent();
+  Ref<ProcessHeader> &GetCurrent();
   SizeT Run() noexcept;
 
   static Ref<ProcessManager> Shared();
@@ -240,7 +239,7 @@ class ProcessManager final {
 class ProcessHelper final {
  public:
   static bool Switch(HAL::StackFrame *newStack, const PID &newPid);
-  static bool CanBeScheduled(Ref<Process> &process);
+  static bool CanBeScheduled(Ref<ProcessHeader> &process);
   static PID &GetCurrentPID();
   static bool StartScheduling();
 };

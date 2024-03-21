@@ -6,29 +6,12 @@
 
 #pragma once
 
-#include <CompilerKit/CompilerKit.hxx>
-#include <System.Core/Defs.hxx>
-
-#define kAllocationTypes 2
-
-CA_EXTERN_C PVOID HcAllocateProcessHeap(ObjectPtr refObj, QWORD sz,
-                                        DWORD flags);
-CA_EXTERN_C BOOL HcProcessHeapExists(ObjectPtr refObj, PVOID ptr);
-CA_EXTERN_C QWORD HcProcessHeapSize(ObjectPtr refObj, PVOID ptr);
-CA_EXTERN_C VOID HcFreeProcessHeap(ObjectPtr refObj, PVOID ptr);
-CA_EXTERN_C ObjectPtr HcGetInstanceObject(void);
-
-enum HcAllocationKind {
-  kStandardAllocation = 0xC,
-  kArrayAllocation = 0xD,
-};
+#include <System.Core/Headers/Defs.hxx>
 
 namespace System {
-using namespace HCore;
-
 class MemoryException;
 
-typedef PVOID HeapPtr;
+typedef PtrVoidType HeapPtr;
 
 enum {
   kHeapExpandable = 2,
@@ -38,23 +21,24 @@ enum {
   kHeapNoFlags = 0
 };
 
-class Heap final {
+class HeapInterface final {
  private:
-  explicit Heap();
+  explicit HeapInterface();
 
  public:
-  ~Heap();
+  ~HeapInterface();
 
  public:
-  HCORE_COPY_DEFAULT(Heap);
+  CA_COPY_DEFAULT(HeapInterface);
 
  public:
-  static Heap *Shared() noexcept;
+  static HeapInterface *Shared() noexcept;
 
  public:
   void Delete(HeapPtr me) noexcept;
-  SizeT Size(HeapPtr me) noexcept;
-  HeapPtr New(const SizeT &sz, const Int32 flags = kHeapNoFlags);
+  SizeType Size(HeapPtr me) noexcept;
+  HeapPtr New(const SizeType &sz, 
+  const DWordType flags = kHeapNoFlags);
 };
 
 
@@ -66,7 +50,7 @@ class HeapException : public SystemException {
   virtual ~HeapException() = default;
 
  public:
-  HCORE_COPY_DEFAULT(HeapException);
+  CA_COPY_DEFAULT(HeapException);
 
  public:
   const char *Name() override { return "HeapException"; }

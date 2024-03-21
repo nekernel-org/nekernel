@@ -11,9 +11,9 @@
 
 namespace HCore
 {
-	class Process;
+	class ProcessHeader;
 
-    typedef Process* ProcessPtr;
+    typedef ProcessHeader* ProcessPtr;
 	
     /// @brief Access control class, which locks a task until one is done.
     class Semaphore final
@@ -30,8 +30,8 @@ namespace HCore
         void Sync() noexcept;
 
     public:
-        bool Lock(Process* process);
-        bool LockOrWait(Process* process, const Int64& seconds);
+        bool Lock(ProcessHeader* process);
+        bool LockOrWait(ProcessHeader* process, const Int64& seconds);
 
     public:
         HCORE_COPY_DEFAULT(Semaphore);

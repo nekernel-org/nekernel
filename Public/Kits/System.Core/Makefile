@@ -9,7 +9,7 @@ OUTPUT=System.Core.dll
 
 .PHONY: build-core-amd64
 build-core-amd64:
-	$(CC) -I../ -I$(HOME) -I../../../Private/ $(CCFLAGS) $(wildcard *.cxx) $(wildcard AMD64/*.s) -o $(OUTPUT)
+	$(CC) -I../ -I$(HOME) -I../../../Private/ $(CCFLAGS) $(wildcard Sources/*.cxx) $(wildcard AMD64/*.s) -o $(OUTPUT)
 
 .PHONY: all
 all: build-core
