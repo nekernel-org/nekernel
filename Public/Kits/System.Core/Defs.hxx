@@ -66,10 +66,10 @@ typedef CHAR BOOL;
 #define TRUE 1
 #define FALSE 0
 
-#define PTR *
+#define CA_PTR *
 
-#define FAR __far
-#define NEAR __near
+#define CA_FAR __far
+#define CA_NEAR __near
 
 #define CA_UNREFERENCED_PARAMETER(e) ((VOID)e)
 
@@ -87,6 +87,10 @@ typedef CHAR BOOL;
 
 #ifdef __64x0__
 #   define _M_64000 5 
+#endif 
+
+#ifdef __riscv__
+#   define _M_RISCV 6
 #endif 
 
 #define CA_STATIC static

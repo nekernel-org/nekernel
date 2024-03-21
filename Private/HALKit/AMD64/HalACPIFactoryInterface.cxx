@@ -16,8 +16,8 @@ ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr) : m_Rsdp(rsdPtr), m_E
   MUST_PASS(_rsdPtr->Revision >= 2);
 }
 
-void ACPIFactoryInterface::Shutdown() {}
-void ACPIFactoryInterface::Reboot() {}
+Void ACPIFactoryInterface::Shutdown() {}
+Void ACPIFactoryInterface::Reboot() {}
 
 /// @brief Finds a descriptor table inside ACPI XSDT.
 ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
@@ -32,10 +32,12 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
   auto xsdt = rsdPtr->XsdtAddress;
   SizeT num = (rsdPtr->Length + sizeof(SDT)) / 8;
 
+  constexpr short ACPI_SIGNATURE_LENGTH = 4;
+
   for (Size index = 0; index < num; ++index) {
     SDT *sdt = reinterpret_cast<SDT *>(xsdt + sizeof(SDT) + index * 8);
 
-    if (!Checksum(sdt->Signature, 4)) ke_stop(RUNTIME_CHECK_ACPI);
+    if (!Checksum(sdt->Signature, ACPI_SIGNATURE_LENGTH)) ke_stop(RUNTIME_CHECK_ACPI);
 
     if (StringBuilder::Equals(const_cast<const char *>(sdt->Signature),
                               signature))

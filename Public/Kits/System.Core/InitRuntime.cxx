@@ -4,9 +4,11 @@
 
 #include <System.Core/Heap.hxx>
 
-/// @brief Inits the C runtime
+/// @brief Inits the process runtime
 /// @return if it was succesful or not.
 DWORD HcInitRuntime(VOID) {
-  kInstanceObject = HcGetProcessObject();
+  kInstanceObject = HcGetInstanceObject();
+  CA_MUST_PASS(kInstanceObject);
+
   return 0;
 }

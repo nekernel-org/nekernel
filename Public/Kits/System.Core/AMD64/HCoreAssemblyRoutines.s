@@ -4,12 +4,12 @@
 
 .section .text
 
-.globl HcGetProcessObject
+.globl HcGetInstanceObject
 .globl __assert_chk_fail
 
 /* @brief Process object getter */
 /* @throws: ApptError: appartement error. */
-HcGetProcessObject:
+HcGetInstanceObject:
     mov $0x10, %rcx /* sysGetProcessObject */
     int $0x21
 

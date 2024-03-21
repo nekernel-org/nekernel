@@ -16,7 +16,7 @@ CA_EXTERN_C PVOID HcAllocateProcessHeap(ObjectPtr refObj, QWORD sz,
 CA_EXTERN_C BOOL HcProcessHeapExists(ObjectPtr refObj, PVOID ptr);
 CA_EXTERN_C QWORD HcProcessHeapSize(ObjectPtr refObj, PVOID ptr);
 CA_EXTERN_C VOID HcFreeProcessHeap(ObjectPtr refObj, PVOID ptr);
-CA_EXTERN_C ObjectPtr HcGetProcessObject(void);
+CA_EXTERN_C ObjectPtr HcGetInstanceObject(void);
 
 enum HcAllocationKind {
   kStandardAllocation = 0xC,
