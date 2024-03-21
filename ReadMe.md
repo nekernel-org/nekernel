@@ -1,5 +1,7 @@
 # HCore (codename: SuperTrouper)
 
+![Kernel](Meta/HCore.svg)
+
 ## MicroKernel and Executives source code.
 
 You need:
