@@ -16,8 +16,6 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
-using namespace HCore;
-
 // Status register
 #define ATA_SR_BSY 0x80
 #define ATA_SR_DRDY 0x40
@@ -118,3 +116,30 @@ using namespace HCore;
 #define ATA_COMMAND(x)  (x + 7)
 
 #define kATASectorSize 512
+
+enum {
+  kATADevicePATA,
+  kATADeviceSATA,
+  kATADevicePATA_PI,
+  kATADeviceSATA_PI,
+  kATADeviceCount,
+};
+
+#ifdef __KERNEL__
+
+HCore::Boolean drv_ata_init(HCore::UInt16 Bus, HCore::UInt8 Drive, HCore::UInt16& OutBus,
+                      HCore::UInt8& OutMaster);
+
+HCore::Boolean drv_ata_detected(HCore::Void);
+
+HCore::Void drv_ata_select(HCore::UInt16 Bus);
+
+HCore::Boolean drv_ata_wait_io(HCore::UInt16 IO);
+
+HCore::Void drv_ata_read(HCore::UInt32 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
+                   HCore::SizeT SectorSz, HCore::SizeT Size);
+
+HCore::Void drv_ata_write(HCore::UInt32 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
+                    HCore::SizeT SectorSz, HCore::SizeT Size);
+
+#endif // ifdef __KERNEL__

@@ -8,6 +8,8 @@
 
 #include <Builtins/ATA/Defines.hxx>
 
+using namespace HCore;
+
 class BDeviceATA final {
  public:
   enum {
@@ -40,12 +42,3 @@ class BDeviceATA final {
  private:
   ATATrait mTrait;
 };
-
-enum {
-  kATADevicePATA,
-  kATADeviceSATA,
-  kATADevicePATA_PI,
-  kATADeviceSATA_PI,
-  kATADeviceCount,
-};
-

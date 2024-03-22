@@ -18,20 +18,20 @@ enum class PATAType { kRead28, kRead48, kWrite28, kWrite48, kATAUnknown };
 const char *ata_read_28(ULong lba);
 const char *ata_read_48(ULong lba);
 
-Int32 ata_write_48(ULong lba, const char *text = nullptr);
-Int32 ata_write_28(ULong lba, const char *text = nullptr);
+Int32 ata_write_48(ULong lba, char *text = nullptr);
+Int32 ata_write_28(ULong lba, char *text = nullptr);
 
-class PATACommandManager final {
+class PATACommandFactory final {
  public:
-  explicit PATACommandManager() = default;
-  ~PATACommandManager() = default;
+  explicit PATACommandFactory() = default;
+  ~PATACommandFactory() = default;
 
-  PATACommandManager &operator=(const PATACommandManager &) = default;
-  PATACommandManager(const PATACommandManager &) = default;
+  PATACommandFactory &operator=(const PATACommandFactory &) = default;
+  PATACommandFactory(const PATACommandFactory &) = default;
 
  public:
-  static Ref<PATACommandManager> Shared() {
-    static Ref<PATACommandManager> manager;
+  static Ref<PATACommandFactory> Shared() {
+    static Ref<PATACommandFactory> manager;
     return manager;
   }
 

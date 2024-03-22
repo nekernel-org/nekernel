@@ -31,8 +31,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   /// Splash screen stuff
 
   writer.Write(L"MahroussLogic (R) NewBoot: ")
-      .Write(BVersionString::Shared())
-      .Write(L"\r\n");
+      .Write(BVersionString::Shared());
 
   writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
@@ -46,7 +45,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   kernelImg.ReadAll();
 
   if (kernelImg.Error() == BFileReader::kOperationOkay) {
-    // First check for a kernel.cfg inside the ESP.
+    // First check for a .MANIFEST inside the ESP.
     // This will tell us about the current kernel.
     BFileReader systemManifest(L".MANIFEST", ImageHandle);
 
