@@ -7,8 +7,8 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <StorageKit/ATA.hpp>
 #include <StorageKit/NVME.hpp>
+#include <StorageKit/AHCI.hpp>
 
 typedef HCore::UInt16 SKScsiPacket[12];
 
