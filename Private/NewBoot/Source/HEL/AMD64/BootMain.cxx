@@ -38,9 +38,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
-  /// Init ATA driver.
-  BDeviceATA ataDrv;
-
   /// Read Kernel blob.
 
   BFileReader kernelImg(L".HCORE", ImageHandle);

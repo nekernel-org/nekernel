@@ -154,6 +154,8 @@ Void boot_ata_read(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
+  boot_ata_wait_io(IO);
+
   BTextWriter writer;
 
   writer.Write(L"NewBoot: Port: ").Write(IO).Write(L"\r\n");
@@ -162,8 +164,6 @@ Void boot_ata_read(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
     WideChar chr = In16(IO + ATA_REG_DATA);
     
     Buf[IndexOff] = chr;
-  
-    boot_ata_wait_io(IO);
   }
 }
 
@@ -180,12 +180,11 @@ Void boot_ata_write(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
+  boot_ata_wait_io(IO);
+
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
-    // Send it two 
     Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
-    Out16(IO + ATA_REG_DATA, '\0');
     
-    boot_ata_wait_io(IO);
   }
 }
 

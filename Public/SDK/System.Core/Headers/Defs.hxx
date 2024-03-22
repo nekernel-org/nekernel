@@ -46,8 +46,8 @@ typedef __UINT32_TYPE__ DWordType;
 typedef __UINT64_TYPE__ QWordType;
 typedef __SIZE_TYPE__ SizeType;
 
-typedef char CharacterTypeUTF16;
-typedef CharacterTypeUTF16* PtrCharacterType;
+typedef char CharacterTypeUTF8;
+typedef CharacterTypeUTF8* PtrCharacterType;
 
 typedef void* PtrVoidType;
 typedef void VoidType;
@@ -59,7 +59,7 @@ typedef __INT64_TYPE__ Int64Type;
 typedef __UINT32_TYPE__ UInt32Type;
 typedef __INT32_TYPE__ Int32Type;
 
-typedef CharacterTypeUTF16 BooleanType;
+typedef CharacterTypeUTF8 BooleanType;
 
 #define CA_COPY_DELETE(KLASS)                                                                                         \
     KLASS &operator=(const KLASS &) = delete;                                                                          \
@@ -234,9 +234,9 @@ typedef struct GUID final {
 /// \brief Object handle.
 /// \author Amlal El Mahrouss
 typedef struct Object final {
-  CharacterTypeUTF16 ObjectName[255];
+  CharacterTypeUTF8 ObjectName[255];
   DWordType ObjectType;
-  CharacterTypeUTF16 ObjectNamespace[255];
+  CharacterTypeUTF8 ObjectNamespace[255];
 
   VoidType(*Release)(struct Object* Self);
   IntPtrType(*Invoke)(struct Object* Self, DWordType Sel, ...);

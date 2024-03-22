@@ -18,7 +18,7 @@
 /// @brief Document file header.
 typedef struct ODFFileHeader
 {
-    CharacterTypeUTF16 f_Ident[kFourCCLength_ODF];
+    CharacterTypeUTF8 f_Ident[kFourCCLength_ODF];
     
     Int32Type f_DocumentKind;
     Int32Type f_DocumentSize;
@@ -26,18 +26,18 @@ typedef struct ODFFileHeader
     Int64Type f_MetaForkOffset;
     Int64Type f_DocumentForkOffset;
 
-    CharacterTypeUTF16 f_Padding[4];
+    CharacterTypeUTF8 f_Padding[4];
 } PACKED ODFFileHeader;
 
 /// @brief ODF Fork header
 typedef struct ODFForkHeader
 {
-    CharacterTypeUTF16 f_MetadataName[255];
+    CharacterTypeUTF8 f_MetadataName[255];
 
     Int32Type f_MetadataKind;
     Int32Type f_MetadataSize;
 
-    CharacterTypeUTF16 f_Padding;
+    CharacterTypeUTF8 f_Padding;
 } PACKED ODFForkHeader;
 
 #endif // !__ODF__
