@@ -9,9 +9,8 @@
 
 #include <System.Core/Headers/Defs.hxx>
 
-/// @brief SOM class, translated to C++
-
 namespace System {
+/// @brief System file interface
 class FileInterface final {
  public:
   explicit FileInterface(const char *path) {
