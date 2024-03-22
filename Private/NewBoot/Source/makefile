@@ -57,3 +57,11 @@ download-edk:
 .PHONY: clean
 clean:
 	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe HCoreKrnl.exe OVMF.fd
+
+.PHONY: help
+help:
+	@echo "=== HELP ==="
+	@echo "epm-img: Format a disk using the Explicit Partition Map/GPT."
+	@echo "clean: clean bootloader."
+	@echo "bootloader-amd64: Build bootloader. (PC AMD64)"
+	@echo "run-efo-amd64: Run bootloader. (PC AMD64)"
