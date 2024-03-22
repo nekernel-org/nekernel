@@ -27,20 +27,21 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   InitGOP();             // Quick Toolkit for UI
   
   BTextWriter writer;
-  BDeviceATA ataDrv;
-
-  Char namePart[kEPMNameLength] = { "NewKernel Standard System" };
-
-  boot_try_write_partition_map(namePart, kEPMNameLength, &ataDrv);
-
   /// Splash screen stuff
 
-  writer.Write(L"MahroussLogic (R) NewBoot: ")
+  writer.Write(L"MahroussLogic (R) NewBoot.exe: ")
       .Write(BVersionString::Shared());
 
-  writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
+  writer.Write(L"\r\nNewBoot.exe: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
+
+  BDeviceATA ataDrv;
+
+  if (ataDrv) {
+    Char namePart[kEPMNameLength] = { "HCoreSystemPartition" };
+    boot_try_write_partition_map(namePart, kEPMNameLength, &ataDrv);
+  }
 
   /// Read Kernel blob.
 
@@ -123,7 +124,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
              handoverHdrPtr->f_FirmwareVendorLen);
 
-    writer.Write(L"NewBoot: Fetch ACPI's 'RSD PTR'...").Write(L"\r\n");
+    writer.Write(L"NewBoot.exe: Fetching ACPI's 'RSD PTR'...").Write(L"\r\n");
 
     for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries; ++indexVT)
     {
@@ -138,13 +139,11 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
           vendorTable[6] == 'R' &&
           vendorTable[7] == ' ') {
         handoverHdrPtr->f_HardwareTables.f_VendorTable = (VoidPtr)vendorTable;
-        writer.Write(L"NewBoot: Found ACPI's 'RSD PTR' table on this machine.").Write(L"\r\n");
+        writer.Write(L"NewBoot.exe: Found ACPI's 'RSD PTR' table on this machine.").Write(L"\r\n");
 
         break;
       }
     }
-
-    EFI::ExitBootServices(MapKey, ImageHandle);
 
     /// TODO: Set this to what we found inside NewFS partition.
     bool isIniNotFound = true;
@@ -154,20 +153,27 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       handoverHdrPtr->f_Version = 0x1011;
       handoverHdrPtr->f_Bootloader = 0x11;  // Installer
 
+      writer.Write(L"NewBoot.exe: Installing NewKernel and it's components...\r\n");
+
+      EFI::ExitBootServices(MapKey, ImageHandle);
+
       Main(handoverHdrPtr);
     } else {
       handoverHdrPtr->f_Magic = kHandoverMagic;
       handoverHdrPtr->f_Version = 0x1011;
       handoverHdrPtr->f_Bootloader = 0xDD;  // System present
 
-      Main(handoverHdrPtr);
+      writer.Write(L"NewBoot.exe: Running NewKernel...\r\n");
+
+      EFI::ExitBootServices(MapKey, ImageHandle);
+
     }
 
     EFI::Stop();
 
     return kEfiOk;
   } else {
-    writer.Write(L"NewBoot: Error-Code: HLDR-0003\r\n");
+    writer.Write(L"NewBoot.exe: Error-Code: HLDR-0003\r\n");
   }
 
   EFI::Stop();

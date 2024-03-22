@@ -1,6 +1,6 @@
 {
   "executable_type": "kernel",
-  "output_name": "HCoreKrnl.exe",
+  "output_name": "NewKernel.exe",
   "start_proc": "Main",
   "format": "PEF"
 }

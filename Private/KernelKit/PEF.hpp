@@ -39,7 +39,8 @@ enum {
   kPefArchRISCV,
   kPefArch64x0, /* 64x0. ISA */
   kPefArch32x0, /* 32x0. ISA */
-  kPefArchCount = (kPefArch32x0 - kPefArchIntel86S) + 1,
+  kPefArchPowerPC,
+  kPefArchCount = (kPefArchPowerPC - kPefArchIntel86S) + 1,
   kPefArchInvalid = 0xFF,
 };
 
@@ -47,7 +48,7 @@ enum {
   kPefKindExec = 1,         /* .exe */
   kPefKindSharedObject = 2, /* .lib */
   kPefKindObject = 4,       /* .obj */
-  kPefKindDebug = 5,        /* .debug */
+  kPefKindDebug = 5,        /* .dbg */
   kPefKindDriver = 6,
   kPefKindCount,
 };
@@ -90,7 +91,7 @@ enum {
 #define kPefDylibExt ".dll"
 #define kPefLibExt ".lib"
 #define kPefObjectExt ".obj"
-#define kPefDebugExt ".pdb"
+#define kPefDebugExt ".dbg"
 
 // HCore System Binary Interface.
 #define kPefAbi (0xDEAD2)

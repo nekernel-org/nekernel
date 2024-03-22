@@ -17,9 +17,9 @@
 
 Status:
 
-NewBoot: Working.
-HCoreKrnl: Not run yet.
+NewBoot.exe: Working.
+NewKernel.exe: New Filesystem in progress.
 
 Prioritize:
-NewBoot: Protocol and API.
-HCoreKrnl: Complying to specs.
+NewBoot.exe: Protocol and API.
+NewKernel.exe: Complying to specs.

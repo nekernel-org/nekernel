@@ -19,6 +19,9 @@
 ///! @brief Disk contains HCore files.
 #define kInstalledMedia 0xDD
 
+EXTERN_C HCore::Void _hal_draw_mouse();
+EXTERN_C HCore::Void _hal_init_mouse();
+
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
 
 EXTERN_C void RuntimeMain(
@@ -83,6 +86,11 @@ EXTERN_C void RuntimeMain(
     /// TODO: Parse system configuration.
   } else {
     /// TODO: Install hcore on host.
+    _hal_init_mouse();
+
+    while (true) {
+      _hal_draw_mouse();
+    }
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

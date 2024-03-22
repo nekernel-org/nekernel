@@ -21,10 +21,10 @@
 
 /// @brief EPM GUID block.
 typedef struct BlockGUID {
-  UInt32 Data1;
-  UInt16 Data2;
-  UInt16 Data3;
-  UInt8 Data4[8];
+  HCore::UInt32 Data1;
+  HCore::UInt16 Data2;
+  HCore::UInt16 Data3;
+  HCore::UInt8 Data4[8];
 } BlockGUID;
 
 /**

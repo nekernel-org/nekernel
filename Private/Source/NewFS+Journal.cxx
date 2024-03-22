@@ -45,7 +45,7 @@ class NewFSJournalRunner final {
     switch (operation) {
       case kNewFSOpLog: {
         if (!classPtr) {
-          kcout << "HCoreKrnl.exe: Miss for classPtr at "
+          kcout << "NewKernel.exe: Miss for classPtr at "
                    "NewFSJournalManager::Run(classPtr) "
                 << __FILE__ << "\n";
           return false;

@@ -28,7 +28,7 @@ class PS2MouseInterface final {
 
  public:
   Void Init() noexcept {
-    HCore::kcout << "HCoreKrnl.exe: Enabling PS/2 mouse...\r\n";
+    HCore::kcout << "NewKernel.exe: Enabling PS/2 mouse...\r\n";
 
     this->Write(0xFF);
 
@@ -54,7 +54,7 @@ class PS2MouseInterface final {
     this->Write(0xF4);
     auto f4Dat = this->Read();
 
-    HCore::kcout << "HCoreKrnl.exe: PS/2 mouse is OK: " << hex_number(f6Dat);
+    HCore::kcout << "NewKernel.exe: PS/2 mouse is OK: " << hex_number(f6Dat);
     HCore::kcout << ", " << hex_number(f4Dat) << end_line();
   }
 
@@ -64,14 +64,14 @@ class PS2MouseInterface final {
 
     while (timeout) {
       if ((HAL::In8(0x64) & 0x1)) {
-        HCore::kcout << "HCoreKrnl.exe: Wait: OK\r\n";
+        HCore::kcout << "NewKernel.exe: Wait: OK\r\n";
         return true;
       }
 
       --timeout;
     }  // wait until we can read
 
-    HCore::kcout << "HCoreKrnl.exe: Wait: Timeout\r\n";
+    HCore::kcout << "NewKernel.exe: Wait: Timeout\r\n";
     // return the ack bit.
     return false;
   }
@@ -81,14 +81,14 @@ class PS2MouseInterface final {
 
     while (timeout) {
       if ((HAL::In8(0x64) & 0b10) == 0) {
-        HCore::kcout << "HCoreKrnl.exe: Wait: OK\r\n";
+        HCore::kcout << "NewKernel.exe: Wait: OK\r\n";
         return true;
       }
 
       --timeout;
     }  // wait until we can read
 
-    HCore::kcout << "HCoreKrnl.exe: Wait: Timeout\r\n";
+    HCore::kcout << "NewKernel.exe: Wait: Timeout\r\n";
     // return the ack bit.
     return false;
   }

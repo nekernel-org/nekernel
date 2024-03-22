@@ -72,7 +72,7 @@ ATAInit_Retry:
   auto statRdy = In8(IO + ATA_REG_STATUS);
 
   if (statRdy & ATA_SR_ERR) {
-    kcout << "HCoreKrnl.exe: ATA: Select error, not an IDE based hard-drive.\r\n";
+    kcout << "NewKernel.exe: ATA: Select error, not an IDE based hard-drive.\r\n";
 
     return false;
   }
@@ -107,21 +107,21 @@ ATAInit_Retry:
 
   /* differentiate ATA, ATAPI, SATA and SATAPI */
   if (cl == 0x14 && ch == 0xEB) {
-    kcout << "HCoreKrnl.exe: PATAPI drive detected.\r\n";
+    kcout << "NewKernel.exe: PATAPI drive detected.\r\n";
     kATADeviceType = kATADevicePATA_PI;
   }
   if (cl == 0x69 && ch == 0x96) {
-    kcout << "HCoreKrnl.exe: SATAPI drive detected.\r\n";
+    kcout << "NewKernel.exe: SATAPI drive detected.\r\n";
     kATADeviceType = kATADeviceSATA_PI;
   }
 
   if (cl == 0x0 && ch == 0x0) {
-    kcout << "HCoreKrnl.exe: PATA drive detected.\r\n";
+    kcout << "NewKernel.exe: PATA drive detected.\r\n";
     kATADeviceType = kATADevicePATA;
   }
 
   if (cl == 0x3c && ch == 0xc3) {
-    kcout << "HCoreKrnl.exe: SATA drive detected.\r\n";
+    kcout << "NewKernel.exe: SATA drive detected.\r\n";
     kATADeviceType = kATADeviceSATA;
   }
 

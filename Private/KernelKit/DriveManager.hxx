@@ -54,26 +54,21 @@ struct DriveTrait final {
   Void (*fVerify)(DrivePacket* packetPtr);
 };
 
-#define kDrivePacketBinary "file/x-binary"
-#define kDrivePacketSource "file/x-source"
-#define kDrivePacketASCII "file/x-ascii"
-#define kDrivePacketZip "file/x-zip"
-
 //! drive as a device.
 typedef DeviceInterface<DriveTrait> DriveDevice;
 typedef DriveDevice* DriveDevicePtr;
 
 /**
- * @brief Abstracted hard-drive container class.
+ * @brief Mounted drives interface.
  * @note This class has all of it's drive set to nullptr, allocate them using
  * GetAddressOf(index).
  */
-class Mountpoint final {
+class MountpointInterface final {
  public:
-  explicit Mountpoint() = default;
-  ~Mountpoint() = default;
+  explicit MountpointInterface() = default;
+  ~MountpointInterface() = default;
 
-  HCORE_COPY_DEFAULT(Mountpoint);
+  HCORE_COPY_DEFAULT(MountpointInterface);
 
  public:
   DriveDevicePtr A() { return mA; }
@@ -95,7 +90,7 @@ class Mountpoint final {
         return &mD;
       default: {
         DbgLastError() = kErrorNoSuchDisk;
-        kcout << "HCoreKrnl\\Mountpoint: Check HError.\n";
+        kcout << "NewKernel.exe: Check HError.\n";
 
         break;
       }

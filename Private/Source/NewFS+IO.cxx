@@ -33,7 +33,7 @@ enum {
   kHCFSSubDriveCount,
 };
 
-Int32 ke_newfs_read(Mountpoint* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
+Int32 ke_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   switch (DrvIndex) {
@@ -58,7 +58,7 @@ Int32 ke_newfs_read(Mountpoint* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   return DrvTrait.fPacket.fPacketGood;
 }
 
-Int32 ke_newfs_write(Mountpoint* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
+Int32 ke_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   switch (DrvIndex) {

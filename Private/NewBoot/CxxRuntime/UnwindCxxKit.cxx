@@ -23,7 +23,7 @@ EXTERN_C void __unwind(void (**finis)(void), int cnt)
 
 EXTERN_C Int32 EfiMain(EfiHandlePtr handle, EfiSystemTable* SystemTable) 
 {
-  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"NewBoot: C++ Runtime Add-in\r\n");
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"NewBoot.exe: C++ Runtime Add-in\r\n");
   
   return kEfiOk;
 }

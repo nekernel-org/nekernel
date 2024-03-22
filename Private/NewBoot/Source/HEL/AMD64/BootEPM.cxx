@@ -27,11 +27,11 @@ Void boot_try_write_partition_map(const Char* namePart, SizeT namePartLength,
 
   BTextWriter writer;
 
-  writer.Write(L"NewBoot: Reading EPM boot block..\r\n");
+  writer.Write(L"NewBoot.exe: Reading EPM boot block...\r\n");
 
   for (SizeT i = 0; i < kEPMMagicLength; i++) {
     if (buf[i] != kEPMMagic[i]) {
-      writer.Write(L"NewBoot: Writing EPM boot block..\r\n");
+      writer.Write(L"NewBoot.exe: Writing EPM boot block...\r\n");
 
       BootBlockType* bootBlock = (BootBlockType*)buf;
 

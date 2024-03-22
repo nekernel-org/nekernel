@@ -4,7 +4,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="dpAw-ApGermXuwIBdtFA-1" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;HCoreKrnl.exe&lt;/h1&gt;&lt;p&gt;The kernel is a C++ app, designed to be scalable, reliable and object oriented.&lt;/p&gt;&lt;p&gt;We&#39;re actually working on the AHCI support for it is scheduled to be done by the end of april.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+        <mxCell id="dpAw-ApGermXuwIBdtFA-1" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;NewKernel.exe&lt;/h1&gt;&lt;p&gt;The kernel is a C++ app, designed to be scalable, reliable and object oriented.&lt;/p&gt;&lt;p&gt;We&#39;re actually working on the AHCI support for it is scheduled to be done by the end of april.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="40" y="40" width="400" height="120" as="geometry" />
         </mxCell>
         <mxCell id="dpAw-ApGermXuwIBdtFA-2" value="MicroKernel" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">

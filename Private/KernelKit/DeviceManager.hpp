@@ -14,9 +14,9 @@
 
 #pragma once
 
-/* HCore */
-/* File: KernelKit/Device.hpp */
-/* Device abstraction and I/O buffer. */
+/* HCore device interface manager. */
+/* @file KernelKit/DeviceManager.hpp */
+/* @brief Device abstraction and I/O buffer. */
 
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Ref.hpp>

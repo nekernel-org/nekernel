@@ -130,21 +130,13 @@ IntNormal 41
 IntNormal 42
 IntNormal 43
 
+;; Mapped according to PIC remap.
 __HCR_INT_44:
     cli
 
     push rax
 
     call _hal_mouse_handler
-
-    pop rax
-
-    push rax
-
-    ;; Find and execute system call TODO
-
-    mov rcx, kMouseLabelExit
-    call ke_io_print
 
     pop rax
 
@@ -220,6 +212,4 @@ kInterruptVectorTable:
     %endrep
 
 kSystemCallLabel:
-    db "HCoreKrnl.exe: SystemCall: Enter SCM.", 0xa, 0xd, 0
-kMouseLabelExit:
-    db "HCoreKrnl.exe: KernelMouse: Acknowledge Interrupt.", 0xa, 0xd, 0
+    db "NewKernel.exe: SystemCall: Enter SCM.", 0xa, 0xd, 0
