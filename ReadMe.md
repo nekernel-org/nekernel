@@ -22,6 +22,4 @@ And execute:
 make h-core-<cpu>-<hardware>
 ```
 
-You'd also need The SDK and MinGW, to build and link the components. For Tools look at `Private/Tools`
-
 ##### Copyright, Mahrouss Logic, all rights reserved.
