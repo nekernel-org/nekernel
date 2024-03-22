@@ -92,16 +92,6 @@ ATAInit_Retry:
     kATAData[indexData] = In16(IO + ATA_REG_DATA);
   }
 
-  writer.Write(L"NewBoot: Drive Model: ");
-
-  for (SizeT indexData = 0; indexData < kATADataLen; indexData += 1) {
-    writer.WriteCharacter(kATAData[indexData]);
-  }
-
-  writer.Write(L"\r\n");
-
-  writer.Write(L"\r\n");
-
   OutBus =
       (Bus == ATA_PRIMARY_IO) ? BDeviceATA::kPrimary : BDeviceATA::kSecondary;
   OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
@@ -145,6 +135,8 @@ Void boot_ata_read(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
                    SizeT SectorSz, SizeT Size) {
   UInt8 Command = (!Master ? 0xE0 : 0xF0);
 
+  boot_ata_wait_io(IO);
+
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0xF));
   Out8(IO + ATA_REG_SEC_COUNT0, SectorSz);
 
@@ -154,22 +146,29 @@ Void boot_ata_read(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  boot_ata_wait_io(IO);
+  while ((In8(ATA_COMMAND(IO))) & ATA_SR_BSY) boot_ata_wait_io(IO);
 
-  BTextWriter writer;
+  UInt16 byte = In16(IO + ATA_REG_DATA);
+  SizeT IndexOff = 0UL;
+  Buf[IndexOff] = byte;
 
-  writer.Write(L"NewBoot: Port: ").Write(IO).Write(L"\r\n");
+  while (byte != 0xFF) {
+    if (IndexOff > Size) break;
 
-  for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
-    WideChar chr = In16(IO + ATA_REG_DATA);
+    ++IndexOff;
+
+    while ((In8(ATA_COMMAND(IO))) & ATA_SR_BSY) boot_ata_wait_io(IO);
     
-    Buf[IndexOff] = chr;
+    byte = In16(IO + ATA_REG_DATA);
+    Buf[IndexOff] = byte;
   }
 }
 
 Void boot_ata_write(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
                     SizeT SectorSz, SizeT Size) {
   UInt8 Command = (!Master ? 0xE0 : 0xF0);
+
+  boot_ata_wait_io(IO);
 
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0xF));
   Out8(IO + ATA_REG_SEC_COUNT0, SectorSz);
@@ -180,11 +179,9 @@ Void boot_ata_write(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  boot_ata_wait_io(IO);
-
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+    boot_ata_wait_io(IO);
     Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
-    
   }
 }
 
@@ -213,12 +210,8 @@ BDeviceATA::BDeviceATA() noexcept {
     kATADetected = true;
 
     BTextWriter writer;
+
     writer.Write(L"NewBoot: Drive is OnLine.\r\n");
-    writer.Write(L"NewBoot: IO: ")
-        .Write(this->Leak().mBus)
-        .Write(L" Master: ")
-        .Write(this->Leak().mMaster)
-        .Write(L"\r\n");
   }
 }
 /**
@@ -262,7 +255,7 @@ BDeviceATA& BDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
 
   if (!Buf || SectorSz < 1) return *this;
 
-  boot_ata_read(this->Leak().mBase, this->Leak().mBus, this->Leak().mMaster,
+  boot_ata_write(this->Leak().mBase, this->Leak().mBus, this->Leak().mMaster,
                 Buf, SectorSz, this->Leak().mSize);
 
   return *this;
