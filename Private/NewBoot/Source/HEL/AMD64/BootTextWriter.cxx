@@ -20,7 +20,7 @@
 /**
 @brief puts wrapper over EFI ConOut.
 */
-BTextWriter &BTextWriter::Write(const CharacterType *str) {
+BTextWriter &BTextWriter::Write(const CharacterTypeUTF16 *str) {
   if (*str == 0 || !str) return *this;
 
   ST->ConOut->OutputString(ST->ConOut, str);
@@ -31,7 +31,7 @@ BTextWriter &BTextWriter::Write(const CharacterType *str) {
 BTextWriter &BTextWriter::Write(const UChar *str) {
   if (*str == 0 || !str) return *this;
 
-  CharacterType strTmp[2];
+  CharacterTypeUTF16 strTmp[2];
   strTmp[1] = 0;
   
   for (size_t i = 0; str[i] != 0; i++) {
@@ -45,7 +45,7 @@ BTextWriter &BTextWriter::Write(const UChar *str) {
 /**
 @brief putc wrapper over EFI ConOut.
 */
-BTextWriter &BTextWriter::WriteCharacter(CharacterType c) {
+BTextWriter &BTextWriter::WriteCharacter(CharacterTypeUTF16 c) {
   EfiCharType str[2];
   str[0] = c;
   str[1] = 0;

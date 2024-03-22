@@ -16,7 +16,8 @@ else
 EMU=qemu-system-x86_64w.exe
 endif
 
-EMU_FLAGS=-net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -serial stdio
+IMG=epm.img
+EMU_FLAGS=-net none -smp 2 -m 4G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -drive file=fat:rw:CDROM,index=2,format=raw -serial stdio
 
 LD_FLAGS=-e efi_main --subsystem=10
 OBJ=$(wildcard *.o) $(wildcard ../../Objects/*.obj) $(wildcard HEL/AMD64/*.obj)
@@ -44,6 +45,10 @@ compile-amd64:
 .PHONY: run-efi-amd64
 run-efi-amd64:
 	$(EMU) $(EMU_FLAGS)
+
+.PHONY: epm-img
+epm-img:
+	qemu-img create -f raw $(IMG) 256M
 
 .PHONY: download-edk
 download-edk:

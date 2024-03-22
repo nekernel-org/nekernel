@@ -89,6 +89,8 @@ typedef struct PartitionBlock PartitionBlockType;
 #define kEPMMagic kEPMMagicError
 #endif
 
+#define kEPMStartPartition 1024
+
 /// END SPECS
 
 #endif  // ifndef __PARTITION_MAP__

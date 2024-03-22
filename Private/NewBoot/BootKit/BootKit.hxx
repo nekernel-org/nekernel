@@ -20,6 +20,7 @@ class BVersionString;
 #include <CompilerKit/Version.hxx>
 #include <FirmwareKit/EFI.hxx>
 #include <NewKit/Defines.hpp>
+#include <FirmwareKit/EPM.hxx>
 
 using namespace HCore;
 
@@ -32,7 +33,8 @@ enum {
   kSegmentBss = 6,
 };
 
-typedef WideChar CharacterType;
+typedef WideChar CharacterTypeUTF16;
+typedef Char CharacterTypeUTF8;
 
 /**
  * @brief BootKit Text Writer class
@@ -43,8 +45,8 @@ class BTextWriter final {
  public:
   BTextWriter &Write(const Long &num);
   BTextWriter &Write(const UChar *str);
-  BTextWriter &Write(const CharacterType *str);
-  BTextWriter &WriteCharacter(CharacterType c);
+  BTextWriter &Write(const CharacterTypeUTF16 *str);
+  BTextWriter &WriteCharacter(CharacterTypeUTF16 c);
 
  public:
   explicit BTextWriter() = default;
@@ -55,10 +57,17 @@ class BTextWriter final {
   BTextWriter(const BTextWriter &) = default;
 };
 
-HCore::SizeT BCopyMem(CharacterType *dest, CharacterType *src,
+HCore::SizeT BCopyMem(CharacterTypeUTF16 *dest, CharacterTypeUTF16 *src,
                       const HCore::SizeT len);
-HCore::SizeT BStrLen(const CharacterType *ptr);
-HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
+
+HCore::SizeT BSetMem(CharacterTypeUTF8 *src, const CharacterTypeUTF8 byte,
+                     const HCore::SizeT len);
+
+/// String length functions.
+
+HCore::SizeT BStrLen(const CharacterTypeUTF16 *ptr);
+
+HCore::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
                      const HCore::SizeT len);
 
 /**
@@ -67,7 +76,7 @@ HCore::SizeT BSetMem(CharacterType *src, const CharacterType byte,
  */
 class BFileReader final {
  public:
-  explicit BFileReader(const CharacterType *path, EfiHandlePtr ImageHandle);
+  explicit BFileReader(const CharacterTypeUTF16 *path, EfiHandlePtr ImageHandle);
   ~BFileReader();
 
   Void ReadAll();
@@ -98,7 +107,7 @@ class BFileReader final {
  private:
   Int32 mErrorCode{kOperationOkay};
   VoidPtr mBlob{nullptr};
-  CharacterType mPath[kPathLen];
+  CharacterTypeUTF16 mPath[kPathLen];
   BTextWriter mWriter;
   EfiFileProtocol *mFile{nullptr};
   UInt64 mSizeFile{0};
@@ -193,5 +202,5 @@ inline Void InitGOP() noexcept {
 
 class BVersionString final {
  public:
-  static const CharacterType *Shared() { return BOOTLOADER_VERSION; }
+  static const CharacterTypeUTF16 *Shared() { return BOOTLOADER_VERSION; }
 };

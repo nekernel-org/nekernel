@@ -25,7 +25,7 @@
 /***
     @brief File Reader constructor.
 */
-BFileReader::BFileReader(const CharacterType* path, EfiHandlePtr ImageHandle) {
+BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandle) {
   if (path != nullptr) {
     SizeT index = 0UL;
     for (; path[index] != L'\0'; ++index) {

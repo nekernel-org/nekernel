@@ -22,6 +22,7 @@ class BDeviceATA final {
 
   struct ATATrait final {
     SizeT mBase{1024};
+    SizeT mSize{1024};
     UInt16 mBus{kPrimary};
     UInt8 mMaster{0};
     Boolean mErr{false};
@@ -31,8 +32,8 @@ class BDeviceATA final {
 
   operator bool();
 
-  BDeviceATA& Read(WideChar* Buf, const SizeT& SecCount);
-  BDeviceATA& Write(WideChar* Buf, const SizeT& SecCount);
+  BDeviceATA& Read(Char* Buf, const SizeT& SecCount);
+  BDeviceATA& Write(Char* Buf, const SizeT& SecCount);
 
   ATATrait& Leak();
 

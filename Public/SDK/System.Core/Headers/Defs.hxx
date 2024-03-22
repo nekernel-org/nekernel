@@ -36,6 +36,8 @@ CA_EXTERN_C void __assert_chk_fail(void);
 #define CA_CDECL __attribute__((cdecl))
 #define CA_MSCALL __attribute__((ms_abi))
 
+#define PACKED __attribute__((packed))
+
 #define CA_PASCAL CA_STDCALL
 
 typedef __UINT8_TYPE__ ByteType;
@@ -44,8 +46,8 @@ typedef __UINT32_TYPE__ DWordType;
 typedef __UINT64_TYPE__ QWordType;
 typedef __SIZE_TYPE__ SizeType;
 
-typedef char CharacterType;
-typedef CharacterType* PtrCharacterType;
+typedef char CharacterTypeUTF16;
+typedef CharacterTypeUTF16* PtrCharacterType;
 
 typedef void* PtrVoidType;
 typedef void VoidType;
@@ -57,7 +59,7 @@ typedef __INT64_TYPE__ Int64Type;
 typedef __UINT32_TYPE__ UInt32Type;
 typedef __INT32_TYPE__ Int32Type;
 
-typedef CharacterType BooleanType;
+typedef CharacterTypeUTF16 BooleanType;
 
 #define CA_COPY_DELETE(KLASS)                                                                                         \
     KLASS &operator=(const KLASS &) = delete;                                                                          \
@@ -232,9 +234,9 @@ typedef struct GUID final {
 /// \brief Object handle.
 /// \author Amlal El Mahrouss
 typedef struct Object final {
-  CharacterType ObjectName[255];
+  CharacterTypeUTF16 ObjectName[255];
   DWordType ObjectType;
-  CharacterType ObjectNamespace[255];
+  CharacterTypeUTF16 ObjectNamespace[255];
 
   VoidType(*Release)(struct Object* Self);
   IntPtrType(*Invoke)(struct Object* Self, DWordType Sel, ...);

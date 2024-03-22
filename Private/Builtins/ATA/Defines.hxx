@@ -117,4 +117,4 @@ using namespace HCore;
 #define ATA_ADDRESS3(x) (x + 5)
 #define ATA_COMMAND(x)  (x + 7)
 
-#define kATASectorSize 4096
+#define kATASectorSize 512

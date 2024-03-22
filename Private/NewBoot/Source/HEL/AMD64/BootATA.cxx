@@ -24,7 +24,7 @@
 
 static Boolean kATADetected = false;
 static Int32 kATADeviceType = kATADeviceCount;
-static CharacterType kATAData[kATADataLen] = {0};
+static CharacterTypeUTF8 kATAData[kATADataLen] = {0};
 
 Boolean boot_ata_detected(Void);
 
@@ -46,7 +46,7 @@ ATAWaitForIO_Retry2:
   return true;
 }
 
-Void ATASelect(UInt16 Bus) {
+Void boot_ata_select(UInt16 Bus) {
   if (Bus == ATA_PRIMARY_IO)
     Out8(Bus + ATA_REG_HDDEVSEL, ATA_PRIMARY_SEL);
   else
@@ -61,7 +61,7 @@ Boolean boot_ata_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus,
 
   UInt16 IO = Bus;
 
-  ATASelect(IO);
+  boot_ata_select(IO);
 
   // Bus init, NEIN bit.
   Out8(IO + ATA_REG_NEIN, 1);
@@ -86,21 +86,25 @@ ATAInit_Retry:
   /// fetch serial info
   /// model, speed, number of sectors...
 
+  boot_ata_wait_io(IO);
+
   for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
     kATAData[indexData] = In16(IO + ATA_REG_DATA);
   }
 
-  writer.Write(L"NewBoot: Model: ");
+  writer.Write(L"NewBoot: Drive Model: ");
 
   for (SizeT indexData = 0; indexData < kATADataLen; indexData += 1) {
-    writer.WriteCharacter(kATAData[indexData + ATA_IDENT_MODEL + 1])
-        .WriteCharacter(kATAData[indexData + ATA_IDENT_MODEL]);
+    writer.WriteCharacter(kATAData[indexData]);
   }
 
   writer.Write(L"\r\n");
 
-  OutBus = (Bus == ATA_PRIMARY) ? BDeviceATA::kPrimary : BDeviceATA::kSecondary;
-  OutMaster = (Bus == ATA_PRIMARY) ? ATA_MASTER : ATA_SLAVE;
+  writer.Write(L"\r\n");
+
+  OutBus =
+      (Bus == ATA_PRIMARY_IO) ? BDeviceATA::kPrimary : BDeviceATA::kSecondary;
+  OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
   Out8(Bus + ATA_REG_HDDEVSEL, 0xA0 | ATA_MASTER << 4);
 
@@ -122,7 +126,7 @@ ATAInit_Retry:
     kATADeviceType = kATADeviceSATA_PI;
   }
 
-  if (cl == 0 && ch == 0) {
+  if (cl == 0x0 && ch == 0x0) {
     writer.Write(L"NewBoot: PATA drive detected.\r\n");
     kATADeviceType = kATADevicePATA;
   }
@@ -137,47 +141,51 @@ ATAInit_Retry:
   return true;
 }
 
-Void boot_ata_read(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
-                SizeT Offset) {
-  UInt8 Command = (Master ? 0xE0 : 0xF0);
+Void boot_ata_read(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
+                   SizeT SectorSz, SizeT Size) {
+  UInt8 Command = (!Master ? 0xE0 : 0xF0);
 
-  Out8(IO + ATA_REG_HDDEVSEL,
-       (Command << 4) | (((Lba & 0x0f000000) >> 24) & 0x0f));
-  Out8(IO + ATA_REG_SEC_COUNT0, 0x1);
-  Out8(IO + ATA_REG_FEATURES, 0);
+  Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0xF));
+  Out8(IO + ATA_REG_SEC_COUNT0, SectorSz);
 
-  Out8(IO + ATA_REG_LBA0, (UInt8)(Lba & 0x000000ff));
-  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba & 0x0000ff00) >> 8);
-  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba & 0x00ff0000) >> 16);
+  Out8(IO + ATA_REG_LBA0, (UInt8)(Lba));
+  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba) >> 8);
+  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba) >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  boot_ata_wait_io(IO);
+  BTextWriter writer;
 
-  for (SizeT IndexOff = 0; IndexOff < 256; ++IndexOff) {
-    Buf[Offset + IndexOff] = In16(IO + ATA_REG_DATA);
+  writer.Write(L"NewBoot: Port: ").Write(IO).Write(L"\r\n");
+
+  for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+    WideChar chr = In16(IO + ATA_REG_DATA);
+    
+    Buf[IndexOff] = chr;
+  
+    boot_ata_wait_io(IO);
   }
 }
 
-Void boot_ata_write(UInt32 Lba, UInt8 IO, UInt8 Master, CharacterType* Buf,
-                 SizeT Offset) {
-  UInt8 Command = (Master ? 0xE0 : 0xF0);
+Void boot_ata_write(UInt32 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
+                    SizeT SectorSz, SizeT Size) {
+  UInt8 Command = (!Master ? 0xE0 : 0xF0);
 
-  Out8(IO + ATA_REG_HDDEVSEL,
-       (Command << 4) | (((Lba & 0x0f000000) >> 24) & 0x0f));
-  Out8(IO + ATA_REG_SEC_COUNT0, 0x1);
-  Out8(IO + ATA_REG_FEATURES, 0);
+  Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0xF));
+  Out8(IO + ATA_REG_SEC_COUNT0, SectorSz);
 
-  Out8(IO + ATA_REG_LBA0, (UInt8)(Lba & 0x000000ff));
-  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba & 0x0000ff00) >> 8);
-  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba & 0x00ff0000) >> 16);
+  Out8(IO + ATA_REG_LBA0, (UInt8)(Lba));
+  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba) >> 8);
+  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba) >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  boot_ata_wait_io(IO);
-
-  for (SizeT IndexOff = 0; IndexOff < 256; ++IndexOff) {
-    Out16(IO + ATA_REG_DATA, Buf[Offset + IndexOff]);
+  for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+    // Send it two 
+    Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
+    Out16(IO + ATA_REG_DATA, '\0');
+    
+    boot_ata_wait_io(IO);
   }
 }
 
@@ -201,21 +209,22 @@ BDeviceATA::BDeviceATA() noexcept {
 
   if (boot_ata_init(ATA_PRIMARY_IO, true, this->Leak().mBus,
                     this->Leak().mMaster) ||
-      boot_ata_init(ATA_PRIMARY_IO, false, this->Leak().mBus,
-                    this->Leak().mMaster) ||
       boot_ata_init(ATA_SECONDARY_IO, true, this->Leak().mBus,
-                    this->Leak().mMaster) ||
-      boot_ata_init(ATA_SECONDARY_IO, false, this->Leak().mBus,
                     this->Leak().mMaster)) {
     kATADetected = true;
 
     BTextWriter writer;
-    writer.Write(L"NewBoot: Driver: OnLine.\r\n");
+    writer.Write(L"NewBoot: Drive is OnLine.\r\n");
+    writer.Write(L"NewBoot: IO: ")
+        .Write(this->Leak().mBus)
+        .Write(L" Master: ")
+        .Write(this->Leak().mMaster)
+        .Write(L"\r\n");
   }
 }
 /**
  * @brief Is ATA detected?
-*/
+ */
 BDeviceATA::operator bool() { return boot_ata_detected(); }
 
 /**
@@ -223,7 +232,7 @@ BDeviceATA::operator bool() { return boot_ata_detected(); }
     @param Sz Sector size
     @param Buf buffer
 */
-BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
+BDeviceATA& BDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
   if (!boot_ata_detected()) {
     Leak().mErr = true;
     return *this;
@@ -233,11 +242,8 @@ BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
 
   if (!Buf || SectorSz < 1) return *this;
 
-  for (SizeT i = 0UL; i < SectorSz; ++i) {
-    boot_ata_read(this->Leak().mBase + i, 
-                  this->Leak().mBus, this->Leak().mMaster,
-               Buf, i);
-  }
+  boot_ata_read(this->Leak().mBase, this->Leak().mBus, this->Leak().mMaster,
+                Buf, SectorSz, this->Leak().mSize);
 
   return *this;
 }
@@ -247,7 +253,7 @@ BDeviceATA& BDeviceATA::Read(CharacterType* Buf, const SizeT& SectorSz) {
     @param Sz Sector size
     @param Buf buffer
 */
-BDeviceATA& BDeviceATA::Write(CharacterType* Buf, const SizeT& SectorSz) {
+BDeviceATA& BDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
   if (!boot_ata_detected()) {
     Leak().mErr = true;
     return *this;
@@ -257,14 +263,8 @@ BDeviceATA& BDeviceATA::Write(CharacterType* Buf, const SizeT& SectorSz) {
 
   if (!Buf || SectorSz < 1) return *this;
 
-  SizeT Off = 0UL;
-
-  for (SizeT i = 0UL; i < SectorSz; ++i) {
-    boot_ata_write(this->Leak().mBase + i, this->Leak().mBus, this->Leak().mMaster,
-                Buf, Off);
-
-    Off += kATASectorSize;
-  }
+  boot_ata_read(this->Leak().mBase, this->Leak().mBus, this->Leak().mMaster,
+                Buf, SectorSz, this->Leak().mSize);
 
   return *this;
 }

@@ -17,15 +17,15 @@
 
 #define kMaxBufSize 256
 
-EXTERN_C void Main(HEL::HandoverInformationHeader* HIH);
+EXTERN_C void Main(HEL::HandoverInformationHeader* handoverInfo);
 
-typedef void (*bt_main_type)(HEL::HandoverInformationHeader* HIH);
+typedef void (*bt_main_type)(HEL::HandoverInformationHeader* handoverInfo);
 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
   InitEFI(SystemTable);  // Init the efi library.
   InitGOP();             // Quick Toolkit for UI
-
+  
   BTextWriter writer;
 
   /// Splash screen stuff
@@ -37,6 +37,9 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
+
+  /// Init ATA driver.
+  BDeviceATA ataDrv;
 
   /// Read Kernel blob.
 
