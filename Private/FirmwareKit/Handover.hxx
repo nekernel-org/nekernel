@@ -68,7 +68,7 @@ struct HandoverInformationHeader {
   WideChar f_FirmwareVendorName[32];
   SizeT f_FirmwareVendorLen;
   struct {
-    VoidPtr f_VendorTables;
+    VoidPtr f_VendorTable;
   } f_HardwareTables;
   struct {
     UIntPtr f_The;

@@ -16,6 +16,8 @@ else
 EMU=qemu-system-x86_64w.exe
 endif
 
+EMU_FLAGS=-net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -serial stdio
+
 LD_FLAGS=-e efi_main --subsystem=10
 OBJ=$(wildcard *.o) $(wildcard ../../Objects/*.obj) $(wildcard HEL/AMD64/*.obj)
 
@@ -23,7 +25,7 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -DkBootKrnlSections=9 -mgeneral-regs-only -mno-red-zone -D__KERNEL__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -D__BOOTLOADER__ -I./ 
+FLAG_GNU=-fshort-wchar -mgeneral-regs-only -mno-red-zone -D__KERNEL__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -D__BOOTLOADER__ -I./ 
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -34,7 +36,6 @@ bootloader-amd64: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/NEWBOOT.EFI
-	$(ADD_FILE) CDROM/.HCORE
 
 .PHONY: compile-amd64
 compile-amd64:
@@ -42,7 +43,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64
 run-efi-amd64:
-	$(EMU) -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -serial stdio
+	$(EMU) $(EMU_FLAGS)
 
 .PHONY: download-edk
 download-edk:

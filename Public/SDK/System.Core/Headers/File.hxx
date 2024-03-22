@@ -10,6 +10,21 @@
 #include <System.Core/Headers/Defs.hxx>
 
 namespace System {
+class FileInterface;
+class DirectoryInterface;
+
+typedef IntPtrType SymlinkType;
+typedef IntPtrType FileType;
+typedef IntPtrType DirectoryType;
+
+enum {
+  kErrorNoSuchPath = -44,
+  kErrorNotAFile = -45,
+  kErrorNotADirectory = -46,
+  kErrorDirectory = -47,
+  kErrorBrokenSymlink = -48,
+};
+
 /// @brief System file interface
 class FileInterface final {
  public:
@@ -27,13 +42,25 @@ class FileInterface final {
   CA_COPY_DEFAULT(FileInterface);
 
  public:
-  PtrVoidType Read(UIntPtrType off, SizeType sz) { return (PtrVoidType)kInstanceObject->Invoke(kInstanceObject, mHandle, 2, off, sz);  }
-  PtrVoidType Read(SizeType sz) { return (PtrVoidType)kInstanceObject->Invoke(kInstanceObject, mHandle, 3, sz);  }
+  PtrVoidType Read(UIntPtrType off, SizeType sz) {
+    return (PtrVoidType)kInstanceObject->Invoke(kInstanceObject, mHandle, 2,
+                                                off, sz);
+  }
+  PtrVoidType Read(SizeType sz) {
+    return (PtrVoidType)kInstanceObject->Invoke(kInstanceObject, mHandle, 3,
+                                                sz);
+  }
 
-  void Write(PtrVoidType buf, UIntPtrType off, SizeType sz) { kInstanceObject->Invoke(kInstanceObject, mHandle, 4, buf, off, sz);  }
-  void Write(PtrVoidType buf, SizeType sz) { kInstanceObject->Invoke(kInstanceObject, mHandle, 5, buf, sz); }
-  
-  void Seek(UIntPtrType off) { kInstanceObject->Invoke(kInstanceObject, mHandle, 5); }
+  void Write(PtrVoidType buf, UIntPtrType off, SizeType sz) {
+    kInstanceObject->Invoke(kInstanceObject, mHandle, 4, buf, off, sz);
+  }
+  void Write(PtrVoidType buf, SizeType sz) {
+    kInstanceObject->Invoke(kInstanceObject, mHandle, 5, buf, sz);
+  }
+
+  void Seek(UIntPtrType off) {
+    kInstanceObject->Invoke(kInstanceObject, mHandle, 5);
+  }
   void Rewind() { kInstanceObject->Invoke(kInstanceObject, mHandle, 6); }
 
  public:
@@ -41,7 +68,7 @@ class FileInterface final {
   void MIME(const char *mime);
 
  private:
-  IntPtrType mHandle;
+  FileType mHandle;
 };
 
 typedef FileInterface *FilePtr;
@@ -64,6 +91,13 @@ class FileException : public SystemException {
   const char *mReason{"System.Core: FileException: Catastrophic failure!"};
 };
 
+inline IntPtrType MakeSymlink(const char *from, const char *outputWhere) {
+  CA_MUST_PASS(from);
+  CA_MUST_PASS(outputWhere);
+
+  return kInstanceObject->Invoke(kInstanceObject, kProcessCallOpenHandle, 1,
+                                 from);
+}
 }  // namespace System
 
-#endif // ifndef __FILE_API__
+#endif  // ifndef __FILE_API__

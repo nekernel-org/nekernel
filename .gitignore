@@ -12,7 +12,6 @@ LOOK.CSS
 
 x86_64/
 
-*.HCORE
 *.epm
 *.app
 

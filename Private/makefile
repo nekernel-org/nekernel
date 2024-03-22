@@ -40,6 +40,7 @@ OBJCOPY=x86_64-w64-mingw32-objcopy
 .PHONY: link-amd64-pc
 link-amd64-pc:
 	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
+	cp $(KERNEL) Root/Boot
 
 .PHONY: all
 all: h-core-amd64-pc link-amd64-pc

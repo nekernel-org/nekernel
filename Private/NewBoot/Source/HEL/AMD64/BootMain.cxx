@@ -15,12 +15,7 @@
 #error This CPU is unknown.
 #endif  // ifdef __x86_64__
 
-#ifndef kBootKrnlSections
-#error[NewBoot/NewBoot] Please provide the amount of sections the kernel has.
-#endif  // !kBootKrnlSections
-
-#define kBootReadSize \
-  (sizeof(DosHeader) + sizeof(ExecHeader) + sizeof(ExecOptionalHeader))
+#define kMaxBufSize 256
 
 EXTERN_C void Main(HEL::HandoverInformationHeader* HIH);
 
@@ -39,12 +34,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .Write(BVersionString::Shared())
       .Write(L"\r\n");
 
-  const char strDate[] = __DATE__;
-
-  writer.Write(L"NewBoot: Build: ");
-
-  for (auto& ch : strDate) writer.WriteCharacter(ch);
-
   writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
@@ -53,11 +42,12 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   BFileReader kernelImg(L".HCORE", ImageHandle);
 
-  kernelImg.Size(kBootReadSize + sizeof(ExecSectionHeader) * kBootKrnlSections);
+  kernelImg.Size(kMaxBufSize);
   kernelImg.ReadAll();
 
   if (kernelImg.Error() == BFileReader::kOperationOkay) {
-    // first check for kernel.cfg inside ESP/EPM.
+    // First check for a kernel.cfg inside the ESP.
+    // This will tell us about the current kernel.
     BFileReader systemManifest(L".MANIFEST", ImageHandle);
 
     systemManifest.Size(1);
@@ -103,10 +93,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                           L"GetMemoryMap returned a value which isn't kEfiOk!");
     }
 
-#ifndef __DEBUG__
-    ST->ConOut->ClearScreen(ST->ConOut);
-#endif
-
     HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
 
     BS->AllocatePool(EfiLoaderData, sizeof(HEL::HandoverInformationHeader),
@@ -133,12 +119,31 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
              handoverHdrPtr->f_FirmwareVendorLen);
 
-    handoverHdrPtr->f_HardwareTables.f_VendorTables =
-        ST->ConfigurationTable->VendorTable;
+    writer.Write(L"NewBoot: Fetch ACPI's 'RSD PTR'...").Write(L"\r\n");
+
+    for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries; ++indexVT)
+    {
+      volatile Char* vendorTable = reinterpret_cast<volatile Char*>(SystemTable->ConfigurationTable[indexVT].VendorTable);
+
+      if (vendorTable[0] == 'R' &&
+          vendorTable[1] == 'S' &&
+          vendorTable[2] == 'D' &&
+          vendorTable[3] == ' ' &&
+          vendorTable[4] == 'P' &&
+          vendorTable[5] == 'T' &&
+          vendorTable[6] == 'R' &&
+          vendorTable[7] == ' ') {
+        handoverHdrPtr->f_HardwareTables.f_VendorTable = (VoidPtr)vendorTable;
+        writer.Write(L"NewBoot: Found ACPI's 'RSD PTR' table on this machine.").Write(L"\r\n");
+
+        break;
+      }
+    }
 
     EFI::ExitBootServices(MapKey, ImageHandle);
 
-    bool isIniNotFound = (systemManifest.Blob() == nullptr);
+    /// TODO: Set this to what we found inside NewFS partition.
+    bool isIniNotFound = true;
 
     if (isIniNotFound) {
       handoverHdrPtr->f_Magic = kHandoverMagic;
