@@ -18,6 +18,8 @@
 #include <Builtins/ATA/Defines.hxx>
 #include <ArchKit/ArchKit.hpp>
 
+#ifdef __KERNEL__
+
 using namespace HCore;
 using namespace HCore::HAL;
 
@@ -173,3 +175,5 @@ Void drv_ata_write(UInt32 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 
 /// @check is ATA detected?
 Boolean drv_ata_detected(Void) { return kATADetected; }
+
+#endif // ifdef __KERNEL__
