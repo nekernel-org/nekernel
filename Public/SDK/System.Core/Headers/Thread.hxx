@@ -46,4 +46,7 @@ BooleanType HcResumeThread(_Input PtrThread ThreadPtr);
 
 QWordType HcProcessIdThread(_Input PtrThread ThreadPtr);
 
+/// @brief Main application thread.
+CA_EXTERN_C PtrThread kMainThread;
+
 #endif  // __THREAD_API__

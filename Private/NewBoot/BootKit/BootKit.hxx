@@ -204,3 +204,5 @@ class BVersionString final {
  public:
   static const CharacterTypeUTF16 *Shared() { return BOOTLOADER_VERSION; }
 };
+
+Void boot_try_write_partition_map(const Char* namePart, SizeT namePartLength, BDeviceATA* ataInterface);

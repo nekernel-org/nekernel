@@ -27,6 +27,11 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   InitGOP();             // Quick Toolkit for UI
   
   BTextWriter writer;
+  BDeviceATA ataDrv;
+
+  Char namePart[kEPMNameLength] = { "NewKernel Standard System" };
+
+  boot_try_write_partition_map(namePart, kEPMNameLength, &ataDrv);
 
   /// Splash screen stuff
 

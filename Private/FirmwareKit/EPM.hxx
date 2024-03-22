@@ -13,12 +13,19 @@
 
 #include <NewKit/Defines.hpp>
 
-#define kEPMUUIDLength 37
 #define kEPMNameLength 32
 #define kEPMFilesystemLength 16
-#define kEPMMagicLength 4
+#define kEPMMagicLength 5
 
 /* The first 512 > x > 1024 bytes of a disk contains this headers. */
+
+/// @brief EPM GUID block.
+typedef struct BlockGUID {
+  UInt32 Data1;
+  UInt16 Data2;
+  UInt16 Data3;
+  UInt8 Data4[8];
+} BlockGUID;
 
 /**
  * @brief The EPM bootloader block.
@@ -26,7 +33,7 @@
 struct PACKED BootBlock {
   HCore::Char Magic[kEPMMagicLength];
   HCore::Char Name[kEPMNameLength];
-  HCore::Char Uuid[kEPMUUIDLength];
+  BlockGUID   Uuid;
   HCore::Int32 Version;
   HCore::Int64 NumBlocks;
   HCore::Int64 SectorSz;
