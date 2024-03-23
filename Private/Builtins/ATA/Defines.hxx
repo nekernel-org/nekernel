@@ -136,10 +136,10 @@ HCore::Void drv_ata_select(HCore::UInt16 Bus);
 
 HCore::Boolean drv_ata_wait_io(HCore::UInt16 IO);
 
-HCore::Void drv_ata_read(HCore::UInt32 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
+HCore::Void drv_ata_read(HCore::UInt64 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
                    HCore::SizeT SectorSz, HCore::SizeT Size);
 
-HCore::Void drv_ata_write(HCore::UInt32 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
+HCore::Void drv_ata_write(HCore::UInt64 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
                     HCore::SizeT SectorSz, HCore::SizeT Size);
 
 #endif // ifdef __KERNEL__

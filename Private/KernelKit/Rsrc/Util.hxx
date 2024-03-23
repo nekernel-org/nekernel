@@ -4,12 +4,14 @@
 // Last Rev
 // Sat Feb 24 CET 2024
 
-#define KeInitRsrc() HCore::SizeT uA = 0
+#define ToolboxInitRsrc() HCore::SizeT uA = 0
 
-#define KeClearRsrc() uA = 0
+#define kClearClr RGB(26, 67, B3)
+
+#define ToolboxClearRsrc() uA = 0
 
 /// @brief draws a resource.
-#define KeDrawRsrc(ImgPtr, _Height, _Width, BaseX, BaseY) \
+#define ToolboxDrawRsrc(ImgPtr, _Height, _Width, BaseX, BaseY) \
   uA = 0;                                                                   \
                                                                             \
   for (HCore::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
@@ -36,7 +38,7 @@
 
 
 /// @brief cleans a resource.
-#define KeClearZone(_Height, _Width, BaseX, BaseY) \
+#define ToolboxClearZone(_Height, _Width, BaseX, BaseY) \
                                                                             \
   for (HCore::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
     for (HCore::SizeT u = BaseY; u < _Width + BaseY; ++u) {                 \
@@ -45,15 +47,15 @@
                                          kHandoverHeader->f_GOP              \
                                              .f_PixelPerLine *              \
                                          i +                                \
-                                     4 * u))) = RGB(0, 0, 0);                 \
+                                     4 * u))) = kClearClr;                 \
     }                                                                         \
   }
 
 
-#define KeDrawZone(_Clr, _Height, _Width, BaseX, BaseY) \
+#define ToolboxDrawZone(_Clr, _Height, _Width, BaseX, BaseY) \
                                                                             \
-  for (HCore::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
-    for (HCore::SizeT u = BaseY; u < _Width + BaseY; ++u) {                 \
+  for (HCore::SizeT i = BaseX; i < _Width + BaseX; ++i) {                  \
+    for (HCore::SizeT u = BaseY; u < _Height + BaseY; ++u) {                 \
         *(((volatile HCore::UInt32*)(kHandoverHeader->f_GOP.f_The +          \
                                      4 *                                    \
                                          kHandoverHeader->f_GOP              \

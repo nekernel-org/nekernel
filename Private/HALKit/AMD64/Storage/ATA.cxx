@@ -18,8 +18,6 @@
 #include <Builtins/ATA/Defines.hxx>
 #include <ArchKit/ArchKit.hpp>
 
-#ifdef __KERNEL__
-
 using namespace HCore;
 using namespace HCore::HAL;
 
@@ -130,16 +128,16 @@ ATAInit_Retry:
   return true;
 }
 
-Void drv_ata_read(UInt32 Lba, UInt16 IO, UInt8 Master, Char* Buf,
+Void drv_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
                    SizeT SectorSz, SizeT Size) {
   UInt8 Command = (!Master ? 0xE0 : 0xF0);
 
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0xF));
   Out8(IO + ATA_REG_SEC_COUNT0, SectorSz);
 
-  Out8(IO + ATA_REG_LBA0, (UInt8)(Lba));
-  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba) >> 8);
-  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba) >> 16);
+  Out8(IO + ATA_REG_LBA0, (Lba));
+  Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
+  Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
@@ -152,16 +150,16 @@ Void drv_ata_read(UInt32 Lba, UInt16 IO, UInt8 Master, Char* Buf,
   }
 }
 
-Void drv_ata_write(UInt32 Lba, UInt16 IO, UInt8 Master, Char* Buf,
+Void drv_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
                     SizeT SectorSz, SizeT Size) {
   UInt8 Command = (!Master ? 0xE0 : 0xF0);
 
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0xF));
   Out8(IO + ATA_REG_SEC_COUNT0, SectorSz);
 
-  Out8(IO + ATA_REG_LBA0, (UInt8)(Lba));
-  Out8(IO + ATA_REG_LBA1, (UInt8)(Lba) >> 8);
-  Out8(IO + ATA_REG_LBA2, (UInt8)(Lba) >> 16);
+  Out8(IO + ATA_REG_LBA0, (Lba));
+  Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
+  Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
@@ -175,5 +173,3 @@ Void drv_ata_write(UInt32 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 
 /// @check is ATA detected?
 Boolean drv_ata_detected(Void) { return kATADetected; }
-
-#endif // ifdef __KERNEL__

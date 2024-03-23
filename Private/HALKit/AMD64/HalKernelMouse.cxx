@@ -11,22 +11,21 @@
 #include <NewKit/Defines.hpp>
 
 // forward decl.
-EXTERN_C HCore::Void _hal_draw_mouse();
+EXTERN_C HCore::Boolean _hal_draw_mouse();
 EXTERN_C HCore::Void _hal_init_mouse();
 
-STATIC HCore::Int32 kPrevX = 0;
-STATIC HCore::Int32 kPrevY = 0;
-STATIC HCore::Int32 kX = 0;
-STATIC HCore::Int32 kY = 0;
+STATIC HCore::Int32 kPrevX = 10;
+STATIC HCore::Int32 kPrevY = 10;
+STATIC HCore::Int32 kX = 10;
+STATIC HCore::Int32 kY = 10;
 STATIC HCore::Int32 kMouseCycle = 0;
 STATIC HCore::PS2MouseInterface kMousePS2;
-STATIC HCore::Int32 kMousePacket[4];
+STATIC HCore::Char kMousePacket[4] = {};
 STATIC HCore::Boolean kMousePacketReady = false;
 
-#define kPS2LeftButton 0b00000001
-#define kPS2MiddleButton 0b00000010
-#define kPS2RightButton 0b00000100
-
+#define kPS2Leftbutton 0b00000001
+#define kPS2Middlebutton 0b00000010
+#define kPS2Rightbutton 0b00000100
 #define kPS2XSign 0b00010000
 #define kPS2YSign 0b00100000
 #define kPS2XOverflow 0b01000000
@@ -38,84 +37,119 @@ Void hal_handle_mouse() {
   HCore::UInt8 data = HAL::In8(0x60);
 
   switch (kMouseCycle) {
-    case 0: {
+    case 0:
       if (kMousePacketReady) break;
-      if ((data & 0b00001000) == 0) break;
-
+      if (data & 0b00001000 == 0) break;
       kMousePacket[0] = data;
-      ++kMouseCycle;
-
+      kMouseCycle++;
       break;
-    }
-    case 1: {
+    case 1:
       if (kMousePacketReady) break;
-
       kMousePacket[1] = data;
-      ++kMouseCycle;
-
+      kMouseCycle++;
       break;
-    }
-    case 2: {
+    case 2:
       if (kMousePacketReady) break;
-
       kMousePacket[2] = data;
-
       kMousePacketReady = true;
       kMouseCycle = 0;
-
-      break;
-    }
-    default:
       break;
   }
 
   // Notify PIC controller that we're done with it's interrupt.
 
-  HCore::HAL::Out8(0xA0, 0x20);
   HCore::HAL::Out8(0x20, 0x20);
+  HCore::HAL::Out8(0xA0, 0x20);
 }
 
 /// @brief Interrupt handler for the mouse.
 EXTERN_C Void _hal_handle_mouse() { hal_handle_mouse(); }
 
+EXTERN_C Boolean _hal_left_button_pressed() { return kMousePacket[0] & kPS2Leftbutton; }
+EXTERN_C Boolean _hal_right_button_pressed() { return kMousePacket[0] & kPS2Rightbutton; }
+EXTERN_C Boolean _hal_middle_button_pressed() { return kMousePacket[0] & kPS2Middlebutton; }
+
 /// @brief Draws the kernel's mouse.
-EXTERN_C Void _hal_draw_mouse() {
-  if (!kMousePacketReady) return;
+EXTERN_C Boolean _hal_draw_mouse() {
+  if (!kMousePacketReady) return false;
 
-  bool xNeg, yNeg, xOvf, yOvf;
+  bool xNegative, yNegative, xOverflow, yOverflow;
 
-  xNeg = (kMousePacket[0] & kPS2XSign);
-  yNeg = (kMousePacket[0] & kPS2YSign);
+  if (kMousePacket[0] & kPS2XSign) {
+    xNegative = true;
+  } else
+    xNegative = false;
 
-  xOvf = (kMousePacket[0] & kPS2XOverflow);
-  yOvf = (kMousePacket[0] & kPS2YOverflow);
+  if (kMousePacket[0] & kPS2YSign) {
+    yNegative = true;
+  } else
+    yNegative = false;
 
-  kX = !xNeg ? (256 + kMousePacket[1]) : (256 - (-kMousePacket[1]));
-  kY = !yNeg ? (256 + kMousePacket[2]) : (256 - (-kMousePacket[2]));
+  if (kMousePacket[0] & kPS2XOverflow) {
+    xOverflow = true;
+  } else
+    xOverflow = false;
 
-  if (kY > kHandoverHeader->f_GOP.f_Height) {
-    kY = 0;
-    return;
+  if (kMousePacket[0] & kPS2YOverflow) {
+    yOverflow = true;
+  } else
+    yOverflow = false;
+
+  if (!xNegative) {
+    kX += kMousePacket[1];
+    if (xOverflow) {
+      kX += 255;
+    }
+  } else {
+    kMousePacket[1] = 256 - kMousePacket[1];
+    kX -= kMousePacket[1];
+    if (xOverflow) {
+      kX -= 255;
+    }
   }
 
-  if (kX > kHandoverHeader->f_GOP.f_Width) {
-    kX = 0;
-    return;
+  if (!yNegative) {
+    kY -= kMousePacket[2];
+    if (yOverflow) {
+      kY -= 255;
+    }
+  } else {
+    kMousePacket[2] = 256 - kMousePacket[2];
+    kY += kMousePacket[2];
+    if (yOverflow) {
+      kY += 255;
+    }
   }
 
-  KeClearZone(POINTER_HEIGHT, POINTER_WIDTH, kPrevX, kPrevY);
+  if (kX < 0) kX = 0;
+  if (kX > kHandoverHeader->f_GOP.f_Width - 8)
+    kX = kHandoverHeader->f_GOP.f_Width - 8;
 
-  KeInitRsrc();
-  KeDrawRsrc(Pointer, POINTER_HEIGHT, POINTER_WIDTH, kX, kY);
-  KeClearRsrc();
+  if (kY < 0) kY = 0;
+  if (kY > kHandoverHeader->f_GOP.f_Height - 16)
+    kY = kHandoverHeader->f_GOP.f_Height - 16;
+
+  ToolboxInitRsrc();
+  ToolboxClearZone(POINTER_HEIGHT, POINTER_WIDTH, kPrevX, kPrevY);
+  ToolboxDrawRsrc(Pointer, POINTER_HEIGHT, POINTER_WIDTH, kX, kY);
+  ToolboxClearRsrc();
+
+  HCore::kcout << number(kX);
+  HCore::kcout << "\r\n";
+  HCore::kcout << number(kY);
+  HCore::kcout << "\r\n";
 
   kPrevX = kX;
   kPrevY = kY;
 
   kMousePacketReady = false;
+  return true;
 }
 
 /// @brief Init kernel mouse.
-EXTERN_C Void _hal_init_mouse() {
-   kMousePS2.Init();
+EXTERN_C Void _hal_init_mouse() { 
+  kMousePS2.Init(); 
+  
+  HAL::Out8(0x21, 0b11111001);
+  HAL::Out8(0xA1, 0b11101111);
 }

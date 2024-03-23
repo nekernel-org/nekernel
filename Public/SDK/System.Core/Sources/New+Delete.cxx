@@ -14,52 +14,41 @@ enum HcAllocationKind {
 };
 
 CA_EXTERN_C PtrVoidType HcAllocateProcessHeap(ObjectPtr refObj, QWordType sz,
-                                        DWordType flags);
+                                              DWordType flags);
 CA_EXTERN_C BooleanType HcProcessHeapExists(ObjectPtr refObj, PtrVoidType ptr);
 CA_EXTERN_C QWordType HcProcessHeapSize(ObjectPtr refObj, PtrVoidType ptr);
 CA_EXTERN_C VoidType HcFreeProcessHeap(ObjectPtr refObj, PtrVoidType ptr);
 
 typedef SizeType size_t;
 
-void* operator new[](size_t sz) 
-{
-	if (sz == 0)
-		++sz;
+void* operator new[](size_t sz) {
+  if (sz == 0) ++sz;
 
-	return HcAllocateProcessHeap(kInstanceObject, sz, kStandardAllocation); 
+  return HcAllocateProcessHeap(kInstanceObject, sz, kStandardAllocation);
 }
 
-void* operator new(size_t sz) 
-{
-	if (sz == 0)
-		++sz;
+void* operator new(size_t sz) {
+  if (sz == 0) ++sz;
 
-	return HcAllocateProcessHeap(kInstanceObject, sz, kArrayAllocation);
+  return HcAllocateProcessHeap(kInstanceObject, sz, kArrayAllocation);
 }
 
-void operator delete[](void* ptr) 
-{
-    if (ptr == nullptr)
-        return;
+void operator delete[](void* ptr) {
+  if (ptr == nullptr) return;
 
-    HcFreeProcessHeap(kInstanceObject, ptr);
+  HcFreeProcessHeap(kInstanceObject, ptr);
 }
 
-void operator delete(void* ptr)
-{
-    if (ptr == nullptr)
-        return;
+void operator delete(void* ptr) {
+  if (ptr == nullptr) return;
 
-    HcFreeProcessHeap(kInstanceObject, ptr);
+  HcFreeProcessHeap(kInstanceObject, ptr);
 }
 
-void operator delete(void* ptr, size_t sz)
-{
-    if (ptr == nullptr)
-        return;
+void operator delete(void* ptr, size_t sz) {
+  if (ptr == nullptr) return;
 
-    (void)sz;
+  (void)sz;
 
-    HcFreeProcessHeap(kInstanceObject, ptr);
+  HcFreeProcessHeap(kInstanceObject, ptr);
 }
-

@@ -268,7 +268,7 @@ bool ProcessHelper::StartScheduling() {
   SizeT ret = processRef.Run();
 
   kcout << StringBuilder::FromInt(
-      "ProcessHelper::StartScheduling() Iterated over: % jobs.\r\n", ret);
+      "ProcessHelper::StartScheduling() Iterated over {%} jobs inside team.\r\n", ret);
 
   return true;
 }

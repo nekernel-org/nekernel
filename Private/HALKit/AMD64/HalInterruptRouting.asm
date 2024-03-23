@@ -105,16 +105,10 @@ IntExp   30
 
 IntNormal 31
 
-;; Mapped according to PIC remap.
-__HCR_INT_32:
-    push rax
-
-    call _hal_handle_mouse
-
-    pop rax
-    iretq
+IntNormal 32
 
 IntNormal 33
+
 IntNormal 34
 IntNormal 35
 IntNormal 36
@@ -124,11 +118,8 @@ IntNormal 39
 IntNormal 40
 IntNormal 41
 IntNormal 42
-
 IntNormal 43
-
 IntNormal 44
-
 IntNormal 45
 IntNormal 46
 IntNormal 47
@@ -168,10 +159,10 @@ IntNormal 60
 ;; this one is doing a POST for us.
 ;; testing interrupts.
 _ke_power_on_self_test:
-    int 50
-    int 50
-    int 50
-    int 50
+    int 0x32
+    int 0x32
+    int 0x32
+    int 0x32
 
     ret
 

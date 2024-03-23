@@ -183,4 +183,4 @@ EXTERN_C void hal_load_gdt(HCore::HAL::RegisterGDT ptr);
 
 /// @brief Maximum size of the IDT.
 #define kKernelIdtSize        0x100
-#define kKernelInterruptId    50
+#define kKernelInterruptId    0x32

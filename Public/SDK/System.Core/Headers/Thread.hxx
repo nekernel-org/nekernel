@@ -13,10 +13,15 @@
 
 #include <System.Core/Headers/Defines.hxx>
 
-/// @brief Thread Information Block, which holds information about the running thread.
+namespace System {
+/// @brief Thread Information Block, which holds information about the running
+/// thread.
 typedef PtrVoidType PtrThread;
 
 /// @brief Main application thread.
 CA_EXTERN_C PtrThread kMainThread;
+
+class ThreadInterface;
+}  // namespace System
 
 #endif  // __THREAD_API__

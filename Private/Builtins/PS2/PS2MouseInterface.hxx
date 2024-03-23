@@ -27,39 +27,30 @@ class PS2MouseInterface final {
   HCORE_COPY_DEFAULT(PS2MouseInterface);
 
  public:
+  /// @brief Enables PS2 mouse for kernel.
+  /// @return 
   Void Init() noexcept {
     HAL::rt_cli();
 
-    HCore::kcout << "HCoreKrnl.exe: Enabling PS/2 mouse...\r\n";
-
-    this->Write(0xFF);
-
-    HAL::Out8(0x64, 0xA8);
+    HAL::Out8(0x64, 0xA8); // enabling the auxiliary device - mouse
 
     this->Wait();
-
-    HAL::Out8(0x64, 0x20);
-
+    HAL::Out8(0x64, 0x20); // tells the keyboard controller that we want to send a command to the mouse
     this->WaitInput();
-
-    UInt8 dataStatus = HAL::In8(0x60);
-
-    dataStatus |= 0b10;
+    
+    UInt8 status = HAL::In8(0x60);
+    status |= 0b10;
 
     this->Wait();
-
-    HAL::Out8(0x60, dataStatus);
+    HAL::Out8(0x64, 0x60);
+    this->Wait();
+    HAL::Out8(0x60, status); // setting the correct bit is the "compaq" status byte
 
     this->Write(0xF6);
-    auto f6Dat = this->Read();
+    this->Read();
 
     this->Write(0xF4);
-    auto f4Dat = this->Read();
-
-    HCore::kcout << "HCoreKrnl.exe: PS/2 mouse is OK: " << hex_number(f6Dat);
-    HCore::kcout << ", " << hex_number(f4Dat) << end_line();
-    
-    HAL::Out8(0x64, 0xAD);
+    this->Read();
 
     HAL::rt_sti();
   }
@@ -69,7 +60,7 @@ class PS2MouseInterface final {
     UInt64 timeout = 100000;
 
     while (timeout) {
-      if ((HAL::In8(0x64) & 0x1) == 0x0) {
+      if ((HAL::In8(0x64) & 0x1)) {
         HCore::kcout << "NewKernel.exe: Wait: OK\r\n";
         return true;
       }

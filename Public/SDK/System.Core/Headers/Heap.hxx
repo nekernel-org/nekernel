@@ -9,7 +9,8 @@
 #include <System.Core/Headers/Defines.hxx>
 
 namespace System {
-class MemoryException;
+class HeapException;
+class HeapInterface;
 
 typedef PtrVoidType PtrHeapType;
 

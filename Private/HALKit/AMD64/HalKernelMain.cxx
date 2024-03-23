@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
+#include <Builtins/Toolbox/Toolbox.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
@@ -19,10 +20,6 @@
 ///! @brief Disk contains HCore files.
 #define kInstalledMedia 0xDD
 
-EXTERN_C HCore::Void _hal_init_mouse();
-EXTERN_C HCore::Void _hal_draw_mouse();
-EXTERN_C HCore::Void _hal_handle_mouse();
-
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
 
 EXTERN_C void RuntimeMain(
@@ -31,9 +28,9 @@ EXTERN_C void RuntimeMain(
 
   /// Setup kernel globals.
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
-  kKernelVirtualStart =
-      reinterpret_cast<HCore::VoidPtr>(reinterpret_cast<HCore::UIntPtr>(
-          HandoverHeader->f_VirtualStart) + kVirtualAddressStartOffset);
+  kKernelVirtualStart = reinterpret_cast<HCore::VoidPtr>(
+      reinterpret_cast<HCore::UIntPtr>(HandoverHeader->f_VirtualStart) +
+      kVirtualAddressStartOffset);
 
   kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
@@ -66,14 +63,6 @@ EXTERN_C void RuntimeMain(
   HCore::HAL::IDTLoader idt;
   idt.Load(idtBase);
 
-  KeInitRsrc();
-
-  KeDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH,
-             ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2),
-             ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
-
-  KeClearRsrc();
-
   /// START POST
 
   HCore::HAL::Detail::_ke_power_on_self_test();
@@ -86,14 +75,20 @@ EXTERN_C void RuntimeMain(
 
   /// We already have an install of HCore.
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
-    /// TODO: Parse system configuration.
+    ToolboxInitRsrc();
+
+    ToolboxDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH,
+               ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2),
+               ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
+
+    ToolboxClearRsrc();
   } else {
     /// TODO: Install hcore on host.
     _hal_init_mouse();
 
-    while (true) {
-      _hal_draw_mouse();
-    }
+    ToolboxDrawZone(kClearClr, kHandoverHeader->f_GOP.f_Height, kHandoverHeader->f_GOP.f_Width, 0, 0);
+
+    TOOLBOX_LOOP() { _hal_draw_mouse(); }
   }
 
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

@@ -162,6 +162,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
       writer.Write(L"NewBoot.exe: Installing NewKernel and it's components...\r\n");
 
+      ST->ConOut->ClearScreen(ST->ConOut);
+
       EFI::ExitBootServices(MapKey, ImageHandle);
 
       Main(handoverHdrPtr);
@@ -171,6 +173,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       handoverHdrPtr->f_Bootloader = 0xDD;  // System present
 
       writer.Write(L"NewBoot.exe: Running NewKernel...\r\n");
+
+      ST->ConOut->ClearScreen(ST->ConOut);
 
       EFI::ExitBootServices(MapKey, ImageHandle);
 
