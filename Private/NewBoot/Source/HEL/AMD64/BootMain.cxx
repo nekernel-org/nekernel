@@ -17,14 +17,21 @@
 
 #define kMaxBufSize 256
 
+/// @brief kernel main entrypoint/
+/// @param handoverInfo 
 EXTERN_C void Main(HEL::HandoverInformationHeader* handoverInfo);
 
+/// @brief Bootloader main type.
 typedef void (*bt_main_type)(HEL::HandoverInformationHeader* handoverInfo);
 
+/// @brief Main EFI entrypoint.
+/// @param ImageHandle Handle of this image.
+/// @param SystemTable The system table of it.
+/// @return 
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
-  InitEFI(SystemTable);  // Init the efi library.
-  InitGOP();             // Quick Toolkit for UI
+  InitEFI(SystemTable);  // Init the EFI library.
+  InitGOP();             // Init the GOP.
   
   BTextWriter writer;
   /// Splash screen stuff
@@ -39,7 +46,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   BDeviceATA ataDrv;
 
   if (ataDrv) {
-    Char namePart[kEPMNameLength] = { "HCoreSystemPartition" };
+    Char namePart[kEPMNameLength] = { "BootBlock" };
     boot_try_write_partition_map(namePart, kEPMNameLength, &ataDrv);
   }
 
@@ -55,7 +62,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     // This will tell us about the current kernel.
     BFileReader systemManifest(L".MANIFEST", ImageHandle);
 
-    systemManifest.Size(1);
+    systemManifest.Size(kMaxBufSize);
     systemManifest.ReadAll();
 
     UInt32 MapKey = 0;
