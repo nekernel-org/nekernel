@@ -21,7 +21,7 @@
 
 EXTERN_C HCore::Void _hal_init_mouse();
 EXTERN_C HCore::Void _hal_draw_mouse();
-EXTERN_C HCore::Void _hal_mouse_handler();
+EXTERN_C HCore::Void _hal_handle_mouse();
 
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
 

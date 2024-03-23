@@ -5,7 +5,7 @@
 #ifndef __ODF__
 #define __ODF__
 
-#include <System.Core/Headers/Defs.hxx>
+#include <System.Core/Headers/Defines.hxx>
 
 /**
  * @brief Open Document Format

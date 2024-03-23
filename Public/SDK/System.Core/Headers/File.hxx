@@ -7,7 +7,7 @@
 #ifndef __FILE_API__
 #define __FILE_API__
 
-#include <System.Core/Headers/Defs.hxx>
+#include <System.Core/Headers/Defines.hxx>
 
 namespace System {
 class FileInterface;

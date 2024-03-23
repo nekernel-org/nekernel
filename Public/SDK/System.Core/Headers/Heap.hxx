@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <System.Core/Headers/Defs.hxx>
+#include <System.Core/Headers/Defines.hxx>
 
 namespace System {
 class MemoryException;

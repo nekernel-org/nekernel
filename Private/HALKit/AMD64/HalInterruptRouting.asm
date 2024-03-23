@@ -36,7 +36,7 @@ global _ke_power_on_self_test
 global ke_handle_irq
 global kInterruptVectorTable
 
-extern _hal_mouse_handler
+extern _hal_handle_mouse
 extern idt_handle_gpf
 extern idt_handle_pf
 extern ke_io_print
@@ -109,7 +109,7 @@ IntNormal 31
 __HCR_INT_32:
     push rax
 
-    call _hal_mouse_handler
+    call _hal_handle_mouse
 
     pop rax
     iretq

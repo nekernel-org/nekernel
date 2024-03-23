@@ -14,8 +14,6 @@
 EXTERN_C HCore::Void _hal_draw_mouse();
 EXTERN_C HCore::Void _hal_init_mouse();
 
-EXTERN_C void ke_io_print(const char* bytes);
-
 STATIC HCore::Int32 kPrevX = 0;
 STATIC HCore::Int32 kPrevY = 0;
 STATIC HCore::Int32 kX = 0;
@@ -78,7 +76,7 @@ Void hal_handle_mouse() {
 }
 
 /// @brief Interrupt handler for the mouse.
-EXTERN_C Void _hal_mouse_handler() { hal_handle_mouse(); }
+EXTERN_C Void _hal_handle_mouse() { hal_handle_mouse(); }
 
 /// @brief Draws the kernel's mouse.
 EXTERN_C Void _hal_draw_mouse() {
