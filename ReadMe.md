@@ -1,4 +1,4 @@
-# HCore (codename: SuperTrouper)
+# NewKernel+NewBoot (codename: HCore)
 
 ![Kernel](Meta/HCore.svg)
 
