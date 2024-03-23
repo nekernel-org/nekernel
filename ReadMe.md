@@ -2,11 +2,11 @@
 
 ![Kernel](Meta/HCore.svg)
 
-## MicroKernel and Executives source code.
+## MicroKernel, bootloader and servers resides here.
 
 You need:
 
-- The GCC toolchain (MinGW) for the kernel and bootloader.
+- MinGW for the kernel and bootloader.
 - HintKit for Compilation check.
 - Netwide Assembler to output COFF object code.
 
