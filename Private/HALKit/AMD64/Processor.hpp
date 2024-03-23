@@ -30,6 +30,7 @@
 #define kTrapGate 0xEF
 #define kTaskGate 0b10001100
 #define kGdtCodeSelector 0x08
+#define kVirtualAddressStartOffset 0x100
 
 namespace HCore {
 namespace Detail::AMD64 {
@@ -182,4 +183,4 @@ EXTERN_C void hal_load_gdt(HCore::HAL::RegisterGDT ptr);
 
 /// @brief Maximum size of the IDT.
 #define kKernelIdtSize        0x100
-#define kKernelInterruptId    0x21
+#define kKernelInterruptId    50

@@ -20,8 +20,6 @@
 #error Unknown architecture
 #endif
 
-#define kVirtualAddressStartOffset 0x100
-
 namespace HCore {
 constexpr static inline SSizeT rt_hash_seed(const char *seed, int mul) {
   SSizeT hash = 0;

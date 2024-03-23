@@ -8,19 +8,20 @@
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
+#include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hpp>
 #include <KernelKit/Rsrc/Splash.rsrc>
 #include <KernelKit/Rsrc/Util.hxx>
-#include <NewKit/Json.hpp>
-#include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/UserHeap.hpp>
+#include <NewKit/Json.hpp>
 
 ///! @brief Disk contains HCore files.
 #define kInstalledMedia 0xDD
 
-EXTERN_C HCore::Void _hal_draw_mouse();
 EXTERN_C HCore::Void _hal_init_mouse();
+EXTERN_C HCore::Void _hal_draw_mouse();
+EXTERN_C HCore::Void _hal_mouse_handler();
 
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
 
@@ -30,7 +31,9 @@ EXTERN_C void RuntimeMain(
 
   /// Setup kernel globals.
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
-  kKernelVirtualStart = (HandoverHeader->f_VirtualStart + kVirtualAddressStartOffset);
+  kKernelVirtualStart =
+      reinterpret_cast<HCore::VoidPtr>(reinterpret_cast<HCore::UIntPtr>(
+          HandoverHeader->f_VirtualStart) + kVirtualAddressStartOffset);
 
   kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;

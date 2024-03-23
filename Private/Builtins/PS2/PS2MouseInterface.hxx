@@ -28,7 +28,9 @@ class PS2MouseInterface final {
 
  public:
   Void Init() noexcept {
-    HCore::kcout << "NewKernel.exe: Enabling PS/2 mouse...\r\n";
+    HAL::rt_cli();
+
+    HCore::kcout << "HCoreKrnl.exe: Enabling PS/2 mouse...\r\n";
 
     this->Write(0xFF);
 
@@ -54,16 +56,20 @@ class PS2MouseInterface final {
     this->Write(0xF4);
     auto f4Dat = this->Read();
 
-    HCore::kcout << "NewKernel.exe: PS/2 mouse is OK: " << hex_number(f6Dat);
+    HCore::kcout << "HCoreKrnl.exe: PS/2 mouse is OK: " << hex_number(f6Dat);
     HCore::kcout << ", " << hex_number(f4Dat) << end_line();
+    
+    HAL::Out8(0x64, 0xAD);
+
+    HAL::rt_sti();
   }
 
-  private:
+ public:
   Bool WaitInput() noexcept {
     UInt64 timeout = 100000;
 
     while (timeout) {
-      if ((HAL::In8(0x64) & 0x1)) {
+      if ((HAL::In8(0x64) & 0x1) == 0x0) {
         HCore::kcout << "NewKernel.exe: Wait: OK\r\n";
         return true;
       }
@@ -94,11 +100,10 @@ class PS2MouseInterface final {
   }
 
   Void Write(UInt8 val) {
-    this->Wait();
     HAL::Out8(0x64, 0xD4);
     this->Wait();
-
     HAL::Out8(0x60, val);
+    this->Wait();
   }
 
   UInt8 Read() {

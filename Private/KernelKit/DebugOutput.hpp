@@ -45,7 +45,7 @@ class TerminalDevice final : public DeviceInterface<const Char *> {
 
 inline TerminalDevice end_line() {
   TerminalDevice selfTerm = TerminalDevice::Shared();
-  selfTerm << "\n";
+  selfTerm << "\r\n";
   return selfTerm;
 }
 
@@ -56,6 +56,30 @@ inline TerminalDevice carriage_return() {
 }
 
 namespace Detail {
+inline TerminalDevice _write_number(const Long &x, TerminalDevice& term) {
+  int y = x / 10;
+  int h = x % 10;
+
+  if (y) _write_number(y, term);
+
+  /* fail if the number is not base-10 */
+  if (h > 9) {
+    _write_number('?', term);
+    return term;
+  }
+
+  if (y < 0) y = -y;
+
+  const char NUMBERS[11] = "0123456789";
+
+  Char buf[2];
+  buf[0] = NUMBERS[h];
+  buf[1] = 0;
+
+  term << buf;
+  return term;
+}
+
 inline TerminalDevice _write_number_hex(const Long &x, TerminalDevice& term) {
   int y = x / 16;
   int h = x % 16;
@@ -70,7 +94,7 @@ inline TerminalDevice _write_number_hex(const Long &x, TerminalDevice& term) {
 
   if (y < 0) y = -y;
 
-  const char NUMBERS[17] = "0123456789ABCDEF";
+  const char NUMBERS[17] = "0123456789";
 
   Char buf[2];
   buf[0] = NUMBERS[h];
@@ -86,6 +110,14 @@ inline TerminalDevice hex_number(const Long &x) {
 
   selfTerm << "0x";
   Detail::_write_number_hex(x, selfTerm);
+
+  return selfTerm;
+}
+
+inline TerminalDevice number(const Long &x) {
+  TerminalDevice selfTerm = TerminalDevice::Shared();
+
+  Detail::_write_number(x, selfTerm);
 
   return selfTerm;
 }

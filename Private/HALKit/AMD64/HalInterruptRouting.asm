@@ -104,9 +104,38 @@ IntNormal 29
 IntExp   30
 
 IntNormal 31
-IntNormal 32
 
-__HCR_INT_33:
+;; Mapped according to PIC remap.
+__HCR_INT_32:
+    push rax
+
+    call _hal_mouse_handler
+
+    pop rax
+    iretq
+
+IntNormal 33
+IntNormal 34
+IntNormal 35
+IntNormal 36
+IntNormal 37
+IntNormal 38
+IntNormal 39
+IntNormal 40
+IntNormal 41
+IntNormal 42
+
+IntNormal 43
+
+IntNormal 44
+
+IntNormal 45
+IntNormal 46
+IntNormal 47
+IntNormal 48
+IntNormal 49
+
+__HCR_INT_50:
     cli
 
     push rax
@@ -119,38 +148,6 @@ __HCR_INT_33:
     sti
     iretq
 
-IntNormal 34
-IntNormal 35
-IntNormal 36
-IntNormal 37
-IntNormal 38
-IntNormal 39
-IntNormal 40
-IntNormal 41
-IntNormal 42
-IntNormal 43
-
-;; Mapped according to PIC remap.
-__HCR_INT_44:
-    cli
-
-    push rax
-
-    call _hal_mouse_handler
-
-    pop rax
-
-    sti
-    iretq
-
-
-IntNormal 45
-
-IntNormal 46
-IntNormal 47
-IntNormal 48
-IntNormal 49
-IntNormal 50
 IntNormal 51
 IntNormal 52
 IntNormal 53
@@ -171,10 +168,10 @@ IntNormal 60
 ;; this one is doing a POST for us.
 ;; testing interrupts.
 _ke_power_on_self_test:
-    int 0x21
-    int 0x21
-    int 0x21
-    int 0x21
+    int 50
+    int 50
+    int 50
+    int 50
 
     ret
 

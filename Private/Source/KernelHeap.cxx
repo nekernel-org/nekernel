@@ -66,7 +66,7 @@ Int32 ke_delete_ke_heap(VoidPtr ptr) {
   if (kHeapCount < 1) return -kErrorInternal;
 
   Detail::HeapInformationBlockPtr virtualAddress =
-      reinterpret_cast<Detail::HeapInformationBlockPtr>(ptr -
+      reinterpret_cast<Detail::HeapInformationBlockPtr>((UIntPtr)ptr -
       sizeof(Detail::HeapInformationBlock));
 
   if (virtualAddress && virtualAddress->hMagic == kHeapMagic) {
@@ -98,7 +98,7 @@ Boolean ke_is_valid_ptr(VoidPtr ptr) {
 
   if (ptr) {
     Detail::HeapInformationBlockPtr virtualAddress =
-        reinterpret_cast<Detail::HeapInformationBlockPtr>(ptr -
+        reinterpret_cast<Detail::HeapInformationBlockPtr>((UIntPtr)ptr -
       sizeof(Detail::HeapInformationBlock));
 
     if (virtualAddress->hPresent && virtualAddress->hMagic == kHeapMagic) {

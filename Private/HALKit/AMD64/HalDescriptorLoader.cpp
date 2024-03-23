@@ -15,35 +15,21 @@ STATIC ::HCore::Detail::AMD64::InterruptDescriptorAMD64
     kInterruptVectorTable[kKernelIdtSize];
 
 STATIC Void RemapPIC(Void) noexcept {
-  UInt8 a1, a2;
-
-  a1 = HAL::In8(0x21);  // save masks
-  a2 = HAL::In8(0xA1);
-
   // Remap PIC.
   HAL::Out8(0x20, 0x10 | 0x01);
-  HAL::rt_wait_400ns();
   HAL::Out8(0xA0, 0x10 | 0x01);
-  HAL::rt_wait_400ns();
 
-  HAL::Out8(0x21, 0x28);
-  HAL::rt_wait_400ns();
-  HAL::Out8(0xA1, 0x30);
+  HAL::Out8(0x21, 32);
+  HAL::Out8(0xA1, 40);
 
-  HAL::rt_wait_400ns();
+  HAL::Out8(0x21, 4);
+  HAL::Out8(0xA1, 2);
 
-  HAL::Out8(0x21, 0x04);
-  HAL::rt_wait_400ns();
-  HAL::Out8(0xA1, 0x02);
-
-  HAL::rt_wait_400ns();
   HAL::Out8(0x21, 0x01);
-  HAL::rt_wait_400ns();
   HAL::Out8(0xA1, 0x01);
-  HAL::rt_wait_400ns();
-  HAL::Out8(0x21, a1);
-  HAL::rt_wait_400ns();
-  HAL::Out8(0xA1, a2);
+  
+  HAL::Out8(0x21, 0x00);
+  HAL::Out8(0xA1, 0x00);
 }
 } // namespace Detail
 
@@ -64,7 +50,9 @@ Void IDTLoader::Load(Register64 &idt) {
 
   MUST_PASS(baseIdt);
 
-  for (UInt16 i = 0; i < kKernelIdtSize; i++) {
+  Detail::RemapPIC();
+  
+  for (UInt16 i = 0; i < kKernelIdtSize; ++i) {
     MUST_PASS(baseIdt[i]);
 
     Detail::kInterruptVectorTable[i].Selector = kGdtCodeSelector;
@@ -82,8 +70,6 @@ Void IDTLoader::Load(Register64 &idt) {
                   (kKernelIdtSize - 1);
 
   hal_load_idt(Detail::kRegIdt);
-
-  Detail::RemapPIC();
 }
 
 void GDTLoader::Load(Ref<RegisterGDT> &gdt) { GDTLoader::Load(gdt.Leak()); }

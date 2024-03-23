@@ -69,6 +69,11 @@ void ke_stop(const HCore::Int &id) {
       kcout << "*** WHAT: CATASROPHIC FAILURE! *** \r\n";
       break;
     }
+    case RUNTIME_CHECK_FAILED: {
+      kcout << "*** CAUSE: RUNTIME_CHECK_FAILED *** \r\n";
+      kcout << "*** WHAT: ASSERTION FAILED! *** \r\n";
+      break;
+    }
     default: {
       kcout << "*** CAUSE: RUNTIME_CHECK_GENERIC *** \r\n";
       break;
@@ -86,8 +91,8 @@ void ke_stop(const HCore::Int &id) {
 void ke_runtime_check(bool expr, const char *file, const char *line) {
   if (!expr) {
 #ifdef __DEBUG__
-    kcout << "Krnl: File: " << file << "\n";
-    kcout << "Krnl: Line: " << line << "\n";
+    kcout << "NewKernel: File: " << file << "\n";
+    kcout << "NewKernel: Line: " << line << "\n";
 
 #endif  // __DEBUG__
 

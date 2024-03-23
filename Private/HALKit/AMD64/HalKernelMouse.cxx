@@ -10,6 +10,12 @@
 #include <KernelKit/Rsrc/Util.hxx>
 #include <NewKit/Defines.hpp>
 
+// forward decl.
+EXTERN_C HCore::Void _hal_draw_mouse();
+EXTERN_C HCore::Void _hal_init_mouse();
+
+EXTERN_C void ke_io_print(const char* bytes);
+
 STATIC HCore::Int32 kPrevX = 0;
 STATIC HCore::Int32 kPrevY = 0;
 STATIC HCore::Int32 kX = 0;
@@ -30,10 +36,8 @@ STATIC HCore::Boolean kMousePacketReady = false;
 
 using namespace HCore;
 
-/// @brief Interrupt handler for the mouse.
-/// @return
-EXTERN_C Void _hal_mouse_handler() {
-  HCore::UInt8 data = HCore::HAL::In8(0x60);
+Void hal_handle_mouse() {
+  HCore::UInt8 data = HAL::In8(0x60);
 
   switch (kMouseCycle) {
     case 0: {
@@ -57,7 +61,7 @@ EXTERN_C Void _hal_mouse_handler() {
       if (kMousePacketReady) break;
 
       kMousePacket[2] = data;
-      ++kMouseCycle;
+
       kMousePacketReady = true;
       kMouseCycle = 0;
 
@@ -69,12 +73,14 @@ EXTERN_C Void _hal_mouse_handler() {
 
   // Notify PIC controller that we're done with it's interrupt.
 
-  HCore::HAL::Out8(0x20, 0x20);
   HCore::HAL::Out8(0xA0, 0x20);
+  HCore::HAL::Out8(0x20, 0x20);
 }
 
+/// @brief Interrupt handler for the mouse.
+EXTERN_C Void _hal_mouse_handler() { hal_handle_mouse(); }
+
 /// @brief Draws the kernel's mouse.
-/// @return void
 EXTERN_C Void _hal_draw_mouse() {
   if (!kMousePacketReady) return;
 
@@ -86,23 +92,16 @@ EXTERN_C Void _hal_draw_mouse() {
   xOvf = (kMousePacket[0] & kPS2XOverflow);
   yOvf = (kMousePacket[0] & kPS2YOverflow);
 
-  kX += xNeg ? (256 - kMousePacket[1]) : (256 - (-kMousePacket[1]));
-  kY += yNeg ? (256 - kMousePacket[2]) : (256 - (-kMousePacket[2]));
-  ;
-
-  if (xOvf) {
-    kX += xNeg ? 255 : -255;
-  }
-
-  if (yOvf) {
-    kY += yNeg ? 255 : -255;
-  }
+  kX = !xNeg ? (256 + kMousePacket[1]) : (256 - (-kMousePacket[1]));
+  kY = !yNeg ? (256 + kMousePacket[2]) : (256 - (-kMousePacket[2]));
 
   if (kY > kHandoverHeader->f_GOP.f_Height) {
+    kY = 0;
     return;
   }
 
   if (kX > kHandoverHeader->f_GOP.f_Width) {
+    kX = 0;
     return;
   }
 
@@ -112,11 +111,13 @@ EXTERN_C Void _hal_draw_mouse() {
   KeDrawRsrc(Pointer, POINTER_HEIGHT, POINTER_WIDTH, kX, kY);
   KeClearRsrc();
 
-  kPrevX = kMousePacket[1];
-  kPrevY = kMousePacket[2];
+  kPrevX = kX;
+  kPrevY = kY;
 
   kMousePacketReady = false;
 }
 
 /// @brief Init kernel mouse.
-EXTERN_C Void _hal_init_mouse() { kMousePS2.Init(); }
+EXTERN_C Void _hal_init_mouse() {
+   kMousePS2.Init();
+}
