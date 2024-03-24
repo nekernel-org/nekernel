@@ -37,7 +37,7 @@ void ke_stop(const HCore::Int &id) {
     }
     case RUNTIME_CHECK_POINTER: {
       kcout << "*** CAUSE: RUNTIME_CHECK_POINTER *** \r\n";
-      kcout << "*** WHAT: HEAP ERROR, UNSTABLE STATE. *** \r\n";
+      kcout << "*** WHAT: HEAP CRC32 ERROR, UNSTABLE STATE. *** \r\n";
       break;
     }
     case RUNTIME_CHECK_BAD_BEHAVIOR: {

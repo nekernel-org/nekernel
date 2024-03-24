@@ -3,7 +3,7 @@
 ;; *
 ;; * 	Copyright Mahrouss Logic, all rights reserved.
 ;; *
-;; *    File: HalInterruptRouting.asm
+;; *    File: HalInterruptAPI.asm
 ;; *    Purpose: Interrupt routing, redirect raw interrupts into their handlers.
 ;; *
 ;; *    ---------------------------------------------------
@@ -129,13 +129,6 @@ IntNormal 49
 __HCR_INT_50:
     cli
 
-    push rax
-
-    mov rcx, kSystemCallLabel
-    call ke_io_print
-
-    pop rax
-
     sti
     iretq
 
@@ -198,6 +191,3 @@ kInterruptVectorTable:
         dq __HCR_INT_%+i
     %assign i i+1
     %endrep
-
-kSystemCallLabel:
-    db "NewKernel.exe: SystemCall: Enter SCM.", 0xa, 0xd, 0

@@ -8,7 +8,7 @@
  * @file Handover.hxx
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
  * @brief The handover boot protocol.
- * @version 0.2
+ * @version 0.3
  * @date 2024-02-23
  *
  * @copyright Copyright (c) 2024, Mahrouss Logic
@@ -68,7 +68,8 @@ struct HandoverInformationHeader {
   WideChar f_FirmwareVendorName[32];
   SizeT f_FirmwareVendorLen;
   struct {
-    VoidPtr f_VendorTable;
+    VoidPtr f_SmBios;
+    VoidPtr f_RsdPtr;
   } f_HardwareTables;
   struct {
     UIntPtr f_The;

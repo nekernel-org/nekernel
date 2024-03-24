@@ -29,7 +29,7 @@ MOVEALL=./MoveAll.sh
 h-core-amd64-pc: clean
 	$(CC) $(CCFLAGS) $(DEBUG) Source/*.cxx HALKit/AMD64/Storage/*.cxx HALKit/AMD64/PCI/*.cxx Source/Network/*.cxx\
 		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
-	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptRouting.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalNewBoot.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInstallTIB.asm

@@ -61,14 +61,12 @@ class PS2MouseInterface final {
 
     while (timeout) {
       if ((HAL::In8(0x64) & 0x1)) {
-        HCore::kcout << "NewKernel.exe: Wait: OK\r\n";
         return true;
       }
 
       --timeout;
     }  // wait until we can read
 
-    HCore::kcout << "NewKernel.exe: Wait: Timeout\r\n";
     // return the ack bit.
     return false;
   }
@@ -78,14 +76,12 @@ class PS2MouseInterface final {
 
     while (timeout) {
       if ((HAL::In8(0x64) & 0b10) == 0) {
-        HCore::kcout << "NewKernel.exe: Wait: OK\r\n";
         return true;
       }
 
       --timeout;
     }  // wait until we can read
 
-    HCore::kcout << "NewKernel.exe: Wait: Timeout\r\n";
     // return the ack bit.
     return false;
   }

@@ -145,7 +145,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
           vendorTable[5] == 'T' &&
           vendorTable[6] == 'R' &&
           vendorTable[7] == ' ') {
-        handoverHdrPtr->f_HardwareTables.f_VendorTable = (VoidPtr)vendorTable;
+        handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
         writer.Write(L"NewBoot.exe: Found ACPI's 'RSD PTR' table on this machine.").Write(L"\r\n");
 
         break;

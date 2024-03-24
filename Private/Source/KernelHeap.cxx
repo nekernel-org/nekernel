@@ -5,10 +5,10 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/KernelHeap.hpp>
-#include <NewKit/PageManager.hpp>
 #include <KernelKit/HError.hpp>
+#include <KernelKit/KernelHeap.hpp>
 #include <NewKit/Crc32.hpp>
+#include <NewKit/PageManager.hpp>
 
 //! @file KernelHeap.cxx
 //! @brief Kernel allocator.
@@ -60,14 +60,14 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 }
 
 /// @brief Declare pointer as free.
-/// @param ptr the pointer.
+/// @param heapPtr the pointer.
 /// @return
-Int32 ke_delete_ke_heap(VoidPtr ptr) {
+Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
   if (kHeapCount < 1) return -kErrorInternal;
 
   Detail::HeapInformationBlockPtr virtualAddress =
-      reinterpret_cast<Detail::HeapInformationBlockPtr>((UIntPtr)ptr -
-      sizeof(Detail::HeapInformationBlock));
+      reinterpret_cast<Detail::HeapInformationBlockPtr>(
+          (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
   if (virtualAddress && virtualAddress->hMagic == kHeapMagic) {
     if (virtualAddress->hCRC32 != 0) {
@@ -91,17 +91,35 @@ Int32 ke_delete_ke_heap(VoidPtr ptr) {
 }
 
 /// @brief Check if pointer is a valid kernel pointer.
-/// @param ptr the pointer
+/// @param heapPtr the pointer
 /// @return if it exists.
-Boolean ke_is_valid_ptr(VoidPtr ptr) {
+Boolean ke_is_valid_heap(VoidPtr heapPtr) {
   if (kHeapCount < 1) return false;
 
-  if (ptr) {
+  if (heapPtr) {
     Detail::HeapInformationBlockPtr virtualAddress =
-        reinterpret_cast<Detail::HeapInformationBlockPtr>((UIntPtr)ptr -
-      sizeof(Detail::HeapInformationBlock));
+        reinterpret_cast<Detail::HeapInformationBlockPtr>(
+            (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
     if (virtualAddress->hPresent && virtualAddress->hMagic == kHeapMagic) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/// @brief Protect the heap pointer with a CRC32.
+/// @param heapPtr 
+/// @return 
+Boolean ke_protect_ke_heap(VoidPtr heapPtr) {
+  if (heapPtr) {
+    Detail::HeapInformationBlockPtr virtualAddress =
+        reinterpret_cast<Detail::HeapInformationBlockPtr>(
+            (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
+
+    if (virtualAddress->hPresent && virtualAddress->hMagic == kHeapMagic) {
+      virtualAddress->hCRC32 = ke_calculate_crc32((Char*)heapPtr, virtualAddress->hSizeAddress);
       return true;
     }
   }

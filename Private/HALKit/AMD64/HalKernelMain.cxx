@@ -17,7 +17,7 @@
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
 
-///! @brief Disk contains HCore files.
+///! @brief Disk already contains an installation.
 #define kInstalledMedia 0xDD
 
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
@@ -70,26 +70,33 @@ EXTERN_C void RuntimeMain(
   /// END POST
 
   /// Mounts a NewFS block.
-  HCore::FilesystemManagerInterface::Mount(new HCore::NewFilesystemManager());
-  HCore::ke_delete_ke_heap(HCore::FilesystemManagerInterface::Unmount());
+  HCore::NewFilesystemManager* newFS = new HCore::NewFilesystemManager();
+  HCore::ke_protect_ke_heap(newFS);
+
+  HCore::FilesystemManagerInterface::Mount(newFS);
 
   /// We already have an install of HCore.
   if (HandoverHeader->f_Bootloader == kInstalledMedia) {
     ToolboxInitRsrc();
 
-    ToolboxDrawRsrc(MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH,
-               ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2),
-               ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
+    ToolboxDrawRsrc(
+        MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH,
+        ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2),
+        ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
 
     ToolboxClearRsrc();
+
+    TOOLBOX_LOOP() {}
   } else {
     /// TODO: Install hcore on host.
     _hal_init_mouse();
 
-    ToolboxDrawZone(kClearClr, kHandoverHeader->f_GOP.f_Height, kHandoverHeader->f_GOP.f_Width, 0, 0);
+    ToolboxDrawZone(kClearClr, kHandoverHeader->f_GOP.f_Height,
+                    kHandoverHeader->f_GOP.f_Width, 0, 0);
 
     TOOLBOX_LOOP() { _hal_draw_mouse(); }
   }
 
+  HCore::ke_delete_ke_heap(newFS);
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

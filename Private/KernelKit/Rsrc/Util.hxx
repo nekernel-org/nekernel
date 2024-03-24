@@ -6,7 +6,7 @@
 
 #define ToolboxInitRsrc() HCore::SizeT uA = 0
 
-#define kClearClr RGB(26, 67, B3)
+#define kClearClr RGB(00, 00, 00)
 
 #define ToolboxClearRsrc() uA = 0
 

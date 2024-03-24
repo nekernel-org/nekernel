@@ -50,6 +50,7 @@ enum class AddressSpace : UInt8 {
   Pci = 2,
   Controller = 3,
   SmBus = 4,
+  Count = 5,
   Invalid = 0xFF,
 };
 
