@@ -15,6 +15,4 @@ EXTERN_C HCore::Boolean _hal_left_button_pressed();
 EXTERN_C HCore::Boolean _hal_middle_button_pressed();
 EXTERN_C HCore::Boolean _hal_right_button_pressed();
 
-#define TOOLBOX_LOOP() while (true)
-
 #include <KernelKit/Rsrc/Util.hxx>

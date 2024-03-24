@@ -18,7 +18,7 @@ Void boot_try_write_partition_map(const Char* namePart, SizeT namePartLength,
   if (namePartLength > kEPMNameLength || !namePart) return;
   if (!ataInterface) return;
 
-  ataInterface->Leak().mBase = kEPMStartPartition;
+  ataInterface->Leak().mBase = 0;
   ataInterface->Leak().mSize = 512;
 
   Char buf[512] = {0};
@@ -27,11 +27,11 @@ Void boot_try_write_partition_map(const Char* namePart, SizeT namePartLength,
 
   BTextWriter writer;
 
-  writer.Write(L"NewBoot.exe: Reading EPM boot block...\r\n");
+  writer.Write(L"NewBoot.exe: Checking for an EPM BootBlock...\r\n");
 
   for (SizeT i = 0; i < kEPMMagicLength; i++) {
     if (buf[i] != kEPMMagic[i]) {
-      writer.Write(L"NewBoot.exe: Writing EPM boot block...\r\n");
+      writer.Write(L"NewBoot.exe: Writing an EPM BootBlock...\r\n");
 
       BootBlockType* bootBlock = (BootBlockType*)buf;
 

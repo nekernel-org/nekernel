@@ -22,6 +22,7 @@
 /* useful macros */
 
 #define kHandoverMagic 0xBADCC
+#define kHandoverVersion 0x1011
 
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
@@ -59,7 +60,6 @@ typedef struct HandoverHeader final {
 struct HandoverInformationHeader {
   UInt64 f_Magic;
   UInt64 f_Version;
-  UInt64 f_Bootloader;
 
   voidPtr f_VirtualStart;
   SizeT f_VirtualSize;

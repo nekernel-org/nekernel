@@ -157,10 +157,9 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
     if (isIniNotFound) {
       handoverHdrPtr->f_Magic = kHandoverMagic;
-      handoverHdrPtr->f_Version = 0x1011;
-      handoverHdrPtr->f_Bootloader = 0x11;  // Installer
+      handoverHdrPtr->f_Version = kHandoverVersion;
 
-      writer.Write(L"NewBoot.exe: Installing NewKernel and it's components...\r\n");
+      writer.Write(L"NewBoot.exe: Setting up OS...\r\n");
 
       ST->ConOut->ClearScreen(ST->ConOut);
 
@@ -169,15 +168,15 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       Main(handoverHdrPtr);
     } else {
       handoverHdrPtr->f_Magic = kHandoverMagic;
-      handoverHdrPtr->f_Version = 0x1011;
-      handoverHdrPtr->f_Bootloader = 0xDD;  // System present
+      handoverHdrPtr->f_Version = kHandoverVersion;
 
-      writer.Write(L"NewBoot.exe: Running NewKernel...\r\n");
+      writer.Write(L"NewBoot.exe: Running OS...\r\n");
 
       ST->ConOut->ClearScreen(ST->ConOut);
 
       EFI::ExitBootServices(MapKey, ImageHandle);
 
+      /// TODO: Read catalog and read NewKernel.exe
     }
 
     EFI::Stop();
