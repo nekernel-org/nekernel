@@ -70,6 +70,8 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
           (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
   if (virtualAddress && virtualAddress->hMagic == kHeapMagic) {
+    MUST_PASS(virtualAddress->hPresent);
+
     if (virtualAddress->hCRC32 != 0) {
       if (virtualAddress->hCRC32 !=
           ke_calculate_crc32((Char *)virtualAddress->hAddress,

@@ -15,4 +15,4 @@ EXTERN_C HCore::Boolean _hal_left_button_pressed();
 EXTERN_C HCore::Boolean _hal_middle_button_pressed();
 EXTERN_C HCore::Boolean _hal_right_button_pressed();
 
-#include <KernelKit/Rsrc/Util.hxx>
+#include <Builtins/Toolbox/Util.hxx>

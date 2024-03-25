@@ -11,7 +11,8 @@
 EXTERN_C void idt_handle_gpf(HCore::UIntPtr rsp) {
   MUST_PASS(HCore::ProcessManager::Shared().Leak().GetCurrent());
 
-  HCore::kcout << "NewKernel.exe: Stack Pointer: " << HCore::StringBuilder::FromInt("rsp{%}", rsp);
+  HCore::kcout << "NewKernel.exe: Stack Pointer: "
+               << HCore::StringBuilder::FromInt("rsp{%}", rsp);
 
   HCore::kcout
       << "NewKernel.exe: General Protection Fault, caused by "

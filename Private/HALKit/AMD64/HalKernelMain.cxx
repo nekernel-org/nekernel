@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
+#include <Builtins/Toolbox/Rsrc/Splash.rsrc>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
@@ -12,8 +13,6 @@
 #include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hpp>
-#include <KernelKit/Rsrc/Splash.rsrc>
-#include <KernelKit/Rsrc/Util.hxx>
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
 

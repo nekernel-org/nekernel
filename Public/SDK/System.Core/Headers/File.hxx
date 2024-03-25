@@ -29,12 +29,12 @@ enum {
 class FileInterface final {
  public:
   explicit FileInterface(const char *path) {
-    mHandle = kInstanceObject->Invoke(kInstanceObject, kProcessCallOpenHandle,
+    mHandle = kApplicationObject->Invoke(kApplicationObject, kProcessCallOpenHandle,
                                       0, path);
   }
 
   ~FileInterface() {
-    kInstanceObject->Invoke(kInstanceObject, kProcessCallCloseHandle, 0,
+    kApplicationObject->Invoke(kApplicationObject, kProcessCallCloseHandle, 0,
                             mHandle);
   }
 
@@ -43,25 +43,25 @@ class FileInterface final {
 
  public:
   PtrVoidType Read(UIntPtrType off, SizeType sz) {
-    return (PtrVoidType)kInstanceObject->Invoke(kInstanceObject, mHandle, 2,
+    return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, mHandle, 2,
                                                 off, sz);
   }
   PtrVoidType Read(SizeType sz) {
-    return (PtrVoidType)kInstanceObject->Invoke(kInstanceObject, mHandle, 3,
+    return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, mHandle, 3,
                                                 sz);
   }
 
   void Write(PtrVoidType buf, UIntPtrType off, SizeType sz) {
-    kInstanceObject->Invoke(kInstanceObject, mHandle, 4, buf, off, sz);
+    kApplicationObject->Invoke(kApplicationObject, mHandle, 4, buf, off, sz);
   }
   void Write(PtrVoidType buf, SizeType sz) {
-    kInstanceObject->Invoke(kInstanceObject, mHandle, 5, buf, sz);
+    kApplicationObject->Invoke(kApplicationObject, mHandle, 5, buf, sz);
   }
 
   void Seek(UIntPtrType off) {
-    kInstanceObject->Invoke(kInstanceObject, mHandle, 5);
+    kApplicationObject->Invoke(kApplicationObject, mHandle, 5);
   }
-  void Rewind() { kInstanceObject->Invoke(kInstanceObject, mHandle, 6); }
+  void Rewind() { kApplicationObject->Invoke(kApplicationObject, mHandle, 6); }
 
  public:
   const char *MIME();
@@ -95,7 +95,7 @@ inline IntPtrType MakeSymlink(const char *from, const char *outputWhere) {
   CA_MUST_PASS(from);
   CA_MUST_PASS(outputWhere);
 
-  return kInstanceObject->Invoke(kInstanceObject, kProcessCallOpenHandle, 1,
+  return kApplicationObject->Invoke(kApplicationObject, kProcessCallOpenHandle, 1,
                                  from);
 }
 }  // namespace System

@@ -93,7 +93,7 @@ struct MadtLocalApicAddressOverride final {
 
 STATIC MadtType kApicMadtList[256];
 
-MadtType* system_find_core(MadtType* madt) {
+MadtType* _hal_system_find_core(MadtType* madt) {
   madt = madt + sizeof(MadtType);
 
   if (rt_string_cmp(madt->fMag, kApicSignature,
@@ -112,12 +112,12 @@ void hal_system_get_cores(voidPtr rsdPtr) {
   MUST_PASS(kApicMadt);  // MADT must exist.
 
   SizeT counter = 0UL;
-  MadtType* offset = system_find_core((MadtType*)kApicMadt);
+  MadtType* offset = _hal_system_find_core((MadtType*)kApicMadt);
   //! now find core addresses.
   while (offset != nullptr) {
     // calls rt_copy_memory in NewC++
     kApicMadtList[counter] = *offset;
-    offset = system_find_core(offset);
+    offset = _hal_system_find_core(offset);
 
     ++counter;
   }

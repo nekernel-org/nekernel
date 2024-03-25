@@ -60,24 +60,24 @@ HeapInterface* HeapInterface::Shared() noexcept {
 }
 
 HeapInterface::HeapInterface() {
-  CA_MUST_PASS(HcProcessHeapExists(kInstanceObject, (PtrVoidType)this));
+  CA_MUST_PASS(HcProcessHeapExists(kApplicationObject, (PtrVoidType)this));
 }
 
 HeapInterface::~HeapInterface() { delete this; }
 
 void HeapInterface::Delete(PtrHeapType me) noexcept {
   CA_MUST_PASS(me);
-  HcFreeProcessHeap(kInstanceObject, me);
+  HcFreeProcessHeap(kApplicationObject, me);
 }
 
 SizeType HeapInterface::Size(PtrHeapType me) noexcept {
   CA_MUST_PASS(me);
-  return HcProcessHeapSize(kInstanceObject, me);
+  return HcProcessHeapSize(kApplicationObject, me);
 }
 
 PtrHeapType HeapInterface::New(const SizeType& sz, const DWordType flags) {
   SizeType _sz = sz;
   if (!_sz) ++_sz;
 
-  return HcAllocateProcessHeap(kInstanceObject, _sz, flags);
+  return HcAllocateProcessHeap(kApplicationObject, _sz, flags);
 }

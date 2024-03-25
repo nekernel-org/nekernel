@@ -7,7 +7,7 @@
 - Language: C++/(Assembly (AMD64, X64000, X86S, ARM64))
 
 ===================================
-1: The HCore Microkernel
+1: The NewKernel
 ===================================
 
 - Drive/Device Abstraction.
@@ -42,7 +42,7 @@
 - Hal -> hal_foo_bar
 
 ===================================
-4: The HCore Bootloader
+4: The NewBoot
 ===================================
 
 - Capable of booting from a network drive.

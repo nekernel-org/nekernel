@@ -5,9 +5,8 @@
 ------------------------------------------- */
 
 #include <Builtins/PS2/PS2MouseInterface.hxx>
+#include <Builtins/Toolbox/Toolbox.hxx>
 #include <KernelKit/Framebuffer.hpp>
-#include <KernelKit/Rsrc/Cursor.rsrc>
-#include <KernelKit/Rsrc/Util.hxx>
 #include <NewKit/Defines.hpp>
 
 // forward decl.
@@ -65,9 +64,15 @@ Void hal_handle_mouse() {
 /// @brief Interrupt handler for the mouse.
 EXTERN_C Void _hal_handle_mouse() { hal_handle_mouse(); }
 
-EXTERN_C Boolean _hal_left_button_pressed() { return kMousePacket[0] & kPS2Leftbutton; }
-EXTERN_C Boolean _hal_right_button_pressed() { return kMousePacket[0] & kPS2Rightbutton; }
-EXTERN_C Boolean _hal_middle_button_pressed() { return kMousePacket[0] & kPS2Middlebutton; }
+EXTERN_C Boolean _hal_left_button_pressed() {
+  return kMousePacket[0] & kPS2Leftbutton;
+}
+EXTERN_C Boolean _hal_right_button_pressed() {
+  return kMousePacket[0] & kPS2Rightbutton;
+}
+EXTERN_C Boolean _hal_middle_button_pressed() {
+  return kMousePacket[0] & kPS2Middlebutton;
+}
 
 /// @brief Draws the kernel's mouse.
 EXTERN_C Boolean _hal_draw_mouse() {
@@ -129,15 +134,7 @@ EXTERN_C Boolean _hal_draw_mouse() {
   if (kY > kHandoverHeader->f_GOP.f_Height - 16)
     kY = kHandoverHeader->f_GOP.f_Height - 16;
 
-  ToolboxInitRsrc();
-  ToolboxClearZone(POINTER_HEIGHT, POINTER_WIDTH, kPrevX, kPrevY);
-  ToolboxDrawRsrc(Pointer, POINTER_HEIGHT, POINTER_WIDTH, kX, kY);
-  ToolboxClearRsrc();
-
-  HCore::kcout << number(kX);
-  HCore::kcout << "\r\n";
-  HCore::kcout << number(kY);
-  HCore::kcout << "\r\n";
+  /// Draw mouse here.
 
   kPrevX = kX;
   kPrevY = kY;
@@ -147,9 +144,9 @@ EXTERN_C Boolean _hal_draw_mouse() {
 }
 
 /// @brief Init kernel mouse.
-EXTERN_C Void _hal_init_mouse() { 
-  kMousePS2.Init(); 
-  
+EXTERN_C Void _hal_init_mouse() {
+  kMousePS2.Init();
+
   HAL::Out8(0x21, 0b11111001);
   HAL::Out8(0xA1, 0b11101111);
 }

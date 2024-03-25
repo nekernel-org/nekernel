@@ -18,9 +18,9 @@
 namespace HCore {
 /**
  * @brief Process Heap Header
- * @note Allocated per process, do not allocate twice!
+ * @note Allocated per process, it denotes the user's heap.
 */
-struct HeapHeader final {
+struct UserHeapHeader final {
   UInt32 fMagic;
   Int32 fFlags;
   Boolean fFree;
@@ -66,7 +66,7 @@ STATIC VoidPtr ke_find_unused_heap(Int flags) {
         !HeapManager::The()[index].Leak().Leak().Leak().Present()) {
       HeapManager::Leak().Leak().TogglePresent(
           HeapManager::The()[index].Leak().Leak(), true);
-      kcout << "[ke_find_unused_heap] Done, trying now to make a pool\r\n";
+      kcout << "[ke_find_unused_heap] Done, trying to make a pool now...\r\n";
 
       return ke_make_heap((VoidPtr)HeapManager::The()[index]
                               .Leak()
@@ -82,7 +82,7 @@ STATIC VoidPtr ke_find_unused_heap(Int flags) {
 
 STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
   if (virtualAddress) {
-    HeapHeader* poolHdr = reinterpret_cast<HeapHeader*>(virtualAddress);
+    UserHeapHeader* poolHdr = reinterpret_cast<UserHeapHeader*>(virtualAddress);
 
     if (!poolHdr->fFree) {
       kcout << "[ke_make_heap] poolHdr->fFree, HeapPtr already exists\n";
@@ -95,7 +95,7 @@ STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
 
     kcout << "[ke_make_heap] New allocation has been done.\n";
     return reinterpret_cast<VoidPtr>(
-        (reinterpret_cast<UIntPtr>(virtualAddress) + sizeof(HeapHeader)));
+        (reinterpret_cast<UIntPtr>(virtualAddress) + sizeof(UserHeapHeader)));
   }
 
   kcout << "[ke_make_heap] Address is invalid";
@@ -103,10 +103,12 @@ STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
 }
 
 STATIC Void ke_free_heap_internal(VoidPtr virtualAddress) {
-  HeapHeader* poolHdr = reinterpret_cast<HeapHeader*>(
-      reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(HeapHeader));
+  UserHeapHeader* poolHdr = reinterpret_cast<UserHeapHeader*>(
+      reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(UserHeapHeader));
 
   if (poolHdr->fMagic == kUserHeapMag) {
+    MUST_PASS(poolHdr->fFree);
+
     poolHdr->fFree = false;
     poolHdr->fFlags = 0;
 

@@ -247,4 +247,4 @@ typedef struct Object final {
 
 CA_EXTERN_C ObjectPtr HcGetInstanceObject(void);
 
-CA_INLINE ObjectPtr kInstanceObject;
+CA_INLINE ObjectPtr kApplicationObject;

@@ -76,7 +76,7 @@ class MountpointInterface final {
   DriveDevicePtr C() { return mC; }
   DriveDevicePtr D() { return mD; }
 
-  DriveDevicePtr* GetAddressOf(int index) {
+  DriveDevicePtr* GetAddressOf(Int32 index) {
     DbgLastError() = kErrorSuccess;
 
     switch (index) {
@@ -90,7 +90,7 @@ class MountpointInterface final {
         return &mD;
       default: {
         DbgLastError() = kErrorNoSuchDisk;
-        kcout << "NewKernel.exe: Check HError.\n";
+        kcout << "NewKernel.exe: No such disk.\n";
 
         break;
       }

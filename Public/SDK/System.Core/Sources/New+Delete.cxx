@@ -5,44 +5,32 @@
 ------------------------------------------- */
 
 #include <System.Core/Headers/Heap.hxx>
-
-#define kAllocationTypes 2
-
-enum HcAllocationKind {
-  kStandardAllocation = 0xC,
-  kArrayAllocation = 0xD,
-};
-
-CA_EXTERN_C PtrVoidType HcAllocateProcessHeap(ObjectPtr refObj, QWordType sz,
-                                              DWordType flags);
-CA_EXTERN_C BooleanType HcProcessHeapExists(ObjectPtr refObj, PtrVoidType ptr);
-CA_EXTERN_C QWordType HcProcessHeapSize(ObjectPtr refObj, PtrVoidType ptr);
-CA_EXTERN_C VoidType HcFreeProcessHeap(ObjectPtr refObj, PtrVoidType ptr);
+#include <System.Core/Headers/Heap.hxx>
 
 typedef SizeType size_t;
 
 void* operator new[](size_t sz) {
   if (sz == 0) ++sz;
 
-  return HcAllocateProcessHeap(kInstanceObject, sz, kStandardAllocation);
+  return HcAllocateProcessHeap(kApplicationObject, sz, kStandardAllocation);
 }
 
 void* operator new(size_t sz) {
   if (sz == 0) ++sz;
 
-  return HcAllocateProcessHeap(kInstanceObject, sz, kArrayAllocation);
+  return HcAllocateProcessHeap(kApplicationObject, sz, kArrayAllocation);
 }
 
 void operator delete[](void* ptr) {
   if (ptr == nullptr) return;
 
-  HcFreeProcessHeap(kInstanceObject, ptr);
+  HcFreeProcessHeap(kApplicationObject, ptr);
 }
 
 void operator delete(void* ptr) {
   if (ptr == nullptr) return;
 
-  HcFreeProcessHeap(kInstanceObject, ptr);
+  HcFreeProcessHeap(kApplicationObject, ptr);
 }
 
 void operator delete(void* ptr, size_t sz) {
@@ -50,5 +38,5 @@ void operator delete(void* ptr, size_t sz) {
 
   (void)sz;
 
-  HcFreeProcessHeap(kInstanceObject, ptr);
+  HcFreeProcessHeap(kApplicationObject, ptr);
 }

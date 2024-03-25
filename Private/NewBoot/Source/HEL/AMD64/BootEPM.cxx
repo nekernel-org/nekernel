@@ -13,7 +13,7 @@ STATIC const BlockGUID kEPMGuid = {
     0x425d,
     {0xbe, 0x7b, 0x75, 0xa3, 0x7c, 0xc6, 0x79, 0xbc}};
 
-Void boot_try_write_partition_map(const Char* namePart, SizeT namePartLength,
+Void boot_try_read_partition_map(const Char* namePart, SizeT namePartLength,
                               BDeviceATA* ataInterface) {
   if (namePartLength > kEPMNameLength || !namePart) return;
   if (!ataInterface) return;
