@@ -6,8 +6,8 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/DebugOutput.hpp>
-#include <NewKit/Utils.hpp>
 #include <KernelKit/Framebuffer.hpp>
+#include <NewKit/Utils.hpp>
 
 namespace HCore {
 enum CommStatus {
@@ -22,13 +22,11 @@ constexpr short PORT = 0x3F8;
 
 static int kState = kStateInvalid;
 
-/// @brief init COM1.
-/// @return 
+/// @brief Init COM1.
+/// @return
 bool serial_init() noexcept {
 #ifdef __DEBUG__
-  if (kState == kStateReady ||
-      kState == kStateTransmit)
-    return true;
+  if (kState == kStateReady || kState == kStateTransmit) return true;
 
   HAL::Out8(PORT + 1, 0x00);  // Disable all interrupts
   HAL::Out8(PORT + 3, 0x80);  // Enable DLAB (set baud rate divisor)
@@ -51,13 +49,13 @@ bool serial_init() noexcept {
   // If serial is not faulty set it in normal operation mode
   // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
   HAL::Out8(Detail::PORT + 4, 0x0F);
-#endif // __DEBUG__
+#endif  // __DEBUG__
 
   return true;
 }
 }  // namespace Detail
 
-EXTERN_C void ke_io_print(const char* bytes) {
+EXTERN_C void ke_io_write(const char* bytes) {
 #ifdef __DEBUG__
   Detail::serial_init();
 
@@ -75,7 +73,7 @@ EXTERN_C void ke_io_print(const char* bytes) {
   }
 
   Detail::kState = kStateReady;
-#endif // __DEBUG__
+#endif  // __DEBUG__
 }
 
 EXTERN_C void ke_io_read(const char* bytes) {
@@ -88,39 +86,35 @@ EXTERN_C void ke_io_read(const char* bytes) {
 
   SizeT index = 0;
 
-  // send zero.
-  HAL::Out8(Detail::PORT, 00);
+  while (true) {
+    auto in = HAL::In8(Detail::PORT);
 
-  // get that zero.
-  auto in = HAL::In8(Detail::PORT);
+    // if enter pressed -> break.
+    if (in == 0xD) {
+      break;
+    }
 
-  while (in != '\n') {
-    // if zero -> ignore.
-    if (in == 0) {
-      ++index;
-      in = HAL::In8(Detail::PORT);
-    
-      continue;
+    if (in < '0' || in < 'A' || in < 'a') {
+      if (in != '@' || in != '!' || in != '?' || in != '.' || in != '/' ||
+          in != ':') {
+        continue;
+      }
     }
 
     ((char*)bytes)[index] = in;
 
-    if (in == 0)
-      break;
-    
     ++index;
-    in = HAL::In8(Detail::PORT);
   }
 
   ((char*)bytes)[index] = 0;
 
   Detail::kState = kStateReady;
-#endif // __DEBUG__
+#endif  // __DEBUG__
 }
 
 TerminalDevice TerminalDevice::Shared() noexcept {
-  TerminalDevice out(HCore::ke_io_print, HCore::ke_io_read);
-  
+  TerminalDevice out(HCore::ke_io_write, HCore::ke_io_read);
+
   return out;
 }
 

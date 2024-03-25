@@ -39,7 +39,7 @@ global kInterruptVectorTable
 extern _hal_handle_mouse
 extern idt_handle_gpf
 extern idt_handle_pf
-extern ke_io_print
+extern ke_io_write
 
 section .text
 
