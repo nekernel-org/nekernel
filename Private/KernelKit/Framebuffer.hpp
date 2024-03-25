@@ -28,7 +28,8 @@ class FramebufferContext final {
 
 class Framebuffer final {
  public:
-  explicit Framebuffer(Ref<FramebufferContext *> &addr) : m_FrameBufferAddr(addr) {}
+  explicit Framebuffer(Ref<FramebufferContext *> &addr)
+      : m_FrameBufferAddr(addr) {}
   ~Framebuffer() {}
 
   Framebuffer &operator=(const Framebuffer &) = delete;
@@ -37,11 +38,28 @@ class Framebuffer final {
   volatile UIntPtr *operator[](const UIntPtr &pos);
 
   operator bool();
-  
+
   const FramebufferColorKind &Color(
       const FramebufferColorKind &colour = FramebufferColorKind::INVALID);
 
   Ref<FramebufferContext *> &Leak();
+
+  /// @brief Draws a rectangle inside the fb.
+  /// @param width 
+  /// @param height 
+  /// @param x 
+  /// @param y 
+  /// @param color 
+  /// @return 
+  Framebuffer &DrawRect(SizeT width, SizeT height, SizeT x, SizeT y,
+                        UInt32 color);
+
+  /// @brief Puts a pixel on the screen.
+  /// @param x where in X
+  /// @param y where in Y
+  /// @param color the color of it.
+  /// @return 
+  Framebuffer &PutPixel(SizeT x, SizeT y, UInt32 color);
 
  private:
   Ref<FramebufferContext *> m_FrameBufferAddr;

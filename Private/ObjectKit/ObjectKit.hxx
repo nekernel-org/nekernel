@@ -9,8 +9,7 @@
 #include <NewKit/Defines.hpp>
 #include <CFKit/GUIDWrapper.hpp>
 
-#define kObjectGlobalNamespaceSystem "HCORE_ROOT\\"
-#define kObjectGlobalNamespaceUser "HCORE_USER_ROOT\\"
+#define kObjectGlobalNamespace ":\\"
 
 enum {
   kObjectTypeProcess,

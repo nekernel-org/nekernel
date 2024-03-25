@@ -13,15 +13,11 @@
 
 #include <System.Core/Headers/Defines.hxx>
 
-namespace System {
 /// @brief Thread Information Block, which holds information about the running
 /// thread.
-typedef PtrVoidType PtrThread;
+typedef QWordType ThreadRef;
 
 /// @brief Main application thread.
-CA_EXTERN_C PtrThread kMainThread;
-
-class ThreadInterface;
-}  // namespace System
+CA_EXTERN_C ThreadRef kMainThread;
 
 #endif  // __THREAD_API__

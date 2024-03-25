@@ -75,8 +75,9 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
     if (virtualAddress->hCRC32 != 0) {
       if (virtualAddress->hCRC32 !=
           ke_calculate_crc32((Char *)virtualAddress->hAddress,
-                             virtualAddress->hSizeAddress))
+                             virtualAddress->hSizeAddress)) {
         ke_stop(RUNTIME_CHECK_POINTER);
+      }
     }
 
     virtualAddress->hSizeAddress = 0UL;
@@ -112,8 +113,8 @@ Boolean ke_is_valid_heap(VoidPtr heapPtr) {
 }
 
 /// @brief Protect the heap pointer with a CRC32.
-/// @param heapPtr 
-/// @return 
+/// @param heapPtr
+/// @return
 Boolean ke_protect_ke_heap(VoidPtr heapPtr) {
   if (heapPtr) {
     Detail::HeapInformationBlockPtr virtualAddress =
@@ -121,7 +122,8 @@ Boolean ke_protect_ke_heap(VoidPtr heapPtr) {
             (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
     if (virtualAddress->hPresent && virtualAddress->hMagic == kHeapMagic) {
-      virtualAddress->hCRC32 = ke_calculate_crc32((Char*)heapPtr, virtualAddress->hSizeAddress);
+      virtualAddress->hCRC32 =
+          ke_calculate_crc32((Char *)heapPtr, virtualAddress->hSizeAddress);
       return true;
     }
   }

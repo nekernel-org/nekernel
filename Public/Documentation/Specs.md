@@ -1,5 +1,5 @@
 ===================================
-0: General Information
+# 0: General Information
 ===================================
 
 - ABI and Format: PEF/PE32+.
@@ -7,7 +7,7 @@
 - Language: C++/(Assembly (AMD64, X64000, X86S, ARM64))
 
 ===================================
-1: The NewKernel
+# 1: The NewKernel
 ===================================
 
 - Drive/Device Abstraction.
@@ -25,7 +25,7 @@
 - Permission Selectors.
 
 ===================================
-2: The Filesystem
+# 2: The Filesystem
 ===================================
 
 - Catalog based with forks.
@@ -34,7 +34,7 @@
 - UNIX path style.
 
 ==================================
-3: Common naming conventions:
+# 3: Common naming conventions:
 ==================================
 
 - Kernel -> ke_init_x
@@ -42,7 +42,7 @@
 - Hal -> hal_foo_bar
 
 ===================================
-4: The NewBoot
+# 4: The NewBoot
 ===================================
 
 - Capable of booting from a network drive.

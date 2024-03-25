@@ -16,6 +16,7 @@
 
 /// @brief four-character code for XIFF.
 #define kFourCCLength_XIFF 4
+#define kXIFFNameLength 255
 
 #define kXIFFContainerVideo "XVFF"
 #define kXIFFContainerAudio "XAFF"
@@ -38,5 +39,19 @@ struct PACKED XiffHeader final {
 };
 
 typedef struct XiffHeader XiffHeader;
+
+/// @brief XIFF metadata header, either located in forks or in file directly.
+/// @author Amlal EL Mahrouss
+struct ML_PACKED XiffMetadataHeader final {
+  ByteType f_Name[kXIFFNameLength];
+  DWordType f_Flags;
+  DWordType f_Type;
+  QWordType f_Offset;
+  SizeType f_Size;
+};
+
+#define kXIFFStringMetadata4CC    "strp"
+#define kXIFFFontMetadata4CC      "font"
+#define kXIFFResourceMetadata4CC  "resx"
 
 #endif  // ifndef __XIFF__

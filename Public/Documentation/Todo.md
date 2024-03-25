@@ -12,14 +12,10 @@
 - Context switch x87/SSE/AVX registers [ X ]
 - Framebuffer [ X ]
 - AHCI support [ ]
-- HCore API and HCore Forms. [ ]
-- Make installer form class [ ]
+- Make installer [ ]
 
 Status:
 
-NewBoot.exe: Working.
+NewBoot.exe: Need to boot from EPM partition.
 NewKernel.exe: New Filesystem in progress.
 
-Prioritize:
-NewBoot.exe: Protocol and API.
-NewKernel.exe: Complying to specs.

@@ -16,6 +16,7 @@ class DirectoryInterface;
 typedef IntPtrType SymlinkType;
 typedef IntPtrType FileType;
 typedef IntPtrType DirectoryType;
+typedef IntPtrType FSRef;
 
 enum {
   kErrorNoSuchPath = -44,
@@ -26,6 +27,7 @@ enum {
 };
 
 /// @brief System file interface
+
 class FileInterface final {
  public:
   explicit FileInterface(const char *path) {
