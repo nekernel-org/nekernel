@@ -49,7 +49,7 @@
         <mxCell id="NTNQYUPq4CuizRvDkpOI-7" value="/Manifest.xml&lt;div&gt;/HCore/&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;- Library.lib/Dll.dll (Subsystem 17)&lt;/div&gt;&lt;div&gt;/Resources/&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
           <mxGeometry x="570" y="650" width="210" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="vm68-OaV5PJmx3jSNiIi-1" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;System.Graphics.dll&lt;/h1&gt;&lt;p&gt;Handles input, graphics and sound.&lt;/p&gt;&lt;p&gt;Uses the ODF format to display graphics and sound is handled by XIFF.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+        <mxCell id="vm68-OaV5PJmx3jSNiIi-1" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;System.Graphics.dll (merged with System.Core)&lt;/h1&gt;&lt;p&gt;Handles input, graphics and sound.&lt;/p&gt;&lt;p&gt;Uses the ODF format to display graphics and sound is handled by XIFF.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="31" y="980" width="250" height="120" as="geometry" />
         </mxCell>
         <mxCell id="vm68-OaV5PJmx3jSNiIi-3" value="System.Graphics.dll" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
