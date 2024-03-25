@@ -50,8 +50,14 @@ struct ML_PACKED XiffMetadataHeader final {
   SizeType f_Size;
 };
 
+/// Pascal string
 #define kXIFFStringMetadata4CC    "strp"
+
+/// TrueType font
 #define kXIFFFontMetadata4CC      "font"
+
+/// UI resource
 #define kXIFFResourceMetadata4CC  "resx"
+
 
 #endif  // ifndef __XIFF__
