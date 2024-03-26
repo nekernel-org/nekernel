@@ -27,8 +27,9 @@
 /// Main filesystem abstraction manager.
 
 #define kBootFolder "/Boot"
-#define kBinFolder "/Programs"
+#define kBinFolder "/Applications"
 #define kShLibsFolder "/Library"
+#define kMountFolder "/Mount"
 
 /// refer to first enum.
 #define kFileOpsCount 4

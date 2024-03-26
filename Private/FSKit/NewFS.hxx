@@ -21,7 +21,7 @@
 #include <NewKit/Defines.hpp>
 
 /**
-    @brief New File System.
+    @brief New File System specification.
     @author Amlal EL Mahrouss
 */
 
@@ -89,34 +89,15 @@
 typedef HCore::Char NewCharType;
 
 enum {
-  kNewFSHardDrive = 0xC0,          // Hard Drive
+  kNewFSHardDrive = 0xC0,          // Hard Drive (SSD, HDD)
   kNewFSOpticalDrive = 0x0C,       // Blu-Ray/DVD
   kNewFSMassStorageDevice = 0xCC,  // USB
-  kNewFSUnknown = 0xFF,            // unknown device or unsupported (floppy)
-  kNewFSDriveCount = 4,
+  kNewFSScsi = 0xC4,               // SCSI Hard Drive
+  kNewFSUnknown = 0xFF,            // Unknown device. (floppy)
+  kNewFSDriveCount = 5,
 };
 
-/// @brief NewFS filesystem block.
-/// @author Amlal El Mahrouss.
-struct PACKED NewBootBlock final {
-  NewCharType Ident[kNewFSIdentLen];
-  NewCharType Shell[kNewFSNodeNameLen];
-
-  HCore::Int64 NumParts; // number of sub-partitions.
-  HCore::Int64 FreeSectors;
-  HCore::Int64 SectorCount;
-  HCore::Int64 SectorSz;
-
-  HCore::Int64 DiskSize; // size of media.
-  HCore::Int32 DiskKind; // kind of disk.
-
-  HCore::Lba FirstPartBlock;
-  HCore::Lba LastPartBlock;
-
-  NewCharType Pad[kNewFSPadLen];
-};
-
-/// @brief File catalog type.
+/// @brief Ccatalog type.
 struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
 
@@ -130,7 +111,7 @@ struct PACKED NewCatalog final {
   HCore::Lba PrevSibling;
 };
 
-/// @brief File fork type.
+/// @brief Fork type.
 struct PACKED NewFork final {
   NewCharType  Name[kNewFSNodeNameLen];
 

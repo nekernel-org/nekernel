@@ -6,16 +6,12 @@
 
 #pragma once
 
-#ifndef __cplusplus
-#error This API is meant to be used with C++.
-#endif
-
 #ifdef CA_MUST_PASS
 #undef CA_MUST_PASS
 #endif
 
 #ifdef _DEBUG
-#define CA_MUST_PASS(e) { if (!e) { __assert_chk_fail() } }
+#define CA_MUST_PASS(e) { if (!e) { MsgBox("Sorry, ssertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) __assert_chk_fail() } }
 #else
 #define CA_MUST_PASS(e) CA_UNREFERENCED_PARAMETER(e)
 #endif
@@ -153,7 +149,7 @@ enum {
  * @brief GUID type, something you can also find in CFKit.
  * @author AMlal El Mahrouss
  */
-typedef struct GUID final {
+typedef struct GUID {
   DWordType Data1;
   WordType Data2;
   WordType Data3;
@@ -162,17 +158,28 @@ typedef struct GUID final {
 
 /// \brief Object handle.
 /// \author Amlal El Mahrouss
-typedef struct Object final {
-  CharacterTypeUTF8 ObjectName[255];
-  DWordType ObjectType;
-  CharacterTypeUTF8 ObjectNamespace[255];
+typedef struct Object {
+  CharacterTypeUTF8 Name[255];
+  DWordType Kind;
+  DWordType Flags;
 
   VoidType(*Release)(struct Object* Self);
   IntPtrType(*Invoke)(struct Object* Self, DWordType Sel, ...);
   VoidType(*Query)(struct Object* Self, PtrVoidType* Dst, SizeType SzDst, struct GUID* GuidOf);
 } *ObjectRef;
 
+#ifdef __cplusplus
+
 #define object_cast reinterpret_cast<ObjectRef>
+
+template <SizeType N>
+using StrType = CharacterTypeUTF8[N];
+
+#else
+
+#define object_cast (ObjectRef)
+
+#endif // ifdef C++
 
 CA_EXTERN_C ObjectRef HcGetAppObject(VoidType);
 
@@ -180,5 +187,9 @@ CA_INLINE ObjectRef kApplicationObject;
 
 typedef CharacterTypeUTF8 Str255Type[255];
 
-template <SizeType N>
-using StrType = CharacterTypeUTF8[N];
+/// @brief Shows an message box with a formatting.
+/// @param title the message box title
+/// @param format the format
+/// @param va_list the va args, that goes along with it.
+/// @return void
+CA_EXTERN_C VoidType MsgBox(CharacterTypeUTF8* title, CharacterTypeUTF8* format, ...);

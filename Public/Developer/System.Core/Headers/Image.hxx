@@ -6,4 +6,4 @@
 
 #pragma once
 
-#include <System.Core/Headers/Window/Window.hxx>
+#include <System.Core/Headers/Window.hxx>

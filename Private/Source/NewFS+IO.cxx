@@ -7,11 +7,16 @@
 #include <KernelKit/DriveManager.hxx>
 #include <KernelKit/FileManager.hpp>
 
-/** ---------------------------------------------------
+/*************************************************************
+ * 
+ * File: NewFS+IO.cxx 
+ * Purpose: Filesystem to mountpoint interface.
+ * Date: 3/26/24
+ * 
+ * Copyright Mahrouss Logic, all rights reserved.
+ * 
+ *************************************************************/
 
-    * THIS FILE CONTAINS CODE FOR THE HCFS I/O DEVICES.
-
-------------------------------------------------------- */
 
 #ifdef __FSKIT_NEWFS__
 

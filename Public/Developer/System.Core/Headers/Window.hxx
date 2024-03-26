@@ -8,9 +8,18 @@
 
 #include <System.Core/Headers/Defines.hxx>
 
-/// @file Window.hxx
-/// @brief Tracker window protocol.
-/// @author Amlal El Mahrouss.
+/*************************************************************
+ * 
+ * File: Window.hxx 
+ * Purpose: Window Manager implementation for System Software.
+ * Date: 3/26/24
+ * 
+ * Copyright Mahrouss Logic, all rights reserved.
+ * 
+ *************************************************************/
+
+struct _GraphicsPoint;
+struct _GraphicsPort;
 
 typedef float PositionType;
 
