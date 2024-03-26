@@ -11,6 +11,7 @@
 #include <NewKit/MutableArray.hpp>
 #include <NewKit/Utils.hpp>
 
+/// @brief File Indexer.
 /// BUGS: 0
 
 #define kMaxLenIndexer 256

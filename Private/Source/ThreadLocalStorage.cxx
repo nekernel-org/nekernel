@@ -47,7 +47,7 @@ EXTERN_C Void tls_check_syscall_impl(HCore::HAL::StackFramePtr stackPtr) noexcep
 
   if (!tls_check_tib(tib)) {
     kcout << "NewKernel.exe: Verification failed, Crashing...\n";
-    ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
+    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
   }
 
   kcout << "NewKernel.exe: Verification succeeded! Keeping on...\n";

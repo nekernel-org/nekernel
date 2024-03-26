@@ -6,8 +6,8 @@
 
 /// @brief Inits the DLL.
 /// @return if it was succesful or not.
-DWordType __DllMain(VoidType) {
-  kApplicationObject = HcGetInstanceObject();
+CA_EXTERN_C DWordType __DllMain(VoidType) {
+  kApplicationObject = HcGetAppObject();
   CA_MUST_PASS(kApplicationObject);
 
   return 0;

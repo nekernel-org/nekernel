@@ -24,5 +24,5 @@ namespace HCore::Builtins {
 /// @brief Returns an AHCI handle.
 /// @param pointerAhciObject the handle to pass. 
 /// @return 
-inline Boolean HcGetHandleAHCI(_InOut ObjectPtr* pointerAhciObject);
+inline Boolean HcGetHandleAHCI(_InOut ObjectRef* pointerAhciObject);
 } // namespace HCore::Builtins

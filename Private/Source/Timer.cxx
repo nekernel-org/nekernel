@@ -10,7 +10,10 @@
 
 using namespace HCore;
 
+/// @brief Unimplemented as it is an interface.
 Int32 HardwareTimerInterface::Wait() noexcept { return H_UNIMPLEMENTED; }
+
+/// @brief HardwareTimer class, meant to be generic.
 
 HardwareTimer::HardwareTimer(Int64 seconds) : fWaitFor(seconds) {}
 HardwareTimer::~HardwareTimer() { fWaitFor = 0; }

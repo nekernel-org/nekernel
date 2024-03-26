@@ -31,6 +31,6 @@ typedef struct Object final {
   HCore::Void(*Release)(struct Object* Self);
   HCore::IntPtr(*Invoke)(struct Object* Self, HCore::Int32 Sel, ...);
   HCore::Void(*Query)(struct Object* Self, HCore::VoidPtr* Dst, HCore::SizeT SzDst, HCore::XRN::GUIDSequence GuidOf);
-} Object, *ObjectPtr;
+} *ObjectRef;
 
-#define object_cast reinterpret_cast<ObjectPtr>
+#define object_cast reinterpret_cast<ObjectRef>

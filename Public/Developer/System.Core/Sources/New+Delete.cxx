@@ -5,20 +5,6 @@
 ------------------------------------------- */
 
 #include <System.Core/Headers/Heap.hxx>
-#include <System.Core/Headers/Heap.hxx>
-
-#define kAllocationTypes 2
-
-enum HcAllocationKind {
-  kStandardAllocation = 0xC,
-  kArrayAllocation = 0xD,
-};
-
-CA_EXTERN_C PtrVoidType HcAllocateProcessHeap(ObjectPtr refObj, QWordType sz,
-                                              DWordType flags);
-CA_EXTERN_C BooleanType HcProcessHeapExists(ObjectPtr refObj, PtrVoidType ptr);
-CA_EXTERN_C QWordType HcProcessHeapSize(ObjectPtr refObj, PtrVoidType ptr);
-CA_EXTERN_C VoidType HcFreeProcessHeap(ObjectPtr refObj, PtrVoidType ptr);
 
 typedef SizeType size_t;
 

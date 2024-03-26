@@ -77,11 +77,23 @@ CA_EXTERN_C ControlRef CreateControl(const DWordType id);
 /// @return 
 CA_EXTERN_C VoidType ReleaseControl(const ControlRef id);
 
-CA_EXTERN_C BooleanType MoveControl(const ControlRef id, GraphicsPoint where);
+/// @brief Moves a control inside a GraphicsPort.
+/// @param id the control ref.
+/// @param where where to move at.
+/// @return 
+CA_EXTERN_C Int32Type SetControlPosition(const ControlRef id, GraphicsPoint where);
 
-CA_EXTERN_C BooleanType EnableControl(const ControlRef id, BooleanType visible);
+/// @brief Enable control.
+/// @param id 
+/// @param enabled 
+/// @return 
+CA_EXTERN_C Int32Type SetControlEnabled(const ControlRef id, BooleanType enabled);
 
-CA_EXTERN_C BooleanType VisibleControl(const ControlRef id, BooleanType visible);
+/// @brief Make control visible.
+/// @param id 
+/// @param visible 
+/// @return 
+CA_EXTERN_C Int32Type MakeControlVisible(const ControlRef id, BooleanType visible);
 
 /// @brief Creates a new window.
 /// @param name the window name
@@ -104,3 +116,16 @@ CA_EXTERN_C VoidType ReleaseWindow(GraphicsPort* port);
 /// @param port the menu port.
 /// @return void
 CA_EXTERN_C VoidType ReleaseMenu(GraphicsPort* port);
+
+/// @brief Moves a window on the desktop. (menu arent movable, will return kErrIncompatible is menu is provided.)
+/// @param id the gfx port.
+/// @param where to move.
+/// @return error code.
+CA_EXTERN_C Int32Type MoveWindow(const GraphicsPort* id, GraphicsPoint where);
+
+enum {
+  kWinErrIncompatible = 0x74,
+  kWinErrOutOfMemory,
+  kWinErrInvalidArg,
+  kWinErrNotImplemented,
+};

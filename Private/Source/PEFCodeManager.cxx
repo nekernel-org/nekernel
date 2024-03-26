@@ -144,7 +144,7 @@ bool execute_from_image(PEFLoader &exec) noexcept {
   ProcessHeader proc(errOrStart.Leak().Leak());
   Ref<ProcessHeader> refProc = proc;
 
-  return ProcessManager::Shared().Leak().Add(refProc);
+  return ProcessScheduler::Shared().Leak().Add(refProc);
 }
 }  // namespace Utils
 

@@ -1,5 +1,5 @@
 ##################################################
-# (C) Mahrouss Logic, 2024, all rights reserved.
+# (C) Mahrouss Logic,  all rights reserved.
 # This is the microkernel makefile.
 ##################################################
 
@@ -25,10 +25,9 @@ error:
 
 MOVEALL=./MoveAll.sh
 
-.PHONY: h-core-amd64-pc
-h-core-amd64-pc: clean
-	$(CC) $(CCFLAGS) $(DEBUG) Source/*.cxx HALKit/AMD64/Storage/*.cxx HALKit/AMD64/PCI/*.cxx Source/Network/*.cxx\
-		Source/Storage/*.cxx HALKit/AMD64/*.cxx HALKit/AMD64/*.cpp HALKit/AMD64/*.s
+.PHONY: h-core-amd64-epm
+h-core-amd64-epm: clean
+	$(CC) $(CCFLAGS) $(DEBUG) $(wildcard Source/*.cxx HALKit/AMD64/Storage/*.cxx) $(wildcard HALKit/AMD64/PCI/*.cxx) $(wildcard Source/Network/*.cxx) $(wildcard Source/Storage/*.cxx) $(wildcard HALKit/AMD64/*.cxx) $(wildcard HALKit/AMD64/*.cpp) $(wildcard HALKit/AMD64/*.s)
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalNewBoot.asm
@@ -37,13 +36,13 @@ h-core-amd64-pc: clean
 
 OBJCOPY=x86_64-w64-mingw32-objcopy 
 
-.PHONY: link-amd64-pc
-link-amd64-pc:
+.PHONY: link-amd64-epm
+link-amd64-epm:
 	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
 	cp $(KERNEL) Root/Boot
 
 .PHONY: all
-all: h-core-amd64-pc link-amd64-pc
+all: h-core-amd64-epm link-amd64-epm
 	@echo "Fully built."
 
 

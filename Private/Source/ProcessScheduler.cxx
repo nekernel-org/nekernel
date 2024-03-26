@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /***********************************************************************************/
-/// @file ProcessManager.cxx
+/// @file ProcessScheduler.cxx
 /// @brief ProcessHeader Scheduler API.
 /***********************************************************************************/
 
@@ -32,7 +32,7 @@ const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
 /***********************************************************************************/
 
 void ProcessHeader::Crash() {
-  kcout << "ProcessManager: Crashed, ExitCode: -1.\r\n";
+  kcout << "ProcessScheduler: Crashed, ExitCode: -1.\r\n";
   MUST_PASS(!ke_bug_check());
 
   this->Exit(-1);
@@ -115,11 +115,11 @@ const AffinityKind &ProcessHeader::GetAffinity() { return this->Affinity; }
 */
 void ProcessHeader::Exit(Int32 exit_code) {
   if (this->ProcessId !=
-      ProcessManager::Shared().Leak().GetCurrent().Leak().ProcessId)
+      ProcessScheduler::Shared().Leak().GetCurrent().Leak().ProcessId)
     ke_stop(RUNTIME_CHECK_PROCESS);
 
   if (this->Ring == (Int32)ProcessSelector::kRingKernel &&
-      ProcessManager::Shared().Leak().GetCurrent().Leak().Ring > 0)
+      ProcessScheduler::Shared().Leak().GetCurrent().Leak().Ring > 0)
     ke_stop(RUNTIME_CHECK_PROCESS);
 
   kExitCode = exit_code;
@@ -141,15 +141,15 @@ void ProcessHeader::Exit(Int32 exit_code) {
   this->Image = nullptr;
   this->StackFrame = nullptr;
 
-  ProcessManager::Shared().Leak().Remove(this->ProcessId);
+  ProcessScheduler::Shared().Leak().Remove(this->ProcessId);
 }
 
-SizeT ProcessManager::Add(Ref<ProcessHeader> &process) {
+SizeT ProcessScheduler::Add(Ref<ProcessHeader> &process) {
   if (!process) return -1;
 
   if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel) return -1;
 
-  kcout << "ProcessManager::Add(Ref<ProcessHeader>& process)\r\n";
+  kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r\n";
 
   process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
   process.Leak().ProcessId = mTeam.AsArray().Count();
@@ -180,15 +180,15 @@ SizeT ProcessManager::Add(Ref<ProcessHeader> &process) {
   return mTeam.AsArray().Count() - 1;
 }
 
-bool ProcessManager::Remove(SizeT process) {
+bool ProcessScheduler::Remove(SizeT process) {
   if (process > mTeam.AsArray().Count()) return false;
 
-  kcout << "ProcessManager::Remove(SizeT process)\r\n";
+  kcout << "ProcessScheduler::Remove(SizeT process)\r\n";
 
   return mTeam.AsArray().Remove(process);
 }
 
-SizeT ProcessManager::Run() noexcept {
+SizeT ProcessScheduler::Run() noexcept {
   SizeT processIndex = 0;  //! we store this guy to tell the scheduler how many
                            //! things we have scheduled.
 
@@ -219,16 +219,16 @@ SizeT ProcessManager::Run() noexcept {
   return processIndex;
 }
 
-Ref<ProcessManager> ProcessManager::Shared() {
-  static ProcessManager ref;
+Ref<ProcessScheduler> ProcessScheduler::Shared() {
+  static ProcessScheduler ref;
   return {ref};
 }
 
-Ref<ProcessHeader> &ProcessManager::GetCurrent() { return mTeam.AsRef(); }
+Ref<ProcessHeader> &ProcessScheduler::GetCurrent() { return mTeam.AsRef(); }
 
 PID &ProcessHelper::GetCurrentPID() {
   kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r\n";
-  return ProcessManager::Shared().Leak().GetCurrent().Leak().ProcessId;
+  return ProcessScheduler::Shared().Leak().GetCurrent().Leak().ProcessId;
 }
 
 bool ProcessHelper::CanBeScheduled(Ref<ProcessHeader> &process) {
@@ -255,12 +255,12 @@ bool ProcessHelper::CanBeScheduled(Ref<ProcessHeader> &process) {
  */
 bool ProcessHelper::StartScheduling() {
   if (ProcessHelper::CanBeScheduled(
-          ProcessManager::Shared().Leak().GetCurrent())) {
-    --ProcessManager::Shared().Leak().GetCurrent().Leak().PTime;
+          ProcessScheduler::Shared().Leak().GetCurrent())) {
+    --ProcessScheduler::Shared().Leak().GetCurrent().Leak().PTime;
     return false;
   }
 
-  auto processRef = ProcessManager::Shared().Leak();
+  auto processRef = ProcessScheduler::Shared().Leak();
 
   if (!processRef)
     return false;  // we have nothing to schedule. simply return.

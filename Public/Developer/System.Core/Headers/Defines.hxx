@@ -136,77 +136,6 @@ enum HcProcessCall {
 
 #include <System.Core/Headers/Hint.hxx>
 
-class SystemException {
- public:
-  explicit SystemException() = default;
-  virtual ~SystemException() = default;
-
- public:
-  CA_COPY_DEFAULT(SystemException);
-
- public:
-  virtual const char *Name() = 0;
-  virtual const char *Reason() = 0;
-
-};
-
-/// @brief Object exception
-/// Throws when the object isn't found.
-class ObjectNotFoundException : public SystemException {
- public:
-  explicit ObjectNotFoundException() = default;
-  virtual ~ObjectNotFoundException() = default;
-
- public:
-  CA_COPY_DEFAULT(ObjectNotFoundException);
-
- public:
-  const char *Name() override { return "ObjectNotFoundException"; } 
-  const char *Reason() override { return mReason; }
-
- private:
-  const char *mReason{
-      "System.Core: ObjectNotFoundException: Catastrophic failure!"};
-};
-
-/// @brief pointer exception
-/// Throws when the object isn't found.
-class PointerException : public SystemException {
- public:
-  explicit PointerException() = default;
-  virtual ~PointerException() = default;
-
- public:
-  CA_COPY_DEFAULT(PointerException);
-
- public:
-  const char *Name() override { return "PointerException"; } 
-  const char *Reason() override { return mReason; }
-
- private:
-  const char *mReason{
-      "System.Core: PointerException: Catastrophic failure!"};
-};
-
-/// @brief pointer exception
-/// Throws when the object isn't found.
-class NullPointerException : public SystemException {
- public:
-  explicit NullPointerException() = default;
-  virtual ~NullPointerException() = default;
-
- public:
-  CA_COPY_DEFAULT(NullPointerException);
-
- public:
-  const char *Name() override { return "NullPointerException"; } 
-  const char *Reason() override { return mReason; }
-
- private:
-  const char *mReason{
-      "System.Core: NullPointerException: Catastrophic failure!"};
-};
-
 #define kObjectGlobalNamespaceSystem "HCORE_ROOT\\"
 #define kObjectGlobalNamespaceUser "HCORE_USER_ROOT\\"
 
@@ -241,10 +170,15 @@ typedef struct Object final {
   VoidType(*Release)(struct Object* Self);
   IntPtrType(*Invoke)(struct Object* Self, DWordType Sel, ...);
   VoidType(*Query)(struct Object* Self, PtrVoidType* Dst, SizeType SzDst, struct GUID* GuidOf);
-} Object, *ObjectPtr;
+} *ObjectRef;
 
-#define object_cast reinterpret_cast<ObjectPtr>
+#define object_cast reinterpret_cast<ObjectRef>
 
-CA_EXTERN_C ObjectPtr HcGetInstanceObject(void);
+CA_EXTERN_C ObjectRef HcGetAppObject(VoidType);
 
-CA_INLINE ObjectPtr kApplicationObject;
+CA_INLINE ObjectRef kApplicationObject;
+
+typedef CharacterTypeUTF8 Str255Type[255];
+
+template <SizeType N>
+using StrType = CharacterTypeUTF8[N];

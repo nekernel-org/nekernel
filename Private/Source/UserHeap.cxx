@@ -6,6 +6,7 @@
 
 #include <NewKit/PageManager.hpp>
 #include <KernelKit/UserHeap.hpp>
+#include <KernelKit/ProcessScheduler.hpp>
 
 #define kHeapHeaderPaddingSz 16
 
@@ -60,6 +61,9 @@ STATIC Void ke_free_heap_internal(VoidPtr vaddr);
 STATIC VoidPtr ke_make_heap(VoidPtr vaddr, Int flags);
 STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr);
 
+/// @brief Find an unused heap header to allocate on.
+/// @param flags the flags to use.
+/// @return 
 STATIC VoidPtr ke_find_unused_heap(Int flags) {
   for (SizeT index = 0; index < kUserHeapMaxSz; ++index) {
     if (HeapManager::The()[index] &&
@@ -80,6 +84,10 @@ STATIC VoidPtr ke_find_unused_heap(Int flags) {
   return nullptr;
 }
 
+/// @brief Makes a new heap for the process to use.
+/// @param virtualAddress the virtual address of the process.
+/// @param flags the flags.
+/// @return 
 STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
   if (virtualAddress) {
     UserHeapHeader* poolHdr = reinterpret_cast<UserHeapHeader*>(virtualAddress);
@@ -102,14 +110,21 @@ STATIC VoidPtr ke_make_heap(VoidPtr virtualAddress, Int flags) {
   return nullptr;
 }
 
+/// @brief Internally makrs the heap as free.
+/// This is done by setting the fFree bit to true
+/// @param virtualAddress 
+/// @return 
 STATIC Void ke_free_heap_internal(VoidPtr virtualAddress) {
   UserHeapHeader* poolHdr = reinterpret_cast<UserHeapHeader*>(
       reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(UserHeapHeader));
 
   if (poolHdr->fMagic == kUserHeapMag) {
-    MUST_PASS(poolHdr->fFree);
+    if (!poolHdr->fFree) {
+      ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
+      return;
+    }
 
-    poolHdr->fFree = false;
+    poolHdr->fFree = true;
     poolHdr->fFlags = 0;
 
     kcout << "[ke_free_heap_internal] Successfully marked header as free!\r\n";

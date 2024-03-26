@@ -39,7 +39,7 @@ EXTERN_C SharedObjectPtr rt_library_init(void) {
   SharedObjectPtr library = tls_new_class<SharedObject>();
 
   if (!library) {
-    ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
+    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 
     return nullptr;
   }
@@ -47,16 +47,16 @@ EXTERN_C SharedObjectPtr rt_library_init(void) {
   library->Mount(tls_new_class<SharedObject::SharedObjectTrait>());
 
   if (!library->Get()) {
-    ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
+    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 
     return nullptr;
   }
 
   library->Get()->fImageObject =
-      ProcessManager::Shared().Leak().GetCurrent().Leak().Image;
+      ProcessScheduler::Shared().Leak().GetCurrent().Leak().Image;
 
   if (!library->Get()->fImageObject) {
-    ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
+    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 
     return nullptr;
   }
@@ -79,7 +79,7 @@ EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool *successful) {
   // sanity check (will also trigger a bug check)
   if (lib == nullptr) {
     *successful = false;
-    ProcessManager::Shared().Leak().GetCurrent().Leak().Crash();
+    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
   }
 
   delete lib->Get();

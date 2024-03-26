@@ -8,57 +8,25 @@
 
 #include <System.Core/Headers/Defines.hxx>
 
-namespace System {
-class HeapException;
-class HeapInterface;
+#define kAllocationTypes 2
 
-typedef PtrVoidType HeapRef;
-
-enum {
-  kHeapExpandable = 2,
-  kHeapNoExecute = 4,
-  kHeapShared = 6,
-  kHeapReadOnly = 8,
-  kHeapNoFlags = 0
+enum HcAllocationKind {
+  kStandardAllocation = 0xC,
+  kArrayAllocation = 0xD,
 };
 
-class HeapInterface final {
- private:
-  explicit HeapInterface();
+/// @brief Allocates a new heap from process pool.
+/// @param refObj 
+/// @param sz 
+/// @param flags 
+/// @return 
+CA_EXTERN_C PtrVoidType HcAllocateProcessHeap(ObjectRef refObj, QWordType sz,
+                                              DWordType flags);
 
- public:
-  ~HeapInterface();
-
- public:
-  CA_COPY_DEFAULT(HeapInterface);
-
- public:
-  static HeapInterface *Shared() noexcept;
-
- public:
-  void Delete(HeapRef me) noexcept;
-  SizeType Size(HeapRef me) noexcept;
-  HeapRef New(const SizeType &sz, 
-  const DWordType flags = kHeapNoFlags);
-};
-
-
-/// @brief heap exception
-/// Throws when the heap pointer isn't found or invalid.
-class HeapException : public SystemException {
- public:
-  explicit HeapException() = default;
-  virtual ~HeapException() = default;
-
- public:
-  CA_COPY_DEFAULT(HeapException);
-
- public:
-  const char *Name() override { return "HeapException"; }
-  const char *Reason() override { return mReason; }
-
- private:
-  const char *mReason{"System.Core: HeapException: Catastrophic failure!"};
-};
-
-}  // namespace System
+/// @brief Check if pointer exists.
+/// @param refObj 
+/// @param ptr 
+/// @return 
+CA_EXTERN_C BooleanType HcProcessHeapExists(ObjectRef refObj, PtrVoidType ptr);
+CA_EXTERN_C QWordType HcProcessHeapSize(ObjectRef refObj, PtrVoidType ptr);
+CA_EXTERN_C VoidType HcFreeProcessHeap(ObjectRef refObj, PtrVoidType ptr);

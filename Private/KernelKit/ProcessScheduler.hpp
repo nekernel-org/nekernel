@@ -26,7 +26,7 @@
 namespace HCore {
 class ProcessHeader;
 class ProcessTeam;
-class ProcessManager;
+class ProcessScheduler;
 
 //! @brief ProcessHeader identifier.
 typedef Int64 ProcessID;
@@ -36,7 +36,7 @@ inline constexpr SizeT kProcessLen = 256U;
 
 //! @brief Forward declaration.
 class ProcessHeader;
-class ProcessManager;
+class ProcessScheduler;
 class ProcessHelper;
 
 //! @brief ProcessHeader status enum.
@@ -181,7 +181,7 @@ class ProcessHeader final {
   const AffinityKind &GetAffinity();
 
  private:
-  friend ProcessManager;
+  friend ProcessScheduler;
   friend ProcessHelper;
 };
 
@@ -206,14 +206,14 @@ using ProcessPtr = ProcessHeader *;
 
 /// @brief ProcessHeader manager class.
 /// The main class which you call to schedule an app.
-class ProcessManager final {
+class ProcessScheduler final {
  private:
-  explicit ProcessManager() = default;
+  explicit ProcessScheduler() = default;
 
  public:
-  ~ProcessManager() = default;
+  ~ProcessScheduler() = default;
 
-  HCORE_COPY_DEFAULT(ProcessManager)
+  HCORE_COPY_DEFAULT(ProcessScheduler)
 
   operator bool() { return mTeam.AsArray().Count() > 0; }
   bool operator!() { return mTeam.AsArray().Count() == 0; }
@@ -226,7 +226,7 @@ class ProcessManager final {
   Ref<ProcessHeader> &GetCurrent();
   SizeT Run() noexcept;
 
-  static Ref<ProcessManager> Shared();
+  static Ref<ProcessScheduler> Shared();
 
  private:
   ProcessTeam mTeam;
