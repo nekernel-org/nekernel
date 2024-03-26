@@ -10,7 +10,7 @@
 
 #define kAllocationTypes 2
 
-enum HcAllocationKind {
+enum RtAllocationKind {
   kStandardAllocation = 0xC,
   kArrayAllocation = 0xD,
 };
@@ -20,13 +20,13 @@ enum HcAllocationKind {
 /// @param sz 
 /// @param flags 
 /// @return 
-CA_EXTERN_C PtrVoidType HcAllocateProcessHeap(ObjectRef refObj, QWordType sz,
+CA_EXTERN_C PtrVoidType RtAllocateProcessHeap(ObjectRef refObj, QWordType sz,
                                               DWordType flags);
 
 /// @brief Check if pointer exists.
 /// @param refObj 
 /// @param ptr 
 /// @return 
-CA_EXTERN_C BooleanType HcProcessHeapExists(ObjectRef refObj, PtrVoidType ptr);
-CA_EXTERN_C QWordType HcProcessHeapSize(ObjectRef refObj, PtrVoidType ptr);
-CA_EXTERN_C VoidType HcFreeProcessHeap(ObjectRef refObj, PtrVoidType ptr);
+CA_EXTERN_C BooleanType RtProcessHeapExists(ObjectRef refObj, PtrVoidType ptr);
+CA_EXTERN_C QWordType RtProcessHeapSize(ObjectRef refObj, PtrVoidType ptr);
+CA_EXTERN_C VoidType RtFreeProcessHeap(ObjectRef refObj, PtrVoidType ptr);

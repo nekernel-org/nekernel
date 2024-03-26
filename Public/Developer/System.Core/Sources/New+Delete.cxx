@@ -11,25 +11,25 @@ typedef SizeType size_t;
 void* operator new[](size_t sz) {
   if (sz == 0) ++sz;
 
-  return HcAllocateProcessHeap(kApplicationObject, sz, kStandardAllocation);
+  return RtAllocateProcessHeap(kApplicationObject, sz, kStandardAllocation);
 }
 
 void* operator new(size_t sz) {
   if (sz == 0) ++sz;
 
-  return HcAllocateProcessHeap(kApplicationObject, sz, kArrayAllocation);
+  return RtAllocateProcessHeap(kApplicationObject, sz, kArrayAllocation);
 }
 
 void operator delete[](void* ptr) {
   if (ptr == nullptr) return;
 
-  HcFreeProcessHeap(kApplicationObject, ptr);
+  RtFreeProcessHeap(kApplicationObject, ptr);
 }
 
 void operator delete(void* ptr) {
   if (ptr == nullptr) return;
 
-  HcFreeProcessHeap(kApplicationObject, ptr);
+  RtFreeProcessHeap(kApplicationObject, ptr);
 }
 
 void operator delete(void* ptr, size_t sz) {
@@ -37,5 +37,5 @@ void operator delete(void* ptr, size_t sz) {
 
   (void)sz;
 
-  HcFreeProcessHeap(kApplicationObject, ptr);
+  RtFreeProcessHeap(kApplicationObject, ptr);
 }

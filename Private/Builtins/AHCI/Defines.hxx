@@ -310,7 +310,24 @@ typedef struct HbaCmdTbl final {
   HCore::UInt8 cfis[64];  // Command FIS
   HCore::UInt8 acmd[16];  // ATAPI command, 12 or 16 bytes
   HCore::UInt8 rsv[48];   // Reserved
-  HbaPrdtEntry prdtEntries[1];  // Physical region descriptor table entries, 0 ~ 65535
+  struct HbaPrdtEntry prdtEntries[1];  // Physical region descriptor table entries, 0 ~ 65535
 } HbaCmdTbl;
 
 /* EOF */
+
+#ifdef __KERNEL__
+
+/// @brief Initializes an AHCI disk.
+/// @param PortsImplemented the amount of port that have been detected.
+/// @return 
+HCore::Boolean drv_ahci_init(HCore::UInt16& PortsImplemented);
+
+HCore::Boolean drv_ahci_detected(HCore::Void);
+
+HCore::Void drv_ahci_read(HCore::UInt64 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
+                   HCore::SizeT SectorSz, HCore::SizeT Size);
+
+HCore::Void drv_ahci_write(HCore::UInt64 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
+                    HCore::SizeT SectorSz, HCore::SizeT Size);
+
+#endif // ifdef __KERNEL__

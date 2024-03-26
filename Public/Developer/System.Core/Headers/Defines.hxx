@@ -117,7 +117,7 @@ typedef CharacterTypeUTF8 BooleanType;
 #define CA_CONSTEXPR
 #endif // __cplusplus
 
-enum HcProcessCall {
+enum RtProcessCall {
     kProcessCallAllocPtr = 1,
     kProcessCallFreePtr,
     kProcessCallSizePtr,
@@ -181,15 +181,8 @@ using StrType = CharacterTypeUTF8[N];
 
 #endif // ifdef C++
 
-CA_EXTERN_C ObjectRef HcGetAppObject(VoidType);
+CA_EXTERN_C ObjectRef RtGetAppObject(VoidType);
 
 CA_INLINE ObjectRef kApplicationObject;
 
 typedef CharacterTypeUTF8 Str255Type[255];
-
-/// @brief Shows an message box with a formatting.
-/// @param title the message box title
-/// @param format the format
-/// @param va_list the va args, that goes along with it.
-/// @return void
-CA_EXTERN_C VoidType MsgBox(CharacterTypeUTF8* title, CharacterTypeUTF8* format, ...);

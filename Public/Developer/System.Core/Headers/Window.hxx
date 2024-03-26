@@ -21,7 +21,11 @@
 struct _GraphicsPoint;
 struct _GraphicsPort;
 
+#ifdef __SINGLE_PRECISION__
 typedef float PositionType;
+#else
+typedef double PositionType;
+#endif
 
 /// @brief A point, can represent the size, position of a window.
 typedef struct _GraphicsPoint {
