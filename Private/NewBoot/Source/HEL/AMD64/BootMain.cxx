@@ -17,22 +17,18 @@
 
 #define kMaxBufSize 256
 
-/// @brief kernel main entrypoint/
-/// @param handoverInfo 
-EXTERN_C void Main(HEL::HandoverInformationHeader* handoverInfo);
-
 /// @brief Bootloader main type.
 typedef void (*bt_main_type)(HEL::HandoverInformationHeader* handoverInfo);
 
 /// @brief Main EFI entrypoint.
 /// @param ImageHandle Handle of this image.
 /// @param SystemTable The system table of it.
-/// @return 
+/// @return
 EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
                                  EfiSystemTable* SystemTable) {
   InitEFI(SystemTable);  // Init the EFI library.
   InitGOP();             // Init the GOP.
-  
+
   BTextWriter writer;
   /// Splash screen stuff
 
@@ -44,12 +40,14 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .Write(L"\r\n");
 
   BDeviceATA ataDrv;
+  Boolean isIniNotFound = No;
 
   if (ataDrv) {
-    Char namePart[kEPMNameLength] = { "BootBlock" };
+    Char namePart[kEPMNameLength] = {"BootBlock"};
 
     /// tries to read an EPM block, or writes one if it fails.
-    boot_write_newfs_partition(namePart, kEPMNameLength, &ataDrv);
+    bool isIniNotFound =
+        boot_write_newfs_partition(namePart, kEPMNameLength, &ataDrv);
   }
 
   /// Read Kernel blob.
@@ -60,13 +58,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   kernelImg.ReadAll();
 
   if (kernelImg.Error() == BFileReader::kOperationOkay) {
-    // First check for a .MANIFEST inside the ESP.
-    // This will tell us about the current kernel.
-    BFileReader systemManifest(L".MANIFEST", ImageHandle);
-
-    systemManifest.Size(kMaxBufSize);
-    systemManifest.ReadAll();
-
     UInt32 MapKey = 0;
     UInt32* Size;
     EfiMemoryDescriptor* Descriptor;
@@ -133,48 +124,39 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
              handoverHdrPtr->f_FirmwareVendorLen);
 
+#ifdef __DEBUG__
     writer.Write(L"NewBoot.exe: Fetching ACPI's 'RSD PTR'...").Write(L"\r\n");
+#endif
 
-    for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries; ++indexVT)
-    {
-      volatile Char* vendorTable = reinterpret_cast<volatile Char*>(SystemTable->ConfigurationTable[indexVT].VendorTable);
+    for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
+         ++indexVT) {
+      volatile Char* vendorTable = reinterpret_cast<volatile Char*>(
+          SystemTable->ConfigurationTable[indexVT].VendorTable);
 
-      if (vendorTable[0] == 'R' &&
-          vendorTable[1] == 'S' &&
-          vendorTable[2] == 'D' &&
-          vendorTable[3] == ' ' &&
-          vendorTable[4] == 'P' &&
-          vendorTable[5] == 'T' &&
-          vendorTable[6] == 'R' &&
-          vendorTable[7] == ' ') {
+      if (vendorTable[0] == 'R' && vendorTable[1] == 'S' &&
+          vendorTable[2] == 'D' && vendorTable[3] == ' ' &&
+          vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
+          vendorTable[6] == 'R' && vendorTable[7] == ' ') {
         handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
-        writer.Write(L"NewBoot.exe: Found ACPI's 'RSD PTR' table on this machine.").Write(L"\r\n");
+
+#ifdef __DEBUG__
+        writer
+            .Write(
+                L"NewBoot.exe: Found ACPI's 'RSD PTR' table on this machine.")
+            .Write(L"\r\n");
+#endif
 
         break;
       }
     }
 
-    /// TODO: Set this to what we found inside NewFS partition.
-    bool isIniNotFound = true;
-
-    if (isIniNotFound) {
-      handoverHdrPtr->f_Magic = kHandoverMagic;
-      handoverHdrPtr->f_Version = kHandoverVersion;
-
-      writer.Write(L"NewBoot.exe: Setting up OS...\r\n");
-
-      ST->ConOut->ClearScreen(ST->ConOut);
-
-      EFI::ExitBootServices(MapKey, ImageHandle);
-
-      Main(handoverHdrPtr);
+    if (!isIniNotFound) {
+      writer.Write(L"NewBoot.exe: No partition found for s10. (HCR-1000)\r\n");
     } else {
       handoverHdrPtr->f_Magic = kHandoverMagic;
       handoverHdrPtr->f_Version = kHandoverVersion;
 
-      writer.Write(L"NewBoot.exe: Running OS...\r\n");
-
-      ST->ConOut->ClearScreen(ST->ConOut);
+      writer.Write(L"NewBoot.exe: Running s10...\r\n");
 
       EFI::ExitBootServices(MapKey, ImageHandle);
 

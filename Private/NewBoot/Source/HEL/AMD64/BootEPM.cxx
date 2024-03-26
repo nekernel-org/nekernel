@@ -14,13 +14,13 @@ STATIC const BlockGUID kEPMGuid = {
     0x425d,
     {0xbe, 0x7b, 0x75, 0xa3, 0x7c, 0xc6, 0x79, 0xbc}};
 
-Void boot_write_newfs_partition(const Char* namePart, SizeT namePartLength,
+EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePartLength,
                                  BDeviceATA* ataInterface) {
-  if (namePartLength > kEPMNameLength || !namePart) return;
-  if (!ataInterface) return;
+  if (namePartLength > kEPMNameLength || !namePart) return No;
+  if (!ataInterface) return No;
 
   ataInterface->Leak().mBase = 0;
-  ataInterface->Leak().mSize = 512;
+  ataInterface->Leak().mSize = kATASectorSize;
 
   Char buf[512] = {0};
 
@@ -28,11 +28,11 @@ Void boot_write_newfs_partition(const Char* namePart, SizeT namePartLength,
 
   BTextWriter writer;
 
-  writer.Write(L"NewBoot.exe: Checking for an EPM BootBlock...\r\n");
+  writer.Write(L"NewBoot.exe: Checking for a NewFS partition...\r\n");
 
   for (SizeT i = 0; i < kEPMMagicLength; i++) {
     if (buf[i] != kEPMMagic[i]) {
-      writer.Write(L"NewBoot.exe: Writing an EPM BootBlock...\r\n");
+      writer.Write(L"NewBoot.exe: Writing a NewFS partition...\r\n");
 
       BootBlockType* bootBlock = (BootBlockType*)buf;
 
@@ -101,7 +101,10 @@ Void boot_write_newfs_partition(const Char* namePart, SizeT namePartLength,
 
       ataInterface->Write(buf, 1);
 
-      return;
+      return No;
     }
   }
+
+  writer.Write(L"NewBoot.exe: Partition found, everything is OK.\r\n");
+  return Yes;
 }
