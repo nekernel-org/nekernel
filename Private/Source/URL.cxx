@@ -20,14 +20,14 @@ constexpr const char *kURLProtocols[] = {
     "http",    // http without the secure
     "file",    // filesystem protocol
     "ftp",     // file transfer protocol
-    "sysconf",  // system settings
+    "sysconf",  // system config
 };
 
 constexpr const int kUrlOutSz = 3;  //! such as: ://
 constexpr const int kProtosCount = 5;
 constexpr const int kRangeSz = 4096;
 
-static ErrorOr<StringView> url_extract_location(const char *url) {
+ErrorOr<StringView> url_extract_location(const char *url) {
   if (!url || *url == 0 || rt_string_len(url, kRangeSz) > kRangeSz)
     return ErrorOr<StringView>{-1};
 
@@ -54,7 +54,7 @@ static ErrorOr<StringView> url_extract_location(const char *url) {
   return ErrorOr<StringView>(view);
 }
 
-static ErrorOr<StringView> url_extract_protocol(const char *url) {
+ErrorOr<StringView> url_extract_protocol(const char *url) {
   if (!url || *url == 0 || rt_string_len(url, kRangeSz) > kRangeSz)
     return ErrorOr<StringView>{-1};
 

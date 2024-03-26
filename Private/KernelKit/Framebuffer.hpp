@@ -67,18 +67,18 @@ class Framebuffer final {
 };
 
 /***********************************************************************************/
-/// Framebuffer utils.
+/// Color utils.
 /***********************************************************************************/
 
 const UInt32 kRgbRed = 0x000000FF;
 const UInt32 kRgbGreen = 0x0000FF00;
 const UInt32 kRgbBlue = 0x00FF0000;
 const UInt32 kRgbBlack = 0x00000000;
-const UInt32 kRgbWhite = 0x00FFFFFF;
+const UInt32 kRgbWhite = 0xFFFFFFFF;
 }  // namespace HCore
 
 /***********************************************************************************/
-/// Framebuffer macros.
+/// Color macros.
 /***********************************************************************************/
 
 #define RGB(R, G, B) (HCore::UInt32)(0x##R##G##B)

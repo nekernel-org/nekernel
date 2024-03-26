@@ -1,19 +1,18 @@
 {
     "configurations": [
         {
-            "name": "HCore (Macintosh MinGW)",
+            "name": "MicroKernel (Macintosh MinGW)",
             "includePath": [
                 "${workspaceFolder}/Private/**",
                 "${workspaceFolder}/Private/NewBoot/**",
-                "${workspaceFolder}/SDK/Kits/**"
+                "${workspaceFolder}/Public/Developer/**"
             ],
             "defines": [
                 "__HCORE__",
                 "__KERNEL__",
                 "Z_PREFIX",
                 "__HAVE_HCORE_APIS__",
-                "__FSKIT_NEWFS__",
-                "kBootKrnlSections"
+                "__FSKIT_NEWFS__"
             ],
             "cStandard": "c17",
             "cppStandard": "c++20",
@@ -21,45 +20,33 @@
             "intelliSenseMode": "gcc-x64"
         },
         {
-            "name": "HCore (Windows MinGW)",
+            "name": "AppDev ",
+            "includePath": [
+                "${workspaceFolder}/Public/Developer/**"
+            ],
+            "defines": [],
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "gcc-x64"
+        },
+        {
+            "name": "MicroKernel (Windows)",
             "includePath": [
                 "${workspaceFolder}/Private/**",
                 "${workspaceFolder}/Private/NewBoot/**",
-                "${workspaceFolder}/Public/SDK/**"
+                "${workspaceFolder}/Public/Developer/**"
             ],
             "defines": [
                 "__HCORE__",
                 "__KERNEL__",
                 "Z_PREFIX",
                 "__HAVE_HCORE_APIS__",
-                "__FSKIT_NEWFS__",
-                "kBootKrnlSections"
+                "__FSKIT_NEWFS__"
             ],
-            "cStandard": "c17",
-            "cppStandard": "c++20",
-            "intelliSenseMode": "gcc-x64"
-        },
-        {
-            "name": "HCore Tools (Mac)",
-            "includePath": [
-                "${workspaceFolder}/Private/Tools/**"
-            ],
-            "defines": [],
-            "cStandard": "c17",
-            "cppStandard": "c++20",
-            "compilerPath": "/usr/bin/gcc",
-            "intelliSenseMode": "macos-gcc-arm64"
-        },
-        {
-            "name": "HCore Tools (Windows MinGW)",
-            "includePath": [
-                "${workspaceFolder}/Private/Tools/**"
-            ],
-            "defines": [],
             "cStandard": "c17",
             "cppStandard": "c++20",
             "compilerPath": "C:/cygwin64/bin/x86_64-w64-mingw32-gcc.exe",
-            "intelliSenseMode": "windows-gcc-x64"
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4

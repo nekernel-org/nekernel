@@ -65,17 +65,17 @@ HeapInterface::HeapInterface() {
 
 HeapInterface::~HeapInterface() { delete this; }
 
-void HeapInterface::Delete(PtrHeapType me) noexcept {
+void HeapInterface::Delete(HeapRef me) noexcept {
   CA_MUST_PASS(me);
   HcFreeProcessHeap(kApplicationObject, me);
 }
 
-SizeType HeapInterface::Size(PtrHeapType me) noexcept {
+SizeType HeapInterface::Size(HeapRef me) noexcept {
   CA_MUST_PASS(me);
   return HcProcessHeapSize(kApplicationObject, me);
 }
 
-PtrHeapType HeapInterface::New(const SizeType& sz, const DWordType flags) {
+HeapRef HeapInterface::New(const SizeType& sz, const DWordType flags) {
   SizeType _sz = sz;
   if (!_sz) ++_sz;
 

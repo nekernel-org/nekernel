@@ -9,13 +9,13 @@
 
 #include <System.Core/Headers/Defines.hxx>
 
+#define kFileOpenInterface 10
+#define kFileAliasInterface 11
+
 namespace System {
 class FileInterface;
 class DirectoryInterface;
 
-typedef IntPtrType SymlinkType;
-typedef IntPtrType FileType;
-typedef IntPtrType DirectoryType;
 typedef IntPtrType FSRef;
 
 enum {
@@ -31,13 +31,17 @@ enum {
 class FileInterface final {
  public:
   explicit FileInterface(const char *path) {
-    mHandle = kApplicationObject->Invoke(kApplicationObject, kProcessCallOpenHandle,
-                                      0, path);
+    CA_MUST_PASS(path);
+
+    mHandle = kApplicationObject->Invoke(
+        kApplicationObject, kProcessCallOpenHandle, kFileOpenInterface, path);
   }
 
   ~FileInterface() {
-    kApplicationObject->Invoke(kApplicationObject, kProcessCallCloseHandle, 0,
-                            mHandle);
+    CA_MUST_PASS(kApplicationObject);
+
+    kApplicationObject->Invoke(kApplicationObject, kProcessCallCloseHandle,
+                               kFileOpenInterface, mHandle);
   }
 
  public:
@@ -45,17 +49,19 @@ class FileInterface final {
 
  public:
   PtrVoidType Read(UIntPtrType off, SizeType sz) {
-    return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, mHandle, 2,
-                                                off, sz);
+    return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, mHandle,
+                                                   2, off, sz);
   }
+
   PtrVoidType Read(SizeType sz) {
-    return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, mHandle, 3,
-                                                sz);
+    return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, mHandle,
+                                                   3, sz);
   }
 
   void Write(PtrVoidType buf, UIntPtrType off, SizeType sz) {
     kApplicationObject->Invoke(kApplicationObject, mHandle, 4, buf, off, sz);
   }
+
   void Write(PtrVoidType buf, SizeType sz) {
     kApplicationObject->Invoke(kApplicationObject, mHandle, 5, buf, sz);
   }
@@ -63,14 +69,21 @@ class FileInterface final {
   void Seek(UIntPtrType off) {
     kApplicationObject->Invoke(kApplicationObject, mHandle, 5);
   }
+
   void Rewind() { kApplicationObject->Invoke(kApplicationObject, mHandle, 6); }
 
  public:
-  const char *MIME();
-  void MIME(const char *mime);
+  const char *MIME() {
+    return (const char *)kApplicationObject->Invoke(kApplicationObject, mHandle,
+                                                    7);
+  }
+
+  void MIME(const char *mime) {
+    kApplicationObject->Invoke(kApplicationObject, mHandle, 8, mime);
+  }
 
  private:
-  FileType mHandle;
+  FSRef mHandle;
 };
 
 typedef FileInterface *FilePtr;
@@ -93,12 +106,12 @@ class FileException : public SystemException {
   const char *mReason{"System.Core: FileException: Catastrophic failure!"};
 };
 
-inline IntPtrType MakeSymlink(const char *from, const char *outputWhere) {
+inline IntPtrType FSMakeAlias(const char *from, const char *outputWhere) {
   CA_MUST_PASS(from);
   CA_MUST_PASS(outputWhere);
 
-  return kApplicationObject->Invoke(kApplicationObject, kProcessCallOpenHandle, 1,
-                                 from);
+  return kApplicationObject->Invoke(kApplicationObject, kProcessCallOpenHandle,
+                                    kFileAliasInterface, from);
 }
 }  // namespace System
 

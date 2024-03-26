@@ -12,7 +12,7 @@ namespace System {
 class HeapException;
 class HeapInterface;
 
-typedef PtrVoidType PtrHeapType;
+typedef PtrVoidType HeapRef;
 
 enum {
   kHeapExpandable = 2,
@@ -36,9 +36,9 @@ class HeapInterface final {
   static HeapInterface *Shared() noexcept;
 
  public:
-  void Delete(PtrHeapType me) noexcept;
-  SizeType Size(PtrHeapType me) noexcept;
-  PtrHeapType New(const SizeType &sz, 
+  void Delete(HeapRef me) noexcept;
+  SizeType Size(HeapRef me) noexcept;
+  HeapRef New(const SizeType &sz, 
   const DWordType flags = kHeapNoFlags);
 };
 

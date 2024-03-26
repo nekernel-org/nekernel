@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_URL_HPP__
-#define _INC_URL_HPP__
+#ifndef _INC_URL_HPP_
+#define _INC_URL_HPP_
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
@@ -24,6 +24,9 @@ class Url final {
   Ref<StringView> m_urlView;
 };
 
+ErrorOr<StringView> url_extract_location(const char *url);
+ErrorOr<StringView> url_extract_protocol(const char *url);
 }  // namespace HCore
 
-#endif /* ifndef _INC_URL_HPP__ */
+
+#endif /* ifndef _INC_URL_HPP_ */
