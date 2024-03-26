@@ -8,7 +8,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Utils.hpp>
 
-// Bugs = 0
+/// BUGS: 0
 
 namespace HCore {
 Url::Url(StringView &strUrl) : m_urlView(strUrl, false) {}
@@ -20,11 +20,10 @@ constexpr const char *kURLProtocols[] = {
     "http",    // http without the secure
     "file",    // filesystem protocol
     "ftp",     // file transfer protocol
-    "sysconf",  // system config
 };
 
 constexpr const int kUrlOutSz = 3;  //! such as: ://
-constexpr const int kProtosCount = 5;
+constexpr const int kProtosCount = 4;
 constexpr const int kRangeSz = 4096;
 
 ErrorOr<StringView> url_extract_location(const char *url) {
