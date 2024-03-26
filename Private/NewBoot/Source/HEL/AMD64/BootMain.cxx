@@ -49,7 +49,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     Char namePart[kEPMNameLength] = { "BootBlock" };
 
     /// tries to read an EPM block, or writes one if it fails.
-    boot_try_read_partition_map(namePart, kEPMNameLength, &ataDrv);
+    boot_write_newfs_partition(namePart, kEPMNameLength, &ataDrv);
   }
 
   /// Read Kernel blob.

@@ -54,6 +54,10 @@
 
 #define kNewFSCatalogKindPage 8
 
+#define kNewFSPartitionTypeStandard 7
+#define kNewFSPartitionTypePage 8
+#define kNewFSPartitionTypeBoot 9
+
 #define kNewFSCatalogKindDevice 9
 #define kNewFSCatalogKindLock 10
 
@@ -182,7 +186,7 @@ class NewFSParser {
   HCORE_COPY_DEFAULT(NewFSParser);
 
  public:
-  virtual _Output NewFork* ForkFrom(NewCatalog& catalog, const Int64& id) = 0;
+  virtual _Output NewFork* GetForkFrom(NewCatalog& catalog, const Char* name) = 0;
 
   virtual _Output NewCatalog* FindCatalog(const char* catalogName) = 0;
 

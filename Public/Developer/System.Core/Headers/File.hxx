@@ -48,38 +48,40 @@ class FileInterface final {
   CA_COPY_DEFAULT(FileInterface);
 
  public:
-  PtrVoidType Read(UIntPtrType off, SizeType sz) {
+  PtrVoidType ReadFork(const CharacterTypeUTF8* name, UIntPtrType off, SizeType sz) {
     return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, mHandle,
-                                                   2, off, sz);
+                                                   2, name, off, sz);
   }
 
-  PtrVoidType Read(SizeType sz) {
+  PtrVoidType ReadFork(const CharacterTypeUTF8* name, SizeType sz) {
     return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, mHandle,
-                                                   3, sz);
+                                                   name, 3, sz);
   }
 
-  void Write(PtrVoidType buf, UIntPtrType off, SizeType sz) {
-    kApplicationObject->Invoke(kApplicationObject, mHandle, 4, buf, off, sz);
+  void WriteFork(const CharacterTypeUTF8* name, PtrVoidType buf, UIntPtrType off, SizeType sz) {
+    kApplicationObject->Invoke(kApplicationObject, mHandle, 4, name, buf, off, sz);
   }
 
-  void Write(PtrVoidType buf, SizeType sz) {
-    kApplicationObject->Invoke(kApplicationObject, mHandle, 5, buf, sz);
+  void WriteFork(const CharacterTypeUTF8* name, PtrVoidType buf, SizeType sz) {
+    kApplicationObject->Invoke(kApplicationObject, mHandle, 5, name, buf, sz);
   }
 
-  void Seek(UIntPtrType off) {
-    kApplicationObject->Invoke(kApplicationObject, mHandle, 5);
+  void SeekFork(const CharacterTypeUTF8* name) {
+    kApplicationObject->Invoke(kApplicationObject, mHandle, 6, name);
   }
 
-  void Rewind() { kApplicationObject->Invoke(kApplicationObject, mHandle, 6); }
+  void RewindFork() { kApplicationObject->Invoke(kApplicationObject, mHandle, 7); }
 
  public:
-  const char *MIME() {
+  const CharacterTypeUTF8 *MIME() {
     return (const char *)kApplicationObject->Invoke(kApplicationObject, mHandle,
-                                                    7);
+                                                    8);
   }
 
-  void MIME(const char *mime) {
-    kApplicationObject->Invoke(kApplicationObject, mHandle, 8, mime);
+  void MIME(const CharacterTypeUTF8 *mime) {
+    CA_MUST_PASS(mime);
+
+    kApplicationObject->Invoke(kApplicationObject, mHandle, 9, mime);
   }
 
  private:

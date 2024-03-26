@@ -96,6 +96,7 @@ typedef struct PartitionBlock PartitionBlockType;
 #define kEPMMagic kEPMMagicError
 #endif
 
+/// partition must start after this address.
 #define kEPMStartPartition 1024
 
 /// END SPECS
