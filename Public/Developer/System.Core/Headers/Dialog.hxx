@@ -13,4 +13,4 @@
 /// @param format the format
 /// @param va_list the va args, that goes along with it.
 /// @return void
-CA_EXTERN_C VoidType MsgBox(CharacterTypeUTF8* title, CharacterTypeUTF8* format, ...);
+CA_EXTERN_C VoidType DlgMsgBox(CharacterTypeUTF8* title, CharacterTypeUTF8* format, ...);

@@ -50,7 +50,7 @@ struct PACKED PartitionBlock {
   HCore::Int64 SectorEnd;
   HCore::Int64 SectorSz;
   HCore::Int64 SectorStart;
-  HCore::Int16 Type;
+  HCore::Int16 Kind;
   HCore::Int32 Version;
   HCore::Char Fs[kEPMFilesystemLength]; /* NewFS, HCFS... */
 };

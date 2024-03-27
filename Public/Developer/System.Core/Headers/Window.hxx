@@ -83,62 +83,62 @@ typedef QWordType ControlRef;
 /// @brief Creates a new control
 /// @param id the control rsrc fork.
 /// @return 
-CA_EXTERN_C ControlRef CreateControl(const DWordType id);
+CA_EXTERN_C ControlRef WmCreateControl(const DWordType id);
 
 /// @brief Releases the control
 /// @param id the control ref.
 /// @return 
-CA_EXTERN_C VoidType ReleaseControl(const ControlRef id);
+CA_EXTERN_C VoidType WmReleaseControl(const ControlRef id);
 
 /// @brief Moves a control inside a GraphicsPort.
 /// @param id the control ref.
 /// @param where where to move at.
 /// @return 
-CA_EXTERN_C Int32Type SetControlPosition(const ControlRef id, GraphicsPoint where);
+CA_EXTERN_C Int32Type WmSetControlPosition(const ControlRef id, GraphicsPoint where);
 
 /// @brief Enable control.
 /// @param id 
 /// @param enabled 
 /// @return 
-CA_EXTERN_C Int32Type SetControlEnabled(const ControlRef id, BooleanType enabled);
+CA_EXTERN_C Int32Type WmSetControlEnabled(const ControlRef id, BooleanType enabled);
 
 /// @brief Make control visible.
 /// @param id 
 /// @param visible 
 /// @return 
-CA_EXTERN_C Int32Type MakeControlVisible(const ControlRef id, BooleanType visible);
+CA_EXTERN_C Int32Type WmMakeControlVisible(const ControlRef id, BooleanType visible);
 
 /// @brief Creates a new window.
 /// @param name the window name
 /// @param rsrcId the window fork rsrc id.
 /// @return the window graphics port.
-CA_EXTERN_C GraphicsPort* CreateWindow(const char* name, const DWordType rsrcId);
+CA_EXTERN_C GraphicsPort* WmCreateWindow(const char* name, const DWordType rsrcId);
 
 /// @brief Creates a new menu
 /// @param name the menu's name
 /// @param rsrcId the menu fork rsrc id.
 /// @return the menu graphics port.
-CA_EXTERN_C GraphicsPort* CreateMenu(const char* name, const DWordType rsrcId);
+CA_EXTERN_C GraphicsPort* WmCreateMenu(const char* name, const DWordType rsrcId);
 
 /// @brief Releases the window.
 /// @param port the window port.
 /// @return void
-CA_EXTERN_C VoidType ReleaseWindow(GraphicsPort* port);
+CA_EXTERN_C VoidType WmReleaseWindow(GraphicsPort* port);
 
 /// @brief Releases the menu
 /// @param port the menu port.
 /// @return void
-CA_EXTERN_C VoidType ReleaseMenu(GraphicsPort* port);
+CA_EXTERN_C VoidType WmReleaseMenu(GraphicsPort* port);
 
 /// @brief Moves a window on the desktop. (menu arent movable, will return kErrIncompatible is menu is provided.)
 /// @param id the gfx port.
 /// @param where to move.
 /// @return error code.
-CA_EXTERN_C Int32Type MoveWindow(const GraphicsPort* id, GraphicsPoint where);
+CA_EXTERN_C Int32Type WmMoveWindow(const GraphicsPort* id, GraphicsPoint where);
 
 enum {
-  kWinErrIncompatible = 0x74,
-  kWinErrOutOfMemory,
-  kWinErrInvalidArg,
-  kWinErrNotImplemented,
+  kWmErrIncompatible = 0x74,
+  kWmErrOutOfMemory,
+  kWmErrInvalidArg,
+  kWmErrNotImplemented,
 };

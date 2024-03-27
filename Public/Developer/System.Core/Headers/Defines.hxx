@@ -11,7 +11,7 @@
 #endif
 
 #ifdef _DEBUG
-#define CA_MUST_PASS(e) { if (!e) { MsgBox("Sorry, ssertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) __assert_chk_fail() } }
+#define CA_MUST_PASS(e) { if (!e) { DlgMsgBox("Sorry, an assertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) __assert_chk_fail() } }
 #else
 #define CA_MUST_PASS(e) CA_UNREFERENCED_PARAMETER(e)
 #endif
@@ -131,9 +131,7 @@ enum RtProcessCall {
 };
 
 #include <System.Core/Headers/Hint.hxx>
-
-#define kObjectGlobalNamespaceSystem "HCORE_ROOT\\"
-#define kObjectGlobalNamespaceUser "HCORE_USER_ROOT\\"
+#include <System.Core/Headers/Dialog.hxx>
 
 enum {
   kObjectTypeProcess,

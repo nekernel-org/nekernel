@@ -5,5 +5,3 @@
 ------------------------------------------- */
 
 #pragma once
-
-#include <System.Core/Headers/Window.hxx>

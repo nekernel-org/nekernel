@@ -28,11 +28,11 @@ typedef VoidType(*ThreadEntrypointKind)(VoidType);
 /// @param threadName the thread's name.
 /// @param threadStart where to start.
 /// @return 
-CA_EXTERN_C ThreadRef CreateThread(const CharacterTypeUTF8* threadName, ThreadEntrypointKind threadStart);
+CA_EXTERN_C ThreadRef TmCreateThread(const CharacterTypeUTF8* threadName, ThreadEntrypointKind threadStart);
 
 /// @brief Dispoes the thread, and exits with code kThreadErrorExit
 /// @param ref 
 /// @return 
-CA_EXTERN_C VoidType  DisposeThread(ThreadRef ref);
+CA_EXTERN_C VoidType TmDisposeThread(ThreadRef ref);
 
 #endif  // __THREAD_API__

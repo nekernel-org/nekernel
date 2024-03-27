@@ -167,7 +167,9 @@ class NewFSParser {
   HCORE_COPY_DEFAULT(NewFSParser);
 
  public:
-  virtual _Output NewFork* GetForkFrom(NewCatalog& catalog, const Char* name) = 0;
+  virtual void                CreateFork(_Input NewCatalog& catalog, _Input NewFork& theFork) = 0;
+  
+  virtual _Output NewFork*    FindFork(_Input NewCatalog& catalog, _Input const Char* name) = 0;
 
   virtual _Output NewCatalog* FindCatalog(const char* catalogName) = 0;
 

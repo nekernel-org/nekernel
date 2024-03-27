@@ -42,7 +42,7 @@ struct EfiFileProtocol;
 
 typedef UInt64 EfiStatusType;
 
-/// @brief Core Handle Type
+/// @brief Core Handle Kind
 /// This is like NT's Win32 HANDLE type.
 typedef struct EfiHandle {
 } *EfiHandlePtr;
@@ -189,15 +189,15 @@ typedef enum EfiAllocateType {
 
 typedef struct EfiMemoryDescriptor {
   ///
-  /// Type of the memory region.
-  /// Type EFI_MEMORY_TYPE is defined in the
+  /// Kind of the memory region.
+  /// Kind EFI_MEMORY_TYPE is defined in the
   /// AllocatePages() function description.
   ///
-  UInt32 Type;
+  UInt32 Kind;
   ///
   /// Physical address of the first byte in the memory region. PhysicalStart
   /// must be aligned on a 4 KiB boundary, and must not be above
-  /// 0xfffffffffffff000. Type EFI_PHYSICAL_ADDRESS is defined in the
+  /// 0xfffffffffffff000. Kind EFI_PHYSICAL_ADDRESS is defined in the
   /// AllocatePages() function description
   ///
   UIntPtr PhysicalStart;
@@ -403,7 +403,7 @@ typedef struct EfiLoadFileProtocol {
 } EfiLoadFileProtocol;
 
 typedef struct EfiDevicePathProtocol {
-  UInt8 Type;
+  UInt8 Kind;
   UInt8 SubType;
   UInt8 Length[2];
 } EfiDevicePathProtocol;

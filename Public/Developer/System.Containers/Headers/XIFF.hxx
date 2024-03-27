@@ -7,7 +7,7 @@
 
 /** ---------------------------------------------------
 
-    * THIS FILE CONTAINS CODE FOR THE eXtended Information File Format.
+    * The eXtended Information File Format.
     * XIFF is used to make setup programs/audio/video files.
 
 ------------------------------------------------------- */
@@ -58,6 +58,5 @@ struct ML_PACKED XiffMetadataHeader final {
 
 /// UI resource
 #define kXIFFResourceMetadata4CC  "resx"
-
 
 #endif  // ifndef __XIFF__
