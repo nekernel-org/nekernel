@@ -96,7 +96,7 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
       swapBlock->SectorSz = kATASectorSize;
       swapBlock->SectorStart = kEPMStartPartition;
       swapBlock->Version = kNewFSVersionInteger;
-      swapBlock->Kind = kNewFSPartitionTypeBoot;
+      swapBlock->Kind = kNewFSPartitionTypePage;
       swapBlock->SectorEnd = MIB(4); /// 4 MIB swap partition.
 
       ataInterface->Write(buf, 1);
@@ -105,6 +105,6 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
     }
   }
 
-  writer.Write(L"NewBoot.exe: Partition found, everything is OK.\r\n");
+  writer.Write(L"NewBoot.exe: Partition found, everything's OK.\r\n");
   return Yes;
 }

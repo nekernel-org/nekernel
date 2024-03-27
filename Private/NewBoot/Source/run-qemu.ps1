@@ -1,1 +1,0 @@
-qemu-system-x86_64w.exe -net none -smp 2 -m 4G -M q35 -bios OVMF.fd -drive file=fat:rw:CDROM,index=1,format=raw -d int

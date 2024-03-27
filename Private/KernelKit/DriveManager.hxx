@@ -24,6 +24,7 @@ enum {
   kMassStorage = 0xDA,
   kFloppyDisc = 0xCD,
   kOpticalDisc = 0xDC,  // CD-ROM/DVD-ROM/Blu-Ray
+  /// combine with below.
   kReadOnly = 0x10,     // Read only drive
   kEPMDrive = 0x11,     // Explicit Partition Map.
   kEPTDrive = 0x12,     // ESP w/ EPM partition.
@@ -42,10 +43,10 @@ struct DriveTrait final {
 
   /// @brief Packet drive (StorageKit compilant.)
   struct DrivePacket final {
-    VoidPtr fPacketContent;  // packet body.
+    VoidPtr fPacketContent;  //! packet body.
     Char fPacketMime[kDriveNameLen];    //! identify what we're sending.
-    SizeT fPacketSize;       // packet size
-    UInt32 fPacketCRC32;     // sanity crc, in case if good is set to false
+    SizeT fPacketSize;       //! packet size
+    UInt32 fPacketCRC32;     //! sanity crc, in case if good is set to false
     Boolean fPacketGood;
   } fPacket;
 

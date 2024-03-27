@@ -12,7 +12,7 @@
 
 ------------------------------------------------------- */
 
-#include <System.Core/Headers/Defines.hxx>
+#include <System.Core/Headers/Defines.h>
 
 /// @brief four-character code for XIFF.
 #define kFourCCLength_XIFF 4
@@ -29,7 +29,7 @@
  * Used by XIFF based containers.
  */
 
-struct PACKED XiffHeader final {
+struct PACKED XiffHeader {
   ByteType f_Magic[kFourCCLength_XIFF];     // XIFF string (includes \0)
   DWordType f_Size;                       // overall size of header (XiffHeader) in bytes
   DWordType f_FormatType;                 // format type. generic
@@ -42,7 +42,7 @@ typedef struct XiffHeader XiffHeader;
 
 /// @brief XIFF metadata header, either located in forks or in file directly.
 /// @author Amlal EL Mahrouss
-struct ML_PACKED XiffMetadataHeader final {
+struct PACKED XiffMetadataHeader {
   ByteType f_Name[kXIFFNameLength];
   DWordType f_Flags;
   DWordType f_Type;

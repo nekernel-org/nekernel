@@ -77,10 +77,10 @@ struct PACKED PartitionBlock {
 
 #define kEPMMaxBlks 128
 
-//! version types.
-//! use in boot block version field.
+///! @brief Version kind enum.
+///! @brief Use in boot block version field.
 
-enum {
+enum kEPMKind {
   kEPMMpUx = 0xcf,
   kEPMLinux = 0x8f,
   kEPMBSD = 0x9f,

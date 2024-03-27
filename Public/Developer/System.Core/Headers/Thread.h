@@ -8,10 +8,10 @@
 // Created by Amlal on 3/18/24
 //
 
-#ifndef __THREAD_API__
-#define __THREAD_API__
+#ifndef __THREAD__
+#define __THREAD__
 
-#include <System.Core/Headers/Defines.hxx>
+#include <System.Core/Headers/Defines.h>
 
 #define kThreadErrorExit -33
 
@@ -31,8 +31,13 @@ typedef VoidType(*ThreadEntrypointKind)(VoidType);
 CA_EXTERN_C ThreadRef TmCreateThread(const CharacterTypeUTF8* threadName, ThreadEntrypointKind threadStart);
 
 /// @brief Dispoes the thread, and exits with code kThreadErrorExit
-/// @param ref 
-/// @return 
+/// @param ref the thread reference.
+/// @return  nothing.
 CA_EXTERN_C VoidType TmDisposeThread(ThreadRef ref);
 
-#endif  // __THREAD_API__
+/// @brief Waits for the thread to complete.
+/// @param ref the thread reference.
+/// @return  nothing.
+CA_EXTERN_C VoidType TmWaitForCompletion(ThreadRef ref);
+
+#endif  // __THREAD__

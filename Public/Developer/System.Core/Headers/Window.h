@@ -6,20 +6,20 @@
 
 #pragma once
 
-#include <System.Core/Headers/Defines.hxx>
+#include <System.Core/Headers/Defines.h>
 
 /*************************************************************
  * 
  * File: Window.hxx 
- * Purpose: Window Manager implementation for System Software.
+ * Purpose: Window Manager API for HCore.
  * Date: 3/26/24
  * 
  * Copyright Mahrouss Logic, all rights reserved.
  * 
  *************************************************************/
 
-struct _GraphicsPoint;
-struct _GraphicsPort;
+struct _WmPoint;
+struct _WindowPort;
 
 #ifdef __SINGLE_PRECISION__
 typedef float PositionType;
@@ -27,13 +27,15 @@ typedef float PositionType;
 typedef double PositionType;
 #endif
 
-/// @brief A point, can represent the size, position of a window.
-typedef struct _GraphicsPoint {
-  PositionType X, Y;
-} GraphicsPoint;
+typedef QWordType DCRef;
 
-/// @brief Tracker Graphics port.
-typedef struct _GraphicsPort {
+/// @brief A point, can represent the size, position of a window.
+typedef struct _WmPoint {
+  PositionType X, Y;
+} WmPoint;
+
+/// @brief Window port type, can be used to control the window.
+typedef struct _WindowPort {
   WordType windowPort;
   WordType windowKind;
   BooleanType windowVisible;
@@ -42,13 +44,14 @@ typedef struct _GraphicsPort {
   BooleanType windowMoving;
   BooleanType windowDisableClose;
   BooleanType windowDisableMinimize;
-  GraphicsPoint windowPosition;
-  GraphicsPoint windowSize;
+  WmPoint windowPosition;
+  WmPoint windowSize;
   BooleanType windowInvalidate;
   DWordType windowClearColor;
   WordType menuPort;
   WordType parentPort;
-} GraphicsPort;
+  DCRef windowDeviceContext;
+} WindowPort;
 
 typedef UInt32Type ColorRef;
 
@@ -90,11 +93,11 @@ CA_EXTERN_C ControlRef WmCreateControl(const DWordType id);
 /// @return 
 CA_EXTERN_C VoidType WmReleaseControl(const ControlRef id);
 
-/// @brief Moves a control inside a GraphicsPort.
+/// @brief Moves a control inside a WindowPort.
 /// @param id the control ref.
 /// @param where where to move at.
 /// @return 
-CA_EXTERN_C Int32Type WmSetControlPosition(const ControlRef id, GraphicsPoint where);
+CA_EXTERN_C Int32Type WmSetControlPosition(const ControlRef id, WmPoint where);
 
 /// @brief Enable control.
 /// @param id 
@@ -112,29 +115,29 @@ CA_EXTERN_C Int32Type WmMakeControlVisible(const ControlRef id, BooleanType visi
 /// @param name the window name
 /// @param rsrcId the window fork rsrc id.
 /// @return the window graphics port.
-CA_EXTERN_C GraphicsPort* WmCreateWindow(const char* name, const DWordType rsrcId);
+CA_EXTERN_C WindowPort* WmCreateWindow(const char* name, const DWordType rsrcId);
 
 /// @brief Creates a new menu
 /// @param name the menu's name
 /// @param rsrcId the menu fork rsrc id.
 /// @return the menu graphics port.
-CA_EXTERN_C GraphicsPort* WmCreateMenu(const char* name, const DWordType rsrcId);
+CA_EXTERN_C WindowPort* WmCreateMenu(const char* name, const DWordType rsrcId);
 
 /// @brief Releases the window.
 /// @param port the window port.
 /// @return void
-CA_EXTERN_C VoidType WmReleaseWindow(GraphicsPort* port);
+CA_EXTERN_C VoidType WmReleaseWindow(WindowPort* port);
 
 /// @brief Releases the menu
 /// @param port the menu port.
 /// @return void
-CA_EXTERN_C VoidType WmReleaseMenu(GraphicsPort* port);
+CA_EXTERN_C VoidType WmReleaseMenu(WindowPort* port);
 
 /// @brief Moves a window on the desktop. (menu arent movable, will return kErrIncompatible is menu is provided.)
 /// @param id the gfx port.
 /// @param where to move.
 /// @return error code.
-CA_EXTERN_C Int32Type WmMoveWindow(const GraphicsPort* id, GraphicsPoint where);
+CA_EXTERN_C Int32Type WmMoveWindow(const WindowPort* id, WmPoint where);
 
 enum {
   kWmErrIncompatible = 0x74,

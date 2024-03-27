@@ -1,13 +1,10 @@
-# NewKernel+NewBoot (codename: HCore)
+![Kernel](Meta/NewKernel.svg)
 
-![Kernel](Meta/HCore.svg)
-
-## MicroKernel, bootloader and servers resides here.
+# NewKernel and NewBoot
 
 You need:
 
 - MinGW for the kernel and bootloader.
-- HintKit for Compilation check.
 - Netwide Assembler to output COFF object code.
 
 Start by cloning the repo:

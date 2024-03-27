@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <System.Core/Headers/Heap.hxx>
+#include <System.Core/Headers/Heap.h>
 
 /// @brief Allocate from the user's heap.
 /// @param refObj Process object.

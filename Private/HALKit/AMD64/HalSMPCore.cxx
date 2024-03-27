@@ -7,7 +7,7 @@
 #include <KernelKit/ProcessScheduler.hpp>
 
 using namespace HCore;
-Void ProcessHeader::SetStart(UIntPtr &imageStart) noexcept {
+Void ProcessHeader::SetEntrypoint(UIntPtr &imageStart) noexcept {
   if (imageStart == 0) this->Crash();
 
   this->StackFrame->Rbp = imageStart;

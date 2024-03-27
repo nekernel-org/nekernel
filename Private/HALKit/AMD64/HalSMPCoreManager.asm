@@ -14,8 +14,13 @@
 
 section .text
 
+;; writes to rdx the stackframe inside rcx.
+;; rcx: Stack Pointer
+;; rdx: SMP core address.
 rt_do_context_switch:
-	retfq
+	
+    retfq
 
+;; gets the current stack frame.
 rt_get_current_context:
     retfq

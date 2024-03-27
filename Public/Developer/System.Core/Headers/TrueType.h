@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include <System.Core/Headers/Window.hxx>
+#include <System.Core/Headers/Window.h>
 
 /*************************************************************
  * 
  * File: TrueType.hxx 
- * Purpose: TrueType font implementation for System Software.
+ * Purpose: TrueType font implementation for HCore.
  * Date: 3/26/24
  * 
  * Copyright Mahrouss Logic, all rights reserved.
@@ -29,3 +29,4 @@ CA_EXTERN_C TTFFontRef FnCreateFont(const char* name);
 /// @param fon 
 /// @return 
 CA_EXTERN_C VoidType FnDisposeFont(TTFFontRef fon);
+

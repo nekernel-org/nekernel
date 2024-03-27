@@ -10,7 +10,7 @@
 
 #define ToolboxClearRsrc() uA = 0
 
-/// @brief draws a resource.
+/// @brief Draws a resource.
 #define ToolboxDrawRsrc(ImgPtr, _Height, _Width, BaseX, BaseY) \
   uA = 0;                                                                   \
                                                                             \
@@ -37,7 +37,7 @@
   }
 
 
-/// @brief cleans a resource.
+/// @brief Cleans a resource.
 #define ToolboxClearZone(_Height, _Width, BaseX, BaseY) \
                                                                             \
   for (HCore::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
@@ -52,6 +52,7 @@
   }
 
 
+/// @brief Draws inside a zone.
 #define ToolboxDrawZone(_Clr, _Height, _Width, BaseX, BaseY) \
                                                                             \
   for (HCore::SizeT i = BaseX; i < _Width + BaseX; ++i) {                  \

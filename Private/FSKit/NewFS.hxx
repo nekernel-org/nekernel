@@ -35,11 +35,15 @@
 #define kNewFSIdent " NewFS"
 #define kNewFSPadLen 16
 
-//! On EPM and GPT disks.
+/// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
 #define kNewFSVersionInteger 0x121
 #define kNewFSVerionString   "1.2.1"
+
+/// @brief Standard fork types.
+#define kNewFSDataFork     "data"
+#define kNewFSResourceFork "rsrc"
 
 #define kNewFSCatalogKindFile 1
 #define kNewFSCatalogKindDir 2

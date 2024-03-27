@@ -130,8 +130,8 @@ enum RtProcessCall {
     kProcessCallsCount = 7,
 };
 
-#include <System.Core/Headers/Hint.hxx>
-#include <System.Core/Headers/Dialog.hxx>
+#include <System.Core/Headers/Hint.h>
+#include <System.Core/Headers/Dialog.h>
 
 enum {
   kObjectTypeProcess,

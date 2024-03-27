@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <System.Core/Headers/Defines.hxx>
+#include <System.Core/Headers/Defines.h>
 
 #define kAllocationTypes 2
 

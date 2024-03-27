@@ -15,10 +15,11 @@
 
 %define kTypeKernel 100
 %define kArchAmd64 122
+%define kHandoverMagic 0xBADCC
 
 section .NewBoot
 
-HandoverMagic: dq 0xBAD55
+HandoverMagic: dq kHandoverMagic
 HandoverType: dw kTypeKernel
 HandoverArch: dw kArchAmd64
 ;; This NewBootStart points to Main.
@@ -27,13 +28,13 @@ HandoverStart: dq Main
 section .text
 
 global Main
-extern RuntimeMain
+extern hal_init_platform
 
 ;; Just a simple setup, we'd also need to tell some before
 Main:
     push rax
     push rcx
-    call RuntimeMain
+    call hal_init_platform
     pop rcx
     pop rax
 ;; Go to sleep.

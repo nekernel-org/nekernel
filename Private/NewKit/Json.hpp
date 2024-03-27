@@ -16,6 +16,7 @@
 #include <NewKit/Utils.hpp>
 
 namespace HCore {
+/// @brief Json value class
 class JsonType final {
  public:
   explicit JsonType() : HCore::JsonType(1, 1) {}
@@ -32,13 +33,18 @@ class JsonType final {
   StringView fValue;
 
  public:
+  /// @brief returns the key of the json
+  /// @return 
   StringView &AsKey() { return fKey; }
 
+  /// @brief returns the value of the json.
+  /// @return 
   StringView &AsValue() { return fValue; }
 
   static JsonType kUndefined;
 };
 
+/// @brief Json stream helper class.
 struct JsonStreamTrait final {
   JsonType In(const char *full_array) {
     SizeT len = rt_string_len(full_array);

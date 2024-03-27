@@ -2,7 +2,7 @@
  (C) Mahrouss Logic
     ===========================================*/
 
-#include <System.Core/Headers/Heap.hxx>
+#include <System.Core/Headers/Heap.h>
 
 /// @brief Inits the library.
 /// @return if it was succesful or not.

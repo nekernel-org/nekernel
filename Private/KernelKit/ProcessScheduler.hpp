@@ -121,7 +121,7 @@ class ProcessHeader final {
   HCORE_COPY_DEFAULT(ProcessHeader)
 
  public:
-  void SetStart(UIntPtr &imageStart) noexcept;
+  void SetEntrypoint(UIntPtr &imageStart) noexcept;
 
  public:
   Char Name[kProcessLen] = {"HCore Process"};
@@ -141,22 +141,27 @@ class ProcessHeader final {
   SizeT FreeMemory{0};
 
   enum {
-    ExecutableType,
-    DLLType,
-    DriverType,
-    TypeCount,
+    kUserKind = 3,
+    kLibKind = 3,
+    kDriverKind = 0,
+    kKindCount,
+  };
+
+  enum {
+    kRingUserKind = 3,
+    kRingDriverKind = 0,
   };
 
   ProcessTime PTime;
-  PID ProcessId{-1};
-  Int32 Ring{3};
-  Int32 Kind{0};
+  PID ProcessId{kPIDInvalid};
+  Int32 Ring{kRingDriverKind};
+  Int32 Kind{kUserKind};
 
  public:
   //! @brief boolean operator, check status.
   operator bool() { return Status != ProcessStatus::kDead; }
 
-  //! @brief Crash app, exits with code ~0.
+  //! @brief Crash the app, exits with code ~0.
   void Crash();
 
   //! @brief Exits app.

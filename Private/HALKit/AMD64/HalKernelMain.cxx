@@ -17,8 +17,9 @@
 #include <NewKit/Json.hpp>
 
 EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
+EXTERN_C void RuntimeMain();
 
-EXTERN_C void RuntimeMain(
+EXTERN_C void hal_init_platform(
     HCore::HEL::HandoverInformationHeader* HandoverHeader) {
   kHandoverHeader = HandoverHeader;
 
@@ -65,12 +66,6 @@ EXTERN_C void RuntimeMain(
 
   /// END POST
 
-  /// Mounts a NewFS block.
-  HCore::NewFilesystemManager* newFS = new HCore::NewFilesystemManager();
-  HCore::ke_protect_ke_heap(newFS);
-
-  HCore::FilesystemManagerInterface::Mount(newFS);
-
   ToolboxInitRsrc();
 
   ToolboxDrawRsrc(
@@ -80,6 +75,7 @@ EXTERN_C void RuntimeMain(
 
   ToolboxClearRsrc();
 
-  HCore::ke_delete_ke_heap(newFS);
+  RuntimeMain();
+
   HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

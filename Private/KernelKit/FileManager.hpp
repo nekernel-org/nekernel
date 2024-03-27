@@ -18,13 +18,18 @@
 #include <FSKit/NewFS.hxx>
 #endif  // __FSKIT_NEWFS__
 
+#ifdef __FSKIT_HCFS__
+#include <FSKit/HCFS.hxx>
+#endif  // __FSKIT_HCFS__
+
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
 #include <NewKit/ErrorID.hpp>
 #include <NewKit/Ref.hpp>
 #include <NewKit/Stream.hpp>
 
-/// Main filesystem abstraction manager.
+/// @brief Filesystem abstraction manager.
+/// Works like the VFS or IFS.
 
 #define kBootFolder "/Boot"
 #define kBinFolder "/Applications"

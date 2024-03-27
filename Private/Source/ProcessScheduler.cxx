@@ -162,15 +162,15 @@ SizeT ProcessScheduler::Add(Ref<ProcessHeader> &process) {
 
   UIntPtr imageStart = reinterpret_cast<UIntPtr>(process.Leak().Image);
 
-  process.Leak().SetStart(imageStart);
+  process.Leak().SetEntrypoint(imageStart);
 
   mTeam.AsArray().Add(process);
 
-  if (!imageStart && process.Leak().Kind == ProcessHeader::ExecutableType) {
+  if (!imageStart && process.Leak().Kind == ProcessHeader::kUserKind) {
     process.Leak().Crash();
   }
 
-  if (!imageStart && process.Leak().Kind == ProcessHeader::DriverType) {
+  if (!imageStart && process.Leak().Kind == ProcessHeader::kDriverKind) {
     if (process.Leak().Ring == 3)
       process.Leak().Crash();
     else

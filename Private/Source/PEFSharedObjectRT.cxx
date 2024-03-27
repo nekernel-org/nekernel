@@ -18,9 +18,9 @@
 
  Revision History:
 
-     01/02/24: Rework shared library ABI, except a rt_library_init and rt_library_free
- (amlel)
-    15/02/24: Breaking changes, changed the name of the routines. (amlel)
+     01/02/24: Rework shared library ABI, except a rt_library_init and
+ rt_library_free (amlel) 15/02/24: Breaking changes, changed the name of the
+ routines. (amlel)
 
  ------------------------------------------- */
 
@@ -76,7 +76,7 @@ EXTERN_C SharedObjectPtr rt_library_init(void) {
 EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool *successful) {
   MUST_PASS(successful);
 
-  // sanity check (will also trigger a bug check)
+  // sanity check (will also trigger a bug check if this fails)
   if (lib == nullptr) {
     *successful = false;
     ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
@@ -92,7 +92,9 @@ EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool *successful) {
 
 /***********************************************************************************/
 
-extern "C" void __mh_purecall(void) {
-  // virtual placeholder.
+/// @brief Unimplemented function (crashes by default)
+/// @param  
+EXTERN_C void __mh_purecall(void) {
+  ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
   return;
 }
