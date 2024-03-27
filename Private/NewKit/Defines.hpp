@@ -88,7 +88,8 @@ inline Args &&move(Args &&arg) {
   return static_cast<Args &&>(arg);
 }
 
-/// @brief Encoding class
+/// @brief Encoder class
+/// Used to cast A to B or B to A.
 class Encoder final {
 public:
   explicit Encoder() = default;
@@ -98,14 +99,23 @@ public:
   Encoder(const Encoder &) = default;
 
 public:
+  /// @brief Convert type to bytes.
+  /// @tparam T the type.
+  /// @param type (a1) the data.
+  /// @return a1 as Char*
   template <typename T>
   Char* AsBytes(T type) noexcept {
     return reinterpret_cast<Char*>(type);
   }
 
+  /// @brief Convert T class to Y class.
+  /// @tparam T the class type of type.
+  /// @tparam Y the result class.
+  /// @param type the class to cast.
+  /// @return the class as Y.
   template <typename T, typename Y>
   Y As(T type) noexcept {
-    return reinterpret_cast<Y>(type);
+    return type.template As<Y>();
   }
 
 };
