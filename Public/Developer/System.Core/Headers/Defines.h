@@ -196,9 +196,12 @@ CA_EXTERN_C ObjectRef          RtGetAppObject(VoidType);
 CA_EXTERN_C SizeType           RtGetAppArgumentsCount(VoidType);
 CA_EXTERN_C CharacterTypeUTF8* RtGetAppArgumentsPtr(VoidType);
 
-CA_INLINE ObjectRef kApplicationObject;
+CA_EXTERN_C ObjectRef kApplicationObject;
 
 typedef CharacterTypeUTF8 Str255Type[255];
 
 #define True  1
 #define False 0
+#define Bool BooleanType
+
+#define NULL ((PtrVoidType)0)

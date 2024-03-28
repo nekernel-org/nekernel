@@ -25,16 +25,3 @@ void operator delete[](void* ptr) {
 
   RtFreeProcessPtr(ptr);
 }
-
-void operator delete(void* ptr) {
-  if (ptr == nullptr) return;
-
-  RtFreeProcessPtr(ptr);
-}
-
-void operator delete(void* ptr, size_t sz) {
-  if (ptr == nullptr) return;
-  CA_UNREFERENCED_PARAMETER(sz);
-
-  RtFreeProcessPtr(ptr);
-}

@@ -60,3 +60,11 @@ CA_EXTERN_C Int32Type WmMoveWindow(WindowPort* id, WmPoint where) {
 
   return 0;
 }
+
+/// Colors!
+
+CA_EXTERN_C const ColorRef kRgbRed = 0x000000FF;
+CA_EXTERN_C const ColorRef kRgbGreen = 0x0000FF00;
+CA_EXTERN_C const ColorRef kRgbBlue = 0x00FF0000;
+CA_EXTERN_C const ColorRef kRgbBlack = 0x00000000;
+CA_EXTERN_C const ColorRef kRgbWhite = 0xFFFFFFFF;

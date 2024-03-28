@@ -73,7 +73,7 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
       }
 
       partBlock->SectorSz = kATASectorSize;
-      partBlock->SectorStart = kEPMStartPartition + MIB(4);
+      partBlock->SectorStart = kEPMStartPartition + MIB(16);
       partBlock->Version = kNewFSVersionInteger;
       partBlock->Kind = kNewFSPartitionTypeStandard;
       partBlock->SectorEnd = 0; /// grows on the disk.
@@ -97,7 +97,7 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
       swapBlock->SectorStart = kEPMStartPartition;
       swapBlock->Version = kNewFSVersionInteger;
       swapBlock->Kind = kNewFSPartitionTypePage;
-      swapBlock->SectorEnd = MIB(4); /// 4 MIB swap partition.
+      swapBlock->SectorEnd = MIB(16); /// 4 MIB swap partition.
 
       ataInterface->Write(buf, 1);
 

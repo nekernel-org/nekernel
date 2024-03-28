@@ -67,11 +67,11 @@ typedef UInt32Type ColorRef;
 /// Color utils.
 /***********************************************************************************/
 
-const ColorRef kRgbRed = 0x000000FF;
-const ColorRef kRgbGreen = 0x0000FF00;
-const ColorRef kRgbBlue = 0x00FF0000;
-const ColorRef kRgbBlack = 0x00000000;
-const ColorRef kRgbWhite = 0xFFFFFFFF;
+CA_EXTERN_C const ColorRef kRgbRed;
+CA_EXTERN_C const ColorRef kRgbGreen;
+CA_EXTERN_C const ColorRef kRgbBlue;
+CA_EXTERN_C const ColorRef kRgbBlack;
+CA_EXTERN_C const ColorRef kRgbWhite;
 
 /***********************************************************************************/
 /// Color macro.
