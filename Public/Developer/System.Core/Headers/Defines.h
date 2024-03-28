@@ -82,13 +82,19 @@ typedef CharacterTypeUTF8 BooleanType;
 
 #define CA_PTR *
 
-#define CA_FAR __far
-#define CA_NEAR __near
-
 #define CA_UNREFERENCED_PARAMETER(e) ((VoidType)e)
 
 #ifdef __x86_64__
+
+#   define CA_FAR __far
+#   define CA_NEAR __near
+
 #   define _M_AMD64 2
+#else
+
+#   define CA_FAR
+#   define CA_NEAR
+
 #endif 
 
 #ifdef __aarch64__
@@ -133,13 +139,14 @@ enum RtProcessCall {
 #include <System.Core/Headers/Hint.h>
 #include <System.Core/Headers/Dialog.h>
 
+#define kObjectGlobalNamespace ":\\"
+
 enum {
-  kObjectTypeProcess,
+  kObjectTypeGeneric,
   kObjectTypeFile,
   kObjectTypeDevice,
   kObjectTypeNetwork,
   kObjectTypeInvalid,
-  KObjectTypeUserDefined = 0xCF,
   kObjectTypeCount = 5,
 };
 
@@ -179,7 +186,9 @@ using StrType = CharacterTypeUTF8[N];
 
 #endif // ifdef C++
 
-CA_EXTERN_C ObjectRef RtGetAppObject(VoidType);
+CA_EXTERN_C ObjectRef          RtGetAppObject(VoidType);
+CA_EXTERN_C SizeType           RtGetAppArgumentsCount(VoidType);
+CA_EXTERN_C CharacterTypeUTF8* RtGetAppArgumentsPtr(VoidType);
 
 CA_INLINE ObjectRef kApplicationObject;
 

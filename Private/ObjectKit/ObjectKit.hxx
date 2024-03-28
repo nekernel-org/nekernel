@@ -12,12 +12,11 @@
 #define kObjectGlobalNamespace ":\\"
 
 enum {
-  kObjectTypeProcess,
+  kObjectTypeGeneric,
   kObjectTypeFile,
   kObjectTypeDevice,
   kObjectTypeNetwork,
   kObjectTypeInvalid,
-  KObjectTypeUserDefined = 0xCF,
   kObjectTypeCount = 5,
 };
 
