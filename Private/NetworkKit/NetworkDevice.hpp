@@ -10,7 +10,7 @@
 #include <KernelKit/DeviceManager.hpp>
 #include <NetworkKit/IP.hpp>
 
-namespace HCore {
+namespace NewOS {
 struct NetworkDeviceCommand;
 class NetworkDevice;
 
@@ -55,7 +55,7 @@ using PPPNetworkDevice = NetworkDevice;
 
 /// @brief HPC device.
 using HPCNetworkDevice = NetworkDevice;
-}  // namespace HCore
+}  // namespace NewOS
 
 #include <NetworkKit/NetworkDevice.inl>
 

@@ -10,7 +10,7 @@
 #include <StorageKit/NVME.hpp>
 #include <StorageKit/AHCI.hpp>
 
-typedef HCore::UInt16 SKScsiPacket[12];
+typedef NewOS::UInt16 SKScsiPacket[12];
 
 extern const SKScsiPacket kCDRomPacketTemplate;
 

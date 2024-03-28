@@ -145,7 +145,7 @@ enum {
 
 /**
  * @brief GUID type, something you can also find in CFKit.
- * @author AMlal El Mahrouss
+ * @author Amlal El Mahrouss
  */
 typedef struct GUID {
   DWordType Data1;

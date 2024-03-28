@@ -7,7 +7,7 @@
 #include <NewKit/Utils.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-namespace HCore {
+namespace NewOS {
 Int rt_string_cmp(const Char *src, const Char *cmp, Size size) {
   Int32 counter = 0;
 
@@ -166,12 +166,12 @@ char *rt_string_from_char(char *str, const char chr) {
 
   return str;
 }
-}  // namespace HCore
+}  // namespace NewOS
 
 extern "C" void memset(void *dst, char src, size_t len) {
-  HCore::rt_set_memory(dst, src, len);
+  NewOS::rt_set_memory(dst, src, len);
 }
 
 extern "C" void memcpy(void *dst, void *src, size_t len) {
-  HCore::rt_copy_memory(src, dst, len);
+  NewOS::rt_copy_memory(src, dst, len);
 }

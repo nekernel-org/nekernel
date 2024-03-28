@@ -8,7 +8,7 @@
 #include <KernelKit/Semaphore.hpp>
 #include <KernelKit/Timer.hpp>
 
-namespace HCore {
+namespace NewOS {
 bool Semaphore::Unlock() noexcept {
   if (fLockingProcess) fLockingProcess = nullptr;
 
@@ -38,4 +38,4 @@ void Semaphore::Sync() noexcept {
   while (fLockingProcess) {
   }
 }
-}  // namespace HCore
+}  // namespace NewOS

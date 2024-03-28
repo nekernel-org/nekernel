@@ -11,7 +11,7 @@
 #include <NewKit/Ref.hpp>
 #include <NewKit/String.hpp>
 
-namespace HCore {
+namespace NewOS {
 class RawIPAddress6;
 class RawIPAddress;
 class IPFactory;
@@ -73,4 +73,4 @@ class IPFactory final {
   static ErrorOr<StringView> ToStringView(Ref<RawIPAddress> ipv4);
   static bool IpCheckVersion4(const char *ip);
 };
-}  // namespace HCore
+}  // namespace NewOS

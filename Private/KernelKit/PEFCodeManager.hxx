@@ -13,7 +13,7 @@
 
 #define kPefApplicationMime "application/x-hcore-exec"
 
-namespace HCore {
+namespace NewOS {
 ///
 /// \name PEFLoader
 /// \brief PEF loader class.
@@ -54,6 +54,6 @@ class PEFLoader : public LoaderInterface {
 namespace Utils {
 bool execute_from_image(PEFLoader &exec) noexcept;
 }  // namespace Utils
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif  // ifndef _INC_CODE_MANAGER_PEF_

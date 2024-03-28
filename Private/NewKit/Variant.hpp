@@ -9,7 +9,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-namespace HCore {
+namespace NewOS {
 class Variant final {
  public:
   enum class VariantKind { kString, kPointer, kUndefined };
@@ -36,4 +36,4 @@ class Variant final {
   voidPtr m_Ptr{nullptr};
   VariantKind m_Kind{VariantKind::kUndefined};
 };
-}  // namespace HCore
+}  // namespace NewOS

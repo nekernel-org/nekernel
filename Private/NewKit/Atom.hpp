@@ -7,7 +7,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore
+namespace NewOS
 {
 template <typename T> class Atom final
 {
@@ -42,4 +42,4 @@ template <typename T> class Atom final
   private:
     T m_ArrayOfAtoms;
 };
-} // namespace HCore
+} // namespace NewOS

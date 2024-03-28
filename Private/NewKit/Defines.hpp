@@ -22,7 +22,7 @@
 #endif
 #endif
 
-namespace HCore {
+namespace NewOS {
 using voidPtr = void *;
 using VoidPtr = void *;
 using nullPtr = decltype(nullptr);
@@ -119,17 +119,17 @@ public:
   }
 
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #define DEDUCE_ENDIAN(address, value)                         \
-  (((reinterpret_cast<HCore::Char *>(address)[0]) == (value)) \
-       ? (HCore::Endian::kEndianBig)                          \
-       : (HCore::Endian::kEndianLittle))
+  (((reinterpret_cast<NewOS::Char *>(address)[0]) == (value)) \
+       ? (NewOS::Endian::kEndianBig)                          \
+       : (NewOS::Endian::kEndianLittle))
 
 #define Yes (true)
 #define No (false)
 
-#define VoidStar HCore::voidPtr
+#define VoidStar NewOS::voidPtr
 
 #ifdef INIT
 #undef INIT

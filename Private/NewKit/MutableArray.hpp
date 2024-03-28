@@ -44,7 +44,7 @@
 
 // FIXME: this is a shitty algorithm, which is consumer hungry.
 // Remove and occurences of that, and remove that class.
-namespace HCore
+namespace NewOS
 {
 template <typename T> class MutableArray;
 
@@ -142,7 +142,7 @@ template <typename T, T _PlaceHolderValue> class NullableMutableArray
     MutableLinkedList<T> *m_FirstNode{nullptr};
 
     /* Number of nodes inside of this dynamic array. */
-    HCore::SizeT m_NodeCount{0};
+    NewOS::SizeT m_NodeCount{0};
 
   private:
     // don't remove that
@@ -217,6 +217,6 @@ class MutableArray : public NullableMutableArray<voidPtr, nullptr>
     MutableLinkedList<T> *m_FirstNode{nullptr};
 
     /* Number of nodes inside of this dynamic array. */
-    HCore::SizeT m_NodeCount{0};
+    NewOS::SizeT m_NodeCount{0};
 };
-} // namespace HCore
+} // namespace NewOS

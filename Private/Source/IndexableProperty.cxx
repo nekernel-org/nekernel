@@ -16,11 +16,11 @@
 
 #define kMaxLenIndexer 256
 
-namespace HCore {
+namespace NewOS {
 namespace Indexer {
 IndexProperty& IndexableProperty::LeakProperty() noexcept { return fIndex; }
 
 void IndexableProperty::AddFlag(Int16 flag) { fFlags |= flag; }
 void IndexableProperty::RemoveFlag(Int16 flag) { fFlags &= flag; }
 }  // namespace Indexer
-}  // namespace HCore
+}  // namespace NewOS

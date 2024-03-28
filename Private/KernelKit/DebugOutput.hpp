@@ -25,7 +25,7 @@
 #define kDebugTeam 43
 #define kDebugEOP 49
 
-namespace HCore {
+namespace NewOS {
 // @brief Emulates a VT100 terminal.
 class TerminalDevice final : public DeviceInterface<const Char *> {
  public:
@@ -135,7 +135,7 @@ class DebuggerPortHeader final {
   Int16 fPort[kDebugMaxPorts];
   Int16 fBoundCnt;
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #ifdef kcout
 #undef kcout

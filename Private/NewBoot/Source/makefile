@@ -26,7 +26,7 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -mgeneral-regs-only -mno-red-zone -D__KERNEL__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_HCORE_APIS__ -D__HCORE__ -D__BOOTLOADER__ -I./ 
+FLAG_GNU=-fshort-wchar -mgeneral-regs-only -mno-red-zone -D__KERNEL__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./ 
 
 .PHONY: invalid-recipe
 invalid-recipe:

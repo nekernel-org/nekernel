@@ -29,21 +29,21 @@ T *tls_new_class(Args &&...args);
 /// @brief Thread Information Block for Local Storage.
 /// Located in GS on AMD64, Virtual Address 0x10000 (64x0, 32x0, ARM64)
 struct PACKED ThreadInformationBlock final {
-  HCore::Char    Cookie[kTLSCookieLen];
-  HCore::UIntPtr StartCode;       // Start Address
-  HCore::UIntPtr StartData;       // Allocation Heap
-  HCore::UIntPtr StartStack;      // Stack Pointer.
-  HCore::Int32   ThreadID;                // Thread execution ID.
+  NewOS::Char    Cookie[kTLSCookieLen];
+  NewOS::UIntPtr StartCode;       // Start Address
+  NewOS::UIntPtr StartData;       // Allocation Heap
+  NewOS::UIntPtr StartStack;      // Stack Pointer.
+  NewOS::Int32   ThreadID;                // Thread execution ID.
 };
 
 /// @brief TLS install TIB
-EXTERN_C void rt_install_tib(ThreadInformationBlock *pTib, HCore::VoidPtr pPib);
+EXTERN_C void rt_install_tib(ThreadInformationBlock *pTib, NewOS::VoidPtr pPib);
 
 ///! @brief Cookie Sanity check.
-HCore::Boolean tls_check_tib(ThreadInformationBlock* ptr);
+NewOS::Boolean tls_check_tib(ThreadInformationBlock* ptr);
 
 /// @brief TLS check system call
-EXTERN_C HCore::Void tls_check_syscall_impl(HCore::HAL::StackFramePtr stackPtr) noexcept;
+EXTERN_C NewOS::Void tls_check_syscall_impl(NewOS::HAL::StackFramePtr stackPtr) noexcept;
 
 #include <KernelKit/ThreadLocalStorage.inl>
 

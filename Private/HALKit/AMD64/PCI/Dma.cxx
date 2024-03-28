@@ -6,7 +6,7 @@
 
 #include <KernelKit/PCI/Dma.hpp>
 
-namespace HCore {
+namespace NewOS {
 DMAWrapper::operator bool() { return m_Address; }
 
 bool DMAWrapper::operator!() { return !m_Address; }
@@ -60,4 +60,4 @@ DMAWrapper &DMAWrapper::operator=(voidPtr Ptr) {
   m_Address = Ptr;
   return *this;
 }
-}  // namespace HCore
+}  // namespace NewOS

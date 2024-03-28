@@ -10,7 +10,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/KernelCheck.hpp>
 
-namespace HCore {
+namespace NewOS {
 template <typename T>
 class Ref final {
  public:
@@ -60,4 +60,4 @@ class NonNullRef final {
  private:
   Ref<T> m_Ref{nullptr};
 };
-}  // namespace HCore
+}  // namespace NewOS

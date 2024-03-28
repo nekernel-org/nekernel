@@ -8,7 +8,7 @@
 #include <NewKit/String.hpp>
 #include <StorageKit/PRDT.hpp>
 
-namespace HCore {
+namespace NewOS {
 PRDT::PRDT(const UIntPtr& physAddr) : m_PrdtAddr(physAddr) {
   MUST_PASS(physAddr);
   kcout << "PRDT::PRDT() {}\r\n";
@@ -29,4 +29,4 @@ PRDT& PRDT::operator=(const UIntPtr& prdtAddress) {
   m_PrdtAddr = prdtAddress;
   return *this;
 }
-}  // namespace HCore
+}  // namespace NewOS

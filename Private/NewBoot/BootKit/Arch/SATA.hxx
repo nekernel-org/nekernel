@@ -17,17 +17,17 @@ class BDeviceSATA final {
   HCORE_COPY_DEFAULT(BDeviceSATA);
 
   struct SATATrait final {
-    HCore::SizeT   mBase{1024};
-    HCore::Boolean mErr{false};
-    HCore::Boolean mDetected{false};
+    NewOS::SizeT   mBase{1024};
+    NewOS::Boolean mErr{false};
+    NewOS::Boolean mDetected{false};
 
     operator bool() { return !this->mErr; }
   };
 
   operator bool() { return this->Leak().mDetected; }
 
-  BDeviceSATA& Read(HCore::WideChar* Buf, const HCore::SizeT& SecCount);
-  BDeviceSATA& Write(HCore::WideChar* Buf, const HCore::SizeT& SecCount);
+  BDeviceSATA& Read(NewOS::WideChar* Buf, const NewOS::SizeT& SecCount);
+  BDeviceSATA& Write(NewOS::WideChar* Buf, const NewOS::SizeT& SecCount);
 
   SATATrait& Leak();
 

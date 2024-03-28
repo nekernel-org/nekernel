@@ -10,7 +10,7 @@
 
 /// BUGS: 0
 
-namespace HCore {
+namespace NewOS {
 Url::Url(StringView &strUrl) : m_urlView(strUrl, false) {}
 
 Url::~Url() = default;
@@ -79,4 +79,4 @@ Ref<ErrorOr<StringView>> Url::Protocol() noexcept {
 
   return Ref<ErrorOr<StringView>>(loc);
 }
-}  // namespace HCore
+}  // namespace NewOS

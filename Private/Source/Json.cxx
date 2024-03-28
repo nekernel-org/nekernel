@@ -6,7 +6,7 @@
 
 #include <NewKit/Json.hpp>
 
-using namespace HCore;
+using namespace NewOS;
 
 /// @brief Undefined object, is null in length.
-INIT(HCore::JsonType::kUndefined, HCore::JsonType);
+INIT(NewOS::JsonType::kUndefined, NewOS::JsonType);

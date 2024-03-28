@@ -6,4 +6,4 @@
 
 #include <CFKit/GUIDWrapper.hpp>
 
-namespace HCore::XRN {}
+namespace NewOS::XRN {}

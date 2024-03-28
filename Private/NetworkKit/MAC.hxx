@@ -10,7 +10,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-namespace HCore {
+namespace NewOS {
 class MacAddressGetter;
 
 /// \brief This retrieves the MAC address of the device.
@@ -24,4 +24,4 @@ class MacAddressGetter final {
   Array<WideChar, 12>& AsBytes();
 };
 
-}  // namespace HCore
+}  // namespace NewOS

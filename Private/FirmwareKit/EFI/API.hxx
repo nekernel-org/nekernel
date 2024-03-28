@@ -86,6 +86,6 @@ inline void InitEFI(EfiSystemTable *SystemTable) noexcept {
 
 #endif  // ifdef __BOOTLOADER__
 
-#define kHCoreSubsystem 17
+#define kNewOSSubsystem 17
 
 #endif /* ifndef __EFI_API__ */

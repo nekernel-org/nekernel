@@ -11,16 +11,16 @@
 
 extern "C" [[noreturn]] void ke_wait_for_debugger() {
   while (true) {
-    HCore::HAL::rt_cli();
-    HCore::HAL::rt_halt();
+    NewOS::HAL::rt_cli();
+    NewOS::HAL::rt_halt();
   }
 }
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
 
-namespace HCore {
-void ke_stop(const HCore::Int &id) {
+namespace NewOS {
+void ke_stop(const NewOS::Int &id) {
   kcout << "*** STOP *** \r\n";
   kcout << "*** NewKernel.exe has trigerred a runtime stop. *** \r\n";
 
@@ -96,7 +96,7 @@ void ke_runtime_check(bool expr, const char *file, const char *line) {
 
 #endif  // __DEBUG__
 
-    HCore::ke_stop(RUNTIME_CHECK_FAILED);  // Runtime Check failed
+    NewOS::ke_stop(RUNTIME_CHECK_FAILED);  // Runtime Check failed
   }
 }
-}  // namespace HCore
+}  // namespace NewOS

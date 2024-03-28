@@ -20,7 +20,7 @@
 #define kUserHeapMaxSz (4096)
 #define kUserHeapMag (0x5500A1)
 
-namespace HCore {
+namespace NewOS {
 typedef enum {
   kUserHeapHypervisor = 0x2,
   kUserHeapShared = 0x4,
@@ -37,4 +37,4 @@ VoidPtr rt_new_heap(Int32 flags);
 /// @param pointer The process heap pointer.
 /// @return 
 Int32 rt_free_heap(voidPtr pointer);
-}  // namespace HCore
+}  // namespace NewOS

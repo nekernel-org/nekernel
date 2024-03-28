@@ -11,7 +11,7 @@
 #define ME_DEVICE_COUNT (33)
 #define ME_FUNCTION_COUNT (8)
 
-namespace HCore::PCI {
+namespace NewOS::PCI {
     class Iterator final {
     public:
         Iterator() = delete;
@@ -31,6 +31,6 @@ namespace HCore::PCI {
     private:
         Array<PCI::Device, ME_BUS_COUNT> m_Devices;
     };
-} // namespace HCore::PCI
+} // namespace NewOS::PCI
 
 #endif // __PCI_ITERATOR_HPP__

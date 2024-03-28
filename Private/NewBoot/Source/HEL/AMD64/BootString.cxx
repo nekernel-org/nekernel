@@ -17,8 +17,8 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-HCore::SizeT BCopyMem(CharacterTypeUTF16 *dest, CharacterTypeUTF16 *src,
-                      const HCore::SizeT len) {
+NewOS::SizeT BCopyMem(CharacterTypeUTF16 *dest, CharacterTypeUTF16 *src,
+                      const NewOS::SizeT len) {
   if (!dest || !src) return 0;
 
   SizeT index = 0UL;
@@ -29,10 +29,10 @@ HCore::SizeT BCopyMem(CharacterTypeUTF16 *dest, CharacterTypeUTF16 *src,
   return index;
 }
 
-HCore::SizeT BStrLen(const CharacterTypeUTF16 *ptr) {
+NewOS::SizeT BStrLen(const CharacterTypeUTF16 *ptr) {
   if (!ptr) return 0;
 
-  HCore::SizeT cnt = 0;
+  NewOS::SizeT cnt = 0;
 
   while (*ptr != (CharacterTypeUTF16)0) {
     ++ptr;
@@ -42,11 +42,11 @@ HCore::SizeT BStrLen(const CharacterTypeUTF16 *ptr) {
   return cnt;
 }
 
-HCore::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
-                     const HCore::SizeT len) {
+NewOS::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
+                     const NewOS::SizeT len) {
   if (!src) return 0;
 
-  HCore::SizeT cnt = 0UL;
+  NewOS::SizeT cnt = 0UL;
 
   while (*src != 0) {
     if (cnt > len) break;
@@ -60,11 +60,11 @@ HCore::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
   return cnt;
 }
 
-HCore::SizeT BSetMem(CharacterTypeUTF8 *src, const CharacterTypeUTF8 byte,
-                     const HCore::SizeT len) {
+NewOS::SizeT BSetMem(CharacterTypeUTF8 *src, const CharacterTypeUTF8 byte,
+                     const NewOS::SizeT len) {
   if (!src) return 0;
 
-  HCore::SizeT cnt = 0UL;
+  NewOS::SizeT cnt = 0UL;
 
   while (*src != 0) {
     if (cnt > len) break;

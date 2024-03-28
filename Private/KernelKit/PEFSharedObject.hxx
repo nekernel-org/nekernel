@@ -1,7 +1,7 @@
 /*
  *      ========================================================
  *
- *      HCore
+ *      NewOS
  *      Copyright Mahrouss Logic, all rights reserved.
  *
  *      ========================================================
@@ -15,7 +15,7 @@
 #include <KernelKit/PEFCodeManager.hxx>
 #include <NewKit/Defines.hpp>
 
-namespace HCore {
+namespace NewOS {
 /// @brief Pure implementation, missing method/function handler.
 extern "C" void __mh_purecall(void);
 
@@ -87,6 +87,6 @@ class SharedObject final {
 };
 
 typedef SharedObject *SharedObjectPtr;
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */

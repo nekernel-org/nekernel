@@ -13,7 +13,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-namespace HCore::HAL {
+namespace NewOS::HAL {
 constexpr Int32 kThreadAPIC = 0;
 constexpr Int32 kThreadLAPIC = 1;
 constexpr Int32 kThreadIOAPIC = 2;
@@ -122,6 +122,6 @@ void hal_system_get_cores(voidPtr rsdPtr) {
     ++counter;
   }
 }
-}  // namespace HCore::HAL
+}  // namespace NewOS::HAL
 
 ///////////////////////////////////////////////////////////////////////////////////////

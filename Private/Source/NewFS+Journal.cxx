@@ -14,7 +14,7 @@
 
 #define kNewFSOpLog (4)
 
-namespace HCore::Detail {
+namespace NewOS::Detail {
 typedef Boolean (*NewFSRunnerType)(VoidPtr delegate);
 
 /// @brief Journal thread class.
@@ -59,8 +59,8 @@ class NewFSJournalRunner final {
     return false;
   }
 };
-}  // namespace HCore::Detail
+}  // namespace NewOS::Detail
 
-using namespace HCore;
+using namespace NewOS;
 
 #endif  // ifdef __FSKIT_NEWFS__

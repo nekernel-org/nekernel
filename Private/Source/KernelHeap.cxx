@@ -15,7 +15,7 @@
 
 #define kHeapMagic 0xD4D7
 
-namespace HCore {
+namespace NewOS {
 STATIC SizeT kHeapCount = 0UL;
 STATIC PageManager kHeapPageManager;
 
@@ -130,4 +130,4 @@ Boolean ke_protect_ke_heap(VoidPtr heapPtr) {
 
   return false;
 }
-}  // namespace HCore
+}  // namespace NewOS

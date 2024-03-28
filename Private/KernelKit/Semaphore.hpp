@@ -9,7 +9,7 @@
 #include <NewKit/Defines.hpp>
 #include <CompilerKit/CompilerKit.hxx>
 
-namespace HCore
+namespace NewOS
 {
 	class ProcessHeader;
 

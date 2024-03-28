@@ -6,4 +6,4 @@
 
 #include <KernelKit/PCI/Express.hpp>
 
-namespace HCore {}
+namespace NewOS {}

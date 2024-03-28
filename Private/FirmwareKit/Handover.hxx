@@ -26,7 +26,7 @@
 
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
-namespace HCore::HEL {
+namespace NewOS::HEL {
 /**
     @brief the kind of executable we're loading.
 */
@@ -85,4 +85,4 @@ struct HandoverInformationHeader {
     @brief Handover Jump Proc
 */
 typedef void (*HandoverProc)(HandoverInformationHeader* pHandover);
-}  // namespace HCore::HEL
+}  // namespace NewOS::HEL

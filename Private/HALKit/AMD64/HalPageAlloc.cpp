@@ -9,8 +9,8 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/KernelCheck.hpp>
 
-STATIC HCore::Boolean kAllocationInProgress = false;
-namespace HCore {
+STATIC NewOS::Boolean kAllocationInProgress = false;
+namespace NewOS {
 namespace HAL {
 /// @brief Allocates a new page of memory.
 /// @param sz the size of it.
@@ -46,4 +46,4 @@ auto hal_alloc_page(Boolean rw, Boolean user) -> VoidPtr {
   return hal_try_alloc_new_page(rw, user);
 }
 }  // namespace HAL
-}  // namespace HCore
+}  // namespace NewOS

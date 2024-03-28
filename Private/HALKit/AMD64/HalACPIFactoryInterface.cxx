@@ -8,7 +8,7 @@
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/String.hpp>
 
-namespace HCore {
+namespace NewOS {
 ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr) : m_Rsdp(rsdPtr), m_Entries(0) {
   volatile RSDP *_rsdPtr = reinterpret_cast<volatile RSDP *>(this->m_Rsdp);
 
@@ -73,4 +73,4 @@ void rt_shutdown_acpi_qemu_30_plus(void) { HAL::Out16(0x604, 0x2000); }
 void rt_shutdown_acpi_virtualbox(void) { HAL::Out16(0x4004, 0x3400); }
 
 /// You have to parse the MADT!
-}  // namespace HCore
+}  // namespace NewOS

@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: PEF.hpp
-    Purpose: Preferred Executable Format for HCore.
+    Purpose: Preferred Executable Format for NewOS.
 
     Revision History:
 
@@ -32,7 +32,7 @@
 /// The PEF also uses the x64 PE calling convention and ABI.
 /// It's just that the container are different.
 
-namespace HCore {
+namespace NewOS {
 enum {
   kPefArchIntel86S,
   kPefArchAMD64,
@@ -85,7 +85,7 @@ enum {
   kPefZero = 0xE,
   kPefLinkerID = 0x1,
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #define kPefExt ".exe"
 #define kPefDylibExt ".dll"
@@ -93,7 +93,7 @@ enum {
 #define kPefObjectExt ".obj"
 #define kPefDebugExt ".dbg"
 
-// HCore System Binary Interface.
+// NewOS System Binary Interface.
 #define kPefAbi (0xDEAD2)
 
 #define kPefStart "__start"

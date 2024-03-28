@@ -15,7 +15,7 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/String.hpp>
 
-namespace HCore {
+namespace NewOS {
 namespace Detail {
 UInt32 rt_get_pef_platform(void) noexcept {
 #ifdef __32x0__
@@ -153,4 +153,4 @@ const char *PEFLoader::Path() { return fPath.Leak().CData(); }
 const char *PEFLoader::Format() { return "PEF"; }
 
 const char *PEFLoader::MIME() { return kPefApplicationMime; }
-}  // namespace HCore
+}  // namespace NewOS

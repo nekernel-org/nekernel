@@ -9,7 +9,7 @@
 #include <KernelKit/Framebuffer.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace HCore {
+namespace NewOS {
 enum CommStatus {
   kStateInvalid,
   kStateReady = 0xCF,
@@ -113,9 +113,9 @@ EXTERN_C void ke_io_read(const char* bytes) {
 }
 
 TerminalDevice TerminalDevice::Shared() noexcept {
-  TerminalDevice out(HCore::ke_io_write, HCore::ke_io_read);
+  TerminalDevice out(NewOS::ke_io_write, NewOS::ke_io_read);
 
   return out;
 }
 
-}  // namespace HCore
+}  // namespace NewOS

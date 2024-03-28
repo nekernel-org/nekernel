@@ -25,7 +25,7 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a)            \
   (((sizeof(a) / sizeof(*(a))) / \
-    (static_cast<HCore::Size>(!(sizeof(a) % sizeof(*(a)))))))
+    (static_cast<NewOS::Size>(!(sizeof(a) % sizeof(*(a)))))))
 #endif
 
 #ifndef ALIGN
@@ -36,9 +36,9 @@
 #define ATTRIBUTE(X) __attribute__((X))
 #endif  // #ifndef ATTRIBUTE
 
-#ifndef __HCORE__
-#define __HCORE__ (202401)
-#endif  // !__HCORE__
+#ifndef __MAHROUSS__
+#define __MAHROUSS__ (202401)
+#endif  // !__MAHROUSS__
 
 #ifndef EXTERN_C
 #define EXTERN_C extern "C"

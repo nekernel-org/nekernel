@@ -16,23 +16,23 @@
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
 
-EXTERN_C HCore::VoidPtr kInterruptVectorTable[];
+EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
 EXTERN_C void RuntimeMain();
 
 EXTERN_C void hal_init_platform(
-    HCore::HEL::HandoverInformationHeader* HandoverHeader) {
+    NewOS::HEL::HandoverInformationHeader* HandoverHeader) {
   kHandoverHeader = HandoverHeader;
 
   /// Setup kernel globals.
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
-  kKernelVirtualStart = reinterpret_cast<HCore::VoidPtr>(
-      reinterpret_cast<HCore::UIntPtr>(HandoverHeader->f_VirtualStart) +
+  kKernelVirtualStart = reinterpret_cast<NewOS::VoidPtr>(
+      reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart) +
       kVirtualAddressStartOffset);
 
   kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 
-  STATIC HCore::HAL::Detail::HCoreGDT GDT = {
+  STATIC NewOS::HAL::Detail::NewOSGDT GDT = {
       {0, 0, 0, 0x00, 0x00, 0},  // null entry
       {0, 0, 0, 0x9a, 0xaf, 0},  // kernel code
       {0, 0, 0, 0x92, 0xaf, 0},  // kernel data
@@ -41,28 +41,28 @@ EXTERN_C void hal_init_platform(
       {0, 0, 0, 0x92, 0xaf, 0},  // user data
   };
 
-  HCore::HAL::RegisterGDT gdtBase;
+  NewOS::HAL::RegisterGDT gdtBase;
 
-  gdtBase.Base = reinterpret_cast<HCore::UIntPtr>(&GDT);
-  gdtBase.Limit = sizeof(HCore::HAL::Detail::HCoreGDT) - 1;
+  gdtBase.Base = reinterpret_cast<NewOS::UIntPtr>(&GDT);
+  gdtBase.Limit = sizeof(NewOS::HAL::Detail::NewOSGDT) - 1;
 
   /// Load GDT.
 
-  HCore::HAL::GDTLoader gdt;
+  NewOS::HAL::GDTLoader gdt;
   gdt.Load(gdtBase);
 
   /// Load IDT.
 
-  HCore::HAL::Register64 idtBase;
-  idtBase.Base = (HCore::UIntPtr)kInterruptVectorTable;
+  NewOS::HAL::Register64 idtBase;
+  idtBase.Base = (NewOS::UIntPtr)kInterruptVectorTable;
   idtBase.Limit = 0;
 
-  HCore::HAL::IDTLoader idt;
+  NewOS::HAL::IDTLoader idt;
   idt.Load(idtBase);
 
   /// START POST
 
-  HCore::HAL::Detail::_ke_power_on_self_test();
+  NewOS::HAL::Detail::_ke_power_on_self_test();
 
   /// END POST
 
@@ -77,5 +77,5 @@ EXTERN_C void hal_init_platform(
 
   RuntimeMain();
 
-  HCore::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+  NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

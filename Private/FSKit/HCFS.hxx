@@ -9,7 +9,7 @@
 #pragma once
 
 /**
-    @brief HCore File System.
+    @brief NewOS File System.
     @author Amlal EL Mahrouss
 */
 
@@ -32,21 +32,21 @@
 typedef struct HCFSBTree final {
   /// @brief The Catalog Data record.
   struct PACKED {
-		  HCore::Lba fDataCatalog;
-		  HCore::Lba fRsrcCatalog;
-		  HCore::SizeT fDataCatalogSize;
-		  HCore::SizeT fRsrcCatalogSize;
+		  NewOS::Lba fDataCatalog;
+		  NewOS::Lba fRsrcCatalog;
+		  NewOS::SizeT fDataCatalogSize;
+		  NewOS::SizeT fRsrcCatalogSize;
 	} fCatalogData;
 
-  HCore::Lba fRelatedTrees[12];
-  HCore::Char fReserved[384];
+  NewOS::Lba fRelatedTrees[12];
+  NewOS::Char fReserved[384];
 } PACKED HCFSBTree;
 
 /// @brief Catalog file for HCFS.
 typedef struct HCFSCatalog {
-	HCore::Char fCatalogName[kHCFSNameLen];
-	HCore::UInt32 fCatalogKind;
-  HCore::UInt32 fCatalogFlags;
+	NewOS::Char fCatalogName[kHCFSNameLen];
+	NewOS::UInt32 fCatalogKind;
+  NewOS::UInt32 fCatalogFlags;
 
   /// @brief Tree information structure.
   /// 0: BTree LBA.
@@ -54,9 +54,9 @@ typedef struct HCFSCatalog {
   /// 3: Last BTree LBA.
   /// 4: First BTree LBA.
   /// Everything else is reserved.
-  HCore::Lba fTreeInfo[12];
+  NewOS::Lba fTreeInfo[12];
 
-  HCore::Char fReserved[152];
+  NewOS::Char fReserved[152];
 } HCFSCatalog;
 
 #define kHCFSCatalogKindFile 1
@@ -74,21 +74,21 @@ enum {
 
 /// @brief This is a boot block, used by HCFS to boot the system (if formated using this filesystem.)
 typedef struct HCFSBootBlock final {
-  HCore::Char Ident[kHCFSIdentLen];
-  HCore::Char Shell[kHCFSNameLen];
+  NewOS::Char Ident[kHCFSIdentLen];
+  NewOS::Char Shell[kHCFSNameLen];
 
-  HCore::Int64 NumParts; // number of sub-partitions.
-  HCore::Int64 FreeSectors;
-  HCore::Int64 SectorCount;
-  HCore::Int64 SectorSz;
+  NewOS::Int64 NumParts; // number of sub-partitions.
+  NewOS::Int64 FreeSectors;
+  NewOS::Int64 SectorCount;
+  NewOS::Int64 SectorSz;
 
-  HCore::Int64 DiskSize; // size of media.
-  HCore::Int32 DiskKind; // kind of disk.
+  NewOS::Int64 DiskSize; // size of media.
+  NewOS::Int32 DiskKind; // kind of disk.
 
-  HCore::Lba FirstPartBlock;
-  HCore::Lba LastPartBlock;
+  NewOS::Lba FirstPartBlock;
+  NewOS::Lba LastPartBlock;
 
-  HCore::Char Pad[kHCFSPadLen];
+  NewOS::Char Pad[kHCFSPadLen];
 } PACKED HCFSBootBlock;
 
 // EOF.

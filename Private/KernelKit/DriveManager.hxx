@@ -17,7 +17,7 @@
 #define kDriveInvalidID -1
 #define kDriveNameLen 32
 
-namespace HCore {
+namespace NewOS {
 enum {
   kInvalidDrive = -1,
   kBlockDevice = 0xAD,
@@ -103,6 +103,6 @@ class MountpointInterface final {
  private:
   DriveDevicePtr mA, mB, mC, mD = nullptr;
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif /* ifndef __DRIVE_MANAGER__ */

@@ -7,7 +7,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore::PCI
+namespace NewOS::PCI
 {
     enum class PciConfigKind : UShort
     {
@@ -74,8 +74,8 @@ namespace HCore::PCI
         UShort m_Bar;
 
     };
-} // namespace HCore::PCI
+} // namespace NewOS::PCI
 
 
-extern "C" void LumiaPCISetCfgTarget(HCore::UInt bar);
-extern "C" HCore::UInt LumiaPCIReadRaw(HCore::UInt bar);
+extern "C" void LumiaPCISetCfgTarget(NewOS::UInt bar);
+extern "C" NewOS::UInt LumiaPCIReadRaw(NewOS::UInt bar);

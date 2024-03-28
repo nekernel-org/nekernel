@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: MSDOS.hpp
-    Purpose: MS-DOS header for HCore.
+    Purpose: MS-DOS header for NewOS.
 
     Revision History:
 
@@ -23,11 +23,11 @@
 #define kMagMz0 'M'
 #define kMagMz1 'Z'
 
-typedef HCore::UInt32 DosWord;
-typedef HCore::Long DosLong;
+typedef NewOS::UInt32 DosWord;
+typedef NewOS::Long DosLong;
 
 typedef struct _DosHeader {
-  HCore::UInt8 eMagic[2];
+  NewOS::UInt8 eMagic[2];
   DosWord eMagLen;
   DosWord ePagesCount;
   DosWord eCrlc;
@@ -48,7 +48,7 @@ typedef struct _DosHeader {
   DosLong eLfanew;
 } DosHeader, *DosHeaderPtr;
 
-namespace HCore {
+namespace NewOS {
 /// @brief Find the PE header inside the the blob.
 inline auto rt_find_exec_header(DosHeaderPtr ptrDos) -> VoidPtr {
   if (!ptrDos) return nullptr;
@@ -57,6 +57,6 @@ inline auto rt_find_exec_header(DosHeaderPtr ptrDos) -> VoidPtr {
 
   return (VoidPtr)(&ptrDos->eLfanew + 1);
 }
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif /* ifndef __MSDOS_EXEC__ */

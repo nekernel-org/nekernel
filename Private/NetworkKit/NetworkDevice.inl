@@ -8,7 +8,7 @@
     Dtor and ctors.
 */
 
-namespace HCore {
+namespace NewOS {
 NetworkDevice::NetworkDevice(void (*out)(NetworkDeviceCommand),
                              void (*in)(NetworkDeviceCommand),
                              void (*on_cleanup)(void))
@@ -24,4 +24,4 @@ NetworkDevice::~NetworkDevice() {
   kcout << "NK: NetworkDevice cleanup.\r\n";
   if (fCleanup) fCleanup();
 }
-} // namespace HCore
+} // namespace NewOS

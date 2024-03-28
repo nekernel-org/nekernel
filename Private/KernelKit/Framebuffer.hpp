@@ -10,7 +10,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore {
+namespace NewOS {
 enum class FramebufferColorKind : UChar {
   RGB32,
   RGB16,
@@ -75,12 +75,12 @@ const UInt32 kRgbGreen = 0x0000FF00;
 const UInt32 kRgbBlue = 0x00FF0000;
 const UInt32 kRgbBlack = 0x00000000;
 const UInt32 kRgbWhite = 0xFFFFFFFF;
-}  // namespace HCore
+}  // namespace NewOS
 
 /***********************************************************************************/
 /// Color macros.
 /***********************************************************************************/
 
-#define RGB(R, G, B) (HCore::UInt32)(0x##R##G##B)
+#define RGB(R, G, B) (NewOS::UInt32)(0x##R##G##B)
 
 #endif /* ifndef __INC_FB_HPP__ */

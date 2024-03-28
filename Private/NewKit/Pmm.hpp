@@ -10,7 +10,7 @@
 #include <NewKit/PageManager.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore {
+namespace NewOS {
 class Pmm;
 class PTEWrapper;
 
@@ -36,4 +36,4 @@ class Pmm final {
  private:
   Ref<PageManager> m_PageManager;
 };
-}  // namespace HCore
+}  // namespace NewOS

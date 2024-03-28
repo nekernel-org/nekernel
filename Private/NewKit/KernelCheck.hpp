@@ -9,13 +9,13 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore {
+namespace NewOS {
 void ke_runtime_check(bool bExpression, const char *file, const char *line);
 }
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)
 #define __MUST_PASS(EXPR, FILE, LINE) \
-  HCore::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
+  NewOS::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
 #define MUST_PASS(EXPR) __MUST_PASS(EXPR, __FILE__, __LINE__)
 #define assert(EXPR) MUST_PASS(EXPR, RUNTIME_CHECK_EXPRESSION)
 
@@ -36,7 +36,7 @@ enum RUNTIME_CHECK {
   RUNTIME_CHECK_COUNT,
 };
 
-namespace HCore {
+namespace NewOS {
 class DumpManager final {
  public:
   static void Dump(void) {
@@ -45,7 +45,7 @@ class DumpManager final {
 };
 
 void ke_stop(const Int &id);
-}  // namespace HCore
+}  // namespace NewOS
 
 #ifdef TRY
 #undef TRY

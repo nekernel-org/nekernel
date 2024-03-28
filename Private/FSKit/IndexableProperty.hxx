@@ -10,7 +10,7 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DriveManager.hxx>
 
-namespace HCore {
+namespace NewOS {
 namespace Indexer {
 struct IndexProperty final {
  public:
@@ -40,4 +40,4 @@ class IndexableProperty final : public Property {
   UInt32 fFlags;
 };
 }  // namespace Indexer
-}  // namespace HCore
+}  // namespace NewOS

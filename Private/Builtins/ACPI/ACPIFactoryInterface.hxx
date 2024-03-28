@@ -12,7 +12,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore {
+namespace NewOS {
 class ACPIFactoryInterface final {
  public:
   explicit ACPIFactoryInterface(voidPtr rsdPtr);
@@ -47,6 +47,6 @@ class ACPIFactoryInterface final {
   SSizeT m_Entries;  // number of entries, -1 tells that no invalid entries were
                      // found.
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif // !__ACPI_MANAGER__

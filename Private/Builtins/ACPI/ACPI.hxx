@@ -13,7 +13,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore {
+namespace NewOS {
 class SDT {
  public:
   Char Signature[4];
@@ -62,6 +62,6 @@ class Address {
   UInt8 Reserved;
   UIntPtr Address;
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif  // !__ACPI__

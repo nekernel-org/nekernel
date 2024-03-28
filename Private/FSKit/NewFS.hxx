@@ -74,7 +74,7 @@
 #define kNewFSEOF (-1)
 
 #define kNewFSBitWidth (sizeof(NewCharType))
-#define kNewFSLbaType (HCore::Lba)
+#define kNewFSLbaType (NewOS::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
 #define kNewFSAddressAsLba (1024U)
@@ -90,7 +90,7 @@
 #define kNewFSFlagUnallocated 0x0F
 #define kNewFSFlagCatalog 0xFF
 
-typedef HCore::Char NewCharType;
+typedef NewOS::Char NewCharType;
 
 enum {
   kNewFSHardDrive = 0xC0,          // Hard Drive (SSD, HDD)
@@ -105,32 +105,32 @@ enum {
 struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
 
-  HCore::Int32 Flags;
-  HCore::Int32 Kind;
+  NewOS::Int32 Flags;
+  NewOS::Int32 Kind;
 
-  HCore::Lba FirstFork;
-  HCore::Lba LastFork;
+  NewOS::Lba FirstFork;
+  NewOS::Lba LastFork;
 
-  HCore::Lba NextSibling;
-  HCore::Lba PrevSibling;
+  NewOS::Lba NextSibling;
+  NewOS::Lba PrevSibling;
 };
 
 /// @brief Fork type.
 struct PACKED NewFork final {
   NewCharType  Name[kNewFSNodeNameLen];
 
-  HCore::Int32 Flags;
-  HCore::Int32 Kind;
+  NewOS::Int32 Flags;
+  NewOS::Int32 Kind;
 
-  HCore::Int64 ResourceId;
-  HCore::Int32 ResourceKind;
-  HCore::Int32 ResourceFlags;
+  NewOS::Int64 ResourceId;
+  NewOS::Int32 ResourceKind;
+  NewOS::Int32 ResourceFlags;
 
-  HCore::Lba   DataOffset;  //8 Where to look for this data?
-  HCore::SizeT DataSize;  /// Data size according using sector count.
+  NewOS::Lba   DataOffset;  //8 Where to look for this data?
+  NewOS::SizeT DataSize;  /// Data size according using sector count.
 
-  HCore::Lba NextSibling;
-  HCore::Lba PreviousSibling;
+  NewOS::Lba NextSibling;
+  NewOS::Lba PreviousSibling;
 };
 
 /// @brief Partition block type
@@ -138,24 +138,24 @@ struct PACKED NewPartitionBlock final {
   NewCharType Ident[kNewFSIdentLen];
   NewCharType PartitionName[kPartLen];
 
-  HCore::Int32 Flags;
-  HCore::Int32 Kind;
+  NewOS::Int32 Flags;
+  NewOS::Int32 Kind;
 
-  HCore::Lba StartCatalog;
-  HCore::SizeT CatalogCount;
+  NewOS::Lba StartCatalog;
+  NewOS::SizeT CatalogCount;
 
-  HCore::SizeT DiskSize;
+  NewOS::SizeT DiskSize;
 
-  HCore::SizeT FreeCatalog;
-  HCore::SizeT FreeSectors;
+  NewOS::SizeT FreeCatalog;
+  NewOS::SizeT FreeSectors;
 
-  HCore::SizeT SectorCount;
-  HCore::SizeT SectorSize;
+  NewOS::SizeT SectorCount;
+  NewOS::SizeT SectorSize;
 
-  HCore::Char Pad[kNewFSPadLen];
+  NewOS::Char Pad[kNewFSPadLen];
 };
 
-namespace HCore {
+namespace NewOS {
 ///
 /// \name NewFSParser
 /// \brief NewFS parser class. (catalog creation, remove removal, root, forks...)
@@ -213,7 +213,7 @@ class NewFilesystemHelper final {
   static const char* UpDir();
   static const char Separator();
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 enum {
   kNewFSPartGPT,

@@ -11,7 +11,7 @@
 /// @brief NewFS File manager.
 /// BUGS: 0
 
-namespace HCore {
+namespace NewOS {
 NewFilesystemManager::NewFilesystemManager() = default;
 
 NewFilesystemManager::~NewFilesystemManager() = default;
@@ -42,6 +42,6 @@ const char* NewFilesystemHelper::Root() { return kNewFSRoot; }
 const char* NewFilesystemHelper::UpDir() { return kNewFSUpDir; }
 
 const char NewFilesystemHelper::Separator() { return kNewFSSeparator; }
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif  // ifdef __FSKIT_NEWFS__

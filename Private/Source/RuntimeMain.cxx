@@ -20,10 +20,10 @@
 
 EXTERN_C void RuntimeMain(void) {    
   ///! Mounts a NewFS block.
-  HCore::NewFilesystemManager* newFS = new HCore::NewFilesystemManager();
-  HCore::ke_protect_ke_heap(newFS);
+  NewOS::NewFilesystemManager* newFS = new NewOS::NewFilesystemManager();
+  NewOS::ke_protect_ke_heap(newFS);
 
-  HCore::FilesystemManagerInterface::Mount(newFS);
+  NewOS::FilesystemManagerInterface::Mount(newFS);
   
   ///! we're done, unmount.
   delete newFS;

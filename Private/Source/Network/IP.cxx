@@ -7,7 +7,7 @@
 #include <NetworkKit/IP.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace HCore {
+namespace NewOS {
 char* RawIPAddress::Address() { return m_Addr; }
 
 RawIPAddress::RawIPAddress(char bytes[4]) { rt_copy_memory(bytes, m_Addr, 4); }
@@ -91,4 +91,4 @@ bool IPFactory::IpCheckVersion4(const char* ip) {
 
   return true;
 }
-}  // namespace HCore
+}  // namespace NewOS

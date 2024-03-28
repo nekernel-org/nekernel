@@ -12,7 +12,7 @@
 #include <NewKit/Function.hpp>
 #include <NewKit/String.hpp>
 
-namespace HCore {
+namespace NewOS {
 using PropertyId = Int;
 
 class Property {
@@ -35,6 +35,6 @@ class Property {
 
 template <SSizeT N>
 using PropertyArray = Array<Property, N>;
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif  // !_INC_PLIST_HPP__

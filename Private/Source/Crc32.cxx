@@ -9,7 +9,7 @@
 // @file CRC32.cpp
 // @brief Check sequence implementation.
 
-namespace HCore {
+namespace NewOS {
 /// @brief The CRC32 table.
 UInt kCrcTbl[kCrcCnt] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
@@ -68,4 +68,4 @@ UInt ke_calculate_crc32(const Char *p, UInt len) noexcept {
   // return (~crc); also works, does the same thing.
   return (crc ^ 0xffffffff);
 }
-}  // namespace HCore
+}  // namespace NewOS

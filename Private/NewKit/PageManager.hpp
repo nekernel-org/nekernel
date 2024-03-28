@@ -17,7 +17,7 @@
 #define kBadAddress (0)
 #endif  // #ifndef kBadAddress
 
-namespace HCore {
+namespace NewOS {
 class PageManager;
 
 class PTEWrapper final {
@@ -76,4 +76,4 @@ struct PageManager final {
   friend PTEWrapper;
   friend class Pmm;
 };
-}  // namespace HCore
+}  // namespace NewOS

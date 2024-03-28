@@ -9,9 +9,9 @@
 #include <KernelKit/PCI/Dma.hpp>
 #include <KernelKit/PCI/Iterator.hpp>
 
-#define kPrdtTransferSize (sizeof(HCore::UShort))
+#define kPrdtTransferSize (sizeof(NewOS::UShort))
 
-namespace HCore {
+namespace NewOS {
 class PRDT final {
  public:
   explicit PRDT() = delete;
@@ -42,4 +42,4 @@ class PRDT final {
 };
 
 using PhysicalAddress = PRDT;  // here
-}  // namespace HCore
+}  // namespace NewOS

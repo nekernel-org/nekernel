@@ -16,7 +16,7 @@
 
 #include <NewKit/Defines.hpp>
 
-using namespace HCore;
+using namespace NewOS;
 
 #define kUSBCommand (UInt16)0x0
 #define kUSBStatus (UInt16)0x2

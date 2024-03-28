@@ -17,7 +17,7 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
-namespace HCore {
+namespace NewOS {
 /// @brief PS/2 Mouse driver interface
 class PS2MouseInterface final {
  public:
@@ -98,4 +98,4 @@ class PS2MouseInterface final {
     return HAL::In8(0x60);
   }
 };
-}  // namespace HCore
+}  // namespace NewOS

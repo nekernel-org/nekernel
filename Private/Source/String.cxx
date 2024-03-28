@@ -8,7 +8,7 @@
 #include <NewKit/Utils.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-namespace HCore {
+namespace NewOS {
 Char *StringView::Data() { return m_Data; }
 
 const Char *StringView::CData() { return m_Data; }
@@ -188,4 +188,4 @@ StringView &StringView::operator+=(const StringView &rhs) {
 
   return *this;
 }
-}  // namespace HCore
+}  // namespace NewOS

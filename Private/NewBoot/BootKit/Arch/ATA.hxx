@@ -8,7 +8,7 @@
 
 #include <Builtins/ATA/Defines.hxx>
 
-using namespace HCore;
+using namespace NewOS;
 
 class BDeviceATA final {
  public:

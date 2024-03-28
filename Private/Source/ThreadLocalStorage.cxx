@@ -1,7 +1,7 @@
 /*
  * ========================================================
  *
- * HCore
+ * NewOS
  * Copyright Mahrouss Logic, all rights reserved.
  *
  *  ========================================================
@@ -17,7 +17,7 @@
 /// @brief TLS implementation in kernel.
 /***********************************************************************************/
 
-using namespace HCore;
+using namespace NewOS;
 
 /**
  * Check for cookie inside TIB.
@@ -42,7 +42,7 @@ Boolean tls_check_tib(ThreadInformationBlock* tib) {
  * @param ptr
  * @return
  */
-EXTERN_C Void tls_check_syscall_impl(HCore::HAL::StackFramePtr stackPtr) noexcept {
+EXTERN_C Void tls_check_syscall_impl(NewOS::HAL::StackFramePtr stackPtr) noexcept {
   ThreadInformationBlock* tib = (ThreadInformationBlock*)stackPtr->Gs;
 
   if (!tls_check_tib(tib)) {

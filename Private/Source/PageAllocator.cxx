@@ -9,7 +9,7 @@
 #include <NewKit/PageAllocator.hpp>
 
 /// @brief Internal namespace, used internally by kernel.
-namespace HCore::Detail {
+namespace NewOS::Detail {
 VoidPtr create_page_wrapper(Boolean rw, Boolean user) {
   auto addr = HAL::hal_alloc_page(rw, user);
 
@@ -44,4 +44,4 @@ bool page_disable(UIntPtr VirtualAddr) {
 
   return false;
 }
-}  // namespace HCore::Detail
+}  // namespace NewOS::Detail

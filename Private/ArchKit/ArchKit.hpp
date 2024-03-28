@@ -20,7 +20,7 @@
 #error Unknown architecture
 #endif
 
-namespace HCore {
+namespace NewOS {
 constexpr static inline SSizeT rt_hash_seed(const char *seed, int mul) {
   SSizeT hash = 0;
 
@@ -31,26 +31,26 @@ constexpr static inline SSizeT rt_hash_seed(const char *seed, int mul) {
 
   return hash;
 }
-}  // namespace HCore
+}  // namespace NewOS
 
 #define kKernelMaxSystemCalls (256)
 
-typedef HCore::Void (*rt_syscall_proc)(HCore::HAL::StackFramePtr);
+typedef NewOS::Void (*rt_syscall_proc)(NewOS::HAL::StackFramePtr);
 
-extern HCore::Array<rt_syscall_proc,
+extern NewOS::Array<rt_syscall_proc,
                     kKernelMaxSystemCalls>
     kSyscalls;
 
-EXTERN_C HCore::Void rt_wait_400ns();
-EXTERN_C HCore::HAL::StackFramePtr rt_get_current_context();
-EXTERN_C HCore::Void rt_do_context_switch(HCore::HAL::StackFramePtr stackFrame);
+EXTERN_C NewOS::Void rt_wait_400ns();
+EXTERN_C NewOS::HAL::StackFramePtr rt_get_current_context();
+EXTERN_C NewOS::Void rt_do_context_switch(NewOS::HAL::StackFramePtr stackFrame);
 
-inline HCore::VoidPtr kKernelVirtualStart;
-inline HCore::UIntPtr kKernelVirtualSize;
+inline NewOS::VoidPtr kKernelVirtualStart;
+inline NewOS::UIntPtr kKernelVirtualSize;
 
-inline HCore::VoidPtr kKernelPhysicalStart;
-inline HCore::UIntPtr kKernelPhysicalSize;
+inline NewOS::VoidPtr kKernelPhysicalStart;
+inline NewOS::UIntPtr kKernelPhysicalSize;
 
 #include <FirmwareKit/Handover.hxx>
 
-inline HCore::HEL::HandoverInformationHeader* kHandoverHeader;
+inline NewOS::HEL::HandoverInformationHeader* kHandoverHeader;

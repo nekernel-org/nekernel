@@ -15,4 +15,4 @@
 
 #include <NewKit/Defines.hpp>
 
-typedef HCore::Int32 Rv64HartType;
+typedef NewOS::Int32 Rv64HartType;

@@ -3,7 +3,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore {
+namespace NewOS {
 template <typename T, typename... Args>
 class Function final {
  public:
@@ -34,6 +34,6 @@ class Function final {
  private:
   T (*m_Fn)(Args... args);
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif  // !_INC_FUNCTION_HPP__

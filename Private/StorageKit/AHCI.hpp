@@ -9,7 +9,7 @@
 #include <KernelKit/DeviceManager.hpp>
 #include <NewKit/OwnPtr.hpp>
 
-namespace HCore {
+namespace NewOS {
 class AHCIPacket;
 
 class AHCIDeviceInterface : public DeviceInterface<AHCIPacket> {
@@ -37,4 +37,4 @@ class AHCIPacket final {
   Lba     Begin;
   Lba     End;
 };
-} // namespace HCore
+} // namespace NewOS

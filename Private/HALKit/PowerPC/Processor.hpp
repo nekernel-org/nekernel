@@ -11,7 +11,7 @@
 
 #define __aligned __attribute__((aligned(4)))
 
-namespace HCore::HAL {
+namespace NewOS::HAL {
 typedef UIntPtr Reg;
 
 struct __aligned StackFrame {
@@ -34,8 +34,8 @@ inline void rt_halt() {
 }
 
 inline void rt_cli() {}
-}  // namespace HCore::HAL
+}  // namespace NewOS::HAL
 
-extern "C" void int_handle_math(HCore::UIntPtr sp);
-extern "C" void int_handle_pf(HCore::UIntPtr sp);
+extern "C" void int_handle_math(NewOS::UIntPtr sp);
+extern "C" void int_handle_pf(NewOS::UIntPtr sp);
 extern "C" void* __ppc_alloca(size_t sz);

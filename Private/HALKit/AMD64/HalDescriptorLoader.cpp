@@ -6,12 +6,12 @@
 
 #include <ArchKit/ArchKit.hpp>
 
-namespace HCore::HAL {
+namespace NewOS::HAL {
 namespace Detail {
 STATIC RegisterGDT kRegGdt;
 STATIC HAL::Register64 kRegIdt;
 
-STATIC ::HCore::Detail::AMD64::InterruptDescriptorAMD64
+STATIC ::NewOS::Detail::AMD64::InterruptDescriptorAMD64
     kInterruptVectorTable[kKernelIdtSize];
 
 STATIC Void RemapPIC(Void) noexcept {
@@ -46,7 +46,7 @@ Void GDTLoader::Load(RegisterGDT &gdt) {
 }
 
 Void IDTLoader::Load(Register64 &idt) {
-  volatile ::HCore::UIntPtr **baseIdt = (volatile ::HCore::UIntPtr **)idt.Base;
+  volatile ::NewOS::UIntPtr **baseIdt = (volatile ::NewOS::UIntPtr **)idt.Base;
 
   MUST_PASS(baseIdt);
 
@@ -66,7 +66,7 @@ Void IDTLoader::Load(Register64 &idt) {
   }
 
   Detail::kRegIdt.Base = reinterpret_cast<UIntPtr>(Detail::kInterruptVectorTable);
-  Detail::kRegIdt.Limit = sizeof(::HCore::Detail::AMD64::InterruptDescriptorAMD64) *
+  Detail::kRegIdt.Limit = sizeof(::NewOS::Detail::AMD64::InterruptDescriptorAMD64) *
                   (kKernelIdtSize - 1);
 
   hal_load_idt(Detail::kRegIdt);
@@ -75,4 +75,4 @@ Void IDTLoader::Load(Register64 &idt) {
 void GDTLoader::Load(Ref<RegisterGDT> &gdt) { GDTLoader::Load(gdt.Leak()); }
 
 void IDTLoader::Load(Ref<Register64> &idt) { IDTLoader::Load(idt.Leak()); }
-}  // namespace HCore::HAL
+}  // namespace NewOS::HAL

@@ -20,7 +20,7 @@
 /* This file handles the process scheduling.
 /***********************************************************************************/
 
-namespace HCore {
+namespace NewOS {
 /***********************************************************************************/
 /// Exit Code stuff
 /***********************************************************************************/
@@ -306,4 +306,4 @@ bool ProcessHelper::Switch(HAL::StackFrame *the_stack, const PID &new_pid) {
 
   return false;
 }
-}  // namespace HCore
+}  // namespace NewOS

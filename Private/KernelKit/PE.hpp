@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: PE.hpp
-    Purpose: Portable Executable for HCore.
+    Purpose: Portable Executable for NewOS.
 
     Revision History:
 
@@ -19,10 +19,10 @@
 
 namespace Detail
 {
-  typedef HCore::UIntPtr PE_QWORD;
-  typedef HCore::UInt32 PE_DWORD;
-  typedef HCore::UInt16 PE_WORD;
-  typedef HCore::UChar PE_BYTE;
+  typedef NewOS::UIntPtr PE_QWORD;
+  typedef NewOS::UInt32 PE_DWORD;
+  typedef NewOS::UInt16 PE_WORD;
+  typedef NewOS::UChar PE_BYTE;
 } // namespace Detail
 
 #define kPeMagic 0x00004550

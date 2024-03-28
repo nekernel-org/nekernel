@@ -16,7 +16,7 @@
 /// KernelHeap.cxx
 /// BUGS: 0
 
-namespace HCore {
+namespace NewOS {
 /**
  * @brief Process Heap Header
  * @note Allocated per process, it denotes the user's heap.
@@ -209,4 +209,4 @@ Int32 rt_free_heap(VoidPtr ptr) {
 
   return -1;
 }
-}  // namespace HCore
+}  // namespace NewOS

@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore
+namespace NewOS
 {
 	
-} // namespace HCore
+} // namespace NewOS

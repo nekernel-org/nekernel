@@ -36,7 +36,7 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
 
       BootBlockType* bootBlock = (BootBlockType*)buf;
 
-      bootBlock->Version = kEPMHCore;
+      bootBlock->Version = kEPMNewOS;
       bootBlock->NumBlocks = kEPMMaxBlks;
 
       for (SizeT i = 0; i < kEPMNameLength; i++) {
@@ -63,7 +63,7 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
         partBlock->Fs[i] = fsName[i];
       }
 
-      partBlock->Magic = kEPMHCore;
+      partBlock->Magic = kEPMNewOS;
 
       char* partName = "System HD";
       int partNameLength = 10;
@@ -84,7 +84,7 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
         swapBlock->Fs[i] = fsName[i];
       }
 
-      swapBlock->Magic = kEPMHCore;
+      swapBlock->Magic = kEPMNewOS;
 
       partName = "Swap HD";
       partNameLength = 8;

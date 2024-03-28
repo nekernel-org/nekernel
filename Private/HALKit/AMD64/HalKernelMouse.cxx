@@ -10,17 +10,17 @@
 #include <NewKit/Defines.hpp>
 
 // forward decl.
-EXTERN_C HCore::Boolean _hal_draw_mouse();
-EXTERN_C HCore::Void _hal_init_mouse();
+EXTERN_C NewOS::Boolean _hal_draw_mouse();
+EXTERN_C NewOS::Void _hal_init_mouse();
 
-STATIC HCore::Int32 kPrevX = 10;
-STATIC HCore::Int32 kPrevY = 10;
-STATIC HCore::Int32 kX = 10;
-STATIC HCore::Int32 kY = 10;
-STATIC HCore::Int32 kMouseCycle = 0;
-STATIC HCore::PS2MouseInterface kMousePS2;
-STATIC HCore::Char kMousePacket[4] = {};
-STATIC HCore::Boolean kMousePacketReady = false;
+STATIC NewOS::Int32 kPrevX = 10;
+STATIC NewOS::Int32 kPrevY = 10;
+STATIC NewOS::Int32 kX = 10;
+STATIC NewOS::Int32 kY = 10;
+STATIC NewOS::Int32 kMouseCycle = 0;
+STATIC NewOS::PS2MouseInterface kMousePS2;
+STATIC NewOS::Char kMousePacket[4] = {};
+STATIC NewOS::Boolean kMousePacketReady = false;
 
 #define kPS2Leftbutton 0b00000001
 #define kPS2Middlebutton 0b00000010
@@ -30,10 +30,10 @@ STATIC HCore::Boolean kMousePacketReady = false;
 #define kPS2XOverflow 0b01000000
 #define kPS2YOverflow 0b10000000
 
-using namespace HCore;
+using namespace NewOS;
 
 Void hal_handle_mouse() {
-  HCore::UInt8 data = HAL::In8(0x60);
+  NewOS::UInt8 data = HAL::In8(0x60);
 
   switch (kMouseCycle) {
     case 0:
@@ -57,8 +57,8 @@ Void hal_handle_mouse() {
 
   // Notify PIC controller that we're done with it's interrupt.
 
-  HCore::HAL::Out8(0x20, 0x20);
-  HCore::HAL::Out8(0xA0, 0x20);
+  NewOS::HAL::Out8(0x20, 0x20);
+  NewOS::HAL::Out8(0xA0, 0x20);
 }
 
 /// @brief Interrupt handler for the mouse.

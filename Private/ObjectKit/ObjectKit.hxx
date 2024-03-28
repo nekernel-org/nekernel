@@ -24,13 +24,13 @@ enum {
 /// \brief Object handle.
 /// \author Amlal El Mahrouss
 typedef struct Object final {
-  HCore::Char ObjectName[255];
-  HCore::Int32 ObjectType;
-  HCore::Char ObjectNamespace[255];
+  NewOS::Char ObjectName[255];
+  NewOS::Int32 ObjectType;
+  NewOS::Char ObjectNamespace[255];
 
-  HCore::Void(*Release)(struct Object* Self);
-  HCore::IntPtr(*Invoke)(struct Object* Self, HCore::Int32 Sel, ...);
-  HCore::Void(*Query)(struct Object* Self, HCore::VoidPtr* Dst, HCore::SizeT SzDst, HCore::XRN::GUIDSequence GuidOf);
+  NewOS::Void(*Release)(struct Object* Self);
+  NewOS::IntPtr(*Invoke)(struct Object* Self, NewOS::Int32 Sel, ...);
+  NewOS::Void(*Query)(struct Object* Self, NewOS::VoidPtr* Dst, NewOS::SizeT SzDst, NewOS::XRN::GUIDSequence GuidOf);
 } *ObjectRef;
 
 #define object_cast reinterpret_cast<ObjectRef>

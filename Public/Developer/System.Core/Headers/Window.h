@@ -11,7 +11,7 @@
 /*************************************************************
  * 
  * File: Window.hxx 
- * Purpose: Window Manager API for HCore.
+ * Purpose: Window Manager API for NewOS.
  * Date: 3/26/24
  * 
  * Copyright Mahrouss Logic, all rights reserved.

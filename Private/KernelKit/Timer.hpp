@@ -11,7 +11,7 @@
 
 #include <NewKit/ErrorID.hpp>
 
-namespace HCore
+namespace NewOS
 {
 class HardwareTimer;
 class HardwareTimerInterface;
@@ -62,4 +62,4 @@ inline Int64 Milliseconds(Int64 time)
 
     return 1000 / Seconds(time);
 }
-} // namespace HCore
+} // namespace NewOS

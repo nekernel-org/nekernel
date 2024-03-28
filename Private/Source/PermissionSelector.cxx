@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	HCore
+ *	NewOS
  * 	Copyright Mahrouss Logic, all rights reserved.
  *
  *	File: PermissionSelector.cpp
@@ -15,7 +15,7 @@
 
 /// bugs 0
 
-namespace HCore {
+namespace NewOS {
 PermissionSelector::PermissionSelector(const Int32 &sel)
     : fRing((RingKind)sel) {
   MUST_PASS(sel > 0);
@@ -35,4 +35,4 @@ bool PermissionSelector::operator!=(const PermissionSelector &lhs) {
 }
 
 const RingKind &PermissionSelector::Ring() noexcept { return this->fRing; }
-}  // namespace HCore
+}  // namespace NewOS

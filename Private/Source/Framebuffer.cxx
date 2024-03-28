@@ -19,7 +19,7 @@
  *
  */
 
-using namespace HCore;
+using namespace NewOS;
 
 /**
  * @brief Get Pixel at
@@ -59,9 +59,9 @@ Ref<FramebufferContext *> &Framebuffer::Leak() {
 
 Framebuffer &Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y,
                                    UInt32 color) {
-  for (HCore::SizeT i = x; i < width + x; ++i) {
-    for (HCore::SizeT u = y; u < height + y; ++u) {
-      *(((volatile HCore::UInt32 *)(m_FrameBufferAddr.Leak()->m_Base +
+  for (NewOS::SizeT i = x; i < width + x; ++i) {
+    for (NewOS::SizeT u = y; u < height + y; ++u) {
+      *(((volatile NewOS::UInt32 *)(m_FrameBufferAddr.Leak()->m_Base +
                                     4 * m_FrameBufferAddr.Leak()->m_Bpp * i +
                                     4 * u))) = color;
     }
@@ -71,7 +71,7 @@ Framebuffer &Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y,
 }
 
 Framebuffer &Framebuffer::PutPixel(SizeT x, SizeT y, UInt32 color) {
-  *(((volatile HCore::UInt32 *)(m_FrameBufferAddr.Leak()->m_Base +
+  *(((volatile NewOS::UInt32 *)(m_FrameBufferAddr.Leak()->m_Base +
                                 4 * m_FrameBufferAddr.Leak()->m_Bpp * x +
                                 4 * y))) = color;
                                 

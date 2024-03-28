@@ -21,23 +21,23 @@
 
 /// @brief EPM GUID block.
 typedef struct BlockGUID {
-  HCore::UInt32 Data1;
-  HCore::UInt16 Data2;
-  HCore::UInt16 Data3;
-  HCore::UInt8 Data4[8];
+  NewOS::UInt32 Data1;
+  NewOS::UInt16 Data2;
+  NewOS::UInt16 Data3;
+  NewOS::UInt8 Data4[8];
 } BlockGUID;
 
 /**
  * @brief The EPM bootloader block.
  */
 struct PACKED BootBlock {
-  HCore::Char Magic[kEPMMagicLength];
-  HCore::Char Name[kEPMNameLength];
+  NewOS::Char Magic[kEPMMagicLength];
+  NewOS::Char Name[kEPMNameLength];
   BlockGUID   Uuid;
-  HCore::Int32 Version;
-  HCore::Int64 NumBlocks;
-  HCore::Int64 SectorSz;
-  HCore::Int64 SectorStart;
+  NewOS::Int32 Version;
+  NewOS::Int64 NumBlocks;
+  NewOS::Int64 SectorSz;
+  NewOS::Int64 SectorStart;
 };
 
 /**
@@ -45,14 +45,14 @@ struct PACKED BootBlock {
  * used to describe a partition inside a media.
  */
 struct PACKED PartitionBlock {
-  HCore::Char Name[kEPMNameLength];
-  HCore::Int32 Magic;
-  HCore::Int64 SectorEnd;
-  HCore::Int64 SectorSz;
-  HCore::Int64 SectorStart;
-  HCore::Int16 Kind;
-  HCore::Int32 Version;
-  HCore::Char Fs[kEPMFilesystemLength]; /* NewFS, HCFS... */
+  NewOS::Char Name[kEPMNameLength];
+  NewOS::Int32 Magic;
+  NewOS::Int64 SectorEnd;
+  NewOS::Int64 SectorSz;
+  NewOS::Int64 SectorStart;
+  NewOS::Int16 Kind;
+  NewOS::Int32 Version;
+  NewOS::Char Fs[kEPMFilesystemLength]; /* NewFS, HCFS... */
 };
 
 /* @brief AMD64 magic for EPM */
@@ -84,7 +84,7 @@ enum kEPMKind {
   kEPMMpUx = 0xcf,
   kEPMLinux = 0x8f,
   kEPMBSD = 0x9f,
-  kEPMHCore = 0x1f,
+  kEPMNewOS = 0x1f,
 };
 
 typedef struct BootBlock BootBlockType;

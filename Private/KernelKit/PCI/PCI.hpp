@@ -14,7 +14,7 @@
 #define PCI_FUNC_COUNT (8)
 #define PCI_BUS_COUNT (255)
 
-namespace HCore::PCI {
+namespace NewOS::PCI {
 // model
     struct DeviceHeader {
         UInt16 VendorId;
@@ -50,4 +50,4 @@ namespace HCore::PCI {
         Detail::BAR BAR4;
         Detail::BAR BAR5;
     };
-} // namespace HCore::PCI
+} // namespace NewOS::PCI

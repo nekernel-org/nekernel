@@ -8,7 +8,7 @@
 
 // bugs = 0
 
-using namespace HCore;
+using namespace NewOS;
 
 /// @brief Unimplemented as it is an interface.
 Int32 HardwareTimerInterface::Wait() noexcept { return H_UNIMPLEMENTED; }

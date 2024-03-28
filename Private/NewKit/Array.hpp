@@ -9,7 +9,7 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Defines.hpp>
 
-namespace HCore
+namespace NewOS
 {
 template <typename T, Size N> 
 class Array final
@@ -67,4 +67,4 @@ private:
     T m_Array[N];
     
 };
-} // namespace HCore
+} // namespace NewOS

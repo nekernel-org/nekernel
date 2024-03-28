@@ -11,7 +11,7 @@
  * @brief This file is about processor specific functions (in/out...)
  */
 
-namespace HCore::HAL {
+namespace NewOS::HAL {
 void Out8(UInt16 port, UInt8 value) {
   asm volatile("outb %%al, %1" : : "a"(value), "Nd"(port) : "memory");
 }
@@ -54,4 +54,4 @@ void rt_sti() { asm volatile("sti"); }
 void rt_cld() { asm volatile("cld"); }
 
 void rt_std() { asm volatile("std"); }
-}  // namespace HCore::HAL
+}  // namespace NewOS::HAL

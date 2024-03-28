@@ -26,15 +26,15 @@
 #define kPTESize (0x1000)
 #endif  // !kPTESize
 
-EXTERN_C void hal_flush_tlb(HCore::UIntPtr pde);
-EXTERN_C void hal_write_cr3(HCore::UIntPtr pde);
-EXTERN_C void hal_write_cr0(HCore::UIntPtr bit);
+EXTERN_C void hal_flush_tlb(NewOS::UIntPtr pde);
+EXTERN_C void hal_write_cr3(NewOS::UIntPtr pde);
+EXTERN_C void hal_write_cr0(NewOS::UIntPtr bit);
 
-EXTERN_C HCore::UIntPtr hal_read_cr0();  // @brief CPU control register.
-EXTERN_C HCore::UIntPtr hal_read_cr2();  // @brief Fault address.
-EXTERN_C HCore::UIntPtr hal_read_cr3();  // @brief Page table.
+EXTERN_C NewOS::UIntPtr hal_read_cr0();  // @brief CPU control register.
+EXTERN_C NewOS::UIntPtr hal_read_cr2();  // @brief Fault address.
+EXTERN_C NewOS::UIntPtr hal_read_cr3();  // @brief Page table.
 
-namespace HCore::HAL {
+namespace NewOS::HAL {
 struct PACKED PageTable64 final {
   bool Present : 1;
   bool Rw : 1;
@@ -42,9 +42,9 @@ struct PACKED PageTable64 final {
   bool Wt : 1;
   bool Cache : 1;
   bool Accessed : 1;
-  HCore::Int32 Reserved : 6;
-  HCore::UIntPtr PhysicalAddress : 36;
-  HCore::Int32 Reserved1 : 15;
+  NewOS::Int32 Reserved : 6;
+  NewOS::UIntPtr PhysicalAddress : 36;
+  NewOS::Int32 Reserved1 : 15;
   bool ExecDisable : 1;
 };
 
@@ -73,9 +73,9 @@ struct PageDirectory64 final {
 };
 
 VoidPtr hal_alloc_page(Boolean rw, Boolean user);
-}  // namespace HCore::HAL
+}  // namespace NewOS::HAL
 
-namespace HCore {
+namespace NewOS {
 typedef HAL::PageTable64 PTE;
 typedef HAL::PageDirectory64 PDE;
-}  // namespace HCore
+}  // namespace NewOS

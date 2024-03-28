@@ -8,10 +8,10 @@
                 "${workspaceFolder}/Public/Developer/**"
             ],
             "defines": [
-                "__HCORE__",
+                "__MAHROUSS__",
                 "__KERNEL__",
                 "Z_PREFIX",
-                "__HAVE_HCORE_APIS__",
+                "__HAVE_MAHROUSS_APIS__",
                 "__FSKIT_NEWFS__"
             ],
             "cStandard": "c17",
@@ -37,10 +37,10 @@
                 "${workspaceFolder}/Public/Developer/**"
             ],
             "defines": [
-                "__HCORE__",
+                "__MAHROUSS__",
                 "__KERNEL__",
                 "Z_PREFIX",
-                "__HAVE_HCORE_APIS__",
+                "__HAVE_MAHROUSS_APIS__",
                 "__FSKIT_NEWFS__"
             ],
             "cStandard": "c17",

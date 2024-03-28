@@ -14,7 +14,7 @@
 //! null deref will throw (Page Zero detected, aborting app!)
 #define kProtectedRegionEnd (512)
 
-namespace HCore {
+namespace NewOS {
 PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
                        UIntPtr VirtAddr)
     : m_Rw(Rw),
@@ -46,7 +46,7 @@ bool PTEWrapper::Reclaim() {
 
 PTEWrapper PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable) {
   // Store PTE wrapper right after PTE.
-  VoidPtr ptr = HCore::HAL::hal_alloc_page(Rw, User);
+  VoidPtr ptr = NewOS::HAL::hal_alloc_page(Rw, User);
 
   return PTEWrapper{Rw, User, ExecDisable, (UIntPtr)ptr};
 }
@@ -73,4 +73,4 @@ bool PTEWrapper::Access() { return m_Accessed; }
 void PTEWrapper::NoExecute(const bool enable) { this->m_ExecDisable = enable; }
 
 const bool &PTEWrapper::NoExecute() { return this->m_ExecDisable; }
-}  // namespace HCore
+}  // namespace NewOS

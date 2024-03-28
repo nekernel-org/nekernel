@@ -10,7 +10,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore
+namespace NewOS
 {
     template <typename StreamTrait, typename Kind>
     class Stream final
@@ -55,4 +55,4 @@ namespace HCore
         Ref<Kind> m_Kind;
 
     };
-} // namespace HCore
+} // namespace NewOS

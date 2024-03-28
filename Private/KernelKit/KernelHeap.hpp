@@ -12,9 +12,9 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore {
+namespace NewOS {
 Int32 ke_delete_ke_heap(voidPtr allocatedPtr);
 Boolean ke_is_valid_heap(VoidPtr ptr);
 voidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user);
 Boolean ke_protect_ke_heap(VoidPtr heapPtr);
-}  // namespace HCore
+}  // namespace NewOS

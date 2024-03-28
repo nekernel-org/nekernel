@@ -12,7 +12,7 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore {
+namespace NewOS {
 enum class DmaKind {
   PCI,  // Bus mastering is required to be turned on. Basiaclly a request
   // control system. 64-Bit access depends on the PAE bit and the device
@@ -70,6 +70,6 @@ class DMAFactory final {
  public:
   static OwnPtr<IOBuf<Char *>> Construct(OwnPtr<DMAWrapper> &dma);
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #include <KernelKit/PCI/Dma.inl>

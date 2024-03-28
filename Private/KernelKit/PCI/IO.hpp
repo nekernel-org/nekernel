@@ -11,7 +11,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore {
+namespace NewOS {
 template <SizeT Sz>
 class IOArray final {
  public:
@@ -40,7 +40,7 @@ class IOArray final {
 };
 
 using IOArray16 = IOArray<16>;
-}  // namespace HCore
+}  // namespace NewOS
 
 #ifdef __x86_64__
 #include <KernelKit/PCI/IO-Impl-AMD64.inl>

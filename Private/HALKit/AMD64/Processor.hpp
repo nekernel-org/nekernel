@@ -32,7 +32,7 @@
 #define kGdtCodeSelector 0x08
 #define kVirtualAddressStartOffset 0x100
 
-namespace HCore {
+namespace NewOS {
 namespace Detail::AMD64 {
 struct PACKED InterruptDescriptorAMD64 final {
   UInt16 OffsetLow;  // offset bits 0..15
@@ -45,9 +45,9 @@ struct PACKED InterruptDescriptorAMD64 final {
   UInt32 Zero;           // reserved
 };
 }  // namespace Detail::AMD64
-}  // namespace HCore
+}  // namespace NewOS
 
-namespace HCore::HAL {
+namespace NewOS::HAL {
 EXTERN_C UChar In8(UInt16 port);
 EXTERN_C UShort In16(UInt16 port);
 EXTERN_C UInt In32(UInt16 port);
@@ -152,7 +152,7 @@ EXTERN_C void _ke_power_on_self_test(void);
     @brief Global descriptor table entry, either null, code or data.
 */
 
-struct PACKED HCoreGDTRecord final {
+struct PACKED NewOSGDTRecord final {
   UInt16 Limit0;
   UInt16 Base0;
   UInt8 Base1;
@@ -161,25 +161,25 @@ struct PACKED HCoreGDTRecord final {
   UInt8 Base2;
 };
 
-struct PACKED ALIGN(0x1000) HCoreGDT final {
-  HCoreGDTRecord Null;
-  HCoreGDTRecord KernCode;
-  HCoreGDTRecord KernData;
-  HCoreGDTRecord UserNull;
-  HCoreGDTRecord UserCode;
-  HCoreGDTRecord UserData;
+struct PACKED ALIGN(0x1000) NewOSGDT final {
+  NewOSGDTRecord Null;
+  NewOSGDTRecord KernCode;
+  NewOSGDTRecord KernData;
+  NewOSGDTRecord UserNull;
+  NewOSGDTRecord UserCode;
+  NewOSGDTRecord UserData;
 };
 }  // namespace Detail
-}  // namespace HCore::HAL
+}  // namespace NewOS::HAL
 
-EXTERN_C void idt_handle_system_call(HCore::UIntPtr rsp);
-EXTERN_C void idt_handle_generic(HCore::UIntPtr rsp);
-EXTERN_C void idt_handle_gpf(HCore::UIntPtr rsp);
-EXTERN_C void idt_handle_math(HCore::UIntPtr rsp);
-EXTERN_C void idt_handle_pf(HCore::UIntPtr rsp);
+EXTERN_C void idt_handle_system_call(NewOS::UIntPtr rsp);
+EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp);
+EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp);
+EXTERN_C void idt_handle_math(NewOS::UIntPtr rsp);
+EXTERN_C void idt_handle_pf(NewOS::UIntPtr rsp);
 
-EXTERN_C void hal_load_idt(HCore::HAL::Register64 ptr);
-EXTERN_C void hal_load_gdt(HCore::HAL::RegisterGDT ptr);
+EXTERN_C void hal_load_idt(NewOS::HAL::Register64 ptr);
+EXTERN_C void hal_load_gdt(NewOS::HAL::RegisterGDT ptr);
 
 /// @brief Maximum size of the IDT.
 #define kKernelIdtSize        0x100

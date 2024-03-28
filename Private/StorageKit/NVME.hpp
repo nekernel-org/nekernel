@@ -9,7 +9,7 @@
 #include <KernelKit/DeviceManager.hpp>
 #include <NewKit/OwnPtr.hpp>
 
-namespace HCore {
+namespace NewOS {
 class NVMEPacket;
 
 class NVMEDeviceInterface : public DeviceInterface<NVMEPacket> {
@@ -42,4 +42,4 @@ class NVMEPacket final {
   Lba     Begin;
   Lba     End;
 };
-}  // namespace HCore
+}  // namespace NewOS

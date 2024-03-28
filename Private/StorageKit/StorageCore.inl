@@ -12,7 +12,7 @@
 /// @file StorageCore.inl
 /// @brief Storage Management API.
 
-namespace HCore {
+namespace NewOS {
 typedef Char* SKStr;
 
 ///! @brief Storage context, reads and write file according to the descriptor
@@ -36,6 +36,6 @@ class StorageInterface {
   virtual PacketDescriptor* Read(const SKStr name) = 0;
   virtual Int32 Write(PacketDescriptor* packet, const SKStr name) = 0;
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif /* ifndef __STORAGEKIT_STORAGECORE_INL__ */

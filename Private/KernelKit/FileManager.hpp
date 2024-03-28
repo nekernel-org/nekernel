@@ -39,7 +39,7 @@
 /// refer to first enum.
 #define kFileOpsCount 4
 
-namespace HCore {
+namespace NewOS {
 enum {
   kFileWriteAll = 100,
   kFileReadAll = 101,
@@ -244,6 +244,6 @@ FileStream<Encoding, Class>::FileStream(const Encoding *path,
 
 template <typename Encoding, typename Class>
 FileStream<Encoding, Class>::~FileStream() = default;
-}  // namespace HCore
+}  // namespace NewOS
 
-#define node_cast(PTR) reinterpret_cast<HCore::NodePtr>(PTR)
+#define node_cast(PTR) reinterpret_cast<NewOS::NodePtr>(PTR)

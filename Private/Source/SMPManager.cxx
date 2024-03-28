@@ -10,10 +10,10 @@
 
 ///! BUGS: 0
 
-///! @brief This file handles multi processing in HCore.
+///! @brief This file handles multi processing in NewOS.
 ///! @brief Multi processing is needed for multi-tasking operations.
 
-namespace HCore {
+namespace NewOS {
 ///! A HardwareThread class takes care of it's owned hardware thread.
 ///! It has a stack for it's core.
 
@@ -168,4 +168,4 @@ bool SMPManager::operator!() noexcept { return m_ThreadList.Empty(); }
 /// @brief Returns the amount of core present.
 /// @return the number of cores.
 SizeT SMPManager::Count() noexcept { return m_ThreadList.Count(); }
-}  // namespace HCore
+}  // namespace NewOS

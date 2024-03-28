@@ -11,7 +11,7 @@
 
 #include <KernelKit/ProcessScheduler.hpp>
 
-namespace HCore {
+namespace NewOS {
 /// @brief Process list array getter.
 /// @return 
 MutableArray<Ref<ProcessHeader>>& ProcessTeam::AsArray() { return mProcessList; }
@@ -19,6 +19,6 @@ MutableArray<Ref<ProcessHeader>>& ProcessTeam::AsArray() { return mProcessList; 
 /// @brief Current process getter.
 /// @return 
 Ref<ProcessHeader>& ProcessTeam::AsRef() { return mCurrentProcess; }
-} // namespace HCore
+} // namespace NewOS
 
 // last rev 05-03-24

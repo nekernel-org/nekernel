@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-namespace HCore
+namespace NewOS
 {
     template<class T>
     T* DMAWrapper::operator->()

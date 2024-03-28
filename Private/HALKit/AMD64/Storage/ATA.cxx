@@ -18,8 +18,8 @@
 #include <Builtins/ATA/Defines.hxx>
 #include <ArchKit/ArchKit.hpp>
 
-using namespace HCore;
-using namespace HCore::HAL;
+using namespace NewOS;
+using namespace NewOS::HAL;
 
 /// bugs: 0
 

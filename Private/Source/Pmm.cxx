@@ -7,7 +7,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Pmm.hpp>
 
-namespace HCore {
+namespace NewOS {
 Pmm::Pmm() : m_PageManager() { kcout << "[PMM] Allocate PageMemoryManager"; }
 
 Pmm::~Pmm() = default;
@@ -65,4 +65,4 @@ Boolean Pmm::ToggleShare(Ref<PTEWrapper> PageRef, Boolean Enable) {
 
   return true;
 }
-}  // namespace HCore
+}  // namespace NewOS

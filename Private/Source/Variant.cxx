@@ -6,7 +6,7 @@
 
 #include <NewKit/Variant.hpp>
 
-namespace HCore {
+namespace NewOS {
 const Char* Variant::ToString() {
   if (m_Ptr == nullptr) {
     return ("Memory:{Nullptr}");
@@ -22,4 +22,4 @@ const Char* Variant::ToString() {
   }
 }
 
-}  // namespace HCore
+}  // namespace NewOS

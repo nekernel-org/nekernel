@@ -6,4 +6,4 @@
 
 #include <KernelKit/PCI/Database.hpp>
 
-namespace HCore {}
+namespace NewOS {}

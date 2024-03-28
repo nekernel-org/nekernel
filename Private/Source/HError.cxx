@@ -6,6 +6,6 @@
 
 #include <KernelKit/HError.hpp>
 
-namespace HCore {
+namespace NewOS {
 Boolean ke_bug_check(void) noexcept { return false; }
-}  // namespace HCore
+}  // namespace NewOS

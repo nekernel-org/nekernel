@@ -9,9 +9,9 @@
 #include <NewKit/Utils.hpp>
 
 /// BUGS: 0
-//! @brief File manager for HCore.
+//! @brief File manager for NewOS.
 
-namespace HCore {
+namespace NewOS {
 static FilesystemManagerInterface* kMounted = nullptr;
 
 /// @brief FilesystemManager getter.
@@ -42,4 +42,4 @@ bool FilesystemManagerInterface::Mount(FilesystemManagerInterface* mountPtr) {
 
   return false;
 }
-}  // namespace HCore
+}  // namespace NewOS

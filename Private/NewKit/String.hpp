@@ -10,7 +10,7 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/KernelCheck.hpp>
 
-namespace HCore {
+namespace NewOS {
 class StringView final {
  public:
   explicit StringView() = default;
@@ -60,4 +60,4 @@ struct StringBuilder final {
   static const char *Format(const char *fmt, const char *from);
   static bool Equals(const char *lhs, const char *rhs);
 };
-}  // namespace HCore
+}  // namespace NewOS

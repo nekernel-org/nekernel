@@ -127,19 +127,19 @@ enum {
 
 #ifdef __KERNEL__
 
-HCore::Boolean drv_ata_init(HCore::UInt16 Bus, HCore::UInt8 Drive, HCore::UInt16& OutBus,
-                      HCore::UInt8& OutMaster);
+NewOS::Boolean drv_ata_init(NewOS::UInt16 Bus, NewOS::UInt8 Drive, NewOS::UInt16& OutBus,
+                      NewOS::UInt8& OutMaster);
 
-HCore::Boolean drv_ata_detected(HCore::Void);
+NewOS::Boolean drv_ata_detected(NewOS::Void);
 
-HCore::Void drv_ata_select(HCore::UInt16 Bus);
+NewOS::Void drv_ata_select(NewOS::UInt16 Bus);
 
-HCore::Boolean drv_ata_wait_io(HCore::UInt16 IO);
+NewOS::Boolean drv_ata_wait_io(NewOS::UInt16 IO);
 
-HCore::Void drv_ata_read(HCore::UInt64 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
-                   HCore::SizeT SectorSz, HCore::SizeT Size);
+NewOS::Void drv_ata_read(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Master, NewOS::Char* Buf,
+                   NewOS::SizeT SectorSz, NewOS::SizeT Size);
 
-HCore::Void drv_ata_write(HCore::UInt64 Lba, HCore::UInt16 IO, HCore::UInt8 Master, HCore::Char* Buf,
-                    HCore::SizeT SectorSz, HCore::SizeT Size);
+NewOS::Void drv_ata_write(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Master, NewOS::Char* Buf,
+                    NewOS::SizeT SectorSz, NewOS::SizeT Size);
 
 #endif // ifdef __KERNEL__

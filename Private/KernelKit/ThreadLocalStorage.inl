@@ -12,7 +12,7 @@
 
 template <typename T>
 inline T* tls_new_ptr(void) {
-  using namespace HCore;
+  using namespace NewOS;
 
   MUST_PASS(ProcessScheduler::Shared().Leak().GetCurrent());
 
@@ -27,7 +27,7 @@ template <typename T>
 inline bool tls_delete_ptr(T* ptr) {
   if (!ptr) return false;
 
-  using namespace HCore;
+  using namespace NewOS;
 
   MUST_PASS(ProcessScheduler::Shared().Leak().GetCurrent());
 
@@ -42,7 +42,7 @@ T* tls_new_class(Args&&... args) {
   T* ptr = tls_new_ptr<T>();
 
   if (ptr) {
-    *ptr = T(HCore::forward(args)...);
+    *ptr = T(NewOS::forward(args)...);
     return ptr;
   }
 

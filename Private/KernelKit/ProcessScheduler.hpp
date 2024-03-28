@@ -23,7 +23,7 @@
 
 ////////////////////////////////////////////////////
 
-namespace HCore {
+namespace NewOS {
 class ProcessHeader;
 class ProcessTeam;
 class ProcessScheduler;
@@ -124,7 +124,7 @@ class ProcessHeader final {
   void SetEntrypoint(UIntPtr &imageStart) noexcept;
 
  public:
-  Char Name[kProcessLen] = {"HCore Process"};
+  Char Name[kProcessLen] = {"NewOS Process"};
   ProcessSubsystem SubSystem{0};
   ProcessSelector Selector{ProcessSelector::kRingUser};
   HAL::StackFramePtr StackFrame{nullptr};
@@ -250,7 +250,7 @@ class ProcessHelper final {
 };
 
 const Int32 &rt_get_exit_code() noexcept;
-}  // namespace HCore
+}  // namespace NewOS
 
 #include <KernelKit/ThreadLocalStorage.hxx>
 

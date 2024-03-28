@@ -6,6 +6,6 @@
 
 #include <StorageKit/NVME.hpp>
 
-namespace HCore {
+namespace NewOS {
 const char *NVMEDeviceInterface::Name() const { return ("NVMEDeviceInterface"); }
-}  // namespace HCore
+}  // namespace NewOS

@@ -11,7 +11,7 @@
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore {
+namespace NewOS {
 template <typename T>
 class OwnPtr;
 
@@ -64,4 +64,4 @@ OwnPtr<T> make_ptr(Args... args) {
 
   return ret;
 }
-}  // namespace HCore
+}  // namespace NewOS

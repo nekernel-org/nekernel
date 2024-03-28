@@ -6,6 +6,6 @@
 
 #include <NetworkKit/NetworkDevice.hpp>
 
-namespace HCore {
+namespace NewOS {
 const char *NetworkDevice::Name() const { return "NetworkDevice"; }
-}  // namespace HCore
+}  // namespace NewOS

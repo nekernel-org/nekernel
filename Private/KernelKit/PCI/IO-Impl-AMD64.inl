@@ -12,7 +12,7 @@
 
 ------------------------------------------- */
 
-namespace HCore {
+namespace NewOS {
 template <SizeT Sz>
 template <typename T>
 T IOArray<Sz>::In(SizeT index) {
@@ -44,4 +44,4 @@ void IOArray<Sz>::Out(SizeT index, T value) {
       break;
   }
 }
-}  // namespace HCore
+}  // namespace NewOS

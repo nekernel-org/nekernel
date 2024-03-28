@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore
+namespace NewOS
 {
     template <typename T>
     class ArrayList final
@@ -54,4 +54,4 @@ namespace HCore
     {
         return ArrayList<ValueType>{val};
     }
-} // namespace HCore
+} // namespace NewOS

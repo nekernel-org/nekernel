@@ -16,7 +16,7 @@
 
 #define kMaxHarts 8
 
-namespace HCore {
+namespace NewOS {
 using ThreadID = UInt32;
 
 enum ThreadKind {
@@ -117,6 +117,6 @@ Void rt_wakeup_thread(HAL::StackFramePtr stack);
 /// @brief makes thread sleep.
 /// hooks and hangs thread to prevent code from executing.
 Void rt_hang_thread(HAL::StackFramePtr stack);
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif  // !__SMP_MANAGER__

@@ -7,36 +7,36 @@
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/PCI/Device.hpp>
 
-HCore::UInt HCorePCIReadRaw(HCore::UInt bar, HCore::UShort bus,
-                            HCore::UShort dev, HCore::UShort fun) {
-  HCore::UInt target = 0x80000000 | ((HCore::UInt)bus << 16) |
-                       ((HCore::UInt)dev << 11) | ((HCore::UInt)fun << 8) |
+NewOS::UInt NewOSPCIReadRaw(NewOS::UInt bar, NewOS::UShort bus,
+                            NewOS::UShort dev, NewOS::UShort fun) {
+  NewOS::UInt target = 0x80000000 | ((NewOS::UInt)bus << 16) |
+                       ((NewOS::UInt)dev << 11) | ((NewOS::UInt)fun << 8) |
                        (bar & 0xFC);
 
-  HCore::HAL::Out32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigAddress,
+  NewOS::HAL::Out32((NewOS::UShort)NewOS::PCI::PciConfigKind::ConfigAddress,
                     target);
 
-  return HCore::HAL::In32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigData);
+  return NewOS::HAL::In32((NewOS::UShort)NewOS::PCI::PciConfigKind::ConfigData);
 }
 
-void HCorePCISetCfgTarget(HCore::UInt bar, HCore::UShort bus, HCore::UShort dev,
-                          HCore::UShort fun) {
-  HCore::UInt target = 0x80000000 | ((HCore::UInt)bus << 16) |
-                       ((HCore::UInt)dev << 11) | ((HCore::UInt)fun << 8) |
+void NewOSPCISetCfgTarget(NewOS::UInt bar, NewOS::UShort bus, NewOS::UShort dev,
+                          NewOS::UShort fun) {
+  NewOS::UInt target = 0x80000000 | ((NewOS::UInt)bus << 16) |
+                       ((NewOS::UInt)dev << 11) | ((NewOS::UInt)fun << 8) |
                        (bar & ~3);
 
-  HCore::HAL::Out32((HCore::UShort)HCore::PCI::PciConfigKind::ConfigAddress,
+  NewOS::HAL::Out32((NewOS::UShort)NewOS::PCI::PciConfigKind::ConfigAddress,
                     target);
 }
 
-namespace HCore::PCI {
+namespace NewOS::PCI {
 Device::Device(UShort bus, UShort device, UShort func, UShort bar)
     : m_Bus(bus), m_Device(device), m_Function(func), m_Bar(bar) {}
 
 Device::~Device() {}
 
 UInt Device::Read(UInt bar, Size sz) {
-  HCorePCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
+  NewOSPCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
 
   if (sz == 4)
     return HAL::In32((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
@@ -48,7 +48,7 @@ UInt Device::Read(UInt bar, Size sz) {
 }
 
 void Device::Write(UInt bar, UIntPtr data, Size sz) {
-  HCorePCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
+  NewOSPCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
 
   if (sz == 4)
     HAL::Out32((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UInt)data);
@@ -59,31 +59,31 @@ void Device::Write(UInt bar, UIntPtr data, Size sz) {
 }
 
 UShort Device::DeviceId() {
-  return (UShort)(HCorePCIReadRaw(0x0 >> 16, m_Bus, m_Device, m_Function));
+  return (UShort)(NewOSPCIReadRaw(0x0 >> 16, m_Bus, m_Device, m_Function));
 }
 
 UShort Device::VendorId() {
-  return (UShort)(HCorePCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
+  return (UShort)(NewOSPCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
 }
 
 UShort Device::InterfaceId() {
-  return (UShort)(HCorePCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
+  return (UShort)(NewOSPCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
 }
 
 UChar Device::Class() {
-  return (UChar)(HCorePCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 24);
+  return (UChar)(NewOSPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 24);
 }
 
 UChar Device::Subclass() {
-  return (UChar)(HCorePCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 16);
+  return (UChar)(NewOSPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 16);
 }
 
 UChar Device::ProgIf() {
-  return (UChar)(HCorePCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 8);
+  return (UChar)(NewOSPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 8);
 }
 
 UChar Device::HeaderType() {
-  return (UChar)(HCorePCIReadRaw(0xC, m_Bus, m_Device, m_Function) >> 16);
+  return (UChar)(NewOSPCIReadRaw(0xC, m_Bus, m_Device, m_Function) >> 16);
 }
 
 void Device::EnableMmio() {
@@ -106,4 +106,4 @@ UShort Device::Vendor() {
 }
 
 Device::operator bool() { return VendorId() != (UShort)PciConfigKind::Invalid; }
-}  // namespace HCore::PCI
+}  // namespace NewOS::PCI

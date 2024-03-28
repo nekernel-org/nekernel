@@ -15,11 +15,11 @@
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace HCore {
+namespace NewOS {
 /// @brief Json value class
 class JsonType final {
  public:
-  explicit JsonType() : HCore::JsonType(1, 1) {}
+  explicit JsonType() : NewOS::JsonType(1, 1) {}
 
   explicit JsonType(SizeT lhsLen, SizeT rhsLen)
       : fKey(lhsLen), fValue(rhsLen) {}
@@ -89,4 +89,4 @@ struct JsonStreamTrait final {
 };
 
 using JsonStream = Stream<JsonStreamTrait, JsonType>;
-}  // namespace HCore
+}  // namespace NewOS

@@ -14,7 +14,7 @@
 
 #pragma once
 
-/* HCore device interface manager. */
+/* NewOS device interface manager. */
 /* @file KernelKit/DeviceManager.hpp */
 /* @brief Device abstraction and I/O buffer. */
 
@@ -24,7 +24,7 @@
 // Last Rev
 // Sat Feb 24 CET 2024
 
-namespace HCore {
+namespace NewOS {
 template <typename T>
 class DeviceInterface;
 
@@ -105,4 +105,4 @@ enum {
   kDeviceTypeMedia,
   kDeviceTypeCount,
 };
-}  // namespace HCore
+}  // namespace NewOS

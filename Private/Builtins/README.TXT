@@ -1,12 +1,12 @@
 ==============
-HCore Builtins
+NewOS Builtins
 ==============
 
 ===============
 What are these?
 ===============
 
-These are HCore builtins device drivers.
+These are NewOS builtins device drivers.
 
 ===========
 Maintainers

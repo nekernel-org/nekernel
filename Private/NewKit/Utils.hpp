@@ -9,7 +9,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace HCore {
+namespace NewOS {
 Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len);
 Int rt_move_memory(const voidPtr src, voidPtr dst, Size len);
 voidPtr rt_set_memory(voidPtr dst, Char val, Size len);
@@ -25,4 +25,4 @@ Int rt_to_uppercase(Int c);
 Int rt_to_lower(Int c);
 voidPtr rt_string_in_string(const char *in, const char *needle);
 char *rt_string_from_char(char *str, const char chr);
-}  // namespace HCore
+}  // namespace NewOS

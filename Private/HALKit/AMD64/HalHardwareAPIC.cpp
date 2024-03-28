@@ -8,7 +8,7 @@
 
 // bugs = 0
 
-namespace HCore {
+namespace NewOS {
 // @brief wakes up thread.
 // wakes up thread from hang.
 void rt_wakeup_thread(HAL::StackFrame* stack) {
@@ -34,4 +34,4 @@ void rt_hang_thread(HAL::StackFrame* stack) {
 
   HAL::rt_sti();
 }
-}  // namespace HCore
+}  // namespace NewOS

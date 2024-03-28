@@ -19,9 +19,9 @@
 #define kRemoteInvalid "00.00.00.00:00000000"
 #define kRemoteMaxLen 21
 
-namespace HCore {
+namespace NewOS {
     typedef UIntPtr ipc_method_type;
     typedef Char ipc_remote_type[kRemoteMaxLen];
-} // namespace HCore
+} // namespace NewOS
 
 #endif // _INC_IPC_ENDPOINT_HXX_

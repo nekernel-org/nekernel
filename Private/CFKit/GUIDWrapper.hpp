@@ -15,7 +15,7 @@
 #define kXRNNil "@{........-....-M...-N...-............}"
 
 // eXtensible Resource Information
-namespace HCore::XRN {
+namespace NewOS::XRN {
 union GUIDSequence {
   alignas(8) UShort u8[16];
   alignas(8) UShort u16[8];
@@ -46,4 +46,4 @@ class GUID final {
  private:
   GUIDSequence m_UUID;
 };
-}  // namespace HCore::XRN
+}  // namespace NewOS::XRN

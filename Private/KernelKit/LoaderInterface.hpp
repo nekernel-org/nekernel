@@ -11,7 +11,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorOr.hpp>
 
-namespace HCore {
+namespace NewOS {
 /// @brief This interface is used to make loader contracts (MSCOFF, PEF).
 /// @author @Amlal-El-Mahrouss
 class LoaderInterface {
@@ -28,4 +28,4 @@ class LoaderInterface {
   virtual _Output ErrorOr<VoidPtr> FindStart() = 0;
   virtual _Output VoidPtr FindSymbol(_Input const char* name, _Input Int32 kind) = 0;
 };
-}  // namespace HCore
+}  // namespace NewOS

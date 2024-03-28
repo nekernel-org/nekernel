@@ -1,7 +1,7 @@
 /*
 *	========================================================
 *
-*	HCore
+*	NewOS
 * 	Copyright Mahrouss Logic, all rights reserved.
 *
 * 	========================================================
@@ -12,7 +12,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace HCore
+namespace NewOS
 {
 using ErrorT = UInt;
 
@@ -65,4 +65,4 @@ template <typename T> class ErrorOr final
 
 using ErrorOrAny = ErrorOr<voidPtr>;
 
-} // namespace HCore
+} // namespace NewOS

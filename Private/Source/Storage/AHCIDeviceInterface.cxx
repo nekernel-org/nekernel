@@ -6,7 +6,7 @@
 
 #include <StorageKit/AHCI.hpp>
 
-using namespace HCore;
+using namespace NewOS;
 
 /// @brief Class constructor
 /// @param Out Disk output

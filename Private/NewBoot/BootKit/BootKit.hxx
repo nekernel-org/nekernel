@@ -22,7 +22,7 @@ class BVersionString;
 #include <NewKit/Defines.hpp>
 #include <FirmwareKit/EPM.hxx>
 
-using namespace HCore;
+using namespace NewOS;
 
 typedef Char *PEFImagePtr;
 typedef Char *PEImagePtr;
@@ -57,18 +57,18 @@ class BTextWriter final {
   BTextWriter(const BTextWriter &) = default;
 };
 
-HCore::SizeT BCopyMem(CharacterTypeUTF16 *dest, CharacterTypeUTF16 *src,
-                      const HCore::SizeT len);
+NewOS::SizeT BCopyMem(CharacterTypeUTF16 *dest, CharacterTypeUTF16 *src,
+                      const NewOS::SizeT len);
 
-HCore::SizeT BSetMem(CharacterTypeUTF8 *src, const CharacterTypeUTF8 byte,
-                     const HCore::SizeT len);
+NewOS::SizeT BSetMem(CharacterTypeUTF8 *src, const CharacterTypeUTF8 byte,
+                     const NewOS::SizeT len);
 
 /// String length functions.
 
-HCore::SizeT BStrLen(const CharacterTypeUTF16 *ptr);
+NewOS::SizeT BStrLen(const CharacterTypeUTF16 *ptr);
 
-HCore::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
-                     const HCore::SizeT len);
+NewOS::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
+                     const NewOS::SizeT len);
 
 /**
  * @brief BootKit File Reader class

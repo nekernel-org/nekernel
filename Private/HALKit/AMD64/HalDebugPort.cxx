@@ -12,7 +12,7 @@
 
 // after that we have start of additional data.
 
-namespace HCore {
+namespace NewOS {
 void rt_debug_listen(DebuggerPortHeader* theHook) noexcept {
   if (theHook == nullptr) return;
 
@@ -32,4 +32,4 @@ void rt_debug_listen(DebuggerPortHeader* theHook) noexcept {
     if (HAL::In16(theHook->fPort[i] != kDebugUnboundPort)) theHook->fBoundCnt++;
   }
 }
-}  // namespace HCore
+}  // namespace NewOS

@@ -20,7 +20,7 @@
 // hash 'user@host:password' -> base64 encoded data
 // use this data to then fetch specific data.
 
-namespace HCore {
+namespace NewOS {
 enum class RingKind {
   kRingUser = 3,
   kRingDriver = 2,
@@ -49,6 +49,6 @@ class PermissionSelector final {
  private:
   RingKind fRing;
 };
-}  // namespace HCore
+}  // namespace NewOS
 
 #endif /* ifndef _INC_PERMISSION_SEL_HPP */

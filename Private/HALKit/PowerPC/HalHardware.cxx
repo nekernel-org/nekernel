@@ -7,7 +7,7 @@
 #include <HALKit/PowerPC/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-namespace HCore {
+namespace NewOS {
 namespace HAL {
 UIntPtr hal_alloc_page(bool rw, bool user) { return 0; }
 }  // namespace HAL
@@ -31,4 +31,4 @@ void ke_com_print(const Char* bytes) {
     ++index;
   }
 }
-}  // namespace HCore
+}  // namespace NewOS

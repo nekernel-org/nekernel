@@ -49,5 +49,5 @@
 - Loads a PE file which is the kernel
 - Sanity checks, based on the number of sections. 
 - Handover compliant.
-- Does check for a valid invalid of HCore (useful in the case of recovering)
+- Does check for a valid invalid of NewOS (useful in the case of recovering)
 

@@ -9,7 +9,7 @@
 #include <FSKit/IndexableProperty.hxx>
 #include <NewKit/MutableArray.hpp>
 
-namespace HCore {
+namespace NewOS {
 namespace Indexer {
 class NewFSIteratorInterface;
 
@@ -48,4 +48,4 @@ class NewFSIteratorInterface {
   MutableArray<IndexableProperty> fProps;
 };
 }  // namespace Indexer
-}  // namespace HCore
+}  // namespace NewOS

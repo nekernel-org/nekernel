@@ -13,7 +13,7 @@ atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
 uarch_t __atexit_func_count;
 
 extern "C" void __cxa_pure_virtual() {
-  HCore::kcout << "NewKernel.exe: C++ placeholder method.\n";
+  NewOS::kcout << "NewKernel.exe: C++ placeholder method.\n";
 }
 
 extern "C" void ___chkstk_ms() {

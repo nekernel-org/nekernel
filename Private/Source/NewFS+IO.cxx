@@ -27,7 +27,7 @@
 #define NEWFS_WRITE(DRV, TRAITS, MP) (*MP->DRV()) << TRAITS
 #define NEWFS_READ(DRV, TRAITS, MP) (*MP->DRV()) >> TRAITS
 
-using namespace HCore;
+using namespace NewOS;
 
 enum {
   kHCFSSubDriveA,

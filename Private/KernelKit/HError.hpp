@@ -9,7 +9,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorID.hpp>
 
-namespace HCore {
+namespace NewOS {
 typedef Int32 HError;
 
 inline constexpr HError kErrorSuccess = 0;
@@ -34,10 +34,10 @@ inline constexpr HError kErrorForkAlreadyExists = 50;
 inline constexpr HError kErrorUnimplemented = 0;
 
 Boolean ke_bug_check(void) noexcept;
-}  // namespace HCore
+}  // namespace NewOS
 
-#define DbgOk() (kLastError == HCore::kErrorSuccess)
-#define DbgFailed() (kLastError != HCore::kErrorSuccess)
+#define DbgOk() (kLastError == NewOS::kErrorSuccess)
+#define DbgFailed() (kLastError != NewOS::kErrorSuccess)
 #define DbgLastError() kLastError
 
-inline HCore::HError kLastError = 0;
+inline NewOS::HError kLastError = 0;

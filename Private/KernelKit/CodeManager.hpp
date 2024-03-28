@@ -20,7 +20,7 @@
 
 #define kUPPNameLen 64
 
-namespace HCore {
+namespace NewOS {
 /// \brief Much like Mac OS's UPP.
 /// This is read-only by design.
 /// It handles different kind of code.
@@ -30,4 +30,4 @@ typedef struct UniversalProcedureTable final {
   const VoidPtr TRAP;
   const SizeT ARCH;
 } PACKED UniversalProcedureTableType;
-} // namespace HCore
+} // namespace NewOS

@@ -8,7 +8,7 @@
 #include <KernelKit/PCI/Device.hpp>
 #include <NewKit/Defines.hpp>
 
-namespace HCore {
+namespace NewOS {
     namespace Types {
         // https://wiki.osdev.org/PCI
         enum class PciDeviceKind : UChar {
@@ -32,4 +32,4 @@ namespace HCore {
             Invalid = Unassgined,
         };
     } // namespace Types
-} // namespace HCore
+} // namespace NewOS
