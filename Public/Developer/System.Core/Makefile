@@ -10,7 +10,7 @@ OUTPUT=SystemLib.lib
 
 .PHONY: build-core-amd64
 build-core-amd64:
-	$(CC) $(INC) $(CCFLAGS) $(wildcard Sources/*.c) $(wildcard Sources/*.cxx) $(wildcard AMD64/*.s) -o $(OUTPUT)
+	$(CC) $(CCINC) $(CCFLAGS) $(wildcard Sources/*.c) $(wildcard Sources/*.cxx) $(wildcard AMD64/*.s) -o $(OUTPUT)
 
 .PHONY: all
 all: build-core-amd64

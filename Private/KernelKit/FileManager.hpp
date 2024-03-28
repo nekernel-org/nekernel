@@ -38,6 +38,7 @@
 
 /// refer to first enum.
 #define kFileOpsCount 4
+#define kFileMimeGeneric "application-type/*"
 
 namespace NewOS {
 enum {
@@ -63,8 +64,17 @@ class FilesystemManagerInterface {
   HCORE_COPY_DEFAULT(FilesystemManagerInterface);
 
  public:
-  static bool Mount(FilesystemManagerInterface *pMount);
+  /// @brief Mounts a new filesystem into an active state.
+  /// @param interface the filesystem interface
+  /// @return
+  static bool Mount(FilesystemManagerInterface *interface);
+
+  /// @brief Unmounts the active filesystem
+  /// @return
   static FilesystemManagerInterface *Unmount();
+
+  /// @brief Getter, gets the active filesystem.
+  /// @return
   static FilesystemManagerInterface *GetMounted();
 
  public:
@@ -79,8 +89,10 @@ class FilesystemManagerInterface {
   virtual NodePtr Open(_Input const char *path, _Input const char *r) = 0;
 
  public:
-  virtual void Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags) = 0;
-  virtual _Output VoidPtr Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT sz) = 0;
+  virtual Void Write(_Input NodePtr node, _Input VoidPtr data,
+                     _Input Int32 flags) = 0;
+  virtual _Output VoidPtr Read(_Input NodePtr node, _Input Int32 flags,
+                               _Input SizeT sz) = 0;
 
  public:
   virtual bool Seek(_Input NodePtr node, _Input SizeT off) = 0;
@@ -95,7 +107,8 @@ class FilesystemManagerInterface {
 
 #ifdef __FSKIT_NEWFS__
 /**
- * @brief Based of FilesystemManagerInterface, takes care of managing NewFS disks.
+ * @brief Based of FilesystemManagerInterface, takes care of managing NewFS
+ * disks.
  */
 class NewFilesystemManager final : public FilesystemManagerInterface {
  public:
@@ -126,6 +139,12 @@ class NewFilesystemManager final : public FilesystemManagerInterface {
   Void Write(NodePtr node, VoidPtr data, Int32 flags) override {
     this->Write(node, data, flags);
   }
+
+ public:
+  /**
+   * NOTE: Write and Read are implemented using a custom NodePtr, retrieved
+   * using OpenFork.
+   */
 
   VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override {
     return this->Read(node, flags, sz);
@@ -162,7 +181,8 @@ class NewFilesystemManager final : public FilesystemManagerInterface {
  * @tparam Encoding file encoding (char, wchar_t...)
  * @tparam FSClass Filesystem contract who takes care of it.
  */
-template <typename Encoding = char, typename FSClass = FilesystemManagerInterface>
+template <typename Encoding = char,
+          typename FSClass = FilesystemManagerInterface>
 class FileStream final {
  public:
   explicit FileStream(const Encoding *path, const Encoding *restrict_type);
@@ -210,7 +230,7 @@ class FileStream final {
     return nullptr;
   }
 
-  void Write(SizeT offset, voidPtr data, SizeT sz) {
+  Void Write(SizeT offset, voidPtr data, SizeT sz) {
     auto man = FSClass::GetMounted();
 
     if (man) {
@@ -219,21 +239,25 @@ class FileStream final {
     }
   }
 
+  /// @brief Leak node pointer.
+  /// @return The node pointer.
+  NodePtr Leak() { return fFile; }
+
  public:
   char *MIME() noexcept { return const_cast<char *>(fMime); }
 
  private:
   NodePtr fFile;
-  const Char *fMime{"application-type/*"};
+  const Char *fMime{kFileMimeGeneric};
 };
 
-#define kRestrictRW "r+"
-#define kRestrictRWB "r+b"
 #define kRestrictR "r"
 #define kRestrictRB "rb"
+#define kRestrictW "w"
+#define kRestrictRW "rw"
 
-using FileStreamUTF8 = FileStream<char>;
-using FileStreamUTF16 = FileStream<wchar_t>;
+using FileStreamUTF8 = FileStream<Char>;
+using FileStreamUTF16 = FileStream<WideChar>;
 
 typedef UInt64 CursorType;
 

@@ -48,10 +48,18 @@ typedef struct _WindowPort {
   WmPoint windowSize;
   BooleanType windowInvalidate;
   DWordType windowClearColor;
-  WordType menuPort;
-  WordType parentPort;
-  DCRef windowDeviceContext;
+  struct _WindowPort* menuPort;
+  struct _WindowPort* parentPort;
 } WindowPort;
+
+typedef struct _ControlPort {
+  WordType controlPort;
+  WordType controlKind;
+  BooleanType controlVisible;
+  BooleanType controlMoving;
+  WmPoint controlPosition;
+  WindowPort* parentPort;
+} ControlPort;
 
 typedef UInt32Type ColorRef;
 
@@ -69,59 +77,57 @@ const ColorRef kRgbWhite = 0xFFFFFFFF;
 /// Color macro.
 /***********************************************************************************/
 
-#define RGB32(R, G, B) (ColorRef)(0x##R##G##B)
+#define WmMakeColorRef(R, G, B) (ColorRef)(0x##R##G##B)
 
-#define kGraphicsKindWindow   0
-#define kGraphicsKindDialog   1
-#define kGraphicsKindMenu     2
-#define kGraphicsKindButton   3
-#define kGraphicsKindLabel    4
-#define kGraphicsKindDropdown 5
-#define kGraphicsKindIcon     6
-#define kGraphicsKindRadio    7
-#define kGraphicsKindCheck    7
-
-typedef QWordType ControlRef;
+#define kControlKindWindow   0
+#define kControlKindDialog   1
+#define kControlKindMenu     2
+#define kControlKindButton   3
+#define kControlKindLabel    4
+#define kControlKindDropdown 5
+#define kControlKindIcon     6
+#define kControlKindRadio    7
+#define kControlKindCheck    7
 
 /// @brief Creates a new control
 /// @param id the control rsrc fork.
 /// @return 
-CA_EXTERN_C ControlRef WmCreateControl(const DWordType id);
+CA_EXTERN_C ControlPort* WmCreateControl(DWordType id);
 
 /// @brief Releases the control
 /// @param id the control ref.
 /// @return 
-CA_EXTERN_C VoidType WmReleaseControl(const ControlRef id);
+CA_EXTERN_C VoidType WmReleaseControl(ControlPort* id);
 
-/// @brief Moves a control inside a WindowPort.
+/// @brief Moves a control inside a ControlPort.
 /// @param id the control ref.
 /// @param where where to move at.
 /// @return 
-CA_EXTERN_C Int32Type WmSetControlPosition(const ControlRef id, WmPoint where);
+CA_EXTERN_C Int32Type WmSetControlPosition(ControlPort* id, WmPoint where);
 
 /// @brief Enable control.
 /// @param id 
 /// @param enabled 
 /// @return 
-CA_EXTERN_C Int32Type WmSetControlEnabled(const ControlRef id, BooleanType enabled);
+CA_EXTERN_C Int32Type WmSetControlEnabled(ControlPort* id, BooleanType enabled);
 
 /// @brief Make control visible.
 /// @param id 
 /// @param visible 
 /// @return 
-CA_EXTERN_C Int32Type WmMakeControlVisible(const ControlRef id, BooleanType visible);
+CA_EXTERN_C Int32Type WmMakeControlVisible(ControlPort* id, BooleanType visible);
 
 /// @brief Creates a new window.
 /// @param name the window name
 /// @param rsrcId the window fork rsrc id.
 /// @return the window graphics port.
-CA_EXTERN_C WindowPort* WmCreateWindow(const char* name, const DWordType rsrcId);
+CA_EXTERN_C WindowPort* WmCreateWindow(const CharacterTypeUTF8* name, const DWordType rsrcId);
 
 /// @brief Creates a new menu
 /// @param name the menu's name
 /// @param rsrcId the menu fork rsrc id.
 /// @return the menu graphics port.
-CA_EXTERN_C WindowPort* WmCreateMenu(const char* name, const DWordType rsrcId);
+CA_EXTERN_C WindowPort* WmCreateMenu(const CharacterTypeUTF8* name, const DWordType rsrcId);
 
 /// @brief Releases the window.
 /// @param port the window port.
@@ -137,7 +143,7 @@ CA_EXTERN_C VoidType WmReleaseMenu(WindowPort* port);
 /// @param id the gfx port.
 /// @param where to move.
 /// @return error code.
-CA_EXTERN_C Int32Type WmMoveWindow(const WindowPort* id, WmPoint where);
+CA_EXTERN_C Int32Type WmMoveWindow(WindowPort* id, WmPoint where);
 
 enum {
   kWmErrIncompatible = 0x74,

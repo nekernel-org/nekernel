@@ -20,7 +20,7 @@ bool NewFilesystemManager::Remove(const char* node_name) {
   if (node_name == nullptr || *node_name == 0) return false;
 
   if (auto catalog = fImpl->GetCatalog(node_name); catalog)
-    return fImpl->RemoveCatalog(*catalog);
+    return fImpl->RemoveCatalog(catalog);
 
   return false;
 }

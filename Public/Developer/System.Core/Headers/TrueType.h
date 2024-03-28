@@ -23,7 +23,7 @@ typedef QWordType TTFFontRef;
 /// @brief Loads a new font into app's memory.
 /// @param name 
 /// @return 
-CA_EXTERN_C TTFFontRef FnCreateFont(const char* name);
+CA_EXTERN_C TTFFontRef FnCreateFont(const CharacterTypeUTF8* name);
 
 /// @brief Dispose an allocated font.
 /// @param fon 

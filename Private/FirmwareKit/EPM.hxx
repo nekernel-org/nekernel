@@ -71,6 +71,10 @@ struct PACKED PartitionBlock {
 
 #define kEPMMagic32k "EPM32"
 
+/* @brief PowerPC magic for EPM */
+
+#define kEPMMagicPPC "EPMPC"
+
 /* @brief Invalid magic for EPM */
 
 #define kEPMMagicError "EPM??"

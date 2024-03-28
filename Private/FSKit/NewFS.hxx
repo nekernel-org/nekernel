@@ -171,17 +171,21 @@ class NewFSParser {
   HCORE_COPY_DEFAULT(NewFSParser);
 
  public:
-  virtual void                CreateFork(_Input NewCatalog& catalog, _Input NewFork& theFork) = 0;
+  virtual _Output NewFork*     CreateFork(_Input NewCatalog* catalog, _Input NewFork& theFork) = 0;
   
-  virtual _Output NewFork*    FindFork(_Input NewCatalog& catalog, _Input const Char* name) = 0;
+  virtual _Output NewFork*     FindFork(_Input NewCatalog* catalog, _Input const Char* name) = 0;
+  
+  virtual _Output Void        RemoveFork(_Input NewFork* fork) = 0;
+
+  virtual _Output Void        CloseFork(_Input NewFork* fork) = 0;
 
   virtual _Output NewCatalog* FindCatalog(const char* catalogName) = 0;
 
   virtual _Output NewCatalog* RootCatalog() = 0;
 
-  virtual _Output NewCatalog* NextCatalog(_Input _Output NewCatalog& cur) = 0;
+  virtual _Output NewCatalog* NextCatalog(_Input _Output NewCatalog* cur) = 0;
 
-  virtual _Output NewCatalog* PrevCatalog(_Input _Output NewCatalog& cur) = 0;
+  virtual _Output NewCatalog* PrevCatalog(_Input _Output NewCatalog* cur) = 0;
 
   virtual _Output NewCatalog* GetCatalog(_Input const char* name) = 0;
 
@@ -191,15 +195,15 @@ class NewFSParser {
 
   virtual _Output NewCatalog* CreateCatalog(_Input const char* name) = 0;
 
-  virtual bool WriteCatalog(_Input _Output NewCatalog& catalog,
+  virtual bool WriteCatalog(_Input _Output NewCatalog* catalog,
                             voidPtr data) = 0;
                             
-  virtual bool RemoveCatalog(_Input _Output NewCatalog& catalog) = 0;
+  virtual bool RemoveCatalog(_Input _Output NewCatalog* catalog) = 0;
 
   /// @brief Make a EPM+NewFS drive out of the disk.
   /// @param drive The drive to write on.
   /// @return If it was sucessful, see DbgLastError().
-  virtual bool Format(_Input _Output DriveTrait& drive) = 0;
+  virtual bool Format(_Input _Output DriveTrait* drive) = 0;
 };
 
 ///

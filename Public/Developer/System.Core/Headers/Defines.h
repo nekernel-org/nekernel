@@ -82,7 +82,7 @@ typedef CharacterTypeUTF8 BooleanType;
 
 #define CA_PTR *
 
-#define CA_UNREFERENCED_PARAMETER(e) ((VoidType)e)
+#define CA_UNREFERENCED_PARAMETER(e) ((VoidType)(e))
 
 #ifdef __x86_64__
 
@@ -124,16 +124,22 @@ typedef CharacterTypeUTF8 BooleanType;
 #endif // __cplusplus
 
 enum RtProcessCall {
-    kProcessCallAllocPtr = 1,
-    kProcessCallFreePtr,
-    kProcessCallSizePtr,
-    kProcessCallCheckPtr,
-    kProcessCallAllocStack,
+    kCallAllocPtr = 1,
+    kCallFreePtr,
+    kCallSizePtr,
+    kCallCheckPtr,
+    kCallAllocStack,
     /// @brief Open a specific handle (can be used as sel to call methods related to it.)
-    kProcessCallOpenHandle,
-    kProcessCallCloseHandle,
+    kCallOpenFile,
+    kCallCloseFile,
+    kCallCreateWindow,
+    kCallCloseWindow,
+    kCallCreateMenu,
+    kCallCloseMenu,
+    kCallGetArgsCount,
+    kCallGetArgsPtr,
     /// @brief Number of process calls.
-    kProcessCallsCount = 7,
+    kCallsCount,
 };
 
 #include <System.Core/Headers/Hint.h>
@@ -193,3 +199,6 @@ CA_EXTERN_C CharacterTypeUTF8* RtGetAppArgumentsPtr(VoidType);
 CA_INLINE ObjectRef kApplicationObject;
 
 typedef CharacterTypeUTF8 Str255Type[255];
+
+#define True  1
+#define False 0

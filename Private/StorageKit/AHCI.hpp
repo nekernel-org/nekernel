@@ -14,8 +14,9 @@ class AHCIPacket;
 
 class AHCIDeviceInterface : public DeviceInterface<AHCIPacket> {
  public:
-   explicit AHCIDeviceInterface(void (*Out)(AHCIPacket outpacket),
-                      void (*In)(AHCIPacket inpacket), void (*Cleanup)(void));
+  explicit AHCIDeviceInterface(void (*Out)(AHCIPacket outpacket),
+                               void (*In)(AHCIPacket inpacket),
+                               void (*Cleanup)(void));
 
   virtual ~AHCIDeviceInterface();
 
@@ -25,16 +26,18 @@ class AHCIDeviceInterface : public DeviceInterface<AHCIPacket> {
 
   const char *Name() const override;
 
-  private:
+ private:
+  void (*fOut)(AHCIPacket);
+  void (*fIn)(AHCIPacket);
   void (*fCleanup)(void);
 };
 
 class AHCIPacket final {
   UIntPtr DataPtr;
-  SizeT   DataSz;
-  UInt8   PortId;
-  UInt8   PortRdy;
-  Lba     Begin;
-  Lba     End;
+  SizeT DataSz;
+  UInt8 PortId;
+  UInt8 PortRdy;
+  Lba BeginLba;
+  Lba SectorCnt;
 };
-} // namespace NewOS
+}  // namespace NewOS

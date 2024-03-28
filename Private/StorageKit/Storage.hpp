@@ -20,5 +20,3 @@ extern const SKScsiPacket kCDRomPacketTemplate;
 
 #define f_kDriveSize(LAST_LBA) ((LAST_LBA + 1) * f_kDriveSectorSize)
 
-#include <StorageKit/StorageCore.inl>
-
