@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <System.Core/Headers/Window.h>
+#include <Headers/Window.h>
 
 /// @brief Shows an message box with a formatting.
 /// @param title the message box title

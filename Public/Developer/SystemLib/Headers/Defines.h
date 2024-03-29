@@ -142,19 +142,8 @@ enum RtProcessCall {
     kCallsCount,
 };
 
-#include <System.Core/Headers/Hint.h>
-#include <System.Core/Headers/Dialog.h>
-
-#define kObjectGlobalNamespace ":\\"
-
-enum {
-  kObjectTypeGeneric,
-  kObjectTypeFile,
-  kObjectTypeDevice,
-  kObjectTypeNetwork,
-  kObjectTypeInvalid,
-  kObjectTypeCount = 5,
-};
+#include <Headers/Hint.h>
+#include <Headers/Dialog.h>
 
 /**
  * @brief GUID type, something you can also find in CFKit.
@@ -167,41 +156,41 @@ typedef struct GUID {
   ByteType Data4[8];
 } GUIDType, *PtrGUIDType;
 
-/// \brief Object handle.
+/// \brief Application Interface.
 /// \author Amlal El Mahrouss
-typedef struct Object {
-  CharacterTypeUTF8 Name[255];
-  DWordType Kind;
-  DWordType Flags;
-
-  VoidType(*Release)(struct Object* Self);
-  IntPtrType(*Invoke)(struct Object* Self, DWordType Sel, ...);
-  VoidType(*Query)(struct Object* Self, PtrVoidType* Dst, SizeType SzDst, struct GUID* GuidOf);
-} *ObjectRef;
+typedef struct Application {
+  VoidType(*Release)(struct Application* Self, DWordType ExitCode);
+  IntPtrType(*Invoke)(struct Application* Self, DWordType Sel, ...);
+  VoidType(*Query)(struct Application* Self, PtrVoidType* Dst, SizeType SzDst, struct GUID* GuidOf);
+} Application, *ApplicationRef;
 
 #ifdef __cplusplus
 
-#define object_cast reinterpret_cast<ObjectRef>
+#define object_cast reinterpret_cast<ApplicationRef>
 
 template <SizeType N>
 using StrType = CharacterTypeUTF8[N];
 
 #else
 
-#define object_cast (ObjectRef)
+#define object_cast (ApplicationRef)
 
 #endif // ifdef C++
 
-CA_EXTERN_C ObjectRef          RtGetAppObject(VoidType);
+CA_EXTERN_C ApplicationRef     RtGetAppObject(VoidType);
 CA_EXTERN_C SizeType           RtGetAppArgumentsCount(VoidType);
 CA_EXTERN_C CharacterTypeUTF8* RtGetAppArgumentsPtr(VoidType);
 
-CA_EXTERN_C ObjectRef kApplicationObject;
+CA_EXTERN_C ApplicationRef kSharedApplication;
 
-typedef CharacterTypeUTF8 Str255Type[255];
+typedef CharacterTypeUTF8 StrType255[255];
 
 #define True  1
 #define False 0
 #define Bool BooleanType
 
-#define NULL ((PtrVoidType)0)
+#define NullPtr ((PtrVoidType)0)
+
+#ifndef kInvalidRef
+#define kInvalidRef 0
+#endif

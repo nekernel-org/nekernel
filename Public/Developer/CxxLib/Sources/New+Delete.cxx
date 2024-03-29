@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <System.Core/Headers/Heap.h>
+#include <Headers/Heap.h>
 
 typedef SizeType size_t;
 

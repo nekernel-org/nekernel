@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <System.Core/Headers/Heap.h>
+#include <Headers/Heap.h>
 
 /// @brief Allocate from the user's heap.
 /// @param sz size of object.
@@ -15,14 +15,14 @@ CA_EXTERN_C PtrVoidType RtAllocateProcessPtr(QWordType sz,
   CA_MUST_PASS(sz);
   CA_MUST_PASS(flags);
 
-  return (PtrVoidType)kApplicationObject->Invoke(kApplicationObject, kCallAllocPtr, sz, flags);
+  return (PtrVoidType)kSharedApplication->Invoke(kSharedApplication, kCallAllocPtr, sz, flags);
 }
 
 /// @brief Free pointer from the user's heap.
 /// @param ptr the pointer to free.
 CA_EXTERN_C VoidType RtFreeProcessPtr(PtrVoidType ptr) {
   CA_MUST_PASS(ptr);
-  CA_UNREFERENCED_PARAMETER(kApplicationObject->Invoke(kApplicationObject, kCallFreePtr, ptr));
+  CA_UNREFERENCED_PARAMETER(kSharedApplication->Invoke(kSharedApplication, kCallFreePtr, ptr));
 }
 
 /// @brief Get pointer size.
@@ -30,7 +30,7 @@ CA_EXTERN_C VoidType RtFreeProcessPtr(PtrVoidType ptr) {
 /// @return the size.
 CA_EXTERN_C QWordType RtProcessPtrSize(PtrVoidType ptr) {
   CA_MUST_PASS(ptr);
-  return kApplicationObject->Invoke(kApplicationObject, kCallSizePtr, ptr);
+  return kSharedApplication->Invoke(kSharedApplication, kCallSizePtr, ptr);
 }
 
 /// @brief Check if the pointer exists.
@@ -38,5 +38,5 @@ CA_EXTERN_C QWordType RtProcessPtrSize(PtrVoidType ptr) {
 /// @return if it exists
 CA_EXTERN_C BooleanType RtProcessPtrExists(PtrVoidType ptr) {
   CA_MUST_PASS(ptr);
-  return kApplicationObject->Invoke(kApplicationObject, kCallCheckPtr, ptr);
+  return kSharedApplication->Invoke(kSharedApplication, kCallCheckPtr, ptr);
 }

@@ -11,7 +11,7 @@
 #ifndef __THREAD__
 #define __THREAD__
 
-#include <System.Core/Headers/Defines.h>
+#include <Headers/Defines.h>
 
 #define kThreadErrorExit -33
 

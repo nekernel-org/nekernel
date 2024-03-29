@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <System.Core/Headers/Window.h>
+#include <Headers/Window.h>
 
 /*************************************************************
  * 
@@ -29,4 +29,3 @@ CA_EXTERN_C TTFFontRef FnCreateFont(const CharacterTypeUTF8* name);
 /// @param fon 
 /// @return 
 CA_EXTERN_C VoidType FnDisposeFont(TTFFontRef fon);
-

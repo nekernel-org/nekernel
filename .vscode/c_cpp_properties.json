@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/Private/**",
                 "${workspaceFolder}/Private/NewBoot/**",
+                "${workspaceFolder}/Public/Developer/SystemLib/**",
                 "${workspaceFolder}/Public/Developer/**"
             ],
             "defines": [
@@ -34,6 +35,7 @@
             "includePath": [
                 "${workspaceFolder}/Private/**",
                 "${workspaceFolder}/Private/NewBoot/**",
+                "${workspaceFolder}/Public/Developer/SystemLib/**",
                 "${workspaceFolder}/Public/Developer/**"
             ],
             "defines": [

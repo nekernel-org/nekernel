@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <System.Core/Headers/Defines.h>
+#include <Headers/Defines.h>
 
 /// @brief Filesystem wrapper.
 
