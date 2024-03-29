@@ -4,7 +4,7 @@
 
 - ABI and Format: PEF/PE32+.
 - Kernel architecture: Microkernel.
-- Language: C++/(Assembly (AMD64, X64000, X86S, ARM64))
+- Language: C++/(Assembly (AMD64, X64000, X86S, ARM64, PowerPC, RISCV))
 
 ===================================
 # 1: The NewKernel
