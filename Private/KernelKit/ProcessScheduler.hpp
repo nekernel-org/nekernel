@@ -14,8 +14,10 @@
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/MutableArray.hpp>
 
-#define kMinMicroTime AffinityKind::kHartStandard
-#define kPIDInvalid (-1)
+#define kSchedMinMicroTime AffinityKind::kHartStandard
+#define kSchedInvalidPID (-1)
+
+#define kSchedProcessLimitPerTeam (100U)
 
 ////////////////////////////////////////////////////
 
@@ -153,7 +155,7 @@ class ProcessHeader final {
   };
 
   ProcessTime PTime;
-  PID ProcessId{kPIDInvalid};
+  PID ProcessId{kSchedInvalidPID};
   Int32 Ring{kRingDriverKind};
   Int32 Kind{kUserKind};
 

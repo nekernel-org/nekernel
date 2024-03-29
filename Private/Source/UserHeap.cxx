@@ -8,7 +8,7 @@
 #include <KernelKit/UserHeap.hpp>
 #include <KernelKit/ProcessScheduler.hpp>
 
-#define kHeapHeaderPaddingSz 16
+#define kHeapHeaderPaddingSz (16U)
 
 /// @file UserHeap.cxx
 /// @brief User Heap Manager, Process heap allocator.
@@ -38,7 +38,7 @@ class HeapManager final {
   STATIC SizeT& Count() { return s_NumPools; }
   STATIC Ref<Pmm>& Leak() { return s_Pmm; }
   STATIC Boolean& IsEnabled() { return s_PoolsAreEnabled; }
-  STATIC Array<Ref<PTEWrapper>, kUserHeapMaxSz>& The() { return s_Pool; }
+  STATIC MutableArray<Ref<PTEWrapper>>& The() { return s_Pool; }
 
  private:
   STATIC Size s_NumPools;
@@ -46,7 +46,7 @@ class HeapManager final {
 
  private:
   STATIC Boolean s_PoolsAreEnabled;
-  STATIC Array<Ref<PTEWrapper>, kUserHeapMaxSz> s_Pool;
+  STATIC MutableArray<Ref<PTEWrapper>> s_Pool;
 };
 
 //! declare fields
@@ -54,7 +54,7 @@ class HeapManager final {
 SizeT HeapManager::s_NumPools = 0UL;
 Ref<Pmm> HeapManager::s_Pmm;
 Boolean HeapManager::s_PoolsAreEnabled = true;
-Array<Ref<PTEWrapper>, kUserHeapMaxSz> HeapManager::s_Pool;
+MutableArray<Ref<PTEWrapper>> HeapManager::s_Pool;
 
 STATIC VoidPtr ke_find_unused_heap(Int flags);
 STATIC Void ke_free_heap_internal(VoidPtr vaddr);
@@ -67,13 +67,12 @@ STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr);
 STATIC VoidPtr ke_find_unused_heap(Int flags) {
   for (SizeT index = 0; index < kUserHeapMaxSz; ++index) {
     if (HeapManager::The()[index] &&
-        !HeapManager::The()[index].Leak().Leak().Leak().Present()) {
+        !HeapManager::The()[index].Leak().Leak().Present()) {
       HeapManager::Leak().Leak().TogglePresent(
           HeapManager::The()[index].Leak().Leak(), true);
       kcout << "[ke_find_unused_heap] Done, trying to make a pool now...\r\n";
 
       return ke_make_heap((VoidPtr)HeapManager::The()[index]
-                              .Leak()
                               .Leak()
                               .Leak()
                               .VirtualAddress(),
@@ -143,7 +142,7 @@ STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr) {
     // ErrorOr<>::operator Boolean
     /// if (address matches)
     ///     -> Free heap.
-    if (HeapManager::The()[index].Leak().Leak().Leak().VirtualAddress() ==
+    if (HeapManager::The()[index].Leak().Leak().VirtualAddress() ==
         (UIntPtr)ptr) {
       HeapManager::Leak().Leak().FreePage(
           HeapManager::The()[index].Leak().Leak());

@@ -18,7 +18,7 @@
 /// @brief memory heap for user programs.
 
 #define kUserHeapMaxSz (4096)
-#define kUserHeapMag (0x5500A1)
+#define kUserHeapMag (0xFAF0FEF0)
 
 namespace NewOS {
 typedef enum {

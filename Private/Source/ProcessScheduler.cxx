@@ -146,6 +146,7 @@ void ProcessHeader::Exit(Int32 exit_code) {
 
 SizeT ProcessScheduler::Add(Ref<ProcessHeader> &process) {
   if (!process) return -1;
+  if (!mTeam.AsArray().Count() > kSchedProcessLimitPerTeam) return -kErrorOutOfTeamSlot;
 
   if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel) return -1;
 
@@ -237,7 +238,7 @@ bool ProcessHelper::CanBeScheduled(Ref<ProcessHeader> &process) {
     return false;
 
   if (process.Leak().GetStatus() == ProcessStatus::kStarting) {
-    if (process.Leak().PTime < static_cast<Int>(kMinMicroTime)) {
+    if (process.Leak().PTime < static_cast<Int>(kSchedMinMicroTime)) {
       process.Leak().Status = ProcessStatus::kRunning;
       process.Leak().Affinity = AffinityKind::kHartStandard;
 
@@ -247,7 +248,7 @@ bool ProcessHelper::CanBeScheduled(Ref<ProcessHeader> &process) {
     ++process.Leak().PTime;
   }
 
-  return process.Leak().PTime > static_cast<Int>(kMinMicroTime);
+  return process.Leak().PTime > static_cast<Int>(kSchedMinMicroTime);
 }
 
 /**

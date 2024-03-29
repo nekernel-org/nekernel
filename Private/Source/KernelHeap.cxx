@@ -13,7 +13,8 @@
 //! @file KernelHeap.cxx
 //! @brief Kernel allocator.
 
-#define kHeapMagic 0xD4D7
+#define kHeapMagic (0xD4D7D5)
+#define kHeapHeaderPaddingSz (16U)
 
 namespace NewOS {
 STATIC SizeT kHeapCount = 0UL;
@@ -24,11 +25,12 @@ namespace Detail {
 /// Located before the address bytes.
 /// | HIB |  ADDRESS  |
 struct PACKED HeapInformationBlock final {
-  UInt16 hMagic;
-  Boolean hPresent;
-  Int32 hCRC32;
-  Int64 hSizeAddress;
-  UIntPtr hAddress;
+  UInt32    hMagic;
+  Boolean   hPresent;
+  UInt32    hCRC32;
+  SizeT     hSizeAddress;
+  UIntPtr   hTargetAddress;
+  UInt8     hPadding[kHeapHeaderPaddingSz];
 };
 
 typedef HeapInformationBlock *HeapInformationBlockPtr;
@@ -51,7 +53,7 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
   heapInfo->hSizeAddress = sz;
   heapInfo->hMagic = kHeapMagic;
   heapInfo->hCRC32 = 0;  // dont fill it for now.
-  heapInfo->hAddress = wrapper.VirtualAddress();
+  heapInfo->hTargetAddress = wrapper.VirtualAddress();
 
   ++kHeapCount;
 
@@ -70,11 +72,13 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
           (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
   if (virtualAddress && virtualAddress->hMagic == kHeapMagic) {
-    MUST_PASS(virtualAddress->hPresent);
+    if (!virtualAddress->hPresent) {
+      return -kErrorHeapNotPresent;
+    }
 
     if (virtualAddress->hCRC32 != 0) {
       if (virtualAddress->hCRC32 !=
-          ke_calculate_crc32((Char *)virtualAddress->hAddress,
+          ke_calculate_crc32((Char *)virtualAddress->hTargetAddress,
                              virtualAddress->hSizeAddress)) {
         ke_stop(RUNTIME_CHECK_POINTER);
       }
@@ -82,7 +86,7 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
 
     virtualAddress->hSizeAddress = 0UL;
     virtualAddress->hPresent = false;
-    virtualAddress->hAddress = 0;
+    virtualAddress->hTargetAddress = 0;
     virtualAddress->hCRC32 = 0;
     virtualAddress->hMagic = 0;
 

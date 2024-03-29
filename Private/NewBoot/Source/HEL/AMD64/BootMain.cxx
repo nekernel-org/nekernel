@@ -17,6 +17,8 @@
 
 #define kMaxBufSize 256
 
+EXTERN_C void Main(HEL::HandoverInformationHeader* handoverInfo);
+
 /// @brief Bootloader main type.
 typedef void (*bt_main_type)(HEL::HandoverInformationHeader* handoverInfo);
 
@@ -151,12 +153,17 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     }
 
     if (!isIniNotFound) {
-      writer.Write(L"NewBoot.exe: No partition found for s10. (HCR-1000)\r\n");
+      writer.Write(L"NewBoot.exe: No partition found for NewOS. (HCR-1000)\r\n");
+      writer.Write(L"NewBoot.exe: Running setup for NewOS...\r\n");
+      
+      EFI::ExitBootServices(MapKey, ImageHandle);
+
+      Main(handoverHdrPtr);
     } else {
       handoverHdrPtr->f_Magic = kHandoverMagic;
       handoverHdrPtr->f_Version = kHandoverVersion;
 
-      writer.Write(L"NewBoot.exe: Running s10...\r\n");
+      writer.Write(L"NewBoot.exe: Running NewOS...\r\n");
 
       EFI::ExitBootServices(MapKey, ImageHandle);
 

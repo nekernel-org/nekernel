@@ -19,6 +19,12 @@
 EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
 EXTERN_C void RuntimeMain();
 
+namespace NewOS::HAL {
+/// @brief Gets the system cores using the MADT.
+/// @param rsdPtr the RSD PTR.
+extern void hal_system_get_cores(NewOS::voidPtr rsdPtr);
+} // namespace NewOS::HAL
+
 EXTERN_C void hal_init_platform(
     NewOS::HEL::HandoverInformationHeader* HandoverHeader) {
   kHandoverHeader = HandoverHeader;
@@ -63,6 +69,8 @@ EXTERN_C void hal_init_platform(
   /// START POST
 
   NewOS::HAL::Detail::_ke_power_on_self_test();
+
+  NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
   /// END POST
 

@@ -21,13 +21,12 @@
 #define kUPPNameLen 64
 
 namespace NewOS {
-/// \brief Much like Mac OS's UPP.
-/// This is read-only by design.
-/// It handles different kind of code.
-/// ARM <-> AMD64 for example.
-typedef struct UniversalProcedureTable final {
-  const Char NAME[kUPPNameLen];
-  const VoidPtr TRAP;
-  const SizeT ARCH;
-} PACKED UniversalProcedureTableType;
+/// @brief Main process entrypoint.
+typedef void (*MainKind)(void);
+
+/// @brief Executes a new process from memory.
+/// @param main 
+/// @param processName 
+/// @return 
+bool execute_from_image(MainKind main, const char* processName);
 } // namespace NewOS

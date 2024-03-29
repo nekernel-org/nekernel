@@ -25,6 +25,8 @@ EXTERN_C void RuntimeMain(void) {
 
   NewOS::FilesystemManagerInterface::Mount(newFS);
   
+  while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0);
+
   ///! we're done, unmount.
   delete newFS;
 }

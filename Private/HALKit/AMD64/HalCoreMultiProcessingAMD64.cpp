@@ -43,11 +43,7 @@ STATIC voidPtr kApicMadt = nullptr;
 STATIC const char* kApicSignature = "APIC";
 
 /// @brief Multiple APIC descriptor table.
-struct MadtType final {
-  char fMag[4];
-  Int32 fLength;
-  char fRev;
-
+struct MadtType final : public SDT {
   struct MadtAddress final {
     UInt32 fPhysicalAddress;
     UInt32 fFlags;  // 1 = Dual Legacy PICs installed
@@ -91,36 +87,21 @@ struct MadtLocalApicAddressOverride final {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-STATIC MadtType kApicMadtList[256];
-
-MadtType* _hal_system_find_core(MadtType* madt) {
-  madt = madt + sizeof(MadtType);
-
-  if (rt_string_cmp(madt->fMag, kApicSignature,
-                    rt_string_len(kApicSignature)) == 0)
-    return madt;
-
-  return nullptr;
-}
+STATIC MadtType* kApicInfoBlock = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void hal_system_get_cores(voidPtr rsdPtr) {
+  kcout << "NewKernel.exe: Constructing ACPIFactoryInterface...\r\n";
+
   auto acpi = ACPIFactoryInterface(rsdPtr);
   kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 
   MUST_PASS(kApicMadt);  // MADT must exist.
 
-  SizeT counter = 0UL;
-  MadtType* offset = _hal_system_find_core((MadtType*)kApicMadt);
-  //! now find core addresses.
-  while (offset != nullptr) {
-    // calls rt_copy_memory in NewC++
-    kApicMadtList[counter] = *offset;
-    offset = _hal_system_find_core(offset);
+  kcout << "NewKernel.exe: Successfuly fetched the MADT!\r\n";
 
-    ++counter;
-  }
+  kApicInfoBlock = (MadtType*)kApicMadt;
 }
 }  // namespace NewOS::HAL
 

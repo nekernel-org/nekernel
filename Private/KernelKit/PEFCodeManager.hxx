@@ -11,7 +11,7 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/String.hpp>
 
-#define kPefApplicationMime "application/x-hcore-exec"
+#define kPefApplicationMime "application/x-newos-exec"
 
 namespace NewOS {
 ///
@@ -29,9 +29,6 @@ class PEFLoader : public LoaderInterface {
 
  public:
   HCORE_COPY_DEFAULT(PEFLoader);
-
- public:
-  typedef void (*MainKind)(void);
 
  public:
   const char *Path() override;

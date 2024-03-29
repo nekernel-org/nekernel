@@ -9,15 +9,42 @@
 #include <NewKit/String.hpp>
 
 namespace NewOS {
-ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr) : m_Rsdp(rsdPtr), m_Entries(0) {
+
+/// Custom to the virtual machine, you'll need to parse the MADT instead.
+
+void rt_shutdown_acpi_qemu_20(void) { HAL::Out16(0xb004, 0x2000); }
+
+void rt_shutdown_acpi_qemu_30_plus(void) { HAL::Out16(0x604, 0x2000); }
+
+void rt_shutdown_acpi_virtualbox(void) { HAL::Out16(0x4004, 0x3400); }
+
+/// You have to parse the MADT!
+
+ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr)
+    : m_Rsdp(rsdPtr), m_Entries(0) {
   volatile RSDP *_rsdPtr = reinterpret_cast<volatile RSDP *>(this->m_Rsdp);
 
   MUST_PASS(_rsdPtr);
   MUST_PASS(_rsdPtr->Revision >= 2);
 }
 
-Void ACPIFactoryInterface::Shutdown() {}
-Void ACPIFactoryInterface::Reboot() {}
+Void ACPIFactoryInterface::Shutdown() {
+#ifdef __DEBUG__
+  rt_shutdown_acpi_qemu_30_plus();
+#else
+
+#endif
+}
+
+/// @brief Reboot (shutdowns on qemu.)
+/// @return 
+Void ACPIFactoryInterface::Reboot() {
+#ifdef __DEBUG__
+  rt_shutdown_acpi_qemu_30_plus();
+#else
+
+#endif
+}
 
 /// @brief Finds a descriptor table inside ACPI XSDT.
 ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
@@ -29,19 +56,26 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
 
   RSDP *rsdPtr = reinterpret_cast<RSDP *>(this->m_Rsdp);
 
-  auto xsdt = rsdPtr->XsdtAddress;
-  SizeT num = (rsdPtr->Length + sizeof(SDT)) / 8;
+  if (rsdPtr->Revision <= 1) {
+    return ErrorOr<voidPtr>{-4};
+  }
+
+  SDT* xsdt = (SDT*)(rsdPtr->XsdtAddress >> (rsdPtr->XsdtAddress & 0xfff));
+  SizeT num = (xsdt->Length + sizeof(SDT)) / 8;
+
+  kcout << "ACPI: Number of entries: " << number(num) << endl;
 
   constexpr short ACPI_SIGNATURE_LENGTH = 4;
 
   for (Size index = 0; index < num; ++index) {
-    SDT *sdt = reinterpret_cast<SDT *>(xsdt + sizeof(SDT) + index * 8);
+    SDT *sdt = (SDT*)*((UInt64*)(UInt64)xsdt + sizeof(SDT) + (index * 8));
 
-    if (!Checksum(sdt->Signature, ACPI_SIGNATURE_LENGTH)) ke_stop(RUNTIME_CHECK_ACPI);
+		for (int signature_index = 0; signature_index < 4; signature_index++){
+			if (sdt->Signature[signature_index] != signature[signature_index])
+				break;
 
-    if (StringBuilder::Equals(const_cast<const char *>(sdt->Signature),
-                              signature))
-      return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(sdt));
+			if (signature_index == 3) return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>((SDT*)sdt));;
+		}
   }
 
   return ErrorOr<voidPtr>{-1};
@@ -63,14 +97,4 @@ bool ACPIFactoryInterface::Checksum(const char *checksum, SSizeT len) {
 
   return chr == 0;
 }
-
-/// Custom to the virtual machine, you'll need to parse the MADT instead.
-
-void rt_shutdown_acpi_qemu_20(void) { HAL::Out16(0xb004, 0x2000); }
-
-void rt_shutdown_acpi_qemu_30_plus(void) { HAL::Out16(0x604, 0x2000); }
-
-void rt_shutdown_acpi_virtualbox(void) { HAL::Out16(0x4004, 0x3400); }
-
-/// You have to parse the MADT!
 }  // namespace NewOS

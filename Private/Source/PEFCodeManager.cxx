@@ -30,6 +30,8 @@ UInt32 rt_get_pef_platform(void) noexcept {
 }
 }  // namespace Detail
 
+/// @brief PEF loader constructor w/ blob.
+/// @param blob 
 PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(nullptr) {
   fCachedBlob = blob;
   fBad = false;
@@ -37,6 +39,8 @@ PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(nullptr) {
   MUST_PASS(fCachedBlob);
 }
 
+/// @brief PEF loader constructor.
+/// @param path 
 PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
   OwnPtr<FileStream<char>> file;
 
@@ -73,6 +77,7 @@ PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
   }
 }
 
+/// @brief PEF destructor.
 PEFLoader::~PEFLoader() {
   if (fCachedBlob) ke_delete_ke_heap(fCachedBlob);
 }
@@ -89,11 +94,11 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
 
   switch (kind) {
     case kPefCode: {
-      errOrSym = StringBuilder::Construct(".text$");
+      errOrSym = StringBuilder::Construct(".code64$");
       break;
     }
     case kPefData: {
-      errOrSym = StringBuilder::Construct(".data$");
+      errOrSym = StringBuilder::Construct(".data64$");
       break;
     }
     case kPefZero: {
@@ -126,6 +131,8 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
   return nullptr;
 }
 
+/// @brief Finds the executable entrypoint.
+/// @return 
 ErrorOr<VoidPtr> PEFLoader::FindStart() {
   if (auto sym = this->FindSymbol(kPefStart, kPefCode); sym)
     return ErrorOr<VoidPtr>(sym);
@@ -133,7 +140,11 @@ ErrorOr<VoidPtr> PEFLoader::FindStart() {
   return ErrorOr<VoidPtr>(H_EXEC_ERROR);
 }
 
+/// @brief Tells if the executable is loaded or not.
+/// @return 
 bool PEFLoader::IsLoaded() noexcept { return !fBad && fCachedBlob; }
+
+#define kPefAppnameCommandHdr "PefAppName"
 
 namespace Utils {
 bool execute_from_image(PEFLoader &exec) noexcept {
@@ -143,6 +154,9 @@ bool execute_from_image(PEFLoader &exec) noexcept {
 
   ProcessHeader proc(errOrStart.Leak().Leak());
   Ref<ProcessHeader> refProc = proc;
+
+  proc.Kind = ProcessHeader::kUserKind;
+  rt_copy_memory(exec.FindSymbol(kPefAppnameCommandHdr, kPefData), proc.Name, rt_string_len((const Char*)exec.FindSymbol(kPefAppnameCommandHdr, kPefData)));
 
   return ProcessScheduler::Shared().Leak().Add(refProc);
 }
