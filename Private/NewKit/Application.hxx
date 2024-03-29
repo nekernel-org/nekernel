@@ -23,6 +23,7 @@ typedef struct Application final {
   /// @brief Invoke a function from the application object.
   NewOS::IntPtr(*Invoke)(struct Application* Self, NewOS::Int32 Sel, ...);
   /// @brief Query a new application object from a GUID.
+  /// @note this doesn't query a process, it query a registered object withtin that app.
   NewOS::Void(*Query)(struct Application* Self, NewOS::VoidPtr* Dst, NewOS::SizeT SzDst, NewOS::XRN::GUIDSequence GuidOf);
 } Application, *ApplicationRef;
 

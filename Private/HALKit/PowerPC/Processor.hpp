@@ -2,6 +2,8 @@
 
     Copyright Mahrouss Logic
 
+    Purpose: PowerPC processor header.
+
 ------------------------------------------- */
 
 #pragma once
@@ -9,12 +11,14 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Utils.hpp>
 
-#define __aligned __attribute__((aligned(4)))
+#define __PPC_ALIGN __attribute__((aligned(4)))
 
 namespace NewOS::HAL {
 typedef UIntPtr Reg;
 
-struct __aligned StackFrame {
+struct __PPC_ALIGN StackFrame {
+  Reg IntNum;
+  Reg Exception;
   Reg R0;
   Reg R1;
   Reg R2;
@@ -23,13 +27,20 @@ struct __aligned StackFrame {
   Reg R5;
   Reg R6;
   Reg R7;
-  Reg ID;  // R8
+  Reg R8;
+  Reg ProgramCounter;
+  Reg StackPointer;
+  /// @brief Process Context
+  Reg PC;
+  /// @brief General Context 
+  Reg GC;
 };
 
 typedef StackFrame* StackFramePtr;
 
 inline void rt_halt() {
   while (1) {
+
   }
 }
 

@@ -40,6 +40,7 @@ extern _hal_handle_mouse
 extern idt_handle_gpf
 extern idt_handle_pf
 extern ke_io_write
+extern idt_handle_ud
 
 section .text
 
@@ -51,7 +52,21 @@ IntNormal 2
 IntNormal 3
 IntNormal 4
 IntNormal 5
-IntNormal 6
+
+;; Invalid opcode interrupt
+__HCR_INT_6:
+    cli
+
+    push rax
+
+    mov rcx, rsp
+    call idt_handle_ud
+
+    pop rax
+
+    sti
+    iretq
+
 IntNormal 7
 IntExp   8
 IntNormal 9
