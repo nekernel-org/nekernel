@@ -10,7 +10,7 @@
 
 /// @brief Filesystem wrapper.
 
-typedef QWordTyp FSRef;
+typedef QWordType FSRef;
 
 /// @brief Opens a new file.
 /// @param path where to find it.
@@ -23,7 +23,7 @@ CA_EXTERN_C FSRef FsOpenFile(const CharacterTypeUTF8* path, const CharacterTypeU
 /// @return 
 CA_EXTERN_C VoidType FsCloseFile(FSRef refFs);
 
-typedef QWordTyp FSForkRef;
+typedef QWordType FSForkRef;
 
 /// @brief A fork information header.
 typedef struct _Fork {
