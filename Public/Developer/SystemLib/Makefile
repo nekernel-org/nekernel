@@ -20,4 +20,4 @@ build-core-amd64:
 
 .PHONY: clean
 clean:
-	rm -f $(wildcard *.o)
+	rm -f $(wildcard *.lib)
