@@ -7,6 +7,8 @@
 #include <BootKit/BootKit.hxx>
 #include <FSKit/NewFS.hxx>
 
+#define kSwapSize MIB(16)
+
 // {310E1FC7-2060-425D-BE7B-75A37CC679BC}
 STATIC const BlockGUID kEPMGuid = {
     0x310e1fc7,
@@ -14,12 +16,14 @@ STATIC const BlockGUID kEPMGuid = {
     0x425d,
     {0xbe, 0x7b, 0x75, 0xa3, 0x7c, 0xc6, 0x79, 0xbc}};
 
+EXTERN_C Void boot_write_newos_specific_partition(BDeviceATA*);
+
 EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePartLength,
                                  BDeviceATA* ataInterface) {
   if (namePartLength > kEPMNameLength || !namePart) return No;
   if (!ataInterface) return No;
 
-  ataInterface->Leak().mBase = 0;
+  ataInterface->Leak().mBase = kEPMStartPartitionBlk;
   ataInterface->Leak().mSize = kATASectorSize;
 
   Char buf[512] = {0};
@@ -37,7 +41,7 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
       BootBlockType* bootBlock = (BootBlockType*)buf;
 
       bootBlock->Version = kEPMNewOS;
-      bootBlock->NumBlocks = kEPMMaxBlks;
+      bootBlock->NumBlocks = 2;
 
       for (SizeT i = 0; i < kEPMNameLength; i++) {
         bootBlock->Magic[i] = kEPMMagic[i];
@@ -73,7 +77,7 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
       }
 
       partBlock->SectorSz = kATASectorSize;
-      partBlock->SectorStart = kEPMStartPartition + MIB(16);
+      partBlock->SectorStart = kEPMStartPartitionBlk + kSwapSize;
       partBlock->Version = kNewFSVersionInteger;
       partBlock->Kind = kNewFSPartitionTypeStandard;
       partBlock->SectorEnd = 0; /// grows on the disk.
@@ -94,12 +98,14 @@ EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePart
       }
 
       swapBlock->SectorSz = kATASectorSize;
-      swapBlock->SectorStart = kEPMStartPartition;
+      swapBlock->SectorStart = kEPMStartPartitionBlk;
       swapBlock->Version = kNewFSVersionInteger;
       swapBlock->Kind = kNewFSPartitionTypePage;
-      swapBlock->SectorEnd = MIB(16); /// 4 MIB swap partition.
+      swapBlock->SectorEnd = kSwapSize; /// 4 MIB swap partition.
 
       ataInterface->Write(buf, 1);
+
+      boot_write_newos_specific_partition(ataInterface);
 
       return No;
     }

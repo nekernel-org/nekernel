@@ -101,7 +101,7 @@ typedef struct PartitionBlock PartitionBlockType;
 #endif
 
 /// partition must start after this address.
-#define kEPMStartPartition 1024
+#define kEPMStartPartitionBlk 34
 
 /// END SPECS
 

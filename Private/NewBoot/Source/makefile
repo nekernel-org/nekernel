@@ -37,7 +37,6 @@ bootloader-amd64: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/NEWBOOT.EFI
-	$(COPY) ../../NewKernel.exe CDROM/INSTALLER/
 
 .PHONY: compile-amd64
 compile-amd64:
