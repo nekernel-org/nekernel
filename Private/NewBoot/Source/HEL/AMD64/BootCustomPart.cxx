@@ -8,13 +8,15 @@
 #include <FSKit/NewFS.hxx>
 
 /// @brief Writes a NewOS partition on top of EPM
-/// @param ataInterface The drive interface.
+/// @param ataInterface The ATA interface.
 /// @return 
-EXTERN_C Void boot_write_newos_specific_partition(BDeviceATA* ataInterface) {
-    ataInterface->Leak().mBase = 0;
-    ataInterface->Leak().mSize = 512;
+EXTERN_C Boolean boot_write_newos_partition(BootDeviceATA* ataInterface) {
+    if (!ataInterface) return No;
 
-    Char newOSHeader[512] = {
+    ataInterface->Leak().mBase = 0;
+    ataInterface->Leak().mSize = kATASectorSize;
+
+    Char newOSHeader[kATASectorSize] = {
         /// signature of our system partition.
         'N', 'e', 'w', '!', 
         /// version of our os partition
@@ -35,4 +37,6 @@ EXTERN_C Void boot_write_newos_specific_partition(BDeviceATA* ataInterface) {
     };
 
     ataInterface->Write(newOSHeader, 1);
+
+    return Yes;
 }

@@ -9,12 +9,12 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <Builtins/AHCI/Defines.hxx>
 
-class BDeviceSATA final {
+class BootDeviceSATA final {
  public:
-  explicit BDeviceSATA() noexcept;
-  ~BDeviceSATA() = default;
+  explicit BootDeviceSATA() noexcept;
+  ~BootDeviceSATA() = default;
 
-  HCORE_COPY_DEFAULT(BDeviceSATA);
+  HCORE_COPY_DEFAULT(BootDeviceSATA);
 
   struct SATATrait final {
     NewOS::SizeT   mBase{1024};
@@ -26,8 +26,8 @@ class BDeviceSATA final {
 
   operator bool() { return this->Leak().mDetected; }
 
-  BDeviceSATA& Read(NewOS::WideChar* Buf, const NewOS::SizeT& SecCount);
-  BDeviceSATA& Write(NewOS::WideChar* Buf, const NewOS::SizeT& SecCount);
+  BootDeviceSATA& Read(NewOS::WideChar* Buf, const NewOS::SizeT& SecCount);
+  BootDeviceSATA& Write(NewOS::WideChar* Buf, const NewOS::SizeT& SecCount);
 
   SATATrait& Leak();
 

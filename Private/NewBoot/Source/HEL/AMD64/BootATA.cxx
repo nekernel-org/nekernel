@@ -93,7 +93,7 @@ ATAInit_Retry:
   }
 
   OutBus =
-      (Bus == ATA_PRIMARY_IO) ? BDeviceATA::kPrimary : BDeviceATA::kSecondary;
+      (Bus == ATA_PRIMARY_IO) ? BootDeviceATA::kPrimary : BootDeviceATA::kSecondary;
   OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
   Out8(Bus + ATA_REG_HDDEVSEL, 0xA0 | ATA_MASTER << 4);
@@ -200,7 +200,7 @@ Boolean boot_ata_detected(Void) { return kATADetected; }
  * @brief ATA Device constructor.
  * @param void none.
  */
-BDeviceATA::BDeviceATA() noexcept {
+BootDeviceATA::BootDeviceATA() noexcept {
   if (boot_ata_detected()) return;
 
   if (boot_ata_init(ATA_PRIMARY_IO, true, this->Leak().mBus,
@@ -217,14 +217,14 @@ BDeviceATA::BDeviceATA() noexcept {
 /**
  * @brief Is ATA detected?
  */
-BDeviceATA::operator bool() { return boot_ata_detected(); }
+BootDeviceATA::operator bool() { return boot_ata_detected(); }
 
 /**
     @brief Read Buf from disk
     @param Sz Sector size
     @param Buf buffer
 */
-BDeviceATA& BDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
+BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
   if (!boot_ata_detected()) {
     Leak().mErr = true;
     return *this;
@@ -245,7 +245,7 @@ BDeviceATA& BDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
     @param Sz Sector size
     @param Buf buffer
 */
-BDeviceATA& BDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
+BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
   if (!boot_ata_detected()) {
     Leak().mErr = true;
     return *this;
@@ -263,6 +263,6 @@ BDeviceATA& BDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorSz) {
 
 /**
  * @brief ATA trait getter.
- * @return BDeviceATA::ATATrait& the drive config.
+ * @return BootDeviceATA::ATATrait& the drive config.
  */
-BDeviceATA::ATATrait& BDeviceATA::Leak() { return mTrait; }
+BootDeviceATA::ATATrait& BootDeviceATA::Leak() { return mTrait; }

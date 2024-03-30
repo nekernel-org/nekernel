@@ -10,17 +10,17 @@
 
 using namespace NewOS;
 
-class BDeviceATA final {
+class BootDeviceATA final {
  public:
   enum {
     kPrimary = ATA_PRIMARY_IO,
     kSecondary = ATA_SECONDARY_IO,
   };
 
-  explicit BDeviceATA() noexcept;
-  ~BDeviceATA() = default;
+  explicit BootDeviceATA() noexcept;
+  ~BootDeviceATA() = default;
 
-  HCORE_COPY_DEFAULT(BDeviceATA);
+  HCORE_COPY_DEFAULT(BootDeviceATA);
 
   struct ATATrait final {
     SizeT mBase{1024};
@@ -34,8 +34,8 @@ class BDeviceATA final {
 
   operator bool();
 
-  BDeviceATA& Read(Char* Buf, const SizeT& SecCount);
-  BDeviceATA& Write(Char* Buf, const SizeT& SecCount);
+  BootDeviceATA& Read(Char* Buf, const SizeT& SecCount);
+  BootDeviceATA& Write(Char* Buf, const SizeT& SecCount);
 
   ATATrait& Leak();
 

@@ -41,7 +41,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
-  BDeviceATA ataDrv;
+  BootDeviceATA ataDrv;
   Boolean isIniNotFound = No;
 
   /// if ATA drive is initialized and EFI vendor supports an EPM scheme.
@@ -52,7 +52,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
     /// tries to read an EPM block, or writes one if it fails.
     bool isIniNotFound =
-        boot_write_newfs_partition(namePart, kEPMNameLength, &ataDrv);
+        boot_write_epm_partition(namePart, kEPMNameLength, &ataDrv);
   } else if (SystemTable->FirmwareVendor[0] != '@') {
     writer.Write(L"This firmware can't understand NewOS, please use Mahrouss Logic products instead\r\nOur website: www.el-mahrouss-logic.com\r\n");
     return kEfiFail;

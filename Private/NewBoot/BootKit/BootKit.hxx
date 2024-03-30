@@ -205,4 +205,4 @@ class BVersionString final {
   static const CharacterTypeUTF16 *Shared() { return BOOTLOADER_VERSION; }
 };
 
-EXTERN_C Boolean boot_write_newfs_partition(const Char* namePart, SizeT namePartLength, BDeviceATA* ataInterface);
+EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLength, BootDeviceATA* ataInterface);
