@@ -20,7 +20,7 @@ IMG=epm.img
 EMU_FLAGS=-net none -smp 4 -m 4G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -drive file=fat:rw:CDROM,index=2,format=raw -d int
 
 LD_FLAGS=-e efi_main --subsystem=10
-OBJ=$(wildcard *.o) $(wildcard ../../Objects/*.obj) $(wildcard HEL/AMD64/*.obj)
+OBJ=$(wildcard *.o) $(wildcard HEL/AMD64/*.obj)
 
 REM=rm
 REM_FLAG=-f
@@ -40,7 +40,7 @@ bootloader-amd64: compile-amd64
 
 .PHONY: compile-amd64
 compile-amd64:
-	$(CC_GNU) $(FLAG_GNU) $(wildcard HEL/AMD64/*.cxx) $(wildcard *.cxx)
+	$(CC_GNU) $(FLAG_GNU) $(DEBUG) $(wildcard HEL/AMD64/*.cxx) $(wildcard *.cxx)
 
 .PHONY: run-efi-amd64
 run-efi-amd64:

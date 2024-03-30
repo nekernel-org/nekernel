@@ -17,8 +17,6 @@
 
 #define kMaxBufSize 256
 
-EXTERN_C void Main(HEL::HandoverInformationHeader* handoverInfo);
-
 /// @brief Bootloader main type.
 typedef void (*bt_main_type)(HEL::HandoverInformationHeader* handoverInfo);
 
@@ -44,6 +42,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   BootDeviceATA ataDrv;
   Boolean isIniNotFound = No;
 
+#ifndef __DEBUG__
   /// if ATA drive is initialized and EFI vendor supports an EPM scheme.
   /// @EDK tells our OS that it supports EPM scheme as well.
   if (ataDrv &&
@@ -51,16 +50,26 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     Char namePart[kEPMNameLength] = {"BootBlock"};
 
     /// tries to read an EPM block, or writes one if it fails.
-    bool isIniNotFound =
+    isIniNotFound =
         boot_write_epm_partition(namePart, kEPMNameLength, &ataDrv);
   } else if (SystemTable->FirmwareVendor[0] != '@') {
-    writer.Write(L"This firmware can't understand NewOS, please use Mahrouss Logic products instead\r\nOur website: www.el-mahrouss-logic.com\r\n");
+    writer.Write(L"NewBoot.exe: This firmware can't understand NewOS, please use Mahrouss Logic products instead\r\nNewBoot.exe: Our website: www.el-mahrouss-logic.com\r\n");
+    return kEfiFail;
+  } else if (!ataDrv) {
+    writer.Write(L"NewBoot.exe: This computer can't work with NewOS, please use Mahrouss Logic products instead\r\nNewBoot.exe: Our website: www.el-mahrouss-logic.com\r\n");
     return kEfiFail;
   }
+#else
+    Char namePart[kEPMNameLength] = {"BootBlock"};
+
+    /// tries to read an EPM block, or writes one if it fails.
+    isIniNotFound =
+        boot_write_epm_partition(namePart, kEPMNameLength, &ataDrv);
+#endif // !__DEBUG__
 
   /// Read Kernel blob.
 
-  BFileReader kernelImg(L".HCORE", ImageHandle);
+  BFileReader kernelImg(L".NEWDEV", ImageHandle);
 
   kernelImg.Size(kMaxBufSize);
   kernelImg.ReadAll();
@@ -160,11 +169,6 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
     if (!isIniNotFound) {
       writer.Write(L"NewBoot.exe: No partition found for NewOS. (HCR-1000)\r\n");
-      writer.Write(L"NewBoot.exe: Running setup for NewOS...\r\n");
-      
-      EFI::ExitBootServices(MapKey, ImageHandle);
-
-      Main(handoverHdrPtr);
     } else {
       handoverHdrPtr->f_Magic = kHandoverMagic;
       handoverHdrPtr->f_Version = kHandoverVersion;

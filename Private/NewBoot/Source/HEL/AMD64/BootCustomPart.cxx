@@ -18,12 +18,10 @@ EXTERN_C Boolean boot_write_newos_partition(BootDeviceATA* ataInterface) {
 
     Char newOSHeader[kATASectorSize] = {
         /// signature of our system partition.
-        'N', 'e', 'w', '!', 
+        'N', 'e', 'w', 'O', 'S', 
         /// version of our os partition
         (Char)0x10,
-        
         /// to retrieve the header size add these two fileds. (divided into parts.)
-
         /// header size (pt 1) 
         (Char)0x100, 
         /// header size (pt 2)
