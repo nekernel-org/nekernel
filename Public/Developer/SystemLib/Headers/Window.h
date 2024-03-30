@@ -52,6 +52,7 @@ typedef struct _WindowPort {
   struct _WindowPort* parentPort;
 } WindowPort;
 
+/// @brief Control port type.
 typedef struct _ControlPort {
   WordType controlPort;
   WordType controlKind;
@@ -61,6 +62,7 @@ typedef struct _ControlPort {
   WindowPort* parentPort;
 } ControlPort;
 
+/// @brief Color reference.
 typedef UInt32Type ColorRef;
 
 /***********************************************************************************/
@@ -79,15 +81,15 @@ CA_EXTERN_C const ColorRef kRgbWhite;
 
 #define WmMakeColorRef(R, G, B) (ColorRef)(0x##R##G##B)
 
-#define kControlKindWindow   0
-#define kControlKindDialog   1
-#define kControlKindMenu     2
-#define kControlKindButton   3
-#define kControlKindLabel    4
-#define kControlKindDropdown 5
-#define kControlKindIcon     6
-#define kControlKindRadio    7
-#define kControlKindCheck    7
+#define kControlKindWindow       0
+#define kControlKindDialog       1
+#define kControlKindMenu         2
+#define kControlKindButton       3
+#define kControlKindLabel        4
+#define kControlKindDropdownMenu 5
+#define kControlKindIcon         6
+#define kControlKindRadioBox     7
+#define kControlKindCheckBox     8
 
 /// @brief Creates a new control
 /// @param id the control rsrc fork.
