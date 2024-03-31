@@ -43,7 +43,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
 
       BootBlockType* bootBlock = (BootBlockType*)buf;
 
-      bootBlock->Version = kEPMNewOS;
+      bootBlock->Version = kEPMRevision;
       bootBlock->NumBlocks = 2;
 
       for (SizeT i = 0; i < kEPMNameLength; i++) {
@@ -54,7 +54,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
         bootBlock->Name[i] = namePart[i];
       }
 
-      bootBlock->SectorStart =
+      bootBlock->LbaStart =
           sizeof(BootBlockType) + (sizeof(PartitionBlockType) * kEPMMaxBlks);
 
       bootBlock->SectorSz = kATASectorSize;
@@ -70,7 +70,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
         partBlock->Fs[i] = fsName[i];
       }
 
-      partBlock->Magic = kEPMNewOS;
+      partBlock->Version = kEPMNewOS;
 
       char* partName = "System HD";
       int partNameLength = 10;
@@ -80,10 +80,10 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       }
 
       partBlock->SectorSz = kATASectorSize;
-      partBlock->SectorStart = kEPMStartPartitionBlk + kSwapSize;
+      partBlock->LbaStart = kEPMStartPartitionBlk + kSwapSize;
       partBlock->Version = kNewFSVersionInteger;
       partBlock->Kind = kNewFSPartitionTypeStandard;
-      partBlock->SectorEnd = 0; /// grows on the disk.
+      partBlock->LbaEnd = 0UL; ///! grows on the disk.
 
       PartitionBlock* swapBlock = (PartitionBlock*)(buf + sizeof(BootBlock) + sizeof(PartitionBlock));
 
@@ -91,7 +91,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
         swapBlock->Fs[i] = fsName[i];
       }
 
-      swapBlock->Magic = kEPMNewOS;
+      swapBlock->Version = kEPMNewOS;
 
       partName = "Swap HD";
       partNameLength = 8;
@@ -101,10 +101,10 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       }
 
       swapBlock->SectorSz = kATASectorSize;
-      swapBlock->SectorStart = kEPMStartPartitionBlk;
+      swapBlock->LbaStart = kEPMStartPartitionBlk;
       swapBlock->Version = kNewFSVersionInteger;
       swapBlock->Kind = kNewFSPartitionTypePage;
-      swapBlock->SectorEnd = kSwapSize; /// 4 MIB swap partition.
+      swapBlock->LbaEnd = kSwapSize; /// 4 MIB swap partition.
 
       ataInterface->Write(buf, 1);
 

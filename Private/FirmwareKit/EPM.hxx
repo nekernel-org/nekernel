@@ -37,7 +37,7 @@ struct PACKED BootBlock {
   NewOS::Int32 Version;
   NewOS::Int64 NumBlocks;
   NewOS::Int64 SectorSz;
-  NewOS::Int64 SectorStart;
+  NewOS::Int64 LbaStart;
 };
 
 /**
@@ -46,12 +46,12 @@ struct PACKED BootBlock {
  */
 struct PACKED PartitionBlock {
   NewOS::Char Name[kEPMNameLength];
-  NewOS::Int32 Magic;
-  NewOS::Int64 SectorEnd;
-  NewOS::Int64 SectorSz;
-  NewOS::Int64 SectorStart;
-  NewOS::Int16 Kind;
   NewOS::Int32 Version;
+  NewOS::Int64 LbaEnd;
+  NewOS::Int64 SectorSz;
+  NewOS::Int64 LbaStart;
+  NewOS::Int16 Kind;
+  NewOS::Int32 FsVersion;
   NewOS::Char Fs[kEPMFilesystemLength]; /* NewFS, HCFS... */
 };
 
@@ -100,8 +100,11 @@ typedef struct PartitionBlock PartitionBlockType;
 #define kEPMMagic kEPMMagicError
 #endif
 
-/// partition must start after this address.
-#define kEPMStartPartitionBlk 34
+///! @brief partition must start after this address.
+#define kEPMStartPartitionBlk 0
+
+///! @brief Current EPM revision (2)
+#define kEPMRevision 2
 
 /// END SPECS
 
