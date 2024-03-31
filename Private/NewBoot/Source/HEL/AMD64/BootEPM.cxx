@@ -37,8 +37,8 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
 
   writer.Write(L"NewBoot.exe: Checking for a NewFS partition...\r\n");
 
-  for (SizeT i = 0; i < kEPMMagicLength; i++) {
-    if (buf[i] != kEPMMagic[i]) {
+  for (SizeT index = 0; index < kEPMMagicLength; ++index) {
+    if (buf[index] != kEPMMagic[index]) {
       writer.Write(L"NewBoot.exe: Writing a NewFS partition...\r\n");
 
       BootBlockType* bootBlock = (BootBlockType*)buf;
@@ -46,11 +46,11 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       bootBlock->Version = kEPMRevision;
       bootBlock->NumBlocks = 2;
 
-      for (SizeT i = 0; i < kEPMNameLength; i++) {
+      for (SizeT i = 0; i < kEPMNameLength; ++i) {
         bootBlock->Magic[i] = kEPMMagic[i];
       }
 
-      for (SizeT i = 0; i < namePartLength; i++) {
+      for (SizeT i = 0; i < namePartLength; ++i) {
         bootBlock->Name[i] = namePart[i];
       }
 
@@ -66,7 +66,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       char* fsName = "NewFS";
       int fsNameLength = 6;
 
-      for (SizeT i = 0; i < fsNameLength; i++) {
+      for (SizeT i = 0; i < fsNameLength; ++i) {
         partBlock->Fs[i] = fsName[i];
       }
 
@@ -75,7 +75,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       char* partName = "System HD";
       int partNameLength = 10;
 
-      for (SizeT i = 0; i < partNameLength; i++) {
+      for (SizeT i = 0; i < partNameLength; ++i) {
         partBlock->Name[i] = partName[i];
       }
 
@@ -87,7 +87,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
 
       PartitionBlock* swapBlock = (PartitionBlock*)(buf + sizeof(BootBlock) + sizeof(PartitionBlock));
 
-      for (SizeT i = 0; i < fsNameLength; i++) {
+      for (SizeT i = 0; i < fsNameLength; ++i) {
         swapBlock->Fs[i] = fsName[i];
       }
 
@@ -96,7 +96,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       partName = "Swap HD";
       partNameLength = 8;
 
-      for (SizeT i = 0; i < partNameLength; i++) {
+      for (SizeT i = 0; i < partNameLength; ++i) {
         swapBlock->Name[i] = partName[i];
       }
 
