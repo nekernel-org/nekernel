@@ -10,14 +10,15 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DriveManager.hxx>
 
+#define kIndexerNodeNameLength 256
+#define kIndexerClaimed        0xCF
+
 namespace NewOS {
 namespace Indexer {
 struct IndexProperty final {
  public:
   Char Drive[kDriveNameLen];
-  Char Path[256];
-  Char From[256];
-  Char To[256];
+  Char Path[kIndexerNodeNameLength];
 };
 
 class IndexableProperty final : public Property {
@@ -34,10 +35,18 @@ class IndexableProperty final : public Property {
  public:
   void AddFlag(Int16 flag);
   void RemoveFlag(Int16 flag);
+  Int16 HasFlag(Int16 flag);
 
  private:
   IndexProperty fIndex;
   UInt32 fFlags;
 };
+
+/// @brief Index a file into the indexer instance.
+/// @param filename path
+/// @param filenameLen used bytes in path.
+/// @param indexer the filesystem indexer.
+/// @return none.
+Void fs_index_file(const Char* filename, SizeT filenameLen, IndexableProperty& indexer);
 }  // namespace Indexer
 }  // namespace NewOS

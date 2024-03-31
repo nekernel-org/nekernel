@@ -38,23 +38,30 @@ enum {
   kHCFSSubDriveCount,
 };
 
-Int32 ke_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
+/// @brief Read from newfs disk.
+/// @param Mnt mounted interface.
+/// @param DrvTrait drive info
+/// @param DrvIndex drive index.
+/// @return 
+Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
+  DrvTrait.fPacket.fPacketGood = false;
+  
   switch (DrvIndex) {
-    case 0: {
+    case kHCFSSubDriveA: {
       NEWFS_READ(A, DrvTrait, Mnt);
       break;
     }
-    case 1: {
+    case kHCFSSubDriveB: {
       NEWFS_READ(B, DrvTrait, Mnt);
       break;
     }
-    case 2: {
+    case kHCFSSubDriveC: {
       NEWFS_READ(C, DrvTrait, Mnt);
       break;
     }
-    case 3: {
+    case kHCFSSubDriveD: {
       NEWFS_READ(D, DrvTrait, Mnt);
       break;
     }
@@ -63,23 +70,30 @@ Int32 ke_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
   return DrvTrait.fPacket.fPacketGood;
 }
 
-Int32 ke_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
+/// @brief Write to newfs disk.
+/// @param Mnt mounted interface. 
+/// @param DrvTrait drive info 
+/// @param DrvIndex drive index.
+/// @return 
+Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
+  DrvTrait.fPacket.fPacketGood = false;
+
   switch (DrvIndex) {
-    case 0: {
+    case kHCFSSubDriveA: {
       NEWFS_WRITE(A, DrvTrait, Mnt);
       break;
     }
-    case 1: {
+    case kHCFSSubDriveB: {
       NEWFS_WRITE(B, DrvTrait, Mnt);
       break;
     }
-    case 2: {
+    case kHCFSSubDriveC: {
       NEWFS_WRITE(C, DrvTrait, Mnt);
       break;
     }
-    case 3: {
+    case kHCFSSubDriveD: {
       NEWFS_WRITE(D, DrvTrait, Mnt);
       break;
     }

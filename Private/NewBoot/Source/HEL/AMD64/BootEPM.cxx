@@ -16,11 +16,11 @@ STATIC const BlockGUID kEPMGuid = {
     0x425d,
     {0xbe, 0x7b, 0x75, 0xa3, 0x7c, 0xc6, 0x79, 0xbc}};
 
-/// @brief External reference, write a NewOS Reserved Partition.
-/// @param  ataInterface ATA interface
+/// @brief Write epm partition to disk.
+/// @param namePart partition name
+/// @param namePartLength length of name
+/// @param ataInterface  disk interface, here ATA.
 /// @return 
-EXTERN_C Boolean boot_write_newos_partition(BootDeviceATA* ataInterface);
-
 EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLength,
                                  BootDeviceATA* ataInterface) {
   if (namePartLength > kEPMNameLength || !namePart) return No;
@@ -107,8 +107,6 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       swapBlock->SectorEnd = kSwapSize; /// 4 MIB swap partition.
 
       ataInterface->Write(buf, 1);
-
-      boot_write_newos_partition(ataInterface);
 
       return No;
     }
