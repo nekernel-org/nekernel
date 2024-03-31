@@ -48,6 +48,7 @@ struct DriveTrait final {
     SizeT fPacketSize;       //! packet size
     UInt32 fPacketCRC32;     //! sanity crc, in case if good is set to false
     Boolean fPacketGood;
+    Lba fLba;
   } fPacket;
 
   Void (*fInput)(DrivePacket* packetPtr);
@@ -91,7 +92,7 @@ class MountpointInterface final {
         return &mD;
       default: {
         DbgLastError() = kErrorNoSuchDisk;
-        kcout << "NewKernel.exe: No such disk.\n";
+        kcout << "NewOS: No such disk.\n";
 
         break;
       }
@@ -103,6 +104,20 @@ class MountpointInterface final {
  private:
   DriveDevicePtr mA, mB, mC, mD = nullptr;
 };
+
+
+/// @brief Unimplemented drive.
+/// @param pckt 
+/// @return 
+Void ke_drv_unimplemented(DriveTrait::DrivePacket* pckt);
+
+/// @brief Makes a new drive.
+/// @return the new drive.
+DriveTrait construct_drive() noexcept;
+
+/// @brief Fetches the main drive.
+/// @return the new drive.
+DriveTrait main_drive() noexcept;
 }  // namespace NewOS
 
 #endif /* ifndef __DRIVE_MANAGER__ */

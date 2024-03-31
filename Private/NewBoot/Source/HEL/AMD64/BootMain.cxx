@@ -32,7 +32,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   BTextWriter writer;
   /// Splash screen stuff
 
-  writer.Write(L"MahroussLogic (R) NewBoot.exe: ")
+  writer.Write(L"MahroussLogic (R) NewOS: ")
       .Write(BVersionString::Shared());
 
   writer.Write(L"\r\nNewBoot.exe: Firmware Vendor: ")
@@ -53,10 +53,10 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     isIniNotFound =
         boot_write_epm_partition(namePart, kEPMNameLength, &ataDrv);
   } else if (SystemTable->FirmwareVendor[0] != '@') {
-    writer.Write(L"NewBoot.exe: This firmware can't understand NewOS, please use Mahrouss Logic products instead\r\nNewBoot.exe: Our website: www.el-mahrouss-logic.com\r\n");
+    writer.Write(L"NewOS: This firmware can't understand NewOS, please use Mahrouss Logic products instead\r\nNewBoot.exe: Our website: www.el-mahrouss-logic.com\r\n");
     return kEfiFail;
   } else if (!ataDrv) {
-    writer.Write(L"NewBoot.exe: This computer can't work with NewOS, please use Mahrouss Logic products instead\r\nNewBoot.exe: Our website: www.el-mahrouss-logic.com\r\n");
+    writer.Write(L"NewOS: This computer can't work with NewOS, please use Mahrouss Logic products instead\r\nNewBoot.exe: Our website: www.el-mahrouss-logic.com\r\n");
     return kEfiFail;
   }
 #else
@@ -142,7 +142,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
              handoverHdrPtr->f_FirmwareVendorLen);
 
 #ifdef __DEBUG__
-    writer.Write(L"NewBoot.exe: Fetching ACPI's 'RSD PTR'...").Write(L"\r\n");
+    writer.Write(L"NewOS: Fetching ACPI's 'RSD PTR'...").Write(L"\r\n");
 #endif
 
     for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
@@ -159,7 +159,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 #ifdef __DEBUG__
         writer
             .Write(
-                L"NewBoot.exe: Found ACPI's 'RSD PTR' table on this machine.")
+                L"NewOS: Found ACPI's 'RSD PTR' table on this machine.")
             .Write(L"\r\n");
 #endif
 
@@ -168,12 +168,12 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
     }
 
     if (!isIniNotFound) {
-      writer.Write(L"NewBoot.exe: No partition found for NewOS. (HCR-1000)\r\n");
+      writer.Write(L"NewOS: No partition found for NewOS. (HCR-1000)\r\n");
     } else {
       handoverHdrPtr->f_Magic = kHandoverMagic;
       handoverHdrPtr->f_Version = kHandoverVersion;
 
-      writer.Write(L"NewBoot.exe: Running NewOS...\r\n");
+      writer.Write(L"NewOS: Running NewOS...\r\n");
 
       EFI::ExitBootServices(MapKey, ImageHandle);
 
@@ -184,7 +184,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
     return kEfiOk;
   } else {
-    writer.Write(L"NewBoot.exe: Error-Code: HLDR-0003\r\n");
+    writer.Write(L"NewOS: Error-Code: HLDR-0003\r\n");
   }
 
   EFI::Stop();

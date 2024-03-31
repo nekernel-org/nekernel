@@ -35,11 +35,11 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
 
   BTextWriter writer;
 
-  writer.Write(L"NewBoot.exe: Checking for a NewFS partition...\r\n");
+  writer.Write(L"NewOS: Checking for a NewFS partition...\r\n");
 
   for (SizeT index = 0; index < kEPMMagicLength; ++index) {
     if (buf[index] != kEPMMagic[index]) {
-      writer.Write(L"NewBoot.exe: Writing a NewFS partition...\r\n");
+      writer.Write(L"NewOS: Writing a NewFS partition...\r\n");
 
       BootBlockType* bootBlock = (BootBlockType*)buf;
 
@@ -112,6 +112,6 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
     }
   }
 
-  writer.Write(L"NewBoot.exe: Partition found, everything's OK.\r\n");
+  writer.Write(L"NewOS: Partition found, everything's OK.\r\n");
   return Yes;
 }

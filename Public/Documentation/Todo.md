@@ -16,6 +16,6 @@
 
 Status:
 
-NewBoot.exe: Need to boot from EPM partition.
-NewKernel.exe: New Filesystem in progress.
+NewBoot: Need to boot from EPM partition.
+NewKernel: New Filesystem in progress.
 

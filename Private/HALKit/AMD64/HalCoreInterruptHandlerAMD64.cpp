@@ -13,11 +13,11 @@
 EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp) {
   MUST_PASS(NewOS::ProcessScheduler::Shared().Leak().GetCurrent());
 
-  NewOS::kcout << "NewKernel.exe: Stack Pointer: "
+  NewOS::kcout << "NewOS: Stack Pointer: "
                << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewKernel.exe: General Protection Fault, caused by "
+      << "NewOS: General Protection Fault, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
@@ -29,13 +29,13 @@ EXTERN_C void idt_handle_scheduler(NewOS::UIntPtr rsp) {
   NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewKernel.exe: Will be scheduled back later "
+      << "NewOS: Will be scheduled back later "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName()
       << NewOS::end_line();
 
   /// schedule another process.
   if (!NewOS::ProcessHelper::StartScheduling()) {
-    NewOS::kcout << "NewKernel.exe: Continue schedule this process...\r\n";
+    NewOS::kcout << "NewOS: Continue schedule this process...\r\n";
   }
 }
 
@@ -46,7 +46,7 @@ EXTERN_C void idt_handle_pf(NewOS::UIntPtr rsp) {
   NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewKernel.exe: Segmentation Fault, caused by "
+      << "NewOS: Segmentation Fault, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
@@ -59,7 +59,7 @@ EXTERN_C void idt_handle_math(NewOS::UIntPtr rsp) {
   NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewKernel.exe: Math error, caused by "
+      << "NewOS: Math error, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
@@ -72,7 +72,7 @@ EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp) {
   NewOS::kcout << NewOS::StringBuilder::FromInt("sp{%}", rsp);
 
   NewOS::kcout
-      << "NewKernel.exe: Execution error, caused by "
+      << "NewOS: Execution error, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
@@ -83,11 +83,11 @@ EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp) {
 EXTERN_C void idt_handle_ud(NewOS::UIntPtr rsp) {
   MUST_PASS(NewOS::ProcessScheduler::Shared().Leak().GetCurrent());
 
-  NewOS::kcout << "NewKernel.exe: Stack Pointer: "
+  NewOS::kcout << "NewOS: Stack Pointer: "
                << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewKernel.exe: Invalid interrupt, caused by "
+      << "NewOS: Invalid interrupt, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();

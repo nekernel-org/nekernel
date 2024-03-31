@@ -92,14 +92,14 @@ STATIC MadtType* kApicInfoBlock = nullptr;
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void hal_system_get_cores(voidPtr rsdPtr) {
-  kcout << "NewKernel.exe: Constructing ACPIFactoryInterface...\r\n";
+  kcout << "NewOS: Constructing ACPIFactoryInterface...\r\n";
 
   auto acpi = ACPIFactoryInterface(rsdPtr);
   kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 
   MUST_PASS(kApicMadt);  // MADT must exist.
 
-  kcout << "NewKernel.exe: Successfuly fetched the MADT!\r\n";
+  kcout << "NewOS: Successfuly fetched the MADT!\r\n";
 
   kApicInfoBlock = (MadtType*)kApicMadt;
 }

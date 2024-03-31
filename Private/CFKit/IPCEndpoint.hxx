@@ -20,8 +20,8 @@
 #define kRemoteMaxLen 21
 
 namespace NewOS {
-    typedef UIntPtr ipc_method_type;
-    typedef Char ipc_remote_type[kRemoteMaxLen];
-} // namespace NewOS
+typedef UIntPtr ipc_method_type;
+typedef Char ipc_remote_type[kRemoteMaxLen];
+}  // namespace NewOS
 
-#endif // _INC_IPC_ENDPOINT_HXX_
+#endif  // _INC_IPC_ENDPOINT_HXX_

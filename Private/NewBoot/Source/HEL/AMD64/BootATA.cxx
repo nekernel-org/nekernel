@@ -72,7 +72,7 @@ ATAInit_Retry:
 
   if (statRdy & ATA_SR_ERR) {
     writer.Write(
-        L"NewBoot.exe: ATA: Select error, not an IDE based hard-drive.\r\n");
+        L"NewOS: ATA: Select error, not an IDE based hard-drive.\r\n");
 
     return false;
   }
@@ -108,21 +108,21 @@ ATAInit_Retry:
 
   /* differentiate ATA, ATAPI, SATA and SATAPI */
   if (cl == 0x14 && ch == 0xEB) {
-    writer.Write(L"NewBoot.exe: PATAPI drive detected.\r\n");
+    writer.Write(L"NewOS: PATAPI drive detected.\r\n");
     kATADeviceType = kATADevicePATA_PI;
   }
   if (cl == 0x69 && ch == 0x96) {
-    writer.Write(L"NewBoot.exe: SATAPI drive detected.\r\n");
+    writer.Write(L"NewOS: SATAPI drive detected.\r\n");
     kATADeviceType = kATADeviceSATA_PI;
   }
 
   if (cl == 0x0 && ch == 0x0) {
-    writer.Write(L"NewBoot.exe: PATA drive detected.\r\n");
+    writer.Write(L"NewOS: PATA drive detected.\r\n");
     kATADeviceType = kATADevicePATA;
   }
 
   if (cl == 0x3c && ch == 0xc3) {
-    writer.Write(L"NewBoot.exe: SATA drive detected.\r\n");
+    writer.Write(L"NewOS: SATA drive detected.\r\n");
     kATADeviceType = kATADeviceSATA;
   }
 
@@ -211,7 +211,7 @@ BootDeviceATA::BootDeviceATA() noexcept {
 
     BTextWriter writer;
 
-    writer.Write(L"NewBoot.exe: Drive is OnLine.\r\n");
+    writer.Write(L"NewOS: Drive is OnLine.\r\n");
   }
 }
 /**

@@ -31,7 +31,7 @@ Boolean tls_check_tib(ThreadInformationBlock* tib) {
   Encoder encoder;
   const char* tibAsBytes = encoder.AsBytes(tib);
 
-  kcout << "NewKernel.exe: Checking for a valid cookie...\n";
+  kcout << "NewOS: Checking for a valid cookie...\n";
 
   return tibAsBytes[0] == kCookieMag0 && tibAsBytes[1] == kCookieMag1 &&
          tibAsBytes[2] == kCookieMag2;
@@ -46,9 +46,9 @@ EXTERN_C Void tls_check_syscall_impl(NewOS::HAL::StackFramePtr stackPtr) noexcep
   ThreadInformationBlock* tib = (ThreadInformationBlock*)stackPtr->Gs;
 
   if (!tls_check_tib(tib)) {
-    kcout << "NewKernel.exe: Verification failed, Crashing...\n";
+    kcout << "NewOS: Verification failed, Crashing...\n";
     ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
   }
 
-  kcout << "NewKernel.exe: Verification succeeded! Keeping on...\n";
+  kcout << "NewOS: Verification succeeded! Keeping on...\n";
 }
