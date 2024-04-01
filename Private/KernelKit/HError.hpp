@@ -33,6 +33,7 @@ inline constexpr HError kErrorInternal = 49;
 inline constexpr HError kErrorForkAlreadyExists = 50;
 inline constexpr HError kErrorOutOfTeamSlot = 51;
 inline constexpr HError kErrorHeapNotPresent = 52;
+inline constexpr HError kErrorNoEntrypoint = 53;
 inline constexpr HError kErrorUnimplemented = 0;
 
 Boolean ke_bug_check(void) noexcept;

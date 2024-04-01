@@ -146,37 +146,36 @@ void ProcessHeader::Exit(Int32 exit_code) {
 
 SizeT ProcessScheduler::Add(Ref<ProcessHeader> &process) {
   if (!process) return -1;
+  
+  if (!process.Leak().Image) {
+    if (process.Leak().Kind != ProcessHeader::kLibKind) {
+      return -kErrorNoEntrypoint;
+    }
+  }
+
   if (!mTeam.AsArray().Count() > kSchedProcessLimitPerTeam) return -kErrorOutOfTeamSlot;
 
   if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel) return -1;
 
   kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r\n";
 
-  process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
-  process.Leak().ProcessId = mTeam.AsArray().Count();
-  process.Leak().HeapCursor = process.Leak().HeapPtr;
+  /// Create heap according to type of process.
+  if (process.Leak().Kind == ProcessHeader::kUserKind)
+    process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
+  else if (process.Leak().Kind == ProcessHeader::kLibKind)
+    process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw || kUserHeapShared);
+  else
+    process.Leak().HeapPtr = rt_new_heap(kUserHeapDriver | kUserHeapRw);
 
   process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame *>(
       ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
 
   MUST_PASS(process.Leak().StackFrame);
 
-  UIntPtr imageStart = reinterpret_cast<UIntPtr>(process.Leak().Image);
-
-  process.Leak().SetEntrypoint(imageStart);
-
   mTeam.AsArray().Add(process);
 
-  if (!imageStart && process.Leak().Kind == ProcessHeader::kUserKind) {
-    process.Leak().Crash();
-  }
-
-  if (!imageStart && process.Leak().Kind == ProcessHeader::kDriverKind) {
-    if (process.Leak().Ring == 3)
-      process.Leak().Crash();
-    else
-      ke_stop(RUNTIME_CHECK_PROCESS);
-  }
+  process.Leak().ProcessId = mTeam.AsArray().Count() - 1;
+  process.Leak().HeapCursor = process.Leak().HeapPtr;
 
   return mTeam.AsArray().Count() - 1;
 }

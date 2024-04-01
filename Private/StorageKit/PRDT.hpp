@@ -12,6 +12,12 @@
 #define kPrdtTransferSize (sizeof(NewOS::UShort))
 
 namespace NewOS {
+enum {
+  kPRDTTransferInProgress,
+  kPRDTTransferIsDone,
+  kPRDTTransferCount,
+};
+
 class PRDT final {
  public:
   explicit PRDT() = delete;

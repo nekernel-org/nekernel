@@ -22,9 +22,13 @@
 
 namespace NewOS {
 typedef enum {
-  kUserHeapHypervisor = 0x2,
+  /// @brief Driver only heap.
+  kUserHeapDriver = 0x2,
+  /// @brief Shared heap.
   kUserHeapShared = 0x4,
+  /// @brief User and private heap.
   kUserHeapUser = 0x6,
+  /// @brief Read and Write heap.
   kUserHeapRw = 0x8,
 } kUserHeapFlags;
 

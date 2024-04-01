@@ -16,10 +16,10 @@ Url::Url(StringView &strUrl) : m_urlView(strUrl, false) {}
 Url::~Url() = default;
 
 constexpr const char *kURLProtocols[] = {
-    "https",   // http with tls.
-    "http",    // http
-    "file",    // filesystem protocol
-    "ftp",     // file transfer protocol
+    "file",   // Filesystem protocol
+    "ping",  // Ping protocol.
+    "telnet", // Telnet protocol
+    "ssh", // SSH protocol
 };
 
 constexpr const int kUrlOutSz = 3;  //! such as: ://

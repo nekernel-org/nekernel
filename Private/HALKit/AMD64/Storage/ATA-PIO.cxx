@@ -5,9 +5,9 @@
 ------------------------------------------- */
 
 /**
- * @file ATA.cxx
+ * @file ATA-PIO.cxx
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
- * @brief ATA driver.
+ * @brief ATA driver (PIO mode).
  * @version 0.1
  * @date 2024-02-02
  *
@@ -138,6 +138,7 @@ Void drv_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
   Out8(IO + ATA_REG_LBA0, (Lba));
   Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
+  Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
@@ -160,6 +161,7 @@ Void drv_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
   Out8(IO + ATA_REG_LBA0, (Lba));
   Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
+  Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
