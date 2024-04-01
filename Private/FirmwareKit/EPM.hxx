@@ -17,7 +17,7 @@
 #define kEPMFilesystemLength 16
 #define kEPMMagicLength 5
 
-/* The first 512 > x > 1024 bytes of a disk contains this headers. */
+/* The first 0 > 128 addresses of a disk contains these headers. */
 
 /// @brief EPM GUID block.
 typedef struct BlockGUID {
