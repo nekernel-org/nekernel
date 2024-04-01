@@ -25,11 +25,16 @@ namespace Detail {
 /// Located before the address bytes.
 /// | HIB |  ADDRESS  |
 struct PACKED HeapInformationBlock final {
+  ///! @brief 32-bit value which contains the magic number of the executable.
   UInt32    hMagic;
+  ///! @brief Boolean value which tells if the pointer is allocated.
   Boolean   hPresent;
+  ///! @brief 32-bit CRC checksum
   UInt32    hCRC32;
-  SizeT     hSizeAddress;
-  UIntPtr   hTargetAddress;
+  /// @brief 64-bit pointer size.
+  SizeT     hSizePtr;
+  /// @brief 64-bit target pointer.
+  UIntPtr   hTargetPtr;
   UInt8     hPadding[kHeapHeaderPaddingSz];
 };
 
@@ -50,10 +55,10 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
       reinterpret_cast<Detail::HeapInformationBlockPtr>(
           wrapper.VirtualAddress());
 
-  heapInfo->hSizeAddress = sz;
+  heapInfo->hSizePtr = sz;
   heapInfo->hMagic = kHeapMagic;
   heapInfo->hCRC32 = 0;  // dont fill it for now.
-  heapInfo->hTargetAddress = wrapper.VirtualAddress();
+  heapInfo->hTargetPtr = wrapper.VirtualAddress();
 
   ++kHeapCount;
 
@@ -78,15 +83,15 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
 
     if (virtualAddress->hCRC32 != 0) {
       if (virtualAddress->hCRC32 !=
-          ke_calculate_crc32((Char *)virtualAddress->hTargetAddress,
-                             virtualAddress->hSizeAddress)) {
+          ke_calculate_crc32((Char *)virtualAddress->hTargetPtr,
+                             virtualAddress->hSizePtr)) {
         ke_stop(RUNTIME_CHECK_POINTER);
       }
     }
 
-    virtualAddress->hSizeAddress = 0UL;
+    virtualAddress->hSizePtr = 0UL;
     virtualAddress->hPresent = false;
-    virtualAddress->hTargetAddress = 0;
+    virtualAddress->hTargetPtr = 0;
     virtualAddress->hCRC32 = 0;
     virtualAddress->hMagic = 0;
 
@@ -127,7 +132,7 @@ Boolean ke_protect_ke_heap(VoidPtr heapPtr) {
 
     if (virtualAddress->hPresent && virtualAddress->hMagic == kHeapMagic) {
       virtualAddress->hCRC32 =
-          ke_calculate_crc32((Char *)heapPtr, virtualAddress->hSizeAddress);
+          ke_calculate_crc32((Char *)heapPtr, virtualAddress->hSizePtr);
       return true;
     }
   }

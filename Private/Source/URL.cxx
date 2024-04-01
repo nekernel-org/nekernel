@@ -16,8 +16,8 @@ Url::Url(StringView &strUrl) : m_urlView(strUrl, false) {}
 Url::~Url() = default;
 
 constexpr const char *kURLProtocols[] = {
-    "https",   // http with the secure.
-    "http",    // http without the secure
+    "https",   // http with tls.
+    "http",    // http
     "file",    // filesystem protocol
     "ftp",     // file transfer protocol
 };

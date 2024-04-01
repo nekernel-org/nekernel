@@ -43,15 +43,14 @@ link-amd64-epm:
 
 .PHONY: all
 all: h-core-amd64-epm link-amd64-epm
-	@echo "Fully built."
-
+	@echo "NewKernel => OK."
 
 .PHONY: help
 help:
 	@echo "=== HELP ==="
 	@echo "all: Build kernel and link it."
-	@echo "link-amd64: Link kernel. (PC AMD64)"
-	@echo "h-core-amd64: Build kernel. (PC AMD64)"
+	@echo "link-amd64-epm: Link kernel. (PC AMD64)"
+	@echo "h-core-amd64-epm: Build kernel. (PC AMD64)"
 
 .PHONY: clean
 clean:

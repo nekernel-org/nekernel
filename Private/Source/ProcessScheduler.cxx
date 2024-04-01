@@ -33,7 +33,7 @@ const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
 
 void ProcessHeader::Crash() {
   kcout << "ProcessScheduler: Crashed, ExitCode: -1.\r\n";
-  MUST_PASS(!ke_bug_check());
+  MUST_PASS(ke_bug_check());
 
   this->Exit(-1);
 }
@@ -225,6 +225,8 @@ Ref<ProcessScheduler> ProcessScheduler::Shared() {
   return {ref};
 }
 
+/// @brief Gets current running process.
+/// @return 
 Ref<ProcessHeader> &ProcessScheduler::GetCurrent() { return mTeam.AsRef(); }
 
 PID &ProcessHelper::GetCurrentPID() {

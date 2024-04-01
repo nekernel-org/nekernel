@@ -7,5 +7,8 @@
 #include <KernelKit/HError.hpp>
 
 namespace NewOS {
-Boolean ke_bug_check(void) noexcept { return false; }
+/// @brief Doea a system wide bug check.
+/// @param void no params.
+/// @return if error-free: true, otherwise false.
+Boolean ke_bug_check(void) noexcept { return true; }
 }  // namespace NewOS

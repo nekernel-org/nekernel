@@ -34,11 +34,11 @@ class JsonType final {
 
  public:
   /// @brief returns the key of the json
-  /// @return 
+  /// @return the key as string view.
   StringView &AsKey() { return fKey; }
 
   /// @brief returns the value of the json.
-  /// @return 
+  /// @return the key as string view.
   StringView &AsValue() { return fValue; }
 
   static JsonType kUndefined;
