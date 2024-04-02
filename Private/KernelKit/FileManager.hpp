@@ -127,18 +127,10 @@ class NewFilesystemManager final : public FilesystemManagerInterface {
   bool Remove(const char *node) override;
 
  public:
-  NodePtr Open(const char *path, const char *r) override {
-    if (!path || *path == 0) return nullptr;
-
-    if (!r || *r == 0) return nullptr;
-
-    return this->Open(path, r);
-  }
+  NodePtr Open(const char *path, const char *r) override;
 
  public:
-  Void Write(NodePtr node, VoidPtr data, Int32 flags) override {
-    this->Write(node, data, flags);
-  }
+  Void Write(NodePtr node, VoidPtr data, Int32 flags) override;
 
  public:
   /**
@@ -146,29 +138,16 @@ class NewFilesystemManager final : public FilesystemManagerInterface {
    * using OpenFork.
    */
 
-  VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override {
-    return this->Read(node, flags, sz);
-  }
+  VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override;
 
  public:
-  bool Seek(NodePtr node, SizeT off) override {
-    if (!node || off == 0) return false;
-
-    return this->Seek(node, off);
-  }
-
+  bool Seek(NodePtr node, SizeT off);
  public:
-  SizeT Tell(NodePtr node) override {
-    if (!node) return kNPos;
 
-    return this->Tell(node);
-  }
+  SizeT Tell(NodePtr node) override;
+  bool Rewind(NodePtr node) override;
 
-  bool Rewind(NodePtr node) override {
-    if (!node) return false;
-
-    return this->Seek(node, 0);
-  }
+  NewFSParser* GetImpl() noexcept;
 
  public:
   NewFSParser *fImpl{nullptr};

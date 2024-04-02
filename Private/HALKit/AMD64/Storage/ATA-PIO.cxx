@@ -18,6 +18,8 @@
 #include <Builtins/ATA/Defines.hxx>
 #include <ArchKit/ArchKit.hpp>
 
+#ifdef __ATA_PIO__
+
 using namespace NewOS;
 using namespace NewOS::HAL;
 
@@ -175,3 +177,5 @@ Void drv_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 
 /// @check is ATA detected?
 Boolean drv_ata_detected(Void) { return kATADetected; }
+
+#endif /* ifdef __ATA_PIO__ */

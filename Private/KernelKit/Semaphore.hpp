@@ -13,7 +13,7 @@ namespace NewOS
 {
 	class ProcessHeader;
 
-    typedef ProcessHeader* ProcessPtr;
+    typedef ProcessHeader* ProcessHeaderRef;
 	
     /// @brief Access control class, which locks a task until one is done.
     class Semaphore final
@@ -37,7 +37,7 @@ namespace NewOS
         HCORE_COPY_DEFAULT(Semaphore);
 
     private:
-        ProcessPtr fLockingProcess{ nullptr };
+        ProcessHeaderRef fLockingProcess{ nullptr };
 
     };
 }

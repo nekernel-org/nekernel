@@ -6,7 +6,7 @@
 
 /***********************************************************************************/
 /// @file ProcessTeam.cxx
-/// @brief ProcessHeader Team API.
+/// @brief Process Team API.
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hpp>

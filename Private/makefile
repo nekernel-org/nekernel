@@ -8,6 +8,22 @@ LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -c -ffreestanding -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../ -I./ 
 ASM 		= nasm
 
+ifneq ($(NEWOS_PIO_ATA), )
+DISKDRIVER =  -D__ATA_PIO__ 
+endif
+
+ifneq ($(NEWOS_DMA_ATA), )
+DISKDRIVER =  -D__ATA_DMA__ 
+endif
+
+ifneq ($(NEWOS_AHCI), )
+DISKDRIVER =  -D__AHCI__ 
+endif
+
+ifneq ($(DEBUG), )
+DEBUG =  -D__DEBUG__ 
+endif
+
 # Add assembler, linker, and object files variables.
 ASMFLAGS	= -f win64
 LDFLAGS		= -e Main --subsystem=17
@@ -27,7 +43,7 @@ MOVEALL=./MoveAll.sh
 
 .PHONY: h-core-amd64-epm
 h-core-amd64-epm: clean
-	$(CC) $(CCFLAGS) $(DEBUG) $(wildcard Source/*.cxx HALKit/AMD64/Storage/*.cxx) $(wildcard HALKit/AMD64/PCI/*.cxx) $(wildcard Source/Network/*.cxx) $(wildcard Source/Storage/*.cxx) $(wildcard HALKit/AMD64/*.cxx) $(wildcard HALKit/AMD64/*.cpp) $(wildcard HALKit/AMD64/*.s)
+	$(CC) $(CCFLAGS) $(DISKDRIVER) $(DEBUG) $(wildcard Source/*.cxx HALKit/AMD64/Storage/*.cxx) $(wildcard HALKit/AMD64/PCI/*.cxx) $(wildcard Source/Network/*.cxx) $(wildcard Source/Storage/*.cxx) $(wildcard HALKit/AMD64/*.cxx) $(wildcard HALKit/AMD64/*.cpp) $(wildcard HALKit/AMD64/*.s)
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalNewBoot.asm
@@ -49,8 +65,8 @@ all: h-core-amd64-epm link-amd64-epm
 help:
 	@echo "=== HELP ==="
 	@echo "all: Build kernel and link it."
-	@echo "link-amd64-epm: Link kernel. (PC AMD64)"
-	@echo "h-core-amd64-epm: Build kernel. (PC AMD64)"
+	@echo "link-amd64-epm: Link kernel. (EPM AMD64)"
+	@echo "h-core-amd64-epm: Build kernel. (EPM AMD64)"
 
 .PHONY: clean
 clean:

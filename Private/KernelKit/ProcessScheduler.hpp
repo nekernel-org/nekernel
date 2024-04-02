@@ -30,10 +30,10 @@ class ProcessHeader;
 class ProcessTeam;
 class ProcessScheduler;
 
-//! @brief ProcessHeader identifier.
+//! @brief Process identifier.
 typedef Int64 ProcessID;
 
-//! @brief ProcessHeader name length.
+//! @brief Process name length.
 inline constexpr SizeT kProcessLen = 256U;
 
 //! @brief Forward declaration.
@@ -41,7 +41,7 @@ class ProcessHeader;
 class ProcessScheduler;
 class ProcessHelper;
 
-//! @brief ProcessHeader status enum.
+//! @brief Process status enum.
 enum class ProcessStatus : Int32 {
   kStarting,
   kRunning,
@@ -209,7 +209,7 @@ class ProcessTeam final {
   Ref<ProcessHeader> mCurrentProcess;
 };
 
-using ProcessPtr = ProcessHeader *;
+using ProcessHeaderRef = ProcessHeader *;
 
 /// @brief ProcessHeader manager class.
 /// The main class which you call to schedule an app.

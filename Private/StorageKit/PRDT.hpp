@@ -12,7 +12,8 @@
 #define kPrdtTransferSize (sizeof(NewOS::UShort))
 
 namespace NewOS {
-enum {
+/// @brief Tranfer information about PRD.
+enum kPRDTTransfer {
   kPRDTTransferInProgress,
   kPRDTTransferIsDone,
   kPRDTTransferCount,
@@ -47,5 +48,5 @@ class PRDT final {
   UIntPtr m_PrdtAddr;
 };
 
-using PhysicalAddress = PRDT;  // here
+EXTERN_C Int32 kPRDTTransferStatus;
 }  // namespace NewOS

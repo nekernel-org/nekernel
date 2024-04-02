@@ -29,21 +29,12 @@
 
 using namespace NewOS;
 
-enum {
-  kHCFSSubDriveA,
-  kHCFSSubDriveB,
-  kHCFSSubDriveC,
-  kHCFSSubDriveD,
-  kHCFSSubDriveInvalid,
-  kHCFSSubDriveCount,
-};
-
 /// @brief Read from newfs disk.
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return 
-Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
+Int32 fs_newfs_read_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   DrvTrait.fPacket.fPacketGood = false;
@@ -75,7 +66,7 @@ Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
 /// @param DrvTrait drive info 
 /// @param DrvIndex drive index.
 /// @return 
-Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
+Int32 fs_newfs_write_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   DrvTrait.fPacket.fPacketGood = false;

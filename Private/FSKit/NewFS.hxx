@@ -171,9 +171,9 @@ class NewFSParser {
   HCORE_COPY_DEFAULT(NewFSParser);
 
  public:
-  virtual _Output NewFork*     CreateFork(_Input NewCatalog* catalog, _Input NewFork& theFork) = 0;
+  virtual _Output NewFork*    CreateFork(_Input NewCatalog* catalog, _Input NewFork& theFork) = 0;
   
-  virtual _Output NewFork*     FindFork(_Input NewCatalog* catalog, _Input const Char* name) = 0;
+  virtual _Output NewFork*    FindFork(_Input NewCatalog* catalog, _Input const Char* name) = 0;
   
   virtual _Output Void        RemoveFork(_Input NewFork* fork) = 0;
 
@@ -198,7 +198,17 @@ class NewFSParser {
   virtual bool WriteCatalog(_Input _Output NewCatalog* catalog,
                             voidPtr data) = 0;
                             
+  virtual VoidPtr ReadCatalog(_Input _Output NewCatalog* catalog,
+                            SizeT dataSz) = 0;
+                            
+  virtual bool Seek(_Input _Output NewCatalog* catalog,
+                            SizeT off) = 0;
+
+  virtual SizeT Tell(_Input _Output NewCatalog* catalog) = 0;
+
   virtual bool RemoveCatalog(_Input _Output NewCatalog* catalog) = 0;
+
+  virtual bool CloseCatalog(_InOut NewCatalog* catalog) = 0;
 
   /// @brief Make a EPM+NewFS drive out of the disk.
   /// @param drive The drive to write on.
@@ -217,11 +227,27 @@ class NewFilesystemHelper final {
   static const char* UpDir();
   static const char Separator();
 };
-}  // namespace NewOS
 
 enum {
-  kNewFSPartGPT,
-  kNewFSPartEPM,
-  kNewFSPartUDF,
-  kNewFSPartCount,
+  kHCFSSubDriveA,
+  kHCFSSubDriveB,
+  kHCFSSubDriveC,
+  kHCFSSubDriveD,
+  kHCFSSubDriveInvalid,
+  kHCFSSubDriveCount,
 };
+
+/// @brief Write to newfs disk.
+/// @param Mnt mounted interface. 
+/// @param DrvTrait drive info 
+/// @param DrvIndex drive index.
+/// @return 
+Int32 fs_newfs_write_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
+
+/// @brief Read from newfs disk.
+/// @param Mnt mounted interface.
+/// @param DrvTrait drive info
+/// @param DrvIndex drive index.
+/// @return 
+Int32 fs_newfs_read_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
+}  // namespace NewOS

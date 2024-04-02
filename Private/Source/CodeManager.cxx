@@ -11,8 +11,9 @@
 using namespace NewOS;
 
 /// @brief Executes a new process from a function. kernel code only.
+/// @note This sets up a new stack, anything on the main function that calls the kernel will not be accessible.
 /// @param main the start of the process.
-/// @return
+/// @return if the process was started or not.
 bool execute_from_image(MainKind main, const char* processName) noexcept {
   if (!main) return false;
 
