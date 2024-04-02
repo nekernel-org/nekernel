@@ -26,6 +26,9 @@
 
 #endif
 
+struct Application;
+struct GUID;
+
 CA_EXTERN_C void __assert_chk_fail(void);
 
 #define CA_STDCALL __attribute__((stdcall))
@@ -56,26 +59,6 @@ typedef __UINT32_TYPE__ UInt32Type;
 typedef __INT32_TYPE__ Int32Type;
 
 typedef CharacterTypeUTF8 BooleanType;
-
-#define CA_COPY_DELETE(KLASS)                                                                                         \
-    KLASS &operator=(const KLASS &) = delete;                                                                          \
-    KLASS(const KLASS &) = delete;
-
-
-#define CA_COPY_DEFAULT(KLASS)                                                                                        \
-    KLASS &operator=(const KLASS &) = default;                                                                         \
-    KLASS(const KLASS &) = default;
-
-
-#define CA_MOVE_DELETE(KLASS)                                                                                         \
-    KLASS &operator=(KLASS &&) = delete;                                                                               \
-    KLASS(KLASS &&) = delete;
-
-
-#define CA_MOVE_DEFAULT(KLASS)                                                                                        \
-    KLASS &operator=(KLASS &&) = default;                                                                              \
-    KLASS(KLASS &&) = default;
-
 
 #define Yes 1
 #define No 0
@@ -166,14 +149,34 @@ typedef struct Application {
 
 #ifdef __cplusplus
 
-#define object_cast reinterpret_cast<ApplicationRef>
+#define CA_COPY_DELETE(KLASS)                                                                                         \
+    KLASS &operator=(const KLASS &) = delete;                                                                          \
+    KLASS(const KLASS &) = delete;
+
+
+#define CA_COPY_DEFAULT(KLASS)                                                                                        \
+    KLASS &operator=(const KLASS &) = default;                                                                         \
+    KLASS(const KLASS &) = default;
+
+
+#define CA_MOVE_DELETE(KLASS)                                                                                         \
+    KLASS &operator=(KLASS &&) = delete;                                                                               \
+    KLASS(KLASS &&) = delete;
+
+
+#define CA_MOVE_DEFAULT(KLASS)                                                                                        \
+    KLASS &operator=(KLASS &&) = default;                                                                              \
+    KLASS(KLASS &&) = default;
+
+
+#define app_cast reinterpret_cast<ApplicationRef>
 
 template <SizeType N>
 using StrType = CharacterTypeUTF8[N];
 
 #else
 
-#define object_cast (ApplicationRef)
+#define app_cast (ApplicationRef)
 
 #endif // ifdef C++
 

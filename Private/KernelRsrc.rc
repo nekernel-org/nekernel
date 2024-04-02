@@ -1,0 +1,25 @@
+1 ICON "Root/Boot/kernel-logo.ico"
+
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "Mahrouss Logic"
+      VALUE "FileDescription", "NewOS Microkernel for AMD64"
+      VALUE "FileVersion", "1.0"
+      VALUE "InternalName", "NewKernel"
+      VALUE "LegalCopyright", "Mahrouss Logic"
+      VALUE "OriginalFilename", "NewKernel.exe"
+      VALUE "ProductName", "NewKernel"
+      VALUE "ProductVersion", "1.0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END

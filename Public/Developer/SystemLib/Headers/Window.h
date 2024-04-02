@@ -27,6 +27,10 @@ typedef float PositionType;
 typedef double PositionType;
 #endif
 
+struct _ControlPort;
+struct _WmPoint;
+struct _WindowPort;
+
 typedef QWordType DCRef;
 
 /// @brief A point, can represent the size, position of a window.
@@ -48,8 +52,8 @@ typedef struct _WindowPort {
   WmPoint windowSize;
   BooleanType windowInvalidate;
   DWordType windowClearColor;
-  struct _WindowPort* menuPort;
-  struct _WindowPort* parentPort;
+  struct _WindowPort* windowMenuPort; ///! Attached menu to it.
+  struct _WindowPort* windowParentPort;
 } WindowPort;
 
 /// @brief Control port type.
@@ -94,72 +98,72 @@ CA_EXTERN_C const ColorRef kRgbWhite;
 /// @brief Creates a new control
 /// @param id the control rsrc fork.
 /// @return 
-CA_EXTERN_C ControlPort* WmCreateControl(DWordType id);
+CA_EXTERN_C ControlPort*  WmCreateControl(DWordType id);
 
 /// @brief Releases the control
 /// @param id the control ref.
 /// @return 
-CA_EXTERN_C VoidType WmReleaseControl(ControlPort* id);
+CA_EXTERN_C VoidType      WmReleaseControl(ControlPort* id);
 
 /// @brief Moves a control inside a ControlPort.
 /// @param id the control ref.
 /// @param where where to move at.
 /// @return 
-CA_EXTERN_C Int32Type WmSetControlPosition(ControlPort* id, WmPoint where);
+CA_EXTERN_C Int32Type     WmSetControlPosition(ControlPort* id, WmPoint where);
 
 /// @brief Enable control.
 /// @param id 
 /// @param enabled 
 /// @return 
-CA_EXTERN_C Int32Type WmSetControlEnabled(ControlPort* id, BooleanType enabled);
+CA_EXTERN_C Int32Type     WmSetControlEnabled(ControlPort* id, BooleanType enabled);
 
 /// @brief Make control visible.
 /// @param id 
 /// @param visible 
 /// @return 
-CA_EXTERN_C Int32Type WmMakeControlVisible(ControlPort* id, BooleanType visible);
+CA_EXTERN_C Int32Type     WmMakeControlVisible(ControlPort* id, BooleanType visible);
 
 /// @brief Creates a new window.
 /// @param name the window name
 /// @param rsrcId the window fork rsrc id.
 /// @return the window graphics port.
-CA_EXTERN_C WindowPort* WmCreateWindow(const CharacterTypeUTF8* name, const DWordType rsrcId);
+CA_EXTERN_C WindowPort*   WmCreateWindow(const CharacterTypeUTF8* name, const DWordType rsrcId);
 
 /// @brief Creates a new menu
 /// @param name the menu's name
 /// @param rsrcId the menu fork rsrc id.
 /// @return the menu graphics port.
-CA_EXTERN_C WindowPort* WmCreateMenu(const CharacterTypeUTF8* name, const DWordType rsrcId);
+CA_EXTERN_C WindowPort*   WmCreateMenu(const CharacterTypeUTF8* name, const DWordType rsrcId);
 
 /// @brief Releases the window.
 /// @param port the window port.
 /// @return void
-CA_EXTERN_C VoidType WmReleaseWindow(WindowPort* port);
+CA_EXTERN_C VoidType      WmReleaseWindow(WindowPort* port);
 
 /// @brief Releases the menu
 /// @param port the menu port.
 /// @return void
-CA_EXTERN_C VoidType WmReleaseMenu(WindowPort* port);
+CA_EXTERN_C VoidType      WmReleaseMenu(WindowPort* port);
 
 /// @brief Moves a window on the desktop. (menu arent movable, will return kErrIncompatible is menu is provided.)
 /// @param id the gfx port.
 /// @param where to move.
 /// @return error code.
-CA_EXTERN_C Int32Type WmMoveWindow(WindowPort* id, WmPoint where);
+CA_EXTERN_C Int32Type     WmMoveWindow(WindowPort* id, WmPoint where);
 
 /// @brief Get last message.
 /// @param id 
 /// @return 
-CA_EXTERN_C Int64Type WmGetMessage(WindowPort* id);
+CA_EXTERN_C Int64Type     WmGetMessage(WindowPort* id);
 
 /// @brief Translate message internally.
 /// @return 
-CA_EXTERN_C VoidType WmTranslateMessage(WindowPort* port, Int64Type msg);
+CA_EXTERN_C VoidType      WmTranslateMessage(WindowPort* port, Int64Type msg);
 
 /// @brief Dispatch message to event queue.
 /// @param id 
 /// @return 
-CA_EXTERN_C Int32Type WmDispatchMessage(WindowPort* id);
+CA_EXTERN_C Int32Type     WmDispatchMessage(WindowPort* id);
 
 enum {
   kWmErrIncompatible = 0x74,

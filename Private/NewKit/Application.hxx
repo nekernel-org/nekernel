@@ -27,4 +27,4 @@ typedef struct Application final {
   NewOS::Void(*Query)(struct Application* Self, NewOS::VoidPtr* Dst, NewOS::SizeT SzDst, NewOS::XRN::GUIDSequence GuidOf);
 } Application, *ApplicationRef;
 
-#define object_cast reinterpret_cast<ApplicationRef>
+#define app_cast reinterpret_cast<ApplicationRef>

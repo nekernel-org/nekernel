@@ -11,17 +11,17 @@ typedef SizeType size_t;
 void* operator new[](size_t sz) {
   if (sz == 0) ++sz;
 
-  return RtAllocateProcessPtr(sz, kStandardAllocation);
+  return RtTlsAllocate(sz, kStandardAllocation);
 }
 
 void* operator new(size_t sz) {
   if (sz == 0) ++sz;
 
-  return RtAllocateProcessPtr(sz, kArrayAllocation);
+  return RtTlsAllocate(sz, kArrayAllocation);
 }
 
 void operator delete[](void* ptr) {
   if (ptr == nullptr) return;
 
-  RtFreeProcessPtr(ptr);
+  RtTlsFree(ptr);
 }
