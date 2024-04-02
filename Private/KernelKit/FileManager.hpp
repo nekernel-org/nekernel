@@ -124,26 +124,11 @@ class NewFilesystemManager final : public FilesystemManagerInterface {
   NodePtr CreateDirectory(const char *path) override;
 
  public:
-  bool Remove(const char *node) override;
-
- public:
+  bool Remove(const char *path) override;
   NodePtr Open(const char *path, const char *r) override;
-
- public:
   Void Write(NodePtr node, VoidPtr data, Int32 flags) override;
-
- public:
-  /**
-   * NOTE: Write and Read are implemented using a custom NodePtr, retrieved
-   * using OpenFork.
-   */
-
   VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override;
-
- public:
   bool Seek(NodePtr node, SizeT off);
- public:
-
   SizeT Tell(NodePtr node) override;
   bool Rewind(NodePtr node) override;
 

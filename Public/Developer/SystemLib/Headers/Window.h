@@ -147,6 +147,20 @@ CA_EXTERN_C VoidType WmReleaseMenu(WindowPort* port);
 /// @return error code.
 CA_EXTERN_C Int32Type WmMoveWindow(WindowPort* id, WmPoint where);
 
+/// @brief Get last message.
+/// @param id 
+/// @return 
+CA_EXTERN_C Int64Type WmGetMessage(WindowPort* id);
+
+/// @brief Translate message internally.
+/// @return 
+CA_EXTERN_C VoidType WmTranslateMessage(WindowPort* port, Int64Type msg);
+
+/// @brief Dispatch message to event queue.
+/// @param id 
+/// @return 
+CA_EXTERN_C Int32Type WmDispatchMessage(WindowPort* id);
+
 enum {
   kWmErrIncompatible = 0x74,
   kWmErrOutOfMemory,

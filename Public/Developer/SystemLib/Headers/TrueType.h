@@ -29,3 +29,16 @@ CA_EXTERN_C TTFFontRef FnCreateFont(const CharacterTypeUTF8* name);
 /// @param fon 
 /// @return 
 CA_EXTERN_C VoidType FnDisposeFont(TTFFontRef fon);
+
+/// @brief Gets the font gylph for character.
+/// @param fon 
+/// @return 
+CA_EXTERN_C PtrVoidType FnGetGlyph(TTFFontRef fon, UInt32Type utfCh);
+
+/// @brief Write a character to the window.
+/// @param fon the font.
+/// @param port the window port.
+/// @param pos the position of where to put the character.
+/// @return 
+CA_EXTERN_C VoidType FnWriteCharacter(TTFFontRef fon, WindowPort* port, PositionType pos);
+
