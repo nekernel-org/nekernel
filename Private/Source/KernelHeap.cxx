@@ -95,6 +95,11 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
     virtualAddress->hCRC32 = 0;
     virtualAddress->hMagic = 0;
 
+    PTEWrapper pageWrapper(false, false, false, (UIntPtr)virtualAddress);
+    Ref<PTEWrapper*> pteAddress{ &pageWrapper };
+    
+    kHeapPageManager.Free(pteAddress);
+
     --kHeapCount;
     return 0;
   }

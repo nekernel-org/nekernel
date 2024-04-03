@@ -36,14 +36,14 @@ struct PACKED ThreadInformationBlock final {
   NewOS::Int32   ThreadID;                // Thread execution ID.
 };
 
-/// @brief TLS install TIB
-EXTERN_C void rt_install_tib(ThreadInformationBlock *pTib, NewOS::VoidPtr pPib);
+/// @brief TLS install TIB and PIB.
+EXTERN_C void rt_install_tib(ThreadInformationBlock *TIB, NewOS::VoidPtr PIB);
 
 ///! @brief Cookie Sanity check.
-NewOS::Boolean tls_check_tib(ThreadInformationBlock* ptr);
+NewOS::Boolean tls_check_tib(ThreadInformationBlock* Ptr);
 
 /// @brief TLS check system call
-EXTERN_C NewOS::Void tls_check_syscall_impl(NewOS::HAL::StackFramePtr stackPtr) noexcept;
+EXTERN_C NewOS::Void tls_check_syscall_impl(NewOS::HAL::StackFramePtr StackPtr) noexcept;
 
 #include <KernelKit/ThreadLocalStorage.inl>
 
