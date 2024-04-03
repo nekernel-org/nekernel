@@ -30,8 +30,6 @@ static void __rt_hang_proc(void) {
 void rt_hang_thread(HAL::StackFrame* stack) {
   HAL::rt_cli();
 
-    // TODO
-
   HAL::rt_sti();
 }
 }  // namespace NewOS

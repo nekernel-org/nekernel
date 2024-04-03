@@ -12,12 +12,12 @@ namespace HAL {
 UIntPtr hal_alloc_page(bool rw, bool user) { return 0; }
 }  // namespace HAL
 
-// @brief wakes up thread.
-// wakes up thread from hang.
+/// @brief wakes up thread.
+/// wakes up thread from hang.
 void rt_wakeup_thread(HAL::StackFrame* stack) {}
 
-// @brief makes thread sleep.
-// hooks and hangs thread to prevent code from executing.
+/// @brief makes thread sleep.
+/// hooks and hangs thread to prevent code from executing.
 void rt_hang_thread(HAL::StackFrame* stack) {}
 
 void ke_com_print(const Char* bytes) {

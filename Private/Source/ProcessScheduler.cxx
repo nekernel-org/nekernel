@@ -130,7 +130,7 @@ void ProcessHeader::Exit(Int32 exit_code) {
     this->HeapPtr = nullptr;
     this->HeapCursor = nullptr;
 
-    this->FreeMemory = 0UL;  // TODO: fill available heap.
+    this->FreeMemory = 0UL;
     this->UsedMemory = 0UL;
   }
 

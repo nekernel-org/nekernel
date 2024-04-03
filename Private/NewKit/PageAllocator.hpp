@@ -16,6 +16,4 @@ VoidPtr create_page_wrapper(Boolean rw, Boolean user);
 void exec_disable(UIntPtr addr);
 bool page_disable(UIntPtr addr);
 }  // namespace Detail
-
-// TODO: SwapVirtualMemoryDevice class!
 }  // namespace NewOS
