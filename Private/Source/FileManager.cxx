@@ -21,7 +21,7 @@ FilesystemManagerInterface* FilesystemManagerInterface::GetMounted() {
 }
 
 /// @brief Unmount filesystem.
-/// @return the unmounted filesystem.
+/// @return The unmounted filesystem.
 FilesystemManagerInterface* FilesystemManagerInterface::Unmount() {
   if (kMounted) {
     auto mount = kMounted;
@@ -34,7 +34,7 @@ FilesystemManagerInterface* FilesystemManagerInterface::Unmount() {
 }
 
 /// @brief Mount filesystem.
-/// @param mountPtr the filesystem to mount.
+/// @param mountPtr The filesystem to mount.
 /// @return if it succeeded true, otherwise false.
 bool FilesystemManagerInterface::Mount(FilesystemManagerInterface* mountPtr) {
   if (kMounted == nullptr) {
