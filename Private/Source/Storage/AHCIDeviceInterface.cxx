@@ -12,8 +12,8 @@ using namespace NewOS;
 /// @param Out Disk output
 /// @param In  Disk input
 /// @param Cleanup Disk cleanup.
-AHCIDeviceInterface::AHCIDeviceInterface(void (*Out)(AHCIPacket outpacket),
-                      void (*In)(AHCIPacket inpacket), void (*Cleanup)(void))
+AHCIDeviceInterface::AHCIDeviceInterface(void (*Out)(MountpointInterface* outpacket),
+                      void (*In)(MountpointInterface* inpacket), void (*Cleanup)(void))
       : DeviceInterface(Out, In), fCleanup(Cleanup) {}
 
 /// @brief Class desctructor

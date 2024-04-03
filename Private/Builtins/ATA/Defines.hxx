@@ -16,7 +16,7 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
-// Status register
+///! Status register
 #define ATA_SR_BSY 0x80
 #define ATA_SR_DRDY 0x40
 #define ATA_SR_DF 0x20
@@ -26,7 +26,7 @@
 #define ATA_SR_IDX 0x02
 #define ATA_SR_ERR 0x01
 
-// Error register
+///! Error register
 #define ATA_ER_BBK 0x80
 #define ATA_ER_UNC 0x40
 #define ATA_ER_MC 0x20
@@ -50,6 +50,7 @@
 #define ATA_CMD_IDENTIFY_PACKET 0xA1
 #define ATA_CMD_IDENTIFY 0xEC
 
+///! ident offsets, use with data that we got from ATA_CMD_IDENTIFY.
 #define ATA_IDENT_DEVICE_TYPE 0
 #define ATA_IDENT_CYLINDERS 2
 #define ATA_IDENT_HEADS 6
@@ -65,7 +66,7 @@
 #define ATA_MASTER 0x00
 #define ATA_SLAVE 0x01
 
-// Register
+///! Register
 #define ATA_REG_DATA 0x00
 #define ATA_REG_ERROR 0x01
 #define ATA_REG_FEATURES 0x01
@@ -91,28 +92,30 @@
 #define ATA_PRIMARY_DCR_AS 0x3F6
 #define ATA_SECONDARY_DCR_AS 0x376
 
-// Irq
+///! Irq
 #define ATA_PRIMARY_IRQ 14
 #define ATA_SECONDARY_IRQ 15
 
-// Channels
+///! Channels
 #define ATA_PRIMARY 0x00
 #define ATA_SECONDARY 0x01
 
 #define ATA_CYL_LOW 4
 #define ATA_CYL_HIGH 5
 
-// IO Direction
+///! IO Direction
 #define ATA_READ 0x00
 #define ATA_WRITE 0x013
 
 #define ATA_PRIMARY_SEL 0xA0
 #define ATA_SECONDARY_SEL 0xB0
 
-// ATA Helpers
+///! ATA address register.
 #define ATA_ADDRESS1(x) (x + 3)
 #define ATA_ADDRESS2(x) (x + 4)
 #define ATA_ADDRESS3(x) (x + 5)
+
+///! ATA command register.
 #define ATA_COMMAND(x)  (x + 7)
 
 #define kATASectorSize 512

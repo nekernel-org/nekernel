@@ -7,18 +7,23 @@
 #pragma once
 
 #include <KernelKit/DeviceManager.hpp>
+#include <KernelKit/DriveManager.hxx>
 #include <NewKit/OwnPtr.hpp>
+#include <NewKit/Utils.hpp>
 
 namespace NewOS {
-class ATAPacket;
-
-class ATADeviceInterface : public DeviceInterface<ATAPacket> {
+/// @brief ATA device interface type.
+class ATADeviceInterface : public DeviceInterface<MountpointInterface*> {
  public:
-  explicit ATADeviceInterface(void (*Out)(ATAPacket outpacket),
-                              void (*In)(ATAPacket inpacket),
+  explicit ATADeviceInterface(void (*Out)(MountpointInterface* outpacket),
+                              void (*In)(MountpointInterface* inpacket),
                               void (*Cleanup)(void));
 
   virtual ~ATADeviceInterface();
+
+public:
+  ATADeviceInterface &operator<<(MountpointInterface* Data) override;
+  ATADeviceInterface &operator>>(MountpointInterface* Data) override;
 
  public:
   ATADeviceInterface &operator=(const ATADeviceInterface &) = default;
@@ -27,17 +32,6 @@ class ATADeviceInterface : public DeviceInterface<ATAPacket> {
   const char *Name() const override;
 
  private:
-  void (*fOut)(ATAPacket);
-  void (*fIn)(ATAPacket);
   void (*fCleanup)(void);
-};
-
-class ATAPacket final {
-  UIntPtr DataPtr;
-  SizeT DataSz;
-  UInt8 PortId;
-  UInt8 PortRdy;
-  Lba BeginLba;
-  Lba SectorCnt;
 };
 }  // namespace NewOS

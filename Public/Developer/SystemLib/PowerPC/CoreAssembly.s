@@ -1,24 +1,26 @@
 /** ===========================================
  (C) Mahrouss Logic
+ Purpose: PowerPC low-level routines.
     ===========================================*/
 
 .section .text
 
 .globl RtGetApp
 .globl RtAssertTriggerInterrupt
+.balign 4
 
 /* @brief Application getter */
 /* @throws: ApptError: appartement error. */
 RtGetApp:
-    mov $0x10, %rcx /* sysGetProcessObject */
-    int $0x21
+    stw 0x10, 0(3) /* sysGetProcessObject */
+    sc
 
-    /* rax gets saved and returned. */
-    ret
+    blr
 
 RtAssertTriggerInterrupt:
-    mov $0x11, %rcx /* sysTerminateCurrentProcess */
-    int $0x21
+    stw 0x11, 0(3) /* sysTerminateCurrentProcess */
+    stw 0x3, 0(4)
+    sc
 
-    ret
+    blr
 

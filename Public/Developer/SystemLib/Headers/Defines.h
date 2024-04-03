@@ -11,7 +11,7 @@
 #endif
 
 #ifdef _DEBUG
-#define CA_MUST_PASS(e) { if (!e) { DlgMsgBox("Sorry, an assertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) __assert_chk_fail() } }
+#define CA_MUST_PASS(e) { if (!e) { DlgMsgBox("Sorry, an assertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) RtAssertTriggerInterrupt() } }
 #else
 #define CA_MUST_PASS(e) CA_UNREFERENCED_PARAMETER(e)
 #endif
@@ -29,7 +29,7 @@
 struct Application;
 struct GUID;
 
-CA_EXTERN_C void __assert_chk_fail(void);
+CA_EXTERN_C void RtAssertTriggerInterrupt(void);
 
 #define CA_STDCALL __attribute__((stdcall))
 #define CA_CDECL __attribute__((cdecl))
@@ -115,6 +115,10 @@ enum RtProcessCall {
     /// @brief Open a specific handle (can be used as sel to call methods related to it.)
     kCallOpenFile,
     kCallCloseFile,
+    kCallOpenDir,
+    kCallCloseDir,
+    kCallOpenDevice,
+    kCallCloseDevice,
     kCallCreateWindow,
     kCallCloseWindow,
     kCallCreateMenu,
@@ -180,9 +184,20 @@ using StrType = CharacterTypeUTF8[N];
 
 #endif // ifdef C++
 
-CA_EXTERN_C ApplicationRef     RtGetAppObject(VoidType);
+/// @brief Get app singleton.
+/// @param  
+/// @return 
+CA_EXTERN_C ApplicationRef     RtGetApp(VoidType);
+
+/// @brief Get argument count
+/// @param  
+/// @return 
 CA_EXTERN_C SizeType           RtGetAppArgumentsCount(VoidType);
-CA_EXTERN_C CharacterTypeUTF8* RtGetAppArgumentsPtr(VoidType);
+
+/// @brief Get argument pointer.
+/// @param  
+/// @return 
+CA_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType);
 
 CA_EXTERN_C ApplicationRef kSharedApplication;
 

@@ -23,8 +23,6 @@ CA_EXTERN_C FSRef FsOpenFile(const CharacterTypeUTF8* path, const CharacterTypeU
 /// @return 
 CA_EXTERN_C VoidType FsCloseFile(FSRef refFs);
 
-typedef QWordType FSForkRef;
-
 /// @brief A fork information header.
 typedef struct _Fork {
     PtrVoidType forkData;
@@ -33,6 +31,8 @@ typedef struct _Fork {
     Int32Type forkKind;
     CharacterTypeUTF8 forkName[256];
 } ForkType;
+
+typedef ForkType* FSForkRef;
 
 /// @brief Gets the fork inside a file.
 /// @param refFs the filesystem ref

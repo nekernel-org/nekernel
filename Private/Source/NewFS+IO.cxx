@@ -24,8 +24,8 @@
 
 /// Useful macros.
 
-#define NEWFS_WRITE(DRV, TRAITS, MP) (*MP->DRV()) << TRAITS
-#define NEWFS_READ(DRV, TRAITS, MP) (*MP->DRV()) >> TRAITS
+#define NEWFS_WRITE(DRV, TRAITS, MP) (*MP->DRV()).fOutput(&TRAITS)
+#define NEWFS_READ(DRV, TRAITS, MP) (*MP->DRV()).fInput(&TRAITS)
 
 using namespace NewOS;
 
@@ -41,19 +41,19 @@ Int32 fs_newfs_read_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 Dr
   
   switch (DrvIndex) {
     case kHCFSSubDriveA: {
-      NEWFS_READ(A, DrvTrait, Mnt);
+      NEWFS_READ(A, DrvTrait.fPacket, Mnt);
       break;
     }
     case kHCFSSubDriveB: {
-      NEWFS_READ(B, DrvTrait, Mnt);
+      NEWFS_READ(B, DrvTrait.fPacket, Mnt);
       break;
     }
     case kHCFSSubDriveC: {
-      NEWFS_READ(C, DrvTrait, Mnt);
+      NEWFS_READ(C, DrvTrait.fPacket, Mnt);
       break;
     }
     case kHCFSSubDriveD: {
-      NEWFS_READ(D, DrvTrait, Mnt);
+      NEWFS_READ(D, DrvTrait.fPacket, Mnt);
       break;
     }
   }
@@ -73,19 +73,19 @@ Int32 fs_newfs_write_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 D
 
   switch (DrvIndex) {
     case kHCFSSubDriveA: {
-      NEWFS_WRITE(A, DrvTrait, Mnt);
+      NEWFS_WRITE(A, DrvTrait.fPacket, Mnt);
       break;
     }
     case kHCFSSubDriveB: {
-      NEWFS_WRITE(B, DrvTrait, Mnt);
+      NEWFS_WRITE(B, DrvTrait.fPacket, Mnt);
       break;
     }
     case kHCFSSubDriveC: {
-      NEWFS_WRITE(C, DrvTrait, Mnt);
+      NEWFS_WRITE(C, DrvTrait.fPacket, Mnt);
       break;
     }
     case kHCFSSubDriveD: {
-      NEWFS_WRITE(D, DrvTrait, Mnt);
+      NEWFS_WRITE(D, DrvTrait.fPacket, Mnt);
       break;
     }
   }

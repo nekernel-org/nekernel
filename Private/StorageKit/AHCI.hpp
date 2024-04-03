@@ -7,15 +7,14 @@
 #pragma once
 
 #include <KernelKit/DeviceManager.hpp>
+#include <KernelKit/DriveManager.hxx>
 #include <NewKit/OwnPtr.hpp>
 
 namespace NewOS {
-class AHCIPacket;
-
-class AHCIDeviceInterface : public DeviceInterface<AHCIPacket> {
+class AHCIDeviceInterface : public DeviceInterface<MountpointInterface*> {
  public:
-  explicit AHCIDeviceInterface(void (*Out)(AHCIPacket outpacket),
-                               void (*In)(AHCIPacket inpacket),
+  explicit AHCIDeviceInterface(void (*Out)(MountpointInterface* outpacket),
+                               void (*In)(MountpointInterface* inpacket),
                                void (*Cleanup)(void));
 
   virtual ~AHCIDeviceInterface();
@@ -27,17 +26,6 @@ class AHCIDeviceInterface : public DeviceInterface<AHCIPacket> {
   const char *Name() const override;
 
  private:
-  void (*fOut)(AHCIPacket);
-  void (*fIn)(AHCIPacket);
   void (*fCleanup)(void);
-};
-
-class AHCIPacket final {
-  UIntPtr DataPtr;
-  SizeT DataSz;
-  UInt8 PortId;
-  UInt8 PortRdy;
-  Lba BeginLba;
-  Lba SectorCnt;
 };
 }  // namespace NewOS

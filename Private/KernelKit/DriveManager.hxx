@@ -54,11 +54,11 @@ struct DriveTrait final {
   Void (*fInput)(DrivePacket* packetPtr);
   Void (*fOutput)(DrivePacket* packetPtr);
   Void (*fVerify)(DrivePacket* packetPtr);
+  const Char* (*fDriveKind)(Void);
 };
 
-//! drive as a device.
-typedef DeviceInterface<DriveTrait> DriveDevice;
-typedef DriveDevice* DriveDevicePtr;
+///! drive as a device.
+typedef DriveTrait* DriveTraitPtr;
 
 /**
  * @brief Mounted drives interface.
@@ -73,12 +73,12 @@ class MountpointInterface final {
   HCORE_COPY_DEFAULT(MountpointInterface);
 
  public:
-  DriveDevicePtr A() { return mA; }
-  DriveDevicePtr B() { return mB; }
-  DriveDevicePtr C() { return mC; }
-  DriveDevicePtr D() { return mD; }
+  DriveTraitPtr A() { return mA; }
+  DriveTraitPtr B() { return mB; }
+  DriveTraitPtr C() { return mC; }
+  DriveTraitPtr D() { return mD; }
 
-  DriveDevicePtr* GetAddressOf(Int32 index) {
+  DriveTraitPtr* GetAddressOf(Int32 index) {
     DbgLastError() = kErrorSuccess;
 
     switch (index) {
@@ -102,22 +102,26 @@ class MountpointInterface final {
   }
 
  private:
-  DriveDevicePtr mA, mB, mC, mD = nullptr;
+  DriveTraitPtr mA, mB, mC, mD = nullptr;
 };
-
 
 /// @brief Unimplemented drive.
 /// @param pckt 
 /// @return 
 Void ke_drv_unimplemented(DriveTrait::DrivePacket* pckt);
 
+/// @brief Gets the drive kind (ATA, SCSI, AHCI...)
+/// @param  
+/// @return 
+const Char* ke_drive_kind(Void);
+
 /// @brief Makes a new drive.
 /// @return the new drive.
-DriveTrait construct_drive() noexcept;
+DriveTrait construct_drive(void) noexcept;
 
 /// @brief Fetches the main drive.
 /// @return the new drive.
-DriveTrait main_drive() noexcept;
+DriveTrait main_drive(void) noexcept;
 }  // namespace NewOS
 
 #endif /* ifndef __DRIVE_MANAGER__ */

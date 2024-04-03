@@ -7,15 +7,14 @@
 #pragma once
 
 #include <KernelKit/DeviceManager.hpp>
+#include <KernelKit/DriveManager.hxx>
 #include <NewKit/OwnPtr.hpp>
 
 namespace NewOS {
-class NVMEPacket;
-
-class NVMEDeviceInterface : public DeviceInterface<NVMEPacket> {
+class NVMEDeviceInterface : public DeviceInterface<MountpointInterface*> {
  public:
-  explicit NVMEDeviceInterface(void (*Out)(NVMEPacket outpacket),
-                      void (*In)(NVMEPacket inpacket), void (*Cleanup)(void))
+  explicit NVMEDeviceInterface(void (*Out)(MountpointInterface* outpacket),
+                      void (*In)(MountpointInterface* inpacket), void (*Cleanup)(void))
       : DeviceInterface(Out, In), fCleanup(Cleanup) {}
 
   virtual ~NVMEDeviceInterface() {
@@ -29,17 +28,9 @@ class NVMEDeviceInterface : public DeviceInterface<NVMEPacket> {
   const char *Name() const override;
 
  public:
-  OwnPtr<NVMEPacket> operator()(UInt32 dmaLow, UInt32 dmaHigh, SizeT sz);
+  OwnPtr<MountpointInterface*> operator()(UInt32 dmaLow, UInt32 dmaHigh, SizeT sz);
 
  private:
   void (*fCleanup)(void);
-};
-
-class NVMEPacket final {
-  UIntPtr DataPtr;
-  SizeT   DataSz;
-  UInt8   Namespace;
-  Lba     Begin;
-  Lba     End;
 };
 }  // namespace NewOS

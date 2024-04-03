@@ -5,7 +5,6 @@
 
 CC=x86_64-w64-mingw32-gcc
 AR=x86_64-w64-mingw32-ar
-ARFLAGS=-rcs
 CCINC=-I./
 CCFLAGS=-D__SINGLE_PRECISION__ -nostdlib -std=c17 -ffreestanding -Xlinker --subsystem=17 -shared
 OUTPUT=SystemLib.lib

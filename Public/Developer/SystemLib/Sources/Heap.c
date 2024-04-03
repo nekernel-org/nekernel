@@ -4,25 +4,27 @@
 
 ------------------------------------------- */
 
+#include <Headers/Defines.h>
 #include <Headers/Heap.h>
 
 /// @brief Allocate from the user's heap.
 /// @param sz size of object.
 /// @param flags flags.
 /// @return
-CA_EXTERN_C PtrVoidType RtTlsAllocate(QWordType sz,
-                                            DWordType flags) {
+CA_EXTERN_C PtrVoidType RtTlsAllocate(QWordType sz, DWordType flags) {
   CA_MUST_PASS(sz);
   CA_MUST_PASS(flags);
 
-  return (PtrVoidType)kSharedApplication->Invoke(kSharedApplication, kCallAllocPtr, sz, flags);
+  return (PtrVoidType)kSharedApplication->Invoke(kSharedApplication,
+                                                 kCallAllocPtr, sz, flags);
 }
 
 /// @brief Free pointer from the user's heap.
 /// @param ptr the pointer to free.
 CA_EXTERN_C VoidType RtTlsFree(PtrVoidType ptr) {
   CA_MUST_PASS(ptr);
-  CA_UNREFERENCED_PARAMETER(kSharedApplication->Invoke(kSharedApplication, kCallFreePtr, ptr));
+  CA_UNREFERENCED_PARAMETER(
+      kSharedApplication->Invoke(kSharedApplication, kCallFreePtr, ptr));
 }
 
 /// @brief Get pointer size.

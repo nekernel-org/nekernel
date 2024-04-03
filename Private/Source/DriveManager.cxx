@@ -53,6 +53,21 @@ Void ke_drv_check_disk(DriveTrait::DrivePacket* pckt) {
     pckt->fPacketGood = false;
 }
 
+/// @brief Gets the drive kind (ATA, SCSI, AHCI...)
+/// @param  
+/// @return 
+#ifdef __ATA_PIO__ 
+const Char* ke_drive_kind(Void) { return "ATA-PIO"; }
+#endif
+
+#ifdef __ATA_DMA__ 
+const Char* ke_drive_kind(Void) { return "ATA-DMA"; }
+#endif
+
+#ifdef __AHCI__ 
+const Char* ke_drive_kind(Void) { return "AHCO"; }
+#endif
+
 /// @brief Unimplemented drive.
 /// @param pckt 
 /// @return 

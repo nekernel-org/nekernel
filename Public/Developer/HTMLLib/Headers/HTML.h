@@ -46,5 +46,5 @@ typedef struct _HtmlDOMElement {
     struct _HtmlDOMElement* fParentElement;
 } HtmlDOMElement, *HtmlDOMElementRef;
 
-
+/// @brief Root element of the DOM.
 #define kHtmlRootElement "document"

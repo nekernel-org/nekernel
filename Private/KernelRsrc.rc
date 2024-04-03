@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Mahrouss Logic"
-      VALUE "FileDescription", "NewOS Microkernel for AMD64"
+      VALUE "CompanyName", "MahroussLogic"
+      VALUE "FileDescription", "NewOS microkernel."
       VALUE "FileVersion", "1.0"
       VALUE "InternalName", "NewKernel"
-      VALUE "LegalCopyright", "Mahrouss Logic"
+      VALUE "LegalCopyright", "MahroussLogic"
       VALUE "OriginalFilename", "NewKernel.exe"
       VALUE "ProductName", "NewKernel"
       VALUE "ProductVersion", "1.0"

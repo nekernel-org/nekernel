@@ -21,8 +21,10 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Ref.hpp>
 
+#define kDriveManagerCount 4U
+
 // Last Rev
-// Sat Feb 24 CET 2024
+// Wed, Apr  3, 2024  9:09:41 AM
 
 namespace NewOS {
 template <typename T>
@@ -41,12 +43,12 @@ class DeviceInterface {
   DeviceInterface(const DeviceInterface<T> &) = default;
 
  public:
-  DeviceInterface<T> &operator<<(T Data) {
+  virtual DeviceInterface<T> &operator<<(T Data) {
     m_Out(Data);
     return *this;
   }
 
-  DeviceInterface<T> &operator>>(T Data) {
+  virtual DeviceInterface<T> &operator>>(T Data) {
     m_In(Data);
     return *this;
   }
