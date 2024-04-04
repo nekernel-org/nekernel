@@ -32,7 +32,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   BTextWriter writer;
   /// Splash screen stuff
 
-  writer.Write(L"MahroussLogic (R) NewOS: ")
+  writer.Write(L"Mahrouss-Logic (R) NewOS: ")
       .Write(BVersionString::Shared());
 
   writer.Write(L"\r\nNewBoot.exe: Firmware Vendor: ")

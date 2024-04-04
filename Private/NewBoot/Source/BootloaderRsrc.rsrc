@@ -1,0 +1,27 @@
+#include "../../CompilerKit/Version.hxx"
+
+1 ICON "../../Root/Boot/kernel-logo.ico"
+
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "Mahrouss-Logic"
+      VALUE "FileDescription", "NewOS multi-platform bootloader."
+      VALUE "FileVersion", BOOTLOADER_VERSION
+      VALUE "InternalName", "NewBoot"
+      VALUE "LegalCopyright", "Copyright Mahrouss-Logic, all rights reserved."
+      VALUE "OriginalFilename", "NewBoot.exe"
+      VALUE "ProductName", "NewBoot"
+      VALUE "ProductVersion", BOOTLOADER_VERSION
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END

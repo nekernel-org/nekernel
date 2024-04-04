@@ -32,14 +32,15 @@ FLAG_GNU=-fshort-wchar -mgeneral-regs-only -mno-red-zone -D__KERNEL__ -DEFI_FUNC
 invalid-recipe:
 	@echo "invalid-recipe: Use make bootloader-<arch> all instead."
 
-.PHONY: bootloader-amd64
-bootloader-amd64: compile-amd64
+.PHONY: all
+all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/NEWBOOT.EFI
 
 .PHONY: compile-amd64
 compile-amd64:
+	windres BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
 	$(CC_GNU) $(FLAG_GNU) $(DEBUG) $(wildcard HEL/AMD64/*.cxx) $(wildcard *.cxx)
 
 .PHONY: run-efi-amd64

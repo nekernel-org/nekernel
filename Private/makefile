@@ -8,19 +8,19 @@ LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -c -ffreestanding -mgeneral-regs-only -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../ -I./ 
 ASM 		= nasm
 
-ifneq ($(NEWOS_PIO_ATA), )
+ifneq ($(ATA_PIO_SUPPORT), )
 DISKDRIVER =  -D__ATA_PIO__ 
 endif
 
-ifneq ($(NEWOS_DMA_ATA), )
+ifneq ($(ATA_DMA_SUPPORT), )
 DISKDRIVER =  -D__ATA_DMA__ 
 endif
 
-ifneq ($(NEWOS_AHCI), )
+ifneq ($(AHCI_SUPPORT), )
 DISKDRIVER =  -D__AHCI__ 
 endif
 
-ifneq ($(DEBUG), )
+ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__ 
 endif
 
@@ -43,7 +43,7 @@ MOVEALL=./MoveAll.sh
 
 .PHONY: h-core-amd64-epm
 h-core-amd64-epm: clean
-	windres KernelRsrc.rc -O coff -o KernelRsrc.obj
+	windres KernelRsrc.rsrc -O coff -o KernelRsrc.obj
 	$(CC) $(CCFLAGS) $(DISKDRIVER) $(DEBUG) $(wildcard Source/*.cxx HALKit/AMD64/Storage/*.cxx) $(wildcard HALKit/AMD64/PCI/*.cxx) $(wildcard Source/Network/*.cxx) $(wildcard Source/Storage/*.cxx) $(wildcard HALKit/AMD64/*.cxx) $(wildcard HALKit/AMD64/*.cpp) $(wildcard HALKit/AMD64/*.s)
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm

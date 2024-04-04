@@ -1,5 +1,7 @@
 1 ICON "Root/Boot/kernel-logo.ico"
 
+#include "CompilerKit/Version.hxx"
+
 1 VERSIONINFO
 FILEVERSION     1,0,0,0
 PRODUCTVERSION  1,0,0,0
@@ -8,14 +10,14 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "MahroussLogic"
-      VALUE "FileDescription", "NewOS microkernel."
-      VALUE "FileVersion", "1.0"
+      VALUE "CompanyName", "Mahrouss-Logic"
+      VALUE "FileDescription", "NewOS multiplatform kernel."
+      VALUE "FileVersion", KERNEL_VERSION
       VALUE "InternalName", "NewKernel"
-      VALUE "LegalCopyright", "MahroussLogic"
+      VALUE "LegalCopyright", "Mahrouss-Logic"
       VALUE "OriginalFilename", "NewKernel.exe"
       VALUE "ProductName", "NewKernel"
-      VALUE "ProductVersion", "1.0"
+      VALUE "ProductVersion", KERNEL_VERSION
     END
   END
   BLOCK "VarFileInfo"
