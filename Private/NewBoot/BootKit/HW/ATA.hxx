@@ -21,7 +21,7 @@ class BootDeviceATA final : public Device {
   explicit BootDeviceATA() noexcept;
   ~BootDeviceATA() = default;
 
-  HCORE_COPY_DEFAULT(BootDeviceATA);
+  NEWOS_COPY_DEFAULT(BootDeviceATA);
 
   struct ATATrait final : public Device::Trait {
     UInt16 mBus{kPrimary};

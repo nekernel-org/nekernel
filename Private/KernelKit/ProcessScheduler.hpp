@@ -120,7 +120,7 @@ class ProcessHeader final {
 
   ~ProcessHeader() = default;
 
-  HCORE_COPY_DEFAULT(ProcessHeader)
+  NEWOS_COPY_DEFAULT(ProcessHeader)
 
  public:
   void SetEntrypoint(UIntPtr &imageStart) noexcept;
@@ -199,7 +199,7 @@ class ProcessTeam final {
   explicit ProcessTeam() = default;
   ~ProcessTeam() = default;
 
-  HCORE_COPY_DEFAULT(ProcessTeam);
+  NEWOS_COPY_DEFAULT(ProcessTeam);
 
   MutableArray<Ref<ProcessHeader>> &AsArray();
   Ref<ProcessHeader> &AsRef();
@@ -220,7 +220,7 @@ class ProcessScheduler final {
  public:
   ~ProcessScheduler() = default;
 
-  HCORE_COPY_DEFAULT(ProcessScheduler)
+  NEWOS_COPY_DEFAULT(ProcessScheduler)
 
   operator bool() { return mTeam.AsArray().Count() > 0; }
   bool operator!() { return mTeam.AsArray().Count() == 0; }

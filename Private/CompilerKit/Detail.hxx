@@ -10,22 +10,22 @@
 #   include <NewKit/Defines.hpp>
 #endif // ifdef __KERNEL__
 
-#define HCORE_COPY_DELETE(KLASS)                                                                                         \
+#define NEWOS_COPY_DELETE(KLASS)                                                                                         \
     KLASS &operator=(const KLASS &) = delete;                                                                          \
     KLASS(const KLASS &) = delete;
 
 
-#define HCORE_COPY_DEFAULT(KLASS)                                                                                        \
+#define NEWOS_COPY_DEFAULT(KLASS)                                                                                        \
     KLASS &operator=(const KLASS &) = default;                                                                         \
     KLASS(const KLASS &) = default;
 
 
-#define HCORE_MOVE_DELETE(KLASS)                                                                                         \
+#define NEWOS_MOVE_DELETE(KLASS)                                                                                         \
     KLASS &operator=(KLASS &&) = delete;                                                                               \
     KLASS(KLASS &&) = delete;
 
 
-#define HCORE_MOVE_DEFAULT(KLASS)                                                                                        \
+#define NEWOS_MOVE_DEFAULT(KLASS)                                                                                        \
     KLASS &operator=(KLASS &&) = default;                                                                              \
     KLASS(KLASS &&) = default;
 

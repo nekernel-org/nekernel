@@ -16,7 +16,7 @@ class Device {
   Device() = default;
   virtual ~Device() = default;
 
-  HCORE_MOVE_DEFAULT(Device);
+  NEWOS_MOVE_DEFAULT(Device);
 
   struct Trait {
     SizeT mBase{1024};

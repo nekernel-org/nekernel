@@ -35,7 +35,7 @@ class SharedObject final {
   ~SharedObject() = default;
 
  public:
-  HCORE_COPY_DEFAULT(SharedObject);
+  NEWOS_COPY_DEFAULT(SharedObject);
 
  private:
   SharedObjectTrait *fMounted{nullptr};

@@ -14,7 +14,7 @@ class BootDeviceSATA final {
   explicit BootDeviceSATA() noexcept;
   ~BootDeviceSATA() = default;
 
-  HCORE_COPY_DEFAULT(BootDeviceSATA);
+  NEWOS_COPY_DEFAULT(BootDeviceSATA);
 
   struct SATATrait final {
     NewOS::SizeT   mBase{1024};

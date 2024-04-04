@@ -17,8 +17,6 @@ namespace NewOS::HAL {
 typedef UIntPtr Reg;
 
 struct __PPC_ALIGN StackFrame {
-  Reg IntNum;
-  Reg Exception;
   Reg R0;
   Reg R1;
   Reg R2;
@@ -28,12 +26,8 @@ struct __PPC_ALIGN StackFrame {
   Reg R6;
   Reg R7;
   Reg R8;
-  Reg ProgramCounter;
-  Reg StackPointer;
-  /// @brief Process Context
   Reg PC;
-  /// @brief General Context 
-  Reg GC;
+  Reg SP;
 };
 
 typedef StackFrame* StackFramePtr;

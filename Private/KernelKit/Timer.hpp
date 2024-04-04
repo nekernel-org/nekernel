@@ -24,7 +24,7 @@ class HardwareTimerInterface
     virtual ~HardwareTimerInterface() = default;
 
   public:
-    HCORE_COPY_DEFAULT(HardwareTimerInterface);
+    NEWOS_COPY_DEFAULT(HardwareTimerInterface);
 
   public:
     virtual Int32 Wait() noexcept;
@@ -37,7 +37,7 @@ class HardwareTimer final : public HardwareTimerInterface
     ~HardwareTimer() override;
 
   public:
-    HCORE_COPY_DEFAULT(HardwareTimer);
+    NEWOS_COPY_DEFAULT(HardwareTimer);
 
   public:
     Int32 Wait() noexcept override;

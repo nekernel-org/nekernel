@@ -38,7 +38,7 @@ class TerminalDevice final : public DeviceInterface<const Char *> {
   /// @return string type (const char*)
   virtual const char *Name() const override { return ("TerminalDevice"); }
 
-  HCORE_COPY_DEFAULT(TerminalDevice);
+  NEWOS_COPY_DEFAULT(TerminalDevice);
 
   static TerminalDevice Shared() noexcept;
 };

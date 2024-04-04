@@ -34,7 +34,7 @@ void operator delete(void* ptr) {
 void operator delete(void* ptr, size_t sz) {
   if (ptr == nullptr) return;
 
-  HCORE_UNUSED(sz);
+  NEWOS_UNUSED(sz);
 
   NewOS::ke_delete_ke_heap(ptr);
 }

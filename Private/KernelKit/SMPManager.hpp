@@ -40,7 +40,7 @@ class HardwareThread final {
   ~HardwareThread();
 
  public:
-  HCORE_COPY_DEFAULT(HardwareThread)
+  NEWOS_COPY_DEFAULT(HardwareThread)
 
  public:
   operator bool();
@@ -84,7 +84,7 @@ class SMPManager final {
   ~SMPManager();
 
  public:
-  HCORE_COPY_DEFAULT(SMPManager);
+  NEWOS_COPY_DEFAULT(SMPManager);
 
  public:
   bool Switch(HAL::StackFrame* the);

@@ -24,7 +24,7 @@ class PS2MouseInterface final {
   explicit PS2MouseInterface() = default;
   ~PS2MouseInterface() = default;
 
-  HCORE_COPY_DEFAULT(PS2MouseInterface);
+  NEWOS_COPY_DEFAULT(PS2MouseInterface);
 
  public:
   /// @brief Enables PS2 mouse for kernel.

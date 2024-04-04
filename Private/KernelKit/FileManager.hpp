@@ -61,7 +61,7 @@ class FilesystemManagerInterface {
   virtual ~FilesystemManagerInterface() = default;
 
  public:
-  HCORE_COPY_DEFAULT(FilesystemManagerInterface);
+  NEWOS_COPY_DEFAULT(FilesystemManagerInterface);
 
  public:
   /// @brief Mounts a new filesystem into an active state.
@@ -116,7 +116,7 @@ class NewFilesystemManager final : public FilesystemManagerInterface {
   ~NewFilesystemManager() override;
 
  public:
-  HCORE_COPY_DEFAULT(NewFilesystemManager);
+  NEWOS_COPY_DEFAULT(NewFilesystemManager);
 
  public:
   NodePtr Create(const char *path) override;

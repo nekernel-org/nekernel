@@ -157,7 +157,7 @@ class MutableArray : public NullableMutableArray<voidPtr, nullptr>
     explicit MutableArray() = default;
     virtual ~MutableArray() = default;
 
-    HCORE_COPY_DEFAULT(MutableArray)
+    NEWOS_COPY_DEFAULT(MutableArray)
 
   public:
     Boolean Add(const T val)

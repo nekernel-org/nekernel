@@ -168,7 +168,7 @@ class NewFSParser {
   virtual ~NewFSParser() = default;
 
  public:
-  HCORE_COPY_DEFAULT(NewFSParser);
+  NEWOS_COPY_DEFAULT(NewFSParser);
 
  public:
   virtual _Output NewFork*    CreateFork(_Input NewCatalog* catalog, _Input NewFork& theFork) = 0;

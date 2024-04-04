@@ -91,4 +91,4 @@
 #endif
 
 #define STRINGIFY(X) #X
-#define HCORE_UNUSED(X) ((void)X)
+#define NEWOS_UNUSED(X) ((void)X)

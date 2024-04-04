@@ -26,7 +26,7 @@ class NewFSIteratorInterface {
   virtual ~NewFSIteratorInterface() = default;
 
  public:
-  HCORE_COPY_DEFAULT(NewFSIteratorInterface);
+  NEWOS_COPY_DEFAULT(NewFSIteratorInterface);
 
  public:
   void Append(IndexableProperty& indexProp) { fProps.Add(indexProp); }

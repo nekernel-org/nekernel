@@ -28,7 +28,7 @@ class PEFLoader : public LoaderInterface {
   ~PEFLoader() override;
 
  public:
-  HCORE_COPY_DEFAULT(PEFLoader);
+  NEWOS_COPY_DEFAULT(PEFLoader);
 
  public:
   const char *Path() override;

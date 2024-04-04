@@ -70,7 +70,7 @@ class MountpointInterface final {
   explicit MountpointInterface() = default;
   ~MountpointInterface() = default;
 
-  HCORE_COPY_DEFAULT(MountpointInterface);
+  NEWOS_COPY_DEFAULT(MountpointInterface);
 
  public:
   DriveTraitPtr A() { return mA; }

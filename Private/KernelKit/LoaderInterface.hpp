@@ -19,7 +19,7 @@ class LoaderInterface {
   explicit LoaderInterface() = default;
   virtual ~LoaderInterface() = default;
 
-  HCORE_COPY_DEFAULT(LoaderInterface);
+  NEWOS_COPY_DEFAULT(LoaderInterface);
 
  public:
   virtual _Output const char* Format() = 0;

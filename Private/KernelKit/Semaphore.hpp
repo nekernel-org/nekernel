@@ -34,7 +34,7 @@ namespace NewOS
         bool LockOrWait(ProcessHeader* process, const Int64& seconds);
 
     public:
-        HCORE_COPY_DEFAULT(Semaphore);
+        NEWOS_COPY_DEFAULT(Semaphore);
 
     private:
         ProcessHeaderRef fLockingProcess{ nullptr };

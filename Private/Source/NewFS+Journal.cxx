@@ -38,7 +38,7 @@ class NewFSJournalRunner final {
     if (fUnloadRoutine) fUnloadRoutine(this);
   }
 
-  HCORE_COPY_DEFAULT(NewFSJournalRunner);
+  NEWOS_COPY_DEFAULT(NewFSJournalRunner);
 
  public:
   Boolean Run(const Int32& operation, VoidPtr classPtr) {

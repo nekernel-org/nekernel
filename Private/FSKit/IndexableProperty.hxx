@@ -27,7 +27,7 @@ class IndexableProperty final : public Property {
       : Property(StringBuilder::Construct("IndexableProperty").Leak().Leak()) {}
   ~IndexableProperty() override = default;
 
-  HCORE_COPY_DEFAULT(IndexableProperty);
+  NEWOS_COPY_DEFAULT(IndexableProperty);
 
  public:
   IndexProperty& LeakProperty() noexcept;

@@ -37,7 +37,7 @@ class PermissionSelector final {
   ~PermissionSelector();
 
  public:
-  HCORE_COPY_DEFAULT(PermissionSelector)
+  NEWOS_COPY_DEFAULT(PermissionSelector)
 
  public:
   bool operator==(const PermissionSelector& lhs);

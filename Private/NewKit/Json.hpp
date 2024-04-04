@@ -26,7 +26,7 @@ class JsonType final {
 
   ~JsonType() = default;
 
-  HCORE_COPY_DEFAULT(JsonType);
+  NEWOS_COPY_DEFAULT(JsonType);
 
  private:
   StringView fKey;
