@@ -13,7 +13,8 @@
                 "__KERNEL__",
                 "Z_PREFIX",
                 "__HAVE_MAHROUSS_APIS__",
-                "__FSKIT_NEWFS__"
+                "__FSKIT_NEWFS__",
+                "__EFI_x86_64__"
             ],
             "cStandard": "c17",
             "cppStandard": "c++20",
@@ -43,7 +44,8 @@
                 "__KERNEL__",
                 "Z_PREFIX",
                 "__HAVE_MAHROUSS_APIS__",
-                "__FSKIT_NEWFS__"
+                "__FSKIT_NEWFS__",
+                "__EFI_x86_64__"
             ],
             "cStandard": "c17",
             "cppStandard": "c++20",

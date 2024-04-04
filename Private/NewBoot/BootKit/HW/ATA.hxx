@@ -7,10 +7,11 @@
 #pragma once
 
 #include <Builtins/ATA/Defines.hxx>
+#include <BootKit/Device.hxx>
 
 using namespace NewOS;
 
-class BootDeviceATA final {
+class BootDeviceATA final : public Device {
  public:
   enum {
     kPrimary = ATA_PRIMARY_IO,
@@ -22,9 +23,7 @@ class BootDeviceATA final {
 
   HCORE_COPY_DEFAULT(BootDeviceATA);
 
-  struct ATATrait final {
-    SizeT mBase{1024};
-    SizeT mSize{1024};
+  struct ATATrait final : public Device::Trait {
     UInt16 mBus{kPrimary};
     UInt8 mMaster{0};
     Boolean mErr{false};
@@ -32,12 +31,13 @@ class BootDeviceATA final {
     operator bool() { return !mErr; }
   };
 
+ public:
   operator bool();
 
-  BootDeviceATA& Read(Char* Buf, const SizeT& SecCount);
-  BootDeviceATA& Write(Char* Buf, const SizeT& SecCount);
+  BootDeviceATA& Read(Char* Buf, const SizeT& SecCount) override;
+  BootDeviceATA& Write(Char* Buf, const SizeT& SecCount) override;
 
-  ATATrait& Leak();
+  ATATrait& Leak() override;
 
  private:
   ATATrait mTrait;

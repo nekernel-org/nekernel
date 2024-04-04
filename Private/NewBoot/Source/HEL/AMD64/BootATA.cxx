@@ -15,7 +15,7 @@
  *
  */
 
-#include <BootKit/Arch/ATA.hxx>
+#include <BootKit/HW/ATA.hxx>
 #include <BootKit/BootKit.hxx>
 
 /// bugs: 0

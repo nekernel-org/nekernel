@@ -173,7 +173,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       handoverHdrPtr->f_Magic = kHandoverMagic;
       handoverHdrPtr->f_Version = kHandoverVersion;
 
-      writer.Write(L"NewOS: Running NewOS...\r\n");
+      writer.Write(L"NewOS: Starting kernel...\r\n");
 
       EFI::ExitBootServices(MapKey, ImageHandle);
 

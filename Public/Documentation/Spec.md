@@ -28,7 +28,7 @@
 # 2: The Filesystem
 ===================================
 
-- Catalog based with forks.
+- Catalog object with associated forks.
 - Large storage support.
 - Long file names.
 - UNIX path style.
@@ -46,8 +46,7 @@
 ===================================
 
 - Capable of booting from a network drive.
-- Loads a PE file which is the kernel
+- Loads a PE file which is the kernel.
 - Sanity checks, based on the number of sections. 
 - Handover compliant.
-- Does check for a valid invalid of NewOS (useful in the case of recovering)
-
+- Does check for a valid partition (useful in the case of recovering)

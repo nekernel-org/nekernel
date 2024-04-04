@@ -16,11 +16,13 @@ class BFileReader;
 class BFileRunner;
 class BVersionString;
 
-#include <BootKit/Arch/ATA.hxx>
+#include <BootKit/HW/ATA.hxx>
 #include <CompilerKit/Version.hxx>
+#ifdef __EFI_x86_64__
 #include <FirmwareKit/EFI.hxx>
-#include <NewKit/Defines.hpp>
+#endif  // ifdef __EFI_x86_64__
 #include <FirmwareKit/EPM.hxx>
+#include <NewKit/Defines.hpp>
 
 using namespace NewOS;
 
@@ -42,6 +44,7 @@ typedef Char CharacterTypeUTF8;
  */
 class BTextWriter final {
   BTextWriter &_Write(const Long &num);
+
  public:
   BTextWriter &Write(const Long &num);
   BTextWriter &Write(const UChar *str);
@@ -76,7 +79,8 @@ NewOS::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
  */
 class BFileReader final {
  public:
-  explicit BFileReader(const CharacterTypeUTF16 *path, EfiHandlePtr ImageHandle);
+  explicit BFileReader(const CharacterTypeUTF16 *path,
+                       EfiHandlePtr ImageHandle);
   ~BFileReader();
 
   Void ReadAll();
@@ -163,9 +167,7 @@ inline UInt32 In32(UInt16 port) {
   return value;
 }
 
-inline Void rt_hlt() {
-  asm volatile("hlt");
-}
+inline Void rt_hlt() { asm volatile("hlt"); }
 
 #endif  // __EFI_x86_64__
 
@@ -181,7 +183,8 @@ const UInt32 kRgbBlue = 0x00FF0000;
 const UInt32 kRgbBlack = 0x00000000;
 const UInt32 kRgbWhite = 0x00FFFFFF;
 
-/** QT GOP and related. */
+#ifdef __EFI_x86_64__
+/** GOP and related. */
 inline EfiGraphicsOutputProtocol *kGop;
 inline UInt16 kStride;
 inline EfiGUID kGopGuid;
@@ -199,10 +202,18 @@ inline Void InitGOP() noexcept {
 
   kStride = 4;
 }
+#endif  // __EFI_x86_64__
 
 class BVersionString final {
  public:
   static const CharacterTypeUTF16 *Shared() { return BOOTLOADER_VERSION; }
 };
 
-EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLength, BootDeviceATA* ataInterface);
+/// @brief Writes an EPM partition on the main disk.
+/// @param namePart the partition's name
+/// @param namePartLength the partition name's length
+/// @param bootDev the disk interface.
+/// @return 
+EXTERN_C Boolean boot_write_epm_partition(const Char *namePart,
+                                          SizeT namePartLength,
+                                          BootDevice *bootDev);

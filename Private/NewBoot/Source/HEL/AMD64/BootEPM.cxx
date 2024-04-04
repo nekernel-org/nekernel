@@ -19,19 +19,19 @@ STATIC const BlockGUID kEPMGuid = {
 /// @brief Write epm partition to disk.
 /// @param namePart partition name
 /// @param namePartLength length of name
-/// @param ataInterface  disk interface, here ATA.
+/// @param bootDev disk interface.
 /// @return 
 EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLength,
-                                 BootDeviceATA* ataInterface) {
+                                 BootDevice* bootDev) {
   if (namePartLength > kEPMNameLength || !namePart) return No;
-  if (!ataInterface) return No;
+  if (!bootDev) return No;
 
-  ataInterface->Leak().mBase = kEPMStartPartitionBlk;
-  ataInterface->Leak().mSize = kATASectorSize;
+  bootDev->Leak().mBase = kEPMStartPartitionBlk;
+  bootDev->Leak().mSize = kATASectorSize;
 
-  Char buf[512] = {0};
+  Char buf[kATASectorSize] = {0};
 
-  ataInterface->Read(buf, 1);
+  bootDev->Read(buf, 1);
 
   BTextWriter writer;
 
@@ -106,7 +106,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       swapBlock->Kind = kNewFSPartitionTypePage;
       swapBlock->LbaEnd = kSwapSize; /// 4 MIB swap partition.
 
-      ataInterface->Write(buf, 1);
+      bootDev->Write(buf, 1);
 
       return No;
     }

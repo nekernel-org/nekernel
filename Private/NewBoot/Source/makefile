@@ -26,7 +26,7 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -mgeneral-regs-only -mno-red-zone -D__KERNEL__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./ 
+FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mgeneral-regs-only -mno-red-zone -D__KERNEL__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./ 
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -37,6 +37,10 @@ all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/NEWBOOT.EFI
+
+ifneq ($(DEBUG_SUPPORT), )
+DEBUG =  -D__DEBUG__ 
+endif
 
 .PHONY: compile-amd64
 compile-amd64:
