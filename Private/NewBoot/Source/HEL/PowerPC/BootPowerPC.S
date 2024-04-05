@@ -19,4 +19,4 @@ k_hdr_ver:
 k_hdr_proc:
 	.long __bootloader_start
 
-/* end */
+/* NewOS kernel header end */

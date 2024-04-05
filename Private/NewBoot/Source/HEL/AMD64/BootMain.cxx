@@ -32,40 +32,28 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
   BTextWriter writer;
   /// Splash screen stuff
 
-  writer.Write(L"Mahrouss-Logic (R) NewOS: ")
-      .Write(BVersionString::Shared());
+  writer.Write(L"Mahrouss-Logic (R) NewOS: ").Write(BVersionString::Shared());
 
   writer.Write(L"\r\nNewBoot.exe: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
-  BootDeviceATA ataDrv;
-  Boolean isIniNotFound = No;
+  BootDeviceATA ataDev;
+  Boolean isEpmFound = No;
 
-#ifndef __DEBUG__
   /// if ATA drive is initialized and EFI vendor supports an EPM scheme.
   /// @EDK tells our OS that it supports EPM scheme as well.
-  if (ataDrv &&
-      SystemTable->FirmwareVendor[0] == '@') {
-    Char namePart[kEPMNameLength] = {"BootBlock"};
-
+  if (ataDev) {
+    Char namePart[kEPMNameLength] = {"NewBoot"};
     /// tries to read an EPM block, or writes one if it fails.
-    isIniNotFound =
-        boot_write_epm_partition(namePart, kEPMNameLength, &ataDrv);
-  } else if (SystemTable->FirmwareVendor[0] != '@') {
-    writer.Write(L"NewOS: This firmware can't understand NewOS, please use Mahrouss Logic products instead\r\nNewBoot.exe: Our website: www.el-mahrouss-logic.com\r\n");
-    return kEfiFail;
-  } else if (!ataDrv) {
-    writer.Write(L"NewOS: This computer can't work with NewOS, please use Mahrouss Logic products instead\r\nNewBoot.exe: Our website: www.el-mahrouss-logic.com\r\n");
+    isEpmFound = boot_write_epm_partition(namePart, kEPMNameLength, &ataDev);
+  } else {
+    writer.Write(
+        L"NewOS: This computer can't work with NewOS, please use Mahrouss-"
+        L"Logic products instead\r\nNewBoot.exe: Our website: "
+        L"www.el-mahrouss-logic.com\r\n");
     return kEfiFail;
   }
-#else
-    Char namePart[kEPMNameLength] = {"BootBlock"};
-
-    /// tries to read an EPM block, or writes one if it fails.
-    isIniNotFound =
-        boot_write_epm_partition(namePart, kEPMNameLength, &ataDrv);
-#endif // !__DEBUG__
 
   /// Read Kernel blob.
 
@@ -76,16 +64,16 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   if (kernelImg.Error() == BFileReader::kOperationOkay) {
     UInt32 MapKey = 0;
-    UInt32* Size;
-    EfiMemoryDescriptor* Descriptor;
+    UInt32* SizePtr = nullptr;
+    EfiMemoryDescriptor* Descriptor = nullptr;
     UInt32 SzDesc = 0;
     UInt32 RevDesc = 0;
 
-    if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&Size) !=
+    if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&SizePtr) !=
         kEfiOk) {
       EFI::RaiseHardError(
-          L"NewBoot-BadAlloc",
-          L"NewBoot ran out of memory! Please check your specs.");
+          L"__bad_alloc",
+          L"NewBoot ran out of memory!");
     }
 
     /****
@@ -94,13 +82,13 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
      *
      */
 
-    *Size = sizeof(EfiMemoryDescriptor);
+    *SizePtr = sizeof(EfiMemoryDescriptor);
 
     if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
                          (VoidPtr*)&Descriptor) != kEfiOk) {
       EFI::RaiseHardError(
-          L"NewBoot-BadAlloc",
-          L"NewBoot ran out of memory! Please check your specs.");
+          L"__bad_alloc",
+          L"NewBoot ran out of memory!");
     }
 
     /****
@@ -109,11 +97,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
      *
      */
 
-    if (BS->GetMemoryMap(Size, Descriptor, &MapKey, &SzDesc, &RevDesc) !=
-        kEfiOk) {
-      EFI::RaiseHardError(L"NewBoot-GetMemoryMap",
-                          L"GetMemoryMap returned a value which isn't kEfiOk!");
-    }
+    while (BS->GetMemoryMap(SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc) !=
+        kEfiOk);
 
     HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
 
@@ -157,9 +142,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
 
 #ifdef __DEBUG__
-        writer
-            .Write(
-                L"NewOS: Found ACPI's 'RSD PTR' table on this machine.")
+        writer.Write(L"NewOS: Found ACPI's 'RSD PTR' table on this machine.")
             .Write(L"\r\n");
 #endif
 
@@ -167,22 +150,19 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
       }
     }
 
-    if (!isIniNotFound) {
+    if (!isEpmFound) {
       writer.Write(L"NewOS: No partition found for NewOS. (HCR-1000)\r\n");
-    } else {
-      handoverHdrPtr->f_Magic = kHandoverMagic;
-      handoverHdrPtr->f_Version = kHandoverVersion;
-
-      writer.Write(L"NewOS: Starting kernel...\r\n");
-
-      EFI::ExitBootServices(MapKey, ImageHandle);
-
-      /// TODO: Read catalog and read NewKernel.exe
     }
 
-    EFI::Stop();
+    handoverHdrPtr->f_Magic = kHandoverMagic;
+    handoverHdrPtr->f_Version = kHandoverVersion;
 
-    return kEfiOk;
+    writer.Write(L"Running NewOS...\r\n");
+
+    EFI::ExitBootServices(MapKey, ImageHandle);
+
+    /// TODO: Read catalog and read NewKernel.exe
+
   } else {
     writer.Write(L"NewOS: Error-Code: HLDR-0003\r\n");
   }

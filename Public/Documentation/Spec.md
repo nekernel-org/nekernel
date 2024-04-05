@@ -15,7 +15,7 @@
 - Separation of Files/Devices.
 - Networking.
 - Hardware Abstraction Layer.
-- Native Filesystem support (NewFS, FAT32 and HCFS).
+- Native Filesystem support (NewFS, FAT32 and ffs2).
 - Program Loaders.
 - Thread Local Storage.
 - Semaphore, Locks, Timers.

@@ -37,6 +37,7 @@ all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/NEWBOOT.EFI
+	$(COPY) ../../Root/Boot/NewKernel.exe CDROM/
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__ 

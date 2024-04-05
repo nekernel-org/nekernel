@@ -34,7 +34,7 @@ Bascially frees everything we have in the EFI side.
 inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
   if (!ST) return;
 
-  ST->BootServices->ExitBootServices(ImageHandle, MapKey);
+  while (ST->BootServices->ExitBootServices(ImageHandle, MapKey) != kEfiOk);
 }
 
 enum {

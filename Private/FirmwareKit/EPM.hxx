@@ -52,7 +52,7 @@ struct PACKED PartitionBlock {
   NewOS::Int64 LbaStart;
   NewOS::Int16 Kind;
   NewOS::Int32 FsVersion;
-  NewOS::Char Fs[kEPMFilesystemLength]; /* NewFS, HCFS... */
+  NewOS::Char Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
 };
 
 /* @brief AMD64 magic for EPM */
@@ -97,7 +97,11 @@ typedef struct PartitionBlock PartitionBlockType;
 #ifdef __x86_64__
 #define kEPMMagic kEPMMagic86
 #else
+#ifdef __powerpc
+#define kEPMMagic kEPMMagicPPC
+#else
 #define kEPMMagic kEPMMagicError
+#endif
 #endif
 
 ///! @brief partition must start after this address.

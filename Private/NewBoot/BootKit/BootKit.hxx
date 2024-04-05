@@ -167,7 +167,15 @@ inline UInt32 In32(UInt16 port) {
   return value;
 }
 
-inline Void rt_hlt() { asm volatile("hlt"); }
+/***
+ * Common processor instructions.
+*/
+
+EXTERN_C void rt_hlt();
+EXTERN_C void rt_cli();
+EXTERN_C void rt_sti();
+EXTERN_C void rt_cld();
+EXTERN_C void rt_std();
 
 #endif  // __EFI_x86_64__
 
@@ -217,3 +225,4 @@ class BVersionString final {
 EXTERN_C Boolean boot_write_epm_partition(const Char *namePart,
                                           SizeT namePartLength,
                                           BootDevice *bootDev);
+

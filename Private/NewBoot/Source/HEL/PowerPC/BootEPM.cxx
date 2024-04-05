@@ -7,8 +7,9 @@
 #include <BootKit/BootKit.hxx>
 #include <FSKit/NewFS.hxx>
 
+#define kEPMSectorSize 1024
+
 #define kSwapSize MIB(16)
-#define kEPMGPTStartLba 30
 
 // {310E1FC7-2060-425D-BE7B-75A37CC679BC}
 STATIC const BlockGUID kEPMGuid = {
@@ -27,10 +28,10 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
   if (namePartLength > kEPMNameLength || !namePart) return No;
   if (!bootDev) return No;
 
-  bootDev->Leak().mBase = kEPMGPTStartLba;
-  bootDev->Leak().mSize = kATASectorSize;
+  bootDev->Leak().mBase = kEPMStartPartitionBlk;
+  bootDev->Leak().mSize = kEPMSectorSize;
 
-  Char buf[kATASectorSize] = {0};
+  Char buf[kEPMSectorSize] = {0};
 
   bootDev->Read(buf, 1);
 
@@ -58,13 +59,13 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       bootBlock->LbaStart =
           sizeof(BootBlockType) + (sizeof(PartitionBlockType) * kEPMMaxBlks);
 
-      bootBlock->SectorSz = kATASectorSize;
+      bootBlock->SectorSz = kEPMSectorSize;
 
       bootBlock->Uuid = kEPMGuid;
 
       PartitionBlock* partBlock = (PartitionBlock*)(buf + sizeof(BootBlock));
 
-      const char* fsName = "NewFS";
+      char* fsName = "NewFS";
       int fsNameLength = 6;
 
       for (SizeT i = 0; i < fsNameLength; ++i) {
@@ -73,14 +74,14 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
 
       partBlock->Version = kEPMNewOS;
 
-      const char* partNameSystem = "System HD";
+      char* partName = "System HD";
       int partNameLength = 10;
 
       for (SizeT i = 0; i < partNameLength; ++i) {
-        partBlock->Name[i] = partNameSystem[i];
+        partBlock->Name[i] = partName[i];
       }
 
-      partBlock->SectorSz = kATASectorSize;
+      partBlock->SectorSz = kEPMSectorSize;
       partBlock->LbaStart = kEPMStartPartitionBlk + kSwapSize;
       partBlock->Version = kNewFSVersionInteger;
       partBlock->Kind = kNewFSPartitionTypeStandard;
@@ -94,14 +95,14 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
 
       swapBlock->Version = kEPMNewOS;
 
-      const char *partNameSwap = "Swap HD";
+      partName = "Swap HD";
       partNameLength = 8;
 
       for (SizeT i = 0; i < partNameLength; ++i) {
-        swapBlock->Name[i] = partNameSwap[i];
+        swapBlock->Name[i] = partName[i];
       }
 
-      swapBlock->SectorSz = kATASectorSize;
+      swapBlock->SectorSz = kEPMSectorSize;
       swapBlock->LbaStart = kEPMStartPartitionBlk;
       swapBlock->Version = kNewFSVersionInteger;
       swapBlock->Kind = kNewFSPartitionTypePage;
