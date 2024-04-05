@@ -10,6 +10,7 @@
 
 ///! BUGS: 0
 
+///! @file SMPManager.cxx
 ///! @brief This file handles multi processing in NewOS.
 ///! @brief Multi processing is needed for multi-tasking operations.
 
@@ -37,7 +38,7 @@ bool HardwareThread::IsBusy() noexcept { return m_Busy; }
 
 /// @brief Get processor stack frame.
 
-HAL::StackFrame* HardwareThread::StackFrame() noexcept {
+HAL::StackFramePtr HardwareThread::StackFrame() noexcept {
   MUST_PASS(m_Stack);
   return m_Stack;
 }
@@ -59,7 +60,7 @@ void HardwareThread::Wake(const bool wakeup) noexcept {
 
 extern bool rt_check_stack(HAL::StackFramePtr stackPtr);
 
-bool HardwareThread::Switch(HAL::StackFrame* stack) {
+bool HardwareThread::Switch(HAL::StackFramePtr stack) {
   if (!rt_check_stack(stack)) return false;
 
   m_Stack = stack;
@@ -96,7 +97,7 @@ HAL::StackFramePtr SMPManager::GetStackFrame() noexcept {
 }
 
 /// @brief Finds and switch to a free core.
-bool SMPManager::Switch(HAL::StackFrame* stack) {
+bool SMPManager::Switch(HAL::StackFramePtr stack) {
   if (stack == nullptr) return false;
 
   for (SizeT idx = 0; idx < kMaxHarts; ++idx) {

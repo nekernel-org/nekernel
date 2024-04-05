@@ -62,7 +62,7 @@ void ke_stop(const NewOS::Int &id) {
     }
     case RUNTIME_CHECK_INVALID_PRIVILEGE: {
       kcout << "*** CAUSE: RUNTIME_CHECK_INVALID_PRIVILEGE *** \r\n";
-      kcout << "*** WHAT: RING-0 POLICY VIOLATION. *** \r\n";
+      kcout << "*** WHAT: HYPERVISOR POLICY VIOLATION. *** \r\n";
       break;
     case RUNTIME_CHECK_UNEXCPECTED: {
       kcout << "*** CAUSE: RUNTIME_CHECK_UNEXCPECTED *** \r\n";

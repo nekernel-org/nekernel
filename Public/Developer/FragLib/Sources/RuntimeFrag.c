@@ -6,9 +6,17 @@
 
 #include <Headers/Defines.h>
 
-/// @brief Inits the system library.
-/// @return if it was succesful or not.
+/// @brief Main application entrypoint.
+/// @param  
+/// @return 
+CA_EXTERN_C VoidType AppMain(VoidType);
+
+/// @brief Pre-entrypoint intiialization.
+/// @param  
+/// @return 
 CA_EXTERN_C VoidType __start(VoidType) {
   kSharedApplication = RtGetApp();
   CA_MUST_PASS(kSharedApplication);
+
+  AppMain();
 }

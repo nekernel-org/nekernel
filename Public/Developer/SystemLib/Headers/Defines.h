@@ -51,6 +51,12 @@ typedef CharacterTypeUTF8* PtrCharacterType;
 typedef void* PtrVoidType;
 typedef void VoidType;
 
+#ifdef __SINGLE_PRECISION__
+typedef float PositionType;
+#else
+typedef double PositionType;
+#endif
+
 typedef __UINTPTR_TYPE__ UIntPtrType;
 typedef __INTPTR_TYPE__ IntPtrType;
 typedef __UINT64_TYPE__ UInt64Type;

@@ -10,7 +10,7 @@
 
 /*************************************************************
  * 
- * File: Window.hxx 
+ * File: Window.h 
  * Purpose: Window Manager API for NewOS.
  * Date: 3/26/24
  * 
@@ -21,17 +21,13 @@
 struct _WmPoint;
 struct _WindowPort;
 
-#ifdef __SINGLE_PRECISION__
-typedef float PositionType;
-#else
-typedef double PositionType;
-#endif
-
 struct _ControlPort;
 struct _WmPoint;
-struct _WindowPort;
 
 typedef QWordType DCRef;
+
+/// @brief Window procedure type.
+typedef VoidType(*WmWindowProc)(struct _WindowPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
 
 /// @brief A point, can represent the size, position of a window.
 typedef struct _WmPoint {
@@ -52,6 +48,7 @@ typedef struct _WindowPort {
   WmPoint windowSize;
   BooleanType windowInvalidate;
   DWordType windowClearColor;
+  WmWindowProc windowProc;
   struct _WindowPort* windowMenuPort; ///! Attached menu to it.
   struct _WindowPort* windowParentPort;
 } WindowPort;
@@ -63,8 +60,16 @@ typedef struct _ControlPort {
   BooleanType controlVisible;
   BooleanType controlMoving;
   WmPoint controlPosition;
+  WmWindowProc controlProc;
   WindowPort* parentPort;
 } ControlPort;
+
+enum {
+  kWmErrIncompatible = 0x74,
+  kWmErrOutOfMemory,
+  kWmErrInvalidArg,
+  kWmErrNotImplemented,
+};
 
 /// @brief Color reference.
 typedef UInt32Type ColorRef;
@@ -94,6 +99,7 @@ CA_EXTERN_C const ColorRef kRgbWhite;
 #define kControlKindIcon         6
 #define kControlKindRadioBox     7
 #define kControlKindCheckBox     8
+#define kControlKindUserDefined  9
 
 /// @brief Creates a new control
 /// @param id the control rsrc fork.
@@ -121,7 +127,7 @@ CA_EXTERN_C Int32Type     WmSetControlEnabled(ControlPort* id, BooleanType enabl
 /// @param id 
 /// @param visible 
 /// @return 
-CA_EXTERN_C Int32Type     WmMakeControlVisible(ControlPort* id, BooleanType visible);
+CA_EXTERN_C Int32Type     WmSetControlVisible(ControlPort* id, BooleanType visible);
 
 /// @brief Creates a new window.
 /// @param name the window name
@@ -164,10 +170,3 @@ CA_EXTERN_C VoidType      WmTranslateMessage(WindowPort* port, Int64Type msg);
 /// @param id 
 /// @return 
 CA_EXTERN_C Int32Type     WmDispatchMessage(WindowPort* id);
-
-enum {
-  kWmErrIncompatible = 0x74,
-  kWmErrOutOfMemory,
-  kWmErrInvalidArg,
-  kWmErrNotImplemented,
-};

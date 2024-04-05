@@ -1,25 +1,22 @@
-/** ===========================================
- (C) Mahrouss Logic
- Purpose: PowerPC low-level routines.
-    ===========================================*/
+; /* -------------------------------------------
+;
+;    Copyright Mahrouss Logic
+;
+;    Purpose: PowerPC low level I/O
+;
+; ------------------------------------------- */
 
-.section .text
-
-.globl RtGetApp
-.globl RtAssertTriggerInterrupt
-.balign 4
 
 /* @brief Application getter */
 /* @throws: ApptError: appartement error. */
-RtGetApp:
-    stw 0x10, 0(3) /* sysGetProcessObject */
+export .code64 RtGetApp:
+    stw 0x10, 0(r3) /* sysGetProcessObject */
     sc
 
     blr
 
-RtAssertTriggerInterrupt:
-    stw 0x11, 0(3) /* sysTerminateCurrentProcess */
-    stw 0x3, 0(4)
+export .code64 RtAssertTriggerInterrupt:
+    stw 0x11, 0(r3) /* sysTerminateCurrentProcess */
     sc
 
     blr

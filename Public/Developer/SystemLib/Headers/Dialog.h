@@ -8,6 +8,32 @@
 
 #include <Headers/Window.h>
 
+struct _DialogPort;
+struct _DialogPoint;
+
+/// @brief Dialog procedure type.
+typedef VoidType(*WmDialogProc)(struct _DialogPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
+
+/// @brief A point, can represent the size, position of a window.
+typedef struct _DialogPoint {
+  PositionType X, Y;
+} DialogPoint;
+
+typedef struct _DialogPort {
+  WordType dlgPort;
+  WordType dlgKind;
+  BooleanType dlgVisible;
+  BooleanType dlgMoving;
+  DialogPoint dlgPosition;
+  WmDialogProc dlgProc;
+  struct _WindowPort* parentPort;
+} DialogPort;
+
+/// @brief Creates a new dialog from a rsrc fork id.
+/// @param rsrcId the resource id.
+/// @return the dialog port.
+CA_EXTERN_C DialogPort* DlgCreateFromRsrc(QWordType rsrcId); 
+
 /// @brief Shows an message box according to format.
 /// @param title the message box title
 /// @param format the format

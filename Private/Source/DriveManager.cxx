@@ -8,6 +8,9 @@
 #include <KernelKit/DriveManager.hxx>
 #include <Builtins/ATA/Defines.hxx>
 
+/// @file DriveManager.cxx
+/// @brief Kernel drive manager.
+
 namespace NewOS {
 static UInt16 kATAIO = 0U;
 static UInt8 kATAMaster = 0U;

@@ -6,7 +6,8 @@
 
 #include <KernelKit/Timer.hpp>
 
-// bugs = 0
+///! BUGS: 0
+///! @file Timer.cxx
 
 using namespace NewOS;
 

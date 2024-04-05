@@ -10,7 +10,7 @@
 
 /*************************************************************
  * 
- * File: TrueType.hxx 
+ * File: TrueType.h 
  * Purpose: TrueType font implementation for NewOS.
  * Date: 3/26/24
  * 
@@ -35,10 +35,4 @@ CA_EXTERN_C VoidType FnDisposeFont(TTFFontRef fon);
 /// @return 
 CA_EXTERN_C PtrVoidType FnGetGlyph(TTFFontRef fon, UInt32Type utfCh);
 
-/// @brief Write a character to the window.
-/// @param fon the font.
-/// @param port the window port.
-/// @param pos the position of where to put the character.
-/// @return 
-CA_EXTERN_C VoidType FnWriteCharacter(TTFFontRef fon, WindowPort* port, PositionType pos);
-
+/// TODO: Get font metadata.

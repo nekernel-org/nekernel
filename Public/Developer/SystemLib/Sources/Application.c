@@ -21,5 +21,5 @@ CA_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType) {
 /// @return
 CA_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType) {
   return (CharacterTypeUTF8**)kSharedApplication->Invoke(kSharedApplication,
-                                                        kCallGetArgsPtr);
+                                                         kCallGetArgsPtr);
 }

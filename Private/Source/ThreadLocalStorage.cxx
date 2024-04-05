@@ -10,7 +10,7 @@
 #include <KernelKit/ProcessScheduler.hpp>
 #include <KernelKit/ThreadLocalStorage.hxx>
 
-/// bugs 0
+///! BUGS: 0
 
 /***********************************************************************************/
 /// @file ThreadLocalStorage.cxx
