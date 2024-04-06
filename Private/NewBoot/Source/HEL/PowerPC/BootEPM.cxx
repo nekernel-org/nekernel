@@ -9,7 +9,7 @@
 
 #define kEPMSectorSize 1024
 
-#define kSwapSize MIB(16)
+#define kEPMSwapSize MIB(16)
 
 // {310E1FC7-2060-425D-BE7B-75A37CC679BC}
 STATIC const BlockGUID kEPMGuid = {
@@ -82,7 +82,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       }
 
       partBlock->SectorSz = kEPMSectorSize;
-      partBlock->LbaStart = kEPMStartPartitionBlk + kSwapSize;
+      partBlock->LbaStart = kEPMStartPartitionBlk + kEPMSwapSize;
       partBlock->Version = kNewFSVersionInteger;
       partBlock->Kind = kNewFSPartitionTypeStandard;
       partBlock->LbaEnd = 0UL; ///! grows on the disk.
@@ -106,7 +106,7 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
       swapBlock->LbaStart = kEPMStartPartitionBlk;
       swapBlock->Version = kNewFSVersionInteger;
       swapBlock->Kind = kNewFSPartitionTypePage;
-      swapBlock->LbaEnd = kSwapSize; /// 4 MIB swap partition.
+      swapBlock->LbaEnd = kEPMSwapSize; /// 4 MIB swap partition.
 
       bootDev->Write(buf, 1);
 

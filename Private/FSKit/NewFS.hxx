@@ -38,8 +38,8 @@
 /// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
-#define kNewFSVersionInteger 0x121
-#define kNewFSVerionString   "1.2.1"
+#define kNewFSVersionInteger 0x122
+#define kNewFSVerionString   "1.2.2"
 
 /// @brief Standard fork types.
 #define kNewFSDataFork     "data"
@@ -87,8 +87,8 @@
 #define kPartLen 32
 
 #define kNewFSFlagDeleted 0xF0
-#define kNewFSFlagUnallocated 0x0F
-#define kNewFSFlagCatalog 0xFF
+#define kNewFSFlagUnallocated 0x00
+#define kNewFSFlagCreated 0x0F
 
 typedef NewOS::Char NewCharType;
 
@@ -156,22 +156,37 @@ struct PACKED NewPartitionBlock final {
 };
 
 namespace NewOS {
+
+enum {
+  kNewFSSubDriveA,
+  kNewFSSubDriveB,
+  kNewFSSubDriveC,
+  kNewFSSubDriveD,
+  kNewFSSubDriveInvalid,
+  kNewFSSubDriveCount,
+};
+
+
 ///
 /// \name NewFSParser
 /// \brief NewFS parser class. (catalog creation, remove removal, root, forks...)
 /// Designed like the DOM, detects the filesystem automatically.
 ///
 
-class NewFSParser {
+class NewFSParser final {
  public:
   explicit NewFSParser() = default;
-  virtual ~NewFSParser() = default;
+  ~NewFSParser() = default;
 
  public:
   NEWOS_COPY_DEFAULT(NewFSParser);
 
  public:
-  virtual _Output NewFork*    CreateFork(_Input NewCatalog* catalog, _Input NewFork& theFork) = 0;
+  /// @brief Creates a new fork inside the New filesystem partition.
+  /// @param catalog it's catalog
+  /// @param theFork the fork itself.
+  /// @return the fork
+  _Output NewFork*            CreateFork(_Input NewCatalog* catalog, _Input NewFork& theFork);
   
   virtual _Output NewFork*    FindFork(_Input NewCatalog* catalog, _Input const Char* name) = 0;
   
@@ -214,6 +229,10 @@ class NewFSParser {
   /// @param drive The drive to write on.
   /// @return If it was sucessful, see DbgLastError().
   virtual bool Format(_Input _Output DriveTrait* drive) = 0;
+
+public:
+  Int32 fDriveIndex{ kNewFSSubDriveA };
+
 };
 
 ///
@@ -228,26 +247,22 @@ class NewFilesystemHelper final {
   static const char Separator();
 };
 
-enum {
-  kHCFSSubDriveA,
-  kHCFSSubDriveB,
-  kHCFSSubDriveC,
-  kHCFSSubDriveD,
-  kHCFSSubDriveInvalid,
-  kHCFSSubDriveCount,
-};
-
 /// @brief Write to newfs disk.
 /// @param Mnt mounted interface. 
 /// @param DrvTrait drive info 
 /// @param DrvIndex drive index.
 /// @return 
-Int32 fs_newfs_write_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
+Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
 
 /// @brief Read from newfs disk.
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return 
-Int32 fs_newfs_read_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
+Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
+
+namespace Detail
+{
+Boolean fs_init_newfs(Void) noexcept;
+} // namespace Detail
 }  // namespace NewOS

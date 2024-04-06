@@ -13,7 +13,9 @@
 
 namespace NewOS {
 /// @brief C++ constructor
-NewFilesystemManager::NewFilesystemManager() = default;
+NewFilesystemManager::NewFilesystemManager() {
+  MUST_PASS(Detail::fs_init_newfs());
+}
 
 NewFilesystemManager::~NewFilesystemManager() = default;
 

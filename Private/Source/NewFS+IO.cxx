@@ -34,25 +34,25 @@ using namespace NewOS;
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return 
-Int32 fs_newfs_read_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
+Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   DrvTrait.fPacket.fPacketGood = false;
   
   switch (DrvIndex) {
-    case kHCFSSubDriveA: {
+    case kNewFSSubDriveA: {
       NEWFS_READ(A, DrvTrait.fPacket, Mnt);
       break;
     }
-    case kHCFSSubDriveB: {
+    case kNewFSSubDriveB: {
       NEWFS_READ(B, DrvTrait.fPacket, Mnt);
       break;
     }
-    case kHCFSSubDriveC: {
+    case kNewFSSubDriveC: {
       NEWFS_READ(C, DrvTrait.fPacket, Mnt);
       break;
     }
-    case kHCFSSubDriveD: {
+    case kNewFSSubDriveD: {
       NEWFS_READ(D, DrvTrait.fPacket, Mnt);
       break;
     }
@@ -66,25 +66,25 @@ Int32 fs_newfs_read_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 Dr
 /// @param DrvTrait drive info 
 /// @param DrvIndex drive index.
 /// @return 
-Int32 fs_newfs_write_raw(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
+Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   DrvTrait.fPacket.fPacketGood = false;
 
   switch (DrvIndex) {
-    case kHCFSSubDriveA: {
+    case kNewFSSubDriveA: {
       NEWFS_WRITE(A, DrvTrait.fPacket, Mnt);
       break;
     }
-    case kHCFSSubDriveB: {
+    case kNewFSSubDriveB: {
       NEWFS_WRITE(B, DrvTrait.fPacket, Mnt);
       break;
     }
-    case kHCFSSubDriveC: {
+    case kNewFSSubDriveC: {
       NEWFS_WRITE(C, DrvTrait.fPacket, Mnt);
       break;
     }
-    case kHCFSSubDriveD: {
+    case kNewFSSubDriveD: {
       NEWFS_WRITE(D, DrvTrait.fPacket, Mnt);
       break;
     }

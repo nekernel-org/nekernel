@@ -13,8 +13,8 @@
 //! @file KernelHeap.cxx
 //! @brief Kernel allocator.
 
-#define kHeapMagic (0xD4D7D5)
-#define kHeapHeaderPaddingSz (16U)
+#define kKernelHeapMagic (0xD4D7D5)
+#define kKernelHeapHeaderPaddingSz (16U)
 
 namespace NewOS {
 STATIC SizeT kHeapCount = 0UL;
@@ -26,16 +26,16 @@ namespace Detail {
 /// | HIB |  ADDRESS  |
 struct PACKED HeapInformationBlock final {
   ///! @brief 32-bit value which contains the magic number of the executable.
-  UInt32    hMagic;
+  UInt32    fMagic;
   ///! @brief Boolean value which tells if the pointer is allocated.
-  Boolean   hPresent;
+  Boolean   fPresent;
   ///! @brief 32-bit CRC checksum
-  UInt32    hCRC32;
+  UInt32    fCRC32;
   /// @brief 64-bit pointer size.
-  SizeT     hSizePtr;
+  SizeT     fTargetPtrSize;
   /// @brief 64-bit target pointer.
-  UIntPtr   hTargetPtr;
-  UInt8     hPadding[kHeapHeaderPaddingSz];
+  UIntPtr   fTargetPtr;
+  UInt8     fPadding[kKernelHeapHeaderPaddingSz];
 };
 
 typedef HeapInformationBlock *HeapInformationBlockPtr;
@@ -55,10 +55,10 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
       reinterpret_cast<Detail::HeapInformationBlockPtr>(
           wrapper.VirtualAddress());
 
-  heapInfo->hSizePtr = sz;
-  heapInfo->hMagic = kHeapMagic;
-  heapInfo->hCRC32 = 0;  // dont fill it for now.
-  heapInfo->hTargetPtr = wrapper.VirtualAddress();
+  heapInfo->fTargetPtrSize = sz;
+  heapInfo->fMagic = kKernelHeapMagic;
+  heapInfo->fCRC32 = 0;  // dont fill it for now.
+  heapInfo->fTargetPtr = wrapper.VirtualAddress();
 
   ++kHeapCount;
 
@@ -76,24 +76,24 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
       reinterpret_cast<Detail::HeapInformationBlockPtr>(
           (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
-  if (virtualAddress && virtualAddress->hMagic == kHeapMagic) {
-    if (!virtualAddress->hPresent) {
+  if (virtualAddress && virtualAddress->fMagic == kKernelHeapMagic) {
+    if (!virtualAddress->fPresent) {
       return -kErrorHeapNotPresent;
     }
 
-    if (virtualAddress->hCRC32 != 0) {
-      if (virtualAddress->hCRC32 !=
-          ke_calculate_crc32((Char *)virtualAddress->hTargetPtr,
-                             virtualAddress->hSizePtr)) {
+    if (virtualAddress->fCRC32 != 0) {
+      if (virtualAddress->fCRC32 !=
+          ke_calculate_crc32((Char *)virtualAddress->fTargetPtr,
+                             virtualAddress->fTargetPtrSize)) {
         ke_stop(RUNTIME_CHECK_POINTER);
       }
     }
 
-    virtualAddress->hSizePtr = 0UL;
-    virtualAddress->hPresent = false;
-    virtualAddress->hTargetPtr = 0;
-    virtualAddress->hCRC32 = 0;
-    virtualAddress->hMagic = 0;
+    virtualAddress->fTargetPtrSize = 0UL;
+    virtualAddress->fPresent = false;
+    virtualAddress->fTargetPtr = 0;
+    virtualAddress->fCRC32 = 0;
+    virtualAddress->fMagic = 0;
 
     PTEWrapper pageWrapper(false, false, false, (UIntPtr)virtualAddress);
     Ref<PTEWrapper*> pteAddress{ &pageWrapper };
@@ -118,7 +118,7 @@ Boolean ke_is_valid_heap(VoidPtr heapPtr) {
         reinterpret_cast<Detail::HeapInformationBlockPtr>(
             (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
-    if (virtualAddress->hPresent && virtualAddress->hMagic == kHeapMagic) {
+    if (virtualAddress->fPresent && virtualAddress->fMagic == kKernelHeapMagic) {
       return true;
     }
   }
@@ -135,9 +135,9 @@ Boolean ke_protect_ke_heap(VoidPtr heapPtr) {
         reinterpret_cast<Detail::HeapInformationBlockPtr>(
             (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
-    if (virtualAddress->hPresent && virtualAddress->hMagic == kHeapMagic) {
-      virtualAddress->hCRC32 =
-          ke_calculate_crc32((Char *)heapPtr, virtualAddress->hSizePtr);
+    if (virtualAddress->fPresent && virtualAddress->fMagic == kKernelHeapMagic) {
+      virtualAddress->fCRC32 =
+          ke_calculate_crc32((Char *)heapPtr, virtualAddress->fTargetPtrSize);
       return true;
     }
   }

@@ -26,11 +26,7 @@
 #define kPefVersion 1
 #define kPefNameLen 64
 
-/// @brief Preferred Executable Format, a format designed
-/// for RISC/CISC Von-neumann processor types.
-
-/// The PEF also uses the x64 PE calling convention and ABI.
-/// It's just that the container are different.
+/// @brief Preferred Executable Format.
 
 namespace NewOS {
 enum {
@@ -94,7 +90,7 @@ enum {
 #define kPefDebugExt ".dbg"
 
 // NewOS System Binary Interface.
-#define kPefAbi (0xDEAD2)
+#define kPefAbi (0x5046)
 
 #define kPefStart "__start"
 
