@@ -188,7 +188,11 @@ class NewFSParser final {
   /// @return the fork
   _Output NewFork*            CreateFork(_Input NewCatalog* catalog, _Input NewFork& theFork);
   
-  virtual _Output NewFork*    FindFork(_Input NewCatalog* catalog, _Input const Char* name) = 0;
+  /// @brief Find fork inside New filesystem.
+  /// @param catalog the catalog.
+  /// @param name the fork name.
+  /// @return the fork.
+  _Output NewFork*            FindFork(_Input NewCatalog* catalog, _Input const Char* name);
   
   virtual _Output Void        RemoveFork(_Input NewFork* fork) = 0;
 
@@ -228,7 +232,7 @@ class NewFSParser final {
   /// @brief Make a EPM+NewFS drive out of the disk.
   /// @param drive The drive to write on.
   /// @return If it was sucessful, see DbgLastError().
-  virtual bool Format(_Input _Output DriveTrait* drive) = 0;
+  bool Format(_Input _Output DriveTrait* drive);
 
 public:
   Int32 fDriveIndex{ kNewFSSubDriveA };

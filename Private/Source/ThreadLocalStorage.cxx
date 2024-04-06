@@ -20,7 +20,7 @@
 using namespace NewOS;
 
 /**
- * Check for cookie inside TIB.
+ * @brief Check for cookie inside TIB.
  * @param tib the TIB to check.
  * @return if the cookie is enabled.
  */
@@ -38,8 +38,8 @@ Boolean tls_check_tib(ThreadInformationBlock* tib) {
 }
 
 /**
- * System call implementation of the TLS check.
- * @param ptr
+ * @brief System call implementation of the TLS check.
+ * @param stackPtr The call frame.
  * @return
  */
 EXTERN_C Void tls_check_syscall_impl(NewOS::HAL::StackFramePtr stackPtr) noexcept {

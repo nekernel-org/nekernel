@@ -15,7 +15,7 @@
                 "__HAVE_MAHROUSS_APIS__",
                 "__FSKIT_NEWFS__",
                 "__EFI_x86_64__",
-                "__AHCI__"
+                "__ATA_PIO__"
             ],
             "cStandard": "c17",
             "cppStandard": "c++20",
@@ -47,7 +47,7 @@
                 "__HAVE_MAHROUSS_APIS__",
                 "__FSKIT_NEWFS__",
                 "__EFI_x86_64__",
-                "__AHCI__"
+                "__ATA_PIO__"
             ],
             "cStandard": "c17",
             "cppStandard": "c++20",
