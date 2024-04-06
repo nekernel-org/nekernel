@@ -130,19 +130,19 @@ enum {
 
 #ifdef __KERNEL__
 
-NewOS::Boolean drv_ata_init(NewOS::UInt16 Bus, NewOS::UInt8 Drive, NewOS::UInt16& OutBus,
+NewOS::Boolean drv_std_init(NewOS::UInt16 Bus, NewOS::UInt8 Drive, NewOS::UInt16& OutBus,
                       NewOS::UInt8& OutMaster);
 
-NewOS::Boolean drv_ata_detected(NewOS::Void);
+NewOS::Boolean drv_std_detected(NewOS::Void);
 
-NewOS::Void drv_ata_select(NewOS::UInt16 Bus);
+NewOS::Void drv_std_select(NewOS::UInt16 Bus);
 
-NewOS::Boolean drv_ata_wait_io(NewOS::UInt16 IO);
+NewOS::Boolean drv_std_wait_io(NewOS::UInt16 IO);
 
-NewOS::Void drv_ata_read(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Master, NewOS::Char* Buf,
+NewOS::Void drv_std_read(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Master, NewOS::Char* Buf,
                    NewOS::SizeT SectorSz, NewOS::SizeT Size);
 
-NewOS::Void drv_ata_write(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Master, NewOS::Char* Buf,
+NewOS::Void drv_std_write(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Master, NewOS::Char* Buf,
                     NewOS::SizeT SectorSz, NewOS::SizeT Size);
 
 #endif // ifdef __KERNEL__

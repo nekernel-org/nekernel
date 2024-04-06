@@ -31,7 +31,7 @@ static Boolean kATADetected = false;
 static Int32 kATADeviceType = kATADeviceCount;
 static Char kATAData[kATADataLen] = {0};
 
-Boolean drv_ata_wait_io(UInt16 IO) {
+Boolean drv_std_wait_io(UInt16 IO) {
   for (int i = 0; i < 4; i++) In8(IO + ATA_REG_STATUS);
 
 ATAWaitForIO_Retry:
@@ -49,20 +49,20 @@ ATAWaitForIO_Retry2:
   return true;
 }
 
-Void drv_ata_select(UInt16 Bus) {
+Void drv_std_select(UInt16 Bus) {
   if (Bus == ATA_PRIMARY_IO)
     Out8(Bus + ATA_REG_HDDEVSEL, ATA_PRIMARY_SEL);
   else
     Out8(Bus + ATA_REG_HDDEVSEL, ATA_SECONDARY_SEL);
 }
 
-Boolean drv_ata_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus,
+Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus,
                       UInt8& OutMaster) {
-  if (drv_ata_detected()) return false;
+  if (drv_std_detected()) return false;
 
   UInt16 IO = Bus;
 
-  drv_ata_select(IO);
+  drv_std_select(IO);
 
   // Bus init, NEIN bit.
   Out8(IO + ATA_REG_NEIN, 1);
@@ -86,7 +86,7 @@ ATAInit_Retry:
   /// fetch serial info
   /// model, speed, number of sectors...
 
-  drv_ata_wait_io(IO);
+  drv_std_wait_io(IO);
 
   for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
     kATAData[indexData] = In16(IO + ATA_REG_DATA);
@@ -130,7 +130,7 @@ ATAInit_Retry:
   return true;
 }
 
-Void drv_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
+Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
                    SizeT SectorSz, SizeT Size) {
   UInt8 Command = (!Master ? 0xE0 : 0xF0);
 
@@ -144,7 +144,7 @@ Void drv_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  drv_ata_wait_io(IO);
+  drv_std_wait_io(IO);
 
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
     WideChar chr = In16(IO + ATA_REG_DATA);
@@ -153,7 +153,7 @@ Void drv_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
   }
 }
 
-Void drv_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
+Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
                     SizeT SectorSz, SizeT Size) {
   UInt8 Command = (!Master ? 0xE0 : 0xF0);
 
@@ -167,7 +167,7 @@ Void drv_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  drv_ata_wait_io(IO);
+  drv_std_wait_io(IO);
 
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
     Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
@@ -176,6 +176,6 @@ Void drv_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 }
 
 /// @check is ATA detected?
-Boolean drv_ata_detected(Void) { return kATADetected; }
+Boolean drv_std_detected(Void) { return kATADetected; }
 
 #endif /* ifdef __ATA_PIO__ */

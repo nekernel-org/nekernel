@@ -7,9 +7,9 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-#define ME_BUS_COUNT (256)
-#define ME_DEVICE_COUNT (33)
-#define ME_FUNCTION_COUNT (8)
+#define NEWOS_BUS_COUNT (256)
+#define NEWOS_DEVICE_COUNT (33)
+#define NEWOS_FUNCTION_COUNT (8)
 
 namespace NewOS::PCI {
     class Iterator final {
@@ -29,7 +29,7 @@ namespace NewOS::PCI {
         Ref<PCI::Device> operator[](const Size &sz);
 
     private:
-        Array<PCI::Device, ME_BUS_COUNT> m_Devices;
+        Array<PCI::Device, NEWOS_BUS_COUNT> m_Devices;
     };
 } // namespace NewOS::PCI
 

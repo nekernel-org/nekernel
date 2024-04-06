@@ -25,7 +25,7 @@ Void ke_drv_input(DriveTrait::DrivePacket* pckt) {
     
     pckt->fPacketGood = false;
 
-    drv_ata_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, 1, pckt->fPacketSize);
+    drv_std_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, 1, pckt->fPacketSize);
 
     pckt->fPacketGood = true;
 }
@@ -40,7 +40,7 @@ Void ke_drv_output(DriveTrait::DrivePacket* pckt) {
     
     pckt->fPacketGood = false;
 
-    drv_ata_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, 1, pckt->fPacketSize);
+    drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, 1, pckt->fPacketSize);
 
     pckt->fPacketGood = true;
 }

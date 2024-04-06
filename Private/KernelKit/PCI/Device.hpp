@@ -77,5 +77,5 @@ namespace NewOS::PCI
 } // namespace NewOS::PCI
 
 
-extern "C" void LumiaPCISetCfgTarget(NewOS::UInt bar);
-extern "C" NewOS::UInt LumiaPCIReadRaw(NewOS::UInt bar);
+EXTERN_C void NewOSPCISetCfgTarget(NewOS::UInt bar);
+EXTERN_C NewOS::UInt NewOSPCIReadRaw(NewOS::UInt bar);

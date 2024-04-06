@@ -34,7 +34,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   writer.Write(L"Mahrouss-Logic (R) NewOS: ").Write(BVersionString::Shared());
 
-  writer.Write(L"\r\nNewBoot.exe: Firmware Vendor: ")
+  writer.Write(L"\r\nNewOS: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
@@ -43,15 +43,12 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   /// if ATA drive is initialized and EFI vendor supports an EPM scheme.
   /// @EDK tells our OS that it supports EPM scheme as well.
-  if (ataDev) {
+  if (ataDev && SystemTable->FirmwareVendor[0] == '@') {
     Char namePart[kEPMNameLength] = {"NewBoot"};
     /// tries to read an EPM block, or writes one if it fails.
     isEpmFound = boot_write_epm_partition(namePart, kEPMNameLength, &ataDev);
   } else {
-    writer.Write(
-        L"NewOS: This computer can't work with NewOS, please use Mahrouss-"
-        L"Logic products instead\r\nNewBoot.exe: Our website: "
-        L"www.el-mahrouss-logic.com\r\n");
+    writer.Write(L"NewOS: This computer can't work with NewOS.\r\n");
     return kEfiFail;
   }
 
@@ -71,9 +68,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
     if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&SizePtr) !=
         kEfiOk) {
-      EFI::RaiseHardError(
-          L"__bad_alloc",
-          L"NewBoot ran out of memory!");
+      EFI::RaiseHardError(L"__bad_alloc", L"NewBoot ran out of memory!");
     }
 
     /****
@@ -86,9 +81,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
     if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
                          (VoidPtr*)&Descriptor) != kEfiOk) {
-      EFI::RaiseHardError(
-          L"__bad_alloc",
-          L"NewBoot ran out of memory!");
+      EFI::RaiseHardError(L"__bad_alloc", L"NewBoot ran out of memory!");
     }
 
     /****
@@ -98,7 +91,8 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
      */
 
     while (BS->GetMemoryMap(SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc) !=
-        kEfiOk);
+           kEfiOk)
+      ;
 
     HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
 
