@@ -8,7 +8,7 @@
 
 namespace NewOS {
 bool Property::StringEquals(StringView& name) {
-  return fsName && this->fsName == name;
+  return fName && this->fName == name;
 }
 
 const PropertyId& Property::GetPropertyById() { return fAction; }

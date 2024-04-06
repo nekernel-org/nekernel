@@ -17,7 +17,7 @@ using PropertyId = Int;
 
 class Property {
  public:
-  explicit Property(const StringView &sw) : fsName(sw) {}
+  explicit Property(const StringView &sw) : fName(sw) {}
 
   virtual ~Property() = default;
 
@@ -29,7 +29,7 @@ class Property {
   const PropertyId &GetPropertyById();
 
  private:
-  Ref<StringView> fsName;
+  Ref<StringView> fName;
   PropertyId fAction;
 };
 

@@ -19,6 +19,7 @@ enum kPRDTTransfer {
   kPRDTTransferCount,
 };
 
+/// @brief Physical Region Descriptor Table.
 struct PRDT {
   UInt32 fPhysAddress;
   UInt32 fSectorCount;
