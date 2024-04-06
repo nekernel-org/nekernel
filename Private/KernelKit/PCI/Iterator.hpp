@@ -29,7 +29,7 @@ namespace NewOS::PCI {
         Ref<PCI::Device> operator[](const Size &sz);
 
     private:
-        Array<PCI::Device, NEWOS_BUS_COUNT> m_Devices;
+        Array<PCI::Device, NEWOS_BUS_COUNT> fDevices;
     };
 } // namespace NewOS::PCI
 

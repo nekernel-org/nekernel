@@ -15,7 +15,7 @@ namespace NewOS
     {
     public:
         explicit ArrayList(T *list)
-            : m_List(reinterpret_cast<T>(list))
+            : fList(reinterpret_cast<T>(list))
         {}
 
         ~ArrayList() = default;
@@ -25,26 +25,26 @@ namespace NewOS
 
         T *Data()
         {
-            return m_List;
+            return fList;
         }
 
         const T *CData()
         {
-            return m_List;
+            return fList;
         }
 
         T &operator[](int index) const
         {
-            return m_List[index];
+            return fList[index];
         }
 
         operator bool()
         {
-            return m_List;
+            return fList;
         }
 
     private:
-        T *m_List;
+        T *fList;
 
         friend class InitHelpers;
 

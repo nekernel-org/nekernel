@@ -23,6 +23,7 @@
 using namespace NewOS;
 
 EXTERN_C Int32 kPRDTTransferStatus;
+STATIC PRDT kPRDT;
 
 #ifdef __ATA_DMA__
 

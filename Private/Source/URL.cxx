@@ -11,7 +11,7 @@
 /// BUGS: 0
 
 namespace NewOS {
-Url::Url(StringView &strUrl) : m_urlView(strUrl, false) {}
+Url::Url(StringView &strUrl) : fUrlView(strUrl, false) {}
 
 Url::~Url() = default;
 
@@ -63,7 +63,7 @@ ErrorOr<StringView> url_extract_protocol(const char *url) {
 }
 
 Ref<ErrorOr<StringView>> Url::Location() noexcept {
-  const char *src = m_urlView.Leak().CData();
+  const char *src = fUrlView.Leak().CData();
   auto loc = url_extract_location(src);
 
   if (!loc) return {};
@@ -72,7 +72,7 @@ Ref<ErrorOr<StringView>> Url::Location() noexcept {
 }
 
 Ref<ErrorOr<StringView>> Url::Protocol() noexcept {
-  const char *src = m_urlView.Leak().CData();
+  const char *src = fUrlView.Leak().CData();
   auto loc = url_extract_protocol(src);
 
   if (!loc) return {};

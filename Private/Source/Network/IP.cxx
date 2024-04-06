@@ -8,13 +8,13 @@
 #include <NewKit/Utils.hpp>
 
 namespace NewOS {
-char* RawIPAddress::Address() { return m_Addr; }
+char* RawIPAddress::Address() { return fAddr; }
 
-RawIPAddress::RawIPAddress(char bytes[4]) { rt_copy_memory(bytes, m_Addr, 4); }
+RawIPAddress::RawIPAddress(char bytes[4]) { rt_copy_memory(bytes, fAddr, 4); }
 
 bool RawIPAddress::operator==(const RawIPAddress& ipv4) {
   for (Size index = 0; index < 4; ++index) {
-    if (ipv4.m_Addr[index] != m_Addr[index]) return false;
+    if (ipv4.fAddr[index] != fAddr[index]) return false;
   }
 
   return true;
@@ -22,7 +22,7 @@ bool RawIPAddress::operator==(const RawIPAddress& ipv4) {
 
 bool RawIPAddress::operator!=(const RawIPAddress& ipv4) {
   for (Size index = 0; index < 4; ++index) {
-    if (ipv4.m_Addr[index] == m_Addr[index]) return false;
+    if (ipv4.fAddr[index] == fAddr[index]) return false;
   }
 
   return true;
@@ -34,11 +34,11 @@ char& RawIPAddress::operator[](const Size& index) {
   static char IP_PLACEHOLDER = '0';
   if (index > 4) return IP_PLACEHOLDER;
 
-  return m_Addr[index];
+  return fAddr[index];
 }
 
 RawIPAddress6::RawIPAddress6(char bytes[8]) {
-  rt_copy_memory(bytes, m_Addr, 8);
+  rt_copy_memory(bytes, fAddr, 8);
 }
 
 char& RawIPAddress6::operator[](const Size& index) {
@@ -47,12 +47,12 @@ char& RawIPAddress6::operator[](const Size& index) {
   static char IP_PLACEHOLDER = '0';
   if (index > 8) return IP_PLACEHOLDER;
 
-  return m_Addr[index];
+  return fAddr[index];
 }
 
 bool RawIPAddress6::operator==(const RawIPAddress6& ipv6) {
   for (SizeT index = 0; index < 8; ++index) {
-    if (ipv6.m_Addr[index] != m_Addr[index]) return false;
+    if (ipv6.fAddr[index] != fAddr[index]) return false;
   }
 
   return true;
@@ -60,7 +60,7 @@ bool RawIPAddress6::operator==(const RawIPAddress6& ipv6) {
 
 bool RawIPAddress6::operator!=(const RawIPAddress6& ipv6) {
   for (SizeT index = 0; index < 8; ++index) {
-    if (ipv6.m_Addr[index] == m_Addr[index]) return false;
+    if (ipv6.fAddr[index] == fAddr[index]) return false;
   }
 
   return true;

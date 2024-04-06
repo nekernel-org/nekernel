@@ -30,30 +30,30 @@ class OwnPtr final {
  public:
   template <typename... Args>
   bool New(Args &&...arg) {
-    if (m_Cls) {
+    if (fCls) {
       return false;
     }
 
-    m_Cls = new T(arg...);
-    return m_Cls;
+    fCls = new T(arg...);
+    return fCls;
   }
 
   void Delete() {
-    if (m_Cls) delete m_Cls;
+    if (fCls) delete fCls;
 
-    m_Cls = nullptr;
+    fCls = nullptr;
   }
 
-  T *operator->() const { return m_Cls; };
-  T *Raw() { return m_Cls; }
+  T *operator->() const { return fCls; };
+  T *Raw() { return fCls; }
 
-  Ref<T> AsRef() { return Ref<T>(m_Cls); }
+  Ref<T> AsRef() { return Ref<T>(fCls); }
 
-  operator bool() { return m_Cls; }
-  bool operator!() { return !m_Cls; }
+  operator bool() { return fCls; }
+  bool operator!() { return !fCls; }
 
  private:
-  T *m_Cls;
+  T *fCls;
 };
 
 template <typename T, typename... Args>

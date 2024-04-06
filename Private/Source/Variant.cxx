@@ -8,11 +8,11 @@
 
 namespace NewOS {
 const Char* Variant::ToString() {
-  if (m_Ptr == nullptr) {
+  if (fPtr == nullptr) {
     return ("Memory:{Nullptr}");
   }
 
-  switch (m_Kind) {
+  switch (fKind) {
     case VariantKind::kString:
       return ("Class:{String}");
     case VariantKind::kPointer:

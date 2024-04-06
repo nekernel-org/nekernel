@@ -10,7 +10,7 @@ class Function final {
   Function() = default;
 
  public:
-  explicit Function(T (*Fn)(Args... args)) : m_Fn(Fn) {}
+  explicit Function(T (*Fn)(Args... args)) : fFn(Fn) {}
 
   ~Function() = default;
 
@@ -19,20 +19,20 @@ class Function final {
 
   template <typename... XArgs>
   T operator()(Args... args) {
-    return m_Fn(args...);
+    return fFn(args...);
   }
 
   template <typename... XArgs>
   T Call(Args... args) {
-    return m_Fn(args...);
+    return fFn(args...);
   }
 
-  operator bool() { return m_Fn; }
+  operator bool() { return fFn; }
 
-  bool operator!() { return !m_Fn; }
+  bool operator!() { return !fFn; }
 
  private:
-  T (*m_Fn)(Args... args);
+  T (*fFn)(Args... args);
 };
 }  // namespace NewOS
 

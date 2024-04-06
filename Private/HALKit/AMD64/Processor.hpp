@@ -172,7 +172,6 @@ struct PACKED ALIGN(0x1000) NewOSGDT final {
 }  // namespace Detail
 }  // namespace NewOS::HAL
 
-EXTERN_C void idt_handle_system_call(NewOS::UIntPtr rsp);
 EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp);
 EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp);
 EXTERN_C void idt_handle_math(NewOS::UIntPtr rsp);

@@ -31,9 +31,9 @@ class Pmm final {
   Boolean ToggleShare(Ref<PTEWrapper> refPage, Boolean enable = true);
 
   /// @brief Get the page manager of this.
-  Ref<PageManager> &Leak() { return m_PageManager; }
+  Ref<PageManager> &Leak() { return fPageManager; }
 
  private:
-  Ref<PageManager> m_PageManager;
+  Ref<PageManager> fPageManager;
 };
 }  // namespace NewOS

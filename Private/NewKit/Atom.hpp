@@ -22,11 +22,11 @@ template <typename T> class Atom final
   public:
     T operator[](Size sz)
     {
-        return (m_ArrayOfAtoms & sz);
+        return (fArrayOfAtoms & sz);
     }
     void operator|(Size sz)
     {
-        m_ArrayOfAtoms |= sz;
+        fArrayOfAtoms |= sz;
     }
 
     friend Boolean operator==(Atom<T> &atomic, const T &idx)
@@ -40,6 +40,6 @@ template <typename T> class Atom final
     }
 
   private:
-    T m_ArrayOfAtoms;
+    T fArrayOfAtoms;
 };
 } // namespace NewOS

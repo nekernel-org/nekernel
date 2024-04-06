@@ -19,14 +19,14 @@ class IOArray final {
 
   IOArray(nullPtr) = delete;
 
-  explicit IOArray(Array<UShort, Sz> &ports) : m_Ports(ports) {}
+  explicit IOArray(Array<UShort, Sz> &ports) : fPorts(ports) {}
   ~IOArray() {}
 
   IOArray &operator=(const IOArray &) = default;
 
   IOArray(const IOArray &) = default;
 
-  operator bool() { return !m_Ports.Empty(); }
+  operator bool() { return !fPorts.Empty(); }
 
  public:
   template <typename T>
@@ -36,7 +36,7 @@ class IOArray final {
   void Out(SizeT index, T value);
 
  private:
-  Array<UShort, Sz> m_Ports;
+  Array<UShort, Sz> fPorts;
 };
 
 using IOArray16 = IOArray<16>;

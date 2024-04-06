@@ -25,15 +25,15 @@ class Variant final {
 
  public:
   explicit Variant(StringView *stringView)
-      : m_Ptr((voidPtr)stringView), m_Kind(VariantKind::kString) {}
-  explicit Variant(nullPtr) : m_Ptr(nullptr), m_Kind(VariantKind::kUndefined) {}
-  explicit Variant(voidPtr ptr) : m_Ptr(ptr), m_Kind(VariantKind::kPointer) {}
+      : fPtr((voidPtr)stringView), fKind(VariantKind::kString) {}
+  explicit Variant(nullPtr) : fPtr(nullptr), fKind(VariantKind::kUndefined) {}
+  explicit Variant(voidPtr ptr) : fPtr(ptr), fKind(VariantKind::kPointer) {}
 
  public:
   const Char *ToString();
 
  private:
-  voidPtr m_Ptr{nullptr};
-  VariantKind m_Kind{VariantKind::kUndefined};
+  voidPtr fPtr{nullptr};
+  VariantKind fKind{VariantKind::kUndefined};
 };
 }  // namespace NewOS

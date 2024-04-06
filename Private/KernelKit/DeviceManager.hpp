@@ -34,7 +34,7 @@ template <typename T>
 class DeviceInterface {
  public:
   explicit DeviceInterface(void (*Out)(T), void (*In)(T))
-      : m_Out(Out), m_In(In) {}
+      : fOut(Out), fIn(In) {}
 
   virtual ~DeviceInterface() = default;
 
@@ -44,23 +44,23 @@ class DeviceInterface {
 
  public:
   virtual DeviceInterface<T> &operator<<(T Data) {
-    m_Out(Data);
+    fOut(Data);
     return *this;
   }
 
   virtual DeviceInterface<T> &operator>>(T Data) {
-    m_In(Data);
+    fIn(Data);
     return *this;
   }
 
   virtual const char *Name() const { return "DeviceInterface"; }
 
-  operator bool() { return m_Out && m_In; }
-  bool operator!() { return !m_Out && !m_In; }
+  operator bool() { return fOut && fIn; }
+  bool operator!() { return !fOut && !fIn; }
 
  private:
-  void (*m_Out)(T Data);
-  void (*m_In)(T Data);
+  void (*fOut)(T Data);
+  void (*fIn)(T Data);
 };
 
 ///
@@ -70,7 +70,7 @@ class DeviceInterface {
 template <typename T>
 class IOBuf final {
  public:
-  explicit IOBuf(T Dat) : m_Data(Dat) {
+  explicit IOBuf(T Dat) : fData(Dat) {
     // at least pass something valid when instancating this struct.
     MUST_PASS(Dat);
   }
@@ -83,16 +83,16 @@ class IOBuf final {
  public:
   template <typename R>
   R operator->() const {
-    return m_Data;
+    return fData;
   }
 
   template <typename R>
   R &operator[](Size index) const {
-    return m_Data[index];
+    return fData[index];
   }
 
  private:
-  T m_Data;
+  T fData;
 };
 
 ///! @brief Device enum types.

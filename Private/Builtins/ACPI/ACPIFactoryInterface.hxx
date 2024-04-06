@@ -43,8 +43,8 @@ class ACPIFactoryInterface final {
   }
 
  private:
-  VoidPtr m_Rsdp;    // pointer to root descriptor.
-  SSizeT m_Entries;  // number of entries, -1 tells that no invalid entries were
+  VoidPtr fRsdp;    // pointer to root descriptor.
+  SSizeT fEntries;  // number of entries, -1 tells that no invalid entries were
                      // found.
 };
 }  // namespace NewOS

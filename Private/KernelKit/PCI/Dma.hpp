@@ -28,7 +28,7 @@ class DMAWrapper final {
  public:
   explicit DMAWrapper(nullPtr) = delete;
   explicit DMAWrapper(voidPtr Ptr, DmaKind Kind = DmaKind::PCI)
-      : m_Address(Ptr), m_Kind(Kind) {}
+      : fAddress(Ptr), fKind(Kind) {}
 
  public:
   DMAWrapper &operator=(voidPtr Ptr);
@@ -59,8 +59,8 @@ class DMAWrapper final {
   UIntPtr operator[](const UIntPtr &offset);
 
  private:
-  voidPtr m_Address{nullptr};
-  DmaKind m_Kind{DmaKind::Invalid};
+  voidPtr fAddress{nullptr};
+  DmaKind fKind{DmaKind::Invalid};
 
  private:
   friend class DMAFactory;

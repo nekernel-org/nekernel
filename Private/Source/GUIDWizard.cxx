@@ -24,10 +24,10 @@ auto make_sequence(const ArrayList<UShort>& uuidSeq) -> Ref<GUIDSequence*> {
 
   Ref<GUIDSequence*> sequenceReference{seq, true};
 
-  sequenceReference->m_Ms1 |= uuidSeq[0];
-  sequenceReference->m_Ms2 |= uuidSeq[1];
-  sequenceReference->m_Ms3 |= uuidSeq[2];
-  sequenceReference->m_Ms3 |= uuidSeq[3];
+  sequenceReference->fMs1 |= uuidSeq[0];
+  sequenceReference->fMs2 |= uuidSeq[1];
+  sequenceReference->fMs3 |= uuidSeq[2];
+  sequenceReference->fMs3 |= uuidSeq[3];
 
   return sequenceReference;
 }

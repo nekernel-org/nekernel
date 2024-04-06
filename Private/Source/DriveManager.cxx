@@ -25,7 +25,12 @@ Void ke_drv_input(DriveTrait::DrivePacket* pckt) {
     
     pckt->fPacketGood = false;
 
+#ifndef __AHCI__
     drv_std_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, 1, pckt->fPacketSize);
+#else
+    drv_std_read(pckt->fLba, (Char*)pckt->fPacketContent, 1, pckt->fPacketSize);
+#endif
+
 
     pckt->fPacketGood = true;
 }
@@ -40,7 +45,11 @@ Void ke_drv_output(DriveTrait::DrivePacket* pckt) {
     
     pckt->fPacketGood = false;
 
+#ifndef __AHCI__
     drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, 1, pckt->fPacketSize);
+#else
+    drv_std_write(pckt->fLba,(Char*)pckt->fPacketContent, 1, pckt->fPacketSize);
+#endif
 
     pckt->fPacketGood = true;
 }
@@ -68,7 +77,7 @@ const Char* ke_drive_kind(Void) { return "ATA-DMA"; }
 #endif
 
 #ifdef __AHCI__ 
-const Char* ke_drive_kind(Void) { return "AHCO"; }
+const Char* ke_drive_kind(Void) { return "AHCI"; }
 #endif
 
 /// @brief Unimplemented drive.

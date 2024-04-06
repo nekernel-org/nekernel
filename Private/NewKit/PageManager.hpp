@@ -42,15 +42,15 @@ class PTEWrapper final {
   bool Access();
 
  private:
-  Boolean m_Rw;
-  Boolean m_User;
-  Boolean m_ExecDisable;
-  UIntPtr m_VirtAddr;
-  Boolean m_Cache;
-  Boolean m_Shareable;
-  Boolean m_Wt;
-  Boolean m_Present;
-  Boolean m_Accessed;
+  Boolean fRw;
+  Boolean fUser;
+  Boolean fExecDisable;
+  UIntPtr fVirtAddr;
+  Boolean fCache;
+  Boolean fShareable;
+  Boolean fWt;
+  Boolean fPresent;
+  Boolean fAccessed;
 
  private:
   friend class PageManager;

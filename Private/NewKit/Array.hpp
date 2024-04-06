@@ -27,12 +27,12 @@ public:
             return {};
 
         kcout << "Returning element\r\n";
-        return ErrorOr<T>(m_Array[At]);
+        return ErrorOr<T>(fArray[At]);
     }
 
     Boolean Empty() const
     {
-        for (auto Val : m_Array)
+        for (auto Val : fArray)
         {
             if (Val)
                 return false;
@@ -44,7 +44,7 @@ public:
     SizeT Count() const
     {
         SizeT cntElems = 0UL;
-        for (auto Val : m_Array)
+        for (auto Val : fArray)
         {
             if (Val)
                 ++cntElems;
@@ -55,7 +55,7 @@ public:
 
     const T *CData()
     {
-        return m_Array;
+        return fArray;
     }
 
     operator bool()
@@ -64,7 +64,7 @@ public:
     }
 
 private:
-    T m_Array[N];
+    T fArray[N];
     
 };
 } // namespace NewOS

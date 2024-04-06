@@ -33,7 +33,7 @@ class RawIPAddress final {
   bool operator!=(const RawIPAddress &ipv6);
 
  private:
-  char m_Addr[4];
+  char fAddr[4];
 
   friend IPFactory;  // it is the one creating these addresses, thus this
                      // is why the constructors are private.
@@ -51,7 +51,7 @@ class RawIPAddress6 final {
   RawIPAddress6(const RawIPAddress6 &) = default;
 
  public:
-  char *Address() { return m_Addr; }
+  char *Address() { return fAddr; }
 
   char &operator[](const Size &index);
 
@@ -59,7 +59,7 @@ class RawIPAddress6 final {
   bool operator!=(const RawIPAddress6 &ipv6);
 
  private:
-  char m_Addr[8];
+  char fAddr[8];
 
   friend IPFactory;
 };

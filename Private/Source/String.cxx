@@ -9,17 +9,17 @@
 #include <KernelKit/DebugOutput.hpp>
 
 namespace NewOS {
-Char *StringView::Data() { return m_Data; }
+Char *StringView::Data() { return fData; }
 
-const Char *StringView::CData() { return m_Data; }
+const Char *StringView::CData() { return fData; }
 
-Size StringView::Length() const { return rt_string_len(m_Data); }
+Size StringView::Length() const { return rt_string_len(fData); }
 
 bool StringView::operator==(const StringView &rhs) const {
   if (rhs.Length() != this->Length()) return false;
 
   for (Size index = 0; index < this->Length(); ++index) {
-    if (rhs.m_Data[index] != m_Data[index]) return false;
+    if (rhs.fData[index] != fData[index]) return false;
   }
 
   return true;
@@ -29,7 +29,7 @@ bool StringView::operator==(const Char *rhs) const {
   if (rt_string_len(rhs) != this->Length()) return false;
 
   for (Size index = 0; index < rt_string_len(rhs); ++index) {
-    if (rhs[index] != m_Data[index]) return false;
+    if (rhs[index] != fData[index]) return false;
   }
 
   return true;
@@ -39,7 +39,7 @@ bool StringView::operator!=(const StringView &rhs) const {
   if (rhs.Length() != this->Length()) return false;
 
   for (Size index = 0; index < rhs.Length(); ++index) {
-    if (rhs.m_Data[index] == m_Data[index]) return false;
+    if (rhs.fData[index] == fData[index]) return false;
   }
 
   return true;
@@ -49,7 +49,7 @@ bool StringView::operator!=(const Char *rhs) const {
   if (rt_string_len(rhs) != this->Length()) return false;
 
   for (Size index = 0; index < rt_string_len(rhs); ++index) {
-    if (rhs[index] == m_Data[index]) return false;
+    if (rhs[index] == fData[index]) return false;
   }
 
   return true;
@@ -174,17 +174,17 @@ static void string_append(char *lhs, char *rhs, int cur) {
 }
 
 StringView &StringView::operator+=(const Char *rhs) {
-  string_append(this->m_Data, const_cast<char *>(rhs), this->m_Cur);
-  this->m_Cur += rt_string_len(rhs);
+  string_append(this->fData, const_cast<char *>(rhs), this->fCur);
+  this->fCur += rt_string_len(rhs);
 
   return *this;
 }
 
 StringView &StringView::operator+=(const StringView &rhs) {
-  if (rt_string_len(rhs.m_Data) > rt_string_len(this->m_Data)) return *this;
+  if (rt_string_len(rhs.fData) > rt_string_len(this->fData)) return *this;
 
-  string_append(this->m_Data, const_cast<char *>(rhs.m_Data), this->m_Cur);
-  this->m_Cur += rt_string_len(const_cast<char *>(rhs.m_Data));
+  string_append(this->fData, const_cast<char *>(rhs.fData), this->fCur);
+  this->fCur += rt_string_len(const_cast<char *>(rhs.fData));
 
   return *this;
 }

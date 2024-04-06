@@ -17,7 +17,7 @@ using PropertyId = Int;
 
 class Property {
  public:
-  explicit Property(const StringView &sw) : m_sName(sw) {}
+  explicit Property(const StringView &sw) : fsName(sw) {}
 
   virtual ~Property() = default;
 
@@ -29,8 +29,8 @@ class Property {
   const PropertyId &GetPropertyById();
 
  private:
-  Ref<StringView> m_sName;
-  PropertyId m_Action;
+  Ref<StringView> fsName;
+  PropertyId fAction;
 };
 
 template <SSizeT N>

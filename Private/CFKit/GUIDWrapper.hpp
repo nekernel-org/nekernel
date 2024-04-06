@@ -23,10 +23,10 @@ union GUIDSequence {
   alignas(8) ULong u64[2];
 
   struct {
-    alignas(8) UInt m_Ms1;
-    UShort m_Ms2;
-    UShort m_Ms3;
-    UChar m_Ms4[8];
+    alignas(8) UInt fMs1;
+    UShort fMs2;
+    UShort fMs3;
+    UChar fMs4[8];
   };
 };
 
@@ -40,10 +40,10 @@ class GUID final {
   GUID(const GUID &) = default;
 
  public:
-  GUIDSequence &operator->() noexcept { return m_UUID; }
-  GUIDSequence &Leak() noexcept { return m_UUID; }
+  GUIDSequence &operator->() noexcept { return fUUID; }
+  GUIDSequence &Leak() noexcept { return fUUID; }
 
  private:
-  GUIDSequence m_UUID;
+  GUIDSequence fUUID;
 };
 }  // namespace NewOS::XRN

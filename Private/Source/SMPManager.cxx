@@ -26,36 +26,36 @@ HardwareThread::~HardwareThread() = default;
 
 //! @brief returns the id
 
-const ThreadID& HardwareThread::ID() noexcept { return m_ID; }
+const ThreadID& HardwareThread::ID() noexcept { return fID; }
 
 //! @brief returns the kind
 
-const ThreadKind& HardwareThread::Kind() noexcept { return m_Kind; }
+const ThreadKind& HardwareThread::Kind() noexcept { return fKind; }
 
 //! @brief is the core busy?
 
-bool HardwareThread::IsBusy() noexcept { return m_Busy; }
+bool HardwareThread::IsBusy() noexcept { return fBusy; }
 
 /// @brief Get processor stack frame.
 
 HAL::StackFramePtr HardwareThread::StackFrame() noexcept {
-  MUST_PASS(m_Stack);
-  return m_Stack;
+  MUST_PASS(fStack);
+  return fStack;
 }
 
-void HardwareThread::Busy(const bool busy) noexcept { m_Busy = busy; }
+void HardwareThread::Busy(const bool busy) noexcept { fBusy = busy; }
 
-HardwareThread::operator bool() { return m_Stack; }
+HardwareThread::operator bool() { return fStack; }
 
 /// @brief Wakeup the processor.
 
 void HardwareThread::Wake(const bool wakeup) noexcept {
-  m_Wakeup = wakeup;
+  fWakeup = wakeup;
 
-  if (!m_Wakeup)
-    rt_hang_thread(m_Stack);
+  if (!fWakeup)
+    rt_hang_thread(fStack);
   else
-    rt_wakeup_thread(m_Stack);
+    rt_wakeup_thread(fStack);
 }
 
 extern bool rt_check_stack(HAL::StackFramePtr stackPtr);
@@ -63,14 +63,14 @@ extern bool rt_check_stack(HAL::StackFramePtr stackPtr);
 bool HardwareThread::Switch(HAL::StackFramePtr stack) {
   if (!rt_check_stack(stack)) return false;
 
-  m_Stack = stack;
+  fStack = stack;
 
-  rt_do_context_switch(m_Stack);
+  rt_do_context_switch(fStack);
   return true;
 }
 
 ///! @brief Tells if processor is waked up.
-bool HardwareThread::IsWakeup() noexcept { return m_Wakeup; }
+bool HardwareThread::IsWakeup() noexcept { return fWakeup; }
 
 //! @brief Constructor and destructor
 
@@ -88,10 +88,10 @@ Ref<SMPManager> SMPManager::Shared() {
 
 /// @brief Get Stack Frame of Core
 HAL::StackFramePtr SMPManager::GetStackFrame() noexcept {
-  if (m_ThreadList[m_CurrentThread].Leak() &&
+  if (fThreadList[fCurrentThread].Leak() &&
       ProcessHelper::GetCurrentPID() ==
-          m_ThreadList[m_CurrentThread].Leak().Leak().m_PID)
-    return m_ThreadList[m_CurrentThread].Leak().Leak().m_Stack;
+          fThreadList[fCurrentThread].Leak().Leak().fPID)
+    return fThreadList[fCurrentThread].Leak().Leak().fStack;
 
   return nullptr;
 }
@@ -102,31 +102,31 @@ bool SMPManager::Switch(HAL::StackFramePtr stack) {
 
   for (SizeT idx = 0; idx < kMaxHarts; ++idx) {
     // stack != nullptr -> if core is used, then continue.
-    if (!m_ThreadList[idx].Leak() ||
-        !m_ThreadList[idx].Leak().Leak().IsWakeup() ||
-        m_ThreadList[idx].Leak().Leak().IsBusy())
+    if (!fThreadList[idx].Leak() ||
+        !fThreadList[idx].Leak().Leak().IsWakeup() ||
+        fThreadList[idx].Leak().Leak().IsBusy())
       continue;
 
     // to avoid any null deref.
-    if (!m_ThreadList[idx].Leak().Leak().m_Stack) continue;
-    if (m_ThreadList[idx].Leak().Leak().m_Stack->Rsp == 0) continue;
-    if (m_ThreadList[idx].Leak().Leak().m_Stack->Rbp == 0) continue;
+    if (!fThreadList[idx].Leak().Leak().fStack) continue;
+    if (fThreadList[idx].Leak().Leak().fStack->Rsp == 0) continue;
+    if (fThreadList[idx].Leak().Leak().fStack->Rbp == 0) continue;
 
-    m_ThreadList[idx].Leak().Leak().Busy(true);
+    fThreadList[idx].Leak().Leak().Busy(true);
 
-    m_ThreadList[idx].Leak().Leak().m_ID = idx;
+    fThreadList[idx].Leak().Leak().fID = idx;
 
     /// I figured out this:
     /// Allocate stack
     /// Set APIC base to stack
     /// Do stuff and relocate stack based on this code.
     /// - Amlel
-    rt_copy_memory(stack, m_ThreadList[idx].Leak().Leak().m_Stack,
+    rt_copy_memory(stack, fThreadList[idx].Leak().Leak().fStack,
                    sizeof(HAL::StackFrame));
 
-    m_ThreadList[idx].Leak().Leak().m_PID = ProcessHelper::GetCurrentPID();
+    fThreadList[idx].Leak().Leak().fPID = ProcessHelper::GetCurrentPID();
 
-    m_ThreadList[idx].Leak().Leak().Busy(false);
+    fThreadList[idx].Leak().Leak().Busy(false);
 
     return true;
   }
@@ -141,32 +141,32 @@ bool SMPManager::Switch(HAL::StackFramePtr stack) {
  */
 Ref<HardwareThread> SMPManager::operator[](const SizeT& idx) {
   if (idx == 0) {
-    if (m_ThreadList[idx].Leak().Leak().Kind() != kHartSystemReserved) {
-      m_ThreadList[idx].Leak().Leak().m_Kind = kHartBoot;
+    if (fThreadList[idx].Leak().Leak().Kind() != kHartSystemReserved) {
+      fThreadList[idx].Leak().Leak().fKind = kHartBoot;
     }
   } else if (idx >= kMaxHarts) {
     HardwareThread fakeThread;
-    fakeThread.m_Kind = kInvalidHart;
+    fakeThread.fKind = kInvalidHart;
 
     return {fakeThread};
   }
 
-  return m_ThreadList[idx].Leak();
+  return fThreadList[idx].Leak();
 }
 
 /**
  * Check if thread pool isn't empty.
  * @return
  */
-SMPManager::operator bool() noexcept { return !m_ThreadList.Empty(); }
+SMPManager::operator bool() noexcept { return !fThreadList.Empty(); }
 
 /**
  * Reverse operator bool
  * @return
  */
-bool SMPManager::operator!() noexcept { return m_ThreadList.Empty(); }
+bool SMPManager::operator!() noexcept { return fThreadList.Empty(); }
 
 /// @brief Returns the amount of core present.
 /// @return the number of cores.
-SizeT SMPManager::Count() noexcept { return m_ThreadList.Count(); }
+SizeT SMPManager::Count() noexcept { return fThreadList.Count(); }
 }  // namespace NewOS

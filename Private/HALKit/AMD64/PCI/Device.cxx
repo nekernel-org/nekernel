@@ -31,59 +31,59 @@ void NewOSPCISetCfgTarget(NewOS::UInt bar, NewOS::UShort bus, NewOS::UShort dev,
 
 namespace NewOS::PCI {
 Device::Device(UShort bus, UShort device, UShort func, UShort bar)
-    : m_Bus(bus), m_Device(device), m_Function(func), m_Bar(bar) {}
+    : fBus(bus), fDevice(device), fFunction(func), fBar(bar) {}
 
 Device::~Device() {}
 
 UInt Device::Read(UInt bar, Size sz) {
-  NewOSPCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
+  NewOSPCISetCfgTarget(bar, fBus, fDevice, fFunction);
 
   if (sz == 4)
-    return HAL::In32((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
+    return HAL::In32((UShort)PciConfigKind::ConfigData + (fBar & 3));
   if (sz == 2)
-    return HAL::In16((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
-  if (sz == 1) return HAL::In8((UShort)PciConfigKind::ConfigData + (m_Bar & 3));
+    return HAL::In16((UShort)PciConfigKind::ConfigData + (fBar & 3));
+  if (sz == 1) return HAL::In8((UShort)PciConfigKind::ConfigData + (fBar & 3));
 
   return 0xFFFF;
 }
 
 void Device::Write(UInt bar, UIntPtr data, Size sz) {
-  NewOSPCISetCfgTarget(bar, m_Bus, m_Device, m_Function);
+  NewOSPCISetCfgTarget(bar, fBus, fDevice, fFunction);
 
   if (sz == 4)
-    HAL::Out32((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UInt)data);
+    HAL::Out32((UShort)PciConfigKind::ConfigData + (fBar & 3), (UInt)data);
   if (sz == 2)
-    HAL::Out16((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UShort)data);
+    HAL::Out16((UShort)PciConfigKind::ConfigData + (fBar & 3), (UShort)data);
   if (sz == 1)
-    HAL::Out8((UShort)PciConfigKind::ConfigData + (m_Bar & 3), (UChar)data);
+    HAL::Out8((UShort)PciConfigKind::ConfigData + (fBar & 3), (UChar)data);
 }
 
 UShort Device::DeviceId() {
-  return (UShort)(NewOSPCIReadRaw(0x0 >> 16, m_Bus, m_Device, m_Function));
+  return (UShort)(NewOSPCIReadRaw(0x0 >> 16, fBus, fDevice, fFunction));
 }
 
 UShort Device::VendorId() {
-  return (UShort)(NewOSPCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
+  return (UShort)(NewOSPCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
 }
 
 UShort Device::InterfaceId() {
-  return (UShort)(NewOSPCIReadRaw(0x0, m_Bus, m_Device, m_Function) >> 16);
+  return (UShort)(NewOSPCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
 }
 
 UChar Device::Class() {
-  return (UChar)(NewOSPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 24);
+  return (UChar)(NewOSPCIReadRaw(0x08, fBus, fDevice, fFunction) >> 24);
 }
 
 UChar Device::Subclass() {
-  return (UChar)(NewOSPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 16);
+  return (UChar)(NewOSPCIReadRaw(0x08, fBus, fDevice, fFunction) >> 16);
 }
 
 UChar Device::ProgIf() {
-  return (UChar)(NewOSPCIReadRaw(0x08, m_Bus, m_Device, m_Function) >> 8);
+  return (UChar)(NewOSPCIReadRaw(0x08, fBus, fDevice, fFunction) >> 8);
 }
 
 UChar Device::HeaderType() {
-  return (UChar)(NewOSPCIReadRaw(0xC, m_Bus, m_Device, m_Function) >> 16);
+  return (UChar)(NewOSPCIReadRaw(0xC, fBus, fDevice, fFunction) >> 16);
 }
 
 void Device::EnableMmio() {
@@ -100,9 +100,9 @@ UShort Device::Vendor() {
   UShort vendor = VendorId();
 
   if (vendor != (UShort)PciConfigKind::Invalid)
-    m_Device = (UShort)Read(0x0, sizeof(UShort));
+    fDevice = (UShort)Read(0x0, sizeof(UShort));
 
-  return m_Device;
+  return fDevice;
 }
 
 Device::operator bool() { return VendorId() != (UShort)PciConfigKind::Invalid; }

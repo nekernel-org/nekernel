@@ -18,7 +18,7 @@ Iterator::Iterator(const Types::PciDeviceKind &type) {
         Device dev(bus, device, function, 0);
 
         if (dev.Class() == (UChar)type) {
-          m_Devices[bus].Leak().Leak() = dev;
+          fDevices[bus].Leak().Leak() = dev;
         }
       }
     }
@@ -28,7 +28,7 @@ Iterator::Iterator(const Types::PciDeviceKind &type) {
 Iterator::~Iterator() {}
 
 Ref<PCI::Device> Iterator::operator[](const Size &sz) {
-  PCI_ITERATOR_FIND_AND_UNWRAP(m_Devices[sz], sz);
+  PCI_ITERATOR_FIND_AND_UNWRAP(fDevices[sz], sz);
   return {};
 }
 }  // namespace NewOS::PCI

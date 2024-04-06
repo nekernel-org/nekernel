@@ -21,7 +21,7 @@ class Url final {
   Ref<ErrorOr<StringView>> Protocol() noexcept;
 
  private:
-  Ref<StringView> m_urlView;
+  Ref<StringView> fUrlView;
 };
 
 ErrorOr<StringView> url_extract_location(const char *url);

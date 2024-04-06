@@ -68,10 +68,10 @@ namespace NewOS::PCI
         UShort Vendor();
 
     private:
-        UShort m_Bus;
-        UShort m_Device;
-        UShort m_Function;
-        UShort m_Bar;
+        UShort fBus;
+        UShort fDevice;
+        UShort fFunction;
+        UShort fBar;
 
     };
 } // namespace NewOS::PCI

@@ -118,7 +118,7 @@
 ///! ATA command register.
 #define ATA_COMMAND(x)  (x + 7)
 
-#define kATASectorSize 512
+#define kATASectorSize (512U)
 
 enum {
   kATADevicePATA,
@@ -128,7 +128,7 @@ enum {
   kATADeviceCount,
 };
 
-#ifdef __KERNEL__
+#if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 
 NewOS::Boolean drv_std_init(NewOS::UInt16 Bus, NewOS::UInt8 Drive, NewOS::UInt16& OutBus,
                       NewOS::UInt8& OutMaster);

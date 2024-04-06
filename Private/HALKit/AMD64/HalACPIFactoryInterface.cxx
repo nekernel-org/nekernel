@@ -21,8 +21,8 @@ void rt_shutdown_acpi_virtualbox(void) { HAL::Out16(0x4004, 0x3400); }
 /// You have to parse the MADT!
 
 ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr)
-    : m_Rsdp(rsdPtr), m_Entries(0) {
-  volatile RSDP *_rsdPtr = reinterpret_cast<volatile RSDP *>(this->m_Rsdp);
+    : fRsdp(rsdPtr), fEntries(0) {
+  volatile RSDP *_rsdPtr = reinterpret_cast<volatile RSDP *>(this->fRsdp);
 
   MUST_PASS(_rsdPtr);
   MUST_PASS(_rsdPtr->Revision >= 2);
@@ -48,13 +48,13 @@ Void ACPIFactoryInterface::Reboot() {
 
 /// @brief Finds a descriptor table inside ACPI XSDT.
 ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
-  MUST_PASS(m_Rsdp);
+  MUST_PASS(fRsdp);
 
   if (!signature) return ErrorOr<voidPtr>{-2};
 
   if (*signature == 0) return ErrorOr<voidPtr>{-3};
 
-  RSDP *rsdPtr = reinterpret_cast<RSDP *>(this->m_Rsdp);
+  RSDP *rsdPtr = reinterpret_cast<RSDP *>(this->fRsdp);
 
   if (rsdPtr->Revision <= 1) {
     return ErrorOr<voidPtr>{-4};

@@ -19,33 +19,10 @@ enum kPRDTTransfer {
   kPRDTTransferCount,
 };
 
-class PRDT final {
- public:
-  explicit PRDT() = delete;
-  explicit PRDT(const UIntPtr &physAddr);
-  ~PRDT();
-
-  PRDT &operator=(const PRDT &) = default;
-  PRDT(const PRDT &) = default;
-
- public:
-  const UInt &Low();
-  const UShort &High();
-  const UIntPtr &PhysicalAddress();
-
- public:
-  PRDT &operator=(const UIntPtr &prdtAddress);
-
- public:
-  operator bool() { return m_PrdtAddr != 0; }
-
- private:
-  union {
-    UInt m_Low;
-    UShort m_High;
-  };
-
-  UIntPtr m_PrdtAddr;
+struct PRDT {
+  UInt32 fPhysAddress;
+  UInt32 fSectorCount;
+  UInt8  fEndBit;
 };
 
 EXTERN_C Int32 kPRDTTransferStatus;

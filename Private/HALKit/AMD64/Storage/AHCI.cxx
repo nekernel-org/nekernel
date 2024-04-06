@@ -49,11 +49,9 @@ NewOS::Boolean drv_std_detected(NewOS::Void) {
   return kAhciDevice.DeviceId() != 0xFFFF;
 }
 
-NewOS::Void drv_std_read(NewOS::UInt64 Lba, NewOS::UInt16 IO,
-                          NewOS::UInt8 Master, NewOS::Char* Buf,
+NewOS::Void drv_std_read(NewOS::UInt64 Lba, NewOS::Char* Buf,
                           NewOS::SizeT SectorSz, NewOS::SizeT Size) {}
 
-NewOS::Void drv_std_write(NewOS::UInt64 Lba, NewOS::UInt16 IO,
-                           NewOS::UInt8 Master, NewOS::Char* Buf,
+NewOS::Void drv_std_write(NewOS::UInt64 Lba, NewOS::Char* Buf,
                            NewOS::SizeT SectorSz, NewOS::SizeT Size) {}
 #endif  // __AHCI__

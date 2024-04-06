@@ -60,12 +60,12 @@ class HardwareThread final {
   const ThreadID& ID() noexcept;
 
  private:
-  HAL::StackFrame* m_Stack;
-  ThreadKind m_Kind;
-  ThreadID m_ID;
-  bool m_Wakeup;
-  bool m_Busy;
-  Int64 m_PID;
+  HAL::StackFrame* fStack;
+  ThreadKind fKind;
+  ThreadID fID;
+  bool fWakeup;
+  bool fBusy;
+  Int64 fPID;
 
  private:
   friend class SMPManager;
@@ -106,8 +106,8 @@ class SMPManager final {
   SizeT Count() noexcept;
 
  private:
-  Array<HardwareThread, kMaxHarts> m_ThreadList;
-  ThreadID m_CurrentThread{0};
+  Array<HardwareThread, kMaxHarts> fThreadList;
+  ThreadID fCurrentThread{0};
 };
 
 /// @brief wakes up thread.

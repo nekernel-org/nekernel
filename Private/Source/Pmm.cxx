@@ -8,15 +8,15 @@
 #include <NewKit/Pmm.hpp>
 
 namespace NewOS {
-Pmm::Pmm() : m_PageManager() { kcout << "[PMM] Allocate PageMemoryManager"; }
+Pmm::Pmm() : fPageManager() { kcout << "[PMM] Allocate PageMemoryManager"; }
 
 Pmm::~Pmm() = default;
 
 /* If this returns Null pointer, enter emergency mode */
 Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite) {
-  PTEWrapper pt = m_PageManager.Leak().Request(user, readWrite, false);
+  PTEWrapper pt = fPageManager.Leak().Request(user, readWrite, false);
 
-  if (pt.m_Present) {
+  if (pt.fPresent) {
     kcout << "[PMM]: Allocation was successful.";
     return Ref<PTEWrapper>(pt);
   }
@@ -29,7 +29,7 @@ Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite) {
 Boolean Pmm::FreePage(Ref<PTEWrapper> PageRef) {
   if (!PageRef) return false;
 
-  PageRef.Leak().m_Present = false;
+  PageRef.Leak().fPresent = false;
 
   return true;
 }
@@ -37,7 +37,7 @@ Boolean Pmm::FreePage(Ref<PTEWrapper> PageRef) {
 Boolean Pmm::TogglePresent(Ref<PTEWrapper> PageRef, Boolean Enable) {
   if (!PageRef) return false;
 
-  PageRef.Leak().m_Present = Enable;
+  PageRef.Leak().fPresent = Enable;
 
   return true;
 }
@@ -45,7 +45,7 @@ Boolean Pmm::TogglePresent(Ref<PTEWrapper> PageRef, Boolean Enable) {
 Boolean Pmm::ToggleUser(Ref<PTEWrapper> PageRef, Boolean Enable) {
   if (!PageRef) return false;
 
-  PageRef.Leak().m_Rw = Enable;
+  PageRef.Leak().fRw = Enable;
 
   return true;
 }
@@ -53,7 +53,7 @@ Boolean Pmm::ToggleUser(Ref<PTEWrapper> PageRef, Boolean Enable) {
 Boolean Pmm::ToggleRw(Ref<PTEWrapper> PageRef, Boolean Enable) {
   if (!PageRef) return false;
 
-  PageRef.Leak().m_Rw = Enable;
+  PageRef.Leak().fRw = Enable;
 
   return true;
 }
@@ -61,7 +61,7 @@ Boolean Pmm::ToggleRw(Ref<PTEWrapper> PageRef, Boolean Enable) {
 Boolean Pmm::ToggleShare(Ref<PTEWrapper> PageRef, Boolean Enable) {
   if (!PageRef) return false;
 
-  PageRef.Leak().m_Shareable = Enable;
+  PageRef.Leak().fShareable = Enable;
 
   return true;
 }

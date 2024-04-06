@@ -36,14 +36,14 @@ const UInt32 kRgbWhite = 0xFFFFFFFF;
  * @return volatile*
  */
 volatile UIntPtr *Framebuffer::operator[](const UIntPtr &pos) {
-  return (UIntPtr *)(m_FrameBufferAddr->m_Base * pos);
+  return (UIntPtr *)(fFrameBufferAddr->fBase * pos);
 }
 
 /// @brief Boolean operator.
 Framebuffer::operator bool() {
-  return m_FrameBufferAddr.Leak()->m_Base != 0 &&
-         m_Colour != FramebufferColorKind::INVALID &&
-         m_FrameBufferAddr.Leak()->m_Base != kBadPtr;
+  return fFrameBufferAddr.Leak()->fBase != 0 &&
+         fColour != FramebufferColorKind::INVALID &&
+         fFrameBufferAddr.Leak()->fBase != kBadPtr;
 }
 
 /// @brief Set color kind of framebuffer.
@@ -51,26 +51,26 @@ Framebuffer::operator bool() {
 /// @return
 const FramebufferColorKind &Framebuffer::Color(
     const FramebufferColorKind &colour) {
-  if (m_Colour != FramebufferColorKind::INVALID &&
+  if (fColour != FramebufferColorKind::INVALID &&
       colour != FramebufferColorKind::INVALID) {
-    m_Colour = colour;
+    fColour = colour;
   }
 
-  return m_Colour;
+  return fColour;
 }
 
 /// @brief Leak framebuffer context.
 /// @return The reference of the framebuffer context.
 Ref<FramebufferContext *> &Framebuffer::Leak() {
-  return this->m_FrameBufferAddr;
+  return this->fFrameBufferAddr;
 }
 
 Framebuffer &Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y,
                                    UInt32 color) {
   for (NewOS::SizeT i = x; i < width + x; ++i) {
     for (NewOS::SizeT u = y; u < height + y; ++u) {
-      *(((volatile NewOS::UInt32 *)(m_FrameBufferAddr.Leak()->m_Base +
-                                    4 * m_FrameBufferAddr.Leak()->m_Bpp * i +
+      *(((volatile NewOS::UInt32 *)(fFrameBufferAddr.Leak()->fBase +
+                                    4 * fFrameBufferAddr.Leak()->fBpp * i +
                                     4 * u))) = color;
     }
   }
@@ -79,8 +79,8 @@ Framebuffer &Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y,
 }
 
 Framebuffer &Framebuffer::PutPixel(SizeT x, SizeT y, UInt32 color) {
-  *(((volatile NewOS::UInt32 *)(m_FrameBufferAddr.Leak()->m_Base +
-                                4 * m_FrameBufferAddr.Leak()->m_Bpp * x +
+  *(((volatile NewOS::UInt32 *)(fFrameBufferAddr.Leak()->fBase +
+                                4 * fFrameBufferAddr.Leak()->fBpp * x +
                                 4 * y))) = color;
                                 
   return *this;

@@ -8,8 +8,8 @@
 
 namespace NewOS {
 bool Property::StringEquals(StringView& name) {
-  return m_sName && this->m_sName == name;
+  return fsName && this->fsName == name;
 }
 
-const PropertyId& Property::GetPropertyById() { return m_Action; }
+const PropertyId& Property::GetPropertyById() { return fAction; }
 }  // namespace NewOS

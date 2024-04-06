@@ -7,8 +7,7 @@
 #include <BootKit/BootKit.hxx>
 #include <FSKit/NewFS.hxx>
 
-#define kEPMSectorSize 1024
-
+#define kEPMSectorSize (1024U)
 #define kEPMSwapSize MIB(16)
 
 // {310E1FC7-2060-425D-BE7B-75A37CC679BC}
@@ -37,11 +36,11 @@ EXTERN_C Boolean boot_write_epm_partition(const Char* namePart, SizeT namePartLe
 
   BTextWriter writer;
 
-  writer.Write(L"NewOS: Checking for a NewFS partition...\r\n");
+  writer.Write(L"NewOS: Checking for a EPM partition...\r\n");
 
   for (SizeT index = 0; index < kEPMMagicLength; ++index) {
     if (buf[index] != kEPMMagic[index]) {
-      writer.Write(L"NewOS: Writing a NewFS partition...\r\n");
+      writer.Write(L"NewOS: Writing a EPM partition...\r\n");
 
       BootBlockType* bootBlock = (BootBlockType*)buf;
 

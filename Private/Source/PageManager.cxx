@@ -17,15 +17,15 @@
 namespace NewOS {
 PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
                        UIntPtr VirtAddr)
-    : m_Rw(Rw),
-      m_User(User),
-      m_ExecDisable(ExecDisable),
-      m_VirtAddr(VirtAddr),
-      m_Cache(false),
-      m_Shareable(false),
-      m_Wt(false),
-      m_Present(true),
-      m_Accessed(false) {}
+    : fRw(Rw),
+      fUser(User),
+      fExecDisable(ExecDisable),
+      fVirtAddr(VirtAddr),
+      fCache(false),
+      fShareable(false),
+      fWt(false),
+      fPresent(true),
+      fAccessed(false) {}
 
 PTEWrapper::~PTEWrapper() {}
 
@@ -36,8 +36,8 @@ void PageManager::FlushTLB(UIntPtr VirtAddr) {
 }
 
 bool PTEWrapper::Reclaim() {
-  if (!this->m_Present) {
-    this->m_Present = true;
+  if (!this->fPresent) {
+    this->fPresent = true;
     return true;
   }
 
@@ -61,16 +61,16 @@ bool PageManager::Free(Ref<PTEWrapper *> &wrapper) {
 }
 
 const UIntPtr PTEWrapper::VirtualAddress() {
-  return (m_VirtAddr + sizeof(PTE) + sizeof(PTEWrapper));
+  return (fVirtAddr + sizeof(PTE) + sizeof(PTEWrapper));
 }
 
-bool PTEWrapper::Shareable() { return m_Shareable; }
+bool PTEWrapper::Shareable() { return fShareable; }
 
-bool PTEWrapper::Present() { return m_Present; }
+bool PTEWrapper::Present() { return fPresent; }
 
-bool PTEWrapper::Access() { return m_Accessed; }
+bool PTEWrapper::Access() { return fAccessed; }
 
-void PTEWrapper::NoExecute(const bool enable) { this->m_ExecDisable = enable; }
+void PTEWrapper::NoExecute(const bool enable) { this->fExecDisable = enable; }
 
-const bool &PTEWrapper::NoExecute() { return this->m_ExecDisable; }
+const bool &PTEWrapper::NoExecute() { return this->fExecDisable; }
 }  // namespace NewOS

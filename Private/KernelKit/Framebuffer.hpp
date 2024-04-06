@@ -20,16 +20,16 @@ enum class FramebufferColorKind : UChar {
 
 class FramebufferContext final {
  public:
-  UIntPtr m_Base;
-  UIntPtr m_Bpp;
-  UInt m_Width;
-  UInt m_Height;
+  UIntPtr fBase;
+  UIntPtr fBpp;
+  UInt fWidth;
+  UInt fHeight;
 };
 
 class Framebuffer final {
  public:
   explicit Framebuffer(Ref<FramebufferContext *> &addr)
-      : m_FrameBufferAddr(addr) {}
+      : fFrameBufferAddr(addr) {}
   ~Framebuffer() {}
 
   Framebuffer &operator=(const Framebuffer &) = delete;
@@ -62,8 +62,8 @@ class Framebuffer final {
   Framebuffer &PutPixel(SizeT x, SizeT y, UInt32 color);
 
  private:
-  Ref<FramebufferContext *> m_FrameBufferAddr;
-  FramebufferColorKind m_Colour;
+  Ref<FramebufferContext *> fFrameBufferAddr;
+  FramebufferColorKind fColour;
 };
 
 /***********************************************************************************/

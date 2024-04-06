@@ -34,13 +34,13 @@ class LockDelegate final
         {
             if (*expr)
             {
-                m_LockStatus | kLockDone;
+                fLockStatus | kLockDone;
                 break;
             }
         }
 
         if (spin == N)
-            m_LockStatus | kLockTimedOut;
+            fLockStatus | kLockTimedOut;
     }
 
     ~LockDelegate() = default;
@@ -50,15 +50,15 @@ class LockDelegate final
 
     bool Done()
     {
-        return m_LockStatus[kLockDone] == kLockDone;
+        return fLockStatus[kLockDone] == kLockDone;
     }
 
     bool HasTimedOut()
     {
-        return m_LockStatus[kLockTimedOut] != kLockTimedOut;
+        return fLockStatus[kLockTimedOut] != kLockTimedOut;
     }
 
   private:
-    Atom<UInt> m_LockStatus;
+    Atom<UInt> fLockStatus;
 };
 } // namespace NewOS

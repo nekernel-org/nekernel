@@ -15,14 +15,14 @@ class StringView final {
  public:
   explicit StringView() = default;
 
-  explicit StringView(Size Sz) : m_Sz(Sz) {
+  explicit StringView(Size Sz) : fSz(Sz) {
     MUST_PASS(Sz > 1);
-    m_Data = new Char[Sz];
-    MUST_PASS(m_Data);
+    fData = new Char[Sz];
+    MUST_PASS(fData);
   }
 
   ~StringView() {
-    if (m_Data) delete[] m_Data;
+    if (fData) delete[] fData;
   }
 
   StringView &operator=(const StringView &) = default;
@@ -41,14 +41,14 @@ class StringView final {
   StringView &operator+=(const Char *rhs);
   StringView &operator+=(const StringView &rhs);
 
-  operator bool() { return m_Data; }
+  operator bool() { return fData; }
 
-  bool operator!() { return m_Data; }
+  bool operator!() { return fData; }
 
  private:
-  Char *m_Data{nullptr};
-  Size m_Sz{0};
-  Size m_Cur{0};
+  Char *fData{nullptr};
+  Size fSz{0};
+  Size fCur{0};
 
   friend class StringBuilder;
 };
