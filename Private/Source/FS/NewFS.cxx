@@ -129,13 +129,73 @@ _Output NewFork* NewFSParser::FindFork(_Input NewCatalog* catalog,
   return theFork;
 }
 
+/// @brief Simpler factory to create a catalog (assumes you want to create a
+/// file.)
+/// @param name
+/// @return
+_Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name) {
+  return this->CreateCatalog(name, 0, kNewFSCatalogKindFile);
+}
+
+/// @brief
+/// @param name
+/// @param flags
+/// @param kind
+/// @return
+_Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
+                                               _Input const Int32& flags,
+                                               _Input const Int32& kind) {
+  return nullptr;
+}
+
 /// @brief Make a EPM+NewFS drive out of the disk.
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see DbgLastError().
 bool NewFSParser::Format(_Input _Output DriveTrait* drive) { return false; }
 
+/// @brief
+/// @param catalog
+/// @param data
+/// @return
+bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog,
+                               voidPtr data) {
+  return false;
+}
+
+_Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName) {
+  return nullptr;
+}
+
+_Output NewCatalog* NewFSParser::GetCatalog(_Input const char* name) {
+  return nullptr;
+}
+
+Boolean NewFSParser::CloseCatalog(_Input _Output NewCatalog* catalog) {
+  return false;
+}
+
+Boolean NewFSParser::RemoveCatalog(_Input _Output NewCatalog* catalog) {
+  return false;
+}
+
+
+VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
+                                 SizeT dataSz) {
+  return nullptr;
+}
+
+bool NewFSParser::Seek(_Input _Output NewCatalog* catalog, SizeT off) {
+  return false;
+}
+
+SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog) { return 0; }
+
 STATIC Lba ke_find_free_fork(SizeT sz) { return 0; }
 STATIC Lba ke_find_free_catalog(SizeT sz) { return 0; }
 STATIC Lba ke_find_free_data(SizeT sz) { return 0; }
+
+namespace NewOS::Detail {
+Boolean fs_init_newfs(Void) noexcept { return false; }
+}  // namespace NewOS::Detail
 
 #endif  // ifdef __FSKIT_NEWFS__
