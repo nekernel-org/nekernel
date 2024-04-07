@@ -162,36 +162,69 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog,
   return false;
 }
 
+/// @brief 
+/// @param catalogName 
+/// @return 
 _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName) {
   return nullptr;
 }
 
+/// @brief 
+/// @param name 
+/// @return 
 _Output NewCatalog* NewFSParser::GetCatalog(_Input const char* name) {
   return nullptr;
 }
 
+/// @brief 
+/// @param catalog 
+/// @return 
 Boolean NewFSParser::CloseCatalog(_Input _Output NewCatalog* catalog) {
   return false;
 }
 
+/// @brief 
+/// @param catalog 
+/// @return 
 Boolean NewFSParser::RemoveCatalog(_Input _Output NewCatalog* catalog) {
   return false;
 }
 
-
+/// @brief 
+/// @param catalog 
+/// @param dataSz 
+/// @return 
 VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
                                  SizeT dataSz) {
   return nullptr;
 }
 
+/// @brief 
+/// @param catalog 
+/// @param off 
+/// @return 
 bool NewFSParser::Seek(_Input _Output NewCatalog* catalog, SizeT off) {
   return false;
 }
 
+/// @brief 
+/// @param catalog 
+/// @return 
 SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog) { return 0; }
 
+/// @brief 
+/// @param sz 
+/// @return 
 STATIC Lba ke_find_free_fork(SizeT sz) { return 0; }
+
+/// @brief 
+/// @param sz 
+/// @return 
 STATIC Lba ke_find_free_catalog(SizeT sz) { return 0; }
+
+/// @brief 
+/// @param sz 
+/// @return 
 STATIC Lba ke_find_free_data(SizeT sz) { return 0; }
 
 namespace NewOS::Detail {

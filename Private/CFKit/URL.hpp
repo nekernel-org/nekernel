@@ -11,10 +11,10 @@
 #include <NewKit/String.hpp>
 
 namespace NewOS {
-class Url final {
+class URL final {
  public:
-  explicit Url(StringView &strUrl);
-  ~Url();
+  explicit URL(StringView &strUrl);
+  ~URL();
 
  public:
   Ref<ErrorOr<StringView>> Location() noexcept;

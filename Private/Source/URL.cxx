@@ -11,18 +11,15 @@
 /// BUGS: 0
 
 namespace NewOS {
-Url::Url(StringView &strUrl) : fUrlView(strUrl, false) {}
+URL::URL(StringView &strUrl) : fUrlView(strUrl, false) {}
 
-Url::~Url() = default;
+URL::~URL() = default;
 
 constexpr const char *kURLProtocols[] = {
-    "file",   // Filesystem protocol
-    "ping",  // Ping protocol.
-    "telnet", // Telnet protocol
-    "ssh", // SSH protocol
+    "file",  // Filesystem protocol
 };
 
-constexpr const int kUrlOutSz = 3;  //! such as: ://
+constexpr const int kUrlOutSz = 1;  //! such as: ://
 constexpr const int kProtosCount = 4;
 constexpr const int kRangeSz = 4096;
 
@@ -62,7 +59,7 @@ ErrorOr<StringView> url_extract_protocol(const char *url) {
   return view;
 }
 
-Ref<ErrorOr<StringView>> Url::Location() noexcept {
+Ref<ErrorOr<StringView>> URL::Location() noexcept {
   const char *src = fUrlView.Leak().CData();
   auto loc = url_extract_location(src);
 
@@ -71,7 +68,7 @@ Ref<ErrorOr<StringView>> Url::Location() noexcept {
   return Ref<ErrorOr<StringView>>(loc);
 }
 
-Ref<ErrorOr<StringView>> Url::Protocol() noexcept {
+Ref<ErrorOr<StringView>> URL::Protocol() noexcept {
   const char *src = fUrlView.Leak().CData();
   auto loc = url_extract_protocol(src);
 

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __CXXKIT_DEF__
-#define __CXXKIT_DEF__
+#ifndef __MPCC_DEF__
+#define __MPCC_DEF__
 
 typedef __SIZE_TYPE__ size_t;
 
@@ -26,11 +26,11 @@ typedef char *caddr_t;
 #endif // !null
 
 #ifdef __GNUC__
-#include <CRT/__cxxkit_alloca.hxx>
-#define __cxxkit_alloca(sz) __cxxkit_alloca_gcc(sz)
+#include <CRT/__mpcc_alloca.hxx>
+#define __mpcc_alloca(sz) __mpcc_alloca_gcc(sz)
 #elif defined(__MPCC__)
 
-#define __alloca(sz) __cxxkit_alloca(sz)
+#define __alloca(sz) __mpcc_alloca(sz)
 #endif
 
 #define __deref(ptr) (*(ptr))
@@ -82,4 +82,4 @@ typedef union double_cast {
     double f;
 } __attribute__((packed)) double_cast_t;
 
-#endif /* __CXXKIT_DEF__ */
+#endif /* __MPCC_DEF__ */
