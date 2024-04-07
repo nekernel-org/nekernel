@@ -29,12 +29,16 @@ PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable,
 
 PTEWrapper::~PTEWrapper() {}
 
+/// @brief Flush virtual address.
+/// @param VirtAddr 
 void PageManager::FlushTLB(UIntPtr VirtAddr) {
   if (VirtAddr == kBadAddress) return;
 
   hal_flush_tlb(VirtAddr);
 }
 
+/// @brief Reclaim freed page.
+/// @return 
 bool PTEWrapper::Reclaim() {
   if (!this->fPresent) {
     this->fPresent = true;
@@ -44,13 +48,21 @@ bool PTEWrapper::Reclaim() {
   return false;
 }
 
+/// @brief Request a PTE.
+/// @param Rw r/w?
+/// @param User user mode?
+/// @param ExecDisable disable execution on page?
+/// @return 
 PTEWrapper PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable) {
   // Store PTE wrapper right after PTE.
   VoidPtr ptr = NewOS::HAL::hal_alloc_page(Rw, User);
 
-  return PTEWrapper{Rw, User, ExecDisable, (UIntPtr)ptr};
+  return PTEWrapper{Rw, User, ExecDisable, reinterpret_cast<UIntPtr>(ptr)};
 }
 
+/// @brief Disable PTE.
+/// @param wrapper the wrapper. 
+/// @return 
 bool PageManager::Free(Ref<PTEWrapper *> &wrapper) {
   if (wrapper) {
     if (!Detail::page_disable(wrapper->VirtualAddress())) return false;
@@ -60,8 +72,10 @@ bool PageManager::Free(Ref<PTEWrapper *> &wrapper) {
   return false;
 }
 
+/// @brief Virtual PTE address.
+/// @return 
 const UIntPtr PTEWrapper::VirtualAddress() {
-  return (fVirtAddr + sizeof(PTE) + sizeof(PTEWrapper));
+  return (fVirtAddr);
 }
 
 bool PTEWrapper::Shareable() { return fShareable; }
