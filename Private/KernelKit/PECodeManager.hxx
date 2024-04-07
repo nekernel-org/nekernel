@@ -19,6 +19,6 @@
 
 ////////////////////////////////////////////////////
 
-#include <KernelKit/PE.hpp>
+#include <KernelKit/PE.hxx>
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/String.hpp>

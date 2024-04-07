@@ -84,8 +84,8 @@ enum {
 }  // namespace NewOS
 
 #define kPefExt ".exe"
-#define kPefDylibExt ".dll"
-#define kPefLibExt ".lib"
+#define kPefDylibExt ".lib"
+#define kPefLibExt ".slib"
 #define kPefObjectExt ".obj"
 #define kPefDebugExt ".dbg"
 

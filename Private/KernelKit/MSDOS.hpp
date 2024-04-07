@@ -14,7 +14,7 @@
 #ifndef __MSDOS_EXEC__
 #define __MSDOS_EXEC__
 
-#include <KernelKit/PE.hpp>
+#include <KernelKit/PE.hxx>
 #include <NewKit/Defines.hpp>
 
 // Last Rev

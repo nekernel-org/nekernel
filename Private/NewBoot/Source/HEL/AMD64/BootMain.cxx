@@ -6,7 +6,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <KernelKit/MSDOS.hpp>
-#include <KernelKit/PE.hpp>
+#include <KernelKit/PE.hxx>
 #include <NewKit/Ref.hpp>
 
 #ifdef __x86_64__

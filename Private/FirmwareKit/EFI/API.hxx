@@ -9,7 +9,7 @@
 
 #include <FirmwareKit/EFI/EFI.hxx>
 #include <KernelKit/MSDOS.hpp>
-#include <KernelKit/PE.hpp>
+#include <KernelKit/PE.hxx>
 
 inline EfiSystemTable *ST = nullptr;
 inline EfiBootServices *BS = nullptr;
