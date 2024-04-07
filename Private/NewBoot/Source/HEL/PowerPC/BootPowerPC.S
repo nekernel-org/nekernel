@@ -9,14 +9,14 @@
 
 /* NewOS kernel header begin */
 
-k_hdr_mag:
+boot_hdr_mag:
 	.ascii "LX"
-k_hdr_name:
+boot_hdr_name:
 	// it has to match ten bytes.
-	.asciz "New OS\0\0\0\0"
-k_hdr_ver:
+	.asciz "NewBoot\0\0\0"
+boot_hdr_ver:
 	.word 0x104
-k_hdr_proc:
-	.long __bootloader_start
+boot_hdr_proc:
+	.long bootloader_start
 
 /* NewOS kernel header end */
