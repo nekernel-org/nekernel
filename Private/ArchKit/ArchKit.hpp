@@ -10,11 +10,11 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Function.hpp>
 
-#ifdef __x86_64__
+#ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #include <HALKit/AMD64/Hypervisor.hpp>
 #include <HALKit/AMD64/Processor.hpp>
-#elif defined(__powerpc64__)
+#elif defined(__NEWOS_PPC__)
 #include <HALKit/PowerPC/Processor.hpp>
 #else
 #error Unknown architecture

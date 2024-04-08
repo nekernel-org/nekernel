@@ -8,6 +8,7 @@
 #include <KernelKit/DriveManager.hxx>
 #include <Builtins/ATA/Defines.hxx>
 #include <Builtins/AHCI/Defines.hxx>
+#include <NewKit/Utils.hpp>
 
 /// @file DriveManager.cxx
 /// @brief Kernel drive manager.
@@ -91,6 +92,9 @@ Void ke_drv_unimplemented(DriveTrait::DrivePacket* pckt) {}
 DriveTrait construct_drive() noexcept {
     DriveTrait trait;
 
+    rt_copy_memory((VoidPtr)"/Mount/Null", trait.fName, rt_string_len("/Mount/Null"));
+    trait.fKind = kInvalidDrive;
+
     trait.fInput = ke_drv_unimplemented;
     trait.fOutput = ke_drv_unimplemented;
     trait.fVerify = ke_drv_unimplemented;
@@ -100,8 +104,11 @@ DriveTrait construct_drive() noexcept {
 
 /// @brief Fetches the main drive.
 /// @return the new drive.
-DriveTrait main_drive() noexcept {
+DriveTrait construct_main_drive() noexcept {
     DriveTrait trait;
+
+    rt_copy_memory((VoidPtr)"/Mount/Disk/0", trait.fName, rt_string_len("/Mount/Disk/0"));
+    trait.fKind = kMassStorage | kEPMDrive;
 
     trait.fInput = ke_drv_input;
     trait.fOutput = ke_drv_output;

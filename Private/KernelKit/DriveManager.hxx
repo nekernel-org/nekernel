@@ -121,7 +121,7 @@ DriveTrait construct_drive(void) noexcept;
 
 /// @brief Fetches the main drive.
 /// @return the new drive.
-DriveTrait main_drive(void) noexcept;
+DriveTrait construct_main_drive(void) noexcept;
 }  // namespace NewOS
 
 #endif /* ifndef __DRIVE_MANAGER__ */

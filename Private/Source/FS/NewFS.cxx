@@ -151,7 +151,18 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 /// @brief Make a EPM+NewFS drive out of the disk.
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see DbgLastError().
-bool NewFSParser::Format(_Input _Output DriveTrait* drive) { return false; }
+bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
+  /// verify disk.
+  drive->fVerify(&drive->fPacket);
+
+  /// if disk isn't good, then error out.
+  if (false == drive->fPacket.fPacketGood) {
+    DbgLastError() = kErrorDiskIsCorrupted;
+    return false;
+  }
+
+  return true;
+}
 
 /// @brief
 /// @param catalog
