@@ -127,15 +127,15 @@ Boolean ke_is_valid_heap(VoidPtr heapPtr) {
 }
 
 /// @brief Protect the heap pointer with a CRC32.
-/// @param heapPtr
-/// @return
+/// @param heapPtr HIB pointer.
+/// @return if it valid: point has crc now., otherwise fail.
 Boolean ke_protect_ke_heap(VoidPtr heapPtr) {
   if (heapPtr) {
     Detail::HeapInformationBlockPtr virtualAddress =
         reinterpret_cast<Detail::HeapInformationBlockPtr>(
             (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
-    if (virtualAddress->fPresent && virtualAddress->fMagic == kKernelHeapMagic) {
+    if (virtualAddress->fPresent && kKernelHeapMagic == virtualAddress->fMagic) {
       virtualAddress->fCRC32 =
           ke_calculate_crc32((Char *)heapPtr, virtualAddress->fTargetPtrSize);
       return true;
