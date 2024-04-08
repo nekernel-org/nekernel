@@ -7,8 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-
-#define kMBCIHostMagic "MBCI"
+#include <Builtins/ACPI/ACPI.hxx>
 
 namespace NewOS {
 struct MBCIHostInterface;
@@ -22,7 +21,6 @@ struct MBCIHostInterface final {
 	UInt64 BaseAddressRegister;
 	UInt64 DeviceSize;
 	UInt8  MemoryType;
-	UInt8  Magic[4];
 	UInt8  HostType;
 	UInt8  HostFlags;
 };
@@ -36,4 +34,6 @@ enum MBCIHostFlags {
 	kMBCIHostFlagsSupportsDMA, /// Has DMA.
 	kMBCIHostFlagsCount,
 };
+
+MBCIHostInterface* drv_get_mbi_host(void);
 } // namespace NewOS

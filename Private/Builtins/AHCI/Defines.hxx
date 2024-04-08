@@ -14,6 +14,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
+#include <Builtins/ACPI/ACPI.hxx>
 
 // Forward declarations of structs.
 
