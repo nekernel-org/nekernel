@@ -25,4 +25,6 @@ rt_do_context_switch:
     lwz 34(%r4), 34(%r3)
     lwz 38(%r4), 38(%r3)
 
+    mr %r31, %r4
+
     bl
