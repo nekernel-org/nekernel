@@ -86,10 +86,11 @@ EXTERN_C void ke_io_read(const char* bytes) {
 
   SizeT index = 0;
 
+  ///! TODO: Look on how to wait for the UART to complete.
   while (true) {
     auto in = HAL::In8(Detail::PORT);
 
-    // if enter pressed -> break.
+    ///! If enter pressed then break.
     if (in == 0xD) {
       break;
     }
