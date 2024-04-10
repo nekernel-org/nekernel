@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <Builtins/ATA/Defines.hxx>
+#include <Builtins/ATA/ATA.hxx>
 #include <BootKit/Device.hxx>
 
 using namespace NewOS;

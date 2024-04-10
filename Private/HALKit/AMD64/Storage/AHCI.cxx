@@ -15,7 +15,7 @@
  *
  */
 
-#include <Builtins/AHCI/Defines.hxx>
+#include <Builtins/AHCI/AHCI.hxx>
 #include <KernelKit/PCI/Iterator.hpp>
 
 #ifdef __AHCI__
@@ -36,7 +36,7 @@ NewOS::Boolean drv_std_init(NewOS::UInt16& PortsImplemented) {
       iterator[devIndex].Leak().EnableMmio();
       kAhciDevice = iterator[devIndex].Leak();
 
-      kcout << "NewKernel: Found AHCI controller.\r\n";
+      kcout << "NewKernel: [PCI] Found AHCI controller.\r\n";
     
       return true;
     }

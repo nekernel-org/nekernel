@@ -41,7 +41,6 @@ extern NewOS::Array<rt_syscall_proc,
                     kKernelMaxSystemCalls>
     kSyscalls;
 
-EXTERN_C NewOS::Void rt_wait_400ns();
 EXTERN_C NewOS::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C NewOS::Void rt_do_context_switch(NewOS::HAL::StackFramePtr stackFrame);
 

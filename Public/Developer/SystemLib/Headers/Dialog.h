@@ -12,7 +12,7 @@ struct _DialogPort;
 struct _DialogPoint;
 
 /// @brief Dialog procedure type.
-typedef VoidType(*WmDialogProc)(struct _DialogPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
+typedef VoidType(*WmDialogFn)(struct _DialogPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
 
 /// @brief A point, can represent the size, position of a window.
 typedef struct _DialogPoint {
@@ -25,7 +25,7 @@ typedef struct _DialogPort {
   BooleanType dlgVisible;
   BooleanType dlgMoving;
   DialogPoint dlgPosition;
-  WmDialogProc dlgProc;
+  WmDialogFn dlgProc;
   struct _WindowPort* parentPort;
 } DialogPort;
 

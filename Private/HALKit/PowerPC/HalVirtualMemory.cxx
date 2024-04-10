@@ -7,4 +7,4 @@
 #include <HALKit/PowerPC/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-extern "C" NewOS::HAL::StackFramePtr rt_get_current_context() { return nullptr; }
+extern "C" void hal_flush_tlb() {}

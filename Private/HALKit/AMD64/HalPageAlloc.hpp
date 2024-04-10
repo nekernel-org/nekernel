@@ -60,7 +60,7 @@ enum class ControlRegisterBits {
   AlignementMask = 18,
   NotWriteThrough = 29,
   CacheDisable = 30,
-  Paging = 31,
+  PageEnable = 31,
 };
 
 inline UInt8 control_register_cast(ControlRegisterBits reg) {

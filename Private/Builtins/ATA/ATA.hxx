@@ -13,6 +13,8 @@
 
 #pragma once
 
+#ifndef __AHCI__
+
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
@@ -146,3 +148,4 @@ NewOS::Void drv_std_write(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Mast
                     NewOS::SizeT SectorSz, NewOS::SizeT Size);
 
 #endif // ifdef __KERNEL__
+#endif // ifndef __AHCI__

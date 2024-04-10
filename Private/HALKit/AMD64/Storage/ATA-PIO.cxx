@@ -15,7 +15,7 @@
  *
  */
 
-#include <Builtins/ATA/Defines.hxx>
+#include <Builtins/ATA/ATA.hxx>
 #include <ArchKit/ArchKit.hpp>
 
 #ifdef __ATA_PIO__

@@ -12,34 +12,65 @@
 STATIC NewOS::Boolean kAllocationInProgress = false;
 namespace NewOS {
 namespace HAL {
+namespace Detail {
+struct VirtualMemoryHeader {
+  Boolean Present : 1;
+  Boolean ReadWrite : 1;
+  Boolean User : 1;
+};
+
+struct VirtualMemoryHeaderTraits {
+  /// @brief Get next header.
+  /// @param current 
+  /// @return 
+  VirtualMemoryHeader* Next(VirtualMemoryHeader* current) {
+    return current + sizeof(PTE);
+  }
+
+  /// @brief Get previous header.
+  /// @param current 
+  /// @return 
+  VirtualMemoryHeader* Prev(VirtualMemoryHeader* current) {
+    return current - sizeof(PTE);
+  }
+};
+}
+
 /// @brief Allocates a new page of memory.
 /// @param sz the size of it.
 /// @param rw read/write flag.
 /// @param user user flag.
 /// @return the page table of it.
 STATIC auto hal_try_alloc_new_page(Boolean rw, Boolean user) -> VoidPtr {
-  kAllocationInProgress = true;
-  PTE* newAddress = (PTE*)kKernelVirtualStart;
+  if (kAllocationInProgress) return nullptr;
 
-  while (newAddress->Present) {
-    newAddress = newAddress + sizeof(PTE);
+  kAllocationInProgress = true;
+
+  ///! fetch from the start.
+  Detail::VirtualMemoryHeader* vmHeader = reinterpret_cast<Detail::VirtualMemoryHeader*>(kKernelVirtualStart);
+  Detail::VirtualMemoryHeaderTraits traits;
+
+  while (vmHeader->Present) {
+    vmHeader = traits.Next(vmHeader);
   }
 
-  newAddress->Present = true;
-  newAddress->Rw = rw;
-  newAddress->User = user;
+  vmHeader->Present = true;
+  vmHeader->ReadWrite = rw;
+  vmHeader->User = user;
 
   kAllocationInProgress = false;
 
-  return reinterpret_cast<VoidPtr>(newAddress);
+  return reinterpret_cast<VoidPtr>(vmHeader);
 }
 
 /// @brief Allocate a new page to be used by the OS.
-/// @param rw
-/// @param user
+/// @param rw read/write bit.
+/// @param user user bit.
 /// @return
 auto hal_alloc_page(Boolean rw, Boolean user) -> VoidPtr {
+  /// Wait for a ongoing allocation to complete.
   while (kAllocationInProgress) {
+    ;
   }
 
   /// allocate new page.

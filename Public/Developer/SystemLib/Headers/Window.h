@@ -27,7 +27,7 @@ struct _WmPoint;
 typedef QWordType DCRef;
 
 /// @brief Window procedure type.
-typedef VoidType(*WmWindowProc)(struct _WindowPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
+typedef VoidType(*WmWindowFn)(struct _WindowPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
 
 /// @brief A point, can represent the size, position of a window.
 typedef struct _WmPoint {
@@ -48,7 +48,7 @@ typedef struct _WindowPort {
   WmPoint windowSize;
   BooleanType windowInvalidate;
   DWordType windowClearColor;
-  WmWindowProc windowProc;
+  WmWindowFn windowProc;
   struct _WindowPort* windowMenuPort; ///! Attached menu to it.
   struct _WindowPort* windowParentPort;
 } WindowPort;
@@ -60,7 +60,7 @@ typedef struct _ControlPort {
   BooleanType controlVisible;
   BooleanType controlMoving;
   WmPoint controlPosition;
-  WmWindowProc controlProc;
+  WmWindowFn controlProc;
   WindowPort* parentPort;
 } ControlPort;
 
@@ -156,17 +156,3 @@ CA_EXTERN_C VoidType      WmReleaseMenu(WindowPort* port);
 /// @param where to move.
 /// @return error code.
 CA_EXTERN_C Int32Type     WmMoveWindow(WindowPort* id, WmPoint where);
-
-/// @brief Get last message.
-/// @param id 
-/// @return 
-CA_EXTERN_C Int64Type     WmGetMessage(WindowPort* id);
-
-/// @brief Translate message internally.
-/// @return 
-CA_EXTERN_C VoidType      WmTranslateMessage(WindowPort* port, Int64Type msg);
-
-/// @brief Dispatch message to event queue.
-/// @param id 
-/// @return 
-CA_EXTERN_C Int32Type     WmDispatchMessage(WindowPort* id);

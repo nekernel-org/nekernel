@@ -7,7 +7,7 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.hxx>
-#include <Builtins/AHCI/Defines.hxx>
+#include <Builtins/AHCI/AHCI.hxx>
 
 class BootDeviceSATA final {
  public:

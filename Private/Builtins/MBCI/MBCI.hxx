@@ -14,15 +14,19 @@ struct MBCIHostInterface;
 struct MBCIDeviceInterface;
 struct MBCIPacketInterface;
 
-/// @brief Host interface
+/// @brief MBCI Host Interface header.
 struct MBCIHostInterface final {
 	UInt32 HostId;
-	UInt32 VendorId;
-	UInt64 BaseAddressRegister;
-	UInt64 DeviceSize;
+	UInt16 VendorId;
+	UInt16 DeviceId;
 	UInt8  MemoryType;
 	UInt8  HostType;
 	UInt8  HostFlags;
+	UInt8  Error;
+	UInt8  Status;
+	UInt8  InterruptEnable;
+	UInt64 BaseAddressRegister;
+	UInt64 BaseAddressRegisterSize;
 };
 
 /// @brief MBCI host flags.
@@ -34,6 +38,4 @@ enum MBCIHostFlags {
 	kMBCIHostFlagsSupportsDMA, /// Has DMA.
 	kMBCIHostFlagsCount,
 };
-
-MBCIHostInterface* drv_get_mbi_host(void);
 } // namespace NewOS
