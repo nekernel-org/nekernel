@@ -3,8 +3,10 @@
 # This is the bootloader makefile.
 ##################################################
 
-CC_GNU=x86_64-w64-mingw32-g++
-LD_GNU=x86_64-w64-mingw32-ld
+CC_GNU=x86_64-w64-mingw32-g++.exe
+LD_GNU=x86_64-w64-mingw32-ld.exe
+
+WINDRES=x86_64-w64-mingw32-windres.exe
 
 ADD_FILE=touch
 COPY=cp
@@ -49,7 +51,7 @@ endif
 
 .PHONY: compile-amd64
 compile-amd64:
-	windres BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
+	$(WINDRES) BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
 	$(CC_GNU) $(FLAG_GNU) $(DEBUG) $(wildcard HEL/AMD64/*.cxx) $(wildcard *.cxx)
 
 .PHONY: run-efi-amd64
