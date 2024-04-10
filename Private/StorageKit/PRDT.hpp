@@ -8,6 +8,7 @@
 
 #include <KernelKit/PCI/Dma.hpp>
 #include <KernelKit/PCI/Iterator.hpp>
+#include <NewKit/Ref.hpp>
 
 #define kPrdtTransferSize (sizeof(NewOS::UShort))
 
@@ -25,6 +26,8 @@ struct PRDT {
   UInt32 fSectorCount;
   UInt8  fEndBit;
 };
+
+void construct_prdt(Ref<PRDT>& prd);
 
 EXTERN_C Int32 kPRDTTransferStatus;
 }  // namespace NewOS
