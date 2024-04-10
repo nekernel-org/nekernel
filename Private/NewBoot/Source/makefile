@@ -12,10 +12,10 @@ ADD_FILE=touch
 COPY=cp
 HTTP_GET=wget
 
-ifeq ($(shell uname), Darwin)
-EMU=qemu-system-x86_64
-else
+ifeq ($(shell uname), Windows_NT)
 EMU=qemu-system-x86_64w.exe
+else
+EMU=qemu-system-x86_64
 endif
 
 IMG=epm.img
