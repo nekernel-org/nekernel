@@ -1,5 +1,7 @@
 syntax: glob
 
+.git
+
 .cmake/
 .qtc_clangd/
 CMakeCache.txt
