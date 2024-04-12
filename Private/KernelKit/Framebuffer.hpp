@@ -2,6 +2,9 @@
 
     Copyright Mahrouss Logic
 
+    File: Framebuffer.hpp
+    Purpose: Framebuffer object.
+
 ------------------------------------------- */
 
 #ifndef __INC_FB_HPP__
@@ -45,12 +48,12 @@ class Framebuffer final {
   Ref<FramebufferContext *> &Leak();
 
   /// @brief Draws a rectangle inside the fb.
-  /// @param width 
-  /// @param height 
-  /// @param x 
-  /// @param y 
-  /// @param color 
-  /// @return 
+  /// @param width the width of it
+  /// @param height the height of it
+  /// @param x its x coord.
+  /// @param y its y coord.
+  /// @param color the color of it.
+  /// @return the framebuffer object.
   Framebuffer &DrawRect(SizeT width, SizeT height, SizeT x, SizeT y,
                         UInt32 color);
 
@@ -58,7 +61,7 @@ class Framebuffer final {
   /// @param x where in X
   /// @param y where in Y
   /// @param color the color of it.
-  /// @return 
+  /// @return the framebuffer object.
   Framebuffer &PutPixel(SizeT x, SizeT y, UInt32 color);
 
  private:
@@ -67,7 +70,7 @@ class Framebuffer final {
 };
 
 /***********************************************************************************/
-/// Color utils.
+/// Some common colors.
 /***********************************************************************************/
 
 extern const UInt32 kRgbRed;
@@ -81,6 +84,7 @@ extern const UInt32 kRgbWhite;
 /// Color macros.
 /***********************************************************************************/
 
+/// @brief Macro hack to make a color (as hexadecimal)
 #define RGB(R, G, B) (NewOS::UInt32)(0x##R##G##B)
 
 #endif /* ifndef __INC_FB_HPP__ */
