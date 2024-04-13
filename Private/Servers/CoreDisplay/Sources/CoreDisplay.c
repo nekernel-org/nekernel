@@ -3,16 +3,17 @@
     Copyright Mahrouss Logic
 
     File: Server.c
-    Purpose: DisplayManager server.
+    Purpose: Display server.
 
 ------------------------------------------- */
 
-#include "Server.h"
+#include <CoreDisplay.h>
+#include <IPCWrapper.h>
 
 /// @brief Called when the server starts.
 DWordType ServerStartup(VoidType)
 {
-	DMInitDisplay(kDMNoFlags); // init standard display. Need to notify other endpoits.
+	CDInitDisplay(kDMNoFlags); // init standard display. Need to notify other endpoits.
 			  // as well.
 			  //
 	
@@ -24,7 +25,8 @@ DWordType ServerStartup(VoidType)
 /// @brief Called when the server shuts down.
 DWordType ServerShutdown(VoidType)
 {
-	DMCloseDisplay(); /// takes no arguments.
+	CDCloseDisplay(); /// takes no arguments.
 	return 0;
 }
 
+/// EOF.
