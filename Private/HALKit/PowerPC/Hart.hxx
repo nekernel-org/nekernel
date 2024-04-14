@@ -3,11 +3,11 @@
     Copyright Mahrouss Logic
 
     File: Hart.hxx
-    Purpose: RISC-V hardware threads.
+    Purpose: PowerPC hardware threads.
 
     Revision History:
 
-    30/01/24: Added file (amlel)
+    14/04/24: Added file (amlel)
 
 ------------------------------------------- */
 
@@ -15,6 +15,6 @@
 
 #include <NewKit/Defines.hpp>
 
-typedef NewOS::Int32 Rv64HartType;
+typedef NewOS::Int32 PPCHartType;
 
 

@@ -134,7 +134,19 @@ IntNormal 40
 IntNormal 41
 IntNormal 42
 IntNormal 43
-IntNormal 44
+
+__HCR_INT_44:
+    cli
+
+    ;; TODO: CoreEvents dispatch routine.
+
+    push rax
+    call _hal_handle_mouse
+    pop rax
+
+    sti
+    iretq
+
 IntNormal 45
 IntNormal 46
 IntNormal 47
@@ -143,6 +155,8 @@ IntNormal 49
 
 __HCR_INT_50:
     cli
+
+    ;; todo handle system calls.
 
     sti
     iretq
