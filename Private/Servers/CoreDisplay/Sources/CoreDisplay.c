@@ -13,7 +13,7 @@
 /// @brief Called when the server starts.
 DWordType ServerStartup(VoidType)
 {
-	CDInitDisplay(kDMNoFlags); // init standard display. Need to notify other endpoits.
+	CDInitDisplay(kCDNoFlags); // init standard display. Need to notify other endpoits.
 			  // as well.
 			  //
 	
@@ -25,7 +25,7 @@ DWordType ServerStartup(VoidType)
 /// @brief Called when the server shuts down.
 DWordType ServerShutdown(VoidType)
 {
-	CDCloseDisplay(); /// takes no arguments.
+	CDCloseDisplay(kCDShutdownAll); /// takes the close flag argument, which tells here to also close the child nodes.
 	IPCSendMessage(kIPCBroadcastDispose); /// broadcast our presence 
 	return 0;
 }
