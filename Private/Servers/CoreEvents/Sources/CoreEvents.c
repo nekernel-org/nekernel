@@ -13,7 +13,7 @@
 /// @brief Called when the server starts.
 DWordType ServerStartup(VoidType)
 {
-	IPCSendMessage(kIPCBroadcast); /// broadcast our presence 
+	IPCSendMessage(kIPCBroadcastNew); /// broadcast our presence 
 	return 0;
 }
 

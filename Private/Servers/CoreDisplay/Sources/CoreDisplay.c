@@ -17,7 +17,7 @@ DWordType ServerStartup(VoidType)
 			  // as well.
 			  //
 	
-	IPCSendMessage(kIPCBroadcast); /// broadcast our presence 
+	IPCSendMessage(kIPCBroadcastNew); /// broadcast our presence 
 
 	return 0;
 }
