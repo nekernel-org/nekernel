@@ -65,7 +65,8 @@ PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
     if (container->Cpu == Detail::rt_get_pef_platform() &&
         container->Magic[0] == kPefMagic[0] &&
         container->Magic[1] == kPefMagic[1] &&
-        container->Magic[2] == kPefMagic[2] && container->Abi == kPefAbi) {
+        container->Magic[2] == kPefMagic[2] &&
+        container->Magic[3] == kPefMagic[3] && container->Abi == kPefAbi) {
       if (container->Kind != kPefKindObject &&
           container->Kind != kPefKindDebug) {
         kcout << "CodeManager: Info: Good executable. can proceed.\n";

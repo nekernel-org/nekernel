@@ -18,10 +18,10 @@
 #include <KernelKit/LoaderInterface.hpp>
 #include <NewKit/Defines.hpp>
 
-#define kPefMagic "PEF"
-#define kPefMagicFat "FEP"
+#define kPefMagic "Joy!"
+#define kPefMagicFat "yoJ!"
 
-#define kPefMagicLen 3
+#define kPefMagicLen 5
 
 #define kPefVersion 1
 #define kPefNameLen 64
@@ -83,7 +83,7 @@ enum {
 };
 }  // namespace NewOS
 
-#define kPefExt ".exe"
+#define kPefExt ".exec"
 #define kPefDylibExt ".lib"
 #define kPefLibExt ".slib"
 #define kPefObjectExt ".obj"
