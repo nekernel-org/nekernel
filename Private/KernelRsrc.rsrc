@@ -1,4 +1,4 @@
-1 ICON "Root/Boot/kernel-logo.ico"
+1 ICON "Root/Boot/sys-icon.ico"
 
 #include "CompilerKit/Version.hxx"
 
