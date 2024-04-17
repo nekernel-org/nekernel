@@ -33,7 +33,7 @@ typedef struct BlockGUID {
 struct PACKED BootBlock {
   NewOS::Char Magic[kEPMMagicLength];
   NewOS::Char Name[kEPMNameLength];
-  BlockGUID   Uuid;
+  BlockGUID Uuid;
   NewOS::Int32 Version;
   NewOS::Int64 NumBlocks;
   NewOS::Int64 SectorSz;
@@ -104,11 +104,12 @@ typedef struct PartitionBlock PartitionBlockType;
 #endif
 #endif
 
-///! @brief partition must start after this address.
-#define kEPMStartPartitionBlk 0
+///! @brief partition must start at this address.
+///! Anything below is reserved for Data backup by the Main OS.
+#define kEPMStartPartitionBlk (0)
 
 ///! @brief Current EPM revision (2)
-#define kEPMRevision 2
+#define kEPMRevision (21)
 
 /// END SPECS
 
