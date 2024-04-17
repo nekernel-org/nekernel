@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "MicroKernel (Macintosh MinGW)",
+            "name": "MicroKernel (Macintosh)",
             "includePath": [
                 "${workspaceFolder}/Private/**",
                 "${workspaceFolder}/Private/NewBoot/**",

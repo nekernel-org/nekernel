@@ -193,7 +193,7 @@ using StrType = CharacterTypeUTF8[N];
 /// @brief Get app singleton.
 /// @param  
 /// @return 
-CA_EXTERN_C ApplicationRef     RtGetApp(VoidType);
+CA_EXTERN_C ApplicationRef     RtGetAppPointer(VoidType);
 
 /// @brief Get argument count
 /// @param  

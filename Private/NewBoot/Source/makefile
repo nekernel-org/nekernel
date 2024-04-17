@@ -3,17 +3,17 @@
 # This is the bootloader makefile.
 ##################################################
 
-CC_GNU=x86_64-w64-mingw32-g++.exe
-LD_GNU=x86_64-w64-mingw32-ld.exe
+CC_GNU=x86_64-w64-mingw32-g++
+LD_GNU=x86_64-w64-mingw32-ld
 
-WINDRES=x86_64-w64-mingw32-windres.exe
+WINDRES=x86_64-w64-mingw32-windres
 
 ADD_FILE=touch
 COPY=cp
 HTTP_GET=wget
 
 ifeq ($(shell uname), Windows_NT)
-EMU=qemu-system-x86_64w.exe
+EMU=qemu-system-x86_64w
 else
 EMU=qemu-system-x86_64
 endif

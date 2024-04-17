@@ -24,6 +24,8 @@ UInt32 rt_get_pef_platform(void) noexcept {
   return kPefArch64x0;
 #elif defined(__x86_64__)
   return kPefArchAMD64;
+#elif defined(__powerpc64__)
+  return kPefArchPowerPC;
 #else
   return kPefArchInvalid;
 #endif  // __32x0__ || __64x0__ || __x86_64__
@@ -53,15 +55,6 @@ PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
 
     PEFContainer *container = reinterpret_cast<PEFContainer *>(fCachedBlob);
 
-    auto fFree = [&]() -> void {
-      kcout << "CodeManager: Warning: Executable format error!\n";
-      fBad = true;
-
-      ke_delete_ke_heap(fCachedBlob);
-
-      fCachedBlob = nullptr;
-    };
-
     if (container->Cpu == Detail::rt_get_pef_platform() &&
         container->Magic[0] == kPefMagic[0] &&
         container->Magic[1] == kPefMagic[1] &&
@@ -74,7 +67,12 @@ PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
       }
     }
 
-    fFree();
+    kcout << "CodeManager: Warning: Executable format error!\n";
+    fBad = true;
+
+    ke_delete_ke_heap(fCachedBlob);
+
+    fCachedBlob = nullptr;
   }
 }
 

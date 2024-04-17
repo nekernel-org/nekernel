@@ -6,23 +6,23 @@
 
 ------------------------------------------- */
 
-.section .text
+.text
 
-.globl RtGetApp
+.globl RtGetAppPointer
 .globl RtAssertTriggerInterrupt
 
 /* @brief Application getter */
 /* @throws: ApptError: appartement error. */
-RtGetApp:
+RtGetAppPointer:
     mov $0x10, %rcx /* sysGetProcessObject */
-    int $0x21
+    int $0x32
 
     /* rax gets saved and returned. */
     ret
 
 RtAssertTriggerInterrupt:
     mov $0x11, %rcx /* sysTerminateCurrentProcess */
-    int $0x21
+    int $0x32
 
     ret
 

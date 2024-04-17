@@ -2,14 +2,13 @@
 ;
 ;    Copyright Mahrouss Logic
 ;
-;    Purpose: PowerPC low level I/O
+;    Purpose: PowerPC Core assembly routines.
 ;
 ; ------------------------------------------- */
 
-
 /* @brief Application getter */
 /* @throws: ApptError: appartement error. */
-export .code64 RtGetApp:
+export .code64 RtGetAppPointer:
     stw 0x10, 0(r3) /* sysGetProcessObject */
     sc
 

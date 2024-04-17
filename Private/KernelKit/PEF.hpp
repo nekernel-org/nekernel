@@ -92,6 +92,6 @@ enum {
 // NewOS System Binary Interface.
 #define kPefAbi (0x5046)
 
-#define kPefStart "__start"
+#define kPefStart "__ImageStart"
 
 #endif /* ifndef __PEF__ */

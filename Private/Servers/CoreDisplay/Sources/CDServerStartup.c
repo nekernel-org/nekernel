@@ -2,25 +2,23 @@
 
     Copyright Mahrouss Logic
 
-    File: CoreEvents.c
-    Purpose: Event server.
+    File: CDServerStartup.c
+	Purpose: Server entrypoint.
 
 ------------------------------------------- */
 
-#include <CoreEvents.h>
+#include <CDServerStartup.h>
 #include <IPC.h>
 
 /// @brief Called when the server starts.
-DWordType ServerStartup(VoidType)
+int ServerStartup(void)
 {
-	IPCSendMessage(kIPCBroadcastNew); /// broadcast our presence 
 	return 0;
 }
 
 /// @brief Called when the server shuts down.
-DWordType ServerShutdown(VoidType)
+int ServerShutdown(void)
 {
-	IPCSendMessage(kIPCBroadcastDispose); /// broadcast our dispose. 
 	return 0;
 }
 

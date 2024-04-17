@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <Headers/Window.h>
+#include <Headers/Wm.h>
 
 struct _DialogPort;
 struct _DialogPoint;
@@ -22,10 +22,11 @@ typedef struct _DialogPoint {
 typedef struct _DialogPort {
   WordType dlgPort;
   WordType dlgKind;
-  BooleanType dlgVisible;
-  BooleanType dlgMoving;
+  BooleanType dlgVisible : 1;
+  BooleanType dlgMoving : 1;
   DialogPoint dlgPosition;
   WmDialogFn dlgProc;
+  struct _WmGFX* dlgGfx;
   struct _WindowPort* parentPort;
 } DialogPort;
 

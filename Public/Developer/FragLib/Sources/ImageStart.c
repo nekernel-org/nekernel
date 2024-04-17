@@ -6,16 +6,16 @@
 
 #include <Headers/Defines.h>
 
-/// @brief Main application entrypoint.
-/// @param  
-/// @return 
+/// @brief Application entrypoint.
+/// @param void
+/// @return void
 CA_EXTERN_C VoidType AppMain(VoidType);
 
-/// @brief Pre-entrypoint intiialization.
-/// @param  
-/// @return 
-CA_EXTERN_C VoidType __start(VoidType) {
-  kSharedApplication = RtGetApp();
+/// @brief Process entrypoint.
+/// @param void
+/// @return void
+CA_EXTERN_C VoidType __ImageStart(VoidType) {
+  kSharedApplication = RtGetAppPointer();
   CA_MUST_PASS(kSharedApplication);
 
   AppMain();

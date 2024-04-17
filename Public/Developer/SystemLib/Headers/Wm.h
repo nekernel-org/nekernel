@@ -10,7 +10,7 @@
 
 /*************************************************************
  * 
- * File: Window.h 
+ * File: Wm.h 
  * Purpose: Window Manager API for NewOS.
  * Date: 3/26/24
  * 
@@ -24,7 +24,13 @@ struct _WindowPort;
 struct _ControlPort;
 struct _WmPoint;
 
-typedef QWordType DCRef;
+/// @brief Window Graphics type.
+typedef struct _WmGFX {
+  UInt32Type Depth;
+  UInt32Type* DataFrame;
+  SizeType DataFrameWidth;
+  SizeType DataFrameHeight;
+} WmGFX, *WmGFXRef;
 
 /// @brief Window procedure type.
 typedef VoidType(*WmWindowFn)(struct _WindowPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
@@ -34,20 +40,21 @@ typedef struct _WmPoint {
   PositionType X, Y;
 } WmPoint;
 
+
 /// @brief Window port type, can be used to control the window.
 typedef struct _WindowPort {
   WordType windowPort;
   WordType windowKind;
-  BooleanType windowVisible;
-  BooleanType windowMaximized;
-  BooleanType windowMinimized;
-  BooleanType windowMoving;
-  BooleanType windowDisableClose;
-  BooleanType windowDisableMinimize;
+  BooleanType windowVisible : 1;
+  BooleanType windowMaximized : 1;
+  BooleanType windowMinimized : 1;
+  BooleanType windowMoving : 1;
+  BooleanType windowDisableClose : 1;
+  BooleanType windowDisableMinimize : 1;
+  BooleanType windowInvalidate : 1;
   WmPoint windowPosition;
   WmPoint windowSize;
-  BooleanType windowInvalidate;
-  DWordType windowClearColor;
+  WmGFXRef windowGfx;
   WmWindowFn windowProc;
   struct _WindowPort* windowMenuPort; ///! Attached menu to it.
   struct _WindowPort* windowParentPort;
@@ -57,10 +64,11 @@ typedef struct _WindowPort {
 typedef struct _ControlPort {
   WordType controlPort;
   WordType controlKind;
-  BooleanType controlVisible;
-  BooleanType controlMoving;
+  BooleanType controlVisible : 1;
+  BooleanType controlMoving : 1;
   WmPoint controlPosition;
   WmWindowFn controlProc;
+  WmGFXRef controlGfx;
   WindowPort* parentPort;
 } ControlPort;
 
@@ -107,37 +115,37 @@ CA_EXTERN_C const ColorRef kRgbWhite;
 CA_EXTERN_C ControlPort*  WmCreateControl(DWordType id);
 
 /// @brief Releases the control
-/// @param id the control ref.
+/// @param ctrlPort the control ref.
 /// @return 
-CA_EXTERN_C VoidType      WmReleaseControl(ControlPort* id);
+CA_EXTERN_C VoidType      WmReleaseControl(ControlPort* ctrlPort);
 
 /// @brief Moves a control inside a ControlPort.
-/// @param id the control ref.
+/// @param ctrlPort the control ref.
 /// @param where where to move at.
 /// @return 
-CA_EXTERN_C Int32Type     WmSetControlPosition(ControlPort* id, WmPoint where);
+CA_EXTERN_C Int32Type     WmSetControlPosition(ControlPort* ctrlPort, WmPoint where);
 
 /// @brief Enable control.
-/// @param id 
+/// @param ctrlPort 
 /// @param enabled 
 /// @return 
-CA_EXTERN_C Int32Type     WmSetControlEnabled(ControlPort* id, BooleanType enabled);
+CA_EXTERN_C Int32Type     WmSetControlEnabled(ControlPort* ctrlPort, BooleanType enabled);
 
 /// @brief Make control visible.
-/// @param id 
+/// @param ctrlPort 
 /// @param visible 
 /// @return 
-CA_EXTERN_C Int32Type     WmSetControlVisible(ControlPort* id, BooleanType visible);
+CA_EXTERN_C Int32Type     WmSetControlVisible(ControlPort* ctrlPort, BooleanType visible);
 
 /// @brief Creates a new window.
 /// @param name the window name
-/// @param rsrcId the window fork rsrc id.
+/// @param rsrcId the window fork rsrc ctrlPort.
 /// @return the window graphics port.
 CA_EXTERN_C WindowPort*   WmCreateWindow(const CharacterTypeUTF8* name, const DWordType rsrcId);
 
 /// @brief Creates a new menu
 /// @param name the menu's name
-/// @param rsrcId the menu fork rsrc id.
+/// @param rsrcId the menu fork rsrc ctrlPort.
 /// @return the menu graphics port.
 CA_EXTERN_C WindowPort*   WmCreateMenu(const CharacterTypeUTF8* name, const DWordType rsrcId);
 
@@ -151,14 +159,17 @@ CA_EXTERN_C VoidType      WmReleaseWindow(WindowPort* port);
 /// @return void
 CA_EXTERN_C VoidType      WmReleaseMenu(WindowPort* port);
 
-/// @brief Moves a window on the desktop. (menu arent movable, will return kErrIncompatible is menu is provided.)
-/// @param id the gfx port.
+/// @brief Moves a window on the desktop. (menu arent movable, will return kErrIncompatible if menu is provided.)
+/// @param wndPort the gfx port.
 /// @param where to move.
 /// @return error code.
-CA_EXTERN_C Int32Type     WmMoveWindow(WindowPort* id, WmPoint where);
+CA_EXTERN_C Int32Type     WmMoveWindow(WindowPort* wndPort, WmPoint where);
 
 /// @brief Get the NewOS about window.
 /// @return The window port of it.
 /// @note The reason that this is not a window is for it to run without blocking the UI.
 CA_EXTERN_C WindowPort*   WmGetOSDlg(void);
 
+/// @brief Draws a blur effect on the window.
+/// @param wndPort the window port.
+CA_EXTERN_C VoidType WmBlur(WindowPort* wndPort);

@@ -6,13 +6,15 @@
 
 #include <Headers/Defines.h>
 
-/// @brief Main Application object, retrieved from the RtGetApp symbol.
+/// @brief Main Application object, retrieved from the RtGetAppPointer symbol.
 ApplicationRef kSharedApplication = NullPtr;
 
 /// @brief Gets the app arguments count.
 /// @param void no arguments.
 /// @return
 CA_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType) {
+  CA_MUST_PASS(kSharedApplication);
+
   return kSharedApplication->Invoke(kSharedApplication, kCallGetArgsCount);
 }
 
@@ -20,6 +22,8 @@ CA_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType) {
 /// @param void no arguments.
 /// @return
 CA_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType) {
+  CA_MUST_PASS(kSharedApplication);
+  
   return (CharacterTypeUTF8**)kSharedApplication->Invoke(kSharedApplication,
                                                          kCallGetArgsPtr);
 }
