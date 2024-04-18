@@ -2,9 +2,8 @@
 
     Copyright Mahrouss Logic
 
-    File: CDBitBlt.h
-    Purpose: Userbuffer to Framebuffer magic.
-
 ------------------------------------------- */
 
-#pragma once
+int __ImageStart(void) {
+    return 0;
+}

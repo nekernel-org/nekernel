@@ -35,7 +35,7 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mgeneral-regs-only -mno-red-zone -D__KE
 
 .PHONY: invalid-recipe
 invalid-recipe:
-	@echo "invalid-recipe: Use make bootloader-<arch> all instead."
+	@echo "invalid-recipe: Use make bootloader-<arch> instead."
 
 .PHONY: all
 all: compile-amd64
