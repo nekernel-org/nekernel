@@ -571,8 +571,6 @@ typedef struct EfiSystemTable {
   } *ConfigurationTable;
 } EfiSystemTable;
 
-#define EfiMain efi_main
-
 #define kEfiOk 0
 #define kEfiFail -1
 

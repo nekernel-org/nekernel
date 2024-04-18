@@ -6,6 +6,7 @@
 
 #include <HALKit/PowerPC/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>
+#include <HALKit/PowerPC/Hart.hxx>
 
 using namespace NewOS;
 

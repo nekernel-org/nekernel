@@ -18,9 +18,12 @@ class BVersionString;
 
 #include <BootKit/HW/ATA.hxx>
 #include <CompilerKit/Version.hxx>
+
 #ifdef __EFI_x86_64__
+#define kBootVirtualAddress (0xffffff80000000)
 #include <FirmwareKit/EFI.hxx>
 #endif  // ifdef __EFI_x86_64__
+
 #include <FirmwareKit/EPM.hxx>
 #include <NewKit/Defines.hpp>
 
@@ -68,8 +71,10 @@ NewOS::SizeT BSetMem(CharacterTypeUTF8 *src, const CharacterTypeUTF8 byte,
 
 /// String length functions.
 
+/// @brief get string length.
 NewOS::SizeT BStrLen(const CharacterTypeUTF16 *ptr);
 
+/// @brief set memory with custom value.
 NewOS::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
                      const NewOS::SizeT len);
 
@@ -169,7 +174,7 @@ inline UInt32 In32(UInt16 port) {
 
 /***
  * Common processor instructions.
-*/
+ */
 
 EXTERN_C void rt_hlt();
 EXTERN_C void rt_cli();
@@ -221,8 +226,10 @@ class BVersionString final {
 /// @param namePart the partition's name
 /// @param namePartLength the partition name's length
 /// @param bootDev the disk interface.
-/// @return 
+/// @return
 EXTERN_C Boolean boot_write_epm_partition(const Char *namePart,
                                           SizeT namePartLength,
                                           BootDevice *bootDev);
 
+/// @brief Bootloader main type.
+typedef void (*BootMainKind)(HEL::HandoverInformationHeader* handoverInfo);

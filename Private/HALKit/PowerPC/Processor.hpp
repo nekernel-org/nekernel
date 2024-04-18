@@ -11,12 +11,12 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Utils.hpp>
 
-#define __PPC_ALIGN __attribute__((aligned(4)))
+#define kHalPPCAlignment __attribute__((aligned(4)))
 
 namespace NewOS::HAL {
 typedef UIntPtr Reg;
 
-struct __PPC_ALIGN StackFrame {
+struct kHalPPCAlignment StackFrame {
   Reg R0;
   Reg R1;
   Reg R2;

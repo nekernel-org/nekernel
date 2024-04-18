@@ -49,7 +49,7 @@ endif
 .PHONY: compile-amd64
 compile-amd64:
 	$(WINDRES) DriverRsrc.rsrc -O coff -o DriverRsrc.o
-	$(CC_GNU) $(FLAG_GNU) $(DEBUG) $(wildcard *.c)
+	$(CC_GNU) $(FLAG_GNU) $(DEBUG) $(wildcard *.c) $(wildcard ../../DriverKit/*.c)
 
 .PHONY: clean
 clean:

@@ -20,3 +20,15 @@ boot_hdr_proc:
 	.long bootloader_start
 
 /* NewOS kernel header end */
+
+.extern bootloader_main
+.extern bootloader_stack
+
+.globl bootloader_start
+bootloader_start:
+	mflr	4			/* real address of .Laddr */
+	lwz	0,(bootloader_stack-bootloader_start)(4)	/* stack address location */
+	mr	1,0			/* use user defined stack */
+
+    bl bootloader_main
+    blr
