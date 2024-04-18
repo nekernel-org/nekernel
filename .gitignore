@@ -1,7 +1,5 @@
 syntax: glob
 
-.svn
-
 .cmake/
 .qtc_clangd/
 CMakeCache.txt
