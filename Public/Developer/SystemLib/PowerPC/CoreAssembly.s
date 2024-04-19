@@ -2,7 +2,7 @@
 ;
 ;    Copyright Mahrouss Logic
 ;
-;    Purpose: PowerPC Core assembly routines.
+;    Purpose: POWER low level I/O
 ;
 ; ------------------------------------------- */
 
@@ -19,4 +19,3 @@ export .code64 RtAssertTriggerInterrupt:
     sc
 
     blr
-
