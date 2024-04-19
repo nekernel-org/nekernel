@@ -22,7 +22,7 @@ IMG=epm.img
 IMG_2=epm-slave.img
 EMU_FLAGS=-net none -smp 4 -m 4G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -drive file=fat:rw:CDROM,index=2,format=raw -d int -hdd epm-slave.img
 
-LD_FLAGS=-e efi_main --subsystem=10
+LD_FLAGS=-e Main --subsystem=10
 
 OBJ=$(wildcard *.o) $(wildcard HEL/AMD64/*.obj)
 

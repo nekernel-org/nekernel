@@ -13,6 +13,27 @@
 
 #define kMaxBufSize 256
 
+/** Graphics related. */
+
+STATIC EfiGraphicsOutputProtocol *kGop = nullptr;
+STATIC UInt16 kStride = 0U;
+STATIC EfiGUID kGopGuid;
+
+/**
+    @brief Finds and stores the GOP.
+*/
+
+STATIC Void InitGOP() noexcept {
+  kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  kGop = nullptr;
+
+  extern EfiBootServices *BS;
+
+  BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr *)&kGop);
+
+  kStride = 4;
+}
+
 /// @brief check the BootDevice if suitable.
 STATIC Bool CheckBootDevice(BootDeviceATA& ataDev) {
   if (ataDev.Leak().mErr) return false;
@@ -23,7 +44,7 @@ STATIC Bool CheckBootDevice(BootDeviceATA& ataDev) {
 /// @param ImageHandle Handle of this image.
 /// @param SystemTable The system table of it.
 /// @return
-EFI_EXTERN_C EFI_API Int efi_main(EfiHandlePtr ImageHandle,
+EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
                                   EfiSystemTable* SystemTable) {
   InitEFI(SystemTable);  ///! Init the EFI library.
   InitGOP();             ///! Init the GOP.
@@ -48,7 +69,7 @@ EFI_EXTERN_C EFI_API Int efi_main(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&SizePtr) !=
       kEfiOk) {
-    EFI::RaiseHardError(L"__bad_alloc", L"NewBoot ran out of memory!");
+    EFI::RaiseHardError(L"Bad-Alloc", L"NewBoot ran out of memory!");
   }
 
   /****
@@ -61,7 +82,7 @@ EFI_EXTERN_C EFI_API Int efi_main(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
                        (VoidPtr*)&Descriptor) != kEfiOk) {
-    EFI::RaiseHardError(L"__bad_alloc", L"NewBoot ran out of memory!");
+    EFI::RaiseHardError(L"Bad-Alloc", L"NewBoot ran out of memory!");
   }
 
   HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
@@ -76,8 +97,6 @@ EFI_EXTERN_C EFI_API Int efi_main(EfiHandlePtr ImageHandle,
         vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
         vendorTable[6] == 'R' && vendorTable[7] == ' ') {
       handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
-
-      writer.Write(L"NewBoot: Found RSDP for kernel.\r\n");
 
       break;
     }
@@ -114,11 +133,11 @@ EFI_EXTERN_C EFI_API Int efi_main(EfiHandlePtr ImageHandle,
 
   handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
-  // EFI::ExitBootServices(MapKey, ImageHandle);
+  EFI::ExitBootServices(MapKey, ImageHandle);
 
   /// TODO: Read catalog and read NewKernel.exe
 
-  // EFI::Stop();
+  EFI::Stop();
 
   CANT_REACH();
 }

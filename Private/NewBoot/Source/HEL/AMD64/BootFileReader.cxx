@@ -25,7 +25,8 @@
 /***
     @brief File Reader constructor.
 */
-BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandle) {
+BFileReader::BFileReader(const CharacterTypeUTF16* path,
+                         EfiHandlePtr ImageHandle) {
   if (path != nullptr) {
     SizeT index = 0UL;
     for (; path[index] != L'\0'; ++index) {
@@ -46,12 +47,12 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandl
   EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
   if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk) {
-    mWriter.Write(L"NewOS: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
+    mWriter.Write(L"NewBoot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
   }
 
   if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk) {
-    mWriter.Write(L"NewOS: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
+    mWriter.Write(L"NewBoot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -59,7 +60,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandl
   /// Start doing disk I/O
 
   if (efp->OpenVolume(efp, &rootFs) != kEfiOk) {
-    mWriter.Write(L"NewOS: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
+    mWriter.Write(L"NewBoot: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -68,7 +69,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandl
 
   if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
       kEfiOk) {
-    mWriter.Write(L"NewOS: Fetch-Protocol: No-Such-Path: ")
+    mWriter.Write(L"NewBoot: Fetch-Protocol: No-Such-Path: ")
         .Write(mPath)
         .Write(L"\r\n");
     this->mErrorCode = kNotSupported;
@@ -88,8 +89,7 @@ BFileReader::~BFileReader() {
     this->mFile = nullptr;
   }
 
-  if (this->mBlob)
-    BS->FreePool(mBlob);
+  if (this->mBlob) BS->FreePool(mBlob);
 
   BSetMem(this->mPath, 0, kPathLen);
 }
@@ -99,13 +99,11 @@ BFileReader::~BFileReader() {
     @param ImageHandle used internally.
 */
 Void BFileReader::ReadAll() {
-  /// Allocate Handover page.
-
   if (this->mErrorCode != kOperationOkay) return;
 
   if (mBlob == nullptr) {
     if (auto err = BS->AllocatePool(EfiLoaderCode, mSizeFile,
-                          (VoidPtr*)&mBlob) != kEfiOk) {
+                                    (VoidPtr*)&mBlob) != kEfiOk) {
       mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
       EFI::RaiseHardError(L"NewBoot_PageError", L"Allocation error.");
     }
@@ -118,3 +116,15 @@ Void BFileReader::ReadAll() {
 
   mErrorCode = kOperationOkay;
 }
+
+/// @brief error code getter.
+/// @return the error code.
+Int32& BFileReader::Error() { return mErrorCode; }
+
+/// @brief blob getter.
+/// @return the blob.
+VoidPtr BFileReader::Blob(){ return mBlob; }
+
+/// @breif Size getter.
+/// @return the size of the file.
+UInt64& BFileReader::Size() { return mSizeFile; }
