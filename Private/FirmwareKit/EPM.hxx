@@ -71,7 +71,7 @@ struct PACKED PartitionBlock {
 
 #define kEPMMagic32k "EPM32"
 
-/* @brief PowerPC magic for EPM */
+/* @brief POWER magic for EPM */
 
 #define kEPMMagicPPC "EPMPC"
 

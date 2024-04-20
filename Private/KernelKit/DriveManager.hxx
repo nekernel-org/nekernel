@@ -106,13 +106,13 @@ class MountpointInterface final {
 };
 
 /// @brief Unimplemented drive.
-/// @param pckt 
-/// @return 
+/// @param pckt
+/// @return
 Void ke_drv_unimplemented(DriveTrait::DrivePacket* pckt);
 
 /// @brief Gets the drive kind (ATA, SCSI, AHCI...)
-/// @param  
-/// @return 
+/// @param
+/// @return
 const Char* ke_drive_kind(Void);
 
 /// @brief Makes a new drive.

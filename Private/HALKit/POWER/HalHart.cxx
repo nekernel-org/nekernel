@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
-#include <HALKit/PowerPC/Processor.hpp>
+#include <HALKit/POWER/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>
-#include <HALKit/PowerPC/Hart.hxx>
+#include <HALKit/POWER/Hart.hxx>
 
 using namespace NewOS;
 

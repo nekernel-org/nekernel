@@ -4,5 +4,5 @@
 
 ------------------------------------------- */
 
-#include <HALKit/PowerPC/Processor.hpp>
+#include <HALKit/POWER/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>

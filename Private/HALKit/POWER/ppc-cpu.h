@@ -17,7 +17,7 @@ struct pt_regs {
 	unsigned long  nip;
 };
 
-#else 
+#else
 #include <asm/ptrace.h>
 #include <asm/types.h>
 #endif
@@ -880,8 +880,8 @@ struct pt_regs {
 #define PVR_REV(pvr)  (((pvr) >>   0) & 0xFFFF)	/* Revison field */
 
 /*
- * AMCC has further subdivided the standard PowerPC 16-bit version and
- * revision subfields of the PVR for the PowerPC 403s into the following:
+ * AMCC has further subdivided the standard ppc 16-bit version and
+ * revision subfields of the PVR for the ppc 403s into the following:
  */
 
 #define PVR_FAM(pvr)	(((pvr) >> 20) & 0xFFF)	/* Family field */
@@ -990,7 +990,7 @@ struct pt_regs {
 
 /*
  * For the 8xx processors, all of them report the same PVR family for
- * the PowerPC core. The various versions of these processors must be
+ * the ppc core. The various versions of these processors must be
  * differentiated by the version number in the Communication Processor
  * Module (CPM).
  */

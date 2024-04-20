@@ -161,7 +161,53 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
     return false;
   }
 
-  return true;
+  Char sectorBuf[kNewFSMinimumSectorSz] = {0};
+
+  drive->fPacket.fPacketContent = sectorBuf;
+  drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
+  drive->fPacket.fLba = kNewFSAddressAsLba;
+
+  drive->fInput(&drive->fPacket);
+
+  /// disk isnt faulty and data has been fetched.
+  if (drive->fPacket.fPacketGood) {
+    NewPartitionBlock* partBlock = (NewPartitionBlock*)sectorBuf;
+    if (partBlock->PartitionName[0] == 0 &&
+        rt_string_cmp(partBlock->Ident, kNewFSIdent, kNewFSIdentLen) == 0) {
+      /// partition is free and valid.
+
+      rt_copy_memory((VoidPtr)kNewFSIdent, (VoidPtr)partBlock->Ident,
+                     kNewFSIdentLen);
+      rt_copy_memory((VoidPtr) "New OS\0", (VoidPtr)partBlock->PartitionName,
+                     rt_string_len("New OS\0"));
+
+      SizeT catalogCount = 0;
+      SizeT sectorCount = 0;
+      SizeT diskSize = 0;
+
+      partBlock->Kind = kNewFSPartitionTypeStandard;
+      partBlock->StartCatalog = sizeof(NewPartitionBlock) + kNewFSAddressAsLba;
+      partBlock->CatalogCount = catalogCount;
+      partBlock->SectorCount = sectorCount;
+      partBlock->DiskSize = diskSize;
+      partBlock->FreeCatalog = partBlock->StartCatalog;
+
+      drive->fPacket.fPacketContent = sectorBuf;
+      drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
+      drive->fPacket.fLba = kNewFSAddressAsLba;
+
+      drive->fOutput(&drive->fPacket);
+
+      return true;
+    }
+
+    kcout << "New OS: Partition already exists.\r\n";
+
+    /// return success as well, do not ignore that partition.
+    return true;
+  }
+
+  return false;
 }
 
 /// @brief
@@ -173,69 +219,76 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog,
   return false;
 }
 
-/// @brief 
-/// @param catalogName 
-/// @return 
+/// @brief
+/// @param catalogName
+/// @return
 _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName) {
   return nullptr;
 }
 
-/// @brief 
-/// @param name 
-/// @return 
+/// @brief
+/// @param name
+/// @return
 _Output NewCatalog* NewFSParser::GetCatalog(_Input const char* name) {
   return nullptr;
 }
 
-/// @brief 
-/// @param catalog 
-/// @return 
+/// @brief
+/// @param catalog
+/// @return
 Boolean NewFSParser::CloseCatalog(_Input _Output NewCatalog* catalog) {
-  return false;
+  return true;
 }
 
-/// @brief 
-/// @param catalog 
-/// @return 
+/// @brief Mark catalog as removed.
+/// @param catalog The catalog structure.
+/// @return
 Boolean NewFSParser::RemoveCatalog(_Input _Output NewCatalog* catalog) {
+  catalog->Flags |= kNewFSFlagDeleted;
+  this->WriteCatalog(catalog, nullptr);
+
   return false;
 }
 
-/// @brief 
-/// @param catalog 
-/// @param dataSz 
-/// @return 
+/// ***************************************************************** ///
+/// Reading,Seek,Tell are unimplemented on catalogs, refer to forks I/O instead.
+/// ***************************************************************** ///
+
+/// @brief
+/// @param catalog
+/// @param dataSz
+/// @return
 VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
                                  SizeT dataSz) {
   return nullptr;
 }
 
-/// @brief 
-/// @param catalog 
-/// @param off 
-/// @return 
+/// @brief
+/// @param catalog
+/// @param off
+/// @return
 bool NewFSParser::Seek(_Input _Output NewCatalog* catalog, SizeT off) {
   return false;
 }
 
-/// @brief 
-/// @param catalog 
-/// @return 
+/// @brief
+/// @param catalog
+/// @return
 SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog) { return 0; }
 
-/// @brief 
-/// @param sz 
-/// @return 
+/// @brief
+/// @param sz
+/// @return
 STATIC Lba ke_find_free_fork(SizeT sz) { return 0; }
 
-/// @brief 
-/// @param sz 
-/// @return 
+/// @brief
+/// @param sz
+/// @return
 STATIC Lba ke_find_free_catalog(SizeT sz) { return 0; }
 
-/// @brief 
-/// @param sz 
-/// @return 
+/// @brief
+/// @param sz
+/// @return
 STATIC Lba ke_find_free_data(SizeT sz) { return 0; }
 
 namespace NewOS::Detail {

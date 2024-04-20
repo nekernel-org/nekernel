@@ -4,10 +4,10 @@
 
 ------------------------------------------- */
 
-#include <HALKit/PowerPC/ppc-cpu.h>
-#include <HALKit/PowerPC/ppc-mmu.h>
+#include <HALKit/POWER/ppc-cpu.h>
+#include <HALKit/POWER/ppc-mmu.h>
 
-#include <HALKit/PowerPC/Processor.hpp>
+#include <HALKit/POWER/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
 /// NOTE: refer to: https://www.nxp.com/docs/en/white-paper/POWRPCARCPRMRM.pdf,

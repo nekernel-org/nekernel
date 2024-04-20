@@ -30,7 +30,11 @@ default.
 #define kNewFSInvalidCatalog -1
 #define kNewFSNodeNameLen 256
 
-#define kNewFSMinimumSectorSz 4096
+#ifdef __x86_64__
+#define kNewFSMinimumSectorSz (512)
+#else
+#define kNewFSMinimumSectorSz (1024)
+#endif // ifdef __x86_64__
 
 #define kNewFSIdentLen 8
 #define kNewFSIdent " NewFS"
@@ -105,6 +109,7 @@ enum {
 /// @brief Ccatalog type.
 struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
+  NewCharType Mime[kNewFSNodeNameLen];
 
   NewOS::Int32 Flags;
   NewOS::Int32 Kind;
@@ -173,7 +178,7 @@ enum {
 /// forks...) Designed like the DOM, detects the filesystem automatically.
 ///
 
-class NewFSParser final {
+class NewFSParser {
  public:
   explicit NewFSParser() = default;
   ~NewFSParser() = default;

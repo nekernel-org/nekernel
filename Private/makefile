@@ -1,5 +1,5 @@
 ##################################################
-# (C) Mahrouss Logic,  all rights reserved.
+# (C) Mahrouss Logic, all rights reserved.
 # This is the microkernel makefile.
 ##################################################
 
@@ -24,13 +24,12 @@ ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
 endif
 
-SLEEP		= sleep 1
 COPY		= cp
 
 # Add assembler, linker, and object files variables.
 ASMFLAGS	= -f win64
 LDFLAGS		= -e Main --subsystem=17
-LDOBJ		= $(wildcard Objects/*.obj)
+LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management, memory, drivers and more.
 KERNEL		= NewKernel.exe
@@ -53,7 +52,6 @@ newos-amd64-epm: clean
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalNewBoot.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInstallTIB.asm
-	$(SLEEP)
 	$(MOVEALL)
 
 OBJCOPY=x86_64-w64-mingw32-objcopy

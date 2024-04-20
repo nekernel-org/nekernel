@@ -1,6 +1,3 @@
-/*
- * PowerPC memory management structures
- */
 
 #ifndef _PPC_MMU_H_
 #define _PPC_MMU_H_
@@ -252,7 +249,7 @@ extern void print_bats(void);
 #define MI_IDXMASK	0x00001f00	/* TLB index to be loaded */
 #define MI_RESETVAL	0x00000000	/* Value of register at reset */
 
-/* These are the Ks and Kp from the PowerPC books.  For proper operation,
+/* These are the Ks and Kp from the ppc books.  For proper operation,
  * Ks = 0, Kp = 1.
  */
 #define MI_AP		786
@@ -311,7 +308,7 @@ extern void print_bats(void);
 #define MC_ASIDMASK	0x0000000f	/* Bits used for ASID value */
 
 
-/* These are the Ks and Kp from the PowerPC books.  For proper operation,
+/* These are the Ks and Kp from the ppc books.  For proper operation,
  * Ks = 0, Kp = 1.
  */
 #define MD_AP		794
@@ -368,7 +365,7 @@ extern void print_bats(void);
 #define M_TW		799
 
 /*
- * At present, all PowerPC 400-class processors share a similar TLB
+ * At present, all ppc 400-class processors share a similar TLB
  * architecture. The instruction and data sides share a unified,
  * 64-entry, fully-associative TLB which is maintained totally under
  * software control. In addition, the instruction side has a

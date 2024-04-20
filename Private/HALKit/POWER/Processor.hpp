@@ -2,7 +2,7 @@
 
     Copyright Mahrouss Logic
 
-    Purpose: PowerPC processor header.
+    Purpose: POWER processor header.
 
 ------------------------------------------- */
 

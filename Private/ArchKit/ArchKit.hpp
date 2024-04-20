@@ -15,7 +15,7 @@
 #include <HALKit/AMD64/Hypervisor.hpp>
 #include <HALKit/AMD64/Processor.hpp>
 #elif defined(__NEWOS_PPC__)
-#include <HALKit/PowerPC/Processor.hpp>
+#include <HALKit/POWER/Processor.hpp>
 #else
 #error Unknown architecture
 #endif

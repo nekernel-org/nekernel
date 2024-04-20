@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: Hart.hxx
-    Purpose: PowerPC hardware threads.
+    Purpose: POWER hardware threads.
 
     Revision History:
 

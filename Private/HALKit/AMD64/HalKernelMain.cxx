@@ -17,7 +17,7 @@
 #include <NewKit/Json.hpp>
 
 EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
-EXTERN_C void RuntimeMain();
+EXTERN_C void AppMain();
 
 namespace NewOS::HAL {
 /// @brief Gets the system cores using the MADT.
@@ -83,7 +83,7 @@ EXTERN_C void hal_init_platform(
 
   ToolboxClearRsrc();
 
-  RuntimeMain();
+  AppMain();
 
   NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

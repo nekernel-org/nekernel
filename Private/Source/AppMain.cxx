@@ -18,13 +18,13 @@
 
 /// @file Main microkernel entrypoint.
 
-EXTERN_C void RuntimeMain(void) {    
+EXTERN_C NewOS::Void AppMain(NewOS::Void) {
   ///! Mounts a NewFS block.
   NewOS::NewFilesystemManager* newFS = new NewOS::NewFilesystemManager();
   NewOS::ke_protect_ke_heap(newFS);
 
   NewOS::FilesystemManagerInterface::Mount(newFS);
-  
+
   while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0);
 
   ///! we're done, unmount.
