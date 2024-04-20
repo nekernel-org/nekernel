@@ -11,7 +11,7 @@ ApplicationRef kSharedApplication = NullPtr;
 
 /// @brief Gets the app arguments count.
 /// @param void no arguments.
-/// @return
+/// @return The number of arguments given to the application.
 CA_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType) {
   CA_MUST_PASS(kSharedApplication);
 
@@ -23,7 +23,7 @@ CA_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType) {
 /// @return
 CA_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType) {
   CA_MUST_PASS(kSharedApplication);
-  
+
   return (CharacterTypeUTF8**)kSharedApplication->Invoke(kSharedApplication,
                                                          kCallGetArgsPtr);
 }

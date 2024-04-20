@@ -39,8 +39,8 @@ invalid-recipe:
 
 .PHONY: all
 all: compile-amd64
-	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o SampleDriver.exe
-	cp SampleDriver.exe ../../Root/Boot/SampleDriver.exe
+	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Bonjour.exe
+	cp Bonjour.exe ../../Root/Boot/Bonjour.exe
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -53,7 +53,7 @@ compile-amd64:
 
 .PHONY: clean
 clean:
-	$(REM) $(REM_FLAG) $(OBJ) SampleDriver.exe
+	$(REM) $(REM_FLAG) $(OBJ) Bonjour.exe
 
 .PHONY: help
 help:
