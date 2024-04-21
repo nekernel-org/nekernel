@@ -7,15 +7,18 @@
 #include <DriverKit/KernelString.h>
 #include <DriverKit/KernelPrint.h>
 
-int __ImageStart(void) {
-    kernelPrintStr("SampleDriver: Starting up...\r\n");
+#include <Drivers/MahroussUpdate/MahroussUpdate.hxx>
+
+DK_EXTERN int __ImageStart(void) {
+    kernelPrintStr("Mahrouss Update: Looking for updates...\r\n");
+    UpdateRequest req("mup://release-mahrouss.logic/newos/");
+
     return 0;
 }
 
-int __ImageEnd(void) {
-    kernelPrintStr("SampleDriver: Shutting down...\r\n");
+DK_EXTERN int __ImageEnd(void) {
     return 0;
 }
 
 ///! @brief Use this to check your stack, if using MinGW/MSVC.
-void ___chkstk_ms(void) {}
+DK_EXTERN void ___chkstk_ms(void) {}
