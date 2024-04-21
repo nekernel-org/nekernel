@@ -8,11 +8,11 @@
 #include <DriverKit/KernelPrint.h>
 
 int __ImageStart(void) {
-    kernelPrintStr("SampleDriver: Starting up...\r\n");
+    kernelPrintStr("Bonjour: Starting up zeroconf...\r\n");
     return 0;
 }
 
 int __ImageEnd(void) {
-    kernelPrintStr("SampleDriver: Shutting down...\r\n");
+    kernelPrintStr("Bonjour: Shutting down zeroconf...\r\n");
     return 0;
 }

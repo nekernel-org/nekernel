@@ -24,7 +24,7 @@ EMU_FLAGS=-net none -smp 4 -m 4G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -
 
 LD_FLAGS=-e __ImageStart --subsystem=17
 
-OBJ=$(wildcard *.o) $(wildcard HEL/AMD64/*.obj)
+OBJ=*.o
 
 
 REM=rm

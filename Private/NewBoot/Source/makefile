@@ -24,8 +24,7 @@ EMU_FLAGS=-net none -smp 4 -m 4G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -
 
 LD_FLAGS=-e Main --subsystem=10
 
-OBJ=$(wildcard *.o) $(wildcard HEL/AMD64/*.obj)
-
+OBJ=*.o
 
 REM=rm
 REM_FLAG=-f
@@ -68,7 +67,7 @@ download-edk:
 
 .PHONY: clean
 clean:
-	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe NewKernel.exe OVMF.fd
+	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe NewKernel.exe OVMF.fd $(IMG) $(IMG_2)
 
 .PHONY: help
 help:

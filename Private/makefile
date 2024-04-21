@@ -39,7 +39,7 @@ SCRIPT		= --script=Linker/Platforms/PC.lds
 
 .PHONY: error
 error:
-	@echo "Use a specific target."
+	@echo "=> Use a specific target."
 
 MOVEALL=./MoveAll.sh
 WINDRES=x86_64-w64-mingw32-windres
@@ -58,7 +58,6 @@ OBJCOPY=x86_64-w64-mingw32-objcopy
 
 .PHONY: link-amd64-epm
 link-amd64-epm:
-	$(SLEEP)
 	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
 	$(COPY) $(KERNEL) Root/Boot
 
