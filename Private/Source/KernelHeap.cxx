@@ -97,7 +97,7 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
 
     PTEWrapper pageWrapper(false, false, false, (UIntPtr)virtualAddress);
     Ref<PTEWrapper*> pteAddress{ &pageWrapper };
-    
+
     kHeapPageManager.Free(pteAddress);
 
     --kHeapCount;
@@ -126,7 +126,7 @@ Boolean ke_is_valid_heap(VoidPtr heapPtr) {
   return false;
 }
 
-/// @brief Protect the heap pointer with a CRC32.
+/// @brief Protect the heap with a CRC value.
 /// @param heapPtr HIB pointer.
 /// @return if it valid: point has crc now., otherwise fail.
 Boolean ke_protect_ke_heap(VoidPtr heapPtr) {

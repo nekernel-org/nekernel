@@ -92,7 +92,7 @@ class MountpointInterface final {
         return &mD;
       default: {
         DbgLastError() = kErrorNoSuchDisk;
-        kcout << "NewOS: No such disk.\n";
+        kcout << "New OS: No such disk.\n";
 
         break;
       }

@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: FileReader.cxx
-    Purpose: NewBoot FileReader,
+    Purpose: New Boot FileReader,
     Read complete file and store it in a buffer.
 
 ------------------------------------------- */
@@ -47,12 +47,12 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
   EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
   if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk) {
-    mWriter.Write(L"NewBoot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
   }
 
   if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk) {
-    mWriter.Write(L"NewBoot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -60,7 +60,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
   /// Start doing disk I/O
 
   if (efp->OpenVolume(efp, &rootFs) != kEfiOk) {
-    mWriter.Write(L"NewBoot: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -69,7 +69,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
   if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
       kEfiOk) {
-    mWriter.Write(L"NewBoot: Fetch-Protocol: No-Such-Path: ")
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Path: ")
         .Write(mPath)
         .Write(L"\r\n");
     this->mErrorCode = kNotSupported;

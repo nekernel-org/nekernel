@@ -33,14 +33,13 @@ class BVersionString;
 #include <BootKit/Protocol.hxx>
 
 #ifdef __EFI_x86_64__
-#define kBootVirtualAddress (0xffffff80000000)
+///! The Boot page provided to NewKernel.
+#define kBootVirtualAddress (0xfffffff80000000)
 #include <FirmwareKit/EFI.hxx>
 #endif  // ifdef __EFI_x86_64__
 
 #include <FirmwareKit/EPM.hxx>
 #include <NewKit/Defines.hpp>
-
-#define kMaxReadSize (320)
 
 using namespace NewOS;
 

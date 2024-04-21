@@ -34,7 +34,7 @@ Void fs_index_file(const Char* filename, SizeT filenameLen, IndexableProperty& i
         indexer.AddFlag(kIndexerClaimed);
         rt_copy_memory((VoidPtr)indexer.LeakProperty().Path, (VoidPtr)filename, filenameLen);
 
-        kcout << "NewOS: FSKit: index new file: " << filename << endl;
+        kcout << "New OS: FSKit: index new file: " << filename << endl;
     }
 }
 }  // namespace Indexer

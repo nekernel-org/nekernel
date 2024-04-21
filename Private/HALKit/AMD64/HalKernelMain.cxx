@@ -74,15 +74,6 @@ EXTERN_C void hal_init_platform(
 
   /// END POST
 
-  ToolboxInitRsrc();
-
-  ToolboxDrawRsrc(
-      MahroussLogic, MAHROUSSLOGIC_HEIGHT, MAHROUSSLOGIC_WIDTH,
-      ((kHandoverHeader->f_GOP.f_Width - MAHROUSSLOGIC_WIDTH) / 2),
-      ((kHandoverHeader->f_GOP.f_Height - MAHROUSSLOGIC_HEIGHT) / 2));
-
-  ToolboxClearRsrc();
-
   AppMain();
 
   NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

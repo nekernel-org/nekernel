@@ -13,7 +13,7 @@
 #include <NewKit/Defines.hpp>
 
 namespace NewOS {
-    
+
 /// @brief Declare pointer as free.
 /// @param heapPtr the pointer.
 /// @return
@@ -31,7 +31,7 @@ Boolean ke_is_valid_heap(VoidPtr ptr);
 /// @return the pointer
 voidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user);
 
-/// @brief Protect the heap pointer with a CRC32.
+/// @brief Protect the heap with a CRC value.
 /// @param heapPtr HIB pointer.
 /// @return if it valid: point has crc now., otherwise fail.
 Boolean ke_protect_ke_heap(VoidPtr heapPtr);

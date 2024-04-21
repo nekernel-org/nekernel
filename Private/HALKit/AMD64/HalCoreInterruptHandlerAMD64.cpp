@@ -9,85 +9,85 @@
 #include <NewKit/String.hpp>
 
 /// @brief Handle GPF fault.
-/// @param rsp 
+/// @param rsp
 EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp) {
   MUST_PASS(NewOS::ProcessScheduler::Shared().Leak().GetCurrent());
 
-  NewOS::kcout << "NewOS: Stack Pointer: "
+  NewOS::kcout << "New OS: Stack Pointer: "
                << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewOS: General Protection Fault, caused by "
+      << "New OS: General Protection Fault, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 }
 
 /// @brief Handle the scheduler interrupt, raised from the HPET timer.
-/// @param rsp 
+/// @param rsp
 EXTERN_C void idt_handle_scheduler(NewOS::UIntPtr rsp) {
   NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewOS: Will be scheduled back later "
+      << "New OS: Will be scheduled back later "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName()
       << NewOS::end_line();
 
   /// schedule another process.
   if (!NewOS::ProcessHelper::StartScheduling()) {
-    NewOS::kcout << "NewOS: Continue schedule this process...\r\n";
+    NewOS::kcout << "New OS: Continue schedule this process...\r\n";
   }
 }
 
 /// @brief Handle page fault.
-/// @param rsp 
+/// @param rsp
 EXTERN_C void idt_handle_pf(NewOS::UIntPtr rsp) {
   MUST_PASS(NewOS::ProcessScheduler::Shared().Leak().GetCurrent());
   NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewOS: Segmentation Fault, caused by "
+      << "New OS: Segmentation Fault, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 }
 
 /// @brief Handle math fault.
-/// @param rsp 
+/// @param rsp
 EXTERN_C void idt_handle_math(NewOS::UIntPtr rsp) {
   MUST_PASS(NewOS::ProcessScheduler::Shared().Leak().GetCurrent());
   NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewOS: Math error, caused by "
+      << "New OS: Math error, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 }
 
 /// @brief Handle any generic fault.
-/// @param rsp 
+/// @param rsp
 EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp) {
   MUST_PASS(NewOS::ProcessScheduler::Shared().Leak().GetCurrent());
   NewOS::kcout << NewOS::StringBuilder::FromInt("sp{%}", rsp);
 
   NewOS::kcout
-      << "NewOS: Execution error, caused by "
+      << "New OS: Execution error, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 }
 
 /// @brief Handle #UD fault.
-/// @param rsp 
+/// @param rsp
 EXTERN_C void idt_handle_ud(NewOS::UIntPtr rsp) {
   MUST_PASS(NewOS::ProcessScheduler::Shared().Leak().GetCurrent());
 
-  NewOS::kcout << "NewOS: Stack Pointer: "
+  NewOS::kcout << "New OS: Stack Pointer: "
                << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
 
   NewOS::kcout
-      << "NewOS: Invalid interrupt, caused by "
+      << "New OS: Invalid interrupt, caused by "
       << NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().GetName();
 
   NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();

@@ -11,11 +11,9 @@
 #include <KernelKit/PE.hxx>
 #include <NewKit/Ref.hpp>
 
-#define kMaxBufSize 256
-
 /** Graphics related. */
 
-STATIC EfiGraphicsOutputProtocol *kGop = nullptr;
+STATIC EfiGraphicsOutputProtocol* kGop = nullptr;
 STATIC UInt16 kStride = 0U;
 STATIC EfiGUID kGopGuid;
 
@@ -23,13 +21,13 @@ STATIC EfiGUID kGopGuid;
     @brief Finds and stores the GOP.
 */
 
-STATIC Void InitGOP() noexcept {
+STATIC Void CheckAndFindFramebuffer() noexcept {
   kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
   kGop = nullptr;
 
-  extern EfiBootServices *BS;
+  extern EfiBootServices* BS;
 
-  BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr *)&kGop);
+  BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop);
 
   kStride = 4;
 }
@@ -45,14 +43,16 @@ STATIC Bool CheckBootDevice(BootDeviceATA& ataDev) {
 /// @param SystemTable The system table of it.
 /// @return
 EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
-                                  EfiSystemTable* SystemTable) {
-  InitEFI(SystemTable);  ///! Init the EFI library.
-  InitGOP();             ///! Init the GOP.
+                              EfiSystemTable* SystemTable) {
+  InitEFI(SystemTable);       ///! Init the EFI library.
+  CheckAndFindFramebuffer();  ///! Init the GOP.
 
   BTextWriter writer;
+
   /// Splash screen stuff
 
-  writer.Write(L"Mahrouss-Logic (R) NewBoot: ").Write(BVersionString::Shared());
+  writer.Write(L"Mahrouss-Logic (R) New Boot: ")
+      .Write(BVersionString::Shared());
 
   writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
@@ -69,7 +69,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&SizePtr) !=
       kEfiOk) {
-    EFI::RaiseHardError(L"Bad-Alloc", L"NewBoot ran out of memory!");
+    EFI::RaiseHardError(L"Bad-Alloc", L"New Boot ran out of memory!");
   }
 
   /****
@@ -82,7 +82,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
                        (VoidPtr*)&Descriptor) != kEfiOk) {
-    EFI::RaiseHardError(L"Bad-Alloc", L"NewBoot ran out of memory!");
+    EFI::RaiseHardError(L"Bad-Alloc", L"New Boot ran out of memory!");
   }
 
   HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
@@ -114,6 +114,20 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   handoverHdrPtr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
   handoverHdrPtr->f_GOP.f_PixelFormat = kGop->Mode->Info->PixelFormat;
   handoverHdrPtr->f_GOP.f_Size = kGop->Mode->FrameBufferSize;
+
+  ///! Finally draw bootloader screen.
+
+  auto kHandoverHeader = handoverHdrPtr;
+
+  ToolboxInitRsrc();
+
+  ToolboxDrawZone(RGB(20, 20, 20), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
+
+  ToolboxClearRsrc();
+
+  ToolboxDrawRsrc(Driver, DRIVER_HEIGHT, DRIVER_WIDTH, (handoverHdrPtr->f_GOP.f_Width - DRIVER_HEIGHT) / 2, (handoverHdrPtr->f_GOP.f_Height - DRIVER_HEIGHT) / 2);
+
+  ToolboxClearRsrc();
 
   BS->AllocatePool(EfiLoaderData, sizeof(HEL::HandoverInformationHeader),
                    (VoidPtr*)&handoverHdrPtr);

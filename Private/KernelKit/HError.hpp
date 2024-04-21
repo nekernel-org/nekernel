@@ -35,6 +35,7 @@ inline constexpr HError kErrorOutOfTeamSlot = 51;
 inline constexpr HError kErrorHeapNotPresent = 52;
 inline constexpr HError kErrorNoEntrypoint = 53;
 inline constexpr HError kErrorDiskIsCorrupted = 54;
+inline constexpr HError kErrorDisk = 55;
 inline constexpr HError kErrorUnimplemented = 0;
 
 Boolean ke_bug_check(void) noexcept;
