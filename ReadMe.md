@@ -1,5 +1,5 @@
 <div align="center">
-<img src="Meta/NewKernel.svg" width="96" height="96"/>
+<img src="Meta/Kernel.svg" width="96" height="96"/>
 <h1>NewKernel</h1>
 </div>
 

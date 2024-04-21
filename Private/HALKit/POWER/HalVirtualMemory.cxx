@@ -10,8 +10,7 @@
 #include <HALKit/POWER/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-/// NOTE: refer to: https://www.nxp.com/docs/en/white-paper/POWRPCARCPRMRM.pdf,
-/// or in /Developer/PDF/POWRPCARCPRMRM.pdf
+/// @note refer to our SoC documentation.
 
 using namespace NewOS;
 

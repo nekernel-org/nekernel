@@ -34,13 +34,17 @@ typedef StackFrame* StackFramePtr;
 
 inline void rt_halt() {
   while (1) {
-
+      asm volatile("mr 0, 0"); // no oop.
   }
 }
 
-inline void rt_cli() {}
+inline void rt_cli() {
+    asm volatile ("mr 0, 0"); // no oop
+}
 }  // namespace NewOS::HAL
 
-extern "C" void int_handle_math(NewOS::UIntPtr sp);
-extern "C" void int_handle_pf(NewOS::UIntPtr sp);
-extern "C" void* __ppc_alloca(size_t sz);
+EXTERN_C void int_handle_math(NewOS::UIntPtr sp);
+EXTERN_C void int_handle_pf(NewOS::UIntPtr sp);
+
+/// @brief Flush system TLB.
+EXTERN_C void hal_flush_tlb();
