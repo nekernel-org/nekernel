@@ -11,6 +11,12 @@
 
 #pragma once
 
+/***********************************************************************************/
+/// Framebuffer helpers.
+/***********************************************************************************/
+
+#define RGB(R, G, B) (UInt32)(0x##R##G##B)
+
 class BTextWriter;
 class BFileReader;
 class BFileRunner;
@@ -18,9 +24,20 @@ class BVersionString;
 
 #include <BootKit/HW/ATA.hxx>
 #include <CompilerKit/Version.hxx>
+
+/***********************************************************************************/
+/// Include other APIs.
+/***********************************************************************************/
+
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
+
 #ifdef __EFI_x86_64__
+///! The Boot page provided to NewKernel.
+#define kBootVirtualAddress (0xfffffff80000000)
 #include <FirmwareKit/EFI.hxx>
 #endif  // ifdef __EFI_x86_64__
+
 #include <FirmwareKit/EPM.hxx>
 #include <NewKit/Defines.hpp>
 
@@ -68,8 +85,10 @@ NewOS::SizeT BSetMem(CharacterTypeUTF8 *src, const CharacterTypeUTF8 byte,
 
 /// String length functions.
 
+/// @brief get string length.
 NewOS::SizeT BStrLen(const CharacterTypeUTF16 *ptr);
 
+/// @brief set memory with custom value.
 NewOS::SizeT BSetMem(CharacterTypeUTF16 *src, const CharacterTypeUTF16 byte,
                      const NewOS::SizeT len);
 
@@ -83,7 +102,8 @@ class BFileReader final {
                        EfiHandlePtr ImageHandle);
   ~BFileReader();
 
-  Void ReadAll();
+ public:
+  Void ReadAll(SizeT until, SizeT chunk = 4096);
 
   enum {
     kOperationOkay,
@@ -94,15 +114,17 @@ class BFileReader final {
     kCount,
   };
 
-  Int32 &Error() { return mErrorCode; }
-  VoidPtr Blob() { return mBlob; }
-  EfiFileProtocolPtr File() { return mFile; }
-  UInt64 &Size() { return mSizeFile; }
+  /// @brief error code getter.
+  /// @return the error code.
+  Int32 &Error();
 
-  UInt64 &Size(const UInt64 &Sz) {
-    mSizeFile = Sz;
-    return mSizeFile;
-  }
+  /// @brief blob getter.
+  /// @return the blob.
+  VoidPtr Blob();
+
+  /// @breif Size getter.
+  /// @return the size of the file.
+  UInt64 &Size();
 
  public:
   BFileReader &operator=(const BFileReader &) = default;
@@ -119,14 +141,13 @@ class BFileReader final {
 
 typedef UInt8 *BlobType;
 
-#define kMaxReadSize (320)
+class BVersionString final {
+ public:
+  static const CharacterTypeUTF16 *Shared() { return BOOTLOADER_VERSION; }
+};
 
-/***********************************************************************************/
-/// Include other APIs.
-/***********************************************************************************/
-
-#include <BootKit/Platform.hxx>
-#include <BootKit/Protocol.hxx>
+/// @brief Bootloader main type.
+typedef void (*BootMainKind)(HEL::HandoverInformationHeader *handoverInfo);
 
 /***********************************************************************************/
 /// Provide some useful processor features.
@@ -134,42 +155,16 @@ typedef UInt8 *BlobType;
 
 #ifdef __EFI_x86_64__
 
-inline void Out8(UInt16 port, UInt8 value) {
-  asm volatile("outb %%al, %1" : : "a"(value), "Nd"(port) : "memory");
-}
-
-inline void Out16(UInt16 port, UInt16 value) {
-  asm volatile("outw %%ax, %1" : : "a"(value), "Nd"(port) : "memory");
-}
-
-inline void Out32(UInt16 port, UInt32 value) {
-  asm volatile("outl %%eax, %1" : : "a"(value), "Nd"(port) : "memory");
-}
-
-inline UInt8 In8(UInt16 port) {
-  UInt8 value;
-  asm volatile("inb %1, %%al" : "=a"(value) : "Nd"(port) : "memory");
-
-  return value;
-}
-
-inline UInt16 In16(UInt16 port) {
-  UInt16 value;
-  asm volatile("inw %%dx, %%ax" : "=a"(value) : "d"(port));
-
-  return value;
-}
-
-inline UInt32 In32(UInt16 port) {
-  UInt32 value;
-  asm volatile("inl %1, %%eax" : "=a"(value) : "Nd"(port) : "memory");
-
-  return value;
-}
-
 /***
  * Common processor instructions.
-*/
+ */
+
+EXTERN_C void Out8(UInt16 port, UInt8 value);
+EXTERN_C void Out16(UInt16 port, UInt16 value);
+EXTERN_C void Out32(UInt16 port, UInt32 value);
+EXTERN_C UInt8 In8(UInt16 port);
+EXTERN_C UInt16 In16(UInt16 port);
+EXTERN_C UInt32 In32(UInt16 port);
 
 EXTERN_C void rt_hlt();
 EXTERN_C void rt_cli();
@@ -179,50 +174,8 @@ EXTERN_C void rt_std();
 
 #endif  // __EFI_x86_64__
 
-/***********************************************************************************/
-/// Framebuffer.
-/***********************************************************************************/
-
-#define RGB(R, G, B) (UInt32)(0x##R##G##B)
-
-const UInt32 kRgbRed = 0x000000FF;
-const UInt32 kRgbGreen = 0x0000FF00;
-const UInt32 kRgbBlue = 0x00FF0000;
-const UInt32 kRgbBlack = 0x00000000;
-const UInt32 kRgbWhite = 0x00FFFFFF;
-
-#ifdef __EFI_x86_64__
-/** GOP and related. */
-inline EfiGraphicsOutputProtocol *kGop;
-inline UInt16 kStride;
-inline EfiGUID kGopGuid;
-
-/**
-@brief Inits the QuickTemplate GUI framework.
-*/
-inline Void InitGOP() noexcept {
-  kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
-  kGop = nullptr;
-
-  extern EfiBootServices *BS;
-
-  BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr *)&kGop);
-
-  kStride = 4;
-}
-#endif  // __EFI_x86_64__
-
-class BVersionString final {
- public:
-  static const CharacterTypeUTF16 *Shared() { return BOOTLOADER_VERSION; }
-};
-
-/// @brief Writes an EPM partition on the main disk.
-/// @param namePart the partition's name
-/// @param namePartLength the partition name's length
-/// @param bootDev the disk interface.
-/// @return 
-EXTERN_C Boolean boot_write_epm_partition(const Char *namePart,
-                                          SizeT namePartLength,
-                                          BootDevice *bootDev);
-
+static inline const UInt32 kRgbRed = 0x000000FF;
+static inline const UInt32 kRgbGreen = 0x0000FF00;
+static inline const UInt32 kRgbBlue = 0x00FF0000;
+static inline const UInt32 kRgbBlack = 0x00000000;
+static inline const UInt32 kRgbWhite = 0x00FFFFFF;

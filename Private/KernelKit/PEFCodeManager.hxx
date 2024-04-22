@@ -24,7 +24,7 @@ class PEFLoader : public LoaderInterface {
 
  public:
   explicit PEFLoader(const VoidPtr blob);
-  explicit PEFLoader(const char *path);
+  explicit PEFLoader(const Char* path);
   ~PEFLoader() override;
 
  public:

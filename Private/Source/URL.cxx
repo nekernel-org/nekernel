@@ -15,12 +15,15 @@ URL::URL(StringView &strUrl) : fUrlView(strUrl, false) {}
 
 URL::~URL() = default;
 
+/// @brief internal and reserved protocols by kernel.
 constexpr const char *kURLProtocols[] = {
     "file",  // Filesystem protocol
+    "mup", // Mahrouss update protocol
+    "param", // Mahrouss parameter protocol.
 };
 
 constexpr const int kUrlOutSz = 1;  //! such as: ://
-constexpr const int kProtosCount = 4;
+constexpr const int kProtosCount = 3;
 constexpr const int kRangeSz = 4096;
 
 ErrorOr<StringView> url_extract_location(const char *url) {

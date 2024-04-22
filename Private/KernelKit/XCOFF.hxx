@@ -16,14 +16,14 @@
 
 #include <NewKit/Defines.hpp>
 
-#define kXCOFF64Magic    0x01F7 
+#define kXCOFF64Magic    0x01F7
 
 #define kXCOFFRelFlg     0x0001
 #define kXCOFFExecutable 0x0002
 #define kXCOFFLnno       0x0004
 #define kXCOFFLSyms      0x0008
 
-/// @brief XCoff file header, meant for PowerPC programs.
+/// @brief XCoff file header, meant for POWER apps.
 typedef struct XCoffFileHeader
 {
     NewOS::UInt16 fMagic;

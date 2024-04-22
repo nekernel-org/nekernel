@@ -17,6 +17,7 @@
 
 namespace NewOS {
 namespace Detail {
+/// @brief Get the PEF platform signature according to the compiled backebnd
 UInt32 rt_get_pef_platform(void) noexcept {
 #ifdef __32x0__
   return kPefArch32x0;
@@ -33,7 +34,7 @@ UInt32 rt_get_pef_platform(void) noexcept {
 }  // namespace Detail
 
 /// @brief PEF loader constructor w/ blob.
-/// @param blob 
+/// @param blob
 PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(nullptr) {
   fCachedBlob = blob;
   fBad = false;
@@ -42,11 +43,11 @@ PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(nullptr) {
 }
 
 /// @brief PEF loader constructor.
-/// @param path 
-PEFLoader::PEFLoader(const char *path) : fCachedBlob(nullptr), fBad(false) {
-  OwnPtr<FileStream<char>> file;
+/// @param path the filesystem path.
+PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fBad(false) {
+  OwnPtr<FileStream<Char>> file;
 
-  file.New(const_cast<Char *>(path), kRestrictRB);
+  file.New(const_cast<Char*>(path), kRestrictRB);
 
   if (StringBuilder::Equals(file->MIME(), this->MIME())) {
     fPath = StringBuilder::Construct(path).Leak();
@@ -131,7 +132,7 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
 }
 
 /// @brief Finds the executable entrypoint.
-/// @return 
+/// @return
 ErrorOr<VoidPtr> PEFLoader::FindStart() {
   if (auto sym = this->FindSymbol(kPefStart, kPefCode); sym)
     return ErrorOr<VoidPtr>(sym);
@@ -140,7 +141,7 @@ ErrorOr<VoidPtr> PEFLoader::FindStart() {
 }
 
 /// @brief Tells if the executable is loaded or not.
-/// @return 
+/// @return
 bool PEFLoader::IsLoaded() noexcept { return !fBad && fCachedBlob; }
 
 #define kPefAppnameCommandHdr "PefAppName"

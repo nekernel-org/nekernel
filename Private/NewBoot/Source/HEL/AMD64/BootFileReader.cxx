@@ -3,7 +3,7 @@
     Copyright Mahrouss Logic
 
     File: FileReader.cxx
-    Purpose: NewBoot FileReader,
+    Purpose: New Boot FileReader,
     Read complete file and store it in a buffer.
 
 ------------------------------------------- */
@@ -25,7 +25,8 @@
 /***
     @brief File Reader constructor.
 */
-BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandle) {
+BFileReader::BFileReader(const CharacterTypeUTF16* path,
+                         EfiHandlePtr ImageHandle) {
   if (path != nullptr) {
     SizeT index = 0UL;
     for (; path[index] != L'\0'; ++index) {
@@ -46,12 +47,12 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandl
   EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
   if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk) {
-    mWriter.Write(L"NewOS: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
   }
 
   if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk) {
-    mWriter.Write(L"NewOS: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -59,7 +60,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandl
   /// Start doing disk I/O
 
   if (efp->OpenVolume(efp, &rootFs) != kEfiOk) {
-    mWriter.Write(L"NewOS: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -68,7 +69,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandl
 
   if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
       kEfiOk) {
-    mWriter.Write(L"NewOS: Fetch-Protocol: No-Such-Path: ")
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Path: ")
         .Write(mPath)
         .Write(L"\r\n");
     this->mErrorCode = kNotSupported;
@@ -88,24 +89,19 @@ BFileReader::~BFileReader() {
     this->mFile = nullptr;
   }
 
-  if (this->mBlob)
-    BS->FreePool(mBlob);
+  if (this->mBlob) BS->FreePool(mBlob);
 
   BSetMem(this->mPath, 0, kPathLen);
 }
 
 /**
     @brief this reads all of the buffer.
-    @param ImageHandle used internally.
+    @param until read until size is reached.
 */
-Void BFileReader::ReadAll() {
-  /// Allocate Handover page.
-
-  if (this->mErrorCode != kOperationOkay) return;
-
+Void BFileReader::ReadAll(SizeT until, SizeT chunk) {
   if (mBlob == nullptr) {
-    if (auto err = BS->AllocatePool(EfiLoaderCode, mSizeFile,
-                          (VoidPtr*)&mBlob) != kEfiOk) {
+    if (auto err = BS->AllocatePool(EfiLoaderCode, until,
+                                    (VoidPtr*)&mBlob) != kEfiOk) {
       mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
       EFI::RaiseHardError(L"NewBoot_PageError", L"Allocation error.");
     }
@@ -113,8 +109,34 @@ Void BFileReader::ReadAll() {
 
   mErrorCode = kNotSupported;
 
-  if (mFile->Read(mFile, &mSizeFile, (VoidPtr)((UIntPtr)mBlob)) != kEfiOk)
-    return;
+  UInt64 bufSize = chunk;
+  UInt64 szCnt = 0;
+  UInt64 curSz = 0;
 
+  while (curSz < until) {
+    if (mFile->Read(mFile, &bufSize, (VoidPtr)((UIntPtr)mBlob + curSz)) != kEfiOk) {
+        break;
+    }
+
+    szCnt += bufSize;
+    curSz += bufSize;
+
+    if (bufSize == 0)
+        break;
+  }
+
+  mSizeFile = curSz;
   mErrorCode = kOperationOkay;
 }
+
+/// @brief error code getter.
+/// @return the error code.
+Int32& BFileReader::Error() { return mErrorCode; }
+
+/// @brief blob getter.
+/// @return the blob.
+VoidPtr BFileReader::Blob(){ return mBlob; }
+
+/// @breif Size getter.
+/// @return the size of the file.
+UInt64& BFileReader::Size() { return mSizeFile; }

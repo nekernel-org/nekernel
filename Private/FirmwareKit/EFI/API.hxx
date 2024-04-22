@@ -19,7 +19,7 @@ EXTERN_C void rt_hlt();
 
 namespace EFI {
 /// @brief Halt and clear interrupts.
-/// @return 
+/// @return
 inline Void Stop() noexcept {
   while (1) {
     rt_hlt();
@@ -51,7 +51,7 @@ inline UInt32 Platform() noexcept { return kPEMachineAMD64; }
  */
 inline void RaiseHardError(const EfiCharType *ErrorCode,
                            const EfiCharType *Reason) noexcept {
-  ST->ConOut->OutputString(ST->ConOut, L"*** STOP ***\r\n");
+  ST->ConOut->OutputString(ST->ConOut, L"\r\n*** STOP ***\r\n");
 
   ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
   ST->ConOut->OutputString(ST->ConOut, ErrorCode);

@@ -19,20 +19,12 @@ void rt_wakeup_thread(HAL::StackFrame* stack) {
   HAL::rt_sti();
 }
 
-/// @brief Hangs until RCX register is cleared.
-/// @param stack 
-static void __rt_hang_proc(HAL::StackFrame* stack) {
-  while (stack->Rcx == 1) {
-    ;
-  }
-}
-
 /// @brief makes thread sleep.
 /// hooks and hangs thread to prevent code from executing.
 void rt_hang_thread(HAL::StackFrame* stack) {
   HAL::rt_cli();
 
-  __rt_hang_proc(stack);
+  stack->Rcx = 1;
 
   HAL::rt_sti();
 }

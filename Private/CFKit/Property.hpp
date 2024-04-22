@@ -15,6 +15,7 @@
 namespace NewOS {
 using PropertyId = Int;
 
+/// @brief Kernel property class.
 class Property {
  public:
   explicit Property(const StringView &sw) : fName(sw) {}

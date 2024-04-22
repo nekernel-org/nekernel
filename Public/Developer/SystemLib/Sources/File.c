@@ -25,7 +25,8 @@ CA_EXTERN_C FSRef FsOpenFile(const CharacterTypeUTF8* path,
   CA_MUST_PASS(path && FsIsValidPath(path) == Yes);
   CA_MUST_PASS(rest);
 
-  return kSharedApplication->Invoke(kSharedApplication, kCallOpenFile, path, rest);
+  return kSharedApplication->Invoke(kSharedApplication, kCallOpenFile, path,
+                                    rest);
 }
 
 /// @brief Closes the file and flushes it to the said file.

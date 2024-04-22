@@ -1,5 +1,5 @@
 ##################################################
-# (C) Mahrouss Logic,  all rights reserved.
+# (C) Mahrouss Logic, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 
@@ -20,12 +20,11 @@ endif
 
 IMG=epm.img
 IMG_2=epm-slave.img
-EMU_FLAGS=-net none -smp 4 -m 4G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -drive file=fat:rw:CDROM,index=2,format=raw -d int -hdd epm-slave.img
+EMU_FLAGS=-net none -smp 4 -m 8G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -drive file=fat:rw:CDROM,index=2,format=raw -d int -hdd epm-slave.img
 
-LD_FLAGS=-e efi_main --subsystem=10
+LD_FLAGS=-e Main --subsystem=10
 
-OBJ=$(wildcard *.o) $(wildcard HEL/AMD64/*.obj)
-
+OBJ=*.o
 
 REM=rm
 REM_FLAG=-f
@@ -35,14 +34,25 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mgeneral-regs-only -mno-red-zone -D__KE
 
 .PHONY: invalid-recipe
 invalid-recipe:
-	@echo "invalid-recipe: Use make bootloader-<arch> all instead."
+	@echo "invalid-recipe: Use make bootloader-<arch> instead."
+
+KERNEL_OBJ=kernel.bin
+DD=dd
+IMG_CREATE=qemu-img
+MAX_KERNEL_SIZE=1024K
+BOOT_LOADER=NewBoot.exe
+KERNEL=NewKernel.exe
 
 .PHONY: all
 all: compile-amd64
-	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
-	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
-	$(COPY) NewBoot.exe CDROM/EFI/BOOT/NEWBOOT.EFI
-	$(COPY) NewBoot.exe ../../Root/Boot/NewBoot.exe
+	mkdir -p CDROM/EFI/BOOT
+	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o $(KERNEL_OBJ)
+	$(IMG_CREATE) create -f raw $(BOOT_LOADER) $(MAX_KERNEL_SIZE)
+	$(DD) if=$(KERNEL_OBJ) of=$(BOOT_LOADER) bs=1 seek=0 conv=notrunc
+	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/BOOTX64.EFI
+	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/NEWBOOT.EFI
+	$(COPY) $(BOOT_LOADER) ../../Root/Boot/$(BOOT_LOADER)
+	$(COPY) ../../$(KERNEL) CDROM/$(KERNEL)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -68,12 +78,13 @@ download-edk:
 
 .PHONY: clean
 clean:
-	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe NewKernel.exe OVMF.fd
+	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe NewKernel.exe OVMF.fd $(IMG) $(IMG_2)
 
 .PHONY: help
 help:
 	@echo "=== HELP ==="
-	@echo "epm-img: Format a disk using the Explicit Partition Map/GPT."
+	@echo "epm-img: Format a disk using the Explicit Partition Map."
+	@echo "gpt-img: Format a disk using the Explicit Partition Map."
 	@echo "clean: clean bootloader."
 	@echo "bootloader-amd64: Build bootloader. (PC AMD64)"
 	@echo "run-efi-amd64: Run bootloader. (PC AMD64)"

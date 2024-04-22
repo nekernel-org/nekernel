@@ -72,7 +72,7 @@ ATAInit_Retry:
   auto statRdy = In8(IO + ATA_REG_STATUS);
 
   if (statRdy & ATA_SR_ERR) {
-    kcout << "NewOS: ATA: Select error, not an IDE based hard-drive.\r\n";
+    kcout << "New OS: ATA: Select error, not an IDE based hard-drive.\r\n";
 
     return false;
   }
@@ -107,21 +107,21 @@ ATAInit_Retry:
 
   /* differentiate ATA, ATAPI, SATA and SATAPI */
   if (cl == 0x14 && ch == 0xEB) {
-    kcout << "NewOS: PATAPI drive detected.\r\n";
+    kcout << "New OS: PATAPI drive detected.\r\n";
     kATADeviceType = kATADevicePATA_PI;
   }
   if (cl == 0x69 && ch == 0x96) {
-    kcout << "NewOS: SATAPI drive detected.\r\n";
+    kcout << "New OS: SATAPI drive detected.\r\n";
     kATADeviceType = kATADeviceSATA_PI;
   }
 
   if (cl == 0x0 && ch == 0x0) {
-    kcout << "NewOS: PATA drive detected.\r\n";
+    kcout << "New OS: PATA drive detected.\r\n";
     kATADeviceType = kATADevicePATA;
   }
 
   if (cl == 0x3c && ch == 0xc3) {
-    kcout << "NewOS: SATA drive detected.\r\n";
+    kcout << "New OS: SATA drive detected.\r\n";
     kATADeviceType = kATADeviceSATA;
   }
 
@@ -148,7 +148,7 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
     WideChar chr = In16(IO + ATA_REG_DATA);
-    
+
     Buf[IndexOff] = chr;
   }
 }
@@ -171,7 +171,7 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
     Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
-    
+
   }
 }
 

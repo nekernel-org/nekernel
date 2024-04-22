@@ -31,7 +31,7 @@ enum ThreadKind {
 
 ///
 /// \name HardwareThread
-/// @brief CPU Hardware Thread (PowerPC, Intel, or NewCPU)
+/// @brief CPU Hardware Thread (POWER, x64, or 64x0)
 ///
 
 class HardwareThread final {

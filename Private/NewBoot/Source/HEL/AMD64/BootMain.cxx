@@ -5,52 +5,61 @@
 ------------------------------------------- */
 
 #include <BootKit/BootKit.hxx>
+#include <BootKit/Rsrc/Driver.rsrc>
+#include <Builtins/Toolbox/Toolbox.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hxx>
 #include <NewKit/Ref.hpp>
 
-#ifdef __x86_64__
-#include <HALKit/AMD64/HalPageAlloc.hpp>
-#else
-#error This CPU is unknown.
-#endif  // ifdef __x86_64__
+/** Graphics related. */
 
-#define kMaxBufSize 256
+STATIC EfiGraphicsOutputProtocol* kGop = nullptr;
+STATIC UInt16 kStride = 0U;
+STATIC EfiGUID kGopGuid;
 
-/// @brief Bootloader main type.
-typedef void (*bt_main_type)(HEL::HandoverInformationHeader* handoverInfo);
+/**
+    @brief Finds and stores the GOP.
+*/
+
+STATIC Void CheckAndFindFramebuffer() noexcept {
+  kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  kGop = nullptr;
+
+  extern EfiBootServices* BS;
+
+  BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop);
+
+  kStride = 4;
+}
+
+/// @brief check the BootDevice if suitable.
+STATIC Bool CheckBootDevice(BootDeviceATA& ataDev) {
+  if (ataDev.Leak().mErr) return false;
+  return true;
+}
 
 /// @brief Main EFI entrypoint.
 /// @param ImageHandle Handle of this image.
 /// @param SystemTable The system table of it.
 /// @return
-EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
-                                 EfiSystemTable* SystemTable) {
-  InitEFI(SystemTable);  // Init the EFI library.
-  InitGOP();             // Init the GOP.
+EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
+                              EfiSystemTable* SystemTable) {
+  InitEFI(SystemTable);       ///! Init the EFI library.
+  CheckAndFindFramebuffer();  ///! Init the GOP.
 
   BTextWriter writer;
+
   /// Splash screen stuff
 
-  writer.Write(L"Mahrouss-Logic (R) NewOS: ").Write(BVersionString::Shared());
+  writer.Write(L"Mahrouss-Logic (R) New Boot: ")
+      .Write(BVersionString::Shared());
 
-  writer.Write(L"\r\nNewOS: Firmware Vendor: ")
+  writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
   BootDeviceATA ataDev;
-  Boolean isEpmFound = No;
-
-  /// if ATA drive is initialized and EFI vendor supports an EPM scheme.
-  /// @EDK tells our OS that it supports EPM scheme as well.
-  if (ataDev) {
-    Char namePart[kEPMNameLength] = {"NewBoot"};
-    /// tries to read an EPM block, or writes one if it fails.
-    isEpmFound = boot_write_epm_partition(namePart, kEPMNameLength, &ataDev);
-  } else {
-    writer.Write(L"NewOS: This computer can't work with NewOS.\r\n");
-    return kEfiFail;
-  }
+  Boolean isGptFound = No;
 
   UInt32 MapKey = 0;
   UInt32* SizePtr = nullptr;
@@ -60,7 +69,7 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&SizePtr) !=
       kEfiOk) {
-    EFI::RaiseHardError(L"__bad_alloc", L"NewBoot ran out of memory!");
+    EFI::RaiseHardError(L"Bad-Alloc", L"New Boot ran out of memory!");
   }
 
   /****
@@ -73,48 +82,10 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
                        (VoidPtr*)&Descriptor) != kEfiOk) {
-    EFI::RaiseHardError(L"__bad_alloc", L"NewBoot ran out of memory!");
+    EFI::RaiseHardError(L"Bad-Alloc", L"New Boot ran out of memory!");
   }
 
-  /****
-   *
-   *  Get machine memory map.
-   *
-   */
-
-  while (BS->GetMemoryMap(SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc) !=
-         kEfiOk)
-    ;
-
   HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
-
-  BS->AllocatePool(EfiLoaderData, sizeof(HEL::HandoverInformationHeader),
-                   (VoidPtr*)&handoverHdrPtr);
-
-  handoverHdrPtr->f_GOP.f_The = kGop->Mode->FrameBufferBase;
-  handoverHdrPtr->f_GOP.f_Width = kGop->Mode->Info->VerticalResolution;
-  handoverHdrPtr->f_GOP.f_Height = kGop->Mode->Info->HorizontalResolution;
-  handoverHdrPtr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
-  handoverHdrPtr->f_GOP.f_PixelFormat = kGop->Mode->Info->PixelFormat;
-  handoverHdrPtr->f_GOP.f_Size = kGop->Mode->FrameBufferSize;
-
-  handoverHdrPtr->f_PhysicalStart =
-      reinterpret_cast<voidPtr>(Descriptor->PhysicalStart);
-  handoverHdrPtr->f_PhysicalSize = Descriptor->NumberOfPages;
-
-  handoverHdrPtr->f_VirtualStart =
-      reinterpret_cast<voidPtr>(Descriptor->VirtualStart);
-
-  handoverHdrPtr->f_VirtualSize = Descriptor->NumberOfPages; /* # of pages */
-
-  handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
-
-  BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
-           handoverHdrPtr->f_FirmwareVendorLen);
-
-#ifdef __DEBUG__
-  writer.Write(L"NewOS: Fetching ACPI's 'RSD PTR'...").Write(L"\r\n");
-#endif
 
   for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
        ++indexVT) {
@@ -127,29 +98,94 @@ EFI_EXTERN_C EFI_API Int EfiMain(EfiHandlePtr ImageHandle,
         vendorTable[6] == 'R' && vendorTable[7] == ' ') {
       handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
 
-#ifdef __DEBUG__
-      writer.Write(L"NewOS: Found ACPI's 'RSD PTR' table on this machine.")
-          .Write(L"\r\n");
-#endif
-
       break;
     }
-  }
-
-  if (!isEpmFound) {
-    writer.Write(L"NewOS: No partition found for NewOS. (HCR-1000)\r\n");
   }
 
   handoverHdrPtr->f_Magic = kHandoverMagic;
   handoverHdrPtr->f_Version = kHandoverVersion;
 
-  writer.Write(L"Running NewOS...\r\n");
+  BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
+           handoverHdrPtr->f_FirmwareVendorLen);
+
+  handoverHdrPtr->f_GOP.f_The = kGop->Mode->FrameBufferBase;
+  handoverHdrPtr->f_GOP.f_Width = kGop->Mode->Info->VerticalResolution;
+  handoverHdrPtr->f_GOP.f_Height = kGop->Mode->Info->HorizontalResolution;
+  handoverHdrPtr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
+  handoverHdrPtr->f_GOP.f_PixelFormat = kGop->Mode->Info->PixelFormat;
+  handoverHdrPtr->f_GOP.f_Size = kGop->Mode->FrameBufferSize;
+
+  ///! Finally draw bootloader screen.
+
+  auto kHandoverHeader = handoverHdrPtr;
+
+  ToolboxInitRsrc();
+
+  ToolboxDrawZone(RGB(FF, FF, FF), handoverHdrPtr->f_GOP.f_Height,
+                  handoverHdrPtr->f_GOP.f_Width, 0, 0);
+
+  ToolboxClearRsrc();
+
+  ToolboxDrawRsrc(Driver, DRIVER_HEIGHT, DRIVER_WIDTH,
+                  (handoverHdrPtr->f_GOP.f_Width - DRIVER_HEIGHT) / 2,
+                  (handoverHdrPtr->f_GOP.f_Height - DRIVER_HEIGHT) / 2);
+
+  ToolboxClearRsrc();
+
+  BS->AllocatePool(EfiLoaderData, sizeof(HEL::HandoverInformationHeader),
+                   (VoidPtr*)&handoverHdrPtr);
+
+  handoverHdrPtr->f_PhysicalStart = 0;
+  handoverHdrPtr->f_PhysicalSize = 0;
+
+  EfiPhysicalAddress* whereAddress =
+      reinterpret_cast<EfiPhysicalAddress*>(kBootVirtualAddress);
+
+  BS->AllocatePages(EfiAllocateType::AllocateAnyPages,
+                    EfiMemoryType::EfiConventionalMemory, 1, whereAddress);
+
+  handoverHdrPtr->f_VirtualStart = reinterpret_cast<voidPtr>(whereAddress);
+
+  handoverHdrPtr->f_VirtualSize = Descriptor->NumberOfPages; /* # of pages */
+
+  handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
+
+  BFileReader reader(L"SplashScreen.fmt", ImageHandle);
+  reader.ReadAll(512, 16);
+
+  Char* buf = (Char*)reader.Blob();
+
+  for (SizeT i = 0; i < reader.Size(); ++i) {
+    if (buf[i] != '\n' && buf[i] != '\r') {
+      if (buf[i] == '*') {
+        writer.WriteCharacter('\t');
+      } else {
+        writer.WriteCharacter(buf[i]);
+      }
+    } else
+      writer.Write(L"\r\n");
+  }
+
+  BFileReader kernelFile(L"NewKernel.exe", ImageHandle);
+  kernelFile.ReadAll(KIB(512), 4096);
+
+  ExecOptionalHeaderPtr headerKind = (ExecOptionalHeaderPtr)rt_find_exec_header((DosHeaderPtr)kernelFile.Blob());
+
+  if (!headerKind) {
+      EFI::RaiseHardError(L"Bad-Exec", L"New Boot can't recognize this executable.");
+  }
+
+  BootMainKind main = (BootMainKind)nullptr;
+
+  if (!main) {
+      EFI::RaiseHardError(L"Bad-Exec", L"New Boot can't recognize this executable.");
+  }
 
   EFI::ExitBootServices(MapKey, ImageHandle);
 
-  /// TODO: Read catalog and read NewKernel.exe
+  main(handoverHdrPtr);
 
   EFI::Stop();
 
-  return kEfiFail;
+  CANT_REACH();
 }
