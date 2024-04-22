@@ -103,7 +103,7 @@ class BFileReader final {
   ~BFileReader();
 
  public:
-  Void ReadAll();
+  Void ReadAll(SizeT until, SizeT chunk = 4096);
 
   enum {
     kOperationOkay,

@@ -7,21 +7,22 @@
 #pragma once
 
 #include <Headers/Defines.h>
+#include "Headers/Dialog.h"
 
 /*************************************************************
- * 
- * File: Wm.h 
+ *
+ * File: Wm.h
  * Purpose: Window Manager API for NewOS.
  * Date: 3/26/24
- * 
+ *
  * Copyright Mahrouss Logic, all rights reserved.
- * 
+ *
  *************************************************************/
 
 struct _WmPoint;
-struct _WindowPort;
-
-struct _ControlPort;
+struct _WmWindowPort;
+struct _WmGFX;
+struct _WmControlPort;
 struct _WmPoint;
 
 /// @brief Window Graphics type.
@@ -33,7 +34,7 @@ typedef struct _WmGFX {
 } WmGFX, *WmGFXRef;
 
 /// @brief Window procedure type.
-typedef VoidType(*WmWindowFn)(struct _WindowPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
+typedef VoidType(*WmWindowFn)(struct _WmWindowPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
 
 /// @brief A point, can represent the size, position of a window.
 typedef struct _WmPoint {
@@ -42,7 +43,7 @@ typedef struct _WmPoint {
 
 
 /// @brief Window port type, can be used to control the window.
-typedef struct _WindowPort {
+typedef struct _WmWindowPort {
   WordType windowPort;
   WordType windowKind;
   BooleanType windowVisible : 1;
@@ -56,12 +57,12 @@ typedef struct _WindowPort {
   WmPoint windowSize;
   WmGFXRef windowGfx;
   WmWindowFn windowProc;
-  struct _WindowPort* windowMenuPort; ///! Attached menu to it.
-  struct _WindowPort* windowParentPort;
+  struct _WmWindowPort* windowMenuPort; ///! Attached menu to it.
+  struct _WmWindowPort* windowParentPort;
 } WindowPort;
 
 /// @brief Control port type.
-typedef struct _ControlPort {
+typedef struct _WmControlPort {
   WordType controlPort;
   WordType controlKind;
   BooleanType controlVisible : 1;
@@ -70,7 +71,7 @@ typedef struct _ControlPort {
   WmWindowFn controlProc;
   WmGFXRef controlGfx;
   WindowPort* parentPort;
-} ControlPort;
+} WmControlPort;
 
 enum {
   kWmErrIncompatible = 0x74,
@@ -111,31 +112,31 @@ CA_EXTERN_C const ColorRef kRgbWhite;
 
 /// @brief Creates a new control
 /// @param id the control rsrc fork.
-/// @return 
-CA_EXTERN_C ControlPort*  WmCreateControl(DWordType id);
+/// @return
+CA_EXTERN_C WmControlPort*  WmCreateControl(DWordType id);
 
 /// @brief Releases the control
 /// @param ctrlPort the control ref.
-/// @return 
-CA_EXTERN_C VoidType      WmReleaseControl(ControlPort* ctrlPort);
+/// @return
+CA_EXTERN_C VoidType      WmReleaseControl(WmControlPort* ctrlPort);
 
-/// @brief Moves a control inside a ControlPort.
+/// @brief Moves a control inside a WmControlPort.
 /// @param ctrlPort the control ref.
 /// @param where where to move at.
-/// @return 
-CA_EXTERN_C Int32Type     WmSetControlPosition(ControlPort* ctrlPort, WmPoint where);
+/// @return
+CA_EXTERN_C Int32Type     WmSetControlPosition(WmControlPort* ctrlPort, WmPoint where);
 
 /// @brief Enable control.
-/// @param ctrlPort 
-/// @param enabled 
-/// @return 
-CA_EXTERN_C Int32Type     WmSetControlEnabled(ControlPort* ctrlPort, BooleanType enabled);
+/// @param ctrlPort
+/// @param enabled
+/// @return
+CA_EXTERN_C Int32Type     WmSetControlEnabled(WmControlPort* ctrlPort, BooleanType enabled);
 
 /// @brief Make control visible.
-/// @param ctrlPort 
-/// @param visible 
-/// @return 
-CA_EXTERN_C Int32Type     WmSetControlVisible(ControlPort* ctrlPort, BooleanType visible);
+/// @param ctrlPort
+/// @param visible
+/// @return
+CA_EXTERN_C Int32Type     WmSetControlVisible(WmControlPort* ctrlPort, BooleanType visible);
 
 /// @brief Creates a new window.
 /// @param name the window name

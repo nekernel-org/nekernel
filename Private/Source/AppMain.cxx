@@ -5,7 +5,6 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <Builtins/Toolbox/Rsrc/Splash.rsrc>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>

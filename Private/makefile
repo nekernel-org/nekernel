@@ -56,9 +56,16 @@ newos-amd64-epm: clean
 
 OBJCOPY=x86_64-w64-mingw32-objcopy
 
+KERNEL_OBJ=kernel.bin
+DD=dd
+IMG_CREATE=qemu-img
+MAX_KERNEL_SIZE=1024K
+
 .PHONY: link-amd64-epm
 link-amd64-epm:
-	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
+	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL_OBJ)
+	$(IMG_CREATE) create -f raw $(KERNEL) $(MAX_KERNEL_SIZE)
+	$(DD) if=$(KERNEL_OBJ) of=$(KERNEL) bs=1 seek=0 conv=notrunc
 	$(COPY) $(KERNEL) Root/Boot
 
 .PHONY: all

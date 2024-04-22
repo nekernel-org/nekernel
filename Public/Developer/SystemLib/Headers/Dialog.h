@@ -27,13 +27,13 @@ typedef struct _DialogPort {
   DialogPoint dlgPosition;
   WmDialogFn dlgProc;
   struct _WmGFX* dlgGfx;
-  struct _WindowPort* parentPort;
+  struct _WmWindowPort* parentPort;
 } DialogPort;
 
 /// @brief Creates a new dialog from a rsrc fork id.
 /// @param rsrcId the resource id.
 /// @return the dialog port.
-CA_EXTERN_C DialogPort* DlgCreateFromRsrc(QWordType rsrcId); 
+CA_EXTERN_C DialogPort* DlgCreateFromRsrc(QWordType rsrcId);
 
 /// @brief Shows an message box according to format.
 /// @param title the message box title

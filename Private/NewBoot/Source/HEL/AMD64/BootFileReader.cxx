@@ -96,13 +96,11 @@ BFileReader::~BFileReader() {
 
 /**
     @brief this reads all of the buffer.
-    @param ImageHandle used internally.
+    @param until read until size is reached.
 */
-Void BFileReader::ReadAll() {
-  if (this->mErrorCode != kOperationOkay) return;
-
+Void BFileReader::ReadAll(SizeT until, SizeT chunk) {
   if (mBlob == nullptr) {
-    if (auto err = BS->AllocatePool(EfiLoaderCode, mSizeFile,
+    if (auto err = BS->AllocatePool(EfiLoaderCode, until,
                                     (VoidPtr*)&mBlob) != kEfiOk) {
       mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
       EFI::RaiseHardError(L"NewBoot_PageError", L"Allocation error.");
@@ -111,9 +109,23 @@ Void BFileReader::ReadAll() {
 
   mErrorCode = kNotSupported;
 
-  if (mFile->Read(mFile, &mSizeFile, (VoidPtr)((UIntPtr)mBlob)) != kEfiOk)
-    return;
+  UInt64 bufSize = chunk;
+  UInt64 szCnt = 0;
+  UInt64 curSz = 0;
 
+  while (curSz < until) {
+    if (mFile->Read(mFile, &bufSize, (VoidPtr)((UIntPtr)mBlob + curSz)) != kEfiOk) {
+        break;
+    }
+
+    szCnt += bufSize;
+    curSz += bufSize;
+
+    if (bufSize == 0)
+        break;
+  }
+
+  mSizeFile = curSz;
   mErrorCode = kOperationOkay;
 }
 

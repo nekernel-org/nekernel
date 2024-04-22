@@ -121,11 +121,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   ToolboxInitRsrc();
 
-  ToolboxDrawZone(RGB(FF, FF, FF), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
+  ToolboxDrawZone(RGB(FF, FF, FF), handoverHdrPtr->f_GOP.f_Height,
+                  handoverHdrPtr->f_GOP.f_Width, 0, 0);
 
   ToolboxClearRsrc();
 
-  ToolboxDrawRsrc(Driver, DRIVER_HEIGHT, DRIVER_WIDTH, (handoverHdrPtr->f_GOP.f_Width - DRIVER_HEIGHT) / 2, (handoverHdrPtr->f_GOP.f_Height - DRIVER_HEIGHT) / 2);
+  ToolboxDrawRsrc(Driver, DRIVER_HEIGHT, DRIVER_WIDTH,
+                  (handoverHdrPtr->f_GOP.f_Width - DRIVER_HEIGHT) / 2,
+                  (handoverHdrPtr->f_GOP.f_Height - DRIVER_HEIGHT) / 2);
 
   ToolboxClearRsrc();
 
@@ -147,9 +150,40 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
+  BFileReader reader(L"SplashScreen.fmt", ImageHandle);
+  reader.ReadAll(512, 16);
+
+  Char* buf = (Char*)reader.Blob();
+
+  for (SizeT i = 0; i < reader.Size(); ++i) {
+    if (buf[i] != '\n' && buf[i] != '\r') {
+      if (buf[i] == '*') {
+        writer.WriteCharacter('\t');
+      } else {
+        writer.WriteCharacter(buf[i]);
+      }
+    } else
+      writer.Write(L"\r\n");
+  }
+
+  BFileReader kernelFile(L"NewKernel.exe", ImageHandle);
+  kernelFile.ReadAll(KIB(512), 4096);
+
+  ExecOptionalHeaderPtr headerKind = (ExecOptionalHeaderPtr)rt_find_exec_header((DosHeaderPtr)kernelFile.Blob());
+
+  if (!headerKind) {
+      EFI::RaiseHardError(L"Bad-Exec", L"New Boot can't recognize this executable.");
+  }
+
+  BootMainKind main = (BootMainKind)nullptr;
+
+  if (!main) {
+      EFI::RaiseHardError(L"Bad-Exec", L"New Boot can't recognize this executable.");
+  }
+
   EFI::ExitBootServices(MapKey, ImageHandle);
 
-  /// TODO: Read catalog and read NewKernel.exe
+  main(handoverHdrPtr);
 
   EFI::Stop();
 
