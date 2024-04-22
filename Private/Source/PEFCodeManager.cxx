@@ -6,12 +6,12 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/FileManager.hpp>
+#include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorID.hpp>
 #include <NewKit/KernelCheck.hpp>
-#include <KernelKit/KernelHeap.hpp>
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/String.hpp>
 
@@ -44,10 +44,11 @@ PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(nullptr) {
 
 /// @brief PEF loader constructor.
 /// @param path the filesystem path.
-PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fBad(false) {
+PEFLoader::PEFLoader(const Char *path)
+    : fCachedBlob(nullptr), fBad(false), fFatBinary(false) {
   OwnPtr<FileStream<Char>> file;
 
-  file.New(const_cast<Char*>(path), kRestrictRB);
+  file.New(const_cast<Char *>(path), kRestrictRB);
 
   if (StringBuilder::Equals(file->MIME(), this->MIME())) {
     fPath = StringBuilder::Construct(path).Leak();
@@ -60,12 +61,17 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fBad(false) {
         container->Magic[0] == kPefMagic[0] &&
         container->Magic[1] == kPefMagic[1] &&
         container->Magic[2] == kPefMagic[2] &&
-        container->Magic[3] == kPefMagic[3] && container->Abi == kPefAbi) {
-      if (container->Kind != kPefKindObject &&
-          container->Kind != kPefKindDebug) {
-        kcout << "CodeManager: Info: Good executable. can proceed.\n";
-        return;
-      }
+        container->Magic[3] == kPefMagic[3] &&
+        container->Magic[4] == kPefMagic[4] && container->Abi == kPefAbi) {
+      return;
+    } else if (container->Magic[4] == kPefMagic[0] &&
+               container->Magic[3] == kPefMagic[1] &&
+               container->Magic[2] == kPefMagic[2] &&
+               container->Magic[1] == kPefMagic[3] &&
+               container->Magic[0] == kPefMagic[0] && container->Abi == kPefAbi) {
+        /// This is a fat binary.
+      this->fFatBinary = true;
+      return;
     }
 
     kcout << "CodeManager: Warning: Executable format error!\n";
@@ -102,7 +108,7 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
       break;
     }
     case kPefZero: {
-      errOrSym = StringBuilder::Construct(".page_zero$");
+      errOrSym = StringBuilder::Construct(".zero64$");
       break;
     }
     default:
@@ -122,9 +128,14 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
   for (SizeT index = 0; index < container->Count; ++index) {
     if (StringBuilder::Equals(container_header->Name,
                               errOrSym.Leak().Leak().CData())) {
-      if (container_header->Kind == kind)
+      if (container_header->Kind == kind) {
+        if (container_header->Cpu != Detail::rt_get_pef_platform()) {
+          if (!this->fFatBinary) return nullptr;
+        }
+
         return (VoidPtr)(static_cast<UIntPtr *>(fCachedBlob) +
                          container_header->Offset);
+      }
     }
   }
 
@@ -156,7 +167,9 @@ bool execute_from_image(PEFLoader &exec) noexcept {
   Ref<ProcessHeader> refProc = proc;
 
   proc.Kind = ProcessHeader::kUserKind;
-  rt_copy_memory(exec.FindSymbol(kPefAppnameCommandHdr, kPefData), proc.Name, rt_string_len((const Char*)exec.FindSymbol(kPefAppnameCommandHdr, kPefData)));
+  rt_copy_memory(exec.FindSymbol(kPefAppnameCommandHdr, kPefData), proc.Name,
+                 rt_string_len((const Char *)exec.FindSymbol(
+                     kPefAppnameCommandHdr, kPefData)));
 
   return ProcessScheduler::Shared().Leak().Add(refProc);
 }
