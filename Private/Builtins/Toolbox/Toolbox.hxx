@@ -21,27 +21,36 @@ EXTERN_C NewOS::Boolean     _hal_right_button_pressed();
 
 #define ToolboxClearRsrc() uA = 0
 
+/// @brief Performs OR drawing on the framebuffer.
+#define ToolboxDrawOrRsrc(ImgPtr, _Height, _Width, BaseX, BaseY) \
+  uA = 0;                                                                   \
+                                                                            \
+  for (NewOS::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
+    for (NewOS::SizeT u = BaseY; u < _Width + BaseY; ++u) {                 \
+        *(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +          \
+                                       4 *                                    \
+                                           kHandoverHeader->f_GOP              \
+                                               .f_PixelPerLine *              \
+                                           i +                                \
+                                       4 * u))) |= ImgPtr[uA];                 \
+                                                                            \
+      ++uA;                                                                 \
+    }                                                                       \
+  }
+
+
 /// @brief Draws a resource.
 #define ToolboxDrawRsrc(ImgPtr, _Height, _Width, BaseX, BaseY) \
   uA = 0;                                                                   \
                                                                             \
   for (NewOS::SizeT i = BaseX; i < _Height + BaseX; ++i) {                  \
     for (NewOS::SizeT u = BaseY; u < _Width + BaseY; ++u) {                 \
-      if (ImgPtr[uA] == 0) {                                                \
         *(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +          \
-                                     4 *                                    \
-                                         kHandoverHeader->f_GOP              \
-                                             .f_PixelPerLine *              \
-                                         i +                                \
-                                     4 * u))) |= ImgPtr[uA];                \
-      } else {                                                              \
-        *(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +          \
-                                     4 *                                    \
-                                         kHandoverHeader->f_GOP              \
-                                             .f_PixelPerLine *              \
-                                         i +                                \
-                                     4 * u))) = ImgPtr[uA];                 \
-      }                                                                     \
+                                       4 *                                    \
+                                           kHandoverHeader->f_GOP              \
+                                               .f_PixelPerLine *              \
+                                           i +                                \
+                                       4 * u))) = ImgPtr[uA];                 \
                                                                             \
       ++uA;                                                                 \
     }                                                                       \
@@ -76,4 +85,3 @@ EXTERN_C NewOS::Boolean     _hal_right_button_pressed();
                                      4 * u))) = _Clr;                 \
     }                                                                         \
   }
-

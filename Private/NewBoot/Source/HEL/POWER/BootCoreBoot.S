@@ -4,10 +4,10 @@
 
 ------------------------------------------- */
 
-.section .init
+.section .boot_hdr
 .align 4
 
-/* NewOS kernel header begin */
+/* NewBoot boot header begin */
 
 boot_hdr_mag:
 	.ascii "LX"
@@ -19,7 +19,7 @@ boot_hdr_ver:
 boot_hdr_proc:
 	.long bootloader_start
 
-/* NewOS kernel header end */
+/* NewOS boot header end */
 
 .extern bootloader_main
 .extern bootloader_stack

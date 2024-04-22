@@ -26,11 +26,11 @@
 #define IsActiveLow(FLG) (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
-#define kInterruptGate 0x8E
-#define kTrapGate 0xEF
-#define kTaskGate 0b10001100
-#define kGdtCodeSelector 0x08
-#define kVirtualAddressStartOffset 0x100
+#define kInterruptGate (0x8E)
+#define kTrapGate (0xEF)
+#define kTaskGate (0b10001100)
+#define kGdtCodeSelector (0x08)
+#define kVirtualAddressStartOffset (0x100)
 
 namespace NewOS {
 namespace Detail::AMD64 {

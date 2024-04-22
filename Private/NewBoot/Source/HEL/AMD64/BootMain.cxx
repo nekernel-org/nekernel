@@ -59,7 +59,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
       .Write(L"\r\n");
 
   BootDeviceATA ataDev;
-  Boolean isEpmFound = No;
+  Boolean isGptFound = No;
 
   UInt32 MapKey = 0;
   UInt32* SizePtr = nullptr;
@@ -121,7 +121,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   ToolboxInitRsrc();
 
-  ToolboxDrawZone(RGB(20, 20, 20), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
+  ToolboxDrawZone(RGB(FF, FF, FF), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
 
   ToolboxClearRsrc();
 

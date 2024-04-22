@@ -38,6 +38,7 @@ invalid-recipe:
 
 .PHONY: all
 all: compile-amd64
+	mkdir -p CDROM/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o NewBoot.exe
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) NewBoot.exe CDROM/EFI/BOOT/NEWBOOT.EFI
@@ -72,7 +73,8 @@ clean:
 .PHONY: help
 help:
 	@echo "=== HELP ==="
-	@echo "epm-img: Format a disk using the Explicit Partition Map/GPT."
+	@echo "epm-img: Format a disk using the Explicit Partition Map."
+	@echo "gpt-img: Format a disk using the Explicit Partition Map."
 	@echo "clean: clean bootloader."
 	@echo "bootloader-amd64: Build bootloader. (PC AMD64)"
 	@echo "run-efi-amd64: Run bootloader. (PC AMD64)"
