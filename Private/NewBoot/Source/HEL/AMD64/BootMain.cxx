@@ -6,7 +6,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/Driver.rsrc>
-#include <Builtins/Toolbox/Bezier.hxx>
+#include <Builtins/Toolbox/Lerp.hxx>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hxx>
