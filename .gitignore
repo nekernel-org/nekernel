@@ -1,5 +1,8 @@
 syntax: glob
 
+html/
+latex/
+
 .cmake/
 .qtc_clangd/
 CMakeCache.txt

@@ -6,7 +6,7 @@
 
 /***********************************************************************************/
 /// @file ProcessScheduler.cxx
-/// @brief ProcessHeader Scheduler API.
+/// @brief Process scheduler.
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hpp>
@@ -146,7 +146,7 @@ void ProcessHeader::Exit(Int32 exit_code) {
 
 SizeT ProcessScheduler::Add(Ref<ProcessHeader> &process) {
   if (!process) return -1;
-  
+
   if (!process.Leak().Image) {
     if (process.Leak().Kind != ProcessHeader::kLibKind) {
       return -kErrorNoEntrypoint;
@@ -225,7 +225,7 @@ Ref<ProcessScheduler> ProcessScheduler::Shared() {
 }
 
 /// @brief Gets current running process.
-/// @return 
+/// @return
 Ref<ProcessHeader> &ProcessScheduler::GetCurrent() { return mTeam.AsRef(); }
 
 PID &ProcessHelper::GetCurrentPID() {
