@@ -6,18 +6,18 @@
 
 /***********************************************************************************/
 /// @file ProcessTeam.cxx
-/// @brief Process Team API.
+/// @brief Process teams.
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hpp>
 
 namespace NewOS {
 /// @brief Process list array getter.
-/// @return 
+/// @return
 MutableArray<Ref<ProcessHeader>>& ProcessTeam::AsArray() { return mProcessList; }
 
 /// @brief Current process getter.
-/// @return 
+/// @return
 Ref<ProcessHeader>& ProcessTeam::AsRef() { return mCurrentProcess; }
 } // namespace NewOS
 

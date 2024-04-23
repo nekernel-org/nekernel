@@ -45,6 +45,7 @@ class PEFLoader : public LoaderInterface {
  private:
   Ref<StringView> fPath;
   VoidPtr fCachedBlob;
+  bool fFatBinary;
   bool fBad;
 };
 

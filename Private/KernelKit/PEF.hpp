@@ -24,7 +24,7 @@
 #define kPefMagicLen 5
 
 #define kPefVersion 1
-#define kPefNameLen 64
+#define kPefNameLen 255
 
 /// @brief Preferred Executable Format.
 
@@ -38,6 +38,13 @@ enum {
   kPefArchPowerPC,
   kPefArchCount = (kPefArchPowerPC - kPefArchIntel86S) + 1,
   kPefArchInvalid = 0xFF,
+};
+
+enum {
+  kPefSubArchAMD,
+  kPefSubArchIntel,
+  kPefSubArchARM,
+  kPefSubArchIBM,
 };
 
 enum {
@@ -69,6 +76,8 @@ typedef struct PEFContainer final {
 
 typedef struct PEFCommandHeader final {
   Char Name[kPefNameLen]; /* container name */
+  UInt32 Cpu;             /* container cpu */
+  UInt32 SubCpu;          /* container sub-cpu */
   UInt32 Flags;           /* container flags */
   UInt16 Kind;            /* container kind */
   UIntPtr Offset;         /* content offset */
