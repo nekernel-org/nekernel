@@ -11,6 +11,8 @@ build.ninja
 cmake_install.cmake
 qtcsettings.cmake
 
+*.exec
+
 LOOK.CSS
 
 x86_64/
