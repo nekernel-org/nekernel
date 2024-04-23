@@ -6,6 +6,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/Driver.rsrc>
+#include <Builtins/Toolbox/Bezier.hxx>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hxx>
@@ -169,16 +170,19 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   BFileReader kernelFile(L"NewKernel.exe", ImageHandle);
   kernelFile.ReadAll(KIB(512), 4096);
 
-  ExecOptionalHeaderPtr headerKind = (ExecOptionalHeaderPtr)rt_find_exec_header((DosHeaderPtr)kernelFile.Blob());
+  ExecOptionalHeaderPtr headerKind = (ExecOptionalHeaderPtr)rt_find_exec_header(
+      (DosHeaderPtr)kernelFile.Blob());
 
   if (!headerKind) {
-      EFI::RaiseHardError(L"Bad-Exec", L"New Boot can't recognize this executable.");
+    EFI::RaiseHardError(L"Bad-Exec",
+                        L"New Boot can't recognize this executable.");
   }
 
-  BootMainKind main = (BootMainKind)nullptr;
+  BootMainKind main = (BootMainKind) nullptr;
 
   if (!main) {
-      EFI::RaiseHardError(L"Bad-Exec", L"New Boot can't recognize this executable.");
+    EFI::RaiseHardError(L"Bad-Exec",
+                        L"New Boot can't recognize this executable.");
   }
 
   EFI::ExitBootServices(MapKey, ImageHandle);
