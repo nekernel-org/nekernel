@@ -86,3 +86,7 @@ struct HandoverInformationHeader {
 */
 typedef void (*HandoverProc)(HandoverInformationHeader* pHandover);
 }  // namespace NewOS::HEL
+
+
+/// @brief Bootloader global header.
+inline NewOS::HEL::HandoverInformationHeader* kHandoverHeader = nullptr;

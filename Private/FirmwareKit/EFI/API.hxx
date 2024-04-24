@@ -7,7 +7,13 @@
 #ifndef __EFI_API__
 #define __EFI_API__
 
+#ifdef __NEWBOOT__
+#include <BootKit/Rsrc/NewBootFatal.rsrc>
+#include <Builtins/Toolbox/Toolbox.hxx>
+#endif // ifdef __NEWBOOT__
+
 #include <FirmwareKit/EFI/EFI.hxx>
+#include <FirmwareKit/Handover.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hxx>
 
@@ -34,7 +40,8 @@ Bascially frees everything we have in the EFI side.
 inline void ExitBootServices(UInt64 MapKey, EfiHandlePtr ImageHandle) noexcept {
   if (!ST) return;
 
-  while (ST->BootServices->ExitBootServices(ImageHandle, MapKey) != kEfiOk);
+  while (ST->BootServices->ExitBootServices(ImageHandle, MapKey) != kEfiOk)
+    ;
 }
 
 enum {
@@ -62,6 +69,16 @@ inline void RaiseHardError(const EfiCharType *ErrorCode,
 #endif  // ifdef __DEBUG__
 
   ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
+
+#ifdef __NEWBOOT__
+  ToolboxInitRsrc();
+
+  ToolboxDrawRsrc(NewBootFatal, NEWBOOTFATAL_HEIGHT, NEWBOOTFATAL_WIDTH,
+                  (kHandoverHeader->f_GOP.f_Width - NEWBOOTFATAL_WIDTH) / 2,
+                  (kHandoverHeader->f_GOP.f_Height - NEWBOOTFATAL_HEIGHT) / 2);
+
+  ToolboxClearRsrc();
+#endif // ifdef __NEWBOOT__
 
   EFI::Stop();
 }

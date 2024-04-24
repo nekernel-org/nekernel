@@ -10,7 +10,10 @@
 
 #include <BootKit/BootKit.hxx>
 #include <FirmwareKit/Handover.hxx>
+#include <cstddef>
 
+/// @file BootFileReader
+/// @brief Bootloader File reader.
 /// BUGS: 0
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +64,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
   if (efp->OpenVolume(efp, &rootFs) != kEfiOk) {
     mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
+    EFI::RaiseHardError(L"NoSuchVolume", L"No Such volume.");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -72,6 +76,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
     mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Path: ")
         .Write(mPath)
         .Write(L"\r\n");
+    EFI::RaiseHardError(L"NoSuchPath", L"No Such file on filesystem.");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -100,8 +105,8 @@ BFileReader::~BFileReader() {
 */
 Void BFileReader::ReadAll(SizeT until, SizeT chunk) {
   if (mBlob == nullptr) {
-    if (auto err = BS->AllocatePool(EfiLoaderCode, until,
-                                    (VoidPtr*)&mBlob) != kEfiOk) {
+    if (auto err = BS->AllocatePool(EfiLoaderCode, until, (VoidPtr*)&mBlob) !=
+                   kEfiOk) {
       mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
       EFI::RaiseHardError(L"NewBoot_PageError", L"Allocation error.");
     }
@@ -113,16 +118,16 @@ Void BFileReader::ReadAll(SizeT until, SizeT chunk) {
   UInt64 szCnt = 0;
   UInt64 curSz = 0;
 
-  while (curSz < until) {
-    if (mFile->Read(mFile, &bufSize, (VoidPtr)((UIntPtr)mBlob + curSz)) != kEfiOk) {
-        break;
+  while (szCnt < until) {
+    if (mFile->Read(mFile, &bufSize, (VoidPtr)((UIntPtr)mBlob + curSz)) !=
+        kEfiOk) {
+      break;
     }
 
     szCnt += bufSize;
     curSz += bufSize;
 
-    if (bufSize == 0)
-        break;
+    if (bufSize == 0) break;
   }
 
   mSizeFile = curSz;
@@ -135,7 +140,7 @@ Int32& BFileReader::Error() { return mErrorCode; }
 
 /// @brief blob getter.
 /// @return the blob.
-VoidPtr BFileReader::Blob(){ return mBlob; }
+VoidPtr BFileReader::Blob() { return mBlob; }
 
 /// @breif Size getter.
 /// @return the size of the file.

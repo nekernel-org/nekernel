@@ -11,15 +11,15 @@
 #endif
 
 #ifndef MIB
-#define MIB(X) (KIB(X) << 20)
+#define MIB(X) ((UInt64)KIB(X) << 20)
 #endif
 
 #ifndef GIB
-#define GIB(X) (MIB(X) << 30)
+#define GIB(X) ((UInt64)MIB(X) << 30)
 #endif
 
 #ifndef TIB
-#define TIB(X) (GIB(X) << 40)
+#define TIB(X) ((UInt64)GIB(X) << 40)
 #endif
 
 #ifndef ARRAY_SIZE

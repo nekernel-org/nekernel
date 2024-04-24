@@ -6,6 +6,7 @@
 
 #include <NewKit/Utils.hpp>
 #include <KernelKit/DebugOutput.hpp>
+#include <cstddef>
 
 namespace NewOS {
 Int rt_string_cmp(const Char *src, const Char *cmp, Size size) {

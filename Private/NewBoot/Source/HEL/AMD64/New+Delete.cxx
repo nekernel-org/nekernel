@@ -5,10 +5,11 @@
 ------------------------------------------- */
 
 #include <BootKit/BootKit.hxx>
+#include <cstddef> /* Since we're using GCC for this EFI program. */
 
 /// @brief Allocates a new object.
 /// @param sz the size.
-/// @return 
+/// @return
 void* operator new(size_t sz)
 {
     void* buf = nullptr;

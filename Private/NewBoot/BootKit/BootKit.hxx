@@ -32,9 +32,10 @@ class BVersionString;
 #include <BootKit/Platform.hxx>
 #include <BootKit/Protocol.hxx>
 
-#ifdef __EFI_x86_64__
-///! The Boot page provided to NewKernel.
+///! @note This address is reserved to NewKernel.
 #define kBootVirtualAddress (0xfffffff80000000)
+
+#ifdef __EFI_x86_64__
 #include <FirmwareKit/EFI.hxx>
 #endif  // ifdef __EFI_x86_64__
 

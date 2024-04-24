@@ -51,5 +51,3 @@ inline NewOS::VoidPtr kKernelPhysicalStart;
 inline NewOS::UIntPtr kKernelPhysicalSize;
 
 #include <FirmwareKit/Handover.hxx>
-
-inline NewOS::HEL::HandoverInformationHeader* kHandoverHeader;

@@ -68,7 +68,7 @@ ErrorOr<StringView> StringBuilder::Construct(const Char *data) {
 const char *StringBuilder::FromInt(const char *fmt, int i) {
   if (!fmt) return ("-1");
 
-  char *ret = (char *)__alloca(sizeof(char) * 8 + rt_string_len(fmt));
+  char *ret = (char *)Alloca(sizeof(char) * 8 + rt_string_len(fmt));
 
   if (!ret) return ("-1");
 
@@ -103,7 +103,7 @@ const char *StringBuilder::FromBool(const char *fmt, bool i) {
   if (!fmt) return ("?");
 
   const char *boolean_expr = i ? "true" : "false";
-  char *ret = (char *)__alloca((sizeof(char) * i) ? 4 : 5 + rt_string_len(fmt));
+  char *ret = (char *)Alloca((sizeof(char) * i) ? 4 : 5 + rt_string_len(fmt));
 
   if (!ret) return ("?");
 
@@ -142,7 +142,7 @@ const char *StringBuilder::Format(const char *fmt, const char *fmt2) {
   if (!fmt || !fmt2) return ("?");
 
   char *ret =
-      (char *)alloca(sizeof(char) * rt_string_len(fmt2) + rt_string_len(fmt2));
+      (char *)Alloca(sizeof(char) * rt_string_len(fmt2) + rt_string_len(fmt2));
 
   if (!ret) return ("?");
 

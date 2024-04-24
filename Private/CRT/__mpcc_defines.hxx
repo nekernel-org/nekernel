@@ -7,6 +7,8 @@
 #ifndef __MPCC_DEF__
 #define __MPCC_DEF__
 
+#ifndef __GNUC__
+
 typedef __SIZE_TYPE__ size_t;
 
 #ifdef __LP64__
@@ -81,5 +83,7 @@ typedef union double_cast {
 
     double f;
 } __attribute__((packed)) double_cast_t;
+
+#endif // ifndef __GNUC__
 
 #endif /* __MPCC_DEF__ */

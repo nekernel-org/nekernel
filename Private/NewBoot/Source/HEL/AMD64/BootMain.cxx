@@ -5,8 +5,7 @@
 ------------------------------------------- */
 
 #include <BootKit/BootKit.hxx>
-#include <BootKit/Rsrc/Driver.rsrc>
-#include <Builtins/Toolbox/Lerp.hxx>
+#include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PEF.hpp>
@@ -118,18 +117,18 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   ///! Finally draw bootloader screen.
 
-  auto kHandoverHeader = handoverHdrPtr;
+  kHandoverHeader = handoverHdrPtr;
 
   ToolboxInitRsrc();
 
-  ToolboxDrawZone(RGB(FF, FF, FF), handoverHdrPtr->f_GOP.f_Height,
+  ToolboxDrawZone(RGB(9d, 9d, 9d), handoverHdrPtr->f_GOP.f_Height,
                   handoverHdrPtr->f_GOP.f_Width, 0, 0);
 
   ToolboxClearRsrc();
 
-  ToolboxDrawRsrc(Driver, DRIVER_HEIGHT, DRIVER_WIDTH,
-                  (handoverHdrPtr->f_GOP.f_Width - DRIVER_HEIGHT) / 2,
-                  (handoverHdrPtr->f_GOP.f_Height - DRIVER_HEIGHT) / 2);
+  ToolboxDrawRsrc(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
+                  (handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
+                  (handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
 
   ToolboxClearRsrc();
 
@@ -202,6 +201,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
       CANT_REACH();
     }
   }
+
+  EFI::RaiseHardError(L"Invalid-PEF-Executable", L"PEF executable expected. Got something else.");
 
   return kEfiFail;
 }
