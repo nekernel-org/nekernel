@@ -6,10 +6,10 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/Driver.rsrc>
-#include <Builtins/Toolbox/Bezier.hxx>
+#include <Builtins/Toolbox/Lerp.hxx>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <KernelKit/MSDOS.hpp>
-#include <KernelKit/PE.hxx>
+#include <KernelKit/PEF.hpp>
 #include <NewKit/Ref.hpp>
 
 /** Graphics related. */
@@ -154,42 +154,54 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   BFileReader reader(L"SplashScreen.fmt", ImageHandle);
   reader.ReadAll(512, 16);
 
-  Char* buf = (Char*)reader.Blob();
+  if (reader.Blob()) {
+    Char* buf = (Char*)reader.Blob();
 
-  for (SizeT i = 0; i < reader.Size(); ++i) {
-    if (buf[i] != '\n' && buf[i] != '\r') {
-      if (buf[i] == '*') {
-        writer.WriteCharacter('\t');
-      } else {
-        writer.WriteCharacter(buf[i]);
+    for (SizeT i = 0; i < reader.Size(); ++i) {
+      if (buf[i] != '\n' && buf[i] != '\r') {
+        if (buf[i] == '*') {
+          writer.WriteCharacter('\t');
+        } else {
+          writer.WriteCharacter(buf[i]);
+        }
+      } else
+        writer.Write(L"\r\n");
+    }
+  }
+
+  BFileReader kernelFile(L"NewLoader.exe", ImageHandle);
+  kernelFile.ReadAll(MIB(1), 4096);
+
+  if (kernelFile.Blob()) {
+    PEFContainer* headerKind =
+        reinterpret_cast<PEFContainer*>(kernelFile.Blob());
+
+    if (headerKind->Magic[0] == kPefMagic[0] &&
+        headerKind->Magic[1] == kPefMagic[1] &&
+        headerKind->Magic[2] == kPefMagic[2] &&
+        headerKind->Magic[3] == kPefMagic[3] &&
+        headerKind->Magic[4] == kPefMagic[4]) {
+      if (headerKind->Abi != kPefAbi || headerKind->Cpu != kPefArchAMD64) {
+        EFI::RaiseHardError(L"Bad-Architecture",
+                            L"New Boot can't run this architecture.");
       }
-    } else
-      writer.Write(L"\r\n");
+
+      BootMainKind main = (BootMainKind) nullptr;
+
+      if (!main) {
+        EFI::RaiseHardError(L"Bad-Exec",
+                            L"New Boot can't recognize this executable.");
+      }
+
+      EFI::ExitBootServices(MapKey, ImageHandle);
+
+      main(handoverHdrPtr);
+
+      EFI::Stop();
+
+      CANT_REACH();
+    }
   }
 
-  BFileReader kernelFile(L"NewKernel.exe", ImageHandle);
-  kernelFile.ReadAll(KIB(512), 4096);
-
-  ExecOptionalHeaderPtr headerKind = (ExecOptionalHeaderPtr)rt_find_exec_header(
-      (DosHeaderPtr)kernelFile.Blob());
-
-  if (!headerKind) {
-    EFI::RaiseHardError(L"Bad-Exec",
-                        L"New Boot can't recognize this executable.");
-  }
-
-  BootMainKind main = (BootMainKind) nullptr;
-
-  if (!main) {
-    EFI::RaiseHardError(L"Bad-Exec",
-                        L"New Boot can't recognize this executable.");
-  }
-
-  EFI::ExitBootServices(MapKey, ImageHandle);
-
-  main(handoverHdrPtr);
-
-  EFI::Stop();
-
-  CANT_REACH();
+  return kEfiFail;
 }
