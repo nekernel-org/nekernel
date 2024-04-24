@@ -7,15 +7,22 @@
 #ifndef __EFI_API__
 #define __EFI_API__
 
-#ifdef __NEWBOOT__
-#include <BootKit/Rsrc/NewBootFatal.rsrc>
-#include <Builtins/Toolbox/Toolbox.hxx>
-#endif // ifdef __NEWBOOT__
-
 #include <FirmwareKit/EFI/EFI.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PE.hxx>
+
+#ifdef __NEWBOOT__
+// forward decl.
+class BTextWriter;
+
+#define __BOOTKIT_NO_INCLUDE__ 1
+
+#include <BootKit/BootKit.hxx>
+#include <BootKit/Rsrc/NewBootFatal.rsrc>
+#include <BootKit/Vendor/Qr.hxx>
+#include <Builtins/Toolbox/Toolbox.hxx>
+#endif  // ifdef __NEWBOOT__
 
 inline EfiSystemTable *ST = nullptr;
 inline EfiBootServices *BS = nullptr;
@@ -58,17 +65,17 @@ inline UInt32 Platform() noexcept { return kPEMachineAMD64; }
  */
 inline void RaiseHardError(const EfiCharType *ErrorCode,
                            const EfiCharType *Reason) noexcept {
+#ifdef __DEBUG__
   ST->ConOut->OutputString(ST->ConOut, L"\r\n*** STOP ***\r\n");
 
   ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
   ST->ConOut->OutputString(ST->ConOut, ErrorCode);
 
-#ifdef __DEBUG__
   ST->ConOut->OutputString(ST->ConOut, L", Reason: ");
   ST->ConOut->OutputString(ST->ConOut, Reason);
-#endif  // ifdef __DEBUG__
 
   ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
+#endif  // ifdef __DEBUG__
 
 #ifdef __NEWBOOT__
   ToolboxInitRsrc();
@@ -78,7 +85,24 @@ inline void RaiseHardError(const EfiCharType *ErrorCode,
                   (kHandoverHeader->f_GOP.f_Height - NEWBOOTFATAL_HEIGHT) / 2);
 
   ToolboxClearRsrc();
-#endif // ifdef __NEWBOOT__
+
+  /// Show the QR code now.
+
+  constexpr auto ver = 7;
+  auto ecc = qr::Ecc::H;
+  auto str = "https://www.mahrouss-logic.com/help";
+  auto len = BStrLen(L"https://www.mahrouss-logic.com/help");
+
+  qr::Qr<ver> encoder;
+  qr::QrDelegate encoderDelegate;
+
+  encoder.encode(str, len, ecc, -1);  // Automatic mask.
+
+  /// tell delegate to draw encoded QR.
+  encoderDelegate.draw<ver>(encoder, (kHandoverHeader->f_GOP.f_Width - encoder.side_size()) / 2,
+      (kHandoverHeader->f_GOP.f_Height - encoder.side_size()) - 20);
+
+#endif  // ifdef __NEWBOOT__
 
   EFI::Stop();
 }

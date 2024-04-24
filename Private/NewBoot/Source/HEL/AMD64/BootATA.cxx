@@ -15,8 +15,9 @@
  *
  */
 
-#include <BootKit/HW/ATA.hxx>
+#include <FirmwareKit/EFI.hxx>
 #include <BootKit/BootKit.hxx>
+#include <BootKit/HW/ATA.hxx>
 
 /// bugs: 0
 

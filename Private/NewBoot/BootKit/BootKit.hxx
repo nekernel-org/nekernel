@@ -29,18 +29,10 @@ class BVersionString;
 /// Include other APIs.
 /***********************************************************************************/
 
-#include <BootKit/Platform.hxx>
-#include <BootKit/Protocol.hxx>
+#include <NewKit/Defines.hpp>
 
 ///! @note This address is reserved to NewKernel.
 #define kBootVirtualAddress (0xfffffff80000000)
-
-#ifdef __EFI_x86_64__
-#include <FirmwareKit/EFI.hxx>
-#endif  // ifdef __EFI_x86_64__
-
-#include <FirmwareKit/EPM.hxx>
-#include <NewKit/Defines.hpp>
 
 using namespace NewOS;
 
@@ -146,9 +138,6 @@ class BVersionString final {
  public:
   static const CharacterTypeUTF16 *Shared() { return BOOTLOADER_VERSION; }
 };
-
-/// @brief Bootloader main type.
-typedef void (*BootMainKind)(HEL::HandoverInformationHeader *handoverInfo);
 
 /***********************************************************************************/
 /// Provide some useful processor features.

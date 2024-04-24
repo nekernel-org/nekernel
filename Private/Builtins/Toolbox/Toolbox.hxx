@@ -25,8 +25,8 @@ EXTERN_C NewOS::Boolean _hal_right_button_pressed();
 #define ToolboxDrawOrRsrc(ImgPtr, _Height, _Width, BaseX, BaseY)               \
   __ToolboxCursor = 0;                                                         \
                                                                                \
-  for (NewOS::SizeT i = BaseX; i < _Height + BaseX; ++i) {                     \
-    for (NewOS::SizeT u = BaseY; u < _Width + BaseY; ++u) {                    \
+  for (NewOS::SizeT i = BaseX; i < (_Height + BaseX); ++i) {                     \
+    for (NewOS::SizeT u = BaseY; u < (_Width + BaseY); ++u) {                    \
       *(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
                                    4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
                                        i +                                     \
@@ -40,8 +40,8 @@ EXTERN_C NewOS::Boolean _hal_right_button_pressed();
 #define ToolboxDrawRsrc(ImgPtr, _Height, _Width, BaseX, BaseY)                 \
   __ToolboxCursor = 0;                                                         \
                                                                                \
-  for (NewOS::SizeT i = BaseX; i < _Height + BaseX; ++i) {                     \
-    for (NewOS::SizeT u = BaseY; u < _Width + BaseY; ++u) {                    \
+  for (NewOS::SizeT i = BaseX; i < (_Height + BaseX); ++i) {                     \
+    for (NewOS::SizeT u = BaseY; u < (_Width + BaseY); ++u) {                    \
       *(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
                                    4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
                                        i +                                     \
@@ -66,8 +66,8 @@ EXTERN_C NewOS::Boolean _hal_right_button_pressed();
 /// @brief Draws inside a zone.
 #define ToolboxDrawZone(_Clr, _Height, _Width, BaseX, BaseY)                   \
                                                                                \
-  for (NewOS::SizeT i = BaseX; i < _Width + BaseX; ++i) {                      \
-    for (NewOS::SizeT u = BaseY; u < _Height + BaseY; ++u) {                   \
+  for (NewOS::SizeT i = BaseX; i < (_Width + BaseX); ++i) {                      \
+    for (NewOS::SizeT u = BaseY; u < (_Height + BaseY); ++u) {                   \
       *(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
                                    4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
                                        i +                                     \

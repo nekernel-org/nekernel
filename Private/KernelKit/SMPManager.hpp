@@ -29,6 +29,9 @@ enum ThreadKind {
   kHartCount,
 };
 
+typedef enum ThreadKind SmThreadKind;
+typedef ThreadID SmThreadID;
+
 ///
 /// \name HardwareThread
 /// @brief CPU Hardware Thread (POWER, x64, or 64x0)

@@ -36,7 +36,7 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__
 invalid-recipe:
 	@echo "invalid-recipe: Use make bootloader-<arch> instead."
 
-KERNEL_OBJ=kernel.bin
+KERNEL_OBJ=boot.bin
 DD=dd
 IMG_CREATE=qemu-img
 MAX_KERNEL_SIZE=1024K

@@ -4,6 +4,8 @@
 
 ------------------------------------------- */
 
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
 
 EXTERN_C void rt_hlt() { asm volatile("hlt"); }

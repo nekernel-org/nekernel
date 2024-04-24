@@ -4,6 +4,8 @@
 
 ------------------------------------------- */
 
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
 #include <cstddef> /* Since we're using GCC for this EFI program. */
 

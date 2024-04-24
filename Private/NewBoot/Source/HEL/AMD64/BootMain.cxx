@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include <FirmwareKit/EFI.hxx>
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Builtins/Toolbox/Toolbox.hxx>
@@ -57,9 +58,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
-
-  BootDeviceATA ataDev;
-  Boolean isGptFound = No;
 
   UInt32 MapKey = 0;
   UInt32* SizePtr = nullptr;
@@ -185,7 +183,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
                             L"New Boot can't run this architecture.");
       }
 
-      BootMainKind main = (BootMainKind) nullptr;
+      NewOS::HEL::BootMainKind main = (NewOS::HEL::BootMainKind) nullptr;
 
       if (!main) {
         EFI::RaiseHardError(L"Bad-Exec",

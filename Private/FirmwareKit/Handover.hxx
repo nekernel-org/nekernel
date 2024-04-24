@@ -81,10 +81,11 @@ struct HandoverInformationHeader {
   } f_GOP;
 };
 
-/**
-    @brief Handover Jump Proc
-*/
-typedef void (*HandoverProc)(HandoverInformationHeader* pHandover);
+/// @brief Bootloader main type.
+typedef void (*BootMainKind)(NewOS::HEL::HandoverInformationHeader* handoverInfo);
+
+/// @brief Alias of bootloader main type.
+typedef void (*HandoverProc)(HandoverInformationHeader* handoverInfo);
 }  // namespace NewOS::HEL
 
 
