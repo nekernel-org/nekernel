@@ -25,7 +25,7 @@
 
 static Boolean kATADetected = false;
 static Int32 kATADeviceType = kATADeviceCount;
-static CharacterTypeUTF8 kATAData[kATADataLen] = {0};
+static UInt16 kATAData[kATADataLen] = {0};
 
 Boolean boot_ata_detected(Void);
 
@@ -81,8 +81,6 @@ ATAInit_Retry:
   if ((statRdy & ATA_SR_BSY)) goto ATAInit_Retry;
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
-
-  BSetMem(kATAData, 0, kATADataLen);
 
   /// fetch serial info
   /// model, speed, number of sectors...
@@ -269,3 +267,10 @@ BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorS
  * @return BootDeviceATA::ATATrait& the drive config.
  */
 BootDeviceATA::ATATrait& BootDeviceATA::Leak() { return mTrait; }
+
+/***
+    @brief Getter, gets the number of sectors inside the drive.
+*/
+SizeT BootDeviceATA::GetSectorsCount() noexcept {
+    return kATAData[60] + kATAData[61];
+}

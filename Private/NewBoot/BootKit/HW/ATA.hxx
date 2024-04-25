@@ -34,6 +34,8 @@ class BootDeviceATA final : public Device {
  public:
   operator bool();
 
+  SizeT GetSectorsCount() noexcept;
+
   BootDeviceATA& Read(Char* Buf, const SizeT& SecCount) override;
   BootDeviceATA& Write(Char* Buf, const SizeT& SecCount) override;
 

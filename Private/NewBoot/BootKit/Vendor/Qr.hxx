@@ -12,6 +12,7 @@
 #include <BootKit/Vendor/Support.hxx>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <cstdint>
+#include <CompilerKit/Detail.hxx>
 
 namespace qr {
 inline uint8_t min_poly =
@@ -810,6 +811,8 @@ class QrDelegate final {
 public:
     explicit QrDelegate() = default;
     ~QrDelegate() = default;
+
+    NEWOS_COPY_DEFAULT(QrDelegate);
 
     /// @brief Draw method delegate.
     template <int V>

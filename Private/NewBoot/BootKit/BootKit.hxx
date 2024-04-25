@@ -11,6 +11,22 @@
 
 #pragma once
 
+#include <BootKit/HW/ATA.hxx>
+#include <CompilerKit/Version.hxx>
+
+/// include NewFS header and Support header as well.
+
+#include <FSKit/NewFS.hxx>
+#include <cstring>
+#include <BootKit/Vendor/Support.hxx>
+
+/***********************************************************************************/
+/// Include other APIs.
+/***********************************************************************************/
+
+#include <NewKit/Defines.hpp>
+#include "Builtins/ATA/ATA.hxx"
+
 /***********************************************************************************/
 /// Framebuffer helpers.
 /***********************************************************************************/
@@ -22,15 +38,6 @@ class BFileReader;
 class BFileRunner;
 class BVersionString;
 
-#include <BootKit/HW/ATA.hxx>
-#include <CompilerKit/Version.hxx>
-
-/***********************************************************************************/
-/// Include other APIs.
-/***********************************************************************************/
-
-#include <NewKit/Defines.hpp>
-
 ///! @note This address is reserved to NewKernel.
 #define kBootVirtualAddress (0xfffffff80000000)
 
@@ -38,12 +45,6 @@ using namespace NewOS;
 
 typedef Char *PEFImagePtr;
 typedef Char *PEImagePtr;
-
-enum {
-  kSegmentCode = 2,
-  kSegmentData = 4,
-  kSegmentBss = 6,
-};
 
 typedef WideChar CharacterTypeUTF16;
 typedef Char CharacterTypeUTF8;
@@ -169,3 +170,80 @@ static inline const UInt32 kRgbGreen = 0x0000FF00;
 static inline const UInt32 kRgbBlue = 0x00FF0000;
 static inline const UInt32 kRgbBlack = 0x00000000;
 static inline const UInt32 kRgbWhite = 0x00FFFFFF;
+
+/// @brief BootKit Disk Formatter.
+template <typename BootDev>
+class BDiskFormatFactory final {
+public:
+    /// @brief File entry for **BDiskFormatFactory**.
+    struct BFileDescriptor final {
+        Char fFilename[255];
+        Char fForkName[255];
+
+        VoidPtr fBlob;
+        SizeT fBlobSz;
+
+        struct BFileDescriptor* fPrev;
+        struct BFileDescriptor* fNext;
+    };
+
+public:
+    explicit BDiskFormatFactory() = default;
+    explicit BDiskFormatFactory(BootDev dev) : fDiskDev(dev) {}
+    ~BDiskFormatFactory() = default;
+
+    NEWOS_COPY_DELETE(BDiskFormatFactory);
+
+    /// @brief Format disk.
+    /// @param Partition Name
+    /// @param Blobs.
+    /// @param Number of blobs.
+    /// @retval True disk has been formatted.
+    /// @retval False failed to format.
+    Boolean Format(const char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
+
+private:
+    /// @brief Write all of the requested catalogs into the filesystem.
+    Boolean _AppendCatalogList(BFileDescriptor* fileBlobs, SizeT blobCount) {
+        return true;
+    }
+
+private:
+    BootDev fDiskDev;
+
+};
+
+/// @brief Format disk.
+/// @param Partition Name
+/// @param Blobs.
+/// @param Number of blobs.
+/// @retval True disk has been formatted.
+/// @retval False failed to format.
+template <typename BootDev>
+inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
+    BDiskFormatFactory::BFileDescriptor* fileBlobs, SizeT blobCount) {
+    // if (!fileBlobs || !blobCount) return false;
+
+    static_assert(kNewFSMinimumSectorSz == kATASectorSize, "Sector size doesn't match!");
+
+    Char buf[kNewFSMinimumSectorSz] = { 0 };
+    NewPartitionBlock* partBlock = reinterpret_cast<NewPartitionBlock*>(buf);
+
+    memcpy(partBlock->PartitionName, partName, strlen(partName));
+
+    /// @note A catalog roughly equal to a sector.
+
+    partBlock->CatalogCount = blobCount;
+    partBlock->Kind = kNewFSHardDrive;
+    partBlock->SectorCount = kNewFSMinimumSectorSz;
+    partBlock->FreeCatalog = fDiskDev.GetSectorsCount() - partBlock->CatalogCount;
+    partBlock->SectorCount = fDiskDev.GetSectorsCount();
+    partBlock->FreeSectors = fDiskDev.GetSectorsCount() - partBlock->CatalogCount;
+    partBlock->StartCatalog = kNewFSAddressAsLba + sizeof(NewPartitionBlock);
+
+    fDiskDev.Leak().mBase = (kNewFSAddressAsLba / kNewFSMinimumSectorSz);
+    fDiskDev.Leak().mSize = kNewFSMinimumSectorSz;
+    fDiskDev.Write(buf, kNewFSMinimumSectorSz);
+
+    return this->_AppendCatalogList(fileBlobs, blobCount);
+}

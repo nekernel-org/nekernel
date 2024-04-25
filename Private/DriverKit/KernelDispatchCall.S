@@ -14,7 +14,7 @@ __kernelDispatchCall:
 #elif defined(__powerpc64__)
 
 __kernelDispatchCall:
-    mflr 3
+    /* There is no specific interrupt request id for a system call in POWER. */
     sc
     blr
 

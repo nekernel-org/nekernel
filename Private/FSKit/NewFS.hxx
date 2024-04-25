@@ -82,7 +82,7 @@ default.
 #define kNewFSLbaType (NewOS::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
-#define kNewFSAddressAsLba (1024U)
+#define kNewFSAddressAsLba (1024)
 
 #define kResourceTypeDialog 10
 #define kResourceTypeString 11
@@ -95,6 +95,8 @@ default.
 #define kNewFSFlagUnallocated 0x00
 #define kNewFSFlagCreated 0x0F
 
+#define kNewFSMimeNameLen (216)
+
 typedef NewOS::Char NewCharType;
 
 enum {
@@ -106,10 +108,10 @@ enum {
   kNewFSDriveCount = 5,
 };
 
-/// @brief Ccatalog type.
+/// @brief Catalog type.
 struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
-  NewCharType Mime[kNewFSNodeNameLen];
+  NewCharType Mime[kNewFSMimeNameLen];
 
   NewOS::Int32 Flags;
   NewOS::Int32 Kind;

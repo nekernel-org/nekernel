@@ -28,5 +28,19 @@ EXTERN_C VoidPtr memcpy(void *dst, const void *src,
   return dst;
 }
 
+/// @brief strlen definition in C++.
+EXTERN_C size_t strlen(const char *whatToCheck) {
+    if (!whatToCheck || *whatToCheck == 0) return 0;
+
+    SizeT len = 0;
+
+    while (whatToCheck[len] != 0) {
+        ++len;
+    }
+
+    return len;
+}
+
+
 /// @brief somthing specific to the microsoft ABI, regarding checking the stack.
 EXTERN_C void ___chkstk_ms(void) {}

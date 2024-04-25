@@ -51,6 +51,7 @@ all: compile-amd64
 	$(DD) if=$(KERNEL_OBJ) of=$(BOOT_LOADER) bs=1 seek=0 conv=notrunc
 	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/NEWBOOT.EFI
+	$(COPY) ../../$(KERNEL) CDROM/$(KERNEL)
 	$(COPY) $(BOOT_LOADER) ../../Root/Boot/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )
@@ -68,8 +69,8 @@ run-efi-amd64:
 
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f raw $(IMG) 256M
-	qemu-img create -f raw $(IMG_2) 512M
+	qemu-img create -f qcow2 $(IMG) 256M
+	qemu-img create -f qcow2 $(IMG_2) 512M
 
 .PHONY: download-edk
 download-edk:

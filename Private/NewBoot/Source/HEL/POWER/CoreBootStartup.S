@@ -10,7 +10,7 @@
 /* NewBoot boot header begin */
 
 boot_hdr_mag:
-	.ascii "LX"
+	.ascii "CB"
 boot_hdr_name:
 	// it has to match ten bytes.
 	.asciz "NewBoot\0\0\0"
