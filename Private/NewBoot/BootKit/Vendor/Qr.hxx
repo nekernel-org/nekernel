@@ -5,6 +5,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <BootKit/Vendor/QrVendor/base.h>
+#include <BootKit/Vendor/QrVendor/bit.h>
+
 #include <BootKit/Vendor/QrPrelude.hxx>
 #include <BootKit/Vendor/Support.hxx>
 #include <Builtins/Toolbox/Toolbox.hxx>
@@ -276,7 +279,7 @@ public:
   void apply_mask(int mask, uint8_t *patterns);
 
  private:
-  static_assert(V <= 40, "invalid version");
+  static_assert(V >= 1 && V <= 40, "invalid version");
   static constexpr int SIDE = 17 + V * 4;
   static constexpr int N_BITS = SIDE * SIDE;
   static constexpr int N_ALIGN = V == 1 ? 0 : V / 7 + 2;
@@ -286,42 +289,29 @@ public:
   static constexpr int N_VER_BITS = V > 6 ? 36 : 0;
   static constexpr int N_DAT_BITS =
       N_BITS - (192 + N_ALIGN_BITS + N_TIMING_BITS + 31 + N_VER_BITS);
-  static constexpr int N_BYTES = N_BITS;  // Actual number of bytes_in_bits
+  static constexpr int N_BYTES = utl::bytes_in_bits(N_BITS);  // Actual number of bytes_in_bits
                                           // required to store whole Qr code
-  static constexpr int N_DAT_BYTES =
-      N_DAT_BITS;  // Actual number of bytes_in_bits required to store
+  static constexpr int N_DAT_BYTES = utl::bytes_in_bits(N_DAT_BITS);  // Actual number of bytes_in_bits required to store
                    // [data + ecc]
   static constexpr int N_DAT_CAPACITY =
       N_DAT_BITS >> 3;  // Capacity of [data + ecc] without remainder bits
  private:
   /// @brief internal function to retrieve bit from a bitset.
-  uint8_t get_arr_bit(uint8_t *arr, uint64_t bit) const {
-    return ((volatile uint8_t *)arr)[bit];
+  uint8_t get_arr_bit(uint8_t *arr, unsigned bit) const {
+    return utl::get_arr_bit(arr, bit);
   }
 
   /// @brief internal function to set bit from a bitset.
-  bool set_arr_bit(uint8_t *arr, uint64_t bit) {
-    if (((volatile uint8_t *)arr)[bit] == 0) {
-      ((volatile uint8_t *)arr)[bit] = 1;
-
-      return true;
-    }
-
-    return false;
+  void set_arr_bit(uint8_t *arr, unsigned bit) {
+    utl::set_arr_bit(arr, bit);
   }
 
   /// @brief internal function to clear bit from a bitset.
-  bool clr_arr_bit(uint8_t *arr, uint64_t bit) {
-    if (((volatile uint8_t *)arr)[bit] == 1) {
-      ((volatile uint8_t *)arr)[bit] = 0;
-
-      return true;
-    }
-
-    return false;
+  void clr_arr_bit(uint8_t *arr, unsigned bit) {
+    utl::clr_arr_bit(arr, bit);
   }
 
-  uint8_t code[N_BITS] = {0};
+  uint8_t code[N_BYTES] = {};
 
   bool status = false;
 };

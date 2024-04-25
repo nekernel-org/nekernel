@@ -61,9 +61,11 @@ enum {
 inline UInt32 Platform() noexcept { return kPEMachineAMD64; }
 
 /***
- * @brief Raise Hard kernel error.
+ * @brief Throw an error, stop execution as well.
+ * @param ErrorCode error code to be print.
+ * @param Reason reason to be print.
  */
-inline void RaiseHardError(const EfiCharType *ErrorCode,
+inline void ThrowError(const EfiCharType *ErrorCode,
                            const EfiCharType *Reason) noexcept {
 #ifdef __DEBUG__
   ST->ConOut->OutputString(ST->ConOut, L"\r\n*** STOP ***\r\n");
@@ -88,19 +90,19 @@ inline void RaiseHardError(const EfiCharType *ErrorCode,
 
   /// Show the QR code now.
 
-  constexpr auto ver = 7;
+  constexpr auto ver = 4;
   auto ecc = qr::Ecc::H;
-  auto str = "https://www.mahrouss-logic.com/help";
-  auto len = BStrLen(L"https://www.mahrouss-logic.com/help");
+  auto str = "https://el-mahrouss-logic.com/";
+  auto len = BStrLen(L"https://el-mahrouss-logic.com/");
 
   qr::Qr<ver> encoder;
   qr::QrDelegate encoderDelegate;
 
-  encoder.encode(str, len, ecc, -1);  // Automatic mask.
+  encoder.encode(str, len, ecc, 0); // Manual mask 0
 
   /// tell delegate to draw encoded QR.
-  encoderDelegate.draw<ver>(encoder, (kHandoverHeader->f_GOP.f_Width - encoder.side_size()) / 2,
-      (kHandoverHeader->f_GOP.f_Height - encoder.side_size()) - 20);
+  encoderDelegate.draw<ver>(encoder, (kHandoverHeader->f_GOP.f_Width - encoder.side_size()) - 20,
+      (kHandoverHeader->f_GOP.f_Height - encoder.side_size()) / 2);
 
 #endif  // ifdef __NEWBOOT__
 

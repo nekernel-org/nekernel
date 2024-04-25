@@ -28,10 +28,12 @@ COPY		= cp
 
 # Add assembler, linker, and object files variables.
 ASMFLAGS	= -f win64
+
+# NewOS subsystem is 17.
 LDFLAGS		= -e Main --subsystem=17
 LDOBJ		= Objects/*.obj
 
-# This file is the kernel, responsible of task management, memory, drivers and more.
+# This file is the kernel, responsible of task management and memory.
 KERNEL		= NewKernel.exe
 
 # The kernel entrypoint
@@ -39,6 +41,7 @@ SCRIPT		= --script=Linker/Platforms/PC.lds
 
 .PHONY: error
 error:
+	@echo "=== ERROR ==="
 	@echo "=> Use a specific target."
 
 MOVEALL=./MoveAll.sh

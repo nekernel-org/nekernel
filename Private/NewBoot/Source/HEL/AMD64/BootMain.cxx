@@ -67,7 +67,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&SizePtr) !=
       kEfiOk) {
-    EFI::RaiseHardError(L"Bad-Alloc", L"New Boot ran out of memory!");
+    EFI::ThrowError(L"Bad-Alloc", L"New Boot ran out of memory!");
   }
 
   /****
@@ -80,7 +80,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
                        (VoidPtr*)&Descriptor) != kEfiOk) {
-    EFI::RaiseHardError(L"Bad-Alloc", L"New Boot ran out of memory!");
+    EFI::ThrowError(L"Bad-Alloc", L"New Boot ran out of memory!");
   }
 
   HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
@@ -179,14 +179,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
         headerKind->Magic[3] == kPefMagic[3] &&
         headerKind->Magic[4] == kPefMagic[4]) {
       if (headerKind->Abi != kPefAbi || headerKind->Cpu != kPefArchAMD64) {
-        EFI::RaiseHardError(L"Bad-Architecture",
+        EFI::ThrowError(L"Bad-Architecture",
                             L"New Boot can't run this architecture.");
       }
 
       NewOS::HEL::BootMainKind main = (NewOS::HEL::BootMainKind) nullptr;
 
       if (!main) {
-        EFI::RaiseHardError(L"Bad-Exec",
+        EFI::ThrowError(L"Bad-Exec",
                             L"New Boot can't recognize this executable.");
       }
 
@@ -200,7 +200,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
     }
   }
 
-  EFI::RaiseHardError(L"Invalid-PEF-Executable", L"PEF executable expected. Got something else.");
+  EFI::ThrowError(L"Invalid-PEF-Executable", L"PEF executable expected. Got something else.");
 
   return kEfiFail;
 }
