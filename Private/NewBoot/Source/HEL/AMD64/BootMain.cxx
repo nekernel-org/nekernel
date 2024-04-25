@@ -4,13 +4,13 @@
 
 ------------------------------------------- */
 
-#include <FirmwareKit/EFI.hxx>
-#include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Builtins/Toolbox/Toolbox.hxx>
+#include <FirmwareKit/EFI.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PEF.hpp>
 #include <NewKit/Ref.hpp>
+#include <BootKit/BootKit.hxx>
 
 /** Graphics related. */
 
@@ -178,16 +178,19 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
         containerKind->Magic[2] == kPefMagic[2] &&
         containerKind->Magic[3] == kPefMagic[3] &&
         containerKind->Magic[4] == kPefMagic[4]) {
-      if (containerKind->Abi != kPefAbi || containerKind->Cpu != kPefArchAMD64) {
+      if (containerKind->Abi != kPefAbi ||
+          containerKind->Cpu != kPefArchAMD64) {
         EFI::ThrowError(L"Bad-Architecture",
-                            L"New Boot can't run this architecture.");
+                        L"New Boot can't run this architecture.");
       }
 
-      NewOS::HEL::BootMainKind main = reinterpret_cast<NewOS::HEL::BootMainKind>(containerKind + containerKind->Start);
+      NewOS::HEL::BootMainKind main =
+          reinterpret_cast<NewOS::HEL::BootMainKind>(containerKind +
+                                                     containerKind->Start);
 
       if (!main) {
         EFI::ThrowError(L"Bad-Exec",
-                            L"New Boot can't recognize this executable.");
+                        L"New Boot can't recognize this executable.");
       }
 
       EFI::ExitBootServices(MapKey, ImageHandle);
@@ -200,7 +203,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
     }
   }
 
-  EFI::ThrowError(L"Invalid-PEF-Executable", L"PEF executable expected. Got something else.");
+  EFI::ThrowError(L"Invalid-PEF-Executable",
+                  L"PEF executable expected. Got something else.");
 
   return kEfiFail;
 }
