@@ -76,9 +76,11 @@ epm-img:
 download-edk:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
+TARGETS=$(REM_FLAG) $(OBJ) NewBoot.exe NewKernel.exe OVMF.fd $(IMG) $(IMG_2) *.bin
+
 .PHONY: clean
 clean:
-	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe NewKernel.exe OVMF.fd $(IMG) $(IMG_2) *.bin
+	$(REM) $(TARGETS)
 
 .PHONY: help
 help:
