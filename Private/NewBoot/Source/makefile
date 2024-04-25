@@ -78,7 +78,7 @@ download-edk:
 
 .PHONY: clean
 clean:
-	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe NewKernel.exe OVMF.fd $(IMG) $(IMG_2)
+	$(REM) $(REM_FLAG) $(OBJ) NewBoot.exe NewKernel.exe OVMF.fd $(IMG) $(IMG_2) *.bin
 
 .PHONY: help
 help:
