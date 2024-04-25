@@ -121,6 +121,13 @@ inline void InitEFI(EfiSystemTable *SystemTable) noexcept {
 
   ST->BootServices->SetWatchdogTimer(0, 0, 0, nullptr);
   ST->ConOut->EnableCursor(ST->ConOut, false);
+
+  if (ST->FirmwareVendor[0] != '@' ||
+      ST->FirmwareVendor[1] != 'M' ||
+      ST->FirmwareVendor[1] != 'H' ||
+      ST->FirmwareVendor[1] != 'R') {
+        EFI::ThrowError(L"Unsupported Firmware", L"Firmware is unsupported, please build OVMF by yourself.");
+    }
 }
 
 #ifdef __BOOTLOADER__
