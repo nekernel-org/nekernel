@@ -33,11 +33,11 @@ NewOS::Boolean drv_std_init(NewOS::UInt16& PortsImplemented) {
   for (SizeT devIndex = 0; devIndex < NEWOS_BUS_COUNT; ++devIndex) {
     if (iterator[devIndex].Leak().Subclass() == kSATASubClass &&
         iterator[devIndex].Leak().ProgIf() == kSATAProgIfAHCI) {
-      iterator[devIndex].Leak().EnableMmio();
-      kAhciDevice = iterator[devIndex].Leak();
+      iterator[devIndex].Leak().EnableMmio(); /// enable the memory i/o for this ahci device.
+      kAhciDevice = iterator[devIndex].Leak(); /// and then leak the reference.
 
       kcout << "NewKernel: [PCI] Found AHCI controller.\r\n";
-    
+
       return true;
     }
   }

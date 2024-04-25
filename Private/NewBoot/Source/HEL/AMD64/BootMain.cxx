@@ -170,20 +170,20 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   kernelFile.ReadAll(MIB(1), 4096);
 
   if (kernelFile.Blob()) {
-    PEFContainer* headerKind =
+    PEFContainer* containerKind =
         reinterpret_cast<PEFContainer*>(kernelFile.Blob());
 
-    if (headerKind->Magic[0] == kPefMagic[0] &&
-        headerKind->Magic[1] == kPefMagic[1] &&
-        headerKind->Magic[2] == kPefMagic[2] &&
-        headerKind->Magic[3] == kPefMagic[3] &&
-        headerKind->Magic[4] == kPefMagic[4]) {
-      if (headerKind->Abi != kPefAbi || headerKind->Cpu != kPefArchAMD64) {
+    if (containerKind->Magic[0] == kPefMagic[0] &&
+        containerKind->Magic[1] == kPefMagic[1] &&
+        containerKind->Magic[2] == kPefMagic[2] &&
+        containerKind->Magic[3] == kPefMagic[3] &&
+        containerKind->Magic[4] == kPefMagic[4]) {
+      if (containerKind->Abi != kPefAbi || containerKind->Cpu != kPefArchAMD64) {
         EFI::ThrowError(L"Bad-Architecture",
                             L"New Boot can't run this architecture.");
       }
 
-      NewOS::HEL::BootMainKind main = (NewOS::HEL::BootMainKind) nullptr;
+      NewOS::HEL::BootMainKind main = reinterpret_cast<NewOS::HEL::BootMainKind>(containerKind + containerKind->Start);
 
       if (!main) {
         EFI::ThrowError(L"Bad-Exec",
