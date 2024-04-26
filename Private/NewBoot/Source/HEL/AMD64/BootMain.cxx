@@ -187,48 +187,50 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   BDiskFormatFactory<BootDeviceATA> diskFormatter;
 
-  BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
+  if (!diskFormatter) {
+    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
 
-  memcpy(rootDesc.fFileName, "/", strlen("/"));
-  memcpy(rootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
+    memcpy(rootDesc.fFileName, "/", strlen("/"));
+    memcpy(rootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
 
-  rootDesc.fBlobSz = strlen(kMachineModel " startup disk.");
-  rootDesc.fBlob = new Char[rootDesc.fBlobSz];
+    rootDesc.fBlobSz = strlen(kMachineModel " startup disk.");
+    rootDesc.fBlob = new Char[rootDesc.fBlobSz];
 
-  memcpy(rootDesc.fBlob, kMachineModel " startup disk.",
-         strlen(kMachineModel " startup disk."));
+    memcpy(rootDesc.fBlob, kMachineModel " startup disk.",
+            strlen(kMachineModel " startup disk."));
 
-  rootDesc.fKind = kNewFSCatalogKindDir;
+    rootDesc.fKind = kNewFSCatalogKindDir;
 
-  BDiskFormatFactory<BootDeviceATA>::BFileDescriptor bootDesc{0};
+    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor bootDesc{0};
 
-  bootDesc.fKind = kNewFSCatalogKindDir;
+    bootDesc.fKind = kNewFSCatalogKindDir;
 
-  memcpy(bootDesc.fFileName, "/Boot", strlen("/Boot"));
-  memcpy(bootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
-  memcpy(bootDesc.fBlob, kMachineModel " startup folder.",
-         strlen(kMachineModel " startup folder."));
+    memcpy(bootDesc.fFileName, "/Boot", strlen("/Boot"));
+    memcpy(bootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
+    memcpy(bootDesc.fBlob, kMachineModel " startup folder.",
+            strlen(kMachineModel " startup folder."));
 
-  bootDesc.fBlobSz = strlen(kMachineModel " startup folder.");
-  bootDesc.fBlob = new Char[bootDesc.fBlobSz];
+    bootDesc.fBlobSz = strlen(kMachineModel " startup folder.");
+    bootDesc.fBlob = new Char[bootDesc.fBlobSz];
 
-  BDiskFormatFactory<BootDeviceATA>::BFileDescriptor kernelDesc{0};
+    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor kernelDesc{0};
 
-  kernelDesc.fKind = kNewFSCatalogKindFile;
+    kernelDesc.fKind = kNewFSCatalogKindFile;
 
-  memcpy(kernelDesc.fFileName, "/Boot/NewKernel", strlen("/Boot/NewKernel"));
-  memcpy(kernelDesc.fForkName, kNewFSDataFork, strlen(kNewFSDataFork));
+    memcpy(kernelDesc.fFileName, "/Boot/NewKernel", strlen("/Boot/NewKernel"));
+    memcpy(kernelDesc.fForkName, kNewFSDataFork, strlen(kNewFSDataFork));
 
-  kernelDesc.fBlob = readerKernel.Blob();
-  kernelDesc.fBlobSz = readerKernel.Size();
+    kernelDesc.fBlob = readerKernel.Blob();
+    kernelDesc.fBlobSz = readerKernel.Size();
 
-  rootDesc.fNext = &bootDesc;
-  rootDesc.fNext->fPrev = &rootDesc;
+    rootDesc.fNext = &bootDesc;
+    rootDesc.fNext->fPrev = &rootDesc;
 
-  rootDesc.fNext->fNext = &kernelDesc;
-  rootDesc.fNext->fNext->fPrev = &bootDesc;
+    rootDesc.fNext->fNext = &kernelDesc;
+    rootDesc.fNext->fNext->fPrev = &bootDesc;
 
-  diskFormatter.Format(kMachineModel, &rootDesc, 3);
+    diskFormatter.Format(kMachineModel, &rootDesc, 3);
+  }
 
   EFI::ExitBootServices(MapKey, ImageHandle);
 

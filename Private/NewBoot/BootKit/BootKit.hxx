@@ -213,6 +213,17 @@ public:
     /// @retval False failed to format.
     Boolean Format(const char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
 
+    operator bool() noexcept {
+        fDiskDev.Leak().mBase = (kNewFSAddressAsLba / BootDev::kSectorSize);
+        fDiskDev.Leak().mSize = BootDev::kSectorSize;
+
+        Char buf[BootDev::kSectorSize] = { 0 };
+
+        fDiskDev.Read(buf, BootDev::kSectorSize);
+
+        return buf[0] == kNewFSIdent[0];
+    }
+
 private:
     /// @brief Write all of the requested catalogs into the filesystem.
     Boolean WriteContent(BFileDescriptor* fileBlobs, SizeT blobCount,
