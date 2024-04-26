@@ -9,14 +9,23 @@
 #include <FirmwareKit/EFI.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PEF.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Macros.hpp>
 #include <BootKit/BootKit.hxx>
+#include <NewKit/Ref.hpp>
+#include <cstring>
+
+/// make the compiler shut up.
+#ifndef kMachineModel
+#define kMachineModel "NeWS HD"
+#endif // !kMachineModel
 
 /** Graphics related. */
 
 STATIC EfiGraphicsOutputProtocol* kGop = nullptr;
 STATIC UInt16 kStride = 0U;
 STATIC EfiGUID kGopGuid;
+
+EXTERN_C Void rt_jump_to_address(VoidPtr blob);
 
 /**
     @brief Finds and stores the GOP.
@@ -166,45 +175,66 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
     }
   }
 
-  BFileReader kernelFile(L"NewLoader.exe", ImageHandle);
-  kernelFile.ReadAll(MIB(1), 4096);
+  ///
+  /// The following checks for an exisiting partition
+  /// inside the disk, if it doesn't have one,
+  /// format the disk.
+  //
 
-  if (kernelFile.Blob()) {
-    PEFContainer* containerKind =
-        reinterpret_cast<PEFContainer*>(kernelFile.Blob());
+  /// need this as well, to invoke BExecutableLoader.
+  BFileReader readerKernel(L"NewKernel.exe", ImageHandle);
+  readerKernel.ReadAll(MIB(1), 4096);
 
-    if (containerKind->Magic[0] == kPefMagic[0] &&
-        containerKind->Magic[1] == kPefMagic[1] &&
-        containerKind->Magic[2] == kPefMagic[2] &&
-        containerKind->Magic[3] == kPefMagic[3] &&
-        containerKind->Magic[4] == kPefMagic[4]) {
-      if (containerKind->Abi != kPefAbi ||
-          containerKind->Cpu != kPefArchAMD64) {
-        EFI::ThrowError(L"Bad-Architecture",
-                        L"New Boot can't run this architecture.");
-      }
+  BDiskFormatFactory<BootDeviceATA> diskFormatter;
 
-      NewOS::HEL::BootMainKind main =
-          reinterpret_cast<NewOS::HEL::BootMainKind>(containerKind +
-                                                     containerKind->Start);
+  BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
 
-      if (!main) {
-        EFI::ThrowError(L"Bad-Exec",
-                        L"New Boot can't recognize this executable.");
-      }
+  memcpy(rootDesc.fFileName, "/", strlen("/"));
+  memcpy(rootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
 
-      EFI::ExitBootServices(MapKey, ImageHandle);
+  rootDesc.fBlobSz = strlen(kMachineModel " startup disk.");
+  rootDesc.fBlob = new Char[rootDesc.fBlobSz];
 
-      main(handoverHdrPtr);
+  memcpy(rootDesc.fBlob, kMachineModel " startup disk.",
+         strlen(kMachineModel " startup disk."));
 
-      EFI::Stop();
+  rootDesc.fKind = kNewFSCatalogKindDir;
 
-      CANT_REACH();
-    }
-  }
+  BDiskFormatFactory<BootDeviceATA>::BFileDescriptor bootDesc{0};
 
-  EFI::ThrowError(L"Invalid-PEF-Executable",
-                  L"PEF executable expected. Got something else.");
+  bootDesc.fKind = kNewFSCatalogKindDir;
 
-  return kEfiFail;
+  memcpy(bootDesc.fFileName, "/Boot", strlen("/Boot"));
+  memcpy(bootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
+  memcpy(bootDesc.fBlob, kMachineModel " startup folder.",
+         strlen(kMachineModel " startup folder."));
+
+  bootDesc.fBlobSz = strlen(kMachineModel " startup folder.");
+  bootDesc.fBlob = new Char[bootDesc.fBlobSz];
+
+  BDiskFormatFactory<BootDeviceATA>::BFileDescriptor kernelDesc{0};
+
+  kernelDesc.fKind = kNewFSCatalogKindFile;
+
+  memcpy(kernelDesc.fFileName, "/Boot/NewKernel", strlen("/Boot/NewKernel"));
+  memcpy(kernelDesc.fForkName, kNewFSDataFork, strlen(kNewFSDataFork));
+
+  kernelDesc.fBlob = readerKernel.Blob();
+  kernelDesc.fBlobSz = readerKernel.Size();
+
+  rootDesc.fNext = &bootDesc;
+  rootDesc.fNext->fPrev = &rootDesc;
+
+  rootDesc.fNext->fNext = &kernelDesc;
+  rootDesc.fNext->fNext->fPrev = &bootDesc;
+
+  diskFormatter.Format(kMachineModel, &rootDesc, 3);
+
+  EFI::ExitBootServices(MapKey, ImageHandle);
+
+  rt_jump_to_address(readerKernel.Blob());
+
+  EFI::Stop();
+
+  CANT_REACH();
 }

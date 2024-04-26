@@ -32,7 +32,7 @@ BTextWriter &BTextWriter::Write(const CharacterTypeUTF16 *str) {
   return *this;
 }
 
-BTextWriter &BTextWriter::Write(const UChar *str) {
+BTextWriter &BTextWriter::Write(const Char *str) {
 #ifdef __DEBUG__
   if (!str || *str == 0) return *this;
 

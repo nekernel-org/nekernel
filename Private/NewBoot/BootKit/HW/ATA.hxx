@@ -23,6 +23,8 @@ class BootDeviceATA final : public Device {
 
   NEWOS_COPY_DEFAULT(BootDeviceATA);
 
+  enum { kSectorSize = kATASectorSize };
+
   struct ATATrait final : public Device::Trait {
     UInt16 mBus{kPrimary};
     UInt8 mMaster{0};

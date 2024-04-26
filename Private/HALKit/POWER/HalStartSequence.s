@@ -4,11 +4,11 @@
 
 ------------------------------------------- */
 
-.globl Main
-.extern HalKernelMain
+.globl __ImageStart
+.extern hal_init_platform
 .align 4
 .text
 
-Main:
-	bl HalKernelMain
+__ImageStart:
+	bl hal_init_platform
 	blr

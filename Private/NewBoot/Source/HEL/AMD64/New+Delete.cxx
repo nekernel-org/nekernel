@@ -20,6 +20,17 @@ void* operator new(size_t sz)
     return buf;
 }
 
+/// @brief Allocates a new object.
+/// @param sz the size.
+/// @return
+void* operator new[](size_t sz)
+{
+    void* buf = nullptr;
+    BS->AllocatePool(EfiMemoryType::EfiLoaderData, sz, &buf);
+
+    return buf;
+}
+
 /// @brief Deletes the object.
 /// @param buf the object.
 void operator delete(void* buf)

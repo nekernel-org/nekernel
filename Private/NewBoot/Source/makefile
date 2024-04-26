@@ -18,6 +18,10 @@ else
 EMU=qemu-system-x86_64
 endif
 
+ifeq ($(NEWS_MODEL), )
+NEWOS_MODEL=-DkMachineModel="\"Generic NeWS HD\""
+endif
+
 IMG=epm.img
 IMG_2=epm-slave.img
 EMU_FLAGS=-net none -smp 4 -m 8G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -drive file=fat:rw:CDROM,index=2,format=raw -d int -hdd epm-slave.img
@@ -46,13 +50,10 @@ KERNEL=NewKernel.exe
 .PHONY: all
 all: compile-amd64
 	mkdir -p CDROM/EFI/BOOT
-	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o $(KERNEL_OBJ)
-	$(IMG_CREATE) create -f raw $(BOOT_LOADER) $(MAX_KERNEL_SIZE)
-	$(DD) if=$(KERNEL_OBJ) of=$(BOOT_LOADER) bs=1 seek=0 conv=notrunc
+	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o $(BOOT_LOADER)
 	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/NEWBOOT.EFI
 	$(COPY) ../../$(KERNEL) CDROM/$(KERNEL)
-	$(COPY) $(BOOT_LOADER) ../../Root/Boot/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -61,7 +62,7 @@ endif
 .PHONY: compile-amd64
 compile-amd64:
 	$(WINDRES) BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
-	$(CC_GNU) $(FLAG_GNU) $(DEBUG) $(wildcard HEL/AMD64/*.cxx) $(wildcard *.cxx)
+	$(CC_GNU) $(NEWOS_MODEL) $(FLAG_GNU) $(DEBUG) $(wildcard HEL/AMD64/*.cxx) $(wildcard HEL/AMD64/*.S) $(wildcard *.cxx)
 
 .PHONY: run-efi-amd64
 run-efi-amd64:
@@ -69,7 +70,7 @@ run-efi-amd64:
 
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f qcow2 $(IMG) 256M
+	qemu-img create -f qcow2 $(IMG) 512M
 	qemu-img create -f qcow2 $(IMG_2) 512M
 
 .PHONY: download-edk

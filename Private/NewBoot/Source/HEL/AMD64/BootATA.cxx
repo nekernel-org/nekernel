@@ -132,7 +132,7 @@ ATAInit_Retry:
 
 Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
                    SizeT SectorSz, SizeT Size) {
-  UInt8 Command = (!Master ? 0xE0 : 0xF0);
+  UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
   boot_ata_wait_io(IO);
 
@@ -146,27 +146,15 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  while ((In8(ATA_COMMAND(IO))) & ATA_SR_BSY) boot_ata_wait_io(IO);
-
-  UInt16 byte = In16(IO + ATA_REG_DATA);
-  SizeT IndexOff = 0UL;
-  Buf[IndexOff] = byte;
-
-  while (byte != 0xFF) {
-    if (IndexOff > Size) break;
-
-    ++IndexOff;
-
-    while ((In8(ATA_COMMAND(IO))) & ATA_SR_BSY) boot_ata_wait_io(IO);
-
-    byte = In16(IO + ATA_REG_DATA);
-    Buf[IndexOff] = byte;
+  for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+    boot_ata_wait_io(IO);
+    Buf[IndexOff] = In16(IO + ATA_REG_DATA);
   }
 }
 
 Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
                     SizeT SectorSz, SizeT Size) {
-  UInt8 Command = (!Master ? 0xE0 : 0xF0);
+  UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
   boot_ata_wait_io(IO);
 
@@ -209,10 +197,6 @@ BootDeviceATA::BootDeviceATA() noexcept {
       boot_ata_init(ATA_SECONDARY_IO, true, this->Leak().mBus,
                     this->Leak().mMaster)) {
     kATADetected = true;
-
-    BTextWriter writer;
-
-    writer.Write(L"New Boot: Drive is OnLine.\r\n");
   }
 }
 /**

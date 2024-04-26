@@ -58,7 +58,7 @@ Void drv_std_select(UInt16 Bus) {
 
 Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus,
                       UInt8& OutMaster) {
-  if (drv_std_detected()) return false;
+  if (drv_std_detected()) return true;
 
   UInt16 IO = Bus;
 

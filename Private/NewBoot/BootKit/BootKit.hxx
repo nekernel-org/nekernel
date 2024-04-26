@@ -6,7 +6,7 @@
 
 /***********************************************************************************/
 /// @file Boot.hxx
-/// @brief Bootloader API.
+/// @brief Bootloader Programming Interface.
 /***********************************************************************************/
 
 #pragma once
@@ -25,7 +25,7 @@
 /***********************************************************************************/
 
 #include <NewKit/Defines.hpp>
-#include "Builtins/ATA/ATA.hxx"
+#include <Builtins/ATA/ATA.hxx>
 
 /***********************************************************************************/
 /// Framebuffer helpers.
@@ -49,6 +49,11 @@ typedef Char *PEImagePtr;
 typedef WideChar CharacterTypeUTF16;
 typedef Char CharacterTypeUTF8;
 
+namespace EFI  {
+    extern void ThrowError(const CharacterTypeUTF16 *ErrorCode,
+                               const CharacterTypeUTF16 *Reason) noexcept;
+}
+
 /**
  * @brief BootKit Text Writer class
  * Writes to UEFI StdOut.
@@ -58,7 +63,7 @@ class BTextWriter final {
 
  public:
   BTextWriter &Write(const Long &num);
-  BTextWriter &Write(const UChar *str);
+  BTextWriter &Write(const Char *str);
   BTextWriter &Write(const CharacterTypeUTF16 *str);
   BTextWriter &WriteCharacter(CharacterTypeUTF16 c);
 
@@ -171,14 +176,19 @@ static inline const UInt32 kRgbBlue = 0x00FF0000;
 static inline const UInt32 kRgbBlack = 0x00000000;
 static inline const UInt32 kRgbWhite = 0x00FFFFFF;
 
+#define kBKBootFileMime "boot-x/file"
+#define kBKBootDirMime  "boot-x/dir"
+
 /// @brief BootKit Disk Formatter.
 template <typename BootDev>
 class BDiskFormatFactory final {
 public:
     /// @brief File entry for **BDiskFormatFactory**.
     struct BFileDescriptor final {
-        Char fFilename[255];
-        Char fForkName[255];
+        Char fFileName[kNewFSNodeNameLen];
+        Char fForkName[kNewFSNodeNameLen];
+
+        UInt32 fKind;
 
         VoidPtr fBlob;
         SizeT fBlobSz;
@@ -190,6 +200,7 @@ public:
 public:
     explicit BDiskFormatFactory() = default;
     explicit BDiskFormatFactory(BootDev dev) : fDiskDev(dev) {}
+
     ~BDiskFormatFactory() = default;
 
     NEWOS_COPY_DELETE(BDiskFormatFactory);
@@ -204,7 +215,101 @@ public:
 
 private:
     /// @brief Write all of the requested catalogs into the filesystem.
-    Boolean _AppendCatalogList(BFileDescriptor* fileBlobs, SizeT blobCount) {
+    Boolean WriteContent(BFileDescriptor* fileBlobs, SizeT blobCount,
+                        SizeT sectorSz, NewPartitionBlock& partBlock) {
+        if (sectorSz != BootDev::kSectorSize) return false;
+
+        BFileDescriptor* blob = fileBlobs;
+        Lba startLba = partBlock.FreeCatalog;
+
+        BTextWriter writer;
+        while (blob) {
+            NewCatalog catalogKind{ 0 };
+
+            /// Fill catalog kind.
+            catalogKind.Kind = blob->fKind;
+
+            /// Allocate fork for blob.
+            catalogKind.FirstFork = (startLba + sizeof(NewCatalog));
+            catalogKind.LastFork = catalogKind.FirstFork;
+
+            NewFork forkKind{ 0 };
+
+            memcpy(forkKind.Name, blob->fForkName, strlen(blob->fForkName));
+            forkKind.Kind = (forkKind.Name[0] == kNewFSDataFork[0]) ? kNewFSDataForkKind : kNewFSRsrcForkKind;
+            forkKind.Flags = kNewFSFlagCreated;
+
+            /// We don't know.
+            forkKind.ResourceFlags = 0;
+            forkKind.ResourceId = 0;
+            forkKind.ResourceKind = 0;
+
+            /// We're the only fork here.
+            forkKind.NextSibling = catalogKind.FirstFork;
+            forkKind.PreviousSibling = catalogKind.FirstFork;
+
+            forkKind.DataOffset = (startLba + sizeof(NewCatalog) + sizeof(NewFork));
+            forkKind.DataSize = blob->fBlobSz;
+
+            Lba lbaStart = forkKind.DataOffset;
+            SizeT cur = 0UL;
+
+            while (cur < forkKind.DataSize) {
+                this->fDiskDev.Leak().mSize = BootDev::kSectorSize;
+                this->fDiskDev.Leak().mBase = forkKind.DataOffset / BootDev::kSectorSize;
+
+                this->fDiskDev.Write((Char*)(blob->fBlob) + cur, BootDev::kSectorSize);
+
+                cur += BootDev::kSectorSize;
+                lbaStart += BootDev::kSectorSize;
+            }
+
+            writer.Write((catalogKind.Kind == kNewFSCatalogKindFile) ? L"New Boot: Write-File: " :
+                L"New Boot: Write-Directory: " ).Write(blob->fFileName).Write(L"\r\n");
+
+            /// Set disk cursor here.
+
+            fDiskDev.Leak().mBase = startLba + sizeof(NewCatalog) / sectorSz;
+            fDiskDev.Leak().mSize = sizeof(NewFork);
+
+            fDiskDev.Write((Char*)&forkKind, 1);
+
+            /// Fork is done.
+
+            catalogKind.Kind = blob->fKind;
+            catalogKind.Flags |= kNewFSFlagCreated;
+
+            Lba catalogLba = (sizeof(NewCatalog) - startLba);
+
+            //// Now write catalog as well..
+
+            catalogKind.PrevSibling = startLba;
+            catalogKind.NextSibling = (sizeof(NewCatalog) + blob->fBlobSz);
+
+            /// this mime only applies to file.
+            if (catalogKind.Kind == kNewFSCatalogKindFile) {
+                memcpy(catalogKind.Mime, kBKBootFileMime, strlen(kBKBootFileMime));
+            } else  {
+                memcpy(catalogKind.Mime, kBKBootDirMime, strlen(kBKBootDirMime));
+            }
+
+            memcpy(catalogKind.Name, blob->fFileName, strlen(blob->fFileName));
+
+            fDiskDev.Leak().mBase = startLba / sectorSz;
+            fDiskDev.Leak().mSize = sizeof(NewCatalog);
+
+            fDiskDev.Write((Char*)&catalogKind, sectorSz);
+
+            startLba += (sizeof(NewCatalog) + blob->fBlobSz);
+
+            --partBlock.FreeCatalog;
+            --partBlock.FreeSectors;
+
+            ++partBlock.CatalogCount;
+
+            blob = blob->fNext;
+        }
+
         return true;
     }
 
@@ -222,28 +327,40 @@ private:
 template <typename BootDev>
 inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
     BDiskFormatFactory::BFileDescriptor* fileBlobs, SizeT blobCount) {
-    // if (!fileBlobs || !blobCount) return false;
+    if (!fileBlobs || !blobCount) return false; /// sanity check
 
-    static_assert(kNewFSMinimumSectorSz == kATASectorSize, "Sector size doesn't match!");
+    /// convert the sector into something that the disk understands.
+    SizeT sectorSz =  BootDev::kSectorSize;
+    Char buf[BootDev::kSectorSize] = { 0 };
 
-    Char buf[kNewFSMinimumSectorSz] = { 0 };
     NewPartitionBlock* partBlock = reinterpret_cast<NewPartitionBlock*>(buf);
 
+    memcpy(partBlock->Ident, kNewFSIdent, kNewFSIdentLen-1);
     memcpy(partBlock->PartitionName, partName, strlen(partName));
 
     /// @note A catalog roughly equal to a sector.
 
-    partBlock->CatalogCount = blobCount;
+    partBlock->CatalogCount = 0UL;
     partBlock->Kind = kNewFSHardDrive;
-    partBlock->SectorCount = kNewFSMinimumSectorSz;
+    partBlock->SectorSize = sectorSz;
     partBlock->FreeCatalog = fDiskDev.GetSectorsCount() - partBlock->CatalogCount;
     partBlock->SectorCount = fDiskDev.GetSectorsCount();
     partBlock->FreeSectors = fDiskDev.GetSectorsCount() - partBlock->CatalogCount;
-    partBlock->StartCatalog = kNewFSAddressAsLba + sizeof(NewPartitionBlock);
+    partBlock->StartCatalog = kNewFSCatalogStartAddress;
 
-    fDiskDev.Leak().mBase = (kNewFSAddressAsLba / kNewFSMinimumSectorSz);
-    fDiskDev.Leak().mSize = kNewFSMinimumSectorSz;
-    fDiskDev.Write(buf, kNewFSMinimumSectorSz);
+    if (this->WriteContent(fileBlobs, blobCount, sectorSz, *partBlock)) {
+        fDiskDev.Leak().mBase = (kNewFSAddressAsLba / sectorSz);
+        fDiskDev.Leak().mSize = BootDev::kSectorSize;
 
-    return this->_AppendCatalogList(fileBlobs, blobCount);
+        fDiskDev.Write(buf, sectorSz);
+
+        BTextWriter writer;
+        writer.Write(L"New Boot: Write-Partition, OK.\r\n");
+
+        return true;
+    } else {
+        EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned.");
+    }
+
+    return false;
 }

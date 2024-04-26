@@ -23,22 +23,16 @@ HandoverMagic: dq kHandoverMagic
 HandoverType: dw kTypeKernel
 HandoverArch: dw kArchAmd64
 ;; This NewBootStart points to Main.
-HandoverStart: dq Main
+HandoverStart: dq __ImageStart
 
 section .text
 
-global Main
+global __ImageStart
 extern hal_init_platform
 
 ;; Just a simple setup, we'd also need to tell some before
-Main:
-    push rax
+__ImageStart:
     push rcx
     call hal_init_platform
     pop rcx
-    pop rax
-;; Go to sleep.
-MainLoop:
-    cli
-    hlt
-    jmp $
+    ret
