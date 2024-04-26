@@ -229,12 +229,12 @@ public:
                 return false;
         }
 
-        if (blockPart->DiskSize != this->fDiskDev.GetDiskSize()) {
+        if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
+            blockPart->DiskSize < 1 ||
+            blockPart->SectorSize != BootDev::kSectorSize) {
             EFI::ThrowError(L"Invalid-Disk-Geometry", L"Invalid disk geometry.");
-        }
-
-        if (blockPart->DiskSize < 1) {
-                    EFI::ThrowError(L"Invalid-Disk-Geometry", L"Invalid disk geometry.");
+        } else if (blockPart->PartitionName[0] == 0) {
+            EFI::ThrowError(L"Invalid-Partition-Name", L"Invalid disk partition.");
         }
 
         BTextWriter writer;

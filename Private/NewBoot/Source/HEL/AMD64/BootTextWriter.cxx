@@ -75,8 +75,8 @@ BTextWriter &BTextWriter::Write(const Long &x) {
 
 BTextWriter &BTextWriter::_Write(const Long &x) {
 #ifdef __DEBUG__
-  int y = x / 16;
-  int h = x % 16;
+  UInt64 y = (x > 0 ? x : -x) / 16;
+  UInt64 h = (x > 0 ? x : -x) % 16;
 
   if (y) this->_Write(y);
 
