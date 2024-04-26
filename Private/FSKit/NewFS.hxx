@@ -117,8 +117,8 @@ struct PACKED NewCatalog final {
   NewOS::Int32 Flags;
   NewOS::Int32 Kind;
 
-  NewOS::Lba FirstFork;
-  NewOS::Lba LastFork;
+  NewOS::Lba DataFork;
+  NewOS::Lba ResourceFork;
 
   NewOS::Lba NextSibling;
   NewOS::Lba PrevSibling;
@@ -208,7 +208,7 @@ class NewFSParser {
   /// @param name the fork name.
   /// @return the fork.
   _Output NewFork* FindFork(_Input NewCatalog* catalog,
-                            _Input const Char* name);
+                            _Input const Char* name, Boolean dataOrRsrc);
 
   virtual _Output Void RemoveFork(_Input NewFork* fork) = 0;
 

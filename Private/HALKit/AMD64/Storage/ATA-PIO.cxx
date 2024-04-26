@@ -134,6 +134,8 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
                    SizeT SectorSz, SizeT Size) {
   UInt8 Command = ((!Master )? 0xE0 : 0xF0);
 
+  Lba /= SectorSz;
+
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
   Out8(IO + ATA_REG_SEC_COUNT0, 1);
 
@@ -157,6 +159,8 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
                     SizeT SectorSz, SizeT Size) {
   UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
+  Lba /= SectorSz;
+
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
   Out8(IO + ATA_REG_SEC_COUNT0, 1);
 
@@ -175,7 +179,19 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
   }
 }
 
-/// @check is ATA detected?
+/// @brief is ATA detected?
 Boolean drv_std_detected(Void) { return kATADetected; }
+
+/***
+    @brief Getter, gets the number of sectors inside the drive.
+*/
+NewOS::SizeT drv_std_get_sector_count() {
+    return (kATAData[61] << 16)| kATAData[60];
+}
+
+/// @brief Get the drive size.
+NewOS::SizeT drv_std_get_drv_size() {
+    return drv_std_get_sector_count() * kATASectorSize;
+}
 
 #endif /* ifdef __ATA_PIO__ */

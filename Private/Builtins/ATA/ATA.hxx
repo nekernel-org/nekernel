@@ -148,5 +148,9 @@ NewOS::Void drv_std_read(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Maste
 NewOS::Void drv_std_write(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Master, NewOS::Char* Buf,
                     NewOS::SizeT SectorSz, NewOS::SizeT Size);
 
+NewOS::SizeT drv_std_get_sector_count();
+
+NewOS::SizeT drv_std_get_drv_size();
+
 #endif // ifdef __KERNEL__
 #endif // ifndef __AHCI__

@@ -268,8 +268,11 @@ private:
             catalogKind->Kind = blob->fKind;
 
             /// Allocate fork for blob.
-            catalogKind->FirstFork = (startLba + sizeof(NewCatalog));
-            catalogKind->LastFork = catalogKind->FirstFork;
+            if (catalogKind->Kind == kNewFSDataForkKind) {
+                catalogKind->DataFork = (startLba + sizeof(NewCatalog));
+            } else {
+                catalogKind->ResourceFork = (startLba + sizeof(NewCatalog));
+            }
 
             NewFork* forkKind = new NewFork();
             memset(forkKind, 0, sizeof(NewFork));
@@ -284,8 +287,8 @@ private:
             forkKind->ResourceKind = 0;
 
             /// We're the only fork here.
-            forkKind->NextSibling = catalogKind->FirstFork;
-            forkKind->PreviousSibling = catalogKind->FirstFork;
+            forkKind->NextSibling = forkKind->Kind == kNewFSDataForkKind ? catalogKind->DataFork : catalogKind->ResourceFork;
+            forkKind->PreviousSibling = kNewFSDataForkKind ? catalogKind->DataFork : catalogKind->ResourceFork;
 
             forkKind->DataOffset = (startLba + sizeof(NewCatalog) + sizeof(NewFork));
             forkKind->DataSize = blob->fBlobSz;

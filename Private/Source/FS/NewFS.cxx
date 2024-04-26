@@ -11,11 +11,14 @@
 #include <NewKit/Crc32.hpp>
 #include <NewKit/Utils.hpp>
 
+#include <Builtins/ATA/ATA.hxx>
+#include <Builtins/AHCI/AHCI.hxx>
+
 using namespace NewOS;
 
 /// forward decl.
 
-STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog);
+STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog, Boolean isDataFork);
 STATIC Lba ke_find_free_catalog(SizeT kind, Int32 drv);
 
 STATIC MountpointInterface sMountpointInterface;
@@ -30,21 +33,30 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
     Lba whereFork = 0;
 
     theFork.DataOffset =
-        ke_find_free_fork(theFork.DataSize, this->fDriveIndex, catalog);
+        ke_find_free_fork(theFork.DataSize, this->fDriveIndex, catalog, theFork.Kind == kNewFSDataForkKind);
     theFork.Flags |= kNewFSFlagCreated;
+    Lba lba = theFork.Kind == kNewFSDataForkKind ? catalog->DataFork : catalog->ResourceFork;
 
-    if (catalog->FirstFork == 0) {
-      catalog->FirstFork = whereFork;
+    if (lba == 0) {
+      lba = whereFork;
     } else {
-      if (catalog->LastFork == 0) {
-        theFork.PreviousSibling = catalog->FirstFork;
+      if (lba == 0) {
+        theFork.PreviousSibling = lba;
       }
     }
 
-    if (catalog->LastFork == 0) {
-      catalog->LastFork = whereFork;
+    if (theFork.Kind == kNewFSDataForkKind) {
+        if (catalog->DataFork == 0) {
+          catalog->DataFork = whereFork;
+        } else {
+          theFork.PreviousSibling = catalog->DataFork;
+        }
     } else {
-      theFork.PreviousSibling = catalog->LastFork;
+        if (catalog->ResourceFork == 0) {
+          catalog->ResourceFork = whereFork;
+        } else {
+          theFork.PreviousSibling = catalog->ResourceFork;
+        }
     }
 
     if (!sMountpointInterface.GetAddressOf(this->fDriveIndex) ||
@@ -92,10 +104,10 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 /// @param name the fork name.
 /// @return the fork.
 _Output NewFork* NewFSParser::FindFork(_Input NewCatalog* catalog,
-                                       _Input const Char* name) {
+                                       _Input const Char* name, Boolean isDataFork) {
   auto drv = *sMountpointInterface.GetAddressOf(this->fDriveIndex);
   NewFork* theFork = nullptr;
-  Lba lba = catalog->FirstFork;
+  Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
 
   while (lba != 0) {
     drv->fPacket.fLba = lba;
@@ -184,15 +196,15 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
 
       rt_copy_memory((VoidPtr)kNewFSIdent, (VoidPtr)partBlock->Ident,
                      kNewFSIdentLen);
-      rt_copy_memory((VoidPtr) "New OS\0", (VoidPtr)partBlock->PartitionName,
-                     rt_string_len("New OS\0"));
+      rt_copy_memory((VoidPtr) "Untitled HD\0", (VoidPtr)partBlock->PartitionName,
+                     rt_string_len("Untitled HD\0"));
 
       SizeT catalogCount = 0;
-      SizeT sectorCount = 0;
-      SizeT diskSize = 0;
+      SizeT sectorCount = drv_std_get_sector_count();
+      SizeT diskSize = drv_std_get_drv_size();
 
       partBlock->Kind = kNewFSPartitionTypeStandard;
-      partBlock->StartCatalog = sizeof(NewPartitionBlock) + kNewFSAddressAsLba;
+      partBlock->StartCatalog = kNewFSCatalogStartAddress;;
       partBlock->CatalogCount = catalogCount;
       partBlock->SectorCount = sectorCount;
       partBlock->DiskSize = diskSize;
@@ -236,20 +248,32 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName) {
 /// @param name
 /// @return
 _Output NewCatalog* NewFSParser::GetCatalog(_Input const char* name) {
-  return nullptr;
+  return this->FindCatalog(name);
 }
 
 /// @brief
 /// @param catalog
 /// @return
 Boolean NewFSParser::CloseCatalog(_Input _Output NewCatalog* catalog) {
-  return true;
+    if (this->WriteCatalog(catalog, nullptr)) {
+        delete catalog;
+        catalog = nullptr;
+
+        return true;
+    }
+
+    return false;
 }
 
 /// @brief Mark catalog as removed.
 /// @param catalog The catalog structure.
 /// @return
 Boolean NewFSParser::RemoveCatalog(_Input _Output NewCatalog* catalog) {
+  if (!catalog) {
+      DbgLastError() = kErrorFileNotFound;
+      return false;
+  }
+
   catalog->Flags |= kNewFSFlagDeleted;
   this->WriteCatalog(catalog, nullptr);
 
@@ -260,32 +284,51 @@ Boolean NewFSParser::RemoveCatalog(_Input _Output NewCatalog* catalog) {
 /// Reading,Seek,Tell are unimplemented on catalogs, refer to forks I/O instead.
 /// ***************************************************************** ///
 
-/// @brief
+/// @brief Read the catalog data fork.
 /// @param catalog
 /// @param dataSz
 /// @return
 VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
                                  SizeT dataSz) {
-  return nullptr;
+    if (!catalog) {
+        DbgLastError() = kErrorFileNotFound;
+        return nullptr;
+    }
+
+
+
+    return nullptr;
 }
 
-/// @brief
+/// @brief Seek in the data fork.
 /// @param catalog
 /// @param off
 /// @return
 bool NewFSParser::Seek(_Input _Output NewCatalog* catalog, SizeT off) {
-  return false;
+    if (!catalog) {
+        DbgLastError() = kErrorFileNotFound;
+        return false;
+    }
+
+    return false;
 }
 
-/// @brief
+/// @brief Tell where we are inside the data fork.
 /// @param catalog
 /// @return
-SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog) { return 0; }
+SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog) {
+    if (!catalog) {
+        DbgLastError() = kErrorFileNotFound;
+        return false;
+    }
+
+    return 0;
+}
 
 /// @brief Find a free fork inside the filesystem.
 /// @param sz the size of the fork to set.
 /// @return the valid lba.
-STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog) {
+STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog, Boolean isDataFork) {
   auto drive = *sMountpointInterface.GetAddressOf(drv);
 
   if (drive) {
@@ -293,7 +336,7 @@ STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog) {
     bool done = false;
     bool error = false;
 
-    Lba lba = catalog->LastFork;
+    Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
 
     while (!done) {
       Char sectorBuf[kNewFSMinimumSectorSz] = {0};
