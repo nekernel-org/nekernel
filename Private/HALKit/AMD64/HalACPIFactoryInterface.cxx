@@ -37,7 +37,7 @@ Void ACPIFactoryInterface::Shutdown() {
 }
 
 /// @brief Reboot (shutdowns on qemu.)
-/// @return 
+/// @return
 Void ACPIFactoryInterface::Reboot() {
 #ifdef __DEBUG__
   rt_shutdown_acpi_qemu_30_plus();
@@ -60,22 +60,23 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
     return ErrorOr<voidPtr>{-4};
   }
 
-  SDT* xsdt = (SDT*)(rsdPtr->XsdtAddress >> (rsdPtr->XsdtAddress & 0xfff));
-  SizeT num = (xsdt->Length + sizeof(SDT)) / 8;
+  SDT* xsdt = (SDT*)(rsdPtr->RsdtAddress + rsdPtr->XsdtAddress);
+  SizeT num = xsdt->Length + sizeof(SDT) / 8;
 
   kcout << "ACPI: Number of entries: " << number(num) << endl;
+  kcout << "ACPI: Address of XSDT: " << number((UIntPtr)xsdt) << endl;
 
   constexpr short ACPI_SIGNATURE_LENGTH = 4;
 
   for (Size index = 0; index < num; ++index) {
     SDT *sdt = (SDT*)*((UInt64*)(UInt64)xsdt + sizeof(SDT) + (index * 8));
 
-		for (int signature_index = 0; signature_index < 4; signature_index++){
-			if (sdt->Signature[signature_index] != signature[signature_index])
-				break;
+	for (int signature_index = 0; signature_index < 4; signature_index++){
+		if (sdt->Signature[signature_index] != signature[signature_index])
+			break;
 
-			if (signature_index == 3) return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>((SDT*)sdt));;
-		}
+		if (signature_index == 3) return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>((SDT*)sdt));
+	}
   }
 
   return ErrorOr<voidPtr>{-1};

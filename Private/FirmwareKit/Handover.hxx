@@ -64,7 +64,6 @@ struct HandoverInformationHeader {
   voidPtr f_VirtualStart;
   SizeT f_VirtualSize;
   voidPtr f_PhysicalStart;
-  SizeT f_PhysicalSize;
   WideChar f_FirmwareVendorName[32];
   SizeT f_FirmwareVendorLen;
   struct {
@@ -79,6 +78,7 @@ struct HandoverInformationHeader {
     UInt32 f_PixelFormat;
     UInt32 f_PixelPerLine;
   } f_GOP;
+  UInt64 f_FirmwareSpecific[8];
 };
 
 /// @brief Bootloader main type.

@@ -50,6 +50,9 @@ typedef struct EfiHandle {
 /* UEFI uses wide characters by default. */
 typedef WideChar EfiCharType;
 
+typedef UInt64 EfiPhysicalAddress;
+typedef UIntPtr EfiVirtualAddress;
+
 /// What's BootBolicy?
 /// If TRUE, indicates that the request originates from the boot manager, and
 /// that the boot manager is attempting to load FilePath as a boot selection. If
@@ -200,13 +203,13 @@ typedef struct EfiMemoryDescriptor {
   /// 0xfffffffffffff000. Kind EFI_PHYSICAL_ADDRESS is defined in the
   /// AllocatePages() function description
   ///
-  UIntPtr PhysicalStart;
+  EfiPhysicalAddress PhysicalStart;
   ///
   /// Virtual address of the first byte in the memory region.
   /// VirtualStart must be aligned on a 4 KiB boundary,
   /// and must not be above 0xfffffffffffff000.
   ///
-  UIntPtr VirtualStart;
+  EfiVirtualAddress VirtualStart;
   ///
   /// NumberOfPagesNumber of 4 KiB pages in the memory region.
   /// NumberOfPages must not be 0, and must not be any value
@@ -416,9 +419,6 @@ typedef struct EfiFileDevicePathProtocol {
   ///
   WideChar Path[kPathLen];
 } EfiFileDevicePathProtocol;
-
-typedef UInt64 EfiPhysicalAddress;
-typedef UIntPtr EfiVirtualAddress;
 
 typedef UInt64(EFI_API *EfiExitBootServices)(VoidPtr ImageHandle,
                                              UInt32 MapKey);
