@@ -8,6 +8,8 @@
 #include <FirmwareKit/Handover.hxx>
 #include <BootKit/Vendor/Support.hxx>
 
+#if 0
+
 /// @brief memset definition in C++.
 /// @param dst destination pointer.
 /// @param byte value to fill in.
@@ -41,6 +43,7 @@ EXTERN_C size_t strlen(const char *whatToCheck) {
     return len;
 }
 
-
 /// @brief somthing specific to the microsoft ABI, regarding checking the stack.
 EXTERN_C void ___chkstk_ms(void) {}
+
+#endif

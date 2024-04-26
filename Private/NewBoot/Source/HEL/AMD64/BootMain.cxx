@@ -21,6 +21,8 @@
 
 /** Graphics related. */
 
+EXTERN_C Void hal_init_platform(HEL::HandoverInformationHeader* HIH);
+
 STATIC EfiGraphicsOutputProtocol* kGop = nullptr;
 STATIC UInt16 kStride = 0U;
 STATIC EfiGUID kGopGuid;
@@ -181,12 +183,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   /// format the disk.
   //
 
-  constexpr auto binarySize = KIB(512);
-
-  /// need this as well, to invoke BExecutableLoader.
-  BFileReader readerKernel(L"NewKernel.exe", ImageHandle);
-  readerKernel.ReadAll(binarySize, BootDeviceATA::kSectorSize);
-
   BDiskFormatFactory<BootDeviceATA> diskFormatter;
 
   if (!diskFormatter) {
@@ -220,28 +216,15 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
     memcpy(bootDesc.fBlob, kMachineModel " startup folder.",
             strlen(kMachineModel " startup folder."));
 
-    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor kernelDesc{0};
-
-    kernelDesc.fKind = kNewFSCatalogKindFile;
-
-    memcpy(kernelDesc.fFileName, "/Boot/NewKernel", strlen("/Boot/NewKernel"));
-    memcpy(kernelDesc.fForkName, kNewFSDataFork, strlen(kNewFSDataFork));
-
-    kernelDesc.fBlob = readerKernel.Blob();
-    kernelDesc.fBlobSz = readerKernel.Size();
-
     rootDesc.fNext = &bootDesc;
     rootDesc.fNext->fPrev = &rootDesc;
 
-    rootDesc.fNext->fNext = &kernelDesc;
-    rootDesc.fNext->fNext->fPrev = &bootDesc;
-
-    diskFormatter.Format(kMachineModel, &rootDesc, 3);
+    diskFormatter.Format(kMachineModel, &rootDesc, 2);
   }
 
   EFI::ExitBootServices(MapKey, ImageHandle);
 
-  rt_jump_to_address(readerKernel.Blob());
+  hal_init_platform(kHandoverHeader);
 
   EFI::Stop();
 

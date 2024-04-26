@@ -28,7 +28,7 @@ EMU_FLAGS=-net none -smp 4 -m 8G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -
 
 LD_FLAGS=-e Main --subsystem=10
 
-OBJ=*.o
+OBJ=*.o ../../Objects/*.obj
 
 REM=rm
 REM_FLAG=-f
@@ -53,7 +53,6 @@ all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o $(BOOT_LOADER)
 	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/BOOTX64.EFI
 	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/NEWBOOT.EFI
-	$(COPY) ../../$(KERNEL) CDROM/$(KERNEL)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -61,7 +60,7 @@ endif
 
 .PHONY: compile-amd64
 compile-amd64:
-	$(WINDRES) BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
+	# $(WINDRES) BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
 	$(CC_GNU) $(NEWOS_MODEL) $(FLAG_GNU) $(DEBUG) $(wildcard HEL/AMD64/*.cxx) $(wildcard HEL/AMD64/*.S) $(wildcard *.cxx)
 
 .PHONY: run-efi-amd64

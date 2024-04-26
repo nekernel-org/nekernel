@@ -9,6 +9,8 @@
 #include <BootKit/BootKit.hxx>
 #include <cstddef> /* Since we're using GCC for this EFI program. */
 
+#if 0
+
 /// @brief Allocates a new object.
 /// @param sz the size.
 /// @return
@@ -45,3 +47,5 @@ void operator delete(void* buf, size_t size)
 {
     BS->FreePool(buf);
 }
+
+#endif // Inactive

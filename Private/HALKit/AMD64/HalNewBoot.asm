@@ -28,9 +28,12 @@ HandoverStart: dq __ImageStart
 section .text
 
 global __ImageStart
+global __NewBootJumpProc
+
 extern hal_init_platform
 
 ;; Just a simple setup, we'd also need to tell some before
+__NewBootJumpProc:
 __ImageStart:
     push rcx
     call hal_init_platform
