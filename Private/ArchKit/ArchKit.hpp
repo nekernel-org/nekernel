@@ -48,6 +48,5 @@ inline NewOS::VoidPtr kKernelVirtualStart;
 inline NewOS::UIntPtr kKernelVirtualSize;
 
 inline NewOS::VoidPtr kKernelPhysicalStart;
-inline NewOS::UIntPtr kKernelPhysicalSize;
 
 #include <FirmwareKit/Handover.hxx>

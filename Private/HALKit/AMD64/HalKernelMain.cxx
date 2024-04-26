@@ -34,7 +34,6 @@ EXTERN_C void hal_init_platform(
       reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart) +
       kVirtualAddressStartOffset);
 
-  kKernelPhysicalSize = HandoverHeader->f_PhysicalSize;
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 
   STATIC NewOS::HAL::Detail::NewOSGDT GDT = {

@@ -6,6 +6,7 @@
 
 #include <Builtins/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hpp>
+#include "NewKit/KernelCheck.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,12 +46,12 @@ STATIC const char* kApicSignature = "APIC";
 /// @brief Multiple APIC descriptor table.
 struct MadtType final : public SDT {
   struct MadtAddress final {
-    UInt32 fPhysicalAddress;
     UInt32 fFlags;  // 1 = Dual Legacy PICs installed
+    UInt32 fPhysicalAddress;
 
     Char fType;
     Char fRecLen;  // record length
-  };
+  } Madt[];
 };
 
 struct MadtProcessorLocalApic final {
@@ -97,11 +98,12 @@ void hal_system_get_cores(voidPtr rsdPtr) {
   auto acpi = ACPIFactoryInterface(rsdPtr);
   kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 
-  MUST_PASS(kApicMadt);  // MADT must exist.
-
-  kcout << "New OS: Successfuly fetched the MADT!\r\n";
-
-  kApicInfoBlock = (MadtType*)kApicMadt;
+  if (kApicMadt) {
+      kcout << "New OS: Successfuly fetched the MADT!\r\n";
+      kApicInfoBlock = (MadtType*)kApicMadt;
+  } else {
+      MUST_PASS(false);
+  }
 }
 }  // namespace NewOS::HAL
 
