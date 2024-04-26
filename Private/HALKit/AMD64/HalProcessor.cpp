@@ -8,7 +8,7 @@
 
 /**
  * @file Processor.cpp
- * @brief This file is about processor specific functions (in/out...)
+ * @brief This file is about processor specific functions (in/out/cli/std...)
  */
 
 namespace NewOS::HAL {

@@ -5,7 +5,7 @@
 
 CC			= x86_64-w64-mingw32-gcc
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -c -ffreestanding -fPIE -fPIC -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../ -I./
+CCFLAGS		= -c -ffreestanding -fPIC -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../ -I./
 ASM 		= nasm
 
 ifneq ($(ATA_PIO_SUPPORT), )
@@ -28,10 +28,12 @@ COPY		= cp
 
 # Add assembler, linker, and object files variables.
 ASMFLAGS	= -f win64
-LDFLAGS		= -e Main --subsystem=17
+
+# NewOS subsystem is 17.
+LDFLAGS		= -e __ImageStart --subsystem=17
 LDOBJ		= Objects/*.obj
 
-# This file is the kernel, responsible of task management, memory, drivers and more.
+# This file is the kernel, responsible of task management and memory.
 KERNEL		= NewKernel.exe
 
 # The kernel entrypoint
@@ -39,6 +41,7 @@ SCRIPT		= --script=Linker/Platforms/PC.lds
 
 .PHONY: error
 error:
+	@echo "=== ERROR ==="
 	@echo "=> Use a specific target."
 
 MOVEALL=./MoveAll.sh
@@ -56,17 +59,13 @@ newos-amd64-epm: clean
 
 OBJCOPY=x86_64-w64-mingw32-objcopy
 
-KERNEL_OBJ=kernel.bin
 DD=dd
 IMG_CREATE=qemu-img
 MAX_KERNEL_SIZE=1024K
 
 .PHONY: link-amd64-epm
 link-amd64-epm:
-	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL_OBJ)
-	$(IMG_CREATE) create -f raw $(KERNEL) $(MAX_KERNEL_SIZE)
-	$(DD) if=$(KERNEL_OBJ) of=$(KERNEL) bs=1 seek=0 conv=notrunc
-	$(COPY) $(KERNEL) Root/Boot
+	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
 
 .PHONY: all
 all: newos-amd64-epm link-amd64-epm

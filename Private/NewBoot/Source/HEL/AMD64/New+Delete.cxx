@@ -4,13 +4,28 @@
 
 ------------------------------------------- */
 
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
 #include <cstddef> /* Since we're using GCC for this EFI program. */
+
+#if 0
 
 /// @brief Allocates a new object.
 /// @param sz the size.
 /// @return
 void* operator new(size_t sz)
+{
+    void* buf = nullptr;
+    BS->AllocatePool(EfiMemoryType::EfiLoaderData, sz, &buf);
+
+    return buf;
+}
+
+/// @brief Allocates a new object.
+/// @param sz the size.
+/// @return
+void* operator new[](size_t sz)
 {
     void* buf = nullptr;
     BS->AllocatePool(EfiMemoryType::EfiLoaderData, sz, &buf);
@@ -32,3 +47,5 @@ void operator delete(void* buf, size_t size)
 {
     BS->FreePool(buf);
 }
+
+#endif // Inactive

@@ -11,6 +11,8 @@
 
 ------------------------------------------- */
 
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
 
 /// bugs 0

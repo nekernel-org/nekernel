@@ -11,6 +11,8 @@
 
 ------------------------------------------- */
 
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
 
 /// BUGS: 0
@@ -30,7 +32,7 @@ BTextWriter &BTextWriter::Write(const CharacterTypeUTF16 *str) {
   return *this;
 }
 
-BTextWriter &BTextWriter::Write(const UChar *str) {
+BTextWriter &BTextWriter::Write(const Char *str) {
 #ifdef __DEBUG__
   if (!str || *str == 0) return *this;
 
@@ -73,8 +75,8 @@ BTextWriter &BTextWriter::Write(const Long &x) {
 
 BTextWriter &BTextWriter::_Write(const Long &x) {
 #ifdef __DEBUG__
-  int y = x / 16;
-  int h = x % 16;
+  UInt64 y = (x > 0 ? x : -x) / 16;
+  UInt64 h = (x > 0 ? x : -x) % 16;
 
   if (y) this->_Write(y);
 

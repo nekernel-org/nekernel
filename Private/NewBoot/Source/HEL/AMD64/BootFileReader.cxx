@@ -8,6 +8,8 @@
 
 ------------------------------------------- */
 
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <cstddef>
@@ -64,7 +66,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
   if (efp->OpenVolume(efp, &rootFs) != kEfiOk) {
     mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
-    EFI::RaiseHardError(L"NoSuchVolume", L"No Such volume.");
+    EFI::ThrowError(L"NoSuchVolume", L"No Such volume.");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -76,7 +78,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
     mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Path: ")
         .Write(mPath)
         .Write(L"\r\n");
-    EFI::RaiseHardError(L"NoSuchPath", L"No Such file on filesystem.");
+    EFI::ThrowError(L"NoSuchPath", L"No Such file on filesystem.");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -108,7 +110,7 @@ Void BFileReader::ReadAll(SizeT until, SizeT chunk) {
     if (auto err = BS->AllocatePool(EfiLoaderCode, until, (VoidPtr*)&mBlob) !=
                    kEfiOk) {
       mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
-      EFI::RaiseHardError(L"NewBoot_PageError", L"Allocation error.");
+      EFI::ThrowError(L"OutOfMemory", L"Allocation error.");
     }
   }
 

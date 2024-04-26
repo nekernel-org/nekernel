@@ -38,7 +38,7 @@ default.
 
 #define kNewFSIdentLen 8
 #define kNewFSIdent " NewFS"
-#define kNewFSPadLen 16
+#define kNewFSPadLen 408
 
 /// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
@@ -82,7 +82,8 @@ default.
 #define kNewFSLbaType (NewOS::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
-#define kNewFSAddressAsLba (1024U)
+#define kNewFSAddressAsLba (1024)
+#define kNewFSCatalogStartAddress (kNewFSAddressAsLba + sizeof(NewPartitionBlock))
 
 #define kResourceTypeDialog 10
 #define kResourceTypeString 11
@@ -95,6 +96,8 @@ default.
 #define kNewFSFlagUnallocated 0x00
 #define kNewFSFlagCreated 0x0F
 
+#define kNewFSMimeNameLen (216)
+
 typedef NewOS::Char NewCharType;
 
 enum {
@@ -106,10 +109,10 @@ enum {
   kNewFSDriveCount = 5,
 };
 
-/// @brief Ccatalog type.
+/// @brief Catalog type.
 struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
-  NewCharType Mime[kNewFSNodeNameLen];
+  NewCharType Mime[kNewFSMimeNameLen];
 
   NewOS::Int32 Flags;
   NewOS::Int32 Kind;
@@ -137,6 +140,9 @@ struct PACKED NewFork final {
 
   NewOS::Lba NextSibling;
   NewOS::Lba PreviousSibling;
+
+  /// To make a perfect sector.
+  NewOS::Char Padding[200];
 };
 
 /// @brief Partition block type
@@ -171,6 +177,9 @@ enum {
   kNewFSSubDriveInvalid,
   kNewFSSubDriveCount,
 };
+
+/// \brief Resource fork kind.
+enum { kNewFSRsrcForkKind = 0, kNewFSDataForkKind = 1 };
 
 ///
 /// \name NewFSParser

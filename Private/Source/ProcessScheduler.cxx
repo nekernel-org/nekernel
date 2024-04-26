@@ -25,8 +25,10 @@ namespace NewOS {
 /// Exit Code stuff
 /***********************************************************************************/
 
-static Int32 kExitCode = 0;
+STATIC Int32 kExitCode = 0U;
 
+/// @brief Gets the latest exit code.
+/// @note Not thread-safe.
 const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
 
 /***********************************************************************************/
@@ -65,8 +67,8 @@ VoidPtr ProcessHeader::New(const SizeT &sz) {
 
 /* @brief checks if runtime pointer is in region. */
 bool rt_in_pool_region(VoidPtr pool_ptr, VoidPtr pool, const SizeT &sz) {
-  Char *_pool_ptr = (Char *)pool_ptr;
-  Char *_pool = (Char *)pool;
+  UIntPtr *_pool_ptr = (UIntPtr *)pool_ptr;
+  UIntPtr *_pool = (UIntPtr *)pool;
 
   for (SizeT index = sz; _pool[sz] != kUserHeapMag; --index) {
     if (&_pool[index] > &_pool_ptr[sz]) continue;
@@ -97,10 +99,13 @@ Boolean ProcessHeader::Delete(VoidPtr ptr, const SizeT &sz) {
   return false;
 }
 
+/// @brief process name getter.
 const Char *ProcessHeader::GetName() { return this->Name; }
 
+/// @brief process selector getter.
 const ProcessSelector &ProcessHeader::GetSelector() { return this->Selector; }
 
+/// @brief process status getter.
 const ProcessStatus &ProcessHeader::GetStatus() { return this->Status; }
 
 /***********************************************************************************/

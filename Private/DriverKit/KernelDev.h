@@ -10,7 +10,11 @@
 
 #include <DriverKit/KernelStd.h>
 
+struct _kernelDevice;
+
+/// @brief Kernel Device driver.
 typedef struct _kernelDevice {
+    char name[255]; // the device name. Could be /./DEVICE_NAME/
     int32_t(*read)(); // read from device.
     int32_t(*write)(); // write to device.
     struct _kernelDevice* (*open)(const char* path); // open device.

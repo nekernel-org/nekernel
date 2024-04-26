@@ -23,6 +23,8 @@ class BootDeviceATA final : public Device {
 
   NEWOS_COPY_DEFAULT(BootDeviceATA);
 
+  enum { kSectorSize = kATASectorSize };
+
   struct ATATrait final : public Device::Trait {
     UInt16 mBus{kPrimary};
     UInt8 mMaster{0};
@@ -33,6 +35,9 @@ class BootDeviceATA final : public Device {
 
  public:
   operator bool();
+
+  SizeT GetSectorsCount() noexcept;
+  SizeT GetDiskSize() noexcept;
 
   BootDeviceATA& Read(Char* Buf, const SizeT& SecCount) override;
   BootDeviceATA& Write(Char* Buf, const SizeT& SecCount) override;

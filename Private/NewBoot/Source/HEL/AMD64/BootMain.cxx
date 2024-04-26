@@ -4,18 +4,30 @@
 
 ------------------------------------------- */
 
-#include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Builtins/Toolbox/Toolbox.hxx>
+#include <FirmwareKit/EFI.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PEF.hpp>
+#include <NewKit/Macros.hpp>
+#include <BootKit/BootKit.hxx>
 #include <NewKit/Ref.hpp>
+#include <cstring>
+
+/// make the compiler shut up.
+#ifndef kMachineModel
+#define kMachineModel "NeWS HD"
+#endif // !kMachineModel
 
 /** Graphics related. */
+
+EXTERN_C Void hal_init_platform(HEL::HandoverInformationHeader* HIH);
 
 STATIC EfiGraphicsOutputProtocol* kGop = nullptr;
 STATIC UInt16 kStride = 0U;
 STATIC EfiGUID kGopGuid;
+
+EXTERN_C Void rt_jump_to_address(VoidPtr blob);
 
 /**
     @brief Finds and stores the GOP.
@@ -58,9 +70,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
-  BootDeviceATA ataDev;
-  Boolean isGptFound = No;
-
   UInt32 MapKey = 0;
   UInt32* SizePtr = nullptr;
   EfiMemoryDescriptor* Descriptor = nullptr;
@@ -69,7 +78,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&SizePtr) !=
       kEfiOk) {
-    EFI::RaiseHardError(L"Bad-Alloc", L"New Boot ran out of memory!");
+    EFI::ThrowError(L"Bad-Alloc", L"New Boot ran out of memory!");
   }
 
   /****
@@ -82,7 +91,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
                        (VoidPtr*)&Descriptor) != kEfiOk) {
-    EFI::RaiseHardError(L"Bad-Alloc", L"New Boot ran out of memory!");
+    EFI::ThrowError(L"Bad-Alloc", L"New Boot ran out of memory!");
   }
 
   HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
@@ -168,41 +177,56 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
     }
   }
 
-  BFileReader kernelFile(L"NewLoader.exe", ImageHandle);
-  kernelFile.ReadAll(MIB(1), 4096);
+  ///
+  /// The following checks for an exisiting partition
+  /// inside the disk, if it doesn't have one,
+  /// format the disk.
+  //
 
-  if (kernelFile.Blob()) {
-    PEFContainer* headerKind =
-        reinterpret_cast<PEFContainer*>(kernelFile.Blob());
+  BDiskFormatFactory<BootDeviceATA> diskFormatter;
 
-    if (headerKind->Magic[0] == kPefMagic[0] &&
-        headerKind->Magic[1] == kPefMagic[1] &&
-        headerKind->Magic[2] == kPefMagic[2] &&
-        headerKind->Magic[3] == kPefMagic[3] &&
-        headerKind->Magic[4] == kPefMagic[4]) {
-      if (headerKind->Abi != kPefAbi || headerKind->Cpu != kPefArchAMD64) {
-        EFI::RaiseHardError(L"Bad-Architecture",
-                            L"New Boot can't run this architecture.");
-      }
+  if (!diskFormatter) {
+    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
 
-      BootMainKind main = (BootMainKind) nullptr;
+    memcpy(rootDesc.fFileName, "/", strlen("/"));
+    memcpy(rootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
 
-      if (!main) {
-        EFI::RaiseHardError(L"Bad-Exec",
-                            L"New Boot can't recognize this executable.");
-      }
+    rootDesc.fBlobSz = BootDeviceATA::kSectorSize;
+    rootDesc.fBlob = new Char[rootDesc.fBlobSz];
 
-      EFI::ExitBootServices(MapKey, ImageHandle);
+    memset(rootDesc.fBlob, 0, rootDesc.fBlobSz);
 
-      main(handoverHdrPtr);
+    memcpy(rootDesc.fBlob, kMachineModel " startup disk.",
+            strlen(kMachineModel " startup disk."));
 
-      EFI::Stop();
+    rootDesc.fKind = kNewFSCatalogKindDir;
 
-      CANT_REACH();
-    }
+    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor bootDesc{0};
+
+    bootDesc.fKind = kNewFSCatalogKindDir;
+
+    memcpy(bootDesc.fFileName, "/Boot", strlen("/Boot"));
+    memcpy(bootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
+
+    bootDesc.fBlobSz = BootDeviceATA::kSectorSize;
+    bootDesc.fBlob = new Char[rootDesc.fBlobSz];
+
+    memset(bootDesc.fBlob, 0, bootDesc.fBlobSz);
+
+    memcpy(bootDesc.fBlob, kMachineModel " startup folder.",
+            strlen(kMachineModel " startup folder."));
+
+    rootDesc.fNext = &bootDesc;
+    rootDesc.fNext->fPrev = &rootDesc;
+
+    diskFormatter.Format(kMachineModel, &rootDesc, 2);
   }
 
-  EFI::RaiseHardError(L"Invalid-PEF-Executable", L"PEF executable expected. Got something else.");
+  EFI::ExitBootServices(MapKey, ImageHandle);
 
-  return kEfiFail;
+  hal_init_platform(kHandoverHeader);
+
+  EFI::Stop();
+
+  CANT_REACH();
 }

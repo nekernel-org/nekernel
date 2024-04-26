@@ -169,10 +169,15 @@ char *rt_string_frofchar(char *str, const char chr) {
 }
 }  // namespace NewOS
 
-extern "C" void memset(void *dst, char src, size_t len) {
+EXTERN_C void memset(void *dst, char src, size_t len) {
   NewOS::rt_set_memory(dst, src, len);
 }
 
-extern "C" void memcpy(void *dst, void *src, size_t len) {
+EXTERN_C void memcpy(void *dst, void *src, size_t len) {
   NewOS::rt_copy_memory(src, dst, len);
+}
+
+/// @brief strlen definition in C++.
+EXTERN_C size_t strlen(const char *whatToCheck) {
+    return NewOS::rt_string_len(whatToCheck);
 }

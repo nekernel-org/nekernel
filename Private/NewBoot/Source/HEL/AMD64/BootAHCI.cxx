@@ -15,4 +15,7 @@
  *
  */
 
+
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
 #include <BootKit/HW/SATA.hxx>

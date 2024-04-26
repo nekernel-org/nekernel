@@ -29,6 +29,7 @@ typedef struct BlockGUID {
 
 /**
  * @brief The EPM bootloader block.
+ * @note NumBlock and LbaStart are ignored on UEFI.
  */
 struct PACKED BootBlock {
   NewOS::Char Magic[kEPMMagicLength];
@@ -42,7 +43,7 @@ struct PACKED BootBlock {
 
 /**
  * @brief The EPM partition block.
- * used to describe a partition inside a media.
+ * used to describe a partition inside a media, doesn't exist on uefi.
  */
 struct PACKED PartitionBlock {
   NewOS::Char Name[kEPMNameLength];
@@ -74,6 +75,10 @@ struct PACKED PartitionBlock {
 /* @brief POWER magic for EPM */
 
 #define kEPMMagicPPC "EPMPC"
+
+/* @brief UEFI magic for EPM */
+
+#define kEPMMagicUEFI "EPMUE"
 
 /* @brief Invalid magic for EPM */
 
@@ -109,7 +114,10 @@ typedef struct PartitionBlock PartitionBlockType;
 #define kEPMStartPartitionBlk (0)
 
 ///! @brief Current EPM revision (2)
-#define kEPMRevision (21)
+#define kEPMRevision (2)
+
+///! @brief Current EPM revision (2)
+#define kEPMRevisionUEFI (0xF)
 
 /// END SPECS
 

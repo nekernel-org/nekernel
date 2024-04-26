@@ -4,7 +4,12 @@
 
 ------------------------------------------- */
 
+#include <BootKit/Platform.hxx>
+#include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
+#include "HALKit/AMD64/Processor.hpp"
+
+#if 0
 
 EXTERN_C void rt_hlt() { asm volatile("hlt"); }
 
@@ -48,3 +53,9 @@ EXTERN_C UInt32 In32(UInt16 port) {
 
   return value;
 }
+
+#else
+
+void rt_hlt() { NewOS::HAL::rt_halt(); }
+
+#endif // 0

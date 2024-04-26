@@ -102,7 +102,8 @@
 #define ATA_PRIMARY 0x00
 #define ATA_SECONDARY 0x01
 
-#define ATA_CYL_LOW 4
+#define ATA_CYL_LOW 3
+#define ATA_CYL_MID 4
 #define ATA_CYL_HIGH 5
 
 ///! IO Direction
