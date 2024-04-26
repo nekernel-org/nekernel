@@ -37,6 +37,7 @@ class BootDeviceATA final : public Device {
   operator bool();
 
   SizeT GetSectorsCount() noexcept;
+  SizeT GetDiskSize() noexcept;
 
   BootDeviceATA& Read(Char* Buf, const SizeT& SecCount) override;
   BootDeviceATA& Write(Char* Buf, const SizeT& SecCount) override;

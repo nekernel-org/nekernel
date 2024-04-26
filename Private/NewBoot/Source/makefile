@@ -70,7 +70,7 @@ run-efi-amd64:
 
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f qcow2 $(IMG) 512M
+	qemu-img create -f qcow2 $(IMG) 1G
 	qemu-img create -f qcow2 $(IMG_2) 512M
 
 .PHONY: download-edk

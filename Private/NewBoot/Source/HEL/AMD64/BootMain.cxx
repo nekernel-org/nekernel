@@ -193,8 +193,10 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
     memcpy(rootDesc.fFileName, "/", strlen("/"));
     memcpy(rootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
 
-    rootDesc.fBlobSz = strlen(kMachineModel " startup disk.");
+    rootDesc.fBlobSz = BootDeviceATA::kSectorSize;
     rootDesc.fBlob = new Char[rootDesc.fBlobSz];
+
+    memset(rootDesc.fBlob, 0, rootDesc.fBlobSz);
 
     memcpy(rootDesc.fBlob, kMachineModel " startup disk.",
             strlen(kMachineModel " startup disk."));
@@ -207,11 +209,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
     memcpy(bootDesc.fFileName, "/Boot", strlen("/Boot"));
     memcpy(bootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
+
+    bootDesc.fBlobSz = BootDeviceATA::kSectorSize;
+    bootDesc.fBlob = new Char[rootDesc.fBlobSz];
+
+    memset(bootDesc.fBlob, 0, bootDesc.fBlobSz);
+
     memcpy(bootDesc.fBlob, kMachineModel " startup folder.",
             strlen(kMachineModel " startup folder."));
-
-    bootDesc.fBlobSz = strlen(kMachineModel " startup folder.");
-    bootDesc.fBlob = new Char[bootDesc.fBlobSz];
 
     BDiskFormatFactory<BootDeviceATA>::BFileDescriptor kernelDesc{0};
 

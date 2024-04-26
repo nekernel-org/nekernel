@@ -214,14 +214,25 @@ public:
     Boolean Format(const char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
 
     operator bool() noexcept {
-        fDiskDev.Leak().mBase = (kNewFSAddressAsLba / BootDev::kSectorSize);
+        fDiskDev.Leak().mBase = (kNewFSAddressAsLba);
         fDiskDev.Leak().mSize = BootDev::kSectorSize;
 
         Char buf[BootDev::kSectorSize] = { 0 };
 
         fDiskDev.Read(buf, BootDev::kSectorSize);
 
-        return buf[0] == kNewFSIdent[0];
+        NewPartitionBlock* blockPart = reinterpret_cast<NewPartitionBlock*>(buf);
+
+        for (SizeT indexMag = 0UL; indexMag < kNewFSIdentLen; ++indexMag) {
+            if (blockPart->Ident[indexMag] != kNewFSIdent[indexMag])
+                return false;
+        }
+
+        BTextWriter writer;
+
+        writer.Write(L"Disk Partition: ").Write(blockPart->PartitionName).Write(L" is okay.\r\n");
+
+        return true;
     }
 
 private:
@@ -231,43 +242,55 @@ private:
         if (sectorSz != BootDev::kSectorSize) return false;
 
         BFileDescriptor* blob = fileBlobs;
-        Lba startLba = partBlock.FreeCatalog;
-
+        Lba startLba = partBlock.StartCatalog;
         BTextWriter writer;
+
         while (blob) {
-            NewCatalog catalogKind{ 0 };
+            NewCatalog* catalogKind = new NewCatalog();
+            memset(catalogKind, 0, sizeof(NewCatalog));
 
             /// Fill catalog kind.
-            catalogKind.Kind = blob->fKind;
+            catalogKind->Kind = blob->fKind;
 
             /// Allocate fork for blob.
-            catalogKind.FirstFork = (startLba + sizeof(NewCatalog));
-            catalogKind.LastFork = catalogKind.FirstFork;
+            catalogKind->FirstFork = (startLba + sizeof(NewCatalog));
+            catalogKind->LastFork = catalogKind->FirstFork;
 
-            NewFork forkKind{ 0 };
+            NewFork* forkKind = new NewFork();
+            memset(forkKind, 0, sizeof(NewFork));
 
-            memcpy(forkKind.Name, blob->fForkName, strlen(blob->fForkName));
-            forkKind.Kind = (forkKind.Name[0] == kNewFSDataFork[0]) ? kNewFSDataForkKind : kNewFSRsrcForkKind;
-            forkKind.Flags = kNewFSFlagCreated;
+            memcpy(forkKind->Name, blob->fForkName, strlen(blob->fForkName));
+            forkKind->Kind = (forkKind->Name[0] == kNewFSDataFork[0]) ? kNewFSDataForkKind : kNewFSRsrcForkKind;
+            forkKind->Flags = kNewFSFlagCreated;
 
             /// We don't know.
-            forkKind.ResourceFlags = 0;
-            forkKind.ResourceId = 0;
-            forkKind.ResourceKind = 0;
+            forkKind->ResourceFlags = 0;
+            forkKind->ResourceId = 0;
+            forkKind->ResourceKind = 0;
 
             /// We're the only fork here.
-            forkKind.NextSibling = catalogKind.FirstFork;
-            forkKind.PreviousSibling = catalogKind.FirstFork;
+            forkKind->NextSibling = catalogKind->FirstFork;
+            forkKind->PreviousSibling = catalogKind->FirstFork;
 
-            forkKind.DataOffset = (startLba + sizeof(NewCatalog) + sizeof(NewFork));
-            forkKind.DataSize = blob->fBlobSz;
+            forkKind->DataOffset = (startLba + sizeof(NewCatalog) + sizeof(NewFork));
+            forkKind->DataSize = blob->fBlobSz;
 
-            Lba lbaStart = forkKind.DataOffset;
+            Lba lbaStart = forkKind->DataOffset;
             SizeT cur = 0UL;
 
-            while (cur < forkKind.DataSize) {
+            writer.Write((catalogKind->Kind == kNewFSCatalogKindFile) ? L"New Boot: Write-File: " :
+                            L"New Boot: Write-Directory: " ).Write(blob->fFileName).Write(L"\r\n");
+
+            /// Set disk cursor here.
+
+            fDiskDev.Leak().mBase = startLba + sizeof(NewCatalog);
+            fDiskDev.Leak().mSize = sizeof(NewFork);
+
+            fDiskDev.Write((Char*)forkKind, sizeof(NewFork));
+
+            while (cur < forkKind->DataSize) {
                 this->fDiskDev.Leak().mSize = BootDev::kSectorSize;
-                this->fDiskDev.Leak().mBase = forkKind.DataOffset / BootDev::kSectorSize;
+                this->fDiskDev.Leak().mBase = (forkKind->DataOffset + cur);
 
                 this->fDiskDev.Write((Char*)(blob->fBlob) + cur, BootDev::kSectorSize);
 
@@ -275,48 +298,40 @@ private:
                 lbaStart += BootDev::kSectorSize;
             }
 
-            writer.Write((catalogKind.Kind == kNewFSCatalogKindFile) ? L"New Boot: Write-File: " :
-                L"New Boot: Write-Directory: " ).Write(blob->fFileName).Write(L"\r\n");
-
-            /// Set disk cursor here.
-
-            fDiskDev.Leak().mBase = startLba + sizeof(NewCatalog) / sectorSz;
-            fDiskDev.Leak().mSize = sizeof(NewFork);
-
-            fDiskDev.Write((Char*)&forkKind, 1);
 
             /// Fork is done.
 
-            catalogKind.Kind = blob->fKind;
-            catalogKind.Flags |= kNewFSFlagCreated;
+            catalogKind->Kind = blob->fKind;
+            catalogKind->Flags |= kNewFSFlagCreated;
 
             Lba catalogLba = (sizeof(NewCatalog) - startLba);
 
             //// Now write catalog as well..
 
-            catalogKind.PrevSibling = startLba;
-            catalogKind.NextSibling = (sizeof(NewCatalog) + blob->fBlobSz);
+            catalogKind->PrevSibling = startLba;
+            catalogKind->NextSibling = (sizeof(NewCatalog) + blob->fBlobSz);
 
             /// this mime only applies to file.
-            if (catalogKind.Kind == kNewFSCatalogKindFile) {
-                memcpy(catalogKind.Mime, kBKBootFileMime, strlen(kBKBootFileMime));
+            if (catalogKind->Kind == kNewFSCatalogKindFile) {
+                memcpy(catalogKind->Mime, kBKBootFileMime, strlen(kBKBootFileMime));
             } else  {
-                memcpy(catalogKind.Mime, kBKBootDirMime, strlen(kBKBootDirMime));
+                memcpy(catalogKind->Mime, kBKBootDirMime, strlen(kBKBootDirMime));
             }
 
-            memcpy(catalogKind.Name, blob->fFileName, strlen(blob->fFileName));
+            memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
 
-            fDiskDev.Leak().mBase = startLba / sectorSz;
+            fDiskDev.Leak().mBase = startLba;
             fDiskDev.Leak().mSize = sizeof(NewCatalog);
 
-            fDiskDev.Write((Char*)&catalogKind, sectorSz);
+            fDiskDev.Write((Char*)catalogKind, sizeof(NewCatalog));
 
-            startLba += (sizeof(NewCatalog) + blob->fBlobSz);
+            startLba += (sizeof(NewCatalog) + sizeof(NewFork) + blob->fBlobSz);
 
             --partBlock.FreeCatalog;
             --partBlock.FreeSectors;
 
-            ++partBlock.CatalogCount;
+            delete forkKind;
+            delete catalogKind;
 
             blob = blob->fNext;
         }
@@ -346,22 +361,23 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
 
     NewPartitionBlock* partBlock = reinterpret_cast<NewPartitionBlock*>(buf);
 
-    memcpy(partBlock->Ident, kNewFSIdent, kNewFSIdentLen-1);
+    memcpy(partBlock->Ident, kNewFSIdent, kNewFSIdentLen - 1);
     memcpy(partBlock->PartitionName, partName, strlen(partName));
 
     /// @note A catalog roughly equal to a sector.
 
-    partBlock->CatalogCount = 0UL;
+    partBlock->CatalogCount = blobCount;
     partBlock->Kind = kNewFSHardDrive;
     partBlock->SectorSize = sectorSz;
     partBlock->FreeCatalog = fDiskDev.GetSectorsCount() - partBlock->CatalogCount;
     partBlock->SectorCount = fDiskDev.GetSectorsCount();
     partBlock->FreeSectors = fDiskDev.GetSectorsCount() - partBlock->CatalogCount;
     partBlock->StartCatalog = kNewFSCatalogStartAddress;
+    partBlock->DiskSize = fDiskDev.GetDiskSize();
 
     if (this->WriteContent(fileBlobs, blobCount, sectorSz, *partBlock)) {
-        fDiskDev.Leak().mBase = (kNewFSAddressAsLba / sectorSz);
-        fDiskDev.Leak().mSize = BootDev::kSectorSize;
+        fDiskDev.Leak().mBase = (kNewFSAddressAsLba);
+        fDiskDev.Leak().mSize = sectorSz;
 
         fDiskDev.Write(buf, sectorSz);
 
