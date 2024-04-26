@@ -229,28 +229,9 @@ BootDeviceATA::ATATrait& BootDeviceATA::Leak() { return mTrait; }
     @brief Getter, gets the number of sectors inside the drive.
 */
 SizeT BootDeviceATA::GetSectorsCount() noexcept {
-    return kATAData[60] + kATAData[61];
+    return (kATAData[61] << 16)| kATAData[60];
 }
 
 SizeT BootDeviceATA::GetDiskSize() noexcept {
-    Out8(this->Leak().mBus + ATA_REG_COMMAND, 0xF8);
-
-    boot_ata_wait_io(this->Leak().mBus);
-
-    UInt64 result = 0;
-
-    result = In8(this->Leak().mBus + ATA_CYL_LOW);
-    result += In8(this->Leak().mBus + ATA_CYL_MID) << 8;
-    result += In8(this->Leak().mBus + ATA_CYL_HIGH) << 16;
-
-    Out8(this->Leak().mBus + ATA_REG_CONTROL, 0x80);
-
-    result += In8(this->Leak().mBus + ATA_CYL_LOW) << 24;
-    result += In8(this->Leak().mBus + ATA_CYL_MID) << 32;
-    result += In8(this->Leak().mBus + ATA_CYL_HIGH) << 40;
-
-    BTextWriter writer;
-    writer.Write(L"Device-Size: ").Write(result).Write(L"\r\n");
-
-    return result;
+    return this->GetSectorsCount() * BootDeviceATA::kSectorSize;
 }
