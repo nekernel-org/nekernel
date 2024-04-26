@@ -28,7 +28,13 @@ EMU_FLAGS=-net none -smp 4 -m 8G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -
 
 LD_FLAGS=-e Main --subsystem=10
 
+ifeq ($(NEWS_STANDLONE), )
 OBJ=*.o ../../Objects/*.obj
+else
+RESCMD=$(WINDRES) BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
+STANDALONE_MACRO=-D__STANDALONE__
+OBJ=*.o
+endif
 
 REM=rm
 REM_FLAG=-f
@@ -60,8 +66,8 @@ endif
 
 .PHONY: compile-amd64
 compile-amd64:
-	# $(WINDRES) BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
-	$(CC_GNU) $(NEWOS_MODEL) $(FLAG_GNU) $(DEBUG) $(wildcard HEL/AMD64/*.cxx) $(wildcard HEL/AMD64/*.S) $(wildcard *.cxx)
+	$(RESCMD)
+	$(CC_GNU) $(NEWOS_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) $(wildcard HEL/AMD64/*.cxx) $(wildcard HEL/AMD64/*.S) $(wildcard *.cxx)
 
 .PHONY: run-efi-amd64
 run-efi-amd64:

@@ -70,31 +70,15 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
-  UInt32 MapKey = 0;
-  UInt32* SizePtr = nullptr;
-  EfiMemoryDescriptor* Descriptor = nullptr;
-  UInt32 SzDesc = 0;
-  UInt32 RevDesc = 0;
-
-  if (BS->AllocatePool(EfiLoaderData, sizeof(UInt32), (VoidPtr*)&SizePtr) !=
-      kEfiOk) {
-    EFI::ThrowError(L"Bad-Alloc", L"New Boot ran out of memory!");
-  }
-
-  /****
-   *
-   *  Load kernel into memory.
-   *
-   */
+  UInt32* MapKey = new UInt32();
+  UInt32* SizePtr = new UInt32();
+  EfiMemoryDescriptor* Descriptor = new EfiMemoryDescriptor();
+  UInt32* SzDesc = new UInt32();
+  UInt32* RevDesc = new UInt32();
 
   *SizePtr = sizeof(EfiMemoryDescriptor);
 
-  if (BS->AllocatePool(EfiLoaderData, sizeof(EfiMemoryDescriptor),
-                       (VoidPtr*)&Descriptor) != kEfiOk) {
-    EFI::ThrowError(L"Bad-Alloc", L"New Boot ran out of memory!");
-  }
-
-  HEL::HandoverInformationHeader* handoverHdrPtr = nullptr;
+  HEL::HandoverInformationHeader* handoverHdrPtr = new HEL::HandoverInformationHeader();
 
   for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
        ++indexVT) {
@@ -141,20 +125,21 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   ToolboxClearRsrc();
 
-  BS->AllocatePool(EfiLoaderData, sizeof(HEL::HandoverInformationHeader),
-                   (VoidPtr*)&handoverHdrPtr);
-
-  handoverHdrPtr->f_PhysicalStart = 0;
-  handoverHdrPtr->f_PhysicalSize = 0;
-
   EfiPhysicalAddress* whereAddress =
-      reinterpret_cast<EfiPhysicalAddress*>(kBootVirtualAddress);
+        reinterpret_cast<EfiPhysicalAddress*>(kBootVirtualAddress);
+
+  BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
+
+  handoverHdrPtr->f_PhysicalStart = (VoidPtr)Descriptor->PhysicalStart;
+
+  handoverHdrPtr->f_FirmwareSpecific[0] = Descriptor->Attribute;
+  handoverHdrPtr->f_FirmwareSpecific[1] = Descriptor->Kind;
+
 
   BS->AllocatePages(EfiAllocateType::AllocateAnyPages,
                     EfiMemoryType::EfiConventionalMemory, 1, whereAddress);
 
-  handoverHdrPtr->f_VirtualStart = reinterpret_cast<voidPtr>(whereAddress);
-
+  handoverHdrPtr->f_VirtualStart = (VoidPtr)Descriptor->VirtualStart;
   handoverHdrPtr->f_VirtualSize = Descriptor->NumberOfPages; /* # of pages */
 
   handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
@@ -209,7 +194,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
     memcpy(bootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
 
     bootDesc.fBlobSz = BootDeviceATA::kSectorSize;
-    bootDesc.fBlob = new Char[rootDesc.fBlobSz];
+    bootDesc.fBlob = new Char[bootDesc.fBlobSz];
 
     memset(bootDesc.fBlob, 0, bootDesc.fBlobSz);
 
@@ -217,12 +202,32 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
             strlen(kMachineModel " startup folder."));
 
     rootDesc.fNext = &bootDesc;
-    rootDesc.fNext->fPrev = &rootDesc;
+    rootDesc.fNext->fPrev = nullptr;
 
-    diskFormatter.Format(kMachineModel, &rootDesc, 2);
+    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor appDesc{0};
+
+    appDesc.fKind = kNewFSCatalogKindDir;
+
+    memcpy(appDesc.fFileName, "/Applications", strlen("/Applications"));
+    memcpy(appDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
+
+    appDesc.fBlobSz = BootDeviceATA::kSectorSize;
+    appDesc.fBlob = new Char[appDesc.fBlobSz];
+
+    memset(appDesc.fBlob, 0, appDesc.fBlobSz);
+
+    memcpy(appDesc.fBlob, kMachineModel " applications folder.",
+            strlen(kMachineModel " applications folder."));
+
+    appDesc.fNext = nullptr;
+    appDesc.fNext->fPrev = &bootDesc;
+
+    bootDesc.fNext = &appDesc;
+
+    diskFormatter.Format(kMachineModel, &rootDesc, 3);
   }
 
-  EFI::ExitBootServices(MapKey, ImageHandle);
+  EFI::ExitBootServices(*MapKey, ImageHandle);
 
   hal_init_platform(kHandoverHeader);
 

@@ -255,7 +255,12 @@ private:
         Lba startLba = partBlock.StartCatalog;
         BTextWriter writer;
 
+        SizeT blobCounter = 0UL;
+
         while (blob) {
+            if (blobCounter > blobCount) break;
+            ++blobCounter;
+
             NewCatalog* catalogKind = new NewCatalog();
             memset(catalogKind, 0, sizeof(NewCatalog));
 
