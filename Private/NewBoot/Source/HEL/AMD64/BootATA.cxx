@@ -237,15 +237,20 @@ SizeT BootDeviceATA::GetDiskSize() noexcept {
 
     boot_ata_wait_io(this->Leak().mBus);
 
-    SizeT result = 0;
+    UInt64 result = 0;
 
-    result += In8(this->Leak().mBus + ATA_CYL_LOW);
+    result = In8(this->Leak().mBus + ATA_CYL_LOW);
     result += In8(this->Leak().mBus + ATA_CYL_MID) << 8;
     result += In8(this->Leak().mBus + ATA_CYL_HIGH) << 16;
-    result += In8(this->Leak().mBus + ATA_CYL_HIGH) << 24;
+
+    Out8(this->Leak().mBus + ATA_REG_CONTROL, 0x80);
+
+    result += In8(this->Leak().mBus + ATA_CYL_LOW) << 24;
+    result += In8(this->Leak().mBus + ATA_CYL_MID) << 32;
+    result += In8(this->Leak().mBus + ATA_CYL_HIGH) << 40;
 
     BTextWriter writer;
-    writer.Write(L"Disk-Size: ").Write(result).Write(L"\r\n");
+    writer.Write(L"Device-Size: ").Write(result).Write(L"\r\n");
 
     return result;
 }

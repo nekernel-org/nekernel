@@ -213,6 +213,7 @@ public:
     /// @retval False failed to format.
     Boolean Format(const char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
 
+    /// @brief check if partition is good.
     operator bool() noexcept {
         fDiskDev.Leak().mBase = (kNewFSAddressAsLba);
         fDiskDev.Leak().mSize = BootDev::kSectorSize;
@@ -228,9 +229,17 @@ public:
                 return false;
         }
 
+        if (blockPart->DiskSize != this->fDiskDev.GetDiskSize()) {
+            EFI::ThrowError(L"Invalid-Disk-Geometry", L"Invalid disk geometry.");
+        }
+
+        if (blockPart->DiskSize < 1) {
+                    EFI::ThrowError(L"Invalid-Disk-Geometry", L"Invalid disk geometry.");
+        }
+
         BTextWriter writer;
 
-        writer.Write(L"Disk Partition: ").Write(blockPart->PartitionName).Write(L" is okay.\r\n");
+        writer.Write(L"Disk Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r\n");
 
         return true;
     }
@@ -275,7 +284,6 @@ private:
             forkKind->DataOffset = (startLba + sizeof(NewCatalog) + sizeof(NewFork));
             forkKind->DataSize = blob->fBlobSz;
 
-            Lba lbaStart = forkKind->DataOffset;
             SizeT cur = 0UL;
 
             writer.Write((catalogKind->Kind == kNewFSCatalogKindFile) ? L"New Boot: Write-File: " :
@@ -288,16 +296,14 @@ private:
 
             fDiskDev.Write((Char*)forkKind, sizeof(NewFork));
 
-            while (cur < forkKind->DataSize) {
+            do {
                 this->fDiskDev.Leak().mSize = BootDev::kSectorSize;
                 this->fDiskDev.Leak().mBase = (forkKind->DataOffset + cur);
 
                 this->fDiskDev.Write((Char*)(blob->fBlob) + cur, BootDev::kSectorSize);
 
                 cur += BootDev::kSectorSize;
-                lbaStart += BootDev::kSectorSize;
-            }
-
+            } while (cur < forkKind->DataSize);
 
             /// Fork is done.
 

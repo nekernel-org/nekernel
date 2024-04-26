@@ -110,7 +110,7 @@ Void BFileReader::ReadAll(SizeT until, SizeT chunk) {
     if (auto err = BS->AllocatePool(EfiLoaderCode, until, (VoidPtr*)&mBlob) !=
                    kEfiOk) {
       mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
-      EFI::ThrowError(L"NewBoot_PageError", L"Allocation error.");
+      EFI::ThrowError(L"OutOfMemory", L"Allocation error.");
     }
   }
 

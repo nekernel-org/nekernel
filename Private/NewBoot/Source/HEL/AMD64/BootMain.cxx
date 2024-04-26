@@ -181,9 +181,11 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   /// format the disk.
   //
 
+  constexpr auto binarySize = KIB(512);
+
   /// need this as well, to invoke BExecutableLoader.
   BFileReader readerKernel(L"NewKernel.exe", ImageHandle);
-  readerKernel.ReadAll(MIB(1), 4096);
+  readerKernel.ReadAll(binarySize, BootDeviceATA::kSectorSize);
 
   BDiskFormatFactory<BootDeviceATA> diskFormatter;
 
