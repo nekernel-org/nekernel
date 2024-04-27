@@ -247,9 +247,12 @@ public:
 
 private:
     /// @brief Write all of the requested catalogs into the filesystem.
-    Boolean WriteContent(BFileDescriptor* fileBlobs, SizeT blobCount,
-                        SizeT sectorSz, NewPartitionBlock& partBlock) {
-        if (sectorSz != BootDev::kSectorSize) return false;
+    /// @param fileBlobs the blobs.
+    /// @param blobCount the number of blobs to write.
+    /// @param partBlock the NewFS partition block.
+    Boolean FormatCatalog(BFileDescriptor* fileBlobs, SizeT blobCount,
+                        NewPartitionBlock& partBlock) {
+        if (partBlock.SectorSize != BootDev::kSectorSize) return false;
 
         BFileDescriptor* blob = fileBlobs;
         Lba startLba = partBlock.StartCatalog;
@@ -390,7 +393,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
     partBlock->StartCatalog = kNewFSCatalogStartAddress;
     partBlock->DiskSize = fDiskDev.GetDiskSize();
 
-    if (this->WriteContent(fileBlobs, blobCount, sectorSz, *partBlock)) {
+    if (this->FormatCatalog(fileBlobs, blobCount, *partBlock)) {
         fDiskDev.Leak().mBase = (kNewFSAddressAsLba);
         fDiskDev.Leak().mSize = sectorSz;
 

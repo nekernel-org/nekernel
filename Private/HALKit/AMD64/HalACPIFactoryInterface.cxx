@@ -64,7 +64,7 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
   SizeT num = xsdt->Length + sizeof(SDT) / 8;
 
   kcout << "ACPI: Number of entries: " << number(num) << endl;
-  kcout << "ACPI: Address of XSDT: " << number((UIntPtr)xsdt) << endl;
+  kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
 
   constexpr short ACPI_SIGNATURE_LENGTH = 4;
 

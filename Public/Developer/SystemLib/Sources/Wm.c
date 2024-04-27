@@ -82,7 +82,7 @@ CA_EXTERN_C VoidType WmBlur(WindowPort* wndPort) {
   if (wndPort != NullPtr) {
     WmGFXRef refGfx = wndPort->windowGfx;
 
-    UInt32Type lookupTbl[4] = {0.21336, 0.41336, 0.61336, 0.81336};
+    FloatType lookupTbl[4] = {0.21336, 0.41336, 0.61336, 0.81336};
 
     for (SizeType width = 0; width < refGfx->DataFrameWidth; ++width) {
       for (SizeType height = 0; height < refGfx->DataFrameHeight; ++height) {

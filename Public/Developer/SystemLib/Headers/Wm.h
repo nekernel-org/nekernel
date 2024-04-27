@@ -173,4 +173,4 @@ CA_EXTERN_C WindowPort*   WmGetOSDlg(void);
 
 /// @brief Draws a blur effect on the window.
 /// @param wndPort the window port.
-CA_EXTERN_C VoidType WmBlur(WindowPort* wndPort);
+CA_EXTERN_C VoidType      WmBlur(WindowPort* wndPort);

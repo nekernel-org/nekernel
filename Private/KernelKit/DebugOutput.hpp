@@ -57,8 +57,8 @@ inline TerminalDevice carriage_return() {
 
 namespace Detail {
 inline TerminalDevice _write_number(const Long &x, TerminalDevice& term) {
-  int y = x / 10;
-  int h = x % 10;
+  UInt64 y = (x > 0 ? x : -x) / 10;
+  UInt64 h = (x > 0 ? x : -x) % 10;
 
   if (y) _write_number(y, term);
 
@@ -81,8 +81,8 @@ inline TerminalDevice _write_number(const Long &x, TerminalDevice& term) {
 }
 
 inline TerminalDevice _write_number_hex(const Long &x, TerminalDevice& term) {
-  int y = x / 16;
-  int h = x % 16;
+  UInt64 y = (x > 0 ? x : -x) / 16;
+  UInt64 h = (x > 0 ? x : -x) % 16;
 
   if (y) _write_number_hex(y, term);
 
@@ -94,7 +94,7 @@ inline TerminalDevice _write_number_hex(const Long &x, TerminalDevice& term) {
 
   if (y < 0) y = -y;
 
-  const char NUMBERS[17] = "0123456789";
+  const char NUMBERS[17] = "0123456789ABCDEF";
 
   Char buf[2];
   buf[0] = NUMBERS[h];
@@ -143,4 +143,3 @@ class DebuggerPortHeader final {
 
 #define kcout TerminalDevice::Shared()
 #define endl end_line()
-
