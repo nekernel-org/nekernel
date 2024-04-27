@@ -26,7 +26,7 @@
 #define kPTESize (0x1000)
 #endif  // !kPTESize
 
-EXTERN_C void hal_flush_tlb(NewOS::UIntPtr pde);
+EXTERN_C void hal_flush_tlb();
 EXTERN_C void hal_write_cr3(NewOS::UIntPtr pde);
 EXTERN_C void hal_write_cr0(NewOS::UIntPtr bit);
 

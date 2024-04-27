@@ -11,10 +11,12 @@
 .globl hal_read_cr0
 .globl hal_flush_tlb
 
-.section .text
+.text
 
 hal_flush_tlb:
-    invlpg (%rcx)
+    call hal_read_cr3
+    mov %rcx, %rax
+    call hal_write_cr3
     ret
 
 hal_read_cr3:
@@ -36,5 +38,3 @@ hal_write_cr3:
 hal_write_cr0:
     movq %cr0, %rdi
     ret
-
-

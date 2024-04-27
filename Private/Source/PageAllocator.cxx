@@ -26,7 +26,7 @@ void exec_disable(UIntPtr VirtualAddr) {
   MUST_PASS(!VirtualAddrTable->Accessed);
   VirtualAddrTable->ExecDisable = true;
 
-  hal_flush_tlb(VirtualAddr);
+  hal_flush_tlb();
 }
 
 bool page_disable(UIntPtr VirtualAddr) {
@@ -37,7 +37,7 @@ bool page_disable(UIntPtr VirtualAddr) {
     if (VirtualAddrTable->Accessed) return false;
     VirtualAddrTable->Present = false;
 
-    hal_flush_tlb(VirtualAddr);
+    hal_flush_tlb();
 
     return true;
   }

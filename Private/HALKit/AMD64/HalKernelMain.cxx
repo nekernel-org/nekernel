@@ -74,5 +74,7 @@ EXTERN_C void hal_init_platform(
 
   AppMain();
 
+  hal_flush_tlb();
+
   NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
