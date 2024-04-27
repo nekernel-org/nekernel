@@ -91,8 +91,8 @@ void ke_stop(const NewOS::Int &id) {
 void ke_runtime_check(bool expr, const char *file, const char *line) {
   if (!expr) {
 #ifdef __DEBUG__
-    kcout << "NewKernel: File: " << file << "\r\n";
-    kcout << "NewKernel: Line: " << line << "\r\n";
+    kcout << "New Kernel: File: " << file << "\r\n";
+    kcout << "New Kernel: Line: " << line << "\r\n";
 
 #endif  // __DEBUG__
 

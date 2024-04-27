@@ -20,12 +20,18 @@
 EXTERN_C NewOS::Void AppMain(NewOS::Void) {
   ///! Mounts a NewFS block.
   NewOS::NewFilesystemManager* newFS = new NewOS::NewFilesystemManager();
-  NewOS::ke_protect_ke_heap(newFS);
 
   NewOS::FilesystemManagerInterface::Mount(newFS);
 
+  if (newFS->GetImpl()) {
+      auto catalog = newFS->GetImpl()->GetCatalog("/");
+      if (catalog) {
+          NewOS::kcout << "Catalog-Path-Name: " << catalog->Name << NewOS::endl;
+          delete catalog;
+      }
+  }
+
   while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0);
 
-  ///! we're done, unmount.
   delete newFS;
 }

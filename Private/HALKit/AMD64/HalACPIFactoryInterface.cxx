@@ -22,10 +22,6 @@ void rt_shutdown_acpi_virtualbox(void) { HAL::Out16(0x4004, 0x3400); }
 
 ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr)
     : fRsdp(rsdPtr), fEntries(0) {
-  volatile RSDP *_rsdPtr = reinterpret_cast<volatile RSDP *>(this->fRsdp);
-
-  MUST_PASS(_rsdPtr);
-  MUST_PASS(_rsdPtr->Revision >= 2);
 }
 
 Void ACPIFactoryInterface::Shutdown() {
@@ -60,8 +56,11 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char *signature) {
     return ErrorOr<voidPtr>{-4};
   }
 
-  SDT* xsdt = (SDT*)(rsdPtr->RsdtAddress + rsdPtr->XsdtAddress);
+  SDT* xsdt = (SDT*)(rsdPtr->XsdtAddress >> (rsdPtr->XsdtAddress &  0xFFF));
+
   SizeT num = xsdt->Length + sizeof(SDT) / 8;
+
+  this->fEntries = num;
 
   kcout << "ACPI: Number of entries: " << number(num) << endl;
   kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;

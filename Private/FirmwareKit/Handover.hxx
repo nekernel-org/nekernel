@@ -25,6 +25,7 @@
 #define kHandoverVersion 0x1011
 
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
+#define kHandoverHeapStart (0xfffffff80000000)
 
 namespace NewOS::HEL {
 /**
@@ -80,6 +81,8 @@ struct HandoverInformationHeader {
   } f_GOP;
   UInt64 f_FirmwareSpecific[8];
 };
+
+enum { kHandoverSpecificKind, kHandoverSpecificAttrib, };
 
 /// @brief Bootloader main type.
 typedef void (*BootMainKind)(NewOS::HEL::HandoverInformationHeader* handoverInfo);

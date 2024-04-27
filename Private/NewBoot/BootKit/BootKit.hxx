@@ -38,9 +38,6 @@ class BFileReader;
 class BFileRunner;
 class BVersionString;
 
-///! @note This address is reserved to NewKernel.
-#define kBootVirtualAddress (0xfffffff80000000)
-
 using namespace NewOS;
 
 typedef Char *PEFImagePtr;
@@ -264,8 +261,12 @@ private:
             if (blobCounter > blobCount) break;
             ++blobCounter;
 
-            NewCatalog* catalogKind = new NewCatalog();
-            memset(catalogKind, 0, sizeof(NewCatalog));
+            Char bufCatalog[sizeof(NewCatalog)] = { 0 };
+            Char bufFork[sizeof(NewFork)] = { 0 };
+
+            NewCatalog* catalogKind = (NewCatalog*)bufFork;
+
+            catalogKind->PrevSibling = startLba;
 
             /// Fill catalog kind.
             catalogKind->Kind = blob->fKind;
@@ -277,8 +278,7 @@ private:
                 catalogKind->ResourceFork = (startLba + sizeof(NewCatalog));
             }
 
-            NewFork* forkKind = new NewFork();
-            memset(forkKind, 0, sizeof(NewFork));
+            NewFork* forkKind = (NewFork*)bufFork;
 
             memcpy(forkKind->Name, blob->fForkName, strlen(blob->fForkName));
             forkKind->Kind = (forkKind->Name[0] == kNewFSDataFork[0]) ? kNewFSDataForkKind : kNewFSRsrcForkKind;
@@ -322,12 +322,7 @@ private:
             catalogKind->Kind = blob->fKind;
             catalogKind->Flags |= kNewFSFlagCreated;
 
-            Lba catalogLba = (sizeof(NewCatalog) - startLba);
-
             //// Now write catalog as well..
-
-            catalogKind->PrevSibling = startLba;
-            catalogKind->NextSibling = (sizeof(NewCatalog) + blob->fBlobSz);
 
             /// this mime only applies to file.
             if (catalogKind->Kind == kNewFSCatalogKindFile) {
@@ -338,6 +333,8 @@ private:
 
             memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
 
+            catalogKind->NextSibling = startLba + (sizeof(NewCatalog) + sizeof(NewFork) + blob->fBlobSz);
+
             fDiskDev.Leak().mBase = startLba;
             fDiskDev.Leak().mSize = sizeof(NewCatalog);
 
@@ -347,9 +344,6 @@ private:
 
             --partBlock.FreeCatalog;
             --partBlock.FreeSectors;
-
-            delete forkKind;
-            delete catalogKind;
 
             blob = blob->fNext;
         }
@@ -387,14 +381,14 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
     partBlock->CatalogCount = blobCount;
     partBlock->Kind = kNewFSHardDrive;
     partBlock->SectorSize = sectorSz;
-    partBlock->FreeCatalog = fDiskDev.GetSectorsCount() - partBlock->CatalogCount;
+    partBlock->FreeCatalog = fDiskDev.GetSectorsCount();
     partBlock->SectorCount = fDiskDev.GetSectorsCount();
-    partBlock->FreeSectors = fDiskDev.GetSectorsCount() - partBlock->CatalogCount;
+    partBlock->FreeSectors = fDiskDev.GetSectorsCount();
     partBlock->StartCatalog = kNewFSCatalogStartAddress;
     partBlock->DiskSize = fDiskDev.GetDiskSize();
 
     if (this->FormatCatalog(fileBlobs, blobCount, *partBlock)) {
-        fDiskDev.Leak().mBase = (kNewFSAddressAsLba);
+        fDiskDev.Leak().mBase = kNewFSAddressAsLba;
         fDiskDev.Leak().mSize = sectorSz;
 
         fDiskDev.Write(buf, sectorSz);

@@ -14,7 +14,7 @@ Pmm::~Pmm() = default;
 
 /* If this returns Null pointer, enter emergency mode */
 Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite) {
-  PTEWrapper pt = fPageManager.Leak().Request(user, readWrite, false);
+  PTEWrapper pt = fPageManager.Leak().Request(user, readWrite, false, kPTESize);
 
   if (pt.fPresent) {
     kcout << "[PMM]: Allocation was successful.";

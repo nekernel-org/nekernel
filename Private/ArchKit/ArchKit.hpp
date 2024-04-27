@@ -44,9 +44,4 @@ extern NewOS::Array<rt_syscall_proc,
 EXTERN_C NewOS::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C NewOS::Void rt_do_context_switch(NewOS::HAL::StackFramePtr stackFrame);
 
-inline NewOS::VoidPtr kKernelVirtualStart;
-inline NewOS::UIntPtr kKernelVirtualSize;
-
-inline NewOS::VoidPtr kKernelPhysicalStart;
-
 #include <FirmwareKit/Handover.hxx>

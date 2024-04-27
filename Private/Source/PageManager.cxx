@@ -53,9 +53,9 @@ bool PTEWrapper::Reclaim() {
 /// @param User user mode?
 /// @param ExecDisable disable execution on page?
 /// @return
-PTEWrapper PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable) {
+PTEWrapper PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz) {
   // Store PTE wrapper right after PTE.
-  VoidPtr ptr = NewOS::HAL::hal_alloc_page(Rw, User);
+  VoidPtr ptr = NewOS::HAL::hal_alloc_page(Rw, User, Sz);
 
   return PTEWrapper{Rw, User, ExecDisable, reinterpret_cast<UIntPtr>(ptr)};
 }

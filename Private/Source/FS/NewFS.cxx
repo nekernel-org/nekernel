@@ -10,7 +10,7 @@
 #include <KernelKit/HError.hpp>
 #include <NewKit/Crc32.hpp>
 #include <NewKit/Utils.hpp>
-
+#include <NewKit/String.hpp>
 #include <Builtins/ATA/ATA.hxx>
 #include <Builtins/AHCI/AHCI.hxx>
 
@@ -59,11 +59,10 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
         }
     }
 
-    if (!sMountpointInterface.GetAddressOf(this->fDriveIndex) ||
-        !*sMountpointInterface.GetAddressOf(this->fDriveIndex))
+    if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
       return nullptr;
 
-    auto drv = *sMountpointInterface.GetAddressOf(this->fDriveIndex);
+    auto drv = sMountpointInterface.GetAddressOf(this->fDriveIndex);
 
     drv->fPacket.fLba = whereFork;
     drv->fPacket.fPacketSize = theFork.DataSize;
@@ -105,7 +104,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 /// @return the fork.
 _Output NewFork* NewFSParser::FindFork(_Input NewCatalog* catalog,
                                        _Input const Char* name, Boolean isDataFork) {
-  auto drv = *sMountpointInterface.GetAddressOf(this->fDriveIndex);
+  auto drv = sMountpointInterface.GetAddressOf(this->fDriveIndex);
   NewFork* theFork = nullptr;
   Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
 
@@ -177,7 +176,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
     return false;
   }
 
-  Char sectorBuf[kNewFSMinimumSectorSz] = {0};
+  UInt16 sectorBuf[kNewFSMinimumSectorSz] = {0};
 
   drive->fPacket.fPacketContent = sectorBuf;
   drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
@@ -241,7 +240,58 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog,
 /// @param catalogName
 /// @return
 _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName) {
-  return nullptr;
+    if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return nullptr;
+
+    Char* sectorBuf = new Char[sizeof(NewPartitionBlock)];
+    auto drive = sMountpointInterface.GetAddressOf(this->fDriveIndex);
+
+    drive->fPacket.fPacketContent = sectorBuf;
+    drive->fPacket.fPacketSize = sizeof(NewPartitionBlock);
+    drive->fPacket.fLba = kNewFSAddressAsLba;
+
+    drive->fInput(&drive->fPacket);
+
+    NewPartitionBlock* part = (NewPartitionBlock*)sectorBuf;
+
+    kcout << "Drive-Kind: " << drive->fDriveKind() << endl;
+
+    kcout << "Partition-Name: " << part->PartitionName << endl;
+    kcout << "Start-Catalog: " << number(part->StartCatalog) << endl;
+    kcout << "Catalog-Count: " << number(part->CatalogCount) << endl;
+    kcout << "Free-Catalog: " << number(part->FreeCatalog) << endl;
+    kcout << "Free-Sectors: " << number(part->FreeSectors) << endl;
+    kcout << "Sector-Size: " << number(part->SectorSize) << endl;
+
+    auto start = part->StartCatalog;
+
+    drive->fPacket.fLba = start;
+    drive->fPacket.fPacketContent = sectorBuf;
+    drive->fPacket.fPacketSize = sizeof(NewCatalog);
+
+    drive->fInput(&drive->fPacket);
+
+    while (drive->fPacket.fPacketGood) {
+        NewCatalog* catalog = (NewCatalog*)sectorBuf;
+
+        if (StringBuilder::Equals(catalogName, catalog->Name)) {
+            NewCatalog* catalogPtr = new NewCatalog();
+            rt_copy_memory(catalog, catalogPtr, sizeof(NewCatalog));
+
+            delete[] sectorBuf;
+            return catalogPtr;
+        }
+
+        if (catalog->NextSibling == 0)
+            break;
+
+        drive->fPacket.fLba = catalog->NextSibling;
+        drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
+        drive->fInput(&drive->fPacket);
+    }
+
+    delete[] sectorBuf;
+
+    return nullptr;
 }
 
 /// @brief
@@ -295,8 +345,6 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
         return nullptr;
     }
 
-
-
     return nullptr;
 }
 
@@ -329,9 +377,10 @@ SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog) {
 /// @param sz the size of the fork to set.
 /// @return the valid lba.
 STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog, Boolean isDataFork) {
-  auto drive = *sMountpointInterface.GetAddressOf(drv);
 
-  if (drive) {
+  if (sMountpointInterface.GetAddressOf(drv)) {
+    auto drive = *sMountpointInterface.GetAddressOf(drv);
+
     /// prepare packet.
     bool done = false;
     bool error = false;
@@ -339,18 +388,18 @@ STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog, Boolean i
     Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
 
     while (!done) {
-      Char sectorBuf[kNewFSMinimumSectorSz] = {0};
+      UInt16 sectorBuf[kNewFSMinimumSectorSz] = {0};
 
-      drive->fPacket.fPacketContent = sectorBuf;
-      drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
-      drive->fPacket.fLba = lba;
+      drive.fPacket.fPacketContent = sectorBuf;
+      drive.fPacket.fPacketSize = kNewFSMinimumSectorSz;
+      drive.fPacket.fLba = lba;
 
-      drive->fInput(&drive->fPacket);
+      drive.fInput(&drive.fPacket);
 
-      if (!drive->fPacket.fPacketGood) {
+      if (!drive.fPacket.fPacketGood) {
         ///! not a lot of choices, disk has become unreliable.
-        if (ke_calculate_crc32(sectorBuf, kNewFSMinimumSectorSz) !=
-            drive->fPacket.fPacketCRC32) {
+        if (ke_calculate_crc32((Char*)sectorBuf, kNewFSMinimumSectorSz) !=
+            drive.fPacket.fPacketCRC32) {
           DbgLastError() = kErrorDiskIsCorrupted;
         }
 
@@ -366,10 +415,10 @@ STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog, Boolean i
         fork->DataSize = sz;
         fork->Flags |= kNewFSFlagCreated;
 
-        drive->fOutput(&drive->fPacket);
+        drive.fOutput(&drive.fPacket);
 
         /// here it's either a read-only filesystem or something bad happened.'
-        if (!drive->fPacket.fPacketGood) {
+        if (!drive.fPacket.fPacketGood) {
           DbgLastError() = kErrorDiskReadOnly;
 
           return 0;
@@ -394,18 +443,18 @@ STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog, Boolean i
 /// @param kind the catalog kind.
 /// @return the valid lba.
 STATIC Lba ke_find_free_catalog(SizeT kind, Int32 drv) {
-  auto drive = *sMountpointInterface.GetAddressOf(drv);
 
-  if (drive) {
-    Char sectorBuf[kNewFSMinimumSectorSz] = {0};
+  if (sMountpointInterface.GetAddressOf(drv)) {
+    auto drive = *sMountpointInterface.GetAddressOf(drv);
+    UInt16 sectorBuf[kNewFSMinimumSectorSz] = {0};
 
     /// prepare packet.
 
-    drive->fPacket.fPacketContent = sectorBuf;
-    drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
-    drive->fPacket.fLba = kNewFSAddressAsLba;
+    drive.fPacket.fPacketContent = sectorBuf;
+    drive.fPacket.fPacketSize = kNewFSMinimumSectorSz;
+    drive.fPacket.fLba = kNewFSAddressAsLba;
 
-    drive->fInput(&drive->fPacket);
+    drive.fInput(&drive.fPacket);
 
     NewPartitionBlock* partBlock = (NewPartitionBlock*)sectorBuf;
 
@@ -419,11 +468,11 @@ STATIC Lba ke_find_free_catalog(SizeT kind, Int32 drv) {
         return 1;
       } else {
         while (startLba != 0) {
-          drive->fPacket.fPacketContent = sectorBuf;
-          drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
-          drive->fPacket.fLba = startLba;
+          drive.fPacket.fPacketContent = sectorBuf;
+          drive.fPacket.fPacketSize = kNewFSMinimumSectorSz;
+          drive.fPacket.fLba = startLba;
 
-          drive->fInput(&drive->fPacket);
+          drive.fInput(&drive.fPacket);
 
           NewCatalog* catalog = (NewCatalog*)sectorBuf;
 
@@ -447,7 +496,16 @@ STATIC Lba ke_find_free_catalog(SizeT kind, Int32 drv) {
 }
 
 namespace NewOS::Detail {
-Boolean fs_init_newfs(Void) noexcept { return true; }
+Boolean fs_init_newfs(Void) noexcept {
+    sMountpointInterface.A() = construct_main_drive();
+    sMountpointInterface.B() = construct_drive();
+    sMountpointInterface.C() = construct_drive();
+    sMountpointInterface.D() = construct_drive();
+
+    sMountpointInterface.A().fVerify(&sMountpointInterface.A().fPacket);
+
+    return true;
+}
 }  // namespace NewOS::Detail
 
 #endif  // ifdef __FSKIT_NEWFS__

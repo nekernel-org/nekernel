@@ -72,7 +72,7 @@ struct PageDirectory64 final {
   PageTable64 ALIGN(kPTEAlign) Pte[kPTEMax];
 };
 
-VoidPtr hal_alloc_page(Boolean rw, Boolean user);
+VoidPtr hal_alloc_page(Boolean rw, Boolean user, SizeT size);
 }  // namespace NewOS::HAL
 
 namespace NewOS {

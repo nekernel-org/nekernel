@@ -8,7 +8,7 @@
 #include <FirmwareKit/Handover.hxx>
 #include <BootKit/Vendor/Support.hxx>
 
-#if 0
+#ifdef __STANDALONE__
 
 /// @brief memset definition in C++.
 /// @param dst destination pointer.

@@ -66,7 +66,7 @@ struct PageManager final {
   PageManager(const PageManager &) = default;
 
  public:
-  PTEWrapper Request(Boolean Rw, Boolean User, Boolean ExecDisable);
+  PTEWrapper Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz);
   bool Free(Ref<PTEWrapper *> &wrapper);
 
  private:

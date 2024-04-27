@@ -9,7 +9,7 @@
 #include <BootKit/BootKit.hxx>
 #include <cstddef> /* Since we're using GCC for this EFI program. */
 
-#if 0
+#ifdef __STANDALONE__
 
 /// @brief Allocates a new object.
 /// @param sz the size.

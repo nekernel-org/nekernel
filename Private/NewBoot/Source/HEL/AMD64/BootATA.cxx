@@ -88,7 +88,7 @@ ATAInit_Retry:
   boot_ata_wait_io(IO);
 
   for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
-    kATAData[indexData] = In8(IO + ATA_REG_DATA);
+    kATAData[indexData] = In16(IO + ATA_REG_DATA);
   }
 
   OutBus =

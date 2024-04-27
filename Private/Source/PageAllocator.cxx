@@ -10,8 +10,8 @@
 
 /// @brief Internal namespace, used internally by kernel.
 namespace NewOS::Detail {
-VoidPtr create_page_wrapper(Boolean rw, Boolean user) {
-  auto addr = HAL::hal_alloc_page(rw, user);
+VoidPtr create_page_wrapper(Boolean rw, Boolean user, SizeT pageSz) {
+  auto addr = HAL::hal_alloc_page(rw, user, pageSz);
 
   if (addr == kBadAddress) {
     kcout << "[create_page_wrapper] kBadAddress returned\n";
@@ -34,7 +34,6 @@ bool page_disable(UIntPtr VirtualAddr) {
     auto VirtualAddrTable = (PTE *)(VirtualAddr);
     MUST_PASS(!VirtualAddrTable->Accessed);
 
-    if (VirtualAddrTable->Accessed) return false;
     VirtualAddrTable->Present = false;
 
     hal_flush_tlb();
