@@ -82,8 +82,8 @@ default.
 #define kNewFSLbaType (NewOS::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
-#define kNewFSAddressAsLba (1024)
-#define kNewFSCatalogStartAddress (kNewFSAddressAsLba + sizeof(NewPartitionBlock))
+#define kNewFSAddressAsLba (512)
+#define kNewFSCatalogStartAddress (1024 + sizeof(NewPartitionBlock))
 
 #define kResourceTypeDialog 10
 #define kResourceTypeString 11

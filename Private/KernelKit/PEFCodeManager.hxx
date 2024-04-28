@@ -50,7 +50,7 @@ class PEFLoader : public LoaderInterface {
 };
 
 namespace Utils {
-bool execute_from_image(PEFLoader &exec) noexcept;
+bool execute_from_image(PEFLoader &exec, const Int32& procKind) noexcept;
 }  // namespace Utils
 }  // namespace NewOS
 

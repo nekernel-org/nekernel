@@ -13,9 +13,9 @@
 #define LONG_MAX ((long)(~0UL>>1))
 #define LONG_MIN (~LONG_MAX)
 
-#define SetMem(dst, c, sz) BSetMem((CharacterTypeUTF16 *)dst, c, sz)
-#define MoveMem(dst, src, sz) BCopyMem((CharacterTypeUTF16 *)dst, (CharacterTypeUTF16 *)src, sz)
-#define CopyMem(dst, src, sz) BCopyMem((CharacterTypeUTF16 *)dst, (CharacterTypeUTF16 *)src, sz)
+#define SetMem(dst, c, sz) memset(dst, c, sz)
+#define MoveMem(dst, src, sz) memcpy(dst, src, sz)
+#define CopyMem(dst, src, sz) memcpy(dst,src, sz)
 
 inline int isspace(int c) { return c == ' '; }
 

@@ -165,7 +165,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   /// if not formated yet, then format it with the following folders:
   /// /, /Boot, /Applications.
-  if (!diskFormatter) {
+  if (!diskFormatter.IsPartitionValid()) {
     BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
 
     memcpy(rootDesc.fFileName, "/", strlen("/"));

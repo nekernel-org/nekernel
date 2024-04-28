@@ -105,18 +105,22 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
   drv_std_select(IO);
 
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
-  Out8(IO + ATA_REG_SEC_COUNT0, 1);
+
+  Out8(IO + ATA_REG_SEC_COUNT0, 2);
 
   Out8(IO + ATA_REG_LBA0, (Lba));
   Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
-  Out8(IO + ATA_REG_LBA4, (Lba) >> 24);
+  Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
+
+  drv_std_wait_io(IO);
 
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
     drv_std_wait_io(IO);
     Buf[IndexOff] = In16(IO + ATA_REG_DATA);
+    drv_std_wait_io(IO);
   }
 }
 
@@ -130,16 +134,20 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
   drv_std_select(IO);
 
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
-  Out8(IO + ATA_REG_SEC_COUNT0, 1);
+
+  Out8(IO + ATA_REG_SEC_COUNT0, 2);
 
   Out8(IO + ATA_REG_LBA0, (Lba));
   Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
-  Out8(IO + ATA_REG_LBA4, (Lba) >> 24);
+  Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
+  drv_std_wait_io(IO);
+
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+    drv_std_wait_io(IO);
     Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
     drv_std_wait_io(IO);
   }

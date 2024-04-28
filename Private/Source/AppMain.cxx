@@ -24,7 +24,7 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
   NewOS::FilesystemManagerInterface::Mount(newFS);
 
   if (newFS->GetImpl()) {
-      auto catalog = newFS->GetImpl()->GetCatalog("/");
+      auto catalog = newFS->GetImpl()->GetCatalog("/Boot");
       if (catalog) {
           NewOS::kcout << "Catalog-Path-Name: " << catalog->Name << NewOS::endl;
           delete catalog;

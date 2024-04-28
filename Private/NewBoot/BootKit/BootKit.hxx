@@ -211,7 +211,7 @@ public:
     Boolean Format(const char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
 
     /// @brief check if partition is good.
-    operator bool() noexcept {
+    Bool IsPartitionValid() noexcept {
         fDiskDev.Leak().mBase = (kNewFSAddressAsLba);
         fDiskDev.Leak().mSize = BootDev::kSectorSize;
 
@@ -221,12 +221,13 @@ public:
 
         NewPartitionBlock* blockPart = reinterpret_cast<NewPartitionBlock*>(buf);
 
+        BTextWriter writer;
+
         for (SizeT indexMag = 0UL; indexMag < kNewFSIdentLen; ++indexMag) {
             if (blockPart->Ident[indexMag] != kNewFSIdent[indexMag])
                 return false;
         }
 
-        BTextWriter writer;
         writer.Write(L"Device Size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r\n");
 
         if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
@@ -255,16 +256,11 @@ private:
         Lba startLba = partBlock.StartCatalog;
         BTextWriter writer;
 
-        SizeT blobCounter = 0UL;
+        Char bufCatalog[sizeof(NewCatalog)] = { 0 };
+        Char bufFork[sizeof(NewFork)] = { 0 };
 
         while (blob) {
-            if (blobCounter > blobCount) break;
-            ++blobCounter;
-
-            Char bufCatalog[sizeof(NewCatalog)] = { 0 };
-            Char bufFork[sizeof(NewFork)] = { 0 };
-
-            NewCatalog* catalogKind = (NewCatalog*)bufFork;
+            NewCatalog* catalogKind = (NewCatalog*)bufCatalog;
 
             catalogKind->PrevSibling = startLba;
 
@@ -306,7 +302,7 @@ private:
             fDiskDev.Leak().mBase = startLba + sizeof(NewCatalog);
             fDiskDev.Leak().mSize = sizeof(NewFork);
 
-            fDiskDev.Write((Char*)forkKind, sizeof(NewFork));
+            fDiskDev.Write((Char*)bufFork, sizeof(NewFork));
 
             do {
                 this->fDiskDev.Leak().mSize = BootDev::kSectorSize;
@@ -338,12 +334,15 @@ private:
             fDiskDev.Leak().mBase = startLba;
             fDiskDev.Leak().mSize = sizeof(NewCatalog);
 
-            fDiskDev.Write((Char*)catalogKind, sizeof(NewCatalog));
+            fDiskDev.Write((Char*)bufCatalog, sizeof(NewCatalog));
 
             startLba += (sizeof(NewCatalog) + sizeof(NewFork) + blob->fBlobSz);
 
             --partBlock.FreeCatalog;
             --partBlock.FreeSectors;
+
+            memset(bufFork, 0, sizeof(NewFork));
+            memset(bufCatalog, 0, sizeof(NewCatalog));
 
             blob = blob->fNext;
         }
