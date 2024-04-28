@@ -11,17 +11,15 @@
 
 namespace NewOS {
 struct MBCIHostInterface;
-struct MBCIDeviceInterface;
-struct MBCIPacketInterface;
 
 /// @brief MBCI Host Interface header.
-struct MBCIHostInterface final {
+struct PACKED MBCIHostInterface final {
 	UInt32 HostId;
 	UInt16 VendorId;
 	UInt16 DeviceId;
 	UInt8  MemoryType;
-	UInt8  HostType;
-	UInt8  HostFlags;
+	UInt16 HostType;
+	UInt16 HostFlags;
 	UInt8  Error;
 	UInt8  Status;
 	UInt8  InterruptEnable;
@@ -36,6 +34,18 @@ enum MBCIHostFlags {
 	kMBCIHostFlagsSupportsDaisyChain, /// Is daisy chained.
 	kMBCIHostFlagsSupportsHWInterrupts, /// Has HW interrupts.
 	kMBCIHostFlagsSupportsDMA, /// Has DMA.
-	kMBCIHostFlagsCount,
+	kMBCIHostFlagsExtended = __UINT16_MAX__, // Extended flags table.
+};
+
+enum MBCIHostKind {
+    kMBCIHostKindHardDisk,
+    kMBCIHostKindOpticalDisk,
+    kMBCIHostKindKeyboardLow,
+    kMBCIHostKindMouseLow,
+    kMBCIHostKindMouseHigh,
+    kMBCIHostKindKeyboardHigh,
+    kMBCIHostKindNetworkInterface,
+    kMBCIHostKindDaisyChain,
+    kMBCIHostKindStartExtended = __UINT16_MAX__, /// Extended vendor table.
 };
 } // namespace NewOS
