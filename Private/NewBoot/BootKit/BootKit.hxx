@@ -185,11 +185,15 @@ public:
         Char fFileName[kNewFSNodeNameLen];
         Char fForkName[kNewFSNodeNameLen];
 
-        UInt32 fKind;
+        Int32 fKind;
+        Int64 fLba;
 
         VoidPtr fBlob;
         SizeT fBlobSz;
 
+        bool IsCatalogValid() { return fLba != 0 && fLba >= kNewFSCatalogStartAddress; }
+
+        struct BFileDescriptor* fParent;
         struct BFileDescriptor* fPrev;
         struct BFileDescriptor* fNext;
     };
@@ -262,7 +266,17 @@ private:
         while (blob) {
             NewCatalog* catalogKind = (NewCatalog*)bufCatalog;
 
-            catalogKind->PrevSibling = startLba;
+            blob->fLba = startLba;
+
+            if (!blob->fParent)
+                catalogKind->PrevSibling = startLba;
+            else {
+                if (blob->IsCatalogValid()) {
+                    catalogKind->PrevSibling = blob->fParent->fLba;
+                } else {
+                    EFI::ThrowError(L"Invalid-Catalog-Location", L"Invalid catalog location.");
+                }
+            }
 
             /// Fill catalog kind.
             catalogKind->Kind = blob->fKind;

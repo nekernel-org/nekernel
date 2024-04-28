@@ -173,6 +173,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
     rootDesc.fBlobSz = BootDeviceATA::kSectorSize;
     rootDesc.fBlob = new Char[rootDesc.fBlobSz];
+    rootDesc.fParent = &rootDesc;
 
     memset(rootDesc.fBlob, 0, rootDesc.fBlobSz);
 
@@ -190,6 +191,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
     bootDesc.fBlobSz = BootDeviceATA::kSectorSize;
     bootDesc.fBlob = new Char[bootDesc.fBlobSz];
+    bootDesc.fParent = &rootDesc;
 
     memset(bootDesc.fBlob, 0, bootDesc.fBlobSz);
 
@@ -208,6 +210,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
     appDesc.fBlobSz = BootDeviceATA::kSectorSize;
     appDesc.fBlob = new Char[appDesc.fBlobSz];
+    appDesc.fParent = &rootDesc;
 
     memset(appDesc.fBlob, 0, appDesc.fBlobSz);
 
