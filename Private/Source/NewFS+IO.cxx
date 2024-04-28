@@ -8,13 +8,13 @@
 #include <KernelKit/FileManager.hpp>
 
 /*************************************************************
- * 
- * File: NewFS+IO.cxx 
+ *
+ * File: NewFS+IO.cxx
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
- * 
+ *
  * Copyright Mahrouss Logic, all rights reserved.
- * 
+ *
  *************************************************************/
 
 
@@ -24,8 +24,8 @@
 
 /// Useful macros.
 
-#define NEWFS_WRITE(DRV, TRAITS, MP) (*MP->DRV()).fOutput(&TRAITS)
-#define NEWFS_READ(DRV, TRAITS, MP) (*MP->DRV()).fInput(&TRAITS)
+#define NEWFS_WRITE(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
+#define NEWFS_READ(DRV, TRAITS, MP) (MP->DRV()).fInput(&TRAITS)
 
 using namespace NewOS;
 
@@ -33,12 +33,12 @@ using namespace NewOS;
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
-/// @return 
+/// @return
 Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 
   DrvTrait.fPacket.fPacketGood = false;
-  
+
   switch (DrvIndex) {
     case kNewFSSubDriveA: {
       NEWFS_READ(A, DrvTrait.fPacket, Mnt);
@@ -62,10 +62,10 @@ Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
 }
 
 /// @brief Write to newfs disk.
-/// @param Mnt mounted interface. 
-/// @param DrvTrait drive info 
+/// @param Mnt mounted interface.
+/// @param DrvTrait drive info
 /// @param DrvIndex drive index.
-/// @return 
+/// @return
 Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
   if (!Mnt) return -1;
 

@@ -76,23 +76,6 @@ CA_EXTERN_C Int32Type WmMoveWindow(WindowPort* wndPort, WmPoint where) {
   return 0;
 }
 
-/// @brief Draws a blur effect on the window.
-/// @param wndPort the window port.
-CA_EXTERN_C VoidType WmBlur(WindowPort* wndPort) {
-  if (wndPort != NullPtr) {
-    WmGFXRef refGfx = wndPort->windowGfx;
-
-    UInt32Type lookupTbl[4] = {0.21336, 0.41336, 0.61336, 0.81336};
-
-    for (SizeType width = 0; width < refGfx->DataFrameWidth; ++width) {
-      for (SizeType height = 0; height < refGfx->DataFrameHeight; ++height) {
-        refGfx->DataFrame[width * height] =
-            refGfx->DataFrame[width * height] * lookupTbl[MathRand() % 4];
-      }
-    }
-  }
-}
-
 /// @brief Causes the window to invalidate and redraw.
 /// @param wndPort The Window port.
 /// @return nothing.

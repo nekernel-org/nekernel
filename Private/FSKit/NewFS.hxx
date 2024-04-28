@@ -82,8 +82,8 @@ default.
 #define kNewFSLbaType (NewOS::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
-#define kNewFSAddressAsLba (1024)
-#define kNewFSCatalogStartAddress (kNewFSAddressAsLba + sizeof(NewPartitionBlock))
+#define kNewFSAddressAsLba (512)
+#define kNewFSCatalogStartAddress (1024 + sizeof(NewPartitionBlock))
 
 #define kResourceTypeDialog 10
 #define kResourceTypeString 11
@@ -117,8 +117,8 @@ struct PACKED NewCatalog final {
   NewOS::Int32 Flags;
   NewOS::Int32 Kind;
 
-  NewOS::Lba FirstFork;
-  NewOS::Lba LastFork;
+  NewOS::Lba DataFork;
+  NewOS::Lba ResourceFork;
 
   NewOS::Lba NextSibling;
   NewOS::Lba PrevSibling;
@@ -187,7 +187,7 @@ enum { kNewFSRsrcForkKind = 0, kNewFSDataForkKind = 1 };
 /// forks...) Designed like the DOM, detects the filesystem automatically.
 ///
 
-class NewFSParser {
+class NewFSParser final {
  public:
   explicit NewFSParser() = default;
   ~NewFSParser() = default;
@@ -208,34 +208,34 @@ class NewFSParser {
   /// @param name the fork name.
   /// @return the fork.
   _Output NewFork* FindFork(_Input NewCatalog* catalog,
-                            _Input const Char* name);
+                            _Input const Char* name, Boolean dataOrRsrc);
 
-  virtual _Output Void RemoveFork(_Input NewFork* fork) = 0;
+  _Output Void RemoveFork(_Input NewFork* fork);
 
-  virtual _Output Void CloseFork(_Input NewFork* fork) = 0;
+  _Output Void CloseFork(_Input NewFork* fork);
 
-  virtual _Output NewCatalog* FindCatalog(_Input const char* catalogName) = 0;
+  _Output NewCatalog* FindCatalog(_Input const char* catalogName);
 
-  virtual _Output NewCatalog* GetCatalog(_Input const char* name) = 0;
+  _Output NewCatalog* GetCatalog(_Input const char* name);
 
-  virtual _Output NewCatalog* CreateCatalog(_Input const char* name,
+  _Output NewCatalog* CreateCatalog(_Input const char* name,
                                             _Input const Int32& flags,
                                             _Input const Int32& kind);
 
-  virtual _Output NewCatalog* CreateCatalog(_Input const char* name);
+  _Output NewCatalog* CreateCatalog(_Input const char* name);
 
-  virtual bool WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data);
+  bool WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data);
 
-  virtual VoidPtr ReadCatalog(_Input _Output NewCatalog* catalog,
-                              SizeT dataSz) = 0;
+  VoidPtr ReadCatalog(_Input _Output NewCatalog* catalog,
+                              SizeT dataSz);
 
-  virtual bool Seek(_Input _Output NewCatalog* catalog, SizeT off) = 0;
+  bool Seek(_Input _Output NewCatalog* catalog, SizeT off);
 
-  virtual SizeT Tell(_Input _Output NewCatalog* catalog) = 0;
+  SizeT Tell(_Input _Output NewCatalog* catalog);
 
-  virtual bool RemoveCatalog(_Input _Output NewCatalog* catalog) = 0;
+  bool RemoveCatalog(_Input _Output NewCatalog* catalog);
 
-  virtual bool CloseCatalog(_InOut NewCatalog* catalog) = 0;
+  bool CloseCatalog(_InOut NewCatalog* catalog);
 
   /// @brief Make a EPM+NewFS drive out of the disk.
   /// @param drive The drive to write on.

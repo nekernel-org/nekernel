@@ -52,8 +52,10 @@ typedef void* PtrVoidType;
 typedef void VoidType;
 
 #ifdef __SINGLE_PRECISION__
+typedef float FloatType;
 typedef float PositionType;
 #else
+typedef double FloatType;
 typedef double PositionType;
 #endif
 
@@ -84,23 +86,23 @@ typedef CharacterTypeUTF8 BooleanType;
 #   define CA_FAR
 #   define CA_NEAR
 
-#endif 
+#endif
 
 #ifdef __aarch64__
 #   define _M_AARCH64 3
-#endif 
+#endif
 
 #ifdef __powerpc64__
-#   define _M_PPC64 4 
-#endif 
+#   define _M_PPC64 4
+#endif
 
 #ifdef __64x0__
-#   define _M_64000 5 
-#endif 
+#   define _M_64000 5
+#endif
 
 #ifdef __riscv__
 #   define _M_RISCV 6
-#endif 
+#endif
 
 #define CA_STATIC static
 #define CA_INLINE inline
@@ -191,18 +193,18 @@ using StrType = CharacterTypeUTF8[N];
 #endif // ifdef C++
 
 /// @brief Get app singleton.
-/// @param  
-/// @return 
+/// @param
+/// @return
 CA_EXTERN_C ApplicationRef     RtGetAppPointer(VoidType);
 
 /// @brief Get argument count
-/// @param  
-/// @return 
+/// @param
+/// @return
 CA_EXTERN_C SizeType           RtGetAppArgumentsCount(VoidType);
 
 /// @brief Get argument pointer.
-/// @param  
-/// @return 
+/// @param
+/// @return
 CA_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType);
 
 CA_EXTERN_C ApplicationRef kSharedApplication;

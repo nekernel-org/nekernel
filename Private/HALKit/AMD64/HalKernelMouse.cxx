@@ -6,6 +6,7 @@
 
 #include <Builtins/PS2/PS2MouseInterface.hxx>
 #include <Builtins/Toolbox/Toolbox.hxx>
+#include <Builtins/Toolbox/Rsrc/Cursor.rsrc>
 #include <KernelKit/Framebuffer.hpp>
 #include <NewKit/Defines.hpp>
 
@@ -21,6 +22,8 @@ STATIC NewOS::Int32 kMouseCycle = 0;
 STATIC NewOS::PS2MouseInterface kMousePS2;
 STATIC NewOS::Char kMousePacket[4] = {};
 STATIC NewOS::Boolean kMousePacketReady = false;
+
+STATIC ToolboxInitRsrc();
 
 #define kPS2Leftbutton 0b00000001
 #define kPS2Middlebutton 0b00000010
@@ -38,7 +41,7 @@ Void hal_handle_mouse() {
   switch (kMouseCycle) {
     case 0:
       if (kMousePacketReady) break;
-      if (data & 0b00001000 == 0) break;
+      if ((data & 0b00001000) == 0) break;
       kMousePacket[0] = data;
       kMouseCycle++;
       break;

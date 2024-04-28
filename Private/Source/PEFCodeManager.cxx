@@ -35,11 +35,9 @@ UInt32 rt_get_pef_platform(void) noexcept {
 
 /// @brief PEF loader constructor w/ blob.
 /// @param blob
-PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(nullptr) {
-  fCachedBlob = blob;
-  fBad = false;
-
+PEFLoader::PEFLoader(const VoidPtr blob) : fCachedBlob(blob) {
   MUST_PASS(fCachedBlob);
+  fBad = false;
 }
 
 /// @brief PEF loader constructor.
@@ -155,10 +153,8 @@ ErrorOr<VoidPtr> PEFLoader::FindStart() {
 /// @return
 bool PEFLoader::IsLoaded() noexcept { return !fBad && fCachedBlob; }
 
-#define kPefAppnameCommandHdr "PefAppName"
-
 namespace Utils {
-bool execute_from_image(PEFLoader &exec) noexcept {
+bool execute_from_image(PEFLoader &exec, const Int32& procKind) noexcept {
   auto errOrStart = exec.FindStart();
 
   if (errOrStart.Error() != 0) return false;
@@ -166,10 +162,7 @@ bool execute_from_image(PEFLoader &exec) noexcept {
   ProcessHeader proc(errOrStart.Leak().Leak());
   Ref<ProcessHeader> refProc = proc;
 
-  proc.Kind = ProcessHeader::kUserKind;
-  rt_copy_memory(exec.FindSymbol(kPefAppnameCommandHdr, kPefData), proc.Name,
-                 rt_string_len((const Char *)exec.FindSymbol(
-                     kPefAppnameCommandHdr, kPefData)));
+  proc.Kind = procKind;
 
   return ProcessScheduler::Shared().Leak().Add(refProc);
 }
@@ -177,7 +170,19 @@ bool execute_from_image(PEFLoader &exec) noexcept {
 
 const char *PEFLoader::Path() { return fPath.Leak().CData(); }
 
-const char *PEFLoader::Format() { return "PEF"; }
+const char *PEFLoader::Format() {
+    #ifdef __32x0__
+      return "32x0 PEF.";
+    #elif defined(__64x0__)
+      return "64x0 PEF.";
+    #elif defined(__x86_64__)
+      return "x86_64 PEF.";
+    #elif defined(__powerpc64__)
+      return "POWER PEF.";
+    #else
+      return "Unknonwn PEF.";
+    #endif  // __32x0__ || __64x0__ || __x86_64__
+}
 
 const char *PEFLoader::MIME() { return kPefApplicationMime; }
 }  // namespace NewOS

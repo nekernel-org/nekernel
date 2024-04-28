@@ -165,12 +165,3 @@ CA_EXTERN_C VoidType      WmReleaseMenu(WindowPort* port);
 /// @param where to move.
 /// @return error code.
 CA_EXTERN_C Int32Type     WmMoveWindow(WindowPort* wndPort, WmPoint where);
-
-/// @brief Get the NewOS about window.
-/// @return The window port of it.
-/// @note The reason that this is not a window is for it to run without blocking the UI.
-CA_EXTERN_C WindowPort*   WmGetOSDlg(void);
-
-/// @brief Draws a blur effect on the window.
-/// @param wndPort the window port.
-CA_EXTERN_C VoidType WmBlur(WindowPort* wndPort);

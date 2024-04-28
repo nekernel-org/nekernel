@@ -88,7 +88,7 @@ ATAInit_Retry:
   boot_ata_wait_io(IO);
 
   for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
-    kATAData[indexData] = In8(IO + ATA_REG_DATA);
+    kATAData[indexData] = In16(IO + ATA_REG_DATA);
   }
 
   OutBus =
@@ -107,18 +107,22 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
   boot_ata_select(IO);
 
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
-  Out8(IO + ATA_REG_SEC_COUNT0, 1);
+
+  Out8(IO + ATA_REG_SEC_COUNT0, 2);
 
   Out8(IO + ATA_REG_LBA0, (Lba));
   Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
-  Out8(IO + ATA_REG_LBA4, (Lba) >> 24);
+  Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
+
+  boot_ata_wait_io(IO);
 
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
     boot_ata_wait_io(IO);
     Buf[IndexOff] = In16(IO + ATA_REG_DATA);
+    boot_ata_wait_io(IO);
   }
 }
 
@@ -130,18 +134,22 @@ Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
   boot_ata_select(IO);
 
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
-  Out8(IO + ATA_REG_SEC_COUNT0, 1);
+
+  Out8(IO + ATA_REG_SEC_COUNT0, 2);
 
   Out8(IO + ATA_REG_LBA0, (Lba));
   Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
-  Out8(IO + ATA_REG_LBA4, (Lba) >> 24);
+  Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
+
+  boot_ata_wait_io(IO);
 
   for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
     boot_ata_wait_io(IO);
     Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
+    boot_ata_wait_io(IO);
   }
 }
 
@@ -188,7 +196,7 @@ BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz
 
   if (!Buf || SectorSz < 1) return *this;
 
-  auto lba = this->Leak().mBase / BootDeviceATA::kSectorSize;
+  auto lba = this->Leak().mBase / SectorSz;
 
   boot_ata_read(lba, this->Leak().mBus, this->Leak().mMaster,
                 Buf, SectorSz, this->Leak().mSize);
@@ -211,7 +219,7 @@ BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorS
 
   if (!Buf || SectorSz < 1) return *this;
 
-  auto lba = this->Leak().mBase / BootDeviceATA::kSectorSize;
+  auto lba = this->Leak().mBase / SectorSz;
 
   boot_ata_write(lba, this->Leak().mBus, this->Leak().mMaster,
                 Buf, SectorSz, this->Leak().mSize);

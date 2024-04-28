@@ -49,7 +49,7 @@ typedef HeapInformationBlock *HeapInformationBlockPtr;
 VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
   if (sz == 0) ++sz;
 
-  auto wrapper = kHeapPageManager.Request(rw, user, false);
+  auto wrapper = kHeapPageManager.Request(rw, user, false, sz);
 
   Detail::HeapInformationBlockPtr heapInfo =
       reinterpret_cast<Detail::HeapInformationBlockPtr>(
@@ -62,6 +62,9 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 
   ++kHeapCount;
 
+  NewOS::kcout << "New OS: Allocate: " << hex_number((IntPtr)wrapper.VirtualAddress() +
+                                   sizeof(Detail::HeapInformationBlock)) << endl;
+
   return reinterpret_cast<VoidPtr>(wrapper.VirtualAddress() +
                                    sizeof(Detail::HeapInformationBlock));
 }
@@ -71,10 +74,14 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 /// @return
 Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
   if (kHeapCount < 1) return -kErrorInternal;
+  if (((IntPtr)heapPtr - sizeof(Detail::HeapInformationBlock)) <= 0) return -kErrorInternal;
+  if (((IntPtr)heapPtr - kBadPtr) < 0) return -kErrorInternal;
 
   Detail::HeapInformationBlockPtr virtualAddress =
       reinterpret_cast<Detail::HeapInformationBlockPtr>(
           (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
+
+  NewOS::kcout << "New OS: Freeing: " << hex_number((UIntPtr)virtualAddress) << endl;
 
   if (virtualAddress && virtualAddress->fMagic == kKernelHeapMagic) {
     if (!virtualAddress->fPresent) {

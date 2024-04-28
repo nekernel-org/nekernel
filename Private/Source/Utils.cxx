@@ -94,8 +94,6 @@ Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
     ++index;
   }
 
-  dstChar[index] = 0;
-
   return index;
 }
 
@@ -108,6 +106,7 @@ const Char *alloc_string(const Char *text) {
   voidPtr vText = reinterpret_cast<voidPtr>(const_cast<char *>(text));
   voidPtr vStr = reinterpret_cast<voidPtr>(const_cast<char *>(string));
   rt_copy_memory(vText, vStr, rt_string_len(text));
+
   return string;
 }
 

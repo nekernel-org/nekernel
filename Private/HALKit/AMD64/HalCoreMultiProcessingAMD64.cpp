@@ -6,7 +6,7 @@
 
 #include <Builtins/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hpp>
-#include "NewKit/KernelCheck.hpp"
+#include <NewKit/KernelCheck.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

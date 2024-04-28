@@ -9,7 +9,7 @@
 #include <BootKit/BootKit.hxx>
 #include "HALKit/AMD64/Processor.hpp"
 
-#if 0
+#ifdef __STANDALONE__
 
 EXTERN_C void rt_hlt() { asm volatile("hlt"); }
 

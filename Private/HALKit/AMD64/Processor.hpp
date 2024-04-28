@@ -16,6 +16,7 @@
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Utils.hpp>
+#include <FirmwareKit/Handover.hxx>
 
 #ifdef kCPUBackendName
 #undef kCPUBackendName
@@ -30,7 +31,7 @@
 #define kTrapGate (0xEF)
 #define kTaskGate (0b10001100)
 #define kGdtCodeSelector (0x08)
-#define kVirtualAddressStartOffset (0x100)
+#define kVirtualAddressStartOffset (0x10000000)
 
 namespace NewOS {
 namespace Detail::AMD64 {
@@ -183,3 +184,8 @@ EXTERN_C void hal_load_gdt(NewOS::HAL::RegisterGDT ptr);
 /// @brief Maximum size of the IDT.
 #define kKernelIdtSize        0x100
 #define kKernelInterruptId    0x32
+
+inline NewOS::VoidPtr kKernelVirtualStart = (NewOS::VoidPtr)kVirtualAddressStartOffset;
+inline NewOS::UIntPtr kKernelVirtualSize = 0UL;
+
+inline NewOS::VoidPtr kKernelPhysicalStart = nullptr;

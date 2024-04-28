@@ -8,7 +8,7 @@
 #include <FirmwareKit/Handover.hxx>
 #include <BootKit/Vendor/Support.hxx>
 
-#if 0
+#ifdef __STANDALONE__
 
 /// @brief memset definition in C++.
 /// @param dst destination pointer.
@@ -16,8 +16,11 @@
 /// @param len length of of src.
 EXTERN_C VoidPtr memset(void *dst, int byte,
                           long long unsigned int len) {
-  SetMem(dst, byte, len);
-  return dst;
+    for (size_t i = 0UL; i < len; ++i) {
+        ((int*)dst)[i] = byte;
+    }
+
+    return dst;
 }
 
 /// @brief memcpy definition in C++.
@@ -26,8 +29,11 @@ EXTERN_C VoidPtr memset(void *dst, int byte,
 /// @param len length of of src.
 EXTERN_C VoidPtr memcpy(void *dst, const void *src,
                           long long unsigned int len) {
-  CopyMem(dst, src, len);
-  return dst;
+    for (size_t i = 0UL; i < len; ++i){
+        ((int*)dst)[i] = ((int*)src)[i];
+    }
+
+    return dst;
 }
 
 /// @brief strlen definition in C++.

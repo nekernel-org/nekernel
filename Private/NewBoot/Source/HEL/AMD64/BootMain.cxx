@@ -12,6 +12,7 @@
 #include <NewKit/Macros.hpp>
 #include <BootKit/BootKit.hxx>
 #include <NewKit/Ref.hpp>
+#include <FirmwareKit/Handover.hxx>
 #include <cstring>
 
 /// make the compiler shut up.
@@ -21,13 +22,11 @@
 
 /** Graphics related. */
 
-EXTERN_C Void hal_init_platform(HEL::HandoverInformationHeader* HIH);
-
 STATIC EfiGraphicsOutputProtocol* kGop = nullptr;
 STATIC UInt16 kStride = 0U;
 STATIC EfiGUID kGopGuid;
 
-EXTERN_C Void rt_jump_to_address(VoidPtr blob);
+EXTERN_C Void hal_init_platform(HEL::HandoverInformationHeader* HIH);
 
 /**
     @brief Finds and stores the GOP.
@@ -66,7 +65,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   writer.Write(L"Mahrouss-Logic (R) New Boot: ")
       .Write(BVersionString::Shared());
 
-  writer.Write(L"\r\nNewBoot: Firmware Vendor: ")
+  writer.Write(L"\r\nNew Boot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
       .Write(L"\r\n");
 
@@ -76,6 +75,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   UInt32* SzDesc = new UInt32();
   UInt32* RevDesc = new UInt32();
 
+  *MapKey = 0;
   *SizePtr = sizeof(EfiMemoryDescriptor);
 
   HEL::HandoverInformationHeader* handoverHdrPtr = new HEL::HandoverInformationHeader();
@@ -125,19 +125,12 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   ToolboxClearRsrc();
 
-  EfiPhysicalAddress* whereAddress =
-        reinterpret_cast<EfiPhysicalAddress*>(kBootVirtualAddress);
-
   BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 
   handoverHdrPtr->f_PhysicalStart = (VoidPtr)Descriptor->PhysicalStart;
 
-  handoverHdrPtr->f_FirmwareSpecific[0] = Descriptor->Attribute;
-  handoverHdrPtr->f_FirmwareSpecific[1] = Descriptor->Kind;
-
-
-  BS->AllocatePages(EfiAllocateType::AllocateAnyPages,
-                    EfiMemoryType::EfiConventionalMemory, 1, whereAddress);
+  handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] = Descriptor->Attribute;
+  handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] = Descriptor->Kind;
 
   handoverHdrPtr->f_VirtualStart = (VoidPtr)Descriptor->VirtualStart;
   handoverHdrPtr->f_VirtualSize = Descriptor->NumberOfPages; /* # of pages */
@@ -170,7 +163,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   BDiskFormatFactory<BootDeviceATA> diskFormatter;
 
-  if (!diskFormatter) {
+  /// if not formated yet, then format it with the following folders:
+  /// /, /Boot, /Applications.
+  if (!diskFormatter.IsPartitionValid()) {
     BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
 
     memcpy(rootDesc.fFileName, "/", strlen("/"));
@@ -178,6 +173,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
     rootDesc.fBlobSz = BootDeviceATA::kSectorSize;
     rootDesc.fBlob = new Char[rootDesc.fBlobSz];
+    rootDesc.fParent = &rootDesc;
 
     memset(rootDesc.fBlob, 0, rootDesc.fBlobSz);
 
@@ -195,6 +191,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
     bootDesc.fBlobSz = BootDeviceATA::kSectorSize;
     bootDesc.fBlob = new Char[bootDesc.fBlobSz];
+    bootDesc.fParent = &rootDesc;
 
     memset(bootDesc.fBlob, 0, bootDesc.fBlobSz);
 
@@ -213,6 +210,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
     appDesc.fBlobSz = BootDeviceATA::kSectorSize;
     appDesc.fBlob = new Char[appDesc.fBlobSz];
+    appDesc.fParent = &rootDesc;
 
     memset(appDesc.fBlob, 0, appDesc.fBlobSz);
 
@@ -229,7 +227,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   EFI::ExitBootServices(*MapKey, ImageHandle);
 
-  hal_init_platform(kHandoverHeader);
+  hal_init_platform(handoverHdrPtr);
 
   EFI::Stop();
 

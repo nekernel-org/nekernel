@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/FileManager.hpp>
+#include <KernelKit/KernelHeap.hpp>
 
 #ifdef __FSKIT_NEWFS__
 
@@ -15,9 +16,14 @@ namespace NewOS {
 /// @brief C++ constructor
 NewFilesystemManager::NewFilesystemManager() {
   MUST_PASS(Detail::fs_init_newfs());
+  fImpl = new NewFSParser();
 }
 
-NewFilesystemManager::~NewFilesystemManager() = default;
+NewFilesystemManager::~NewFilesystemManager() {
+    if (fImpl) {
+        delete fImpl;
+    }
+}
 
 /// @brief Removes a node from the filesystem.
 /// @param fileName The filename
@@ -53,15 +59,15 @@ NodePtr NewFilesystemManager::CreateAlias(const char* path) {
 }
 
 /// @brief Gets the root directory.
-/// @return 
+/// @return
 const char* NewFilesystemHelper::Root() { return kNewFSRoot; }
 
 /// @brief Gets the up-dir directory.
-/// @return 
+/// @return
 const char* NewFilesystemHelper::UpDir() { return kNewFSUpDir; }
 
 /// @brief Gets the separator character.
-/// @return 
+/// @return
 const char NewFilesystemHelper::Separator() { return kNewFSSeparator; }
 }  // namespace NewOS
 

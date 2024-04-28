@@ -28,17 +28,17 @@ ATADeviceInterface::~ATADeviceInterface() {
 const char* ATADeviceInterface::Name() const { return "ATADeviceInterface"; }
 
 /// @brief Output operator.
-/// @param Data 
-/// @return 
+/// @param Data
+/// @return
 ATADeviceInterface& ATADeviceInterface::operator<<(MountpointInterface* Data) {
   if (!Data) return *this;
 
   for (SizeT driveCount = 0; driveCount < kDriveManagerCount; ++driveCount) {
     auto interface = Data->GetAddressOf(driveCount);
-    if ((*interface) && rt_string_cmp((*interface)->fDriveKind(), "ATA-", 5) == 0) {
+    if ((interface) && rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) == 0) {
       continue;
-    } else if ((*interface) &&
-               rt_string_cmp((*interface)->fDriveKind(), "ATA-", 5) != 0) {
+    } else if ((interface) &&
+               rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) != 0) {
       return *this;
     }
   }
@@ -48,17 +48,17 @@ ATADeviceInterface& ATADeviceInterface::operator<<(MountpointInterface* Data) {
 }
 
 /// @brief Input operator.
-/// @param Data 
-/// @return 
+/// @param Data
+/// @return
 ATADeviceInterface& ATADeviceInterface::operator>>(MountpointInterface* Data) {
   if (!Data) return *this;
 
   for (SizeT driveCount = 0; driveCount < kDriveManagerCount; ++driveCount) {
     auto interface = Data->GetAddressOf(driveCount);
-    if ((*interface) && rt_string_cmp((*interface)->fDriveKind(), "ATA-", 5) == 0) {
+    if ((interface) && rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) == 0) {
       continue;
-    } else if ((*interface) &&
-               rt_string_cmp((*interface)->fDriveKind(), "ATA-", 5) != 0) {
+    } else if ((interface) &&
+               rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) != 0) {
       return *this;
     }
   }

@@ -26,7 +26,7 @@
 #define kPTESize (0x1000)
 #endif  // !kPTESize
 
-EXTERN_C void hal_flush_tlb(NewOS::UIntPtr pde);
+EXTERN_C void hal_flush_tlb();
 EXTERN_C void hal_write_cr3(NewOS::UIntPtr pde);
 EXTERN_C void hal_write_cr0(NewOS::UIntPtr bit);
 
@@ -72,7 +72,7 @@ struct PageDirectory64 final {
   PageTable64 ALIGN(kPTEAlign) Pte[kPTEMax];
 };
 
-VoidPtr hal_alloc_page(Boolean rw, Boolean user);
+VoidPtr hal_alloc_page(Boolean rw, Boolean user, SizeT size);
 }  // namespace NewOS::HAL
 
 namespace NewOS {

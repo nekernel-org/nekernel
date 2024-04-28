@@ -73,12 +73,12 @@ class MountpointInterface final {
   NEWOS_COPY_DEFAULT(MountpointInterface);
 
  public:
-  DriveTraitPtr A() { return mA; }
-  DriveTraitPtr B() { return mB; }
-  DriveTraitPtr C() { return mC; }
-  DriveTraitPtr D() { return mD; }
+  DriveTrait& A() { return mA; }
+  DriveTrait& B() { return mB; }
+  DriveTrait& C() { return mC; }
+  DriveTrait& D() { return mD; }
 
-  DriveTraitPtr* GetAddressOf(Int32 index) {
+  DriveTraitPtr GetAddressOf(Int32 index) {
     DbgLastError() = kErrorSuccess;
 
     switch (index) {
@@ -102,7 +102,7 @@ class MountpointInterface final {
   }
 
  private:
-  DriveTraitPtr mA, mB, mC, mD = nullptr;
+  DriveTrait mA, mB, mC, mD;
 };
 
 /// @brief Unimplemented drive.
