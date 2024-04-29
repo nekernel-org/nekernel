@@ -86,7 +86,7 @@ class FilesystemManagerInterface {
 
  public:
   virtual Void Write(_Input NodePtr node, _Input VoidPtr data,
-                     _Input Int32 flags) = 0;
+                     _Input Int32 flags, _Input SizeT size) = 0;
   virtual _Output VoidPtr Read(_Input NodePtr node, _Input Int32 flags,
                                _Input SizeT sz) = 0;
 
@@ -122,7 +122,7 @@ class NewFilesystemManager final : public FilesystemManagerInterface {
  public:
   bool Remove(const char *path) override;
   NodePtr Open(const char *path, const char *r) override;
-  Void Write(NodePtr node, VoidPtr data, Int32 flags) override;
+  Void Write(NodePtr node, VoidPtr data, Int32 flags, SizeT sz) override;
   VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override;
   bool Seek(NodePtr node, SizeT off);
   SizeT Tell(NodePtr node) override;

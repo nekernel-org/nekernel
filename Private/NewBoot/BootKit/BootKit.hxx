@@ -186,16 +186,9 @@ public:
         Char fForkName[kNewFSNodeNameLen];
 
         Int32 fKind;
-        Int64 fLba;
 
         VoidPtr fBlob;
         SizeT fBlobSz;
-
-        bool IsCatalogValid() { return fLba != 0 && fLba >= kNewFSCatalogStartAddress; }
-
-        struct BFileDescriptor* fParent;
-        struct BFileDescriptor* fPrev;
-        struct BFileDescriptor* fNext;
     };
 
 public:
@@ -236,7 +229,8 @@ public:
 
         if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
             blockPart->DiskSize < 1 ||
-            blockPart->SectorSize != BootDev::kSectorSize) {
+            blockPart->SectorSize != BootDev::kSectorSize ||
+            blockPart->Version != kNewFSVersionInteger) {
             EFI::ThrowError(L"Invalid-Disk-Geometry", L"Invalid disk geometry.");
         } else if (blockPart->PartitionName[0] == 0) {
             EFI::ThrowError(L"Invalid-Partition-Name", L"Invalid disk partition.");
@@ -252,7 +246,7 @@ private:
     /// @param fileBlobs the blobs.
     /// @param blobCount the number of blobs to write.
     /// @param partBlock the NewFS partition block.
-    Boolean FormatCatalog(BFileDescriptor* fileBlobs, SizeT blobCount,
+    Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount,
                         NewPartitionBlock& partBlock) {
         if (partBlock.SectorSize != BootDev::kSectorSize) return false;
 
@@ -263,103 +257,95 @@ private:
         Char bufCatalog[sizeof(NewCatalog)] = { 0 };
         Char bufFork[sizeof(NewFork)] = { 0 };
 
-        while (blob) {
-            NewCatalog* catalogKind = (NewCatalog*)bufCatalog;
+        NewCatalog* catalogKind = (NewCatalog*)bufCatalog;
+        catalogKind->PrevSibling = startLba;
+        catalogKind->NextSibling = (sizeof(NewCatalog) + sizeof(NewFork) + blob->fBlobSz);
 
-            blob->fLba = startLba;
+        /// Fill catalog kind.
+        catalogKind->Kind = blob->fKind;
 
-            if (!blob->fParent)
-                catalogKind->PrevSibling = startLba;
-            else {
-                if (blob->IsCatalogValid()) {
-                    catalogKind->PrevSibling = blob->fParent->fLba;
-                } else {
-                    EFI::ThrowError(L"Invalid-Catalog-Location", L"Invalid catalog location.");
-                }
-            }
-
-            /// Fill catalog kind.
-            catalogKind->Kind = blob->fKind;
-
-            /// Allocate fork for blob.
-            if (catalogKind->Kind == kNewFSDataForkKind) {
-                catalogKind->DataFork = (startLba + sizeof(NewCatalog));
-            } else {
-                catalogKind->ResourceFork = (startLba + sizeof(NewCatalog));
-            }
-
-            NewFork* forkKind = (NewFork*)bufFork;
-
-            memcpy(forkKind->Name, blob->fForkName, strlen(blob->fForkName));
-            forkKind->Kind = (forkKind->Name[0] == kNewFSDataFork[0]) ? kNewFSDataForkKind : kNewFSRsrcForkKind;
-            forkKind->Flags = kNewFSFlagCreated;
-
-            /// We don't know.
-            forkKind->ResourceFlags = 0;
-            forkKind->ResourceId = 0;
-            forkKind->ResourceKind = 0;
-
-            /// We're the only fork here.
-            forkKind->NextSibling = forkKind->Kind == kNewFSDataForkKind ? catalogKind->DataFork : catalogKind->ResourceFork;
-            forkKind->PreviousSibling = kNewFSDataForkKind ? catalogKind->DataFork : catalogKind->ResourceFork;
-
-            forkKind->DataOffset = (startLba + sizeof(NewCatalog) + sizeof(NewFork));
-            forkKind->DataSize = blob->fBlobSz;
-
-            SizeT cur = 0UL;
-
-            writer.Write((catalogKind->Kind == kNewFSCatalogKindFile) ? L"New Boot: Write-File: " :
-                            L"New Boot: Write-Directory: " ).Write(blob->fFileName).Write(L"\r\n");
-
-            /// Set disk cursor here.
-
-            fDiskDev.Leak().mBase = startLba + sizeof(NewCatalog);
-            fDiskDev.Leak().mSize = sizeof(NewFork);
-
-            fDiskDev.Write((Char*)bufFork, sizeof(NewFork));
-
-            do {
-                this->fDiskDev.Leak().mSize = BootDev::kSectorSize;
-                this->fDiskDev.Leak().mBase = (forkKind->DataOffset + cur);
-
-                this->fDiskDev.Write((Char*)(blob->fBlob) + cur, BootDev::kSectorSize);
-
-                cur += BootDev::kSectorSize;
-            } while (cur < forkKind->DataSize);
-
-            /// Fork is done.
-
-            catalogKind->Kind = blob->fKind;
-            catalogKind->Flags |= kNewFSFlagCreated;
-
-            //// Now write catalog as well..
-
-            /// this mime only applies to file.
-            if (catalogKind->Kind == kNewFSCatalogKindFile) {
-                memcpy(catalogKind->Mime, kBKBootFileMime, strlen(kBKBootFileMime));
-            } else  {
-                memcpy(catalogKind->Mime, kBKBootDirMime, strlen(kBKBootDirMime));
-            }
-
-            memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
-
-            catalogKind->NextSibling = startLba + (sizeof(NewCatalog) + sizeof(NewFork) + blob->fBlobSz);
-
-            fDiskDev.Leak().mBase = startLba;
-            fDiskDev.Leak().mSize = sizeof(NewCatalog);
-
-            fDiskDev.Write((Char*)bufCatalog, sizeof(NewCatalog));
-
-            startLba += (sizeof(NewCatalog) + sizeof(NewFork) + blob->fBlobSz);
-
-            --partBlock.FreeCatalog;
-            --partBlock.FreeSectors;
-
-            memset(bufFork, 0, sizeof(NewFork));
-            memset(bufCatalog, 0, sizeof(NewCatalog));
-
-            blob = blob->fNext;
+        /// Allocate fork for blob.
+        if (catalogKind->Kind == kNewFSDataForkKind) {
+            catalogKind->DataFork = (startLba + sizeof(NewCatalog));
+            catalogKind->DataForkSize += blob->fBlobSz;
+        } else {
+            catalogKind->ResourceFork = (startLba + sizeof(NewCatalog));
+            catalogKind->ResourceForkOverallSize += blob->fBlobSz;
         }
+
+        /// before going to forks, we must check for the catalog name first.
+        if (blob->fKind == kNewFSCatalogKindDir &&
+            blob->fFileName[strlen(blob->fFileName) - 1] != '/') {
+            EFI::ThrowError(L"Developer-Error", L"This is caused by the developer of the bootloader.");
+        }
+
+        NewFork* forkKind = (NewFork*)bufFork;
+
+        memcpy(forkKind->Name, blob->fForkName, strlen(blob->fForkName));
+        forkKind->Kind = (forkKind->Name[0] == kNewFSDataFork[0]) ? kNewFSDataForkKind : kNewFSRsrcForkKind;
+        forkKind->Flags = kNewFSFlagCreated;
+
+        /// We don't know.
+        forkKind->ResourceFlags = 0;
+        forkKind->ResourceId = 0;
+        forkKind->ResourceKind = 0;
+
+        /// We're the only fork here.
+        forkKind->NextSibling = forkKind->Kind == kNewFSDataForkKind ? catalogKind->DataFork : catalogKind->ResourceFork;
+        forkKind->PreviousSibling = kNewFSDataForkKind ? catalogKind->DataFork : catalogKind->ResourceFork;
+
+        forkKind->DataOffset = (startLba + sizeof(NewCatalog) + sizeof(NewFork));
+        forkKind->DataSize = blob->fBlobSz;
+
+        SizeT cur = 0UL;
+
+        writer.Write((catalogKind->Kind == kNewFSCatalogKindFile) ? L"New Boot: Write-File: " :
+                        L"New Boot: Write-Directory: " ).Write(blob->fFileName).Write(L"\r\n");
+
+        /// Set disk cursor here.
+
+        fDiskDev.Leak().mBase = startLba + sizeof(NewCatalog);
+        fDiskDev.Leak().mSize = sizeof(NewFork);
+
+        fDiskDev.Write((Char*)bufFork, sizeof(NewFork));
+
+        do {
+            this->fDiskDev.Leak().mSize = BootDev::kSectorSize;
+            this->fDiskDev.Leak().mBase = (forkKind->DataOffset + cur);
+
+            this->fDiskDev.Write((Char*)(blob->fBlob) + cur, BootDev::kSectorSize);
+
+            cur += BootDev::kSectorSize;
+        } while (cur < forkKind->DataSize);
+
+        /// Fork is done.
+
+        catalogKind->Kind = blob->fKind;
+        catalogKind->Flags = kNewFSFlagCreated;
+
+        //// Now write catalog as well..
+
+        /// this mime only applies to file.
+        if (catalogKind->Kind == kNewFSCatalogKindFile) {
+            memcpy(catalogKind->Mime, kBKBootFileMime, strlen(kBKBootFileMime));
+        } else  {
+            memcpy(catalogKind->Mime, kBKBootDirMime, strlen(kBKBootDirMime));
+        }
+
+        memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
+
+        fDiskDev.Leak().mBase = startLba;
+        fDiskDev.Leak().mSize = sizeof(NewCatalog);
+
+        fDiskDev.Write((Char*)bufCatalog, sizeof(NewCatalog));
+
+        startLba += (sizeof(NewCatalog) + sizeof(NewFork) + blob->fBlobSz);
+
+        --partBlock.FreeCatalog;
+        --partBlock.FreeSectors;
+
+        memset(bufFork, 0, sizeof(NewFork));
+        memset(bufCatalog, 0, sizeof(NewCatalog));
 
         return true;
     }
@@ -391,16 +377,19 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
 
     /// @note A catalog roughly equal to a sector.
 
+    partBlock->Version = kNewFSVersionInteger;
     partBlock->CatalogCount = blobCount;
     partBlock->Kind = kNewFSHardDrive;
     partBlock->SectorSize = sectorSz;
-    partBlock->FreeCatalog = fDiskDev.GetSectorsCount();
+    partBlock->FreeCatalog = fDiskDev.GetSectorsCount() / sizeof(NewCatalog);
     partBlock->SectorCount = fDiskDev.GetSectorsCount();
     partBlock->FreeSectors = fDiskDev.GetSectorsCount();
     partBlock->StartCatalog = kNewFSCatalogStartAddress;
     partBlock->DiskSize = fDiskDev.GetDiskSize();
+    partBlock->Flags |= kNewFSPartitionTypeBoot;
 
-    if (this->FormatCatalog(fileBlobs, blobCount, *partBlock)) {
+    /// if we can write a root catalog, then write the partition block.
+    if (this->WriteRootCatalog(fileBlobs, blobCount, *partBlock)) {
         fDiskDev.Leak().mBase = kNewFSAddressAsLba;
         fDiskDev.Leak().mSize = sectorSz;
 

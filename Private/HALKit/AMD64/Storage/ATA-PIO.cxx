@@ -106,7 +106,8 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
 
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
-  Out8(IO + ATA_REG_SEC_COUNT0, 2);
+  /// Compute sector count.
+  Out8(IO + ATA_REG_SEC_COUNT0, SectorSz / (SectorSz / 2));
 
   Out8(IO + ATA_REG_LBA0, (Lba));
   Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
@@ -133,9 +134,10 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
   drv_std_wait_io(IO);
   drv_std_select(IO);
 
+  /// Compute sector count.
   Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
-  Out8(IO + ATA_REG_SEC_COUNT0, 2);
+  Out8(IO + ATA_REG_SEC_COUNT0, SectorSz / (SectorSz / 2));
 
   Out8(IO + ATA_REG_LBA0, (Lba));
   Out8(IO + ATA_REG_LBA1, (Lba) >> 8);

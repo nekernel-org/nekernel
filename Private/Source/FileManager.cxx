@@ -47,9 +47,9 @@ bool FilesystemManagerInterface::Mount(FilesystemManagerInterface* mountPtr) {
 
 #ifdef __FSKIT_NEWFS__
 /// @brief Opens a new file.
-/// @param path 
-/// @param r 
-/// @return 
+/// @param path
+/// @param r
+/// @return
 NodePtr NewFilesystemManager::Open(const char* path, const char* r) {
   if (!path || *path == 0) return nullptr;
 
@@ -66,14 +66,14 @@ NodePtr NewFilesystemManager::Open(const char* path, const char* r) {
 }
 
 /// @brief Writes to a catalog
-/// @param node 
-/// @param data 
-/// @param flags 
-/// @return 
+/// @param node
+/// @param data
+/// @param flags
+/// @return
 Void NewFilesystemManager::Write(NodePtr node, VoidPtr data,
-                                       Int32 flags) {
+                                       Int32 flags, SizeT size) {
   if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-    fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data);
+    fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size);
 }
 
 /**
@@ -82,10 +82,10 @@ Void NewFilesystemManager::Write(NodePtr node, VoidPtr data,
  */
 
 /// @brief Reads from filesystem.
-/// @param node 
-/// @param flags 
-/// @param sz 
-/// @return 
+/// @param node
+/// @param flags
+/// @param sz
+/// @return
 VoidPtr NewFilesystemManager::Read(NodePtr node, Int32 flags, SizeT sz) {
   if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
     return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz);
@@ -94,18 +94,18 @@ VoidPtr NewFilesystemManager::Read(NodePtr node, Int32 flags, SizeT sz) {
 }
 
 /// @brief Seek from Catalog.
-/// @param node 
-/// @param off 
-/// @return 
+/// @param node
+/// @param off
+/// @return
 bool NewFilesystemManager::Seek(NodePtr node, SizeT off) {
   if (!node || off == 0) return false;
-  
+
   return fImpl->Seek(reinterpret_cast<NewCatalog*>(node), off);
 }
 
 /// @brief Tell where the catalog is/
-/// @param node 
-/// @return 
+/// @param node
+/// @return
 SizeT NewFilesystemManager::Tell(NodePtr node) {
   if (!node) return kNPos;
 
@@ -113,8 +113,8 @@ SizeT NewFilesystemManager::Tell(NodePtr node) {
 }
 
 /// @brief Rewind the catalog.
-/// @param node 
-/// @return 
+/// @param node
+/// @return
 bool NewFilesystemManager::Rewind(NodePtr node) {
   if (!node) return false;
 
@@ -122,7 +122,7 @@ bool NewFilesystemManager::Rewind(NodePtr node) {
 }
 
 /// @brief The filesystem implementation.
-/// @return 
+/// @return
 NewFSParser* NewFilesystemManager::GetImpl() noexcept { return fImpl; }
 #endif // __FSKIT_NEWFS__
 }  // namespace NewOS

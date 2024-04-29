@@ -38,13 +38,13 @@ default.
 
 #define kNewFSIdentLen 8
 #define kNewFSIdent " NewFS"
-#define kNewFSPadLen 408
+#define kNewFSPadLen 400
 
 /// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
-#define kNewFSVersionInteger 0x122
-#define kNewFSVerionString "1.2.2"
+#define kNewFSVersionInteger 0x123
+#define kNewFSVerionString "1.23"
 
 /// @brief Standard fork types.
 #define kNewFSDataFork "data"
@@ -83,7 +83,7 @@ default.
 
 /// Start After the PM headers, pad 1024 bytes.
 #define kNewFSAddressAsLba (512)
-#define kNewFSCatalogStartAddress (1024 + sizeof(NewPartitionBlock))
+#define kNewFSCatalogStartAddress (1024 + sizeof(NewPartitionBlock) + sizeof(NewCatalog))
 
 #define kResourceTypeDialog 10
 #define kResourceTypeString 11
@@ -96,7 +96,7 @@ default.
 #define kNewFSFlagUnallocated 0x00
 #define kNewFSFlagCreated 0x0F
 
-#define kNewFSMimeNameLen (216)
+#define kNewFSMimeNameLen (200)
 
 typedef NewOS::Char NewCharType;
 
@@ -116,6 +116,12 @@ struct PACKED NewCatalog final {
 
   NewOS::Int32 Flags;
   NewOS::Int32 Kind;
+
+  /// Size of the data fork.
+  NewOS::Lba DataForkSize;
+
+  /// Size of all resource forks.
+  NewOS::Lba ResourceForkOverallSize;
 
   NewOS::Lba DataFork;
   NewOS::Lba ResourceFork;
@@ -163,6 +169,8 @@ struct PACKED NewPartitionBlock final {
 
   NewOS::SizeT SectorCount;
   NewOS::SizeT SectorSize;
+
+  NewOS::UInt64 Version;
 
   NewOS::Char Pad[kNewFSPadLen];
 };
@@ -214,7 +222,7 @@ class NewFSParser final {
 
   _Output Void CloseFork(_Input NewFork* fork);
 
-  _Output NewCatalog* FindCatalog(_Input const char* catalogName);
+  _Output NewCatalog* FindCatalog(_Input const char* catalogName, Lba& outLba);
 
   _Output NewCatalog* GetCatalog(_Input const char* name);
 
@@ -224,7 +232,8 @@ class NewFSParser final {
 
   _Output NewCatalog* CreateCatalog(_Input const char* name);
 
-  bool WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data);
+  bool WriteCatalog(_Input _Output NewCatalog* catalog,
+                    voidPtr data, SizeT sizeOfData);
 
   VoidPtr ReadCatalog(_Input _Output NewCatalog* catalog,
                               SizeT dataSz);

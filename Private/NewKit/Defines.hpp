@@ -66,7 +66,7 @@ using Utf32Char = char32_t;
 
 using Void = void;
 
-using Lba = SSizeT;
+using Lba = UInt64;
 
 enum class Endian : UChar { kEndianLittle, kEndianBig, kEndianMixed, kCount };
 

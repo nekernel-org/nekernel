@@ -168,61 +168,19 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   if (!diskFormatter.IsPartitionValid()) {
     BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
 
-    memcpy(rootDesc.fFileName, "/", strlen("/"));
-    memcpy(rootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
+    CopyMem(rootDesc.fFileName, "/", StrLen("/"));
+    CopyMem(rootDesc.fForkName, kNewFSResourceFork, StrLen(kNewFSResourceFork));
 
     rootDesc.fBlobSz = BootDeviceATA::kSectorSize;
     rootDesc.fBlob = new Char[rootDesc.fBlobSz];
-    rootDesc.fParent = &rootDesc;
 
-    memset(rootDesc.fBlob, 0, rootDesc.fBlobSz);
-
-    memcpy(rootDesc.fBlob, kMachineModel " startup disk.",
+    SetMem(rootDesc.fBlob, 0, rootDesc.fBlobSz);
+    CopyMem(rootDesc.fBlob, kMachineModel " startup disk.",
             strlen(kMachineModel " startup disk."));
 
     rootDesc.fKind = kNewFSCatalogKindDir;
 
-    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor bootDesc{0};
-
-    bootDesc.fKind = kNewFSCatalogKindDir;
-
-    memcpy(bootDesc.fFileName, "/Boot", strlen("/Boot"));
-    memcpy(bootDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
-
-    bootDesc.fBlobSz = BootDeviceATA::kSectorSize;
-    bootDesc.fBlob = new Char[bootDesc.fBlobSz];
-    bootDesc.fParent = &rootDesc;
-
-    memset(bootDesc.fBlob, 0, bootDesc.fBlobSz);
-
-    memcpy(bootDesc.fBlob, kMachineModel " startup folder.",
-            strlen(kMachineModel " startup folder."));
-
-    rootDesc.fNext = &bootDesc;
-    rootDesc.fNext->fPrev = nullptr;
-
-    BDiskFormatFactory<BootDeviceATA>::BFileDescriptor appDesc{0};
-
-    appDesc.fKind = kNewFSCatalogKindDir;
-
-    memcpy(appDesc.fFileName, "/Applications", strlen("/Applications"));
-    memcpy(appDesc.fForkName, kNewFSResourceFork, strlen(kNewFSResourceFork));
-
-    appDesc.fBlobSz = BootDeviceATA::kSectorSize;
-    appDesc.fBlob = new Char[appDesc.fBlobSz];
-    appDesc.fParent = &rootDesc;
-
-    memset(appDesc.fBlob, 0, appDesc.fBlobSz);
-
-    memcpy(appDesc.fBlob, kMachineModel " applications folder.",
-            strlen(kMachineModel " applications folder."));
-
-    appDesc.fNext = nullptr;
-    appDesc.fNext->fPrev = &bootDesc;
-
-    bootDesc.fNext = &appDesc;
-
-    diskFormatter.Format(kMachineModel, &rootDesc, 3);
+    diskFormatter.Format(kMachineModel, &rootDesc, 1);
   }
 
   EFI::ExitBootServices(*MapKey, ImageHandle);
