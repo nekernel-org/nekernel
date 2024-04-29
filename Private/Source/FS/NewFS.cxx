@@ -16,12 +16,6 @@
 
 using namespace NewOS;
 
-/// forward decl.
-
-STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog,
-                             Boolean isDataFork);
-STATIC Lba ke_find_free_catalog(SizeT kind, Int32 drv);
-
 STATIC MountpointInterface sMountpointInterface;
 
 /// @brief Creates a new fork inside the New filesystem partition.
@@ -31,68 +25,39 @@ STATIC MountpointInterface sMountpointInterface;
 _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
                                          _Input NewFork& theFork) {
   if (catalog && theFork.Name[0] != 0 && theFork.DataSize > 0) {
-    Lba whereFork = 0;
+    theFork.Flags = kNewFSFlagCreated;
+    Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
+                                                   : catalog->ResourceFork;
 
-    theFork.DataOffset =
-        ke_find_free_fork(theFork.DataSize, this->fDriveIndex, catalog,
-                          theFork.Kind == kNewFSDataForkKind);
-    theFork.Flags |= kNewFSFlagCreated;
-    Lba lba = theFork.Kind == kNewFSDataForkKind ? catalog->DataFork
-                                                 : catalog->ResourceFork;
+    if (lba <= kNewFSCatalogStartAddress) return nullptr;
 
-    if (lba <= kNewFSAddressAsLba) {
-      lba = whereFork;
-    } else {
-      if (lba <= kNewFSAddressAsLba) {
-        theFork.PreviousSibling = lba;
-      }
-    }
-
-    if (theFork.Kind == kNewFSDataForkKind) {
-      if (catalog->DataFork == 0) {
-        catalog->DataFork = whereFork;
-      } else {
-        theFork.PreviousSibling = catalog->DataFork;
-      }
-    } else {
-      if (catalog->ResourceFork == 0) {
-        catalog->ResourceFork = whereFork;
-      } else {
-        theFork.PreviousSibling = catalog->ResourceFork;
-      }
-    }
+    theFork.DataOffset = lba + sizeof(NewFork);
 
     if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return nullptr;
 
     auto drv = sMountpointInterface.GetAddressOf(this->fDriveIndex);
 
-    drv->fPacket.fLba = whereFork;
-    drv->fPacket.fPacketSize = theFork.DataSize;
+    Char cpyFork[sizeof(NewFork)] = {0};
+
+    drv->fPacket.fLba = lba + sizeof(NewCatalog);
+    drv->fPacket.fPacketSize = sizeof(NewFork);
+    drv->fPacket.fPacketContent = (VoidPtr)cpyFork;
+
+    drv->fInput(&drv->fPacket);
+
+    NewFork* cpyForkStruct = (NewFork*)cpyFork;
+
+    if (cpyForkStruct->Flags == kNewFSFlagCreated) return nullptr;
+
+    /// special treatment.
+    rt_copy_memory((VoidPtr) "fs/newfs-packet", drv->fPacket.fPacketMime,
+                   rt_string_len("fs/newfs-packet"));
+
+    drv->fPacket.fLba = lba;
+    drv->fPacket.fPacketSize = sizeof(NewFork);
     drv->fPacket.fPacketContent = (VoidPtr)&theFork;
 
-    rt_copy_memory((VoidPtr) "fs/newfs-packet", drv->fPacket.fPacketMime, 16);
-
-    if (auto res =
-            fs_newfs_write(&sMountpointInterface, *drv, this->fDriveIndex);
-        res) {
-      switch (res) {
-        case 1:
-          DbgLastError() = kErrorDiskReadOnly;
-          break;
-        case 2:
-          DbgLastError() = kErrorDiskIsFull;
-          break;
-          DbgLastError() = kErrorNoSuchDisk;
-          break;
-
-        default:
-          break;
-      }
-      return nullptr;
-    }
-
-    /// Also update catalog.
-    this->WriteCatalog(catalog, nullptr, 0);
+    drv->fOutput(&drv->fPacket);
 
     return &theFork;
   }
@@ -171,7 +136,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
       name[rt_string_len(name) - 1] != NewFilesystemHelper::Separator())
     return nullptr;
 
-    /// as well as this, we don't want that.
+  /// as well as this, we don't want that.
   if (kind != kNewFSCatalogKindDir &&
       name[rt_string_len(name) - 1] == NewFilesystemHelper::Separator())
     return nullptr;
@@ -193,8 +158,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     return nullptr;
   }
 
-  for (SizeT indexFill = 0; indexFill < rt_string_len(name);
-       ++indexFill) {
+  for (SizeT indexFill = 0; indexFill < rt_string_len(name); ++indexFill) {
     copyName[indexFill] = name[indexFill];
   }
 
@@ -207,14 +171,14 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
   copyName[--indexReverseCopy] = 0;
 
   while (copyName[indexReverseCopy] != '/') {
-      copyName[indexReverseCopy] = 0;
-      --indexReverseCopy;
+    copyName[indexReverseCopy] = 0;
+    --indexReverseCopy;
   }
 
   NewCatalog* catalog = this->FindCatalog(copyName, outLba);
 
   if (!catalog) {
-      return nullptr;
+    return nullptr;
   }
 
   if (catalog->Kind == kNewFSCatalogKindFile) {
@@ -222,12 +186,9 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     return nullptr;
   }
 
-  constexpr SizeT cDefaultForkSize = 8096;
+  constexpr SizeT cDefaultForkSize = 8192;
 
   NewCatalog* catalogChild = new NewCatalog();
-
-  catalogChild->DataFork = 0UL;
-  catalogChild->ResourceFork = 0UL;
 
   catalogChild->ResourceForkOverallSize = cDefaultForkSize;
   catalogChild->DataForkSize = cDefaultForkSize;
@@ -259,21 +220,24 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     NewCatalog* nextSibling = (NewCatalog*)sectorBuf;
 
     if (startFree <= kNewFSAddressAsLba) {
-        delete catalogChild;
-        delete catalog;
+      delete catalogChild;
+      delete catalog;
 
-        return nullptr;
+      return nullptr;
     }
 
     /// allocation or reallocation or catalog...
-    if (StringBuilder::Equals(nextSibling->Name, name) ||
-        (nextSibling->Name[0] == 0 &&
+    if ((nextSibling->Name[0] == 0 &&
          nextSibling->Flags != kNewFSFlagCreated)) {
+      catalogChild->DataFork = startFree + sizeof(NewCatalog);
+      catalogChild->ResourceFork =
+          startFree + sizeof(NewCatalog) + catalogChild->DataForkSize;
+
       if ((nextSibling->Flags != kNewFSFlagCreated)) {
         nextSibling->Flags = kNewFSFlagCreated;
 
         drive->fPacket.fPacketContent = catalogChild;
-        drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
+        drive->fPacket.fPacketSize = sizeof(NewCatalog);
         drive->fPacket.fLba = startFree;
 
         if (catalogChild->Kind == kNewFSCatalogKindFile) {
@@ -290,7 +254,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
         drive->fOutput(&drive->fPacket);
 
-        kcout << "New OS: Create new catalog with success!\r\n";
+        kcout << "New OS: Create new catalog successfully!\r\n";
 
         Char sectBuf[sizeof(NewCatalog)] = {0};
 
@@ -379,11 +343,13 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
 
       partBlock->Version = kNewFSVersionInteger;
 
+      const auto cUntitledHD = "New OS HD\0";
+
       rt_copy_memory((VoidPtr)kNewFSIdent, (VoidPtr)partBlock->Ident,
                      kNewFSIdentLen);
-      rt_copy_memory((VoidPtr) "Untitled HD\0",
-                     (VoidPtr)partBlock->PartitionName,
-                     rt_string_len("Untitled HD\0"));
+
+      rt_copy_memory((VoidPtr)cUntitledHD, (VoidPtr)partBlock->PartitionName,
+                     rt_string_len(cUntitledHD));
 
       SizeT catalogCount = 0;
       SizeT sectorCount = drv_std_get_sector_count();
@@ -391,8 +357,8 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
 
       partBlock->Kind = kNewFSPartitionTypeStandard;
       partBlock->StartCatalog = kNewFSCatalogStartAddress;
-      ;
-      partBlock->CatalogCount = catalogCount;
+      partBlock->Flags |= kNewFSPartitionTypeStandard;
+      partBlock->CatalogCount = sectorCount / sizeof(NewCatalog);
       partBlock->SectorCount = sectorCount;
       partBlock->DiskSize = diskSize;
       partBlock->FreeCatalog = partBlock->StartCatalog;
@@ -406,7 +372,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
       return true;
     }
 
-    kcout << "New OS: Partition already exists.\r\n";
+    kcout << "New OS: PartitionBlock already exists.\r\n";
 
     /// return success as well, do not ignore that partition.
     return true;
@@ -418,9 +384,51 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
 /// @brief Writes the data fork into a specific catalog.
 /// @param catalog the catalog itself
 /// @param data the data.
-/// @return
+/// @return if the catalog w rote the contents successfully.
 bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
                                SizeT sizeOfData) {
+  if (sizeOfData > catalog->DataForkSize) return false;
+  if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return false;
+
+  NewFork* forkData = new NewFork();
+
+  auto drive = sMountpointInterface.GetAddressOf(this->fDriveIndex);
+
+  auto startFork = catalog->DataFork;
+
+  /// sanity check of the fork position as the condition to run the loop.
+  if (startFork >= kNewFSCatalogStartAddress) {
+    drive->fPacket.fPacketContent = forkData;
+    drive->fPacket.fPacketSize = sizeof(NewFork);
+    drive->fPacket.fLba = startFork;
+
+    drive->fInput(&drive->fPacket);
+
+    /// check if fork even exists.
+    if (forkData->Flags != kNewFSFlagCreated) {
+      DbgLastError() = kErrorDiskIsCorrupted;
+
+      delete forkData;
+      return false;
+    }
+
+    /// sanity check the fork.
+    if (forkData->DataOffset <= kNewFSCatalogStartAddress) {
+      DbgLastError() = kErrorDiskIsCorrupted;
+
+      delete forkData;
+      return false;
+    }
+
+    drive->fPacket.fPacketContent = data;
+    drive->fPacket.fPacketSize = sizeOfData;
+    drive->fPacket.fLba = forkData->DataOffset;
+
+    drive->fOutput(&drive->fPacket);
+
+    return true;
+  }
+
   return false;
 }
 
@@ -563,127 +571,6 @@ SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog) {
   if (!catalog) {
     DbgLastError() = kErrorFileNotFound;
     return false;
-  }
-
-  return 0;
-}
-
-/// @brief Find a free fork inside the filesystem.
-/// @param sz the size of the fork to set.
-/// @return the valid lba.
-STATIC Lba ke_find_free_fork(SizeT sz, Int32 drv, NewCatalog* catalog,
-                             Boolean isDataFork) {
-  if (sMountpointInterface.GetAddressOf(drv)) {
-    auto drive = *sMountpointInterface.GetAddressOf(drv);
-
-    /// prepare packet.
-    bool done = false;
-    bool error = false;
-
-    Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
-
-    while (!done) {
-      UInt16 sectorBuf[kNewFSMinimumSectorSz] = {0};
-
-      drive.fPacket.fPacketContent = sectorBuf;
-      drive.fPacket.fPacketSize = kNewFSMinimumSectorSz;
-      drive.fPacket.fLba = lba;
-
-      drive.fInput(&drive.fPacket);
-
-      if (!drive.fPacket.fPacketGood) {
-        ///! not a lot of choices, disk has become unreliable.
-        if (ke_calculate_crc32((Char*)sectorBuf, kNewFSMinimumSectorSz) !=
-            drive.fPacket.fPacketCRC32) {
-          DbgLastError() = kErrorDiskIsCorrupted;
-        }
-
-        error = true;
-        break;
-      }
-
-      NewFork* fork = (NewFork*)sectorBuf;
-
-      if (fork->DataSize == 0 && fork->Name[0] == 0 &&
-          (fork->Flags == kNewFSFlagDeleted ||
-           fork->Flags == kNewFSFlagUnallocated)) {
-        fork->DataSize = sz;
-        fork->Flags = kNewFSFlagCreated;
-
-        drive.fOutput(&drive.fPacket);
-
-        /// here it's either a read-only filesystem or something bad happened.'
-        if (!drive.fPacket.fPacketGood) {
-          DbgLastError() = kErrorDiskReadOnly;
-
-          return 0;
-        }
-
-        return lba;
-      }
-
-      lba += sizeof(NewFork);
-    }
-
-    if (error) {
-      DbgLastError() = kErrorDisk;
-      return 0;
-    }
-  }
-
-  return 0;
-}
-
-/// @brief find a free catalog.
-/// @param kind the catalog kind.
-/// @return the valid lba.
-STATIC Lba ke_find_free_catalog(SizeT kind, Int32 drv) {
-  if (sMountpointInterface.GetAddressOf(drv)) {
-    auto drive = *sMountpointInterface.GetAddressOf(drv);
-    UInt16 sectorBuf[kNewFSMinimumSectorSz] = {0};
-
-    /// prepare packet.
-
-    drive.fPacket.fPacketContent = sectorBuf;
-    drive.fPacket.fPacketSize = kNewFSMinimumSectorSz;
-    drive.fPacket.fLba = kNewFSAddressAsLba;
-
-    drive.fInput(&drive.fPacket);
-
-    NewPartitionBlock* partBlock = (NewPartitionBlock*)sectorBuf;
-
-    /// check for a valid partition.
-    if (partBlock->PartitionName[0] != 0 &&
-        rt_string_cmp(partBlock->Ident, kNewFSIdent, kNewFSIdentLen) == 0) {
-      auto startLba = partBlock->FreeCatalog;
-
-      if (startLba == 0) {
-        DbgLastError() = kErrorDiskIsFull;
-        return 1;
-      } else {
-        while (startLba != 0) {
-          drive.fPacket.fPacketContent = sectorBuf;
-          drive.fPacket.fPacketSize = kNewFSMinimumSectorSz;
-          drive.fPacket.fLba = startLba;
-
-          drive.fInput(&drive.fPacket);
-
-          NewCatalog* catalog = (NewCatalog*)sectorBuf;
-
-          if (catalog->Flags == kNewFSFlagUnallocated ||
-              catalog->Flags == kNewFSFlagDeleted) {
-            catalog->Flags = kNewFSFlagCreated;
-            catalog->Kind |= kind;
-
-            return startLba;
-          }
-
-          startLba = catalog->NextSibling;
-        }
-
-        return 0;
-      }
-    }
   }
 
   return 0;

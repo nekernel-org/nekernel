@@ -246,7 +246,7 @@ private:
     /// @param fileBlobs the blobs.
     /// @param blobCount the number of blobs to write.
     /// @param partBlock the NewFS partition block.
-    Boolean FormatCatalog(BFileDescriptor* fileBlobs, SizeT blobCount,
+    Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount,
                         NewPartitionBlock& partBlock) {
         if (partBlock.SectorSize != BootDev::kSectorSize) return false;
 
@@ -381,13 +381,15 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
     partBlock->CatalogCount = blobCount;
     partBlock->Kind = kNewFSHardDrive;
     partBlock->SectorSize = sectorSz;
-    partBlock->FreeCatalog = fDiskDev.GetSectorsCount();
+    partBlock->FreeCatalog = fDiskDev.GetSectorsCount() / sizeof(NewCatalog);
     partBlock->SectorCount = fDiskDev.GetSectorsCount();
     partBlock->FreeSectors = fDiskDev.GetSectorsCount();
     partBlock->StartCatalog = kNewFSCatalogStartAddress;
     partBlock->DiskSize = fDiskDev.GetDiskSize();
+    partBlock->Flags |= kNewFSPartitionTypeBoot;
 
-    if (this->FormatCatalog(fileBlobs, blobCount, *partBlock)) {
+    /// if we can write a root catalog, then write the partition block.
+    if (this->WriteRootCatalog(fileBlobs, blobCount, *partBlock)) {
         fDiskDev.Leak().mBase = kNewFSAddressAsLba;
         fDiskDev.Leak().mSize = sectorSz;
 
