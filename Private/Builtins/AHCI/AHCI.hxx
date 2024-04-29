@@ -318,27 +318,34 @@ typedef struct HbaCmdTbl final {
 
 /// @brief Initializes an AHCI disk.
 /// @param PortsImplemented the amount of port that have been detected.
-/// @return 
+/// @return
 NewOS::Boolean drv_std_init(NewOS::UInt16& PortsImplemented);
 
 NewOS::Boolean drv_std_detected(NewOS::Void);
 
 /// @brief Read from disk.
-/// @param Lba 
-/// @param Buf 
-/// @param SectorSz 
-/// @param Size 
-/// @return 
+/// @param Lba
+/// @param Buf
+/// @param SectorSz
+/// @param Size
+/// @return
 NewOS::Void drv_std_read(NewOS::UInt64 Lba, NewOS::Char* Buf,
                    NewOS::SizeT SectorSz, NewOS::SizeT Size);
 
 /// @brief Write to disk.
-/// @param Lba 
-/// @param Buf 
-/// @param SectorSz 
-/// @param Size 
-/// @return 
+/// @param Lba
+/// @param Buf
+/// @param SectorSz
+/// @param Size
+/// @return
 NewOS::Void drv_std_write(NewOS::UInt64 Lba, NewOS::Char* Buf,
                     NewOS::SizeT SectorSz, NewOS::SizeT Size);
+
+/// @brief get sector count.
+NewOS::SizeT drv_std_get_sector_count();
+
+/// @brief get device size.
+NewOS::SizeT drv_std_get_drv_size();
+
 
 #endif // ifdef __KERNEL__

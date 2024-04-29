@@ -15,7 +15,8 @@
 
 #define SetMem(dst, c, sz) memset(dst, c, sz)
 #define MoveMem(dst, src, sz) memcpy(dst, src, sz)
-#define CopyMem(dst, src, sz) memcpy(dst,src, sz)
+#define CopyMem(dst, src, sz) memcpy(dst, src, sz)
+#define StrLen(src) strlen(src)
 
 inline int isspace(int c) { return c == ' '; }
 

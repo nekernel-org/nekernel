@@ -24,10 +24,21 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
   NewOS::FilesystemManagerInterface::Mount(newFS);
 
   if (newFS->GetImpl()) {
-      auto catalog = newFS->GetImpl()->GetCatalog("/Boot");
-      if (catalog) {
-          NewOS::kcout << "Catalog-Path-Name: " << catalog->Name << NewOS::endl;
-          delete catalog;
+      NewCatalog* mountCatalog = newFS->GetImpl()->GetCatalog("/Boot/");
+
+      if (mountCatalog) {
+          delete newFS->GetImpl()->CreateCatalog("/Boot/System/", 0, kNewFSCatalogKindDir);
+          NewCatalog* newKernelCatalog = newFS->GetImpl()->CreateCatalog("/Boot/System/NewKernel");
+
+          if (newKernelCatalog)
+            NewOS::kcout << "Catalog-Path-Name: " << newKernelCatalog->Name << NewOS::endl;
+
+          NewOS::kcout << "Catalog-Path-Name: " << mountCatalog->Name << NewOS::endl;
+
+          delete newKernelCatalog;
+          delete mountCatalog;
+      } else {
+          delete newFS->GetImpl()->CreateCatalog("/Boot/", 0, kNewFSCatalogKindDir);
       }
   }
 
