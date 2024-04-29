@@ -73,7 +73,7 @@ ATAInit_Retry:
 
   if (statRdy & ATA_SR_ERR) {
     writer.Write(
-        L"New Boot: ATA: Select error, not an IDE based hard-drive.\r\n");
+        L"New Boot: ATA: Select error, not an IDE based hard-drive.\r");
 
     return false;
   }

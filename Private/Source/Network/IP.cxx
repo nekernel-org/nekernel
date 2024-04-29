@@ -29,7 +29,7 @@ bool RawIPAddress::operator!=(const RawIPAddress& ipv4) {
 }
 
 char& RawIPAddress::operator[](const Size& index) {
-  kcout << "[RawIPAddress::operator[]] Fetching Index...\r\n";
+  kcout << "[RawIPAddress::operator[]] Fetching Index...\r";
 
   static char IP_PLACEHOLDER = '0';
   if (index > 4) return IP_PLACEHOLDER;
@@ -42,7 +42,7 @@ RawIPAddress6::RawIPAddress6(char bytes[8]) {
 }
 
 char& RawIPAddress6::operator[](const Size& index) {
-  kcout << "[RawIPAddress6::operator[]] Fetching Index...\r\n";
+  kcout << "[RawIPAddress6::operator[]] Fetching Index...\r";
 
   static char IP_PLACEHOLDER = '0';
   if (index > 8) return IP_PLACEHOLDER;

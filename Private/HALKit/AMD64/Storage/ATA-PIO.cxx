@@ -123,6 +123,8 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
     Buf[IndexOff] = In16(IO + ATA_REG_DATA);
     drv_std_wait_io(IO);
   }
+
+  drv_std_wait_io(IO);
 }
 
 Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
@@ -153,6 +155,8 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf,
     Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
     drv_std_wait_io(IO);
   }
+
+  drv_std_wait_io(IO);
 }
 
 /// @brief is ATA detected?

@@ -20,9 +20,9 @@ NewFilesystemManager::NewFilesystemManager() {
 }
 
 NewFilesystemManager::~NewFilesystemManager() {
-    if (fImpl) {
-        delete fImpl;
-    }
+  if (fImpl) {
+    delete fImpl;
+  }
 }
 
 /// @brief Removes a node from the filesystem.
@@ -31,10 +31,7 @@ NewFilesystemManager::~NewFilesystemManager() {
 bool NewFilesystemManager::Remove(const char* fileName) {
   if (fileName == nullptr || *fileName == 0) return false;
 
-  if (auto catalog = fImpl->GetCatalog(fileName); catalog)
-    return fImpl->RemoveCatalog(catalog);
-
-  return false;
+  return fImpl->RemoveCatalog(fileName);
 }
 
 /// @brief Creates a node with the specified.

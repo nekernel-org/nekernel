@@ -65,9 +65,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   writer.Write(L"Mahrouss-Logic (R) New Boot: ")
       .Write(BVersionString::Shared());
 
-  writer.Write(L"\r\nNew Boot: Firmware Vendor: ")
+  writer.Write(L"\rNew Boot: Firmware Vendor: ")
       .Write(SystemTable->FirmwareVendor)
-      .Write(L"\r\n");
+      .Write(L"\r");
 
   UInt32* MapKey = new UInt32();
   UInt32* SizePtr = new UInt32();
@@ -151,7 +151,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
           writer.WriteCharacter(buf[i]);
         }
       } else
-        writer.Write(L"\r\n");
+        writer.Write(L"\r");
     }
   }
 

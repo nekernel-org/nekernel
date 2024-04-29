@@ -225,7 +225,7 @@ public:
                 return false;
         }
 
-        writer.Write(L"Device Size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r\n");
+        writer.Write(L"Device Size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
 
         if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
             blockPart->DiskSize < 1 ||
@@ -236,7 +236,7 @@ public:
             EFI::ThrowError(L"Invalid-Partition-Name", L"Invalid disk partition.");
         }
 
-        writer.Write(L"Device Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r\n");
+        writer.Write(L"Device Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
         return true;
     }
@@ -300,7 +300,7 @@ private:
         SizeT cur = 0UL;
 
         writer.Write((catalogKind->Kind == kNewFSCatalogKindFile) ? L"New Boot: Write-File: " :
-                        L"New Boot: Write-Directory: " ).Write(blob->fFileName).Write(L"\r\n");
+                        L"New Boot: Write-Directory: " ).Write(blob->fFileName).Write(L"\r");
 
         /// Set disk cursor here.
 
@@ -396,7 +396,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
         fDiskDev.Write(buf, sectorSz);
 
         BTextWriter writer;
-        writer.Write(L"New Boot: Write-Partition, OK.\r\n");
+        writer.Write(L"New Boot: Write-Partition, OK.\r");
 
         return true;
     } else {

@@ -74,7 +74,7 @@ STATIC VoidPtr ke_find_unused_heap(Int32 flags) {
         !UserHeapManager::The()[index].Leak().Leak().Present()) {
       UserHeapManager::Leak().Leak().TogglePresent(
           UserHeapManager::The()[index].Leak().Leak(), true);
-      kcout << "[ke_find_unused_heap] Done, trying to make a pool now...\r\n";
+      kcout << "[ke_find_unused_heap] Done, trying to make a pool now...\r";
 
       return ke_make_heap_internal(
           (VoidPtr)UserHeapManager::The()[index].Leak().Leak().VirtualAddress(),
@@ -129,7 +129,7 @@ STATIC Void ke_free_heap_internal(VoidPtr virtualAddress) {
     poolHdr->fFree = true;
     poolHdr->fFlags = 0;
 
-    kcout << "[ke_free_heap_internal] Successfully marked header as free!\r\n";
+    kcout << "[ke_free_heap_internal] Successfully marked header as free!\r";
   }
 }
 

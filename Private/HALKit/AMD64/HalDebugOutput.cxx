@@ -68,7 +68,10 @@ EXTERN_C void ke_io_write(const char* bytes) {
   SizeT len = rt_string_len(bytes, 256);
 
   while (index < len) {
-    HAL::Out8(Detail::PORT, bytes[index]);
+    if (bytes[index] == '\r')
+        HAL::Out8(Detail::PORT, '\r');
+
+    HAL::Out8(Detail::PORT, bytes[index] == '\r' ? '\n' : bytes[index]);
     ++index;
   }
 

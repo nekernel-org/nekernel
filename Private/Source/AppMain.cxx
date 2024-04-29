@@ -34,6 +34,8 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
       NewCatalog* newKernelCatalog =
           newFS->GetImpl()->CreateCatalog("/Boot/System/ExampleTextFile");
 
+          NewOS::kcout << NewOS::hex_number(newKernelCatalog->Flags) << NewOS::endl;
+
       if (newKernelCatalog)
         NewOS::kcout << "Catalog-Path-Name: " << newKernelCatalog->Name
                      << NewOS::endl;
@@ -43,14 +45,8 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
 
       constexpr auto cDataSz = 512;
       NewOS::Char theData[cDataSz] = {
-          "THIS FORK\rCONTAINS DATA\rAS\rYOU\rCAN\rSEE...THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE.."};
+          "About NewKernel...\rNewKernel is the System behind "
+          "NewOS.\rFeaturing modern common features, yet innovative.\r"};
 
       NewFork theFork{0};
       NewOS::rt_copy_memory((NewOS::VoidPtr) "EditableText",
@@ -62,6 +58,17 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
 
       newFS->GetImpl()->CreateFork(newKernelCatalog, theFork);
       newFS->GetImpl()->WriteCatalog(newKernelCatalog, theData, cDataSz);
+
+      //newFS->GetImpl()->RemoveCatalog("/Boot/System/ExampleTextFile");
+
+
+
+      char* buf = nullptr;
+
+      buf =
+              (NewOS::Char*)newFS->GetImpl()->ReadCatalog("/Boot/System/ExampleTextFile", 512);
+
+      NewOS::kcout << buf << NewOS::endl;
 
       delete newKernelCatalog;
       delete mountCatalog;

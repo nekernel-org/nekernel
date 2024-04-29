@@ -11,7 +11,7 @@
 
 namespace NewOS
 {
-template <typename T, Size N> 
+template <typename T, Size N>
 class Array final
 {
 public:
@@ -26,7 +26,7 @@ public:
         if (At > N)
             return {};
 
-        kcout << "Returning element\r\n";
+        kcout << "Returning element\r";
         return ErrorOr<T>(fArray[At]);
     }
 
@@ -65,6 +65,6 @@ public:
 
 private:
     T fArray[N];
-    
+
 };
 } // namespace NewOS

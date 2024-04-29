@@ -92,9 +92,9 @@ default.
 #define kConfigLen 64
 #define kPartLen 32
 
-#define kNewFSFlagDeleted 0xF0
-#define kNewFSFlagUnallocated 0x00
-#define kNewFSFlagCreated 0x0F
+#define kNewFSFlagDeleted 70
+#define kNewFSFlagUnallocated 00
+#define kNewFSFlagCreated 71
 
 #define kNewFSMimeNameLen (200)
 
@@ -114,7 +114,9 @@ struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
   NewCharType Mime[kNewFSMimeNameLen];
 
+  /// Catalog status flag.
   NewOS::Int32 Flags;
+  /// Catalog kind.
   NewOS::Int32 Kind;
 
   /// Size of the data fork.
@@ -235,14 +237,14 @@ class NewFSParser final {
   bool WriteCatalog(_Input _Output NewCatalog* catalog,
                     voidPtr data, SizeT sizeOfData);
 
-  VoidPtr ReadCatalog(_Input _Output NewCatalog* catalog,
+  VoidPtr ReadCatalog(_Input _Output const char* catalogName,
                               SizeT dataSz);
 
   bool Seek(_Input _Output NewCatalog* catalog, SizeT off);
 
   SizeT Tell(_Input _Output NewCatalog* catalog);
 
-  bool RemoveCatalog(_Input _Output NewCatalog* catalog);
+  bool RemoveCatalog(_Input const Char* catalog);
 
   bool CloseCatalog(_InOut NewCatalog* catalog);
 

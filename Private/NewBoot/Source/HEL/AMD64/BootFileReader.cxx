@@ -52,12 +52,12 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
   EfiGUID guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
   if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk) {
-    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r");
     this->mErrorCode = kNotSupported;
   }
 
   if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk) {
-    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r");
     this->mErrorCode = kNotSupported;
     return;
   }
@@ -65,7 +65,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
   /// Start doing disk I/O
 
   if (efp->OpenVolume(efp, &rootFs) != kEfiOk) {
-    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Volume").Write(L"\r\n");
+    mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Volume").Write(L"\r");
     EFI::ThrowError(L"NoSuchVolume", L"No Such volume.");
     this->mErrorCode = kNotSupported;
     return;
@@ -77,7 +77,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
       kEfiOk) {
     mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Path: ")
         .Write(mPath)
-        .Write(L"\r\n");
+        .Write(L"\r");
     EFI::ThrowError(L"NoSuchPath", L"No Such file on filesystem.");
     this->mErrorCode = kNotSupported;
     return;
@@ -109,7 +109,7 @@ Void BFileReader::ReadAll(SizeT until, SizeT chunk) {
   if (mBlob == nullptr) {
     if (auto err = BS->AllocatePool(EfiLoaderCode, until, (VoidPtr*)&mBlob) !=
                    kEfiOk) {
-      mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r\n");
+      mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r");
       EFI::ThrowError(L"OutOfMemory", L"Allocation error.");
     }
   }

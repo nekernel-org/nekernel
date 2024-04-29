@@ -52,7 +52,7 @@ OwnPtr<IOBuf<Char *>> DMAFactory::Construct(OwnPtr<DMAWrapper> &dma) {
 
   if (!dmaOwnPtr) return {};
 
-  kcout << "Returning the new OwnPtr<IOBuf<Char*>>!\r\n";
+  kcout << "Returning the new OwnPtr<IOBuf<Char*>>!\r";
   return dmaOwnPtr;
 }
 

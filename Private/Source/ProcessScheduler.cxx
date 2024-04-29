@@ -34,7 +34,7 @@ const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
 /***********************************************************************************/
 
 void ProcessHeader::Crash() {
-  kcout << "ProcessScheduler: Crashed, ExitCode: -1.\r\n";
+  kcout << "ProcessScheduler: Crashed, ExitCode: -1.\r";
   MUST_PASS(ke_bug_check());
 
   this->Exit(-1);
@@ -162,7 +162,7 @@ SizeT ProcessScheduler::Add(Ref<ProcessHeader> &process) {
 
   if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel) return -1;
 
-  kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r\n";
+  kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r";
 
   /// Create heap according to type of process.
   if (process.Leak().Kind == ProcessHeader::kUserKind)
@@ -188,7 +188,7 @@ SizeT ProcessScheduler::Add(Ref<ProcessHeader> &process) {
 bool ProcessScheduler::Remove(SizeT process) {
   if (process > mTeam.AsArray().Count()) return false;
 
-  kcout << "ProcessScheduler::Remove(SizeT process)\r\n";
+  kcout << "ProcessScheduler::Remove(SizeT process)\r";
 
   return mTeam.AsArray().Remove(process);
 }
@@ -234,7 +234,7 @@ Ref<ProcessScheduler> ProcessScheduler::Shared() {
 Ref<ProcessHeader> &ProcessScheduler::GetCurrent() { return mTeam.AsRef(); }
 
 PID &ProcessHelper::GetCurrentPID() {
-  kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r\n";
+  kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r";
   return ProcessScheduler::Shared().Leak().GetCurrent().Leak().ProcessId;
 }
 
@@ -275,7 +275,7 @@ bool ProcessHelper::StartScheduling() {
   SizeT ret = processRef.Run();
 
   kcout << StringBuilder::FromInt(
-      "ProcessHelper::StartScheduling() Iterated over {%} jobs inside team.\r\n", ret);
+      "ProcessHelper::StartScheduling() Iterated over {%} jobs inside team.\r", ret);
 
   return true;
 }
