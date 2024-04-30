@@ -16,6 +16,7 @@
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
 #include <NewKit/Utils.hpp>
+#include <NewKit/KernelCheck.hpp>
 
 /// @file Main microkernel entrypoint.
 
@@ -25,51 +26,40 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
 
   NewOS::FilesystemManagerInterface::Mount(newFS);
 
+  constexpr auto cDataSz = 512;
+  NewOS::UInt8 theData[cDataSz] = { "\x48\xC7\xC0\x00\x00\x00\x00\xC3\xC1" };
+
   if (newFS->GetImpl()) {
     NewCatalog* textCatalog = nullptr;
 
-    if (!newFS->GetImpl()->GetCatalog("/EditableText")) {
-        constexpr auto cDataSz = 512;
-        NewOS::Char theData[cDataSz] = {
-        "About NewKernel...\rNewKernel is the System behind "
-        "NewOS.\rFeaturing modern common features, yet innovative.\r"};
+    if (!newFS->GetImpl()->GetCatalog("/System/.NEWFS_SANITIZER")) {
 
         NewFork theFork{0};
 
-        NewOS::rt_copy_memory((NewOS::VoidPtr) "EditableText",
+        NewOS::rt_copy_memory((NewOS::VoidPtr) "RawExecutable",
                         (NewOS::VoidPtr)theFork.Name,
-                        NewOS::rt_string_len("EditableText"));
+                        NewOS::rt_string_len("RawExecutable"));
 
         theFork.Kind = NewOS::kNewFSDataForkKind;
         theFork.DataSize = kNewFSForkSize;
 
-        textCatalog = newFS->GetImpl()->CreateCatalog("/EditableText");
+        newFS->GetImpl()->CreateCatalog("/System/", 0, kNewFSCatalogKindDir);
+        textCatalog = newFS->GetImpl()->CreateCatalog("/System/.NEWFS_SANITIZER");
 
         newFS->GetImpl()->CreateFork(textCatalog, theFork);
-        newFS->GetImpl()->WriteCatalog(textCatalog, theData, cDataSz, "EditableText");
-
-        NewFork theForkPreview{0};
-
-        theForkPreview.Kind = NewOS::kNewFSDataForkKind;
-        theForkPreview.DataSize = kNewFSForkSize;
-
-        NewOS::rt_copy_memory((NewOS::VoidPtr) "EditableTextPreview",
-                                (NewOS::VoidPtr)theForkPreview.Name,
-                                NewOS::rt_string_len("EditableTextPreview"));
-
-        NewOS::Char theDataPreview[cDataSz] = { "NewKernel Info:\r\tNewKernel!" };
-        newFS->GetImpl()->CreateFork(textCatalog, theForkPreview);
-
-        newFS->GetImpl()->WriteCatalog(textCatalog, theDataPreview, cDataSz, "EditableTextPreview");
-    } else {
-        NewOS::kcout << "Catalog already exists.\r";
+        newFS->GetImpl()->WriteCatalog(textCatalog, theData, cDataSz, "RawExecutable");
     }
 
-    char* buf = nullptr;
+    NewOS::UInt8* buf = nullptr;
 
-    buf = (NewOS::Char*)newFS->GetImpl()->ReadCatalog(newFS->GetImpl()->GetCatalog("/EditableText"), 512, "EditableTextPreview");
+    buf = (NewOS::UInt8*)newFS->GetImpl()->ReadCatalog(newFS->GetImpl()->GetCatalog("/System/.NEWFS_SANITIZER"), 512, "RawExecutable");
 
-    NewOS::kcout << buf << NewOS::endl;
+    for (NewOS::SizeT index = 0UL; index < cDataSz; ++index) {
+        if (buf[index] != theData[index]) {
+            NewOS::kcout << "Diff-Detected: " << NewOS::hex_number(buf[index]) << NewOS::endl;
+            NewOS::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+        }
+    }
   }
 
   while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0)

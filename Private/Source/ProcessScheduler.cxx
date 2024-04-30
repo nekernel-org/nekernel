@@ -13,6 +13,7 @@
 #include <KernelKit/SMPManager.hpp>
 #include <KernelKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
+#include <KernelKit/HError.hpp>
 
 ///! bugs = 0
 
@@ -48,7 +49,12 @@ void ProcessHeader::Wake(const bool should_wakeup) {
 /***********************************************************************************/
 
 VoidPtr ProcessHeader::New(const SizeT &sz) {
-  if (this->FreeMemory < 1) return nullptr;
+  if (this->FreeMemory < 1) {
+      DbgLastError() = kErrorHeapOutOfMemory;
+      this->Crash(); /// out of memory.
+
+      return nullptr;
+  }
 
   if (this->HeapCursor) {
     VoidPtr ptr = this->HeapCursor;
@@ -66,7 +72,7 @@ VoidPtr ProcessHeader::New(const SizeT &sz) {
 /***********************************************************************************/
 
 /* @brief checks if runtime pointer is in region. */
-bool rt_in_pool_region(VoidPtr pool_ptr, VoidPtr pool, const SizeT &sz) {
+bool rt_is_in_pool(VoidPtr pool_ptr, VoidPtr pool, const SizeT &sz) {
   UIntPtr *_pool_ptr = (UIntPtr *)pool_ptr;
   UIntPtr *_pool = (UIntPtr *)pool;
 
@@ -86,7 +92,7 @@ Boolean ProcessHeader::Delete(VoidPtr ptr, const SizeT &sz) {
   // also check for the amount of allocations we've done so far.
   if (this->UsedMemory < 1) return false;
 
-  if (rt_in_pool_region(ptr, this->HeapCursor, this->UsedMemory)) {
+  if (rt_is_in_pool(ptr, this->HeapCursor, this->UsedMemory)) {
     this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor - (sizeof(sz)));
     rt_zero_memory(ptr, sz);
 

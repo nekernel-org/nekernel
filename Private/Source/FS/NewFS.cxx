@@ -66,15 +66,16 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 
             prevFork = cpyFork;
         } else {
+            /// This is a check that we have, in order to link the previous fork entry.
+            if (lba >= kNewFSCatalogStartAddress) {
+                prevFork.NextSibling = lba;
+
+                /// write to disk.
+                drv->fOutput(&drv->fPacket);
+            }
+
             break;
         }
-    }
-
-
-    if (lba >= kNewFSCatalogStartAddress) {
-        prevFork.NextSibling = lba;
-
-        drv->fOutput(&drv->fPacket);
     }
 
     constexpr auto cForkPadding = 4;
@@ -90,6 +91,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 
     drv->fOutput(&drv->fPacket);
 
+    /// log what we have now.
     kcout << "New OS: Wrote fork data at: " << hex_number(theFork.DataOffset) << endl;
     kcout << "New OS: Wrote fork at: " << hex_number(lba) << endl;
 
