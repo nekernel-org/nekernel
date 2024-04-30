@@ -26,38 +26,37 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
 
   NewOS::FilesystemManagerInterface::Mount(newFS);
 
-  constexpr auto cDataSz = 512;
-  NewOS::UInt8 theData[cDataSz] = { "\x48\xC7\xC0\x00\x00\x00\x00\xC3\xC1" };
+  constexpr auto sanitizerSize = 512;
+  NewOS::UInt8 sanitizerBytes[sanitizerSize] = { "\x48\xC7\xC0\x00\x00\x00\x00\xC3\xC1" };
 
   if (newFS->GetImpl()) {
-    NewCatalog* textCatalog = nullptr;
+    NewCatalog* sanitizerCatalog = nullptr;
 
-    if (!newFS->GetImpl()->GetCatalog("/System/.NEWFS_SANITIZER")) {
+    if (!newFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%")) {
+        NewFork sanitizerFork{0};
 
-        NewFork theFork{0};
+        NewOS::rt_copy_memory((NewOS::VoidPtr) "/System/%NKSYSSAN%$RawExecutable",
+                        (NewOS::VoidPtr)sanitizerFork.Name,
+                        NewOS::rt_string_len("/System/%NKSYSSAN%$RawExecutable"));
 
-        NewOS::rt_copy_memory((NewOS::VoidPtr) "/System/.NEWFS_SANITIZER$RawExecutable",
-                        (NewOS::VoidPtr)theFork.Name,
-                        NewOS::rt_string_len("/System/.NEWFS_SANITIZER$RawExecutable"));
-
-        theFork.Kind = NewOS::kNewFSDataForkKind;
-        theFork.DataSize = kNewFSForkSize;
+        sanitizerFork.Kind = NewOS::kNewFSDataForkKind;
+        sanitizerFork.DataSize = kNewFSForkSize;
 
         newFS->GetImpl()->CreateCatalog("/System/", 0, kNewFSCatalogKindDir);
-        textCatalog = newFS->GetImpl()->CreateCatalog("/System/.NEWFS_SANITIZER");
+        sanitizerCatalog = newFS->GetImpl()->CreateCatalog("/System/%NKSYSSAN%");
 
-        newFS->GetImpl()->CreateFork(textCatalog, theFork);
-        newFS->GetImpl()->WriteCatalog(textCatalog, theData, cDataSz, "/System/.NEWFS_SANITIZER$RawExecutable");
+        newFS->GetImpl()->CreateFork(sanitizerCatalog, sanitizerFork);
+        newFS->GetImpl()->WriteCatalog(sanitizerCatalog, sanitizerBytes, sanitizerSize, "/System/%NKSYSSAN%$RawExecutable");
     }
 
     NewOS::UInt8* buf = nullptr;
 
     buf = (NewOS::UInt8*)newFS->GetImpl()->ReadCatalog(
-        newFS->GetImpl()->GetCatalog("/System/.NEWFS_SANITIZER"),
-        512, "/System/.NEWFS_SANITIZER$RawExecutable");
+        newFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%"),
+        512, "/System/%NKSYSSAN%$RawExecutable");
 
-    for (NewOS::SizeT index = 0UL; index < cDataSz; ++index) {
-        if (buf[index] != theData[index]) {
+    for (NewOS::SizeT index = 0UL; index < sanitizerSize; ++index) {
+        if (buf[index] != sanitizerBytes[index]) {
             NewOS::kcout << "Diff-Detected: " << NewOS::hex_number(buf[index]) << NewOS::endl;
             NewOS::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
         }
