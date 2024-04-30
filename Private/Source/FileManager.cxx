@@ -70,10 +70,13 @@ NodePtr NewFilesystemManager::Open(const char* path, const char* r) {
 /// @param data
 /// @param flags
 /// @return
-Void NewFilesystemManager::Write(NodePtr node, VoidPtr data,
-                                       Int32 flags, SizeT size) {
+Void NewFilesystemManager::Write(NodePtr node, VoidPtr data, Int32 flags,
+                                 SizeT size) {
+  constexpr const char* cReadAllFork = kNewFSDataFork;
+
   if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-    fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size);
+    fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
+                        cReadAllFork);
 }
 
 /**
@@ -87,8 +90,11 @@ Void NewFilesystemManager::Write(NodePtr node, VoidPtr data,
 /// @param sz
 /// @return
 VoidPtr NewFilesystemManager::Read(NodePtr node, Int32 flags, SizeT sz) {
+  constexpr const char* cReadAllFork = kNewFSDataFork;
+
   if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-    return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz);
+    return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz,
+                              cReadAllFork);
 
   return nullptr;
 }
@@ -124,5 +130,5 @@ bool NewFilesystemManager::Rewind(NodePtr node) {
 /// @brief The filesystem implementation.
 /// @return
 NewFSParser* NewFilesystemManager::GetImpl() noexcept { return fImpl; }
-#endif // __FSKIT_NEWFS__
+#endif  // __FSKIT_NEWFS__
 }  // namespace NewOS

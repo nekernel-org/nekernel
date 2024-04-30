@@ -103,7 +103,7 @@ enum {
 
 #define kPefStart "__ImageStart"
 
-#define kPefForkKind "PEF!"
-#define kPefForkKindFAT "FEP!"
+#define kPefForkKind kPefMagic
+#define kPefForkKindFAT kPefMagicFat
 
 #endif /* ifndef __PEF__ */

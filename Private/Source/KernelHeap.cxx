@@ -62,9 +62,6 @@ VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user) {
 
   ++kHeapCount;
 
-  NewOS::kcout << "New OS: Allocate: " << hex_number((IntPtr)wrapper.VirtualAddress() +
-                                   sizeof(Detail::HeapInformationBlock)) << endl;
-
   return reinterpret_cast<VoidPtr>(wrapper.VirtualAddress() +
                                    sizeof(Detail::HeapInformationBlock));
 }
@@ -80,8 +77,6 @@ Int32 ke_delete_ke_heap(VoidPtr heapPtr) {
   Detail::HeapInformationBlockPtr virtualAddress =
       reinterpret_cast<Detail::HeapInformationBlockPtr>(
           (UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
-
-  NewOS::kcout << "New OS: Freeing: " << hex_number((UIntPtr)virtualAddress) << endl;
 
   if (virtualAddress && virtualAddress->fMagic == kKernelHeapMagic) {
     if (!virtualAddress->fPresent) {

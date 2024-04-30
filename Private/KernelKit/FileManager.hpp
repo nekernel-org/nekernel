@@ -130,7 +130,7 @@ class NewFilesystemManager final : public FilesystemManagerInterface {
 
   NewFSParser* GetImpl() noexcept;
 
- public:
+ private:
   NewFSParser *fImpl{nullptr};
 };
 

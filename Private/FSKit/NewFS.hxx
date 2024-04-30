@@ -30,11 +30,7 @@ default.
 #define kNewFSInvalidCatalog -1
 #define kNewFSNodeNameLen 256
 
-#ifdef __x86_64__
 #define kNewFSMinimumSectorSz (512)
-#else
-#define kNewFSMinimumSectorSz (1024)
-#endif // ifdef __x86_64__
 
 #define kNewFSIdentLen 8
 #define kNewFSIdent " NewFS"
@@ -53,6 +49,8 @@ default.
 #define kNewFSCatalogKindFile 1
 #define kNewFSCatalogKindDir 2
 #define kNewFSCatalogKindAlias 3
+
+#define kNewFSForkSize (8192)
 
 //! shared between network or
 //! other filesystems. Export forks as .zip when copying.
@@ -125,7 +123,7 @@ struct PACKED NewCatalog final {
   NewOS::Lba DataForkSize;
 
   /// Size of all resource forks.
-  NewOS::Lba ResourceForkOverallSize;
+  NewOS::Lba ResourceForkSize;
 
   NewOS::Lba DataFork;
   NewOS::Lba ResourceFork;
@@ -134,7 +132,10 @@ struct PACKED NewCatalog final {
   NewOS::Lba PrevSibling;
 };
 
-/// @brief Fork type.
+/// @brief Fork type, contains a data page.
+/// @note The way we store is way different than how other filesystems do, specific chunk of code are
+/// written into either the data fork or resource fork, the resource fork is reserved for file metadata.
+/// whereas the data fork is reserved for file data.
 struct PACKED NewFork final {
   NewCharType Name[kNewFSNodeNameLen];
 
@@ -237,10 +238,10 @@ class NewFSParser final {
   _Output NewCatalog* CreateCatalog(_Input const char* name);
 
   bool WriteCatalog(_Input _Output NewCatalog* catalog,
-                    voidPtr data, SizeT sizeOfData);
+                    voidPtr data, SizeT sizeOfData, _Input const char* forkName);
 
   VoidPtr ReadCatalog(_Input _Output NewCatalog* catalog,
-                              SizeT dataSz);
+                              SizeT dataSz, _Input const char* forkName);
 
   bool Seek(_Input _Output NewCatalog* catalog, SizeT off);
 
