@@ -41,19 +41,33 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
                         NewOS::rt_string_len("EditableText"));
 
         theFork.Kind = NewOS::kNewFSDataForkKind;
-        theFork.DataSize = cDataSz;
+        theFork.DataSize = kNewFSForkSize;
 
         textCatalog = newFS->GetImpl()->CreateCatalog("/EditableText");
 
         newFS->GetImpl()->CreateFork(textCatalog, theFork);
-        newFS->GetImpl()->WriteCatalog(textCatalog, theData, cDataSz);
+        newFS->GetImpl()->WriteCatalog(textCatalog, theData, cDataSz, "EditableText");
+
+        NewFork theForkPreview{0};
+
+        theForkPreview.Kind = NewOS::kNewFSDataForkKind;
+        theForkPreview.DataSize = kNewFSForkSize;
+
+        NewOS::rt_copy_memory((NewOS::VoidPtr) "EditableTextPreview",
+                                (NewOS::VoidPtr)theForkPreview.Name,
+                                NewOS::rt_string_len("EditableTextPreview"));
+
+        NewOS::Char theDataPreview[cDataSz] = { "NewKernel Info:\r\tNewKernel!" };
+        newFS->GetImpl()->CreateFork(textCatalog, theForkPreview);
+
+        newFS->GetImpl()->WriteCatalog(textCatalog, theDataPreview, cDataSz, "EditableTextPreview");
     } else {
         NewOS::kcout << "Catalog already exists.\r";
     }
 
     char* buf = nullptr;
 
-    buf = (NewOS::Char*)newFS->GetImpl()->ReadCatalog(newFS->GetImpl()->GetCatalog("/EditableText"), 512);
+    buf = (NewOS::Char*)newFS->GetImpl()->ReadCatalog(newFS->GetImpl()->GetCatalog("/EditableText"), 512, "EditableTextPreview");
 
     NewOS::kcout << buf << NewOS::endl;
   }

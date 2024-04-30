@@ -270,7 +270,7 @@ private:
             catalogKind->DataForkSize += blob->fBlobSz;
         } else {
             catalogKind->ResourceFork = (startLba + sizeof(NewCatalog));
-            catalogKind->ResourceForkOverallSize += blob->fBlobSz;
+            catalogKind->ResourceForkSize += blob->fBlobSz;
         }
 
         /// before going to forks, we must check for the catalog name first.
