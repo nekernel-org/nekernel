@@ -168,16 +168,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   if (!diskFormatter.IsPartitionValid()) {
     BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
 
-    CopyMem(rootDesc.fFileName, "/", StrLen("/"));
-    CopyMem(rootDesc.fForkName, kNewFSResourceFork, StrLen(kNewFSResourceFork));
-
-    rootDesc.fBlobSz = BootDeviceATA::kSectorSize;
-    rootDesc.fBlob = new Char[rootDesc.fBlobSz];
-
-    SetMem(rootDesc.fBlob, 0, rootDesc.fBlobSz);
-    CopyMem(rootDesc.fBlob, kMachineModel " startup disk.",
-            strlen(kMachineModel " startup disk."));
-
+    CopyMem(rootDesc.fFileName, kNewFSRoot, StrLen(kNewFSRoot));
     rootDesc.fKind = kNewFSCatalogKindDir;
 
     diskFormatter.Format(kMachineModel, &rootDesc, 1);

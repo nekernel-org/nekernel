@@ -64,7 +64,11 @@ class FilesystemAutomountProvider final {
           sanitizerFork.Kind = NewOS::kNewFSDataForkKind;
           sanitizerFork.DataSize = kNewFSForkSize;
 
-          fNewFS->GetImpl()->CreateCatalog("/System/", 0, kNewFSCatalogKindDir);
+          delete fNewFS->GetImpl()->CreateCatalog("/System/", 0, kNewFSCatalogKindDir);
+          delete fNewFS->GetImpl()->CreateCatalog("/Boot/", 0, kNewFSCatalogKindDir);
+          delete fNewFS->GetImpl()->CreateCatalog("/Support/", 0, kNewFSCatalogKindDir);
+          delete fNewFS->GetImpl()->CreateCatalog("/Applications/", 0, kNewFSCatalogKindDir);
+
           sanitizerCatalog =
               fNewFS->GetImpl()->CreateCatalog("/System/%NKSYSSAN%");
 
@@ -79,6 +83,12 @@ class FilesystemAutomountProvider final {
         buf = (NewOS::UInt8*)fNewFS->GetImpl()->ReadCatalog(
             fNewFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%"), 512,
             "/System/%NKSYSSAN%$RawExecutable");
+
+        if (!buf) {
+            NewOS::kcout << "Bad-Ptr: " << NewOS::hex_number((NewOS::UIntPtr)buf)
+                           << NewOS::endl;
+              NewOS::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+        }
 
         for (NewOS::SizeT index = 0UL; index < sanitizerSize; ++index) {
           if (buf[index] != sanitizerBytes[index]) {

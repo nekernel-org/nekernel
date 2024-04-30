@@ -9,7 +9,7 @@
 
     ?/?/?: Added file (amlel)
     12/02/24: Add UUID macro for EPM and GPT partition schemes.
-    3/16/24: Add mandatory sector size, kNewFSMinimumSectorSz is set to 2048 by
+    3/16/24: Add mandatory sector size, kNewFSSectorSz is set to 2048 by
 default.
 
 ------------------------------------------- */
@@ -30,7 +30,7 @@ default.
 #define kNewFSInvalidCatalog -1
 #define kNewFSNodeNameLen 256
 
-#define kNewFSMinimumSectorSz (512)
+#define kNewFSSectorSz (512)
 
 #define kNewFSIdentLen 8
 #define kNewFSIdent " NewFS"
