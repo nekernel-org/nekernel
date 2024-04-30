@@ -174,7 +174,7 @@ SizeT ProcessScheduler::Add(Ref<ProcessHeader> &process) {
   if (process.Leak().Kind == ProcessHeader::kUserKind)
     process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
   else if (process.Leak().Kind == ProcessHeader::kLibKind)
-    process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw || kUserHeapShared);
+    process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
   else
     process.Leak().HeapPtr = rt_new_heap(kUserHeapDriver | kUserHeapRw);
 

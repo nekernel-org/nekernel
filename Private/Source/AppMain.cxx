@@ -36,9 +36,9 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
 
         NewFork theFork{0};
 
-        NewOS::rt_copy_memory((NewOS::VoidPtr) "RawExecutable",
+        NewOS::rt_copy_memory((NewOS::VoidPtr) "/System/.NEWFS_SANITIZER$RawExecutable",
                         (NewOS::VoidPtr)theFork.Name,
-                        NewOS::rt_string_len("RawExecutable"));
+                        NewOS::rt_string_len("/System/.NEWFS_SANITIZER$RawExecutable"));
 
         theFork.Kind = NewOS::kNewFSDataForkKind;
         theFork.DataSize = kNewFSForkSize;
@@ -47,12 +47,14 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
         textCatalog = newFS->GetImpl()->CreateCatalog("/System/.NEWFS_SANITIZER");
 
         newFS->GetImpl()->CreateFork(textCatalog, theFork);
-        newFS->GetImpl()->WriteCatalog(textCatalog, theData, cDataSz, "RawExecutable");
+        newFS->GetImpl()->WriteCatalog(textCatalog, theData, cDataSz, "/System/.NEWFS_SANITIZER$RawExecutable");
     }
 
     NewOS::UInt8* buf = nullptr;
 
-    buf = (NewOS::UInt8*)newFS->GetImpl()->ReadCatalog(newFS->GetImpl()->GetCatalog("/System/.NEWFS_SANITIZER"), 512, "RawExecutable");
+    buf = (NewOS::UInt8*)newFS->GetImpl()->ReadCatalog(
+        newFS->GetImpl()->GetCatalog("/System/.NEWFS_SANITIZER"),
+        512, "/System/.NEWFS_SANITIZER$RawExecutable");
 
     for (NewOS::SizeT index = 0UL; index < cDataSz; ++index) {
         if (buf[index] != theData[index]) {
