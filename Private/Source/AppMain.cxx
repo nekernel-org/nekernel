@@ -45,57 +45,23 @@ class FilesystemAutomountProvider final {
       /// Sample AMD64 program,
       /// mov rax, 0x0
       /// ret
-      /// @note there was a 0xc1 before, to delimit the program, but I removed it. We
-      /// don't need that now.
+      /// @note there was a 0xc1 before, to delimit the program, but I removed
+      /// it. We don't need that now.
       NewOS::UInt8 sanitizerBytes[sanitizerSize] = {
           "\x48\xC7\xC0\x00\x00\x00\x00\xC3"};
 
       if (fNewFS->GetImpl()) {
         NewCatalog* sanitizerCatalog = nullptr;
 
-        if (!fNewFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%")) {
-          NewFork sanitizerFork{0};
-
-          NewOS::rt_copy_memory(
-              (NewOS::VoidPtr) "/System/%NKSYSSAN%$RawExecutable",
-              (NewOS::VoidPtr)sanitizerFork.Name,
-              NewOS::rt_string_len("/System/%NKSYSSAN%$RawExecutable"));
-
-          sanitizerFork.Kind = NewOS::kNewFSDataForkKind;
-          sanitizerFork.DataSize = kNewFSForkSize;
-
-          delete fNewFS->GetImpl()->CreateCatalog("/System/", 0, kNewFSCatalogKindDir);
-          delete fNewFS->GetImpl()->CreateCatalog("/Boot/", 0, kNewFSCatalogKindDir);
-          delete fNewFS->GetImpl()->CreateCatalog("/Support/", 0, kNewFSCatalogKindDir);
-          delete fNewFS->GetImpl()->CreateCatalog("/Applications/", 0, kNewFSCatalogKindDir);
-
-          sanitizerCatalog =
-              fNewFS->GetImpl()->CreateCatalog("/System/%NKSYSSAN%");
-
-          fNewFS->GetImpl()->CreateFork(sanitizerCatalog, sanitizerFork);
-          fNewFS->GetImpl()->WriteCatalog(sanitizerCatalog, sanitizerBytes,
-                                          sanitizerSize,
-                                          "/System/%NKSYSSAN%$RawExecutable");
-        }
-
-        NewOS::UInt8* buf = nullptr;
-
-        buf = (NewOS::UInt8*)fNewFS->GetImpl()->ReadCatalog(
-            fNewFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%"), 512,
-            "/System/%NKSYSSAN%$RawExecutable");
-
-        if (!buf) {
-            NewOS::kcout << "Bad-Ptr: " << NewOS::hex_number((NewOS::UIntPtr)buf)
-                           << NewOS::endl;
-              NewOS::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
-        }
-
-        for (NewOS::SizeT index = 0UL; index < sanitizerSize; ++index) {
-          if (buf[index] != sanitizerBytes[index]) {
-            NewOS::kcout << "Diff-Detected: " << NewOS::hex_number(buf[index])
-                         << NewOS::endl;
-            NewOS::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
-          }
+        if (!fNewFS->GetImpl()->GetCatalog("/System/")) {
+          delete fNewFS->GetImpl()->CreateCatalog("/System/", 0,
+                                                  kNewFSCatalogKindDir);
+          delete fNewFS->GetImpl()->CreateCatalog("/Boot/", 0,
+                                                  kNewFSCatalogKindDir);
+          delete fNewFS->GetImpl()->CreateCatalog("/Support/", 0,
+                                                  kNewFSCatalogKindDir);
+          delete fNewFS->GetImpl()->CreateCatalog("/Applications/", 0,
+                                                  kNewFSCatalogKindDir);
         }
       }
     }

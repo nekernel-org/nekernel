@@ -39,8 +39,8 @@ default.
 /// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
-#define kNewFSVersionInteger 0x124
-#define kNewFSVerionString "1.24"
+#define kNewFSVersionInteger 0x125
+#define kNewFSVerionString "1.25"
 
 /// @brief Standard fork types.
 #define kNewFSDataFork "data"
@@ -132,12 +132,15 @@ struct PACKED NewCatalog final {
   NewOS::Lba PrevSibling;
 };
 
+#define kNewFSForkNameLen (200U)
+
 /// @brief Fork type, contains a data page.
 /// @note The way we store is way different than how other filesystems do, specific chunk of code are
 /// written into either the data fork or resource fork, the resource fork is reserved for file metadata.
 /// whereas the data fork is reserved for file data.
 struct PACKED NewFork final {
-  NewCharType Name[kNewFSNodeNameLen];
+  NewCharType ForkName[kNewFSForkNameLen];
+  NewOS::Char CatalogName[kNewFSNodeNameLen];
 
   NewOS::Int32 Flags;
   NewOS::Int32 Kind;
@@ -151,9 +154,6 @@ struct PACKED NewFork final {
 
   NewOS::Lba NextSibling;
   NewOS::Lba PreviousSibling;
-
-  /// To make a perfect sector.
-  NewOS::Char Padding[200];
 };
 
 /// @brief Partition block type

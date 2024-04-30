@@ -27,7 +27,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
                                          _Input NewFork& theFork) {
   if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return nullptr;
 
-  if (catalog && theFork.Name[0] != 0 && theFork.DataSize == kNewFSForkSize) {
+  if (catalog && theFork.ForkName[0] != 0 && theFork.DataSize == kNewFSForkSize) {
     Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
                                                    : catalog->ResourceFork;
 
@@ -45,7 +45,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
     NewFork prevFork{0};
     Lba lbaOfPreviousFork = lba;
 
-    while (cpyFork.Name[0] == 0) {
+    while (cpyFork.ForkName[0] == 0) {
       if (lba <= kNewFSCatalogStartAddress) break;
 
       drv->fPacket.fLba = lba;
@@ -58,7 +58,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 
       if (cpyFork.Flags == kNewFSFlagCreated) {
         kcout << "New OS: Fork already exists.\r";
-        if (StringBuilder::Equals(cpyFork.Name, theFork.Name)) return nullptr;
+        if (StringBuilder::Equals(cpyFork.ForkName, theFork.ForkName)) return nullptr;
 
         lbaOfPreviousFork = lba;
         lba = cpyFork.NextSibling;
@@ -140,7 +140,7 @@ _Output NewFork* NewFSParser::FindFork(_Input NewCatalog* catalog,
       return nullptr;
     }
 
-    if (StringBuilder::Equals(theFork->Name, name)) {
+    if (StringBuilder::Equals(theFork->ForkName, name)) {
       break;
     }
 
@@ -219,7 +219,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     delete catalog;
     return nullptr;
   } else if (!catalog) {
-      outLba = kNewFSCatalogStartAddress;
+    outLba = kNewFSCatalogStartAddress;
   }
 
   constexpr SizeT cDefaultForkSize = kNewFSForkSize;
@@ -281,13 +281,16 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
       drive->fInput(&drive->fPacket);
 
+      constexpr auto cNewFSCatalogPadding = 4;
+
       NewPartitionBlock* partBlock = (NewPartitionBlock*)sectorBufPartBlock;
 
       catalogChild->DataFork = partBlock->DiskSize - partBlock->StartCatalog;
 
       catalogChild->ResourceFork = catalogChild->DataFork;
 
-      catalogChild->NextSibling = startFree + sizeof(NewCatalog);
+      catalogChild->NextSibling =
+          startFree + (sizeof(NewCatalog) * cNewFSCatalogPadding);
 
       drive->fPacket.fPacketContent = catalogChild;
       drive->fPacket.fPacketSize = sizeof(NewCatalog);
@@ -297,7 +300,8 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
       drive->fPacket.fPacketContent = catalogBuf;
       drive->fPacket.fPacketSize = kNewFSSectorSz;
-      drive->fPacket.fLba = outLba;
+      drive->fPacket.fLba =
+          startFree - (sizeof(NewCatalog) * cNewFSCatalogPadding);
 
       drive->fInput(&drive->fPacket);
 
@@ -307,7 +311,8 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
       kcout << "New OS: Create new catalog, status: "
             << hex_number(catalogChild->Flags) << endl;
-      kcout << "New OS: Create new catalog, status: " << catalogChild->Name << endl;
+      kcout << "New OS: Create new catalog, status: " << catalogChild->Name
+            << endl;
 
       drive->fPacket.fPacketContent = sectorBufPartBlock;
       drive->fPacket.fPacketSize = kNewFSSectorSz;
@@ -325,8 +330,10 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
       return catalogChild;
     }
 
+    constexpr auto cNewFSCatalogPadding = 4;
+
     //// @note that's how we find the next catalog in the partition block.
-    startFree = startFree + 1;
+    startFree = startFree + (sizeof(NewCatalog) * cNewFSCatalogPadding);
 
     drive->fPacket.fPacketContent = catalogBuf;
     drive->fPacket.fPacketSize = kNewFSSectorSz;
@@ -440,6 +447,8 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 
   auto startFork = catalog->DataFork;
 
+  rt_copy_memory(catalog->Name, forkData->CatalogName, kNewFSNodeNameLen);
+
   /// sanity check of the fork position as the condition to run the loop.
   while (startFork >= kNewFSCatalogStartAddress) {
     drive->fPacket.fPacketContent = forkData;
@@ -447,7 +456,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
     drive->fPacket.fLba = startFork;
 
     drive->fInput(&drive->fPacket);
-    kcout << "Fork-Name: " << forkData->Name << endl;
+    kcout << "Fork-Name: " << forkData->ForkName << endl;
 
     /// sanity check the fork.
     if (forkData->DataOffset <= kNewFSCatalogStartAddress) {
@@ -461,7 +470,19 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 
     if (forkData->Flags != kNewFSFlagUnallocated &&
         forkData->Flags != kNewFSFlagDeleted &&
-        StringBuilder::Equals(forkData->Name, forkName)) {
+        StringBuilder::Equals(forkData->ForkName, forkName)) {
+      drive->fPacket.fPacketContent = data;
+      drive->fPacket.fPacketSize = sizeOfData;
+      drive->fPacket.fLba = forkData->DataOffset;
+      kcout << "Fork-Offset: " << hex_number(forkData->DataOffset) << endl;
+
+      drive->fOutput(&drive->fPacket);
+
+      delete forkData;
+      return true;
+    } else if (auto catalog = this->GetCatalog(forkData->CatalogName);
+               catalog == nullptr) {
+      delete catalog;
       drive->fPacket.fPacketContent = data;
       drive->fPacket.fPacketSize = sizeOfData;
       drive->fPacket.fLba = forkData->DataOffset;
@@ -642,7 +663,7 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
 
     forkData = (NewFork*)sectorBuf;
 
-    kcout << "Fork-Name: " << forkData->Name << endl;
+    kcout << "Fork-Name: " << forkData->ForkName << endl;
 
     if (forkData->DataOffset <= kNewFSCatalogStartAddress) {
       delete[] sectorBuf;
@@ -652,7 +673,7 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
       return nullptr;
     }
 
-    if (StringBuilder::Equals(forkName, forkData->Name)) break;
+    if (StringBuilder::Equals(forkName, forkData->ForkName)) break;
 
     dataForkLba = forkData->NextSibling;
   }

@@ -251,9 +251,11 @@ private:
 
         Char bufCatalog[sizeof(NewCatalog)] = { 0 };
 
+        constexpr auto cNewFSCatalogPadding = 4;
+
         NewCatalog* catalogKind = (NewCatalog*)bufCatalog;
         catalogKind->PrevSibling = startLba;
-        catalogKind->NextSibling = (startLba + sizeof(NewCatalog));
+        catalogKind->NextSibling = (startLba + (sizeof(NewCatalog) * cNewFSCatalogPadding));
 
         /// Fill catalog kind.
         catalogKind->Kind = blob->fKind;
