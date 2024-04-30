@@ -2,6 +2,9 @@
 
     Copyright Mahrouss Logic
 
+    File: AppMain.cxx
+    Purpose: Kernel main loop.
+
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
@@ -15,56 +18,90 @@
 #include <KernelKit/ProcessScheduler.hpp>
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
-#include <NewKit/Utils.hpp>
 #include <NewKit/KernelCheck.hpp>
+#include <NewKit/Utils.hpp>
+
+namespace Detail {
+/// @brief Filesystem auto mounter, additional checks are also done by the
+/// class.
+class FilesystemAutomountProvider final {
+  NewOS::NewFilesystemManager* fNewFS{nullptr};
+
+ public:
+  explicit FilesystemAutomountProvider() {
+    if (NewOS::FilesystemManagerInterface::GetMounted()) {
+      /// Mounted partition, cool!
+      NewOS::kcout
+          << "New OS: Not need to mount for a NewFS partition here...\r";
+    } else {
+      /// Not mounted partition, auto-mount.
+      ///! Mounts a NewFS block.
+      fNewFS = new NewOS::NewFilesystemManager();
+
+      NewOS::FilesystemManagerInterface::Mount(fNewFS);
+
+      constexpr auto sanitizerSize = 512;
+
+      /// Sample AMD64 program,
+      /// mov rax, 0x0
+      /// ret
+      /// @note there was a 0xc1 before, to delimit the program, but I removed it. We
+      /// don't need that now.
+      NewOS::UInt8 sanitizerBytes[sanitizerSize] = {
+          "\x48\xC7\xC0\x00\x00\x00\x00\xC3"};
+
+      if (fNewFS->GetImpl()) {
+        NewCatalog* sanitizerCatalog = nullptr;
+
+        if (!fNewFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%")) {
+          NewFork sanitizerFork{0};
+
+          NewOS::rt_copy_memory(
+              (NewOS::VoidPtr) "/System/%NKSYSSAN%$RawExecutable",
+              (NewOS::VoidPtr)sanitizerFork.Name,
+              NewOS::rt_string_len("/System/%NKSYSSAN%$RawExecutable"));
+
+          sanitizerFork.Kind = NewOS::kNewFSDataForkKind;
+          sanitizerFork.DataSize = kNewFSForkSize;
+
+          fNewFS->GetImpl()->CreateCatalog("/System/", 0, kNewFSCatalogKindDir);
+          sanitizerCatalog =
+              fNewFS->GetImpl()->CreateCatalog("/System/%NKSYSSAN%");
+
+          fNewFS->GetImpl()->CreateFork(sanitizerCatalog, sanitizerFork);
+          fNewFS->GetImpl()->WriteCatalog(sanitizerCatalog, sanitizerBytes,
+                                          sanitizerSize,
+                                          "/System/%NKSYSSAN%$RawExecutable");
+        }
+
+        NewOS::UInt8* buf = nullptr;
+
+        buf = (NewOS::UInt8*)fNewFS->GetImpl()->ReadCatalog(
+            fNewFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%"), 512,
+            "/System/%NKSYSSAN%$RawExecutable");
+
+        for (NewOS::SizeT index = 0UL; index < sanitizerSize; ++index) {
+          if (buf[index] != sanitizerBytes[index]) {
+            NewOS::kcout << "Diff-Detected: " << NewOS::hex_number(buf[index])
+                         << NewOS::endl;
+            NewOS::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+          }
+        }
+      }
+    }
+  }
+
+  ~FilesystemAutomountProvider() { delete fNewFS; }
+};
+}  // namespace Detail
 
 /// @file Main microkernel entrypoint.
 
 EXTERN_C NewOS::Void AppMain(NewOS::Void) {
-  ///! Mounts a NewFS block.
-  NewOS::NewFilesystemManager* newFS = new NewOS::NewFilesystemManager();
+  /// Now run kernel loop, until no process are running.
+  Detail::FilesystemAutomountProvider mounter;
 
-  NewOS::FilesystemManagerInterface::Mount(newFS);
-
-  constexpr auto sanitizerSize = 512;
-  NewOS::UInt8 sanitizerBytes[sanitizerSize] = { "\x48\xC7\xC0\x00\x00\x00\x00\xC3\xC1" };
-
-  if (newFS->GetImpl()) {
-    NewCatalog* sanitizerCatalog = nullptr;
-
-    if (!newFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%")) {
-        NewFork sanitizerFork{0};
-
-        NewOS::rt_copy_memory((NewOS::VoidPtr) "/System/%NKSYSSAN%$RawExecutable",
-                        (NewOS::VoidPtr)sanitizerFork.Name,
-                        NewOS::rt_string_len("/System/%NKSYSSAN%$RawExecutable"));
-
-        sanitizerFork.Kind = NewOS::kNewFSDataForkKind;
-        sanitizerFork.DataSize = kNewFSForkSize;
-
-        newFS->GetImpl()->CreateCatalog("/System/", 0, kNewFSCatalogKindDir);
-        sanitizerCatalog = newFS->GetImpl()->CreateCatalog("/System/%NKSYSSAN%");
-
-        newFS->GetImpl()->CreateFork(sanitizerCatalog, sanitizerFork);
-        newFS->GetImpl()->WriteCatalog(sanitizerCatalog, sanitizerBytes, sanitizerSize, "/System/%NKSYSSAN%$RawExecutable");
-    }
-
-    NewOS::UInt8* buf = nullptr;
-
-    buf = (NewOS::UInt8*)newFS->GetImpl()->ReadCatalog(
-        newFS->GetImpl()->GetCatalog("/System/%NKSYSSAN%"),
-        512, "/System/%NKSYSSAN%$RawExecutable");
-
-    for (NewOS::SizeT index = 0UL; index < sanitizerSize; ++index) {
-        if (buf[index] != sanitizerBytes[index]) {
-            NewOS::kcout << "Diff-Detected: " << NewOS::hex_number(buf[index]) << NewOS::endl;
-            NewOS::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
-        }
-    }
-  }
-
-  while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0)
+  while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0) {
     ;
-
-  delete newFS;
+  }
 }
