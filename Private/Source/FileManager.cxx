@@ -88,7 +88,7 @@ Void NewFilesystemManager::Write(NodePtr node, VoidPtr data,
 /// @return
 VoidPtr NewFilesystemManager::Read(NodePtr node, Int32 flags, SizeT sz) {
   if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-    return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node)->Name, sz);
+    return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz);
 
   return nullptr;
 }

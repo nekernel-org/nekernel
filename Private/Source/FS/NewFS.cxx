@@ -11,6 +11,7 @@
 #include <FSKit/NewFS.hxx>
 #include <KernelKit/HError.hpp>
 #include <NewKit/Crc32.hpp>
+#include <NewKit/KernelCheck.hpp>
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
@@ -24,30 +25,19 @@ STATIC MountpointInterface sMountpointInterface;
 /// @return the fork
 _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
                                          _Input NewFork& theFork) {
+  if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return nullptr;
+
   if (catalog && theFork.Name[0] != 0 && theFork.DataSize > 0) {
-    theFork.Flags = kNewFSFlagCreated;
     Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
                                                    : catalog->ResourceFork;
 
+    kcout << "Data-Fork-LBA: " << hex_number(lba) << endl;
+
     if (lba <= kNewFSCatalogStartAddress) return nullptr;
 
-    theFork.DataOffset = lba + sizeof(NewCatalog) + sizeof(NewFork);
-
-    if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return nullptr;
+    theFork.DataOffset = lba - sizeof(NewFork);
 
     auto drv = sMountpointInterface.GetAddressOf(this->fDriveIndex);
-
-    Char cpyFork[sizeof(NewFork)] = {0};
-
-    drv->fPacket.fLba = lba + sizeof(NewCatalog);
-    drv->fPacket.fPacketSize = sizeof(NewFork);
-    drv->fPacket.fPacketContent = (VoidPtr)cpyFork;
-
-    drv->fInput(&drv->fPacket);
-
-    NewFork* cpyForkStruct = (NewFork*)cpyFork;
-
-    if (cpyForkStruct->Flags == kNewFSFlagCreated) return nullptr;
 
     /// special treatment.
     rt_copy_memory((VoidPtr) "fs/newfs-packet", drv->fPacket.fPacketMime,
@@ -55,9 +45,11 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 
     drv->fPacket.fLba = lba;
     drv->fPacket.fPacketSize = sizeof(NewFork);
-    drv->fPacket.fPacketContent = (VoidPtr)&theFork;
+    drv->fPacket.fPacketContent = &theFork;
 
     drv->fOutput(&drv->fPacket);
+
+    kcout << "New OS: Wrote fork data at: " << hex_number(theFork.DataOffset) << endl;
 
     return &theFork;
   }
@@ -74,6 +66,7 @@ _Output NewFork* NewFSParser::FindFork(_Input NewCatalog* catalog,
                                        Boolean isDataFork) {
   auto drv = sMountpointInterface.GetAddressOf(this->fDriveIndex);
   NewFork* theFork = nullptr;
+
   Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
 
   while (lba != 0) {
@@ -147,35 +140,35 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     return checkForCpy;
   }
 
-  char copyName[kNewFSNodeNameLen] = {0};
+  char parentName[kNewFSNodeNameLen] = {0};
 
   for (SizeT indexName = 0UL; indexName < rt_string_len(name); ++indexName) {
-    copyName[indexName] = name[indexName];
+    parentName[indexName] = name[indexName];
   }
 
-  if (*copyName == 0) {
+  if (*parentName == 0) {
     DbgLastError() = kErrorFileNotFound;
     return nullptr;
   }
 
   for (SizeT indexFill = 0; indexFill < rt_string_len(name); ++indexFill) {
-    copyName[indexFill] = name[indexFill];
+    parentName[indexFill] = name[indexFill];
   }
 
-  SizeT indexReverseCopy = rt_string_len(copyName);
+  SizeT indexReverseCopy = rt_string_len(parentName);
 
   // zero character.
-  copyName[--indexReverseCopy] = 0;
+  parentName[--indexReverseCopy] = 0;
 
   // mandatory / character.
-  copyName[--indexReverseCopy] = 0;
+  parentName[--indexReverseCopy] = 0;
 
-  while (copyName[indexReverseCopy] != '/') {
-    copyName[indexReverseCopy] = 0;
+  while (parentName[indexReverseCopy] != '/') {
+    parentName[indexReverseCopy] = 0;
     --indexReverseCopy;
   }
 
-  NewCatalog* catalog = this->FindCatalog(copyName, outLba);
+  NewCatalog* catalog = this->FindCatalog(parentName, outLba);
 
   if (!catalog) {
     return nullptr;
@@ -186,7 +179,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     return nullptr;
   }
 
-  constexpr SizeT cDefaultForkSize = 8192;
+  constexpr SizeT cDefaultForkSize = 8196;
 
   NewCatalog* catalogChild = new NewCatalog();
 
@@ -201,22 +194,27 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
   rt_copy_memory((VoidPtr)name, (VoidPtr)catalogChild->Name,
                  rt_string_len(name));
 
-  UInt16 sectorBuf[kNewFSMinimumSectorSz] = {0};
+  UInt16 catalogBuf[kNewFSMinimumSectorSz] = {0};
 
   auto drive = sMountpointInterface.GetAddressOf(this->fDriveIndex);
 
   Lba startFree = catalogChild->PrevSibling + catalog->NextSibling;
 
-  kcout << "Next-Catalog: " << hex_number(startFree) << endl;
+  kcout << "Free-Catalog: " << hex_number(startFree) << endl;
+  kcout << "New-Catalog: " << name << endl;
+  kcout << "Parent-Catalog: " << parentName << endl;
 
-  drive->fPacket.fPacketContent = sectorBuf;
+  rt_copy_memory((VoidPtr) "fs/newfs-packet", drive->fPacket.fPacketMime,
+                 rt_string_len("fs/newfs-packet"));
+
+  drive->fPacket.fPacketContent = catalogBuf;
   drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
   drive->fPacket.fLba = startFree;
 
   drive->fInput(&drive->fPacket);
 
   while (drive->fPacket.fPacketGood) {
-    NewCatalog* nextSibling = (NewCatalog*)sectorBuf;
+    NewCatalog* nextSibling = (NewCatalog*)catalogBuf;
 
     if (startFree <= kNewFSAddressAsLba) {
       delete catalogChild;
@@ -226,10 +224,23 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     }
 
     /// allocation or reallocation or catalog...
-    if (nextSibling->Name[0] == 0 && nextSibling->Flags != kNewFSFlagCreated) {
-      catalogChild->DataFork = startFree + sizeof(NewCatalog);
-      catalogChild->ResourceFork =
-          startFree + sizeof(NewCatalog) + catalogChild->DataForkSize;
+    if (nextSibling->Flags != kNewFSFlagCreated) {
+      Char sectorBufPartBlock[kNewFSMinimumSectorSz] = {0};
+
+      drive->fPacket.fPacketContent = sectorBufPartBlock;
+      drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
+      drive->fPacket.fLba = kNewFSAddressAsLba;
+
+      drive->fInput(&drive->fPacket);
+
+      NewPartitionBlock* partBlock = (NewPartitionBlock*)sectorBufPartBlock;
+
+      catalogChild->DataFork =
+          partBlock->DiskSize - startFree - sizeof(NewCatalog);
+
+      kcout << "DataFork: " << hex_number(catalogChild->DataFork) << endl;
+
+      catalogChild->ResourceFork = catalogChild->DataFork;
 
       if (catalogChild->Kind == kNewFSCatalogKindFile) {
         rt_copy_memory((VoidPtr) "x-kind/file", (VoidPtr)catalogChild->Mime,
@@ -243,13 +254,16 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
                                   catalogChild->DataForkSize +
                                   catalogChild->ResourceForkOverallSize;
 
-      drive->fPacket.fPacketContent = catalogChild;
+      rt_copy_memory(catalogChild, catalogBuf, sizeof(NewCatalog));
+
+      drive->fPacket.fPacketContent = catalogBuf;
       drive->fPacket.fPacketSize = sizeof(NewCatalog);
       drive->fPacket.fLba = startFree;
 
       drive->fOutput(&drive->fPacket);
 
-      kcout << "New OS: Create new catalog successfully!\r";
+      kcout << "New OS: Create new catalog, status: "
+            << hex_number(nextSibling->Flags) << endl;
 
       Char sectBuf[sizeof(NewCatalog)] = {0};
 
@@ -266,15 +280,11 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
       kcout << "Edit-Catalog: " << prevCatalog->Name << endl;
 
-      Char sectorBufPartBlock[kNewFSMinimumSectorSz] = {0};
-
       drive->fPacket.fPacketContent = sectorBufPartBlock;
       drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
       drive->fPacket.fLba = kNewFSAddressAsLba;
 
       drive->fInput(&drive->fPacket);
-
-      NewPartitionBlock* partBlock = (NewPartitionBlock*)sectorBufPartBlock;
 
       partBlock->SectorCount -= 1;
       partBlock->CatalogCount += 1;
@@ -287,11 +297,9 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     }
 
     //// @note that's how we find the next catalog in the partition block.
-    startFree += sizeof(NewFork) + sizeof(NewCatalog) +
-                 nextSibling->DataForkSize +
-                 nextSibling->ResourceForkOverallSize;
+    startFree += sizeof(NewFork) + sizeof(NewCatalog) + cDefaultForkSize;
 
-    drive->fPacket.fPacketContent = sectorBuf;
+    drive->fPacket.fPacketContent = catalogBuf;
     drive->fPacket.fPacketSize = kNewFSMinimumSectorSz;
     drive->fPacket.fLba = startFree;
 
@@ -308,6 +316,9 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
   /// verify disk.
   drive->fVerify(&drive->fPacket);
+
+  rt_copy_memory((VoidPtr) "fs/newfs-packet", drive->fPacket.fPacketMime,
+                   rt_string_len("fs/newfs-packet"));
 
   /// if disk isn't good, then error out.
   if (false == drive->fPacket.fPacketGood) {
@@ -348,7 +359,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
 
       partBlock->Kind = kNewFSPartitionTypeStandard;
       partBlock->StartCatalog = kNewFSCatalogStartAddress;
-      partBlock->Flags |= kNewFSPartitionTypeStandard;
+      partBlock->Flags = kNewFSPartitionTypeStandard;
       partBlock->CatalogCount = sectorCount / sizeof(NewCatalog);
       partBlock->SectorCount = sectorCount;
       partBlock->DiskSize = diskSize;
@@ -363,11 +374,11 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
       kcout << "Drive-Kind: " << drive->fDriveKind() << endl;
 
       kcout << "Partition-Name: " << partBlock->PartitionName << endl;
-      kcout << "Start-Catalog: " << number(partBlock->StartCatalog) << endl;
-      kcout << "Catalog-Count: " << number(partBlock->CatalogCount) << endl;
-      kcout << "Free-Catalog: " << number(partBlock->FreeCatalog) << endl;
-      kcout << "Free-Sectors: " << number(partBlock->FreeSectors) << endl;
-      kcout << "Sector-Size: " << number(partBlock->SectorSize) << endl;
+      kcout << "Start-Catalog: " << hex_number(partBlock->StartCatalog) << endl;
+      kcout << "Catalog-Count: " << hex_number(partBlock->CatalogCount) << endl;
+      kcout << "Free-Catalog: " << hex_number(partBlock->FreeCatalog) << endl;
+      kcout << "Free-Sectors: " << hex_number(partBlock->FreeSectors) << endl;
+      kcout << "Sector-Size: " << hex_number(partBlock->SectorSize) << endl;
 
       return true;
     }
@@ -391,8 +402,12 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
   if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return false;
 
   NewFork* forkData = new NewFork();
+  rt_set_memory(forkData, 0, sizeof(NewFork));
 
   auto drive = sMountpointInterface.GetAddressOf(this->fDriveIndex);
+
+  rt_copy_memory((VoidPtr) "fs/newfs-packet", drive->fPacket.fPacketMime,
+                   rt_string_len("fs/newfs-packet"));
 
   auto startFork = catalog->DataFork;
 
@@ -404,17 +419,11 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 
     drive->fInput(&drive->fPacket);
 
-    /// check if fork even exists.
-    if (forkData->Flags != kNewFSFlagCreated) {
-      DbgLastError() = kErrorDiskIsCorrupted;
-
-      delete forkData;
-      return false;
-    }
-
     /// sanity check the fork.
     if (forkData->DataOffset <= kNewFSCatalogStartAddress) {
       DbgLastError() = kErrorDiskIsCorrupted;
+
+      kcout << "New OS: Invalid fork offset.\r";
 
       delete forkData;
       return false;
@@ -433,14 +442,17 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 }
 
 /// @brief
-/// @param catalogName
-/// @return
+/// @param catalogName the catalog name.
+/// @return the newly found catalog.
 _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
                                              Lba& outLba) {
   if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return nullptr;
 
   Char* sectorBuf = new Char[sizeof(NewPartitionBlock)];
   auto drive = sMountpointInterface.GetAddressOf(this->fDriveIndex);
+
+  rt_copy_memory((VoidPtr) "fs/newfs-packet", drive->fPacket.fPacketMime,
+                   rt_string_len("fs/newfs-packet"));
 
   drive->fPacket.fPacketContent = sectorBuf;
   drive->fPacket.fPacketSize = sizeof(NewPartitionBlock);
@@ -467,12 +479,13 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
     if (StringBuilder::Equals(catalogName, catalog->Name)) {
       /// ignore unallocated catalog, break
       if (catalog->Flags != kNewFSFlagCreated) {
-
         goto _NewFSContinueSearch;
       }
 
       NewCatalog* catalogPtr = new NewCatalog();
       rt_copy_memory(catalog, catalogPtr, sizeof(NewCatalog));
+
+      kcout << "New OS: Found catalog at: " << hex_number(start) << endl;
 
       outLba = start;
       delete[] sectorBuf;
@@ -482,7 +495,7 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
   _NewFSContinueSearch:
     start = catalog->NextSibling;
 
-    kcout << "Catalog-Next: " << number(start) << endl;
+    kcout << "Catalog-Next: " << hex_number(start) << endl;
 
     if (start <= kNewFSAddressAsLba) break;
 
@@ -511,14 +524,12 @@ _Output NewCatalog* NewFSParser::GetCatalog(_Input const char* name) {
 /// @param catalog
 /// @return
 Boolean NewFSParser::CloseCatalog(_Input _Output NewCatalog* catalog) {
-  if (this->WriteCatalog(catalog, nullptr, 0)) {
-    delete catalog;
-    catalog = nullptr;
+  if (!catalog) return false;
 
-    return true;
-  }
+  delete catalog;
+  catalog = nullptr;
 
-  return false;
+  return true;
 }
 
 /// @brief Mark catalog as removed.
@@ -538,6 +549,9 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
     catalog->Flags = kNewFSFlagDeleted;
 
     auto drive = sMountpointInterface.GetAddressOf(this->fDriveIndex);
+
+    rt_copy_memory((VoidPtr) "fs/newfs-packet", drive->fPacket.fPacketMime,
+                     rt_string_len("fs/newfs-packet"));
 
     drive->fPacket.fLba = outLba;  // the catalog position.
     drive->fPacket.fPacketSize =
@@ -561,23 +575,28 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
 /// @param catalog
 /// @param dataSz
 /// @return
-VoidPtr NewFSParser::ReadCatalog(_Input _Output const char* catalogName,
+VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
                                  SizeT dataSz) {
-  if (!catalogName) {
+  if (!catalog) {
     DbgLastError() = kErrorFileNotFound;
     return nullptr;
   }
 
   if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return nullptr;
 
-  NewCatalog* catalog = this->GetCatalog(catalogName);
+  Lba dataForkLba = catalog->DataFork;
+  Size dataForkSize = catalog->DataForkSize;
 
-  if (!catalog) return nullptr;
+  kcout << "Found-Catalog: " << catalog->Name
+        << ", Data-Fork: " << hex_number(dataForkLba) << endl;
 
   Char* sectorBuf = new Char[sizeof(NewFork)];
   auto drive = sMountpointInterface.GetAddressOf(this->fDriveIndex);
 
-  drive->fPacket.fLba = catalog->DataFork;
+  rt_copy_memory((VoidPtr) "fs/newfs-packet", drive->fPacket.fPacketMime,
+                   rt_string_len("fs/newfs-packet"));
+
+  drive->fPacket.fLba = dataForkLba;
   drive->fPacket.fPacketSize = sizeof(NewFork);
   drive->fPacket.fPacketContent = sectorBuf;
 
@@ -585,10 +604,13 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output const char* catalogName,
 
   NewFork* forkData = (NewFork*)sectorBuf;
 
-  kcout << forkData->Name << " " << hex_number(forkData->DataOffset) << endl;
+  kcout << "Fork-Name: " << forkData->Name << endl;
 
-  if (dataSz > forkData->DataSize) {
+  if (forkData->DataOffset <= kNewFSCatalogStartAddress ||
+      dataSz > forkData->DataSize) {
     delete[] sectorBuf;
+
+    kcout << "Fail-Data-Offset: " << hex_number(forkData->DataOffset) << endl;
 
     return nullptr;
   }

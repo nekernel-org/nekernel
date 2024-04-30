@@ -43,8 +43,8 @@ default.
 /// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
-#define kNewFSVersionInteger 0x123
-#define kNewFSVerionString "1.23"
+#define kNewFSVersionInteger 0x124
+#define kNewFSVerionString "1.24"
 
 /// @brief Standard fork types.
 #define kNewFSDataFork "data"
@@ -115,7 +115,9 @@ struct PACKED NewCatalog final {
   NewCharType Mime[kNewFSMimeNameLen];
 
   /// Catalog status flag.
-  NewOS::Int32 Flags;
+  NewOS::UInt16 Flags;
+  /// Custom catalog flags.
+  NewOS::UInt16 FileFlags;
   /// Catalog kind.
   NewOS::Int32 Kind;
 
@@ -237,7 +239,7 @@ class NewFSParser final {
   bool WriteCatalog(_Input _Output NewCatalog* catalog,
                     voidPtr data, SizeT sizeOfData);
 
-  VoidPtr ReadCatalog(_Input _Output const char* catalogName,
+  VoidPtr ReadCatalog(_Input _Output NewCatalog* catalog,
                               SizeT dataSz);
 
   bool Seek(_Input _Output NewCatalog* catalog, SizeT off);
