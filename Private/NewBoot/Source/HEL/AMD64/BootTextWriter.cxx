@@ -26,12 +26,28 @@ BTextWriter &BTextWriter::Write(const CharacterTypeUTF16 *str) {
 #ifdef __DEBUG__
   if (!str || *str == 0) return *this;
 
-  ST->ConOut->OutputString(ST->ConOut, str);
+  CharacterTypeUTF16 strTmp[2];
+  strTmp[1] = 0;
+
+  for (size_t i = 0; str[i] != 0; i++) {
+    if (str[i] == '\r') {
+        strTmp[0] = str[i];
+        ST->ConOut->OutputString(ST->ConOut, strTmp);
+
+        strTmp[0] = '\n';
+        ST->ConOut->OutputString(ST->ConOut, strTmp);
+    } else {
+        strTmp[0] = str[i];
+        ST->ConOut->OutputString(ST->ConOut, strTmp);
+    }
+  }
 #endif  // ifdef __DEBUG__
 
   return *this;
 }
 
+/// @brief UTF-8 equivalent of Write (UTF-16).
+/// @param str the input string.
 BTextWriter &BTextWriter::Write(const Char *str) {
 #ifdef __DEBUG__
   if (!str || *str == 0) return *this;
@@ -40,8 +56,16 @@ BTextWriter &BTextWriter::Write(const Char *str) {
   strTmp[1] = 0;
 
   for (size_t i = 0; str[i] != 0; i++) {
-    strTmp[0] = str[i];
-    ST->ConOut->OutputString(ST->ConOut, strTmp);
+    if (str[i] == '\r') {
+        strTmp[0] = str[i];
+        ST->ConOut->OutputString(ST->ConOut, strTmp);
+
+        strTmp[0] = '\n';
+        ST->ConOut->OutputString(ST->ConOut, strTmp);
+    } else {
+        strTmp[0] = str[i];
+        ST->ConOut->OutputString(ST->ConOut, strTmp);
+    }
   }
 #endif  // ifdef __DEBUG__
 

@@ -35,7 +35,7 @@ EXTERN_C void idt_handle_scheduler(NewOS::UIntPtr rsp) {
 
   /// schedule another process.
   if (!NewOS::ProcessHelper::StartScheduling()) {
-    NewOS::kcout << "New OS: Continue schedule this process...\r\n";
+    NewOS::kcout << "New OS: Continue schedule this process...\r";
   }
 }
 

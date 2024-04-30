@@ -10,7 +10,7 @@
 #include <Drivers/MahroussUpdate/MahroussUpdate.hxx>
 
 DK_EXTERN int __ImageStart(void) {
-    kernelPrintStr("Mahrouss Update: Looking for updates...\r\n");
+    kernelPrintStr("Mahrouss Update: Looking for updates...\r");
     UpdateRequest req("mup://release-mahrouss.logic/newos/");
 
     return 0;

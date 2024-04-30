@@ -75,7 +75,7 @@ run-efi-amd64:
 
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f raw $(IMG) 1G
+	qemu-img create -f raw $(IMG) 4G
 	qemu-img create -f raw $(IMG_2) 512M
 
 .PHONY: download-edk

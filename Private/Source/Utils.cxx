@@ -157,7 +157,7 @@ voidPtr rt_string_in_string(const char *in, const char *needle) {
 
 // @brief Checks for a string start at the character.
 
-char *rt_string_frofchar(char *str, const char chr) {
+char *rt_string_has_char(char *str, const char chr) {
   while (*str != chr) {
     ++str;
 

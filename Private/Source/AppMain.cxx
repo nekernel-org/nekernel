@@ -26,48 +26,36 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void) {
   NewOS::FilesystemManagerInterface::Mount(newFS);
 
   if (newFS->GetImpl()) {
-    NewCatalog* mountCatalog = newFS->GetImpl()->GetCatalog("/Boot/");
+    NewCatalog* textCatalog = nullptr;
 
-    if (mountCatalog) {
-      delete newFS->GetImpl()->CreateCatalog("/Boot/System/", 0,
-                                             kNewFSCatalogKindDir);
-      NewCatalog* newKernelCatalog =
-          newFS->GetImpl()->CreateCatalog("/Boot/System/ExampleTextFile");
+    if (!newFS->GetImpl()->GetCatalog("/EditableText")) {
+        constexpr auto cDataSz = 512;
+        NewOS::Char theData[cDataSz] = {
+        "About NewKernel...\rNewKernel is the System behind "
+        "NewOS.\rFeaturing modern common features, yet innovative.\r"};
 
-      if (newKernelCatalog)
-        NewOS::kcout << "Catalog-Path-Name: " << newKernelCatalog->Name
-                     << NewOS::endl;
+        NewFork theFork{0};
 
-      NewOS::kcout << "Catalog-Path-Name: " << mountCatalog->Name
-                   << NewOS::endl;
+        NewOS::rt_copy_memory((NewOS::VoidPtr) "EditableText",
+                        (NewOS::VoidPtr)theFork.Name,
+                        NewOS::rt_string_len("EditableText"));
 
-      constexpr auto cDataSz = 512;
-      NewOS::Char theData[cDataSz] = {
-          "THIS FORK\rCONTAINS DATA\rAS\rYOU\rCAN\rSEE...THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE..THIS FORK\rCONTAINS "
-          "DATA\rAS\rYOU\rCAN\rSEE.."};
+        theFork.Kind = NewOS::kNewFSDataForkKind;
+        theFork.DataSize = cDataSz;
 
-      NewFork theFork{0};
-      NewOS::rt_copy_memory((NewOS::VoidPtr) "EditableText",
-                            (NewOS::VoidPtr)theFork.Name,
-                            NewOS::rt_string_len("EditableText"));
+        textCatalog = newFS->GetImpl()->CreateCatalog("/EditableText");
 
-      theFork.Kind = NewOS::kNewFSDataForkKind;
-      theFork.DataSize = cDataSz;
-
-      newFS->GetImpl()->CreateFork(newKernelCatalog, theFork);
-      newFS->GetImpl()->WriteCatalog(newKernelCatalog, theData, cDataSz);
-
-      delete newKernelCatalog;
-      delete mountCatalog;
+        newFS->GetImpl()->CreateFork(textCatalog, theFork);
+        newFS->GetImpl()->WriteCatalog(textCatalog, theData, cDataSz);
     } else {
-      delete newFS->GetImpl()->CreateCatalog("/Boot/", 0, kNewFSCatalogKindDir);
+        NewOS::kcout << "Catalog already exists.\r";
     }
+
+    char* buf = nullptr;
+
+    buf = (NewOS::Char*)newFS->GetImpl()->ReadCatalog(newFS->GetImpl()->GetCatalog("/EditableText"), 512);
+
+    NewOS::kcout << buf << NewOS::endl;
   }
 
   while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0)

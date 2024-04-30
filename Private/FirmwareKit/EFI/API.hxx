@@ -67,7 +67,7 @@ inline UInt32 Platform() noexcept { return kPEMachineAMD64; }
 inline void ThrowError(const EfiCharType *ErrorCode,
                            const EfiCharType *Reason) noexcept {
 #ifdef __DEBUG__
-  ST->ConOut->OutputString(ST->ConOut, L"\r\n*** STOP ***\r\n");
+  ST->ConOut->OutputString(ST->ConOut, L"\r*** STOP ***\r");
 
   ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
   ST->ConOut->OutputString(ST->ConOut, ErrorCode);
@@ -75,7 +75,7 @@ inline void ThrowError(const EfiCharType *ErrorCode,
   ST->ConOut->OutputString(ST->ConOut, L", Reason: ");
   ST->ConOut->OutputString(ST->ConOut, Reason);
 
-  ST->ConOut->OutputString(ST->ConOut, L" ***\r\n");
+  ST->ConOut->OutputString(ST->ConOut, L" ***\r");
 #endif  // ifdef __DEBUG__
 
 #ifdef __NEWBOOT__

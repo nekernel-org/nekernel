@@ -43,8 +43,8 @@ default.
 /// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
-#define kNewFSVersionInteger 0x123
-#define kNewFSVerionString "1.23"
+#define kNewFSVersionInteger 0x124
+#define kNewFSVerionString "1.24"
 
 /// @brief Standard fork types.
 #define kNewFSDataFork "data"
@@ -92,9 +92,9 @@ default.
 #define kConfigLen 64
 #define kPartLen 32
 
-#define kNewFSFlagDeleted 0xF0
-#define kNewFSFlagUnallocated 0x00
-#define kNewFSFlagCreated 0x0F
+#define kNewFSFlagDeleted 70
+#define kNewFSFlagUnallocated 00
+#define kNewFSFlagCreated 71
 
 #define kNewFSMimeNameLen (200)
 
@@ -114,7 +114,11 @@ struct PACKED NewCatalog final {
   NewCharType Name[kNewFSNodeNameLen];
   NewCharType Mime[kNewFSMimeNameLen];
 
-  NewOS::Int32 Flags;
+  /// Catalog status flag.
+  NewOS::UInt16 Flags;
+  /// Custom catalog flags.
+  NewOS::UInt16 FileFlags;
+  /// Catalog kind.
   NewOS::Int32 Kind;
 
   /// Size of the data fork.
@@ -242,7 +246,7 @@ class NewFSParser final {
 
   SizeT Tell(_Input _Output NewCatalog* catalog);
 
-  bool RemoveCatalog(_Input _Output NewCatalog* catalog);
+  bool RemoveCatalog(_Input const Char* catalog);
 
   bool CloseCatalog(_InOut NewCatalog* catalog);
 

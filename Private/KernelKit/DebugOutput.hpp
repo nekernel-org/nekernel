@@ -45,7 +45,7 @@ class TerminalDevice final : public DeviceInterface<const Char *> {
 
 inline TerminalDevice end_line() {
   TerminalDevice selfTerm = TerminalDevice::Shared();
-  selfTerm << "\r\n";
+  selfTerm << "\r";
   return selfTerm;
 }
 
