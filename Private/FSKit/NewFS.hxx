@@ -26,47 +26,47 @@ default.
     @author Amlal EL Mahrouss
 */
 
-#define kNewFSInvalidFork -1
-#define kNewFSInvalidCatalog -1
-#define kNewFSNodeNameLen 256
+#define kNewFSInvalidFork (-1)
+#define kNewFSInvalidCatalog (-1)
+#define kNewFSNodeNameLen (256)
 
 #define kNewFSSectorSz (512)
 
-#define kNewFSIdentLen 8
+#define kNewFSIdentLen (8)
 #define kNewFSIdent " NewFS"
-#define kNewFSPadLen 400
+#define kNewFSPadLen (400)
 
 /// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
-#define kNewFSVersionInteger 0x125
+#define kNewFSVersionInteger (0x125)
 #define kNewFSVerionString "1.25"
 
 /// @brief Standard fork types.
 #define kNewFSDataFork "data"
 #define kNewFSResourceFork "rsrc"
 
-#define kNewFSCatalogKindFile 1
-#define kNewFSCatalogKindDir 2
-#define kNewFSCatalogKindAlias 3
+#define kNewFSCatalogKindFile (1)
+#define kNewFSCatalogKindDir (2)
+#define kNewFSCatalogKindAlias (3)
 
 #define kNewFSForkSize (8192)
 
 //! shared between network or
 //! other filesystems. Export forks as .zip when copying.
-#define kNewFSCatalogKindShared 4
+#define kNewFSCatalogKindShared (4)
 
-#define kNewFSCatalogKindResource 5
-#define kNewFSCatalogKindExecutable 6
+#define kNewFSCatalogKindResource (5)
+#define kNewFSCatalogKindExecutable (6)
 
-#define kNewFSCatalogKindPage 8
+#define kNewFSCatalogKindPage (8)
 
-#define kNewFSPartitionTypeStandard 7
-#define kNewFSPartitionTypePage 8
-#define kNewFSPartitionTypeBoot 9
+#define kNewFSPartitionTypeStandard (7)
+#define kNewFSPartitionTypePage (8)
+#define kNewFSPartitionTypeBoot (9)
 
-#define kNewFSCatalogKindDevice 9
-#define kNewFSCatalogKindLock 10
+#define kNewFSCatalogKindDevice (9)
+#define kNewFSCatalogKindLock (10)
 
 #define kNewFSSeparator '/'
 
@@ -83,18 +83,20 @@ default.
 #define kNewFSAddressAsLba (512)
 #define kNewFSCatalogStartAddress (1024 + sizeof(NewPartitionBlock) + sizeof(NewCatalog))
 
-#define kResourceTypeDialog 10
-#define kResourceTypeString 11
-#define kResourceTypeMenu 12
+#define kResourceTypeDialog (10)
+#define kResourceTypeString (11)
+#define kResourceTypeMenu (12)
 
-#define kConfigLen 64
-#define kPartLen 32
+#define kConfigLen (64)
+#define kPartLen (32)
 
-#define kNewFSFlagDeleted 70
-#define kNewFSFlagUnallocated 00
-#define kNewFSFlagCreated 71
+#define kNewFSFlagDeleted (70)
+#define kNewFSFlagUnallocated (0)
+#define kNewFSFlagCreated (71)
 
 #define kNewFSMimeNameLen (200)
+
+#define kNewFSForkNameLen (200U)
 
 typedef NewOS::Char NewCharType;
 
@@ -131,8 +133,6 @@ struct PACKED NewCatalog final {
   NewOS::Lba NextSibling;
   NewOS::Lba PrevSibling;
 };
-
-#define kNewFSForkNameLen (200U)
 
 /// @brief Fork type, contains a data page.
 /// @note The way we store is way different than how other filesystems do, specific chunk of code are

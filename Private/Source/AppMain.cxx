@@ -40,16 +40,6 @@ class FilesystemAutomountProvider final {
 
       NewOS::FilesystemManagerInterface::Mount(fNewFS);
 
-      constexpr auto sanitizerSize = 512;
-
-      /// Sample AMD64 program,
-      /// mov rax, 0x0
-      /// ret
-      /// @note there was a 0xc1 before, to delimit the program, but I removed
-      /// it. We don't need that now.
-      NewOS::UInt8 sanitizerBytes[sanitizerSize] = {
-          "\x48\xC7\xC0\x00\x00\x00\x00\xC3"};
-
       if (fNewFS->GetImpl()) {
         NewCatalog* sanitizerCatalog = nullptr;
 
@@ -62,7 +52,44 @@ class FilesystemAutomountProvider final {
                                                   kNewFSCatalogKindDir);
           delete fNewFS->GetImpl()->CreateCatalog("/Applications/", 0,
                                                   kNewFSCatalogKindDir);
+
+          NewFork theFork{0};
+
+          const NewOS::Char* cSrcName = "FolderInfo";
+
+          NewOS::rt_copy_memory((NewOS::VoidPtr)(cSrcName),
+                                theFork.ForkName,
+                                NewOS::rt_string_len(cSrcName));
+
+          theFork.DataSize = kNewFSForkSize;
+          theFork.ResourceId = 0;
+          theFork.ResourceKind = NewOS::kNewFSRsrcForkKind;
+          theFork.Kind = NewOS::kNewFSDataForkKind;
+
+          const NewOS::Char metadataFolder[kNewFSSectorSz] =
+              "<p>Kind: folder</p>\r<p>Created by System.</p>\r";
+          const NewOS::SizeT metadataSz = kNewFSSectorSz;
+
+          auto catalogSystem = fNewFS->GetImpl()->GetCatalog("/System/");
+
+          fNewFS->GetImpl()->CreateFork(catalogSystem, theFork);
+
+          fNewFS->GetImpl()->WriteCatalog(catalogSystem,
+                                          (NewOS::VoidPtr)(metadataFolder),
+                                          metadataSz, "FolderInfo");
+
+          delete catalogSystem;
+
+          catalogSystem = fNewFS->GetImpl()->GetCatalog("/Support/");
+
+          fNewFS->GetImpl()->CreateFork(catalogSystem, theFork);
+
+          fNewFS->GetImpl()->WriteCatalog(catalogSystem,
+                                          (NewOS::VoidPtr)(metadataFolder),
+                                          metadataSz, "FolderInfo");
         }
+
+        NewOS::kcout << (NewOS::Char*)fNewFS->GetImpl()->ReadCatalog(fNewFS->GetImpl()->GetCatalog("/System/"), 512, "FolderInfo");
       }
     }
   }

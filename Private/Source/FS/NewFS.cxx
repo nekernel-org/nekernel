@@ -31,7 +31,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
     Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
                                                    : catalog->ResourceFork;
 
-    kcout << "Data-Fork-Lba: " << hex_number(lba) << endl;
+    kcout << "Fork-Lba: " << hex_number(lba) << endl;
 
     if (lba <= kNewFSCatalogStartAddress) return nullptr;
 
@@ -41,29 +41,29 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
     rt_copy_memory((VoidPtr) "fs/newfs-packet", drv->fPacket.fPacketMime,
                    rt_string_len("fs/newfs-packet"));
 
-    NewFork cpyFork{0};
+    NewFork curFork{0};
     NewFork prevFork{0};
     Lba lbaOfPreviousFork = lba;
 
-    while (cpyFork.ForkName[0] == 0) {
+    while (curFork.ForkName[0] == 0) {
       if (lba <= kNewFSCatalogStartAddress) break;
 
       drv->fPacket.fLba = lba;
       drv->fPacket.fPacketSize = sizeof(NewFork);
-      drv->fPacket.fPacketContent = &cpyFork;
+      drv->fPacket.fPacketContent = &curFork;
 
       drv->fInput(&drv->fPacket);
 
-      kcout << "New OS: Next-Fork: " << hex_number(cpyFork.NextSibling) << endl;
+      kcout << "New OS: Next-Fork: " << hex_number(curFork.NextSibling) << endl;
 
-      if (cpyFork.Flags == kNewFSFlagCreated) {
+      if (curFork.Flags == kNewFSFlagCreated) {
         kcout << "New OS: Fork already exists.\r";
-        if (StringBuilder::Equals(cpyFork.ForkName, theFork.ForkName)) return nullptr;
+        if (StringBuilder::Equals(curFork.ForkName, theFork.ForkName)) return nullptr;
 
         lbaOfPreviousFork = lba;
-        lba = cpyFork.NextSibling;
+        lba = curFork.NextSibling;
 
-        prevFork = cpyFork;
+        prevFork = curFork;
       } else {
         /// This is a check that we have, in order to link the previous fork
         /// entry.
@@ -153,16 +153,16 @@ _Output NewFork* NewFSParser::FindFork(_Input NewCatalog* catalog,
 /// @brief Simpler factory to create a catalog (assumes you want to create a
 /// file.)
 /// @param name
-/// @return
+/// @return catalog pointer.
 _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name) {
   return this->CreateCatalog(name, 0, kNewFSCatalogKindFile);
 }
 
-/// @brief
-/// @param name
-/// @param flags
-/// @param kind
-/// @return
+/// @brief Creates a new catalog into the disk.
+/// @param name the catalog name.
+/// @param flags the flags of the catalog.
+/// @param kind the catalog kind.
+/// @return catalog pointer.
 _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
                                                _Input const Int32& flags,
                                                _Input const Int32& kind) {
@@ -208,7 +208,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
   // mandatory / character.
   parentName[--indexReverseCopy] = 0;
 
-  while (parentName[indexReverseCopy] != '/') {
+  while (parentName[indexReverseCopy] != NewFilesystemHelper::Separator()) {
     parentName[indexReverseCopy] = 0;
     --indexReverseCopy;
   }
@@ -323,6 +323,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
       partBlock->SectorCount -= 1;
       partBlock->CatalogCount += 1;
       partBlock->FreeCatalog -= 1;
+      partBlock->FreeCatalog = catalogChild->NextSibling;
 
       drive->fOutput(&drive->fPacket);
 

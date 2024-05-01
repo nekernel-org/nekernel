@@ -148,9 +148,11 @@ NewOS::Void drv_std_read(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Maste
 NewOS::Void drv_std_write(NewOS::UInt64 Lba, NewOS::UInt16 IO, NewOS::UInt8 Master, NewOS::Char* Buf,
                     NewOS::SizeT SectorSz, NewOS::SizeT Size);
 
+/// @brief get sector count.
 NewOS::SizeT drv_std_get_sector_count();
 
+/// @brief get device size.
 NewOS::SizeT drv_std_get_drv_size();
 
 #endif // ifdef __KERNEL__
-#endif // ifndef __AHCI__
+#endif // ifndef __ATA_PIO__ || __AHCI__
