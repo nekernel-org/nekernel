@@ -405,7 +405,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
       partBlock->CatalogCount = sectorCount / sizeof(NewCatalog);
       partBlock->SectorCount = sectorCount;
       partBlock->DiskSize = diskSize;
-      partBlock->FreeCatalog = partBlock->StartCatalog;
+      partBlock->FreeCatalog = sectorCount / sizeof(NewCatalog);
 
       drive->fPacket.fPacketContent = sectorBuf;
       drive->fPacket.fPacketSize = kNewFSSectorSz;
@@ -620,6 +620,21 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
     drive->fPacket.fPacketContent = catalog;  // the catalog itself.
 
     drive->fOutput(&drive->fPacket);  // send packet.
+
+    Char partitonBlockBuf[sizeof(NewPartitionBlock)] = { 0 };
+
+    drive->fPacket.fLba = kNewFSAddressAsLba;
+    drive->fPacket.fPacketContent = partitonBlockBuf;
+    drive->fPacket.fPacketSize = sizeof(NewPartitionBlock);
+
+    drive->fInput(&drive->fPacket);
+
+    NewPartitionBlock* partBlock = reinterpret_cast<NewPartitionBlock*>(partitonBlockBuf);
+
+    ++partBlock->FreeCatalog;
+    --partBlock->CatalogCount;
+
+    drive->fOutput(&drive->fPacket);
 
     return true;
   }

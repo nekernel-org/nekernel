@@ -67,7 +67,7 @@ class FilesystemAutomountProvider final {
           theFork.Kind = NewOS::kNewFSDataForkKind;
 
           const NewOS::Char metadataFolder[kNewFSSectorSz] =
-              "<p>Kind: folder</p>\r<p>Created by System.</p>\r";
+              "<p>Kind: folder</p>\r<p>Created by: system</p>\r";
           const NewOS::SizeT metadataSz = kNewFSSectorSz;
 
           auto catalogSystem = fNewFS->GetImpl()->GetCatalog("/System/");
