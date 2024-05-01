@@ -92,3 +92,7 @@
 
 #define STRINGIFY(X) #X
 #define NEWOS_UNUSED(X) ((void)X)
+
+#ifndef RGB
+#define RGB(R, G, B) (UInt32)(0x##R##G##B)
+#endif // !RGB

@@ -92,7 +92,7 @@ inline void ThrowError(const EfiCharType *ErrorCode,
   constexpr auto ver = 4;
   auto ecc = qr::Ecc::H;
   auto str = "https://el-mahrouss-logic.com/";
-  auto len = BStrLen(L"https://el-mahrouss-logic.com/");
+  auto len = StrLen("https://el-mahrouss-logic.com/");
 
   qr::Qr<ver> encoder;
   qr::QrDelegate encoderDelegate;

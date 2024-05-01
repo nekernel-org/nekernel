@@ -27,11 +27,11 @@
 #include <NewKit/Defines.hpp>
 #include <Builtins/ATA/ATA.hxx>
 
+#include <FirmwareKit/EFI.hxx>
+
 /***********************************************************************************/
 /// Framebuffer helpers.
 /***********************************************************************************/
-
-#define RGB(R, G, B) (UInt32)(0x##R##G##B)
 
 class BTextWriter;
 class BFileReader;

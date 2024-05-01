@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include <FirmwareKit/EFI/API.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <FirmwareKit/EFI.hxx>

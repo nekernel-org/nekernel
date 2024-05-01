@@ -9,9 +9,8 @@
 #include <BootKit/Vendor/QrVendor/bit.h>
 
 #include <BootKit/Vendor/QrPrelude.hxx>
-#include <BootKit/Vendor/Support.hxx>
 #include <Builtins/Toolbox/Toolbox.hxx>
-#include <cstdint>
+#include <BootKit/Vendor/Support.hxx>
 #include <CompilerKit/Detail.hxx>
 
 namespace qr {

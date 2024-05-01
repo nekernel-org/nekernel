@@ -10,8 +10,8 @@
 
 #include <BootKit/BootKit.hxx>
 
-#define LONG_MAX ((long)(~0UL>>1))
-#define LONG_MIN (~LONG_MAX)
+#define cLongMax ((long)(~0UL>>1))
+#define cLongMin (~cLongMax)
 
 #define SetMem(dst, c, sz) memset(dst, c, sz)
 #define MoveMem(dst, src, sz) memcpy(dst, src, sz)
@@ -23,7 +23,7 @@ inline int isspace(int c) { return c == ' '; }
 inline long StringToLong(const char * nptr, char ** endptr, int base) {
     const char *p = nptr, *endp;
     bool is_neg = 0, overflow = 0;
-    /* Need unsigned so (-LONG_MIN) can fit in these: */
+    /* Need unsigned so (-cLongMin) can fit in these: */
     unsigned long n = 0UL, cutoff;
     int cutlim;
     if (base < 0 || base == 1 || base > 36) {
@@ -60,8 +60,8 @@ inline long StringToLong(const char * nptr, char ** endptr, int base) {
     } else if (base == 0) {
         base = 10;
     }
-    cutoff = (is_neg) ? -(LONG_MIN / base) : LONG_MAX / base;
-    cutlim = (is_neg) ? -(LONG_MIN % base) : LONG_MAX % base;
+    cutoff = (is_neg) ? -(cLongMin / base) : cLongMax / base;
+    cutlim = (is_neg) ? -(cLongMin % base) : cLongMax % base;
     while (1) {
         int c;
         if (*p >= 'A')
@@ -85,7 +85,7 @@ inline long StringToLong(const char * nptr, char ** endptr, int base) {
     }
     if (endptr) *endptr = (char *)endp;
     if (overflow) {
-        return ((is_neg) ? LONG_MIN : LONG_MAX);
+        return ((is_neg) ? cLongMin : cLongMax);
     }
     return (long)((is_neg) ? -n : n);
 }

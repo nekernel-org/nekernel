@@ -12,6 +12,7 @@
 #include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
 #include <FirmwareKit/Handover.hxx>
+#include <FirmwareKit/EFI/API.hxx>
 #include <cstddef>
 
 /// @file BootFileReader

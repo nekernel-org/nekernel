@@ -80,11 +80,4 @@ extern const UInt32 kRgbBlack;
 extern const UInt32 kRgbWhite;
 }  // namespace NewOS
 
-/***********************************************************************************/
-/// Color macros.
-/***********************************************************************************/
-
-/// @brief Macro hack to make a color (as hexadecimal)
-#define RGB(R, G, B) (NewOS::UInt32)(0x##R##G##B)
-
 #endif /* ifndef __INC_FB_HPP__ */
