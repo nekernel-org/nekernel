@@ -17,6 +17,12 @@
 
 using namespace NewOS;
 
+///! BUGS: 0
+
+/***********************************************************************************/
+/* This file implement the New File System.
+/***********************************************************************************/
+
 STATIC MountpointInterface sMountpointInterface;
 
 /// @brief Creates a new fork inside the New filesystem partition.
@@ -27,11 +33,12 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
                                          _Input NewFork& theFork) {
   if (!sMountpointInterface.GetAddressOf(this->fDriveIndex)) return nullptr;
 
-  if (catalog && theFork.ForkName[0] != 0 && theFork.DataSize == kNewFSForkSize) {
+  if (catalog && theFork.ForkName[0] != 0 &&
+      theFork.DataSize == kNewFSForkSize) {
     Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
                                                    : catalog->ResourceFork;
 
-    kcout << "Fork-Lba: " << hex_number(lba) << endl;
+    kcout << "Fork Lba: " << hex_number(lba) << endl;
 
     if (lba <= kNewFSCatalogStartAddress) return nullptr;
 
@@ -45,7 +52,8 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
     NewFork prevFork{0};
     Lba lbaOfPreviousFork = lba;
 
-    while (curFork.ForkName[0] == 0) {
+    /// do not check for anything. Loop until we get what we want, that is a free fork zone.
+    while (true) {
       if (lba <= kNewFSCatalogStartAddress) break;
 
       drv->fPacket.fLba = lba;
@@ -58,7 +66,13 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 
       if (curFork.Flags == kNewFSFlagCreated) {
         kcout << "New OS: Fork already exists.\r";
-        if (StringBuilder::Equals(curFork.ForkName, theFork.ForkName)) return nullptr;
+
+        /// sanity check.
+        if (StringBuilder::Equals(curFork.ForkName, theFork.ForkName) &&
+            StringBuilder::Equals(curFork.CatalogName, catalog->Name))
+          return nullptr;
+
+        kcout << "Next-Fork: " << hex_number(curFork.NextSibling) << endl;
 
         lbaOfPreviousFork = lba;
         lba = curFork.NextSibling;
@@ -68,6 +82,10 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
         /// This is a check that we have, in order to link the previous fork
         /// entry.
         if (lba >= kNewFSCatalogStartAddress) {
+          drv->fPacket.fLba = lbaOfPreviousFork;
+          drv->fPacket.fPacketSize = sizeof(NewFork);
+          drv->fPacket.fPacketContent = &prevFork;
+
           prevFork.NextSibling = lba;
 
           /// write to disk.
@@ -78,7 +96,8 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
       }
     }
 
-    constexpr auto cForkPadding = 4;
+    constexpr auto cForkPadding =
+        4;  /// this value gives us space for the data offset.
 
     theFork.Flags = kNewFSFlagCreated;
     theFork.DataOffset = lba - sizeof(NewFork) * cForkPadding;
@@ -94,6 +113,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
     /// log what we have now.
     kcout << "New OS: Wrote fork data at: " << hex_number(theFork.DataOffset)
           << endl;
+
     kcout << "New OS: Wrote fork at: " << hex_number(lba) << endl;
 
     return &theFork;
@@ -286,8 +306,8 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
       NewPartitionBlock* partBlock = (NewPartitionBlock*)sectorBufPartBlock;
 
       if (partBlock->FreeCatalog < 1) {
-          delete catalogChild;
-          return nullptr;
+        delete catalogChild;
+        return nullptr;
       }
 
       catalogChild->DataFork = partBlock->DiskSize - partBlock->StartCatalog;
@@ -462,6 +482,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
     drive->fPacket.fLba = startFork;
 
     drive->fInput(&drive->fPacket);
+
     kcout << "Fork-Name: " << forkData->ForkName << endl;
 
     /// sanity check the fork.
@@ -476,7 +497,8 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 
     if (forkData->Flags != kNewFSFlagUnallocated &&
         forkData->Flags != kNewFSFlagDeleted &&
-        StringBuilder::Equals(forkData->ForkName, forkName)) {
+        StringBuilder::Equals(forkData->ForkName, forkName) &&
+        StringBuilder::Equals(forkData->CatalogName, catalog->Name)) {
       drive->fPacket.fPacketContent = data;
       drive->fPacket.fPacketSize = sizeOfData;
       drive->fPacket.fLba = forkData->DataOffset;
@@ -621,7 +643,7 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
 
     drive->fOutput(&drive->fPacket);  // send packet.
 
-    Char partitonBlockBuf[sizeof(NewPartitionBlock)] = { 0 };
+    Char partitonBlockBuf[sizeof(NewPartitionBlock)] = {0};
 
     drive->fPacket.fLba = kNewFSAddressAsLba;
     drive->fPacket.fPacketContent = partitonBlockBuf;
@@ -629,7 +651,8 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
 
     drive->fInput(&drive->fPacket);
 
-    NewPartitionBlock* partBlock = reinterpret_cast<NewPartitionBlock*>(partitonBlockBuf);
+    NewPartitionBlock* partBlock =
+        reinterpret_cast<NewPartitionBlock*>(partitonBlockBuf);
 
     ++partBlock->FreeCatalog;
     --partBlock->CatalogCount;
@@ -694,7 +717,8 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
       return nullptr;
     }
 
-    if (StringBuilder::Equals(forkName, forkData->ForkName)) break;
+    if (StringBuilder::Equals(forkName, forkData->ForkName) &&
+        StringBuilder::Equals(catalog->Name, forkData->CatalogName)) break;
 
     dataForkLba = forkData->NextSibling;
   }

@@ -6,7 +6,7 @@
 
 /***********************************************************************************/
 /// @file ProcessScheduler.cxx
-/// @brief Process scheduler.
+/// @brief MicroKernel process scheduler.
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hpp>
@@ -15,7 +15,7 @@
 #include <NewKit/String.hpp>
 #include <KernelKit/HError.hpp>
 
-///! bugs = 0
+///! BUGS: 0
 
 /***********************************************************************************/
 /* This file handles the process scheduling.
@@ -23,14 +23,14 @@
 
 namespace NewOS {
 /***********************************************************************************/
-/// Exit Code stuff
+/// @brief Exit Code global
 /***********************************************************************************/
 
-STATIC Int32 kExitCode = 0U;
+STATIC Int32 kLastExitCode = 0U;
 
 /// @brief Gets the latest exit code.
 /// @note Not thread-safe.
-const Int32 &rt_get_exit_code() noexcept { return kExitCode; }
+const Int32 &rt_get_exit_code() noexcept { return kLastExitCode; }
 
 /***********************************************************************************/
 
@@ -133,7 +133,7 @@ void ProcessHeader::Exit(Int32 exit_code) {
       ProcessScheduler::Shared().Leak().GetCurrent().Leak().Ring > 0)
     ke_stop(RUNTIME_CHECK_PROCESS);
 
-  kExitCode = exit_code;
+  kLastExitCode = exit_code;
 
   if (this->Ring != (Int32)ProcessSelector::kRingDriver) {
     if (this->HeapPtr) rt_free_heap(this->HeapPtr);
