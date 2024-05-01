@@ -89,7 +89,16 @@ class FilesystemAutomountProvider final {
                                           metadataSz, "FolderInfo");
         }
 
-        NewOS::kcout << (NewOS::Char*)fNewFS->GetImpl()->ReadCatalog(fNewFS->GetImpl()->GetCatalog("/System/"), 512, "FolderInfo");
+        auto systemFolder = fNewFS->GetImpl()->GetCatalog("/System/");
+        auto buf = fNewFS->GetImpl()->ReadCatalog(systemFolder, 512, "FolderInfo");
+        NewOS::kcout << (NewOS::Char*)buf;
+
+        delete (NewOS::Char*) buf;
+        delete systemFolder;
+
+        systemFolder = fNewFS->GetImpl()->GetCatalog("/Boot/");
+
+        NewOS::kcout << systemFolder->Name << NewOS::endl;
       }
     }
   }

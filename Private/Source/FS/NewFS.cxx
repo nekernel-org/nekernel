@@ -285,6 +285,11 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
       NewPartitionBlock* partBlock = (NewPartitionBlock*)sectorBufPartBlock;
 
+      if (partBlock->FreeCatalog < 1) {
+          delete catalogChild;
+          return nullptr;
+      }
+
       catalogChild->DataFork = partBlock->DiskSize - partBlock->StartCatalog;
 
       catalogChild->ResourceFork = catalogChild->DataFork;
