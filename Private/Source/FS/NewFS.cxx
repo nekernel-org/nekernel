@@ -190,11 +190,12 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
   Lba outLba = 0UL;
 
+  /// a directory should have a slash in the end.
   if (kind == kNewFSCatalogKindDir &&
       name[rt_string_len(name) - 1] != NewFilesystemHelper::Separator())
     return nullptr;
 
-  /// as well as this, we don't want that.
+  /// a file shouldn't have a slash in the end.
   if (kind != kNewFSCatalogKindDir &&
       name[rt_string_len(name) - 1] == NewFilesystemHelper::Separator())
     return nullptr;
@@ -215,6 +216,8 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
     DbgLastError() = kErrorFileNotFound;
     return nullptr;
   }
+
+  /// Locate parent catalog, to then allocate right after it.
 
   for (SizeT indexFill = 0; indexFill < rt_string_len(name); ++indexFill) {
     parentName[indexFill] = name[indexFill];
@@ -550,14 +553,51 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
 
   NewPartitionBlock* part = (NewPartitionBlock*)sectorBuf;
 
-  auto start = part->StartCatalog;
+  auto startCatalogList = part->StartCatalog;
+  const auto cCtartCatalogList = part->StartCatalog;
 
-  drive->fPacket.fLba = start;
+  auto localSearchFirst = false;
+
+  drive->fPacket.fLba = startCatalogList;
   drive->fPacket.fPacketContent = sectorBuf;
   drive->fPacket.fPacketSize = sizeof(NewCatalog);
 
   drive->fInput(&drive->fPacket);
 
+  if (!StringBuilder::Equals(catalogName, NewFilesystemHelper::Root())) {
+      Char parentName[kNewFSNodeNameLen] = { 0 };
+
+      for (SizeT indexFill = 0; indexFill < rt_string_len(catalogName); ++indexFill) {
+        parentName[indexFill] = catalogName[indexFill];
+      }
+
+      SizeT indexReverseCopy = rt_string_len(parentName);
+
+      // zero character.
+      parentName[--indexReverseCopy] = 0;
+
+      // mandatory / character.
+      parentName[--indexReverseCopy] = 0;
+
+      while (parentName[indexReverseCopy] != NewFilesystemHelper::Separator()) {
+        parentName[indexReverseCopy] = 0;
+        --indexReverseCopy;
+      }
+
+      NewCatalog* parentCatalog = this->FindCatalog(parentName, outLba);
+
+      if (parentCatalog &&
+          !StringBuilder::Equals(parentName, NewFilesystemHelper::Root())) {
+          startCatalogList = outLba;
+          delete parentCatalog;
+
+          localSearchFirst = true;
+      } else if (parentCatalog) {
+          delete parentCatalog;
+      }
+  }
+
+_NewFSSearchThroughCatalogList:
   while (drive->fPacket.fPacketGood) {
     NewCatalog* catalog = (NewCatalog*)sectorBuf;
 
@@ -570,23 +610,30 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
       NewCatalog* catalogPtr = new NewCatalog();
       rt_copy_memory(catalog, catalogPtr, sizeof(NewCatalog));
 
-      kcout << "New OS: Found catalog at: " << hex_number(start) << endl;
+      kcout << "New OS: Found catalog at: " << hex_number(startCatalogList) << endl;
 
-      outLba = start;
+      outLba = startCatalogList;
       delete[] sectorBuf;
       return catalogPtr;
     }
 
   _NewFSContinueSearch:
-    start = catalog->NextSibling;
+    startCatalogList = catalog->NextSibling;
 
-    if (start <= kNewFSAddressAsLba) break;
+    if (startCatalogList <= kNewFSAddressAsLba) break;
 
-    drive->fPacket.fLba = start;
+    drive->fPacket.fLba = startCatalogList;
     drive->fPacket.fPacketContent = sectorBuf;
     drive->fPacket.fPacketSize = sizeof(NewCatalog);
 
     drive->fInput(&drive->fPacket);
+  }
+
+  if (localSearchFirst) {
+      localSearchFirst = false;
+      startCatalogList = cCtartCatalogList;
+
+      goto _NewFSSearchThroughCatalogList;
   }
 
   outLba = 0UL;

@@ -111,7 +111,7 @@ typedef struct PartitionBlock PartitionBlockType;
 
 ///! @brief partition must start at this address.
 ///! Anything below is reserved for Data backup by the Main OS.
-#define kEPMStartPartitionBlk (0)
+#define kEPMStartPartitionBlk (sizeof(BootBlock))
 
 ///! @brief Current EPM revision (2)
 #define kEPMRevision (2)
@@ -119,6 +119,6 @@ typedef struct PartitionBlock PartitionBlockType;
 ///! @brief Current EPM revision (2)
 #define kEPMRevisionUEFI (0xF)
 
-/// END SPECS
+/// END OF SPECS
 
 #endif  // ifndef __PARTITION_MAP__
