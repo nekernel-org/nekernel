@@ -33,12 +33,18 @@ STATIC Int32 kLastExitCode = 0U;
 const Int32 &rt_get_exit_code() noexcept { return kLastExitCode; }
 
 /***********************************************************************************/
+/// @brief crash current process.
+/***********************************************************************************/
 
 void ProcessHeader::Crash() {
-  kcout << "ProcessScheduler: Crashed, ExitCode: -1.\r";
-  MUST_PASS(ke_bug_check());
+  kcout << this->Name << ": crashed. (id = " << number(39);
+  kcout << ")\r";
 
-  this->Exit(-1);
+  if (this->Ring != kRingUserKind) {
+      MUST_PASS(ke_bug_check());
+  }
+
+  this->Exit(kErrorProcessFault);
 }
 
 void ProcessHeader::Wake(const bool should_wakeup) {

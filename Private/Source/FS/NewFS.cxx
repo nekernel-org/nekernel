@@ -643,16 +643,16 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
 
     drive->fOutput(&drive->fPacket);  // send packet.
 
-    Char partitonBlockBuf[sizeof(NewPartitionBlock)] = {0};
+    Char partitionBlockBuf[sizeof(NewPartitionBlock)] = {0};
 
     drive->fPacket.fLba = kNewFSAddressAsLba;
-    drive->fPacket.fPacketContent = partitonBlockBuf;
+    drive->fPacket.fPacketContent = partitionBlockBuf;
     drive->fPacket.fPacketSize = sizeof(NewPartitionBlock);
 
     drive->fInput(&drive->fPacket);
 
     NewPartitionBlock* partBlock =
-        reinterpret_cast<NewPartitionBlock*>(partitonBlockBuf);
+        reinterpret_cast<NewPartitionBlock*>(partitionBlockBuf);
 
     ++partBlock->FreeCatalog;
     --partBlock->CatalogCount;
@@ -670,10 +670,13 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
 /// Reading,Seek,Tell are unimplemented on catalogs, refer to forks I/O instead.
 /// ***************************************************************** ///
 
+/***********************************************************************************/
 /// @brief Read the catalog data fork.
 /// @param catalog
 /// @param dataSz
 /// @return
+/***********************************************************************************/
+
 VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
                                  _Input SizeT dataSz,
                                  _Input const char* forkName) {
@@ -740,32 +743,43 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
   return forkBuf;
 }
 
+/***********************************************************************************/
 /// @brief Seek in the data fork.
 /// @param catalog the catalog offset.
 /// @param off where to seek.
-/// @return
+/// @return if the seeking was successful.
+/***********************************************************************************/
+
 bool NewFSParser::Seek(_Input _Output NewCatalog* catalog, SizeT off) {
   if (!catalog) {
     DbgLastError() = kErrorFileNotFound;
     return false;
   }
 
-  return true;
+  DbgLastError() = kErrorUnimplemented;
+  return false;
 }
 
+/***********************************************************************************/
 /// @brief Tell where we are inside the data fork.
 /// @param catalog
-/// @return
+/// @return The position on the file.
+/***********************************************************************************/
+
 SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog) {
   if (!catalog) {
     DbgLastError() = kErrorFileNotFound;
     return 0;
   }
 
+  DbgLastError() = kErrorUnimplemented;
   return 0;
 }
 
 namespace NewOS::Detail {
+/***********************************************************************************/
+/// @brief Construct NewFS drives.
+/***********************************************************************************/
 Boolean fs_init_newfs(Void) noexcept {
   sMountpointInterface.A() = construct_main_drive();
   sMountpointInterface.B() = construct_drive();
@@ -773,6 +787,24 @@ Boolean fs_init_newfs(Void) noexcept {
   sMountpointInterface.D() = construct_drive();
 
   sMountpointInterface.A().fVerify(&sMountpointInterface.A().fPacket);
+
+  Char partitionBlockBuf[sizeof(NewPartitionBlock)] = { 0 };
+
+  sMountpointInterface.A().fPacket.fLba = kNewFSAddressAsLba;
+  sMountpointInterface.A().fPacket.fPacketContent = partitionBlockBuf;
+  sMountpointInterface.A().fPacket.fPacketSize = sizeof(NewPartitionBlock);
+
+  sMountpointInterface.A().fInput(&sMountpointInterface.A().fPacket);
+
+  NewPartitionBlock* partBlock =
+      reinterpret_cast<NewPartitionBlock*>(partitionBlockBuf);
+
+  if (!StringBuilder::Equals(partBlock->Ident, kNewFSIdent)) {
+      kcout << "New OS: New FS Partition is corrupt.\r";
+      return false;
+  }
+
+  kcout << "New OS: Read partition: " << partBlock->PartitionName << ", with success!\r";
 
   return true;
 }
