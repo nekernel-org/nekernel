@@ -73,9 +73,10 @@ compile-amd64:
 run-efi-amd64:
 	$(EMU) $(EMU_FLAGS)
 
+# img_2 is the rescue disk. img is the bootable disk, as provided by the NeWS.
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f raw $(IMG) 4G
+	qemu-img create -f raw $(IMG) 20G
 	qemu-img create -f raw $(IMG_2) 512M
 
 .PHONY: download-edk
