@@ -40,18 +40,31 @@ class TerminalDevice final : public DeviceInterface<const Char *> {
 
   NEWOS_COPY_DEFAULT(TerminalDevice);
 
-  static TerminalDevice Shared() noexcept;
+  static TerminalDevice& Shared() noexcept;
 };
 
-inline TerminalDevice end_line() {
-  TerminalDevice selfTerm = TerminalDevice::Shared();
+inline TerminalDevice& end_line() {
+  TerminalDevice& selfTerm = TerminalDevice::Shared();
   selfTerm << "\r";
   return selfTerm;
 }
 
-inline TerminalDevice carriage_return() {
-  TerminalDevice selfTerm = TerminalDevice::Shared();
+inline TerminalDevice& carriage_return() {
+  TerminalDevice& selfTerm = TerminalDevice::Shared();
   selfTerm << "\r";
+  return selfTerm;
+}
+
+inline TerminalDevice& tabulate() {
+  TerminalDevice& selfTerm = TerminalDevice::Shared();
+  selfTerm << "\t";
+  return selfTerm;
+}
+
+/// @brief emulate a terminal bell, like the VT100 does.
+inline TerminalDevice& bell() {
+  TerminalDevice& selfTerm = TerminalDevice::Shared();
+  selfTerm << "\a";
   return selfTerm;
 }
 
@@ -105,8 +118,8 @@ inline TerminalDevice _write_number_hex(const Long &x, TerminalDevice& term) {
 }
 } // namespace Detail
 
-inline TerminalDevice hex_number(const Long &x) {
-  TerminalDevice selfTerm = TerminalDevice::Shared();
+inline TerminalDevice& hex_number(const Long &x) {
+  TerminalDevice& selfTerm = TerminalDevice::Shared();
 
   selfTerm << "0x";
   Detail::_write_number_hex(x, selfTerm);
@@ -114,16 +127,16 @@ inline TerminalDevice hex_number(const Long &x) {
   return selfTerm;
 }
 
-inline TerminalDevice number(const Long &x) {
-  TerminalDevice selfTerm = TerminalDevice::Shared();
+inline TerminalDevice& number(const Long &x) {
+  TerminalDevice& selfTerm = TerminalDevice::Shared();
 
   Detail::_write_number(x, selfTerm);
 
   return selfTerm;
 }
 
-inline TerminalDevice get_console_in(Char* buf) {
-  TerminalDevice selfTerm = TerminalDevice::Shared();
+inline TerminalDevice& get_console_in(Char* buf) {
+  TerminalDevice& selfTerm = TerminalDevice::Shared();
   selfTerm >> buf;
   return selfTerm;
 }

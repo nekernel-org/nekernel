@@ -116,10 +116,13 @@ EXTERN_C void ke_io_read(const char* bytes) {
 #endif  // __DEBUG__
 }
 
-TerminalDevice TerminalDevice::Shared() noexcept {
-  TerminalDevice out(NewOS::ke_io_write, NewOS::ke_io_read);
+TerminalDevice& TerminalDevice::Shared() noexcept {
+  static TerminalDevice* out = nullptr;
 
-  return out;
+  if (!out)
+    out = new TerminalDevice(NewOS::ke_io_write, NewOS::ke_io_read);
+
+  return *out;
 }
 
 }  // namespace NewOS
