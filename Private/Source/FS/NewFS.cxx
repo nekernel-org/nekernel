@@ -445,6 +445,9 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive) {
       kcout << "Free-Sectors: " << hex_number(partBlock->FreeSectors) << endl;
       kcout << "Sector-Size: " << hex_number(partBlock->SectorSize) << endl;
 
+      /// write the root catalog.
+      this->CreateCatalog(kNewFSRoot, 0, kNewFSCatalogKindDir);
+
       return true;
     }
 
@@ -576,7 +579,7 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
       // zero character.
       parentName[--indexReverseCopy] = 0;
 
-      // mandatory / character.
+      // mandatory '/' character.
       parentName[--indexReverseCopy] = 0;
 
       while (parentName[indexReverseCopy] != NewFilesystemHelper::Separator()) {
@@ -666,7 +669,8 @@ Boolean NewFSParser::CloseCatalog(_Input _Output NewCatalog* catalog) {
 /// @param catalog The catalog structure.
 /// @return
 Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
-  if (!catalogName) {
+  if (!catalogName ||
+      StringBuilder::Equals(catalogName, NewFilesystemHelper::Root())) {
     DbgLastError() = kErrorInternal;
     return false;
   }
