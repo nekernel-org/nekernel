@@ -20,7 +20,7 @@ using namespace NewOS;
 ///! BUGS: 0
 
 /***********************************************************************************/
-/* This file implement the New File System.
+/* This file implements the New File System.
 /***********************************************************************************/
 
 STATIC MountpointInterface sMountpointInterface;
