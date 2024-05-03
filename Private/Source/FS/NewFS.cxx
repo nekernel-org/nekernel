@@ -667,7 +667,7 @@ Boolean NewFSParser::CloseCatalog(_Input _Output NewCatalog* catalog) {
 
 /// @brief Mark catalog as removed.
 /// @param catalog The catalog structure.
-/// @return
+/// @return if the catalog was removed or not.
 Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName) {
   if (!catalogName ||
       StringBuilder::Equals(catalogName, NewFilesystemHelper::Root())) {
