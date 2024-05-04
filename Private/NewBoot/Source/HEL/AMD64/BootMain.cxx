@@ -4,22 +4,22 @@
 
 ------------------------------------------- */
 
-#include <FirmwareKit/EFI/API.hxx>
+#include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <FirmwareKit/EFI.hxx>
+#include <FirmwareKit/EFI/API.hxx>
+#include <FirmwareKit/Handover.hxx>
 #include <KernelKit/MSDOS.hpp>
 #include <KernelKit/PEF.hpp>
 #include <NewKit/Macros.hpp>
-#include <BootKit/BootKit.hxx>
 #include <NewKit/Ref.hpp>
-#include <FirmwareKit/Handover.hxx>
 #include <cstring>
 
 /// make the compiler shut up.
 #ifndef kMachineModel
 #define kMachineModel "NeWS HD"
-#endif // !kMachineModel
+#endif  // !kMachineModel
 
 /** Graphics related. */
 
@@ -72,14 +72,15 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   UInt32* MapKey = new UInt32();
   UInt32* SizePtr = new UInt32();
-  EfiMemoryDescriptor* Descriptor = new EfiMemoryDescriptor();
+  EfiMemoryDescriptor* Descriptor = nullptr;
   UInt32* SzDesc = new UInt32();
   UInt32* RevDesc = new UInt32();
 
   *MapKey = 0;
-  *SizePtr = sizeof(EfiMemoryDescriptor);
+  *SizePtr = 0;
 
-  HEL::HandoverInformationHeader* handoverHdrPtr = new HEL::HandoverInformationHeader();
+  HEL::HandoverInformationHeader* handoverHdrPtr =
+      new HEL::HandoverInformationHeader();
 
   for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
        ++indexVT) {
@@ -129,10 +130,29 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 
+  Descriptor = new EfiMemoryDescriptor[*SzDesc];
+  BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
+
+  writer.Write(L"Kernel-Memory-Map:\r");
+
+  writer.Write(L"Number-Of-Pages: ")
+      .Write(Descriptor->NumberOfPages)
+      .Write(L"\r");
+  writer.Write(L"Virtual-Address: ")
+      .Write(Descriptor->VirtualStart)
+      .Write(L"\r");
+  writer.Write(L"Phyiscal-Address: ")
+      .Write(Descriptor->PhysicalStart)
+      .Write(L"\r");
+  writer.Write(L"Kind: ").Write(Descriptor->Kind).Write(L"\r");
+  writer.Write(L"Attribute: ").Write(Descriptor->Attribute).Write(L"\r");
+
   handoverHdrPtr->f_PhysicalStart = (VoidPtr)Descriptor->PhysicalStart;
 
-  handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] = Descriptor->Attribute;
-  handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] = Descriptor->Kind;
+  handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
+      Descriptor->Attribute;
+  handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] =
+      Descriptor->Kind;
 
   handoverHdrPtr->f_VirtualStart = (VoidPtr)Descriptor->VirtualStart;
   handoverHdrPtr->f_VirtualSize = Descriptor->NumberOfPages; /* # of pages */
