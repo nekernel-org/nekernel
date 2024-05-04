@@ -93,7 +93,14 @@ inline bool operator>=(AffinityKind lhs, AffinityKind rhs) {
 
 // end of operator overloading.
 
-using ProcessSubsystem = UInt32;
+enum ProcessSubsystemEnum {
+    eProcessSubsystemLogin,
+    eProcessSubsystemNative,
+    eProcessSubsystemInvalid,
+    eProcessSubsystemCount,
+};
+
+using ProcessSubsystem = ProcessSubsystemEnum;
 using ProcessTime = UInt64;
 using PID = Int64;
 
@@ -127,7 +134,7 @@ class ProcessHeader final {
 
  public:
   Char Name[kProcessLen] = {"NewOS Process"};
-  ProcessSubsystem SubSystem{0};
+  ProcessSubsystem SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
   ProcessSelector Selector{ProcessSelector::kRingUser};
   HAL::StackFramePtr StackFrame{nullptr};
   AffinityKind Affinity;

@@ -32,7 +32,7 @@ class PEFLoader : public LoaderInterface {
 
  public:
   const char *Path() override;
-  const char *Format() override;
+  const char *FormatAsString() override;
   const char *MIME() override;
 
  public:

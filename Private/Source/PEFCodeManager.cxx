@@ -94,19 +94,22 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
   PEFCommandHeader *container_header = reinterpret_cast<PEFCommandHeader *>(
       (UIntPtr)fCachedBlob + sizeof(PEFContainer));
 
+  constexpr auto cMangleCharacter = '$';
+  const char* cContainerKinds[] = { ".code64", ".data64", ".zero64", nullptr };
+
   ErrorOr<StringView> errOrSym;
 
   switch (kind) {
     case kPefCode: {
-      errOrSym = StringBuilder::Construct(".code64$");
+      errOrSym = StringBuilder::Construct(cContainerKinds[0]); // code symbol.
       break;
     }
     case kPefData: {
-      errOrSym = StringBuilder::Construct(".data64$");
+      errOrSym = StringBuilder::Construct(cContainerKinds[1]); // data symbol.
       break;
     }
     case kPefZero: {
-      errOrSym = StringBuilder::Construct(".zero64$");
+      errOrSym = StringBuilder::Construct(cContainerKinds[2]); // block starting symbol.
       break;
     }
     default:
@@ -115,9 +118,9 @@ VoidPtr PEFLoader::FindSymbol(const char *name, Int32 kind) {
 
   char *unconstSymbol = const_cast<char *>(name);
 
-  for (SizeT i = 0UL; i < rt_string_len(name, 0); ++i) {
+  for (SizeT i = 0UL; i < rt_string_len(unconstSymbol, kPefNameLen); ++i) {
     if (unconstSymbol[i] == ' ') {
-      unconstSymbol[i] = '$';
+      unconstSymbol[i] = cMangleCharacter;
     }
   }
 
@@ -170,7 +173,7 @@ bool execute_from_image(PEFLoader &exec, const Int32& procKind) noexcept {
 
 const char *PEFLoader::Path() { return fPath.Leak().CData(); }
 
-const char *PEFLoader::Format() {
+const char *PEFLoader::FormatAsString() {
     #ifdef __32x0__
       return "32x0 PEF.";
     #elif defined(__64x0__)
@@ -180,8 +183,8 @@ const char *PEFLoader::Format() {
     #elif defined(__powerpc64__)
       return "POWER PEF.";
     #else
-      return "Unknonwn PEF.";
-    #endif  // __32x0__ || __64x0__ || __x86_64__
+      return "Unknown PEF.";
+    #endif  // __32x0__ || __64x0__ || __x86_64__ || __powerpc64__
 }
 
 const char *PEFLoader::MIME() { return kPefApplicationMime; }
