@@ -7,7 +7,7 @@
 #pragma once
 
 #include <Headers/Defines.h>
-#include "Headers/Dialog.h"
+#include <Headers/Dialog.h>
 
 /*************************************************************
  *
@@ -118,7 +118,7 @@ CA_EXTERN_C WmControlPort*  WmCreateControl(DWordType id);
 /// @brief Releases the control
 /// @param ctrlPort the control ref.
 /// @return
-CA_EXTERN_C VoidType      WmReleaseControl(WmControlPort* ctrlPort);
+CA_EXTERN_C VoidType        WmReleaseControl(WmControlPort* ctrlPort);
 
 /// @brief Moves a control inside a WmControlPort.
 /// @param ctrlPort the control ref.
