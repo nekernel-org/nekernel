@@ -86,6 +86,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
     volatile Char* vendorTable = reinterpret_cast<volatile Char*>(
         SystemTable->ConfigurationTable[indexVT].VendorTable);
 
+    /// ACPI's 'RSD PTR', which contains hardware tables (MADT, FACP...)
     if (vendorTable[0] == 'R' && vendorTable[1] == 'S' &&
         vendorTable[2] == 'D' && vendorTable[3] == ' ' &&
         vendorTable[4] == 'P' && vendorTable[5] == 'T' &&

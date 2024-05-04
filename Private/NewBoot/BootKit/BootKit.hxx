@@ -313,6 +313,15 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char* partName,
 
     /// @note A catalog roughly equal to a sector.
 
+    constexpr auto cMinimumDiskSize = 10; // at minimum.
+
+    /// @note also look at EPM headers, for free part blocks.
+
+    if (GIB(fDiskDev.GetDiskSize()) < cMinimumDiskSize) {
+        EFI::ThrowError(L"Disk-Too-Tiny", L"Disk can't contain a New Filesystem partition.");
+        return false;
+    }
+
     partBlock->Version = kNewFSVersionInteger;
     partBlock->CatalogCount = blobCount;
     partBlock->Kind = kNewFSHardDrive;
