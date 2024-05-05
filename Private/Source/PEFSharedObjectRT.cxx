@@ -35,36 +35,40 @@ using namespace NewOS;
 /* @brief Library runtime initializer. */
 /***********************************************************************************/
 
-EXTERN_C SharedObjectPtr rt_library_init(void) {
-  SharedObjectPtr library = tls_new_class<SharedObject>();
+EXTERN_C SharedObjectPtr rt_library_init(void)
+{
+	SharedObjectPtr library = tls_new_class<SharedObject>();
 
-  if (!library) {
-    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
+	if (!library)
+	{
+		ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 
-    return nullptr;
-  }
+		return nullptr;
+	}
 
-  library->Mount(tls_new_class<SharedObject::SharedObjectTrait>());
+	library->Mount(tls_new_class<SharedObject::SharedObjectTrait>());
 
-  if (!library->Get()) {
-    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
+	if (!library->Get())
+	{
+		ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 
-    return nullptr;
-  }
+		return nullptr;
+	}
 
-  library->Get()->fImageObject =
-      ProcessScheduler::Shared().Leak().GetCurrent().Leak().Image;
+	library->Get()->fImageObject =
+		ProcessScheduler::Shared().Leak().GetCurrent().Leak().Image;
 
-  if (!library->Get()->fImageObject) {
-    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
+	if (!library->Get()->fImageObject)
+	{
+		ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
 
-    return nullptr;
-  }
+		return nullptr;
+	}
 
-  library->Get()->fImageEntrypointOffset =
-      library->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart, 0), kPefCode);
+	library->Get()->fImageEntrypointOffset =
+		library->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart, 0), kPefCode);
 
-  return library;
+	return library;
 }
 
 /***********************************************************************************/
@@ -73,28 +77,31 @@ EXTERN_C SharedObjectPtr rt_library_init(void) {
 /* @param SharedObjectPtr the library to free. */
 /***********************************************************************************/
 
-EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool *successful) {
-  MUST_PASS(successful);
+EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool* successful)
+{
+	MUST_PASS(successful);
 
-  // sanity check (will also trigger a bug check if this fails)
-  if (lib == nullptr) {
-    *successful = false;
-    ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
-  }
+	// sanity check (will also trigger a bug check if this fails)
+	if (lib == nullptr)
+	{
+		*successful = false;
+		ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
+	}
 
-  delete lib->Get();
-  delete lib;
+	delete lib->Get();
+	delete lib;
 
-  lib = nullptr;
+	lib = nullptr;
 
-  *successful = true;
+	*successful = true;
 }
 
 /***********************************************************************************/
 
 /// @brief Unimplemented function (crashes by default)
-/// @param  
-EXTERN_C void __mh_purecall(void) {
-  ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
-  return;
+/// @param
+EXTERN_C void __mh_purecall(void)
+{
+	ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
+	return;
 }

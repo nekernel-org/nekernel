@@ -1,3 +1,16 @@
 ---
+BasedOnStyle: Microsoft
+AccessModifierOffset: '-4'
+AlignAfterOpenBracket: Align
+AlignConsecutiveMacros: 'true'
+AlignConsecutiveAssignments: 'true'
+AlignConsecutiveDeclarations: 'true'
+BinPackParameters: 'false'
+ColumnLimit: '0'
 Language: Cpp
-BasedOnStyle: Google
+NamespaceIndentation: All
+PointerAlignment: Left
+ReflowComments: 'true'
+SortIncludes: 'false'
+UseTab: Always
+...

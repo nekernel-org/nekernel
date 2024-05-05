@@ -13,9 +13,10 @@
 ///! @file NewFS+Journal.cxx
 ///! @brief Journaling for NewFS.
 
-namespace NewOS::Journal {
-}  // namespace NewOS::Journal
+namespace NewOS::Journal
+{
+} // namespace NewOS::Journal
 
 using namespace NewOS;
 
-#endif  // ifdef __FSKIT_NEWFS__
+#endif // ifdef __FSKIT_NEWFS__

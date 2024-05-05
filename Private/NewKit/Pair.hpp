@@ -10,5 +10,5 @@
 
 namespace NewOS
 {
-	
+
 } // namespace NewOS

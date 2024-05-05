@@ -14,14 +14,16 @@ using namespace NewOS;
 /// @note This sets up a new stack, anything on the main function that calls the kernel will not be accessible.
 /// @param main the start of the process.
 /// @return if the process was started or not.
-bool execute_from_image(MainKind main, const char* processName) noexcept {
-  if (!main) return false;
+bool execute_from_image(MainKind main, const char* processName) noexcept
+{
+	if (!main)
+		return false;
 
-  ProcessHeader proc((VoidPtr)main);
-  proc.Kind = ProcessHeader::kDriverKind;
-  rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(proc.Name));
+	ProcessHeader proc((VoidPtr)main);
+	proc.Kind = ProcessHeader::kDriverKind;
+	rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(proc.Name));
 
-  Ref<ProcessHeader> refProc = proc;
+	Ref<ProcessHeader> refProc = proc;
 
-  return ProcessScheduler::Shared().Leak().Add(refProc);
+	return ProcessScheduler::Shared().Leak().Add(refProc);
 }

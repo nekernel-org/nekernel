@@ -21,138 +21,164 @@
 #define kDebugMag3 'G'
 
 #define kDebugSourceFile 0
-#define kDebugLine 33
-#define kDebugTeam 43
-#define kDebugEOP 49
+#define kDebugLine		 33
+#define kDebugTeam		 43
+#define kDebugEOP		 49
 
-namespace NewOS {
-// @brief Emulates a VT100 terminal.
-class TerminalDevice final : public DeviceInterface<const Char *> {
- public:
-  TerminalDevice(void (*print)(const Char *), void (*get)(const Char *))
-      : DeviceInterface<const Char *>(print, get) {}
+namespace NewOS
+{
+	// @brief Emulates a VT100 terminal.
+	class TerminalDevice final : public DeviceInterface<const Char*>
+	{
+	public:
+		TerminalDevice(void (*print)(const Char*), void (*get)(const Char*))
+			: DeviceInterface<const Char*>(print, get)
+		{
+		}
 
-  virtual ~TerminalDevice() {}
+		virtual ~TerminalDevice()
+		{
+		}
 
-  /// @brief returns device name (terminal name)
-  /// @return string type (const char*)
-  virtual const char *Name() const override { return ("TerminalDevice"); }
+		/// @brief returns device name (terminal name)
+		/// @return string type (const char*)
+		virtual const char* Name() const override
+		{
+			return ("TerminalDevice");
+		}
 
-  NEWOS_COPY_DEFAULT(TerminalDevice);
+		NEWOS_COPY_DEFAULT(TerminalDevice);
 
-  static TerminalDevice& Shared() noexcept;
-};
+		static TerminalDevice& Shared() noexcept;
+	};
 
-inline TerminalDevice& end_line() {
-  TerminalDevice& selfTerm = TerminalDevice::Shared();
-  selfTerm << "\r";
-  return selfTerm;
-}
+	inline TerminalDevice& end_line()
+	{
+		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		selfTerm << "\r";
+		return selfTerm;
+	}
 
-inline TerminalDevice& carriage_return() {
-  TerminalDevice& selfTerm = TerminalDevice::Shared();
-  selfTerm << "\r";
-  return selfTerm;
-}
+	inline TerminalDevice& carriage_return()
+	{
+		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		selfTerm << "\r";
+		return selfTerm;
+	}
 
-inline TerminalDevice& tabulate() {
-  TerminalDevice& selfTerm = TerminalDevice::Shared();
-  selfTerm << "\t";
-  return selfTerm;
-}
+	inline TerminalDevice& tabulate()
+	{
+		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		selfTerm << "\t";
+		return selfTerm;
+	}
 
-/// @brief emulate a terminal bell, like the VT100 does.
-inline TerminalDevice& bell() {
-  TerminalDevice& selfTerm = TerminalDevice::Shared();
-  selfTerm << "\a";
-  return selfTerm;
-}
+	/// @brief emulate a terminal bell, like the VT100 does.
+	inline TerminalDevice& bell()
+	{
+		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		selfTerm << "\a";
+		return selfTerm;
+	}
 
-namespace Detail {
-inline TerminalDevice _write_number(const Long &x, TerminalDevice& term) {
-  UInt64 y = (x > 0 ? x : -x) / 10;
-  UInt64 h = (x > 0 ? x : -x) % 10;
+	namespace Detail
+	{
+		inline TerminalDevice _write_number(const Long& x, TerminalDevice& term)
+		{
+			UInt64 y = (x > 0 ? x : -x) / 10;
+			UInt64 h = (x > 0 ? x : -x) % 10;
 
-  if (y) _write_number(y, term);
+			if (y)
+				_write_number(y, term);
 
-  /* fail if the number is not base-10 */
-  if (h > 9) {
-    _write_number('?', term);
-    return term;
-  }
+			/* fail if the number is not base-10 */
+			if (h > 9)
+			{
+				_write_number('?', term);
+				return term;
+			}
 
-  if (y < 0) y = -y;
+			if (y < 0)
+				y = -y;
 
-  const char NUMBERS[11] = "0123456789";
+			const char NUMBERS[11] = "0123456789";
 
-  Char buf[2];
-  buf[0] = NUMBERS[h];
-  buf[1] = 0;
+			Char buf[2];
+			buf[0] = NUMBERS[h];
+			buf[1] = 0;
 
-  term << buf;
-  return term;
-}
+			term << buf;
+			return term;
+		}
 
-inline TerminalDevice _write_number_hex(const Long &x, TerminalDevice& term) {
-  UInt64 y = (x > 0 ? x : -x) / 16;
-  UInt64 h = (x > 0 ? x : -x) % 16;
+		inline TerminalDevice _write_number_hex(const Long& x, TerminalDevice& term)
+		{
+			UInt64 y = (x > 0 ? x : -x) / 16;
+			UInt64 h = (x > 0 ? x : -x) % 16;
 
-  if (y) _write_number_hex(y, term);
+			if (y)
+				_write_number_hex(y, term);
 
-  /* fail if the hex number is not base-16 */
-  if (h > 15) {
-    _write_number_hex('?', term);
-    return term;
-  }
+			/* fail if the hex number is not base-16 */
+			if (h > 15)
+			{
+				_write_number_hex('?', term);
+				return term;
+			}
 
-  if (y < 0) y = -y;
+			if (y < 0)
+				y = -y;
 
-  const char NUMBERS[17] = "0123456789ABCDEF";
+			const char NUMBERS[17] = "0123456789ABCDEF";
 
-  Char buf[2];
-  buf[0] = NUMBERS[h];
-  buf[1] = 0;
+			Char buf[2];
+			buf[0] = NUMBERS[h];
+			buf[1] = 0;
 
-  term << buf;
-  return term;
-}
-} // namespace Detail
+			term << buf;
+			return term;
+		}
+	} // namespace Detail
 
-inline TerminalDevice& hex_number(const Long &x) {
-  TerminalDevice& selfTerm = TerminalDevice::Shared();
+	inline TerminalDevice& hex_number(const Long& x)
+	{
+		TerminalDevice& selfTerm = TerminalDevice::Shared();
 
-  selfTerm << "0x";
-  Detail::_write_number_hex(x, selfTerm);
+		selfTerm << "0x";
+		Detail::_write_number_hex(x, selfTerm);
 
-  return selfTerm;
-}
+		return selfTerm;
+	}
 
-inline TerminalDevice& number(const Long &x) {
-  TerminalDevice& selfTerm = TerminalDevice::Shared();
+	inline TerminalDevice& number(const Long& x)
+	{
+		TerminalDevice& selfTerm = TerminalDevice::Shared();
 
-  Detail::_write_number(x, selfTerm);
+		Detail::_write_number(x, selfTerm);
 
-  return selfTerm;
-}
+		return selfTerm;
+	}
 
-inline TerminalDevice& get_console_in(Char* buf) {
-  TerminalDevice& selfTerm = TerminalDevice::Shared();
-  selfTerm >> buf;
-  return selfTerm;
-}
+	inline TerminalDevice& get_console_in(Char* buf)
+	{
+		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		selfTerm >> buf;
+		return selfTerm;
+	}
 
-typedef Char rt_debug_type[255];
+	typedef Char rt_debug_type[255];
 
-class DebuggerPortHeader final {
- public:
-  Int16 fPort[kDebugMaxPorts];
-  Int16 fBoundCnt;
-};
-}  // namespace NewOS
+	class DebuggerPortHeader final
+	{
+	public:
+		Int16 fPort[kDebugMaxPorts];
+		Int16 fBoundCnt;
+	};
+} // namespace NewOS
 
 #ifdef kcout
 #undef kcout
-#endif  // ifdef kcout
+#endif // ifdef kcout
 
 #define kcout TerminalDevice::Shared()
-#define endl end_line()
+#define endl  end_line()

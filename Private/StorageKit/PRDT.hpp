@@ -12,22 +12,25 @@
 
 #define kPrdtTransferSize (sizeof(NewOS::UShort))
 
-namespace NewOS {
-/// @brief Tranfer information about PRD.
-enum kPRDTTransfer {
-  kPRDTTransferInProgress,
-  kPRDTTransferIsDone,
-  kPRDTTransferCount,
-};
+namespace NewOS
+{
+	/// @brief Tranfer information about PRD.
+	enum kPRDTTransfer
+	{
+		kPRDTTransferInProgress,
+		kPRDTTransferIsDone,
+		kPRDTTransferCount,
+	};
 
-/// @brief Physical Region Descriptor Table.
-struct PRDT {
-  UInt32 fPhysAddress;
-  UInt32 fSectorCount;
-  UInt8  fEndBit;
-};
+	/// @brief Physical Region Descriptor Table.
+	struct PRDT
+	{
+		UInt32 fPhysAddress;
+		UInt32 fSectorCount;
+		UInt8  fEndBit;
+	};
 
-void construct_prdt(Ref<PRDT>& prd);
+	void construct_prdt(Ref<PRDT>& prd);
 
-EXTERN_C Int32 kPRDTTransferStatus;
-}  // namespace NewOS
+	EXTERN_C Int32 kPRDTTransferStatus;
+} // namespace NewOS

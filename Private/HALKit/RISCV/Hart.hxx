@@ -16,5 +16,3 @@
 #include <NewKit/Defines.hpp>
 
 typedef NewOS::Int32 Rv64HartType;
-
-

@@ -21,18 +21,18 @@
 typedef QWordType TTFFontRef;
 
 /// @brief Loads a new font into app's memory.
-/// @param name 
-/// @return 
+/// @param name
+/// @return
 CA_EXTERN_C TTFFontRef FnCreateFont(const CharacterTypeUTF8* name);
 
 /// @brief Dispose an allocated font.
-/// @param fon 
-/// @return 
+/// @param fon
+/// @return
 CA_EXTERN_C VoidType FnDisposeFont(TTFFontRef fon);
 
 /// @brief Gets the font gylph for character.
-/// @param fon 
-/// @return 
+/// @param fon
+/// @return
 CA_EXTERN_C PtrVoidType FnGetGlyph(TTFFontRef fon, UInt32Type utfCh);
 
 /// TODO: Get font metadata.

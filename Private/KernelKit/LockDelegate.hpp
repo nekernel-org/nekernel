@@ -9,56 +9,56 @@
 #include <NewKit/Atom.hpp>
 #include <NewKit/Defines.hpp>
 
-#define kLockDone (200U)    /* job is done */
+#define kLockDone	  (200U) /* job is done */
 #define kLockTimedOut (100U) /* job has timed out */
 
 namespace NewOS
 {
-/// @brief Lock condition pointer.
-typedef Boolean* LockPtr;
+	/// @brief Lock condition pointer.
+	typedef Boolean* LockPtr;
 
-/// @brief Locking delegate class, hangs until limit.
-/// @tparam N the amount of cycles to wait.
-template <SizeT N>
-class LockDelegate final
-{
-  public:
-    LockDelegate() = delete;
+	/// @brief Locking delegate class, hangs until limit.
+	/// @tparam N the amount of cycles to wait.
+	template <SizeT N>
+	class LockDelegate final
+	{
+	public:
+		LockDelegate() = delete;
 
-  public:
-    explicit LockDelegate(LockPtr expr)
-    {
-        auto spin = 0U;
-    
-        while (spin != N)
-        {
-            if (*expr)
-            {
-                fLockStatus | kLockDone;
-                break;
-            }
-        }
+	public:
+		explicit LockDelegate(LockPtr expr)
+		{
+			auto spin = 0U;
 
-        if (spin == N)
-            fLockStatus | kLockTimedOut;
-    }
+			while (spin != N)
+			{
+				if (*expr)
+				{
+					fLockStatus | kLockDone;
+					break;
+				}
+			}
 
-    ~LockDelegate() = default;
+			if (spin == N)
+				fLockStatus | kLockTimedOut;
+		}
 
-    LockDelegate &operator=(const LockDelegate &) = delete;
-    LockDelegate(const LockDelegate &) = delete;
+		~LockDelegate() = default;
 
-    bool Done()
-    {
-        return fLockStatus[kLockDone] == kLockDone;
-    }
+		LockDelegate& operator=(const LockDelegate&) = delete;
+		LockDelegate(const LockDelegate&)			 = delete;
 
-    bool HasTimedOut()
-    {
-        return fLockStatus[kLockTimedOut] != kLockTimedOut;
-    }
+		bool Done()
+		{
+			return fLockStatus[kLockDone] == kLockDone;
+		}
 
-  private:
-    Atom<UInt> fLockStatus;
-};
+		bool HasTimedOut()
+		{
+			return fLockStatus[kLockTimedOut] != kLockTimedOut;
+		}
+
+	private:
+		Atom<UInt> fLockStatus;
+	};
 } // namespace NewOS

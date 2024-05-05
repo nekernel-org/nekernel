@@ -16,67 +16,70 @@
 #include <NewKit/Json.hpp>
 
 EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
-EXTERN_C void AppMain();
+EXTERN_C void			AppMain();
 
-namespace NewOS::HAL {
-/// @brief Gets the system cores using the MADT.
-/// @param rsdPtr the RSD PTR.
-extern void hal_system_get_cores(NewOS::voidPtr rsdPtr);
-}  // namespace NewOS::HAL
+namespace NewOS::HAL
+{
+	/// @brief Gets the system cores using the MADT.
+	/// @param rsdPtr the RSD PTR.
+	extern void hal_system_get_cores(NewOS::voidPtr rsdPtr);
+} // namespace NewOS::HAL
 
 EXTERN_C void hal_init_platform(
-    NewOS::HEL::HandoverInformationHeader* HandoverHeader) {
-  kHandoverHeader = HandoverHeader;
+	NewOS::HEL::HandoverInformationHeader* HandoverHeader)
+{
+	kHandoverHeader = HandoverHeader;
 
-  if (kHandoverHeader->f_Magic != kHandoverMagic &&
-      kHandoverHeader->f_Version != kHandoverVersion) {
-    return;
-  }
+	if (kHandoverHeader->f_Magic != kHandoverMagic &&
+		kHandoverHeader->f_Version != kHandoverVersion)
+	{
+		return;
+	}
 
-  /// Setup kernel globals.
-  kKernelVirtualSize = HandoverHeader->f_VirtualSize;
-  kKernelVirtualStart = reinterpret_cast<NewOS::VoidPtr>(
-      reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart));
+	/// Setup kernel globals.
+	kKernelVirtualSize	= HandoverHeader->f_VirtualSize;
+	kKernelVirtualStart = reinterpret_cast<NewOS::VoidPtr>(
+		reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart) + kVirtualAddressStartOffset);
 
-  kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
+	kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 
-  STATIC NewOS::HAL::Detail::NewOSGDT GDT = {
-      {0, 0, 0, 0x00, 0x00, 0},  // null entry
-      {0, 0, 0, 0x9a, 0xaf, 0},  // kernel code
-      {0, 0, 0, 0x92, 0xaf, 0},  // kernel data
-      {0, 0, 0, 0x00, 0x00, 0},  // null entry
-      {0, 0, 0, 0x9a, 0xaf, 0},  // user code
-      {0, 0, 0, 0x92, 0xaf, 0},  // user data
-  };
+	STATIC NewOS::HAL::Detail::NewOSGDT GDT = {
+		{0, 0, 0, 0x00, 0x00, 0}, // null entry
+		{0, 0, 0, 0x9a, 0xaf, 0}, // kernel code
+		{0, 0, 0, 0x92, 0xaf, 0}, // kernel data
+		{0, 0, 0, 0x00, 0x00, 0}, // null entry
+		{0, 0, 0, 0x9a, 0xaf, 0}, // user code
+		{0, 0, 0, 0x92, 0xaf, 0}, // user data
+	};
 
-  NewOS::HAL::RegisterGDT gdtBase;
+	NewOS::HAL::RegisterGDT gdtBase;
 
-  gdtBase.Base = reinterpret_cast<NewOS::UIntPtr>(&GDT);
-  gdtBase.Limit = sizeof(NewOS::HAL::Detail::NewOSGDT) - 1;
+	gdtBase.Base  = reinterpret_cast<NewOS::UIntPtr>(&GDT);
+	gdtBase.Limit = sizeof(NewOS::HAL::Detail::NewOSGDT) - 1;
 
-  /// Load GDT.
+	/// Load GDT.
 
-  NewOS::HAL::GDTLoader gdt;
-  gdt.Load(gdtBase);
+	NewOS::HAL::GDTLoader gdt;
+	gdt.Load(gdtBase);
 
-  /// Load IDT.
+	/// Load IDT.
 
-  NewOS::HAL::Register64 idtBase;
-  idtBase.Base = (NewOS::UIntPtr)kInterruptVectorTable;
-  idtBase.Limit = 0;
+	NewOS::HAL::Register64 idtBase;
+	idtBase.Base  = (NewOS::UIntPtr)kInterruptVectorTable;
+	idtBase.Limit = 0;
 
-  NewOS::HAL::IDTLoader idt;
-  idt.Load(idtBase);
+	NewOS::HAL::IDTLoader idt;
+	idt.Load(idtBase);
 
-  /// START POST
+	/// START POST
 
-  NewOS::HAL::Detail::_ke_power_on_self_test();
+	NewOS::HAL::Detail::_ke_power_on_self_test();
 
-  NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
-  /// END POST
+	/// END POST
 
-  AppMain();
+	AppMain();
 
-  NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

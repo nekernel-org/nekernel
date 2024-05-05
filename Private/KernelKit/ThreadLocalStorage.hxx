@@ -16,28 +16,29 @@
 #define kCookieMag2 'R'
 
 template <typename T>
-T *tls_new_ptr(void);
+T* tls_new_ptr(void);
 
 template <typename T>
-bool tls_delete_ptr(T *ptr);
+bool tls_delete_ptr(T* ptr);
 
 template <typename T, typename... Args>
-T *tls_new_class(Args &&...args);
+T* tls_new_class(Args&&... args);
 
 #define kTLSCookieLen 3
 
 /// @brief Thread Information Block for Local Storage.
 /// Located in GS on AMD64, Virtual Address 0x10000 (64x0, 32x0, ARM64)
-struct PACKED ThreadInformationBlock final {
-  NewOS::Char    Cookie[kTLSCookieLen];
-  NewOS::UIntPtr StartCode;       // Start Address
-  NewOS::UIntPtr StartData;       // Allocation Heap
-  NewOS::UIntPtr StartStack;      // Stack Pointer.
-  NewOS::Int32   ThreadID;                // Thread execution ID.
+struct PACKED ThreadInformationBlock final
+{
+	NewOS::Char	   Cookie[kTLSCookieLen];
+	NewOS::UIntPtr StartCode;  // Start Address
+	NewOS::UIntPtr StartData;  // Allocation Heap
+	NewOS::UIntPtr StartStack; // Stack Pointer.
+	NewOS::Int32   ThreadID;   // Thread execution ID.
 };
 
 /// @brief TLS install TIB and PIB.
-EXTERN_C void rt_install_tib(ThreadInformationBlock *TIB, NewOS::VoidPtr PIB);
+EXTERN_C void rt_install_tib(ThreadInformationBlock* TIB, NewOS::VoidPtr PIB);
 
 ///! @brief Cookie Sanity check.
 NewOS::Boolean tls_check_tib(ThreadInformationBlock* Ptr);

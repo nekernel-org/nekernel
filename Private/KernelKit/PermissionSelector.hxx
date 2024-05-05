@@ -20,35 +20,38 @@
 // hash 'user@host:password' -> base64 encoded data
 // use this data to then fetch specific data.
 
-namespace NewOS {
-enum class RingKind {
-  kRingUser = 3,
-  kRingDriver = 2,
-  kRingKernel = 0,
-  kRingUnknown = -1,
-  kRingCount = 4,
-};
+namespace NewOS
+{
+	enum class RingKind
+	{
+		kRingUser	 = 3,
+		kRingDriver	 = 2,
+		kRingKernel	 = 0,
+		kRingUnknown = -1,
+		kRingCount	 = 4,
+	};
 
-class PermissionSelector final {
- private:
-  explicit PermissionSelector(const Int32& sel);
-  explicit PermissionSelector(const RingKind& kind);
+	class PermissionSelector final
+	{
+	private:
+		explicit PermissionSelector(const Int32& sel);
+		explicit PermissionSelector(const RingKind& kind);
 
-  ~PermissionSelector();
+		~PermissionSelector();
 
- public:
-  NEWOS_COPY_DEFAULT(PermissionSelector)
+	public:
+		NEWOS_COPY_DEFAULT(PermissionSelector)
 
- public:
-  bool operator==(const PermissionSelector& lhs);
-  bool operator!=(const PermissionSelector& lhs);
+	public:
+		bool operator==(const PermissionSelector& lhs);
+		bool operator!=(const PermissionSelector& lhs);
 
- public:
-  const RingKind& Ring() noexcept;
+	public:
+		const RingKind& Ring() noexcept;
 
- private:
-  RingKind fRing;
-};
-}  // namespace NewOS
+	private:
+		RingKind fRing;
+	};
+} // namespace NewOS
 
 #endif /* ifndef _INC_PERMISSION_SEL_HPP */

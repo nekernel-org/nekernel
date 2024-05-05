@@ -6,4 +6,6 @@
 
 #include <KernelKit/LockDelegate.hpp>
 
-namespace NewOS {} // namespace NewOS
+namespace NewOS
+{
+} // namespace NewOS

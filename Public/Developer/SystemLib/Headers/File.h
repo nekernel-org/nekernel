@@ -20,18 +20,19 @@ CA_EXTERN_C FSRef FsOpenFile(const CharacterTypeUTF8* path, const CharacterTypeU
 
 /// @brief Closes the file and flushes it to the said file.
 /// @param refFs the filesystem reference.
-/// @return 
+/// @return
 CA_EXTERN_C VoidType FsCloseFile(FSRef refFs);
 
 #define kMaxForkNameLength 256 /* long fork names. */
 
 /// @brief A fork information header.
-typedef struct _Fork {
-    PtrVoidType forkData;
-    SizeType forkSize;
-    Int32Type forkFlags;
-    Int32Type forkKind;
-    CharacterTypeUTF8 forkName[kMaxForkNameLength];
+typedef struct _Fork
+{
+	PtrVoidType		  forkData;
+	SizeType		  forkSize;
+	Int32Type		  forkFlags;
+	Int32Type		  forkKind;
+	CharacterTypeUTF8 forkName[kMaxForkNameLength];
 } ForkType;
 
 typedef ForkType* FSForkRef;

@@ -21,79 +21,90 @@
 
 /* useful macros */
 
-#define kHandoverMagic 0xBADCC
+#define kHandoverMagic	 0xBADCC
 #define kHandoverVersion 0x112
 
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
-namespace NewOS::HEL {
-/**
+namespace NewOS::HEL
+{
+	/**
     @brief the kind of executable we're loading.
 */
-enum {
-  kTypeKernel = 100,
-  kTypeKernelDriver = 101,
-  kTypeRsrc = 102,
-  kTypeCount = 3,
-};
+	enum
+	{
+		kTypeKernel		  = 100,
+		kTypeKernelDriver = 101,
+		kTypeRsrc		  = 102,
+		kTypeCount		  = 3,
+	};
 
-/**
+	/**
     @brief The executable architecture.
 */
 
-enum {
-  kArchAmd64 = 122,
-  kArchCount = 2,
-};
+	enum
+	{
+		kArchAmd64 = 122,
+		kArchCount = 2,
+	};
 
-/**
+	/**
 @brief The first struct that we read when inspecting The executable
 it tells us more about it and IS format independent.
 */
-typedef struct HandoverHeader final {
-  UInt64 f_TargetMagic;
-  Int32 f_TargetType;
-  Int32 f_TargetArch;
-  UIntPtr f_TargetStartAddress;
-} __attribute__((packed)) HandoverHeader, *HandoverHeaderPtr;
+	typedef struct HandoverHeader final
+	{
+		UInt64	f_TargetMagic;
+		Int32	f_TargetType;
+		Int32	f_TargetArch;
+		UIntPtr f_TargetStartAddress;
+	} __attribute__((packed)) HandoverHeader, *HandoverHeaderPtr;
 
-struct HandoverInformationHeader {
-  UInt64 f_Magic;
-  UInt64 f_Version;
+	struct HandoverInformationHeader
+	{
+		UInt64 f_Magic;
+		UInt64 f_Version;
 
-  voidPtr f_VirtualStart;
-  SizeT f_VirtualSize;
-  voidPtr f_PhysicalStart;
+		voidPtr f_VirtualStart;
+		SizeT	f_VirtualSize;
+		voidPtr f_PhysicalStart;
 
-  WideChar f_FirmwareVendorName[32];
-  SizeT f_FirmwareVendorLen;
+		WideChar f_FirmwareVendorName[32];
+		SizeT	 f_FirmwareVendorLen;
 
-  struct {
-    VoidPtr f_SmBios;
-    VoidPtr f_RsdPtr;
-  } f_HardwareTables;
+		struct
+		{
+			VoidPtr f_SmBios;
+			VoidPtr f_RsdPtr;
+		} f_HardwareTables;
 
-  struct {
-    UIntPtr f_The;
-    SizeT f_Size;
-    UInt32 f_Width;
-    UInt32 f_Height;
-    UInt32 f_PixelFormat;
-    UInt32 f_PixelPerLine;
-  } f_GOP;
+		struct
+		{
+			UIntPtr f_The;
+			SizeT	f_Size;
+			UInt32	f_Width;
+			UInt32	f_Height;
+			UInt32	f_PixelFormat;
+			UInt32	f_PixelPerLine;
+		} f_GOP;
 
-  UInt64 f_FirmwareSpecific[8];
-};
+		UInt64 f_FirmwareSpecific[8];
+	};
 
-enum { kHandoverSpecificKind, kHandoverSpecificAttrib, kHandoverSpecificMemoryEfi, };
+	enum
+	{
+		kHandoverSpecificKind,
+		kHandoverSpecificAttrib,
+		kHandoverSpecificMemoryEfi,
+	};
 
-/// @brief Bootloader main type.
-typedef void (*BootMainKind)(NewOS::HEL::HandoverInformationHeader* handoverInfo);
+	/// @brief Bootloader main type.
+	typedef void (*BootMainKind)(NewOS::HEL::HandoverInformationHeader* handoverInfo);
 
-/// @brief Alias of bootloader main type.
-typedef void (*HandoverProc)(HandoverInformationHeader* handoverInfo);
-}  // namespace NewOS::HEL
-
+	/// @brief Alias of bootloader main type.
+	typedef void (*HandoverProc)(HandoverInformationHeader* handoverInfo);
+} // namespace NewOS::HEL
 
 /// @brief Bootloader global header.
 inline NewOS::HEL::HandoverInformationHeader* kHandoverHeader = nullptr;

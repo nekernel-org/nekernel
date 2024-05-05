@@ -12,22 +12,24 @@ struct _DialogPort;
 struct _DialogPoint;
 
 /// @brief Dialog procedure type.
-typedef VoidType(*WmDialogFn)(struct _DialogPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
+typedef VoidType (*WmDialogFn)(struct _DialogPort* port, UInt32Type msg, UIntPtrType pParam, UIntPtrType iParam);
 
 /// @brief A point, can represent the size, position of a window.
-typedef struct _DialogPoint {
-  PositionType X, Y;
+typedef struct _DialogPoint
+{
+	PositionType X, Y;
 } DialogPoint;
 
-typedef struct _DialogPort {
-  WordType dlgPort;
-  WordType dlgKind;
-  BooleanType dlgVisible : 1;
-  BooleanType dlgMoving : 1;
-  DialogPoint dlgPosition;
-  WmDialogFn dlgProc;
-  struct _WmGFX* dlgGfx;
-  struct _WmWindowPort* parentPort;
+typedef struct _DialogPort
+{
+	WordType			  dlgPort;
+	WordType			  dlgKind;
+	BooleanType			  dlgVisible : 1;
+	BooleanType			  dlgMoving : 1;
+	DialogPoint			  dlgPosition;
+	WmDialogFn			  dlgProc;
+	struct _WmGFX*		  dlgGfx;
+	struct _WmWindowPort* parentPort;
 } DialogPort;
 
 /// @brief Creates a new dialog from a rsrc fork id.

@@ -9,214 +9,224 @@
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 
-#define TRY_FIND_NODE(NAME, NODE)                                              \
-    auto *NAME = NODE;                                                         \
-    while (NAME)                                                               \
-    {                                                                          \
-        if (NAME->fIndex == Index)                                            \
-            return NAME->fVal;                                                \
-        NAME = NAME->fNext;                                                   \
-    }
+#define TRY_FIND_NODE(NAME, NODE)  \
+	auto* NAME = NODE;             \
+	while (NAME)                   \
+	{                              \
+		if (NAME->fIndex == Index) \
+			return NAME->fVal;     \
+		NAME = NAME->fNext;        \
+	}
 
+#define TRY_FIND_NODE2(NAME, NODE)     \
+	auto* NAME = NODE;                 \
+	while (NAME)                       \
+	{                                  \
+		if (NAME->fIndex == Index)     \
+			return Ref<T>{NAME->fVal}; \
+		NAME = NAME->fNext;            \
+	}
 
-
-#define TRY_FIND_NODE2(NAME, NODE)                                             \
-    auto *NAME = NODE;                                                         \
-    while (NAME)                                                               \
-    {                                                                          \
-        if (NAME->fIndex == Index)                                            \
-            return Ref<T>{NAME->fVal};                                        \
-        NAME = NAME->fNext;                                                   \
-    }
-
-
-
-#define TRY_REMOVE_NODE(NODE)                                                  \
-    if (NODE && NODE->fIndex == Index)                                        \
-    {                                                                          \
-        NODE->fUsed = false;                                                  \
-        NODE->fIndex = 0;                                                     \
-                                                                               \
-        return true;                                                           \
-    }
-
-
+#define TRY_REMOVE_NODE(NODE)          \
+	if (NODE && NODE->fIndex == Index) \
+	{                                  \
+		NODE->fUsed	 = false;          \
+		NODE->fIndex = 0;              \
+                                       \
+		return true;                   \
+	}
 
 // FIXME: this is a shitty algorithm, which is consumer hungry.
 // Remove and occurences of that, and remove that class.
 namespace NewOS
 {
-template <typename T> class MutableArray;
+	template <typename T>
+	class MutableArray;
 
-template <typename T, T _PlaceHolderValue> class NullableMutableArray;
+	template <typename T, T _PlaceHolderValue>
+	class NullableMutableArray;
 
-template <typename T> class MutableLinkedList
-{
-  public:
-    T fVal;
-    SizeT fIndex{0};
-    Boolean fUsed{false};
+	template <typename T>
+	class MutableLinkedList
+	{
+	public:
+		T		fVal;
+		SizeT	fIndex{0};
+		Boolean fUsed{false};
 
-    MutableLinkedList *fPrev{nullptr};
-    MutableLinkedList *fNext{nullptr};
-};
+		MutableLinkedList* fPrev{nullptr};
+		MutableLinkedList* fNext{nullptr};
+	};
 
-template <typename T, T _PlaceHolderValue> class NullableMutableArray
-{
-  public:
-    // explicit this.
-    explicit NullableMutableArray() : fFirstNode(new MutableLinkedList<T>()) {}
+	template <typename T, T _PlaceHolderValue>
+	class NullableMutableArray
+	{
+	public:
+		// explicit this.
+		explicit NullableMutableArray()
+			: fFirstNode(new MutableLinkedList<T>())
+		{
+		}
 
-    /*
+		/*
      * We free all the nodes allocated by the array
      * and store the next one inside "NextIt"
      */
 
-    virtual ~NullableMutableArray()
-    {
-        auto *It = fFirstNode;
-        MutableLinkedList<T> *NextIt = nullptr;
+		virtual ~NullableMutableArray()
+		{
+			auto*				  It	 = fFirstNode;
+			MutableLinkedList<T>* NextIt = nullptr;
 
-        while (It)
-        {
-            NextIt = It->fNext;
-            delete It;
+			while (It)
+			{
+				NextIt = It->fNext;
+				delete It;
 
-            It = NextIt;
-        }
-    }
+				It = NextIt;
+			}
+		}
 
-    NullableMutableArray &operator=(const NullableMutableArray &) = default;
-    NullableMutableArray(const NullableMutableArray &) = default;
+		NullableMutableArray& operator=(const NullableMutableArray&) = default;
+		NullableMutableArray(const NullableMutableArray&)			 = default;
 
-    operator bool() { return Count() > 1; }
+		operator bool()
+		{
+			return Count() > 1;
+		}
 
-  public:
-    T operator[](const SizeT &Index) const
-    {
-        TRY_FIND_NODE(first, fFirstNode);
-        TRY_FIND_NODE(last, fLastNode);
+	public:
+		T operator[](const SizeT& Index) const
+		{
+			TRY_FIND_NODE(first, fFirstNode);
+			TRY_FIND_NODE(last, fLastNode);
 
-        return _PlaceHolderValue;
-    }
+			return _PlaceHolderValue;
+		}
 
-    SizeT Count() const { return fNodeCount; }
+		SizeT Count() const
+		{
+			return fNodeCount;
+		}
 
-  public:
-    Boolean Remove(const SizeT &Index)
-    {
-        TRY_REMOVE_NODE(fFirstNode);
-        TRY_REMOVE_NODE(fLastNode);
+	public:
+		Boolean Remove(const SizeT& Index)
+		{
+			TRY_REMOVE_NODE(fFirstNode);
+			TRY_REMOVE_NODE(fLastNode);
 
-        return false;
-    }
+			return false;
+		}
 
-    Boolean Add(const T val)
-    {
-        auto *iterationNode = fFirstNode;
-        MUST_PASS(iterationNode);
+		Boolean Add(const T val)
+		{
+			auto* iterationNode = fFirstNode;
+			MUST_PASS(iterationNode);
 
-        while (iterationNode)
-        {
-            if (!iterationNode->fUsed)
-            {
-                iterationNode->fVal = val;
-                iterationNode->fIndex = 0;
+			while (iterationNode)
+			{
+				if (!iterationNode->fUsed)
+				{
+					iterationNode->fVal	  = val;
+					iterationNode->fIndex = 0;
 
-                iterationNode->fUsed = true;
+					iterationNode->fUsed = true;
 
-                ++fNodeCount;
+					++fNodeCount;
 
-                return true;
-            }
+					return true;
+				}
 
-            iterationNode = iterationNode->fNext;
-        }
+				iterationNode = iterationNode->fNext;
+			}
 
-        return false;
-    }
+			return false;
+		}
 
-  private:
-    /* Avoid useless lookups */
-    MutableLinkedList<T> *fLastNode{nullptr};
-    MutableLinkedList<T> *fFirstNode{nullptr};
+	private:
+		/* Avoid useless lookups */
+		MutableLinkedList<T>* fLastNode{nullptr};
+		MutableLinkedList<T>* fFirstNode{nullptr};
 
-    /* Number of nodes inside of this dynamic array. */
-    NewOS::SizeT fNodeCount{0};
+		/* Number of nodes inside of this dynamic array. */
+		NewOS::SizeT fNodeCount{0};
 
-  private:
-    // don't remove that
-    friend MutableArray<T>;
-};
+	private:
+		// don't remove that
+		friend MutableArray<T>;
+	};
 
-template <typename T>
-class MutableArray : public NullableMutableArray<voidPtr, nullptr>
-{
-  public:
-    // explicit this.
-    explicit MutableArray() = default;
-    virtual ~MutableArray() = default;
+	template <typename T>
+	class MutableArray : public NullableMutableArray<voidPtr, nullptr>
+	{
+	public:
+		// explicit this.
+		explicit MutableArray() = default;
+		virtual ~MutableArray() = default;
 
-    NEWOS_COPY_DEFAULT(MutableArray)
+		NEWOS_COPY_DEFAULT(MutableArray)
 
-  public:
-    Boolean Add(const T val)
-    {
-        auto *iterationNode = fFirstNode;
-        MUST_PASS(iterationNode);
+	public:
+		Boolean Add(const T val)
+		{
+			auto* iterationNode = fFirstNode;
+			MUST_PASS(iterationNode);
 
-        while (iterationNode)
-        {
-            if (!iterationNode->fUsed)
-            {
-                iterationNode->fVal = val;
-                iterationNode->fIndex = 0;
+			while (iterationNode)
+			{
+				if (!iterationNode->fUsed)
+				{
+					iterationNode->fVal	  = val;
+					iterationNode->fIndex = 0;
 
-                iterationNode->fUsed = true;
+					iterationNode->fUsed = true;
 
-                ++fNodeCount;
+					++fNodeCount;
 
-                return true;
-            }
+					return true;
+				}
 
-            iterationNode = iterationNode->fNext;
-        }
+				iterationNode = iterationNode->fNext;
+			}
 
-        return false;
-    }
+			return false;
+		}
 
-  public:
-    Ref<T> operator[](const SizeT &Index) const
-    {
-        TRY_FIND_NODE2(first, fFirstNode);
-        TRY_FIND_NODE2(last, fLastNode);
+	public:
+		Ref<T> operator[](const SizeT& Index) const
+		{
+			TRY_FIND_NODE2(first, fFirstNode);
+			TRY_FIND_NODE2(last, fLastNode);
 
-        return {};
-    }
+			return {};
+		}
 
-    SizeT Count() const { return fNodeCount; }
+		SizeT Count() const
+		{
+			return fNodeCount;
+		}
 
-    bool Contains(T &value) noexcept
-    {
-        MutableLinkedList<T> *first = fFirstNode;
+		bool Contains(T& value) noexcept
+		{
+			MutableLinkedList<T>* first = fFirstNode;
 
-        while (first)
-        {
-            if (first->fVal == value && first->fUsed)
-                return true;
+			while (first)
+			{
+				if (first->fVal == value && first->fUsed)
+					return true;
 
-            first = first->fNext;
-        }
+				first = first->fNext;
+			}
 
-        return false;
-    }
+			return false;
+		}
 
-  private:
-    /* Avoid useless lookups */
-    MutableLinkedList<T> *fLastNode{nullptr};
-    MutableLinkedList<T> *fFirstNode{nullptr};
+	private:
+		/* Avoid useless lookups */
+		MutableLinkedList<T>* fLastNode{nullptr};
+		MutableLinkedList<T>* fFirstNode{nullptr};
 
-    /* Number of nodes inside of this dynamic array. */
-    NewOS::SizeT fNodeCount{0};
-};
+		/* Number of nodes inside of this dynamic array. */
+		NewOS::SizeT fNodeCount{0};
+	};
 } // namespace NewOS

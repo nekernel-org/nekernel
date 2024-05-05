@@ -7,62 +7,79 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Pmm.hpp>
 
-namespace NewOS {
-Pmm::Pmm() : fPageManager() { kcout << "[PMM] Allocate PageMemoryManager"; }
+namespace NewOS
+{
+	Pmm::Pmm()
+		: fPageManager()
+	{
+		kcout << "[PMM] Allocate PageMemoryManager";
+	}
 
-Pmm::~Pmm() = default;
+	Pmm::~Pmm() = default;
 
-/* If this returns Null pointer, enter emergency mode */
-Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite) {
-  PTEWrapper pt = fPageManager.Leak().Request(user, readWrite, false, kPTESize);
+	/* If this returns Null pointer, enter emergency mode */
+	Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite)
+	{
+		PTEWrapper pt = fPageManager.Leak().Request(user, readWrite, false, kPTESize);
 
-  if (pt.fPresent) {
-    kcout << "[PMM]: Allocation was successful.";
-    return Ref<PTEWrapper>(pt);
-  }
+		if (pt.fPresent)
+		{
+			kcout << "[PMM]: Allocation was successful.";
+			return Ref<PTEWrapper>(pt);
+		}
 
-  kcout << "[PMM]: Allocation failure.";
+		kcout << "[PMM]: Allocation failure.";
 
-  return {};
-}
+		return {};
+	}
 
-Boolean Pmm::FreePage(Ref<PTEWrapper> PageRef) {
-  if (!PageRef) return false;
+	Boolean Pmm::FreePage(Ref<PTEWrapper> PageRef)
+	{
+		if (!PageRef)
+			return false;
 
-  PageRef.Leak().fPresent = false;
+		PageRef.Leak().fPresent = false;
 
-  return true;
-}
+		return true;
+	}
 
-Boolean Pmm::TogglePresent(Ref<PTEWrapper> PageRef, Boolean Enable) {
-  if (!PageRef) return false;
+	Boolean Pmm::TogglePresent(Ref<PTEWrapper> PageRef, Boolean Enable)
+	{
+		if (!PageRef)
+			return false;
 
-  PageRef.Leak().fPresent = Enable;
+		PageRef.Leak().fPresent = Enable;
 
-  return true;
-}
+		return true;
+	}
 
-Boolean Pmm::ToggleUser(Ref<PTEWrapper> PageRef, Boolean Enable) {
-  if (!PageRef) return false;
+	Boolean Pmm::ToggleUser(Ref<PTEWrapper> PageRef, Boolean Enable)
+	{
+		if (!PageRef)
+			return false;
 
-  PageRef.Leak().fRw = Enable;
+		PageRef.Leak().fRw = Enable;
 
-  return true;
-}
+		return true;
+	}
 
-Boolean Pmm::ToggleRw(Ref<PTEWrapper> PageRef, Boolean Enable) {
-  if (!PageRef) return false;
+	Boolean Pmm::ToggleRw(Ref<PTEWrapper> PageRef, Boolean Enable)
+	{
+		if (!PageRef)
+			return false;
 
-  PageRef.Leak().fRw = Enable;
+		PageRef.Leak().fRw = Enable;
 
-  return true;
-}
+		return true;
+	}
 
-Boolean Pmm::ToggleShare(Ref<PTEWrapper> PageRef, Boolean Enable) {
-  if (!PageRef) return false;
+	Boolean Pmm::ToggleShare(Ref<PTEWrapper> PageRef, Boolean Enable)
+	{
+		if (!PageRef)
+			return false;
 
-  PageRef.Leak().fShareable = Enable;
+		PageRef.Leak().fShareable = Enable;
 
-  return true;
-}
-}  // namespace NewOS
+		return true;
+	}
+} // namespace NewOS

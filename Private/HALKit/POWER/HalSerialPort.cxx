@@ -11,14 +11,17 @@ using namespace NewOS;
 
 /// @brief Writes to COM1.
 /// @param bytes
-void ke_io_write(const Char* bytes) {
-  if (!bytes) return;
+void ke_io_write(const Char* bytes)
+{
+	if (!bytes)
+		return;
 
-  SizeT index = 0;
-  SizeT len = rt_string_len(bytes, 256);
+	SizeT index = 0;
+	SizeT len	= rt_string_len(bytes, 256);
 
-  while (index < len) {
-    // TODO
-    ++index;
-  }
+	while (index < len)
+	{
+		// TODO
+		++index;
+	}
 }

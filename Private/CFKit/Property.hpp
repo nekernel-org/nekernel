@@ -12,30 +12,35 @@
 #include <NewKit/Function.hpp>
 #include <NewKit/String.hpp>
 
-namespace NewOS {
-using PropertyId = Int;
+namespace NewOS
+{
+	using PropertyId = Int;
 
-/// @brief Kernel property class.
-class Property {
- public:
-  explicit Property(const StringView &sw) : fName(sw) {}
+	/// @brief Kernel property class.
+	class Property
+	{
+	public:
+		explicit Property(const StringView& sw)
+			: fName(sw)
+		{
+		}
 
-  virtual ~Property() = default;
+		virtual ~Property() = default;
 
- public:
-  Property &operator=(const Property &) = default;
-  Property(const Property &) = default;
+	public:
+		Property& operator=(const Property&) = default;
+		Property(const Property&)			 = default;
 
-  bool StringEquals(StringView &name);
-  const PropertyId &GetPropertyById();
+		bool			  StringEquals(StringView& name);
+		const PropertyId& GetPropertyById();
 
- private:
-  Ref<StringView> fName;
-  PropertyId fAction;
-};
+	private:
+		Ref<StringView> fName;
+		PropertyId		fAction;
+	};
 
-template <SSizeT N>
-using PropertyArray = Array<Property, N>;
-}  // namespace NewOS
+	template <SSizeT N>
+	using PropertyArray = Array<Property, N>;
+} // namespace NewOS
 
-#endif  // !_INC_PLIST_HPP__
+#endif // !_INC_PLIST_HPP__

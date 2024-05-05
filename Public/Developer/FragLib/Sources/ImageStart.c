@@ -14,9 +14,10 @@ CA_EXTERN_C VoidType AppMain(VoidType);
 /// @brief Process entrypoint.
 /// @param void
 /// @return void
-CA_EXTERN_C VoidType __ImageStart(VoidType) {
-  kSharedApplication = RtGetAppPointer();
-  CA_MUST_PASS(kSharedApplication);
+CA_EXTERN_C VoidType __ImageStart(VoidType)
+{
+	kSharedApplication = RtGetAppPointer();
+	CA_MUST_PASS(kSharedApplication);
 
-  AppMain();
+	AppMain();
 }

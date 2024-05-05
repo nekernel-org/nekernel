@@ -11,39 +11,48 @@
 
 using namespace NewOS;
 
-class BootDeviceATA final : public Device {
- public:
-  enum {
-    kPrimary = ATA_PRIMARY_IO,
-    kSecondary = ATA_SECONDARY_IO,
-  };
+class BootDeviceATA final : public Device
+{
+public:
+	enum
+	{
+		kPrimary   = ATA_PRIMARY_IO,
+		kSecondary = ATA_SECONDARY_IO,
+	};
 
-  explicit BootDeviceATA() noexcept;
-  ~BootDeviceATA() = default;
+	explicit BootDeviceATA() noexcept;
+	~BootDeviceATA() = default;
 
-  NEWOS_COPY_DEFAULT(BootDeviceATA);
+	NEWOS_COPY_DEFAULT(BootDeviceATA);
 
-  enum { kSectorSize = kATASectorSize };
+	enum
+	{
+		kSectorSize = kATASectorSize
+	};
 
-  struct ATATrait final : public Device::Trait {
-    UInt16 mBus{kPrimary};
-    UInt8 mMaster{0};
-    Boolean mErr{false};
+	struct ATATrait final : public Device::Trait
+	{
+		UInt16	mBus{kPrimary};
+		UInt8	mMaster{0};
+		Boolean mErr{false};
 
-    operator bool() { return !mErr; }
-  };
+		operator bool()
+		{
+			return !mErr;
+		}
+	};
 
- public:
-  operator bool();
+public:
+	operator bool();
 
-  SizeT GetSectorsCount() noexcept;
-  SizeT GetDiskSize() noexcept;
+	SizeT GetSectorsCount() noexcept;
+	SizeT GetDiskSize() noexcept;
 
-  BootDeviceATA& Read(Char* Buf, const SizeT& SecCount) override;
-  BootDeviceATA& Write(Char* Buf, const SizeT& SecCount) override;
+	BootDeviceATA& Read(Char* Buf, const SizeT& SecCount) override;
+	BootDeviceATA& Write(Char* Buf, const SizeT& SecCount) override;
 
-  ATATrait& Leak() override;
+	ATATrait& Leak() override;
 
- private:
-  ATATrait mTrait;
+private:
+	ATATrait mTrait;
 };

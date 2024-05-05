@@ -8,34 +8,46 @@
 #include <KernelKit/Semaphore.hpp>
 #include <KernelKit/Timer.hpp>
 
-namespace NewOS {
-bool Semaphore::Unlock() noexcept {
-  if (fLockingProcess) fLockingProcess = nullptr;
+namespace NewOS
+{
+	bool Semaphore::Unlock() noexcept
+	{
+		if (fLockingProcess)
+			fLockingProcess = nullptr;
 
-  return fLockingProcess == nullptr;
-}
+		return fLockingProcess == nullptr;
+	}
 
-bool Semaphore::Lock(ProcessHeader* process) {
-  if (!process || fLockingProcess) return false;
+	bool Semaphore::Lock(ProcessHeader* process)
+	{
+		if (!process || fLockingProcess)
+			return false;
 
-  fLockingProcess = process;
+		fLockingProcess = process;
 
-  return true;
-}
+		return true;
+	}
 
-bool Semaphore::IsLocked() const { return fLockingProcess; }
+	bool Semaphore::IsLocked() const
+	{
+		return fLockingProcess;
+	}
 
-bool Semaphore::LockOrWait(ProcessHeader* process, const Int64& seconds) {
-  if (process == nullptr) return false;
+	bool Semaphore::LockOrWait(ProcessHeader* process, const Int64& seconds)
+	{
+		if (process == nullptr)
+			return false;
 
-  HardwareTimer timer(Seconds(seconds));
-  timer.Wait();
+		HardwareTimer timer(Seconds(seconds));
+		timer.Wait();
 
-  return this->Lock(process);
-}
+		return this->Lock(process);
+	}
 
-void Semaphore::Sync() noexcept {
-  while (fLockingProcess) {
-  }
-}
-}  // namespace NewOS
+	void Semaphore::Sync() noexcept
+	{
+		while (fLockingProcess)
+		{
+		}
+	}
+} // namespace NewOS

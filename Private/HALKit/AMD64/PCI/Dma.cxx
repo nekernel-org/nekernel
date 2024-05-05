@@ -6,58 +6,77 @@
 
 #include <KernelKit/PCI/Dma.hpp>
 
-namespace NewOS {
-DMAWrapper::operator bool() { return fAddress; }
+namespace NewOS
+{
+	DMAWrapper::operator bool()
+	{
+		return fAddress;
+	}
 
-bool DMAWrapper::operator!() { return !fAddress; }
+	bool DMAWrapper::operator!()
+	{
+		return !fAddress;
+	}
 
-Boolean DMAWrapper::Check(UIntPtr offset) const {
-  if (!fAddress) return false;
-  if (offset == 0) return true;
+	Boolean DMAWrapper::Check(UIntPtr offset) const
+	{
+		if (!fAddress)
+			return false;
+		if (offset == 0)
+			return true;
 
-  kcout << "[DMAWrapper::IsIn] Checking offset..\n";
-  return reinterpret_cast<UIntPtr>(fAddress) >= offset;
-}
+		kcout << "[DMAWrapper::IsIn] Checking offset..\n";
+		return reinterpret_cast<UIntPtr>(fAddress) >= offset;
+	}
 
-bool DMAWrapper::Write(const UIntPtr &bit, const UIntPtr &offset) {
-  if (!fAddress) return false;
+	bool DMAWrapper::Write(const UIntPtr& bit, const UIntPtr& offset)
+	{
+		if (!fAddress)
+			return false;
 
-  kcout << "[DMAWrapper::Write] Writing at address..\n";
+		kcout << "[DMAWrapper::Write] Writing at address..\n";
 
-  auto addr =
-      (volatile UIntPtr *)(reinterpret_cast<UIntPtr>(fAddress) + offset);
-  *addr = bit;
+		auto addr =
+			(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(fAddress) + offset);
+		*addr = bit;
 
-  return true;
-}
+		return true;
+	}
 
-UIntPtr DMAWrapper::Read(const UIntPtr &offset) {
-  kcout << "[DMAWrapper::Read] checking fAddress..\n";
-  if (!fAddress) return 0;
+	UIntPtr DMAWrapper::Read(const UIntPtr& offset)
+	{
+		kcout << "[DMAWrapper::Read] checking fAddress..\n";
+		if (!fAddress)
+			return 0;
 
-  kcout << "[DMAWrapper::Read] Reading fAddress..\n";
-  return *(volatile UIntPtr *)(reinterpret_cast<UIntPtr>(fAddress) + offset);
-  ;
-}
+		kcout << "[DMAWrapper::Read] Reading fAddress..\n";
+		return *(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(fAddress) + offset);
+		;
+	}
 
-UIntPtr DMAWrapper::operator[](const UIntPtr &offset) {
-  return this->Read(offset);
-}
+	UIntPtr DMAWrapper::operator[](const UIntPtr& offset)
+	{
+		return this->Read(offset);
+	}
 
-OwnPtr<IOBuf<Char *>> DMAFactory::Construct(OwnPtr<DMAWrapper> &dma) {
-  if (!dma) return {};
+	OwnPtr<IOBuf<Char*>> DMAFactory::Construct(OwnPtr<DMAWrapper>& dma)
+	{
+		if (!dma)
+			return {};
 
-  OwnPtr<IOBuf<Char *>> dmaOwnPtr =
-      make_ptr<IOBuf<Char *>, char *>(reinterpret_cast<char *>(dma->fAddress));
+		OwnPtr<IOBuf<Char*>> dmaOwnPtr =
+			make_ptr<IOBuf<Char*>, char*>(reinterpret_cast<char*>(dma->fAddress));
 
-  if (!dmaOwnPtr) return {};
+		if (!dmaOwnPtr)
+			return {};
 
-  kcout << "Returning the new OwnPtr<IOBuf<Char*>>!\r";
-  return dmaOwnPtr;
-}
+		kcout << "Returning the new OwnPtr<IOBuf<Char*>>!\r";
+		return dmaOwnPtr;
+	}
 
-DMAWrapper &DMAWrapper::operator=(voidPtr Ptr) {
-  fAddress = Ptr;
-  return *this;
-}
-}  // namespace NewOS
+	DMAWrapper& DMAWrapper::operator=(voidPtr Ptr)
+	{
+		fAddress = Ptr;
+		return *this;
+	}
+} // namespace NewOS

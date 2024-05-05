@@ -15,7 +15,8 @@
 #include <NewKit/Stream.hpp>
 #include <NewKit/String.hpp>
 
-namespace NewOS::XRN::Version1 {
-Ref<GUIDSequence*> make_sequence(const ArrayList<UShort>& seq);
-ErrorOr<Ref<NewOS::StringView>> try_guid_to_string(Ref<GUIDSequence*>& guid);
-}  // namespace NewOS::XRN::Version1
+namespace NewOS::XRN::Version1
+{
+	Ref<GUIDSequence*>				make_sequence(const ArrayList<UShort>& seq);
+	ErrorOr<Ref<NewOS::StringView>> try_guid_to_string(Ref<GUIDSequence*>& guid);
+} // namespace NewOS::XRN::Version1

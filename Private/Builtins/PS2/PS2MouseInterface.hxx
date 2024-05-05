@@ -17,85 +17,96 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
-namespace NewOS {
-/// @brief PS/2 Mouse driver interface
-class PS2MouseInterface final {
- public:
-  explicit PS2MouseInterface() = default;
-  ~PS2MouseInterface() = default;
+namespace NewOS
+{
+	/// @brief PS/2 Mouse driver interface
+	class PS2MouseInterface final
+	{
+	public:
+		explicit PS2MouseInterface() = default;
+		~PS2MouseInterface()		 = default;
 
-  NEWOS_COPY_DEFAULT(PS2MouseInterface);
+		NEWOS_COPY_DEFAULT(PS2MouseInterface);
 
- public:
-  /// @brief Enables PS2 mouse for kernel.
-  /// @return 
-  Void Init() noexcept {
-    HAL::rt_cli();
+	public:
+		/// @brief Enables PS2 mouse for kernel.
+		/// @return
+		Void Init() noexcept
+		{
+			HAL::rt_cli();
 
-    HAL::Out8(0x64, 0xA8); // enabling the auxiliary device - mouse
+			HAL::Out8(0x64, 0xA8); // enabling the auxiliary device - mouse
 
-    this->Wait();
-    HAL::Out8(0x64, 0x20); // tells the keyboard controller that we want to send a command to the mouse
-    this->WaitInput();
-    
-    UInt8 status = HAL::In8(0x60);
-    status |= 0b10;
+			this->Wait();
+			HAL::Out8(0x64, 0x20); // tells the keyboard controller that we want to send a command to the mouse
+			this->WaitInput();
 
-    this->Wait();
-    HAL::Out8(0x64, 0x60);
-    this->Wait();
-    HAL::Out8(0x60, status); // setting the correct bit is the "compaq" status byte
+			UInt8 status = HAL::In8(0x60);
+			status |= 0b10;
 
-    this->Write(0xF6);
-    this->Read();
+			this->Wait();
+			HAL::Out8(0x64, 0x60);
+			this->Wait();
+			HAL::Out8(0x60, status); // setting the correct bit is the "compaq" status byte
 
-    this->Write(0xF4);
-    this->Read();
+			this->Write(0xF6);
+			this->Read();
 
-    HAL::rt_sti();
-  }
+			this->Write(0xF4);
+			this->Read();
 
- public:
-  Bool WaitInput() noexcept {
-    UInt64 timeout = 100000;
+			HAL::rt_sti();
+		}
 
-    while (timeout) {
-      if ((HAL::In8(0x64) & 0x1)) {
-        return true;
-      }
+	public:
+		Bool WaitInput() noexcept
+		{
+			UInt64 timeout = 100000;
 
-      --timeout;
-    }  // wait until we can read
+			while (timeout)
+			{
+				if ((HAL::In8(0x64) & 0x1))
+				{
+					return true;
+				}
 
-    // return the ack bit.
-    return false;
-  }
+				--timeout;
+			} // wait until we can read
 
-  Bool Wait() noexcept {
-    UInt64 timeout = 100000;
+			// return the ack bit.
+			return false;
+		}
 
-    while (timeout) {
-      if ((HAL::In8(0x64) & 0b10) == 0) {
-        return true;
-      }
+		Bool Wait() noexcept
+		{
+			UInt64 timeout = 100000;
 
-      --timeout;
-    }  // wait until we can read
+			while (timeout)
+			{
+				if ((HAL::In8(0x64) & 0b10) == 0)
+				{
+					return true;
+				}
 
-    // return the ack bit.
-    return false;
-  }
+				--timeout;
+			} // wait until we can read
 
-  Void Write(UInt8 val) {
-    HAL::Out8(0x64, 0xD4);
-    this->Wait();
-    HAL::Out8(0x60, val);
-    this->Wait();
-  }
+			// return the ack bit.
+			return false;
+		}
 
-  UInt8 Read() {
-    this->WaitInput();
-    return HAL::In8(0x60);
-  }
-};
-}  // namespace NewOS
+		Void Write(UInt8 val)
+		{
+			HAL::Out8(0x64, 0xD4);
+			this->Wait();
+			HAL::Out8(0x60, val);
+			this->Wait();
+		}
+
+		UInt8 Read()
+		{
+			this->WaitInput();
+			return HAL::In8(0x60);
+		}
+	};
+} // namespace NewOS

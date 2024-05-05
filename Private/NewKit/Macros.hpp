@@ -23,43 +23,47 @@
 #endif
 
 #ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a)            \
-  (((sizeof(a) / sizeof(*(a))) / \
-    (static_cast<NewOS::Size>(!(sizeof(a) % sizeof(*(a)))))))
+#define ARRAY_SIZE(a)              \
+	(((sizeof(a) / sizeof(*(a))) / \
+	  (static_cast<NewOS::Size>(!(sizeof(a) % sizeof(*(a)))))))
 #endif
 
 #ifndef ALIGN
 #define ALIGN(X) __attribute__((aligned(X)))
-#endif  // #ifndef ALIGN
+#endif // #ifndef ALIGN
 
 #ifndef ATTRIBUTE
 #define ATTRIBUTE(X) __attribute__((X))
-#endif  // #ifndef ATTRIBUTE
+#endif // #ifndef ATTRIBUTE
 
 #ifndef __MAHROUSS__
 #define __MAHROUSS__ (202401)
-#endif  // !__MAHROUSS__
+#endif // !__MAHROUSS__
 
 #ifndef EXTERN_C
 #define EXTERN_C extern "C"
 #endif
 
 #ifndef MAKE_ENUM
-#define MAKE_ENUM(NAME) enum NAME {
+#define MAKE_ENUM(NAME) \
+	enum NAME           \
+	{
 #endif
 
 #ifndef END_ENUM
 #define END_ENUM() \
-  }                \
-  ;
+	}              \
+	;
 #endif
 
 #ifndef MAKE_STRING_ENUM
-#define MAKE_STRING_ENUM(NAME) namespace NAME {
+#define MAKE_STRING_ENUM(NAME) \
+	namespace NAME             \
+	{
 #endif
 
 #ifndef ENUM_STRING
-#define ENUM_STRING(NAME, VAL) inline constexpr const char *NAME = VAL
+#define ENUM_STRING(NAME, VAL) inline constexpr const char* NAME = VAL
 #endif
 
 #ifndef END_STRING_ENUM
@@ -68,17 +72,17 @@
 
 #ifndef Alloca
 #define Alloca(Sz) __builtin_alloca(Sz)
-#endif  // #ifndef Alloca
+#endif // #ifndef Alloca
 
 #ifndef CANT_REACH
 #define CANT_REACH() __builtin_unreachable()
 #endif
 
-#define kBadPtr 0xFBFBFBFBFBFBFBFB
+#define kBadPtr	 0xFBFBFBFBFBFBFBFB
 #define kMaxAddr 0xFFFFFFFFFFFFFFFF
 #define kPathLen 255
 
-#define PACKED ATTRIBUTE(packed)
+#define PACKED	ATTRIBUTE(packed)
 #define NO_EXEC ATTRIBUTE(noexec)
 
 #define EXTERN extern
@@ -90,7 +94,7 @@
 #define self this
 #endif
 
-#define STRINGIFY(X) #X
+#define STRINGIFY(X)	#X
 #define NEWOS_UNUSED(X) ((void)X)
 
 #ifndef RGB

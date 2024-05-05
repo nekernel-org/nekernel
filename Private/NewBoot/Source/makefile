@@ -25,7 +25,7 @@ endif
 IMG=epm.img
 IMG_2=epm-slave.img
 
-EMU_FLAGS=-net none -smp 4 -m 4G -M q35 \
+EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 			-bios OVMF.fd -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
@@ -49,9 +49,6 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__
 			-DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -nostdlib -fno-rtti -fno-exceptions \
 			-std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
 
-DD=dd
-IMG_CREATE=qemu-img
-MAX_KERNEL_SIZE=1024K
 BOOT_LOADER=NewBoot.exe
 KERNEL=NewKernel.exe
 

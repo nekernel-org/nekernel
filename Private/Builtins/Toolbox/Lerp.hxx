@@ -13,8 +13,8 @@
 /// @param from where?
 /// @param to to?
 /// @param at which state we're at **to**.
-inline int Lerp( int from , int to , float percent ) noexcept
+inline int Lerp(int from, int to, float percent) noexcept
 {
-    int difference = to - from;
-    return from + ( difference * percent );
+	int difference = to - from;
+	return from + (difference * percent);
 }

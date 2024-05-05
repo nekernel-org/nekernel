@@ -10,10 +10,10 @@
 
 #if defined(__cplusplus)
 #define DK_EXTERN extern "C"
-#define NIL nullptr
+#define NIL		  nullptr
 #else
 #define DK_EXTERN extern
-#define NIL NULL
+#define NIL		  NULL
 #endif // defined(__cplusplus)
 
 #include <stdint.h>

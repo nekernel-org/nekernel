@@ -22,12 +22,12 @@ typedef QWordType ThreadRef;
 /// @brief Main application thread.
 CA_EXTERN_C ThreadRef kMainThread;
 
-typedef VoidType(*ThreadEntrypointKind)(VoidType);
+typedef VoidType (*ThreadEntrypointKind)(VoidType);
 
 /// @brief Creates a new thread, and runs the code.
 /// @param threadName the thread's name.
 /// @param threadStart where to start.
-/// @return 
+/// @return
 CA_EXTERN_C ThreadRef TmCreateThread(const CharacterTypeUTF8* threadName, ThreadEntrypointKind threadStart);
 
 /// @brief Dispoes the thread, and exits with code kThreadErrorExit
@@ -40,4 +40,4 @@ CA_EXTERN_C VoidType TmDisposeThread(ThreadRef ref);
 /// @return  nothing.
 CA_EXTERN_C VoidType TmWaitForCompletion(ThreadRef ref);
 
-#endif  // __THREAD__
+#endif // __THREAD__

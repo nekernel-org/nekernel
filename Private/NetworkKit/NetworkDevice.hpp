@@ -10,53 +10,56 @@
 #include <KernelKit/DeviceManager.hpp>
 #include <NetworkKit/IP.hpp>
 
-namespace NewOS {
-struct NetworkDeviceCommand;
-class NetworkDevice;
+namespace NewOS
+{
+	struct NetworkDeviceCommand;
+	class NetworkDevice;
 
-/**
+	/**
 * \brief Network device interface, establishes a connection to the NIC.
 */
-class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand> {
- public:
-  NetworkDevice(void (*out)(NetworkDeviceCommand),
-                void (*in)(NetworkDeviceCommand),
-                void (*onCleanup)(void) = nullptr);
+	class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand>
+	{
+	public:
+		NetworkDevice(void (*out)(NetworkDeviceCommand),
+					  void (*in)(NetworkDeviceCommand),
+					  void (*onCleanup)(void) = nullptr);
 
-  ~NetworkDevice() override;
+		~NetworkDevice() override;
 
- public:
-  NetworkDevice &operator=(const NetworkDevice &) = default;
-  NetworkDevice(const NetworkDevice &) = default;
+	public:
+		NetworkDevice& operator=(const NetworkDevice&) = default;
+		NetworkDevice(const NetworkDevice&)			   = default;
 
- public:
-  const char *Name() const override;
+	public:
+		const char* Name() const override;
 
- private:
-  void (*fCleanup)(void);
-};
+	private:
+		void (*fCleanup)(void);
+	};
 
-struct PACKED NetworkDeviceCommand final {
-  UInt32 CommandName;
-  UInt32 CommandType;
-  UInt32 CommandFlags;
-  VoidPtr CommandBuffer;
-  SizeT CommandSizeBuffer;
-};
+	struct PACKED NetworkDeviceCommand final
+	{
+		UInt32	CommandName;
+		UInt32	CommandType;
+		UInt32	CommandFlags;
+		VoidPtr CommandBuffer;
+		SizeT	CommandSizeBuffer;
+	};
 
-/// @brief TCP device.
-using TCPNetworkDevice = NetworkDevice;
+	/// @brief TCP device.
+	using TCPNetworkDevice = NetworkDevice;
 
-/// @brief UDP device.
-using UDPNetworkDevice = NetworkDevice;
+	/// @brief UDP device.
+	using UDPNetworkDevice = NetworkDevice;
 
-/// @brief PPP device.
-using PPPNetworkDevice = NetworkDevice;
+	/// @brief PPP device.
+	using PPPNetworkDevice = NetworkDevice;
 
-/// @brief HPC device.
-using HPCNetworkDevice = NetworkDevice;
-}  // namespace NewOS
+	/// @brief HPC device.
+	using HPCNetworkDevice = NetworkDevice;
+} // namespace NewOS
 
 #include <NetworkKit/NetworkDevice.inl>
 
-#endif  // !__NETWORK_DEVICE__
+#endif // !__NETWORK_DEVICE__

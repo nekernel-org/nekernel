@@ -14,8 +14,9 @@
 
 #define kCrcCnt (256)
 
-namespace NewOS {
-UInt ke_calculate_crc32(const Char* crc, UInt len) noexcept;
-}  // namespace NewOS
+namespace NewOS
+{
+	UInt ke_calculate_crc32(const Char* crc, UInt len) noexcept;
+} // namespace NewOS
 
-#endif  // !__CRC32_H__
+#endif // !__CRC32_H__
