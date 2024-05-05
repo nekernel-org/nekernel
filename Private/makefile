@@ -5,7 +5,8 @@
 
 CC			= x86_64-w64-mingw32-gcc
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -c -ffreestanding -fPIC -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../ -I./
+CCFLAGS		= -c -ffreestanding -fPIC -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
+			-std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../ -I./
 ASM 		= nasm
 
 ifneq ($(ATA_PIO_SUPPORT), )
@@ -50,7 +51,12 @@ WINDRES=x86_64-w64-mingw32-windres
 .PHONY: newos-amd64-epm
 newos-amd64-epm: clean
 	$(WINDRES) KernelRsrc.rsrc -O coff -o KernelRsrc.obj
-	$(CC) $(CCFLAGS) $(DISKDRIVER) $(DEBUG) $(wildcard Source/*.cxx) $(wildcard Source/FS/*.cxx) $(wildcard HALKit/AMD64/Storage/*.cxx) $(wildcard HALKit/AMD64/PCI/*.cxx) $(wildcard Source/Network/*.cxx) $(wildcard Source/Storage/*.cxx) $(wildcard HALKit/AMD64/*.cxx) $(wildcard HALKit/AMD64/*.cpp) $(wildcard HALKit/AMD64/*.s)
+	$(CC) $(CCFLAGS) $(DISKDRIVER) $(DEBUG) $(wildcard Source/*.cxx) \
+	       $(wildcard Source/FS/*.cxx) $(wildcard HALKit/AMD64/Storage/*.cxx) \
+			$(wildcard HALKit/AMD64/PCI/*.cxx) $(wildcard Source/Network/*.cxx) $(wildcard Source/Storage/*.cxx) \
+			$(wildcard HALKit/AMD64/*.cxx) $(wildcard HALKit/AMD64/*.cpp) \
+			$(wildcard HALKit/AMD64/*.s)
+
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalNewBoot.asm

@@ -24,7 +24,12 @@ endif
 
 IMG=epm.img
 IMG_2=epm-slave.img
-EMU_FLAGS=-net none -smp 4 -m 4G -M q35 -bios OVMF.fd -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -drive file=fat:rw:CDROM,index=2,format=raw -d int -hdd epm-slave.img
+
+EMU_FLAGS=-net none -smp 4 -m 4G -M q35 \
+			-bios OVMF.fd -device piix3-ide,id=ide \
+			-drive id=disk,file=$(IMG),format=raw,if=none \
+			-device ide-hd,drive=disk,bus=ide.0 -drive \
+			file=fat:rw:CDROM,index=2,format=raw -d int -hdd epm-slave.img
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -40,18 +45,19 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ -DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -nostdlib -fno-rtti -fno-exceptions -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
+FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
+			-DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -nostdlib -fno-rtti -fno-exceptions \
+			-std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
 
-.PHONY: invalid-recipe
-invalid-recipe:
-	@echo "invalid-recipe: Use make bootloader-<arch> instead."
-
-KERNEL_OBJ=boot.bin
 DD=dd
 IMG_CREATE=qemu-img
 MAX_KERNEL_SIZE=1024K
 BOOT_LOADER=NewBoot.exe
 KERNEL=NewKernel.exe
+
+.PHONY: invalid-recipe
+invalid-recipe:
+	@echo "invalid-recipe: Use make compile-<arch> instead."
 
 .PHONY: all
 all: compile-amd64
