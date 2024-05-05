@@ -22,10 +22,9 @@
 /* useful macros */
 
 #define kHandoverMagic 0xBADCC
-#define kHandoverVersion 0x1011
+#define kHandoverVersion 0x112
 
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
-#define kHandoverHeapStart (0xfffffff80000000)
 
 namespace NewOS::HEL {
 /**
@@ -65,12 +64,15 @@ struct HandoverInformationHeader {
   voidPtr f_VirtualStart;
   SizeT f_VirtualSize;
   voidPtr f_PhysicalStart;
+
   WideChar f_FirmwareVendorName[32];
   SizeT f_FirmwareVendorLen;
+
   struct {
     VoidPtr f_SmBios;
     VoidPtr f_RsdPtr;
   } f_HardwareTables;
+
   struct {
     UIntPtr f_The;
     SizeT f_Size;
@@ -79,10 +81,11 @@ struct HandoverInformationHeader {
     UInt32 f_PixelFormat;
     UInt32 f_PixelPerLine;
   } f_GOP;
+
   UInt64 f_FirmwareSpecific[8];
 };
 
-enum { kHandoverSpecificKind, kHandoverSpecificAttrib, };
+enum { kHandoverSpecificKind, kHandoverSpecificAttrib, kHandoverSpecificMemoryEfi, };
 
 /// @brief Bootloader main type.
 typedef void (*BootMainKind)(NewOS::HEL::HandoverInformationHeader* handoverInfo);

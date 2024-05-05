@@ -22,17 +22,21 @@ namespace NewOS::HAL {
 /// @brief Gets the system cores using the MADT.
 /// @param rsdPtr the RSD PTR.
 extern void hal_system_get_cores(NewOS::voidPtr rsdPtr);
-} // namespace NewOS::HAL
+}  // namespace NewOS::HAL
 
 EXTERN_C void hal_init_platform(
     NewOS::HEL::HandoverInformationHeader* HandoverHeader) {
   kHandoverHeader = HandoverHeader;
 
+  if (kHandoverHeader->f_Magic != kHandoverMagic &&
+      kHandoverHeader->f_Version != kHandoverVersion) {
+    return;
+  }
+
   /// Setup kernel globals.
   kKernelVirtualSize = HandoverHeader->f_VirtualSize;
   kKernelVirtualStart = reinterpret_cast<NewOS::VoidPtr>(
-      reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart) +
-      kVirtualAddressStartOffset);
+      reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart));
 
   kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 

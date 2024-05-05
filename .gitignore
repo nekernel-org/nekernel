@@ -3,6 +3,13 @@ syntax: glob
 html/
 latex/
 
+# NewKernel image
+NewKernel
+
+# Alternative kernel image
+AltKernel
+PatchKernel
+
 .cmake/
 .qtc_clangd/
 CMakeCache.txt

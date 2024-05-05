@@ -29,7 +29,7 @@ COPY		= cp
 # Add assembler, linker, and object files variables.
 ASMFLAGS	= -f win64
 
-# NewOS subsystem is 17.
+# NewOS subsystem is 17 and entrypoint is __ImageStart
 LDFLAGS		= -e __ImageStart --subsystem=17
 LDOBJ		= Objects/*.obj
 

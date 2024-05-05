@@ -11,6 +11,7 @@
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/MSDOS.hpp>
+#include <KernelKit/PE.hxx>
 #include <KernelKit/PEF.hpp>
 #include <NewKit/Macros.hpp>
 #include <NewKit/Ref.hpp>
@@ -133,29 +134,50 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
   Descriptor = new EfiMemoryDescriptor[*SzDesc];
   BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 
-  writer.Write(L"Kernel-Memory-Map:\r");
+  writer.Write(L"Kernel-Desc-Count: ");
+  writer.Write(*SzDesc);
+  writer.Write(L"\r");
+
+  auto cDefaultMemoryMap = 0;  /// The sixth entry.
+
+  /// A simple loop which finds a usable memory region for us.
+  SizeT i = 0UL;
+  for (; Descriptor[i].Kind != EfiMemoryType::EfiConventionalMemory; ++i) {
+    ;
+  }
+
+  cDefaultMemoryMap = i;
 
   writer.Write(L"Number-Of-Pages: ")
-      .Write(Descriptor->NumberOfPages)
+      .Write(Descriptor[cDefaultMemoryMap].NumberOfPages)
       .Write(L"\r");
   writer.Write(L"Virtual-Address: ")
-      .Write(Descriptor->VirtualStart)
+      .Write(Descriptor[cDefaultMemoryMap].VirtualStart)
       .Write(L"\r");
   writer.Write(L"Phyiscal-Address: ")
-      .Write(Descriptor->PhysicalStart)
+      .Write(Descriptor[cDefaultMemoryMap].PhysicalStart)
       .Write(L"\r");
-  writer.Write(L"Kind: ").Write(Descriptor->Kind).Write(L"\r");
-  writer.Write(L"Attribute: ").Write(Descriptor->Attribute).Write(L"\r");
+  writer.Write(L"Page-Kind: ")
+      .Write(Descriptor[cDefaultMemoryMap].Kind)
+      .Write(L"\r");
+  writer.Write(L"Page-Attribute: ")
+      .Write(Descriptor[cDefaultMemoryMap].Attribute)
+      .Write(L"\r");
 
-  handoverHdrPtr->f_PhysicalStart = (VoidPtr)Descriptor->PhysicalStart;
+  handoverHdrPtr->f_PhysicalStart =
+      (VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
 
   handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
-      Descriptor->Attribute;
+      Descriptor[cDefaultMemoryMap].Attribute;
   handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] =
-      Descriptor->Kind;
+      Descriptor[cDefaultMemoryMap].Kind;
+  handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
+      (UIntPtr)Descriptor;
 
-  handoverHdrPtr->f_VirtualStart = (VoidPtr)Descriptor->VirtualStart;
-  handoverHdrPtr->f_VirtualSize = Descriptor->NumberOfPages; /* # of pages */
+  handoverHdrPtr->f_VirtualStart =
+      (VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
+  handoverHdrPtr->f_VirtualSize =
+      Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
 
   handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
@@ -198,6 +220,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr ImageHandle,
 
   EFI::ExitBootServices(*MapKey, ImageHandle);
 
+  /// Fallback to builtin kernel.
   hal_init_platform(handoverHdrPtr);
 
   EFI::Stop();
