@@ -90,10 +90,6 @@
 
 #define CONST const
 
-#ifndef self
-#define self this
-#endif
-
 #define STRINGIFY(X)	#X
 #define NEWOS_UNUSED(X) ((void)X)
 

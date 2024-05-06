@@ -86,4 +86,13 @@ typedef union double_cast {
 
 #endif // ifndef __GNUC__
 
+/// Include these helpers as well.
+
+#ifdef __STD_CXX__
+
+#include <CRT/__mpcc_exception.hxx>
+#include <CRT/__mpcc_malloc.hxx>
+
+#endif // ifdef __STD_CXX__
+
 #endif /* __MPCC_DEF__ */

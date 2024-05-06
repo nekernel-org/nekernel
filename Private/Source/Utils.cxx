@@ -211,18 +211,43 @@ namespace NewOS
 	}
 } // namespace NewOS
 
+////////////////////////////////////////////////////////////////////////////////////////
+/// Exported C functions
+////////////////////////////////////////////////////////////////////////////////////////
+
+/// @brief memset in C++
 EXTERN_C void memset(void* dst, char src, size_t len)
 {
 	NewOS::rt_set_memory(dst, src, len);
 }
 
+/// @brief memcpy in C++
 EXTERN_C void memcpy(void* dst, void* src, size_t len)
 {
 	NewOS::rt_copy_memory(src, dst, len);
+}
+
+/// @brief memmove in C++
+EXTERN_C void* memmove(void* dst, void* src, size_t len)
+{
+    NewOS::rt_copy_memory(src, dst, len);
+	return dst;
 }
 
 /// @brief strlen definition in C++.
 EXTERN_C size_t strlen(const char* whatToCheck)
 {
 	return NewOS::rt_string_len(whatToCheck);
+}
+
+/// @brief memcmp in C++
+EXTERN_C NewOS::SizeT memcmp(void* dst, void* src, size_t len)
+{
+	return NewOS::rt_string_cmp((char*)src, (char*)dst, len);
+}
+
+/// @brief strcmp in C++
+EXTERN_C NewOS::SizeT strcmp(char* dst, char* src, size_t len)
+{
+	return NewOS::rt_string_cmp(src, dst, len);
 }

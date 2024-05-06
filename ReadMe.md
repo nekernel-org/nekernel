@@ -1,5 +1,4 @@
 <div align="center">
-<img src="../Meta/Kernel.svg" width="96" height="96"/>
 <h1>NewOS</h1>
 </div>
 
