@@ -7,6 +7,8 @@
 #ifndef __HINTKIT_COMPILER_HINT_HXX__
 #define __HINTKIT_COMPILER_HINT_HXX__
 
+#pragma compiler(hint_manifest)
+
 #define _Input
 #define _Output
 
