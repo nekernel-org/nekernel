@@ -16,7 +16,7 @@ namespace std
 #ifdef __KERNEL__
     inline void __throw_general(void)
     {
-        asm ("int $0xD");
+        __asm__ ("int $0xD");
     }
 #else
     inline void __throw_general(void)

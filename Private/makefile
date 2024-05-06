@@ -5,7 +5,7 @@
 
 CC			= x86_64-w64-mingw32-gcc
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -c -fPIC -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
+CCFLAGS		= -c -fPIC -ffreestanding -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
 			-std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../ -I./ \
 			-DBLEND2D_NO_STDCXX -DBLEND2D_NO_TLS -DBLEND2D_EMBED
 
