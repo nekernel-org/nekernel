@@ -29,7 +29,7 @@ EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 			-bios OVMF.fd -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
-			file=fat:rw:CDROM,index=2,format=raw -d int -hdd epm-slave.img
+			file=fat:rw:Root,index=2,format=raw -d int -hdd epm-slave.img
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -58,11 +58,11 @@ invalid-recipe:
 
 .PHONY: all
 all: compile-amd64
-	mkdir -p CDROM/EFI/BOOT
+	mkdir -p Root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o $(BOOT_LOADER)
-	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/BOOTX64.EFI
-	$(COPY) $(BOOT_LOADER) CDROM/EFI/BOOT/NEWBOOT.EFI
-	$(COPY) ../../$(KERNEL) CDROM/$(KERNEL)
+	$(COPY) $(BOOT_LOADER) Root/EFI/BOOT/BOOTX64.EFI
+	$(COPY) $(BOOT_LOADER) Root/EFI/BOOT/NEWBOOT.EFI
+	$(COPY) ../../$(KERNEL) Root/$(KERNEL)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
