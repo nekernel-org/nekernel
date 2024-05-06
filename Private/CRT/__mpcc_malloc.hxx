@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <KernelKit/KernelHeap.hpp>
+#include <NewKit/Defines.hpp>
 
 namespace stdx
 {

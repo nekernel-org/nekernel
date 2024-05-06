@@ -38,9 +38,3 @@ namespace std
         CANT_REACH(); // prevent from continuing.
     }
 }
-
-EXTERN_C void abort(void)
-{
-    std::__throw_general();
-    CANT_REACH();
-}
