@@ -11,12 +11,12 @@
 #endif
 
 #ifdef _DEBUG
-#define CA_MUST_PASS(e)                                                                                                 \
-	{                                                                                                                   \
-		if (!e)                                                                                                         \
-		{                                                                                                               \
+#define CA_MUST_PASS(e)                                                                                             \
+	{                                                                                                               \
+		if (!e)                                                                                                     \
+		{                                                                                                           \
 			Alert("Sorry, an assertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) RtAssertTriggerInterrupt() \
-		}                                                                                                               \
+		}                                                                                                           \
 	}
 #else
 #define CA_MUST_PASS(e) CA_UNREFERENCED_PARAMETER(e)
@@ -129,7 +129,7 @@ enum RtProcessCall
 	kCallSizePtr,
 	kCallCheckPtr,
 	kCallAllocStack,
-	/// @brief Open a specific handle 
+	/// @brief Open a specific handle
 	/// (can be used as sel to call methods related to it.)
 	kCallOpenFile,
 	kCallCloseFile,

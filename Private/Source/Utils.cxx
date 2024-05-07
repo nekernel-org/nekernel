@@ -230,7 +230,7 @@ EXTERN_C void memcpy(void* dst, void* src, size_t len)
 /// @brief memmove in C++
 EXTERN_C void* memmove(void* dst, void* src, size_t len)
 {
-    NewOS::rt_copy_memory(src, dst, len);
+	NewOS::rt_copy_memory(src, dst, len);
 	return dst;
 }
 
