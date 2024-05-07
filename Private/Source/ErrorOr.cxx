@@ -7,6 +7,6 @@
 #include <NewKit/ErrorOr.hpp>
 
 /***********************************************************************************/
-/// @file ErrorOr.cxx
-/// @brief Error Or Value class.
+/// @file ErrorOr.cxx                                                            ///
+/// @brief Error Or Value class.                                                 ///
 /***********************************************************************************/

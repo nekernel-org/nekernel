@@ -20,5 +20,5 @@ BooleanType IntlSetLocale(const IntlRef intl);
 /// @brief locale helpers.
 
 /// @brief translate a string from a locale.
-const CharacterTypeUTF8* IntlTranslate(const CharacterTypeUTF8* input,
+const CharacterTypeUTF8* Intl(const CharacterTypeUTF8* input,
 									   const IntlRef			locale);

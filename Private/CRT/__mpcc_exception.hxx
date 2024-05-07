@@ -6,10 +6,9 @@
 
 #pragma once
 
-/// This file is an implementation of __throw* family of functions.
-
 #include <KernelKit/DebugOutput.hpp>
 
+/// @brief Standard C++ namespace
 namespace std
 {
 #ifdef __x86_64__

@@ -6,7 +6,7 @@
 
 /***********************************************************************************/
 /// @file ProcessTeam.cxx
-/// @brief Process teams.
+/// @brief Process teams implementation.
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hpp>
@@ -14,14 +14,14 @@
 namespace NewOS
 {
 	/// @brief Process list array getter.
-	/// @return
+	/// @return The list of process to schedule.
 	MutableArray<Ref<ProcessHeader>>& ProcessTeam::AsArray()
 	{
 		return mProcessList;
 	}
 
 	/// @brief Current process getter.
-	/// @return
+	/// @return The current process header.
 	Ref<ProcessHeader>& ProcessTeam::AsRef()
 	{
 		return mCurrentProcess;

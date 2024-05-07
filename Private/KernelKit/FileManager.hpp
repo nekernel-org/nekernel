@@ -129,9 +129,15 @@ namespace NewOS
 		SizeT	Tell(NodePtr node) override;
 		bool	Rewind(NodePtr node) override;
 
+	public:
+		void SetResourceFork(const char* forkName);
+		void SetDataFork(const char* forkName);
+
 		NewFSParser* GetImpl() noexcept;
 
 	private:
+		Char		 fDataFork[kNewFSForkNameLen] = {0};
+		Char		 fRsrcFork[kNewFSForkNameLen] = {0};
 		NewFSParser* fImpl{nullptr};
 	};
 

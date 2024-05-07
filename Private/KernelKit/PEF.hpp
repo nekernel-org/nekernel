@@ -26,8 +26,6 @@
 #define kPefVersion 1
 #define kPefNameLen 255
 
-/// @brief Preferred Executable Format.
-
 namespace NewOS
 {
 	enum

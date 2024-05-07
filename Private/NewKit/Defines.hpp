@@ -22,6 +22,7 @@
 #endif
 #endif
 
+/// @brief NewOS namespace.
 namespace NewOS
 {
 	using voidPtr = void*;

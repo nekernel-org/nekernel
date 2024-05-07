@@ -13,10 +13,9 @@
 
 #include <Headers/Defines.h>
 
-#define kThreadErrorExit -33
+#define kThreadErrorExit (-33)
 
-/// @brief Thread Information Block, which holds information about the running
-/// thread.
+/// @brief Thread reference.
 typedef QWordType ThreadRef;
 
 /// @brief Main application thread.
@@ -28,16 +27,21 @@ typedef VoidType (*ThreadEntrypointKind)(VoidType);
 /// @param threadName the thread's name.
 /// @param threadStart where to start.
 /// @return
-CA_EXTERN_C ThreadRef TmCreateThread(const CharacterTypeUTF8* threadName, ThreadEntrypointKind threadStart);
+CA_EXTERN_C ThreadRef CTCreate(const CharacterTypeUTF8* threadName, ThreadEntrypointKind threadStart);
 
 /// @brief Dispoes the thread, and exits with code kThreadErrorExit
 /// @param ref the thread reference.
 /// @return  nothing.
-CA_EXTERN_C VoidType TmDisposeThread(ThreadRef ref);
+CA_EXTERN_C VoidType CTRelease(ThreadRef ref);
 
 /// @brief Waits for the thread to complete.
 /// @param ref the thread reference.
 /// @return  nothing.
-CA_EXTERN_C VoidType TmWaitForCompletion(ThreadRef ref);
+CA_EXTERN_C VoidType CTJoin(ThreadRef ref);
+
+/// @brief Yields the current thread.
+/// @param ref the thead reference.
+/// @return 
+CA_EXTERN_C VoidType CTYield(ThreadRef ref);
 
 #endif // __THREAD__

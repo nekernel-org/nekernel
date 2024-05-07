@@ -74,33 +74,45 @@ namespace NewOS
 		return node_cast(catalog);
 	}
 
-	/// @brief Writes to a catalog
-	/// @param node
-	/// @param data
-	/// @param flags
+	/// @brief Writes to a catalog's fork.
+	/// @param node the node ptr.
+	/// @param data the data.
+	/// @param flags the size.
 	/// @return
 	Void NewFilesystemManager::Write(NodePtr node, VoidPtr data, Int32 flags, SizeT size)
 	{
-		constexpr const char* cReadAllFork = kNewFSDataFork;
+		if (!size ||
+			size > kNewFSForkSize)
+			return;
+
+		if (!data)
+			return;
+
+		NEWOS_UNUSED(flags);
+
+		const char* cReadAllFork = fDataFork;
 
 		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
 			fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
 								cReadAllFork);
 	}
 
-	/**
- * NOTE: Write and Read are implemented using a custom NodePtr, retrieved
- * using OpenFork.
- */
-
-	/// @brief Reads from filesystem.
-	/// @param node
-	/// @param flags
-	/// @param sz
+	/// @brief Read from filesystem fork.
+	/// @param node the catalog node.
+	/// @param flags the flags with it.
+	/// @param sz the size to read.
 	/// @return
 	VoidPtr NewFilesystemManager::Read(NodePtr node, Int32 flags, SizeT sz)
 	{
-		constexpr const char* cReadAllFork = kNewFSDataFork;
+		if (sz > kNewFSForkSize)
+			return nullptr;
+
+		if (!sz)
+			return nullptr;
+
+		NEWOS_UNUSED(flags);
+
+		const char* cReadAllFork = fDataFork;
 
 		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
 			return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz,
@@ -112,7 +124,9 @@ namespace NewOS
 	/// @brief Seek from Catalog.
 	/// @param node
 	/// @param off
-	/// @return
+	/// @retval true always returns false, this is unimplemented.
+	/// @retval false always returns this, it is unimplemented.
+
 	bool NewFilesystemManager::Seek(NodePtr node, SizeT off)
 	{
 		if (!node || off == 0)
@@ -121,9 +135,11 @@ namespace NewOS
 		return fImpl->Seek(reinterpret_cast<NewCatalog*>(node), off);
 	}
 
-	/// @brief Tell where the catalog is/
+	/// @brief Tell where the catalog is.
 	/// @param node
-	/// @return
+	/// @retval true always returns false, this is unimplemented.
+	/// @retval false always returns this, it is unimplemented.
+
 	SizeT NewFilesystemManager::Tell(NodePtr node)
 	{
 		if (!node)
@@ -132,9 +148,11 @@ namespace NewOS
 		return fImpl->Tell(reinterpret_cast<NewCatalog*>(node));
 	}
 
-	/// @brief Rewind the catalog.
+	/// @brief Rewinds the catalog.
 	/// @param node
-	/// @return
+	/// @retval true always returns false, this is unimplemented.
+	/// @retval false always returns this, it is unimplemented.
+
 	bool NewFilesystemManager::Rewind(NodePtr node)
 	{
 		if (!node)
@@ -143,11 +161,23 @@ namespace NewOS
 		return this->Seek(node, 0);
 	}
 
-	/// @brief The filesystem implementation.
-	/// @return
+	/// @brief Returns the filesystem parser.
+	/// @return the Filesystem parser class.
 	NewFSParser* NewFilesystemManager::GetImpl() noexcept
 	{
 		return fImpl;
+	}
+
+	void NewFilesystemManager::SetResourceFork(const char* forkName)
+	{
+		if (!forkName) return;
+		rt_copy_memory((VoidPtr)forkName, (VoidPtr)fRsrcFork, rt_string_len(forkName));
+	}
+
+	void NewFilesystemManager::SetDataFork(const char* forkName)
+	{
+		if (!forkName) return;
+		rt_copy_memory((VoidPtr)forkName, (VoidPtr)fDataFork, rt_string_len(forkName));
 	}
 #endif // __FSKIT_NEWFS__
 } // namespace NewOS
