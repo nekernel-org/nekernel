@@ -4,16 +4,18 @@
 
 ------------------------------------------- */
 
-#pragma once
-
-#include <Headers/Wm.h>
-
 /*************************************************************
  *
- * File: Draw.h
- * Purpose: Xtrem Composer API for NewOS.
+ * File: Alert.h
+ * Purpose: New OS alert dialog.
  * Date: 3/26/24
  *
  * Copyright Mahrouss Logic, all rights reserved.
  *
  *************************************************************/
+
+#pragma once
+
+#include <Headers/Defines.h>
+
+CA_EXTERN_C VoidType Alert(const CharacterTypeUTF8* fmt, ...);

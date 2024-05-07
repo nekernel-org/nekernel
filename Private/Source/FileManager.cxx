@@ -5,7 +5,6 @@
 ------------------------------------------- */
 
 #include <KernelKit/FileManager.hpp>
-#include <NewKit/ErrorID.hpp>
 #include <NewKit/Utils.hpp>
 
 /// BUGS: 0

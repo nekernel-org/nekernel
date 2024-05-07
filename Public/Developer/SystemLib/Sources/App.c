@@ -7,7 +7,7 @@
 #include <Headers/Defines.h>
 
 /// @brief Main Application object, retrieved from the RtGetAppPointer symbol.
-ApplicationRef kSharedApplication = NullPtr;
+ApplicationInterfaceRef kSharedApplication = NullPtr;
 
 /// @brief Gets the app arguments count.
 /// @param void no arguments.

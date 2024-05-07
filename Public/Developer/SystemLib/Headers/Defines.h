@@ -15,7 +15,7 @@
 	{                                                                                                                   \
 		if (!e)                                                                                                         \
 		{                                                                                                               \
-			DlgMsgBox("Sorry, an assertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) RtAssertTriggerInterrupt() \
+			Alert("Sorry, an assertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) RtAssertTriggerInterrupt() \
 		}                                                                                                               \
 	}
 #else
@@ -32,7 +32,7 @@
 
 #endif
 
-struct Application;
+struct ApplicationInterface;
 struct GUID;
 
 CA_EXTERN_C void RtAssertTriggerInterrupt(void);
@@ -44,6 +44,8 @@ CA_EXTERN_C void RtAssertTriggerInterrupt(void);
 #define PACKED __attribute__((packed))
 
 #define CA_PASCAL CA_STDCALL
+
+#include <Headers/Hint.h>
 
 typedef __UINT8_TYPE__	ByteType;
 typedef __UINT16_TYPE__ WordType;
@@ -127,7 +129,8 @@ enum RtProcessCall
 	kCallSizePtr,
 	kCallCheckPtr,
 	kCallAllocStack,
-	/// @brief Open a specific handle (can be used as sel to call methods related to it.)
+	/// @brief Open a specific handle 
+	/// (can be used as sel to call methods related to it.)
 	kCallOpenFile,
 	kCallCloseFile,
 	kCallOpenDir,
@@ -145,9 +148,6 @@ enum RtProcessCall
 	kCallsCount,
 };
 
-#include <Headers/Hint.h>
-#include <Headers/Dialog.h>
-
 /**
  * @brief GUID type, something you can also find in CFKit.
  * @author Amlal El Mahrouss
@@ -162,12 +162,12 @@ typedef struct GUID
 
 /// \brief Application Interface.
 /// \author Amlal El Mahrouss
-typedef struct Application
+typedef struct ApplicationInterface
 {
-	VoidType (*Release)(struct Application* Self, DWordType ExitCode);
-	IntPtrType (*Invoke)(struct Application* Self, DWordType Sel, ...);
-	VoidType (*Query)(struct Application* Self, PtrVoidType* Dst, SizeType SzDst, struct GUID* GuidOf);
-} Application, *ApplicationRef;
+	VoidType (*Release)(struct ApplicationInterface* Self, DWordType ExitCode);
+	IntPtrType (*Invoke)(struct ApplicationInterface* Self, DWordType Sel, ...);
+	VoidType (*Query)(struct ApplicationInterface* Self, PtrVoidType* Dst, SizeType SzDst, struct GUID* GuidOf);
+} ApplicationInterface, *ApplicationInterfaceRef;
 
 #ifdef __cplusplus
 
@@ -187,21 +187,21 @@ typedef struct Application
 	KLASS& operator=(KLASS&&) = default; \
 	KLASS(KLASS&&)			  = default;
 
-#define app_cast reinterpret_cast<ApplicationRef>
+#define app_cast reinterpret_cast<ApplicationInterfaceRef>
 
 template <SizeType N>
 using StrType = CharacterTypeUTF8[N];
 
 #else
 
-#define app_cast (ApplicationRef)
+#define app_cast (ApplicationInterfaceRef)
 
 #endif // ifdef C++
 
 /// @brief Get app singleton.
 /// @param
 /// @return
-CA_EXTERN_C ApplicationRef RtGetAppPointer(VoidType);
+CA_EXTERN_C ApplicationInterfaceRef RtGetAppPointer(VoidType);
 
 /// @brief Get argument count
 /// @param
@@ -213,7 +213,7 @@ CA_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType);
 /// @return
 CA_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType);
 
-CA_EXTERN_C ApplicationRef kSharedApplication;
+CA_EXTERN_C ApplicationInterfaceRef kSharedApplication;
 
 typedef CharacterTypeUTF8 StrType255[255];
 
@@ -226,3 +226,5 @@ typedef CharacterTypeUTF8 StrType255[255];
 #ifndef kInvalidRef
 #define kInvalidRef 0
 #endif
+
+#include <Headers/Alert.h>

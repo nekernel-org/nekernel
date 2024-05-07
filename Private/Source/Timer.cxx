@@ -14,7 +14,7 @@ using namespace NewOS;
 /// @brief Unimplemented as it is an interface.
 Int32 HardwareTimerInterface::Wait() noexcept
 {
-	return H_UNIMPLEMENTED;
+	return kErrorUnimplemented;
 }
 
 /// @brief HardwareTimer class, meant to be generic.

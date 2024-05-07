@@ -8,8 +8,7 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hxx>
-
-#include <NewKit/ErrorID.hpp>
+#include <KernelKit/HError.hpp>
 
 namespace NewOS
 {

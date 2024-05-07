@@ -17,7 +17,7 @@
 
 /// \brief Application Interface.
 /// \author Amlal El Mahrouss
-typedef struct _Application final
+typedef struct _ApplicationInterface final
 {
 	/// @brief Releases the object exit the process on main object.
 	NewOS::Void (*Release)(struct _Application* Self, NewOS::Int32 ExitCode);
@@ -26,6 +26,6 @@ typedef struct _Application final
 	/// @brief Query a new application object from a GUID.
 	/// @note this doesn't query a process, it query a registered object withtin that app.
 	NewOS::Void (*Query)(struct _Application* Self, NewOS::VoidPtr* Dst, NewOS::SizeT SzDst, NewOS::XRN::GUIDSequence GuidOf);
-} Application, *ApplicationRef;
+} ApplicationInterface, *ApplicationInterfaceRef;
 
-#define app_cast reinterpret_cast<ApplicationRef>
+#define app_cast reinterpret_cast<ApplicationInterfaceRef>

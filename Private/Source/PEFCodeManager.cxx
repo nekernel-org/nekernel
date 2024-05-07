@@ -10,7 +10,6 @@
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/ErrorID.hpp>
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/String.hpp>
@@ -172,7 +171,7 @@ namespace NewOS
 		if (auto sym = this->FindSymbol(kPefStart, kPefCode); sym)
 			return ErrorOr<VoidPtr>(sym);
 
-		return ErrorOr<VoidPtr>(H_EXEC_ERROR);
+		return ErrorOr<VoidPtr>(kErrorExecutable);
 	}
 
 	/// @brief Tells if the executable is loaded or not.

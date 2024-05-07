@@ -7,7 +7,6 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/ErrorID.hpp>
 
 namespace NewOS
 {
@@ -37,6 +36,7 @@ namespace NewOS
 	inline constexpr HError kErrorNoEntrypoint		 = 53;
 	inline constexpr HError kErrorDiskIsCorrupted	 = 54;
 	inline constexpr HError kErrorDisk				 = 55;
+	inline constexpr HError kErrorInvalidData		 = 56;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
 	Boolean ke_bug_check(void) noexcept;

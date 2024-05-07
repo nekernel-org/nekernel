@@ -20,7 +20,6 @@
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
-#include <NewKit/ErrorID.hpp>
 #include <NewKit/Ref.hpp>
 #include <NewKit/Stream.hpp>
 
@@ -159,7 +158,7 @@ namespace NewOS
 		ErrorOr<Int64> WriteAll(const VoidPtr data) noexcept
 		{
 			if (data == nullptr)
-				return ErrorOr<Int64>(H_INVALID_DATA);
+				return ErrorOr<Int64>(kErrorInvalidData);
 
 			auto man = FSClass::GetMounted();
 
@@ -169,7 +168,7 @@ namespace NewOS
 				return ErrorOr<Int64>(0);
 			}
 
-			return ErrorOr<Int64>(H_INVALID_DATA);
+			return ErrorOr<Int64>(kErrorInvalidData);
 		}
 
 		VoidPtr Read() noexcept
