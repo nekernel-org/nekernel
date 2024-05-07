@@ -6,6 +6,8 @@
 
 #pragma once
 
+#pragma compiler(hint_manifest)
+
 #define _Input
 #define _Output
 

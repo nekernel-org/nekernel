@@ -138,6 +138,7 @@ enum RtProcessCall
 	kCallCloseWindow,
 	kCallCreateMenu,
 	kCallCloseMenu,
+	kCallRandomNumberGenerator,
 	kCallGetArgsCount,
 	kCallGetArgsPtr,
 	/// @brief Number of process calls.
