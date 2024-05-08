@@ -34,7 +34,7 @@ EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 LD_FLAGS=-e Main --subsystem=10
 
 ifeq ($(NEWS_STANDLONE), )
-OBJ=*.o ../../Objects/*.obj
+OBJ=*.o ../../Kernel/Objects/*.obj
 else
 RESCMD=$(WINDRES) BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
 STANDALONE_MACRO=-D__STANDALONE__
@@ -46,7 +46,7 @@ REM_FLAG=-f
 
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
-			-DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -nostdlib -fno-rtti -fno-exceptions \
+			-DEFI_FUNCTION_WRAPPER -I../ -I../../Kernel -I./ -c -nostdlib -fno-rtti -fno-exceptions \
 			-std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
 
 BOOT_LOADER=NewBoot.exe
@@ -62,7 +62,7 @@ all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o $(BOOT_LOADER)
 	$(COPY) $(BOOT_LOADER) Root/EFI/BOOT/BOOTX64.EFI
 	$(COPY) $(BOOT_LOADER) Root/EFI/BOOT/NEWBOOT.EFI
-	$(COPY) ../../$(KERNEL) Root/$(KERNEL)
+	$(COPY) ../../Kernel/$(KERNEL) Root/$(KERNEL)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__

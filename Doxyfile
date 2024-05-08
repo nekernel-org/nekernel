@@ -511,7 +511,7 @@ TIMESTAMP              = NO
 #---------------------------------------------------------------------------
 
 # If the EXTRACT_ALL tag is set to YES, doxygen will assume all entities in
-# documentation are documented, even if no documentation was available. Private
+# documentation are documented, even if no documentation was available. Kernel
 # class members and static file members will be hidden unless the
 # EXTRACT_PRIVATE respectively EXTRACT_STATIC tags are set to YES.
 # Note: This will also disable the warnings about undocumented members that are

@@ -682,7 +682,7 @@ struct pt_regs
 #define PVR	  SPRN_PVR	 /* Processor Version */
 #define RPA	  SPRN_RPA	 /* Required Physical Address Register */
 #define SDR1  SPRN_SDR1	 /* MMU hash base register */
-#define SPR0  SPRN_SPRG0 /* Supervisor Private Registers */
+#define SPR0  SPRN_SPRG0 /* Supervisor Kernel Registers */
 #define SPR1  SPRN_SPRG1
 #define SPR2  SPRN_SPRG2
 #define SPR3  SPRN_SPRG3

@@ -1,12 +1,11 @@
 # CoreSystem
-## System API.
+## System Core framework.
 
 Currently contains:
+
 - Heap API.
 - File API.
-- Window Manager API.
-- Dialogs API.
-- Data types.
+- Data API.
 - Threading API.
 
 Needs:
