@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -10,7 +10,7 @@
  * Purpose: New OS alert dialog.
  * Date: 3/26/24
  *
- * Copyright Mahrouss Logic, all rights reserved.
+ * Copyright SoftwareLabs, all rights reserved.
  *
  *************************************************************/
 

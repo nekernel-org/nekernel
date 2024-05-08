@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
     File: PECodeManager.hxx
     Purpose: PE32+ Code Manager and Shared Objects.

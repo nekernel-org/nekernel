@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
     File: Prcoessor.hxx
     Purpose: AMD64 processor abstraction.

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
     File: Defines.hxx
     Purpose: XHCI (and backwards) header.

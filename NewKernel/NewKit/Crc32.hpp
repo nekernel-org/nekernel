@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	NewOS 	Date Added: 13/02/2023
- * 	Copyright Mahrouss Logic, all rights reserved.
+ * 	Copyright SoftwareLabs, all rights reserved.
  *
  * 	========================================================
  */

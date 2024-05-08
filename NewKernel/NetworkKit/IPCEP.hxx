@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic.
+    Copyright SoftwareLabs.
 
     File: IPCEP.hxx, Purpose: Common IPC protocol. 
 

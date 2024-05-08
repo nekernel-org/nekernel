@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
     File: CodeManager.hpp
     Purpose: Code Manager and Shared Objects.

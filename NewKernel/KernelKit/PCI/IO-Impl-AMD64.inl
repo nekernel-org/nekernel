@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
     File: IO-Impl-AMD64.hpp
     Purpose: I/O for AMD64.

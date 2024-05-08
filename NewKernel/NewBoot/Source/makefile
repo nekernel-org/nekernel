@@ -1,5 +1,5 @@
 ##################################################
-# (C) Mahrouss Logic, all rights reserved.
+# (C) SoftwareLabs, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 

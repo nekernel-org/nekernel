@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -68,7 +68,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	/// Splash screen stuff
 
-	writer.Write(L"Mahrouss-Logic (R) New Boot: ")
+	writer.Write(L"SoftwareLabs (R) New Boot: ")
 		.Write(BVersionString::Shared());
 
 	writer.Write(L"\rNew Boot: Firmware Vendor: ")

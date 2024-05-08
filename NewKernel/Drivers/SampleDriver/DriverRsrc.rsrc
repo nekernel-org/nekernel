@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Mahrouss-Logic"
+      VALUE "CompanyName", "SoftwareLabs"
       VALUE "FileDescription", "New OS driver."
       VALUE "FileVersion", "1.00"
       VALUE "InternalName", "SampleDriver"
-      VALUE "LegalCopyright", "Copyright Mahrouss-Logic, all rights reserved."
+      VALUE "LegalCopyright", "Copyright SoftwareLabs, all rights reserved."
       VALUE "OriginalFilename", "SampleDriver.exe"
       VALUE "ProductName", "SampleDriver"
       VALUE "ProductVersion", "1.00"

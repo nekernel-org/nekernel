@@ -1,6 +1,6 @@
 ; /* -------------------------------------------
 ;
-;    Copyright Mahrouss Logic
+;    Copyright SoftwareLabs
 ;
 ;    Purpose: POWER low level I/O
 ;

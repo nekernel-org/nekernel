@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Mahrouss-Logic"
+      VALUE "CompanyName", "SoftwareLabs"
       VALUE "FileDescription", "New OS Bonjour driver."
       VALUE "FileVersion", "1.00"
       VALUE "InternalName", "Bonjour."
-      VALUE "LegalCopyright", "Copyright Mahrouss-Logic, all rights reserved."
+      VALUE "LegalCopyright", "Copyright SoftwareLabs, all rights reserved."
       VALUE "OriginalFilename", "Bonjour.exe"
       VALUE "ProductName", "Bonjour."
       VALUE "ProductVersion", "1.00"

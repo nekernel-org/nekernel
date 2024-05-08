@@ -10,11 +10,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Mahrouss-Logic"
+      VALUE "CompanyName", "SoftwareLabs"
       VALUE "FileDescription", "New OS multiplatform kernel."
       VALUE "FileVersion", KERNEL_VERSION
       VALUE "InternalName", "NewKernel"
-      VALUE "LegalCopyright", "Mahrouss-Logic"
+      VALUE "LegalCopyright", "SoftwareLabs"
       VALUE "OriginalFilename", "NewKernel.exe"
       VALUE "ProductName", "NewKernel"
       VALUE "ProductVersion", KERNEL_VERSION

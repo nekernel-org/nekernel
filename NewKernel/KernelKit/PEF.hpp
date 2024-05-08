@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
     File: PEF.hpp
     Purpose: Preferred Executable Format for NewOS.

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright Mahrouss Logic
+    Copyright SoftwareLabs
 
     File: MSDOS.hpp
     Purpose: MS-DOS header for NewOS.

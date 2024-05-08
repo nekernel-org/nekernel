@@ -10,11 +10,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Mahrouss-Logic"
+      VALUE "CompanyName", "SoftwareLabs"
       VALUE "FileDescription", "New OS multi-platform bootloader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "NewBoot"
-      VALUE "LegalCopyright", "Copyright Mahrouss-Logic, all rights reserved."
+      VALUE "LegalCopyright", "Copyright SoftwareLabs, all rights reserved."
       VALUE "OriginalFilename", "NewBoot.exe"
       VALUE "ProductName", "NewBoot"
       VALUE "ProductVersion", BOOTLOADER_VERSION
