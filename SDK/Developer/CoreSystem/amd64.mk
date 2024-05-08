@@ -1,17 +1,17 @@
 ##################################################
 # (C) Mahrouss Logic, all rights reserved.
-# This is the SystemLib Makefile.
+# This is the CoreSystem Makefile.
 ##################################################
 
 CC=x86_64-w64-mingw32-gcc
 AR=x86_64-w64-mingw32-ar
 CCINC=-I./
 CCFLAGS=-D__SINGLE_PRECISION__ -nostdlib -std=c17 -ffreestanding -Xlinker --subsystem=17 -shared
-OUTPUT=SystemLib.lib
+OUTPUT=CoreSystem.lib
 
 .PHONY: all
 all: build-core-amd64
-	@echo "[SystemLib.lib] Build done."
+	@echo "[CoreSystem.lib] Build done."
 
 .PHONY: build-core-amd64
 build-core-amd64:

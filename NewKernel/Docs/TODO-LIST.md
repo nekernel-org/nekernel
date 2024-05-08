@@ -1,4 +1,4 @@
-# TODO list.
+# TODO list
 
 - We need preemptive multi-threading. [ X ]
 - We then need sync primitives. [ X ]
