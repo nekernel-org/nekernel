@@ -14,16 +14,16 @@
 %define kInterruptId 0x21
 
 %macro IntExp 1
-global __HCR_INT_%1 
-__HCR_INT_%1:
+global __NEW_INT_%1 
+__NEW_INT_%1:
     cld
 
     iretq
 %endmacro
 
 %macro IntNormal 1
-global __HCR_INT_%1 
-__HCR_INT_%1:
+global __NEW_INT_%1 
+__NEW_INT_%1:
     cld
 
     iretq
@@ -54,7 +54,7 @@ IntNormal 4
 IntNormal 5
 
 ;; Invalid opcode interrupt
-__HCR_INT_6:
+__NEW_INT_6:
     cli
 
     push rax
@@ -75,7 +75,7 @@ IntExp   11
 
 IntExp 12
 
-__HCR_INT_13:
+__NEW_INT_13:
     cli
 
     push rax
@@ -88,7 +88,7 @@ __HCR_INT_13:
     sti
     iretq
 
-__HCR_INT_14:
+__NEW_INT_14:
     cli
 
     push rax
@@ -135,7 +135,7 @@ IntNormal 41
 IntNormal 42
 IntNormal 43
 
-__HCR_INT_44:
+__NEW_INT_44:
     cli
 
     ;; TODO: CoreEvents dispatch routine.
@@ -153,7 +153,7 @@ IntNormal 47
 IntNormal 48
 IntNormal 49
 
-__HCR_INT_50:
+__NEW_INT_50:
     cli
 
     ;; todo handle system calls.
@@ -217,6 +217,6 @@ section .data
 kInterruptVectorTable:
     %assign i 0
     %rep 256
-        dq __HCR_INT_%+i
+        dq __NEW_INT_%+i
     %assign i i+1
     %endrep

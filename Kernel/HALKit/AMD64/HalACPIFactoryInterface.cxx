@@ -75,7 +75,7 @@ namespace NewOS
 
 		SDT* xsdt = (SDT*)(rsdPtr->XsdtAddress >> (rsdPtr->XsdtAddress & 0xFFF));
 
-		SizeT num = xsdt->Length + sizeof(SDT) / 8;
+		SizeT num = (xsdt->Length + sizeof(SDT)) / 8;
 
 		this->fEntries = num;
 
@@ -83,10 +83,11 @@ namespace NewOS
 		kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
 
 		constexpr short ACPI_SIGNATURE_LENGTH = 4;
+		SizeT offsetToAdd = 0UL;
 
 		for (Size index = 0; index < num; ++index)
 		{
-			SDT* sdt = (SDT*)*((UInt64*)(UInt64)xsdt + sizeof(SDT) + (index * 8));
+			SDT* sdt = &(xsdt[index]) + offsetToAdd;
 
 			for (int signature_index = 0; signature_index < 4; signature_index++)
 			{
@@ -94,11 +95,13 @@ namespace NewOS
 					break;
 
 				if (signature_index == 3)
-					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>((SDT*)sdt));
+					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(sdt));
 			}
+
+			offsetToAdd = sdt->Length;
 		}
 
-		return ErrorOr<voidPtr>{-1};
+		return ErrorOr<voidPtr>{nullptr};
 	}
 
 	/***

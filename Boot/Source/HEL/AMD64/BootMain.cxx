@@ -90,7 +90,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
 		 ++indexVT)
 	{
-		volatile Char* vendorTable = reinterpret_cast<volatile Char*>(
+		Char* vendorTable = reinterpret_cast<Char*>(
 			SystemTable->ConfigurationTable[indexVT].VendorTable);
 
 		/// ACPI's 'RSD PTR', which contains hardware tables (MADT, FACP...)
@@ -99,6 +99,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
 			vendorTable[6] == 'R' && vendorTable[7] == ' ')
 		{
+			writer.Write(L"New Boot: Found ACPI RSD PTR!\r");
 			handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
 
 			break;

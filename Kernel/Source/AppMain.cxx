@@ -22,6 +22,7 @@
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
+#include <KernelKit/CodeManager.hpp>
 
 namespace Detail
 {
@@ -177,6 +178,12 @@ namespace Detail
 			return fNewFS;
 		}
 	};
+
+	STATIC NewOS::Void AppWatchdogThread(NewOS::Void)
+	{
+		NewOS::kcout << "SystemSanityThread: Exiting process...";
+		NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Exit(0);
+	}
 } // namespace Detail
 
 /// @file Main microkernel entrypoint.
@@ -185,6 +192,9 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void)
 {
 	/// Now run kernel loop, until no process are running.
 	Detail::FilesystemWizard wizard; // automatic.
+
+	auto cWatchdogThreadName = "SystemSanityThread";
+	NewOS::execute_from_image((NewOS::MainKind)Detail::AppWatchdogThread, cWatchdogThreadName);
 
 	while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0)
 	{

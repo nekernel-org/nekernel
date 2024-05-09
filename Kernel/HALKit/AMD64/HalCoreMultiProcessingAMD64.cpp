@@ -23,12 +23,12 @@ namespace NewOS::HAL
 	constexpr Int32 kThreadBoot	  = 4;
 
 	/*
- *
- * this is used to store info about the current running thread
- * we use this struct to determine if we can use it, or mark it as used or on
- * sleep.
- *
- */
+    *
+    * this is used to store info about the current running thread
+    * we use this struct to determine if we can use it, or mark it as used or on
+    * sleep.
+    *
+    */
 
 	struct ProcessorInfoAMD64 final
 	{
@@ -51,12 +51,12 @@ namespace NewOS::HAL
 	{
 		struct MadtAddress final
 		{
+			UInt32 fAddress;
 			UInt32 fFlags; // 1 = Dual Legacy PICs installed
-			UInt32 fPhysicalAddress;
 
 			Char fType;
 			Char fRecLen; // record length
-		} Madt[];
+		} fMadt[];
 	};
 
 	struct MadtProcessorLocalApic final
@@ -104,20 +104,23 @@ namespace NewOS::HAL
 
 	void hal_system_get_cores(voidPtr rsdPtr)
 	{
-		kcout << "New OS: Constructing ACPIFactoryInterface...\r";
-
 		auto acpi = ACPIFactoryInterface(rsdPtr);
 		kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 
 		if (kApicMadt)
 		{
-			kcout << "New OS: Successfuly fetched the MADT!\r";
+			kcout << "New OS: Successfuly fetched the cores!\r";
 			kApicInfoBlock = (MadtType*)kApicMadt;
+
+            kcout << "New OS: Revision: ";
+            kcout.HexNumber(kApicInfoBlock->Revision).EndLine();
+
+            ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 		}
-		else
-		{
-			MUST_PASS(false);
-		}
+        else
+        {
+            ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+        }
 	}
 } // namespace NewOS::HAL
 

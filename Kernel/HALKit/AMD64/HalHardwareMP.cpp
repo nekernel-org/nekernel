@@ -16,7 +16,7 @@ namespace NewOS
 	{
 		HAL::rt_cli();
 
-		stack->Rcx = 0;
+        
 
 		HAL::rt_sti();
 	}
@@ -27,7 +27,7 @@ namespace NewOS
 	{
 		HAL::rt_cli();
 
-		stack->Rcx = 1;
+		
 
 		HAL::rt_sti();
 	}

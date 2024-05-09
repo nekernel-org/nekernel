@@ -15,7 +15,7 @@
 
 #define kDebugUnboundPort 0x0FEED
 
-#define kDebugMag0 'H'
+#define kDebugMag0 'N'
 #define kDebugMag1 'D'
 #define kDebugMag2 'B'
 #define kDebugMag3 'G'
@@ -27,6 +27,12 @@
 
 namespace NewOS
 {
+    class TerminalDevice;
+
+    inline TerminalDevice& end_line();
+    inline TerminalDevice& number(const Long& x);
+    inline TerminalDevice& hex_number(const Long& x);
+
 	// @brief Emulates a VT100 terminal.
 	class TerminalDevice final : public DeviceInterface<const Char*>
 	{
@@ -34,10 +40,30 @@ namespace NewOS
 		TerminalDevice(void (*print)(const Char*), void (*get)(const Char*))
 			: DeviceInterface<const Char*>(print, get)
 		{
+
 		}
 
 		virtual ~TerminalDevice()
 		{
+
+		}
+
+		TerminalDevice& Number(const Long Data) noexcept
+		{
+            number(Data);
+			return *this;
+		}
+
+		TerminalDevice& HexNumber(const Long Data) noexcept
+		{
+            number(Data);
+			return *this;
+		}
+
+        TerminalDevice& EndLine() noexcept
+		{
+            end_line();
+			return *this;
 		}
 
 		/// @brief returns device name (terminal name)
