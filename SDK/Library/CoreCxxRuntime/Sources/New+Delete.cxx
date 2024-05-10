@@ -13,7 +13,7 @@ void* operator new[](size_t sz)
 	if (sz == 0)
 		++sz;
 
-	return RtTlsAllocate(sz, kStandardAllocation);
+	return RtHeapAllocate(sz, kStandardAllocation);
 }
 
 void* operator new(size_t sz)
@@ -21,7 +21,7 @@ void* operator new(size_t sz)
 	if (sz == 0)
 		++sz;
 
-	return RtTlsAllocate(sz, kArrayAllocation);
+	return RtHeapAllocate(sz, kArrayAllocation);
 }
 
 void operator delete[](void* ptr)
@@ -29,5 +29,5 @@ void operator delete[](void* ptr)
 	if (ptr == nullptr)
 		return;
 
-	RtTlsFree(ptr);
+	RtHeapFree(ptr);
 }

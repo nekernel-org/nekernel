@@ -20,20 +20,20 @@ enum RtAllocationKind
 /// @param sz the size
 /// @param flags the allocation flags.
 /// @return
-CA_EXTERN_C PtrVoidType RtTlsAllocate(QWordType sz,
+CA_EXTERN_C PtrVoidType RtHeapAllocate(QWordType sz,
 									  DWordType flags);
 
 /// @brief Check if the pointer exists.
 /// @param ptr the pointer to free.
 /// @return
-CA_EXTERN_C BooleanType RtTlsPtrExists(PtrVoidType ptr);
+CA_EXTERN_C BooleanType RtHeapPtrExists(PtrVoidType ptr);
 
 /// @brief Gets the size of the process' pointer.
 /// @param ptr the pointer to free.
 /// @return
-CA_EXTERN_C QWordType RtTlsGetSize(PtrVoidType ptr);
+CA_EXTERN_C QWordType RtHeapGetSize(PtrVoidType ptr);
 
 /// @brief Frees the process pointer.
 /// @param ptr the pointer to free.
 /// @return
-CA_EXTERN_C VoidType RtTlsFree(PtrVoidType ptr);
+CA_EXTERN_C VoidType RtHeapFree(PtrVoidType ptr);
