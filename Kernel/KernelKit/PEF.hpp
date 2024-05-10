@@ -73,9 +73,6 @@ namespace NewOS
 	} PACKED PEFContainer;
 
 	/* First PEFCommandHeader starts after PEFContainer */
-	/* Last container is __exec_end */
-
-	/* PEF executable section and commands. */
 
 	typedef struct PEFCommandHeader final
 	{
