@@ -36,4 +36,11 @@ namespace std
 		__throw_general();
 		CANT_REACH(); // prevent from continuing.
 	}
+
+	inline void __throw_bad_array_new_length(void)
+	{
+		NewOS::kcout << "MPCC C++: Bad array length.\r";
+		__throw_general();
+		CANT_REACH(); // prevent from continuing.
+	}
 } // namespace std
