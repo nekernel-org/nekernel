@@ -37,10 +37,7 @@ LDFLAGS		= -e __ImageStart --subsystem=17
 LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
-KERNEL		= NewKernel.exe
-
-# The kernel entrypoint
-SCRIPT		= --script=Linker/Platforms/PC.lds
+KERNEL		= NewOSKrnl.exe
 
 .PHONY: error
 error:

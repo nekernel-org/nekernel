@@ -46,54 +46,54 @@ namespace NewOS::HAL
 	STATIC voidPtr	   kApicMadt	  = nullptr;
 	STATIC const char* kApicSignature = "APIC";
 
-	/// @brief Multiple APIC descriptor table.
+	/// @brief Multiple APIC Descriptor Table.
 	struct MadtType final : public SDT
 	{
 		struct MadtAddress final
 		{
-			UInt32 fAddress;
-			UInt32 fFlags; // 1 = Dual Legacy PICs installed
-
-			Char fType;
-			Char fRecLen; // record length
-		} fMadt[];
+			Char RecordType;
+			Char RecordLen; // record length
+			
+			UInt32 Address;
+			UInt32 Flags; // 1 = Dual Legacy PICs installed
+		} MadtRecords[];
 	};
 
 	struct MadtProcessorLocalApic final
 	{
-		Char   fProcessorId;
-		Char   fApicId;
-		UInt32 fFlags;
+		Char   AcpiProcessorId;
+		Char   Reserved;
+		UInt32 Flags;
 	};
 
 	struct MadtIOApic final
 	{
-		Char   fApicId;
-		Char   fReserved;
-		UInt32 fAddress;
-		UInt32 fSystemInterruptBase;
+		Char   ApicId;
+		Char   Reserved;
+		UInt32 Address;
+		UInt32 SystemInterruptBase;
 	};
 
 	struct MadtInterruptSource final
 	{
-		Char   fBusSource;
-		Char   fIrqSource;
-		UInt32 fGSI;
-		UInt16 fFlags;
+		Char   BusSource;
+		Char   IrqSource;
+		UInt32 GSI;
+		UInt16 Flags;
 	};
 
 	struct MadtInterruptNmi final
 	{
-		Char   fNmiSource;
-		Char   fReserved;
-		UInt16 fFlags;
-		UInt32 fGSI;
+		Char   NmiSource;
+		Char   Reserved;
+		UInt16 Flags;
+		UInt32 GSI;
 	};
 
 	struct MadtLocalApicAddressOverride final
 	{
-		UInt16	fResvered;
-		UIntPtr fAddress;
+		UInt16	Resvered;
+		UIntPtr Address;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -109,17 +109,13 @@ namespace NewOS::HAL
 
 		if (kApicMadt)
 		{
-			kcout << "New OS: Successfuly fetched the cores!\r";
+            kcout << "New OS: APIC is present...\r";
 			kApicInfoBlock = (MadtType*)kApicMadt;
-
-            kcout << "New OS: Revision: ";
-            kcout.HexNumber(kApicInfoBlock->Revision).EndLine();
-
-            ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 		}
         else
         {
-            ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+			kcout << "New OS: APIC is not present! it is a vital component.\r";
+            ke_stop(RUNTIME_CHECK_FAILED);
         }
 	}
 } // namespace NewOS::HAL

@@ -163,7 +163,7 @@ namespace NewOS
 
 		enum
 		{
-			kUserKind	= 3,
+			kAppKind	= 3,
 			kLibKind	= 3,
 			kDriverKind = 0,
 			kKindCount,
@@ -178,7 +178,7 @@ namespace NewOS
 		ProcessTime PTime;
 		PID			ProcessId{kSchedInvalidPID};
 		Int32		Ring{kRingDriverKind};
-		Int32		Kind{kUserKind};
+		Int32		Kind{kAppKind};
 
 	public:
 		//! @brief boolean operator, check status.

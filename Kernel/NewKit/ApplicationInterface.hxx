@@ -8,7 +8,7 @@
 
 ///
 /// @brief Application object, given by the OS to the process. interact with the OS.
-/// @file Application.hxx
+/// @file ApplicationInterface.hxx
 /// @author Amlal EL Mahrouss
 ///
 

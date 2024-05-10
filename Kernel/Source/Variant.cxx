@@ -10,11 +10,6 @@ namespace NewOS
 {
 	const Char* Variant::ToString()
 	{
-		if (fPtr == nullptr)
-		{
-			return ("Memory:{Nullptr}");
-		}
-
 		switch (fKind)
 		{
 		case VariantKind::kString:

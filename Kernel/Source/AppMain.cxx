@@ -179,25 +179,50 @@ namespace Detail
 		}
 	};
 
-	STATIC NewOS::Void AppWatchdogThread(NewOS::Void)
+	/// @brief System loader entrypoint.
+	/// @param void no parameters.
+	/// @return void no return value.
+	STATIC NewOS::Void AppSystemLoader(NewOS::Void)
 	{
-		NewOS::kcout << "SystemSanityThread: Exiting process...";
+		NewOS::PEFLoader coreGraphicsShLib("/System/CoreGraphics");
+
+		if (!coreGraphicsShLib.IsLoaded())
+		{
+			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
+		}
+
+		NewOS::Utils::execute_from_image(coreGraphicsShLib,
+										 NewOS::ProcessHeader::kLibKind);
+
+		NewOS::PEFLoader logonService("/System/Login");
+
+		if (!logonService.IsLoaded())
+		{
+			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
+		}
+
+		NewOS::Utils::execute_from_image(logonService,
+										 NewOS::ProcessHeader::kAppKind);
+
+		NewOS::kcout << "SystemLoader: Exiting process, we're done initializing stuff...";
+
 		NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Exit(0);
 	}
 } // namespace Detail
 
-/// @file Main microkernel entrypoint.
-
+/// @brief Application entrypoint.
+/// @param Void
+/// @return Void
 EXTERN_C NewOS::Void AppMain(NewOS::Void)
 {
 	/// Now run kernel loop, until no process are running.
 	Detail::FilesystemWizard wizard; // automatic.
 
-	auto cWatchdogThreadName = "SystemSanityThread";
-	NewOS::execute_from_image((NewOS::MainKind)Detail::AppWatchdogThread, cWatchdogThreadName);
+	auto cLoaderName = "SystemLoader";
+	NewOS::execute_from_image(Detail::AppSystemLoader, cLoaderName);
 
 	while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0)
 	{
-		;
+		NewOS::kcout << "New OS: sleeping...\r";
 	}
 }

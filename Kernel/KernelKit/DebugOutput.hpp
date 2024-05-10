@@ -56,7 +56,7 @@ namespace NewOS
 
 		TerminalDevice& HexNumber(const Long Data) noexcept
 		{
-            number(Data);
+            hex_number(Data);
 			return *this;
 		}
 

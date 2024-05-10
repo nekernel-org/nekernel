@@ -218,7 +218,7 @@ namespace NewOS
 		kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r";
 
 		/// Create heap according to type of process.
-		if (process.Leak().Kind == ProcessHeader::kUserKind)
+		if (process.Leak().Kind == ProcessHeader::kAppKind)
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
 		else if (process.Leak().Kind == ProcessHeader::kLibKind)
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);

@@ -136,8 +136,6 @@ namespace NewOS
 		NewFSParser* GetImpl() noexcept;
 
 	private:
-		Char		 fDataFork[kNewFSForkNameLen] = {0};
-		Char		 fRsrcFork[kNewFSForkNameLen] = {0};
 		NewFSParser* fImpl{nullptr};
 	};
 

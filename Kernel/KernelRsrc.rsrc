@@ -15,7 +15,7 @@ BEGIN
       VALUE "FileVersion", KERNEL_VERSION
       VALUE "InternalName", "NewKernel"
       VALUE "LegalCopyright", "SoftwareLabs"
-      VALUE "OriginalFilename", "NewKernel.exe"
+      VALUE "OriginalFilename", "NewOSKrnl.exe"
       VALUE "ProductName", "NewKernel"
       VALUE "ProductVersion", KERNEL_VERSION
     END

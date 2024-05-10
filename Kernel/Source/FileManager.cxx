@@ -90,11 +90,11 @@ namespace NewOS
 
 		NEWOS_UNUSED(flags);
 
-		const char* cReadAllFork = fDataFork;
-
+		auto dataForkName = "FileData";
+		
 		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
 			fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
-								cReadAllFork);
+								dataForkName);
 	}
 
 	/// @brief Read from filesystem fork.
@@ -112,11 +112,11 @@ namespace NewOS
 
 		NEWOS_UNUSED(flags);
 
-		const char* cReadAllFork = fDataFork;
+		auto dataForkName = "FileData";
 
 		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
 			return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz,
-									  cReadAllFork);
+									  dataForkName);
 
 		return nullptr;
 	}
@@ -166,18 +166,6 @@ namespace NewOS
 	NewFSParser* NewFilesystemManager::GetImpl() noexcept
 	{
 		return fImpl;
-	}
-
-	void NewFilesystemManager::SetResourceFork(const char* forkName)
-	{
-		if (!forkName) return;
-		rt_copy_memory((VoidPtr)forkName, (VoidPtr)fRsrcFork, rt_string_len(forkName));
-	}
-
-	void NewFilesystemManager::SetDataFork(const char* forkName)
-	{
-		if (!forkName) return;
-		rt_copy_memory((VoidPtr)forkName, (VoidPtr)fDataFork, rt_string_len(forkName));
 	}
 #endif // __FSKIT_NEWFS__
 } // namespace NewOS

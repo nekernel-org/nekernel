@@ -26,7 +26,7 @@ namespace NewOS
 	void ke_stop(const NewOS::Int& id)
 	{
 		kcout << "*** STOP *** \r";
-		kcout << "*** NewKernel.exe has trigerred a runtime stop. *** \r";
+		kcout << "*** Kernel has trigerred a runtime stop. *** \r";
 
 		switch (id)
 		{
