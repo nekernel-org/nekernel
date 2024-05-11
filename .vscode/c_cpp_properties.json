@@ -3,10 +3,10 @@
         {
             "name": "MicroKernel (Macintosh)",
             "includePath": [
-                "${workspaceFolder}/Private/**",
-                "${workspaceFolder}/Private/NewBoot/**",
-                "${workspaceFolder}/Public/Developer/SystemLib/**",
-                "${workspaceFolder}/Public/Developer/**"
+                "${workspaceFolder}/Kernel/**",
+                "${workspaceFolder}/Kernel/NewBoot/**",
+                "${workspaceFolder}/SDK/Developer/CoreSystem/**",
+                "${workspaceFolder}/SDK/Developer/**"
             ],
             "defines": [
                 "__MAHROUSS__",
@@ -26,7 +26,7 @@
         {
             "name": "AppDev ",
             "includePath": [
-                "${workspaceFolder}/Public/Developer/**"
+                "${workspaceFolder}/SDK/Developer/**"
             ],
             "defines": [],
             "cStandard": "c17",
@@ -36,10 +36,10 @@
         {
             "name": "MicroKernel (Windows)",
             "includePath": [
-                "${workspaceFolder}/Private/**",
-                "${workspaceFolder}/Private/NewBoot/**",
-                "${workspaceFolder}/Public/Developer/SystemLib/**",
-                "${workspaceFolder}/Public/Developer/**"
+                "${workspaceFolder}/Kernel/**",
+                "${workspaceFolder}/Kernel/NewBoot/**",
+                "${workspaceFolder}/SDK/Developer/CoreSystem/**",
+                "${workspaceFolder}/SDK/Developer/**"
             ],
             "defines": [
                 "__MAHROUSS__",

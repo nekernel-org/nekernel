@@ -1,0 +1,27 @@
+1 ICON "Root/Boot/Icons/kernel-logo.ico"
+
+#include "CompilerKit/Version.hxx"
+
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "SoftwareLabs"
+      VALUE "FileDescription", "New OS multiplatform kernel."
+      VALUE "FileVersion", KERNEL_VERSION
+      VALUE "InternalName", "NewKernel"
+      VALUE "LegalCopyright", "SoftwareLabs"
+      VALUE "OriginalFilename", "NewOSKrnl.exe"
+      VALUE "ProductName", "NewKernel"
+      VALUE "ProductVersion", KERNEL_VERSION
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END
