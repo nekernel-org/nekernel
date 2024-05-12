@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -21,4 +21,4 @@ BooleanType IntlSetLocale(const IntlRef intl);
 
 /// @brief translate a string from a locale.
 const CharacterTypeUTF8* Intl(const CharacterTypeUTF8* input,
-									   const IntlRef			locale);
+							  const IntlRef			   locale);

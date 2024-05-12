@@ -4,9 +4,6 @@
 
 ------------------------------------------- */
 
-#pragma once
+#include <Headers/Thread.h>
 
-#include <Headers/Defines.h>
-
-/// @file Rsrc.h
-/// @brief RXML forks.
+ThreadRef kMainThread = 0;

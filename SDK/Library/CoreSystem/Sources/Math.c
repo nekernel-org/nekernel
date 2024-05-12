@@ -8,7 +8,7 @@
 
 /// @brief Number generator helper.
 /// @return Random generated number.
-CA_EXTERN_C SizeType MathRand(VoidType)
+CS_EXTERN_C SizeType MathRand(VoidType)
 {
 	return kSharedApplication->Invoke(kSharedApplication, kCallRandomNumberGenerator);
 }
