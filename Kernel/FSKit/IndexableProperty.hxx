@@ -10,7 +10,7 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DriveManager.hxx>
 
-#define kIndexerNodeNameLength 256
+#define kIndexerNodeNameLength 255
 #define kIndexerClaimed		   0xCF
 
 namespace NewOS
