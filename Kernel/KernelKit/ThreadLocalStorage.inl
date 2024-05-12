@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -34,12 +34,15 @@ inline bool tls_delete_ptr(T* ptr)
 
 	MUST_PASS(ProcessScheduler::Shared().Leak().GetCurrent());
 
-	ptr->~T();
-
 	auto ref_process = ProcessScheduler::Shared().Leak().GetCurrent();
 	return ref_process.Leak().Delete(ptr, sizeof(T));
 }
 
+/// @brief Allocate a C++ class, and then call the constructor of it.
+/// @tparam T
+/// @tparam ...Args
+/// @param ...args
+/// @return
 template <typename T, typename... Args>
 T* tls_new_class(Args&&... args)
 {
@@ -52,4 +55,15 @@ T* tls_new_class(Args&&... args)
 	}
 
 	return nullptr;
+}
+
+/// @brief Delete a C++ class (call constructor first.)
+/// @tparam T
+/// @param ptr
+/// @return
+template <typename T>
+inline bool tls_delete_class(T* ptr)
+{
+	ptr->~T();
+	return tls_delete_ptr(ptr);
 }

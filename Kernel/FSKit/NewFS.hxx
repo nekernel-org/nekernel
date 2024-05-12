@@ -209,7 +209,6 @@ namespace NewOS
 	/// \brief NewFS parser class. (catalog creation, remove removal, root,
 	/// forks...) Designed like the DOM, detects the filesystem automatically.
 	///
-
 	class NewFSParser final
 	{
 	public:
