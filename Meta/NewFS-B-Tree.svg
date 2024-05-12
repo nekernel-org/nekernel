@@ -1,0 +1,162 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 566 520" width="566" height="520">
+    <!-- svg-source:excalidraw -->
+
+    <defs>
+        <style class="style-fonts">
+            @font-face {
+                font-family: "Virgil";
+                src: url("https://excalidraw.com/Virgil.woff2");
+            }
+
+            @font-face {
+                font-family: "Cascadia";
+                src: url("https://excalidraw.com/Cascadia.woff2");
+            }
+
+            @font-face {
+                font-family: "Assistant";
+                src: url("https://excalidraw.com/Assistant-Regular.woff2");
+            }
+        </style>
+
+    </defs>
+    <rect x="0" y="0" width="566" height="520" fill="#ffffff"></rect>
+    <g stroke-linecap="round" transform="translate(10 10) rotate(0 66.5 250)">
+        <path
+            d="M32 0 C44.33 -0.41, 60.84 -1.91, 101 0 M32 0 C52.99 -0.05, 73.05 -0.18, 101 0 M101 0 C120.38 1.09, 131.23 12.51, 133 32 M101 0 C123.53 2.1, 131.8 9.45, 133 32 M133 32 C131.29 206.61, 131.66 379.71, 133 468 M133 32 C134.12 203.69, 133.94 374.76, 133 468 M133 468 C134.11 490.32, 123.5 499, 101 500 M133 468 C135.3 489.15, 120.06 501.6, 101 500 M101 500 C80.59 498.63, 61.41 498.19, 32 500 M101 500 C84.91 499.8, 69.75 498.8, 32 500 M32 500 C11.34 501.76, 1.21 488.88, 0 468 M32 500 C10.17 498.67, -0.4 488.11, 0 468 M0 468 C-1.22 376.31, -2.49 284.44, 0 32 M0 468 C1.48 362.68, 1.05 258.67, 0 32 M0 32 C-1.87 12.34, 12.13 0.71, 32 0 M0 32 C-0.28 11.6, 10.59 -2.14, 32 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(26.5 30.5) rotate(0 50 16)">
+        <path
+            d="M8 0 C27.04 -0.45, 48.47 1.69, 92 0 M8 0 C25.72 0.47, 43.94 -0.23, 92 0 M92 0 C96.09 -0.71, 100.81 3.85, 100 8 M92 0 C95.95 -1.2, 100.33 3.8, 100 8 M100 8 C98.41 11.61, 101.01 19.37, 100 24 M100 8 C99.64 14.41, 100.01 19.21, 100 24 M100 24 C99.53 29.08, 99.31 31.78, 92 32 M100 24 C99.29 31.18, 99.45 30.83, 92 32 M92 32 C62.02 33.32, 28.23 33.18, 8 32 M92 32 C59.97 31.84, 28.77 32.13, 8 32 M8 32 C3.46 33.81, 0.03 29.1, 0 24 M8 32 C1.52 31.61, 2.2 27.06, 0 24 M0 24 C0.26 19.4, 1.46 15.33, 0 8 M0 24 C0.06 18.27, -0.33 12.26, 0 8 M0 8 C-0.3 4.35, 4.12 -1.31, 8 0 M0 8 C-1.52 4.7, 1.8 1.95, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(27 67) rotate(0 50 16)">
+        <path
+            d="M8 0 C35.73 1.98, 61.03 -0.04, 92 0 M8 0 C26.8 0.6, 44.05 0.94, 92 0 M92 0 C97.1 0.57, 101.67 3.73, 100 8 M92 0 C95.92 -0.54, 102 3.92, 100 8 M100 8 C99.53 12.83, 101.55 17.32, 100 24 M100 8 C100.4 14.35, 99.38 19.96, 100 24 M100 24 C98.98 30.22, 97.85 33.85, 92 32 M100 24 C99.26 27.41, 99.31 33.68, 92 32 M92 32 C71.97 30.61, 50.69 31.86, 8 32 M92 32 C63.65 30.8, 36.99 31.29, 8 32 M8 32 C1.87 30.4, 0.49 29.73, 0 24 M8 32 C4.32 31.67, -0.84 30.59, 0 24 M0 24 C-0.39 19.34, -1.28 14.21, 0 8 M0 24 C0.21 18.17, 0.67 12.97, 0 8 M0 8 C-0.49 4.33, 1.31 -1.9, 8 0 M0 8 C-0.13 1.64, 3.71 0.68, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(27 105) rotate(0 50 16)">
+        <path
+            d="M8 0 C27.98 -1.48, 47.35 1.59, 92 0 M8 0 C34.52 0.62, 61.84 -0.5, 92 0 M92 0 C98.99 -1.36, 98.1 2.56, 100 8 M92 0 C96.31 1.04, 100.68 1.72, 100 8 M100 8 C100.35 11.95, 99.99 15.67, 100 24 M100 8 C99.49 14.23, 99.91 20.89, 100 24 M100 24 C99.73 31.07, 97.25 33.23, 92 32 M100 24 C100.64 30.14, 97.67 34.1, 92 32 M92 32 C73.67 31.77, 56.96 31.77, 8 32 M92 32 C73.28 32.44, 55.24 31.27, 8 32 M8 32 C4.57 33.52, 0.1 30.24, 0 24 M8 32 C3.21 31.56, 2.22 28.12, 0 24 M0 24 C0.49 18.89, 0.23 15.42, 0 8 M0 24 C-0.21 19.69, 0.36 15.63, 0 8 M0 8 C-0.64 2.74, 4.54 -1.38, 8 0 M0 8 C1.46 1.29, 3.07 -1.2, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(26 143) rotate(0 50 16)">
+        <path
+            d="M8 0 C39.67 -0.46, 73.99 1.28, 92 0 M8 0 C34.27 -1.31, 61.16 -1.42, 92 0 M92 0 C95.98 1.9, 101.52 2.77, 100 8 M92 0 C98.38 0.54, 99.56 4.89, 100 8 M100 8 C98.73 12.42, 98.59 16.11, 100 24 M100 8 C100.31 11.59, 99.73 15.98, 100 24 M100 24 C99.61 28.69, 97.41 33.87, 92 32 M100 24 C98.41 30.79, 95.95 32.4, 92 32 M92 32 C71.97 29.73, 52.34 31.74, 8 32 M92 32 C63.47 32.11, 37.4 31.49, 8 32 M8 32 C4.19 32.89, 1.09 28.42, 0 24 M8 32 C2.25 30.97, -1.28 30.64, 0 24 M0 24 C-0.31 16.5, 0.12 13.09, 0 8 M0 24 C-0.53 19.12, 0.66 13.3, 0 8 M0 8 C1.33 1.22, 1.87 -0.03, 8 0 M0 8 C-2.19 4.41, 4.21 0.45, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(242 75) rotate(0 50 16)">
+        <path
+            d="M8 0 C30.81 -0.48, 49.18 0.41, 92 0 M8 0 C26.38 0.45, 45.7 0.22, 92 0 M92 0 C98.4 0.16, 101.59 0.83, 100 8 M92 0 C96.51 -1.98, 98.01 4.18, 100 8 M100 8 C100 12.2, 99.13 18.48, 100 24 M100 8 C99.72 12.35, 100.82 15.46, 100 24 M100 24 C101.64 30.3, 98.39 31.77, 92 32 M100 24 C100.97 30.96, 99.26 29.8, 92 32 M92 32 C67.2 32.1, 39.05 31.89, 8 32 M92 32 C69.24 32.68, 45.72 32.94, 8 32 M8 32 C1.12 33.35, 1.22 31.01, 0 24 M8 32 C1.88 34.06, 1.76 27.82, 0 24 M0 24 C0.56 16.61, -1.4 12.51, 0 8 M0 24 C-0.73 18.1, 0.57 12.82, 0 8 M0 8 C-0.66 4.5, 3.91 -0.26, 8 0 M0 8 C-1.83 3.12, 4.12 1.17, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(243 113) rotate(0 50 16)">
+        <path
+            d="M8 0 C42.12 -1.14, 74.66 1.09, 92 0 M8 0 C26.09 0.37, 43.65 -0.97, 92 0 M92 0 C97.44 1.64, 101.78 2.01, 100 8 M92 0 C99.44 1.43, 99.7 0.83, 100 8 M100 8 C99.86 13.22, 100.96 18.59, 100 24 M100 8 C100.32 10.76, 100.58 14.59, 100 24 M100 24 C100.83 27.98, 98.93 32.17, 92 32 M100 24 C101.28 28.65, 99.53 34.26, 92 32 M92 32 C74.03 33.13, 55.29 32.81, 8 32 M92 32 C70.41 32.37, 51.38 32.2, 8 32 M8 32 C1.41 31.29, 0.13 29.85, 0 24 M8 32 C1.98 30.56, 1.83 31.27, 0 24 M0 24 C-1.34 19.33, -0.46 15.33, 0 8 M0 24 C-0.25 20.64, -0.26 16.69, 0 8 M0 8 C-1.95 1.88, 1.76 1.38, 8 0 M0 8 C-0.3 1.27, 3.75 -1.38, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(243 150) rotate(0 50 16)">
+        <path
+            d="M8 0 C28.64 -0.67, 48.97 1.89, 92 0 M8 0 C25.71 -0.07, 43.04 -0.23, 92 0 M92 0 C96.25 -1.45, 100.44 0.77, 100 8 M92 0 C97.76 1.52, 100.05 1.22, 100 8 M100 8 C99.54 11.23, 101.28 17.81, 100 24 M100 8 C99.31 12.55, 99.74 17.43, 100 24 M100 24 C98.14 27.93, 97.92 31.11, 92 32 M100 24 C99.86 28.27, 95.35 29.76, 92 32 M92 32 C69.85 31.37, 49.17 31.38, 8 32 M92 32 C59.16 32.67, 25 33.6, 8 32 M8 32 C2.59 33.05, -0.01 27.75, 0 24 M8 32 C1.8 33.32, 0.47 28.41, 0 24 M0 24 C-0.63 20.08, 0.11 14.05, 0 8 M0 24 C0.13 21.41, 0.26 17.09, 0 8 M0 8 C1.7 3.3, 3.47 -1.26, 8 0 M0 8 C-1.72 2.65, 2.16 0.23, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(453 202) rotate(0 50 16)">
+        <path
+            d="M8 0 C35.92 0.48, 61.22 -1.6, 92 0 M8 0 C39.24 0.21, 68.31 0.61, 92 0 M92 0 C97.97 0.81, 98.74 1.17, 100 8 M92 0 C97.32 -0.5, 100.23 4.19, 100 8 M100 8 C101.15 14.59, 101.48 18.52, 100 24 M100 8 C99.97 13.65, 99.79 19.51, 100 24 M100 24 C101.18 28.7, 99.1 32.96, 92 32 M100 24 C98.83 28.42, 97.27 33.96, 92 32 M92 32 C64.31 31.76, 40.47 30.51, 8 32 M92 32 C75.37 31.39, 58.38 31.34, 8 32 M8 32 C1.53 31.93, 1.5 30.24, 0 24 M8 32 C2.4 30.64, -0.54 28.35, 0 24 M0 24 C-0.92 21.15, 1.26 13.75, 0 8 M0 24 C-0.48 18.98, 0.53 15.63, 0 8 M0 8 C-0.43 1, 2.24 1.27, 8 0 M0 8 C-0.52 4.53, 4.42 0.33, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round">
+        <g transform="translate(126 41) rotate(0 59.5 27.5)">
+            <path d="M1.1 -1 C20.69 8.31, 98.52 45.53, 118.32 54.96 M0.22 1.09 C20.13 10.68, 100.77 47.74, 120.67 56.47"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+        <g transform="translate(126 41) rotate(0 59.5 27.5)">
+            <path
+                d="M95.74 54.6 C103.14 53.92, 113.82 57.24, 120.67 56.47 M95.74 54.6 C104.12 54.97, 112.69 56.72, 120.67 56.47"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+        <g transform="translate(126 41) rotate(0 59.5 27.5)">
+            <path
+                d="M102.77 39.02 C107.49 44.07, 115.61 53.07, 120.67 56.47 M102.77 39.02 C108.7 44.72, 114.84 51.86, 120.67 56.47"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+    </g>
+    <mask></mask>
+    <g stroke-linecap="round">
+        <g transform="translate(343 81.90413927031761) rotate(0 54.5 67.88052628506725)">
+            <path
+                d="M-0.98 0.36 C17.4 22.9, 90.82 113.34, 109.19 136.05 M0.7 -0.5 C19.04 21.6, 90.35 111.55, 108.34 134.08"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+        <g transform="translate(343 81.90413927031761) rotate(0 54.5 67.88052628506725)">
+            <path
+                d="M87.02 121.02 C92.14 124.23, 96.46 127.07, 108.34 134.08 M87.02 121.02 C94.46 126.13, 103.36 129.88, 108.34 134.08"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+        <g transform="translate(343 81.90413927031761) rotate(0 54.5 67.88052628506725)">
+            <path
+                d="M100.4 110.37 C102.81 115.69, 104.34 120.75, 108.34 134.08 M100.4 110.37 C102.86 119.3, 106.82 126.98, 108.34 134.08"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+    </g>
+    <mask></mask>
+    <g stroke-linecap="round" transform="translate(456 240.5) rotate(0 50 16)">
+        <path
+            d="M8 0 C39.09 0.1, 73.54 -0.62, 92 0 M8 0 C39.94 -0.45, 69.69 -0.36, 92 0 M92 0 C98.92 1.43, 99.52 3.22, 100 8 M92 0 C97.45 -2.09, 98.12 4.58, 100 8 M100 8 C98.76 14.58, 101.13 18.19, 100 24 M100 8 C100.66 12.05, 100.64 16.95, 100 24 M100 24 C98.41 27.66, 98.95 31.73, 92 32 M100 24 C100.9 31.07, 97.25 30.39, 92 32 M92 32 C71.36 29.78, 51.4 31.93, 8 32 M92 32 C67.24 32.01, 42.08 31.68, 8 32 M8 32 C2.41 32.13, 0.64 29.25, 0 24 M8 32 C3.69 33.59, -1.23 30.06, 0 24 M0 24 C0.56 19.78, 1.3 16.39, 0 8 M0 24 C0.64 20, -0.66 16.72, 0 8 M0 8 C1.82 2.14, 3.45 -0.37, 8 0 M0 8 C-1.87 4.3, 1.41 1.92, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round" transform="translate(456 277.5) rotate(0 50 16)">
+        <path
+            d="M8 0 C37.56 -0.52, 64.57 1.68, 92 0 M8 0 C36.42 0.08, 66.09 0.81, 92 0 M92 0 C96.86 0.55, 100.1 0.85, 100 8 M92 0 C95.45 1.91, 100.67 3.68, 100 8 M100 8 C100.93 13.39, 99.64 19.04, 100 24 M100 8 C100.83 11.25, 99.51 14.2, 100 24 M100 24 C101.62 29.07, 98.11 33.51, 92 32 M100 24 C99.91 27.72, 95.75 33.36, 92 32 M92 32 C69.6 31.65, 50.61 31.71, 8 32 M92 32 C68.28 32.09, 45.8 32.26, 8 32 M8 32 C3.31 31.92, 0.89 30.72, 0 24 M8 32 C1.44 32.73, -1.05 29.01, 0 24 M0 24 C1.22 19.38, -1.08 13.74, 0 8 M0 24 C-0.78 20.71, 0.6 16.67, 0 8 M0 8 C0.78 2.3, 1.04 1.42, 8 0 M0 8 C-1.25 4.58, 3.68 -0.18, 8 0"
+            stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+    </g>
+    <g stroke-linecap="round">
+        <g transform="translate(450 289) rotate(0 -163.5 -59.5)">
+            <path
+                d="M-0.44 -0.49 C-54.84 -20.55, -272.59 -100.28, -326.95 -120.2 M1.53 -1.79 C-52.97 -21.76, -273.1 -99.73, -327.88 -119.29"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+        <g transform="translate(450 289) rotate(0 -163.5 -59.5)">
+            <path
+                d="M-302.88 -119.48 C-309.99 -119.45, -317.47 -118.82, -327.88 -119.29 M-302.88 -119.48 C-307.35 -120.07, -312.8 -118.51, -327.88 -119.29"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+        <g transform="translate(450 289) rotate(0 -163.5 -59.5)">
+            <path
+                d="M-308.61 -103.36 C-314.29 -107.37, -320.33 -110.8, -327.88 -119.29 M-308.61 -103.36 C-311.7 -107.52, -315.91 -109.48, -327.88 -119.29"
+                stroke="#1e1e1e" stroke-width="2" fill="none"></path>
+        </g>
+    </g>
+    <mask></mask>
+    <g transform="translate(42 35) rotate(0 14.289999961853027 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Dir</text></g>
+    <g transform="translate(41.96999740600586 68.5) rotate(0 16.029998779296875 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">File</text></g>
+    <g transform="translate(484.9700012207031 282.5) rotate(0 17.720001220703125 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Link</text></g>
+    <g transform="translate(45.970001220703125 144.5) rotate(0 16.029998779296875 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">File</text></g>
+    <g transform="translate(256.710000038147 77.5) rotate(0 14.289999961853027 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Dir</text></g>
+    <g transform="translate(469.710000038147 207.5) rotate(0 14.289999961853027 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">Dir</text></g>
+    <g transform="translate(475.9700012207031 244.5) rotate(0 16.029998779296875 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">File</text></g>
+    <g transform="translate(251.97000122070312 117.5) rotate(0 16.029998779296875 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">File</text></g>
+    <g transform="translate(252.97000122070312 152.5) rotate(0 16.029998779296875 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">File</text></g>
+    <g transform="translate(43.970001220703125 114.5) rotate(0 16.029998779296875 12.5)"><text x="0" y="17.52"
+            font-family="Virgil, Segoe UI Emoji" font-size="20px" fill="#1e1e1e" text-anchor="start"
+            style="white-space: pre;" direction="ltr" dominant-baseline="alphabetic">File</text></g>
+</svg>

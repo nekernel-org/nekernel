@@ -159,7 +159,7 @@ namespace NewOS
 			if (virtualAddress->fPresent && kKernelHeapMagic == virtualAddress->fMagic)
 			{
 				virtualAddress->fCRC32 =
-					ke_calculate_crc32((Char*)heapPtr, virtualAddress->fTargetPtrSize);
+					ke_calculate_crc32((Char*)virtualAddress->fTargetPtr, virtualAddress->fTargetPtrSize);
 				return true;
 			}
 		}

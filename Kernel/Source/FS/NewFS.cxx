@@ -20,7 +20,12 @@ using namespace NewOS;
 ///! BUGS: 0
 
 /***********************************************************************************/
-/* This file implements the New File System.
+/// This file implements the New File System.
+///	New File System implements a B-Tree based algortihm.
+///		/Disk
+///	/Path1		/Path2
+/// /File.txt		/File.pef /File.png <-- symlink.
+///								/Path1/File.txt
 /***********************************************************************************/
 
 STATIC MountpointInterface sMountpointInterface;
