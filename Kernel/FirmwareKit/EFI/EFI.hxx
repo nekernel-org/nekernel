@@ -754,14 +754,21 @@ typedef struct EfiTime
 
 struct EfiFileInfo final
 {
+	/// @brief Structure size.
 	UInt64	Size;
+	/// @brief File size.
 	UInt64	FileSize;
+	/// @brief Physical size on disk.
 	UInt64	PhysicalSize;
+	/// @brief Create time.
 	EfiTime CreateTime;
+	/// @brief Last access time.
 	EfiTime LastAccessTime;
+	/// @brief Edit time.
 	EfiTime EditTime;
+	/// @brief Attributes.
 	UInt64	Attribute;
-	// Do not touch that, it's EFI specific.
+	/// @brief VLA file name.
 	WideChar FileName[1];
 };
 
