@@ -78,12 +78,29 @@ namespace NewOS
 
 	extern bool rt_check_stack(HAL::StackFramePtr stackPtr);
 
+	/// @brief Switch to hardware thread.
+	/// @param stack the new hardware thread.
+	/// @retval true stack was changed, code is running.
+	/// @retval false stack is invalid, previous code is running.
 	bool HardwareThread::Switch(HAL::StackFramePtr stack)
 	{
 		if (!rt_check_stack(stack))
 			return false;
 
-		fStack = stack;
+		if (!fStack)
+		{
+			fStack = stack;
+		}
+		else
+		{
+			/// Keep the arguments, switch the base pointer, stack pointer
+			/// fs and gs registers.
+
+			fStack->Rbp = stack->Rbp;
+			fStack->Rsp = stack->Rsp;
+			fStack->Fs = stack->Fs;
+			fStack->Gs = stack->Gs;
+		}
 
 		rt_do_context_switch(fStack);
 		return true;
