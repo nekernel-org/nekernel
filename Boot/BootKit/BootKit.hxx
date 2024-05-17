@@ -360,7 +360,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		fDiskDev.Write(buf, sectorSz);
 
 		BTextWriter writer;
-		writer.Write(L"New Boot: Write-Partition, OK.\r");
+		writer.Write(L"New Boot: Write-Partition: OK.\r");
 
 		return true;
 	}

@@ -12,7 +12,7 @@ ADD_FILE=touch
 COPY=cp
 HTTP_GET=wget
 
-ifeq ($(shell uname), Windows_NT)
+ifneq ($(shell uname), Darwin)
 EMU=qemu-system-x86_64w
 else
 EMU=qemu-system-x86_64
@@ -28,9 +28,9 @@ IMG_2=epm-slave.img
 
 EMU_FLAGS=-net none -smp 4,sockets=1,cores=4,threads=1 -m 8G -M q35 \
 			-bios Source/$(BIOS) -device piix3-ide,id=ide \
-			-drive id=disk,file=Source/$(IMG),format=raw,if=none \
+			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
-			file=fat:rw:Source/Root,index=2,format=raw -d int -hdd Source/$(IMG_2)
+			file=fat:rw:Source/Root,index=2,format=raw -d int -hdd $(IMG_2)
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -59,7 +59,7 @@ invalid-recipe:
 
 .PHONY: all
 all: compile-amd64
-	mkdir -p Root/EFI/BOOT
+	mkdir -p Source/Root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Source/$(BOOT_LOADER)
 	$(COPY) Source/$(BOOT_LOADER) Source/Root/EFI/BOOT/BOOTX64.EFI
 	$(COPY) Source/$(BOOT_LOADER) Source/Root/EFI/BOOT/NEWBOOT.EFI

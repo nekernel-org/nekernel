@@ -150,16 +150,16 @@ namespace NewOS
 	/***********************************************************************************/
 
 	/**
-@brief Affinity is the time slot allowed for the process.
-*/
+	@brief Affinity is the time slot allowed for the process.
+	*/
 	const AffinityKind& ProcessHeader::GetAffinity()
 	{
 		return this->Affinity;
 	}
 
 	/**
-@brief Standard exit proc.
-*/
+	@brief Standard exit proc.
+	*/
 	void ProcessHeader::Exit(Int32 exit_code)
 	{
 		if (this->ProcessId !=
@@ -196,6 +196,9 @@ namespace NewOS
 		ProcessScheduler::Shared().Leak().Remove(this->ProcessId);
 	}
 
+	/// @brief Add process to list.
+	/// @param process 
+	/// @return 
 	SizeT ProcessScheduler::Add(Ref<ProcessHeader>& process)
 	{
 		if (!process)
@@ -238,6 +241,9 @@ namespace NewOS
 		return mTeam.AsArray().Count() - 1;
 	}
 
+	/// @brief Remove process from list.
+	/// @param process 
+	/// @return 
 	bool ProcessScheduler::Remove(SizeT process)
 	{
 		if (process > mTeam.AsArray().Count())
@@ -248,6 +254,8 @@ namespace NewOS
 		return mTeam.AsArray().Remove(process);
 	}
 
+	/// @brief Run scheduler.
+	/// @return 
 	SizeT ProcessScheduler::Run() noexcept
 	{
 		SizeT processIndex = 0; //! we store this guy to tell the scheduler how many
@@ -284,7 +292,16 @@ namespace NewOS
 		return processIndex;
 	}
 
-	Ref<ProcessScheduler> ProcessScheduler::Shared()
+	/// @brief Gets the current scheduled team.
+	/// @return 
+	ProcessTeam& ProcessScheduler::CurrentTeam()
+	{
+		return mTeam;
+	}
+
+	/// @brief Shared instance of the process scheduler.
+	/// @return 
+	Ref<ProcessScheduler&> ProcessScheduler::Shared()
 	{
 		static ProcessScheduler ref;
 		return {ref};
@@ -297,12 +314,18 @@ namespace NewOS
 		return mTeam.AsRef();
 	}
 
+	/// @brief Current proccess id getter.
+	/// @return Process ID integer.
 	PID& ProcessHelper::GetCurrentPID()
 	{
 		kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r";
 		return ProcessScheduler::Shared().Leak().GetCurrent().Leak().ProcessId;
 	}
 
+	/// @brief Check if process can be schedulded.
+	/// @param process the process reference. 
+	/// @retval true can be schedulded.
+	/// @retval false cannot be schedulded.
 	bool ProcessHelper::CanBeScheduled(Ref<ProcessHeader>& process)
 	{
 		if (process.Leak().Status == ProcessStatus::kFrozen ||
@@ -326,8 +349,9 @@ namespace NewOS
 	}
 
 	/**
- * @brief Spin scheduler class.
- */
+	 * @brief Spin scheduler class.
+	 */
+
 	bool ProcessHelper::StartScheduling()
 	{
 		if (ProcessHelper::CanBeScheduled(
@@ -351,10 +375,10 @@ namespace NewOS
 	}
 
 	/**
- * \brief Does a context switch in a CPU.
- * \param the_stack the stackframe of the running app.
- * \param new_pid the process's PID.
-*/
+	 * \brief Does a context switch in a CPU.
+	 * \param the_stack the stackframe of the running app.
+	 * \param new_pid the process's PID.
+	*/
 
 	bool ProcessHelper::Switch(HAL::StackFrame* the_stack, const PID& new_pid)
 	{
