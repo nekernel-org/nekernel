@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Hart.hxx
-    Purpose: RISC-V hardware threads.
+	File: Hart.hxx
+	Purpose: RISC-V hardware threads.
 
-    Revision History:
+	Revision History:
 
-    30/01/24: Added file (amlel)
+	30/01/24: Added file (amlel)
 
 ------------------------------------------- */
 

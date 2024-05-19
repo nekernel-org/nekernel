@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Defines.hxx
-    Purpose: ATA header.
+	File: Defines.hxx
+	Purpose: ATA header.
 
-    Revision History:
+	Revision History:
 
-    03/02/24: Added file (amlel)
+	03/02/24: Added file (amlel)
 
 ------------------------------------------- */
 

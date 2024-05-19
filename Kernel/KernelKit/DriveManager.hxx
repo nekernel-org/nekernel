@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -65,10 +65,10 @@ namespace NewOS
 	typedef DriveTrait* DriveTraitPtr;
 
 	/**
- * @brief Mounted drives interface.
- * @note This class has all of it's drive set to nullptr, allocate them using
- * GetAddressOf(index).
- */
+	 * @brief Mounted drives interface.
+	 * @note This class has all of it's drive set to nullptr, allocate them using
+	 * GetAddressOf(index).
+	 */
 	class MountpointInterface final
 	{
 	public:

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -197,8 +197,8 @@ namespace NewOS
 	}
 
 	/// @brief Add process to list.
-	/// @param process 
-	/// @return 
+	/// @param process
+	/// @return
 	SizeT ProcessScheduler::Add(Ref<ProcessHeader>& process)
 	{
 		if (!process)
@@ -242,8 +242,8 @@ namespace NewOS
 	}
 
 	/// @brief Remove process from list.
-	/// @param process 
-	/// @return 
+	/// @param process
+	/// @return
 	bool ProcessScheduler::Remove(SizeT process)
 	{
 		if (process > mTeam.AsArray().Count())
@@ -255,7 +255,7 @@ namespace NewOS
 	}
 
 	/// @brief Run scheduler.
-	/// @return 
+	/// @return
 	SizeT ProcessScheduler::Run() noexcept
 	{
 		SizeT processIndex = 0; //! we store this guy to tell the scheduler how many
@@ -293,14 +293,14 @@ namespace NewOS
 	}
 
 	/// @brief Gets the current scheduled team.
-	/// @return 
+	/// @return
 	ProcessTeam& ProcessScheduler::CurrentTeam()
 	{
 		return mTeam;
 	}
 
 	/// @brief Shared instance of the process scheduler.
-	/// @return 
+	/// @return
 	Ref<ProcessScheduler&> ProcessScheduler::Shared()
 	{
 		static ProcessScheduler ref;
@@ -323,7 +323,7 @@ namespace NewOS
 	}
 
 	/// @brief Check if process can be schedulded.
-	/// @param process the process reference. 
+	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
 	bool ProcessHelper::CanBeScheduled(Ref<ProcessHeader>& process)
@@ -378,7 +378,7 @@ namespace NewOS
 	 * \brief Does a context switch in a CPU.
 	 * \param the_stack the stackframe of the running app.
 	 * \param new_pid the process's PID.
-	*/
+	 */
 
 	bool ProcessHelper::Switch(HAL::StackFrame* the_stack, const PID& new_pid)
 	{

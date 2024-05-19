@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: String.cxx
-    Purpose: NewBoot string library
+	File: String.cxx
+	Purpose: NewBoot string library
 
-    Revision History:
+	Revision History:
 
 
 

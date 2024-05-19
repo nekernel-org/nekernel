@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -20,6 +20,6 @@
 
 /// @brief Shows an alert box, as provided by the OS.
 /// @param fmt The alert formating.
-/// @param  
-/// @return 
+/// @param
+/// @return
 CS_EXTERN_C VoidType Alert(const CharacterTypeUTF8* fmt, ...);

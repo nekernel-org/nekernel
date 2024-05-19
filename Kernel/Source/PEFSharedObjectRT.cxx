@@ -18,7 +18,7 @@
 
  Revision History:
 
-     01/02/24: Rework shared library ABI, except a rt_library_init and
+	 01/02/24: Rework shared library ABI, except a rt_library_init and
  rt_library_free (amlel) 15/02/24: Breaking changes, changed the name of the
  routines. (amlel)
 

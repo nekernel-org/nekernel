@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: CPUID.hxx
-    Purpose: CPUID flags.
+	File: CPUID.hxx
+	Purpose: CPUID flags.
 
-    Revision History:
+	Revision History:
 
-    30/01/24: Added file (amlel)
+	30/01/24: Added file (amlel)
 
 ------------------------------------------- */
 

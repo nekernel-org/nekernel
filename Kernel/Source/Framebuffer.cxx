@@ -1,14 +1,14 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Framebuffer.cxx
-    Purpose: Framebuffer object
+	File: Framebuffer.cxx
+	Purpose: Framebuffer object
 
-    Revision History:
+	Revision History:
 
-    01/02/24: Added file (amlel)
-    02/02/24: Add documentation (amlel)
+	01/02/24: Added file (amlel)
+	02/02/24: Add documentation (amlel)
 
 ------------------------------------------- */
 

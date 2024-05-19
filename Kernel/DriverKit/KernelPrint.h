@@ -1,8 +1,8 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    Purpose: Kernel Text I/O.
+	Purpose: Kernel Text I/O.
 
 ------------------------------------------- */
 

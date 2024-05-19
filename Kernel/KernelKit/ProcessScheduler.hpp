@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -277,8 +277,8 @@ namespace NewOS
 	};
 
 	/*
- * Just a helper class, which contains some utilities for the scheduler.
- */
+	 * Just a helper class, which contains some utilities for the scheduler.
+	 */
 
 	class ProcessHelper final
 	{

@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Hart.hxx
-    Purpose: POWER hardware threads.
+	File: Hart.hxx
+	Purpose: POWER hardware threads.
 
-    Revision History:
+	Revision History:
 
-    14/04/24: Added file (amlel)
+	14/04/24: Added file (amlel)
 
 ------------------------------------------- */
 

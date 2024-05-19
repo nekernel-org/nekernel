@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -21,7 +21,7 @@ enum RtAllocationKind
 /// @param flags the allocation flags.
 /// @return
 CS_EXTERN_C PtrVoidType RtHeapAllocate(QWordType sz,
-									  DWordType flags);
+									   DWordType flags);
 
 /// @brief Check if the pointer exists.
 /// @param ptr the pointer to free.

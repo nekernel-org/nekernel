@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -8,5 +8,5 @@
 
 namespace NewOS
 {
-    /// Leave it empty for now.
+	/// Leave it empty for now.
 } // namespace NewOS

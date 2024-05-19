@@ -1,9 +1,9 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: AppMain.cxx
-    Purpose: Kernel main loop.
+	File: AppMain.cxx
+	Purpose: Kernel main loop.
 
 ------------------------------------------- */
 
@@ -24,7 +24,7 @@
 #include <NewKit/Utils.hpp>
 #include <KernelKit/CodeManager.hpp>
 
-namespace Detail
+namespace NewOS::Detail
 {
 	/// @brief Filesystem auto mounter, additional checks are also done by the
 	/// class.
@@ -208,7 +208,7 @@ namespace Detail
 
 		NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Exit(0);
 	}
-} // namespace Detail
+} // namespace NewOS::Detail
 
 /// @brief Application entrypoint.
 /// @param Void
@@ -216,13 +216,13 @@ namespace Detail
 EXTERN_C NewOS::Void AppMain(NewOS::Void)
 {
 	/// Now run kernel loop, until no process are running.
-	Detail::FilesystemWizard wizard; // automatic.
+	NewOS::Detail::FilesystemWizard wizard; // automatic.
 
 	auto cLoaderName = "SystemLoader";
-	NewOS::execute_from_image(Detail::AppSystemLoader, cLoaderName);
+	NewOS::execute_from_image(NewOS::Detail::AppSystemLoader, cLoaderName);
 
 	while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0)
 	{
-		NewOS::kcout << "New OS: sleeping...\r";
+		NewOS::kcout << "New OS: Shuting down...\r";
 	}
 }

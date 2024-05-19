@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: XCOFF.hpp
-    Purpose: XCOFF for NewOS.
+	File: XCOFF.hpp
+	Purpose: XCOFF for NewOS.
 
-    Revision History:
+	Revision History:
 
-    04/07/24: Added file (amlel)
+	04/07/24: Added file (amlel)
 
 ------------------------------------------- */
 

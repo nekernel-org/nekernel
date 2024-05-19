@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -16,8 +16,8 @@ namespace NewOS
 	class NetworkDevice;
 
 	/**
-* \brief Network device interface, establishes a connection to the NIC.
-*/
+	 * \brief Network device interface, establishes a connection to the NIC.
+	 */
 	class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand>
 	{
 	public:
@@ -56,8 +56,8 @@ namespace NewOS
 	/// @brief PPP device.
 	using PPPNetworkDevice = NetworkDevice;
 
-	/// @brief HPC device.
-	using HPCNetworkDevice = NetworkDevice;
+	/// @brief IPCEP device.
+	using IPCEPNetworkDevice = NetworkDevice;
 } // namespace NewOS
 
 #include <NetworkKit/NetworkDevice.inl>

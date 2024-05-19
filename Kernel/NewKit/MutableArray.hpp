@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 #pragma once
@@ -69,9 +69,9 @@ namespace NewOS
 		}
 
 		/*
-     * We free all the nodes allocated by the array
-     * and store the next one inside "NextIt"
-     */
+		 * We free all the nodes allocated by the array
+		 * and store the next one inside "NextIt"
+		 */
 
 		virtual ~NullableMutableArray()
 		{

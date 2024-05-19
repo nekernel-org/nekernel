@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
 /**
-    @brief The Explicit Partition Map scheme.
+	@brief The Explicit Partition Map scheme.
 */
 
 #ifndef __PARTITION_MAP__

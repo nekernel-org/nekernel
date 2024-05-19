@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -69,10 +69,10 @@ Bascially frees everything we have in the EFI side.
 	}
 
 	/***
- * @brief Throw an error, stop execution as well.
- * @param ErrorCode error code to be print.
- * @param Reason reason to be print.
- */
+	 * @brief Throw an error, stop execution as well.
+	 * @param ErrorCode error code to be print.
+	 * @param Reason reason to be print.
+	 */
 	inline void ThrowError(const EfiCharType* ErrorCode,
 						   const EfiCharType* Reason) noexcept
 	{

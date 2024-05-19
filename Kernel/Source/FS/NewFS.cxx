@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -35,7 +35,7 @@ STATIC MountpointInterface sMountpointInterface;
 /// @param theFork the fork itself.
 /// @return the fork
 _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
-										 _Input NewFork& theFork)
+										 _Input NewFork&	theFork)
 {
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return nullptr;
@@ -204,7 +204,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name)
 /// @param flags the flags of the catalog.
 /// @param kind the catalog kind.
 /// @return catalog pointer.
-_Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
+_Output NewCatalog* NewFSParser::CreateCatalog(_Input const char*  name,
 											   _Input const Int32& flags,
 											   _Input const Int32& kind)
 {

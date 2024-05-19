@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -42,8 +42,8 @@ namespace NewOS
 	};
 
 	/**
- * @brief IPv6 address.
- */
+	 * @brief IPv6 address.
+	 */
 	class RawIPAddress6 final
 	{
 	private:
@@ -71,8 +71,8 @@ namespace NewOS
 	};
 
 	/**
- * @brief IP Creation helpers
- */
+	 * @brief IP Creation helpers
+	 */
 	class IPFactory final
 	{
 	public:

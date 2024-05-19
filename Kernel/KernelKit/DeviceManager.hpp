@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -8,7 +8,7 @@
 
  Revision History:
 
-     31/01/24: Add kDeviceCnt (amlel)
+	 31/01/24: Add kDeviceCnt (amlel)
 
  ------------------------------------------- */
 

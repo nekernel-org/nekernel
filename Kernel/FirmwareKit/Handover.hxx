@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -29,7 +29,7 @@
 namespace NewOS::HEL
 {
 	/**
-    @brief the kind of executable we're loading.
+	@brief the kind of executable we're loading.
 */
 	enum
 	{
@@ -40,7 +40,7 @@ namespace NewOS::HEL
 	};
 
 	/**
-    @brief The executable architecture.
+	@brief The executable architecture.
 */
 
 	enum

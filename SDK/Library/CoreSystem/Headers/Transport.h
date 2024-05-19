@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -17,6 +17,5 @@
 #include <Headers/Defines.h>
 
 typedef QWordType CSStreamType;
-
 
 #endif // __TRANSPORT__

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -31,7 +31,7 @@ STATIC EfiGUID					  kGopGuid;
 EXTERN_C Void hal_init_platform(HEL::HandoverInformationHeader* HIH);
 
 /**
-    @brief Finds and stores the GOP.
+	@brief Finds and stores the GOP.
 */
 
 STATIC Void CheckAndFindFramebuffer() noexcept

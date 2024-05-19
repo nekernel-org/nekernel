@@ -1,10 +1,10 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: FileReader.cxx
-    Purpose: New Boot FileReader,
-    Read complete file and store it in a buffer.
+	File: FileReader.cxx
+	Purpose: New Boot FileReader,
+	Read complete file and store it in a buffer.
 
 ------------------------------------------- */
 
@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /***
-    @brief File Reader constructor.
+	@brief File Reader constructor.
 */
 BFileReader::BFileReader(const CharacterTypeUTF16* path,
 						 EfiHandlePtr			   ImageHandle)
@@ -111,8 +111,8 @@ BFileReader::~BFileReader()
 }
 
 /**
-    @brief this reads all of the buffer.
-    @param until read until size is reached.
+	@brief this reads all of the buffer.
+	@param until read until size is reached.
 */
 Void BFileReader::ReadAll(SizeT until, SizeT chunk)
 {

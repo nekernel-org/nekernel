@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -176,7 +176,7 @@ Boolean drv_std_detected(Void)
 }
 
 /***
-    @brief Getter, gets the number of sectors inside the drive.
+	@brief Getter, gets the number of sectors inside the drive.
 */
 NewOS::SizeT drv_std_get_sector_count()
 {

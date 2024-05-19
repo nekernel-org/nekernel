@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -19,9 +19,9 @@
 namespace NewOS
 {
 	/**
- * @brief Process Heap Header
- * @note Allocated per process, it denotes the user's heap.
- */
+	 * @brief Process Heap Header
+	 * @note Allocated per process, it denotes the user's heap.
+	 */
 	struct UserHeapHeader final
 	{
 		UInt32	fMagic;
@@ -31,10 +31,10 @@ namespace NewOS
 	};
 
 	/**
- * @brief User Heap Manager class, takes care of allocating the process pools.
- * @note This rely on Virtual Memory! Consider adding good vmem support when
- * @note porting to a new arch.
- */
+	 * @brief User Heap Manager class, takes care of allocating the process pools.
+	 * @note This rely on Virtual Memory! Consider adding good vmem support when
+	 * @note porting to a new arch.
+	 */
 	class UserHeapManager final
 	{
 	public:
@@ -158,12 +158,12 @@ namespace NewOS
 	}
 
 	/**
- * @brief Check for the ptr and frees it.
- *
- * @param index Where to look at.
- * @param ptr The ptr to check.
- * @return Boolean true if successful.
- */
+	 * @brief Check for the ptr and frees it.
+	 *
+	 * @param index Where to look at.
+	 * @param ptr The ptr to check.
+	 * @return Boolean true if successful.
+	 */
 	STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr)
 	{
 		if (UserHeapManager::The()[index])

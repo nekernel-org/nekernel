@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -8,7 +8,7 @@
 
  Revision History:
 
-     31/01/24: Update documentation (amlel)
+	 31/01/24: Update documentation (amlel)
 
  ------------------------------------------- */
 
@@ -49,8 +49,8 @@ namespace NewOS
 	typedef VoidPtr NodePtr;
 
 	/**
-    @brief Filesystem Manager Interface class
-    @brief Used to provide common I/O for a specific filesystem.
+	@brief Filesystem Manager Interface class
+	@brief Used to provide common I/O for a specific filesystem.
 */
 	class FilesystemManagerInterface
 	{
@@ -103,9 +103,9 @@ namespace NewOS
 
 #ifdef __FSKIT_NEWFS__
 	/**
- * @brief Based of FilesystemManagerInterface, takes care of managing NewFS
- * disks.
- */
+	 * @brief Based of FilesystemManagerInterface, takes care of managing NewFS
+	 * disks.
+	 */
 	class NewFilesystemManager final : public FilesystemManagerInterface
 	{
 	public:
@@ -142,10 +142,10 @@ namespace NewOS
 #endif // ifdef __FSKIT_NEWFS__
 
 	/**
- * Usable FileStream
- * @tparam Encoding file encoding (char, wchar_t...)
- * @tparam FSClass Filesystem contract who takes care of it.
- */
+	 * Usable FileStream
+	 * @tparam Encoding file encoding (char, wchar_t...)
+	 * @tparam FSClass Filesystem contract who takes care of it.
+	 */
 	template <typename Encoding = char,
 			  typename FSClass	= FilesystemManagerInterface>
 	class FileStream final

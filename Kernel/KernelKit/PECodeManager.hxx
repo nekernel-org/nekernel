@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: PECodeManager.hxx
-    Purpose: PE32+ Code Manager and Shared Objects.
+	File: PECodeManager.hxx
+	Purpose: PE32+ Code Manager and Shared Objects.
 
-    Revision History:
+	Revision History:
 
-    12/02/24: Added file (amlel)
+	12/02/24: Added file (amlel)
 
 ------------------------------------------- */
 

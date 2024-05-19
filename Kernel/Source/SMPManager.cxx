@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -98,8 +98,8 @@ namespace NewOS
 
 			fStack->Rbp = stack->Rbp;
 			fStack->Rsp = stack->Rsp;
-			fStack->Fs = stack->Fs;
-			fStack->Gs = stack->Gs;
+			fStack->Fs	= stack->Fs;
+			fStack->Gs	= stack->Gs;
 		}
 
 		rt_do_context_switch(fStack);
@@ -183,10 +183,10 @@ namespace NewOS
 	}
 
 	/**
- * Index Hardware thread
- * @param idx the index
- * @return the reference to the hardware thread.
- */
+	 * Index Hardware thread
+	 * @param idx the index
+	 * @return the reference to the hardware thread.
+	 */
 	Ref<HardwareThread> SMPManager::operator[](const SizeT& idx)
 	{
 		if (idx == 0)
@@ -208,18 +208,18 @@ namespace NewOS
 	}
 
 	/**
- * Check if thread pool isn't empty.
- * @return
- */
+	 * Check if thread pool isn't empty.
+	 * @return
+	 */
 	SMPManager::operator bool() noexcept
 	{
 		return !fThreadList.Empty();
 	}
 
 	/**
- * Reverse operator bool
- * @return
- */
+	 * Reverse operator bool
+	 * @return
+	 */
 	bool SMPManager::operator!() noexcept
 	{
 		return fThreadList.Empty();

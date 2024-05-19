@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: GUIDWizard.cxx
-    Purpose: GUID helper code
+	File: GUIDWizard.cxx
+	Purpose: GUID helper code
 
-    Revision History:
+	Revision History:
 
 ------------------------------------------- */
 

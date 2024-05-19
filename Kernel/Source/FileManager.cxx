@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -91,7 +91,7 @@ namespace NewOS
 		NEWOS_UNUSED(flags);
 
 		auto dataForkName = "FileData";
-		
+
 		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
 			fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
 								dataForkName);

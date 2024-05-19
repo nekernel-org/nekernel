@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -41,7 +41,7 @@ CS_EXTERN_C VoidType CSThreadJoin(ThreadRef ref);
 
 /// @brief Yields the current thread.
 /// @param ref the thead reference.
-/// @return 
+/// @return
 CS_EXTERN_C VoidType CSThreadYield(ThreadRef ref);
 
 #endif // __THREAD__

@@ -1,14 +1,14 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Defines.hxx
-    Purpose: XHCI (and backwards) header.
+	File: Defines.hxx
+	Purpose: XHCI (and backwards) header.
 
-    Revision History:
+	Revision History:
 
-    01/02/24: Added file (amlel)
-    03/02/24: Update filename to Defines.hxx (amlel)
+	01/02/24: Added file (amlel)
+	03/02/24: Update filename to Defines.hxx (amlel)
 
 ------------------------------------------- */
 
@@ -61,10 +61,10 @@ typedef struct USBInterruptEnableRegister final
 } USBInterruptEnableRegister;
 
 /*
-    Some terminology:
+	Some terminology:
 
-    Frame Number: Number of processed entry of the Frame List.
-    Frame List Base Address:
-    32-bit physical adress of Frame List. Remember that first 12 bytes are
+	Frame Number: Number of processed entry of the Frame List.
+	Frame List Base Address:
+	32-bit physical adress of Frame List. Remember that first 12 bytes are
    always 0. The Frame List must contain 1024 entries.
 */

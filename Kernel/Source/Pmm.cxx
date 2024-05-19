@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -9,6 +9,7 @@
 
 namespace NewOS
 {
+	/// @brief Pmm constructor.
 	Pmm::Pmm()
 		: fPageManager()
 	{
@@ -18,17 +19,19 @@ namespace NewOS
 	Pmm::~Pmm() = default;
 
 	/* If this returns Null pointer, enter emergency mode */
+	/// @param user is this a user page?
+	/// @param readWrite is it r/w?
 	Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite)
 	{
 		PTEWrapper pt = fPageManager.Leak().Request(user, readWrite, false, kPTESize);
 
 		if (pt.fPresent)
 		{
-			kcout << "[PMM]: Allocation was successful.";
+			kcout << "[PMM]: Allocation was successful.\r";
 			return Ref<PTEWrapper>(pt);
 		}
 
-		kcout << "[PMM]: Allocation failure.";
+		kcout << "[PMM]: Allocation failed.\r";
 
 		return {};
 	}

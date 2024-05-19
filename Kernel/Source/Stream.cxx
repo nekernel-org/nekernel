@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Stream.cxx
-    Purpose: Stream object
+	File: Stream.cxx
+	Purpose: Stream object
 
-    Revision History:
+	Revision History:
 
 ------------------------------------------- */
 

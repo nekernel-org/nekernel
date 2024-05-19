@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -32,17 +32,17 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 	/* Need unsigned so (-cLongMin) can fit in these: */
 	unsigned long n = 0UL, cutoff;
 	int			  cutlim;
-	
+
 	if (base < 0 || base == 1 || base > 36)
 	{
 		return 0L;
 	}
-	
+
 	endp = nptr;
-	
+
 	while (IsSpace(*p))
 		p++;
-	
+
 	if (*p == '+')
 	{
 		p++;
@@ -55,8 +55,8 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 	{
 		p++;
 		/* For strtol(" 0xZ", &endptr, 16), endptr should point to 'x';
-         * pointing to ' ' or '0' is non-compliant.
-         * (Many implementations do this wrong.) */
+		 * pointing to ' ' or '0' is non-compliant.
+		 * (Many implementations do this wrong.) */
 		endp = p;
 		if (base == 16 && (*p == 'X' || *p == 'x'))
 		{
@@ -87,10 +87,10 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 	{
 		base = 10;
 	}
-	
+
 	cutoff = (is_neg) ? -(cLongMin / base) : cLongMax / base;
 	cutlim = (is_neg) ? -(cLongMin % base) : cLongMax % base;
-	
+
 	while (1)
 	{
 		int c;
@@ -106,7 +106,7 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 		if (overflow)
 		{
 			/* endptr should go forward and point to the non-digit character
-             * (of the given base); required by ANSI standard. */
+			 * (of the given base); required by ANSI standard. */
 			if (endptr)
 				continue;
 			break;

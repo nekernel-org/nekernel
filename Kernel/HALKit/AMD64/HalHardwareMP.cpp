@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -16,8 +16,6 @@ namespace NewOS
 	{
 		HAL::rt_cli();
 
-        
-
 		HAL::rt_sti();
 	}
 
@@ -26,8 +24,6 @@ namespace NewOS
 	void rt_hang_thread(HAL::StackFrame* stack)
 	{
 		HAL::rt_cli();
-
-		
 
 		HAL::rt_sti();
 	}

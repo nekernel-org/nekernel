@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -755,11 +755,11 @@ typedef struct EfiTime
 struct EfiFileInfo final
 {
 	/// @brief Structure size.
-	UInt64	Size;
+	UInt64 Size;
 	/// @brief File size.
-	UInt64	FileSize;
+	UInt64 FileSize;
 	/// @brief Physical size on disk.
-	UInt64	PhysicalSize;
+	UInt64 PhysicalSize;
 	/// @brief Create time.
 	EfiTime CreateTime;
 	/// @brief Last access time.
@@ -767,7 +767,7 @@ struct EfiFileInfo final
 	/// @brief Edit time.
 	EfiTime EditTime;
 	/// @brief Attributes.
-	UInt64	Attribute;
+	UInt64 Attribute;
 	/// @brief VLA file name.
 	WideChar FileName[1];
 };

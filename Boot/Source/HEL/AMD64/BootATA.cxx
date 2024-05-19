@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -202,9 +202,9 @@ BootDeviceATA::operator bool()
 }
 
 /**
-    @brief Read Buf from disk
-    @param Sz Sector size
-    @param Buf buffer
+	@brief Read Buf from disk
+	@param Sz Sector size
+	@param Buf buffer
 */
 BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz)
 {
@@ -228,9 +228,9 @@ BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz
 }
 
 /**
-    @brief Write Buf into disk
-    @param Sz Sector size
-    @param Buf buffer
+	@brief Write Buf into disk
+	@param Sz Sector size
+	@param Buf buffer
 */
 BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorSz)
 {
@@ -263,7 +263,7 @@ BootDeviceATA::ATATrait& BootDeviceATA::Leak()
 }
 
 /***
-    @brief Getter, gets the number of sectors inside the drive.
+	@brief Getter, gets the number of sectors inside the drive.
 */
 SizeT BootDeviceATA::GetSectorsCount() noexcept
 {
