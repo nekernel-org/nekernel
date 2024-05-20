@@ -1,5 +1,5 @@
 # CoreSystem
-## System Core framework.
+## Core System framework.
 
 Currently contains:
 
@@ -8,6 +8,6 @@ Currently contains:
 - Data API.
 - Threading API.
 
-Needs:
+Needs to have:
 - Device API
 - Drive API.
