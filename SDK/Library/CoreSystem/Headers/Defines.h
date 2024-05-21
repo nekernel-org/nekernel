@@ -15,7 +15,7 @@
 	{                                                                                                               \
 		if (!e)                                                                                                     \
 		{                                                                                                           \
-			Alert("Sorry, an assertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) RtAssertTriggerInterrupt() \
+			UiAlert("Assertion failed.\nExpression :%s\nFile: %s\nLine: %i", #e, __FILE__, __LINE__) RtAssertTriggerInterrupt() \
 		}                                                                                                           \
 	}
 #else
@@ -144,6 +144,11 @@ enum RtProcessCall
 	kCallRandomNumberGenerator,
 	kCallGetArgsCount,
 	kCallGetArgsPtr,
+	kCallFileExists,
+	kCallDirectoryExists,
+	kCallSymlinkExists,
+	kCallDeviceExists,
+	kCallDriveExists,
 	/// @brief Number of process calls.
 	kCallsCount,
 };

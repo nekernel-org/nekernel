@@ -6,7 +6,7 @@
 CC=x86_64-w64-mingw32-gcc
 AR=x86_64-w64-mingw32-ar
 CCINC=-I./
-CCFLAGS=-D__SINGLE_PRECISION__ -nostdlib -std=c17 -ffreestanding -Xlinker --subsystem=17 -shared
+CCFLAGS=-D__SINGLE_PRECISION__ -nostdlib -std=c17 -ffreestanding -Xlinker --subsystem=17 -e __DllMainCRTStartup -shared
 OUTPUT=CoreSystem.lib
 
 .PHONY: all

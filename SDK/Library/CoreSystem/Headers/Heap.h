@@ -8,9 +8,9 @@
 
 #include <Headers/Defines.h>
 
-#define kAllocationKindCount (2)
+#define cAllocationKindCount (2U)
 
-enum RtAllocationKind
+enum CsAllocationKind
 {
 	kStandardAllocation = 0xC,
 	kArrayAllocation	= 0xD,
@@ -20,20 +20,20 @@ enum RtAllocationKind
 /// @param sz the size
 /// @param flags the allocation flags.
 /// @return
-CS_EXTERN_C PtrVoidType RtHeapAllocate(QWordType sz,
+CS_EXTERN_C PtrVoidType CSAllocateHeap(QWordType sz,
 									   DWordType flags);
 
 /// @brief Check if the pointer exists.
 /// @param ptr the pointer to free.
 /// @return
-CS_EXTERN_C BooleanType RtHeapPtrExists(PtrVoidType ptr);
+CS_EXTERN_C BooleanType CSIsHeapValid(PtrVoidType ptr);
 
 /// @brief Gets the size of the process' pointer.
 /// @param ptr the pointer to free.
 /// @return
-CS_EXTERN_C QWordType RtHeapGetSize(PtrVoidType ptr);
+CS_EXTERN_C QWordType CSGetHeapSize(PtrVoidType ptr);
 
 /// @brief Frees the process pointer.
 /// @param ptr the pointer to free.
 /// @return
-CS_EXTERN_C VoidType RtHeapFree(PtrVoidType ptr);
+CS_EXTERN_C VoidType CSFreeHeap(PtrVoidType ptr);

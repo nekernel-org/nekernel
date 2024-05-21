@@ -11,7 +11,7 @@
 /// @param sz size of object.
 /// @param flags flags.
 /// @return
-CS_EXTERN_C PtrVoidType RtHeapAllocate(QWordType sz, DWordType flags)
+CS_EXTERN_C PtrVoidType CSAllocateHeap(QWordType sz, DWordType flags)
 {
 	CS_MUST_PASS(kSharedApplication);
 	CS_MUST_PASS(sz);
@@ -23,7 +23,7 @@ CS_EXTERN_C PtrVoidType RtHeapAllocate(QWordType sz, DWordType flags)
 
 /// @brief Free pointer from the user's heap.
 /// @param ptr the pointer to free.
-CS_EXTERN_C VoidType RtHeapFree(PtrVoidType ptr)
+CS_EXTERN_C VoidType CSFreeHeap(PtrVoidType ptr)
 {
 	CS_MUST_PASS(kSharedApplication);
 	CS_MUST_PASS(ptr);
@@ -35,7 +35,7 @@ CS_EXTERN_C VoidType RtHeapFree(PtrVoidType ptr)
 /// @brief Get pointer size.
 /// @param ptr the pointer to find.
 /// @return the size.
-CS_EXTERN_C QWordType RtHeapGetSize(PtrVoidType ptr)
+CS_EXTERN_C QWordType CSGetHeapSize(PtrVoidType ptr)
 {
 	CS_MUST_PASS(kSharedApplication);
 
@@ -46,10 +46,9 @@ CS_EXTERN_C QWordType RtHeapGetSize(PtrVoidType ptr)
 /// @brief Check if the pointer exists.
 /// @param ptr the pointer to check.
 /// @return if it exists
-CS_EXTERN_C BooleanType RtHeapPtrExists(PtrVoidType ptr)
+CS_EXTERN_C BooleanType CSIsHeapValid(PtrVoidType ptr)
 {
 	CS_MUST_PASS(kSharedApplication);
-
 	CS_MUST_PASS(ptr);
 	return kSharedApplication->Invoke(kSharedApplication, kCallCheckPtr, ptr);
 }

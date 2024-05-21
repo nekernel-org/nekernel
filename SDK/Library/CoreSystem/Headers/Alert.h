@@ -22,4 +22,4 @@
 /// @param fmt The alert formating.
 /// @param
 /// @return
-CS_EXTERN_C VoidType Alert(const CharacterTypeUTF8* fmt, ...);
+CS_EXTERN_C VoidType UiAlert(const CharacterTypeUTF8* fmt, ...);

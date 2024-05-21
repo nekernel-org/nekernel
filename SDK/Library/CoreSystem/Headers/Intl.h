@@ -12,9 +12,14 @@
 
 typedef UInt64Type IntlRef;
 
-/// @brief locale getter and setters.
-
+/// @brief Get app locale.
+/// @param name locale name.
+/// @return 
 IntlRef		IntlGetLocale(const char* name);
+
+/// @brief Set app locale.
+/// @param intl the locale
+/// @return 
 BooleanType IntlSetLocale(const IntlRef intl);
 
 /// @brief locale helpers.
