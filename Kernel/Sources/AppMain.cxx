@@ -184,7 +184,7 @@ namespace NewOS::Detail
 	/// @return void no return value.
 	STATIC NewOS::Void AppSystemLoader(NewOS::Void)
 	{
-		NewOS::PEFLoader coreGraphicsShLib("/System/CoreGraphics");
+		NewOS::PEFLoader coreGraphicsShLib("/System/WindowServer");
 
 		if (!coreGraphicsShLib.IsLoaded())
 		{
@@ -221,8 +221,5 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void)
 	auto cLoaderName = "SystemLoader";
 	NewOS::execute_from_image(NewOS::Detail::AppSystemLoader, cLoaderName);
 
-	while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0)
-	{
-		NewOS::kcout << "New OS: Shuting down...\r";
-	}
+	while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0) {}
 }
