@@ -1,4 +1,4 @@
-<Private>
+<SourceDeploy>
     <File name="Headers/Hint.h" hidden="true"/>
     <Directory name="Sources/" hidden="true"/>
-</Private>
+</SourceDeploy>
