@@ -1,12 +1,14 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
 #pragma once
 
 #include <Headers/Defines.h>
+
+struct _Fork;
 
 /// @brief Filesystem wrapper.
 
@@ -16,37 +18,35 @@ typedef QWordType FSRef;
 /// @param path where to find it.
 /// @param rest the restrict (rw, rwe, r+, w+, r, w)
 /// @return FSRef the file.
-CA_EXTERN_C FSRef FsOpenFile(const CharacterTypeUTF8* path, const CharacterTypeUTF8* r);
+CS_EXTERN_C FSRef CSOpenFile(const CharacterTypeUTF8* path, const CharacterTypeUTF8* r);
 
 /// @brief Closes the file and flushes it to the said file.
-/// @param refFs the filesystem reference.
+/// @param refCS the filesystem reference.
 /// @return
-CA_EXTERN_C VoidType FsCloseFile(FSRef refFs);
+CS_EXTERN_C VoidType CSCloseFile(FSRef refCS);
 
-#define kMaxForkNameLength 256 /* long fork names. */
+#define kMaxForkNameLength (256U) /* long fork names. */
 
 /// @brief A fork information header.
 typedef struct _Fork
 {
-	PtrVoidType		  forkData;
-	SizeType		  forkSize;
 	Int32Type		  forkFlags;
 	Int32Type		  forkKind;
 	CharacterTypeUTF8 forkName[kMaxForkNameLength];
-} ForkType;
+	SizeType		  forkSize;
+	CharacterTypeUTF8 forkData[];
+} ForkType, ForkTypePtr;
 
 typedef ForkType* FSForkRef;
 
 /// @brief Gets the fork inside a file.
-/// @param refFs the filesystem ref
+/// @param refCS the filesystem ref
 /// @param forkName the fork's name
 /// @return the fork data.
-CA_EXTERN_C FSForkRef FsGetFork(FSRef refFs, const CharacterTypeUTF8* forkName);
+CS_EXTERN_C FSForkRef CSGetFork(FSRef refCS, const CharacterTypeUTF8* forkName);
 
 /// @brief Check if the filesystem path is valid.
 /// @return if not return false, or true.
-CA_EXTERN_C BooleanType FsIsValidPath(const CharacterTypeUTF8* path);
+CS_EXTERN_C BooleanType CSIsValidPath(const CharacterTypeUTF8* path);
 
-/// @note not only limited to, there is code forks, icon forks...
-#define FsGetDataFork(refFs) FsGetFork(refFs, "data")
-#define FsGetRsrcFork(refFs) FsGetFork(refFs, "rsrc")
+/// END OF FILE

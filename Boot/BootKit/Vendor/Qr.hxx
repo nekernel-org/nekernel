@@ -5,13 +5,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <BootKit/Vendor/QrVendor/base.h>
-#include <BootKit/Vendor/QrVendor/bit.h>
+#include <BootKit/Vendor/Shared/base.h>
+#include <BootKit/Vendor/Shared/bit.h>
 
 #include <BootKit/Vendor/QrPrelude.hxx>
 #include <Builtins/Toolbox/Toolbox.hxx>
 #include <BootKit/Vendor/Support.hxx>
 #include <CompilerKit/Detail.hxx>
+
+/// @note the QR code is still code 128, it utilizes the same concept of having it's own character set.
 
 namespace qr
 {
@@ -284,14 +286,6 @@ namespace qr
 		constexpr auto side_size() const
 		{
 			return SIDE;
-		}
-		constexpr auto data_size() const
-		{
-			return N_BITS;
-		}
-		constexpr auto data_ptr() const
-		{
-			return code;
 		}
 
 		bool module(int x, int y);

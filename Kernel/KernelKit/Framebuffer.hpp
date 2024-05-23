@@ -1,9 +1,9 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Framebuffer.hpp
-    Purpose: Framebuffer object.
+	File: Framebuffer.hpp
+	Purpose: Framebuffer object.
 
 ------------------------------------------- */
 

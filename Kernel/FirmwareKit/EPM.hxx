@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
 /**
-    @brief The Explicit Partition Map scheme.
+	@brief The Explicit Partition Map scheme.
 */
 
 #ifndef __PARTITION_MAP__
@@ -87,8 +87,6 @@ struct PACKED PartitionBlock
 
 #define kEPMMagicError "EPM??"
 
-#define kEPMMaxBlks 128
-
 ///! @brief Version kind enum.
 ///! @brief Use in boot block version field.
 
@@ -122,6 +120,9 @@ typedef struct PartitionBlock PartitionBlockType;
 
 ///! @brief Current EPM revision (2)
 #define kEPMRevisionUEFI (0xF)
+
+/* @brief Maximum block count. */
+#define kEPMMaxBlks 128
 
 /// END OF SPECS
 

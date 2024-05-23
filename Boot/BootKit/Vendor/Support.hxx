@@ -1,12 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
 #pragma once
 
-/// @file Purpose of this file is to help port libs into the bootloader.
+/// @file Support.hxx
+/// @brief Purpose of this file is to help port libs into the bootloader.
 
 #include <BootKit/BootKit.hxx>
 
@@ -18,7 +19,7 @@
 #define CopyMem(dst, src, sz) memcpy(dst, src, sz)
 #define StrLen(src)			  strlen(src)
 
-inline int isspace(int c)
+inline int IsSpace(int c)
 {
 	return c == ' ';
 }
@@ -27,16 +28,21 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 {
 	const char *p	   = nptr, *endp;
 	bool		is_neg = 0, overflow = 0;
+
 	/* Need unsigned so (-cLongMin) can fit in these: */
 	unsigned long n = 0UL, cutoff;
 	int			  cutlim;
+
 	if (base < 0 || base == 1 || base > 36)
 	{
 		return 0L;
 	}
+
 	endp = nptr;
-	while (isspace(*p))
+
+	while (IsSpace(*p))
 		p++;
+
 	if (*p == '+')
 	{
 		p++;
@@ -49,8 +55,8 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 	{
 		p++;
 		/* For strtol(" 0xZ", &endptr, 16), endptr should point to 'x';
-         * pointing to ' ' or '0' is non-compliant.
-         * (Many implementations do this wrong.) */
+		 * pointing to ' ' or '0' is non-compliant.
+		 * (Many implementations do this wrong.) */
 		endp = p;
 		if (base == 16 && (*p == 'X' || *p == 'x'))
 		{
@@ -81,8 +87,10 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 	{
 		base = 10;
 	}
+
 	cutoff = (is_neg) ? -(cLongMin / base) : cLongMax / base;
 	cutlim = (is_neg) ? -(cLongMin % base) : cLongMax % base;
+
 	while (1)
 	{
 		int c;
@@ -98,7 +106,7 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 		if (overflow)
 		{
 			/* endptr should go forward and point to the non-digit character
-             * (of the given base); required by ANSI standard. */
+			 * (of the given base); required by ANSI standard. */
 			if (endptr)
 				continue;
 			break;
@@ -110,11 +118,14 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 		}
 		n = n * base + c;
 	}
+
 	if (endptr)
 		*endptr = (char*)endp;
+
 	if (overflow)
 	{
 		return ((is_neg) ? cLongMin : cLongMax);
 	}
+
 	return (long)((is_neg) ? -n : n);
 }

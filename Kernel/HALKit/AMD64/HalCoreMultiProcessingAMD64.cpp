@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -23,12 +23,12 @@ namespace NewOS::HAL
 	constexpr Int32 kThreadBoot	  = 4;
 
 	/*
-    *
-    * this is used to store info about the current running thread
-    * we use this struct to determine if we can use it, or mark it as used or on
-    * sleep.
-    *
-    */
+	 *
+	 * this is used to store info about the current running thread
+	 * we use this struct to determine if we can use it, or mark it as used or on
+	 * sleep.
+	 *
+	 */
 
 	struct ProcessorInfoAMD64 final
 	{
@@ -53,7 +53,7 @@ namespace NewOS::HAL
 		{
 			Char RecordType;
 			Char RecordLen; // record length
-			
+
 			UInt32 Address;
 			UInt32 Flags; // 1 = Dual Legacy PICs installed
 		} MadtRecords[];
@@ -109,14 +109,14 @@ namespace NewOS::HAL
 
 		if (kApicMadt)
 		{
-            kcout << "New OS: APIC is present...\r";
+			kcout << "New OS: APIC is present...\r";
 			kApicInfoBlock = (MadtType*)kApicMadt;
 		}
-        else
-        {
+		else
+		{
 			kcout << "New OS: APIC is not present! it is a vital component.\r";
-            ke_stop(RUNTIME_CHECK_FAILED);
-        }
+			ke_stop(RUNTIME_CHECK_FAILED);
+		}
 	}
 } // namespace NewOS::HAL
 

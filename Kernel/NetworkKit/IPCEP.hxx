@@ -1,8 +1,9 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs.
+	Copyright SoftwareLabs.
 
-    File: IPCEP.hxx, Purpose: Common IPC protocol. 
+	File: IPCEP.hxx.
+	Purpose: IPC protocol.
 
 ------------------------------------------- */
 
@@ -12,16 +13,16 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-/// @brief Common IPC Endpoint Protocol (Common IPC for short).
+/// @brief IPC Endpoint Protocol (IPCEP for short).
 
 /// IA separator.
-#define kRemoteSeparator "."
+#define cRemoteSeparator "."
 
 /// Interchange address, consists of domain:namespace.
-#define kRemoteInvalid	"00.00.00.00:0000"
-#define kRemoteBitWidth 96 /* 96-bit address space. */
+#define cRemoteInvalid	"00.00.00.00:0000"
+#define cRemoteBitWidth (96) /* 96-bit address space. */
 
-#define kRemoteHeaderMagic 0xFEEDFACE
+#define cRemoteHeaderMagic (0x4950434550)
 
 namespace NewOS
 {
@@ -36,14 +37,14 @@ namespace NewOS
 
 	enum
 	{
-		kIPCEPLittleEndian = 0,
-		kIPCEPBigEndian	   = 1
+		eIPCEPLittleEndian = 0,
+		eIPCEPBigEndian	   = 1
 	};
 
 	/// @brief IPCEP connection header
 	typedef struct IPCEPConnectionHeader
 	{
-		UInt32			 IpcHeader;	   // kRemoteHeaderMagic
+		UInt32			 IpcHeader;	   // cRemoteHeaderMagic
 		UInt8			 IpcEndianess; // 0 : LE, 1 : BE
 		SizeT			 IpcPacketSize;
 		IPCEPAddressType IpcFrom;

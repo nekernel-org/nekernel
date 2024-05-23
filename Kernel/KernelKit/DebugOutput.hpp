@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -27,11 +27,11 @@
 
 namespace NewOS
 {
-    class TerminalDevice;
+	class TerminalDevice;
 
-    inline TerminalDevice& end_line();
-    inline TerminalDevice& number(const Long& x);
-    inline TerminalDevice& hex_number(const Long& x);
+	inline TerminalDevice& end_line();
+	inline TerminalDevice& number(const Long& x);
+	inline TerminalDevice& hex_number(const Long& x);
 
 	// @brief Emulates a VT100 terminal.
 	class TerminalDevice final : public DeviceInterface<const Char*>
@@ -40,29 +40,27 @@ namespace NewOS
 		TerminalDevice(void (*print)(const Char*), void (*get)(const Char*))
 			: DeviceInterface<const Char*>(print, get)
 		{
-
 		}
 
 		virtual ~TerminalDevice()
 		{
-
 		}
 
 		TerminalDevice& Number(const Long Data) noexcept
 		{
-            number(Data);
+			number(Data);
 			return *this;
 		}
 
 		TerminalDevice& HexNumber(const Long Data) noexcept
 		{
-            hex_number(Data);
+			hex_number(Data);
 			return *this;
 		}
 
-        TerminalDevice& EndLine() noexcept
+		TerminalDevice& EndLine() noexcept
 		{
-            end_line();
+			end_line();
 			return *this;
 		}
 

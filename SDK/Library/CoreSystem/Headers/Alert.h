@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -18,4 +18,8 @@
 
 #include <Headers/Defines.h>
 
-CA_EXTERN_C VoidType Alert(const CharacterTypeUTF8* fmt, ...);
+/// @brief Shows an alert box, as provided by the OS.
+/// @param fmt The alert formating.
+/// @param
+/// @return
+CS_EXTERN_C VoidType UiAlert(const CharacterTypeUTF8* fmt, ...);

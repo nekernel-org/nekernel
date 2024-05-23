@@ -1,8 +1,8 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    Purpose: POWER processor header.
+	Purpose: POWER processor header.
 
 ------------------------------------------- */
 

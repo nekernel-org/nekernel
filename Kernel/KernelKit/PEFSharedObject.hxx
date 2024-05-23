@@ -21,9 +21,9 @@ namespace NewOS
 	extern "C" void __mh_purecall(void);
 
 	/**
- * @brief Shared Library class
- * Load library from this class
- */
+	 * @brief Shared Library class
+	 * Load library from this class
+	 */
 	class SharedObject final
 	{
 	public:

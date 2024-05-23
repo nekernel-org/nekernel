@@ -1,8 +1,8 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    Purpose: Kernel Devices.
+	Purpose: Kernel Devices.
 
 ------------------------------------------- */
 

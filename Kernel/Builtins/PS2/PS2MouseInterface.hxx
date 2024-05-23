@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: PS2MouseInterface.hxx
-    Purpose: PS/2 mouse.
+	File: PS2MouseInterface.hxx
+	Purpose: PS/2 mouse.
 
-    Revision History:
+	Revision History:
 
-    03/02/24: Added file (amlel)
+	03/02/24: Added file (amlel)
 
 ------------------------------------------- */
 

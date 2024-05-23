@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -252,31 +252,33 @@ namespace NewOS
 		{
 			return mTeam.AsArray().Count() > 0;
 		}
+
 		bool operator!()
 		{
 			return mTeam.AsArray().Count() == 0;
 		}
 
-		ProcessTeam& CurrentTeam()
-		{
-			return mTeam;
-		}
+	public:
+		ProcessTeam& CurrentTeam();
 
+	public:
 		SizeT Add(Ref<ProcessHeader>& headerRef);
 		bool  Remove(SizeT headerIndex);
 
+	public:
 		Ref<ProcessHeader>& GetCurrent();
 		SizeT				Run() noexcept;
 
-		static Ref<ProcessScheduler> Shared();
+	public:
+		static Ref<ProcessScheduler&> Shared();
 
 	private:
 		ProcessTeam mTeam;
 	};
 
 	/*
- * Just a helper class, which contains some utilities for the scheduler.
- */
+	 * Just a helper class, which contains some utilities for the scheduler.
+	 */
 
 	class ProcessHelper final
 	{

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -83,10 +83,10 @@ namespace NewOS
 		kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
 
 		constexpr short ACPI_SIGNATURE_LENGTH = 4;
-		
+
 		for (Size index = 0; index < this->fEntries; ++index)
 		{
-			SDT &sdt = xsdt[index];
+			SDT& sdt = xsdt[index];
 
 			for (short signature_index = 0; signature_index < ACPI_SIGNATURE_LENGTH; ++signature_index)
 			{
@@ -102,9 +102,9 @@ namespace NewOS
 	}
 
 	/***
-    @brief check SDT header
-    @param checksum the header to checksum
-    @param len the length of it.
+	@brief check SDT header
+	@param checksum the header to checksum
+	@param len the length of it.
 */
 	bool ACPIFactoryInterface::Checksum(const char* checksum, SSizeT len)
 	{

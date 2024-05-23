@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: MSDOS.hpp
-    Purpose: MS-DOS header for NewOS.
+	File: MSDOS.hpp
+	Purpose: MS-DOS header for NewOS.
 
-    Revision History:
+	Revision History:
 
-    30/01/24: Added file (amlel)
+	30/01/24: Added file (amlel)
 
 ------------------------------------------- */
 

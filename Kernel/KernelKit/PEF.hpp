@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: PEF.hpp
-    Purpose: Preferred Executable Format for NewOS.
+	File: PEF.hpp
+	Purpose: Preferred Executable Format for NewOS.
 
-    Revision History:
+	Revision History:
 
-    ?/?/23: Added file (amlel)
+	?/?/23: Added file (amlel)
 
 ------------------------------------------- */
 

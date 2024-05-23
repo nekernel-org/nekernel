@@ -1,14 +1,14 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
 #pragma once
 
 /**
-    @file Processor.hxx
-    @brief Processor specific code.
+	@file Processor.hxx
+	@brief Processor specific code.
 */
 
 #ifdef __x86_64__

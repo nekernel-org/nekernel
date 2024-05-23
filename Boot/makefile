@@ -12,10 +12,10 @@ ADD_FILE=touch
 COPY=cp
 HTTP_GET=wget
 
-ifeq ($(shell uname), Windows_NT)
-EMU=qemu-system-x86_64w
-else
+ifneq ($(shell uname), Windows_NT)
 EMU=qemu-system-x86_64
+else
+EMU=qemu-system-x86_64w
 endif
 
 ifeq ($(NEWS_MODEL), )
@@ -26,11 +26,11 @@ BIOS=OVMF.fd
 IMG=epm.img
 IMG_2=epm-slave.img
 
-EMU_FLAGS=-net none -smp 4,sockets=1,cores=4,threads=1 -m 8G -M q35 \
-			-bios Source/$(BIOS) -device piix3-ide,id=ide \
-			-drive id=disk,file=Source/$(IMG),format=raw,if=none \
+EMU_FLAGS=-net none -smp 4,sockets=1,cores=4,threads=1 -m 4G -M q35 \
+			-bios Sources/$(BIOS) -device piix3-ide,id=ide \
+			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
-			file=fat:rw:Source/Root,index=2,format=raw -d int -hdd Source/$(IMG_2)
+			file=fat:rw:Sources/Root,index=2,format=raw -d int -hdd $(IMG_2)
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -59,11 +59,11 @@ invalid-recipe:
 
 .PHONY: all
 all: compile-amd64
-	mkdir -p Root/EFI/BOOT
-	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Source/$(BOOT_LOADER)
-	$(COPY) Source/$(BOOT_LOADER) Source/Root/EFI/BOOT/BOOTX64.EFI
-	$(COPY) Source/$(BOOT_LOADER) Source/Root/EFI/BOOT/NEWBOOT.EFI
-	$(COPY) ../Kernel/$(KERNEL) Source/Root/$(KERNEL)
+	mkdir -p Sources/Root/EFI/BOOT
+	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Sources/$(BOOT_LOADER)
+	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/BOOTX64.EFI
+	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/NEWBOOT.EFI
+	$(COPY) ../Kernel/$(KERNEL) Sources/Root/$(KERNEL)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -73,9 +73,9 @@ endif
 compile-amd64:
 	$(RESCMD)
 	$(CC_GNU) $(NEWOS_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
-	$(wildcard Source/HEL/AMD64/*.cxx) \
-	$(wildcard Source/HEL/AMD64/*.S) 
-	$(wildcard Source/*.cxx)
+	$(wildcard Sources/HEL/AMD64/*.cxx) \
+	$(wildcard Sources/HEL/AMD64/*.S) 
+	$(wildcard Sources/*.cxx)
 
 .PHONY: run-efi-amd64
 run-efi-amd64:

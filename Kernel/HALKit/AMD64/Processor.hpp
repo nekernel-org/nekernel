@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Prcoessor.hxx
-    Purpose: AMD64 processor abstraction.
+	File: Prcoessor.hxx
+	Purpose: AMD64 processor abstraction.
 
-    Revision History:
+	Revision History:
 
-    30/01/24: Added file (amlel)
+	30/01/24: Added file (amlel)
 
 ------------------------------------------- */
 
@@ -130,8 +130,8 @@ namespace NewOS::HAL
 	};
 
 	/***
- * @brief Segment Boolean operations
- */
+	 * @brief Segment Boolean operations
+	 */
 	class SegmentDescriptorComparator final
 	{
 	public:
@@ -169,7 +169,7 @@ namespace NewOS::HAL
 		EXTERN_C void _ke_power_on_self_test(void);
 
 		/**
-    @brief Global descriptor table entry, either null, code or data.
+	@brief Global descriptor table entry, either null, code or data.
 */
 
 		struct PACKED NewOSGDTRecord final

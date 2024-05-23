@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: Defines.hxx
-    Purpose: AHCI header.
+	File: Defines.hxx
+	Purpose: AHCI header.
 
-    Revision History:
+	Revision History:
 
-    03/02/24: Added file (amlel)
+	03/02/24: Added file (amlel)
 
 ------------------------------------------- */
 

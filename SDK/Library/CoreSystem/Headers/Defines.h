@@ -1,49 +1,49 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
 #pragma once
 
-#ifdef CA_MUST_PASS
-#undef CA_MUST_PASS
+#ifdef CS_MUST_PASS
+#undef CS_MUST_PASS
 #endif
 
 #ifdef _DEBUG
-#define CA_MUST_PASS(e)                                                                                             \
+#define CS_MUST_PASS(e)                                                                                             \
 	{                                                                                                               \
 		if (!e)                                                                                                     \
 		{                                                                                                           \
-			Alert("Sorry, an assertion failed.\nFile: %s\nLine: %i", __FILE__, __LINE__) RtAssertTriggerInterrupt() \
+			UiAlert("Assertion failed.\nExpression :%s\nFile: %s\nLine: %i", #e, __FILE__, __LINE__) RtAssertTriggerInterrupt() \
 		}                                                                                                           \
 	}
 #else
-#define CA_MUST_PASS(e) CA_UNREFERENCED_PARAMETER(e)
+#define CS_MUST_PASS(e) CS_UNREFERENCED_PARAMETER(e)
 #endif
 
 #ifdef __cplusplus
 
-#define CA_EXTERN_C extern "C"
+#define CS_EXTERN_C extern "C"
 
 #else
 
-#define CA_EXTERN_C extern
+#define CS_EXTERN_C extern
 
 #endif
 
 struct ApplicationInterface;
 struct GUID;
 
-CA_EXTERN_C void RtAssertTriggerInterrupt(void);
+CS_EXTERN_C void RtAssertTriggerInterrupt(void);
 
-#define CA_STDCALL __attribute__((stdcall))
-#define CA_CDECL   __attribute__((cdecl))
-#define CA_MSCALL  __attribute__((ms_abi))
+#define CS_STDCALL __attribute__((stdcall))
+#define CS_CDECL   __attribute__((cdecl))
+#define CS_MSCALL  __attribute__((ms_abi))
 
 #define PACKED __attribute__((packed))
 
-#define CA_PASCAL CA_STDCALL
+#define CS_PASCAL CS_STDCALL
 
 #include <Headers/Hint.h>
 
@@ -79,20 +79,20 @@ typedef CharacterTypeUTF8 BooleanType;
 #define Yes 1
 #define No	0
 
-#define CA_PTR *
+#define CS_PTR *
 
-#define CA_UNREFERENCED_PARAMETER(e) ((VoidType)(e))
+#define CS_UNREFERENCED_PARAMETER(e) ((VoidType)(e))
 
 #ifdef __x86_64__
 
-#define CA_FAR	__far
-#define CA_NEAR __near
+#define CS_FAR	__far
+#define CS_NEAR __near
 
 #define _M_AMD64 2
 #else
 
-#define CA_FAR
-#define CA_NEAR
+#define CS_FAR
+#define CS_NEAR
 
 #endif
 
@@ -112,14 +112,14 @@ typedef CharacterTypeUTF8 BooleanType;
 #define _M_RISCV 6
 #endif
 
-#define CA_STATIC static
-#define CA_INLINE inline
-#define CA_CONST  const
+#define CS_STATIC static
+#define CS_INLINE inline
+#define CS_CONST  const
 
 #ifdef __cplusplus
-#define CA_CONSTEXPR constexpr
+#define CS_CONSTEXPR constexpr
 #else
-#define CA_CONSTEXPR
+#define CS_CONSTEXPR
 #endif // __cplusplus
 
 enum RtProcessCall
@@ -144,6 +144,11 @@ enum RtProcessCall
 	kCallRandomNumberGenerator,
 	kCallGetArgsCount,
 	kCallGetArgsPtr,
+	kCallFileExists,
+	kCallDirectoryExists,
+	kCallSymlinkExists,
+	kCallDeviceExists,
+	kCallDriveExists,
 	/// @brief Number of process calls.
 	kCallsCount,
 };
@@ -171,19 +176,19 @@ typedef struct ApplicationInterface
 
 #ifdef __cplusplus
 
-#define CA_COPY_DELETE(KLASS)                \
+#define CS_COPY_DELETE(KLASS)                \
 	KLASS& operator=(const KLASS&) = delete; \
 	KLASS(const KLASS&)			   = delete;
 
-#define CA_COPY_DEFAULT(KLASS)                \
+#define CS_COPY_DEFAULT(KLASS)                \
 	KLASS& operator=(const KLASS&) = default; \
 	KLASS(const KLASS&)			   = default;
 
-#define CA_MOVE_DELETE(KLASS)           \
+#define CS_MOVE_DELETE(KLASS)           \
 	KLASS& operator=(KLASS&&) = delete; \
 	KLASS(KLASS&&)			  = delete;
 
-#define CA_MOVE_DEFAULT(KLASS)           \
+#define CS_MOVE_DEFAULT(KLASS)           \
 	KLASS& operator=(KLASS&&) = default; \
 	KLASS(KLASS&&)			  = default;
 
@@ -201,19 +206,19 @@ using StrType = CharacterTypeUTF8[N];
 /// @brief Get app singleton.
 /// @param
 /// @return
-CA_EXTERN_C ApplicationInterfaceRef RtGetAppPointer(VoidType);
+CS_EXTERN_C ApplicationInterfaceRef RtGetAppPointer(VoidType);
 
 /// @brief Get argument count
 /// @param
 /// @return
-CA_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType);
+CS_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType);
 
 /// @brief Get argument pointer.
 /// @param
 /// @return
-CA_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType);
+CS_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType);
 
-CA_EXTERN_C ApplicationInterfaceRef kSharedApplication;
+CS_EXTERN_C ApplicationInterfaceRef kSharedApplication;
 
 typedef CharacterTypeUTF8 StrType255[255];
 

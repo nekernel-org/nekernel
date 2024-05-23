@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
 ------------------------------------------- */
 
@@ -19,7 +19,7 @@
 typedef QWordType ThreadRef;
 
 /// @brief Main application thread.
-CA_EXTERN_C ThreadRef kMainThread;
+CS_EXTERN_C ThreadRef kMainThread;
 
 typedef VoidType (*ThreadEntrypointKind)(VoidType);
 
@@ -27,21 +27,21 @@ typedef VoidType (*ThreadEntrypointKind)(VoidType);
 /// @param threadName the thread's name.
 /// @param threadStart where to start.
 /// @return
-CA_EXTERN_C ThreadRef CTCreate(const CharacterTypeUTF8* threadName, ThreadEntrypointKind threadStart);
+CS_EXTERN_C ThreadRef CSThreadCreate(const CharacterTypeUTF8* threadName, ThreadEntrypointKind threadStart);
 
 /// @brief Dispoes the thread, and exits with code kThreadErrorExit
 /// @param ref the thread reference.
 /// @return  nothing.
-CA_EXTERN_C VoidType CTRelease(ThreadRef ref);
+CS_EXTERN_C VoidType CSThreadRelease(ThreadRef ref);
 
 /// @brief Waits for the thread to complete.
 /// @param ref the thread reference.
 /// @return  nothing.
-CA_EXTERN_C VoidType CTJoin(ThreadRef ref);
+CS_EXTERN_C VoidType CSThreadJoin(ThreadRef ref);
 
 /// @brief Yields the current thread.
 /// @param ref the thead reference.
-/// @return 
-CA_EXTERN_C VoidType CTYield(ThreadRef ref);
+/// @return
+CS_EXTERN_C VoidType CSThreadYield(ThreadRef ref);
 
 #endif // __THREAD__

@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: HPET.hxx
-    Purpose: HPET builtin.
+	File: HPET.hxx
+	Purpose: HPET builtin.
 
-    Revision History:
+	Revision History:
 
 ------------------------------------------- */
 

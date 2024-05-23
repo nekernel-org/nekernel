@@ -1,15 +1,15 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: NewFS.hxx
-    Purpose:
+	File: NewFS.hxx
+	Purpose:
 
-    Revision History:
+	Revision History:
 
-    ?/?/?: Added file (amlel)
-    12/02/24: Add UUID macro for EPM and GPT partition schemes.
-    3/16/24: Add mandatory sector size, kNewFSSectorSz is set to 2048 by
+	?/?/?: Added file (amlel)
+	12/02/24: Add UUID macro for EPM and GPT partition schemes.
+	3/16/24: Add mandatory sector size, kNewFSSectorSz is set to 2048 by
 default.
 
 ------------------------------------------- */
@@ -22,8 +22,8 @@ default.
 #include <NewKit/Defines.hpp>
 
 /**
-    @brief New File System specification.
-    @author Amlal EL Mahrouss
+	@brief New File System specification.
+	@author Amlal EL Mahrouss
 */
 
 #define kNewFSInvalidFork	 (-1)
@@ -209,7 +209,6 @@ namespace NewOS
 	/// \brief NewFS parser class. (catalog creation, remove removal, root,
 	/// forks...) Designed like the DOM, detects the filesystem automatically.
 	///
-
 	class NewFSParser final
 	{
 	public:
@@ -225,7 +224,7 @@ namespace NewOS
 		/// @param theFork the fork itself.
 		/// @return the fork
 		_Output NewFork* CreateFork(_Input NewCatalog* catalog,
-									_Input NewFork& theFork);
+									_Input NewFork&	   theFork);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
@@ -243,7 +242,7 @@ namespace NewOS
 
 		_Output NewCatalog* GetCatalog(_Input const char* name);
 
-		_Output NewCatalog* CreateCatalog(_Input const char* name,
+		_Output NewCatalog* CreateCatalog(_Input const char*  name,
 										  _Input const Int32& flags,
 										  _Input const Int32& kind);
 

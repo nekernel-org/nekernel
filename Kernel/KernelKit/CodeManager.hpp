@@ -1,14 +1,14 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+	Copyright SoftwareLabs
 
-    File: CodeManager.hpp
-    Purpose: Code Manager and Shared Objects.
+	File: CodeManager.hpp
+	Purpose: Code Manager and Shared Objects.
 
-    Revision History:
+	Revision History:
 
-    30/01/24: Added file (amlel)
-    3/8/24: Add UPP struct.
+	30/01/24: Added file (amlel)
+	3/8/24: Add UPP struct.
 
 ------------------------------------------- */
 
