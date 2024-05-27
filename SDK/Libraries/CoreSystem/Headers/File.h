@@ -8,6 +8,8 @@
 
 #include <Headers/Defines.h>
 
+#define kMaxForkNameLength (256U) /* long fork names. */
+
 struct _Fork;
 
 /// @brief Filesystem wrapper.
@@ -24,8 +26,6 @@ CS_EXTERN_C FSRef CSOpenFile(const CharacterTypeUTF8* path, const CharacterTypeU
 /// @param refCS the filesystem reference.
 /// @return
 CS_EXTERN_C VoidType CSCloseFile(FSRef refCS);
-
-#define kMaxForkNameLength (256U) /* long fork names. */
 
 /// @brief A fork information header.
 typedef struct _Fork

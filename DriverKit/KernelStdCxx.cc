@@ -12,7 +12,7 @@ void* operator new(size_t sz) {
     if (!sz) ++sz;
 
     auto ptr = kernelCall("NewKernelHeap", 1, sz);
-    kernelCall("KernelHeapProtect", 1, ptr);
+    kernelCall("ProtectKernelHeap", 1, ptr);
 
     return ptr;
 }

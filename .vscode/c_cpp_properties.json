@@ -4,9 +4,11 @@
             "name": "MicroKernel (Macintosh)",
             "includePath": [
                 "${workspaceFolder}/Kernel/**",
+                "${workspaceFolder}/Drivers/**",
                 "${workspaceFolder}/Boot/**",
-                "${workspaceFolder}/SDK/Library/CoreSystem/**",
-                "${workspaceFolder}/SDK/Library/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/SDK/Libraries/CoreSystem/**",
+                "${workspaceFolder}/SDK/Libraries/**"
             ],
             "defines": [
                 "__MAHROUSS__",
@@ -36,10 +38,12 @@
         {
             "name": "MicroKernel (Windows)",
             "includePath": [
+                "${workspaceFolder}/Drivers/**",
                 "${workspaceFolder}/Kernel/**",
                 "${workspaceFolder}/Boot/**",
-                "${workspaceFolder}/SDK/Library/CoreSystem/**",
-                "${workspaceFolder}/SDK/Library/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/SDK/Libraries/CoreSystem/**",
+                "${workspaceFolder}/SDK/Libraries/**"
             ],
             "defines": [
                 "__MAHROUSS__",

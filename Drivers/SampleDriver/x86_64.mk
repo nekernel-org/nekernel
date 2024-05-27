@@ -30,7 +30,6 @@ invalid-recipe:
 .PHONY: all
 all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o SampleDriver.exe
-	cp SampleDriver.exe ../../Root/Boot/SampleDriver.exe
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__

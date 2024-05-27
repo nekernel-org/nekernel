@@ -30,7 +30,6 @@ invalid-recipe:
 .PHONY: all
 all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Bonjour.exe
-	cp Bonjour.exe ../../Root/Boot/Bonjour.exe
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
