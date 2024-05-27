@@ -141,7 +141,7 @@ typedef UInt8* BlobType;
 class BVersionString final
 {
 public:
-	static const CharacterTypeUTF16* Shared()
+	static const CharacterTypeUTF16* The()
 	{
 		return BOOTLOADER_VERSION;
 	}

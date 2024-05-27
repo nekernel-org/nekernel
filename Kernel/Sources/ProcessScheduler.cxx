@@ -163,11 +163,11 @@ namespace NewOS
 	void ProcessHeader::Exit(Int32 exit_code)
 	{
 		if (this->ProcessId !=
-			ProcessScheduler::Shared().Leak().GetCurrent().Leak().ProcessId)
+			ProcessScheduler::The().Leak().GetCurrent().Leak().ProcessId)
 			ke_stop(RUNTIME_CHECK_PROCESS);
 
 		if (this->Ring == (Int32)ProcessSelector::kRingKernel &&
-			ProcessScheduler::Shared().Leak().GetCurrent().Leak().Ring > 0)
+			ProcessScheduler::The().Leak().GetCurrent().Leak().Ring > 0)
 			ke_stop(RUNTIME_CHECK_PROCESS);
 
 		kLastExitCode = exit_code;
@@ -193,7 +193,7 @@ namespace NewOS
 		this->Image		 = nullptr;
 		this->StackFrame = nullptr;
 
-		ProcessScheduler::Shared().Leak().Remove(this->ProcessId);
+		ProcessScheduler::The().Leak().Remove(this->ProcessId);
 	}
 
 	/// @brief Add process to list.
@@ -301,7 +301,7 @@ namespace NewOS
 
 	/// @brief Shared instance of the process scheduler.
 	/// @return
-	Ref<ProcessScheduler&> ProcessScheduler::Shared()
+	Ref<ProcessScheduler&> ProcessScheduler::The()
 	{
 		static ProcessScheduler ref;
 		return {ref};
@@ -319,7 +319,7 @@ namespace NewOS
 	PID& ProcessHelper::GetCurrentPID()
 	{
 		kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r";
-		return ProcessScheduler::Shared().Leak().GetCurrent().Leak().ProcessId;
+		return ProcessScheduler::The().Leak().GetCurrent().Leak().ProcessId;
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -355,13 +355,13 @@ namespace NewOS
 	bool ProcessHelper::StartScheduling()
 	{
 		if (ProcessHelper::CanBeScheduled(
-				ProcessScheduler::Shared().Leak().GetCurrent()))
+				ProcessScheduler::The().Leak().GetCurrent()))
 		{
-			--ProcessScheduler::Shared().Leak().GetCurrent().Leak().PTime;
+			--ProcessScheduler::The().Leak().GetCurrent().Leak().PTime;
 			return false;
 		}
 
-		auto processRef = ProcessScheduler::Shared().Leak();
+		auto processRef = ProcessScheduler::The().Leak();
 
 		if (!processRef)
 			return false; // we have nothing to schedule. simply return.
@@ -385,29 +385,29 @@ namespace NewOS
 		if (!the_stack || new_pid < 0)
 			return false;
 
-		for (SizeT index = 0UL; index < SMPManager::Shared().Leak().Count(); ++index)
+		for (SizeT index = 0UL; index < SMPManager::The().Leak().Count(); ++index)
 		{
-			if (SMPManager::Shared().Leak()[index].Leak().Kind() == kInvalidHart)
+			if (SMPManager::The().Leak()[index].Leak().Kind() == kInvalidHart)
 				continue;
 
-			if (SMPManager::Shared().Leak()[index].Leak().StackFrame() == the_stack)
+			if (SMPManager::The().Leak()[index].Leak().StackFrame() == the_stack)
 			{
-				SMPManager::Shared().Leak()[index].Leak().Busy(false);
+				SMPManager::The().Leak()[index].Leak().Busy(false);
 				continue;
 			}
 
-			if (SMPManager::Shared().Leak()[index].Leak().IsBusy())
+			if (SMPManager::The().Leak()[index].Leak().IsBusy())
 				continue;
 
-			if (SMPManager::Shared().Leak()[index].Leak().Kind() !=
+			if (SMPManager::The().Leak()[index].Leak().Kind() !=
 					ThreadKind::kHartBoot &&
-				SMPManager::Shared().Leak()[index].Leak().Kind() !=
+				SMPManager::The().Leak()[index].Leak().Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				SMPManager::Shared().Leak()[index].Leak().Busy(true);
+				SMPManager::The().Leak()[index].Leak().Busy(true);
 				ProcessHelper::GetCurrentPID() = new_pid;
 
-				return SMPManager::Shared().Leak()[index].Leak().Switch(the_stack);
+				return SMPManager::The().Leak()[index].Leak().Switch(the_stack);
 			}
 		}
 

@@ -51,7 +51,7 @@ EXTERN_C Void tls_check_syscall_impl(NewOS::HAL::StackFramePtr stackPtr) noexcep
 	if (!tls_check_tib(tib))
 	{
 		kcout << "New OS: Verification failed, Crashing...\r";
-		ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
+		ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
 	}
 
 	kcout << "New OS: Verification succeeded! Keeping on...\r";

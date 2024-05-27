@@ -195,7 +195,7 @@ namespace NewOS
 
 			proc.Kind = procKind;
 
-			return ProcessScheduler::Shared().Leak().Add(refProc);
+			return ProcessScheduler::The().Leak().Add(refProc);
 		}
 	} // namespace Utils
 

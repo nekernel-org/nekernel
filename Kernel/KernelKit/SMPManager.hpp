@@ -105,7 +105,7 @@ namespace NewOS
 	public:
 		/// @brief Shared instance of the SMP Manager.
 		/// @return the reference to the smp manager.
-		static Ref<SMPManager> Shared();
+		static Ref<SMPManager> The();
 
 	public:
 		/// @brief Returns the amount of threads present in the system.

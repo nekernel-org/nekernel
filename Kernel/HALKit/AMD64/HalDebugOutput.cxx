@@ -132,7 +132,7 @@ namespace NewOS
 #endif // __DEBUG__
 	}
 
-	TerminalDevice& TerminalDevice::Shared() noexcept
+	TerminalDevice& TerminalDevice::The() noexcept
 	{
 		static TerminalDevice* out = nullptr;
 

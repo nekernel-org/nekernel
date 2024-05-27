@@ -206,7 +206,7 @@ namespace NewOS::Detail
 
 		NewOS::kcout << "SystemLoader: Exiting process, we're done initializing stuff...";
 
-		NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Exit(0);
+		NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().Exit(0);
 	}
 } // namespace NewOS::Detail
 
@@ -221,5 +221,5 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void)
 	auto cLoaderName = "SystemLoader";
 	NewOS::execute_from_image(NewOS::Detail::AppSystemLoader, cLoaderName);
 
-	while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0) {}
+	while (NewOS::ProcessScheduler::The().Leak().Run() > 0) {}
 }

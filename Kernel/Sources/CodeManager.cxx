@@ -25,6 +25,6 @@ namespace NewOS
 
 		Ref<ProcessHeader> refProc = proc;
 
-		return ProcessScheduler::Shared().Leak().Add(refProc);
+		return ProcessScheduler::The().Leak().Add(refProc);
 	}
 } // namespace NewOS

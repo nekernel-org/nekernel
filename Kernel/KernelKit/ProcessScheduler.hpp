@@ -270,7 +270,7 @@ namespace NewOS
 		SizeT				Run() noexcept;
 
 	public:
-		static Ref<ProcessScheduler&> Shared();
+		static Ref<ProcessScheduler&> The();
 
 	private:
 		ProcessTeam mTeam;

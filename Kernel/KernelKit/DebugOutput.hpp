@@ -73,26 +73,26 @@ namespace NewOS
 
 		NEWOS_COPY_DEFAULT(TerminalDevice);
 
-		static TerminalDevice& Shared() noexcept;
+		static TerminalDevice& The() noexcept;
 	};
 
 	inline TerminalDevice& end_line()
 	{
-		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		TerminalDevice& selfTerm = TerminalDevice::The();
 		selfTerm << "\r";
 		return selfTerm;
 	}
 
 	inline TerminalDevice& carriage_return()
 	{
-		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		TerminalDevice& selfTerm = TerminalDevice::The();
 		selfTerm << "\r";
 		return selfTerm;
 	}
 
 	inline TerminalDevice& tabulate()
 	{
-		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		TerminalDevice& selfTerm = TerminalDevice::The();
 		selfTerm << "\t";
 		return selfTerm;
 	}
@@ -100,7 +100,7 @@ namespace NewOS
 	/// @brief emulate a terminal bell, like the VT100 does.
 	inline TerminalDevice& bell()
 	{
-		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		TerminalDevice& selfTerm = TerminalDevice::The();
 		selfTerm << "\a";
 		return selfTerm;
 	}
@@ -166,7 +166,7 @@ namespace NewOS
 
 	inline TerminalDevice& hex_number(const Long& x)
 	{
-		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		TerminalDevice& selfTerm = TerminalDevice::The();
 
 		selfTerm << "0x";
 		Detail::_write_number_hex(x, selfTerm);
@@ -176,7 +176,7 @@ namespace NewOS
 
 	inline TerminalDevice& number(const Long& x)
 	{
-		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		TerminalDevice& selfTerm = TerminalDevice::The();
 
 		Detail::_write_number(x, selfTerm);
 
@@ -185,7 +185,7 @@ namespace NewOS
 
 	inline TerminalDevice& get_console_in(Char* buf)
 	{
-		TerminalDevice& selfTerm = TerminalDevice::Shared();
+		TerminalDevice& selfTerm = TerminalDevice::The();
 		selfTerm >> buf;
 		return selfTerm;
 	}
@@ -204,5 +204,5 @@ namespace NewOS
 #undef kcout
 #endif // ifdef kcout
 
-#define kcout TerminalDevice::Shared()
+#define kcout TerminalDevice::The()
 #define endl  end_line()

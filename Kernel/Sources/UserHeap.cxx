@@ -37,8 +37,9 @@ namespace NewOS
 	 */
 	class UserHeapManager final
 	{
-	public:
 		UserHeapManager()  = delete;
+		
+	public:
 		~UserHeapManager() = default;
 
 	public:
@@ -46,14 +47,17 @@ namespace NewOS
 		{
 			return s_NumPools;
 		}
+		
 		STATIC Ref<Pmm>& Leak()
 		{
 			return s_Pmm;
 		}
+		
 		STATIC Boolean& IsEnabled()
 		{
 			return s_PoolsAreEnabled;
 		}
+
 		STATIC MutableArray<Ref<PTEWrapper>>& The()
 		{
 			return s_Pool;
@@ -146,7 +150,7 @@ namespace NewOS
 		{
 			if (!poolHdr->fFree)
 			{
-				ProcessScheduler::Shared().Leak().GetCurrent().Leak().Crash();
+				ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
 				return;
 			}
 

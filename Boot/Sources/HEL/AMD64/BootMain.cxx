@@ -69,7 +69,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	/// Splash screen stuff
 
 	writer.Write(L"SoftwareLabs (R) New Boot: ")
-		.Write(BVersionString::Shared());
+		.Write(BVersionString::The());
 
 	writer.Write(L"\rNew Boot: Firmware Vendor: ")
 		.Write(SystemTable->FirmwareVendor)

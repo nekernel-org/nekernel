@@ -121,7 +121,7 @@ namespace NewOS
 	SMPManager::~SMPManager() = default;
 
 	/// @brief Shared singleton function
-	Ref<SMPManager> SMPManager::Shared()
+	Ref<SMPManager> SMPManager::The()
 	{
 		static SMPManager manager;
 		return {manager};
