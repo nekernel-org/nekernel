@@ -4,18 +4,18 @@
 
 ------------------------------------------- */
 
-#include <DriverKit/KernelString.h>
-#include <DriverKit/KernelPrint.h>
+#include <DDK/KernelString.h>
+#include <DDK/KernelPrint.h>
 
 int __ImageStart(void)
 {
-	kernelPrintStr("DynamicLoader: Starting up...\r");
+	kernelPrintStr("SampleDriver: Starting up...\r");
 	return 0;
 }
 
 int __ImageEnd(void)
 {
-	kernelPrintStr("DynamicLoader: Shutting down...\r");
+	kernelPrintStr("SampleDriver: Shutting down...\r");
 	return 0;
 }
 

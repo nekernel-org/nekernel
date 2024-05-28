@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <DriverKit/KernelString.h>
-#include <DriverKit/KernelPrint.h>
+#include <DDK/KernelString.h>
+#include <DDK/KernelPrint.h>
 
 int __ImageStart(void)
 {

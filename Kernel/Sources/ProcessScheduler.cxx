@@ -42,7 +42,7 @@ namespace NewOS
 
 	void ProcessHeader::Crash()
 	{
-		kcout << this->Name << ": crashed. (id = " << number(39);
+		kcout << this->Name << ": crashed. (id = " << number(kErrorProcessFault);
 		kcout << ")\r";
 
 		if (this->Ring != kRingUserKind)

@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <DriverKit/KernelDev.h>
+#include <DDK/KernelDev.h>
 
 /// @brief Open a new binary device from path.
 DK_EXTERN kernelDeviceRef kernelOpenBinaryDevice(const char* devicePath)

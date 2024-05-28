@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <DriverKit/KernelStd.h>
+#include <DDK/KernelStd.h>
 #include <stdarg.h>
 
 DK_EXTERN __attribute__((naked)) void __kernelDispatchCall(int32_t cnt, ...);

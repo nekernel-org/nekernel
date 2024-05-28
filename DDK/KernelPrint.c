@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <DriverKit/KernelPrint.h>
+#include <DDK/KernelPrint.h>
 
 DK_EXTERN void kernelPrintChar(const char ch)
 {
