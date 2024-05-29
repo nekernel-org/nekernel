@@ -9,13 +9,13 @@
 
 int __ImageStart(void)
 {
-	kernelPrintStr("DynamicLoader: Starting up...\r");
+	kernelPrintStr("SDLD: Starting up...\r");
 	return 0;
 }
 
 int __ImageEnd(void)
 {
-	kernelPrintStr("DynamicLoader: Shutting down...\r");
+	kernelPrintStr("SDLD: Shutting down...\r");
 	return 0;
 }
 
