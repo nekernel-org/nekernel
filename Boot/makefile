@@ -27,7 +27,7 @@ IMG=epm.img
 IMG_2=epm-slave.img
 
 EMU_FLAGS=-net none -smp 4,sockets=1,cores=4,threads=1 -m 4G -M q35 \
-			-bios Sources/$(BIOS) -device piix3-ide,id=ide \
+			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
 			file=fat:rw:Sources/Root,index=2,format=raw -d int -hdd $(IMG_2)
