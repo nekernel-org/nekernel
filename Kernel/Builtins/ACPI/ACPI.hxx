@@ -81,7 +81,7 @@ namespace NewOS
 		UInt32 OemRev;
 		UInt32 CreatorID;
 		UInt32 CreatorRevision;
-		UInt64 AddressArr[];
+		UInt32 AddressArr[];
 	};
 } // namespace NewOS
 

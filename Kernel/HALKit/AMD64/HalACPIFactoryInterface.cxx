@@ -76,36 +76,38 @@ namespace NewOS
 		}
 
 		/// FIXME
-		RSDT* xsdt = (RSDT*)rsdPtr->XsdtAddress;
+		RSDT* xsdt = (RSDT*)(rsdPtr->RsdtAddress);
 
-		if (NewOS::HAL::ke_map_address((PDE*)hal_read_cr3(), rsdPtr->XsdtAddress, (UIntPtr)xsdt, NewOS::HAL::eFlagsRw))
-			return ErrorOr<voidPtr>{-5};
-
-		Int64 num = (xsdt->Length - sizeof(SDT)) / sizeof(UInt64);
+		Int64 num = (xsdt->Length - sizeof(SDT)) / sizeof(UInt32);
 
 		if (num < 1)
 		{
+			kcout << "ACPI: No entries." << endl;
 			return ErrorOr<voidPtr>{-6};
 		}
 
 		this->fEntries = num;
 
 		kcout << "ACPI: Number of entries: " << number(this->fEntries) << endl;
+		kcout << "ACPI: Revision: " << number(xsdt->Revision) << endl;
+		kcout << "ACPI: XSDT: " << xsdt->Signature << endl;
 		kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
 
 		const short cAcpiSignatureLength = 4;
 
 		for (Size index = 0; index < this->fEntries; ++index)
 		{
-			SDT* sdt = (SDT*)(xsdt->AddressArr[index]);
+			SDT& sdt = *(SDT*)xsdt->AddressArr[index];
+
+			kcout << "ACPI: Revision: " << number(sdt.CreatorID) << endl;
 
 			for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index)
 			{
-				if (sdt->Signature[signature_index] != signature[signature_index])
+				if (sdt.Signature[signature_index] != signature[signature_index])
 					break;
 
 				if (signature_index == (cAcpiSignatureLength - 1))
-					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(sdt));
+					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(&sdt));
 			}
 		}
 

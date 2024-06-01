@@ -38,8 +38,19 @@ CS_EXTERN_C VoidType CSCloseFile(FSRef refCS)
 {
 	CS_MUST_PASS(kSharedApplication);
 
-	kSharedApplication->Invoke(kSharedApplication, refCS, kFlushFile);
+	CSFlushFile(refCS);
+
 	kSharedApplication->Invoke(kSharedApplication, kCallCloseFile, refCS);
+}
+
+/// @brief Flush file
+/// @param refCS the file reference.
+/// @return 
+CS_EXTERN_C VoidType CSFlushFile(FSRef refCS)
+{
+	CS_MUST_PASS(kSharedApplication);
+
+	kSharedApplication->Invoke(kSharedApplication, refCS, kFlushFile);
 }
 
 /// @brief Check if filesystem path is valid.

@@ -74,24 +74,27 @@ namespace NewOS::HAL
 		if (!pde->Pte[pml4_index].Present)
 		{
 			pde->Pte[pml4_index].Present = true;
-			kcout << "PM: It is present now.\r";
+			kcout << "PM is present now.\r";
+
+			pde->Pte[pml4_index].PhysicalAddress = phys_addr;
+			pde->Pte[pml4_index].Rw				 = flags & eFlagsRw;
+			pde->Pte[pml4_index].User			 = flags & eFlagsUser;
+			pde->Pte[pml4_index].ExecDisable	 = flags & eFlagsExecDisable;
+
+			return 0;
 		}
 		else
 		{
-			kcout << "PM: It is already present.\r";
-            kcout << "Address? " << hex_number(pde->Pte[pml4_index].PhysicalAddress) << endl;
-            kcout << "User? " << (pde->Pte[pml4_index].User ? "yes" : "no") << "\r";
-            kcout << "RW? " << (pde->Pte[pml4_index].Rw ? "yes" : "no") << "\r";
+			kcout << "PM is already present.\r";
 
-            return 1;
+			kcout << "PhysicalAddress: " << hex_number(pde->Pte[pml4_index].PhysicalAddress) << endl;
+			kcout << "User: " << (pde->Pte[pml4_index].User ? "yes" : "no") << "\r";
+			kcout << "RW: " << (pde->Pte[pml4_index].Rw ? "yes" : "no") << "\r";
+
+			return 1;
 		}
 
-		pde->Pte[pml4_index].PhysicalAddress = phys_addr;
-		pde->Pte[pml4_index].Rw				 = flags & eFlagsRw;
-		pde->Pte[pml4_index].User			 = flags & eFlagsUser;
-		pde->Pte[pml4_index].ExecDisable	 = flags & eFlagsExecDisable;
-
-        return 0;
+		return 0;
 	}
 
 	/// @brief Map address to PDE.
@@ -102,9 +105,6 @@ namespace NewOS::HAL
 	inline void ke_unmap_address(PDE* pde, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
 	{
 		UInt16 pml4_index = (virt_addr >> 39) & 0x1FF;
-		UInt16 pdpt_index = (virt_addr >> 30) & 0x1FF;
-		UInt16 pd_index	  = (virt_addr >> 21) & 0x1FF;
-		UInt16 pt_index	  = (virt_addr >> 12) & 0x1FF;
 
 		if (pde->Pte[pml4_index].Present)
 		{

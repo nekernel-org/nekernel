@@ -137,37 +137,17 @@ namespace NewOS::HAL
 
 		if (kApicMadt != nullptr)
 		{
-			auto madt = (SDT*)kApicMadt;
+			MadtType* madt = (MadtType*)kApicMadt;
 
-			const UInt8* madt_end  = (const UInt8*)madt + madt->Length;
-			const UInt8* entry_ptr = (const UInt8*)(madt + 1);
+            constexpr auto cMaxProbableCores = 4;
 
-			while (entry_ptr < madt_end)
-			{
-				const MadtType::MadtAddress* entry_header = (const MadtType::MadtAddress*)entry_ptr;
-
-				switch (entry_header->Flags)
-				{
-				case 0: {
-					const MadtProcessorLocalApic* local_apic = (const MadtProcessorLocalApic*)entry_ptr;
-					if (local_apic->Flags & 1)
-					{
-						// Processor is enabled
-						kcout << "Processor ID: %d, APIC ID: %d\n"
-							  << number(local_apic->AcpiProcessorId) << number(local_apic->ApicId);
-					}
-					break;
-				}
-				default:
-					break;
-				}
-
-				entry_ptr += entry_header->RecordLen;
-			}
-
-			while (true)
-			{
-			}
+            for (SizeT i = 0; i < cMaxProbableCores; ++i)
+            {
+                if (madt->MadtRecords[i].Flags == 0x01) // if local apic.
+                {
+                    // then register as a core for scheduler.
+                }
+            }
 		}
 		else
 		{
