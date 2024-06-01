@@ -6,7 +6,7 @@
 
 #include <NewKit/Utils.hpp>
 #include <KernelKit/CodeManager.hpp>
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 
 namespace NewOS
 {

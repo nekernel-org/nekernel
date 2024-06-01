@@ -26,7 +26,7 @@ BIOS=OVMF.fd
 IMG=epm.img
 IMG_2=epm-slave.img
 
-EMU_FLAGS=-net none -smp 4,sockets=1,cores=4,threads=1 -m 4G -M q35 \
+EMU_FLAGS=-net none -smp 2 -m 4G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \

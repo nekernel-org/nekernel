@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/Semaphore.hpp>
 #include <KernelKit/Timer.hpp>
 

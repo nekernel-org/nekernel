@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/SMPManager.hpp>
 
 ///! BUGS: 0
@@ -95,7 +95,6 @@ namespace NewOS
 		{
 			/// Keep the arguments, switch the base pointer, stack pointer
 			/// fs and gs registers.
-
 			fStack->Rbp = stack->Rbp;
 			fStack->Rsp = stack->Rsp;
 			fStack->Fs	= stack->Fs;
@@ -103,6 +102,7 @@ namespace NewOS
 		}
 
 		rt_do_context_switch(fStack);
+		
 		return true;
 	}
 
@@ -171,6 +171,8 @@ namespace NewOS
 			/// - Amlel
 			rt_copy_memory(stack, fThreadList[idx].Leak().Leak().fStack,
 						   sizeof(HAL::StackFrame));
+
+			fThreadList[idx].Leak().Leak().Switch(fThreadList[idx].Leak().Leak().fStack);
 
 			fThreadList[idx].Leak().Leak().fPID = ProcessHelper::GetCurrentPID();
 

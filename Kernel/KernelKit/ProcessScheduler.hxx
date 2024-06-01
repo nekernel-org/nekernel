@@ -163,9 +163,9 @@ namespace NewOS
 
 		enum
 		{
-			kAppKind	= 3,
-			kLibKind	= 3,
-			kDriverKind = 0,
+			kAppKind	= 1,
+			kShLibKind	= 2,
+			kDriverKind = 3,
 			kKindCount,
 		};
 

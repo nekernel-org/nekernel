@@ -8,7 +8,7 @@
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 #include <NewKit/Defines.hpp>
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/OwnPtr.hpp>

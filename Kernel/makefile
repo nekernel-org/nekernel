@@ -69,7 +69,7 @@ link-amd64-epm:
 
 .PHONY: all
 all: newos-amd64-epm link-amd64-epm
-	@echo "NewKernel => OK."
+	@echo "NewOSKrnl => OK."
 
 .PHONY: help
 help:

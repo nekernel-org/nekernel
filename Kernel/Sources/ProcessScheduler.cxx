@@ -9,7 +9,7 @@
 /// @brief MicroKernel process scheduler.
 /***********************************************************************************/
 
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/SMPManager.hpp>
 #include <KernelKit/KernelHeap.hpp>
 #include <NewKit/String.hpp>
@@ -206,7 +206,7 @@ namespace NewOS
 
 		if (!process.Leak().Image)
 		{
-			if (process.Leak().Kind != ProcessHeader::kLibKind)
+			if (process.Leak().Kind != ProcessHeader::kShLibKind)
 			{
 				return -kErrorNoEntrypoint;
 			}
@@ -223,7 +223,7 @@ namespace NewOS
 		/// Create heap according to type of process.
 		if (process.Leak().Kind == ProcessHeader::kAppKind)
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
-		else if (process.Leak().Kind == ProcessHeader::kLibKind)
+		else if (process.Leak().Kind == ProcessHeader::kShLibKind)
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
 		else
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapDriver | kUserHeapRw);

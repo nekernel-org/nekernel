@@ -7,6 +7,12 @@
 #include <Builtins/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/KernelCheck.hpp>
+#include <ArchKit/ArchKit.hpp>
+
+#define kAPIC_ICR_Low	  0x300
+#define kAPIC_ICR_High	  0x310
+#define kAPIC_SIPI_Vector 0x00500
+#define kAPIC_EIPI_Vector 0x00400
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +68,7 @@ namespace NewOS::HAL
 	struct MadtProcessorLocalApic final
 	{
 		Char   AcpiProcessorId;
-		Char   Reserved;
+		Char   ApicId;
 		UInt32 Flags;
 	};
 
@@ -102,15 +108,66 @@ namespace NewOS::HAL
 
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	void hal_system_get_cores(voidPtr rsdPtr)
+	/// @brief Send start IPI for CPU.
+	/// @param apicId
+	/// @param vector
+	/// @param targetAddress
+	/// @return
+	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
+	{
+		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
+		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
+	}
+
+	/// @brief Send end IPI for CPU.
+	/// @param apicId
+	/// @param vector
+	/// @param targetAddress
+	/// @return
+	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
+	{
+		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
+		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
+	}
+
+	Void hal_system_get_cores(voidPtr rsdPtr)
 	{
 		auto acpi = ACPIFactoryInterface(rsdPtr);
 		kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 
-		if (kApicMadt)
+		if (kApicMadt != nullptr)
 		{
-			kcout << "New OS: APIC is present...\r";
-			kApicInfoBlock = (MadtType*)kApicMadt;
+			auto madt = (SDT*)kApicMadt;
+
+			const UInt8* madt_end  = (const UInt8*)madt + madt->Length;
+			const UInt8* entry_ptr = (const UInt8*)(madt + 1);
+
+			while (entry_ptr < madt_end)
+			{
+				const MadtType::MadtAddress* entry_header = (const MadtType::MadtAddress*)entry_ptr;
+
+				switch (entry_header->Flags)
+				{
+				case 0: {
+					const MadtProcessorLocalApic* local_apic = (const MadtProcessorLocalApic*)entry_ptr;
+					if (local_apic->Flags & 1)
+					{
+						// Processor is enabled
+						kcout << "Processor ID: %d, APIC ID: %d\n"
+							  << number(local_apic->AcpiProcessorId) << number(local_apic->ApicId);
+					}
+					break;
+				}
+				default:
+					break;
+				}
+
+				entry_ptr += entry_header->RecordLen;
+			}
+
+			while (true)
+			{
+			}
 		}
 		else
 		{

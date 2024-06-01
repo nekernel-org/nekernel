@@ -7,6 +7,8 @@
 #include <Builtins/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/String.hpp>
+#include <ArchKit/ArchKit.hpp>
+#include <KernelKit/KernelHeap.hpp>
 
 namespace NewOS
 {
@@ -73,28 +75,37 @@ namespace NewOS
 			return ErrorOr<voidPtr>{-4};
 		}
 
-		SDT* xsdt = (SDT*)(rsdPtr->XsdtAddress >> (rsdPtr->XsdtAddress & 0xFFF));
+		/// FIXME
+		RSDT* xsdt = (RSDT*)rsdPtr->XsdtAddress;
 
-		SizeT num = -(xsdt->Length - sizeof(SDT)) / 8;
+		if (NewOS::HAL::ke_map_address((PDE*)hal_read_cr3(), rsdPtr->XsdtAddress, (UIntPtr)xsdt, NewOS::HAL::eFlagsRw))
+			return ErrorOr<voidPtr>{-5};
+
+		Int64 num = (xsdt->Length - sizeof(SDT)) / sizeof(UInt64);
+
+		if (num < 1)
+		{
+			return ErrorOr<voidPtr>{-6};
+		}
 
 		this->fEntries = num;
 
-		kcout << "ACPI: Number of entries: " << number(num) << endl;
+		kcout << "ACPI: Number of entries: " << number(this->fEntries) << endl;
 		kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
 
-		constexpr short ACPI_SIGNATURE_LENGTH = 4;
+		const short cAcpiSignatureLength = 4;
 
 		for (Size index = 0; index < this->fEntries; ++index)
 		{
-			SDT& sdt = xsdt[index];
+			SDT* sdt = (SDT*)(xsdt->AddressArr[index]);
 
-			for (short signature_index = 0; signature_index < ACPI_SIGNATURE_LENGTH; ++signature_index)
+			for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index)
 			{
-				if (sdt.Signature[signature_index] != signature[signature_index])
+				if (sdt->Signature[signature_index] != signature[signature_index])
 					break;
 
-				if (signature_index == 4)
-					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(&sdt));
+				if (signature_index == (cAcpiSignatureLength - 1))
+					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(sdt));
 			}
 		}
 

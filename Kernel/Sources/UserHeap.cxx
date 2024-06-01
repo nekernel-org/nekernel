@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/PageManager.hpp>
 

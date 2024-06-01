@@ -17,6 +17,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Utils.hpp>
 #include <FirmwareKit/Handover.hxx>
+#include <HALKit/AMD64/HalPageAlloc.hpp>
 
 #ifdef kCPUBackendName
 #undef kCPUBackendName
@@ -53,6 +54,68 @@ namespace NewOS
 
 namespace NewOS::HAL
 {
+
+	enum
+	{
+		eFlagsUser,
+		eFlagsRw,
+		eFlagsExecDisable
+	};
+
+	/// @brief Map address to PDE.
+	/// @param pde a valid page directory.
+	/// @param phys_addr a valid phyiscal address.
+	/// @param virt_addr a valid virtual address.
+	/// @param flags the flags to put on the page.
+	inline Int32 ke_map_address(PDE* pde, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
+	{
+		UInt16 pml4_index = (virt_addr >> 39) & 0x1FF;
+
+		if (!pde->Pte[pml4_index].Present)
+		{
+			pde->Pte[pml4_index].Present = true;
+			kcout << "PM: It is present now.\r";
+		}
+		else
+		{
+			kcout << "PM: It is already present.\r";
+            kcout << "Address? " << hex_number(pde->Pte[pml4_index].PhysicalAddress) << endl;
+            kcout << "User? " << (pde->Pte[pml4_index].User ? "yes" : "no") << "\r";
+            kcout << "RW? " << (pde->Pte[pml4_index].Rw ? "yes" : "no") << "\r";
+
+            return 1;
+		}
+
+		pde->Pte[pml4_index].PhysicalAddress = phys_addr;
+		pde->Pte[pml4_index].Rw				 = flags & eFlagsRw;
+		pde->Pte[pml4_index].User			 = flags & eFlagsUser;
+		pde->Pte[pml4_index].ExecDisable	 = flags & eFlagsExecDisable;
+
+        return 0;
+	}
+
+	/// @brief Map address to PDE.
+	/// @param pde
+	/// @param phys_addr
+	/// @param virt_addr
+	/// @param flags
+	inline void ke_unmap_address(PDE* pde, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
+	{
+		UInt16 pml4_index = (virt_addr >> 39) & 0x1FF;
+		UInt16 pdpt_index = (virt_addr >> 30) & 0x1FF;
+		UInt16 pd_index	  = (virt_addr >> 21) & 0x1FF;
+		UInt16 pt_index	  = (virt_addr >> 12) & 0x1FF;
+
+		if (pde->Pte[pml4_index].Present)
+		{
+			pde->Pte[pml4_index].Present		 = false;
+			pde->Pte[pml4_index].PhysicalAddress = 0;
+			pde->Pte[pml4_index].Rw				 = 0;
+			pde->Pte[pml4_index].User			 = 0;
+			pde->Pte[pml4_index].ExecDisable	 = 0;
+		}
+	}
+
 	EXTERN_C UChar	In8(UInt16 port);
 	EXTERN_C UShort In16(UInt16 port);
 	EXTERN_C UInt	In32(UInt16 port);
@@ -162,6 +225,8 @@ namespace NewOS::HAL
 	};
 
 	Void hal_system_get_cores(VoidPtr rsdPtr);
+	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
+	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 
 	/// @brief Processor specific structures.
 	namespace Detail

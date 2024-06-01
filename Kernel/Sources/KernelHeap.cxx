@@ -38,7 +38,10 @@ namespace NewOS
 			SizeT fTargetPtrSize;
 			/// @brief 64-bit target pointer.
 			UIntPtr fTargetPtr;
-			UInt8	fPadding[kKernelHeapHeaderPaddingSz];
+			/// @brief Is this a page pointer?
+			Boolean fPagePtr;
+			/// @brief Padding bytes for header.
+			UInt8 fPadding[kKernelHeapHeaderPaddingSz];
 		};
 
 		typedef HeapInformationBlock* HeapInformationBlockPtr;
@@ -64,11 +67,33 @@ namespace NewOS
 		heapInfo->fMagic		 = kKernelHeapMagic;
 		heapInfo->fCRC32		 = 0; // dont fill it for now.
 		heapInfo->fTargetPtr	 = wrapper.VirtualAddress();
+		heapInfo->fPagePtr		 = 0;
 
 		++kHeapCount;
 
 		return reinterpret_cast<VoidPtr>(wrapper.VirtualAddress() +
 										 sizeof(Detail::HeapInformationBlock));
+	}
+
+	/// @brief Makes a page heap.
+	/// @param heapPtr 
+	/// @return 
+	Int32 ke_make_ke_page(VoidPtr heapPtr)
+	{
+		if (kHeapCount < 1)
+			return -kErrorInternal;
+		if (((IntPtr)heapPtr - sizeof(Detail::HeapInformationBlock)) <= 0)
+			return -kErrorInternal;
+		if (((IntPtr)heapPtr - kBadPtr) < 0)
+			return -kErrorInternal;
+
+		Detail::HeapInformationBlockPtr virtualAddress =
+			reinterpret_cast<Detail::HeapInformationBlockPtr>(
+				(UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
+
+		virtualAddress->fPagePtr = 1;
+
+		return 0;
 	}
 
 	/// @brief Declare pointer as free.

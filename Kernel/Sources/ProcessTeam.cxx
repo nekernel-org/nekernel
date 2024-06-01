@@ -9,7 +9,7 @@
 /// @brief Process teams implementation.
 /***********************************************************************************/
 
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 
 namespace NewOS
 {

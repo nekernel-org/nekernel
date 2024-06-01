@@ -10,7 +10,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/PEF.hpp>
 #include <KernelKit/PEFSharedObject.hxx>
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
 #include <NewKit/Defines.hpp>
 
