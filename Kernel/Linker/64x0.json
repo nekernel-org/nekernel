@@ -1,6 +1,6 @@
 {
   "executable_type": "kernel",
-  "output_name": "NewOSKrnl.exe",
+  "output_name": "newoskrnl.exe",
   "start_proc": "__ImageStart",
   "format": "PEF"
 }

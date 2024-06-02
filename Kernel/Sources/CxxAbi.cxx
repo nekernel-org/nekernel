@@ -14,7 +14,7 @@ uarch_t __atexit_func_count;
 
 extern "C" void __cxa_pure_virtual()
 {
-	NewOS::kcout << "New OS: C++ placeholder method.\n";
+	NewOS::kcout << "newoskrnl: C++ placeholder method.\n";
 }
 
 extern "C" void ___chkstk_ms()

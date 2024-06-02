@@ -57,13 +57,13 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
 	if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk)
 	{
-		mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r");
+		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Protocol").Write(L"\r");
 		this->mErrorCode = kNotSupported;
 	}
 
 	if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk)
 	{
-		mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Protocol").Write(L"\r");
+		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Protocol").Write(L"\r");
 		this->mErrorCode = kNotSupported;
 		return;
 	}
@@ -72,7 +72,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
 	if (efp->OpenVolume(efp, &rootFs) != kEfiOk)
 	{
-		mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Volume").Write(L"\r");
+		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Volume").Write(L"\r");
 		this->mErrorCode = kNotSupported;
 		return;
 	}
@@ -82,7 +82,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 	if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
 		kEfiOk)
 	{
-		mWriter.Write(L"New Boot: Fetch-Protocol: No-Such-Path: ")
+		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Path: ")
 			.Write(mPath)
 			.Write(L"\r");
 		this->mErrorCode = kNotSupported;

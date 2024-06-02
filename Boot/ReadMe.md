@@ -1,4 +1,4 @@
-# NewBoot
+# newosldr
 
 You need:
 

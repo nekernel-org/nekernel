@@ -113,7 +113,7 @@ namespace NewOS
 				return &mD;
 			default: {
 				DbgLastError() = kErrorNoSuchDisk;
-				kcout << "New OS: No such disk.\n";
+				kcout << "newoskrnl: No such disk.\n";
 
 				break;
 			}

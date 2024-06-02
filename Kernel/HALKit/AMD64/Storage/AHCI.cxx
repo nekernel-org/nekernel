@@ -43,7 +43,7 @@ NewOS::Boolean drv_std_init(NewOS::UInt16& PortsImplemented)
 			iterator[devIndex].Leak().EnableMmio();	 /// enable the memory i/o for this ahci device.
 			kAhciDevice = iterator[devIndex].Leak(); /// and then leak the reference.
 
-			kcout << "New Kernel: [PCI] Found AHCI controller.\r";
+			kcout << "newoskrnl: [PCI] Found AHCI controller.\r";
 
 			return true;
 		}

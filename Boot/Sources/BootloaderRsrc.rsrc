@@ -13,10 +13,10 @@ BEGIN
       VALUE "CompanyName", "SoftwareLabs"
       VALUE "FileDescription", "New OS multi-platform bootloader."
       VALUE "FileVersion", BOOTLOADER_VERSION
-      VALUE "InternalName", "NewBoot"
+      VALUE "InternalName", "newosldr"
       VALUE "LegalCopyright", "Copyright SoftwareLabs, all rights reserved."
-      VALUE "OriginalFilename", "NewOSLdr.exe"
-      VALUE "ProductName", "NewBoot"
+      VALUE "OriginalFilename", "newosldr.exe"
+      VALUE "ProductName", "newosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION
     END
   END

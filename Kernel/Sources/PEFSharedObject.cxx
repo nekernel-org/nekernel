@@ -102,6 +102,5 @@ EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool* successful)
 /// @param
 EXTERN_C void __mh_purecall(void)
 {
-	ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
-	return;
+	kcout << "newoskrnl: unimplemented symbol!\r";
 }

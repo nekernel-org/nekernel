@@ -73,11 +73,11 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 
 			drv->fInput(&drv->fPacket);
 
-			kcout << "New OS: Next-Fork: " << hex_number(curFork.NextSibling) << endl;
+			kcout << "newoskrnl: Next-Fork: " << hex_number(curFork.NextSibling) << endl;
 
 			if (curFork.Flags == kNewFSFlagCreated)
 			{
-				kcout << "New OS: Fork already exists.\r";
+				kcout << "newoskrnl: Fork already exists.\r";
 
 				/// sanity check.
 				if (StringBuilder::Equals(curFork.ForkName, theFork.ForkName) &&
@@ -126,10 +126,10 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 		drv->fOutput(&drv->fPacket);
 
 		/// log what we have now.
-		kcout << "New OS: Wrote fork data at: " << hex_number(theFork.DataOffset)
+		kcout << "newoskrnl: Wrote fork data at: " << hex_number(theFork.DataOffset)
 			  << endl;
 
-		kcout << "New OS: Wrote fork at: " << hex_number(lba) << endl;
+		kcout << "newoskrnl: Wrote fork at: " << hex_number(lba) << endl;
 
 		return &theFork;
 	}
@@ -372,9 +372,9 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char*  name,
 
 			drive->fOutput(&drive->fPacket);
 
-			kcout << "New OS: Create new catalog, status: "
+			kcout << "newoskrnl: Create new catalog, status: "
 				  << hex_number(catalogChild->Flags) << endl;
-			kcout << "New OS: Create new catalog, status: " << catalogChild->Name
+			kcout << "newoskrnl: Create new catalog, status: " << catalogChild->Name
 				  << endl;
 
 			drive->fPacket.fPacketContent = sectorBufPartBlock;
@@ -449,7 +449,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 			partBlock->Version = kNewFSVersionInteger;
 
-			const auto cUntitledHD = "New OS HD\0";
+			const auto cUntitledHD = "newoskrnl HD\0";
 
 			rt_copy_memory((VoidPtr)kNewFSIdent, (VoidPtr)partBlock->Ident,
 						   kNewFSIdentLen);
@@ -475,14 +475,14 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 			drive->fOutput(&drive->fPacket);
 
-			kcout << "Drive-Kind: " << drive->fDriveKind() << endl;
+			kcout << "newoskrnl: drive kind: " << drive->fDriveKind() << endl;
 
-			kcout << "Partition-Name: " << partBlock->PartitionName << endl;
-			kcout << "Start-Catalog: " << hex_number(partBlock->StartCatalog) << endl;
-			kcout << "Catalog-Count: " << hex_number(partBlock->CatalogCount) << endl;
-			kcout << "Free-Catalog: " << hex_number(partBlock->FreeCatalog) << endl;
-			kcout << "Free-Sectors: " << hex_number(partBlock->FreeSectors) << endl;
-			kcout << "Sector-Size: " << hex_number(partBlock->SectorSize) << endl;
+			kcout << "newoskrnl: partition name: " << partBlock->PartitionName << endl;
+			kcout << "newoskrnl: start: " << hex_number(partBlock->StartCatalog) << endl;
+			kcout << "newoskrnl: number of catalogs: " << hex_number(partBlock->CatalogCount) << endl;
+			kcout << "newoskrnl: free catalog: " << hex_number(partBlock->FreeCatalog) << endl;
+			kcout << "newoskrnl: free sectors: " << hex_number(partBlock->FreeSectors) << endl;
+			kcout << "newoskrnl: sector size: " << hex_number(partBlock->SectorSize) << endl;
 
 			/// write the root catalog.
 			this->CreateCatalog(kNewFSRoot, 0, kNewFSCatalogKindDir);
@@ -490,7 +490,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 			return true;
 		}
 
-		kcout << "New OS: PartitionBlock already exists.\r";
+		kcout << "newoskrnl: PartitionBlock already exists.\r";
 
 		/// return success as well, do not ignore that partition.
 		return true;
@@ -531,14 +531,14 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 
 		drive->fInput(&drive->fPacket);
 
-		kcout << "Fork-Name: " << forkData->ForkName << endl;
+		kcout << "newoskrnl: forkName: " << forkData->ForkName << endl;
 
 		/// sanity check the fork.
 		if (forkData->DataOffset <= kNewFSCatalogStartAddress)
 		{
 			DbgLastError() = kErrorDiskIsCorrupted;
 
-			kcout << "New OS: Invalid fork offset.\r";
+			kcout << "newoskrnl: Invalid fork offset.\r";
 
 			delete forkData;
 			return false;
@@ -552,7 +552,8 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 			drive->fPacket.fPacketContent = data;
 			drive->fPacket.fPacketSize	  = sizeOfData;
 			drive->fPacket.fLba			  = forkData->DataOffset;
-			kcout << "Fork-Offset: " << hex_number(forkData->DataOffset) << endl;
+
+			kcout << "newoskrnl: data offset: " << hex_number(forkData->DataOffset) << endl;
 
 			drive->fOutput(&drive->fPacket);
 
@@ -563,10 +564,12 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 				 catalog == nullptr)
 		{
 			delete catalog;
+
 			drive->fPacket.fPacketContent = data;
 			drive->fPacket.fPacketSize	  = sizeOfData;
 			drive->fPacket.fLba			  = forkData->DataOffset;
-			kcout << "Fork-Offset: " << hex_number(forkData->DataOffset) << endl;
+
+			kcout << "newoskrnl: data offset: " << hex_number(forkData->DataOffset) << endl;
 
 			drive->fOutput(&drive->fPacket);
 
@@ -670,7 +673,7 @@ _NewFSSearchThroughCatalogList:
 			NewCatalog* catalogPtr = new NewCatalog();
 			rt_copy_memory(catalog, catalogPtr, sizeof(NewCatalog));
 
-			kcout << "New OS: Found catalog at: " << hex_number(startCatalogList) << endl;
+			kcout << "newoskrnl: found catalog at: " << hex_number(startCatalogList) << endl;
 
 			outLba = startCatalogList;
 			delete[] sectorBuf;
@@ -809,8 +812,8 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
 	Lba	 dataForkLba  = catalog->DataFork;
 	Size dataForkSize = catalog->DataForkSize;
 
-	kcout << "Found-Catalog: " << catalog->Name
-		  << ", Data-Fork: " << hex_number(dataForkLba) << endl;
+	kcout << "newoskrnl: catalog " << catalog->Name
+		  << ", fork: " << hex_number(dataForkLba) << endl;
 
 	Char* sectorBuf = new Char[sizeof(NewFork)];
 	auto  drive		= sMountpointInterface.GetAddressOf(this->fDriveIndex);
@@ -830,7 +833,7 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
 
 		forkData = (NewFork*)sectorBuf;
 
-		kcout << "Fork-Name: " << forkData->ForkName << endl;
+		kcout << "newoskrnl: name: " << forkData->ForkName << endl;
 
 		if (forkData->DataOffset <= kNewFSCatalogStartAddress)
 		{
@@ -930,11 +933,11 @@ namespace NewOS::Detail
 
 		if (!StringBuilder::Equals(partBlock->Ident, kNewFSIdent))
 		{
-			kcout << "New OS: New FS Partition is corrupt.\r";
+			kcout << "newoskrnl: New FS Partition is corrupt.\r";
 			return false;
 		}
 
-		kcout << "New OS: Read partition: " << partBlock->PartitionName << ", with success!\r";
+		kcout << "newoskrnl: Read partition: " << partBlock->PartitionName << ", with success!\r";
 
 		return true;
 	}

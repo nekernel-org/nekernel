@@ -37,7 +37,7 @@ LDFLAGS		= -e __ImageStart --subsystem=17
 LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
-KERNEL		= NewOSKrnl.exe
+KERNEL		= newoskrnl.exe
 
 .PHONY: error
 error:

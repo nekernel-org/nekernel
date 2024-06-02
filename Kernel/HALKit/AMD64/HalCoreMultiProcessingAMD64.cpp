@@ -146,12 +146,13 @@ namespace NewOS::HAL
                 if (madt->MadtRecords[i].Flags == 0x01) // if local apic.
                 {
                     // then register as a core for scheduler.
+                    kcout << "newoskrnl: register core as scheduler thread.\r";
                 }
             }
 		}
 		else
 		{
-			kcout << "New OS: APIC is not present! it is a vital component.\r";
+			kcout << "newoskrnl: APIC is not present! it is a vital component.\r";
 			ke_stop(RUNTIME_CHECK_FAILED);
 		}
 	}

@@ -15,7 +15,7 @@ BEGIN
       VALUE "FileVersion", KERNEL_VERSION
       VALUE "InternalName", "NeXUS"
       VALUE "LegalCopyright", "SoftwareLabs"
-      VALUE "OriginalFilename", "NewOSKrnl.exe"
+      VALUE "OriginalFilename", "newoskrnl.exe"
       VALUE "ProductName", "NewOSKrnl"
       VALUE "ProductVersion", KERNEL_VERSION
     END
