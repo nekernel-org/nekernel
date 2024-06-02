@@ -32,6 +32,8 @@
 
 #endif
 
+#include <Headers/Alert.h>
+
 struct ApplicationInterface;
 struct GUID;
 
@@ -231,5 +233,3 @@ typedef CharacterTypeUTF8 StrType255[255];
 #ifndef kInvalidRef
 #define kInvalidRef 0
 #endif
-
-#include <Headers/Alert.h>

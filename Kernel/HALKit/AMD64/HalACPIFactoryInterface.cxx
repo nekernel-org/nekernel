@@ -63,17 +63,15 @@ namespace NewOS
 		MUST_PASS(fRsdp);
 
 		if (!signature)
-			return ErrorOr<voidPtr>{-2};
+			return ErrorOr<voidPtr>{-1};
 
 		if (*signature == 0)
-			return ErrorOr<voidPtr>{-3};
+			return ErrorOr<voidPtr>{-1};
 
 		RSDP* rsdPtr = reinterpret_cast<RSDP*>(this->fRsdp);
 
 		if (rsdPtr->Revision <= 1)
-		{
-			return ErrorOr<voidPtr>{-4};
-		}
+			return ErrorOr<voidPtr>{-1};
 
 		/// FIXME
 		RSDT* xsdt = (RSDT*)(rsdPtr->RsdtAddress);
@@ -82,15 +80,16 @@ namespace NewOS
 
 		if (num < 1)
 		{
-			kcout << "ACPI: No entries." << endl;
-			return ErrorOr<voidPtr>{-6};
+			/// stop here, we should have entries...
+			ke_stop(RUNTIME_CHECK_ACPI);
+			return ErrorOr<voidPtr>{-1};
 		}
 
 		this->fEntries = num;
 
 		kcout << "ACPI: Number of entries: " << number(this->fEntries) << endl;
 		kcout << "ACPI: Revision: " << number(xsdt->Revision) << endl;
-		kcout << "ACPI: XSDT: " << xsdt->Signature << endl;
+		kcout << "ACPI: Signature: " << xsdt->Signature << endl;
 		kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
 
 		const short cAcpiSignatureLength = 4;
@@ -111,7 +110,7 @@ namespace NewOS
 			}
 		}
 
-		return ErrorOr<voidPtr>{nullptr};
+		return ErrorOr<voidPtr>{-1};
 	}
 
 	/***

@@ -9,7 +9,7 @@
 #include <Headers/Defines.h>
 
 ///////////////////////////////////////////////////////////////////////
-/// Random functions                                                ///
+/// Random number generators functions                              ///
 ///////////////////////////////////////////////////////////////////////
 
 /// @brief Number generator helper.
