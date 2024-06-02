@@ -73,7 +73,6 @@ namespace NewOS
 		if (rsdPtr->Revision <= 1)
 			return ErrorOr<voidPtr>{-1};
 
-		/// FIXME
 		RSDT* xsdt = (RSDT*)(rsdPtr->RsdtAddress);
 
 		Int64 num = (xsdt->Length - sizeof(SDT)) / sizeof(UInt32);

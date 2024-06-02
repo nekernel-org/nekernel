@@ -14,7 +14,7 @@
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/MutableArray.hpp>
 
-#define kSchedMinMicroTime AffinityKind::kHartStandard
+#define kSchedMinMicroTime (AffinityKind::kHartStandard)
 #define kSchedInvalidPID   (-1)
 
 #define kSchedProcessLimitPerTeam (100U)
