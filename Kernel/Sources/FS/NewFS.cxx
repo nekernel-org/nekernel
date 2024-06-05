@@ -46,7 +46,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 		Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
 
-		kcout << "Fork Lba: " << hex_number(lba) << endl;
+		kcout << "newoskrnl: fork lba: " << hex_number(lba) << endl;
 
 		if (lba <= kNewFSCatalogStartAddress)
 			return nullptr;
