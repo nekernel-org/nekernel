@@ -13,10 +13,10 @@ k_hdr_mag:
 	.ascii "LX"
 k_hdr_name:
 	// it has to match ten bytes.
-	.asciz "New OS\0\0\0\0"
+	.asciz "newosldr\0\0"
 k_hdr_ver:
 	.word 0x104
 k_hdr_proc:
-	.long __bootloader_start
+	.long bootloader_start
 
 /* end */

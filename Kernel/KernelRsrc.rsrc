@@ -11,12 +11,12 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "SoftwareLabs"
-      VALUE "FileDescription", "New OS multiplatform kernel."
+      VALUE "FileDescription", "NuX/OS kernel."
       VALUE "FileVersion", KERNEL_VERSION
-      VALUE "InternalName", "NewKernel"
+      VALUE "InternalName", "NeXUS"
       VALUE "LegalCopyright", "SoftwareLabs"
-      VALUE "OriginalFilename", "NewOSKrnl.exe"
-      VALUE "ProductName", "NewKernel"
+      VALUE "OriginalFilename", "newoskrnl.exe"
+      VALUE "ProductName", "NewOSKrnl"
       VALUE "ProductVersion", KERNEL_VERSION
     END
   END

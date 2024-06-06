@@ -14,8 +14,10 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-#define kDriveInvalidID -1
-#define kDriveNameLen	32
+#define kDriveManagerCount 	(4U)
+
+#define kDriveInvalidID 	(-1)
+#define kDriveNameLen		(32)
 
 namespace NewOS
 {
@@ -111,7 +113,7 @@ namespace NewOS
 				return &mD;
 			default: {
 				DbgLastError() = kErrorNoSuchDisk;
-				kcout << "New OS: No such disk.\n";
+				kcout << "newoskrnl: No such disk.\n";
 
 				break;
 			}

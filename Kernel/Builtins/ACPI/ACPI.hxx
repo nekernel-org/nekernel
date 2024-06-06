@@ -15,7 +15,7 @@
 
 namespace NewOS
 {
-	class SDT
+	class PACKED SDT
 	{
 	public:
 		Char   Signature[4];
@@ -29,7 +29,7 @@ namespace NewOS
 		UInt32 CreatorRevision;
 	};
 
-	class RSDP : public SDT
+	class PACKED RSDP : public SDT
 	{
 	public:
 		UInt32	RsdtAddress;
@@ -38,7 +38,7 @@ namespace NewOS
 		UInt8	Reserved0[3];
 	};
 
-	class ConfigHeader
+	class PACKED ConfigHeader
 	{
 	public:
 		UInt64 BaseAddress;
@@ -59,7 +59,7 @@ namespace NewOS
 		Invalid		 = 0xFF,
 	};
 
-	class Address
+	class PACKED Address
 	{
 	public:
 		AddressSpace AddressSpaceId;
@@ -67,6 +67,21 @@ namespace NewOS
 		UInt8		 RegisterBitOffset;
 		UInt8		 Reserved;
 		UIntPtr		 Address;
+	};
+
+	class PACKED RSDT
+	{
+	public:
+		Char   Signature[4];
+		UInt32 Length;
+		UInt8  Revision;
+		Char   Checksum;
+		Char   OemId[6];
+		Char   OemTableId[8];
+		UInt32 OemRev;
+		UInt32 CreatorID;
+		UInt32 CreatorRevision;
+		UInt32 AddressArr[];
 	};
 } // namespace NewOS
 

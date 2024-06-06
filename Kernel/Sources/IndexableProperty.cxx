@@ -50,7 +50,7 @@ namespace NewOS
 				indexer.AddFlag(kIndexerClaimed);
 				rt_copy_memory((VoidPtr)indexer.LeakProperty().Path, (VoidPtr)filename, filenameLen);
 
-				kcout << "New OS: FSKit: index new file: " << filename << endl;
+				kcout << "newoskrnl: FSKit: index new file: " << filename << endl;
 			}
 		}
 	} // namespace Indexer

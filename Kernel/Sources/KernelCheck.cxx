@@ -98,8 +98,8 @@ namespace NewOS
 		if (!expr)
 		{
 #ifdef __DEBUG__
-			kcout << "New Kernel: File: " << file << "\r";
-			kcout << "New Kernel: Line: " << line << "\r";
+			kcout << "newoskrnl: File: " << file << "\r";
+			kcout << "newoskrnl: Line: " << line << "\r";
 
 #endif // __DEBUG__
 

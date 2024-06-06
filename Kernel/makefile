@@ -37,7 +37,7 @@ LDFLAGS		= -e __ImageStart --subsystem=17
 LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
-KERNEL		= NewOSKrnl.exe
+KERNEL		= newoskrnl.exe
 
 .PHONY: error
 error:
@@ -69,7 +69,7 @@ link-amd64-epm:
 
 .PHONY: all
 all: newos-amd64-epm link-amd64-epm
-	@echo "NewKernel => OK."
+	@echo "NewOSKrnl => OK."
 
 .PHONY: help
 help:

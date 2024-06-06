@@ -16,7 +16,7 @@
 #include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEF.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
 #include <NewKit/KernelCheck.hpp>
@@ -182,31 +182,31 @@ namespace NewOS::Detail
 	/// @brief System loader entrypoint.
 	/// @param void no parameters.
 	/// @return void no return value.
-	STATIC NewOS::Void AppSystemLoader(NewOS::Void)
+	STATIC NewOS::Void AppSystem(NewOS::Void)
 	{
-		NewOS::PEFLoader coreGraphicsShLib("/System/WindowServer");
+		NewOS::PEFLoader wndServer("/System/WindowServer");
 
-		if (!coreGraphicsShLib.IsLoaded())
+		if (!wndServer.IsLoaded())
 		{
 			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		NewOS::Utils::execute_from_image(coreGraphicsShLib,
-										 NewOS::ProcessHeader::kLibKind);
-
-		NewOS::PEFLoader logonService("/System/Login");
-
-		if (!logonService.IsLoaded())
-		{
-			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
-		}
-
-		NewOS::Utils::execute_from_image(logonService,
+		NewOS::Utils::execute_from_image(wndServer,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::kcout << "SystemLoader: Exiting process, we're done initializing stuff...";
+		NewOS::PEFLoader launchServer("/System/Launcher");
 
-		NewOS::ProcessScheduler::Shared().Leak().GetCurrent().Leak().Exit(0);
+		if (!launchServer.IsLoaded())
+		{
+			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
+		}
+
+		NewOS::Utils::execute_from_image(launchServer,
+										 NewOS::ProcessHeader::kAppKind);
+
+		NewOS::kcout << "System: done, sleeping...";
+
+		while (true) {}
 	}
 } // namespace NewOS::Detail
 
@@ -218,8 +218,8 @@ EXTERN_C NewOS::Void AppMain(NewOS::Void)
 	/// Now run kernel loop, until no process are running.
 	NewOS::Detail::FilesystemWizard wizard; // automatic.
 
-	auto cLoaderName = "SystemLoader";
-	NewOS::execute_from_image(NewOS::Detail::AppSystemLoader, cLoaderName);
+	auto cLoaderName = "System";
+	NewOS::execute_from_image(NewOS::Detail::AppSystem, cLoaderName);
 
-	while (NewOS::ProcessScheduler::Shared().Leak().Run() > 0) {}
+	while (NewOS::ProcessScheduler::The().Leak().Run() > 0) {}
 }

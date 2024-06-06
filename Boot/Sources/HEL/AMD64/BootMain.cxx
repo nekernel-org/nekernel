@@ -68,8 +68,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	/// Splash screen stuff
 
-	writer.Write(L"SoftwareLabs (R) New Boot: ")
-		.Write(BVersionString::Shared());
+	writer.Write(L"SoftwareLabs (R) newosldr: ")
+		.Write(BVersionString::The());
 
 	writer.Write(L"\rNew Boot: Firmware Vendor: ")
 		.Write(SystemTable->FirmwareVendor)
@@ -99,7 +99,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
 			vendorTable[6] == 'R' && vendorTable[7] == ' ')
 		{
-			writer.Write(L"New Boot: Found ACPI RSD PTR!\r");
+			writer.Write(L"newosldr: Found ACPI RSD PTR!\r");
 			handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
 
 			break;

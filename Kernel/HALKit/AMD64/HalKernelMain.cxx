@@ -11,7 +11,7 @@
 #include <KernelKit/Framebuffer.hpp>
 #include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
 

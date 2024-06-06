@@ -141,7 +141,7 @@ typedef UInt8* BlobType;
 class BVersionString final
 {
 public:
-	static const CharacterTypeUTF16* Shared()
+	static const CharacterTypeUTF16* The()
 	{
 		return BOOTLOADER_VERSION;
 	}
@@ -284,7 +284,7 @@ private:
 			EFI::ThrowError(L"Developer-Error", L"This is caused by the developer of the bootloader.");
 		}
 
-		writer.Write((catalogKind->Kind == kNewFSCatalogKindFile) ? L"New Boot: Write-File: " : L"New Boot: Write-Directory: ").Write(blob->fFileName).Write(L"\r");
+		writer.Write((catalogKind->Kind == kNewFSCatalogKindFile) ? L"newosldr: Write-File: " : L"newosldr: Write-Directory: ").Write(blob->fFileName).Write(L"\r");
 
 		memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
 
@@ -360,7 +360,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		fDiskDev.Write(buf, sectorSz);
 
 		BTextWriter writer;
-		writer.Write(L"New Boot: Write-Partition: OK.\r");
+		writer.Write(L"newosldr: Write-Partition: OK.\r");
 
 		return true;
 	}

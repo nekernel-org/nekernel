@@ -18,6 +18,6 @@
 
 Status:
 
-NewBoot: Need to boot from EPM partition.
+newosldr: Need to boot from EPM partition.
 <br>
 NewKernel: New Filesystem in progress.

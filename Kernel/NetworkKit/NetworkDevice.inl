@@ -15,7 +15,7 @@ namespace NewOS
 								 void (*on_cleanup)(void))
 		: DeviceInterface<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup)
 	{
-		kcout << "New OS: NetworkDevice initialized.\r";
+		kcout << "newoskrnl: NetworkDevice initialized.\r";
 
 		MUST_PASS(out && in && on_cleanup);
 	}
@@ -24,7 +24,7 @@ namespace NewOS
 	{
 		MUST_PASS(fCleanup);
 
-		kcout << "New OS: NetworkDevice cleanup.\r";
+		kcout << "newoskrnl: NetworkDevice cleanup.\r";
 		if (fCleanup)
 			fCleanup();
 	}

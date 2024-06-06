@@ -26,8 +26,8 @@ BIOS=OVMF.fd
 IMG=epm.img
 IMG_2=epm-slave.img
 
-EMU_FLAGS=-net none -smp 4,sockets=1,cores=4,threads=1 -m 4G -M q35 \
-			-bios Sources/$(BIOS) -device piix3-ide,id=ide \
+EMU_FLAGS=-net none -smp 2 -m 4G -M q35 \
+			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
 			file=fat:rw:Sources/Root,index=2,format=raw -d int -hdd $(IMG_2)
@@ -50,8 +50,8 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel -I./ -c -nostdlib -fno-rtti -fno-exceptions \
 			-std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
 
-BOOT_LOADER=NewOSLdr.exe
-KERNEL=NewOSKrnl.exe
+BOOT_LOADER=newosldr.exe
+KERNEL=newoskrnl.exe
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -92,7 +92,7 @@ download-edk:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=NewOSLdr.exe NewOSKrnl.exe OVMF.fd
+EXECUTABLES=newosldr.exe newoskrnl.exe OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

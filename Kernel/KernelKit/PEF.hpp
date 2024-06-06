@@ -44,7 +44,7 @@ namespace NewOS
 	{
 		kPefSubArchAMD,
 		kPefSubArchIntel,
-		kPefSubArchARM,
+		kPefSubArchGeneric,
 		kPefSubArchIBM,
 	};
 

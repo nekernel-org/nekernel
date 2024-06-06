@@ -6,7 +6,7 @@
 
 #include <NewKit/Utils.hpp>
 #include <KernelKit/CodeManager.hpp>
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 
 namespace NewOS
 {
@@ -25,6 +25,6 @@ namespace NewOS
 
 		Ref<ProcessHeader> refProc = proc;
 
-		return ProcessScheduler::Shared().Leak().Add(refProc);
+		return ProcessScheduler::The().Leak().Add(refProc);
 	}
 } // namespace NewOS

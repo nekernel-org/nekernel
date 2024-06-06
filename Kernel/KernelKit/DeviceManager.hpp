@@ -21,8 +21,6 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Ref.hpp>
 
-#define kDriveManagerCount 4U
-
 // Last Rev
 // Wed, Apr  3, 2024  9:09:41 AM
 
@@ -70,7 +68,7 @@ namespace NewOS
 		}
 		bool operator!()
 		{
-			return !fOut && !fIn;
+			return !fOut || !fIn;
 		}
 
 	private:

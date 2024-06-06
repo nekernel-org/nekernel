@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessScheduler.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 
 using namespace NewOS;
 Void ProcessHeader::SetEntrypoint(UIntPtr& imageStart) noexcept

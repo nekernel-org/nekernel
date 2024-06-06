@@ -7,6 +7,12 @@
 #include <Builtins/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/KernelCheck.hpp>
+#include <ArchKit/ArchKit.hpp>
+
+#define kAPIC_ICR_Low	  0x300
+#define kAPIC_ICR_High	  0x310
+#define kAPIC_SIPI_Vector 0x00500
+#define kAPIC_EIPI_Vector 0x00400
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +68,7 @@ namespace NewOS::HAL
 	struct MadtProcessorLocalApic final
 	{
 		Char   AcpiProcessorId;
-		Char   Reserved;
+		Char   ApicId;
 		UInt32 Flags;
 	};
 
@@ -102,19 +108,51 @@ namespace NewOS::HAL
 
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	void hal_system_get_cores(voidPtr rsdPtr)
+	/// @brief Send start IPI for CPU.
+	/// @param apicId
+	/// @param vector
+	/// @param targetAddress
+	/// @return
+	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
+	{
+		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
+		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
+	}
+
+	/// @brief Send end IPI for CPU.
+	/// @param apicId
+	/// @param vector
+	/// @param targetAddress
+	/// @return
+	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
+	{
+		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
+		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
+	}
+
+	Void hal_system_get_cores(voidPtr rsdPtr)
 	{
 		auto acpi = ACPIFactoryInterface(rsdPtr);
 		kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 
-		if (kApicMadt)
+		if (kApicMadt != nullptr)
 		{
-			kcout << "New OS: APIC is present...\r";
-			kApicInfoBlock = (MadtType*)kApicMadt;
+			MadtType* madt = (MadtType*)kApicMadt;
+
+            constexpr auto cMaxProbableCores = 4;
+
+            for (SizeT i = 0; i < cMaxProbableCores; ++i)
+            {
+                if (madt->MadtRecords[i].Flags == 0x01) // if local apic.
+                {
+                    // then register as a core for scheduler.
+                    kcout << "newoskrnl: register core as scheduler thread.\r";
+                }
+            }
 		}
 		else
 		{
-			kcout << "New OS: APIC is not present! it is a vital component.\r";
+			kcout << "newoskrnl: APIC is not present! it is a vital component.\r";
 			ke_stop(RUNTIME_CHECK_FAILED);
 		}
 	}

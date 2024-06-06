@@ -7,6 +7,8 @@
 #include <Builtins/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/String.hpp>
+#include <ArchKit/ArchKit.hpp>
+#include <KernelKit/KernelHeap.hpp>
 
 namespace NewOS
 {
@@ -61,44 +63,53 @@ namespace NewOS
 		MUST_PASS(fRsdp);
 
 		if (!signature)
-			return ErrorOr<voidPtr>{-2};
+			return ErrorOr<voidPtr>{-1};
 
 		if (*signature == 0)
-			return ErrorOr<voidPtr>{-3};
+			return ErrorOr<voidPtr>{-1};
 
 		RSDP* rsdPtr = reinterpret_cast<RSDP*>(this->fRsdp);
 
 		if (rsdPtr->Revision <= 1)
+			return ErrorOr<voidPtr>{-1};
+
+		RSDT* xsdt = (RSDT*)(rsdPtr->RsdtAddress);
+
+		Int64 num = (xsdt->Length - sizeof(SDT)) / sizeof(UInt32);
+
+		if (num < 1)
 		{
-			return ErrorOr<voidPtr>{-4};
+			/// stop here, we should have entries...
+			ke_stop(RUNTIME_CHECK_ACPI);
+			return ErrorOr<voidPtr>{-1};
 		}
-
-		SDT* xsdt = (SDT*)(rsdPtr->XsdtAddress >> (rsdPtr->XsdtAddress & 0xFFF));
-
-		SizeT num = -(xsdt->Length - sizeof(SDT)) / 8;
 
 		this->fEntries = num;
 
-		kcout << "ACPI: Number of entries: " << number(num) << endl;
+		kcout << "ACPI: Number of entries: " << number(this->fEntries) << endl;
+		kcout << "ACPI: Revision: " << number(xsdt->Revision) << endl;
+		kcout << "ACPI: Signature: " << xsdt->Signature << endl;
 		kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
 
-		constexpr short ACPI_SIGNATURE_LENGTH = 4;
+		const short cAcpiSignatureLength = 4;
 
 		for (Size index = 0; index < this->fEntries; ++index)
 		{
-			SDT& sdt = xsdt[index];
+			SDT& sdt = *(SDT*)xsdt->AddressArr[index];
 
-			for (short signature_index = 0; signature_index < ACPI_SIGNATURE_LENGTH; ++signature_index)
+			kcout << "ACPI: Revision: " << number(sdt.CreatorID) << endl;
+
+			for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index)
 			{
 				if (sdt.Signature[signature_index] != signature[signature_index])
 					break;
 
-				if (signature_index == 4)
+				if (signature_index == (cAcpiSignatureLength - 1))
 					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(&sdt));
 			}
 		}
 
-		return ErrorOr<voidPtr>{nullptr};
+		return ErrorOr<voidPtr>{-1};
 	}
 
 	/***
