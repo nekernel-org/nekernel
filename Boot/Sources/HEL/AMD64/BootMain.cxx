@@ -71,7 +71,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	writer.Write(L"SoftwareLabs (R) newosldr: ")
 		.Write(BVersionString::The());
 
-	writer.Write(L"\rNew Boot: Firmware Vendor: ")
+	writer.Write(L"\rnewosldr: Firmware Vendor: ")
 		.Write(SystemTable->FirmwareVendor)
 		.Write(L"\r");
 

@@ -13,7 +13,7 @@ qtcsettings.cmake
 
 *.exec
 
-LOOK.CSS
+NvVars
 
 x86_64/
 
