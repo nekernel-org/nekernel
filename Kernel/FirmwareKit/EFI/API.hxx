@@ -21,7 +21,7 @@ class BTextWriter;
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBootFatal.rsrc>
 #include <BootKit/Vendor/Qr.hxx>
-#include <Builtins/Toolbox/Toolbox.hxx>
+#include <Builtins/GX/GX>
 #endif // ifdef __NEWBOOT__
 
 inline EfiSystemTable*	ST = nullptr;
@@ -89,13 +89,13 @@ Bascially frees everything we have in the EFI side.
 #endif // ifdef __DEBUG__
 
 #ifdef __NEWBOOT__
-		ToolboxInitRsrc();
+		GXInit();
 
-		ToolboxDrawRsrc(NewBootFatal, NEWBOOTFATAL_HEIGHT, NEWBOOTFATAL_WIDTH,
+		GXDrawImg(NewBootFatal, NEWBOOTFATAL_HEIGHT, NEWBOOTFATAL_WIDTH,
 						(kHandoverHeader->f_GOP.f_Width - NEWBOOTFATAL_WIDTH) / 2,
 						(kHandoverHeader->f_GOP.f_Height - NEWBOOTFATAL_HEIGHT) / 2);
 
-		ToolboxClearRsrc();
+		GXFini();
 
 		/// Show the QR code now.
 

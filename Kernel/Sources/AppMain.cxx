@@ -8,7 +8,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <Builtins/Toolbox/Toolbox.hxx>
+#include <Builtins/GX/GX>
 #include <CompilerKit/Detail.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>

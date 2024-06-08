@@ -6,7 +6,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
-#include <Builtins/Toolbox/Toolbox.hxx>
+#include <Builtins/GX/GX>
 #include <FirmwareKit/EFI.hxx>
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
@@ -22,6 +22,14 @@
 #define kMachineModel "NeWS HD"
 #endif // !kMachineModel
 
+#ifndef cExpectedWidth
+#define cExpectedWidth 436
+#endif
+
+#ifndef cExpectedHeight
+#define cExpectedHeight 644
+#endif
+
 /** Graphics related. */
 
 STATIC EfiGraphicsOutputProtocol* kGop	  = nullptr;
@@ -34,7 +42,7 @@ EXTERN_C Void hal_init_platform(HEL::HandoverInformationHeader* HIH);
 	@brief Finds and stores the GOP.
 */
 
-STATIC Void CheckAndFindFramebuffer() noexcept
+STATIC Void InitVideoFB() noexcept
 {
 	kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
 	kGop	 = nullptr;
@@ -42,6 +50,18 @@ STATIC Void CheckAndFindFramebuffer() noexcept
 	extern EfiBootServices* BS;
 
 	BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop);
+
+	for (size_t i = 0; i < kGop->Mode->MaxMode; ++i)
+	{
+		EfiGraphicsOutputProtocolModeInformation* infoPtr = nullptr;
+
+		if (infoPtr->HorizontalResolution == cExpectedWidth &&
+			infoPtr->VerticalResolution == cExpectedHeight)
+		{
+			kGop->SetMode(kGop, i);
+			break;
+		}
+	}
 
 	kStride = 4;
 }
@@ -62,7 +82,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 							  EfiSystemTable* SystemTable)
 {
 	InitEFI(SystemTable);	   ///! Init the EFI library.
-	CheckAndFindFramebuffer(); ///! Init the GOP.
+	InitVideoFB(); ///! Init the GOP.
 
 	BTextWriter writer;
 
@@ -123,18 +143,18 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	kHandoverHeader = handoverHdrPtr;
 
-	ToolboxInitRsrc();
+	GXInit();
 
-	ToolboxDrawZone(RGB(9d, 9d, 9d), handoverHdrPtr->f_GOP.f_Height,
+	GXDraw(RGB(9d, 9d, 9d), handoverHdrPtr->f_GOP.f_Height,
 					handoverHdrPtr->f_GOP.f_Width, 0, 0);
 
-	ToolboxClearRsrc();
+	GXFini();
 
-	ToolboxDrawRsrc(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
+	GXDrawImg(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
 					(handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
 					(handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
 
-	ToolboxClearRsrc();
+	GXFini();
 
 	BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 

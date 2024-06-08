@@ -14,6 +14,6 @@ Maintainers/Authors
 
 ACPIFactoryInterface: Amlal EL Mahrouss.
 AHCI: Amlal EL Mahrouss.
-Toolbox: Amlal EL Mahrouss.
+GX: Amlal EL Mahrouss.
 PS2: Amlal EL Mahrouss
 ATA: Amlal EL Mahrouss
