@@ -49,7 +49,7 @@ namespace NewOS::Detail
 
 				NewOS::FilesystemManagerInterface::Mount(fNewFS);
 
-				if (fNewFS->GetImpl())
+				if (fNewFS->GetParser())
 				{
 					constexpr auto cFolderInfo		  = "Metadata";
 					const auto	   cDirCount		  = 8;
@@ -59,7 +59,7 @@ namespace NewOS::Detail
 
 					for (NewOS::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
-						auto catalogDir = fNewFS->GetImpl()->GetCatalog(cDirStr[dirIndx]);
+						auto catalogDir = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
 
 						if (catalogDir)
 						{
@@ -67,7 +67,7 @@ namespace NewOS::Detail
 							continue;
 						}
 
-						catalogDir = fNewFS->GetImpl()->CreateCatalog(cDirStr[dirIndx], 0,
+						catalogDir = fNewFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
 																	  kNewFSCatalogKindDir);
 
 						NewFork theFork{0};
@@ -100,11 +100,11 @@ namespace NewOS::Detail
 
 						const NewOS::SizeT metadataSz = kNewFSSectorSz;
 
-						auto catalogSystem = fNewFS->GetImpl()->GetCatalog(cDirStr[dirIndx]);
+						auto catalogSystem = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
 
-						fNewFS->GetImpl()->CreateFork(catalogSystem, theFork);
+						fNewFS->GetParser()->CreateFork(catalogSystem, theFork);
 
-						fNewFS->GetImpl()->WriteCatalog(
+						fNewFS->GetParser()->WriteCatalog(
 							catalogSystem, (NewOS::VoidPtr)(metadataFolder.CData()),
 							metadataSz, cFolderInfo);
 
@@ -113,13 +113,13 @@ namespace NewOS::Detail
 				}
 
 				NewCatalog* catalogDisk =
-					this->fNewFS->GetImpl()->GetCatalog("/Mount/This Disk");
+					this->fNewFS->GetParser()->GetCatalog("/Mount/This Disk");
 
 				const NewOS::Char* cSrcName = "DiskInfo";
 
 				if (catalogDisk)
 				{
-					auto bufferInfoDisk = (NewOS::Char*)this->fNewFS->GetImpl()->ReadCatalog(catalogDisk, kNewFSSectorSz, cSrcName);
+					auto bufferInfoDisk = (NewOS::Char*)this->fNewFS->GetParser()->ReadCatalog(catalogDisk, kNewFSSectorSz, cSrcName);
 					NewOS::kcout << bufferInfoDisk << NewOS::end_line();
 
 					delete bufferInfoDisk;
@@ -155,8 +155,8 @@ namespace NewOS::Detail
 					theDiskFork.ResourceKind = NewOS::kNewFSRsrcForkKind;
 					theDiskFork.Kind		 = NewOS::kNewFSDataForkKind;
 
-					fNewFS->GetImpl()->CreateFork(catalogDisk, theDiskFork);
-					fNewFS->GetImpl()->WriteCatalog(catalogDisk,
+					fNewFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
+					fNewFS->GetParser()->WriteCatalog(catalogDisk,
 													(NewOS::VoidPtr)diskFolder.CData(),
 													kNewFSSectorSz, cSrcName);
 

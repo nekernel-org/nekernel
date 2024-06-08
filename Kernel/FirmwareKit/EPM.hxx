@@ -83,6 +83,10 @@ struct PACKED PartitionBlock
 
 #define kEPMMagicUEFI "EPMUE"
 
+/* @brief CoreBoot magic for EPM */
+
+#define kEPMMagicCoreBoot "EPMCB"
+
 /* @brief Invalid magic for EPM */
 
 #define kEPMMagicError "EPM??"
@@ -113,16 +117,16 @@ typedef struct PartitionBlock PartitionBlockType;
 
 ///! @brief partition must start at this address.
 ///! Anything below is reserved for Data backup by the Main OS.
-#define kEPMStartPartitionBlk (sizeof(BootBlock))
+#define kEPMStartPartitionBlk 	(sizeof(BootBlock))
 
 ///! @brief Current EPM revision (2)
-#define kEPMRevision (2)
+#define kEPMRevision 			(3)
 
 ///! @brief Current EPM revision (2)
-#define kEPMRevisionUEFI (0xF)
+#define kEPMRevisionUEFI 		(0xF)
 
 /* @brief Maximum block count. */
-#define kEPMMaxBlks 128
+#define kEPMMaxBlks 			(128)
 
 /// END OF SPECS
 
