@@ -16,7 +16,7 @@
 
 #include <Headers/Defines.h>
 
-typedef QWordType TrStreamType;
+typedef QWordType TptStreamType;
 
 /// @brief Opens a new socket
 /// @param afType address family
@@ -24,12 +24,12 @@ typedef QWordType TrStreamType;
 /// @param sockProto socket protocol.
 /// @return The STREAMS socket.
 /// @note return is const.
-CS_EXTERN_C CS_CONST TrStreamType CSOpenSocket(UInt32Type afType, UInt32Type sockType, UInt32Type sockProto);
+CS_EXTERN_C CS_CONST TptStreamType CSOpenSocket(UInt32Type afType, UInt32Type sockType, UInt32Type sockProto);
 
 /// @brief Close a STREAMS socket.
 /// @param streams The streams socket.
 /// @return 
-CS_EXTERN_C VoidType CSCloseSocket(CS_CONST TrStreamType streams);
+CS_EXTERN_C VoidType CSCloseSocket(CS_CONST TptStreamType streams);
 
 /// @brief Get OpenTransport version.
 /// @param void

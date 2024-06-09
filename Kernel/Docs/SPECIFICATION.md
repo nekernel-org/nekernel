@@ -24,7 +24,7 @@
 - Thread Local Storage.
 - Semaphore, Locks, Timers.
 - Canary mechanisms.
-- Dynamic Libraries.
+- Dynamic Sys.
 - Cross Platform.
 - Permission Selectors.
 

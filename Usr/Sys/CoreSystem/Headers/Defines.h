@@ -124,7 +124,7 @@ typedef CharacterTypeUTF8 BooleanType;
 #define CS_CONSTEXPR
 #endif // __cplusplus
 
-enum RtProcessCall
+enum 
 {
 	kCallAllocPtr = 1,
 	kCallFreePtr,
@@ -152,7 +152,7 @@ enum RtProcessCall
 	kCallDeviceExists,
 	kCallDriveExists,
 	/// @brief Number of process calls.
-	kCallsCount,
+	kCallCount,
 };
 
 /**
@@ -173,7 +173,8 @@ typedef struct ApplicationInterface
 {
 	VoidType (*Release)(struct ApplicationInterface* Self, DWordType ExitCode);
 	IntPtrType (*Invoke)(struct ApplicationInterface* Self, DWordType Sel, ...);
-	VoidType (*Query)(struct ApplicationInterface* Self, PtrVoidType* Dst, SizeType SzDst, struct GUID* GuidOf);
+	VoidType (*Query)(struct ApplicationInterface* Self, PtrVoidType* Dst, 
+						SizeType SzDst, struct GUID* GuidOf);
 } ApplicationInterface, *ApplicationInterfaceRef;
 
 #ifdef __cplusplus
@@ -201,7 +202,7 @@ using StrType = CharacterTypeUTF8[N];
 
 #else
 
-#define app_cast (ApplicationInterfaceRef)
+#define app_cast(X) (ApplicationInterfaceRef)(X)
 
 #endif // ifdef C++
 
@@ -213,15 +214,17 @@ CS_EXTERN_C ApplicationInterfaceRef RtGetAppPointer(VoidType);
 /// @brief Get argument count
 /// @param
 /// @return
-CS_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType);
+CS_EXTERN_C SizeType 				RtGetAppArgumentsCount(VoidType);
 
 /// @brief Get argument pointer.
 /// @param
 /// @return
-CS_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType);
+CS_EXTERN_C CharacterTypeUTF8** 	RtGetAppArgumentsPtr(VoidType);
 
+/// @brief Shared application interface.
 CS_EXTERN_C ApplicationInterfaceRef kSharedApplication;
 
+/// @brief 255 length string type.
 typedef CharacterTypeUTF8 StrType255[255];
 
 #define True  1
@@ -233,3 +236,6 @@ typedef CharacterTypeUTF8 StrType255[255];
 #ifndef kInvalidRef
 #define kInvalidRef 0
 #endif
+
+/// @brief Result type.
+typedef UInt64Type ResultType;

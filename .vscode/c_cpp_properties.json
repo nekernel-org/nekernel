@@ -7,8 +7,8 @@
                 "${workspaceFolder}/Drv/**",
                 "${workspaceFolder}/Boot/**",
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/SDK/Libraries/CoreSystem/**",
-                "${workspaceFolder}/SDK/Libraries/**"
+                "${workspaceFolder}/Usr/Sys/CoreSystem/**",
+                "${workspaceFolder}/Usr/Sys/**"
             ],
             "defines": [
                 "__MAHROUSS__",
@@ -28,7 +28,7 @@
         {
             "name": "AppDev ",
             "includePath": [
-                "${workspaceFolder}/SDK/Developer/**"
+                "${workspaceFolder}/Usr/Developer/**"
             ],
             "defines": [],
             "cStandard": "c17",
@@ -42,8 +42,8 @@
                 "${workspaceFolder}/Kernel/**",
                 "${workspaceFolder}/Boot/**",
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/SDK/Libraries/CoreSystem/**",
-                "${workspaceFolder}/SDK/Libraries/**"
+                "${workspaceFolder}/Usr/Sys/CoreSystem/**",
+                "${workspaceFolder}/Usr/Sys/**"
             ],
             "defines": [
                 "__MAHROUSS__",
