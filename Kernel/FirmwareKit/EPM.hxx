@@ -108,7 +108,7 @@ typedef struct PartitionBlock PartitionBlockType;
 #ifdef __x86_64__
 #define kEPMMagic kEPMMagic86
 #else
-#ifdef __powerpc
+#ifdef __powerpc64__
 #define kEPMMagic kEPMMagicPPC
 #else
 #define kEPMMagic kEPMMagicError
