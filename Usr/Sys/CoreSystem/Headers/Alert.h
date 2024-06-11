@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 ------------------------------------------- */
 
@@ -10,7 +10,7 @@
  * Purpose: New OS alert dialog.
  * Date: 3/26/24
  *
- * Copyright SoftwareLabs, all rights reserved.
+ * Copyright Zeta Electronics Corporation, all rights reserved.
  *
  *************************************************************/
 

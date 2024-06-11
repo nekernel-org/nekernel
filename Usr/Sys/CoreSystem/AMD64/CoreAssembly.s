@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-    Copyright SoftwareLabs
+    Copyright Zeta Electronics Corporation
 
     Purpose: AMD64 low level I/O
 

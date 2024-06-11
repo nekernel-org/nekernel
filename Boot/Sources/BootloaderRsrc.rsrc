@@ -10,11 +10,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "SoftwareLabs"
+      VALUE "CompanyName", "Zeta Electronics Corporation"
       VALUE "FileDescription", "New OS multi-platform bootloader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "newosldr"
-      VALUE "LegalCopyright", "Copyright SoftwareLabs, all rights reserved."
+      VALUE "LegalCopyright", "Copyright Zeta Electronics Corporation, all rights reserved."
       VALUE "OriginalFilename", "newosldr.exe"
       VALUE "ProductName", "newosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION

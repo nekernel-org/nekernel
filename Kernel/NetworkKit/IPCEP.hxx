@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs.
+	Copyright Zeta Electronics Corporation.
 
 	File: IPCEP.hxx.
 	Purpose: IPC protocol.

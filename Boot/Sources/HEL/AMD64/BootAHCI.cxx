@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) SoftwareLabs
+ * @copyright Copyright (c) Zeta Electronics Corporation
  *
  */
 

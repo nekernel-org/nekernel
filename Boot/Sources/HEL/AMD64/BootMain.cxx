@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 ------------------------------------------- */
 
@@ -88,7 +88,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	/// Splash screen stuff
 
-	writer.Write(L"SoftwareLabs (R) newosldr: ")
+	writer.Write(L"Zeta Electronics Corporation (R) newosldr: ")
 		.Write(BVersionString::The());
 
 	writer.Write(L"\rnewosldr: Firmware Vendor: ")

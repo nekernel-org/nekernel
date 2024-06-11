@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: PECodeManager.hxx
 	Purpose: PE32+ Code Manager and Shared Objects.

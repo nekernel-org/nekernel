@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: CodeManager.hpp
 	Purpose: Code Manager and Shared Objects.

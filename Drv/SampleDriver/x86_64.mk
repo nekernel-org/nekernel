@@ -1,5 +1,5 @@
 ##################################################
-# (C) SoftwareLabs, all rights reserved.
+# (C) Zeta Electronics Corporation, all rights reserved.
 # This is the sample driver makefile.
 ##################################################
 

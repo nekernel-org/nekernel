@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: PS2MouseInterface.hxx
 	Purpose: PS/2 mouse.

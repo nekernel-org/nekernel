@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	NewOS 	Date Added: 13/02/2023
- * 	Copyright SoftwareLabs, all rights reserved.
+ * 	Copyright Zeta Electronics Corporation, all rights reserved.
  *
  * 	========================================================
  */

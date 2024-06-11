@@ -25,4 +25,4 @@ make all
 
 for the default target (AMD64 EPM)
 
-##### Copyright, SoftwareLabs, all rights reserved.
+##### Copyright, Zeta Electronics Corporation, all rights reserved.

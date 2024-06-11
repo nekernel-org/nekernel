@@ -1,6 +1,6 @@
 ; /* -------------------------------------------
 ;
-;    Copyright SoftwareLabs
+;    Copyright Zeta Electronics Corporation
 ;
 ;    Purpose: POWER low level I/O
 ;

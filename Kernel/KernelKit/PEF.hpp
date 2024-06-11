@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: PEF.hpp
 	Purpose: Preferred Executable Format for NewOS.

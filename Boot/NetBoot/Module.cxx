@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	NetBoot
- * 	Copyright SoftwareLabs, all rights reserved.
+ * 	Copyright Zeta Electronics Corporation, all rights reserved.
  *
  * 	========================================================
  */
