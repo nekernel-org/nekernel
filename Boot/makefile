@@ -26,7 +26,7 @@ BIOS=OVMF.fd
 IMG=epm.img
 IMG_2=epm-slave.img
 
-EMU_FLAGS=-net none -smp 2 -m 4G -M q35 \
+EMU_FLAGS=-net none -smp 4 -serial stdio -m 4G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
@@ -74,7 +74,7 @@ compile-amd64:
 	$(RESCMD)
 	$(CC_GNU) $(NEWOS_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
 	$(wildcard Sources/HEL/AMD64/*.cxx) \
-	$(wildcard Sources/HEL/AMD64/*.S) 
+	$(wildcard Sources/HEL/AMD64/*.S)
 	$(wildcard Sources/*.cxx)
 
 .PHONY: run-efi-amd64

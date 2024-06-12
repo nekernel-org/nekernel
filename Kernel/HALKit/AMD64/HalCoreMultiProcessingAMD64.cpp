@@ -14,6 +14,8 @@
 #define kAPIC_SIPI_Vector 0x00500
 #define kAPIC_EIPI_Vector 0x00400
 
+EXTERN_C void AppMain();
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //! NOTE: fGSI stands 'Field Global System Interrupt'
@@ -104,7 +106,18 @@ namespace NewOS::HAL
 
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	STATIC MadtType* kApicInfoBlock = nullptr;
+	STATIC MadtType* kApicInfoBlock			 = nullptr;
+	STATIC UIntPtr	 kApicMadtAddresses[255] = {0};
+	STATIC SizeT	 kApicMadtAddressesCount = 0UL;
+	STATIC UIntPtr	 cBaseAddressAPIC		 = 0xFEE00000;
+
+	/// @brief this will help us schedule our cores.
+	STATIC Boolean* cProgramInitialized = nullptr;
+
+	enum
+	{
+		cAPICEOI = 0xb0,
+	};
 
 	///////////////////////////////////////////////////////////////////////////////////////
 
@@ -119,6 +132,8 @@ namespace NewOS::HAL
 		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
 	}
 
+	EXTERN_C Void _hal_spin_core(Void);
+
 	/// @brief Send end IPI for CPU.
 	/// @param apicId
 	/// @param vector
@@ -130,6 +145,42 @@ namespace NewOS::HAL
 		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
+	/// @brief assembly routine. internal use only.
+	EXTERN_C Void _hal_enable_smp(Void);
+
+	EXTERN_C Void hal_apic_acknowledge_cont(Void)
+	{
+		kcout << "newoskrnl: finish kernel init... \r";
+
+		if (cProgramInitialized &&
+			*cProgramInitialized)
+		{
+			*cProgramInitialized = false;
+
+			AppMain();
+
+			while (true)
+			{
+
+			}
+		}
+		else
+		{
+			kcout << "newoskrnl: putting thread to sleep...\r";
+
+			AppMain();
+
+			while (true)
+			{
+			}
+		}
+	}
+
+	EXTERN_C Void hal_apic_acknowledge(Void)
+	{
+		hal_apic_acknowledge_cont();
+	}
+
 	Void hal_system_get_cores(voidPtr rsdPtr)
 	{
 		auto acpi = ACPIFactoryInterface(rsdPtr);
@@ -139,16 +190,37 @@ namespace NewOS::HAL
 		{
 			MadtType* madt = (MadtType*)kApicMadt;
 
-            constexpr auto cMaxProbableCores = 4;
+			constexpr auto cMaxProbableCores = 4;
 
-            for (SizeT i = 0; i < cMaxProbableCores; ++i)
-            {
-                if (madt->MadtRecords[i].Flags == 0x01) // if local apic.
-                {
-                    // then register as a core for scheduler.
-                    kcout << "newoskrnl: register core as scheduler thread.\r";
-                }
-            }
+			for (SizeT i = 2; i < cMaxProbableCores; ++i)
+			{
+				if (madt->MadtRecords[i].Flags == 0x01) // if local apic.
+				{
+					MadtType::MadtAddress& madtRecord = madt->MadtRecords[i];
+					// then register as a core for scheduler.
+					kcout << "newoskrnl: register core as scheduler thread.\r";
+
+					kApicMadtAddresses[kApicMadtAddressesCount] = madtRecord.Address;
+					++kApicMadtAddressesCount;
+
+					auto flagsSet = NewOS::ke_dma_read(madtRecord.Address, 0xF0); // SVR register.
+
+					// enable APIC.
+					flagsSet |= 0x100;
+
+					NewOS::ke_dma_write(cBaseAddressAPIC, 0xF0, flagsSet);
+
+					/// Set sprurious interrupt vector.
+					NewOS::ke_dma_write(cBaseAddressAPIC, 0xF0, 0x100 | 0xFF);
+
+					// highest task priority. for our realtime kernel.
+					NewOS::ke_dma_write(cBaseAddressAPIC, 0x21, 0);
+
+					cProgramInitialized = new Boolean(true);
+
+					hal_send_start_ipi(kApicMadtAddressesCount, 0x40, cBaseAddressAPIC);
+				}
+			}
 		}
 		else
 		{

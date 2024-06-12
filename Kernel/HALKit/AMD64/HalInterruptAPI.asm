@@ -14,7 +14,7 @@
 %define kInterruptId 0x21
 
 %macro IntExp 1
-global __NEW_INT_%1 
+global __NEW_INT_%1
 __NEW_INT_%1:
     cld
 
@@ -22,7 +22,7 @@ __NEW_INT_%1:
 %endmacro
 
 %macro IntNormal 1
-global __NEW_INT_%1 
+global __NEW_INT_%1
 __NEW_INT_%1:
     cld
 
@@ -100,7 +100,7 @@ __NEW_INT_14:
 
     sti
     iretq
-    
+
 IntNormal 15
 IntNormal 16
 IntExp 17
@@ -120,7 +120,49 @@ IntExp   30
 
 IntNormal 31
 
-IntNormal 32
+[extern hal_apic_acknowledge]
+
+__NEW_INT_32:
+    push rax
+    push rcx
+    push rdx
+    push rbx
+    push rbp
+    push rsi
+    push rdi
+    push r8
+    push r9
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+
+    jmp hal_apic_acknowledge
+
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rdi
+    pop rsi
+    pop rbp
+    pop rbx
+    pop rdx
+    pop rcx
+    pop rax
+
+    mov eax, 0
+
+    ;; tell there local apic that we're done.
+    mov dword [0xFEE00000 + 0xB0], eax ; LAPIC_EOI
+
+    iretq
 
 IntNormal 33
 
