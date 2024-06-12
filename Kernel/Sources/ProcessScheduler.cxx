@@ -215,9 +215,6 @@ namespace NewOS
 		if (!mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
 			return -kErrorOutOfTeamSlot;
 
-		if (process.Leak().Ring != (Int32)ProcessSelector::kRingKernel)
-			return -1;
-
 		kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r";
 
 		/// Create heap according to type of process.

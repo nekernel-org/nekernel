@@ -8,13 +8,21 @@
 #include <HALKit/AMD64/Processor.hpp>
 #include <NewKit/KernelCheck.hpp>
 #include <ArchKit/ArchKit.hpp>
+#include <KernelKit/Semaphore.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
 #define kAPIC_SIPI_Vector 0x00500
 #define kAPIC_EIPI_Vector 0x00400
 
-EXTERN_C void AppMain();
+/// @brief This symbol is the kernel main symbol.
+EXTERN_C void KeMain();
+
+/// @brief assembly routine. internal use only.
+EXTERN_C void _hal_enable_smp(void);
+
+/// @note: _hal_switch_context
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -104,6 +112,8 @@ namespace NewOS::HAL
 		UIntPtr Address;
 	};
 
+	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame);
+
 	///////////////////////////////////////////////////////////////////////////////////////
 
 	STATIC MadtType* kApicInfoBlock			 = nullptr;
@@ -145,8 +155,7 @@ namespace NewOS::HAL
 		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
-	/// @brief assembly routine. internal use only.
-	EXTERN_C Void _hal_enable_smp(Void);
+	STATIC HAL::StackFramePtr cFramePtr = nullptr;
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
@@ -157,28 +166,44 @@ namespace NewOS::HAL
 		{
 			*cProgramInitialized = false;
 
-			AppMain();
+			kcout << "newoskrnl: putting thread to sleep...\r";
 
-			while (true)
-			{
-
-			}
+			_hal_spin_core();
 		}
 		else
 		{
-			kcout << "newoskrnl: putting thread to sleep...\r";
+			KeMain();
 
-			AppMain();
-
-			while (true)
-			{
-			}
+			_hal_spin_core();
 		}
 	}
+
+	EXTERN_C StackFramePtr _hal_leak_current_context(Void) { return cFramePtr; }
 
 	EXTERN_C Void hal_apic_acknowledge(Void)
 	{
 		hal_apic_acknowledge_cont();
+	}
+
+	EXTERN_C Void _hal_switch_context(HAL::StackFramePtr stackFrame)
+	{
+		hal_switch_context(stackFrame);
+	}
+
+	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame)
+	{
+		/// TODO: 
+		Semaphore sem;
+		while (sem.IsLocked()) {}
+
+		sem.Lock(&ProcessScheduler::The().Leak().GetCurrent().Leak());
+
+		cFramePtr = stackFrame;
+
+		/// yes the exception field contains the core id.
+		hal_send_start_ipi(stackFrame->Exception, 0x40, cBaseAddressAPIC);
+
+		sem.Unlock();
 	}
 
 	Void hal_system_get_cores(voidPtr rsdPtr)
@@ -194,7 +219,7 @@ namespace NewOS::HAL
 
 			for (SizeT i = 2; i < cMaxProbableCores; ++i)
 			{
-				if (madt->MadtRecords[i].Flags == 0x01) // if local apic.
+				if (madt->MadtRecords[i].Flags == kThreadLAPIC) // if local apic.
 				{
 					MadtType::MadtAddress& madtRecord = madt->MadtRecords[i];
 					// then register as a core for scheduler.

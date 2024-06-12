@@ -1,7 +1,7 @@
 #ifndef __ASM_PPC_PROCESSOR_H
 #define __ASM_PPC_PROCESSOR_H
 
-/// ! @note The NeWS cpu is based on the e500 with 64-bit extensions, much like the 970.
+/// ! @note The Zeta cpu is based on the e500 with 64-bit extensions, much like the 970.
 
 /*
  * Default implementation of macro that returns current

@@ -2,7 +2,7 @@
 
 	Copyright Zeta Electronics Corporation
 
-	File: AppMain.cxx
+	File: KeMain.cxx
 	Purpose: Kernel main loop.
 
 ------------------------------------------- */
@@ -182,29 +182,29 @@ namespace NewOS::Detail
 	/// @brief System loader entrypoint.
 	/// @param void no parameters.
 	/// @return void no return value.
-	STATIC NewOS::Void AppSystem(NewOS::Void)
+	STATIC NewOS::Void SystemLauncher_Main(NewOS::Void)
 	{
-		NewOS::PEFLoader wndServer("/System/WindowServer");
+		NewOS::PEFLoader lockScreen("/System/LockScreen");
 
-		if (!wndServer.IsLoaded())
+		if (!lockScreen.IsLoaded())
 		{
 			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		NewOS::Utils::execute_from_image(wndServer,
+		NewOS::Utils::execute_from_image(lockScreen,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::PEFLoader launchServer("/System/Launcher");
+		NewOS::PEFLoader stageBoard("/System/StageBoard");
 
-		if (!launchServer.IsLoaded())
+		if (!stageBoard.IsLoaded())
 		{
 			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		NewOS::Utils::execute_from_image(launchServer,
+		NewOS::Utils::execute_from_image(stageBoard,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::kcout << "System: done, sleeping...";
+		NewOS::kcout << "SystemLauncher: done, sleeping...";
 
 		while (true) {}
 	}
@@ -213,13 +213,16 @@ namespace NewOS::Detail
 /// @brief Application entrypoint.
 /// @param Void
 /// @return Void
-EXTERN_C NewOS::Void AppMain(NewOS::Void)
+EXTERN_C NewOS::Void KeMain(NewOS::Void)
 {
 	/// Now run kernel loop, until no process are running.
 	NewOS::Detail::FilesystemWizard wizard; // automatic.
 
-	auto cLoaderName = "System";
-	NewOS::execute_from_image(NewOS::Detail::AppSystem, cLoaderName);
+	auto cLoaderName = "SystemLauncher";
+	NewOS::execute_from_image(NewOS::Detail::SystemLauncher_Main, cLoaderName);
 
-	while (NewOS::ProcessScheduler::The().Leak().Run() > 0) {}
+	while (true) 
+	{
+		NewOS::ProcessScheduler::The().Leak().Run();
+	}
 }

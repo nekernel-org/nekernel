@@ -99,6 +99,21 @@ namespace NewOS
 			fStack->Rsp = stack->Rsp;
 			fStack->Fs	= stack->Fs;
 			fStack->Gs	= stack->Gs;
+
+			// save global registers.
+
+			fStack->R15 = stack->R15;
+			fStack->R14 = stack->R14;
+
+			fStack->R13 = stack->R13;
+			fStack->R12 = stack->R12;
+			fStack->R11 = stack->R11;
+
+			fStack->R10 = stack->R10;
+			fStack->R9 = stack->R9;
+			fStack->R8 = stack->R8;
+
+			fStack->Exception = this->fID;
 		}
 
 		rt_do_context_switch(fStack);

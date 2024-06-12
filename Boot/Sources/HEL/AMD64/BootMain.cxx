@@ -19,7 +19,7 @@
 
 /// make the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "NeWS HD"
+#define kMachineModel "Zeta HD"
 #endif // !kMachineModel
 
 #ifndef cExpectedWidth
