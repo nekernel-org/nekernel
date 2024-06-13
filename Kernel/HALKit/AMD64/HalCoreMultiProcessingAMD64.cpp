@@ -168,12 +168,12 @@ namespace NewOS::HAL
 
 			kcout << "newoskrnl: putting thread to sleep...\r";
 
+			KeMain();
+
 			_hal_spin_core();
 		}
 		else
 		{
-			KeMain();
-
 			_hal_spin_core();
 		}
 	}

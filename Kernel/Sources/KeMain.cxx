@@ -39,7 +39,7 @@ namespace NewOS::Detail
 			{
 				/// Mounted partition, cool!
 				NewOS::kcout
-					<< "New OS: No need to create for a NewFS partition here...\r";
+					<< "newoskrnl: No need to create for a NewFS partition here...\r";
 			}
 			else
 			{
@@ -51,11 +51,11 @@ namespace NewOS::Detail
 
 				if (fNewFS->GetParser())
 				{
-					constexpr auto cFolderInfo		  = "Metadata";
+					constexpr auto cFolderInfo		  = "META-INF";
 					const auto	   cDirCount		  = 8;
 					const char*	   cDirStr[cDirCount] = {
-						   "/Boot/", "/System/", "/Support/", "/Applications/",
-						   "/Users/", "/Library/", "/Mount/", "/Assistants/"};
+						   "\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
+						   "\\Users\\", "\\Library\\", "\\Mount\\", "\\DCIM\\"};
 
 					for (NewOS::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
@@ -113,9 +113,9 @@ namespace NewOS::Detail
 				}
 
 				NewCatalog* catalogDisk =
-					this->fNewFS->GetParser()->GetCatalog("/Mount/This Disk");
+					this->fNewFS->GetParser()->GetCatalog("\\Mount\\This Disk");
 
-				const NewOS::Char* cSrcName = "DiskInfo";
+				const NewOS::Char* cSrcName = "DISK-INF";
 
 				if (catalogDisk)
 				{
@@ -128,14 +128,14 @@ namespace NewOS::Detail
 				else
 				{
 					catalogDisk =
-						(NewCatalog*)this->Leak()->CreateAlias("/Mount/This Disk");
+						(NewCatalog*)this->Leak()->CreateAlias("\\Mount\\This Disk");
 
 					NewOS::StringView diskFolder(kNewFSSectorSz);
 
 					diskFolder +=
-						"<p>Kind: alias to disk</p>\r<p>Created by: system</p>\r<p>Edited "
+						"<p>Kind: alias to disk</p>\r<p>Created by: newoskrnl</p>\r<p>Edited "
 						"by: "
-						"system</p>\r<p>Volume Type: New OS Standard</p>\r";
+						"N/A</p>\r<p>Volume Type: New OS Standard</p>\r";
 
 					diskFolder += "<p>Original Path: ";
 					diskFolder += NewOS::NewFilesystemHelper::Root();
@@ -184,7 +184,7 @@ namespace NewOS::Detail
 	/// @return void no return value.
 	STATIC NewOS::Void SystemLauncher_Main(NewOS::Void)
 	{
-		NewOS::PEFLoader lockScreen("/System/LockScreen");
+		NewOS::PEFLoader lockScreen("\\System\\LockScreen");
 
 		if (!lockScreen.IsLoaded())
 		{
@@ -194,7 +194,7 @@ namespace NewOS::Detail
 		NewOS::Utils::execute_from_image(lockScreen,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::PEFLoader stageBoard("/System/StageBoard");
+		NewOS::PEFLoader stageBoard("\\System\\StageBoard");
 
 		if (!stageBoard.IsLoaded())
 		{
@@ -221,7 +221,7 @@ EXTERN_C NewOS::Void KeMain(NewOS::Void)
 	auto cLoaderName = "SystemLauncher";
 	NewOS::execute_from_image(NewOS::Detail::SystemLauncher_Main, cLoaderName);
 
-	while (true) 
+	while (true)
 	{
 		NewOS::ProcessScheduler::The().Leak().Run();
 	}

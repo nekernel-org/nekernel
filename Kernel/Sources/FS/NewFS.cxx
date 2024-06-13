@@ -593,6 +593,8 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return nullptr;
 
+	kcout << "newoskrnl: start finding catalog...\r";
+
 	Char* sectorBuf = new Char[sizeof(NewPartitionBlock)];
 	auto  drive		= sMountpointInterface.GetAddressOf(this->fDriveIndex);
 
