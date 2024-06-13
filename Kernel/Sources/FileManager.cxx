@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 ------------------------------------------- */
 
@@ -163,7 +163,7 @@ namespace NewOS
 
 	/// @brief Returns the filesystem parser.
 	/// @return the Filesystem parser class.
-	NewFSParser* NewFilesystemManager::GetImpl() noexcept
+	NewFSParser* NewFilesystemManager::GetParser() noexcept
 	{
 		return fImpl;
 	}

@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <Builtins/Toolbox/Toolbox.hxx>
+#include <Builtins/GX/GX>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
@@ -16,7 +16,6 @@
 #include <NewKit/Json.hpp>
 
 EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
-EXTERN_C void			AppMain();
 
 namespace NewOS::HAL
 {
@@ -77,9 +76,9 @@ EXTERN_C void hal_init_platform(
 
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
-	/// END POST
+	NewOS::kcout << "newoskrnl: We're done here...\r";
 
-	AppMain();
-
-	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+	while (true)
+	{
+	}
 }

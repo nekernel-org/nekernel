@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: Framebuffer.hpp
 	Purpose: Framebuffer object.

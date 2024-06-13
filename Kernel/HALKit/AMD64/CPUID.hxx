@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: CPUID.hxx
 	Purpose: CPUID flags.

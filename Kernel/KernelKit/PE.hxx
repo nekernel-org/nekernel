@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: PE.hxx
 	Purpose: Portable Executable for NewOS.

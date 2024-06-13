@@ -1,4 +1,4 @@
-1 ICON "Root/Boot/Icons/kernel-logo.ico"
+1 ICON "../Icons/kernel-logo.ico"
 
 #include "CompilerKit/Version.hxx"
 
@@ -10,11 +10,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "SoftwareLabs"
+      VALUE "CompanyName", "Zeta Electronics Corporation"
       VALUE "FileDescription", "NuX/OS kernel."
       VALUE "FileVersion", KERNEL_VERSION
       VALUE "InternalName", "NeXUS"
-      VALUE "LegalCopyright", "SoftwareLabs"
+      VALUE "LegalCopyright", "Zeta Electronics Corporation"
       VALUE "OriginalFilename", "newoskrnl.exe"
       VALUE "ProductName", "NewOSKrnl"
       VALUE "ProductVersion", KERNEL_VERSION

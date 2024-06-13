@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: MSDOS.hpp
 	Purpose: MS-DOS header for NewOS.

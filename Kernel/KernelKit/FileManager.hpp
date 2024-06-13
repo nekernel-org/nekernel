@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 ------------------------------------------- */
 
@@ -133,7 +133,9 @@ namespace NewOS
 		void SetResourceFork(const char* forkName);
 		void SetDataFork(const char* forkName);
 
-		NewFSParser* GetImpl() noexcept;
+		/// @brief Get internal parser.
+		/// @return 
+		NewFSParser* GetParser() noexcept;
 
 	private:
 		NewFSParser* fImpl{nullptr};

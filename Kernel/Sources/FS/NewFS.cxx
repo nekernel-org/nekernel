@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 ------------------------------------------- */
 
@@ -73,7 +73,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 
 			drv->fInput(&drv->fPacket);
 
-			kcout << "newoskrnl: Next-Fork: " << hex_number(curFork.NextSibling) << endl;
+			kcout << "newoskrnl: next fork: " << hex_number(curFork.NextSibling) << endl;
 
 			if (curFork.Flags == kNewFSFlagCreated)
 			{
@@ -84,7 +84,7 @@ _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
 					StringBuilder::Equals(curFork.CatalogName, catalog->Name))
 					return nullptr;
 
-				kcout << "Next-Fork: " << hex_number(curFork.NextSibling) << endl;
+				kcout << "newoskrnl: next fork: " << hex_number(curFork.NextSibling) << endl;
 
 				lbaOfPreviousFork = lba;
 				lba				  = curFork.NextSibling;

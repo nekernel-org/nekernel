@@ -9,7 +9,7 @@
 #include <BootKit/Vendor/Shared/bit.h>
 
 #include <BootKit/Vendor/QrPrelude.hxx>
-#include <Builtins/Toolbox/Toolbox.hxx>
+#include <Builtins/GX/GX>
 #include <BootKit/Vendor/Support.hxx>
 #include <CompilerKit/Detail.hxx>
 
@@ -371,7 +371,7 @@ namespace qr
 		{
 			for (int x = 0; x < (this->side_size()); ++x)
 			{
-				ToolboxDrawZone(
+				GXDraw(
 					(this->module(x, y) ? RGB(00, 00, 00) : RGB(FF, FF, FF)),
 					1, 1,
 					x + whereX, y + whereY);

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: Prcoessor.hxx
 	Purpose: AMD64 processor abstraction.

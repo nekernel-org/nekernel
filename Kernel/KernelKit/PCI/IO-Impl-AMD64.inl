@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright SoftwareLabs
+	Copyright Zeta Electronics Corporation
 
 	File: IO-Impl-AMD64.hpp
 	Purpose: I/O for AMD64.
