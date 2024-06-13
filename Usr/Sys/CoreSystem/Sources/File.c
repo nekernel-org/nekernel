@@ -19,7 +19,7 @@ enum FileOp
 /// @brief Opens a new file.
 /// @param path where to find it.
 /// @param rest the restrict (rw, rwe, r+, w+, r, w)
-/// @return FSRef the file.
+/// @return FSRef file reference.
 CS_EXTERN_C FSRef CSOpenFile(const CharacterTypeUTF8* path,
 							 const CharacterTypeUTF8* rest)
 {
@@ -33,7 +33,7 @@ CS_EXTERN_C FSRef CSOpenFile(const CharacterTypeUTF8* path,
 
 /// @brief Closes the file and flushes it to the said file.
 /// @param refCS the filesystem reference.
-/// @return
+/// @return void
 CS_EXTERN_C VoidType CSCloseFile(FSRef refCS)
 {
 	CS_MUST_PASS(kSharedApplication);
@@ -45,7 +45,7 @@ CS_EXTERN_C VoidType CSCloseFile(FSRef refCS)
 
 /// @brief Flush file
 /// @param refCS the file reference.
-/// @return 
+/// @return void
 CS_EXTERN_C VoidType CSFlushFile(FSRef refCS)
 {
 	CS_MUST_PASS(kSharedApplication);
@@ -54,16 +54,16 @@ CS_EXTERN_C VoidType CSFlushFile(FSRef refCS)
 }
 
 /// @brief Check if filesystem path is valid.
-/// @param path 
-/// @return 
+/// @param path the filesystem path.
+/// @return if the path is valid or not.
 CS_EXTERN_C BooleanType CSIsValidPath(const CharacterTypeUTF8* path)
 {
 	CS_MUST_PASS(kSharedApplication);
 	CS_MUST_PASS(path);
 
 	return kSharedApplication->Invoke(kSharedApplication, kCallFileExists, path) ||
-			kSharedApplication->Invoke(kSharedApplication, kCallDirectoryExists, path) ||
-			kSharedApplication->Invoke(kSharedApplication, kCallSymlinkExists, path) ||
-			kSharedApplication->Invoke(kSharedApplication, kCallDriveExists, path) ||
-			kSharedApplication->Invoke(kSharedApplication, kCallDeviceExists, path);
+		   kSharedApplication->Invoke(kSharedApplication, kCallDirectoryExists, path) ||
+		   kSharedApplication->Invoke(kSharedApplication, kCallSymlinkExists, path) ||
+		   kSharedApplication->Invoke(kSharedApplication, kCallDriveExists, path) ||
+		   kSharedApplication->Invoke(kSharedApplication, kCallDeviceExists, path);
 }

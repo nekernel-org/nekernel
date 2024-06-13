@@ -11,12 +11,12 @@
 #endif
 
 #ifdef _DEBUG
-#define CS_MUST_PASS(e)                                                                                             \
-	{                                                                                                               \
-		if (!e)                                                                                                     \
-		{                                                                                                           \
+#define CS_MUST_PASS(e)                                                                                                         \
+	{                                                                                                                           \
+		if (!e)                                                                                                                 \
+		{                                                                                                                       \
 			UiAlert("Assertion failed.\nExpression :%s\nFile: %s\nLine: %i", #e, __FILE__, __LINE__) RtAssertTriggerInterrupt() \
-		}                                                                                                           \
+		}                                                                                                                       \
 	}
 #else
 #define CS_MUST_PASS(e) CS_UNREFERENCED_PARAMETER(e)
@@ -124,7 +124,7 @@ typedef CharacterTypeUTF8 BooleanType;
 #define CS_CONSTEXPR
 #endif // __cplusplus
 
-enum 
+enum
 {
 	kCallAllocPtr = 1,
 	kCallFreePtr,
@@ -173,8 +173,7 @@ typedef struct ApplicationInterface
 {
 	VoidType (*Release)(struct ApplicationInterface* Self, DWordType ExitCode);
 	IntPtrType (*Invoke)(struct ApplicationInterface* Self, DWordType Sel, ...);
-	VoidType (*Query)(struct ApplicationInterface* Self, PtrVoidType* Dst, 
-						SizeType SzDst, struct GUID* GuidOf);
+	VoidType (*Query)(struct ApplicationInterface* Self, PtrVoidType* Dst, SizeType SzDst, struct GUID* GuidOf);
 } ApplicationInterface, *ApplicationInterfaceRef;
 
 #ifdef __cplusplus
@@ -214,12 +213,12 @@ CS_EXTERN_C ApplicationInterfaceRef RtGetAppPointer(VoidType);
 /// @brief Get argument count
 /// @param
 /// @return
-CS_EXTERN_C SizeType 				RtGetAppArgumentsCount(VoidType);
+CS_EXTERN_C SizeType RtGetAppArgumentsCount(VoidType);
 
 /// @brief Get argument pointer.
 /// @param
 /// @return
-CS_EXTERN_C CharacterTypeUTF8** 	RtGetAppArgumentsPtr(VoidType);
+CS_EXTERN_C CharacterTypeUTF8** RtGetAppArgumentsPtr(VoidType);
 
 /// @brief Shared application interface.
 CS_EXTERN_C ApplicationInterfaceRef kSharedApplication;

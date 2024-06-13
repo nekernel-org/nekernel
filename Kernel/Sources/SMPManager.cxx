@@ -110,8 +110,8 @@ namespace NewOS
 			fStack->R11 = stack->R11;
 
 			fStack->R10 = stack->R10;
-			fStack->R9 = stack->R9;
-			fStack->R8 = stack->R8;
+			fStack->R9	= stack->R9;
+			fStack->R8	= stack->R8;
 
 			fStack->Rcx = this->fID;
 		}
@@ -219,7 +219,7 @@ namespace NewOS
 
 			if (!fakeThread)
 			{
-			    fakeThread = new HardwareThread();
+				fakeThread = new HardwareThread();
 			}
 
 			fakeThread->fKind = kInvalidHart;

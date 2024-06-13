@@ -8,7 +8,7 @@
 #include <HALKit/AXP/Processor.hpp>
 
 /// @brief Internal call for syscall, to work with C++.
-/// @param stack 
+/// @param stack
 /// @return nothing.
 EXTERN_C void rt_syscall_handle(NewOS::HAL::StackFrame* stack)
 {

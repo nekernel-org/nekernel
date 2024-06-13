@@ -51,7 +51,7 @@ CS_EXTERN_C BooleanType CSIsValidPath(const CharacterTypeUTF8* path);
 
 /// @brief Flush file
 /// @param refCS the file reference.
-/// @return 
+/// @return
 CS_EXTERN_C VoidType CSFlushFile(FSRef refCS);
 
 /// END OF FILE

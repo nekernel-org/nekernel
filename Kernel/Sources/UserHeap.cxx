@@ -37,8 +37,8 @@ namespace NewOS
 	 */
 	class UserHeapManager final
 	{
-		UserHeapManager()  = delete;
-		
+		UserHeapManager() = delete;
+
 	public:
 		~UserHeapManager() = default;
 
@@ -47,12 +47,12 @@ namespace NewOS
 		{
 			return s_NumPools;
 		}
-		
+
 		STATIC Ref<Pmm>& Leak()
 		{
 			return s_Pmm;
 		}
-		
+
 		STATIC Boolean& IsEnabled()
 		{
 			return s_PoolsAreEnabled;

@@ -28,19 +28,19 @@ CS_EXTERN_C CS_CONST TptStreamType CSOpenSocket(UInt32Type afType, UInt32Type so
 
 /// @brief Close a STREAMS socket.
 /// @param streams The streams socket.
-/// @return 
+/// @return
 CS_EXTERN_C VoidType CSCloseSocket(CS_CONST TptStreamType streams);
 
 /// @brief Get OpenTransport version.
 /// @param void
-/// @return 
+/// @return
 CS_EXTERN_C CS_CONST Int32Type CSGetVersion(VoidType);
 
 enum
 {
 	TrSocketProtoTCP, /// TCP socket
 	TrSocketProtoUDP, /// UDP socket
-	TrSocketProtoUN, /// IPC  socket
+	TrSocketProtoUN,  /// IPC  socket
 	TrSocketProtoRaw, /// Raw socket
 	TrSocketProtoCount,
 };

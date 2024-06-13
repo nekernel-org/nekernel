@@ -37,8 +37,8 @@ namespace NewOS
 	/// @return if it valid: point has crc now., otherwise fail.
 	Boolean ke_protect_ke_heap(VoidPtr heapPtr);
 
-    /// @brief Makes a kernel heap page.
-    /// @param heapPtr 
-    /// @return 
-    Int32 ke_make_ke_page(VoidPtr heapPtr);
+	/// @brief Makes a kernel heap page.
+	/// @param heapPtr
+	/// @return
+	Int32 ke_make_ke_page(VoidPtr heapPtr);
 } // namespace NewOS

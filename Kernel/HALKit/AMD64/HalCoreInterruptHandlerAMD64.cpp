@@ -82,8 +82,7 @@ EXTERN_C NewOS::Void hal_system_call_enter(NewOS::UIntPtr rcx, NewOS::UIntPtr rd
 /// @brief Enter kernel call from assembly (DDK only).
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C NewOS::Void hal_kernel_call_enter(NewOS::UIntPtr rcx, NewOS::UIntPtr rdx,
-											NewOS::UIntPtr r8, NewOS::UIntPtr r9)
+EXTERN_C NewOS::Void hal_kernel_call_enter(NewOS::UIntPtr rcx, NewOS::UIntPtr rdx, NewOS::UIntPtr r8, NewOS::UIntPtr r9)
 {
 	if (rcx != 0)
 	{

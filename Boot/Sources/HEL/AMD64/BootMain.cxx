@@ -81,8 +81,8 @@ STATIC Bool CheckBootDevice(BootDeviceATA& ataDev)
 EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 							  EfiSystemTable* SystemTable)
 {
-	InitEFI(SystemTable);	   ///! Init the EFI library.
-	InitVideoFB(); ///! Init the GOP.
+	InitEFI(SystemTable); ///! Init the EFI library.
+	InitVideoFB();		  ///! Init the GOP.
 
 	BTextWriter writer;
 
@@ -146,13 +146,13 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	GXInit();
 
 	GXDraw(RGB(9d, 9d, 9d), handoverHdrPtr->f_GOP.f_Height,
-					handoverHdrPtr->f_GOP.f_Width, 0, 0);
+		   handoverHdrPtr->f_GOP.f_Width, 0, 0);
 
 	GXFini();
 
 	GXDrawImg(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
-					(handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
-					(handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
+			  (handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
+			  (handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
 
 	GXFini();
 

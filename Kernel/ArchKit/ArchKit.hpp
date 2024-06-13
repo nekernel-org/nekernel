@@ -83,8 +83,8 @@ typedef NewOS::Void (*rt_syscall_proc)(NewOS::VoidPtr);
 
 struct RTSyscallInfoHdr final
 {
-	NewOS::Int64 fHash;
-	NewOS::Bool fHooked;
+	NewOS::Int64	fHash;
+	NewOS::Bool		fHooked;
 	rt_syscall_proc fProc;
 };
 

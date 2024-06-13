@@ -162,8 +162,8 @@ namespace NewOS
 
 		enum
 		{
-			kAppKind	= 1,
-			kShLibKind	= 2,
+			kAppKind   = 1,
+			kShLibKind = 2,
 			kKindCount,
 		};
 
@@ -231,14 +231,14 @@ namespace NewOS
 	/// The main class which you call to schedule an app.
 	class ProcessScheduler final
 	{
-	    explicit ProcessScheduler() = default;
+		explicit ProcessScheduler() = default;
 
 	public:
 		~ProcessScheduler() = default;
 
 		NEWOS_COPY_DEFAULT(ProcessScheduler)
 
-		operator bool();
+			 operator bool();
 		bool operator!();
 
 	public:

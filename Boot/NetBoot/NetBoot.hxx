@@ -19,9 +19,8 @@ typedef struct NetBootInternetHeader
 	CharacterTypeUTF8 NB3; /// magic char 3 'T'
 	CharacterTypeUTF8 NB4; /// magic char 4 'B'
 
-	CharacterTypeUTF8 PatchName[255]; /// example: ColdChoco
-	NewOS::Int32 PatchLength; /// the patch length.
+	CharacterTypeUTF8 PatchName[255];	/// example: ColdChoco
+	NewOS::Int32	  PatchLength;		/// the patch length.
 	CharacterTypeUTF8 PatchTarget[255]; /// the target file.
-	NewOS::Boolean ImpliesROM; /// does it implies EEPROM patching?
+	NewOS::Boolean	  ImpliesROM;		/// does it implies EEPROM patching?
 } NetBootInternetHeader;
-

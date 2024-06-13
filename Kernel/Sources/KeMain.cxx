@@ -68,7 +68,7 @@ namespace NewOS::Detail
 						}
 
 						catalogDir = fNewFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
-																	  kNewFSCatalogKindDir);
+																		kNewFSCatalogKindDir);
 
 						NewFork theFork{0};
 
@@ -157,8 +157,8 @@ namespace NewOS::Detail
 
 					fNewFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
 					fNewFS->GetParser()->WriteCatalog(catalogDisk,
-													(NewOS::VoidPtr)diskFolder.CData(),
-													kNewFSSectorSz, cSrcName);
+													  (NewOS::VoidPtr)diskFolder.CData(),
+													  kNewFSSectorSz, cSrcName);
 
 					delete catalogDisk;
 				}

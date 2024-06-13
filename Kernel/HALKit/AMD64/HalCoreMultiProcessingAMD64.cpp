@@ -113,10 +113,16 @@ namespace NewOS::HAL
 
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	STATIC MadtType* kApicInfoBlock			 = nullptr;
-	STATIC UIntPtr	 kApicMadtAddresses[255] = {0};
-	STATIC SizeT	 kApicMadtAddressesCount = 0UL;
-	STATIC UIntPtr	 cBaseAddressAPIC		 = 0xFEE00000;
+	STATIC MadtType* kApicInfoBlock = nullptr;
+
+	STATIC struct
+	{
+		UIntPtr fAddress{0};
+		UInt32	fKind{0};
+	} kApicMadtAddresses[255] = {};
+
+	STATIC SizeT   kApicMadtAddressesCount = 0UL;
+	STATIC UIntPtr cBaseAddressAPIC		   = 0xFEE00000;
 
 	/// @brief this will help us schedule our cores.
 	STATIC Boolean* cProgramInitialized = nullptr;
@@ -156,7 +162,6 @@ namespace NewOS::HAL
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
-	    ProcessHelper::StartScheduling();
 		_hal_spin_core();
 	}
 
@@ -202,21 +207,23 @@ namespace NewOS::HAL
 
 		if (kApicMadt != nullptr)
 		{
-			MadtType* madt = (MadtType*)kApicMadt;
+			MadtType* madt = reinterpret_cast<MadtType*>(kApicMadt);
 
 			constexpr auto cMaxProbableCores = 4; // the amount of cores we want.
 			constexpr auto cStartAt			 = 0; // start here to avoid boot core.
 
 			for (SizeT coreAt = cStartAt; coreAt < cMaxProbableCores; ++coreAt)
 			{
-				if (madt->MadtRecords[coreAt].Flags == kThreadLAPIC) // if local apic.
+				if (madt->MadtRecords[coreAt].Flags != kThreadBoot) // if local apic.
 				{
 					MadtType::MadtAddress& madtRecord = madt->MadtRecords[coreAt];
 
 					// then register as a core for scheduler.
-					kcout << "newoskrnl: register core as scheduler thread.\r";
+					kcout << "newoskrnl: Register Local APIC.\r";
 
-					kApicMadtAddresses[kApicMadtAddressesCount] = madtRecord.Address;
+					kApicMadtAddresses[kApicMadtAddressesCount].fAddress = madtRecord.Address;
+					kApicMadtAddresses[kApicMadtAddressesCount].fKind	 = madt->MadtRecords[coreAt].Flags;
+
 					++kApicMadtAddressesCount;
 				}
 			}
@@ -241,7 +248,7 @@ namespace NewOS::HAL
 			cProgramInitialized = new Boolean(true);
 
 			constexpr auto cWhereToInterrupt = 0x40;
-			constexpr auto cWhatCore = 1;
+			constexpr auto cWhatCore		 = 1;
 
 			hal_send_start_ipi(cWhatCore, cWhereToInterrupt, cBaseAddressAPIC);
 		}

@@ -16,7 +16,7 @@
 
 #include <NewKit/Defines.hpp>
 
-#define cXCOFF64Magic 	 (0x01F7)
+#define cXCOFF64Magic (0x01F7)
 
 #define cXCOFFRelFlg	 (0x0001)
 #define cXCOFFExecutable (0x0002)
@@ -41,10 +41,11 @@ typedef struct XCoffFileHeader
 #define cForkNameLen (255)
 
 /// @brief This the executable manifest fork.
-typedef struct XCoffForkHeader {
-	NewOS::Char	   fPropertiesXMLFork[cForkNameLen];
-	NewOS::Char	   fDynamicLoaderFork[cForkNameLen];
-	NewOS::Char	   fCodeSignFork[cForkNameLen];
+typedef struct XCoffForkHeader
+{
+	NewOS::Char fPropertiesXMLFork[cForkNameLen];
+	NewOS::Char fDynamicLoaderFork[cForkNameLen];
+	NewOS::Char fCodeSignFork[cForkNameLen];
 } XCoffForkHeader;
 
 #endif // ifndef __XCOFF__

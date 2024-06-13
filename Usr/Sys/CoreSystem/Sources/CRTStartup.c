@@ -8,5 +8,5 @@
 
 VoidType __DllMainCRTStartup(VoidType)
 {
-    kSharedApplication = RtGetAppPointer();
+	kSharedApplication = RtGetAppPointer();
 }

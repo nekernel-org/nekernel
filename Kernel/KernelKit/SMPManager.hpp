@@ -99,8 +99,8 @@ namespace NewOS
 
 	public:
 		Ref<HardwareThread*> operator[](const SizeT& idx);
-		bool				operator!() noexcept;
-							operator bool() noexcept;
+		bool				 operator!() noexcept;
+							 operator bool() noexcept;
 
 	public:
 		/// @brief Shared instance of the SMP Manager.

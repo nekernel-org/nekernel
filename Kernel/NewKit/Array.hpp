@@ -26,7 +26,6 @@ namespace NewOS
 			if (At > N)
 				return {};
 
-			kcout << "Returning element\r";
 			return ErrorOr<T*>(&fArray[At]);
 		}
 

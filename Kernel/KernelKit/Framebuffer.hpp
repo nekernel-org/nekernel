@@ -39,7 +39,7 @@ namespace NewOS
 			: fFrameBufferAddr(addr)
 		{
 		}
-		
+
 		~Framebuffer()
 		{
 		}

@@ -173,8 +173,8 @@ namespace NewOS
 
 			if (!iterationNode)
 			{
-    			fFirstNode = new  MutableLinkedList<T>();
-    			iterationNode = fFirstNode;
+				fFirstNode	  = new MutableLinkedList<T>();
+				iterationNode = fFirstNode;
 			}
 
 			MUST_PASS(iterationNode);

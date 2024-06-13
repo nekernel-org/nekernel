@@ -79,8 +79,8 @@ EXTERN_C void hal_init_platform(
 	constexpr auto cDummyInterrupt = 0x10; // 16
 
 	kSyscalls[cDummyInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr sf) -> void {
-	    const char* msg = (const char*)sf;
-	    NewOS::kcout << "newoskrnl: " << msg << "\r";
+		const char* msg = (const char*)sf;
+		NewOS::kcout << "newoskrnl: " << msg << "\r";
 	};
 
 	kSyscalls[cDummyInterrupt].Leak().Leak()->fHooked = true;
@@ -93,5 +93,6 @@ EXTERN_C void hal_init_platform(
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
 	while (true)
-	{}
+	{
+	}
 }

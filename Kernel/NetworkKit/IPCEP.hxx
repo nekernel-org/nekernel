@@ -50,8 +50,8 @@ namespace NewOS
 		IPCEPAddressType IpcFrom;
 		IPCEPAddressType IpcTo;
 		UInt32			 IpcCRC32;
-		UInt32           IpcMsg;
-		UInt32           IpcMsgSz;
+		UInt32			 IpcMsg;
+		UInt32			 IpcMsgSz;
 	} PACKED IPCEPConnectionHeader;
 } // namespace NewOS
 
