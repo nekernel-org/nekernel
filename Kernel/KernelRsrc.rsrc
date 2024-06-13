@@ -1,4 +1,4 @@
-1 ICON "../Icons/kernel-logo.ico"
+1 ICON "../Icons/bonjour-logo.ico"
 
 #include "CompilerKit/Version.hxx"
 
