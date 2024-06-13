@@ -87,12 +87,10 @@ EXTERN_C void hal_init_platform(
 
 	NewOS::HAL::Detail::_ke_power_on_self_test();
 
-	auto cLoaderName = "newoskrnl";
+	auto cLoaderName = "LaunchDevil";
 	NewOS::execute_from_image(KeMain, cLoaderName);
 
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
-
-	NewOS::kcout << "newoskrnl: We're done here...\r";
 
 	while (true)
 	{}

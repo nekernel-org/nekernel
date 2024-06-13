@@ -164,19 +164,11 @@ namespace NewOS
 		{
 			kAppKind	= 1,
 			kShLibKind	= 2,
-			kDriverKind = 3,
 			kKindCount,
-		};
-
-		enum
-		{
-			kRingUserKind	= 3,
-			kRingDriverKind = 0,
 		};
 
 		ProcessTime PTime;
 		PID			ProcessId{kSchedInvalidPID};
-		Int32		Ring{kRingDriverKind};
 		Int32		Kind{kAppKind};
 
 	public:

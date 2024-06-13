@@ -20,7 +20,7 @@ namespace NewOS
 			return false;
 
 		ProcessHeader proc((VoidPtr)main);
-		proc.Kind = ProcessHeader::kDriverKind;
+		proc.Kind = ProcessHeader::kAppKind;
 		rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(proc.Name));
 
 		Ref<ProcessHeader> refProc = proc;

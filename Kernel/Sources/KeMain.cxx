@@ -204,9 +204,7 @@ namespace NewOS::Detail
 		NewOS::Utils::execute_from_image(stageBoard,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::kcout << "SystemLauncher: done, sleeping...";
-
-		while (true) {}
+		/// TODO: now jump to user mode using the HAL.
 	}
 } // namespace NewOS::Detail
 
@@ -218,6 +216,5 @@ EXTERN_C NewOS::Void KeMain(NewOS::Void)
 	/// Now run kernel loop, until no process are running.
 	NewOS::Detail::FilesystemWizard wizard; // automatic.
 
-	auto cLoaderName = "SystemLauncher";
-	NewOS::execute_from_image(NewOS::Detail::SystemLauncher_Main, cLoaderName);
+	NewOS::Detail::SystemLauncher_Main();
 }

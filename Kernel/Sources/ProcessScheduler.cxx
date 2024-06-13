@@ -46,11 +46,6 @@ namespace NewOS
 		kcout.Number(kErrorProcessFault);
 		kcout << ")\r";
 
-		if (this->Ring != kRingUserKind)
-		{
-			MUST_PASS(ke_bug_check());
-		}
-
 		this->Exit(kErrorProcessFault);
 	}
 
@@ -167,23 +162,7 @@ namespace NewOS
 			ProcessScheduler::The().Leak().GetCurrent().Leak().ProcessId)
 			ke_stop(RUNTIME_CHECK_PROCESS);
 
-		if (this->Ring == (Int32)ProcessSelector::kRingKernel &&
-			ProcessScheduler::The().Leak().GetCurrent().Leak().Ring > 0)
-			ke_stop(RUNTIME_CHECK_PROCESS);
-
 		kLastExitCode = exit_code;
-
-		if (this->Ring != (Int32)ProcessSelector::kRingDriver)
-		{
-			if (this->HeapPtr)
-				rt_free_heap(this->HeapPtr);
-
-			this->HeapPtr	 = nullptr;
-			this->HeapCursor = nullptr;
-
-			this->FreeMemory = 0UL;
-			this->UsedMemory = 0UL;
-		}
 
 		//! Delete image if not done already.
 		if (this->Image)
@@ -352,7 +331,8 @@ namespace NewOS
 		auto& processRef = ProcessScheduler::The().Leak();
 		SizeT ret		 = processRef.Run();
 
-		kcout << "newoskrnl: Iterated over: " << number(ret);
+		kcout << "newoskrnl: Iterated over: ";
+		kcout.Number(ret);
 		kcout << " processes.\r";
 
 		return true;
