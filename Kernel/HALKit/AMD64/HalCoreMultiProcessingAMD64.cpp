@@ -178,7 +178,10 @@ namespace NewOS::HAL
 		}
 	}
 
-	EXTERN_C StackFramePtr _hal_leak_current_context(Void) { return cFramePtr; }
+	EXTERN_C StackFramePtr _hal_leak_current_context(Void)
+	{
+		return cFramePtr;
+	}
 
 	EXTERN_C Void hal_apic_acknowledge(Void)
 	{
@@ -192,9 +195,10 @@ namespace NewOS::HAL
 
 	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame)
 	{
-		/// TODO: 
 		Semaphore sem;
-		while (sem.IsLocked()) {}
+		while (sem.IsLocked())
+		{
+		}
 
 		sem.Lock(&ProcessScheduler::The().Leak().GetCurrent().Leak());
 
@@ -206,6 +210,8 @@ namespace NewOS::HAL
 		sem.Unlock();
 	}
 
+	/// @brief Fetch and enable cores inside main CPU.
+	/// @param rsdPtr RSD PTR structure.
 	Void hal_system_get_cores(voidPtr rsdPtr)
 	{
 		auto acpi = ACPIFactoryInterface(rsdPtr);
@@ -215,41 +221,50 @@ namespace NewOS::HAL
 		{
 			MadtType* madt = (MadtType*)kApicMadt;
 
-			constexpr auto cMaxProbableCores = 4;
+			constexpr auto cMaxProbableCores = 4; // the amount of cores we want.
+			constexpr auto cStartAt			 = 0; // start here to avoid boot core.
 
-			for (SizeT i = 2; i < cMaxProbableCores; ++i)
+			for (SizeT coreAt = cStartAt; coreAt < cMaxProbableCores; ++coreAt)
 			{
-				if (madt->MadtRecords[i].Flags == kThreadLAPIC) // if local apic.
+				if (madt->MadtRecords[coreAt].Flags == kThreadLAPIC) // if local apic.
 				{
-					MadtType::MadtAddress& madtRecord = madt->MadtRecords[i];
+					MadtType::MadtAddress& madtRecord = madt->MadtRecords[coreAt];
+
 					// then register as a core for scheduler.
 					kcout << "newoskrnl: register core as scheduler thread.\r";
 
 					kApicMadtAddresses[kApicMadtAddressesCount] = madtRecord.Address;
 					++kApicMadtAddressesCount;
-
-					auto flagsSet = NewOS::ke_dma_read(madtRecord.Address, 0xF0); // SVR register.
-
-					// enable APIC.
-					flagsSet |= 0x100;
-
-					NewOS::ke_dma_write(cBaseAddressAPIC, 0xF0, flagsSet);
-
-					/// Set sprurious interrupt vector.
-					NewOS::ke_dma_write(cBaseAddressAPIC, 0xF0, 0x100 | 0xFF);
-
-					// highest task priority. for our realtime kernel.
-					NewOS::ke_dma_write(cBaseAddressAPIC, 0x21, 0);
-
-					cProgramInitialized = new Boolean(true);
-
-					hal_send_start_ipi(kApicMadtAddressesCount, 0x40, cBaseAddressAPIC);
 				}
 			}
+
+			///////////////////////////////////////////////////////////////////////////
+			/// Start local APIC now.
+			///////////////////////////////////////////////////////////////////////////
+
+			auto flagsSet = NewOS::ke_dma_read(cBaseAddressAPIC, 0xF0); // SVR register.
+
+			// enable APIC.
+			flagsSet |= 0x100;
+
+			NewOS::ke_dma_write(cBaseAddressAPIC, 0xF0, flagsSet);
+
+			/// Set sprurious interrupt vector.
+			NewOS::ke_dma_write(cBaseAddressAPIC, 0xF0, 0x100 | 0xFF);
+
+			// highest task priority. for our realtime kernel.
+			NewOS::ke_dma_write(cBaseAddressAPIC, 0x21, 0);
+
+			cProgramInitialized = new Boolean(true);
+
+			constexpr auto cWhereToInterrupt = 0x40;
+			constexpr auto cWhatCore = 1;
+
+			hal_send_start_ipi(cWhatCore, cWhereToInterrupt, cBaseAddressAPIC);
 		}
 		else
 		{
-			kcout << "newoskrnl: APIC is not present! it is a vital component.\r";
+			kcout << "newoskrnl: APIC is not present! it is a vital component to enable SMP.\r";
 			ke_stop(RUNTIME_CHECK_FAILED);
 		}
 	}

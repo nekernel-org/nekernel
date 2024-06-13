@@ -8,13 +8,6 @@
 
 #include <NewKit/Defines.hpp>
 
-EXTERN_C NewOS::Void _hal_init_mouse();
-EXTERN_C NewOS::Boolean _hal_draw_mouse();
-EXTERN_C NewOS::Void _hal_handle_mouse();
-EXTERN_C NewOS::Boolean _hal_left_button_pressed();
-EXTERN_C NewOS::Boolean _hal_middle_button_pressed();
-EXTERN_C NewOS::Boolean _hal_right_button_pressed();
-
 #define GXInit() NewOS::SizeT __GXCursor = 0
 
 #define gxClearClr RGB(00, 00, 00)
@@ -83,11 +76,11 @@ EXTERN_C NewOS::Boolean _hal_right_button_pressed();
 		}                                                                            \
 	}
 
-
+/// This is enabled if Cairo is compiled with GX.
 #ifdef __CG_USE_GX__
 /// @brief This function creates a new framebuffer for GX.
-/// @return 
-inline cairo_surface_t* GXCreateFramebufferCairo() 
+/// @return
+inline cairo_surface_t* GXCreateFramebufferCairo()
 {
     cairo_format_t format = CAIRO_FORMAT_ARGB32;
 
