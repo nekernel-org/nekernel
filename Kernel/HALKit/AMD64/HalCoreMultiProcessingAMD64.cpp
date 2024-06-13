@@ -16,9 +16,6 @@
 #define kAPIC_SIPI_Vector 0x00500
 #define kAPIC_EIPI_Vector 0x00400
 
-/// @brief This symbol is the kernel main symbol.
-EXTERN_C void KeMain();
-
 /// @brief assembly routine. internal use only.
 EXTERN_C void _hal_enable_smp(void);
 
@@ -159,9 +156,7 @@ namespace NewOS::HAL
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
-		/// TODO: better init code.
-		KeMain();
-
+	    ProcessHelper::StartScheduling();
 		_hal_spin_core();
 	}
 

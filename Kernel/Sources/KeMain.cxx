@@ -220,9 +220,4 @@ EXTERN_C NewOS::Void KeMain(NewOS::Void)
 
 	auto cLoaderName = "SystemLauncher";
 	NewOS::execute_from_image(NewOS::Detail::SystemLauncher_Main, cLoaderName);
-
-	while (true)
-	{
-		NewOS::ProcessScheduler::The().Leak().Run();
-	}
 }

@@ -79,7 +79,7 @@ namespace NewOS
 
 #define kKernelMaxSystemCalls (256)
 
-typedef NewOS::Void (*rt_syscall_proc)(NewOS::HAL::StackFramePtr);
+typedef NewOS::Void (*rt_syscall_proc)(NewOS::VoidPtr);
 
 struct RTSyscallInfoHdr final
 {
@@ -95,7 +95,7 @@ inline NewOS::Array<RTSyscallInfoHdr,
 inline NewOS::Array<RTSyscallInfoHdr,
 					kKernelMaxSystemCalls>
 	kKerncalls;
-	
+
 EXTERN_C NewOS::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C NewOS::Void rt_do_context_switch(NewOS::HAL::StackFramePtr stackFrame);
 

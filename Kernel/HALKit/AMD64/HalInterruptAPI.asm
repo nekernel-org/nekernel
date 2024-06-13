@@ -201,11 +201,15 @@ IntNormal 49
 __NEW_INT_50:
     cli
 
+    push rcx
+    push rdx
     push rax
 
     call hal_system_call_enter
 
     pop rax
+    pop rdx
+    pop rcx
 
     sti
     iretq
@@ -213,47 +217,19 @@ __NEW_INT_50:
 __NEW_INT_51:
     cli
 
-    push 0
-    push 51
-    push rax
     push rcx
     push rdx
-    push rbx
-    push rbp
-    push rsi
-    push rdi
     push r8
     push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
-    push gs
-    push fs
-
-    mov rcx, rbp
+    push rax
 
     call hal_kernel_call_enter
 
-    pop fs
-    pop gs
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
+    pop rax
     pop r9
     pop r8
-    pop rdi
-    pop rsi
-    pop rbp
-    pop rbx
     pop rdx
     pop rcx
-    pop rax
 
     sti
     iretq
@@ -278,12 +254,17 @@ IntNormal 60
 ;; testing interrupts.
 _ke_power_on_self_test:
     mov rcx, 0x10
-    int 0x32
-    int 0x32
-    int 0x32
+    mov rdx, _ke_string_post
+
     int 0x32
 
     ret
+
+section .data
+_ke_string_post:
+    db "POST has been successful.", 0
+
+section .text
 
 [global hal_load_gdt]
 

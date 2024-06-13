@@ -14,6 +14,10 @@
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
+#include <KernelKit/CodeManager.hpp>
+
+/// @brief This symbol is the kernel main symbol.
+EXTERN_C void KeMain();
 
 EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
 
@@ -72,13 +76,24 @@ EXTERN_C void hal_init_platform(
 
 	/// START POST
 
+	constexpr auto cDummyInterrupt = 0x10; // 16
+
+	kSyscalls[cDummyInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr sf) -> void {
+	    const char* msg = (const char*)sf;
+	    NewOS::kcout << "newoskrnl: " << msg << "\r";
+	};
+
+	kSyscalls[cDummyInterrupt].Leak().Leak()->fHooked = true;
+
 	NewOS::HAL::Detail::_ke_power_on_self_test();
+
+	auto cLoaderName = "newoskrnl";
+	NewOS::execute_from_image(KeMain, cLoaderName);
 
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
 	NewOS::kcout << "newoskrnl: We're done here...\r";
 
 	while (true)
-	{
-	}
+	{}
 }

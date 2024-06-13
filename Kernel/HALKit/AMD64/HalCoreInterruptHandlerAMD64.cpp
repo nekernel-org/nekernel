@@ -12,11 +12,6 @@
 /// @param rsp
 EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp)
 {
-	MUST_PASS(NewOS::ProcessScheduler::The().Leak().GetCurrent());
-
-	NewOS::kcout << "newoskrnl: Stack Pointer: "
-				 << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
-
 	NewOS::kcout
 		<< "newoskrnl: General Protection Fault, caused by "
 		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
@@ -28,9 +23,6 @@ EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_pf(NewOS::UIntPtr rsp)
 {
-	MUST_PASS(NewOS::ProcessScheduler::The().Leak().GetCurrent());
-	NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
-
 	NewOS::kcout
 		<< "newoskrnl: Segmentation Fault, caused by "
 		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
@@ -42,9 +34,6 @@ EXTERN_C void idt_handle_pf(NewOS::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_math(NewOS::UIntPtr rsp)
 {
-	MUST_PASS(NewOS::ProcessScheduler::The().Leak().GetCurrent());
-	NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
-
 	NewOS::kcout
 		<< "newoskrnl: Math error, caused by "
 		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
@@ -56,9 +45,6 @@ EXTERN_C void idt_handle_math(NewOS::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp)
 {
-	MUST_PASS(NewOS::ProcessScheduler::The().Leak().GetCurrent());
-	NewOS::kcout << NewOS::StringBuilder::FromInt("sp{%}", rsp);
-
 	NewOS::kcout
 		<< "newoskrnl: Execution error, caused by "
 		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
@@ -70,11 +56,6 @@ EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_ud(NewOS::UIntPtr rsp)
 {
-	MUST_PASS(NewOS::ProcessScheduler::The().Leak().GetCurrent());
-
-	NewOS::kcout << "newoskrnl: Stack Pointer: "
-				 << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
-
 	NewOS::kcout
 		<< "newoskrnl: Invalid interrupt, caused by "
 		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
@@ -91,10 +72,8 @@ EXTERN_C NewOS::Void hal_system_call_enter(NewOS::UIntPtr rcx, NewOS::UIntPtr rd
 	{
 		NewOS::kcout << "newoskrnl: syscall: enter.\r";
 
-		NewOS::kcout << "rcx: " << NewOS::number(rcx) << NewOS::endl; 
-
-		if (kSyscalls[rcx].Leak().Leak().fHooked)
-			(kSyscalls[rcx].Leak().Leak().fProc)((NewOS::HAL::StackFramePtr)rdx);
+		if (kSyscalls[rcx].Leak().Leak()->fHooked)
+			(kSyscalls[rcx].Leak().Leak()->fProc)((NewOS::VoidPtr)rdx);
 
 		NewOS::kcout << "newoskrnl: syscall: exit.\r";
 	}

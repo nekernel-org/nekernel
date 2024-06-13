@@ -17,7 +17,7 @@
 #define kSchedMinMicroTime (AffinityKind::kHartStandard)
 #define kSchedInvalidPID   (-1)
 
-#define kSchedProcessLimitPerTeam (100U)
+#define kSchedProcessLimitPerTeam (16U)
 
 ////////////////////////////////////////////////////
 
@@ -134,7 +134,6 @@ namespace NewOS
 		explicit ProcessHeader(VoidPtr startImage = nullptr)
 			: Image(startImage)
 		{
-			MUST_PASS(startImage);
 		}
 
 		~ProcessHeader() = default;
@@ -145,7 +144,7 @@ namespace NewOS
 		void SetEntrypoint(UIntPtr& imageStart) noexcept;
 
 	public:
-		Char			   Name[kProcessLen] = {"NewOS Process"};
+		Char			   Name[kProcessLen] = {"Process"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
 		ProcessSelector	   Selector{ProcessSelector::kRingUser};
 		HAL::StackFramePtr StackFrame{nullptr};
@@ -240,23 +239,15 @@ namespace NewOS
 	/// The main class which you call to schedule an app.
 	class ProcessScheduler final
 	{
-	private:
-		explicit ProcessScheduler() = default;
+	    explicit ProcessScheduler() = default;
 
 	public:
 		~ProcessScheduler() = default;
 
 		NEWOS_COPY_DEFAULT(ProcessScheduler)
 
-		operator bool()
-		{
-			return mTeam.AsArray().Count() > 0;
-		}
-
-		bool operator!()
-		{
-			return mTeam.AsArray().Count() == 0;
-		}
+		operator bool();
+		bool operator!();
 
 	public:
 		ProcessTeam& CurrentTeam();

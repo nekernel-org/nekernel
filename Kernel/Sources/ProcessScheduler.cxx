@@ -18,7 +18,7 @@
 ///! BUGS: 0
 
 /***********************************************************************************/
-/* This file handles the process scheduling.
+/* This file handles the process scheduling. */
 /***********************************************************************************/
 
 namespace NewOS
@@ -42,7 +42,8 @@ namespace NewOS
 
 	void ProcessHeader::Crash()
 	{
-		kcout << this->Name << ": crashed. (id = " << number(kErrorProcessFault);
+		kcout << (*this->Name == 0 ? "Unknown" : this->Name) << ": crashed. (id = ";
+		kcout.Number(kErrorProcessFault);
 		kcout << ")\r";
 
 		if (this->Ring != kRingUserKind)
@@ -201,9 +202,6 @@ namespace NewOS
 	/// @return
 	SizeT ProcessScheduler::Add(Ref<ProcessHeader>& process)
 	{
-		if (!process)
-			return -1;
-
 		if (!process.Leak().Image)
 		{
 			if (process.Leak().Kind != ProcessHeader::kShLibKind)
@@ -212,7 +210,7 @@ namespace NewOS
 			}
 		}
 
-		if (!mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
+		if (mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
 			return -kErrorOutOfTeamSlot;
 
 		kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r";
@@ -262,8 +260,8 @@ namespace NewOS
 		{
 			auto process = mTeam.AsArray()[processIndex];
 
-			MUST_PASS(process); //! no need for a MUST_PASS(process.Leak());, it is
-								//! recursive because of the nature of the class;
+			if (!process)
+				continue;
 
 			//! run any process needed to be scheduled.
 			if (ProcessHelper::CanBeScheduled(process.Leak()))
@@ -351,22 +349,11 @@ namespace NewOS
 
 	bool ProcessHelper::StartScheduling()
 	{
-		if (ProcessHelper::CanBeScheduled(
-				ProcessScheduler::The().Leak().GetCurrent()))
-		{
-			--ProcessScheduler::The().Leak().GetCurrent().Leak().PTime;
-			return false;
-		}
+		auto& processRef = ProcessScheduler::The().Leak();
+		SizeT ret		 = processRef.Run();
 
-		auto processRef = ProcessScheduler::The().Leak();
-
-		if (!processRef)
-			return false; // we have nothing to schedule. simply return.
-
-		SizeT ret = processRef.Run();
-
-		kcout << StringBuilder::FromInt(
-			"ProcessHelper::StartScheduling() Iterated over {%} jobs inside team.\r", ret);
+		kcout << "newoskrnl: Iterated over: " << number(ret);
+		kcout << " processes.\r";
 
 		return true;
 	}
@@ -384,30 +371,42 @@ namespace NewOS
 
 		for (SizeT index = 0UL; index < SMPManager::The().Leak().Count(); ++index)
 		{
-			if (SMPManager::The().Leak()[index].Leak().Kind() == kInvalidHart)
+			if (SMPManager::The().Leak()[index].Leak()->Kind() == kInvalidHart)
 				continue;
 
-			if (SMPManager::The().Leak()[index].Leak().StackFrame() == the_stack)
+			if (SMPManager::The().Leak()[index].Leak()->StackFrame() == the_stack)
 			{
-				SMPManager::The().Leak()[index].Leak().Busy(false);
+				SMPManager::The().Leak()[index].Leak()->Busy(false);
 				continue;
 			}
 
-			if (SMPManager::The().Leak()[index].Leak().IsBusy())
+			if (SMPManager::The().Leak()[index].Leak()->IsBusy())
 				continue;
 
-			if (SMPManager::The().Leak()[index].Leak().Kind() !=
+			if (SMPManager::The().Leak()[index].Leak()->Kind() !=
 					ThreadKind::kHartBoot &&
-				SMPManager::The().Leak()[index].Leak().Kind() !=
+				SMPManager::The().Leak()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				SMPManager::The().Leak()[index].Leak().Busy(true);
+				SMPManager::The().Leak()[index].Leak()->Busy(true);
 				ProcessHelper::GetCurrentPID() = new_pid;
 
-				return SMPManager::The().Leak()[index].Leak().Switch(the_stack);
+				return SMPManager::The().Leak()[index].Leak()->Switch(the_stack);
 			}
 		}
 
 		return false;
+	}
+
+	/// @brief this checks if any process is on the team.
+	ProcessScheduler::operator bool()
+	{
+		return mTeam.AsArray().Count() > 0;
+	}
+
+	/// @brief this checks if no process is on the team.
+	bool ProcessScheduler::operator!()
+	{
+		return mTeam.AsArray().Count() == 0;
 	}
 } // namespace NewOS
