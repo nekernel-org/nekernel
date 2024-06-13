@@ -113,7 +113,7 @@ namespace NewOS
 			fStack->R9 = stack->R9;
 			fStack->R8 = stack->R8;
 
-			fStack->Exception = this->fID;
+			fStack->Rcx = this->fID;
 		}
 
 		rt_do_context_switch(fStack);

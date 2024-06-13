@@ -43,14 +43,7 @@ namespace NewOS
 
 		SizeT Count() const
 		{
-			SizeT cntElems = 0UL;
-			for (auto Val : fArray)
-			{
-				if (Val)
-					++cntElems;
-			}
-
-			return cntElems;
+			return N;
 		}
 
 		const T* CData()

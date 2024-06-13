@@ -24,24 +24,6 @@ EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp)
 	NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
 }
 
-/// @brief Handle the scheduler interrupt, raised from the HPET timer.
-/// @param rsp
-EXTERN_C void idt_handle_scheduler(NewOS::UIntPtr rsp)
-{
-	NewOS::kcout << NewOS::StringBuilder::FromInt("rsp{%}", rsp);
-
-	NewOS::kcout
-		<< "newoskrnl: Will be scheduled back later "
-		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName()
-		<< NewOS::end_line();
-
-	/// schedule another process.
-	if (!NewOS::ProcessHelper::StartScheduling())
-	{
-		NewOS::kcout << "newoskrnl: Continue schedule this process...\r";
-	}
-}
-
 /// @brief Handle page fault.
 /// @param rsp
 EXTERN_C void idt_handle_pf(NewOS::UIntPtr rsp)
@@ -98,4 +80,36 @@ EXTERN_C void idt_handle_ud(NewOS::UIntPtr rsp)
 		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
 
 	NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+}
+
+/// @brief Enter syscall from assembly.
+/// @param stack the stack pushed from assembly routine.
+/// @return nothing.
+EXTERN_C NewOS::Void hal_system_call_enter(NewOS::UIntPtr rcx, NewOS::UIntPtr rdx)
+{
+	if (rcx <= (kSyscalls.Count() - 1))
+	{
+		NewOS::kcout << "newoskrnl: syscall: enter.\r";
+
+		NewOS::kcout << "rcx: " << NewOS::number(rcx) << NewOS::endl; 
+
+		if (kSyscalls[rcx].Leak().Leak().fHooked)
+			(kSyscalls[rcx].Leak().Leak().fProc)((NewOS::HAL::StackFramePtr)rdx);
+
+		NewOS::kcout << "newoskrnl: syscall: exit.\r";
+	}
+}
+
+/// @brief Enter kernel call from assembly (DDK only).
+/// @param stack the stack pushed from assembly routine.
+/// @return nothing.
+EXTERN_C NewOS::Void hal_kernel_call_enter(NewOS::UIntPtr rcx, NewOS::UIntPtr rdx,
+											NewOS::UIntPtr r8, NewOS::UIntPtr r9)
+{
+	if (rcx != 0)
+	{
+		NewOS::kcout << "newoskrnl: kerncall: enter.\r";
+
+		NewOS::kcout << "newoskrnl: kerncall: exit.\r";
+	}
 }

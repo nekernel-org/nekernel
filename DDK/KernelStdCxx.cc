@@ -11,8 +11,8 @@
 void* operator new(size_t sz) {
     if (!sz) ++sz;
 
-    auto ptr = kernelCall("NewKernelHeap", 1, sz);
-    kernelCall("ProtectKernelHeap", 1, ptr);
+    auto ptr = kernelCall("NewKernelHeap", 1, &sz, sizeof(size_t));
+    kernelCall("ProtectKernelHeap", 1, ptr, sz);
 
     return ptr;
 }
@@ -20,5 +20,5 @@ void* operator new(size_t sz) {
 void operator delete(void* ptr) noexcept {
     if (!ptr) return;
 
-    kernelCall("DeleteKernelHeap", 1,ptr);
+    kernelCall("DeleteKernelHeap", 1, ptr, 0);
 }

@@ -159,23 +159,10 @@ namespace NewOS::HAL
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
-		kcout << "newoskrnl: finish kernel init... \r";
+		/// TODO: better init code.
+		KeMain();
 
-		if (cProgramInitialized &&
-			*cProgramInitialized)
-		{
-			*cProgramInitialized = false;
-
-			kcout << "newoskrnl: putting thread to sleep...\r";
-
-			KeMain();
-
-			_hal_spin_core();
-		}
-		else
-		{
-			_hal_spin_core();
-		}
+		_hal_spin_core();
 	}
 
 	EXTERN_C StackFramePtr _hal_leak_current_context(Void)
@@ -196,6 +183,7 @@ namespace NewOS::HAL
 	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame)
 	{
 		Semaphore sem;
+
 		while (sem.IsLocked())
 		{
 		}
@@ -205,7 +193,7 @@ namespace NewOS::HAL
 		cFramePtr = stackFrame;
 
 		/// yes the exception field contains the core id.
-		hal_send_start_ipi(stackFrame->Exception, 0x40, cBaseAddressAPIC);
+		hal_send_start_ipi(stackFrame->Rcx, 0x40, cBaseAddressAPIC);
 
 		sem.Unlock();
 	}

@@ -81,10 +81,21 @@ namespace NewOS
 
 typedef NewOS::Void (*rt_syscall_proc)(NewOS::HAL::StackFramePtr);
 
-extern NewOS::Array<rt_syscall_proc,
+struct RTSyscallInfoHdr final
+{
+	NewOS::Int64 fHash;
+	NewOS::Bool fHooked;
+	rt_syscall_proc fProc;
+};
+
+inline NewOS::Array<RTSyscallInfoHdr,
 					kKernelMaxSystemCalls>
 	kSyscalls;
 
+inline NewOS::Array<RTSyscallInfoHdr,
+					kKernelMaxSystemCalls>
+	kKerncalls;
+	
 EXTERN_C NewOS::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C NewOS::Void rt_do_context_switch(NewOS::HAL::StackFramePtr stackFrame);
 
