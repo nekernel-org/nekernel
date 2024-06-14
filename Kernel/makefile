@@ -11,6 +11,8 @@ CCFLAGS		= -c -fPIC -ffreestanding -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fn
 
 ASM 		= nasm
 
+DISKDRIVER =  -D__ATA_PIO__
+
 ifneq ($(ATA_PIO_SUPPORT), )
 DISKDRIVER =  -D__ATA_PIO__
 endif
@@ -23,7 +25,7 @@ ifneq ($(AHCI_SUPPORT), )
 DISKDRIVER =  -D__AHCI__
 endif
 
-ifneq ($(DEBUG_SUPPORT), )
+ifeq ($(RELEASE_SUPPORT), )
 DEBUG =  -D__DEBUG__
 endif
 
@@ -69,6 +71,8 @@ link-amd64-epm:
 
 .PHONY: all
 all: newos-amd64-epm link-amd64-epm
+	qemu-img create -f raw newoskrnl.rom 512K
+	dd if=newoskrnl.exe of=newoskrnl.rom bs=1 seek=0 conv=notrunc
 	@echo "NewOSKrnl => OK."
 
 .PHONY: help
