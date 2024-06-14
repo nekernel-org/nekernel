@@ -59,18 +59,20 @@ namespace NewOS
 
 	VoidPtr ProcessHeader::New(const SizeT& sz)
 	{
-		if (this->FreeMemory < 1)
-		{
-			DbgLastError() = kErrorHeapOutOfMemory;
-			this->Crash(); /// out of memory.
-
-			return nullptr;
-		}
-
 		if (this->HeapCursor)
 		{
-			VoidPtr ptr		 = this->HeapCursor;
+			if (this->FreeMemory < 1)
+			{
+				DbgLastError() = kErrorHeapOutOfMemory;
+			
+				/* we're going out of memory */
+				this->Crash();
+
+				return nullptr;
+			}
+
 			this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor + (sizeof(sz)));
+			VoidPtr ptr		 = this->HeapCursor;
 
 			++this->UsedMemory;
 			--this->FreeMemory;
@@ -206,11 +208,13 @@ namespace NewOS
 			ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
 
 		MUST_PASS(process.Leak().StackFrame);
+		
+		process.Leak().Status = ProcessStatus::kRunning;
+
+		process.Leak().ProcessId  = (mTeam.AsArray().Count() - 1);
+		process.Leak().HeapCursor = process.Leak().HeapPtr;
 
 		mTeam.AsArray().Add(process);
-
-		process.Leak().ProcessId  = mTeam.AsArray().Count() - 1;
-		process.Leak().HeapCursor = process.Leak().HeapPtr;
 
 		return mTeam.AsArray().Count() - 1;
 	}
@@ -232,17 +236,14 @@ namespace NewOS
 	/// @return
 	SizeT ProcessScheduler::Run() noexcept
 	{
-		SizeT processIndex = 0; //! we store this guy to tell the scheduler how many
+		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								//! things we have scheduled.
 
-		for (; processIndex < mTeam.AsArray().Count(); ++processIndex)
+		for (; process_index < mTeam.AsArray().Count(); ++process_index)
 		{
-			auto process = mTeam.AsArray()[processIndex];
+			auto process = mTeam.AsArray()[process_index];
 
-			if (!process)
-				continue;
-
-			//! run any process needed to be scheduled.
+			//! check if process needs to be scheduled.
 			if (ProcessHelper::CanBeScheduled(process.Leak()))
 			{
 				auto unwrapped_process = *process.Leak();
@@ -255,6 +256,8 @@ namespace NewOS
 				// tell helper to find a core to schedule on.
 				ProcessHelper::Switch(mTeam.AsRef().Leak().StackFrame,
 									  mTeam.AsRef().Leak().ProcessId);
+				
+				kcout << unwrapped_process.Name << ": process switched.\r";
 			}
 			else
 			{
@@ -263,7 +266,7 @@ namespace NewOS
 			}
 		}
 
-		return processIndex;
+		return process_index;
 	}
 
 	/// @brief Gets the current scheduled team.
@@ -328,8 +331,8 @@ namespace NewOS
 
 	bool ProcessHelper::StartScheduling()
 	{
-		auto& processRef = ProcessScheduler::The().Leak();
-		SizeT ret		 = processRef.Run();
+		auto& process_ref = ProcessScheduler::The().Leak();
+		SizeT ret		 = process_ref.Run();
 
 		kcout << "newoskrnl: Iterated over: ";
 		kcout.Number(ret);

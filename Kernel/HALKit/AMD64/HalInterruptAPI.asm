@@ -157,10 +157,10 @@ __NEW_INT_32:
     pop rcx
     pop rax
 
-    mov eax, 0
+    mov rax, 0
 
     ;; tell there local apic that we're done.
-    mov dword [0xFEE00000 + 0xB0], eax ; LAPIC_EOI
+    mov [0xFEE00000 + 0xB0], rax ; LAPIC_EOI
 
     iretq
 

@@ -203,8 +203,6 @@ namespace NewOS::Detail
 
 		NewOS::Utils::execute_from_image(stageBoard,
 										 NewOS::ProcessHeader::kAppKind);
-
-		/// TODO: now jump to user mode using the HAL.
 	}
 } // namespace NewOS::Detail
 
@@ -217,4 +215,13 @@ EXTERN_C NewOS::Void KeMain(NewOS::Void)
 	NewOS::Detail::FilesystemWizard wizard; // automatic.
 
 	NewOS::Detail::SystemLauncher_Main();
+	
+	// fetch system cores.
+	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+
+	while (true)
+	{
+		// start scheduling.
+		NewOS::ProcessHelper::StartScheduling();
+	}
 }

@@ -12,10 +12,12 @@ ADD_FILE=touch
 COPY=cp
 HTTP_GET=wget
 
-ifneq ($(shell uname), Windows_NT)
+# Select this for UNIX distributions
+ifneq ($(shell uname), CYGWIN_NT-10.0-19045)
 EMU=qemu-system-x86_64
 else
-EMU=qemu-system-x86_64w
+# this for NT distributions
+EMU=qemu-system-x86_64w.exe
 endif
 
 ifeq ($(NEWS_MODEL), )
