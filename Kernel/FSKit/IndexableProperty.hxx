@@ -28,9 +28,10 @@ namespace NewOS
 		{
 		public:
 			explicit IndexableProperty()
-				: Property(StringBuilder::Construct("IndexableProperty").Leak().Leak())
+				: Property(StringBuilder::Construct("Indexable").Leak().Leak())
 			{
 			}
+			
 			~IndexableProperty() override = default;
 
 			NEWOS_COPY_DEFAULT(IndexableProperty);

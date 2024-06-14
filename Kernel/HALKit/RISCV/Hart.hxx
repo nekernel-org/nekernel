@@ -16,3 +16,9 @@
 #include <NewKit/Defines.hpp>
 
 typedef NewOS::Int32 Rv64HartType;
+
+/// @brief Set PC to specific hart.
+/// @param hart the hart
+/// @param epc the pc.
+/// @return 
+EXTERN_C NewOS::Void hal_switch_to_hart(Rv64HartType hart, NewOS::VoidPtr epc);
