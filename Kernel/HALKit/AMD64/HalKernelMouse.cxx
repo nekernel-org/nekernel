@@ -10,7 +10,7 @@
 #include <KernelKit/Framebuffer.hpp>
 #include <NewKit/Defines.hpp>
 
-// forward decl.
+/// @note forward decl.
 EXTERN_C NewOS::Boolean _hal_draw_mouse();
 EXTERN_C NewOS::Void _hal_init_mouse();
 

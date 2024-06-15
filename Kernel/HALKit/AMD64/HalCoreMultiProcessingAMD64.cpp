@@ -10,6 +10,7 @@
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/Semaphore.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/Timer.hpp>
 
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
@@ -184,11 +185,7 @@ namespace NewOS::HAL
 	{
 		Semaphore sem;
 
-		while (sem.IsLocked())
-		{
-		}
-
-		sem.Lock(&ProcessScheduler::The().Leak().GetCurrent().Leak());
+		sem.LockOrWait(&ProcessScheduler::The().Leak().GetCurrent().Leak(), Seconds(5));
 
 		cFramePtr = stackFrame;
 

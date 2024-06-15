@@ -1,4 +1,4 @@
-<!-- NuX OS -->
+<!-- README -->
 
 <div align="center">
 <img src="Meta/NewOS.svg"/>
