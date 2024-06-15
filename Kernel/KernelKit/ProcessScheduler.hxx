@@ -269,7 +269,7 @@ namespace NewOS
 		static bool Switch(HAL::StackFrame* newStack, const PID& newPid);
 		static bool CanBeScheduled(Ref<ProcessHeader>& process);
 		static PID& GetCurrentPID();
-		static bool StartScheduling();
+		static SizeT StartScheduling();
 	};
 
 	const Int32& rt_get_exit_code() noexcept;

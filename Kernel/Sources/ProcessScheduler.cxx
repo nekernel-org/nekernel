@@ -329,16 +329,12 @@ namespace NewOS
 	 * @brief Spin scheduler class.
 	 */
 
-	bool ProcessHelper::StartScheduling()
+	SizeT ProcessHelper::StartScheduling()
 	{
 		auto& process_ref = ProcessScheduler::The().Leak();
 		SizeT ret		 = process_ref.Run();
 
-		kcout << "newoskrnl: Iterated over: ";
-		kcout.Number(ret);
-		kcout << " processes.\r";
-
-		return true;
+		return ret;
 	}
 
 	/**

@@ -182,9 +182,9 @@ namespace NewOS::Detail
 	/// @brief System loader entrypoint.
 	/// @param void no parameters.
 	/// @return void no return value.
-	STATIC NewOS::Void SystemLauncher_Main(NewOS::Void)
+	STATIC NewOS::Void ke_launch_srv(NewOS::Void)
 	{
-		NewOS::PEFLoader lockScreen("\\System\\LockScreen");
+		NewOS::PEFLoader lockScreen("\\System\\securesrv.exe");
 
 		if (!lockScreen.IsLoaded())
 		{
@@ -194,7 +194,7 @@ namespace NewOS::Detail
 		NewOS::Utils::execute_from_image(lockScreen,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::PEFLoader stageBoard("\\System\\StageBoard");
+		NewOS::PEFLoader stageBoard("\\System\\uisrv.exe");
 
 		if (!stageBoard.IsLoaded())
 		{
@@ -212,9 +212,9 @@ namespace NewOS::Detail
 EXTERN_C NewOS::Void KeMain(NewOS::Void)
 {
 	/// Now run kernel loop, until no process are running.
-	NewOS::Detail::FilesystemWizard wizard; // automatic.
+	NewOS::Detail::FilesystemWizard wizard; // automatic filesystem creation.
 
-	NewOS::Detail::SystemLauncher_Main();
+	NewOS::Detail::ke_launch_srv();
 	
 	// fetch system cores.
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
