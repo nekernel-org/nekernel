@@ -10,6 +10,8 @@
 #include <KernelKit/DeviceManager.hpp>
 #include <NetworkKit/IP.hpp>
 
+/// @note Can either work with: Ethernet, GPRS, WiFi
+
 namespace NewOS
 {
 	struct NetworkDeviceCommand;
@@ -58,6 +60,12 @@ namespace NewOS
 
 	/// @brief IPCEP device.
 	using IPCEPNetworkDevice = NetworkDevice;
+
+	/// @brief GRPS device.
+	using GPRSNetworkDevice = NetworkDevice;
+
+	/// @brief GSM device.
+	using GSMNetworkDevice = NetworkDevice;
 } // namespace NewOS
 
 #include <NetworkKit/NetworkDevice.inl>

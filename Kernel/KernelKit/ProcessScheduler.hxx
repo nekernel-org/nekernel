@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __PROCESS_SCHEDULER__
-#define __PROCESS_SCHEDULER__
+#ifndef _INC_PROCESS_SCHEDULER_HXX_
+#define _INC_PROCESS_SCHEDULER_HXX_
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/FileManager.hpp>
@@ -283,4 +283,4 @@ namespace NewOS
 
 ////////////////////////////////////////////////////
 
-#endif /* ifndef __PROCESS_SCHEDULER__ */
+#endif /* ifndef _INC_PROCESS_SCHEDULER_HXX_ */
