@@ -36,6 +36,7 @@ namespace NewOS
 		kPefArch64x0, /* 64x0. ISA */
 		kPefArch32x0, /* 32x0. ISA */
 		kPefArchPowerPC,
+		kPefArchARM64,
 		kPefArchCount	= (kPefArchPowerPC - kPefArchIntel86S) + 1,
 		kPefArchInvalid = 0xFF,
 	};

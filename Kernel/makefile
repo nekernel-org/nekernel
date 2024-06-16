@@ -25,7 +25,7 @@ ifneq ($(AHCI_SUPPORT), )
 DISKDRIVER =  -D__AHCI__
 endif
 
-ifeq ($(RELEASE_SUPPORT), )
+ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
 endif
 

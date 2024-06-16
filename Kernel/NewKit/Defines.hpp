@@ -133,12 +133,6 @@ namespace NewOS
 	};
 } // namespace NewOS
 
-/// @note this is for the purpose of having a common namespace alongside zeta's codebase.
-namespace ma::zeta::kernel
-{
-	using namespace NewOS;
-}
-
 #define DEDUCE_ENDIAN(address, value)                          \
 	(((reinterpret_cast<NewOS::Char*>(address)[0]) == (value)) \
 		 ? (NewOS::Endian::kEndianBig)                         \
