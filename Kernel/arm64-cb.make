@@ -3,9 +3,9 @@
 # This is the microkernel makefile.
 ##################################################
 
-CC			= arm-none-eabi-gcc.exe
+CC			= arm-none-eabi-g++.exe
 LD			= arm-none-eabi-ld.exe
-CCFLAGS		= -c -fPIC -ffreestanding -D__NEWOS_ARM64__ -fno-rtti -fno-exceptions -I../ -I./ \
+CCFLAGS		= -c -fPIC -ffreestanding -D__NEWOS_ARM64__ -fno-rtti -fno-exceptions -I./ \
 			-std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__
 
 ASM 		= arm-none-eabi-as.exe
@@ -22,10 +22,6 @@ endif
 
 COPY		= cp
 
-# Add assembler, linker, and object files variables.
-ASMFLAGS	= -f elf64
-
-# NewOS subsystem is 17 and entrypoint is __ImageStart
 LDFLAGS		= -e __ImageStart
 LDOBJ		= Objects/*.obj
 
@@ -57,17 +53,17 @@ link-arm64-epm:
 
 .PHONY: all
 all: newos-arm64-epm link-arm64-epm
-	qemu-img create -f raw newoskrnl.rom 512K
-	dd if=newoskrnl.exe of=newoskrnl.rom bs=1 seek=0 conv=notrunc
+	qemu-img create -f raw newoskrnl.512k.exe 512K
+	dd if=newoskrnl.exe of=newoskrnl.512k.exe bs=1 seek=0 conv=notrunc
 	@echo "NewOSKrnl => OK."
 
 .PHONY: help
 help:
 	@echo "=== HELP ==="
 	@echo "all: Build kernel and link it."
-	@echo "link-arm64-epm: Link kernel. (EPM AMD64)"
-	@echo "newos-arm64-epm: Build kernel. (EPM AMD64)"
+	@echo "link-arm64-epm: Link kernel for EPM based disks."
+	@echo "newos-arm64-epm: Build kernel for EPM based disks."
 
 .PHONY: clean
 clean:
-	rm -f $(LDOBJ) $(KERNEL)
+	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL)

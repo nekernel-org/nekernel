@@ -6,7 +6,7 @@
 CC			= x86_64-w64-mingw32-gcc
 LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -c -fPIC -ffreestanding -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
-			-std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../ -I./
+			-std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I./
 
 ASM 		= nasm
 
@@ -70,17 +70,17 @@ link-amd64-epm:
 
 .PHONY: all
 all: newos-amd64-epm link-amd64-epm
-	qemu-img create -f raw newoskrnl.rom 512K
-	dd if=newoskrnl.exe of=newoskrnl.rom bs=1 seek=0 conv=notrunc
+	qemu-img create -f raw newoskrnl.512k.exe 512K
+	dd if=newoskrnl.exe of=newoskrnl.512k.exe bs=1 seek=0 conv=notrunc
 	@echo "NewOSKrnl => OK."
 
 .PHONY: help
 help:
 	@echo "=== HELP ==="
 	@echo "all: Build kernel and link it."
-	@echo "link-amd64-epm: Link kernel. (EPM AMD64)"
-	@echo "newos-amd64-epm: Build kernel. (EPM AMD64)"
+	@echo "link-amd64-epm: Link kernel for EPM based disks."
+	@echo "newos-amd64-epm: Build kernel for EPM based disks."
 
 .PHONY: clean
 clean:
-	rm -f $(LDOBJ) $(KERNEL)
+	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL)
