@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __NETWORK_DEVICE__
-#define __NETWORK_DEVICE__
+#ifndef __INC_NETWORK_DEVICE_HPP__
+#define __INC_NETWORK_DEVICE_HPP__
 
 #include <KernelKit/DeviceManager.hpp>
 #include <NetworkKit/IP.hpp>
@@ -70,4 +70,4 @@ namespace NewOS
 
 #include <NetworkKit/NetworkDevice.inl>
 
-#endif // !__NETWORK_DEVICE__
+#endif // !__INC_NETWORK_DEVICE_HPP__
