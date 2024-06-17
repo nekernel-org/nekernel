@@ -8,8 +8,26 @@
 
 namespace NewOS
 {
+	/// \brief Getter for fNetworkName.
 	const char* NetworkDevice::Name() const
 	{
-		return "NetworkDevice";
+		return this->fNetworkName;
+	}
+
+	/// \brief Setter for fNetworkName.
+	Boolean NetworkDevice::Name(const char* strView)
+	{
+		if (strView == nullptr)
+			return false;
+
+		if (*strView == 0)
+			return false;
+
+		if (rt_string_len(strView) > cNetworkNameLen)
+			return false;
+
+		rt_copy_memory(strView, this->fNetworkName, rt_string_len(strView));
+
+		return true;
 	}
 } // namespace NewOS

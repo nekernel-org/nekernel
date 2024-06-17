@@ -9,13 +9,13 @@
 
 #include <Builtins/GX/GX>
 
-int __ImageStart(void)
+int __at_enter(void)
 {
 	kernelPrintStr("VideoDrv: Starting up...\r");
 	return 0;
 }
 
-int __ImageEnd(void)
+int __at_exit(void)
 {
 	kernelPrintStr("VideoDrv: Shutting down...\r");
 	return 0;

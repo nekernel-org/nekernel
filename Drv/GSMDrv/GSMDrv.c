@@ -7,7 +7,8 @@
 #include <DDK/KernelString.h>
 #include <DDK/KernelPrint.h>
 
-int __ImageStart(void)
+/// @brief GSM entrypoint.
+int __at_enter(void)
 {
 	kernelPrintStr("GSMDrv: Starting up...\r");
 
@@ -16,7 +17,8 @@ int __ImageStart(void)
 	return 0;
 }
 
-int __ImageEnd(void)
+/// @brief GSM 'atexit' function.
+int __at_exit(void)
 {
 	kernelPrintStr("GSMDrv: Shutting down...\r");
 	return 0;
