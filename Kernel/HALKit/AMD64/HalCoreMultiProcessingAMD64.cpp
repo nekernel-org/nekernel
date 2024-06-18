@@ -185,7 +185,7 @@ namespace NewOS::HAL
 	{
 		Semaphore sem;
 
-		sem.LockOrWait(&ProcessScheduler::The().Leak().GetCurrent().Leak(), Seconds(5));
+		sem.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), Seconds(5));
 
 		cFramePtr = stackFrame;
 

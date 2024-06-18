@@ -38,7 +38,7 @@ namespace NewOS
 		Boolean Name(const char* strView);
 
 	private:
-		constexpr auto cNetworkNameLen = 512;
+		static constexpr auto cNetworkNameLen = 512;
 
 		Void (*fCleanup)(void);
 		Char fNetworkName[cNetworkNameLen];

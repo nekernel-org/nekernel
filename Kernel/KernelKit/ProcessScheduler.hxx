@@ -249,7 +249,7 @@ namespace NewOS
 		bool  Remove(SizeT headerIndex);
 
 	public:
-		Ref<ProcessHeader>& GetCurrent();
+		Ref<ProcessHeader>& TheCurrent();
 		SizeT				Run() noexcept;
 
 	public:
@@ -268,7 +268,7 @@ namespace NewOS
 	public:
 		static bool Switch(HAL::StackFrame* newStack, const PID& newPid);
 		static bool CanBeScheduled(Ref<ProcessHeader>& process);
-		static PID& GetCurrentPID();
+		static PID& TheCurrentPID();
 		static SizeT StartScheduling();
 	};
 

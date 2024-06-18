@@ -14,9 +14,9 @@ EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp)
 {
 	NewOS::kcout
 		<< "newoskrnl: General Protection Fault, caused by "
-		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
+		<< NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetName();
 
-	NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+	NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 }
 
 /// @brief Handle page fault.
@@ -25,9 +25,9 @@ EXTERN_C void idt_handle_pf(NewOS::UIntPtr rsp)
 {
 	NewOS::kcout
 		<< "newoskrnl: Segmentation Fault, caused by "
-		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
+		<< NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetName();
 
-	NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+	NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 }
 
 /// @brief Handle math fault.
@@ -36,9 +36,9 @@ EXTERN_C void idt_handle_math(NewOS::UIntPtr rsp)
 {
 	NewOS::kcout
 		<< "newoskrnl: Math error, caused by "
-		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
+		<< NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetName();
 
-	NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+	NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 }
 
 /// @brief Handle any generic fault.
@@ -47,9 +47,9 @@ EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp)
 {
 	NewOS::kcout
 		<< "newoskrnl: Execution error, caused by "
-		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
+		<< NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetName();
 
-	NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+	NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 }
 
 /// @brief Handle #UD fault.
@@ -58,9 +58,9 @@ EXTERN_C void idt_handle_ud(NewOS::UIntPtr rsp)
 {
 	NewOS::kcout
 		<< "newoskrnl: Invalid interrupt, caused by "
-		<< NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().GetName();
+		<< NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetName();
 
-	NewOS::ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+	NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 }
 
 /// @brief Enter syscall from assembly.

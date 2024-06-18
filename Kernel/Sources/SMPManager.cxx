@@ -85,36 +85,26 @@ namespace NewOS
 	bool HardwareThread::Switch(HAL::StackFramePtr stack)
 	{
 		if (!rt_check_stack(stack))
+		{
+			/// provide 'nullptr' to free the stack frame.
+			if (stack == nullptr)
+			{
+				delete fStack;
+				fStack = nullptr;
+
+				return true;
+			}
+
 			return false;
-
-		if (!fStack)
-		{
-			fStack = stack;
 		}
-		else
+
+		if (fStack)
 		{
-			/// Keep the arguments, switch the base pointer, stack pointer
-			/// fs and gs registers.
-			fStack->Rbp = stack->Rbp;
-			fStack->Rsp = stack->Rsp;
-			fStack->Fs	= stack->Fs;
-			fStack->Gs	= stack->Gs;
-
-			// save global registers.
-
-			fStack->R15 = stack->R15;
-			fStack->R14 = stack->R14;
-
-			fStack->R13 = stack->R13;
-			fStack->R12 = stack->R12;
-			fStack->R11 = stack->R11;
-
-			fStack->R10 = stack->R10;
-			fStack->R9	= stack->R9;
-			fStack->R8	= stack->R8;
-
-			fStack->Rcx = this->fID;
+			delete fStack;
+			fStack = nullptr;
 		}
+		
+		fStack = stack;
 
 		rt_do_context_switch(fStack);
 
@@ -146,7 +136,7 @@ namespace NewOS
 	HAL::StackFramePtr SMPManager::Leak() noexcept
 	{
 		if (fThreadList[fCurrentThread].Leak() &&
-			ProcessHelper::GetCurrentPID() ==
+			ProcessHelper::TheCurrentPID() ==
 				fThreadList[fCurrentThread].Leak().Leak()->fPID)
 			return fThreadList[fCurrentThread].Leak().Leak()->fStack;
 
@@ -189,7 +179,7 @@ namespace NewOS
 
 			fThreadList[idx].Leak().Leak()->Switch(fThreadList[idx].Leak().Leak()->fStack);
 
-			fThreadList[idx].Leak().Leak()->fPID = ProcessHelper::GetCurrentPID();
+			fThreadList[idx].Leak().Leak()->fPID = ProcessHelper::TheCurrentPID();
 
 			fThreadList[idx].Leak().Leak()->Busy(false);
 

@@ -44,14 +44,16 @@ Boolean tls_check_tib(ThreadInformationBlock* tib)
  * @param stackPtr The call frame.
  * @return
  */
-EXTERN_C Void tls_check_syscall_impl(NewOS::HAL::StackFramePtr stackPtr) noexcept
+EXTERN_C Void tls_check_syscall_impl(NewOS::VoidPtr TIB) noexcept
 {
-	ThreadInformationBlock* tib = (ThreadInformationBlock*)stackPtr->Gs;
+	if (!TIB) return;
+
+	ThreadInformationBlock* tib = (ThreadInformationBlock*)TIB;
 
 	if (!tls_check_tib(tib))
 	{
 		kcout << "newoskrnl: Verification failed, Crashing...\r";
-		ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 	}
 
 	kcout << "newoskrnl: Verification succeeded! Keeping on...\r";

@@ -150,7 +150,7 @@ namespace NewOS
 		{
 			if (!poolHdr->fFree)
 			{
-				ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+				ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 				return;
 			}
 

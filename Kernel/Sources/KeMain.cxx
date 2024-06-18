@@ -28,13 +28,13 @@ namespace NewOS::Detail
 {
 	/// @brief Filesystem auto mounter, additional checks are also done by the
 	/// class.
-	class FilesystemWizard final
+	class FilesystemInstaller final
 	{
 		NewOS::NewFilesystemManager* fNewFS{nullptr};
 
 	public:
 		/// @brief wizard constructor.
-		explicit FilesystemWizard()
+		explicit FilesystemInstaller()
 		{
 			if (NewOS::FilesystemManagerInterface::GetMounted())
 			{
@@ -166,9 +166,9 @@ namespace NewOS::Detail
 			}
 		}
 
-		~FilesystemWizard() = default;
+		~FilesystemInstaller() = default;
 
-		NEWOS_COPY_DEFAULT(FilesystemWizard);
+		NEWOS_COPY_DEFAULT(FilesystemInstaller);
 
 		/// @brief Grab the disk's NewFS reference.
 		/// @return NewFilesystemManager the filesystem interface
@@ -211,7 +211,7 @@ namespace NewOS::Detail
 EXTERN_C NewOS::Void KeMain(NewOS::Void)
 {
 	/// Now run kernel loop, until no process are running.
-	NewOS::Detail::FilesystemWizard wizard; // automatic filesystem creation.
+	NewOS::Detail::FilesystemInstaller installer; // automatic filesystem creation.
 
 	NewOS::Detail::ke_launch_srv();
 	

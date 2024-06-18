@@ -76,14 +76,20 @@ EXTERN_C void hal_init_platform(
 
 	/* install basic hooks. */
 
-	constexpr auto cDummyInterrupt = 0x10; // 16
+	constexpr auto cSerialWriteInterrupt = 0x10; // 16
+	constexpr auto cTlsInterrupt = 0x11; // 17
 
-	kSyscalls[cDummyInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr sf) -> void {
-		const char* msg = (const char*)sf;
+	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+		const char* msg = (const char*)rdx;
 		NewOS::kcout << "newoskrnl: " << msg << "\r";
 	};
 
-	kSyscalls[cDummyInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+		tls_check_syscall_impl(rdx);
+	};
+
+	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked = true;
 
 	NewOS::HAL::Detail::_ke_power_on_self_test();
 

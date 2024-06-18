@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <NetworkKit/NetworkDevice.hpp>
+#include <NewKit/Utils.hpp>
 
 namespace NewOS
 {
@@ -26,7 +27,8 @@ namespace NewOS
 		if (rt_string_len(strView) > cNetworkNameLen)
 			return false;
 
-		rt_copy_memory(strView, this->fNetworkName, rt_string_len(strView));
+		rt_copy_memory((VoidPtr)strView, 
+					   (VoidPtr)this->fNetworkName, rt_string_len(strView));
 
 		return true;
 	}

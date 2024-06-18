@@ -161,7 +161,7 @@ namespace NewOS
 	void ProcessHeader::Exit(Int32 exit_code)
 	{
 		if (this->ProcessId !=
-			ProcessScheduler::The().Leak().GetCurrent().Leak().ProcessId)
+			ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId)
 			ke_stop(RUNTIME_CHECK_PROCESS);
 
 		kLastExitCode = exit_code;
@@ -286,17 +286,17 @@ namespace NewOS
 
 	/// @brief Gets current running process.
 	/// @return
-	Ref<ProcessHeader>& ProcessScheduler::GetCurrent()
+	Ref<ProcessHeader>& ProcessScheduler::TheCurrent()
 	{
 		return mTeam.AsRef();
 	}
 
 	/// @brief Current proccess id getter.
 	/// @return Process ID integer.
-	PID& ProcessHelper::GetCurrentPID()
+	PID& ProcessHelper::TheCurrentPID()
 	{
-		kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r";
-		return ProcessScheduler::The().Leak().GetCurrent().Leak().ProcessId;
+		kcout << "ProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
+		return ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId;
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -368,7 +368,7 @@ namespace NewOS
 					ThreadKind::kHartSystemReserved)
 			{
 				SMPManager::The().Leak()[index].Leak()->Busy(true);
-				ProcessHelper::GetCurrentPID() = new_pid;
+				ProcessHelper::TheCurrentPID() = new_pid;
 
 				return SMPManager::The().Leak()[index].Leak()->Switch(the_stack);
 			}
