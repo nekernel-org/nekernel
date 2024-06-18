@@ -15,16 +15,7 @@
 #define kCookieMag1 'C'
 #define kCookieMag2 'R'
 
-template <typename T>
-T* tls_new_ptr(void);
-
-template <typename T>
-bool tls_delete_ptr(T* ptr);
-
-template <typename T, typename... Args>
-T* tls_new_class(Args&&... args);
-
-#define kTLSCookieLen 3
+#define kTLSCookieLen (3U)
 
 /// @brief Thread Information Block for Local Storage.
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
@@ -39,13 +30,24 @@ struct PACKED ThreadInformationBlock final
 
 typedef struct ThreadInformationBlock ProcessInformationBlock;
 
-/// @brief TLS install TIB and PIB.
-EXTERN_C void rt_install_tib(ThreadInformationBlock* TIB, ThreadInformationBlock* PIB);
-
 ///! @brief Cookie Sanity check.
 NewOS::Boolean tls_check_tib(ThreadInformationBlock* Ptr);
 
-/// @brief TLS check system call
+///! @brief new ptr syscall.
+template <typename T>
+T* tls_new_ptr(void);
+
+///! @brief delete ptr syscall.
+template <typename T>
+bool tls_delete_ptr(T* ptr);
+
+template <typename T, typename... Args>
+T* tls_new_class(Args&&... args);
+
+/// @brief TLS install TIB and PIB. (syscall)
+EXTERN_C void rt_install_tib(ThreadInformationBlock* TIB, ThreadInformationBlock* PIB);
+
+/// @brief TLS check (syscall)
 EXTERN_C NewOS::Void tls_check_syscall_impl(NewOS::VoidPtr TIB) noexcept;
 
 #include <KernelKit/ThreadLocalStorage.inl>

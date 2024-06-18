@@ -74,10 +74,13 @@ EXTERN_C void hal_init_platform(
 	NewOS::HAL::IDTLoader idt;
 	idt.Load(idtBase);
 
-	/* install basic hooks. */
+	/* install basic syscalls. */
 
 	constexpr auto cSerialWriteInterrupt = 0x10; // 16
 	constexpr auto cTlsInterrupt = 0x11; // 17
+	constexpr auto cTlsInstallInterrupt = 0x12; // 18
+	constexpr auto cNewInterrupt = 0x13; // 19
+	constexpr auto cDeleteInterrupt = 0x14; // 20
 
 	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
@@ -88,8 +91,47 @@ EXTERN_C void hal_init_platform(
 		tls_check_syscall_impl(rdx);
 	};
 
+	struct PACKED HeapAllocInfo final
+	{
+		NewOS::VoidPtr fThe;
+		NewOS::Size    fTheSz;
+	};
+
+	struct PACKED ProcessBlockInfo final
+	{
+		ThreadInformationBlock* fTIB;
+		ThreadInformationBlock* fPIB;
+	};
+
+	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+
+		/// get HAC struct.
+		HeapAllocInfo* rdxInf = (HeapAllocInfo*)rdx;
+		
+		/// assign the fThe field with the pointer.
+		rdxInf->fThe = NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
+	};
+
+	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+		/// get HAC struct.
+		HeapAllocInfo* rdxInf = (HeapAllocInfo*)rdx;
+		
+		/// delete ptr with sz in mind.
+		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
+	};
+	
+	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+		ProcessBlockInfo* rdxPb = (ProcessBlockInfo*)rdx;
+
+		/// install the process's fTIB and fPIB.
+		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);
+	};
+
 	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fHooked = true;
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cNewInterrupt].Leak().Leak()->fHooked = true;
 
 	NewOS::HAL::Detail::_ke_power_on_self_test();
 

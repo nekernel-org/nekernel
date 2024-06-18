@@ -11,6 +11,8 @@
 
 [global rt_install_tib]
 
+section .text
+
 ;; changed: rs, fs
 ;; expected: rcx, rdx
 
