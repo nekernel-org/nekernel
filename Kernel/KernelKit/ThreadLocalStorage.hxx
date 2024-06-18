@@ -27,7 +27,7 @@ T* tls_new_class(Args&&... args);
 #define kTLSCookieLen 3
 
 /// @brief Thread Information Block for Local Storage.
-/// Located in GS on AMD64, Virtual Address 0x10000 (64x0, 32x0, ARM64)
+/// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED ThreadInformationBlock final
 {
 	NewOS::Char	   Cookie[kTLSCookieLen];
