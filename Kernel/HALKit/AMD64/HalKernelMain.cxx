@@ -106,7 +106,7 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
 
 		/// get HAC struct.
-		HeapAllocInfo* rdxInf = (HeapAllocInfo*)rdx;
+		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 		
 		/// assign the fThe field with the pointer.
 		rdxInf->fThe = NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
@@ -114,14 +114,14 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
 		/// get HAC struct.
-		HeapAllocInfo* rdxInf = (HeapAllocInfo*)rdx;
+		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 		
 		/// delete ptr with sz in mind.
 		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
 	
 	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
-		ProcessBlockInfo* rdxPb = (ProcessBlockInfo*)rdx;
+		ProcessBlockInfo* rdxPb = reinterpret_cast<ProcessBlockInfo*>(rdx);
 
 		/// install the process's fTIB and fPIB.
 		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);

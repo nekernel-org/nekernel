@@ -32,9 +32,14 @@ namespace NewOS
 
 	/// You have to parse the MADT!
 
-	ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr)
+	ACPIFactoryInterface::ACPIFactoryInterface(VoidPtr rsdPtr)
 		: fRsdp(rsdPtr), fEntries(0)
 	{
+#ifdef __DEBUG__
+		kcout << "newoskrnl: ACPI: init interface.\r";
+#else
+
+#endif
 	}
 
 	Void ACPIFactoryInterface::Shutdown()

@@ -27,7 +27,7 @@
 namespace NewOS
 {
 	/// @brief 96-bit number to represent the domain and namespace
-	struct PACKED IPCEPAddress
+	struct PACKED IPCEPAddress final
 	{
 		UInt32 RemoteAddress;
 		UInt64 RemoteNamespace;
@@ -41,17 +41,20 @@ namespace NewOS
 		eIPCEPBigEndian	   = 1
 	};
 
-	/// @brief IPCEP connection header
+	/// @brief IPCEP connection header, must be the same on
+	/// user side as well.
+
 	typedef struct IPCEPConnectionHeader
 	{
-		UInt32			 IpcHeader;	   // cRemoteHeaderMagic
-		UInt8			 IpcEndianess; // 0 : LE, 1 : BE
-		SizeT			 IpcPacketSize;
+		UInt32 IpcHeader;	   // cRemoteHeaderMagic
+		UInt8 IpcEndianess; // 0 : LE, 1 : BE
+		SizeT IpcPacketSize;
 		IPCEPAddressType IpcFrom;
 		IPCEPAddressType IpcTo;
-		UInt32			 IpcCRC32;
-		UInt32			 IpcMsg;
-		UInt32			 IpcMsgSz;
+		UInt32 IpcCRC32;
+		UInt32 IpcMsg;
+		UInt32 IpcMsgSz;
+		UInt8 IpcData[];
 	} PACKED IPCEPConnectionHeader;
 } // namespace NewOS
 
