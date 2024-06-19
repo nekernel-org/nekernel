@@ -85,39 +85,29 @@ namespace NewOS
 	bool HardwareThread::Switch(HAL::StackFramePtr stack)
 	{
 		if (!rt_check_stack(stack))
+		{
+			/// provide 'nullptr' to free the stack frame.
+			if (stack == nullptr)
+			{
+				delete fStack;
+				fStack = nullptr;
+
+				return true;
+			}
+
 			return false;
-
-		if (!fStack)
-		{
-			fStack = stack;
 		}
-		else
+
+		if (fStack)
 		{
-			/// Keep the arguments, switch the base pointer, stack pointer
-			/// fs and gs registers.
-			fStack->Rbp = stack->Rbp;
-			fStack->Rsp = stack->Rsp;
-			fStack->Fs	= stack->Fs;
-			fStack->Gs	= stack->Gs;
-
-			// save global registers.
-
-			fStack->R15 = stack->R15;
-			fStack->R14 = stack->R14;
-
-			fStack->R13 = stack->R13;
-			fStack->R12 = stack->R12;
-			fStack->R11 = stack->R11;
-
-			fStack->R10 = stack->R10;
-			fStack->R9 = stack->R9;
-			fStack->R8 = stack->R8;
-
-			fStack->Exception = this->fID;
+			delete fStack;
+			fStack = nullptr;
 		}
+		
+		fStack = stack;
 
 		rt_do_context_switch(fStack);
-		
+
 		return true;
 	}
 
@@ -143,12 +133,12 @@ namespace NewOS
 	}
 
 	/// @brief Get Stack Frame of Core
-	HAL::StackFramePtr SMPManager::GetStackFrame() noexcept
+	HAL::StackFramePtr SMPManager::Leak() noexcept
 	{
 		if (fThreadList[fCurrentThread].Leak() &&
-			ProcessHelper::GetCurrentPID() ==
-				fThreadList[fCurrentThread].Leak().Leak().fPID)
-			return fThreadList[fCurrentThread].Leak().Leak().fStack;
+			ProcessHelper::TheCurrentPID() ==
+				fThreadList[fCurrentThread].Leak().Leak()->fPID)
+			return fThreadList[fCurrentThread].Leak().Leak()->fStack;
 
 		return nullptr;
 	}
@@ -163,35 +153,35 @@ namespace NewOS
 		{
 			// stack != nullptr -> if core is used, then continue.
 			if (!fThreadList[idx].Leak() ||
-				!fThreadList[idx].Leak().Leak().IsWakeup() ||
-				fThreadList[idx].Leak().Leak().IsBusy())
+				!fThreadList[idx].Leak().Leak()->IsWakeup() ||
+				fThreadList[idx].Leak().Leak()->IsBusy())
 				continue;
 
 			// to avoid any null deref.
-			if (!fThreadList[idx].Leak().Leak().fStack)
+			if (!fThreadList[idx].Leak().Leak()->fStack)
 				continue;
-			if (fThreadList[idx].Leak().Leak().fStack->Rsp == 0)
+			if (fThreadList[idx].Leak().Leak()->fStack->Rsp == 0)
 				continue;
-			if (fThreadList[idx].Leak().Leak().fStack->Rbp == 0)
+			if (fThreadList[idx].Leak().Leak()->fStack->Rbp == 0)
 				continue;
 
-			fThreadList[idx].Leak().Leak().Busy(true);
+			fThreadList[idx].Leak().Leak()->Busy(true);
 
-			fThreadList[idx].Leak().Leak().fID = idx;
+			fThreadList[idx].Leak().Leak()->fID = idx;
 
 			/// I figured out this:
 			/// Allocate stack
 			/// Set APIC base to stack
 			/// Do stuff and relocate stack based on this code.
 			/// - Amlel
-			rt_copy_memory(stack, fThreadList[idx].Leak().Leak().fStack,
+			rt_copy_memory(stack, fThreadList[idx].Leak().Leak()->fStack,
 						   sizeof(HAL::StackFrame));
 
-			fThreadList[idx].Leak().Leak().Switch(fThreadList[idx].Leak().Leak().fStack);
+			fThreadList[idx].Leak().Leak()->Switch(fThreadList[idx].Leak().Leak()->fStack);
 
-			fThreadList[idx].Leak().Leak().fPID = ProcessHelper::GetCurrentPID();
+			fThreadList[idx].Leak().Leak()->fPID = ProcessHelper::TheCurrentPID();
 
-			fThreadList[idx].Leak().Leak().Busy(false);
+			fThreadList[idx].Leak().Leak()->Busy(false);
 
 			return true;
 		}
@@ -204,19 +194,25 @@ namespace NewOS
 	 * @param idx the index
 	 * @return the reference to the hardware thread.
 	 */
-	Ref<HardwareThread> SMPManager::operator[](const SizeT& idx)
+	Ref<HardwareThread*> SMPManager::operator[](const SizeT& idx)
 	{
 		if (idx == 0)
 		{
-			if (fThreadList[idx].Leak().Leak().Kind() != kHartSystemReserved)
+			if (fThreadList[idx].Leak().Leak()->Kind() != kHartSystemReserved)
 			{
-				fThreadList[idx].Leak().Leak().fKind = kHartBoot;
+				fThreadList[idx].Leak().Leak()->fKind = kHartBoot;
 			}
 		}
 		else if (idx >= kMaxHarts)
 		{
-			HardwareThread fakeThread;
-			fakeThread.fKind = kInvalidHart;
+			static HardwareThread* fakeThread = new HardwareThread();
+
+			if (!fakeThread)
+			{
+				fakeThread = new HardwareThread();
+			}
+
+			fakeThread->fKind = kInvalidHart;
 
 			return {fakeThread};
 		}

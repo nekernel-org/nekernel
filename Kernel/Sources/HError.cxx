@@ -13,6 +13,7 @@ namespace NewOS
 	/// @return if error-free: true, otherwise false.
 	Boolean ke_bug_check(void) noexcept
 	{
-		return true;
+		/// TODO:
+		return false;
 	}
 } // namespace NewOS

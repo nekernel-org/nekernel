@@ -10,14 +10,12 @@
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/Semaphore.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/Timer.hpp>
 
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
 #define kAPIC_SIPI_Vector 0x00500
 #define kAPIC_EIPI_Vector 0x00400
-
-/// @brief This symbol is the kernel main symbol.
-EXTERN_C void KeMain();
 
 /// @brief assembly routine. internal use only.
 EXTERN_C void _hal_enable_smp(void);
@@ -116,10 +114,16 @@ namespace NewOS::HAL
 
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	STATIC MadtType* kApicInfoBlock			 = nullptr;
-	STATIC UIntPtr	 kApicMadtAddresses[255] = {0};
-	STATIC SizeT	 kApicMadtAddressesCount = 0UL;
-	STATIC UIntPtr	 cBaseAddressAPIC		 = 0xFEE00000;
+	STATIC MadtType* kApicInfoBlock = nullptr;
+
+	STATIC struct
+	{
+		UIntPtr fAddress{0};
+		UInt32	fKind{0};
+	} kApicMadtAddresses[255] = {};
+
+	STATIC SizeT   kApicMadtAddressesCount = 0UL;
+	STATIC UIntPtr cBaseAddressAPIC		   = 0xFEE00000;
 
 	/// @brief this will help us schedule our cores.
 	STATIC Boolean* cProgramInitialized = nullptr;
@@ -159,23 +163,7 @@ namespace NewOS::HAL
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
-		kcout << "newoskrnl: finish kernel init... \r";
-
-		if (cProgramInitialized &&
-			*cProgramInitialized)
-		{
-			*cProgramInitialized = false;
-
-			kcout << "newoskrnl: putting thread to sleep...\r";
-
-			_hal_spin_core();
-		}
-		else
-		{
-			KeMain();
-
-			_hal_spin_core();
-		}
+		_hal_spin_core();
 	}
 
 	EXTERN_C StackFramePtr _hal_leak_current_context(Void)
@@ -196,16 +184,13 @@ namespace NewOS::HAL
 	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame)
 	{
 		Semaphore sem;
-		while (sem.IsLocked())
-		{
-		}
 
-		sem.Lock(&ProcessScheduler::The().Leak().GetCurrent().Leak());
+		sem.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), Seconds(5));
 
 		cFramePtr = stackFrame;
 
 		/// yes the exception field contains the core id.
-		hal_send_start_ipi(stackFrame->Exception, 0x40, cBaseAddressAPIC);
+		hal_send_start_ipi(stackFrame->Rcx, 0x40, cBaseAddressAPIC);
 
 		sem.Unlock();
 	}
@@ -219,21 +204,23 @@ namespace NewOS::HAL
 
 		if (kApicMadt != nullptr)
 		{
-			MadtType* madt = (MadtType*)kApicMadt;
+			MadtType* madt = reinterpret_cast<MadtType*>(kApicMadt);
 
 			constexpr auto cMaxProbableCores = 4; // the amount of cores we want.
 			constexpr auto cStartAt			 = 0; // start here to avoid boot core.
 
 			for (SizeT coreAt = cStartAt; coreAt < cMaxProbableCores; ++coreAt)
 			{
-				if (madt->MadtRecords[coreAt].Flags == kThreadLAPIC) // if local apic.
+				if (madt->MadtRecords[coreAt].Flags != kThreadBoot) // if local apic.
 				{
 					MadtType::MadtAddress& madtRecord = madt->MadtRecords[coreAt];
 
 					// then register as a core for scheduler.
-					kcout << "newoskrnl: register core as scheduler thread.\r";
+					kcout << "newoskrnl: Register Local APIC.\r";
 
-					kApicMadtAddresses[kApicMadtAddressesCount] = madtRecord.Address;
+					kApicMadtAddresses[kApicMadtAddressesCount].fAddress = madtRecord.Address;
+					kApicMadtAddresses[kApicMadtAddressesCount].fKind	 = madt->MadtRecords[coreAt].Flags;
+
 					++kApicMadtAddressesCount;
 				}
 			}
@@ -258,7 +245,7 @@ namespace NewOS::HAL
 			cProgramInitialized = new Boolean(true);
 
 			constexpr auto cWhereToInterrupt = 0x40;
-			constexpr auto cWhatCore = 1;
+			constexpr auto cWhatCore		 = 1;
 
 			hal_send_start_ipi(cWhatCore, cWhereToInterrupt, cBaseAddressAPIC);
 		}

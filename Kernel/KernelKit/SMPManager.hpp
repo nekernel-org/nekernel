@@ -94,13 +94,13 @@ namespace NewOS
 		NEWOS_COPY_DEFAULT(SMPManager);
 
 	public:
-		bool			   Switch(HAL::StackFrame* the);
-		HAL::StackFramePtr GetStackFrame() noexcept;
+		bool			   Switch(HAL::StackFramePtr the);
+		HAL::StackFramePtr Leak() noexcept;
 
 	public:
-		Ref<HardwareThread> operator[](const SizeT& idx);
-		bool				operator!() noexcept;
-							operator bool() noexcept;
+		Ref<HardwareThread*> operator[](const SizeT& idx);
+		bool				 operator!() noexcept;
+							 operator bool() noexcept;
 
 	public:
 		/// @brief Shared instance of the SMP Manager.

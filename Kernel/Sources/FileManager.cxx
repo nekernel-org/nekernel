@@ -90,7 +90,7 @@ namespace NewOS
 
 		NEWOS_UNUSED(flags);
 
-		auto dataForkName = "FileData";
+		auto dataForkName = kNewFSDataFork;
 
 		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
 			fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
@@ -112,7 +112,7 @@ namespace NewOS
 
 		NEWOS_UNUSED(flags);
 
-		auto dataForkName = "FileData";
+		auto dataForkName = kNewFSDataFork;
 
 		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
 			return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz,

@@ -21,13 +21,12 @@ namespace NewOS
 		Array& operator=(const Array&) = default;
 		Array(const Array&)			   = default;
 
-		ErrorOr<T> operator[](Size At)
+		ErrorOr<T*> operator[](Size At)
 		{
 			if (At > N)
 				return {};
 
-			kcout << "Returning element\r";
-			return ErrorOr<T>(fArray[At]);
+			return ErrorOr<T*>(&fArray[At]);
 		}
 
 		Boolean Empty() const
@@ -43,14 +42,7 @@ namespace NewOS
 
 		SizeT Count() const
 		{
-			SizeT cntElems = 0UL;
-			for (auto Val : fArray)
-			{
-				if (Val)
-					++cntElems;
-			}
-
-			return cntElems;
+			return N;
 		}
 
 		const T* CData()

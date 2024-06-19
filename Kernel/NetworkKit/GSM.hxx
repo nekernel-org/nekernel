@@ -3,7 +3,7 @@
 	Copyright Zeta Electronics Corporation.
 
 	File: GSM.hxx.
-	Purpose: GSM protocol.
+	Purpose: GSM protocol classes.
 
 ------------------------------------------- */
 

@@ -170,6 +170,13 @@ namespace NewOS
 		Boolean Add(const T val)
 		{
 			auto* iterationNode = fFirstNode;
+
+			if (!iterationNode)
+			{
+				fFirstNode	  = new MutableLinkedList<T>();
+				iterationNode = fFirstNode;
+			}
+
 			MUST_PASS(iterationNode);
 
 			while (iterationNode)

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_PLIST_HPP__
-#define _INC_PLIST_HPP__
+#ifndef __INC_PLIST_HPP__
+#define __INC_PLIST_HPP__
 
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
@@ -14,18 +14,16 @@
 
 namespace NewOS
 {
-	using PropertyId = Int;
+	/// @brief handle to anything (number, ptr, string...)
+	using PropertyId = UIntPtr;
 
 	/// @brief Kernel property class.
+	/// @example \Properties\SmpCores or \Properties\KernelVersion
 	class Property
 	{
 	public:
-		explicit Property(const StringView& sw)
-			: fName(sw)
-		{
-		}
-
-		virtual ~Property() = default;
+		explicit Property(const StringView& sw);
+		virtual ~Property();
 
 	public:
 		Property& operator=(const Property&) = default;
@@ -39,8 +37,8 @@ namespace NewOS
 		PropertyId		fAction;
 	};
 
-	template <SSizeT N>
+	template <SizeT N>
 	using PropertyArray = Array<Property, N>;
 } // namespace NewOS
 
-#endif // !_INC_PLIST_HPP__
+#endif // !__INC_PLIST_HPP__

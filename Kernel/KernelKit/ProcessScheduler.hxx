@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __PROCESS_SCHEDULER__
-#define __PROCESS_SCHEDULER__
+#ifndef _INC_PROCESS_SCHEDULER_HXX_
+#define _INC_PROCESS_SCHEDULER_HXX_
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/FileManager.hpp>
@@ -17,7 +17,7 @@
 #define kSchedMinMicroTime (AffinityKind::kHartStandard)
 #define kSchedInvalidPID   (-1)
 
-#define kSchedProcessLimitPerTeam (100U)
+#define kSchedProcessLimitPerTeam (16U)
 
 ////////////////////////////////////////////////////
 
@@ -134,7 +134,6 @@ namespace NewOS
 		explicit ProcessHeader(VoidPtr startImage = nullptr)
 			: Image(startImage)
 		{
-			MUST_PASS(startImage);
 		}
 
 		~ProcessHeader() = default;
@@ -145,7 +144,7 @@ namespace NewOS
 		void SetEntrypoint(UIntPtr& imageStart) noexcept;
 
 	public:
-		Char			   Name[kProcessLen] = {"NewOS Process"};
+		Char			   Name[kProcessLen] = {"Process"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
 		ProcessSelector	   Selector{ProcessSelector::kRingUser};
 		HAL::StackFramePtr StackFrame{nullptr};
@@ -163,21 +162,13 @@ namespace NewOS
 
 		enum
 		{
-			kAppKind	= 1,
-			kShLibKind	= 2,
-			kDriverKind = 3,
+			kAppKind   = 1,
+			kShLibKind = 2,
 			kKindCount,
-		};
-
-		enum
-		{
-			kRingUserKind	= 3,
-			kRingDriverKind = 0,
 		};
 
 		ProcessTime PTime;
 		PID			ProcessId{kSchedInvalidPID};
-		Int32		Ring{kRingDriverKind};
 		Int32		Kind{kAppKind};
 
 	public:
@@ -240,7 +231,6 @@ namespace NewOS
 	/// The main class which you call to schedule an app.
 	class ProcessScheduler final
 	{
-	private:
 		explicit ProcessScheduler() = default;
 
 	public:
@@ -248,15 +238,8 @@ namespace NewOS
 
 		NEWOS_COPY_DEFAULT(ProcessScheduler)
 
-		operator bool()
-		{
-			return mTeam.AsArray().Count() > 0;
-		}
-
-		bool operator!()
-		{
-			return mTeam.AsArray().Count() == 0;
-		}
+			 operator bool();
+		bool operator!();
 
 	public:
 		ProcessTeam& CurrentTeam();
@@ -266,7 +249,7 @@ namespace NewOS
 		bool  Remove(SizeT headerIndex);
 
 	public:
-		Ref<ProcessHeader>& GetCurrent();
+		Ref<ProcessHeader>& TheCurrent();
 		SizeT				Run() noexcept;
 
 	public:
@@ -285,8 +268,8 @@ namespace NewOS
 	public:
 		static bool Switch(HAL::StackFrame* newStack, const PID& newPid);
 		static bool CanBeScheduled(Ref<ProcessHeader>& process);
-		static PID& GetCurrentPID();
-		static bool StartScheduling();
+		static PID& TheCurrentPID();
+		static SizeT StartScheduling();
 	};
 
 	const Int32& rt_get_exit_code() noexcept;
@@ -300,4 +283,4 @@ namespace NewOS
 
 ////////////////////////////////////////////////////
 
-#endif /* ifndef __PROCESS_SCHEDULER__ */
+#endif /* ifndef _INC_PROCESS_SCHEDULER_HXX_ */

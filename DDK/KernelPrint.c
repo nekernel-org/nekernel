@@ -10,7 +10,7 @@
 
 DK_EXTERN void kernelPrintChar(const char ch)
 {
-	kernelCall("WriteCharacter", 1, ch);
+	kernelCall("WriteCharacter", 1, ch, 1);
 }
 
 /// @brief print string to UART.

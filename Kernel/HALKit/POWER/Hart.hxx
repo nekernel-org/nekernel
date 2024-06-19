@@ -26,3 +26,9 @@ typedef struct HalHardwareThread
 	NewOS::UInt32  fPageFlags;
 	PPCHartType	   fIdentNumber;
 } HalHardwareThread;
+
+/// @brief Set PC to specific hart.
+/// @param hart the hart
+/// @param epc the pc.
+/// @return 
+EXTERN_C NewOS::Void hal_switch_to_hart(HalHardwareThread* hart, NewOS::VoidPtr epc);

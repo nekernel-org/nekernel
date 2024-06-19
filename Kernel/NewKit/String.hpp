@@ -35,7 +35,7 @@ namespace NewOS
 		StringView(const StringView&)			 = default;
 
 		Char*		Data();
-		const Char* CData();
+		const Char* CData() const;
 		Size		Length() const;
 
 		bool operator==(const Char* rhs) const;

@@ -5,16 +5,20 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <HALKit/Alpha/Processor.hpp>
+#include <HALKit/AXP/Processor.hpp>
 
-NewOS::Array<void (*)(NewOS::Int32 id, NewOS::HAL::StackFrame*),
-			 kKernelMaxSystemCalls>
-	kSyscalls;
-
-extern "C" void rt_syscall_handle(NewOS::HAL::StackFrame* stack)
+/// @brief Internal call for syscall, to work with C++.
+/// @param stack
+/// @return nothing.
+EXTERN_C void rt_syscall_handle(NewOS::HAL::StackFrame* stack)
 {
-	for (NewOS::SizeT index = 0UL; index < kKernelMaxSystemCalls; ++index)
+	if (stack->Rcx <= (kSyscalls.Count() - 1))
 	{
-		(kSyscalls[index].Leak().Leak())(stack->ID, stack);
+		NewOS::kcout << "newoskrnl: syscall: enter.\r";
+
+		if (kSyscalls[stack->Rcx].Leak().Leak().fHooked)
+			(kSyscalls[stack->Rcx].Leak().Leak().fProc)(stack);
+
+		NewOS::kcout << "newoskrnl: syscall: exit.\r";
 	}
 }

@@ -15,9 +15,9 @@ inline T* tls_new_ptr(void)
 {
 	using namespace NewOS;
 
-	MUST_PASS(ProcessScheduler::The().Leak().GetCurrent());
+	MUST_PASS(ProcessScheduler::The().Leak().TheCurrent());
 
-	auto ref_process = ProcessScheduler::The().Leak().GetCurrent();
+	auto ref_process = ProcessScheduler::The().Leak().TheCurrent();
 
 	T* pointer = (T*)ref_process.Leak().New(sizeof(T));
 	return pointer;
@@ -32,9 +32,9 @@ inline bool tls_delete_ptr(T* ptr)
 
 	using namespace NewOS;
 
-	MUST_PASS(ProcessScheduler::The().Leak().GetCurrent());
+	MUST_PASS(ProcessScheduler::The().Leak().TheCurrent());
 
-	auto ref_process = ProcessScheduler::The().Leak().GetCurrent();
+	auto ref_process = ProcessScheduler::The().Leak().TheCurrent();
 	return ref_process.Leak().Delete(ptr, sizeof(T));
 }
 

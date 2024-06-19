@@ -15,7 +15,7 @@ namespace NewOS
 		return fData;
 	}
 
-	const Char* StringView::CData()
+	const Char* StringView::CData() const
 	{
 		return fData;
 	}

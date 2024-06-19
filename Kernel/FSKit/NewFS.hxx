@@ -68,10 +68,10 @@ default.
 #define kNewFSCatalogKindDevice (9)
 #define kNewFSCatalogKindLock	(10)
 
-#define kNewFSSeparator '/'
+#define kNewFSSeparator '\\'
 
 #define kNewFSUpDir ".."
-#define kNewFSRoot	"/"
+#define kNewFSRoot	"\\"
 
 #define kNewFSLF  '\r'
 #define kNewFSEOF (-1)

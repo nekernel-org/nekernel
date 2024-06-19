@@ -76,8 +76,8 @@ namespace NewOS
 	}
 
 	/// @brief Makes a page heap.
-	/// @param heapPtr 
-	/// @return 
+	/// @param heapPtr
+	/// @return
 	Int32 ke_make_ke_page(VoidPtr heapPtr)
 	{
 		if (kHeapCount < 1)

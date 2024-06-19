@@ -24,19 +24,21 @@ namespace NewOS
 			Char Path[kIndexerNodeNameLength];
 		};
 
+
 		class IndexableProperty final : public Property
 		{
 		public:
 			explicit IndexableProperty()
-				: Property(StringBuilder::Construct("IndexableProperty").Leak().Leak())
+				: Property(StringBuilder::Construct("\\Filesystem\\IsIndexable?").Leak().Leak())
 			{
 			}
+			
 			~IndexableProperty() override = default;
 
 			NEWOS_COPY_DEFAULT(IndexableProperty);
 
 		public:
-			IndexProperty& LeakProperty() noexcept;
+			IndexProperty& Leak() noexcept;
 
 		public:
 			void  AddFlag(Int16 flag);

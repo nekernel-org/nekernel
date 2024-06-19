@@ -12,7 +12,6 @@
 
 namespace NewOS
 {
-
 	/// Custom to the virtual machine, you'll need to parse the MADT instead.
 
 	void rt_shutdown_acpi_qemu_20(void)
@@ -32,9 +31,14 @@ namespace NewOS
 
 	/// You have to parse the MADT!
 
-	ACPIFactoryInterface::ACPIFactoryInterface(voidPtr rsdPtr)
+	ACPIFactoryInterface::ACPIFactoryInterface(VoidPtr rsdPtr)
 		: fRsdp(rsdPtr), fEntries(0)
 	{
+#ifdef __DEBUG__
+		kcout << "newoskrnl: ACPI: init interface.\r";
+#else
+
+#endif
 	}
 
 	Void ACPIFactoryInterface::Shutdown()

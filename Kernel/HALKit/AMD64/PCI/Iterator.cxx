@@ -7,8 +7,8 @@
 #include <KernelKit/PCI/Iterator.hpp>
 
 #define PCI_ITERATOR_FIND_AND_UNWRAP(DEV, SZ) \
-	if (DEV.Leak())                           \
-		return DEV.Leak();
+	if (DEV.Leak().Leak())                    \
+		return *DEV.Leak().Leak();
 
 namespace NewOS::PCI
 {
@@ -25,7 +25,7 @@ namespace NewOS::PCI
 
 					if (dev.Class() == (UChar)type)
 					{
-						fDevices[bus].Leak().Leak() = dev;
+						*fDevices[bus].Leak().Leak() = dev;
 					}
 				}
 			}

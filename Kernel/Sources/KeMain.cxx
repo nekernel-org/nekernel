@@ -28,18 +28,19 @@ namespace NewOS::Detail
 {
 	/// @brief Filesystem auto mounter, additional checks are also done by the
 	/// class.
-	class FilesystemWizard final
+	class FilesystemInstaller final
 	{
 		NewOS::NewFilesystemManager* fNewFS{nullptr};
 
 	public:
-		explicit FilesystemWizard()
+		/// @brief wizard constructor.
+		explicit FilesystemInstaller()
 		{
 			if (NewOS::FilesystemManagerInterface::GetMounted())
 			{
 				/// Mounted partition, cool!
 				NewOS::kcout
-					<< "New OS: No need to create for a NewFS partition here...\r";
+					<< "newoskrnl: No need to create for a NewFS partition here...\r";
 			}
 			else
 			{
@@ -51,11 +52,11 @@ namespace NewOS::Detail
 
 				if (fNewFS->GetParser())
 				{
-					constexpr auto cFolderInfo		  = "Metadata";
+					constexpr auto cFolderInfo		  = "META-INF";
 					const auto	   cDirCount		  = 8;
 					const char*	   cDirStr[cDirCount] = {
-						   "/Boot/", "/System/", "/Support/", "/Applications/",
-						   "/Users/", "/Library/", "/Mount/", "/Assistants/"};
+						   "\\Boot\\", "\\System\\", "\\Support\\", "\\Packages\\",
+						   "\\Users\\", "\\Library\\", "\\Mount\\", "\\DCIM\\"};
 
 					for (NewOS::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
@@ -68,7 +69,7 @@ namespace NewOS::Detail
 						}
 
 						catalogDir = fNewFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
-																	  kNewFSCatalogKindDir);
+																		kNewFSCatalogKindDir);
 
 						NewFork theFork{0};
 
@@ -92,9 +93,9 @@ namespace NewOS::Detail
 
 						metadataFolder +=
 							"<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
-							"system</p>\r<p>Volume Type: New OS Standard</p>\r";
+							"system</p>\r<p>Volume Type: s10 Filesystem</p>\r";
 
-						metadataFolder += "<p>File name: ";
+						metadataFolder += "<p>Path: ";
 						metadataFolder += cDirStr[dirIndx];
 						metadataFolder += "</p>\r";
 
@@ -113,9 +114,9 @@ namespace NewOS::Detail
 				}
 
 				NewCatalog* catalogDisk =
-					this->fNewFS->GetParser()->GetCatalog("/Mount/This Disk");
+					this->fNewFS->GetParser()->GetCatalog("\\Mount\\C:\\");
 
-				const NewOS::Char* cSrcName = "DiskInfo";
+				const NewOS::Char* cSrcName = "DISK-INF";
 
 				if (catalogDisk)
 				{
@@ -128,16 +129,16 @@ namespace NewOS::Detail
 				else
 				{
 					catalogDisk =
-						(NewCatalog*)this->Leak()->CreateAlias("/Mount/This Disk");
+						(NewCatalog*)this->Leak()->CreateAlias("\\Mount\\C:\\");
 
 					NewOS::StringView diskFolder(kNewFSSectorSz);
 
 					diskFolder +=
 						"<p>Kind: alias to disk</p>\r<p>Created by: system</p>\r<p>Edited "
 						"by: "
-						"system</p>\r<p>Volume Type: New OS Standard</p>\r";
+						"system</p>\r<p>Volume Type: s10 Filesystem</p>\r";
 
-					diskFolder += "<p>Original Path: ";
+					diskFolder += "<p>Root: ";
 					diskFolder += NewOS::NewFilesystemHelper::Root();
 					diskFolder += "</p>\r";
 
@@ -157,56 +158,50 @@ namespace NewOS::Detail
 
 					fNewFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
 					fNewFS->GetParser()->WriteCatalog(catalogDisk,
-													(NewOS::VoidPtr)diskFolder.CData(),
-													kNewFSSectorSz, cSrcName);
+													  (NewOS::VoidPtr)diskFolder.CData(),
+													  kNewFSSectorSz, cSrcName);
 
 					delete catalogDisk;
 				}
 			}
 		}
 
-		~FilesystemWizard()
-		{
-			delete fNewFS;
-		}
+		~FilesystemInstaller() = default;
 
-		NEWOS_COPY_DEFAULT(FilesystemWizard);
+		NEWOS_COPY_DEFAULT(FilesystemInstaller);
 
-		/// Grab the disk's NewFS reference.
+		/// @brief Grab the disk's NewFS reference.
+		/// @return NewFilesystemManager the filesystem interface
 		NewOS::NewFilesystemManager* Leak()
 		{
 			return fNewFS;
 		}
 	};
 
-	/// @brief System loader entrypoint.
+	/// @brief Loads necessary servers for the OS to work.
 	/// @param void no parameters.
 	/// @return void no return value.
-	STATIC NewOS::Void SystemLauncher_Main(NewOS::Void)
+	STATIC NewOS::Void ke_launch_srv(NewOS::Void)
 	{
-		NewOS::PEFLoader lockScreen("/System/LockScreen");
+		NewOS::PEFLoader secureSrv("\\System\\securesrv.exe");
 
-		if (!lockScreen.IsLoaded())
+		if (!secureSrv.IsLoaded())
 		{
 			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		NewOS::Utils::execute_from_image(lockScreen,
+		NewOS::Utils::execute_from_image(secureSrv,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::PEFLoader stageBoard("/System/StageBoard");
+		NewOS::PEFLoader uiSrv("\\System\\uisrv.exe");
 
-		if (!stageBoard.IsLoaded())
+		if (!uiSrv.IsLoaded())
 		{
 			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		NewOS::Utils::execute_from_image(stageBoard,
+		NewOS::Utils::execute_from_image(uiSrv,
 										 NewOS::ProcessHeader::kAppKind);
-
-		NewOS::kcout << "SystemLauncher: done, sleeping...";
-
-		while (true) {}
 	}
 } // namespace NewOS::Detail
 
@@ -216,13 +211,17 @@ namespace NewOS::Detail
 EXTERN_C NewOS::Void KeMain(NewOS::Void)
 {
 	/// Now run kernel loop, until no process are running.
-	NewOS::Detail::FilesystemWizard wizard; // automatic.
+	NewOS::Detail::FilesystemInstaller installer; // automatic filesystem creation.
 
-	auto cLoaderName = "SystemLauncher";
-	NewOS::execute_from_image(NewOS::Detail::SystemLauncher_Main, cLoaderName);
+	NewOS::Detail::ke_launch_srv();
+	
+	// fetch system cores.
+	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
-	while (true) 
+	// spin forever.
+	while (Yes)
 	{
-		NewOS::ProcessScheduler::The().Leak().Run();
+		// start scheduling.
+		NewOS::ProcessHelper::StartScheduling();
 	}
 }

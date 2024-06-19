@@ -18,7 +18,7 @@
 ///! BUGS: 0
 
 /***********************************************************************************/
-/* This file handles the process scheduling.
+/* This file handles the process scheduling. */
 /***********************************************************************************/
 
 namespace NewOS
@@ -42,13 +42,9 @@ namespace NewOS
 
 	void ProcessHeader::Crash()
 	{
-		kcout << this->Name << ": crashed. (id = " << number(kErrorProcessFault);
+		kcout << (*this->Name == 0 ? "Unknown" : this->Name) << ": crashed. (id = ";
+		kcout.Number(kErrorProcessFault);
 		kcout << ")\r";
-
-		if (this->Ring != kRingUserKind)
-		{
-			MUST_PASS(ke_bug_check());
-		}
 
 		this->Exit(kErrorProcessFault);
 	}
@@ -63,18 +59,20 @@ namespace NewOS
 
 	VoidPtr ProcessHeader::New(const SizeT& sz)
 	{
-		if (this->FreeMemory < 1)
-		{
-			DbgLastError() = kErrorHeapOutOfMemory;
-			this->Crash(); /// out of memory.
-
-			return nullptr;
-		}
-
 		if (this->HeapCursor)
 		{
-			VoidPtr ptr		 = this->HeapCursor;
+			if (this->FreeMemory < 1)
+			{
+				DbgLastError() = kErrorHeapOutOfMemory;
+			
+				/* we're going out of memory */
+				this->Crash();
+
+				return nullptr;
+			}
+
 			this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor + (sizeof(sz)));
+			VoidPtr ptr		 = this->HeapCursor;
 
 			++this->UsedMemory;
 			--this->FreeMemory;
@@ -163,26 +161,10 @@ namespace NewOS
 	void ProcessHeader::Exit(Int32 exit_code)
 	{
 		if (this->ProcessId !=
-			ProcessScheduler::The().Leak().GetCurrent().Leak().ProcessId)
-			ke_stop(RUNTIME_CHECK_PROCESS);
-
-		if (this->Ring == (Int32)ProcessSelector::kRingKernel &&
-			ProcessScheduler::The().Leak().GetCurrent().Leak().Ring > 0)
+			ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId)
 			ke_stop(RUNTIME_CHECK_PROCESS);
 
 		kLastExitCode = exit_code;
-
-		if (this->Ring != (Int32)ProcessSelector::kRingDriver)
-		{
-			if (this->HeapPtr)
-				rt_free_heap(this->HeapPtr);
-
-			this->HeapPtr	 = nullptr;
-			this->HeapCursor = nullptr;
-
-			this->FreeMemory = 0UL;
-			this->UsedMemory = 0UL;
-		}
 
 		//! Delete image if not done already.
 		if (this->Image)
@@ -201,9 +183,6 @@ namespace NewOS
 	/// @return
 	SizeT ProcessScheduler::Add(Ref<ProcessHeader>& process)
 	{
-		if (!process)
-			return -1;
-
 		if (!process.Leak().Image)
 		{
 			if (process.Leak().Kind != ProcessHeader::kShLibKind)
@@ -212,7 +191,7 @@ namespace NewOS
 			}
 		}
 
-		if (!mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
+		if (mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
 			return -kErrorOutOfTeamSlot;
 
 		kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r";
@@ -229,11 +208,13 @@ namespace NewOS
 			ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
 
 		MUST_PASS(process.Leak().StackFrame);
+		
+		process.Leak().Status = ProcessStatus::kRunning;
+
+		process.Leak().ProcessId  = (mTeam.AsArray().Count() - 1);
+		process.Leak().HeapCursor = process.Leak().HeapPtr;
 
 		mTeam.AsArray().Add(process);
-
-		process.Leak().ProcessId  = mTeam.AsArray().Count() - 1;
-		process.Leak().HeapCursor = process.Leak().HeapPtr;
 
 		return mTeam.AsArray().Count() - 1;
 	}
@@ -255,17 +236,14 @@ namespace NewOS
 	/// @return
 	SizeT ProcessScheduler::Run() noexcept
 	{
-		SizeT processIndex = 0; //! we store this guy to tell the scheduler how many
+		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								//! things we have scheduled.
 
-		for (; processIndex < mTeam.AsArray().Count(); ++processIndex)
+		for (; process_index < mTeam.AsArray().Count(); ++process_index)
 		{
-			auto process = mTeam.AsArray()[processIndex];
+			auto process = mTeam.AsArray()[process_index];
 
-			MUST_PASS(process); //! no need for a MUST_PASS(process.Leak());, it is
-								//! recursive because of the nature of the class;
-
-			//! run any process needed to be scheduled.
+			//! check if process needs to be scheduled.
 			if (ProcessHelper::CanBeScheduled(process.Leak()))
 			{
 				auto unwrapped_process = *process.Leak();
@@ -278,6 +256,8 @@ namespace NewOS
 				// tell helper to find a core to schedule on.
 				ProcessHelper::Switch(mTeam.AsRef().Leak().StackFrame,
 									  mTeam.AsRef().Leak().ProcessId);
+				
+				kcout << unwrapped_process.Name << ": process switched.\r";
 			}
 			else
 			{
@@ -286,7 +266,7 @@ namespace NewOS
 			}
 		}
 
-		return processIndex;
+		return process_index;
 	}
 
 	/// @brief Gets the current scheduled team.
@@ -306,17 +286,17 @@ namespace NewOS
 
 	/// @brief Gets current running process.
 	/// @return
-	Ref<ProcessHeader>& ProcessScheduler::GetCurrent()
+	Ref<ProcessHeader>& ProcessScheduler::TheCurrent()
 	{
 		return mTeam.AsRef();
 	}
 
 	/// @brief Current proccess id getter.
 	/// @return Process ID integer.
-	PID& ProcessHelper::GetCurrentPID()
+	PID& ProcessHelper::TheCurrentPID()
 	{
-		kcout << "ProcessHelper::GetCurrentPID: Leaking ProcessId...\r";
-		return ProcessScheduler::The().Leak().GetCurrent().Leak().ProcessId;
+		kcout << "ProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
+		return ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId;
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -349,26 +329,12 @@ namespace NewOS
 	 * @brief Spin scheduler class.
 	 */
 
-	bool ProcessHelper::StartScheduling()
+	SizeT ProcessHelper::StartScheduling()
 	{
-		if (ProcessHelper::CanBeScheduled(
-				ProcessScheduler::The().Leak().GetCurrent()))
-		{
-			--ProcessScheduler::The().Leak().GetCurrent().Leak().PTime;
-			return false;
-		}
+		auto& process_ref = ProcessScheduler::The().Leak();
+		SizeT ret		 = process_ref.Run();
 
-		auto processRef = ProcessScheduler::The().Leak();
-
-		if (!processRef)
-			return false; // we have nothing to schedule. simply return.
-
-		SizeT ret = processRef.Run();
-
-		kcout << StringBuilder::FromInt(
-			"ProcessHelper::StartScheduling() Iterated over {%} jobs inside team.\r", ret);
-
-		return true;
+		return ret;
 	}
 
 	/**
@@ -384,30 +350,42 @@ namespace NewOS
 
 		for (SizeT index = 0UL; index < SMPManager::The().Leak().Count(); ++index)
 		{
-			if (SMPManager::The().Leak()[index].Leak().Kind() == kInvalidHart)
+			if (SMPManager::The().Leak()[index].Leak()->Kind() == kInvalidHart)
 				continue;
 
-			if (SMPManager::The().Leak()[index].Leak().StackFrame() == the_stack)
+			if (SMPManager::The().Leak()[index].Leak()->StackFrame() == the_stack)
 			{
-				SMPManager::The().Leak()[index].Leak().Busy(false);
+				SMPManager::The().Leak()[index].Leak()->Busy(false);
 				continue;
 			}
 
-			if (SMPManager::The().Leak()[index].Leak().IsBusy())
+			if (SMPManager::The().Leak()[index].Leak()->IsBusy())
 				continue;
 
-			if (SMPManager::The().Leak()[index].Leak().Kind() !=
+			if (SMPManager::The().Leak()[index].Leak()->Kind() !=
 					ThreadKind::kHartBoot &&
-				SMPManager::The().Leak()[index].Leak().Kind() !=
+				SMPManager::The().Leak()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				SMPManager::The().Leak()[index].Leak().Busy(true);
-				ProcessHelper::GetCurrentPID() = new_pid;
+				SMPManager::The().Leak()[index].Leak()->Busy(true);
+				ProcessHelper::TheCurrentPID() = new_pid;
 
-				return SMPManager::The().Leak()[index].Leak().Switch(the_stack);
+				return SMPManager::The().Leak()[index].Leak()->Switch(the_stack);
 			}
 		}
 
 		return false;
+	}
+
+	/// @brief this checks if any process is on the team.
+	ProcessScheduler::operator bool()
+	{
+		return mTeam.AsArray().Count() > 0;
+	}
+
+	/// @brief this checks if no process is on the team.
+	bool ProcessScheduler::operator!()
+	{
+		return mTeam.AsArray().Count() == 0;
 	}
 } // namespace NewOS

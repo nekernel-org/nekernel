@@ -14,10 +14,10 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-#define kDriveManagerCount 	(4U)
+#define kDriveManagerCount (4U)
 
-#define kDriveInvalidID 	(-1)
-#define kDriveNameLen		(32)
+#define kDriveInvalidID (-1)
+#define kDriveNameLen	(32)
 
 namespace NewOS
 {

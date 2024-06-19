@@ -157,10 +157,10 @@ __NEW_INT_32:
     pop rcx
     pop rax
 
-    mov eax, 0
+    mov rax, 0
 
     ;; tell there local apic that we're done.
-    mov dword [0xFEE00000 + 0xB0], eax ; LAPIC_EOI
+    mov [0xFEE00000 + 0xB0], rax ; LAPIC_EOI
 
     iretq
 
@@ -195,15 +195,45 @@ IntNormal 47
 IntNormal 48
 IntNormal 49
 
+[extern hal_system_call_enter]
+[extern hal_kernel_call_enter]
+
 __NEW_INT_50:
     cli
 
-    ;; todo handle system calls.
+    push rcx
+    push rdx
+    push rax
+
+    call hal_system_call_enter
+
+    pop rax
+    pop rdx
+    pop rcx
 
     sti
     iretq
 
-IntNormal 51
+__NEW_INT_51:
+    cli
+
+    push rcx
+    push rdx
+    push r8
+    push r9
+    push rax
+
+    call hal_kernel_call_enter
+
+    pop rax
+    pop r9
+    pop r8
+    pop rdx
+    pop rcx
+
+    sti
+    iretq
+
 IntNormal 52
 IntNormal 53
 IntNormal 54
@@ -223,12 +253,18 @@ IntNormal 60
 ;; this one is doing a POST for us.
 ;; testing interrupts.
 _ke_power_on_self_test:
-    int 0x32
-    int 0x32
-    int 0x32
+    mov rcx, 0x10
+    mov rdx, _ke_string_post
+
     int 0x32
 
     ret
+
+section .data
+_ke_string_post:
+    db "POST has been successful.", 0
+
+section .text
 
 [global hal_load_gdt]
 

@@ -279,7 +279,7 @@ private:
 
 		/// before going to forks, we must check for the catalog name first.
 		if (blob->fKind == kNewFSCatalogKindDir &&
-			blob->fFileName[strlen(blob->fFileName) - 1] != '/')
+			blob->fFileName[strlen(blob->fFileName) - 1] != kNewFSSeparator)
 		{
 			EFI::ThrowError(L"Developer-Error", L"This is caused by the developer of the bootloader.");
 		}

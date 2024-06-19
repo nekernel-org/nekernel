@@ -12,6 +12,7 @@ cmake_install.cmake
 qtcsettings.cmake
 
 *.exec
+*.rom
 
 NvVars
 

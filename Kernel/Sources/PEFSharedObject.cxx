@@ -41,7 +41,7 @@ EXTERN_C SharedObjectPtr rt_library_init(void)
 
 	if (!library)
 	{
-		ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 
 		return nullptr;
 	}
@@ -50,17 +50,17 @@ EXTERN_C SharedObjectPtr rt_library_init(void)
 
 	if (!library->Get())
 	{
-		ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 
 		return nullptr;
 	}
 
 	library->Get()->fImageObject =
-		ProcessScheduler::The().Leak().GetCurrent().Leak().Image;
+		ProcessScheduler::The().Leak().TheCurrent().Leak().Image;
 
 	if (!library->Get()->fImageObject)
 	{
-		ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 
 		return nullptr;
 	}
@@ -85,7 +85,7 @@ EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool* successful)
 	if (lib == nullptr)
 	{
 		*successful = false;
-		ProcessScheduler::The().Leak().GetCurrent().Leak().Crash();
+		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 	}
 
 	delete lib->Get();

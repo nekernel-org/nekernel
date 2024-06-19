@@ -4,11 +4,13 @@
 
 ------------------------------------------- */
 
-#ifndef __NETWORK_DEVICE__
-#define __NETWORK_DEVICE__
+#ifndef __INC_NETWORK_DEVICE_HPP__
+#define __INC_NETWORK_DEVICE_HPP__
 
 #include <KernelKit/DeviceManager.hpp>
 #include <NetworkKit/IP.hpp>
+
+/// @note Can either work with: Ethernet, GPRS, WiFi
 
 namespace NewOS
 {
@@ -33,12 +35,17 @@ namespace NewOS
 
 	public:
 		const char* Name() const override;
+		Boolean Name(const char* strView);
 
 	private:
-		void (*fCleanup)(void);
+		static constexpr auto cNetworkNameLen = 512;
+
+		Void (*fCleanup)(void);
+		Char fNetworkName[cNetworkNameLen];
+
 	};
 
-	struct PACKED NetworkDeviceCommand final
+	struct NetworkDeviceCommand final
 	{
 		UInt32	CommandName;
 		UInt32	CommandType;
@@ -58,8 +65,14 @@ namespace NewOS
 
 	/// @brief IPCEP device.
 	using IPCEPNetworkDevice = NetworkDevice;
+
+	/// @brief GRPS device.
+	using GPRSNetworkDevice = NetworkDevice;
+
+	/// @brief GSM device.
+	using GSMNetworkDevice = NetworkDevice;
 } // namespace NewOS
 
 #include <NetworkKit/NetworkDevice.inl>
 
-#endif // !__NETWORK_DEVICE__
+#endif // !__INC_NETWORK_DEVICE_HPP__

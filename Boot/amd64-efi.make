@@ -12,10 +12,12 @@ ADD_FILE=touch
 COPY=cp
 HTTP_GET=wget
 
-ifneq ($(shell uname), Windows_NT)
+# Select this for UNIX distributions
+ifneq ($(shell uname), CYGWIN_NT-10.0-19045)
 EMU=qemu-system-x86_64
 else
-EMU=qemu-system-x86_64w
+# this for NT distributions
+EMU=qemu-system-x86_64w.exe
 endif
 
 ifeq ($(NEWS_MODEL), )
@@ -26,7 +28,7 @@ BIOS=OVMF.fd
 IMG=epm.img
 IMG_2=epm-slave.img
 
-EMU_FLAGS=-net none -smp 4 -serial stdio -m 4G -M q35 \
+EMU_FLAGS=-net none -smp 4 -m 4G -M q35 -d int \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \

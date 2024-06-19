@@ -134,7 +134,7 @@ namespace NewOS
 		void SetDataFork(const char* forkName);
 
 		/// @brief Get internal parser.
-		/// @return 
+		/// @return
 		NewFSParser* GetParser() noexcept;
 
 	private:
