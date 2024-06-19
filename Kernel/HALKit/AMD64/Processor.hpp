@@ -54,7 +54,7 @@ namespace NewOS
 
 namespace NewOS::HAL
 {
-
+    /// @brief Virtual memory flags.
 	enum
 	{
 		eFlagsUser,
@@ -87,9 +87,11 @@ namespace NewOS::HAL
 		{
 			kcout << "PM is already present.\r";
 
-			kcout << "PhysicalAddress: " << hex_number(pde->Pte[pml4_index].PhysicalAddress) << endl;
-			kcout << "User: " << (pde->Pte[pml4_index].User ? "yes" : "no") << "\r";
-			kcout << "RW: " << (pde->Pte[pml4_index].Rw ? "yes" : "no") << "\r";
+			kcout << "PhysicalAddress: " << hex_number(pde->Pte[pml4_index].PhysicalAddress);
+			kcout << "\r";
+
+			kcout << "User: " << (pde->Pte[pml4_index].User ? "YES" : "NO") << "\r";
+			kcout << "RW: " << (pde->Pte[pml4_index].Rw ? "YES" : "NO") << "\r";
 
 			return 1;
 		}
@@ -146,7 +148,7 @@ namespace NewOS::HAL
 	using RawRegister = UInt64;
 
 	using InterruptId	= UShort; /* For each element in the IVT */
-	using interruptTrap = UIntPtr(UIntPtr sp);
+	using InterruptTrapKind = UIntPtr(UIntPtr sp);
 
 	typedef UIntPtr Reg;
 

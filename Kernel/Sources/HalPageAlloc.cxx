@@ -5,7 +5,13 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
+
+#ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hpp>
+#elif defined(__NEWOS_ARM64__)
+#include <HALKit/ARM64/HalPageAlloc.hpp>
+#endif
+
 #include <NewKit/Defines.hpp>
 #include <NewKit/KernelCheck.hpp>
 

@@ -30,5 +30,5 @@ typedef struct HalHardwareThread
 /// @brief Set PC to specific hart.
 /// @param hart the hart
 /// @param epc the pc.
-/// @return 
-EXTERN_C NewOS::Void hal_switch_to_hart(HalHardwareThread* hart, NewOS::VoidPtr epc);
+/// @return
+EXTERN_C NewOS::Void hal_set_pc_to_hart(HalHardwareThread* hart, NewOS::VoidPtr epc);

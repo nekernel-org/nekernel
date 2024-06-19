@@ -45,7 +45,7 @@ error:
 	@echo "=== ERROR ==="
 	@echo "=> Use a specific target."
 
-MOVEALL=./MoveAll.sh
+MOVEALL=./MoveAll.X64.sh
 WINDRES=x86_64-w64-mingw32-windres
 
 .PHONY: newos-amd64-epm

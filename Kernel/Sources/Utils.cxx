@@ -6,7 +6,6 @@
 
 #include <NewKit/Utils.hpp>
 #include <KernelKit/DebugOutput.hpp>
-#include <cstddef>
 
 namespace NewOS
 {
@@ -186,7 +185,7 @@ namespace NewOS
 
 	voidPtr rt_string_in_string(const char* in, const char* needle)
 	{
-		for (size_t i = 0; i < rt_string_len(in); ++i)
+		for (SizeT i = 0; i < rt_string_len(in); ++i)
 		{
 			if (rt_string_cmp(in + i, needle, rt_string_len(needle)) == 0)
 				return reinterpret_cast<voidPtr>(const_cast<char*>(in + i));
@@ -216,38 +215,38 @@ namespace NewOS
 ////////////////////////////////////////////////////////////////////////////////////////
 
 /// @brief memset in C++
-EXTERN_C void memset(void* dst, char src, size_t len)
+EXTERN_C void memset(void* dst, char src, NewOS::SizeT len)
 {
 	NewOS::rt_set_memory(dst, src, len);
 }
 
 /// @brief memcpy in C++
-EXTERN_C void memcpy(void* dst, void* src, size_t len)
+EXTERN_C void memcpy(void* dst, void* src, NewOS::SizeT len)
 {
 	NewOS::rt_copy_memory(src, dst, len);
 }
 
 /// @brief memmove in C++
-EXTERN_C void* memmove(void* dst, void* src, size_t len)
+EXTERN_C void* memmove(void* dst, void* src, NewOS::SizeT len)
 {
 	NewOS::rt_copy_memory(src, dst, len);
 	return dst;
 }
 
 /// @brief strlen definition in C++.
-EXTERN_C size_t strlen(const char* whatToCheck)
+EXTERN_C NewOS::SizeT strlen(const char* whatToCheck)
 {
 	return NewOS::rt_string_len(whatToCheck);
 }
 
 /// @brief memcmp in C++
-EXTERN_C NewOS::SizeT memcmp(void* dst, void* src, size_t len)
+EXTERN_C NewOS::SizeT memcmp(void* dst, void* src, NewOS::SizeT len)
 {
 	return NewOS::rt_string_cmp((char*)src, (char*)dst, len);
 }
 
 /// @brief strcmp in C++
-EXTERN_C NewOS::SizeT strcmp(char* dst, char* src, size_t len)
+EXTERN_C NewOS::SizeT strcmp(char* dst, char* src, NewOS::SizeT len)
 {
 	return NewOS::rt_string_cmp(src, dst, len);
 }

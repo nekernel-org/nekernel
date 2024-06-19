@@ -16,6 +16,8 @@
 #include <HALKit/AMD64/Processor.hpp>
 #elif defined(__NEWOS_PPC__)
 #include <HALKit/POWER/Processor.hpp>
+#elif defined(__NEWOS_ARM64__)
+#include <HALKit/ARM64/Processor.hxx>
 #else
 #error !!! unknown architecture !!!
 #endif

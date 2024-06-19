@@ -8,6 +8,7 @@
 
 #include <Builtins/AHCI/AHCI.hxx>
 #include <Builtins/ATA/ATA.hxx>
+#include <Builtins/Flash/Flash.hxx>
 #include <FSKit/NewFS.hxx>
 #include <KernelKit/HError.hpp>
 #include <NewKit/Crc32.hpp>

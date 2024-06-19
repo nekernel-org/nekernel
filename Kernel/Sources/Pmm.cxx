@@ -7,6 +7,10 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Pmm.hpp>
 
+#if defined(__NEWOS_ARM64__)
+#include <HALKit/ARM64/Processor.hxx>
+#endif
+
 namespace NewOS
 {
 	/// @brief Pmm constructor.

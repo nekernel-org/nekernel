@@ -8,7 +8,7 @@
 
 /** ---------------------------------------------------
 
-	* THIS FILE CONTAINS CODE FOR X86_64 PAGING.
+	* THIS FILE CONTAINS CODE FOR ARM64 PAGING.
 
 ------------------------------------------------------- */
 
@@ -27,12 +27,6 @@
 #endif // !kPTESize
 
 EXTERN_C void hal_flush_tlb();
-EXTERN_C void hal_write_cr3(NewOS::UIntPtr pde);
-EXTERN_C void hal_write_cr0(NewOS::UIntPtr bit);
-
-EXTERN_C NewOS::UIntPtr hal_read_cr0(); // @brief CPU control register.
-EXTERN_C NewOS::UIntPtr hal_read_cr2(); // @brief Fault address.
-EXTERN_C NewOS::UIntPtr hal_read_cr3(); // @brief Page table.
 
 namespace NewOS::HAL
 {

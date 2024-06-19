@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include <HALKit/AMD64/HalPageAlloc.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/PageManager.hpp>
 

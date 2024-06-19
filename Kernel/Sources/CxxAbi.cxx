@@ -12,21 +12,26 @@ atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
 
 uarch_t __atexit_func_count;
 
-extern "C" void __cxa_pure_virtual()
+/// @brief Dynamic Shared Object Handle.
+NewOS::UIntPtr __dso_handle;
+
+EXTERN_C void __cxa_pure_virtual()
 {
 	NewOS::kcout << "newoskrnl: C++ placeholder method.\n";
 }
 
-extern "C" void ___chkstk_ms()
+EXTERN_C void ___chkstk_ms()
 {
-	while (1)
+	while (true)
 	{
-		asm("cli");
-		asm("hlt");
 	}
 }
 
-extern "C" int atexit(void (*f)(void*), void* arg, void* dso)
+#ifdef __NEWOS_ARM64__
+#define atexit __aeabi_atexit
+#endif
+
+EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)
 {
 	if (__atexit_func_count >= kDSOMaxObjects)
 		return -1;
@@ -40,7 +45,7 @@ extern "C" int atexit(void (*f)(void*), void* arg, void* dso)
 	return 0;
 }
 
-extern "C" void __cxa_finalize(void* f)
+EXTERN_C void __cxa_finalize(void* f)
 {
 	uarch_t i = __atexit_func_count;
 	if (!f)
@@ -68,19 +73,19 @@ extern "C" void __cxa_finalize(void* f)
 
 namespace cxxabiv1
 {
-	extern "C" int __cxa_guard_acquire(__guard* g)
+	EXTERN_C int __cxa_guard_acquire(__guard* g)
 	{
 		(void)g;
 		return 0;
 	}
 
-	extern "C" int __cxa_guard_release(__guard* g)
+	EXTERN_C int __cxa_guard_release(__guard* g)
 	{
 		*(char*)g = 1;
 		return 0;
 	}
 
-	extern "C" void __cxa_guard_abort(__guard* g)
+	EXTERN_C void __cxa_guard_abort(__guard* g)
 	{
 		(void)g;
 	}

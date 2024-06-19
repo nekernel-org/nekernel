@@ -214,14 +214,15 @@ EXTERN_C NewOS::Void KeMain(NewOS::Void)
 	NewOS::Detail::FilesystemInstaller installer; // automatic filesystem creation.
 
 	NewOS::Detail::ke_launch_srv();
-	
-	// fetch system cores.
-	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
-	// spin forever.
-	while (Yes)
-	{
-		// start scheduling.
-		NewOS::ProcessHelper::StartScheduling();
-	}
+#if __NEWOS_AMD64__
+    /// fetch system cores.
+	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+#else
+    /// ... or fetch using CoreBoot.
+#endif
+
+	NewOS::ProcessHelper::StartScheduling();
+
+	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

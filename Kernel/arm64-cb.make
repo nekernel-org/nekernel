@@ -3,17 +3,17 @@
 # This is the microkernel makefile.
 ##################################################
 
-CC			= arm-none-eabi-g++.exe
-LD			= arm-none-eabi-ld.exe
+CC			= arm-none-eabi-g++ -march=armv8-a
+LD			= arm-none-eabi-ld
 CCFLAGS		= -c -fPIC -ffreestanding -D__NEWOS_ARM64__ -fno-rtti -fno-exceptions -I./ \
-			-std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__
+			-std=c++20 -D__FSKIT_NEWFS__ -D__ZETA_MACHINE__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__
 
-ASM 		= arm-none-eabi-as.exe
+ASM 		= arm-none-eabi-as -march=armv8-a
 
 DISKDRIVER = -D__FLASH_MEM__
 
 ifneq ($(SDCARD_SUPPORT), )
-DISKDRIVER =   -D__SDCARD__
+DISKDRIVER = -D__SDCARD__
 endif
 
 ifneq ($(DEBUG_SUPPORT), )
@@ -27,13 +27,14 @@ LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
 KERNEL		= newoskrnl.exe
+KERNEL_512K = newoskrnl.512k.exe
 
 .PHONY: error
 error:
 	@echo "=== ERROR ==="
 	@echo "=> Use a specific target."
 
-MOVEALL=./MoveAll.sh
+MOVEALL=./MoveAll.ARM64.sh
 
 .PHONY: newos-arm64-epm
 newos-arm64-epm: clean
@@ -53,8 +54,8 @@ link-arm64-epm:
 
 .PHONY: all
 all: newos-arm64-epm link-arm64-epm
-	qemu-img create -f raw newoskrnl.512k.exe 512K
-	dd if=newoskrnl.exe of=newoskrnl.512k.exe bs=1 seek=0 conv=notrunc
+	qemu-img create -f raw $(KERNEL_512K) 512K
+	dd if=newoskrnl.exe of=$(KERNEL_512K) bs=1 seek=0 conv=notrunc
 	@echo "NewOSKrnl => OK."
 
 .PHONY: help
@@ -66,4 +67,4 @@ help:
 
 .PHONY: clean
 clean:
-	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL)
+	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL) $(KERNEL_512K)

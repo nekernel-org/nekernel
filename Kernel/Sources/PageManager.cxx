@@ -7,8 +7,10 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/PageManager.hpp>
 
-#ifdef __x86_64__
+#ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hpp>
+#elif defined(__NEWOS_ARM64__)
+#include <HALKit/ARM64/Processor.hxx>
 #endif // ifdef __x86_64__
 
 //! null deref will throw (Page Zero detected, aborting app!)

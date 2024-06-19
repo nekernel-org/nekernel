@@ -9,12 +9,14 @@
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/String.hpp>
 
-extern "C" [[noreturn]] void ke_wait_for_debugger()
+EXTERN_C [[noreturn]] void ke_wait_for_debugger()
 {
 	while (true)
 	{
+#ifdef __NEWOS_AMD64__
 		NewOS::HAL::rt_cli();
 		NewOS::HAL::rt_halt();
+#endif
 	}
 }
 
@@ -52,7 +54,7 @@ namespace NewOS
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
 			kcout << "*** CAUSE: RUNTIME_CHECK_BOOTSTRAP *** \r";
-			kcout << "*** WHAT: INVALID BOOT SEQUENCE. *** \r";
+			kcout << "*** WHAT: END OF CODE. *** \r";
 			break;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {

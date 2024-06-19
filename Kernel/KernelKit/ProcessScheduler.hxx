@@ -122,7 +122,7 @@ namespace NewOS
 
 	// Helper types.
 	using ImagePtr = VoidPtr;
-	using HeapPtr  = VoidPtr;
+	using HeapPtrKind  = VoidPtr;
 
 	// @name ProcessHeader
 	// @brief Process Header (PH)
@@ -152,9 +152,9 @@ namespace NewOS
 		ProcessStatus	   Status;
 
 		// Memory, images.
-		HeapPtr	 HeapCursor{nullptr};
+		HeapPtrKind	 HeapCursor{nullptr};
 		ImagePtr Image{nullptr};
-		HeapPtr	 HeapPtr{nullptr};
+		HeapPtrKind	 HeapPtr{nullptr};
 
 		// memory usage
 		SizeT UsedMemory{0};
