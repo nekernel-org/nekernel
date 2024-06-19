@@ -660,6 +660,8 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
 		}
 	}
 
+	kcout << "newoskrnl: fetching catalog...\r";
+
 _NewFSSearchThroughCatalogList:
 	while (drive->fPacket.fPacketGood)
 	{

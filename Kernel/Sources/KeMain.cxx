@@ -55,8 +55,8 @@ namespace NewOS::Detail
 					constexpr auto cFolderInfo		  = "META-INF";
 					const auto	   cDirCount		  = 8;
 					const char*	   cDirStr[cDirCount] = {
-						   "\\Boot\\", "\\System\\", "\\Support\\", "\\Packages\\",
-						   "\\Users\\", "\\Library\\", "\\Mount\\", "\\DCIM\\"};
+						   "C:\\Boot\\", "C:\\System\\", "C:\\Support\\", "C:\\Applications\\",
+						   "C:\\Users\\", "C:\\Library\\", "C:\\Mount\\", "C:\\DCIM\\"};
 
 					for (NewOS::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
@@ -64,6 +64,8 @@ namespace NewOS::Detail
 
 						if (catalogDir)
 						{
+						    NewOS::kcout << "newoskrnl: Already here\r";
+
 							delete catalogDir;
 							continue;
 						}
@@ -93,7 +95,7 @@ namespace NewOS::Detail
 
 						metadataFolder +=
 							"<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
-							"system</p>\r<p>Volume Type: s10 Filesystem</p>\r";
+							"system</p>\r<p>Volume Type: Zeta</p>\r";
 
 						metadataFolder += "<p>Path: ";
 						metadataFolder += cDirStr[dirIndx];
@@ -103,7 +105,11 @@ namespace NewOS::Detail
 
 						auto catalogSystem = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
 
+						kcout << "newoskrnl: write fork...\r";
+
 						fNewFS->GetParser()->CreateFork(catalogSystem, theFork);
+
+						kcout << "newoskrnl: write catalog...\r";
 
 						fNewFS->GetParser()->WriteCatalog(
 							catalogSystem, (NewOS::VoidPtr)(metadataFolder.CData()),
@@ -114,7 +120,7 @@ namespace NewOS::Detail
 				}
 
 				NewCatalog* catalogDisk =
-					this->fNewFS->GetParser()->GetCatalog("\\Mount\\C:\\");
+					this->fNewFS->GetParser()->GetCatalog("C:\\Mount\\SIM:");
 
 				const NewOS::Char* cSrcName = "DISK-INF";
 
@@ -129,14 +135,14 @@ namespace NewOS::Detail
 				else
 				{
 					catalogDisk =
-						(NewCatalog*)this->Leak()->CreateAlias("\\Mount\\C:\\");
+						(NewCatalog*)this->Leak()->CreateAlias("C:\\Mount\\SIM:");
 
 					NewOS::StringView diskFolder(kNewFSSectorSz);
 
 					diskFolder +=
-						"<p>Kind: alias to disk</p>\r<p>Created by: system</p>\r<p>Edited "
+						"<p>Kind: alias to SIM</p>\r<p>Created by: system</p>\r<p>Edited "
 						"by: "
-						"system</p>\r<p>Volume Type: s10 Filesystem</p>\r";
+						"system</p>\r<p>Volume Type: SIM</p>\r";
 
 					diskFolder += "<p>Root: ";
 					diskFolder += NewOS::NewFilesystemHelper::Root();
@@ -161,6 +167,8 @@ namespace NewOS::Detail
 													  (NewOS::VoidPtr)diskFolder.CData(),
 													  kNewFSSectorSz, cSrcName);
 
+					NewOS::kcout << diskFolder.CData() << NewOS::end_line();
+
 					delete catalogDisk;
 				}
 			}
@@ -183,7 +191,7 @@ namespace NewOS::Detail
 	/// @return void no return value.
 	STATIC NewOS::Void ke_launch_srv(NewOS::Void)
 	{
-		NewOS::PEFLoader secureSrv("\\System\\securesrv.exe");
+		NewOS::PEFLoader secureSrv("C:\\System\\securesrv.exe");
 
 		if (!secureSrv.IsLoaded())
 		{
@@ -193,7 +201,7 @@ namespace NewOS::Detail
 		NewOS::Utils::execute_from_image(secureSrv,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::PEFLoader uiSrv("\\System\\uisrv.exe");
+		NewOS::PEFLoader uiSrv("C:\\System\\uisrv.exe");
 
 		if (!uiSrv.IsLoaded())
 		{
@@ -211,18 +219,6 @@ namespace NewOS::Detail
 EXTERN_C NewOS::Void KeMain(NewOS::Void)
 {
 	/// Now run kernel loop, until no process are running.
-	NewOS::Detail::FilesystemInstaller installer; // automatic filesystem creation.
-
+	NewOS::Detail::FilesystemInstaller(); // automatic filesystem creation.
 	NewOS::Detail::ke_launch_srv();
-
-#if __NEWOS_AMD64__
-    /// fetch system cores.
-	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
-#else
-    /// ... or fetch using CoreBoot.
-#endif
-
-	NewOS::ProcessHelper::StartScheduling();
-
-	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

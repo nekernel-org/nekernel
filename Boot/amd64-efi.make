@@ -28,7 +28,7 @@ BIOS=OVMF.fd
 IMG=epm.img
 IMG_2=epm-slave.img
 
-EMU_FLAGS=-net none -smp 4 -m 4G -M q35 -d int \
+EMU_FLAGS=-net none -m 4G -M q35 -d int \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
@@ -86,8 +86,8 @@ run-efi-amd64:
 # img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta.
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f raw $(IMG) 10G
-	qemu-img create -f raw $(IMG_2) 512M
+	qemu-img create -f raw $(IMG) 4G
+	qemu-img create -f raw $(IMG_2) 4G
 
 .PHONY: download-edk
 download-edk:

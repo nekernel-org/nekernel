@@ -39,12 +39,12 @@ default.
 /// @brief Partition GUID on EPM and GPT disks.
 #define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
 
-#define kNewFSVersionInteger (0x125)
-#define kNewFSVerionString	 "1.25"
+#define kNewFSVersionInteger (0x126)
+#define kNewFSVerionString	 "1.26"
 
 /// @brief Standard fork types.
-#define kNewFSDataFork	   "data"
-#define kNewFSResourceFork "rsrc"
+#define kNewFSDataFork	   "main_data"
+#define kNewFSResourceFork "main_rsrc"
 
 #define kNewFSCatalogKindFile  (1)
 #define kNewFSCatalogKindDir   (2)
@@ -71,7 +71,7 @@ default.
 #define kNewFSSeparator '\\'
 
 #define kNewFSUpDir ".."
-#define kNewFSRoot	"\\"
+#define kNewFSRoot	"C:\\"
 
 #define kNewFSLF  '\r'
 #define kNewFSEOF (-1)
@@ -106,6 +106,7 @@ enum
 	kNewFSOpticalDrive		= 0x0C, // Blu-Ray/DVD
 	kNewFSMassStorageDevice = 0xCC, // USB
 	kNewFSScsi				= 0xC4, // SCSI Hard Drive
+	kNewFSFlashDrive        = 0xC6,
 	kNewFSUnknown			= 0xFF, // Unknown device. (floppy)
 	kNewFSDriveCount		= 5,
 };

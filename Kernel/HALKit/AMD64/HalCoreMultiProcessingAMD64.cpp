@@ -163,7 +163,8 @@ namespace NewOS::HAL
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
-		_hal_spin_core();
+		kcout << "newoskrnl: stopping core...\r";
+		ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 	}
 
 	EXTERN_C StackFramePtr _hal_leak_current_context(Void)
@@ -211,12 +212,12 @@ namespace NewOS::HAL
 
 			for (SizeT coreAt = cStartAt; coreAt < cMaxProbableCores; ++coreAt)
 			{
-				if (madt->MadtRecords[coreAt].Flags != kThreadBoot) // if local apic.
+				if (madt->MadtRecords[coreAt].Flags < kThreadBoot) // if local apic.
 				{
 					MadtType::MadtAddress& madtRecord = madt->MadtRecords[coreAt];
 
 					// then register as a core for scheduler.
-					kcout << "newoskrnl: Register Local APIC.\r";
+					kcout << "newoskrnl: Register APIC.\r";
 
 					kApicMadtAddresses[kApicMadtAddressesCount].fAddress = madtRecord.Address;
 					kApicMadtAddresses[kApicMadtAddressesCount].fKind	 = madt->MadtRecords[coreAt].Flags;

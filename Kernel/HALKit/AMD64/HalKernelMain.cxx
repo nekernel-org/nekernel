@@ -62,7 +62,7 @@ EXTERN_C void hal_init_platform(
 	NewOS::HEL::HandoverInformationHeader* HandoverHeader)
 {
 	/* Setup globals. */
-	
+
 	kHandoverHeader = HandoverHeader;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
@@ -95,9 +95,9 @@ EXTERN_C void hal_init_platform(
 	idt.Load(idtBase);
 
 	/**
-		register basic syscalls. 
+		register basic syscalls.
 	*/
-	
+
 	constexpr auto cSerialWriteInterrupt = 0x10; // 16
 	constexpr auto cTlsInterrupt = 0x11; // 17
 	constexpr auto cTlsInstallInterrupt = 0x12; // 18
@@ -111,7 +111,7 @@ EXTERN_C void hal_init_platform(
 	constexpr auto cCatalogClose = 0x20;
 	constexpr auto cCatalogRemove = 0x21;
 	constexpr auto cCatalogCreate = 0x22;
-	
+
 	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
 		NewOS::kcout << "newoskrnl: " << msg << "\r";
@@ -124,7 +124,7 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
 		/// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
-		
+
 		/// assign the fThe field with the pointer.
 		rdxInf->fThe = NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
 	};
@@ -132,18 +132,18 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
 		/// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
-		
+
 		/// delete ptr with sz in mind.
 		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
-	
+
 	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
 		ProcessBlockInfo* rdxPb = reinterpret_cast<ProcessBlockInfo*>(rdx);
 
 		/// install the process's fTIB and fPIB.
 		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);
 	};
-		
+
 	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
 		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
 
@@ -164,12 +164,9 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked = true;
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked = true;
 
-	NewOS::HAL::Detail::_ke_power_on_self_test();
+    KeMain();
 
-	/**
-		call kernel entrypoint. 
-	*/
-	KeMain();
+	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
 	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

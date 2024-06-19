@@ -32,7 +32,6 @@ __NEW_INT_%1:
 ; This file handles the core interrupt table
 ; Last edited 31/01/24
 
-global _ke_power_on_self_test
 global ke_handle_irq
 global kInterruptVectorTable
 
@@ -249,20 +248,6 @@ IntNormal 60
     IntNormal i
 %assign i i+1
 %endrep
-
-;; this one is doing a POST for us.
-;; testing interrupts.
-_ke_power_on_self_test:
-    mov rcx, 0x10
-    mov rdx, _ke_string_post
-
-    int 0x32
-
-    ret
-
-section .data
-_ke_string_post:
-    db "POST has been successful.", 0
 
 section .text
 
