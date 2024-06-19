@@ -12,7 +12,6 @@
 
 namespace NewOS
 {
-
 	/// Custom to the virtual machine, you'll need to parse the MADT instead.
 
 	void rt_shutdown_acpi_qemu_20(void)
