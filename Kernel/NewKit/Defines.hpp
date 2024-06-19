@@ -133,6 +133,11 @@ namespace NewOS
 	};
 } // namespace NewOS
 
+namespace ma::zeta::kern
+{
+    using namespace NewOS;
+} // namespace ma::zeta::kern
+
 #define DEDUCE_ENDIAN(address, value)                          \
 	(((reinterpret_cast<NewOS::Char*>(address)[0]) == (value)) \
 		 ? (NewOS::Endian::kEndianBig)                         \
