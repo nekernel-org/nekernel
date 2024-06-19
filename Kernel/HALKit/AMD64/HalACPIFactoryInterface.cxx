@@ -77,10 +77,13 @@ namespace NewOS
 		if (rsdPtr->Revision <= 1)
 			return ErrorOr<voidPtr>{-1};
 
-		RSDT* xsdt = (RSDT*)(rsdPtr->RsdtAddress);
+		RSDT* xsdt = reinterpret_cast<RSDT*>(rsdPtr->RsdtAddress);
 
 		Int64 num = (xsdt->Length - sizeof(SDT)) / sizeof(UInt32);
 
+		/***
+			crucial to avoid - overflows.
+			*/
 		if (num < 1)
 		{
 			/// stop here, we should have entries...
@@ -99,7 +102,7 @@ namespace NewOS
 
 		for (Size index = 0; index < this->fEntries; ++index)
 		{
-			SDT& sdt = *(SDT*)xsdt->AddressArr[index];
+			SDT& sdt = *reinterpret_cast<SDT*>(xsdt->AddressArr[index]);
 
 			kcout << "ACPI: Revision: " << number(sdt.CreatorID) << endl;
 

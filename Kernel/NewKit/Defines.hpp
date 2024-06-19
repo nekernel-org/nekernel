@@ -17,7 +17,7 @@
 #ifdef __has_feature
 #if !__has_feature(cxx_nullptr)
 #if !__has_nullptr
-#error You must at least have nullptr featured on your C++ compiler.
+#error !!! You must at least have nullptr featured on your C++ compiler. !!!
 #endif
 #endif
 #endif

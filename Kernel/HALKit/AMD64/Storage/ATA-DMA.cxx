@@ -28,11 +28,11 @@ STATIC PRDT	   kPRDT;
 #ifdef __ATA_DMA__
 
 #ifdef __ATA_PIO__
-#error You cant have both PIO and DMA enabled!
+#error !!! You cant have both PIO and DMA enabled! !!! 
 #endif /* ifdef __ATA_PIO__ */
 
 #ifdef __AHCI__
-#error You cant have both ATA and AHCI enabled!
+#error !!! You cant have both ATA and AHCI enabled! !!! 
 #endif /* ifdef __AHCI__ */
 
 #endif /* ifdef __ATA_DMA__ */

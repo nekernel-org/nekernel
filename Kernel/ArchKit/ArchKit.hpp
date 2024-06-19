@@ -17,7 +17,7 @@
 #elif defined(__NEWOS_PPC__)
 #include <HALKit/POWER/Processor.hpp>
 #else
-#error Unknown architecture
+#error !!! unknown architecture !!!
 #endif
 
 namespace NewOS

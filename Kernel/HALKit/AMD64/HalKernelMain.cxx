@@ -21,6 +21,26 @@ EXTERN_C void KeMain();
 
 EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
 
+struct PACKED HeapAllocInfo final
+{
+	NewOS::VoidPtr fThe;
+	NewOS::Size    fTheSz;
+};
+
+struct PACKED ProcessBlockInfo final
+{
+	ThreadInformationBlock* fTIB;
+	ThreadInformationBlock* fPIB;
+};
+
+struct PACKED ProcessExitInfo final
+{
+	STATIC constexpr auto cReasonLen = 512;
+
+	NewOS::Int64 fCode;
+	NewOS::Char  fReason[cReasonLen];
+};
+
 namespace NewOS::HAL
 {
 	/// @brief Gets the system cores using the MADT.
@@ -74,14 +94,24 @@ EXTERN_C void hal_init_platform(
 	NewOS::HAL::IDTLoader idt;
 	idt.Load(idtBase);
 
-	/* install basic syscalls. */
-
+	/**
+		register basic syscalls. 
+	*/
+	
 	constexpr auto cSerialWriteInterrupt = 0x10; // 16
 	constexpr auto cTlsInterrupt = 0x11; // 17
 	constexpr auto cTlsInstallInterrupt = 0x12; // 18
 	constexpr auto cNewInterrupt = 0x13; // 19
 	constexpr auto cDeleteInterrupt = 0x14; // 20
-
+	constexpr auto cExitInterrupt = 0x15;
+	constexpr auto cLastExitInterrupt = 0x16;
+	constexpr auto cCatalogOpen = 0x17;
+	constexpr auto cForkRead = 0x18;
+	constexpr auto cForkWrite = 0x19;
+	constexpr auto cCatalogClose = 0x20;
+	constexpr auto cCatalogRemove = 0x21;
+	constexpr auto cCatalogCreate = 0x22;
+	
 	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
 		NewOS::kcout << "newoskrnl: " << msg << "\r";
@@ -91,20 +121,7 @@ EXTERN_C void hal_init_platform(
 		tls_check_syscall_impl(rdx);
 	};
 
-	struct PACKED HeapAllocInfo final
-	{
-		NewOS::VoidPtr fThe;
-		NewOS::Size    fTheSz;
-	};
-
-	struct PACKED ProcessBlockInfo final
-	{
-		ThreadInformationBlock* fTIB;
-		ThreadInformationBlock* fPIB;
-	};
-
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
-
 		/// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 		
@@ -126,17 +143,32 @@ EXTERN_C void hal_init_platform(
 		/// install the process's fTIB and fPIB.
 		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);
 	};
+		
+	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
+
+		NewOS::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
+		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Exit(rdxEi->fCode);
+	};
+
+	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
+		rdxEi->fCode = NewOS::rt_get_exit_code();
+	};
 
 	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fHooked = true;
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked = true;
 	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked = true;
 	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked = true;
 	kSyscalls[cNewInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked = true;
 
 	NewOS::HAL::Detail::_ke_power_on_self_test();
 
-	/* Call generic kernel entrypoint. */
-
+	/**
+		call kernel entrypoint. 
+	*/
 	KeMain();
 
 	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
