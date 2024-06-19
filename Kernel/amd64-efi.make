@@ -39,6 +39,7 @@ LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
 KERNEL		= newoskrnl.exe
+KERNEL_512K = newoskrnl.512k.exe
 
 .PHONY: error
 error:
@@ -70,8 +71,8 @@ link-amd64-epm:
 
 .PHONY: all
 all: newos-amd64-epm link-amd64-epm
-	qemu-img create -f raw newoskrnl.512k.exe 512K
-	dd if=newoskrnl.exe of=newoskrnl.512k.exe bs=1 seek=0 conv=notrunc
+	qemu-img create -f raw $(KERNEL_512K) 512K
+	dd if=newoskrnl.exe of=$(KERNEL_512K) bs=1 seek=0 conv=notrunc
 	@echo "NewOSKrnl => OK."
 
 .PHONY: help
