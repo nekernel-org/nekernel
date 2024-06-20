@@ -73,7 +73,7 @@ EXTERN_C void hal_init_platform(
 
 	kKernelVirtualSize	= HandoverHeader->f_VirtualSize;
 	kKernelVirtualStart = reinterpret_cast<NewOS::VoidPtr>(
-		reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart) + kVirtualAddressStartOffset);
+		reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart) + cHeapStartOffset);
 
 	kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 

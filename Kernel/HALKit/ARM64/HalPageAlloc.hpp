@@ -8,7 +8,7 @@
 
 /** ---------------------------------------------------
 
-	* THIS FILE CONTAINS CODE FOR ARM64 PAGING.
+	* THIS FILE CONTAINS CODE FOR ARMV8 PAGING.
 
 ------------------------------------------------------- */
 
@@ -26,22 +26,34 @@
 #define kPTESize (0x1000)
 #endif // !kPTESize
 
-EXTERN_C void hal_flush_tlb();
+//! short format address range
+
+#define c16KBPage 0b000
+#define c8KBPage 0b001
+#define c4KBPage 0b010
+#define c2KBPage 0b011
+#define c1KBPage 0b100
+#define c512BPage 0b101
+#define c256BPage 0b110
+#define c128BPage 0b111
+
+/// Long format address range
+
+#define cPageMAll { 0b000, 0b000 }
+#define cPageMToMax(M) { M, 0b000 }
+#define cPageMaxToM(M) { 0b000, M }
+#define cPageMToN(M, N) { M, N }
 
 namespace NewOS::HAL
 {
-	struct PACKED PageTable64 final
+	struct PACKED LongDescLevel3 final
 	{
-		bool		   Present : 1;
-		bool		   Rw : 1;
-		bool		   User : 1;
-		bool		   Wt : 1;
-		bool		   Cache : 1;
-		bool		   Accessed : 1;
-		NewOS::Int32   Reserved : 6;
-		NewOS::UInt64 PhysicalAddress : 36;
-		NewOS::Int32   Reserved1 : 15;
-		bool		   ExecDisable : 1;
+		Boolean		   Present : 1;
+		Boolean		   Rw : 1;
+		UInt16         Lpat : 9;
+		UInt32         Address : 27;
+		UInt32         Sbzp : 12;
+		UInt32         UPat : 11;
 	};
 
 	namespace Detail
@@ -69,7 +81,7 @@ namespace NewOS::HAL
 
 	struct PageDirectory64 final
 	{
-		PageTable64 ALIGN(kPTEAlign) Pte[kPTEMax];
+		LongDescLevel3 ALIGN(kPTEAlign) Pte[kPTEMax];
 	};
 
 	VoidPtr hal_alloc_page(Boolean rw, Boolean user, SizeT size);
@@ -77,6 +89,8 @@ namespace NewOS::HAL
 
 namespace NewOS
 {
-	typedef HAL::PageTable64	 PTE;
+	typedef HAL::LongDescLevel3	 PTE;
 	typedef HAL::PageDirectory64 PDE;
 } // namespace NewOS
+
+EXTERN_C void hal_flush_tlb();

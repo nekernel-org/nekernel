@@ -17,10 +17,10 @@
 
 #define kPTESize 512 /* 64-bit PT */
 
-#define kCPUBackendName "ARM64"
+#define kCPUBackendName "ARMv8"
 
 #ifdef __ZETA_MACHINE__
-#define kVirtualAddressStartOffset (0x80000000)
+#define cHeapStartOffset (0x10000000)
 #else
 #error !!! please provide that macro. !!!
 #endif
@@ -47,7 +47,7 @@ namespace NewOS::HAL
 	typedef StackFrame* StackFramePtr;
 }
 
-inline NewOS::VoidPtr kKernelVirtualStart = (NewOS::VoidPtr)kVirtualAddressStartOffset;
+inline NewOS::VoidPtr kKernelVirtualStart = (NewOS::VoidPtr)cHeapStartOffset;
 inline NewOS::UIntPtr kKernelVirtualSize  = 0UL;
 
 inline NewOS::VoidPtr kKernelPhysicalStart = nullptr;

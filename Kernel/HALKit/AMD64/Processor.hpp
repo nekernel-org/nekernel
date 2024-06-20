@@ -32,7 +32,7 @@
 #define kTrapGate				   (0xEF)
 #define kTaskGate				   (0b10001100)
 #define kGdtCodeSelector		   (0x08)
-#define kVirtualAddressStartOffset (0x10000000)
+#define cHeapStartOffset (0x10000000)
 
 namespace NewOS
 {
@@ -273,7 +273,7 @@ EXTERN_C void hal_load_gdt(NewOS::HAL::RegisterGDT ptr);
 #define kKernelIdtSize	   0x100
 #define kKernelInterruptId 0x32
 
-inline NewOS::VoidPtr kKernelVirtualStart = (NewOS::VoidPtr)kVirtualAddressStartOffset;
+inline NewOS::VoidPtr kKernelVirtualStart = (NewOS::VoidPtr)cHeapStartOffset;
 inline NewOS::UIntPtr kKernelVirtualSize  = 0UL;
 
 inline NewOS::VoidPtr kKernelPhysicalStart = nullptr;
