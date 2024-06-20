@@ -7,7 +7,8 @@
 #include <NewKit/Defines.hpp>
 #include <ArchKit/ArchKit.hpp>
 
-/// @brief MBCI flash drive.
+/// @file Flash.cxx
+/// @brief Flash memory builtin.
 
 #ifdef __FLASH_MEM__
 
@@ -24,4 +25,4 @@ namespace NewOS
 	}
 } // namespace NewOS
 
-#endif // if __FLASH_MEM__ (MBCI)
+#endif // if __FLASH_MEM__ (Bridge)
