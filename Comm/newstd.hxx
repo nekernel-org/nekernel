@@ -26,8 +26,18 @@ typedef void(*NWindowCallback)(NWindow*);
 typedef int NOSType;
 typedef bool NOSBool;
 
+typedef __UINT64_TYPE__ UInt64;
+typedef __UINT32_TYPE__ UInt32;
+typedef __UINT16_TYPE__ UInt16;
+typedef __UINT8_TYPE__ UInt8;
+
+typedef __INT64_TYPE__ SInt64;
+typedef __INT32_TYPE__ SInt32;
+typedef __INT16_TYPE__ SInt16;
+typedef __INT8_TYPE__ SInt8;
+
 /**
-@brief This contains has standard application functions.
+	@brief Standard library class.
 */
 class NUser final
 {
