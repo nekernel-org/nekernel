@@ -9,12 +9,12 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "Zeta Electronics Corporation"
-      VALUE "FileDescription", "New OS driver."
+      VALUE "FileDescription", "CG HW video driver."
       VALUE "FileVersion", "1.00"
       VALUE "InternalName", "SampleDriver"
-      VALUE "LegalCopyright", "Copyright Zeta Electronics Corporation, all rights reserved."
-      VALUE "OriginalFilename", "SampleDriver.exe"
-      VALUE "ProductName", "SampleDriver"
+      VALUE "LegalCopyright", "2024 Copyright Zeta Electronics Corporation, all rights reserved."
+      VALUE "OriginalFilename", "VideoDrv.exe"
+      VALUE "ProductName", "VideoDrv"
       VALUE "ProductVersion", "1.00"
     END
   END

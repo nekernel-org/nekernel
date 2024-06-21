@@ -77,7 +77,7 @@ STATIC Bool CheckBootDevice(BootDeviceATA& ataDev)
 /// @brief Main EFI entrypoint.
 /// @param ImageHandle Handle of this image.
 /// @param SystemTable The system table of it.
-/// @return
+/// @return nothing, never returns.
 EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 							  EfiSystemTable* SystemTable)
 {
@@ -91,9 +91,19 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	writer.Write(L"Zeta Electronics Corporation (R) newosldr: ")
 		.Write(BVersionString::The());
 
-	writer.Write(L"\rnewosldr: Firmware Vendor: ")
-		.Write(SystemTable->FirmwareVendor)
-		.Write(L"\r");
+	if (SystemTable->FirmwareVendor[0] != '\\' ||
+		SystemTable->FirmwareVendor[1] != 'E' ||
+		SystemTable->FirmwareVendor[2] != 'P' ||
+		SystemTable->FirmwareVendor[3] != 'M')
+	{
+		writer.Write(L"\rnewosldr: vendor: ")
+			.Write(SystemTable->FirmwareVendor)
+			.Write(L" isn't supported.\r");
+
+		EFI::Stop();
+
+		CANT_REACH();
+	}
 
 	UInt32*				 MapKey		= new UInt32();
 	UInt32*				 SizePtr	= new UInt32();

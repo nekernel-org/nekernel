@@ -26,8 +26,7 @@
 
 namespace NewOS::Detail
 {
-	/// @brief Filesystem auto mounter, additional checks are also done by the
-	/// class.
+	/// @brief Filesystem auto installer, additional checks are also done by the class.
 	class FilesystemInstaller final
 	{
 		NewOS::NewFilesystemManager* fNewFS{nullptr};
@@ -105,11 +104,7 @@ namespace NewOS::Detail
 
 						auto catalogSystem = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
 
-						kcout << "newoskrnl: write fork...\r";
-
 						fNewFS->GetParser()->CreateFork(catalogSystem, theFork);
-
-						kcout << "newoskrnl: write catalog...\r";
 
 						fNewFS->GetParser()->WriteCatalog(
 							catalogSystem, (NewOS::VoidPtr)(metadataFolder.CData()),
@@ -186,11 +181,12 @@ namespace NewOS::Detail
 		}
 	};
 
-	/// @brief Loads necessary servers for the OS to work.
-	/// @param void no parameters.
+	/// @brief Loads necessary servers for the kernel -> user mode switch.
+	/// @param void no args.
 	/// @return void no return value.
 	STATIC NewOS::Void ke_launch_srv(NewOS::Void)
 	{
+	    // load security server.
 		NewOS::PEFLoader secureSrv("C:\\System\\securesrv.exe");
 
 		if (!secureSrv.IsLoaded())
@@ -201,14 +197,15 @@ namespace NewOS::Detail
 		NewOS::Utils::execute_from_image(secureSrv,
 										 NewOS::ProcessHeader::kAppKind);
 
-		NewOS::PEFLoader uiSrv("C:\\System\\uisrv.exe");
+		/// load middleware service.
+		NewOS::PEFLoader middlewareSvc("C:\\System\\middlewaresvc.exe");
 
-		if (!uiSrv.IsLoaded())
+		if (!middlewareSvc.IsLoaded())
 		{
 			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		NewOS::Utils::execute_from_image(uiSrv,
+		NewOS::Utils::execute_from_image(middlewareSvc,
 										 NewOS::ProcessHeader::kAppKind);
 	}
 } // namespace NewOS::Detail

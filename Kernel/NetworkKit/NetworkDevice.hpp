@@ -71,6 +71,9 @@ namespace NewOS
 
 	/// @brief GSM device.
 	using GSMNetworkDevice = NetworkDevice;
+
+	/// @brief LTE device.
+	using LTENetworkDevice = NetworkDevice;
 } // namespace NewOS
 
 #include <NetworkKit/NetworkDevice.inl>

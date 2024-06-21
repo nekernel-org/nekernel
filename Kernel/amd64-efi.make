@@ -84,4 +84,4 @@ help:
 
 .PHONY: clean
 clean:
-	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL)
+	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL) $(KERNEL_512K)

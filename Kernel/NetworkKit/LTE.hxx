@@ -2,15 +2,15 @@
 
 	Copyright Zeta Electronics Corporation.
 
-	File: GSM.hxx.
-	Purpose: GSM protocol classes.
+	File: LTE.hxx.
+	Purpose: LTE protocol classes.
 
 ------------------------------------------- */
 
-#ifndef _INC_NETWORK_GSM_HXX_
-#define _INC_NETWORK_GSM_HXX_
+#ifndef _INC_NETWORK_LTE_HXX_
+#define _INC_NETWORK_LTE_HXX_
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-#endif // ifndef _INC_NETWORK_GSM_HXX_
+#endif // ifndef _INC_NETWORK_LTE_HXX_
