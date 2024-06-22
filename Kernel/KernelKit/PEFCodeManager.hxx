@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_CODE_MANAGER_PEF_
-#define _INC_CODE_MANAGER_PEF_
+#ifndef _INC_CODE_MANAGER_PEF_HXX_
+#define _INC_CODE_MANAGER_PEF_HXX_
 
 #include <KernelKit/PEF.hpp>
 #include <NewKit/ErrorOr.hpp>
@@ -59,4 +59,4 @@ namespace NewOS
 	} // namespace Utils
 } // namespace NewOS
 
-#endif // ifndef _INC_CODE_MANAGER_PEF_
+#endif // ifndef _INC_CODE_MANAGER_PEF_HXX_

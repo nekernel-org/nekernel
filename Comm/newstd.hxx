@@ -13,8 +13,8 @@ Purpose: NewOS standard interface.
 #error !!! including header in kernel mode !!!
 #endif // __KERNEL__
 
-#define IMPORT_CXX extern "C++"
-#define IMPORT_C extern "C"
+#define ML_IMPORT_CXX extern "C++"
+#define ML_IMPORT_C extern "C"
 
 #define cRestrictR	"r"
 #define cRestrictRB "rb"
