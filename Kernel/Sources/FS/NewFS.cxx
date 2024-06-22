@@ -15,6 +15,7 @@
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
+#include <FirmwareKit/EPM.hxx>
 
 using namespace NewOS;
 
@@ -36,7 +37,7 @@ STATIC MountpointInterface sMountpointInterface;
 /// @param theFork the fork itself.
 /// @return the fork
 _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
-										 _Input NewFork&	theFork)
+										 _Input NewFork& theFork)
 {
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return nullptr;
@@ -205,7 +206,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name)
 /// @param flags the flags of the catalog.
 /// @param kind the catalog kind.
 /// @return catalog pointer.
-_Output NewCatalog* NewFSParser::CreateCatalog(_Input const char*  name,
+_Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 											   _Input const Int32& flags,
 											   _Input const Int32& kind)
 {
@@ -320,7 +321,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char*  name,
 	{
 		nextSibling = (NewCatalog*)catalogBuf;
 
-		if (startFree <= kNewFSAddressAsLba)
+		if (startFree <= kNewFSStartLba)
 		{
 			delete catalogChild;
 			delete catalog;
@@ -335,7 +336,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char*  name,
 
 			drive->fPacket.fPacketContent = sectorBufPartBlock;
 			drive->fPacket.fPacketSize	  = kNewFSSectorSz;
-			drive->fPacket.fLba			  = kNewFSAddressAsLba;
+			drive->fPacket.fLba			  = kNewFSStartLba;
 
 			drive->fInput(&drive->fPacket);
 
@@ -380,7 +381,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char*  name,
 
 			drive->fPacket.fPacketContent = sectorBufPartBlock;
 			drive->fPacket.fPacketSize	  = kNewFSSectorSz;
-			drive->fPacket.fLba			  = kNewFSAddressAsLba;
+			drive->fPacket.fLba			  = kNewFSStartLba;
 
 			drive->fInput(&drive->fPacket);
 
@@ -433,7 +434,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 	drive->fPacket.fPacketContent = sectorBuf;
 	drive->fPacket.fPacketSize	  = kNewFSSectorSz;
-	drive->fPacket.fLba			  = kNewFSAddressAsLba;
+	drive->fPacket.fLba			  = kNewFSStartLba;
 
 	drive->fInput(&drive->fPacket);
 
@@ -472,7 +473,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 			drive->fPacket.fPacketContent = sectorBuf;
 			drive->fPacket.fPacketSize	  = kNewFSSectorSz;
-			drive->fPacket.fLba			  = kNewFSAddressAsLba;
+			drive->fPacket.fLba			  = kNewFSStartLba;
 
 			drive->fOutput(&drive->fPacket);
 
@@ -487,6 +488,33 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 			/// write the root catalog.
 			this->CreateCatalog(kNewFSRoot, 0, kNewFSCatalogKindDir);
+
+			if (partBlock->Flags & kNewFSPartitionTypeBoot)
+			{
+				/// make it bootable when needed.
+				Char bufEpmHdr[kNewFSSectorSz] = {0};
+
+				BootBlockType* epmBoot = (BootBlockType*)bufEpmHdr;
+
+				constexpr auto cFsName = "NewFS";
+
+				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, rt_string_len(cFsName));
+
+				epmBoot->FsVersion = kNewFSVersionInteger;
+				epmBoot->LbaStart  = kNewFSStartLba;
+				epmBoot->SectorSz  = partBlock->SectorSize;
+				epmBoot->NumBlocks = partBlock->CatalogCount;
+
+				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>("BOOT:")), epmBoot->Name, rt_string_len("BOOT:"));
+
+				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epmBoot->Magic, rt_string_len(kEPMMagic));
+
+				drive->fPacket.fPacketContent = bufEpmHdr;
+				drive->fPacket.fPacketSize	  = (epmBoot->SectorSz);
+				drive->fPacket.fLba			  = kEpmBase;
+
+				drive->fOutput(&drive->fPacket);
+			}
 
 			return true;
 		}
@@ -604,7 +632,7 @@ _Output NewCatalog* NewFSParser::FindCatalog(_Input const char* catalogName,
 
 	drive->fPacket.fPacketContent = sectorBuf;
 	drive->fPacket.fPacketSize	  = sizeof(NewPartitionBlock);
-	drive->fPacket.fLba			  = kNewFSAddressAsLba;
+	drive->fPacket.fLba			  = kNewFSStartLba;
 
 	drive->fInput(&drive->fPacket);
 
@@ -688,7 +716,7 @@ _NewFSSearchThroughCatalogList:
 	_NewFSContinueSearch:
 		startCatalogList = catalog->NextSibling;
 
-		if (startCatalogList <= kNewFSAddressAsLba)
+		if (startCatalogList <= kNewFSStartLba)
 			break;
 
 		drive->fPacket.fLba			  = startCatalogList;
@@ -769,7 +797,7 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName)
 
 		Char partitionBlockBuf[sizeof(NewPartitionBlock)] = {0};
 
-		drive->fPacket.fLba			  = kNewFSAddressAsLba;
+		drive->fPacket.fLba			  = kNewFSStartLba;
 		drive->fPacket.fPacketContent = partitionBlockBuf;
 		drive->fPacket.fPacketSize	  = sizeof(NewPartitionBlock);
 
@@ -927,7 +955,7 @@ namespace NewOS::Detail
 
 		Char partitionBlockBuf[sizeof(NewPartitionBlock)] = {0};
 
-		sMountpointInterface.A().fPacket.fLba			= kNewFSAddressAsLba;
+		sMountpointInterface.A().fPacket.fLba			= kNewFSStartLba;
 		sMountpointInterface.A().fPacket.fPacketContent = partitionBlockBuf;
 		sMountpointInterface.A().fPacket.fPacketSize	= sizeof(NewPartitionBlock);
 

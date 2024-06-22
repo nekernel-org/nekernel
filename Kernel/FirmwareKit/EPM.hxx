@@ -41,22 +41,10 @@ struct PACKED BootBlock
 	NewOS::Int64 NumBlocks;
 	NewOS::Int64 SectorSz;
 	NewOS::Int64 LbaStart;
-};
-
-/**
- * @brief The EPM partition block.
- * used to describe a partition inside a media, doesn't exist on some platforms.
- */
-struct PACKED PartitionBlock
-{
-	NewOS::Char	 Name[kEPMNameLength];
-	NewOS::Int32 Version;
-	NewOS::Int64 LbaEnd;
-	NewOS::Int64 SectorSz;
-	NewOS::Int64 LbaStart;
 	NewOS::Int16 Kind;
 	NewOS::Int32 FsVersion;
 	NewOS::Char	 Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
+	NewOS::Char  Reserved[409]; // to fill a full sector.
 };
 
 /* @brief AMD64 magic for EPM */
@@ -102,8 +90,7 @@ enum kEPMKind
 	kEPMNewOS = 0x1f, // This kernel.
 };
 
-typedef struct BootBlock	  BootBlockType;
-typedef struct PartitionBlock PartitionBlockType;
+typedef struct BootBlock BootBlockType;
 
 #ifdef __NEWOS_AMD64__
 #define kEPMMagic kEPMMagic86
@@ -123,6 +110,8 @@ typedef struct PartitionBlock PartitionBlockType;
 #define kEPMRevision     (0xAD)
 ///! @brief Current EPM revision
 #define kEPMRevisionUEFI (0xAF)
+/// !@brief EPM base address
+#define kEpmBase         (0U)
 
 /// END OF SPECS
 

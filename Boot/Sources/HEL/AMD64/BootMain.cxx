@@ -89,21 +89,15 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	/// Splash screen stuff
 
 	writer.Write(L"Zeta Electronics Corporation (R) newosldr: ")
-		.Write(BVersionString::The());
+		.Write(BVersionString::The()).Write("\r");
 
-	if (SystemTable->FirmwareVendor[0] != '\\' ||
-		SystemTable->FirmwareVendor[1] != 'E' ||
-		SystemTable->FirmwareVendor[2] != 'P' ||
-		SystemTable->FirmwareVendor[3] != 'M')
-	{
-		writer.Write(L"\rnewosldr: vendor: ")
-			.Write(SystemTable->FirmwareVendor)
-			.Write(L" isn't supported.\r");
+#ifndef __DEBUG__
+    writer.Write(L"\rnewosldr: AMD64 is only supported in debug mode.\r");
 
-		EFI::Stop();
+	EFI::Stop();
 
-		CANT_REACH();
-	}
+	CANT_REACH();
+#endif
 
 	UInt32*				 MapKey		= new UInt32();
 	UInt32*				 SizePtr	= new UInt32();

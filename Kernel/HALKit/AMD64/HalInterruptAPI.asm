@@ -122,6 +122,8 @@ IntNormal 31
 [extern hal_apic_acknowledge]
 
 __NEW_INT_32:
+;; make this active, SMP works again.
+%if 0
     push rax
     push rcx
     push rdx
@@ -160,7 +162,7 @@ __NEW_INT_32:
 
     ;; tell there local apic that we're done.
     mov [0xFEE00000 + 0xB0], rax ; LAPIC_EOI
-
+%endif
     iretq
 
 IntNormal 33

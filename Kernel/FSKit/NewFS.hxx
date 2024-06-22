@@ -80,8 +80,8 @@ default.
 #define kNewFSLbaType  (NewOS::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
-#define kNewFSAddressAsLba		  (512)
-#define kNewFSCatalogStartAddress (1024 + sizeof(NewPartitionBlock) + sizeof(NewCatalog))
+#define kNewFSStartLba			  (1024)
+#define kNewFSCatalogStartAddress ((2048) + sizeof(NewPartitionBlock) + sizeof(NewCatalog))
 
 #define kResourceTypeDialog (10)
 #define kResourceTypeString (11)
@@ -106,7 +106,7 @@ enum
 	kNewFSOpticalDrive		= 0x0C, // Blu-Ray/DVD
 	kNewFSMassStorageDevice = 0xCC, // USB
 	kNewFSScsi				= 0xC4, // SCSI Hard Drive
-	kNewFSFlashDrive        = 0xC6,
+	kNewFSFlashDrive		= 0xC6,
 	kNewFSUnknown			= 0xFF, // Unknown device. (floppy)
 	kNewFSDriveCount		= 5,
 };
@@ -225,7 +225,7 @@ namespace NewOS
 		/// @param theFork the fork itself.
 		/// @return the fork
 		_Output NewFork* CreateFork(_Input NewCatalog* catalog,
-									_Input NewFork&	   theFork);
+									_Input NewFork& theFork);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
@@ -243,7 +243,7 @@ namespace NewOS
 
 		_Output NewCatalog* GetCatalog(_Input const char* name);
 
-		_Output NewCatalog* CreateCatalog(_Input const char*  name,
+		_Output NewCatalog* CreateCatalog(_Input const char* name,
 										  _Input const Int32& flags,
 										  _Input const Int32& kind);
 

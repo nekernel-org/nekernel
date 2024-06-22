@@ -12,12 +12,13 @@
 #pragma once
 
 #include <BootKit/HW/ATA.hxx>
+#include <FirmwareKit/EPM.hxx>
 #include <CompilerKit/Version.hxx>
 
 /// include NewFS header and Support header as well.
 
-#include <FSKit/NewFS.hxx>
 #include <cstring>
+#include <FSKit/NewFS.hxx>
 #include <BootKit/Vendor/Support.hxx>
 
 /***********************************************************************************/
@@ -215,7 +216,7 @@ public:
 	/// @brief check if partition is good.
 	Bool IsPartitionValid() noexcept
 	{
-		fDiskDev.Leak().mBase = (kNewFSAddressAsLba);
+		fDiskDev.Leak().mBase = (kNewFSStartLba);
 		fDiskDev.Leak().mSize = BootDev::kSectorSize;
 
 		Char buf[BootDev::kSectorSize] = {0};
@@ -284,7 +285,7 @@ private:
 			EFI::ThrowError(L"Developer-Error", L"This is caused by the developer of the bootloader.");
 		}
 
-		writer.Write((catalogKind->Kind == kNewFSCatalogKindFile) ? L"newosldr: Write-File: " : L"newosldr: Write-Directory: ").Write(blob->fFileName).Write(L"\r");
+		writer.Write(L"newosldr: root directory: ").Write(blob->fFileName).Write(L"\r");
 
 		memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
 
@@ -354,13 +355,35 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 	/// if we can write a root catalog, then write the partition block.
 	if (this->WriteRootCatalog(fileBlobs, blobCount, *partBlock))
 	{
-		fDiskDev.Leak().mBase = kNewFSAddressAsLba;
+		fDiskDev.Leak().mBase = kNewFSStartLba;
 		fDiskDev.Leak().mSize = sectorSz;
 
 		fDiskDev.Write(buf, sectorSz);
 
+		/// Reset buffer.
+		SetMem(buf, 0, sectorSz);
+
+		BootBlockType* epmBoot = (BootBlockType*)buf;
+
+		constexpr auto cFsName = "NewFS";
+
+		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, StrLen(cFsName));
+
+		epmBoot->FsVersion = kNewFSVersionInteger;
+		epmBoot->LbaStart  = kNewFSStartLba;
+		epmBoot->SectorSz  = partBlock->SectorSize;
+		epmBoot->NumBlocks = partBlock->CatalogCount;
+
+		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>("BOOT:")), epmBoot->Name, StrLen("BOOT:"));
+		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epmBoot->Magic, StrLen(kEPMMagic));
+
 		BTextWriter writer;
-		writer.Write(L"newosldr: Write-Partition: OK.\r");
+		writer.Write(L"newosldr: wrote parition.\r");
+
+		fDiskDev.Leak().mBase = kEpmBase;
+		fDiskDev.Leak().mSize = sectorSz;
+
+		fDiskDev.Write(buf, sectorSz);
 
 		return true;
 	}

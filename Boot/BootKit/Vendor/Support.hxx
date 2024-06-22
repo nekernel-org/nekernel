@@ -9,8 +9,6 @@
 /// @file Support.hxx
 /// @brief Purpose of this file is to help port libs into the bootloader.
 
-#include <BootKit/BootKit.hxx>
-
 #define cLongMax ((long)(~0UL >> 1))
 #define cLongMin (~cLongMax)
 
