@@ -8,18 +8,18 @@
 	@brief The Explicit Partition Map scheme.
 */
 
-#ifndef __PARTITION_MAP__
-#define __PARTITION_MAP__
+#ifndef __FIRMWARE_EPM_HXX__
+#define __FIRMWARE_EPM_HXX__
 
 #include <NewKit/Defines.hpp>
 
-#define kEPMNameLength		 32
-#define kEPMFilesystemLength 16
-#define kEPMMagicLength		 5
+#define kEPMNameLength		 (32)
+#define kEPMFilesystemLength (16)
+#define kEPMMagicLength		 (5)
 
 /* The first 0 > 128 addresses of a disk contains these headers. */
 
-/// @brief EPM GUID block.
+/// @brief EPM GUID structure.
 typedef struct BlockGUID
 {
 	NewOS::UInt32 Data1;
@@ -29,8 +29,8 @@ typedef struct BlockGUID
 } BlockGUID;
 
 /**
- * @brief The EPM bootloader block.
- * @note NumBlock and LbaStart are ignored on UEFI.
+ * @brief The EPM boot block.
+ * @note NumBlock and LbaStart are ignored on some platforms.
  */
 struct PACKED BootBlock
 {
@@ -45,7 +45,7 @@ struct PACKED BootBlock
 
 /**
  * @brief The EPM partition block.
- * used to describe a partition inside a media, doesn't exist on uefi.
+ * used to describe a partition inside a media, doesn't exist on some platforms.
  */
 struct PACKED PartitionBlock
 {
@@ -96,20 +96,20 @@ struct PACKED PartitionBlock
 
 enum kEPMKind
 {
-	kEPMMpUx  = 0xcf,
+	kEPMMpUx  = 0xcf, // Bridge or other embedded OS
 	kEPMLinux = 0x8f,
 	kEPMBSD	  = 0x9f,
-	kEPMNewOS = 0x1f,
+	kEPMNewOS = 0x1f, // This kernel.
 };
 
 typedef struct BootBlock	  BootBlockType;
 typedef struct PartitionBlock PartitionBlockType;
 
-#ifdef __x86_64__
+#ifdef __NEWOS_AMD64__
 #define kEPMMagic kEPMMagic86
 #else
-#ifdef __powerpc64__
-#define kEPMMagic kEPMMagicPPC
+#ifdef __NEWOS_ARM64__
+#define kEPMMagic kEPMMagicARM
 #else
 #define kEPMMagic kEPMMagicError
 #endif
@@ -119,15 +119,11 @@ typedef struct PartitionBlock PartitionBlockType;
 ///! Anything below is reserved for Data backup by the Main OS.
 #define kEPMStartPartitionBlk (sizeof(BootBlock))
 
-///! @brief Current EPM revision (2)
-#define kEPMRevision (3)
-
-///! @brief Current EPM revision (2)
-#define kEPMRevisionUEFI (0xF)
-
-/* @brief Maximum block count. */
-#define kEPMMaxBlks (128)
+///! @brief Current EPM revision
+#define kEPMRevision     (0xAD)
+///! @brief Current EPM revision
+#define kEPMRevisionUEFI (0xAF)
 
 /// END OF SPECS
 
-#endif // ifndef __PARTITION_MAP__
+#endif // ifndef __FIRMWARE_EPM_HXX__
