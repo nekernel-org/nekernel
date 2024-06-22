@@ -81,20 +81,8 @@ namespace NewOS
 	/// @return
 	Void NewFilesystemManager::Write(NodePtr node, VoidPtr data, Int32 flags, SizeT size)
 	{
-		if (!size ||
-			size > kNewFSForkSize)
-			return;
-
-		if (!data)
-			return;
-
-		NEWOS_UNUSED(flags);
-
 		auto dataForkName = kNewFSDataFork;
-
-		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-			fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
-								dataForkName);
+		this->Write(dataForkName, node, data, flags, size);
 	}
 
 	/// @brief Read from filesystem fork.
@@ -104,6 +92,34 @@ namespace NewOS
 	/// @return
 	VoidPtr NewFilesystemManager::Read(NodePtr node, Int32 flags, SizeT sz)
 	{
+		auto dataForkName = kNewFSDataFork;
+		return this->Read(dataForkName, node, flags, sz);
+	}
+
+	Void NewFilesystemManager::Write(_Input const Char* name,
+			   _Input NodePtr node, _Input VoidPtr data,
+			   _Input Int32 flags,
+			   _Input SizeT size)
+	{
+		if (!size ||
+			size > kNewFSForkSize)
+			return;
+
+		if (!data)
+			return;
+
+		NEWOS_UNUSED(flags);
+
+		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
+			fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
+								name);
+	}
+
+	_Output VoidPtr NewFilesystemManager::Read(_Input const Char* name,
+						 _Input NodePtr node,
+						 _Input Int32 flags,
+						 _Input SizeT sz)
+	{
 		if (sz > kNewFSForkSize)
 			return nullptr;
 
@@ -112,11 +128,9 @@ namespace NewOS
 
 		NEWOS_UNUSED(flags);
 
-		auto dataForkName = kNewFSDataFork;
-
 		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
 			return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz,
-									  dataForkName);
+									  name);
 
 		return nullptr;
 	}

@@ -5,7 +5,6 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/FileManager.hpp>
 #include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
@@ -49,15 +48,15 @@ namespace NewOS
 	PEFLoader::PEFLoader(const Char* path)
 		: fCachedBlob(nullptr), fBad(false), fFatBinary(false)
 	{
-		OwnPtr<FileStream<Char>> file;
+		fFile.New(const_cast<Char*>(path), cRestrictRB);
 
-		file.New(const_cast<Char*>(path), kRestrictRB);
-
-		if (StringBuilder::Equals(file->MIME(), this->MIME()))
+		if (StringBuilder::Equals(fFile->MIME(), this->MIME()))
 		{
 			fPath = StringBuilder::Construct(path).Leak();
 
-			fCachedBlob = file->Read();
+			auto cPefHeader = "PEFContainer";
+
+			fCachedBlob = fFile->Read(cPefHeader);
 
 			PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
@@ -85,7 +84,7 @@ namespace NewOS
 			fBad = true;
 
 			ke_delete_ke_heap(fCachedBlob);
-
+			
 			fCachedBlob = nullptr;
 		}
 	}
@@ -95,6 +94,8 @@ namespace NewOS
 	{
 		if (fCachedBlob)
 			ke_delete_ke_heap(fCachedBlob);
+
+		fFile.Delete();
 	}
 
 	VoidPtr PEFLoader::FindSymbol(const char* name, Int32 kind)
@@ -104,8 +105,12 @@ namespace NewOS
 
 		PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-		PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(
-			(UIntPtr)fCachedBlob + sizeof(PEFContainer));
+		StringView cPefHeaderStr = StringBuilder::Construct("PEFContainerHeader:").Leak().Leak();
+		cPefHeaderStr += name;
+
+		auto blob = fFile->Read(cPefHeaderStr.CData());
+
+		PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(blob);
 
 		constexpr auto cMangleCharacter	 = '$';
 		const char*	   cContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
@@ -114,15 +119,18 @@ namespace NewOS
 
 		switch (kind)
 		{
-		case kPefCode: {
+		case kPefCode: 
+		{
 			errOrSym = StringBuilder::Construct(cContainerKinds[0]); // code symbol.
 			break;
 		}
-		case kPefData: {
+		case kPefData: 
+		{
 			errOrSym = StringBuilder::Construct(cContainerKinds[1]); // data symbol.
 			break;
 		}
-		case kPefZero: {
+		case kPefZero: 
+		{
 			errOrSym = StringBuilder::Construct(cContainerKinds[2]); // block starting symbol.
 			break;
 		}
@@ -152,15 +160,23 @@ namespace NewOS
 					if (container_header->Cpu != Detail::rt_get_pef_platform())
 					{
 						if (!this->fFatBinary)
+						{
+							ke_delete_ke_heap(blob);
 							return nullptr;
+						}
 					}
 
-					return (VoidPtr)(static_cast<UIntPtr*>(fCachedBlob) +
-									 container_header->Offset);
+					Char* blobRet = new Char[container_header->Size];
+
+					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
+
+					ke_delete_ke_heap(blob);
+					return blobRet;
 				}
 			}
 		}
-
+		
+		ke_delete_ke_heap(blob);
 		return nullptr;
 	}
 

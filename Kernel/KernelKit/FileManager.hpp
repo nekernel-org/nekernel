@@ -26,27 +26,35 @@
 /// @brief Filesystem abstraction manager.
 /// Works like the VFS or IFS.
 
-#define kBootFolder	  "/Boot"
-#define kBinFolder	  "/Applications"
-#define kShLibsFolder "/Library"
-#define kMountFolder  "/Mount"
+#define cRestrictR	"r"
+#define cRestrictRB "rb"
+#define cRestrictW	"w"
+#define cRestrictRW "rw"
 
 /// refer to first enum.
-#define kFileOpsCount	 4
-#define kFileMimeGeneric "application-type/*"
+#define cFileOpsCount	 4
+#define cFileMimeGeneric "application-type/*"
+
+/** @brief invalid position. (n-pos) */
+#define kNPos (SizeT)(-1);
 
 namespace NewOS
 {
 	enum
 	{
-		kFileWriteAll	= 100,
-		kFileReadAll	= 101,
-		kFileReadChunk	= 102,
-		kFileWriteChunk = 103,
-		kFileIOCnt		= (kFileWriteChunk - kFileWriteAll) + 1,
+		cFileWriteAll	= 100,
+		cFileReadAll	= 101,
+		cFileReadChunk	= 102,
+		cFileWriteChunk = 103,
+		cFileIOCnt		= (cFileWriteChunk - cFileWriteAll) + 1,
 	};
 
-	typedef VoidPtr NodePtr;
+	/// @brief filesystem node generic type.
+	struct PACKED FMNode final {
+		VoidPtr _Unused;
+	};
+
+	typedef FMNode* NodePtr;
 
 	/**
 	@brief Filesystem Manager Interface class
@@ -55,7 +63,7 @@ namespace NewOS
 	class FilesystemManagerInterface
 	{
 	public:
-		FilesystemManagerInterface()		  = default;
+		explicit FilesystemManagerInterface() = default;
 		virtual ~FilesystemManagerInterface() = default;
 
 	public:
@@ -87,9 +95,19 @@ namespace NewOS
 		virtual NodePtr Open(_Input const char* path, _Input const char* r) = 0;
 
 	public:
-		virtual Void			Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size) = 0;
-		virtual _Output VoidPtr Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT sz)						   = 0;
+		virtual Void Write(_Input NodePtr node, _Input VoidPtr data, 
+						   _Input Int32 flags, _Input SizeT size) = 0;
+		
+		virtual _Output VoidPtr Read(_Input NodePtr node,
+									 _Input Int32 flags, _Input SizeT sz)  = 0;
+		
+		virtual Void Write(_Input const Char* name,
+						   _Input NodePtr node, _Input VoidPtr data, 
+						   _Input Int32 flags, _Input SizeT size) = 0;
 
+		virtual _Output VoidPtr Read(_Input const Char* name,
+									 _Input NodePtr node,
+									 _Input Int32 flags, _Input SizeT sz)  = 0;
 	public:
 		virtual bool Seek(_Input NodePtr node, _Input SizeT off) = 0;
 
@@ -97,9 +115,6 @@ namespace NewOS
 		virtual SizeT Tell(_Input NodePtr node)	  = 0;
 		virtual bool  Rewind(_Input NodePtr node) = 0;
 	};
-
-/** @brief invalid position. (n-pos) */
-#define kNPos (SizeT)(-1);
 
 #ifdef __FSKIT_NEWFS__
 	/**
@@ -128,7 +143,17 @@ namespace NewOS
 		bool	Seek(NodePtr node, SizeT off);
 		SizeT	Tell(NodePtr node) override;
 		bool	Rewind(NodePtr node) override;
+		
+		Void Write(_Input const Char* name,
+						   _Input NodePtr node, _Input VoidPtr data, 
+						   _Input Int32 flags, 
+				   _Input SizeT size) override;
 
+		_Output VoidPtr Read(_Input const Char* name,
+									 _Input NodePtr node,
+									 _Input Int32 flags,
+							 _Input SizeT sz) override;
+	
 	public:
 		void SetResourceFork(const char* forkName);
 		void SetDataFork(const char* forkName);
@@ -170,7 +195,7 @@ namespace NewOS
 
 			if (man)
 			{
-				man->Write(fFile, data, kFileWriteAll);
+				man->Write(fFile, data, cFileWriteAll);
 				return ErrorOr<Int64>(0);
 			}
 
@@ -183,7 +208,36 @@ namespace NewOS
 
 			if (man)
 			{
-				VoidPtr ret = man->Read(fFile, kFileReadAll, 0);
+				VoidPtr ret = man->Read(fFile, cFileReadAll, 0);
+				return ret;
+			}
+
+			return nullptr;
+		}
+
+		ErrorOr<Int64> WriteAll(const char* fName, const VoidPtr data) noexcept
+		{
+			if (data == nullptr)
+				return ErrorOr<Int64>(kErrorInvalidData);
+
+			auto man = FSClass::GetMounted();
+
+			if (man)
+			{
+				man->Write(fName, fFile, data, cFileWriteAll);
+				return ErrorOr<Int64>(0);
+			}
+
+			return ErrorOr<Int64>(kErrorInvalidData);
+		}
+
+		VoidPtr Read(const char* fName) noexcept
+		{
+			auto man = FSClass::GetMounted();
+
+			if (man)
+			{
+				VoidPtr ret = man->Read(fName, fFile, cFileReadAll, 0);
 				return ret;
 			}
 
@@ -197,7 +251,7 @@ namespace NewOS
 			if (man)
 			{
 				man->Seek(fFile, offset);
-				auto ret = man->Read(fFile, kFileReadChunk, sz);
+				auto ret = man->Read(fFile, cFileReadChunk, sz);
 
 				return ret;
 			}
@@ -212,7 +266,7 @@ namespace NewOS
 			if (man)
 			{
 				man->Seek(fFile, offset);
-				man->Write(fFile, data, sz, kFileReadChunk);
+				man->Write(fFile, data, sz, cFileReadChunk);
 			}
 		}
 
@@ -231,28 +285,29 @@ namespace NewOS
 
 	private:
 		NodePtr		fFile;
-		const Char* fMime{kFileMimeGeneric};
+		const Char* fMime{cFileMimeGeneric};
 	};
-
-#define kRestrictR	"r"
-#define kRestrictRB "rb"
-#define kRestrictW	"w"
-#define kRestrictRW "rw"
 
 	using FileStreamUTF8  = FileStream<Char>;
 	using FileStreamUTF16 = FileStream<WideChar>;
 
 	typedef UInt64 CursorType;
-
+	
+	/// @brief constructor
 	template <typename Encoding, typename Class>
 	FileStream<Encoding, Class>::FileStream(const Encoding* path,
 											const Encoding* restrict_type)
 		: fFile(Class::GetMounted()->Open(path, restrict_type))
 	{
+		kcout << "newoskrnl: new file: " << path << ".\r";
 	}
 
-	template <typename Encoding, typename Class>
-	FileStream<Encoding, Class>::~FileStream() = default;
+	/// @brief destructor
+	template<typename Encoding, typename Class>
+	FileStream<Encoding, Class>::~FileStream()
+	{
+		delete fFile;
+	}
 } // namespace NewOS
 
 #define node_cast(PTR) reinterpret_cast<NewOS::NodePtr>(PTR)

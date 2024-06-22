@@ -10,6 +10,7 @@
 #include <KernelKit/PEF.hpp>
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/String.hpp>
+#include <KernelKit/FileManager.hpp>
 
 #define kPefApplicationMime "application/x-newos-exec"
 
@@ -45,6 +46,7 @@ namespace NewOS
 		bool IsLoaded() noexcept;
 
 	private:
+		OwnPtr<FileStream<Char>> fFile;
 		Ref<StringView> fPath;
 		VoidPtr			fCachedBlob;
 		bool			fFatBinary;

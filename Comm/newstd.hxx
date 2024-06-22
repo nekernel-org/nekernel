@@ -16,6 +16,11 @@ Purpose: NewOS standard interface.
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C extern "C"
 
+#define cRestrictR	"r"
+#define cRestrictRB "rb"
+#define cRestrictW	"w"
+#define cRestrictRW "rw"
+
 class NUser; /// @brief User application class.
 class NWindow; /// @brief Window class.
 class NWindowAlert; /// @brief Window alert object
@@ -23,8 +28,9 @@ class NURL; /// @brief URL object.
 
 typedef void(*NWindowCallback)(NWindow*);
 
-typedef int NOSType;
-typedef bool NOSBool;
+typedef int OSType;
+typedef bool Bool;
+typedef void UInt0;
 
 typedef __UINT64_TYPE__ UInt64;
 typedef __UINT32_TYPE__ UInt32;
@@ -42,33 +48,30 @@ typedef __INT8_TYPE__ SInt8;
 class NUser final
 {
 public:
-    /// THOSE REQUIRES PERMISSIONS FROM THE USER. ///
+    // THOSE REQUIRES PERMISSIONS FROM THE USER. ///
 
-    static void Poweroff();
-    static void Reboot();
+    static UInt0 Poweroff();
+    static UInt0 Reboot();
+    static Bool IsWokeup();
 
-    /// THOSE REQUIRES PERMISSIONS FROM THE USER. ///
+    // THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. ///
 
-    static NOSBool IsWokeup();
-    static void Terminate();
+    static UInt0 Terminate();
+    static Bool Exit(OSType code);
+    static UInt0* New(long long sz);
+    static UInt0 Delete(void* ptr);
 
-    /// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. ///
+    // ASK FOR ELEVATION ///
 
-    static NOSBool Exit(NOSType code);
-    static void* New(long long sz);
-    static void Delete(void* ptr);
+    static Bool RaiseUAC();
 
-    /// ASK FOR ELEVATION ///
+    // THOSE MAY REQUIRE PERMISSIONS FROM THE USER. ///
 
-    static NOSBool RaiseUAC();
-
-    /// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. ///
-
-    static NOSType Open(const char* path);
-    static void Close(NOSType fd);
+    static OSType Open(const char* path);
+    static UInt0 Close(OSType fd);
     static NURL* Execute(const NURL* command);
-    static void* Read(const char* forkName, NOSType fd);
-    static void* Write(const char* forkName, NOSType fd);
+    static UInt0* Read(const char* forkName, OSType fd);
+    static UInt0* Write(const char* forkName, OSType fd);
 };
 
 /**
@@ -97,7 +100,7 @@ public:
     virtual NWindowAlert* Collect(const char* resultBuf, long resultBufSz) = 0;
 
 public:
-    NOSBool fAsyncOperationMode;
+    Bool fAsyncOperationMode;
     NWindowCallback fAsyncOnComplete;
 
 };
@@ -129,7 +132,7 @@ public:
 						  NWindowCallback onHover = nullptr) = 0;
 
 public:
-    NOSBool  fWindowEnabled;
+    Bool  fWindowEnabled;
     void* fWindowDataPtr;
 
 };
