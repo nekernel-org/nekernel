@@ -366,6 +366,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		BootBlockType* epmBoot = (BootBlockType*)buf;
 
 		constexpr auto cFsName = "NewFS";
+		constexpr auto cBlockName = "Zeta:";
 
 		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, StrLen(cFsName));
 
@@ -374,8 +375,8 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		epmBoot->SectorSz  = partBlock->SectorSize;
 		epmBoot->NumBlocks = partBlock->CatalogCount;
 
-		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>("BOOT:")), epmBoot->Name, StrLen("BOOT:"));
-		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epmBoot->Magic, StrLen(kEPMMagic));
+		CopyMem(epmBoot->Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), StrLen(cBlockName));
+		CopyMem(epmBoot->Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
 
 		BTextWriter writer;
 		writer.Write(L"newosldr: wrote parition.\r");
@@ -384,7 +385,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		fDiskDev.Leak().mSize = sectorSz;
 
 		fDiskDev.Write(buf, sectorSz);
-
+		
 		return true;
 	}
 	else

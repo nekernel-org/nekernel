@@ -497,6 +497,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 				BootBlockType* epmBoot = (BootBlockType*)bufEpmHdr;
 
 				constexpr auto cFsName = "NewFS";
+				constexpr auto cBlockName = "Zeta:";
 
 				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, rt_string_len(cFsName));
 
@@ -505,8 +506,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 				epmBoot->SectorSz  = partBlock->SectorSize;
 				epmBoot->NumBlocks = partBlock->CatalogCount;
 
-				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>("BOOT:")), epmBoot->Name, rt_string_len("BOOT:"));
-
+				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), epmBoot->Name, rt_string_len(cBlockName));
 				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epmBoot->Magic, rt_string_len(kEPMMagic));
 
 				drive->fPacket.fPacketContent = bufEpmHdr;

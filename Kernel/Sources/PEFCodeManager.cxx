@@ -20,14 +20,16 @@ namespace NewOS
 		/// @brief Get the PEF platform signature according to the compiled backebnd
 		UInt32 rt_get_pef_platform(void) noexcept
 		{
-#ifdef __32x0__
+#ifdef __NEWOS_32X0__
 			return kPefArch32x0;
-#elif defined(__64x0__)
+#elif defined(__NEWOS_64X0__)
 			return kPefArch64x0;
-#elif defined(__x86_64__)
+#elif defined(__NEWOS_AMD64__)
 			return kPefArchAMD64;
-#elif defined(__powerpc64__)
+#elif defined(__NEWOS_PPC64__)
 			return kPefArchPowerPC;
+#elif defined(__NEWOS_ARM64__)
+			return kPefArchARM64;
 #else
 			return kPefArchInvalid;
 #endif // __32x0__ || __64x0__ || __x86_64__
