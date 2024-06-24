@@ -48,24 +48,24 @@ typedef __INT8_TYPE__  SInt8;
 class NUser final
 {
 public:
-	// THOSE REQUIRES PERMISSIONS FROM THE USER. ///
+	// THOSE REQUIRES PERMISSIONS FROM THE USER. //
 
 	static UInt0 Poweroff();
 	static UInt0 Reboot();
 	static Bool	 IsWokeup();
 
-	// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. ///
+	// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. //
 
 	static UInt0  Terminate();
 	static Bool	  Exit(OSType code);
 	static UInt0* New(long long sz);
 	static UInt0  Delete(void* ptr);
 
-	// ASK FOR ELEVATION ///
+	// ASK FOR ELEVATION //
 
 	static Bool RaiseUAC();
 
-	// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. ///
+	// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. //
 
 	static OSType Open(const char* path);
 	static UInt0  Close(OSType fd);
