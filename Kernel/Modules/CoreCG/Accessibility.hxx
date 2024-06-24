@@ -20,6 +20,7 @@ namespace NewOS
 	inline float cDeviceWidthAlert	= 150;
 	inline float cDeviceHeightAlert = 141;
 
+	/// @brief common user interface class.
 	class UIAccessibilty final
 	{
 		explicit UIAccessibilty() = default;
