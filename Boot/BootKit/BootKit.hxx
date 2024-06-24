@@ -26,7 +26,7 @@
 /***********************************************************************************/
 
 #include <NewKit/Defines.hpp>
-#include <Builtins/ATA/ATA.hxx>
+#include <Modules/ATA/ATA.hxx>
 
 #include <FirmwareKit/EFI.hxx>
 
@@ -365,7 +365,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 
 		BootBlockType* epmBoot = (BootBlockType*)buf;
 
-		constexpr auto cFsName = "NewFS";
+		constexpr auto cFsName	  = "NewFS";
 		constexpr auto cBlockName = "Zeta:";
 
 		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, StrLen(cFsName));
@@ -385,7 +385,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		fDiskDev.Leak().mSize = sectorSz;
 
 		fDiskDev.Write(buf, sectorSz);
-		
+
 		return true;
 	}
 	else

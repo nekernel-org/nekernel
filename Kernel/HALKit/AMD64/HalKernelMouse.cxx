@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
-#include <Builtins/PS2/PS2MouseInterface.hxx>
-#include <Builtins/GX/GX>
-#include <Builtins/GX/Rsrc/Cursor.rsrc>
+#include <Modules/PS2/PS2MouseInterface.hxx>
+#include <Modules/CoreCG/CoreCG.hxx>
+#include <Modules/CoreCG/Rsrc/Cursor.rsrc>
 #include <KernelKit/Framebuffer.hpp>
 #include <NewKit/Defines.hpp>
 

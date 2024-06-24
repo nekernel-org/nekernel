@@ -6,8 +6,8 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/DriveManager.hxx>
-#include <Builtins/ATA/ATA.hxx>
-#include <Builtins/AHCI/AHCI.hxx>
+#include <Modules/ATA/ATA.hxx>
+#include <Modules/AHCI/AHCI.hxx>
 #include <NewKit/Utils.hpp>
 
 /// @file DriveManager.cxx

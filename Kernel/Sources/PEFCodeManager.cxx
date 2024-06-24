@@ -86,7 +86,7 @@ namespace NewOS
 			fBad = true;
 
 			ke_delete_ke_heap(fCachedBlob);
-			
+
 			fCachedBlob = nullptr;
 		}
 	}
@@ -121,18 +121,15 @@ namespace NewOS
 
 		switch (kind)
 		{
-		case kPefCode: 
-		{
+		case kPefCode: {
 			errOrSym = StringBuilder::Construct(cContainerKinds[0]); // code symbol.
 			break;
 		}
-		case kPefData: 
-		{
+		case kPefData: {
 			errOrSym = StringBuilder::Construct(cContainerKinds[1]); // data symbol.
 			break;
 		}
-		case kPefZero: 
-		{
+		case kPefZero: {
 			errOrSym = StringBuilder::Construct(cContainerKinds[2]); // block starting symbol.
 			break;
 		}
@@ -177,7 +174,7 @@ namespace NewOS
 				}
 			}
 		}
-		
+
 		ke_delete_ke_heap(blob);
 		return nullptr;
 	}

@@ -6,9 +6,9 @@
 
 #ifdef __FSKIT_NEWFS__
 
-#include <Builtins/AHCI/AHCI.hxx>
-#include <Builtins/ATA/ATA.hxx>
-#include <Builtins/Flash/Flash.hxx>
+#include <Modules/AHCI/AHCI.hxx>
+#include <Modules/ATA/ATA.hxx>
+#include <Modules/Flash/Flash.hxx>
 #include <FSKit/NewFS.hxx>
 #include <KernelKit/HError.hpp>
 #include <NewKit/Crc32.hpp>
@@ -496,7 +496,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 				BootBlockType* epmBoot = (BootBlockType*)bufEpmHdr;
 
-				constexpr auto cFsName = "NewFS";
+				constexpr auto cFsName	  = "NewFS";
 				constexpr auto cBlockName = "Zeta:";
 
 				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, rt_string_len(cFsName));

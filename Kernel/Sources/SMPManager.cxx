@@ -103,7 +103,7 @@ namespace NewOS
 			delete fStack;
 			fStack = nullptr;
 		}
-		
+
 		fStack = stack;
 
 		rt_do_context_switch(fStack);

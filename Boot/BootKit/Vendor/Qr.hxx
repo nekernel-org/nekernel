@@ -9,7 +9,7 @@
 #include <BootKit/Vendor/Shared/bit.h>
 
 #include <BootKit/Vendor/QrPrelude.hxx>
-#include <Builtins/GX/GX>
+#include <Modules/CoreCG/CoreCG.hxx>
 #include <BootKit/Vendor/Support.hxx>
 #include <CompilerKit/Detail.hxx>
 

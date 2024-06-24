@@ -121,8 +121,8 @@ namespace NewOS
 	};
 
 	// Helper types.
-	using ImagePtr = VoidPtr;
-	using HeapPtrKind  = VoidPtr;
+	using ImagePtr	  = VoidPtr;
+	using HeapPtrKind = VoidPtr;
 
 	// @name ProcessHeader
 	// @brief Process Header (PH)
@@ -152,9 +152,9 @@ namespace NewOS
 		ProcessStatus	   Status;
 
 		// Memory, images.
-		HeapPtrKind	 HeapCursor{nullptr};
-		ImagePtr Image{nullptr};
-		HeapPtrKind	 HeapPtr{nullptr};
+		HeapPtrKind HeapCursor{nullptr};
+		ImagePtr	Image{nullptr};
+		HeapPtrKind HeapPtr{nullptr};
 
 		// memory usage
 		SizeT UsedMemory{0};
@@ -266,9 +266,9 @@ namespace NewOS
 	class ProcessHelper final
 	{
 	public:
-		static bool Switch(HAL::StackFrame* newStack, const PID& newPid);
-		static bool CanBeScheduled(Ref<ProcessHeader>& process);
-		static PID& TheCurrentPID();
+		static bool	 Switch(HAL::StackFrame* newStack, const PID& newPid);
+		static bool	 CanBeScheduled(Ref<ProcessHeader>& process);
+		static PID&	 TheCurrentPID();
 		static SizeT StartScheduling();
 	};
 

@@ -9,7 +9,7 @@
 namespace NewOS
 {
 	Property::Property(const StringView& sw)
-	: fName(sw)
+		: fName(sw)
 	{
 		kcout << "Property: created: " << sw.CData() << endl;
 	}

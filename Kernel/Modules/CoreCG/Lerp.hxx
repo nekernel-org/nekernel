@@ -17,6 +17,6 @@ typedef float GXReal;
 /// @param at which state we're at **to**.
 inline GXReal GXLerp(GXReal to, GXReal from, GXReal stat)
 {
-	register GXReal difference = to - from;
+	GXReal difference = to - from;
 	return from + (difference * stat);
 }

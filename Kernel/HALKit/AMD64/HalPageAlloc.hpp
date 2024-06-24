@@ -38,16 +38,16 @@ namespace NewOS::HAL
 {
 	struct PACKED PageTable64 final
 	{
-		bool		   Present : 1;
-		bool		   Rw : 1;
-		bool		   User : 1;
-		bool		   Wt : 1;
-		bool		   Cache : 1;
-		bool		   Accessed : 1;
-		NewOS::Int32   Reserved : 6;
+		bool		  Present : 1;
+		bool		  Rw : 1;
+		bool		  User : 1;
+		bool		  Wt : 1;
+		bool		  Cache : 1;
+		bool		  Accessed : 1;
+		NewOS::Int32  Reserved : 6;
 		NewOS::UInt64 PhysicalAddress : 36;
-		NewOS::Int32   Reserved1 : 15;
-		bool		   ExecDisable : 1;
+		NewOS::Int32  Reserved1 : 15;
+		bool		  ExecDisable : 1;
 	};
 
 	namespace Detail

@@ -29,6 +29,5 @@ namespace NewOS
 		{
 			/* nohing, code is spinning */
 		}
-		
 	}
 } // namespace NewOS

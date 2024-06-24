@@ -23,7 +23,6 @@ NewOS::Boolean lte_turn_off_slot(NewOS::Int32 slot);
 
 /// @brief Send AT command.
 NewOS::Boolean lte_send_at_command(NewOS::Char* buf,
-								   NewOS::Size bufSz);
-
+								   NewOS::Size	bufSz);
 
 #endif // ifndef _INC_NETWORK_LTE_IO_HXX_

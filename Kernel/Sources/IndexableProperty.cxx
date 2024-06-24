@@ -29,7 +29,7 @@ namespace NewOS
 		{
 			fFlags |= flag;
 		}
-		
+
 		Void IndexableProperty::RemoveFlag(Int16 flag)
 		{
 			fFlags &= flag;

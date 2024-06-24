@@ -35,14 +35,13 @@ namespace NewOS
 
 	public:
 		const char* Name() const override;
-		Boolean Name(const char* strView);
+		Boolean		Name(const char* strView);
 
 	private:
 		static constexpr auto cNetworkNameLen = 512;
 
 		Void (*fCleanup)(void);
 		Char fNetworkName[cNetworkNameLen];
-
 	};
 
 	struct NetworkDeviceCommand final

@@ -97,9 +97,10 @@ namespace NewOS
 	}
 
 	Void NewFilesystemManager::Write(_Input const Char* name,
-			   _Input NodePtr node, _Input VoidPtr data,
-			   _Input Int32 flags,
-			   _Input SizeT size)
+									 _Input NodePtr		node,
+									 _Input VoidPtr		data,
+									 _Input Int32		flags,
+									 _Input SizeT		size)
 	{
 		if (!size ||
 			size > kNewFSForkSize)
@@ -116,9 +117,9 @@ namespace NewOS
 	}
 
 	_Output VoidPtr NewFilesystemManager::Read(_Input const Char* name,
-						 _Input NodePtr node,
-						 _Input Int32 flags,
-						 _Input SizeT sz)
+											   _Input NodePtr	  node,
+											   _Input Int32		  flags,
+											   _Input SizeT		  sz)
 	{
 		if (sz > kNewFSForkSize)
 			return nullptr;

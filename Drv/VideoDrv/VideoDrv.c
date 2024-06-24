@@ -6,7 +6,7 @@
 
 #include <DDK/KernelString.h>
 #include <DDK/KernelPrint.h>
-#include <Builtins/GX/GX>
+#include <Modules/CoreCG/CoreCG.hxx>
 
 int __at_enter(void)
 {

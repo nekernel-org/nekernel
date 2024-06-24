@@ -7,7 +7,7 @@
 #ifndef __ACPI_MANAGER__
 #define __ACPI_MANAGER__
 
-#include <Builtins/ACPI/ACPI.hxx>
+#include <Modules/ACPI/ACPI.hxx>
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>

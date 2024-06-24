@@ -46,7 +46,8 @@ Boolean tls_check_tib(ThreadInformationBlock* tib)
  */
 EXTERN_C Void tls_check_syscall_impl(NewOS::VoidPtr TIB) noexcept
 {
-	if (!TIB) return;
+	if (!TIB)
+		return;
 
 	ThreadInformationBlock* tib = (ThreadInformationBlock*)TIB;
 

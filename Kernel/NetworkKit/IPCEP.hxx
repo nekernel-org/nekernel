@@ -46,15 +46,15 @@ namespace NewOS
 
 	typedef struct IPCEPConnectionHeader
 	{
-		UInt32 IpcHeader;	   // cRemoteHeaderMagic
-		UInt8 IpcEndianess; // 0 : LE, 1 : BE
-		SizeT IpcPacketSize;
+		UInt32			 IpcHeader;	   // cRemoteHeaderMagic
+		UInt8			 IpcEndianess; // 0 : LE, 1 : BE
+		SizeT			 IpcPacketSize;
 		IPCEPAddressType IpcFrom;
 		IPCEPAddressType IpcTo;
-		UInt32 IpcCRC32;
-		UInt32 IpcMsg;
-		UInt32 IpcMsgSz;
-		UInt8 IpcData[];
+		UInt32			 IpcCRC32;
+		UInt32			 IpcMsg;
+		UInt32			 IpcMsgSz;
+		UInt8			 IpcData[];
 	} PACKED IPCEPConnectionHeader;
 } // namespace NewOS
 

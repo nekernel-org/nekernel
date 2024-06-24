@@ -28,10 +28,10 @@
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
-#define kInterruptGate			   (0x8E)
-#define kTrapGate				   (0xEF)
-#define kTaskGate				   (0b10001100)
-#define kGdtCodeSelector		   (0x08)
+#define kInterruptGate	 (0x8E)
+#define kTrapGate		 (0xEF)
+#define kTaskGate		 (0b10001100)
+#define kGdtCodeSelector (0x08)
 #define cHeapStartOffset (0x10000000)
 
 namespace NewOS
@@ -54,7 +54,7 @@ namespace NewOS
 
 namespace NewOS::HAL
 {
-    /// @brief Virtual memory flags.
+	/// @brief Virtual memory flags.
 	enum
 	{
 		eFlagsUser,
@@ -147,7 +147,7 @@ namespace NewOS::HAL
 
 	using RawRegister = UInt64;
 
-	using InterruptId	= UShort; /* For each element in the IVT */
+	using InterruptId		= UShort; /* For each element in the IVT */
 	using InterruptTrapKind = UIntPtr(UIntPtr sp);
 
 	typedef UIntPtr Reg;

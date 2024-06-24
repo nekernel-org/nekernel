@@ -24,7 +24,6 @@ namespace NewOS
 			Char Path[kIndexerNodeNameLength];
 		};
 
-
 		class IndexableProperty final : public Property
 		{
 		public:
@@ -32,7 +31,7 @@ namespace NewOS
 				: Property(StringBuilder::Construct("\\Filesystem\\IsIndexable?").Leak().Leak())
 			{
 			}
-			
+
 			~IndexableProperty() override = default;
 
 			NEWOS_COPY_DEFAULT(IndexableProperty);

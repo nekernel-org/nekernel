@@ -21,7 +21,7 @@ class BTextWriter;
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBootFatal.rsrc>
 #include <BootKit/Vendor/Qr.hxx>
-#include <Builtins/GX/GX>
+#include <Modules/CoreCG/CoreCG.hxx>
 #endif // ifdef __NEWBOOT__
 
 inline EfiSystemTable*	ST = nullptr;

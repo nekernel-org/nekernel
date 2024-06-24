@@ -8,7 +8,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <Builtins/GX/GX>
+#include <Modules/CoreCG/CoreCG.hxx>
 #include <CompilerKit/Detail.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
@@ -63,7 +63,7 @@ namespace NewOS::Detail
 
 						if (catalogDir)
 						{
-						    NewOS::kcout << "newoskrnl: Already here\r";
+							NewOS::kcout << "newoskrnl: Already here\r";
 
 							delete catalogDir;
 							continue;
@@ -186,7 +186,7 @@ namespace NewOS::Detail
 	/// @return void no return value.
 	STATIC NewOS::Void ke_launch_srv(NewOS::Void)
 	{
-	    // load security server.
+		// load security server.
 		NewOS::PEFLoader secureSrv("C:\\System\\securesrv.exe");
 
 		if (!secureSrv.IsLoaded())

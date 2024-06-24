@@ -6,7 +6,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
-#include <Builtins/GX/GX>
+#include <Modules/CoreCG/CoreCG.hxx>
 #include <FirmwareKit/EFI.hxx>
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
@@ -89,10 +89,11 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	/// Splash screen stuff
 
 	writer.Write(L"Zeta Electronics Corporation (R) newosldr: ")
-		.Write(BVersionString::The()).Write("\r");
+		.Write(BVersionString::The())
+		.Write("\r");
 
 #ifndef __DEBUG__
-    writer.Write(L"\rnewosldr: AMD64 is only supported in debug mode.\r");
+	writer.Write(L"\rnewosldr: AMD64 is only supported in debug mode.\r");
 
 	EFI::Stop();
 

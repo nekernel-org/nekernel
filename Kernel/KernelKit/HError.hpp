@@ -8,6 +8,10 @@
 
 #include <NewKit/Defines.hpp>
 
+#define DbgOk()		   (kLastError == NewOS::kErrorSuccess)
+#define DbgFailed()	   (kLastError != NewOS::kErrorSuccess)
+#define DbgLastError() kLastError
+
 namespace NewOS
 {
 	typedef Int32 HError;
@@ -37,13 +41,11 @@ namespace NewOS
 	inline constexpr HError kErrorDiskIsCorrupted	 = 54;
 	inline constexpr HError kErrorDisk				 = 55;
 	inline constexpr HError kErrorInvalidData		 = 56;
+	inline constexpr HError kErrorAsync				 = 57;
+	inline constexpr HError kErrorNonBlocking		 = 58;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
 	Boolean ke_bug_check(void) noexcept;
 } // namespace NewOS
-
-#define DbgOk()		   (kLastError == NewOS::kErrorSuccess)
-#define DbgFailed()	   (kLastError != NewOS::kErrorSuccess)
-#define DbgLastError() kLastError
 
 inline NewOS::HError kLastError = 0;

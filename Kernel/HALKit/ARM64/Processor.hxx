@@ -27,13 +27,13 @@
 
 namespace NewOS::HAL
 {
-    struct PACKED Register64 final
+	struct PACKED Register64 final
 	{
 		UShort	Limit;
 		UIntPtr Base;
 	};
 
-	typedef UIntPtr Reg;
+	typedef UIntPtr	   Reg;
 	typedef Register64 Register;
 
 	struct PACKED StackFrame final
@@ -45,7 +45,7 @@ namespace NewOS::HAL
 	};
 
 	typedef StackFrame* StackFramePtr;
-}
+} // namespace NewOS::HAL
 
 inline NewOS::VoidPtr kKernelVirtualStart = (NewOS::VoidPtr)cHeapStartOffset;
 inline NewOS::UIntPtr kKernelVirtualSize  = 0UL;

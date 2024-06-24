@@ -50,7 +50,8 @@ namespace NewOS
 	};
 
 	/// @brief filesystem node generic type.
-	struct PACKED FMNode final {
+	struct PACKED FMNode final
+	{
 		VoidPtr _Unused;
 	};
 
@@ -95,19 +96,23 @@ namespace NewOS
 		virtual NodePtr Open(_Input const char* path, _Input const char* r) = 0;
 
 	public:
-		virtual Void Write(_Input NodePtr node, _Input VoidPtr data, 
-						   _Input Int32 flags, _Input SizeT size) = 0;
-		
+		virtual Void Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size) = 0;
+
 		virtual _Output VoidPtr Read(_Input NodePtr node,
-									 _Input Int32 flags, _Input SizeT sz)  = 0;
-		
+									 _Input Int32	flags,
+									 _Input SizeT	sz) = 0;
+
 		virtual Void Write(_Input const Char* name,
-						   _Input NodePtr node, _Input VoidPtr data, 
-						   _Input Int32 flags, _Input SizeT size) = 0;
+						   _Input NodePtr	  node,
+						   _Input VoidPtr	  data,
+						   _Input Int32		  flags,
+						   _Input SizeT		  size) = 0;
 
 		virtual _Output VoidPtr Read(_Input const Char* name,
-									 _Input NodePtr node,
-									 _Input Int32 flags, _Input SizeT sz)  = 0;
+									 _Input NodePtr		node,
+									 _Input Int32		flags,
+									 _Input SizeT		sz) = 0;
+
 	public:
 		virtual bool Seek(_Input NodePtr node, _Input SizeT off) = 0;
 
@@ -143,17 +148,18 @@ namespace NewOS
 		bool	Seek(NodePtr node, SizeT off);
 		SizeT	Tell(NodePtr node) override;
 		bool	Rewind(NodePtr node) override;
-		
+
 		Void Write(_Input const Char* name,
-						   _Input NodePtr node, _Input VoidPtr data, 
-						   _Input Int32 flags, 
-				   _Input SizeT size) override;
+				   _Input NodePtr	  node,
+				   _Input VoidPtr	  data,
+				   _Input Int32		  flags,
+				   _Input SizeT		  size) override;
 
 		_Output VoidPtr Read(_Input const Char* name,
-									 _Input NodePtr node,
-									 _Input Int32 flags,
-							 _Input SizeT sz) override;
-	
+							 _Input NodePtr		node,
+							 _Input Int32		flags,
+							 _Input SizeT		sz) override;
+
 	public:
 		void SetResourceFork(const char* forkName);
 		void SetDataFork(const char* forkName);
@@ -292,7 +298,7 @@ namespace NewOS
 	using FileStreamUTF16 = FileStream<WideChar>;
 
 	typedef UInt64 CursorType;
-	
+
 	/// @brief constructor
 	template <typename Encoding, typename Class>
 	FileStream<Encoding, Class>::FileStream(const Encoding* path,
@@ -303,7 +309,7 @@ namespace NewOS
 	}
 
 	/// @brief destructor
-	template<typename Encoding, typename Class>
+	template <typename Encoding, typename Class>
 	FileStream<Encoding, Class>::~FileStream()
 	{
 		delete fFile;

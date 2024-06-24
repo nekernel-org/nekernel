@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <Builtins/GX/GX>
+#include <Modules/CoreCG/CoreCG.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
@@ -14,6 +14,7 @@
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/UserHeap.hpp>
 #include <NewKit/Json.hpp>
+#include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hpp>
 
 /// @brief This symbol is the kernel main symbol.
@@ -24,7 +25,7 @@ EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
 struct PACKED HeapAllocInfo final
 {
 	NewOS::VoidPtr fThe;
-	NewOS::Size    fTheSz;
+	NewOS::Size	   fTheSz;
 };
 
 struct PACKED ProcessBlockInfo final
@@ -38,7 +39,7 @@ struct PACKED ProcessExitInfo final
 	STATIC constexpr auto cReasonLen = 512;
 
 	NewOS::Int64 fCode;
-	NewOS::Char  fReason[cReasonLen];
+	NewOS::Char	 fReason[cReasonLen];
 };
 
 namespace NewOS::HAL
@@ -98,30 +99,30 @@ EXTERN_C void hal_init_platform(
 		register basic syscalls.
 	*/
 
-	constexpr auto cSerialWriteInterrupt = 0x10; // 16
-	constexpr auto cTlsInterrupt = 0x11; // 17
-	constexpr auto cTlsInstallInterrupt = 0x12; // 18
-	constexpr auto cNewInterrupt = 0x13; // 19
-	constexpr auto cDeleteInterrupt = 0x14; // 20
-	constexpr auto cExitInterrupt = 0x15;
-	constexpr auto cLastExitInterrupt = 0x16;
-	constexpr auto cCatalogOpen = 0x17;
-	constexpr auto cForkRead = 0x18;
-	constexpr auto cForkWrite = 0x19;
-	constexpr auto cCatalogClose = 0x20;
-	constexpr auto cCatalogRemove = 0x21;
-	constexpr auto cCatalogCreate = 0x22;
+	constexpr auto cSerialAlertInterrupt = 0x10; // 16
+	constexpr auto cTlsInterrupt		 = 0x11; // 17
+	constexpr auto cTlsInstallInterrupt	 = 0x12; // 18
+	constexpr auto cNewInterrupt		 = 0x13; // 19
+	constexpr auto cDeleteInterrupt		 = 0x14; // 20
+	constexpr auto cExitInterrupt		 = 0x15;
+	constexpr auto cLastExitInterrupt	 = 0x16;
+	constexpr auto cCatalogOpen			 = 0x17;
+	constexpr auto cForkRead			 = 0x18;
+	constexpr auto cForkWrite			 = 0x19;
+	constexpr auto cCatalogClose		 = 0x20;
+	constexpr auto cCatalogRemove		 = 0x21;
+	constexpr auto cCatalogCreate		 = 0x22;
 
-	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
 		NewOS::kcout << "newoskrnl: " << msg << "\r";
 	};
 
-	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		tls_check_syscall_impl(rdx);
 	};
 
-	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		/// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 
@@ -129,7 +130,7 @@ EXTERN_C void hal_init_platform(
 		rdxInf->fThe = NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
 	};
 
-	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		/// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 
@@ -137,36 +138,37 @@ EXTERN_C void hal_init_platform(
 		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
 
-	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		ProcessBlockInfo* rdxPb = reinterpret_cast<ProcessBlockInfo*>(rdx);
 
 		/// install the process's fTIB and fPIB.
 		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);
 	};
 
-	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
 
 		NewOS::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
 		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Exit(rdxEi->fCode);
 	};
 
-	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx)->void {
+	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
-		rdxEi->fCode = NewOS::rt_get_exit_code();
+		rdxEi->fCode		   = NewOS::rt_get_exit_code();
 	};
 
-	kSyscalls[cSerialWriteInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cNewInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked			= true;
+	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked	= true;
+	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked		= true;
+	kSyscalls[cNewInterrupt].Leak().Leak()->fHooked			= true;
+	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked		= true;
+	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked	= true;
 
-    KeMain();
-
+	NewOS::UIAccessibilty::The().Show("RCM", NewOS::UIAccessibilty::The().Width(), NewOS::UIAccessibilty::The().Height());
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+
+	KeMain();
 
 	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

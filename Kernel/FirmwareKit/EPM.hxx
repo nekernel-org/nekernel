@@ -44,7 +44,7 @@ struct PACKED BootBlock
 	NewOS::Int16 Kind;
 	NewOS::Int32 FsVersion;
 	NewOS::Char	 Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
-	NewOS::Char  Reserved[409]; // to fill a full sector.
+	NewOS::Char	 Reserved[409];			   // to fill a full sector.
 };
 
 /* @brief AMD64 magic for EPM */
@@ -107,11 +107,11 @@ typedef struct BootBlock BootBlockType;
 #define kEPMStartPartitionBlk (sizeof(BootBlock))
 
 ///! @brief Current EPM revision
-#define kEPMRevision     (0xAD)
+#define kEPMRevision (0xAD)
 ///! @brief Current EPM revision
 #define kEPMRevisionUEFI (0xAF)
 /// !@brief EPM base address
-#define kEpmBase         (0U)
+#define kEpmBase (0U)
 
 /// END OF SPECS
 

@@ -47,10 +47,10 @@ namespace NewOS
 
 	private:
 		OwnPtr<FileStream<Char>> fFile;
-		Ref<StringView> fPath;
-		VoidPtr			fCachedBlob;
-		bool			fFatBinary;
-		bool			fBad;
+		Ref<StringView>			 fPath;
+		VoidPtr					 fCachedBlob;
+		bool					 fFatBinary;
+		bool					 fBad;
 	};
 
 	namespace Utils

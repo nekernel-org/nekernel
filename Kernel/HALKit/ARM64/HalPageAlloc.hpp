@@ -29,31 +29,43 @@
 //! short format address range
 
 #define c16KBPage 0b000
-#define c8KBPage 0b001
-#define c4KBPage 0b010
-#define c2KBPage 0b011
-#define c1KBPage 0b100
+#define c8KBPage  0b001
+#define c4KBPage  0b010
+#define c2KBPage  0b011
+#define c1KBPage  0b100
 #define c512BPage 0b101
 #define c256BPage 0b110
 #define c128BPage 0b111
 
 /// Long format address range
 
-#define cPageMAll { 0b000, 0b000 }
-#define cPageMToMax(M) { M, 0b000 }
-#define cPageMaxToM(M) { 0b000, M }
-#define cPageMToN(M, N) { M, N }
+#define cPageMAll    \
+	{                \
+		0b000, 0b000 \
+	}
+#define cPageMToMax(M) \
+	{                  \
+		M, 0b000       \
+	}
+#define cPageMaxToM(M) \
+	{                  \
+		0b000, M       \
+	}
+#define cPageMToN(M, N) \
+	{                   \
+		M, N            \
+	}
 
 namespace NewOS::HAL
 {
 	struct PACKED LongDescLevel3 final
 	{
-		Boolean		   Present : 1;
-		Boolean		   Rw : 1;
-		UInt16         Lpat : 9;
-		UInt32         Address : 27;
-		UInt32         Sbzp : 12;
-		UInt32         UPat : 11;
+		Boolean Present : 1;
+		Boolean Rw : 1;
+		UInt16	Lpat : 9;
+		UInt32	Address : 27;
+		UInt32	Sbzp : 12;
+		UInt32	UPat : 11;
 	};
 
 	namespace Detail

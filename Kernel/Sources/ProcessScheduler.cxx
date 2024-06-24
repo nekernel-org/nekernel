@@ -64,7 +64,7 @@ namespace NewOS
 			if (this->FreeMemory < 1)
 			{
 				DbgLastError() = kErrorHeapOutOfMemory;
-			
+
 				/* we're going out of memory */
 				this->Crash();
 
@@ -208,7 +208,7 @@ namespace NewOS
 			ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
 
 		MUST_PASS(process.Leak().StackFrame);
-		
+
 		process.Leak().Status = ProcessStatus::kRunning;
 
 		process.Leak().ProcessId  = (mTeam.AsArray().Count() - 1);
@@ -237,7 +237,7 @@ namespace NewOS
 	SizeT ProcessScheduler::Run() noexcept
 	{
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
-								//! things we have scheduled.
+								 //! things we have scheduled.
 
 		for (; process_index < mTeam.AsArray().Count(); ++process_index)
 		{
@@ -256,7 +256,7 @@ namespace NewOS
 				// tell helper to find a core to schedule on.
 				ProcessHelper::Switch(mTeam.AsRef().Leak().StackFrame,
 									  mTeam.AsRef().Leak().ProcessId);
-				
+
 				kcout << unwrapped_process.Name << ": process switched.\r";
 			}
 			else
@@ -332,7 +332,7 @@ namespace NewOS
 	SizeT ProcessHelper::StartScheduling()
 	{
 		auto& process_ref = ProcessScheduler::The().Leak();
-		SizeT ret		 = process_ref.Run();
+		SizeT ret		  = process_ref.Run();
 
 		return ret;
 	}
