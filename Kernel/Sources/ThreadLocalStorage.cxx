@@ -53,7 +53,7 @@ EXTERN_C Void tls_check_syscall_impl(NewOS::VoidPtr TIB) noexcept
 
 	if (!tls_check_tib(tib))
 	{
-		kcout << "newoskrnl: Verification failed, Crashing...\r";
+		kcout << "newoskrnl: crashing because of an invalid TIB...\r";
 		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 	}
 
