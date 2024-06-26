@@ -34,19 +34,6 @@ namespace NewOS
 			return the;
 		}
 
-		Int32 Show(const char* text, int x, int y)
-		{
-			if (!text || *text == 0)
-				return kErrorHeapNotPresent;
-
-			// GXDrawText("Sleek", text, cDeviceWidthAlert, x, cDeviceHeightAlert, y);
-
-			if (cKTSyncCall)
-				return kErrorAsync;
-
-			return kErrorSuccess;
-		}
-
 		Int64 Width() noexcept
 		{
 			return kHandoverHeader->f_GOP.f_Width;

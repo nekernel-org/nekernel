@@ -198,7 +198,6 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked	= true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	= true;
 
-	NewOS::UIAccessibilty::The().Show("RCM", NewOS::UIAccessibilty::The().Width(), NewOS::UIAccessibilty::The().Height());
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
 	KERNEL_INIT(KeMain());
