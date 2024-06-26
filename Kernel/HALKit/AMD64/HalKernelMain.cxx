@@ -125,7 +125,7 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
-		NewOS::kcout << "NAPI: " << msg << "\r";
+		NewOS::kcout << "Native Log: " << msg << "\r";
 	};
 
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
@@ -133,22 +133,22 @@ EXTERN_C void hal_init_platform(
 	};
 
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
-		/// get HAC struct.
+		// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 		
 		if (!rdxInf) return;
 
-		/// assign the fThe field with the pointer.
+		// assign the fThe field with the pointer.
 		rdxInf->fThe = NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
 	};
 
 	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
-		/// get HAC struct.
+		// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 
 		if (!rdxInf) return;
 
-		/// delete ptr with sz in mind.
+		// delete ptr with sz in mind.
 		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
 
@@ -157,7 +157,7 @@ EXTERN_C void hal_init_platform(
 		
 		if (!rdxPb) return;
 
-		/// install the process's fTIB and fPIB.
+		// install the fTIB and fPIB.
 		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);
 	};
 
@@ -196,7 +196,7 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked		= true;
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked	= true;
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked	= true;
-	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	= true;
+	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked		= true;
 
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
