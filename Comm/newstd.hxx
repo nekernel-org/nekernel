@@ -3,7 +3,7 @@
 Copyright Zeta Electronics Corporation.
 
 File: newstd.hxx.
-Purpose: NewOS standard interface.
+Purpose: NewOS standard system call interface.
 
 ------------------------------------------- */
 
