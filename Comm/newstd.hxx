@@ -37,10 +37,14 @@ typedef __UINT32_TYPE__ UInt32;
 typedef __UINT16_TYPE__ UInt16;
 typedef __UINT8_TYPE__	UInt8;
 
+typedef __SIZE_TYPE__ SizeT;
+
 typedef __INT64_TYPE__ SInt64;
 typedef __INT32_TYPE__ SInt32;
 typedef __INT16_TYPE__ SInt16;
 typedef __INT8_TYPE__  SInt8;
+
+typedef char 			UTFChar;
 
 /**
 	@brief Standard library class.
@@ -67,11 +71,11 @@ public:
 
 	// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. //
 
-	static OSType Open(const char* path);
-	static UInt0  Close(OSType fd);
+	static OSType Open(const char* path, const char* restr);
+	static UInt0  Close(OSType descriptorType);
 	static NURL*  Execute(const NURL* command);
-	static UInt0* Read(const char* forkName, OSType fd);
-	static UInt0* Write(const char* forkName, OSType fd);
+	static UInt0* Read(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType);
+	static UInt0* Write(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType);
 };
 
 /**
