@@ -78,16 +78,5 @@
 		}                                                                            \
 	}
 
-/// This is enabled if Cairo is compiled with CoreCG.
-#ifdef __CG_USE_GX__
-/// @brief This function creates a new framebuffer for CoreCG.
-/// @return
-inline cairo_surface_t* GXCreateFramebufferCairo()
-{
-	cairo_format_t format = CAIRO_FORMAT_ARGB32;
 
-	NewOS::Int32 stride = cairo_format_stride_for_width(format, kHandoverHeader->f_GOP.f_Width);
 
-	return cairo_image_surface_create_for_data((unsigned char*)kHandoverHeader->f_GOP.f_The, format, kHandoverHeader->f_GOP.f_Width, kHandoverHeader->f_GOP.f_Height, stride);
-}
-#endif

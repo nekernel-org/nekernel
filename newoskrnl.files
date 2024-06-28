@@ -29,7 +29,7 @@ Boot/Sources/HEL/AMD64/New+Delete.cxx
 Boot/Sources/HEL/AMD64/Support.cxx
 Boot/Sources/HEL/AMD64/compile_flags.txt
 Boot/Sources/HEL/POWER/CoreBootStartup.S
-Boot/Sources/HEL/RISCV/BootRISCV.S
+Boot/Sources/HEL/64X000/Boot64x0.S
 Boot/Sources/compile_flags.txt
 Boot/amd64-efi.make
 Comm/compile_flags.txt

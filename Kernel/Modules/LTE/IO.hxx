@@ -13,7 +13,7 @@ Purpose: LTE I/O.
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-/// @brief LTE I/O routines.
+/// @brief Long Term Evolution I/O routines.
 
 /// @brief Turn on SIM slot.
 NewOS::Boolean lte_turn_on_slot(NewOS::Int32 slot);

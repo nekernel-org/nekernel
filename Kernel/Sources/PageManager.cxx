@@ -10,8 +10,8 @@
 #ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #elif defined(__NEWOS_ARM64__)
-#include <HALKit/ARM64/Processor.hxx>
-#endif // ifdef __x86_64__
+#include <HALKit/ARM64/HalPageAlloc.hpp>
+#endif // ifdef __NEWOS_AMD64__ || defined(__NEWOS_ARM64__)
 
 //! null deref will throw (Page Zero detected, aborting app!)
 #define kProtectedRegionEnd (512)
@@ -31,13 +31,11 @@ namespace NewOS
 	{
 	}
 
-	PTEWrapper::~PTEWrapper()
-	{
-	}
+	PTEWrapper::~PTEWrapper() = default;
 
 	/// @brief Flush virtual address.
 	/// @param VirtAddr
-	void PageManager::FlushTLB(UIntPtr VirtAddr)
+	Void PageManager::FlushTLB(UIntPtr VirtAddr)
 	{
 		if (VirtAddr == kBadAddress)
 			return;
@@ -47,7 +45,7 @@ namespace NewOS
 
 	/// @brief Reclaim freed page.
 	/// @return
-	bool PTEWrapper::Reclaim()
+	Bool PTEWrapper::Reclaim()
 	{
 		if (!this->fPresent)
 		{

@@ -7,17 +7,17 @@
 .section .boot_hdr
 .align 4
 
-/* NewBoot boot header begin */
+/* NewBoot boot header begin for a 64x000 kernel. */
 
 boot_hdr_mag:
-	.ascii "CB"
+        .ascii "CB"
 boot_hdr_name:
-	// it has to match ten bytes.
-	.asciz "newosldr\0\0"
+        // it has to match ten bytes.
+        .asciz "newosldr\0\0"
 boot_hdr_ver:
-	.word 0x104
+        .word 0x104
 boot_hdr_proc:
-	.long bootloader_start
+        .long bootloader_start
 
 /* NewBoot boot header end */
 
@@ -26,9 +26,10 @@ boot_hdr_proc:
 
 .globl bootloader_start
 bootloader_start:
-    mflr	4			/* real address of .Laddr */
-    lwz	0,(bootloader_stack-bootloader_start)(4)	/* stack address location */
-    mr	1,0			/* use user defined stack */
+    psh	4			/* real address of .Laddr */
+    ldi     0,(bootloader_stack-bootloader_start)(4)	/* stack address location */
+    mv	19,0			/* use user defined stack */
+    jrl
 
     bl bootloader_main
     blr
