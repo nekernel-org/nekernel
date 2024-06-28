@@ -8,6 +8,10 @@
 
 #include <Comm/newstd.hxx>
 
+#define DbgOk()		   (kLastError == kErrorSuccess)
+#define DbgFailed()	   (kLastError != kErrorSuccess)
+#define DbgLastError() kLastError
+
 typedef SInt32 HError;
 
 inline constexpr HError kErrorSuccess			 = 0;
@@ -38,9 +42,5 @@ inline constexpr HError kErrorInvalidData		 = 56;
 inline constexpr HError kErrorAsync				 = 57;
 inline constexpr HError kErrorNonBlocking		 = 58;
 inline constexpr HError kErrorUnimplemented		 = 0;
-
-#define DbgOk()		   (kLastError == kErrorSuccess)
-#define DbgFailed()	   (kLastError != kErrorSuccess)
-#define DbgLastError() kLastError
 
 inline HError kLastError = 0;

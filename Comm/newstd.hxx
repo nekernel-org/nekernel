@@ -136,7 +136,7 @@ public:
 };
 
 /**
-This class contains an URL
+@brief This class contains an URL
 */
 class NURL
 {

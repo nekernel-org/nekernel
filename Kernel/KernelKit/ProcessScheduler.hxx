@@ -141,7 +141,8 @@ namespace NewOS
 		NEWOS_COPY_DEFAULT(ProcessHeader)
 
 	public:
-		void SetEntrypoint(UIntPtr& imageStart) noexcept;
+		void			   SetEntrypoint(UIntPtr& imageStart) noexcept;
+		const Int32&	   GetExitCode() noexcept;
 
 	public:
 		Char			   Name[kProcessLen] = {"Process"};
@@ -179,30 +180,32 @@ namespace NewOS
 		}
 
 		//! @brief Crash the app, exits with code ~0.
-		void Crash();
+		Void			Crash();
 
 		//! @brief Exits app.
-		void Exit(Int32 exitCode = 0);
+		Void			Exit(Int32 exitCode = 0);
 
 		//! @brief TLS Allocate
-		VoidPtr New(const SizeT& sz);
+		VoidPtr			New(const SizeT& sz);
 
 		//! @brief TLS Free.
-		Boolean Delete(VoidPtr ptr, const SizeT& sz);
+		Boolean			Delete(VoidPtr ptr, const SizeT& sz);
 
 		//! @brief Wakes up threads.
-		void Wake(const bool wakeup = false);
+		Void			Wake(const bool wakeup = false);
 
 		// ProcessHeader getters.
 	public:
 		//! @brief ProcessHeader name getter, example: "C RunTime"
-		const Char* GetName();
+		const Char*		GetName();
 
 		const ProcessSelector& GetSelector();
 		const ProcessStatus&   GetStatus();
 		const AffinityKind&	   GetAffinity();
 
 	private:
+		Int32			fLastExitCode{0};
+
 		friend ProcessScheduler;
 		friend ProcessHelper;
 	};

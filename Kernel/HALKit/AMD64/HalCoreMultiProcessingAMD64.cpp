@@ -160,6 +160,7 @@ namespace NewOS::HAL
 	}
 
 	STATIC HAL::StackFramePtr cFramePtr = nullptr;
+	STATIC Int32		      cSMPInterrupt = 0x40;
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
@@ -186,12 +187,13 @@ namespace NewOS::HAL
 	{
 		Semaphore sem;
 
-		sem.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), Seconds(5));
+		HardwareTimer timer(Seconds(5));
+		sem.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), &timer);
 
 		cFramePtr = stackFrame;
 
 		/// yes the exception field contains the core id.
-		hal_send_start_ipi(stackFrame->Rcx, 0x40, cBaseAddressAPIC);
+		hal_send_start_ipi(stackFrame->Rcx, cSMPInterrupt, cBaseAddressAPIC);
 
 		sem.Unlock();
 	}
@@ -245,10 +247,9 @@ namespace NewOS::HAL
 
 			cProgramInitialized = new Boolean(true);
 
-			constexpr auto cWhereToInterrupt = 0x40;
 			constexpr auto cWhatCore		 = 1;
 
-			hal_send_start_ipi(cWhatCore, cWhereToInterrupt, cBaseAddressAPIC);
+			hal_send_start_ipi(cWhatCore, cSMPInterrupt, cBaseAddressAPIC);
 		}
 		else
 		{

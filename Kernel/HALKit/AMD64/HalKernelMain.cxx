@@ -16,6 +16,7 @@
 #include <NewKit/Json.hpp>
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hpp>
+#include <Modules/ACPI/ACPIFactoryInterface.hxx>
 
 #define KERNEL_INIT(X) X; \
 	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
@@ -179,12 +180,12 @@ EXTERN_C void hal_init_platform(
 	};
 
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
-		NewOS::ACPIFactoryInterface acpi;
+		NewOS::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 		acpi.Reboot();
 	};
 
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
-		NewOS::ACPIFactoryInterface acpi;
+		NewOS::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 		acpi.Shutdown();
 	};
 

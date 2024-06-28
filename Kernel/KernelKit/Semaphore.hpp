@@ -7,6 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
+#include <KernelKit/Timer.hpp>
 #include <CompilerKit/CompilerKit.hxx>
 
 namespace NewOS
@@ -27,11 +28,11 @@ namespace NewOS
 		bool Unlock() noexcept;
 
 	public:
-		void Sync() noexcept;
+		void WaitForProcess() noexcept;
 
 	public:
 		bool Lock(ProcessHeader* process);
-		bool LockOrWait(ProcessHeader* process, const Int64& seconds);
+		bool LockOrWait(ProcessHeader* process, HardwareTimerInterface* timer);
 
 	public:
 		NEWOS_COPY_DEFAULT(Semaphore);

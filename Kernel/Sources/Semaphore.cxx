@@ -6,7 +6,6 @@
 
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/Semaphore.hpp>
-#include <KernelKit/Timer.hpp>
 
 namespace NewOS
 {
@@ -33,21 +32,31 @@ namespace NewOS
 		return fLockingProcess;
 	}
 
-	bool Semaphore::LockOrWait(ProcessHeader* process, const Int64& seconds)
+	bool Semaphore::LockOrWait(ProcessHeader* process, HardwareTimerInterface* timer)
 	{
 		if (process == nullptr)
 			return false;
 
-		HardwareTimer timer(Seconds(seconds));
-		timer.Wait();
+		if (timer == nullptr)
+			return false;
+
+		this->Lock(process);
+
+		timer->Wait();
 
 		return this->Lock(process);
 	}
 
-	void Semaphore::Sync() noexcept
+	/// @brief Wait with process, either wait for process being invalid, or not being run.
+	Void Semaphore::WaitForProcess() noexcept
 	{
 		while (fLockingProcess)
 		{
+			if (fLockingProcess->GetStatus() != ProcessStatus::kRunning)
+			{
+				this->Unlock();
+				break;
+			}
 		}
 	}
 } // namespace NewOS

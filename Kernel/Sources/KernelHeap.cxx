@@ -185,6 +185,7 @@ namespace NewOS
 			{
 				virtualAddress->fCRC32 =
 					ke_calculate_crc32((Char*)virtualAddress->fTargetPtr, virtualAddress->fTargetPtrSize);
+
 				return true;
 			}
 		}

@@ -27,13 +27,19 @@ namespace NewOS
 	/// @brief Exit Code global
 	/***********************************************************************************/
 
-	STATIC Int32 kLastExitCode = 0U;
+	STATIC Int32 cLastExitCode = 0U;
 
 	/// @brief Gets the latest exit code.
 	/// @note Not thread-safe.
+	/// @return Int32 the last exit code.
+	const Int32& ProcessHeader::GetExitCode() noexcept
+	{
+		return fLastExitCode;
+	}
+
 	const Int32& rt_get_exit_code() noexcept
 	{
-		return kLastExitCode;
+		return cLastExitCode;
 	}
 
 	/***********************************************************************************/
@@ -164,7 +170,8 @@ namespace NewOS
 			ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId)
 			ke_stop(RUNTIME_CHECK_PROCESS);
 
-		kLastExitCode = exit_code;
+		fLastExitCode = exit_code;
+		cLastExitCode = exit_code;
 
 		//! Delete image if not done already.
 		if (this->Image)

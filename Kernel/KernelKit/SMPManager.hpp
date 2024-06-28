@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __SMP_MANAGER__
-#define __SMP_MANAGER__
+#ifndef __INC_SMP_MANAGER_HPP__
+#define __INC_SMP_MANAGER_HPP__
 
 #include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hxx>
@@ -126,4 +126,4 @@ namespace NewOS
 	Void rt_hang_thread(HAL::StackFramePtr stack);
 } // namespace NewOS
 
-#endif // !__SMP_MANAGER__
+#endif // !__INC_SMP_MANAGER_HPP__
