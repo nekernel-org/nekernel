@@ -1,26 +1,25 @@
-<!-- README -->
+<!-- README of ZKA 1 -->
 
 # ZKA (Zeta Kernel Architecture)
 
 ZKA is an operating system kernel, also codenamed 'Ne'.
-<br>
-You need:
+
+## Installation:
 
 - MinGW/GCC for the kernel and bootloader.
 - Netwide Assembler/CodeTools to output COFF/PEF object code.
 
-## Start by cloning the repo:
+### Start by cloning:
 
 ```
-git clone git@bitbucket.org:mahrouss/microkernel.git
+git clone git@bitbucket.org:mahrouss/newoskrnl.git
+cd newoskrnl
 ```
 
-## And execute:
+### And then select the makefile to execute:
 
 ```
 make -f amd64-efi.make all
 ```
-
-For the custom target 'AMD64 EPM'.
 
 ##### Copyright, Zeta Electronics Corporation, all rights reserved.
