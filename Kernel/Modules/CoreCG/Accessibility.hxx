@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "CompilerKit/Detail.hxx"
 #include <NewKit/NewKit.hpp>
 #include <KernelKit/HError.hpp>
 #include <Modules/CoreCG/CoreCG.hxx>
