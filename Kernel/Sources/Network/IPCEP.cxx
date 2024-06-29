@@ -56,16 +56,19 @@ _Fail:
 	return false;
 }
 
-/// @brief Sanitize packet function
-/// @retval true packet is correct.
-/// @retval false packet is incorrect and process has crashed.
-Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt)
+namespace NewOS
 {
-	if (!__ipc_sanitize_packet(pckt))
+	/// @brief Sanitize packet function
+	/// @retval true packet is correct.
+	/// @retval false packet is incorrect and process has crashed.
+	Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt)
 	{
-		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
-		return false;
-	}
+		if (!__ipc_sanitize_packet(pckt))
+		{
+			ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+			return false;
+		}
 
-	return true;
+		return true;
+	}
 }
