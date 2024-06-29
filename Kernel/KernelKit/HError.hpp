@@ -46,8 +46,9 @@ namespace NewOS
 	inline constexpr HError kErrorInvalidData		 = 56;
 	inline constexpr HError kErrorAsync				 = 57;
 	inline constexpr HError kErrorNonBlocking		 = 58;
+	inline constexpr HError kErrorIPC				 = 59;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
-	Boolean ke_bug_check(void) noexcept;
+	Boolean err_bug_check(void) noexcept;
 } // namespace NewOS
 

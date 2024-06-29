@@ -5,10 +5,14 @@
 ------------------------------------------- */
 
 #include <NetworkKit/IPCEP.hxx>
+#include <KernelKit/HError.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 
 using namespace NewOS;
 
-Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt)
+/// @internal
+/// @brief The internal sanitize function.
+Bool __ipc_sanitize_packet(IPCEPMessageHeader* pckt)
 {
 	if (!pckt) return false;
 
@@ -19,25 +23,49 @@ Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt)
 	case Endian::kEndianBig:
 	{
 		if (pckt->IpcEndianess == eIPCEPLittleEndian)
-			return false;
+			goto _Fail;
 
 		break;
 	}
 	case Endian::kEndianLittle:
 	{
 		if (pckt->IpcEndianess == eIPCEPBigEndian)
-			return false;
+			goto _Fail;
 
 		break;
 	}
 	case Endian::kEndianMixed:
 		break;
 	default:
+		goto _Fail;
+	}
+
+	if (pckt->IpcFrom == pckt->IpcTo)
+	{
+		goto _Fail;
+	}
+	if (pckt->IpcPacketSize > cIPCEPMsgSize)
+	{
+		goto _Fail;
+	}
+
+	return pckt->IpcPacketSize > 1 && pckt->IpcHeaderMagic == cRemoteHeaderMagic;
+
+_Fail:
+	ErrLocal() = kErrorIPC;
+	return false;
+}
+
+/// @brief Sanitize packet function
+/// @retval true packet is correct.
+/// @retval false packet is incorrect and process has crashed.
+Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt)
+{
+	if (!__ipc_sanitize_packet(pckt))
+	{
+		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 		return false;
 	}
 
-	if (pckt->IpcFrom == pckt->IpcTo) return false;
-	if (pckt->IpcPacketSize > cIPCEPMsgSize) return false;
-
-	return pckt->IpcPacketSize > 1 && pckt->IpcHeaderMagic == cRemoteHeaderMagic;
+	return true;
 }

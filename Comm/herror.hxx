@@ -41,6 +41,7 @@ inline constexpr HError kErrorDisk				 = 55;
 inline constexpr HError kErrorInvalidData		 = 56;
 inline constexpr HError kErrorAsync				 = 57;
 inline constexpr HError kErrorNonBlocking		 = 58;
+inline constexpr HError kErrorIPC				 = 59;
 inline constexpr HError kErrorUnimplemented		 = 0;
 
 inline HError kLastError = 0;

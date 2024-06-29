@@ -17,6 +17,7 @@
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hpp>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
+#include <NetworkKit/IPCEP.hxx>
 
 #define KERNEL_INIT(X) X; \
 	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
@@ -103,7 +104,7 @@ EXTERN_C void hal_init_platform(
 	CONST NewOS::HAL::IDTLoader cIDT;
 	cIDT.Load(idtBase);
 
-	// register the basic NAPI syscalls.
+	// Register the basic SCI functions.
 
 	constexpr auto cSerialAlertInterrupt = 0x10;
 	constexpr auto cTlsInterrupt		 = 0x11;
@@ -123,6 +124,7 @@ EXTERN_C void hal_init_platform(
 	constexpr auto cLPCSendMsg	 		 = 0x25;
 	constexpr auto cLPCOpenMsg	 		 = 0x26;
 	constexpr auto cLPCCloseMsg	 		 = 0x27;
+	constexpr auto cLPCSanitizeMsg		 = 0x28;
 
 	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
@@ -131,6 +133,10 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
 		tls_check_syscall_impl(rdx);
+	};
+
+	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+		NewOS::ipc_sanitize_packet(reinterpret_cast<NewOS::IPCEPMessageHeader*>(rdx));
 	};
 
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
@@ -198,6 +204,7 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked	= true;
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked	= true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked		= true;
+	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked		= true;
 
 	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
