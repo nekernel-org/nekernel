@@ -8,9 +8,9 @@
 
 #include <Comm/newstd.hxx>
 
-#define DbgOk()		   (kLastError == kErrorSuccess)
-#define DbgFailed()	   (kLastError != kErrorSuccess)
-#define DbgLastError() kLastError
+#define ErrLocalIsOk()		   (kLastError == kErrorSuccess)
+#define ErrLocalFailed()	   (kLastError != kErrorSuccess)
+#define ErrLocal() kLastError
 
 typedef SInt32 HError;
 

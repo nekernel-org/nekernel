@@ -8,9 +8,12 @@
 
 #include <NewKit/Defines.hpp>
 
-#define DbgOk()		   (kLastError == NewOS::kErrorSuccess)
-#define DbgFailed()	   (kLastError != NewOS::kErrorSuccess)
-#define DbgLastError() kLastError
+/// @file HError.hpp
+/// @brief Local Process Codes.
+
+#define ErrLocalIsOk()		   (NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() == NewOS::kErrorSuccess)
+#define ErrLocalFailed()	   (NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() != NewOS::kErrorSuccess)
+#define ErrLocal()				NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode()
 
 namespace NewOS
 {
@@ -48,4 +51,3 @@ namespace NewOS
 	Boolean ke_bug_check(void) noexcept;
 } // namespace NewOS
 
-inline NewOS::HError kLastError = 0;

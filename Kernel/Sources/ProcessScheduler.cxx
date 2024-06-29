@@ -55,6 +55,8 @@ namespace NewOS
 		this->Exit(kErrorProcessFault);
 	}
 
+	Int32& ProcessHeader::GetLocalCode() noexcept { return fLocalCode; }
+
 	void ProcessHeader::Wake(const bool should_wakeup)
 	{
 		this->Status =
@@ -69,7 +71,7 @@ namespace NewOS
 		{
 			if (this->FreeMemory < 1)
 			{
-				DbgLastError() = kErrorHeapOutOfMemory;
+				ErrLocal() = kErrorHeapOutOfMemory;
 
 				/* we're going out of memory */
 				this->Crash();
@@ -134,19 +136,19 @@ namespace NewOS
 	}
 
 	/// @brief process name getter.
-	const Char* ProcessHeader::GetName()
+	const Char* ProcessHeader::GetName() noexcept
 	{
 		return this->Name;
 	}
 
 	/// @brief process selector getter.
-	const ProcessSelector& ProcessHeader::GetSelector()
+	const ProcessSelector& ProcessHeader::GetSelector() noexcept
 	{
 		return this->Selector;
 	}
 
 	/// @brief process status getter.
-	const ProcessStatus& ProcessHeader::GetStatus()
+	const ProcessStatus& ProcessHeader::GetStatus() noexcept
 	{
 		return this->Status;
 	}
@@ -156,7 +158,7 @@ namespace NewOS
 	/**
 	@brief Affinity is the time slot allowed for the process.
 	*/
-	const AffinityKind& ProcessHeader::GetAffinity()
+	const AffinityKind& ProcessHeader::GetAffinity() noexcept
 	{
 		return this->Affinity;
 	}

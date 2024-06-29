@@ -16,6 +16,7 @@
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 #include <FirmwareKit/EPM.hxx>
+#include <KernelKit/ProcessScheduler.hxx>
 
 using namespace NewOS;
 
@@ -167,12 +168,12 @@ _Output NewFork* NewFSParser::FindFork(_Input NewCatalog* catalog,
 			switch (res)
 			{
 			case 1:
-				DbgLastError() = kErrorDiskReadOnly;
+				ErrLocal() = kErrorDiskReadOnly;
 				break;
 			case 2:
-				DbgLastError() = kErrorDiskIsFull;
+				ErrLocal() = kErrorDiskIsFull;
 				break;
-				DbgLastError() = kErrorNoSuchDisk;
+				ErrLocal() = kErrorNoSuchDisk;
 				break;
 
 			default:
@@ -241,7 +242,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
 	if (*parentName == 0)
 	{
-		DbgLastError() = kErrorFileNotFound;
+		ErrLocal() = kErrorFileNotFound;
 		return nullptr;
 	}
 
@@ -414,7 +415,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
 /// @brief Make a EPM+NewFS drive out of the disk.
 /// @param drive The drive to write on.
-/// @return If it was sucessful, see DbgLastError().
+/// @return If it was sucessful, see ErrLocal().
 bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 {
 	/// verify disk.
@@ -426,7 +427,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 	/// if disk isn't good, then error out.
 	if (false == drive->fPacket.fPacketGood)
 	{
-		DbgLastError() = kErrorDiskIsCorrupted;
+		ErrLocal() = kErrorDiskIsCorrupted;
 		return false;
 	}
 
@@ -565,7 +566,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 		/// sanity check the fork.
 		if (forkData->DataOffset <= kNewFSCatalogStartAddress)
 		{
-			DbgLastError() = kErrorDiskIsCorrupted;
+			ErrLocal() = kErrorDiskIsCorrupted;
 
 			kcout << "newoskrnl: Invalid fork offset.\r";
 
@@ -771,7 +772,7 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName)
 	if (!catalogName ||
 		StringBuilder::Equals(catalogName, NewFilesystemHelper::Root()))
 	{
-		DbgLastError() = kErrorInternal;
+		ErrLocal() = kErrorInternal;
 		return false;
 	}
 
@@ -835,7 +836,7 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NewCatalog* catalog,
 {
 	if (!catalog)
 	{
-		DbgLastError() = kErrorFileNotFound;
+		ErrLocal() = kErrorFileNotFound;
 		return nullptr;
 	}
 
@@ -913,11 +914,11 @@ bool NewFSParser::Seek(_Input _Output NewCatalog* catalog, SizeT off)
 {
 	if (!catalog)
 	{
-		DbgLastError() = kErrorFileNotFound;
+		ErrLocal() = kErrorFileNotFound;
 		return false;
 	}
 
-	DbgLastError() = kErrorUnimplemented;
+	ErrLocal() = kErrorUnimplemented;
 	return false;
 }
 
@@ -931,11 +932,11 @@ SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog)
 {
 	if (!catalog)
 	{
-		DbgLastError() = kErrorFileNotFound;
+		ErrLocal() = kErrorFileNotFound;
 		return 0;
 	}
 
-	DbgLastError() = kErrorUnimplemented;
+	ErrLocal() = kErrorUnimplemented;
 	return 0;
 }
 

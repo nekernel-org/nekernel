@@ -18,19 +18,32 @@
 /// IA separator.
 #define cRemoteSeparator "."
 
-/// Interchange address, consists of domain:namespace.
-#define cRemoteInvalid	"00.00.00.00:0000"
-#define cRemoteBitWidth (96) /* 96-bit address space. */
+/// Interchange address, consists of PID:TEAM.
+#define cRemoteInvalid	"00:00"
 
-#define cRemoteHeaderMagic (0x4950434550)
+#define cRemoteHeaderMagic (0x4950434)
 
 namespace NewOS
 {
-	/// @brief 96-bit number to represent the domain and namespace
+	/// @brief 128-bit IPC address.
 	struct PACKED IPCEPAddress final
 	{
-		UInt32 RemoteAddress;
-		UInt64 RemoteNamespace;
+		UInt64 ProcessID;
+		UInt64 ProcessTeam;
+
+		////////////////////////////////////
+		// some operators.
+		////////////////////////////////////
+
+		bool operator==(const IPCEPAddress& addr) noexcept
+		{
+			return addr.ProcessID == this->ProcessID && addr.ProcessTeam == this->ProcessTeam;
+		}
+
+		bool operator==(IPCEPAddress& addr) noexcept
+		{
+			return addr.ProcessID == this->ProcessID && addr.ProcessTeam == this->ProcessTeam;
+		}
 	};
 
 	typedef struct IPCEPAddress IPCEPAddressType;
@@ -41,12 +54,12 @@ namespace NewOS
 		eIPCEPBigEndian	   = 1
 	};
 
-	/// @brief IPCEP connection header, must be the same on
-	/// user side as well.
+	constexpr auto cIPCEPMsgSize = 6094U;
 
-	typedef struct IPCEPConnectionHeader
+	/// @brief IPCEP connection header, message cannot be greater than 6K.
+	typedef struct IPCEPMessageHeader final
 	{
-		UInt32			 IpcHeader;	   // cRemoteHeaderMagic
+		UInt32			 IpcHeaderMagic;	   // cRemoteHeaderMagic
 		UInt8			 IpcEndianess; // 0 : LE, 1 : BE
 		SizeT			 IpcPacketSize;
 		IPCEPAddressType IpcFrom;
@@ -54,8 +67,10 @@ namespace NewOS
 		UInt32			 IpcCRC32;
 		UInt32			 IpcMsg;
 		UInt32			 IpcMsgSz;
-		UInt8			 IpcData[];
-	} PACKED IPCEPConnectionHeader;
+		UInt8			 IpcData[cIPCEPMsgSize];
+	} PACKED IPCEPMessageHeader;
+
+	Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt);
 } // namespace NewOS
 
 #endif // _INC_IPC_ENDPOINT_HXX_

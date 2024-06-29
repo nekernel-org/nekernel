@@ -268,7 +268,7 @@ namespace NewOS
 
 		/// @brief Make a EPM+NewFS drive out of the disk.
 		/// @param drive The drive to write on.
-		/// @return If it was sucessful, see DbgLastError().
+		/// @return If it was sucessful, see ErrLocal().
 		bool Format(_Input _Output DriveTrait* drive);
 
 	public:

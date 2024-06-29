@@ -4,9 +4,10 @@
 
 ------------------------------------------- */
 
-#ifndef __DRIVE_MANAGER__
-#define __DRIVE_MANAGER__
+#ifndef __INC_DRIVE_MANAGER_HXX__
+#define __INC_DRIVE_MANAGER_HXX__
 
+#include <KernelKit/ProcessScheduler.hxx>
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/DeviceManager.hpp>
@@ -99,7 +100,7 @@ namespace NewOS
 
 		DriveTraitPtr GetAddressOf(Int32 index)
 		{
-			DbgLastError() = kErrorSuccess;
+			ErrLocal() = kErrorSuccess;
 
 			switch (index)
 			{
@@ -112,7 +113,7 @@ namespace NewOS
 			case 3:
 				return &mD;
 			default: {
-				DbgLastError() = kErrorNoSuchDisk;
+				ErrLocal() = kErrorNoSuchDisk;
 				kcout << "newoskrnl: No such disk.\n";
 
 				break;
@@ -145,4 +146,4 @@ namespace NewOS
 	DriveTrait construct_main_drive(void) noexcept;
 } // namespace NewOS
 
-#endif /* ifndef __DRIVE_MANAGER__ */
+#endif /* ifndef __INC_DRIVE_MANAGER_HXX__ */

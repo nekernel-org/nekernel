@@ -8,7 +8,6 @@
 #define _INC_PROCESS_SCHEDULER_HXX_
 
 #include <ArchKit/ArchKit.hpp>
-#include <KernelKit/FileManager.hpp>
 #include <KernelKit/LockDelegate.hpp>
 #include <KernelKit/PermissionSelector.hxx>
 #include <KernelKit/UserHeap.hpp>
@@ -197,14 +196,19 @@ namespace NewOS
 		// ProcessHeader getters.
 	public:
 		//! @brief ProcessHeader name getter, example: "C RunTime"
-		const Char*		GetName();
+		const Char*		GetName() noexcept;
 
-		const ProcessSelector& GetSelector();
-		const ProcessStatus&   GetStatus();
-		const AffinityKind&	   GetAffinity();
+		//! @brief return local error code of process.
+		//! @return Int32 local error code.
+		Int32& GetLocalCode() noexcept;
+
+		const ProcessSelector& GetSelector() noexcept;
+		const ProcessStatus&   GetStatus() noexcept;
+		const AffinityKind&	   GetAffinity() noexcept;
 
 	private:
 		Int32			fLastExitCode{0};
+		Int32			fLocalCode{0};
 
 		friend ProcessScheduler;
 		friend ProcessHelper;
@@ -222,10 +226,12 @@ namespace NewOS
 
 		MutableArray<Ref<ProcessHeader>>& AsArray();
 		Ref<ProcessHeader>&				  AsRef();
+		UInt64&						      Id() noexcept;
 
 	public:
 		MutableArray<Ref<ProcessHeader>> mProcessList;
 		Ref<ProcessHeader>				 mCurrentProcess;
+		UInt64							 mTeamId{0};
 	};
 
 	using ProcessHeaderRef = ProcessHeader*;

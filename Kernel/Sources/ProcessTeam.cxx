@@ -20,6 +20,13 @@ namespace NewOS
 		return mProcessList;
 	}
 
+	/// @brief Get team ID.
+	/// @return The team's ID.
+	UInt64& ProcessTeam::Id() noexcept
+	{
+		return mTeamId;
+	}
+
 	/// @brief Current process getter.
 	/// @return The current process header.
 	Ref<ProcessHeader>& ProcessTeam::AsRef()
