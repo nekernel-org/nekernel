@@ -6,7 +6,7 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/CxxAbi.hpp>
-#include <NewKit/KernelCheck.hpp>
+#include <KernelKit/HError.hpp>
 
 atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
 
@@ -22,12 +22,12 @@ EXTERN_C void __cxa_pure_virtual()
 
 EXTERN_C void ___chkstk_ms()
 {
-	while (true)
-	{
-	}
+	NewOS::err_bug_check_raise();
+	NewOS::err_bug_check();
 }
 
 #ifdef __NEWOS_ARM64__
+// AEABI specific.
 #define atexit __aeabi_atexit
 #endif
 

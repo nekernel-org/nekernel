@@ -5,15 +5,28 @@
 ------------------------------------------- */
 
 #include <KernelKit/HError.hpp>
+#include <NewKit/KernelCheck.hpp>
 
 namespace NewOS
 {
-	/// @brief Doea a system wide bug check.
+	STATIC Bool cRaise = false;
+
+	/// @brief Does a system wide bug check.
 	/// @param void no params.
 	/// @return if error-free: true, otherwise false.
 	Boolean err_bug_check(void) noexcept
 	{
-		/// TODO:
+		if (cRaise)
+		{
+			ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+		}
+
 		return false;
+	}
+
+	Void err_bug_check_raise(void) noexcept
+	{
+		if (!cRaise)
+			cRaise = true;
 	}
 } // namespace NewOS

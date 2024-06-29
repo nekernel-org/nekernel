@@ -49,6 +49,7 @@ namespace NewOS
 	inline constexpr HError kErrorIPC				 = 59;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
+	Void    err_bug_check_raise(void) noexcept;
 	Boolean err_bug_check(void) noexcept;
 } // namespace NewOS
 

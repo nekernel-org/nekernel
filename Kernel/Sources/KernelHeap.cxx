@@ -87,11 +87,11 @@ namespace NewOS
 		if (((IntPtr)heapPtr - kBadPtr) < 0)
 			return -kErrorInternal;
 
-		Detail::HeapInformationBlockPtr virtualAddress =
+		Detail::HeapInformationBlockPtr heapInfoBlk =
 			reinterpret_cast<Detail::HeapInformationBlockPtr>(
 				(UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
-		virtualAddress->fPagePtr = 1;
+		heapInfoBlk->fPagePtr = 1;
 
 		return 0;
 	}
@@ -108,34 +108,34 @@ namespace NewOS
 		if (((IntPtr)heapPtr - kBadPtr) < 0)
 			return -kErrorInternal;
 
-		Detail::HeapInformationBlockPtr virtualAddress =
+		Detail::HeapInformationBlockPtr heapInfoBlk =
 			reinterpret_cast<Detail::HeapInformationBlockPtr>(
 				(UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
-		if (virtualAddress && virtualAddress->fMagic == kKernelHeapMagic)
+		if (heapInfoBlk && heapInfoBlk->fMagic == kKernelHeapMagic)
 		{
-			if (!virtualAddress->fPresent)
+			if (!heapInfoBlk->fPresent)
 			{
 				return -kErrorHeapNotPresent;
 			}
 
-			if (virtualAddress->fCRC32 != 0)
+			if (heapInfoBlk->fCRC32 != 0)
 			{
-				if (virtualAddress->fCRC32 !=
-					ke_calculate_crc32((Char*)virtualAddress->fTargetPtr,
-									   virtualAddress->fTargetPtrSize))
+				if (heapInfoBlk->fCRC32 !=
+					ke_calculate_crc32((Char*)heapInfoBlk->fTargetPtr,
+									   heapInfoBlk->fTargetPtrSize))
 				{
 					ke_stop(RUNTIME_CHECK_POINTER);
 				}
 			}
 
-			virtualAddress->fTargetPtrSize = 0UL;
-			virtualAddress->fPresent	   = false;
-			virtualAddress->fTargetPtr	   = 0;
-			virtualAddress->fCRC32		   = 0;
-			virtualAddress->fMagic		   = 0;
+			heapInfoBlk->fTargetPtrSize = 0UL;
+			heapInfoBlk->fPresent	   = false;
+			heapInfoBlk->fTargetPtr	   = 0;
+			heapInfoBlk->fCRC32		   = 0;
+			heapInfoBlk->fMagic		   = 0;
 
-			PTEWrapper		 pageWrapper(false, false, false, (UIntPtr)virtualAddress);
+			PTEWrapper		 pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heapInfoBlk));
 			Ref<PTEWrapper*> pteAddress{&pageWrapper};
 
 			kHeapPageManager.Free(pteAddress);
@@ -177,14 +177,14 @@ namespace NewOS
 	{
 		if (heapPtr)
 		{
-			Detail::HeapInformationBlockPtr virtualAddress =
+			Detail::HeapInformationBlockPtr heapInfoBlk =
 				reinterpret_cast<Detail::HeapInformationBlockPtr>(
 					(UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
 
-			if (virtualAddress->fPresent && kKernelHeapMagic == virtualAddress->fMagic)
+			if (heapInfoBlk->fPresent && kKernelHeapMagic == heapInfoBlk->fMagic)
 			{
-				virtualAddress->fCRC32 =
-					ke_calculate_crc32((Char*)virtualAddress->fTargetPtr, virtualAddress->fTargetPtrSize);
+				heapInfoBlk->fCRC32 =
+					ke_calculate_crc32((Char*)heapInfoBlk->fTargetPtr, heapInfoBlk->fTargetPtrSize);
 
 				return true;
 			}
