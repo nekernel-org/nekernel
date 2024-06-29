@@ -947,10 +947,10 @@ namespace NewOS::Detail
 	/***********************************************************************************/
 	Boolean fs_init_newfs(Void) noexcept
 	{
-		sMountpointInterface.A() = construct_main_drive();
-		sMountpointInterface.B() = construct_drive();
-		sMountpointInterface.C() = construct_drive();
-		sMountpointInterface.D() = construct_drive();
+		sMountpointInterface.A() = io_construct_main_drive();
+		sMountpointInterface.B() = io_construct_drive();
+		sMountpointInterface.C() = io_construct_drive();
+		sMountpointInterface.D() = io_construct_drive();
 
 		sMountpointInterface.A().fVerify(&sMountpointInterface.A().fPacket);
 

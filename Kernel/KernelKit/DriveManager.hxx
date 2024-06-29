@@ -130,20 +130,20 @@ namespace NewOS
 	/// @brief Unimplemented drive.
 	/// @param pckt
 	/// @return
-	Void ke_drv_unimplemented(DriveTrait::DrivePacket* pckt);
+	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt);
 
 	/// @brief Gets the drive kind (ATA, SCSI, AHCI...)
 	/// @param
-	/// @return
-	const Char* ke_drive_kind(Void);
+	/// @return the drive kind (ATA, Flash, NVM)
+	const Char* io_drive_kind(Void);
 
 	/// @brief Makes a new drive.
-	/// @return the new drive.
-	DriveTrait construct_drive(void) noexcept;
+	/// @return the new drive as a trait.
+	DriveTrait io_construct_drive(void) noexcept;
 
 	/// @brief Fetches the main drive.
-	/// @return the new drive.
-	DriveTrait construct_main_drive(void) noexcept;
+	/// @return the new drive as a trait.
+	DriveTrait io_construct_main_drive(void) noexcept;
 } // namespace NewOS
 
 #endif /* ifndef __INC_DRIVE_MANAGER_HXX__ */

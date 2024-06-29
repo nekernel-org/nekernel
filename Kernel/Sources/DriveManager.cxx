@@ -86,21 +86,21 @@ namespace NewOS
 /// @param
 /// @return
 #ifdef __ATA_PIO__
-	const Char* ke_drive_kind(Void)
+	const Char* io_drive_kind(Void)
 	{
 		return "ATA-PIO";
 	}
 #endif
 
 #ifdef __ATA_DMA__
-	const Char* ke_drive_kind(Void)
+	const Char* io_drive_kind(Void)
 	{
 		return "ATA-DMA";
 	}
 #endif
 
 #ifdef __AHCI__
-	const Char* ke_drive_kind(Void)
+	const Char* io_drive_kind(Void)
 	{
 		return "AHCI";
 	}
@@ -109,30 +109,30 @@ namespace NewOS
 	/// @brief Unimplemented drive.
 	/// @param pckt
 	/// @return
-	Void ke_drv_unimplemented(DriveTrait::DrivePacket* pckt)
+	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt)
 	{
 	}
 
 	/// @brief Makes a new drive.
 	/// @return the new drive.
-	DriveTrait construct_drive() noexcept
+	DriveTrait io_construct_drive() noexcept
 	{
 		DriveTrait trait;
 
 		rt_copy_memory((VoidPtr) "/Mount/Null", trait.fName, rt_string_len("/Mount/Null"));
 		trait.fKind = kInvalidDrive;
 
-		trait.fInput	 = ke_drv_unimplemented;
-		trait.fOutput	 = ke_drv_unimplemented;
-		trait.fVerify	 = ke_drv_unimplemented;
-		trait.fDriveKind = ke_drive_kind;
+		trait.fInput	 = io_drv_unimplemented;
+		trait.fOutput	 = io_drv_unimplemented;
+		trait.fVerify	 = io_drv_unimplemented;
+		trait.fDriveKind = io_drive_kind;
 
 		return trait;
 	}
 
 	/// @brief Fetches the main drive.
 	/// @return the new drive.
-	DriveTrait construct_main_drive() noexcept
+	DriveTrait io_construct_main_drive() noexcept
 	{
 		DriveTrait trait;
 
@@ -142,7 +142,7 @@ namespace NewOS
 		trait.fInput	 = ke_drv_input;
 		trait.fOutput	 = ke_drv_output;
 		trait.fVerify	 = ke_drv_check_disk;
-		trait.fDriveKind = ke_drive_kind;
+		trait.fDriveKind = io_drive_kind;
 
 		return trait;
 	}
