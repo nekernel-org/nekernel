@@ -70,6 +70,9 @@ namespace NewOS
 		UInt8			 IpcData[cIPCEPMsgSize];
 	} PACKED IPCEPMessageHeader;
 
+	/// @brief Sanitize packet function
+	/// @retval true packet is correct.
+	/// @retval false packet is incorrect and process has crashed.
 	Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt);
 } // namespace NewOS
 
