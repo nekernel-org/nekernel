@@ -3,7 +3,7 @@
 Copyright Zeta Electronics Corporation.
 
 File: newstd.hxx.
-Purpose: NewOS standard system call interface.
+Purpose: System Call Interface.
 
 ------------------------------------------- */
 
@@ -44,95 +44,66 @@ typedef __INT32_TYPE__ SInt32;
 typedef __INT16_TYPE__ SInt16;
 typedef __INT8_TYPE__  SInt8;
 
-typedef char 			UTFChar;
+typedef char UTFChar;
 
 /**
-	@brief Standard library class.
+	@brief Application class.
 */
-class NUser final
+class NApplication
 {
 public:
-	// THOSE REQUIRES PERMISSIONS FROM THE USER. //
+	explicit NApplication() = default;
+	virtual ~NApplication() = default;
 
-	static UInt0 Poweroff();
-	static UInt0 Reboot();
-	static Bool	 IsWokeup();
+	typedef UInt32 MBCIType;
+
+public:
+	/// @brief disable device.
+	UInt0 PowerOff(MBCIType);
+
+	/// @brief enable device.
+	UInt0 PowerOn(MBCIType);
+
+	/// @brief reboot device.
+	UInt0 PowerReboot(MBCIType);
+
+	/// @brief check if MBCI device is wokeup.
+	Bool  PowerIsWokeup(MBCIType);
+
+	/// @brief probe MBCI device from phone.
+	MBCIType PowerProbeDevice(const char* namepace, const int index);
 
 	// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. //
 
-	static UInt0  Terminate();
-	static Bool	  Exit(OSType code);
-	static UInt0* New(long long sz);
-	static UInt0  Delete(void* ptr);
+	/// @brief terminate app.
+	virtual UInt0  AppTerminate() = 0;
 
-	// ASK FOR ELEVATION //
+	/// @brief exit thread.
+	virtual Bool   ThreadExit(OSType code) = 0;
 
-	static Bool RaiseUAC();
+	/// @brief alloc pointer.
+	virtual UInt0* ProcessNew(long long sz) = 0;
+
+	/// @brief free pointer.
+	virtual UInt0  ProcessDelete(void* ptr) = 0;
 
 	// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. //
 
-	static OSType Open(const char* path, const char* restr);
-	static UInt0  Close(OSType descriptorType);
-	static NURL*  Execute(const NURL* command);
-	static UInt0* Read(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType);
-	static UInt0* Write(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType);
-};
+	/// @brief Open descriptor.
+	virtual OSType OpenStorage(const char* path, const char* restr) = 0;
 
-/**
-@brief Class which exposes the app alert API.
-*/
-class NWindowAlert
-{
-public:
-	explicit NWindowAlert() = default;
-	virtual ~NWindowAlert() = default;
+	/// @brief Close descriptor.
+	virtual UInt0  CloseStorage(OSType descriptorType) = 0;
 
-public:
-	/// @brief Opens an alert dialog.
-	virtual NWindowAlert* Alert(const char* message, const char* title) = 0;
+	/// @brief Execute from shell.
+	virtual NURL*  URLExecute(const NURL* shell) = 0;
 
-	/// @brief Makes a prompt dialog.
-	virtual NWindowAlert* Prompt(const char* message, const char* title) = 0;
+	/// @brief Read descriptor.
+	virtual UInt0* ReadStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType) = 0;
 
-	/// @brief Makes a prompt notification dialog.
-	virtual NWindowAlert* PromptNotification(const char* message, const char* title) = 0;
+	/// @brief Write descriptor.
+	virtual UInt0* WriteStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType) = 0;
 
-	/// @brief Makes a notification dialog.
-	virtual NWindowAlert* Notification(const char* message, const char* title) = 0;
-
-	/// Collect result of prompt/notification.
-	virtual NWindowAlert* Collect(const char* resultBuf, long resultBufSz) = 0;
-
-public:
-	Bool			fAsyncOperationMode;
-	NWindowCallback fAsyncOnComplete;
-};
-
-/// @brief Window object.
-class NWindow
-{
-public:
-	explicit NWindow() = default;
-	virtual ~NWindow() = default;
-
-public:
-	virtual NWindow* New(const char* pageName) = 0;
-
-	virtual NWindow* Ref(NWindow* pagee) = 0;
-
-	virtual NWindow* Text(const char* text) = 0;
-
-	virtual NWindow* Button(const char* text, NWindowCallback onClick = nullptr, NWindowCallback onDblClick = nullptr) = 0;
-
-	virtual NWindow* Checkbox(const char* text, NWindowCallback onSelect = nullptr, NWindowCallback onUnselect = nullptr) = 0;
-
-	virtual NWindow* Radio(const char* text, NWindowCallback onSelect = nullptr, NWindowCallback onUnselect = nullptr) = 0;
-
-	virtual NWindow* Link(const char* where, const char* textIfAny = "", NWindowCallback onClick = nullptr, NWindowCallback onHover = nullptr) = 0;
-
-public:
-	Bool  fWindowEnabled;
-	void* fWindowDataPtr;
 };
 
 /**

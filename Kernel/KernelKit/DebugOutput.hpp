@@ -42,9 +42,7 @@ namespace NewOS
 		{
 		}
 
-		virtual ~TerminalDevice()
-		{
-		}
+		virtual ~TerminalDevice() = default;
 
 		TerminalDevice& Number(const Long Data) noexcept
 		{

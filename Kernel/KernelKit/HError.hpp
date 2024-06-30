@@ -47,6 +47,7 @@ namespace NewOS
 	inline constexpr HError kErrorAsync				 = 57;
 	inline constexpr HError kErrorNonBlocking		 = 58;
 	inline constexpr HError kErrorIPC				 = 59;
+	inline constexpr HError kErrorSign				 = 60;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
 	Void    err_bug_check_raise(void) noexcept;

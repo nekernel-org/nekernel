@@ -520,7 +520,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 			return true;
 		}
 
-		kcout << "newoskrnl: PartitionBlock already exists.\r";
+		kcout << "newoskrnl: partition block already exists.\r";
 
 		/// return success as well, do not ignore that partition.
 		return true;
