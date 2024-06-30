@@ -12,12 +12,12 @@ ADD_FILE=touch
 COPY=cp
 HTTP_GET=wget
 
-# Select this for UNIX distributions
-ifneq ($(shell uname), CYGWIN_NT-10.0-19045)
-EMU=qemu-system-x86_64
+# Select this for Windows.
+ifneq ($(findstring CYGWIN_NT-10.0,$(shell uname)), )
+EMU=qemu-system-x86_64w.exe
 else
 # this for NT distributions
-EMU=qemu-system-x86_64w.exe
+EMU=qemu-system-x86_64
 endif
 
 ifeq ($(NEWS_MODEL), )
@@ -50,7 +50,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel -I./ -c -nostdlib -fno-rtti -fno-exceptions \
-			-std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
+                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
 
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.exe

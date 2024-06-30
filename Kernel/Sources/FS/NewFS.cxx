@@ -561,7 +561,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 
 		drive->fInput(&drive->fPacket);
 
-		kcout << "newoskrnl: forkName: " << forkData->ForkName << endl;
+		kcout << "newoskrnl: fork name: " << forkData->ForkName << endl;
 
 		/// sanity check the fork.
 		if (forkData->DataOffset <= kNewFSCatalogStartAddress)

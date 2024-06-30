@@ -125,10 +125,10 @@ namespace NewOS
 			if (y < 0)
 				y = -y;
 
-			const char NUMBERS[11] = "0123456789";
+			const char cNumbers[11] = "0123456789";
 
 			Char buf[2];
-			buf[0] = NUMBERS[h];
+			buf[0] = cNumbers[h];
 			buf[1] = 0;
 
 			term << buf;
@@ -153,10 +153,10 @@ namespace NewOS
 			if (y < 0)
 				y = -y;
 
-			const char NUMBERS[17] = "0123456789ABCDEF";
+			const char cNumbers[17] = "0123456789ABCDEF";
 
 			Char buf[2];
-			buf[0] = NUMBERS[h];
+			buf[0] = cNumbers[h];
 			buf[1] = 0;
 
 			term << buf;
@@ -186,7 +186,9 @@ namespace NewOS
 	inline TerminalDevice& get_console_in(Char* buf)
 	{
 		TerminalDevice& selfTerm = TerminalDevice::The();
+
 		selfTerm >> buf;
+
 		return selfTerm;
 	}
 
