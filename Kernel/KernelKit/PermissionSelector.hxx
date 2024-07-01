@@ -1,16 +1,16 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+ Copyright Zeta Electronics Corporation
 
 ------------------------------------------- */
 
-#ifndef _INC_PERMISSION_SEL_HPP
-#define _INC_PERMISSION_SEL_HPP
+#ifndef _INC_PERMISSION_SEL_HXX_
+#define _INC_PERMISSION_SEL_HXX_
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
-// kernel mode user.
+// super admin mode user.
 #define kMachineUser "Machine"
 
 // user mode users.
@@ -54,4 +54,4 @@ namespace NewOS
 	};
 } // namespace NewOS
 
-#endif /* ifndef _INC_PERMISSION_SEL_HPP */
+#endif /* ifndef _INC_PERMISSION_SEL_HXX_ */

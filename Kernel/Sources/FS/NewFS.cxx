@@ -226,14 +226,17 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 		name[rt_string_len(name) - 1] == NewFilesystemHelper::Separator())
 		return nullptr;
 
-	NewCatalog* checkForCpy = this->FindCatalog(name, outLba);
+	NewCatalog* copyExists = this->FindCatalog(name, outLba);
 
-	if (checkForCpy)
+	if (copyExists)
 	{
-		return checkForCpy;
+		kcout << "newoskrnl: copy already exists.\r";
+		ErrLocal() = kErrorFileExists;
+
+		return copyExists;
 	}
 
-	char parentName[kNewFSNodeNameLen] = {0};
+	Char parentName[kNewFSNodeNameLen] = {0};
 
 	for (SizeT indexName = 0UL; indexName < rt_string_len(name); ++indexName)
 	{
@@ -255,10 +258,10 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 
 	SizeT indexReverseCopy = rt_string_len(parentName);
 
-	// zero character.
+	// zero character it.
 	parentName[--indexReverseCopy] = 0;
 
-	// mandatory / character.
+	// mandatory / character, zero it.
 	parentName[--indexReverseCopy] = 0;
 
 	while (parentName[indexReverseCopy] != NewFilesystemHelper::Separator())

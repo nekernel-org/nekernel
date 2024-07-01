@@ -21,7 +21,7 @@ namespace NewOS
 
 	inline constexpr HError kErrorSuccess			 = 0;
 	inline constexpr HError kErrorExecutable		 = 33;
-	inline constexpr HError kErrorExecutableLib		 = 34; // no such library!!!
+	inline constexpr HError kErrorExecutableLib		 = 34;
 	inline constexpr HError kErrorFileNotFound		 = 35;
 	inline constexpr HError kErrorDirectoryNotFound	 = 36;
 	inline constexpr HError kErrorDiskReadOnly		 = 37;
