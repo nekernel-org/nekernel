@@ -9,13 +9,40 @@
 #include <NewKit/Defines.hpp>
 #include <Modules/ACPI/ACPI.hxx>
 
+/**
+- VCC (IN) (OUT for MCU)
+- CLK (IN) (OUT for MCU)
+- ACK (BI) (Contains an Acknowledge Packet Frame)
+- D0- (IN) (Starts with the Host Imterface Packet Frame)
+- D1- (IN) (Starts with the Host Imterface Packet Frame)
+- D0+ (OUT) (Starts with the Host Imterface Packet Frame)
+- D1+ (OUT) (Starts with the Host Imterface Packet Frame)
+- GND (IN) (OUT for MCU)
+ */
+
+#define cMBCIZeroSz (8)
+#define cMBCIMagic "MBCI  "
+
 namespace NewOS
 {
 	struct MBCIHostInterface;
+	struct MBCIPacketACK;
+
+	/// @brief MBCI Acknowledge header.
+	struct PACKED MBCIPacketACK final
+	{
+		UInt32 Magic;
+		UInt32 HostId;
+		UInt16 VendorId;
+		UInt16 DeviceId;
+		Bool   Acknowleged;
+		Char   Zero[cMBCIZeroSz];
+	};
 
 	/// @brief MBCI Host Interface header.
 	struct PACKED MBCIHostInterface final
 	{
+		UInt32 Magic;
 		UInt32 HostId;
 		UInt16 VendorId;
 		UInt16 DeviceId;
@@ -27,6 +54,7 @@ namespace NewOS
 		UInt8  InterruptEnable;
 		UInt64 BaseAddressRegister;
 		UInt64 BaseAddressRegisterSize;
+		Char   Zero[cMBCIZeroSz];
 	};
 
 	/// @brief MBCI host flags.
