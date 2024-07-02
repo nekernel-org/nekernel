@@ -25,7 +25,7 @@
 #define kDebugTeam		 43
 #define kDebugEOP		 49
 
-namespace NewOS
+namespace Kernel
 {
 	class TerminalDevice;
 
@@ -198,7 +198,7 @@ namespace NewOS
 		Int16 fPort[kDebugMaxPorts];
 		Int16 fBoundCnt;
 	};
-} // namespace NewOS
+} // namespace Kernel
 
 #ifdef kcout
 #undef kcout

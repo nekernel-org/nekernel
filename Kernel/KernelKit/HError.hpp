@@ -11,11 +11,11 @@
 /// @file HError.hpp
 /// @brief Local Process Codes.
 
-#define ErrLocalIsOk()		   (NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() == NewOS::kErrorSuccess)
-#define ErrLocalFailed()	   (NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() != NewOS::kErrorSuccess)
-#define ErrLocal()				NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode()
+#define ErrLocalIsOk()		   (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() == Kernel::kErrorSuccess)
+#define ErrLocalFailed()	   (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() != Kernel::kErrorSuccess)
+#define ErrLocal()				Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode()
 
-namespace NewOS
+namespace Kernel
 {
 	typedef Int32 HError;
 
@@ -52,5 +52,5 @@ namespace NewOS
 
 	Void    err_bug_check_raise(void) noexcept;
 	Boolean err_bug_check(void) noexcept;
-} // namespace NewOS
+} // namespace Kernel
 

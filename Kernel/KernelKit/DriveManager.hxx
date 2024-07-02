@@ -20,7 +20,7 @@
 #define kDriveInvalidID (-1)
 #define kDriveNameLen	(32)
 
-namespace NewOS
+namespace Kernel
 {
 	enum
 	{
@@ -144,6 +144,6 @@ namespace NewOS
 	/// @brief Fetches the main drive.
 	/// @return the new drive as a trait.
 	DriveTrait io_construct_main_drive(void) noexcept;
-} // namespace NewOS
+} // namespace Kernel
 
 #endif /* ifndef __INC_DRIVE_MANAGER_HXX__ */

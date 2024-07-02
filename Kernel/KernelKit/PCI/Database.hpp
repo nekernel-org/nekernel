@@ -8,7 +8,7 @@
 #include <KernelKit/PCI/Device.hpp>
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	namespace Types
 	{
@@ -35,4 +35,4 @@ namespace NewOS
 			Invalid							  = Unassgined,
 		};
 	} // namespace Types
-} // namespace NewOS
+} // namespace Kernel

@@ -23,7 +23,7 @@
 #define cMBCIZeroSz (8)
 #define cMBCIMagic "MBCI  "
 
-namespace NewOS
+namespace Kernel
 {
 	struct MBCIHostInterface;
 	struct MBCIPacketACK;
@@ -80,4 +80,4 @@ namespace NewOS
 		kMBCIHostKindDaisyChain,
 		kMBCIHostKindStartExtended = __UINT16_MAX__, /// Extended vendor table.
 	};
-} // namespace NewOS
+} // namespace Kernel

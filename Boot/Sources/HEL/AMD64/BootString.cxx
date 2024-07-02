@@ -19,7 +19,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-NewOS::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const NewOS::SizeT len)
+Kernel::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const Kernel::SizeT len)
 {
 	if (!dest || !src)
 		return 0;
@@ -33,12 +33,12 @@ NewOS::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const N
 	return index;
 }
 
-NewOS::SizeT BStrLen(const CharacterTypeUTF16* ptr)
+Kernel::SizeT BStrLen(const CharacterTypeUTF16* ptr)
 {
 	if (!ptr)
 		return 0;
 
-	NewOS::SizeT cnt = 0;
+	Kernel::SizeT cnt = 0;
 
 	while (*ptr != (CharacterTypeUTF16)0)
 	{
@@ -49,12 +49,12 @@ NewOS::SizeT BStrLen(const CharacterTypeUTF16* ptr)
 	return cnt;
 }
 
-NewOS::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const NewOS::SizeT len)
+Kernel::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const Kernel::SizeT len)
 {
 	if (!src)
 		return 0;
 
-	NewOS::SizeT cnt = 0UL;
+	Kernel::SizeT cnt = 0UL;
 
 	while (*src != 0)
 	{
@@ -70,12 +70,12 @@ NewOS::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, con
 	return cnt;
 }
 
-NewOS::SizeT BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const NewOS::SizeT len)
+Kernel::SizeT BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const Kernel::SizeT len)
 {
 	if (!src)
 		return 0;
 
-	NewOS::SizeT cnt = 0UL;
+	Kernel::SizeT cnt = 0UL;
 
 	while (*src != 0)
 	{

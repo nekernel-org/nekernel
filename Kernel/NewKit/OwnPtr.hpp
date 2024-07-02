@@ -11,7 +11,7 @@
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	template <typename T>
 	class OwnPtr;
@@ -91,4 +91,4 @@ namespace NewOS
 
 		return ret;
 	}
-} // namespace NewOS
+} // namespace Kernel

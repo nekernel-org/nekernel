@@ -8,7 +8,7 @@
 
 // bugs = 0
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief wakes up thread.
 	/// wakes up thread from hang.
@@ -30,4 +30,4 @@ namespace NewOS
 			/* nohing, code is spinning */
 		}
 	}
-} // namespace NewOS
+} // namespace Kernel

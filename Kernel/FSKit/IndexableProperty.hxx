@@ -13,7 +13,7 @@
 #define kIndexerNodeNameLength 255
 #define kIndexerClaimed		   0xCF
 
-namespace NewOS
+namespace Kernel
 {
 	namespace Indexer
 	{
@@ -56,4 +56,4 @@ namespace NewOS
 		/// @return none.
 		Void fs_index_file(const Char* filename, SizeT filenameLen, IndexableProperty& indexer);
 	} // namespace Indexer
-} // namespace NewOS
+} // namespace Kernel

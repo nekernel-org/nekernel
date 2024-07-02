@@ -11,10 +11,10 @@
 ///! BUGS: 0
 
 ///! @file SMPManager.cxx
-///! @brief This file handles multi processing in NewOS.
+///! @brief This file handles multi processing in Kernel.
 ///! @brief Multi processing is needed for multi-tasking operations.
 
-namespace NewOS
+namespace Kernel
 {
 	///! A HardwareThread class takes care of it's owned hardware thread.
 	///! It has a stack for it's core.
@@ -244,4 +244,4 @@ namespace NewOS
 	{
 		return fThreadList.Count();
 	}
-} // namespace NewOS
+} // namespace Kernel

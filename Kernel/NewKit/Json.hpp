@@ -15,14 +15,14 @@
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Json value class
 	class JsonType final
 	{
 	public:
 		explicit JsonType()
-			: NewOS::JsonType(1, 1)
+			: Kernel::JsonType(1, 1)
 		{
 		}
 
@@ -115,4 +115,4 @@ namespace NewOS
 	};
 
 	using JsonStream = Stream<JsonStreamTrait, JsonType>;
-} // namespace NewOS
+} // namespace Kernel

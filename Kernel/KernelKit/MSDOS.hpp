@@ -3,7 +3,7 @@
 	Copyright Zeta Electronics Corporation
 
 	File: MSDOS.hpp
-	Purpose: MS-DOS header for NewOS.
+	Purpose: MS-DOS header for Kernel.
 
 	Revision History:
 
@@ -23,12 +23,12 @@
 #define kMagMz0 'M'
 #define kMagMz1 'Z'
 
-typedef NewOS::UInt32 DosWord;
-typedef NewOS::Long	  DosLong;
+typedef Kernel::UInt32 DosWord;
+typedef Kernel::Long	  DosLong;
 
 typedef struct _DosHeader
 {
-	NewOS::UInt8 eMagic[2];
+	Kernel::UInt8 eMagic[2];
 	DosWord		 eMagLen;
 	DosWord		 ePagesCount;
 	DosWord		 eCrlc;
@@ -49,7 +49,7 @@ typedef struct _DosHeader
 	DosLong		 eLfanew;
 } DosHeader, *DosHeaderPtr;
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Find the PE header inside the the blob.
 	inline auto rt_find_exec_header(DosHeaderPtr ptrDos) -> VoidPtr
@@ -63,6 +63,6 @@ namespace NewOS
 
 		return (VoidPtr)(&ptrDos->eLfanew + 1);
 	}
-} // namespace NewOS
+} // namespace Kernel
 
 #endif /* ifndef __MSDOS_EXEC__ */

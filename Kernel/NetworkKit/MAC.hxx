@@ -10,7 +10,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class MacAddressGetter;
 
@@ -26,4 +26,4 @@ namespace NewOS
 		Array<WideChar, 12>& AsBytes();
 	};
 
-} // namespace NewOS
+} // namespace Kernel

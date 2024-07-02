@@ -12,7 +12,7 @@
 /// @brief NewFS File manager.
 /// BUGS: 0
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief C++ constructor
 	NewFilesystemManager::NewFilesystemManager()
@@ -84,6 +84,6 @@ namespace NewOS
 	{
 		return kNewFSSeparator;
 	}
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // ifdef __FSKIT_NEWFS__

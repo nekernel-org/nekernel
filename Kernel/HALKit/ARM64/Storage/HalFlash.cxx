@@ -14,7 +14,7 @@
 
 #define cMaxFlash (4U)
 
-namespace NewOS
+namespace Kernel
 {
 	/// /:\\BRIDGE\\FLSH\\1
 	constexpr auto cFlashBridgeMagic	= "FLSH";
@@ -61,6 +61,6 @@ namespace NewOS
 	{
 		kcout << "newoskrnl: disabled hardware.\r";
 	}
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // if __FLASH_MEM__ (Bridge)

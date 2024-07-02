@@ -8,7 +8,7 @@
 #include <NewKit/Utils.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	Char* StringView::Data()
 	{
@@ -245,4 +245,4 @@ namespace NewOS
 
 		return *this;
 	}
-} // namespace NewOS
+} // namespace Kernel

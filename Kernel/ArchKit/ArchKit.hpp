@@ -22,7 +22,7 @@
 #error !!! unknown architecture !!!
 #endif
 
-namespace NewOS
+namespace Kernel
 {
 	constexpr static inline SSizeT rt_hash_seed(const char* seed, int mul)
 	{
@@ -77,28 +77,28 @@ namespace NewOS
 
 		kcout << "\r";
 	}
-} // namespace NewOS
+} // namespace Kernel
 
 #define kKernelMaxSystemCalls (256)
 
-typedef NewOS::Void (*rt_syscall_proc)(NewOS::VoidPtr);
+typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 
 struct RTSyscallInfoHdr final
 {
-	NewOS::Int64	fHash;
-	NewOS::Bool		fHooked;
+	Kernel::Int64	fHash;
+	Kernel::Bool		fHooked;
 	rt_syscall_proc fProc;
 };
 
-inline NewOS::Array<RTSyscallInfoHdr,
+inline Kernel::Array<RTSyscallInfoHdr,
 					kKernelMaxSystemCalls>
 	kSyscalls;
 
-inline NewOS::Array<RTSyscallInfoHdr,
+inline Kernel::Array<RTSyscallInfoHdr,
 					kKernelMaxSystemCalls>
 	kKerncalls;
 
-EXTERN_C NewOS::HAL::StackFramePtr rt_get_current_context();
-EXTERN_C NewOS::Void rt_do_context_switch(NewOS::HAL::StackFramePtr stackFrame);
+EXTERN_C Kernel::HAL::StackFramePtr rt_get_current_context();
+EXTERN_C Kernel::Void rt_do_context_switch(Kernel::HAL::StackFramePtr stackFrame);
 
 #include <FirmwareKit/Handover.hxx>

@@ -16,14 +16,14 @@
 #include <NewKit/Defines.hpp>
 
 /// @brief hardware thread indentification type.
-typedef NewOS::Int32 PPCHartType;
+typedef Kernel::Int32 PPCHartType;
 
 /// @brief Hardware thread information structure.
 typedef struct HalHardwareThread
 {
-	NewOS::UIntPtr fStartAddress;
-	NewOS::UInt8   fPrivleged : 1;
-	NewOS::UInt32  fPageFlags;
+	Kernel::UIntPtr fStartAddress;
+	Kernel::UInt8   fPrivleged : 1;
+	Kernel::UInt32  fPageFlags;
 	PPCHartType	   fIdentNumber;
 } HalHardwareThread;
 
@@ -31,4 +31,4 @@ typedef struct HalHardwareThread
 /// @param hart the hart
 /// @param epc the pc.
 /// @return
-EXTERN_C NewOS::Void hal_set_pc_to_hart(HalHardwareThread* hart, NewOS::VoidPtr epc);
+EXTERN_C Kernel::Void hal_set_pc_to_hart(HalHardwareThread* hart, Kernel::VoidPtr epc);

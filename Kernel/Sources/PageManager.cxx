@@ -16,7 +16,7 @@
 //! null deref will throw (Page Zero detected, aborting app!)
 #define kProtectedRegionEnd (512)
 
-namespace NewOS
+namespace Kernel
 {
 	PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable, UIntPtr VirtAddr)
 		: fRw(Rw),
@@ -64,7 +64,7 @@ namespace NewOS
 	PTEWrapper PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz)
 	{
 		// Store PTE wrapper right after PTE.
-		VoidPtr ptr = NewOS::HAL::hal_alloc_page(Rw, User, Sz);
+		VoidPtr ptr = Kernel::HAL::hal_alloc_page(Rw, User, Sz);
 
 		return PTEWrapper{Rw, User, ExecDisable, reinterpret_cast<UIntPtr>(ptr)};
 	}
@@ -115,4 +115,4 @@ namespace NewOS
 	{
 		return this->fExecDisable;
 	}
-} // namespace NewOS
+} // namespace Kernel

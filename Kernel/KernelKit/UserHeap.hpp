@@ -20,7 +20,7 @@
 #define kUserHeapMaxSz (4096)
 #define kUserHeapMag   (0xFAF0FEF0)
 
-namespace NewOS
+namespace Kernel
 {
 	typedef enum
 	{
@@ -43,4 +43,4 @@ namespace NewOS
 	/// @param pointer The process heap pointer.
 	/// @return
 	Int32 rt_free_heap(voidPtr pointer);
-} // namespace NewOS
+} // namespace Kernel

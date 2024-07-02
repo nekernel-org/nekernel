@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 
-} // namespace NewOS
+} // namespace Kernel

@@ -10,7 +10,7 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/KernelCheck.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class StringView final
 	{
@@ -73,4 +73,4 @@ namespace NewOS
 		static const char*		   Format(const char* fmt, const char* from);
 		static bool				   Equals(const char* lhs, const char* rhs);
 	};
-} // namespace NewOS
+} // namespace Kernel

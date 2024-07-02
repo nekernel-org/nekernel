@@ -10,7 +10,7 @@
 #include <KernelKit/Timer.hpp>
 #include <CompilerKit/CompilerKit.hxx>
 
-namespace NewOS
+namespace Kernel
 {
 	class ProcessHeader;
 
@@ -40,4 +40,4 @@ namespace NewOS
 	private:
 		ProcessHeaderRef fLockingProcess{nullptr};
 	};
-} // namespace NewOS
+} // namespace Kernel

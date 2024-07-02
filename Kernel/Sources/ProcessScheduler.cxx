@@ -21,7 +21,7 @@
 /* This file handles the process scheduling. */
 /***********************************************************************************/
 
-namespace NewOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/// @brief Exit Code global
@@ -397,4 +397,4 @@ namespace NewOS
 	{
 		return mTeam.AsArray().Count() == 0;
 	}
-} // namespace NewOS
+} // namespace Kernel

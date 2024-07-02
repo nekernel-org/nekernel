@@ -7,7 +7,7 @@
 #include <KernelKit/HError.hpp>
 #include <NewKit/KernelCheck.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	STATIC Bool cRaise = false;
 
@@ -29,4 +29,4 @@ namespace NewOS
 		if (!cRaise)
 			cRaise = true;
 	}
-} // namespace NewOS
+} // namespace Kernel

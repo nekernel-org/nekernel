@@ -7,7 +7,7 @@
 #include <HALKit/POWER/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	namespace HAL
 	{
@@ -16,4 +16,4 @@ namespace NewOS
 			return 0;
 		}
 	} // namespace HAL
-} // namespace NewOS
+} // namespace Kernel

@@ -14,29 +14,29 @@
 #include <NewKit/Defines.hpp>
 #include <Modules/ACPI/ACPI.hxx>
 
-namespace NewOS
+namespace Kernel
 {
 	struct PACKED HPETAddressStructure final
 	{
-		NewOS::UInt8  AddressSpaceId; // 0 - system memory, 1 - system I/O
-		NewOS::UInt8  RegisterBitWidth;
-		NewOS::UInt8  RegisterBitOffset;
-		NewOS::UInt8  Reserved;
-		NewOS::UInt64 Address;
+		Kernel::UInt8  AddressSpaceId; // 0 - system memory, 1 - system I/O
+		Kernel::UInt8  RegisterBitWidth;
+		Kernel::UInt8  RegisterBitOffset;
+		Kernel::UInt8  Reserved;
+		Kernel::UInt64 Address;
 	};
 
 	struct PACKED HPETHeader final : public SDT
 	{
-		NewOS::UInt8		 HardwareRevId;
-		NewOS::UInt8		 ComparatorCount : 5;
-		NewOS::UInt8		 CounterSize : 1;
-		NewOS::UInt8		 Reserved : 1;
-		NewOS::UInt8		 LegacyReplacement : 1;
-		NewOS::UInt16		 PciVendorId;
+		Kernel::UInt8		 HardwareRevId;
+		Kernel::UInt8		 ComparatorCount : 5;
+		Kernel::UInt8		 CounterSize : 1;
+		Kernel::UInt8		 Reserved : 1;
+		Kernel::UInt8		 LegacyReplacement : 1;
+		Kernel::UInt16		 PciVendorId;
 		HPETAddressStructure Address;
-		NewOS::UInt8		 HpetNumber;
-		NewOS::UInt16		 MinimumTick;
-		NewOS::UInt8		 PageProtection;
+		Kernel::UInt8		 HpetNumber;
+		Kernel::UInt16		 MinimumTick;
+		Kernel::UInt8		 PageProtection;
 	};
 
-} // namespace NewOS
+} // namespace Kernel

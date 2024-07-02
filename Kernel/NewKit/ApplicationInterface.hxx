@@ -20,12 +20,12 @@
 typedef struct _ApplicationInterface final
 {
 	/// @brief Releases the object exit the process on main object.
-	NewOS::Void (*Release)(struct _Application* Self, NewOS::Int32 ExitCode);
+	Kernel::Void (*Release)(struct _Application* Self, Kernel::Int32 ExitCode);
 	/// @brief Invoke a function from the application object.
-	NewOS::IntPtr (*Invoke)(struct _Application* Self, NewOS::Int32 Sel, ...);
+	Kernel::IntPtr (*Invoke)(struct _Application* Self, Kernel::Int32 Sel, ...);
 	/// @brief Query a new application object from a GUID.
 	/// @note this doesn't query a process, it query a registered object withtin that app.
-	NewOS::Void (*Query)(struct _Application* Self, NewOS::VoidPtr* Dst, NewOS::SizeT SzDst, NewOS::XRN::GUIDSequence GuidOf);
+	Kernel::Void (*Query)(struct _Application* Self, Kernel::VoidPtr* Dst, Kernel::SizeT SzDst, Kernel::XRN::GUIDSequence GuidOf);
 } ApplicationInterface, *ApplicationInterfaceRef;
 
 #define app_cast reinterpret_cast<ApplicationInterfaceRef>

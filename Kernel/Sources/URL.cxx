@@ -10,7 +10,7 @@
 
 /// BUGS: 0
 
-namespace NewOS
+namespace Kernel
 {
 	URL::URL(StringView& strUrl)
 		: fUrlView(strUrl, false)
@@ -93,4 +93,4 @@ namespace NewOS
 
 		return Ref<ErrorOr<StringView>>(loc);
 	}
-} // namespace NewOS
+} // namespace Kernel

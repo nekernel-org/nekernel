@@ -26,7 +26,7 @@
 
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
-namespace NewOS::HEL
+namespace Kernel::HEL
 {
 	/**
 	@brief the kind of executable we're loading.
@@ -100,11 +100,11 @@ it tells us more about it and IS format independent.
 	};
 
 	/// @brief Bootloader main type.
-	typedef void (*BootMainKind)(NewOS::HEL::HandoverInformationHeader* handoverInfo);
+	typedef void (*BootMainKind)(Kernel::HEL::HandoverInformationHeader* handoverInfo);
 
 	/// @brief Alias of bootloader main type.
 	typedef void (*HandoverProc)(HandoverInformationHeader* handoverInfo);
-} // namespace NewOS::HEL
+} // namespace Kernel::HEL
 
 /// @brief Bootloader global header.
-inline NewOS::HEL::HandoverInformationHeader* kHandoverHeader = nullptr;
+inline Kernel::HEL::HandoverInformationHeader* kHandoverHeader = nullptr;

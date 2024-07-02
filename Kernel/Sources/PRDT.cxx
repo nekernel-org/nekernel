@@ -8,7 +8,7 @@
 #include <NewKit/String.hpp>
 #include <StorageKit/PRDT.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief constructs a new PRD.
 	/// @param prd PRD reference.
@@ -19,4 +19,4 @@ namespace NewOS
 		prd.Leak().fSectorCount = 0x0;
 		prd.Leak().fEndBit		= 0x0;
 	}
-} // namespace NewOS
+} // namespace Kernel

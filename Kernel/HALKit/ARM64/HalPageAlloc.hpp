@@ -56,7 +56,7 @@
 		M, N            \
 	}
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	struct PACKED LongDescLevel3 final
 	{
@@ -97,12 +97,12 @@ namespace NewOS::HAL
 	};
 
 	VoidPtr hal_alloc_page(Boolean rw, Boolean user, SizeT size);
-} // namespace NewOS::HAL
+} // namespace Kernel::HAL
 
-namespace NewOS
+namespace Kernel
 {
 	typedef HAL::LongDescLevel3	 PTE;
 	typedef HAL::PageDirectory64 PDE;
-} // namespace NewOS
+} // namespace Kernel
 
 EXTERN_C void hal_flush_tlb();

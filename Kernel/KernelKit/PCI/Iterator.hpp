@@ -11,7 +11,7 @@
 #define NEWOS_DEVICE_COUNT	 (33)
 #define NEWOS_FUNCTION_COUNT (8)
 
-namespace NewOS::PCI
+namespace Kernel::PCI
 {
 	class Iterator final
 	{
@@ -33,6 +33,6 @@ namespace NewOS::PCI
 	private:
 		Array<PCI::Device, NEWOS_BUS_COUNT> fDevices;
 	};
-} // namespace NewOS::PCI
+} // namespace Kernel::PCI
 
 #endif // __PCI_ITERATOR_HPP__

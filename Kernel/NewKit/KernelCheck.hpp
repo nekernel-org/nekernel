@@ -9,14 +9,14 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	void ke_runtime_check(bool bExpression, const char* file, const char* line);
 }
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)
 #define __MUST_PASS(EXPR, FILE, LINE) \
-	NewOS::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
+	Kernel::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
 #define MUST_PASS(EXPR) __MUST_PASS(EXPR, __FILE__, __LINE__)
 #define assert(EXPR)	MUST_PASS(EXPR, RUNTIME_CHECK_EXPRESSION)
 
@@ -38,7 +38,7 @@ enum RUNTIME_CHECK
 	RUNTIME_CHECK_COUNT,
 };
 
-namespace NewOS
+namespace Kernel
 {
 	class DumpManager final
 	{
@@ -50,7 +50,7 @@ namespace NewOS
 	};
 
 	void ke_stop(const Int& id);
-} // namespace NewOS
+} // namespace Kernel
 
 #ifdef TRY
 #undef TRY

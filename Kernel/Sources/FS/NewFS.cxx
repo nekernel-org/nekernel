@@ -18,7 +18,7 @@
 #include <FirmwareKit/EPM.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 
-using namespace NewOS;
+using namespace Kernel;
 
 ///! BUGS: 0
 
@@ -943,7 +943,7 @@ SizeT NewFSParser::Tell(_Input _Output NewCatalog* catalog)
 	return 0;
 }
 
-namespace NewOS::Detail
+namespace Kernel::Detail
 {
 	/***********************************************************************************/
 	/// @brief Construct NewFS drives.
@@ -978,6 +978,6 @@ namespace NewOS::Detail
 
 		return true;
 	}
-} // namespace NewOS::Detail
+} // namespace Kernel::Detail
 
 #endif // ifdef __FSKIT_NEWFS__

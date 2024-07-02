@@ -17,7 +17,7 @@
 // @brief Size of UUID.
 #define kUUIDSize 37
 
-namespace NewOS::XRN::Version1
+namespace Kernel::XRN::Version1
 {
 	auto make_sequence(const ArrayList<UShort>& uuidSeq) -> Ref<GUIDSequence*>
 	{
@@ -62,4 +62,4 @@ namespace NewOS::XRN::Version1
 
 		return ErrorOr<Ref<StringView>>{-1};
 	}
-} // namespace NewOS::XRN::Version1
+} // namespace Kernel::XRN::Version1

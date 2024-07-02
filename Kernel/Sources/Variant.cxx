@@ -6,7 +6,7 @@
 
 #include <NewKit/Variant.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	const Char* Variant::ToString()
 	{
@@ -21,4 +21,4 @@ namespace NewOS
 		}
 	}
 
-} // namespace NewOS
+} // namespace Kernel

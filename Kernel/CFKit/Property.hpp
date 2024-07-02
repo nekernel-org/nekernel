@@ -12,7 +12,7 @@
 #include <NewKit/Function.hpp>
 #include <NewKit/String.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief handle to anything (number, ptr, string...)
 	using PropertyId = UIntPtr;
@@ -39,6 +39,6 @@ namespace NewOS
 
 	template <SizeT N>
 	using PropertyArray = Array<Property, N>;
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // !__INC_PLIST_HPP__

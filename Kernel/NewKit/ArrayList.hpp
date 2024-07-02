@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	template <typename T>
 	class ArrayList final
@@ -55,4 +55,4 @@ namespace NewOS
 	{
 		return ArrayList<ValueType>{val};
 	}
-} // namespace NewOS
+} // namespace Kernel

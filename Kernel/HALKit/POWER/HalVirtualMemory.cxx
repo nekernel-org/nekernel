@@ -12,7 +12,7 @@
 
 /// @note refer to our SoC documentation.
 
-using namespace NewOS;
+using namespace Kernel;
 
 /// @brief Write directly to the specific TLB.
 /// @param mas0

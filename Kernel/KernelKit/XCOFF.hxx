@@ -3,7 +3,7 @@
 	Copyright Zeta Electronics Corporation
 
 	File: XCOFF.hpp
-	Purpose: XCOFF for NewOS.
+	Purpose: XCOFF for Kernel.
 
 	Revision History:
 
@@ -29,13 +29,13 @@ struct XCoffForkHeader;
 /// @brief XCoff file header, meant for POWER apps.
 typedef struct XCoffFileHeader
 {
-	NewOS::UInt16  fMagic;
-	NewOS::UInt16  fTarget;
-	NewOS::UInt16  fNumSecs;
-	NewOS::UInt32  fTimeDat;
-	NewOS::UIntPtr fSymPtr;
-	NewOS::UInt32  fNumSyms;
-	NewOS::UInt16  fOptHdr; // ?: Number of bytes in optional header
+	Kernel::UInt16  fMagic;
+	Kernel::UInt16  fTarget;
+	Kernel::UInt16  fNumSecs;
+	Kernel::UInt32  fTimeDat;
+	Kernel::UIntPtr fSymPtr;
+	Kernel::UInt32  fNumSyms;
+	Kernel::UInt16  fOptHdr; // ?: Number of bytes in optional header
 } XCoffFileHeader32, XCoffFileHeader64;
 
 #define cForkNameLen (255)
@@ -43,9 +43,9 @@ typedef struct XCoffFileHeader
 /// @brief This the executable manifest fork.
 typedef struct XCoffForkHeader
 {
-	NewOS::Char fPropertiesXMLFork[cForkNameLen];
-	NewOS::Char fDynamicLoaderFork[cForkNameLen];
-	NewOS::Char fCodeSignFork[cForkNameLen];
+	Kernel::Char fPropertiesXMLFork[cForkNameLen];
+	Kernel::Char fDynamicLoaderFork[cForkNameLen];
+	Kernel::Char fCodeSignFork[cForkNameLen];
 } XCoffForkHeader;
 
 #endif // ifndef __INC_XCOFF_HXX__

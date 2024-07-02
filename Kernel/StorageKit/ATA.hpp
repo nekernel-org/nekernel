@@ -11,7 +11,7 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief ATA device interface type.
 	class ATADeviceInterface : public DeviceInterface<MountpointInterface*>
@@ -36,4 +36,4 @@ namespace NewOS
 	private:
 		void (*fCleanup)(void);
 	};
-} // namespace NewOS
+} // namespace Kernel

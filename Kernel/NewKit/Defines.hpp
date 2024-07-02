@@ -22,8 +22,8 @@
 #endif
 #endif
 
-/// @brief NewOS namespace.
-namespace NewOS
+/// @brief The **newoskrnl** namespace where it's API resides.
+namespace Kernel
 {
 	using voidPtr = void*;
 	using VoidPtr = void*;
@@ -131,17 +131,17 @@ namespace NewOS
 			return type.template As<Y>();
 		}
 	};
-} // namespace NewOS
+} // namespace Kernel
 
 #define DEDUCE_ENDIAN(address, value)                          \
-	(((reinterpret_cast<NewOS::Char*>(address)[0]) == (value)) \
-		 ? (NewOS::Endian::kEndianBig)                         \
-		 : (NewOS::Endian::kEndianLittle))
+	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
+		 ? (Kernel::Endian::kEndianBig)                         \
+		 : (Kernel::Endian::kEndianLittle))
 
 #define Yes (true)
 #define No	(false)
 
-#define VoidStar NewOS::voidPtr
+#define VoidStar Kernel::voidPtr
 
 #ifdef INIT
 #undef INIT

@@ -6,6 +6,6 @@
 
 #include <KernelKit/PCI/Database.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 }

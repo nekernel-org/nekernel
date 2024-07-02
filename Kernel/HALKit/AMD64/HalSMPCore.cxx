@@ -6,7 +6,7 @@
 
 #include <KernelKit/ProcessScheduler.hxx>
 
-using namespace NewOS;
+using namespace Kernel;
 Void ProcessHeader::SetEntrypoint(UIntPtr& imageStart) noexcept
 {
 	if (imageStart == 0)
@@ -16,7 +16,7 @@ Void ProcessHeader::SetEntrypoint(UIntPtr& imageStart) noexcept
 	this->StackFrame->Rsp = this->StackFrame->Rbp;
 }
 
-namespace NewOS
+namespace Kernel
 {
 	bool rt_check_stack(HAL::StackFramePtr stackPtr)
 	{
@@ -27,4 +27,4 @@ namespace NewOS
 
 		return true;
 	}
-} // namespace NewOS
+} // namespace Kernel

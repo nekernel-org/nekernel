@@ -9,7 +9,7 @@
 #include <KernelKit/Framebuffer.hpp>
 #include <NewKit/Utils.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	enum CommStatus
 	{
@@ -137,9 +137,9 @@ namespace NewOS
 		static TerminalDevice* out = nullptr;
 
 		if (!out)
-			out = new TerminalDevice(NewOS::ke_io_write, NewOS::ke_io_read);
+			out = new TerminalDevice(Kernel::ke_io_write, Kernel::ke_io_read);
 
 		return *out;
 	}
 
-} // namespace NewOS
+} // namespace Kernel

@@ -12,7 +12,7 @@
 #define kLockDone	  (200U) /* job is done */
 #define kLockTimedOut (100U) /* job has timed out */
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Lock condition pointer.
 	typedef Boolean* LockPtr;
@@ -61,4 +61,4 @@ namespace NewOS
 	private:
 		Atom<UInt> fLockStatus;
 	};
-} // namespace NewOS
+} // namespace Kernel

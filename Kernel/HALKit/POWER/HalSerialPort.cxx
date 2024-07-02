@@ -7,7 +7,7 @@
 #include <HALKit/POWER/Processor.hpp>
 #include <KernelKit/DebugOutput.hpp>
 
-using namespace NewOS;
+using namespace Kernel;
 
 /// @brief Writes to COM1.
 /// @param bytes

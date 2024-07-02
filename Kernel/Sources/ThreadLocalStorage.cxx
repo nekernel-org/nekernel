@@ -1,7 +1,7 @@
 /*
  * ========================================================
  *
- * NewOS
+ * Kernel
  * Copyright Zeta Electronics Corporation, all rights reserved.
  *
  *  ========================================================
@@ -17,7 +17,7 @@
 /// @brief TLS implementation in kernel.
 /***********************************************************************************/
 
-using namespace NewOS;
+using namespace Kernel;
 
 /**
  * @brief Check for cookie inside TIB.
@@ -44,7 +44,7 @@ Boolean tls_check_tib(ThreadInformationBlock* tib)
  * @param stackPtr The call frame.
  * @return
  */
-EXTERN_C Void tls_check_syscall_impl(NewOS::VoidPtr TIB) noexcept
+EXTERN_C Void tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept
 {
 	if (!TIB)
 		return;

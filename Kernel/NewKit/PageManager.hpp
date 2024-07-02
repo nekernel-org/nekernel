@@ -17,7 +17,7 @@
 #define kBadAddress (0)
 #endif // #ifndef kBadAddress
 
-namespace NewOS
+namespace Kernel
 {
 	class PageManager;
 
@@ -78,4 +78,4 @@ namespace NewOS
 		friend PTEWrapper;
 		friend class Pmm;
 	};
-} // namespace NewOS
+} // namespace Kernel

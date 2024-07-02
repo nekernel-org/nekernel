@@ -9,7 +9,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/PageManager.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	namespace Detail
 	{
@@ -17,4 +17,4 @@ namespace NewOS
 		void	exec_disable(UIntPtr addr);
 		bool	page_disable(UIntPtr addr);
 	} // namespace Detail
-} // namespace NewOS
+} // namespace Kernel

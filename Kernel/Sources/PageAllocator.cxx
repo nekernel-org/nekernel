@@ -9,7 +9,7 @@
 #include <NewKit/PageAllocator.hpp>
 
 /// @brief Internal namespace, used internally by kernel.
-namespace NewOS::Detail
+namespace Kernel::Detail
 {
 	VoidPtr create_page_wrapper(Boolean rw, Boolean user, SizeT pageSz)
 	{
@@ -49,4 +49,4 @@ namespace NewOS::Detail
 
 		return false;
 	}
-} // namespace NewOS::Detail
+} // namespace Kernel::Detail

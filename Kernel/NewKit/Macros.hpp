@@ -25,7 +25,7 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a)              \
 	(((sizeof(a) / sizeof(*(a))) / \
-	  (static_cast<NewOS::Size>(!(sizeof(a) % sizeof(*(a)))))))
+	  (static_cast<Kernel::Size>(!(sizeof(a) % sizeof(*(a)))))))
 #endif
 
 #ifndef ALIGN

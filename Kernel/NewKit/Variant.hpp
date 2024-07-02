@@ -9,7 +9,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class Variant final
 	{
@@ -51,4 +51,4 @@ namespace NewOS
 		voidPtr		fPtr{nullptr};
 		VariantKind fKind{VariantKind::kUndefined};
 	};
-} // namespace NewOS
+} // namespace Kernel

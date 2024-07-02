@@ -16,7 +16,7 @@
 /// KernelHeap.cxx
 /// BUGS: 0
 
-namespace NewOS
+namespace Kernel
 {
 	/**
 	 * @brief Process Heap Header
@@ -253,4 +253,4 @@ namespace NewOS
 
 		return -1;
 	}
-} // namespace NewOS
+} // namespace Kernel

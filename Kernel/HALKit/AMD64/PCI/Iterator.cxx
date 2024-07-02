@@ -10,7 +10,7 @@
 	if (DEV.Leak().Leak())                    \
 		return *DEV.Leak().Leak();
 
-namespace NewOS::PCI
+namespace Kernel::PCI
 {
 	Iterator::Iterator(const Types::PciDeviceKind& type)
 	{
@@ -41,4 +41,4 @@ namespace NewOS::PCI
 		PCI_ITERATOR_FIND_AND_UNWRAP(fDevices[sz], sz);
 		return {};
 	}
-} // namespace NewOS::PCI
+} // namespace Kernel::PCI

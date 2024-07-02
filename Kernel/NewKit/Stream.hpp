@@ -10,7 +10,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	template <typename StreamTrait, typename Kind>
 	class Stream final
@@ -55,4 +55,4 @@ namespace NewOS
 		Ref<StreamTrait> fStream;
 		Ref<Kind>		 fKind;
 	};
-} // namespace NewOS
+} // namespace Kernel

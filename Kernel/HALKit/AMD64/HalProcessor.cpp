@@ -11,7 +11,7 @@
  * @brief This file is about processor specific functions (in/out/cli/std...)
  */
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	void Out8(UInt16 port, UInt8 value)
 	{
@@ -94,4 +94,4 @@ namespace NewOS::HAL
 	{
 		asm volatile("std");
 	}
-} // namespace NewOS::HAL
+} // namespace Kernel::HAL

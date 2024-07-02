@@ -6,6 +6,6 @@
 
 #include <CFKit/GUIDWrapper.hpp>
 
-namespace NewOS::XRN
+namespace Kernel::XRN
 {
 }

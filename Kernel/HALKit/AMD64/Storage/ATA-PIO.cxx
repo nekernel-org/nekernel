@@ -20,8 +20,8 @@
 
 #ifdef __ATA_PIO__
 
-using namespace NewOS;
-using namespace NewOS::HAL;
+using namespace Kernel;
+using namespace Kernel::HAL;
 
 /// bugs: 0
 
@@ -178,13 +178,13 @@ Boolean drv_std_detected(Void)
 /***
 	@brief Getter, gets the number of sectors inside the drive.
 */
-NewOS::SizeT drv_std_get_sector_count()
+Kernel::SizeT drv_std_get_sector_count()
 {
 	return (kATAData[61] << 16) | kATAData[60];
 }
 
 /// @brief Get the drive size.
-NewOS::SizeT drv_std_get_drv_size()
+Kernel::SizeT drv_std_get_drv_size()
 {
 	return drv_std_get_sector_count() * kATASectorSize;
 }

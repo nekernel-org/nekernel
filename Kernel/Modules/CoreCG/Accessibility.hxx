@@ -12,7 +12,7 @@
 #include <Modules/CoreCG/Lerp.hxx>
 #include <ArchKit/ArchKit.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	inline Bool cKTSyncCall = false;
 
@@ -43,4 +43,4 @@ namespace NewOS
 			return kHandoverHeader->f_GOP.f_Height;
 		}
 	};
-} // namespace NewOS
+} // namespace Kernel

@@ -10,7 +10,7 @@
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/KernelHeap.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	/// Custom to the virtual machine, you'll need to parse the MADT instead.
 
@@ -138,4 +138,4 @@ namespace NewOS
 
 		return chr == 0;
 	}
-} // namespace NewOS
+} // namespace Kernel

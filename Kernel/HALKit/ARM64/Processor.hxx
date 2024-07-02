@@ -25,7 +25,7 @@
 #error !!! please provide that macro. !!!
 #endif
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	struct PACKED Register64 final
 	{
@@ -45,11 +45,11 @@ namespace NewOS::HAL
 	};
 
 	typedef StackFrame* StackFramePtr;
-} // namespace NewOS::HAL
+} // namespace Kernel::HAL
 
-inline NewOS::VoidPtr kKernelVirtualStart = (NewOS::VoidPtr)cHeapStartOffset;
-inline NewOS::UIntPtr kKernelVirtualSize  = 0UL;
+inline Kernel::VoidPtr kKernelVirtualStart = (Kernel::VoidPtr)cHeapStartOffset;
+inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 
-inline NewOS::VoidPtr kKernelPhysicalStart = nullptr;
+inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
 
 #include <HALKit/ARM64/HalPageAlloc.hpp>

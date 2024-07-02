@@ -14,7 +14,7 @@
 
 #define kPefApplicationMime "application/x-newos-exec"
 
-namespace NewOS
+namespace Kernel
 {
 	///
 	/// \name PEFLoader
@@ -57,6 +57,6 @@ namespace NewOS
 	{
 		bool execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept;
 	} // namespace Utils
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // ifndef _INC_CODE_MANAGER_PEF_HXX_

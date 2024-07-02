@@ -12,7 +12,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class ACPIFactoryInterface final
 	{
@@ -50,6 +50,6 @@ namespace NewOS
 		SSizeT	fEntries; // number of entries, -1 tells that no invalid entries were
 						  // found.
 	};
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // !__ACPI_MANAGER__

@@ -20,19 +20,19 @@
 #include <NetworkKit/IPCEP.hxx>
 
 #define KERNEL_INIT(X) X; \
-	NewOS::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 
 
 
 /// @brief This symbol is the kernel main symbol.
 EXTERN_C void KeMain();
 
-EXTERN_C NewOS::VoidPtr kInterruptVectorTable[];
+EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
 struct PACKED HeapAllocInfo final
 {
-	NewOS::VoidPtr fThe;
-	NewOS::Size	   fTheSz;
+	Kernel::VoidPtr fThe;
+	Kernel::Size	   fTheSz;
 };
 
 struct PACKED ProcessBlockInfo final
@@ -45,19 +45,19 @@ struct PACKED ProcessExitInfo final
 {
 	STATIC constexpr auto cReasonLen = 512;
 
-	NewOS::Int64 fCode;
-	NewOS::Char	 fReason[cReasonLen];
+	Kernel::Int64 fCode;
+	Kernel::Char	 fReason[cReasonLen];
 };
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
 	/// @param rsdPtr The 'RSD PTR' data structure.
-	extern void hal_system_get_cores(NewOS::voidPtr rsdPtr);
-} // namespace NewOS::HAL
+	extern void hal_system_get_cores(Kernel::voidPtr rsdPtr);
+} // namespace Kernel::HAL
 
 /* GDT. */
-STATIC NewOS::HAL::Detail::NewOSGDT cGdt = {
+STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
 	{0, 0, 0, 0x00, 0x00, 0}, // null entry
 	{0, 0, 0, 0x9a, 0xaf, 0}, // kernel code
 	{0, 0, 0, 0x92, 0xaf, 0}, // kernel data
@@ -67,7 +67,7 @@ STATIC NewOS::HAL::Detail::NewOSGDT cGdt = {
 };
 
 EXTERN_C void hal_init_platform(
-	NewOS::HEL::HandoverInformationHeader* HandoverHeader)
+	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
 {
 	/* Setup globals. */
 
@@ -80,28 +80,28 @@ EXTERN_C void hal_init_platform(
 	}
 
 	kKernelVirtualSize	= HandoverHeader->f_VirtualSize;
-	kKernelVirtualStart = reinterpret_cast<NewOS::VoidPtr>(
-		reinterpret_cast<NewOS::UIntPtr>(HandoverHeader->f_VirtualStart) + cHeapStartOffset);
+	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
+		reinterpret_cast<Kernel::UIntPtr>(HandoverHeader->f_VirtualStart) + cHeapStartOffset);
 
 	kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
 
 	// Load memory descriptors.
 
-	NewOS::HAL::RegisterGDT gdtBase;
+	Kernel::HAL::RegisterGDT gdtBase;
 
-	gdtBase.Base  = reinterpret_cast<NewOS::UIntPtr>(&cGdt);
-	gdtBase.Limit = sizeof(NewOS::HAL::Detail::NewOSGDT) - 1;
+	gdtBase.Base  = reinterpret_cast<Kernel::UIntPtr>(&cGdt);
+	gdtBase.Limit = sizeof(Kernel::HAL::Detail::NewOSGDT) - 1;
 
-	CONST NewOS::HAL::GDTLoader cGDT;
+	CONST Kernel::HAL::GDTLoader cGDT;
 	cGDT.Load(gdtBase);
 
 	// Load IDT now.
 
-	NewOS::HAL::Register64 idtBase;
-	idtBase.Base  = (NewOS::UIntPtr)kInterruptVectorTable;
+	Kernel::HAL::Register64 idtBase;
+	idtBase.Base  = (Kernel::UIntPtr)kInterruptVectorTable;
 	idtBase.Limit = 0;
 
-	CONST NewOS::HAL::IDTLoader cIDT;
+	CONST Kernel::HAL::IDTLoader cIDT;
 	cIDT.Load(idtBase);
 
 	// Register the basic SCI functions.
@@ -126,40 +126,40 @@ EXTERN_C void hal_init_platform(
 	constexpr auto cLPCCloseMsg	 		 = 0x27;
 	constexpr auto cLPCSanitizeMsg		 = 0x28;
 
-	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
-		NewOS::kcout << "Native Log: " << msg << "\r";
+		Kernel::kcout << "Native Log: " << msg << "\r";
 	};
 
-	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		tls_check_syscall_impl(rdx);
 	};
 
-	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
-		NewOS::ipc_sanitize_packet(reinterpret_cast<NewOS::IPCEPMessageHeader*>(rdx));
+	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+		Kernel::ipc_sanitize_packet(reinterpret_cast<Kernel::IPCEPMessageHeader*>(rdx));
 	};
 
-	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 		
 		if (!rdxInf) return;
 
 		// assign the fThe field with the pointer.
-		rdxInf->fThe = NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
+		rdxInf->fThe = Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
 	};
 
-	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 
 		if (!rdxInf) return;
 
 		// delete ptr with sz in mind.
-		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
+		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
 
-	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		ProcessBlockInfo* rdxPb = reinterpret_cast<ProcessBlockInfo*>(rdx);
 		
 		if (!rdxPb) return;
@@ -168,30 +168,30 @@ EXTERN_C void hal_init_platform(
 		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);
 	};
 
-	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
 		
 		if (!rdxEi) return;
 
-		NewOS::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
-		NewOS::ProcessScheduler::The().Leak().TheCurrent().Leak().Exit(rdxEi->fCode);
+		Kernel::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
+		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Exit(rdxEi->fCode);
 	};
 
-	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
+	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
 		
 		if (!rdxEi) return;
 
-		rdxEi->fCode		   = NewOS::rt_get_exit_code();
+		rdxEi->fCode		   = Kernel::rt_get_exit_code();
 	};
 
-	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
-		NewOS::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+		Kernel::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 		acpi.Reboot();
 	};
 
-	kSyscalls[cShutdownInterrupt].Leak().Leak()->fProc = [](NewOS::VoidPtr rdx) -> void {
-		NewOS::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+	kSyscalls[cShutdownInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+		Kernel::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 		acpi.Shutdown();
 	};
 
@@ -206,7 +206,7 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked		= true;
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked		= true;
 
-	NewOS::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
 	KERNEL_INIT(KeMain());
 }

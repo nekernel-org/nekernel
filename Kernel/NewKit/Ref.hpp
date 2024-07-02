@@ -10,7 +10,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/KernelCheck.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	template <typename T>
 	class Ref final
@@ -86,4 +86,4 @@ namespace NewOS
 	private:
 		Ref<T> fRef{nullptr};
 	};
-} // namespace NewOS
+} // namespace Kernel

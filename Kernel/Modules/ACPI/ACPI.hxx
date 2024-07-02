@@ -13,7 +13,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class PACKED SDT
 	{
@@ -83,6 +83,6 @@ namespace NewOS
 		UInt32 CreatorRevision;
 		UInt32 AddressArr[];
 	};
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // !__ACPI__

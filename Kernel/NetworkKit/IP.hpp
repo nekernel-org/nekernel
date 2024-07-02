@@ -11,7 +11,7 @@
 #include <NewKit/Ref.hpp>
 #include <NewKit/String.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class RawIPAddress6;
 	class RawIPAddress;
@@ -80,4 +80,4 @@ namespace NewOS
 		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress> ipv4);
 		static bool				   IpCheckVersion4(const char* ip);
 	};
-} // namespace NewOS
+} // namespace Kernel

@@ -17,7 +17,7 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief PS/2 Mouse driver interface
 	class PS2MouseInterface final
@@ -109,4 +109,4 @@ namespace NewOS
 			return HAL::In8(0x60);
 		}
 	};
-} // namespace NewOS
+} // namespace Kernel

@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	NewOS
+ *	Kernel
  * 	Copyright Zeta Electronics Corporation, all rights reserved.
  *
  * 	========================================================
@@ -12,7 +12,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	using ErrorT = UInt;
 
@@ -69,4 +69,4 @@ namespace NewOS
 
 	using ErrorOrAny = ErrorOr<voidPtr>;
 
-} // namespace NewOS
+} // namespace Kernel

@@ -15,7 +15,7 @@
 #include <HALKit/AMD64/Processor.hpp>
 #endif
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Pmm constructor.
 	Pmm::Pmm()
@@ -93,4 +93,4 @@ namespace NewOS
 
 		return true;
 	}
-} // namespace NewOS
+} // namespace Kernel

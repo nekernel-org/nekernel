@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.hpp>
 
-#define GXInit() NewOS::SizeT __GXCursor = 0
+#define GXInit() Kernel::SizeT __GXCursor = 0
 
 #define GXRgba(R, G, B) (UInt32)(R | G | B)
 
@@ -20,11 +20,11 @@
 #define GXDrawAlphaImg(ImgPtr, _Height, _Width, BaseX, BaseY)                        \
 	__GXCursor = 0;                                                                  \
                                                                                      \
-	for (NewOS::SizeT i = BaseX; i < (_Height + BaseX); ++i)                         \
+	for (Kernel::SizeT i = BaseX; i < (_Height + BaseX); ++i)                         \
 	{                                                                                \
-		for (NewOS::SizeT u = BaseY; u < (_Width + BaseY); ++u)                      \
+		for (Kernel::SizeT u = BaseY; u < (_Width + BaseY); ++u)                      \
 		{                                                                            \
-			*(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											 i +                                     \
 										 4 * u))) |= ImgPtr[__GXCursor];             \
@@ -37,11 +37,11 @@
 #define GXDrawImg(ImgPtr, _Height, _Width, BaseX, BaseY)                             \
 	__GXCursor = 0;                                                                  \
                                                                                      \
-	for (NewOS::SizeT i = BaseX; i < (_Height + BaseX); ++i)                         \
+	for (Kernel::SizeT i = BaseX; i < (_Height + BaseX); ++i)                         \
 	{                                                                                \
-		for (NewOS::SizeT u = BaseY; u < (_Width + BaseY); ++u)                      \
+		for (Kernel::SizeT u = BaseY; u < (_Width + BaseY); ++u)                      \
 		{                                                                            \
-			*(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											 i +                                     \
 										 4 * u))) = ImgPtr[__GXCursor];              \
@@ -53,11 +53,11 @@
 /// @brief Cleans a resource.
 #define GXClear(_Height, _Width, BaseX, BaseY)                                       \
                                                                                      \
-	for (NewOS::SizeT i = BaseX; i < _Height + BaseX; ++i)                           \
+	for (Kernel::SizeT i = BaseX; i < _Height + BaseX; ++i)                           \
 	{                                                                                \
-		for (NewOS::SizeT u = BaseY; u < _Width + BaseY; ++u)                        \
+		for (Kernel::SizeT u = BaseY; u < _Width + BaseY; ++u)                        \
 		{                                                                            \
-			*(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											 i +                                     \
 										 4 * u))) = gxClearClr;                      \
@@ -67,11 +67,11 @@
 /// @brief Draws inside a zone.
 #define GXDraw(_Clr, _Height, _Width, BaseX, BaseY)                                  \
                                                                                      \
-	for (NewOS::SizeT i = BaseX; i < (_Width + BaseX); ++i)                          \
+	for (Kernel::SizeT i = BaseX; i < (_Width + BaseX); ++i)                          \
 	{                                                                                \
-		for (NewOS::SizeT u = BaseY; u < (_Height + BaseY); ++u)                     \
+		for (Kernel::SizeT u = BaseY; u < (_Height + BaseY); ++u)                     \
 		{                                                                            \
-			*(((volatile NewOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											 i +                                     \
 										 4 * u))) = _Clr;                            \

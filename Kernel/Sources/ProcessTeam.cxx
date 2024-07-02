@@ -11,7 +11,7 @@
 
 #include <KernelKit/ProcessScheduler.hxx>
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Process list array getter.
 	/// @return The list of process to schedule.
@@ -33,6 +33,6 @@ namespace NewOS
 	{
 		return mCurrentProcess;
 	}
-} // namespace NewOS
+} // namespace Kernel
 
 // last rev 05-03-24

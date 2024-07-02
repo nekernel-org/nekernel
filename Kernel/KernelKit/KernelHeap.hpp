@@ -12,9 +12,8 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
-
 	/// @brief Declare pointer as free.
 	/// @param heapPtr the pointer.
 	/// @return
@@ -41,4 +40,4 @@ namespace NewOS
 	/// @param heapPtr
 	/// @return
 	Int32 ke_make_ke_page(VoidPtr heapPtr);
-} // namespace NewOS
+} // namespace Kernel

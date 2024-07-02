@@ -8,7 +8,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <HALKit/POWER/Hart.hxx>
 
-using namespace NewOS;
+using namespace Kernel;
 
 /// @brief wakes up thread.
 /// wakes up thread from hang.

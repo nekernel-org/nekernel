@@ -34,7 +34,7 @@
 #define kGdtCodeSelector (0x08)
 #define cHeapStartOffset (0x10000000)
 
-namespace NewOS
+namespace Kernel
 {
 	namespace Detail::AMD64
 	{
@@ -50,9 +50,9 @@ namespace NewOS
 			UInt32 Zero;		   // reserved
 		};
 	} // namespace Detail::AMD64
-} // namespace NewOS
+} // namespace Kernel
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	/// @brief Virtual memory flags.
 	enum
@@ -259,21 +259,21 @@ namespace NewOS::HAL
 			NewOSGDTRecord UserData;
 		};
 	} // namespace Detail
-} // namespace NewOS::HAL
+} // namespace Kernel::HAL
 
-EXTERN_C void idt_handle_generic(NewOS::UIntPtr rsp);
-EXTERN_C void idt_handle_gpf(NewOS::UIntPtr rsp);
-EXTERN_C void idt_handle_math(NewOS::UIntPtr rsp);
-EXTERN_C void idt_handle_pf(NewOS::UIntPtr rsp);
+EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp);
+EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp);
+EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp);
+EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp);
 
-EXTERN_C void hal_load_idt(NewOS::HAL::Register64 ptr);
-EXTERN_C void hal_load_gdt(NewOS::HAL::RegisterGDT ptr);
+EXTERN_C void hal_load_idt(Kernel::HAL::Register64 ptr);
+EXTERN_C void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 
 /// @brief Maximum size of the IDT.
 #define kKernelIdtSize	   0x100
 #define kKernelInterruptId 0x32
 
-inline NewOS::VoidPtr kKernelVirtualStart = (NewOS::VoidPtr)cHeapStartOffset;
-inline NewOS::UIntPtr kKernelVirtualSize  = 0UL;
+inline Kernel::VoidPtr kKernelVirtualStart = (Kernel::VoidPtr)cHeapStartOffset;
+inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 
-inline NewOS::VoidPtr kKernelPhysicalStart = nullptr;
+inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;

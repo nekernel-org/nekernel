@@ -27,14 +27,14 @@
 #endif // !kPTESize
 
 EXTERN_C void hal_flush_tlb();
-EXTERN_C void hal_write_cr3(NewOS::UIntPtr pde);
-EXTERN_C void hal_write_cr0(NewOS::UIntPtr bit);
+EXTERN_C void hal_write_cr3(Kernel::UIntPtr pde);
+EXTERN_C void hal_write_cr0(Kernel::UIntPtr bit);
 
-EXTERN_C NewOS::UIntPtr hal_read_cr0(); // @brief CPU control register.
-EXTERN_C NewOS::UIntPtr hal_read_cr2(); // @brief Fault address.
-EXTERN_C NewOS::UIntPtr hal_read_cr3(); // @brief Page table.
+EXTERN_C Kernel::UIntPtr hal_read_cr0(); // @brief CPU control register.
+EXTERN_C Kernel::UIntPtr hal_read_cr2(); // @brief Fault address.
+EXTERN_C Kernel::UIntPtr hal_read_cr3(); // @brief Page table.
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	struct PACKED PageTable64 final
 	{
@@ -44,9 +44,9 @@ namespace NewOS::HAL
 		bool		  Wt : 1;
 		bool		  Cache : 1;
 		bool		  Accessed : 1;
-		NewOS::Int32  Reserved : 6;
-		NewOS::UInt64 PhysicalAddress : 36;
-		NewOS::Int32  Reserved1 : 15;
+		Kernel::Int32  Reserved : 6;
+		Kernel::UInt64 PhysicalAddress : 36;
+		Kernel::Int32  Reserved1 : 15;
 		bool		  ExecDisable : 1;
 	};
 
@@ -79,10 +79,10 @@ namespace NewOS::HAL
 	};
 
 	VoidPtr hal_alloc_page(Boolean rw, Boolean user, SizeT size);
-} // namespace NewOS::HAL
+} // namespace Kernel::HAL
 
-namespace NewOS
+namespace Kernel
 {
 	typedef HAL::PageTable64	 PTE;
 	typedef HAL::PageDirectory64 PDE;
-} // namespace NewOS
+} // namespace Kernel

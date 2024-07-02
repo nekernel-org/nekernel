@@ -3,7 +3,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	template <typename T, typename... Args>
 	class Function final
@@ -48,6 +48,6 @@ namespace NewOS
 		T(*fFn)
 		(Args... args);
 	};
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // !_INC_FUNCTION_HPP__

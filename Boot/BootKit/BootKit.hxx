@@ -39,7 +39,7 @@ class BFileReader;
 class BFileRunner;
 class BVersionString;
 
-using namespace NewOS;
+using namespace Kernel;
 
 typedef Char* PEFImagePtr;
 typedef Char* PEImagePtr;
@@ -76,17 +76,17 @@ public:
 	BTextWriter(const BTextWriter&)			   = default;
 };
 
-NewOS::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const NewOS::SizeT len);
+Kernel::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const Kernel::SizeT len);
 
-NewOS::SizeT BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const NewOS::SizeT len);
+Kernel::SizeT BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const Kernel::SizeT len);
 
 /// String length functions.
 
 /// @brief get string length.
-NewOS::SizeT BStrLen(const CharacterTypeUTF16* ptr);
+Kernel::SizeT BStrLen(const CharacterTypeUTF16* ptr);
 
 /// @brief set memory with custom value.
-NewOS::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const NewOS::SizeT len);
+Kernel::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const Kernel::SizeT len);
 
 /**
  * @brief BootKit File Reader class

@@ -25,14 +25,14 @@ enum
 	kSATASubClass	= 0x06
 };
 
-static NewOS::PCI::Device kAhciDevice;
+static Kernel::PCI::Device kAhciDevice;
 
 /// @brief Initializes an AHCI disk.
 /// @param PortsImplemented the amount of port that have been detected.
 /// @return
-NewOS::Boolean drv_std_init(NewOS::UInt16& PortsImplemented)
+Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 {
-	using namespace NewOS;
+	using namespace Kernel;
 
 	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
 	for (SizeT devIndex = 0; devIndex < NEWOS_BUS_COUNT; ++devIndex)
@@ -52,16 +52,16 @@ NewOS::Boolean drv_std_init(NewOS::UInt16& PortsImplemented)
 	return false;
 }
 
-NewOS::Boolean drv_std_detected(NewOS::Void)
+Kernel::Boolean drv_std_detected(Kernel::Void)
 {
 	return kAhciDevice.DeviceId() != 0xFFFF;
 }
 
-NewOS::Void drv_std_read(NewOS::UInt64 Lba, NewOS::Char* Buf, NewOS::SizeT SectorSz, NewOS::SizeT Size)
+Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size)
 {
 }
 
-NewOS::Void drv_std_write(NewOS::UInt64 Lba, NewOS::Char* Buf, NewOS::SizeT SectorSz, NewOS::SizeT Size)
+Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size)
 {
 }
 #endif // __AHCI__

@@ -13,10 +13,10 @@
 ///! @file NewFS+Journal.cxx
 ///! @brief Journaling for NewFS.
 
-namespace NewOS::Journal
+namespace Kernel::Journal
 {
-} // namespace NewOS::Journal
+} // namespace Kernel::Journal
 
-using namespace NewOS;
+using namespace Kernel;
 
 #endif // ifdef __FSKIT_NEWFS__

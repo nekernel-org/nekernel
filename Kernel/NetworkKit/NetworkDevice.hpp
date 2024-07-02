@@ -12,7 +12,7 @@
 
 /// @note Can either work with: Ethernet, GPRS, WiFi
 
-namespace NewOS
+namespace Kernel
 {
 	struct NetworkDeviceCommand;
 	class NetworkDevice;
@@ -73,7 +73,7 @@ namespace NewOS
 
 	/// @brief LTE device.
 	using LTENetworkDevice = NetworkDevice;
-} // namespace NewOS
+} // namespace Kernel
 
 #include <NetworkKit/NetworkDevice.inl>
 

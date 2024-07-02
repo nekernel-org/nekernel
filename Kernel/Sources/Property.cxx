@@ -6,7 +6,7 @@
 
 #include <CFKit/Property.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	Property::Property(const StringView& sw)
 		: fName(sw)
@@ -25,4 +25,4 @@ namespace NewOS
 	{
 		return fAction;
 	}
-} // namespace NewOS
+} // namespace Kernel

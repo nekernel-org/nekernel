@@ -16,7 +16,7 @@
 
 #define kMaxHarts 8
 
-namespace NewOS
+namespace Kernel
 {
 	using ThreadID = UInt32;
 
@@ -122,6 +122,6 @@ namespace NewOS
 	/// @brief makes thread sleep.
 	/// hooks and hangs thread to prevent code from executing.
 	Void rt_hang_thread(HAL::StackFramePtr stack);
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // !__INC_SMP_MANAGER_HPP__

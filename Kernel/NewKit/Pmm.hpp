@@ -10,7 +10,7 @@
 #include <NewKit/PageManager.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class Pmm;
 	class PTEWrapper;
@@ -41,4 +41,4 @@ namespace NewOS
 	private:
 		Ref<PageManager> fPageManager;
 	};
-} // namespace NewOS
+} // namespace Kernel

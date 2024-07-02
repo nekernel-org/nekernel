@@ -15,10 +15,10 @@
 
 #include <NewKit/Defines.hpp>
 
-typedef NewOS::Int32 Rv64HartType;
+typedef Kernel::Int32 Rv64HartType;
 
 /// @brief Set PC to specific hart.
 /// @param hart the hart
 /// @param epc the pc.
 /// @return
-EXTERN_C NewOS::Void hal_set_pc_to_hart(Rv64HartType hart, NewOS::VoidPtr epc);
+EXTERN_C Kernel::Void hal_set_pc_to_hart(Rv64HartType hart, Kernel::VoidPtr epc);

@@ -14,8 +14,8 @@ EXTERN_C [[noreturn]] void ke_wait_for_debugger()
 	while (true)
 	{
 #ifdef __NEWOS_AMD64__
-		NewOS::HAL::rt_cli();
-		NewOS::HAL::rt_halt();
+		Kernel::HAL::rt_cli();
+		Kernel::HAL::rt_halt();
 #endif
 	}
 }
@@ -23,9 +23,9 @@ EXTERN_C [[noreturn]] void ke_wait_for_debugger()
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
 
-namespace NewOS
+namespace Kernel
 {
-	void ke_stop(const NewOS::Int& id)
+	void ke_stop(const Kernel::Int& id)
 	{
 		kcout << "*** STOP *** \r";
 		kcout << "*** Kernel has trigerred a runtime stop. *** \r";
@@ -105,7 +105,7 @@ namespace NewOS
 
 #endif // __DEBUG__
 
-			NewOS::ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
+			Kernel::ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
 		}
 	}
-} // namespace NewOS
+} // namespace Kernel

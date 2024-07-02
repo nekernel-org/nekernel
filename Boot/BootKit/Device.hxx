@@ -8,7 +8,7 @@
 
 #include <Modules/ATA/ATA.hxx>
 
-using namespace NewOS;
+using namespace Kernel;
 
 /// @brief Device type.
 class Device

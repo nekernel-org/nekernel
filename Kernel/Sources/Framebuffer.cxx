@@ -19,16 +19,16 @@
  *
  */
 
-using namespace NewOS;
+using namespace Kernel;
 
-namespace NewOS
+namespace Kernel
 {
 	const UInt32 kRgbRed   = 0x000000FF;
 	const UInt32 kRgbGreen = 0x0000FF00;
 	const UInt32 kRgbBlue  = 0x00FF0000;
 	const UInt32 kRgbBlack = 0x00000000;
 	const UInt32 kRgbWhite = 0xFFFFFFFF;
-} // namespace NewOS
+} // namespace Kernel
 
 /**
  * @brief Get Pixel at
@@ -73,11 +73,11 @@ Ref<FramebufferContext*>& Framebuffer::Leak()
 
 Framebuffer& Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y, UInt32 color)
 {
-	for (NewOS::SizeT i = x; i < width + x; ++i)
+	for (Kernel::SizeT i = x; i < width + x; ++i)
 	{
-		for (NewOS::SizeT u = y; u < height + y; ++u)
+		for (Kernel::SizeT u = y; u < height + y; ++u)
 		{
-			*(((volatile NewOS::UInt32*)(fFrameBufferAddr.Leak()->fBase +
+			*(((volatile Kernel::UInt32*)(fFrameBufferAddr.Leak()->fBase +
 										 4 * fFrameBufferAddr.Leak()->fBpp * i +
 										 4 * u))) = color;
 		}
@@ -88,7 +88,7 @@ Framebuffer& Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y, 
 
 Framebuffer& Framebuffer::PutPixel(SizeT x, SizeT y, UInt32 color)
 {
-	*(((volatile NewOS::UInt32*)(fFrameBufferAddr.Leak()->fBase +
+	*(((volatile Kernel::UInt32*)(fFrameBufferAddr.Leak()->fBase +
 								 4 * fFrameBufferAddr.Leak()->fBpp * x +
 								 4 * y))) = color;
 

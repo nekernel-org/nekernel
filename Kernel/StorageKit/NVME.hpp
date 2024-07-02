@@ -10,7 +10,7 @@
 #include <KernelKit/DriveManager.hxx>
 #include <NewKit/OwnPtr.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class NVMEDeviceInterface : public DeviceInterface<MountpointInterface*>
 	{
@@ -40,4 +40,4 @@ namespace NewOS
 	private:
 		void (*fCleanup)(void);
 	};
-} // namespace NewOS
+} // namespace Kernel

@@ -10,7 +10,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class URL final
 	{
@@ -28,6 +28,6 @@ namespace NewOS
 
 	ErrorOr<StringView> url_extract_location(const char* url);
 	ErrorOr<StringView> url_extract_protocol(const char* url);
-} // namespace NewOS
+} // namespace Kernel
 
 #endif /* ifndef _INC_URL_HPP_ */

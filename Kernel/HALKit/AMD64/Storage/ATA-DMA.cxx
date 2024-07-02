@@ -20,7 +20,7 @@
 #include <Modules/ATA/ATA.hxx>
 #include <ArchKit/ArchKit.hpp>
 
-using namespace NewOS;
+using namespace Kernel;
 
 EXTERN_C Int32 kPRDTTransferStatus;
 STATIC PRDT	   kPRDT;

@@ -20,7 +20,7 @@
 // hash 'user@host:password' -> base64 encoded data
 // use this data to then fetch specific data.
 
-namespace NewOS
+namespace Kernel
 {
 	enum class RingKind
 	{
@@ -52,6 +52,6 @@ namespace NewOS
 	private:
 		RingKind fRing;
 	};
-} // namespace NewOS
+} // namespace Kernel
 
 #endif /* ifndef _INC_PERMISSION_SEL_HXX_ */

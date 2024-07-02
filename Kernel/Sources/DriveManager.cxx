@@ -13,7 +13,7 @@
 /// @file DriveManager.cxx
 /// @brief Kernel drive manager.
 
-namespace NewOS
+namespace Kernel
 {
 	static UInt16 kATAIO	 = 0U;
 	static UInt8  kATAMaster = 0U;
@@ -146,4 +146,4 @@ namespace NewOS
 
 		return trait;
 	}
-} // namespace NewOS
+} // namespace Kernel

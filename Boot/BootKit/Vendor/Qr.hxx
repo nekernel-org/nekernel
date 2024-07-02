@@ -965,9 +965,9 @@ namespace qr
 	};
 } // namespace qr
 
-namespace NewOS::Qr
+namespace Kernel::Qr
 {
 	using namespace qr;
-} // namespace NewOS::Qr
+} // namespace Kernel::Qr
 
 #endif

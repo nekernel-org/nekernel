@@ -77,7 +77,7 @@ default.
 #define kNewFSEOF (-1)
 
 #define kNewFSBitWidth (sizeof(NewCharType))
-#define kNewFSLbaType  (NewOS::Lba)
+#define kNewFSLbaType  (Kernel::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
 #define kNewFSStartLba			  (1024)
@@ -98,7 +98,7 @@ default.
 
 #define kNewFSForkNameLen (200U)
 
-typedef NewOS::Char NewCharType;
+typedef Kernel::Char NewCharType;
 
 enum
 {
@@ -118,23 +118,23 @@ struct PACKED NewCatalog final
 	NewCharType Mime[kNewFSMimeNameLen];
 
 	/// Catalog status flag.
-	NewOS::UInt16 Flags;
+	Kernel::UInt16 Flags;
 	/// Custom catalog flags.
-	NewOS::UInt16 FileFlags;
+	Kernel::UInt16 FileFlags;
 	/// Catalog kind.
-	NewOS::Int32 Kind;
+	Kernel::Int32 Kind;
 
 	/// Size of the data fork.
-	NewOS::Lba DataForkSize;
+	Kernel::Lba DataForkSize;
 
 	/// Size of all resource forks.
-	NewOS::Lba ResourceForkSize;
+	Kernel::Lba ResourceForkSize;
 
-	NewOS::Lba DataFork;
-	NewOS::Lba ResourceFork;
+	Kernel::Lba DataFork;
+	Kernel::Lba ResourceFork;
 
-	NewOS::Lba NextSibling;
-	NewOS::Lba PrevSibling;
+	Kernel::Lba NextSibling;
+	Kernel::Lba PrevSibling;
 };
 
 /// @brief Fork type, contains a data page.
@@ -144,20 +144,20 @@ struct PACKED NewCatalog final
 struct PACKED NewFork final
 {
 	NewCharType ForkName[kNewFSForkNameLen];
-	NewOS::Char CatalogName[kNewFSNodeNameLen];
+	Kernel::Char CatalogName[kNewFSNodeNameLen];
 
-	NewOS::Int32 Flags;
-	NewOS::Int32 Kind;
+	Kernel::Int32 Flags;
+	Kernel::Int32 Kind;
 
-	NewOS::Int64 ResourceId;
-	NewOS::Int32 ResourceKind;
-	NewOS::Int32 ResourceFlags;
+	Kernel::Int64 ResourceId;
+	Kernel::Int32 ResourceKind;
+	Kernel::Int32 ResourceFlags;
 
-	NewOS::Lba	 DataOffset; // 8 Where to look for this data?
-	NewOS::SizeT DataSize;	 /// Data size according using sector count.
+	Kernel::Lba	 DataOffset; // 8 Where to look for this data?
+	Kernel::SizeT DataSize;	 /// Data size according using sector count.
 
-	NewOS::Lba NextSibling;
-	NewOS::Lba PreviousSibling;
+	Kernel::Lba NextSibling;
+	Kernel::Lba PreviousSibling;
 };
 
 /// @brief Partition block type
@@ -166,26 +166,26 @@ struct PACKED NewPartitionBlock final
 	NewCharType Ident[kNewFSIdentLen];
 	NewCharType PartitionName[kPartLen];
 
-	NewOS::Int32 Flags;
-	NewOS::Int32 Kind;
+	Kernel::Int32 Flags;
+	Kernel::Int32 Kind;
 
-	NewOS::Lba	 StartCatalog;
-	NewOS::SizeT CatalogCount;
+	Kernel::Lba	 StartCatalog;
+	Kernel::SizeT CatalogCount;
 
-	NewOS::SizeT DiskSize;
+	Kernel::SizeT DiskSize;
 
-	NewOS::SizeT FreeCatalog;
-	NewOS::SizeT FreeSectors;
+	Kernel::SizeT FreeCatalog;
+	Kernel::SizeT FreeSectors;
 
-	NewOS::SizeT SectorCount;
-	NewOS::SizeT SectorSize;
+	Kernel::SizeT SectorCount;
+	Kernel::SizeT SectorSize;
 
-	NewOS::UInt64 Version;
+	Kernel::UInt64 Version;
 
-	NewOS::Char Pad[kNewFSPadLen];
+	Kernel::Char Pad[kNewFSPadLen];
 };
 
-namespace NewOS
+namespace Kernel
 {
 
 	enum
@@ -292,22 +292,22 @@ namespace NewOS
 	{
 		Boolean fs_init_newfs(Void) noexcept;
 	} // namespace Detail
-} // namespace NewOS
+} // namespace Kernel
 
 /// @brief Write to newfs disk.
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return
-NewOS::Int32 fs_newfs_write(NewOS::MountpointInterface* Mnt,
-							NewOS::DriveTrait&			DrvTrait,
-							NewOS::Int32				DrvIndex);
+Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* Mnt,
+							Kernel::DriveTrait&			DrvTrait,
+							Kernel::Int32				DrvIndex);
 
 /// @brief Read from newfs disk.
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return
-NewOS::Int32 fs_newfs_read(NewOS::MountpointInterface* Mnt,
-						   NewOS::DriveTrait&		   DrvTrait,
-						   NewOS::Int32				   DrvIndex);
+Kernel::Int32 fs_newfs_read(Kernel::MountpointInterface* Mnt,
+						   Kernel::DriveTrait&		   DrvTrait,
+						   Kernel::Int32				   DrvIndex);

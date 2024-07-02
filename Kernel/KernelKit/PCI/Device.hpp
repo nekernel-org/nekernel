@@ -7,7 +7,7 @@
 
 #include <NewKit/Defines.hpp>
 
-namespace NewOS::PCI
+namespace Kernel::PCI
 {
 	enum class PciConfigKind : UShort
 	{
@@ -73,7 +73,7 @@ namespace NewOS::PCI
 		UShort fFunction;
 		UShort fBar;
 	};
-} // namespace NewOS::PCI
+} // namespace Kernel::PCI
 
-EXTERN_C void NewOSPCISetCfgTarget(NewOS::UInt bar);
-EXTERN_C NewOS::UInt NewOSPCIReadRaw(NewOS::UInt bar);
+EXTERN_C void NewOSPCISetCfgTarget(Kernel::UInt bar);
+EXTERN_C Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar);

@@ -6,7 +6,7 @@
 
 #include <StorageKit/ATA.hpp>
 
-using namespace NewOS;
+using namespace Kernel;
 
 /// @brief Class constructor
 /// @param Out Disk output

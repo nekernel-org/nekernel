@@ -15,9 +15,9 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/KernelCheck.hpp>
 
-STATIC NewOS::Boolean kAllocationInProgress = false;
+STATIC Kernel::Boolean kAllocationInProgress = false;
 
-namespace NewOS
+namespace Kernel
 {
 	namespace HAL
 	{
@@ -106,4 +106,4 @@ namespace NewOS
 			return hal_try_alloc_new_page(rw, user, size);
 		}
 	} // namespace HAL
-} // namespace NewOS
+} // namespace Kernel

@@ -8,9 +8,9 @@
 #include <NewKit/Utils.hpp>
 
 /// BUGS: 0
-//! @brief File manager for NewOS.
+//! @brief File manager for Kernel.
 
-namespace NewOS
+namespace Kernel
 {
 	static FilesystemManagerInterface* kMounted = nullptr;
 
@@ -189,4 +189,4 @@ namespace NewOS
 		return fImpl;
 	}
 #endif // __FSKIT_NEWFS__
-} // namespace NewOS
+} // namespace Kernel

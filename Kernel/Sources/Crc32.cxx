@@ -9,7 +9,7 @@
 // @file CRC32.cpp
 // @brief Check sequence implementation.
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief The CRC32 table.
 	UInt kCrcTbl[kCrcCnt] = {
@@ -71,4 +71,4 @@ namespace NewOS
 		// return (~crc); also works, does the same thing.
 		return (crc ^ 0xffffffff);
 	}
-} // namespace NewOS
+} // namespace Kernel

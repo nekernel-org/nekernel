@@ -24,30 +24,30 @@
 #include <NewKit/Utils.hpp>
 #include <KernelKit/CodeManager.hpp>
 
-namespace NewOS::Detail
+namespace Kernel::Detail
 {
 	/// @brief Filesystem auto installer, additional checks are also done by the class.
 	class FilesystemInstaller final
 	{
-		NewOS::NewFilesystemManager* fNewFS{nullptr};
+		Kernel::NewFilesystemManager* fNewFS{nullptr};
 
 	public:
 		/// @brief wizard constructor.
 		explicit FilesystemInstaller()
 		{
-			if (NewOS::FilesystemManagerInterface::GetMounted())
+			if (Kernel::FilesystemManagerInterface::GetMounted())
 			{
 				/// Mounted partition, cool!
-				NewOS::kcout
+				Kernel::kcout
 					<< "newoskrnl: No need to create for a NewFS partition here...\r";
 			}
 			else
 			{
 				/// Not mounted partition, auto-mount.
 				///! Mounts a NewFS block.
-				fNewFS = new NewOS::NewFilesystemManager();
+				fNewFS = new Kernel::NewFilesystemManager();
 
-				NewOS::FilesystemManagerInterface::Mount(fNewFS);
+				Kernel::FilesystemManagerInterface::Mount(fNewFS);
 
 				if (fNewFS->GetParser())
 				{
@@ -57,13 +57,13 @@ namespace NewOS::Detail
 						   "C:\\Boot\\", "C:\\System\\", "C:\\Support\\", "C:\\Applications\\",
 						   "C:\\Users\\", "C:\\Library\\", "C:\\Mount\\", "C:\\DCIM\\", "C:\\Storage\\"};
 
-					for (NewOS::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
+					for (Kernel::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
 						auto catalogDir = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
 
 						if (catalogDir)
 						{
-							NewOS::kcout << "newoskrnl: Already here\r";
+							Kernel::kcout << "newoskrnl: Already here\r";
 
 							delete catalogDir;
 							continue;
@@ -74,23 +74,23 @@ namespace NewOS::Detail
 
 						NewFork theFork{0};
 
-						const NewOS::Char* cSrcName = cFolderInfo;
+						const Kernel::Char* cSrcName = cFolderInfo;
 
-						NewOS::rt_copy_memory((NewOS::VoidPtr)(cSrcName), theFork.ForkName,
-											  NewOS::rt_string_len(cSrcName));
+						Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theFork.ForkName,
+											  Kernel::rt_string_len(cSrcName));
 
-						NewOS::rt_copy_memory((NewOS::VoidPtr)(catalogDir->Name),
+						Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDir->Name),
 											  theFork.CatalogName,
-											  NewOS::rt_string_len(catalogDir->Name));
+											  Kernel::rt_string_len(catalogDir->Name));
 
 						delete catalogDir;
 
 						theFork.DataSize	 = kNewFSForkSize;
 						theFork.ResourceId	 = 0;
-						theFork.ResourceKind = NewOS::kNewFSRsrcForkKind;
-						theFork.Kind		 = NewOS::kNewFSDataForkKind;
+						theFork.ResourceKind = Kernel::kNewFSRsrcForkKind;
+						theFork.Kind		 = Kernel::kNewFSDataForkKind;
 
-						NewOS::StringView metadataFolder(kNewFSSectorSz);
+						Kernel::StringView metadataFolder(kNewFSSectorSz);
 
 						metadataFolder +=
 							"<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
@@ -100,14 +100,14 @@ namespace NewOS::Detail
 						metadataFolder += cDirStr[dirIndx];
 						metadataFolder += "</p>\r";
 
-						const NewOS::SizeT metadataSz = kNewFSSectorSz;
+						const Kernel::SizeT metadataSz = kNewFSSectorSz;
 
 						auto catalogSystem = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
 
 						fNewFS->GetParser()->CreateFork(catalogSystem, theFork);
 
 						fNewFS->GetParser()->WriteCatalog(
-							catalogSystem, (NewOS::VoidPtr)(metadataFolder.CData()),
+							catalogSystem, (Kernel::VoidPtr)(metadataFolder.CData()),
 							metadataSz, cFolderInfo);
 
 						delete catalogSystem;
@@ -117,12 +117,12 @@ namespace NewOS::Detail
 				NewCatalog* catalogDisk =
 					this->fNewFS->GetParser()->GetCatalog("C:\\Mount\\SIM:");
 
-				const NewOS::Char* cSrcName = "DISK-INF";
+				const Kernel::Char* cSrcName = "DISK-INF";
 
 				if (catalogDisk)
 				{
-					auto bufferInfoDisk = (NewOS::Char*)this->fNewFS->GetParser()->ReadCatalog(catalogDisk, kNewFSSectorSz, cSrcName);
-					NewOS::kcout << bufferInfoDisk << NewOS::end_line();
+					auto bufferInfoDisk = (Kernel::Char*)this->fNewFS->GetParser()->ReadCatalog(catalogDisk, kNewFSSectorSz, cSrcName);
+					Kernel::kcout << bufferInfoDisk << Kernel::end_line();
 
 					delete bufferInfoDisk;
 					delete catalogDisk;
@@ -132,37 +132,37 @@ namespace NewOS::Detail
 					catalogDisk =
 						(NewCatalog*)this->Leak()->CreateAlias("C:\\Mount\\SIM:");
 
-					NewOS::StringView diskFolder(kNewFSSectorSz);
+					Kernel::StringView diskFolder(kNewFSSectorSz);
 
 					diskFolder +=
-						"<p>Kind: alias to SIM</p>\r<p>Created by: system</p>\r<p>Edited "
+						"<p>Kind: alias to SIM Card</p>\r<p>Created by: system</p>\r<p>Edited "
 						"by: "
-						"system</p>\r<p>Volume Type: SIM</p>\r";
+						"system</p>\r<p>Volume Type: SIM Card</p>\r";
 
 					diskFolder += "<p>Root: ";
-					diskFolder += NewOS::NewFilesystemHelper::Root();
+					diskFolder += Kernel::NewFilesystemHelper::Root();
 					diskFolder += "</p>\r";
 
 					NewFork theDiskFork{0};
 
-					NewOS::rt_copy_memory((NewOS::VoidPtr)(cSrcName), theDiskFork.ForkName,
-										  NewOS::rt_string_len(cSrcName));
+					Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theDiskFork.ForkName,
+										  Kernel::rt_string_len(cSrcName));
 
-					NewOS::rt_copy_memory((NewOS::VoidPtr)(catalogDisk->Name),
+					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDisk->Name),
 										  theDiskFork.CatalogName,
-										  NewOS::rt_string_len(catalogDisk->Name));
+										  Kernel::rt_string_len(catalogDisk->Name));
 
 					theDiskFork.DataSize	 = kNewFSForkSize;
 					theDiskFork.ResourceId	 = 0;
-					theDiskFork.ResourceKind = NewOS::kNewFSRsrcForkKind;
-					theDiskFork.Kind		 = NewOS::kNewFSDataForkKind;
+					theDiskFork.ResourceKind = Kernel::kNewFSRsrcForkKind;
+					theDiskFork.Kind		 = Kernel::kNewFSDataForkKind;
 
 					fNewFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
 					fNewFS->GetParser()->WriteCatalog(catalogDisk,
-													  (NewOS::VoidPtr)diskFolder.CData(),
+													  (Kernel::VoidPtr)diskFolder.CData(),
 													  kNewFSSectorSz, cSrcName);
 
-					NewOS::kcout << diskFolder.CData() << NewOS::end_line();
+					Kernel::kcout << diskFolder.CData() << Kernel::end_line();
 
 					delete catalogDisk;
 				}
@@ -175,7 +175,7 @@ namespace NewOS::Detail
 
 		/// @brief Grab the disk's NewFS reference.
 		/// @return NewFilesystemManager the filesystem interface
-		NewOS::NewFilesystemManager* Leak()
+		Kernel::NewFilesystemManager* Leak()
 		{
 			return fNewFS;
 		}
@@ -184,38 +184,38 @@ namespace NewOS::Detail
 	/// @brief Loads necessary servers for the kernel -> user mode switch.
 	/// @param void no args.
 	/// @return void no return value.
-	STATIC NewOS::Void ke_launch_srv(NewOS::Void)
+	STATIC Kernel::Void ke_launch_srv(Kernel::Void)
 	{
 		// load security server.
-		NewOS::PEFLoader secureSrv("C:\\System\\securesrv.exe");
+		Kernel::PEFLoader launchDevil("C:\\System\\launchd");
 
-		if (!secureSrv.IsLoaded())
+		if (!launchDevil.IsLoaded())
 		{
-			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
+			Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		NewOS::Utils::execute_from_image(secureSrv,
-										 NewOS::ProcessHeader::kAppKind);
+		Kernel::Utils::execute_from_image(launchDevil,
+										 Kernel::ProcessHeader::kAppKind);
 
 		/// load middleware service.
-		NewOS::PEFLoader middlewareSvc("C:\\System\\middlewaresvc.exe");
+		Kernel::PEFLoader stageBoard("C:\\System\\stageboard");
 
-		if (!middlewareSvc.IsLoaded())
+		if (!stageBoard.IsLoaded())
 		{
-			NewOS::ke_stop(RUNTIME_CHECK_FAILED);
+			Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		NewOS::Utils::execute_from_image(middlewareSvc,
-										 NewOS::ProcessHeader::kAppKind);
+		Kernel::Utils::execute_from_image(stageBoard,
+										 Kernel::ProcessHeader::kAppKind);
 	}
-} // namespace NewOS::Detail
+} // namespace Kernel::Detail
 
 /// @brief Application entrypoint.
 /// @param Void
 /// @return Void
-EXTERN_C NewOS::Void KeMain(NewOS::Void)
+EXTERN_C Kernel::Void KeMain(Kernel::Void)
 {
 	/// Now run kernel loop, until no process are running.
-	NewOS::Detail::FilesystemInstaller(); // automatic filesystem creation.
-	NewOS::Detail::ke_launch_srv();
+	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
+	Kernel::Detail::ke_launch_srv();
 }

@@ -3,7 +3,7 @@
 	Copyright Zeta Electronics Corporation
 
 	File: PE.hxx
-	Purpose: Portable Executable for NewOS.
+	Purpose: Portable Executable for Kernel.
 
 	Revision History:
 
@@ -20,14 +20,14 @@
 
 typedef struct ExecHeader final
 {
-	NewOS::UInt32 mMagic; // PE\0\0 or 0x00004550
-	NewOS::UInt16 mMachine;
-	NewOS::UInt16 mNumberOfSections;
-	NewOS::UInt32 mTimeDateStamp;
-	NewOS::UInt32 mPointerToSymbolTable;
-	NewOS::UInt32 mNumberOfSymbols;
-	NewOS::UInt16 mSizeOfOptionalHeader;
-	NewOS::UInt16 mCharacteristics;
+	Kernel::UInt32 mMagic; // PE\0\0 or 0x00004550
+	Kernel::UInt16 mMachine;
+	Kernel::UInt16 mNumberOfSections;
+	Kernel::UInt32 mTimeDateStamp;
+	Kernel::UInt32 mPointerToSymbolTable;
+	Kernel::UInt32 mNumberOfSymbols;
+	Kernel::UInt16 mSizeOfOptionalHeader;
+	Kernel::UInt16 mCharacteristics;
 } ALIGN(8) ExecHeader, *ExecHeaderPtr;
 
 #define kMagPE32 0x010b
@@ -38,49 +38,49 @@ typedef struct ExecHeader final
 
 typedef struct ExecOptionalHeader final
 {
-	NewOS::UInt16  mMagic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
-	NewOS::UChar   mMajorLinkerVersion;
-	NewOS::UChar   mMinorLinkerVersion;
-	NewOS::UIntPtr mSizeOfCode;
-	NewOS::UIntPtr mSizeOfInitializedData;
-	NewOS::UIntPtr mSizeOfUninitializedData;
-	NewOS::UInt32  mAddressOfEntryPoint;
-	NewOS::UInt32  mBaseOfCode;
-	NewOS::UIntPtr mImageBase;
-	NewOS::UInt32  mSectionAlignment;
-	NewOS::UInt32  mFileAlignment;
-	NewOS::UInt16  mMajorOperatingSystemVersion;
-	NewOS::UInt16  mMinorOperatingSystemVersion;
-	NewOS::UInt16  mMajorImageVersion;
-	NewOS::UInt16  mMinorImageVersion;
-	NewOS::UInt16  mMajorSubsystemVersion;
-	NewOS::UInt16  mMinorSubsystemVersion;
-	NewOS::UInt32  mWin32VersionValue;
-	NewOS::UIntPtr mSizeOfImage;
-	NewOS::UIntPtr mSizeOfHeaders;
-	NewOS::UInt32  mCheckSum;
-	NewOS::UInt16  mSubsystem;
-	NewOS::UInt16  mDllCharacteristics;
-	NewOS::UIntPtr mSizeOfStackReserve;
-	NewOS::UIntPtr mSizeOfStackCommit;
-	NewOS::UIntPtr mSizeOfHeapReserve;
-	NewOS::UIntPtr mSizeOfHeapCommit;
-	NewOS::UInt32  mLoaderFlags;
-	NewOS::UInt32  mNumberOfRvaAndSizes;
+	Kernel::UInt16  mMagic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
+	Kernel::UChar   mMajorLinkerVersion;
+	Kernel::UChar   mMinorLinkerVersion;
+	Kernel::UIntPtr mSizeOfCode;
+	Kernel::UIntPtr mSizeOfInitializedData;
+	Kernel::UIntPtr mSizeOfUninitializedData;
+	Kernel::UInt32  mAddressOfEntryPoint;
+	Kernel::UInt32  mBaseOfCode;
+	Kernel::UIntPtr mImageBase;
+	Kernel::UInt32  mSectionAlignment;
+	Kernel::UInt32  mFileAlignment;
+	Kernel::UInt16  mMajorOperatingSystemVersion;
+	Kernel::UInt16  mMinorOperatingSystemVersion;
+	Kernel::UInt16  mMajorImageVersion;
+	Kernel::UInt16  mMinorImageVersion;
+	Kernel::UInt16  mMajorSubsystemVersion;
+	Kernel::UInt16  mMinorSubsystemVersion;
+	Kernel::UInt32  mWin32VersionValue;
+	Kernel::UIntPtr mSizeOfImage;
+	Kernel::UIntPtr mSizeOfHeaders;
+	Kernel::UInt32  mCheckSum;
+	Kernel::UInt16  mSubsystem;
+	Kernel::UInt16  mDllCharacteristics;
+	Kernel::UIntPtr mSizeOfStackReserve;
+	Kernel::UIntPtr mSizeOfStackCommit;
+	Kernel::UIntPtr mSizeOfHeapReserve;
+	Kernel::UIntPtr mSizeOfHeapCommit;
+	Kernel::UInt32  mLoaderFlags;
+	Kernel::UInt32  mNumberOfRvaAndSizes;
 } ExecOptionalHeader, *ExecOptionalHeaderPtr;
 
 typedef struct ExecSectionHeader final
 {
-	CONST NewOS::UChar mName[8];
-	NewOS::UInt32	   mVirtualSize;
-	NewOS::UInt32	   mVirtualAddress;
-	NewOS::UInt32	   mSizeOfRawData;
-	NewOS::UInt32	   mPointerToRawData;
-	NewOS::UInt32	   mPointerToRelocations;
-	NewOS::UInt32	   mPointerToLinenumbers;
-	NewOS::UInt16	   mNumberOfRelocations;
-	NewOS::UInt16	   mNumberOfLinenumbers;
-	NewOS::UInt32	   mCharacteristics;
+	CONST Kernel::UChar mName[8];
+	Kernel::UInt32	   mVirtualSize;
+	Kernel::UInt32	   mVirtualAddress;
+	Kernel::UInt32	   mSizeOfRawData;
+	Kernel::UInt32	   mPointerToRawData;
+	Kernel::UInt32	   mPointerToRelocations;
+	Kernel::UInt32	   mPointerToLinenumbers;
+	Kernel::UInt16	   mNumberOfRelocations;
+	Kernel::UInt16	   mNumberOfLinenumbers;
+	Kernel::UInt32	   mCharacteristics;
 } ExecSectionHeader, *ExecSectionHeaderPtr;
 
 enum kExecDataDirParams
@@ -93,29 +93,29 @@ enum kExecDataDirParams
 
 typedef struct ExecExportDirectory
 {
-	NewOS::UInt32 mCharacteristics;
-	NewOS::UInt32 mTimeDateStamp;
-	NewOS::UInt16 mMajorVersion;
-	NewOS::UInt16 mMinorVersion;
-	NewOS::UInt32 mName;
-	NewOS::UInt32 mBase;
-	NewOS::UInt32 mNumberOfFunctions;
-	NewOS::UInt32 mNumberOfNames;
-	NewOS::UInt32 mAddressOfFunctions; // export table rva
-	NewOS::UInt32 mAddressOfNames;
-	NewOS::UInt32 mAddressOfNameOrdinal; // ordinal table rva
+	Kernel::UInt32 mCharacteristics;
+	Kernel::UInt32 mTimeDateStamp;
+	Kernel::UInt16 mMajorVersion;
+	Kernel::UInt16 mMinorVersion;
+	Kernel::UInt32 mName;
+	Kernel::UInt32 mBase;
+	Kernel::UInt32 mNumberOfFunctions;
+	Kernel::UInt32 mNumberOfNames;
+	Kernel::UInt32 mAddressOfFunctions; // export table rva
+	Kernel::UInt32 mAddressOfNames;
+	Kernel::UInt32 mAddressOfNameOrdinal; // ordinal table rva
 } ExecExportDirectory, *ExecExportDirectoryPtr;
 
 typedef struct ExecImportDirectory
 {
 	union {
-		NewOS::UInt32 mCharacteristics;
-		NewOS::UInt32 mOriginalFirstThunk;
+		Kernel::UInt32 mCharacteristics;
+		Kernel::UInt32 mOriginalFirstThunk;
 	};
-	NewOS::UInt32 mTimeDateStamp;
-	NewOS::UInt32 mForwarderChain;
-	NewOS::UInt32 mNameRva;
-	NewOS::UInt32 mThunkTableRva;
+	Kernel::UInt32 mTimeDateStamp;
+	Kernel::UInt32 mForwarderChain;
+	Kernel::UInt32 mNameRva;
+	Kernel::UInt32 mThunkTableRva;
 } ExecImportDirectory, *ExecImportDirectoryPtr;
 
 #define kPeStart "__hcore_subsys_start"

@@ -9,7 +9,7 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	template <typename T, Size N>
 	class Array final
@@ -58,4 +58,4 @@ namespace NewOS
 	private:
 		T fArray[N];
 	};
-} // namespace NewOS
+} // namespace Kernel

@@ -7,7 +7,7 @@
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/Semaphore.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	bool Semaphore::Unlock() noexcept
 	{
@@ -59,4 +59,4 @@ namespace NewOS
 			}
 		}
 	}
-} // namespace NewOS
+} // namespace Kernel

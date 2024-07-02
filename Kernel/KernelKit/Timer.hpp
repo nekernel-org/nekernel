@@ -10,7 +10,7 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/HError.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	class HardwareTimer;
 	class HardwareTimerInterface;
@@ -61,4 +61,4 @@ namespace NewOS
 
 		return 1000 / Seconds(time);
 	}
-} // namespace NewOS
+} // namespace Kernel

@@ -8,7 +8,7 @@
 #include <KernelKit/CodeManager.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Executes a new process from a function. kernel code only.
 	/// @note This sets up a new stack, anything on the main function that calls the kernel will not be accessible.
@@ -27,4 +27,4 @@ namespace NewOS
 
 		return ProcessScheduler::The().Leak().Add(refProc);
 	}
-} // namespace NewOS
+} // namespace Kernel

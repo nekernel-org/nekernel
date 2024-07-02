@@ -13,7 +13,7 @@
 
 #define kHalPPCAlignment __attribute__((aligned(4)))
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	typedef UIntPtr Reg;
 
@@ -46,10 +46,10 @@ namespace NewOS::HAL
 	{
 		asm volatile("mr 0, 0"); // no oop
 	}
-} // namespace NewOS::HAL
+} // namespace Kernel::HAL
 
-EXTERN_C void int_handle_math(NewOS::UIntPtr sp);
-EXTERN_C void int_handle_pf(NewOS::UIntPtr sp);
+EXTERN_C void int_handle_math(Kernel::UIntPtr sp);
+EXTERN_C void int_handle_pf(Kernel::UIntPtr sp);
 
 /// @brief Flush system TLB.
 EXTERN_C void hal_flush_tlb();

@@ -8,7 +8,7 @@
 #include <KernelKit/HError.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
 
-using namespace NewOS;
+using namespace Kernel;
 
 /// @internal
 /// @brief The internal sanitize function.
@@ -56,7 +56,7 @@ _Fail:
 	return false;
 }
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Sanitize packet function
 	/// @retval true packet is correct.

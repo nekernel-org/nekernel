@@ -8,7 +8,7 @@
 #define __EFI__
 
 /**
-@brief NewOS Implementation of EFI.
+@brief Kernel Implementation of EFI.
 @note This API is in WiP, so it's not 'pretty', just deal with it. We'll be
 improving that later.
 @author Amlal El Mahrouss
@@ -16,7 +16,7 @@ improving that later.
 
 #include <NewKit/Defines.hpp>
 
-using namespace NewOS;
+using namespace Kernel;
 
 /* we always use stdcall in EFI, the pascal way of calling functions. */
 

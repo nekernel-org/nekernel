@@ -11,4 +11,4 @@
 /// @file SCSI.hxx
 /// @brief Serial SCSI driver.
 
-typedef NewOS::UInt16 scsi_packet_type[12];
+typedef Kernel::UInt16 scsi_packet_type[12];

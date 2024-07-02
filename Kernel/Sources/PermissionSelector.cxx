@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	NewOS
+ *	Kernel
  * 	Copyright Zeta Electronics Corporation, all rights reserved.
  *
  *	File: PermissionSelector.cpp
@@ -15,7 +15,7 @@
 
 /// bugs 0
 
-namespace NewOS
+namespace Kernel
 {
 	PermissionSelector::PermissionSelector(const Int32& sel)
 		: fRing((RingKind)sel)
@@ -44,4 +44,4 @@ namespace NewOS
 	{
 		return this->fRing;
 	}
-} // namespace NewOS
+} // namespace Kernel

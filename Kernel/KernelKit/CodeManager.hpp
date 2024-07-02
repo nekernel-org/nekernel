@@ -20,7 +20,7 @@
 
 #define kUPPNameLen 64
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Main process entrypoint.
 	typedef void (*MainKind)(void);
@@ -30,4 +30,4 @@ namespace NewOS
 	/// @param main the start of the process.
 	/// @return if the process was started or not.
 	bool execute_from_image(MainKind main, const char* processName);
-} // namespace NewOS
+} // namespace Kernel

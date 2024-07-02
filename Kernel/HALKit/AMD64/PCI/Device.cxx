@@ -7,29 +7,29 @@
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/PCI/Device.hpp>
 
-NewOS::UInt NewOSPCIReadRaw(NewOS::UInt bar, NewOS::UShort bus, NewOS::UShort dev, NewOS::UShort fun)
+Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
-	NewOS::UInt target = 0x80000000 | ((NewOS::UInt)bus << 16) |
-						 ((NewOS::UInt)dev << 11) | ((NewOS::UInt)fun << 8) |
+	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
+						 ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
 						 (bar & 0xFC);
 
-	NewOS::HAL::Out32((NewOS::UShort)NewOS::PCI::PciConfigKind::ConfigAddress,
+	Kernel::HAL::Out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
 					  target);
 
-	return NewOS::HAL::In32((NewOS::UShort)NewOS::PCI::PciConfigKind::ConfigData);
+	return Kernel::HAL::In32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
 
-void NewOSPCISetCfgTarget(NewOS::UInt bar, NewOS::UShort bus, NewOS::UShort dev, NewOS::UShort fun)
+void NewOSPCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
-	NewOS::UInt target = 0x80000000 | ((NewOS::UInt)bus << 16) |
-						 ((NewOS::UInt)dev << 11) | ((NewOS::UInt)fun << 8) |
+	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
+						 ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
 						 (bar & ~3);
 
-	NewOS::HAL::Out32((NewOS::UShort)NewOS::PCI::PciConfigKind::ConfigAddress,
+	Kernel::HAL::Out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
 					  target);
 }
 
-namespace NewOS::PCI
+namespace Kernel::PCI
 {
 	Device::Device(UShort bus, UShort device, UShort func, UShort bar)
 		: fBus(bus), fDevice(device), fFunction(func), fBar(bar)
@@ -127,4 +127,4 @@ namespace NewOS::PCI
 	{
 		return VendorId() != (UShort)PciConfigKind::Invalid;
 	}
-} // namespace NewOS::PCI
+} // namespace Kernel::PCI

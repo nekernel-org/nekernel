@@ -13,7 +13,7 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/String.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	namespace Detail
 	{
@@ -238,4 +238,4 @@ namespace NewOS
 	{
 		return kPefApplicationMime;
 	}
-} // namespace NewOS
+} // namespace Kernel

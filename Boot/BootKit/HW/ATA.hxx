@@ -9,7 +9,7 @@
 #include <Modules/ATA/ATA.hxx>
 #include <BootKit/Device.hxx>
 
-using namespace NewOS;
+using namespace Kernel;
 
 class BootDeviceATA final : public Device
 {

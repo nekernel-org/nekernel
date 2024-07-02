@@ -15,7 +15,7 @@
 #define kXRNNil "@{........-....-M...-N...-............}"
 
 // eXtensible Resource Information
-namespace NewOS::XRN
+namespace Kernel::XRN
 {
 	union GUIDSequence {
 		alignas(8) UShort u8[16];
@@ -55,4 +55,4 @@ namespace NewOS::XRN
 	private:
 		GUIDSequence fUUID;
 	};
-} // namespace NewOS::XRN
+} // namespace Kernel::XRN

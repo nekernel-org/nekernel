@@ -11,7 +11,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	template <SizeT Sz>
 	class IOArray final
@@ -50,7 +50,7 @@ namespace NewOS
 	};
 
 	using IOArray16 = IOArray<16>;
-} // namespace NewOS
+} // namespace Kernel
 
 #ifdef __x86_64__
 #include <KernelKit/PCI/IO-Impl-AMD64.inl>

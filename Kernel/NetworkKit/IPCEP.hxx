@@ -23,7 +23,7 @@
 
 #define cRemoteHeaderMagic (0x4950434)
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief 128-bit IPC address.
 	struct PACKED IPCEPAddress final
@@ -74,6 +74,6 @@ namespace NewOS
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
 	Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt);
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // _INC_IPC_ENDPOINT_HXX_

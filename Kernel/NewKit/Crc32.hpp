@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	NewOS 	Date Added: 13/02/2023
+ *	Kernel 	Date Added: 13/02/2023
  * 	Copyright Zeta Electronics Corporation, all rights reserved.
  *
  * 	========================================================
@@ -14,9 +14,9 @@
 
 #define kCrcCnt (256)
 
-namespace NewOS
+namespace Kernel
 {
 	UInt ke_calculate_crc32(const Char* crc, UInt len) noexcept;
-} // namespace NewOS
+} // namespace Kernel
 
 #endif // !__CRC32_H__

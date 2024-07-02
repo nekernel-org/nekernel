@@ -1,7 +1,7 @@
 /*
  *      ========================================================
  *
- *      NewOS
+ *      Kernel
  *      Copyright Zeta Electronics Corporation, all rights reserved.
  *
  *      ========================================================
@@ -15,7 +15,7 @@
 #include <KernelKit/PEFCodeManager.hxx>
 #include <NewKit/Defines.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	/// @brief Pure implementation, missing method/function handler.
 	extern "C" void __mh_purecall(void);
@@ -107,6 +107,6 @@ namespace NewOS
 	};
 
 	typedef SharedObject* SharedObjectPtr;
-} // namespace NewOS
+} // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */

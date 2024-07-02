@@ -16,13 +16,13 @@ Purpose: LTE I/O.
 /// @brief Long Term Evolution I/O routines.
 
 /// @brief Turn on SIM slot.
-NewOS::Boolean lte_turn_on_slot(NewOS::Int32 slot);
+Kernel::Boolean lte_turn_on_slot(Kernel::Int32 slot);
 
 /// @brief Turn off SIM slot.
-NewOS::Boolean lte_turn_off_slot(NewOS::Int32 slot);
+Kernel::Boolean lte_turn_off_slot(Kernel::Int32 slot);
 
 /// @brief Send AT command.
-NewOS::Boolean lte_send_at_command(NewOS::Char* buf,
-								   NewOS::Size	bufSz);
+Kernel::Boolean lte_send_at_command(Kernel::Char* buf,
+								   Kernel::Size	bufSz);
 
 #endif // ifndef _INC_NETWORK_LTE_IO_HXX_

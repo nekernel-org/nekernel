@@ -13,17 +13,17 @@ atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
 uarch_t __atexit_func_count;
 
 /// @brief Dynamic Shared Object Handle.
-NewOS::UIntPtr __dso_handle;
+Kernel::UIntPtr __dso_handle;
 
 EXTERN_C void __cxa_pure_virtual()
 {
-	NewOS::kcout << "newoskrnl: C++ placeholder method.\n";
+	Kernel::kcout << "newoskrnl: C++ placeholder method.\n";
 }
 
 EXTERN_C void ___chkstk_ms()
 {
-	NewOS::err_bug_check_raise();
-	NewOS::err_bug_check();
+	Kernel::err_bug_check_raise();
+	Kernel::err_bug_check();
 }
 
 #ifdef __NEWOS_ARM64__

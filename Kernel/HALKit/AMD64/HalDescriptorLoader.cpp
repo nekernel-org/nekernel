@@ -6,14 +6,14 @@
 
 #include <ArchKit/ArchKit.hpp>
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	namespace Detail
 	{
 		STATIC RegisterGDT kRegGdt;
 		STATIC HAL::Register64 kRegIdt;
 
-		STATIC ::NewOS::Detail::AMD64::InterruptDescriptorAMD64
+		STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64
 			kInterruptVectorTable[kKernelIdtSize];
 
 		STATIC Void RemapPIC(Void) noexcept
@@ -51,7 +51,7 @@ namespace NewOS::HAL
 
 	Void IDTLoader::Load(Register64& idt)
 	{
-		volatile ::NewOS::UIntPtr** baseIdt = (volatile ::NewOS::UIntPtr**)idt.Base;
+		volatile ::Kernel::UIntPtr** baseIdt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
 		MUST_PASS(baseIdt);
 
@@ -72,7 +72,7 @@ namespace NewOS::HAL
 		}
 
 		Detail::kRegIdt.Base  = reinterpret_cast<UIntPtr>(Detail::kInterruptVectorTable);
-		Detail::kRegIdt.Limit = sizeof(::NewOS::Detail::AMD64::InterruptDescriptorAMD64) *
+		Detail::kRegIdt.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) *
 								(kKernelIdtSize - 1);
 
 		hal_load_idt(Detail::kRegIdt);
@@ -87,4 +87,4 @@ namespace NewOS::HAL
 	{
 		IDTLoader::Load(idt.Leak());
 	}
-} // namespace NewOS::HAL
+} // namespace Kernel::HAL

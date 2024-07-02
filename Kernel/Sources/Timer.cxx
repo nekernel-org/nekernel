@@ -9,7 +9,7 @@
 ///! BUGS: 0
 ///! @file Timer.cxx
 
-using namespace NewOS;
+using namespace Kernel;
 
 /// @brief Unimplemented as it is an interface.
 Int32 HardwareTimerInterface::Wait() noexcept

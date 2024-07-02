@@ -14,7 +14,7 @@
 
 #pragma once
 
-/* NewOS device interface manager. */
+/* Kernel device interface manager. */
 /* @file KernelKit/DeviceManager.hpp */
 /* @brief Device abstraction and I/O buffer. */
 
@@ -24,7 +24,7 @@
 // Last Rev
 // Wed, Apr  3, 2024  9:09:41 AM
 
-namespace NewOS
+namespace Kernel
 {
 	template <typename T>
 	class DeviceInterface;
@@ -126,4 +126,4 @@ namespace NewOS
 		kDeviceTypeMedia,
 		kDeviceTypeCount,
 	};
-} // namespace NewOS
+} // namespace Kernel

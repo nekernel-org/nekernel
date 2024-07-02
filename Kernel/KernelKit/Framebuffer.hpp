@@ -13,7 +13,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	enum class FramebufferColorKind : UChar
 	{
@@ -86,6 +86,6 @@ namespace NewOS
 	extern const UInt32 kRgbBlue;
 	extern const UInt32 kRgbBlack;
 	extern const UInt32 kRgbWhite;
-} // namespace NewOS
+} // namespace Kernel
 
 #endif /* ifndef __INC_FB_HPP__ */

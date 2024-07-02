@@ -11,17 +11,17 @@
 #include <NewKit/Defines.hpp>
 
 /// @note forward decl.
-EXTERN_C NewOS::Boolean _hal_draw_mouse();
-EXTERN_C NewOS::Void _hal_init_mouse();
+EXTERN_C Kernel::Boolean _hal_draw_mouse();
+EXTERN_C Kernel::Void _hal_init_mouse();
 
-STATIC NewOS::Int32 kPrevX		= 10;
-STATIC NewOS::Int32 kPrevY		= 10;
-STATIC NewOS::Int32 kX			= 10;
-STATIC NewOS::Int32 kY			= 10;
-STATIC NewOS::Int32 kMouseCycle = 0;
-STATIC NewOS::PS2MouseInterface kMousePS2;
-STATIC NewOS::Char kMousePacket[4]		= {};
-STATIC NewOS::Boolean kMousePacketReady = false;
+STATIC Kernel::Int32 kPrevX		= 10;
+STATIC Kernel::Int32 kPrevY		= 10;
+STATIC Kernel::Int32 kX			= 10;
+STATIC Kernel::Int32 kY			= 10;
+STATIC Kernel::Int32 kMouseCycle = 0;
+STATIC Kernel::PS2MouseInterface kMousePS2;
+STATIC Kernel::Char kMousePacket[4]		= {};
+STATIC Kernel::Boolean kMousePacketReady = false;
 
 STATIC GXInit();
 
@@ -33,11 +33,11 @@ STATIC GXInit();
 #define kPS2XOverflow	 0b01000000
 #define kPS2YOverflow	 0b10000000
 
-using namespace NewOS;
+using namespace Kernel;
 
 Void hal_handle_mouse()
 {
-	NewOS::UInt8 data = HAL::In8(0x60);
+	Kernel::UInt8 data = HAL::In8(0x60);
 
 	switch (kMouseCycle)
 	{
@@ -66,8 +66,8 @@ Void hal_handle_mouse()
 
 	// Notify PIC controller that we're done with it's interrupt.
 
-	NewOS::HAL::Out8(0x20, 0x20);
-	NewOS::HAL::Out8(0xA0, 0x20);
+	Kernel::HAL::Out8(0x20, 0x20);
+	Kernel::HAL::Out8(0xA0, 0x20);
 }
 
 /// @brief Interrupt handler for the mouse.

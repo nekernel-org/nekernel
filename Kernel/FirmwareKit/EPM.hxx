@@ -22,10 +22,10 @@
 /// @brief EPM GUID structure.
 typedef struct BlockGUID
 {
-	NewOS::UInt32 Data1;
-	NewOS::UInt16 Data2;
-	NewOS::UInt16 Data3;
-	NewOS::UInt8  Data4[8];
+	Kernel::UInt32 Data1;
+	Kernel::UInt16 Data2;
+	Kernel::UInt16 Data3;
+	Kernel::UInt8  Data4[8];
 } BlockGUID;
 
 /**
@@ -34,17 +34,17 @@ typedef struct BlockGUID
  */
 struct PACKED BootBlock
 {
-	NewOS::Char	 Magic[kEPMMagicLength];
-	NewOS::Char	 Name[kEPMNameLength];
+	Kernel::Char	 Magic[kEPMMagicLength];
+	Kernel::Char	 Name[kEPMNameLength];
 	BlockGUID	 Uuid;
-	NewOS::Int32 Version;
-	NewOS::Int64 NumBlocks;
-	NewOS::Int64 SectorSz;
-	NewOS::Int64 LbaStart;
-	NewOS::Int16 Kind;
-	NewOS::Int32 FsVersion;
-	NewOS::Char	 Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
-	NewOS::Char	 Reserved[409];			   // to fill a full sector.
+	Kernel::Int32 Version;
+	Kernel::Int64 NumBlocks;
+	Kernel::Int64 SectorSz;
+	Kernel::Int64 LbaStart;
+	Kernel::Int16 Kind;
+	Kernel::Int32 FsVersion;
+	Kernel::Char	 Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
+	Kernel::Char	 Reserved[409];			   // to fill a full sector.
 };
 
 /* @brief AMD64 magic for EPM */

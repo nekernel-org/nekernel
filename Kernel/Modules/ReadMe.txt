@@ -1,5 +1,5 @@
 ==============
-NewOS Modules
+Kernel Modules
 ==============
 
 ===============

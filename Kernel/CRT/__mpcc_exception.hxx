@@ -32,14 +32,14 @@ namespace std
 
 	inline void __throw_domain_error(const char* error)
 	{
-		NewOS::kcout << "MPCC C++: Domain error: " << error << "\r";
+		Kernel::kcout << "MPCC C++: Domain error: " << error << "\r";
 		__throw_general();
 		CANT_REACH(); // prevent from continuing.
 	}
 
 	inline void __throw_bad_array_new_length(void)
 	{
-		NewOS::kcout << "MPCC C++: Bad array length.\r";
+		Kernel::kcout << "MPCC C++: Bad array length.\r";
 		__throw_general();
 		CANT_REACH(); // prevent from continuing.
 	}

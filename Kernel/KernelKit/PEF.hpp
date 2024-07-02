@@ -3,7 +3,7 @@
 	Copyright Zeta Electronics Corporation
 
 	File: PEF.hpp
-	Purpose: Preferred Executable Format for NewOS.
+	Purpose: Preferred Executable Format for Kernel.
 
 	Revision History:
 
@@ -26,7 +26,7 @@
 #define kPefVersion 1
 #define kPefNameLen 255
 
-namespace NewOS
+namespace Kernel
 {
 	enum
 	{
@@ -93,7 +93,7 @@ namespace NewOS
 		kPefZero	 = 0xE,
 		kPefLinkerID = 0x1,
 	};
-} // namespace NewOS
+} // namespace Kernel
 
 #define kPefExt		  ".exec"
 #define kPefDylibExt  ".lib"
@@ -101,7 +101,7 @@ namespace NewOS
 #define kPefObjectExt ".obj"
 #define kPefDebugExt  ".dbg"
 
-// NewOS System Binary Interface.
+// Kernel System Binary Interface.
 #define kPefAbi (0x5046)
 
 #define kPefStart "__ImageStart"

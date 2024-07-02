@@ -38,7 +38,7 @@
 /** @brief invalid position. (n-pos) */
 #define kNPos (SizeT)(-1);
 
-namespace NewOS
+namespace Kernel
 {
 	enum
 	{
@@ -314,6 +314,6 @@ namespace NewOS
 	{
 		delete fFile;
 	}
-} // namespace NewOS
+} // namespace Kernel
 
-#define node_cast(PTR) reinterpret_cast<NewOS::NodePtr>(PTR)
+#define node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)

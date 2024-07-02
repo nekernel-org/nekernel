@@ -28,7 +28,7 @@ EXTERN_C void _hal_enable_smp(void);
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-namespace NewOS::HAL
+namespace Kernel::HAL
 {
 	constexpr Int32 kThreadAPIC	  = 0;
 	constexpr Int32 kThreadLAPIC  = 1;
@@ -142,8 +142,8 @@ namespace NewOS::HAL
 	/// @return
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
-		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
-		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
+		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
+		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
 	}
 
 	EXTERN_C Void _hal_spin_core(Void);
@@ -155,8 +155,8 @@ namespace NewOS::HAL
 	/// @return
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
-		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
-		NewOS::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
+		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
+		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
 	STATIC HAL::StackFramePtr cFramePtr = nullptr;
@@ -232,18 +232,18 @@ namespace NewOS::HAL
 			/// Start local APIC now.
 			///////////////////////////////////////////////////////////////////////////
 
-			auto flagsSet = NewOS::ke_dma_read(cBaseAddressAPIC, 0xF0); // SVR register.
+			auto flagsSet = Kernel::ke_dma_read(cBaseAddressAPIC, 0xF0); // SVR register.
 
 			// enable APIC.
 			flagsSet |= 0x100;
 
-			NewOS::ke_dma_write(cBaseAddressAPIC, 0xF0, flagsSet);
+			Kernel::ke_dma_write(cBaseAddressAPIC, 0xF0, flagsSet);
 
 			/// Set sprurious interrupt vector.
-			NewOS::ke_dma_write(cBaseAddressAPIC, 0xF0, 0x100 | 0xFF);
+			Kernel::ke_dma_write(cBaseAddressAPIC, 0xF0, 0x100 | 0xFF);
 
 			// highest task priority. for our realtime kernel.
-			NewOS::ke_dma_write(cBaseAddressAPIC, 0x21, 0);
+			Kernel::ke_dma_write(cBaseAddressAPIC, 0x21, 0);
 
 			cProgramInitialized = new Boolean(true);
 
@@ -257,6 +257,6 @@ namespace NewOS::HAL
 			ke_stop(RUNTIME_CHECK_FAILED);
 		}
 	}
-} // namespace NewOS::HAL
+} // namespace Kernel::HAL
 
 ///////////////////////////////////////////////////////////////////////////////////////

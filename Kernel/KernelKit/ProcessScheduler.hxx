@@ -24,7 +24,7 @@
 
 ////////////////////////////////////////////////////
 
-namespace NewOS
+namespace Kernel
 {
 	class ProcessHeader;
 	class ProcessTeam;
@@ -282,7 +282,7 @@ namespace NewOS
 	};
 
 	const Int32& rt_get_exit_code() noexcept;
-} // namespace NewOS
+} // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.hxx>
 

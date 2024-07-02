@@ -96,7 +96,7 @@ EXTERN_C UInt32 In32(UInt16 port)
 
 void rt_hlt()
 {
-	NewOS::HAL::rt_halt();
+	Kernel::HAL::rt_halt();
 }
 
 #endif // 0

@@ -6,7 +6,7 @@
 
 #include <KernelKit/LockDelegate.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	/// Leave it empty for now.
-} // namespace NewOS
+} // namespace Kernel

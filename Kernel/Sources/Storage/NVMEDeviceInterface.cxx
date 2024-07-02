@@ -6,10 +6,10 @@
 
 #include <StorageKit/NVME.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	const char* NVMEDeviceInterface::Name() const
 	{
 		return ("NVMEDeviceInterface");
 	}
-} // namespace NewOS
+} // namespace Kernel

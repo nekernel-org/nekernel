@@ -14,7 +14,7 @@
 #define PCI_FUNC_COUNT	 (8)
 #define PCI_BUS_COUNT	 (255)
 
-namespace NewOS::PCI
+namespace Kernel::PCI
 {
 	// model
 	struct DeviceHeader
@@ -55,4 +55,4 @@ namespace NewOS::PCI
 		Detail::BAR BAR4;
 		Detail::BAR BAR5;
 	};
-} // namespace NewOS::PCI
+} // namespace Kernel::PCI

@@ -21,17 +21,17 @@
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED ThreadInformationBlock final
 {
-	NewOS::Char	   Cookie[kTLSCookieLen];
-	NewOS::UIntPtr StartCode;  // Start Address
-	NewOS::UIntPtr StartData;  // Allocation Heap
-	NewOS::UIntPtr StartStack; // Stack Pointer.
-	NewOS::Int32   ThreadID;   // Thread execution ID.
+	Kernel::Char	   Cookie[kTLSCookieLen];
+	Kernel::UIntPtr StartCode;  // Start Address
+	Kernel::UIntPtr StartData;  // Allocation Heap
+	Kernel::UIntPtr StartStack; // Stack Pointer.
+	Kernel::Int32   ThreadID;   // Thread execution ID.
 };
 
 typedef struct ThreadInformationBlock ProcessInformationBlock;
 
 ///! @brief Cookie Sanity check.
-NewOS::Boolean tls_check_tib(ThreadInformationBlock* Ptr);
+Kernel::Boolean tls_check_tib(ThreadInformationBlock* Ptr);
 
 ///! @brief new ptr syscall.
 template <typename T>
@@ -48,7 +48,7 @@ T* tls_new_class(Args&&... args);
 EXTERN_C void rt_install_tib(ThreadInformationBlock* TIB, ThreadInformationBlock* PIB);
 
 /// @brief TLS check (syscall)
-EXTERN_C NewOS::Void tls_check_syscall_impl(NewOS::VoidPtr TIB) noexcept;
+EXTERN_C Kernel::Void tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept;
 
 #include <KernelKit/ThreadLocalStorage.inl>
 

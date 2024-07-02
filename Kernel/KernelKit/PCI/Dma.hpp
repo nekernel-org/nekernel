@@ -12,7 +12,7 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Ref.hpp>
 
-namespace NewOS
+namespace Kernel
 {
 	enum class DmaKind
 	{
@@ -76,6 +76,6 @@ namespace NewOS
 	public:
 		static OwnPtr<IOBuf<Char*>> Construct(OwnPtr<DMAWrapper>& dma);
 	};
-} // namespace NewOS
+} // namespace Kernel
 
 #include <KernelKit/PCI/Dma.inl>

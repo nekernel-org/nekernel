@@ -16,7 +16,7 @@
 #define kKernelHeapMagic		   (0xD4D7D5)
 #define kKernelHeapHeaderPaddingSz (16U)
 
-namespace NewOS
+namespace Kernel
 {
 	STATIC SizeT	   kHeapCount = 0UL;
 	STATIC PageManager kHeapPageManager;
@@ -192,4 +192,4 @@ namespace NewOS
 
 		return false;
 	}
-} // namespace NewOS
+} // namespace Kernel

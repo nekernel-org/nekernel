@@ -26,7 +26,7 @@
 #define NEWFS_WRITE(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
 #define NEWFS_READ(DRV, TRAITS, MP)	 (MP->DRV()).fInput(&TRAITS)
 
-using namespace NewOS;
+using namespace Kernel;
 
 /// @brief Read from newfs disk.
 /// @param Mnt mounted interface.
