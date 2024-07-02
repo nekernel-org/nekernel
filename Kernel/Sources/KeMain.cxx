@@ -52,10 +52,10 @@ namespace NewOS::Detail
 				if (fNewFS->GetParser())
 				{
 					constexpr auto cFolderInfo		  = "META-INF";
-					const auto	   cDirCount		  = 8;
+					const auto	   cDirCount		  = 9;
 					const char*	   cDirStr[cDirCount] = {
 						   "C:\\Boot\\", "C:\\System\\", "C:\\Support\\", "C:\\Applications\\",
-						   "C:\\Users\\", "C:\\Library\\", "C:\\Mount\\", "C:\\DCIM\\"};
+						   "C:\\Users\\", "C:\\Library\\", "C:\\Mount\\", "C:\\DCIM\\", "C:\\Storage\\"};
 
 					for (NewOS::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{

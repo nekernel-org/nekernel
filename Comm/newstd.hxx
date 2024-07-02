@@ -21,12 +21,7 @@ Purpose: System Call Interface.
 #define cRestrictW	"w"
 #define cRestrictRW "rw"
 
-class NUser;		/// @brief User application class.
-class NWindow;		/// @brief Window class.
-class NWindowAlert; /// @brief Window alert object
-class NURL;			/// @brief URL object.
-
-typedef void (*NWindowCallback)(NWindow*);
+class NSyscall;		/// @brief User application class.
 
 typedef int	 OSType;
 typedef bool Bool;
@@ -46,46 +41,49 @@ typedef __INT8_TYPE__  SInt8;
 
 typedef char UTFChar;
 
+typedef UInt32 MBCIType;
+
 /**
 	@brief Application class.
 */
-class NApplication
+class NSyscall
 {
 public:
-	explicit NApplication() = default;
-	virtual ~NApplication() = default;
+	explicit NSyscall() = default;
+	virtual ~NSyscall() = default;
 
-	typedef UInt32 MBCIType;
+	NSyscall& operator=(const NSyscall&) = default;
+	NSyscall(const NSyscall&) = default;
 
 public:
 	/// @brief disable device.
-	UInt0 PowerOff(MBCIType);
+	virtual UInt0 PowerOff(MBCIType)  = 0;
 
 	/// @brief enable device.
-	UInt0 PowerOn(MBCIType);
+	virtual UInt0 PowerOn(MBCIType)  = 0;
 
 	/// @brief reboot device.
-	UInt0 PowerReboot(MBCIType);
+	virtual UInt0 PowerReboot(MBCIType)  = 0;
 
 	/// @brief check if MBCI device is wokeup.
-	Bool  PowerIsWokeup(MBCIType);
+	virtual Bool  PowerIsWokeup(MBCIType)  = 0;
 
 	/// @brief probe MBCI device from phone.
-	MBCIType PowerProbeDevice(const char* namepace, const int index);
+	virtual MBCIType PowerProbeDevice(const char* namepace, const int index)  = 0;
 
 	// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. //
 
 	/// @brief terminate app.
-	virtual UInt0  AppTerminate() = 0;
+	virtual UInt0 AppTerminate() = 0;
 
 	/// @brief exit thread.
-	virtual Bool   ThreadExit(OSType code) = 0;
+	virtual Bool ThreadExit(OSType code) = 0;
 
 	/// @brief alloc pointer.
 	virtual UInt0* ProcessNew(long long sz) = 0;
 
 	/// @brief free pointer.
-	virtual UInt0  ProcessDelete(void* ptr) = 0;
+	virtual UInt0 ProcessDelete(void* ptr) = 0;
 
 	// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. //
 
@@ -93,33 +91,31 @@ public:
 	virtual OSType OpenStorage(const char* path, const char* restr) = 0;
 
 	/// @brief Close descriptor.
-	virtual UInt0  CloseStorage(OSType descriptorType) = 0;
+	virtual UInt0 CloseStorage(OSType descriptorType) = 0;
 
 	/// @brief Execute from shell.
-	virtual NURL*  URLExecute(const NURL* shell) = 0;
+	virtual OSType URLExecute(const UTFChar* shellLink) = 0;
 
 	/// @brief Read descriptor.
 	virtual UInt0* ReadStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType) = 0;
+
+	/// @brief Seek in storage file
+	virtual UInt64 SeekStorage(OSType descriptorType, UInt64 offset) = 0;
+
+	/// @brief Tell storage cursor.
+	virtual UInt64 TellStorage(OSType descriptorType) = 0;
+
+	/// @brief Remove stored file.
+	virtual UInt64 RemoveStorage(OSType descriptorType) = 0;
+
+	/// @brief Create stored file.
+	virtual OSType CreateStorage(const UTFChar* fileName, UInt64 flags) = 0;
 
 	/// @brief Write descriptor.
 	virtual UInt0* WriteStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType) = 0;
 
 };
 
-/**
-@brief This class contains an URL
-*/
-class NURL
-{
-public:
-	explicit NURL() = default;
-	virtual ~NURL() = default;
-
-public:
-	virtual NURL* Navigate(const char* url)		 = 0;
-	virtual NURL* Protocol(const char* protocol) = 0;
-
-public:
-	char* fBufferPtr;
-	long  fBufferLen;
-};
+/// @brief Request syscall object.
+/// @return Syscall implementation.
+NSyscall* NRequestSyscall(UInt0);
