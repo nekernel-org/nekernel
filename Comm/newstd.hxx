@@ -7,7 +7,8 @@ Purpose: System Call Interface.
 
 ------------------------------------------- */
 
-#pragma once
+#ifndef _INC_COMM_NEWSTD_HXX_
+#define _INC_COMM_NEWSTD_HXX_
 
 #ifdef __KERNEL__
 #error !!! including header in kernel mode !!!
@@ -21,7 +22,7 @@ Purpose: System Call Interface.
 #define cRestrictW	"w"
 #define cRestrictRW "rw"
 
-class NSyscall;		/// @brief User application class.
+class NSyscall;		/// @brief System call class.
 
 typedef int	 OSType;
 typedef bool Bool;
@@ -74,16 +75,16 @@ public:
 	// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. //
 
 	/// @brief terminate app.
-	virtual UInt0 AppTerminate() = 0;
+	virtual UInt0 Terminate() = 0;
 
 	/// @brief exit thread.
-	virtual Bool ThreadExit(OSType code) = 0;
+	virtual Bool Exit(OSType code) = 0;
 
 	/// @brief alloc pointer.
-	virtual UInt0* ProcessNew(long long sz) = 0;
+	virtual UInt0* New(long long sz) = 0;
 
 	/// @brief free pointer.
-	virtual UInt0 ProcessDelete(void* ptr) = 0;
+	virtual UInt0 Delete(void* ptr) = 0;
 
 	// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. //
 
@@ -118,4 +119,10 @@ public:
 
 /// @brief Request syscall object.
 /// @return Syscall implementation.
-NSyscall* NRequestSyscall(UInt0);
+ML_IMPORT_C NSyscall* NRequestSyscall(UInt0);
+
+/// @brief Release syscall object.
+/// @param syscall System call object.
+ML_IMPORT_C UInt0	  NReleaseSyscall(NSyscall* syscall);
+
+#endif // ifndef _INC_COMM_NEWSTD_HXX_
