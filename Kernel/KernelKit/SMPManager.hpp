@@ -89,8 +89,6 @@ namespace NewOS
 
 	public:
 		~SMPManager();
-
-	public:
 		NEWOS_COPY_DEFAULT(SMPManager);
 
 	public:

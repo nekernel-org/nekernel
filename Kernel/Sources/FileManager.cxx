@@ -23,7 +23,7 @@ namespace NewOS
 
 	/// @brief Unmount filesystem.
 	/// @return The unmounted filesystem.
-	FilesystemManagerInterface* FilesystemManagerInterface::Unmount()
+	_Output FilesystemManagerInterface* FilesystemManagerInterface::Unmount()
 	{
 		if (kMounted)
 		{
@@ -39,7 +39,7 @@ namespace NewOS
 	/// @brief Mount filesystem.
 	/// @param mountPtr The filesystem to mount.
 	/// @return if it succeeded true, otherwise false.
-	bool FilesystemManagerInterface::Mount(FilesystemManagerInterface* mountPtr)
+	bool FilesystemManagerInterface::Mount(_Input FilesystemManagerInterface* mountPtr)
 	{
 		if (kMounted == nullptr)
 		{
@@ -55,7 +55,7 @@ namespace NewOS
 	/// @param path
 	/// @param r
 	/// @return
-	NodePtr NewFilesystemManager::Open(const char* path, const char* r)
+	NodePtr NewFilesystemManager::Open(_Input const Char* path, _Input const Char* r)
 	{
 		if (!path || *path == 0)
 			return nullptr;
@@ -79,10 +79,13 @@ namespace NewOS
 	/// @param data the data.
 	/// @param flags the size.
 	/// @return
-	Void NewFilesystemManager::Write(NodePtr node, VoidPtr data, Int32 flags, SizeT size)
+	Void NewFilesystemManager::Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size)
 	{
-		auto dataForkName = kNewFSDataFork;
-		this->Write(dataForkName, node, data, flags, size);
+		if (!node) return;
+		if (!size) return;
+
+		constexpr auto cDataForkName = kNewFSDataFork;
+		this->Write(cDataForkName, node, data, flags, size);
 	}
 
 	/// @brief Read from filesystem fork.
@@ -90,10 +93,13 @@ namespace NewOS
 	/// @param flags the flags with it.
 	/// @param sz the size to read.
 	/// @return
-	VoidPtr NewFilesystemManager::Read(NodePtr node, Int32 flags, SizeT sz)
+	VoidPtr NewFilesystemManager::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
 	{
-		auto dataForkName = kNewFSDataFork;
-		return this->Read(dataForkName, node, flags, sz);
+		if (!node) return nullptr;
+		if (!size) return nullptr;
+
+		constexpr auto cDataForkName = kNewFSDataFork;
+		return this->Read(cDataForkName, node, flags, size);
 	}
 
 	Void NewFilesystemManager::Write(_Input const Char* name,

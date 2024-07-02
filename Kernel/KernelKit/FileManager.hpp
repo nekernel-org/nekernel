@@ -136,13 +136,13 @@ namespace NewOS
 		NEWOS_COPY_DEFAULT(NewFilesystemManager);
 
 	public:
-		NodePtr Create(const char* path) override;
-		NodePtr CreateAlias(const char* path) override;
-		NodePtr CreateDirectory(const char* path) override;
+		NodePtr Create(const Char* path) override;
+		NodePtr CreateAlias(const Char* path) override;
+		NodePtr CreateDirectory(const Char* path) override;
 
 	public:
-		bool	Remove(const char* path) override;
-		NodePtr Open(const char* path, const char* r) override;
+		bool	Remove(const Char* path) override;
+		NodePtr Open(const Char* path, const Char* r) override;
 		Void	Write(NodePtr node, VoidPtr data, Int32 flags, SizeT sz) override;
 		VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override;
 		bool	Seek(NodePtr node, SizeT off);
