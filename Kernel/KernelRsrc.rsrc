@@ -1,4 +1,4 @@
-1 ICON "../Icons/bonjour-logo.ico"
+1 ICON "../Icons/kernel-logo.ico"
 
 #include "CompilerKit/Version.hxx"
 
@@ -11,9 +11,9 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "Zeta Electronics Corporation"
-      VALUE "FileDescription", "Zeta OS kernel."
+	  VALUE "FileDescription", "NewOS Kernel."
       VALUE "FileVersion", KERNEL_VERSION
-      VALUE "InternalName", "NeXUS"
+	  VALUE "InternalName", "HCore"
       VALUE "LegalCopyright", "Zeta Electronics Corporation"
       VALUE "OriginalFilename", "newoskrnl.exe"
       VALUE "ProductName", "NewOSKrnl"

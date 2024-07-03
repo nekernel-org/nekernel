@@ -6,14 +6,14 @@
 
 //! @brief Allocates a pointer from the process's tls.
 
-#ifndef __PROCESS_MANAGER__
+#ifndef _INC_PROCESS_SCHEDULER_HXX_
 #include <KernelKit/ProcessScheduler.hxx>
 #endif
 
 template <typename T>
 inline T* tls_new_ptr(void)
 {
-	using namespace NewOS;
+	using namespace Kernel;
 
 	MUST_PASS(ProcessScheduler::The().Leak().TheCurrent());
 
@@ -30,7 +30,7 @@ inline bool tls_delete_ptr(T* ptr)
 	if (!ptr)
 		return false;
 
-	using namespace NewOS;
+	using namespace Kernel;
 
 	MUST_PASS(ProcessScheduler::The().Leak().TheCurrent());
 
@@ -48,9 +48,11 @@ T* tls_new_class(Args&&... args)
 {
 	T* ptr = tls_new_ptr<T>();
 
+	using namespace Kernel;
+
 	if (ptr)
 	{
-		*ptr = T(NewOS::forward(args)...);
+		*ptr = T(forward(args)...);
 		return ptr;
 	}
 

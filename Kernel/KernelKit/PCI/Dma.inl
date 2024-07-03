@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-namespace NewOS
+namespace Kernel
 {
 	template <class T>
 	T* DMAWrapper::operator->()

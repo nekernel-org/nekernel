@@ -12,7 +12,7 @@
 
 ------------------------------------------- */
 
-namespace NewOS
+namespace Kernel
 {
 	template <SizeT Sz>
 	template <typename T>
@@ -20,12 +20,14 @@ namespace NewOS
 	{
 		switch (sizeof(T))
 		{
+#ifdef __NEWOS_AMD64__
 		case 4:
 			return HAL::In32(fPorts[index].Leak());
 		case 2:
 			return HAL::In16(fPorts[index].Leak());
 		case 1:
 			return HAL::In8(fPorts[index].Leak());
+#endif
 		default:
 			return 0xFFFF;
 		}
@@ -37,7 +39,7 @@ namespace NewOS
 	{
 		switch (sizeof(T))
 		{
-#ifdef __x86_64__
+#ifdef __NEWOS_AMD64__
 		case 4:
 			HAL::Out32(fPorts[index].Leak(), value);
 		case 2:

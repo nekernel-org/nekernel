@@ -16,6 +16,10 @@ Boot/BootKit/Vendor/Support.hxx
 Boot/BootKit/compile_flags.txt
 Boot/NetBoot/Module.cxx
 Boot/NetBoot/NetBoot.hxx
+Kernel/KernelKit/ThreadLocalStorage.inl
+Kernel/KernelKit/PCI/Dma.inl
+Kernel/KernelKit/PCI/IO-Impl-AMD64.inl
+Kernel/NetworkKit/NetworkDevice.inl
 Boot/ReadMe.md
 Boot/Sources/HEL/AMD64/BootAHCI.cxx
 Boot/Sources/HEL/AMD64/BootATA.cxx

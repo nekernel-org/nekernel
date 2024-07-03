@@ -8,7 +8,7 @@
 	Dtor and ctors.
 */
 
-namespace NewOS
+namespace Kernel
 {
 	NetworkDevice::NetworkDevice(void (*out)(NetworkDeviceCommand),
 								 void (*in)(NetworkDeviceCommand),
@@ -25,6 +25,7 @@ namespace NewOS
 		MUST_PASS(fCleanup);
 
 		kcout << "newoskrnl: NetworkDevice cleanup.\r";
+
 		if (fCleanup)
 			fCleanup();
 	}
