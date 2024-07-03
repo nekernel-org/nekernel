@@ -51,13 +51,14 @@ DDK/KernelString.c
 DDK/KernelString.h
 DDK/ReadMe.txt
 Doxyfile
-Drv/Bonjour/Bonjour.c
-Drv/Bonjour/x86_64.mk
+Drv/Hello/CheckStack.c
+Drv/Hello/Hello.c
+Drv/Hello/x86_64.mk
 Drv/SampleDriver/CheckStck.c
 Drv/SampleDriver/SampleDriver.c
 Drv/SampleDriver/x86_64.mk
 Drv/VideoDrv/CheckStck.c
-Drv/VideoDrv/VideoDrv.c
+Drv/VideoDrv/VideoDrv.cc
 Drv/VideoDrv/x86_64.make
 Kernel/ArchKit/ArchKit.hpp
 Kernel/ArchKit/compile_flags.txt

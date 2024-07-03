@@ -14,5 +14,5 @@
 DK_EXTERN void kernelPrintChar(const char ch);
 
 /// @brief print string to UART.
-/// @param message UART to transmit.
+/// @param message string to transmit to UART.
 DK_EXTERN void kernelPrintStr(const char* message);

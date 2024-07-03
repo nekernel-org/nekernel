@@ -10,21 +10,12 @@
 #include <DDK/KernelString.h>
 
 /// @brief Open a new binary device from path.
-DK_EXTERN kernelDeviceRef kernelOpenBinaryDevice(const char* devicePath)
+DK_EXTERN kernelDeviceRef kernelOpenDevice(const char* devicePath)
 {
 	if (!devicePath)
-		return NIL;
+		return nil;
 
-	return kernelCall("OpenBinaryDevice", 1, devicePath, kernelStringLength(devicePath));
-}
-
-/// @brief Open a new character device from path.
-DK_EXTERN kernelDeviceRef kernelOpenCharDevice(const char* devicePath)
-{
-	if (!devicePath)
-		return NIL;
-
-	return kernelCall("OpenCharDevice", 1, devicePath, kernelStringLength(devicePath));
+	return kernelCall("OpenDevice", 1, (void*)devicePath, kernelStringLength(devicePath));
 }
 
 /// @brief Close any device.

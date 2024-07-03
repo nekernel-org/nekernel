@@ -12,7 +12,7 @@ ADD_FILE=touch
 COPY=cp
 HTTP_GET=wget
 
-LD_FLAGS=-e __ImageStart --subsystem=17
+LD_FLAGS=-e __at_enter --subsystem=17
 
 OBJ=*.o
 
