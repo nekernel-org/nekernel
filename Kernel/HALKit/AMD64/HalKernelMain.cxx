@@ -19,10 +19,9 @@
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPCEP.hxx>
 
-#define KERNEL_INIT(X) X; \
+#define KERNEL_INIT(X) \
+	X;                 \
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
-
-
 
 /// @brief This symbol is the kernel main symbol.
 EXTERN_C void KeMain();
@@ -32,7 +31,7 @@ EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 struct PACKED HeapAllocInfo final
 {
 	Kernel::VoidPtr fThe;
-	Kernel::Size	   fTheSz;
+	Kernel::Size	fTheSz;
 };
 
 struct PACKED ProcessBlockInfo final
@@ -46,7 +45,7 @@ struct PACKED ProcessExitInfo final
 	STATIC constexpr auto cReasonLen = 512;
 
 	Kernel::Int64 fCode;
-	Kernel::Char	 fReason[cReasonLen];
+	Kernel::Char  fReason[cReasonLen];
 };
 
 namespace Kernel::HAL
@@ -121,9 +120,9 @@ EXTERN_C void hal_init_platform(
 	constexpr auto cCatalogCreate		 = 0x22;
 	constexpr auto cRebootInterrupt		 = 0x23;
 	constexpr auto cShutdownInterrupt	 = 0x24;
-	constexpr auto cLPCSendMsg	 		 = 0x25;
-	constexpr auto cLPCOpenMsg	 		 = 0x26;
-	constexpr auto cLPCCloseMsg	 		 = 0x27;
+	constexpr auto cLPCSendMsg			 = 0x25;
+	constexpr auto cLPCOpenMsg			 = 0x26;
+	constexpr auto cLPCCloseMsg			 = 0x27;
 	constexpr auto cLPCSanitizeMsg		 = 0x28;
 
 	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -142,8 +141,9 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
-		
-		if (!rdxInf) return;
+
+		if (!rdxInf)
+			return;
 
 		// assign the fThe field with the pointer.
 		rdxInf->fThe = Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
@@ -153,7 +153,8 @@ EXTERN_C void hal_init_platform(
 		// get HAC struct.
 		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
 
-		if (!rdxInf) return;
+		if (!rdxInf)
+			return;
 
 		// delete ptr with sz in mind.
 		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
@@ -161,8 +162,9 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		ProcessBlockInfo* rdxPb = reinterpret_cast<ProcessBlockInfo*>(rdx);
-		
-		if (!rdxPb) return;
+
+		if (!rdxPb)
+			return;
 
 		// install the fTIB and fPIB.
 		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);
@@ -170,8 +172,9 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
-		
-		if (!rdxEi) return;
+
+		if (!rdxEi)
+			return;
 
 		Kernel::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
 		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Exit(rdxEi->fCode);
@@ -179,10 +182,11 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
-		
-		if (!rdxEi) return;
 
-		rdxEi->fCode		   = Kernel::rt_get_exit_code();
+		if (!rdxEi)
+			return;
+
+		rdxEi->fCode = Kernel::rt_get_exit_code();
 	};
 
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {

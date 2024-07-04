@@ -21,7 +21,7 @@
  */
 
 #define cMBCIZeroSz (8)
-#define cMBCIMagic "MBCI  "
+#define cMBCIMagic	"MBCI  "
 
 namespace Kernel
 {

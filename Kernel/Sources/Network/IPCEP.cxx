@@ -14,21 +14,20 @@ using namespace Kernel;
 /// @brief The internal sanitize function.
 Bool __ipc_sanitize_packet(IPCEPMessageHeader* pckt)
 {
-	if (!pckt) return false;
+	if (!pckt)
+		return false;
 
 	auto endian = DEDUCE_ENDIAN(pckt, ((char*)pckt)[0]);
 
 	switch (endian)
 	{
-	case Endian::kEndianBig:
-	{
+	case Endian::kEndianBig: {
 		if (pckt->IpcEndianess == eIPCEPLittleEndian)
 			goto _Fail;
 
 		break;
 	}
-	case Endian::kEndianLittle:
-	{
+	case Endian::kEndianLittle: {
 		if (pckt->IpcEndianess == eIPCEPBigEndian)
 			goto _Fail;
 
@@ -71,4 +70,4 @@ namespace Kernel
 
 		return true;
 	}
-}
+} // namespace Kernel

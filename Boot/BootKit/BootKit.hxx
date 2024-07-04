@@ -39,19 +39,19 @@ class BFileReader;
 class BFileRunner;
 class BVersionString;
 
-using namespace Kernel;
-
 typedef Char* PEFImagePtr;
 typedef Char* PEImagePtr;
 
 typedef WideChar CharacterTypeUTF16;
 typedef Char	 CharacterTypeUTF8;
 
+using namespace Kernel;
+
 namespace EFI
 {
-	extern void ThrowError(const CharacterTypeUTF16* ErrorCode,
-						   const CharacterTypeUTF16* Reason) noexcept;
-}
+	extern void ThrowError(const CharacterTypeUTF16* errorCode,
+						   const CharacterTypeUTF16* reason) noexcept;
+} // namespace EFI
 
 /**
  * @brief BootKit Text Writer class

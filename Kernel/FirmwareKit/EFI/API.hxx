@@ -9,7 +9,7 @@
 
 #include <FirmwareKit/EFI/EFI.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/MSDOS.hpp>
+#include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
 
 #ifdef __NEWBOOT__

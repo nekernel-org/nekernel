@@ -22,9 +22,9 @@ typedef Kernel::Int32 PPCHartType;
 typedef struct HalHardwareThread
 {
 	Kernel::UIntPtr fStartAddress;
-	Kernel::UInt8   fPrivleged : 1;
-	Kernel::UInt32  fPageFlags;
-	PPCHartType	   fIdentNumber;
+	Kernel::UInt8	fPrivleged : 1;
+	Kernel::UInt32	fPageFlags;
+	PPCHartType		fIdentNumber;
 } HalHardwareThread;
 
 /// @brief Set PC to specific hart.

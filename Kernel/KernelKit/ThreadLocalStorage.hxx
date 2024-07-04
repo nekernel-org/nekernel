@@ -21,11 +21,11 @@
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED ThreadInformationBlock final
 {
-	Kernel::Char	   Cookie[kTLSCookieLen];
-	Kernel::UIntPtr StartCode;  // Start Address
-	Kernel::UIntPtr StartData;  // Allocation Heap
+	Kernel::Char	Cookie[kTLSCookieLen];
+	Kernel::UIntPtr StartCode;	// Start Address
+	Kernel::UIntPtr StartData;	// Allocation Heap
 	Kernel::UIntPtr StartStack; // Stack Pointer.
-	Kernel::Int32   ThreadID;   // Thread execution ID.
+	Kernel::Int32	ThreadID;	// Thread execution ID.
 };
 
 typedef struct ThreadInformationBlock ProcessInformationBlock;

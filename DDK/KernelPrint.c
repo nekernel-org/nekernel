@@ -10,9 +10,9 @@
 
 DK_EXTERN void kernelPrintChar(const char ch)
 {
-	char assembled[2] = { 0 };
-	assembled[0] = ch;
-	assembled[1] = 0;
+	char assembled[2] = {0};
+	assembled[0]	  = ch;
+	assembled[1]	  = 0;
 
 	kernelCall("WriteCharacter", 1, assembled, 1);
 }

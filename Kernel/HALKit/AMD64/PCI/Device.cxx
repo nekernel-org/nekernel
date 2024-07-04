@@ -10,11 +10,11 @@
 Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
-						 ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
-						 (bar & 0xFC);
+						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
+						  (bar & 0xFC);
 
 	Kernel::HAL::Out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
-					  target);
+					   target);
 
 	return Kernel::HAL::In32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
@@ -22,11 +22,11 @@ Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShor
 void NewOSPCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
-						 ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
-						 (bar & ~3);
+						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
+						  (bar & ~3);
 
 	Kernel::HAL::Out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
-					  target);
+					   target);
 }
 
 namespace Kernel::PCI

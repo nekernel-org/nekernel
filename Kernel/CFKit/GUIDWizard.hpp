@@ -17,6 +17,6 @@
 
 namespace Kernel::XRN::Version1
 {
-	Ref<GUIDSequence*>				make_sequence(const ArrayList<UShort>& seq);
+	Ref<GUIDSequence*>				 make_sequence(const ArrayList<UShort>& seq);
 	ErrorOr<Ref<Kernel::StringView>> try_guid_to_string(Ref<GUIDSequence*>& guid);
 } // namespace Kernel::XRN::Version1

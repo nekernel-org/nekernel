@@ -130,10 +130,10 @@ namespace Kernel
 			}
 
 			heapInfoBlk->fTargetPtrSize = 0UL;
-			heapInfoBlk->fPresent	   = false;
-			heapInfoBlk->fTargetPtr	   = 0;
-			heapInfoBlk->fCRC32		   = 0;
-			heapInfoBlk->fMagic		   = 0;
+			heapInfoBlk->fPresent		= false;
+			heapInfoBlk->fTargetPtr		= 0;
+			heapInfoBlk->fCRC32			= 0;
+			heapInfoBlk->fMagic			= 0;
 
 			PTEWrapper		 pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heapInfoBlk));
 			Ref<PTEWrapper*> pteAddress{&pageWrapper};

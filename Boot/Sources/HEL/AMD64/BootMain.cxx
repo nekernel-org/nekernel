@@ -10,7 +10,7 @@
 #include <FirmwareKit/EFI.hxx>
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/MSDOS.hpp>
+#include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
 #include <KernelKit/PEF.hpp>
 #include <NewKit/Macros.hpp>
@@ -166,36 +166,24 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	Descriptor = new EfiMemoryDescriptor[*SzDesc];
 	BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 
-	writer.Write(L"Kernel-Desc-Count: ");
-	writer.Write(*SzDesc);
-	writer.Write(L"\r");
+	auto cDefaultMemoryMap = 0; // The sixth entry.
 
-	auto cDefaultMemoryMap = 0; /// The sixth entry.
+	//-----------------------------------------------------------//
+	// A simple loop which finds a usable memory region for us.
+	//-----------------------------------------------------------//
 
-	/// A simple loop which finds a usable memory region for us.
-	SizeT i = 0UL;
-	for (; Descriptor[i].Kind != EfiMemoryType::EfiConventionalMemory; ++i)
+	SizeT lookIndex = 0UL;
+
+	for (; Descriptor[lookIndex].Kind != EfiMemoryType::EfiConventionalMemory; ++lookIndex)
 	{
 		;
 	}
 
-	cDefaultMemoryMap = i;
+	cDefaultMemoryMap = lookIndex;
 
-	writer.Write(L"Number-Of-Pages: ")
-		.Write(Descriptor[cDefaultMemoryMap].NumberOfPages)
-		.Write(L"\r");
-	writer.Write(L"Virtual-Address: ")
-		.Write(Descriptor[cDefaultMemoryMap].VirtualStart)
-		.Write(L"\r");
-	writer.Write(L"Phyiscal-Address: ")
-		.Write(Descriptor[cDefaultMemoryMap].PhysicalStart)
-		.Write(L"\r");
-	writer.Write(L"Page-Kind: ")
-		.Write(Descriptor[cDefaultMemoryMap].Kind)
-		.Write(L"\r");
-	writer.Write(L"Page-Attribute: ")
-		.Write(Descriptor[cDefaultMemoryMap].Attribute)
-		.Write(L"\r");
+	//-----------------------------------------------------------//
+	// Update handover file specific table and phyiscal start field.
+	//-----------------------------------------------------------//
 
 	handoverHdrPtr->f_PhysicalStart =
 		(VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
@@ -214,41 +202,18 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
-	BFileReader reader(L"SplashScreen.fmt", ImageHandle);
-	reader.ReadAll(512, 16);
-
-	if (reader.Blob())
-	{
-		Char* buf = (Char*)reader.Blob();
-
-		for (SizeT i = 0; i < reader.Size(); ++i)
-		{
-			if (buf[i] != '\n' && buf[i] != '\r')
-			{
-				if (buf[i] == '*')
-				{
-					writer.WriteCharacter('\t');
-				}
-				else
-				{
-					writer.WriteCharacter(buf[i]);
-				}
-			}
-			else
-				writer.Write(L"\r");
-		}
-	}
-
-	///
-	/// The following checks for an exisiting partition
-	/// inside the disk, if it doesn't have one,
-	/// format the disk.
-	//
+	// ---------------------------------------------------- //
+	// The following checks for an exisiting partition
+	// inside the disk, if it doesn't have one,
+	// format the disk.
+	// ---------------------------------------------------- //
 
 	BDiskFormatFactory<BootDeviceATA> diskFormatter;
 
-	/// if not formated yet, then format it with the following folders:
-	/// /, /Boot, /Applications.
+	// ---------------------------------------------------- //
+	// if not formated yet, then format it with the following folders:
+	// /, /Boot, /Applications.
+	// ---------------------------------------------------- //
 	if (!diskFormatter.IsPartitionValid())
 	{
 		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
@@ -261,7 +226,10 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	EFI::ExitBootServices(*MapKey, ImageHandle);
 
-	/// Fallback to builtin kernel.
+	// ---------------------------------------------------- //
+	// Fallback to builtin kernel.
+	// ---------------------------------------------------- //
+
 	hal_init_platform(handoverHdrPtr);
 
 	EFI::Stop();

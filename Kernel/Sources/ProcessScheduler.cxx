@@ -55,7 +55,10 @@ namespace Kernel
 		this->Exit(kErrorProcessFault);
 	}
 
-	Int32& ProcessHeader::GetLocalCode() noexcept { return fLocalCode; }
+	Int32& ProcessHeader::GetLocalCode() noexcept
+	{
+		return fLocalCode;
+	}
 
 	void ProcessHeader::Wake(const bool should_wakeup)
 	{

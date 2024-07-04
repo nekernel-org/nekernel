@@ -13,7 +13,7 @@
 #include <BootKit/BootKit.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <FirmwareKit/EFI/API.hxx>
-#include <cstddef>
+#include <climits>
 
 /// @file BootFileReader
 /// @brief Bootloader File reader.
@@ -111,8 +111,9 @@ BFileReader::~BFileReader()
 }
 
 /**
-	@brief this reads all of the buffer.
-	@param until read until size is reached.
+	@brief Reads all of the file into a buffer.
+	@param **until** size of file
+	@param **chunk** chunk to read each time.
 */
 Void BFileReader::ReadAll(SizeT until, SizeT chunk)
 {
@@ -121,7 +122,7 @@ Void BFileReader::ReadAll(SizeT until, SizeT chunk)
 		if (auto err = BS->AllocatePool(EfiLoaderCode, until, (VoidPtr*)&mBlob) !=
 					   kEfiOk)
 		{
-			mWriter.Write(L"*** EFI-Code: ").Write(err).Write(L" ***\r");
+			mWriter.Write(L"*** error: ").Write(err).Write(L" ***\r");
 			EFI::ThrowError(L"OutOfMemory", L"Out of memory.");
 		}
 	}

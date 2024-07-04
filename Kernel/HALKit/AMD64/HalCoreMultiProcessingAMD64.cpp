@@ -159,8 +159,8 @@ namespace Kernel::HAL
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
-	STATIC HAL::StackFramePtr cFramePtr = nullptr;
-	STATIC Int32		      cSMPInterrupt = 0x40;
+	STATIC HAL::StackFramePtr cFramePtr		= nullptr;
+	STATIC Int32			  cSMPInterrupt = 0x40;
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
@@ -247,7 +247,7 @@ namespace Kernel::HAL
 
 			cProgramInitialized = new Boolean(true);
 
-			constexpr auto cWhatCore		 = 1;
+			constexpr auto cWhatCore = 1;
 
 			hal_send_start_ipi(cWhatCore, cSMPInterrupt, cBaseAddressAPIC);
 		}

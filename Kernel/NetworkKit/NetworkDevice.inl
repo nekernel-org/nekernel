@@ -29,4 +29,4 @@ namespace Kernel
 		if (fCleanup)
 			fCleanup();
 	}
-} // namespace NewOS
+} // namespace Kernel

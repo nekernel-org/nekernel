@@ -10,8 +10,10 @@
 
 DK_EXTERN size_t kernelStringLength(const char* in)
 {
-	if (in == nil) return 0;
-	if (*in == 0) return 0;
+	if (in == nil)
+		return 0;
+	if (*in == 0)
+		return 0;
 
 	size_t index = 0;
 

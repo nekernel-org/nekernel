@@ -34,17 +34,17 @@ typedef struct BlockGUID
  */
 struct PACKED BootBlock
 {
-	Kernel::Char	 Magic[kEPMMagicLength];
-	Kernel::Char	 Name[kEPMNameLength];
-	BlockGUID	 Uuid;
+	Kernel::Char  Magic[kEPMMagicLength];
+	Kernel::Char  Name[kEPMNameLength];
+	BlockGUID	  Uuid;
 	Kernel::Int32 Version;
 	Kernel::Int64 NumBlocks;
 	Kernel::Int64 SectorSz;
 	Kernel::Int64 LbaStart;
 	Kernel::Int16 Kind;
 	Kernel::Int32 FsVersion;
-	Kernel::Char	 Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
-	Kernel::Char	 Reserved[409];			   // to fill a full sector.
+	Kernel::Char  Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
+	Kernel::Char  Reserved[409];			// to fill a full sector.
 };
 
 /* @brief AMD64 magic for EPM */

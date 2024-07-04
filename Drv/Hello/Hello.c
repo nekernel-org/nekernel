@@ -13,10 +13,9 @@ struct HelloMasterConfigHeaderInput;
 
 struct HelloMasterConfigHeaderInput
 {
-	size_t fSizeOfOutput;
+	size_t							fSizeOfOutput;
 	struct HelloMasterConfigHeader* fOutput;
 };
-
 
 /// @file Hello.c
 /// @brief Zero configuration protocol, a much more better protocol for zero configuration.
@@ -28,15 +27,15 @@ typedef struct HelloMasterConfigHeader
 	int64_t fMagic;
 	int64_t fVersion;
 	int64_t fSourceAddress;
-	size_t  fDataLength;
+	size_t	fDataLength;
 	wchar_t fUTF16Data[cHMCHMaxDataLength];
 } __attribute__((packed)) HelloMasterConfigHeader;
 
 #define cHMCHDeviceLen 255
 
-static kernelDeviceRef cDev = nil;
-static char* cDeviceUUID = nil; // 3ed40738-c7d6-4b59-afdf-3c104b05fbf
-static HelloMasterConfigHeader* cHeader = nil;
+static kernelDeviceRef			cDev		= nil;
+static char*					cDeviceUUID = nil; // 3ed40738-c7d6-4b59-afdf-3c104b05fbf
+static HelloMasterConfigHeader* cHeader		= nil;
 
 /// @brief Link to master device to attribute DHCP lease.
 static void __hello_link_device(void* a0)
@@ -66,13 +65,14 @@ static void __hello_link_device(void* a0)
 
 static void __hello_get_hmch(void* a0)
 {
-	if (a0 == nil) return;
+	if (a0 == nil)
+		return;
 
 	kernelPrintStr("Hello: returning header...\r");
 
 	struct HelloMasterConfigHeaderInput* in = a0;
-	in->fOutput = cHeader;
-	in->fSizeOfOutput = sizeof(in->fOutput);
+	in->fOutput								= cHeader;
+	in->fSizeOfOutput						= sizeof(in->fOutput);
 }
 
 static void __hello_unlink_device(void* a0)

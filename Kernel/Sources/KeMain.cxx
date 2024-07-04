@@ -77,11 +77,11 @@ namespace Kernel::Detail
 						const Kernel::Char* cSrcName = cFolderInfo;
 
 						Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theFork.ForkName,
-											  Kernel::rt_string_len(cSrcName));
+											   Kernel::rt_string_len(cSrcName));
 
 						Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDir->Name),
-											  theFork.CatalogName,
-											  Kernel::rt_string_len(catalogDir->Name));
+											   theFork.CatalogName,
+											   Kernel::rt_string_len(catalogDir->Name));
 
 						delete catalogDir;
 
@@ -146,11 +146,11 @@ namespace Kernel::Detail
 					NewFork theDiskFork{0};
 
 					Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theDiskFork.ForkName,
-										  Kernel::rt_string_len(cSrcName));
+										   Kernel::rt_string_len(cSrcName));
 
 					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDisk->Name),
-										  theDiskFork.CatalogName,
-										  Kernel::rt_string_len(catalogDisk->Name));
+										   theDiskFork.CatalogName,
+										   Kernel::rt_string_len(catalogDisk->Name));
 
 					theDiskFork.DataSize	 = kNewFSForkSize;
 					theDiskFork.ResourceId	 = 0;
@@ -195,7 +195,7 @@ namespace Kernel::Detail
 		}
 
 		Kernel::Utils::execute_from_image(launchDevil,
-										 Kernel::ProcessHeader::kAppKind);
+										  Kernel::ProcessHeader::kAppKind);
 
 		/// load middleware service.
 		Kernel::PEFLoader stageBoard("C:\\System\\stageboard");
@@ -206,7 +206,7 @@ namespace Kernel::Detail
 		}
 
 		Kernel::Utils::execute_from_image(stageBoard,
-										 Kernel::ProcessHeader::kAppKind);
+										  Kernel::ProcessHeader::kAppKind);
 	}
 } // namespace Kernel::Detail
 

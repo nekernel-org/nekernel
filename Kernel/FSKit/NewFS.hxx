@@ -143,7 +143,7 @@ struct PACKED NewCatalog final
 /// whereas the data fork is reserved for file data.
 struct PACKED NewFork final
 {
-	NewCharType ForkName[kNewFSForkNameLen];
+	NewCharType	 ForkName[kNewFSForkNameLen];
 	Kernel::Char CatalogName[kNewFSNodeNameLen];
 
 	Kernel::Int32 Flags;
@@ -153,8 +153,8 @@ struct PACKED NewFork final
 	Kernel::Int32 ResourceKind;
 	Kernel::Int32 ResourceFlags;
 
-	Kernel::Lba	 DataOffset; // 8 Where to look for this data?
-	Kernel::SizeT DataSize;	 /// Data size according using sector count.
+	Kernel::Lba	  DataOffset; // 8 Where to look for this data?
+	Kernel::SizeT DataSize;	  /// Data size according using sector count.
 
 	Kernel::Lba NextSibling;
 	Kernel::Lba PreviousSibling;
@@ -169,7 +169,7 @@ struct PACKED NewPartitionBlock final
 	Kernel::Int32 Flags;
 	Kernel::Int32 Kind;
 
-	Kernel::Lba	 StartCatalog;
+	Kernel::Lba	  StartCatalog;
 	Kernel::SizeT CatalogCount;
 
 	Kernel::SizeT DiskSize;
@@ -225,7 +225,7 @@ namespace Kernel
 		/// @param theFork the fork itself.
 		/// @return the fork
 		_Output NewFork* CreateFork(_Input NewCatalog* catalog,
-									_Input NewFork& theFork);
+									_Input NewFork&	   theFork);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
@@ -243,7 +243,7 @@ namespace Kernel
 
 		_Output NewCatalog* GetCatalog(_Input const char* name);
 
-		_Output NewCatalog* CreateCatalog(_Input const char* name,
+		_Output NewCatalog* CreateCatalog(_Input const char*  name,
 										  _Input const Int32& flags,
 										  _Input const Int32& kind);
 
@@ -300,8 +300,8 @@ namespace Kernel
 /// @param DrvIndex drive index.
 /// @return
 Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* Mnt,
-							Kernel::DriveTrait&			DrvTrait,
-							Kernel::Int32				DrvIndex);
+							 Kernel::DriveTrait&		  DrvTrait,
+							 Kernel::Int32				  DrvIndex);
 
 /// @brief Read from newfs disk.
 /// @param Mnt mounted interface.
@@ -309,5 +309,5 @@ Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* Mnt,
 /// @param DrvIndex drive index.
 /// @return
 Kernel::Int32 fs_newfs_read(Kernel::MountpointInterface* Mnt,
-						   Kernel::DriveTrait&		   DrvTrait,
-						   Kernel::Int32				   DrvIndex);
+							Kernel::DriveTrait&			 DrvTrait,
+							Kernel::Int32				 DrvIndex);

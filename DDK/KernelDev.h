@@ -15,10 +15,10 @@ struct _kernelDevice;
 /// @brief Kernel Device driver.
 typedef struct _kernelDevice
 {
-	char name[255];									 // the device name. Could be /./DEVICE_NAME/
-	void* (*read)(void* arg, int len);								 // read from device.
+	char name[255];					   // the device name. Could be /./DEVICE_NAME/
+	void* (*read)(void* arg, int len); // read from device.
 	void (*write)(void* arg, int len);
-	void (*wait)(void);									   // write to device.
+	void (*wait)(void);								 // write to device.
 	struct _kernelDevice* (*open)(const char* path); // open device.
 	void (*close)(struct _kernelDevice* dev);		 // close device.
 } kernelDevice, *kernelDeviceRef;

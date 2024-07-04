@@ -86,16 +86,16 @@ typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 struct RTSyscallInfoHdr final
 {
 	Kernel::Int64	fHash;
-	Kernel::Bool		fHooked;
+	Kernel::Bool	fHooked;
 	rt_syscall_proc fProc;
 };
 
 inline Kernel::Array<RTSyscallInfoHdr,
-					kKernelMaxSystemCalls>
+					 kKernelMaxSystemCalls>
 	kSyscalls;
 
 inline Kernel::Array<RTSyscallInfoHdr,
-					kKernelMaxSystemCalls>
+					 kKernelMaxSystemCalls>
 	kKerncalls;
 
 EXTERN_C Kernel::HAL::StackFramePtr rt_get_current_context();

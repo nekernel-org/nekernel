@@ -24,29 +24,29 @@
 #define kMagMz1 'Z'
 
 typedef Kernel::UInt32 DosWord;
-typedef Kernel::Long	  DosLong;
+typedef Kernel::Long   DosLong;
 
 typedef struct _DosHeader
 {
 	Kernel::UInt8 eMagic[2];
-	DosWord		 eMagLen;
-	DosWord		 ePagesCount;
-	DosWord		 eCrlc;
-	DosWord		 eCParHdr;
-	DosWord		 eMinAlloc;
-	DosWord		 eMaxAlloc;
-	DosWord		 eStackSeg;
-	DosWord		 eStackPtr;
-	DosWord		 eChksum;
-	DosWord		 eIp;
-	DosWord		 eCs;
-	DosWord		 eLfarlc;
-	DosWord		 eOvno;
-	DosWord		 eRes[4];
-	DosWord		 eOemid;
-	DosWord		 eOeminfo;
-	DosWord		 eRes2[10];
-	DosLong		 eLfanew;
+	DosWord		  eMagLen;
+	DosWord		  ePagesCount;
+	DosWord		  eCrlc;
+	DosWord		  eCParHdr;
+	DosWord		  eMinAlloc;
+	DosWord		  eMaxAlloc;
+	DosWord		  eStackSeg;
+	DosWord		  eStackPtr;
+	DosWord		  eChksum;
+	DosWord		  eIp;
+	DosWord		  eCs;
+	DosWord		  eLfarlc;
+	DosWord		  eOvno;
+	DosWord		  eRes[4];
+	DosWord		  eOemid;
+	DosWord		  eOeminfo;
+	DosWord		  eRes2[10];
+	DosLong		  eLfanew;
 } DosHeader, *DosHeaderPtr;
 
 namespace Kernel
@@ -56,8 +56,10 @@ namespace Kernel
 	{
 		if (!ptrDos)
 			return nullptr;
+
 		if (ptrDos->eMagic[0] != kMagMz0)
 			return nullptr;
+
 		if (ptrDos->eMagic[1] != kMagMz1)
 			return nullptr;
 

@@ -140,8 +140,8 @@ namespace Kernel
 		NEWOS_COPY_DEFAULT(ProcessHeader)
 
 	public:
-		void			   SetEntrypoint(UIntPtr& imageStart) noexcept;
-		const Int32&	   GetExitCode() noexcept;
+		void		 SetEntrypoint(UIntPtr& imageStart) noexcept;
+		const Int32& GetExitCode() noexcept;
 
 	public:
 		Char			   Name[kProcessLen] = {"Process"};
@@ -179,24 +179,24 @@ namespace Kernel
 		}
 
 		//! @brief Crash the app, exits with code ~0.
-		Void			Crash();
+		Void Crash();
 
 		//! @brief Exits app.
-		Void			Exit(Int32 exitCode = 0);
+		Void Exit(Int32 exitCode = 0);
 
 		//! @brief TLS Allocate
-		VoidPtr			New(const SizeT& sz);
+		VoidPtr New(const SizeT& sz);
 
 		//! @brief TLS Free.
-		Boolean			Delete(VoidPtr ptr, const SizeT& sz);
+		Boolean Delete(VoidPtr ptr, const SizeT& sz);
 
 		//! @brief Wakes up threads.
-		Void			Wake(const bool wakeup = false);
+		Void Wake(const bool wakeup = false);
 
 		// ProcessHeader getters.
 	public:
 		//! @brief ProcessHeader name getter, example: "C RunTime"
-		const Char*		GetName() noexcept;
+		const Char* GetName() noexcept;
 
 		//! @brief return local error code of process.
 		//! @return Int32 local error code.
@@ -207,8 +207,8 @@ namespace Kernel
 		const AffinityKind&	   GetAffinity() noexcept;
 
 	private:
-		Int32			fLastExitCode{0};
-		Int32			fLocalCode{0};
+		Int32 fLastExitCode{0};
+		Int32 fLocalCode{0};
 
 		friend ProcessScheduler;
 		friend ProcessHelper;
@@ -226,7 +226,7 @@ namespace Kernel
 
 		MutableArray<Ref<ProcessHeader>>& AsArray();
 		Ref<ProcessHeader>&				  AsRef();
-		UInt64&						      Id() noexcept;
+		UInt64&							  Id() noexcept;
 
 	public:
 		MutableArray<Ref<ProcessHeader>> mProcessList;

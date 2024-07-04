@@ -22,7 +22,7 @@ Purpose: System Call Interface.
 #define cRestrictW	"w"
 #define cRestrictRW "rw"
 
-class NSyscall;		/// @brief System call class.
+class NSyscall; /// @brief System call class.
 
 typedef int	 OSType;
 typedef bool Bool;
@@ -54,23 +54,23 @@ public:
 	virtual ~NSyscall() = default;
 
 	NSyscall& operator=(const NSyscall&) = default;
-	NSyscall(const NSyscall&) = default;
+	NSyscall(const NSyscall&)			 = default;
 
 public:
 	/// @brief disable device.
-	virtual UInt0 PowerOff(MBCIType)  = 0;
+	virtual UInt0 PowerOff(MBCIType) = 0;
 
 	/// @brief enable device.
-	virtual UInt0 PowerOn(MBCIType)  = 0;
+	virtual UInt0 PowerOn(MBCIType) = 0;
 
 	/// @brief reboot device.
-	virtual UInt0 PowerReboot(MBCIType)  = 0;
+	virtual UInt0 PowerReboot(MBCIType) = 0;
 
 	/// @brief check if MBCI device is wokeup.
-	virtual Bool  PowerIsWokeup(MBCIType)  = 0;
+	virtual Bool PowerIsWokeup(MBCIType) = 0;
 
 	/// @brief probe MBCI device from phone.
-	virtual MBCIType PowerProbeDevice(const char* namepace, const int index)  = 0;
+	virtual MBCIType PowerProbeDevice(const char* namepace, const int index) = 0;
 
 	// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. //
 
@@ -114,7 +114,6 @@ public:
 
 	/// @brief Write descriptor.
 	virtual UInt0* WriteStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType) = 0;
-
 };
 
 /// @brief Request syscall object.
@@ -123,6 +122,6 @@ ML_IMPORT_C NSyscall* NRequestSyscall(UInt0);
 
 /// @brief Release syscall object.
 /// @param syscall System call object.
-ML_IMPORT_C UInt0	  NReleaseSyscall(NSyscall* syscall);
+ML_IMPORT_C UInt0 NReleaseSyscall(NSyscall* syscall);
 
 #endif // ifndef _INC_COMM_NEWSTD_HXX_

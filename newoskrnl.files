@@ -161,7 +161,7 @@ Kernel/KernelKit/HError.hpp
 Kernel/KernelKit/KernelHeap.hpp
 Kernel/KernelKit/LoaderInterface.hpp
 Kernel/KernelKit/LockDelegate.hpp
-Kernel/KernelKit/MSDOS.hpp
+Kernel/KernelKit/MSDOS.hxx
 Kernel/KernelKit/PCI/Database.hpp
 Kernel/KernelKit/PCI/Device.hpp
 Kernel/KernelKit/PCI/Dma.hpp

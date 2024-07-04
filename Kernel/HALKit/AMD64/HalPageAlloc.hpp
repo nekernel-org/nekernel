@@ -38,16 +38,16 @@ namespace Kernel::HAL
 {
 	struct PACKED PageTable64 final
 	{
-		bool		  Present : 1;
-		bool		  Rw : 1;
-		bool		  User : 1;
-		bool		  Wt : 1;
-		bool		  Cache : 1;
-		bool		  Accessed : 1;
+		bool		   Present : 1;
+		bool		   Rw : 1;
+		bool		   User : 1;
+		bool		   Wt : 1;
+		bool		   Cache : 1;
+		bool		   Accessed : 1;
 		Kernel::Int32  Reserved : 6;
 		Kernel::UInt64 PhysicalAddress : 36;
 		Kernel::Int32  Reserved1 : 15;
-		bool		  ExecDisable : 1;
+		bool		   ExecDisable : 1;
 	};
 
 	namespace Detail

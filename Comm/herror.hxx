@@ -12,9 +12,9 @@
 #error !!! including header in kernel mode !!!
 #endif // __KERNEL__
 
-#define ErrLocalIsOk()			(kLastError == kErrorSuccess)
-#define ErrLocalFailed()		(kLastError != kErrorSuccess)
-#define ErrLocal()				(kLastError)
+#define ErrLocalIsOk()	 (kLastError == kErrorSuccess)
+#define ErrLocalFailed() (kLastError != kErrorSuccess)
+#define ErrLocal()		 (kLastError)
 
 typedef SInt32 HError;
 

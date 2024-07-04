@@ -81,8 +81,10 @@ namespace Kernel
 	/// @return
 	Void NewFilesystemManager::Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size)
 	{
-		if (!node) return;
-		if (!size) return;
+		if (!node)
+			return;
+		if (!size)
+			return;
 
 		constexpr auto cDataForkName = kNewFSDataFork;
 		this->Write(cDataForkName, node, data, flags, size);
@@ -95,8 +97,10 @@ namespace Kernel
 	/// @return
 	VoidPtr NewFilesystemManager::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
 	{
-		if (!node) return nullptr;
-		if (!size) return nullptr;
+		if (!node)
+			return nullptr;
+		if (!size)
+			return nullptr;
 
 		constexpr auto cDataForkName = kNewFSDataFork;
 		return this->Read(cDataForkName, node, flags, size);

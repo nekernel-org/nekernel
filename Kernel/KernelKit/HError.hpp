@@ -11,9 +11,9 @@
 /// @file HError.hpp
 /// @brief Local Process Codes.
 
-#define ErrLocalIsOk()		   (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() == Kernel::kErrorSuccess)
-#define ErrLocalFailed()	   (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() != Kernel::kErrorSuccess)
-#define ErrLocal()				Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode()
+#define ErrLocalIsOk()	 (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() == Kernel::kErrorSuccess)
+#define ErrLocalFailed() (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() != Kernel::kErrorSuccess)
+#define ErrLocal()		 Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode()
 
 namespace Kernel
 {
@@ -50,7 +50,6 @@ namespace Kernel
 	inline constexpr HError kErrorSign				 = 60;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
-	Void    err_bug_check_raise(void) noexcept;
+	Void	err_bug_check_raise(void) noexcept;
 	Boolean err_bug_check(void) noexcept;
 } // namespace Kernel
-

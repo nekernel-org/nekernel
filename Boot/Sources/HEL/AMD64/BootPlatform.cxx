@@ -7,7 +7,6 @@
 #include <BootKit/Platform.hxx>
 #include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
-#include "HALKit/AMD64/Processor.hpp"
 
 #ifdef __STANDALONE__
 
@@ -93,6 +92,8 @@ EXTERN_C UInt32 In32(UInt16 port)
 }
 
 #else
+
+#include <HALKit/AMD64/Processor.hpp>
 
 void rt_hlt()
 {

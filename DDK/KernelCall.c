@@ -26,11 +26,10 @@ DK_EXTERN void* kernelCall(const char* kernelRpcName, int32_t cnt, void* data, s
 	return __kernelDispatchCall(kernelRpcName, cnt, data, sz);
 }
 
-
 /// @brief add system call.
 /// @param slot system call slot
 /// @param slotFn, syscall slot.
-DK_EXTERN void  kernelAddSyscall(const int slot, void(*slotFn)(void* a0))
+DK_EXTERN void kernelAddSyscall(const int slot, void (*slotFn)(void* a0))
 {
 	kernelCall("AddSyscall", slot, slotFn, 0);
 }

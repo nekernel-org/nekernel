@@ -78,8 +78,8 @@ Framebuffer& Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y, 
 		for (Kernel::SizeT u = y; u < height + y; ++u)
 		{
 			*(((volatile Kernel::UInt32*)(fFrameBufferAddr.Leak()->fBase +
-										 4 * fFrameBufferAddr.Leak()->fBpp * i +
-										 4 * u))) = color;
+										  4 * fFrameBufferAddr.Leak()->fBpp * i +
+										  4 * u))) = color;
 		}
 	}
 
@@ -89,8 +89,8 @@ Framebuffer& Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y, 
 Framebuffer& Framebuffer::PutPixel(SizeT x, SizeT y, UInt32 color)
 {
 	*(((volatile Kernel::UInt32*)(fFrameBufferAddr.Leak()->fBase +
-								 4 * fFrameBufferAddr.Leak()->fBpp * x +
-								 4 * y))) = color;
+								  4 * fFrameBufferAddr.Leak()->fBpp * x +
+								  4 * y))) = color;
 
 	return *this;
 }

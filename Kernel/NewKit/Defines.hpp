@@ -133,7 +133,7 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#define DEDUCE_ENDIAN(address, value)                          \
+#define DEDUCE_ENDIAN(address, value)                           \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))

@@ -30,7 +30,7 @@ DK_EXTERN void* kernelCall(const char* kernelRpcName, int32_t cnt, void* dat, si
 /// @brief add system call.
 /// @param slot system call slot
 /// @param slotFn, syscall slot.
-DK_EXTERN void  kernelAddSyscall(const int slot, void(*slotFn)(void* a0));
+DK_EXTERN void kernelAddSyscall(const int slot, void (*slotFn)(void* a0));
 
 /// @brief allocate ptr.
 /// @param sz size of ptr.

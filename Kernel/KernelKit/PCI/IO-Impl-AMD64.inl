@@ -51,4 +51,4 @@ namespace Kernel
 			break;
 		}
 	}
-} // namespace NewOS
+} // namespace Kernel

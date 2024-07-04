@@ -17,4 +17,4 @@ namespace Kernel
 	{
 		return reinterpret_cast<T*>((UIntPtr)fAddress + offset);
 	}
-} // namespace NewOS
+} // namespace Kernel
