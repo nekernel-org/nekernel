@@ -8,15 +8,28 @@
 #include <DDK/KernelPrint.h>
 #include <DDK/KernelDev.h>
 
+struct HelloMasterConfigHeader;
+struct HelloMasterConfigHeaderInput;
+
+struct HelloMasterConfigHeaderInput
+{
+	size_t fSizeOfOutput;
+	struct HelloMasterConfigHeader* fOutput;
+};
+
+
 /// @file Hello.c
 /// @brief Zero configuration protocol, a much more better protocol for zero configuration.
 
+#define cHMCHMaxDataLength (1024)
+
 typedef struct HelloMasterConfigHeader
 {
-	int fMagic;
-	int fVersion;
-	int fProviderAddress;
-	char fDHCPLease[255];
+	int64_t fMagic;
+	int64_t fVersion;
+	int64_t fSourceAddress;
+	size_t  fDataLength;
+	wchar_t fUTF16Data[cHMCHMaxDataLength];
 } __attribute__((packed)) HelloMasterConfigHeader;
 
 #define cHMCHDeviceLen 255
@@ -28,9 +41,12 @@ static HelloMasterConfigHeader* cHeader = nil;
 /// @brief Link to master device to attribute DHCP lease.
 static void __hello_link_device(void* a0)
 {
+	kernelPrintStr("Hello: turning up...\r");
+
 	if (!cDev)
 	{
-		cDev = kernelOpenDevice("NET:\\HMCH\\0.0.0.0");
+		// open raw network device.
+		cDev = kernelOpenDevice("RAWNET:\\");
 	}
 
 	cDev->write("+LINK", kernelStringLength("+LINK"));
@@ -48,9 +64,20 @@ static void __hello_link_device(void* a0)
 	cHeader = cDev->read(nil, sizeof(HelloMasterConfigHeader));
 }
 
+static void __hello_get_hmch(void* a0)
+{
+	if (a0 == nil) return;
+
+	kernelPrintStr("Hello: returning header...\r");
+
+	struct HelloMasterConfigHeaderInput* in = a0;
+	in->fOutput = cHeader;
+	in->fSizeOfOutput = sizeof(in->fOutput);
+}
+
 static void __hello_unlink_device(void* a0)
 {
-	kernelPrintStr("Hello: shutting down Hello...\r");
+	kernelPrintStr("Hello: shutting down...\r");
 
 	if (cDev)
 	{
@@ -84,6 +111,7 @@ int __at_enter(void)
 
 	kernelAddSyscall(0, __hello_link_device);
 	kernelAddSyscall(1, __hello_unlink_device);
+	kernelAddSyscall(2, __hello_get_hmch);
 
 	return 0;
 }
