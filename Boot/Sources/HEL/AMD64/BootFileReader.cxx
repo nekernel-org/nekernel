@@ -13,7 +13,6 @@
 #include <BootKit/BootKit.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <FirmwareKit/EFI/API.hxx>
-#include <climits>
 
 /// @file BootFileReader
 /// @brief Bootloader File reader.
