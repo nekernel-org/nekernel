@@ -16,16 +16,17 @@
 
 #pragma once
 
-#include "NewKit/Utils.hpp"
 #ifdef __FSKIT_USE_NEWFS__
 #include <FSKit/NewFS.hxx>
 #endif // __FSKIT_USE_NEWFS__
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
-#include <NewKit/Ref.hpp>
 #include <KernelKit/HError.hpp>
+#include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Stream.hpp>
+#include <NewKit/ErrorOr.hpp>
+#include <NewKit/Ref.hpp>
 
 /// @brief Filesystem abstraction manager.
 /// Works like the VFS or IFS.

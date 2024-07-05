@@ -122,7 +122,8 @@ namespace Kernel::Detail
 				if (catalogDisk)
 				{
 					auto bufferInfoDisk = (Kernel::Char*)this->fNewFS->GetParser()->ReadCatalog(catalogDisk, kNewFSSectorSz, cSrcName);
-					Kernel::kcout << bufferInfoDisk << Kernel::end_line();
+					Kernel::kcout << bufferInfoDisk;
+					Kernel::end_line();
 
 					delete bufferInfoDisk;
 					delete catalogDisk;
@@ -162,7 +163,8 @@ namespace Kernel::Detail
 													  (Kernel::VoidPtr)diskFolder.CData(),
 													  kNewFSSectorSz, cSrcName);
 
-					Kernel::kcout << diskFolder.CData() << Kernel::end_line();
+					Kernel::kcout << diskFolder.CData();
+					Kernel::end_line();
 
 					delete catalogDisk;
 				}

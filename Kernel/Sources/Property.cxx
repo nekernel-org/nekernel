@@ -11,7 +11,8 @@ namespace Kernel
 	Property::Property(const StringView& sw)
 		: fName(sw)
 	{
-		kcout << "Property: created: " << sw.CData() << endl;
+		kcout << "newoskrnl: Property created: " << sw.CData();
+		endl;
 	}
 
 	Property::~Property() = default;
