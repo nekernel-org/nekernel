@@ -12,11 +12,11 @@
 
 namespace Kernel
 {
-	static FilesystemManagerInterface* kMounted = nullptr;
+	STATIC FilesystemManagerInterface* kMounted = nullptr;
 
 	/// @brief FilesystemManager getter.
 	/// @return The mounted filesystem.
-	FilesystemManagerInterface* FilesystemManagerInterface::GetMounted()
+	_Output FilesystemManagerInterface* FilesystemManagerInterface::GetMounted()
 	{
 		return kMounted;
 	}
@@ -55,7 +55,7 @@ namespace Kernel
 	/// @param path
 	/// @param r
 	/// @return
-	NodePtr NewFilesystemManager::Open(_Input const Char* path, _Input const Char* r)
+	_Output NodePtr NewFilesystemManager::Open(_Input const Char* path, _Input const Char* r)
 	{
 		if (!path || *path == 0)
 			return nullptr;
@@ -95,7 +95,7 @@ namespace Kernel
 	/// @param flags the flags with it.
 	/// @param sz the size to read.
 	/// @return
-	VoidPtr NewFilesystemManager::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
+	_Output VoidPtr NewFilesystemManager::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
 	{
 		if (!node)
 			return nullptr;
@@ -152,7 +152,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	bool NewFilesystemManager::Seek(NodePtr node, SizeT off)
+	_Output Bool NewFilesystemManager::Seek(NodePtr node, SizeT off)
 	{
 		if (!node || off == 0)
 			return false;
@@ -165,7 +165,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	SizeT NewFilesystemManager::Tell(NodePtr node)
+	_Output SizeT NewFilesystemManager::Tell(NodePtr node)
 	{
 		if (!node)
 			return kNPos;
@@ -178,7 +178,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	bool NewFilesystemManager::Rewind(NodePtr node)
+	_Output Bool NewFilesystemManager::Rewind(NodePtr node)
 	{
 		if (!node)
 			return false;
@@ -188,7 +188,7 @@ namespace Kernel
 
 	/// @brief Returns the filesystem parser.
 	/// @return the Filesystem parser class.
-	NewFSParser* NewFilesystemManager::GetParser() noexcept
+	_Output NewFSParser* NewFilesystemManager::GetParser() noexcept
 	{
 		return fImpl;
 	}
