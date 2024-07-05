@@ -275,8 +275,8 @@ namespace Kernel
 	class ProcessHelper final
 	{
 	public:
-		STATIC bool	 Switch(HAL::StackFrame* newStack, const PID& newPid);
-		STATIC bool	 CanBeScheduled(Ref<ProcessHeader>& process);
+		STATIC bool Switch(HAL::StackFrame* newStack, const PID& newPid);
+		STATIC bool CanBeScheduled(Ref<ProcessHeader>& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
 	};

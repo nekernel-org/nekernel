@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef __FSKIT_NEWFS__
+#ifdef __FSKIT_USE_NEWFS__
 
 #include <Modules/AHCI/AHCI.hxx>
 #include <Modules/ATA/ATA.hxx>
@@ -38,7 +38,7 @@ STATIC MountpointInterface sMountpointInterface;
 /// @param theFork the fork itself.
 /// @return the fork
 _Output NewFork* NewFSParser::CreateFork(_Input NewCatalog* catalog,
-										 _Input NewFork&	theFork)
+										 _Input NewFork& theFork)
 {
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return nullptr;
@@ -207,7 +207,7 @@ _Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name)
 /// @param flags the flags of the catalog.
 /// @param kind the catalog kind.
 /// @return catalog pointer.
-_Output NewCatalog* NewFSParser::CreateCatalog(_Input const char*  name,
+_Output NewCatalog* NewFSParser::CreateCatalog(_Input const char* name,
 											   _Input const Int32& flags,
 											   _Input const Int32& kind)
 {
@@ -451,7 +451,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 		if (partBlock->PartitionName[0] == 0 &&
 			rt_string_cmp(partBlock->Ident, kNewFSIdent, kNewFSIdentLen))
 		{
-			/// partition is free and valid.
+			// partition is free and valid.
 
 			partBlock->Version = kNewFSVersionInteger;
 
@@ -463,9 +463,10 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 			rt_copy_memory((VoidPtr)cUntitledHD, (VoidPtr)partBlock->PartitionName,
 						   rt_string_len(cUntitledHD));
 
-			SizeT catalogCount = 0;
-			SizeT sectorCount  = drv_std_get_sector_count();
-			SizeT diskSize	   = drv_std_get_drv_size();
+			SizeT catalogCount = 0UL;
+
+			SizeT sectorCount = drv_std_get_sector_count();
+			SizeT diskSize	  = drv_std_get_drv_size();
 
 			partBlock->Kind			= kNewFSPartitionTypeStandard;
 			partBlock->StartCatalog = kNewFSCatalogStartAddress;
@@ -490,12 +491,12 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 			kcout << "newoskrnl: free sectors: " << hex_number(partBlock->FreeSectors) << endl;
 			kcout << "newoskrnl: sector size: " << hex_number(partBlock->SectorSize) << endl;
 
-			/// write the root catalog.
+			// write the root catalog.
 			this->CreateCatalog(kNewFSRoot, 0, kNewFSCatalogKindDir);
 
 			if (partBlock->Flags & kNewFSPartitionTypeBoot)
 			{
-				/// make it bootable when needed.
+				// make it bootable when needed.
 				Char bufEpmHdr[kNewFSSectorSz] = {0};
 
 				BootBlockType* epmBoot = (BootBlockType*)bufEpmHdr;
@@ -525,7 +526,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 		kcout << "newoskrnl: partition block already exists.\r";
 
-		/// return success as well, do not ignore that partition.
+		// return success as well, do not ignore that partition.
 		return true;
 	}
 
@@ -555,7 +556,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 
 	rt_copy_memory(catalog->Name, forkData->CatalogName, kNewFSNodeNameLen);
 
-	/// sanity check of the fork position as the condition to run the loop.
+	// sanity check of the fork position as the condition to run the loop.
 	while (startFork >= kNewFSCatalogStartAddress)
 	{
 		drive->fPacket.fPacketContent = forkData;
@@ -566,7 +567,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NewCatalog* catalog, voidPtr data,
 
 		kcout << "newoskrnl: fork name: " << forkData->ForkName << endl;
 
-		/// sanity check the fork.
+		// check the fork, if it's position is valid.
 		if (forkData->DataOffset <= kNewFSCatalogStartAddress)
 		{
 			ErrLocal() = kErrorDiskIsCorrupted;
@@ -980,4 +981,4 @@ namespace Kernel::Detail
 	}
 } // namespace Kernel::Detail
 
-#endif // ifdef __FSKIT_NEWFS__
+#endif // ifdef __FSKIT_USE_NEWFS__

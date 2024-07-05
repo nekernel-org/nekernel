@@ -6,7 +6,7 @@
 CC			= arm-none-eabi-g++ -march=armv8-a
 LD			= arm-none-eabi-ld
 CCFLAGS		= -c -fPIC -ffreestanding -D__NEWOS_ARM64__ -fno-rtti -fno-exceptions -I./ \
-			-std=c++20 -D__FSKIT_NEWFS__ -D__ZETA_MACHINE__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__
+			-std=c++20 -D__FSKIT_USE_NEWFS__ -D__ZETA_MACHINE__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__
 
 ASM 		= arm-none-eabi-as -march=armv8-a
 

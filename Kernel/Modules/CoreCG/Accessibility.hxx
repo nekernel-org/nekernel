@@ -4,7 +4,8 @@
 
 ------------------------------------------- */
 
-#pragma once
+#ifndef __CORECG_ACCESS_HXX__
+#define __CORECG_ACCESS_HXX__
 
 #include <NewKit/NewKit.hpp>
 #include <KernelKit/HError.hpp>
@@ -44,3 +45,5 @@ namespace Kernel
 		}
 	};
 } // namespace Kernel
+
+#endif // !__CORECG_ACCESS_HXX__

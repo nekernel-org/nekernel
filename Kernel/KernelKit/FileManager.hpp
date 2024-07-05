@@ -9,31 +9,42 @@
  Revision History:
 
 	 31/01/24: Update documentation (amlel)
+	 05/07/24: NewFS support, and fork support, updated constants and specs
+		as well.
 
  ------------------------------------------- */
 
 #pragma once
 
-#ifdef __FSKIT_NEWFS__
+#include "NewKit/Utils.hpp"
+#ifdef __FSKIT_USE_NEWFS__
 #include <FSKit/NewFS.hxx>
-#endif // __FSKIT_NEWFS__
+#endif // __FSKIT_USE_NEWFS__
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
 #include <NewKit/Ref.hpp>
+#include <KernelKit/HError.hpp>
 #include <NewKit/Stream.hpp>
 
 /// @brief Filesystem abstraction manager.
 /// Works like the VFS or IFS.
 
-#define cRestrictR	"r"
-#define cRestrictRB "rb"
-#define cRestrictW	"w"
-#define cRestrictRW "rw"
+#define cRestrictR	 "r"
+#define cRestrictRB	 "rb"
+#define cRestrictW	 "w"
+#define cRestrictWB	 "rw"
+#define cRestrictRWB "rwb"
 
-/// refer to first enum.
+#define cRestrictMax 5
+
+#define node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)
+
+/**
+    @note Refer to first enum.
+*/
 #define cFileOpsCount	 4
-#define cFileMimeGeneric "application-type/*"
+#define cFileMimeGeneric "n-application-kind/all"
 
 /** @brief invalid position. (n-pos) */
 #define kNPos (SizeT)(-1);
@@ -121,7 +132,7 @@ namespace Kernel
 		virtual bool  Rewind(_Input NodePtr node) = 0;
 	};
 
-#ifdef __FSKIT_NEWFS__
+#ifdef __FSKIT_USE_NEWFS__
 	/**
 	 * @brief Based of FilesystemManagerInterface, takes care of managing NewFS
 	 * disks.
@@ -172,7 +183,7 @@ namespace Kernel
 		NewFSParser* fImpl{nullptr};
 	};
 
-#endif // ifdef __FSKIT_NEWFS__
+#endif // ifdef __FSKIT_USE_NEWFS__
 
 	/**
 	 * Usable FileStream
@@ -194,6 +205,12 @@ namespace Kernel
 	public:
 		ErrorOr<Int64> WriteAll(const VoidPtr data) noexcept
 		{
+			if (this->fFileRestrict != eRestrictReadWrite &&
+				this->fFileRestrict != eRestrictReadWriteBinary &&
+				this->fFileRestrict != eRestrictWrite &&
+				this->fFileRestrict != eRestrictWriteBinary)
+				return ErrorOr<Int64>(kErrorInvalidData);
+
 			if (data == nullptr)
 				return ErrorOr<Int64>(kErrorInvalidData);
 
@@ -208,8 +225,14 @@ namespace Kernel
 			return ErrorOr<Int64>(kErrorInvalidData);
 		}
 
-		VoidPtr Read() noexcept
+		VoidPtr ReadAll() noexcept
 		{
+			if (this->fFileRestrict != eRestrictReadWrite &&
+				this->fFileRestrict != eRestrictReadWriteBinary &&
+				this->fFileRestrict != eRestrictRead &&
+				this->fFileRestrict != eRestrictReadBinary)
+				return nullptr;
+
 			auto man = FSClass::GetMounted();
 
 			if (man)
@@ -223,6 +246,12 @@ namespace Kernel
 
 		ErrorOr<Int64> WriteAll(const char* fName, const VoidPtr data) noexcept
 		{
+			if (this->fFileRestrict != eRestrictReadWrite &&
+				this->fFileRestrict != eRestrictReadWriteBinary &&
+				this->fFileRestrict != eRestrictWrite &&
+				this->fFileRestrict != eRestrictWriteBinary)
+				return ErrorOr<Int64>(kErrorInvalidData);
+
 			if (data == nullptr)
 				return ErrorOr<Int64>(kErrorInvalidData);
 
@@ -239,6 +268,12 @@ namespace Kernel
 
 		VoidPtr Read(const char* fName) noexcept
 		{
+			if (this->fFileRestrict != eRestrictReadWrite &&
+				this->fFileRestrict != eRestrictReadWriteBinary &&
+				this->fFileRestrict != eRestrictRead &&
+				this->fFileRestrict != eRestrictReadBinary)
+				return nullptr;
+
 			auto man = FSClass::GetMounted();
 
 			if (man)
@@ -250,8 +285,14 @@ namespace Kernel
 			return nullptr;
 		}
 
-		voidPtr Read(SizeT offset, SizeT sz)
+		VoidPtr Read(SizeT offset, SizeT sz)
 		{
+			if (this->fFileRestrict != eRestrictReadWrite &&
+				this->fFileRestrict != eRestrictReadWriteBinary &&
+				this->fFileRestrict != eRestrictRead &&
+				this->fFileRestrict != eRestrictReadBinary)
+				return nullptr;
+
 			auto man = FSClass::GetMounted();
 
 			if (man)
@@ -267,6 +308,12 @@ namespace Kernel
 
 		Void Write(SizeT offset, voidPtr data, SizeT sz)
 		{
+			if (this->fFileRestrict != eRestrictReadWrite &&
+				this->fFileRestrict != eRestrictReadWriteBinary &&
+				this->fFileRestrict != eRestrictWrite &&
+				this->fFileRestrict != eRestrictWriteBinary)
+				return;
+
 			auto man = FSClass::GetMounted();
 
 			if (man)
@@ -276,6 +323,7 @@ namespace Kernel
 			}
 		}
 
+	public:
 		/// @brief Leak node pointer.
 		/// @return The node pointer.
 		NodePtr Leak()
@@ -283,14 +331,26 @@ namespace Kernel
 			return fFile;
 		}
 
-	public:
-		char* MIME() noexcept
+		/// @brief Leak MIME.
+		/// @return The MIME.
+		Char* MIME() noexcept
 		{
 			return const_cast<char*>(fMime);
 		}
 
+		enum
+		{
+			eRestrictRead,
+			eRestrictReadBinary,
+			eRestrictWrite,
+			eRestrictWriteBinary,
+			eRestrictReadWrite,
+			eRestrictReadWriteBinary,
+		};
+
 	private:
-		NodePtr		fFile;
+		NodePtr		fFile{nullptr};
+		Int32		fFileRestrict{};
 		const Char* fMime{cFileMimeGeneric};
 	};
 
@@ -305,6 +365,47 @@ namespace Kernel
 											const Encoding* restrict_type)
 		: fFile(Class::GetMounted()->Open(path, restrict_type))
 	{
+		static const auto cLength = 255;
+
+		struct StringMap final
+		{
+			Char  fRestrict[cLength];
+			Int32 fMappedTo;
+		};
+
+		const SizeT		cRestrictCount	= cRestrictMax;
+		const StringMap cRestrictList[] = {
+			{
+				.fRestrict = cRestrictR,
+				.fMappedTo = eRestrictRead,
+			},
+			{
+				.fRestrict = cRestrictRB,
+				.fMappedTo = eRestrictReadBinary,
+			},
+			{
+				.fRestrict = cRestrictRWB,
+				.fMappedTo = eRestrictReadWriteBinary,
+			},
+			{
+				.fRestrict = cRestrictW,
+				.fMappedTo = eRestrictWrite,
+			},
+			{
+				.fRestrict = cRestrictWB,
+				.fMappedTo = eRestrictReadWrite,
+			}};
+
+		for (SizeT index = 0; index < cRestrictCount; ++index)
+		{
+			if (rt_string_cmp(restrict_type, cRestrictList[index].fRestrict,
+							  rt_string_len(cRestrictList[index].fRestrict)) == 0)
+			{
+				fFileRestrict = cRestrictList[index].fMappedTo;
+				break;
+			}
+		}
+
 		kcout << "newoskrnl: new file: " << path << ".\r";
 	}
 
@@ -315,5 +416,3 @@ namespace Kernel
 		delete fFile;
 	}
 } // namespace Kernel
-
-#define node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)

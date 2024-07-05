@@ -7,7 +7,7 @@
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/KernelHeap.hpp>
 
-#ifdef __FSKIT_NEWFS__
+#ifdef __FSKIT_USE_NEWFS__
 
 /// @brief NewFS File manager.
 /// BUGS: 0
@@ -86,4 +86,4 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#endif // ifdef __FSKIT_NEWFS__
+#endif // ifdef __FSKIT_USE_NEWFS__

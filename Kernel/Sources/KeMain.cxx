@@ -187,25 +187,14 @@ namespace Kernel::Detail
 	STATIC Kernel::Void ke_launch_srv(Kernel::Void)
 	{
 		// load security server.
-		Kernel::PEFLoader launchDevil("C:\\System\\launchd");
+		Kernel::PEFLoader simConn("C:\\System\\SimConnect");
 
-		if (!launchDevil.IsLoaded())
+		if (!simConn.IsLoaded())
 		{
 			Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 		}
 
-		Kernel::Utils::execute_from_image(launchDevil,
-										  Kernel::ProcessHeader::kAppKind);
-
-		/// load middleware service.
-		Kernel::PEFLoader stageBoard("C:\\System\\stageboard");
-
-		if (!stageBoard.IsLoaded())
-		{
-			Kernel::ke_stop(RUNTIME_CHECK_FAILED);
-		}
-
-		Kernel::Utils::execute_from_image(stageBoard,
+		Kernel::Utils::execute_from_image(simConn,
 										  Kernel::ProcessHeader::kAppKind);
 	}
 } // namespace Kernel::Detail
