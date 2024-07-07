@@ -13,7 +13,7 @@
 #define nil		  nullptr
 #else
 #define DK_EXTERN extern
-#define nil		  NULL
+#define nil		  ((void*)0)
 #endif // defined(__cplusplus)
 
 #include <stdint.h>

@@ -138,10 +138,10 @@ namespace Kernel
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))
 
-#define Yes (true)
-#define No	(false)
+#define Yes true
+#define No	false
 
-#define VoidStar Kernel::voidPtr
+#define VoidStar Kernel::VoidPtr
 
 #ifdef INIT
 #undef INIT
