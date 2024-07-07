@@ -35,14 +35,8 @@ namespace Kernel
 	class Framebuffer final
 	{
 	public:
-		explicit Framebuffer(Ref<FramebufferContext*>& addr)
-			: fFrameBufferAddr(addr)
-		{
-		}
-
-		~Framebuffer()
-		{
-		}
+		explicit Framebuffer(Ref<FramebufferContext*>& addr);
+		~Framebuffer() = default;
 
 		Framebuffer& operator=(const Framebuffer&) = delete;
 		Framebuffer(const Framebuffer&)			   = default;

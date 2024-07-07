@@ -2,6 +2,15 @@
 
 	Copyright Zeta Electronics Corporation
 
+	File: HalTimer.cxx
+	Purpose: HAL timer
+
+	Revision History:
+
+	07/07/24: Added file (amlel)
+	
 ------------------------------------------- */
 
-#include <NewKit/Defines.hpp>
+#include <ArchKit/ArchKit.hpp>
+
+struct TimerInfoStruct;
