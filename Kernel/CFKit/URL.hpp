@@ -26,8 +26,8 @@ namespace Kernel
 		Ref<StringView> fUrlView;
 	};
 
-	ErrorOr<StringView> url_extract_location(const char* url);
-	ErrorOr<StringView> url_extract_protocol(const char* url);
+	ErrorOr<StringView> url_extract_location(const Char* url);
+	ErrorOr<StringView> url_extract_protocol(const Char* url);
 } // namespace Kernel
 
 #endif /* ifndef _INC_URL_HPP_ */
