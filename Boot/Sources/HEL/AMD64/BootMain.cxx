@@ -15,6 +15,7 @@
 #include <KernelKit/PEF.hpp>
 #include <NewKit/Macros.hpp>
 #include <NewKit/Ref.hpp>
+#include <BootKit/ProgramLoader.hxx>
 #include <cstring>
 
 /// make the compiler shut up.
@@ -224,13 +225,37 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		diskFormatter.Format(kMachineModel, &rootDesc, 1);
 	}
 
+#ifdef __NEWOS_CAN_PATCH__
+
+	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
+
+	readerKernel.ReadAll(kib_cast(5), kib_cast(5));
+
+	Boot::ProgramLoader* loader = nullptr;
+
+	if (readerKernel.Blob())
+	{
+		loader = new Boot::ProgramLoader(readerKernel.Blob());
+		loader->SetName("NewOSKrnl (Patched)");
+	}
+
+#endif // ifdef __NEWOS_CAN_PATCH__
+
 	EFI::ExitBootServices(*MapKey, ImageHandle);
 
 	// ---------------------------------------------------- //
 	// Fallback to builtin kernel.
+	//
 	// ---------------------------------------------------- //
+#ifdef __NEWOS_CAN_PATCH__
 
+	if (loader)
+		loader->Start(handoverHdrPtr);
+	else
+		hal_init_platform(handoverHdrPtr);
+#else
 	hal_init_platform(handoverHdrPtr);
+#endif // ifdef __NEWOS_CAN_PATCH__
 
 	EFI::Stop();
 

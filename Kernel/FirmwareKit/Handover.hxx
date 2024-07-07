@@ -100,7 +100,7 @@ it tells us more about it and IS format independent.
 	};
 
 	/// @brief Bootloader main type.
-	typedef void (*BootMainKind)(Kernel::HEL::HandoverInformationHeader* handoverInfo);
+	typedef void (*BootMainKind)(HandoverInformationHeader* handoverInfo);
 
 	/// @brief Alias of bootloader main type.
 	typedef void (*HandoverProc)(HandoverInformationHeader* handoverInfo);

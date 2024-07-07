@@ -135,6 +135,7 @@ private:
 	BTextWriter		   mWriter;
 	EfiFileProtocol*   mFile{nullptr};
 	UInt64			   mSizeFile{0};
+	EfiFileProtocol*   mRootFs;
 };
 
 typedef UInt8* BlobType;

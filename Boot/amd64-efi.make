@@ -32,7 +32,7 @@ EMU_FLAGS=-net none -m 4G -M q35 -d int \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
-			file=fat:rw:Sources/Root,index=2,format=raw -d int -hdd $(IMG_2)
+			file=fat:rw:Sources/Root/,index=2,format=raw -d int -hdd $(IMG_2)
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -65,7 +65,6 @@ all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Sources/$(BOOT_LOADER)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/BOOTX64.EFI
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/NEWBOOT.EFI
-	$(COPY) ../Kernel/$(KERNEL) Sources/Root/$(KERNEL)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -76,7 +75,7 @@ compile-amd64:
 	$(RESCMD)
 	$(CC_GNU) $(NEWOS_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
 	$(wildcard Sources/HEL/AMD64/*.cxx) \
-	$(wildcard Sources/HEL/AMD64/*.S)
+	$(wildcard Sources/HEL/AMD64/*.S) \
 	$(wildcard Sources/*.cxx)
 
 .PHONY: run-efi-amd64

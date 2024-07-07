@@ -49,27 +49,26 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 	EfiGUID guidEfp = EfiGUID(EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID);
 
 	EfiSimpleFilesystemProtocol* efp	= nullptr;
-	EfiFileProtocol*			 rootFs = nullptr;
 
 	EfiLoadImageProtocol* img	  = nullptr;
 	EfiGUID				  guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
 	if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk)
 	{
-		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Protocol").Write(L"\r");
+		mWriter.Write(L"newosldr: Handle-Protocol: No-Such-Protocol").Write(L"\r");
 		this->mErrorCode = kNotSupported;
 	}
 
 	if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk)
 	{
-		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Protocol").Write(L"\r");
+		mWriter.Write(L"newosldr: Handle-Protocol: No-Such-Protocol").Write(L"\r");
 		this->mErrorCode = kNotSupported;
 		return;
 	}
 
 	/// Start doing disk I/O
 
-	if (efp->OpenVolume(efp, &rootFs) != kEfiOk)
+	if (efp->OpenVolume(efp, &mRootFs) != kEfiOk)
 	{
 		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Volume").Write(L"\r");
 		this->mErrorCode = kNotSupported;
@@ -78,17 +77,18 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
 	EfiFileProtocol* kernelFile = nullptr;
 
-	if (rootFs->Open(rootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
+	if (mRootFs->Open(mRootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
 		kEfiOk)
 	{
 		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Path: ")
 			.Write(mPath)
 			.Write(L"\r");
 		this->mErrorCode = kNotSupported;
+		
+		mRootFs->Close(mRootFs);
+
 		return;
 	}
-
-	rootFs->Close(rootFs);
 
 	mSizeFile  = 0;
 	mFile	   = kernelFile;
@@ -103,22 +103,31 @@ BFileReader::~BFileReader()
 		this->mFile = nullptr;
 	}
 
+	if (this->mRootFs)
+	{
+		this->mRootFs->Close(this->mRootFs);
+		this->mRootFs = nullptr;
+	}
+
 	if (this->mBlob)
-		BS->FreePool(mBlob);
+	{
+		BS->FreePool(this->mBlob);
+		this->mBlob = nullptr;
+	}
 
 	BSetMem(this->mPath, 0, kPathLen);
 }
 
 /**
 	@brief Reads all of the file into a buffer.
-	@param **until** size of file
-	@param **chunk** chunk to read each time.
+	@param **readUntil** size of file
+	@param **chunkToRead** chunk to read each time.
 */
-Void BFileReader::ReadAll(SizeT until, SizeT chunk)
+Void BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead)
 {
 	if (mBlob == nullptr)
 	{
-		if (auto err = BS->AllocatePool(EfiLoaderCode, until, (VoidPtr*)&mBlob) !=
+		if (auto err = BS->AllocatePool(EfiLoaderCode, readUntil, (VoidPtr*)&mBlob) !=
 					   kEfiOk)
 		{
 			mWriter.Write(L"*** error: ").Write(err).Write(L" ***\r");
@@ -128,26 +137,24 @@ Void BFileReader::ReadAll(SizeT until, SizeT chunk)
 
 	mErrorCode = kNotSupported;
 
-	UInt64 bufSize = chunk;
-	UInt64 szCnt   = 0;
-	UInt64 curSz   = 0;
+	UInt64 bufSize = chunkToRead;
+	UInt64 szCnt   = 0UL;
 
-	while (szCnt < until)
+	while (szCnt < readUntil)
 	{
-		if (mFile->Read(mFile, &bufSize, (VoidPtr)((UIntPtr)mBlob + curSz)) !=
-			kEfiOk)
-		{
-			break;
-		}
+		auto res = mFile->Read(mFile, &bufSize, (VoidPtr)(&((Char*)mBlob)[szCnt]));
 
 		szCnt += bufSize;
-		curSz += bufSize;
 
-		if (bufSize == 0)
+		if (res == kBufferTooSmall)
+			bufSize = chunkToRead;
+		else if (res == kEfiOk)
+			bufSize = chunkToRead;
+		else
 			break;
 	}
 
-	mSizeFile  = curSz;
+	mSizeFile  = szCnt;
 	mErrorCode = kOperationOkay;
 }
 

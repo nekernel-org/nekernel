@@ -594,6 +594,7 @@ typedef struct EfiSystemTable
 
 #define kEfiOk	 0
 #define kEfiFail -1
+#define kBufferTooSmall 5
 
 #define EFI_EXTERN_C extern "C"
 

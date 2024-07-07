@@ -1,4 +1,4 @@
-1 ICON "../Icons/kernel-logo.ico"
+1 ICON "../Icons/app-logo.ico"
 
 #include "CompilerKit/Version.hxx"
 
@@ -13,10 +13,10 @@ BEGIN
       VALUE "CompanyName", "Zeta Electronics Corporation"
 	  VALUE "FileDescription", "NewOS Kernel."
       VALUE "FileVersion", KERNEL_VERSION
-	  VALUE "InternalName", "HCore"
+	  VALUE "InternalName", "newoskrnl"
       VALUE "LegalCopyright", "Zeta Electronics Corporation"
       VALUE "OriginalFilename", "newoskrnl.exe"
-      VALUE "ProductName", "NewOSKrnl"
+      VALUE "ProductName", "newoskrnl"
       VALUE "ProductVersion", KERNEL_VERSION
     END
   END
