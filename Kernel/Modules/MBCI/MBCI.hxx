@@ -13,10 +13,10 @@
 - VCC (IN) (OUT for MCU)
 - CLK (IN) (OUT for MCU)
 - ACK (BI) (Contains an Acknowledge Packet Frame)
-- D0- (IN) (Starts with the Host Imterface Packet Frame)
-- D1- (IN) (Starts with the Host Imterface Packet Frame)
-- D0+ (OUT) (Starts with the Host Imterface Packet Frame)
-- D1+ (OUT) (Starts with the Host Imterface Packet Frame)
+- D0- (IN) (Starts with the Host Interface Packet Frame)
+- D1- (IN) (Starts with the Host Interface Packet Frame)
+- D0+ (OUT) (Starts with the Host Interface Packet Frame)
+- D1+ (OUT) (Starts with the Host Interface Packet Frame)
 - GND (IN) (OUT for MCU)
  */
 
@@ -60,11 +60,11 @@ namespace Kernel
 	/// @brief MBCI host flags.
 	enum MBCIHostFlags
 	{
-		kMBCIHostFlagsSupportsPageProtection,	 /// Page protected.
-		kMBCIHostFlagsSupportsAPM,				 /// Advanced Power Management.
-		kMBCIHostFlagsSupportsDaisyChain,		 /// Is daisy chained.
-		kMBCIHostFlagsSupportsHWInterrupts,		 /// Has HW interrupts.
-		kMBCIHostFlagsSupportsDMA,				 /// Has DMA.
+		kMBCIHostFlagsSupportsNothing,	         // Invalid MBCI device.
+		kMBCIHostFlagsSupportsAPM,				 // Advanced Power Management.
+		kMBCIHostFlagsSupportsDaisyChain,		 // Is daisy chained.
+		kMBCIHostFlagsSupportsHWInterrupts,		 // Has HW interrupts.
+		kMBCIHostFlagsSupportsDMA,				 // Has DMA.
 		kMBCIHostFlagsExtended = __UINT16_MAX__, // Extended flags table.
 	};
 
@@ -78,6 +78,6 @@ namespace Kernel
 		kMBCIHostKindKeyboardHigh,
 		kMBCIHostKindNetworkInterface,
 		kMBCIHostKindDaisyChain,
-		kMBCIHostKindStartExtended = __UINT16_MAX__, /// Extended vendor table.
+		kMBCIHostKindStartExtended = __UINT16_MAX__, // Extended vendor table.
 	};
 } // namespace Kernel
