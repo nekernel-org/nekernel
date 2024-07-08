@@ -5,7 +5,8 @@
 
 ------------------------------------------- */
 
-#pragma once
+#ifndef _NEWKIT_REF_HPP_
+#define _NEWKIT_REF_HPP_
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/KernelCheck.hpp>
@@ -37,7 +38,7 @@ namespace Kernel
 			return fClass;
 		}
 
-		T& Leak()
+		T& Leak() noexcept
 		{
 			return fClass;
 		}
@@ -52,7 +53,7 @@ namespace Kernel
 			return fStrong;
 		}
 
-		operator bool()
+		operator bool() noexcept
 		{
 			return fStrong;
 		}
@@ -72,6 +73,7 @@ namespace Kernel
 		NonNullRef(T* ref)
 			: fRef(ref, true)
 		{
+		  MUST_PASS(ref != nullptr);
 		}
 
 		Ref<T>& operator->()
@@ -87,3 +89,5 @@ namespace Kernel
 		Ref<T> fRef{nullptr};
 	};
 } // namespace Kernel
+
+#endif // ifndef _NEWKIT_REF_HPP_
