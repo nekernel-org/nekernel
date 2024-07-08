@@ -22,8 +22,8 @@ namespace Kernel
 	/// @brief internal and reserved protocols by kernel.
 	constexpr const Char* kURLProtocols[] = {
 		"file",	 // Filesystem protocol
-		"mup",	 // Mahrouss update protocol
-		"param", // Mahrouss parameter protocol.
+		"zup",	 // Zeta update protocol
+		"oscc", // Open System Configuration Connectivity.
 	};
 
 	constexpr const int kUrlOutSz	 = 1; //! such as: ://
