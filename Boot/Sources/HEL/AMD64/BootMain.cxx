@@ -16,11 +16,15 @@
 #include <NewKit/Macros.hpp>
 #include <NewKit/Ref.hpp>
 #include <BootKit/ProgramLoader.hxx>
+#include <KernelKit/KernelHeap.hpp>
 #include <cstring>
+
+#include <BootKit/Vendor/Support.hxx>ke_realloc_ke_heap
+#include <BootKit/STB.hxx>
 
 /// make the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "Zeta HD"
+#define kMachineModel "Zeta SSD"
 #endif // !kMachineModel
 
 #ifndef cExpectedWidth
@@ -152,13 +156,13 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	CGInit();
 
 	CGDrawInRegion(cCGClearClr, handoverHdrPtr->f_GOP.f_Height,
-		   handoverHdrPtr->f_GOP.f_Width, 0, 0);
+				   handoverHdrPtr->f_GOP.f_Width, 0, 0);
 
 	CGFini();
 
 	CGDrawBitMapInRegion(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
-			  (handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
-			  (handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
+						 (handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
+						 (handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
 
 	CGFini();
 
@@ -229,7 +233,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
-	readerKernel.ReadAll(kib_cast(5), kib_cast(5));
+	/// TODO: BFileReader::GetSize(...);
+	constexpr auto cKernelSz = 275101;
+	readerKernel.ReadAll(cKernelSz, 4096);
 
 	Boot::ProgramLoader* loader = nullptr;
 

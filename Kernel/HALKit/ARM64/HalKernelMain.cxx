@@ -12,7 +12,7 @@
 #include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/UserHeap.hpp>
+#include <KernelKit/ProcessHeap.hpp>
 #include <NewKit/Json.hpp>
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hpp>

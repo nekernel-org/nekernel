@@ -180,7 +180,7 @@ Kernel/KernelKit/SMPManager.hpp
 Kernel/KernelKit/Semaphore.hpp
 Kernel/KernelKit/ThreadLocalStorage.hxx
 Kernel/KernelKit/Timer.hpp
-Kernel/KernelKit/UserHeap.hpp
+Kernel/KernelKit/ProcessHeap.hpp
 Kernel/KernelKit/XCOFF.hxx
 Kernel/KernelKit/compile_flags.txt
 Kernel/Modules/ACPI/ACPI.hxx
@@ -294,7 +294,7 @@ Kernel/Sources/String.cxx
 Kernel/Sources/ThreadLocalStorage.cxx
 Kernel/Sources/Timer.cxx
 Kernel/Sources/URL.cxx
-Kernel/Sources/UserHeap.cxx
+Kernel/Sources/ProcessHeap.cxx
 Kernel/Sources/Utils.cxx
 Kernel/Sources/Variant.cxx
 Kernel/Sources/compile_flags.txt

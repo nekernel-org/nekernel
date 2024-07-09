@@ -21,7 +21,7 @@ EMU=qemu-system-x86_64
 endif
 
 ifeq ($(NEWS_MODEL), )
-NEWOS_MODEL=-DkMachineModel="\"Generic Zeta HD\""
+NEWOS_MODEL=-DkMachineModel="\"Zeta SSD\""
 endif
 
 BIOS=OVMF.fd
@@ -52,7 +52,7 @@ REM_FLAG=-f
 
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
-			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel -I./ -c -nostdlib -fno-rtti -fno-exceptions \
+			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../Kernel -I./ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
 
 BOOT_LOADER=newosldr.exe
@@ -68,6 +68,8 @@ all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Sources/$(BOOT_LOADER)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/BOOTX64.EFI
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/NEWBOOT.EFI
+	$(COPY) ../Kernel/$(KERNEL) Sources/Root/$(KERNEL)
+	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -90,6 +92,7 @@ run-efi-amd64:
 epm-img:
 	qemu-img create -f raw $(IMG) 4G
 	qemu-img create -f raw $(IMG_2) 4G
+	qemu-img create -f raw $(IMG_3) 4G
 
 .PHONY: download-edk
 download-edk:

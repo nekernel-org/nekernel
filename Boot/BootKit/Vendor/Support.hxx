@@ -22,6 +22,19 @@ inline int IsSpace(int c)
 	return c == ' ';
 }
 
+inline int StringNCompare(const char* destination, const char* source, long length)
+{
+	long err = 0;
+
+	for (long i = 0UL; i < length; ++i)
+	{
+		if (source[i] != destination[i])
+			++err;
+	}
+
+	return err;
+}
+
 inline long StringToLong(const char* nptr, char** endptr, int base)
 {
 	const char *p	   = nptr, *endp;

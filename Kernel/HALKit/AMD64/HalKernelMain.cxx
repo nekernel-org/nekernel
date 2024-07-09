@@ -12,14 +12,14 @@
 #include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/UserHeap.hpp>
+#include <KernelKit/ProcessHeap.hpp>
 #include <NewKit/Json.hpp>
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hpp>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPCEP.hxx>
 
-#define KERNEL_INIT(X) \
+#define mInitKernel(X) \
 	X;                 \
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 
@@ -212,5 +212,5 @@ EXTERN_C void hal_init_platform(
 
 	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 
-	KERNEL_INIT(KeMain());
+	mInitKernel(KeMain());
 }

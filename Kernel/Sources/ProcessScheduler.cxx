@@ -206,15 +206,23 @@ namespace Kernel
 		if (mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
 			return -kErrorOutOfTeamSlot;
 
-		kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r";
+		kcout << "ProcessScheduler:: adding process to team...\r";
 
 		/// Create heap according to type of process.
 		if (process.Leak().Kind == ProcessHeader::kAppKind)
+		{
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
+		}
 		else if (process.Leak().Kind == ProcessHeader::kShLibKind)
+		{
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
+		}
 		else
-			process.Leak().HeapPtr = rt_new_heap(kUserHeapDriver | kUserHeapRw);
+		{
+		    // something went wrong, do not continue, process kind is incorrect.
+			process.Leak().Crash();
+			return -kErrorProcessFault;
+		}
 
 		process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame*>(
 			ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
@@ -226,22 +234,28 @@ namespace Kernel
 		process.Leak().ProcessId  = (mTeam.AsArray().Count() - 1);
 		process.Leak().HeapCursor = process.Leak().HeapPtr;
 
-		mTeam.AsArray().Add(process);
+		MUST_PASS(mTeam.AsArray().Add(process));
 
-		return mTeam.AsArray().Count() - 1;
+		return (mTeam.AsArray().Count() - 1);
 	}
 
 	/// @brief Remove process from list.
-	/// @param process
-	/// @return
-	bool ProcessScheduler::Remove(SizeT process)
+	/// @param processSlot process slot inside team.
+	/// @retval true process was removed.
+	/// @retval false process doesn't exist in team.
+	Bool ProcessScheduler::Remove(SizeT processSlot)
 	{
-		if (process > mTeam.AsArray().Count())
+	    // check if process is within range.
+		if (processSlot > mTeam.AsArray().Count())
 			return false;
 
-		kcout << "ProcessScheduler::Remove(SizeT process)\r";
+		// also check if the process isn't a dummy one.
+		if (mTeam.AsArray()[processSlot].Leak().Leak().Image == nullptr)
+			return false;
 
-		return mTeam.AsArray().Remove(process);
+		kcout << "ProcessScheduler: removing process\r";
+
+		return mTeam.AsArray().Remove(processSlot);
 	}
 
 	/// @brief Run scheduler.

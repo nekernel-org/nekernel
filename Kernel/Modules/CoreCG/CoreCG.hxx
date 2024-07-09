@@ -27,7 +27,7 @@
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
-										  4 * u))) |= ImgPtr[__GXCursor];             \
+										  4 * u))) |= (ImgPtr)[__GXCursor];             \
                                                                                       \
 			++__GXCursor;                                                             \
 		}                                                                             \
@@ -44,7 +44,7 @@
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
-										  4 * u))) = ImgPtr[__GXCursor];              \
+										  4 * u))) = (ImgPtr)[__GXCursor];              \
                                                                                       \
 			++__GXCursor;                                                             \
 		}                                                                             \

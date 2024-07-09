@@ -109,6 +109,7 @@ public:
 		kEmptyDirectory,
 		kNoSuchEntry,
 		kIsDirectory,
+		kTooSmall,
 		kCount,
 	};
 
@@ -332,7 +333,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 
 	/// @note A catalog roughly equal to a sector.
 
-	constexpr auto cMinimumDiskSize = 10; // at minimum.
+	constexpr auto cMinimumDiskSize = 4; // at minimum.
 
 	/// @note also look at EPM headers, for free part blocks.
 

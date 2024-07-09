@@ -10,7 +10,7 @@
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/LockDelegate.hpp>
 #include <KernelKit/PermissionSelector.hxx>
-#include <KernelKit/UserHeap.hpp>
+#include <KernelKit/ProcessHeap.hpp>
 #include <NewKit/MutableArray.hpp>
 
 #define kSchedMinMicroTime (AffinityKind::kHartStandard)
@@ -254,8 +254,8 @@ namespace Kernel
 		ProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(Ref<ProcessHeader>& headerRef);
-		bool  Remove(SizeT headerIndex);
+		SizeT Add(Ref<ProcessHeader>& processRef);
+		Bool Remove(SizeT processSlot);
 
 	public:
 		Ref<ProcessHeader>& TheCurrent();

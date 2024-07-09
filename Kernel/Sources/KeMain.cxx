@@ -17,7 +17,7 @@
 #include <KernelKit/PEF.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/UserHeap.hpp>
+#include <KernelKit/ProcessHeap.hpp>
 #include <NewKit/Json.hpp>
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/String.hpp>

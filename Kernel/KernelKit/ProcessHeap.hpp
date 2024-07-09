@@ -14,8 +14,8 @@
 #include <NewKit/Pmm.hpp>
 
 /// @version 5/11/23
-/// @file UserHeap.hpp
-/// @brief memory heap for user programs.
+/// @file ProcessHeap.hpp
+/// @brief memory heap for user processes.
 
 #define kUserHeapMaxSz (4096)
 #define kUserHeapMag   (0xFAF0FEF0)
@@ -24,8 +24,6 @@ namespace Kernel
 {
 	typedef enum
 	{
-		/// @brief Driver only heap.
-		kUserHeapDriver = 0x2,
 		/// @brief Shared heap.
 		kUserHeapShared = 0x4,
 		/// @brief User and private heap.

@@ -48,7 +48,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
 	EfiGUID guidEfp = EfiGUID(EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID);
 
-	EfiSimpleFilesystemProtocol* efp	= nullptr;
+	EfiSimpleFilesystemProtocol* efp = nullptr;
 
 	EfiLoadImageProtocol* img	  = nullptr;
 	EfiGUID				  guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
@@ -84,7 +84,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 			.Write(mPath)
 			.Write(L"\r");
 		this->mErrorCode = kNotSupported;
-		
+
 		mRootFs->Close(mRootFs);
 
 		return;
@@ -147,11 +147,18 @@ Void BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead)
 		szCnt += bufSize;
 
 		if (res == kBufferTooSmall)
-			bufSize = chunkToRead;
+		{
+			mErrorCode = kTooSmall;
+			return;
+		}
 		else if (res == kEfiOk)
-			bufSize = chunkToRead;
+		{
+			continue;
+		}
 		else
+		{
 			break;
+		}
 	}
 
 	mSizeFile  = szCnt;

@@ -18,5 +18,5 @@
 #include <NewKit/OwnPtr.hpp>
 #include <NewKit/Ref.hpp>
 #include <NewKit/Stream.hpp>
-#include <KernelKit/UserHeap.hpp>
+#include <KernelKit/ProcessHeap.hpp>
 #include <NewKit/Utils.hpp>

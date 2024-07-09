@@ -5,12 +5,12 @@
 ------------------------------------------- */
 
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/UserHeap.hpp>
+#include <KernelKit/ProcessHeap.hpp>
 #include <NewKit/PageManager.hpp>
 
 #define kHeapHeaderPaddingSz (16U)
 
-/// @file UserHeap.cxx
+/// @file ProcessHeap.cxx
 /// @brief User Heap Manager, Process heap allocator.
 /// @note if you want to look at the kernel allocator, please look for
 /// KernelHeap.cxx

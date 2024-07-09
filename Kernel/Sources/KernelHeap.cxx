@@ -11,7 +11,7 @@
 #include <NewKit/PageManager.hpp>
 
 //! @file KernelHeap.cxx
-//! @brief Kernel allocator.
+//! @brief Kernel heap allocator.
 
 #define kKernelHeapMagic		   (0xD4D7D5)
 #define kKernelHeapHeaderPaddingSz (16U)
@@ -47,23 +47,47 @@ namespace Kernel
 		typedef HeapInformationBlock* HeapInformationBlockPtr;
 	} // namespace Detail
 
+	/// @brief Declare a new size for allocatedPtr.
+	/// @param allocatedPtr the pointer.
+	/// @return
+	voidPtr ke_realloc_ke_heap(voidPtr allocatedPtr, SizeT newSz)
+	{
+		if (!allocatedPtr || newSz < 1)
+			return nullptr;
+
+		Detail::HeapInformationBlockPtr heapInfoBlk =
+			reinterpret_cast<Detail::HeapInformationBlockPtr>(
+				(UIntPtr)allocatedPtr - sizeof(Detail::HeapInformationBlock));
+
+		heapInfoBlk->fTargetPtrSize = newSz;
+
+		if (heapInfoBlk->fCRC32 > 0)
+		{
+		    MUST_PASS(ke_protect_ke_heap(allocatedPtr));
+		}
+
+		return allocatedPtr;
+	}
+
 	/// @brief allocate chunk of memory.
 	/// @param sz size of pointer
 	/// @param rw read write (true to enable it)
 	/// @param user is it accesible by user processes?
 	/// @return the pointer
-	VoidPtr ke_new_ke_heap(SizeT sz, const bool rw, const bool user)
+	VoidPtr ke_new_ke_heap(const SizeT sz, const bool rw, const bool user)
 	{
-		if (sz == 0)
-			++sz;
+	   auto szFix = sz;
 
-		auto wrapper = kHeapPageManager.Request(rw, user, false, sz);
+		if (szFix == 0)
+			++szFix;
+
+		auto wrapper = kHeapPageManager.Request(rw, user, false, szFix);
 
 		Detail::HeapInformationBlockPtr heapInfo =
 			reinterpret_cast<Detail::HeapInformationBlockPtr>(
 				wrapper.VirtualAddress());
 
-		heapInfo->fTargetPtrSize = sz;
+		heapInfo->fTargetPtrSize = szFix;
 		heapInfo->fMagic		 = kKernelHeapMagic;
 		heapInfo->fCRC32		 = 0; // dont fill it for now.
 		heapInfo->fTargetPtr	 = wrapper.VirtualAddress();
