@@ -4,7 +4,8 @@
 
 ------------------------------------------- */
 
-#pragma once
+#ifndef _INC_MODULE_MBCI_HXX_
+#define _INC_MODULE_MBCI_HXX_
 
 #include <NewKit/Defines.hpp>
 #include <Modules/ACPI/ACPI.hxx>
@@ -26,17 +27,27 @@
 namespace Kernel
 {
 	struct MBCIHostInterface;
-	struct MBCIPacketACK;
+	struct MBCIHostInterfacePacketFrame;
 
-	/// @brief MBCI Acknowledge header.
-	struct PACKED MBCIPacketACK final
+	/// @brief MBCI Packet frame header
+	struct PACKED MBCIHostInterfacePacketFrame final
 	{
 		UInt32 Magic;
 		UInt32 HostId;
-		UInt16 VendorId;
-		UInt16 DeviceId;
-		Bool   Acknowleged;
+		UInt32 Flags;
+		UInt32 VendorId;
+		UInt32 DeviceId;
+		UInt32 DeviceSpeed;
+		Bool   Acknowledge;
 		Char   Zero[cMBCIZeroSz];
+	};
+
+	enum
+	{
+		eMBCISpeedDeviceInvalid,
+		eMBCILowSpeedDevice,
+		eMBCIHighSpeedDevice,
+		eMBCISpeedDeviceCount,
 	};
 
 	/// @brief MBCI Host Interface header.
@@ -60,24 +71,26 @@ namespace Kernel
 	/// @brief MBCI host flags.
 	enum MBCIHostFlags
 	{
-		kMBCIHostFlagsSupportsNothing,	         // Invalid MBCI device.
-		kMBCIHostFlagsSupportsAPM,				 // Advanced Power Management.
-		kMBCIHostFlagsSupportsDaisyChain,		 // Is daisy chained.
-		kMBCIHostFlagsSupportsHWInterrupts,		 // Has HW interrupts.
-		kMBCIHostFlagsSupportsDMA,				 // Has DMA.
-		kMBCIHostFlagsExtended = __UINT16_MAX__, // Extended flags table.
+		eMBCIHostFlagsSupportsNothing,			 // Invalid MBCI device.
+		eMBCIHostFlagsSupportsAPM,				 // Advanced Power Management.
+		eMBCIHostFlagsSupportsDaisyChain,		 // Is daisy chained.
+		eMBCIHostFlagsSupportsHWInterrupts,		 // Has HW interrupts.
+		eMBCIHostFlagsSupportsDMA,				 // Has DMA.
+		eMBCIHostFlagsExtended = __UINT16_MAX__, // Extended flags table.
 	};
 
 	enum MBCIHostKind
 	{
-		kMBCIHostKindHardDisk,
-		kMBCIHostKindOpticalDisk,
-		kMBCIHostKindKeyboardLow,
-		kMBCIHostKindMouseLow,
-		kMBCIHostKindMouseHigh,
-		kMBCIHostKindKeyboardHigh,
-		kMBCIHostKindNetworkInterface,
-		kMBCIHostKindDaisyChain,
-		kMBCIHostKindStartExtended = __UINT16_MAX__, // Extended vendor table.
+		eMBCIHostKindHardDisk,
+		eMBCIHostKindOpticalDisk,
+		eMBCIHostKindKeyboardLow,
+		eMBCIHostKindMouseLow,
+		eMBCIHostKindMouseHigh,
+		eMBCIHostKindKeyboardHigh,
+		eMBCIHostKindNetworkInterface,
+		eMBCIHostKindDaisyChain,
+		eMBCIHostKindStartExtended = __UINT16_MAX__, // Extended vendor table.
 	};
 } // namespace Kernel
+
+#endif // ifndef _INC_MODULE_MBCI_HXX_
