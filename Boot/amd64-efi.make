@@ -25,14 +25,17 @@ NEWOS_MODEL=-DkMachineModel="\"Generic Zeta HD\""
 endif
 
 BIOS=OVMF.fd
-IMG=epm.img
+IMG=epm-master-1.img
 IMG_2=epm-slave.img
+IMG_3=epm-master-2.img
 
 EMU_FLAGS=-net none -m 4G -M q35 -d int \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
-			file=fat:rw:Sources/Root/,index=2,format=raw -d int -hdd $(IMG_2)
+			file=fat:rw:Sources/Root/,index=2,format=raw -d int -hdd $(IMG_2) \
+			-drive file=$(IMG_3),if=none,id=nvm
+            -device nvme,serial=Zeta,drive=nvm
 
 LD_FLAGS=-e Main --subsystem=10
 

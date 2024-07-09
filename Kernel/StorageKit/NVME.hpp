@@ -12,21 +12,14 @@
 
 namespace Kernel
 {
-	class NVMEDeviceInterface : public DeviceInterface<MountpointInterface*>
+	class NVMEDeviceInterface final : public DeviceInterface<MountpointInterface*>
 	{
 	public:
 		explicit NVMEDeviceInterface(void (*Out)(MountpointInterface* outpacket),
 									 void (*In)(MountpointInterface* inpacket),
-									 void (*Cleanup)(void))
-			: DeviceInterface(Out, In), fCleanup(Cleanup)
-		{
-		}
+									 void (*Cleanup)(void));
 
-		virtual ~NVMEDeviceInterface()
-		{
-			if (fCleanup)
-				fCleanup();
-		}
+		~NVMEDeviceInterface() override;
 
 	public:
 		NVMEDeviceInterface& operator=(const NVMEDeviceInterface&) = default;
