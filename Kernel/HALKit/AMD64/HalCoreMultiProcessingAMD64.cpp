@@ -17,6 +17,10 @@
 #define kAPIC_SIPI_Vector 0x00500
 #define kAPIC_EIPI_Vector 0x00400
 
+#define kAPIC_BASE_MSR		  0x1B
+#define kAPIC_BASE_MSR_BSP	  0x100
+#define kAPIC_BASE_MSR_ENABLE 0x800
+
 /// @brief assembly routine. internal use only.
 EXTERN_C void _hal_enable_smp(void);
 
@@ -57,8 +61,8 @@ namespace Kernel::HAL
 		} Selector;
 	};
 
-	STATIC voidPtr	   kApicMadt	  = nullptr;
-	STATIC const char* kApicSignature = "APIC";
+	STATIC VoidPtr kApicMadt		  = nullptr;
+	STATIC const Char* kApicSignature = "APIC";
 
 	/// @brief Multiple APIC Descriptor Table.
 	struct MadtType final : public SDT
@@ -122,11 +126,7 @@ namespace Kernel::HAL
 		UInt32	fKind{0};
 	} kApicMadtAddresses[255] = {};
 
-	STATIC SizeT   kApicMadtAddressesCount = 0UL;
-	STATIC UIntPtr cBaseAddressAPIC		   = 0xFEE00000;
-
-	/// @brief this will help us schedule our cores.
-	STATIC Boolean* cProgramInitialized = nullptr;
+	STATIC SizeT kApicMadtAddressesCount = 0UL;
 
 	enum
 	{
@@ -142,7 +142,7 @@ namespace Kernel::HAL
 	/// @return
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
-		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
+		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, (apicId << 24));
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
 	}
 
@@ -160,14 +160,15 @@ namespace Kernel::HAL
 	}
 
 	STATIC HAL::StackFramePtr cFramePtr		= nullptr;
-	STATIC Int32			  cSMPInterrupt = 0x40;
+	STATIC Int32			  cSMPInterrupt = 34;
 
 	EXTERN_C Void hal_apic_acknowledge_cont(Void)
 	{
-		kcout << "newoskrnl: stopping core...\r";
-		ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+		kcout << "newoskrnl: Acknowledged.\r";
 	}
 
+	/// @brief Current context getter.
+	/// @retval StackFramePtr the current context.
 	EXTERN_C StackFramePtr _hal_leak_current_context(Void)
 	{
 		return cFramePtr;
@@ -192,10 +193,28 @@ namespace Kernel::HAL
 
 		cFramePtr = stackFrame;
 
-		/// yes the exception field contains the core id.
-		hal_send_start_ipi(stackFrame->A0, cSMPInterrupt, cBaseAddressAPIC);
-
 		sem.Unlock();
+	}
+
+	STATIC auto cAPICAddress = 0x0FEC00000;
+
+	STATIC void cpu_set_apic_base(UIntPtr apic)
+	{
+		UInt32 edx = 0;
+		UInt32 eax = (apic & 0xfffff0000) | kAPIC_BASE_MSR_ENABLE;
+
+		edx = (apic >> 32) & 0x0f;
+
+		hal_set_msr(kAPIC_BASE_MSR, eax, edx);
+	}
+
+	STATIC UIntPtr cpu_get_apic_base()
+	{
+		UInt32 eax, edx;
+
+		hal_get_msr(kAPIC_BASE_MSR, &eax, &edx);
+
+		return (eax & 0xfffff000) | ((UIntPtr)(edx & 0x0f) << 32);
 	}
 
 	/// @brief Fetch and enable cores inside main CPU.
@@ -209,47 +228,29 @@ namespace Kernel::HAL
 		{
 			MadtType* madt = reinterpret_cast<MadtType*>(kApicMadt);
 
-			constexpr auto cMaxProbableCores = 4; // the amount of cores we want.
-			constexpr auto cStartAt			 = 0; // start here to avoid boot core.
+			const auto	   cMaxProbableCores = madt->Length / sizeof(MadtType::MadtAddress); // the amount of cores we want.
+			constexpr auto cStartAt			 = 0;											 // start here to avoid boot core.
+
+			cpu_set_apic_base(cpu_get_apic_base());
+
+			// set SVR register to bit 8 to start recieve interrupts.
+
+			auto flagsSet = Kernel::ke_dma_read(cAPICAddress, 0xF0); // SVR register.
+			flagsSet |= 0x100;
+
+			Kernel::ke_dma_write(cAPICAddress, 0xF0, flagsSet | 0x100);
 
 			for (SizeT coreAt = cStartAt; coreAt < cMaxProbableCores; ++coreAt)
 			{
-				if (madt->MadtRecords[coreAt].Flags < kThreadBoot) // if local apic.
-				{
-					MadtType::MadtAddress& madtRecord = madt->MadtRecords[coreAt];
+				MadtType::MadtAddress& madtRecord = madt->MadtRecords[coreAt];
 
-					// then register as a core for scheduler.
-					kcout << "newoskrnl: Register APIC.\r";
+				kApicMadtAddresses[kApicMadtAddressesCount].fAddress = madtRecord.Address;
+				kApicMadtAddresses[kApicMadtAddressesCount].fKind	 = madt->MadtRecords[coreAt].RecordType;
 
-					kApicMadtAddresses[kApicMadtAddressesCount].fAddress = madtRecord.Address;
-					kApicMadtAddresses[kApicMadtAddressesCount].fKind	 = madt->MadtRecords[coreAt].Flags;
+				kcout << "newoskrnl: register ipi...\r";
 
-					++kApicMadtAddressesCount;
-				}
+				++kApicMadtAddressesCount;
 			}
-
-			///////////////////////////////////////////////////////////////////////////
-			/// Start local APIC now.
-			///////////////////////////////////////////////////////////////////////////
-
-			auto flagsSet = Kernel::ke_dma_read(cBaseAddressAPIC, 0xF0); // SVR register.
-
-			// enable APIC.
-			flagsSet |= 0x100;
-
-			Kernel::ke_dma_write(cBaseAddressAPIC, 0xF0, flagsSet);
-
-			/// Set sprurious interrupt vector.
-			Kernel::ke_dma_write(cBaseAddressAPIC, 0xF0, 0x100 | 0xFF);
-
-			// highest task priority. for our realtime kernel.
-			Kernel::ke_dma_write(cBaseAddressAPIC, 0x21, 0);
-
-			cProgramInitialized = new Boolean(true);
-
-			constexpr auto cWhatCore = 1;
-
-			hal_send_start_ipi(cWhatCore, cSMPInterrupt, cBaseAddressAPIC);
 		}
 		else
 		{

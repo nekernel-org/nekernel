@@ -29,7 +29,7 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -m 4G -M q35 -d int \
+EMU_FLAGS=-net none -smp 2 -m 4G -M q35 -serial stdio \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \

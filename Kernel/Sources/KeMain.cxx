@@ -63,7 +63,7 @@ namespace Kernel::Detail
 
 						if (catalogDir)
 						{
-							Kernel::kcout << "newoskrnl: Already here\r";
+							Kernel::kcout << "newoskrnl: already here.\r";
 
 							delete catalogDir;
 							continue;
@@ -186,18 +186,8 @@ namespace Kernel::Detail
 	/// @brief Loads necessary servers for the kernel -> user mode switch.
 	/// @param void no args.
 	/// @return void no return value.
-	STATIC Kernel::Void ke_launch_srv(Kernel::Void)
+	STATIC Kernel::Void ke_user_switch(Kernel::Void)
 	{
-		// load security server.
-		Kernel::PEFLoader simConn("C:\\System\\SimConnect");
-
-		if (!simConn.IsLoaded())
-		{
-			Kernel::ke_stop(RUNTIME_CHECK_FAILED);
-		}
-
-		Kernel::Utils::execute_from_image(simConn,
-										  Kernel::ProcessHeader::kAppKind);
 	}
 } // namespace Kernel::Detail
 
@@ -208,5 +198,5 @@ EXTERN_C Kernel::Void KeMain(Kernel::Void)
 {
 	/// Now run kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
-	Kernel::Detail::ke_launch_srv();
+	Kernel::Detail::ke_user_switch();
 }

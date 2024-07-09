@@ -18,8 +18,10 @@
 
 #define STBI_ASSERT(x)			 MUST_PASS(x)
 #define STBI_MALLOC(x)			 Kernel::ke_new_ke_heap(x, true, true)
-#define STBI_REALLOC(p, x)		 Kernel::ke_update_ke_heap(p, x);
+#define STBI_REALLOC(p, x)		 Kernel::ke_realloc_ke_heap(p, x);
 #define STBI_FREE(x)			 Kernel::ke_delete_ke_heap(x)
 #define STB_IMAGE_IMPLEMENTATION 1
+
+#include <KernelKit/KernelHeap.hpp>
 
 #include <BootKit/Vendor/stb_image.hxx>

@@ -19,6 +19,8 @@
 #include <FirmwareKit/Handover.hxx>
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 
+#include <cpuid.h>
+
 #ifdef kCPUBackendName
 #undef kCPUBackendName
 #endif // ifdef kCPUBackendName
@@ -229,6 +231,30 @@ namespace Kernel::HAL
 	Void hal_system_get_cores(VoidPtr rsdPtr);
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
+
+	inline Bool hal_has_msr() noexcept
+	{
+		static UInt32 eax, unused, edx; // eax, edx
+
+		__get_cpuid(1, &eax, &unused, &unused, &edx);
+
+		// edx returns the flag for MSR (which is 1 shifted to 5.)
+		return edx & (1 << 5);
+	}
+
+	inline Void hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept
+	{
+		asm volatile("rdmsr"
+					 : "=a"(*lo), "=d"(*hi)
+					 : "c"(msr));
+	}
+
+	inline Void hal_set_msr(UInt32 msr, UInt32 lo, UInt32 hi) noexcept
+	{
+		asm volatile("wrmsr"
+					 :
+					 : "a"(lo), "d"(hi), "c"(msr));
+	}
 
 	/// @brief Processor specific structures.
 	namespace Detail

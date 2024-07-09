@@ -16,10 +16,9 @@
 #include <NewKit/Macros.hpp>
 #include <NewKit/Ref.hpp>
 #include <BootKit/ProgramLoader.hxx>
-#include <KernelKit/KernelHeap.hpp>
 #include <cstring>
 
-#include <BootKit/Vendor/Support.hxx>ke_realloc_ke_heap
+#include <BootKit/Vendor/Support.hxx>
 #include <BootKit/STB.hxx>
 
 /// make the compiler shut up.
