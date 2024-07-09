@@ -3,6 +3,6 @@
   "executable_type": "kernel",
   "output_name": "newoskrnl.exe",
   "start_proc": "__ImageStart",
-  "arch": "32x0",
+  "arch": "arm64",
   "format": "PEF"
 }

@@ -45,7 +45,7 @@ typedef char UTFChar;
 typedef UInt32 MBCIType;
 
 /**
-	@brief Application class.
+	@brief System call class.
 */
 class NSyscall
 {

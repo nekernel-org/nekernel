@@ -1,3 +1,4 @@
 -I./
--I../Kerne;
+-I../Kernel
+-I../
 -std=c++20
