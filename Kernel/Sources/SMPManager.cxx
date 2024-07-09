@@ -160,9 +160,9 @@ namespace Kernel
 			// to avoid any null deref.
 			if (!fThreadList[idx].Leak().Leak()->fStack)
 				continue;
-			if (fThreadList[idx].Leak().Leak()->fStack->Rsp == 0)
+			if (fThreadList[idx].Leak().Leak()->fStack->SP == 0)
 				continue;
-			if (fThreadList[idx].Leak().Leak()->fStack->Rbp == 0)
+			if (fThreadList[idx].Leak().Leak()->fStack->BP == 0)
 				continue;
 
 			fThreadList[idx].Leak().Leak()->Busy(true);

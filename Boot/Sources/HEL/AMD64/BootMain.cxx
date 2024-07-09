@@ -149,18 +149,18 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	kHandoverHeader = handoverHdrPtr;
 
-	GXInit();
+	CGInit();
 
-	GXDraw(RGB(9d, 9d, 9d), handoverHdrPtr->f_GOP.f_Height,
+	CGDrawInRegion(cCGClearClr, handoverHdrPtr->f_GOP.f_Height,
 		   handoverHdrPtr->f_GOP.f_Width, 0, 0);
 
-	GXFini();
+	CGFini();
 
-	GXDrawImg(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
+	CGDrawBitMapInRegion(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
 			  (handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
 			  (handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
 
-	GXFini();
+	CGFini();
 
 	BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 

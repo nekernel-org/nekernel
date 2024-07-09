@@ -23,7 +23,7 @@ STATIC Kernel::PS2MouseInterface kMousePS2;
 STATIC Kernel::Char kMousePacket[4]		 = {};
 STATIC Kernel::Boolean kMousePacketReady = false;
 
-STATIC GXInit();
+STATIC CGInit();
 
 #define kPS2Leftbutton	 0b00000001
 #define kPS2Middlebutton 0b00000010

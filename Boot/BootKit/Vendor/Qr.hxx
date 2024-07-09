@@ -371,8 +371,8 @@ namespace qr
 		{
 			for (int x = 0; x < (this->side_size()); ++x)
 			{
-				GXDraw(
-					(this->module(x, y) ? RGB(00, 00, 00) : RGB(FF, FF, FF)),
+				CGDrawInRegion(
+					(this->module(x, y) ? RGB(00, 00, 00) : RGB(0xFF, 0xFF, 0xFF)),
 					1, 1,
 					x + whereX, y + whereY);
 			}

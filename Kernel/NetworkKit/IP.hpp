@@ -76,8 +76,8 @@ namespace Kernel
 	class IPFactory final
 	{
 	public:
-		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress6> ipv6);
-		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress> ipv4);
+		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress6>& ipv6);
+		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress>& ipv4);
 		static bool				   IpCheckVersion4(const char* ip);
 	};
 } // namespace Kernel

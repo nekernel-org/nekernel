@@ -14,7 +14,7 @@
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 #include <HALKit/AMD64/Hypervisor.hpp>
 #include <HALKit/AMD64/Processor.hpp>
-#elif defined(__NEWOS_PPC__)
+#elif defined(__NEWOS_POWER64__)
 #include <HALKit/POWER/Processor.hpp>
 #elif defined(__NEWOS_ARM64__)
 #include <HALKit/ARM64/Processor.hxx>

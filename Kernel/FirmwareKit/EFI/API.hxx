@@ -89,13 +89,13 @@ Bascially frees everything we have in the EFI side.
 #endif // ifdef __DEBUG__
 
 #ifdef __NEWBOOT__
-		GXInit();
+		CGInit();
 
-		GXDrawImg(NewBootFatal, NEWBOOTFATAL_HEIGHT, NEWBOOTFATAL_WIDTH,
+		CGDrawBitMapInRegion(NewBootFatal, NEWBOOTFATAL_HEIGHT, NEWBOOTFATAL_WIDTH,
 				  (kHandoverHeader->f_GOP.f_Width - NEWBOOTFATAL_WIDTH) / 2,
 				  (kHandoverHeader->f_GOP.f_Height - NEWBOOTFATAL_HEIGHT) / 2);
 
-		GXFini();
+		CGFini();
 
 		/// Show the QR code now.
 

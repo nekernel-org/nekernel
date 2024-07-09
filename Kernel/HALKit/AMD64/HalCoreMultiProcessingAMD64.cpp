@@ -193,7 +193,7 @@ namespace Kernel::HAL
 		cFramePtr = stackFrame;
 
 		/// yes the exception field contains the core id.
-		hal_send_start_ipi(stackFrame->Rcx, cSMPInterrupt, cBaseAddressAPIC);
+		hal_send_start_ipi(stackFrame->A0, cSMPInterrupt, cBaseAddressAPIC);
 
 		sem.Unlock();
 	}

@@ -157,7 +157,7 @@ namespace Kernel
 		NodePtr Open(const Char* path, const Char* r) override;
 		Void	Write(NodePtr node, VoidPtr data, Int32 flags, SizeT sz) override;
 		VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override;
-		bool	Seek(NodePtr node, SizeT off);
+		bool	Seek(NodePtr node, SizeT off) override;
 		SizeT	Tell(NodePtr node) override;
 		bool	Rewind(NodePtr node) override;
 

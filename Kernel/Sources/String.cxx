@@ -98,7 +98,7 @@ namespace Kernel
 		if (!fmt)
 			return ("-1");
 
-		char* ret = (char*)Alloca(sizeof(char) * 8 + rt_string_len(fmt));
+		char* ret = (char*)ALLOCA(sizeof(char) * 8 + rt_string_len(fmt));
 
 		if (!ret)
 			return ("-1");
@@ -131,7 +131,7 @@ namespace Kernel
 			ret[idx] = fmt[idx];
 		}
 
-		return ret; /* Copy that ret into a buffer, Alloca allocates to the stack */
+		return ret; /* Copy that ret into a buffer, 'ALLOCA' allocates to the stack */
 	}
 
 	const char* StringBuilder::FromBool(const char* fmt, bool i)
@@ -140,7 +140,7 @@ namespace Kernel
 			return ("?");
 
 		const char* boolean_expr = i ? "true" : "false";
-		char*		ret			 = (char*)Alloca((sizeof(char) * i) ? 4 : 5 + rt_string_len(fmt));
+		char*		ret			 = (char*)ALLOCA((sizeof(char) * i) ? 4 : 5 + rt_string_len(fmt));
 
 		if (!ret)
 			return ("?");
@@ -189,7 +189,7 @@ namespace Kernel
 			return ("?");
 
 		char* ret =
-			(char*)Alloca(sizeof(char) * rt_string_len(fmt2) + rt_string_len(fmt2));
+			(char*)ALLOCA(sizeof(char) * rt_string_len(fmt2) + rt_string_len(fmt2));
 
 		if (!ret)
 			return ("?");

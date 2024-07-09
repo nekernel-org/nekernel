@@ -155,7 +155,7 @@ namespace Kernel::HAL
 	struct PACKED StackFrame final
 	{
 		Reg IntNum, Exception;
-		Reg Rdi, Rsi, Rbp, Rsp, Rbx, Rdx, Rcx, Rax;
+		Reg A0, A2, BP, SP, A3, A4, A5, A6;
 		Reg R8, R9, R10, R11, R12, R13, R14, R15;
 		Reg Gs, Fs;
 	};

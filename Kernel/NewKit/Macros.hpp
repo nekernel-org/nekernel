@@ -86,9 +86,9 @@
 #define END_STRING_ENUM() }
 #endif
 
-#ifndef Alloca
-#define Alloca(Sz) __builtin_alloca(Sz)
-#endif // #ifndef Alloca
+#ifndef ALLOCA
+#define ALLOCA(Sz) __builtin_alloca(Sz)
+#endif // #ifndef ALLOCA
 
 #ifndef CANT_REACH
 #define CANT_REACH() __builtin_unreachable()
@@ -107,8 +107,8 @@
 #define CONST const
 
 #define STRINGIFY(X)	#X
-#define NEWOS_UNUSED(X) ((void)X)
+#define NEWOS_UNUSED(X) ((Kernel::Void)X)
 
 #ifndef RGB
-#define RGB(R, G, B) (UInt32)(0x##R##G##B)
+#define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
 #endif // !RGB
