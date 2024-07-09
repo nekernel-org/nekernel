@@ -91,6 +91,9 @@ namespace Kernel
 		eMBCIHostKindDaisyChain,
 		eMBCIHostKindStartExtended = __UINT16_MAX__, // Extended vendor table.
 	};
+
+	/// @brief An AuthKey is a context used to decrpy data from an MBCI packet.
+	typedef UInt64 MBCIAuthyKeyType;
 } // namespace Kernel
 
 #endif // ifndef _INC_MODULE_MBCI_HXX_
