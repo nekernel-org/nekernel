@@ -21,6 +21,5 @@ namespace Kernel
 	ENUM_STRING(ParallelsAlt, " lrpepyh vr ");
 	ENUM_STRING(Bhyve, "bhyve bhyve ");
 	ENUM_STRING(Qnx, " QNXQVMBSQG ");
-
 	END_STRING_ENUM()
 } // namespace Kernel

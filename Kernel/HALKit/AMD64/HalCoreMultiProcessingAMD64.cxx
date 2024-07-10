@@ -162,11 +162,6 @@ namespace Kernel::HAL
 	STATIC HAL::StackFramePtr cFramePtr		= nullptr;
 	STATIC Int32			  cSMPInterrupt = 34;
 
-	EXTERN_C Void hal_apic_acknowledge_cont(Void)
-	{
-		kcout << "newoskrnl: Acknowledged.\r";
-	}
-
 	/// @brief Current context getter.
 	/// @retval StackFramePtr the current context.
 	EXTERN_C StackFramePtr _hal_leak_current_context(Void)
@@ -176,7 +171,6 @@ namespace Kernel::HAL
 
 	EXTERN_C Void hal_apic_acknowledge(Void)
 	{
-		hal_apic_acknowledge_cont();
 	}
 
 	EXTERN_C Void _hal_switch_context(HAL::StackFramePtr stackFrame)
@@ -198,7 +192,7 @@ namespace Kernel::HAL
 
 	STATIC auto cAPICAddress = 0x0FEC00000;
 
-	STATIC void cpu_set_apic_base(UIntPtr apic)
+	STATIC Void cpu_set_apic_base(UIntPtr apic)
 	{
 		UInt32 edx = 0;
 		UInt32 eax = (apic & 0xfffff0000) | kAPIC_BASE_MSR_ENABLE;
@@ -208,7 +202,7 @@ namespace Kernel::HAL
 		hal_set_msr(kAPIC_BASE_MSR, eax, edx);
 	}
 
-	STATIC UIntPtr cpu_get_apic_base()
+	STATIC UIntPtr cpu_get_apic_base(Void)
 	{
 		UInt32 eax, edx;
 
@@ -228,9 +222,6 @@ namespace Kernel::HAL
 		{
 			MadtType* madt = reinterpret_cast<MadtType*>(kApicMadt);
 
-			const auto	   cMaxProbableCores = madt->Length / sizeof(MadtType::MadtAddress); // the amount of cores we want.
-			constexpr auto cStartAt			 = 0;											 // start here to avoid boot core.
-
 			cpu_set_apic_base(cpu_get_apic_base());
 
 			// set SVR register to bit 8 to start recieve interrupts.
@@ -239,18 +230,6 @@ namespace Kernel::HAL
 			flagsSet |= 0x100;
 
 			Kernel::ke_dma_write(cAPICAddress, 0xF0, flagsSet | 0x100);
-
-			for (SizeT coreAt = cStartAt; coreAt < cMaxProbableCores; ++coreAt)
-			{
-				MadtType::MadtAddress& madtRecord = madt->MadtRecords[coreAt];
-
-				kApicMadtAddresses[kApicMadtAddressesCount].fAddress = madtRecord.Address;
-				kApicMadtAddresses[kApicMadtAddressesCount].fKind	 = madt->MadtRecords[coreAt].RecordType;
-
-				kcout << "newoskrnl: register ipi...\r";
-
-				++kApicMadtAddressesCount;
-			}
 		}
 		else
 		{

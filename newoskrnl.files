@@ -100,7 +100,7 @@ Kernel/HALKit/AMD64/HalInstallTIB.asm
 Kernel/HALKit/AMD64/HalInterruptAPI.asm
 Kernel/HALKit/AMD64/HalKernelMain.cxx
 Kernel/HALKit/AMD64/HalKernelMouse.cxx
-Kernel/HALKit/AMD64/HalNewBoot.asm
+Kernel/HALKit/AMD64/HalBoot.asm
 Kernel/HALKit/AMD64/HalPageAlloc.hpp
 Kernel/HALKit/AMD64/HalProcessor.cpp
 Kernel/HALKit/AMD64/HalRoutines.s

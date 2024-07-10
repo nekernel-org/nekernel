@@ -132,7 +132,7 @@ __NEW_INT_34:
     mov rax, 0
 
     ;; tell there local apic that we're done.
-    mov [cAPICAddress + 0xB0], rax ; send end of interrupt.
+    mov qword [cAPICAddress + 0xB0], rax ; send end of interrupt.
 
     iretq
 

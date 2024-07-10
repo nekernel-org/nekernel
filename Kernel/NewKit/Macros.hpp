@@ -79,7 +79,7 @@
 #endif
 
 #ifndef ENUM_STRING
-#define ENUM_STRING(NAME, VAL) inline constexpr const char* NAME = VAL
+#define ENUM_STRING(NAME, VAL) inline constexpr const char* e##NAME = VAL
 #endif
 
 #ifndef END_STRING_ENUM

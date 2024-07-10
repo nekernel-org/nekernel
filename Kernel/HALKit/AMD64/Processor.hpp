@@ -19,7 +19,10 @@
 #include <FirmwareKit/Handover.hxx>
 #include <HALKit/AMD64/HalPageAlloc.hpp>
 
+EXTERN_C
+{
 #include <cpuid.h>
+}
 
 #ifdef kCPUBackendName
 #undef kCPUBackendName
@@ -73,15 +76,16 @@ namespace Kernel::HAL
 	{
 		UInt16 pml4_index = (virt_addr >> 39) & 0x1FF;
 
-		if (!pde->Pte[pml4_index].Present)
+		if (pde && !pde->Pte[pml4_index].Present)
 		{
 			pde->Pte[pml4_index].Present = true;
-			kcout << "PM is present now.\r";
 
 			pde->Pte[pml4_index].PhysicalAddress = phys_addr;
 			pde->Pte[pml4_index].Rw				 = flags & eFlagsRw;
 			pde->Pte[pml4_index].User			 = flags & eFlagsUser;
 			pde->Pte[pml4_index].ExecDisable	 = flags & eFlagsExecDisable;
+
+			kcout << "PTE is present now.\r";
 
 			return 0;
 		}
@@ -92,13 +96,13 @@ namespace Kernel::HAL
 			kcout << "PhysicalAddress: " << hex_number(pde->Pte[pml4_index].PhysicalAddress);
 			kcout << "\r";
 
-			kcout << "User: " << (pde->Pte[pml4_index].User ? "YES" : "NO") << "\r";
-			kcout << "RW: " << (pde->Pte[pml4_index].Rw ? "YES" : "NO") << "\r";
+			kcout << "User: " << (pde->Pte[pml4_index].User ? "true" : "false") << "\r";
+			kcout << "RW: " << (pde->Pte[pml4_index].Rw ? "true" : "false") << "\r";
 
-			return 1;
+			return 0;
 		}
 
-		return 0;
+		return 1;
 	}
 
 	/// @brief Map address to PDE.
@@ -106,7 +110,7 @@ namespace Kernel::HAL
 	/// @param phys_addr
 	/// @param virt_addr
 	/// @param flags
-	inline void ke_unmap_address(PDE* pde, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
+	inline Void ke_unmap_address(PDE* pde, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
 	{
 		UInt16 pml4_index = (virt_addr >> 39) & 0x1FF;
 
@@ -202,11 +206,12 @@ namespace Kernel::HAL
 	class SegmentDescriptorComparator final
 	{
 	public:
-		bool IsValid(SegmentDescriptor& seg)
+		Bool IsValid(SegmentDescriptor& seg)
 		{
 			return seg.Base > seg.Limit;
 		}
-		bool Equals(SegmentDescriptor& seg, SegmentDescriptor& segRight)
+
+		Bool Equals(SegmentDescriptor& seg, SegmentDescriptor& segRight)
 		{
 			return seg.Base == segRight.Base && seg.Limit == segRight.Limit;
 		}
@@ -217,21 +222,24 @@ namespace Kernel::HAL
 	class GDTLoader final
 	{
 	public:
-		static void Load(RegisterGDT& gdt);
-		static void Load(Ref<RegisterGDT>& gdt);
+		static Void Load(RegisterGDT& gdt);
+		static Void Load(Ref<RegisterGDT>& gdt);
 	};
 
 	class IDTLoader final
 	{
 	public:
-		static void Load(Register64& idt);
-		static void Load(Ref<Register64>& idt);
+		static Void Load(Register64& idt);
+		static Void Load(Ref<Register64>& idt);
 	};
 
 	Void hal_system_get_cores(VoidPtr rsdPtr);
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 
+	/// @brief Do a cpuid to check if MSR exists on CPU.
+	/// @retval true it does exists.
+	/// @retval false it doesn't.
 	inline Bool hal_has_msr() noexcept
 	{
 		static UInt32 eax, unused, edx; // eax, edx
@@ -242,13 +250,24 @@ namespace Kernel::HAL
 		return edx & (1 << 5);
 	}
 
+	/// @brief Get Model-specific register.
+	/// @param msr MSR
+	/// @param lo low byte
+	/// @param hi high byte
 	inline Void hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept
 	{
+		if (!lo || !hi)
+			return;
+
 		asm volatile("rdmsr"
 					 : "=a"(*lo), "=d"(*hi)
 					 : "c"(msr));
 	}
 
+	/// @brief Set Model-specific register.
+	/// @param msr MSR
+	/// @param lo low byte
+	/// @param hi high byte
 	inline Void hal_set_msr(UInt32 msr, UInt32 lo, UInt32 hi) noexcept
 	{
 		asm volatile("wrmsr"
@@ -256,14 +275,12 @@ namespace Kernel::HAL
 					 : "a"(lo), "d"(hi), "c"(msr));
 	}
 
-	/// @brief Processor specific structures.
+	/// @brief Processor specific namespace.
 	namespace Detail
 	{
-		EXTERN_C void _ke_power_on_self_test(void);
-
 		/**
-	@brief Global descriptor table entry, either null, code or data.
-*/
+		  @brief Global descriptor table entry, either null, code or data.
+	    */
 
 		struct PACKED NewOSGDTRecord final
 		{
@@ -285,15 +302,35 @@ namespace Kernel::HAL
 			NewOSGDTRecord UserData;
 		};
 	} // namespace Detail
+
+	class APICController
+	{
+	public:
+		explicit APICController(VoidPtr base)
+			: fApic(base)
+		{
+		}
+
+		~APICController() = default;
+
+		NEWOS_COPY_DEFAULT(APICController);
+
+	public:
+		UInt32 Read(UInt32 reg) noexcept;
+		Void   Write(UInt32 reg, UInt32 value) noexcept;
+
+	private:
+		VoidPtr fApic{nullptr};
+	};
 } // namespace Kernel::HAL
 
-EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp);
-EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp);
-EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp);
-EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp);
+EXTERN_C Kernel::Void idt_handle_generic(Kernel::UIntPtr rsp);
+EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp);
+EXTERN_C Kernel::Void idt_handle_math(Kernel::UIntPtr rsp);
+EXTERN_C Kernel::Void idt_handle_pf(Kernel::UIntPtr rsp);
 
-EXTERN_C void hal_load_idt(Kernel::HAL::Register64 ptr);
-EXTERN_C void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
+EXTERN_C Kernel::Void hal_load_idt(Kernel::HAL::Register64 ptr);
+EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 
 /// @brief Maximum size of the IDT.
 #define kKernelIdtSize	   0x100
