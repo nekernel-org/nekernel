@@ -1,0 +1,49 @@
+<mxfile host="app.diagrams.net" modified="2024-07-10T08:35:09.264Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" etag="3vMfxDKsgdLXeMbgt9fG" version="24.6.4" type="device">
+  <diagram name="Page-1" id="lDkK2i6CeL2VbSOVDvrP">
+    <mxGraphModel dx="866" dy="517" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-1" value="DDK Hooks (KCI and SCI routes.)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="234" y="450" width="360" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-2" value="libCoreFoundation/libCoreSystem (SCI)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="234" y="410" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-3" value="libCoreGraphics" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="234" y="370" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-4" value="libCoreApplication" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="241" y="330" width="136" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-5" value="libCoreMT" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="387" y="330" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-8" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;System layer.&lt;/h1&gt;&lt;p&gt;This layer describes the kernel and it&#39;s API, which makes the Zeta OS.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="620" y="325" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-9" value="libCoreHTML" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="241" y="200" width="136" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-10" value="libCoreAsync" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="387" y="200" width="203" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-11" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;High level layer.&lt;/h1&gt;&lt;p&gt;This contains the launcher, some&lt;/p&gt;&lt;p&gt;APIs (here CoreHTML and CoreAsync.) and apps.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="620" y="140" width="180" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-12" value="Launcher" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="241" y="130" width="349" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-13" value="Kernel" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="235.5" y="520" width="360" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-14" value="New OS" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="241" y="70" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ifhO3zQZNW-sXvZMTmu8-15" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Application&lt;/span&gt;&lt;/h1&gt;&lt;div&gt;Each app is organized so:&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;/*.exe&lt;/div&gt;&lt;div&gt;/NewOS/&lt;/div&gt;&lt;div&gt;/NewOS/Libraries/lib*&lt;/div&gt;&lt;div&gt;/NewOS/Manifests/*.alist&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;*.exe must match the MLExecutable field, and be a PEF executable.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;App.alist is mandatory on apps.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;An New OS is simply a directory&lt;/div&gt;&lt;div&gt;with the .app extension.&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="10" y="130" width="180" height="240" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
