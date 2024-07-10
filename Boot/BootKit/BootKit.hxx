@@ -235,7 +235,7 @@ public:
 				return false;
 		}
 
-		writer.Write(L"Device Size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
+		writer.Write(L"newosldr: disk size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
 
 		if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
 			blockPart->DiskSize < 1 ||
@@ -249,7 +249,7 @@ public:
 			EFI::ThrowError(L"Invalid-Partition-Name", L"Invalid disk partition.");
 		}
 
-		writer.Write(L"Device Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
+		writer.Write(L"newosldr: partition name: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
 		return true;
 	}

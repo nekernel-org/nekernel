@@ -12,8 +12,8 @@
 #include <KernelKit/KernelHeap.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/ProcessHeap.hpp>
-#include <NewKit/Json.hpp>
+#include <KernelKit/ProcessHeap.hxx>
+#include <NewKit/Json.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hpp>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>

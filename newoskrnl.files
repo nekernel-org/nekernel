@@ -180,7 +180,7 @@ Kernel/KernelKit/SMPManager.hpp
 Kernel/KernelKit/Semaphore.hpp
 Kernel/KernelKit/ThreadLocalStorage.hxx
 Kernel/KernelKit/Timer.hpp
-Kernel/KernelKit/ProcessHeap.hpp
+Kernel/KernelKit/ProcessHeap.hxx
 Kernel/KernelKit/XCOFF.hxx
 Kernel/KernelKit/compile_flags.txt
 Kernel/Modules/ACPI/ACPI.hxx
@@ -223,7 +223,7 @@ Kernel/NewKit/CxxAbi.hpp
 Kernel/NewKit/Defines.hpp
 Kernel/NewKit/ErrorOr.hpp
 Kernel/NewKit/Function.hpp
-Kernel/NewKit/Json.hpp
+Kernel/NewKit/Json.hxx
 Kernel/NewKit/KernelCheck.hpp
 Kernel/NewKit/Macros.hpp
 Kernel/NewKit/MutableArray.hpp

@@ -14,7 +14,7 @@
 #include <NewKit/Pmm.hpp>
 
 /// @version 5/11/23
-/// @file ProcessHeap.hpp
+/// @file ProcessHeap.hxx
 /// @brief memory heap for user processes.
 
 #define kUserHeapMaxSz (4096)

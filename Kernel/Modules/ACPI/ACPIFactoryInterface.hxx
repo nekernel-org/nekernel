@@ -14,6 +14,10 @@
 
 namespace Kernel
 {
+    class ACPIFactoryInterface;
+
+    typedef ACPIFactoryInterface PowerFactoryInterface;
+
 	class ACPIFactoryInterface final
 	{
 	public:

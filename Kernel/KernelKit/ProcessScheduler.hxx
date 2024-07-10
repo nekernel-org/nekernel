@@ -10,7 +10,7 @@
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/LockDelegate.hpp>
 #include <KernelKit/PermissionSelector.hxx>
-#include <KernelKit/ProcessHeap.hpp>
+#include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/MutableArray.hpp>
 
 #define kSchedMinMicroTime (AffinityKind::kHartStandard)

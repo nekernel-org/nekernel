@@ -1,3 +1,7 @@
 -std=c++20
 -I../../../
--I../../../../
+-I../../../../Kernel
+-D__NEWOS_AMD64__
+-std=c++20
+-D__x86_64__
+-D__NEWOS_CAN_PATCH__

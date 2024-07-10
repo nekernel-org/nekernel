@@ -24,7 +24,7 @@
 /// @brief assembly routine. internal use only.
 EXTERN_C void _hal_enable_smp(void);
 
-/// @note: _hal_switch_context
+/// @note: _hal_switch_context is internal
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -169,10 +169,13 @@ namespace Kernel::HAL
 		return cFramePtr;
 	}
 
+	/// @internal
 	EXTERN_C Void hal_apic_acknowledge(Void)
 	{
+	   kcout << "newoskrnl: acknowledge APIC.\r";
 	}
 
+	/// @internal
 	EXTERN_C Void _hal_switch_context(HAL::StackFramePtr stackFrame)
 	{
 		hal_switch_context(stackFrame);
@@ -182,7 +185,9 @@ namespace Kernel::HAL
 	{
 		Semaphore sem;
 
-		HardwareTimer timer(Seconds(5));
+		constexpr auto cSeconds = 1U;
+
+		HardwareTimer timer(Seconds(cSeconds));
 		sem.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), &timer);
 
 		cFramePtr = stackFrame;

@@ -241,7 +241,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::ProgramLoader(readerKernel.Blob());
-		loader->SetName("NewOSKrnl (Patched)");
+		loader->SetName("'newoskrnl.exe'");
 	}
 
 #endif // ifdef __NEWOS_CAN_PATCH__
@@ -256,11 +256,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	if (loader)
 		loader->Start(handoverHdrPtr);
-	else
-		hal_init_platform(handoverHdrPtr);
-#else
-	hal_init_platform(handoverHdrPtr);
 #endif // ifdef __NEWOS_CAN_PATCH__
+
+	hal_init_platform(handoverHdrPtr);
 
 	EFI::Stop();
 

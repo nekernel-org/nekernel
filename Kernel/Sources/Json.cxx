@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Json.hpp>
+#include <NewKit/Json.hxx>
 
 using namespace Kernel;
 
