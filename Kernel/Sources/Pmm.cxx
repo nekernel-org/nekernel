@@ -12,7 +12,7 @@
 #endif
 
 #if defined(__NEWOS_AMD64__)
-#include <HALKit/AMD64/Processor.hpp>
+#include <HALKit/AMD64/Processor.hxx>
 #endif
 
 namespace Kernel

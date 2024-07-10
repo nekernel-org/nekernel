@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
-#include <HALKit/AMD64/Processor.hpp>
+#include <HALKit/AMD64/Processor.hxx>
 #include <NewKit/KernelCheck.hpp>
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/Semaphore.hpp>

@@ -17,7 +17,7 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Utils.hpp>
 #include <FirmwareKit/Handover.hxx>
-#include <HALKit/AMD64/HalPageAlloc.hpp>
+#include <HALKit/AMD64/HalPageAlloc.hxx>
 
 EXTERN_C
 {
@@ -158,6 +158,7 @@ namespace Kernel::HAL
 
 	typedef UIntPtr Reg;
 
+	/// @brief Stack frame (as retrieved from assembly.)
 	struct PACKED StackFrame final
 	{
 		Reg IntNum, Exception;

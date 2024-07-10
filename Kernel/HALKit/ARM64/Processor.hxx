@@ -53,4 +53,4 @@ inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 
 inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
 
-#include <HALKit/ARM64/HalPageAlloc.hpp>
+#include <HALKit/ARM64/HalPageAlloc.hxx>

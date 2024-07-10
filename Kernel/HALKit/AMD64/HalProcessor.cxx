@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <HALKit/AMD64/Processor.hpp>
+#include <HALKit/AMD64/Processor.hxx>
 
 /**
  * @file Processor.cpp

@@ -101,7 +101,7 @@ Kernel/HALKit/AMD64/HalInterruptAPI.asm
 Kernel/HALKit/AMD64/HalKernelMain.cxx
 Kernel/HALKit/AMD64/HalKernelMouse.cxx
 Kernel/HALKit/AMD64/HalBoot.asm
-Kernel/HALKit/AMD64/HalPageAlloc.hpp
+Kernel/HALKit/AMD64/HalPageAlloc.hxx
 Kernel/HALKit/AMD64/HalProcessor.cpp
 Kernel/HALKit/AMD64/HalRoutines.s
 Kernel/HALKit/AMD64/HalSMPCore.cxx
@@ -115,12 +115,12 @@ Kernel/HALKit/AMD64/PCI/Express.cxx
 Kernel/HALKit/AMD64/PCI/IO.cxx
 Kernel/HALKit/AMD64/PCI/Iterator.cxx
 Kernel/HALKit/AMD64/PCI/PCI.cxx
-Kernel/HALKit/AMD64/Processor.hpp
+Kernel/HALKit/AMD64/Processor.hxx
 Kernel/HALKit/AMD64/ReadMe.md
 Kernel/HALKit/AMD64/Storage/AHCI.cxx
 Kernel/HALKit/AMD64/Storage/ATA-DMA.cxx
 Kernel/HALKit/AMD64/Storage/ATA-PIO.cxx
-Kernel/HALKit/ARM64/HalPageAlloc.hpp
+Kernel/HALKit/ARM64/HalPageAlloc.hxx
 Kernel/HALKit/ARM64/HalPageInternal.S
 Kernel/HALKit/ARM64/HalTimer.cxx
 Kernel/HALKit/ARM64/Processor.hxx
@@ -130,7 +130,7 @@ Kernel/HALKit/AXP/CR.s
 Kernel/HALKit/AXP/CoreInterruptHandlerDEC.cpp
 Kernel/HALKit/AXP/CoreSyscallHandlerDEC.cpp
 Kernel/HALKit/AXP/HAL.s
-Kernel/HALKit/AXP/Processor.hpp
+Kernel/HALKit/AXP/Processor.hxx
 Kernel/HALKit/AXP/SYSCALL.s
 Kernel/HALKit/AXP/VM.s
 Kernel/HALKit/POWER/HalContextSwitchPowerPC.s
@@ -142,7 +142,7 @@ Kernel/HALKit/POWER/HalThread.cxx
 Kernel/HALKit/POWER/HalVirtualMemory.cxx
 Kernel/HALKit/POWER/Hart.hxx
 Kernel/HALKit/POWER/MBCI/HalMBCIHost.cxx
-Kernel/HALKit/POWER/Processor.hpp
+Kernel/HALKit/POWER/Processor.hxx
 Kernel/HALKit/POWER/ReadMe.md
 Kernel/HALKit/POWER/ppc-cpu.h
 Kernel/HALKit/POWER/ppc-mmu.h

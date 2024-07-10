@@ -11,11 +11,11 @@
 #include <NewKit/Function.hpp>
 
 #ifdef __NEWOS_AMD64__
-#include <HALKit/AMD64/HalPageAlloc.hpp>
+#include <HALKit/AMD64/HalPageAlloc.hxx>
 #include <HALKit/AMD64/Hypervisor.hpp>
-#include <HALKit/AMD64/Processor.hpp>
+#include <HALKit/AMD64/Processor.hxx>
 #elif defined(__NEWOS_POWER64__)
-#include <HALKit/POWER/Processor.hpp>
+#include <HALKit/POWER/Processor.hxx>
 #elif defined(__NEWOS_ARM64__)
 #include <HALKit/ARM64/Processor.hxx>
 #else

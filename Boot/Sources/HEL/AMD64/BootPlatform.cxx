@@ -93,7 +93,7 @@ EXTERN_C UInt32 In32(UInt16 port)
 
 #else
 
-#include <HALKit/AMD64/Processor.hpp>
+#include <HALKit/AMD64/Processor.hxx>
 
 void rt_hlt()
 {

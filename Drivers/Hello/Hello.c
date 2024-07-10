@@ -40,12 +40,12 @@ static HelloMasterConfigHeader* cHeader		= nil;
 /// @brief Link to master device to attribute DHCP lease.
 static void __hello_link_device(void* a0)
 {
-	kernelPrintStr("Hello: turning up...\r");
+	kernelPrintStr("Hello: linking...\r");
 
 	if (!cDev)
 	{
 		// open raw network device.
-		cDev = kernelOpenDevice("RAWNET:\\");
+		cDev = kernelOpenDevice("BROADCAST:\\");
 	}
 
 	cDev->write("+LINK", kernelStringLength("+LINK"));
@@ -77,7 +77,7 @@ static void __hello_get_hmch(void* a0)
 
 static void __hello_unlink_device(void* a0)
 {
-	kernelPrintStr("Hello: shutting down...\r");
+	kernelPrintStr("Hello: unlinking...\r");
 
 	if (cDev)
 	{

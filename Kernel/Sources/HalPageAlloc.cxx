@@ -7,9 +7,9 @@
 #include <ArchKit/ArchKit.hpp>
 
 #ifdef __NEWOS_AMD64__
-#include <HALKit/AMD64/HalPageAlloc.hpp>
+#include <HALKit/AMD64/HalPageAlloc.hxx>
 #elif defined(__NEWOS_ARM64__)
-#include <HALKit/ARM64/HalPageAlloc.hpp>
+#include <HALKit/ARM64/HalPageAlloc.hxx>
 #endif
 
 #include <NewKit/Defines.hpp>
