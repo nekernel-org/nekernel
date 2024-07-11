@@ -11,8 +11,8 @@
 
 ------------------------------------------- */
 
-#ifndef __PEF__
-#define __PEF__
+#ifndef __INC_PEF_HPP__
+#define __INC_PEF_HPP__
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/LoaderInterface.hpp>
@@ -95,6 +95,7 @@ namespace Kernel
 	};
 } // namespace Kernel
 
+/* not mandatory, only for non fork based filesystems */
 #define kPefExt		  ".exec"
 #define kPefDylibExt  ".lib"
 #define kPefLibExt	  ".slib"
@@ -109,4 +110,4 @@ namespace Kernel
 #define kPefForkKind	kPefMagic
 #define kPefForkKindFAT kPefMagicFat
 
-#endif /* ifndef __PEF__ */
+#endif /* ifndef __INC_PEF_HPP__ */

@@ -8,6 +8,8 @@
 #include <BootKit/Vendor/Support.hxx>
 #include <BootKit/BootKit.hxx>
 
+#include <KernelKit/PEF.hpp>
+
 EXTERN_C
 {
 #include <string.h>
@@ -29,17 +31,17 @@ namespace Boot
 			return;
 		}
 
-		if (firstBytes[0] == 'M' &&
-			firstBytes[1] == 'Z')
+		if (firstBytes[0] == kMagMz0 &&
+			firstBytes[1] == kMagMz1)
 		{
 			// Parse PE32+
 			fStartAddress = nullptr;
 			writer.Write("newosldr: MZ executable detected.\r");
 		}
-		else if (firstBytes[0] == 'J' &&
-				 firstBytes[1] == 'o' &&
-				 firstBytes[2] == 'y' &&
-				 firstBytes[3] == '!')
+		else if (firstBytes[0] == kPefMagic[0] &&
+				 firstBytes[1] == kPefMagic[1] &&
+				 firstBytes[2] == kPefMagic[2] &&
+				 firstBytes[3] == kPefMagic[3])
 		{
 			// Parse Non FAT PEF.
 			fStartAddress = nullptr;
@@ -52,14 +54,17 @@ namespace Boot
 		}
 	}
 
+	/// @note handover header has to be valid!
 	Void ProgramLoader::Start(HEL::HandoverInformationHeader* handover)
 	{
+		MUST_PASS(handover);
+
 		BTextWriter writer;
-		writer.Write("newosldr: running: ").Write(fBlobName).Write("\r");
+		writer.Write("newosldr: Trying to run: ").Write(fBlobName).Write("\r");
 
 		if (!fStartAddress)
 		{
-			writer.Write("newosldr: exec error.\r");
+			writer.Write("newosldr: Exec format error.\r");
 			return;
 		}
 
