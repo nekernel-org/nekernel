@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __MPCC_DEF__
-#define __MPCC_DEF__
+#ifndef __MPCC_DEFINES_HXX__
+#define __MPCC_DEFINES_HXX__
 
 #ifndef __GNUC__
 
@@ -95,4 +95,4 @@ typedef union double_cast {
 
 #endif // ifdef __STD_CXX__
 
-#endif /* __MPCC_DEF__ */
+#endif /* __MPCC_DEFINES_HXX__ */
