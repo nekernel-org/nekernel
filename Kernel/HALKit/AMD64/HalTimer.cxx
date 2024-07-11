@@ -8,7 +8,7 @@
 	Revision History:
 
 	07/07/24: Added file (amlel)
-	
+
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>

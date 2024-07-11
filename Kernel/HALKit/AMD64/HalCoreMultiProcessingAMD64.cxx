@@ -61,7 +61,7 @@ namespace Kernel::HAL
 		} Selector;
 	};
 
-	STATIC VoidPtr kApicMadt		  = nullptr;
+	STATIC VoidPtr	   kApicMadt	  = nullptr;
 	STATIC const Char* kApicSignature = "APIC";
 
 	/// @brief Multiple APIC Descriptor Table.
@@ -172,7 +172,7 @@ namespace Kernel::HAL
 	/// @internal
 	EXTERN_C Void hal_apic_acknowledge(Void)
 	{
-	   kcout << "newoskrnl: acknowledge APIC.\r";
+		kcout << "newoskrnl: acknowledge APIC.\r";
 	}
 
 	/// @internal

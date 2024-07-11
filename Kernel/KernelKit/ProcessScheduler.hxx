@@ -247,7 +247,7 @@ namespace Kernel
 
 		NEWOS_COPY_DEFAULT(ProcessScheduler)
 
-			 operator bool();
+		operator bool();
 		bool operator!();
 
 	public:
@@ -255,7 +255,7 @@ namespace Kernel
 
 	public:
 		SizeT Add(Ref<ProcessHeader>& processRef);
-		Bool Remove(SizeT processSlot);
+		Bool  Remove(SizeT processSlot);
 
 	public:
 		Ref<ProcessHeader>& TheCurrent();
@@ -275,8 +275,8 @@ namespace Kernel
 	class ProcessHelper final
 	{
 	public:
-		STATIC bool Switch(HAL::StackFrame* newStack, const PID& newPid);
-		STATIC bool CanBeScheduled(Ref<ProcessHeader>& process);
+		STATIC bool	 Switch(HAL::StackFrame* newStack, const PID& newPid);
+		STATIC bool	 CanBeScheduled(Ref<ProcessHeader>& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
 	};

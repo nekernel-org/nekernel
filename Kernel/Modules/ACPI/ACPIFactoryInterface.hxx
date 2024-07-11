@@ -14,9 +14,9 @@
 
 namespace Kernel
 {
-    class ACPIFactoryInterface;
+	class ACPIFactoryInterface;
 
-    typedef ACPIFactoryInterface PowerFactoryInterface;
+	typedef ACPIFactoryInterface PowerFactoryInterface;
 
 	class ACPIFactoryInterface final
 	{

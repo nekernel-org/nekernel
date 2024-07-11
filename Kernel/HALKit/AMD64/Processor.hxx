@@ -281,7 +281,7 @@ namespace Kernel::HAL
 	{
 		/**
 		  @brief Global descriptor table entry, either null, code or data.
-	    */
+		*/
 
 		struct PACKED NewOSGDTRecord final
 		{

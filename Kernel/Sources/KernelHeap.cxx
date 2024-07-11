@@ -63,7 +63,7 @@ namespace Kernel
 
 		if (heapInfoBlk->fCRC32 > 0)
 		{
-		    MUST_PASS(ke_protect_ke_heap(allocatedPtr));
+			MUST_PASS(ke_protect_ke_heap(allocatedPtr));
 		}
 
 		return allocatedPtr;
@@ -76,7 +76,7 @@ namespace Kernel
 	/// @return the pointer
 	VoidPtr ke_new_ke_heap(const SizeT sz, const bool rw, const bool user)
 	{
-	   auto szFix = sz;
+		auto szFix = sz;
 
 		if (szFix == 0)
 			++szFix;

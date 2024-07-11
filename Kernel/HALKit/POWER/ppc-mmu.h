@@ -411,7 +411,7 @@ extern void print_bats(void);
 #define MAS0_TLBSEL(x)	(((x) << 28) & MAS0_TLBSEL_MSK)
 #define MAS0_ESEL_MSK	0x0FFF0000
 #define MAS0_ESEL(x)	(((x) << 16) & MAS0_ESEL_MSK)
-#define MAS0_NV(x)		((x)&0x00000FFF)
+#define MAS0_NV(x)		((x) & 0x00000FFF)
 
 #define MAS1_VALID		  0x80000000
 #define MAS1_IPROT		  0x40000000
@@ -468,9 +468,9 @@ extern void print_bats(void);
 	 (((ts) << 12) & MAS1_TS) |                  \
 	 (MAS1_TSIZE(tsize)))
 #define FSL_BOOKE_MAS2(epn, wimge) \
-	(((epn)&MAS3_RPN) | (wimge))
+	(((epn) & MAS3_RPN) | (wimge))
 #define FSL_BOOKE_MAS3(rpn, user, perms) \
-	(((rpn)&MAS3_RPN) | (user) | (perms))
+	(((rpn) & MAS3_RPN) | (user) | (perms))
 #define FSL_BOOKE_MAS7(rpn) \
 	(((uint64_t)(rpn)) >> 32)
 
@@ -638,10 +638,10 @@ extern int					  num_tlb_entries;
 
 /* Some handy macros */
 
-#define EPN(e)			((e)&0xfffffc00)
+#define EPN(e)			((e) & 0xfffffc00)
 #define TLB0(epn, sz)	((EPN((epn)) | (sz) | TLB_VALID))
-#define TLB1(rpn, erpn) (((rpn)&0xfffffc00) | (erpn))
-#define TLB2(a)			((a)&0x00000fbf)
+#define TLB1(rpn, erpn) (((rpn) & 0xfffffc00) | (erpn))
+#define TLB2(a)			((a) & 0x00000fbf)
 
 #define tlbtab_start \
 	mflr r1;         \

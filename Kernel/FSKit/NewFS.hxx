@@ -225,7 +225,7 @@ namespace Kernel
 		/// @param theFork the fork itself.
 		/// @return the fork
 		_Output NewFork* CreateFork(_Input NewCatalog* catalog,
-									_Input NewFork& theFork);
+									_Input NewFork&	   theFork);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
@@ -243,7 +243,7 @@ namespace Kernel
 
 		_Output NewCatalog* GetCatalog(_Input const char* name);
 
-		_Output NewCatalog* CreateCatalog(_Input const char* name,
+		_Output NewCatalog* CreateCatalog(_Input const char*  name,
 										  _Input const Int32& flags,
 										  _Input const Int32& kind);
 

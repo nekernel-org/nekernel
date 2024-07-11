@@ -12,12 +12,12 @@
 
 namespace Boot
 {
-    using namespace Kernel;
+	using namespace Kernel;
 
 	class ProgramLoader;
 
 	/// @brief Program loader class
-    /// @package nl.zeta.boot.api
+	/// @package nl.zeta.boot.api
 	class ProgramLoader final
 	{
 	public:
@@ -34,8 +34,8 @@ namespace Boot
 		void		SetName(const char* name);
 
 	private:
-        Char fBlobName[255];
+		Char	fBlobName[255];
 		VoidPtr fStartAddress{nullptr};
 		VoidPtr fBlob{nullptr};
 	};
-} // namespace Kernel
+} // namespace Boot

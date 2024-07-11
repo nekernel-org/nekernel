@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "NewKit/Json.hxx"
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Modules/CoreCG/CoreCG.hxx>
@@ -18,10 +19,7 @@
 #include <BootKit/ProgramLoader.hxx>
 #include <cstring>
 
-#include <BootKit/Vendor/Support.hxx>
-#include <BootKit/STB.hxx>
-
-/// make the compiler shut up.
+// make the compiler shut up.
 #ifndef kMachineModel
 #define kMachineModel "Zeta SSD"
 #endif // !kMachineModel
@@ -228,7 +226,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		diskFormatter.Format(kMachineModel, &rootDesc, 1);
 	}
 
-#ifdef __NEWOS_CAN_PATCH__
+#ifdef __NEWOS_OTA__
 
 	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
@@ -244,7 +242,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		loader->SetName("'newoskrnl.exe'");
 	}
 
-#endif // ifdef __NEWOS_CAN_PATCH__
+#endif // ifdef __NEWOS_OTA__
 
 	EFI::ExitBootServices(*MapKey, ImageHandle);
 
@@ -252,11 +250,11 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Fallback to builtin kernel.
 	//
 	// ---------------------------------------------------- //
-#ifdef __NEWOS_CAN_PATCH__
+#ifdef __NEWOS_OTA__
 
 	if (loader)
 		loader->Start(handoverHdrPtr);
-#endif // ifdef __NEWOS_CAN_PATCH__
+#endif // ifdef __NEWOS_OTA__
 
 	hal_init_platform(handoverHdrPtr);
 

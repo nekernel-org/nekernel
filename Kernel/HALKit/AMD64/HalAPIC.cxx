@@ -9,8 +9,8 @@
 
 namespace Kernel::HAL
 {
-    /// @brief Read from APIC controller.
-    /// @param reg register.
+	/// @brief Read from APIC controller.
+	/// @param reg register.
 	UInt32 APICController::Read(UInt32 reg) noexcept
 	{
 		MUST_PASS(this->fApic);

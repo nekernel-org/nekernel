@@ -15,6 +15,8 @@
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
+#define cMaxJsonPath 4096
+
 namespace Kernel
 {
 	/// @brief Json value class
@@ -57,62 +59,66 @@ namespace Kernel
 		static JsonType kUndefined;
 	};
 
-	/// @brief Json stream helper class.
-	struct JsonStreamTrait final
+	/// @brief Json stream reader helper.
+	struct JsonStreamReader final
 	{
-		JsonType In(const char* full_array)
+		STATIC JsonType In(const Char* full_array)
 		{
-			SizeT len = rt_string_len(full_array);
+			if (full_array[0] != '{')
+				return JsonType::kUndefined;
 
-			if (full_array[0] == '\"' && full_array[len - 1] == ',' ||
-				full_array[len - 1] == '\"')
+			SizeT	len			= rt_string_len(full_array);
+			Boolean probe_value = false;
+
+			SizeT key_len	= 0;
+			SizeT value_len = 0;
+
+			JsonType type(cMaxJsonPath, cMaxJsonPath);
+
+			for (SizeT i = 1; i < len; ++i)
 			{
-				Boolean probe_key = true;
+				if (full_array[i] == '\r' ||
+					full_array[i] == '\n')
+					continue;
 
-				SizeT key_len	= 0;
-				SizeT value_len = 0;
-
-				for (SizeT i = 1; i < len; i++)
+				if (probe_value)
 				{
-					if (full_array[i] == ' ')
-						continue;
-
-					JsonType type(kPathLen, kPathLen);
-
-					if (probe_key)
+					if (full_array[i] == '}' ||
+						full_array[i] == ',')
 					{
-						type.AsKey().Data()[key_len] = full_array[i];
-						++key_len;
+						probe_value = false;
 
-						if (full_array[i] == '\"')
-						{
-							probe_key					 = false;
-							type.AsKey().Data()[key_len] = 0;
-
-							++i;
-						}
+						++value_len;
 					}
 					else
 					{
 						type.AsValue().Data()[value_len] = full_array[i];
-						++value_len;
 
-						if (full_array[i] == '\"')
-						{
-							type.AsValue().Data()[value_len] = 0;
-						}
+						++value_len;
+					}
+				}
+				else
+				{
+					if (full_array[i] == ':')
+					{
+						probe_value					 = true;
+						type.AsKey().Data()[key_len] = 0;
+						++key_len;
+					}
+					else
+					{
+						type.AsKey().Data()[key_len] = full_array[i];
+
+						++key_len;
 					}
 				}
 			}
 
-			return JsonType::kUndefined;
-		}
+			type.AsValue().Data()[value_len] = 0;
 
-		JsonType Out(JsonType& out)
-		{
-			return out;
+			return type;
 		}
 	};
 
-	using JsonStream = Stream<JsonStreamTrait, JsonType>;
+	using JsonStream = Stream<JsonStreamReader, JsonType>;
 } // namespace Kernel

@@ -13,7 +13,7 @@
 
 namespace Kernel::HAL
 {
-	void Out8(UInt16 port, UInt8 value)
+	Void Out8(UInt16 port, UInt8 value)
 	{
 		asm volatile("outb %%al, %1"
 					 :
@@ -21,7 +21,7 @@ namespace Kernel::HAL
 					 : "memory");
 	}
 
-	void Out16(UInt16 port, UInt16 value)
+	Void Out16(UInt16 port, UInt16 value)
 	{
 		asm volatile("outw %%ax, %1"
 					 :
@@ -29,7 +29,7 @@ namespace Kernel::HAL
 					 : "memory");
 	}
 
-	void Out32(UInt16 port, UInt32 value)
+	Void Out32(UInt16 port, UInt32 value)
 	{
 		asm volatile("outl %%eax, %1"
 					 :
@@ -70,27 +70,27 @@ namespace Kernel::HAL
 		return value;
 	}
 
-	void rt_halt()
+	Void rt_halt()
 	{
 		asm volatile("hlt");
 	}
 
-	void rt_cli()
+	Void rt_cli()
 	{
 		asm volatile("cli");
 	}
 
-	void rt_sti()
+	Void rt_sti()
 	{
 		asm volatile("sti");
 	}
 
-	void rt_cld()
+	Void rt_cld()
 	{
 		asm volatile("cld");
 	}
 
-	void rt_std()
+	Void rt_std()
 	{
 		asm volatile("std");
 	}

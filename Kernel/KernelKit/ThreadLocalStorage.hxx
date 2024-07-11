@@ -22,10 +22,10 @@
 struct PACKED ThreadInformationBlock final
 {
 	Kernel::Char	Cookie[kTLSCookieLen]; // Process cookie.
-	Kernel::UIntPtr StartCode;	// Start Address
-	Kernel::UIntPtr StartData;	// Allocation Heap
-	Kernel::UIntPtr StartStack; // Stack Pointer.
-	Kernel::Int32	ThreadID;	// Thread execution ID.
+	Kernel::UIntPtr StartCode;			   // Start Address
+	Kernel::UIntPtr StartData;			   // Allocation Heap
+	Kernel::UIntPtr StartStack;			   // Stack Pointer.
+	Kernel::Int32	ThreadID;			   // Thread execution ID.
 };
 
 typedef struct ThreadInformationBlock ProcessInformationBlock;

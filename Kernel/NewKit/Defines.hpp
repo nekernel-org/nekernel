@@ -143,8 +143,8 @@ namespace Kernel
 
 #define VoidStar Kernel::VoidPtr
 
-#ifdef INIT
-#undef INIT
-#endif // ifdef INIT
+#ifdef cInitObject
+#undef cInitObject
+#endif // ifdef cInitObject
 
-#define INIT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
+#define cInitObject(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)

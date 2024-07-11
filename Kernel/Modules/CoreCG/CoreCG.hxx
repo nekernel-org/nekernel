@@ -17,7 +17,7 @@
 #define CGFini() __GXCursor = 0
 
 /// @brief Performs OR drawing on the framebuffer.
-#define CGDrawBitMapInRegionA(ImgPtr, _Height, _Width, BaseX, BaseY)                         \
+#define CGDrawBitMapInRegionA(ImgPtr, _Height, _Width, BaseX, BaseY)                  \
 	__GXCursor = 0;                                                                   \
                                                                                       \
 	for (Kernel::SizeT i = BaseX; i < (_Height + BaseX); ++i)                         \
@@ -27,14 +27,14 @@
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
-										  4 * u))) |= (ImgPtr)[__GXCursor];             \
+										  4 * u))) |= (ImgPtr)[__GXCursor];           \
                                                                                       \
 			++__GXCursor;                                                             \
 		}                                                                             \
 	}
 
 /// @brief Draws a resource.
-#define CGDrawBitMapInRegion(ImgPtr, _Height, _Width, BaseX, BaseY)                              \
+#define CGDrawBitMapInRegion(ImgPtr, _Height, _Width, BaseX, BaseY)                   \
 	__GXCursor = 0;                                                                   \
                                                                                       \
 	for (Kernel::SizeT i = BaseX; i < (_Height + BaseX); ++i)                         \
@@ -44,14 +44,14 @@
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
-										  4 * u))) = (ImgPtr)[__GXCursor];              \
+										  4 * u))) = (ImgPtr)[__GXCursor];            \
                                                                                       \
 			++__GXCursor;                                                             \
 		}                                                                             \
 	}
 
 /// @brief Cleans a resource.
-#define CGClearRegion(_Height, _Width, BaseX, BaseY)                                        \
+#define CGClearRegion(_Height, _Width, BaseX, BaseY)                                  \
                                                                                       \
 	for (Kernel::SizeT i = BaseX; i < _Height + BaseX; ++i)                           \
 	{                                                                                 \
@@ -60,12 +60,12 @@
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
-										  4 * u))) = cCGClearClr;                      \
+										  4 * u))) = cCGClearClr;                     \
 		}                                                                             \
 	}
 
 /// @brief Draws inside a zone.
-#define CGDrawInRegion(_Clr, _Height, _Width, BaseX, BaseY)                                   \
+#define CGDrawInRegion(_Clr, _Height, _Width, BaseX, BaseY)                           \
                                                                                       \
 	for (Kernel::SizeT i = BaseX; i < (_Width + BaseX); ++i)                          \
 	{                                                                                 \

@@ -29,13 +29,12 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -smp 2 -m 4G -M q35 -serial stdio \
+EMU_FLAGS=-net none -smp 2 -m 4G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
 			file=fat:rw:Sources/Root/,index=2,format=raw -d int -hdd $(IMG_2) \
-			-drive file=$(IMG_3),if=none,id=nvm
-            -device nvme,serial=Zeta,drive=nvm
+			-drive file=$(IMG_3),if=none,id=nvm -device nvme,serial=Zeta,drive=nvm
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -52,8 +51,8 @@ REM_FLAG=-f
 
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
-			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../Kernel -I./ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__NEWOS_CAN_PATCH__ -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
+			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../Kernel -c -nostdlib -fno-rtti -fno-exceptions \
+                        -std=c++20 -D__NEWOS_OTA__ -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__
 
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.exe

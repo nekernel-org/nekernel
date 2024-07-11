@@ -219,7 +219,7 @@ namespace Kernel
 		}
 		else
 		{
-		    // something went wrong, do not continue, process kind is incorrect.
+			// something went wrong, do not continue, process kind is incorrect.
 			process.Leak().Crash();
 			return -kErrorProcessFault;
 		}
@@ -245,7 +245,7 @@ namespace Kernel
 	/// @retval false process doesn't exist in team.
 	Bool ProcessScheduler::Remove(SizeT processSlot)
 	{
-	    // check if process is within range.
+		// check if process is within range.
 		if (processSlot > mTeam.AsArray().Count())
 			return false;
 

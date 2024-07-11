@@ -70,14 +70,13 @@ namespace Kernel
 	}
 
 	/// @brief Draws a rectangle.
-	/// @param width 
-	/// @param height 
-	/// @param x 
-	/// @param y 
-	/// @param color 
-	/// @return 
-	_Output Framebuffer& Framebuffer::DrawRect(SizeT width, SizeT height,
-	 											SizeT x, SizeT y, UInt32 color)
+	/// @param width
+	/// @param height
+	/// @param x
+	/// @param y
+	/// @param color
+	/// @return
+	_Output Framebuffer& Framebuffer::DrawRect(SizeT width, SizeT height, SizeT x, SizeT y, UInt32 color)
 	{
 		for (Kernel::SizeT i = x; i < width + x; ++i)
 		{
@@ -93,10 +92,10 @@ namespace Kernel
 	}
 
 	/// @brief Put a pixel on the screen.
-	/// @param x 
-	/// @param y 
-	/// @param color 
-	/// @return 
+	/// @param x
+	/// @param y
+	/// @param color
+	/// @return
 	_Output Framebuffer& Framebuffer::PutPixel(SizeT x, SizeT y, UInt32 color)
 	{
 		*(((volatile Kernel::UInt32*)(fFrameBufferAddr.Leak()->fBase +

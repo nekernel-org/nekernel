@@ -5,9 +5,9 @@
 
 namespace Kernel
 {
-    struct IMGContainerHeader;
-    struct IMGMetadataHeader;
+	struct IMGContainerHeader;
+	struct IMGMetadataHeader;
 
-}
+} // namespace Kernel
 
 #endif // ifndef __CORECG_IMG_HXX__

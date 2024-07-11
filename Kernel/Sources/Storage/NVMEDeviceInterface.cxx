@@ -8,9 +8,9 @@
 
 namespace Kernel
 {
-    NVMEDeviceInterface::NVMEDeviceInterface(void (*Out)(MountpointInterface* outpacket),
-								 void (*In)(MountpointInterface* inpacket),
-								 void (*Cleanup)(void))
+	NVMEDeviceInterface::NVMEDeviceInterface(void (*Out)(MountpointInterface* outpacket),
+											 void (*In)(MountpointInterface* inpacket),
+											 void (*Cleanup)(void))
 		: DeviceInterface(Out, In), fCleanup(Cleanup)
 	{
 	}

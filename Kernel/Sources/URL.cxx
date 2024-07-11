@@ -21,8 +21,8 @@ namespace Kernel
 
 	/// @brief internal and reserved protocols by kernel.
 	constexpr const Char* kURLProtocols[] = {
-		"file",	 // Filesystem protocol
-		"zup",	 // Zeta update protocol
+		"file", // Filesystem protocol
+		"zup",	// Zeta update protocol
 		"oscc", // Open System Configuration Connectivity.
 	};
 

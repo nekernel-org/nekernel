@@ -66,8 +66,8 @@ T* tls_new_class(Args&&... args)
 template <typename T>
 inline Kernel::Bool tls_delete_class(T* ptr)
 {
-    if (!ptr)
-        return false;
+	if (!ptr)
+		return false;
 
 	ptr->~T();
 	return tls_delete_ptr(ptr);

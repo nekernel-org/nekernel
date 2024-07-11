@@ -42,7 +42,7 @@
 #define node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)
 
 /**
-    @note Refer to first enum.
+	@note Refer to first enum.
 */
 #define cFileOpsCount	 4
 #define cFileMimeGeneric "n-application-kind/all"
