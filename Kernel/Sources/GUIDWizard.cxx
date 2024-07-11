@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 	File: GUIDWizard.cxx
 	Purpose: GUID helper code

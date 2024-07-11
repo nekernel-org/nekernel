@@ -6,4 +6,4 @@ A kit used to write kernel HALs, using the NDK compiler suite.
 
 Simply link against these files.
 
-###### Copyright 2024 Zeta Electronics Corporation, all rights reserved.
+###### Copyright 2024 ZKA Technologies, all rights reserved.

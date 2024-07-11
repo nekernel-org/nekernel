@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -13,7 +13,7 @@
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
  *
- * Copyright Zeta Electronics Corporation, all rights reserved.
+ * Copyright ZKA Technologies, all rights reserved.
  *
  *************************************************************/
 

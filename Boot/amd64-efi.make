@@ -1,5 +1,5 @@
 ##################################################
-# (C) Zeta Electronics Corporation, all rights reserved.
+# (C) ZKA Technologies, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 

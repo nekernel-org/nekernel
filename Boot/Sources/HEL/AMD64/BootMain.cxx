@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -92,7 +92,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	/// Splash screen stuff
 
-	writer.Write(L"Zeta Electronics Corporation (R) newosldr: ")
+	writer.Write(L"ZKA Technologies (R) newosldr: ")
 		.Write(BVersionString::The())
 		.Write("\r");
 

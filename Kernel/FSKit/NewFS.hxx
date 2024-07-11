@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 	File: NewFS.hxx
 	Purpose:

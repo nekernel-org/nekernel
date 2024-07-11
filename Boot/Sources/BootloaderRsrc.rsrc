@@ -10,11 +10,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Zeta Electronics Corporation"
+      VALUE "CompanyName", "ZKA Technologies"
       VALUE "FileDescription", "New OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "newosldr"
-      VALUE "LegalCopyright", "Copyright Zeta Electronics Corporation, all rights reserved."
+      VALUE "LegalCopyright", "Copyright ZKA Technologies, all rights reserved."
       VALUE "OriginalFilename", "newosldr.exe"
       VALUE "ProductName", "newosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION

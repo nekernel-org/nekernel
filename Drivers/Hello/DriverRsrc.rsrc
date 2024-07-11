@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Zeta Electronics Corporation"
+      VALUE "CompanyName", "ZKA Technologies"
       VALUE "FileDescription", "New OS Zeroconf driver."
       VALUE "FileVersion", "1.00"
       VALUE "InternalName", "Bonjour."
-      VALUE "LegalCopyright", "Copyright Zeta Electronics Corporation, all rights reserved."
+      VALUE "LegalCopyright", "Copyright ZKA Technologies, all rights reserved."
       VALUE "OriginalFilename", "Bonjour.exe"
       VALUE "ProductName", "Bonjour."
       VALUE "ProductVersion", "1.00"

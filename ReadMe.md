@@ -24,4 +24,4 @@ cd newoskrnl
 make -f amd64-efi.make all
 ```
 
-##### Copyright, Zeta Electronics Corporation, all rights reserved.
+##### Copyright, ZKA Technologies, all rights reserved.

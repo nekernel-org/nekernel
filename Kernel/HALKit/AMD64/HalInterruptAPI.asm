@@ -1,7 +1,7 @@
 ;; /*
 ;; *    ---------------------------------------------------
 ;; *
-;; * 	Copyright Zeta Electronics Corporation, all rights reserved.
+;; * 	Copyright ZKA Technologies, all rights reserved.
 ;; *
 ;; *    File: HalInterruptAPI.asm
 ;; *    Purpose: Interrupt routing, redirect raw interrupts into their handlers.

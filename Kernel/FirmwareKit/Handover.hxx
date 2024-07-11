@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
  * @version 0.3
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, Zeta Electronics Corporation
+ * @copyright Copyright (c) 2024, ZKA Technologies
  *
  */
 

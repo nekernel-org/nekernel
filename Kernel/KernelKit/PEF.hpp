@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 	File: PEF.hpp
 	Purpose: Preferred Executable Format for Kernel.
