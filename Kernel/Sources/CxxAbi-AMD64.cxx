@@ -4,6 +4,8 @@
 
 ------------------------------------------- */
 
+#ifdef __NEWOS_AMD64__
+
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/CxxAbi.hpp>
 #include <KernelKit/HError.hpp>
@@ -85,3 +87,5 @@ namespace cxxabiv1
 		(void)g;
 	}
 } // namespace cxxabiv1
+
+#endif // ifdef __NEWOS_AMD64__
