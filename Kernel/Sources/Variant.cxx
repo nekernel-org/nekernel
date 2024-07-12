@@ -15,9 +15,9 @@ namespace Kernel
 		case VariantKind::kString:
 			return ("Class:{String}");
 		case VariantKind::kPointer:
-			return ("Memory:{Pointer}");
+			return ("Class:{Pointer}");
 		default:
-			return ("Memory:{Undefined}");
+			return ("Class:{Undefined}");
 		}
 	}
 
