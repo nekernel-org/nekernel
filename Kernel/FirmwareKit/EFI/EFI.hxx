@@ -722,8 +722,10 @@ typedef struct EfiFileProtocol
 
 	EfiStatusType(EFI_API* ReadEx)(EfiFileProtocol*	  This,
 								   struct EfiIOToken* Token);
+
 	EfiStatusType(EFI_API* WriteEx)(EfiFileProtocol*   This,
 									struct EfiIOToken* Token);
+
 	EfiStatusType(EFI_API* FlushEx)(EfiFileProtocol*   This,
 									struct EfiIOToken* Token);
 } EfiFileProtocol, *EfiFileProtocolPtr;

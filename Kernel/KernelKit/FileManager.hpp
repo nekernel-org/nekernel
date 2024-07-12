@@ -28,7 +28,7 @@
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/Ref.hpp>
 
-/// @brief Filesystem abstraction manager.
+/// @brief Filesystem manager, abstraction over mounted filesystem.
 /// Works like the VFS or IFS.
 
 #define cRestrictR	 "r"

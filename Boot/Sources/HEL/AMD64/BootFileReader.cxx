@@ -127,6 +127,21 @@ Void BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead)
 {
 	if (mBlob == nullptr)
 	{
+		EfiFileInfo newPtrInfo;
+		UInt32		 szInfo		= 0;
+
+		EfiGUID cFileInfoGUID = EFI_FILE_INFO_GUID;
+
+		if (mFile->GetInfo(mFile, &cFileInfoGUID, &szInfo, &newPtrInfo) == kEfiOk)
+		{
+			if (newPtrInfo.FileSize < readUntil)
+				readUntil = newPtrInfo.FileSize;
+			else if (readUntil < 1)
+				readUntil = newPtrInfo.FileSize;
+
+			mWriter.Write(L"newosldr: physical size: ").Write(readUntil).Write("\r");
+		}
+
 		if (auto err = BS->AllocatePool(EfiLoaderCode, readUntil, (VoidPtr*)&mBlob) !=
 					   kEfiOk)
 		{

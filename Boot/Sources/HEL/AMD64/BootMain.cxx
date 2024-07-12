@@ -25,11 +25,11 @@
 #endif // !kMachineModel
 
 #ifndef cExpectedWidth
-#define cExpectedWidth 436
+#define cExpectedWidth 1280
 #endif
 
 #ifndef cExpectedHeight
-#define cExpectedHeight 644
+#define cExpectedHeight 720
 #endif
 
 /** Graphics related. */
@@ -53,9 +53,14 @@ STATIC Void InitVideoFB() noexcept
 
 	BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop);
 
-	for (size_t i = 0; i < kGop->Mode->MaxMode; ++i)
+	kStride = 4;
+
+	for (SizeT i = 0; i < kGop->Mode->MaxMode; ++i)
 	{
 		EfiGraphicsOutputProtocolModeInformation* infoPtr = nullptr;
+		UInt32 sz = 0U;
+
+		kGop->QueryMode(kGop, i, &sz, &infoPtr);
 
 		if (infoPtr->HorizontalResolution == cExpectedWidth &&
 			infoPtr->VerticalResolution == cExpectedHeight)
@@ -65,7 +70,6 @@ STATIC Void InitVideoFB() noexcept
 		}
 	}
 
-	kStride = 4;
 }
 
 /// @brief check the BootDevice if suitable.
@@ -126,7 +130,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
 			vendorTable[6] == 'R' && vendorTable[7] == ' ')
 		{
-			writer.Write(L"newosldr: Found ACPI RSD PTR!\r");
+			writer.Write(L"newosldr: filling rsdptr...\r");
 			handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
 
 			break;
@@ -230,16 +234,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
-	/// TODO: BFileReader::GetSize(...);
-	constexpr auto cKernelSz = 275101;
-	readerKernel.ReadAll(cKernelSz, 4096);
+	readerKernel.ReadAll(0);
 
 	Boot::ProgramLoader* loader = nullptr;
 
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::ProgramLoader(readerKernel.Blob());
-		loader->SetName("'newoskrnl.exe'");
+		loader->SetName("\"newoskrnl.exe\" (ZKA)");
 	}
 
 #endif // ifdef __NEWOS_OTA__
@@ -247,11 +249,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	EFI::ExitBootServices(*MapKey, ImageHandle);
 
 	// ---------------------------------------------------- //
-	// Fallback to builtin kernel.
-	//
+	// Call OTA kernel or fallback to builtin.
 	// ---------------------------------------------------- //
 #ifdef __NEWOS_OTA__
-
 	if (loader)
 		loader->Start(handoverHdrPtr);
 #endif // ifdef __NEWOS_OTA__

@@ -49,8 +49,7 @@ namespace Boot
 		}
 		else
 		{
-			// probably a binary blob.
-			fStartAddress = fBlob;
+			writer.Write("newosldr: Exec format error.\r");
 		}
 	}
 
