@@ -20,15 +20,29 @@
 
 using namespace Kernel;
 
+#ifdef __ED__
+/**
+    Define those external symbols, to make the editor shutup
+*/
+
+/// @brief get sector count.
+Kernel::SizeT drv_std_get_sector_count();
+
+/// @brief get device size.
+Kernel::SizeT drv_std_get_drv_size();
+
+#endif
+
+
 ///! BUGS: 0
 
 /***********************************************************************************/
 /// This file implements the New File System.
 ///	New File System implements a B-Tree based algortihm.
-///		/Disk
-///	/Path1		/Path2
-/// /File.txt		/File.pef /File.png <-- symlink.
-///								/Path1/File.txt
+///		C:\\
+///	\\Path1\\		/\\ath2\\
+/// \\readme.rtf		\\ListContents.pef \\readme.lnk <-- symlink.
+///								\\Path1\\readme.rtf
 /***********************************************************************************/
 
 STATIC MountpointInterface sMountpointInterface;

@@ -6,3 +6,4 @@
 -D__NEWOS_AMD64__
 -I../Vendor
 -D__x86_64__
+-D__ED__
