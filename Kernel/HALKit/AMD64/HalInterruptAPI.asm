@@ -121,18 +121,10 @@ IntNormal 31
 
 [extern hal_apic_acknowledge]
 
-%define cAPICAddress 0xFEE00000
-
 __NEW_INT_34:
-;; make this active, SMP works again.
     push rax
     call hal_apic_acknowledge
     pop rax
-
-    mov rax, 0
-
-    ;; tell there local apic that we're done.
-    mov qword [cAPICAddress + 0xB0], rax ; send end of interrupt.
 
     iretq
 

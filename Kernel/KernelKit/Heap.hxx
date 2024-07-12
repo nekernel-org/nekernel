@@ -4,10 +4,11 @@
 
 ------------------------------------------- */
 
-#pragma once
+#ifndef _INC_KERNEL_HEAP_HXX_
+#define _INC_KERNEL_HEAP_HXX_
 
 // last-rev 30/01/24
-// file: KernelHeap.hpp
+// file: KernelHeap.hxx
 // description: heap allocation for the kernel.
 
 #include <NewKit/Defines.hpp>
@@ -46,3 +47,5 @@ namespace Kernel
 	/// @return
 	Int32 ke_make_ke_page(VoidPtr allocatedPtr);
 } // namespace Kernel
+
+#endif // !_INC_KERNEL_HEAP_HXX_

@@ -28,8 +28,12 @@ namespace Kernel
 		{
 		public:
 			explicit IndexableProperty()
-				: Property(StringBuilder::Construct("\\Filesystem\\IsIndexable?").Leak().Leak())
+				: Property()
 			{
+				Kernel::StringView strProp(cMaxPropLen);
+				strProp += "\\Properties\\Indexable";
+
+				this->GetKey() = strProp;
 			}
 
 			~IndexableProperty() override = default;

@@ -8,7 +8,7 @@
 #include <HALKit/AMD64/Processor.hxx>
 #include <NewKit/String.hpp>
 #include <ArchKit/ArchKit.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 
 namespace Kernel
 {

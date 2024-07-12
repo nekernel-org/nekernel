@@ -2,18 +2,19 @@
 
 	Copyright ZKA Technologies
 
-	File: KeMain.cxx
-	Purpose: Kernel main loop.
+	File: Main.cxx
+	Purpose: Main entrypoint of kernel.
 
 ------------------------------------------- */
 
+#include "KernelKit/DebugOutput.hpp"
 #include <ArchKit/ArchKit.hpp>
 #include <Modules/CoreCG/CoreCG.hxx>
 #include <CompilerKit/Detail.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 #include <KernelKit/PEF.hpp>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
@@ -23,6 +24,9 @@
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 #include <KernelKit/CodeManager.hpp>
+#include <CFKit/Property.hpp>
+
+EXTERN Kernel::Property cKernelVersion;
 
 namespace Kernel::Detail
 {
@@ -39,7 +43,7 @@ namespace Kernel::Detail
 			{
 				/// Mounted partition, cool!
 				Kernel::kcout
-					<< "newoskrnl: No need to create for a NewFS partition here...\r";
+					<< "newoskrnl: No need to create for a NewFS+EPM partition here...\r";
 			}
 			else
 			{
@@ -63,7 +67,7 @@ namespace Kernel::Detail
 
 						if (catalogDir)
 						{
-							Kernel::kcout << "newoskrnl: already here.\r";
+							Kernel::kcout << "newoskrnl: already exists.\r";
 
 							delete catalogDir;
 							continue;
@@ -121,11 +125,6 @@ namespace Kernel::Detail
 
 				if (catalogDisk)
 				{
-					auto bufferInfoDisk = (Kernel::Char*)this->fNewFS->GetParser()->ReadCatalog(catalogDisk, kNewFSSectorSz, cSrcName);
-					Kernel::kcout << bufferInfoDisk;
-					Kernel::end_line();
-
-					delete bufferInfoDisk;
 					delete catalogDisk;
 				}
 				else
@@ -163,9 +162,6 @@ namespace Kernel::Detail
 													  (Kernel::VoidPtr)diskFolder.CData(),
 													  kNewFSSectorSz, cSrcName);
 
-					Kernel::kcout << diskFolder.CData();
-					Kernel::end_line();
-
 					delete catalogDisk;
 				}
 			}
@@ -188,6 +184,7 @@ namespace Kernel::Detail
 	/// @return void no return value.
 	STATIC Kernel::Void ke_user_switch(Kernel::Void)
 	{
+		Kernel::kcout << "newoskrnl: " << cKernelVersion.GetKey().CData() << ": " << Kernel::number(cKernelVersion.GetValue()) << Kernel::endl;
 	}
 } // namespace Kernel::Detail
 

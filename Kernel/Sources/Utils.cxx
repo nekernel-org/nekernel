@@ -48,15 +48,14 @@ namespace Kernel
 
 	Size rt_string_len(const Char* ptr)
 	{
-		if (!ptr)
+		if (*ptr == 0)
 			return 0;
 
 		SizeT cnt = 0;
 
-		while (*ptr != (Char)0)
+		while (ptr[cnt] != (Char)0)
 		{
-			++ptr;
-			++cnt;
+			cnt++;
 		}
 
 		return cnt;

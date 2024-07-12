@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <NewKit/Defines.hpp>

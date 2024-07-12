@@ -158,7 +158,7 @@ Kernel/KernelKit/DriveManager.hxx
 Kernel/KernelKit/FileManager.hpp
 Kernel/KernelKit/Framebuffer.hpp
 Kernel/KernelKit/HError.hpp
-Kernel/KernelKit/KernelHeap.hpp
+Kernel/KernelKit/Heap.hxx
 Kernel/KernelKit/LoaderInterface.hpp
 Kernel/KernelKit/LockDelegate.hpp
 Kernel/KernelKit/MSDOS.hxx

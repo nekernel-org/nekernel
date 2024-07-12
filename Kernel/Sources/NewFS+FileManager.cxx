@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/FileManager.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 
 #ifdef __FSKIT_USE_NEWFS__
 

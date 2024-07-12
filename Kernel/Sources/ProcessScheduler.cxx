@@ -11,7 +11,7 @@
 
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/SMPManager.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 #include <NewKit/String.hpp>
 #include <KernelKit/HError.hpp>
 
@@ -29,14 +29,9 @@ namespace Kernel
 
 	STATIC Int32 cLastExitCode = 0U;
 
-	/// @brief Gets the latest exit code.
+	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
-	const Int32& ProcessHeader::GetExitCode() noexcept
-	{
-		return fLastExitCode;
-	}
-
 	const Int32& rt_get_exit_code() noexcept
 	{
 		return cLastExitCode;
@@ -53,6 +48,14 @@ namespace Kernel
 		kcout << ")\r";
 
 		this->Exit(kErrorProcessFault);
+	}
+
+	/// @brief Gets the local last exit code.
+	/// @note Not thread-safe.
+	/// @return Int32 the last exit code.
+	const Int32& ProcessHeader::GetExitCode() noexcept
+	{
+		return this->fLastExitCode;
 	}
 
 	Int32& ProcessHeader::GetLocalCode() noexcept
@@ -76,13 +79,13 @@ namespace Kernel
 			{
 				ErrLocal() = kErrorHeapOutOfMemory;
 
-				/* we're going out of memory */
+				/* We're going out of memory! crash... */
 				this->Crash();
 
 				return nullptr;
 			}
 
-			this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor + (sizeof(sz)));
+			this->HeapCursor = reinterpret_cast<VoidPtr>((UIntPtr)this->HeapCursor + (sizeof(sz)));
 			VoidPtr ptr		 = this->HeapCursor;
 
 			++this->UsedMemory;
@@ -97,21 +100,17 @@ namespace Kernel
 	/***********************************************************************************/
 
 	/* @brief checks if runtime pointer is in region. */
-	bool rt_is_in_pool(VoidPtr pool_ptr, VoidPtr pool, const SizeT& sz)
+	bool rt_is_in_pool(VoidPtr pool_ptr, VoidPtr pool, const SizeT& pool_ptr_cur_sz, const SizeT& pool_ptr_used_sz)
 	{
-		UIntPtr* _pool_ptr = (UIntPtr*)pool_ptr;
-		UIntPtr* _pool	   = (UIntPtr*)pool;
+		if (pool == nullptr ||
+			pool_ptr == nullptr)
+			return false;
 
-		for (SizeT index = sz; _pool[sz] != kUserHeapMag; --index)
-		{
-			if (&_pool[index] > &_pool_ptr[sz])
-				continue;
+		UIntPtr* uint_pool_ptr = (UIntPtr*)pool_ptr;
+		UIntPtr* uint_pool	   = (UIntPtr*)pool;
 
-			if (_pool[index] == _pool_ptr[index])
-				return true;
-		}
-
-		return false;
+		return (UIntPtr)&uint_pool > (UIntPtr)&uint_pool_ptr &&
+			   pool_ptr_cur_sz > pool_ptr_used_sz;
 	}
 
 	/* @brief free pointer from usage. */
@@ -124,7 +123,7 @@ namespace Kernel
 		if (this->UsedMemory < 1)
 			return false;
 
-		if (rt_is_in_pool(ptr, this->HeapCursor, this->UsedMemory))
+		if (rt_is_in_pool(ptr, this->HeapCursor, this->UsedMemory, this->FreeMemory))
 		{
 			this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor - (sizeof(sz)));
 			rt_zero_memory(ptr, sz);

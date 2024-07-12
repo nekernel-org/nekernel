@@ -43,6 +43,11 @@ namespace Kernel
 			return fClass;
 		}
 
+		T& Fetch() const noexcept
+		{
+			return fClass;
+		}
+
 		T operator*()
 		{
 			return fClass;

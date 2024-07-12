@@ -9,7 +9,7 @@
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ProcessHeap.hxx>
@@ -18,10 +18,15 @@
 #include <KernelKit/CodeManager.hpp>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPCEP.hxx>
+#include <CFKit/Property.hpp>
 
 #define mInitKernel(X) \
 	X;                 \
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+
+
+
+Kernel::Property cKernelVersion;
 
 /// @brief This symbol is the kernel main symbol.
 EXTERN_C void KeMain();
@@ -209,6 +214,14 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked	= true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked		= true;
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked		= true;
+
+	// newoskrnl version 1.00
+	//
+	Kernel::StringView strVer(cMaxPropLen);
+	strVer += "\\Properties\\KernelVersion";
+
+	cKernelVersion.GetKey() = strVer;
+    cKernelVersion.GetValue() = 1100;
 
 	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 

@@ -34,7 +34,7 @@ namespace Kernel
 		}
 
 		explicit ErrorOr(T Class)
-			: mRef(Class)
+			: mRef(Class, true)
 		{
 		}
 

@@ -22,7 +22,7 @@ namespace Kernel
 
 	Size StringView::Length() const
 	{
-		return rt_string_len(fData);
+		return fSz;
 	}
 
 	bool StringView::operator==(const StringView& rhs) const
@@ -214,22 +214,25 @@ namespace Kernel
 		return ret;
 	}
 
-	static void string_append(char* lhs, char* rhs, int cur)
+	STATIC void rt_string_append(Char* lhs, Char* rhs, Int cur)
 	{
-		if (lhs && rhs)
+		SizeT sz_rhs = rt_string_len(rhs);
+		SizeT rhs_i = 0;
+
+		for (; rhs_i < sz_rhs; ++rhs_i)
 		{
-			SizeT sz_rhs = rt_string_len(rhs);
-
-			if (sz_rhs == 0)
-				return;
-
-			rt_copy_memory(rhs, lhs + cur, sz_rhs);
+			lhs[rhs_i + cur] = rhs[rhs_i];
 		}
+
+		lhs[rhs_i + cur] = 0;
 	}
 
 	StringView& StringView::operator+=(const Char* rhs)
 	{
-		string_append(this->fData, const_cast<char*>(rhs), this->fCur);
+		if (rt_string_len(rhs) > this->Length())
+			return *this;
+
+		rt_string_append(this->fData, const_cast<Char*>(rhs), this->fCur);
 		this->fCur += rt_string_len(rhs);
 
 		return *this;
@@ -237,11 +240,11 @@ namespace Kernel
 
 	StringView& StringView::operator+=(const StringView& rhs)
 	{
-		if (rt_string_len(rhs.fData) > rt_string_len(this->fData))
+		if (rt_string_len(rhs.fData) > this->Length())
 			return *this;
 
-		string_append(this->fData, const_cast<char*>(rhs.fData), this->fCur);
-		this->fCur += rt_string_len(const_cast<char*>(rhs.fData));
+		rt_string_append(this->fData, const_cast<Char*>(rhs.fData), this->fCur);
+		this->fCur += rt_string_len(const_cast<Char*>(rhs.fData));
 
 		return *this;
 	}

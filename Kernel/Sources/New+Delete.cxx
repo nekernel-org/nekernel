@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 #include <NewKit/New.hpp>
 
 void* operator new[](size_t sz)

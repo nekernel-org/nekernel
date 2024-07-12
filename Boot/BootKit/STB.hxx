@@ -22,6 +22,6 @@
 #define STBI_FREE(x)			 Kernel::ke_delete_ke_heap(x)
 #define STB_IMAGE_IMPLEMENTATION 1
 
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 
 #include <BootKit/Vendor/stb_image.hxx>

@@ -6,7 +6,7 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/HError.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 #include <NewKit/Crc32.hpp>
 #include <NewKit/PageManager.hpp>
 

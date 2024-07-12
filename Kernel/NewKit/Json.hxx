@@ -15,7 +15,8 @@
 #include <NewKit/String.hpp>
 #include <NewKit/Utils.hpp>
 
-#define cMaxJsonPath 4096
+#define cMaxJsonPath  4096
+#define cUndefinedLen 32
 
 namespace Kernel
 {
@@ -24,8 +25,10 @@ namespace Kernel
 	{
 	public:
 		explicit JsonType()
-			: Kernel::JsonType(1, 1)
+			: Kernel::JsonType(cUndefinedLen, cUndefinedLen)
 		{
+			this->AsKey() += "undefined";
+			this->AsValue() += "undefined";
 		}
 
 		explicit JsonType(SizeT lhsLen, SizeT rhsLen)
@@ -37,7 +40,10 @@ namespace Kernel
 
 		NEWOS_COPY_DEFAULT(JsonType);
 
+		Bool IsUndefined() { return fUndefined; }
+
 	private:
+	    Bool fUndefined; // is this instance undefined?
 		StringView fKey;
 		StringView fValue;
 
