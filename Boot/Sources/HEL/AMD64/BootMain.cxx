@@ -137,8 +137,12 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		}
 	}
 
+	// Fill handover header now.
+
 	handoverHdrPtr->f_Magic	  = kHandoverMagic;
 	handoverHdrPtr->f_Version = kHandoverVersion;
+
+	// Provide fimware vendor name.
 
 	BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
 			 handoverHdrPtr->f_FirmwareVendorLen);
@@ -150,9 +154,11 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
 	handoverHdrPtr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
 
-	///! Finally draw bootloader screen.
+	// Assign to global 'kHandoverHeader'.
 
 	kHandoverHeader = handoverHdrPtr;
+
+	// Start drawing the 'zka' icon.
 
 	CGInit();
 
