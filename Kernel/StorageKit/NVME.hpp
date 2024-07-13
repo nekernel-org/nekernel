@@ -31,6 +31,6 @@ namespace Kernel
 		OwnPtr<MountpointInterface*> operator()(UInt32 dmaLow, UInt32 dmaHigh, SizeT sz);
 
 	private:
-		void (*fCleanup)(void);
+		void (*fCleanup)(void) = {nullptr};
 	};
 } // namespace Kernel

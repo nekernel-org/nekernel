@@ -34,6 +34,6 @@ namespace Kernel
 		const char* Name() const override;
 
 	private:
-		void (*fCleanup)(void);
+		void (*fCleanup)(void) = { nullptr };
 	};
 } // namespace Kernel
