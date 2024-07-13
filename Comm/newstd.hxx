@@ -14,15 +14,15 @@ Purpose: System Call Interface.
 #error !!! including header in kernel mode !!!
 #endif // __KERNEL__
 
-#define ML_IMPORT_CXX extern "C++"
-#define ML_IMPORT_C	  extern "C"
+#define IMPORT_CXX extern "C++"
+#define IMPORT_C   extern "C"
 
 #define cRestrictR	"r"
 #define cRestrictRB "rb"
 #define cRestrictW	"w"
 #define cRestrictRW "rw"
 
-class NSyscall; /// @brief System call class.
+class NSSyscallInterface; /// @brief System call class.
 
 typedef int	 OSType;
 typedef bool Bool;
@@ -42,35 +42,35 @@ typedef __INT8_TYPE__  SInt8;
 
 typedef char UTFChar;
 
-typedef UInt32 MBCIType;
+typedef UInt32 PowerID;
 
 /**
 	@brief System call class.
 */
-class NSyscall
+class NSSyscallInterface
 {
 public:
-	explicit NSyscall() = default;
-	virtual ~NSyscall() = default;
+	explicit NSSyscallInterface() = default;
+	virtual ~NSSyscallInterface() = default;
 
-	NSyscall& operator=(const NSyscall&) = default;
-	NSyscall(const NSyscall&)			 = default;
+	NSSyscallInterface& operator=(const NSSyscallInterface&) = default;
+	NSSyscallInterface(const NSSyscallInterface&)			 = default;
 
 public:
 	/// @brief disable device.
-	virtual UInt0 PowerOff(MBCIType) = 0;
+	virtual UInt0 PowerOff(PowerID) = 0;
 
 	/// @brief enable device.
-	virtual UInt0 PowerOn(MBCIType) = 0;
+	virtual UInt0 PowerOn(PowerID) = 0;
 
 	/// @brief reboot device.
-	virtual UInt0 PowerReboot(MBCIType) = 0;
+	virtual UInt0 PowerReboot(PowerID) = 0;
 
 	/// @brief check if MBCI device is wokeup.
-	virtual Bool PowerIsWokeup(MBCIType) = 0;
+	virtual Bool PowerIsWokeup(PowerID) = 0;
 
-	/// @brief probe MBCI device from phone.
-	virtual MBCIType PowerProbeDevice(const char* namepace, const int index) = 0;
+	/// @brief probe MBCI/ACPI device from phone.
+	virtual PowerID PowerProbeDevice(const char* namepace, const int index) = 0;
 
 	// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. //
 
@@ -116,12 +116,8 @@ public:
 	virtual UInt0* WriteStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType) = 0;
 };
 
-/// @brief Request syscall object.
+/// @brief Get shared syscall object.
 /// @return Syscall implementation.
-ML_IMPORT_C NSyscall* NRequestSyscall(UInt0);
-
-/// @brief Release syscall object.
-/// @param syscall System call object.
-ML_IMPORT_C UInt0 NReleaseSyscall(NSyscall* syscall);
+IMPORT_C NSSyscallInterface* NSGetSharedSyscallInterface(UInt0);
 
 #endif // ifndef _INC_COMM_NEWSTD_HXX_

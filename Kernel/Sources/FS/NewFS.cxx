@@ -39,8 +39,8 @@ Kernel::SizeT drv_std_get_drv_size();
 /***********************************************************************************/
 /// This file implements the New File System.
 ///	New File System implements a B-Tree based algortihm.
-///		C:\\
-///	\\Path1\\		/\\ath2\\
+///		\\
+///	\\Path1\\		\\ath2\\
 /// \\readme.rtf		\\ListContents.pef \\readme.lnk <-- symlink.
 ///								\\Path1\\readme.rtf
 /***********************************************************************************/

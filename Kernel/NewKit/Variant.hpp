@@ -8,6 +8,7 @@
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
+#include <NewKit/Json.hxx>
 
 namespace Kernel
 {
@@ -17,8 +18,9 @@ namespace Kernel
 		enum class VariantKind
 		{
 			kString,
-			kPointer,
-			kUndefined
+			kBlob,
+			kNull,
+			kJson,
 		};
 
 	public:
@@ -35,20 +37,28 @@ namespace Kernel
 			: fPtr((voidPtr)stringView), fKind(VariantKind::kString)
 		{
 		}
-		explicit Variant(nullPtr)
-			: fPtr(nullptr), fKind(VariantKind::kUndefined)
+
+		explicit Variant(JsonType* json)
+			: fPtr((voidPtr)json), fKind(VariantKind::kJson)
 		{
 		}
+
+		explicit Variant(nullPtr)
+			: fPtr(nullptr), fKind(VariantKind::kNull)
+		{
+		}
+
 		explicit Variant(voidPtr ptr)
-			: fPtr(ptr), fKind(VariantKind::kPointer)
+			: fPtr(ptr), fKind(VariantKind::kBlob)
 		{
 		}
 
 	public:
 		const Char* ToString();
+		VoidPtr Leak();
 
 	private:
 		voidPtr		fPtr{nullptr};
-		VariantKind fKind{VariantKind::kUndefined};
+		VariantKind fKind{VariantKind::kNull};
 	};
 } // namespace Kernel

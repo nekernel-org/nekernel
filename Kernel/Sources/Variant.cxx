@@ -12,13 +12,17 @@ namespace Kernel
 	{
 		switch (fKind)
 		{
+		case VariantKind::kJson:
+			return ("Class:{Json}");
 		case VariantKind::kString:
 			return ("Class:{String}");
-		case VariantKind::kPointer:
-			return ("Class:{Pointer}");
+		case VariantKind::kBlob:
+			return ("Class:{Blob}");
 		default:
-			return ("Class:{Undefined}");
+			return ("Class:{Null}");
 		}
 	}
 
+	/// @brief Leak variant's instance.
+	VoidPtr Variant::Leak() { return fPtr; }
 } // namespace Kernel

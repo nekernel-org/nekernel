@@ -16,7 +16,8 @@
 #include <NewKit/Utils.hpp>
 
 #define cMaxJsonPath  4096
-#define cUndefinedLen 32
+#define cJSONLen 32
+#define cJSONNull "null"
 
 namespace Kernel
 {
@@ -25,10 +26,13 @@ namespace Kernel
 	{
 	public:
 		explicit JsonType()
-			: Kernel::JsonType(cUndefinedLen, cUndefinedLen)
 		{
-			this->AsKey() += "undefined";
-			this->AsValue() += "undefined";
+		    auto len = cJSONLen;
+			StringView key = StringView(len);
+			key += cJSONNull;
+
+			this->AsKey() = key;
+			this->AsValue() = key;
 		}
 
 		explicit JsonType(SizeT lhsLen, SizeT rhsLen)
@@ -40,7 +44,7 @@ namespace Kernel
 
 		NEWOS_COPY_DEFAULT(JsonType);
 
-		Bool IsUndefined() { return fUndefined; }
+		const Bool& IsUndefined() { return fUndefined; }
 
 	private:
 	    Bool fUndefined; // is this instance undefined?
@@ -62,7 +66,7 @@ namespace Kernel
 			return fValue;
 		}
 
-		static JsonType kUndefined;
+		static JsonType kNull;
 	};
 
 	/// @brief Json stream reader helper.
@@ -71,7 +75,7 @@ namespace Kernel
 		STATIC JsonType In(const Char* full_array)
 		{
 			if (full_array[0] != '{')
-				return JsonType::kUndefined;
+				return JsonType::kNull;
 
 			SizeT	len			= rt_string_len(full_array);
 			Boolean probe_value = false;

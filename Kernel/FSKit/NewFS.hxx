@@ -71,7 +71,7 @@ default.
 #define kNewFSSeparator '\\'
 
 #define kNewFSUpDir ".."
-#define kNewFSRoot	"C:\\"
+#define kNewFSRoot	"\\"
 
 #define kNewFSLF  '\r'
 #define kNewFSEOF (-1)

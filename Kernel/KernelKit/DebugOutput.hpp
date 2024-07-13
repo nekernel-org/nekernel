@@ -205,4 +205,4 @@ namespace Kernel
 #endif // ifdef kcout
 
 #define kcout TerminalDevice::The()
-#define endl  end_line()
+#define endl  kcout << Kernel::end_line()

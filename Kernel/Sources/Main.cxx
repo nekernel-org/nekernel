@@ -58,8 +58,8 @@ namespace Kernel::Detail
 					constexpr auto cFolderInfo		  = "META-INF";
 					const auto	   cDirCount		  = 9;
 					const char*	   cDirStr[cDirCount] = {
-						   "C:\\Boot\\", "C:\\System\\", "C:\\Support\\", "C:\\Applications\\",
-						   "C:\\Users\\", "C:\\Library\\", "C:\\Mount\\", "C:\\DCIM\\", "C:\\Storage\\"};
+						   "\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
+						   "\\Users\\", "\\Library\\", "\\Mount\\", "\\DCIM\\", "\\Storage\\"};
 
 					for (Kernel::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
@@ -119,7 +119,7 @@ namespace Kernel::Detail
 				}
 
 				NewCatalog* catalogDisk =
-					this->fNewFS->GetParser()->GetCatalog("C:\\Mount\\SIM:");
+					this->fNewFS->GetParser()->GetCatalog("\\Mount\\SIM:");
 
 				const Kernel::Char* cSrcName = "DISK-INF";
 
@@ -130,7 +130,7 @@ namespace Kernel::Detail
 				else
 				{
 					catalogDisk =
-						(NewCatalog*)this->Leak()->CreateAlias("C:\\Mount\\SIM:");
+						(NewCatalog*)this->Leak()->CreateAlias("\\Mount\\SIM:");
 
 					Kernel::StringView diskFolder(kNewFSSectorSz);
 
