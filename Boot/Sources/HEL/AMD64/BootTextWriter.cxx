@@ -131,9 +131,9 @@ BTextWriter& BTextWriter::_Write(const Long& x)
 	if (y < 0)
 		y = -y;
 
-	const char NUMBERS[17] = "0123456789ABCDEF";
+	const char cNumbers[17] = "0123456789ABCDEF";
 
-	this->WriteCharacter(NUMBERS[h]);
+	this->WriteCharacter(cNumbers[h]);
 #endif // ifdef __DEBUG__
 
 	return *this;

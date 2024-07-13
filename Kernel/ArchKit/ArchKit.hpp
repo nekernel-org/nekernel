@@ -10,6 +10,8 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Function.hpp>
 
+#include <FirmwareKit/Handover.hxx>
+
 #ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
 #include <HALKit/AMD64/Hypervisor.hpp>
@@ -24,7 +26,7 @@
 
 namespace Kernel
 {
-	constexpr static inline SSizeT rt_hash_seed(const char* seed, int mul)
+	inline SSizeT rt_hash_seed(const char* seed, int mul)
 	{
 		SSizeT hash = 0;
 
@@ -41,7 +43,7 @@ namespace Kernel
 	/// @param base the base address.
 	/// @param reg the register.
 	/// @param value the write to write on it.
-	inline void ke_dma_write(UInt32 base, UInt32 reg, UInt32 value) noexcept
+	inline Void ke_dma_write(UInt32 base, UInt32 reg, UInt32 value) noexcept
 	{
 		*(volatile UInt32*)((UInt64)base + reg) = value;
 	}
@@ -58,18 +60,19 @@ namespace Kernel
 	/// @brief Print a region of memory.
 	/// @param start
 	/// @param length
-	inline void ke_print_raw_memory(const void* start, Size length)
+	inline Void ke_print_raw_memory(const void* start, Size length)
 	{
 		const UInt8* ptr = (const UInt8*)start;
+
 		for (Size i = 0; i < length; i++)
 		{
 			if (i % 16 == 0)
 			{
-				kcout << hex_number((UIntPtr)ptr + i);
+				kcout.HexNumber((UIntPtr)ptr + i);
 			}
 			else
 			{
-				kcout << hex_number(ptr[i]);
+				kcout.HexNumber(ptr[i]);
 			}
 
 			kcout << " ";
@@ -100,5 +103,3 @@ inline Kernel::Array<RTSyscallInfoHdr,
 
 EXTERN_C Kernel::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C Kernel::Void rt_do_context_switch(Kernel::HAL::StackFramePtr stackFrame);
-
-#include <FirmwareKit/Handover.hxx>

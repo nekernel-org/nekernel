@@ -104,7 +104,8 @@ namespace Kernel
 		{
 			SDT& sdt = *reinterpret_cast<SDT*>(xsdt->AddressArr[index]);
 
-			kcout << "ACPI: Revision: " << number(sdt.CreatorID) << endl;
+			kcout << "ACPI: Checksum: " << number(sdt.Checksum) << endl;
+			kcout << "ACPI: Revision: " << number(sdt.Revision) << endl;
 
 			for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index)
 			{

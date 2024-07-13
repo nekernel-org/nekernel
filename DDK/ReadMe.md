@@ -2,8 +2,8 @@
 
 A kit used to write kernel HALs, using the NDK compiler suite.
 
-## How to use
+## How to use it
 
-Simply link against these files.
+Simply link against libDDK.
 
 ###### Copyright 2024 ZKA Technologies, all rights reserved.
