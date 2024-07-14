@@ -36,9 +36,6 @@ default.
 #define kNewFSIdent	   " NewFS"
 #define kNewFSPadLen   (400)
 
-/// @brief Partition GUID on EPM and GPT disks.
-#define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
-
 #define kNewFSVersionInteger (0x126)
 #define kNewFSVerionString	 "1.26"
 
