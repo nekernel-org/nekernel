@@ -1,16 +1,18 @@
-#ifndef QR_H
-#define QR_H
+#ifndef QR_HXX
+#define QR_HXX
 
+extern "C" {
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
+}
 
 #include <BootKit/Vendor/Shared/base.h>
 #include <BootKit/Vendor/Shared/bit.h>
 
 #include <BootKit/Vendor/QrPrelude.hxx>
 #include <Modules/CoreCG/CoreCG.hxx>
-#include <BootKit/Vendor/Support.hxx>
+#include <BootKit/Support.hxx>
 #include <CompilerKit/Detail.hxx>
 
 /// @note the QR code is still code 128, it utilizes the same concept of having it's own character set.
@@ -970,4 +972,4 @@ namespace Kernel::Qr
 	using namespace qr;
 } // namespace Kernel::Qr
 
-#endif
+#endif // QR_HXX

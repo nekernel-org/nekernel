@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <BootKit/ProgramLoader.hxx>
-#include <BootKit/Vendor/Support.hxx>
+#include <BootKit/Support.hxx>
 #include <BootKit/BootKit.hxx>
 
 #include <KernelKit/PEF.hpp>

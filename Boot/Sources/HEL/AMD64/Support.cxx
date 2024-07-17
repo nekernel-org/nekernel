@@ -8,7 +8,7 @@
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/EFI/EFI.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <BootKit/Vendor/Support.hxx>
+#include <BootKit/Support.hxx>
 #include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
 

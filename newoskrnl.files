@@ -12,7 +12,7 @@ Boot/BootKit/Vendor/Qr.hxx
 Boot/BootKit/Vendor/QrPrelude.hxx
 Boot/BootKit/Vendor/Shared/base.h
 Boot/BootKit/Vendor/Shared/bit.h
-Boot/BootKit/Vendor/Support.hxx
+Boot/BootKit/Support.hxx
 Boot/BootKit/compile_flags.txt
 Boot/NetBoot/Module.cxx
 Boot/NetBoot/NetBoot.hxx

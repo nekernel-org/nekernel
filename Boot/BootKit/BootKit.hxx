@@ -19,7 +19,7 @@
 
 #include <cstring>
 #include <FSKit/NewFS.hxx>
-#include <BootKit/Vendor/Support.hxx>
+#include <BootKit/Support.hxx>
 
 /***********************************************************************************/
 /// Include other APIs.
