@@ -1,6 +1,7 @@
 #ifndef QR_HXX
 #define QR_HXX
 
+#include "BootKit/BootKit.hxx"
 extern "C" {
 #include <math.h>
 #include <stddef.h>
@@ -369,6 +370,11 @@ namespace qr
 		if (!this->status)
 			return false; // it may be invalid.
 
+		BTextWriter writer;
+		writer.Write(L"Printing QR-code...\r");
+
+		CGInit();
+
 		for (int y = 0; y < (this->side_size()); ++y)
 		{
 			for (int x = 0; x < (this->side_size()); ++x)
@@ -379,6 +385,8 @@ namespace qr
 					x + whereX, y + whereY);
 			}
 		}
+
+		CGFini();
 
 		return false;
 	}

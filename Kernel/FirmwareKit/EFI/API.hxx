@@ -16,6 +16,8 @@
 // forward decl.
 class BTextWriter;
 
+#define cWebsiteMacro "https://zka-mobile.com/help"
+
 #define __BOOTKIT_NO_INCLUDE__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -76,7 +78,6 @@ Bascially frees everything we have in the EFI side.
 	inline void ThrowError(const EfiCharType* ErrorCode,
 						   const EfiCharType* Reason) noexcept
 	{
-#ifdef __DEBUG__
 		ST->ConOut->OutputString(ST->ConOut, L"\r*** STOP ***\r");
 
 		ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
@@ -86,36 +87,29 @@ Bascially frees everything we have in the EFI side.
 		ST->ConOut->OutputString(ST->ConOut, Reason);
 
 		ST->ConOut->OutputString(ST->ConOut, L" ***\r");
-#endif // ifdef __DEBUG__
 
 #ifdef __NEWBOOT__
-		CGInit();
-
-		CGDrawBitMapInRegion(NewBootFatal, NEWBOOTFATAL_HEIGHT, NEWBOOTFATAL_WIDTH,
-							 (kHandoverHeader->f_GOP.f_Width - NEWBOOTFATAL_WIDTH) / 2,
-							 (kHandoverHeader->f_GOP.f_Height - NEWBOOTFATAL_HEIGHT) / 2);
-
-		CGFini();
-
-		/// Show the QR code now.
+		// Show the QR code now.
 
 		constexpr auto ver = 4;
 		auto		   ecc = qr::Ecc::H;
-		auto		   str = "https://el-mahrouss-logic.com/";
-		auto		   len = StrLen("https://el-mahrouss-logic.com/");
+		auto		   input = cWebsiteMacro;
+		auto		   len = StrLen(cWebsiteMacro);
 
 		qr::Qr<ver>	   encoder;
 		qr::QrDelegate encoderDelegate;
 
-		encoder.encode(str, len, ecc, 0); // Manual mask 0
+		encoder.encode(input, len, ecc, 0); // Manual mask 0
+
+		constexpr auto whereX = 10;
+		constexpr auto whereY = 10;
 
 		/// tell delegate to draw encoded QR.
-		encoderDelegate.draw<ver>(encoder, (kHandoverHeader->f_GOP.f_Width - encoder.side_size()) - 20,
-								  (kHandoverHeader->f_GOP.f_Height - encoder.side_size()) / 2);
-
-#endif // ifdef __NEWBOOT__
+		encoderDelegate.draw<ver>(encoder, whereX,
+								  whereY);
 
 		EFI::Stop();
+#endif // ifdef __NEWBOOT__
 	}
 } // namespace EFI
 

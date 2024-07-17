@@ -58,7 +58,7 @@ STATIC Void InitVideoFB() noexcept
 	for (SizeT i = 0; i < kGop->Mode->MaxMode; ++i)
 	{
 		EfiGraphicsOutputProtocolModeInformation* infoPtr = nullptr;
-		UInt32 sz = 0U;
+		UInt32									  sz	  = 0U;
 
 		kGop->QueryMode(kGop, i, &sz, &infoPtr);
 
@@ -69,7 +69,6 @@ STATIC Void InitVideoFB() noexcept
 			break;
 		}
 	}
-
 }
 
 /// @brief check the BootDevice if suitable.
@@ -97,14 +96,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	writer.Write(L"ZKA Technologies (R) newosldr: ")
 		.Write(BVersionString::The())
 		.Write("\r");
-
-#ifndef __DEBUG__
-	writer.Write(L"\rnewosldr: AMD64 is only supported in debug mode.\r");
-
-	EFI::Stop();
-
-	CANT_REACH();
-#endif
 
 	UInt32*				 MapKey		= new UInt32();
 	UInt32*				 SizePtr	= new UInt32();
@@ -158,20 +149,13 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	kHandoverHeader = handoverHdrPtr;
 
-	// Start drawing the 'zka' icon.
+	// check if we are in AMD64
+#if defined(__NEWOS_AMD64__)
+	writer.Write(L"\rnewosldr: AMD64 support is not official.\r");
+	EFI::ThrowError(L"Beta-Software", L"Beta Software.");
+#endif
 
-	CGInit();
-
-	CGDrawInRegion(cCGClearClr, handoverHdrPtr->f_GOP.f_Height,
-				   handoverHdrPtr->f_GOP.f_Width, 0, 0);
-
-	CGFini();
-
-	CGDrawBitMapInRegion(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
-						 (handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
-						 (handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
-
-	CGFini();
+	// get memory map.
 
 	BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 
