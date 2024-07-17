@@ -370,9 +370,6 @@ namespace qr
 		if (!this->status)
 			return false; // it may be invalid.
 
-		BTextWriter writer;
-		writer.Write(L"Printing QR-code...\r");
-
 		CGInit();
 
 		for (int y = 0; y < (this->side_size()); ++y)
@@ -388,7 +385,7 @@ namespace qr
 
 		CGFini();
 
-		return false;
+		return true;
 	}
 
 	// Create Qr code with given error correction level. If mask == -1,
