@@ -27,6 +27,7 @@
 
 
 Kernel::Property cKernelVersion;
+Kernel::Property cAutoFormatDisk;
 
 /// @brief This symbol is the kernel main symbol.
 EXTERN_C void KeMain();
@@ -216,12 +217,17 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked		= true;
 
 	// newoskrnl version 1.00
-	//
 	Kernel::StringView strVer(cMaxPropLen);
 	strVer += "\\Properties\\KernelVersion";
 
 	cKernelVersion.GetKey() = strVer;
-    cKernelVersion.GetValue() = 1100;
+    cKernelVersion.GetValue() = 100;
+
+    Kernel::StringView strAutoMount(cMaxPropLen);
+	strAutoMount += "\\Properties\\AutoMountFS?";
+
+	cAutoFormatDisk.GetKey() = strAutoMount;
+    cAutoFormatDisk.GetValue() = Yes;
 
 	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_RsdPtr);
 

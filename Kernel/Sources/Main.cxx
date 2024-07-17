@@ -7,7 +7,6 @@
 
 ------------------------------------------- */
 
-#include "KernelKit/DebugOutput.hpp"
 #include <ArchKit/ArchKit.hpp>
 #include <Modules/CoreCG/CoreCG.hxx>
 #include <CompilerKit/Detail.hxx>
@@ -27,10 +26,11 @@
 #include <CFKit/Property.hpp>
 
 EXTERN Kernel::Property cKernelVersion;
+EXTERN Kernel::Property cAutoFormatDisk;
 
 namespace Kernel::Detail
 {
-	/// @brief Filesystem auto installer, additional checks are also done by the class.
+	/// @brief Filesystem auto formatter, additional checks are also done by the class.
 	class FilesystemInstaller final
 	{
 		Kernel::NewFilesystemManager* fNewFS{nullptr};
@@ -39,16 +39,20 @@ namespace Kernel::Detail
 		/// @brief wizard constructor.
 		explicit FilesystemInstaller()
 		{
+			if (cAutoFormatDisk.GetValue() == No)
+			{
+				return;
+			}
+
 			if (Kernel::FilesystemManagerInterface::GetMounted())
 			{
-				/// Mounted partition, cool!
+				// Partition is mounted, cool!
 				Kernel::kcout
-					<< "newoskrnl: No need to create for a NewFS+EPM partition here...\r";
+					<< "newoskrnl: No need to create for a new NewFS (EPM) partition here...\r";
 			}
 			else
 			{
-				/// Not mounted partition, auto-mount.
-				///! Mounts a NewFS block.
+				// Mounts a NewFS from main drive.
 				fNewFS = new Kernel::NewFilesystemManager();
 
 				Kernel::FilesystemManagerInterface::Mount(fNewFS);
@@ -59,7 +63,7 @@ namespace Kernel::Detail
 					const auto	   cDirCount		  = 9;
 					const char*	   cDirStr[cDirCount] = {
 						   "\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
-						   "\\Users\\", "\\Library\\", "\\Mount\\", "\\DCIM\\", "\\Storage\\"};
+						   "\\Users\\", "\\Library\\", "\\Mounted\\", "\\DCIM\\", "\\Applications\\Storage\\"};
 
 					for (Kernel::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
@@ -97,7 +101,7 @@ namespace Kernel::Detail
 						Kernel::StringView metadataFolder(kNewFSSectorSz);
 
 						metadataFolder +=
-							"<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
+							"<!properties/>\r<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
 							"system</p>\r<p>Volume Type: Zeta</p>\r";
 
 						metadataFolder += "<p>Path: ";
@@ -135,7 +139,7 @@ namespace Kernel::Detail
 					Kernel::StringView diskFolder(kNewFSSectorSz);
 
 					diskFolder +=
-						"<p>Kind: alias to SIM Card</p>\r<p>Created by: system</p>\r<p>Edited "
+						"<!properties/><p>Kind: alias to SIM Card</p>\r<p>Created by: system</p>\r<p>Edited "
 						"by: "
 						"system</p>\r<p>Volume Type: SIM Card</p>\r";
 
