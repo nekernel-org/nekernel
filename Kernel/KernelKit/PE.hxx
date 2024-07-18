@@ -11,12 +11,18 @@
 
 ------------------------------------------- */
 
-#ifndef __PE__
-#define __PE__
+#ifndef __KERNELKIT_INC_PE_HXX__
+#define __KERNELKIT_INC_PE_HXX__
 
 #include <NewKit/Defines.hpp>
 
 #define kPeMagic 0x00004550
+
+#define kMagPE32 0x010b
+#define kMagPE64 0x020b
+
+#define kPEMachineAMD64 0x8664
+#define kPEMachineARM64 0xaa64
 
 typedef struct ExecHeader final
 {
@@ -29,12 +35,6 @@ typedef struct ExecHeader final
 	Kernel::UInt16 mSizeOfOptionalHeader;
 	Kernel::UInt16 mCharacteristics;
 } PACKED ExecHeader, *ExecHeaderPtr;
-
-#define kMagPE32 0x010b
-#define kMagPE64 0x020b
-
-#define kPEMachineAMD64 0x8664
-#define kPEMachineARM64 0xaa64
 
 typedef struct ExecOptionalHeader final
 {
@@ -71,17 +71,17 @@ typedef struct ExecOptionalHeader final
 
 typedef struct ExecSectionHeader final
 {
-	CONST Kernel::UChar mName[8];
+	Kernel::UChar       mName[8];
 	Kernel::UInt32		mVirtualSize;
 	Kernel::UInt32		mVirtualAddress;
 	Kernel::UInt32		mSizeOfRawData;
 	Kernel::UInt32		mPointerToRawData;
 	Kernel::UInt32		mPointerToRelocations;
-	Kernel::UInt32		mPointerToLinenumbers;
+	Kernel::UInt32		mPointerToLineNumbers;
 	Kernel::UInt16		mNumberOfRelocations;
 	Kernel::UInt16		mNumberOfLinenumbers;
 	Kernel::UInt32		mCharacteristics;
-} PACKED ExecSectionHeader, *ExecSectionHeaderPtr;
+} ExecSectionHeader, *ExecSectionHeaderPtr;
 
 enum kExecDataDirParams
 {
@@ -120,4 +120,4 @@ typedef struct ExecImportDirectory
 
 #define kPeStart "__ImageStart"
 
-#endif /* ifndef __PE__ */
+#endif /* ifndef __KERNELKIT_INC_PE_HXX__ */

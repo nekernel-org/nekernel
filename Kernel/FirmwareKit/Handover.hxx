@@ -76,7 +76,7 @@ it tells us more about it and IS format independent.
 		struct
 		{
 			VoidPtr f_SmBios;
-			VoidPtr f_RsdPtr;
+			VoidPtr f_VendorPtr;
 		} f_HardwareTables;
 
 		struct

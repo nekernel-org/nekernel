@@ -85,6 +85,36 @@ BTextWriter& BTextWriter::Write(const Char* str)
 	return *this;
 }
 
+BTextWriter& BTextWriter::Write(const UChar* str)
+{
+#ifdef __DEBUG__
+	if (!str || *str == 0)
+		return *this;
+
+	CharacterTypeUTF16 strTmp[2];
+	strTmp[1] = 0;
+
+	for (size_t i = 0; str[i] != 0; i++)
+	{
+		if (str[i] == '\r')
+		{
+			strTmp[0] = str[i];
+			ST->ConOut->OutputString(ST->ConOut, strTmp);
+
+			strTmp[0] = '\n';
+			ST->ConOut->OutputString(ST->ConOut, strTmp);
+		}
+		else
+		{
+			strTmp[0] = str[i];
+			ST->ConOut->OutputString(ST->ConOut, strTmp);
+		}
+	}
+#endif // ifdef __DEBUG__
+
+	return *this;
+}
+
 /**
 @brief putc wrapper over EFI ConOut.
 */

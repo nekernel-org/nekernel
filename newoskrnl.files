@@ -171,7 +171,7 @@ Kernel/KernelKit/PCI/Iterator.hpp
 Kernel/KernelKit/PCI/PCI.hpp
 Kernel/KernelKit/PE.hxx
 Kernel/KernelKit/PECodeManager.hxx
-Kernel/KernelKit/PEF.hpp
+Kernel/KernelKit/PEF.hxx
 Kernel/KernelKit/PEFCodeManager.hxx
 Kernel/KernelKit/PEFSharedObject.hxx
 Kernel/KernelKit/PermissionSelector.hxx
@@ -300,7 +300,7 @@ Kernel/Sources/Variant.cxx
 Kernel/Sources/compile_flags.txt
 Kernel/StorageKit/AHCI.hpp
 Kernel/StorageKit/ATA.hpp
-Kernel/StorageKit/NVME.hpp
+Kernel/StorageKit/NVME.hxx
 Kernel/StorageKit/PRDT.hpp
 Kernel/StorageKit/SCSI.hxx
 Kernel/StorageKit/Storage.hpp

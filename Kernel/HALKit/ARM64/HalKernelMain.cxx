@@ -154,12 +154,12 @@ EXTERN_C void hal_init_platform(
 	};
 
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+		Kernel::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 		acpi.Reboot();
 	};
 
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_RsdPtr);
+		Kernel::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 		acpi.Shutdown();
 	};
 

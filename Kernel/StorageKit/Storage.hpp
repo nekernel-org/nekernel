@@ -7,7 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <StorageKit/NVME.hpp>
+#include <StorageKit/NVME.hxx>
 #include <StorageKit/AHCI.hpp>
 #include <StorageKit/SCSI.hxx>
 

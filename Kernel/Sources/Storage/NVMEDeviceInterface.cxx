@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <StorageKit/NVME.hpp>
+#include <StorageKit/NVME.hxx>
 
 namespace Kernel
 {

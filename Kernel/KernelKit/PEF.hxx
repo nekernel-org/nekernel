@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies
 
-	File: PEF.hpp
+	File: PEF.hxx
 	Purpose: Preferred Executable Format for Kernel.
 
 	Revision History:
@@ -11,8 +11,8 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_PEF_HPP__
-#define __INC_PEF_HPP__
+#ifndef __KERNELKIT_INC_PEF_HXX__
+#define __KERNELKIT_INC_PEF_HXX__
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/LoaderInterface.hpp>
@@ -110,4 +110,4 @@ namespace Kernel
 #define kPefForkKind	kPefMagic
 #define kPefForkKindFAT kPefMagicFat
 
-#endif /* ifndef __INC_PEF_HPP__ */
+#endif /* ifndef __KERNELKIT_INC_PEF_HXX__ */

@@ -35,6 +35,7 @@ namespace Boot
 
 	private:
 		Char	fBlobName[255];
+		Char*   fStackPtr{nullptr};
 		VoidPtr fStartAddress{nullptr};
 		VoidPtr fBlob{nullptr};
 	};

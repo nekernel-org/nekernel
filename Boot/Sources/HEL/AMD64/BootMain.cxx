@@ -13,7 +13,7 @@
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
-#include <KernelKit/PEF.hpp>
+#include <KernelKit/PEF.hxx>
 #include <NewKit/Macros.hpp>
 #include <NewKit/Ref.hpp>
 #include <BootKit/ProgramLoader.hxx>
@@ -121,8 +121,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
 			vendorTable[6] == 'R' && vendorTable[7] == ' ')
 		{
-			writer.Write(L"newosldr: filling rsdptr...\r");
-			handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
+			writer.Write(L"newosldr: Filling rsdptr...\r");
+			handoverHdrPtr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendorTable;
 
 			break;
 		}
@@ -149,8 +149,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	kHandoverHeader = handoverHdrPtr;
 
-	// check if we are in AMD64
-#if defined(__NEWOS_AMD64__)
+	// check if we are running in the PC platform. If so abort.
+#if defined(__NEWOS_AMD64__) && !defined(__DEBUG__)
 	writer.Write(L"\rnewosldr: AMD64 support is not official.\r");
 	EFI::ThrowError(L"Beta-Software", L"Beta Software.");
 #endif
@@ -244,9 +244,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 #ifdef __NEWOS_OTA__
 	if (loader)
 		loader->Start(handoverHdrPtr);
+#else
+    hal_init_platform(handoverHdrPtr);
 #endif // ifdef __NEWOS_OTA__
-
-	hal_init_platform(handoverHdrPtr);
 
 	EFI::Stop();
 

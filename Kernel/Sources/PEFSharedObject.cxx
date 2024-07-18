@@ -8,7 +8,7 @@
  */
 
 #include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/PEF.hpp>
+#include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFSharedObject.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>

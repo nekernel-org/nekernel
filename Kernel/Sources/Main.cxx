@@ -14,7 +14,7 @@
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/Framebuffer.hpp>
 #include <KernelKit/Heap.hxx>
-#include <KernelKit/PEF.hpp>
+#include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ProcessHeap.hxx>

@@ -66,6 +66,7 @@ public:
 	BTextWriter& Write(const Char* str);
 	BTextWriter& Write(const CharacterTypeUTF16* str);
 	BTextWriter& WriteCharacter(CharacterTypeUTF16 c);
+	BTextWriter& Write(const UChar* str);
 
 public:
 	explicit BTextWriter() = default;
