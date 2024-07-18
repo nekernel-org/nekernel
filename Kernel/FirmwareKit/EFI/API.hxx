@@ -91,22 +91,22 @@ Bascially frees everything we have in the EFI side.
 #ifdef __NEWBOOT__
 		// Show the QR code now.
 
-		constexpr auto ver = 4;
-		auto		   ecc = qr::Ecc::H;
-		auto		   input = cWebsiteMacro;
-		auto		   len = StrLen(cWebsiteMacro);
+		constexpr auto cVer     = 4;
+		const auto		   cECC = qr::Ecc::H;
+		const auto		   cInput = cWebsiteMacro;
+		const auto		   cInputLen = StrLen(cWebsiteMacro);
 
-		qr::Qr<ver>	   encoder;
-		qr::QrDelegate encoderDelegate;
+		qr::Qr<cVer>	   encoder;
+		qr::QrDelegate     encoderDelegate;
 
-		encoder.encode(input, len, ecc, 0); // Manual mask 0
+		encoder.encode(cInput, cInputLen, cECC, 0); // Manual mask 0
 
-		constexpr auto whereX = 10;
-		constexpr auto whereY = 10;
+		const auto cWhereStartX = (kHandoverHeader->f_GOP.f_Width - encoder.side_size()) - 20;
+		const auto cWhereStartY = (kHandoverHeader->f_GOP.f_Height - encoder.side_size()) / 2;
 
-		/// tell delegate to draw encoded QR.
-		encoderDelegate.draw<ver>(encoder, whereX,
-								  whereY);
+		// tell delegate to draw encoded QR now.
+		encoderDelegate.draw<cVer>(encoder, cWhereStartX,
+								  cWhereStartY);
 
 		EFI::Stop();
 #endif // ifdef __NEWBOOT__
