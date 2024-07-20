@@ -245,7 +245,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (loader)
 		loader->Start(handoverHdrPtr);
 #else
-    hal_init_platform(handoverHdrPtr);
+	hal_init_platform(handoverHdrPtr);
 #endif // ifdef __NEWOS_OTA__
 
 	EFI::Stop();

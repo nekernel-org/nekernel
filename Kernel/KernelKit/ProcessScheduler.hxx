@@ -13,7 +13,7 @@
 #include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/MutableArray.hpp>
 
-#define kSchedMinMicroTime (AffinityKind::kHartStandard)
+#define kSchedMinMicroTime (AffinityKind::kStandard)
 #define kSchedInvalidPID   (-1)
 
 #define kSchedProcessLimitPerTeam (16U)
@@ -58,7 +58,7 @@ namespace Kernel
 		kInvalid	  = 300,
 		kVeryHigh	  = 250,
 		kHigh		  = 200,
-		kHartStandard = 150,
+		kStandard = 150,
 		kLowUsage	  = 100,
 		kVeryLowUsage = 50,
 	};
@@ -167,7 +167,7 @@ namespace Kernel
 			kKindCount,
 		};
 
-		ProcessTime PTime;
+		ProcessTime PTime{0};
 		PID			ProcessId{kSchedInvalidPID};
 		Int32		Kind{kAppKind};
 
@@ -178,25 +178,29 @@ namespace Kernel
 			return Status != ProcessStatus::kDead;
 		}
 
-		//! @brief Crash the app, exits with code ~0.
+		///! @brief Crashes the app, exits with code ~0.
 		Void Crash();
 
-		//! @brief Exits app.
+		///! @brief Exits the app.
 		Void Exit(Int32 exitCode = 0);
 
-		//! @brief TLS Allocate
+		///! @brief TLS allocate.
+		///! @param sz size of new ptr.
 		VoidPtr New(const SizeT& sz);
 
-		//! @brief TLS Free.
+		///! @brief TLS free.
+		///! @param ptr the pointer to free.
+		///! @param sz the size of it.
 		Boolean Delete(VoidPtr ptr, const SizeT& sz);
 
-		//! @brief Wakes up threads.
+		///! @brief Wakes up threads.
 		Void Wake(const bool wakeup = false);
 
 		// ProcessHeader getters.
 	public:
-		//! @brief ProcessHeader name getter, example: "C RunTime"
-		const Char* GetName() noexcept;
+		///! @brief Get the process's name
+		///! @example 'C Runtime Library'
+		const Char* GetProcessName() noexcept;
 
 		//! @brief return local error code of process.
 		//! @return Int32 local error code.

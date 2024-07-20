@@ -15,7 +15,7 @@
 
 /// @version 5/11/23
 /// @file ProcessHeap.hxx
-/// @brief memory heap for user processes.
+/// @brief Heap for user processes.
 
 #define kUserHeapMaxSz (4096)
 #define kUserHeapMag   (0xFAF0FEF0)

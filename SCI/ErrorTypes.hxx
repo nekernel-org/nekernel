@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <Comm/newstd.hxx>
+#include <SCI/StandardInterface.hxx>
 
 #ifdef __KERNEL__
 #error !!! including header in kernel mode !!!

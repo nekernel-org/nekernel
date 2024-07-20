@@ -52,7 +52,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../Kernel -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__NEWOS_OTA__ -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__
+                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__
 
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.exe

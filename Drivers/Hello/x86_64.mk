@@ -20,7 +20,7 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -fno-rtti -fno-exceptions -D__DDK_AMD64__ -mgeneral-regs-only -mno-red-zone -D__KERNEL__ \
+FLAG_GNU=-fshort-wchar -D__DDK_AMD64__ -mgeneral-regs-only -mno-red-zone -D__KERNEL__ \
 	-DEFI_FUNCTION_WRAPPER -I../ -I../../ -I./ -c -ffreestanding  -std=c17 -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
 
 .PHONY: invalid-recipe

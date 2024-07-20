@@ -20,7 +20,7 @@ EXTERN_C
 
 namespace Boot
 {
-    EXTERN_C Int32 rt_jump_to_address(HEL::HandoverProc baseCode, HEL::HandoverInformationHeader* handover, Char* stackPointer);
+	EXTERN_C Int32 rt_jump_to_address(HEL::HandoverProc baseCode, HEL::HandoverInformationHeader* handover, Char* stackPointer);
 
 	ProgramLoader::ProgramLoader(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
@@ -39,14 +39,14 @@ namespace Boot
 		if (firstBytes[0] == kMagMz0 &&
 			firstBytes[1] == kMagMz1)
 		{
-		    writer.Write("newosldr: MZ executable detected.\r");
+			writer.Write("newosldr: MZ executable detected.\r");
 
-		    ExecHeaderPtr hdrPtr = (ldr_find_exec_header(firstBytes));
-		    ExecOptionalHeaderPtr optHdr = (ldr_find_opt_exec_header(firstBytes));
+			ExecHeaderPtr		  hdrPtr = (ldr_find_exec_header(firstBytes));
+			ExecOptionalHeaderPtr optHdr = (ldr_find_opt_exec_header(firstBytes));
 
 			// Parse PE32+
 			fStartAddress = (VoidPtr)((UIntPtr)optHdr->mImageBase + optHdr->mBaseOfCode + optHdr->mAddressOfEntryPoint);
-			fStackPtr = new Char[optHdr->mSizeOfStackReserve];
+			fStackPtr	  = new Char[optHdr->mSizeOfStackReserve];
 
 			writer.Write("newosldr: Major Linker: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
 			writer.Write("newosldr: Minor Linker: ").Write(optHdr->mMinorLinkerVersion).Write("\r");
@@ -73,21 +73,21 @@ namespace Boot
 	/// @note handover header has to be valid!
 	Void ProgramLoader::Start(HEL::HandoverInformationHeader* handover)
 	{
-	    BTextWriter writer;
+		BTextWriter writer;
 
-	    if (!handover)
+		if (!handover ||
+			((Char*)fStartAddress)[0] == 0x0)
 		{
-		    writer.Write("newosldr: Exec format error.\r");
-       	    return;
+			writer.Write("newosldr: Exec format error.\r");
+			return;
 		}
 
 		writer.Write("newosldr: Trying to run: ").Write(fBlobName).Write("\r");
 
-		if (!fStartAddress ||
-		    ((Char*)fStartAddress)[0] == 0x0)
+		if (!fStartAddress)
 		{
-		    HEL::HandoverProc fn = [](HEL::HandoverInformationHeader* rcx) -> void {
-		        BTextWriter writer;
+			HEL::HandoverProc fn = [](HEL::HandoverInformationHeader* rcx) -> void {
+				BTextWriter writer;
 				writer.Write("newosldr: Exec format error, Thread has been aborted.\r");
 
 				EFI::ThrowError(L"Exec-Format-Error", L"Format doesn't match (Thread aborted.)");

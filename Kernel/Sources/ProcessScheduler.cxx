@@ -138,7 +138,7 @@ namespace Kernel
 	}
 
 	/// @brief process name getter.
-	const Char* ProcessHeader::GetName() noexcept
+	const Char* ProcessHeader::GetProcessName() noexcept
 	{
 		return this->Name;
 	}
@@ -273,21 +273,21 @@ namespace Kernel
 			{
 				auto unwrapped_process = *process.Leak();
 
-				unwrapped_process.PTime = 0;
-
 				// set the current process.
 				mTeam.AsRef() = unwrapped_process;
 
 				// tell helper to find a core to schedule on.
-				ProcessHelper::Switch(mTeam.AsRef().Leak().StackFrame,
-									  mTeam.AsRef().Leak().ProcessId);
+				ProcessHelper::Switch(unwrapped_process.StackFrame,
+									  unwrapped_process.ProcessId);
 
-				kcout << unwrapped_process.Name << ": process switched.\r";
+				unwrapped_process.PTime = static_cast<Int32>(unwrapped_process.Affinity);
+
+				kcout << unwrapped_process.Name << ": has been switched to process core.\r";
 			}
 			else
 			{
 				// otherwise increment the P-time.
-				++mTeam.AsRef().Leak().PTime;
+				--mTeam.AsRef().Leak().PTime;
 			}
 		}
 
@@ -336,10 +336,10 @@ namespace Kernel
 
 		if (process.Leak().GetStatus() == ProcessStatus::kStarting)
 		{
-			if (process.Leak().PTime < static_cast<Int>(kSchedMinMicroTime))
+			if (process.Leak().PTime <= 0)
 			{
 				process.Leak().Status	= ProcessStatus::kRunning;
-				process.Leak().Affinity = AffinityKind::kHartStandard;
+				process.Leak().Affinity = AffinityKind::kStandard;
 
 				return true;
 			}
@@ -347,7 +347,7 @@ namespace Kernel
 			++process.Leak().PTime;
 		}
 
-		return process.Leak().PTime > static_cast<Int>(kSchedMinMicroTime);
+		return process.Leak().PTime > 0;
 	}
 
 	/**

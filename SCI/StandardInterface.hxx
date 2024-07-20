@@ -7,8 +7,8 @@ Purpose: System Call Interface.
 
 ------------------------------------------- */
 
-#ifndef _INC_COMM_NEWSTD_HXX_
-#define _INC_COMM_NEWSTD_HXX_
+#ifndef __SCI_STD_HXX__
+#define __SCI_STD_HXX__
 
 #ifdef __KERNEL__
 #error !!! including header in kernel mode !!!
@@ -22,9 +22,9 @@ Purpose: System Call Interface.
 #define cRestrictW	"w"
 #define cRestrictRW "rw"
 
-class NSSyscallInterface; /// @brief System call class.
+class SCISharedInterface; /// @brief System call class.
 
-typedef int	 OSType;
+typedef long long int	 FD;
 typedef bool Bool;
 typedef void UInt0;
 
@@ -47,14 +47,14 @@ typedef UInt32 PowerID;
 /**
 	@brief System call class.
 */
-class NSSyscallInterface
+class SCISharedInterface
 {
 public:
-	explicit NSSyscallInterface() = default;
-	virtual ~NSSyscallInterface() = default;
+	explicit SCISharedInterface() = default;
+	virtual ~SCISharedInterface() = default;
 
-	NSSyscallInterface& operator=(const NSSyscallInterface&) = default;
-	NSSyscallInterface(const NSSyscallInterface&)			 = default;
+	SCISharedInterface& operator=(const SCISharedInterface&) = default;
+	SCISharedInterface(const SCISharedInterface&)			 = default;
 
 public:
 	/// @brief disable device.
@@ -78,7 +78,7 @@ public:
 	virtual UInt0 Terminate() = 0;
 
 	/// @brief exit thread.
-	virtual Bool Exit(OSType code) = 0;
+	virtual Bool Exit(FD code) = 0;
 
 	/// @brief alloc pointer.
 	virtual UInt0* New(long long sz) = 0;
@@ -89,35 +89,35 @@ public:
 	// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. //
 
 	/// @brief Open descriptor.
-	virtual OSType OpenStorage(const char* path, const char* restr) = 0;
+	virtual FD OpenStorage(const char* path, const char* restr) = 0;
 
 	/// @brief Close descriptor.
-	virtual UInt0 CloseStorage(OSType descriptorType) = 0;
+	virtual UInt0 CloseStorage(FD descriptorType) = 0;
 
 	/// @brief Execute from shell.
-	virtual OSType URLExecute(const UTFChar* shellLink) = 0;
+	virtual FD URLExecute(const UTFChar* shellLink) = 0;
 
 	/// @brief Read descriptor.
-	virtual UInt0* ReadStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType) = 0;
+	virtual UInt0* ReadStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, FD descriptorType) = 0;
 
 	/// @brief Seek in storage file
-	virtual UInt64 SeekStorage(OSType descriptorType, UInt64 offset) = 0;
+	virtual UInt64 SeekStorage(FD descriptorType, UInt64 offset) = 0;
 
 	/// @brief Tell storage cursor.
-	virtual UInt64 TellStorage(OSType descriptorType) = 0;
+	virtual UInt64 TellStorage(FD descriptorType) = 0;
 
 	/// @brief Remove stored file.
-	virtual UInt64 RemoveStorage(OSType descriptorType) = 0;
+	virtual UInt64 RemoveStorage(FD descriptorType) = 0;
 
 	/// @brief Create stored file.
-	virtual OSType CreateStorage(const UTFChar* fileName, UInt64 flags) = 0;
+	virtual FD CreateStorage(const UTFChar* fileName, UInt64 flags) = 0;
 
 	/// @brief Write descriptor.
-	virtual UInt0* WriteStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, OSType descriptorType) = 0;
+	virtual UInt0* WriteStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, FD descriptorType) = 0;
 };
 
 /// @brief Get shared syscall object.
 /// @return Syscall implementation.
-IMPORT_C NSSyscallInterface* NSGetSharedSyscallInterface(UInt0);
+IMPORT_C SCISharedInterface* SCIGetSharedInterface(UInt0);
 
-#endif // ifndef _INC_COMM_NEWSTD_HXX_
+#endif // ifndef __SCI_STD_HXX__
