@@ -236,7 +236,7 @@ Kernel/NewKit/PageAllocator.hpp
 Kernel/NewKit/PageManager.hpp
 Kernel/NewKit/Pair.hpp
 Kernel/NewKit/Pmm.hpp
-Kernel/NewKit/Ref.hpp
+Kernel/NewKit/Ref.hxx
 Kernel/NewKit/Stream.hpp
 Kernel/NewKit/String.hpp
 Kernel/NewKit/Utils.hpp

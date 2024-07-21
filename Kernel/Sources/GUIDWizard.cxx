@@ -10,7 +10,7 @@
 ------------------------------------------- */
 
 #include <CFKit/GUIDWizard.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 // begin of ascii 'readable' characters. (A, C, C, 1, 2)
 #define kAsciiBegin 47

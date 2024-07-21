@@ -10,7 +10,7 @@
 #include <NewKit/ArrayList.hpp>
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/PageManager.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 #include <NewKit/Pmm.hpp>
 
 /// @version 5/11/23

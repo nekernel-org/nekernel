@@ -7,7 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 #include <NewKit/Stream.hpp>
 
 /* GUID for C++ Components */

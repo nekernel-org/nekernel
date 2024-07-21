@@ -8,7 +8,7 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 #include <NewKit/String.hpp>
 
 namespace Kernel

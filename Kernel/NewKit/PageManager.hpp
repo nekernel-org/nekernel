@@ -11,7 +11,7 @@
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/PageAllocator.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 #ifndef kBadAddress
 #define kBadAddress (0)

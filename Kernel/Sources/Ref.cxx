@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>

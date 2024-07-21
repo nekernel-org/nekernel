@@ -8,7 +8,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {

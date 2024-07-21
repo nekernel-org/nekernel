@@ -9,7 +9,7 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hxx>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 // Last Rev
 // Sat Feb 24 CET 2024

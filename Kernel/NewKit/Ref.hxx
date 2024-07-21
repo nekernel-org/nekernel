@@ -18,39 +18,47 @@ namespace Kernel
 	{
 	public:
 		Ref()  = default;
-		~Ref() = default;
+
+		~Ref()
+		{
+		    if (fStrong)
+			{
+			    fClass = nullptr;
+			}
+		}
 
 	public:
 		Ref(T cls, const bool& strong = false)
-			: fClass(cls), fStrong(strong)
+			: fClass(&cls), fStrong(strong)
 		{
 		}
 
 		Ref& operator=(T ref)
 		{
-			fClass = ref;
+			*fClass = ref;
 			return *this;
 		}
 
 	public:
 		T operator->() const
 		{
-			return fClass;
+			return *fClass;
 		}
 
 		T& Leak() noexcept
 		{
-			return fClass;
+			return *fClass;
 		}
 
-		T& Fetch() const noexcept
+		T& TryLeak() const noexcept
 		{
-			return fClass;
+		    MUST_PASS(*fClass);
+			return *fClass;
 		}
 
 		T operator*()
 		{
-			return fClass;
+			return *fClass;
 		}
 
 		bool IsStrong() const
@@ -64,8 +72,8 @@ namespace Kernel
 		}
 
 	private:
-		T	 fClass;
-		bool fStrong{false};
+	    T*	 fClass;
+		Bool fStrong{false};
 	};
 
 	template <typename T>

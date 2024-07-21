@@ -10,7 +10,7 @@
 #include <KernelKit/PCI/Device.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/OwnPtr.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {

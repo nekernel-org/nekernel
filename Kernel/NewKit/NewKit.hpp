@@ -16,7 +16,7 @@
 #include <NewKit/MutableArray.hpp>
 #include <NewKit/New.hpp>
 #include <NewKit/OwnPtr.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 #include <NewKit/Stream.hpp>
 #include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/Utils.hpp>

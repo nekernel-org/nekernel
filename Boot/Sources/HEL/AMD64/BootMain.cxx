@@ -15,7 +15,7 @@
 #include <KernelKit/PE.hxx>
 #include <KernelKit/PEF.hxx>
 #include <NewKit/Macros.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 #include <BootKit/ProgramLoader.hxx>
 #include <cstring>
 

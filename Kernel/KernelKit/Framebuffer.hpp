@@ -11,7 +11,7 @@
 #define __INC_FB_HPP__
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {

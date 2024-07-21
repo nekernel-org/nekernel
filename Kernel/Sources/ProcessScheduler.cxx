@@ -301,12 +301,14 @@ namespace Kernel
 		return mTeam;
 	}
 
+	/// @internal
+	STATIC Ref<ProcessScheduler> cSchedulerRef;
+
 	/// @brief Shared instance of the process scheduler.
 	/// @return
-	Ref<ProcessScheduler&> ProcessScheduler::The()
+	Ref<ProcessScheduler>& ProcessScheduler::The()
 	{
-		static ProcessScheduler ref;
-		return {ref};
+		return cSchedulerRef;
 	}
 
 	/// @brief Gets current running process.

@@ -19,7 +19,7 @@
 /* @brief Device abstraction and I/O buffer. */
 
 #include <NewKit/ErrorOr.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 // Last Rev
 // Wed, Apr  3, 2024  9:09:41 AM

@@ -5,7 +5,7 @@
 #include <KernelKit/PCI/Device.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 #define NEWOS_BUS_COUNT		 (256)
 #define NEWOS_DEVICE_COUNT	 (33)

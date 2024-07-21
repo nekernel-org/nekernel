@@ -9,7 +9,7 @@
 #include <ArchKit/ArchKit.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {

@@ -266,7 +266,7 @@ namespace Kernel
 		SizeT				Run() noexcept;
 
 	public:
-		STATIC Ref<ProcessScheduler&> The();
+		STATIC Ref<ProcessScheduler>& The();
 
 	private:
 		ProcessTeam mTeam;

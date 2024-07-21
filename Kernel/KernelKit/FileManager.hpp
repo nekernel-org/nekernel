@@ -26,7 +26,7 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Stream.hpp>
 #include <NewKit/ErrorOr.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 /// @brief Filesystem manager, abstraction over mounted filesystem.
 /// Works like the VFS or IFS.

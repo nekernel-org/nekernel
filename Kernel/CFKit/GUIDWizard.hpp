@@ -11,7 +11,7 @@
 #include <NewKit/ArrayList.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorOr.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 #include <NewKit/Stream.hpp>
 #include <NewKit/String.hpp>
 

@@ -10,7 +10,7 @@
 #include <Modules/ACPI/ACPI.hxx>
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {
