@@ -182,7 +182,7 @@ namespace Kernel
 		Void Crash();
 
 		///! @brief Exits the app.
-		Void Exit(Int32 exitCode = 0);
+		Void Exit(const Int32& exit_code = 0);
 
 		///! @brief TLS allocate.
 		///! @param sz size of new ptr.

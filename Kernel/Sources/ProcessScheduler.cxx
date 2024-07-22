@@ -168,7 +168,7 @@ namespace Kernel
 	/**
 	@brief Standard exit proc.
 	*/
-	void ProcessHeader::Exit(Int32 exit_code)
+	void ProcessHeader::Exit(const Int32& exit_code)
 	{
 		if (this->ProcessId !=
 			ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId)
@@ -180,6 +180,7 @@ namespace Kernel
 		//! Delete image if not done already.
 		if (this->Image)
 			ke_delete_ke_heap(this->Image);
+
 		if (this->StackFrame)
 			ke_delete_ke_heap((VoidPtr)this->StackFrame);
 
