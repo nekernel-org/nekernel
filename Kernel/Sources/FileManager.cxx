@@ -121,8 +121,8 @@ namespace Kernel
 
 		NEWOS_UNUSED(flags);
 
-		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-			fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
+		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
+			fImpl->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), data, size,
 								name);
 	}
 
@@ -139,8 +139,8 @@ namespace Kernel
 
 		NEWOS_UNUSED(flags);
 
-		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-			return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz,
+		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
+			return fImpl->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), sz,
 									  name);
 
 		return nullptr;
@@ -157,7 +157,7 @@ namespace Kernel
 		if (!node || off == 0)
 			return false;
 
-		return fImpl->Seek(reinterpret_cast<NewCatalog*>(node), off);
+		return fImpl->Seek(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), off);
 	}
 
 	/// @brief Tell where the catalog is.
@@ -170,7 +170,7 @@ namespace Kernel
 		if (!node)
 			return kNPos;
 
-		return fImpl->Tell(reinterpret_cast<NewCatalog*>(node));
+		return fImpl->Tell(reinterpret_cast<NFS_CATALOG_STRUCT*>(node));
 	}
 
 	/// @brief Rewinds the catalog.

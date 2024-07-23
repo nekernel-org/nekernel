@@ -20,7 +20,7 @@
 
 // make the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "Zeta SSD"
+#define kMachineModel "ZKA SSD"
 #endif // !kMachineModel
 
 #ifndef cExpectedWidth

@@ -226,7 +226,7 @@ public:
 
 		fDiskDev.Read(buf, BootDev::kSectorSize);
 
-		NewPartitionBlock* blockPart = reinterpret_cast<NewPartitionBlock*>(buf);
+		NFS_ROOT_PARTITION_BLOCK* blockPart = reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(buf);
 
 		BTextWriter writer;
 
@@ -260,7 +260,7 @@ private:
 	/// @param fileBlobs the blobs.
 	/// @param blobCount the number of blobs to write.
 	/// @param partBlock the NewFS partition block.
-	Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount, NewPartitionBlock& partBlock)
+	Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount, NFS_ROOT_PARTITION_BLOCK& partBlock)
 	{
 		if (partBlock.SectorSize != BootDev::kSectorSize)
 			return false;
@@ -269,13 +269,13 @@ private:
 		Lba				 startLba = partBlock.StartCatalog;
 		BTextWriter		 writer;
 
-		Char bufCatalog[sizeof(NewCatalog)] = {0};
+		Char bufCatalog[sizeof(NFS_CATALOG_STRUCT)] = {0};
 
 		constexpr auto cNewFSCatalogPadding = 4;
 
-		NewCatalog* catalogKind	 = (NewCatalog*)bufCatalog;
+		NFS_CATALOG_STRUCT* catalogKind	 = (NFS_CATALOG_STRUCT*)bufCatalog;
 		catalogKind->PrevSibling = startLba;
-		catalogKind->NextSibling = (startLba + (sizeof(NewCatalog) * cNewFSCatalogPadding));
+		catalogKind->NextSibling = (startLba + (sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding));
 
 		/// Fill catalog kind.
 		catalogKind->Kind  = blob->fKind;
@@ -293,14 +293,14 @@ private:
 		memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
 
 		fDiskDev.Leak().mBase = startLba;
-		fDiskDev.Leak().mSize = sizeof(NewCatalog);
+		fDiskDev.Leak().mSize = sizeof(NFS_CATALOG_STRUCT);
 
-		fDiskDev.Write((Char*)bufCatalog, sizeof(NewCatalog));
+		fDiskDev.Write((Char*)bufCatalog, sizeof(NFS_CATALOG_STRUCT));
 
 		--partBlock.FreeCatalog;
 		--partBlock.FreeSectors;
 
-		memset(bufCatalog, 0, sizeof(NewCatalog));
+		memset(bufCatalog, 0, sizeof(NFS_CATALOG_STRUCT));
 
 		return true;
 	}
@@ -327,7 +327,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 	SizeT sectorSz					= BootDev::kSectorSize;
 	Char  buf[BootDev::kSectorSize] = {0};
 
-	NewPartitionBlock* partBlock = reinterpret_cast<NewPartitionBlock*>(buf);
+	NFS_ROOT_PARTITION_BLOCK* partBlock = reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(buf);
 
 	memcpy(partBlock->Ident, kNewFSIdent, kNewFSIdentLen - 1);
 	memcpy(partBlock->PartitionName, partName, strlen(partName));
@@ -348,7 +348,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 	partBlock->CatalogCount = blobCount;
 	partBlock->Kind			= kNewFSHardDrive;
 	partBlock->SectorSize	= sectorSz;
-	partBlock->FreeCatalog	= fDiskDev.GetSectorsCount() / sizeof(NewCatalog);
+	partBlock->FreeCatalog	= fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
 	partBlock->SectorCount	= fDiskDev.GetSectorsCount();
 	partBlock->FreeSectors	= fDiskDev.GetSectorsCount();
 	partBlock->StartCatalog = kNewFSCatalogStartAddress;
@@ -366,10 +366,10 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		/// Reset buffer.
 		SetMem(buf, 0, sectorSz);
 
-		BootBlockType* epmBoot = (BootBlockType*)buf;
+		BOOT_BLOCK_STRUCT* epmBoot = (BOOT_BLOCK_STRUCT*)buf;
 
 		constexpr auto cFsName	  = "NewFS";
-		constexpr auto cBlockName = "Zeta:";
+		constexpr auto cBlockName = "ZKA:";
 
 		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, StrLen(cFsName));
 

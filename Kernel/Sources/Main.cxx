@@ -80,7 +80,7 @@ namespace Kernel::Detail
 						catalogDir = fNewFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
 																		kNewFSCatalogKindDir);
 
-						NewFork theFork{0};
+						NFS_FORK_STRUCT theFork{0};
 
 						const Kernel::Char* cSrcName = cFolderInfo;
 
@@ -122,7 +122,7 @@ namespace Kernel::Detail
 					}
 				}
 
-				NewCatalog* catalogDisk =
+				NFS_CATALOG_STRUCT* catalogDisk =
 					this->fNewFS->GetParser()->GetCatalog("\\Mount\\SIM:");
 
 				const Kernel::Char* cSrcName = "DISK-INF";
@@ -134,7 +134,7 @@ namespace Kernel::Detail
 				else
 				{
 					catalogDisk =
-						(NewCatalog*)this->Leak()->CreateAlias("\\Mount\\SIM:");
+						(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias("\\Mount\\SIM:");
 
 					Kernel::StringView diskFolder(kNewFSSectorSz);
 
@@ -147,7 +147,7 @@ namespace Kernel::Detail
 					diskFolder += Kernel::NewFilesystemHelper::Root();
 					diskFolder += "</p>\r";
 
-					NewFork theDiskFork{0};
+					NFS_FORK_STRUCT theDiskFork{0};
 
 					Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theDiskFork.ForkName,
 										   Kernel::rt_string_len(cSrcName));
