@@ -9,7 +9,7 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/LockDelegate.hpp>
-#include <KernelKit/PermissionSelector.hxx>
+#include <KernelKit/User.hxx>
 #include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/MutableArray.hpp>
 

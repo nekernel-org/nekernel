@@ -63,7 +63,7 @@ namespace Kernel::Detail
 					const auto	   cDirCount		  = 9;
 					const char*	   cDirStr[cDirCount] = {
 						   "\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
-						   "\\Users\\", "\\Library\\", "\\Mounted\\", "\\DCIM\\", "\\Applications\\Storage\\"};
+						   "\\Users\\", "\\Library\\", "\\Mounted\\", "\\DCIM\\", "\\Applications\\Store\\"};
 
 					for (Kernel::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
@@ -188,6 +188,10 @@ namespace Kernel::Detail
 	/// @return void no return value.
 	STATIC Kernel::Void ke_user_switch(Kernel::Void)
 	{
+
+		Kernel::cRootUser = new User(RingKind::kRingSuperUser, kSuperUser);
+		Kernel::kcout << "newoskrnl: logged in as: " << Kernel::cRootUser->Name().CData() << Kernel::endl;
+
 		Kernel::kcout << "newoskrnl: " << cKernelVersion.GetKey().CData() << ": " << Kernel::number(cKernelVersion.GetValue()) << Kernel::endl;
 	}
 } // namespace Kernel::Detail

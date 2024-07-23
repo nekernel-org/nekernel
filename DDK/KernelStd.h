@@ -11,13 +11,25 @@
 #if defined(__cplusplus)
 #define DK_EXTERN extern "C"
 #define nil		  nullptr
+#define DK_FINAL final
 #else
 #define DK_EXTERN extern
 #define nil		  ((void*)0)
+#define DK_FINAL
 #endif // defined(__cplusplus)
 
 #include <stdint.h>
 #include <stddef.h>
+
+struct DDK_STATUS_STRUCT;
+
+/// \brief DDK status structure (__at_enable, __at_disable...)
+struct DDK_STATUS_STRUCT DK_FINAL
+{
+	int32_t action_id;
+	int32_t issuer_id;
+	int32_t group_id;
+};
 
 /// @brief Call kernel (interrupt 0x33)
 /// @param kernelRpcName

@@ -4,43 +4,50 @@
  *	Kernel
  * 	Copyright ZKA Technologies, all rights reserved.
  *
- *	File: PermissionSelector.cpp
+ *	File: User.cpp
  * 	Purpose: Permission selectors.
  *
  * 	========================================================
  */
 
-#include <KernelKit/PermissionSelector.hxx>
+#include <KernelKit/User.hxx>
 #include <NewKit/KernelCheck.hpp>
 
 /// bugs 0
 
 namespace Kernel
 {
-	PermissionSelector::PermissionSelector(const Int32& sel)
+	User::User(const Int32& sel, const Char* userName)
 		: fRing((RingKind)sel)
 	{
-		MUST_PASS(sel > 0);
+		MUST_PASS(sel >= 0);
+		this->fUserName += userName;
 	}
 
-	PermissionSelector::PermissionSelector(const RingKind& ringKind)
+	User::User(const RingKind& ringKind, const Char* userName)
 		: fRing(ringKind)
 	{
+		this->fUserName += userName;
 	}
 
-	PermissionSelector::~PermissionSelector() = default;
+	User::~User() = default;
 
-	bool PermissionSelector::operator==(const PermissionSelector& lhs)
+	bool User::operator==(const User& lhs)
 	{
 		return lhs.fRing == this->fRing;
 	}
 
-	bool PermissionSelector::operator!=(const PermissionSelector& lhs)
+	bool User::operator!=(const User& lhs)
 	{
 		return lhs.fRing != this->fRing;
 	}
 
-	const RingKind& PermissionSelector::Ring() noexcept
+	const StringView User::Name() noexcept
+	{
+		return this->fUserName;
+	}
+
+	const RingKind& User::Ring() noexcept
 	{
 		return this->fRing;
 	}

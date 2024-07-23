@@ -176,7 +176,7 @@ Kernel/KernelKit/PECodeManager.hxx
 Kernel/KernelKit/PEF.hxx
 Kernel/KernelKit/PEFCodeManager.hxx
 Kernel/KernelKit/PEFSharedObject.hxx
-Kernel/KernelKit/PermissionSelector.hxx
+Kernel/KernelKit/User.hxx
 Kernel/KernelKit/ProcessScheduler.hxx
 Kernel/KernelKit/SMPManager.hpp
 Kernel/KernelKit/Semaphore.hpp
@@ -216,7 +216,6 @@ Kernel/NetworkKit/LTE.hxx
 Kernel/NetworkKit/MAC.hxx
 Kernel/NetworkKit/NetworkDevice.hpp
 Kernel/NetworkKit/compile_flags.txt
-Kernel/NewKit/ApplicationInterface.hxx
 Kernel/NewKit/Array.hpp
 Kernel/NewKit/ArrayList.hpp
 Kernel/NewKit/Atom.hpp
@@ -279,7 +278,7 @@ Kernel/Sources/PEFSharedObject.cxx
 Kernel/Sources/PRDT.cxx
 Kernel/Sources/PageAllocator.cxx
 Kernel/Sources/PageManager.cxx
-Kernel/Sources/PermissionSelector.cxx
+Kernel/Sources/User.cxx
 Kernel/Sources/Pmm.cxx
 Kernel/Sources/ProcessScheduler.cxx
 Kernel/Sources/ProcessTeam.cxx
