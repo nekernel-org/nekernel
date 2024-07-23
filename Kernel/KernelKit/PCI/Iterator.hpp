@@ -1,3 +1,9 @@
+/* -------------------------------------------
+
+	Copyright ZKA Technologies
+
+------------------------------------------- */
+
 #ifndef __PCI_ITERATOR_HPP__
 #define __PCI_ITERATOR_HPP__
 
@@ -22,7 +28,6 @@ namespace Kernel::PCI
 		explicit Iterator(const Types::PciDeviceKind& deviceType);
 
 		Iterator& operator=(const Iterator&) = default;
-
 		Iterator(const Iterator&) = default;
 
 		~Iterator();

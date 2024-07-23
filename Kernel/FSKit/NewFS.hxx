@@ -65,6 +65,8 @@ default.
 #define kNewFSCatalogKindDevice (9)
 #define kNewFSCatalogKindLock	(10)
 
+#define kNewFSCatalogKindRLE	(11)
+
 #define kNewFSSeparator '\\'
 
 #define kNewFSUpDir ".."

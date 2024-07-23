@@ -2,6 +2,11 @@
 
 	Copyright ZKA Technologies
 
+	Revision History:
+
+	??/??/24: Added file (amlel)
+	23 Jul 24: Update filename to Defines.hxx and using ALIGN_NVME for NVME structs. (amlel)
+
 ------------------------------------------- */
 
 #ifndef __MODULE_NVME_HXX__
@@ -11,13 +16,13 @@
 
 /// TODO: checklist in: https://wiki.osdev.org/NVMe
 
-#define mNVMEAlign ATTRIBUTE(aligned(sizeof(Kernel::NVMEInt32)))
+#define ALIGN_NVME ATTRIBUTE(aligned(sizeof(Kernel::NVMEInt32)))
 
 namespace Kernel
 {
 	typedef UInt32 NVMEInt32;
 
-	struct NVMEBar0 final
+	struct ALIGN_NVME NVMEBar0 final
 	{
 		NVMEInt32 fCap;
 		NVMEInt32 fVer;
@@ -30,7 +35,7 @@ namespace Kernel
 		NVMEInt32 fAdminCompletionQueue;
 	};
 
-	struct NVMEQueue final
+	struct ALIGN_NVME NVMEQueue final
 	{
 		NVMEInt32 fOpcode;
 		NVMEInt32 fNSID;
@@ -50,7 +55,9 @@ namespace Kernel
 	};
 
 	template <Int32 Opcode>
-	inline Bool nvme_create_admin_command(NVMEQueue* entry, UInt32 nsid, UInt32 prpTransfer[3], UInt32 startingLba[2], UInt32 lowTransferBlocks)
+	inline Bool nvme_create_admin_command(NVMEQueue* entry, UInt32 nsid,
+	UInt32 prpTransfer[3],
+	UInt32 startingLba[2], UInt32 lowTransferBlocks)
 	{
 		if (entry == nullptr)
 			return false;
@@ -70,7 +77,9 @@ namespace Kernel
 	}
 
 	template <Int32 Opcode>
-	inline Bool nvme_create_admin_command(NVMEQueue* entry, UInt64 baseAddress, UInt32 identLoAndQueueSizeHi, UInt32 flagsLoAndQueueComplIdHi, UInt32 identify, Bool provideIdentify = false, Bool namespaceIdentify = false)
+	inline Bool nvme_create_io_command(NVMEQueue* entry, UInt64 baseAddress,
+	UInt32 identLoAndQueueSizeHi, UInt32 flagsLoAndQueueComplIdHi,
+	UInt32 identify, Bool provideIdentify = false, Bool namespaceIdentify = false)
 	{
 		if (entry == nullptr)
 			return false;

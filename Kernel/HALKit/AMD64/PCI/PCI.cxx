@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/PCI/PCI.hpp>
+#include <KernelKit/PCI/PCI.hxx>

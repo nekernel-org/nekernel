@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-#include "NewKit/Json.hxx"
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Modules/CoreCG/CoreCG.hxx>

@@ -221,7 +221,7 @@ EXTERN_C void hal_init_platform(
 	strVer += "\\Properties\\KernelVersion";
 
 	cKernelVersion.GetKey() = strVer;
-    cKernelVersion.GetValue() = 100;
+    cKernelVersion.GetValue() = __MAHROUSS__;
 
     Kernel::StringView strAutoMount(cMaxPropLen);
 	strAutoMount += "\\Properties\\AutoMountFS?";

@@ -1,7 +1,6 @@
 #ifndef QR_HXX
 #define QR_HXX
 
-#include "BootKit/BootKit.hxx"
 extern "C" {
 #include <math.h>
 #include <stddef.h>

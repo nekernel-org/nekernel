@@ -3,16 +3,17 @@
 	Copyright ZKA Technologies
 
 ------------------------------------------- */
+
 #pragma once
 
 #include <NewKit/Defines.hpp>
 
-#define PCI_CONFIG_ADDRESS (0xCF8)
-#define PCI_CONFIG_DATA	   (0xCFC)
+#define cPCIConfigAddressPort (0xCF8)
+#define cPCIConfigDataPort	   (0xCFC)
 
-#define PCI_DEVICE_COUNT (32)
-#define PCI_FUNC_COUNT	 (8)
-#define PCI_BUS_COUNT	 (255)
+#define cPCIDeviceCount (32)
+#define cPCIFuncCount	 (8)
+#define cPCIBusCount	 (255)
 
 namespace Kernel::PCI
 {
