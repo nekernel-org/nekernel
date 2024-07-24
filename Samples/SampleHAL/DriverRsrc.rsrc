@@ -9,12 +9,12 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "ZKA Technologies"
-      VALUE "FileDescription", "CG HW video driver."
+      VALUE "FileDescription", "ZKA HAL."
       VALUE "FileVersion", "1.00"
-      VALUE "InternalName", "SampleDriver"
-      VALUE "LegalCopyright", "2024 Copyright ZKA Technologies, all rights reserved."
-      VALUE "OriginalFilename", "VideoDrv.exe"
-      VALUE "ProductName", "VideoDrv"
+      VALUE "InternalName", "SampleHAL"
+      VALUE "LegalCopyright", "Copyright ZKA Technologies, all rights reserved."
+      VALUE "OriginalFilename", "SampleHAL.exe"
+      VALUE "ProductName", "SampleHAL"
       VALUE "ProductVersion", "1.00"
     END
   END
