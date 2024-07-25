@@ -76,6 +76,17 @@ namespace Kernel
 		SizeT index = 0;
 		SizeT len	= rt_string_len(bytes, 256);
 
+		const auto cColor = "\x1b[1;32m";
+		SizeT lenClr	= rt_string_len(cColor, 256);
+
+		while (index < lenClr)
+		{
+			HAL::Out8(Detail::PORT, cColor[index]);
+			++index;
+		}
+
+		index = 0;
+
 		while (index < len)
 		{
 			if (bytes[index] == '\r')
