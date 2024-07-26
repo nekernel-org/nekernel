@@ -92,13 +92,14 @@ namespace Kernel
 
 		RecoveryFactory::Recover();
 
-#ifdef __DEBUG__
-		ke_wait_for_debugger();
-#endif // ifdef __DEBUG__
 	}
 	
 	Void RecoveryFactory::Recover() noexcept
-	{
+	{		
+#ifdef __DEBUG__
+		ke_wait_for_debugger();
+#endif // ifdef __DEBUG__
+
 		PowerFactoryInterface powerInterface(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 		powerInterface.Shutdown();
 	}
