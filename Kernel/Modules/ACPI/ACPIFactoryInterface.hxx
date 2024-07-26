@@ -4,11 +4,12 @@
 
 ------------------------------------------- */
 
-#ifndef __ACPI_MANAGER__
-#define __ACPI_MANAGER__
+#ifndef __MOD_ACPI_HXX__
+#define __MOD_ACPI_HXX__
 
-#include <Modules/ACPI/ACPI.hxx>
 #include <KernelKit/DebugOutput.hpp>
+#include <Modules/ACPI/ACPI.hxx>
+#include <NewKit/ErrorOr.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Ref.hxx>
 
@@ -56,4 +57,4 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#endif // !__ACPI_MANAGER__
+#endif // !__MOD_ACPI_HXX__
