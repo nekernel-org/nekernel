@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies
 
-	Purpose: Kernel Strings.
+	Purpose: DDK Strings.
 
 ------------------------------------------- */
 

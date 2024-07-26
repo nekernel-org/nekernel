@@ -14,7 +14,7 @@ BEGIN
 	  VALUE "FileDescription", "NewOS Kernel."
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "newoskrnl"
-      VALUE "LegalCopyright", "ZKA Technologies"
+      VALUE "LegalCopyright", "(c) ZKA Technologies, all rights reserved."
       VALUE "OriginalFilename", "newoskrnl.exe"
       VALUE "ProductName", "newoskrnl"
       VALUE "ProductVersion", KERNEL_VERSION

@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies
 
-	Purpose: Kernel Definitions.
+	Purpose: DDK Definitions.
 
 ------------------------------------------- */
 
@@ -44,11 +44,20 @@ DK_EXTERN void* kernelCall(const char* kernelRpcName, int32_t cnt, void* dat, si
 /// @param slotFn, syscall slot.
 DK_EXTERN void kernelAddSyscall(const int slot, void (*slotFn)(void* a0));
 
-/// @brief allocate ptr.
+/// @brief allocate heap ptr.
 /// @param sz size of ptr.
 /// @return the pointer allocated or **nil**.
 DK_EXTERN void* kernelAlloc(size_t sz);
 
-/// @brief allocate ptr.
+/// @brief free heap ptr.
 /// @param pointer to free
 DK_EXTERN void kernelFree(void*);
+
+/// @brief The highest API version of the DDK.
+DK_EXTERN int32_t c_api_version_highest;
+
+/// @brief The lowest API version of the DDK.
+DK_EXTERN int32_t c_api_version_least;
+
+/// @brief c_api_version_least+c_api_version_highest combined version.
+DK_EXTERN int32_t c_api_version;

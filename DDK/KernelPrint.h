@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies
 
-	Purpose: Kernel Text I/O.
+	Purpose: DDK Text I/O.
 
 ------------------------------------------- */
 

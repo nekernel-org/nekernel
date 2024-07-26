@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies
 
-	Purpose: Kernel Definitions.
+	Purpose: DDK kernel call.
 
 ------------------------------------------- */
 

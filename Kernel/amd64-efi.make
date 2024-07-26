@@ -1,6 +1,6 @@
 ##################################################
 # (C) ZKA Technologies, all rights reserved.
-# This is the microkernel makefile.
+# This is the newoskrnl's makefile.
 ##################################################
 
 CC			= x86_64-w64-mingw32-g++

@@ -2,7 +2,7 @@
 
     Copyright ZKA Technologies
 
-    Purpose: Standard library.
+    Purpose: DDK allocator.
 
 ------------------------------------------- */
 

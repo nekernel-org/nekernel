@@ -1,4 +1,4 @@
 {
-  "pluginName": "iBoot",
-  "description": "OTA updates."
+  "pluginName": "NetBoot",
+  "description": "Over the Air update module."
 }

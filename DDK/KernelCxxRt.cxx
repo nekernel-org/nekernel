@@ -2,7 +2,7 @@
 
     Copyright ZKA Technologies
 
-    Purpose: Driver C++ Definitions.
+    Purpose: DDK C++ runtime.
 
 ------------------------------------------- */
 

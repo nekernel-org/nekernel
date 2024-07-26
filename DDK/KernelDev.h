@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies
 
-	Purpose: Kernel Devices.
+	Purpose: DDK Devices.
 
 ------------------------------------------- */
 
