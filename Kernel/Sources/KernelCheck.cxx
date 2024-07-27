@@ -11,7 +11,7 @@
 #include <FirmwareKit/Handover.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 
-EXTERN_C [[noreturn]] void ke_wait_for_debugger()
+EXTERN_C [[noreturn]] Kernel::Void ke_wait_for_debugger()
 {
 	while (Yes)
 	{
@@ -115,7 +115,7 @@ namespace Kernel
 
 #endif // __DEBUG__
 
-			Kernel::ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
+			ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
 		}
 	}
 } // namespace Kernel
