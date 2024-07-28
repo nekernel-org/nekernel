@@ -2,11 +2,13 @@
  * ========================================================
  *
  * Kernel
- * Copyright Zeta Electronics Corporation, all rights reserved.
+ * Copyright ZKA Technologies, all rights reserved.
  *
  *  ========================================================
  */
 
+#include <NewKit/String.hpp>
+#include <CFKit/Property.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
 
@@ -14,10 +16,12 @@
 
 /***********************************************************************************/
 /// @file ThreadLocalStorage.cxx
-/// @brief TLS implementation in kernel.
+/// @brief TLS inside the kernel.
 /***********************************************************************************/
 
 using namespace Kernel;
+
+Kernel::Property cTLSEnforceCheck;
 
 /**
  * @brief Check for cookie inside TIB.
@@ -33,7 +37,7 @@ Boolean tls_check_tib(ThreadInformationBlock* tib)
 	Encoder		encoder;
 	const char* tibAsBytes = encoder.AsBytes(tib);
 
-	kcout << "newoskrnl: Checking for a valid cookie...\r";
+	kcout << "newoskrnl: checking for a valid cookie...\r";
 
 	return tibAsBytes[0] == kCookieMag0 && tibAsBytes[1] == kCookieMag1 &&
 		   tibAsBytes[2] == kCookieMag2;
@@ -44,18 +48,28 @@ Boolean tls_check_tib(ThreadInformationBlock* tib)
  * @param stackPtr The call frame.
  * @return
  */
-EXTERN_C Void tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept
+EXTERN_C Void tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 {
-	if (!TIB)
-		return;
+	if (!tib_ptr)
+	{
+		if (cTLSEnforceCheck.GetValue() == No)
+		{
+			return;
+		}
+		else
+		{
+			kcout << "newoskrnl: crashing because of an invalid TIB...\r";
+			ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		}
+	}
 
-	ThreadInformationBlock* tib = (ThreadInformationBlock*)TIB;
+	ThreadInformationBlock* tib_struct = (ThreadInformationBlock*)tib_ptr;
 
-	if (!tls_check_tib(tib))
+	if (!tls_check_tib(tib_struct))
 	{
 		kcout << "newoskrnl: crashing because of an invalid TIB...\r";
 		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 	}
 
-	kcout << "newoskrnl: Verification succeeded! Keeping on...\r";
+	kcout << "newoskrnl: Verification succeeded! staying alive...\r";
 }

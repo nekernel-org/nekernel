@@ -1,10 +1,10 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
-#include <HALKit/POWER/Processor.hpp>
+#include <HALKit/POWER/Processor.hxx>
 #include <KernelKit/DebugOutput.hpp>
 
 namespace Kernel

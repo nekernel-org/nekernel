@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -19,7 +19,7 @@
 
 #include <cstring>
 #include <FSKit/NewFS.hxx>
-#include <BootKit/Vendor/Support.hxx>
+#include <BootKit/Support.hxx>
 
 /***********************************************************************************/
 /// Include other APIs.
@@ -39,19 +39,19 @@ class BFileReader;
 class BFileRunner;
 class BVersionString;
 
-using namespace Kernel;
-
 typedef Char* PEFImagePtr;
 typedef Char* PEImagePtr;
 
 typedef WideChar CharacterTypeUTF16;
 typedef Char	 CharacterTypeUTF8;
 
+using namespace Kernel;
+
 namespace EFI
 {
-	extern void ThrowError(const CharacterTypeUTF16* ErrorCode,
-						   const CharacterTypeUTF16* Reason) noexcept;
-}
+	extern void ThrowError(const CharacterTypeUTF16* errorCode,
+						   const CharacterTypeUTF16* reason) noexcept;
+} // namespace EFI
 
 /**
  * @brief BootKit Text Writer class
@@ -66,6 +66,7 @@ public:
 	BTextWriter& Write(const Char* str);
 	BTextWriter& Write(const CharacterTypeUTF16* str);
 	BTextWriter& WriteCharacter(CharacterTypeUTF16 c);
+	BTextWriter& Write(const UChar* str);
 
 public:
 	explicit BTextWriter() = default;
@@ -100,7 +101,7 @@ public:
 	~BFileReader();
 
 public:
-	Void ReadAll(SizeT until, SizeT chunk = 4096);
+	Void ReadAll(SizeT until, SizeT chunk = kib_cast(4));
 
 	enum
 	{
@@ -109,6 +110,7 @@ public:
 		kEmptyDirectory,
 		kNoSuchEntry,
 		kIsDirectory,
+		kTooSmall,
 		kCount,
 	};
 
@@ -135,6 +137,7 @@ private:
 	BTextWriter		   mWriter;
 	EfiFileProtocol*   mFile{nullptr};
 	UInt64			   mSizeFile{0};
+	EfiFileProtocol*   mRootFs;
 };
 
 typedef UInt8* BlobType;
@@ -223,7 +226,7 @@ public:
 
 		fDiskDev.Read(buf, BootDev::kSectorSize);
 
-		NewPartitionBlock* blockPart = reinterpret_cast<NewPartitionBlock*>(buf);
+		NFS_ROOT_PARTITION_BLOCK* blockPart = reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(buf);
 
 		BTextWriter writer;
 
@@ -233,7 +236,7 @@ public:
 				return false;
 		}
 
-		writer.Write(L"Device Size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
+		writer.Write(L"newosldr: disk size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
 
 		if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
 			blockPart->DiskSize < 1 ||
@@ -247,7 +250,7 @@ public:
 			EFI::ThrowError(L"Invalid-Partition-Name", L"Invalid disk partition.");
 		}
 
-		writer.Write(L"Device Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
+		writer.Write(L"newosldr: partition name: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
 		return true;
 	}
@@ -257,7 +260,7 @@ private:
 	/// @param fileBlobs the blobs.
 	/// @param blobCount the number of blobs to write.
 	/// @param partBlock the NewFS partition block.
-	Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount, NewPartitionBlock& partBlock)
+	Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount, NFS_ROOT_PARTITION_BLOCK& partBlock)
 	{
 		if (partBlock.SectorSize != BootDev::kSectorSize)
 			return false;
@@ -266,13 +269,13 @@ private:
 		Lba				 startLba = partBlock.StartCatalog;
 		BTextWriter		 writer;
 
-		Char bufCatalog[sizeof(NewCatalog)] = {0};
+		Char bufCatalog[sizeof(NFS_CATALOG_STRUCT)] = {0};
 
 		constexpr auto cNewFSCatalogPadding = 4;
 
-		NewCatalog* catalogKind	 = (NewCatalog*)bufCatalog;
+		NFS_CATALOG_STRUCT* catalogKind	 = (NFS_CATALOG_STRUCT*)bufCatalog;
 		catalogKind->PrevSibling = startLba;
-		catalogKind->NextSibling = (startLba + (sizeof(NewCatalog) * cNewFSCatalogPadding));
+		catalogKind->NextSibling = (startLba + (sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding));
 
 		/// Fill catalog kind.
 		catalogKind->Kind  = blob->fKind;
@@ -290,14 +293,14 @@ private:
 		memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
 
 		fDiskDev.Leak().mBase = startLba;
-		fDiskDev.Leak().mSize = sizeof(NewCatalog);
+		fDiskDev.Leak().mSize = sizeof(NFS_CATALOG_STRUCT);
 
-		fDiskDev.Write((Char*)bufCatalog, sizeof(NewCatalog));
+		fDiskDev.Write((Char*)bufCatalog, sizeof(NFS_CATALOG_STRUCT));
 
 		--partBlock.FreeCatalog;
 		--partBlock.FreeSectors;
 
-		memset(bufCatalog, 0, sizeof(NewCatalog));
+		memset(bufCatalog, 0, sizeof(NFS_CATALOG_STRUCT));
 
 		return true;
 	}
@@ -324,14 +327,14 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 	SizeT sectorSz					= BootDev::kSectorSize;
 	Char  buf[BootDev::kSectorSize] = {0};
 
-	NewPartitionBlock* partBlock = reinterpret_cast<NewPartitionBlock*>(buf);
+	NFS_ROOT_PARTITION_BLOCK* partBlock = reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(buf);
 
 	memcpy(partBlock->Ident, kNewFSIdent, kNewFSIdentLen - 1);
 	memcpy(partBlock->PartitionName, partName, strlen(partName));
 
 	/// @note A catalog roughly equal to a sector.
 
-	constexpr auto cMinimumDiskSize = 2; // at minimum.
+	constexpr auto cMinimumDiskSize = 4; // at minimum.
 
 	/// @note also look at EPM headers, for free part blocks.
 
@@ -345,7 +348,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 	partBlock->CatalogCount = blobCount;
 	partBlock->Kind			= kNewFSHardDrive;
 	partBlock->SectorSize	= sectorSz;
-	partBlock->FreeCatalog	= fDiskDev.GetSectorsCount() / sizeof(NewCatalog);
+	partBlock->FreeCatalog	= fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
 	partBlock->SectorCount	= fDiskDev.GetSectorsCount();
 	partBlock->FreeSectors	= fDiskDev.GetSectorsCount();
 	partBlock->StartCatalog = kNewFSCatalogStartAddress;
@@ -363,10 +366,10 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		/// Reset buffer.
 		SetMem(buf, 0, sectorSz);
 
-		BootBlockType* epmBoot = (BootBlockType*)buf;
+		BOOT_BLOCK_STRUCT* epmBoot = (BOOT_BLOCK_STRUCT*)buf;
 
 		constexpr auto cFsName	  = "NewFS";
-		constexpr auto cBlockName = "Zeta:";
+		constexpr auto cBlockName = "ZKA:";
 
 		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, StrLen(cFsName));
 

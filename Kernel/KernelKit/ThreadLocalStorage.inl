@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -25,7 +25,7 @@ inline T* tls_new_ptr(void)
 
 //! @brief TLS delete implementation.
 template <typename T>
-inline bool tls_delete_ptr(T* ptr)
+inline Kernel::Bool tls_delete_ptr(T* ptr)
 {
 	if (!ptr)
 		return false;
@@ -64,8 +64,11 @@ T* tls_new_class(Args&&... args)
 /// @param ptr
 /// @return
 template <typename T>
-inline bool tls_delete_class(T* ptr)
+inline Kernel::Bool tls_delete_class(T* ptr)
 {
+	if (!ptr)
+		return false;
+
 	ptr->~T();
 	return tls_delete_ptr(ptr);
 }

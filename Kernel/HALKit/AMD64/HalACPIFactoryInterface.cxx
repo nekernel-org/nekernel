@@ -1,14 +1,14 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
-#include <HALKit/AMD64/Processor.hpp>
+#include <HALKit/AMD64/Processor.hxx>
 #include <NewKit/String.hpp>
 #include <ArchKit/ArchKit.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 
 namespace Kernel
 {
@@ -104,7 +104,8 @@ namespace Kernel
 		{
 			SDT& sdt = *reinterpret_cast<SDT*>(xsdt->AddressArr[index]);
 
-			kcout << "ACPI: Revision: " << number(sdt.CreatorID) << endl;
+			kcout << "ACPI: Checksum: " << number(sdt.Checksum) << endl;
+			kcout << "ACPI: Revision: " << number(sdt.Revision) << endl;
 
 			for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index)
 			{

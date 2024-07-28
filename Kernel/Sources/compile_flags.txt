@@ -3,5 +3,5 @@
 -std=c++20
 -I../
 -I$(HOME)/
--D__FSKIT_NEWFS__
+-D__FSKIT_USE_NEWFS__
 -D__NEWOS_AMD64__

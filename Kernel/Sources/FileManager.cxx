@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -12,11 +12,11 @@
 
 namespace Kernel
 {
-	static FilesystemManagerInterface* kMounted = nullptr;
+	STATIC FilesystemManagerInterface* kMounted = nullptr;
 
 	/// @brief FilesystemManager getter.
 	/// @return The mounted filesystem.
-	FilesystemManagerInterface* FilesystemManagerInterface::GetMounted()
+	_Output FilesystemManagerInterface* FilesystemManagerInterface::GetMounted()
 	{
 		return kMounted;
 	}
@@ -50,12 +50,12 @@ namespace Kernel
 		return false;
 	}
 
-#ifdef __FSKIT_NEWFS__
+#ifdef __FSKIT_USE_NEWFS__
 	/// @brief Opens a new file.
 	/// @param path
 	/// @param r
 	/// @return
-	NodePtr NewFilesystemManager::Open(_Input const Char* path, _Input const Char* r)
+	_Output NodePtr NewFilesystemManager::Open(_Input const Char* path, _Input const Char* r)
 	{
 		if (!path || *path == 0)
 			return nullptr;
@@ -81,8 +81,10 @@ namespace Kernel
 	/// @return
 	Void NewFilesystemManager::Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size)
 	{
-		if (!node) return;
-		if (!size) return;
+		if (!node)
+			return;
+		if (!size)
+			return;
 
 		constexpr auto cDataForkName = kNewFSDataFork;
 		this->Write(cDataForkName, node, data, flags, size);
@@ -93,10 +95,12 @@ namespace Kernel
 	/// @param flags the flags with it.
 	/// @param sz the size to read.
 	/// @return
-	VoidPtr NewFilesystemManager::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
+	_Output VoidPtr NewFilesystemManager::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
 	{
-		if (!node) return nullptr;
-		if (!size) return nullptr;
+		if (!node)
+			return nullptr;
+		if (!size)
+			return nullptr;
 
 		constexpr auto cDataForkName = kNewFSDataFork;
 		return this->Read(cDataForkName, node, flags, size);
@@ -117,8 +121,8 @@ namespace Kernel
 
 		NEWOS_UNUSED(flags);
 
-		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-			fImpl->WriteCatalog(reinterpret_cast<NewCatalog*>(node), data, size,
+		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
+			fImpl->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), data, size,
 								name);
 	}
 
@@ -135,8 +139,8 @@ namespace Kernel
 
 		NEWOS_UNUSED(flags);
 
-		if ((reinterpret_cast<NewCatalog*>(node))->Kind == kNewFSCatalogKindFile)
-			return fImpl->ReadCatalog(reinterpret_cast<NewCatalog*>(node), sz,
+		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
+			return fImpl->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), sz,
 									  name);
 
 		return nullptr;
@@ -148,12 +152,12 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	bool NewFilesystemManager::Seek(NodePtr node, SizeT off)
+	_Output Bool NewFilesystemManager::Seek(NodePtr node, SizeT off)
 	{
 		if (!node || off == 0)
 			return false;
 
-		return fImpl->Seek(reinterpret_cast<NewCatalog*>(node), off);
+		return fImpl->Seek(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), off);
 	}
 
 	/// @brief Tell where the catalog is.
@@ -161,12 +165,12 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	SizeT NewFilesystemManager::Tell(NodePtr node)
+	_Output SizeT NewFilesystemManager::Tell(NodePtr node)
 	{
 		if (!node)
 			return kNPos;
 
-		return fImpl->Tell(reinterpret_cast<NewCatalog*>(node));
+		return fImpl->Tell(reinterpret_cast<NFS_CATALOG_STRUCT*>(node));
 	}
 
 	/// @brief Rewinds the catalog.
@@ -174,7 +178,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	bool NewFilesystemManager::Rewind(NodePtr node)
+	_Output Bool NewFilesystemManager::Rewind(NodePtr node)
 	{
 		if (!node)
 			return false;
@@ -184,9 +188,9 @@ namespace Kernel
 
 	/// @brief Returns the filesystem parser.
 	/// @return the Filesystem parser class.
-	NewFSParser* NewFilesystemManager::GetParser() noexcept
+	_Output NewFSParser* NewFilesystemManager::GetParser() noexcept
 	{
 		return fImpl;
 	}
-#endif // __FSKIT_NEWFS__
+#endif // __FSKIT_USE_NEWFS__
 } // namespace Kernel

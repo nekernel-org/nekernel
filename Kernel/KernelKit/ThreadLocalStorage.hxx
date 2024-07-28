@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -21,11 +21,11 @@
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED ThreadInformationBlock final
 {
-	Kernel::Char	   Cookie[kTLSCookieLen];
-	Kernel::UIntPtr StartCode;  // Start Address
-	Kernel::UIntPtr StartData;  // Allocation Heap
-	Kernel::UIntPtr StartStack; // Stack Pointer.
-	Kernel::Int32   ThreadID;   // Thread execution ID.
+	Kernel::Char	Cookie[kTLSCookieLen]; // Process cookie.
+	Kernel::UIntPtr StartCode;			   // Start Address
+	Kernel::UIntPtr StartData;			   // Allocation Heap
+	Kernel::UIntPtr StartStack;			   // Stack Pointer.
+	Kernel::Int32	ThreadID;			   // Thread execution ID.
 };
 
 typedef struct ThreadInformationBlock ProcessInformationBlock;
@@ -39,7 +39,7 @@ T* tls_new_ptr(void);
 
 ///! @brief delete ptr syscall.
 template <typename T>
-bool tls_delete_ptr(T* ptr);
+Kernel::Boolean tls_delete_ptr(T* ptr);
 
 template <typename T, typename... Args>
 T* tls_new_class(Args&&... args);
@@ -52,6 +52,6 @@ EXTERN_C Kernel::Void tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept;
 
 #include <KernelKit/ThreadLocalStorage.inl>
 
-// last rev 1/29/24
+// last rev 7/7/24
 
 #endif /* ifndef _KERNELKIT_TLS_HPP */

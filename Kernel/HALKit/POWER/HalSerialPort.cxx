@@ -1,10 +1,10 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
-#include <HALKit/POWER/Processor.hpp>
+#include <HALKit/POWER/Processor.hxx>
 #include <KernelKit/DebugOutput.hpp>
 
 using namespace Kernel;
@@ -17,7 +17,7 @@ void ke_io_write(const Char* bytes)
 		return;
 
 	SizeT index = 0;
-	SizeT len	= rt_string_len(bytes, 256);
+	SizeT len	= rt_string_len(bytes, 255);
 
 	while (index < len)
 	{

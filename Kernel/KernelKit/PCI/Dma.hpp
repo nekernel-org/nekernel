@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -10,7 +10,7 @@
 #include <KernelKit/PCI/Device.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/OwnPtr.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {
@@ -52,7 +52,7 @@ namespace Kernel
 		T* Get(const UIntPtr off = 0);
 
 	public:
-			 operator bool();
+		operator bool();
 		bool operator!();
 
 	public:

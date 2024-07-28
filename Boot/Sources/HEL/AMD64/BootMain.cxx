@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -10,24 +10,25 @@
 #include <FirmwareKit/EFI.hxx>
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/MSDOS.hpp>
+#include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
-#include <KernelKit/PEF.hpp>
+#include <KernelKit/PEF.hxx>
 #include <NewKit/Macros.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
+#include <BootKit/ProgramLoader.hxx>
 #include <cstring>
 
-/// make the compiler shut up.
+// make the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "Zeta HD"
+#define kMachineModel "ZKA SSD"
 #endif // !kMachineModel
 
 #ifndef cExpectedWidth
-#define cExpectedWidth 436
+#define cExpectedWidth 1280
 #endif
 
 #ifndef cExpectedHeight
-#define cExpectedHeight 644
+#define cExpectedHeight 720
 #endif
 
 /** Graphics related. */
@@ -51,9 +52,14 @@ STATIC Void InitVideoFB() noexcept
 
 	BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop);
 
-	for (size_t i = 0; i < kGop->Mode->MaxMode; ++i)
+	kStride = 4;
+
+	for (SizeT i = 0; i < kGop->Mode->MaxMode; ++i)
 	{
 		EfiGraphicsOutputProtocolModeInformation* infoPtr = nullptr;
+		UInt32									  sz	  = 0U;
+
+		kGop->QueryMode(kGop, i, &sz, &infoPtr);
 
 		if (infoPtr->HorizontalResolution == cExpectedWidth &&
 			infoPtr->VerticalResolution == cExpectedHeight)
@@ -62,8 +68,6 @@ STATIC Void InitVideoFB() noexcept
 			break;
 		}
 	}
-
-	kStride = 4;
 }
 
 /// @brief check the BootDevice if suitable.
@@ -88,17 +92,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	/// Splash screen stuff
 
-	writer.Write(L"Zeta Electronics Corporation (R) newosldr: ")
+	writer.Write(L"ZKA Technologies (R) newosldr: ")
 		.Write(BVersionString::The())
 		.Write("\r");
-
-#ifndef __DEBUG__
-	writer.Write(L"\rnewosldr: AMD64 is only supported in debug mode.\r");
-
-	EFI::Stop();
-
-	CANT_REACH();
-#endif
 
 	UInt32*				 MapKey		= new UInt32();
 	UInt32*				 SizePtr	= new UInt32();
@@ -124,15 +120,19 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
 			vendorTable[6] == 'R' && vendorTable[7] == ' ')
 		{
-			writer.Write(L"newosldr: Found ACPI RSD PTR!\r");
-			handoverHdrPtr->f_HardwareTables.f_RsdPtr = (VoidPtr)vendorTable;
+			writer.Write(L"newosldr: Filling rsdptr...\r");
+			handoverHdrPtr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendorTable;
 
 			break;
 		}
 	}
 
+	// Fill handover header now.
+
 	handoverHdrPtr->f_Magic	  = kHandoverMagic;
 	handoverHdrPtr->f_Version = kHandoverVersion;
+
+	// Provide fimware vendor name.
 
 	BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
 			 handoverHdrPtr->f_FirmwareVendorLen);
@@ -144,58 +144,41 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
 	handoverHdrPtr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
 
-	///! Finally draw bootloader screen.
+	// Assign to global 'kHandoverHeader'.
 
 	kHandoverHeader = handoverHdrPtr;
 
-	GXInit();
+	// check if we are running in the PC platform. If so abort.
+#if defined(__NEWOS_AMD64__) && !defined(__DEBUG__)
+	writer.Write(L"\rnewosldr: AMD64 support is not official.\r");
+	EFI::ThrowError(L"Beta-Software", L"Beta Software.");
+#endif
 
-	GXDraw(RGB(9d, 9d, 9d), handoverHdrPtr->f_GOP.f_Height,
-		   handoverHdrPtr->f_GOP.f_Width, 0, 0);
-
-	GXFini();
-
-	GXDrawImg(NewBoot, NEWBOOT_HEIGHT, NEWBOOT_WIDTH,
-			  (handoverHdrPtr->f_GOP.f_Width - NEWBOOT_WIDTH) / 2,
-			  (handoverHdrPtr->f_GOP.f_Height - NEWBOOT_HEIGHT) / 2);
-
-	GXFini();
+	// get memory map.
 
 	BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 
 	Descriptor = new EfiMemoryDescriptor[*SzDesc];
 	BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
 
-	writer.Write(L"Kernel-Desc-Count: ");
-	writer.Write(*SzDesc);
-	writer.Write(L"\r");
+	auto cDefaultMemoryMap = 0; // The sixth entry.
 
-	auto cDefaultMemoryMap = 0; /// The sixth entry.
+	//-----------------------------------------------------------//
+	// A simple loop which finds a usable memory region for us.
+	//-----------------------------------------------------------//
 
-	/// A simple loop which finds a usable memory region for us.
-	SizeT i = 0UL;
-	for (; Descriptor[i].Kind != EfiMemoryType::EfiConventionalMemory; ++i)
+	SizeT lookIndex = 0UL;
+
+	for (; Descriptor[lookIndex].Kind != EfiMemoryType::EfiConventionalMemory; ++lookIndex)
 	{
 		;
 	}
 
-	cDefaultMemoryMap = i;
+	cDefaultMemoryMap = lookIndex;
 
-	writer.Write(L"Number-Of-Pages: ")
-		.Write(Descriptor[cDefaultMemoryMap].NumberOfPages)
-		.Write(L"\r");
-	writer.Write(L"Virtual-Address: ")
-		.Write(Descriptor[cDefaultMemoryMap].VirtualStart)
-		.Write(L"\r");
-	writer.Write(L"Phyiscal-Address: ")
-		.Write(Descriptor[cDefaultMemoryMap].PhysicalStart)
-		.Write(L"\r");
-	writer.Write(L"Page-Kind: ")
-		.Write(Descriptor[cDefaultMemoryMap].Kind)
-		.Write(L"\r");
-	writer.Write(L"Page-Attribute: ")
-		.Write(Descriptor[cDefaultMemoryMap].Attribute)
-		.Write(L"\r");
+	//-----------------------------------------------------------//
+	// Update handover file specific table and phyiscal start field.
+	//-----------------------------------------------------------//
 
 	handoverHdrPtr->f_PhysicalStart =
 		(VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
@@ -214,41 +197,18 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
-	BFileReader reader(L"SplashScreen.fmt", ImageHandle);
-	reader.ReadAll(512, 16);
-
-	if (reader.Blob())
-	{
-		Char* buf = (Char*)reader.Blob();
-
-		for (SizeT i = 0; i < reader.Size(); ++i)
-		{
-			if (buf[i] != '\n' && buf[i] != '\r')
-			{
-				if (buf[i] == '*')
-				{
-					writer.WriteCharacter('\t');
-				}
-				else
-				{
-					writer.WriteCharacter(buf[i]);
-				}
-			}
-			else
-				writer.Write(L"\r");
-		}
-	}
-
-	///
-	/// The following checks for an exisiting partition
-	/// inside the disk, if it doesn't have one,
-	/// format the disk.
-	//
+	// ---------------------------------------------------- //
+	// The following checks for an exisiting partition
+	// inside the disk, if it doesn't have one,
+	// format the disk.
+	// ---------------------------------------------------- //
 
 	BDiskFormatFactory<BootDeviceATA> diskFormatter;
 
-	/// if not formated yet, then format it with the following folders:
-	/// /, /Boot, /Applications.
+	// ---------------------------------------------------- //
+	// if not formated yet, then format it with the following folders:
+	// /, /Boot, /Applications.
+	// ---------------------------------------------------- //
 	if (!diskFormatter.IsPartitionValid())
 	{
 		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
@@ -259,10 +219,33 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		diskFormatter.Format(kMachineModel, &rootDesc, 1);
 	}
 
+#ifdef __NEWOS_OTA__
+
+	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
+
+	readerKernel.ReadAll(0);
+
+	Boot::ProgramLoader* loader = nullptr;
+
+	if (readerKernel.Blob())
+	{
+		loader = new Boot::ProgramLoader(readerKernel.Blob());
+		loader->SetName("\"newoskrnl.exe\" (ZKA)");
+	}
+
+#endif // ifdef __NEWOS_OTA__
+
 	EFI::ExitBootServices(*MapKey, ImageHandle);
 
-	/// Fallback to builtin kernel.
+	// ---------------------------------------------------- //
+	// Call OTA kernel or fallback to builtin.
+	// ---------------------------------------------------- //
+#ifdef __NEWOS_OTA__
+	if (loader)
+		loader->Start(handoverHdrPtr);
+#else
 	hal_init_platform(handoverHdrPtr);
+#endif // ifdef __NEWOS_OTA__
 
 	EFI::Stop();
 

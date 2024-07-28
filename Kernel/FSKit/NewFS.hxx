@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 	File: NewFS.hxx
 	Purpose:
@@ -36,9 +36,6 @@ default.
 #define kNewFSIdent	   " NewFS"
 #define kNewFSPadLen   (400)
 
-/// @brief Partition GUID on EPM and GPT disks.
-#define kNewFSUUID "@{DD997393-9CCE-4288-A8D5-C0FDE3908DBE}"
-
 #define kNewFSVersionInteger (0x126)
 #define kNewFSVerionString	 "1.26"
 
@@ -68,10 +65,14 @@ default.
 #define kNewFSCatalogKindDevice (9)
 #define kNewFSCatalogKindLock	(10)
 
+#define kNewFSCatalogKindRLE	(11)
+
 #define kNewFSSeparator '\\'
+#define kNewFSSeparatorAlt '/'
 
 #define kNewFSUpDir ".."
-#define kNewFSRoot	"C:\\"
+#define kNewFSRoot	"\\"
+#define kNewFSRootAlt "/"
 
 #define kNewFSLF  '\r'
 #define kNewFSEOF (-1)
@@ -81,7 +82,7 @@ default.
 
 /// Start After the PM headers, pad 1024 bytes.
 #define kNewFSStartLba			  (1024)
-#define kNewFSCatalogStartAddress ((2048) + sizeof(NewPartitionBlock) + sizeof(NewCatalog))
+#define kNewFSCatalogStartAddress ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK) + sizeof(NFS_CATALOG_STRUCT))
 
 #define kResourceTypeDialog (10)
 #define kResourceTypeString (11)
@@ -112,7 +113,7 @@ enum
 };
 
 /// @brief Catalog type.
-struct PACKED NewCatalog final
+struct PACKED NFS_CATALOG_STRUCT final
 {
 	NewCharType Name[kNewFSNodeNameLen];
 	NewCharType Mime[kNewFSMimeNameLen];
@@ -141,9 +142,9 @@ struct PACKED NewCatalog final
 /// @note The way we store is way different than how other filesystems do, specific chunk of code are
 /// written into either the data fork or resource fork, the resource fork is reserved for file metadata.
 /// whereas the data fork is reserved for file data.
-struct PACKED NewFork final
+struct PACKED NFS_FORK_STRUCT final
 {
-	NewCharType ForkName[kNewFSForkNameLen];
+	NewCharType	 ForkName[kNewFSForkNameLen];
 	Kernel::Char CatalogName[kNewFSNodeNameLen];
 
 	Kernel::Int32 Flags;
@@ -153,15 +154,15 @@ struct PACKED NewFork final
 	Kernel::Int32 ResourceKind;
 	Kernel::Int32 ResourceFlags;
 
-	Kernel::Lba	 DataOffset; // 8 Where to look for this data?
-	Kernel::SizeT DataSize;	 /// Data size according using sector count.
+	Kernel::Lba	  DataOffset; // 8 Where to look for this data?
+	Kernel::SizeT DataSize;	  /// Data size according using sector count.
 
 	Kernel::Lba NextSibling;
 	Kernel::Lba PreviousSibling;
 };
 
 /// @brief Partition block type
-struct PACKED NewPartitionBlock final
+struct PACKED NFS_ROOT_PARTITION_BLOCK final
 {
 	NewCharType Ident[kNewFSIdentLen];
 	NewCharType PartitionName[kPartLen];
@@ -169,7 +170,7 @@ struct PACKED NewPartitionBlock final
 	Kernel::Int32 Flags;
 	Kernel::Int32 Kind;
 
-	Kernel::Lba	 StartCatalog;
+	Kernel::Lba	  StartCatalog;
 	Kernel::SizeT CatalogCount;
 
 	Kernel::SizeT DiskSize;
@@ -187,7 +188,6 @@ struct PACKED NewPartitionBlock final
 
 namespace Kernel
 {
-
 	enum
 	{
 		kNewFSSubDriveA,
@@ -224,47 +224,47 @@ namespace Kernel
 		/// @param catalog it's catalog
 		/// @param theFork the fork itself.
 		/// @return the fork
-		_Output NewFork* CreateFork(_Input NewCatalog* catalog,
-									_Input NewFork& theFork);
+		_Output NFS_FORK_STRUCT* CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
+									_Input NFS_FORK_STRUCT&	   theFork);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
 		/// @param name the fork name.
 		/// @return the fork.
-		_Output NewFork* FindFork(_Input NewCatalog* catalog,
+		_Output NFS_FORK_STRUCT* FindFork(_Input NFS_CATALOG_STRUCT* catalog,
 								  _Input const Char* name,
 								  Boolean			 dataOrRsrc);
 
-		_Output Void RemoveFork(_Input NewFork* fork);
+		_Output Void RemoveFork(_Input NFS_FORK_STRUCT* fork);
 
-		_Output Void CloseFork(_Input NewFork* fork);
+		_Output Void CloseFork(_Input NFS_FORK_STRUCT* fork);
 
-		_Output NewCatalog* FindCatalog(_Input const char* catalogName, Lba& outLba);
+		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const char* catalogName, Lba& outLba);
 
-		_Output NewCatalog* GetCatalog(_Input const char* name);
+		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const char* name);
 
-		_Output NewCatalog* CreateCatalog(_Input const char* name,
+		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const char*  name,
 										  _Input const Int32& flags,
 										  _Input const Int32& kind);
 
-		_Output NewCatalog* CreateCatalog(_Input const char* name);
+		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const char* name);
 
-		bool WriteCatalog(_Input _Output NewCatalog* catalog,
+		bool WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 						  voidPtr					 data,
 						  SizeT						 sizeOfData,
 						  _Input const char*		 forkName);
 
-		VoidPtr ReadCatalog(_Input _Output NewCatalog* catalog,
+		VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 							SizeT					   dataSz,
 							_Input const char*		   forkName);
 
-		bool Seek(_Input _Output NewCatalog* catalog, SizeT off);
+		bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);
 
-		SizeT Tell(_Input _Output NewCatalog* catalog);
+		SizeT Tell(_Input _Output NFS_CATALOG_STRUCT* catalog);
 
 		bool RemoveCatalog(_Input const Char* catalog);
 
-		bool CloseCatalog(_InOut NewCatalog* catalog);
+		bool CloseCatalog(_InOut NFS_CATALOG_STRUCT* catalog);
 
 		/// @brief Make a EPM+NewFS drive out of the disk.
 		/// @param drive The drive to write on.
@@ -300,8 +300,8 @@ namespace Kernel
 /// @param DrvIndex drive index.
 /// @return
 Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* Mnt,
-							Kernel::DriveTrait&			DrvTrait,
-							Kernel::Int32				DrvIndex);
+							 Kernel::DriveTrait&		  DrvTrait,
+							 Kernel::Int32				  DrvIndex);
 
 /// @brief Read from newfs disk.
 /// @param Mnt mounted interface.
@@ -309,5 +309,5 @@ Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* Mnt,
 /// @param DrvIndex drive index.
 /// @return
 Kernel::Int32 fs_newfs_read(Kernel::MountpointInterface* Mnt,
-						   Kernel::DriveTrait&		   DrvTrait,
-						   Kernel::Int32				   DrvIndex);
+							Kernel::DriveTrait&			 DrvTrait,
+							Kernel::Int32				 DrvIndex);

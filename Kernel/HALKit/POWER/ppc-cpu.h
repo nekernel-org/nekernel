@@ -141,36 +141,36 @@ struct pt_regs
 #define SPRN_DBCR		0x3F2 /* Debug Control Regsiter */
 #define DBCR_EDM		0x80000000
 #define DBCR_IDM		0x40000000
-#define DBCR_RST(x)		(((x)&0x3) << 28)
+#define DBCR_RST(x)		(((x) & 0x3) << 28)
 #define DBCR_RST_NONE	0
 #define DBCR_RST_CORE	1
 #define DBCR_RST_CHIP	2
 #define DBCR_RST_SYSTEM 3
-#define DBCR_IC			0x08000000		  /* Instruction Completion Debug Evnt */
-#define DBCR_BT			0x04000000		  /* Branch Taken Debug Event */
-#define DBCR_EDE		0x02000000		  /* Exception Debug Event */
-#define DBCR_TDE		0x01000000		  /* TRAP Debug Event */
-#define DBCR_FER		0x00F80000		  /* First Events Remaining Mask */
-#define DBCR_FT			0x00040000		  /* Freeze Timers on Debug Event */
-#define DBCR_IA1		0x00020000		  /* Instr. Addr. Compare 1 Enable */
-#define DBCR_IA2		0x00010000		  /* Instr. Addr. Compare 2 Enable */
-#define DBCR_D1R		0x00008000		  /* Data Addr. Compare 1 Read Enable */
-#define DBCR_D1W		0x00004000		  /* Data Addr. Compare 1 Write Enable */
-#define DBCR_D1S(x)		(((x)&0x3) << 12) /* Data Adrr. Compare 1 Size */
+#define DBCR_IC			0x08000000			/* Instruction Completion Debug Evnt */
+#define DBCR_BT			0x04000000			/* Branch Taken Debug Event */
+#define DBCR_EDE		0x02000000			/* Exception Debug Event */
+#define DBCR_TDE		0x01000000			/* TRAP Debug Event */
+#define DBCR_FER		0x00F80000			/* First Events Remaining Mask */
+#define DBCR_FT			0x00040000			/* Freeze Timers on Debug Event */
+#define DBCR_IA1		0x00020000			/* Instr. Addr. Compare 1 Enable */
+#define DBCR_IA2		0x00010000			/* Instr. Addr. Compare 2 Enable */
+#define DBCR_D1R		0x00008000			/* Data Addr. Compare 1 Read Enable */
+#define DBCR_D1W		0x00004000			/* Data Addr. Compare 1 Write Enable */
+#define DBCR_D1S(x)		(((x) & 0x3) << 12) /* Data Adrr. Compare 1 Size */
 #define DAC_BYTE		0
 #define DAC_HALF		1
 #define DAC_WORD		2
 #define DAC_QUAD		3
-#define DBCR_D2R		0x00000800		 /* Data Addr. Compare 2 Read Enable */
-#define DBCR_D2W		0x00000400		 /* Data Addr. Compare 2 Write Enable */
-#define DBCR_D2S(x)		(((x)&0x3) << 8) /* Data Addr. Compare 2 Size */
-#define DBCR_SBT		0x00000040		 /* Second Branch Taken Debug Event */
-#define DBCR_SED		0x00000020		 /* Second Exception Debug Event */
-#define DBCR_STD		0x00000010		 /* Second Trap Debug Event */
-#define DBCR_SIA		0x00000008		 /* Second IAC Enable */
-#define DBCR_SDA		0x00000004		 /* Second DAC Enable */
-#define DBCR_JOI		0x00000002		 /* JTAG Serial Outbound Int. Enable */
-#define DBCR_JII		0x00000001		 /* JTAG Serial Inbound Int. Enable */
+#define DBCR_D2R		0x00000800		   /* Data Addr. Compare 2 Read Enable */
+#define DBCR_D2W		0x00000400		   /* Data Addr. Compare 2 Write Enable */
+#define DBCR_D2S(x)		(((x) & 0x3) << 8) /* Data Addr. Compare 2 Size */
+#define DBCR_SBT		0x00000040		   /* Second Branch Taken Debug Event */
+#define DBCR_SED		0x00000020		   /* Second Exception Debug Event */
+#define DBCR_STD		0x00000010		   /* Second Trap Debug Event */
+#define DBCR_SIA		0x00000008		   /* Second IAC Enable */
+#define DBCR_SDA		0x00000004		   /* Second DAC Enable */
+#define DBCR_JOI		0x00000002		   /* JTAG Serial Outbound Int. Enable */
+#define DBCR_JII		0x00000001		   /* JTAG Serial Inbound Int. Enable */
 #ifndef CONFIG_BOOKE
 #define SPRN_DBCR0 0x3F2 /* Debug Control Register 0 */
 #else
@@ -395,27 +395,27 @@ struct pt_regs
 #define TCR_WP(x) (((64 - x) & 0x3) << 30) | \
 					  (((64 - x) & 0x3c) << 15) /* WDT Period 2^x clocks*/
 #else
-#define TCR_WP(x) (((x)&0x3) << 30)	   /* WDT Period */
-#define WP_2_17	  0					   /* 2^17 clocks */
-#define WP_2_21	  1					   /* 2^21 clocks */
-#define WP_2_25	  2					   /* 2^25 clocks */
-#define WP_2_29	  3					   /* 2^29 clocks */
-#endif								   /* CONFIG_E500 */
-#define TCR_WRC(x)	 (((x)&0x3) << 28) /* WDT Reset Control */
-#define WRC_NONE	 0				   /* No reset will occur */
-#define WRC_CORE	 1				   /* Core reset will occur */
-#define WRC_CHIP	 2				   /* Chip reset will occur */
-#define WRC_SYSTEM	 3				   /* System reset will occur */
-#define TCR_WIE		 0x08000000		   /* WDT Interrupt Enable */
-#define TCR_PIE		 0x04000000		   /* PIT Interrupt Enable */
-#define TCR_FP(x)	 (((x)&0x3) << 24) /* FIT Period */
-#define FP_2_9		 0				   /* 2^9 clocks */
-#define FP_2_13		 1				   /* 2^13 clocks */
-#define FP_2_17		 2				   /* 2^17 clocks */
-#define FP_2_21		 3				   /* 2^21 clocks */
-#define TCR_FIE		 0x00800000		   /* FIT Interrupt Enable */
-#define TCR_ARE		 0x00400000		   /* Auto Reload Enable */
-#define SPRN_THRM1	 0x3FC			   /* Thermal Management Register 1 */
+#define TCR_WP(x) (((x) & 0x3) << 30)	 /* WDT Period */
+#define WP_2_17	  0						 /* 2^17 clocks */
+#define WP_2_21	  1						 /* 2^21 clocks */
+#define WP_2_25	  2						 /* 2^25 clocks */
+#define WP_2_29	  3						 /* 2^29 clocks */
+#endif									 /* CONFIG_E500 */
+#define TCR_WRC(x)	 (((x) & 0x3) << 28) /* WDT Reset Control */
+#define WRC_NONE	 0					 /* No reset will occur */
+#define WRC_CORE	 1					 /* Core reset will occur */
+#define WRC_CHIP	 2					 /* Chip reset will occur */
+#define WRC_SYSTEM	 3					 /* System reset will occur */
+#define TCR_WIE		 0x08000000			 /* WDT Interrupt Enable */
+#define TCR_PIE		 0x04000000			 /* PIT Interrupt Enable */
+#define TCR_FP(x)	 (((x) & 0x3) << 24) /* FIT Period */
+#define FP_2_9		 0					 /* 2^9 clocks */
+#define FP_2_13		 1					 /* 2^13 clocks */
+#define FP_2_17		 2					 /* 2^17 clocks */
+#define FP_2_21		 3					 /* 2^21 clocks */
+#define TCR_FIE		 0x00800000			 /* FIT Interrupt Enable */
+#define TCR_ARE		 0x00400000			 /* Auto Reload Enable */
+#define SPRN_THRM1	 0x3FC				 /* Thermal Management Register 1 */
 #define THRM1_TIN	 (1 << 0)
 #define THRM1_TIV	 (1 << 1)
 #define THRM1_THRES	 (0x7f << 2)
@@ -429,26 +429,26 @@ struct pt_regs
 #ifndef CONFIG_BOOKE
 #define SPRN_TSR 0x3D8 /* Timer Status Register */
 #else
-#define SPRN_TSR 0x150				  /* Book E Timer Status Register */
-#endif								  /* CONFIG_BOOKE */
-#define TSR_ENW		0x80000000		  /* Enable Next Watchdog */
-#define TSR_WIS		0x40000000		  /* WDT Interrupt Status */
-#define TSR_WRS(x)	(((x)&0x3) << 28) /* WDT Reset Status */
-#define WRS_NONE	0				  /* No WDT reset occurred */
-#define WRS_CORE	1				  /* WDT forced core reset */
-#define WRS_CHIP	2				  /* WDT forced chip reset */
-#define WRS_SYSTEM	3				  /* WDT forced system reset */
-#define TSR_PIS		0x08000000		  /* PIT Interrupt Status */
-#define TSR_FIS		0x04000000		  /* FIT Interrupt Status */
-#define SPRN_UMMCR0 0x3A8			  /* User Monitor Mode Control Register 0 */
-#define SPRN_UMMCR1 0x3AC			  /* User Monitor Mode Control Register 0 */
-#define SPRN_UPMC1	0x3A9			  /* User Performance Counter Register 1 */
-#define SPRN_UPMC2	0x3AA			  /* User Performance Counter Register 2 */
-#define SPRN_UPMC3	0x3AD			  /* User Performance Counter Register 3 */
-#define SPRN_UPMC4	0x3AE			  /* User Performance Counter Register 4 */
-#define SPRN_USIA	0x3AB			  /* User Sampled Instruction Address Register */
-#define SPRN_XER	0x001			  /* Fixed Point Exception Register */
-#define SPRN_ZPR	0x3B0			  /* Zone Protection Register */
+#define SPRN_TSR 0x150					/* Book E Timer Status Register */
+#endif									/* CONFIG_BOOKE */
+#define TSR_ENW		0x80000000			/* Enable Next Watchdog */
+#define TSR_WIS		0x40000000			/* WDT Interrupt Status */
+#define TSR_WRS(x)	(((x) & 0x3) << 28) /* WDT Reset Status */
+#define WRS_NONE	0					/* No WDT reset occurred */
+#define WRS_CORE	1					/* WDT forced core reset */
+#define WRS_CHIP	2					/* WDT forced chip reset */
+#define WRS_SYSTEM	3					/* WDT forced system reset */
+#define TSR_PIS		0x08000000			/* PIT Interrupt Status */
+#define TSR_FIS		0x04000000			/* FIT Interrupt Status */
+#define SPRN_UMMCR0 0x3A8				/* User Monitor Mode Control Register 0 */
+#define SPRN_UMMCR1 0x3AC				/* User Monitor Mode Control Register 0 */
+#define SPRN_UPMC1	0x3A9				/* User Performance Counter Register 1 */
+#define SPRN_UPMC2	0x3AA				/* User Performance Counter Register 2 */
+#define SPRN_UPMC3	0x3AD				/* User Performance Counter Register 3 */
+#define SPRN_UPMC4	0x3AE				/* User Performance Counter Register 4 */
+#define SPRN_USIA	0x3AB				/* User Sampled Instruction Address Register */
+#define SPRN_XER	0x001				/* Fixed Point Exception Register */
+#define SPRN_ZPR	0x3B0				/* Zone Protection Register */
 
 /* Book E definitions */
 #define SPRN_DECAR	 0x036 /* Decrementer Auto Reload Register */
@@ -853,7 +853,7 @@ struct pt_regs
 #define IOCR_PTD	0x00000400
 #define IOCR_ARE	0x00000080
 #define IOCR_DRC	0x00000020
-#define IOCR_RDM(x) (((x)&0x3) << 3)
+#define IOCR_RDM(x) (((x) & 0x3) << 3)
 #define IOCR_TCS	0x00000004
 #define IOCR_SCS	0x00000002
 #define IOCR_SPC	0x00000001
@@ -1252,7 +1252,7 @@ int fsl_qoriq_dsp_core_to_cluster(unsigned int core);
 #if defined(CONFIG_MPC83xx)
 #define CPU_TYPE_ENTRY(x) \
 	{                     \
-#x, SPR_##x       \
+		#x, SPR_##x       \
 	}
 #endif
 #endif

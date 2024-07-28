@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -10,12 +10,14 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/Function.hpp>
 
+#include <FirmwareKit/Handover.hxx>
+
 #ifdef __NEWOS_AMD64__
-#include <HALKit/AMD64/HalPageAlloc.hpp>
+#include <HALKit/AMD64/HalPageAlloc.hxx>
 #include <HALKit/AMD64/Hypervisor.hpp>
-#include <HALKit/AMD64/Processor.hpp>
-#elif defined(__NEWOS_PPC__)
-#include <HALKit/POWER/Processor.hpp>
+#include <HALKit/AMD64/Processor.hxx>
+#elif defined(__NEWOS_POWER64__)
+#include <HALKit/POWER/Processor.hxx>
 #elif defined(__NEWOS_ARM64__)
 #include <HALKit/ARM64/Processor.hxx>
 #else
@@ -24,7 +26,7 @@
 
 namespace Kernel
 {
-	constexpr static inline SSizeT rt_hash_seed(const char* seed, int mul)
+	inline SSizeT rt_hash_seed(const char* seed, int mul)
 	{
 		SSizeT hash = 0;
 
@@ -41,7 +43,7 @@ namespace Kernel
 	/// @param base the base address.
 	/// @param reg the register.
 	/// @param value the write to write on it.
-	inline void ke_dma_write(UInt32 base, UInt32 reg, UInt32 value) noexcept
+	inline Void ke_dma_write(UInt32 base, UInt32 reg, UInt32 value) noexcept
 	{
 		*(volatile UInt32*)((UInt64)base + reg) = value;
 	}
@@ -58,18 +60,19 @@ namespace Kernel
 	/// @brief Print a region of memory.
 	/// @param start
 	/// @param length
-	inline void ke_print_raw_memory(const void* start, Size length)
+	inline Void ke_print_raw_memory(const void* start, Size length)
 	{
 		const UInt8* ptr = (const UInt8*)start;
+
 		for (Size i = 0; i < length; i++)
 		{
 			if (i % 16 == 0)
 			{
-				kcout << hex_number((UIntPtr)ptr + i);
+				kcout.HexNumber((UIntPtr)ptr + i);
 			}
 			else
 			{
-				kcout << hex_number(ptr[i]);
+				kcout.HexNumber(ptr[i]);
 			}
 
 			kcout << " ";
@@ -86,19 +89,17 @@ typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 struct RTSyscallInfoHdr final
 {
 	Kernel::Int64	fHash;
-	Kernel::Bool		fHooked;
+	Kernel::Bool	fHooked;
 	rt_syscall_proc fProc;
 };
 
 inline Kernel::Array<RTSyscallInfoHdr,
-					kKernelMaxSystemCalls>
+					 kKernelMaxSystemCalls>
 	kSyscalls;
 
 inline Kernel::Array<RTSyscallInfoHdr,
-					kKernelMaxSystemCalls>
+					 kKernelMaxSystemCalls>
 	kKerncalls;
 
 EXTERN_C Kernel::HAL::StackFramePtr rt_get_current_context();
 EXTERN_C Kernel::Void rt_do_context_switch(Kernel::HAL::StackFramePtr stackFrame);
-
-#include <FirmwareKit/Handover.hxx>

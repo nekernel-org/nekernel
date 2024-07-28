@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -10,16 +10,32 @@
 #define KIB(X) ((X) / 1024)
 #endif
 
+#ifndef kib_cast
+#define kib_cast(X) ((X) * 1024)
+#endif
+
 #ifndef MIB
 #define MIB(X) ((UInt64)KIB(X) / 1024)
+#endif
+
+#ifndef mib_cast
+#define mib_cast(X) ((UInt64)kib_cast(X) * 1024)
 #endif
 
 #ifndef GIB
 #define GIB(X) ((UInt64)MIB(X) / 1024)
 #endif
 
+#ifndef gib_cast
+#define gib_cast(X) ((UInt64)mib_cast(X) * 1024)
+#endif
+
 #ifndef TIB
 #define TIB(X) ((UInt64)GIB(X) / 1024)
+#endif
+
+#ifndef tib_cast
+#define tib_cast(X) ((UInt64)gib_cast(X) * 1024)
 #endif
 
 #ifndef ARRAY_SIZE
@@ -37,7 +53,7 @@
 #endif // #ifndef ATTRIBUTE
 
 #ifndef __MAHROUSS__
-#define __MAHROUSS__ (202401)
+#define __MAHROUSS__ (202404)
 #endif // !__MAHROUSS__
 
 #ifndef EXTERN_C
@@ -63,16 +79,16 @@
 #endif
 
 #ifndef ENUM_STRING
-#define ENUM_STRING(NAME, VAL) inline constexpr const char* NAME = VAL
+#define ENUM_STRING(NAME, VAL) inline constexpr const char* e##NAME = VAL
 #endif
 
 #ifndef END_STRING_ENUM
 #define END_STRING_ENUM() }
 #endif
 
-#ifndef Alloca
-#define Alloca(Sz) __builtin_alloca(Sz)
-#endif // #ifndef Alloca
+#ifndef ALLOCA
+#define ALLOCA(Sz) __builtin_alloca(Sz)
+#endif // #ifndef ALLOCA
 
 #ifndef CANT_REACH
 #define CANT_REACH() __builtin_unreachable()
@@ -91,8 +107,8 @@
 #define CONST const
 
 #define STRINGIFY(X)	#X
-#define NEWOS_UNUSED(X) ((void)X)
+#define NEWOS_UNUSED(X) ((Kernel::Void)X)
 
 #ifndef RGB
-#define RGB(R, G, B) (UInt32)(0x##R##G##B)
+#define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
 #endif // !RGB

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright Zeta Electronics Corporation.
+Copyright ZKA Technologies.
 
 File: LTE\IO.hxx.
 Purpose: LTE I/O.
@@ -23,6 +23,6 @@ Kernel::Boolean lte_turn_off_slot(Kernel::Int32 slot);
 
 /// @brief Send AT command.
 Kernel::Boolean lte_send_at_command(Kernel::Char* buf,
-								   Kernel::Size	bufSz);
+									Kernel::Size  bufSz);
 
 #endif // ifndef _INC_NETWORK_LTE_IO_HXX_

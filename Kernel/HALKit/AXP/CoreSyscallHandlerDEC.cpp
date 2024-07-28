@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
-#include <HALKit/AXP/Processor.hpp>
+#include <HALKit/AXP/Processor.hxx>
 
 /// @brief Internal call for syscall, to work with C++.
 /// @param stack

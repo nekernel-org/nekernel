@@ -1,7 +1,7 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>

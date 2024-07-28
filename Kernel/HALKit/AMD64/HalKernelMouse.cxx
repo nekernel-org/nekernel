@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -14,16 +14,16 @@
 EXTERN_C Kernel::Boolean _hal_draw_mouse();
 EXTERN_C Kernel::Void _hal_init_mouse();
 
-STATIC Kernel::Int32 kPrevX		= 10;
-STATIC Kernel::Int32 kPrevY		= 10;
-STATIC Kernel::Int32 kX			= 10;
-STATIC Kernel::Int32 kY			= 10;
+STATIC Kernel::Int32 kPrevX		 = 10;
+STATIC Kernel::Int32 kPrevY		 = 10;
+STATIC Kernel::Int32 kX			 = 10;
+STATIC Kernel::Int32 kY			 = 10;
 STATIC Kernel::Int32 kMouseCycle = 0;
 STATIC Kernel::PS2MouseInterface kMousePS2;
-STATIC Kernel::Char kMousePacket[4]		= {};
+STATIC Kernel::Char kMousePacket[4]		 = {};
 STATIC Kernel::Boolean kMousePacketReady = false;
 
-STATIC GXInit();
+STATIC CGInit();
 
 #define kPS2Leftbutton	 0b00000001
 #define kPS2Middlebutton 0b00000010

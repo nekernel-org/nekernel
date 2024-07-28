@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -26,11 +26,14 @@ namespace Kernel::Detail
 
 	void exec_disable(UIntPtr VirtualAddr)
 	{
+#ifdef __NEWOS_SUPPORT_NX__
 		PTE* VirtualAddrTable = reinterpret_cast<PTE*>(VirtualAddr);
-		MUST_PASS(!VirtualAddrTable->Accessed);
+
+		MUST_PASS(!VirtualAddrTable->ExecDisable == false);
 		VirtualAddrTable->ExecDisable = true;
 
 		hal_flush_tlb();
+#endif // ifdef __NEWOS_SUPPORT_NX__
 	}
 
 	bool page_disable(UIntPtr VirtualAddr)
@@ -38,8 +41,8 @@ namespace Kernel::Detail
 		if (VirtualAddr)
 		{
 			auto VirtualAddrTable = (PTE*)(VirtualAddr);
-			MUST_PASS(!VirtualAddrTable->Accessed);
 
+			MUST_PASS(!VirtualAddrTable->Present == true);
 			VirtualAddrTable->Present = false;
 
 			hal_flush_tlb();

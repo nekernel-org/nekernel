@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -27,7 +27,7 @@ namespace Kernel
 
 		/// @brief Init COM1.
 		/// @return
-		bool serial_init() noexcept
+		bool hal_serial_init() noexcept
 		{
 #ifdef __DEBUG__
 			if (kState == kStateReady || kState == kStateTransmit)
@@ -64,7 +64,7 @@ namespace Kernel
 	EXTERN_C void ke_io_write(const char* bytes)
 	{
 #ifdef __DEBUG__
-		Detail::serial_init();
+		Detail::hal_serial_init();
 
 		if (!bytes || Detail::kState != kStateReady)
 			return;
@@ -74,7 +74,10 @@ namespace Kernel
 		Detail::kState = kStateTransmit;
 
 		SizeT index = 0;
-		SizeT len	= rt_string_len(bytes, 256);
+		SizeT len	= 0;
+
+		index = 0;
+		len	= rt_string_len(bytes, 255);
 
 		while (index < len)
 		{
@@ -92,7 +95,7 @@ namespace Kernel
 	EXTERN_C void ke_io_read(const char* bytes)
 	{
 #ifdef __DEBUG__
-		Detail::serial_init();
+		Detail::hal_serial_init();
 
 		if (!bytes || Detail::kState != kStateReady)
 			return;

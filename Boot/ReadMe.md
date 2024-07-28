@@ -1,4 +1,4 @@
-# newosldr
+# newosldr (Zeta Bootloader Architecture)
 
 You need:
 
@@ -11,10 +11,10 @@ Start by cloning the repo:
 git clone git@bitbucket.org:mahrouss/microkernel.git
 ```
 
-And execute:
+And then execute:
 
 ```
 make all
 ```
 
-##### Copyright, Zeta Electronics Corporation, all rights reserved.
+##### Copyright, ZKA Technologies, all rights reserved.

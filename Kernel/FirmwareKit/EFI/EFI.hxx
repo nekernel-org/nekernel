@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -46,7 +46,7 @@ typedef UInt64 EfiStatusType;
 /// This is like NT's Win32 HANDLE type.
 typedef struct EfiHandle
 {
-} * EfiHandlePtr;
+}* EfiHandlePtr;
 
 /* UEFI uses wide characters by default. */
 typedef WideChar EfiCharType;
@@ -589,11 +589,12 @@ typedef struct EfiSystemTable
 	{
 		EfiGUID VendorGUID;
 		VoidPtr VendorTable;
-	} * ConfigurationTable;
+	}* ConfigurationTable;
 } EfiSystemTable;
 
-#define kEfiOk	 0
-#define kEfiFail -1
+#define kEfiOk			0
+#define kEfiFail		-1
+#define kBufferTooSmall 5
 
 #define EFI_EXTERN_C extern "C"
 
@@ -721,8 +722,10 @@ typedef struct EfiFileProtocol
 
 	EfiStatusType(EFI_API* ReadEx)(EfiFileProtocol*	  This,
 								   struct EfiIOToken* Token);
+
 	EfiStatusType(EFI_API* WriteEx)(EfiFileProtocol*   This,
 									struct EfiIOToken* Token);
+
 	EfiStatusType(EFI_API* FlushEx)(EfiFileProtocol*   This,
 									struct EfiIOToken* Token);
 } EfiFileProtocol, *EfiFileProtocolPtr;

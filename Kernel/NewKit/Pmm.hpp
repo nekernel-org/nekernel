@@ -1,14 +1,14 @@
 
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
 #pragma once
 
 #include <NewKit/PageManager.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {

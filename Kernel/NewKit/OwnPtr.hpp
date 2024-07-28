@@ -1,7 +1,7 @@
 
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -9,7 +9,7 @@
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/KernelCheck.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {

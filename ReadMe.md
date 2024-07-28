@@ -1,13 +1,15 @@
 <!-- README of ZKA 1 -->
 
+![ZKA](Meta/NewOS.svg)
+
 # ZKA (Zeta Kernel Architecture)
 
-ZKA is an operating system kernel, also codenamed 'Ne'.
+ZKA is an operating system kernel, also codenamed 'NewOS'.
 
 ## Installation:
 
 - MinGW/GCC for the kernel and bootloader.
-- Netwide Assembler/CodeTools to output COFF/PEF object code.
+- Netwide Assembler/NDK to output COFF/PEF object code.
 
 ### Start by cloning:
 
@@ -22,4 +24,4 @@ cd newoskrnl
 make -f amd64-efi.make all
 ```
 
-##### Copyright, Zeta Electronics Corporation, all rights reserved.
+##### Copyright, ZKA Technologies, all rights reserved.

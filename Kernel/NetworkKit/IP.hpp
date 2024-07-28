@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -8,7 +8,7 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 #include <NewKit/String.hpp>
 
 namespace Kernel
@@ -76,8 +76,8 @@ namespace Kernel
 	class IPFactory final
 	{
 	public:
-		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress6> ipv6);
-		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress> ipv4);
+		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress6>& ipv6);
+		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress>& ipv4);
 		static bool				   IpCheckVersion4(const char* ip);
 	};
 } // namespace Kernel

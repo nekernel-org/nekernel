@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation.
+	Copyright ZKA Technologies.
 
 	File: LTE.hxx.
 	Purpose: LTE protocol classes.

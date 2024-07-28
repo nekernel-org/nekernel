@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -8,9 +8,9 @@
 #include <NewKit/PageManager.hpp>
 
 #ifdef __NEWOS_AMD64__
-#include <HALKit/AMD64/HalPageAlloc.hpp>
+#include <HALKit/AMD64/HalPageAlloc.hxx>
 #elif defined(__NEWOS_ARM64__)
-#include <HALKit/ARM64/HalPageAlloc.hpp>
+#include <HALKit/ARM64/HalPageAlloc.hxx>
 #endif // ifdef __NEWOS_AMD64__ || defined(__NEWOS_ARM64__)
 
 //! null deref will throw (Page Zero detected, aborting app!)

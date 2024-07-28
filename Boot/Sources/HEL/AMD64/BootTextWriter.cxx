@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 	File: String.cxx
 	Purpose: NewBoot string library
@@ -85,6 +85,36 @@ BTextWriter& BTextWriter::Write(const Char* str)
 	return *this;
 }
 
+BTextWriter& BTextWriter::Write(const UChar* str)
+{
+#ifdef __DEBUG__
+	if (!str || *str == 0)
+		return *this;
+
+	CharacterTypeUTF16 strTmp[2];
+	strTmp[1] = 0;
+
+	for (size_t i = 0; str[i] != 0; i++)
+	{
+		if (str[i] == '\r')
+		{
+			strTmp[0] = str[i];
+			ST->ConOut->OutputString(ST->ConOut, strTmp);
+
+			strTmp[0] = '\n';
+			ST->ConOut->OutputString(ST->ConOut, strTmp);
+		}
+		else
+		{
+			strTmp[0] = str[i];
+			ST->ConOut->OutputString(ST->ConOut, strTmp);
+		}
+	}
+#endif // ifdef __DEBUG__
+
+	return *this;
+}
+
 /**
 @brief putc wrapper over EFI ConOut.
 */
@@ -131,9 +161,9 @@ BTextWriter& BTextWriter::_Write(const Long& x)
 	if (y < 0)
 		y = -y;
 
-	const char NUMBERS[17] = "0123456789ABCDEF";
+	const char cNumbers[17] = "0123456789ABCDEF";
 
-	this->WriteCharacter(NUMBERS[h]);
+	this->WriteCharacter(cNumbers[h]);
 #endif // ifdef __DEBUG__
 
 	return *this;

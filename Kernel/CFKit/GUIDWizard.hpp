@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -11,12 +11,12 @@
 #include <NewKit/ArrayList.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorOr.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 #include <NewKit/Stream.hpp>
 #include <NewKit/String.hpp>
 
 namespace Kernel::XRN::Version1
 {
-	Ref<GUIDSequence*>				make_sequence(const ArrayList<UShort>& seq);
-	ErrorOr<Ref<Kernel::StringView>> try_guid_to_string(Ref<GUIDSequence*>& guid);
+	Ref<GUIDSequence*>				 cf_make_sequence(const ArrayList<UInt32>& seq);
+	ErrorOr<Ref<Kernel::StringView>> cf_try_guid_to_string(Ref<GUIDSequence*>& guid);
 } // namespace Kernel::XRN::Version1

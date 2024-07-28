@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -14,7 +14,7 @@ using namespace Kernel;
 class Device
 {
 public:
-	Device()		  = default;
+	explicit Device() = default;
 	virtual ~Device() = default;
 
 	NEWOS_MOVE_DEFAULT(Device);

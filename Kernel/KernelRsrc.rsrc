@@ -1,4 +1,4 @@
-1 ICON "../Icons/kernel-logo.ico"
+1 ICON "../Icons/main.ico"
 
 #include "CompilerKit/Version.hxx"
 
@@ -10,13 +10,13 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Zeta Electronics Corporation"
+      VALUE "CompanyName", "ZKA Technologies"
 	  VALUE "FileDescription", "NewOS Kernel."
       VALUE "FileVersion", KERNEL_VERSION
-	  VALUE "InternalName", "HCore"
-      VALUE "LegalCopyright", "Zeta Electronics Corporation"
+	  VALUE "InternalName", "newoskrnl"
+      VALUE "LegalCopyright", "(c) ZKA Technologies, all rights reserved."
       VALUE "OriginalFilename", "newoskrnl.exe"
-      VALUE "ProductName", "NewOSKrnl"
+      VALUE "ProductName", "newoskrnl"
       VALUE "ProductVersion", KERNEL_VERSION
     END
   END

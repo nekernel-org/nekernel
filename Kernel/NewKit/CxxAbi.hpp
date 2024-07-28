@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 #pragma once
 
 #include <NewKit/Defines.hpp>
 
-#ifdef __GNUC__
+#ifndef __NDK__
 
 #define kDSOMaxObjects (128)
 

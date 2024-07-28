@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation.
+	Copyright ZKA Technologies.
 
 	File: IPCEP.hxx.
 	Purpose: IPC protocol.
@@ -19,7 +19,7 @@
 #define cRemoteSeparator "."
 
 /// Interchange address, consists of PID:TEAM.
-#define cRemoteInvalid	"00:00"
+#define cRemoteInvalid "00:00"
 
 #define cRemoteHeaderMagic (0x4950434)
 
@@ -59,8 +59,8 @@ namespace Kernel
 	/// @brief IPCEP connection header, message cannot be greater than 6K.
 	typedef struct IPCEPMessageHeader final
 	{
-		UInt32			 IpcHeaderMagic;	   // cRemoteHeaderMagic
-		UInt8			 IpcEndianess; // 0 : LE, 1 : BE
+		UInt32			 IpcHeaderMagic; // cRemoteHeaderMagic
+		UInt8			 IpcEndianess;	 // 0 : LE, 1 : BE
 		SizeT			 IpcPacketSize;
 		IPCEPAddressType IpcFrom;
 		IPCEPAddressType IpcTo;

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -29,4 +29,4 @@ namespace Kernel
 		if (fCleanup)
 			fCleanup();
 	}
-} // namespace NewOS
+} // namespace Kernel

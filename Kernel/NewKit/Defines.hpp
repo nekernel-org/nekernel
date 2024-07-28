@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -133,18 +133,18 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#define DEDUCE_ENDIAN(address, value)                          \
+#define DEDUCE_ENDIAN(address, value)                           \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))
 
-#define Yes (true)
-#define No	(false)
+#define Yes true
+#define No	false
 
-#define VoidStar Kernel::voidPtr
+#define VoidStar Kernel::VoidPtr
 
-#ifdef INIT
-#undef INIT
-#endif // ifdef INIT
+#ifdef cInitObject
+#undef cInitObject
+#endif // ifdef cInitObject
 
-#define INIT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
+#define cInitObject(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)

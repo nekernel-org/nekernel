@@ -1,12 +1,12 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
-#include <NewKit/Json.hpp>
+#include <NewKit/Json.hxx>
 
 using namespace Kernel;
 
 /// @brief Undefined object, is null in length.
-INIT(Kernel::JsonType::kUndefined, Kernel::JsonType);
+cInitObject(Kernel::JsonType::kNull, Kernel::JsonType);

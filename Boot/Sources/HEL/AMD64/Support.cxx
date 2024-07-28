@@ -1,12 +1,16 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
+#include <BootKit/BootKit.hxx>
+#include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/EFI/EFI.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <BootKit/Vendor/Support.hxx>
+#include <BootKit/Support.hxx>
+#include <KernelKit/MSDOS.hxx>
+#include <KernelKit/PE.hxx>
 
 #ifdef __STANDALONE__
 
@@ -54,7 +58,7 @@ EXTERN_C size_t strlen(const char* whatToCheck)
 	return len;
 }
 
-/// @brief somthing specific to the microsoft ABI, regarding checking the stack.
+/// @brief somthing specific to the Microsoft's ABI, When the stack grows too big.
 EXTERN_C void ___chkstk_ms(void)
 {
 }

@@ -1,7 +1,7 @@
 ;; /*
 ;; *    ---------------------------------------------------
 ;; *
-;; * 	Copyright Zeta Electronics Corporation, all rights reserved.
+;; * 	Copyright ZKA Technologies, all rights reserved.
 ;; *
 ;; *    File: HalInterruptAPI.asm
 ;; *    Purpose: Interrupt routing, redirect raw interrupts into their handlers.
@@ -121,53 +121,16 @@ IntNormal 31
 
 [extern hal_apic_acknowledge]
 
-__NEW_INT_32:
-;; make this active, SMP works again.
-%if 0
+__NEW_INT_34:
     push rax
-    push rcx
-    push rdx
-    push rbx
-    push rbp
-    push rsi
-    push rdi
-    push r8
-    push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
-
-    jmp hal_apic_acknowledge
-
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
-    pop r9
-    pop r8
-    pop rdi
-    pop rsi
-    pop rbp
-    pop rbx
-    pop rdx
-    pop rcx
+    call hal_apic_acknowledge
     pop rax
 
-    mov rax, 0
-
-    ;; tell there local apic that we're done.
-    mov [0xFEE00000 + 0xB0], rax ; LAPIC_EOI
-%endif
     iretq
 
-IntNormal 33
+IntNormal 32
 
-IntNormal 34
+IntNormal 33
 IntNormal 35
 IntNormal 36
 IntNormal 37

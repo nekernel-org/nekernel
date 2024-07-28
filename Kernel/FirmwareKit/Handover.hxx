@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
  * @version 0.3
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, Zeta Electronics Corporation
+ * @copyright Copyright (c) 2024, ZKA Technologies
  *
  */
 
@@ -76,7 +76,7 @@ it tells us more about it and IS format independent.
 		struct
 		{
 			VoidPtr f_SmBios;
-			VoidPtr f_RsdPtr;
+			VoidPtr f_VendorPtr;
 		} f_HardwareTables;
 
 		struct
@@ -100,7 +100,7 @@ it tells us more about it and IS format independent.
 	};
 
 	/// @brief Bootloader main type.
-	typedef void (*BootMainKind)(Kernel::HEL::HandoverInformationHeader* handoverInfo);
+	typedef void (*BootMainKind)(HandoverInformationHeader* handoverInfo);
 
 	/// @brief Alias of bootloader main type.
 	typedef void (*HandoverProc)(HandoverInformationHeader* handoverInfo);

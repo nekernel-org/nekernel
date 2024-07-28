@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -9,11 +9,11 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/LockDelegate.hpp>
-#include <KernelKit/PermissionSelector.hxx>
-#include <KernelKit/UserHeap.hpp>
+#include <KernelKit/User.hxx>
+#include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/MutableArray.hpp>
 
-#define kSchedMinMicroTime (AffinityKind::kHartStandard)
+#define kSchedMinMicroTime (AffinityKind::kStandard)
 #define kSchedInvalidPID   (-1)
 
 #define kSchedProcessLimitPerTeam (16U)
@@ -58,7 +58,7 @@ namespace Kernel
 		kInvalid	  = 300,
 		kVeryHigh	  = 250,
 		kHigh		  = 200,
-		kHartStandard = 150,
+		kStandard = 150,
 		kLowUsage	  = 100,
 		kVeryLowUsage = 50,
 	};
@@ -140,8 +140,8 @@ namespace Kernel
 		NEWOS_COPY_DEFAULT(ProcessHeader)
 
 	public:
-		void			   SetEntrypoint(UIntPtr& imageStart) noexcept;
-		const Int32&	   GetExitCode() noexcept;
+		void		 SetEntrypoint(UIntPtr& imageStart) noexcept;
+		const Int32& GetExitCode() noexcept;
 
 	public:
 		Char			   Name[kProcessLen] = {"Process"};
@@ -167,7 +167,7 @@ namespace Kernel
 			kKindCount,
 		};
 
-		ProcessTime PTime;
+		ProcessTime PTime{0};
 		PID			ProcessId{kSchedInvalidPID};
 		Int32		Kind{kAppKind};
 
@@ -178,25 +178,29 @@ namespace Kernel
 			return Status != ProcessStatus::kDead;
 		}
 
-		//! @brief Crash the app, exits with code ~0.
-		Void			Crash();
+		///! @brief Crashes the app, exits with code ~0.
+		Void Crash();
 
-		//! @brief Exits app.
-		Void			Exit(Int32 exitCode = 0);
+		///! @brief Exits the app.
+		Void Exit(const Int32& exit_code = 0);
 
-		//! @brief TLS Allocate
-		VoidPtr			New(const SizeT& sz);
+		///! @brief TLS allocate.
+		///! @param sz size of new ptr.
+		VoidPtr New(const SizeT& sz);
 
-		//! @brief TLS Free.
-		Boolean			Delete(VoidPtr ptr, const SizeT& sz);
+		///! @brief TLS free.
+		///! @param ptr the pointer to free.
+		///! @param sz the size of it.
+		Boolean Delete(VoidPtr ptr, const SizeT& sz);
 
-		//! @brief Wakes up threads.
-		Void			Wake(const bool wakeup = false);
+		///! @brief Wakes up threads.
+		Void Wake(const bool wakeup = false);
 
 		// ProcessHeader getters.
 	public:
-		//! @brief ProcessHeader name getter, example: "C RunTime"
-		const Char*		GetName() noexcept;
+		///! @brief Get the process's name
+		///! @example 'C Runtime Library'
+		const Char* GetProcessName() noexcept;
 
 		//! @brief return local error code of process.
 		//! @return Int32 local error code.
@@ -207,8 +211,8 @@ namespace Kernel
 		const AffinityKind&	   GetAffinity() noexcept;
 
 	private:
-		Int32			fLastExitCode{0};
-		Int32			fLocalCode{0};
+		Int32 fLastExitCode{0};
+		Int32 fLocalCode{0};
 
 		friend ProcessScheduler;
 		friend ProcessHelper;
@@ -226,7 +230,7 @@ namespace Kernel
 
 		MutableArray<Ref<ProcessHeader>>& AsArray();
 		Ref<ProcessHeader>&				  AsRef();
-		UInt64&						      Id() noexcept;
+		UInt64&							  Id() noexcept;
 
 	public:
 		MutableArray<Ref<ProcessHeader>> mProcessList;
@@ -247,22 +251,22 @@ namespace Kernel
 
 		NEWOS_COPY_DEFAULT(ProcessScheduler)
 
-			 operator bool();
+		operator bool();
 		bool operator!();
 
 	public:
 		ProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(Ref<ProcessHeader>& headerRef);
-		bool  Remove(SizeT headerIndex);
+		SizeT Add(Ref<ProcessHeader>& processRef);
+		Bool  Remove(SizeT processSlot);
 
 	public:
 		Ref<ProcessHeader>& TheCurrent();
 		SizeT				Run() noexcept;
 
 	public:
-		STATIC Ref<ProcessScheduler&> The();
+		STATIC Ref<ProcessScheduler>& The();
 
 	private:
 		ProcessTeam mTeam;

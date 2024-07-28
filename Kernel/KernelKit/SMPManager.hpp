@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -9,10 +9,9 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hxx>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
-// Last Rev
-// Sat Feb 24 CET 2024
+/// @note Last Rev Sun 28 Jul CET 2024
 
 #define kMaxHarts 8
 
@@ -98,7 +97,7 @@ namespace Kernel
 	public:
 		Ref<HardwareThread*> operator[](const SizeT& idx);
 		bool				 operator!() noexcept;
-							 operator bool() noexcept;
+		operator bool() noexcept;
 
 	public:
 		/// @brief Shared instance of the SMP Manager.

@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
 #ifndef _INC_CODE_MANAGER_PEF_HXX_
 #define _INC_CODE_MANAGER_PEF_HXX_
 
-#include <KernelKit/PEF.hpp>
+#include <KernelKit/PEF.hxx>
 #include <NewKit/ErrorOr.hpp>
 #include <NewKit/String.hpp>
 #include <KernelKit/FileManager.hpp>

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
 
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/SMPManager.hpp>
-#include <KernelKit/KernelHeap.hpp>
+#include <KernelKit/Heap.hxx>
 #include <NewKit/String.hpp>
 #include <KernelKit/HError.hpp>
 
@@ -29,14 +29,9 @@ namespace Kernel
 
 	STATIC Int32 cLastExitCode = 0U;
 
-	/// @brief Gets the latest exit code.
+	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
-	const Int32& ProcessHeader::GetExitCode() noexcept
-	{
-		return fLastExitCode;
-	}
-
 	const Int32& rt_get_exit_code() noexcept
 	{
 		return cLastExitCode;
@@ -48,14 +43,31 @@ namespace Kernel
 
 	void ProcessHeader::Crash()
 	{
-		kcout << (*this->Name == 0 ? "Unknown" : this->Name) << ": crashed. (id = ";
+		kcout << (*this->Name == 0 ? "Kernel" : this->Name) << ": crashed. (id = ";
 		kcout.Number(kErrorProcessFault);
 		kcout << ")\r";
+
+		if (Kernel::ProcessScheduler::The().Leak().CurrentTeam().AsArray().Count() < 1)
+		{
+			kcout << "*** BAD PROCESS ***\rTerminating as we are the only process...\r";
+			ke_stop(RUNTIME_CHECK_PROCESS);
+		}
 
 		this->Exit(kErrorProcessFault);
 	}
 
-	Int32& ProcessHeader::GetLocalCode() noexcept { return fLocalCode; }
+	/// @brief Gets the local last exit code.
+	/// @note Not thread-safe.
+	/// @return Int32 the last exit code.
+	const Int32& ProcessHeader::GetExitCode() noexcept
+	{
+		return this->fLastExitCode;
+	}
+
+	Int32& ProcessHeader::GetLocalCode() noexcept
+	{
+		return fLocalCode;
+	}
 
 	void ProcessHeader::Wake(const bool should_wakeup)
 	{
@@ -73,13 +85,13 @@ namespace Kernel
 			{
 				ErrLocal() = kErrorHeapOutOfMemory;
 
-				/* we're going out of memory */
+				/* We're going out of memory! crash... */
 				this->Crash();
 
 				return nullptr;
 			}
 
-			this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor + (sizeof(sz)));
+			this->HeapCursor = reinterpret_cast<VoidPtr>((UIntPtr)this->HeapCursor + (sizeof(sz)));
 			VoidPtr ptr		 = this->HeapCursor;
 
 			++this->UsedMemory;
@@ -94,21 +106,17 @@ namespace Kernel
 	/***********************************************************************************/
 
 	/* @brief checks if runtime pointer is in region. */
-	bool rt_is_in_pool(VoidPtr pool_ptr, VoidPtr pool, const SizeT& sz)
+	bool rt_is_in_pool(VoidPtr pool_ptr, VoidPtr pool, const SizeT& pool_ptr_cur_sz, const SizeT& pool_ptr_used_sz)
 	{
-		UIntPtr* _pool_ptr = (UIntPtr*)pool_ptr;
-		UIntPtr* _pool	   = (UIntPtr*)pool;
+		if (pool == nullptr ||
+			pool_ptr == nullptr)
+			return false;
 
-		for (SizeT index = sz; _pool[sz] != kUserHeapMag; --index)
-		{
-			if (&_pool[index] > &_pool_ptr[sz])
-				continue;
+		UIntPtr* uint_pool_ptr = (UIntPtr*)pool_ptr;
+		UIntPtr* uint_pool	   = (UIntPtr*)pool;
 
-			if (_pool[index] == _pool_ptr[index])
-				return true;
-		}
-
-		return false;
+		return (UIntPtr)&uint_pool > (UIntPtr)&uint_pool_ptr &&
+			   pool_ptr_cur_sz > pool_ptr_used_sz;
 	}
 
 	/* @brief free pointer from usage. */
@@ -121,7 +129,7 @@ namespace Kernel
 		if (this->UsedMemory < 1)
 			return false;
 
-		if (rt_is_in_pool(ptr, this->HeapCursor, this->UsedMemory))
+		if (rt_is_in_pool(ptr, this->HeapCursor, this->UsedMemory, this->FreeMemory))
 		{
 			this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor - (sizeof(sz)));
 			rt_zero_memory(ptr, sz);
@@ -136,7 +144,7 @@ namespace Kernel
 	}
 
 	/// @brief process name getter.
-	const Char* ProcessHeader::GetName() noexcept
+	const Char* ProcessHeader::GetProcessName() noexcept
 	{
 		return this->Name;
 	}
@@ -166,7 +174,7 @@ namespace Kernel
 	/**
 	@brief Standard exit proc.
 	*/
-	void ProcessHeader::Exit(Int32 exit_code)
+	void ProcessHeader::Exit(const Int32& exit_code)
 	{
 		if (this->ProcessId !=
 			ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId)
@@ -178,6 +186,7 @@ namespace Kernel
 		//! Delete image if not done already.
 		if (this->Image)
 			ke_delete_ke_heap(this->Image);
+
 		if (this->StackFrame)
 			ke_delete_ke_heap((VoidPtr)this->StackFrame);
 
@@ -203,15 +212,23 @@ namespace Kernel
 		if (mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
 			return -kErrorOutOfTeamSlot;
 
-		kcout << "ProcessScheduler::Add(Ref<ProcessHeader>& process)\r";
+		kcout << "ProcessScheduler:: adding process to team...\r";
 
 		/// Create heap according to type of process.
 		if (process.Leak().Kind == ProcessHeader::kAppKind)
+		{
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
+		}
 		else if (process.Leak().Kind == ProcessHeader::kShLibKind)
+		{
 			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
+		}
 		else
-			process.Leak().HeapPtr = rt_new_heap(kUserHeapDriver | kUserHeapRw);
+		{
+			// something went wrong, do not continue, process kind is incorrect.
+			process.Leak().Crash();
+			return -kErrorProcessFault;
+		}
 
 		process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame*>(
 			ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
@@ -223,22 +240,28 @@ namespace Kernel
 		process.Leak().ProcessId  = (mTeam.AsArray().Count() - 1);
 		process.Leak().HeapCursor = process.Leak().HeapPtr;
 
-		mTeam.AsArray().Add(process);
+		MUST_PASS(mTeam.AsArray().Add(process));
 
-		return mTeam.AsArray().Count() - 1;
+		return (mTeam.AsArray().Count() - 1);
 	}
 
 	/// @brief Remove process from list.
-	/// @param process
-	/// @return
-	bool ProcessScheduler::Remove(SizeT process)
+	/// @param processSlot process slot inside team.
+	/// @retval true process was removed.
+	/// @retval false process doesn't exist in team.
+	Bool ProcessScheduler::Remove(SizeT processSlot)
 	{
-		if (process > mTeam.AsArray().Count())
+		// check if process is within range.
+		if (processSlot > mTeam.AsArray().Count())
 			return false;
 
-		kcout << "ProcessScheduler::Remove(SizeT process)\r";
+		// also check if the process isn't a dummy one.
+		if (mTeam.AsArray()[processSlot].Leak().Leak().Image == nullptr)
+			return false;
 
-		return mTeam.AsArray().Remove(process);
+		kcout << "ProcessScheduler: removing process\r";
+
+		return mTeam.AsArray().Remove(processSlot);
 	}
 
 	/// @brief Run scheduler.
@@ -257,21 +280,21 @@ namespace Kernel
 			{
 				auto unwrapped_process = *process.Leak();
 
-				unwrapped_process.PTime = 0;
-
 				// set the current process.
 				mTeam.AsRef() = unwrapped_process;
 
 				// tell helper to find a core to schedule on.
-				ProcessHelper::Switch(mTeam.AsRef().Leak().StackFrame,
-									  mTeam.AsRef().Leak().ProcessId);
+				ProcessHelper::Switch(unwrapped_process.StackFrame,
+									  unwrapped_process.ProcessId);
 
-				kcout << unwrapped_process.Name << ": process switched.\r";
+				unwrapped_process.PTime = static_cast<Int32>(unwrapped_process.Affinity);
+
+				kcout << unwrapped_process.Name << ": has been switched to process core.\r";
 			}
 			else
 			{
 				// otherwise increment the P-time.
-				++mTeam.AsRef().Leak().PTime;
+				--mTeam.AsRef().Leak().PTime;
 			}
 		}
 
@@ -285,12 +308,14 @@ namespace Kernel
 		return mTeam;
 	}
 
+	/// @internal
+	STATIC Ref<ProcessScheduler> cSchedulerRef;
+
 	/// @brief Shared instance of the process scheduler.
 	/// @return
-	Ref<ProcessScheduler&> ProcessScheduler::The()
+	Ref<ProcessScheduler>& ProcessScheduler::The()
 	{
-		static ProcessScheduler ref;
-		return {ref};
+		return cSchedulerRef;
 	}
 
 	/// @brief Gets current running process.
@@ -320,10 +345,10 @@ namespace Kernel
 
 		if (process.Leak().GetStatus() == ProcessStatus::kStarting)
 		{
-			if (process.Leak().PTime < static_cast<Int>(kSchedMinMicroTime))
+			if (process.Leak().PTime <= 0)
 			{
 				process.Leak().Status	= ProcessStatus::kRunning;
-				process.Leak().Affinity = AffinityKind::kHartStandard;
+				process.Leak().Affinity = AffinityKind::kStandard;
 
 				return true;
 			}
@@ -331,7 +356,7 @@ namespace Kernel
 			++process.Leak().PTime;
 		}
 
-		return process.Leak().PTime > static_cast<Int>(kSchedMinMicroTime);
+		return process.Leak().PTime > 0;
 	}
 
 	/**

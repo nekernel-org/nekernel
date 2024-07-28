@@ -8,11 +8,12 @@
  @brief this function setups a stack and then jumps to
  a function */
 rt_jump_to_address:
-    mov rdx, rsp
-    mov rdi, rcx
-    mov rdx, rbp
+    mov r8, rsp
+
     push rax
-	mov r8, rcx
-    call rdi
+    push rdx
+    jmp rcx
+    pop rdx
     pop rax
+
     ret

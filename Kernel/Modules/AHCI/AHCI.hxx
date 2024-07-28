@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 	File: Defines.hxx
 	Purpose: AHCI header.
@@ -50,30 +50,30 @@ typedef struct FisRegH2D final
 	// DWORD 0
 	Kernel::UInt8 FisType; // FIS_TYPE_REG_H2D
 
-	Kernel::UInt8 PortMul : 4;	// Port multiplier
+	Kernel::UInt8 PortMul : 4;	 // Port multiplier
 	Kernel::UInt8 Reserved0 : 3; // Reserved
 	Kernel::UInt8 CmdOrCtrl : 1; // 1: Command, 0: Control
 
-	Kernel::UInt8 Command;  // Command register
+	Kernel::UInt8 Command;	// Command register
 	Kernel::UInt8 Featurel; // Feature register, 7:0
 
 	// DWORD 1
-	Kernel::UInt8 Lba0;	 // LBA low register, 7:0
-	Kernel::UInt8 Lba1;	 // LBA mid register, 15:8
-	Kernel::UInt8 Lba2;	 // LBA high register, 23:16
+	Kernel::UInt8 Lba0;	  // LBA low register, 7:0
+	Kernel::UInt8 Lba1;	  // LBA mid register, 15:8
+	Kernel::UInt8 Lba2;	  // LBA high register, 23:16
 	Kernel::UInt8 Device; // Device register
 
 	// DWORD 2
-	Kernel::UInt8 Lba3;		  // LBA register, 31:24
-	Kernel::UInt8 Lba4;		  // LBA register, 39:32
-	Kernel::UInt8 Lba5;		  // LBA register, 47:40
+	Kernel::UInt8 Lba3;		   // LBA register, 31:24
+	Kernel::UInt8 Lba4;		   // LBA register, 39:32
+	Kernel::UInt8 Lba5;		   // LBA register, 47:40
 	Kernel::UInt8 FeatureHigh; // Feature register, 15:8
 
 	// DWORD 3
-	Kernel::UInt8 CountLow;	// Count register, 7:0
+	Kernel::UInt8 CountLow;	 // Count register, 7:0
 	Kernel::UInt8 CountHigh; // Count register, 15:8
-	Kernel::UInt8 Icc;		// Isochronous command completion
-	Kernel::UInt8 Control;	// Control register
+	Kernel::UInt8 Icc;		 // Isochronous command completion
+	Kernel::UInt8 Control;	 // Control register
 
 	// DWORD 4
 	Kernel::UInt8 Reserved1[4]; // Reserved
@@ -84,18 +84,18 @@ typedef struct FisRegD2H final
 	// DWORD 0
 	Kernel::UInt8 FisType; // FIS_TYPE_REG_D2H
 
-	Kernel::UInt8 PortMul : 4;	   // Port multiplier
-	Kernel::UInt8 Reserved0 : 2;	   // Reserved
+	Kernel::UInt8 PortMul : 4;		// Port multiplier
+	Kernel::UInt8 Reserved0 : 2;	// Reserved
 	Kernel::UInt8 InterruptBit : 1; // Interrupt bit
-	Kernel::UInt8 Reserved1 : 1;	   // Reserved
+	Kernel::UInt8 Reserved1 : 1;	// Reserved
 
 	Kernel::UInt8 Status; // Status register
-	Kernel::UInt8 Rrror;	 // Error register
+	Kernel::UInt8 Rrror;  // Error register
 
 	// DWORD 1
-	Kernel::UInt8 Lba0;	 // LBA low register, 7:0
-	Kernel::UInt8 Lba1;	 // LBA mid register, 15:8
-	Kernel::UInt8 Lba2;	 // LBA high register, 23:16
+	Kernel::UInt8 Lba0;	  // LBA low register, 7:0
+	Kernel::UInt8 Lba1;	  // LBA mid register, 15:8
+	Kernel::UInt8 Lba2;	  // LBA high register, 23:16
 	Kernel::UInt8 Device; // Device register
 
 	// DWORD 2
@@ -105,9 +105,9 @@ typedef struct FisRegD2H final
 	Kernel::UInt8 Rsv2; // Reserved
 
 	// DWORD 3
-	Kernel::UInt8 CountLow;	// Count register, 7:0
+	Kernel::UInt8 CountLow;	 // Count register, 7:0
 	Kernel::UInt8 CountHigh; // Count register, 15:8
-	Kernel::UInt8 Rsv3[2];	// Reserved
+	Kernel::UInt8 Rsv3[2];	 // Reserved
 
 	// DWORD 4
 	Kernel::UInt8 Rsv4[4]; // Reserved
@@ -118,7 +118,7 @@ typedef struct FisData final
 	// DWORD 0
 	Kernel::UInt8 FisType; // FIS_TYPE_DATA
 
-	Kernel::UInt8 PortMul : 4;	// Port multiplier
+	Kernel::UInt8 PortMul : 4;	 // Port multiplier
 	Kernel::UInt8 Reserved0 : 4; // Reserved
 
 	Kernel::UInt8 Reserved1[2]; // Reserved
@@ -132,19 +132,19 @@ typedef struct FisPioSetup final
 	// DWORD 0
 	Kernel::UInt8 FisType; // FIS_TYPE_PIO_SETUP
 
-	Kernel::UInt8 PortMul : 4;	   // Port multiplier
-	Kernel::UInt8 Reserved0 : 1;	   // Reserved
-	Kernel::UInt8 DTD : 1;		   // Data transfer direction, 1 - device to host
+	Kernel::UInt8 PortMul : 4;		// Port multiplier
+	Kernel::UInt8 Reserved0 : 1;	// Reserved
+	Kernel::UInt8 DTD : 1;			// Data transfer direction, 1 - device to host
 	Kernel::UInt8 InterruptBit : 1; // Interrupt bit
 	Kernel::UInt8 Reserved1 : 1;
 
 	Kernel::UInt8 Status; // Status register
-	Kernel::UInt8 Error;	 // Error register
+	Kernel::UInt8 Error;  // Error register
 
 	// DWORD 1
-	Kernel::UInt8 Lba0;	 // LBA low register, 7:0
-	Kernel::UInt8 Lba1;	 // LBA mid register, 15:8
-	Kernel::UInt8 Lba2;	 // LBA high register, 23:16
+	Kernel::UInt8 Lba0;	  // LBA low register, 7:0
+	Kernel::UInt8 Lba1;	  // LBA mid register, 15:8
+	Kernel::UInt8 Lba2;	  // LBA high register, 23:16
 	Kernel::UInt8 Device; // Device register
 
 	// DWORD 2
@@ -154,14 +154,14 @@ typedef struct FisPioSetup final
 	Kernel::UInt8 Rsv2; // Reserved
 
 	// DWORD 3
-	Kernel::UInt8 CountLow;	// Count register, 7:0
+	Kernel::UInt8 CountLow;	 // Count register, 7:0
 	Kernel::UInt8 CountHigh; // Count register, 15:8
-	Kernel::UInt8 Rsv3;		// Reserved
-	Kernel::UInt8 EStatus;	// New value of status register
+	Kernel::UInt8 Rsv3;		 // Reserved
+	Kernel::UInt8 EStatus;	 // New value of status register
 
 	// DWORD 4
 	Kernel::UInt16 TranferCount; // Transfer count
-	Kernel::UInt8  Rsv4[2];		// Reserved
+	Kernel::UInt8  Rsv4[2];		 // Reserved
 } FisPioSetup;
 
 typedef struct FisDmaSetup final
@@ -169,18 +169,18 @@ typedef struct FisDmaSetup final
 	// DWORD 0
 	Kernel::UInt8 FisType; // FIS_TYPE_DMA_SETUP
 
-	Kernel::UInt8 PortMul : 4;	   // Port multiplier
-	Kernel::UInt8 Reserved0 : 1;	   // Reserved
-	Kernel::UInt8 DTD : 1;		   // Data transfer direction, 1 - device to host
+	Kernel::UInt8 PortMul : 4;		// Port multiplier
+	Kernel::UInt8 Reserved0 : 1;	// Reserved
+	Kernel::UInt8 DTD : 1;			// Data transfer direction, 1 - device to host
 	Kernel::UInt8 InterruptBit : 1; // Interrupt bit
-	Kernel::UInt8 AutoEnable : 1;   // Auto-activate. Specifies if DMA Activate FIS is needed
+	Kernel::UInt8 AutoEnable : 1;	// Auto-activate. Specifies if DMA Activate FIS is needed
 
 	Kernel::UInt8 Reserved1[2]; // Reserved
 
 	// DWORD 1&2
 	Kernel::UInt64 DmaBufferId; // DMA Buffer Identifier. Used to Identify DMA buffer in
-							   // host memory. SATA Spec says host specific and not in
-							   // Spec. Trying AHCI spec might work.
+								// host memory. SATA Spec says host specific and not in
+								// Spec. Trying AHCI spec might work.
 
 	// DWORD 3
 	Kernel::UInt32 Rsvd; // More reserved
@@ -223,41 +223,41 @@ typedef struct FisDevBits final
 
 typedef struct HbaPort final
 {
-	Kernel::UInt32 Clb;			 // 0x00, command list base address, 1K-byte aligned
-	Kernel::UInt32 Clbu;			 // 0x04, command list base address upper 32 bits
-	Kernel::UInt32 Fb;			 // 0x08, FIS base address, 256-byte aligned
-	Kernel::UInt32 Fbu;			 // 0x0C, FIS base address upper 32 bits
-	Kernel::UInt32 Is;			 // 0x10, interrupt status
-	Kernel::UInt32 Ie;			 // 0x14, interrupt enable
-	Kernel::UInt32 Cmd;			 // 0x18, command and status
-	Kernel::UInt32 Reserved0;	 // 0x1C, Reserved
-	Kernel::UInt32 Tfd;			 // 0x20, task file data
-	Kernel::UInt32 Sig;			 // 0x24, signature
-	Kernel::UInt32 Ssts;			 // 0x28, SATA status (SCR0:SStatus)
-	Kernel::UInt32 Sctl;			 // 0x2C, SATA control (SCR2:SControl)
-	Kernel::UInt32 Serr;			 // 0x30, SATA error (SCR1:SError)
-	Kernel::UInt32 Sact;			 // 0x34, SATA active (SCR3:SActive)
-	Kernel::UInt32 Ci;			 // 0x38, command issue
-	Kernel::UInt32 Sntf;			 // 0x20, SATA notification (SCR4:SNotification)
-	Kernel::UInt32 Fbs;			 // 0x40, FIS-based switch control
+	Kernel::UInt32 Clb;			  // 0x00, command list base address, 1K-byte aligned
+	Kernel::UInt32 Clbu;		  // 0x04, command list base address upper 32 bits
+	Kernel::UInt32 Fb;			  // 0x08, FIS base address, 256-byte aligned
+	Kernel::UInt32 Fbu;			  // 0x0C, FIS base address upper 32 bits
+	Kernel::UInt32 Is;			  // 0x10, interrupt status
+	Kernel::UInt32 Ie;			  // 0x14, interrupt enable
+	Kernel::UInt32 Cmd;			  // 0x18, command and status
+	Kernel::UInt32 Reserved0;	  // 0x1C, Reserved
+	Kernel::UInt32 Tfd;			  // 0x20, task file data
+	Kernel::UInt32 Sig;			  // 0x24, signature
+	Kernel::UInt32 Ssts;		  // 0x28, SATA status (SCR0:SStatus)
+	Kernel::UInt32 Sctl;		  // 0x2C, SATA control (SCR2:SControl)
+	Kernel::UInt32 Serr;		  // 0x30, SATA error (SCR1:SError)
+	Kernel::UInt32 Sact;		  // 0x34, SATA active (SCR3:SActive)
+	Kernel::UInt32 Ci;			  // 0x38, command issue
+	Kernel::UInt32 Sntf;		  // 0x20, SATA notification (SCR4:SNotification)
+	Kernel::UInt32 Fbs;			  // 0x40, FIS-based switch control
 	Kernel::UInt32 Reserved1[11]; // 0x44 ~ 0x6F, Reserved
-	Kernel::UInt32 Vendor[4];	 // 0x70 ~ 0x7F, vendor specific
+	Kernel::UInt32 Vendor[4];	  // 0x70 ~ 0x7F, vendor specific
 } HbaPort;
 
 typedef struct HbaMem final
 {
 	// 0x00 - 0x2B, Generic Host Control
-	Kernel::UInt32 Cap;	   // 0x00, Host capability
-	Kernel::UInt32 Ghc;	   // 0x04, Global host control
-	Kernel::UInt32 Is;	   // 0x08, Interrupt status
-	Kernel::UInt32 Pi;	   // 0x0C, Port implemented
-	Kernel::UInt32 Vs;	   // 0x10, Version
+	Kernel::UInt32 Cap;		// 0x00, Host capability
+	Kernel::UInt32 Ghc;		// 0x04, Global host control
+	Kernel::UInt32 Is;		// 0x08, Interrupt status
+	Kernel::UInt32 Pi;		// 0x0C, Port implemented
+	Kernel::UInt32 Vs;		// 0x10, Version
 	Kernel::UInt32 Ccc_ctl; // 0x14, Command completion coalescing control
 	Kernel::UInt32 Ccc_pts; // 0x18, Command completion coalescing ports
-	Kernel::UInt32 Em_loc;  // 0x1C, Enclosure management location
-	Kernel::UInt32 Em_ctl;  // 0x20, Enclosure management control
-	Kernel::UInt32 Cap2;	   // 0x24, Host capabilities extended
-	Kernel::UInt32 Bohc;	   // 0x28, BIOS/OS handoff control and status
+	Kernel::UInt32 Em_loc;	// 0x1C, Enclosure management location
+	Kernel::UInt32 Em_ctl;	// 0x20, Enclosure management control
+	Kernel::UInt32 Cap2;	// 0x24, Host capabilities extended
+	Kernel::UInt32 Bohc;	// 0x28, BIOS/OS handoff control and status
 
 	Kernel::UInt16 Resv0;
 	Kernel::UInt32 Resv2;
@@ -268,21 +268,21 @@ typedef struct HbaMem final
 typedef struct HbaCmdHeader final
 {
 	// DW0
-	Kernel::UInt8 Cfl : 5;		   // Command FIS length in DWORDS, 2 ~ 16
-	Kernel::UInt8 Atapi : 1;		   // ATAPI
-	Kernel::UInt8 Write : 1;		   // Write, 1: H2D, 0: D2H
+	Kernel::UInt8 Cfl : 5;			// Command FIS length in DWORDS, 2 ~ 16
+	Kernel::UInt8 Atapi : 1;		// ATAPI
+	Kernel::UInt8 Write : 1;		// Write, 1: H2D, 0: D2H
 	Kernel::UInt8 Prefetchable : 1; // Prefetchable
 
-	Kernel::UInt8 Reset : 1;		// Reset
-	Kernel::UInt8 BIST : 1;		// BIST
-	Kernel::UInt8 Clear : 1;		// Clear busy upon R_OK
+	Kernel::UInt8 Reset : 1;	 // Reset
+	Kernel::UInt8 BIST : 1;		 // BIST
+	Kernel::UInt8 Clear : 1;	 // Clear busy upon R_OK
 	Kernel::UInt8 Reserved0 : 1; // Reserved
-	Kernel::UInt8 Pmp : 4;		// Port multiplier port
+	Kernel::UInt8 Pmp : 4;		 // Port multiplier port
 
-	Kernel::UInt16		   Prdtl; // Physical region descriptor table length in entries
+	Kernel::UInt16			Prdtl; // Physical region descriptor table length in entries
 	volatile Kernel::UInt32 Prdbc; // Physical region descriptor byte count transferred
 
-	Kernel::UInt32 Ctba;	 // Command table descriptor base address
+	Kernel::UInt32 Ctba;  // Command table descriptor base address
 	Kernel::UInt32 Ctbau; // Command table descriptor base address upper 32 bits
 
 	Kernel::UInt32 Reserved1[4]; // Reserved
@@ -291,13 +291,13 @@ typedef struct HbaCmdHeader final
 typedef struct HbaFis final
 {
 	// 0x00
-	FisDmaSetup	 Dsfis; // DMA Setup FIS
+	FisDmaSetup	  Dsfis; // DMA Setup FIS
 	Kernel::UInt8 Pad0[4];
 	// 0x20
-	FisPioSetup	 Psfis; // PIO Setup FIS
+	FisPioSetup	  Psfis; // PIO Setup FIS
 	Kernel::UInt8 Pad1[12];
 	// 0x40
-	FisRegD2H	 Rfis; // Register – Device to Host FIS
+	FisRegD2H	  Rfis; // Register – Device to Host FIS
 	Kernel::UInt8 Pad2[4];
 	// 0x58
 	FisDevBits Sdbfis; // Set Device Bit FIS
@@ -309,12 +309,12 @@ typedef struct HbaFis final
 
 typedef struct HbaPrdtEntry final
 {
-	Kernel::UInt32 Dba;		 // Data base address
-	Kernel::UInt32 Dbau;		 // Data base address upper 32 bits
+	Kernel::UInt32 Dba;		  // Data base address
+	Kernel::UInt32 Dbau;	  // Data base address upper 32 bits
 	Kernel::UInt32 Reserved0; // Reserved
 	// DW3
-	Kernel::UInt32 Dbc : 22;			// Byte count, 4M max
-	Kernel::UInt32 Reserved1 : 9;	// Reserved
+	Kernel::UInt32 Dbc : 22;		 // Byte count, 4M max
+	Kernel::UInt32 Reserved1 : 9;	 // Reserved
 	Kernel::UInt32 InterruptBit : 1; // Interrupt on completion
 } HbaPrdtEntry;
 

@@ -1,3 +1,9 @@
+/* -------------------------------------------
+
+	Copyright ZKA Technologies
+
+------------------------------------------- */
+
 #ifndef __PCI_ITERATOR_HPP__
 #define __PCI_ITERATOR_HPP__
 
@@ -5,7 +11,7 @@
 #include <KernelKit/PCI/Device.hpp>
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 #define NEWOS_BUS_COUNT		 (256)
 #define NEWOS_DEVICE_COUNT	 (33)
@@ -22,7 +28,6 @@ namespace Kernel::PCI
 		explicit Iterator(const Types::PciDeviceKind& deviceType);
 
 		Iterator& operator=(const Iterator&) = default;
-
 		Iterator(const Iterator&) = default;
 
 		~Iterator();

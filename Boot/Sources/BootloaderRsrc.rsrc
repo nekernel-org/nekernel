@@ -1,6 +1,6 @@
 #include "../../Kernel/CompilerKit/Version.hxx"
 
-1 ICON "../../Icons/boot-logo.ico"
+1 ICON "../../Icons/main.ico"
 
 1 VERSIONINFO
 FILEVERSION     1,0,0,0
@@ -10,11 +10,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Zeta Electronics Corporation"
-      VALUE "FileDescription", "New OS multi-platform bootloader."
+      VALUE "CompanyName", "ZKA Technologies"
+      VALUE "FileDescription", "New OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "newosldr"
-      VALUE "LegalCopyright", "Copyright Zeta Electronics Corporation, all rights reserved."
+      VALUE "LegalCopyright", "Copyright ZKA Technologies, all rights reserved."
       VALUE "OriginalFilename", "newosldr.exe"
       VALUE "ProductName", "newosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION

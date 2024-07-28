@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
-#ifndef __MPCC_DEF__
-#define __MPCC_DEF__
+#ifndef __MPCC_DEFINES_HXX__
+#define __MPCC_DEFINES_HXX__
 
 #ifndef __GNUC__
 
@@ -30,7 +30,7 @@ typedef char*  caddr_t;
 #ifdef __GNUC__
 #include <CRT/__mpcc_alloca.hxx>
 #define __mpcc_alloca(sz) __mpcc_alloca_gcc(sz)
-#elif defined(__MPCC__)
+#elif defined(__NDK__)
 
 #define __alloca(sz) __mpcc_alloca(sz)
 #endif
@@ -95,4 +95,4 @@ typedef union double_cast {
 
 #endif // ifdef __STD_CXX__
 
-#endif /* __MPCC_DEF__ */
+#endif /* __MPCC_DEFINES_HXX__ */

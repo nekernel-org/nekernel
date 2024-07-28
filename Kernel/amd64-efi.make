@@ -1,12 +1,12 @@
 ##################################################
-# (C) Zeta Electronics Corporation, all rights reserved.
-# This is the microkernel makefile.
+# (C) ZKA Technologies, all rights reserved.
+# This is the newoskrnl's makefile.
 ##################################################
 
 CC			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -c -fPIC -ffreestanding -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
-			-std=c++20 -D__FSKIT_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I./
+CCFLAGS		= -fshort-wchar -c -fPIC -ffreestanding -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
+			-std=c++20 -D__NEWOS_SUPPORT_NX__ -I../Vendor -D__FSKIT_USE_NEWFS__ -D__KERNEL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I./
 
 ASM 		= nasm
 
@@ -59,8 +59,8 @@ newos-amd64-epm: clean
 			$(wildcard HALKit/AMD64/*.s)
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalSMPCoreManager.asm
-	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalNewBoot.asm
-	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInstallTIB.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalBoot.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalUtils.asm
 	$(MOVEALL)
 
 OBJCOPY=x86_64-w64-mingw32-objcopy

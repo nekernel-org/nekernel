@@ -1,7 +1,7 @@
 
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -40,13 +40,11 @@ enum RUNTIME_CHECK
 
 namespace Kernel
 {
-	class DumpManager final
+	/// @brief Dumping factory class.
+	class RecoveryFactory final
 	{
 	public:
-		static void Dump(void)
-		{
-			// TODO:
-		}
+		STATIC Void Recover() noexcept;
 	};
 
 	void ke_stop(const Int& id);

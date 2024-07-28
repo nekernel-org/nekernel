@@ -1,15 +1,15 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
 #include <BootKit/Platform.hxx>
 #include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
-#include <cstddef> /* Since we're using GCC for this EFI program. */
 
 #ifdef __STANDALONE__
+#include <cstddef> /* Since we're using GCC for this EFI program. */
 
 /// @brief Allocates a new object.
 /// @param sz the size.

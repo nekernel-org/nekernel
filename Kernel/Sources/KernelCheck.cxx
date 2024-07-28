@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -8,10 +8,12 @@
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/String.hpp>
+#include <FirmwareKit/Handover.hxx>
+#include <Modules/ACPI/ACPIFactoryInterface.hxx>
 
-EXTERN_C [[noreturn]] void ke_wait_for_debugger()
+EXTERN_C [[noreturn]] Kernel::Void ke_wait_for_debugger()
 {
-	while (true)
+	while (Yes)
 	{
 #ifdef __NEWOS_AMD64__
 		Kernel::HAL::rt_cli();
@@ -88,12 +90,20 @@ namespace Kernel
 		}
 		};
 
-		DumpManager::Dump();
+		RecoveryFactory::Recover();
 
+	}
+	
+	Void RecoveryFactory::Recover() noexcept
+	{		
 #ifdef __DEBUG__
 		ke_wait_for_debugger();
 #endif // ifdef __DEBUG__
+
+		PowerFactoryInterface powerInterface(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+		powerInterface.Shutdown();
 	}
+	
 
 	void ke_runtime_check(bool expr, const char* file, const char* line)
 	{
@@ -105,7 +115,7 @@ namespace Kernel
 
 #endif // __DEBUG__
 
-			Kernel::ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
+			ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
 		}
 	}
 } // namespace Kernel

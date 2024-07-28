@@ -1,12 +1,13 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/SMPManager.hpp>
+#include <CFKit/Property.hpp>
 
 ///! BUGS: 0
 
@@ -16,6 +17,8 @@
 
 namespace Kernel
 {
+	STATIC Property cSMPCoreName;
+
 	///! A HardwareThread class takes care of it's owned hardware thread.
 	///! It has a stack for it's core.
 
@@ -120,7 +123,16 @@ namespace Kernel
 	//! @brief Constructor and destructor
 
 	///! @brief Default constructor.
-	SMPManager::SMPManager() = default;
+	SMPManager::SMPManager()
+	{
+		StringView strCoreName(512);
+		strCoreName += "\\Properties\\Smp\\SchedulerClass";
+
+		cSMPCoreName.GetKey() = strCoreName;
+		cSMPCoreName.GetValue() = (UIntPtr)this;
+
+		kcout << "newoskrnl: initializing " << strCoreName.CData() << endl;
+	}
 
 	///! @brief Default destructor.
 	SMPManager::~SMPManager() = default;
@@ -160,9 +172,9 @@ namespace Kernel
 			// to avoid any null deref.
 			if (!fThreadList[idx].Leak().Leak()->fStack)
 				continue;
-			if (fThreadList[idx].Leak().Leak()->fStack->Rsp == 0)
+			if (fThreadList[idx].Leak().Leak()->fStack->SP == 0)
 				continue;
-			if (fThreadList[idx].Leak().Leak()->fStack->Rbp == 0)
+			if (fThreadList[idx].Leak().Leak()->fStack->BP == 0)
 				continue;
 
 			fThreadList[idx].Leak().Leak()->Busy(true);

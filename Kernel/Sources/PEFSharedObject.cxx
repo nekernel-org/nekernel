@@ -2,13 +2,13 @@
  * ========================================================
  *
  * Kernel
- * Copyright Zeta Electronics Corporation, all rights reserved.
+ * Copyright ZKA Technologies, all rights reserved.
  *
  *  ========================================================
  */
 
 #include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/PEF.hpp>
+#include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFSharedObject.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
@@ -18,66 +18,69 @@
 
  Revision History:
 
-	 01/02/24: Rework shared library ABI, except a rt_library_init and
- rt_library_free (amlel) 15/02/24: Breaking changes, changed the name of the
+	 01/02/24: Rework shared sharedObj ABI, except a rt_library_init and
+ rt_library_fini (amlel) 15/02/24: Breaking changes, changed the name of the
  routines. (amlel)
+
+	07/28/24: Replace rt_library_free with rt_library_fini
 
  ------------------------------------------- */
 
 using namespace Kernel;
 
 /***********************************************************************************/
-/// @file SharedObjectRT.cxx
-/// @brief Shared Object runtime.
+/// @file PEFSharedObjectRT.cxx
+/// @brief PEF's shared object runtime.
 /***********************************************************************************/
 
 /***********************************************************************************/
-/* @brief Library runtime initializer. */
+/** @brief Library initializer. */
 /***********************************************************************************/
 
 EXTERN_C SharedObjectPtr rt_library_init(void)
 {
-	SharedObjectPtr library = tls_new_class<SharedObject>();
+	SharedObjectPtr sharedObj = tls_new_class<SharedObject>();
 
-	if (!library)
+	if (!sharedObj)
 	{
 		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 
 		return nullptr;
 	}
 
-	library->Mount(tls_new_class<SharedObject::SharedObjectTrait>());
+	sharedObj->Mount(tls_new_class<SharedObject::SharedObjectTrait>());
 
-	if (!library->Get())
+	if (!sharedObj->Get())
 	{
 		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 
 		return nullptr;
 	}
 
-	library->Get()->fImageObject =
+	sharedObj->Get()->fImageObject =
 		ProcessScheduler::The().Leak().TheCurrent().Leak().Image;
 
-	if (!library->Get()->fImageObject)
+	if (!sharedObj->Get()->fImageObject)
 	{
 		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 
 		return nullptr;
 	}
 
-	library->Get()->fImageEntrypointOffset =
-		library->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart, 0), kPefCode);
+	sharedObj->Get()->fImageEntrypointOffset =
+		sharedObj->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart, 0), kPefCode);
 
-	return library;
+	return sharedObj;
 }
 
 /***********************************************************************************/
-/* @brief Ends the library. */
-/* @note Please check if the lib got freed! */
-/* @param SharedObjectPtr the library to free. */
+/** @brief Frees the sharedObj. */
+/** @note Please check if the lib got freed! */
+/** @param lib The sharedObj to free. */
+/** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool* successful)
+EXTERN_C Void rt_library_fini(SharedObjectPtr lib, bool* successful)
 {
 	MUST_PASS(successful);
 
@@ -97,9 +100,10 @@ EXTERN_C Void rt_library_free(SharedObjectPtr lib, bool* successful)
 }
 
 /***********************************************************************************/
-
 /// @brief Unimplemented function (crashes by default)
 /// @param
+/***********************************************************************************/
+
 EXTERN_C void __mh_purecall(void)
 {
 	kcout << "newoskrnl: unimplemented symbol!\r";

@@ -1,16 +1,18 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
-#ifndef __INC_PLIST_HPP__
-#define __INC_PLIST_HPP__
+#ifndef __INC_PROPS_HPP__
+#define __INC_PROPS_HPP__
 
 #include <NewKit/Array.hpp>
 #include <NewKit/Defines.hpp>
 #include <NewKit/Function.hpp>
 #include <NewKit/String.hpp>
+
+#define cMaxPropLen 4096
 
 namespace Kernel
 {
@@ -22,23 +24,24 @@ namespace Kernel
 	class Property
 	{
 	public:
-		explicit Property(const StringView& sw);
+	    Property() = default;
 		virtual ~Property();
 
 	public:
 		Property& operator=(const Property&) = default;
 		Property(const Property&)			 = default;
 
-		bool			  StringEquals(StringView& name);
-		const PropertyId& GetPropertyById();
+		bool		StringEquals(StringView& name);
+		PropertyId& GetValue();
+		StringView& GetKey();
 
 	private:
-		Ref<StringView> fName;
-		PropertyId		fAction;
+		StringView      fName{cMaxPropLen};
+		PropertyId		fAction{No};
 	};
 
 	template <SizeT N>
 	using PropertyArray = Array<Property, N>;
 } // namespace Kernel
 
-#endif // !__INC_PLIST_HPP__
+#endif // !__INC_PROPS_HPP__

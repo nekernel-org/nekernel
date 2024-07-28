@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
@@ -8,6 +8,7 @@
 
 #include <NewKit/Defines.hpp>
 #include <NewKit/ErrorOr.hpp>
+#include <NewKit/Utils.hpp>
 #include <NewKit/KernelCheck.hpp>
 
 namespace Kernel
@@ -15,7 +16,15 @@ namespace Kernel
 	class StringView final
 	{
 	public:
-		explicit StringView() = default;
+		explicit StringView()
+		{
+		    fSz = 4096;
+
+			fData = new Char[fSz];
+			MUST_PASS(fData);
+
+			rt_set_memory(fData, 0, fSz);
+		}
 
 		explicit StringView(Size Sz)
 			: fSz(Sz)
@@ -23,6 +32,8 @@ namespace Kernel
 			MUST_PASS(Sz > 1);
 			fData = new Char[Sz];
 			MUST_PASS(fData);
+
+			rt_set_memory(fData, 0, Sz);
 		}
 
 		~StringView()

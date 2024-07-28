@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	Kernel
- * 	Copyright Zeta Electronics Corporation, all rights reserved.
+ * 	Copyright ZKA Technologies, all rights reserved.
  *
  * 	========================================================
  */
@@ -10,7 +10,7 @@
 #pragma once
 
 #include <NewKit/Defines.hpp>
-#include <NewKit/Ref.hpp>
+#include <NewKit/Ref.hxx>
 
 namespace Kernel
 {
@@ -34,7 +34,7 @@ namespace Kernel
 		}
 
 		explicit ErrorOr(T Class)
-			: mRef(Class)
+			: mRef(Class, true)
 		{
 		}
 

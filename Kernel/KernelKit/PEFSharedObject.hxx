@@ -2,7 +2,7 @@
  *      ========================================================
  *
  *      Kernel
- *      Copyright Zeta Electronics Corporation, all rights reserved.
+ *      Copyright ZKA Technologies, all rights reserved.
  *
  *      ========================================================
  */
@@ -11,7 +11,7 @@
 #define __KERNELKIT_SHARED_OBJECT_HXX__
 
 #include <KernelKit/LoaderInterface.hpp>
-#include <KernelKit/PEF.hpp>
+#include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <NewKit/Defines.hpp>
 

@@ -1,7 +1,7 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
-#include <KernelKit/PCI/PCI.hpp>
+#include <KernelKit/PCI/PCI.hxx>

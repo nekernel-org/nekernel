@@ -1,5 +1,5 @@
 ##################################################
-# (C) Zeta Electronics Corporation, all rights reserved.
+# (C) ZKA Technologies, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 
@@ -21,18 +21,20 @@ EMU=qemu-system-x86_64
 endif
 
 ifeq ($(NEWS_MODEL), )
-NEWOS_MODEL=-DkMachineModel="\"Generic Zeta HD\""
+NEWOS_MODEL=-DkMachineModel="\"ZKA SSD\""
 endif
 
 BIOS=OVMF.fd
-IMG=epm.img
+IMG=epm-master-1.img
 IMG_2=epm-slave.img
+IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -m 4G -M q35 -d int \
+EMU_FLAGS=-net none -smp 2 -m 4G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
-			file=fat:rw:Sources/Root,index=2,format=raw -d int -hdd $(IMG_2)
+			file=fat:rw:Sources/Root/,index=2,format=raw -d int -hdd $(IMG_2) \
+			-drive file=$(IMG_3),if=none,id=nvm -device nvme,serial=Zeta,drive=nvm
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -49,8 +51,8 @@ REM_FLAG=-f
 
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
-			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel -I./ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__ -I./
+			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../Kernel -c -nostdlib -fno-rtti -fno-exceptions \
+                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__
 
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.exe
@@ -66,6 +68,7 @@ all: compile-amd64
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/BOOTX64.EFI
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/NEWBOOT.EFI
 	$(COPY) ../Kernel/$(KERNEL) Sources/Root/$(KERNEL)
+	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -76,7 +79,7 @@ compile-amd64:
 	$(RESCMD)
 	$(CC_GNU) $(NEWOS_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
 	$(wildcard Sources/HEL/AMD64/*.cxx) \
-	$(wildcard Sources/HEL/AMD64/*.S)
+	$(wildcard Sources/HEL/AMD64/*.S) \
 	$(wildcard Sources/*.cxx)
 
 .PHONY: run-efi-amd64
@@ -88,6 +91,7 @@ run-efi-amd64:
 epm-img:
 	qemu-img create -f raw $(IMG) 4G
 	qemu-img create -f raw $(IMG_2) 4G
+	qemu-img create -f raw $(IMG_3) 4G
 
 .PHONY: download-edk
 download-edk:

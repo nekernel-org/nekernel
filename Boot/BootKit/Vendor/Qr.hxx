@@ -1,16 +1,18 @@
-#ifndef QR_H
-#define QR_H
+#ifndef QR_HXX
+#define QR_HXX
 
+extern "C" {
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
+}
 
 #include <BootKit/Vendor/Shared/base.h>
 #include <BootKit/Vendor/Shared/bit.h>
 
 #include <BootKit/Vendor/QrPrelude.hxx>
 #include <Modules/CoreCG/CoreCG.hxx>
-#include <BootKit/Vendor/Support.hxx>
+#include <BootKit/Support.hxx>
 #include <CompilerKit/Detail.hxx>
 
 /// @note the QR code is still code 128, it utilizes the same concept of having it's own character set.
@@ -367,18 +369,22 @@ namespace qr
 		if (!this->status)
 			return false; // it may be invalid.
 
+		CGInit();
+
 		for (int y = 0; y < (this->side_size()); ++y)
 		{
 			for (int x = 0; x < (this->side_size()); ++x)
 			{
-				GXDraw(
-					(this->module(x, y) ? RGB(00, 00, 00) : RGB(FF, FF, FF)),
+				CGDrawInRegion(
+					(this->module(x, y) ? RGB(00, 00, 00) : RGB(0xFF, 0xFF, 0xFF)),
 					1, 1,
 					x + whereX, y + whereY);
 			}
 		}
 
-		return false;
+		CGFini();
+
+		return true;
 	}
 
 	// Create Qr code with given error correction level. If mask == -1,
@@ -970,4 +976,4 @@ namespace Kernel::Qr
 	using namespace qr;
 } // namespace Kernel::Qr
 
-#endif
+#endif // QR_HXX

@@ -13,11 +13,13 @@
   - AHCI driver [ WiP ]
 - Context switch x87/SSE/AVX registers [ X ]
 - Framebuffer [ X ]
-- AHCI support [ ]
-- Make installer [ ]
+- ATA support [ X ]
+- Make installer [ X ]
 
 Status:
 
-newosldr: Need to boot from EPM partition.
+newosldr: Need to boot from EPM partition. [ X ]
 <br>
-NewKernel: New Filesystem in progress.
+NewKernel: New Filesystem is done. [ X ]
+
+**Refer to Jira!**

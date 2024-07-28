@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-	Copyright Zeta Electronics Corporation
+	Copyright ZKA Technologies
 
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/FileManager.hpp>
 
-#ifdef __FSKIT_NEWFS__
+#ifdef __FSKIT_USE_NEWFS__
 
 ///! BUGS: 0
 ///! @file NewFS+Journal.cxx
@@ -19,4 +19,4 @@ namespace Kernel::Journal
 
 using namespace Kernel;
 
-#endif // ifdef __FSKIT_NEWFS__
+#endif // ifdef __FSKIT_USE_NEWFS__
