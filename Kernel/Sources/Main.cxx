@@ -189,8 +189,10 @@ namespace Kernel::Detail
 	STATIC Kernel::Void ke_user_switch(Kernel::Void)
 	{
 
-		Kernel::cRootUser = new User(RingKind::kRingSuperUser, kSuperUser);
-		Kernel::kcout << "newoskrnl: logged in as: " << Kernel::cRootUser->Name().CData() << Kernel::endl;
+		Kernel::UserView::The()->fRootUser = new User(RingKind::kRingSuperUser, kSuperUser);
+		Kernel::kcout << "newoskrnl: logged in as: " << Kernel::UserView::The()->fRootUser->Name().CData() << Kernel::endl;
+
+		Kernel::UserView::The()->LogIn(Kernel::UserView::The()->fRootUser);
 
 		Kernel::kcout << "newoskrnl: " << cKernelVersion.GetKey().CData() << ": " << Kernel::number(cKernelVersion.GetValue()) << Kernel::endl;
 	}

@@ -51,4 +51,14 @@ namespace Kernel
 	{
 		return this->fRing;
 	}
+
+	Bool User::IsStdUser() noexcept
+	{
+		return this->Ring() == RingKind::kRingStdUser;
+	}
+
+	Bool User::IsSuperUser() noexcept
+	{
+		return this->Ring() == RingKind::kRingSuperUser;
+	}
 } // namespace Kernel
