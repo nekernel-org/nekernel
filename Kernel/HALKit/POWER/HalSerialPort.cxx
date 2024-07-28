@@ -17,7 +17,7 @@ void ke_io_write(const Char* bytes)
 		return;
 
 	SizeT index = 0;
-	SizeT len	= rt_string_len(bytes, 256);
+	SizeT len	= rt_string_len(bytes, 0);
 
 	while (index < len)
 	{

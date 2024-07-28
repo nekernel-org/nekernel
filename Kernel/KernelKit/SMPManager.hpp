@@ -11,8 +11,7 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Ref.hxx>
 
-// Last Rev
-// Sat Feb 24 CET 2024
+/// @note Last Rev Sun 28 Jul CET 2024
 
 #define kMaxHarts 8
 

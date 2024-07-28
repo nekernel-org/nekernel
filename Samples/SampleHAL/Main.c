@@ -7,14 +7,14 @@
 #include <DDK/KernelString.h>
 #include <DDK/KernelPrint.h>
 
-int __ImageStart(void)
+int __at_enter(void)
 {
-	kernelPrintStr("SampleDriver: Starting up...\r");
+	kernelPrintStr("SampleHAL: Starting up...\r");
 	return 0;
 }
 
-int __ImageEnd(void)
+int __at_exit(void)
 {
-	kernelPrintStr("SampleDriver: Shutting down...\r");
+	kernelPrintStr("SampleHAL: Shutting down...\r");
 	return 0;
 }

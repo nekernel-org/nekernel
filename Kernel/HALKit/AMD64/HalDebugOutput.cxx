@@ -74,10 +74,10 @@ namespace Kernel
 		Detail::kState = kStateTransmit;
 
 		SizeT index = 0;
-		SizeT len	= rt_string_len(bytes, 256);
+		SizeT len	= rt_string_len(bytes, 0);
 
 		const auto cColor = "\x1b[1;32m";
-		SizeT lenClr	= rt_string_len(cColor, 256);
+		SizeT lenClr	= rt_string_len(cColor, 0);
 
 		while (index < lenClr)
 		{
