@@ -26,6 +26,10 @@
 #define kPTESize (0x1000)
 #endif // !kPTESize
 
+#ifndef kAlign
+#define kAlign __BIGGEST_ALIGNMENT__
+#endif // !kAlign
+
 EXTERN_C void hal_flush_tlb();
 EXTERN_C void hal_write_cr3(Kernel::UIntPtr pde);
 EXTERN_C void hal_write_cr0(Kernel::UIntPtr bit);

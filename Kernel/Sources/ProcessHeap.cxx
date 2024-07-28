@@ -22,7 +22,7 @@ namespace Kernel
 	 * @brief Process Heap Header
 	 * @note Allocated per process, it denotes the user's heap.
 	 */
-	struct UserHeapHeader final
+	struct PROCESS_HEAP_HEADER final
 	{
 		UInt32	fMagic;
 		Int32	fFlags;
@@ -30,35 +30,38 @@ namespace Kernel
 		UInt8	fPadding[kHeapHeaderPaddingSz];
 	};
 
+	/// @brief PROCESS_HEAP_HEADER as pointer type.
+	typedef PROCESS_HEAP_HEADER* PROCESS_HEAP_HEADER_PTR;
+
 	/**
-	 * @brief User Heap Manager class, takes care of allocating the process pools.
+	 * @brief Process heap class, takes care of allocating the process pools.
 	 * @note This rely on Virtual Memory! Consider adding good vmem support when
 	 * @note porting to a new arch.
 	 */
-	class UserHeapManager final
+	class ProcessHeapHelper final
 	{
-		UserHeapManager() = delete;
+		ProcessHeapHelper() = delete;
 
 	public:
-		~UserHeapManager() = default;
+		~ProcessHeapHelper() = default;
 
 	public:
-		STATIC SizeT& Count()
+		STATIC SizeT& Count() noexcept
 		{
 			return s_NumPools;
 		}
 
-		STATIC Ref<Pmm>& Leak()
+		STATIC Ref<Pmm>& Leak() noexcept
 		{
 			return s_Pmm;
 		}
 
-		STATIC Boolean& IsEnabled()
+		STATIC Boolean& IsEnabled() noexcept
 		{
 			return s_PoolsAreEnabled;
 		}
 
-		STATIC MutableArray<Ref<PTEWrapper>>& The()
+		STATIC MutableArray<Ref<PTEWrapper>>& The() noexcept
 		{
 			return s_Pool;
 		}
@@ -74,10 +77,10 @@ namespace Kernel
 
 	//! declare fields
 
-	SizeT						  UserHeapManager::s_NumPools = 0UL;
-	Ref<Pmm>					  UserHeapManager::s_Pmm;
-	Boolean						  UserHeapManager::s_PoolsAreEnabled = true;
-	MutableArray<Ref<PTEWrapper>> UserHeapManager::s_Pool;
+	SizeT						  ProcessHeapHelper::s_NumPools = 0UL;
+	Ref<Pmm>					  ProcessHeapHelper::s_Pmm;
+	Boolean						  ProcessHeapHelper::s_PoolsAreEnabled = true;
+	MutableArray<Ref<PTEWrapper>> ProcessHeapHelper::s_Pool;
 
 	STATIC VoidPtr ke_find_unused_heap(Int32 flags);
 	STATIC Void	   ke_free_heap_internal(VoidPtr vaddr);
@@ -91,15 +94,15 @@ namespace Kernel
 	{
 		for (SizeT index = 0; index < kUserHeapMaxSz; ++index)
 		{
-			if (UserHeapManager::The()[index] &&
-				!UserHeapManager::The()[index].Leak().Leak().Present())
+			if (ProcessHeapHelper::The()[index] &&
+				!ProcessHeapHelper::The()[index].Leak().Leak().Present())
 			{
-				UserHeapManager::Leak().Leak().TogglePresent(
-					UserHeapManager::The()[index].Leak().Leak(), true);
+				ProcessHeapHelper::Leak().Leak().TogglePresent(
+					ProcessHeapHelper::The()[index].Leak().Leak(), true);
 				kcout << "[ke_find_unused_heap] Done, trying to make a pool now...\r";
 
 				return ke_make_heap_internal(
-					(VoidPtr)UserHeapManager::The()[index].Leak().Leak().VirtualAddress(),
+					(VoidPtr)ProcessHeapHelper::The()[index].Leak().Leak().VirtualAddress(),
 					flags);
 			}
 		}
@@ -115,7 +118,7 @@ namespace Kernel
 	{
 		if (virtualAddress)
 		{
-			UserHeapHeader* poolHdr = reinterpret_cast<UserHeapHeader*>(virtualAddress);
+			PROCESS_HEAP_HEADER* poolHdr = reinterpret_cast<PROCESS_HEAP_HEADER*>(virtualAddress);
 
 			if (!poolHdr->fFree)
 			{
@@ -130,7 +133,7 @@ namespace Kernel
 
 			kcout << "[ke_make_heap_internal] New allocation has been done.\n";
 			return reinterpret_cast<VoidPtr>(
-				(reinterpret_cast<UIntPtr>(virtualAddress) + sizeof(UserHeapHeader)));
+				(reinterpret_cast<UIntPtr>(virtualAddress) + sizeof(PROCESS_HEAP_HEADER)));
 		}
 
 		kcout << "[ke_make_heap_internal] Address is invalid";
@@ -143,8 +146,8 @@ namespace Kernel
 	/// @return
 	STATIC Void ke_free_heap_internal(VoidPtr virtualAddress)
 	{
-		UserHeapHeader* poolHdr = reinterpret_cast<UserHeapHeader*>(
-			reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(UserHeapHeader));
+		PROCESS_HEAP_HEADER* poolHdr = reinterpret_cast<PROCESS_HEAP_HEADER*>(
+			reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(PROCESS_HEAP_HEADER));
 
 		if (poolHdr->fMagic == kUserHeapMag)
 		{
@@ -170,18 +173,18 @@ namespace Kernel
 	 */
 	STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr)
 	{
-		if (UserHeapManager::The()[index])
+		if (ProcessHeapHelper::The()[index])
 		{
 			// ErrorOr<>::operator Boolean
 			/// if (address matches)
 			///     -> Free heap.
-			if (UserHeapManager::The()[index].Leak().Leak().VirtualAddress() ==
+			if (ProcessHeapHelper::The()[index].Leak().Leak().VirtualAddress() ==
 				(UIntPtr)ptr)
 			{
-				UserHeapManager::Leak().Leak().FreePage(
-					UserHeapManager::The()[index].Leak().Leak());
+				ProcessHeapHelper::Leak().Leak().FreePage(
+					ProcessHeapHelper::The()[index].Leak().Leak());
 
-				--UserHeapManager::Count();
+				--ProcessHeapHelper::Count();
 
 				ke_free_heap_internal(ptr);
 				ptr = nullptr;
@@ -198,24 +201,24 @@ namespace Kernel
 	/// @return a pool pointer with selected permissions.
 	VoidPtr rt_new_heap(Int32 flags)
 	{
-		if (!UserHeapManager::IsEnabled())
+		if (!ProcessHeapHelper::IsEnabled())
 			return nullptr;
 
-		if (UserHeapManager::Count() > kUserHeapMaxSz)
+		if (ProcessHeapHelper::Count() > kUserHeapMaxSz)
 			return nullptr;
 
 		if (VoidPtr ret = ke_find_unused_heap(flags))
 			return ret;
 
 		// this wasn't set to true
-		auto ref_page = UserHeapManager::Leak().Leak().RequestPage(
+		auto ref_page = ProcessHeapHelper::Leak().Leak().RequestPage(
 			((flags & kUserHeapUser)), (flags & kUserHeapRw));
 
 		if (ref_page)
 		{
 			///! reserve page.
-			UserHeapManager::The()[UserHeapManager::Count()].Leak() = ref_page;
-			auto& ref												= UserHeapManager::Count();
+			ProcessHeapHelper::The()[ProcessHeapHelper::Count()].Leak() = ref_page;
+			auto& ref												= ProcessHeapHelper::Count();
 
 			++ref; // increment the number of addresses we have now.
 
@@ -232,12 +235,12 @@ namespace Kernel
 	/// @return status code
 	Int32 rt_free_heap(VoidPtr ptr)
 	{
-		if (!UserHeapManager::IsEnabled())
+		if (!ProcessHeapHelper::IsEnabled())
 			return -1;
 
 		if (ptr)
 		{
-			SizeT base = UserHeapManager::Count();
+			SizeT base = ProcessHeapHelper::Count();
 
 			if (ke_check_and_free_heap(base, ptr))
 				return 0;

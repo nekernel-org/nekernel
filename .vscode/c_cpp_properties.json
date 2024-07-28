@@ -6,9 +6,7 @@
         "${workspaceFolder}/Kernel/**",
         "${workspaceFolder}/Drv/**",
         "${workspaceFolder}/Boot/**",
-        "${workspaceFolder}/**",
-        "${workspaceFolder}/Usr/Sys/CoreSystem/**",
-        "${workspaceFolder}/Usr/Sys/**"
+        "${workspaceFolder}/**"
       ],
       "defines": [
         "__MAHROUSS__",
@@ -18,19 +16,12 @@
         "__FSKIT_USE_NEWFS__",
         "__EFI_x86_64__",
         "__ATA_PIO__",
-        "__NEWOS_AMD64__"
+        "__NEWOS_AMD64__",
+        "__DEBUG__"
       ],
       "cStandard": "c17",
       "cppStandard": "c++20",
       "compilerPath": "/opt/homebrew/bin/x86_64-w64-mingw32-gcc",
-      "intelliSenseMode": "gcc-x64"
-    },
-    {
-      "name": "AppDev ",
-      "includePath": ["${workspaceFolder}/Usr/Developer/**"],
-      "defines": [],
-      "cStandard": "c17",
-      "cppStandard": "c++20",
       "intelliSenseMode": "gcc-x64"
     },
     {
@@ -39,9 +30,7 @@
         "${workspaceFolder}/Drv/**",
         "${workspaceFolder}/Kernel/**",
         "${workspaceFolder}/Boot/**",
-        "${workspaceFolder}/**",
-        "${workspaceFolder}/Usr/Sys/CoreSystem/**",
-        "${workspaceFolder}/Usr/Sys/**"
+        "${workspaceFolder}/**"
       ],
       "defines": [
         "__MAHROUSS__",
@@ -51,7 +40,8 @@
         "__FSKIT_USE_NEWFS__",
         "__EFI_x86_64__",
         "__ATA_PIO__",
-        "__NEWOS_AMD64__"
+        "__NEWOS_AMD64__",
+        "__DEBUG__"
       ],
       "cStandard": "c17",
       "cppStandard": "c++20",

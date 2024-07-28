@@ -30,6 +30,8 @@ EXTERN_C
 
 #define kCPUBackendName "AMD64"
 
+#define kSyscallRoute 0x32
+
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
@@ -37,6 +39,7 @@ EXTERN_C
 #define kTrapGate		 (0xEF)
 #define kTaskGate		 (0b10001100)
 #define kGdtCodeSelector (0x08)
+#define kGdtUserCodeSelector (0x10)
 #define cHeapStartOffset (0x10000000)
 
 namespace Kernel

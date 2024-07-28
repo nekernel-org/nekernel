@@ -43,9 +43,15 @@ namespace Kernel
 
 	void ProcessHeader::Crash()
 	{
-		kcout << (*this->Name == 0 ? "Unknown" : this->Name) << ": crashed. (id = ";
+		kcout << (*this->Name == 0 ? "Kernel" : this->Name) << ": crashed. (id = ";
 		kcout.Number(kErrorProcessFault);
 		kcout << ")\r";
+
+		if (Kernel::ProcessScheduler::The().Leak().CurrentTeam().AsArray().Count() < 1)
+		{
+			kcout << "*** BAD PROCESS ***\rTerminating as we are the only process...\r";
+			ke_stop(RUNTIME_CHECK_PROCESS);
+		}
 
 		this->Exit(kErrorProcessFault);
 	}

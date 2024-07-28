@@ -37,7 +37,7 @@ namespace Kernel
 		{
 			if (len > _len)
 			{
-				break;
+				return 0;
 			}
 
 			++len;

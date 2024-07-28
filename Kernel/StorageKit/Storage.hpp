@@ -6,11 +6,17 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
-#include <StorageKit/NVME.hxx>
-#include <StorageKit/AHCI.hpp>
-#include <StorageKit/SCSI.hxx>
+#define kDriveSectorSizeHDD		(512)
+#define kDriveSectorSizeSSD		(4096)
+#define kDriveSectorSizeOptical (2048)
 
-#define kDriveSectorSizeHDD	  (512)
-#define kDriveSectorSizeSSD	  (4096)
-#define kDriveSectorSizeCDROM (2048)
+namespace Kernel
+{
+	template <typename T>
+	class DeviceInterface;
+
+	class NVMEDeviceInterface;
+	class AHCIDeviceInterface;
+	class ATADeviceInterface;
+	class SCSIDeviceInterface;
+} // namespace Kernel

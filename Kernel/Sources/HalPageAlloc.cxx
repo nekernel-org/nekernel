@@ -29,7 +29,7 @@ namespace Kernel
 				Boolean Present;
 				Boolean ReadWrite;
 				Boolean User;
-				SizeT	PageSize;
+				SizeT	Size;
 			};
 
 			struct VirtualMemoryHeaderTraits
@@ -39,7 +39,7 @@ namespace Kernel
 				/// @return
 				VirtualMemoryHeader* Next(VirtualMemoryHeader* current)
 				{
-					return current + sizeof(PTE) + current->PageSize;
+					return current + sizeof(VirtualMemoryHeader) + current->Size;
 				}
 
 				/// @brief Get previous header.
@@ -47,7 +47,7 @@ namespace Kernel
 				/// @return
 				VirtualMemoryHeader* Prev(VirtualMemoryHeader* current)
 				{
-					return current - sizeof(PTE) - current->PageSize;
+					return current - sizeof(VirtualMemoryHeader)  - current->Size;
 				}
 			};
 		} // namespace Detail
@@ -80,7 +80,7 @@ namespace Kernel
 			vmHeader->Present	= true;
 			vmHeader->ReadWrite = rw;
 			vmHeader->User		= user;
-			vmHeader->PageSize	= size;
+			vmHeader->Size		= size;
 
 			kAllocationInProgress = false;
 
