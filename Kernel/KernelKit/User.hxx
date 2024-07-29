@@ -8,22 +8,27 @@
 #define _INC_PERMISSION_SEL_HXX_
 
 #include <CompilerKit/CompilerKit.hxx>
+#include <KernelKit/LPC.hxx>
 #include <NewKit/String.hpp>
 #include <NewKit/Defines.hpp>
 
 // user mode users.
-#define kSuperUser "Admin"
+#define kSuperUser "Super"
 #define kGuestUser "Guest"
 
-#define kUsersDir "\\Users\\Store\\"
+#define kUsersFile "\\Users\\$Stores$"
 
-#define kMaxUserNameLen (255)
+#define kMaxUserNameLen	 (255)
+#define kMaxUserTokenLen (4096)
 
 // hash 'password' -> base64+md5 encoded data
 // use this data to then fetch specific data of the user..
 
 namespace Kernel
 {
+	class User;
+	class UserView;
+
 	enum class RingKind
 	{
 		kRingStdUser   = 1,
@@ -50,16 +55,23 @@ namespace Kernel
 		bool operator!=(const User& lhs);
 
 	public:
-		/// @brief Getters.
-		const RingKind&	 Ring() noexcept;
+		/// @brief Get software ring
+		const RingKind& Ring() noexcept;
+		/// @brief Get user name
 		const StringView Name() noexcept;
 
+		/// @brief Is he a standard user?
 		Bool IsStdUser() noexcept;
+
+		/// @brief Is she a super user?
 		Bool IsSuperUser() noexcept;
 
 	private:
 		RingKind   fRing{RingKind::kRingStdUser};
 		StringView fUserName{kMaxUserNameLen};
+		VoidPtr	   fUserToken{nullptr};
+
+		friend UserView;
 	};
 
 	class UserView final
@@ -76,50 +88,9 @@ namespace Kernel
 	public:
 		NEWOS_COPY_DELETE(UserView);
 
-		STATIC UserView* The() noexcept
-		{
-			UserView* view = nullptr;
-
-			if (!view)
-				view = new UserView();
-
-			return view;
-		}
-
-		Void LogIn(User* user) noexcept
-		{
-			if (fCurrentUser)
-			{
-				if (!fLastLoggedOffUser)
-				{
-					fLastLoggedOffUser = fCurrentUser;
-				}
-				else
-				{
-					this->LogOff();
-				}
-			}
-
-			fCurrentUser = user;
-		}
-
-		Void LogOff() noexcept
-		{
-			if (!fCurrentUser)
-				return;
-
-			// an illegal operation just occured, we can't risk more.
-			if (fCurrentUser == fRootUser)
-			{
-			    ke_stop(RUNTIME_CHECK_BOOTSTRAP);
-			}
-
-			if (fLastLoggedOffUser)
-				delete fLastLoggedOffUser;
-
-			fLastLoggedOffUser = nullptr;
-			fLastLoggedOffUser = fCurrentUser;
-		}
+		STATIC UserView* The() noexcept;
+		Void LogIn(User* user, const Char* password) noexcept;
+		Void LogOff() noexcept;
 	};
 } // namespace Kernel
 

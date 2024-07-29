@@ -13,7 +13,7 @@
 #include <KernelKit/SMPManager.hpp>
 #include <KernelKit/Heap.hxx>
 #include <NewKit/String.hpp>
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 
 ///! BUGS: 0
 

@@ -10,7 +10,7 @@
 #include <Modules/ATA/ATA.hxx>
 #include <Modules/Flash/Flash.hxx>
 #include <FSKit/NewFS.hxx>
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 #include <NewKit/Crc32.hpp>
 #include <NewKit/KernelCheck.hpp>
 #include <NewKit/String.hpp>

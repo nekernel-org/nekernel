@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 #include <NewKit/KernelCheck.hpp>
 
 namespace Kernel

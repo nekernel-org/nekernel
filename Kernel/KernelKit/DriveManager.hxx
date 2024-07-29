@@ -11,7 +11,7 @@
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DebugOutput.hpp>
 #include <KernelKit/DeviceManager.hpp>
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 

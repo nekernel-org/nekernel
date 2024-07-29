@@ -47,6 +47,7 @@ inline constexpr HError kErrorAsync				 = 57;
 inline constexpr HError kErrorNonBlocking		 = 58;
 inline constexpr HError kErrorIPC				 = 59;
 inline constexpr HError kErrorSign				 = 60;
+inline constexpr HError kErrorInvalidCreds		 = 61;
 inline constexpr HError kErrorUnimplemented		 = 0;
 
 inline HError kLastError = 0;
