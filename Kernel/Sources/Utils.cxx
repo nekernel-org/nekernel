@@ -29,9 +29,6 @@ namespace Kernel
 
 	Size rt_string_len(const Char* str, SizeT _len)
 	{
-		if (*str == '\0')
-			return 0;
-
 		Size len{0};
 		while (str[len] != '\0')
 		{
@@ -40,7 +37,7 @@ namespace Kernel
 				return 0;
 			}
 
-			++len;
+			len++;
 		}
 
 		return len;

@@ -190,9 +190,8 @@ namespace Kernel::Detail
 	{
 
 		Kernel::UserView::The()->fRootUser = new User(RingKind::kRingSuperUser, kSuperUser);
-		Kernel::kcout << "newoskrnl: logged in as: " << Kernel::UserView::The()->fRootUser->Name().CData() << Kernel::endl;
 
-		Kernel::UserView::The()->LogIn(Kernel::UserView::The()->fRootUser, "");
+		Kernel::UserView::The()->LogIn(Kernel::UserView::The()->fRootUser, nullptr);
 
 		Kernel::kcout << "newoskrnl: " << cKernelVersion.GetKey().CData() << ": " << Kernel::number(cKernelVersion.GetValue()) << Kernel::endl;
 	}

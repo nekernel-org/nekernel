@@ -40,7 +40,7 @@ namespace Kernel
 	class User final
 	{
 	public:
-		explicit User() = default;
+		explicit User() = delete;
 
 		User(const Int32& sel, const Char* userName);
 		User(const RingKind& kind, const Char* userName);
@@ -58,7 +58,7 @@ namespace Kernel
 		/// @brief Get software ring
 		const RingKind& Ring() noexcept;
 		/// @brief Get user name
-		const StringView Name() noexcept;
+		StringView& Name() noexcept;
 
 		/// @brief Is he a standard user?
 		Bool IsStdUser() noexcept;
@@ -68,7 +68,7 @@ namespace Kernel
 
 	private:
 		RingKind   fRing{RingKind::kRingStdUser};
-		StringView fUserName{kMaxUserNameLen};
+		StringView fUserName;
 		VoidPtr	   fUserToken{nullptr};
 
 		friend UserView;

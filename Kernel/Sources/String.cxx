@@ -214,7 +214,7 @@ namespace Kernel
 		return ret;
 	}
 
-	STATIC void rt_string_append(Char* lhs, Char* rhs, Int cur)
+	STATIC void rt_string_append(Char* lhs, const Char* rhs, Int32 cur)
 	{
 		SizeT sz_rhs = rt_string_len(rhs);
 		SizeT rhs_i = 0;
@@ -223,16 +223,11 @@ namespace Kernel
 		{
 			lhs[rhs_i + cur] = rhs[rhs_i];
 		}
-
-		lhs[rhs_i + cur] = 0;
 	}
 
 	StringView& StringView::operator+=(const Char* rhs)
 	{
-		if (rt_string_len(rhs) > this->Length())
-			return *this;
-
-		rt_string_append(this->fData, const_cast<Char*>(rhs), this->fCur);
+		rt_string_append(this->fData, rhs, this->fCur);
 		this->fCur += rt_string_len(rhs);
 
 		return *this;

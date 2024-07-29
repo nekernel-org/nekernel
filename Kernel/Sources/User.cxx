@@ -23,13 +23,16 @@ namespace Kernel
 		: fRing((RingKind)sel)
 	{
 		MUST_PASS(sel >= 0);
-		this->fUserName += userName;
+
+		auto view = StringBuilder::Construct(userName);
+		this->fUserName += view.Leak().Leak();
 	}
 
 	User::User(const RingKind& ringKind, const Char* userName)
 		: fRing(ringKind)
 	{
-		this->fUserName += userName;
+		auto view = StringBuilder::Construct(userName);
+		this->fUserName += view.Leak().Leak();
 	}
 
 	User::~User() = default;
@@ -44,7 +47,7 @@ namespace Kernel
 		return lhs.fRing != this->fRing;
 	}
 
-	const StringView User::Name() noexcept
+	StringView& User::Name() noexcept
 	{
 		return this->fUserName;
 	}
@@ -111,6 +114,7 @@ namespace Kernel
 		}
 
 		fCurrentUser = user;
+		Kernel::kcout << "newoskrnl: logged in as: " << fCurrentUser->Name().CData() << Kernel::endl;
 	}
 
 	Void UserView::LogOff() noexcept
