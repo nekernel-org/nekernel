@@ -22,29 +22,26 @@ namespace Kernel
 	///! A HardwareThread class takes care of it's owned hardware thread.
 	///! It has a stack for it's core.
 
-	///! @brief constructor
+	///! @brief C++ constructor.
 	HardwareThread::HardwareThread() = default;
 
-	///! @brief destructor
+	///! @brief C++ destructor.
 	HardwareThread::~HardwareThread() = default;
 
-	//! @brief returns the id
-
+	//! @brief returns the id of the thread.
 	const ThreadID& HardwareThread::ID() noexcept
 	{
 		return fID;
 	}
 
-	//! @brief returns the kind
-
+	//! @brief returns the kind of thread we have.
 	const ThreadKind& HardwareThread::Kind() noexcept
 	{
 		return fKind;
 	}
 
-	//! @brief is the core busy?
-
-	bool HardwareThread::IsBusy() noexcept
+	//! @brief is the thread busy?
+	Bool HardwareThread::IsBusy() noexcept
 	{
 		return fBusy;
 	}
@@ -57,7 +54,7 @@ namespace Kernel
 		return fStack;
 	}
 
-	void HardwareThread::Busy(const bool busy) noexcept
+	Void HardwareThread::Busy(const Bool busy) noexcept
 	{
 		fBusy = busy;
 	}
@@ -69,7 +66,7 @@ namespace Kernel
 
 	/// @brief Wakeup the processor.
 
-	void HardwareThread::Wake(const bool wakeup) noexcept
+	Void HardwareThread::Wake(const bool wakeup) noexcept
 	{
 		fWakeup = wakeup;
 
@@ -79,13 +76,13 @@ namespace Kernel
 			rt_wakeup_thread(fStack);
 	}
 
-	extern bool rt_check_stack(HAL::StackFramePtr stackPtr);
+	EXTERN Bool rt_check_stack(HAL::StackFramePtr stackPtr);
 
 	/// @brief Switch to hardware thread.
 	/// @param stack the new hardware thread.
 	/// @retval true stack was changed, code is running.
 	/// @retval false stack is invalid, previous code is running.
-	bool HardwareThread::Switch(HAL::StackFramePtr stack)
+	Bool HardwareThread::Switch(HAL::StackFramePtr stack)
 	{
 		if (!rt_check_stack(stack))
 		{
