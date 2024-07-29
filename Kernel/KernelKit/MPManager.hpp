@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_SMP_MANAGER_HPP__
-#define __INC_SMP_MANAGER_HPP__
+#ifndef __INC_MP_MANAGER_HPP__
+#define __INC_MP_MANAGER_HPP__
 
 #include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hxx>
@@ -65,30 +65,30 @@ namespace Kernel
 		const ThreadID&	  ID() noexcept;
 
 	private:
-		HAL::StackFrame* fStack;
+		HAL::StackFrame* fStack{nullptr};
 		ThreadKind		 fKind;
 		ThreadID		 fID;
+		ProcessID		 fSourcePID;
 		bool			 fWakeup;
 		bool			 fBusy;
-		Int64			 fPID;
 
 	private:
-		friend class SMPManager;
+		friend class MPManager;
 	};
 
 	///
-	/// \name SMPManager
+	/// \name MPManager
 	/// @brief Multi processor manager to manage other cores and dispatch tasks.
 	///
 
-	class SMPManager final
+	class MPManager final
 	{
 	private:
-		explicit SMPManager();
+		explicit MPManager();
 
 	public:
-		~SMPManager();
-		NEWOS_COPY_DEFAULT(SMPManager);
+		~MPManager();
+		NEWOS_COPY_DEFAULT(MPManager);
 
 	public:
 		bool			   Switch(HAL::StackFramePtr the);
@@ -102,7 +102,7 @@ namespace Kernel
 	public:
 		/// @brief Shared instance of the SMP Manager.
 		/// @return the reference to the smp manager.
-		static Ref<SMPManager> The();
+		static Ref<MPManager> The();
 
 	public:
 		/// @brief Returns the amount of threads present in the system.
@@ -123,4 +123,4 @@ namespace Kernel
 	Void rt_hang_thread(HAL::StackFramePtr stack);
 } // namespace Kernel
 
-#endif // !__INC_SMP_MANAGER_HPP__
+#endif // !__INC_MP_MANAGER_HPP__

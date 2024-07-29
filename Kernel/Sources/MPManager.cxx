@@ -6,12 +6,12 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/SMPManager.hpp>
+#include <KernelKit/MPManager.hpp>
 #include <CFKit/Property.hpp>
 
 ///! BUGS: 0
 
-///! @file SMPManager.cxx
+///! @file MPManager.cxx
 ///! @brief This file handles multi processing in Kernel.
 ///! @brief Multi processing is needed for multi-tasking operations.
 
@@ -120,7 +120,7 @@ namespace Kernel
 	//! @brief Constructor and destructor
 
 	///! @brief Default constructor.
-	SMPManager::SMPManager()
+	MPManager::MPManager()
 	{
 		StringView strCoreName(512);
 		strCoreName += "\\Properties\\Smp\\SchedulerClass";
@@ -132,28 +132,28 @@ namespace Kernel
 	}
 
 	///! @brief Default destructor.
-	SMPManager::~SMPManager() = default;
+	MPManager::~MPManager() = default;
 
 	/// @brief Shared singleton function
-	Ref<SMPManager> SMPManager::The()
+	Ref<MPManager> MPManager::The()
 	{
-		static SMPManager manager;
+		static MPManager manager;
 		return {manager};
 	}
 
 	/// @brief Get Stack Frame of Core
-	HAL::StackFramePtr SMPManager::Leak() noexcept
+	HAL::StackFramePtr MPManager::Leak() noexcept
 	{
 		if (fThreadList[fCurrentThread].Leak() &&
 			ProcessHelper::TheCurrentPID() ==
-				fThreadList[fCurrentThread].Leak().Leak()->fPID)
+				fThreadList[fCurrentThread].Leak().Leak()->fSourcePID)
 			return fThreadList[fCurrentThread].Leak().Leak()->fStack;
 
 		return nullptr;
 	}
 
 	/// @brief Finds and switch to a free core.
-	bool SMPManager::Switch(HAL::StackFramePtr stack)
+	bool MPManager::Switch(HAL::StackFramePtr stack)
 	{
 		if (stack == nullptr)
 			return false;
@@ -188,7 +188,7 @@ namespace Kernel
 
 			fThreadList[idx].Leak().Leak()->Switch(fThreadList[idx].Leak().Leak()->fStack);
 
-			fThreadList[idx].Leak().Leak()->fPID = ProcessHelper::TheCurrentPID();
+			fThreadList[idx].Leak().Leak()->fSourcePID = ProcessHelper::TheCurrentPID();
 
 			fThreadList[idx].Leak().Leak()->Busy(false);
 
@@ -203,7 +203,7 @@ namespace Kernel
 	 * @param idx the index
 	 * @return the reference to the hardware thread.
 	 */
-	Ref<HardwareThread*> SMPManager::operator[](const SizeT& idx)
+	Ref<HardwareThread*> MPManager::operator[](const SizeT& idx)
 	{
 		if (idx == 0)
 		{
@@ -233,7 +233,7 @@ namespace Kernel
 	 * Check if thread pool isn't empty.
 	 * @return
 	 */
-	SMPManager::operator bool() noexcept
+	MPManager::operator bool() noexcept
 	{
 		return !fThreadList.Empty();
 	}
@@ -242,14 +242,14 @@ namespace Kernel
 	 * Reverse operator bool
 	 * @return
 	 */
-	bool SMPManager::operator!() noexcept
+	bool MPManager::operator!() noexcept
 	{
 		return fThreadList.Empty();
 	}
 
 	/// @brief Returns the amount of core present.
 	/// @return the number of cores.
-	SizeT SMPManager::Count() noexcept
+	SizeT MPManager::Count() noexcept
 	{
 		return fThreadList.Count();
 	}
