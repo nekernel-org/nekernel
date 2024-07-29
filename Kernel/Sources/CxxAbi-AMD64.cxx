@@ -8,7 +8,7 @@
 
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/CxxAbi.hpp>
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 
 atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
 

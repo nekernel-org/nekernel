@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <NetworkKit/IPCEP.hxx>
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 
 using namespace Kernel;

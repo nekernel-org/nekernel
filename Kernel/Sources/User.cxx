@@ -12,6 +12,8 @@
 
 #include <KernelKit/User.hxx>
 #include <NewKit/KernelCheck.hpp>
+#include <KernelKit/FileManager.hpp>
+#include <KernelKit/ProcessScheduler.hxx>
 
 /// bugs 0
 
@@ -60,5 +62,72 @@ namespace Kernel
 	Bool User::IsSuperUser() noexcept
 	{
 		return this->Ring() == RingKind::kRingSuperUser;
+	}
+
+	UserView* UserView::The() noexcept
+	{
+		UserView* view = nullptr;
+
+		if (!view)
+			view = new UserView();
+
+		return view;
+	}
+
+	Void UserView::LogIn(User* user, const Char* password) noexcept
+	{
+		if (!password ||
+			!user)
+		{
+			ErrLocal() = kErrorInvalidData;
+
+			return;
+		}
+
+		FileStreamUTF8 file(kUsersFile, "rb");
+
+		auto token = file.Read(password);
+
+		if (!token)
+		{
+			ErrLocal() = kErrorInvalidCreds;
+
+			kcout << "newoskrnl: Incorrect credentials.\r";
+			return;
+		}
+
+		user->fUserToken = token;
+
+		if (fCurrentUser)
+		{
+			if (!fLastLoggedOffUser)
+			{
+				fLastLoggedOffUser = fCurrentUser;
+			}
+			else
+			{
+				this->LogOff();
+			}
+		}
+
+		fCurrentUser = user;
+	}
+
+	Void UserView::LogOff() noexcept
+	{
+		if (!fCurrentUser)
+			return;
+
+		// an illegal operation just occured, we can't risk more.
+		if (fCurrentUser == fRootUser)
+		{
+			ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+		}
+
+		if (fLastLoggedOffUser)
+			delete fLastLoggedOffUser;
+
+		fLastLoggedOffUser = nullptr;
+		fLastLoggedOffUser = fCurrentUser;
 	}
 } // namespace Kernel

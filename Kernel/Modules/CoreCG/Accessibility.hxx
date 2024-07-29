@@ -8,7 +8,7 @@
 #define __CORECG_ACCESS_HXX__
 
 #include <NewKit/NewKit.hpp>
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 #include <Modules/CoreCG/CoreCG.hxx>
 #include <Modules/CoreCG/Lerp.hxx>
 #include <ArchKit/ArchKit.hpp>

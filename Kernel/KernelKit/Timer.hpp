@@ -8,7 +8,7 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <CompilerKit/CompilerKit.hxx>
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 
 namespace Kernel
 {

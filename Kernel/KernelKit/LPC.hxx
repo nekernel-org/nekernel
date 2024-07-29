@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.hpp>
 
-/// @file HError.hpp
+/// @file LPC.hxx
 /// @brief Local Process Codes.
 
 #define ErrLocalIsOk()	 (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() == Kernel::kErrorSuccess)
@@ -48,6 +48,7 @@ namespace Kernel
 	inline constexpr HError kErrorNonBlocking		 = 58;
 	inline constexpr HError kErrorIPC				 = 59;
 	inline constexpr HError kErrorSign				 = 60;
+	inline constexpr HError kErrorInvalidCreds		 = 61;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
 	Void	err_bug_check_raise(void) noexcept;

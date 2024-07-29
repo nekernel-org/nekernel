@@ -22,7 +22,7 @@
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
-#include <KernelKit/HError.hpp>
+#include <KernelKit/LPC.hxx>
 #include <KernelKit/DebugOutput.hpp>
 #include <NewKit/Stream.hpp>
 #include <NewKit/ErrorOr.hpp>
