@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <DDK/KernelString.h>
+#include <DDKit/KernelString.h>
 
 /// @brief print character into UART.
 DK_EXTERN void kernelPrintChar(const char ch);

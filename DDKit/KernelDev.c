@@ -6,8 +6,8 @@
 
 ------------------------------------------- */
 
-#include <DDK/KernelDev.h>
-#include <DDK/KernelString.h>
+#include <DDKit/KernelDev.h>
+#include <DDKit/KernelString.h>
 
 /// @brief Open a new binary device from path.
 DK_EXTERN kernelDeviceRef kernelOpenDevice(const char* devicePath)

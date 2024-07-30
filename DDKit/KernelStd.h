@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <stdint.h>
+#include <stddef.h>
+
 #if defined(__cplusplus)
 #define DK_EXTERN extern "C"
 #define nil		  nullptr
@@ -18,8 +21,9 @@
 #define DK_FINAL
 #endif // defined(__cplusplus)
 
-#include <stdint.h>
-#include <stddef.h>
+#ifndef __KERNEL__
+#error !!! including header in kernel mode !!!
+#endif // __KERNEL__
 
 struct DDK_STATUS_STRUCT;
 

@@ -1,0 +1,5 @@
+<SourceDeploy>
+<HiddenFiles>
+    <SourceFile>*.cxx</SourceFile>
+</HiddenFiles>
+</SourceDeploy>
