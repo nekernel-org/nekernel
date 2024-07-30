@@ -1,5 +1,6 @@
 <SourceDeploy>
 <HiddenFiles>
     <SourceFile>*.cxx</SourceFile>
+    <SourceFile>*.drawio</SourceFile>
 </HiddenFiles>
 </SourceDeploy>
