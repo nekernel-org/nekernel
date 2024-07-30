@@ -21,7 +21,7 @@ namespace Kernel
 	STATIC SizeT	   kHeapCount = 0UL;
 	STATIC PageManager kHeapPageManager;
 
-	namespace Details
+	namespace Detail
 	{
 		/// @brief Kernel heap information block.
 		/// Located before the address bytes.
@@ -55,9 +55,9 @@ namespace Kernel
 		if (!allocatedPtr || newSz < 1)
 			return nullptr;
 
-		Details::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
-			reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)allocatedPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
+		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)allocatedPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 		heapInfoBlk->fTargetPtrSize = newSz;
 
@@ -83,8 +83,8 @@ namespace Kernel
 
 		auto wrapper = kHeapPageManager.Request(rw, user, false, szFix);
 
-		Details::HEAP_INFORMATION_BLOCK_PTR heapInfo =
-			reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
+		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfo =
+			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				wrapper.VirtualAddress());
 
 		heapInfo->fTargetPtrSize = szFix;
@@ -96,7 +96,7 @@ namespace Kernel
 		++kHeapCount;
 
 		return reinterpret_cast<VoidPtr>(wrapper.VirtualAddress() +
-										 sizeof(Details::HEAP_INFORMATION_BLOCK));
+										 sizeof(Detail::HEAP_INFORMATION_BLOCK));
 	}
 
 	/// @brief Makes a page heap.
@@ -106,14 +106,14 @@ namespace Kernel
 	{
 		if (kHeapCount < 1)
 			return -kErrorInternal;
-		if (((IntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK)) <= 0)
+		if (((IntPtr)heapPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK)) <= 0)
 			return -kErrorInternal;
 		if (((IntPtr)heapPtr - kBadPtr) < 0)
 			return -kErrorInternal;
 
-		Details::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
-			reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
+		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heapPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 		heapInfoBlk->fPagePtr = 1;
 
@@ -127,14 +127,14 @@ namespace Kernel
 	{
 		if (kHeapCount < 1)
 			return -kErrorInternal;
-		if (((IntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK)) <= 0)
+		if (((IntPtr)heapPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK)) <= 0)
 			return -kErrorInternal;
 		if (((IntPtr)heapPtr - kBadPtr) < 0)
 			return -kErrorInternal;
 
-		Details::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
-			reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
+		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heapPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 		if (heapInfoBlk && heapInfoBlk->fMagic == kKernelHeapMagic)
 		{
@@ -181,9 +181,9 @@ namespace Kernel
 
 		if (heapPtr)
 		{
-			Details::HEAP_INFORMATION_BLOCK_PTR virtualAddress =
-				reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
+			Detail::HEAP_INFORMATION_BLOCK_PTR virtualAddress =
+				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
+					(UIntPtr)heapPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 			if (virtualAddress->fPresent && virtualAddress->fMagic == kKernelHeapMagic)
 			{
@@ -201,9 +201,9 @@ namespace Kernel
 	{
 		if (heapPtr)
 		{
-			Details::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
-				reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
+			Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
+					(UIntPtr)heapPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 			if (heapInfoBlk->fPresent && kKernelHeapMagic == heapInfoBlk->fMagic)
 			{
