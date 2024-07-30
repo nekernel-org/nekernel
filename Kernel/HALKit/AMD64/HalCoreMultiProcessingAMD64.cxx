@@ -120,9 +120,6 @@ namespace Kernel::HAL
 
 	STATIC MadtType* kApicInfoBlock = nullptr;
 
-	EXTERN_C SizeT kApicMadtAddressesCount = 0UL;
-	EXTERN_C SizeT cBspDone				   = 0UL;
-
 	enum
 	{
 		cAPICEOI = 0xb0,
@@ -225,15 +222,7 @@ namespace Kernel::HAL
 
 		if (kApicMadt != nullptr)
 		{
-			UInt8 bsp_id, bsp_done = No;
-
-			UInt32	num_cores			= 4;
-			UInt32* local_apic_ptr		= nullptr;
-			UInt32* local_apic_ids[255] = {0};
-
-			MadtType* type = (MadtType*)kApicMadt;
-
-			local_apic_ptr = (UInt32*)type->Address;
+			kApicInfoBlock = (MadtType*)kApicMadt;
 		}
 		else
 		{

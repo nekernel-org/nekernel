@@ -12,7 +12,7 @@ namespace Kernel
 {
 	/// @brief wakes up thread.
 	/// wakes up thread from hang.
-	void rt_wakeup_thread(HAL::StackFrame* stack)
+	void mp_wakeup_thread(HAL::StackFrame* stack)
 	{
 		HAL::rt_cli();
 
@@ -23,7 +23,7 @@ namespace Kernel
 
 	/// @brief makes the thread sleep on a loop.
 	/// hooks and hangs thread to prevent code from executing.
-	void rt_hang_thread(HAL::StackFrame* stack)
+	void mp_hang_thread(HAL::StackFrame* stack)
 	{
 		while (true)
 		{

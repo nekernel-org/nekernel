@@ -21,6 +21,8 @@ namespace Kernel
 	STATIC SizeT	   kHeapCount = 0UL;
 	STATIC PageManager kHeapPageManager;
 
+	STATIC Bool kOperationInProgress = No;
+
 	namespace Detail
 	{
 		/// @brief Kernel heap information block.
@@ -45,6 +47,26 @@ namespace Kernel
 		};
 
 		typedef HEAP_INFORMATION_BLOCK* HEAP_INFORMATION_BLOCK_PTR;
+
+		Bool mm_alloc_init_timeout(Void) noexcept
+		{
+			SizeT timOut = 0U;
+
+			while (kOperationInProgress)
+			{
+				++timOut;
+				if (timOut > 10000000)
+					return false;
+			}
+
+			kOperationInProgress = Yes;
+			return true;
+		}
+
+		Void mm_alloc_fini_timeout(Void) noexcept
+		{
+			kOperationInProgress = No;
+		}
 	} // namespace Detail
 
 	/// @brief Declare a new size for allocatedPtr.
@@ -76,6 +98,8 @@ namespace Kernel
 	/// @return the pointer
 	VoidPtr mm_new_ke_heap(const SizeT sz, const bool rw, const bool user)
 	{
+		Detail::mm_alloc_init_timeout();
+
 		auto szFix = sz;
 
 		if (szFix == 0)
@@ -95,6 +119,8 @@ namespace Kernel
 
 		++kHeapCount;
 
+		Detail::mm_alloc_fini_timeout();
+
 		return reinterpret_cast<VoidPtr>(wrapper.VirtualAddress() +
 										 sizeof(Detail::HEAP_INFORMATION_BLOCK));
 	}
@@ -111,11 +137,15 @@ namespace Kernel
 		if (((IntPtr)heapPtr - kBadPtr) < 0)
 			return -kErrorInternal;
 
+		Detail::mm_alloc_init_timeout();
+
 		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heapPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 		heapInfoBlk->fPagePtr = 1;
+
+		Detail::mm_alloc_fini_timeout();
 
 		return 0;
 	}
@@ -132,6 +162,8 @@ namespace Kernel
 		if (((IntPtr)heapPtr - kBadPtr) < 0)
 			return -kErrorInternal;
 
+		Detail::mm_alloc_init_timeout();
+
 		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heapPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
@@ -140,6 +172,7 @@ namespace Kernel
 		{
 			if (!heapInfoBlk->fPresent)
 			{
+				Detail::mm_alloc_fini_timeout();
 				return -kErrorHeapNotPresent;
 			}
 
@@ -165,6 +198,9 @@ namespace Kernel
 			kHeapPageManager.Free(pteAddress);
 
 			--kHeapCount;
+
+			Detail::mm_alloc_fini_timeout();
+
 			return 0;
 		}
 

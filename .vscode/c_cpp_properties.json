@@ -16,7 +16,8 @@
         "__EFI_x86_64__",
         "__ATA_PIO__",
         "__NEWOS_AMD64__",
-        "__DEBUG__"
+        "__DEBUG__",
+        "__NEWOS_OTA__"
       ],
       "cStandard": "c17",
       "cppStandard": "c++20",
@@ -39,7 +40,8 @@
         "__EFI_x86_64__",
         "__ATA_PIO__",
         "__NEWOS_AMD64__",
-        "__DEBUG__"
+        "__DEBUG__",
+        "__NEWOS_OTA__"
       ],
       "cStandard": "c17",
       "cppStandard": "c++20",

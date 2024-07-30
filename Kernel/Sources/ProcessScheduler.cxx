@@ -32,7 +32,7 @@ namespace Kernel
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
-	const Int32& rt_get_exit_code() noexcept
+	const Int32& sched_get_exit_code(void) noexcept
 	{
 		return cLastExitCode;
 	}

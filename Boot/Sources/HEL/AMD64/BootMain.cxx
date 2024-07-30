@@ -197,6 +197,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
+	// ------------------------------------------ //
+	// draw background color.
+	// ------------------------------------------ //
+
+	CGInit();
+	CGDrawInRegion(CGColor(0xaa, 0x00, 0x00), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
+	CGFini();
+
 	// ---------------------------------------------------- //
 	// The following checks for an exisiting partition
 	// inside the disk, if it doesn't have one,
@@ -227,11 +235,17 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	Boot::ProgramLoader* loader = nullptr;
 
+	// ------------------------------------------ //
+	// If we succeed in reading the blob, then execute it. 
+	// ------------------------------------------ //
+
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::ProgramLoader(readerKernel.Blob());
-		loader->SetName("\"newoskrnl.exe\" (ZKA)");
+		loader->SetName("\"newoskrnl.exe\" (ZKA 64-bit MP)");
 	}
+
+	writer.Write("Running: ").Write(loader->GetName()).Write("\r");
 
 #endif // ifdef __NEWOS_OTA__
 

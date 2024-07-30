@@ -90,7 +90,7 @@ namespace Kernel
 		NEWOS_COPY_DELETE(UserView);
 
 		STATIC UserView* The() noexcept;
-		Void LogIn(User* user, const Char* password) noexcept;
+		Bool LogIn(User* user, const Char* password) noexcept;
 		Void LogOff() noexcept;
 	};
 } // namespace Kernel

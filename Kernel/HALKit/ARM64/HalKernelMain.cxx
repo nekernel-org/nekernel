@@ -150,7 +150,7 @@ EXTERN_C void hal_init_platform(
 		if (!rdxEi)
 			return;
 
-		rdxEi->fCode = Kernel::rt_get_exit_code();
+		rdxEi->fCode = Kernel::sched_get_exit_code();
 	};
 
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {

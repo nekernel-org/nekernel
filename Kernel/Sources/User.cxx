@@ -15,6 +15,8 @@
 #include <KernelKit/FileManager.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
 
+#include <KernelKit/Heap.hxx>
+
 /// bugs 0
 
 namespace Kernel
@@ -77,17 +79,23 @@ namespace Kernel
 		return view;
 	}
 
-	Void UserView::LogIn(User* user, const Char* password) noexcept
+	Bool UserView::LogIn(User* user, const Char* password) noexcept
 	{
 		if (!password ||
 			!user)
 		{
 			ErrLocal() = kErrorInvalidData;
 
-			return;
+			kcout << "newoskrnl: Incorrect data given.\r";
+
+			return false;
 		}
 
 		FileStreamUTF8 file(kUsersFile, "rb");
+
+		// ------------------------------------------ //
+		// Retrieve token from a specific file fork.
+		// ------------------------------------------ //
 
 		auto token = file.Read(password);
 
@@ -96,8 +104,24 @@ namespace Kernel
 			ErrLocal() = kErrorInvalidCreds;
 
 			kcout << "newoskrnl: Incorrect credentials.\r";
-			return;
+			return false;
 		}
+		else
+		{
+			if (rt_string_cmp((Char*)token, const_cast<Char*>(password), rt_string_len(password)))
+			{
+				kcout << "newoskrnl: Incorrect credentials.\r";
+
+				mm_delete_ke_heap(token);
+				return false;
+			}
+			
+			kcout << "newoskrnl: Correct credentials, moving on.\r";
+		}
+
+		// ------------------------------------------ //
+		// This was successful, continue.
+		// ------------------------------------------ //
 
 		user->fUserToken = token;
 
@@ -115,6 +139,8 @@ namespace Kernel
 
 		fCurrentUser = user;
 		Kernel::kcout << "newoskrnl: logged in as: " << fCurrentUser->Name().CData() << Kernel::endl;
+
+		return true;
 	}
 
 	Void UserView::LogOff() noexcept

@@ -18,8 +18,6 @@
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/PEFSharedObject.hxx>
 
-#define kUPPNameLen 64
-
 namespace Kernel
 {
 	/// @brief Main process entrypoint.
@@ -29,5 +27,5 @@ namespace Kernel
 	/// @note This sets up a new stack, anything on the main function that calls the kernel will not be accessible.
 	/// @param main the start of the process.
 	/// @return if the process was started or not.
-	bool execute_from_image(MainKind main, const char* processName);
+	bool execute_from_image(MainKind main, const char* processName) noexcept;
 } // namespace Kernel

@@ -285,7 +285,7 @@ namespace Kernel
 		STATIC SizeT StartScheduling();
 	};
 
-	const Int32& rt_get_exit_code() noexcept;
+	const Int32& sched_get_exit_code(void) noexcept;
 } // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.hxx>

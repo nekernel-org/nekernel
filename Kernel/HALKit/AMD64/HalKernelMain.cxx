@@ -24,8 +24,6 @@
 	X;                 \
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 
-
-
 Kernel::Property cKernelVersion;
 Kernel::Property cAutoFormatDisk;
 
@@ -34,19 +32,19 @@ EXTERN_C void KeMain();
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
-struct PACKED HeapAllocInfo final
+struct PACKED HEAP_ALLOC_INFO final
 {
 	Kernel::VoidPtr fThe;
 	Kernel::Size	fTheSz;
 };
 
-struct PACKED ProcessBlockInfo final
+struct PACKED PROCESS_BLOCK_INFO final
 {
 	ThreadInformationBlock* fTIB;
 	ThreadInformationBlock* fPIB;
 };
 
-struct PACKED ProcessExitInfo final
+struct PACKED PROCESS_EXIT_INFO final
 {
 	STATIC constexpr auto cReasonLen = 512;
 
@@ -146,7 +144,7 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		// get HAC struct.
-		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
+		HEAP_ALLOC_INFO* rdxInf = reinterpret_cast<HEAP_ALLOC_INFO*>(rdx);
 
 		if (!rdxInf)
 			return;
@@ -157,7 +155,7 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		// get HAC struct.
-		HeapAllocInfo* rdxInf = reinterpret_cast<HeapAllocInfo*>(rdx);
+		HEAP_ALLOC_INFO* rdxInf = reinterpret_cast<HEAP_ALLOC_INFO*>(rdx);
 
 		if (!rdxInf)
 			return;
@@ -167,7 +165,7 @@ EXTERN_C void hal_init_platform(
 	};
 
 	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		ProcessBlockInfo* rdxPb = reinterpret_cast<ProcessBlockInfo*>(rdx);
+		PROCESS_BLOCK_INFO* rdxPb = reinterpret_cast<PROCESS_BLOCK_INFO*>(rdx);
 
 		if (!rdxPb)
 			return;
@@ -177,7 +175,7 @@ EXTERN_C void hal_init_platform(
 	};
 
 	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
+		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
 
 		if (!rdxEi)
 			return;
@@ -187,22 +185,22 @@ EXTERN_C void hal_init_platform(
 	};
 
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		ProcessExitInfo* rdxEi = reinterpret_cast<ProcessExitInfo*>(rdx);
+		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
 
 		if (!rdxEi)
 			return;
 
-		rdxEi->fCode = Kernel::rt_get_exit_code();
+		rdxEi->fCode = Kernel::sched_get_exit_code();
 	};
 
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-		acpi.Reboot();
+		Kernel::PowerFactoryInterface pow(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+		pow.Reboot();
 	};
 
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::ACPIFactoryInterface acpi(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-		acpi.Shutdown();
+		Kernel::PowerFactoryInterface pow(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+		pow.Shutdown();
 	};
 
 	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fHooked = true;
@@ -220,16 +218,32 @@ EXTERN_C void hal_init_platform(
 	Kernel::StringView strVer(cMaxPropLen);
 	strVer += "\\Properties\\KernelVersion";
 
-	cKernelVersion.GetKey() = strVer;
-    cKernelVersion.GetValue() = __MAHROUSS__;
+	cKernelVersion.GetKey()	  = strVer;
+	cKernelVersion.GetValue() = __MAHROUSS_VER__;
 
-    Kernel::StringView strAutoMount(cMaxPropLen);
+	Kernel::StringView strAutoMount(cMaxPropLen);
 	strAutoMount += "\\Properties\\AutoMountFS?";
 
-	cAutoFormatDisk.GetKey() = strAutoMount;
-    cAutoFormatDisk.GetValue() = Yes;
+	cAutoFormatDisk.GetKey()   = strAutoMount;
 
-	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+
+	for (size_t i = 0; i < cMaxCmdLine; i++)
+	{
+		if (Kernel::rt_string_cmp(kHandoverHeader->f_CommandLine[i], "/AutoFormat", Kernel::rt_string_len("/AutoFormat")) == 0)
+		{
+			cAutoFormatDisk.GetValue() = Yes;
+			break;
+		}
+	}
+
+	for (size_t i = 0; i < cMaxCmdLine; i++)
+	{
+		if (Kernel::rt_string_cmp(kHandoverHeader->f_CommandLine[i], "/SMP", Kernel::rt_string_len("/SMP")) == 0)
+		{
+			Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+			break;
+		}
+	}
 
 	mInitKernel(KeMain());
 }

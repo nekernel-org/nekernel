@@ -17,6 +17,9 @@
 
 namespace Kernel
 {
+	class HardwareThread;
+	class MPManager;
+
 	using ThreadID = UInt32;
 
 	enum ThreadKind
@@ -116,11 +119,11 @@ namespace Kernel
 
 	/// @brief wakes up thread.
 	/// wakes up thread from hang.
-	Void rt_wakeup_thread(HAL::StackFramePtr stack);
+	Void mp_wakeup_thread(HAL::StackFramePtr stack);
 
 	/// @brief makes thread sleep.
 	/// hooks and hangs thread to prevent code from executing.
-	Void rt_hang_thread(HAL::StackFramePtr stack);
+	Void mp_hang_thread(HAL::StackFramePtr stack);
 } // namespace Kernel
 
 #endif // !__INC_MP_MANAGER_HPP__

@@ -77,7 +77,7 @@ default.
 #define kNewFSLF  '\r'
 #define kNewFSEOF (-1)
 
-#define kNewFSBitWidth (sizeof(NewCharType))
+#define kNewFSBitWidth (sizeof(Kernel::Char))
 #define kNewFSLbaType  (Kernel::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
@@ -99,24 +99,23 @@ default.
 
 #define kNewFSForkNameLen (200U)
 
-typedef Kernel::Char NewCharType;
-
 enum
 {
-	kNewFSHardDrive			= 0xC0, // Hard Drive (SSD, HDD)
+	kNewFSHardDrive			= 0xC0, // Hard Drive
+	kNewFSSolidStateDrive	= 0xC1, // Solid State Drive
 	kNewFSOpticalDrive		= 0x0C, // Blu-Ray/DVD
 	kNewFSMassStorageDevice = 0xCC, // USB
 	kNewFSScsi				= 0xC4, // SCSI Hard Drive
 	kNewFSFlashDrive		= 0xC6,
-	kNewFSUnknown			= 0xFF, // Unknown device. (floppy)
-	kNewFSDriveCount		= 5,
+	kNewFSUnknown			= 0xFF, // Unknown device.
+	kNewFSDriveCount		= 7,
 };
 
 /// @brief Catalog type.
 struct PACKED NFS_CATALOG_STRUCT final
 {
-	NewCharType Name[kNewFSNodeNameLen];
-	NewCharType Mime[kNewFSMimeNameLen];
+	Kernel::Char Name[kNewFSNodeNameLen];
+	Kernel::Char Mime[kNewFSMimeNameLen];
 
 	/// Catalog status flag.
 	Kernel::UInt16 Flags;
@@ -144,7 +143,7 @@ struct PACKED NFS_CATALOG_STRUCT final
 /// whereas the data fork is reserved for file data.
 struct PACKED NFS_FORK_STRUCT final
 {
-	NewCharType	 ForkName[kNewFSForkNameLen];
+	Kernel::Char	 ForkName[kNewFSForkNameLen];
 	Kernel::Char CatalogName[kNewFSNodeNameLen];
 
 	Kernel::Int32 Flags;
@@ -164,8 +163,8 @@ struct PACKED NFS_FORK_STRUCT final
 /// @brief Partition block type
 struct PACKED NFS_ROOT_PARTITION_BLOCK final
 {
-	NewCharType Ident[kNewFSIdentLen];
-	NewCharType PartitionName[kPartLen];
+	Kernel::Char Ident[kNewFSIdentLen];
+	Kernel::Char PartitionName[kPartLen];
 
 	Kernel::Int32 Flags;
 	Kernel::Int32 Kind;
@@ -272,7 +271,7 @@ namespace Kernel
 		bool Format(_Input _Output DriveTrait* drive);
 
 	public:
-		Int32 fDriveIndex{kNewFSSubDriveA};
+		Int32 fDriveIndex{kNewFSSubDriveC};
 	};
 
 	///

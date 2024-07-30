@@ -60,10 +60,10 @@ namespace Kernel::Detail
 				if (fNewFS->GetParser())
 				{
 					constexpr auto cFolderInfo		  = "META-INF";
-					const auto	   cDirCount		  = 9;
+					const auto	   cDirCount		  = 7;
 					const char*	   cDirStr[cDirCount] = {
 						   "\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
-						   "\\Users\\", "\\Library\\", "\\Mounted\\", "\\DCIM\\", "\\Applications\\Store\\"};
+						   "\\Users\\", "\\Library\\", "\\Mounted\\"};
 
 					for (Kernel::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 					{
@@ -102,7 +102,7 @@ namespace Kernel::Detail
 
 						metadataFolder +=
 							"<!properties/>\r<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
-							"system</p>\r<p>Volume Type: Zeta</p>\r";
+							"system</p>\r<p>Volume Type: ZKA Filesystem</p>\r";
 
 						metadataFolder += "<p>Path: ";
 						metadataFolder += cDirStr[dirIndx];
@@ -120,53 +120,6 @@ namespace Kernel::Detail
 
 						delete catalogSystem;
 					}
-				}
-
-				NFS_CATALOG_STRUCT* catalogDisk =
-					this->fNewFS->GetParser()->GetCatalog("\\Mount\\SIM:");
-
-				const Kernel::Char* cSrcName = "DISK-INF";
-
-				if (catalogDisk)
-				{
-					delete catalogDisk;
-				}
-				else
-				{
-					catalogDisk =
-						(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias("\\Mount\\SIM:");
-
-					Kernel::StringView diskFolder(kNewFSSectorSz);
-
-					diskFolder +=
-						"<!properties/><p>Kind: alias to SIM Card</p>\r<p>Created by: system</p>\r<p>Edited "
-						"by: "
-						"system</p>\r<p>Volume Type: SIM Card</p>\r";
-
-					diskFolder += "<p>Root: ";
-					diskFolder += Kernel::NewFilesystemHelper::Root();
-					diskFolder += "</p>\r";
-
-					NFS_FORK_STRUCT theDiskFork{0};
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theDiskFork.ForkName,
-										   Kernel::rt_string_len(cSrcName));
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDisk->Name),
-										   theDiskFork.CatalogName,
-										   Kernel::rt_string_len(catalogDisk->Name));
-
-					theDiskFork.DataSize	 = kNewFSForkSize;
-					theDiskFork.ResourceId	 = 0;
-					theDiskFork.ResourceKind = Kernel::kNewFSRsrcForkKind;
-					theDiskFork.Kind		 = Kernel::kNewFSDataForkKind;
-
-					fNewFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
-					fNewFS->GetParser()->WriteCatalog(catalogDisk,
-													  (Kernel::VoidPtr)diskFolder.CData(),
-													  kNewFSSectorSz, cSrcName);
-
-					delete catalogDisk;
 				}
 			}
 		}
@@ -190,7 +143,7 @@ namespace Kernel::Detail
 	{
 
 		Kernel::UserView::The()->fRootUser = new User(RingKind::kRingSuperUser, kSuperUser);
-		Kernel::UserView::The()->LogIn(Kernel::UserView::The()->fRootUser, "");
+		Kernel::UserView::The()->LogIn(Kernel::UserView::The()->fRootUser, "root");
 
 		Kernel::kcout << "newoskrnl: " << cKernelVersion.GetKey().CData() << ": " << Kernel::number(cKernelVersion.GetValue()) << Kernel::endl;
 	}

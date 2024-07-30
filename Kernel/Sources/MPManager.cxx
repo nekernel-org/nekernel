@@ -71,9 +71,9 @@ namespace Kernel
 		fWakeup = wakeup;
 
 		if (!fWakeup)
-			rt_hang_thread(fStack);
+			mp_hang_thread(fStack);
 		else
-			rt_wakeup_thread(fStack);
+			mp_wakeup_thread(fStack);
 	}
 
 	EXTERN Bool rt_check_stack(HAL::StackFramePtr stackPtr);
