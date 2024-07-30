@@ -1,10 +1,9 @@
 {
   "configurations": [
     {
-      "name": "MicroKernel (Macintosh)",
+      "name": "Kernel (Macintosh)",
       "includePath": [
         "${workspaceFolder}/Kernel/**",
-        "${workspaceFolder}/Drv/**",
         "${workspaceFolder}/Boot/**",
         "${workspaceFolder}/**"
       ],
@@ -25,9 +24,8 @@
       "intelliSenseMode": "gcc-x64"
     },
     {
-      "name": "MicroKernel (Windows)",
+      "name": "Kernel (Windows)",
       "includePath": [
-        "${workspaceFolder}/Drv/**",
         "${workspaceFolder}/Kernel/**",
         "${workspaceFolder}/Boot/**",
         "${workspaceFolder}/**"

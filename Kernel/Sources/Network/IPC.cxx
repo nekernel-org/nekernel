@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <NetworkKit/IPCEP.hxx>
+#include <NetworkKit/IPC.hxx>
 #include <KernelKit/LPC.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 
@@ -12,7 +12,7 @@ using namespace Kernel;
 
 /// @internal
 /// @brief The internal sanitize function.
-Bool ipc_int_sanitize_packet(IPCEPMessageHeader* pckt)
+Bool ipc_int_sanitize_packet(IPC_MESSAGE_STRUCT* pckt)
 {
 	auto endian = DEDUCE_ENDIAN(pckt, ((char*)pckt)[0]);
 
@@ -54,7 +54,7 @@ namespace Kernel
 	/// @brief Sanitize packet function
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
-	Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt)
+	Bool ipc_sanitize_packet(IPC_MESSAGE_STRUCT* pckt)
 	{
 		if (!pckt ||
 			!ipc_int_sanitize_packet(pckt))

@@ -6,11 +6,7 @@
 
 #pragma once
 
-#include <SCI/StandardInterface.hxx>
-
-#ifdef __KERNEL__
-#error !!! including header in kernel mode !!!
-#endif // __KERNEL__
+#include <SCIKit/Types.hxx>
 
 #define ErrLocalIsOk()	 (kLastError == kErrorSuccess)
 #define ErrLocalFailed() (kLastError != kErrorSuccess)
@@ -50,4 +46,4 @@ inline constexpr HError kErrorSign				 = 60;
 inline constexpr HError kErrorInvalidCreds		 = 61;
 inline constexpr HError kErrorUnimplemented		 = 0;
 
-inline HError kLastError = 0;
+IMPORT_C HError kLastError;

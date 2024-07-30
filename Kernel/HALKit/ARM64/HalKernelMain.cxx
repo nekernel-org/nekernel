@@ -17,7 +17,7 @@
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hpp>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
-#include <NetworkKit/IPCEP.hxx>
+#include <NetworkKit/IPC.hxx>
 
 #define KERNEL_INIT(X) \
 	X;                 \
@@ -99,7 +99,7 @@ EXTERN_C void hal_init_platform(
 	};
 
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::ipc_sanitize_packet(reinterpret_cast<Kernel::IPCEPMessageHeader*>(rdx));
+		Kernel::ipc_sanitize_packet(reinterpret_cast<Kernel::IPC_MESSAGE_STRUCT*>(rdx));
 	};
 
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {

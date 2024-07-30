@@ -57,6 +57,7 @@ namespace Kernel
 	public:
 		/// @brief Get software ring
 		const RingKind& Ring() noexcept;
+		
 		/// @brief Get user name
 		StringView& Name() noexcept;
 

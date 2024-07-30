@@ -2,59 +2,27 @@
 
 Copyright ZKA Technologies.
 
-File: newstd.hxx.
-Purpose: System Call Interface.
+File: StandardInterface1.hxx.
+Purpose: System Call Interface Version 1.
 
 ------------------------------------------- */
 
 #ifndef __SCI_STD_HXX__
 #define __SCI_STD_HXX__
 
-#ifdef __KERNEL__
-#error !!! including header in kernel mode !!!
-#endif // __KERNEL__
-
-#define IMPORT_CXX extern "C++"
-#define IMPORT_C   extern "C"
-
-#define cRestrictR	"r"
-#define cRestrictRB "rb"
-#define cRestrictW	"w"
-#define cRestrictRW "rw"
-
-class SCISharedInterface; /// @brief System call class.
-
-typedef long long int	 FD;
-typedef bool Bool;
-typedef void UInt0;
-
-typedef __UINT64_TYPE__ UInt64;
-typedef __UINT32_TYPE__ UInt32;
-typedef __UINT16_TYPE__ UInt16;
-typedef __UINT8_TYPE__	UInt8;
-
-typedef __SIZE_TYPE__ SizeT;
-
-typedef __INT64_TYPE__ SInt64;
-typedef __INT32_TYPE__ SInt32;
-typedef __INT16_TYPE__ SInt16;
-typedef __INT8_TYPE__  SInt8;
-
-typedef char UTFChar;
-
-typedef UInt32 PowerID;
+#include <SCIKit/Types.hxx>
 
 /**
 	@brief System call class.
 */
-class SCISharedInterface
+class __attribute__((uuid_of(SharedInterface1))) SharedInterface1 : public UnknownInterface
 {
 public:
-	explicit SCISharedInterface() = default;
-	virtual ~SCISharedInterface() = default;
+	explicit SharedInterface1() = default;
+	virtual ~SharedInterface1() = default;
 
-	SCISharedInterface& operator=(const SCISharedInterface&) = default;
-	SCISharedInterface(const SCISharedInterface&)			 = default;
+	SharedInterface1& operator=(const SharedInterface1&) = default;
+	SharedInterface1(const SharedInterface1&)			 = default;
 
 public:
 	/// @brief disable device.
@@ -69,8 +37,8 @@ public:
 	/// @brief check if MBCI device is wokeup.
 	virtual Bool PowerIsWokeup(PowerID) = 0;
 
-	/// @brief probe MBCI/ACPI device from phone.
-	virtual PowerID PowerProbeDevice(const char* namepace, const int index) = 0;
+	/// @brief probe MBCI/ACPI device from device.
+	virtual PowerID PowerProbeDevice(const char* namezpace, const int index) = 0;
 
 	// THOSE DOESNT REQUIRE PERMISSIONS FROM THE USER. //
 
@@ -89,7 +57,7 @@ public:
 	// THOSE MAY REQUIRE PERMISSIONS FROM THE USER. //
 
 	/// @brief Open descriptor.
-	virtual FD OpenStorage(const char* path, const char* restr) = 0;
+	virtual FD OpenStorage(const char* path, const UInt32 restr) = 0;
 
 	/// @brief Close descriptor.
 	virtual UInt0 CloseStorage(FD descriptorType) = 0;
@@ -115,9 +83,5 @@ public:
 	/// @brief Write descriptor.
 	virtual UInt0* WriteStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, FD descriptorType) = 0;
 };
-
-/// @brief Get shared syscall object.
-/// @return Syscall implementation.
-IMPORT_C SCISharedInterface* SCIGetSharedInterface(UInt0);
 
 #endif // ifndef __SCI_STD_HXX__

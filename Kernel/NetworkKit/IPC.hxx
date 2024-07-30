@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies.
 
-	File: IPCEP.hxx.
+	File: IPC.hxx.
 	Purpose: IPC protocol.
 
 ------------------------------------------- */
@@ -13,7 +13,8 @@
 #include <NewKit/Defines.hpp>
 #include <NewKit/String.hpp>
 
-/// @brief IPC Endpoint Protocol (IPCEP for short).
+/// @file IPC.hxx
+/// @brief IPC protocol.
 
 /// IA separator.
 #define cRemoteSeparator "."
@@ -26,7 +27,7 @@
 namespace Kernel
 {
 	/// @brief 128-bit IPC address.
-	struct PACKED IPCEPAddress final
+	struct PACKED IPC_ADDRESS_STRUCT final
 	{
 		UInt64 ProcessID;
 		UInt64 ProcessTeam;
@@ -35,18 +36,18 @@ namespace Kernel
 		// some operators.
 		////////////////////////////////////
 
-		bool operator==(const IPCEPAddress& addr) noexcept
+		bool operator==(const IPC_ADDRESS_STRUCT& addr) noexcept
 		{
 			return addr.ProcessID == this->ProcessID && addr.ProcessTeam == this->ProcessTeam;
 		}
 
-		bool operator==(IPCEPAddress& addr) noexcept
+		bool operator==(IPC_ADDRESS_STRUCT& addr) noexcept
 		{
 			return addr.ProcessID == this->ProcessID && addr.ProcessTeam == this->ProcessTeam;
 		}
 	};
 
-	typedef struct IPCEPAddress IPCEPAddressType;
+	typedef struct IPC_ADDRESS_STRUCT IPCEPAddressKind;
 
 	enum
 	{
@@ -56,24 +57,24 @@ namespace Kernel
 
 	constexpr auto cIPCEPMsgSize = 6094U;
 
-	/// @brief IPCEP connection header, message cannot be greater than 6K.
-	typedef struct IPCEPMessageHeader final
+	/// @brief IPC connection header, message cannot be greater than 6K.
+	typedef struct IPC_MESSAGE_STRUCT final
 	{
 		UInt32			 IpcHeaderMagic; // cRemoteHeaderMagic
 		UInt8			 IpcEndianess;	 // 0 : LE, 1 : BE
 		SizeT			 IpcPacketSize;
-		IPCEPAddressType IpcFrom;
-		IPCEPAddressType IpcTo;
+		IPCEPAddressKind IpcFrom;
+		IPCEPAddressKind IpcTo;
 		UInt32			 IpcCRC32;
 		UInt32			 IpcMsg;
 		UInt32			 IpcMsgSz;
 		UInt8			 IpcData[cIPCEPMsgSize];
-	} PACKED IPCEPMessageHeader;
+	} PACKED IPC_MESSAGE_STRUCT;
 
 	/// @brief Sanitize packet function
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
-	Bool ipc_sanitize_packet(IPCEPMessageHeader* pckt);
+	Bool ipc_sanitize_packet(IPC_MESSAGE_STRUCT* pckt);
 } // namespace Kernel
 
 #endif // _INC_IPC_ENDPOINT_HXX_

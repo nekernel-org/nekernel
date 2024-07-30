@@ -62,7 +62,7 @@ namespace Kernel
 	/// @brief PPP device.
 	using PPPNetworkDevice = NetworkDevice;
 
-	/// @brief IPCEP device.
+	/// @brief IPC device.
 	using IPCEPNetworkDevice = NetworkDevice;
 
 	/// @brief GRPS device.
