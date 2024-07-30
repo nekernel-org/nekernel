@@ -185,10 +185,10 @@ namespace Kernel
 
 		//! Delete image if not done already.
 		if (this->Image)
-			ke_delete_ke_heap(this->Image);
+			mm_delete_ke_heap(this->Image);
 
 		if (this->StackFrame)
-			ke_delete_ke_heap((VoidPtr)this->StackFrame);
+			mm_delete_ke_heap((VoidPtr)this->StackFrame);
 
 		this->Image		 = nullptr;
 		this->StackFrame = nullptr;
@@ -231,7 +231,7 @@ namespace Kernel
 		}
 
 		process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame*>(
-			ke_new_ke_heap(sizeof(HAL::StackFrame), true, false));
+			mm_new_ke_heap(sizeof(HAL::StackFrame), true, false));
 
 		MUST_PASS(process.Leak().StackFrame);
 

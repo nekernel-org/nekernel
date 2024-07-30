@@ -12,10 +12,12 @@ Purpose: System Call Interface Version 1.
 
 #include <SCIKit/Types.hxx>
 
+typedef UInt32 PowerID;
+
 /**
 	@brief System call class.
 */
-class __attribute__((uuid_of(SharedInterface1))) SharedInterface1 : public UnknownInterface
+class __attribute__((uuid("21f40aef-cce0-4c0b-9672-40f9053394bc"))) SharedInterface1 : public UnknownInterface
 {
 public:
 	explicit SharedInterface1() = default;

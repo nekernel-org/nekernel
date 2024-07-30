@@ -8,5 +8,5 @@
 
 #include <NewKit/Defines.hpp>
 
-#define KERNELKIT_VERSION "1.01"
-#define KERNELKIT_RELEASE "Cairo"
+#define KERNELKIT_VERSION "1.02"
+#define KERNELKIT_RELEASE "Alexandria"

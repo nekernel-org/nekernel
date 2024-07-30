@@ -24,7 +24,7 @@ namespace Kernel
 		NEWOS_COPY_DEFAULT(LoaderInterface);
 
 	public:
-		virtual _Output const char* FormatAsString()											= 0;
+		virtual _Output const char* AsString()											= 0;
 		virtual _Output const char* MIME()														= 0;
 		virtual _Output const char* Path()														= 0;
 		virtual _Output ErrorOr<VoidPtr> FindStart()											= 0;

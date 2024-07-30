@@ -85,7 +85,7 @@ namespace Kernel
 			kcout << "CodeManager: Warning: Executable format error!\n";
 			fBad = true;
 
-			ke_delete_ke_heap(fCachedBlob);
+			mm_delete_ke_heap(fCachedBlob);
 
 			fCachedBlob = nullptr;
 		}
@@ -95,7 +95,7 @@ namespace Kernel
 	PEFLoader::~PEFLoader()
 	{
 		if (fCachedBlob)
-			ke_delete_ke_heap(fCachedBlob);
+			mm_delete_ke_heap(fCachedBlob);
 
 		fFile.Delete();
 	}
@@ -160,7 +160,7 @@ namespace Kernel
 					{
 						if (!this->fFatBinary)
 						{
-							ke_delete_ke_heap(blob);
+							mm_delete_ke_heap(blob);
 							return nullptr;
 						}
 					}
@@ -169,13 +169,13 @@ namespace Kernel
 
 					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
 
-					ke_delete_ke_heap(blob);
+					mm_delete_ke_heap(blob);
 					return blobRet;
 				}
 			}
 		}
 
-		ke_delete_ke_heap(blob);
+		mm_delete_ke_heap(blob);
 		return nullptr;
 	}
 
@@ -219,18 +219,18 @@ namespace Kernel
 		return fPath.Leak().CData();
 	}
 
-	const char* PEFLoader::FormatAsString()
+	const char* PEFLoader::AsString()
 	{
 #ifdef __32x0__
-		return "32x0 PEF.";
+		return "32x0 PEF format.";
 #elif defined(__64x0__)
-		return "64x0 PEF.";
+		return "64x0 PEF format.";
 #elif defined(__x86_64__)
-		return "x86_64 PEF.";
+		return "x86_64 PEF format.";
 #elif defined(__powerpc64__)
-		return "POWER PEF.";
+		return "POWER PEF format.";
 #else
-		return "Unknown PEF.";
+		return "Unknown PEF format.";
 #endif // __32x0__ || __64x0__ || __x86_64__ || __powerpc64__
 	}
 

@@ -21,12 +21,12 @@ namespace Kernel
 	STATIC SizeT	   kHeapCount = 0UL;
 	STATIC PageManager kHeapPageManager;
 
-	namespace Detail
+	namespace Details
 	{
 		/// @brief Kernel heap information block.
 		/// Located before the address bytes.
 		/// | HIB |  ADDRESS  |
-		struct PACKED HeapInformationBlock final
+		struct PACKED HEAP_INFORMATION_BLOCK final
 		{
 			///! @brief 32-bit value which contains the magic number of the executable.
 			UInt32 fMagic;
@@ -44,26 +44,26 @@ namespace Kernel
 			UInt8 fPadding[kKernelHeapHeaderPaddingSz];
 		};
 
-		typedef HeapInformationBlock* HeapInformationBlockPtr;
+		typedef HEAP_INFORMATION_BLOCK* HEAP_INFORMATION_BLOCK_PTR;
 	} // namespace Detail
 
 	/// @brief Declare a new size for allocatedPtr.
 	/// @param allocatedPtr the pointer.
 	/// @return
-	voidPtr ke_realloc_ke_heap(voidPtr allocatedPtr, SizeT newSz)
+	voidPtr mm_realloc_ke_heap(voidPtr allocatedPtr, SizeT newSz)
 	{
 		if (!allocatedPtr || newSz < 1)
 			return nullptr;
 
-		Detail::HeapInformationBlockPtr heapInfoBlk =
-			reinterpret_cast<Detail::HeapInformationBlockPtr>(
-				(UIntPtr)allocatedPtr - sizeof(Detail::HeapInformationBlock));
+		Details::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+			reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)allocatedPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
 
 		heapInfoBlk->fTargetPtrSize = newSz;
 
 		if (heapInfoBlk->fCRC32 > 0)
 		{
-			MUST_PASS(ke_protect_ke_heap(allocatedPtr));
+			MUST_PASS(mm_protect_ke_heap(allocatedPtr));
 		}
 
 		return allocatedPtr;
@@ -74,7 +74,7 @@ namespace Kernel
 	/// @param rw read write (true to enable it)
 	/// @param user is it accesible by user processes?
 	/// @return the pointer
-	VoidPtr ke_new_ke_heap(const SizeT sz, const bool rw, const bool user)
+	VoidPtr mm_new_ke_heap(const SizeT sz, const bool rw, const bool user)
 	{
 		auto szFix = sz;
 
@@ -83,8 +83,8 @@ namespace Kernel
 
 		auto wrapper = kHeapPageManager.Request(rw, user, false, szFix);
 
-		Detail::HeapInformationBlockPtr heapInfo =
-			reinterpret_cast<Detail::HeapInformationBlockPtr>(
+		Details::HEAP_INFORMATION_BLOCK_PTR heapInfo =
+			reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
 				wrapper.VirtualAddress());
 
 		heapInfo->fTargetPtrSize = szFix;
@@ -96,24 +96,24 @@ namespace Kernel
 		++kHeapCount;
 
 		return reinterpret_cast<VoidPtr>(wrapper.VirtualAddress() +
-										 sizeof(Detail::HeapInformationBlock));
+										 sizeof(Details::HEAP_INFORMATION_BLOCK));
 	}
 
 	/// @brief Makes a page heap.
 	/// @param heapPtr
 	/// @return
-	Int32 ke_make_ke_page(VoidPtr heapPtr)
+	Int32 mm_make_ke_page(VoidPtr heapPtr)
 	{
 		if (kHeapCount < 1)
 			return -kErrorInternal;
-		if (((IntPtr)heapPtr - sizeof(Detail::HeapInformationBlock)) <= 0)
+		if (((IntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK)) <= 0)
 			return -kErrorInternal;
 		if (((IntPtr)heapPtr - kBadPtr) < 0)
 			return -kErrorInternal;
 
-		Detail::HeapInformationBlockPtr heapInfoBlk =
-			reinterpret_cast<Detail::HeapInformationBlockPtr>(
-				(UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
+		Details::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+			reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
 
 		heapInfoBlk->fPagePtr = 1;
 
@@ -123,18 +123,18 @@ namespace Kernel
 	/// @brief Declare pointer as free.
 	/// @param heapPtr the pointer.
 	/// @return
-	Int32 ke_delete_ke_heap(VoidPtr heapPtr)
+	Int32 mm_delete_ke_heap(VoidPtr heapPtr)
 	{
 		if (kHeapCount < 1)
 			return -kErrorInternal;
-		if (((IntPtr)heapPtr - sizeof(Detail::HeapInformationBlock)) <= 0)
+		if (((IntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK)) <= 0)
 			return -kErrorInternal;
 		if (((IntPtr)heapPtr - kBadPtr) < 0)
 			return -kErrorInternal;
 
-		Detail::HeapInformationBlockPtr heapInfoBlk =
-			reinterpret_cast<Detail::HeapInformationBlockPtr>(
-				(UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
+		Details::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+			reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
 
 		if (heapInfoBlk && heapInfoBlk->fMagic == kKernelHeapMagic)
 		{
@@ -181,9 +181,9 @@ namespace Kernel
 
 		if (heapPtr)
 		{
-			Detail::HeapInformationBlockPtr virtualAddress =
-				reinterpret_cast<Detail::HeapInformationBlockPtr>(
-					(UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
+			Details::HEAP_INFORMATION_BLOCK_PTR virtualAddress =
+				reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
+					(UIntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
 
 			if (virtualAddress->fPresent && virtualAddress->fMagic == kKernelHeapMagic)
 			{
@@ -197,13 +197,13 @@ namespace Kernel
 	/// @brief Protect the heap with a CRC value.
 	/// @param heapPtr HIB pointer.
 	/// @return if it valid: point has crc now., otherwise fail.
-	Boolean ke_protect_ke_heap(VoidPtr heapPtr)
+	Boolean mm_protect_ke_heap(VoidPtr heapPtr)
 	{
 		if (heapPtr)
 		{
-			Detail::HeapInformationBlockPtr heapInfoBlk =
-				reinterpret_cast<Detail::HeapInformationBlockPtr>(
-					(UIntPtr)heapPtr - sizeof(Detail::HeapInformationBlock));
+			Details::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+				reinterpret_cast<Details::HEAP_INFORMATION_BLOCK_PTR>(
+					(UIntPtr)heapPtr - sizeof(Details::HEAP_INFORMATION_BLOCK));
 
 			if (heapInfoBlk->fPresent && kKernelHeapMagic == heapInfoBlk->fMagic)
 			{

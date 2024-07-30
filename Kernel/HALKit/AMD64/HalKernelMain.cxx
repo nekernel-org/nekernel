@@ -216,7 +216,7 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked		= true;
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked		= true;
 
-	// newoskrnl version 1.00
+	// newoskrnl version 1.00.
 	Kernel::StringView strVer(cMaxPropLen);
 	strVer += "\\Properties\\KernelVersion";
 

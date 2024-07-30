@@ -35,7 +35,7 @@ namespace Kernel
 
 	public:
 		const char* Path() override;
-		const char* FormatAsString() override;
+		const char* AsString() override;
 		const char* MIME() override;
 
 	public:

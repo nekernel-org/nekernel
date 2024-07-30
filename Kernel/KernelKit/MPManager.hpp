@@ -66,11 +66,11 @@ namespace Kernel
 
 	private:
 		HAL::StackFrame* fStack{nullptr};
-		ThreadKind		 fKind;
-		ThreadID		 fID;
-		ProcessID		 fSourcePID;
-		bool			 fWakeup;
-		bool			 fBusy;
+		ThreadKind		 fKind{ThreadKind::kInvalidHart};
+		ThreadID		 fID{0};
+		ProcessID		 fSourcePID{-1};
+		bool			 fWakeup{false};
+		bool			 fBusy{false};
 
 	private:
 		friend class MPManager;

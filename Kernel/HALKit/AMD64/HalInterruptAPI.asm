@@ -119,16 +119,8 @@ IntExp   30
 
 IntNormal 31
 
-[extern hal_apic_acknowledge]
-
-__NEW_INT_34:
-    push rax
-    call hal_apic_acknowledge
-    pop rax
-
-    iretq
-
 IntNormal 32
+IntNormal 34
 
 IntNormal 33
 IntNormal 35

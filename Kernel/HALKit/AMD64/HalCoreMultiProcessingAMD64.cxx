@@ -67,13 +67,13 @@ namespace Kernel::HAL
 	/// @brief Multiple APIC Descriptor Table.
 	struct MadtType final : public SDT
 	{
+		UInt32 Address;
+		UInt32 Flags; // 1 = Dual Legacy PICs installed
+
 		struct MadtAddress final
 		{
 			Char RecordType;
 			Char RecordLen; // record length
-
-			UInt32 Address;
-			UInt32 Flags; // 1 = Dual Legacy PICs installed
 		} MadtRecords[];
 	};
 
@@ -120,13 +120,8 @@ namespace Kernel::HAL
 
 	STATIC MadtType* kApicInfoBlock = nullptr;
 
-	STATIC struct
-	{
-		UIntPtr fAddress{0};
-		UInt32	fKind{0};
-	} kApicMadtAddresses[255] = {};
-
-	STATIC SizeT kApicMadtAddressesCount = 0UL;
+	EXTERN_C SizeT kApicMadtAddressesCount = 0UL;
+	EXTERN_C SizeT cBspDone				   = 0UL;
 
 	enum
 	{
@@ -170,9 +165,12 @@ namespace Kernel::HAL
 	}
 
 	/// @internal
-	EXTERN_C Void hal_apic_acknowledge(Void)
+	EXTERN_C Void hal_ap_startup(Void)
 	{
-		kcout << "newoskrnl: acknowledge APIC.\r";
+		while (Yes)
+		{
+			
+		}
 	}
 
 	/// @internal
@@ -216,6 +214,8 @@ namespace Kernel::HAL
 		return (eax & 0xfffff000) | ((UIntPtr)(edx & 0x0f) << 32);
 	}
 
+	EXTERN_C Void hal_ap_trampoline(Void);
+
 	/// @brief Fetch and enable cores inside main CPU.
 	/// @param rsdPtr RSD PTR structure.
 	Void hal_system_get_cores(voidPtr rsdPtr)
@@ -225,16 +225,15 @@ namespace Kernel::HAL
 
 		if (kApicMadt != nullptr)
 		{
-			MadtType* madt = reinterpret_cast<MadtType*>(kApicMadt);
+			UInt8 bsp_id, bsp_done = No;
 
-			cpu_set_apic_base(cpu_get_apic_base());
+			UInt32	num_cores			= 4;
+			UInt32* local_apic_ptr		= nullptr;
+			UInt32* local_apic_ids[255] = {0};
 
-			// set SVR register to bit 8 to start recieve interrupts.
+			MadtType* type = (MadtType*)kApicMadt;
 
-			auto flagsSet = Kernel::ke_dma_read(cAPICAddress, 0xF0); // SVR register.
-			flagsSet |= 0x100;
-
-			Kernel::ke_dma_write(cAPICAddress, 0xF0, flagsSet | 0x100);
+			local_apic_ptr = (UInt32*)type->Address;
 		}
 		else
 		{

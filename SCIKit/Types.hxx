@@ -36,18 +36,13 @@ typedef __INT8_TYPE__  SInt8;
 
 typedef char UTFChar;
 
-typedef UInt32 PowerID;
-
 // Interfaces are divided between classes.
 // So that they aren't too big.
 
-class SharedInterface1;
-class SharedInterface2;
-class SharedInterface3;
-class UnknownInterface;
-class EncodingInterface;
+class UnknownInterface; // Refrenced from an IDB entry.
+class UnknownUCLSID; // From IDB, the constructor of the object.
 
-class __attribute__((uuid_of(UnknownInterface))) UnknownInterface
+class __attribute__((uuid("d7c144b6-0792-44b8-b06b-02b227b547df"))) UnknownInterface
 {
 public:
 	explicit UnknownInterface() = default;
@@ -56,14 +51,14 @@ public:
 	UnknownInterface& operator=(const UnknownInterface&) = default;
 	UnknownInterface(const UnknownInterface&)			 = default;
 
-	SInt32 Release() { return -1; }
+	SInt32 Release() { delete this; }
 	
 	template <typename TCLS>
-    SInt32 Release(TCLS* cls) { return -1; }
+    SInt32 Release(TCLS* cls) { delete cls; return 0; }
 
-	template <typename TCLS, typename UCLSID>
-	TCLS* QueryInterface(UCLSID uclsidOfCls) { return nullptr; }
+	template <typename TCLS, typename UCLSID, typename... Args>
+	TCLS* QueryInterface(UCLSID uclsidOfCls, Args... args) { return uclsidOfCls->QueryObject<TCLS>(args...); }
 };
 
 template <typename TCLS, typename UCLSID>
-TCLS* SciGetClassFromCLSID(UCLSID uclsidOfCls);
+TCLS* RtlGetClassFromCLSID(UCLSID uclsidOfCls);
