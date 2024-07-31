@@ -340,7 +340,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 
 	if (GIB(fDiskDev.GetDiskSize()) < cMinimumDiskSize)
 	{
-		EFI::ThrowError(L"Disk-Too-Tiny", L"Disk can't contain a New Filesystem partition.");
+		EFI::ThrowError(L"Disk-Too-Tiny", L"Can't format a New Filesystem partition here.");
 		return false;
 	}
 

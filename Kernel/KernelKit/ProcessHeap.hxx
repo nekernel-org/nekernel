@@ -15,7 +15,7 @@
 
 /// @version 5/11/23
 /// @file ProcessHeap.hxx
-/// @brief Heap for user processes.
+/// @brief Process heap allocator.
 
 #define kUserHeapMaxSz (4096)
 #define kUserHeapMag   (0xFAF0FEF0)
@@ -33,12 +33,12 @@ namespace Kernel
 	} kUserHeapFlags;
 
 	/// @brief Allocate a process heap, no zero out is done here.
-	/// @param flags
+	/// @param flags the allocation flags.
 	/// @return The process's heap.
-	VoidPtr rt_new_heap(Int32 flags);
+	VoidPtr sched_new_heap(Int32 flags);
 
 	/// @brief Frees the process heap.
 	/// @param pointer The process heap pointer.
-	/// @return
-	Int32 rt_free_heap(voidPtr pointer);
+	/// @return status code of the freeing.
+	Int32 sched_free_heap(voidPtr pointer);
 } // namespace Kernel

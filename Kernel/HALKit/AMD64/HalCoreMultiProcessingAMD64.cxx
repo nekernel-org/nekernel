@@ -166,7 +166,6 @@ namespace Kernel::HAL
 	{
 		while (Yes)
 		{
-			
 		}
 	}
 
@@ -176,9 +175,17 @@ namespace Kernel::HAL
 		hal_switch_context(stackFrame);
 	}
 
+	constexpr auto cMaxPCBBlocks = 64;
+
+	struct PROCESS_CONTROL_BLOCK final
+	{
+		ProcessHeader*	   f_Header;
+		HAL::StackFramePtr f_StackFrame;
+	} fBlocks[cMaxPCBBlocks] = {0};
+
 	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame)
 	{
-		Semaphore sem;
+		STATIC Semaphore sem;
 
 		constexpr auto cSeconds = 1U;
 
@@ -186,6 +193,9 @@ namespace Kernel::HAL
 		sem.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), &timer);
 
 		cFramePtr = stackFrame;
+
+		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Header = &ProcessScheduler::The().Leak().TheCurrent().Leak();
+		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_StackFrame = stackFrame;
 
 		sem.Unlock();
 	}

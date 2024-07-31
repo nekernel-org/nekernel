@@ -22,7 +22,9 @@ Int32 HardwareTimerInterface::Wait() noexcept
 HardwareTimer::HardwareTimer(Int64 seconds)
 	: fWaitFor(seconds)
 {
+	MUST_PASS(fWaitFor > 0);
 }
+
 HardwareTimer::~HardwareTimer()
 {
 	fWaitFor = 0;
@@ -35,6 +37,7 @@ Int32 HardwareTimer::Wait() noexcept
 
 	while (*fDigitalTimer < (*fDigitalTimer + fWaitFor))
 	{
+		;
 	}
 
 	return 0;

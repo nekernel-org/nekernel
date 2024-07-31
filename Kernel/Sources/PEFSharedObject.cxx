@@ -18,11 +18,11 @@
 
  Revision History:
 
-	 01/02/24: Rework shared sharedObj ABI, except a rt_library_init and
- rt_library_fini (amlel) 15/02/24: Breaking changes, changed the name of the
+	 01/02/24: Rework shared sharedObj ABI, except a rtl_init_shared_object and
+ rtl_fini_shared_object (amlel) 15/02/24: Breaking changes, changed the name of the
  routines. (amlel)
 
-	07/28/24: Replace rt_library_free with rt_library_fini
+	07/28/24: Replace rt_library_free with rtl_fini_shared_object
 
  ------------------------------------------- */
 
@@ -37,13 +37,13 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C SharedObjectPtr rt_library_init(void)
+EXTERN_C SharedObjectPtr rtl_init_shared_object(ProcessHeader* header)
 {
 	SharedObjectPtr sharedObj = tls_new_class<SharedObject>();
 
 	if (!sharedObj)
 	{
-		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		header->Crash();
 
 		return nullptr;
 	}
@@ -52,17 +52,17 @@ EXTERN_C SharedObjectPtr rt_library_init(void)
 
 	if (!sharedObj->Get())
 	{
-		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		header->Crash();
 
 		return nullptr;
 	}
 
 	sharedObj->Get()->fImageObject =
-		ProcessScheduler::The().Leak().TheCurrent().Leak().Image;
+		header->Image;
 
 	if (!sharedObj->Get()->fImageObject)
 	{
-		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		header->Crash();
 
 		return nullptr;
 	}
@@ -80,7 +80,7 @@ EXTERN_C SharedObjectPtr rt_library_init(void)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rt_library_fini(SharedObjectPtr lib, bool* successful)
+EXTERN_C Void rtl_fini_shared_object(ProcessHeader* header, SharedObjectPtr lib, Bool* successful)
 {
 	MUST_PASS(successful);
 
@@ -88,7 +88,7 @@ EXTERN_C Void rt_library_fini(SharedObjectPtr lib, bool* successful)
 	if (lib == nullptr)
 	{
 		*successful = false;
-		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		header->Crash();
 	}
 
 	delete lib->Get();

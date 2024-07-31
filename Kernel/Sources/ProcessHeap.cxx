@@ -199,7 +199,7 @@ namespace Kernel
 	/// @brief Creates a new pool pointer.
 	/// @param flags the flags attached to it.
 	/// @return a pool pointer with selected permissions.
-	VoidPtr rt_new_heap(Int32 flags)
+	VoidPtr sched_new_heap(Int32 flags)
 	{
 		if (!ProcessHeapHelper::IsEnabled())
 			return nullptr;
@@ -233,7 +233,7 @@ namespace Kernel
 	/// @brief free a pool pointer.
 	/// @param ptr The pool pointer to free.
 	/// @return status code
-	Int32 rt_free_heap(VoidPtr ptr)
+	Int32 sched_free_heap(VoidPtr ptr)
 	{
 		if (!ProcessHeapHelper::IsEnabled())
 			return -1;

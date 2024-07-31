@@ -10,6 +10,7 @@
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/PEFSharedObject.hxx>
 #include <KernelKit/MPManager.hpp>
 #include <KernelKit/Heap.hxx>
 #include <NewKit/String.hpp>
@@ -193,6 +194,17 @@ namespace Kernel
 		this->Image		 = nullptr;
 		this->StackFrame = nullptr;
 
+		if (this->Kind == kShLibKind)
+		{
+			bool success = false;
+			rtl_fini_shared_object(this, this->SharedLibObjectPtr, &success);
+
+			if (success)
+			{
+				this->SharedLibObjectPtr = nullptr;
+			}
+		}
+
 		ProcessScheduler::The().Leak().Remove(this->ProcessId);
 	}
 
@@ -217,11 +229,12 @@ namespace Kernel
 		/// Create heap according to type of process.
 		if (process.Leak().Kind == ProcessHeader::kAppKind)
 		{
-			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw);
+			process.Leak().HeapPtr = sched_new_heap(kUserHeapUser | kUserHeapRw);
 		}
 		else if (process.Leak().Kind == ProcessHeader::kShLibKind)
 		{
-			process.Leak().HeapPtr = rt_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
+			process.Leak().SharedLibObjectPtr = rtl_init_shared_object(&process.Leak());
+			process.Leak().HeapPtr		 = sched_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
 		}
 		else
 		{

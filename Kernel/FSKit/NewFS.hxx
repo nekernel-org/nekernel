@@ -67,15 +67,15 @@ default.
 #define kNewFSCatalogKindDevice (9)
 #define kNewFSCatalogKindLock	(10)
 
-#define kNewFSCatalogKindRLE	(11)
+#define kNewFSCatalogKindRLE (11)
 
 #define kNewFSCatalogKindMetaFile (12)
 
-#define kNewFSSeparator '\\'
+#define kNewFSSeparator	   '\\'
 #define kNewFSSeparatorAlt '/'
 
-#define kNewFSUpDir ".."
-#define kNewFSRoot	"\\"
+#define kNewFSUpDir	  ".."
+#define kNewFSRoot	  "\\"
 #define kNewFSRootAlt "/"
 
 #define kNewFSLF  '\r'
@@ -147,7 +147,7 @@ struct PACKED NFS_CATALOG_STRUCT final
 /// whereas the data fork is reserved for file data.
 struct PACKED NFS_FORK_STRUCT final
 {
-	Kernel::Char	 ForkName[kNewFSForkNameLen];
+	Kernel::Char ForkName[kNewFSForkNameLen];
 	Kernel::Char CatalogName[kNewFSNodeNameLen];
 
 	Kernel::Int32 Flags;
@@ -228,15 +228,15 @@ namespace Kernel
 		/// @param theFork the fork itself.
 		/// @return the fork
 		_Output NFS_FORK_STRUCT* CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-									_Input NFS_FORK_STRUCT&	   theFork);
+											_Input NFS_FORK_STRUCT&	   theFork);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
 		/// @param name the fork name.
 		/// @return the fork.
 		_Output NFS_FORK_STRUCT* FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-								  _Input const Char* name,
-								  Boolean			 dataOrRsrc);
+										  _Input const Char*		 name,
+										  Boolean					 dataOrRsrc);
 
 		_Output Void RemoveFork(_Input NFS_FORK_STRUCT* fork);
 
@@ -247,19 +247,19 @@ namespace Kernel
 		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const char* name);
 
 		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const char*  name,
-										  _Input const Int32& flags,
-										  _Input const Int32& kind);
+												  _Input const Int32& flags,
+												  _Input const Int32& kind);
 
 		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const char* name);
 
 		bool WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-						  voidPtr					 data,
-						  SizeT						 sizeOfData,
-						  _Input const char*		 forkName);
+						  voidPtr							 data,
+						  SizeT								 sizeOfData,
+						  _Input const char*				 forkName);
 
 		VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-							SizeT					   dataSz,
-							_Input const char*		   forkName);
+							SizeT							   dataSz,
+							_Input const char*				   forkName);
 
 		bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);
 

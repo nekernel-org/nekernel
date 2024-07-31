@@ -36,10 +36,11 @@ namespace Kernel
 	//! @brief Process name length.
 	inline constexpr SizeT kProcessLen = 256U;
 
-	//! @brief Forward declaration.
+	//! @brief Forward declarations.
 	class ProcessHeader;
 	class ProcessScheduler;
 	class ProcessHelper;
+	class SharedObject;
 
 	//! @brief Process status enum.
 	enum class ProcessStatus : Int32
@@ -144,7 +145,7 @@ namespace Kernel
 		const Int32& GetExitCode() noexcept;
 
 	public:
-		Char			   Name[kProcessLen] = {"Process"};
+		Char			   Name[kProcessLen] = {"Unknown Process"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
 		ProcessSelector	   Selector{ProcessSelector::kRingUser};
 		HAL::StackFramePtr StackFrame{nullptr};
@@ -156,7 +157,10 @@ namespace Kernel
 		ImagePtr	Image{nullptr};
 		HeapPtrKind HeapPtr{nullptr};
 
-		// memory usage
+		// shared library handle, reserved for .lib only.
+		SharedObject* SharedLibObjectPtr{nullptr};
+
+		// Memory usage.
 		SizeT UsedMemory{0};
 		SizeT FreeMemory{0};
 

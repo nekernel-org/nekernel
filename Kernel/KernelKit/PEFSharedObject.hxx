@@ -107,6 +107,10 @@ namespace Kernel
 	};
 
 	typedef SharedObject* SharedObjectPtr;
+
+	EXTERN_C SharedObjectPtr rtl_init_shared_object(ProcessHeader* header);
+	EXTERN_C Void			 rtl_fini_shared_object(ProcessHeader* header, SharedObjectPtr lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */
+

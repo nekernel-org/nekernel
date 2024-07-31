@@ -7,12 +7,18 @@ Purpose: System Call Interface Version 1.
 
 ------------------------------------------- */
 
-#ifndef __SCI_STD_HXX__
-#define __SCI_STD_HXX__
+#ifndef __SHARED_INTERFACE_HXX__
+#define __SHARED_INTERFACE_HXX__
+
+#define cRestrictR	1
+#define cRestrictRB 2
+#define cRestrictW	4
+#define cRestrictRW 6
 
 #include <SCIKit/Types.hxx>
 
 typedef UInt32 PowerID;
+typedef long long int FD;
 
 /**
 	@brief System call class.
@@ -86,4 +92,4 @@ public:
 	virtual UInt0* WriteStorage(const UTFChar* cmdNameOrData, SizeT cmdSize, FD descriptorType) = 0;
 };
 
-#endif // ifndef __SCI_STD_HXX__
+#endif // ifndef __SHARED_INTERFACE_HXX__

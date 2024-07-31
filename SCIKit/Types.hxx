@@ -7,20 +7,13 @@ Purpose: System Call types.
 
 ------------------------------------------- */
 
-
 #pragma once
 
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C   extern "C"
 
-#define cRestrictR	1
-#define cRestrictRB 2
-#define cRestrictW	4
-#define cRestrictRW 6
-
-typedef long long int	 FD;
-typedef bool Bool;
-typedef void UInt0;
+typedef bool		  Bool;
+typedef void		  UInt0;
 
 typedef __UINT64_TYPE__ UInt64;
 typedef __UINT32_TYPE__ UInt32;
@@ -40,7 +33,7 @@ typedef char UTFChar;
 // So that they aren't too big.
 
 class UnknownInterface; // Refrenced from an IDB entry.
-class UnknownUCLSID; // From IDB, the constructor of the object.
+class UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: WordUCLSID.
 
 class __attribute__((uuid("d7c144b6-0792-44b8-b06b-02b227b547df"))) UnknownInterface
 {
@@ -51,14 +44,30 @@ public:
 	UnknownInterface& operator=(const UnknownInterface&) = default;
 	UnknownInterface(const UnknownInterface&)			 = default;
 
-	SInt32 Release() { delete this; }
-	
-	template <typename TCLS>
-    SInt32 Release(TCLS* cls) { delete cls; return 0; }
-
-	template <typename TCLS, typename UCLSID, typename... Args>
-	TCLS* QueryInterface(UCLSID uclsidOfCls, Args... args) { return uclsidOfCls->QueryObject<TCLS>(args...); }
+	SInt32 Release()
+	{
+		delete this;
+		return 0;
+	}
 };
 
-template <typename TCLS, typename UCLSID>
-TCLS* RtlGetClassFromCLSID(UCLSID uclsidOfCls);
+#ifdef __NEWOS_SYMS__
+#include <SCIKit/rtl.internal.inl>
+#else
+
+/// @brief Allocate new SCM class.
+/// @tparam TCLS 
+/// @tparam UCLSID 
+/// @param uclsidOfCls 
+/// @return 
+template <typename TCLS, typename UCLSID, typename... Args>
+inline TCLS* RtlGetClassFromCLSID(UCLSID uclsidOfCls, Args... args);
+
+/// @brief Release SCM class.
+/// @tparam TCLS 
+/// @param cls 
+/// @return 
+template <typename TCLS>
+inline SInt32 RtlReleaseClass(TCLS* cls);
+
+#endif

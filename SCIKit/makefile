@@ -1,7 +1,12 @@
 ######################
 # (C) ZKA
+# SCM/SCI kit makefile.
 ######################
+
+CC=g++
+FLAGS=-I../ -shared -fPIC -D__NEWOS_SYMS__
+OUTPUT=libSCI.lib
 
 .PHONY: build-sci
 build-sci:
-	g++ *.cxx -I../ -shared -fPIC -o libSCI.lib
+	$(CC) $(wildcard *.cxx) $(FLAGS) -o $(OUTPUT)
