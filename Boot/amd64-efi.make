@@ -38,19 +38,14 @@ EMU_FLAGS=-net none -smp 2 -m 4G -M q35 \
 
 LD_FLAGS=-e Main --subsystem=10
 
-ifeq ($(NEWS_STANDLONE), )
-OBJ=*.o ../Kernel/Objects/*.obj
-else
-RESCMD=$(WINDRES) BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
 STANDALONE_MACRO=-D__STANDALONE__
 OBJ=*.o
-endif
 
 REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
+FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -D__NEWOS_OTA__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../Kernel -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__
 

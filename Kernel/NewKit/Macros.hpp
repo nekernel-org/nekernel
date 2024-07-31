@@ -53,7 +53,7 @@
 #endif // #ifndef ATTRIBUTE
 
 #ifndef __MAHROUSS_VER__
-#define __MAHROUSS_VER__ (202404)
+#define __MAHROUSS_VER__ (2024)
 #endif // !__MAHROUSS_VER__
 
 #ifndef EXTERN_C

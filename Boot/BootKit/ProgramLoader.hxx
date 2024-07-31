@@ -32,6 +32,7 @@ namespace Boot
 		void		Start(HEL::HandoverInformationHeader* handover);
 		const char* GetName();
 		void		SetName(const char* name);
+		bool 		IsValid();
 
 	private:
 		Char	fBlobName[255];

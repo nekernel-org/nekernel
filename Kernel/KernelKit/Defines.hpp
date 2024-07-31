@@ -9,4 +9,3 @@
 #include <NewKit/Defines.hpp>
 
 #define KERNELKIT_VERSION "1.02"
-#define KERNELKIT_RELEASE "Alexandria"

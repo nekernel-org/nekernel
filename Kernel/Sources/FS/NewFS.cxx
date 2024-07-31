@@ -303,15 +303,13 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
 
 	Int32 flagsList = flags;
 
-	if (name[0] == kNewFSMetaFilePrefix)
+	if (flagsList & kNewFSCatalogKindMetaFile)
 	{
 		if (UserView::The()->Current() != UserView::The()->fRootUser)
 		{
 			delete catalogChild;
 			return nullptr;
 		}
-
-		flagsList |= kNewFSCatalogKindMetaFile;
 	}
 
 	catalogChild->ResourceForkSize = cDefaultForkSize;
@@ -351,7 +349,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
 
 	while (drive->fPacket.fPacketGood)
 	{
-		nextSibling = (NFS_CATALOG_STRUCT*)catalogBuf;
+		nextSibling = reinterpret_cast<NFS_CATALOG_STRUCT*>(catalogBuf);
 
 		if (startFree <= kNewFSStartLba)
 		{
@@ -361,7 +359,9 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
 			return nullptr;
 		}
 
-		/// allocation or reallocation or catalog...
+		// ========================== //
+		// allocate catalog now...
+		// ========================== //
 		if (nextSibling->Flags != kNewFSFlagCreated)
 		{
 			Char sectorBufPartBlock[kNewFSSectorSz] = {0};
@@ -449,13 +449,13 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
 /// @return If it was sucessful, see ErrLocal().
 bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 {
-	/// verify disk.
+	// verify disk.
 	drive->fVerify(&drive->fPacket);
 
 	rt_copy_memory((VoidPtr) "fs/newfs-packet", drive->fPacket.fPacketMime,
 				   rt_string_len("fs/newfs-packet"));
 
-	/// if disk isn't good, then error out.
+	// if disk isn't good, then error out.
 	if (false == drive->fPacket.fPacketGood)
 	{
 		ErrLocal() = kErrorDiskIsCorrupted;
@@ -470,12 +470,12 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 	drive->fInput(&drive->fPacket);
 
-	/// disk isnt faulty and data has been fetched.
+	// disk isnt faulty and data has been fetched.
 	if (drive->fPacket.fPacketGood)
 	{
 		NFS_ROOT_PARTITION_BLOCK* partBlock = (NFS_ROOT_PARTITION_BLOCK*)sectorBuf;
 
-		/// check for an empty partition here.
+		// check for an empty partition here.
 		if (partBlock->PartitionName[0] == 0 &&
 			rt_string_cmp(partBlock->Ident, kNewFSIdent, kNewFSIdentLen))
 		{
@@ -483,7 +483,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 			partBlock->Version = kNewFSVersionInteger;
 
-			const auto cUntitledHD = "newoskrnl HD\0";
+			const auto cUntitledHD = "Untitled HD\0";
 
 			rt_copy_memory((VoidPtr)kNewFSIdent, (VoidPtr)partBlock->Ident,
 						   kNewFSIdentLen);
@@ -733,7 +733,7 @@ _NewFSSearchThroughCatalogList:
 			/// ignore unallocated catalog, break
 			if (catalog->Flags != kNewFSFlagCreated)
 			{
-				goto _NewFSContinueSearch;
+				goto NewFSContinueSearch;
 			}
 
 			NFS_CATALOG_STRUCT* catalogPtr = new NFS_CATALOG_STRUCT();
@@ -746,7 +746,7 @@ _NewFSSearchThroughCatalogList:
 			return catalogPtr;
 		}
 
-	_NewFSContinueSearch:
+	NewFSContinueSearch:
 		startCatalogList = catalog->NextSibling;
 
 		if (startCatalogList <= kNewFSStartLba)
@@ -773,8 +773,8 @@ _NewFSSearchThroughCatalogList:
 	return nullptr;
 }
 
-/// @brief
-/// @param name
+/// @brief Get catalog from filesystem.
+/// @param name the catalog's name/
 /// @return
 _Output NFS_CATALOG_STRUCT* NewFSParser::GetCatalog(_Input const char* name)
 {
@@ -782,8 +782,8 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::GetCatalog(_Input const char* name)
 	return this->FindCatalog(name, unused);
 }
 
-/// @brief
-/// @param catalog
+/// @brief Closes a catalog, (frees it).
+/// @param catalog the catalog to close.
 /// @return
 Boolean NewFSParser::CloseCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog)
 {

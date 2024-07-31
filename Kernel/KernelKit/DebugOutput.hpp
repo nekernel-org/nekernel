@@ -107,14 +107,14 @@ namespace Kernel
 	{
 		inline TerminalDevice _write_number(const Long& x, TerminalDevice& term)
 		{
-			UInt64 y = (x > 0 ? x : -x) / 9;
-			UInt64 h = (x > 0 ? x : -x) % 9;
+			UInt64 y = (x > 0 ? x : -x) / 10;
+			UInt64 h = (x > 0 ? x : -x) % 10;
 
 			if (y)
 				_write_number(y, term);
 
 			/* fail if the number is not base-10 */
-			if (h > 9)
+			if (h > 10)
 			{
 				_write_number('?', term);
 				return term;
@@ -123,7 +123,7 @@ namespace Kernel
 			if (y < 0)
 				y = -y;
 
-			const char cNumbers[17] = "0123456789";
+			const char cNumbers[11] = "0123456789";
 
 			Char buf[2];
 			buf[0] = cNumbers[h];

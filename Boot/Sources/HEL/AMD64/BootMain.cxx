@@ -227,8 +227,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		diskFormatter.Format(kMachineModel, &rootDesc, 1);
 	}
 
-#ifdef __NEWOS_OTA__
-
 	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
 	readerKernel.ReadAll(0);
@@ -236,30 +234,35 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	Boot::ProgramLoader* loader = nullptr;
 
 	// ------------------------------------------ //
-	// If we succeed in reading the blob, then execute it. 
+	// If we succeed in reading the blob, then execute it.
 	// ------------------------------------------ //
 
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::ProgramLoader(readerKernel.Blob());
-		loader->SetName("\"newoskrnl.exe\" (ZKA 64-bit MP)");
+		loader->SetName("\"newoskrnl.exe\" (64-bit MP)");
 	}
 
-	writer.Write("Running: ").Write(loader->GetName()).Write("\r");
+	if (!loader->IsValid())
+	{
+		writer.Write("newosldr: Invalid kernel image!\r");
 
-#endif // ifdef __NEWOS_OTA__
+		EFI::Stop();
+
+		CANT_REACH();
+	}
+
+	writer.Write("newosldr: ").Write(loader->GetName()).Write("\r");
+
+	CopyMem(handoverHdrPtr->f_CommandLine[0], "/SMP", StrLen("/SMP"));
 
 	EFI::ExitBootServices(*MapKey, ImageHandle);
 
 	// ---------------------------------------------------- //
-	// Call OTA kernel or fallback to builtin.
+	// Call kernel.
 	// ---------------------------------------------------- //
-#ifdef __NEWOS_OTA__
-	if (loader)
-		loader->Start(handoverHdrPtr);
-#else
-	hal_init_platform(handoverHdrPtr);
-#endif // ifdef __NEWOS_OTA__
+
+	loader->Start(handoverHdrPtr);
 
 	EFI::Stop();
 

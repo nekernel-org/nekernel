@@ -97,7 +97,7 @@ namespace Kernel
 		// Retrieve token from a specific file fork.
 		// ------------------------------------------ //
 
-		auto token = file.Read(password);
+		auto token = file.Read(user->fUserName.CData());
 
 		if (!token)
 		{

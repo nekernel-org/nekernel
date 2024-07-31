@@ -39,13 +39,13 @@ namespace Boot
 		if (firstBytes[0] == kMagMz0 &&
 			firstBytes[1] == kMagMz1)
 		{
-			writer.Write("newosldr: MZ executable detected.\r");
+			writer.Write("newosldr: Windows executable detected.\r");
 
 			ExecHeaderPtr		  hdrPtr = (ldr_find_exec_header(firstBytes));
 			ExecOptionalHeaderPtr optHdr = (ldr_find_opt_exec_header(firstBytes));
 
 			// Parse PE32+
-			fStartAddress = (VoidPtr)((UIntPtr)optHdr->mImageBase + optHdr->mBaseOfCode + optHdr->mAddressOfEntryPoint);
+			fStartAddress = (VoidPtr)(optHdr->mAddressOfEntryPoint);
 			fStackPtr	  = new Char[optHdr->mSizeOfStackReserve];
 
 			writer.Write("newosldr: Major Linker: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
@@ -111,5 +111,10 @@ namespace Boot
 	Void ProgramLoader::SetName(const Char* name)
 	{
 		CopyMem(fBlobName, name, StrLen(name));
+	}
+
+	bool ProgramLoader::IsValid()
+	{
+		return fStartAddress != nullptr;
 	}
 } // namespace Boot
