@@ -84,6 +84,13 @@ namespace Kernel
 	{
 		return kNewFSSeparator;
 	}
+
+	/// @brief Gets the metafile character.
+	/// @return 
+	const char NewFilesystemHelper::MetaFile()
+	{
+		return kNewFSMetaFilePrefix;
+	}
 } // namespace Kernel
 
 #endif // ifdef __FSKIT_USE_NEWFS__

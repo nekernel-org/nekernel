@@ -143,6 +143,11 @@ namespace Kernel
 		return true;
 	}
 
+	User* UserView::Current() noexcept
+	{
+		return fCurrentUser;
+	}
+
 	Void UserView::LogOff() noexcept
 	{
 		if (!fCurrentUser)

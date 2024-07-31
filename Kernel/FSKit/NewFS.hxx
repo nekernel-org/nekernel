@@ -36,8 +36,10 @@ default.
 #define kNewFSIdent	   " NewFS"
 #define kNewFSPadLen   (400)
 
-#define kNewFSVersionInteger (0x126)
-#define kNewFSVerionString	 "1.26"
+#define kNewFSMetaFilePrefix '$'
+
+#define kNewFSVersionInteger (0x127)
+#define kNewFSVerionString	 "1.27"
 
 /// @brief Standard fork types.
 #define kNewFSDataFork	   "main_data"
@@ -66,6 +68,8 @@ default.
 #define kNewFSCatalogKindLock	(10)
 
 #define kNewFSCatalogKindRLE	(11)
+
+#define kNewFSCatalogKindMetaFile (12)
 
 #define kNewFSSeparator '\\'
 #define kNewFSSeparatorAlt '/'
@@ -282,9 +286,10 @@ namespace Kernel
 	class NewFilesystemHelper final
 	{
 	public:
-		static const char* Root();
-		static const char* UpDir();
-		static const char  Separator();
+		STATIC const char* Root();
+		STATIC const char* UpDir();
+		STATIC const char  Separator();
+		STATIC const char  MetaFile();
 	};
 
 	namespace Detail

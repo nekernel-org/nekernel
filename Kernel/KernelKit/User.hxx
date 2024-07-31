@@ -16,7 +16,7 @@
 #define kSuperUser "Super"
 #define kGuestUser "Guest"
 
-#define kUsersFile "\\Users\\$Stores$"
+#define kUsersFile "\\Users\\$UserMTF"
 
 #define kMaxUserNameLen	 (255)
 #define kMaxUserTokenLen (4096)
@@ -91,6 +91,7 @@ namespace Kernel
 
 		STATIC UserView* The() noexcept;
 		Bool LogIn(User* user, const Char* password) noexcept;
+		User* Current() noexcept;
 		Void LogOff() noexcept;
 	};
 } // namespace Kernel

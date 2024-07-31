@@ -243,7 +243,7 @@ public:
 			blockPart->SectorSize != BootDev::kSectorSize ||
 			blockPart->Version != kNewFSVersionInteger)
 		{
-			EFI::ThrowError(L"Invalid-Disk-Geometry", L"Invalid disk geometry.");
+			EFI::ThrowError(L"Invalid-Disk-Geometry", L"Invalid disk.");
 		}
 		else if (blockPart->PartitionName[0] == 0)
 		{

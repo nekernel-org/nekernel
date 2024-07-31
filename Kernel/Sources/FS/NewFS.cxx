@@ -17,6 +17,7 @@
 #include <NewKit/Utils.hpp>
 #include <FirmwareKit/EPM.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/User.hxx>
 
 using namespace Kernel;
 
@@ -300,13 +301,26 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
 
 	NFS_CATALOG_STRUCT* catalogChild = new NFS_CATALOG_STRUCT();
 
+	Int32 flagsList = flags;
+
+	if (name[0] == kNewFSMetaFilePrefix)
+	{
+		if (UserView::The()->Current() != UserView::The()->fRootUser)
+		{
+			delete catalogChild;
+			return nullptr;
+		}
+
+		flagsList |= kNewFSCatalogKindMetaFile;
+	}
+
 	catalogChild->ResourceForkSize = cDefaultForkSize;
 	catalogChild->DataForkSize	   = cDefaultForkSize;
 
 	catalogChild->NextSibling = outLba;
 	catalogChild->PrevSibling = outLba;
 	catalogChild->Kind		  = kind;
-	catalogChild->Flags		  = kNewFSFlagCreated;
+	catalogChild->Flags		  = kNewFSFlagCreated | flagsList;
 
 	rt_copy_memory((VoidPtr)name, (VoidPtr)catalogChild->Name,
 				   rt_string_len(name));
