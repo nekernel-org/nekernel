@@ -4,6 +4,6 @@
 
 ------------------------------------------- */
 
-#include <SCIKit/ErrorTypes.hxx>
+#include <SCIKit/SCIErr.hxx>
 
-HError kLastError = 0;
+NEW_ERROR_TYPE kLastError = 0;
