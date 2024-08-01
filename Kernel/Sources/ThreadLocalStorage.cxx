@@ -24,20 +24,20 @@ using namespace Kernel;
 Kernel::Property cTLSEnforceCheck;
 
 /**
- * @brief Check for cookie inside TIB.
+ * @brief Checks for cookie inside the TIB.
  * @param tib the TIB to check.
  * @return if the cookie is enabled.
  */
 
-Boolean tls_check_tib(ThreadInformationBlock* tib)
+Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* the_tib)
 {
-	if (!tib)
+	if (!the_tib)
 		return false;
 
 	Encoder		encoder;
-	const char* tibAsBytes = encoder.AsBytes(tib);
+	const char* tibAsBytes = encoder.AsBytes(the_tib);
 
-	kcout << "newoskrnl: checking for a valid cookie...\r";
+	kcout << "newoskrnl: checking for a valid cookie inside the TIB...\r";
 
 	return tibAsBytes[0] == kCookieMag0 && tibAsBytes[1] == kCookieMag1 &&
 		   tibAsBytes[2] == kCookieMag2;
@@ -48,28 +48,29 @@ Boolean tls_check_tib(ThreadInformationBlock* tib)
  * @param stackPtr The call frame.
  * @return
  */
-EXTERN_C Void tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
+EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 {
 	if (!tib_ptr)
 	{
 		if (cTLSEnforceCheck.GetValue() == No)
 		{
-			return;
+			return true;
 		}
 		else
 		{
-			kcout << "newoskrnl: crashing because of an invalid TIB...\r";
-			ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+			kcout << "newoskrnl: failing because of an invalid TIB...\r";
+			return false;
 		}
 	}
 
-	ThreadInformationBlock* tib_struct = (ThreadInformationBlock*)tib_ptr;
+	THREAD_INFORMATION_BLOCK* tib_struct = (THREAD_INFORMATION_BLOCK*)tib_ptr;
 
 	if (!tls_check_tib(tib_struct))
 	{
 		kcout << "newoskrnl: crashing because of an invalid TIB...\r";
-		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		return false;
 	}
 
 	kcout << "newoskrnl: Verification succeeded! staying alive...\r";
+	return true;
 }

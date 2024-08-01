@@ -36,8 +36,8 @@ struct PACKED HeapAllocInfo final
 
 struct PACKED ProcessBlockInfo final
 {
-	ThreadInformationBlock* fTIB;
-	ThreadInformationBlock* fPIB;
+	THREAD_INFORMATION_BLOCK* fTIB;
+	THREAD_INFORMATION_BLOCK* fPIB;
 };
 
 struct PACKED ProcessExitInfo final
@@ -91,11 +91,14 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
-		Kernel::kcout << "serial: " << msg << "\r";
+		Kernel::kcout << "Kernel: " << msg << "\r";
 	};
 
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		tls_check_syscall_impl(rdx);
+		if (tls_check_syscall_impl(rdx) == false)
+		{
+			Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		}
 	};
 
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {

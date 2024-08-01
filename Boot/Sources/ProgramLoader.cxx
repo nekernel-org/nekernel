@@ -18,6 +18,8 @@ EXTERN_C
 #include <string.h>
 }
 
+extern EfiBootServices* BS;
+
 namespace Boot
 {
 	EXTERN_C Int32 rt_jump_to_address(HEL::HandoverProc baseCode, HEL::HandoverInformationHeader* handover, Char* stackPointer);
@@ -63,14 +65,22 @@ namespace Boot
 			{
 				ExecSectionHeaderPtr sect = &sectPtr[sectIndex];
 
-				// if this is a code header.
-				if (sect->mCharacteristics & 0x00000020)
-				{
-					fStartAddress = (VoidPtr)(optHdr->mAddressOfEntryPoint + sect->mPointerToRawData + 
-					sect->mVirtualAddress);
-					writer.Write("newosldr: Start Address: ").Write((UIntPtr)fStartAddress).Write("\r");
+				EfiPhysicalAddress address_to_alloc = sect->mVirtualAddress;
 
-					break;
+				// if this is a code header, then we can look for the entrypoint.
+				if (sect->mCharacteristics & eUserSection)
+				{
+					BS->AllocatePages(EfiAllocateType::AllocateAddress, EfiMemoryType::EfiLoaderCode, 1, &address_to_alloc);
+
+					if (!fStartAddress)
+					{
+						fStartAddress = (VoidPtr)((UIntPtr)firstBytes + optHdr->mAddressOfEntryPoint);
+						writer.Write("newosldr: Start Address set: ").Write((UIntPtr)fStartAddress).Write("\r");
+					}
+				}
+				else
+				{
+					BS->AllocatePages(EfiAllocateType::AllocateAddress, EfiMemoryType::EfiLoaderData, 1, &address_to_alloc);
 				}
 			}
 		}
@@ -97,32 +107,28 @@ namespace Boot
 	{
 		BTextWriter writer;
 
-		if (!handover ||
-			((Char*)fStartAddress)[0] == 0x0)
+		if (!handover)
 		{
 			writer.Write("newosldr: Exec format error.\r");
 			return;
 		}
 
-		writer.Write("newosldr: Trying to run: ").Write(fBlobName).Write("\r");
+		HEL::HandoverProc err_fn = [](HEL::HandoverInformationHeader* rcx) -> void {
+			BTextWriter writer;
+			writer.Write("newosldr: Exec format error, Thread has been aborted.\r");
+
+			EFI::ThrowError(L"Exec-Format-Error", L"Format doesn't match (Thread aborted.)");
+		};
 
 		if (!fStartAddress)
 		{
-			HEL::HandoverProc fn = [](HEL::HandoverInformationHeader* rcx) -> void {
-				BTextWriter writer;
-				writer.Write("newosldr: Exec format error, Thread has been aborted.\r");
-
-				EFI::ThrowError(L"Exec-Format-Error", L"Format doesn't match (Thread aborted.)");
-			};
-
-			rt_jump_to_address(fn, handover, fStackPtr);
-
-			return;
+			err_fn(handover);
 		}
 
-		HEL::HandoverProc start = reinterpret_cast<HEL::HandoverProc>((UIntPtr)fStartAddress);
+		volatile HEL::HandoverProc start = reinterpret_cast<HEL::HandoverProc>((UIntPtr)fStartAddress);
 
-		rt_jump_to_address(start, handover, fStackPtr);
+		start(handover);
+		err_fn(handover);
 	}
 
 	const Char* ProgramLoader::GetName()

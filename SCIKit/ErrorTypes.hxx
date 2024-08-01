@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <SCIKit/Types.hxx>
+#include <SCIKit/SCI.hxx>
 
 #define ErrLocalIsOk()	 (kLastError == kErrorSuccess)
 #define ErrLocalFailed() (kLastError != kErrorSuccess)

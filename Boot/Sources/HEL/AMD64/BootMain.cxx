@@ -243,16 +243,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		loader->SetName("\"newoskrnl.exe\" (64-bit MP)");
 	}
 
-	if (!loader->IsValid())
-	{
-		writer.Write("newosldr: Invalid kernel image!\r");
-
-		EFI::Stop();
-
-		CANT_REACH();
-	}
-
-	writer.Write("newosldr: ").Write(loader->GetName()).Write("\r");
+	writer.Write("newosldr: Running: ").Write(loader->GetName()).Write("\r");
 
 	CopyMem(handoverHdrPtr->f_CommandLine[0], "/SMP", StrLen("/SMP"));
 

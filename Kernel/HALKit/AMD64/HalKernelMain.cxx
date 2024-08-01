@@ -32,19 +32,19 @@ EXTERN_C void KeMain();
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
-struct PACKED HEAP_ALLOC_INFO final
+struct HEAP_ALLOC_INFO final
 {
 	Kernel::VoidPtr fThe;
 	Kernel::Size	fTheSz;
 };
 
-struct PACKED PROCESS_BLOCK_INFO final
+struct PROCESS_BLOCK_INFO final
 {
-	ThreadInformationBlock* fTIB;
-	ThreadInformationBlock* fPIB;
+	THREAD_INFORMATION_BLOCK* fTIB;
+	THREAD_INFORMATION_BLOCK* fGIB;
 };
 
-struct PACKED PROCESS_EXIT_INFO final
+struct PROCESS_EXIT_INFO final
 {
 	STATIC constexpr auto cReasonLen = 512;
 
@@ -131,11 +131,14 @@ EXTERN_C void hal_init_platform(
 
 	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
-		Kernel::kcout << "Native Log: " << msg << "\r";
+		Kernel::kcout << "Kernel: " << msg << "\r";
 	};
 
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		tls_check_syscall_impl(rdx);
+		if (tls_check_syscall_impl(rdx) == false)
+		{
+			Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		}
 	};
 
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -170,8 +173,8 @@ EXTERN_C void hal_init_platform(
 		if (!rdxPb)
 			return;
 
-		// install the fTIB and fPIB.
-		rt_install_tib(rdxPb->fTIB, rdxPb->fPIB);
+		// install the fTIB and fGIB.
+		rt_install_tib(rdxPb->fTIB, rdxPb->fGIB);
 	};
 
 	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -224,8 +227,7 @@ EXTERN_C void hal_init_platform(
 	Kernel::StringView strAutoMount(cMaxPropLen);
 	strAutoMount += "\\Properties\\AutoMountFS?";
 
-	cAutoFormatDisk.GetKey()   = strAutoMount;
-
+	cAutoFormatDisk.GetKey() = strAutoMount;
 
 	for (size_t i = 0; i < cMaxCmdLine; i++)
 	{

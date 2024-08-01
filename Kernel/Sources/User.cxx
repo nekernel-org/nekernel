@@ -17,10 +17,21 @@
 
 #include <KernelKit/Heap.hxx>
 
-/// bugs 0
+/// BUGS: 0
 
 namespace Kernel
 {
+	namespace Detail
+	{
+		/// \brief Constructs a token by hashing the password.
+		/// \param password password to hash.
+		/// \return the hashed password 
+		const Char* cred_construct_token(const Char* password)
+		{
+			return nullptr;
+		}
+	}
+
 	User::User(const Int32& sel, const Char* userName)
 		: fRing((RingKind)sel)
 	{
@@ -108,7 +119,9 @@ namespace Kernel
 		}
 		else
 		{
-			if (rt_string_cmp((Char*)token, const_cast<Char*>(password), rt_string_len(password)))
+			auto tok = Detail::cred_construct_token(password);
+
+			if (rt_string_cmp((Char*)token, tok, rt_string_len(tok)))
 			{
 				kcout << "newoskrnl: Incorrect credentials.\r";
 

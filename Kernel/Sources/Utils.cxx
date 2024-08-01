@@ -11,6 +11,10 @@ namespace Kernel
 {
 	Int rt_string_cmp(const Char* src, const Char* cmp, Size size)
 	{
+		if (!cmp ||
+			!src)
+			return 1;
+
 		Int32 counter = 0;
 
 		for (Size index = 0; index < size; ++index)

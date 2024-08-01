@@ -92,19 +92,35 @@ namespace Kernel
 	/// @return VoidPtr the heap pointer.
 	STATIC VoidPtr ke_find_unused_heap(Int32 flags)
 	{
-		for (SizeT index = 0; index < kUserHeapMaxSz; ++index)
+		SizeT index = 0UL;
+
+		while (true)
 		{
+			/* ************************************ */
+			/* allocate if it doesnt exist. */
+			/* ************************************ */
+			if (!ProcessHeapHelper::The()[index])
+			{
+				ProcessHeapHelper::The().Add(Kernel::Ref<Kernel::PTEWrapper>());
+			}
+
 			if (ProcessHeapHelper::The()[index] &&
 				!ProcessHeapHelper::The()[index].Leak().Leak().Present())
 			{
 				ProcessHeapHelper::Leak().Leak().TogglePresent(
 					ProcessHeapHelper::The()[index].Leak().Leak(), true);
+					
+				ProcessHeapHelper::Leak().Leak().ToggleUser(
+					ProcessHeapHelper::The()[index].Leak().Leak(), true);
+
 				kcout << "[ke_find_unused_heap] Done, trying to make a pool now...\r";
 
 				return ke_make_heap_internal(
 					(VoidPtr)ProcessHeapHelper::The()[index].Leak().Leak().VirtualAddress(),
 					flags);
 			}
+
+			++index;
 		}
 
 		return nullptr;
@@ -131,7 +147,8 @@ namespace Kernel
 			poolHdr->fMagic = kUserHeapMag;
 			poolHdr->fFree	= false;
 
-			kcout << "[ke_make_heap_internal] New allocation has been done.\n";
+			kcout << "[ke_make_heap_internal] New allocation has been done, returning new chunk.\n";
+
 			return reinterpret_cast<VoidPtr>(
 				(reinterpret_cast<UIntPtr>(virtualAddress) + sizeof(PROCESS_HEAP_HEADER)));
 		}
@@ -204,9 +221,6 @@ namespace Kernel
 		if (!ProcessHeapHelper::IsEnabled())
 			return nullptr;
 
-		if (ProcessHeapHelper::Count() > kUserHeapMaxSz)
-			return nullptr;
-
 		if (VoidPtr ret = ke_find_unused_heap(flags))
 			return ret;
 
@@ -245,7 +259,7 @@ namespace Kernel
 			if (ke_check_and_free_heap(base, ptr))
 				return 0;
 
-			for (SizeT index = 0; index < kUserHeapMaxSz; ++index)
+			for (SizeT index = 0; index < ProcessHeapHelper::The().Count(); ++index)
 			{
 				if (ke_check_and_free_heap(index, ptr))
 					return 0;

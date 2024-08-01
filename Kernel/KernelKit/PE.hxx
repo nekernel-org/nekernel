@@ -129,4 +129,9 @@ typedef struct ExecImageHeader {
 	ExecOptionalHeader mOptHdr;
 } ExecImageHeader, *ExecImageHeaderPtr;
 
+enum
+{
+	eUserSection = 0x00000020,
+};
+
 #endif /* ifndef __KERNELKIT_INC_PE_HXX__ */

@@ -17,21 +17,21 @@
 
 #define kTLSCookieLen (3U)
 
-/// @brief Thread Information Block for Local Storage.
+struct THREAD_INFORMATION_BLOCK;
+
+/// @brief Thread Information Block.
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
-struct PACKED ThreadInformationBlock final
+struct PACKED THREAD_INFORMATION_BLOCK final
 {
-	Kernel::Char	Cookie[kTLSCookieLen]; // Process cookie.
-	Kernel::UIntPtr StartCode;			   // Start Address
-	Kernel::UIntPtr StartData;			   // Allocation Heap
-	Kernel::UIntPtr StartStack;			   // Stack Pointer.
-	Kernel::Int32	ThreadID;			   // Thread execution ID.
+	Kernel::Char	f_Cookie[kTLSCookieLen]; // Process cookie.
+	Kernel::UIntPtr f_Code;			   // Start Address
+	Kernel::UIntPtr f_Data;			   // Allocation Heap
+	Kernel::UIntPtr f_BSS;			   // Stack Pointer.
+	Kernel::Int32	f_ID;			   // Thread execution ID.
 };
 
-typedef struct ThreadInformationBlock ProcessInformationBlock;
-
 ///! @brief Cookie Sanity check.
-Kernel::Boolean tls_check_tib(ThreadInformationBlock* Ptr);
+Kernel::Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* the_tib);
 
 ///! @brief new ptr syscall.
 template <typename T>
@@ -45,10 +45,10 @@ template <typename T, typename... Args>
 T* tls_new_class(Args&&... args);
 
 /// @brief TLS install TIB and PIB. (syscall)
-EXTERN_C void rt_install_tib(ThreadInformationBlock* TIB, ThreadInformationBlock* PIB);
+EXTERN_C void rt_install_tib(THREAD_INFORMATION_BLOCK* TIB, THREAD_INFORMATION_BLOCK* PIB);
 
 /// @brief TLS check (syscall)
-EXTERN_C Kernel::Void tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept;
+EXTERN_C Kernel::Bool tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept;
 
 #include <KernelKit/ThreadLocalStorage.inl>
 

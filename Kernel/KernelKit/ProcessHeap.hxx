@@ -17,7 +17,6 @@
 /// @file ProcessHeap.hxx
 /// @brief Process heap allocator.
 
-#define kUserHeapMaxSz (4096)
 #define kUserHeapMag   (0xFAF0FEF0)
 
 namespace Kernel
