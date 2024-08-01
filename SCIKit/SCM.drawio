@@ -1,40 +1,40 @@
-<mxfile host="app.diagrams.net" modified="2024-07-30T08:10:48.550Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36" etag="RXlhIX_6zJCQ26jH2pJE" version="24.6.4" type="device">
-  <diagram name="Page-1" id="_vc7fxBdNKI2W8YhI8VA">
-    <mxGraphModel dx="1050" dy="557" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        <mxCell id="eRehIIeIVOPW1y23kRkx-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="eRehIIeIVOPW1y23kRkx-1" target="eRehIIeIVOPW1y23kRkx-6">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-1" value="Kernel level interfaces" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="431" y="450" width="226" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="eRehIIeIVOPW1y23kRkx-2" target="eRehIIeIVOPW1y23kRkx-8">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-2" value="User level interfaces" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="200" y="450" width="226" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="eRehIIeIVOPW1y23kRkx-3" target="eRehIIeIVOPW1y23kRkx-2">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=52.5;exitPerimeter=0;" edge="1" parent="1" source="eRehIIeIVOPW1y23kRkx-3" target="eRehIIeIVOPW1y23kRkx-1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-3" value="IDB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
-          <mxGeometry x="283" y="290" width="60" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-6" value="HAL #1&lt;div&gt;Uses UI interface&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="484" y="570" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-8" value="Program #2&lt;div&gt;Is a web browser&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="253" y="570" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="eRehIIeIVOPW1y23kRkx-10" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;System Component Model&lt;/h1&gt;&lt;p&gt;SCM is a standardized way of sharing code within DLLs in NewOS.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="590" y="230" width="180" height="180" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram name="Page-1" id="_vc7fxBdNKI2W8YhI8VA">
+        <mxGraphModel dx="746" dy="307" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="eRehIIeIVOPW1y23kRkx-1" target="eRehIIeIVOPW1y23kRkx-6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-1" value="Kernel level interfaces" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="431" y="450" width="226" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="eRehIIeIVOPW1y23kRkx-2" target="eRehIIeIVOPW1y23kRkx-8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-2" value="User level interfaces" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="450" width="226" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="eRehIIeIVOPW1y23kRkx-3" target="eRehIIeIVOPW1y23kRkx-2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=52.5;exitPerimeter=0;" parent="1" source="eRehIIeIVOPW1y23kRkx-3" target="eRehIIeIVOPW1y23kRkx-1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-3" value="IDB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
+                    <mxGeometry x="283" y="290" width="60" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-6" value="HAL #1&lt;div&gt;Takes care of a specific device support.&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="484" y="570" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-8" value="Program #2&lt;div&gt;Is a web browser, it uses an HTML parser component.&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="253" y="570" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-10" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;System Component Model&lt;/h1&gt;&lt;p&gt;SCM is a standardized way of sharing code within DLLs in NewOS.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="230" width="180" height="180" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
