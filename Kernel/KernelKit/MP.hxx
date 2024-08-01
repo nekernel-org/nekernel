@@ -12,13 +12,14 @@
 #include <NewKit/Ref.hxx>
 
 /// @note Last Rev Sun 28 Jul CET 2024
+/// @note Last Rev Thu, Aug  1, 2024  9:07:38 AM
 
-#define kMaxHarts 8
+#define cMaxHWThreads (8U)
 
 namespace Kernel
 {
 	class HardwareThread;
-	class MPManager;
+	class MPCoreScheduler;
 
 	using ThreadID = UInt32;
 
@@ -38,7 +39,7 @@ namespace Kernel
 
 	///
 	/// \name HardwareThread
-	/// @brief CPU Hardware Thread (POWER, x64, or 64x0)
+	/// \brief Abstraction over the CPU's core, used to run processes or threads.
 	///
 
 	class HardwareThread final
@@ -76,22 +77,22 @@ namespace Kernel
 		bool			 fBusy{false};
 
 	private:
-		friend class MPManager;
+		friend class MPCoreScheduler;
 	};
 
 	///
-	/// \name MPManager
-	/// @brief Multi processor manager to manage other cores and dispatch tasks.
+	/// \name MPCoreScheduler
+	/// \brief Class to manage the thread scheduling.
 	///
 
-	class MPManager final
+	class MPCoreScheduler final
 	{
 	private:
-		explicit MPManager();
+		explicit MPCoreScheduler();
 
 	public:
-		~MPManager();
-		NEWOS_COPY_DEFAULT(MPManager);
+		~MPCoreScheduler();
+		NEWOS_COPY_DEFAULT(MPCoreScheduler);
 
 	public:
 		bool			   Switch(HAL::StackFramePtr the);
@@ -103,9 +104,9 @@ namespace Kernel
 		operator bool() noexcept;
 
 	public:
-		/// @brief Shared instance of the SMP Manager.
-		/// @return the reference to the smp manager.
-		static Ref<MPManager> The();
+		/// @brief Shared instance of the MP Manager.
+		/// @return the reference to the mp manager class.
+		static Ref<MPCoreScheduler> The();
 
 	public:
 		/// @brief Returns the amount of threads present in the system.
@@ -113,7 +114,7 @@ namespace Kernel
 		SizeT Count() noexcept;
 
 	private:
-		Array<HardwareThread, kMaxHarts> fThreadList;
+		Array<HardwareThread, cMaxHWThreads> fThreadList;
 		ThreadID						 fCurrentThread{0};
 	};
 

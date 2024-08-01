@@ -17,7 +17,7 @@
 %define kArchAmd64 122
 %define kHandoverMagic 0xBADCC
 
-section .NewBoot
+section .newosldr
 
 HandoverMagic: dq kHandoverMagic
 HandoverType: dw kTypeKernel

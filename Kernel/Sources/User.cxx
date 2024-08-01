@@ -69,17 +69,17 @@ namespace Kernel
 		return this->Ring() == RingKind::kRingSuperUser;
 	}
 
-	UserView* UserView::The() noexcept
+	UserManager* UserManager::The() noexcept
 	{
-		UserView* view = nullptr;
+		UserManager* view = nullptr;
 
 		if (!view)
-			view = new UserView();
+			view = new UserManager();
 
 		return view;
 	}
 
-	Bool UserView::LogIn(User* user, const Char* password) noexcept
+	Bool UserManager::LogIn(User* user, const Char* password) noexcept
 	{
 		if (!password ||
 			!user)
@@ -143,12 +143,12 @@ namespace Kernel
 		return true;
 	}
 
-	User* UserView::Current() noexcept
+	User* UserManager::Current() noexcept
 	{
 		return fCurrentUser;
 	}
 
-	Void UserView::LogOff() noexcept
+	Void UserManager::LogOff() noexcept
 	{
 		if (!fCurrentUser)
 			return;

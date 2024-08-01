@@ -41,32 +41,54 @@ namespace Boot
 		{
 			writer.Write("newosldr: Windows executable detected.\r");
 
-			ExecHeaderPtr		  hdrPtr = (ldr_find_exec_header(firstBytes));
-			ExecOptionalHeaderPtr optHdr = (ldr_find_opt_exec_header(firstBytes));
+			ExecHeaderPtr		  hdrPtr = ldr_find_exec_header(firstBytes);
+			ExecOptionalHeaderPtr optHdr = ldr_find_opt_exec_header(firstBytes);
 
-			// Parse PE32+
-			fStartAddress = (VoidPtr)(optHdr->mAddressOfEntryPoint);
-			fStackPtr	  = new Char[optHdr->mSizeOfStackReserve];
+			// ================================ //
+			// Allocate stack.
+			// ================================ //
+			fStackPtr = new Char[optHdr->mSizeOfStackReserve];
 
-			writer.Write("newosldr: Major Linker: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
-			writer.Write("newosldr: Minor Linker: ").Write(optHdr->mMinorLinkerVersion).Write("\r");
-			writer.Write("newosldr: Major Subsystem: ").Write(optHdr->mMajorSubsystemVersion).Write("\r");
-			writer.Write("newosldr: Minor Subsystem: ").Write(optHdr->mMinorSubsystemVersion).Write("\r");
+			writer.Write("newosldr: Major Linker Ver: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
+			writer.Write("newosldr: Minor Linker Ver: ").Write(optHdr->mMinorLinkerVersion).Write("\r");
+			writer.Write("newosldr: Major Subsystem Ver: ").Write(optHdr->mMajorSubsystemVersion).Write("\r");
+			writer.Write("newosldr: Minor Subsystem Ver: ").Write(optHdr->mMinorSubsystemVersion).Write("\r");
 			writer.Write("newosldr: Magic: ").Write(optHdr->mMagic).Write("\r");
-			writer.Write("newosldr: StartAddress: ").Write((UIntPtr)optHdr->mImageBase + optHdr->mBaseOfCode + optHdr->mAddressOfEntryPoint).Write("\r");
+
+			ExecSectionHeaderPtr sectPtr = (ExecSectionHeaderPtr)((UIntPtr)firstBytes + ((DosHeaderPtr)firstBytes)->eLfanew + hdrPtr->mSizeOfOptionalHeader + sizeof(ExecHeader) + sizeof(UInt32));
+
+			constexpr auto cMaxSectionsOfKernel = 10;
+
+			for (SizeT sectIndex = 0; sectIndex < cMaxSectionsOfKernel; ++sectIndex)
+			{
+				ExecSectionHeaderPtr sect = &sectPtr[sectIndex];
+
+				// if this is a code header.
+				if (sect->mCharacteristics & 0x00000020)
+				{
+					fStartAddress = (VoidPtr)(optHdr->mAddressOfEntryPoint + sect->mPointerToRawData + 
+					sect->mVirtualAddress);
+					writer.Write("newosldr: Start Address: ").Write((UIntPtr)fStartAddress).Write("\r");
+
+					break;
+				}
+			}
 		}
 		else if (firstBytes[0] == kPefMagic[0] &&
 				 firstBytes[1] == kPefMagic[1] &&
 				 firstBytes[2] == kPefMagic[2] &&
 				 firstBytes[3] == kPefMagic[3])
 		{
-			// Parse Non FAT PEF.
+			//  =========================================  //
+			//  PEF executable detected.
+			//  =========================================  //
+
 			fStartAddress = nullptr;
 			writer.Write("newosldr: PEF executable detected.\r");
 		}
 		else
 		{
-			writer.Write("newosldr: Exec format error.\r");
+			writer.Write("newosldr: Invalid executable.\r");
 		}
 	}
 

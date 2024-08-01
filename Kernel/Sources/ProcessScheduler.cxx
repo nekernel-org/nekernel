@@ -11,7 +11,7 @@
 
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/PEFSharedObject.hxx>
-#include <KernelKit/MPManager.hpp>
+#include <KernelKit/MP.hxx>
 #include <KernelKit/Heap.hxx>
 #include <NewKit/String.hpp>
 #include <KernelKit/LPC.hxx>
@@ -395,29 +395,29 @@ namespace Kernel
 		if (!the_stack || new_pid < 0)
 			return false;
 
-		for (SizeT index = 0UL; index < MPManager::The().Leak().Count(); ++index)
+		for (SizeT index = 0UL; index < MPCoreScheduler::The().Leak().Count(); ++index)
 		{
-			if (MPManager::The().Leak()[index].Leak()->Kind() == kInvalidHart)
+			if (MPCoreScheduler::The().Leak()[index].Leak()->Kind() == kInvalidHart)
 				continue;
 
-			if (MPManager::The().Leak()[index].Leak()->StackFrame() == the_stack)
+			if (MPCoreScheduler::The().Leak()[index].Leak()->StackFrame() == the_stack)
 			{
-				MPManager::The().Leak()[index].Leak()->Busy(false);
+				MPCoreScheduler::The().Leak()[index].Leak()->Busy(false);
 				continue;
 			}
 
-			if (MPManager::The().Leak()[index].Leak()->IsBusy())
+			if (MPCoreScheduler::The().Leak()[index].Leak()->IsBusy())
 				continue;
 
-			if (MPManager::The().Leak()[index].Leak()->Kind() !=
+			if (MPCoreScheduler::The().Leak()[index].Leak()->Kind() !=
 					ThreadKind::kHartBoot &&
-				MPManager::The().Leak()[index].Leak()->Kind() !=
+				MPCoreScheduler::The().Leak()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				MPManager::The().Leak()[index].Leak()->Busy(true);
+				MPCoreScheduler::The().Leak()[index].Leak()->Busy(true);
 				ProcessHelper::TheCurrentPID() = new_pid;
 
-				return MPManager::The().Leak()[index].Leak()->Switch(the_stack);
+				return MPCoreScheduler::The().Leak()[index].Leak()->Switch(the_stack);
 			}
 		}
 

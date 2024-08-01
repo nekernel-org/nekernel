@@ -27,7 +27,7 @@
 namespace Kernel
 {
 	class User;
-	class UserView;
+	class UserManager;
 
 	enum class RingKind
 	{
@@ -72,13 +72,13 @@ namespace Kernel
 		StringView fUserName;
 		VoidPtr	   fUserToken{nullptr};
 
-		friend UserView;
+		friend UserManager;
 	};
 
-	class UserView final
+	class UserManager final
 	{
-		UserView()	= default;
-		~UserView() = default;
+		UserManager()	= default;
+		~UserManager() = default;
 
 		User* fCurrentUser		 = nullptr;
 		User* fLastLoggedOffUser = nullptr;
@@ -87,9 +87,9 @@ namespace Kernel
 		User* fRootUser = nullptr;
 
 	public:
-		NEWOS_COPY_DELETE(UserView);
+		NEWOS_COPY_DELETE(UserManager);
 
-		STATIC UserView* The() noexcept;
+		STATIC UserManager* The() noexcept;
 		Bool LogIn(User* user, const Char* password) noexcept;
 		User* Current() noexcept;
 		Void LogOff() noexcept;

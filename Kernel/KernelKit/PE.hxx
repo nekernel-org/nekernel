@@ -26,7 +26,6 @@
 
 typedef struct ExecHeader final
 {
-	Kernel::UInt32 mMagic; // PE\0\0 or 0x00004550
 	Kernel::UInt16 mMachine;
 	Kernel::UInt16 mNumberOfSections;
 	Kernel::UInt32 mTimeDateStamp;
@@ -38,40 +37,41 @@ typedef struct ExecHeader final
 
 typedef struct ExecOptionalHeader final
 {
-	Kernel::UInt16	mMagic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
-	Kernel::UChar	mMajorLinkerVersion;
-	Kernel::UChar	mMinorLinkerVersion;
-	Kernel::UIntPtr mSizeOfCode;
-	Kernel::UIntPtr mSizeOfInitializedData;
-	Kernel::UIntPtr mSizeOfUninitializedData;
-	Kernel::UInt32	mAddressOfEntryPoint;
-	Kernel::UInt32	mBaseOfCode;
-	Kernel::UIntPtr mImageBase;
-	Kernel::UInt32	mSectionAlignment;
-	Kernel::UInt32	mFileAlignment;
-	Kernel::UInt16	mMajorOperatingSystemVersion;
-	Kernel::UInt16	mMinorOperatingSystemVersion;
-	Kernel::UInt16	mMajorImageVersion;
-	Kernel::UInt16	mMinorImageVersion;
-	Kernel::UInt16	mMajorSubsystemVersion;
-	Kernel::UInt16	mMinorSubsystemVersion;
-	Kernel::UInt32	mWin32VersionValue;
-	Kernel::UIntPtr mSizeOfImage;
-	Kernel::UIntPtr mSizeOfHeaders;
-	Kernel::UInt32	mCheckSum;
-	Kernel::UInt16	mSubsystem;
-	Kernel::UInt16	mDllCharacteristics;
-	Kernel::UIntPtr mSizeOfStackReserve;
-	Kernel::UIntPtr mSizeOfStackCommit;
-	Kernel::UIntPtr mSizeOfHeapReserve;
-	Kernel::UIntPtr mSizeOfHeapCommit;
-	Kernel::UInt32	mLoaderFlags;
-	Kernel::UInt32	mNumberOfRvaAndSizes;
+	Kernel::UInt16 mMagic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
+	Kernel::UInt8  mMajorLinkerVersion;
+	Kernel::UInt8  mMinorLinkerVersion;
+	Kernel::UInt32 mSizeOfCode;
+	Kernel::UInt32 mSizeOfInitializedData;
+	Kernel::UInt32 mSizeOfUninitializedData;
+	Kernel::UInt32 mAddressOfEntryPoint;
+	Kernel::UInt32 mBaseOfCode;
+	Kernel::UInt32 mBaseOfData;
+	Kernel::UInt32 mImageBase;
+	Kernel::UInt32 mSectionAlignment;
+	Kernel::UInt32 mFileAlignment;
+	Kernel::UInt16 mMajorOperatingSystemVersion;
+	Kernel::UInt16 mMinorOperatingSystemVersion;
+	Kernel::UInt16 mMajorImageVersion;
+	Kernel::UInt16 mMinorImageVersion;
+	Kernel::UInt16 mMajorSubsystemVersion;
+	Kernel::UInt16 mMinorSubsystemVersion;
+	Kernel::UInt32 mWin32VersionValue;
+	Kernel::UInt32 mSizeOfImage;
+	Kernel::UInt32 mSizeOfHeaders;
+	Kernel::UInt32 mCheckSum;
+	Kernel::UInt16 mSubsystem;
+	Kernel::UInt16 mDllCharacteristics;
+	Kernel::UInt32 mSizeOfStackReserve;
+	Kernel::UInt32 mSizeOfStackCommit;
+	Kernel::UInt32 mSizeOfHeapReserve;
+	Kernel::UInt32 mSizeOfHeapCommit;
+	Kernel::UInt32 mLoaderFlags;
+	Kernel::UInt32 mNumberOfRvaAndSizes;
 } PACKED ExecOptionalHeader, *ExecOptionalHeaderPtr;
 
 typedef struct ExecSectionHeader final
 {
-	Kernel::UChar       mName[8];
+	Kernel::Char       mName[8];
 	Kernel::UInt32		mVirtualSize;
 	Kernel::UInt32		mVirtualAddress;
 	Kernel::UInt32		mSizeOfRawData;
@@ -118,6 +118,15 @@ typedef struct ExecImportDirectory
 	Kernel::UInt32 mThunkTableRva;
 } PACKED ExecImportDirectory, *ExecImportDirectoryPtr;
 
-#define kPeStart "__ImageStart"
+typedef struct ExecDataDirectory {
+  Kernel::UInt32 VirtualAddress;
+  Kernel::UInt32 Size;
+} ExecDataDirectory, *ExecDataDirectoryPtr;
+
+typedef struct ExecImageHeader {
+	Kernel::UInt32 mSignature;
+	ExecHeader mHeader;
+	ExecOptionalHeader mOptHdr;
+} ExecImageHeader, *ExecImageHeaderPtr;
 
 #endif /* ifndef __KERNELKIT_INC_PE_HXX__ */

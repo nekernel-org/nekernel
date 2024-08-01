@@ -28,7 +28,6 @@ LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
 KERNEL		= newoskrnl.exe
-KERNEL_512K = newoskrnl.512k.exe
 
 .PHONY: error
 error:
@@ -55,8 +54,6 @@ link-arm64-epm:
 
 .PHONY: all
 all: newos-arm64-epm link-arm64-epm
-	qemu-img create -f raw $(KERNEL_512K) 512K
-	dd if=newoskrnl.exe of=$(KERNEL_512K) bs=1 seek=0 conv=notrunc
 	@echo "NewOSKrnl => OK."
 
 .PHONY: help
@@ -68,4 +65,4 @@ help:
 
 .PHONY: clean
 clean:
-	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL) $(KERNEL_512K)
+	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL) 

@@ -6,13 +6,13 @@
 
 #include <ArchKit/ArchKit.hpp>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/MPManager.hpp>
+#include <KernelKit/MP.hxx>
 #include <CFKit/Property.hpp>
 
 ///! BUGS: 0
 
-///! @file MPManager.cxx
-///! @brief This file handles multi processing in Kernel.
+///! @file MP.cxx
+///! @brief This file handles multi processing in the kernel.
 ///! @brief Multi processing is needed for multi-tasking operations.
 
 namespace Kernel
@@ -120,10 +120,10 @@ namespace Kernel
 	//! @brief Constructor and destructor
 
 	///! @brief Default constructor.
-	MPManager::MPManager()
+	MPCoreScheduler::MPCoreScheduler()
 	{
 		StringView strCoreName(512);
-		strCoreName += "\\Properties\\Smp\\SchedulerClass";
+		strCoreName += "\\Class\\Smp\\MPClass";
 
 		cSMPCoreName.GetKey() = strCoreName;
 		cSMPCoreName.GetValue() = (UIntPtr)this;
@@ -132,17 +132,17 @@ namespace Kernel
 	}
 
 	///! @brief Default destructor.
-	MPManager::~MPManager() = default;
+	MPCoreScheduler::~MPCoreScheduler() = default;
 
 	/// @brief Shared singleton function
-	Ref<MPManager> MPManager::The()
+	Ref<MPCoreScheduler> MPCoreScheduler::The()
 	{
-		static MPManager manager;
+		static MPCoreScheduler manager;
 		return {manager};
 	}
 
 	/// @brief Get Stack Frame of Core
-	HAL::StackFramePtr MPManager::Leak() noexcept
+	HAL::StackFramePtr MPCoreScheduler::Leak() noexcept
 	{
 		if (fThreadList[fCurrentThread].Leak() &&
 			ProcessHelper::TheCurrentPID() ==
@@ -153,12 +153,12 @@ namespace Kernel
 	}
 
 	/// @brief Finds and switch to a free core.
-	bool MPManager::Switch(HAL::StackFramePtr stack)
+	bool MPCoreScheduler::Switch(HAL::StackFramePtr stack)
 	{
 		if (stack == nullptr)
 			return false;
 
-		for (SizeT idx = 0; idx < kMaxHarts; ++idx)
+		for (SizeT idx = 0; idx < cMaxHWThreads; ++idx)
 		{
 			// stack != nullptr -> if core is used, then continue.
 			if (!fThreadList[idx].Leak() ||
@@ -203,7 +203,7 @@ namespace Kernel
 	 * @param idx the index
 	 * @return the reference to the hardware thread.
 	 */
-	Ref<HardwareThread*> MPManager::operator[](const SizeT& idx)
+	Ref<HardwareThread*> MPCoreScheduler::operator[](const SizeT& idx)
 	{
 		if (idx == 0)
 		{
@@ -212,7 +212,7 @@ namespace Kernel
 				fThreadList[idx].Leak().Leak()->fKind = kHartBoot;
 			}
 		}
-		else if (idx >= kMaxHarts)
+		else if (idx >= cMaxHWThreads)
 		{
 			static HardwareThread* fakeThread = new HardwareThread();
 
@@ -233,7 +233,7 @@ namespace Kernel
 	 * Check if thread pool isn't empty.
 	 * @return
 	 */
-	MPManager::operator bool() noexcept
+	MPCoreScheduler::operator bool() noexcept
 	{
 		return !fThreadList.Empty();
 	}
@@ -242,14 +242,14 @@ namespace Kernel
 	 * Reverse operator bool
 	 * @return
 	 */
-	bool MPManager::operator!() noexcept
+	bool MPCoreScheduler::operator!() noexcept
 	{
 		return fThreadList.Empty();
 	}
 
 	/// @brief Returns the amount of core present.
 	/// @return the number of cores.
-	SizeT MPManager::Count() noexcept
+	SizeT MPCoreScheduler::Count() noexcept
 	{
 		return fThreadList.Count();
 	}
