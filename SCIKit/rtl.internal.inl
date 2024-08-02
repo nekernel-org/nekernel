@@ -2,20 +2,29 @@
 
 Copyright ZKA Technologies.
 
-File: rt.internal.inl.
-Purpose: Internal file for SCM.
+File: rt.internal.inl
+Purpose: Base code of SCM.
 
 ------------------------------------------- */
 
+/// @internal
+
+#ifndef __ZECC__
+#define object class
+#define protocol class
+#define clsid(X) __attribute__((uuid(X)))
+
+#warning ! you may be using the clang version of the newos kit, please be cautious that some thing mayn't be present. !
+#endif // !__ZECC__
 
 // Interfaces are divided between classes.
 // So that they aren't too big.
 
-class UnknownInterface; // Refrenced from an IDB entry.
+protocol UnknownInterface; // Refrenced from an IDB entry.
 class UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: TextUCLSID.
-class UUID;
+object UUID;
 
-class __attribute__((uuid("d7c144b6-0792-44b8-b06b-02b227b547df"))) UnknownInterface
+protocol clsid("d7c144b6-0792-44b8-b06b-02b227b547df") UnknownInterface
 {
 public:
 	explicit UnknownInterface() = default;
@@ -30,23 +39,23 @@ public:
 	virtual VoidPtr QueryInterface(UUID* p_uuid) = 0;
 };
 
-/// @brief Allocate new SCM class.
+/// @brief Allocate new SCM object.
 /// @tparam TCLS 
 /// @tparam UCLSID 
 /// @param uclsidOfCls 
 /// @return 
 template <typename TCLS, typename UCLSID, typename... Args>
-inline TCLS* RtlQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
+inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 {
 	return uclsidOfCls->QueryInterfaceWithArgs(args...);
 }
 
-/// @brief Release SCM class.
+/// @brief Release SCM object.
 /// @tparam TCLS 
 /// @param cls 
 /// @return 
 template <typename TCLS>
-inline SInt32 RtlReleaseClass(TCLS* cls)
+inline SInt32 ScmReleaseClass(TCLS* cls)
 {
 	if (!cls)
 		return -1;
