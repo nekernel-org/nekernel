@@ -7,7 +7,7 @@
 #ifndef _INC_MODULE_MBCI_HXX_
 #define _INC_MODULE_MBCI_HXX_
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 #include <Modules/ACPI/ACPI.hxx>
 
 /**

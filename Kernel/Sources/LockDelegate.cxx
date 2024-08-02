@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/LockDelegate.hpp>
+#include <KernelKit/LockDelegate.hxx>
 
 namespace Kernel
 {

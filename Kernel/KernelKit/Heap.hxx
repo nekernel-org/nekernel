@@ -11,7 +11,7 @@
 // file: KernelHeap.hxx
 // description: heap allocation for the kernel.
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 namespace Kernel
 {

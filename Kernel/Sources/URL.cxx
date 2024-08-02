@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
-#include <CFKit/URL.hpp>
-#include <KernelKit/DebugOutput.hpp>
-#include <NewKit/Utils.hpp>
+#include <CFKit/URL.hxx>
+#include <KernelKit/DebugOutput.hxx>
+#include <NewKit/Utils.hxx>
 
 /// BUGS: 0
 

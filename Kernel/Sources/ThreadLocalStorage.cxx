@@ -7,8 +7,8 @@
  *  ========================================================
  */
 
-#include <NewKit/String.hpp>
-#include <CFKit/Property.hpp>
+#include <NewKit/String.hxx>
+#include <CFKit/Property.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
 

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
-#include <NewKit/Utils.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/Utils.hxx>
 
 #define NoOp()			 asm volatile("mr 0, 0")
 #define kHalPPCAlignment __attribute__((aligned(4)))

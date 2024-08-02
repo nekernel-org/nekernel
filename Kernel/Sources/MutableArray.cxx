@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/MutableArray.hpp>
+#include <NewKit/MutableArray.hxx>

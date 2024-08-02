@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <NewKit/Array.hpp>
-#include <NewKit/Defines.hpp>
-#include <NewKit/Utils.hpp>
+#include <NewKit/Array.hxx>
+#include <NewKit/Defines.hxx>
+#include <NewKit/Utils.hxx>
 #include <FirmwareKit/Handover.hxx>
 
 #ifdef kCPUBackendName

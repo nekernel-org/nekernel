@@ -7,7 +7,7 @@
 #ifndef __INC_MP_MANAGER_HPP__
 #define __INC_MP_MANAGER_HPP__
 
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Ref.hxx>
 

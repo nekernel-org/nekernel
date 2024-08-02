@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
-#include <KernelKit/PCI/Device.hpp>
+#include <ArchKit/ArchKit.hxx>
+#include <KernelKit/PCI/Device.hxx>
 
 Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {

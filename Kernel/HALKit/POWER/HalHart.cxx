@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <HALKit/POWER/Processor.hxx>
-#include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/DebugOutput.hxx>
 #include <HALKit/POWER/Hart.hxx>
 
 using namespace Kernel;

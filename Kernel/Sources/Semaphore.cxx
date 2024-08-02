@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/Semaphore.hpp>
+#include <KernelKit/Semaphore.hxx>
 
 namespace Kernel
 {

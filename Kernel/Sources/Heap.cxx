@@ -4,11 +4,11 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/LPC.hxx>
 #include <KernelKit/Heap.hxx>
-#include <NewKit/Crc32.hpp>
-#include <NewKit/PageManager.hpp>
+#include <NewKit/Crc32.hxx>
+#include <NewKit/PageManager.hxx>
 
 //! @file KernelHeap.cxx
 //! @brief Kernel heap allocator.

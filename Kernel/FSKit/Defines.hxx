@@ -6,6 +6,6 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 #define FSKIT_VERSION "1.00"

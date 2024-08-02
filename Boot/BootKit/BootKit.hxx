@@ -25,7 +25,7 @@
 /// Include other APIs.
 /***********************************************************************************/
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 #include <Modules/ATA/ATA.hxx>
 
 #include <FirmwareKit/EFI.hxx>

@@ -19,7 +19,7 @@ default.
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
 #include <KernelKit/DriveManager.hxx>
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 /**
 	@brief New File System specification.

@@ -4,10 +4,10 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
-#include <KernelKit/DebugOutput.hpp>
-#include <NewKit/KernelCheck.hpp>
-#include <NewKit/String.hpp>
+#include <ArchKit/ArchKit.hxx>
+#include <KernelKit/DebugOutput.hxx>
+#include <NewKit/KernelCheck.hxx>
+#include <NewKit/String.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 

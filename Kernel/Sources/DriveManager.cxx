@@ -4,11 +4,11 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/DriveManager.hxx>
 #include <Modules/ATA/ATA.hxx>
 #include <Modules/AHCI/AHCI.hxx>
-#include <NewKit/Utils.hpp>
+#include <NewKit/Utils.hxx>
 
 /// @file DriveManager.cxx
 /// @brief Kernel drive manager.

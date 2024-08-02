@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 /// @file FAT32.hxx
 /// @brief FAT32 support.

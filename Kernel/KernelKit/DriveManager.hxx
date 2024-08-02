@@ -9,11 +9,11 @@
 
 #include <KernelKit/ProcessScheduler.hxx>
 #include <CompilerKit/CompilerKit.hxx>
-#include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/DeviceManager.hpp>
+#include <KernelKit/DebugOutput.hxx>
+#include <KernelKit/DeviceManager.hxx>
 #include <KernelKit/LPC.hxx>
-#include <NewKit/Defines.hpp>
-#include <NewKit/String.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/String.hxx>
 
 #define kDriveManagerCount (4U)
 

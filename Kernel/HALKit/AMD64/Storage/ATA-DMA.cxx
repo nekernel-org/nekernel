@@ -15,10 +15,10 @@
  *
  */
 
-#include <StorageKit/PRDT.hpp>
+#include <StorageKit/PRDT.hxx>
 
 #include <Modules/ATA/ATA.hxx>
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 
 using namespace Kernel;
 

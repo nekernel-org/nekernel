@@ -8,8 +8,8 @@
 #ifndef _NEWKIT_REF_HPP_
 #define _NEWKIT_REF_HPP_
 
-#include <NewKit/Defines.hpp>
-#include <NewKit/KernelCheck.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/KernelCheck.hxx>
 
 namespace Kernel
 {

@@ -10,7 +10,7 @@
 #ifndef _INC_NETWORK_LTE_HXX_
 #define _INC_NETWORK_LTE_HXX_
 
-#include <NewKit/Defines.hpp>
-#include <NewKit/String.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/String.hxx>
 
 #endif // ifndef _INC_NETWORK_LTE_HXX_

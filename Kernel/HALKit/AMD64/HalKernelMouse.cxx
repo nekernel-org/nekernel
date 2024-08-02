@@ -7,8 +7,8 @@
 #include <Modules/PS2/PS2MouseInterface.hxx>
 #include <Modules/CoreCG/CoreCG.hxx>
 #include <Modules/CoreCG/Rsrc/Cursor.rsrc>
-#include <KernelKit/Framebuffer.hpp>
-#include <NewKit/Defines.hpp>
+#include <KernelKit/Framebuffer.hxx>
+#include <NewKit/Defines.hxx>
 
 /// @note forward decl.
 EXTERN_C Kernel::Boolean _hal_draw_mouse();

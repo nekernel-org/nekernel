@@ -4,14 +4,14 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <NewKit/Defines.hpp>
-#include <NewKit/KernelCheck.hpp>
-#include <NewKit/OwnPtr.hpp>
-#include <NewKit/String.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/KernelCheck.hxx>
+#include <NewKit/OwnPtr.hxx>
+#include <NewKit/String.hxx>
 
 namespace Kernel
 {

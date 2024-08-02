@@ -7,11 +7,11 @@
 #ifndef __CORECG_ACCESS_HXX__
 #define __CORECG_ACCESS_HXX__
 
-#include <NewKit/NewKit.hpp>
+#include <NewKit/NewKit.hxx>
 #include <KernelKit/LPC.hxx>
 #include <Modules/CoreCG/CoreCG.hxx>
 #include <Modules/CoreCG/Lerp.hxx>
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 
 namespace Kernel
 {

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Defines.hpp>
-#include <ArchKit/ArchKit.hpp>
+#include <NewKit/Defines.hxx>
+#include <ArchKit/ArchKit.hxx>
 
 /// @file Flash.cxx
 /// @brief Flash memory builtin.

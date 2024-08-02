@@ -16,7 +16,7 @@
 #ifndef __AHCI__
 
 #include <CompilerKit/CompilerKit.hxx>
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 ///! Status register
 #define ATA_SR_BSY	0x80

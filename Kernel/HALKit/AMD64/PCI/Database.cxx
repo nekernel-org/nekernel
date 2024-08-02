@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/PCI/Database.hpp>
+#include <KernelKit/PCI/Database.hxx>
 
 namespace Kernel
 {

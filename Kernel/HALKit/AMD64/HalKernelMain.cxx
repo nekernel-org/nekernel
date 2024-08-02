@@ -4,21 +4,21 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 #include <Modules/CoreCG/CoreCG.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/FileManager.hpp>
-#include <KernelKit/Framebuffer.hpp>
+#include <KernelKit/FileManager.hxx>
+#include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/Json.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
-#include <KernelKit/CodeManager.hpp>
+#include <KernelKit/CodeManager.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
-#include <CFKit/Property.hpp>
+#include <CFKit/Property.hxx>
 
 #define mInitKernel(X) \
 	X;                 \

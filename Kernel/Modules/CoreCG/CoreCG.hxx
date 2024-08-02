@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 #define CGInit() Kernel::SizeT __GXCursor = 0
 

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/FileManager.hpp>
+#include <KernelKit/DebugOutput.hxx>
+#include <KernelKit/FileManager.hxx>
 
 #ifdef __FSKIT_USE_NEWFS__
 

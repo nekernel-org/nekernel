@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
-#include <KernelKit/DebugOutput.hpp>
-#include <NewKit/PageAllocator.hpp>
+#include <ArchKit/ArchKit.hxx>
+#include <KernelKit/DebugOutput.hxx>
+#include <NewKit/PageAllocator.hxx>
 
 /// @brief Internal namespace, used internally by kernel.
 namespace Kernel::Detail

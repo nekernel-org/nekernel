@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/Heap.hxx>
-#include <NewKit/New.hpp>
+#include <NewKit/New.hxx>
 
 void* operator new[](size_t sz)
 {

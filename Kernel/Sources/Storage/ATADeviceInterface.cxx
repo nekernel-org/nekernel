@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <StorageKit/ATA.hpp>
+#include <StorageKit/ATA.hxx>
 
 using namespace Kernel;
 

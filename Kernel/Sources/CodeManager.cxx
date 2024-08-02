@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Utils.hpp>
-#include <KernelKit/CodeManager.hpp>
+#include <NewKit/Utils.hxx>
+#include <KernelKit/CodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 
 namespace Kernel

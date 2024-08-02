@@ -6,8 +6,8 @@
 
 #ifdef __NEWOS_ARM64__
 
-#include <KernelKit/DebugOutput.hpp>
-#include <NewKit/CxxAbi.hpp>
+#include <KernelKit/DebugOutput.hxx>
+#include <NewKit/CxxAbi.hxx>
 #include <KernelKit/LPC.hxx>
 
 EXTERN_C

@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Crc32.hpp>
+#include <NewKit/Crc32.hxx>
 
 // @file CRC32.cpp
 // @brief Check sequence implementation.

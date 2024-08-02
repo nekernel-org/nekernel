@@ -9,4 +9,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Stream.hpp>
+#include <NewKit/Stream.hxx>

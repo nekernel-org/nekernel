@@ -6,8 +6,8 @@
 
 #ifdef __NEWOS_AMD64__
 
-#include <KernelKit/DebugOutput.hpp>
-#include <NewKit/CxxAbi.hpp>
+#include <KernelKit/DebugOutput.hxx>
+#include <NewKit/CxxAbi.hxx>
 #include <KernelKit/LPC.hxx>
 
 atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];

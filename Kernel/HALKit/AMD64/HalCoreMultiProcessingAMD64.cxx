@@ -6,11 +6,11 @@
 
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hxx>
-#include <NewKit/KernelCheck.hpp>
-#include <ArchKit/ArchKit.hpp>
-#include <KernelKit/Semaphore.hpp>
+#include <NewKit/KernelCheck.hxx>
+#include <ArchKit/ArchKit.hxx>
+#include <KernelKit/Semaphore.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/Timer.hpp>
+#include <KernelKit/Timer.hxx>
 
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310

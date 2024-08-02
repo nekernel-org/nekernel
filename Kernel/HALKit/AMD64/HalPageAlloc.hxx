@@ -12,7 +12,7 @@
 
 ------------------------------------------------------- */
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 #ifndef kPTEMax
 #define kPTEMax (0x200)

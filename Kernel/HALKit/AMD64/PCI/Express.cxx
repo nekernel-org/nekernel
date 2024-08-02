@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/PCI/Express.hpp>
+#include <KernelKit/PCI/Express.hxx>
 
 namespace Kernel
 {

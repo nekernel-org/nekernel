@@ -4,10 +4,10 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
-#include <KernelKit/DebugOutput.hpp>
-#include <KernelKit/Framebuffer.hpp>
-#include <NewKit/Utils.hpp>
+#include <ArchKit/ArchKit.hxx>
+#include <KernelKit/DebugOutput.hxx>
+#include <KernelKit/Framebuffer.hxx>
+#include <NewKit/Utils.hxx>
 
 namespace Kernel
 {

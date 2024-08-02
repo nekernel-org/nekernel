@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <CFKit/GUIDWrapper.hpp>
+#include <CFKit/GUIDWrapper.hxx>
 
 namespace Kernel::XRN
 {

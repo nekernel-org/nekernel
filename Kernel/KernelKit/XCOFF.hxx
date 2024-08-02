@@ -14,7 +14,7 @@
 #ifndef __INC_XCOFF_HXX__
 #define __INC_XCOFF_HXX__
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 #define cXCOFF64Magic (0x01F7)
 

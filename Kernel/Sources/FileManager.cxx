@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/FileManager.hpp>
-#include <NewKit/Utils.hpp>
+#include <KernelKit/FileManager.hxx>
+#include <NewKit/Utils.hxx>
 
 /// BUGS: 0
 //! @brief File manager for Kernel.

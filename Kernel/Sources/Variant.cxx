@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Variant.hpp>
+#include <NewKit/Variant.hxx>
 
 namespace Kernel
 {

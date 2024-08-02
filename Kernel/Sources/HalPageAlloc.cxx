@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 
 #ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
@@ -12,8 +12,8 @@
 #include <HALKit/ARM64/HalPageAlloc.hxx>
 #endif
 
-#include <NewKit/Defines.hpp>
-#include <NewKit/KernelCheck.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/KernelCheck.hxx>
 
 STATIC Kernel::Boolean kAllocationInProgress = false;
 

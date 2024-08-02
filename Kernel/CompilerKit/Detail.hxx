@@ -7,7 +7,7 @@
 #pragma once
 
 #ifdef __KERNEL__
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 #endif // ifdef __KERNEL__
 
 #define NEWOS_COPY_DELETE(KLASS)             \

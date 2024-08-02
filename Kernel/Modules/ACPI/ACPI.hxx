@@ -11,7 +11,7 @@
 	https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
 */
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 namespace Kernel
 {

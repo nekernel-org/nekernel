@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <CFKit/Property.hpp>
+#include <CFKit/Property.hxx>
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DriveManager.hxx>
 

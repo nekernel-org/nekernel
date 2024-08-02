@@ -15,7 +15,7 @@
 #define __MSDOS_EXEC__
 
 #include <KernelKit/PE.hxx>
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 // Last Rev
 // Sat Feb 24 CET 2024

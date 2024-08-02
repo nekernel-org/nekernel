@@ -12,7 +12,7 @@
 #ifndef __MODULE_NVME_HXX__
 #define __MODULE_NVME_HXX__
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 /// TODO: checklist in: https://wiki.osdev.org/NVMe
 

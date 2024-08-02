@@ -7,10 +7,10 @@
 #ifndef __MOD_ACPI_HXX__
 #define __MOD_ACPI_HXX__
 
-#include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/DebugOutput.hxx>
 #include <Modules/ACPI/ACPI.hxx>
-#include <NewKit/ErrorOr.hpp>
-#include <NewKit/Defines.hpp>
+#include <NewKit/ErrorOr.hxx>
+#include <NewKit/Defines.hxx>
 #include <NewKit/Ref.hxx>
 
 namespace Kernel

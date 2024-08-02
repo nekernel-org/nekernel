@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DebugOutput.hpp>
-#include <NewKit/PageManager.hpp>
+#include <KernelKit/DebugOutput.hxx>
+#include <NewKit/PageManager.hxx>
 
 #ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>

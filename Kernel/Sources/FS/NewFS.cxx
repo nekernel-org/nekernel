@@ -11,10 +11,10 @@
 #include <Modules/Flash/Flash.hxx>
 #include <FSKit/NewFS.hxx>
 #include <KernelKit/LPC.hxx>
-#include <NewKit/Crc32.hpp>
-#include <NewKit/KernelCheck.hpp>
-#include <NewKit/String.hpp>
-#include <NewKit/Utils.hpp>
+#include <NewKit/Crc32.hxx>
+#include <NewKit/KernelCheck.hxx>
+#include <NewKit/String.hxx>
+#include <NewKit/Utils.hxx>
 #include <FirmwareKit/EPM.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/User.hxx>

@@ -4,10 +4,10 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/MP.hxx>
-#include <CFKit/Property.hpp>
+#include <CFKit/Property.hxx>
 
 ///! BUGS: 0
 

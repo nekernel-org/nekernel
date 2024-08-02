@@ -8,7 +8,7 @@
 #include <HALKit/POWER/ppc-mmu.h>
 
 #include <HALKit/POWER/Processor.hxx>
-#include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/DebugOutput.hxx>
 
 /// @note refer to the SoC documentation.
 

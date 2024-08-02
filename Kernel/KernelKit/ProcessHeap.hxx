@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include <NewKit/Array.hpp>
-#include <NewKit/ArrayList.hpp>
-#include <NewKit/ErrorOr.hpp>
-#include <NewKit/PageManager.hpp>
+#include <NewKit/Array.hxx>
+#include <NewKit/ArrayList.hxx>
+#include <NewKit/ErrorOr.hxx>
+#include <NewKit/PageManager.hxx>
 #include <NewKit/Ref.hxx>
-#include <NewKit/Pmm.hpp>
+#include <NewKit/Pmm.hxx>
 
 /// @version 5/11/23
 /// @file ProcessHeap.hxx
@@ -29,7 +29,7 @@ namespace Kernel
 		kUserHeapUser = 0x6,
 		/// @brief Read and Write heap.
 		kUserHeapRw = 0x8,
-	} kUserHeapFlags;
+	} UserHeapFlags;
 
 	/// @brief Allocate a process heap, no zero out is done here.
 	/// @param flags the allocation flags.

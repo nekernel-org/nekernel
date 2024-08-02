@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>

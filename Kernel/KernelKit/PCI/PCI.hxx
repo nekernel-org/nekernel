@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 #define cPCIConfigAddressPort (0xCF8)
 #define cPCIConfigDataPort	   (0xCFC)

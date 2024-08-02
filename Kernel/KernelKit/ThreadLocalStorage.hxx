@@ -7,7 +7,7 @@
 #ifndef _KERNELKIT_TLS_HPP
 #define _KERNELKIT_TLS_HPP
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 //! @brief TLS implementation in C++
 

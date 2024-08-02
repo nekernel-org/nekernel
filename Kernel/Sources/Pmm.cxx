@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DebugOutput.hpp>
-#include <NewKit/Pmm.hpp>
+#include <KernelKit/DebugOutput.hxx>
+#include <NewKit/Pmm.hxx>
 
 #if defined(__NEWOS_ARM64__)
 #include <HALKit/ARM64/Processor.hxx>

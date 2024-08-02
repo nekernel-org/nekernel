@@ -11,8 +11,8 @@
  */
 
 #include <KernelKit/User.hxx>
-#include <NewKit/KernelCheck.hpp>
-#include <KernelKit/FileManager.hpp>
+#include <NewKit/KernelCheck.hxx>
+#include <KernelKit/FileManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 
 #include <KernelKit/Heap.hxx>

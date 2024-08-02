@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <NewKit/String.hpp>
+#include <NewKit/String.hxx>
 
 /// @brief Handle GPF fault.
 /// @param rsp

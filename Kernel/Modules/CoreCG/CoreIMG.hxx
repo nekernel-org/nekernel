@@ -1,7 +1,7 @@
 #ifndef __CORECG_IMG_HXX__
 #define __CORECG_IMG_HXX__
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 namespace Kernel
 {

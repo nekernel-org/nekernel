@@ -13,9 +13,9 @@
 
 #pragma once
 
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 #include <CompilerKit/CompilerKit.hxx>
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 namespace Kernel
 {

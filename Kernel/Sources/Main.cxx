@@ -7,23 +7,23 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hpp>
+#include <ArchKit/ArchKit.hxx>
 #include <Modules/CoreCG/CoreCG.hxx>
 #include <CompilerKit/Detail.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/FileManager.hpp>
-#include <KernelKit/Framebuffer.hpp>
+#include <KernelKit/FileManager.hxx>
+#include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/Json.hxx>
-#include <NewKit/KernelCheck.hpp>
-#include <NewKit/String.hpp>
-#include <NewKit/Utils.hpp>
-#include <KernelKit/CodeManager.hpp>
-#include <CFKit/Property.hpp>
+#include <NewKit/KernelCheck.hxx>
+#include <NewKit/String.hxx>
+#include <NewKit/Utils.hxx>
+#include <KernelKit/CodeManager.hxx>
+#include <CFKit/Property.hxx>
 
 EXTERN Kernel::Property cKernelVersion;
 EXTERN Kernel::Property cAutoFormatDisk;

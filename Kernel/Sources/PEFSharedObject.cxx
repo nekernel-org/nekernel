@@ -7,12 +7,12 @@
  *  ========================================================
  */
 
-#include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFSharedObject.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 /* -------------------------------------------
 

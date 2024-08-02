@@ -6,8 +6,8 @@
 
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hxx>
-#include <NewKit/String.hpp>
-#include <ArchKit/ArchKit.hpp>
+#include <NewKit/String.hxx>
+#include <ArchKit/ArchKit.hxx>
 #include <KernelKit/Heap.hxx>
 
 namespace Kernel

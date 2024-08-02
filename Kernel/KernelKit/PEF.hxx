@@ -15,8 +15,8 @@
 #define __KERNELKIT_INC_PEF_HXX__
 
 #include <CompilerKit/CompilerKit.hxx>
-#include <KernelKit/LoaderInterface.hpp>
-#include <NewKit/Defines.hpp>
+#include <KernelKit/LoaderInterface.hxx>
+#include <NewKit/Defines.hxx>
 
 #define kPefMagic	 "Joy!"
 #define kPefMagicFat "yoJ!"

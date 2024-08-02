@@ -13,7 +13,7 @@
 #include <KernelKit/PEFSharedObject.hxx>
 #include <KernelKit/MP.hxx>
 #include <KernelKit/Heap.hxx>
-#include <NewKit/String.hpp>
+#include <NewKit/String.hxx>
 #include <KernelKit/LPC.hxx>
 
 ///! BUGS: 0

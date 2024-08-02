@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <NetworkKit/NetworkDevice.hpp>
-#include <NewKit/Utils.hpp>
+#include <NetworkKit/NetworkDevice.hxx>
+#include <NewKit/Utils.hxx>
 
 namespace Kernel
 {

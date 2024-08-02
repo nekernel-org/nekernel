@@ -6,7 +6,7 @@
 
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ProcessHeap.hxx>
-#include <NewKit/PageManager.hpp>
+#include <NewKit/PageManager.hxx>
 
 #define kHeapHeaderPaddingSz (16U)
 

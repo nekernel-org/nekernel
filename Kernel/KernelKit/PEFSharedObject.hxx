@@ -10,10 +10,10 @@
 #ifndef __KERNELKIT_SHARED_OBJECT_HXX__
 #define __KERNELKIT_SHARED_OBJECT_HXX__
 
-#include <KernelKit/LoaderInterface.hpp>
+#include <KernelKit/LoaderInterface.hxx>
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 namespace Kernel
 {

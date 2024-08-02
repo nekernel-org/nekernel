@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <NewKit/Array.hpp>
-#include <NewKit/Defines.hpp>
-#include <NewKit/String.hpp>
+#include <NewKit/Array.hxx>
+#include <NewKit/Defines.hxx>
+#include <NewKit/String.hxx>
 
 namespace Kernel
 {

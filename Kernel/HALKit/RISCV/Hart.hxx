@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 typedef Kernel::Int32 Rv64HartType;
 

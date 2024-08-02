@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/PCI/Iterator.hpp>
+#include <KernelKit/PCI/Iterator.hxx>
 
 #define PCI_ITERATOR_FIND_AND_UNWRAP(DEV, SZ) \
 	if (DEV.Leak().Leak())                    \

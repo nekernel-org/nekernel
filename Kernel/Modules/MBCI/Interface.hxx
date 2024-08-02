@@ -6,5 +6,5 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 #include <Modules/MBCI/MBCI.hxx>

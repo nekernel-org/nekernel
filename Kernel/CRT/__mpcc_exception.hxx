@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <KernelKit/DebugOutput.hpp>
+#include <KernelKit/DebugOutput.hxx>
 
 /// @brief Standard C++ namespace
 namespace std

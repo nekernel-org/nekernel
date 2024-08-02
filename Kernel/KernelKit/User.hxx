@@ -9,8 +9,8 @@
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/LPC.hxx>
-#include <NewKit/String.hpp>
-#include <NewKit/Defines.hpp>
+#include <NewKit/String.hxx>
+#include <NewKit/Defines.hxx>
 
 // user mode users.
 #define kSuperUser "Super"
@@ -26,8 +26,8 @@
 
 namespace Kernel
 {
-	class User;
 	class UserManager;
+	class User;
 
 	enum class RingKind
 	{

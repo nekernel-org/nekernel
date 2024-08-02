@@ -10,8 +10,8 @@
 #ifndef _INC_IPC_ENDPOINT_HXX_
 #define _INC_IPC_ENDPOINT_HXX_
 
-#include <NewKit/Defines.hpp>
-#include <NewKit/String.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/String.hxx>
 
 /// @file IPC.hxx
 /// @brief IPC protocol.

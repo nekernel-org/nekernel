@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 /// @file LPC.hxx
 /// @brief Local Process Codes.

@@ -14,7 +14,7 @@
 #ifndef __KERNELKIT_INC_PE_HXX__
 #define __KERNELKIT_INC_PE_HXX__
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 #define kPeMagic 0x00004550
 

@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/OwnPtr.hpp>
+#include <NewKit/OwnPtr.hxx>

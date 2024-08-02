@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <CFKit/Property.hpp>
+#include <CFKit/Property.hxx>
 
 namespace Kernel
 {

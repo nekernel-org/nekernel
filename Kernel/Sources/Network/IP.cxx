@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <NetworkKit/IP.hpp>
-#include <NewKit/Utils.hpp>
+#include <NetworkKit/IP.hxx>
+#include <NewKit/Utils.hxx>
 
 namespace Kernel
 {

@@ -8,8 +8,8 @@
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <FSKit/IndexableProperty.hxx>
-#include <NewKit/MutableArray.hpp>
-#include <NewKit/Utils.hpp>
+#include <NewKit/MutableArray.hxx>
+#include <NewKit/Utils.hxx>
 
 /// @brief File Indexer.
 /// BUGS: 0

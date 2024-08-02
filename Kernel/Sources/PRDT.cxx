@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DebugOutput.hpp>
-#include <NewKit/String.hpp>
-#include <StorageKit/PRDT.hpp>
+#include <KernelKit/DebugOutput.hxx>
+#include <NewKit/String.hxx>
+#include <StorageKit/PRDT.hxx>
 
 namespace Kernel
 {

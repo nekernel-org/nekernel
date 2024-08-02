@@ -9,7 +9,7 @@
 
 ------------------------------------------- */
 
-#include <CFKit/GUIDWizard.hpp>
+#include <CFKit/GUIDWizard.hxx>
 #include <NewKit/Ref.hxx>
 
 // begin of ascii 'readable' characters. (A, C, C, 1, 2)

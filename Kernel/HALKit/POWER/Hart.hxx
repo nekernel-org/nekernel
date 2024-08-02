@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 /// @brief hardware thread indentification type.
 typedef Kernel::Int32 PPCHartType;

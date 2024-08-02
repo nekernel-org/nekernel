@@ -7,11 +7,11 @@
 #ifndef _INC_PROCESS_SCHEDULER_HXX_
 #define _INC_PROCESS_SCHEDULER_HXX_
 
-#include <ArchKit/ArchKit.hpp>
-#include <KernelKit/LockDelegate.hpp>
+#include <ArchKit/ArchKit.hxx>
+#include <KernelKit/LockDelegate.hxx>
 #include <KernelKit/User.hxx>
 #include <KernelKit/ProcessHeap.hxx>
-#include <NewKit/MutableArray.hpp>
+#include <NewKit/MutableArray.hxx>
 
 #define kSchedMinMicroTime (AffinityKind::kStandard)
 #define kSchedInvalidPID   (-1)
@@ -28,10 +28,11 @@ namespace Kernel
 {
 	//! @brief Forward declarations.
 	struct PROCESS_HEADER_BLOCK;
+	
+	class PEFSharedObjectInterface;
 	class ProcessTeam;
 	class ProcessScheduler;
 	class ProcessHelper;
-	class PEFSharedObjectInterface;
 
 	//! @brief Process identifier.
 	typedef Int64 ProcessID;

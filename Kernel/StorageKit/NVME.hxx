@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <KernelKit/DeviceManager.hpp>
+#include <KernelKit/DeviceManager.hxx>
 #include <KernelKit/DriveManager.hxx>
-#include <NewKit/OwnPtr.hpp>
+#include <NewKit/OwnPtr.hxx>
 
 namespace Kernel
 {

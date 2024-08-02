@@ -14,7 +14,7 @@ improving that later.
 @author Amlal El Mahrouss
 */
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 using namespace Kernel;
 

@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <StorageKit/AHCI.hpp>
+#include <StorageKit/AHCI.hxx>
 
 using namespace Kernel;
 

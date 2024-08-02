@@ -8,9 +8,9 @@
 #define _INC_CODE_MANAGER_PEF_HXX_
 
 #include <KernelKit/PEF.hxx>
-#include <NewKit/ErrorOr.hpp>
-#include <NewKit/String.hpp>
-#include <KernelKit/FileManager.hpp>
+#include <NewKit/ErrorOr.hxx>
+#include <NewKit/String.hxx>
+#include <KernelKit/FileManager.hxx>
 
 #define kPefApplicationMime "application/x-newos-exec"
 

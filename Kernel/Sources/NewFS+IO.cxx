@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/DriveManager.hxx>
-#include <KernelKit/FileManager.hpp>
+#include <KernelKit/FileManager.hxx>
 
 /*************************************************************
  *

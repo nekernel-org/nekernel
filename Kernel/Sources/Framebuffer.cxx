@@ -13,7 +13,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/Framebuffer.hpp>
+#include <KernelKit/Framebuffer.hxx>
 #include <HintKit/CompilerHint.hxx>
 
 /**

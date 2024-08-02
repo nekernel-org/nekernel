@@ -10,8 +10,8 @@ Purpose: LTE I/O.
 #ifndef _INC_NETWORK_LTE_IO_HXX_
 #define _INC_NETWORK_LTE_IO_HXX_
 
-#include <NewKit/Defines.hpp>
-#include <NewKit/String.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/String.hxx>
 
 /// @brief Long Term Evolution I/O routines.
 

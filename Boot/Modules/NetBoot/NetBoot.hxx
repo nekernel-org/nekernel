@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 /// @brief the internet header is used to download updates OTA.
 typedef struct NetBootInternetHeader

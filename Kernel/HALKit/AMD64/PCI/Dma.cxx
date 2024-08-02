@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/PCI/Dma.hpp>
+#include <KernelKit/PCI/Dma.hxx>
 
 namespace Kernel
 {

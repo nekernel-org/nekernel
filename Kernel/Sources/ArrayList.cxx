@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/ArrayList.hpp>
+#include <NewKit/ArrayList.hxx>

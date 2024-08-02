@@ -10,10 +10,10 @@
 // last-rev: 30/01/24
 
 #include <CompilerKit/CompilerKit.hxx>
-#include <NewKit/Defines.hpp>
-#include <NewKit/Stream.hpp>
-#include <NewKit/String.hpp>
-#include <NewKit/Utils.hpp>
+#include <NewKit/Defines.hxx>
+#include <NewKit/Stream.hxx>
+#include <NewKit/String.hxx>
+#include <NewKit/Utils.hxx>
 
 #define cMaxJsonPath  4096
 #define cJSONLen 32

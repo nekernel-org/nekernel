@@ -7,8 +7,8 @@
 //! @file DebuggerPort.cxx
 //! @brief UART debug via packets.
 
-#include <ArchKit/ArchKit.hpp>
-#include <KernelKit/DebugOutput.hpp>
+#include <ArchKit/ArchKit.hxx>
+#include <KernelKit/DebugOutput.hxx>
 
 // after that we have start of additional data.
 

@@ -11,7 +11,7 @@
 #ifndef __FIRMWARE_EPM_HXX__
 #define __FIRMWARE_EPM_HXX__
 
-#include <NewKit/Defines.hpp>
+#include <NewKit/Defines.hxx>
 
 #define kEPMNameLength		 (32)
 #define kEPMFilesystemLength (16)

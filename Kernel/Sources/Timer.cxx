@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/Timer.hpp>
+#include <KernelKit/Timer.hxx>
 
 ///! BUGS: 0
 ///! @file Timer.cxx
