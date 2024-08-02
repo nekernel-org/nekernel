@@ -37,9 +37,9 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C SharedObjectPtr rtl_init_shared_object(ProcessHeader* header)
+EXTERN_C SharedObjectPtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header)
 {
-	SharedObjectPtr sharedObj = tls_new_class<SharedObject>();
+	SharedObjectPtr sharedObj = tls_new_class<PEFSharedObjectInterface>();
 
 	if (!sharedObj)
 	{
@@ -48,7 +48,7 @@ EXTERN_C SharedObjectPtr rtl_init_shared_object(ProcessHeader* header)
 		return nullptr;
 	}
 
-	sharedObj->Mount(tls_new_class<SharedObject::SharedObjectTrait>());
+	sharedObj->Mount(tls_new_class<PEFSharedObjectInterface::PEF_SHARED_OBJECT_TRAITS>());
 
 	if (!sharedObj->Get())
 	{
@@ -80,7 +80,7 @@ EXTERN_C SharedObjectPtr rtl_init_shared_object(ProcessHeader* header)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_shared_object(ProcessHeader* header, SharedObjectPtr lib, Bool* successful)
+EXTERN_C Void rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, SharedObjectPtr lib, Bool* successful)
 {
 	MUST_PASS(successful);
 

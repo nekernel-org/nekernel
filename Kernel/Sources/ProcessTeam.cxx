@@ -15,7 +15,7 @@ namespace Kernel
 {
 	/// @brief Process list array getter.
 	/// @return The list of process to schedule.
-	MutableArray<Ref<ProcessHeader>>& ProcessTeam::AsArray()
+	MutableArray<Ref<PROCESS_HEADER_BLOCK>>& ProcessTeam::AsArray()
 	{
 		return mProcessList;
 	}
@@ -29,7 +29,7 @@ namespace Kernel
 
 	/// @brief Current process getter.
 	/// @return The current process header.
-	Ref<ProcessHeader>& ProcessTeam::AsRef()
+	Ref<PROCESS_HEADER_BLOCK>& ProcessTeam::AsRef()
 	{
 		return mCurrentProcess;
 	}

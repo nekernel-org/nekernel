@@ -179,7 +179,7 @@ namespace Kernel::HAL
 
 	struct PROCESS_CONTROL_BLOCK final
 	{
-		ProcessHeader*	   f_Header;
+		PROCESS_HEADER_BLOCK*	   f_Header;
 		HAL::StackFramePtr f_StackFrame;
 	} fBlocks[cMaxPCBBlocks] = {0};
 

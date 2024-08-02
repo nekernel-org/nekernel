@@ -12,9 +12,9 @@
 
 namespace Kernel
 {
-	class ProcessHeader;
+	class PROCESS_HEADER_BLOCK;
 
-	typedef ProcessHeader* ProcessHeaderRef;
+	typedef PROCESS_HEADER_BLOCK* ProcessHeaderRef;
 
 	/// @brief Access control class, which locks a task until one is done.
 	class Semaphore final
@@ -31,8 +31,8 @@ namespace Kernel
 		void WaitForProcess() noexcept;
 
 	public:
-		bool Lock(ProcessHeader* process);
-		bool LockOrWait(ProcessHeader* process, HardwareTimerInterface* timer);
+		bool Lock(PROCESS_HEADER_BLOCK* process);
+		bool LockOrWait(PROCESS_HEADER_BLOCK* process, HardwareTimerInterface* timer);
 
 	public:
 		NEWOS_COPY_DEFAULT(Semaphore);

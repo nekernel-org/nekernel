@@ -26,9 +26,12 @@
 
 namespace Kernel
 {
-	class ProcessHeader;
+	//! @brief Forward declarations.
+	struct PROCESS_HEADER_BLOCK;
 	class ProcessTeam;
 	class ProcessScheduler;
+	class ProcessHelper;
+	class PEFSharedObjectInterface;
 
 	//! @brief Process identifier.
 	typedef Int64 ProcessID;
@@ -36,11 +39,6 @@ namespace Kernel
 	//! @brief Process name length.
 	inline constexpr SizeT kProcessLen = 256U;
 
-	//! @brief Forward declarations.
-	class ProcessHeader;
-	class ProcessScheduler;
-	class ProcessHelper;
-	class SharedObject;
 
 	//! @brief Process status enum.
 	enum class ProcessStatus : Int32
@@ -124,21 +122,19 @@ namespace Kernel
 	using ImagePtr	  = VoidPtr;
 	using HeapPtrKind = VoidPtr;
 
-	// @name ProcessHeader
-	// @brief Process Header (PH)
-	// Holds information about the running process.
-	// Thread execution is being abstracted away.
-	class ProcessHeader final
+	/// @name PROCESS_HEADER_BLOCK
+	/// @brief Process Header (PHB). Holds information about the running process. Thread execution the THREAD_INFORMATION_BLOCK.
+	struct PROCESS_HEADER_BLOCK final
 	{
 	public:
-		explicit ProcessHeader(VoidPtr startImage = nullptr)
+		explicit PROCESS_HEADER_BLOCK(VoidPtr startImage = nullptr)
 			: Image(startImage)
 		{
 		}
 
-		~ProcessHeader() = default;
+		~PROCESS_HEADER_BLOCK() = default;
 
-		NEWOS_COPY_DEFAULT(ProcessHeader)
+		NEWOS_COPY_DEFAULT(PROCESS_HEADER_BLOCK)
 
 	public:
 		void		 SetEntrypoint(UIntPtr& imageStart) noexcept;
@@ -158,7 +154,7 @@ namespace Kernel
 		HeapPtrKind HeapPtr{nullptr};
 
 		// shared library handle, reserved for .lib only.
-		SharedObject* SharedLibObjectPtr{nullptr};
+		PEFSharedObjectInterface* SharedObjectPEF{nullptr};
 
 		// Memory usage.
 		SizeT UsedMemory{0};
@@ -167,7 +163,7 @@ namespace Kernel
 		enum
 		{
 			kAppKind   = 1,
-			kShLibKind = 2,
+			kSharedObjectKind = 2,
 			kKindCount,
 		};
 
@@ -200,7 +196,7 @@ namespace Kernel
 		///! @brief Wakes up threads.
 		Void Wake(const bool wakeup = false);
 
-		// ProcessHeader getters.
+		// PROCESS_HEADER_BLOCK getters.
 	public:
 		///! @brief Get the process's name
 		///! @example 'C Runtime Library'
@@ -232,19 +228,19 @@ namespace Kernel
 
 		NEWOS_COPY_DEFAULT(ProcessTeam);
 
-		MutableArray<Ref<ProcessHeader>>& AsArray();
-		Ref<ProcessHeader>&				  AsRef();
+		MutableArray<Ref<PROCESS_HEADER_BLOCK>>& AsArray();
+		Ref<PROCESS_HEADER_BLOCK>&				  AsRef();
 		UInt64&							  Id() noexcept;
 
 	public:
-		MutableArray<Ref<ProcessHeader>> mProcessList;
-		Ref<ProcessHeader>				 mCurrentProcess;
+		MutableArray<Ref<PROCESS_HEADER_BLOCK>> mProcessList;
+		Ref<PROCESS_HEADER_BLOCK>				 mCurrentProcess;
 		UInt64							 mTeamId{0};
 	};
 
-	using ProcessHeaderRef = ProcessHeader*;
+	using ProcessHeaderRef = PROCESS_HEADER_BLOCK*;
 
-	/// @brief ProcessHeader manager class.
+	/// @brief PROCESS_HEADER_BLOCK manager class.
 	/// The main class which you call to schedule an app.
 	class ProcessScheduler final
 	{
@@ -262,11 +258,11 @@ namespace Kernel
 		ProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(Ref<ProcessHeader>& processRef);
+		SizeT Add(Ref<PROCESS_HEADER_BLOCK>& processRef);
 		Bool  Remove(SizeT processSlot);
 
 	public:
-		Ref<ProcessHeader>& TheCurrent();
+		Ref<PROCESS_HEADER_BLOCK>& TheCurrent();
 		SizeT				Run() noexcept;
 
 	public:
@@ -284,7 +280,7 @@ namespace Kernel
 	{
 	public:
 		STATIC bool	 Switch(HAL::StackFrame* newStack, const PID& newPid);
-		STATIC bool	 CanBeScheduled(Ref<ProcessHeader>& process);
+		STATIC bool	 CanBeScheduled(Ref<PROCESS_HEADER_BLOCK>& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
 	};

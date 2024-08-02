@@ -22,12 +22,14 @@ namespace Kernel
 	/// @brief internal and reserved protocols by kernel.
 	constexpr const Char* kURLProtocols[] = {
 		"file", // Filesystem protocol
-		"zup",	// Zeta update protocol
+		"zup",	// ZKA update protocol
 		"oscc", // Open System Configuration Connectivity.
+		"odbc", // ODBC connectivity.
+		"https", // HTTPS layer driver (HTTPS.sys). 
 	};
 
 	constexpr const int kUrlOutSz	 = 1; //! such as: ://
-	constexpr const int kProtosCount = 3;
+	constexpr const int kProtosCount = 5;
 	constexpr const int kRangeSz	 = 4096;
 
 	ErrorOr<StringView> url_extract_location(const Char* url)

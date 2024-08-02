@@ -42,7 +42,7 @@ namespace Kernel
 	/// @brief crash current process.
 	/***********************************************************************************/
 
-	void ProcessHeader::Crash()
+	void PROCESS_HEADER_BLOCK::Crash()
 	{
 		kcout << (*this->Name == 0 ? "Kernel" : this->Name) << ": crashed. (id = ";
 		kcout.Number(kErrorProcessFault);
@@ -60,17 +60,17 @@ namespace Kernel
 	/// @brief Gets the local last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
-	const Int32& ProcessHeader::GetExitCode() noexcept
+	const Int32& PROCESS_HEADER_BLOCK::GetExitCode() noexcept
 	{
 		return this->fLastExitCode;
 	}
 
-	Int32& ProcessHeader::GetLocalCode() noexcept
+	Int32& PROCESS_HEADER_BLOCK::GetLocalCode() noexcept
 	{
 		return fLocalCode;
 	}
 
-	void ProcessHeader::Wake(const bool should_wakeup)
+	void PROCESS_HEADER_BLOCK::Wake(const bool should_wakeup)
 	{
 		this->Status =
 			should_wakeup ? ProcessStatus::kRunning : ProcessStatus::kFrozen;
@@ -78,7 +78,7 @@ namespace Kernel
 
 	/***********************************************************************************/
 
-	VoidPtr ProcessHeader::New(const SizeT& sz)
+	VoidPtr PROCESS_HEADER_BLOCK::New(const SizeT& sz)
 	{
 		if (this->HeapCursor)
 		{
@@ -121,7 +121,7 @@ namespace Kernel
 	}
 
 	/* @brief free pointer from usage. */
-	Boolean ProcessHeader::Delete(VoidPtr ptr, const SizeT& sz)
+	Boolean PROCESS_HEADER_BLOCK::Delete(VoidPtr ptr, const SizeT& sz)
 	{
 		if (sz < 1 || this->HeapCursor == this->HeapPtr)
 			return false;
@@ -145,19 +145,19 @@ namespace Kernel
 	}
 
 	/// @brief process name getter.
-	const Char* ProcessHeader::GetProcessName() noexcept
+	const Char* PROCESS_HEADER_BLOCK::GetProcessName() noexcept
 	{
 		return this->Name;
 	}
 
 	/// @brief process selector getter.
-	const ProcessSelector& ProcessHeader::GetSelector() noexcept
+	const ProcessSelector& PROCESS_HEADER_BLOCK::GetSelector() noexcept
 	{
 		return this->Selector;
 	}
 
 	/// @brief process status getter.
-	const ProcessStatus& ProcessHeader::GetStatus() noexcept
+	const ProcessStatus& PROCESS_HEADER_BLOCK::GetStatus() noexcept
 	{
 		return this->Status;
 	}
@@ -167,7 +167,7 @@ namespace Kernel
 	/**
 	@brief Affinity is the time slot allowed for the process.
 	*/
-	const AffinityKind& ProcessHeader::GetAffinity() noexcept
+	const AffinityKind& PROCESS_HEADER_BLOCK::GetAffinity() noexcept
 	{
 		return this->Affinity;
 	}
@@ -175,7 +175,7 @@ namespace Kernel
 	/**
 	@brief Standard exit proc.
 	*/
-	void ProcessHeader::Exit(const Int32& exit_code)
+	void PROCESS_HEADER_BLOCK::Exit(const Int32& exit_code)
 	{
 		if (this->ProcessId !=
 			ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId)
@@ -194,14 +194,14 @@ namespace Kernel
 		this->Image		 = nullptr;
 		this->StackFrame = nullptr;
 
-		if (this->Kind == kShLibKind)
+		if (this->Kind == kSharedObjectKind)
 		{
 			bool success = false;
-			rtl_fini_shared_object(this, this->SharedLibObjectPtr, &success);
+			rtl_fini_shared_object(this, this->SharedObjectPEF, &success);
 
 			if (success)
 			{
-				this->SharedLibObjectPtr = nullptr;
+				this->SharedObjectPEF = nullptr;
 			}
 		}
 
@@ -211,11 +211,11 @@ namespace Kernel
 	/// @brief Add process to list.
 	/// @param process
 	/// @return
-	SizeT ProcessScheduler::Add(Ref<ProcessHeader>& process)
+	SizeT ProcessScheduler::Add(Ref<PROCESS_HEADER_BLOCK>& process)
 	{
 		if (!process.Leak().Image)
 		{
-			if (process.Leak().Kind != ProcessHeader::kShLibKind)
+			if (process.Leak().Kind != PROCESS_HEADER_BLOCK::kSharedObjectKind)
 			{
 				return -kErrorNoEntrypoint;
 			}
@@ -227,13 +227,13 @@ namespace Kernel
 		kcout << "ProcessScheduler:: adding process to team...\r";
 
 		/// Create heap according to type of process.
-		if (process.Leak().Kind == ProcessHeader::kAppKind)
+		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kAppKind)
 		{
 			process.Leak().HeapPtr = sched_new_heap(kUserHeapUser | kUserHeapRw);
 		}
-		else if (process.Leak().Kind == ProcessHeader::kShLibKind)
+		else if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
 		{
-			process.Leak().SharedLibObjectPtr = rtl_init_shared_object(&process.Leak());
+			process.Leak().SharedObjectPEF = rtl_init_shared_object(&process.Leak());
 			process.Leak().HeapPtr		 = sched_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
 		}
 		else
@@ -333,7 +333,7 @@ namespace Kernel
 
 	/// @brief Gets current running process.
 	/// @return
-	Ref<ProcessHeader>& ProcessScheduler::TheCurrent()
+	Ref<PROCESS_HEADER_BLOCK>& ProcessScheduler::TheCurrent()
 	{
 		return mTeam.AsRef();
 	}
@@ -350,7 +350,7 @@ namespace Kernel
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
-	bool ProcessHelper::CanBeScheduled(Ref<ProcessHeader>& process)
+	bool ProcessHelper::CanBeScheduled(Ref<PROCESS_HEADER_BLOCK>& process)
 	{
 		if (process.Leak().Status == ProcessStatus::kFrozen ||
 			process.Leak().Status == ProcessStatus::kDead)

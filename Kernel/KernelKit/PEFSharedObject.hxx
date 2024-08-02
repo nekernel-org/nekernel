@@ -24,38 +24,40 @@ namespace Kernel
 	 * @brief Shared Library class
 	 * Load library from this class
 	 */
-	class SharedObject final
+	class PEFSharedObjectInterface final
 	{
 	public:
-		struct SharedObjectTrait final
+		struct PEF_SHARED_OBJECT_TRAITS final
 		{
-			VoidPtr fImageObject;
-			VoidPtr fImageEntrypointOffset;
+			VoidPtr fImageObject{nullptr};
+			VoidPtr fImageEntrypointOffset{nullptr};
+
+			Bool IsValid() { return fImageObject && fImageEntrypointOffset; }
 		};
 
 	public:
-		explicit SharedObject() = default;
-		~SharedObject()			= default;
+		explicit PEFSharedObjectInterface() = default;
+		~PEFSharedObjectInterface()			= default;
 
 	public:
-		NEWOS_COPY_DEFAULT(SharedObject);
+		NEWOS_COPY_DEFAULT(PEFSharedObjectInterface);
 
 	private:
-		SharedObjectTrait* fMounted{nullptr};
+		PEF_SHARED_OBJECT_TRAITS* fMounted{nullptr};
 
 	public:
-		SharedObjectTrait** GetAddressOf()
+		PEF_SHARED_OBJECT_TRAITS** GetAddressOf()
 		{
 			return &fMounted;
 		}
 
-		SharedObjectTrait* Get()
+		PEF_SHARED_OBJECT_TRAITS* Get()
 		{
 			return fMounted;
 		}
 
 	public:
-		void Mount(SharedObjectTrait* to_mount)
+		void Mount(PEF_SHARED_OBJECT_TRAITS* to_mount)
 		{
 			if (!to_mount || !to_mount->fImageObject)
 				return;
@@ -106,10 +108,10 @@ namespace Kernel
 		PEFLoader* fLoader{nullptr};
 	};
 
-	typedef SharedObject* SharedObjectPtr;
+	typedef PEFSharedObjectInterface* SharedObjectPtr;
 
-	EXTERN_C SharedObjectPtr rtl_init_shared_object(ProcessHeader* header);
-	EXTERN_C Void			 rtl_fini_shared_object(ProcessHeader* header, SharedObjectPtr lib, Bool* successful);
+	EXTERN_C SharedObjectPtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header);
+	EXTERN_C Void			 rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, SharedObjectPtr lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */

@@ -9,11 +9,14 @@
 #include <NewKit/Atom.hpp>
 #include <NewKit/Defines.hpp>
 
-#define kLockDone	  (200U) /* job is done */
-#define kLockTimedOut (100U) /* job has timed out */
-
 namespace Kernel
 {
+	enum
+	{
+		kLockDone = 200,
+		kLockTimedOut,
+	};
+
 	/// @brief Lock condition pointer.
 	typedef Boolean* LockPtr;
 

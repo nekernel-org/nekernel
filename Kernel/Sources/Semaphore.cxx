@@ -17,7 +17,7 @@ namespace Kernel
 		return fLockingProcess == nullptr;
 	}
 
-	bool Semaphore::Lock(ProcessHeader* process)
+	bool Semaphore::Lock(PROCESS_HEADER_BLOCK* process)
 	{
 		if (!process || fLockingProcess)
 			return false;
@@ -32,7 +32,7 @@ namespace Kernel
 		return fLockingProcess;
 	}
 
-	bool Semaphore::LockOrWait(ProcessHeader* process, HardwareTimerInterface* timer)
+	bool Semaphore::LockOrWait(PROCESS_HEADER_BLOCK* process, HardwareTimerInterface* timer)
 	{
 		if (process == nullptr)
 			return false;

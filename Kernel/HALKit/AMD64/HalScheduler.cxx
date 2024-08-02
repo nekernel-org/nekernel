@@ -7,7 +7,7 @@
 #include <KernelKit/ProcessScheduler.hxx>
 
 using namespace Kernel;
-Void ProcessHeader::SetEntrypoint(UIntPtr& imageStart) noexcept
+Void PROCESS_HEADER_BLOCK::SetEntrypoint(UIntPtr& imageStart) noexcept
 {
 	if (imageStart == 0)
 		this->Crash();

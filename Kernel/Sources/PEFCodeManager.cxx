@@ -205,8 +205,8 @@ namespace Kernel
 			if (errOrStart.Error() != 0)
 				return false;
 
-			ProcessHeader	   proc(errOrStart.Leak().Leak());
-			Ref<ProcessHeader> refProc = proc;
+			PROCESS_HEADER_BLOCK	   proc(errOrStart.Leak().Leak());
+			Ref<PROCESS_HEADER_BLOCK> refProc = proc;
 
 			proc.Kind = procKind;
 
