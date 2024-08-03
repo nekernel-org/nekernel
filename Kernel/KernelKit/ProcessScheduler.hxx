@@ -101,7 +101,7 @@ namespace Kernel
 
 	enum ProcessSubsystemEnum
 	{
-		eProcessSubsystemLogin,
+		eProcessSubsystemSecurity,
 		eProcessSubsystemNative,
 		eProcessSubsystemInvalid,
 		eProcessSubsystemCount,
@@ -112,11 +112,12 @@ namespace Kernel
 	using PID			   = Int64;
 
 	// for permission manager, tells where we run the code.
-	enum class ProcessSelector : Int
+	enum class ProcessLevelRing : Int32
 	{
-		kRingUser,	 /* user ring (or ring 3 in x86) */
-		kRingDriver, /* ring 2 in x86, hypervisor privileges in other archs */
-		kRingKernel, /* machine privileges */
+		kRingStdUser   = 1,
+		kRingSuperUser = 2,
+		kRingGuestUser = 5,
+		kRingCount	   = 5,
 	};
 
 	// Helper types.
@@ -144,7 +145,7 @@ namespace Kernel
 	public:
 		Char			   Name[kProcessLen] = {"Unknown Process"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
-		ProcessSelector	   Selector{ProcessSelector::kRingUser};
+		ProcessLevelRing	   Selector{ProcessLevelRing::kRingStdUser};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity;
 		ProcessStatus	   Status;
@@ -154,7 +155,7 @@ namespace Kernel
 		ImagePtr	Image{nullptr};
 		HeapPtrKind HeapPtr{nullptr};
 
-		// shared library handle, reserved for .lib only.
+		// shared library handle, reserved for kSharedLib only.
 		PEFSharedObjectInterface* SharedObjectPEF{nullptr};
 
 		// Memory usage.
@@ -207,7 +208,7 @@ namespace Kernel
 		//! @return Int32 local error code.
 		Int32& GetLocalCode() noexcept;
 
-		const ProcessSelector& GetSelector() noexcept;
+		const ProcessLevelRing& GetSelector() noexcept;
 		const ProcessStatus&   GetStatus() noexcept;
 		const AffinityKind&	   GetAffinity() noexcept;
 
