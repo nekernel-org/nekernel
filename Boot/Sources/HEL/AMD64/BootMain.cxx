@@ -6,7 +6,7 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
-#include <Modules/CoreCG/CoreCG.hxx>
+#include <Modules/CoreCG/FbRenderer.hxx>
 #include <FirmwareKit/EFI.hxx>
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
@@ -16,6 +16,7 @@
 #include <NewKit/Macros.hxx>
 #include <NewKit/Ref.hxx>
 #include <BootKit/ProgramLoader.hxx>
+#include <Modules/CoreCG/TextRenderer.hxx>
 #include <cstring>
 
 // make the compiler shut up.
@@ -202,7 +203,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// ------------------------------------------ //
 
 	CGInit();
-	CGDrawInRegion(CGColor(0xaa, 0x00, 0x00), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
+	CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
 	CGFini();
 
 	// ---------------------------------------------------- //
@@ -240,7 +241,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::ProgramLoader(readerKernel.Blob());
-		loader->SetName("\"newoskrnl.exe\" (64-bit MP)");
+		loader->SetName("\"newoskrnl.exe\" (64-bit SMP)");
 	}
 
 	writer.Write("newosldr: Running: ").Write(loader->GetName()).Write("\r");
@@ -252,6 +253,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// ---------------------------------------------------- //
 	// Call kernel.
 	// ---------------------------------------------------- //
+
+	cg_write_text((UInt8*)"NEWOSKRNL", 0, 0, RGB(0x10, 0x10, 0x10));
 
 	loader->Start(handoverHdrPtr);
 

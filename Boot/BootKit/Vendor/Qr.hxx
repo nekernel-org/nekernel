@@ -11,7 +11,7 @@ extern "C" {
 #include <BootKit/Vendor/Shared/bit.h>
 
 #include <BootKit/Vendor/QrPrelude.hxx>
-#include <Modules/CoreCG/CoreCG.hxx>
+#include <Modules/CoreCG/FbRenderer.hxx>
 #include <BootKit/Support.hxx>
 #include <CompilerKit/Detail.hxx>
 

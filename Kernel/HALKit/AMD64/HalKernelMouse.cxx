@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <Modules/PS2/PS2MouseInterface.hxx>
-#include <Modules/CoreCG/CoreCG.hxx>
+#include <Modules/CoreCG/FbRenderer.hxx>
 #include <Modules/CoreCG/Rsrc/Cursor.rsrc>
 #include <KernelKit/Framebuffer.hxx>
 #include <NewKit/Defines.hxx>

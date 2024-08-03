@@ -154,7 +154,7 @@ namespace Kernel::HAL
 	STATIC HAL::StackFramePtr cFramePtr		= nullptr;
 	STATIC Int32			  cSMPInterrupt = 34;
 
-	/// @brief Current context getter.
+	/// @brief Gets the current context, used for context switching.
 	/// @retval StackFramePtr the current context.
 	EXTERN_C StackFramePtr _hal_leak_current_context(Void)
 	{

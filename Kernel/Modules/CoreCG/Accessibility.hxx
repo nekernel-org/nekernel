@@ -9,7 +9,7 @@
 
 #include <NewKit/NewKit.hxx>
 #include <KernelKit/LPC.hxx>
-#include <Modules/CoreCG/CoreCG.hxx>
+#include <Modules/CoreCG/FbRenderer.hxx>
 #include <Modules/CoreCG/Lerp.hxx>
 #include <ArchKit/ArchKit.hxx>
 

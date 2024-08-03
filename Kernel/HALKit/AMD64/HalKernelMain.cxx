@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
-#include <Modules/CoreCG/CoreCG.hxx>
+#include <Modules/CoreCG/FbRenderer.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileManager.hxx>
 #include <KernelKit/Framebuffer.hxx>
