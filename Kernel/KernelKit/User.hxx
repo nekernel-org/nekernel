@@ -13,8 +13,8 @@
 #include <NewKit/Defines.hxx>
 
 // user mode users.
-#define kSuperUser "Super"
-#define kGuestUser "Guest"
+#define kSuperUser "\\Local\\Super"
+#define kGuestUser "\\Local\\Guest"
 
 #define kUsersFile "\\Users\\$UserMTF"
 
@@ -90,9 +90,9 @@ namespace Kernel
 		NEWOS_COPY_DELETE(UserManager);
 
 		STATIC UserManager* The() noexcept;
-		Bool LogIn(User* user, const Char* password) noexcept;
-		User* Current() noexcept;
-		Void LogOff() noexcept;
+		Bool TryLogIn(User* user, const Char* password) noexcept;
+		User* GetCurrent() noexcept;
+		Void TryLogOff() noexcept;
 	};
 } // namespace Kernel
 

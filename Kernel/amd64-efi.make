@@ -39,7 +39,7 @@ LDFLAGS		= -e ke_startup_platform --subsystem=17 --image-base 0x10000000
 LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
-KERNEL		= newoskrnl.dll
+KERNEL		= newoskrnl.lib
 
 .PHONY: error
 error:

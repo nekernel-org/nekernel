@@ -1,7 +1,7 @@
 {
   "linker": "link.exe",
   "executable_type": "kernel",
-  "output_name": "newoskrnl.dll",
+  "output_name": "newoskrnl.lib",
   "start_proc": "__ImageStart",
   "arch": "arm64",
   "format": "PEF"

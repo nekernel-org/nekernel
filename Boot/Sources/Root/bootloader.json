@@ -1,4 +1,4 @@
 {
-  "newoskrnl.dll": "kernel",
+  "newoskrnl.lib": "kernel",
   "ZETA/fonts.json": "rsrc"
 }

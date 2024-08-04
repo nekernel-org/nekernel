@@ -304,7 +304,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
 
 	if (flagsList & kNewFSCatalogKindMetaFile)
 	{
-		if (UserManager::The()->Current() != UserManager::The()->fRootUser)
+		if (UserManager::The()->GetCurrent() != UserManager::The()->fRootUser)
 		{
 			delete catalogChild;
 			return nullptr;

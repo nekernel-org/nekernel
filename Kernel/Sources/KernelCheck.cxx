@@ -15,15 +15,9 @@
 #include <Modules/CoreCG/FbRenderer.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
-EXTERN_C [[noreturn]] Kernel::Void ke_wait_for_debugger()
+EXTERN_C Kernel::Void ke_wait_for_debugger()
 {
-	while (Yes)
-	{
-#ifdef __NEWOS_AMD64__
-		Kernel::HAL::rt_cli();
-		Kernel::HAL::rt_halt();
-#endif
-	}
+
 }
 
 /* Each error code is attributed with an ID, which will prompt a string onto the

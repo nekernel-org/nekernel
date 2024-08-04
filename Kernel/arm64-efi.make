@@ -27,7 +27,7 @@ LDFLAGS		= -subsystem:efi_application -entry:hal_init_platform /nodefaultlib
 LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
-KERNEL		= newoskrnl.dll
+KERNEL		= newoskrnl.lib
 
 .PHONY: error
 error:

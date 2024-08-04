@@ -26,9 +26,19 @@ namespace Kernel
 		/// \brief Constructs a token by hashing the password.
 		/// \param password password to hash.
 		/// \return the hashed password 
-		const Char* cred_construct_token(const Char* password)
+		const Int32 cred_construct_token(Char* password, User* user)
 		{
-			return nullptr;
+			if (!password || !user)
+				return -1;
+
+			for (Size i_pass = 0; i_pass < rt_string_len(password); ++i_pass)
+			{
+				Char cur_chr = password[i_pass];
+				password[i_pass] = cur_chr + (user->IsStdUser() ? 0xCF : 0xEF); 
+			}
+			
+
+			return 0;
 		}
 	}
 
@@ -90,7 +100,7 @@ namespace Kernel
 		return view;
 	}
 
-	Bool UserManager::LogIn(User* user, const Char* password) noexcept
+	Bool UserManager::TryLogIn(User* user, const Char* password) noexcept
 	{
 		if (!password ||
 			!user)
@@ -119,9 +129,25 @@ namespace Kernel
 		}
 		else
 		{
-			auto tok = Detail::cred_construct_token(password);
+			Char generated_token[255] = { 0 };
 
-			if (rt_string_cmp((Char*)token, tok, rt_string_len(tok)))
+			// ================================================== //
+			// Provide password on token variable.
+			// ================================================== //
+
+			rt_copy_memory((VoidPtr)password, generated_token, rt_string_len(password));
+
+			// ================================================== //
+			// Construct token.
+			// ================================================== //
+
+			Detail::cred_construct_token(generated_token, user);
+
+			// ================================================== //
+			// Checks if it matches the current token we have.
+			// ================================================== //
+
+			if (rt_string_cmp((Char*)token, generated_token, rt_string_len(password)))
 			{
 				kcout << "newoskrnl: Incorrect credentials.\r";
 
@@ -146,7 +172,7 @@ namespace Kernel
 			}
 			else
 			{
-				this->LogOff();
+				this->TryLogOff();
 			}
 		}
 
@@ -156,12 +182,12 @@ namespace Kernel
 		return true;
 	}
 
-	User* UserManager::Current() noexcept
+	User* UserManager::GetCurrent() noexcept
 	{
 		return fCurrentUser;
 	}
 
-	Void UserManager::LogOff() noexcept
+	Void UserManager::TryLogOff() noexcept
 	{
 		if (!fCurrentUser)
 			return;

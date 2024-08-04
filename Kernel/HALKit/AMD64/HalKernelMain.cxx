@@ -243,7 +243,7 @@ void hal_real_init(void)
 	}
 
 	kTextOffsetY += 10;
-	cg_write_text("LOADING SUBSYSTEMS...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
+	cg_write_text("LOADING SECURITY SUBSYSTEM...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
