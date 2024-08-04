@@ -53,26 +53,32 @@ namespace Boot
 			writer.Write("newosldr: Major Subsystem Ver: ").Write(optHdr->mMajorSubsystemVersion).Write("\r");
 			writer.Write("newosldr: Minor Subsystem Ver: ").Write(optHdr->mMinorSubsystemVersion).Write("\r");
 			writer.Write("newosldr: Magic: ").Write(hdrPtr->mSignature).Write("\r");
-			writer.Write("newosldr: ImageBase: ").Write(optHdr->mImageBase).Write("\r");
 
 			constexpr auto cPageSize = 512;
 
 			EfiPhysicalAddress loadStartAddress = optHdr->mImageBase;
 			loadStartAddress += optHdr->mBaseOfData;
 
+			writer.Write("newosldr: ImageBase: ").Write(loadStartAddress).Write("\r");
+
 			auto numPages = optHdr->mSizeOfImage / cPageSize;
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
 
 			ExecSectionHeaderPtr sectPtr = (ExecSectionHeaderPtr)(((Char*)optHdr) + hdrPtr->mSizeOfOptionalHeader);
 
+			constexpr auto sectionForCode = ".start";
+
 			for (SizeT sectIndex = 0; sectIndex < numSecs; ++sectIndex)
 			{
 				ExecSectionHeaderPtr sect = &sectPtr[sectIndex];
 
-				if (strcmp(".text", sect->mName) == 0)
+				if (StrCmp(sectionForCode, sect->mName) == 0)
 				{
-					fStartAddress = (VoidPtr)((UIntPtr)fBlob + sect->mVirtualAddress + optHdr->mAddressOfEntryPoint);
+					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + sect->mVirtualAddress);
+					writer.Write("newosldr: Start Address: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
+
+				writer.Write("newosldr: offset ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write(".\r");
 
 				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
@@ -80,8 +86,6 @@ namespace Boot
 			EfiPhysicalAddress start = (EfiPhysicalAddress)fStartAddress;
 
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, 1, &start);
-
-			writer.Write("newosldr: Start Address: ").Write((UIntPtr)fStartAddress).Write("\r");
 
 			// ================================ //
 			// Allocate stack.
@@ -129,7 +133,7 @@ namespace Boot
 			err_fn(handover);
 		}
 
-		rt_jump_to_address(reinterpret_cast<HEL::HandoverProc>(fStartAddress), handover, fStackPtr);
+		reinterpret_cast<HEL::HandoverProc>(fStartAddress)(handover);
 		err_fn(handover);
 	}
 

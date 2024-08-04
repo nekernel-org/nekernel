@@ -16,7 +16,7 @@
 %define kArchAmd64 122
 %define kHandoverMagic 0xBADCC
 
-section .newosldr
+section .ldr
 
 HandoverMagic: dq kHandoverMagic
 HandoverType: dw kTypeKernel
@@ -24,7 +24,7 @@ HandoverArch: dw kArchAmd64
 ;; This NewBootStart points to Main.
 HandoverStart: dq hal_init_platform
 
-section .text
+section .start
 
 [global ke_startup_platform]
 

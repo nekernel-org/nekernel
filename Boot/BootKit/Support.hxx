@@ -16,6 +16,7 @@
 #define MoveMem(dst, src, sz) memcpy(dst, src, sz)
 #define CopyMem(dst, src, sz) memcpy(dst, src, sz)
 #define StrLen(src)			  strlen(src)
+#define StrCmp(dst, src) strcmp(dst, src)
 
 inline int IsSpace(int c)
 {
