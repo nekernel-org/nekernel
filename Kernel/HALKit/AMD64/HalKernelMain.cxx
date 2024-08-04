@@ -19,6 +19,7 @@
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
+#include <Modules/CoreCG/TextRenderer.hxx>
 
 #define mInitKernel(X) \
 	X;                 \
@@ -52,6 +53,8 @@ struct PROCESS_EXIT_INFO final
 	Kernel::Char  fReason[cReasonLen];
 };
 
+STATIC Kernel::UInt32 kTextOffsetY = 30;
+
 namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
@@ -82,6 +85,11 @@ EXTERN_C void hal_init_platform(
 		return;
 	}
 
+	cg_write_text("NEWOSKRNL (C) ZKA TECHNOLOGIES.", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
+	kTextOffsetY += 10;
+
+	cg_write_text("SMP OS (MAX 8 CORES).", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
+
 	kKernelVirtualSize	= HandoverHeader->f_VirtualSize;
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(HandoverHeader->f_VirtualStart) + cHeapStartOffset);
@@ -109,29 +117,30 @@ EXTERN_C void hal_init_platform(
 
 	// Register the basic SCI functions.
 
-	constexpr auto cSerialAlertInterrupt = 0x10;
-	constexpr auto cTlsInterrupt		 = 0x11;
-	constexpr auto cTlsInstallInterrupt	 = 0x12;
-	constexpr auto cNewInterrupt		 = 0x13;
-	constexpr auto cDeleteInterrupt		 = 0x14;
-	constexpr auto cExitInterrupt		 = 0x15;
-	constexpr auto cLastExitInterrupt	 = 0x16;
-	constexpr auto cCatalogOpen			 = 0x17;
-	constexpr auto cForkRead			 = 0x18;
-	constexpr auto cForkWrite			 = 0x19;
-	constexpr auto cCatalogClose		 = 0x20;
-	constexpr auto cCatalogRemove		 = 0x21;
-	constexpr auto cCatalogCreate		 = 0x22;
-	constexpr auto cRebootInterrupt		 = 0x23;
-	constexpr auto cShutdownInterrupt	 = 0x24;
-	constexpr auto cLPCSendMsg			 = 0x25;
-	constexpr auto cLPCOpenMsg			 = 0x26;
-	constexpr auto cLPCCloseMsg			 = 0x27;
-	constexpr auto cLPCSanitizeMsg		 = 0x28;
+	constexpr auto cVGAWrite			= 0x10;
+	constexpr auto cTlsInterrupt		= 0x11;
+	constexpr auto cTlsInstallInterrupt = 0x12;
+	constexpr auto cNewInterrupt		= 0x13;
+	constexpr auto cDeleteInterrupt		= 0x14;
+	constexpr auto cExitInterrupt		= 0x15;
+	constexpr auto cLastExitInterrupt	= 0x16;
+	constexpr auto cCatalogOpen			= 0x17;
+	constexpr auto cForkRead			= 0x18;
+	constexpr auto cForkWrite			= 0x19;
+	constexpr auto cCatalogClose		= 0x20;
+	constexpr auto cCatalogRemove		= 0x21;
+	constexpr auto cCatalogCreate		= 0x22;
+	constexpr auto cRebootInterrupt		= 0x23;
+	constexpr auto cShutdownInterrupt	= 0x24;
+	constexpr auto cLPCSendMsg			= 0x25;
+	constexpr auto cLPCOpenMsg			= 0x26;
+	constexpr auto cLPCCloseMsg			= 0x27;
+	constexpr auto cLPCSanitizeMsg		= 0x28;
 
-	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cVGAWrite].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		const char* msg = (const char*)rdx;
-		Kernel::kcout << "Kernel: " << msg << "\r";
+		cg_write_text(msg, kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
+		kTextOffsetY += 10;
 	};
 
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -206,16 +215,16 @@ EXTERN_C void hal_init_platform(
 		pow.Shutdown();
 	};
 
-	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked			= true;
-	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked	= true;
-	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked		= true;
-	kSyscalls[cNewInterrupt].Leak().Leak()->fHooked			= true;
-	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked		= true;
-	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked	= true;
-	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked	= true;
-	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked		= true;
-	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked		= true;
+	kSyscalls[cVGAWrite].Leak().Leak()->fHooked			   = true;
+	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked		   = true;
+	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked = true;
+	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked	   = true;
+	kSyscalls[cNewInterrupt].Leak().Leak()->fHooked		   = true;
+	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked	   = true;
+	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked   = true;
+	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
+	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
+	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked	   = true;
 
 	// newoskrnl version 1.00.
 	Kernel::StringView strVer(cMaxPropLen);

@@ -46,43 +46,47 @@ namespace Boot
 			ExecHeaderPtr		  hdrPtr = ldr_find_exec_header(firstBytes);
 			ExecOptionalHeaderPtr optHdr = ldr_find_opt_exec_header(firstBytes);
 
-			// ================================ //
-			// Allocate stack.
-			// ================================ //
-			fStackPtr = new Char[optHdr->mSizeOfStackReserve];
+			auto numSecs = hdrPtr->mNumberOfSections;
 
 			writer.Write("newosldr: Major Linker Ver: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
 			writer.Write("newosldr: Minor Linker Ver: ").Write(optHdr->mMinorLinkerVersion).Write("\r");
 			writer.Write("newosldr: Major Subsystem Ver: ").Write(optHdr->mMajorSubsystemVersion).Write("\r");
 			writer.Write("newosldr: Minor Subsystem Ver: ").Write(optHdr->mMinorSubsystemVersion).Write("\r");
-			writer.Write("newosldr: Magic: ").Write(optHdr->mMagic).Write("\r");
+			writer.Write("newosldr: Magic: ").Write(hdrPtr->mSignature).Write("\r");
 			writer.Write("newosldr: ImageBase: ").Write(optHdr->mImageBase).Write("\r");
 
-			EfiPhysicalAddress base_img_addr = optHdr->mImageBase;
+			constexpr auto cPageSize = 512;
 
-			constexpr auto cMaxSectionsOfKernel = 10;
+			EfiPhysicalAddress loadStartAddress = optHdr->mImageBase;
+			loadStartAddress += optHdr->mBaseOfData;
 
-			BS->AllocatePages(EfiAllocateType::AllocateAnyPages, EfiMemoryType::EfiLoaderCode, cMaxSectionsOfKernel, &base_img_addr);
+			auto numPages = optHdr->mSizeOfImage / cPageSize;
+			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
 
-			ExecSectionHeaderPtr sectPtr = (ExecSectionHeaderPtr)((UIntPtr)firstBytes + ((DosHeaderPtr)firstBytes)->eLfanew + hdrPtr->mSizeOfOptionalHeader + sizeof(ExecHeader) + sizeof(UInt32));
+			ExecSectionHeaderPtr sectPtr = (ExecSectionHeaderPtr)(((Char*)optHdr) + hdrPtr->mSizeOfOptionalHeader);
 
-			for (SizeT sectIndex = 0; sectIndex < cMaxSectionsOfKernel; ++sectIndex)
+			for (SizeT sectIndex = 0; sectIndex < numSecs; ++sectIndex)
 			{
 				ExecSectionHeaderPtr sect = &sectPtr[sectIndex];
 
-				EfiPhysicalAddress address_to_alloc = sect->mVirtualAddress;
-
-				// if this is a code header, then we can look for the entrypoint.
-				if (sect->mCharacteristics & eUserSection)
+				if (strcmp(".text", sect->mName) == 0)
 				{
-					if (!fStartAddress)
-					{
-						fStartAddress = (VoidPtr)((VoidPtr)((UIntPtr)sect->mPointerToRawData + (sect->mVirtualAddress - optHdr->mAddressOfEntryPoint)));
-
-						writer.Write("newosldr: Start Address set: ").Write((UIntPtr)fStartAddress).Write("\r");
-					}
+					fStartAddress = (VoidPtr)((UIntPtr)fBlob + sect->mVirtualAddress + optHdr->mAddressOfEntryPoint);
 				}
+
+				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
+
+			EfiPhysicalAddress start = (EfiPhysicalAddress)fStartAddress;
+
+			BS->AllocatePages(AllocateAddress, EfiLoaderData, 1, &start);
+
+			writer.Write("newosldr: Start Address: ").Write((UIntPtr)fStartAddress).Write("\r");
+
+			// ================================ //
+			// Allocate stack.
+			// ================================ //
+			fStackPtr = new Char[optHdr->mSizeOfStackReserve];
 		}
 		else if (firstBytes[0] == kPefMagic[0] &&
 				 firstBytes[1] == kPefMagic[1] &&
@@ -117,7 +121,7 @@ namespace Boot
 			BTextWriter writer;
 			writer.Write("newosldr: Exec format error, Thread has been aborted.\r");
 
-			EFI::ThrowError(L"Exec-Format-Error", L"Format doesn't match (Thread aborted.)");
+			EFI::ThrowError(L"Exec-Format-Error", L"Format doesn't match (Thread aborted).");
 		};
 
 		if (!fStartAddress)

@@ -5,7 +5,7 @@
 
 CC			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -fshort-wchar -c -ffreestanding -fPIC -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
+CCFLAGS		= -fshort-wchar -c -ffreestanding -fPIC -shared -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
 			-std=c++20 -D__NEWOS_SUPPORT_NX__ -I../Vendor -D__FSKIT_USE_NEWFS__ \
 			-D__NEWOSKRNL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I./ -I../
 
@@ -35,7 +35,7 @@ COPY		= cp
 ASMFLAGS	= -f win64
 
 # Kernel subsystem is 17 and entrypoint is __ImageStart
-LDFLAGS		= -e ke_startup_platform --subsystem=17
+LDFLAGS		= -e ke_startup_platform --subsystem=17 --image-base 0x10000000
 LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.

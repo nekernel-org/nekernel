@@ -26,6 +26,7 @@
 
 typedef struct ExecHeader final
 {
+	Kernel::UInt32 mSignature;
 	Kernel::UInt16 mMachine;
 	Kernel::UInt16 mNumberOfSections;
 	Kernel::UInt32 mTimeDateStamp;
@@ -33,7 +34,7 @@ typedef struct ExecHeader final
 	Kernel::UInt32 mNumberOfSymbols;
 	Kernel::UInt16 mSizeOfOptionalHeader;
 	Kernel::UInt16 mCharacteristics;
-} PACKED ExecHeader, *ExecHeaderPtr;
+}  ExecHeader, *ExecHeaderPtr;
 
 typedef struct ExecOptionalHeader final
 {
@@ -67,7 +68,7 @@ typedef struct ExecOptionalHeader final
 	Kernel::UInt32 mSizeOfHeapCommit;
 	Kernel::UInt32 mLoaderFlags;
 	Kernel::UInt32 mNumberOfRvaAndSizes;
-} PACKED ExecOptionalHeader, *ExecOptionalHeaderPtr;
+}  ExecOptionalHeader, *ExecOptionalHeaderPtr;
 
 typedef struct ExecSectionHeader final
 {
@@ -81,7 +82,7 @@ typedef struct ExecSectionHeader final
 	Kernel::UInt16		mNumberOfRelocations;
 	Kernel::UInt16		mNumberOfLinenumbers;
 	Kernel::UInt32		mCharacteristics;
-} ExecSectionHeader, *ExecSectionHeaderPtr;
+}  ExecSectionHeader, *ExecSectionHeaderPtr;
 
 enum kExecDataDirParams
 {
@@ -104,7 +105,7 @@ typedef struct ExecExportDirectory
 	Kernel::UInt32 mAddressOfFunctions; // export table rva
 	Kernel::UInt32 mAddressOfNames;
 	Kernel::UInt32 mAddressOfNameOrdinal; // ordinal table rva
-} PACKED ExecExportDirectory, *ExecExportDirectoryPtr;
+}  ExecExportDirectory, *ExecExportDirectoryPtr;
 
 typedef struct ExecImportDirectory
 {
@@ -116,7 +117,7 @@ typedef struct ExecImportDirectory
 	Kernel::UInt32 mForwarderChain;
 	Kernel::UInt32 mNameRva;
 	Kernel::UInt32 mThunkTableRva;
-} PACKED ExecImportDirectory, *ExecImportDirectoryPtr;
+}  ExecImportDirectory, *ExecImportDirectoryPtr;
 
 typedef struct ExecDataDirectory {
   Kernel::UInt32 VirtualAddress;
@@ -124,7 +125,6 @@ typedef struct ExecDataDirectory {
 } ExecDataDirectory, *ExecDataDirectoryPtr;
 
 typedef struct ExecImageHeader {
-	Kernel::UInt32 mSignature;
 	ExecHeader mHeader;
 	ExecOptionalHeader mOptHdr;
 } ExecImageHeader, *ExecImageHeaderPtr;

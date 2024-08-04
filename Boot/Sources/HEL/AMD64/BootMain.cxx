@@ -157,12 +157,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
 	CGFini();
 
-	// check if we are running in the PC platform. If so abort.
-#if defined(__NEWOS_AMD64__) && !defined(__DEBUG__)
-	writer.Write(L"\rnewosldr: AMD64 support is not official.\r");
-	EFI::ThrowError(L"Beta-Software", L"Beta Software.");
-#endif
-
 	// ---------------------------------------------------- //
 	// The following checks for an exisiting partition
 	// inside the disk, if it doesn't have one,
@@ -170,7 +164,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// ---------------------------------------------------- //
 
 	BFileReader readerKernel(L"newoskrnl.dll", ImageHandle);
-
+	
 	readerKernel.ReadAll(0);
 
 	Boot::ProgramLoader* loader = nullptr;
@@ -198,7 +192,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// ---------------------------------------------------- //
 
 	cg_write_text("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0x00, 0x00, 0x00));
-	cg_write_text("SMP OS (MAX 8 CORES).", 20, 10, RGB(0x00, 0x00, 0x00));
+	cg_write_text("LOADING NEWOSKRNL...", 20, 10, RGB(0x00, 0x00, 0x00));
 
 	loader->Start(handoverHdrPtr);
 

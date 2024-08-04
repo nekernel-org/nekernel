@@ -12,6 +12,10 @@
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/Timer.hxx>
 
+// Needed for SMP. //
+
+#include <KernelKit/MP.hxx>
+
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
 #define kAPIC_SIPI_Vector 0x00500

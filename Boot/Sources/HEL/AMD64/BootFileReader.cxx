@@ -123,12 +123,12 @@ BFileReader::~BFileReader()
 	@param **readUntil** size of file
 	@param **chunkToRead** chunk to read each time.
 */
-Void BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead)
+Void BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr outAddress)
 {
 	if (mBlob == nullptr)
 	{
 		EfiFileInfo newPtrInfo;
-		UInt32		 szInfo		= 0;
+		UInt32		szInfo = 0;
 
 		EfiGUID cFileInfoGUID = EFI_FILE_INFO_GUID;
 
@@ -142,11 +142,18 @@ Void BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead)
 			mWriter.Write(L"newosldr: physical size: ").Write(readUntil).Write("\r");
 		}
 
-		if (auto err = BS->AllocatePool(EfiLoaderCode, readUntil, (VoidPtr*)&mBlob) !=
-					   kEfiOk)
+		if (!outAddress)
 		{
-			mWriter.Write(L"*** error: ").Write(err).Write(L" ***\r");
-			EFI::ThrowError(L"OutOfMemory", L"Out of memory.");
+			if (auto err = BS->AllocatePool(EfiLoaderCode, readUntil, (VoidPtr*)&mBlob) !=
+						   kEfiOk)
+			{
+				mWriter.Write(L"*** error: ").Write(err).Write(L" ***\r");
+				EFI::ThrowError(L"OutOfMemory", L"Out of memory.");
+			}
+		}
+		else
+		{
+			mBlob = (VoidPtr)outAddress;
 		}
 	}
 
@@ -163,16 +170,7 @@ Void BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead)
 
 		if (res == kBufferTooSmall)
 		{
-			mErrorCode = kTooSmall;
-			return;
-		}
-		else if (res == kEfiOk)
-		{
-			continue;
-		}
-		else
-		{
-			break;
+			bufSize = chunkToRead;
 		}
 	}
 

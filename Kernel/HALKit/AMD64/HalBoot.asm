@@ -29,4 +29,7 @@ section .text
 [global ke_startup_platform]
 
 ke_startup_platform:
+    push rax
+    jmp hal_init_platform
+    pop rax
     ret

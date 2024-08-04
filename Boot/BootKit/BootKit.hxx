@@ -101,7 +101,7 @@ public:
 	~BFileReader();
 
 public:
-	Void ReadAll(SizeT until, SizeT chunk = kib_cast(4));
+	Void ReadAll(SizeT until, SizeT chunk = kib_cast(4), UIntPtr outAddress = 0UL);
 
 	enum
 	{

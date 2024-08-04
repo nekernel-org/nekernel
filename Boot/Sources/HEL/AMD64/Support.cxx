@@ -58,6 +58,25 @@ EXTERN_C size_t strlen(const char* whatToCheck)
 	return len;
 }
 
+/// @brief strcmp definition in C++.
+EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight)
+{
+	if (!whatToCheck || *whatToCheck == 0)
+		return 0;
+
+	SizeT len = 0;
+
+	while (whatToCheck[len] == whatToCheckRight[len])
+	{
+		if (whatToCheck[len] == 0)
+			return 0;
+
+		++len;
+	}
+
+	return whatToCheck[len] == whatToCheckRight[len] ? 0 : len;
+}
+
 /// @brief somthing specific to the Microsoft's ABI, When the stack grows too big.
 EXTERN_C void ___chkstk_ms(void)
 {
