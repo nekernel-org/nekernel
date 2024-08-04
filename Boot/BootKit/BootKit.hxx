@@ -382,7 +382,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		CopyMem(epmBoot->Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
 
 		BTextWriter writer;
-		writer.Write(L"newosldr: wrote parition.\r");
+		writer.Write(L"newosldr: wrote partition.\r");
 
 		fDiskDev.Leak().mBase = kEpmBase;
 		fDiskDev.Leak().mSize = sectorSz;

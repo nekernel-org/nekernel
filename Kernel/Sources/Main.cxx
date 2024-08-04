@@ -141,7 +141,6 @@ namespace Kernel::Detail
 	/// @return void no return value.
 	STATIC Kernel::Void ke_user_switch(Kernel::Void)
 	{
-
 		Kernel::UserManager::The()->fRootUser = new User(RingKind::kRingSuperUser, kSuperUser);
 		Kernel::UserManager::The()->LogIn(Kernel::UserManager::The()->fRootUser, "root");
 

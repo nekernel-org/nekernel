@@ -12,11 +12,11 @@
 #include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
 
-#ifdef __NEWBOOT__
+#ifdef __NEWOSLDR__
 // forward decl.
 class BTextWriter;
 
-#define cWebsiteMacro "https://zka-mobile.com/help"
+#define cWebsiteMacro "https://zka-tech.nl/hulp"
 
 #define __BOOTKIT_NO_INCLUDE__ 1
 
@@ -24,7 +24,7 @@ class BTextWriter;
 #include <BootKit/Rsrc/NewBootFatal.rsrc>
 #include <BootKit/Vendor/Qr.hxx>
 #include <Modules/CoreCG/FbRenderer.hxx>
-#endif // ifdef __NEWBOOT__
+#endif // ifdef __NEWOSLDR__
 
 inline EfiSystemTable*	ST = nullptr;
 inline EfiBootServices* BS = nullptr;
@@ -88,7 +88,7 @@ Bascially frees everything we have in the EFI side.
 
 		ST->ConOut->OutputString(ST->ConOut, L" ***\r");
 
-#ifdef __NEWBOOT__
+#ifdef __NEWOSLDR__
 		// Show the QR code now.
 
 		constexpr auto cVer     = 4;
@@ -109,7 +109,7 @@ Bascially frees everything we have in the EFI side.
 								  cWhereStartY);
 
 		EFI::Stop();
-#endif // ifdef __NEWBOOT__
+#endif // ifdef __NEWOSLDR__
 	}
 } // namespace EFI
 

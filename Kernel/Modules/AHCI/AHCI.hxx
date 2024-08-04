@@ -365,4 +365,4 @@ Kernel::SizeT drv_std_get_sector_count();
 /// @brief get device size.
 Kernel::SizeT drv_std_get_drv_size();
 
-#endif // ifdef __KERNEL__
+#endif // ifdef __NEWOSKRNL__

@@ -149,55 +149,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	kHandoverHeader = handoverHdrPtr;
 
-	// check if we are running in the PC platform. If so abort.
-#if defined(__NEWOS_AMD64__) && !defined(__DEBUG__)
-	writer.Write(L"\rnewosldr: AMD64 support is not official.\r");
-	EFI::ThrowError(L"Beta-Software", L"Beta Software.");
-#endif
-
-	// get memory map.
-
-	BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
-
-	Descriptor = new EfiMemoryDescriptor[*SzDesc];
-	BS->GetMemoryMap(SizePtr, Descriptor, MapKey, SzDesc, RevDesc);
-
-	auto cDefaultMemoryMap = 0; // The sixth entry.
-
-	//-----------------------------------------------------------//
-	// A simple loop which finds a usable memory region for us.
-	//-----------------------------------------------------------//
-
-	SizeT lookIndex = 0UL;
-
-	for (; Descriptor[lookIndex].Kind != EfiMemoryType::EfiConventionalMemory; ++lookIndex)
-	{
-		;
-	}
-
-	cDefaultMemoryMap = lookIndex;
-
-	//-----------------------------------------------------------//
-	// Update handover file specific table and phyiscal start field.
-	//-----------------------------------------------------------//
-
-	handoverHdrPtr->f_PhysicalStart =
-		(VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
-
-	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
-		Descriptor[cDefaultMemoryMap].Attribute;
-	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] =
-		Descriptor[cDefaultMemoryMap].Kind;
-	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
-		(UIntPtr)Descriptor;
-
-	handoverHdrPtr->f_VirtualStart =
-		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
-	handoverHdrPtr->f_VirtualSize =
-		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
-
-	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
-
 	// ------------------------------------------ //
 	// draw background color.
 	// ------------------------------------------ //
@@ -206,27 +157,17 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
 	CGFini();
 
+	// check if we are running in the PC platform. If so abort.
+#if defined(__NEWOS_AMD64__) && !defined(__DEBUG__)
+	writer.Write(L"\rnewosldr: AMD64 support is not official.\r");
+	EFI::ThrowError(L"Beta-Software", L"Beta Software.");
+#endif
+
 	// ---------------------------------------------------- //
 	// The following checks for an exisiting partition
 	// inside the disk, if it doesn't have one,
 	// format the disk.
 	// ---------------------------------------------------- //
-
-	BDiskFormatFactory<BootDeviceATA> diskFormatter;
-
-	// ---------------------------------------------------- //
-	// if not formated yet, then format it with the following folders:
-	// /, /Boot, /Applications.
-	// ---------------------------------------------------- //
-	if (!diskFormatter.IsPartitionValid())
-	{
-		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor rootDesc{0};
-
-		CopyMem(rootDesc.fFileName, kNewFSRoot, StrLen(kNewFSRoot));
-		rootDesc.fKind = kNewFSCatalogKindDir;
-
-		diskFormatter.Format(kMachineModel, &rootDesc, 1);
-	}
 
 	BFileReader readerKernel(L"newoskrnl.dll", ImageHandle);
 
@@ -241,12 +182,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::ProgramLoader(readerKernel.Blob());
-		loader->SetName("\"newoskrnl.dll\" (64-bit SMP)");
+		loader->SetName("\"newoskrnl.dll\" (64-bit SMP DLL)");
 	}
 
 	writer.Write("newosldr: Running: ").Write(loader->GetName()).Write("\r");
 
 	CopyMem(handoverHdrPtr->f_CommandLine[0], "/SMP", StrLen("/SMP"));
+
+	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
 	EFI::ExitBootServices(*MapKey, ImageHandle);
 
@@ -254,7 +197,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Call kernel.
 	// ---------------------------------------------------- //
 
-	cg_write_text((UInt8*)"NEWOSKRNL", 0, 0, RGB(0x10, 0x10, 0x10));
+	cg_write_text("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0x00, 0x00, 0x00));
+	cg_write_text("SMP OS (MAX 8 CORES).", 20, 10, RGB(0x00, 0x00, 0x00));
 
 	loader->Start(handoverHdrPtr);
 

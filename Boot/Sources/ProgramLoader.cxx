@@ -56,10 +56,15 @@ namespace Boot
 			writer.Write("newosldr: Major Subsystem Ver: ").Write(optHdr->mMajorSubsystemVersion).Write("\r");
 			writer.Write("newosldr: Minor Subsystem Ver: ").Write(optHdr->mMinorSubsystemVersion).Write("\r");
 			writer.Write("newosldr: Magic: ").Write(optHdr->mMagic).Write("\r");
+			writer.Write("newosldr: ImageBase: ").Write(optHdr->mImageBase).Write("\r");
 
-			ExecSectionHeaderPtr sectPtr = (ExecSectionHeaderPtr)((UIntPtr)firstBytes + ((DosHeaderPtr)firstBytes)->eLfanew + hdrPtr->mSizeOfOptionalHeader + sizeof(ExecHeader) + sizeof(UInt32));
+			EfiPhysicalAddress base_img_addr = optHdr->mImageBase;
 
 			constexpr auto cMaxSectionsOfKernel = 10;
+
+			BS->AllocatePages(EfiAllocateType::AllocateAnyPages, EfiMemoryType::EfiLoaderCode, cMaxSectionsOfKernel, &base_img_addr);
+
+			ExecSectionHeaderPtr sectPtr = (ExecSectionHeaderPtr)((UIntPtr)firstBytes + ((DosHeaderPtr)firstBytes)->eLfanew + hdrPtr->mSizeOfOptionalHeader + sizeof(ExecHeader) + sizeof(UInt32));
 
 			for (SizeT sectIndex = 0; sectIndex < cMaxSectionsOfKernel; ++sectIndex)
 			{
@@ -72,7 +77,7 @@ namespace Boot
 				{
 					if (!fStartAddress)
 					{
-						fStartAddress = (VoidPtr)((VoidPtr)((UIntPtr)fBlob + 184 + (sect->mVirtualAddress - optHdr->mAddressOfEntryPoint)));
+						fStartAddress = (VoidPtr)((VoidPtr)((UIntPtr)sect->mPointerToRawData + (sect->mVirtualAddress - optHdr->mAddressOfEntryPoint)));
 
 						writer.Write("newosldr: Start Address set: ").Write((UIntPtr)fStartAddress).Write("\r");
 					}

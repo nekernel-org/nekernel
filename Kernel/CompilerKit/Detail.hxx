@@ -6,9 +6,9 @@
 
 #pragma once
 
-#ifdef __KERNEL__
+#ifdef __NEWOSKRNL__
 #include <NewKit/Defines.hxx>
-#endif // ifdef __KERNEL__
+#endif // ifdef __NEWOSKRNL__
 
 #define NEWOS_COPY_DELETE(KLASS)             \
 	KLASS& operator=(const KLASS&) = delete; \

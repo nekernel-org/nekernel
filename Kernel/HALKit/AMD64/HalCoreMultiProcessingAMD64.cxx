@@ -175,7 +175,7 @@ namespace Kernel::HAL
 		hal_switch_context(stackFrame);
 	}
 
-	constexpr auto cMaxPCBBlocks = 64;
+	constexpr auto cMaxPCBBlocks = cMaxHWThreads;
 
 	struct PROCESS_CONTROL_BLOCK final
 	{

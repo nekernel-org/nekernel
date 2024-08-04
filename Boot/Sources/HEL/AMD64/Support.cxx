@@ -14,12 +14,6 @@
 
 #ifdef __STANDALONE__
 
-EXTERN_C void __cxa_pure_virtual()
-{
-	BTextWriter writer;
-	writer.Write("newosldr: Placeholder.\r");
-}
-
 /// @brief memset definition in C++.
 /// @param dst destination pointer.
 /// @param byte value to fill in.

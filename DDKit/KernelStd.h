@@ -21,9 +21,9 @@
 #define DK_FINAL
 #endif // defined(__cplusplus)
 
-#ifndef __KERNEL__
+#ifndef __NEWOSKRNL__
 #error !!! including header in kernel mode !!!
-#endif // __KERNEL__
+#endif // __NEWOSKRNL__
 
 struct DDK_STATUS_STRUCT;
 

@@ -5,6 +5,6 @@
     "sources_path": ["*.c", "*.cxx", "*.S"],
     "output_name": "libDDK.lib",
     "compiler_flags": ["-ffreestanding",  "-shared",  "-std=c17",  "-std=c++20", "-fno-rtti",  "-fno-exceptions", " -Wl,--subsystem=17"],
-    "cpp_macros": ["__KERNEL__", "__DDK_AMD64__", "cDDKVersionHighest=1", "cDDKVersionLowest=1"]
+    "cpp_macros": ["__NEWOSKRNL__", "__DDK_AMD64__", "cDDKVersionHighest=1", "cDDKVersionLowest=1"]
   }
   
