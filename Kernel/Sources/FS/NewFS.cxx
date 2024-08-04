@@ -23,7 +23,7 @@ using namespace Kernel;
 
 #ifdef __ED__
 /**
-    Define those external symbols, to make the editor shutup
+	Define those external symbols, to make the editor shutup
 */
 
 /// @brief get sector count.
@@ -33,7 +33,6 @@ Kernel::SizeT drv_std_get_sector_count();
 Kernel::SizeT drv_std_get_drv_size();
 
 #endif
-
 
 ///! BUGS: 0
 
@@ -53,7 +52,7 @@ STATIC MountpointInterface sMountpointInterface;
 /// @param theFork the fork itself.
 /// @return the fork
 _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-										 _Input NFS_FORK_STRUCT&	theFork)
+												 _Input NFS_FORK_STRUCT&	theFork)
 {
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return nullptr;
@@ -77,7 +76,7 @@ _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* cata
 
 		NFS_FORK_STRUCT curFork{0};
 		NFS_FORK_STRUCT prevFork{0};
-		Lba		lbaOfPreviousFork = lba;
+		Lba				lbaOfPreviousFork = lba;
 
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
 		while (true)
@@ -160,10 +159,10 @@ _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* cata
 /// @param name the fork name.
 /// @return the fork.
 _Output NFS_FORK_STRUCT* NewFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-									   _Input const Char* name,
-									   Boolean			  isDataFork)
+											   _Input const Char*		  name,
+											   Boolean					  isDataFork)
 {
-	auto	 drv	 = sMountpointInterface.GetAddressOf(this->fDriveIndex);
+	auto			 drv	 = sMountpointInterface.GetAddressOf(this->fDriveIndex);
 	NFS_FORK_STRUCT* theFork = nullptr;
 
 	Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
@@ -223,8 +222,8 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char* name)
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
-											   _Input const Int32& flags,
-											   _Input const Int32& kind)
+													   _Input const Int32& flags,
+													   _Input const Int32& kind)
 {
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return nullptr;
@@ -447,8 +446,12 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
 /// @brief Make a EPM+NewFS drive out of the disk.
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see ErrLocal().
-bool NewFSParser::Format(_Input _Output DriveTrait* drive)
+bool NewFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
 {
+	if (*part_name == 0 ||
+		endLba == 0)
+		return false;
+
 	// verify disk.
 	drive->fVerify(&drive->fPacket);
 
@@ -464,14 +467,78 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 	Char sectorBuf[kNewFSSectorSz] = {0};
 
+	Lba start = kNewFSStartLba;
+
 	drive->fPacket.fPacketContent = sectorBuf;
 	drive->fPacket.fPacketSize	  = kNewFSSectorSz;
-	drive->fPacket.fLba			  = kNewFSStartLba;
+	drive->fPacket.fLba			  = start;
 
 	drive->fInput(&drive->fPacket);
 
+	if (flags & kNewFSPartitionTypeBoot)
+	{
+		// make it bootable when needed.
+		Char bufEpmHdr[kNewFSSectorSz] = {0};
+
+		BOOT_BLOCK_STRUCT* epmBoot = (BOOT_BLOCK_STRUCT*)bufEpmHdr;
+
+		constexpr auto cFsName	  = "NewFS";
+		constexpr auto cBlockName = "ZKA:";
+
+		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, rt_string_len(cFsName));
+
+		epmBoot->FsVersion = kNewFSVersionInteger;
+		epmBoot->LbaStart  = 0;
+		epmBoot->SectorSz  = kNewFSSectorSz;
+
+		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), epmBoot->Name, rt_string_len(cBlockName));
+		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epmBoot->Magic, rt_string_len(kEPMMagic));
+
+		Lba outEpmLba = kEpmBase;
+
+		Char buf[kNewFSSectorSz];
+
+		Lba	  prevStart = 0;
+		SizeT cnt		= 0;
+
+		while (drive->fPacket.fPacketGood)
+		{
+			drive->fPacket.fPacketContent = buf;
+			drive->fPacket.fPacketSize	  = kNewFSSectorSz;
+			drive->fPacket.fLba			  = outEpmLba;
+
+			drive->fInput(&drive->fPacket);
+
+			if (buf[0] == 0)
+			{
+				epmBoot->LbaStart = prevStart;
+
+				if (epmBoot->LbaStart)
+					epmBoot->LbaStart = outEpmLba;
+
+				epmBoot->LbaEnd	   = endLba;
+				epmBoot->NumBlocks = cnt;
+
+				drive->fPacket.fPacketContent = bufEpmHdr;
+				drive->fPacket.fPacketSize	  = kNewFSSectorSz;
+				drive->fPacket.fLba			  = outEpmLba;
+
+				drive->fOutput(&drive->fPacket);
+
+				break;
+			}
+			else
+			{
+				prevStart = ((BOOT_BLOCK_STRUCT*)buf)->LbaStart + ((BOOT_BLOCK_STRUCT*)buf)->LbaEnd;
+			}
+
+			outEpmLba += sizeof(BOOT_BLOCK_STRUCT);
+			++cnt;
+		}
+	}
+
 	// disk isnt faulty and data has been fetched.
-	if (drive->fPacket.fPacketGood)
+	while (drive->fPacket.fPacketGood)
 	{
 		NFS_ROOT_PARTITION_BLOCK* partBlock = (NFS_ROOT_PARTITION_BLOCK*)sectorBuf;
 
@@ -483,7 +550,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 
 			partBlock->Version = kNewFSVersionInteger;
 
-			const auto cUntitledHD = "Untitled HD\0";
+			const auto cUntitledHD = part_name;
 
 			rt_copy_memory((VoidPtr)kNewFSIdent, (VoidPtr)partBlock->Ident,
 						   kNewFSIdentLen);
@@ -522,40 +589,18 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive)
 			// write the root catalog.
 			this->CreateCatalog(kNewFSRoot, 0, kNewFSCatalogKindDir);
 
-			if (partBlock->Flags & kNewFSPartitionTypeBoot)
-			{
-				// make it bootable when needed.
-				Char bufEpmHdr[kNewFSSectorSz] = {0};
-
-				BOOT_BLOCK_STRUCT* epmBoot = (BOOT_BLOCK_STRUCT*)bufEpmHdr;
-
-				constexpr auto cFsName	  = "NewFS";
-				constexpr auto cBlockName = "Zeta:";
-
-				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, rt_string_len(cFsName));
-
-				epmBoot->FsVersion = kNewFSVersionInteger;
-				epmBoot->LbaStart  = kNewFSStartLba;
-				epmBoot->SectorSz  = partBlock->SectorSize;
-				epmBoot->NumBlocks = partBlock->CatalogCount;
-
-				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), epmBoot->Name, rt_string_len(cBlockName));
-				rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epmBoot->Magic, rt_string_len(kEPMMagic));
-
-				drive->fPacket.fPacketContent = bufEpmHdr;
-				drive->fPacket.fPacketSize	  = (epmBoot->SectorSz);
-				drive->fPacket.fLba			  = kEpmBase;
-
-				drive->fOutput(&drive->fPacket);
-			}
-
 			return true;
 		}
 
 		kcout << "newoskrnl: partition block already exists.\r";
 
-		// return success as well, do not ignore that partition.
-		return true;
+		start += partBlock->DiskSize;
+
+		drive->fPacket.fPacketContent = sectorBuf;
+		drive->fPacket.fPacketSize	  = kNewFSSectorSz;
+		drive->fPacket.fLba			  = start;
+
+		drive->fInput(&drive->fPacket);
 	}
 
 	return false;
@@ -650,7 +695,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, voidP
 /// @param catalogName the catalog name.
 /// @return the newly found catalog.
 _Output NFS_CATALOG_STRUCT* NewFSParser::FindCatalog(_Input const char* catalogName,
-											 Lba&				outLba)
+													 Lba&				outLba)
 {
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return nullptr;
@@ -823,7 +868,7 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName)
 
 		drive->fPacket.fLba = outLba; // the catalog position.
 		drive->fPacket.fPacketSize =
-			sizeof(NFS_CATALOG_STRUCT);					 // size of catalog. roughly the sector size.
+			sizeof(NFS_CATALOG_STRUCT);			 // size of catalog. roughly the sector size.
 		drive->fPacket.fPacketContent = catalog; // the catalog itself.
 
 		drive->fOutput(&drive->fPacket); // send packet.
@@ -863,8 +908,8 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName)
 /***********************************************************************************/
 
 VoidPtr NewFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-								 _Input SizeT				dataSz,
-								 _Input const char*			forkName)
+								 _Input SizeT						dataSz,
+								 _Input const char*					forkName)
 {
 	if (!catalog)
 	{

@@ -208,7 +208,7 @@ namespace Kernel
 		//! @return Int32 local error code.
 		Int32& GetLocalCode() noexcept;
 
-		const ProcessLevelRing& GetSelector() noexcept;
+		const ProcessLevelRing& GetLevelRing() noexcept;
 		const ProcessStatus&   GetStatus() noexcept;
 		const AffinityKind&	   GetAffinity() noexcept;
 

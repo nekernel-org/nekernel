@@ -47,10 +47,10 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -D__NEWOS_OTA__ -mno-red-zone -D__KERNEL__ -D__NEWBOOT__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../Kernel -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__
+                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__ -I../
 
 BOOT_LOADER=newosldr.exe
-KERNEL=newoskrnl.exe
+KERNEL=newoskrnl.dll
 DDK=libDDK.lib
 SCI=libSCI.lib
 
@@ -97,7 +97,7 @@ download-edk:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=newosldr.exe newoskrnl.exe OVMF.fd
+EXECUTABLES=newosldr.exe newoskrnl.dll OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

@@ -151,7 +151,7 @@ namespace Kernel
 	}
 
 	/// @brief process selector getter.
-	const ProcessSelector& PROCESS_HEADER_BLOCK::GetSelector() noexcept
+	const ProcessLevelRing& PROCESS_HEADER_BLOCK::GetLevelRing() noexcept
 	{
 		return this->Selector;
 	}

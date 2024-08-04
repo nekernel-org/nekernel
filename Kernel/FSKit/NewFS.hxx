@@ -186,7 +186,9 @@ struct PACKED NFS_ROOT_PARTITION_BLOCK final
 
 	Kernel::UInt64 Version;
 
-	Kernel::Char Pad[kNewFSPadLen];
+	Kernel::Lba EpmBlock;
+
+	Kernel::Char Pad[kNewFSPadLen-sizeof(Kernel::Lba)];
 };
 
 namespace Kernel
@@ -252,7 +254,7 @@ namespace Kernel
 
 		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const char* name);
 
-		bool WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
+		Bool WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 						  voidPtr							 data,
 						  SizeT								 sizeOfData,
 						  _Input const char*				 forkName);
@@ -272,7 +274,7 @@ namespace Kernel
 		/// @brief Make a EPM+NewFS drive out of the disk.
 		/// @param drive The drive to write on.
 		/// @return If it was sucessful, see ErrLocal().
-		bool Format(_Input _Output DriveTrait* drive);
+		bool Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name);
 
 	public:
 		Int32 fDriveIndex{kNewFSSubDriveC};

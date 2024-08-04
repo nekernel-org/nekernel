@@ -63,12 +63,17 @@
 ///! Anything below is reserved for Data backup by the Main OS.
 #define kEPMStartPartitionBlk (sizeof(_BOOT_BLOCK_STRUCT))
 
-///! @brief Current EPM revision
+///! @brief Current EPM revision.
 #define kEPMRevision (0xAD)
-///! @brief Current EPM revision
+
+///! @brief Current EPM revision.
 #define kEPMRevisionUEFI (0xAF)
-/// !@brief EPM base address
+
+/// !@brief EPM base address.
 #define kEpmBase (0U)
+
+struct _BLOCK_GUID_STRUCT;
+struct _BOOT_BLOCK_STRUCT;
 
 /* The first 0 > 128 addresses of a disk contains these headers. */
 
@@ -93,11 +98,12 @@ struct PACKED _BOOT_BLOCK_STRUCT
 	Kernel::Int32 Version;
 	Kernel::Int64 NumBlocks;
 	Kernel::Int64 SectorSz;
-	Kernel::Int64 LbaStart;
+	Kernel::Int64 LbaStart; // base offset
+	Kernel::Int64 LbaEnd; // addition of lba_start to get the end of partition.
 	Kernel::Int16 Kind;
 	Kernel::Int32 FsVersion;
 	Kernel::Char  Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
-	Kernel::Char  Reserved[409];			// to fill a full sector.
+	Kernel::Char  Reserved[401];			// to fill a full sector.
 };
 
 ///! @brief Version kind enum.

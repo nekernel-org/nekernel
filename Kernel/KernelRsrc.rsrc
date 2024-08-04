@@ -15,7 +15,7 @@ BEGIN
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "newoskrnl"
       VALUE "LegalCopyright", "(c) ZKA Technologies, all rights reserved."
-      VALUE "OriginalFilename", "newoskrnl.exe"
+      VALUE "OriginalFilename", "newoskrnl.dll"
       VALUE "ProductName", "newoskrnl"
       VALUE "ProductVersion", KERNEL_VERSION
     END

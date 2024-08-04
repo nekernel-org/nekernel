@@ -70,17 +70,12 @@ namespace Boot
 				// if this is a code header, then we can look for the entrypoint.
 				if (sect->mCharacteristics & eUserSection)
 				{
-					BS->AllocatePages(EfiAllocateType::AllocateAddress, EfiMemoryType::EfiLoaderCode, 1, &address_to_alloc);
-
 					if (!fStartAddress)
 					{
-						fStartAddress = (VoidPtr)((UIntPtr)firstBytes + optHdr->mAddressOfEntryPoint);
+						fStartAddress = (VoidPtr)((VoidPtr)((UIntPtr)fBlob + 184 + (sect->mVirtualAddress - optHdr->mAddressOfEntryPoint)));
+
 						writer.Write("newosldr: Start Address set: ").Write((UIntPtr)fStartAddress).Write("\r");
 					}
-				}
-				else
-				{
-					BS->AllocatePages(EfiAllocateType::AllocateAddress, EfiMemoryType::EfiLoaderData, 1, &address_to_alloc);
 				}
 			}
 		}
@@ -125,9 +120,7 @@ namespace Boot
 			err_fn(handover);
 		}
 
-		volatile HEL::HandoverProc start = reinterpret_cast<HEL::HandoverProc>((UIntPtr)fStartAddress);
-
-		start(handover);
+		rt_jump_to_address(reinterpret_cast<HEL::HandoverProc>(fStartAddress), handover, fStackPtr);
 		err_fn(handover);
 	}
 
