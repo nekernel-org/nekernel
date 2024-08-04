@@ -51,6 +51,8 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -D__NEWOS_OTA__ -mno-red-zone -D__KERNEL
 
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.exe
+DDK=libDDK.lib
+SCI=libSCI.lib
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -63,6 +65,8 @@ all: compile-amd64
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/BOOTX64.EFI
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/NEWBOOT.EFI
 	$(COPY) ../Kernel/$(KERNEL) Sources/Root/$(KERNEL)
+	$(COPY) ../SCIKit/$(SCI) Sources/Root/$(SCI)
+	$(COPY) ../DDKit/$(DDK) Sources/Root/$(DDK)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )

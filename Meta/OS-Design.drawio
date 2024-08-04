@@ -1,29 +1,29 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="lDkK2i6CeL2VbSOVDvrP">
-        <mxGraphModel dx="1356" dy="558" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="746" dy="307" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="ifhO3zQZNW-sXvZMTmu8-1" value="DDKit Hooks" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="234" y="450" width="360" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="ifhO3zQZNW-sXvZMTmu8-2" value="SCIKit and SCM" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="ifhO3zQZNW-sXvZMTmu8-2" value="SCIKit" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="235.5" y="340" width="360" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="ifhO3zQZNW-sXvZMTmu8-3" value="FoundationKit, AnimationKit, GraphicsKit" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="235.5" y="295" width="360" height="30" as="geometry"/>
+                    <mxGeometry x="235.5" y="295" width="360" height="35" as="geometry"/>
                 </mxCell>
                 <mxCell id="ifhO3zQZNW-sXvZMTmu8-8" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;System layer.&lt;/h1&gt;&lt;p&gt;This layer describes the kernel and it's API, which makes the Zeta OS.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="610" y="440" width="180" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="ifhO3zQZNW-sXvZMTmu8-13" value="NewOS MP Kernel" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="235.5" y="520" width="360" height="60" as="geometry"/>
+                <mxCell id="ifhO3zQZNW-sXvZMTmu8-13" value="NewOS MP Kernel, DDKit&amp;nbsp;DLL and installed drivers." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="235.5" y="450" width="360" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;User layer&lt;/h1&gt;&lt;div&gt;This layer is located on user space, it is containing all of the users frameworks, SCI and SCM objects.&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                <mxCell id="2" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;User layer&lt;/h1&gt;&lt;div&gt;This layer is located on user space, it is containing all of the users frameworks, SCI and SCM objects.&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="610" y="290" width="180" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;NewOS&lt;/h1&gt;&lt;div&gt;NewOS is an interesting piece&lt;/div&gt;&lt;div&gt;of engineering, designed to be mutli-user and multi tasked, it perfectly suits that need. And gives a neat API to work on.&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                <mxCell id="3" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;NewOS&lt;/h1&gt;&lt;div&gt;NewOS is an interesting piece&lt;/div&gt;&lt;div&gt;of engineering, designed to be mutli-user and multi tasked, it perfectly suits that need. And gives a neat API to work on.&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="90" y="80" width="180" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Subsystems (Security, Native)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="235.5" y="380" width="360" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

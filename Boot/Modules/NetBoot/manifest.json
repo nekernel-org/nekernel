@@ -1,4 +1,4 @@
 {
   "pluginName": "NetBoot",
-  "description": "Over the Air update module."
+  "description": "Boot NewOS from a network volume."
 }
