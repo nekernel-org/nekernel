@@ -273,9 +273,9 @@ private:
 
 		constexpr auto cNewFSCatalogPadding = 4;
 
-		NFS_CATALOG_STRUCT* catalogKind	 = (NFS_CATALOG_STRUCT*)bufCatalog;
-		catalogKind->PrevSibling = startLba;
-		catalogKind->NextSibling = (startLba + (sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding));
+		NFS_CATALOG_STRUCT* catalogKind = (NFS_CATALOG_STRUCT*)bufCatalog;
+		catalogKind->PrevSibling		= startLba;
+		catalogKind->NextSibling		= (startLba + (sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding));
 
 		/// Fill catalog kind.
 		catalogKind->Kind  = blob->fKind;
@@ -288,6 +288,9 @@ private:
 			EFI::ThrowError(L"Developer-Error", L"This is caused by the developer of the bootloader.");
 		}
 
+		--partBlock.FreeCatalog;
+		--partBlock.FreeSectors;
+
 		writer.Write(L"newosldr: root directory: ").Write(blob->fFileName).Write(L"\r");
 
 		memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
@@ -296,11 +299,6 @@ private:
 		fDiskDev.Leak().mSize = sizeof(NFS_CATALOG_STRUCT);
 
 		fDiskDev.Write((Char*)bufCatalog, sizeof(NFS_CATALOG_STRUCT));
-
-		--partBlock.FreeCatalog;
-		--partBlock.FreeSectors;
-
-		memset(bufCatalog, 0, sizeof(NFS_CATALOG_STRUCT));
 
 		return true;
 	}
@@ -324,8 +322,8 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		return false; /// sanity check
 
 	/// convert the sector into something that the disk understands.
-	SizeT sectorSz					= BootDev::kSectorSize;
-	Char  buf[BootDev::kSectorSize] = {0};
+	SizeT sectorSz = BootDev::kSectorSize;
+	Char* buf	   = new Char[BootDev::kSectorSize];
 
 	NFS_ROOT_PARTITION_BLOCK* partBlock = reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(buf);
 
@@ -340,6 +338,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 
 	if (GIB(fDiskDev.GetDiskSize()) < cMinimumDiskSize)
 	{
+		delete buf;
 		EFI::ThrowError(L"Disk-Too-Tiny", L"Can't format a New Filesystem partition here.");
 		return false;
 	}
@@ -382,19 +381,22 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 		CopyMem(epmBoot->Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
 
 		BTextWriter writer;
-		writer.Write(L"newosldr: wrote partition.\r");
+		writer.Write(L"newosldr: wrote partition with success.\r");
 
 		fDiskDev.Leak().mBase = kEpmBase;
 		fDiskDev.Leak().mSize = sectorSz;
 
 		fDiskDev.Write(buf, sectorSz);
 
+		delete buf;
 		return true;
 	}
 	else
 	{
+		delete buf;
 		EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned.");
 	}
 
+	delete buf;
 	return false;
 }

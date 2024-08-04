@@ -41,7 +41,7 @@ namespace Boot
 		if (firstBytes[0] == kMagMz0 &&
 			firstBytes[1] == kMagMz1)
 		{
-			writer.Write("newosldr: Windows executable detected.\r");
+			writer.Write("newosldr: PE32+ executable detected.\r");
 
 			ExecHeaderPtr		  hdrPtr = ldr_find_exec_header(firstBytes);
 			ExecOptionalHeaderPtr optHdr = ldr_find_opt_exec_header(firstBytes);

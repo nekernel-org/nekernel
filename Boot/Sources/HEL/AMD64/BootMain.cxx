@@ -7,6 +7,7 @@
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
 #include <Modules/CoreCG/FbRenderer.hxx>
+#include <Modules/CoreCG/TextRenderer.hxx>
 #include <FirmwareKit/EFI.hxx>
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
@@ -16,7 +17,6 @@
 #include <NewKit/Macros.hxx>
 #include <NewKit/Ref.hxx>
 #include <BootKit/ProgramLoader.hxx>
-#include <Modules/CoreCG/TextRenderer.hxx>
 #include <cstring>
 
 // make the compiler shut up.
@@ -97,14 +97,11 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		.Write(BVersionString::The())
 		.Write("\r");
 
-	UInt32*				 MapKey		= new UInt32();
-	UInt32*				 SizePtr	= new UInt32();
+	UInt32				 MapKey		= 0;
+	UInt32				 SizePtr	= sizeof(EfiMemoryDescriptor);
 	EfiMemoryDescriptor* Descriptor = nullptr;
-	UInt32*				 SzDesc		= new UInt32();
-	UInt32*				 RevDesc	= new UInt32();
-
-	*MapKey	 = 0;
-	*SizePtr = 0;
+	UInt32				 SzDesc		= sizeof(EfiMemoryDescriptor);
+	UInt32				 RevDesc	= 0;
 
 	HEL::HandoverInformationHeader* handoverHdrPtr =
 		new HEL::HandoverInformationHeader();
@@ -129,6 +126,47 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	}
 
 	// Fill handover header now.
+
+	BS->GetMemoryMap(&SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc);
+
+	Descriptor = new EfiMemoryDescriptor[SzDesc];
+	BS->GetMemoryMap(&SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc);
+
+	auto cDefaultMemoryMap = 0; // The sixth entry.
+
+	//-----------------------------------------------------------//
+	// A simple loop which finds a usable memory region for us.
+	//-----------------------------------------------------------//
+
+	SizeT lookIndex = 0UL;
+
+	for (; Descriptor[lookIndex].Kind != EfiMemoryType::EfiConventionalMemory; ++lookIndex)
+	{
+		;
+	}
+
+	cDefaultMemoryMap = lookIndex;
+
+	//-----------------------------------------------------------//
+	// Update handover file specific table and phyiscal start field.
+	//-----------------------------------------------------------//
+
+	handoverHdrPtr->f_PhysicalStart =
+		(VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
+
+	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
+		Descriptor[cDefaultMemoryMap].Attribute;
+	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] =
+		Descriptor[cDefaultMemoryMap].Kind;
+	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
+		(UIntPtr)Descriptor;
+
+	handoverHdrPtr->f_VirtualStart =
+		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
+	handoverHdrPtr->f_VirtualSize =
+		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
+
+	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
 	handoverHdrPtr->f_Magic	  = kHandoverMagic;
 	handoverHdrPtr->f_Version = kHandoverVersion;
@@ -164,7 +202,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// ---------------------------------------------------- //
 
 	BFileReader readerKernel(L"newoskrnl.dll", ImageHandle);
-	
+
 	readerKernel.ReadAll(0);
 
 	Boot::ProgramLoader* loader = nullptr;
@@ -185,7 +223,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
-	EFI::ExitBootServices(*MapKey, ImageHandle);
+	EFI::ExitBootServices(MapKey, ImageHandle);
 
 	// ---------------------------------------------------- //
 	// Call kernel.

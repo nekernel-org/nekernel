@@ -19,7 +19,9 @@ EXTERN EfiBootServices* BS;
 void* operator new(size_t sz)
 {
 	void* buf = nullptr;
-	BS->AllocatePool(EfiMemoryType::EfiLoaderData, sz, &buf);
+	
+	while (BS->AllocatePool(EfiMemoryType::EfiLoaderData, sz, &buf) == kBufferTooSmall)
+		BS->FreePool(buf);
 
 	return buf;
 }

@@ -11,6 +11,10 @@
 #include <FirmwareKit/Handover.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 
+#include <Modules/CoreCG/Accessibility.hxx>
+#include <Modules/CoreCG/FbRenderer.hxx>
+#include <Modules/CoreCG/TextRenderer.hxx>
+
 EXTERN_C [[noreturn]] Kernel::Void ke_wait_for_debugger()
 {
 	while (Yes)
@@ -29,6 +33,24 @@ namespace Kernel
 {
 	void ke_stop(const Kernel::Int& id)
 	{
+		CGInit();
+
+		auto panicBack = RGB(0xDC, 0xF5, 0xF5);
+		auto panicTxt = RGB(0, 0, 0);
+		
+		CGDrawInRegion(panicBack, UIAccessibilty::The().Height(), UIAccessibilty::The().Width(), 0, 0);
+
+		auto start_y = 10;
+		auto x = 10;
+
+		cg_write_text("*** Kernel panic! ***\rnewoskrnl.dll stopped working properly so we had to shut it down.", start_y, x, panicTxt);
+
+		CGFini();
+
+		// ******* //
+		// shows in debug only.
+		// ******* //
+
 		kcout << "*** STOP *** \r";
 		kcout << "*** Kernel has trigerred a runtime stop. *** \r";
 

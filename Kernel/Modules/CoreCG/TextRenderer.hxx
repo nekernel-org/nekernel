@@ -166,7 +166,8 @@ inline Kernel::Void cg_write_text(const Kernel::Char* text, Kernel::Int32 x_dst,
 		if (text[i] == '\r' ||
 			text[i] == '\n')
 		{
-			x_dst += FONT_SIZE_X;
+			y_dst += FONT_SIZE_Y;
+
 			continue;
 		}
 

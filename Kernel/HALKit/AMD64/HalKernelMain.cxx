@@ -21,15 +21,8 @@
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
-#define mInitKernel(X) \
-	X;                 \
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
-
 Kernel::Property cKernelVersion;
 Kernel::Property cAutoFormatDisk;
-
-/// @brief This symbol is the kernel main symbol.
-EXTERN_C void KeMain();
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
@@ -72,6 +65,8 @@ STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
 	{0, 0, 0, 0x92, 0xaf, 0}, // user data
 };
 
+void hal_real_init(void);
+
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
 {
@@ -87,17 +82,23 @@ EXTERN_C void hal_init_platform(
 
 	cg_write_text("NEWOSKRNL (C) ZKA TECHNOLOGIES.", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 	kTextOffsetY += 10;
-
 	cg_write_text("SMP OS (MAX 8 CORES).", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
-	kKernelVirtualSize	= HandoverHeader->f_VirtualSize;
-	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(HandoverHeader->f_VirtualStart) + cHeapStartOffset);
+	hal_real_init();
+}
 
-	kKernelPhysicalStart = HandoverHeader->f_PhysicalStart;
+void hal_real_init(void)
+{
+	kKernelVirtualSize	= kHandoverHeader->f_VirtualSize;
+	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart) + cHeapStartOffset);
+
+	kKernelPhysicalStart = kHandoverHeader->f_PhysicalStart;
+
+	kTextOffsetY += 10;
+	cg_write_text("LOADING INTERRUPTS...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
 	// Load memory descriptors.
-
 	Kernel::HAL::RegisterGDT gdtBase;
 
 	gdtBase.Base  = reinterpret_cast<Kernel::UIntPtr>(&cGdt);
@@ -116,6 +117,9 @@ EXTERN_C void hal_init_platform(
 	cIDT.Load(idtBase);
 
 	// Register the basic SCI functions.
+
+	kTextOffsetY += 10;
+	cg_write_text("LOADING SYSCALLS...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
 	constexpr auto cVGAWrite			= 0x10;
 	constexpr auto cTlsInterrupt		= 0x11;
@@ -226,17 +230,8 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked	   = true;
 
-	// newoskrnl version 1.00.
-	Kernel::StringView strVer(cMaxPropLen);
-	strVer += "\\Properties\\KernelVersion";
-
-	cKernelVersion.GetKey()	  = strVer;
-	cKernelVersion.GetValue() = __MAHROUSS_VER__;
-
-	Kernel::StringView strAutoMount(cMaxPropLen);
-	strAutoMount += "\\Properties\\AutoMountFS?";
-
-	cAutoFormatDisk.GetKey() = strAutoMount;
+	kTextOffsetY += 10;
+	cg_write_text("LOADING SMP...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
 	for (size_t i = 0; i < cMaxCmdLine; i++)
 	{
@@ -247,14 +242,8 @@ EXTERN_C void hal_init_platform(
 		}
 	}
 
-	for (size_t i = 0; i < cMaxCmdLine; i++)
-	{
-		if (Kernel::rt_string_cmp(kHandoverHeader->f_CommandLine[i], "/SMP", Kernel::rt_string_len("/SMP")) == 0)
-		{
-			Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-			break;
-		}
-	}
+	kTextOffsetY += 10;
+	cg_write_text("LOADING SUBSYSTEMS...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
-	mInitKernel(KeMain());
+	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
