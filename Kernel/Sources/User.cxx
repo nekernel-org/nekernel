@@ -4,8 +4,8 @@
  *	Kernel
  * 	Copyright ZKA Technologies, all rights reserved.
  *
- *	File: User.cpp
- * 	Purpose: Permission selectors.
+ *	File: User.cxx
+ * 	Purpose: User concept and management.
  *
  * 	========================================================
  */
@@ -25,7 +25,7 @@ namespace Kernel
 	{
 		/// \brief Constructs a token by hashing the password.
 		/// \param password password to hash.
-		/// \return the hashed password 
+		/// \return the hashed password
 		const Int32 cred_construct_token(Char* password, User* user)
 		{
 			if (!password || !user)
@@ -34,9 +34,9 @@ namespace Kernel
 			for (Size i_pass = 0; i_pass < rt_string_len(password); ++i_pass)
 			{
 				Char cur_chr = password[i_pass];
-				password[i_pass] = cur_chr + (user->IsStdUser() ? 0xCF : 0xEF); 
+				password[i_pass] = cur_chr + (user->IsStdUser() ? 0xCF : 0xEF);
 			}
-			
+
 
 			return 0;
 		}
@@ -154,7 +154,7 @@ namespace Kernel
 				mm_delete_ke_heap(token);
 				return false;
 			}
-			
+
 			kcout << "newoskrnl: Correct credentials, moving on.\r";
 		}
 
