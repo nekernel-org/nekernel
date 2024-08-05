@@ -44,24 +44,6 @@ namespace Kernel
 
 		virtual ~TerminalDevice() = default;
 
-		TerminalDevice& Number(const Long Data) noexcept
-		{
-			number(Data);
-			return *this;
-		}
-
-		TerminalDevice& HexNumber(const Long Data) noexcept
-		{
-			hex_number(Data);
-			return *this;
-		}
-
-		TerminalDevice& EndLine() noexcept
-		{
-			end_line();
-			return *this;
-		}
-
 		/// @brief returns device name (terminal name)
 		/// @return string type (const char*)
 		virtual const char* Name() const override

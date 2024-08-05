@@ -24,7 +24,7 @@
 #define kHandoverMagic	 0xBADCC
 #define kHandoverVersion 0x113
 
-#define cMaxCmdLine 8
+#define kHandoverMaxCmdLine 8
 
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
@@ -92,7 +92,7 @@ it tells us more about it and IS format independent.
 		} f_GOP;
 
 		UInt64 f_FirmwareSpecific[8];
-		Char f_CommandLine[255][cMaxCmdLine];
+		Char f_CommandLine[255][kHandoverMaxCmdLine];
 	};
 
 	enum

@@ -233,7 +233,7 @@ void hal_real_init(void)
 	kTextOffsetY += 10;
 	cg_write_text("LOADING SMP...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
-	for (size_t i = 0; i < cMaxCmdLine; i++)
+	for (Kernel::SizeT i = 0; i < kHandoverMaxCmdLine; i++)
 	{
 		if (Kernel::rt_string_cmp(kHandoverHeader->f_CommandLine[i], "/AutoFormat", Kernel::rt_string_len("/AutoFormat")) == 0)
 		{

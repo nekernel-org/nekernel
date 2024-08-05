@@ -68,11 +68,11 @@ namespace Kernel
 		{
 			if (i % 16 == 0)
 			{
-				kcout.HexNumber((UIntPtr)ptr + i);
+				kcout << hex_number((UIntPtr)ptr + i);
 			}
 			else
 			{
-				kcout.HexNumber(ptr[i]);
+				kcout << hex_number(ptr[i]);
 			}
 
 			kcout << " ";

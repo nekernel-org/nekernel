@@ -40,7 +40,7 @@ EXTERN_C
 #define kTaskGate		 (0b10001100)
 #define kGdtCodeSelector (0x08)
 #define kGdtUserCodeSelector (0x10)
-#define cHeapStartOffset (0x10000000)
+#define cHeapStartOffset (0x4000000)
 
 namespace Kernel
 {

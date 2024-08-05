@@ -45,7 +45,7 @@ namespace Kernel
 	void PROCESS_HEADER_BLOCK::Crash()
 	{
 		kcout << (*this->Name == 0 ? "Kernel" : this->Name) << ": crashed. (id = ";
-		kcout.Number(kErrorProcessFault);
+		kcout << number(kErrorProcessFault);
 		kcout << ")\r";
 
 		if (Kernel::ProcessScheduler::The().Leak().CurrentTeam().AsArray().Count() < 1)

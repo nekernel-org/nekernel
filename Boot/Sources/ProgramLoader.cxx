@@ -80,12 +80,9 @@ namespace Boot
 
 				writer.Write("newosldr: offset ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write(".\r");
 
+				SetMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), 0, sect->mSizeOfRawData);
 				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
-
-			EfiPhysicalAddress start = (EfiPhysicalAddress)fStartAddress;
-
-			BS->AllocatePages(AllocateAddress, EfiLoaderData, 1, &start);
 
 			// ================================ //
 			// Allocate stack.
