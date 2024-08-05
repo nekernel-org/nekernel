@@ -15,13 +15,16 @@
 #include <Modules/CoreCG/FbRenderer.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
-EXTERN_C Kernel::Void ke_wait_for_debugger()
-{
+#define SetMem(dst, byte, sz) Kernel::rt_set_memory((Kernel::VoidPtr)dst, byte, sz)
+#define CopyMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
+#define MoveMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 
-}
+#include <BootKit/Vendor/Qr.hxx>
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
+
+#define cWebsiteMacro "https://zka-tech.nl/hulp"
 
 namespace Kernel
 {
@@ -37,9 +40,28 @@ namespace Kernel
 		auto start_y = 10;
 		auto x = 10;
 
-		cg_write_text("*** Kernel panic! ***\rnewoskrnl.dll stopped working properly so we had to shut it down.", start_y, x, panicTxt);
+		cg_write_text("*** Kernel panic! ***\rnewoskrnl.lib stopped working properly so we had to shut it down.", start_y, x, panicTxt);
 
 		CGFini();
+
+		// Show the QR code now.
+
+		constexpr auto cVer     = 4;
+		const auto		   cECC = qr::Ecc::H;
+		const auto		   cInput = cWebsiteMacro;
+		const auto		   cInputLen = rt_string_len(cWebsiteMacro);
+
+		qr::Qr<cVer>	   encoder;
+		qr::QrDelegate     encoderDelegate;
+
+		encoder.encode(cInput, cInputLen, cECC, 0); // Manual mask 0
+
+		const auto cWhereStartX = (kHandoverHeader->f_GOP.f_Width - encoder.side_size()) - 20;
+		const auto cWhereStartY = (kHandoverHeader->f_GOP.f_Height - encoder.side_size()) / 2;
+
+		// tell delegate to draw encoded QR now.
+		encoderDelegate.draw<cVer>(encoder, cWhereStartX,
+								  cWhereStartY);
 
 		// ******* //
 		// shows in debug only.
@@ -112,10 +134,6 @@ namespace Kernel
 	
 	Void RecoveryFactory::Recover() noexcept
 	{		
-#ifdef __DEBUG__
-		ke_wait_for_debugger();
-#endif // ifdef __DEBUG__
-
 		PowerFactoryInterface powerInterface(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 		powerInterface.Shutdown();
 	}
@@ -126,8 +144,8 @@ namespace Kernel
 		if (!expr)
 		{
 #ifdef __DEBUG__
-			kcout << "newoskrnl: File: " << file << "\r";
-			kcout << "newoskrnl: Line: " << line << "\r";
+			kcout << "newoskrnl: FILE: " << file << "\r";
+			kcout << "newoskrnl: LINE: " << line << "\r";
 
 #endif // __DEBUG__
 

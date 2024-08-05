@@ -15,20 +15,22 @@
 
 #include <NewKit/Defines.hxx>
 
+struct HAL_HARDWARE_THREAD;
+
 /// @brief hardware thread indentification type.
 typedef Kernel::Int32 PPCHartType;
 
 /// @brief Hardware thread information structure.
-typedef struct HalHardwareThread
+typedef struct HAL_HARDWARE_THREAD
 {
 	Kernel::UIntPtr fStartAddress;
 	Kernel::UInt8	fPrivleged : 1;
 	Kernel::UInt32	fPageFlags;
 	PPCHartType		fIdentNumber;
-} HalHardwareThread;
+} HAL_HARDWARE_THREAD;
 
 /// @brief Set PC to specific hart.
 /// @param hart the hart
 /// @param epc the pc.
 /// @return
-EXTERN_C Kernel::Void hal_set_pc_to_hart(HalHardwareThread* hart, Kernel::VoidPtr epc);
+EXTERN_C Kernel::Void hal_set_pc_to_hart(HAL_HARDWARE_THREAD* hart, Kernel::VoidPtr epc);

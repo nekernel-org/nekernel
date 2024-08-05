@@ -66,6 +66,7 @@ namespace Kernel
 	{
 		if (!src || len < 1)
 			return nullptr;
+			
 		char* start = reinterpret_cast<Char*>(src);
 
 		while (len)
@@ -210,6 +211,8 @@ namespace Kernel
 	}
 } // namespace Kernel
 
+#ifdef __FREESTANDING__
+
 ////////////////////////////////////////////////////////////////////////////////////////
 /// Exported C functions
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -250,3 +253,5 @@ EXTERN_C Kernel::SizeT strcmp(char* dst, char* src, Kernel::SizeT len)
 {
 	return Kernel::rt_string_cmp(src, dst, len);
 }
+
+#endif // __FREESTANDING__

@@ -12,11 +12,15 @@
 #define cLongMax ((long)(~0UL >> 1))
 #define cLongMin (~cLongMax)
 
+#ifdef __NEWOSLDR__
+
 #define SetMem(dst, c, sz)	  memset(dst, c, sz)
 #define MoveMem(dst, src, sz) memcpy(dst, src, sz)
 #define CopyMem(dst, src, sz) memcpy(dst, src, sz)
 #define StrLen(src)			  strlen(src)
 #define StrCmp(dst, src) strcmp(dst, src)
+
+#endif // __NEWOSLDR__
 
 inline int IsSpace(int c)
 {

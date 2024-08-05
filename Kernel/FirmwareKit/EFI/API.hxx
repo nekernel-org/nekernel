@@ -16,8 +16,6 @@
 // forward decl.
 class BTextWriter;
 
-#define cWebsiteMacro "https://zka-tech.nl/hulp"
-
 #define __BOOTKIT_NO_INCLUDE__ 1
 
 #include <BootKit/BootKit.hxx>
@@ -88,28 +86,7 @@ Bascially frees everything we have in the EFI side.
 
 		ST->ConOut->OutputString(ST->ConOut, L" ***\r");
 
-#ifdef __NEWOSLDR__
-		// Show the QR code now.
-
-		constexpr auto cVer     = 4;
-		const auto		   cECC = qr::Ecc::H;
-		const auto		   cInput = cWebsiteMacro;
-		const auto		   cInputLen = StrLen(cWebsiteMacro);
-
-		qr::Qr<cVer>	   encoder;
-		qr::QrDelegate     encoderDelegate;
-
-		encoder.encode(cInput, cInputLen, cECC, 0); // Manual mask 0
-
-		const auto cWhereStartX = (kHandoverHeader->f_GOP.f_Width - encoder.side_size()) - 20;
-		const auto cWhereStartY = (kHandoverHeader->f_GOP.f_Height - encoder.side_size()) / 2;
-
-		// tell delegate to draw encoded QR now.
-		encoderDelegate.draw<cVer>(encoder, cWhereStartX,
-								  cWhereStartY);
-
 		EFI::Stop();
-#endif // ifdef __NEWOSLDR__
 	}
 } // namespace EFI
 

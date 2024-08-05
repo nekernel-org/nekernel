@@ -2,17 +2,20 @@
 #define QR_HXX
 
 extern "C" {
+
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
+
 }
 
 #include <BootKit/Vendor/Shared/base.h>
 #include <BootKit/Vendor/Shared/bit.h>
 
 #include <BootKit/Vendor/QrPrelude.hxx>
-#include <Modules/CoreCG/FbRenderer.hxx>
 #include <BootKit/Support.hxx>
+
+#include <Modules/CoreCG/FbRenderer.hxx>
 #include <CompilerKit/Detail.hxx>
 
 /// @note the QR code is still code 128, it utilizes the same concept of having it's own character set.
@@ -202,7 +205,7 @@ namespace qr
 	}
 
 	// Reed-Solomon Ecc generator polynomial for the given degree.
-	constexpr void gf_gen_poly(int degree, uint8_t* poly)
+	inline void gf_gen_poly(int degree, uint8_t* poly)
 	{
 		SetMem(poly, 0, degree);
 
@@ -218,7 +221,7 @@ namespace qr
 	}
 
 	// Polynomial division if Galois Field.
-	constexpr void gf_poly_div(uint8_t* dividend, size_t len, uint8_t* divisor, int degree, uint8_t* result)
+	inline void gf_poly_div(uint8_t* dividend, size_t len, uint8_t* divisor, int degree, uint8_t* result)
 	{
 		SetMem(result, 0, degree);
 
