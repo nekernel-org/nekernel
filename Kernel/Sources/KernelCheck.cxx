@@ -19,12 +19,12 @@
 #define CopyMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 #define MoveMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 
+#define cWebsiteMacro "https://zka-tech.nl/hulp"
+
 #include <BootKit/Vendor/Qr.hxx>
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
-
-#define cWebsiteMacro "https://zka-tech.nl/hulp"
 
 namespace Kernel
 {

@@ -28,13 +28,13 @@ namespace Kernel
 	/// @brief Check if pointer is a valid kernel pointer.
 	/// @param allocatedPtr the pointer
 	/// @return if it exists.
-	Boolean ke_is_valid_heap(VoidPtr allocatedPtr);
+	Boolean mm_is_valid_heap(VoidPtr allocatedPtr);
 
 	/// @brief allocate chunk of memory.
 	/// @param sz size of pointer
 	/// @param rw read write (true to enable it)
 	/// @param user is it accesible by user processes?
-	/// @return the pointer
+	/// @return The newly allocated pointer.
 	voidPtr mm_new_ke_heap(const SizeT sz, const Bool rw, const Bool user);
 
 	/// @brief Protect the heap with a CRC value.

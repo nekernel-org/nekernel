@@ -395,29 +395,29 @@ namespace Kernel
 		if (!the_stack || new_pid < 0)
 			return false;
 
-		for (SizeT index = 0UL; index < MPCoreScheduler::The().Leak().Count(); ++index)
+		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Leak().Count(); ++index)
 		{
-			if (MPCoreScheduler::The().Leak()[index].Leak()->Kind() == kInvalidHart)
+			if (HardwareThreadScheduler::The().Leak()[index].Leak()->Kind() == kInvalidHart)
 				continue;
 
-			if (MPCoreScheduler::The().Leak()[index].Leak()->StackFrame() == the_stack)
+			if (HardwareThreadScheduler::The().Leak()[index].Leak()->StackFrame() == the_stack)
 			{
-				MPCoreScheduler::The().Leak()[index].Leak()->Busy(false);
+				HardwareThreadScheduler::The().Leak()[index].Leak()->Busy(false);
 				continue;
 			}
 
-			if (MPCoreScheduler::The().Leak()[index].Leak()->IsBusy())
+			if (HardwareThreadScheduler::The().Leak()[index].Leak()->IsBusy())
 				continue;
 
-			if (MPCoreScheduler::The().Leak()[index].Leak()->Kind() !=
+			if (HardwareThreadScheduler::The().Leak()[index].Leak()->Kind() !=
 					ThreadKind::kHartBoot &&
-				MPCoreScheduler::The().Leak()[index].Leak()->Kind() !=
+				HardwareThreadScheduler::The().Leak()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				MPCoreScheduler::The().Leak()[index].Leak()->Busy(true);
+				HardwareThreadScheduler::The().Leak()[index].Leak()->Busy(true);
 				ProcessHelper::TheCurrentPID() = new_pid;
 
-				return MPCoreScheduler::The().Leak()[index].Leak()->Switch(the_stack);
+				return HardwareThreadScheduler::The().Leak()[index].Leak()->Switch(the_stack);
 			}
 		}
 

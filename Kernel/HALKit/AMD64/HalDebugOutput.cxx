@@ -8,6 +8,7 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/Framebuffer.hxx>
 #include <NewKit/Utils.hxx>
+#include <NewKit/New.hxx>
 
 namespace Kernel
 {
@@ -137,12 +138,8 @@ namespace Kernel
 
 	TerminalDevice& TerminalDevice::The() noexcept
 	{
-		static TerminalDevice* out = nullptr;
-
-		if (!out)
-			out = new TerminalDevice(Kernel::ke_io_write, Kernel::ke_io_read);
-
-		return *out;
+		STATIC TerminalDevice out(Kernel::ke_io_write, Kernel::ke_io_read);
+		return out;
 	}
 
 } // namespace Kernel

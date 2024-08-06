@@ -30,11 +30,11 @@ namespace Kernel
 		/// | HIB |  ADDRESS  |
 		struct PACKED HEAP_INFORMATION_BLOCK final
 		{
-			///! @brief 32-bit value which contains the magic number of the executable.
+			///! @brief 32-bit value which contains the magic number of the heap.
 			UInt32 fMagic;
-			///! @brief Boolean value which tells if the pointer is allocated.
+			///! @brief Boolean value which tells if the heap is allocated.
 			Boolean fPresent;
-			///! @brief 32-bit CRC checksum
+			///! @brief 32-bit CRC checksum.
 			UInt32 fCRC32;
 			/// @brief 64-bit pointer size.
 			SizeT fTargetPtrSize;
@@ -95,7 +95,7 @@ namespace Kernel
 	/// @param sz size of pointer
 	/// @param rw read write (true to enable it)
 	/// @param user is it accesible by user processes?
-	/// @return the pointer
+	/// @return The newly allocated pointer.
 	VoidPtr mm_new_ke_heap(const SizeT sz, const bool rw, const bool user)
 	{
 		Detail::mm_alloc_init_timeout();
@@ -210,7 +210,7 @@ namespace Kernel
 	/// @brief Check if pointer is a valid kernel pointer.
 	/// @param heapPtr the pointer
 	/// @return if it exists.
-	Boolean ke_is_valid_heap(VoidPtr heapPtr)
+	Boolean mm_is_valid_heap(VoidPtr heapPtr)
 	{
 		if (kHeapCount < 1)
 			return false;

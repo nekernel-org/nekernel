@@ -120,7 +120,7 @@ namespace Kernel
 	//! @brief Constructor and destructor
 
 	///! @brief Default constructor.
-	MPCoreScheduler::MPCoreScheduler()
+	HardwareThreadScheduler::HardwareThreadScheduler()
 	{
 		StringView strCoreName(512);
 		strCoreName += "\\Class\\Smp\\MPClass";
@@ -132,17 +132,17 @@ namespace Kernel
 	}
 
 	///! @brief Default destructor.
-	MPCoreScheduler::~MPCoreScheduler() = default;
+	HardwareThreadScheduler::~HardwareThreadScheduler() = default;
 
 	/// @brief Shared singleton function
-	Ref<MPCoreScheduler> MPCoreScheduler::The()
+	Ref<HardwareThreadScheduler> HardwareThreadScheduler::The()
 	{
-		static MPCoreScheduler manager;
+		static HardwareThreadScheduler manager;
 		return {manager};
 	}
 
 	/// @brief Get Stack Frame of Core
-	HAL::StackFramePtr MPCoreScheduler::Leak() noexcept
+	HAL::StackFramePtr HardwareThreadScheduler::Leak() noexcept
 	{
 		if (fThreadList[fCurrentThread].Leak() &&
 			ProcessHelper::TheCurrentPID() ==
@@ -153,7 +153,7 @@ namespace Kernel
 	}
 
 	/// @brief Finds and switch to a free core.
-	bool MPCoreScheduler::Switch(HAL::StackFramePtr stack)
+	bool HardwareThreadScheduler::Switch(HAL::StackFramePtr stack)
 	{
 		if (stack == nullptr)
 			return false;
@@ -203,7 +203,7 @@ namespace Kernel
 	 * @param idx the index
 	 * @return the reference to the hardware thread.
 	 */
-	Ref<HardwareThread*> MPCoreScheduler::operator[](const SizeT& idx)
+	Ref<HardwareThread*> HardwareThreadScheduler::operator[](const SizeT& idx)
 	{
 		if (idx == 0)
 		{
@@ -233,7 +233,7 @@ namespace Kernel
 	 * Check if thread pool isn't empty.
 	 * @return
 	 */
-	MPCoreScheduler::operator bool() noexcept
+	HardwareThreadScheduler::operator bool() noexcept
 	{
 		return !fThreadList.Empty();
 	}
@@ -242,14 +242,14 @@ namespace Kernel
 	 * Reverse operator bool
 	 * @return
 	 */
-	bool MPCoreScheduler::operator!() noexcept
+	bool HardwareThreadScheduler::operator!() noexcept
 	{
 		return fThreadList.Empty();
 	}
 
 	/// @brief Returns the amount of core present.
 	/// @return the number of cores.
-	SizeT MPCoreScheduler::Count() noexcept
+	SizeT HardwareThreadScheduler::Count() noexcept
 	{
 		return fThreadList.Count();
 	}

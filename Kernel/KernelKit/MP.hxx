@@ -19,7 +19,7 @@
 namespace Kernel
 {
 	class HardwareThread;
-	class MPCoreScheduler;
+	class HardwareThreadScheduler;
 
 	using ThreadID = UInt32;
 
@@ -77,22 +77,22 @@ namespace Kernel
 		bool			 fBusy{false};
 
 	private:
-		friend class MPCoreScheduler;
+		friend class HardwareThreadScheduler;
 	};
 
 	///
-	/// \name MPCoreScheduler
+	/// \name HardwareThreadScheduler
 	/// \brief Class to manage the thread scheduling.
 	///
 
-	class MPCoreScheduler final
+	class HardwareThreadScheduler final
 	{
 	private:
-		explicit MPCoreScheduler();
+		explicit HardwareThreadScheduler();
 
 	public:
-		~MPCoreScheduler();
-		NEWOS_COPY_DEFAULT(MPCoreScheduler);
+		~HardwareThreadScheduler();
+		NEWOS_COPY_DEFAULT(HardwareThreadScheduler);
 
 	public:
 		bool			   Switch(HAL::StackFramePtr the);
@@ -106,7 +106,7 @@ namespace Kernel
 	public:
 		/// @brief Shared instance of the MP Manager.
 		/// @return the reference to the mp manager class.
-		static Ref<MPCoreScheduler> The();
+		static Ref<HardwareThreadScheduler> The();
 
 	public:
 		/// @brief Returns the amount of threads present in the system.
