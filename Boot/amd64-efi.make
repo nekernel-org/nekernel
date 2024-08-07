@@ -50,9 +50,9 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSL
                         -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__ -D__BOOTLOADER__ -I../
 
 BOOT_LOADER=newosldr.exe
-KERNEL=newoskrnl.lib
-DDK=libDDK.lib
-SCI=libSCI.lib
+KERNEL=newoskrnl.dll
+DDK=libDDK.dll
+SCI=libSCI.dll
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -97,7 +97,7 @@ download-edk:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=newosldr.exe newoskrnl.lib OVMF.fd
+EXECUTABLES=newosldr.exe newoskrnl.dll OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

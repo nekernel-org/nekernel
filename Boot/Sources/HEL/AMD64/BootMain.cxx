@@ -201,7 +201,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// format the disk.
 	// ---------------------------------------------------- //
 
-	BFileReader readerKernel(L"newoskrnl.lib", ImageHandle);
+	BFileReader readerKernel(L"newoskrnl.dll", ImageHandle);
 
 	readerKernel.ReadAll(0);
 
@@ -214,7 +214,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::ProgramLoader(readerKernel.Blob());
-		loader->SetName("\"newoskrnl.lib\" (64-bit SMP DLL)");
+		loader->SetName("\"newoskrnl.dll\" (64-bit SMP DLL)");
 	}
 
 	writer.Write("newosldr: Running: ").Write(loader->GetName()).Write("\r");

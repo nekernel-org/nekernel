@@ -40,7 +40,7 @@ namespace Kernel
 		auto start_y = 10;
 		auto x = 10;
 
-		cg_write_text("*** Kernel panic! ***\rnewoskrnl.lib stopped working properly so we had to shut it down.", start_y, x, panicTxt);
+		cg_write_text("*** Kernel panic! ***\rnewoskrnl.dll stopped working properly so we had to shut it down.", start_y, x, panicTxt);
 
 		CGFini();
 

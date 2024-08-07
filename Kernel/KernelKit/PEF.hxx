@@ -23,7 +23,7 @@
 
 #define kPefMagicLen 5
 
-#define kPefVersion 1
+#define kPefVersion 3
 #define kPefNameLen 255
 
 namespace Kernel
@@ -96,16 +96,18 @@ namespace Kernel
 } // namespace Kernel
 
 /* not mandatory, only for non fork based filesystems */
-#define kPefExt		  ".exec"
-#define kPefDylibExt  ".lib"
-#define kPefLibExt	  ".slib"
+#define kPefExt		  ".exe"
+#define kPefDylibExt  ".dll"
+#define kPefLibExt	  ".lib"
 #define kPefObjectExt ".obj"
 #define kPefDebugExt  ".dbg"
 
 // Kernel System Binary Interface.
-#define kPefAbi (0x5046)
+#define kPefAbi 	   (0x5046)
 
-#define kPefStart "__ImageStart"
+#define kPefBaseOrigin (0x40000000)
+
+#define kPefStart 		"__ImageStart"
 
 #define kPefForkKind	kPefMagic
 #define kPefForkKindFAT kPefMagicFat

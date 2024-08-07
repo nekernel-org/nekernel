@@ -52,7 +52,7 @@ inline constexpr auto cLPCCloseMsgSyscall	 = 0x27;
 inline constexpr auto cLPCSanitizeMsgSyscall = 0x28;
 
 #ifdef __NEWOS_SYMS__
-#include <SCIKit/rtl.internal.inl>
+#include <SCIKit/scm.internal.inl>
 #else
 class UnknownInterface; // Refrenced from an IDB entry.
 class UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: WordUCLSID.
