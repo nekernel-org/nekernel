@@ -2,8 +2,8 @@
 
 Copyright ZKA Technologies.
 
-File: Types.hxx.
-Purpose: System Call types.
+File: SCIBase.hxx
+Purpose: SCIKit foundation header.
 
 ------------------------------------------- */
 
@@ -128,8 +128,10 @@ struct PROCESS_EXIT_INFO final
 /// @param data the data associated with it.
 /// @param data_sz the size of the data associated with it.
 /// @return status code.
-IMPORT_C SInt32 RtlRaiseSystemCall(const SInt32 id, VoidPtr data, SizeT data_sz);
+IMPORT_C SInt32 RtlRaiseSysCall(const SInt32 id, VoidPtr data, SizeT data_sz);
 
-IMPORT_C VoidPtr RtlGetDLLProcedure(const char* symbol, VoidPtr dll_handle);
-IMPORT_C VoidPtr RtOpenDLL(const char* path);
-IMPORT_C void RtCloseDLL(VoidPtr dll_handle);
+/// @note Part of NK loader API.
+
+IMPORT_C VoidPtr RtlGetDLLProc(const char* symbol, VoidPtr dll_handle);
+IMPORT_C VoidPtr RtlOpenDLL(const char* path);
+IMPORT_C UInt0 RtlCloseDLL(VoidPtr dll_handle);
