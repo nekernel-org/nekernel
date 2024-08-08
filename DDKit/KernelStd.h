@@ -22,7 +22,7 @@
 #endif // defined(__cplusplus)
 
 #ifndef __NEWOSKRNL__
-#error !!! including header in kernel mode !!!
+#error !!! including header in user mode !!!
 #endif // __NEWOSKRNL__
 
 struct DDK_STATUS_STRUCT;

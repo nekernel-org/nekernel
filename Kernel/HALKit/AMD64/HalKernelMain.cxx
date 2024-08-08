@@ -46,8 +46,6 @@ struct PROCESS_EXIT_INFO final
 	Kernel::Char  fReason[cReasonLen];
 };
 
-STATIC Kernel::UInt32 kTextOffsetY = 30;
-
 namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
@@ -80,6 +78,8 @@ EXTERN_C void hal_init_platform(
 		return;
 	}
 
+	STATIC Kernel::UInt32 kTextOffsetY = 30;
+
 	cg_write_text("NEWOSKRNL (C) ZKA TECHNOLOGIES.", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 	kTextOffsetY += 10;
 	cg_write_text("SMP OS (MAX 8 CORES).", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
@@ -90,7 +90,7 @@ EXTERN_C void hal_init_platform(
 void hal_real_init(void)
 {
 	// get page size.
-	kKernelVirtualSize	= kHandoverHeader->f_VirtualSize;
+	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
 
 	// get virtual address start.
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
@@ -99,9 +99,6 @@ void hal_real_init(void)
 	// get physical address start.
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PhysicalStart));
-
-	kTextOffsetY += 10;
-	cg_write_text("LOADING INTERRUPTS...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
 	// Load memory descriptors.
 	Kernel::HAL::RegisterGDT gdtBase;
@@ -123,7 +120,6 @@ void hal_real_init(void)
 
 	// Register the basic system calls.
 
-	constexpr auto cVGAWrite			= 0x10;
 	constexpr auto cTlsInterrupt		= 0x11;
 	constexpr auto cTlsInstallInterrupt = 0x12;
 	constexpr auto cNewInterrupt		= 0x13;
@@ -142,12 +138,6 @@ void hal_real_init(void)
 	constexpr auto cLPCOpenMsg			= 0x26;
 	constexpr auto cLPCCloseMsg			= 0x27;
 	constexpr auto cLPCSanitizeMsg		= 0x28;
-
-	kSyscalls[cVGAWrite].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		const char* msg = (const char*)rdx;
-		cg_write_text(msg, kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
-		kTextOffsetY += 10;
-	};
 
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		if (tls_check_syscall_impl(rdx) == false)
@@ -221,7 +211,6 @@ void hal_real_init(void)
 		pow.Shutdown();
 	};
 
-	kSyscalls[cVGAWrite].Leak().Leak()->fHooked			   = true;
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked		   = true;
 	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked = true;
 	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked	   = true;

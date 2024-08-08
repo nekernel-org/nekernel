@@ -97,3 +97,22 @@ IMPORT_C UInt64 RtlOpenFile(const char* path, const char* drv);
 /// @param file_desc the file descriptor.
 /// @return 
 IMPORT_C UInt0 RtlCloseFile(UInt64 file_desc);
+
+/// @brief Installs the TIB and GIB inside the current process.
+/// @param none
+/// @return > 0 error ocurred or already present, = 0 success.
+IMPORT_C UInt32 RtlInstallTIB(UInt0);
+
+/// @brief Asks for the process's own framebuffer. (Not a GPU one)
+/// @param flags 
+/// @param fb_ptr 
+/// @param fb_out_sz 
+/// @return 
+IMPORT_C UInt32 RtlRequestFB(SInt32* type, VoidPtr* fb_ptr, SizeT* fb_out_sz);
+
+enum
+{
+	eFBGPU,
+	eFBCPU,
+	eFBInvalid,
+};
