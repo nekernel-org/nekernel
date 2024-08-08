@@ -197,11 +197,11 @@ namespace Kernel
 		if (this->Kind == kSharedObjectKind)
 		{
 			bool success = false;
-			rtl_fini_shared_object(this, this->SharedObjectPEF, &success);
+			rtl_fini_shared_object(this, this->DLLPtr, &success);
 
 			if (success)
 			{
-				this->SharedObjectPEF = nullptr;
+				this->DLLPtr = nullptr;
 			}
 		}
 
@@ -233,7 +233,7 @@ namespace Kernel
 		}
 		else if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
 		{
-			process.Leak().SharedObjectPEF = rtl_init_shared_object(&process.Leak());
+			process.Leak().DLLPtr = rtl_init_shared_object(&process.Leak());
 			process.Leak().HeapPtr		 = sched_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
 		}
 		else

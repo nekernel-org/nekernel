@@ -31,26 +31,6 @@ typedef void*			 VoidPtr;
 typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
 
-inline constexpr auto cSerialAlertSyscall	 = 0x10;
-inline constexpr auto cTlsSyscall			 = 0x11;
-inline constexpr auto cTlsInstallSyscall	 = 0x12;
-inline constexpr auto cNewSyscall			 = 0x13;
-inline constexpr auto cDeleteSyscall		 = 0x14;
-inline constexpr auto cExitSyscall			 = 0x15;
-inline constexpr auto cLastExitSyscall		 = 0x16;
-inline constexpr auto cCatalogOpenSyscall	 = 0x17;
-inline constexpr auto cForkReadSyscall		 = 0x18;
-inline constexpr auto cForkWriteSyscall		 = 0x19;
-inline constexpr auto cCatalogCloseSyscall	 = 0x20;
-inline constexpr auto cCatalogRemoveSyscall	 = 0x21;
-inline constexpr auto cCatalogCreateSyscall	 = 0x22;
-inline constexpr auto cRebootSyscallSyscall	 = 0x23;
-inline constexpr auto cShutdownSyscall		 = 0x24;
-inline constexpr auto cLPCSendMsgSyscall	 = 0x25;
-inline constexpr auto cLPCOpenMsgSyscall	 = 0x26;
-inline constexpr auto cLPCCloseMsgSyscall	 = 0x27;
-inline constexpr auto cLPCSanitizeMsgSyscall = 0x28;
-
 #ifdef __NEWOS_SYMS__
 #include <SCIKit/scm.internal.inl>
 #else
@@ -90,48 +70,30 @@ public:
 
 #endif
 
-/* ================================================ */
-/* SCI structures */
-/* ================================================ */
-
-struct HEAP_ALLOC_INFO final
-{
-	VoidPtr fThe;
-	SizeT	fTheSz;
-};
-
-struct THREAD_INFORMATION_BLOCK final
-{
-	Char	f_Cookie[3]; // Process cookie.
-	UIntPtr f_Code;		 // Start Address
-	UIntPtr f_Data;		 // Allocation Heap
-	UIntPtr f_BSS;		 // Stack Pointer.
-	SInt32	f_ID;		 // Thread execution ID.
-};
-
-struct PROCESS_BLOCK_INFO final
-{
-	THREAD_INFORMATION_BLOCK* fTIB;
-	THREAD_INFORMATION_BLOCK* fGIB;
-};
-
-struct PROCESS_EXIT_INFO final
-{
-	static constexpr auto cReasonLen = 512;
-
-	SInt64 fCode;
-	Char   fReason[cReasonLen];
-};
-
-/// @brief Raise system call.
-/// @param id the system call id could be 0x10 for example.
-/// @param data the data associated with it.
-/// @param data_sz the size of the data associated with it.
-/// @return status code.
-IMPORT_C SInt32 RtlRaiseSysCall(const SInt32 id, VoidPtr data, SizeT data_sz);
-
 /// @note Part of NK loader API.
 
 IMPORT_C VoidPtr RtlGetDLLProc(const char* symbol, VoidPtr dll_handle);
-IMPORT_C VoidPtr RtlOpenDLL(const char* path);
+
+/// @brief Open DLL handle.
+/// @param path 
+/// @param drv 
+/// @return 
+IMPORT_C VoidPtr RtlOpenDLL(const char* path, const char* drv);
+
+/// @brief Close DLL handle
+/// @param dll_handle 
+/// @return 
 IMPORT_C UInt0 RtlCloseDLL(VoidPtr dll_handle);
+
+/// @note Part of NK file API.
+
+/// @brief Opens a file from a drive.
+/// @param path the filesystem path.
+/// @param drv drive name, use NULL to use default one.
+/// @return the file descriptor of the file.
+IMPORT_C UInt64 RtlOpenFile(const char* path, const char* drv);
+
+/// @brief Closes a file and flushes its content.
+/// @param file_desc the file descriptor.
+/// @return 
+IMPORT_C UInt0 RtlCloseFile(UInt64 file_desc);

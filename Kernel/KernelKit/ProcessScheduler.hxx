@@ -143,20 +143,22 @@ namespace Kernel
 		const Int32& GetExitCode() noexcept;
 
 	public:
-		Char			   Name[kProcessLen] = {"Unknown Process"};
+		Char			   Name[kProcessLen] = {"PROCESS"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
 		ProcessLevelRing	   Selector{ProcessLevelRing::kRingStdUser};
 		HAL::StackFramePtr StackFrame{nullptr};
-		AffinityKind	   Affinity;
-		ProcessStatus	   Status;
+		AffinityKind	   Affinity{AffinityKind::kStandard};
+		ProcessStatus	   Status{ProcessStatus::kDead};
 
 		// Memory, images.
 		HeapPtrKind HeapCursor{nullptr};
 		ImagePtr	Image{nullptr};
 		HeapPtrKind HeapPtr{nullptr};
 
+		typedef PEFSharedObjectInterface ProcessDLLInterface;
+
 		// shared library handle, reserved for kSharedLib only.
-		PEFSharedObjectInterface* SharedObjectPEF{nullptr};
+		ProcessDLLInterface* DLLPtr{nullptr};
 
 		// Memory usage.
 		SizeT UsedMemory{0};
