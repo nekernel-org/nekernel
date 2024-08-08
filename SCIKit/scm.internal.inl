@@ -65,3 +65,20 @@ inline SInt32 ScmReleaseClass(TCLS* cls)
 
 	return 0;
 }
+
+template <typename FnSign, typename ClsID>
+protocol EventListenerInterface final : public ClsID
+{
+public:
+	explicit EventListenerInterface() = default;
+	virtual ~UnknownInterface() = default;
+
+	EventListenerInterface& operator=(const EventListenerInterface&) = default;
+	EventListenerInterface(const EventListenerInterface&)			 = default;
+
+    virtual EventListenerInterface& operator +=(FnSign arg) 
+	{
+        this->AddEvent(arg);
+        return *this;
+    }
+};

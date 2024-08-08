@@ -68,6 +68,18 @@ public:
 	virtual VoidPtr			  QueryInterface(UUID* p_uuid) = 0;
 };
 
+template <typename FnSign, typename ClsID>
+class EventListenerInterface final : public ClsID
+{
+public:
+	explicit EventListenerInterface() = default;
+	virtual ~UnknownInterface() = default;
+
+	EventListenerInterface& operator=(const EventListenerInterface&) = default;
+	EventListenerInterface(const EventListenerInterface&)			 = default;
+
+    virtual EventListenerInterface& operator +=(FnSign arg) = 0;
+};
 #endif
 
 /// @note Part of NK loader API.
