@@ -20,16 +20,3 @@ section .ldr
 
 HandoverMagic: dq kHandoverMagic
 HandoverType: dw kTypeKernel
-HandoverArch: dw kArchAmd64
-;; This NewBootStart points to Main.
-HandoverStart: dq hal_init_platform
-
-section .start
-
-[global ke_startup_platform]
-
-ke_startup_platform:
-    push rax
-    jmp hal_init_platform
-    pop rax
-    ret

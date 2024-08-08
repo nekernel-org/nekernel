@@ -183,8 +183,8 @@ namespace Kernel::HAL
 
 	struct PROCESS_CONTROL_BLOCK final
 	{
-		PROCESS_HEADER_BLOCK*	   f_Header;
-		HAL::StackFramePtr f_StackFrame;
+		PROCESS_HEADER_BLOCK* f_Header;
+		HAL::StackFramePtr	  f_StackFrame;
 	} fBlocks[cMaxPCBBlocks] = {0};
 
 	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame)
@@ -198,7 +198,7 @@ namespace Kernel::HAL
 
 		cFramePtr = stackFrame;
 
-		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Header = &ProcessScheduler::The().Leak().TheCurrent().Leak();
+		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Header	   = &ProcessScheduler::The().Leak().TheCurrent().Leak();
 		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_StackFrame = stackFrame;
 
 		sem.Unlock();
@@ -234,15 +234,9 @@ namespace Kernel::HAL
 		auto acpi = ACPIFactoryInterface(rsdPtr);
 		kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
 
-		if (kApicMadt != nullptr)
-		{
-			kApicInfoBlock = (MadtType*)kApicMadt;
-		}
-		else
-		{
-			kcout << "newoskrnl: APIC is not present! it is a vital component to enable SMP.\r";
-			ke_stop(RUNTIME_CHECK_FAILED);
-		}
+		MUST_PASS(kApicMadt);
+
+		kApicInfoBlock = (MadtType*)kApicMadt;
 	}
 } // namespace Kernel::HAL
 

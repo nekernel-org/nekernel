@@ -14,20 +14,20 @@ namespace Boot
 {
 	using namespace Kernel;
 
-	class ProgramLoader;
+	class KernelLoader;
 
 	/// @brief Program loader class
 	/// @package nl.zeta.boot.api
-	class ProgramLoader final
+	class KernelLoader final
 	{
 	public:
-		explicit ProgramLoader() = delete;
-		~ProgramLoader()		 = default;
+		explicit KernelLoader() = delete;
+		~KernelLoader()		 = default;
 
-		explicit ProgramLoader(Kernel::VoidPtr blob);
+		explicit KernelLoader(Kernel::VoidPtr blob);
 
-		ProgramLoader& operator=(const ProgramLoader&) = default;
-		ProgramLoader(const ProgramLoader&)			   = default;
+		KernelLoader& operator=(const KernelLoader&) = default;
+		KernelLoader(const KernelLoader&)			   = default;
 
 		void		Start(HEL::HandoverInformationHeader* handover);
 		const char* GetName();
@@ -36,7 +36,7 @@ namespace Boot
 
 	private:
 		Char	fBlobName[255];
-		Char*   fStackPtr{nullptr};
+		Char*   fHeapForProgram{nullptr};
 		VoidPtr fStartAddress{nullptr};
 		VoidPtr fBlob{nullptr};
 	};

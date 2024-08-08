@@ -16,7 +16,7 @@
 #include <KernelKit/PEF.hxx>
 #include <NewKit/Macros.hxx>
 #include <NewKit/Ref.hxx>
-#include <BootKit/ProgramLoader.hxx>
+#include <BootKit/KernelLoader.hxx>
 #include <cstring>
 
 // make the compiler shut up.
@@ -205,7 +205,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	readerKernel.ReadAll(0);
 
-	Boot::ProgramLoader* loader = nullptr;
+	Boot::KernelLoader* loader = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
@@ -213,7 +213,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	if (readerKernel.Blob())
 	{
-		loader = new Boot::ProgramLoader(readerKernel.Blob());
+		loader = new Boot::KernelLoader(readerKernel.Blob());
 		loader->SetName("\"newoskrnl.dll\" (64-bit SMP DLL)");
 	}
 

@@ -44,6 +44,13 @@ void operator delete(void* buf)
 	BS->FreePool(buf);
 }
 
+/// @brief Deletes the object.
+/// @param buf the object.
+void operator delete[](void* buf)
+{
+	BS->FreePool(buf);
+}
+
 /// @brief Deletes the object (array specific).
 /// @param buf the object.
 /// @param size it's size.

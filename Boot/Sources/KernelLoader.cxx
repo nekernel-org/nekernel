@@ -4,13 +4,15 @@
 
 ------------------------------------------- */
 
-#include <BootKit/ProgramLoader.hxx>
+#include <BootKit/KernelLoader.hxx>
 #include <BootKit/Support.hxx>
 #include <BootKit/BootKit.hxx>
+#include <FirmwareKit/EFI/API.hxx>
 
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PE.hxx>
 #include <KernelKit/MSDOS.hxx>
+#include <Modules/CoreCG/TextRenderer.hxx>
 #include <CFKit/LoaderUtils.hxx>
 
 EXTERN_C
@@ -18,13 +20,13 @@ EXTERN_C
 #include <string.h>
 }
 
-extern EfiBootServices* BS;
+#define kHOTypeKernel 100
+
+EXTERN EfiBootServices* BS;
 
 namespace Boot
 {
-	EXTERN_C Int32 rt_jump_to_address(HEL::HandoverProc baseCode, HEL::HandoverInformationHeader* handover, Char* stackPointer);
-
-	ProgramLoader::ProgramLoader(VoidPtr blob)
+	KernelLoader::KernelLoader(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
 	{
 		// detect the format.
@@ -46,6 +48,12 @@ namespace Boot
 			ExecHeaderPtr		  hdrPtr = ldr_find_exec_header(firstBytes);
 			ExecOptionalHeaderPtr optHdr = ldr_find_opt_exec_header(firstBytes);
 
+			if (hdrPtr->mMachine != 0x8664 &&
+				hdrPtr->mSignature != 0x20b)
+			{
+				return;
+			}
+
 			auto numSecs = hdrPtr->mNumberOfSections;
 
 			writer.Write("newosldr: Major Linker Ver: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
@@ -66,7 +74,8 @@ namespace Boot
 
 			ExecSectionHeaderPtr sectPtr = (ExecSectionHeaderPtr)(((Char*)optHdr) + hdrPtr->mSizeOfOptionalHeader);
 
-			constexpr auto sectionForCode = ".start";
+			constexpr auto sectionForCode	= ".text";
+			constexpr auto sectionForNewLdr = ".ldr";
 
 			for (SizeT sectIndex = 0; sectIndex < numSecs; ++sectIndex)
 			{
@@ -74,20 +83,31 @@ namespace Boot
 
 				if (StrCmp(sectionForCode, sect->mName) == 0)
 				{
-					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + sect->mVirtualAddress);
+					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + optHdr->mAddressOfEntryPoint);
 					writer.Write("newosldr: Start Address: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
+				else if (StrCmp(sectionForNewLdr, sect->mName) == 0)
+				{
+					struct HANDOVER_INFORMATION_STUB
+					{
+						UInt64 HandoverMagic;
+						UInt32 HandoverType;
 
-				writer.Write("newosldr: offset ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write(".\r");
+					}* structHandover = (struct HANDOVER_INFORMATION_STUB*)(fBlob + sect->mPointerToRawData);
+
+					if (structHandover->HandoverMagic != kHandoverMagic ||
+						structHandover->HandoverType != kHOTypeKernel)
+					{
+						cg_write_text("NEWOSLDR: INVALID HANDOVER IMAGE! ABORTING...", 40, 10, RGB(0x00, 0x00, 0x00));
+						EFI::Stop();
+					}
+				}
+
+				writer.Write("newosldr: offset ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
 
 				SetMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), 0, sect->mSizeOfRawData);
 				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
-
-			// ================================ //
-			// Allocate stack.
-			// ================================ //
-			fStackPtr = new Char[optHdr->mSizeOfStackReserve];
 		}
 		else if (firstBytes[0] == kPefMagic[0] &&
 				 firstBytes[1] == kPefMagic[1] &&
@@ -108,7 +128,7 @@ namespace Boot
 	}
 
 	/// @note handover header has to be valid!
-	Void ProgramLoader::Start(HEL::HandoverInformationHeader* handover)
+	Void KernelLoader::Start(HEL::HandoverInformationHeader* handover)
 	{
 		BTextWriter writer;
 
@@ -119,10 +139,8 @@ namespace Boot
 		}
 
 		HEL::HandoverProc err_fn = [](HEL::HandoverInformationHeader* rcx) -> void {
-			BTextWriter writer;
-			writer.Write("newosldr: Exec format error, Thread has been aborted.\r");
-
-			EFI::ThrowError(L"Exec-Format-Error", L"Format doesn't match (Thread aborted).");
+			cg_write_text("NEWOSLDR: INVALID IMAGE! ABORTING...", 40, 10, RGB(0x00, 0x00, 0x00));
+			EFI::Stop();
 		};
 
 		if (!fStartAddress)
@@ -134,17 +152,17 @@ namespace Boot
 		err_fn(handover);
 	}
 
-	const Char* ProgramLoader::GetName()
+	const Char* KernelLoader::GetName()
 	{
 		return fBlobName;
 	}
 
-	Void ProgramLoader::SetName(const Char* name)
+	Void KernelLoader::SetName(const Char* name)
 	{
 		CopyMem(fBlobName, name, StrLen(name));
 	}
 
-	bool ProgramLoader::IsValid()
+	bool KernelLoader::IsValid()
 	{
 		return fStartAddress != nullptr;
 	}

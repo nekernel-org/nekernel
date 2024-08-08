@@ -89,11 +89,16 @@ EXTERN_C void hal_init_platform(
 
 void hal_real_init(void)
 {
+	// get page size.
 	kKernelVirtualSize	= kHandoverHeader->f_VirtualSize;
-	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart) + cHeapStartOffset);
 
-	kKernelPhysicalStart = kHandoverHeader->f_PhysicalStart;
+	// get virtual address start.
+	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart));
+
+	// get physical address start.
+	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PhysicalStart));
 
 	kTextOffsetY += 10;
 	cg_write_text("LOADING INTERRUPTS...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
@@ -116,10 +121,7 @@ void hal_real_init(void)
 	CONST Kernel::HAL::IDTLoader cIDT;
 	cIDT.Load(idtBase);
 
-	// Register the basic SCI functions.
-
-	kTextOffsetY += 10;
-	cg_write_text("LOADING SYSCALLS...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
+	// Register the basic system calls.
 
 	constexpr auto cVGAWrite			= 0x10;
 	constexpr auto cTlsInterrupt		= 0x11;
@@ -230,20 +232,7 @@ void hal_real_init(void)
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked	   = true;
 
-	kTextOffsetY += 10;
-	cg_write_text("LOADING SMP...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
-
-	for (Kernel::SizeT i = 0; i < kHandoverMaxCmdLine; i++)
-	{
-		if (Kernel::rt_string_cmp(kHandoverHeader->f_CommandLine[i], "/AutoFormat", Kernel::rt_string_len("/AutoFormat")) == 0)
-		{
-			cAutoFormatDisk.GetValue() = Yes;
-			break;
-		}
-	}
-
-	kTextOffsetY += 10;
-	cg_write_text("LOADING SECURITY SUBSYSTEM...", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
+	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

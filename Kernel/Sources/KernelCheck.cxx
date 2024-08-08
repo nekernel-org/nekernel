@@ -19,7 +19,7 @@
 #define CopyMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 #define MoveMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 
-#define cWebsiteMacro "https://zka-tech.nl/hulp"
+#define cWebsiteMacro "https://zka.ma/help"
 
 #include <BootKit/Vendor/Qr.hxx>
 
@@ -134,8 +134,10 @@ namespace Kernel
 	
 	Void RecoveryFactory::Recover() noexcept
 	{		
-		PowerFactoryInterface powerInterface(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-		powerInterface.Shutdown();
+		while (true)
+		{
+			asm volatile ("cli; hlt");
+		}
 	}
 	
 
@@ -143,12 +145,6 @@ namespace Kernel
 	{
 		if (!expr)
 		{
-#ifdef __DEBUG__
-			kcout << "newoskrnl: FILE: " << file << "\r";
-			kcout << "newoskrnl: LINE: " << line << "\r";
-
-#endif // __DEBUG__
-
 			ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
 		}
 	}
