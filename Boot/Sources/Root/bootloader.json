@@ -1,4 +1,5 @@
 {
-  "newoskrnl.dll": "kernel",
-  "ZETA/fonts.json": "rsrc"
+  "newoskrnl.dll": "krnldll",
+  "ZKA/fonts.json": "rsrc",
+  "ZKA/cmd.json": "cmdline"
 }

@@ -103,6 +103,10 @@ default.
 
 #define kNewFSForkNameLen (200U)
 
+struct NFS_CATALOG_STRUCT;
+struct NFS_FORK_STRUCT;
+struct NFS_ROOT_PARTITION_BLOCK;
+
 enum
 {
 	kNewFSHardDrive			= 0xC0, // Hard Drive
