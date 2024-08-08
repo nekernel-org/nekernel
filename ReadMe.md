@@ -2,7 +2,7 @@
 
 ![ZKA](Meta/NewOS.svg)
 
-# ZKA (Zeta Kernel Architecture)
+# ZKA (ZKA Kernel Architecture)
 
 ZKA is an operating system kernel, also codenamed 'NewOS'.
 
