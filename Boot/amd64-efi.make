@@ -53,6 +53,7 @@ BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.dll
 DDK=libDDK.dll
 SCI=libSCI.dll
+CRT=libCRT.dll
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -67,6 +68,7 @@ all: compile-amd64
 	$(COPY) ../Kernel/$(KERNEL) Sources/Root/$(KERNEL)
 	$(COPY) ../SCIKit/$(SCI) Sources/Root/$(SCI)
 	$(COPY) ../DDKit/$(DDK) Sources/Root/$(DDK)
+	$(COPY) ../CRTKit/$(CRT) Sources/Root/$(CRT)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )

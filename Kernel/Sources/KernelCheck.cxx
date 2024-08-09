@@ -32,27 +32,27 @@ namespace Kernel
 	{
 		CGInit();
 
-		auto panicBack = RGB(0xDC, 0xF5, 0xF5);
-		auto panicTxt = RGB(0, 0, 0);
-		
+		auto panicBack = RGB(0xff, 0x3a, 0x3a);
+		auto panicTxt  = RGB(0xff, 0xff, 0xff);
+
 		CGDrawInRegion(panicBack, UIAccessibilty::The().Height(), UIAccessibilty::The().Width(), 0, 0);
 
 		auto start_y = 10;
-		auto x = 10;
+		auto x		 = 10;
 
-		cg_write_text("*** Kernel panic! ***\rnewoskrnl.dll stopped working properly so we had to shut it down.", start_y, x, panicTxt);
+		cg_write_text("newoskrnl.dll stopped working properly so we had to stop.", start_y, x, panicTxt);
 
 		CGFini();
 
 		// Show the QR code now.
 
-		constexpr auto cVer     = 4;
-		const auto		   cECC = qr::Ecc::H;
-		const auto		   cInput = cWebsiteMacro;
-		const auto		   cInputLen = rt_string_len(cWebsiteMacro);
+		constexpr auto cVer		 = 4;
+		const auto	   cECC		 = qr::Ecc::H;
+		const auto	   cInput	 = cWebsiteMacro;
+		const auto	   cInputLen = rt_string_len(cWebsiteMacro);
 
-		qr::Qr<cVer>	   encoder;
-		qr::QrDelegate     encoderDelegate;
+		qr::Qr<cVer>   encoder;
+		qr::QrDelegate encoderDelegate;
 
 		encoder.encode(cInput, cInputLen, cECC, 0); // Manual mask 0
 
@@ -61,85 +61,68 @@ namespace Kernel
 
 		// tell delegate to draw encoded QR now.
 		encoderDelegate.draw<cVer>(encoder, cWhereStartX,
-								  cWhereStartY);
+								   cWhereStartY);
 
-		// ******* //
-		// shows in debug only.
-		// ******* //
-
-		kcout << "*** STOP *** \r";
-		kcout << "*** Kernel has trigerred a runtime stop. *** \r";
+		start_y += 10;
 
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_PROCESS *** \r";
-			kcout << "*** WHAT: BAD DRIVER. *** \r";
+			cg_write_text("Scheduler error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_ACPI *** \r";
-			kcout << "*** WHAT: ACPI ERROR, UNSTABLE STATE. *** \r";
+			cg_write_text("ACPI error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_POINTER *** \r";
-			kcout << "*** WHAT: HEAP CRC32 ERROR, UNSTABLE STATE. *** \r";
+			cg_write_text("Kernel heap error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_BAD_BEHAVIOR *** \r";
-			kcout << "*** WHAT: KERNEL BECAME UNSTABLE. *** \r";
+			cg_write_text("Undefined Behavior error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_BOOTSTRAP *** \r";
-			kcout << "*** WHAT: END OF CODE. *** \r";
+			cg_write_text("End of code.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_HANDSHAKE *** \r";
-			kcout << "*** WHAT: BAD HANDSHAKE. *** \r";
+			cg_write_text("Handshake error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_IPC *** \r";
-			kcout << "*** WHAT: RICH CALL VIOLATION. *** \r";
+			cg_write_text("Kernel IPC error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_INVALID_PRIVILEGE: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_INVALID_PRIVILEGE *** \r";
-			kcout << "*** WHAT: HYPERVISOR POLICY VIOLATION. *** \r";
+			cg_write_text("Privilege violation.", start_y, x, panicTxt);
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_UNEXCPECTED *** \r";
-			kcout << "*** WHAT: CATASROPHIC FAILURE! *** \r";
+			cg_write_text("Catasrophic failure.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_FAILED *** \r";
-			kcout << "*** WHAT: ASSERTION FAILED! *** \r";
+			cg_write_text("Assertion failed.", start_y, x, panicTxt);
 			break;
 		}
 		default: {
-			kcout << "*** CAUSE: RUNTIME_CHECK_GENERIC *** \r";
+			cg_write_text("Unknown error.", start_y, x, panicTxt);
 			break;
 		}
 		}
 		};
 
 		RecoveryFactory::Recover();
-
 	}
-	
+
 	Void RecoveryFactory::Recover() noexcept
-	{		
+	{
 		while (true)
 		{
-			asm volatile ("cli; hlt");
+			asm volatile("cli; hlt");
 		}
 	}
-	
 
 	void ke_runtime_check(bool expr, const char* file, const char* line)
 	{

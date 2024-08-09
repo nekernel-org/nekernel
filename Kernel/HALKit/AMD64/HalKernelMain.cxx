@@ -84,6 +84,8 @@ EXTERN_C void hal_init_platform(
 	kTextOffsetY += 10;
 	cg_write_text("SMP OS (MAX 8 CORES).", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
 
+	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+
 	hal_real_init();
 }
 
@@ -137,17 +139,12 @@ void hal_real_init(void)
 	constexpr auto cLPCSendMsg			= 0x25;
 	constexpr auto cLPCOpenMsg			= 0x26;
 	constexpr auto cLPCCloseMsg			= 0x27;
-	constexpr auto cLPCSanitizeMsg		= 0x28;
 
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		if (tls_check_syscall_impl(rdx) == false)
 		{
 			Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 		}
-	};
-
-	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::ipc_sanitize_packet(reinterpret_cast<Kernel::IPC_MESSAGE_STRUCT*>(rdx));
 	};
 
 	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -219,9 +216,6 @@ void hal_real_init(void)
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
-	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked	   = true;
 
 	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

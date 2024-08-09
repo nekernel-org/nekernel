@@ -95,4 +95,27 @@ typedef union double_cast {
 
 #endif // ifdef __STD_CXX__
 
+namespace std
+{
+	/// @brief Forward object.
+	/// @tparam Args the object type.
+	/// @param arg the object.
+	/// @return object's rvalue
+	template <typename Args>
+	inline Args&& forward(Args& arg)
+	{
+		return static_cast<Args&&>(arg);
+	}
+
+	/// @brief Move object.
+	/// @tparam Args the object type.
+	/// @param arg the object.
+	/// @return object's rvalue
+	template <typename Args>
+	inline Args&& move(Args&& arg)
+	{
+		return static_cast<Args&&>(arg);
+	}
+} // namespace std
+
 #endif /* __MPCC_DEFINES_HXX__ */

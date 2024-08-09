@@ -51,18 +51,6 @@ namespace Kernel::HEL
 		kArchCount = 2,
 	};
 
-	/**
-@brief The first struct that we read when inspecting The executable
-it tells us more about it and IS format independent.
-*/
-	typedef struct HandoverHeader final
-	{
-		UInt64	f_TargetMagic;
-		Int32	f_TargetType;
-		Int32	f_TargetArch;
-		UIntPtr f_TargetStartAddress;
-	} __attribute__((packed)) HandoverHeader, *HandoverHeaderPtr;
-
 	struct HandoverInformationHeader
 	{
 		UInt64 f_Magic;
