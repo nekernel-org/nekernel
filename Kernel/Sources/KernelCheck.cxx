@@ -68,7 +68,7 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			cg_write_text("Scheduler error.", start_y, x, panicTxt);
+			cg_write_text("Process scheduler error (Catasrophic failure).", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {

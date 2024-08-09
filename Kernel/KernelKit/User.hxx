@@ -57,7 +57,7 @@ namespace Kernel
 	public:
 		/// @brief Get software ring
 		const RingKind& Ring() noexcept;
-		
+
 		/// @brief Get user name
 		StringView& Name() noexcept;
 
@@ -66,6 +66,8 @@ namespace Kernel
 
 		/// @brief Is she a super user?
 		Bool IsSuperUser() noexcept;
+
+		Bool TrySave(const Char* password) noexcept;
 
 	private:
 		RingKind   fRing{RingKind::kRingStdUser};
@@ -77,7 +79,7 @@ namespace Kernel
 
 	class UserManager final
 	{
-		UserManager()	= default;
+		UserManager()  = default;
 		~UserManager() = default;
 
 		User* fCurrentUser		 = nullptr;
@@ -90,9 +92,9 @@ namespace Kernel
 		NEWOS_COPY_DELETE(UserManager);
 
 		STATIC UserManager* The() noexcept;
-		Bool TryLogIn(User* user, const Char* password) noexcept;
-		User* GetCurrent() noexcept;
-		Void TryLogOff() noexcept;
+		Bool				TryLogIn(User* user, const Char* password) noexcept;
+		User*				GetCurrent() noexcept;
+		Void				TryLogOff() noexcept;
 	};
 } // namespace Kernel
 

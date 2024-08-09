@@ -18,10 +18,9 @@
 
 namespace Kernel
 {
-	STATIC SizeT	   kHeapCount = 0UL;
-	STATIC PageManager kHeapPageManager;
-
-	STATIC Bool kOperationInProgress = No;
+	SizeT	   kHeapCount = 0UL;
+	PageManager kHeapPageManager;
+	Bool kOperationInProgress = No;
 
 	namespace Detail
 	{
@@ -48,19 +47,9 @@ namespace Kernel
 
 		typedef HEAP_INFORMATION_BLOCK* HEAP_INFORMATION_BLOCK_PTR;
 
-		Bool mm_alloc_init_timeout(Void) noexcept
+		Void mm_alloc_init_timeout(Void) noexcept
 		{
-			SizeT timOut = 0U;
-
-			while (kOperationInProgress)
-			{
-				++timOut;
-				if (timOut > 10000000)
-					return false;
-			}
-
 			kOperationInProgress = Yes;
-			return true;
 		}
 
 		Void mm_alloc_fini_timeout(Void) noexcept

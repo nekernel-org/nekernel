@@ -1,5 +1,5 @@
-#define NEWBOOTFATAL_HEIGHT 239
-#define NEWBOOTFATAL_WIDTH 402
+#define NEWOSLDRFATAL_HEIGHT 239
+#define NEWOSLDRFATAL_WIDTH 402
 
 // array size is 288234
 static const unsigned int NewBootFatal[]  = {

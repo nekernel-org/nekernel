@@ -102,18 +102,18 @@ namespace Kernel
 
 		for (Size index = 0; index < this->fEntries; ++index)
 		{
-			SDT& sdt = *reinterpret_cast<SDT*>(xsdt->AddressArr[index]);
+			SDT* sdt = reinterpret_cast<SDT*>(xsdt->AddressArr[index]);
 
-			kcout << "ACPI: Checksum: " << number(sdt.Checksum) << endl;
-			kcout << "ACPI: Revision: " << number(sdt.Revision) << endl;
+			kcout << "ACPI: Checksum: " << number(sdt->Checksum) << endl;
+			kcout << "ACPI: Revision: " << number(sdt->Revision) << endl;
 
 			for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index)
 			{
-				if (sdt.Signature[signature_index] != signature[signature_index])
+				if (sdt->Signature[signature_index] != signature[signature_index])
 					break;
 
 				if (signature_index == (cAcpiSignatureLength - 1))
-					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(&sdt));
+					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(xsdt->AddressArr[index]));
 			}
 		}
 

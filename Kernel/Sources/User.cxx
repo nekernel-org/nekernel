@@ -33,32 +33,56 @@ namespace Kernel
 
 			for (Size i_pass = 0; i_pass < rt_string_len(password); ++i_pass)
 			{
-				Char cur_chr = password[i_pass];
+				Char cur_chr	 = password[i_pass];
 				password[i_pass] = cur_chr + (user->IsStdUser() ? 0xCF : 0xEF);
 			}
 
-
 			return 0;
 		}
-	}
+	} // namespace Detail
 
 	User::User(const Int32& sel, const Char* userName)
 		: fRing((RingKind)sel)
 	{
 		MUST_PASS(sel >= 0);
-
-		auto view = StringBuilder::Construct(userName);
-		this->fUserName += view.Leak().Leak();
+		this->fUserName += userName;
 	}
 
 	User::User(const RingKind& ringKind, const Char* userName)
 		: fRing(ringKind)
 	{
-		auto view = StringBuilder::Construct(userName);
-		this->fUserName += view.Leak().Leak();
+		this->fUserName += userName;
 	}
 
 	User::~User() = default;
+
+	Bool User::TrySave(const Char* password) noexcept
+	{
+		SizeT len = rt_string_len(password);
+
+		Char* token = new Char[len];
+
+		MUST_PASS(token);
+
+		rt_copy_memory((VoidPtr)password, token, rt_string_len(password));
+
+		Detail::cred_construct_token(token, this);
+
+		if (NewFilesystemManager::GetMounted())
+		{
+			if (auto dir = NewFilesystemManager::GetMounted()->CreateDirectory("\\Users"))
+				delete dir;
+
+			auto node = NewFilesystemManager::GetMounted()->Create(kUsersFile);
+			NewFilesystemManager::GetMounted()->Write(this->fUserName.CData(), node, (VoidPtr)token, this->IsStdUser() ? 0xCF : 0xEF, len);
+
+			delete node;
+
+			return true;
+		}
+
+		return false;
+	}
 
 	bool User::operator==(const User& lhs)
 	{
@@ -129,7 +153,7 @@ namespace Kernel
 		}
 		else
 		{
-			Char generated_token[255] = { 0 };
+			Char generated_token[255] = {0};
 
 			// ================================================== //
 			// Provide password on token variable.
@@ -155,7 +179,7 @@ namespace Kernel
 				return false;
 			}
 
-			kcout << "newoskrnl: Correct credentials, moving on.\r";
+			kcout << "newoskrnl: Credentials are correct, moving on.\r";
 		}
 
 		// ------------------------------------------ //
@@ -177,7 +201,7 @@ namespace Kernel
 		}
 
 		fCurrentUser = user;
-		Kernel::kcout << "newoskrnl: logged in as: " << fCurrentUser->Name().CData() << Kernel::endl;
+		Kernel::kcout << "newoskrnl: Logged in as: " << fCurrentUser->Name().CData() << Kernel::endl;
 
 		return true;
 	}

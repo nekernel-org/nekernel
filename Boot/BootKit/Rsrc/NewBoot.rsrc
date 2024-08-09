@@ -1,5 +1,5 @@
-#define NEWBOOT_HEIGHT 239
-#define NEWBOOT_WIDTH 402
+#define NEWOSLDR_HEIGHT 239
+#define NEWOSLDR_WIDTH 402
 
 // array size is 288234
 static const unsigned int NewBoot[]  = {

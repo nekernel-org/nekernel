@@ -16,6 +16,8 @@
 
 #include <KernelKit/MP.hxx>
 
+#define kApicSignature "APIC"
+
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
 #define kAPIC_SIPI_Vector 0x00500
@@ -66,7 +68,6 @@ namespace Kernel::HAL
 	};
 
 	STATIC VoidPtr	   kApicMadt	  = nullptr;
-	STATIC const Char* kApicSignature = "APIC";
 
 	/// @brief Multiple APIC Descriptor Table.
 	struct MadtType final : public SDT

@@ -45,9 +45,6 @@ EXTERN_C VoidPtr memcpy(void* dst, const void* src, long long unsigned int len)
 /// @brief strlen definition in C++.
 EXTERN_C size_t strlen(const char* whatToCheck)
 {
-	if (!whatToCheck || *whatToCheck == 0)
-		return 0;
-
 	SizeT len = 0;
 
 	while (whatToCheck[len] != 0)

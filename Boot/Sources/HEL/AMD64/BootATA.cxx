@@ -190,6 +190,8 @@ BootDeviceATA::BootDeviceATA() noexcept
 		boot_ata_init(ATA_SECONDARY_IO, true, this->Leak().mBus,
 					  this->Leak().mMaster))
 	{
+		BTextWriter writer;
+		writer.Write("ATA: Has been detected.\r");
 		kATADetected = true;
 	}
 }
@@ -249,6 +251,9 @@ BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorS
 
 	boot_ata_write(lba, this->Leak().mBus, this->Leak().mMaster,
 				   Buf, SectorSz, this->Leak().mSize);
+
+	BTextWriter writer;
+	writer.Write("OK\r");
 
 	return *this;
 }

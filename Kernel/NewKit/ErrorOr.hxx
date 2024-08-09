@@ -47,7 +47,7 @@ namespace Kernel
 			return *this;
 		}
 
-		Ref<T> Leak()
+		Ref<T>& Leak()
 		{
 			return mRef;
 		}

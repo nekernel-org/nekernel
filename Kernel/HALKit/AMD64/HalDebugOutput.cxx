@@ -136,9 +136,9 @@ namespace Kernel
 #endif // __DEBUG__
 	}
 
-	TerminalDevice& TerminalDevice::The() noexcept
+	TerminalDevice TerminalDevice::The() noexcept
 	{
-		STATIC TerminalDevice out(Kernel::ke_io_write, Kernel::ke_io_read);
+		TerminalDevice out(Kernel::ke_io_write, Kernel::ke_io_read);
 		return out;
 	}
 

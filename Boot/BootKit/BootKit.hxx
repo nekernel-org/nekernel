@@ -243,11 +243,11 @@ public:
 			blockPart->SectorSize != BootDev::kSectorSize ||
 			blockPart->Version != kNewFSVersionInteger)
 		{
-			EFI::ThrowError(L"Invalid-Disk-Geometry", L"Invalid disk.");
+			return false;
 		}
 		else if (blockPart->PartitionName[0] == 0)
 		{
-			EFI::ThrowError(L"Invalid-Partition-Name", L"Invalid disk partition.");
+			return false;
 		}
 
 		writer.Write(L"newosldr: partition name: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
@@ -281,19 +281,12 @@ private:
 		catalogKind->Kind  = blob->fKind;
 		catalogKind->Flags = kNewFSFlagCreated;
 
-		/// before going to forks, we must check for the catalog name first.
-		if (blob->fKind == kNewFSCatalogKindDir &&
-			blob->fFileName[strlen(blob->fFileName) - 1] != kNewFSSeparator)
-		{
-			EFI::ThrowError(L"Developer-Error", L"This is caused by the developer of the bootloader.");
-		}
-
 		--partBlock.FreeCatalog;
 		--partBlock.FreeSectors;
 
 		writer.Write(L"newosldr: root directory: ").Write(blob->fFileName).Write(L"\r");
 
-		memcpy(catalogKind->Name, blob->fFileName, strlen(blob->fFileName));
+		CopyMem(catalogKind->Name, blob->fFileName, StrLen(blob->fFileName));
 
 		fDiskDev.Leak().mBase = startLba;
 		fDiskDev.Leak().mSize = sizeof(NFS_CATALOG_STRUCT);

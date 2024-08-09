@@ -29,9 +29,9 @@ namespace Kernel
 {
 	class TerminalDevice;
 
-	inline TerminalDevice& end_line();
-	inline TerminalDevice& number(const Long& x);
-	inline TerminalDevice& hex_number(const Long& x);
+	inline TerminalDevice end_line();
+	inline TerminalDevice number(const Long& x);
+	inline TerminalDevice hex_number(const Long& x);
 
 	// @brief Emulates a VT100 terminal.
 	class TerminalDevice final : public DeviceInterface<const Char*>
@@ -53,34 +53,34 @@ namespace Kernel
 
 		NEWOS_COPY_DEFAULT(TerminalDevice);
 
-		static TerminalDevice& The() noexcept;
+		STATIC TerminalDevice The() noexcept;
 	};
 
-	inline TerminalDevice& end_line()
+	inline TerminalDevice end_line()
 	{
-		TerminalDevice& selfTerm = TerminalDevice::The();
+		TerminalDevice selfTerm = TerminalDevice::The();
 		selfTerm << "\r";
 		return selfTerm;
 	}
 
-	inline TerminalDevice& carriage_return()
+	inline TerminalDevice carriage_return()
 	{
-		TerminalDevice& selfTerm = TerminalDevice::The();
+		TerminalDevice selfTerm = TerminalDevice::The();
 		selfTerm << "\r";
 		return selfTerm;
 	}
 
-	inline TerminalDevice& tabulate()
+	inline TerminalDevice tabulate()
 	{
-		TerminalDevice& selfTerm = TerminalDevice::The();
+		TerminalDevice selfTerm = TerminalDevice::The();
 		selfTerm << "\t";
 		return selfTerm;
 	}
 
 	/// @brief emulate a terminal bell, like the VT100 does.
-	inline TerminalDevice& bell()
+	inline TerminalDevice bell()
 	{
-		TerminalDevice& selfTerm = TerminalDevice::The();
+		TerminalDevice selfTerm = TerminalDevice::The();
 		selfTerm << "\a";
 		return selfTerm;
 	}
@@ -144,9 +144,9 @@ namespace Kernel
 		}
 	} // namespace Detail
 
-	inline TerminalDevice& hex_number(const Long& x)
+	inline TerminalDevice hex_number(const Long& x)
 	{
-		TerminalDevice& selfTerm = TerminalDevice::The();
+		TerminalDevice selfTerm = TerminalDevice::The();
 
 		selfTerm << "0x";
 		Detail::_write_number_hex(x, selfTerm);
@@ -154,18 +154,18 @@ namespace Kernel
 		return selfTerm;
 	}
 
-	inline TerminalDevice& number(const Long& x)
+	inline TerminalDevice number(const Long& x)
 	{
-		TerminalDevice& selfTerm = TerminalDevice::The();
+		TerminalDevice selfTerm = TerminalDevice::The();
 
 		Detail::_write_number(x, selfTerm);
 
 		return selfTerm;
 	}
 
-	inline TerminalDevice& get_console_in(Char* buf)
+	inline TerminalDevice get_console_in(Char* buf)
 	{
-		TerminalDevice& selfTerm = TerminalDevice::The();
+		TerminalDevice selfTerm = TerminalDevice::The();
 
 		selfTerm >> buf;
 

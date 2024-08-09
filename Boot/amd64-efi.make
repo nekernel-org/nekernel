@@ -64,7 +64,7 @@ all: compile-amd64
 	mkdir -p Sources/Root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Sources/$(BOOT_LOADER)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/BOOTX64.EFI
-	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/NEWBOOT.EFI
+	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/NEWOSLDR.EFI
 	$(COPY) ../Kernel/$(KERNEL) Sources/Root/$(KERNEL)
 	$(COPY) ../SCIKit/$(SCI) Sources/Root/$(SCI)
 	$(COPY) ../DDKit/$(DDK) Sources/Root/$(DDK)

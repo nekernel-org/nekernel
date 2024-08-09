@@ -15,7 +15,7 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/KernelCheck.hxx>
 
-STATIC Kernel::Boolean kAllocationInProgress = false;
+Kernel::Boolean kAllocationInProgress = false;
 
 namespace Kernel
 {

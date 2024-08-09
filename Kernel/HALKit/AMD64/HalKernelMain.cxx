@@ -53,6 +53,13 @@ namespace Kernel::HAL
 	extern void hal_system_get_cores(Kernel::voidPtr rsdPtr);
 } // namespace Kernel::HAL
 
+namespace Kernel
+{
+	EXTERN SizeT		kHeapCount;
+	EXTERN PageManager kHeapPageManager;
+	EXTERN Bool		kOperationInProgress;
+} // namespace Kernel
+
 /* GDT. */
 STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
 	{0, 0, 0, 0x00, 0x00, 0}, // null entry
@@ -64,6 +71,8 @@ STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
 };
 
 void hal_real_init(void);
+
+static Kernel::User* cRoot;
 
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
@@ -78,25 +87,24 @@ EXTERN_C void hal_init_platform(
 		return;
 	}
 
-	STATIC Kernel::UInt32 kTextOffsetY = 30;
-
-	cg_write_text("NEWOSKRNL (C) ZKA TECHNOLOGIES.", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
-	kTextOffsetY += 10;
-	cg_write_text("SMP OS (MAX 8 CORES).", kTextOffsetY, 10, RGB(0x00, 0x00, 0x00));
-
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
-
 	hal_real_init();
 }
 
+EXTERN Kernel::Boolean kAllocationInProgress;
+
 void hal_real_init(void)
 {
+	Kernel::kHeapPageManager = Kernel::PageManager();
+	Kernel::kHeapCount = 0UL;
+	Kernel::kOperationInProgress = No;
+	kAllocationInProgress = No;
+
 	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
 
-	// get virtual address start.
+	// get virtual address start (for the heap)
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart));
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart) + cHeapStartOffset);
 
 	// get physical address start.
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
@@ -217,5 +225,19 @@ void hal_real_init(void)
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
 
-	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+	cRoot = new Kernel::User(Kernel::RingKind::kRingSuperUser, kSuperUser);
+
+#ifdef __DEBUG__
+	cRoot->TrySave("6aa162f3-20f6-4143-92f9-5dd37066aedc");
+#else
+	cRoot->TrySave("password");
+#endif
+
+#ifdef __DEBUG__
+	Kernel::UserManager::The()->TryLogIn(cRoot, "6aa162f3-20f6-4143-92f9-5dd37066aedc");
+#else
+	Kernel::UserManager::The()->TryLogIn(cRoot, "password");
+#endif
+
+	Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 }
