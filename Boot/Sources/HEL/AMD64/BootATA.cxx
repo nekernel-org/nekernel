@@ -252,9 +252,6 @@ BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorS
 	boot_ata_write(lba, this->Leak().mBus, this->Leak().mMaster,
 				   Buf, SectorSz, this->Leak().mSize);
 
-	BTextWriter writer;
-	writer.Write("OK\r");
-
 	return *this;
 }
 

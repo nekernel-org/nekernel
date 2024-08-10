@@ -1,5 +1,3 @@
-1 ICON "../Icons/default.ico"
-
 #include "CompilerKit/Version.hxx"
 
 1 VERSIONINFO

@@ -9,13 +9,13 @@ Purpose: Base code of SCM.
 
 /// @internal
 
-#ifndef __ZECC__
+#ifndef __NDK__
 #define object class
 #define protocol class
 #define clsid(X) __attribute__((uuid(X)))
 
 #warning ! you may be using the clang version of the newos kit, please be cautious that some thing mayn't be present. !
-#endif // !__ZECC__
+#endif // !__NDK__
 
 // Interfaces are divided between classes.
 // So that they aren't too big.

@@ -29,7 +29,7 @@ typedef char*  caddr_t;
 
 #ifdef __GNUC__
 #include <CRT/__mpcc_alloca.hxx>
-#define __mpcc_alloca(sz) __mpcc_alloca_gcc(sz)
+#define __mpcc_alloca(sz) __mpcc_alloca(sz)
 #elif defined(__NDK__)
 
 #define __alloca(sz) __mpcc_alloca(sz)

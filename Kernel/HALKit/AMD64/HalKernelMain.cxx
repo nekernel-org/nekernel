@@ -224,7 +224,6 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	const auto cPassword = "password";
 #endif
 
-
 	cRoot->TrySave(cPassword);
 	Kernel::UserManager::The()->TryLogIn(cRoot, cPassword);
 

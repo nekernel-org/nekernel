@@ -17,6 +17,9 @@
 
 #include <KernelKit/Heap.hxx>
 
+#define cStdUser (0xCF)
+#define cSuperUser (0xEF)
+
 /// BUGS: 0
 
 namespace Kernel
@@ -34,7 +37,7 @@ namespace Kernel
 			for (Size i_pass = 0; i_pass < rt_string_len(password); ++i_pass)
 			{
 				Char cur_chr	 = password[i_pass];
-				password[i_pass] = cur_chr + (user->IsStdUser() ? 0xCF : 0xEF);
+				password[i_pass] = cur_chr + (user->IsStdUser() ? cStdUser : cSuperUser);
 			}
 
 			return 0;
@@ -72,8 +75,9 @@ namespace Kernel
 
 		if (NewFilesystemManager::GetMounted())
 		{
-			if (auto dir = NewFilesystemManager::GetMounted()->CreateDirectory("\\Users");
-				dir)
+			auto dir = NewFilesystemManager::GetMounted()->CreateDirectory("\\Users\\");
+			
+			if (dir)
 			{
 				delete dir;
 			}
@@ -84,7 +88,7 @@ namespace Kernel
 			}
 
 			auto node = NewFilesystemManager::GetMounted()->Create(kUsersFile);
-			NewFilesystemManager::GetMounted()->Write(this->fUserName.CData(), node, (VoidPtr)token, this->IsStdUser() ? 0xCF : 0xEF, len);
+			NewFilesystemManager::GetMounted()->Write(this->fUserName.CData(), node, (VoidPtr)token, this->IsStdUser() ? cStdUser : cSuperUser, len);
 
 			delete node;
 			delete token;

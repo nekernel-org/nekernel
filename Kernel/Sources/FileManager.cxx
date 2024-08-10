@@ -37,13 +37,13 @@ namespace Kernel
 	}
 
 	/// @brief Mount filesystem.
-	/// @param mountPtr The filesystem to mount.
+	/// @param mount_ptr The filesystem to mount.
 	/// @return if it succeeded true, otherwise false.
-	bool FilesystemManagerInterface::Mount(_Input FilesystemManagerInterface* mountPtr)
+	bool FilesystemManagerInterface::Mount(_Input FilesystemManagerInterface* mount_ptr)
 	{
-		if (kMounted == nullptr)
+		if (mount_ptr != nullptr)
 		{
-			kMounted = mountPtr;
+			kMounted = mount_ptr;
 			return true;
 		}
 

@@ -221,13 +221,13 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char* name)
 /// @param flags the flags of the catalog.
 /// @param kind the catalog kind.
 /// @return catalog pointer.
-_Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const char*  name,
+_Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char*  name,
 													   _Input const Int32& flags,
 													   _Input const Int32& kind)
 {
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return nullptr;
-
+		
 	Lba outLba = 0UL;
 
 	/// a directory should have a slash in the end.
@@ -610,10 +610,8 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endL
 /// @param catalog the catalog itself
 /// @param data the data.
 /// @return if the catalog w rote the contents successfully.
-bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, voidPtr data, SizeT sizeOfData, _Input const char* forkName)
+bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, voidPtr data, SizeT sizeOfData, _Input const Char* forkName)
 {
-	if (sizeOfData > catalog->DataForkSize)
-		return false;
 	if (!sMountpointInterface.GetAddressOf(this->fDriveIndex))
 		return false;
 
@@ -656,6 +654,11 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, voidP
 			StringBuilder::Equals(forkData->ForkName, forkName) &&
 			StringBuilder::Equals(forkData->CatalogName, catalog->Name))
 		{
+			// ===================================================== //
+			// Store size of blob now.
+			// ===================================================== //
+			forkData->DataSize = sizeOfData;
+
 			drive->fPacket.fPacketContent = data;
 			drive->fPacket.fPacketSize	  = sizeOfData;
 			drive->fPacket.fLba			  = forkData->DataOffset;
@@ -670,6 +673,11 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, voidP
 		else if (auto catalog = this->GetCatalog(forkData->CatalogName);
 				 catalog == nullptr)
 		{
+			// ===================================================== //
+			// Store size of blob now.
+			// ===================================================== //
+			forkData->DataSize = sizeOfData;
+
 			delete catalog;
 
 			drive->fPacket.fPacketContent = data;
@@ -679,6 +687,16 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, voidP
 			kcout << "newoskrnl: data offset: " << hex_number(forkData->DataOffset) << endl;
 
 			drive->fOutput(&drive->fPacket);
+
+			forkData->Flags = kNewFSFlagCreated;
+
+			drive->fPacket.fPacketContent = forkData;
+			drive->fPacket.fPacketSize	  = sizeof(NFS_FORK_STRUCT);
+			drive->fPacket.fLba			  = startFork;
+
+			drive->fOutput(&drive->fPacket);
+
+			kcout << "newoskrnl: wrote fork at offset: " << hex_number(forkData->DataOffset) << endl;
 
 			delete forkData;
 			return true;

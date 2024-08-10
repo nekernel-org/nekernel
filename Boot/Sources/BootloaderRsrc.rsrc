@@ -1,7 +1,5 @@
 #include "../../Kernel/CompilerKit/Version.hxx"
 
-1 ICON "../../Icons/default.ico"
-
 1 VERSIONINFO
 FILEVERSION     1,0,0,0
 PRODUCTVERSION  1,0,0,0

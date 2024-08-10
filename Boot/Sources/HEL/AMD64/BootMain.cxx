@@ -200,7 +200,16 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	
 	if (!checkPart.IsPartitionValid())
 	{
-		writer.Write("newosldr: Warning, partition isn't valid! Need to repartition it.\r");
+		writer.Write("newosldr: Warning, partition isn't valid! repaired it.\rPlease restart the computer now.\r");
+
+		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
+		root.fFileName[0] = kNewFSRoot[0];
+		root.fFileName[1] = 0;
+
+		root.fKind = kNewFSCatalogKindDir;
+
+		checkPart.Format("NewOS (ZKA:)", &root, 1);
+
 		EFI::Stop();
 	}
 

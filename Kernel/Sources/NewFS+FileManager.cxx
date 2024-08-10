@@ -25,6 +25,8 @@ namespace Kernel
 
 	NewFilesystemManager::~NewFilesystemManager()
 	{
+		kcout << "Destroying it...\r";
+
 		if (fImpl)
 		{
 			delete fImpl;
