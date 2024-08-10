@@ -1,10 +1,10 @@
 {
-    "compiler_path": "g++",
+    "compiler_path": "x86_64-w64-mingw32-g++.exe",
     "compiler_std": "c++20",
     "headers_path": ["../"],
     "sources_path": ["*.cxx"],
     "output_name": "sci.dll",
-    "compiler_flags": ["-fPIC", "-shared", "-std=c++20"],
+    "compiler_flags": ["-fPIC", "-shared", "-Wl,--subsystem=17"],
     "cpp_macros": ["__NEWOS_SYMS__"]
   }
   
