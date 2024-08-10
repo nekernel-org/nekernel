@@ -4,7 +4,7 @@
 
 # ZKA (ZKA Kernel Architecture)
 
-ZKA is an operating system kernel, also codenamed 'NewOS'.
+ZKA is an operating system kernel of New OS.
 
 ## Installation:
 
@@ -14,8 +14,8 @@ ZKA is an operating system kernel, also codenamed 'NewOS'.
 ### Start by cloning:
 
 ```
-git clone git@bitbucket.org:mahrouss/newoskrnl.git
-cd newoskrnl
+git clone git@bitbucket.org:mahrouss/boot-krnl-dll.git
+cd boot-krnl-dll
 ```
 
 ### And then select the makefile to execute:

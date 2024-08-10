@@ -73,7 +73,7 @@ class EventListenerInterface final : public ClsID
 {
 public:
 	explicit EventListenerInterface() = default;
-	virtual ~UnknownInterface() = default;
+	virtual ~EventListenerInterface() = default;
 
 	EventListenerInterface& operator=(const EventListenerInterface&) = default;
 	EventListenerInterface(const EventListenerInterface&)			 = default;
@@ -128,3 +128,18 @@ enum
 	eFBCPU,
 	eFBInvalid,
 };
+
+/// @brief Allocate new SCM object.
+/// @tparam TCLS the class type.
+/// @tparam UCLSID UCLS factory class type.
+/// @param uclsidOfCls UCLS factory class
+/// @return TCLS interface
+template <typename TCLS, typename UCLSID, typename... Args>
+inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args);
+
+/// @brief Release SCM object.
+/// @tparam TCLS the class type.
+/// @param cls the class to release.
+/// @return status code.
+template <typename TCLS>
+inline SInt32 ScmReleaseClass(TCLS* cls);

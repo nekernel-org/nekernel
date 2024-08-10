@@ -19,7 +19,7 @@
 #define CopyMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 #define MoveMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 
-#define cWebsiteMacro "https://zka.ma/help"
+#define cWebsiteMacro "https://zka.nl/help"
 
 #include <BootKit/Vendor/Qr.hxx>
 
@@ -65,49 +65,51 @@ namespace Kernel
 
 		start_y += 10;
 
+		// show text according to error id.
+
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			cg_write_text("Process scheduler error (Catasrophic failure).", start_y, x, panicTxt);
+			cg_write_text("0x00000008 Process scheduler error (Catasrophic failure).", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
-			cg_write_text("ACPI error.", start_y, x, panicTxt);
+			cg_write_text("0x00000006 ACPI error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
-			cg_write_text("Kernel heap error.", start_y, x, panicTxt);
+			cg_write_text("0x00000000 Kernel heap error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {
-			cg_write_text("Undefined Behavior error.", start_y, x, panicTxt);
+			cg_write_text("0x00000009 Undefined Behavior error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			cg_write_text("End of code.", start_y, x, panicTxt);
+			cg_write_text("0x0000000A End of code.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
-			cg_write_text("Handshake error.", start_y, x, panicTxt);
+			cg_write_text("0x00000005 Handshake error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
-			cg_write_text("Kernel IPC error.", start_y, x, panicTxt);
+			cg_write_text("0x00000003 Kernel IPC error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_INVALID_PRIVILEGE: {
-			cg_write_text("Privilege violation.", start_y, x, panicTxt);
+			cg_write_text("0x00000007 Kernel privilege violation.", start_y, x, panicTxt);
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			cg_write_text("Catasrophic failure.", start_y, x, panicTxt);
+			cg_write_text("0x0000000B Catasrophic failure.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			cg_write_text("Assertion failed.", start_y, x, panicTxt);
+			cg_write_text("0x10000001 Assertion failed.", start_y, x, panicTxt);
 			break;
 		}
 		default: {
-			cg_write_text("Unknown error.", start_y, x, panicTxt);
+			cg_write_text("0xFFFFFFFF Unknown error.", start_y, x, panicTxt);
 			break;
 		}
 		}
@@ -118,7 +120,7 @@ namespace Kernel
 
 	Void RecoveryFactory::Recover() noexcept
 	{
-		while (true)
+		while (Yes)
 		{
 			asm volatile("cli; hlt");
 		}

@@ -40,10 +40,10 @@ public:
 };
 
 /// @brief Allocate new SCM object.
-/// @tparam TCLS 
-/// @tparam UCLSID 
-/// @param uclsidOfCls 
-/// @return 
+/// @tparam TCLS the class type.
+/// @tparam UCLSID UCLS factory class type.
+/// @param uclsidOfCls UCLS factory class
+/// @return TCLS interface
 template <typename TCLS, typename UCLSID, typename... Args>
 inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 {
@@ -51,9 +51,9 @@ inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 }
 
 /// @brief Release SCM object.
-/// @tparam TCLS 
-/// @param cls 
-/// @return 
+/// @tparam TCLS the class type.
+/// @param cls the class to release.
+/// @return status code.
 template <typename TCLS>
 inline SInt32 ScmReleaseClass(TCLS* cls)
 {
@@ -71,7 +71,7 @@ protocol EventListenerInterface final : public ClsID
 {
 public:
 	explicit EventListenerInterface() = default;
-	virtual ~UnknownInterface() = default;
+	virtual ~EventListenerInterface() = default;
 
 	EventListenerInterface& operator=(const EventListenerInterface&) = default;
 	EventListenerInterface(const EventListenerInterface&)			 = default;

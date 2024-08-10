@@ -51,9 +51,9 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSL
 
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.dll
-DDK=libDDK.dll
-SCI=libSCI.dll
-CRT=libCRT.dll
+DDK=ddk.dll
+SCI=sci.dll
+CRT=crtcxx.dll
 
 .PHONY: invalid-recipe
 invalid-recipe:

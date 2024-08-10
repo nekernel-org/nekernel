@@ -50,15 +50,8 @@ namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
 	/// @param rsdPtr The 'RSD PTR' data structure.
-	extern void hal_system_get_cores(Kernel::voidPtr rsdPtr);
+	EXTERN void hal_system_get_cores(Kernel::voidPtr rsdPtr);
 } // namespace Kernel::HAL
-
-namespace Kernel
-{
-	EXTERN SizeT		kHeapCount;
-	EXTERN PageManager kHeapPageManager;
-	EXTERN Bool		kOperationInProgress;
-} // namespace Kernel
 
 /* GDT. */
 STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
@@ -70,7 +63,7 @@ STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
 	{0, 0, 0, 0x92, 0xaf, 0}, // user data
 };
 
-void hal_real_init(void);
+Kernel::Void hal_real_init(Kernel::Void) noexcept;
 
 static Kernel::User* cRoot;
 
@@ -90,16 +83,8 @@ EXTERN_C void hal_init_platform(
 	hal_real_init();
 }
 
-EXTERN Kernel::Boolean kAllocationInProgress;
-
-void hal_real_init(void)
-{
-	Kernel::kHeapPageManager = Kernel::PageManager();
-	Kernel::kHeapCount = 0UL;
-	Kernel::kOperationInProgress = No;
-	kAllocationInProgress = No;
-
-	// get page size.
+Kernel::Void hal_real_init(Kernel::Void) noexcept
+{	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
 
 	// get virtual address start (for the heap)
@@ -228,16 +213,13 @@ void hal_real_init(void)
 	cRoot = new Kernel::User(Kernel::RingKind::kRingSuperUser, kSuperUser);
 
 #ifdef __DEBUG__
-	cRoot->TrySave("6aa162f3-20f6-4143-92f9-5dd37066aedc");
+	const auto cPassword = "6aa162f3-20f6-4143-92f9-5dd37066aedc";
 #else
-	cRoot->TrySave("password");
+	const auto cPassword = "password";
 #endif
 
-#ifdef __DEBUG__
-	Kernel::UserManager::The()->TryLogIn(cRoot, "6aa162f3-20f6-4143-92f9-5dd37066aedc");
-#else
-	Kernel::UserManager::The()->TryLogIn(cRoot, "password");
-#endif
+	cRoot->TrySave(cPassword);
+	Kernel::UserManager::The()->TryLogIn(cRoot, cPassword);
 
 	Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 }

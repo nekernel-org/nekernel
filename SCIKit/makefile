@@ -5,7 +5,7 @@
 
 CC=g++
 FLAGS=-I../ -shared -fPIC -D__NEWOS_SYMS__
-OUTPUT=libSCI.dll
+OUTPUT=sci.dll
 
 .PHONY: build-sci
 build-sci:
