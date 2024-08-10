@@ -19,11 +19,13 @@ Kernel::Boolean kAllocationInProgress = false;
 
 namespace Kernel
 {
+	constexpr auto cVMTMagic = 0xDEEFD00D;
+
 	namespace HAL
 	{
 		namespace Detail
 		{
-			struct VirtualMemoryHeader
+			struct VIRTUAL_MEMORY_HEADER
 			{
 				UInt32	Magic;
 				Boolean Present;
@@ -32,22 +34,28 @@ namespace Kernel
 				SizeT	Size;
 			};
 
-			struct VirtualMemoryHeaderTraits
+			struct VirtualMemoryHeaderTraits final
 			{
 				/// @brief Get next header.
 				/// @param current
 				/// @return
-				VirtualMemoryHeader* Next(VirtualMemoryHeader* current)
+				VIRTUAL_MEMORY_HEADER* Next(VIRTUAL_MEMORY_HEADER* current)
 				{
-					return current + sizeof(VirtualMemoryHeader) + current->Size;
+					if (current->Magic != cVMTMagic)
+						current->Size = 8196;
+
+					return current + sizeof(VIRTUAL_MEMORY_HEADER) + current->Size;
 				}
 
 				/// @brief Get previous header.
 				/// @param current
 				/// @return
-				VirtualMemoryHeader* Prev(VirtualMemoryHeader* current)
+				VIRTUAL_MEMORY_HEADER* Prev(VIRTUAL_MEMORY_HEADER* current)
 				{
-					return current - sizeof(VirtualMemoryHeader)  - current->Size;
+					if (current->Magic != cVMTMagic)
+						current->Size = 8196;
+
+					return current - sizeof(VIRTUAL_MEMORY_HEADER) - current->Size;
 				}
 			};
 		} // namespace Detail
@@ -64,14 +72,12 @@ namespace Kernel
 
 			kAllocationInProgress = true;
 
-			constexpr auto cVMTMagic = 0xDEEFD00D;
-
 			///! fetch from the start.
-			Detail::VirtualMemoryHeader*	  vmHeader = reinterpret_cast<Detail::VirtualMemoryHeader*>(kKernelVirtualStart);
+			Detail::VIRTUAL_MEMORY_HEADER*	  vmHeader = reinterpret_cast<Detail::VIRTUAL_MEMORY_HEADER*>(kKernelVMTStart);
 			Detail::VirtualMemoryHeaderTraits traits;
 
 			while (vmHeader->Present &&
-				   vmHeader->Magic != cVMTMagic)
+				   vmHeader->Magic == cVMTMagic)
 			{
 				vmHeader = traits.Next(vmHeader);
 			}
@@ -84,7 +90,7 @@ namespace Kernel
 
 			kAllocationInProgress = false;
 
-			return reinterpret_cast<VoidPtr>(vmHeader);
+			return reinterpret_cast<VoidPtr>(vmHeader + sizeof(Detail::VIRTUAL_MEMORY_HEADER));
 		}
 
 		/// @brief Allocate a new page to be used by the OS.

@@ -64,27 +64,32 @@ Void drv_std_select(UInt16 Bus)
 
 Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 {
-	if (drv_std_detected())
-		return true;
-
 	UInt16 IO = Bus;
 
 	drv_std_select(IO);
+	
+	Kernel::kcout << "newoskrnl: Initializing drive...\r";
 
+ATAInit_Retry:
 	// Bus init, NEIN bit.
 	Out8(IO + ATA_REG_NEIN, 1);
 
-	// identify until it's good.
-ATAInit_Retry:
+	// identify until it's good
+
 	auto statRdy = In8(IO + ATA_REG_STATUS);
 
 	if (statRdy & ATA_SR_ERR)
 	{
+	Kernel::kcout << "newoskrnl: Failing drive...\r";
+
 		return false;
 	}
 
 	if ((statRdy & ATA_SR_BSY))
+	{
+		kcout << "Retrying...";
 		goto ATAInit_Retry;
+	}
 
 	Out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
@@ -101,6 +106,8 @@ ATAInit_Retry:
 	OutBus = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
 
 	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
+
+	Kernel::kcout << "newoskrnl: Create ATA module.\r";
 
 	return true;
 }

@@ -58,6 +58,8 @@ namespace Kernel
 
 	Bool User::TrySave(const Char* password) noexcept
 	{
+		kcout << "Trying to save password...\r";
+
 		SizeT len = rt_string_len(password);
 
 		Char* token = new Char[len];
@@ -70,16 +72,27 @@ namespace Kernel
 
 		if (NewFilesystemManager::GetMounted())
 		{
-			if (auto dir = NewFilesystemManager::GetMounted()->CreateDirectory("\\Users"))
+			if (auto dir = NewFilesystemManager::GetMounted()->CreateDirectory("\\Users");
+				dir)
+			{
 				delete dir;
+			}
+			else
+			{
+				delete token;
+				return false;
+			}
 
 			auto node = NewFilesystemManager::GetMounted()->Create(kUsersFile);
 			NewFilesystemManager::GetMounted()->Write(this->fUserName.CData(), node, (VoidPtr)token, this->IsStdUser() ? 0xCF : 0xEF, len);
 
 			delete node;
+			delete token;
 
 			return true;
 		}
+
+		delete token;
 
 		return false;
 	}

@@ -1,0 +1,10 @@
+{
+    "compiler_path": "x86_64-w64-mingw32-gcc",
+    "compiler_std": "c++20",
+    "headers_path": ["../", "./"],
+    "sources_path": ["*.c", "*.cxx", "*.S"],
+    "output_name": "gx.dll",
+    "compiler_flags": ["-ffreestanding",  "-shared",  "-std=c17",  "-std=c++20", "-fno-rtti",  "-fno-exceptions", " -Wl,--subsystem=17"],
+    "cpp_macros": ["__NEWOSKRNL__", "__DDK_AMD64__", "cGXVersionHighest=1", "cGXVersionLowest=1"]
+  }
+  

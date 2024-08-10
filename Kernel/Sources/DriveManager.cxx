@@ -136,13 +136,15 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "/Mount/MainDisk/", trait.fName, rt_string_len("/Mount/MainDisk/"));
-		trait.fKind = kMassStorage | kEPMDrive;
+		rt_copy_memory((VoidPtr) "MainDisk", trait.fName, rt_string_len("MainDisk"));
+		trait.fKind = kMassStorage;
 
 		trait.fInput	 = ke_drv_input;
 		trait.fOutput	 = ke_drv_output;
 		trait.fVerify	 = ke_drv_check_disk;
 		trait.fDriveKind = io_drive_kind;
+
+		kcout << "newoskrnl: Construct drive with success.\r";
 
 		return trait;
 	}

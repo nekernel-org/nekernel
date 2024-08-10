@@ -150,15 +150,13 @@ namespace Kernel
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatus	   Status{ProcessStatus::kDead};
 
-		// Memory, images.
+		// Memory, images pointers.
 		HeapPtrKind HeapCursor{nullptr};
 		ImagePtr	Image{nullptr};
 		HeapPtrKind HeapPtr{nullptr};
 
-		typedef PEFSharedObjectInterface ProcessDLLInterface;
-
-		// shared library handle, reserved for kSharedLib only.
-		ProcessDLLInterface* DLLPtr{nullptr};
+		// shared library handle, reserved for kSharedObjectKind types of executables only.
+		PEFSharedObjectInterface* DLLPtr{nullptr};
 
 		// Memory usage.
 		SizeT UsedMemory{0};

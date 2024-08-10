@@ -118,7 +118,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
 			vendorTable[6] == 'R' && vendorTable[7] == ' ')
 		{
-			writer.Write(L"newosldr: Filling rsdptr...\r");
+			writer.Write(L"newosldr: Filling RSD PTR...\r");
 			handoverHdrPtr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendorTable;
 
 			break;
@@ -163,6 +163,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_VirtualStart =
 		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
+
 	handoverHdrPtr->f_VirtualSize =
 		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
 
@@ -194,6 +195,13 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	CGInit();
 	CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
 	CGFini();
+
+	BDiskFormatFactory<BootDeviceATA> checkPart;
+	
+	if (!checkPart.IsPartitionValid())
+	{
+		writer.Write("newosldr: Warning, partition isn't valid! Need to repartition it.\r");
+	}
 
 	// ---------------------------------------------------- //
 	// The following checks for an exisiting partition

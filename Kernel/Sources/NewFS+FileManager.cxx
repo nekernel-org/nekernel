@@ -19,6 +19,8 @@ namespace Kernel
 	{
 		MUST_PASS(Detail::fs_init_newfs());
 		fImpl = new NewFSParser();
+
+		kcout << "We are done here... (NewFilesystemManager).\r";
 	}
 
 	NewFilesystemManager::~NewFilesystemManager()

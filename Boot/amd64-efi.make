@@ -29,12 +29,11 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -smp 2 -m 6G -M q35 \
+EMU_FLAGS=-net none -smp 2 -m 8G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
-			file=fat:rw:Sources/Root/,index=2,format=raw -d int -hdd $(IMG_2) \
-			-drive file=$(IMG_3),if=none,id=nvm -device nvme,serial=Zeta,drive=nvm
+			file=fat:rw:Sources/Root/,index=2,format=raw -d int -hdd $(IMG_2)
 
 LD_FLAGS=-e Main --subsystem=10
 

@@ -89,7 +89,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	// get virtual address start (for the heap)
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart) + cHeapStartOffset);
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart));
 
 	// get physical address start.
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
@@ -210,6 +210,12 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
 
+	Kernel::kcout << "newoskrnl: Creating Filesystem and Super User...\r";
+	
+	auto fs = new Kernel::NewFilesystemManager();
+
+	Kernel::NewFilesystemManager::Mount(fs);
+
 	cRoot = new Kernel::User(Kernel::RingKind::kRingSuperUser, kSuperUser);
 
 #ifdef __DEBUG__
@@ -217,6 +223,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 #else
 	const auto cPassword = "password";
 #endif
+
 
 	cRoot->TrySave(cPassword);
 	Kernel::UserManager::The()->TryLogIn(cRoot, cPassword);

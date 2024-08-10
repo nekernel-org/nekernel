@@ -93,7 +93,7 @@ namespace Boot
 						UInt64 HandoverMagic;
 						UInt32 HandoverType;
 
-					}* structHandover = (struct HANDOVER_INFORMATION_STUB*)(fBlob + sect->mPointerToRawData);
+					}* structHandover = (struct HANDOVER_INFORMATION_STUB*)((UIntPtr)fBlob + sect->mPointerToRawData);
 
 					if (structHandover->HandoverMagic != kHandoverMagic ||
 						structHandover->HandoverType != kHOTypeKernel)

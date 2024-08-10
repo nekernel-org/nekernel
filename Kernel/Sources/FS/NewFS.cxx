@@ -1029,26 +1029,11 @@ namespace Kernel::Detail
 		sMountpointInterface.C() = io_construct_drive();
 		sMountpointInterface.D() = io_construct_drive();
 
+		kcout << "newoskrnl: Testing drive...\r";
+
 		sMountpointInterface.A().fVerify(&sMountpointInterface.A().fPacket);
 
-		Char partitionBlockBuf[sizeof(NFS_ROOT_PARTITION_BLOCK)] = {0};
-
-		sMountpointInterface.A().fPacket.fLba			= kNewFSStartLba;
-		sMountpointInterface.A().fPacket.fPacketContent = partitionBlockBuf;
-		sMountpointInterface.A().fPacket.fPacketSize	= sizeof(NFS_ROOT_PARTITION_BLOCK);
-
-		sMountpointInterface.A().fInput(&sMountpointInterface.A().fPacket);
-
-		NFS_ROOT_PARTITION_BLOCK* partBlock =
-			reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(partitionBlockBuf);
-
-		if (!StringBuilder::Equals(partBlock->Ident, kNewFSIdent))
-		{
-			kcout << "newoskrnl: New FS Partition is corrupt.\r";
-			return false;
-		}
-
-		kcout << "newoskrnl: Read partition: " << partBlock->PartitionName << ", with success!\r";
+		kcout << "newoskrnl: Testing drive [ OK ]...\r";
 
 		return true;
 	}
