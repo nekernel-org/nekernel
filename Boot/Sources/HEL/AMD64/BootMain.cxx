@@ -201,6 +201,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (!checkPart.IsPartitionValid())
 	{
 		writer.Write("newosldr: Warning, partition isn't valid! Need to repartition it.\r");
+		EFI::Stop();
 	}
 
 	// ---------------------------------------------------- //
