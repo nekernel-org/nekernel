@@ -17,7 +17,7 @@
 
 #include <KernelKit/Heap.hxx>
 
-#define cStdUser (0xCF)
+#define cStdUser   (0xCF)
 #define cSuperUser (0xEF)
 
 /// BUGS: 0
@@ -75,22 +75,19 @@ namespace Kernel
 
 		if (NewFilesystemManager::GetMounted())
 		{
-			auto dir = NewFilesystemManager::GetMounted()->CreateDirectory("\\Users\\");
+			auto node = NewFilesystemManager::GetMounted()->Open(kUsersFile, "wb");
+
+			if (!node)
+			{
+				NewFilesystemManager::GetMounted()->Create(kUsersFile);
+			}
+
+			if (node)
+			{
+				NewFilesystemManager::GetMounted()->Write(this->fUserName.CData(), node, (VoidPtr)token, (this->IsStdUser() ? cStdUser : cSuperUser) | kNewFSCatalogKindMetaFile, len);
+				delete node;
+			}
 			
-			if (dir)
-			{
-				delete dir;
-			}
-			else
-			{
-				delete token;
-				return false;
-			}
-
-			auto node = NewFilesystemManager::GetMounted()->Create(kUsersFile);
-			NewFilesystemManager::GetMounted()->Write(this->fUserName.CData(), node, (VoidPtr)token, this->IsStdUser() ? cStdUser : cSuperUser, len);
-
-			delete node;
 			delete token;
 
 			return true;
@@ -152,6 +149,8 @@ namespace Kernel
 
 			return false;
 		}
+
+		kcout << "newoskrnl: Trying to log-in.\r";
 
 		FileStreamUTF8 file(kUsersFile, "rb");
 

@@ -20,12 +20,12 @@ namespace Kernel
 		MUST_PASS(Detail::fs_init_newfs());
 		fImpl = new NewFSParser();
 
-		kcout << "We are done here... (NewFilesystemManager).\r";
+		kcout << "newoskrnl: We are done here... (NewFilesystemManager).\r";
 	}
 
 	NewFilesystemManager::~NewFilesystemManager()
 	{
-		kcout << "Destroying it...\r";
+		kcout << "newoskrnl: Destroying it...\r";
 
 		if (fImpl)
 		{

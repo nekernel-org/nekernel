@@ -209,12 +209,16 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
-
-	Kernel::kcout << "newoskrnl: Creating Filesystem and Super User...\r";
 	
 	auto fs = new Kernel::NewFilesystemManager();
 
 	Kernel::NewFilesystemManager::Mount(fs);
+
+	MUST_PASS(fs->GetParser());
+
+	delete fs->GetParser()->CreateCatalog("\\Users\\", 0, kNewFSCatalogKindDir);
+
+	Kernel::kcout << "newoskrnl: Creating filesystem and " << kSuperUser << "..." << Kernel::endl;
 
 	cRoot = new Kernel::User(Kernel::RingKind::kRingSuperUser, kSuperUser);
 
@@ -223,8 +227,13 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 #else
 	const auto cPassword = "password";
 #endif
+	
+	Kernel::UserManager::The()->fRootUser = cRoot;
+
+	Kernel::kcout << "newoskrnl: Root is " << kSuperUser << "." << Kernel::endl;
 
 	cRoot->TrySave(cPassword);
+	
 	Kernel::UserManager::The()->TryLogIn(cRoot, cPassword);
 
 	Kernel::ke_stop(RUNTIME_CHECK_FAILED);

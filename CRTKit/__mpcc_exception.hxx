@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <CRTKit/__mpcc_defines.hxx>
+
 /// @brief CRT exit, with exit code (!!! exits all threads. !!!)
 /// @param code 
 /// @return 

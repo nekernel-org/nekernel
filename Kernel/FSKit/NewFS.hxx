@@ -38,7 +38,7 @@ default.
 
 #define kNewFSMetaFilePrefix '$'
 
-#define kNewFSVersionInteger (0x127)
+#define kNewFSVersionInteger (0x0127)
 #define kNewFSVerionString	 "1.27"
 
 /// @brief Standard fork types.
@@ -281,7 +281,7 @@ namespace Kernel
 		bool Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name);
 
 	public:
-		Int32 fDriveIndex{kNewFSSubDriveC};
+		Int32 fDriveIndex{kNewFSSubDriveA};
 	};
 
 	///

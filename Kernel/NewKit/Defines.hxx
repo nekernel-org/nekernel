@@ -66,6 +66,9 @@ namespace Kernel
 	using WideChar	= wchar_t;
 	using Utf32Char = char32_t;
 
+	typedef UInt64 PhysicalAddress;
+	typedef UInt64 VirtualAddress;
+
 	using Void = void;
 
 	using Lba = UInt64;

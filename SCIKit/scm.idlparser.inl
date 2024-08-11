@@ -16,3 +16,6 @@ Purpose: Base code of SCM.
 
 #warning ! you may be using the clang version of the newos kit, please be cautious that some thing mayn't be present. !
 #endif // !__NDK__
+
+protocol IDLParserInterface;
+protocol IDLInterface;

@@ -52,7 +52,7 @@ BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.dll
 DDK=ddk.dll
 SCI=sci.dll
-CRT=crtcxx.dll
+CRT=mpccrt.dll
 
 .PHONY: invalid-recipe
 invalid-recipe:

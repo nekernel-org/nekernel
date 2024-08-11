@@ -12,55 +12,35 @@
 /// @param rsp
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
-	Kernel::kcout
-		<< "newoskrnl: General Protection Fault, caused by "
-		<< Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetProcessName();
-
-	Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
 }
 
 /// @brief Handle page fault.
 /// @param rsp
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
-	Kernel::kcout
-		<< "newoskrnl: Segmentation Fault, caused by "
-		<< Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetProcessName();
-
-	Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
 }
 
 /// @brief Handle math fault.
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
-	Kernel::kcout
-		<< "newoskrnl: Math error, caused by "
-		<< Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetProcessName();
-
-	Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
 }
 
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
-	Kernel::kcout
-		<< "newoskrnl: Execution error, caused by "
-		<< Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetProcessName();
-
-	Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
 }
 
 /// @brief Handle #UD fault.
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
-	Kernel::kcout
-		<< "newoskrnl: Invalid interrupt, caused by "
-		<< Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetProcessName();
-
-	Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
 }
 
 /// @brief Enter syscall from assembly.

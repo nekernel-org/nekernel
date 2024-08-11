@@ -31,7 +31,7 @@ typedef void*			 VoidPtr;
 typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
 
-#ifdef __NEWOS_SYMS__
+#ifdef __SCI_IMPL__
 #include <SCIKit/scm.internal.inl>
 #else
 class UnknownInterface; // Refrenced from an IDB entry.
@@ -135,11 +135,17 @@ enum
 /// @param uclsidOfCls UCLS factory class
 /// @return TCLS interface
 template <typename TCLS, typename UCLSID, typename... Args>
-inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args);
+TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args);
 
 /// @brief Release SCM object.
 /// @tparam TCLS the class type.
 /// @param cls the class to release.
 /// @return status code.
 template <typename TCLS>
-inline SInt32 ScmReleaseClass(TCLS* cls);
+SInt32 ScmReleaseClass(TCLS* cls);
+
+/// @brief Creates an SCM instance in the process.
+SInt32 ScmCreateInstance(UInt32 flags, VoidPtr* handle_instance);
+
+/// @brief Destroys an SCM instance of the process.
+UInt0  ScmDestroyInstance(VoidPtr handle_instance);

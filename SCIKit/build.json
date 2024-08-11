@@ -5,6 +5,6 @@
     "sources_path": ["*.cxx"],
     "output_name": "sci.dll",
     "compiler_flags": ["-fPIC", "-shared", "-Wl,--subsystem=17"],
-    "cpp_macros": ["__NEWOS_SYMS__"]
+    "cpp_macros": ["__SCI_IMPL__", "cSCIVersion=0x0100"]
   }
   

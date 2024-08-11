@@ -19,7 +19,7 @@ Kernel::Boolean kAllocationInProgress = false;
 
 namespace Kernel
 {
-	constexpr auto cVMTMagic = 0xDEEFD00D;
+	constexpr auto cVMHMagic = 0xDEEFD00D;
 
 	namespace HAL
 	{
@@ -28,9 +28,9 @@ namespace Kernel
 			struct VIRTUAL_MEMORY_HEADER
 			{
 				UInt32	Magic;
-				Boolean Present;
-				Boolean ReadWrite;
-				Boolean User;
+				Boolean Present : 1;
+				Boolean ReadWrite : 1;
+				Boolean User : 1;
 				SizeT	Size;
 			};
 
@@ -41,7 +41,7 @@ namespace Kernel
 				/// @return
 				VIRTUAL_MEMORY_HEADER* Next(VIRTUAL_MEMORY_HEADER* current)
 				{
-					if (current->Magic != cVMTMagic)
+					if (current->Magic != cVMHMagic)
 						current->Size = 8196;
 
 					return current + sizeof(VIRTUAL_MEMORY_HEADER) + current->Size;
@@ -52,7 +52,7 @@ namespace Kernel
 				/// @return
 				VIRTUAL_MEMORY_HEADER* Prev(VIRTUAL_MEMORY_HEADER* current)
 				{
-					if (current->Magic != cVMTMagic)
+					if (current->Magic != cVMHMagic)
 						current->Size = 8196;
 
 					return current - sizeof(VIRTUAL_MEMORY_HEADER) - current->Size;
@@ -72,17 +72,17 @@ namespace Kernel
 
 			kAllocationInProgress = true;
 
-			///! fetch from the start.
+			//! fetch from the start.
 			Detail::VIRTUAL_MEMORY_HEADER*	  vmHeader = reinterpret_cast<Detail::VIRTUAL_MEMORY_HEADER*>(kKernelVMTStart);
 			Detail::VirtualMemoryHeaderTraits traits;
 
 			while (vmHeader->Present &&
-				   vmHeader->Magic == cVMTMagic)
+				   vmHeader->Magic == cVMHMagic)
 			{
 				vmHeader = traits.Next(vmHeader);
 			}
 
-			vmHeader->Magic		= cVMTMagic;
+			vmHeader->Magic		= cVMHMagic;
 			vmHeader->Present	= true;
 			vmHeader->ReadWrite = rw;
 			vmHeader->User		= user;
@@ -99,16 +99,16 @@ namespace Kernel
 		/// @return
 		auto hal_alloc_page(Boolean rw, Boolean user, SizeT size) -> VoidPtr
 		{
-			/// Wait for a ongoing allocation to complete.
+			// Wait for a ongoing allocation to complete.
 			while (kAllocationInProgress)
 			{
-				;
+				(void)0;
 			}
 
 			if (size == 0)
 				++size;
 
-			/// allocate new page.
+			// allocate new page.
 			return hal_try_alloc_new_page(rw, user, size);
 		}
 	} // namespace HAL
