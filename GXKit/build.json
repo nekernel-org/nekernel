@@ -5,6 +5,6 @@
     "sources_path": ["*.c"],
     "output_name": "gx.dll",
     "compiler_flags": ["-ffreestanding",  "-shared",  "-std=c17", " -Wl,--subsystem=17"],
-    "cpp_macros": ["__NEWOSKRNL__", "__DDK_AMD64__", "cGXVersionHighest=1", "cGXVersionLowest=1"]
+    "cpp_macros": ["__NEWOSKRNL__", "__GX_AMD64__", "cGXVersionHighest=0x0100", "cGXVersionLowest=0x0100"]
   }
   

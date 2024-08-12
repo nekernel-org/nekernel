@@ -4,7 +4,7 @@
     "headers_path": ["../"],
     "sources_path": ["*.cxx"],
     "output_name": "sci.dll",
-    "compiler_flags": ["-fPIC", "-shared", "-Wl,--subsystem=17"],
-    "cpp_macros": ["__SCI_IMPL__", "cSCIVersion=0x0100"]
+    "compiler_flags": ["-fPIC", "-ffreestanding",  "-shared", "-fno-rtti",  "-fno-exceptions", "-Wl,--subsystem=17"],
+    "cpp_macros": ["__SCI_IMPL__", "cSCIVersion=0x0100", "cSCIVersionHighest=0x0100", "cSCIVersionLowest=0x0100"]
   }
   

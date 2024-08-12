@@ -5,6 +5,6 @@
     "sources_path": ["*.cxx"],
     "output_name": "encryptfs.dll",
     "compiler_flags": ["-ffreestanding",  "-shared", "-fno-rtti",  "-fno-exceptions", " -Wl,--subsystem=17"],
-    "cpp_macros": ["__CRT_AMD64__", "cEFSVersion=0x0100", "cEFSVersionHighest=0x0100", "cEFSVersionLowest=0x0100"]
+    "cpp_macros": ["__EFS_AMD64__", "cEFSVersion=0x0100", "cEFSVersionHighest=0x0100", "cEFSVersionLowest=0x0100"]
   }
   
