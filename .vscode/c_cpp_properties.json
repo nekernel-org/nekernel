@@ -39,6 +39,7 @@
         "__EFI_x86_64__",
         "__ATA_PIO__",
         "__NEWOS_AMD64__",
+        "__NEWOSLDR__",
         "__DEBUG__"
       ],
       "cStandard": "c17",

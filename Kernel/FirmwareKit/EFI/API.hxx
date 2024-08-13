@@ -12,6 +12,8 @@
 #include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
 
+#define kNewOSSubsystem 17
+
 #ifdef __NEWOSLDR__
 // forward decl.
 class BTextWriter;
@@ -65,7 +67,7 @@ Bascially frees everything we have in the EFI side.
 
 	inline UInt32 Platform() noexcept
 	{
-		return kPEMachineAMD64;
+		return kPeMachineAMD64;
 	}
 
 	/***
@@ -105,12 +107,10 @@ inline void InitEFI(EfiSystemTable* SystemTable) noexcept
 	ST->ConOut->EnableCursor(ST->ConOut, false);
 }
 
-#ifdef __BOOTLOADER__
+#ifdef __NEWOSLDR__
 
 #include <BootKit/Platform.hxx>
 
-#endif // ifdef __BOOTLOADER__
-
-#define kNewOSSubsystem 17
+#endif // ifdef __NEWOSLDR__
 
 #endif /* ifndef __EFI_API__ */

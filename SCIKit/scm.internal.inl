@@ -34,8 +34,8 @@ public:
 	UnknownInterface(const UnknownInterface&)			 = default;
  
 	virtual SInt32 Release() = 0;
-	virtual void DecrementRef() = 0;
-	virtual UnknownInterface* IncrementRef() = 0;
+	virtual void RemoveRef() = 0;
+	virtual UnknownInterface* AddRef() = 0;
 	virtual VoidPtr QueryInterface(UUID* p_uuid) = 0;
 };
 
@@ -78,7 +78,7 @@ public:
 
     virtual EventListenerInterface& operator +=(FnSign arg) 
 	{
-        this->AddEvent(arg);
+        this->AddEventListener(arg);
         return *this;
     }
 };

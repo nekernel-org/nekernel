@@ -14,20 +14,20 @@ namespace Boot
 {
 	using namespace Kernel;
 
-	class KernelLoader;
+	class Thread;
 
 	/// @brief Program loader class
 	/// @package nl.zeta.boot.api
-	class KernelLoader final
+	class Thread final
 	{
 	public:
-		explicit KernelLoader() = delete;
-		~KernelLoader()		 = default;
+		explicit Thread() = delete;
+		~Thread()		 = default;
 
-		explicit KernelLoader(Kernel::VoidPtr blob);
+		explicit Thread(Kernel::VoidPtr blob);
 
-		KernelLoader& operator=(const KernelLoader&) = default;
-		KernelLoader(const KernelLoader&)			   = default;
+		Thread& operator=(const Thread&) = default;
+		Thread(const Thread&)			   = default;
 
 		void		Start(HEL::HandoverInformationHeader* handover);
 		const char* GetName();
@@ -35,8 +35,7 @@ namespace Boot
 		bool 		IsValid();
 
 	private:
-		Char	fBlobName[255];
-		Char*   fHeapForProgram{nullptr};
+		Char	fBlobName[255] = { "Boot Thread" };
 		VoidPtr fStartAddress{nullptr};
 		VoidPtr fBlob{nullptr};
 	};

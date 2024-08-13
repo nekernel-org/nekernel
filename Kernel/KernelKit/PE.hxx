@@ -21,8 +21,8 @@
 #define kMagPE32 0x010b
 #define kMagPE64 0x020b
 
-#define kPEMachineAMD64 0x8664
-#define kPEMachineARM64 0xaa64
+#define kPeMachineAMD64 0x8664
+#define kPeMachineARM64 0xaa64
 
 typedef struct ExecHeader final
 {

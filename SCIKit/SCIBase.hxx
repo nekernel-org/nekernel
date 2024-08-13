@@ -12,6 +12,8 @@ Purpose: SCIKit foundation header.
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C   extern "C"
 
+#define OBJECT_PATH "\\::\\OBJDLL\\"
+
 typedef bool Bool;
 typedef void UInt0;
 
@@ -63,8 +65,8 @@ public:
 	UnknownInterface(const UnknownInterface&)			 = default;
 
 	virtual SInt32			  Release()					   = 0;
-	virtual void			  DecrementRef()			   = 0;
-	virtual UnknownInterface* IncrementRef()			   = 0;
+	virtual void			  RemoveRef()			   = 0;
+	virtual UnknownInterface* AddRef()			   = 0;
 	virtual VoidPtr			  QueryInterface(UUID* p_uuid) = 0;
 };
 
@@ -82,8 +84,27 @@ public:
 };
 #endif
 
-/// @note Part of NK loader API.
+// ------------------------------------------------------------------------------------------ //
+/// @note Handle types.
+// ------------------------------------------------------------------------------------------ //
 
+typedef VoidPtr NEW_OBJECT;
+
+typedef NEW_OBJECT DLL_OBJECT;
+typedef NEW_OBJECT IO_OBJECT;
+typedef NEW_OBJECT COMP_OBJECT;
+
+// ------------------------------------------------------------------------------------------ //
+
+// ------------------------------------------------------------------------------------------ //
+/// @note Part of NK loader API.
+// ------------------------------------------------------------------------------------------ //
+
+
+/// @brief Get function which is part of the DLL.
+/// @param symbol the symbol to look for
+/// @param dll_handle the DLL handle.
+/// @return the proc pointer.
 IMPORT_C VoidPtr RtlGetDLLProc(const char* symbol, VoidPtr dll_handle);
 
 /// @brief Open DLL handle.
@@ -113,21 +134,7 @@ IMPORT_C UInt0 RtlCloseFile(UInt64 file_desc);
 /// @brief Installs the TIB and GIB inside the current process.
 /// @param none
 /// @return > 0 error ocurred or already present, = 0 success.
-IMPORT_C UInt32 RtlInstallTIB(UInt0);
-
-/// @brief Asks for the process's own framebuffer. (Not a GPU one)
-/// @param flags 
-/// @param fb_ptr 
-/// @param fb_out_sz 
-/// @return 
-IMPORT_C UInt32 RtlRequestFB(SInt32* type, VoidPtr* fb_ptr, SizeT* fb_out_sz);
-
-enum
-{
-	eFBGPU,
-	eFBCPU,
-	eFBInvalid,
-};
+IMPORT_C UInt32 RtlInstallInfoBlocks(UInt0);
 
 /// @brief Allocate new SCM object.
 /// @tparam TCLS the class type.

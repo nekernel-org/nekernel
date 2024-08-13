@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <BootKit/KernelLoader.hxx>
+#include <BootKit/Thread.hxx>
 #include <BootKit/Support.hxx>
 #include <BootKit/BootKit.hxx>
 #include <FirmwareKit/EFI/API.hxx>
@@ -26,7 +26,7 @@ EXTERN EfiBootServices* BS;
 
 namespace Boot
 {
-	KernelLoader::KernelLoader(VoidPtr blob)
+	Thread::Thread(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
 	{
 		// detect the format.
@@ -43,16 +43,23 @@ namespace Boot
 		if (firstBytes[0] == kMagMz0 &&
 			firstBytes[1] == kMagMz1)
 		{
-			writer.Write("newosldr: PE32+ executable detected.\r");
-
 			ExecHeaderPtr		  hdrPtr = ldr_find_exec_header(firstBytes);
 			ExecOptionalHeaderPtr optHdr = ldr_find_opt_exec_header(firstBytes);
 
-			if (hdrPtr->mMachine != 0x8664 &&
-				hdrPtr->mSignature != 0x20b)
+			if (hdrPtr->mMachine != kPeMachineAMD64 ||
+				hdrPtr->mSignature != kPeMagic)
 			{
+				writer.Write("newosldr: Not a PE32+ executable.\r");
 				return;
 			}
+
+			if (optHdr->mSubsystem != kNewOSSubsystem)
+			{
+				writer.Write("newosldr: Not a New OS executable.\r");
+				return;
+			}
+
+			writer.Write("newosldr: PE32+ executable detected (New OS Subsystem).\r");
 
 			auto numSecs = hdrPtr->mNumberOfSections;
 
@@ -92,7 +99,6 @@ namespace Boot
 					{
 						UInt64 HandoverMagic;
 						UInt32 HandoverType;
-
 					}* structHandover = (struct HANDOVER_INFORMATION_STUB*)((UIntPtr)fBlob + sect->mPointerToRawData);
 
 					if (structHandover->HandoverMagic != kHandoverMagic ||
@@ -128,7 +134,7 @@ namespace Boot
 	}
 
 	/// @note handover header has to be valid!
-	Void KernelLoader::Start(HEL::HandoverInformationHeader* handover)
+	Void Thread::Start(HEL::HandoverInformationHeader* handover)
 	{
 		BTextWriter writer;
 
@@ -152,17 +158,17 @@ namespace Boot
 		err_fn(handover);
 	}
 
-	const Char* KernelLoader::GetName()
+	const Char* Thread::GetName()
 	{
 		return fBlobName;
 	}
 
-	Void KernelLoader::SetName(const Char* name)
+	Void Thread::SetName(const Char* name)
 	{
 		CopyMem(fBlobName, name, StrLen(name));
 	}
 
-	bool KernelLoader::IsValid()
+	bool Thread::IsValid()
 	{
 		return fStartAddress != nullptr;
 	}
