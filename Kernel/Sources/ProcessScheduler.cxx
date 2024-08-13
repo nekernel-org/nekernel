@@ -226,19 +226,19 @@ namespace Kernel
 
 		kcout << "ProcessScheduler:: adding process to team...\r";
 
-		/// Create heap according to type of process.
+		// Create heap according to type of process.
 		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kAppKind)
 		{
-			process.Leak().HeapPtr = sched_new_heap(kUserHeapUser | kUserHeapRw);
+			process.Leak().HeapPtr = sched_new_heap(kProcessHeapUser | kProcessHeapRw, process.Leak().SizeMemory);
 		}
 		else if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
 		{
 			process.Leak().DLLPtr = rtl_init_shared_object(&process.Leak());
-			process.Leak().HeapPtr		 = sched_new_heap(kUserHeapUser | kUserHeapRw | kUserHeapShared);
+			process.Leak().HeapPtr		 = sched_new_heap(kProcessHeapUser | kProcessHeapRw | kProcessHeapShared, process.Leak().SizeMemory);
 		}
 		else
 		{
-			// something went wrong, do not continue, process kind is incorrect.
+			// Something went wrong, do not continue, process may be incorrect.
 			process.Leak().Crash();
 			return -kErrorProcessFault;
 		}

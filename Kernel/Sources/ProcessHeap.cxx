@@ -8,7 +8,7 @@
 #include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/PageManager.hxx>
 
-#define kHeapHeaderPaddingSz (16U)
+#define cHeapHeaderPaddingSz (16U)
 
 /// @file ProcessHeap.cxx
 /// @brief User Heap Manager, Process heap allocator.
@@ -24,10 +24,12 @@ namespace Kernel
 	 */
 	struct PROCESS_HEAP_HEADER final
 	{
-		UInt32	fMagic;
-		Int32	fFlags;
-		Boolean fFree;
-		UInt8	fPadding[kHeapHeaderPaddingSz];
+		UInt32	fPageMagic;
+		Int32	fPageFlags;
+		Boolean fPageFree;
+		UIntPtr fPageVirtStart;
+		SizeT   fPageVirtSize;
+		UInt8	fPagePad[cHeapHeaderPaddingSz];
 	};
 
 	/// @brief PROCESS_HEAP_HEADER as pointer type.
@@ -82,15 +84,15 @@ namespace Kernel
 	Boolean						  ProcessHeapHelper::s_PoolsAreEnabled = true;
 	MutableArray<Ref<PTEWrapper>> ProcessHeapHelper::s_Pool;
 
-	STATIC VoidPtr ke_find_unused_heap(Int32 flags);
-	STATIC Void	   ke_free_heap_internal(VoidPtr vaddr);
-	STATIC VoidPtr ke_make_heap_internal(VoidPtr vaddr, Int32 flags);
-	STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr);
+	STATIC VoidPtr sched_find_unused_heap(Int32 flags, SizeT len);
+	STATIC Void	   sched_free_heap_internal(VoidPtr vaddr);
+	STATIC VoidPtr sched_make_heap_internal(VoidPtr vaddr, Int32 flags, SizeT len);
+	STATIC Boolean sched_check_and_free_heap(const SizeT& index, VoidPtr ptr);
 
 	/// @brief Find an unused heap header to allocate on.
 	/// @param flags the flags to use.
 	/// @return VoidPtr the heap pointer.
-	STATIC VoidPtr ke_find_unused_heap(Int32 flags)
+	STATIC VoidPtr sched_find_unused_heap(Int32 flags, SizeT len)
 	{
 		SizeT index = 0UL;
 
@@ -113,11 +115,11 @@ namespace Kernel
 				ProcessHeapHelper::Leak().Leak().ToggleUser(
 					ProcessHeapHelper::The()[index].Leak().Leak(), true);
 
-				kcout << "[ke_find_unused_heap] Done, trying to make a pool now...\r";
+				kcout << "[sched_find_unused_heap] Done, trying to make a pool now...\r";
 
-				return ke_make_heap_internal(
+				return sched_make_heap_internal(
 					(VoidPtr)ProcessHeapHelper::The()[index].Leak().Leak().VirtualAddress(),
-					flags);
+					flags, len);
 			}
 
 			++index;
@@ -127,57 +129,59 @@ namespace Kernel
 	}
 
 	/// @brief Makes a new heap for the process to use.
-	/// @param virtualAddress the virtual address of the process.
+	/// @param virtual_address the virtual address of the process.
 	/// @param flags the flags.
 	/// @return
-	STATIC VoidPtr ke_make_heap_internal(VoidPtr virtualAddress, Int32 flags)
+	STATIC VoidPtr sched_make_heap_internal(VoidPtr virtual_address, Int32 flags, SizeT len_in_gb)
 	{
-		if (virtualAddress)
+		if (virtual_address)
 		{
-			PROCESS_HEAP_HEADER* poolHdr = reinterpret_cast<PROCESS_HEAP_HEADER*>(virtualAddress);
+			PROCESS_HEAP_HEADER* process_heap_hdr = reinterpret_cast<PROCESS_HEAP_HEADER*>(virtual_address);
 
-			if (!poolHdr->fFree)
+			if (!process_heap_hdr->fPageFree)
 			{
 				kcout
-					<< "[ke_make_heap_internal] poolHdr->fFree, HeapPtr already exists\n";
+					<< "[sched_make_heap_internal] process_heap_hdr->fPageFree, HeapPtr already exists\n";
 				return nullptr;
 			}
 
-			poolHdr->fFlags = flags;
-			poolHdr->fMagic = kUserHeapMag;
-			poolHdr->fFree	= false;
+			process_heap_hdr->fPageFlags = flags;
+			process_heap_hdr->fPageMagic = kProcessHeapMag;
+			process_heap_hdr->fPageFree	= false;
+			process_heap_hdr->fPageVirtStart = (UIntPtr)virtual_address + sizeof(PROCESS_HEAP_HEADER);
+			process_heap_hdr->fPageVirtSize = len_in_gb;
 
-			kcout << "[ke_make_heap_internal] New allocation has been done, returning new chunk.\n";
+			kcout << "[sched_make_heap_internal] New allocation has been done, returning new chunk.\n";
 
 			return reinterpret_cast<VoidPtr>(
-				(reinterpret_cast<UIntPtr>(virtualAddress) + sizeof(PROCESS_HEAP_HEADER)));
+				(reinterpret_cast<UIntPtr>(virtual_address) + sizeof(PROCESS_HEAP_HEADER)));
 		}
 
-		kcout << "[ke_make_heap_internal] Address is invalid";
+		kcout << "[sched_make_heap_internal] Address is invalid";
 		return nullptr;
 	}
 
 	/// @brief Internally makrs the heap as free.
-	/// This is done by setting the fFree bit to true
-	/// @param virtualAddress
+	/// This is done by setting the fPageFree bit to true
+	/// @param virtual_address
 	/// @return
-	STATIC Void ke_free_heap_internal(VoidPtr virtualAddress)
+	STATIC Void sched_free_heap_internal(VoidPtr virtual_address)
 	{
-		PROCESS_HEAP_HEADER* poolHdr = reinterpret_cast<PROCESS_HEAP_HEADER*>(
-			reinterpret_cast<UIntPtr>(virtualAddress) - sizeof(PROCESS_HEAP_HEADER));
+		PROCESS_HEAP_HEADER* process_heap_hdr = reinterpret_cast<PROCESS_HEAP_HEADER*>(
+			reinterpret_cast<UIntPtr>(virtual_address) - sizeof(PROCESS_HEAP_HEADER));
 
-		if (poolHdr->fMagic == kUserHeapMag)
+		if (process_heap_hdr->fPageMagic == kProcessHeapMag)
 		{
-			if (!poolHdr->fFree)
+			if (!process_heap_hdr->fPageFree)
 			{
 				ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 				return;
 			}
 
-			poolHdr->fFree	= true;
-			poolHdr->fFlags = 0;
+			process_heap_hdr->fPageFree	= true;
+			process_heap_hdr->fPageFlags = 0;
 
-			kcout << "[ke_free_heap_internal] Successfully marked header as free!\r";
+			kcout << "[sched_free_heap_internal] Successfully marked header as free!\r";
 		}
 	}
 
@@ -188,7 +192,7 @@ namespace Kernel
 	 * @param ptr The ptr to check.
 	 * @return Boolean true if successful.
 	 */
-	STATIC Boolean ke_check_and_free_heap(const SizeT& index, VoidPtr ptr)
+	STATIC Boolean sched_check_and_free_heap(const SizeT& index, VoidPtr ptr)
 	{
 		if (ProcessHeapHelper::The()[index])
 		{
@@ -203,7 +207,7 @@ namespace Kernel
 
 				--ProcessHeapHelper::Count();
 
-				ke_free_heap_internal(ptr);
+				sched_free_heap_internal(ptr);
 				ptr = nullptr;
 
 				return true;
@@ -216,17 +220,17 @@ namespace Kernel
 	/// @brief Creates a new pool pointer.
 	/// @param flags the flags attached to it.
 	/// @return a pool pointer with selected permissions.
-	VoidPtr sched_new_heap(Int32 flags)
+	VoidPtr sched_new_heap(Int32 flags, SizeT page_size)
 	{
 		if (!ProcessHeapHelper::IsEnabled())
 			return nullptr;
 
-		if (VoidPtr ret = ke_find_unused_heap(flags))
+		if (VoidPtr ret = sched_find_unused_heap(flags, page_size))
 			return ret;
 
 		// this wasn't set to true
 		auto ref_page = ProcessHeapHelper::Leak().Leak().RequestPage(
-			((flags & kUserHeapUser)), (flags & kUserHeapRw));
+			((flags & kProcessHeapUser)), (flags & kProcessHeapRw));
 
 		if (ref_page)
 		{
@@ -237,8 +241,8 @@ namespace Kernel
 			++ref; // increment the number of addresses we have now.
 
 			// finally make the pool address.
-			return ke_make_heap_internal(
-				reinterpret_cast<VoidPtr>(ref_page.Leak().VirtualAddress()), flags);
+			return sched_make_heap_internal(
+				reinterpret_cast<VoidPtr>(ref_page.Leak().VirtualAddress()), flags, page_size);
 		}
 
 		return nullptr;
@@ -256,12 +260,12 @@ namespace Kernel
 		{
 			SizeT base = ProcessHeapHelper::Count();
 
-			if (ke_check_and_free_heap(base, ptr))
+			if (sched_check_and_free_heap(base, ptr))
 				return 0;
 
 			for (SizeT index = 0; index < ProcessHeapHelper::The().Count(); ++index)
 			{
-				if (ke_check_and_free_heap(index, ptr))
+				if (sched_check_and_free_heap(index, ptr))
 					return 0;
 
 				--base;

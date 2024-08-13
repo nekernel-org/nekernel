@@ -17,24 +17,25 @@
 /// @file ProcessHeap.hxx
 /// @brief Process heap allocator.
 
-#define kUserHeapMag   (0xFAF0FEF0)
+#define kProcessHeapMag   (0xFAF0FEF0)
 
 namespace Kernel
 {
 	typedef enum
 	{
 		/// @brief Shared heap.
-		kUserHeapShared = 0x4,
+		kProcessHeapShared = 0x4,
 		/// @brief User and private heap.
-		kUserHeapUser = 0x6,
+		kProcessHeapUser = 0x6,
 		/// @brief Read and Write heap.
-		kUserHeapRw = 0x8,
+		kProcessHeapRw = 0x8,
 	} UserHeapFlags;
 
 	/// @brief Allocate a process heap, no zero out is done here.
-	/// @param flags the allocation flags.
+	/// @param flags the heap's flags.
+	/// @param len_in_gib the heap in GB.
 	/// @return The process's heap.
-	VoidPtr sched_new_heap(Int32 flags);
+	VoidPtr sched_new_heap(Int32 flags, SizeT len_in_gib);
 
 	/// @brief Frees the process heap.
 	/// @param pointer The process heap pointer.

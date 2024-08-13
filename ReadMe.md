@@ -1,6 +1,6 @@
 <!-- README of ZKA 1 -->
 
-![ZKA](Meta/NewOS.svg)
+![ZKA](res/zka.svg)
 
 # ZKA (ZKA Kernel Architecture)
 

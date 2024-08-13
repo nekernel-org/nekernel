@@ -3,7 +3,7 @@
     "compiler_std": "c++20",
     "headers_path": ["../", "./"],
     "sources_path": ["*.cxx"],
-    "output_name": "mpccrt.dll",
+    "output_name": "ndkcrt.dll",
     "compiler_flags": ["-ffreestanding",  "-shared", "-fno-rtti",  "-fno-exceptions", " -Wl,--subsystem=17"],
     "cpp_macros": ["__CRT_AMD64__", "cCRTVersion=0x0100", "cEFSVersionHighest=0x0100", "cEFSVersionLowest=0x0100"]
   }

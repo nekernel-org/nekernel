@@ -161,6 +161,7 @@ namespace Kernel
 		// Memory usage.
 		SizeT UsedMemory{0};
 		SizeT FreeMemory{0};
+		SizeT SizeMemory{gib_cast(4)};
 
 		enum
 		{

@@ -9,11 +9,11 @@
 
 #if defined(__NEWOS_ARM64__)
 #include <HALKit/ARM64/Processor.hxx>
-#endif
+#endif // defined(__NEWOS_ARM64__)
 
 #if defined(__NEWOS_AMD64__)
 #include <HALKit/AMD64/Processor.hxx>
-#endif
+#endif // defined(__NEWOS_AMD64__)
 
 namespace Kernel
 {
