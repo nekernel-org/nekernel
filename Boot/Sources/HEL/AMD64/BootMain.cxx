@@ -208,7 +208,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 		root.fKind = kNewFSCatalogKindDir;
 
-		checkPart.Format("NewOS (ZKA:)", &root, 1);
+		checkPart.Format("ZKA (C:)", &root, 1);
 
 		EFI::Stop();
 	}
@@ -232,7 +232,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::Thread(readerKernel.Blob());
-		loader->SetName("\"newoskrnl.dll\" (64-bit SMP DLL)");
+		loader->SetName("64-bit Kernel SMP DLL.");
 	}
 
 	writer.Write("newosldr: Running: ").Write(loader->GetName()).Write("\r");
