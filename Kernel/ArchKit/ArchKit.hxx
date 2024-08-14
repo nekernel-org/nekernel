@@ -86,18 +86,18 @@ namespace Kernel
 
 typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 
-struct RTSyscallInfoHdr final
+struct HAL_SYSCALL_RECORD final
 {
 	Kernel::Int64	fHash;
 	Kernel::Bool	fHooked;
 	rt_syscall_proc fProc;
 };
 
-inline Kernel::Array<RTSyscallInfoHdr,
+inline Kernel::Array<HAL_SYSCALL_RECORD,
 					 kKernelMaxSystemCalls>
 	kSyscalls;
 
-inline Kernel::Array<RTSyscallInfoHdr,
+inline Kernel::Array<HAL_SYSCALL_RECORD,
 					 kKernelMaxSystemCalls>
 	kKerncalls;
 
