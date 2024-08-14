@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: PS2MouseInterface.hxx
 	Purpose: PS/2 mouse.

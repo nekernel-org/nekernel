@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: PECodeManager.hxx
 	Purpose: PE32+ Code Manager and Shared Objects.

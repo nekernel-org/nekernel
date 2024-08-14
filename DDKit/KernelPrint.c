@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	Purpose: DDK Text I/O.
 

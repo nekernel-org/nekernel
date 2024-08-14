@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Technologies..
 
 	File: IPC.hxx.
 	Purpose: IPC protocol.

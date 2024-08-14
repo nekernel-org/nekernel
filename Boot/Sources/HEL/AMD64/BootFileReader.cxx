@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: FileReader.cxx
 	Purpose: New Boot FileReader,

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: PE.hxx
 	Purpose: Portable Executable for Kernel.

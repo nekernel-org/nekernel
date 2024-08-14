@@ -1,11 +1,11 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 ------------------------------------------- */
 
-#ifndef __MPCC_DEFINES_HXX__
-#define __MPCC_DEFINES_HXX__
+#ifndef __NDK_DEFINES_HXX__
+#define __NDK_DEFINES_HXX__
 
 #ifndef __GNUC__
 
@@ -118,4 +118,4 @@ namespace std
 	}
 } // namespace std
 
-#endif /* __MPCC_DEFINES_HXX__ */
+#endif /* __NDK_DEFINES_HXX__ */

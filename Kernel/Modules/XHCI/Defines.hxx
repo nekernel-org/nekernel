@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: Defines.hxx
 	Purpose: XHCI (and backwards) header.

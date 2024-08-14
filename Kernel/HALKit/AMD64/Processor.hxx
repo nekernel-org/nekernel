@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: Prcoessor.hxx
 	Purpose: AMD64 processor abstraction.

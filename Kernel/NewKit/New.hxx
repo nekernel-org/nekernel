@@ -1,7 +1,7 @@
 
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 ------------------------------------------- */
 #pragma once

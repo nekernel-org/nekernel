@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: PEF.hxx
 	Purpose: Preferred Executable Format for Kernel.

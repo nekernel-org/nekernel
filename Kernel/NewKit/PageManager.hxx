@@ -3,7 +3,7 @@
 
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 ------------------------------------------- */
 

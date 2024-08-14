@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: IO-Impl-AMD64.hpp
 	Purpose: I/O for AMD64.

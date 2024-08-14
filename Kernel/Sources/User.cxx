@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	Kernel
- * 	Copyright ZKA Technologies, all rights reserved.
+ * 	Copyright ZKA Technologies., all rights reserved.
  *
  *	File: User.cxx
  * 	Purpose: User concept and management.

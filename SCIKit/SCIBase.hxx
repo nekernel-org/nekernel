@@ -3,11 +3,16 @@
 Copyright ZKA Technologies.
 
 File: SCIBase.hxx
-Purpose: SCIKit foundation header.
+Purpose: SCI/M core header file (C++)
 
 ------------------------------------------- */
 
-#pragma once
+#ifndef __SCI_BASE_HXX__
+#define __SCI_BASE_HXX__
+
+#ifdef __cplusplus
+
+#include <SCIKit/Hint.hxx>
 
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C   extern "C"
@@ -105,31 +110,31 @@ typedef NEW_OBJECT COMP_OBJECT;
 /// @param symbol the symbol to look for
 /// @param dll_handle the DLL handle.
 /// @return the proc pointer.
-IMPORT_C VoidPtr RtlGetDLLProc(const char* symbol, VoidPtr dll_handle);
+IMPORT_C VoidPtr RtlGetDLLProc(_Input const Char* symbol, _Input NEW_OBJECT dll_handle);
 
 /// @brief Open DLL handle.
 /// @param path 
 /// @param drv 
 /// @return 
-IMPORT_C VoidPtr RtlOpenDLL(const char* path, const char* drv);
+IMPORT_C NEW_OBJECT RtlOpenDLL(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close DLL handle
 /// @param dll_handle 
 /// @return 
-IMPORT_C UInt0 RtlCloseDLL(VoidPtr dll_handle);
+IMPORT_C UInt0 RtlCloseDLL(_Input NEW_OBJECT dll_handle);
 
 /// @note Part of NK file API.
 
 /// @brief Opens a file from a drive.
-/// @param path the filesystem path.
-/// @param drv drive name, use NULL to use default one.
+/// @param fs_path the filesystem path.
+/// @param drive_letter drive name, use NULL to use default one.
 /// @return the file descriptor of the file.
-IMPORT_C UInt64 RtlOpenFile(const char* path, const char* drv);
+IMPORT_C NEW_OBJECT RtlOpenFile(const Char* fs_path, const Char* drive_letter);
 
 /// @brief Closes a file and flushes its content.
 /// @param file_desc the file descriptor.
 /// @return 
-IMPORT_C UInt0 RtlCloseFile(UInt64 file_desc);
+IMPORT_C UInt0 RtlCloseFile(_Input NEW_OBJECT file_desc);
 
 /// @brief Installs the TIB and GIB inside the current process.
 /// @param none
@@ -142,32 +147,39 @@ IMPORT_C UInt32 RtlInstallInfoBlocks(UInt0);
 /// @param uclsidOfCls UCLS factory class
 /// @return TCLS interface
 template <typename TCLS, typename UCLSID, typename... Args>
-TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args);
+TCLS* ScmQueryInterface(_Input UCLSID* uclsidOfCls, _Input Args&&... args);
 
 /// @brief Release SCM object.
 /// @tparam TCLS the class type.
 /// @param cls the class to release.
 /// @return status code.
 template <typename TCLS>
-SInt32 ScmReleaseClass(TCLS* cls);
+SInt32 ScmReleaseClass(_Input TCLS* cls);
 
 /// @brief Creates an SCM instance in the process.
 /// @param handle_instance the SCM handle.
 /// @param flags the SCM flags.
-SInt32 ScmCreateInstance(UInt32 flags, VoidPtr* handle_instance);
+SInt32 ScmCreateInstance(_Input UInt32 flags, _Output VoidPtr* handle_instance);
 
 /// @brief Destroys an SCM instance of the process.
 /// @param handle_instance the SCM handle.
-UInt0  ScmDestroyInstance(VoidPtr handle_instance);
+UInt0  ScmDestroyInstance(_Input VoidPtr handle_instance);
 
 /// @brief Creates a new heap from the process's address space.
 /// @param len the length of it.
 /// @param flags the flags of it.
 /// @return heap pointer.
-VoidPtr RtlCreateHeap(SizeT len, UInt32 flags);
+VoidPtr RtlCreateHeap(_Input SizeT len, _Input UInt32 flags);
 
 /// @brief Destroys the pointer
 /// @param heap the heap itself.
 /// @return void.
-UInt0 RtlDestroyHeap(VoidPtr heap);
+UInt0 RtlDestroyHeap(_Input VoidPtr heap);
 
+#else
+
+#include <SCIKit/SCIBase.h>
+
+#endif // ifdef __cplusplus
+
+#endif // ifndef __SCI_BASE_HXX__

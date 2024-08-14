@@ -2,7 +2,7 @@
 
 ![ZKA](res/zka.svg)
 
-# ZKA (ZKA Kernel Architecture)
+# ZKA Kernel Architecture (Mark 1)
 
 ZKA is an operating system kernel of New OS.
 
@@ -11,7 +11,7 @@ ZKA is an operating system kernel of New OS.
 - MinGW/GCC for the kernel and bootloader.
 - Netwide Assembler/NDK to output COFF/PEF object code.
 
-### Start by cloning:
+### Start by cloning the OS:
 
 ```
 git clone git@bitbucket.org:mahrouss/boot-krnl-dll.git
@@ -24,4 +24,4 @@ cd boot-krnl-dll
 make -f amd64-efi.make all
 ```
 
-##### Copyright, ZKA Technologies, all rights reserved.
+##### Copyright ZKA Technologies. All rights reserved.

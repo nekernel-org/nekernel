@@ -12,7 +12,7 @@ BEGIN
       VALUE "FileDescription", "New OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "newosldr"
-      VALUE "LegalCopyright", "Copyright ZKA Technologies, all rights reserved."
+      VALUE "LegalCopyright", "Copyright ZKA Technologies., all rights reserved."
       VALUE "OriginalFilename", "newosldr.exe"
       VALUE "ProductName", "newosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies
+	Copyright ZKA Technologies.
 
 	File: CodeManager.hpp
 	Purpose: Code Manager and Shared Objects.
