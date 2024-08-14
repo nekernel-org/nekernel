@@ -21,12 +21,14 @@ namespace Kernel
 			ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
 		}
 
-		return false;
+		return true;
 	}
 
-	Void err_bug_check_raise(void) noexcept
+	/// @brief Tells if we should raise a bug check not.
+	/// @param  void
+	/// @return void
+	Void err_bug_check_raise(Void) noexcept
 	{
-		if (!cRaise)
-			cRaise = true;
+		cRaise = true;
 	}
 } // namespace Kernel
