@@ -12,7 +12,7 @@ Purpose: SCIKit foundation header.
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C   extern "C"
 
-#define OBJECT_PATH "\\::\\OBJDLL\\"
+#define OBJECT_PATH "::\\"
 
 typedef bool Bool;
 typedef void UInt0;
@@ -152,7 +152,22 @@ template <typename TCLS>
 SInt32 ScmReleaseClass(TCLS* cls);
 
 /// @brief Creates an SCM instance in the process.
+/// @param handle_instance the SCM handle.
+/// @param flags the SCM flags.
 SInt32 ScmCreateInstance(UInt32 flags, VoidPtr* handle_instance);
 
 /// @brief Destroys an SCM instance of the process.
+/// @param handle_instance the SCM handle.
 UInt0  ScmDestroyInstance(VoidPtr handle_instance);
+
+/// @brief Creates a new heap from the process's address space.
+/// @param len the length of it.
+/// @param flags the flags of it.
+/// @return heap pointer.
+VoidPtr RtlCreateHeap(SizeT len, UInt32 flags);
+
+/// @brief Destroys the pointer
+/// @param heap the heap itself.
+/// @return void.
+UInt0 RtlDestroyHeap(VoidPtr heap);
+

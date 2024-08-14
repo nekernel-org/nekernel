@@ -28,11 +28,11 @@ typedef char*  caddr_t;
 #endif // !null
 
 #ifdef __GNUC__
-#include <CRT/__mpcc_alloca.hxx>
-#define __mpcc_alloca(sz) __mpcc_alloca(sz)
+#include <CRT/__ndk_alloca.hxx>
+#define __ndk_alloca(sz) __ndk_alloca(sz)
 #elif defined(__NDK__)
 
-#define __alloca(sz) __mpcc_alloca(sz)
+#define __alloca(sz) __ndk_alloca(sz)
 #endif
 
 #define __deref(ptr) (*(ptr))
@@ -90,8 +90,8 @@ typedef union double_cast {
 
 #ifdef __STD_CXX__
 
-#include <CRT/__mpcc_exception.hxx>
-#include <CRT/__mpcc_malloc.hxx>
+#include <CRT/__ndk_exception.hxx>
+#include <CRT/__ndk_malloc.hxx>
 
 #endif // ifdef __STD_CXX__
 

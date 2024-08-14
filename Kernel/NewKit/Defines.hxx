@@ -11,7 +11,7 @@
 #define NEWKIT_VERSION "1.01"
 
 #if !defined(_INC_NO_STDC_HEADERS) && defined(__GNUC__)
-#include <CRTKit/__mpcc_defines.hxx>
+#include <CRTKit/__ndk_defines.hxx>
 #endif
 
 #ifdef __has_feature

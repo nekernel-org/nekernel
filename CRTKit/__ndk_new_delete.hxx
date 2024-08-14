@@ -6,7 +6,8 @@
 
 #pragma once
 
-#include <CRTKit/__mpcc_defines.hxx>
+#include <CRTKit/__ndk_defines.hxx>
+#include <SCIKit/SCIBase.hxx>
 
 namespace stdx
 {
@@ -23,8 +24,39 @@ namespace stdx
 	template <typename KindClass>
 	inline void release(KindClass ptr)
 	{
-		if (!ptr)
-			return;
 		delete ptr;
 	}
 } // namespace stdx
+
+void* operator new(size_type len)
+{
+	if (!len)
+		++len;
+
+	return RtlCreateHeap(len, 0);
+}
+
+void operator delete(void* ptr)
+{
+	if (!ptr)
+		return;
+
+
+	RtlDestroyHeap(ptr);
+}
+
+void* operator new[](size_type len)
+{
+	if (!len)
+		++len;
+
+	return RtlCreateHeap(len, 0);
+}
+
+void operator delete[](void* ptr)
+{
+	if (!ptr)
+		return;
+
+	RtlDestroyHeap(ptr);
+}
