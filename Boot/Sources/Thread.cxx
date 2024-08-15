@@ -83,6 +83,7 @@ namespace Boot
 
 			constexpr auto sectionForCode	= ".text";
 			constexpr auto sectionForNewLdr = ".ldr";
+			constexpr auto sectionForBSS = ".bss";
 
 			for (SizeT sectIndex = 0; sectIndex < numSecs; ++sectIndex)
 			{
@@ -92,6 +93,10 @@ namespace Boot
 				{
 					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + optHdr->mAddressOfEntryPoint);
 					writer.Write("newosldr: Start Address: ").Write((UIntPtr)fStartAddress).Write("\r");
+				}
+				else if (StrCmp(sectionForBSS, sect->mName) == 0)
+				{
+					SetMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), 0, sect->mSizeOfRawData);
 				}
 				else if (StrCmp(sectionForNewLdr, sect->mName) == 0)
 				{
@@ -111,7 +116,6 @@ namespace Boot
 
 				writer.Write("newosldr: offset ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
 
-				SetMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), 0, sect->mSizeOfRawData);
 				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
 		}
