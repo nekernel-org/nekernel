@@ -244,11 +244,27 @@ namespace Kernel
 		}
 
 		process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame*>(
-			mm_new_ke_heap(sizeof(HAL::StackFrame), true, false));
+			mm_new_ke_heap(sizeof(HAL::StackFrame), Yes, Yes));
 
 		MUST_PASS(process.Leak().StackFrame);
 
-		process.Leak().Status = ProcessStatus::kRunning;
+		if (process.Leak().Image)
+		{
+			process.Leak().StackFrame->BP = reinterpret_cast<HAL::Reg>(process.Leak().Image);
+		}
+		else
+		{
+			if (process.Leak().Kind != PROCESS_HEADER_BLOCK::kSharedObjectKind)
+			{
+				process.Leak().Crash();
+				return -kErrorProcessFault;
+			}
+		}
+
+		if (!process.Leak().StackFrame->SP)
+			process.Leak().StackFrame->SP = reinterpret_cast<HAL::Reg>(mm_new_ke_heap(sizeof(UInt8) * 8196, Yes, Yes));
+
+		process.Leak().Status = ProcessStatus::kStarting;
 
 		process.Leak().ProcessId  = (mTeam.AsArray().Count() - 1);
 		process.Leak().HeapCursor = process.Leak().HeapPtr;
@@ -355,6 +371,16 @@ namespace Kernel
 		if (process.Leak().Status == ProcessStatus::kFrozen ||
 			process.Leak().Status == ProcessStatus::kDead)
 			return false;
+
+		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
+		{
+			if (auto start = process.Leak().DLLPtr->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart), kPefCode);
+				start)
+			{
+				process.Leak().Image = start;
+				process.Leak().StackFrame->BP = reinterpret_cast<HAL::Reg>(start);
+			}
+		}
 
 		if (process.Leak().GetStatus() == ProcessStatus::kStarting)
 		{

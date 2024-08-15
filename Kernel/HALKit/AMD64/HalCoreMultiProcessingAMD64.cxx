@@ -27,9 +27,6 @@
 #define kAPIC_BASE_MSR_BSP	  0x100
 #define kAPIC_BASE_MSR_ENABLE 0x800
 
-/// @brief assembly routine. internal use only.
-EXTERN_C void _hal_enable_smp(void);
-
 /// @note: _hal_switch_context is internal
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -40,11 +37,24 @@ EXTERN_C void _hal_enable_smp(void);
 
 namespace Kernel::HAL
 {
+	struct MADT_TABLE;
+
+	EXTERN_C Void _hal_spin_core(Void);
+
+	STATIC Void hal_switch_context(HAL::StackFramePtr stack_frame);
+
 	constexpr Int32 kThreadAPIC	  = 0;
 	constexpr Int32 kThreadLAPIC  = 1;
 	constexpr Int32 kThreadIOAPIC = 2;
 	constexpr Int32 kThreadAPIC64 = 3;
 	constexpr Int32 kThreadBoot	  = 4;
+
+	STATIC MADT_TABLE* kSMPBlock = nullptr;
+	Bool			   kSMPAware = false;
+
+	STATIC Int32 cSMPInterrupt = 34;
+
+	STATIC VoidPtr kRawMADT = nullptr;
 
 	/*
 	 *
@@ -67,67 +77,13 @@ namespace Kernel::HAL
 		} Selector;
 	};
 
-	STATIC VoidPtr	   kApicMadt	  = nullptr;
-
 	/// @brief Multiple APIC Descriptor Table.
-	struct MadtType final : public SDT
+	struct MADT_TABLE final : public SDT
 	{
-		UInt32 Address;
-		UInt32 Flags; // 1 = Dual Legacy PICs installed
+		UInt32 Address; // Madt address
+		UInt8  Flags;	// Madt flags
 
-		struct MadtAddress final
-		{
-			Char RecordType;
-			Char RecordLen; // record length
-		} MadtRecords[];
-	};
-
-	struct MadtProcessorLocalApic final
-	{
-		Char   AcpiProcessorId;
-		Char   ApicId;
-		UInt32 Flags;
-	};
-
-	struct MadtIOApic final
-	{
-		Char   ApicId;
-		Char   Reserved;
-		UInt32 Address;
-		UInt32 SystemInterruptBase;
-	};
-
-	struct MadtInterruptSource final
-	{
-		Char   BusSource;
-		Char   IrqSource;
-		UInt32 GSI;
-		UInt16 Flags;
-	};
-
-	struct MadtInterruptNmi final
-	{
-		Char   NmiSource;
-		Char   Reserved;
-		UInt16 Flags;
-		UInt32 GSI;
-	};
-
-	struct MadtLocalApicAddressOverride final
-	{
-		UInt16	Resvered;
-		UIntPtr Address;
-	};
-
-	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame);
-
-	///////////////////////////////////////////////////////////////////////////////////////
-
-	STATIC MadtType* kApicInfoBlock = nullptr;
-
-	enum
-	{
-		cAPICEOI = 0xb0,
+		VoidPtr Records[]; // Records List
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -143,8 +99,6 @@ namespace Kernel::HAL
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
 	}
 
-	EXTERN_C Void _hal_spin_core(Void);
-
 	/// @brief Send end IPI for CPU.
 	/// @param apicId
 	/// @param vector
@@ -156,28 +110,16 @@ namespace Kernel::HAL
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
-	STATIC HAL::StackFramePtr cFramePtr		= nullptr;
-	STATIC Int32			  cSMPInterrupt = 34;
-
-	/// @brief Gets the current context, used for context switching.
-	/// @retval StackFramePtr the current context.
-	EXTERN_C StackFramePtr _hal_leak_current_context(Void)
-	{
-		return cFramePtr;
-	}
-
 	/// @internal
 	EXTERN_C Void hal_ap_startup(Void)
 	{
-		while (Yes)
-		{
-		}
+		ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 	}
 
 	/// @internal
-	EXTERN_C Void _hal_switch_context(HAL::StackFramePtr stackFrame)
+	EXTERN_C Void _hal_switch_context(HAL::StackFramePtr stack_frame)
 	{
-		hal_switch_context(stackFrame);
+		hal_switch_context(stack_frame);
 	}
 
 	constexpr auto cMaxPCBBlocks = cMaxHWThreads;
@@ -188,7 +130,12 @@ namespace Kernel::HAL
 		HAL::StackFramePtr	  f_StackFrame;
 	} fBlocks[cMaxPCBBlocks] = {0};
 
-	STATIC Void hal_switch_context(HAL::StackFramePtr stackFrame)
+	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
+	{
+		return fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_StackFrame;
+	}
+
+	STATIC Void hal_switch_context(HAL::StackFramePtr stack_frame)
 	{
 		STATIC Semaphore sem;
 
@@ -197,10 +144,8 @@ namespace Kernel::HAL
 		HardwareTimer timer(Seconds(cSeconds));
 		sem.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), &timer);
 
-		cFramePtr = stackFrame;
-
 		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Header	   = &ProcessScheduler::The().Leak().TheCurrent().Leak();
-		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_StackFrame = stackFrame;
+		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_StackFrame = stack_frame;
 
 		sem.Unlock();
 	}
@@ -233,11 +178,17 @@ namespace Kernel::HAL
 	Void hal_system_get_cores(voidPtr rsdPtr)
 	{
 		auto acpi = ACPIFactoryInterface(rsdPtr);
-		kApicMadt = acpi.Find(kApicSignature).Leak().Leak();
+		kRawMADT  = acpi.Find(kApicSignature).Leak().Leak();
 
-		MUST_PASS(kApicMadt);
+		kSMPBlock = reinterpret_cast<MADT_TABLE*>(kRawMADT);
 
-		kApicInfoBlock = (MadtType*)kApicMadt;
+		if (!kSMPBlock)
+			kSMPAware = false;
+
+		if (kSMPBlock)
+		{
+			kSMPAware = true;
+		}
 	}
 } // namespace Kernel::HAL
 

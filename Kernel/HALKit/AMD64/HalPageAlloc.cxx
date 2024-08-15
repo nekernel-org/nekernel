@@ -73,24 +73,24 @@ namespace Kernel
 			kAllocationInProgress = true;
 
 			//! fetch from the start.
-			Detail::VIRTUAL_MEMORY_HEADER*	  vmHeader = reinterpret_cast<Detail::VIRTUAL_MEMORY_HEADER*>(kKernelVMTStart);
+			Detail::VIRTUAL_MEMORY_HEADER*	  vmh_header = reinterpret_cast<Detail::VIRTUAL_MEMORY_HEADER*>(kKernelVMTStart);
 			Detail::VirtualMemoryHeaderTraits traits;
 
-			while (vmHeader->Present &&
-				   vmHeader->Magic == cVMHMagic)
+			while (vmh_header->Present &&
+				   vmh_header->Magic == cVMHMagic)
 			{
-				vmHeader = traits.Next(vmHeader);
+				vmh_header = traits.Next(vmh_header);
 			}
 
-			vmHeader->Magic		= cVMHMagic;
-			vmHeader->Present	= true;
-			vmHeader->ReadWrite = rw;
-			vmHeader->User		= user;
-			vmHeader->Size		= size;
+			vmh_header->Magic		= cVMHMagic;
+			vmh_header->Present	= true;
+			vmh_header->ReadWrite = rw;
+			vmh_header->User		= user;
+			vmh_header->Size		= size;
 
 			kAllocationInProgress = false;
 
-			return reinterpret_cast<VoidPtr>(vmHeader + sizeof(Detail::VIRTUAL_MEMORY_HEADER));
+			return reinterpret_cast<VoidPtr>(vmh_header + sizeof(Detail::VIRTUAL_MEMORY_HEADER));
 		}
 
 		/// @brief Allocate a new page to be used by the OS.

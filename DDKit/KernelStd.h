@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies.
 
-	Purpose: DDK Definitions.
+	Purpose: DDK DLL Base Header.
 
 ------------------------------------------- */
 
