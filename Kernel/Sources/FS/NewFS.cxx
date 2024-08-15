@@ -1034,16 +1034,18 @@ namespace Kernel::Detail
 	/***********************************************************************************/
 	Boolean fs_init_newfs(Void) noexcept
 	{
+		kcout << "newoskrnl: Creating drives...\r";
+
 		sMountpointInterface.A() = io_construct_main_drive();
 		sMountpointInterface.B() = io_construct_drive();
 		sMountpointInterface.C() = io_construct_drive();
 		sMountpointInterface.D() = io_construct_drive();
 
-		kcout << "newoskrnl: Testing drive...\r";
+		kcout << "newoskrnl: Testing main drive...\r";
 
 		sMountpointInterface.A().fVerify(&sMountpointInterface.A().fPacket);
 
-		kcout << "newoskrnl: Testing drive [ OK ]...\r";
+		kcout << "newoskrnl: Testing main drive [ OK ]...\r";
 
 		return true;
 	}

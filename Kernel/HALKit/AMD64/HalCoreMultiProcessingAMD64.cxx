@@ -81,9 +81,12 @@ namespace Kernel::HAL
 	struct MADT_TABLE final : public SDT
 	{
 		UInt32 Address; // Madt address
-		UInt8  Flags;	// Madt flags
+		UInt32  Flags;	// Madt flags
 
-		VoidPtr Records[]; // Records List
+		struct {
+			UInt8 Type;
+			UInt8 Len;
+		} Records[]; // Records List
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////

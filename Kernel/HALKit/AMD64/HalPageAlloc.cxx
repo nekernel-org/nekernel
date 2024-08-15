@@ -6,6 +6,8 @@
 
 #include <ArchKit/ArchKit.hxx>
 
+#define cVMHMagic (0xDEEFD00D)
+
 #ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
 #elif defined(__NEWOS_ARM64__)
@@ -19,7 +21,6 @@ Kernel::Boolean kAllocationInProgress = false;
 
 namespace Kernel
 {
-	constexpr auto cVMHMagic = 0xDEEFD00D;
 
 	namespace HAL
 	{
@@ -99,11 +100,15 @@ namespace Kernel
 		/// @return
 		auto hal_alloc_page(Boolean rw, Boolean user, SizeT size) -> VoidPtr
 		{
+			kcout << "Waiting now...";
+
 			// Wait for a ongoing allocation to complete.
 			while (kAllocationInProgress)
 			{
 				(void)0;
 			}
+
+			kcout << ", done waiting, allocating...\r";
 
 			if (size == 0)
 				++size;

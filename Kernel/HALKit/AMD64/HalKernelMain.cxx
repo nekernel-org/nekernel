@@ -24,6 +24,8 @@
 Kernel::Property cKernelVersion;
 Kernel::Property cAutoFormatDisk;
 
+EXTERN Kernel::Boolean kAllocationInProgress;
+
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
 struct HEAP_ALLOC_INFO final
@@ -84,7 +86,11 @@ EXTERN_C void hal_init_platform(
 }
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept
-{	// get page size.
+{	
+	// reset kAllocationInProgress field to zero.
+	kAllocationInProgress = false;
+
+	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
 
 	// get virtual address start (for the heap)
@@ -210,15 +216,20 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
 	
+	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+
+	Kernel::kcout << "newoskrnl: Creating filesystem and such.\r";
+
 	auto fs = new Kernel::NewFilesystemManager();
+	
+	MUST_PASS(fs);
+	MUST_PASS(fs->GetParser());
 
 	Kernel::NewFilesystemManager::Mount(fs);
 
-	MUST_PASS(fs->GetParser());
-
 	delete fs->GetParser()->CreateCatalog("\\Users\\", 0, kNewFSCatalogKindDir);
 
-	Kernel::kcout << "newoskrnl: Creating filesystem and " << kSuperUser << "..." << Kernel::endl;
+	Kernel::kcout << "newoskrnl: Created filesystem and now creating " << kSuperUser << "..." << Kernel::endl;
 
 	cRoot = new Kernel::User(Kernel::RingKind::kRingSuperUser, kSuperUser);
 

@@ -75,12 +75,7 @@ namespace Kernel
 
 		if (NewFilesystemManager::GetMounted())
 		{
-			auto node = NewFilesystemManager::GetMounted()->Open(kUsersFile, "wb");
-
-			if (!node)
-			{
-				NewFilesystemManager::GetMounted()->Create(kUsersFile);
-			}
+			auto node = NewFilesystemManager::GetMounted()->Create(kUsersFile);
 
 			if (node)
 			{
@@ -89,12 +84,10 @@ namespace Kernel
 			}
 			
 			delete token;
-
 			return true;
 		}
 
 		delete token;
-
 		return false;
 	}
 
