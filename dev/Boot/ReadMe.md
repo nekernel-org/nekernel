@@ -1,4 +1,4 @@
-# newosldr (Zeta Bootloader Architecture)
+# ZBA (Zeta Bootloader Architecture)
 
 You need:
 
