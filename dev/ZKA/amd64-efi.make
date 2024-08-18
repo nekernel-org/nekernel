@@ -7,7 +7,7 @@ CC			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -fshort-wchar -c -shared -D__NEWOS_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
 			-std=c++20 -D__NEWOS_SUPPORT_NX__ -I../Vendor -D__FSKIT_USE_NEWFS__ \
-			-D__NEWOSKRNL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I./ -I../ -I../Boot
+			-D__NEWOSKRNL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I./ -I../ -I../ZBA
 
 ASM 		= nasm
 

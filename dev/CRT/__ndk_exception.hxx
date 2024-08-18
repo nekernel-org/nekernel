@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include <CRTKit/__ndk_defines.hxx>
+#include <CRT/__ndk_defines.hxx>
 
 /// @brief CRT exit, with exit code (!!! exits all threads. !!!)
-/// @param code 
-/// @return 
+/// @param code
+/// @return
 extern "C" int __exit(int code);
 
 /// @brief Standard C++ namespace

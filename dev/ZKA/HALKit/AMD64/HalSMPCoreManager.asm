@@ -1,7 +1,7 @@
 ;; /*
 ;; *	========================================================
 ;; *
-;; *	Kernel
+;; *	ZKA
 ;; * 	Copyright ZKA Technologies., all rights reserved.
 ;; *
 ;; * 	========================================================
@@ -57,11 +57,11 @@ rt_do_context_switch:
     mov r14, [r9 + (8 * 17)]
     mov r15, [r9 + (8 * 18)]
 
-    fldcw word [r9 + (8 * 21)] 
+    fldcw word [r9 + (8 * 21)]
 
     mov r9, [r9 + (8 * 12)]
 
-    retfq 
+    retfq
 
 ;; gets the current stack frame.
 rt_get_current_context:

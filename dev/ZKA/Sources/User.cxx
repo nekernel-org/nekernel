@@ -1,7 +1,7 @@
 /*
  *	========================================================
  *
- *	Kernel
+ *  ZKA
  * 	Copyright ZKA Technologies., all rights reserved.
  *
  *	File: User.cxx
@@ -82,7 +82,7 @@ namespace Kernel
 				NewFilesystemManager::GetMounted()->Write(this->fUserName.CData(), node, (VoidPtr)token, (this->IsStdUser() ? cStdUser : cSuperUser) | kNewFSCatalogKindMetaFile, len);
 				delete node;
 			}
-			
+
 			delete token;
 			return true;
 		}

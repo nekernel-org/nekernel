@@ -45,7 +45,7 @@ REM_FLAG=-f
 
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSLDR__ \
-			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../Kernel  -I../ -c -nostdlib -fno-rtti -fno-exceptions \
+			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../ZKA  -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__
 
 BOOT_LOADER=newosldr.exe
@@ -64,10 +64,10 @@ all: compile-amd64
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o Sources/$(BOOT_LOADER)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/BOOTX64.EFI
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/EFI/BOOT/NEWOSLDR.EFI
-	$(COPY) ../Kernel/$(KERNEL) Sources/Root/$(KERNEL)
-	$(COPY) ../SCIKit/$(SCI) Sources/Root/$(SCI)
-	$(COPY) ../DDKit/$(DDK) Sources/Root/$(DDK)
-	$(COPY) ../CRTKit/$(CRT) Sources/Root/$(CRT)
+	$(COPY) ../ZKA/$(KERNEL) Sources/Root/$(KERNEL)
+	$(COPY) ../SCI/$(SCI) Sources/Root/$(SCI)
+	$(COPY) ../DDK/$(DDK) Sources/Root/$(DDK)
+	$(COPY) ../CRT/$(CRT) Sources/Root/$(CRT)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )

@@ -1,7 +1,7 @@
 ;; /*
 ;; *	========================================================
 ;; *
-;; *	Kernel
+;; *	ZKA
 ;; * 	Copyright ZKA Technologies., all rights reserved.
 ;; *
 ;; * 	========================================================
@@ -29,5 +29,5 @@ rt_install_tib:
 [global hal_ap_trampoline]
 
 hal_ap_trampoline:
-hal_ap_trampoline_1:  
+hal_ap_trampoline_1:
     jmp    hal_ap_startup

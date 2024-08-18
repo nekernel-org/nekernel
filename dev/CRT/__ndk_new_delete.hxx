@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <CRTKit/__ndk_defines.hxx>
+#include <CRT/__ndk_defines.hxx>
 #include <SCIKit/SCIBase.hxx>
 
 namespace stdx
