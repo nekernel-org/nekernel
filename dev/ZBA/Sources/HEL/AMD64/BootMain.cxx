@@ -134,7 +134,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	cg_write_text("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	cg_write_text(BVersionString::The(), 20, 10, RGB(0xFF, 0xFF, 0xFF));
-	cg_write_text("WARNING: YOU MUST HAVE AT LEAST 2 CORES OR COHERENT PROCESSORS INSLATTED IN YOUR SYSTEM.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+	cg_write_text("WARNING: YOU MUST HAVE AT LEAST 2 CORES OR COHERENT PROCESSORS INSTALLED IN YOUR SYSTEM.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 
 	// Fill handover header now.
 
