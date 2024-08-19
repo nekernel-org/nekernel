@@ -28,7 +28,7 @@ namespace Kernel
 {
 	//! @brief Forward declarations.
 	struct PROCESS_HEADER_BLOCK;
-	
+
 	class PEFSharedObjectInterface;
 	class ProcessTeam;
 	class ProcessScheduler;
@@ -143,7 +143,7 @@ namespace Kernel
 		const Int32& GetExitCode() noexcept;
 
 	public:
-		Char			   Name[kProcessLen] = {"PROCESS"};
+		Char			   Name[kProcessLen] = {"PROCESS #0 (TEAM 0)"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
 		ProcessLevelRing	   Selector{ProcessLevelRing::kRingStdUser};
 		HAL::StackFramePtr StackFrame{nullptr};

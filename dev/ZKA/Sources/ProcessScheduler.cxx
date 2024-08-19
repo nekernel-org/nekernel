@@ -210,8 +210,8 @@ namespace Kernel
 	}
 
 	/// @brief Add process to list.
-	/// @param process
-	/// @return
+	/// @param process the process *Ref* class.
+	/// @return the process index inside the team.
 	SizeT ProcessScheduler::Add(Ref<PROCESS_HEADER_BLOCK>& process)
 	{
 		if (!process.Leak().Image)

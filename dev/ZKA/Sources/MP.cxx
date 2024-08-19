@@ -84,17 +84,17 @@ namespace Kernel
 	/// @retval false stack is invalid, previous code is running.
 	Bool HardwareThread::Switch(HAL::StackFramePtr stack)
 	{
+		/// provide 'nullptr' to free the stack frame.
+		if (stack == nullptr)
+		{
+			delete fStack;
+			fStack = nullptr;
+
+			return true;
+		}
+
 		if (!rt_check_stack(stack))
 		{
-			/// provide 'nullptr' to free the stack frame.
-			if (stack == nullptr)
-			{
-				delete fStack;
-				fStack = nullptr;
-
-				return true;
-			}
-
 			return false;
 		}
 
@@ -125,7 +125,7 @@ namespace Kernel
 		StringView strCoreName(512);
 		strCoreName += "\\Class\\Smp\\MPClass";
 
-		cSMPCoreName.GetKey() = strCoreName;
+		cSMPCoreName.GetKey()	= strCoreName;
 		cSMPCoreName.GetValue() = (UIntPtr)this;
 
 		kcout << "newoskrnl: initializing " << strCoreName.CData() << endl;
