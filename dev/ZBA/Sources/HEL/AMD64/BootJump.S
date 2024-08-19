@@ -1,4 +1,5 @@
 .global rt_jump_to_address
+.global rt_reset_hardware
 .text
 
 .text
@@ -19,3 +20,30 @@ rt_jump_to_address:
     pop rax
 
     ret
+
+.code16
+
+rt_reset_hardware:
+    /* dont raise any interrupts. (except ofc NMIs.) */
+    cli
+wait_gate1:
+    /* wait for gate 1 to be ready? */
+    in al,0x64
+    and al,2
+    jnz wait_gate1
+    mov al,0x0D1
+    out 0x64,al
+wait_gate2:
+    /* wait for gate 2 to be ready? */
+    in al,0x64
+    and al,2
+    jnz wait_gate2
+    mov al,0x0FE
+    out 0x60,al
+
+    /* trigger triple fault */
+
+    xor eax,eax
+    mov cr3,eax
+reset_wait:
+    jmp reset_wait

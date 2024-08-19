@@ -12,7 +12,7 @@ Purpose: SCI/M core header file (C++)
 
 #ifdef __cplusplus
 
-#include <SCIKit/Hint.hxx>
+#include <SCI/Hint.hxx>
 
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C   extern "C"
@@ -39,7 +39,7 @@ typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
 
 #ifdef __SCI_IMPL__
-#include <SCIKit/scm.internal.inl>
+#include <SCI/scm.internal.inl>
 #else
 class UnknownInterface; // Refrenced from an IDB entry.
 class UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: WordUCLSID.
@@ -113,14 +113,14 @@ typedef NEW_OBJECT COMP_OBJECT;
 IMPORT_C VoidPtr RtlGetDLLProc(_Input const Char* symbol, _Input NEW_OBJECT dll_handle);
 
 /// @brief Open DLL handle.
-/// @param path 
-/// @param drv 
-/// @return 
+/// @param path
+/// @param drv
+/// @return
 IMPORT_C NEW_OBJECT RtlOpenDLL(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close DLL handle
-/// @param dll_handle 
-/// @return 
+/// @param dll_handle
+/// @return
 IMPORT_C UInt0 RtlCloseDLL(_Input NEW_OBJECT dll_handle);
 
 /// @note Part of NK file API.
@@ -133,7 +133,7 @@ IMPORT_C NEW_OBJECT RtlOpenFile(const Char* fs_path, const Char* drive_letter);
 
 /// @brief Closes a file and flushes its content.
 /// @param file_desc the file descriptor.
-/// @return 
+/// @return
 IMPORT_C UInt0 RtlCloseFile(_Input NEW_OBJECT file_desc);
 
 /// @brief Installs the TIB and GIB inside the current process.
@@ -178,7 +178,7 @@ UInt0 RtlDestroyHeap(_Input VoidPtr heap);
 
 #else
 
-#include <SCIKit/SCIBase.h>
+#include <SCI/SCIBase.h>
 
 #endif // ifdef __cplusplus
 

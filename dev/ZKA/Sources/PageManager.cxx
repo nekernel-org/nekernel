@@ -63,11 +63,9 @@ namespace Kernel
 	/// @return
 	PTEWrapper PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz)
 	{
-		kcout << "newoskrnl: Allocating VMH page from PageManager...\r";
-
 		// Store PTE wrapper right after PTE.
 		VoidPtr ptr = Kernel::HAL::hal_alloc_page(Rw, User, Sz);
-		
+
 		if (ptr == kBadAddress)
 		{
 			kcout << "[create_page_wrapper] kBadAddress returned\n";

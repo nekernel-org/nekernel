@@ -86,9 +86,11 @@ EXTERN_C void hal_init_platform(
 }
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept
-{	
+{
 	// reset kAllocationInProgress field to zero.
 	kAllocationInProgress = false;
+
+	kKernelVMTStart = kHandoverHeader->f_HeapStart;
 
 	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
@@ -215,36 +217,39 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
-	
+
 	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::kcout << "newoskrnl: Creating filesystem and such.\r";
 
 	auto fs = new Kernel::NewFilesystemManager();
-	
+
 	MUST_PASS(fs);
 	MUST_PASS(fs->GetParser());
 
 	Kernel::NewFilesystemManager::Mount(fs);
 
-	delete fs->GetParser()->CreateCatalog("\\Users\\", 0, kNewFSCatalogKindDir);
-
-	Kernel::kcout << "newoskrnl: Created filesystem and now creating " << kSuperUser << "..." << Kernel::endl;
+	if (auto node = fs->GetParser()->GetCatalog("\\Users\\");
+		!node)
+	{
+		delete fs->GetParser()->CreateCatalog("\\Users\\", 0, kNewFSCatalogKindDir);
+	}
 
 	cRoot = new Kernel::User(Kernel::RingKind::kRingSuperUser, kSuperUser);
 
 #ifdef __DEBUG__
-	const auto cPassword = "6aa162f3-20f6-4143-92f9-5dd37066aedc";
+	const auto cPassword = "infdev";
 #else
 	const auto cPassword = "password";
 #endif
-	
+
 	Kernel::UserManager::The()->fRootUser = cRoot;
 
 	Kernel::kcout << "newoskrnl: Root is " << kSuperUser << "." << Kernel::endl;
 
 	cRoot->TrySave(cPassword);
-	
+
+	/// TODO: Fix this now!
 	Kernel::UserManager::The()->TryLogIn(cRoot, cPassword);
 
 	Kernel::ke_stop(RUNTIME_CHECK_FAILED);

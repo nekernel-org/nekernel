@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <DDKit/KernelStd.h>
+#include <DDK/KernelStd.h>
 
 void* operator new(size_t sz)
 {

@@ -4,6 +4,4 @@
 
 ------------------------------------------- */
 
-#include <SCIKit/SCIErr.hxx>
-
-NEW_ERROR_TYPE kLastError = 0;
+#include <SCI/SCIBase.hxx>

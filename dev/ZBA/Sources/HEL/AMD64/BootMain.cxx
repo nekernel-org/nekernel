@@ -38,7 +38,7 @@ STATIC EfiGraphicsOutputProtocol* kGop	  = nullptr;
 STATIC UInt16					  kStride = 0U;
 STATIC EfiGUID					  kGopGuid;
 
-EXTERN_C Void hal_init_platform(HEL::HandoverInformationHeader* HIH);
+EXTERN_C Void rt_reset_hardware();
 
 /**
 	@brief Finds and stores the GOP.
@@ -89,14 +89,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	InitEFI(SystemTable); ///! Init the EFI library.
 	InitVideoFB();		  ///! Init the GOP.
 
-	BTextWriter writer;
-
-	/// Splash screen stuff
-
-	writer.Write(L"ZKA Technologies (R) newosldr: ")
-		.Write(BVersionString::The())
-		.Write("\r");
-
 	UInt32				 MapKey		= 0;
 	UInt32				 SizePtr	= sizeof(EfiMemoryDescriptor);
 	EfiMemoryDescriptor* Descriptor = nullptr;
@@ -118,12 +110,31 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
 			vendorTable[6] == 'R' && vendorTable[7] == ' ')
 		{
-			writer.Write(L"newosldr: Filling RSD PTR...\r");
 			handoverHdrPtr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendorTable;
-
 			break;
 		}
 	}
+
+	// ------------------------------------------ //
+	// draw background color.
+	// ------------------------------------------ //
+
+	handoverHdrPtr->f_GOP.f_The			 = kGop->Mode->FrameBufferBase;
+	handoverHdrPtr->f_GOP.f_Width		 = kGop->Mode->Info->VerticalResolution;
+	handoverHdrPtr->f_GOP.f_Height		 = kGop->Mode->Info->HorizontalResolution;
+	handoverHdrPtr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
+	handoverHdrPtr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
+	handoverHdrPtr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
+
+	kHandoverHeader = handoverHdrPtr;
+
+	CGInit();
+	CGDrawInRegion(CGColor(0xff, 0x3a, 0x3a), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
+	CGFini();
+
+	cg_write_text("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
+	cg_write_text(BVersionString::The(), 20, 10, RGB(0xFF, 0xFF, 0xFF));
+	cg_write_text("WARNING: YOU MUST HAVE AT LEAST 2 CORES OR COHERENT PROCESSORS INSLATTED IN YOUR SYSTEM.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 
 	// Fill handover header now.
 
@@ -164,6 +175,10 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_VirtualStart =
 		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
 
+	handoverHdrPtr->f_HeapStart = nullptr;
+
+	BS->AllocatePool(EfiLoaderCode, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart);
+
 	handoverHdrPtr->f_VirtualSize =
 		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
 
@@ -177,39 +192,23 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
 			 handoverHdrPtr->f_FirmwareVendorLen);
 
-	handoverHdrPtr->f_GOP.f_The			 = kGop->Mode->FrameBufferBase;
-	handoverHdrPtr->f_GOP.f_Width		 = kGop->Mode->Info->VerticalResolution;
-	handoverHdrPtr->f_GOP.f_Height		 = kGop->Mode->Info->HorizontalResolution;
-	handoverHdrPtr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
-	handoverHdrPtr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
-	handoverHdrPtr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
-
 	// Assign to global 'kHandoverHeader'.
 
-	kHandoverHeader = handoverHdrPtr;
-
-	// ------------------------------------------ //
-	// draw background color.
-	// ------------------------------------------ //
-
-	CGInit();
-	CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
-	CGFini();
-
 	BDiskFormatFactory<BootDeviceATA> checkPart;
-	
+
 	if (!checkPart.IsPartitionValid())
 	{
-		writer.Write("newosldr: Warning, partition isn't valid! repaired it.\rPlease restart the computer now.\r");
-
 		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
 		root.fFileName[0] = kNewFSRoot[0];
 		root.fFileName[1] = 0;
 
 		root.fKind = kNewFSCatalogKindDir;
 
-		checkPart.Format("ZKA (C:)", &root, 1);
+		checkPart.Format("ZKA (A:)", &root, 1);
 
+		cg_write_text("INSATLLED PARTITION WITH SUCCESS.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+
+		rt_reset_hardware();
 		EFI::Stop();
 	}
 
@@ -223,7 +222,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	readerKernel.ReadAll(0);
 
-	Boot::Thread* loader = nullptr;
+	Boot::BThread* loader = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
@@ -231,25 +230,17 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	if (readerKernel.Blob())
 	{
-		loader = new Boot::Thread(readerKernel.Blob());
-		loader->SetName("64-bit Kernel SMP DLL.");
+		loader = new Boot::BThread(readerKernel.Blob());
+		loader->SetName("64-bit Kernel DLL.");
 	}
-
-	writer.Write("newosldr: Running: ").Write(loader->GetName()).Write("\r");
-
-	/// TODO: Parse command line from ZKA\cmd.json
-	// CopyMem(handoverHdrPtr->f_CommandLine[0], "/SMP", StrLen("/SMP"));
 
 	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
 	EFI::ExitBootServices(MapKey, ImageHandle);
 
 	// ---------------------------------------------------- //
-	// Call kernel.
+	// finally load kernel.
 	// ---------------------------------------------------- //
-
-	cg_write_text("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0x00, 0x00, 0x00));
-	cg_write_text("LOADING NEWOSKRNL...", 20, 10, RGB(0x00, 0x00, 0x00));
 
 	loader->Start(handoverHdrPtr);
 

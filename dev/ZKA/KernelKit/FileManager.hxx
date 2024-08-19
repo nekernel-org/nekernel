@@ -59,6 +59,9 @@ namespace Kernel
 		cFileReadChunk	= 102,
 		cFileWriteChunk = 103,
 		cFileIOCnt		= (cFileWriteChunk - cFileWriteAll) + 1,
+		// file flags
+		cFileFlagRsrc = 104,
+		cFileFlagData = 105,
 	};
 
 	/// @brief filesystem node generic type.
@@ -173,11 +176,8 @@ namespace Kernel
 							 _Input SizeT		sz) override;
 
 	public:
-		void SetResourceFork(const char* forkName);
-		void SetDataFork(const char* forkName);
-
-		/// @brief Get internal parser.
-		/// @return
+		/// @brief Get NewFS parser class.
+		/// @return The filesystem parser class.
 		NewFSParser* GetParser() noexcept;
 
 	private:

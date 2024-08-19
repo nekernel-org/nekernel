@@ -29,16 +29,20 @@ namespace Kernel
 		/// \brief Constructs a token by hashing the password.
 		/// \param password password to hash.
 		/// \return the hashed password
-		const Int32 cred_construct_token(Char* password, User* user)
+		const Int32 cred_construct_token(Char* password, const Char* in_password, User* user, SizeT length)
 		{
 			if (!password || !user)
 				return -1;
 
-			for (Size i_pass = 0; i_pass < rt_string_len(password); ++i_pass)
+			kcout << "Constructing token...\r";
+
+			for (Size i_pass = 0; i_pass < length; ++i_pass)
 			{
-				Char cur_chr	 = password[i_pass];
+				Char cur_chr	 = in_password[i_pass];
 				password[i_pass] = cur_chr + (user->IsStdUser() ? cStdUser : cSuperUser);
 			}
+
+			kcout << "Done constructing token...\r";
 
 			return 0;
 		}
@@ -48,46 +52,74 @@ namespace Kernel
 		: fRing((RingKind)sel)
 	{
 		MUST_PASS(sel >= 0);
-		this->fUserName += userName;
+		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
 	}
 
 	User::User(const RingKind& ringKind, const Char* userName)
 		: fRing(ringKind)
 	{
-		this->fUserName += userName;
+	   rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
 	}
 
 	User::~User() = default;
 
 	Bool User::TrySave(const Char* password) noexcept
 	{
-		kcout << "Trying to save password...\r";
-
 		SizeT len = rt_string_len(password);
 
 		Char* token = new Char[len];
 
 		MUST_PASS(token);
 
-		rt_copy_memory((VoidPtr)password, token, rt_string_len(password));
+		kcout << "Trying to save password...\r";
 
-		Detail::cred_construct_token(token, this);
+		rt_copy_memory((VoidPtr)password, token, len);
+		Detail::cred_construct_token(token, password, this, len);
 
 		if (NewFilesystemManager::GetMounted())
 		{
-			auto node = NewFilesystemManager::GetMounted()->Create(kUsersFile);
+			NewFilesystemManager* new_fs = (NewFilesystemManager*)NewFilesystemManager::GetMounted();
 
-			if (node)
+			kcout << "newoskrnl: Opening catalog.\r";
+
+			auto node = new_fs->GetParser()->GetCatalog(kUsersFile);
+
+			if (!node)
 			{
-				NewFilesystemManager::GetMounted()->Write(this->fUserName.CData(), node, (VoidPtr)token, (this->IsStdUser() ? cStdUser : cSuperUser) | kNewFSCatalogKindMetaFile, len);
-				delete node;
+				node = new_fs->GetParser()->CreateCatalog(kUsersFile);
 			}
 
-			delete token;
+			kcout << "newoskrnl: Writing token...\r";
+
+			NFS_FORK_STRUCT fork{0};
+
+			fork.Kind = kNewFSRsrcForkKind;
+			fork.DataSize = rt_string_len(password);
+
+			rt_copy_memory((VoidPtr)this->fUserName, fork.ForkName, rt_string_len(this->fUserName));
+			rt_copy_memory((VoidPtr)kUsersFile, fork.CatalogName, rt_string_len(kUsersFile));
+
+			fork.DataSize = len;
+
+			new_fs->GetParser()->CreateFork(node, fork);
+
+			new_fs->GetParser()->WriteCatalog(node, (fork.Kind == kNewFSRsrcForkKind), reinterpret_cast<VoidPtr>(token), len, this->fUserName);
+
+			delete node;
+			node = nullptr;
+
+			delete[] token;
+			token = nullptr;
+
+			kcout << "newoskrnl: Wrote token...\r";
 			return true;
 		}
 
-		delete token;
+		kcout << "No filesystem mounted...\r";
+
+		delete[] token;
+		token = nullptr;
+
 		return false;
 	}
 
@@ -101,7 +133,7 @@ namespace Kernel
 		return lhs.fRing != this->fRing;
 	}
 
-	StringView& User::Name() noexcept
+	Char* User::Name() noexcept
 	{
 		return this->fUserName;
 	}
@@ -123,7 +155,7 @@ namespace Kernel
 
 	UserManager* UserManager::The() noexcept
 	{
-		UserManager* view = nullptr;
+		static UserManager* view = nullptr;
 
 		if (!view)
 			view = new UserManager();
@@ -136,22 +168,33 @@ namespace Kernel
 		if (!password ||
 			!user)
 		{
-			ErrLocal() = kErrorInvalidData;
-
 			kcout << "newoskrnl: Incorrect data given.\r";
+
+			ErrLocal() = kErrorInvalidData;
 
 			return false;
 		}
 
 		kcout << "newoskrnl: Trying to log-in.\r";
 
-		FileStreamUTF8 file(kUsersFile, "rb");
+		NewFilesystemManager* new_fs = (NewFilesystemManager*)NewFilesystemManager::GetMounted();
+
+		// do not use if unmounted.
+
+		if (!new_fs)
+			return false;
+
+		auto node = new_fs->GetParser()->GetCatalog(kUsersFile);
 
 		// ------------------------------------------ //
 		// Retrieve token from a specific file fork.
+		// Fail on null.
 		// ------------------------------------------ //
 
-		auto token = file.Read(user->fUserName.CData());
+		if (!node)
+			return false;
+
+		auto token = new_fs->GetParser()->ReadCatalog(node, rt_string_len(password), user->fUserName);
 
 		if (!token)
 		{
@@ -162,7 +205,7 @@ namespace Kernel
 		}
 		else
 		{
-			Char generated_token[255] = {0};
+			Char generated_token[kMaxUserTokenLen] = {0};
 
 			// ================================================== //
 			// Provide password on token variable.
@@ -174,7 +217,7 @@ namespace Kernel
 			// Construct token.
 			// ================================================== //
 
-			Detail::cred_construct_token(generated_token, user);
+			Detail::cred_construct_token(generated_token, password, user, rt_string_len(password));
 
 			// ================================================== //
 			// Checks if it matches the current token we have.
@@ -210,7 +253,7 @@ namespace Kernel
 		}
 
 		fCurrentUser = user;
-		Kernel::kcout << "newoskrnl: Logged in as: " << fCurrentUser->Name().CData() << Kernel::endl;
+		Kernel::kcout << "newoskrnl: Logged in as: " << fCurrentUser->Name() << Kernel::endl;
 
 		return true;
 	}

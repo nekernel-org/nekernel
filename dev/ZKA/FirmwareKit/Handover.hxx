@@ -26,6 +26,8 @@
 
 #define kHandoverMaxCmdLine 8
 
+#define kHandoverHeapSz gib_cast(2)
+
 #define kHandoverStructSz sizeof(HEL::HandoverHeader)
 
 namespace Kernel::HEL
@@ -56,9 +58,11 @@ namespace Kernel::HEL
 		UInt64 f_Magic;
 		UInt64 f_Version;
 
-		voidPtr f_VirtualStart;
+		VoidPtr f_VirtualStart;
 		SizeT	f_VirtualSize;
-		voidPtr f_PhysicalStart;
+		VoidPtr f_PhysicalStart;
+
+		VoidPtr f_HeapStart;
 
 		WideChar f_FirmwareVendorName[32];
 		SizeT	 f_FirmwareVendorLen;

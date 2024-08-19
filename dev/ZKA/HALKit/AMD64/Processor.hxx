@@ -40,7 +40,6 @@ EXTERN_C
 #define kTaskGate		 (0b10001100)
 #define kGdtCodeSelector (0x08)
 #define kGdtUserCodeSelector (0x10)
-#define cHeapStartOffset (0x80000000)
 
 namespace Kernel
 {
@@ -341,7 +340,7 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 #define kKernelIdtSize	   0x100
 #define kKernelInterruptId 0x32
 
-inline Kernel::VoidPtr kKernelVMTStart = (Kernel::VoidPtr)cHeapStartOffset;
+inline Kernel::VoidPtr kKernelVMTStart = nullptr;
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
 inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 

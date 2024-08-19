@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <DDKit/KernelString.h>
+#include <DDK/KernelString.h>
 
 DK_EXTERN size_t kernelStringLength(const char* in)
 {

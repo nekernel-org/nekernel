@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <DDKit/KernelStd.h>
+#include <DDK/KernelStd.h>
 
 struct _kernelDevice;
 

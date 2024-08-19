@@ -122,7 +122,7 @@ namespace Kernel
 		NEWOS_UNUSED(flags);
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
-			fImpl->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), data, size,
+			fImpl->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & cFileFlagRsrc ? true : false), data, size,
 								name);
 	}
 

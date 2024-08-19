@@ -36,7 +36,7 @@
 
 class BTextWriter;
 class BFileReader;
-class BFileRunner;
+class BThread;
 class BVersionString;
 
 typedef Char* PEFImagePtr;
@@ -145,7 +145,7 @@ typedef UInt8* BlobType;
 class BVersionString final
 {
 public:
-	static const CharacterTypeUTF16* The()
+	static const CharacterTypeUTF8* The()
 	{
 		return BOOTLOADER_VERSION;
 	}
@@ -284,7 +284,8 @@ private:
 		--partBlock.FreeCatalog;
 		--partBlock.FreeSectors;
 
-		writer.Write(L"newosldr: root directory: ").Write(blob->fFileName).Write(L"\r");
+		writer.Write(L"newosldr: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
+		writer.Write(L"newosldr: disk formatted.\r");
 
 		CopyMem(catalogKind->Name, blob->fFileName, StrLen(blob->fFileName));
 
@@ -372,9 +373,6 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
 
 		CopyMem(epmBoot->Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), StrLen(cBlockName));
 		CopyMem(epmBoot->Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
-
-		BTextWriter writer;
-		writer.Write(L"newosldr: wrote partition with success.\r");
 
 		fDiskDev.Leak().mBase = kEpmBase;
 		fDiskDev.Leak().mSize = sectorSz;

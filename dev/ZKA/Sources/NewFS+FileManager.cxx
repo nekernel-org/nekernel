@@ -49,7 +49,7 @@ namespace Kernel
 	/// @return The Node pointer.
 	NodePtr NewFilesystemManager::Create(const char* path)
 	{
-		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindFile));
+		return node_cast(fImpl->CreateCatalog(path));
 	}
 
 	/// @brief Creates a node with is a directory.
@@ -90,7 +90,7 @@ namespace Kernel
 	}
 
 	/// @brief Gets the metafile character.
-	/// @return 
+	/// @return
 	const char NewFilesystemHelper::MetaFile()
 	{
 		return kNewFSMetaFilePrefix;

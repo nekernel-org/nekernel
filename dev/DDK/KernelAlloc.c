@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <DDKit/KernelStd.h>
+#include <DDK/KernelStd.h>
 
 /**
     \brief Allocates a new heap on the kernel's side.

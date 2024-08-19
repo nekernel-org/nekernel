@@ -7,7 +7,6 @@
 #pragma once
 
 #include <CRT/__ndk_defines.hxx>
-#include <SCIKit/SCIBase.hxx>
 
 namespace stdx
 {
@@ -27,35 +26,3 @@ namespace stdx
 		delete ptr;
 	}
 } // namespace stdx
-
-void* operator new(size_type len)
-{
-	if (!len)
-		++len;
-
-	return RtlCreateHeap(len, 0);
-}
-
-void operator delete(void* ptr)
-{
-	if (!ptr)
-		return;
-
-	RtlDestroyHeap(ptr);
-}
-
-void* operator new[](size_type len)
-{
-	if (!len)
-		++len;
-
-	return RtlCreateHeap(len, 0);
-}
-
-void operator delete[](void* ptr)
-{
-	if (!ptr)
-		return;
-
-	RtlDestroyHeap(ptr);
-}

@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <DDKit/KernelStd.h>
+#include <DDK/KernelStd.h>
 #include <stdarg.h>
 
 /// @brief this is an internal call, do not use it.

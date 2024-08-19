@@ -94,8 +94,6 @@ namespace Kernel
 		if (szFix == 0)
 			++szFix;
 
-		kcout << "newoskrnl: allocating VMH page...\r";
-
 		auto wrapper = kHeapPageManager.Request(rw, user, false, szFix);
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =

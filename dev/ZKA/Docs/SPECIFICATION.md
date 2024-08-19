@@ -10,7 +10,7 @@
 
 ===================================
 
-# 1: The NewKernel
+# 1: The Kernel
 
 ===================================
 
@@ -20,8 +20,8 @@
 - Networking.
 - Hardware Abstraction Layer.
 - Native Filesystem support (NewFS, FAT32 and ffs2).
-- Program Loaders.
-- Thread Local Storage.
+- Program Loaders interfaces.
+- TLS (Thread Local Storage) support.
 - Semaphore, Locks, Timers.
 - Canary mechanisms.
 - Dynamic Sys.

@@ -59,7 +59,7 @@ namespace Kernel
 		const RingKind& Ring() noexcept;
 
 		/// @brief Get user name
-		StringView& Name() noexcept;
+		Char* Name() noexcept;
 
 		/// @brief Is he a standard user?
 		Bool IsStdUser() noexcept;
@@ -71,7 +71,7 @@ namespace Kernel
 
 	private:
 		RingKind   fRing{RingKind::kRingStdUser};
-		StringView fUserName;
+		Char fUserName[kMaxUserNameLen];
 		VoidPtr	   fUserToken{nullptr};
 
 		friend UserManager;

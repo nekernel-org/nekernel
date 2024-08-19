@@ -51,6 +51,7 @@ namespace Kernel
 		if (Kernel::ProcessScheduler::The().Leak().CurrentTeam().AsArray().Count() < 1)
 		{
 			kcout << "*** BAD PROCESS ***\rTerminating as we are the only process...\r";
+
 			ke_stop(RUNTIME_CHECK_PROCESS);
 		}
 

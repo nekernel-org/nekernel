@@ -248,24 +248,25 @@ namespace Kernel
 
 		_Output Void CloseFork(_Input NFS_FORK_STRUCT* fork);
 
-		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const char* catalogName, Lba& outLba);
+		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalogName, Lba& outLba);
 
-		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const char* name);
+		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const Char* name);
 
-		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const char*  name,
+		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char*  name,
 												  _Input const Int32& flags,
 												  _Input const Int32& kind);
 
-		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const char* name);
+		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name);
 
 		Bool WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-						  voidPtr							 data,
-						  SizeT								 sizeOfData,
-						  _Input const char*				 forkName);
+		                  _Input Bool isRsrcFork,
+						  _Input VoidPtr							 data,
+						  _Input SizeT								 sizeOfData,
+						  _Input const Char*				 forkName);
 
 		VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 							SizeT							   dataSz,
-							_Input const char*				   forkName);
+							_Input const Char*				   forkName);
 
 		bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);
 
@@ -292,10 +293,10 @@ namespace Kernel
 	class NewFilesystemHelper final
 	{
 	public:
-		STATIC const char* Root();
-		STATIC const char* UpDir();
-		STATIC const char  Separator();
-		STATIC const char  MetaFile();
+		STATIC const Char* Root();
+		STATIC const Char* UpDir();
+		STATIC const Char  Separator();
+		STATIC const Char  MetaFile();
 	};
 
 	namespace Detail

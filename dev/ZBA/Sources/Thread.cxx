@@ -26,7 +26,7 @@ EXTERN EfiBootServices* BS;
 
 namespace Boot
 {
-	Thread::Thread(VoidPtr blob)
+	BThread::BThread(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
 	{
 		// detect the format.
@@ -138,7 +138,7 @@ namespace Boot
 	}
 
 	/// @note handover header has to be valid!
-	Void Thread::Start(HEL::HandoverInformationHeader* handover)
+	Void BThread::Start(HEL::HandoverInformationHeader* handover)
 	{
 		BTextWriter writer;
 
@@ -162,17 +162,17 @@ namespace Boot
 		err_fn(handover);
 	}
 
-	const Char* Thread::GetName()
+	const Char* BThread::GetName()
 	{
 		return fBlobName;
 	}
 
-	Void Thread::SetName(const Char* name)
+	Void BThread::SetName(const Char* name)
 	{
 		CopyMem(fBlobName, name, StrLen(name));
 	}
 
-	bool Thread::IsValid()
+	bool BThread::IsValid()
 	{
 		return fStartAddress != nullptr;
 	}
