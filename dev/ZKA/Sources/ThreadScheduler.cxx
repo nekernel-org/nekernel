@@ -26,7 +26,7 @@ namespace Kernel::Detail
         UIntPtr fCode;
         UIntPtr fStack;
         UIntPtr fBSS;
-        UIntPtr fProcessheader;
+        UIntPtr fProcessHeader;
 
         // GX buffers.
         UIntPtr fTGB;
