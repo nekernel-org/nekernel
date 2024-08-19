@@ -26,13 +26,22 @@
 #endif // __NEWOSKRNL__
 
 struct DDK_STATUS_STRUCT;
+struct DDK_PROPERTY_RECORD;
+
+struct DDK_PROPERTY_RECORD DK_FINAL
+{
+    char* p_name;
+    void* p_object;
+    void* p_scm_object;
+};
 
 /// \brief DDK status structure (__at_enable, __at_disable...)
 struct DDK_STATUS_STRUCT DK_FINAL
 {
-	int32_t action_id;
-	int32_t issuer_id;
-	int32_t group_id;
+	int32_t s_action_id;
+	int32_t s_issuer_id;
+	int32_t s_group_id;
+	void*   s_object;
 };
 
 /// @brief Call kernel (interrupt 0x33)
@@ -56,6 +65,20 @@ DK_EXTERN void* kernelAlloc(size_t sz);
 /// @brief free heap ptr.
 /// @param pointer to free
 DK_EXTERN void kernelFree(void*);
+
+
+/// @brief Get a kernel property.
+/// @param slot property id (always 0)
+/// @param name the property's name.
+/// @return property's object.
+DK_EXTERN void* kernelGetProperty(const int slot, const char* name);
+
+/// @brief Set a kernel property.
+/// @param slot property id (always 0)
+/// @param name the property's name.
+/// @param ddk_pr pointer to a  property's DDK_PROPERTY_RECORD.
+/// @return property's object.
+DK_EXTERN void* kernelSetProperty(const int slot, const struct DDK_PROPERTY_RECORD* ddk_pr);
 
 /// @brief The highest API version of the DDK.
 DK_EXTERN int32_t c_api_version_highest;

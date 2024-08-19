@@ -32,5 +32,24 @@ DK_EXTERN void* kernelCall(const char* kernelRpcName, int32_t cnt, void* data, s
 /// @param slotFn, syscall slot.
 DK_EXTERN void kernelAddSyscall(const int slot, void (*slotFn)(void* a0))
 {
-	kernelCall("AddSyscall", slot, slotFn, 0);
+	kernelCall("AddSyscall", slot, slotFn, 1);
+}
+
+/// @brief Get a kernel property.
+/// @param slot property id (always 0)
+/// @param name the prperty's name.
+/// @return property's object.
+DK_EXTERN void* kernelGetProperty(const int slot, const char* name)
+{
+	return kernelCall("GetProperty", slot, name, 1);
+}
+
+/// @brief Set a kernel property.
+/// @param slot property id (always 0)
+/// @param name the property's name.
+/// @param ddk_pr pointer to a  property's DDK_PROPERTY_RECORD.
+/// @return property's object.
+DK_EXTERN void* kernelSetProperty(const int slot, const struct DDK_PROPERTY_RECORD* ddk_pr)
+{
+	return kernelCall("SetProperty", slot, ddk_pr, 1);
 }
