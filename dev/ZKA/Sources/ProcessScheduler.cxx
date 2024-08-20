@@ -44,13 +44,12 @@ namespace Kernel
 
 	void PROCESS_HEADER_BLOCK::Crash()
 	{
-		kcout << (*this->Name == 0 ? "Kernel" : this->Name) << ": crashed. (id = ";
-		kcout << number(kErrorProcessFault);
+		kcout << (*this->Name == 0 ? "UNKNOWN" : this->Name) << ": crashed. (id = " << number(kErrorProcessFault);
 		kcout << ")\r";
 
 		if (Kernel::ProcessScheduler::The().Leak().CurrentTeam().AsArray().Count() < 1)
 		{
-			kcout << "*** BAD PROCESS ***\rTerminating as we are the only process...\r";
+			kcout << "newoskrnl: Terminating as we are the only process...\r";
 
 			ke_stop(RUNTIME_CHECK_PROCESS);
 		}
@@ -234,8 +233,8 @@ namespace Kernel
 		}
 		else if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
 		{
-			process.Leak().DLLPtr = rtl_init_shared_object(&process.Leak());
-			process.Leak().HeapPtr		 = sched_new_heap(kProcessHeapUser | kProcessHeapRw | kProcessHeapShared, process.Leak().SizeMemory);
+			process.Leak().DLLPtr  = rtl_init_shared_object(&process.Leak());
+			process.Leak().HeapPtr = sched_new_heap(kProcessHeapUser | kProcessHeapRw | kProcessHeapShared, process.Leak().SizeMemory);
 		}
 		else
 		{
@@ -378,7 +377,7 @@ namespace Kernel
 			if (auto start = process.Leak().DLLPtr->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart), kPefCode);
 				start)
 			{
-				process.Leak().Image = start;
+				process.Leak().Image		  = start;
 				process.Leak().StackFrame->BP = reinterpret_cast<HAL::Reg>(start);
 			}
 		}
