@@ -32,7 +32,7 @@ public:
 
 	UnknownInterface& operator=(const UnknownInterface&) = default;
 	UnknownInterface(const UnknownInterface&)			 = default;
- 
+
 	virtual SInt32 Release() = 0;
 	virtual void RemoveRef() = 0;
 	virtual UnknownInterface* AddRef() = 0;
@@ -67,7 +67,7 @@ inline SInt32 ScmReleaseClass(TCLS* cls)
 }
 
 template <typename FnSign, typename ClsID>
-protocol EventListenerInterface final : public ClsID
+protocol EventListenerInterface : public ClsID
 {
 public:
 	explicit EventListenerInterface() = default;
@@ -76,7 +76,7 @@ public:
 	EventListenerInterface& operator=(const EventListenerInterface&) = default;
 	EventListenerInterface(const EventListenerInterface&)			 = default;
 
-    virtual EventListenerInterface& operator +=(FnSign arg) 
+    virtual EventListenerInterface& operator +=(FnSign arg)
 	{
         this->AddEventListener(arg);
         return *this;

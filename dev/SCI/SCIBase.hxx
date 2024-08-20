@@ -17,8 +17,6 @@ Purpose: SCI/M core header file (C++)
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C   extern "C"
 
-#define OBJECT_PATH "::\\"
-
 typedef bool Bool;
 typedef void UInt0;
 
@@ -76,7 +74,7 @@ public:
 };
 
 template <typename FnSign, typename ClsID>
-class EventListenerInterface final : public ClsID
+class EventListenerInterface : public ClsID
 {
 public:
 	explicit EventListenerInterface() = default;

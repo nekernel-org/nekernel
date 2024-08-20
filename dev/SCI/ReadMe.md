@@ -1,3 +1,5 @@
-# Official SCM implementation for New OS
+# ZKA System Call Interface.
 
-Read the specs for + information...
+System Call Interface and Component Interface.
+
+###### (c) ZKA Technologies, all rights reserved.
