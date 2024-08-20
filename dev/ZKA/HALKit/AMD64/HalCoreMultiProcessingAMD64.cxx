@@ -27,6 +27,8 @@
 #define kAPIC_BASE_MSR_BSP	  0x100
 #define kAPIC_BASE_MSR_ENABLE 0x800
 
+#define cSMPMax (32U)
+
 /// @note: _hal_switch_context is internal
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -43,30 +45,64 @@ namespace Kernel::HAL
 
 	STATIC Void hal_switch_context(HAL::StackFramePtr stack_frame);
 
-	constexpr Int32 kThreadAPIC	  = 0;
-	constexpr Int32 kThreadLAPIC  = 1;
-	constexpr Int32 kThreadIOAPIC = 2;
-	constexpr Int32 kThreadAPIC64 = 3;
-	constexpr Int32 kThreadBoot	  = 4;
+	STATIC MADT_TABLE* kMADTBlock = nullptr;
+	STATIC Bool		   kSMPAware  = false;
+	STATIC Int64	   kSMPCount  = 0;
 
-	STATIC MADT_TABLE* kSMPBlock = nullptr;
-	Bool			   kSMPAware = false;
-
-	STATIC Int32 cSMPInterrupt = 34;
-
-	STATIC VoidPtr kRawMADT = nullptr;
+	STATIC Int32   cSMPInterrupt	  = 0;
+	STATIC Int64   cSMPCores[cSMPMax] = {0};
+	STATIC VoidPtr kRawMADT			  = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
 	struct MADT_TABLE final : public SDT
 	{
 		UInt32 Address; // Madt address
-		UInt32 Flags;	// Madt flags
+		UInt8  Flags;	// Madt flags
 
 		struct
 		{
 			UInt8 Type;
 			UInt8 Len;
-		} Records[]; // Records List
+
+			union {
+				struct
+				{
+					UInt8  IoID;
+					UInt8  Resv;
+					UInt32 IoAddress;
+					UInt32 GISBase;
+				} IOAPIC;
+
+				struct
+				{
+					UInt8  Source;
+					UInt8  IRQSource;
+					UInt32 GSI;
+					UInt16 Flags;
+				} IOAPIC_NMI;
+
+				struct
+				{
+					UInt8  ProcessorID;
+					UInt16 Flags;
+					UInt8  LINT;
+				} LAPIC;
+
+				struct
+				{
+					UInt16 Reserved;
+					UInt64 Address;
+				} LAPIC_ADDRESS_OVERRIDE;
+
+				struct
+				{
+					UInt16 Reserved;
+					UInt32 x2APICID;
+					UInt32 Flags;
+					UInt32 AcpiID;
+				} LAPIC_ADDRESS;
+			};
+		} List[]; // Records List
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +173,55 @@ namespace Kernel::HAL
 	/// @param rsdPtr RSD PTR structure.
 	Void hal_system_get_cores(voidPtr rsdPtr)
 	{
-	   (void)rsdPtr;
+		auto acpi_interface = ACPIFactoryInterface(rsdPtr);
+		kRawMADT			= acpi_interface.Find(kApicSignature).Leak().Leak();
+
+		kMADTBlock = reinterpret_cast<MADT_TABLE*>(kRawMADT);
+
+		if (!kMADTBlock)
+		{
+			kSMPAware = false;
+		}
+		else
+		{
+			SizeT index = 0;
+
+			// reset values.
+
+			cSMPInterrupt = 0;
+			kSMPCount	  = 0;
+
+			kcout << "newoskrnl: Probing MADT cores...\r";
+
+			while (Yes)
+			{
+				if (kMADTBlock->List[index].Type == 0 ||
+					index > cSMPMax)
+					break;
+
+				switch (kMADTBlock->List[index].Type)
+				{
+				case 0x01: {
+					cSMPCores[index] = kMADTBlock->List[index].IOAPIC.IoID;
+					++kSMPCount;
+					break;
+				}
+				case 0x02: {
+					cSMPCores[index] = kMADTBlock->List[index].LAPIC.ProcessorID;
+					++kSMPCount;
+					break;
+				}
+				}
+
+				++index;
+			}
+
+			kcout << "newoskrnl: # of Cores: " << number(kSMPCount) << endl;
+
+			kcout << "newoskrnl: First core ID: " << number(cSMPCores[0]) << endl;
+
+			kSMPAware = true;
+		}
 	}
 } // namespace Kernel::HAL
 
