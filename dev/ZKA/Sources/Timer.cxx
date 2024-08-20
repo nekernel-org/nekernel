@@ -8,36 +8,40 @@
 
 ///! BUGS: 0
 ///! @file Timer.cxx
+///! @brief Software Timer implementation
 
 using namespace Kernel;
 
 /// @brief Unimplemented as it is an interface.
-Int32 HardwareTimerInterface::Wait() noexcept
+Int32 TimerInterface::Wait() noexcept
 {
 	return kErrorUnimplemented;
 }
 
-/// @brief HardwareTimer class, meant to be generic.
+/// @brief SoftwareTimer class, meant to be generic.
 
-HardwareTimer::HardwareTimer(Int64 seconds)
+SoftwareTimer::SoftwareTimer(Int64 seconds)
 	: fWaitFor(seconds)
 {
-	MUST_PASS(fWaitFor > 0);
+    fDigitalTimer = new IntPtr();
+    MUST_PASS(fDigitalTimer);
+
 }
 
-HardwareTimer::~HardwareTimer()
+SoftwareTimer::~SoftwareTimer()
 {
+    delete fDigitalTimer;
 	fWaitFor = 0;
 }
 
-Int32 HardwareTimer::Wait() noexcept
+Int32 SoftwareTimer::Wait() noexcept
 {
 	if (fWaitFor < 1)
 		return -1;
 
 	while (*fDigitalTimer < (*fDigitalTimer + fWaitFor))
 	{
-		;
+		++fDigitalTimer;
 	}
 
 	return 0;

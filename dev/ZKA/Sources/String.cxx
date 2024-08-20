@@ -183,6 +183,17 @@ namespace Kernel
 		return true;
 	}
 
+	bool StringBuilder::Equals(const WideChar* lhs, const WideChar* rhs)
+	{
+		for (Size index = 0; rhs[index] != 0; ++index)
+		{
+			if (rhs[index] != lhs[index])
+				return false;
+		}
+
+		return true;
+	}
+
 	const char* StringBuilder::Format(const char* fmt, const char* fmt2)
 	{
 		if (!fmt || !fmt2)

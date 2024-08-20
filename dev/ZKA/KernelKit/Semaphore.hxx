@@ -32,7 +32,7 @@ namespace Kernel
 
 	public:
 		bool Lock(PROCESS_HEADER_BLOCK* process);
-		bool LockOrWait(PROCESS_HEADER_BLOCK* process, HardwareTimerInterface* timer);
+		bool LockOrWait(PROCESS_HEADER_BLOCK* process, TimerInterface* timer);
 
 	public:
 		NEWOS_COPY_DEFAULT(Semaphore);

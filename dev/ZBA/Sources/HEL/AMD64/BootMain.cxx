@@ -126,6 +126,15 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
 	handoverHdrPtr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
 
+	auto	guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
+	VoidPtr mp		= nullptr;
+
+	extern EfiBootServices* BS;
+
+	BS->LocateProtocol(&guid_mp, nullptr, &mp);
+
+	handoverHdrPtr->f_HardwareTables.f_MPPtr = mp;
+
 	kHandoverHeader = handoverHdrPtr;
 
 	CGInit();
@@ -192,6 +201,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
 			 handoverHdrPtr->f_FirmwareVendorLen);
 
+	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
+
 	// Assign to global 'kHandoverHeader'.
 
 	BDiskFormatFactory<BootDeviceATA> checkPart;
@@ -233,8 +244,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		loader = new Boot::BThread(readerKernel.Blob());
 		loader->SetName("64-bit Kernel DLL.");
 	}
-
-	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
 	EFI::ExitBootServices(MapKey, ImageHandle);
 

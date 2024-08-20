@@ -24,6 +24,10 @@ using namespace Kernel;
 #define EFI_API __attribute__((ms_abi))
 #endif // ifndef EPI_API
 
+#define IN
+#define OUT
+#define OPTIONAL
+
 // Forward decls
 
 struct EfiTableHeader;
@@ -46,7 +50,7 @@ typedef UInt64 EfiStatusType;
 /// This is like NT's Win32 HANDLE type.
 typedef struct EfiHandle
 {
-}* EfiHandlePtr;
+} * EfiHandlePtr;
 
 /* UEFI uses wide characters by default. */
 typedef WideChar EfiCharType;
@@ -589,7 +593,7 @@ typedef struct EfiSystemTable
 	{
 		EfiGUID VendorGUID;
 		VoidPtr VendorTable;
-	}* ConfigurationTable;
+	} * ConfigurationTable;
 } EfiSystemTable;
 
 #define kEfiOk			0
@@ -780,5 +784,100 @@ struct EfiFileInfo final
 #define EFI_FILE_PROTOCOL_LATEST_REVISION EFI_FILE_PROTOCOL_REVISION2
 
 #define EFI_EXTRA_DESCRIPTOR_SIZE 8
+
+#define EFI_MP_SERVICES_PROTOCOL_GUID  \
+	{                                  \
+		0x3fdda605, 0xa76e, 0x4f46,    \
+		{                              \
+			0xad, 0x29, 0x12, 0xf4,    \
+				0x53, 0x1b, 0x3d, 0x08 \
+		}                              \
+	}
+
+//*******************************************************
+// EFI_CPU_PHYSICAL_LOCATION
+// @note As in the EFI specs.
+//*******************************************************
+typedef struct _EfiCPUPhyiscalLocation
+{
+	UInt32 Package;
+	UInt32 Core;
+	UInt32 Thread;
+} EfiCPUPhyiscalLocation;
+
+typedef union _EfiExtendedProcessorInformation {
+	EfiCPUPhyiscalLocation Location2;
+} EfiExtendedProcessorInformation;
+
+typedef struct _EfiProcessorInformation
+{
+	UInt64							ProcessorId;
+	UInt32							StatusFlag;
+	EfiCPUPhyiscalLocation			Location;
+	EfiExtendedProcessorInformation ExtendedInformation;
+} EfiProcessorInformation;
+
+#define PROCESSOR_AS_BSP_BIT		0x00000001
+#define PROCESSOR_ENABLED_BIT		0x00000002
+#define PROCESSOR_HEALTH_STATUS_BIT 0x00000004
+
+typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS)(
+	IN struct _EfiMpServicesProtocol* Self,
+	OUT UInt32* NumberOfProcessors,
+	OUT UInt32* NumberOfEnabledProcessors);
+
+typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_GET_PROCESSOR_INFO)(
+	IN struct _EfiMpServicesProtocol* Self,
+	IN UInt32*							 ProcessorNumber,
+	OUT struct _EfiProcessorInformation* NumberOfEnabledProcessors);
+
+#define END_OF_CPU_LIST 0xffffffff
+
+typedef void EFI_API (*EFI_AP_PROCEDURE)(
+	IN VoidPtr ProcedureArgument);
+
+typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_STARTUP_ALL_APS)(
+	IN struct _EfiMpServicesProtocol* This,
+	IN EFI_AP_PROCEDURE				  Procedure,
+	IN Boolean						  SingleThread,
+	IN VoidPtr WaitEvent			  OPTIONAL, // EFI_EVENT first, but unused here.
+	IN UInt32						  TimeoutInMicroSeconds,
+	IN Void* ProcedureArgument OPTIONAL,
+	OUT UInt32** FailedCpuList OPTIONAL);
+
+typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_SWITCH_BSP)(
+	IN struct _EfiMpServicesProtocol* This,
+	IN UInt32						  ProcessorNumber,
+	IN Boolean						  EnableOldBSP);
+
+typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_STARTUP_THIS_AP)(
+	IN struct _EfiMpServicesProtocol* This,
+	IN EFI_AP_PROCEDURE				  Procedure,
+	IN UInt32						  ProcessorNumber,
+	IN VoidPtr WaitEvent			  OPTIONAL,
+	IN UInt32						  TimeoutInMicroseconds,
+	IN Void* ProcedureArgument OPTIONAL,
+	OUT Boolean* Finished OPTIONAL);
+
+typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_ENABLEDISABLEAP)(
+	IN struct _EfiMpServicesProtocol* This,
+	IN UInt32						  ProcessorNumber,
+	IN Boolean						  EnableAP,
+	IN UInt32* HealthFlag OPTIONAL);
+
+typedef EfiStatusType EFI_API(* EFI_MP_SERVICES_WHOAMI)(
+	IN struct _EfiMpServicesProtocol* This,
+	OUT UInt32* ProcessorNumber);
+
+typedef struct _EfiMpServicesProtocol
+{
+	EFI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS GetNumberOfProcessors;
+	EFI_MP_SERVICES_GET_PROCESSOR_INFO		 GetProcessorInfo;
+	EFI_MP_SERVICES_STARTUP_ALL_APS			 StartupAllAPs;
+	EFI_MP_SERVICES_STARTUP_THIS_AP			 StartupThisAP;
+	EFI_MP_SERVICES_SWITCH_BSP				 SwitchBSP;
+	EFI_MP_SERVICES_ENABLEDISABLEAP			 EnableDisableAP;
+	EFI_MP_SERVICES_WHOAMI					 WhoAmI;
+} EfiMpServicesProtocol;
 
 #endif // ifndef __EFI__

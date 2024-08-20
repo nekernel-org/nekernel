@@ -48,28 +48,28 @@ namespace Kernel
 		UInt32 Reserved;
 	};
 
-	enum class AddressSpace : UInt8
+	enum class ACPI_ADDRESS_SPACE_KIND : UInt8
 	{
-		SystemMemory = 0,
-		SystemIO	 = 1,
-		Pci			 = 2,
-		Controller	 = 3,
-		SmBus		 = 4,
-		Count		 = 5,
-		Invalid		 = 0xFF,
+		eSystemMemory = 0,
+		eSystemIO	 = 1,
+		ePci			 = 2,
+		eController	 = 3,
+		eSmBus		 = 4,
+		eCount		 = 5,
+		eInvalid		 = 0xFF,
 	};
 
-	class PACKED Address
+	class PACKED ACPI_ADDRESS final
 	{
 	public:
-		AddressSpace AddressSpaceId;
+		ACPI_ADDRESS_SPACE_KIND AddressSpaceId;
 		UInt8		 RegisterBitWidth;
 		UInt8		 RegisterBitOffset;
 		UInt8		 Reserved;
 		UIntPtr		 Address;
 	};
 
-	class PACKED RSDT
+	class PACKED RSDT final
 	{
 	public:
 		Char   Signature[4];

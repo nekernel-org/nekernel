@@ -12,24 +12,41 @@
 
 namespace Kernel
 {
-	class HardwareTimer;
-	class HardwareTimerInterface;
+	class SoftwareTimer;
+	class TimerInterface;
 
-	class HardwareTimerInterface
+	class TimerInterface
 	{
 	public:
 		/// @brief Default constructor
-		explicit HardwareTimerInterface() = default;
-		virtual ~HardwareTimerInterface() = default;
+		explicit TimerInterface() = default;
+		virtual ~TimerInterface() = default;
 
 	public:
-		NEWOS_COPY_DEFAULT(HardwareTimerInterface);
+		NEWOS_COPY_DEFAULT(TimerInterface);
 
 	public:
 		virtual Int32 Wait() noexcept;
 	};
 
-	class HardwareTimer final : public HardwareTimerInterface
+	class SoftwareTimer final : public TimerInterface
+	{
+	public:
+		explicit SoftwareTimer(Int64 seconds);
+		~SoftwareTimer() override;
+
+	public:
+		NEWOS_COPY_DEFAULT(SoftwareTimer);
+
+	public:
+		Int32 Wait() noexcept override;
+
+	private:
+		IntPtr* fDigitalTimer{nullptr};
+		Int64	fWaitFor{0};
+	};
+
+	class HardwareTimer final : public TimerInterface
 	{
 	public:
 		explicit HardwareTimer(Int64 seconds);
@@ -41,7 +58,7 @@ namespace Kernel
 	public:
 		Int32 Wait() noexcept override;
 
-	public:
+	private:
 		IntPtr* fDigitalTimer{nullptr};
 		Int64	fWaitFor{0};
 	};
@@ -51,7 +68,7 @@ namespace Kernel
 		if (time < 0)
 			return 0;
 
-		return 1000 / time;
+		return 1000 * time;
 	}
 
 	inline Int64 Milliseconds(Int64 time)
@@ -59,6 +76,6 @@ namespace Kernel
 		if (time < 0)
 			return 0;
 
-		return 1000 / Seconds(time);
+		return 1000 * Seconds(time);
 	}
 } // namespace Kernel

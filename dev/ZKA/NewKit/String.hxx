@@ -79,9 +79,10 @@ namespace Kernel
 	struct StringBuilder final
 	{
 		static ErrorOr<StringView> Construct(const Char* data);
-		static const char*		   FromInt(const char* fmt, int n);
-		static const char*		   FromBool(const char* fmt, bool n);
-		static const char*		   Format(const char* fmt, const char* from);
-		static bool				   Equals(const char* lhs, const char* rhs);
+		static const char*		   FromInt(const Char* fmt, int n);
+		static const char*		   FromBool(const Char* fmt, bool n);
+		static const char*		   Format(const Char* fmt, const Char* from);
+		static bool				   Equals(const Char* lhs, const Char* rhs);
+		static bool				   Equals(const WideChar* lhs, const WideChar* rhs);
 	};
 } // namespace Kernel

@@ -28,7 +28,7 @@
                 <mxCell id="c-_7pHU60HQ0aR4bwu-4-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="c-_7pHU60HQ0aR4bwu-4-8" target="c-_7pHU60HQ0aR4bwu-4-1" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="c-_7pHU60HQ0aR4bwu-4-8" value="Scheduler context switch (on non MT mode),&lt;br&gt;Also HardwareTimer gets implemented." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="c-_7pHU60HQ0aR4bwu-4-8" value="Scheduler context switch (on non MT mode),&lt;br&gt;Also SoftwareTimer gets implemented." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="160" y="60" width="120" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="c-_7pHU60HQ0aR4bwu-4-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="c-_7pHU60HQ0aR4bwu-4-10" edge="1">

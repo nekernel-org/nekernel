@@ -12,6 +12,8 @@
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/Timer.hxx>
 
+#include <FirmwareKit/EFI.hxx>
+
 // Needed for SMP. //
 
 #include <KernelKit/MP.hxx>
@@ -56,34 +58,14 @@ namespace Kernel::HAL
 
 	STATIC VoidPtr kRawMADT = nullptr;
 
-	/*
-	 *
-	 * this is used to store info about the current running thread
-	 * we use this struct to determine if we can use it, or mark it as used or on
-	 * sleep.
-	 *
-	 */
-
-	struct ProcessorInfoAMD64 final
-	{
-		Int32	ThreadType;
-		UIntPtr JumpAddress;
-
-		struct
-		{
-			UInt32 Code;
-			UInt32 Data;
-			UInt32 BSS;
-		} Selector;
-	};
-
 	/// @brief Multiple APIC Descriptor Table.
 	struct MADT_TABLE final : public SDT
 	{
 		UInt32 Address; // Madt address
-		UInt32  Flags;	// Madt flags
+		UInt32 Flags;	// Madt flags
 
-		struct {
+		struct
+		{
 			UInt8 Type;
 			UInt8 Len;
 		} Records[]; // Records List
@@ -129,68 +111,64 @@ namespace Kernel::HAL
 
 	struct PROCESS_CONTROL_BLOCK final
 	{
-		PROCESS_HEADER_BLOCK* f_Header;
-		HAL::StackFramePtr	  f_StackFrame;
+		PROCESS_HEADER_BLOCK* f_PHB;
+		HAL::StackFramePtr	  f_Frame;
 	} fBlocks[cMaxPCBBlocks] = {0};
 
 	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
 	{
-		return fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_StackFrame;
+		return fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Frame;
 	}
 
 	STATIC Void hal_switch_context(HAL::StackFramePtr stack_frame)
 	{
-		STATIC Semaphore sem;
+		Semaphore semaphore_process;
 
-		constexpr auto cSeconds = 1U;
+		const auto cDurationSeconds = Seconds(5);
 
-		HardwareTimer timer(Seconds(cSeconds));
-		sem.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), &timer);
+		HardwareTimer timer(cDurationSeconds);
+		semaphore_process.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), &timer);
 
-		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Header	   = &ProcessScheduler::The().Leak().TheCurrent().Leak();
-		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_StackFrame = stack_frame;
+		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_PHB	  = &ProcessScheduler::The().Leak().TheCurrent().Leak();
+		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Frame = stack_frame;
 
-		sem.Unlock();
+		semaphore_process.Unlock();
 	}
-
-	STATIC auto cAPICAddress = 0x0FEC00000;
-
-	STATIC Void cpu_set_apic_base(UIntPtr apic)
-	{
-		UInt32 edx = 0;
-		UInt32 eax = (apic & 0xfffff0000) | kAPIC_BASE_MSR_ENABLE;
-
-		edx = (apic >> 32) & 0x0f;
-
-		hal_set_msr(kAPIC_BASE_MSR, eax, edx);
-	}
-
-	STATIC UIntPtr cpu_get_apic_base(Void)
-	{
-		UInt32 eax, edx;
-
-		hal_get_msr(kAPIC_BASE_MSR, &eax, &edx);
-
-		return (eax & 0xfffff000) | ((UIntPtr)(edx & 0x0f) << 32);
-	}
-
-	EXTERN_C Void hal_ap_trampoline(Void);
 
 	/// @brief Fetch and enable cores inside main CPU.
 	/// @param rsdPtr RSD PTR structure.
 	Void hal_system_get_cores(voidPtr rsdPtr)
 	{
-		auto acpi = ACPIFactoryInterface(rsdPtr);
-		kRawMADT  = acpi.Find(kApicSignature).Leak().Leak();
-
-		kSMPBlock = reinterpret_cast<MADT_TABLE*>(kRawMADT);
-
-		if (!kSMPBlock)
-			kSMPAware = false;
-
-		if (kSMPBlock)
+		if (StringBuilder::Equals(kHandoverHeader->f_FirmwareVendorName, kHandoverBetterEFI_U))
 		{
-			kSMPAware = true;
+			// Our EFI way using Hybrid MP services.
+			EfiMpServicesProtocol* mp = reinterpret_cast<EfiMpServicesProtocol*>(kHandoverHeader->f_HardwareTables.f_MPPtr);
+
+			UInt32 who_is_this = -1;
+
+			mp->WhoAmI(mp, &who_is_this);
+
+			kcout << "newoskrnl: Processor #0 WhoAmI: " << number(who_is_this) << endl;
+
+			UInt32 health_flag = 0;
+
+			UInt32 num		   = 0;
+			UInt32 enabled_num = 0;
+
+			mp->GetNumberOfProcessors(mp, &num, &enabled_num);
+
+			kcout << "newoskrnl: Processor #: " << number(num) << endl;
+			kcout << "newoskrnl: Enabled processors #: " << number(enabled_num) << endl;
+
+			if (enabled_num < 2)
+			{
+				ke_stop(RUNTIME_CHECK_PROCESS);
+			}
+		}
+		else
+		{
+			// Classic way (MADT)
+			kcout << "Non ZKA EFI system detected.\r";
 		}
 	}
 } // namespace Kernel::HAL

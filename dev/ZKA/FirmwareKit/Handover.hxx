@@ -22,9 +22,12 @@
 /* useful macros */
 
 #define kHandoverMagic	 0xBADCC
-#define kHandoverVersion 0x113
+#define kHandoverVersion 0x114
 
 #define kHandoverMaxCmdLine 8
+
+#define kHandoverBetterEFI "ZKA_EFI"
+#define kHandoverBetterEFI_U  L"ZKA_EFI"
 
 #define kHandoverHeapSz gib_cast(2)
 
@@ -71,6 +74,7 @@ namespace Kernel::HEL
 		{
 			VoidPtr f_SmBios;
 			VoidPtr f_VendorPtr;
+			VoidPtr f_MPPtr;
 		} f_HardwareTables;
 
 		struct
