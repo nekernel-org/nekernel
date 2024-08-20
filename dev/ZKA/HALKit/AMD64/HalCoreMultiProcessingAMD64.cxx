@@ -12,8 +12,6 @@
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/Timer.hxx>
 
-#include <FirmwareKit/EFI.hxx>
-
 // Needed for SMP. //
 
 #include <KernelKit/MP.hxx>
@@ -139,37 +137,7 @@ namespace Kernel::HAL
 	/// @param rsdPtr RSD PTR structure.
 	Void hal_system_get_cores(voidPtr rsdPtr)
 	{
-		if (StringBuilder::Equals(kHandoverHeader->f_FirmwareVendorName, kHandoverBetterEFI_U))
-		{
-			// Our EFI way using Hybrid MP services.
-			EfiMpServicesProtocol* mp = reinterpret_cast<EfiMpServicesProtocol*>(kHandoverHeader->f_HardwareTables.f_MPPtr);
-
-			UInt32 who_is_this = -1;
-
-			mp->WhoAmI(mp, &who_is_this);
-
-			kcout << "newoskrnl: Processor #0 WhoAmI: " << number(who_is_this) << endl;
-
-			UInt32 health_flag = 0;
-
-			UInt32 num		   = 0;
-			UInt32 enabled_num = 0;
-
-			mp->GetNumberOfProcessors(mp, &num, &enabled_num);
-
-			kcout << "newoskrnl: Processor #: " << number(num) << endl;
-			kcout << "newoskrnl: Enabled processors #: " << number(enabled_num) << endl;
-
-			if (enabled_num < 2)
-			{
-				ke_stop(RUNTIME_CHECK_PROCESS);
-			}
-		}
-		else
-		{
-			// Classic way (MADT)
-			kcout << "Non ZKA EFI system detected.\r";
-		}
+	   (void)rsdPtr;
 	}
 } // namespace Kernel::HAL
 
