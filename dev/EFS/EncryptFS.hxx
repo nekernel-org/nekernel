@@ -14,9 +14,3 @@
 #pragma once
 
 #include <FSKit/NewFS.hxx>
-
-/// @brief EncryptFS NewFS extension for data protection.
-
-#define EFSKIT_VERSION 0x0100
-
-struct EFS_ENCRYPT_BLOCK;
