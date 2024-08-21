@@ -13,7 +13,7 @@ namespace Kernel
 
 	/// @brief Does a system wide bug check.
 	/// @param void no params.
-	/// @return if error-free: true, otherwise false.
+	/// @return if error-free: false, otherwise true.
 	Boolean err_bug_check(void) noexcept
 	{
 		if (cRaise)
@@ -21,7 +21,7 @@ namespace Kernel
 			ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
 		}
 
-		return true;
+		return false;
 	}
 
 	/// @brief Tells if we should raise a bug check not.

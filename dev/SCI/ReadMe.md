@@ -1,5 +1,5 @@
-# ZKA System Call Interface.
+# ZKA's SCI.
 
-System Call Interface and Component Interface.
+System Call and Component Interface, used maninly to communicate with kernel and registered objects.
 
 ###### (c) ZKA Technologies, all rights reserved.

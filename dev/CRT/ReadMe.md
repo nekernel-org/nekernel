@@ -1,4 +1,4 @@
-# ZKA C++ RunTime
+# ZKA C++ RunTime.
 
 This is the public interface of ZKA' C++ RunTime.
 

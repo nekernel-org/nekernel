@@ -1,4 +1,4 @@
-# DDK (Device Driver Kit)
+# ZKA's Device Driver Kit.
 
 A kit used to write kernel HALs, using the NDK compiler suite.
 

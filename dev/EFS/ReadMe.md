@@ -1,4 +1,4 @@
-# ZKA Encrypted File System
+# ZKA Encrypted File System.
 
 This is the ZKA's Encrypted file system DLL.
 
