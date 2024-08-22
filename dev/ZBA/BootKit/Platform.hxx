@@ -7,16 +7,26 @@
 #pragma once
 
 /**
-	@file Processor.hxx
-	@brief Processor specific code.
+	@file Platform.hxx
+	@brief Platform specific code.
 */
 
 #ifdef __x86_64__
 
-extern "C" void rt_halt();
-extern "C" void rt_cli();
-extern "C" void rt_sti();
-extern "C" void rt_cld();
-extern "C" void rt_std();
+#ifdef __cplusplus
+#ifndef EXTERN_C
+#define EXTERN_C extern "C"
+#endif
+#else
+#ifndef EXTERN_C
+#define EXTERN_C extern
+#endif
+#endif // __cplusplus
+
+EXTERN_C void rt_halt();
+EXTERN_C void rt_cli();
+EXTERN_C void rt_sti();
+EXTERN_C void rt_cld();
+EXTERN_C void rt_std();
 
 #endif /* ifdef __x86_64__ */
