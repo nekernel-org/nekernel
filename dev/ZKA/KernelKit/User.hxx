@@ -19,7 +19,7 @@
 #define kUsersFile "\\Users\\$MANIFEST"
 
 #define kMaxUserNameLen	 (255)
-#define kMaxUserTokenLen (4096)
+#define kMaxUserTokenLen (255)
 
 // hash 'password' -> base64+md5 encoded data
 // use this data to then fetch specific data of the user..
@@ -71,8 +71,8 @@ namespace Kernel
 
 	private:
 		RingKind   fRing{RingKind::kRingStdUser};
-		Char fUserName[kMaxUserNameLen];
-		VoidPtr	   fUserToken{nullptr};
+		Char fUserName[kMaxUserNameLen] = { 0 };
+		Char fUserToken[kMaxUserTokenLen] = { 0 };
 
 		friend UserManager;
 	};
@@ -82,17 +82,16 @@ namespace Kernel
 		UserManager()  = default;
 		~UserManager() = default;
 
-		User* fCurrentUser		 = nullptr;
-		User* fLastLoggedOffUser = nullptr;
+		User* fCurrentUser{nullptr};
 
 	public:
-		User* fRootUser = nullptr;
+		User* fRootUser{nullptr};
 
 	public:
 		NEWOS_COPY_DELETE(UserManager);
 
 		STATIC UserManager* The() noexcept;
-		Bool				TryLogIn(User* user, const Char* password) noexcept;
+		Bool				TryLogIn(User& user, const Char* password) noexcept;
 		User*				GetCurrent() noexcept;
 		Void				TryLogOff() noexcept;
 	};

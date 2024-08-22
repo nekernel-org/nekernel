@@ -77,6 +77,10 @@ namespace Kernel
 			cg_write_text("0x00000006 ACPI error.", start_y, x, panicTxt);
 			break;
 		}
+		case RUNTIME_CHECK_FILESYSTEM: {
+			cg_write_text("0x0000000A Filesystem corruption error.", start_y, x, panicTxt);
+			break;
+		}
 		case RUNTIME_CHECK_POINTER: {
 			cg_write_text("0x00000000 Kernel heap error.", start_y, x, panicTxt);
 			break;

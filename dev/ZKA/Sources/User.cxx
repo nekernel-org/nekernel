@@ -58,7 +58,7 @@ namespace Kernel
 	User::User(const RingKind& ringKind, const Char* userName)
 		: fRing(ringKind)
 	{
-	   rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
+		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
 	}
 
 	User::~User() = default;
@@ -86,14 +86,16 @@ namespace Kernel
 
 			if (!node)
 			{
-				node = new_fs->GetParser()->CreateCatalog(kUsersFile);
+				ErrLocal() = kErrorInternal;
+
+				return false;
 			}
 
 			kcout << "newoskrnl: Writing token...\r";
 
 			NFS_FORK_STRUCT fork{0};
 
-			fork.Kind = kNewFSRsrcForkKind;
+			fork.Kind	  = kNewFSDataForkKind;
 			fork.DataSize = rt_string_len(password);
 
 			rt_copy_memory((VoidPtr)this->fUserName, fork.ForkName, rt_string_len(this->fUserName));
@@ -103,7 +105,8 @@ namespace Kernel
 
 			new_fs->GetParser()->CreateFork(node, fork);
 
-			new_fs->GetParser()->WriteCatalog(node, (fork.Kind == kNewFSRsrcForkKind), reinterpret_cast<VoidPtr>(token), len, this->fUserName);
+			// writing the data fork now. False means a data fork.
+			bool wrote = new_fs->GetParser()->WriteCatalog(node, false, reinterpret_cast<VoidPtr>(token), len, this->fUserName);
 
 			delete node;
 			node = nullptr;
@@ -111,8 +114,8 @@ namespace Kernel
 			delete[] token;
 			token = nullptr;
 
-			kcout << "newoskrnl: Wrote token...\r";
-			return true;
+			kcout << "newoskrnl: Wrote token?\r";
+			return wrote;
 		}
 
 		kcout << "No filesystem mounted...\r";
@@ -163,10 +166,9 @@ namespace Kernel
 		return view;
 	}
 
-	Bool UserManager::TryLogIn(User* user, const Char* password) noexcept
+	Bool UserManager::TryLogIn(User& user, const Char* password) noexcept
 	{
-		if (!password ||
-			!user)
+		if (!password)
 		{
 			kcout << "newoskrnl: Incorrect data given.\r";
 
@@ -192,9 +194,15 @@ namespace Kernel
 		// ------------------------------------------ //
 
 		if (!node)
+		{
+			ErrLocal() = kErrorInvalidData;
+			kcout << "newoskrnl: No such path.\r";
 			return false;
+		}
 
-		auto token = new_fs->GetParser()->ReadCatalog(node, rt_string_len(password), user->fUserName);
+		kcout << "newoskrnl: reading: " << node->Name << endl;
+
+		auto token = new_fs->GetParser()->ReadCatalog(node, false, rt_string_len(password), user.fUserName);
 
 		if (!token)
 		{
@@ -217,7 +225,7 @@ namespace Kernel
 			// Construct token.
 			// ================================================== //
 
-			Detail::cred_construct_token(generated_token, password, user, rt_string_len(password));
+			Detail::cred_construct_token(generated_token, password, &user, rt_string_len(password));
 
 			// ================================================== //
 			// Checks if it matches the current token we have.
@@ -234,25 +242,7 @@ namespace Kernel
 			kcout << "newoskrnl: Credentials are correct, moving on.\r";
 		}
 
-		// ------------------------------------------ //
-		// This was successful, continue.
-		// ------------------------------------------ //
-
-		user->fUserToken = token;
-
-		if (fCurrentUser)
-		{
-			if (!fLastLoggedOffUser)
-			{
-				fLastLoggedOffUser = fCurrentUser;
-			}
-			else
-			{
-				this->TryLogOff();
-			}
-		}
-
-		fCurrentUser = user;
+		fCurrentUser = &user;
 		Kernel::kcout << "newoskrnl: Logged in as: " << fCurrentUser->Name() << Kernel::endl;
 
 		return true;
@@ -265,19 +255,6 @@ namespace Kernel
 
 	Void UserManager::TryLogOff() noexcept
 	{
-		if (!fCurrentUser)
-			return;
-
-		// an illegal operation just occured, we can't risk more.
-		if (fCurrentUser == fRootUser)
-		{
-			ke_stop(RUNTIME_CHECK_BOOTSTRAP);
-		}
-
-		if (fLastLoggedOffUser)
-			delete fLastLoggedOffUser;
-
-		fLastLoggedOffUser = nullptr;
-		fLastLoggedOffUser = fCurrentUser;
+		fCurrentUser = nullptr;
 	}
 } // namespace Kernel

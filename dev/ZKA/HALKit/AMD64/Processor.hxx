@@ -87,13 +87,13 @@ namespace Kernel::HAL
 			pde->Pte[pml4_index].User			 = flags & eFlagsUser;
 			pde->Pte[pml4_index].ExecDisable	 = flags & eFlagsExecDisable;
 
-			kcout << "PTE is present now.\r";
+			kcout << "newoskrnl: PTE is present now.\r";
 
 			return 0;
 		}
 		else
 		{
-			kcout << "PM is already present.\r";
+			kcout << "newoskrnl: PM is already present.\r";
 
 			kcout << "PhysicalAddress: " << hex_number(pde->Pte[pml4_index].PhysicalAddress);
 			kcout << "\r";
@@ -340,7 +340,7 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 #define kKernelIdtSize	   0x100
 #define kKernelInterruptId 0x32
 
-inline Kernel::VoidPtr kKernelVMTStart = nullptr;
+inline Kernel::VoidPtr kKernelVMHStart = nullptr;
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
 inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 

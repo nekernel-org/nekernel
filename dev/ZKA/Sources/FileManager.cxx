@@ -140,7 +140,7 @@ namespace Kernel
 		NEWOS_UNUSED(flags);
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
-			return fImpl->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), sz,
+			return fImpl->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & cFileFlagRsrc ? true : false), sz,
 									  name);
 
 		return nullptr;

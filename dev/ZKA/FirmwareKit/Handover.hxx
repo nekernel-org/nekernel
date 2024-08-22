@@ -31,7 +31,7 @@
 
 #define kHandoverHeapSz gib_cast(2)
 
-#define kHandoverStructSz sizeof(HEL::HandoverHeader)
+#define kHandoverStructSz sizeof(HEL::HandoverInformationHeader)
 
 namespace Kernel::HEL
 {

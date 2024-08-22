@@ -67,8 +67,6 @@ STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
 
-static Kernel::User* cRoot;
-
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
 {
@@ -90,7 +88,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	// reset kAllocationInProgress field to zero.
 	kAllocationInProgress = false;
 
-	kKernelVMTStart = kHandoverHeader->f_HeapStart;
+	kKernelVMHStart = kHandoverHeader->f_HeapStart;
 
 	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
@@ -233,24 +231,21 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		!node)
 	{
 		delete fs->GetParser()->CreateCatalog("\\Users\\", 0, kNewFSCatalogKindDir);
+		delete fs->GetParser()->CreateCatalog(kUsersFile, 0, kNewFSCatalogKindFile);
 	}
 
-	cRoot = new Kernel::User(Kernel::RingKind::kRingSuperUser, kSuperUser);
-
 #ifdef __DEBUG__
-	const auto cPassword = "infdev";
-#else
-	const auto cPassword = "password";
+	const auto cPassword = "debug_usr";
+	const auto cPasswordIncorrect = "debug_usr_invalid";
+	Kernel::User user{Kernel::RingKind::kRingSuperUser, kSuperUser};
+
+	if (!user.TrySave(cPassword))
+	{
+	   Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
+	}
+
+	Kernel::UserManager::The()->TryLogIn(user, cPassword);
 #endif
-
-	Kernel::UserManager::The()->fRootUser = cRoot;
-
-	Kernel::kcout << "newoskrnl: Root is " << kSuperUser << "." << Kernel::endl;
-
-	cRoot->TrySave(cPassword);
-
-	/// TODO: Fix this now!
-	Kernel::UserManager::The()->TryLogIn(cRoot, cPassword);
 
 	Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 }

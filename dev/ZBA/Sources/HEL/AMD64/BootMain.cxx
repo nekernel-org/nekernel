@@ -185,7 +185,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_HeapStart = nullptr;
 
-	BS->AllocatePool(EfiLoaderCode, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart);
+	while (BS->AllocatePool(EfiLoaderCode, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk);
 
 	handoverHdrPtr->f_VirtualSize =
 		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */

@@ -241,7 +241,8 @@ public:
 		if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
 			blockPart->DiskSize < 1 ||
 			blockPart->SectorSize != BootDev::kSectorSize ||
-			blockPart->Version != kNewFSVersionInteger)
+			blockPart->Version != kNewFSVersionInteger ||
+			blockPart->StartCatalog == 0)
 		{
 			return false;
 		}

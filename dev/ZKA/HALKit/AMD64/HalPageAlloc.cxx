@@ -7,6 +7,7 @@
 #include <ArchKit/ArchKit.hxx>
 
 #define cVMHMagic (0xDEEFD00D)
+#define cPaddingVMH (512)
 
 #ifdef __NEWOS_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
@@ -21,7 +22,6 @@ Kernel::Boolean kAllocationInProgress = false;
 
 namespace Kernel
 {
-
 	namespace HAL
 	{
 		namespace Detail
@@ -43,7 +43,7 @@ namespace Kernel
 				VIRTUAL_MEMORY_HEADER* Next(VIRTUAL_MEMORY_HEADER* current)
 				{
 					if (current->Magic != cVMHMagic)
-						current->Size = 8196;
+						current->Size = cPaddingVMH;
 
 					return current + sizeof(VIRTUAL_MEMORY_HEADER) + current->Size;
 				}
@@ -54,7 +54,7 @@ namespace Kernel
 				VIRTUAL_MEMORY_HEADER* Prev(VIRTUAL_MEMORY_HEADER* current)
 				{
 					if (current->Magic != cVMHMagic)
-						current->Size = 8196;
+						current->Size = cPaddingVMH;
 
 					return current - sizeof(VIRTUAL_MEMORY_HEADER) - current->Size;
 				}
@@ -74,7 +74,7 @@ namespace Kernel
 			kAllocationInProgress = true;
 
 			//! fetch from the start.
-			Detail::VIRTUAL_MEMORY_HEADER*	  vmh_header = reinterpret_cast<Detail::VIRTUAL_MEMORY_HEADER*>(kKernelVMTStart);
+			Detail::VIRTUAL_MEMORY_HEADER*	  vmh_header = reinterpret_cast<Detail::VIRTUAL_MEMORY_HEADER*>(kKernelVMHStart);
 			Detail::VirtualMemoryHeaderTraits traits;
 
 			while (vmh_header->Present &&
