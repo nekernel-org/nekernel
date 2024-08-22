@@ -44,7 +44,9 @@ namespace Kernel
 
 	void PROCESS_HEADER_BLOCK::Crash()
 	{
-		kcout << (*this->Name == 0 ? "UNKNOWN" : this->Name) << ": crashed. (id = " << number(kErrorProcessFault);
+	   constexpr auto cUnknownProcess = "?";
+
+		kcout << (*this->Name == 0 ? cUnknownProcess : this->Name) << ": crashed. (id = " << number(kErrorProcessFault);
 		kcout << ")\r";
 
 		this->Exit(kErrorProcessFault);

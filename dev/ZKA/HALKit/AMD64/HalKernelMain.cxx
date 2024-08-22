@@ -227,22 +227,11 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::NewFilesystemManager::Mount(fs);
 
-	if (auto node = fs->GetParser()->GetCatalog("\\Users\\");
-		!node)
-	{
-		delete fs->GetParser()->CreateCatalog("\\Users\\", 0, kNewFSCatalogKindDir);
-		delete fs->GetParser()->CreateCatalog(kUsersFile, 0, kNewFSCatalogKindFile);
-	}
-
 #ifdef __DEBUG__
-	const auto cPassword = "debug_usr";
+	const auto cPassword		  = "debug_usr";
 	const auto cPasswordIncorrect = "debug_usr_invalid";
-	Kernel::User user{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
-	if (!user.TrySave(cPassword))
-	{
-	   Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
-	}
+	Kernel::User user{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
 	Kernel::UserManager::The()->TryLogIn(user, cPassword);
 #endif

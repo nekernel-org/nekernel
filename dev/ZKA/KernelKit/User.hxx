@@ -16,7 +16,7 @@
 #define kSuperUser "\\Local\\Super"
 #define kGuestUser "\\Local\\Guest"
 
-#define kUsersFile "\\Users\\$MANIFEST"
+#define kUsersFile "\\Users\\UsrRcrd"
 
 #define kMaxUserNameLen	 (255)
 #define kMaxUserTokenLen (255)

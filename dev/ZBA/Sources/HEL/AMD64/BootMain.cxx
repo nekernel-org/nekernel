@@ -216,9 +216,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 		checkPart.Format("ZKA (A:)", &root, 1);
 
-		cg_write_text("INSATLLED PARTITION WITH SUCCESS.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
-
-		rt_reset_hardware();
 		EFI::Stop();
 	}
 

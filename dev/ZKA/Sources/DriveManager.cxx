@@ -28,15 +28,11 @@ namespace Kernel
 			return;
 		}
 
-		pckt->fPacketGood = false;
-
 #ifdef __AHCI__
 		drv_std_read(pckt->fLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
 		drv_std_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
 #endif
-
-		pckt->fPacketGood = true;
 	}
 
 	/// @brief Writes to an ATA drive.
@@ -49,15 +45,11 @@ namespace Kernel
 			return;
 		}
 
-		pckt->fPacketGood = false;
-
 #ifdef __AHCI__
 		drv_std_write(pckt->fLba, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
 		drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
 #endif
-
-		pckt->fPacketGood = true;
 	}
 
 	/// @brief Executes a disk check on the ATA drive.

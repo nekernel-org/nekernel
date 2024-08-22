@@ -49,7 +49,7 @@ default.
 #define kNewFSCatalogKindDir   (2)
 #define kNewFSCatalogKindAlias (3)
 
-#define kNewFSForkSize (8192)
+#define kNewFSForkSize (512)
 
 //! shared between network or
 //! other filesystems. Export forks as .zip when copying.
@@ -85,8 +85,8 @@ default.
 #define kNewFSLbaType  (Kernel::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
-#define kNewFSStartLba			  (1024)
-#define kNewFSCatalogStartAddress ((1024) + sizeof(NFS_ROOT_PARTITION_BLOCK) + sizeof(NFS_CATALOG_STRUCT))
+#define kNewFSRootCatalogStartAddress			  (1024)
+#define kNewFSCatalogStartAddress ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK))
 
 #define kResourceTypeDialog (10)
 #define kResourceTypeString (11)

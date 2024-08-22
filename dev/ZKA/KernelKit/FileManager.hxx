@@ -64,13 +64,7 @@ namespace Kernel
 		cFileFlagData = 105,
 	};
 
-	/// @brief filesystem node generic type.
-	struct PACKED FMNode final
-	{
-		VoidPtr _Unused;
-	};
-
-	typedef FMNode* NodePtr;
+	typedef VoidPtr NodePtr;
 
 	/**
 	@brief Filesystem Manager Interface class

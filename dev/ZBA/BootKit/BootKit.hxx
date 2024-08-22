@@ -219,7 +219,7 @@ public:
 	/// @brief check if partition is good.
 	Bool IsPartitionValid() noexcept
 	{
-		fDiskDev.Leak().mBase = (kNewFSStartLba);
+		fDiskDev.Leak().mBase = (kNewFSRootCatalogStartAddress);
 		fDiskDev.Leak().mSize = BootDev::kSectorSize;
 
 		Char buf[BootDev::kSectorSize] = {0};
@@ -263,37 +263,32 @@ private:
 	/// @param partBlock the NewFS partition block.
 	Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount, NFS_ROOT_PARTITION_BLOCK& partBlock)
 	{
-		if (partBlock.SectorSize != BootDev::kSectorSize)
-			return false;
-
 		BFileDescriptor* blob	  = fileBlobs;
 		Lba				 startLba = partBlock.StartCatalog;
 		BTextWriter		 writer;
 
-		Char bufCatalog[sizeof(NFS_CATALOG_STRUCT)] = {0};
+		NFS_CATALOG_STRUCT catalogKind{0};
 
 		constexpr auto cNewFSCatalogPadding = 4;
 
-		NFS_CATALOG_STRUCT* catalogKind = (NFS_CATALOG_STRUCT*)bufCatalog;
-		catalogKind->PrevSibling		= startLba;
-		catalogKind->NextSibling		= (startLba + (sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding));
+		catalogKind.PrevSibling		= startLba;
+		catalogKind.NextSibling		= (startLba + sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding);
 
 		/// Fill catalog kind.
-		catalogKind->Kind  = blob->fKind;
-		catalogKind->Flags = kNewFSFlagCreated;
+		catalogKind.Kind  = blob->fKind;
+		catalogKind.Flags = kNewFSFlagCreated;
 
 		--partBlock.FreeCatalog;
 		--partBlock.FreeSectors;
 
-		writer.Write(L"newosldr: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
-		writer.Write(L"newosldr: Disk formatted.\r");
-
-		CopyMem(catalogKind->Name, blob->fFileName, StrLen(blob->fFileName));
+		CopyMem(catalogKind.Name, blob->fFileName, StrLen(blob->fFileName));
 
 		fDiskDev.Leak().mBase = startLba;
 		fDiskDev.Leak().mSize = sizeof(NFS_CATALOG_STRUCT);
 
-		fDiskDev.Write((Char*)bufCatalog, sizeof(NFS_CATALOG_STRUCT));
+		fDiskDev.Write((Char*)&catalogKind, sizeof(NFS_CATALOG_STRUCT));
+
+		writer.Write(L"newosldr: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
 
 		return true;
 	}
@@ -318,12 +313,10 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 
 	/// convert the sector into something that the disk understands.
 	SizeT sectorSz = BootDev::kSectorSize;
-	Char* buf	   = new Char[BootDev::kSectorSize];
+	NFS_ROOT_PARTITION_BLOCK  partBlock{0};
 
-	NFS_ROOT_PARTITION_BLOCK* partBlock = reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(buf);
-
-	memcpy(partBlock->Ident, kNewFSIdent, kNewFSIdentLen - 1);
-	memcpy(partBlock->PartitionName, partName, strlen(partName));
+	CopyMem(partBlock.Ident, kNewFSIdent, kNewFSIdentLen - 1);
+	CopyMem(partBlock.PartitionName, partName, strlen(partName));
 
 	/// @note A catalog roughly equal to a sector.
 
@@ -333,62 +326,58 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 
 	if (GIB(fDiskDev.GetDiskSize()) < cMinimumDiskSize)
 	{
-		delete buf;
 		EFI::ThrowError(L"Disk-Too-Tiny", L"Can't format a New Filesystem partition here.");
 		return false;
 	}
 
-	partBlock->Version		= kNewFSVersionInteger;
-	partBlock->CatalogCount = blobCount;
-	partBlock->Kind			= kNewFSHardDrive;
-	partBlock->SectorSize	= sectorSz;
-	partBlock->FreeCatalog	= fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
-	partBlock->SectorCount	= fDiskDev.GetSectorsCount();
-	partBlock->FreeSectors	= fDiskDev.GetSectorsCount();
-	partBlock->StartCatalog = kNewFSCatalogStartAddress;
-	partBlock->DiskSize		= fDiskDev.GetDiskSize();
-	partBlock->Flags |= kNewFSPartitionTypeBoot;
+	partBlock.Version		= kNewFSVersionInteger;
+	partBlock.CatalogCount = blobCount;
+	partBlock.Kind			= kNewFSHardDrive;
+	partBlock.SectorSize	= sectorSz;
+	partBlock.FreeCatalog	= fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
+	partBlock.SectorCount	= fDiskDev.GetSectorsCount();
+	partBlock.FreeSectors	= fDiskDev.GetSectorsCount();
+	partBlock.StartCatalog = kNewFSCatalogStartAddress;
+	partBlock.DiskSize		= fDiskDev.GetDiskSize();
+	partBlock.Flags |= kNewFSPartitionTypeBoot | kNewFSPartitionTypeStandard;
+
+	fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
+	fDiskDev.Leak().mSize = sectorSz;
+
+	fDiskDev.Write((Char*)&partBlock, sectorSz);
+
+	BOOT_BLOCK_STRUCT epmBoot{0};
+
+	constexpr auto cFsName	  = "NewFS";
+	constexpr auto cBlockName = "ZKA:";
+
+	CopyMem(epmBoot.Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), StrLen(cFsName));
+
+	epmBoot.FsVersion = kNewFSVersionInteger;
+	epmBoot.LbaStart  = kNewFSRootCatalogStartAddress;
+	epmBoot.SectorSz  = partBlock.SectorSize;
+	epmBoot.NumBlocks = partBlock.CatalogCount;
+
+	CopyMem(epmBoot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), StrLen(cBlockName));
+	CopyMem(epmBoot.Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
+
+	fDiskDev.Leak().mBase = 1; // always always resies at zero block.
+	fDiskDev.Leak().mSize = BootDev::kSectorSize;
+
+	fDiskDev.Write((Char*)&epmBoot, sectorSz);
 
 	/// if we can write a root catalog, then write the partition block.
-	if (this->WriteRootCatalog(fileBlobs, blobCount, *partBlock))
+	if (this->WriteRootCatalog(fileBlobs, blobCount, partBlock))
 	{
-		fDiskDev.Leak().mBase = kNewFSStartLba;
-		fDiskDev.Leak().mSize = sectorSz;
+		BTextWriter writer;
+		writer.Write(L"newosldr: Disk formatted.\r");
 
-		fDiskDev.Write(buf, sectorSz);
-
-		/// Reset buffer.
-		SetMem(buf, 0, sectorSz);
-
-		BOOT_BLOCK_STRUCT* epmBoot = (BOOT_BLOCK_STRUCT*)buf;
-
-		constexpr auto cFsName	  = "NewFS";
-		constexpr auto cBlockName = "ZKA:";
-
-		CopyMem(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, StrLen(cFsName));
-
-		epmBoot->FsVersion = kNewFSVersionInteger;
-		epmBoot->LbaStart  = kNewFSStartLba;
-		epmBoot->SectorSz  = partBlock->SectorSize;
-		epmBoot->NumBlocks = partBlock->CatalogCount;
-
-		CopyMem(epmBoot->Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), StrLen(cBlockName));
-		CopyMem(epmBoot->Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
-
-		fDiskDev.Leak().mBase = kEpmBase;
-		fDiskDev.Leak().mSize = sectorSz;
-
-		fDiskDev.Write(buf, sectorSz);
-
-		delete buf;
 		return true;
 	}
 	else
 	{
-		delete buf;
 		EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned.");
 	}
 
-	delete buf;
 	return false;
 }

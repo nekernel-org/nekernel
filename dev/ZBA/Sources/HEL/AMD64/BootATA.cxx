@@ -111,6 +111,8 @@ ATAInit_Retry:
 
 Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, SizeT SectorSz, SizeT Size)
 {
+    Lba /= SectorSz;
+
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
 	boot_ata_wait_io(IO);
@@ -120,7 +122,7 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, 
 
 	Out8(IO + ATA_REG_SEC_COUNT0, 2);
 
-	Out8(IO + ATA_REG_LBA0, (Lba));
+	Out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
 	Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
 	Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
@@ -139,6 +141,8 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, 
 
 Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, SizeT SectorSz, SizeT Size)
 {
+    Lba /= SectorSz;
+
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
 	boot_ata_wait_io(IO);
@@ -148,7 +152,7 @@ Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 
 	Out8(IO + ATA_REG_SEC_COUNT0, 2);
 
-	Out8(IO + ATA_REG_LBA0, (Lba));
+	Out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
 	Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
 	Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
@@ -219,9 +223,7 @@ BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz
 	if (!Buf || SectorSz < 1)
 		return *this;
 
-	auto lba = this->Leak().mBase / SectorSz;
-
-	boot_ata_read(lba, this->Leak().mBus, this->Leak().mMaster,
+	boot_ata_read(this->Leak().mBase, this->Leak().mBus, this->Leak().mMaster,
 				  Buf, SectorSz, this->Leak().mSize);
 
 	return *this;
@@ -245,9 +247,7 @@ BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorS
 	if (!Buf || SectorSz < 1)
 		return *this;
 
-	auto lba = this->Leak().mBase / SectorSz;
-
-	boot_ata_write(lba, this->Leak().mBus, this->Leak().mMaster,
+	boot_ata_write(this->Leak().mBase, this->Leak().mBus, this->Leak().mMaster,
 				   Buf, SectorSz, this->Leak().mSize);
 
 	return *this;
