@@ -47,13 +47,6 @@ namespace Kernel
 		kcout << (*this->Name == 0 ? "UNKNOWN" : this->Name) << ": crashed. (id = " << number(kErrorProcessFault);
 		kcout << ")\r";
 
-		if (Kernel::ProcessScheduler::The().Leak().CurrentTeam().AsArray().Count() < 1)
-		{
-			kcout << "newoskrnl: Terminating as we are the only process...\r";
-
-			ke_stop(RUNTIME_CHECK_PROCESS);
-		}
-
 		this->Exit(kErrorProcessFault);
 	}
 
