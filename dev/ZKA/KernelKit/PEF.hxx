@@ -101,6 +101,7 @@ namespace Kernel
 #define kPefLibExt	  ".lib"
 #define kPefObjectExt ".obj"
 #define kPefDebugExt  ".dbg"
+#define kPefDriverExt ".sys"
 
 // Kernel System Binary Interface.
 #define kPefAbi 	   (0x5046)

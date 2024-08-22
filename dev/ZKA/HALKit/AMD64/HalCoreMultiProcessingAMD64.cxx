@@ -170,11 +170,11 @@ namespace Kernel::HAL
 	}
 
 	/// @brief Fetch and enable cores inside main CPU.
-	/// @param rsdPtr RSD PTR structure.
-	Void hal_system_get_cores(voidPtr rsdPtr)
+	/// @param vendor_ptr RSD PTR structure.
+	Void hal_system_get_cores(voidPtr vendor_ptr)
 	{
-		auto acpi_interface = ACPIFactoryInterface(rsdPtr);
-		kRawMADT			= acpi_interface.Find(kApicSignature).Leak().Leak();
+		auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
+		kRawMADT			= hw_and_pow_int.Find(kApicSignature).Leak().Leak();
 
 		kMADTBlock = reinterpret_cast<MADT_TABLE*>(kRawMADT);
 
