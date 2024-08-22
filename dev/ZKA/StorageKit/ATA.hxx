@@ -31,7 +31,7 @@ namespace Kernel
 		ATADeviceInterface& operator=(const ATADeviceInterface&) = default;
 		ATADeviceInterface(const ATADeviceInterface&)			 = default;
 
-		const char* Name() const override;
+		const Char* Name() const override;
 
 	private:
 		void (*fCleanup)(void) = { nullptr };

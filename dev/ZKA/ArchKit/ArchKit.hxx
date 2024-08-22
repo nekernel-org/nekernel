@@ -26,7 +26,7 @@
 
 namespace Kernel
 {
-	inline SSizeT rt_hash_seed(const char* seed, int mul)
+	inline SSizeT rt_hash_seed(const Char* seed, int mul)
 	{
 		SSizeT hash = 0;
 

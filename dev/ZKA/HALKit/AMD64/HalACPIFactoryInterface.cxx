@@ -62,7 +62,7 @@ namespace Kernel
 	}
 
 	/// @brief Finds a descriptor table inside ACPI XSDT.
-	ErrorOr<voidPtr> ACPIFactoryInterface::Find(const char* signature)
+	ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature)
 	{
 		MUST_PASS(fRsdp);
 
@@ -128,7 +128,7 @@ namespace Kernel
 	@param checksum the header to checksum
 	@param len the length of it.
 */
-	bool ACPIFactoryInterface::Checksum(const char* checksum, SSizeT len)
+	bool ACPIFactoryInterface::Checksum(const Char* checksum, SSizeT len)
 	{
 		if (len == 0)
 			return -1;

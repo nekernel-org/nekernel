@@ -25,7 +25,7 @@ namespace Kernel
 		AHCIDeviceInterface& operator=(const AHCIDeviceInterface&) = default;
 		AHCIDeviceInterface(const AHCIDeviceInterface&)			   = default;
 
-		const char* Name() const override;
+		const Char* Name() const override;
 
 	private:
 		void (*fCleanup)(void) = {nullptr};

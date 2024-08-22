@@ -62,7 +62,7 @@ namespace Kernel
 		}
 	} // namespace Detail
 
-	EXTERN_C void ke_io_write(const char* bytes)
+	EXTERN_C void ke_io_write(const Char* bytes)
 	{
 #ifdef __DEBUG__
 		Detail::hal_serial_init();
@@ -93,7 +93,7 @@ namespace Kernel
 #endif // __DEBUG__
 	}
 
-	EXTERN_C void ke_io_read(const char* bytes)
+	EXTERN_C void ke_io_read(const Char* bytes)
 	{
 #ifdef __DEBUG__
 		Detail::hal_serial_init();

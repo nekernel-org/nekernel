@@ -30,7 +30,7 @@ ATADeviceInterface::~ATADeviceInterface()
 
 /// @brief Returns the name of the device interface.
 /// @return it's name as a string.
-const char* ATADeviceInterface::Name() const
+const Char* ATADeviceInterface::Name() const
 {
 	return "ATADeviceInterface";
 }

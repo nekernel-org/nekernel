@@ -90,7 +90,7 @@ EXTERN_C void hal_init_platform(
 	constexpr auto cLPCSanitizeMsg		 = 0x28;
 
 	kSyscalls[cSerialAlertInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		const char* msg = (const char*)rdx;
+		const Kernel::Char* msg = (const Kernel::Char*)rdx;
 		Kernel::kcout << "Kernel: " << msg << "\r";
 	};
 

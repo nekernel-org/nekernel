@@ -29,7 +29,7 @@ AHCIDeviceInterface::~AHCIDeviceInterface()
 
 /// @brief Returns the name of the device interface.
 /// @return it's name as a string.
-const char* AHCIDeviceInterface::Name() const
+const Char* AHCIDeviceInterface::Name() const
 {
 	return "AHCIDeviceInterface";
 }

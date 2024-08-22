@@ -93,7 +93,7 @@ namespace Kernel
 		return ErrorOr<StringView>(view);
 	}
 
-	const char* StringBuilder::FromInt(const char* fmt, int i)
+	const Char* StringBuilder::FromInt(const Char* fmt, int i)
 	{
 		if (!fmt)
 			return ("-1");
@@ -134,12 +134,12 @@ namespace Kernel
 		return ret; /* Copy that ret into a buffer, 'ALLOCA' allocates to the stack */
 	}
 
-	const char* StringBuilder::FromBool(const char* fmt, bool i)
+	const Char* StringBuilder::FromBool(const Char* fmt, bool i)
 	{
 		if (!fmt)
 			return ("?");
 
-		const char* boolean_expr = i ? "true" : "false";
+		const Char* boolean_expr = i ? "true" : "false";
 		char*		ret			 = (char*)ALLOCA((sizeof(char) * i) ? 4 : 5 + rt_string_len(fmt));
 
 		if (!ret)
@@ -169,7 +169,7 @@ namespace Kernel
 		return ret;
 	}
 
-	bool StringBuilder::Equals(const char* lhs, const char* rhs)
+	bool StringBuilder::Equals(const Char* lhs, const Char* rhs)
 	{
 		if (rt_string_len(rhs) != rt_string_len(lhs))
 			return false;
@@ -194,7 +194,7 @@ namespace Kernel
 		return true;
 	}
 
-	const char* StringBuilder::Format(const char* fmt, const char* fmt2)
+	const Char* StringBuilder::Format(const Char* fmt, const Char* fmt2)
 	{
 		if (!fmt || !fmt2)
 			return ("?");

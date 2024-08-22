@@ -45,8 +45,8 @@ namespace Kernel
 		virtual ~TerminalDevice() = default;
 
 		/// @brief returns device name (terminal name)
-		/// @return string type (const char*)
-		virtual const char* Name() const override
+		/// @return string type (const Char*)
+		virtual const Char* Name() const override
 		{
 			return ("TerminalDevice");
 		}
@@ -105,7 +105,7 @@ namespace Kernel
 			if (y < 0)
 				y = -y;
 
-			const char cNumbers[11] = "0123456789";
+			const Char cNumbers[11] = "0123456789";
 
 			Char buf[2];
 			buf[0] = cNumbers[h];
@@ -133,7 +133,7 @@ namespace Kernel
 			if (y < 0)
 				y = -y;
 
-			const char cNumbers[17] = "0123456789ABCDEF";
+			const Char cNumbers[17] = "0123456789ABCDEF";
 
 			Char buf[2];
 			buf[0] = cNumbers[h];

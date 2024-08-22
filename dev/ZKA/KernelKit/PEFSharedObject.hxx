@@ -83,7 +83,7 @@ namespace Kernel
 		};
 
 		template <typename SymbolType>
-		SymbolType Load(const char* symbol_name, SizeT len, Int32 kind)
+		SymbolType Load(const Char* symbol_name, SizeT len, Int32 kind)
 		{
 			if (symbol_name == nullptr || *symbol_name == 0)
 				return nullptr;
@@ -115,4 +115,3 @@ namespace Kernel
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */
-

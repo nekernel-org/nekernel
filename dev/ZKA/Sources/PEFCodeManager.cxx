@@ -100,7 +100,7 @@ namespace Kernel
 		fFile.Delete();
 	}
 
-	VoidPtr PEFLoader::FindSymbol(const char* name, Int32 kind)
+	VoidPtr PEFLoader::FindSymbol(const Char* name, Int32 kind)
 	{
 		if (!fCachedBlob || fBad)
 			return nullptr;
@@ -115,7 +115,7 @@ namespace Kernel
 		PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(blob);
 
 		constexpr auto cMangleCharacter	 = '$';
-		const char*	   cContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
+		const Char*	   cContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
 
 		ErrorOr<StringView> errOrSym;
 
@@ -214,12 +214,12 @@ namespace Kernel
 		}
 	} // namespace Utils
 
-	const char* PEFLoader::Path()
+	const Char* PEFLoader::Path()
 	{
 		return fPath.Leak().CData();
 	}
 
-	const char* PEFLoader::AsString()
+	const Char* PEFLoader::AsString()
 	{
 #ifdef __32x0__
 		return "32x0 PEF format.";
@@ -234,7 +234,7 @@ namespace Kernel
 #endif // __32x0__ || __64x0__ || __x86_64__ || __powerpc64__
 	}
 
-	const char* PEFLoader::MIME()
+	const Char* PEFLoader::MIME()
 	{
 		return kPefApplicationMime;
 	}

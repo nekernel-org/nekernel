@@ -214,7 +214,7 @@ public:
 	/// @param Number of blobs.
 	/// @retval True disk has been formatted.
 	/// @retval False failed to format.
-	Boolean Format(const char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
+	Boolean Format(const Char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
 
 	/// @brief check if partition is good.
 	Bool IsPartitionValid() noexcept
@@ -236,7 +236,7 @@ public:
 				return false;
 		}
 
-		writer.Write(L"newosldr: disk size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
+		writer.Write(L"newosldr: Disk size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
 
 		if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
 			blockPart->DiskSize < 1 ||
@@ -250,7 +250,7 @@ public:
 			return false;
 		}
 
-		writer.Write(L"newosldr: partition name: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
+		writer.Write(L"newosldr: Partition name: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
 		return true;
 	}
@@ -285,7 +285,7 @@ private:
 		--partBlock.FreeSectors;
 
 		writer.Write(L"newosldr: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
-		writer.Write(L"newosldr: disk formatted.\r");
+		writer.Write(L"newosldr: Disk formatted.\r");
 
 		CopyMem(catalogKind->Name, blob->fFileName, StrLen(blob->fFileName));
 
@@ -308,7 +308,7 @@ private:
 /// @retval True disk has been formatted.
 /// @retval False failed to format.
 template <typename BootDev>
-inline Boolean BDiskFormatFactory<BootDev>::Format(const char*							partName,
+inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 												   BDiskFormatFactory::BFileDescriptor* fileBlobs,
 												   SizeT								blobCount)
 {

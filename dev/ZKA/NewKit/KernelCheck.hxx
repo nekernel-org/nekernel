@@ -11,7 +11,7 @@
 
 namespace Kernel
 {
-	void ke_runtime_check(bool bExpression, const char* file, const char* line);
+	void ke_runtime_check(bool bExpression, const Char* file, const Char* line);
 }
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)

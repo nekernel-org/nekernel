@@ -24,10 +24,10 @@ namespace Kernel
 		NEWOS_COPY_DEFAULT(LoaderInterface);
 
 	public:
-		virtual _Output const char* AsString()											= 0;
-		virtual _Output const char* MIME()														= 0;
-		virtual _Output const char* Path()														= 0;
+		virtual _Output const Char* AsString()											= 0;
+		virtual _Output const Char* MIME()														= 0;
+		virtual _Output const Char* Path()														= 0;
 		virtual _Output ErrorOr<VoidPtr> FindStart()											= 0;
-		virtual _Output VoidPtr			 FindSymbol(_Input const char* name, _Input Int32 kind) = 0;
+		virtual _Output VoidPtr			 FindSymbol(_Input const Char* name, _Input Int32 kind) = 0;
 	};
 } // namespace Kernel

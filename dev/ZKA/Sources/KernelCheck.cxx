@@ -126,7 +126,7 @@ namespace Kernel
 		}
 	}
 
-	void ke_runtime_check(bool expr, const char* file, const char* line)
+	void ke_runtime_check(bool expr, const Char* file, const Char* line)
 	{
 		if (!expr)
 		{

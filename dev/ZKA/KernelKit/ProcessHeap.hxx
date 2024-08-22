@@ -33,9 +33,9 @@ namespace Kernel
 
 	/// @brief Allocate a process heap, no zero out is done here.
 	/// @param flags the heap's flags.
-	/// @param len_in_gib the heap in GB.
+	/// @param initial_len_in_gib the initial heap's length in GB.
 	/// @return The process's heap.
-	VoidPtr sched_new_heap(Int32 flags, SizeT len_in_gib);
+	VoidPtr sched_new_heap(Int32 flags, SizeT initial_len_in_gib);
 
 	/// @brief Frees the process heap.
 	/// @param pointer The process heap pointer.

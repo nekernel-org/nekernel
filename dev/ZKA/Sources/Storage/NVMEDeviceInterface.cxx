@@ -21,7 +21,7 @@ namespace Kernel
 			fCleanup();
 	}
 
-	const char* NVMEDeviceInterface::Name() const
+	const Char* NVMEDeviceInterface::Name() const
 	{
 		return ("NVMEDeviceInterface");
 	}

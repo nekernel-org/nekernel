@@ -93,12 +93,12 @@ namespace Kernel
 			}
 
 			this->HeapCursor = reinterpret_cast<VoidPtr>((UIntPtr)this->HeapCursor + (sizeof(sz)));
-			VoidPtr ptr		 = this->HeapCursor;
+			VoidPtr cursor	 = this->HeapCursor;
 
 			++this->UsedMemory;
 			--this->FreeMemory;
 
-			return ptr;
+			return cursor;
 		}
 
 		return nullptr;

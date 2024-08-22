@@ -34,13 +34,13 @@ namespace Kernel
 		NEWOS_COPY_DEFAULT(PEFLoader);
 
 	public:
-		const char* Path() override;
-		const char* AsString() override;
-		const char* MIME() override;
+		const Char* Path() override;
+		const Char* AsString() override;
+		const Char* MIME() override;
 
 	public:
 		ErrorOr<VoidPtr> FindStart() override;
-		VoidPtr			 FindSymbol(const char* name, Int32 kind) override;
+		VoidPtr			 FindSymbol(const Char* name, Int32 kind) override;
 
 	public:
 		bool IsLoaded() noexcept;

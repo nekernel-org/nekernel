@@ -36,16 +36,16 @@ namespace Kernel
 		/// @brief Descriptor find factory.
 		/// @param signature The signature of the descriptor table (MADT, ACPI...)
 		/// @return the blob inside an ErrorOr object.
-		ErrorOr<voidPtr> Find(const char* signature);
+		ErrorOr<voidPtr> Find(const Char* signature);
 
 		/// @brief Checksum factory.
 		/// @param checksum the data to checksum
 		/// @param len it's size
 		/// @return if it succeed
-		bool Checksum(const char* checksum, SSizeT len); // watch for collides!
+		bool Checksum(const Char* checksum, SSizeT len); // watch for collides!
 
 	public:
-		ErrorOr<voidPtr> operator[](const char* signature)
+		ErrorOr<voidPtr> operator[](const Char* signature)
 		{
 			return this->Find(signature);
 		}

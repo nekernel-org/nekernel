@@ -102,7 +102,7 @@ namespace Kernel
 		return str;
 	}
 
-	bool IPFactory::IpCheckVersion4(const char* ip)
+	bool IPFactory::IpCheckVersion4(const Char* ip)
 	{
 		int cnter = 0;
 

@@ -66,7 +66,7 @@ namespace Kernel
 	{
 		if (!src || len < 1)
 			return nullptr;
-			
+
 		char* start = reinterpret_cast<Char*>(src);
 
 		while (len)
@@ -184,7 +184,7 @@ namespace Kernel
 		return chr == '\n';
 	}
 
-	voidPtr rt_string_in_string(const char* in, const char* needle)
+	voidPtr rt_string_in_string(const Char* in, const Char* needle)
 	{
 		for (SizeT i = 0; i < rt_string_len(in); ++i)
 		{
@@ -197,7 +197,7 @@ namespace Kernel
 
 	// @brief Checks for a string start at the character.
 
-	char* rt_string_has_char(char* str, const char chr)
+	char* rt_string_has_char(char* str, const Char chr)
 	{
 		while (*str != chr)
 		{
@@ -237,7 +237,7 @@ EXTERN_C void* memmove(void* dst, void* src, Kernel::SizeT len)
 }
 
 /// @brief strlen definition in C++.
-EXTERN_C Kernel::SizeT strlen(const char* whatToCheck)
+EXTERN_C Kernel::SizeT strlen(const Char* whatToCheck)
 {
 	return Kernel::rt_string_len(whatToCheck);
 }

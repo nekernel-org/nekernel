@@ -100,15 +100,15 @@ namespace Kernel
 		static FilesystemManagerInterface* GetMounted();
 
 	public:
-		virtual NodePtr Create(_Input const char* path)			 = 0;
-		virtual NodePtr CreateAlias(_Input const char* path)	 = 0;
-		virtual NodePtr CreateDirectory(_Input const char* path) = 0;
+		virtual NodePtr Create(_Input const Char* path)			 = 0;
+		virtual NodePtr CreateAlias(_Input const Char* path)	 = 0;
+		virtual NodePtr CreateDirectory(_Input const Char* path) = 0;
 
 	public:
-		virtual bool Remove(_Input const char* path) = 0;
+		virtual bool Remove(_Input const Char* path) = 0;
 
 	public:
-		virtual NodePtr Open(_Input const char* path, _Input const char* r) = 0;
+		virtual NodePtr Open(_Input const Char* path, _Input const Char* r) = 0;
 
 	public:
 		virtual Void Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size) = 0;
@@ -245,7 +245,7 @@ namespace Kernel
 			return nullptr;
 		}
 
-		ErrorOr<Int64> WriteAll(const char* fName, const VoidPtr data) noexcept
+		ErrorOr<Int64> WriteAll(const Char* fName, const VoidPtr data) noexcept
 		{
 			if (this->fFileRestrict != eRestrictReadWrite &&
 				this->fFileRestrict != eRestrictReadWriteBinary &&
@@ -267,7 +267,7 @@ namespace Kernel
 			return ErrorOr<Int64>(kErrorInvalidData);
 		}
 
-		VoidPtr Read(const char* fName) noexcept
+		VoidPtr Read(const Char* fName) noexcept
 		{
 			if (this->fFileRestrict != eRestrictReadWrite &&
 				this->fFileRestrict != eRestrictReadWriteBinary &&

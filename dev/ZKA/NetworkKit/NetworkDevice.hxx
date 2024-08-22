@@ -34,8 +34,8 @@ namespace Kernel
 		NetworkDevice(const NetworkDevice&)			   = default;
 
 	public:
-		const char* Name() const override;
-		Boolean		Name(const char* strView);
+		const Char* Name() const override;
+		Boolean		Name(const Char* strView);
 
 	private:
 		static constexpr auto cNetworkNameLen = 512;

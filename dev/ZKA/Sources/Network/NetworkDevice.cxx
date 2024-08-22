@@ -10,13 +10,13 @@
 namespace Kernel
 {
 	/// \brief Getter for fNetworkName.
-	const char* NetworkDevice::Name() const
+	const Char* NetworkDevice::Name() const
 	{
 		return this->fNetworkName;
 	}
 
 	/// \brief Setter for fNetworkName.
-	Boolean NetworkDevice::Name(const char* strView)
+	Boolean NetworkDevice::Name(const Char* strView)
 	{
 		if (strView == nullptr)
 			return false;

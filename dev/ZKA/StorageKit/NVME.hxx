@@ -25,7 +25,7 @@ namespace Kernel
 		NVMEDeviceInterface& operator=(const NVMEDeviceInterface&) = default;
 		NVMEDeviceInterface(const NVMEDeviceInterface&)			   = default;
 
-		const char* Name() const override;
+		const Char* Name() const override;
 
 	public:
 		OwnPtr<MountpointInterface*> operator()(UInt32 dmaLow, UInt32 dmaHigh, SizeT sz);
