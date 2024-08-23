@@ -388,7 +388,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 				return nullptr;
 			}
 
-			catalogChild->DataFork	   = partBlock->DiskSize - partBlock->StartCatalog;
+			catalogChild->DataFork	   = partBlock->DiskSize - start_free;
 			catalogChild->ResourceFork = catalogChild->DataFork;
 
 			catalogChild->NextSibling =
@@ -624,19 +624,19 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 	auto startFork = (!isRsrcFork) ? catalog->DataFork
 								   : catalog->ResourceFork;
 
-	NFS_FORK_STRUCT forkDataIn{0};
+	NFS_FORK_STRUCT* forkDataIn = new NFS_FORK_STRUCT();
 
 	// sanity check of the fork position as the condition to run the loop.
 	while (startFork >= kNewFSCatalogStartAddress)
 	{
-		drive.fPacket.fPacketContent = &forkDataIn;
+		drive.fPacket.fPacketContent = forkDataIn;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
 		drive.fPacket.fLba			 = startFork;
 
 		drive.fInput(&drive.fPacket);
 
 		// check the fork, if it's position is valid.
-		if (forkDataIn.DataOffset <= kNewFSCatalogStartAddress)
+		if (forkDataIn->DataOffset <= kNewFSCatalogStartAddress)
 		{
 			ErrLocal() = kErrorDiskIsCorrupted;
 
@@ -645,22 +645,23 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 			return false;
 		}
 
-		if (forkDataIn.Flags != kNewFSFlagUnallocated &&
-			forkDataIn.Flags != kNewFSFlagDeleted &&
-			StringBuilder::Equals(forkDataIn.ForkName, forkName) &&
-			StringBuilder::Equals(forkDataIn.CatalogName, catalog->Name))
+		if (forkDataIn->Flags != kNewFSFlagUnallocated &&
+			forkDataIn->Flags != kNewFSFlagDeleted &&
+			StringBuilder::Equals(forkDataIn->ForkName, forkName) &&
+			StringBuilder::Equals(forkDataIn->CatalogName, catalog->Name))
 		{
-			if (forkDataIn.DataSize < sizeOfData)
+			if (forkDataIn->DataSize < sizeOfData &&
+				forkDataIn->DataSize < 1)
 			{
-				startFork = forkDataIn.NextSibling;
+				startFork = forkDataIn->NextSibling;
 				continue;
 			}
 
 			drive.fPacket.fPacketContent = data;
 			drive.fPacket.fPacketSize	 = sizeOfData;
-			drive.fPacket.fLba			 = forkDataIn.DataOffset;
+			drive.fPacket.fLba			 = forkDataIn->DataOffset;
 
-			kcout << "newoskrnl: data offset: " << hex_number(forkDataIn.DataOffset) << endl;
+			kcout << "newoskrnl: data offset: " << hex_number(forkDataIn->DataOffset) << endl;
 
 			drive.fOutput(&drive.fPacket);
 
@@ -672,19 +673,22 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 			// Store size of blob now.
 			// ===================================================== //
 
-			if (forkDataIn.DataSize < sizeOfData)
+			if (forkDataIn->DataSize < sizeOfData &&
+				forkDataIn->DataSize < 1)
 			{
-				startFork = forkDataIn.NextSibling;
+				startFork = forkDataIn->NextSibling + sizeof(NFS_FORK_STRUCT);
 				continue;
 			}
 
-			forkDataIn.Flags = kNewFSFlagCreated;
+			forkDataIn->Flags = kNewFSFlagCreated;
+			forkDataIn->DataOffset = startFork + sizeof(NFS_FORK_STRUCT);
+			forkDataIn->DataSize = sizeOfData;
 
 			drive.fPacket.fPacketContent = data;
 			drive.fPacket.fPacketSize	 = sizeOfData;
-			drive.fPacket.fLba			 = forkDataIn.DataOffset;
+			drive.fPacket.fLba			 = startFork + sizeof(NFS_FORK_STRUCT);
 
-			kcout << "newoskrnl: data offset: " << hex_number(forkDataIn.DataOffset) << endl;
+			kcout << "newoskrnl: data offset: " << hex_number(forkDataIn->DataOffset) << endl;
 
 			drive.fOutput(&drive.fPacket);
 
@@ -694,14 +698,14 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 
 			drive.fOutput(&drive.fPacket);
 
-			kcout << "newoskrnl: wrote fork at offset: " << hex_number(forkDataIn.DataOffset) << endl;
+			kcout << "newoskrnl: wrote fork at offset: " << hex_number(forkDataIn->DataOffset) << endl;
 
 			delete catalog;
 
 			return true;
 		}
 
-		startFork = forkDataIn.NextSibling;
+		startFork = forkDataIn->NextSibling + forkDataIn->DataSize;
 	}
 
 	return false;
@@ -931,6 +935,8 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 		return nullptr;
 	}
 
+	constexpr auto cNewFSCatalogPadding = 4;
+
 	Lba	 dataForkLba  = (!isRsrcFork) ? catalog->DataFork : catalog->ResourceFork;
 	Size dataForkSize = (!isRsrcFork) ? catalog->DataForkSize : catalog->ResourceForkSize;
 
@@ -938,14 +944,14 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 		  << ", fork: " << hex_number(dataForkLba) << endl;
 
 	NFS_FORK_STRUCT* fs_buf = new NFS_FORK_STRUCT();
-	auto  drive		= sMountpointInterface.A();
+	auto			 drive	= sMountpointInterface.A();
 
 	rt_copy_memory((VoidPtr) "fs/newfs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/newfs-packet"));
 
 	NFS_FORK_STRUCT* fs_fork_data = nullptr;
 
-	while (dataForkLba >= kNewFSCatalogStartAddress)
+	while (dataForkLba > kNewFSCatalogStartAddress)
 	{
 		drive.fPacket.fLba			 = dataForkLba;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
@@ -955,16 +961,8 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 
 		fs_fork_data = fs_buf;
 
-		kcout << "newoskrnl: name: " << fs_fork_data->ForkName << endl;
-
-		if (fs_fork_data->DataOffset <= kNewFSCatalogStartAddress)
-		{
-			delete[] fs_buf;
-
-			kcout << "Fail-Data-Offset: " << hex_number(fs_fork_data->DataOffset) << endl;
-
-			return nullptr;
-		}
+		kcout << "newoskrnl: ForkName: " << fs_fork_data->ForkName << endl;
+		kcout << "newoskrnl: CatalogName: " << fs_fork_data->CatalogName << endl;
 
 		if (StringBuilder::Equals(forkName, fs_fork_data->ForkName) &&
 			StringBuilder::Equals(catalog->Name, fs_fork_data->CatalogName))
@@ -973,22 +971,13 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 		dataForkLba = fs_fork_data->NextSibling;
 	}
 
-	if (dataForkLba <= kNewFSCatalogStartAddress)
+	if (dataForkLba < kNewFSCatalogStartAddress)
 	{
 		delete[] fs_buf;
 		return nullptr;
 	}
 
-	NFS_FORK_STRUCT* forkBuf = new NFS_FORK_STRUCT();
-
-	drive.fPacket.fLba			 = fs_fork_data->DataOffset;
-	drive.fPacket.fPacketSize	 = dataSz;
-	drive.fPacket.fPacketContent = forkBuf;
-
-	drive.fInput(&drive.fPacket);
-
-	delete[] fs_buf;
-	return forkBuf;
+	return fs_fork_data;
 }
 
 /***********************************************************************************/

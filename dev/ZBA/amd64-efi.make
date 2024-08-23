@@ -91,7 +91,7 @@ run-efi-amd64:
 # img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta.
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f raw $(IMG) 4G
+	qemu-img create -f raw $(IMG) 10G
 	qemu-img create -f raw $(IMG_2) 4G
 	qemu-img create -f raw $(IMG_3) 4G
 

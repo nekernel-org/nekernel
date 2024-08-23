@@ -17,6 +17,7 @@
 #define kGuestUser "\\Local\\Guest"
 
 #define kUsersFile "\\Users\\UsrRcrd"
+#define kUsersDir "\\Users\\"
 
 #define kMaxUserNameLen	 (255)
 #define kMaxUserTokenLen (255)
@@ -73,7 +74,6 @@ namespace Kernel
 		RingKind   fRing{RingKind::kRingStdUser};
 		Char fUserName[kMaxUserNameLen] = { 0 };
 		Char fUserToken[kMaxUserTokenLen] = { 0 };
-		VoidPtr fUserNodePtr{nullptr};
 
 		friend UserManager;
 	};
@@ -92,7 +92,8 @@ namespace Kernel
 		NEWOS_COPY_DELETE(UserManager);
 
 		STATIC UserManager* The() noexcept;
-		Bool				TryLogIn(User& user) noexcept;
+		Bool				TryLogIn(User& user, const Char* password, const Char* right_password) noexcept;
+		Bool				TryLogIn(User& user, const Char* password) noexcept;
 		User*				GetCurrent() noexcept;
 		Void				TryLogOff() noexcept;
 	};
