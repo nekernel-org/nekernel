@@ -80,6 +80,7 @@ namespace Kernel
 
 	class UserManager final
 	{
+	private:
 		UserManager()  = default;
 		~UserManager() = default;
 
