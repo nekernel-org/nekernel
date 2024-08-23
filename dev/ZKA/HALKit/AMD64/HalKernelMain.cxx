@@ -229,7 +229,6 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 #ifdef __DEBUG__
 	const auto cPassword		  = "debug_usr";
-	const auto cPasswordIncorrect = "debug_usr_invalid";
 
 	Kernel::User user{Kernel::RingKind::kRingSuperUser, kSuperUser};
 

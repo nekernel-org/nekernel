@@ -66,14 +66,15 @@ namespace Kernel
 		{
 			return fOut && fIn;
 		}
-		bool operator!()
+
+		Bool operator!()
 		{
 			return !fOut || !fIn;
 		}
 
 	private:
-		void (*fOut)(T Data) = {nullptr};
-		void (*fIn)(T Data) = {nullptr};
+		Void (*fOut)(T Data) = {nullptr};
+		Void (*fIn)(T Data) = {nullptr};
 	};
 
 	///

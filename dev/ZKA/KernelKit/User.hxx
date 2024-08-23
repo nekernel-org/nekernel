@@ -21,7 +21,7 @@
 #define kMaxUserNameLen	 (255)
 #define kMaxUserTokenLen (255)
 
-// hash 'password' -> base64+md5 encoded data
+// hash password.
 // use this data to then fetch specific data of the user..
 
 namespace Kernel
