@@ -49,7 +49,7 @@ namespace Kernel
 		~User();
 
 	public:
-		NEWOS_COPY_DEFAULT(User)
+		ZKA_COPY_DEFAULT(User)
 
 	public:
 		bool operator==(const User& lhs);
@@ -90,7 +90,7 @@ namespace Kernel
 		User* fRootUser{nullptr};
 
 	public:
-		NEWOS_COPY_DELETE(UserManager);
+		ZKA_COPY_DELETE(UserManager);
 
 		STATIC UserManager* The() noexcept;
 		Bool				TryLogIn(User& user, const Char* password, const Char* right_password) noexcept;

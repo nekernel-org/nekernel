@@ -7,7 +7,7 @@
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/PCI/Device.hxx>
 
-Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
+Kernel::UInt ZKA_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
@@ -19,7 +19,7 @@ Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShor
 	return Kernel::HAL::In32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
 
-void NewOSPCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
+void ZKA_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
@@ -29,34 +29,40 @@ void NewOSPCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort d
 					   target);
 }
 
+#define PCI_BAR_IO		 0x01
+#define PCI_BAR_LOWMEM	 0x02
+#define PCI_BAR_64		 0x04
+#define PCI_BAR_PREFETCH 0x08
+
 namespace Kernel::PCI
 {
-	Device::Device(UShort bus, UShort device, UShort func, UShort bar)
+	Device::Device(UShort bus, UShort device, UShort func, UInt32 bar)
 		: fBus(bus), fDevice(device), fFunction(func), fBar(bar)
 	{
+		// get bar 0
+		auto bar_zero = 0x10 + bar * sizeof(UInt32);
+		fBar		  = this->Read(bar_zero, 4);
 	}
 
-	Device::~Device()
-	{
-	}
+	Device::~Device() = default;
 
 	UInt Device::Read(UInt bar, Size sz)
 	{
-		NewOSPCISetCfgTarget(bar, fBus, fDevice, fFunction);
+		ZKA_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
 
 		if (sz == 4)
-			return HAL::In32((UShort)PciConfigKind::ConfigData + (fBar & 3));
+			return HAL::In32((UShort)PciConfigKind::ConfigData + (bar & 3));
 		if (sz == 2)
-			return HAL::In16((UShort)PciConfigKind::ConfigData + (fBar & 3));
+			return HAL::In16((UShort)PciConfigKind::ConfigData + (bar & 3));
 		if (sz == 1)
-			return HAL::In8((UShort)PciConfigKind::ConfigData + (fBar & 3));
+			return HAL::In8((UShort)PciConfigKind::ConfigData + (bar & 3));
 
 		return 0xFFFF;
 	}
 
 	void Device::Write(UInt bar, UIntPtr data, Size sz)
 	{
-		NewOSPCISetCfgTarget(bar, fBus, fDevice, fFunction);
+		ZKA_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
 
 		if (sz == 4)
 			HAL::Out32((UShort)PciConfigKind::ConfigData + (fBar & 3), (UInt)data);
@@ -68,37 +74,37 @@ namespace Kernel::PCI
 
 	UShort Device::DeviceId()
 	{
-		return (UShort)(NewOSPCIReadRaw(0x0 >> 16, fBus, fDevice, fFunction));
+		return (UShort)(ZKA_PCIReadRaw(0x0 >> 16, fBus, fDevice, fFunction));
 	}
 
 	UShort Device::VendorId()
 	{
-		return (UShort)(NewOSPCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
+		return (UShort)(ZKA_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
 	}
 
 	UShort Device::InterfaceId()
 	{
-		return (UShort)(NewOSPCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
+		return (UShort)(ZKA_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
 	}
 
 	UChar Device::Class()
 	{
-		return (UChar)(NewOSPCIReadRaw(0x08, fBus, fDevice, fFunction) >> 24);
+		return (UChar)(ZKA_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 24);
 	}
 
 	UChar Device::Subclass()
 	{
-		return (UChar)(NewOSPCIReadRaw(0x08, fBus, fDevice, fFunction) >> 16);
+		return (UChar)(ZKA_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 16);
 	}
 
 	UChar Device::ProgIf()
 	{
-		return (UChar)(NewOSPCIReadRaw(0x08, fBus, fDevice, fFunction) >> 8);
+		return (UChar)(ZKA_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 8);
 	}
 
 	UChar Device::HeaderType()
 	{
-		return (UChar)(NewOSPCIReadRaw(0xC, fBus, fDevice, fFunction) >> 16);
+		return (UChar)(ZKA_PCIReadRaw(0xC, fBus, fDevice, fFunction) >> 16);
 	}
 
 	void Device::EnableMmio()
@@ -111,6 +117,11 @@ namespace Kernel::PCI
 	{
 		bool enable = Read(0x04, sizeof(UShort)) | (1 << 2);
 		Write(0x04, enable, sizeof(UShort));
+	}
+
+	UInt32 Device::Bar()
+	{
+		return fBar;
 	}
 
 	UShort Device::Vendor()

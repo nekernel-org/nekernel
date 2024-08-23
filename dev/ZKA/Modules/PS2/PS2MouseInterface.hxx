@@ -26,7 +26,7 @@ namespace Kernel
 		explicit PS2MouseInterface() = default;
 		~PS2MouseInterface()		 = default;
 
-		NEWOS_COPY_DEFAULT(PS2MouseInterface);
+		ZKA_COPY_DEFAULT(PS2MouseInterface);
 
 	public:
 		/// @brief Enables PS2 mouse for kernel.

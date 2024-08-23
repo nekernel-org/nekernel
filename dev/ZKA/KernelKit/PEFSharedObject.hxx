@@ -40,7 +40,7 @@ namespace Kernel
 		~PEFSharedObjectInterface()			= default;
 
 	public:
-		NEWOS_COPY_DEFAULT(PEFSharedObjectInterface);
+		ZKA_COPY_DEFAULT(PEFSharedObjectInterface);
 
 	private:
 		PEF_SHARED_OBJECT_TRAITS* fMounted{nullptr};

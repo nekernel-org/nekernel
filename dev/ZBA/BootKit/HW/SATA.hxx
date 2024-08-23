@@ -15,7 +15,7 @@ public:
 	explicit BootDeviceSATA() noexcept;
 	~BootDeviceSATA() = default;
 
-	NEWOS_COPY_DEFAULT(BootDeviceSATA);
+	ZKA_COPY_DEFAULT(BootDeviceSATA);
 
 	struct SATATrait final
 	{

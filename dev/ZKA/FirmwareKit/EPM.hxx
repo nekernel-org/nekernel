@@ -52,7 +52,7 @@
 #ifdef __ZKA_AMD64__
 #define kEPMMagic kEPMMagic86
 #else
-#ifdef __NEWOS_ARM64__
+#ifdef __ZKA_ARM64__
 #define kEPMMagic kEPMMagicARM
 #else
 #define kEPMMagic kEPMMagicError

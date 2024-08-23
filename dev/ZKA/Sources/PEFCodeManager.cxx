@@ -20,15 +20,15 @@ namespace Kernel
 		/// @brief Get the PEF platform signature according to the compiled backebnd
 		UInt32 rt_get_pef_platform(void) noexcept
 		{
-#ifdef __NEWOS_32X0__
+#ifdef __ZKA_32X0__
 			return kPefArch32x0;
-#elif defined(__NEWOS_64X0__)
+#elif defined(__ZKA_64X0__)
 			return kPefArch64x0;
 #elif defined(__ZKA_AMD64__)
 			return kPefArchAMD64;
-#elif defined(__NEWOS_PPC64__)
+#elif defined(__ZKA_PPC64__)
 			return kPefArchPowerPC;
-#elif defined(__NEWOS_ARM64__)
+#elif defined(__ZKA_ARM64__)
 			return kPefArchARM64;
 #else
 			return kPefArchInvalid;

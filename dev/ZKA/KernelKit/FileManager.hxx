@@ -78,7 +78,7 @@ namespace Kernel
 		virtual ~FilesystemManagerInterface() = default;
 
 	public:
-		NEWOS_COPY_DEFAULT(FilesystemManagerInterface);
+		ZKA_COPY_DEFAULT(FilesystemManagerInterface);
 
 	public:
 		/// @brief Mounts a new filesystem into an active state.
@@ -143,7 +143,7 @@ namespace Kernel
 		~NewFilesystemManager() override;
 
 	public:
-		NEWOS_COPY_DEFAULT(NewFilesystemManager);
+		ZKA_COPY_DEFAULT(NewFilesystemManager);
 
 	public:
 		NodePtr Create(const Char* path) override;

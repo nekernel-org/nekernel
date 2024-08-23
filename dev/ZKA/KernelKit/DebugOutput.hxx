@@ -51,7 +51,7 @@ namespace Kernel
 			return ("TerminalDevice");
 		}
 
-		NEWOS_COPY_DEFAULT(TerminalDevice);
+		ZKA_COPY_DEFAULT(TerminalDevice);
 
 		STATIC TerminalDevice The() noexcept;
 	};

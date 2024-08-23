@@ -186,8 +186,12 @@ namespace Kernel
 		}
 
 		fCurrentUser = &user;
-		Kernel::kcout << "newoskrnl: Logged in as: " << fCurrentUser->Name() << Kernel::endl;
 
+		if (fCurrentUser->Name()[0])
+			Kernel::kcout << "newoskrnl: Logged in as: " << fCurrentUser->Name() << Kernel::endl;
+			else
+
+			Kernel::kcout << "newoskrnl: Logged in as anon. " << Kernel::endl;
 		return true;
 	}
 

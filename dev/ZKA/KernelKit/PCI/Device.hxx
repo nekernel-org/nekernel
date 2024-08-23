@@ -22,7 +22,7 @@ namespace Kernel::PCI
 		Device() = default;
 
 	public:
-		explicit Device(UShort bus, UShort device, UShort function, UShort bar);
+		explicit Device(UShort bus, UShort device, UShort function, UInt32 bar);
 
 		Device& operator=(const Device&) = default;
 
@@ -60,6 +60,7 @@ namespace Kernel::PCI
 		UChar  Subclass();
 		UChar  ProgIf();
 		UChar  HeaderType();
+		UInt32 Bar();
 
 	public:
 		void EnableMmio();
@@ -71,7 +72,7 @@ namespace Kernel::PCI
 		UShort fBus;
 		UShort fDevice;
 		UShort fFunction;
-		UShort fBar;
+		UInt32 fBar;
 	};
 } // namespace Kernel::PCI
 

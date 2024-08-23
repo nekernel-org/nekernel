@@ -44,7 +44,7 @@ void operator delete(void* ptr, size_t sz)
 	if (ptr == nullptr)
 		return;
 
-	NEWOS_UNUSED(sz);
+	ZKA_UNUSED(sz);
 
 	Kernel::mm_delete_ke_heap(ptr);
 }

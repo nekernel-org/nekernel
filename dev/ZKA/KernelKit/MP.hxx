@@ -49,7 +49,7 @@ namespace Kernel
 		~HardwareThread();
 
 	public:
-		NEWOS_COPY_DEFAULT(HardwareThread)
+		ZKA_COPY_DEFAULT(HardwareThread)
 
 	public:
 		operator bool();
@@ -92,7 +92,7 @@ namespace Kernel
 
 	public:
 		~HardwareThreadScheduler();
-		NEWOS_COPY_DEFAULT(HardwareThreadScheduler);
+		ZKA_COPY_DEFAULT(HardwareThreadScheduler);
 
 	public:
 		bool			   Switch(HAL::StackFramePtr the);

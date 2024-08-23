@@ -38,7 +38,7 @@ namespace Kernel
 
 			~IndexableProperty() override = default;
 
-			NEWOS_COPY_DEFAULT(IndexableProperty);
+			ZKA_COPY_DEFAULT(IndexableProperty);
 
 		public:
 			IndexProperty& Leak() noexcept;

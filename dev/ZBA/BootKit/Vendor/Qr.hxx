@@ -963,7 +963,7 @@ namespace qr
 		explicit QrDelegate() = default;
 		~QrDelegate()		  = default;
 
-		NEWOS_COPY_DEFAULT(QrDelegate);
+		ZKA_COPY_DEFAULT(QrDelegate);
 
 		/// @brief Draw method delegate.
 		template <int V>

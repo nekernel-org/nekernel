@@ -78,7 +78,7 @@ namespace Kernel
 		explicit MountpointInterface() = default;
 		~MountpointInterface()		   = default;
 
-		NEWOS_COPY_DEFAULT(MountpointInterface);
+		ZKA_COPY_DEFAULT(MountpointInterface);
 
 	public:
 		DriveTrait& A()

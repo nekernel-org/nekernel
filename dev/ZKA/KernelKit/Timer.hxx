@@ -23,7 +23,7 @@ namespace Kernel
 		virtual ~TimerInterface() = default;
 
 	public:
-		NEWOS_COPY_DEFAULT(TimerInterface);
+		ZKA_COPY_DEFAULT(TimerInterface);
 
 	public:
 		virtual Int32 Wait() noexcept;
@@ -36,7 +36,7 @@ namespace Kernel
 		~SoftwareTimer() override;
 
 	public:
-		NEWOS_COPY_DEFAULT(SoftwareTimer);
+		ZKA_COPY_DEFAULT(SoftwareTimer);
 
 	public:
 		Int32 Wait() noexcept override;
@@ -53,7 +53,7 @@ namespace Kernel
 		~HardwareTimer() override;
 
 	public:
-		NEWOS_COPY_DEFAULT(HardwareTimer);
+		ZKA_COPY_DEFAULT(HardwareTimer);
 
 	public:
 		Int32 Wait() noexcept override;

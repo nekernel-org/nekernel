@@ -21,7 +21,7 @@ namespace Kernel
 		explicit LoaderInterface() = default;
 		virtual ~LoaderInterface() = default;
 
-		NEWOS_COPY_DEFAULT(LoaderInterface);
+		ZKA_COPY_DEFAULT(LoaderInterface);
 
 	public:
 		virtual _Output const Char* AsString()											= 0;

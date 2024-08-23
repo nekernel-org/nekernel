@@ -7,9 +7,9 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <NewKit/Pmm.hxx>
 
-#if defined(__NEWOS_ARM64__)
+#if defined(__ZKA_ARM64__)
 #include <HALKit/ARM64/Processor.hxx>
-#endif // defined(__NEWOS_ARM64__)
+#endif // defined(__ZKA_ARM64__)
 
 #if defined(__ZKA_AMD64__)
 #include <HALKit/AMD64/Processor.hxx>

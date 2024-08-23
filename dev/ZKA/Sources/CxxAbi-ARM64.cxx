@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef __NEWOS_ARM64__
+#ifdef __ZKA_ARM64__
 
 #include <KernelKit/DebugOutput.hxx>
 #include <NewKit/CxxAbi.hxx>
@@ -71,4 +71,4 @@ EXTERN_C void _purecall()
 	Kernel::kcout << "newoskrnl: C++ placeholder method.\n";
 }
 
-#endif // ifdef __NEWOS_ARM64__
+#endif // ifdef __ZKA_ARM64__

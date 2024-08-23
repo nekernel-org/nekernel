@@ -21,7 +21,7 @@ EMU=qemu-system-x86_64
 endif
 
 ifeq ($(NEWS_MODEL), )
-NEWOS_MODEL=-DkMachineModel="\"ZKA SSD\""
+ZKA_MODEL=-DkMachineModel="\"ZKA SSD\""
 endif
 
 BIOS=OVMF.fd
@@ -32,7 +32,7 @@ IMG_3=epm-master-2.img
 EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
-			-device ide-hd,drive=disk,bus=ide.0 -drive \
+			-device ide-hd,drive=disk,bus=ide.0 -hdd $(IMG_2)  -drive \
 			file=fat:rw:Sources/Root/,index=2,format=raw -d int
 
 LD_FLAGS=-e Main --subsystem=10
@@ -79,7 +79,7 @@ endif
 .PHONY: compile-amd64
 compile-amd64:
 	$(RESCMD)
-	$(CC_GNU) $(NEWOS_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
+	$(CC_GNU) $(ZKA_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
 	$(wildcard Sources/HEL/AMD64/*.cxx) \
 	$(wildcard Sources/HEL/AMD64/*.S) \
 	$(wildcard Sources/*.cxx)

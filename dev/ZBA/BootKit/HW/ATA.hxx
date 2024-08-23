@@ -23,7 +23,7 @@ public:
 	explicit BootDeviceATA() noexcept;
 	~BootDeviceATA() = default;
 
-	NEWOS_COPY_DEFAULT(BootDeviceATA);
+	ZKA_COPY_DEFAULT(BootDeviceATA);
 
 	enum
 	{

@@ -119,7 +119,7 @@ namespace Kernel
 		if (!data)
 			return;
 
-		NEWOS_UNUSED(flags);
+		ZKA_UNUSED(flags);
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
 			fImpl->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & cFileFlagRsrc ? true : false), data, size,
@@ -137,7 +137,7 @@ namespace Kernel
 		if (!sz)
 			return nullptr;
 
-		NEWOS_UNUSED(flags);
+		ZKA_UNUSED(flags);
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
 			return fImpl->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & cFileFlagRsrc ? true : false), sz,

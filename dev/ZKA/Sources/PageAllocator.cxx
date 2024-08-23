@@ -26,14 +26,14 @@ namespace Kernel::Detail
 
 	void exec_disable(UIntPtr VirtualAddr)
 	{
-#ifdef __NEWOS_SUPPORT_NX__
+#ifdef __ZKA_SUPPORT_NX__
 		PTE* VirtualAddrTable = reinterpret_cast<PTE*>(VirtualAddr);
 
 		MUST_PASS(!VirtualAddrTable->ExecDisable == false);
 		VirtualAddrTable->ExecDisable = true;
 
 		hal_flush_tlb();
-#endif // ifdef __NEWOS_SUPPORT_NX__
+#endif // ifdef __ZKA_SUPPORT_NX__
 	}
 
 	bool page_disable(UIntPtr VirtualAddr)

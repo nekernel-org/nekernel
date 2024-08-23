@@ -206,7 +206,7 @@ public:
 
 	~BDiskFormatFactory() = default;
 
-	NEWOS_COPY_DELETE(BDiskFormatFactory);
+	ZKA_COPY_DELETE(BDiskFormatFactory);
 
 	/// @brief Format disk.
 	/// @param Partition Name

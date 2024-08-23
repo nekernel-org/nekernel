@@ -15,13 +15,13 @@ namespace Kernel::PCI
 	Iterator::Iterator(const Types::PciDeviceKind& type)
 	{
 		// probe devices.
-		for (int bus = 0; bus < NEWOS_BUS_COUNT; ++bus)
+		for (int bus = 0; bus < ZKA_BUS_COUNT; ++bus)
 		{
-			for (int device = 0; device < NEWOS_DEVICE_COUNT; ++device)
+			for (int device = 0; device < ZKA_DEVICE_COUNT; ++device)
 			{
-				for (int function = 0; function < NEWOS_FUNCTION_COUNT; ++function)
+				for (int function = 0; function < ZKA_FUNCTION_COUNT; ++function)
 				{
-					Device dev(bus, device, function, 0);
+					Device dev(bus, device, function, type == Types::PciDeviceKind::MassStorageController ? 5 : 1);
 
 					if (dev.Class() == (UChar)type)
 					{

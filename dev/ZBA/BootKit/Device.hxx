@@ -17,7 +17,7 @@ public:
 	explicit Device() = default;
 	virtual ~Device() = default;
 
-	NEWOS_MOVE_DEFAULT(Device);
+	ZKA_MOVE_DEFAULT(Device);
 
 	struct Trait
 	{

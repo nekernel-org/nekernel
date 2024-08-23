@@ -42,7 +42,7 @@ namespace Kernel
 
 		~JsonType() = default;
 
-		NEWOS_COPY_DEFAULT(JsonType);
+		ZKA_COPY_DEFAULT(JsonType);
 
 		const Bool& IsUndefined() { return fUndefined; }
 

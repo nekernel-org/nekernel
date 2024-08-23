@@ -13,9 +13,9 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/Ref.hxx>
 
-#define NEWOS_BUS_COUNT		 (256)
-#define NEWOS_DEVICE_COUNT	 (33)
-#define NEWOS_FUNCTION_COUNT (8)
+#define ZKA_BUS_COUNT		 (256)
+#define ZKA_DEVICE_COUNT	 (33)
+#define ZKA_FUNCTION_COUNT (8)
 
 namespace Kernel::PCI
 {
@@ -36,7 +36,7 @@ namespace Kernel::PCI
 		Ref<PCI::Device> operator[](const Size& sz);
 
 	private:
-		Array<PCI::Device, NEWOS_BUS_COUNT> fDevices;
+		Array<PCI::Device, ZKA_BUS_COUNT> fDevices;
 	};
 } // namespace Kernel::PCI
 

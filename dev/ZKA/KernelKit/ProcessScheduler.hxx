@@ -136,7 +136,7 @@ namespace Kernel
 
 		~PROCESS_HEADER_BLOCK() = default;
 
-		NEWOS_COPY_DEFAULT(PROCESS_HEADER_BLOCK)
+		ZKA_COPY_DEFAULT(PROCESS_HEADER_BLOCK)
 
 	public:
 		void		 SetEntrypoint(UIntPtr& imageStart) noexcept;
@@ -229,7 +229,7 @@ namespace Kernel
 		explicit ProcessTeam() = default;
 		~ProcessTeam()		   = default;
 
-		NEWOS_COPY_DEFAULT(ProcessTeam);
+		ZKA_COPY_DEFAULT(ProcessTeam);
 
 		MutableArray<Ref<PROCESS_HEADER_BLOCK>>& AsArray();
 		Ref<PROCESS_HEADER_BLOCK>&				  AsRef();
@@ -252,7 +252,7 @@ namespace Kernel
 	public:
 		~ProcessScheduler() = default;
 
-		NEWOS_COPY_DEFAULT(ProcessScheduler)
+		ZKA_COPY_DEFAULT(ProcessScheduler)
 
 		operator bool();
 		bool operator!();

@@ -46,7 +46,7 @@ namespace Kernel
 		}
 
 #ifdef __AHCI__
-		drv_std_write(pckt->fLba, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
 		drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
 #endif
@@ -69,6 +69,9 @@ namespace Kernel
 		kATAIO	   = ATA_PRIMARY_IO;
 
 		MUST_PASS(drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster));
+#elif defined(__AHCI__)
+		UInt16 pi = 0;
+		MUST_PASS(drv_std_init(pi));
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
 
 		pckt->fPacketGood = true;
@@ -111,7 +114,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "/Mount/Null", trait.fName, rt_string_len("/Mount/Null"));
+		rt_copy_memory((VoidPtr) "\\NUL", trait.fName, rt_string_len("\\NUL"));
 		trait.fKind = kInvalidDrive;
 
 		trait.fInput	 = io_drv_unimplemented;

@@ -4,7 +4,7 @@
 ######################
 
 CC=g++
-FLAGS=-I../ -shared -fPIC -D__NEWOS_SYMS__
+FLAGS=-I../ -shared -fPIC -D__ZKA_SYMS__
 OUTPUT=sci.dll
 
 .PHONY: build-sci

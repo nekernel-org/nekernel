@@ -35,7 +35,7 @@ namespace Kernel
 		bool LockOrWait(PROCESS_HEADER_BLOCK* process, TimerInterface* timer);
 
 	public:
-		NEWOS_COPY_DEFAULT(Semaphore);
+		ZKA_COPY_DEFAULT(Semaphore);
 
 	private:
 		ProcessHeaderRef fLockingProcess{nullptr};

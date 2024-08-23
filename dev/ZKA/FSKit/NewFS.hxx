@@ -226,7 +226,7 @@ namespace Kernel
 		~NewFSParser()		   = default;
 
 	public:
-		NEWOS_COPY_DEFAULT(NewFSParser);
+		ZKA_COPY_DEFAULT(NewFSParser);
 
 	public:
 		/// @brief Creates a new fork inside the New filesystem partition.

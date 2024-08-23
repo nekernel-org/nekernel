@@ -18,6 +18,8 @@
 
 // Forward declarations of structs.
 
+#define kAHCISectorSize (512U)
+
 struct HbaPort;
 struct FisData;
 struct FisRegD2H;
@@ -262,7 +264,7 @@ typedef struct HbaMem final
 	Kernel::UInt16 Resv0;
 	Kernel::UInt32 Resv2;
 
-	HbaPort Ports[1]; // 1 ~ 32
+	HbaPort Ports[32]; // 1 ~ 32, 32 is the max ahci devices per controller.
 } HbaMem;
 
 typedef struct HbaCmdHeader final

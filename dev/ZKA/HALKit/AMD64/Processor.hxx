@@ -317,7 +317,7 @@ namespace Kernel::HAL
 
 		~APICController() = default;
 
-		NEWOS_COPY_DEFAULT(APICController);
+		ZKA_COPY_DEFAULT(APICController);
 
 	public:
 		UInt32 Read(UInt32 reg) noexcept;

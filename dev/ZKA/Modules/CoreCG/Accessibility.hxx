@@ -26,7 +26,7 @@ namespace Kernel
 		explicit UIAccessibilty() = default;
 
 	public:
-		NEWOS_COPY_DELETE(UIAccessibilty);
+		ZKA_COPY_DELETE(UIAccessibilty);
 
 		static UIAccessibilty& The()
 		{

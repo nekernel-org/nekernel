@@ -164,7 +164,7 @@ namespace Kernel
 		explicit MutableArray() = default;
 		virtual ~MutableArray() = default;
 
-		NEWOS_COPY_DEFAULT(MutableArray)
+		ZKA_COPY_DEFAULT(MutableArray)
 
 	public:
 		Boolean Add(const T val)
