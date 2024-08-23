@@ -15,7 +15,7 @@
         "__FSKIT_USE_NEWFS__",
         "__EFI_x86_64__",
         "__ATA_PIO__",
-        "__NEWOS_AMD64__",
+        "__ZKA_AMD64__",
         "__DEBUG__"
       ],
       "cStandard": "c17",
@@ -38,7 +38,7 @@
         "__FSKIT_USE_NEWFS__",
         "__EFI_x86_64__",
         "__ATA_PIO__",
-        "__NEWOS_AMD64__",
+        "__ZKA_AMD64__",
         "__NEWOSLDR__",
         "__DEBUG__"
       ],

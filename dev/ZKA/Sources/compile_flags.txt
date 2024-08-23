@@ -4,4 +4,4 @@
 -I../
 -I$(HOME)/
 -D__FSKIT_USE_NEWFS__
--D__NEWOS_AMD64__
+-D__ZKA_AMD64__

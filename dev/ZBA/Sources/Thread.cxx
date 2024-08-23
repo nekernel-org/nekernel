@@ -15,12 +15,9 @@
 #include <Modules/CoreCG/TextRenderer.hxx>
 #include <CFKit/LoaderUtils.hxx>
 
-EXTERN_C
-{
+EXTERN_C{
 #include <string.h>
 }
-
-#define kHOTypeKernel 100
 
 EXTERN EfiBootServices* BS;
 
@@ -53,13 +50,13 @@ namespace Boot
 				return;
 			}
 
-			if (optHdr->mSubsystem != kNewOSSubsystem)
+			if (optHdr->mSubsystem != kZKASubsystem)
 			{
-				writer.Write("newosldr: Not a New OS executable.\r");
+				writer.Write("newosldr: Not a ZKA Subsystem executable.\r");
 				return;
 			}
 
-			writer.Write("newosldr: PE32+ executable detected (New OS Subsystem).\r");
+			writer.Write("newosldr: PE32+ executable detected (ZKA Subsystem).\r");
 
 			auto numSecs = hdrPtr->mNumberOfSections;
 
@@ -83,7 +80,7 @@ namespace Boot
 
 			constexpr auto sectionForCode	= ".text";
 			constexpr auto sectionForNewLdr = ".ldr";
-			constexpr auto sectionForBSS = ".bss";
+			constexpr auto sectionForBSS	= ".bss";
 
 			for (SizeT sectIndex = 0; sectIndex < numSecs; ++sectIndex)
 			{
@@ -92,7 +89,7 @@ namespace Boot
 				if (StrCmp(sectionForCode, sect->mName) == 0)
 				{
 					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + optHdr->mAddressOfEntryPoint);
-					writer.Write("newosldr: Start Address: ").Write((UIntPtr)fStartAddress).Write("\r");
+					writer.Write("newosldr: Entrypoint of DLL: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
 				else if (StrCmp(sectionForBSS, sect->mName) == 0)
 				{
@@ -106,11 +103,11 @@ namespace Boot
 						UInt32 HandoverType;
 					}* structHandover = (struct HANDOVER_INFORMATION_STUB*)((UIntPtr)fBlob + sect->mPointerToRawData);
 
-					if (structHandover->HandoverMagic != kHandoverMagic ||
-						structHandover->HandoverType != kHOTypeKernel)
+					if (structHandover->HandoverMagic != kHandoverMagic &&
+						structHandover->HandoverType != HEL::kTypeKernel)
 					{
-						cg_write_text("NEWOSLDR: INVALID HANDOVER IMAGE! ABORTING...", 40, 10, RGB(0x00, 0x00, 0x00));
-						EFI::Stop();
+						writer.Write("newosldr: Entrypoint of SYS: ").Write((UIntPtr)fStartAddress).Write("\r");
+						cg_write_text("NEWOSLDR: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 					}
 				}
 
@@ -149,7 +146,7 @@ namespace Boot
 		}
 
 		HEL::HandoverProc err_fn = [](HEL::HandoverInformationHeader* rcx) -> void {
-			cg_write_text("NEWOSLDR: INVALID IMAGE! ABORTING...", 40, 10, RGB(0x00, 0x00, 0x00));
+			cg_write_text("NEWOSLDR: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			EFI::Stop();
 		};
 
@@ -159,7 +156,6 @@ namespace Boot
 		}
 
 		reinterpret_cast<HEL::HandoverProc>(fStartAddress)(handover);
-		err_fn(handover);
 	}
 
 	const Char* BThread::GetName()

@@ -9,7 +9,7 @@
 #define cVMHMagic (0xDEEFD00D)
 #define cPaddingVMH (512)
 
-#ifdef __NEWOS_AMD64__
+#ifdef __ZKA_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
 #elif defined(__NEWOS_ARM64__)
 #include <HALKit/ARM64/HalPageAlloc.hxx>

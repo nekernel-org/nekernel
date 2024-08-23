@@ -46,13 +46,14 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSLDR__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../ZKA  -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__NEWOS_AMD64__ -D__MAHROUSS__
+                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__ZKA_AMD64__ -D__MAHROUSS__
 
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.dll
 DDK=ddk.dll
 SCI=sci.dll
 CRT=ndkcrt.dll
+BOOT_SCR=bootscr.sys
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -67,6 +68,7 @@ all: compile-amd64
 	$(COPY) ../ZKA/$(KERNEL) Sources/Root/$(KERNEL)
 	$(COPY) ../SCI/$(SCI) Sources/Root/$(SCI)
 	$(COPY) ../DDK/$(DDK) Sources/Root/$(DDK)
+	$(COPY) ./Modules/BootScr/$(BOOT_SCR) Sources/Root/$(BOOT_SCR)
 	$(COPY) ../CRT/$(CRT) Sources/Root/$(CRT)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/$(BOOT_LOADER)
 

@@ -43,7 +43,8 @@ namespace Kernel::HEL
 		kTypeKernel		  = 100,
 		kTypeKernelDriver = 101,
 		kTypeRsrc		  = 102,
-		kTypeCount		  = 3,
+		kTypeInvalid		  = 103,
+		kTypeCount = 4,
 	};
 
 	/**

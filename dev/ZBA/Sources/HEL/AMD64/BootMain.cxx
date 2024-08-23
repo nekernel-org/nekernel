@@ -185,7 +185,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_HeapStart = nullptr;
 
-	while (BS->AllocatePool(EfiLoaderCode, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk);
+	while (BS->AllocatePool(EfiLoaderCode, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk)
+		;
 
 	handoverHdrPtr->f_VirtualSize =
 		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
@@ -224,6 +225,23 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// inside the disk, if it doesn't have one,
 	// format the disk.
 	// ---------------------------------------------------- //
+
+	BFileReader readerBootScr(L"bootscr.sys", ImageHandle);
+	readerBootScr.ReadAll(0);
+
+	Boot::BThread* loaderBootScr = nullptr;
+
+	// ------------------------------------------ //
+	// If we succeed in reading the blob, then execute it.
+	// ------------------------------------------ //
+
+	if (readerBootScr.Blob())
+	{
+		loaderBootScr = new Boot::BThread(readerBootScr.Blob());
+		loaderBootScr->SetName("64-bit Boot Screen DLL.");
+	}
+
+	loaderBootScr->Start(handoverHdrPtr);
 
 	BFileReader readerKernel(L"newoskrnl.dll", ImageHandle);
 

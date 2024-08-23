@@ -12,7 +12,7 @@
 #include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
 
-#define kNewOSSubsystem 17
+#define kZKASubsystem 17
 
 #ifdef __NEWOSLDR__
 // forward decl.

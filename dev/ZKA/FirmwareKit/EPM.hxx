@@ -49,7 +49,7 @@
 
 #define kEPMMagicError "EPM??"
 
-#ifdef __NEWOS_AMD64__
+#ifdef __ZKA_AMD64__
 #define kEPMMagic kEPMMagic86
 #else
 #ifdef __NEWOS_ARM64__

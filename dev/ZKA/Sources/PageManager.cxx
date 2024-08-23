@@ -7,11 +7,11 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <NewKit/PageManager.hxx>
 
-#ifdef __NEWOS_AMD64__
+#ifdef __ZKA_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
 #elif defined(__NEWOS_ARM64__)
 #include <HALKit/ARM64/HalPageAlloc.hxx>
-#endif // ifdef __NEWOS_AMD64__ || defined(__NEWOS_ARM64__)
+#endif // ifdef __ZKA_AMD64__ || defined(__NEWOS_ARM64__)
 
 //! null deref will throw (Page Zero detected, aborting app!)
 #define kProtectedRegionEnd (512)

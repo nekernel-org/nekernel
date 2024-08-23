@@ -9,11 +9,7 @@
 
 #include <BootKit/BootKit.hxx>
 
-EXTERN EfiSystemTable*	ST;
-
-EXTERN_C Int32 ModuleMain(Void)
+EXTERN_C Int32 main(Kernel::HEL::HandoverInformationHeader* Handover)
 {
-	ST->ConOut->ClearScreen(ST->ConOut);
-
 	return kEfiOk;
 }

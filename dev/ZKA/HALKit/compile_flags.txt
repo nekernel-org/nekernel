@@ -3,4 +3,4 @@
 -std=c++20
 -I./
 -I../
--D__NEWOS_AMD64__
+-D__ZKA_AMD64__

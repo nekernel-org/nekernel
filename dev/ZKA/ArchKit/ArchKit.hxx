@@ -12,7 +12,7 @@
 
 #include <FirmwareKit/Handover.hxx>
 
-#ifdef __NEWOS_AMD64__
+#ifdef __ZKA_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
 #include <HALKit/AMD64/Hypervisor.hxx>
 #include <HALKit/AMD64/Processor.hxx>

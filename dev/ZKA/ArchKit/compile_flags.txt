@@ -4,5 +4,5 @@
 -I./
 -I../
 -I$(HOME)/
--D__NEWOS_AMD64__
+-D__ZKA_AMD64__
 -D__ED__

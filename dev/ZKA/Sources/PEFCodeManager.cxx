@@ -24,7 +24,7 @@ namespace Kernel
 			return kPefArch32x0;
 #elif defined(__NEWOS_64X0__)
 			return kPefArch64x0;
-#elif defined(__NEWOS_AMD64__)
+#elif defined(__ZKA_AMD64__)
 			return kPefArchAMD64;
 #elif defined(__NEWOS_PPC64__)
 			return kPefArchPowerPC;

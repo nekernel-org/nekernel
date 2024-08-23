@@ -139,7 +139,7 @@ Void BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr outAddress
 			else if (readUntil < 1)
 				readUntil = newPtrInfo.FileSize;
 
-			mWriter.Write(L"newosldr: physical size: ").Write(readUntil).Write("\r");
+			mWriter.Write(L"newosldr: Physical size: ").Write(readUntil).Write("\r");
 		}
 
 		if (!outAddress)

@@ -1,8 +1,8 @@
 .global rt_jump_to_address
 .global rt_reset_hardware
-.text
 
 .text
+
 .intel_syntax noprefix
 
 /**

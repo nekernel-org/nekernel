@@ -7,19 +7,10 @@
  * 	========================================================
  */
 
+#include <NetBoot.hxx>
 #include <BootKit/BootKit.hxx>
-#include <NetBoot/NetBoot.hxx>
 
-EXTERN EfiSystemTable*	ST;
-
-EXTERN_C Int32 ModuleMain(Void)
+EXTERN_C Int32 main(Kernel::HEL::HandoverInformationHeader* Handover)
 {
-	ST->ConOut->ClearScreen(ST->ConOut);
-
-	/// @todo
-	/// - Find a network drive called "\.\newoskrnl.dll" with fork 'For-NewOSLdr' in the network path. (NewFS formatted disk as well!)
-	/// - Download our image
-	/// - Boot from it.
-
 	return kEfiOk;
 }
