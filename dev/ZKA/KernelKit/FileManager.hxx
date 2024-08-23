@@ -26,6 +26,7 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <NewKit/Stream.hxx>
 #include <NewKit/ErrorOr.hxx>
+#include <KernelKit/Heap.hxx>
 #include <NewKit/Ref.hxx>
 
 /// @brief Filesystem manager, abstraction over mounted filesystem.
@@ -362,14 +363,15 @@ namespace Kernel
 	{
 		static const auto cLength = 255;
 
-		struct StringMap final
+		/// @brief restrict information about the file descriptor.
+		struct RESTRICT_MAP final
 		{
 			Char  fRestrict[cLength];
 			Int32 fMappedTo;
 		};
 
 		const SizeT		cRestrictCount	= cRestrictMax;
-		const StringMap cRestrictList[] = {
+		const RESTRICT_MAP cRestrictList[] = {
 			{
 				.fRestrict = cRestrictR,
 				.fMappedTo = eRestrictRead,
@@ -408,6 +410,6 @@ namespace Kernel
 	template <typename Encoding, typename Class>
 	FileStream<Encoding, Class>::~FileStream()
 	{
-		delete fFile;
+		mm_delete_ke_heap(fFile);
 	}
 } // namespace Kernel

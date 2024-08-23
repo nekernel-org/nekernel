@@ -14,7 +14,7 @@ using namespace Kernel;
 /// @brief The internal sanitize function.
 Bool ipc_int_sanitize_packet(IPC_MESSAGE_STRUCT* pckt)
 {
-	auto endian = DEDUCE_ENDIAN(pckt, ((char*)pckt)[0]);
+	auto endian = DEDUCE_ENDIAN(pckt, ((Char*)pckt)[0]);
 
 	switch (endian)
 	{

@@ -8,8 +8,8 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "ZKA Technologies"
-	  VALUE "FileDescription", "NewOS Kernel."
+      VALUE "CompanyName", "ZKA Technologies."
+	  VALUE "FileDescription", "ZKA Kernel DLL."
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "newoskrnl"
       VALUE "LegalCopyright", "(c) ZKA Technologies, all rights reserved."

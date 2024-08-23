@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_PERMISSION_SEL_HXX_
-#define _INC_PERMISSION_SEL_HXX_
+#ifndef _INC_USER_HXX_
+#define _INC_USER_HXX_
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/LPC.hxx>
@@ -73,6 +73,7 @@ namespace Kernel
 		RingKind   fRing{RingKind::kRingStdUser};
 		Char fUserName[kMaxUserNameLen] = { 0 };
 		Char fUserToken[kMaxUserTokenLen] = { 0 };
+		VoidPtr fUserNodePtr{nullptr};
 
 		friend UserManager;
 	};
@@ -91,10 +92,10 @@ namespace Kernel
 		NEWOS_COPY_DELETE(UserManager);
 
 		STATIC UserManager* The() noexcept;
-		Bool				TryLogIn(User& user, const Char* password) noexcept;
+		Bool				TryLogIn(User& user) noexcept;
 		User*				GetCurrent() noexcept;
 		Void				TryLogOff() noexcept;
 	};
 } // namespace Kernel
 
-#endif /* ifndef _INC_PERMISSION_SEL_HXX_ */
+#endif /* ifndef _INC_USER_HXX_ */

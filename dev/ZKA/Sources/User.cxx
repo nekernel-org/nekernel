@@ -10,6 +10,7 @@
  * 	========================================================
  */
 
+#include "KernelKit/LPC.hxx"
 #include <KernelKit/User.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <KernelKit/FileManager.hxx>
@@ -38,7 +39,11 @@ namespace Kernel
 
 			for (Size i_pass = 0; i_pass < length; ++i_pass)
 			{
-				Char cur_chr	 = in_password[i_pass];
+				Char cur_chr = in_password[i_pass];
+
+				if (cur_chr == 0)
+					break;
+
 				password[i_pass] = cur_chr + (user->IsStdUser() ? cStdUser : cSuperUser);
 			}
 
@@ -61,7 +66,10 @@ namespace Kernel
 		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
 	}
 
-	User::~User() = default;
+	User::~User()
+	{
+		mm_delete_ke_heap(fUserNodePtr);
+	}
 
 	Bool User::TrySave(const Char* password) noexcept
 	{
@@ -86,8 +94,7 @@ namespace Kernel
 
 			if (!node)
 			{
-				ErrLocal() = kErrorInternal;
-
+				ErrLocal() = kErrorDiskIsFull;
 				return false;
 			}
 
@@ -108,8 +115,8 @@ namespace Kernel
 			// writing the data fork now. False means a data fork.
 			bool wrote = new_fs->GetParser()->WriteCatalog(node, false, reinterpret_cast<VoidPtr>(token), len, this->fUserName);
 
-			delete node;
-			node = nullptr;
+			this->fUserNodePtr = reinterpret_cast<VoidPtr>(node);
+			rt_copy_memory(token, this->fUserToken, rt_string_len(token));
 
 			delete[] token;
 			token = nullptr;
@@ -166,9 +173,10 @@ namespace Kernel
 		return view;
 	}
 
-	Bool UserManager::TryLogIn(User& user, const Char* password) noexcept
+	Bool UserManager::TryLogIn(User& user) noexcept
 	{
-		if (!password)
+		if (!user.fUserToken[0] ||
+			!user.fUserNodePtr)
 		{
 			kcout << "newoskrnl: Incorrect data given.\r";
 
@@ -179,63 +187,53 @@ namespace Kernel
 
 		kcout << "newoskrnl: Trying to log-in.\r";
 
+		kcout << "newoskrnl: reading: " << reinterpret_cast<NFS_CATALOG_STRUCT*>(user.fUserNodePtr)->Name << endl;
+
 		NewFilesystemManager* new_fs = (NewFilesystemManager*)NewFilesystemManager::GetMounted();
 
-		// do not use if unmounted.
-
 		if (!new_fs)
-			return false;
-
-		auto node = new_fs->GetParser()->GetCatalog(kUsersFile);
-
-		// ------------------------------------------ //
-		// Retrieve token from a specific file fork.
-		// Fail on null.
-		// ------------------------------------------ //
-
-		if (!node)
 		{
-			ErrLocal() = kErrorInvalidData;
-			kcout << "newoskrnl: No such path.\r";
+			ErrLocal() = kErrorInvalidCreds;
+			kcout << "newoskrnl: Incorrect filesystem.\r";
+
 			return false;
 		}
 
-		kcout << "newoskrnl: reading: " << node->Name << endl;
+		NFS_CATALOG_STRUCT* node = new_fs->GetParser()->GetCatalog(kUsersFile);
 
-		auto token = new_fs->GetParser()->ReadCatalog(node, false, rt_string_len(password), user.fUserName);
+		if (!node)
+		{
+			node = reinterpret_cast<NFS_CATALOG_STRUCT*>(user.fUserNodePtr);
+
+			if (!node)
+			{
+				ErrLocal() = kErrorInvalidCreds;
+				kcout << "newoskrnl: Incorrect catalog.\r";
+
+				return false;
+			}
+		}
+
+		auto token = new_fs->GetParser()->ReadCatalog(node, false, rt_string_len(user.fUserToken), user.fUserName);
 
 		if (!token)
 		{
 			ErrLocal() = kErrorInvalidCreds;
 
-			kcout << "newoskrnl: Incorrect credentials.\r";
+			kcout << "newoskrnl: Incorrect token.\r";
 			return false;
 		}
 		else
 		{
-			Char generated_token[kMaxUserTokenLen] = {0};
-
-			// ================================================== //
-			// Provide password on token variable.
-			// ================================================== //
-
-			rt_copy_memory((VoidPtr)password, generated_token, rt_string_len(password));
-
-			// ================================================== //
-			// Construct token.
-			// ================================================== //
-
-			Detail::cred_construct_token(generated_token, password, &user, rt_string_len(password));
-
 			// ================================================== //
 			// Checks if it matches the current token we have.
 			// ================================================== //
 
-			if (rt_string_cmp((Char*)token, generated_token, rt_string_len(password)))
+			if (rt_string_cmp(reinterpret_cast<Char*>(token), user.fUserToken, rt_string_len(user.fUserToken)))
 			{
 				kcout << "newoskrnl: Incorrect credentials.\r";
-
 				mm_delete_ke_heap(token);
+
 				return false;
 			}
 

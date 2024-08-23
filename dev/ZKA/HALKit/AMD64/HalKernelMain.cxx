@@ -228,11 +228,13 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::NewFilesystemManager::Mount(fs);
 
 #ifdef __DEBUG__
-	const auto cPassword		  = "debug_usr";
+	const auto cPassword = "debug_usr";
 
 	Kernel::User user{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
-	Kernel::UserManager::The()->TryLogIn(user, cPassword);
+	user.TrySave(cPassword);
+
+	Kernel::UserManager::The()->TryLogIn(user);
 #endif
 
 	Kernel::ke_stop(RUNTIME_CHECK_FAILED);
