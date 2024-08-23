@@ -19,13 +19,6 @@
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 
-#define KERNEL_INIT(X) \
-	X;                 \
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
-
-/// @brief This symbol is the kernel main symbol.
-EXTERN_C void KeMain();
-
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
 struct PACKED HeapAllocInfo final
@@ -176,6 +169,4 @@ EXTERN_C void hal_init_platform(
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked	= true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked		= true;
 	kSyscalls[cLPCSanitizeMsg].Leak().Leak()->fHooked		= true;
-
-	KERNEL_INIT(KeMain());
 }
