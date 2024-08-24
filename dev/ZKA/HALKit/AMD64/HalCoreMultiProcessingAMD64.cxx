@@ -107,22 +107,26 @@ namespace Kernel::HAL
 
 	///////////////////////////////////////////////////////////////////////////////////////
 
+	/***********************************************************************************/
 	/// @brief Send start IPI for CPU.
 	/// @param apicId
 	/// @param vector
 	/// @param targetAddress
 	/// @return
+	/***********************************************************************************/
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, (apicId << 24));
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
 	}
 
+	/***********************************************************************************/
 	/// @brief Send end IPI for CPU.
 	/// @param apicId
 	/// @param vector
 	/// @param targetAddress
 	/// @return
+	/***********************************************************************************/
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
@@ -169,8 +173,10 @@ namespace Kernel::HAL
 		semaphore_process.Unlock();
 	}
 
+	/***********************************************************************************/
 	/// @brief Fetch and enable cores inside main CPU.
 	/// @param vendor_ptr RSD PTR structure.
+	/***********************************************************************************/
 	Void hal_system_get_cores(voidPtr vendor_ptr)
 	{
 		auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
@@ -216,8 +222,7 @@ namespace Kernel::HAL
 				++index;
 			}
 
-			kcout << "newoskrnl: # of Cores: " << number(kSMPCount) << endl;
-
+			kcout << "newoskrnl: # of cores: " << number(kSMPCount) << endl;
 			kcout << "newoskrnl: First core ID: " << number(cSMPCores[0]) << endl;
 
 			kSMPAware = true;

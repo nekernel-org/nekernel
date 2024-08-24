@@ -23,6 +23,8 @@
 
 Kernel::Property cKernelVersion;
 
+Kernel::User cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
+
 EXTERN Kernel::Boolean kAllocationInProgress;
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
@@ -65,7 +67,7 @@ STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
 };
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
-EXTERN_C Kernel::Void KeMain(Kernel::Void);
+EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
@@ -227,12 +229,11 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::NewFilesystemManager::Mount(fs);
 
-	const auto cPassword = "debug_usr";
+	const auto cPassword = "ZKA_KERNEL_AUTHORITY";
 
-	Kernel::User user_debug{Kernel::RingKind::kRingSuperUser, kSuperUser};
-	Kernel::UserManager::The()->TryLogIn(user_debug, cPassword, cPassword);
+	cUserSuper.TrySave(cPassword);
 
-	KeMain();
+	ke_dll_entrypoint();
 
 	Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 }

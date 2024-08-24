@@ -183,12 +183,11 @@ namespace Kernel::Detail
 /// @brief Application entrypoint.
 /// @param Void
 /// @return Void
-EXTERN_C Kernel::Void KeMain(Kernel::Void)
+EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 {
+    CGInit();
 
-	CGInit();
-
-	CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
+    CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
 				   0, 0);
 
 	CGFini();
@@ -199,7 +198,6 @@ EXTERN_C Kernel::Void KeMain(Kernel::Void)
 	root_zka_wnd->w_y = 10;
 
 	root_zka_wnd->w_needs_repaint = Yes;
-	CG::CGDrawWindowList(&root_zka_wnd, 1);
 
 	/// Now run kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
@@ -212,6 +210,11 @@ EXTERN_C Kernel::Void KeMain(Kernel::Void)
 	root_install_wnd->w_needs_repaint = Yes;
 
 	CG::UI_WINDOW_STRUCT* arr[] = {root_zka_wnd, root_install_wnd};
+
+	CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
+				   0, 0);
+
+	CGFini();
 
 	CG::CGDrawWindowList(arr, 2);
 

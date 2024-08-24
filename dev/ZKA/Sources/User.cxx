@@ -10,7 +10,7 @@
  * 	========================================================
  */
 
-#include "KernelKit/LPC.hxx"
+#include <KernelKit/LPC.hxx>
 #include <KernelKit/User.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <KernelKit/FileManager.hxx>
@@ -27,7 +27,7 @@ namespace Kernel
 {
 	namespace Detail
 	{
-		/// \brief Constructs a token by hashing the password.
+		/// \brief Constructs a password by hashing the password.
 		/// \param password password to hash.
 		/// \return the hashed password
 		const Int32 cred_construct_token(Char* password, const Char* in_password, User* user, SizeT length)
@@ -35,7 +35,7 @@ namespace Kernel
 			if (!password || !user)
 				return -1;
 
-			kcout << "Constructing token...\r";
+			kcout << "Constructing password...\r";
 
 			for (Size i_pass = 0; i_pass < length; ++i_pass)
 			{
@@ -47,7 +47,7 @@ namespace Kernel
 				password[i_pass] = cur_chr + (user->IsStdUser() ? cStdUser : cSuperUser);
 			}
 
-			kcout << "Done constructing token...\r";
+			kcout << "Done constructing password...\r";
 
 			return 0;
 		}
@@ -68,25 +68,37 @@ namespace Kernel
 
 	User::~User() = default;
 
-	Bool User::TrySave(const Char* password) noexcept
+	Bool User::TrySave(const Char* password_to_fill) noexcept
 	{
-		if (!password ||
-			*password == 0)
+		if (!password_to_fill ||
+			*password_to_fill == 0)
 			return false;
 
-		SizeT len = rt_string_len(password);
+		SizeT len = rt_string_len(password_to_fill);
 
-		Char* token = new Char[len];
+		Char* password = new Char[len];
 
-		MUST_PASS(token);
+		MUST_PASS(password);
 
-		rt_copy_memory((VoidPtr)password, token, len);
-		Detail::cred_construct_token(token, password, this, len);
+		// fill data first, generate hash.
+		// return false on error.
 
-		rt_copy_memory(token, this->fUserToken, rt_string_len(token));
+		rt_copy_memory((VoidPtr)password_to_fill, password, len);
 
-		delete[] token;
-		token = nullptr;
+		if (!Detail::cred_construct_token(password, password_to_fill, this, len))
+		{
+			delete[] password;
+			password = nullptr;
+
+			return false;
+		}
+
+		// then store password.
+
+		rt_copy_memory(password, this->fUserToken, rt_string_len(password_to_fill));
+
+		delete[] password;
+		password = nullptr;
 
 		kcout << "newoskrnl: Saved password...\r";
 
@@ -121,87 +133,5 @@ namespace Kernel
 	Bool User::IsSuperUser() noexcept
 	{
 		return this->Ring() == RingKind::kRingSuperUser;
-	}
-
-	UserManager* UserManager::The() noexcept
-	{
-		static UserManager* view = nullptr;
-
-		if (!view)
-			view = new UserManager();
-
-		return view;
-	}
-
-	Bool UserManager::TryLogIn(User& user, const Char* password, const Char* right_password) noexcept
-	{
-		if (!password ||
-			*password == 0)
-			return false;
-
-		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(password)), user.fUserToken, rt_string_len(password));
-		Detail::cred_construct_token(user.fUserToken, password, &user, rt_string_len(password));
-
-		return this->TryLogIn(user, right_password);
-	}
-
-	Bool UserManager::TryLogIn(User& user, const Char* token) noexcept
-	{
-		if (!user.fUserToken[0])
-		{
-			kcout << "newoskrnl: Incorrect data given.\r";
-
-			ErrLocal() = kErrorInvalidData;
-
-			return false;
-		}
-
-		kcout << "newoskrnl: Trying to log-in.\r";
-
-		if (!token)
-		{
-			ErrLocal() = kErrorInvalidCreds;
-
-			kcout << "newoskrnl: Incorrect token.\r";
-			return false;
-		}
-		else
-		{
-			// ================================================== //
-			// Checks if it matches the current token we have.
-			// ================================================== //
-
-			Char password[kMaxUserTokenLen] = {0};
-
-			rt_copy_memory(reinterpret_cast<Char*>(const_cast<Char*>(token)), password, rt_string_len(token));
-			Detail::cred_construct_token(password, token, &user, rt_string_len(password));
-
-			if (rt_string_cmp(password, user.fUserToken, rt_string_len(token)))
-			{
-				kcout << "newoskrnl: Incorrect credentials.\r";
-				return false;
-			}
-
-			kcout << "newoskrnl: Credentials are correct, moving on.\r";
-		}
-
-		fCurrentUser = &user;
-
-		if (fCurrentUser->Name()[0])
-			Kernel::kcout << "newoskrnl: Logged in as: " << fCurrentUser->Name() << Kernel::endl;
-			else
-
-			Kernel::kcout << "newoskrnl: Logged in as anon. " << Kernel::endl;
-		return true;
-	}
-
-	User* UserManager::GetCurrent() noexcept
-	{
-		return fCurrentUser;
-	}
-
-	Void UserManager::TryLogOff() noexcept
-	{
-		fCurrentUser = nullptr;
 	}
 } // namespace Kernel

@@ -23,13 +23,8 @@ struct THREAD_INFORMATION_BLOCK;
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED THREAD_INFORMATION_BLOCK final
 {
-	Kernel::Char	f_Cookie[kTLSCookieLen]; // Process cookie.
-	Kernel::UIntPtr f_Code;		 // Start address (Instruction Pointer)
-	Kernel::UIntPtr f_Data;		 // Allocated Heap for process.
-	Kernel::UIntPtr f_Stack;		 // Application Stack pointer.
-	Kernel::Int32	f_ID;		 // Thread execution ID.
-	Kernel::Int64  f_UsedHeapPercent; // used heap in percent.
-	Kernel::Int64  f_FreeHeapPercent; // heap free in percent.
+	Kernel::Char	f_Cookie[kTLSCookieLen]{0}; // Thread magic number.
+	Kernel::VoidPtr f_ThreadRecord{nullptr};
 };
 
 ///! @brief Cookie Sanity check.

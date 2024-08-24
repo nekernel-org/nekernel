@@ -25,7 +25,7 @@
 namespace Kernel
 {
 	/***********************************************************************************/
-	/// @brief Exit Code global
+	/// @brief Exit Code global variable.
 	/***********************************************************************************/
 
 	STATIC Int32 cLastExitCode = 0U;
@@ -44,10 +44,12 @@ namespace Kernel
 
 	void PROCESS_HEADER_BLOCK::Crash()
 	{
-	   constexpr auto cUnknownProcess = "?";
+		constexpr auto cUnknownProcess = "?";
 
 		kcout << (*this->Name == 0 ? cUnknownProcess : this->Name) << ": crashed. (id = " << number(kErrorProcessFault);
 		kcout << ")\r";
+
+		this->Status = ProcessStatus::kDead;
 
 		this->Exit(kErrorProcessFault);
 	}
@@ -59,6 +61,10 @@ namespace Kernel
 	{
 		return this->fLastExitCode;
 	}
+
+	/***********************************************************************************/
+	/// @brief Error code variable getter.
+	/***********************************************************************************/
 
 	Int32& PROCESS_HEADER_BLOCK::GetLocalCode() noexcept
 	{
@@ -146,9 +152,9 @@ namespace Kernel
 	}
 
 	/// @brief process selector getter.
-	const ProcessLevelRing& PROCESS_HEADER_BLOCK::GetLevelRing() noexcept
+	const User* PROCESS_HEADER_BLOCK::GetOwner() noexcept
 	{
-		return this->Selector;
+		return this->AssignedOwner;
 	}
 
 	/// @brief process status getter.
@@ -172,10 +178,6 @@ namespace Kernel
 	*/
 	void PROCESS_HEADER_BLOCK::Exit(const Int32& exit_code)
 	{
-		if (this->ProcessId !=
-			ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId)
-			ke_stop(RUNTIME_CHECK_PROCESS);
-
 		fLastExitCode = exit_code;
 		cLastExitCode = exit_code;
 
@@ -220,6 +222,13 @@ namespace Kernel
 			return -kErrorOutOfTeamSlot;
 
 		kcout << "ProcessScheduler:: adding process to team...\r";
+
+		if (process.Leak().GetOwner() == nullptr)
+		{
+			// Something went wrong, do not continue, process may be incorrect.
+			process.Leak().Crash();
+			return -kErrorProcessFault;
+		}
 
 		// Create heap according to type of process.
 		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kAppKind)
@@ -304,6 +313,12 @@ namespace Kernel
 			{
 				auto unwrapped_process = *process.Leak();
 
+				if (unwrapped_process.Parent->Status == ProcessStatus::kKilled)
+				{
+					unwrapped_process.Exit();
+					continue;
+				}
+
 				// set the current process.
 				mTeam.AsRef() = unwrapped_process;
 
@@ -313,7 +328,7 @@ namespace Kernel
 
 				unwrapped_process.PTime = static_cast<Int32>(unwrapped_process.Affinity);
 
-				kcout << unwrapped_process.Name << ": has been switched to process core.\r";
+				kcout << unwrapped_process.Name << ": has been switched to a CPU core.\r";
 			}
 			else
 			{

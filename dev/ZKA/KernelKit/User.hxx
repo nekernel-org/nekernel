@@ -77,27 +77,6 @@ namespace Kernel
 
 		friend UserManager;
 	};
-
-	class UserManager final
-	{
-	private:
-		UserManager()  = default;
-		~UserManager() = default;
-
-		User* fCurrentUser{nullptr};
-
-	public:
-		User* fRootUser{nullptr};
-
-	public:
-		ZKA_COPY_DELETE(UserManager);
-
-		STATIC UserManager* The() noexcept;
-		Bool				TryLogIn(User& user, const Char* password, const Char* right_password) noexcept;
-		Bool				TryLogIn(User& user, const Char* password) noexcept;
-		User*				GetCurrent() noexcept;
-		Void				TryLogOff() noexcept;
-	};
 } // namespace Kernel
 
 #endif /* ifndef _INC_USER_HXX_ */

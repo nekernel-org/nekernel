@@ -56,7 +56,7 @@ namespace Kernel
 		{
 			fPath = StringBuilder::Construct(path).Leak();
 
-			auto cPefHeader = "PEFContainer";
+			auto cPefHeader = "PEF_CONTAINER";
 
 			fCachedBlob = fFile->Read(cPefHeader);
 
@@ -82,7 +82,7 @@ namespace Kernel
 				return;
 			}
 
-			kcout << "CodeManager: Warning: Executable format error!\n";
+			kcout << "CodeManagerPEF: Warning: Executable format error!\n";
 			fBad = true;
 
 			mm_delete_ke_heap(fCachedBlob);
@@ -107,7 +107,7 @@ namespace Kernel
 
 		PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-		StringView cPefHeaderStr = StringBuilder::Construct("PEFContainerHeader:").Leak().Leak();
+		StringView cPefHeaderStr;
 		cPefHeaderStr += name;
 
 		auto blob = fFile->Read(cPefHeaderStr.CData());

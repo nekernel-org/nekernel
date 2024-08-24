@@ -125,7 +125,8 @@ namespace Kernel
 	using HeapPtrKind = VoidPtr;
 
 	/// @name PROCESS_HEADER_BLOCK
-	/// @brief Process Header (PHB). Holds information about the running process. Thread execution the THREAD_INFORMATION_BLOCK.
+	/// @brief Process Header Block (PHB).
+	   /// Holds information about the running process/thread.
 	struct PROCESS_HEADER_BLOCK final
 	{
 	public:
@@ -145,7 +146,7 @@ namespace Kernel
 	public:
 		Char			   Name[kProcessLen] = {"PROCESS #0 (TEAM 0)"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
-		ProcessLevelRing	   Selector{ProcessLevelRing::kRingStdUser};
+		User*              AssignedOwner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatus	   Status{ProcessStatus::kDead};
@@ -157,6 +158,8 @@ namespace Kernel
 
 		// shared library handle, reserved for kSharedObjectKind types of executables only.
 		PEFSharedObjectInterface* DLLPtr{nullptr};
+
+		PROCESS_HEADER_BLOCK* Parent{nullptr};
 
 		// Memory usage.
 		SizeT UsedMemory{0};
@@ -209,7 +212,7 @@ namespace Kernel
 		//! @return Int32 local error code.
 		Int32& GetLocalCode() noexcept;
 
-		const ProcessLevelRing& GetLevelRing() noexcept;
+		const User* GetOwner() noexcept;
 		const ProcessStatus&   GetStatus() noexcept;
 		const AffinityKind&	   GetAffinity() noexcept;
 

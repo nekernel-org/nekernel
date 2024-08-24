@@ -21,7 +21,41 @@
 
 using namespace Kernel;
 
-Kernel::Property cTLSEnforceCheck;
+namespace Detail
+{
+	/// \brief Process thread information header.
+	struct THREAD_HEADER_BLOCK final
+	{
+		STATIC constexpr SizeT cMaxLen = 256;
+
+		Char		  fName[cMaxLen] = {"THREAD #0 (PROCESS 0)"};
+		ProcessStatus fThreadStatus;
+		Int64		  fThreadID;
+		UIntPtr		  fCode{0};
+		UIntPtr		  fStack{0};
+		UIntPtr		  fData{0};
+
+		Void Exit() noexcept
+		{
+			this->fThreadStatus = ProcessStatus::kKilled;
+		}
+
+		UIntPtr GetStack() noexcept
+		{
+			return fStack;
+		}
+
+		UIntPtr GetData() noexcept
+		{
+			return fData;
+		}
+
+		UIntPtr GetPC() noexcept
+		{
+			return fCode;
+		}
+	};
+} // namespace Detail
 
 /**
  * @brief Checks for cookie inside the TIB.
@@ -31,7 +65,8 @@ Kernel::Property cTLSEnforceCheck;
 
 Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* the_tib)
 {
-	if (!the_tib)
+	if (!the_tib ||
+		!the_tib->f_ThreadRecord)
 		return false;
 
 	Encoder		encoder;
@@ -45,22 +80,15 @@ Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* the_tib)
 
 /**
  * @brief System call implementation of the TLS check.
- * @param stackPtr The call frame.
+ * @param tib_ptr The TIB record.
  * @return
  */
 EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 {
 	if (!tib_ptr)
 	{
-		if (cTLSEnforceCheck.GetValue() == No)
-		{
-			return true;
-		}
-		else
-		{
-			kcout << "newoskrnl: failing because of an invalid TIB...\r";
-			return false;
-		}
+		kcout << "newoskrnl: failing because of an invalid TIB...\r";
+		return false;
 	}
 
 	THREAD_INFORMATION_BLOCK* tib_struct = (THREAD_INFORMATION_BLOCK*)tib_ptr;

@@ -22,14 +22,20 @@
 using namespace Kernel;
 
 #ifdef __ED__
+/***********************************************************************************/
 /**
 	Define those external symbols, to make the editor shutup
 */
+/***********************************************************************************/
 
+/***********************************************************************************/
 /// @brief get sector count.
+/***********************************************************************************/
 Kernel::SizeT drv_std_get_sector_count();
 
+/***********************************************************************************/
 /// @brief get device size.
+/***********************************************************************************/
 Kernel::SizeT drv_std_get_drv_size();
 
 #endif
@@ -47,10 +53,12 @@ Kernel::SizeT drv_std_get_drv_size();
 
 STATIC MountpointInterface sMountpointInterface;
 
+/***********************************************************************************/
 /// @brief Creates a new fork inside the New filesystem partition.
 /// @param catalog it's catalog
 /// @param theFork the fork itself.
 /// @return the fork
+/***********************************************************************************/
 _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 												 _Input NFS_FORK_STRUCT& theFork)
 {
@@ -156,10 +164,12 @@ _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* cata
 	return nullptr;
 }
 
+/***********************************************************************************/
 /// @brief Find fork inside New filesystem.
 /// @param catalog the catalog.
 /// @param name the fork name.
 /// @return the fork.
+/***********************************************************************************/
 _Output NFS_FORK_STRUCT* NewFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
 											   _Input const Char* name,
 											   Boolean			  isDataFork)
@@ -209,20 +219,24 @@ _Output NFS_FORK_STRUCT* NewFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalo
 	return theFork;
 }
 
+/***********************************************************************************/
 /// @brief Simpler factory to create a catalog (assumes you want to create a
 /// file.)
 /// @param name
 /// @return catalog pointer.
+/***********************************************************************************/
 _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name)
 {
 	return this->CreateCatalog(name, 0, kNewFSCatalogKindFile);
 }
 
+/***********************************************************************************/
 /// @brief Creates a new catalog into the disk.
 /// @param name the catalog name.
 /// @param flags the flags of the catalog.
 /// @param kind the catalog kind.
 /// @return catalog pointer.
+/***********************************************************************************/
 _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 													   _Input const Int32& flags,
 													   _Input const Int32& kind)
