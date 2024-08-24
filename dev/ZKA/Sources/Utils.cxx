@@ -62,12 +62,12 @@ namespace Kernel
 		return cnt;
 	}
 
-	voidPtr rt_set_memory(voidPtr src, char value, Size len)
+	voidPtr rt_set_memory(voidPtr src, UInt32 value, Size len)
 	{
 		if (!src || len < 1)
 			return nullptr;
 
-		char* start = reinterpret_cast<Char*>(src);
+		UInt32* start = reinterpret_cast<UInt32*>(src);
 
 		while (len)
 		{

@@ -67,13 +67,26 @@
 /// @brief Draws inside a zone.
 #define CGDrawInRegion(_Clr, _Height, _Width, BaseX, BaseY)                           \
                                                                                       \
-	for (Kernel::SizeT x_base = BaseX; x_base < (_Width + BaseX); ++x_base)                          \
+	for (Kernel::SizeT x_base = BaseX; x_base < (_Width + BaseX); ++x_base)           \
 	{                                                                                 \
-		for (Kernel::SizeT y_base = BaseY; y_base < (_Height + BaseY); ++y_base)                     \
+		for (Kernel::SizeT y_base = BaseY; y_base < (_Height + BaseY); ++y_base)      \
 		{                                                                             \
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-											  x_base +                                     \
-										  4 * y_base))) = _Clr;                            \
+											  x_base +                                \
+										  4 * y_base))) = _Clr;                       \
+		}                                                                             \
+	}
+
+#define CGDrawInRegionA(_Clr, _Height, _Width, BaseX, BaseY)                          \
+                                                                                      \
+	for (Kernel::SizeT x_base = BaseX; x_base < (_Width + BaseX); ++x_base)           \
+	{                                                                                 \
+		for (Kernel::SizeT y_base = BaseY; y_base < (_Height + BaseY); ++y_base)      \
+		{                                                                             \
+			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
+											  x_base +                                \
+										  4 * y_base))) |= _Clr;                      \
 		}                                                                             \
 	}

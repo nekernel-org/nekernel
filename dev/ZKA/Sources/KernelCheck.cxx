@@ -35,7 +35,7 @@ namespace Kernel
 		auto panicBack = RGB(0xff, 0x3a, 0x3a);
 		auto panicTxt  = RGB(0xff, 0xff, 0xff);
 
-		CGDrawInRegion(panicBack, UIAccessibilty::The().Height(), UIAccessibilty::The().Width(), 0, 0);
+		CGDrawInRegion(panicBack, CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(), 0, 0);
 
 		auto start_y = 10;
 		auto x		 = 10;

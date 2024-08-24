@@ -13,7 +13,7 @@ namespace Kernel
 {
 	Int			rt_copy_memory(const voidPtr src, voidPtr dst, Size len);
 	Int			rt_move_memory(const voidPtr src, voidPtr dst, Size len);
-	voidPtr		rt_set_memory(voidPtr dst, Char val, Size len);
+	voidPtr		rt_set_memory(voidPtr dst, UInt32 val, Size len);
 	void		rt_zero_memory(voidPtr pointer, Size len);
 	Int			rt_string_cmp(const Char* src, const Char* cmp, Size len);
 	const Char* alloc_string(const Char* text);

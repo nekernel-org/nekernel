@@ -13,8 +13,10 @@
 #include <Modules/CoreCG/Lerp.hxx>
 #include <ArchKit/ArchKit.hxx>
 
-namespace Kernel
+namespace CG
 {
+    using namespace Kernel;
+
 	inline Bool cKTSyncCall = false;
 
 	inline float cDeviceWidthAlert	= 150;

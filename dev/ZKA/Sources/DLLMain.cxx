@@ -23,6 +23,7 @@
 #include <NewKit/Utils.hxx>
 #include <KernelKit/CodeManager.hxx>
 #include <CFKit/Property.hxx>
+#include <Modules/CoreCG/WindowRenderer.hxx>
 
 EXTERN Kernel::Property cKernelVersion;
 
@@ -184,6 +185,27 @@ namespace Kernel::Detail
 /// @return Void
 EXTERN_C Kernel::Void KeMain(Kernel::Void)
 {
+
+    CGInit();
+
+	CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
+						   0, 0);
+
+	CGFini();
+
+	auto root_zka_wnd = CG::CGCreateWindow(0, "ZKA System", "Window", 0, 0, 512, 214);
+
+	root_zka_wnd->w_x = 10;
+	root_zka_wnd->w_y = 10;
+
+	root_zka_wnd->w_needs_repaint = Yes;
+
+	CG::CGDrawWindowList(&root_zka_wnd, 1);
+
 	/// Now run kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
+
+	while (Yes)
+	{
+	}
 }

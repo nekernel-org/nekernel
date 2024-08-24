@@ -9,14 +9,14 @@
 /// @file Lerp.hxx
 /// @brief Linear interpolation implementation.
 
-typedef float GXReal;
+typedef float CGReal;
 
 /// @brief Linear interpolation equation solver.
 /// @param from where?
 /// @param to to?
 /// @param at which state we're at **to**.
-inline GXReal GXLerp(GXReal to, GXReal from, GXReal stat)
+inline CGReal CGLerp(CGReal to, CGReal from, CGReal stat)
 {
-	GXReal difference = to - from;
+	CGReal difference = to - from;
 	return from + (difference * stat);
 }

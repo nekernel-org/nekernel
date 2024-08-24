@@ -28,7 +28,7 @@ namespace Kernel::Detail
         UIntPtr fBSS;
         UIntPtr fProcessHeader;
 
-        // GX buffers.
+        // CG video buffer and it's size.
         UIntPtr fTGB;
         UIntPtr fTGBSize;
     };
