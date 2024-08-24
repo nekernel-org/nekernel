@@ -32,8 +32,11 @@ IMG_3=epm-master-2.img
 EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
-			-device ide-hd,drive=disk,bus=ide.0 -hdd $(IMG_2)  -drive \
-			file=fat:rw:Sources/Root/,index=2,format=raw -d int
+			-device ide-hd,drive=disk,bus=ide.0 -drive \
+			file=fat:rw:Sources/Root/,index=2,format=raw -d int \
+			-drive id=disk_2,file=$(IMG_2),if=none \
+            -device ahci,id=ahci \
+            -device ide-hd,drive=disk_2,bus=ahci.0
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -53,7 +56,7 @@ KERNEL=newoskrnl.dll
 DDK=ddk.dll
 SCI=sci.dll
 CRT=ndkcrt.dll
-BOOT_SCR=bootscr.sys
+SYS_CHK=syschk.sys
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -68,7 +71,7 @@ all: compile-amd64
 	$(COPY) ../ZKA/$(KERNEL) Sources/Root/$(KERNEL)
 	$(COPY) ../SCI/$(SCI) Sources/Root/$(SCI)
 	$(COPY) ../DDK/$(DDK) Sources/Root/$(DDK)
-	$(COPY) ./Modules/BootScr/$(BOOT_SCR) Sources/Root/$(BOOT_SCR)
+	$(COPY) ./Modules/SysChk/$(SYS_CHK) Sources/Root/$(SYS_CHK)
 	$(COPY) ../CRT/$(CRT) Sources/Root/$(CRT)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/$(BOOT_LOADER)
 

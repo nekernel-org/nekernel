@@ -22,7 +22,6 @@
 #include <Modules/CoreCG/TextRenderer.hxx>
 
 Kernel::Property cKernelVersion;
-Kernel::Property cAutoFormatDisk;
 
 EXTERN Kernel::Boolean kAllocationInProgress;
 
@@ -66,6 +65,7 @@ STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
 };
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
+EXTERN_C Kernel::Void KeMain(Kernel::Void);
 
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
@@ -231,6 +231,8 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::User user_debug{Kernel::RingKind::kRingSuperUser, kSuperUser};
 	Kernel::UserManager::The()->TryLogIn(user_debug, cPassword, cPassword);
+
+	KeMain();
 
 	Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 }

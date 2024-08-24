@@ -11,7 +11,7 @@
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) ZKA Technologies
+ * @copyright ZKA Technologies.
  *
  */
 
@@ -25,8 +25,8 @@ enum
 	kSATASubClass	= 0x06
 };
 
-static Kernel::PCI::Device kAhciDevice;
-static HbaPort*			   kAhciPort = nullptr;
+STATIC Kernel::PCI::Device kAhciDevice;
+STATIC HbaPort* kAhciPort = nullptr;
 
 /// @brief Initializes an AHCI disk.
 /// @param PortsImplemented the amount of port that have been detected.
@@ -42,39 +42,53 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 		if (iterator[devIndex].Leak().Subclass() == kSATASubClass &&
 			iterator[devIndex].Leak().ProgIf() == kSATAProgIfAHCI)
 		{
-			iterator[devIndex].Leak().EnableMmio();	 /// enable the memory i/o for this ahci device.
+			iterator[devIndex].Leak().EnableMmio();		 /// enable the memory i/o for this ahci device.
+			iterator[devIndex].Leak().BecomeBusMaster(); /// become bus master for this ahci device, so that we can control it.
+
 			kAhciDevice = iterator[devIndex].Leak(); /// and then leak the reference.
 
 			HbaMem* mem_ahci = (HbaMem*)kAhciDevice.Bar();
 
-			UInt32 pi = mem_ahci->Pi;
-			Int32  i  = 0;
+			UInt32 ports_implemented = mem_ahci->Pi;
+			Int32  ahci_index		 = 0;
 
 			const auto cMaxAhciDevices = 32;
 			const auto cAhciSig		   = 0x00000101;
 			const auto cAhciPresent	   = 0x03;
+			const auto cAhciIPMActive  = 0x01;
 
-			while (i < cMaxAhciDevices)
+			auto detected = false;
+
+			while (ahci_index < cMaxAhciDevices)
 			{
-				if (pi & 1 &&
-					(mem_ahci->Ports[i].Ssts & 0x0F) == cAhciPresent &&
-					((mem_ahci->Ports[i].Ssts >> 8) & 0x0F) == 1)
+				if (ports_implemented)
 				{
-					kcout << "newoskrnl: Port is implemented.\r";
+					kcout << "newoskrnl: Port is implemented by host.\r";
 
-					if (mem_ahci->Ports[i].Sig == cAhciSig)
+					UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
+					UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
+
+					if (mem_ahci->Ports[ahci_index].Sig == cAhciSig &&
+						det == cAhciPresent &&
+						ipm == cAhciIPMActive)
 					{
-						kcout << "newoskrnl: device is SATA.\r";
+						kcout << "newoskrnl: Found AHCI controller.\r";
+						kcout << "newoskrnl: Device is of SATA type.\r";
+
+						detected = true;
+
+						kAhciPort = &mem_ahci->Ports[ahci_index];
+
+						// start command engine.
+						// drv_start_ahci_engine();
 					}
 				}
 
-				pi >>= 1;
-				i++;
+				ports_implemented >>= 1;
+				ahci_index++;
 			}
 
-			kcout << "newoskrnl: [PCI] Found AHCI controller.\r";
-
-			return true;
+			return detected;
 		}
 	}
 

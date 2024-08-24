@@ -486,13 +486,15 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endL
 
 		BOOT_BLOCK_STRUCT* epmBoot = (BOOT_BLOCK_STRUCT*)bufEpmHdr;
 
+		// EPM header.
+
 		constexpr auto cFsName	  = "NewFS";
 		constexpr auto cBlockName = "ZKA:";
 
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, rt_string_len(cFsName));
 
 		epmBoot->FsVersion = kNewFSVersionInteger;
-		epmBoot->LbaStart  = 0;
+		epmBoot->LbaStart  = start;
 		epmBoot->SectorSz  = kNewFSSectorSz;
 
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), epmBoot->Name, rt_string_len(cBlockName));

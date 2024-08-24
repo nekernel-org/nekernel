@@ -226,8 +226,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// format the disk.
 	// ---------------------------------------------------- //
 
-	BFileReader readerBootScr(L"bootscr.sys", ImageHandle);
-	readerBootScr.ReadAll(0);
+	BFileReader readerSysChk(L"syschk.sys", ImageHandle);
+	readerSysChk.ReadAll(0);
 
 	Boot::BThread* loaderBootScr = nullptr;
 
@@ -235,10 +235,10 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// If we succeed in reading the blob, then execute it.
 	// ------------------------------------------ //
 
-	if (readerBootScr.Blob())
+	if (readerSysChk.Blob())
 	{
-		loaderBootScr = new Boot::BThread(readerBootScr.Blob());
-		loaderBootScr->SetName("64-bit Boot Screen DLL.");
+		loaderBootScr = new Boot::BThread(readerSysChk.Blob());
+		loaderBootScr->SetName("64-bit System Check DLL.");
 	}
 
 	loaderBootScr->Start(handoverHdrPtr);

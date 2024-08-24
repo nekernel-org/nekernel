@@ -131,7 +131,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "MainDisk", trait.fName, rt_string_len("MainDisk"));
+		rt_copy_memory((VoidPtr) "\\Mount\\NUL:", trait.fName, rt_string_len("\\Mount\\NUL:"));
 		trait.fKind = kMassStorage;
 
 		trait.fInput	 = ke_drv_input;

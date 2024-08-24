@@ -7,7 +7,7 @@
 namespace Kernel
 {
 	/// @brief Find the PE header inside the blob.
-	inline auto ldr_find_exec_header(DosHeaderPtr ptrDos) -> ExecHeaderPtr
+	inline auto ldr_find_exec_header(DosHeaderPtr ptrDos) -> LDR_EXEC_HEADER_PTR
 	{
 		if (!ptrDos)
 			return nullptr;
@@ -18,11 +18,11 @@ namespace Kernel
 		if (ptrDos->eMagic[1] != kMagMz1)
 			return nullptr;
 
-		return (ExecHeaderPtr)(VoidPtr)(&ptrDos->eLfanew + 1);
+		return (LDR_EXEC_HEADER_PTR)(VoidPtr)(&ptrDos->eLfanew + 1);
 	}
 
 	/// @brief Find the PE optional header inside the blob.
-	inline auto ldr_find_opt_exec_header(DosHeaderPtr ptrDos) -> ExecOptionalHeaderPtr
+	inline auto ldr_find_opt_exec_header(DosHeaderPtr ptrDos) -> LDR_OPTIONAL_HEADER_PTR
 	{
 		if (!ptrDos)
 			return nullptr;
@@ -32,12 +32,12 @@ namespace Kernel
         if (!exec)
             return nullptr;
 
-		return (ExecOptionalHeaderPtr)(VoidPtr)(&exec->mCharacteristics + 1);
+		return (LDR_OPTIONAL_HEADER_PTR)(VoidPtr)(&exec->mCharacteristics + 1);
 	}
 
 	/// @brief Find the PE header inside the blob.
 	/// @note overloaded function.
-	inline auto ldr_find_exec_header(const Char* ptrDos) -> ExecHeaderPtr
+	inline auto ldr_find_exec_header(const Char* ptrDos) -> LDR_EXEC_HEADER_PTR
 	{
 	   return ldr_find_exec_header((DosHeaderPtr)ptrDos);
 	}
@@ -45,7 +45,7 @@ namespace Kernel
 
 	/// @brief Find the PE header inside the blob.
 	/// @note overloaded function.
-	inline auto ldr_find_opt_exec_header(const Char* ptrDos) -> ExecOptionalHeaderPtr
+	inline auto ldr_find_opt_exec_header(const Char* ptrDos) -> LDR_OPTIONAL_HEADER_PTR
 	{
 	   return ldr_find_opt_exec_header((DosHeaderPtr)ptrDos);
 	}

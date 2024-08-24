@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "../../", "../../../ZKA", "../../../", "./"],
   "sources_path": ["*.cxx", "*.S"],
-  "output_name": "bootscr.sys",
+  "output_name": "syschk.sys",
   "compiler_flags": [
     "-ffreestanding",
     "-nostdlib",

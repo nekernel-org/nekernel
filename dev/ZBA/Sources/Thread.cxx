@@ -12,34 +12,20 @@
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PE.hxx>
 #include <KernelKit/MSDOS.hxx>
-#include <Modules/CoreCG/TextRenderer.hxx>
 #include <CFKit/LoaderUtils.hxx>
+#include <Modules/CoreCG/TextRenderer.hxx>
+
+#include <SIGG/Drv.hxx>
 
 EXTERN_C{
 #include <string.h>
 }
 
-// External boot services record.
+// External boot services symbol.
 EXTERN EfiBootServices* BS;
 
 namespace Boot
 {
-	namespace Detail
-	{
-		/// @brief Instablle Secure Driver record.
-		struct SIGNED_DRIVER_HEADER final
-		{
-			// doesn't change.
-			char d_binary_magic[5];
-			int	 d_binary_version;
-			// can change.
-			char   d_binary_name[4096];
-			UInt64 d_binary_checksum;
-			UInt64 d_binary_size;
-			char   d_binary_padding[512];
-		};
-	} // namespace Detail
-
 	BThread::BThread(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
 	{
@@ -57,8 +43,8 @@ namespace Boot
 		if (firstBytes[0] == kMagMz0 &&
 			firstBytes[1] == kMagMz1)
 		{
-			ExecHeaderPtr		  hdrPtr = ldr_find_exec_header(firstBytes);
-			ExecOptionalHeaderPtr optHdr = ldr_find_opt_exec_header(firstBytes);
+			LDR_EXEC_HEADER_PTR		  hdrPtr = ldr_find_exec_header(firstBytes);
+			LDR_OPTIONAL_HEADER_PTR optHdr = ldr_find_opt_exec_header(firstBytes);
 
 			if (hdrPtr->mMachine != kPeMachineAMD64 ||
 				hdrPtr->mSignature != kPeMagic)
@@ -93,7 +79,7 @@ namespace Boot
 			auto numPages = optHdr->mSizeOfImage / cPageSize;
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
 
-			ExecSectionHeaderPtr sectPtr = (ExecSectionHeaderPtr)(((Char*)optHdr) + hdrPtr->mSizeOfOptionalHeader);
+			LDR_SECTION_HEADER_PTR sectPtr = (LDR_SECTION_HEADER_PTR)(((Char*)optHdr) + hdrPtr->mSizeOfOptionalHeader);
 
 			constexpr auto sectionForCode	= ".text";
 			constexpr auto sectionForNewLdr = ".ldr";
@@ -101,7 +87,7 @@ namespace Boot
 
 			for (SizeT sectIndex = 0; sectIndex < numSecs; ++sectIndex)
 			{
-				ExecSectionHeaderPtr sect = &sectPtr[sectIndex];
+				LDR_SECTION_HEADER_PTR sect = &sectPtr[sectIndex];
 
 				if (StrCmp(sectionForCode, sect->mName) == 0)
 				{

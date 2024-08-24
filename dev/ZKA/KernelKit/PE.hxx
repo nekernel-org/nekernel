@@ -24,7 +24,7 @@
 #define kPeMachineAMD64 0x8664
 #define kPeMachineARM64 0xaa64
 
-typedef struct ExecHeader final
+typedef struct LDR_EXEC_HEADER final
 {
 	Kernel::UInt32 mSignature;
 	Kernel::UInt16 mMachine;
@@ -34,9 +34,9 @@ typedef struct ExecHeader final
 	Kernel::UInt32 mNumberOfSymbols;
 	Kernel::UInt16 mSizeOfOptionalHeader;
 	Kernel::UInt16 mCharacteristics;
-}  ExecHeader, *ExecHeaderPtr;
+}  LDR_EXEC_HEADER, *LDR_EXEC_HEADER_PTR;
 
-typedef struct ExecOptionalHeader final
+typedef struct LDR_OPTIONAL_HEADER final
 {
 	Kernel::UInt16 mMagic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
 	Kernel::UInt8  mMajorLinkerVersion;
@@ -68,9 +68,9 @@ typedef struct ExecOptionalHeader final
 	Kernel::UInt32 mSizeOfHeapCommit;
 	Kernel::UInt32 mLoaderFlags;
 	Kernel::UInt32 mNumberOfRvaAndSizes;
-}  ExecOptionalHeader, *ExecOptionalHeaderPtr;
+}  LDR_OPTIONAL_HEADER, *LDR_OPTIONAL_HEADER_PTR;
 
-typedef struct ExecSectionHeader final
+typedef struct LDR_SECTION_HEADER final
 {
 	Kernel::Char       mName[8];
 	Kernel::UInt32		mVirtualSize;
@@ -82,7 +82,7 @@ typedef struct ExecSectionHeader final
 	Kernel::UInt16		mNumberOfRelocations;
 	Kernel::UInt16		mNumberOfLinenumbers;
 	Kernel::UInt32		mCharacteristics;
-}  ExecSectionHeader, *ExecSectionHeaderPtr;
+}  LDR_SECTION_HEADER, *LDR_SECTION_HEADER_PTR;
 
 enum kExecDataDirParams
 {
@@ -92,7 +92,7 @@ enum kExecDataDirParams
 	kExecCount,
 };
 
-typedef struct ExecExportDirectory
+typedef struct LDR_EXPORT_DIRECTORY
 {
 	Kernel::UInt32 mCharacteristics;
 	Kernel::UInt32 mTimeDateStamp;
@@ -105,9 +105,9 @@ typedef struct ExecExportDirectory
 	Kernel::UInt32 mAddressOfFunctions; // export table rva
 	Kernel::UInt32 mAddressOfNames;
 	Kernel::UInt32 mAddressOfNameOrdinal; // ordinal table rva
-}  ExecExportDirectory, *ExecExportDirectoryPtr;
+}  LDR_EXPORT_DIRECTORY, *LDR_EXPORT_DIRECTORY_PTR;
 
-typedef struct ExecImportDirectory
+typedef struct LDR_IMPORT_DIRECTORY
 {
 	union {
 		Kernel::UInt32 mCharacteristics;
@@ -117,17 +117,17 @@ typedef struct ExecImportDirectory
 	Kernel::UInt32 mForwarderChain;
 	Kernel::UInt32 mNameRva;
 	Kernel::UInt32 mThunkTableRva;
-}  ExecImportDirectory, *ExecImportDirectoryPtr;
+}  LDR_IMPORT_DIRECTORY, *LDR_IMPORT_DIRECTORY_PTR;
 
-typedef struct ExecDataDirectory {
+typedef struct LDR_DATA_DIRECTORY {
   Kernel::UInt32 VirtualAddress;
   Kernel::UInt32 Size;
-} ExecDataDirectory, *ExecDataDirectoryPtr;
+} LDR_DATA_DIRECTORY, *LDR_DATA_DIRECTORY_PTR;
 
-typedef struct ExecImageHeader {
-	ExecHeader mHeader;
-	ExecOptionalHeader mOptHdr;
-} ExecImageHeader, *ExecImageHeaderPtr;
+typedef struct LDR_IMAGE_HEADER {
+	LDR_EXEC_HEADER mHeader;
+	LDR_OPTIONAL_HEADER mOptHdr;
+} LDR_IMAGE_HEADER, *LDR_IMAGE_HEADER_PTR;
 
 enum
 {
