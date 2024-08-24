@@ -81,6 +81,12 @@ namespace Kernel
 				   vmh_header->Magic == cVMHMagic)
 			{
 				vmh_header = traits.Next(vmh_header);
+
+				if (vmh_header == reinterpret_cast<VoidPtr>(kBadPtr))
+				{
+				    ke_stop(RUNTIME_CHECK_POINTER);
+				    return nullptr;
+				}
 			}
 
 			vmh_header->Magic		= cVMHMagic;

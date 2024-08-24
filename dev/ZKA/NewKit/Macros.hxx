@@ -95,6 +95,7 @@
 #endif
 
 #define kBadPtr	 0xFBFBFBFBFBFBFBFB
+#define kBadAddress 0x00000000000000
 #define kMaxAddr 0xFFFFFFFFFFFFFFFF
 #define kPathLen 255
 

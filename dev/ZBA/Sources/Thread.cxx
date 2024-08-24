@@ -24,6 +24,8 @@ EXTERN_C{
 // External boot services symbol.
 EXTERN EfiBootServices* BS;
 
+/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
+
 namespace Boot
 {
 	BThread::BThread(VoidPtr blob)

@@ -24,6 +24,7 @@
 #include <KernelKit/CodeManager.hxx>
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/WindowRenderer.hxx>
+#include <KernelKit/Timer.hxx>
 
 EXTERN Kernel::Property cKernelVersion;
 
@@ -180,14 +181,19 @@ namespace Kernel::Detail
 	};
 } // namespace Kernel::Detail
 
+namespace Kernel
+{
+	EXTERN ProcessScheduler* cProcessScheduler;
+} // namespace Kernel
+
 /// @brief Application entrypoint.
 /// @param Void
 /// @return Void
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 {
-    CGInit();
+	CGInit();
 
-    CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
+	CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
 				   0, 0);
 
 	CGFini();
@@ -209,16 +215,14 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	root_install_wnd->w_needs_repaint = Yes;
 
-	CG::UI_WINDOW_STRUCT* arr[] = {root_zka_wnd, root_install_wnd};
+	CG::CGDrawWindowList(&root_zka_wnd, 1);
+	CG::CGDrawWindowList(&root_install_wnd, 1);
 
-	CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
-				   0, 0);
-
-	CGFini();
-
-	CG::CGDrawWindowList(arr, 2);
+	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
+	Kernel::cProcessScheduler = nullptr;
 
 	while (Yes)
 	{
+		Kernel::ProcessHelper::StartScheduling();
 	}
 }

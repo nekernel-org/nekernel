@@ -13,10 +13,6 @@
 #include <NewKit/PageAllocator.hxx>
 #include <NewKit/Ref.hxx>
 
-#ifndef kBadAddress
-#define kBadAddress (0)
-#endif // #ifndef kBadAddress
-
 namespace Kernel
 {
 	class PageManager;

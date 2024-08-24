@@ -250,9 +250,9 @@ namespace Kernel
 	/// The main class which you call to schedule an app.
 	class ProcessScheduler final
 	{
-		explicit ProcessScheduler() = default;
-
 	public:
+	explicit ProcessScheduler() = default;
+
 		~ProcessScheduler() = default;
 
 		ZKA_COPY_DEFAULT(ProcessScheduler)
@@ -272,7 +272,7 @@ namespace Kernel
 		SizeT				Run() noexcept;
 
 	public:
-		STATIC Ref<ProcessScheduler>& The();
+		STATIC Ref<ProcessScheduler> The();
 
 	private:
 		ProcessTeam mTeam;

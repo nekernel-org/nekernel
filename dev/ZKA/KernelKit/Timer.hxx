@@ -63,7 +63,7 @@ namespace Kernel
 		Int64	fWaitFor{0};
 	};
 
-	inline Int64 Seconds(Int64 time)
+	inline Int64 Milliseconds(Int64 time)
 	{
 		if (time < 0)
 			return 0;
@@ -71,11 +71,11 @@ namespace Kernel
 		return 1000 * time;
 	}
 
-	inline Int64 Milliseconds(Int64 time)
+	inline Int64 Seconds(Int64 time)
 	{
 		if (time < 0)
 			return 0;
 
-		return 1000 * Seconds(time);
+		return 1000 * Milliseconds(time);
 	}
 } // namespace Kernel

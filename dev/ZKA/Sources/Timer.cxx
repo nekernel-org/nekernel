@@ -41,7 +41,7 @@ Int32 SoftwareTimer::Wait() noexcept
 
 	while (*fDigitalTimer < (*fDigitalTimer + fWaitFor))
 	{
-		++fDigitalTimer;
+		++(*fDigitalTimer);
 	}
 
 	return 0;

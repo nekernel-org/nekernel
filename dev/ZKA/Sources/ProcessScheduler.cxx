@@ -28,7 +28,10 @@ namespace Kernel
 	/// @brief Exit Code global variable.
 	/***********************************************************************************/
 
-	STATIC Int32 cLastExitCode = 0U;
+	Int32 cLastExitCode = 0U;
+
+	/// @brief The main process object.
+	ProcessScheduler* cProcessScheduler = nullptr;
 
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
@@ -202,7 +205,7 @@ namespace Kernel
 			}
 		}
 
-		ProcessScheduler::The().Leak().Remove(this->ProcessId);
+		cProcessScheduler->Remove(this->ProcessId);
 	}
 
 	/// @brief Add process to list.
@@ -278,6 +281,16 @@ namespace Kernel
 		return (mTeam.AsArray().Count() - 1);
 	}
 
+	/***********************************************************************************/
+
+	Ref<ProcessScheduler> ProcessScheduler::The()
+	{
+		MUST_PASS(cProcessScheduler);
+		return *cProcessScheduler;
+	}
+
+	/***********************************************************************************/
+
 	/// @brief Remove process from list.
 	/// @param processSlot process slot inside team.
 	/// @retval true process was removed.
@@ -301,6 +314,8 @@ namespace Kernel
 	/// @return
 	SizeT ProcessScheduler::Run() noexcept
 	{
+		kcout << "newoskrnl: Entering scheduler control..\r";
+
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
@@ -337,6 +352,8 @@ namespace Kernel
 			}
 		}
 
+		kcout << "newoskrnl: Exiting scheduler control..\r";
+
 		return process_index;
 	}
 
@@ -348,14 +365,6 @@ namespace Kernel
 	}
 
 	/// @internal
-	STATIC Ref<ProcessScheduler> cSchedulerRef;
-
-	/// @brief Shared instance of the process scheduler.
-	/// @return
-	Ref<ProcessScheduler>& ProcessScheduler::The()
-	{
-		return cSchedulerRef;
-	}
 
 	/// @brief Gets current running process.
 	/// @return
@@ -369,7 +378,7 @@ namespace Kernel
 	PID& ProcessHelper::TheCurrentPID()
 	{
 		kcout << "ProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-		return ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId;
+		return cProcessScheduler->TheCurrent().Leak().ProcessId;
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -414,9 +423,10 @@ namespace Kernel
 
 	SizeT ProcessHelper::StartScheduling()
 	{
-		auto& process_ref = ProcessScheduler::The().Leak();
-		SizeT ret		  = process_ref.Run();
+		if (!cProcessScheduler)
+			cProcessScheduler = new ProcessScheduler();
 
+		SizeT ret = cProcessScheduler->Run();
 		return ret;
 	}
 
