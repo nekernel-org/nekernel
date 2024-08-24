@@ -33,7 +33,7 @@ static Char	   kATAData[kATADataLen] = {0};
 
 Boolean drv_std_wait_io(UInt16 IO)
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 400; i++)
 		In8(IO + ATA_REG_STATUS);
 
 ATAWaitForIO_Retry:
