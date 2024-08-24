@@ -205,18 +205,10 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	root_zka_wnd->w_needs_repaint = Yes;
 
+	CG::CGDrawWindowList(&root_zka_wnd, 1);
+
 	/// Now run kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
-
-	auto root_install_wnd = CG::CGCreateWindow(CG::cWndFlagButton, "Install ZKA.", "Button", 0, 0, 128, 32);
-
-	root_install_wnd->w_x = 30;
-	root_install_wnd->w_y = 60;
-
-	root_install_wnd->w_needs_repaint = Yes;
-
-	CG::CGDrawWindowList(&root_zka_wnd, 1);
-	CG::CGDrawWindowList(&root_install_wnd, 1);
 
 	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 	Kernel::cProcessScheduler = nullptr;
