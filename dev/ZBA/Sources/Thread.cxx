@@ -110,7 +110,7 @@ namespace Boot
 						structHandover->HandoverType != HEL::kTypeKernel)
 					{
 						writer.Write("newosldr: Entrypoint of SYS: ").Write((UIntPtr)fStartAddress).Write("\r");
-						cg_write_text("NEWOSLDR: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+						CGDrawString("NEWOSLDR: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 					}
 				}
 
@@ -149,7 +149,7 @@ namespace Boot
 		}
 
 		HEL::HandoverProc err_fn = [](HEL::HandoverInformationHeader* rcx) -> void {
-			cg_write_text("NEWOSLDR: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
+			CGDrawString("NEWOSLDR: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			EFI::Stop();
 		};
 

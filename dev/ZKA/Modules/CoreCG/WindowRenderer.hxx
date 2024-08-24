@@ -20,12 +20,14 @@ namespace CG
 {
 	using namespace Kernel;
 
+	struct UI_WINDOW_STRUCT;
+
 	enum
 	{
 		cWndFlagNoShow = 0x04,
 	};
 
-	struct CG_WINDOW
+	struct UI_WINDOW_STRUCT final
 	{
 		Int32	w_flags{0};
 		Char	w_window_name[255]{0};
@@ -38,9 +40,9 @@ namespace CG
 		Bool	w_needs_repaint{false};
 	};
 
-	typedef struct CG_WINDOW CG_WINDOW;
+	typedef struct UI_WINDOW_STRUCT UI_WINDOW_STRUCT;
 
-	inline struct CG_WINDOW* CGCreateWindow(Int32 flags, const Char* window_name, const Char* class_name, Int32 x, Int32 y, Int32 width, Int32 height)
+	inline struct UI_WINDOW_STRUCT* CGCreateWindow(Int32 flags, const Char* window_name, const Char* class_name, Int32 x, Int32 y, Int32 width, Int32 height)
 	{
 		const auto cMaxLimit = 214;
 
@@ -51,7 +53,7 @@ namespace CG
 			return nullptr;
 		}
 
-		CG_WINDOW* wnd = new CG_WINDOW();
+		UI_WINDOW_STRUCT* wnd = new UI_WINDOW_STRUCT();
 
 		if (!wnd)
 		{
@@ -75,7 +77,7 @@ namespace CG
 		return wnd;
 	}
 
-	inline bool CGDestroyWindow(struct CG_WINDOW* wnd)
+	inline bool CGDestroyWindow(struct UI_WINDOW_STRUCT* wnd)
 	{
 		if (wnd)
 		{
@@ -93,7 +95,7 @@ namespace CG
 		return false;
 	}
 
-	inline SizeT CGDrawWindowList(CG_WINDOW** wnd, SizeT wnd_cnt)
+	inline SizeT CGDrawWindowList(UI_WINDOW_STRUCT** wnd, SizeT wnd_cnt)
 	{
 		if (wnd_cnt == 0 ||
 			!wnd)
@@ -138,11 +140,11 @@ namespace CG
 
 			CGInit();
 
-			CGDrawBitMapInRegionA(wnd[index]->display_ptr, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
+			CGDrawBitMapInRegion(wnd[index]->display_ptr, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
 			CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), wnd[index]->w_w, FLATCONTROLS_HEIGHT, wnd[index]->w_y, wnd[index]->w_x);
 			CGDrawBitMapInRegion(FlatControls, FLATCONTROLS_HEIGHT, FLATCONTROLS_WIDTH, wnd[index]->w_y, wnd[index]->w_x+wnd[index]->w_w-FLATCONTROLS_WIDTH);
 
-			cg_write_text(wnd[index]->w_window_name, wnd[index]->w_y + 8, wnd[index]->w_x + 8, CGColor(0x00, 0x00, 0x00));
+			CGDrawString(wnd[index]->w_window_name, wnd[index]->w_y + 8, wnd[index]->w_x + 8, CGColor(0x00, 0x00, 0x00));
 
 			CGFini();
 		}

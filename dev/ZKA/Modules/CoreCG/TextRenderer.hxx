@@ -145,19 +145,20 @@ inline const Kernel::UInt8 cFontBitmap[FONT_NOF_CHARS][FONT_SIZE_X] = {
 
 };
 
-inline Kernel::Void cg_render_text_font(const Kernel::UInt8* bitmap, Kernel::Int32& x_dst, Kernel::Int32& y_dst, Kernel::Int32& color)
+inline Kernel::Void CGRenderStringFromBitMap(const Kernel::UInt8* bitmap, const Kernel::SizeT& x_sz, const Kernel::SizeT& y_sz, Kernel::Int32& x_dst, Kernel::Int32& y_dst, Kernel::Int32& color)
 {
 	Kernel::Int32 x, y;
 	Kernel::Int32 set;
 
-	x = 0;
-	y = 0;
+	x	= 0;
+	y	= 0;
+	set = 0;
 
-	for (; y < FONT_SIZE_Y; y++)
+	for (; y < y_sz; ++y)
 	{
-		for (x = 0; x < FONT_SIZE_X; x++)
+		for (x = 0; x < x_sz; ++x)
 		{
-			set = bitmap[x] & 1 << y;
+			set = bitmap[x] & (1 << y);
 
 			if (set)
 				CGDrawInRegion(color, 1, 1, ((x_dst) + x), ((y_dst) + y));
@@ -165,19 +166,11 @@ inline Kernel::Void cg_render_text_font(const Kernel::UInt8* bitmap, Kernel::Int
 	}
 }
 
-inline Kernel::Void cg_write_text(const Kernel::Char* text, Kernel::Int32 x_dst, Kernel::Int32 y_dst, Kernel::Int32 color)
+inline Kernel::Void CGDrawString(const Kernel::Char* text, Kernel::Int32 x_dst, Kernel::Int32 y_dst, Kernel::Int32 color)
 {
 	for (Kernel::SizeT i = 0; text[i] != 0; ++i)
 	{
-		if (text[i] == '\r' ||
-			text[i] == '\n')
-		{
-			y_dst += FONT_SIZE_Y;
-
-			continue;
-		}
-
-		cg_render_text_font(&cFontBitmap[text[i]][0], x_dst, y_dst, color);
+		CGRenderStringFromBitMap(&cFontBitmap[text[i]][0], FONT_SIZE_X, FONT_SIZE_Y, x_dst, y_dst, color);
 		y_dst += FONT_SIZE_Y;
 	}
 }

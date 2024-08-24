@@ -6,7 +6,7 @@
 
 #pragma once
 
-/// @file Lerp.hxx
+/// @file Math.hxx
 /// @brief Linear interpolation implementation.
 
 typedef float CGReal;

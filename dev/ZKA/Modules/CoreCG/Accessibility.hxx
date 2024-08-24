@@ -10,29 +10,25 @@
 #include <NewKit/NewKit.hxx>
 #include <KernelKit/LPC.hxx>
 #include <Modules/CoreCG/FbRenderer.hxx>
-#include <Modules/CoreCG/Lerp.hxx>
+#include <Modules/CoreCG/Math.hxx>
 #include <ArchKit/ArchKit.hxx>
 
 namespace CG
 {
     using namespace Kernel;
 
-	inline Bool cKTSyncCall = false;
-
-	inline float cDeviceWidthAlert	= 150;
-	inline float cDeviceHeightAlert = 141;
-
-	/// @brief common user interface class.
+	/// @brief common User interface class.
 	class UIAccessibilty final
 	{
 		explicit UIAccessibilty() = default;
+		~UIAccessibilty() = default;
 
 	public:
 		ZKA_COPY_DELETE(UIAccessibilty);
 
-		static UIAccessibilty& The()
+		STATIC UIAccessibilty& The()
 		{
-			static UIAccessibilty the;
+			STATIC UIAccessibilty the;
 			return the;
 		}
 

@@ -40,7 +40,7 @@ namespace Kernel
 		auto start_y = 10;
 		auto x		 = 10;
 
-		cg_write_text("newoskrnl.dll stopped working properly so we had to stop.", start_y, x, panicTxt);
+		CGDrawString("newoskrnl.dll stopped working properly so we had to stop.", start_y, x, panicTxt);
 
 		CGFini();
 
@@ -70,50 +70,50 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			cg_write_text("0x00000008 Process scheduler error (Catasrophic failure).", start_y, x, panicTxt);
+			CGDrawString("0x00000008 Process scheduler error (Catasrophic failure).", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
-			cg_write_text("0x00000006 ACPI error.", start_y, x, panicTxt);
+			CGDrawString("0x00000006 ACPI error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_FILESYSTEM: {
-			cg_write_text("0x0000000A Filesystem corruption error.", start_y, x, panicTxt);
+			CGDrawString("0x0000000A Filesystem corruption error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
-			cg_write_text("0x00000000 Kernel heap error.", start_y, x, panicTxt);
+			CGDrawString("0x00000000 Kernel heap error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {
-			cg_write_text("0x00000009 Undefined Behavior error.", start_y, x, panicTxt);
+			CGDrawString("0x00000009 Undefined Behavior error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			cg_write_text("0x0000000A End of code.", start_y, x, panicTxt);
+			CGDrawString("0x0000000A End of code.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
-			cg_write_text("0x00000005 Handshake error.", start_y, x, panicTxt);
+			CGDrawString("0x00000005 Handshake error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
-			cg_write_text("0x00000003 Kernel IPC error.", start_y, x, panicTxt);
+			CGDrawString("0x00000003 Kernel IPC error.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_INVALID_PRIVILEGE: {
-			cg_write_text("0x00000007 Kernel privilege violation.", start_y, x, panicTxt);
+			CGDrawString("0x00000007 Kernel privilege violation.", start_y, x, panicTxt);
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			cg_write_text("0x0000000B Catasrophic failure.", start_y, x, panicTxt);
+			CGDrawString("0x0000000B Catasrophic failure.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			cg_write_text("0x10000001 Assertion failed.", start_y, x, panicTxt);
+			CGDrawString("0x10000001 Assertion failed.", start_y, x, panicTxt);
 			break;
 		}
 		default: {
-			cg_write_text("0xFFFFFFFF Unknown error.", start_y, x, panicTxt);
+			CGDrawString("0xFFFFFFFF Unknown error.", start_y, x, panicTxt);
 			break;
 		}
 		}
