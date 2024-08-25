@@ -24,7 +24,7 @@
 	{                                                                                 \
 		for (Kernel::SizeT u = BaseY; u < (_Width + BaseY); ++u)                      \
 		{                                                                             \
-			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+			*(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
 										  4 * u))) |= (ImgPtr)[__GXCursor];           \
@@ -41,7 +41,7 @@
 	{                                                                                 \
 		for (Kernel::SizeT u = BaseY; u < (_Width + BaseY); ++u)                      \
 		{                                                                             \
-			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+			*(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
 										  4 * u))) = (ImgPtr)[__GXCursor];            \

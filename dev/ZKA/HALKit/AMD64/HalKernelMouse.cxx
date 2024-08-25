@@ -19,7 +19,6 @@ STATIC Kernel::Int32 kPrevY		 = 10;
 STATIC Kernel::Int32 kX			 = 10;
 STATIC Kernel::Int32 kY			 = 10;
 STATIC Kernel::Int32 kMouseCycle = 0;
-STATIC Kernel::PS2MouseInterface kMousePS2;
 STATIC Kernel::Char kMousePacket[4]		 = {};
 STATIC Kernel::Boolean kMousePacketReady = false;
 
@@ -35,7 +34,7 @@ STATIC CGInit();
 
 using namespace Kernel;
 
-Void hal_handle_mouse()
+EXTERN_C Void hal_handle_mouse()
 {
 	Kernel::UInt8 data = HAL::In8(0x60);
 
@@ -68,12 +67,6 @@ Void hal_handle_mouse()
 
 	Kernel::HAL::Out8(0x20, 0x20);
 	Kernel::HAL::Out8(0xA0, 0x20);
-}
-
-/// @brief Interrupt handler for the mouse.
-EXTERN_C Void _hal_handle_mouse()
-{
-	hal_handle_mouse();
 }
 
 EXTERN_C Boolean _hal_left_button_pressed()
@@ -176,6 +169,8 @@ EXTERN_C Boolean _hal_draw_mouse()
 	kPrevX = kX;
 	kPrevY = kY;
 
+	CGDrawBitMapInRegionA(Cursor, cCurHeight, cCurWidth, kY, kX);
+
 	kMousePacketReady = false;
 	return true;
 }
@@ -183,8 +178,13 @@ EXTERN_C Boolean _hal_draw_mouse()
 /// @brief Init kernel mouse.
 EXTERN_C Void _hal_init_mouse()
 {
-	kMousePS2.Init();
+    kPrevX		 = 10;
+    kPrevY		 = 10;
+    kX			 = 10;
+    kY			 = 10;
+    kMouseCycle = 0;
+    kMousePacketReady = false;
 
-	HAL::Out8(0x21, 0b11111001);
-	HAL::Out8(0xA1, 0b11101111);
+    Kernel::PS2MouseInterface ps2_mouse;
+	ps2_mouse.Init();
 }

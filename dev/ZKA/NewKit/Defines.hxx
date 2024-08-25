@@ -9,6 +9,7 @@
 #include <NewKit/Macros.hxx>
 
 #define NEWKIT_VERSION "1.01"
+#define NEWKIT_VERSION_CB 0x0101
 
 #if !defined(_INC_NO_STDC_HEADERS) && defined(__GNUC__)
 #include <CRT/__ndk_defines.hxx>

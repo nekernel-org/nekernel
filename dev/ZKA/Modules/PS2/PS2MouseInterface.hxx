@@ -33,29 +33,32 @@ namespace Kernel
 		/// @return
 		Void Init() noexcept
 		{
-			HAL::rt_cli();
-
 			HAL::Out8(0x64, 0xA8); // enabling the auxiliary device - mouse
 
 			this->Wait();
+
 			HAL::Out8(0x64, 0x20); // tells the keyboard controller that we want to send a command to the mouse
-			this->WaitInput();
+
+			this->Wait();
 
 			UInt8 status = HAL::In8(0x60);
-			status |= 0b10;
+			status |= 0x02;
 
-			this->Wait();
 			HAL::Out8(0x64, 0x60);
-			this->Wait();
 			HAL::Out8(0x60, status); // setting the correct bit is the "compaq" status byte
 
-			this->Write(0xF6);
+			HAL::Out8(0x64, 0xD4);
+			HAL::Out8(0x60, 0xFA); // setting the correct bit is the "compaq" status byte
+
 			this->Read();
 
-			this->Write(0xF4);
-			this->Read();
+			// Unmask mouse IRQ.
 
-			HAL::rt_sti();
+			// get slave PIC.
+			UInt8 old_pic = HAL::In8(0x21);
+
+			// enable mosue interrupts
+			HAL::Out8(0x21, old_pic & (~0b00000100));
 		}
 
 	public:

@@ -35,7 +35,7 @@ __NEW_INT_%1:
 global ke_handle_irq
 global kInterruptVectorTable
 
-extern _hal_handle_mouse
+extern hal_handle_mouse
 extern idt_handle_gpf
 extern idt_handle_pf
 extern ke_io_write
@@ -136,11 +136,7 @@ IntNormal 43
 __NEW_INT_44:
     cli
 
-    ;; TODO: CoreEvents dispatch routine.
-
-    push rax
-    call _hal_handle_mouse
-    pop rax
+    call hal_handle_mouse
 
     sti
     iretq

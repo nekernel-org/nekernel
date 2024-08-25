@@ -16,14 +16,14 @@ namespace Kernel::HAL
 		STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64
 			kInterruptVectorTable[kKernelIdtSize];
 
-		STATIC Void RemapPIC(Void) noexcept
+		STATIC Void hal_remap_intel_pic_ctrl(Void) noexcept
 		{
 			// Remap PIC.
-			HAL::Out8(0x20, 0x10 | 0x01);
-			HAL::Out8(0xA0, 0x10 | 0x01);
+			HAL::Out8(0x20, 0x11);
+			HAL::Out8(0xA0, 0x11);
 
-			HAL::Out8(0x21, 32);
-			HAL::Out8(0xA1, 40);
+			HAL::Out8(0x21, 40);
+			HAL::Out8(0xA1, 32);
 
 			HAL::Out8(0x21, 4);
 			HAL::Out8(0xA1, 2);
@@ -31,8 +31,8 @@ namespace Kernel::HAL
 			HAL::Out8(0x21, 0x01);
 			HAL::Out8(0xA1, 0x01);
 
-			HAL::Out8(0x21, 0x00);
-			HAL::Out8(0xA1, 0x00);
+			HAL::Out8(0x21, 0xFD);
+			HAL::Out8(0xA1, 0xFF);
 		}
 	} // namespace Detail
 
@@ -55,7 +55,7 @@ namespace Kernel::HAL
 
 		MUST_PASS(baseIdt);
 
-		Detail::RemapPIC();
+		Detail::hal_remap_intel_pic_ctrl();
 
 		for (UInt16 i = 0; i < kKernelIdtSize; ++i)
 		{
