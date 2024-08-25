@@ -803,7 +803,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::FindCatalog(_Input const Char* catalogN
 
 	kcout << "newoskrnl: fetching catalog...\r";
 
-_NewFSSearchThroughCatalogList:
+NewFSSearchThroughCatalogList:
 	while (drive.fPacket.fPacketGood)
 	{
 		drive.fPacket.fLba			 = startCatalogList;
@@ -844,7 +844,7 @@ _NewFSSearchThroughCatalogList:
 		localSearchFirst = false;
 		startCatalogList = cCtartCatalogList;
 
-		goto _NewFSSearchThroughCatalogList;
+		goto NewFSSearchThroughCatalogList;
 	}
 
 	out_lba = 0UL;

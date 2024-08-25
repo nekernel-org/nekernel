@@ -27,9 +27,9 @@ using namespace Kernel::HAL;
 
 #define kATADataLen 256
 
-static Boolean kATADetected			 = false;
-static Int32   kATADeviceType		 = kATADeviceCount;
-static Char	   kATAData[kATADataLen] = {0};
+STATIC Boolean kATADetected			 = false;
+STATIC Int32   kATADeviceType		 = kATADeviceCount;
+STATIC Char	   kATAData[kATADataLen] = {0};
 
 Boolean drv_std_wait_io(UInt16 IO)
 {
