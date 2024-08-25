@@ -146,7 +146,7 @@ namespace CG
 			{
 				CGDrawInRegion(CGColor(0xD3, 0x74, 0x00), wnd[index]->w_w + 1, wnd[index]->w_h + 1, wnd[index]->w_y, wnd[index]->w_x);
 				CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), wnd[index]->w_w - 1, wnd[index]->w_h - 1, wnd[index]->w_y + 1, wnd[index]->w_x + 1);
-				CGDrawString(wnd[index]->w_window_name, wnd[index]->w_y + (wnd[index]->w_y / 2) - 1, wnd[index]->w_x + (wnd[index]->w_x / 2), CGColor(0x00, 0x00, 0x00));
+				CGDrawString(wnd[index]->w_window_name, wnd[index]->w_y + (wnd[index]->w_y / 2) - (wnd[index]->w_h / 2), wnd[index]->w_x + (wnd[index]->w_x / 2), CGColor(0x00, 0x00, 0x00));
 			}
 
 			CGFini();
