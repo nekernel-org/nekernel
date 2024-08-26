@@ -129,7 +129,7 @@ namespace Kernel::Detail
 			}
 
 			NFS_CATALOG_STRUCT* catalogDisk =
-				this->fNewFS->GetParser()->GetCatalog("\\System\\syspage.sys");
+				this->fNewFS->GetParser()->GetCatalog(kSysPage);
 
 			const Kernel::Char* cSrcName = "8K_SYS_PAGE_KERNEL";
 
@@ -140,7 +140,7 @@ namespace Kernel::Detail
 			else
 			{
 				catalogDisk =
-					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias("\\System\\syspage.sys");
+					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias(kSysPage);
 
 				NFS_FORK_STRUCT theDiskFork{0};
 
