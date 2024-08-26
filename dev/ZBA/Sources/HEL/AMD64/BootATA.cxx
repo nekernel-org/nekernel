@@ -120,7 +120,7 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, 
 
 	Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
-	Out8(IO + ATA_REG_SEC_COUNT0, 2);
+	Out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
 	Out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
 	Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
@@ -150,7 +150,7 @@ Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 
 	Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
-	Out8(IO + ATA_REG_SEC_COUNT0, 2);
+	Out8(IO + ATA_REG_SEC_COUNT0, ((Size + (SectorSz)) / SectorSz));
 
 	Out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
 	Out8(IO + ATA_REG_LBA1, (Lba) >> 8);

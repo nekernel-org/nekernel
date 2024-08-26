@@ -7,6 +7,7 @@
 
 ------------------------------------------- */
 
+#include <KernelKit/PE.hxx>
 #include <ArchKit/ArchKit.hxx>
 #include <CompilerKit/Detail.hxx>
 #include <FirmwareKit/Handover.hxx>
@@ -100,8 +101,6 @@ namespace Kernel::Detail
 										   theFork.CatalogName,
 										   Kernel::rt_string_len(catalogDir->Name));
 
-					delete catalogDir;
-
 					theFork.DataSize	 = kNewFSForkSize;
 					theFork.ResourceId	 = 0;
 					theFork.ResourceKind = Kernel::kNewFSRsrcForkKind;
@@ -119,22 +118,20 @@ namespace Kernel::Detail
 
 					const Kernel::SizeT metadataSz = kNewFSSectorSz;
 
-					auto catalogSystem = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
-
-					fNewFS->GetParser()->CreateFork(catalogSystem, theFork);
+					fNewFS->GetParser()->CreateFork(catalogDir, theFork);
 
 					fNewFS->GetParser()->WriteCatalog(
-						catalogSystem, true, (Kernel::VoidPtr)(metadataFolder.CData()),
+						catalogDir, true, (Kernel::VoidPtr)(metadataFolder.CData()),
 						metadataSz, cFolderInfo);
 
-					delete catalogSystem;
+					delete catalogDir;
 				}
 			}
 
 			NFS_CATALOG_STRUCT* catalogDisk =
-				this->fNewFS->GetParser()->GetCatalog("\\System\\newoskrnl.dll");
+				this->fNewFS->GetParser()->GetCatalog("\\System\\syspage.sys");
 
-			const Kernel::Char* cSrcName = "KERNEL_EXEC";
+			const Kernel::Char* cSrcName = "8K_SYS_PAGE_KERNEL";
 
 			if (catalogDisk)
 			{
@@ -143,7 +140,7 @@ namespace Kernel::Detail
 			else
 			{
 				catalogDisk =
-					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias("\\System\\newoskrnl.dll");
+					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias("\\System\\syspage.sys");
 
 				NFS_FORK_STRUCT theDiskFork{0};
 
@@ -154,16 +151,14 @@ namespace Kernel::Detail
 									   theDiskFork.CatalogName,
 									   Kernel::rt_string_len(catalogDisk->Name));
 
-				theDiskFork.DataSize	 = kHandoverHeader->f_HardwareTables.f_ImageSz;
-				theDiskFork.ResourceId	 = Kernel::kPefKindExec | 0xFFFF000;
+				Kernel::Size sz_hdr = kNewFSForkSz;
+
+				theDiskFork.DataSize	 =sz_hdr;
+				theDiskFork.ResourceId	 = kNewFSCatalogKindExecutable | kNewFSCatalogKindPage;
 				theDiskFork.ResourceKind = Kernel::kNewFSDataForkKind;
 				theDiskFork.Kind		 = Kernel::kNewFSDataForkKind;
 
 				fNewFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
-				fNewFS->GetParser()->WriteCatalog(catalogDisk,
-												  false,
-												  kHandoverHeader->f_HardwareTables.f_ImagePtr,
-												  kHandoverHeader->f_HardwareTables.f_ImageSz, cSrcName);
 
 				delete catalogDisk;
 			}

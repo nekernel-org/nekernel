@@ -253,9 +253,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// If we succeed in reading the blob, then execute it.
 	// ------------------------------------------ //
 
-	handoverHdrPtr->f_HardwareTables.f_ImagePtr = readerKernel.Blob();
-	handoverHdrPtr->f_HardwareTables.f_ImageSz = readerKernel.Size();
-
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::BThread(readerKernel.Blob());

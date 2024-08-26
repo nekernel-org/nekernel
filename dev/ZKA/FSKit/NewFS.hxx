@@ -31,6 +31,7 @@ default.
 #define kNewFSNodeNameLen	 (256)
 
 #define kNewFSSectorSz (512)
+#define kNewFSForkSz (8192)
 
 #define kNewFSIdentLen (8)
 #define kNewFSIdent	   " NewFS"

@@ -62,7 +62,8 @@ STATIC MountpointInterface sMountpointInterface;
 _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 												 _Input NFS_FORK_STRUCT& theFork)
 {
-	if (catalog && theFork.ForkName[0] != 0)
+	if (catalog && theFork.ForkName[0] != 0 &&
+	   theFork.DataSize <= kNewFSForkSz)
 	{
 		Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
@@ -641,6 +642,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 								   : catalog->ResourceFork;
 
 	NFS_FORK_STRUCT* forkDataIn = new NFS_FORK_STRUCT();
+	NFS_FORK_STRUCT	 prevFork{};
 
 	// sanity check of the fork position as the condition to run the loop.
 	while (startFork >= kNewFSCatalogStartAddress)
@@ -666,25 +668,6 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 			StringBuilder::Equals(forkDataIn->ForkName, forkName) &&
 			StringBuilder::Equals(forkDataIn->CatalogName, catalog->Name))
 		{
-			if (forkDataIn->DataSize < sizeOfData &&
-				forkDataIn->DataSize < 1)
-			{
-				startFork = forkDataIn->NextSibling;
-				continue;
-			}
-
-			drive.fPacket.fPacketContent = data;
-			drive.fPacket.fPacketSize	 = sizeOfData;
-			drive.fPacket.fLba			 = forkDataIn->DataOffset;
-
-			kcout << "newoskrnl: data offset: " << hex_number(forkDataIn->DataOffset) << endl;
-
-			drive.fOutput(&drive.fPacket);
-
-			return true;
-		}
-		else
-		{
 			// ===================================================== //
 			// Store size of blob now.
 			// ===================================================== //
@@ -692,13 +675,13 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 			if (forkDataIn->DataSize < sizeOfData &&
 				forkDataIn->DataSize < 1)
 			{
-				startFork = forkDataIn->NextSibling + sizeof(NFS_FORK_STRUCT);
+				startFork = forkDataIn->NextSibling;
 				continue;
 			}
 
-			forkDataIn->Flags = kNewFSFlagCreated;
+			forkDataIn->Flags	   = kNewFSFlagCreated;
 			forkDataIn->DataOffset = startFork + sizeof(NFS_FORK_STRUCT);
-			forkDataIn->DataSize = sizeOfData;
+			forkDataIn->DataSize   = sizeOfData;
 
 			drive.fPacket.fPacketContent = data;
 			drive.fPacket.fPacketSize	 = sizeOfData;
@@ -720,6 +703,10 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 
 			return true;
 		}
+
+		// stumble upon a fork, store it.
+
+		prevFork = *forkDataIn;
 
 		startFork = forkDataIn->NextSibling + forkDataIn->DataSize;
 	}
