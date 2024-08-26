@@ -166,7 +166,7 @@ namespace Kernel::Detail
 
 		~FilesystemInstaller() = default;
 
-		NEWOS_COPY_DEFAULT(FilesystemInstaller);
+		ZKA_COPY_DEFAULT(FilesystemInstaller);
 
 		/// @brief Grab the disk's NewFS reference.
 		/// @return NewFilesystemManager the filesystem interface
