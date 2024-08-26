@@ -21,15 +21,14 @@ section .text
 ;; rcx: Stack Pointer
 ;; rdx: SMP core address.
 rt_do_context_switch:
-    push rax
+    push rcx
     call _hal_switch_context
-    pop rax
+    pop rcx
 
     ;; Now grab newly allocated process's stack frame.
-
     push rax
     call _hal_leak_current_context
-    mov rax, r9
+    mov r9, rax
     pop rax
 
     ;; Take care of context switching within AP.

@@ -114,6 +114,7 @@ namespace Kernel::HAL
 	/// @param targetAddress
 	/// @return
 	/***********************************************************************************/
+	
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, (apicId << 24));

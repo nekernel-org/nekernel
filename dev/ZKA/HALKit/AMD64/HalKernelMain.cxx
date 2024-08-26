@@ -218,7 +218,8 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
 
-	Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+	if (kHandoverHeader->f_MultiProcessingEnabled)
+		Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::kcout << "newoskrnl: Creating filesystem and such.\r";
 

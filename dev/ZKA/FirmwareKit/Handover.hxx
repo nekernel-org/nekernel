@@ -75,13 +75,9 @@ namespace Kernel::HEL
 		{
 			VoidPtr f_SmBios;
 			VoidPtr f_VendorPtr;
-			struct
-			{
-				VoidPtr f_ImagePtr;
-				SizeT	f_ImageSz;
-			};
-			VoidPtr f_MPPtr;
 		} f_HardwareTables;
+
+		Bool f_MultiProcessingEnabled;
 
 		struct
 		{

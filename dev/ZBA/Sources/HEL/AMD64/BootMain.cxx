@@ -126,23 +126,28 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
 	handoverHdrPtr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
 
-	auto	guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
-	VoidPtr mp		= nullptr;
+	auto				   guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
+	EfiMpServicesProtocol* mp	   = nullptr;
 
 	extern EfiBootServices* BS;
 
-	BS->LocateProtocol(&guid_mp, nullptr, &mp);
+	BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
 
-	handoverHdrPtr->f_HardwareTables.f_MPPtr = mp;
+	handoverHdrPtr->f_MultiProcessingEnabled = mp != nullptr;
 
 	kHandoverHeader = handoverHdrPtr;
 
 	CGInit();
-	CGDrawInRegion(CGColor(0xff, 0x3a, 0x3a), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
+	CGDrawInRegion(CGColor(0xFF, 0x3A, 0x3A), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
 	CGFini();
 
+	UInt32 cnt_enabled	= 0;
+	UInt32 cnt_disabled = 0;
+
+	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
+
 	CGDrawString("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
-	CGDrawString(BVersionString::The(), 20, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString((cnt_enabled > 1) ? "MULTIPROCESSOR SYSTEM." : "UNIPROCESSOR SYSTEM.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 
 	// Fill handover header now.
 

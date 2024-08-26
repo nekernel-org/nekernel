@@ -186,7 +186,16 @@ __NEW_INT_51:
     sti
     iretq
 
-IntNormal 52
+[extern hal_ap_startup]
+
+__NEW_INT_52:
+    cli
+
+    jmp hal_ap_startup
+
+    sti
+    ret
+
 IntNormal 53
 IntNormal 54
 IntNormal 55
