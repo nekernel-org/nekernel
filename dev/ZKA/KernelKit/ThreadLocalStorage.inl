@@ -4,14 +4,15 @@
 
 ------------------------------------------- */
 
-//! @brief Allocates a pointer from the process's tls.
+//! @file ThreadLocalStorage.inl
+//! @brief Allocate resources from the process's heap storage.
 
 #ifndef _INC_PROCESS_SCHEDULER_HXX_
 #include <KernelKit/ProcessScheduler.hxx>
 #endif
 
 template <typename T>
-inline T* tls_new_ptr(void)
+inline T* tls_new_ptr(void) noexcept
 {
 	using namespace Kernel;
 
@@ -25,7 +26,7 @@ inline T* tls_new_ptr(void)
 
 //! @brief TLS delete implementation.
 template <typename T>
-inline Kernel::Bool tls_delete_ptr(T* ptr)
+inline Kernel::Bool tls_delete_ptr(T* ptr) noexcept
 {
 	if (!ptr)
 		return false;

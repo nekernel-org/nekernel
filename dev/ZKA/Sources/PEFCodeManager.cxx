@@ -102,15 +102,12 @@ namespace Kernel
 
 	VoidPtr PEFLoader::FindSymbol(const Char* name, Int32 kind)
 	{
-		if (!fCachedBlob || fBad)
+		if (!fCachedBlob || fBad || !name)
 			return nullptr;
 
 		PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-		StringView cPefHeaderStr;
-		cPefHeaderStr += name;
-
-		auto blob = fFile->Read(cPefHeaderStr.CData());
+		auto blob = fFile->Read(name);
 
 		PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(blob);
 
@@ -205,7 +202,7 @@ namespace Kernel
 			if (errOrStart.Error() != 0)
 				return false;
 
-			PROCESS_HEADER_BLOCK	   proc(errOrStart.Leak().Leak());
+			PROCESS_HEADER_BLOCK	  proc(errOrStart.Leak().Leak());
 			Ref<PROCESS_HEADER_BLOCK> refProc = proc;
 
 			proc.Kind = procKind;
