@@ -13,7 +13,7 @@
 #include <NewKit/Defines.hxx>
 
 // user mode users.
-#define kSuperUser "ZKA USER\\SYSTEM"
+#define kSuperUser "ZKA USER\\SUPER"
 #define kGuestUser "ZKA USER\\GUEST"
 
 #define kUsersFile "\\Users\\$UsrRcrd"

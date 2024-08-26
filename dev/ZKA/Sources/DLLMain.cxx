@@ -194,7 +194,7 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CGFini();
 
-	auto root_zka_wnd = CG::CGCreateWindow(CG::cWndFlagWindow, "ZKA Setup", "Window", 0, 0, 512, 256);
+	auto root_zka_wnd = CG::CGCreateWindow(CG::cWndFlagWindow, "ZKA Operating System", "Window", 20, 20, CG::UIAccessibilty::The().Height() - 20, CG::UIAccessibilty::The().Width() - 20);
 
 	root_zka_wnd->w_sub_type = CG::cWndFlagCloseControlSelect;
 	root_zka_wnd->w_x = 10;
@@ -202,18 +202,10 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	root_zka_wnd->w_needs_repaint = Yes;
 
+	CG::CGDrawWindowList(&root_zka_wnd, 1);
+
 	/// Now run kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
-
-	auto root_install_wnd = CG::CGCreateWindow(CG::cWndFlagButtonSelect, "Install Now.", "Button", 0, 0, 128, 32);
-
-	root_install_wnd->w_x = 512 - 128;
-	root_install_wnd->w_y = 256 - 32;
-
-	root_install_wnd->w_needs_repaint = Yes;
-
-	CG::CGDrawWindowList(&root_zka_wnd, 1);
-	CG::CGDrawWindowList(&root_install_wnd, 1);
 
 	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 	Kernel::cProcessScheduler = nullptr;
