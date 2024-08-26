@@ -9,7 +9,10 @@
 
 #include <NewKit/Defines.hxx>
 
-EXTERN_C void rle_compress(void* data, long sz, void* out, long out_sz);
-EXTERN_C void rle_decompress(void* data, long sz, void* out, long out_sz);
+namespace Kernel
+{
+	EXTERN_C Void rle_compress(VoidPtr data, Size sz, VoidPtr out, Size out_sz);
+	EXTERN_C Void rle_decompress(VoidPtr data, Size sz, VoidPtr out, Size out_sz);
+} // namespace Kernel
 
 #endif // !ifndef __KERNELKIT_RLE_HXX__

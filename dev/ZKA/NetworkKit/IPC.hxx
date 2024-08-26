@@ -13,6 +13,8 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/String.hxx>
 
+#include <CompressKit/RLE.hxx>
+
 /// @file IPC.hxx
 /// @brief IPC protocol.
 

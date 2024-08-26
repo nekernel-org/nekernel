@@ -27,7 +27,6 @@
 
 namespace Kernel
 {
-	class UserManager;
 	class User;
 
 	enum class RingKind
@@ -74,8 +73,6 @@ namespace Kernel
 		RingKind   fRing{RingKind::kRingStdUser};
 		Char fUserName[kMaxUserNameLen] = { 0 };
 		Char fUserToken[kMaxUserTokenLen] = { 0 };
-
-		friend UserManager;
 	};
 } // namespace Kernel
 

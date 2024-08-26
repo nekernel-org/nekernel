@@ -80,7 +80,7 @@ namespace Kernel::Detail
 
 					if (catalogDir)
 					{
-						Kernel::kcout << "newoskrnl: already exists.\r";
+						Kernel::kcout << "newoskrnl: Already exists.\r";
 
 						delete catalogDir;
 						continue;
@@ -132,9 +132,9 @@ namespace Kernel::Detail
 			}
 
 			NFS_CATALOG_STRUCT* catalogDisk =
-				this->fNewFS->GetParser()->GetCatalog("\\Mount\\NUL:");
+				this->fNewFS->GetParser()->GetCatalog("\\System\\newoskrnl.dll");
 
-			const Kernel::Char* cSrcName = "DISK-INF";
+			const Kernel::Char* cSrcName = "KERNEL_EXEC";
 
 			if (catalogDisk)
 			{
@@ -143,17 +143,7 @@ namespace Kernel::Detail
 			else
 			{
 				catalogDisk =
-					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias("\\Mount\\NUL:");
-
-				Kernel::StringView diskFolder(kNewFSSectorSz);
-
-				diskFolder +=
-					"<!properties/><p>Kind: alias to NULL.</p>\r<p>Created by: system</p>\r<p>Edited "
-					"by: "
-					"system</p>\r<p>Volume Type: NULL.</p>\r";
-
-				diskFolder += "<p>Root: NUL";
-				diskFolder += "</p>\r";
+					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias("\\System\\newoskrnl.dll");
 
 				NFS_FORK_STRUCT theDiskFork{0};
 
@@ -164,16 +154,16 @@ namespace Kernel::Detail
 									   theDiskFork.CatalogName,
 									   Kernel::rt_string_len(catalogDisk->Name));
 
-				theDiskFork.DataSize	 = kNewFSForkSize;
-				theDiskFork.ResourceId	 = 0;
-				theDiskFork.ResourceKind = Kernel::kNewFSRsrcForkKind;
+				theDiskFork.DataSize	 = kHandoverHeader->f_HardwareTables.f_ImageSz;
+				theDiskFork.ResourceId	 = Kernel::kPefKindExec | 0xFFFF000;
+				theDiskFork.ResourceKind = Kernel::kNewFSDataForkKind;
 				theDiskFork.Kind		 = Kernel::kNewFSDataForkKind;
 
 				fNewFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
 				fNewFS->GetParser()->WriteCatalog(catalogDisk,
-												  true,
-												  (Kernel::VoidPtr)diskFolder.CData(),
-												  kNewFSSectorSz, cSrcName);
+												  false,
+												  kHandoverHeader->f_HardwareTables.f_ImagePtr,
+												  kHandoverHeader->f_HardwareTables.f_ImageSz, cSrcName);
 
 				delete catalogDisk;
 			}

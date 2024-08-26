@@ -29,7 +29,7 @@ namespace Kernel
 	//! @brief Forward declarations.
 	struct PROCESS_HEADER_BLOCK;
 
-	class PEFSharedObjectInterface;
+	class PEFDLLInterface;
 	class ProcessTeam;
 	class ProcessScheduler;
 	class ProcessHelper;
@@ -157,8 +157,7 @@ namespace Kernel
 		HeapPtrKind HeapPtr{nullptr};
 
 		// shared library handle, reserved for kSharedObjectKind types of executables only.
-		PEFSharedObjectInterface* DLLPtr{nullptr};
-
+		PEFDLLInterface* DLLPtr{nullptr};
 		PROCESS_HEADER_BLOCK* Parent{nullptr};
 
 		// Memory usage.

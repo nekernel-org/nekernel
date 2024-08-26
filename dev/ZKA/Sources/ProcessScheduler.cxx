@@ -10,7 +10,7 @@
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/PEFSharedObject.hxx>
+#include <KernelKit/PEFDLLInterface.hxx>
 #include <KernelKit/MP.hxx>
 #include <KernelKit/Heap.hxx>
 #include <NewKit/String.hxx>

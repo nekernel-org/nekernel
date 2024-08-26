@@ -1,7 +1,7 @@
 /*
  * ========================================================
  *
- * Kernel
+ * newoskrnl
  * Copyright ZKA Technologies., all rights reserved.
  *
  *  ========================================================
@@ -9,7 +9,7 @@
 
 #include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/PEF.hxx>
-#include <KernelKit/PEFSharedObject.hxx>
+#include <KernelKit/PEFDLLInterface.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
 #include <NewKit/Defines.hxx>
@@ -37,9 +37,9 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C SharedObjectPtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header)
+EXTERN_C DLLInterfacePtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header)
 {
-	SharedObjectPtr sharedObj = tls_new_class<PEFSharedObjectInterface>();
+	DLLInterfacePtr sharedObj = tls_new_class<PEFDLLInterface>();
 
 	if (!sharedObj)
 	{
@@ -48,7 +48,7 @@ EXTERN_C SharedObjectPtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header)
 		return nullptr;
 	}
 
-	sharedObj->Mount(tls_new_class<PEFSharedObjectInterface::PEF_SHARED_OBJECT_TRAITS>());
+	sharedObj->Mount(tls_new_class<PEFDLLInterface::DLL_TRAITS>());
 
 	if (!sharedObj->Get())
 	{
@@ -80,7 +80,7 @@ EXTERN_C SharedObjectPtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, SharedObjectPtr lib, Bool* successful)
+EXTERN_C Void rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, DLLInterfacePtr lib, Bool* successful)
 {
 	MUST_PASS(successful);
 
@@ -97,14 +97,4 @@ EXTERN_C Void rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, SharedObjectP
 	lib = nullptr;
 
 	*successful = true;
-}
-
-/***********************************************************************************/
-/// @brief Unimplemented function (crashes by default)
-/// @param
-/***********************************************************************************/
-
-EXTERN_C void __mh_purecall(void)
-{
-	kcout << "newoskrnl: unimplemented symbol!\r";
 }

@@ -26,8 +26,8 @@
 
 #define kHandoverMaxCmdLine 8
 
-#define kHandoverBetterEFI "ZKA_EFI"
-#define kHandoverBetterEFI_U  L"ZKA_EFI"
+#define kHandoverBetterEFI	 "ZKA_EFI"
+#define kHandoverBetterEFI_U L"ZKA_EFI"
 
 #define kHandoverHeapSz gib_cast(2)
 
@@ -43,8 +43,8 @@ namespace Kernel::HEL
 		kTypeKernel		  = 100,
 		kTypeKernelDriver = 101,
 		kTypeRsrc		  = 102,
-		kTypeInvalid		  = 103,
-		kTypeCount = 4,
+		kTypeInvalid	  = 103,
+		kTypeCount		  = 4,
 	};
 
 	/**
@@ -75,6 +75,11 @@ namespace Kernel::HEL
 		{
 			VoidPtr f_SmBios;
 			VoidPtr f_VendorPtr;
+			struct
+			{
+				VoidPtr f_ImagePtr;
+				SizeT	f_ImageSz;
+			};
 			VoidPtr f_MPPtr;
 		} f_HardwareTables;
 
@@ -89,7 +94,7 @@ namespace Kernel::HEL
 		} f_GOP;
 
 		UInt64 f_FirmwareSpecific[8];
-		Char f_CommandLine[255][kHandoverMaxCmdLine];
+		Char   f_CommandLine[255][kHandoverMaxCmdLine];
 	};
 
 	enum

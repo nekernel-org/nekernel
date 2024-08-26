@@ -10,54 +10,42 @@
 #ifndef __KERNELKIT_SHARED_OBJECT_HXX__
 #define __KERNELKIT_SHARED_OBJECT_HXX__
 
-#include <KernelKit/LoaderInterface.hxx>
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <NewKit/Defines.hxx>
+#include <KernelKit/DLLInterface.hxx>
 
 namespace Kernel
 {
-	/// @brief Pure implementation, missing method/function handler.
-	extern "C" void __mh_purecall(void);
-
 	/**
 	 * @brief Shared Library class
 	 * Load library from this class
 	 */
-	class PEFSharedObjectInterface final
+	class PEFDLLInterface final : public DLLInterface
 	{
 	public:
-		struct PEF_SHARED_OBJECT_TRAITS final
-		{
-			VoidPtr fImageObject{nullptr};
-			VoidPtr fImageEntrypointOffset{nullptr};
-
-			Bool IsValid() { return fImageObject && fImageEntrypointOffset; }
-		};
+		explicit PEFDLLInterface() = default;
+		~PEFDLLInterface()		   = default;
 
 	public:
-		explicit PEFSharedObjectInterface() = default;
-		~PEFSharedObjectInterface()			= default;
-
-	public:
-		ZKA_COPY_DEFAULT(PEFSharedObjectInterface);
+		ZKA_COPY_DEFAULT(PEFDLLInterface);
 
 	private:
-		PEF_SHARED_OBJECT_TRAITS* fMounted{nullptr};
+		DLL_TRAITS* fMounted{nullptr};
 
 	public:
-		PEF_SHARED_OBJECT_TRAITS** GetAddressOf()
+		DLL_TRAITS** GetAddressOf()
 		{
 			return &fMounted;
 		}
 
-		PEF_SHARED_OBJECT_TRAITS* Get()
+		DLL_TRAITS* Get()
 		{
 			return fMounted;
 		}
 
 	public:
-		void Mount(PEF_SHARED_OBJECT_TRAITS* to_mount)
+		void Mount(DLL_TRAITS* to_mount)
 		{
 			if (!to_mount || !to_mount->fImageObject)
 				return;
@@ -96,7 +84,7 @@ namespace Kernel
 			if (!ret)
 			{
 				if (kind == kPefCode)
-					return (VoidPtr)__mh_purecall;
+					return (VoidPtr)__zka_pure_call;
 
 				return nullptr;
 			}
@@ -108,10 +96,10 @@ namespace Kernel
 		PEFLoader* fLoader{nullptr};
 	};
 
-	typedef PEFSharedObjectInterface* SharedObjectPtr;
+	typedef PEFDLLInterface* DLLInterfacePtr;
 
-	EXTERN_C SharedObjectPtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header);
-	EXTERN_C Void			 rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, SharedObjectPtr lib, Bool* successful);
+	EXTERN_C DLLInterfacePtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header);
+	EXTERN_C Void			 rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, DLLInterfacePtr lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */

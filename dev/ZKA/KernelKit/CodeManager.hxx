@@ -16,7 +16,7 @@
 
 #include <KernelKit/PECodeManager.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/PEFSharedObject.hxx>
+#include <KernelKit/PEFDLLInterface.hxx>
 
 namespace Kernel
 {

@@ -10,7 +10,7 @@ Purpose: SCI/M core header file (C++)
 #ifndef __SCI_BASE_HXX__
 #define __SCI_BASE_HXX__
 
-#include <SCI/Hint.h>
+#include <SCI/sci_hint.hxx>
 
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C   extern "C"
@@ -33,6 +33,8 @@ typedef __INT8_TYPE__  SInt8;
 typedef void*			 VoidPtr;
 typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
+
+#include <SCI/sci_err.hxx>
 
 #ifdef __SCI_IMPL__
 #include <SCI/scm.internal.inl>
@@ -89,12 +91,13 @@ public:
 /// @note Handle types.
 // ------------------------------------------------------------------------------------------ //
 
-typedef VoidPtr NEW_OBJECT;
+typedef VoidPtr ZKAObject;
 
-typedef NEW_OBJECT DLL_OBJECT;
-typedef NEW_OBJECT IO_OBJECT;
-typedef NEW_OBJECT COMP_OBJECT;
-typedef NEW_OBJECT SCM_OBJECT;
+typedef ZKAObject ZKADLLObject;
+typedef ZKAObject ZKAIOObject;
+typedef ZKAObject ZKASCMObject;
+typedef ZKAObject ZKAThreadObject;
+typedef ZKAObject ZKASocketObject;
 
 // ------------------------------------------------------------------------------------------ //
 
@@ -106,18 +109,18 @@ typedef NEW_OBJECT SCM_OBJECT;
 /// @param symbol the symbol to look for
 /// @param dll_handle the DLL handle.
 /// @return the proc pointer.
-IMPORT_C NEW_OBJECT LdrGetDLLProc(_Input const Char* symbol, _Input NEW_OBJECT dll_handle);
+IMPORT_C ZKAObject LdrGetDLLProc(_Input const Char* symbol, _Input ZKAObject dll_handle);
 
 /// @brief Open DLL handle.
 /// @param path
 /// @param drv
 /// @return
-IMPORT_C NEW_OBJECT LdrOpenDLL(_Input const Char* path, _Input const Char* drive_letter);
+IMPORT_C ZKAObject LdrOpenDLL(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close DLL handle
 /// @param dll_handle
 /// @return
-IMPORT_C UInt0 LdrCloseDLL(_Input NEW_OBJECT dll_handle);
+IMPORT_C UInt0 LdrCloseDLL(_Input ZKAObject dll_handle);
 
 // ------------------------------------------------------------------------------------------ //
 // File API.
@@ -127,18 +130,28 @@ IMPORT_C UInt0 LdrCloseDLL(_Input NEW_OBJECT dll_handle);
 /// @param fs_path the filesystem path.
 /// @param drive_letter drive name, use NULL to use default one.
 /// @return the file descriptor of the file.
-IMPORT_C NEW_OBJECT RtlOpenFile(const Char* fs_path, const Char* drive_letter);
+IMPORT_C ZKAObject IoOpenFile(const Char* fs_path, const Char* drive_letter);
 
 /// @brief Closes a file and flushes its content.
 /// @param file_desc the file descriptor.
-/// @return
-IMPORT_C UInt0 RtlCloseFile(_Input NEW_OBJECT file_desc);
+/// @return void.
+IMPORT_C UInt0 IoCloseFile(_Input ZKAObject file_desc);
+
+IMPORT_C UInt32 IoWriteFile(_Input ZKAObject file_desc, _Output VoidPtr out_data, SizeT sz_data);
+
+IMPORT_C UInt32 IoReadFile(_Input ZKAObject file_desc, _Output VoidPtr* out_data, SizeT sz_data);
+
+IMPORT_C UInt64 IoRewindFile(_Input ZKAObject file_desc);
+
+IMPORT_C UInt64 IoTellFile(_Input ZKAObject file_desc);
+
+IMPORT_C UInt64 IoSeekFile(_Input ZKAObject file_desc, UInt64 file_offset);
 
 // ------------------------------------------------------------------------
 // TLS API.
 // ------------------------------------------------------------------------
 
-/// @brief Installs the TIB and GIB inside the current process.
+/// @brief Installs the Thread Information Block and Global Information Block inside the current process.
 /// @param void.
 /// @return > 0 error ocurred or already present, = 0 success.
 IMPORT_C UInt32 TlsInstallIB(UInt0);
@@ -165,11 +178,11 @@ SInt32 ScmReleaseClass(_Input TCLS* cls);
 /// @brief Creates an SCM instance in the process.
 /// @param handle_instance the SCM handle.
 /// @param flags the SCM flags.
-IMPORT_C SInt32 ScmCreateInstance(_Input UInt32 flags, _Output SCM_OBJECT* handle_instance);
+IMPORT_C SInt32 ScmCreateInstance(_Input UInt32 flags, _Output ZKAObject* handle_instance);
 
 /// @brief Destroys an SCM instance of the process.
 /// @param handle_instance the SCM handle.
-IMPORT_C UInt0  ScmDestroyInstance(_Input SCM_OBJECT handle_instance);
+IMPORT_C UInt0  ScmDestroyInstance(_Input ZKAObject handle_instance);
 
 // ------------------------------------------------------------------------
 // Memory Management API.
