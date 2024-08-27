@@ -114,7 +114,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "\\NUL", trait.fName, rt_string_len("\\NUL"));
+		rt_copy_memory((VoidPtr) "\\Mount\\NUL:", trait.fName, rt_string_len("\\Mount\\NUL:"));
 		trait.fKind = kInvalidDrive;
 
 		trait.fInput	 = io_drv_unimplemented;
@@ -131,7 +131,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "\\Mount\\NUL:", trait.fName, rt_string_len("\\Mount\\NUL:"));
+		rt_copy_memory((VoidPtr) "\\Mount\\MainDisk:", trait.fName, rt_string_len("\\Mount\\MainDisk:"));
 		trait.fKind = kMassStorage;
 
 		trait.fInput	 = ke_drv_input;

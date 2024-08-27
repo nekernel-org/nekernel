@@ -55,12 +55,12 @@ namespace Kernel::Detail
 		{
 			if (Kernel::FilesystemManagerInterface::GetMounted())
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: No need to allocate a NewFS filesystem here...", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: NewFS filesystem already mounted...", 10, 10, RGB(0, 0, 0));
 				fNewFS = reinterpret_cast<Kernel::NewFilesystemManager*>(Kernel::FilesystemManagerInterface::GetMounted());
 			}
 			else
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Allocating a NewFS filesystem here...", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Mounting a NewFS filesystem...", 10, 10, RGB(0, 0, 0));
 
 				// Mounts a NewFS from main drive.
 				fNewFS = new Kernel::NewFilesystemManager();
@@ -68,14 +68,14 @@ namespace Kernel::Detail
 				Kernel::FilesystemManagerInterface::Mount(fNewFS);
 			}
 
+			const auto cDirCount = 7;
+
+			const char* cDirStr[cDirCount] = {
+				"\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
+				"\\Users\\", "\\Library\\", "\\Mount\\"};
+
 			if (fNewFS->GetParser())
 			{
-				constexpr auto cFolderInfo		  = "META-INF";
-				const auto	   cDirCount		  = 7;
-				const char*	   cDirStr[cDirCount] = {
-					   "\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
-					   "\\Users\\", "\\Library\\", "\\Mount\\"};
-
 				for (Kernel::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 				{
 					auto catalogDir = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
@@ -84,7 +84,8 @@ namespace Kernel::Detail
 					{
 						Kernel::kcout << "newoskrnl: Already exists.\r";
 
-						CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog already exists...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog already exists: ")), RGB(0, 0, 0));
 
 						delete catalogDir;
 						continue;
@@ -93,41 +94,8 @@ namespace Kernel::Detail
 					catalogDir = fNewFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
 																	kNewFSCatalogKindDir);
 
-					NFS_FORK_STRUCT theFork{0};
-
-					const Kernel::Char* cSrcName = cFolderInfo;
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theFork.ForkName,
-										   Kernel::rt_string_len(cSrcName));
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDir->Name),
-										   theFork.CatalogName,
-										   Kernel::rt_string_len(catalogDir->Name));
-
-					theFork.DataSize	 = kNewFSForkSize;
-					theFork.ResourceId	 = 0;
-					theFork.ResourceKind = Kernel::kNewFSRsrcForkKind;
-					theFork.Kind		 = Kernel::kNewFSDataForkKind;
-
-					Kernel::StringView metadataFolder(kNewFSSectorSz);
-
-					metadataFolder +=
-						"<!properties/>\r<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
-						"system</p>\r<p>Volume Type: Zeta</p>\r";
-
-					metadataFolder += "<p>Path: ";
-					metadataFolder += cDirStr[dirIndx];
-					metadataFolder += "</p>\r";
-
-					const Kernel::SizeT metadataSz = kNewFSSectorSz;
-
-					fNewFS->GetParser()->CreateFork(catalogDir, theFork);
-
-					fNewFS->GetParser()->WriteCatalog(
-						catalogDir, true, (Kernel::VoidPtr)(metadataFolder.CData()),
-						metadataSz, cFolderInfo);
-
-					CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog has been created...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog has been created: ")), RGB(0, 0, 0));
 
 					delete catalogDir;
 				}
@@ -135,15 +103,22 @@ namespace Kernel::Detail
 
 			NFS_CATALOG_STRUCT* catalogDisk =
 				this->fNewFS->GetParser()->GetCatalog(kSysPage);
-
 			const Kernel::Char* cSrcName = "8K_SYS_PAGE_KERNEL";
 
 			if (catalogDisk)
 			{
+
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog file exists: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog file exists: ")), RGB(0, 0, 0));
+
 				delete catalogDisk;
 			}
 			else
 			{
+
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog has been created: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog has been created: ")), RGB(0, 0, 0));
+
 				catalogDisk =
 					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias(kSysPage);
 
@@ -210,8 +185,6 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 	Kernel::cProcessScheduler = nullptr;
-
-	CG::CGDrawBackground();
 
 	while (Yes)
 	{
