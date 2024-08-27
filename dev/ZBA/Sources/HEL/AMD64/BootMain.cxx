@@ -222,7 +222,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 		checkPart.Format("ZKA (A:)", &root, 1);
 
-		EFI::Stop();
+		rt_reset_hardware();
 	}
 
 	// ---------------------------------------------------- //

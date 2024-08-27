@@ -314,8 +314,6 @@ namespace Kernel
 	/// @return
 	SizeT ProcessScheduler::Run() noexcept
 	{
-		kcout << "newoskrnl: Entering scheduler control..\r";
-
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
@@ -351,8 +349,6 @@ namespace Kernel
 				--mTeam.AsRef().Leak().PTime;
 			}
 		}
-
-		kcout << "newoskrnl: Exiting scheduler control..\r";
 
 		return process_index;
 	}

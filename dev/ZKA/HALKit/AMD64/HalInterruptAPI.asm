@@ -35,7 +35,6 @@ __NEW_INT_%1:
 global ke_handle_irq
 global kInterruptVectorTable
 
-extern hal_handle_mouse
 extern idt_handle_gpf
 extern idt_handle_pf
 extern ke_io_write
@@ -107,7 +106,9 @@ IntNormal 18
 IntNormal 19
 IntNormal 20
 IntNormal 21
+
 IntNormal 22
+
 IntNormal 23
 IntNormal 24
 IntNormal 25
@@ -115,7 +116,8 @@ IntNormal 26
 IntNormal 27
 IntNormal 28
 IntNormal 29
-IntExp   30
+
+IntExp    30
 
 IntNormal 31
 
@@ -132,15 +134,7 @@ IntNormal 40
 IntNormal 41
 IntNormal 42
 IntNormal 43
-
-__NEW_INT_44:
-    cli
-
-    call hal_handle_mouse
-
-    sti
-    iretq
-
+IntNormal 44
 IntNormal 45
 IntNormal 46
 IntNormal 47

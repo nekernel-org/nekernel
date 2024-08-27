@@ -29,8 +29,8 @@ namespace Kernel
 		ACPIFactoryInterface(const ACPIFactoryInterface&)			 = default;
 
 	public:
-		void Shutdown(); // shutdown
-		void Reboot();	 // soft-reboot
+		Void Shutdown(); // shutdown
+		Void Reboot();	 // soft-reboot
 
 	public:
 		/// @brief Descriptor find factory.

@@ -55,8 +55,6 @@ namespace Kernel::HAL
 
 		MUST_PASS(baseIdt);
 
-		Detail::hal_remap_intel_pic_ctrl();
-
 		for (UInt16 i = 0; i < kKernelIdtSize; ++i)
 		{
 			MUST_PASS(baseIdt[i]);
@@ -77,6 +75,8 @@ namespace Kernel::HAL
 								(kKernelIdtSize - 1);
 
 		hal_load_idt(Detail::kRegIdt);
+
+		Detail::hal_remap_intel_pic_ctrl();
 	}
 
 	void GDTLoader::Load(Ref<RegisterGDT>& gdt)

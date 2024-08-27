@@ -34,11 +34,8 @@
 EXTERN Kernel::Property cKernelVersion;
 
 /***********************************************************************************/
-/* This is an external C symbol. */
+/* This is an external C symbol, to draw the mouse. */
 /***********************************************************************************/
-
-EXTERN_C Kernel::Void _hal_init_mouse();
-EXTERN_C Kernel::Boolean _hal_draw_mouse();
 
 STATIC CG::UI_WINDOW_STRUCT* cKernelWnd = nullptr;
 
@@ -55,12 +52,12 @@ namespace Kernel::Detail
 		{
 			if (Kernel::FilesystemManagerInterface::GetMounted())
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: NewFS filesystem already mounted...", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: NewFS already mounted by HAL...", 10, 10, RGB(0, 0, 0));
 				fNewFS = reinterpret_cast<Kernel::NewFilesystemManager*>(Kernel::FilesystemManagerInterface::GetMounted());
 			}
 			else
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Mounting a NewFS filesystem...", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Mounted NewFS filesystem...", 10, 10, RGB(0, 0, 0));
 
 				// Mounts a NewFS from main drive.
 				fNewFS = new Kernel::NewFilesystemManager();
@@ -84,8 +81,8 @@ namespace Kernel::Detail
 					{
 						Kernel::kcout << "newoskrnl: Already exists.\r";
 
-						CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog already exists: ")), RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog directory already exists: ")), RGB(0, 0, 0));
 
 						delete catalogDir;
 						continue;
@@ -108,19 +105,19 @@ namespace Kernel::Detail
 			if (catalogDisk)
 			{
 
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog file exists: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
-				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog file exists: ")), RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog swap file already exists: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog swap file already exists: ")), RGB(0, 0, 0));
 
 				delete catalogDisk;
 			}
 			else
 			{
 
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog has been created: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
-				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog has been created: ")), RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog swap file created: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog swap file created: ")), RGB(0, 0, 0));
 
 				catalogDisk =
-					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias(kSysPage);
+					(NFS_CATALOG_STRUCT*)this->Leak()->CreateSwapFile(kSysPage);
 
 				NFS_FORK_STRUCT theDiskFork{0};
 
@@ -172,7 +169,7 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	cKernelWnd = nullptr;
 	cKernelWnd = CG::CGCreateWindow(CG::cWndFlagWindow, "ZKA Operating System Kernel Log", "Window", 20, 20, CG::UIAccessibilty::The().Height() - 20, CG::UIAccessibilty::The().Width() - 20);
 
-	cKernelWnd->w_sub_type = CG::cWndFlagCloseControlSelect;
+	cKernelWnd->w_sub_type = 0;
 	cKernelWnd->w_x		   = 10;
 	cKernelWnd->w_y		   = 10;
 
@@ -182,6 +179,14 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	/// Now run kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
+
+	cKernelWnd->w_sub_type = CG::cWndFlagCloseControlSelect;
+	cKernelWnd->w_needs_repaint = Yes;
+
+	CG::CGDrawWindowList(&cKernelWnd, 1);
+
+	CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Booting: ", 10, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("NewOSKrnl: Booting: ")), RGB(0, 0, 0));
 
 	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 	Kernel::cProcessScheduler = nullptr;

@@ -12,53 +12,101 @@
 
 namespace Kernel
 {
-	/// Custom to the virtual machine, you'll need to parse the MADT instead.
-
-	void rt_shutdown_acpi_qemu_20(void)
+	namespace Detail
 	{
-		HAL::Out16(0xb004, 0x2000);
-	}
+		struct FADT final : public SDT
+		{
+			UInt32 FirmwareCtrl;
+			UInt32 Dsdt;
 
-	void rt_shutdown_acpi_qemu_30_plus(void)
-	{
-		HAL::Out16(0x604, 0x2000);
-	}
+			// field used in ACPI 1.0; no longer in use, for compatibility only
+			UInt8 Reserved;
 
-	void rt_shutdown_acpi_virtualbox(void)
-	{
-		HAL::Out16(0x4004, 0x3400);
-	}
+			UInt8  PreferredPowerManagementProfile;
+			UInt16 SCI_Interrupt;
+			UInt32 SMI_CommandPort;
+			UInt8  AcpiEnable;
+			UInt8  AcpiDisable;
+			UInt8  S4BIOS_REQ;
+			UInt8  PSTATE_Control;
+			UInt32 PM1aEventBlock;
+			UInt32 PM1bEventBlock;
+			UInt32 PM1aControlBlock;
+			UInt32 PM1bControlBlock;
+			UInt32 PM2ControlBlock;
+			UInt32 PMTimerBlock;
+			UInt32 GPE0Block;
+			UInt32 GPE1Block;
+			UInt8  PM1EventLength;
+			UInt8  PM1ControlLength;
+			UInt8  PM2ControlLength;
+			UInt8  PMTimerLength;
+			UInt8  GPE0Length;
+			UInt8  GPE1Length;
+			UInt8  GPE1Base;
+			UInt8  CStateControl;
+			UInt16 WorstC2Latency;
+			UInt16 WorstC3Latency;
+			UInt16 FlushSize;
+			UInt16 FlushStride;
+			UInt8  DutyOffset;
+			UInt8  DutyWidth;
+			UInt8  DayAlarm;
+			UInt8  MonthAlarm;
+			UInt8  Century;
 
-	/// You have to parse the MADT!
+			// reserved in ACPI 1.0; used since ACPI 2.0+
+			UInt16 BootArchitectureFlags;
+
+			UInt8  Reserved2;
+			UInt32 Flags;
+
+			// 12 byte structure; see below for details
+			ACPI_ADDRESS ResetReg;
+
+			UInt8 ResetValue;
+			UInt8 Reserved3[3];
+
+			// 64bit pointers - Available on ACPI 2.0+
+			UInt64 X_FirmwareControl;
+			UInt64 X_Dsdt;
+
+			ACPI_ADDRESS X_PM1aEventBlock;
+			ACPI_ADDRESS X_PM1bEventBlock;
+			ACPI_ADDRESS X_PM1aControlBlock;
+			ACPI_ADDRESS X_PM1bControlBlock;
+			ACPI_ADDRESS X_PM2ControlBlock;
+			ACPI_ADDRESS X_PMTimerBlock;
+			ACPI_ADDRESS X_GPE0Block;
+			ACPI_ADDRESS X_GPE1Block;
+		};
+	} // namespace Detail
 
 	ACPIFactoryInterface::ACPIFactoryInterface(VoidPtr rsdPtr)
 		: fRsdp(rsdPtr), fEntries(0)
 	{
-#ifdef __DEBUG__
-		kcout << "newoskrnl: ACPI: init interface.\r";
-#else
-
-#endif
 	}
 
 	Void ACPIFactoryInterface::Shutdown()
 	{
-#ifdef __DEBUG__
-		rt_shutdown_acpi_qemu_30_plus();
-#else
-
-#endif
+	failed_to_shutdown:
+		// in case no acpi mode, or it's not available.
+		while (Yes)
+		{
+			asm volatile("cli; hlt");
+		}
 	}
 
-	/// @brief Reboot (shutdowns on qemu.)
-	/// @return
+	/// @brief Reboot machine in either ACPI or by triple faulting.
+	/// @return nothing it's a reboot.
 	Void ACPIFactoryInterface::Reboot()
 	{
-#ifdef __DEBUG__
-		rt_shutdown_acpi_qemu_30_plus();
-#else
-
-#endif
+	failed_to_reboot:
+		// in case no acpi mode, or it's not available.
+		while (Yes)
+		{
+			asm volatile("cli; hlt");
+		}
 	}
 
 	/// @brief Finds a descriptor table inside ACPI XSDT.

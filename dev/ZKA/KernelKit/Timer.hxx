@@ -68,7 +68,8 @@ namespace Kernel
 		if (time < 0)
 			return 0;
 
-		return 1000 * time;
+		// TODO: nanoseconds maybe?
+		return 1000 * 1000 * time;
 	}
 
 	inline Int64 Seconds(Int64 time)

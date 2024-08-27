@@ -12,6 +12,8 @@
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/Timer.hxx>
 
+#include <Modules/CoreCG/TextRenderer.hxx>
+
 // Needed for SMP. //
 
 #include <KernelKit/MP.hxx>
@@ -45,7 +47,7 @@ namespace Kernel::HAL
 
 	STATIC Void hal_switch_context(HAL::StackFramePtr stack_frame);
 
-	STATIC MADT_TABLE* kMADTBlock = nullptr;
+	STATIC struct MADT_TABLE* kMADTBlock = nullptr;
 	STATIC Bool		   kSMPAware  = false;
 	STATIC Int64	   kSMPCount  = 0;
 
@@ -114,7 +116,7 @@ namespace Kernel::HAL
 	/// @param targetAddress
 	/// @return
 	/***********************************************************************************/
-	
+
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, (apicId << 24));
@@ -130,13 +132,14 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
-		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, apicId << 24);
+		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, (apicId << 24));
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
 	/// @internal
 	EXTERN_C Void hal_ap_startup(Void)
 	{
+	   CGDrawString("100", 10, 50, RGB(0x00, 0x00, 0x00));
 		ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 	}
 
@@ -200,6 +203,8 @@ namespace Kernel::HAL
 
 			kcout << "newoskrnl: Probing MADT cores...\r";
 
+			UIntPtr madt_address = kMADTBlock->Address;
+
 			while (Yes)
 			{
 				if (kMADTBlock->List[index].Type == 0 ||
@@ -210,12 +215,19 @@ namespace Kernel::HAL
 				{
 				case 0x01: {
 					cSMPCores[index] = kMADTBlock->List[index].IOAPIC.IoID;
+					kcout << "newoskrnl: Core ID: " << number(cSMPCores[index]) << endl;
 					++kSMPCount;
 					break;
 				}
 				case 0x02: {
 					cSMPCores[index] = kMADTBlock->List[index].LAPIC.ProcessorID;
+					kcout << "newoskrnl: Core ID: " << number(cSMPCores[index]) << endl;
 					++kSMPCount;
+					break;
+				}
+				case 0x05: {
+					madt_address = kMADTBlock->List[index].LAPIC_ADDRESS_OVERRIDE.Address;
+					kcout << "newoskrnl: Address: " << number(madt_address) << endl;
 					break;
 				}
 				}
@@ -226,7 +238,14 @@ namespace Kernel::HAL
 			kcout << "newoskrnl: # of cores: " << number(kSMPCount) << endl;
 			kcout << "newoskrnl: First core ID: " << number(cSMPCores[0]) << endl;
 
+			// Kernel is now SMP aware.
+			// That means that the scheduler is now available (on MP kernels)
+
 			kSMPAware = true;
+
+			// This is used to start the
+			hal_send_end_ipi(cSMPCores[0], 0x34, madt_address);
+			hal_send_start_ipi(cSMPCores[0], 0x34, madt_address);
 		}
 	}
 } // namespace Kernel::HAL

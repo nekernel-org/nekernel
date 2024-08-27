@@ -21,8 +21,6 @@ rt_jump_to_address:
 
     ret
 
-.code16
-
 rt_reset_hardware:
     /* dont raise any interrupts. (except ofc NMIs.) */
     cli
@@ -41,9 +39,9 @@ wait_gate2:
     mov al,0x0FE
     out 0x60,al
 
-    /* trigger triple fault */
+    /* trigger triple fault, by writing to cr4 */
 
-    xor eax,eax
-    mov cr3,eax
+    xor rax,rax
+    mov cr4,rax
 reset_wait:
     jmp reset_wait

@@ -48,7 +48,7 @@ namespace Kernel
 		UInt32 Reserved;
 	};
 
-	enum class ACPI_ADDRESS_SPACE_KIND : UInt8
+	enum ACPI_ADDRESS_SPACE_KIND : UInt8
 	{
 		eSystemMemory = 0,
 		eSystemIO	 = 1,
@@ -62,7 +62,7 @@ namespace Kernel
 	class PACKED ACPI_ADDRESS final
 	{
 	public:
-		ACPI_ADDRESS_SPACE_KIND AddressSpaceId;
+		UInt8 AddressSpaceId;
 		UInt8		 RegisterBitWidth;
 		UInt8		 RegisterBitOffset;
 		UInt8		 Reserved;

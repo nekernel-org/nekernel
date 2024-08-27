@@ -98,6 +98,7 @@ namespace Kernel
 		virtual NodePtr Create(_Input const Char* path)			 = 0;
 		virtual NodePtr CreateAlias(_Input const Char* path)	 = 0;
 		virtual NodePtr CreateDirectory(_Input const Char* path) = 0;
+		virtual NodePtr CreateSwapFile(const Char* path) = 0;
 
 	public:
 		virtual bool Remove(_Input const Char* path) = 0;
@@ -149,6 +150,7 @@ namespace Kernel
 		NodePtr Create(const Char* path) override;
 		NodePtr CreateAlias(const Char* path) override;
 		NodePtr CreateDirectory(const Char* path) override;
+		NodePtr CreateSwapFile(const Char* path) override;
 
 	public:
 		bool	Remove(const Char* path) override;

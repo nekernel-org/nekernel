@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
+#include <KernelKit/Timer.hxx>
 #include <KernelKit/DebugOutput.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <NewKit/String.hxx>
@@ -20,7 +21,7 @@
 #define CopyMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 #define MoveMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
 
-#define cWebsiteMacro "https://zka.nl/help"
+#define cWebsiteMacro "https://help.el-mahrouss-logic.com/"
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
@@ -31,7 +32,7 @@ namespace Kernel
 	{
 		CGInit();
 
-		auto panicTxt  = RGB(0xff, 0xff, 0xff);
+		auto panicTxt = RGB(0xff, 0xff, 0xff);
 
 		CG::CGDrawBackground();
 
@@ -39,6 +40,11 @@ namespace Kernel
 		auto x		 = 10;
 
 		CGDrawString("newoskrnl.dll Stopped working properly so it had to stop.", start_y, x, panicTxt);
+		start_y += 10;
+
+		// simply offset from previous string and then write the website.
+		CGDrawString("Please visit: ", start_y, x, panicTxt);
+		CGDrawString(cWebsiteMacro, start_y, x + (FONT_SIZE_X * rt_string_len("Please visit: ")), panicTxt);
 
 		CGFini();
 
@@ -54,34 +60,42 @@ namespace Kernel
 		}
 		case RUNTIME_CHECK_ACPI: {
 			CGDrawString("0x00000006 ACPI configuration error.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_FILESYSTEM: {
 			CGDrawString("0x0000000A Filesystem corruption error.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
 			CGDrawString("0x00000000 Kernel heap pointer error, surely corrupted.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {
 			CGDrawString("0x00000009 Undefined behavior error, image had to stop.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
 			CGDrawString("0x0000000A End of boot code, but nothing to continue.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
 			CGDrawString("0x00000005 Bad handshake error.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
 			CGDrawString("0x00000003 Bad kernel IPC error.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_INVALID_PRIVILEGE: {
 			CGDrawString("0x00000007 Kernel privilege violation.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
 			CGDrawString("0x0000000B Catasrophic kernel failure.", start_y, x, panicTxt);
@@ -89,24 +103,30 @@ namespace Kernel
 		}
 		case RUNTIME_CHECK_FAILED: {
 			CGDrawString("0x10000001 Assertion failed.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		default: {
+			RecoveryFactory::Recover();
 			CGDrawString("0xFFFFFFFC Unknown kernel error.", start_y, x, panicTxt);
 			break;
 		}
 		}
 		};
 
-		RecoveryFactory::Recover();
+		while (Yes)
+			;
 	}
 
 	Void RecoveryFactory::Recover() noexcept
 	{
-		while (Yes)
-		{
-			asm volatile("cli; hlt");
-		}
+		const auto cMaxSeconds = Seconds(4);
+
+		HardwareTimer timer(cMaxSeconds);
+		timer.Wait();
+
+		PowerFactoryInterface power(nullptr);
+		power.Reboot();
 	}
 
 	void ke_runtime_check(bool expr, const Char* file, const Char* line)

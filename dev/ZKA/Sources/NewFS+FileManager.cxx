@@ -68,6 +68,14 @@ namespace Kernel
 		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindAlias));
 	}
 
+	/// @brief Creates a node with is a page file.
+	/// @param path The filename path.
+	/// @return The Node pointer.
+	NodePtr NewFilesystemManager::CreateSwapFile(const Char* path)
+	{
+		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindPage));
+	}
+
 	/// @brief Gets the root directory.
 	/// @return
 	const Char* NewFilesystemHelper::Root()

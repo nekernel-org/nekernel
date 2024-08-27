@@ -34,8 +34,8 @@ namespace Kernel
 		kHartCount,
 	};
 
-	typedef enum ThreadKind SmThreadKind;
-	typedef ThreadID		SmThreadID;
+	typedef enum ThreadKind ThreadKind;
+	typedef ThreadID		ThreadID;
 
 	///
 	/// \name HardwareThread
