@@ -12,7 +12,7 @@ Purpose: Base code of SCM.
 #ifndef __NDK__
 #define object class
 #define protocol class
-#define clsid(X) __attribute__((uuid(X)))
+#define clsid(X)
 
 #warning ! you may be using the clang version of the newos kit, please be cautious that some thing mayn't be present. !
 #endif // !__NDK__
@@ -20,22 +20,22 @@ Purpose: Base code of SCM.
 // Interfaces are divided between classes.
 // So that they aren't too big.
 
-protocol UnknownInterface; // Refrenced from an IDB entry.
-class UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: TextUCLSID.
+protocol IUnknown; // Refrenced from an IDB entry.
+protocol UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: TextUCLSID.
 object UUID;
 
-protocol clsid("d7c144b6-0792-44b8-b06b-02b227b547df") UnknownInterface
+protocol clsid("d7c144b6-0792-44b8-b06b-02b227b547df") IUnknown
 {
 public:
-	explicit UnknownInterface() = default;
-	virtual ~UnknownInterface() = default;
+	explicit IUnknown() = default;
+	virtual ~IUnknown() = default;
 
-	UnknownInterface& operator=(const UnknownInterface&) = default;
-	UnknownInterface(const UnknownInterface&)			 = default;
+	IUnknown& operator=(const IUnknown&) = default;
+	IUnknown(const IUnknown&)			 = default;
 
 	virtual SInt32 Release() = 0;
 	virtual void RemoveRef() = 0;
-	virtual UnknownInterface* AddRef() = 0;
+	virtual IUnknown* AddRef() = 0;
 	virtual VoidPtr QueryInterface(UUID* p_uuid) = 0;
 };
 
@@ -47,6 +47,7 @@ public:
 template <typename TCLS, typename UCLSID, typename... Args>
 inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 {
+    uclsidOfCls->AddRef();
 	return uclsidOfCls->QueryInterfaceWithArgs(args...);
 }
 
@@ -55,13 +56,15 @@ inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 /// @param cls the class to release.
 /// @return status code.
 template <typename TCLS>
-inline SInt32 ScmReleaseClass(TCLS* cls)
+inline SInt32 ScmReleaseClass(TCLS** cls)
 {
 	if (!cls)
 		return -1;
 
-	cls->DecrementRef();
+	cls->RemoveRef();
 	cls->Release();
+
+	cls = nullptr;
 
 	return 0;
 }

@@ -37,9 +37,9 @@ typedef char			 Char;
 #include <SCI/sci_err.hxx>
 
 #ifdef __SCI_IMPL__
-#include <SCI/scm.internal.inl>
+#include <SCI/scm_core.hxx>
 #else
-class UnknownInterface; // Refrenced from an IDB entry.
+class IUnknown; // Refrenced from an IDB entry.
 class UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: WordUCLSID.
 class UUID;
 
@@ -49,7 +49,10 @@ class UUID;
 /// @param uclsidOfCls
 /// @return
 template <typename TCLS, typename UCLSID, typename... Args>
-TCLS* RtlQueryInterface(UCLSID uclsidOfCls, Args... args);
+TCLS* ScmQueryInterface(UCLSID uclsidOfCls, Args... args);
+
+template <typename TCLS>
+SInt32 ScmReleaseClass(TCLS** cls);
 
 /// @brief Release SCM class.
 /// @tparam TCLS
@@ -58,18 +61,18 @@ TCLS* RtlQueryInterface(UCLSID uclsidOfCls, Args... args);
 template <typename TCLS>
 SInt32 RtlReleaseClass(TCLS* cls);
 
-class __attribute__((uuid("d7c144b6-0792-44b8-b06b-02b227b547df"))) UnknownInterface
+class __attribute__((uuid("d7c144b6-0792-44b8-b06b-02b227b547df"))) IUnknown
 {
 public:
-	explicit UnknownInterface() = default;
-	virtual ~UnknownInterface() = default;
+	explicit IUnknown() = default;
+	virtual ~IUnknown() = default;
 
-	UnknownInterface& operator=(const UnknownInterface&) = default;
-	UnknownInterface(const UnknownInterface&)			 = default;
+	IUnknown& operator=(const IUnknown&) = default;
+	IUnknown(const IUnknown&)			 = default;
 
 	virtual SInt32			  Release()					   = 0;
 	virtual void			  RemoveRef()			   = 0;
-	virtual UnknownInterface* AddRef()			   = 0;
+	virtual IUnknown* AddRef()			   = 0;
 	virtual VoidPtr			  QueryInterface(UUID* p_uuid) = 0;
 };
 

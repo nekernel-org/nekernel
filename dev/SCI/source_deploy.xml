@@ -2,6 +2,8 @@
 <HiddenFiles>
     <SourceFile>Sources/*.cxx</SourceFile>
     <SourceFile>*.drawio</SourceFile>
-    <SourceFile>*.internal.inl</SourceFile>
+    <SourceFile>*.hxx</SourceFile>
+    <SourceFile>*.inl</SourceFile>
+    <SourceFile>*.idl</SourceFile>
 </HiddenFiles>
 </SourceDeploy>
