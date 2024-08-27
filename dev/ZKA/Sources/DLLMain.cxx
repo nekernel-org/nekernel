@@ -40,6 +40,8 @@ EXTERN Kernel::Property cKernelVersion;
 EXTERN_C Kernel::Void _hal_init_mouse();
 EXTERN_C Kernel::Boolean _hal_draw_mouse();
 
+STATIC CG::UI_WINDOW_STRUCT* cKernelWnd = nullptr;
+
 namespace Kernel::Detail
 {
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
@@ -53,14 +55,13 @@ namespace Kernel::Detail
 		{
 			if (Kernel::FilesystemManagerInterface::GetMounted())
 			{
-				// Partition is mounted, cool!
-				Kernel::kcout
-					<< "newoskrnl: No need to create for a new NewFS (EPM) partition here...\r";
-
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: No need to allocate a NewFS filesystem here...", 10, 10, RGB(0, 0, 0));
 				fNewFS = reinterpret_cast<Kernel::NewFilesystemManager*>(Kernel::FilesystemManagerInterface::GetMounted());
 			}
 			else
 			{
+				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Allocating a NewFS filesystem here...", 10, 10, RGB(0, 0, 0));
+
 				// Mounts a NewFS from main drive.
 				fNewFS = new Kernel::NewFilesystemManager();
 
@@ -82,6 +83,8 @@ namespace Kernel::Detail
 					if (catalogDir)
 					{
 						Kernel::kcout << "newoskrnl: Already exists.\r";
+
+						CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog already exists...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
 
 						delete catalogDir;
 						continue;
@@ -124,6 +127,8 @@ namespace Kernel::Detail
 						catalogDir, true, (Kernel::VoidPtr)(metadataFolder.CData()),
 						metadataSz, cFolderInfo);
 
+					CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog has been created...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+
 					delete catalogDir;
 				}
 			}
@@ -153,7 +158,7 @@ namespace Kernel::Detail
 
 				Kernel::Size sz_hdr = kNewFSForkSz;
 
-				theDiskFork.DataSize	 =sz_hdr;
+				theDiskFork.DataSize	 = sz_hdr;
 				theDiskFork.ResourceId	 = kNewFSCatalogKindExecutable | kNewFSCatalogKindPage;
 				theDiskFork.ResourceKind = Kernel::kNewFSDataForkKind;
 				theDiskFork.Kind		 = Kernel::kNewFSDataForkKind;
@@ -187,28 +192,26 @@ namespace Kernel
 /// @return Void
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 {
-	CGInit();
+	CG::CGDrawBackground();
 
-	CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
-				   0, 0);
+	cKernelWnd = nullptr;
+	cKernelWnd = CG::CGCreateWindow(CG::cWndFlagWindow, "ZKA Operating System Kernel Log", "Window", 20, 20, CG::UIAccessibilty::The().Height() - 20, CG::UIAccessibilty::The().Width() - 20);
 
-	CGFini();
+	cKernelWnd->w_sub_type = CG::cWndFlagCloseControlSelect;
+	cKernelWnd->w_x		   = 10;
+	cKernelWnd->w_y		   = 10;
 
-	auto root_zka_wnd = CG::CGCreateWindow(CG::cWndFlagWindow, "ZKA Operating System", "Window", 20, 20, CG::UIAccessibilty::The().Height() - 20, CG::UIAccessibilty::The().Width() - 20);
+	cKernelWnd->w_needs_repaint = Yes;
 
-	root_zka_wnd->w_sub_type = CG::cWndFlagCloseControlSelect;
-	root_zka_wnd->w_x = 10;
-	root_zka_wnd->w_y = 10;
-
-	root_zka_wnd->w_needs_repaint = Yes;
-
-	CG::CGDrawWindowList(&root_zka_wnd, 1);
+	CG::CGDrawWindowList(&cKernelWnd, 1);
 
 	/// Now run kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
 
 	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 	Kernel::cProcessScheduler = nullptr;
+
+	CG::CGDrawBackground();
 
 	while (Yes)
 	{

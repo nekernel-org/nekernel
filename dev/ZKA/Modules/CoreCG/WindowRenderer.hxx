@@ -51,6 +51,16 @@ namespace CG
 
 	typedef struct UI_WINDOW_STRUCT UI_WINDOW_STRUCT;
 
+	inline Void CGDrawBackground() noexcept
+	{
+		CGInit();
+
+		CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
+					   0, 0);
+
+		CGFini();
+	}
+
 	inline struct UI_WINDOW_STRUCT* CGCreateWindow(Int32 kind, const Char* window_name, const Char* class_name, Int32 x, Int32 y, Int32 width, Int32 height, UI_WINDOW_STRUCT* parent = nullptr)
 	{
 		UI_WINDOW_STRUCT* wnd = new UI_WINDOW_STRUCT();
@@ -106,9 +116,15 @@ namespace CG
 
 	inline Kernel::Void CGDrawStringToWnd(UI_WINDOW_STRUCT* wnd, const Kernel::Char* text, Kernel::Int32 y_dst, Kernel::Int32 x_dst, Kernel::Int32 color)
 	{
+		y_dst += wnd->w_y + FLATCONTROLS_HEIGHT;
+		x_dst += wnd->w_x;
+
+		if (y_dst > (wnd->w_h + wnd->w_y))
+			return;
+
 		for (Kernel::SizeT i = 0; text[i] != 0; ++i)
 		{
-			if (x_dst > wnd->w_w)
+			if (x_dst > (wnd->w_w + wnd->w_x))
 				break;
 
 			CGRenderStringFromBitMap(&cFontBitmap[text[i]][0], FONT_SIZE_X, FONT_SIZE_Y, y_dst, x_dst, color);
@@ -209,11 +225,8 @@ namespace CG
 
 			for (SizeT child = 0; child < wnd[index]->w_child_count; ++child)
 			{
-				if (wnd[index]->w_child_elements[child]->w_x < wnd[index]->w_x + FLATCONTROLS_WIDTH)
-					wnd[index]->w_child_elements[child]->w_x += wnd[index]->w_x + FLATCONTROLS_WIDTH;
-
-				if (wnd[index]->w_child_elements[child]->w_y < (wnd[index]->w_y + FLATCONTROLS_HEIGHT))
-					wnd[index]->w_child_elements[child]->w_y += wnd[index]->w_y + FLATCONTROLS_HEIGHT;
+				wnd[index]->w_child_elements[child]->w_x += wnd[index]->w_x;
+				wnd[index]->w_child_elements[child]->w_y += wnd[index]->w_y + FLATCONTROLS_HEIGHT;
 
 				if ((wnd[index]->w_child_elements[child]->w_w + wnd[index]->w_child_elements[child]->w_x) > (wnd[index]->w_x + wnd[index]->w_w) ||
 					(wnd[index]->w_child_elements[child]->w_h + wnd[index]->w_child_elements[child]->w_y) > (wnd[index]->w_y + wnd[index]->w_h))
