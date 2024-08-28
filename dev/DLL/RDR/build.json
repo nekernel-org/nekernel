@@ -3,9 +3,8 @@
   "compiler_std": "c++20",
   "headers_path": ["../"],
   "sources_path": ["Sources/*.cxx"],
-  "output_name": "sysdrv.sys",
+  "output_name": "wrenderer.dll",
   "compiler_flags": [
-    "-fPIC",
     "-ffreestanding",
     "-shared",
     "-fno-rtti",
@@ -13,9 +12,9 @@
     "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
-    "__SGM_IMPL__",
-    "cSGMVersion=0x0100",
-    "cSGMVersionHighest=0x0100",
-    "cSGMVersionLowest=0x0100"
+    "__WRENDER_IMPL__",
+    "cWRVersion=0x0100",
+    "cWRVersionHighest=0x0100",
+    "cWRVersionLowest=0x0100"
   ]
 }
