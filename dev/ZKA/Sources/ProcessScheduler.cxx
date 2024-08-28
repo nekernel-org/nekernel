@@ -6,7 +6,7 @@
 
 /***********************************************************************************/
 /// @file ProcessScheduler.cxx
-/// @brief MicroKernel process scheduler.
+/// @brief User Process scheduler.
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.hxx>
@@ -19,7 +19,7 @@
 ///! BUGS: 0
 
 /***********************************************************************************/
-/* This file handles the process scheduling. */
+/* TODO: Document more the kernel, sdk and kits. */
 /***********************************************************************************/
 
 namespace Kernel
