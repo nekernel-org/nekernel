@@ -77,16 +77,16 @@ public:
 };
 
 template <typename FnSign, typename ClsID>
-class EventListenerInterface : public ClsID
+class IEventListener : public ClsID
 {
 public:
-	explicit EventListenerInterface() = default;
-	virtual ~EventListenerInterface() = default;
+	explicit IEventListener() = default;
+	virtual ~IEventListener() = default;
 
-	EventListenerInterface& operator=(const EventListenerInterface&) = default;
-	EventListenerInterface(const EventListenerInterface&)			 = default;
+	IEventListener& operator=(const IEventListener&) = default;
+	IEventListener(const IEventListener&)			 = default;
 
-    virtual EventListenerInterface& operator +=(FnSign arg) = 0;
+    virtual IEventListener& operator +=(FnSign arg) = 0;
 };
 #endif
 

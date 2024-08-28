@@ -1,21 +1,19 @@
 {
   "compiler_path": "x86_64-w64-mingw32-g++",
   "compiler_std": "c++20",
-  "headers_path": ["../"],
+  "headers_path": ["../", "./", "../../"],
   "sources_path": ["Sources/*.cxx"],
-  "output_name": "sec.dll",
+  "output_name": "runscm.exe",
   "compiler_flags": [
-    "-fPIC",
     "-ffreestanding",
-    "-shared",
     "-fno-rtti",
     "-fno-exceptions",
-    "-Wl,--subsystem=17"
+    " -Wl,--subsystem=17"
   ],
   "cpp_macros": [
-    "__SEC_IMPL__",
-    "cSECVersion=0x0100",
-    "cSECVersionHighest=0x0100",
-    "cSECVersionLowest=0x0100"
+    "__SCM_AMD64__",
+    "cSCMVersion=0x0100",
+    "cSCMVersionHighest=0x0100",
+    "cSCMVersionLowest=0x0100"
   ]
 }
