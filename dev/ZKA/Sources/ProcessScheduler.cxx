@@ -28,7 +28,7 @@ namespace Kernel
 	/// @brief Exit Code global variable.
 	/***********************************************************************************/
 
-	Int32 cLastExitCode = 0U;
+	UInt32 cLastExitCode = 0U;
 
 	/// @brief The main process object.
 	ProcessScheduler* cProcessScheduler = nullptr;
@@ -36,7 +36,7 @@ namespace Kernel
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
-	const Int32& sched_get_exit_code(void) noexcept
+	const UInt32& sched_get_exit_code(void) noexcept
 	{
 		return cLastExitCode;
 	}
@@ -60,7 +60,7 @@ namespace Kernel
 	/// @brief Gets the local last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
-	const Int32& PROCESS_HEADER_BLOCK::GetExitCode() noexcept
+	const UInt32& PROCESS_HEADER_BLOCK::GetExitCode() noexcept
 	{
 		return this->fLastExitCode;
 	}

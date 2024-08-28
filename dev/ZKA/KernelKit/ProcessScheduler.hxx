@@ -141,7 +141,7 @@ namespace Kernel
 
 	public:
 		void		 SetEntrypoint(UIntPtr& imageStart) noexcept;
-		const Int32& GetExitCode() noexcept;
+		const UInt32& GetExitCode() noexcept;
 
 	public:
 		Char			   Name[kProcessLen] = {"PROCESS #0 (TEAM 0)"};
@@ -216,7 +216,7 @@ namespace Kernel
 		const AffinityKind&	   GetAffinity() noexcept;
 
 	private:
-		Int32 fLastExitCode{0};
+		UInt32 fLastExitCode{0};
 		Int32 fLocalCode{0};
 
 		friend ProcessScheduler;
@@ -290,7 +290,7 @@ namespace Kernel
 		STATIC SizeT StartScheduling();
 	};
 
-	const Int32& sched_get_exit_code(void) noexcept;
+	const UInt32& sched_get_exit_code(void) noexcept;
 } // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.hxx>
