@@ -185,8 +185,8 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawWindowList(&cKernelWnd, 1);
 
-	CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Booting: ", 10, 10, RGB(0, 0, 0));
-	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("NewOSKrnl: Booting: ")), RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Running System Component: ", 10, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("NewOSKrnl: Running System Component: ")), RGB(0, 0, 0));
 
 	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 	Kernel::cProcessScheduler = nullptr;
