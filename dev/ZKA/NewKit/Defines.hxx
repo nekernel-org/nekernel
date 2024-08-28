@@ -74,10 +74,11 @@ namespace Kernel
 
 	using Lba = UInt64;
 
-	enum class Endian : UChar
+	enum class Endian : UInt8
 	{
-		kEndianLittle,
+		kEndianInvalid,
 		kEndianBig,
+		kEndianLittle,
 		kEndianMixed,
 		kCount
 	};

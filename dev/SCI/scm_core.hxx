@@ -14,7 +14,7 @@ Purpose: Base code of SCM.
 #define protocol class
 #define clsid(X)
 
-#warning ! you may be using the clang version of the newos kit, please be cautious that some thing mayn't be present. !
+#warning ! You may be using the clang version of the ZKA kit, please be cautious that some thing mayn't be present. !
 #endif // !__NDK__
 
 // Interfaces are divided between classes.

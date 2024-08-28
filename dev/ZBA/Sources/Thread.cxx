@@ -15,7 +15,7 @@
 #include <CFKit/LoaderUtils.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
-#include <SIGG/Format.hxx>
+#include <SIGG/SIGG.hxx>
 
 EXTERN_C{
 #include <string.h>

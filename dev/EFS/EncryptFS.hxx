@@ -14,3 +14,9 @@
 #pragma once
 
 #include <FSKit/NewFS.hxx>
+
+namespace EncryptFS
+{
+	using namespace Kernel;
+	
+}

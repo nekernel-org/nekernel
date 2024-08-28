@@ -12,22 +12,25 @@
 
 #include <NewKit/Defines.hxx>
 #include <NewKit/String.hxx>
-
+#include <HintKit/CompilerHint.hxx>
 #include <CompressKit/RLE.hxx>
 
 /// @file IPC.hxx
-/// @brief IPC protocol.
+/// @brief IPC EP protocol.
 
 /// IA separator.
-#define cRemoteSeparator "."
+#define cIPCEPRemoteSeparator ":"
 
 /// Interchange address, consists of PID:TEAM.
-#define cRemoteInvalid "00:00"
+#define cIPCEPRemoteInvalid "00:00"
 
-#define cRemoteHeaderMagic (0x4950434)
+#define cIPCEPHeaderMagic (0x4950434)
 
 namespace Kernel
 {
+	struct IPC_ADDRESS_STRUCT;
+	struct IPC_MESSAGE_STRUCT;
+
 	/// @brief 128-bit IPC address.
 	struct PACKED IPC_ADDRESS_STRUCT final
 	{
@@ -54,7 +57,8 @@ namespace Kernel
 	enum
 	{
 		eIPCEPLittleEndian = 0,
-		eIPCEPBigEndian	   = 1
+		eIPCEPBigEndian	   = 1,
+		eIPCEPMixedEndian = 2,
 	};
 
 	constexpr auto cIPCEPMsgSize = 6094U;
@@ -76,7 +80,12 @@ namespace Kernel
 	/// @brief Sanitize packet function
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
-	Bool ipc_sanitize_packet(IPC_MESSAGE_STRUCT* pckt);
+	Bool ipc_sanitize_packet(_Input IPC_MESSAGE_STRUCT* pckt_in);
+
+	/// @brief Construct packet function
+	/// @retval true packet is correct.
+	/// @retval false packet is incorrect and process has crashed.
+	Bool ipc_construct_packet(_Output IPC_MESSAGE_STRUCT** pckt_in);
 } // namespace Kernel
 
 #endif // _INC_IPC_ENDPOINT_HXX_

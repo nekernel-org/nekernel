@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <Modules/CoreCG/FbRenderer.hxx>
+#include <WindowMgr.hxx>
 
-/// @file WindowCompositor.cxx
-/// @brief Window compoistor, takes care of video regions.
+/// @file WindowMgr.cxx
+/// @brief Window manager of system driver.

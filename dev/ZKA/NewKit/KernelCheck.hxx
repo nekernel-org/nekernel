@@ -15,10 +15,17 @@ namespace Kernel
 }
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)
+
 #define __MUST_PASS(EXPR, FILE, LINE) \
 	Kernel::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
+
+#ifdef __DEBUG__
 #define MUST_PASS(EXPR) __MUST_PASS(EXPR, __FILE__, __LINE__)
 #define assert(EXPR)	MUST_PASS(EXPR, RUNTIME_CHECK_EXPRESSION)
+#else
+#define MUST_PASS(EXPR) (Kernel::Void)(EXPR)
+#define assert(EXPR)	(Kernel::Void)(EXPR)
+#endif
 
 enum RUNTIME_CHECK
 {

@@ -34,6 +34,8 @@ namespace CG
 
 	struct UI_WINDOW_STRUCT final
 	{
+		static constexpr auto cChildElementCount = 255;
+
 		Char					 w_window_name[255]{0};
 		Char					 w_class_name[255]{0};
 		Int32					 w_type{0};
@@ -43,7 +45,7 @@ namespace CG
 		Int32					 w_w{0};
 		Int32					 w_h{0};
 		Size					 w_child_count{0};
-		struct UI_WINDOW_STRUCT* w_child_elements[255]{0};
+		struct UI_WINDOW_STRUCT* w_child_elements[cChildElementCount]{0};
 		struct UI_WINDOW_STRUCT* w_parent{nullptr};
 		UInt32*					 display_ptr{nullptr};
 		Bool					 w_needs_repaint{false};
