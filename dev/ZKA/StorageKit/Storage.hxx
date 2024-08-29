@@ -6,8 +6,8 @@
 
 #pragma once
 
-#define kDriveSectorSizeHDD		(512)
-#define kDriveSectorSizeSSD		(4096)
+#define kDriveSectorSizeHDD		(512U)
+#define kDriveSectorSizeSSD		(512U)
 #define kDriveSectorSizeOptical (2048)
 
 namespace Kernel

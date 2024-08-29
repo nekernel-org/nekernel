@@ -15,7 +15,8 @@
 #include <CFKit/LoaderUtils.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
-#include <SIGG/SIGG.hxx>
+//! Get SIGG header from formats directory.
+#include <FMT/SIGG.hxx>
 
 EXTERN_C{
 #include <string.h>
@@ -111,7 +112,7 @@ namespace Boot
 					if (structHandover->HandoverMagic != kHandoverMagic &&
 						structHandover->HandoverType != HEL::kTypeKernel)
 					{
-						writer.Write("newosldr: Entrypoint of SYS: ").Write((UIntPtr)fStartAddress).Write("\r");
+						writer.Write("newosldr: Entrypoint of EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
 						CGDrawString("NEWOSLDR: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 					}
 				}
@@ -131,11 +132,12 @@ namespace Boot
 			//  =========================================  //
 
 			fStartAddress = nullptr;
-			writer.Write("newosldr: PEF executable detected.\r");
+			writer.Write("newosldr: PEF executable detected, won't load it.\r");
+			writer.Write("newosldr: note: PEF executables aren't loadable by default.\r");
 		}
 		else
 		{
-			writer.Write("newosldr: Invalid executable.\r");
+			writer.Write("newosldr: Invalid executable. (note: SIGG executables aren't loadable by default).\r");
 		}
 	}
 
