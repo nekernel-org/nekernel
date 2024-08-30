@@ -167,14 +167,14 @@ namespace Kernel
 
 		enum
 		{
-			kAppKind   = 1,
+			kExeKind   = 1,
 			kSharedObjectKind = 2,
 			kKindCount,
 		};
 
 		ProcessTime PTime{0};
 		PID			ProcessId{kSchedInvalidPID};
-		Int32		Kind{kAppKind};
+		Int32		Kind{kExeKind};
 
 	public:
 		//! @brief boolean operator, check status.

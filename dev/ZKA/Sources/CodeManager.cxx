@@ -20,11 +20,10 @@ namespace Kernel
 			return false;
 
 		PROCESS_HEADER_BLOCK proc((VoidPtr)main);
-		proc.Kind = PROCESS_HEADER_BLOCK::kAppKind;
+		proc.Kind = PROCESS_HEADER_BLOCK::kExeKind;
 		rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(proc.Name));
+		proc.Image = (VoidPtr)main;
 
-		Ref<PROCESS_HEADER_BLOCK> refProc{proc};
-
-		return ProcessScheduler::The().Leak().Add(refProc);
+		return ProcessScheduler::The().Leak().Add(proc);
 	}
 } // namespace Kernel

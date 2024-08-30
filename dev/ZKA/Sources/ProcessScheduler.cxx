@@ -215,10 +215,7 @@ namespace Kernel
 	{
 		if (!process.Leak().Image)
 		{
-			if (process.Leak().Kind != PROCESS_HEADER_BLOCK::kSharedObjectKind)
-			{
-				return -kErrorNoEntrypoint;
-			}
+			return -kErrorInvalidData;
 		}
 
 		if (mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
@@ -227,7 +224,7 @@ namespace Kernel
 		kcout << "ProcessScheduler: Adding process to team...\r";
 
 		// Create heap according to type of process.
-		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kAppKind)
+		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kExeKind)
 		{
 			process.Leak().HeapPtr = mm_new_ke_heap(process.Leak().SizeMemory, true, true);
 		}
