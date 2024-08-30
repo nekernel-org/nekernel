@@ -49,27 +49,8 @@ mp_do_context_switch:
     fldcw word [r9 + (8 * 21)]
 
     mov r9, [r9 + (8 * 12)]
-
-    ; User code selector is 0x20 btw (Amlal).
-
-    mov ax, 0x23
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-
-    push 0x23
-    push rsp
-
-    pushfq
-    pop rax
-    or rax, 0x200
-    push rax
-
-    push 0x20
-    push rbp
-
-    iretq
+    
+    ret
 
 ;; gets the current stack frame.
 rt_get_current_context:

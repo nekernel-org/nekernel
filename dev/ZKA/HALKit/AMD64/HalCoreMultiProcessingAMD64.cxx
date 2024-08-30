@@ -168,8 +168,6 @@ namespace Kernel::HAL
 		fBlocks[ProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxPCBBlocks].f_PHB	  = &ProcessScheduler::The().CurrentProcess().Leak();
 		fBlocks[ProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxPCBBlocks].f_Frame = stack_frame;
 
-		mp_do_context_switch(stack_frame);
-
 		semaphore_process.Unlock();
 		ke_stop(RUNTIME_CHECK_FAILED);
 	}
