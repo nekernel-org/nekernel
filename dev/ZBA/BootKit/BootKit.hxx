@@ -336,17 +336,20 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 	if (strncmp(kNewFSIdent, partBlock.Ident, kNewFSIdentLen) == 0 &&
 		partBlock.Version != kNewFSVersionInteger)
 	{
-		BTextWriter writer;
-		writer.Write(L"newosldr: Disk partition updated.\r");
+		if (partBlock.Version != 0)
+		{
+			BTextWriter writer;
+			writer.Write(L"newosldr: Disk partition updated.\r");
 
-		partBlock.Version = kNewFSVersionInteger;
+			partBlock.Version = kNewFSVersionInteger;
 
-		fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
-		fDiskDev.Leak().mSize = sectorSz;
+			fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
+			fDiskDev.Leak().mSize = sectorSz;
 
-		fDiskDev.Write((Char*)&partBlock, sectorSz);
+			fDiskDev.Write((Char*)&partBlock, sectorSz);
 
-		return true;
+			return true;
+		}
 	}
 	else if (strncmp(kNewFSIdent, partBlock.Ident, kNewFSIdentLen))
 	{
@@ -354,7 +357,8 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 		writer.Write(L"newosldr: Disk partition error, not a valid one.\r");
 
 		// TODO: Find a way to use EFI::Stop.
-		while (1);
+		while (1)
+			;
 	}
 
 	CopyMem(partBlock.Ident, kNewFSIdent, kNewFSIdentLen - 1);

@@ -33,7 +33,7 @@ EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
-			file=fat:rw:Sources/Root/,index=2,format=raw -d int \
+			file=fat:rw:Sources/Root/,index=2,format=raw \
 			-drive id=disk_2,file=$(IMG_2),if=none \
             -device ahci,id=ahci \
             -device ide-hd,drive=disk_2,bus=ahci.0
@@ -49,7 +49,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSLDR__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Vendor -I../ZKA  -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__HAVE_MAHROUSS_APIS__ -D__ZKA_AMD64__ -D__MAHROUSS__
+                        -std=c++20 -D__HAVE_ZKA_APIS__ -D__ZKA_AMD64__ -D__ZKA__
 
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.dll

@@ -7,10 +7,10 @@
 .align 4
 .type name, @function
 .text
-.globl rt_do_context_switch
+.globl mp_do_context_switch
 
 /* r3 (3) = assigner stack, r4 (4) = assignee stack */
-rt_do_context_switch:
+mp_do_context_switch:
     lwz 0(%4), 0(%3)
     lwz 4(%4), 4(%3)
     lwz 8(%4), 8(%3)

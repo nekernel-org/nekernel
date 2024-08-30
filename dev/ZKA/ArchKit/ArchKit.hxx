@@ -102,4 +102,4 @@ inline Kernel::Array<HAL_SYSCALL_RECORD,
 	kKerncalls;
 
 EXTERN_C Kernel::HAL::StackFramePtr rt_get_current_context();
-EXTERN_C Kernel::Void rt_do_context_switch(Kernel::HAL::StackFramePtr stack_frame);
+EXTERN_C Kernel::Void mp_do_context_switch(Kernel::HAL::StackFramePtr stack_frame);

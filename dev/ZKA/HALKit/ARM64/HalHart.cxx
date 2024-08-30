@@ -14,7 +14,7 @@ namespace Kernel
 	/// wakes up thread from hang.
 	void mp_wakeup_thread(HAL::StackFrame* stack)
 	{
-		rt_do_context_switch(stack);
+		mp_do_context_switch(stack);
 	}
 
 	/// @brief makes the thread sleep on a loop.

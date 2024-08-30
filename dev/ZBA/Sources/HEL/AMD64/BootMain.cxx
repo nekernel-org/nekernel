@@ -134,6 +134,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
 
 	handoverHdrPtr->f_MultiProcessingEnabled = mp != nullptr;
+	handoverHdrPtr->f_HardwareTables.f_MpPtr = reinterpret_cast<VoidPtr>(mp);
 
 	kHandoverHeader = handoverHdrPtr;
 

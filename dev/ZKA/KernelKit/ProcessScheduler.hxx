@@ -233,12 +233,12 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(ProcessTeam);
 
-		MutableArray<Ref<PROCESS_HEADER_BLOCK>>& AsArray();
+		Array<PROCESS_HEADER_BLOCK, kSchedProcessLimitPerTeam>& AsArray();
 		Ref<PROCESS_HEADER_BLOCK>&				  AsRef();
 		UInt64&							  Id() noexcept;
 
 	public:
-		MutableArray<Ref<PROCESS_HEADER_BLOCK>> mProcessList;
+		Array<PROCESS_HEADER_BLOCK, kSchedProcessLimitPerTeam> mProcessList;
 		Ref<PROCESS_HEADER_BLOCK>				 mCurrentProcess;
 		UInt64							 mTeamId{0};
 	};
@@ -263,7 +263,7 @@ namespace Kernel
 		ProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(Ref<PROCESS_HEADER_BLOCK>& processRef);
+		SizeT Add(Ref<PROCESS_HEADER_BLOCK> processRef);
 		Bool  Remove(SizeT processSlot);
 
 	public:
@@ -278,14 +278,14 @@ namespace Kernel
 	};
 
 	/*
-	 * Just a helper class, which contains some utilities for the scheduler.
+	 * \brief Process helper class, which contains needed utilities for the scheduler.
 	 */
 
 	class ProcessHelper final
 	{
 	public:
-		STATIC bool	 Switch(HAL::StackFrame* newStack, const PID& newPid);
-		STATIC bool	 CanBeScheduled(Ref<PROCESS_HEADER_BLOCK>& process);
+		STATIC bool	 Switch(HAL::StackFramePtr new_stack, const PID& new_pid);
+		STATIC bool	 CanBeScheduled(PROCESS_HEADER_BLOCK& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
 	};

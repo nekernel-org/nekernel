@@ -262,22 +262,22 @@ namespace Kernel::HAL
 
 		struct PACKED NewOSGDTRecord final
 		{
-			UInt16 Limit0;
-			UInt16 Base0;
-			UInt8  Base1;
-			UInt8  AccessByte;
-			UInt8  Limit1_Flags;
-			UInt8  Base2;
+			UInt16 fLimit0;
+			UInt16 fBase0;
+			UInt8  fBase1;
+			UInt8  fAccessByte;
+			UInt8  fLimit1_Flags;
+			UInt8  fBase2;
 		};
 
 		struct PACKED ALIGN(0x1000) NewOSGDT final
 		{
-			NewOSGDTRecord Null;
-			NewOSGDTRecord KernCode;
-			NewOSGDTRecord KernData;
-			NewOSGDTRecord UserNull;
-			NewOSGDTRecord UserCode;
-			NewOSGDTRecord UserData;
+			NewOSGDTRecord fNull;
+			NewOSGDTRecord fKernCode;
+			NewOSGDTRecord fKernData;
+			NewOSGDTRecord fUserNull;
+			NewOSGDTRecord fUserCode;
+			NewOSGDTRecord fUserData;
 		};
 	} // namespace Detail
 

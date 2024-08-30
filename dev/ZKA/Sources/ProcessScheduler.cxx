@@ -211,7 +211,7 @@ namespace Kernel
 	/// @brief Add process to list.
 	/// @param process the process *Ref* class.
 	/// @return the process index inside the team.
-	SizeT ProcessScheduler::Add(Ref<PROCESS_HEADER_BLOCK>& process)
+	SizeT ProcessScheduler::Add(Ref<PROCESS_HEADER_BLOCK> process)
 	{
 		if (!process.Leak().Image)
 		{
@@ -224,24 +224,17 @@ namespace Kernel
 		if (mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
 			return -kErrorOutOfTeamSlot;
 
-		kcout << "ProcessScheduler:: adding process to team...\r";
-
-		if (process.Leak().GetOwner() == nullptr)
-		{
-			// Something went wrong, do not continue, process may be incorrect.
-			process.Leak().Crash();
-			return -kErrorProcessFault;
-		}
+		kcout << "ProcessScheduler: Adding process to team...\r";
 
 		// Create heap according to type of process.
 		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kAppKind)
 		{
-			process.Leak().HeapPtr = sched_new_heap(kProcessHeapUser | kProcessHeapRw, process.Leak().SizeMemory);
+			process.Leak().HeapPtr = mm_new_ke_heap(process.Leak().SizeMemory, true, true);
 		}
 		else if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
 		{
-			process.Leak().DLLPtr  = rtl_init_shared_object(&process.Leak());
-			process.Leak().HeapPtr = sched_new_heap(kProcessHeapUser | kProcessHeapRw | kProcessHeapShared, process.Leak().SizeMemory);
+			process.Leak().DLLPtr = rtl_init_shared_object(&process.Leak());
+			process.Leak().HeapPtr = mm_new_ke_heap(process.Leak().SizeMemory, true, true);
 		}
 		else
 		{
@@ -276,7 +269,9 @@ namespace Kernel
 		process.Leak().ProcessId  = (mTeam.AsArray().Count() - 1);
 		process.Leak().HeapCursor = process.Leak().HeapPtr;
 
-		MUST_PASS(mTeam.AsArray().Add(process));
+		mTeam.AsArray()[process.Leak().ProcessId] = process.Leak();
+
+		kcout << "ProcessScheduler: Adding process to team [ OK ]...\r";
 
 		return (mTeam.AsArray().Count() - 1);
 	}
@@ -302,12 +297,13 @@ namespace Kernel
 			return false;
 
 		// also check if the process isn't a dummy one.
-		if (mTeam.AsArray()[processSlot].Leak().Leak().Image == nullptr)
+		if (mTeam.AsArray()[processSlot].Image == nullptr)
 			return false;
 
-		kcout << "ProcessScheduler: removing process\r";
+		kcout << "ProcessScheduler: Removing process...\r";
 
-		return mTeam.AsArray().Remove(processSlot);
+		mTeam.AsArray()[processSlot].Status = ProcessStatus::kDead;
+		return true;
 	}
 
 	/// @brief Run scheduler.
@@ -322,26 +318,18 @@ namespace Kernel
 			auto process = mTeam.AsArray()[process_index];
 
 			//! check if process needs to be scheduled.
-			if (ProcessHelper::CanBeScheduled(process.Leak()))
+			if (ProcessHelper::CanBeScheduled(process))
 			{
-				auto unwrapped_process = *process.Leak();
-
-				if (unwrapped_process.Parent->Status == ProcessStatus::kKilled)
-				{
-					unwrapped_process.Exit();
-					continue;
-				}
-
 				// set the current process.
-				mTeam.AsRef() = unwrapped_process;
+				mTeam.AsRef() = process;
+
+				process.PTime = static_cast<Int32>(process.Affinity);
+
+				kcout << process.Name << ": will be runned.\r";
 
 				// tell helper to find a core to schedule on.
-				ProcessHelper::Switch(unwrapped_process.StackFrame,
-									  unwrapped_process.ProcessId);
-
-				unwrapped_process.PTime = static_cast<Int32>(unwrapped_process.Affinity);
-
-				kcout << unwrapped_process.Name << ": has been switched to a CPU core.\r";
+				ProcessHelper::Switch(process.StackFrame,
+									  process.ProcessId);
 			}
 			else
 			{
@@ -381,36 +369,23 @@ namespace Kernel
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
-	bool ProcessHelper::CanBeScheduled(Ref<PROCESS_HEADER_BLOCK>& process)
+	bool ProcessHelper::CanBeScheduled(PROCESS_HEADER_BLOCK& process)
 	{
-		if (process.Leak().Status == ProcessStatus::kFrozen ||
-			process.Leak().Status == ProcessStatus::kDead)
+		if (process.Status == ProcessStatus::kFrozen ||
+			process.Status == ProcessStatus::kDead)
 			return false;
 
-		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
+		if (process.Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
 		{
-			if (auto start = process.Leak().DLLPtr->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart), kPefCode);
+			if (auto start = process.DLLPtr->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart), kPefCode);
 				start)
 			{
-				process.Leak().Image		  = start;
-				process.Leak().StackFrame->BP = reinterpret_cast<HAL::Reg>(start);
+				process.Image		  = start;
+				process.StackFrame->BP = reinterpret_cast<HAL::Reg>(start);
 			}
 		}
 
-		if (process.Leak().GetStatus() == ProcessStatus::kStarting)
-		{
-			if (process.Leak().PTime <= 0)
-			{
-				process.Leak().Status	= ProcessStatus::kRunning;
-				process.Leak().Affinity = AffinityKind::kStandard;
-
-				return true;
-			}
-
-			++process.Leak().PTime;
-		}
-
-		return process.Leak().PTime > 0;
+		return process.PTime > 0;
 	}
 
 	/**

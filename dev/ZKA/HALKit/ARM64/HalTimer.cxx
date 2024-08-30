@@ -13,4 +13,4 @@
 
 #include <ArchKit/ArchKit.hxx>
 
-struct TimerInfoStruct;
+struct TIMER_INFO;

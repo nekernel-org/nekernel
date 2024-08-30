@@ -19,7 +19,7 @@ Void PROCESS_HEADER_BLOCK::SetEntrypoint(UIntPtr& imageStart) noexcept
 
 namespace Kernel
 {
-	bool rt_check_stack(HAL::StackFramePtr stackPtr)
+	bool hal_check_stack(HAL::StackFramePtr stackPtr)
 	{
 		if (!stackPtr)
 			return false;

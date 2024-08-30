@@ -19,12 +19,6 @@
 
 #define kCPUBackendName "ARMv8"
 
-#ifdef __ZETA_MACHINE__
-#define cHeapStartOffset (0x10000000)
-#else
-#error !!! please provide that macro. !!!
-#endif
-
 namespace Kernel::HAL
 {
 	struct PACKED Register64 final
@@ -48,7 +42,9 @@ namespace Kernel::HAL
 	typedef StackFrame* StackFramePtr;
 } // namespace Kernel::HAL
 
-inline Kernel::VoidPtr kKernelVirtualStart = (Kernel::VoidPtr)cHeapStartOffset;
+
+inline Kernel::VoidPtr kKernelVMHStart	   = nullptr;
+inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
 inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 
 inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;

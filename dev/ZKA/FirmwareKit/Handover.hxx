@@ -75,6 +75,7 @@ namespace Kernel::HEL
 		{
 			VoidPtr f_SmBios;
 			VoidPtr f_VendorPtr;
+			VoidPtr f_MpPtr;
 		} f_HardwareTables;
 
 		Bool f_MultiProcessingEnabled;

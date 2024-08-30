@@ -15,7 +15,7 @@ namespace Kernel
 {
 	/// @brief Process list array getter.
 	/// @return The list of process to schedule.
-	MutableArray<Ref<PROCESS_HEADER_BLOCK>>& ProcessTeam::AsArray()
+	Array<PROCESS_HEADER_BLOCK, kSchedProcessLimitPerTeam>& ProcessTeam::AsArray()
 	{
 		return mProcessList;
 	}

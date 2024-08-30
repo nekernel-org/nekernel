@@ -52,9 +52,9 @@
 #define ATTRIBUTE(X) __attribute__((X))
 #endif // #ifndef ATTRIBUTE
 
-#ifndef __MAHROUSS_VER__
-#define __MAHROUSS_VER__ (2024)
-#endif // !__MAHROUSS_VER__
+#ifndef __ZKA_VER__
+#define __ZKA_VER__ (2024)
+#endif // !__ZKA_VER__
 
 #ifndef EXTERN_C
 #define EXTERN_C extern "C"

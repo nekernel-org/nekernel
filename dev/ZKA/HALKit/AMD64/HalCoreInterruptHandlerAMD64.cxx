@@ -52,8 +52,8 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 	{
 		Kernel::kcout << "newoskrnl: syscall: enter.\r";
 
-		if (kSyscalls[rcx].Leak().Leak()->fHooked)
-			(kSyscalls[rcx].Leak().Leak()->fProc)((Kernel::VoidPtr)rdx);
+		if (kSyscalls[rcx].fHooked)
+			(kSyscalls[rcx].fProc)((Kernel::VoidPtr)rdx);
 
 		Kernel::kcout << "newoskrnl: syscall: exit.\r";
 	}
@@ -68,8 +68,8 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 	{
 		Kernel::kcout << "newoskrnl: kerncall: enter.\r";
 
-		if (kKerncalls[rcx].Leak().Leak()->fHooked)
-			(kKerncalls[rcx].Leak().Leak()->fProc)((Kernel::VoidPtr)rdx);
+		if (kKerncalls[rcx].fHooked)
+			(kKerncalls[rcx].fProc)((Kernel::VoidPtr)rdx);
 
 		Kernel::kcout << "newoskrnl: kerncall: exit.\r";
 	}

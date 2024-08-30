@@ -114,8 +114,8 @@ namespace Kernel
 		}
 		};
 
-		while (Yes)
-			;
+		PowerFactoryInterface power(nullptr);
+		power.Reboot();
 	}
 
 	Void RecoveryFactory::Recover() noexcept
@@ -125,8 +125,10 @@ namespace Kernel
 		HardwareTimer timer(cMaxSeconds);
 		timer.Wait();
 
+		kcout << "newoskrnl: Shutting down...\r";
+
 		PowerFactoryInterface power(nullptr);
-		power.Reboot();
+		power.Shutdown();
 	}
 
 	void ke_runtime_check(bool expr, const Char* file, const Char* line)

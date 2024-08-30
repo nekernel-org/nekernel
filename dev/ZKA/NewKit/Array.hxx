@@ -21,12 +21,9 @@ namespace Kernel
 		Array& operator=(const Array&) = default;
 		Array(const Array&)			   = default;
 
-		ErrorOr<T*> operator[](Size At)
+		T& operator[](const SizeT& At)
 		{
-			if (At > N)
-				return {};
-
-			return ErrorOr<T*>(&fArray[At]);
+			return (fArray[At]);
 		}
 
 		Boolean Empty() const

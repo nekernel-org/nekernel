@@ -23,6 +23,7 @@
 #include <NewKit/String.hxx>
 #include <NewKit/Utils.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/CodeManager.hxx>
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/WindowRenderer.hxx>
 #include <KernelKit/Timer.hxx>
@@ -213,8 +214,11 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA...", 30, 10, RGB(0, 0, 0));
 
-	while (Yes)
-	{
-		Kernel::ProcessHelper::StartScheduling();
-	}
+	Kernel::ProcessHelper::StartScheduling();
+	
+	Kernel::execute_from_image([]() -> void {
+	},
+							   "ZKA Logger");
+
+	Kernel::ProcessHelper::StartScheduling();
 }

@@ -76,7 +76,10 @@ namespace Kernel
 			mp_wakeup_thread(fStack);
 	}
 
-	EXTERN Bool rt_check_stack(HAL::StackFramePtr stackPtr);
+	/// @note Those symbols are needed in order to switch and validate the stack.
+
+	EXTERN Bool	  hal_check_stack(HAL::StackFramePtr stackPtr);
+	EXTERN_C Void hal_switch_context(HAL::StackFramePtr stackPtr);
 
 	/// @brief Switch to hardware thread.
 	/// @param stack the new hardware thread.
@@ -93,7 +96,7 @@ namespace Kernel
 			return true;
 		}
 
-		if (!rt_check_stack(stack))
+		if (!hal_check_stack(stack))
 		{
 			return false;
 		}
@@ -106,7 +109,7 @@ namespace Kernel
 
 		fStack = stack;
 
-		rt_do_context_switch(fStack);
+		hal_switch_context(fStack);
 
 		return true;
 	}
@@ -144,12 +147,7 @@ namespace Kernel
 	/// @brief Get Stack Frame of Core
 	HAL::StackFramePtr HardwareThreadScheduler::Leak() noexcept
 	{
-		if (fThreadList[fCurrentThread].Leak() &&
-			ProcessHelper::TheCurrentPID() ==
-				fThreadList[fCurrentThread].Leak().Leak()->fSourcePID)
-			return fThreadList[fCurrentThread].Leak().Leak()->fStack;
-
-		return nullptr;
+		return fThreadList[fCurrentThread].fStack;
 	}
 
 	/// @brief Finds and switch to a free core.
@@ -161,36 +159,36 @@ namespace Kernel
 		for (SizeT idx = 0; idx < cMaxHWThreads; ++idx)
 		{
 			// stack != nullptr -> if core is used, then continue.
-			if (!fThreadList[idx].Leak() ||
-				!fThreadList[idx].Leak().Leak()->IsWakeup() ||
-				fThreadList[idx].Leak().Leak()->IsBusy())
+			if (!fThreadList[idx] ||
+				!fThreadList[idx].IsWakeup() ||
+				fThreadList[idx].IsBusy())
 				continue;
 
 			// to avoid any null deref.
-			if (!fThreadList[idx].Leak().Leak()->fStack)
+			if (!fThreadList[idx].fStack)
 				continue;
-			if (fThreadList[idx].Leak().Leak()->fStack->SP == 0)
+			if (fThreadList[idx].fStack->SP == 0)
 				continue;
-			if (fThreadList[idx].Leak().Leak()->fStack->BP == 0)
+			if (fThreadList[idx].fStack->BP == 0)
 				continue;
 
-			fThreadList[idx].Leak().Leak()->Busy(true);
+			fThreadList[idx].Busy(true);
 
-			fThreadList[idx].Leak().Leak()->fID = idx;
+			fThreadList[idx].fID = idx;
 
 			/// I figured out this:
 			/// Allocate stack
 			/// Set APIC base to stack
 			/// Do stuff and relocate stack based on this code.
 			/// - Amlel
-			rt_copy_memory(stack, fThreadList[idx].Leak().Leak()->fStack,
+			rt_copy_memory(stack, fThreadList[idx].fStack,
 						   sizeof(HAL::StackFrame));
 
-			fThreadList[idx].Leak().Leak()->Switch(fThreadList[idx].Leak().Leak()->fStack);
+			fThreadList[idx].Switch(fThreadList[idx].fStack);
 
-			fThreadList[idx].Leak().Leak()->fSourcePID = ProcessHelper::TheCurrentPID();
+			fThreadList[idx].fSourcePID = ProcessHelper::TheCurrentPID();
 
-			fThreadList[idx].Leak().Leak()->Busy(false);
+			fThreadList[idx].Busy(false);
 
 			return true;
 		}
@@ -207,9 +205,9 @@ namespace Kernel
 	{
 		if (idx == 0)
 		{
-			if (fThreadList[idx].Leak().Leak()->Kind() != kHartSystemReserved)
+			if (fThreadList[idx].Kind() != kHartSystemReserved)
 			{
-				fThreadList[idx].Leak().Leak()->fKind = kHartBoot;
+				fThreadList[idx].fKind = kHartBoot;
 			}
 		}
 		else if (idx >= cMaxHWThreads)
@@ -226,7 +224,7 @@ namespace Kernel
 			return {fakeThread};
 		}
 
-		return fThreadList[idx].Leak();
+		return &fThreadList[idx];
 	}
 
 	/**

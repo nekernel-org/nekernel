@@ -17,9 +17,10 @@
 
 // timer slot 0
 
-#define cHPETCounterValue (0x0f0 * 0x20)
-#define cHPETConfigValue  (0x010 * 0x20)
-#define cHPETCompValue	  (0x108 * 0x20)
+#define cHPETCounterRegValue (0x00)
+#define cHPETConfigRegValue  (0x20)
+#define cHPETCompRegValue	  (0x24)
+#define cHPETInterruptRegValue	  (0x2C)
 
 ///! BUGS: 0
 ///! @file HalTimer.cxx
@@ -67,19 +68,19 @@ Int32 HardwareTimer::Wait() noexcept
 		return -1;
 
 	// if not enabled yet.
-	if (!(*(fDigitalTimer + cHPETConfigValue) & (1 << 0)))
+	if (!(*(fDigitalTimer + cHPETConfigRegValue) & (1 << 0)))
 	{
-		*(fDigitalTimer + cHPETConfigValue) |= (1 << 0); // enable it
-		*(fDigitalTimer + cHPETConfigValue) |= (1 << 3); // one shot conf
+		*(fDigitalTimer + cHPETConfigRegValue) |= (1 << 0); // enable it
+		*(fDigitalTimer + cHPETConfigRegValue) |= (1 << 3); // one shot conf
 	}
 
 	UInt64 ticks = fWaitFor / ((*(fDigitalTimer) >> 32) & __UINT32_MAX__);
 
-	auto prev = *(fDigitalTimer + cHPETCounterValue);
+	auto prev = *(fDigitalTimer + cHPETCounterRegValue);
 
-	*(fDigitalTimer + cHPETCompValue) = prev + ticks;
+	prev += ticks;
 
-	while (*(fDigitalTimer + cHPETCounterValue) < (ticks));
+	while (*(fDigitalTimer + cHPETCounterRegValue) < (ticks));
 
 	return 0;
 }

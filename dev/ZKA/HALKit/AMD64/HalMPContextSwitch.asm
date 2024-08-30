@@ -10,7 +10,7 @@
 [bits 64]
 
 [global rt_get_current_context]
-[global rt_do_context_switch]
+[global mp_do_context_switch]
 [global _hal_spin_core]
 [extern _hal_switch_context]
 [extern _hal_leak_current_context]
@@ -20,20 +20,10 @@ section .text
 ;; writes to rdx the stackframe inside rcx.
 ;; rcx: Stack Pointer
 ;; rdx: SMP core address.
-rt_do_context_switch:
-    push rcx
-    call _hal_switch_context
-    pop rcx
-
-    ;; Now grab newly allocated process's stack frame.
-    push rax
-    call _hal_leak_current_context
-    mov r9, rax
-    pop rax
-
+mp_do_context_switch:
     ;; Take care of context switching within AP.
 
-    mov r9, rax
+    mov r9, rcx
 
     mov rbp, [r9 + (8 * 5)]
     mov rsp, [r9 + (8 * 6)]
@@ -60,7 +50,26 @@ rt_do_context_switch:
 
     mov r9, [r9 + (8 * 12)]
 
-    retfq
+    ; User code selector is 0x20 btw (Amlal).
+
+    mov ax, 0x23
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    push 0x23
+    push rsp
+
+    pushfq
+    pop rax
+    or rax, 0x200
+    push rax
+
+    push 0x20
+    push rbp
+
+    iretq
 
 ;; gets the current stack frame.
 rt_get_current_context:

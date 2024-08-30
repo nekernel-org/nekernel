@@ -6,10 +6,6 @@
 
 #include <KernelKit/PCI/Iterator.hxx>
 
-#define PCI_ITERATOR_FIND_AND_UNWRAP(DEV, SZ) \
-	if (DEV.Leak().Leak())                    \
-		return *DEV.Leak().Leak();
-
 namespace Kernel::PCI
 {
 	Iterator::Iterator(const Types::PciDeviceKind& type)
@@ -25,7 +21,7 @@ namespace Kernel::PCI
 
 					if (dev.Class() == (UChar)type)
 					{
-						*fDevices[bus].Leak().Leak() = dev;
+						fDevices[bus] = dev;
 					}
 				}
 			}
@@ -36,9 +32,8 @@ namespace Kernel::PCI
 	{
 	}
 
-	Ref<PCI::Device> Iterator::operator[](const Size& sz)
+	Ref<PCI::Device> Iterator::operator[](const Size& at)
 	{
-		PCI_ITERATOR_FIND_AND_UNWRAP(fDevices[sz], sz);
-		return {};
+		return fDevices[at];
 	}
 } // namespace Kernel::PCI

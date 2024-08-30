@@ -11,11 +11,10 @@
 #include <KernelKit/Semaphore.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
 #include <KernelKit/Timer.hxx>
-
 #include <Modules/CoreCG/TextRenderer.hxx>
 
 // Needed for SMP. //
-
+#include <FirmwareKit/EFI.hxx>
 #include <KernelKit/MP.hxx>
 
 #define kApicSignature "APIC"
@@ -45,14 +44,12 @@ namespace Kernel::HAL
 
 	EXTERN_C Void _hal_spin_core(Void);
 
-	STATIC Void hal_switch_context(HAL::StackFramePtr stack_frame);
-
 	STATIC struct MADT_TABLE* kMADTBlock = nullptr;
 	STATIC Bool		   kSMPAware  = false;
 	STATIC Int64	   kSMPCount  = 0;
 
 	STATIC Int32   cSMPInterrupt	  = 0;
-	STATIC Int64   cSMPCores[cSMPMax] = {0};
+	STATIC UInt64   cSMPCores[cSMPMax] = {0};
 	STATIC VoidPtr kRawMADT			  = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
@@ -136,17 +133,14 @@ namespace Kernel::HAL
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
-	/// @internal
-	EXTERN_C Void hal_ap_startup(Void)
-	{
-	   CGDrawString("100", 10, 50, RGB(0x00, 0x00, 0x00));
-		ke_stop(RUNTIME_CHECK_BOOTSTRAP);
-	}
+	EXTERN_C Void hal_switch_context(HAL::StackFramePtr stack_frame);
 
+	/// @brief Called when the AP is ready.
 	/// @internal
-	EXTERN_C Void _hal_switch_context(HAL::StackFramePtr stack_frame)
+	EXTERN_C Void hal_on_ap_startup(HAL::StackFramePtr stack_frame)
 	{
 		hal_switch_context(stack_frame);
+		ke_stop(RUNTIME_CHECK_FAILED);
 	}
 
 	constexpr auto cMaxPCBBlocks = cMaxHWThreads;
@@ -162,7 +156,7 @@ namespace Kernel::HAL
 		return fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Frame;
 	}
 
-	STATIC Void hal_switch_context(HAL::StackFramePtr stack_frame)
+	EXTERN_C Void hal_switch_context(HAL::StackFramePtr stack_frame)
 	{
 		Semaphore semaphore_process;
 
@@ -174,7 +168,10 @@ namespace Kernel::HAL
 		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_PHB	  = &ProcessScheduler::The().Leak().TheCurrent().Leak();
 		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Frame = stack_frame;
 
+		mp_do_context_switch(stack_frame);
+
 		semaphore_process.Unlock();
+		ke_stop(RUNTIME_CHECK_FAILED);
 	}
 
 	/***********************************************************************************/
@@ -207,19 +204,13 @@ namespace Kernel::HAL
 
 			while (Yes)
 			{
-				if (kMADTBlock->List[index].Type == 0 ||
-					index > cSMPMax)
+				if (kMADTBlock->List[index].Type > 9 ||
+					kSMPCount > cSMPMax)
 					break;
 
 				switch (kMADTBlock->List[index].Type)
 				{
-				case 0x01: {
-					cSMPCores[index] = kMADTBlock->List[index].IOAPIC.IoID;
-					kcout << "newoskrnl: Core ID: " << number(cSMPCores[index]) << endl;
-					++kSMPCount;
-					break;
-				}
-				case 0x02: {
+				case 0x00: {
 					cSMPCores[index] = kMADTBlock->List[index].LAPIC.ProcessorID;
 					kcout << "newoskrnl: Core ID: " << number(cSMPCores[index]) << endl;
 					++kSMPCount;
@@ -236,16 +227,15 @@ namespace Kernel::HAL
 			}
 
 			kcout << "newoskrnl: # of cores: " << number(kSMPCount) << endl;
-			kcout << "newoskrnl: First core ID: " << number(cSMPCores[0]) << endl;
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP kernels)
 
 			kSMPAware = true;
 
-			// This is used to start the
-			hal_send_end_ipi(cSMPCores[0], 0x34, madt_address);
-			hal_send_start_ipi(cSMPCores[0], 0x34, madt_address);
+			const auto cStartIPI = 0x34;
+
+			/// TODO: Notify AP core that it must start.
 		}
 	}
 } // namespace Kernel::HAL

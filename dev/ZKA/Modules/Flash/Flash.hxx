@@ -6,7 +6,7 @@
 
 #pragma once
 
-#ifdef __FLASH_MEM__
+#ifdef __USE_MBCI_FLASH__
 
 #include <NewKit/Defines.hxx>
 
@@ -18,4 +18,4 @@ Kernel::SizeT drv_std_get_sector_count();
 /// @return drive size
 Kernel::SizeT drv_std_get_drv_size();
 
-#endif // ifdef __FLASH_MEM__
+#endif // ifdef __USE_MBCI_FLASH__

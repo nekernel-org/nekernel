@@ -141,14 +141,14 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	constexpr auto cLPCOpenMsg			= 0x26;
 	constexpr auto cLPCCloseMsg			= 0x27;
 
-	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cTlsInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		if (tls_check_syscall_impl(rdx) == false)
 		{
 			Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
 		}
 	};
 
-	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cNewInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		// get HAC struct.
 		HEAP_ALLOC_INFO* rdxInf = reinterpret_cast<HEAP_ALLOC_INFO*>(rdx);
 
@@ -159,7 +159,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		rdxInf->fThe = Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
 	};
 
-	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cDeleteInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		// get HAC struct.
 		HEAP_ALLOC_INFO* rdxInf = reinterpret_cast<HEAP_ALLOC_INFO*>(rdx);
 
@@ -170,7 +170,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
 
-	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cTlsInstallInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		PROCESS_BLOCK_INFO* rdxPb = reinterpret_cast<PROCESS_BLOCK_INFO*>(rdx);
 
 		if (!rdxPb)
@@ -180,7 +180,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		rt_install_tib(rdxPb->fTIB, rdxPb->fGIB);
 	};
 
-	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cExitInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
 
 		if (!rdxEi)
@@ -190,7 +190,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Exit(rdxEi->fCode);
 	};
 
-	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cLastExitInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
 
 		if (!rdxEi)
@@ -199,24 +199,24 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		rdxEi->fCode = Kernel::sched_get_exit_code();
 	};
 
-	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cRebootInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		Kernel::PowerFactoryInterface pow(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 		pow.Reboot();
 	};
 
-	kSyscalls[cShutdownInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
+	kSyscalls[cShutdownInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		Kernel::PowerFactoryInterface pow(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 		pow.Shutdown();
 	};
 
-	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked		   = true;
-	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked	   = true;
-	kSyscalls[cNewInterrupt].Leak().Leak()->fHooked		   = true;
-	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked	   = true;
-	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked   = true;
-	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
-	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
+	kSyscalls[cTlsInterrupt].fHooked		   = true;
+	kSyscalls[cTlsInstallInterrupt].fHooked = true;
+	kSyscalls[cDeleteInterrupt].fHooked	   = true;
+	kSyscalls[cNewInterrupt].fHooked		   = true;
+	kSyscalls[cExitInterrupt].fHooked	   = true;
+	kSyscalls[cLastExitInterrupt].fHooked   = true;
+	kSyscalls[cShutdownInterrupt].fHooked   = true;
+	kSyscalls[cRebootInterrupt].fHooked	   = true;
 
 	if (kHandoverHeader->f_MultiProcessingEnabled)
 		Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);

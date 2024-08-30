@@ -10,7 +10,7 @@
 /// @file Flash.cxx
 /// @brief Flash memory builtin.
 
-#ifdef __FLASH_MEM__
+#ifdef __USE_MBCI_FLASH__
 
 #define cMaxFlash (4U)
 
@@ -53,14 +53,14 @@ namespace Kernel
 	/// @brief Enable flash memory at slot.
 	STATIC Void drv_enable_flash(Int32 arg)
 	{
-		kcout << "newoskrnl: enabled hardware.\r";
+		kcout << "newoskrnl: Enabled FLSH hardware.\r";
 	}
 
 	/// @brief Disable flash memory at slot.
 	STATIC Void drv_disable_flash(Int32 arg)
 	{
-		kcout << "newoskrnl: disabled hardware.\r";
+		kcout << "newoskrnl: Disabled FLSH hardware.\r";
 	}
 } // namespace Kernel
 
-#endif // if __FLASH_MEM__ (Bridge)
+#endif // if __USE_MBCI_FLASH__ (Bridge)

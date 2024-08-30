@@ -10,6 +10,7 @@
 
 #include <NewKit/Defines.hxx>
 #include <NewKit/KernelCheck.hxx>
+#include <KernelKit/Heap.hxx>
 
 namespace Kernel
 {
@@ -18,14 +19,7 @@ namespace Kernel
 	{
 	public:
 		Ref()  = default;
-
-		~Ref()
-		{
-		    if (fStrong)
-			{
-			    fClass = nullptr;
-			}
-		}
+		~Ref() = default;
 
 	public:
 		Ref(T cls, const bool& strong = false)
@@ -35,12 +29,15 @@ namespace Kernel
 
 		Ref& operator=(T ref)
 		{
+			if (!fClass)
+				fClass = (T*)mm_new_ke_heap(sizeof(T), false, false);
+
 			*fClass = ref;
 			return *this;
 		}
 
 	public:
-		T operator->() const
+		T& operator->() const
 		{
 			return *fClass;
 		}
@@ -72,7 +69,7 @@ namespace Kernel
 		}
 
 	private:
-	    T*	 fClass;
+	    T*	 fClass{nullptr};
 		Bool fStrong{false};
 	};
 

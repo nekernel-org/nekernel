@@ -8,10 +8,10 @@
         "${workspaceFolder}/**"
       ],
       "defines": [
-        "__MAHROUSS__",
+        "__ZKA__",
         "__NEWOSKRNL__",
         "Z_PREFIX",
-        "__HAVE_MAHROUSS_APIS__",
+        "__HAVE_ZKA_APIS__",
         "__FSKIT_USE_NEWFS__",
         "__EFI_x86_64__",
         "__ATA_PIO__",
@@ -31,10 +31,10 @@
         "${workspaceFolder}/**"
       ],
       "defines": [
-        "__MAHROUSS__",
+        "__ZKA__",
         "__NEWOSKRNL__",
         "Z_PREFIX",
-        "__HAVE_MAHROUSS_APIS__",
+        "__HAVE_ZKA_APIS__",
         "__FSKIT_USE_NEWFS__",
         "__EFI_x86_64__",
         "__ATA_PIO__",

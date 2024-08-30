@@ -16,7 +16,7 @@ namespace Kernel
 	{
 		HAL::rt_cli();
 
-		rt_do_context_switch(stack);
+		mp_do_context_switch(stack);
 
 		HAL::rt_sti();
 	}

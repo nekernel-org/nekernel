@@ -7,15 +7,11 @@ CC			= clang++
 LD			= lld-link
 CCFLAGS		= -fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__ZKA_ARM64__ -fno-rtti -fno-exceptions -I./ \
 			 -target aarch64-unknown-windows \
-				-std=c++20 -D__FSKIT_USE_NEWFS__ -D__ZETA_MACHINE__ -D__NEWOSKRNL__ -D__HAVE_MAHROUSS_APIS__ -D__MAHROUSS__ -I../
+				-std=c++20 -D__FSKIT_USE_NEWFS__ -D__ZETA_MACHINE__ -D__NEWOSKRNL__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../
 
 ASM 		= clang++
 
-DISKDRIVER = -D__FLASH_MEM__
-
-ifneq ($(SDCARD_SUPPORT), )
-DISKDRIVER = -D__SDCARD__
-endif
+DISKDRIVER = -D__USE_FLASH_MEM__ -D__USE_SAS__ -D__USE_SATA__
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -27,7 +23,7 @@ LDFLAGS		= -subsystem:efi_application -entry:hal_init_platform /nodefaultlib
 LDOBJ		= Objects/*.obj
 
 # This file is the kernel, responsible of task management and memory.
-KERNEL		= newoskrnl.dll
+KERNEL		= newoskrnl.so
 
 .PHONY: error
 error:
