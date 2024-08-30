@@ -63,7 +63,7 @@ _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* cata
 												 _Input NFS_FORK_STRUCT& theFork)
 {
 	if (catalog && theFork.ForkName[0] != 0 &&
-	   theFork.DataSize <= kNewFSForkSz)
+		theFork.DataSize <= kNewFSForkSz)
 	{
 		Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
@@ -381,7 +381,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 		}
 
 		// ========================== //
-		// allocate catalog now...
+		// Allocate catalog now...
 		// ========================== //
 		if ((nextSibling->Flags & kNewFSFlagCreated) == 0)
 		{
@@ -406,10 +406,13 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 			catalogChild->DataFork	   = partBlock->DiskSize - start_free;
 			catalogChild->ResourceFork = catalogChild->DataFork;
 
-			catalogChild->NextSibling =
-				start_free + (sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding);
-
-			// write the new catalog.
+			// Write the new catalog next sibling, if we don't know this parent. //
+			// This is necessary, so that we don't have to get another lba to allocate. //
+			if (!StringBuilder::Equals(parentName, nextSibling->Name))
+			{
+				catalogChild->NextSibling =
+					start_free + (sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding);
+			}
 
 			drive.fPacket.fPacketContent = catalogChild;
 			drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
@@ -417,7 +420,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 
 			drive.fOutput(&drive.fPacket);
 
-			// get newfs part block.
+			// Get NewFS partition's block.
 
 			drive.fPacket.fPacketContent = sectorBufPartBlock;
 			drive.fPacket.fPacketSize	 = kNewFSSectorSz;
@@ -425,10 +428,9 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 
 			drive.fInput(&drive.fPacket);
 
-			partBlock->SectorCount -= 1;
+			partBlock->FreeSectors -= 1;
 			partBlock->CatalogCount += 1;
 			partBlock->FreeCatalog -= 1;
-			partBlock->FreeCatalog = catalogChild->NextSibling;
 
 			drive.fOutput(&drive.fPacket);
 
@@ -904,8 +906,8 @@ Boolean NewFSParser::RemoveCatalog(_Input const Char* catalogName)
 		NFS_ROOT_PARTITION_BLOCK* partBlock =
 			reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(partitionBlockBuf);
 
-		++partBlock->FreeCatalog;
 		--partBlock->CatalogCount;
+		++partBlock->FreeSectors;
 
 		drive.fOutput(&drive.fPacket);
 

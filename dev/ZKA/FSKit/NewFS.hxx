@@ -39,8 +39,8 @@ default.
 
 #define kNewFSMetaFilePrefix '$'
 
-#define kNewFSVersionInteger (0x0127)
-#define kNewFSVerionString	 "1.27"
+#define kNewFSVersionInteger (0x0128)
+#define kNewFSVerionString	 "1.28"
 
 /// @brief Standard fork types.
 #define kNewFSDataFork	   "main_data"

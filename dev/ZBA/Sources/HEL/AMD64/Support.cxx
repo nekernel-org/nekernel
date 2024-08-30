@@ -71,7 +71,7 @@ EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight)
 		++len;
 	}
 
-	return whatToCheck[len] == whatToCheckRight[len] ? 0 : len;
+	return len;
 }
 
 /// @brief somthing specific to the Microsoft's ABI, When the stack grows too big.

@@ -90,7 +90,7 @@ namespace Kernel::Detail
 																	kNewFSCatalogKindDir);
 
 					CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog has been created: ")), RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog directory has been created: ")), RGB(0, 0, 0));
 
 					delete catalogDir;
 				}
@@ -211,7 +211,7 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 		CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing catalog: ")), RGB(0, 0, 0));
 	}
 
-	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting the scheduler...", 30, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA...", 30, 10, RGB(0, 0, 0));
 
 	while (Yes)
 	{

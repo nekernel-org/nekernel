@@ -271,8 +271,8 @@ private:
 
 		constexpr auto cNewFSCatalogPadding = 4;
 
-		catalogKind.PrevSibling		= startLba;
-		catalogKind.NextSibling		= (startLba + sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding);
+		catalogKind.PrevSibling = startLba;
+		catalogKind.NextSibling = (startLba + sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding);
 
 		/// Fill catalog kind.
 		catalogKind.Kind  = blob->fKind;
@@ -313,10 +313,6 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 
 	/// convert the sector into something that the disk understands.
 	SizeT sectorSz = BootDev::kSectorSize;
-	NFS_ROOT_PARTITION_BLOCK  partBlock{0};
-
-	CopyMem(partBlock.Ident, kNewFSIdent, kNewFSIdentLen - 1);
-	CopyMem(partBlock.PartitionName, partName, strlen(partName));
 
 	/// @note A catalog roughly equal to a sector.
 
@@ -330,16 +326,50 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 		return false;
 	}
 
-	partBlock.Version		= kNewFSVersionInteger;
+	fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
+	fDiskDev.Leak().mSize = sectorSz;
+
+	NFS_ROOT_PARTITION_BLOCK partBlock{0};
+
+	fDiskDev.Read((Char*)&partBlock, sizeof(NFS_ROOT_PARTITION_BLOCK));
+
+	if (strncmp(kNewFSIdent, partBlock.Ident, kNewFSIdentLen) == 0 &&
+		partBlock.Version != kNewFSVersionInteger)
+	{
+		BTextWriter writer;
+		writer.Write(L"newosldr: Disk partition updated.\r");
+
+		partBlock.Version = kNewFSVersionInteger;
+
+		fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
+		fDiskDev.Leak().mSize = sectorSz;
+
+		fDiskDev.Write((Char*)&partBlock, sectorSz);
+
+		return true;
+	}
+	else if (strncmp(kNewFSIdent, partBlock.Ident, kNewFSIdentLen))
+	{
+		BTextWriter writer;
+		writer.Write(L"newosldr: Disk partition error, not a valid one.\r");
+
+		// TODO: Find a way to use EFI::Stop.
+		while (1);
+	}
+
+	CopyMem(partBlock.Ident, kNewFSIdent, kNewFSIdentLen - 1);
+	CopyMem(partBlock.PartitionName, partName, strlen(partName));
+
+	partBlock.Version	   = kNewFSVersionInteger;
 	partBlock.CatalogCount = blobCount;
-	partBlock.Kind			= kNewFSHardDrive;
-	partBlock.SectorSize	= sectorSz;
-	partBlock.FreeCatalog	= fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
-	partBlock.SectorCount	= fDiskDev.GetSectorsCount();
-	partBlock.FreeSectors	= fDiskDev.GetSectorsCount();
+	partBlock.Kind		   = kNewFSHardDrive;
+	partBlock.SectorSize   = sectorSz;
+	partBlock.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
+	partBlock.SectorCount  = fDiskDev.GetSectorsCount();
+	partBlock.FreeSectors  = fDiskDev.GetSectorsCount();
 	partBlock.StartCatalog = kNewFSCatalogStartAddress;
-	partBlock.DiskSize		= fDiskDev.GetDiskSize();
-	partBlock.Flags |= kNewFSPartitionTypeBoot | kNewFSPartitionTypeStandard;
+	partBlock.DiskSize	   = fDiskDev.GetDiskSize();
+	partBlock.Flags		   = kNewFSPartitionTypeBoot | kNewFSPartitionTypeStandard;
 
 	fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
 	fDiskDev.Leak().mSize = sectorSz;
