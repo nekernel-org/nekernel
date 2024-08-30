@@ -30,7 +30,7 @@ namespace Kernel
 		Ref& operator=(T ref)
 		{
 			if (!fClass)
-				fClass = (T*)mm_new_ke_heap(sizeof(T), false, false);
+				return *this;
 
 			*fClass = ref;
 			return *this;
@@ -39,6 +39,7 @@ namespace Kernel
 	public:
 		T& operator->() const
 		{
+		    MUST_PASS(*fClass);
 			return *fClass;
 		}
 

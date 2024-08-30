@@ -23,7 +23,7 @@ namespace Kernel
 		proc.Kind = PROCESS_HEADER_BLOCK::kAppKind;
 		rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(proc.Name));
 
-		Ref<PROCESS_HEADER_BLOCK> refProc = proc;
+		Ref<PROCESS_HEADER_BLOCK> refProc{proc};
 
 		return ProcessScheduler::The().Leak().Add(refProc);
 	}
