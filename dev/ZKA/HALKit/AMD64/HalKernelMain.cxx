@@ -12,7 +12,6 @@
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/Json.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hxx>
@@ -144,7 +143,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cTlsInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		if (tls_check_syscall_impl(rdx) == false)
 		{
-			Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+			Kernel::ProcessScheduler::The().CurrentProcess().Leak().Crash();
 		}
 	};
 
@@ -156,7 +155,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		// assign the fThe field with the pointer.
-		rdxInf->fThe = Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
+		rdxInf->fThe = Kernel::ProcessScheduler::The().CurrentProcess().Leak().New(rdxInf->fTheSz);
 	};
 
 	kSyscalls[cDeleteInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -167,7 +166,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		// delete ptr with sz in mind.
-		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
+		Kernel::ProcessScheduler::The().CurrentProcess().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
 
 	kSyscalls[cTlsInstallInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -187,7 +186,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		Kernel::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
-		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Exit(rdxEi->fCode);
+		Kernel::ProcessScheduler::The().CurrentProcess().Leak().Exit(rdxEi->fCode);
 	};
 
 	kSyscalls[cLastExitInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {

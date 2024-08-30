@@ -18,5 +18,4 @@
 #include <NewKit/OwnPtr.hxx>
 #include <NewKit/Ref.hxx>
 #include <NewKit/Stream.hxx>
-#include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/Utils.hxx>

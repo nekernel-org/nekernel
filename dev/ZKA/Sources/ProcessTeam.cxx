@@ -22,7 +22,7 @@ namespace Kernel
 
 	/// @brief Get team ID.
 	/// @return The team's ID.
-	UInt64& ProcessTeam::Id() noexcept
+	ProcessID& ProcessTeam::Id() noexcept
 	{
 		return mTeamId;
 	}

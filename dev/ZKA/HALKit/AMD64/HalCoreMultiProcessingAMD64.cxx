@@ -153,7 +153,7 @@ namespace Kernel::HAL
 
 	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
 	{
-		return fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Frame;
+		return fBlocks[ProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxPCBBlocks].f_Frame;
 	}
 
 	EXTERN_C Void hal_switch_context(HAL::StackFramePtr stack_frame)
@@ -163,10 +163,10 @@ namespace Kernel::HAL
 		const auto cDurationSeconds = Seconds(5);
 
 		HardwareTimer timer(cDurationSeconds);
-		semaphore_process.LockOrWait(&ProcessScheduler::The().Leak().TheCurrent().Leak(), &timer);
+		semaphore_process.LockOrWait(&ProcessScheduler::The().CurrentProcess().Leak(), &timer);
 
-		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_PHB	  = &ProcessScheduler::The().Leak().TheCurrent().Leak();
-		fBlocks[ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId % cMaxPCBBlocks].f_Frame = stack_frame;
+		fBlocks[ProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxPCBBlocks].f_PHB	  = &ProcessScheduler::The().CurrentProcess().Leak();
+		fBlocks[ProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxPCBBlocks].f_Frame = stack_frame;
 
 		mp_do_context_switch(stack_frame);
 

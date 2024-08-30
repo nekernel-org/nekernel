@@ -17,7 +17,6 @@
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/ProcessScheduler.hxx>
-#include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/Json.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <NewKit/String.hxx>
@@ -189,6 +188,8 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	Kernel::cProcessScheduler = nullptr;
 	Kernel::ProcessHelper::StartScheduling();
 
+	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA System...", 30, 10, RGB(0, 0, 0));
+
 	Kernel::PEFLoader sys_user_drv(kSysDrv);
 
 	if (sys_user_drv.IsLoaded())
@@ -212,13 +213,14 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 		CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing catalog: ")), RGB(0, 0, 0));
 	}
 
-	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA...", 30, 10, RGB(0, 0, 0));
-
-	Kernel::ProcessHelper::StartScheduling();
-	
 	Kernel::execute_from_image([]() -> void {
 	},
 							   "ZKA Logger");
 
-	Kernel::ProcessHelper::StartScheduling();
+	while (Yes)
+	{
+		Kernel::ProcessHelper::StartScheduling();
+	}
+
+	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

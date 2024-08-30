@@ -10,7 +10,6 @@
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/LockDelegate.hxx>
 #include <KernelKit/User.hxx>
-#include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/MutableArray.hxx>
 
 #define kSchedMinMicroTime (AffinityKind::kStandard)
@@ -40,7 +39,6 @@ namespace Kernel
 	//! @brief Process name length.
 	inline constexpr SizeT kProcessLen = 256U;
 
-
 	//! @brief Process status enum.
 	enum class ProcessStatus : Int32
 	{
@@ -58,7 +56,7 @@ namespace Kernel
 		kInvalid	  = 300,
 		kVeryHigh	  = 250,
 		kHigh		  = 200,
-		kStandard = 150,
+		kStandard	  = 150,
 		kLowUsage	  = 100,
 		kVeryLowUsage = 50,
 	};
@@ -126,7 +124,7 @@ namespace Kernel
 
 	/// @name PROCESS_HEADER_BLOCK
 	/// @brief Process Header Block (PHB).
-	   /// Holds information about the running process/thread.
+	/// Holds information about the running process/thread.
 	struct PROCESS_HEADER_BLOCK final
 	{
 	public:
@@ -140,13 +138,13 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(PROCESS_HEADER_BLOCK)
 
 	public:
-		void		 SetEntrypoint(UIntPtr& imageStart) noexcept;
+		void		  SetEntrypoint(UIntPtr& imageStart) noexcept;
 		const UInt32& GetExitCode() noexcept;
 
 	public:
 		Char			   Name[kProcessLen] = {"PROCESS #0 (TEAM 0)"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
-		User*              AssignedOwner{nullptr};
+		User*			   AssignedOwner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatus	   Status{ProcessStatus::kDead};
@@ -157,7 +155,7 @@ namespace Kernel
 		HeapPtrKind HeapPtr{nullptr};
 
 		// shared library handle, reserved for kSharedObjectKind types of executables only.
-		PEFDLLInterface* DLLPtr{nullptr};
+		PEFDLLInterface*	  DLLPtr{nullptr};
 		PROCESS_HEADER_BLOCK* Parent{nullptr};
 
 		// Memory usage.
@@ -167,7 +165,7 @@ namespace Kernel
 
 		enum
 		{
-			kExeKind   = 1,
+			kExeKind		  = 1,
 			kSharedObjectKind = 2,
 			kKindCount,
 		};
@@ -211,13 +209,13 @@ namespace Kernel
 		//! @return Int32 local error code.
 		Int32& GetLocalCode() noexcept;
 
-		const User* GetOwner() noexcept;
-		const ProcessStatus&   GetStatus() noexcept;
-		const AffinityKind&	   GetAffinity() noexcept;
+		const User*			 GetOwner() noexcept;
+		const ProcessStatus& GetStatus() noexcept;
+		const AffinityKind&	 GetAffinity() noexcept;
 
 	private:
 		UInt32 fLastExitCode{0};
-		Int32 fLocalCode{0};
+		Int32  fLocalCode{0};
 
 		friend ProcessScheduler;
 		friend ProcessHelper;
@@ -234,23 +232,24 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(ProcessTeam);
 
 		Array<PROCESS_HEADER_BLOCK, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<PROCESS_HEADER_BLOCK>&				  AsRef();
-		UInt64&							  Id() noexcept;
+		Ref<PROCESS_HEADER_BLOCK>&								AsRef();
+		ProcessID&													Id() noexcept;
 
 	public:
 		Array<PROCESS_HEADER_BLOCK, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<PROCESS_HEADER_BLOCK>				 mCurrentProcess;
-		UInt64							 mTeamId{0};
+		Ref<PROCESS_HEADER_BLOCK>							   mCurrentProcess;
+		SizeT												   mProcessAmount{0};
+		ProcessID											   mTeamId{0};
 	};
 
-	using ProcessHeaderRef = PROCESS_HEADER_BLOCK*;
+	using PROCESS_HEADER_BLOCK_PTR = PROCESS_HEADER_BLOCK*;
 
 	/// @brief PROCESS_HEADER_BLOCK manager class.
 	/// The main class which you call to schedule an app.
 	class ProcessScheduler final
 	{
 	public:
-	explicit ProcessScheduler() = default;
+		explicit ProcessScheduler() = default;
 
 		~ProcessScheduler() = default;
 
@@ -263,15 +262,15 @@ namespace Kernel
 		ProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(Ref<PROCESS_HEADER_BLOCK> processRef);
-		Bool  Remove(SizeT processSlot);
+		SizeT Add(PROCESS_HEADER_BLOCK& processRef);
+		Bool  Remove(ProcessID processSlot);
 
 	public:
-		Ref<PROCESS_HEADER_BLOCK>& TheCurrent();
-		SizeT				Run() noexcept;
+		Ref<PROCESS_HEADER_BLOCK>& CurrentProcess();
+		SizeT					   Run() noexcept;
 
 	public:
-		STATIC Ref<ProcessScheduler> The();
+		STATIC ProcessScheduler& The();
 
 	private:
 		ProcessTeam mTeam;

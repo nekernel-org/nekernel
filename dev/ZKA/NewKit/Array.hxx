@@ -37,9 +37,17 @@ namespace Kernel
 			return true;
 		}
 
-		SizeT Count() const
+		const SizeT Count()
 		{
-			return N;
+			SizeT count = 0;
+
+			for (SizeT i = 0; i < N; i++)
+			{
+				if (fArray[i])
+					++count;
+			}
+
+			return count;
 		}
 
 		const T* CData()

@@ -113,7 +113,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		if (tls_check_syscall_impl(rdx) == false)
 		{
-			Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+			Kernel::ProcessScheduler::The().Leak().CurrentProcess().Leak().Crash();
 		}
 	};
 
@@ -125,7 +125,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		// assign the fThe field with the pointer.
-		rdxInf->fThe = Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().New(rdxInf->fTheSz);
+		rdxInf->fThe = Kernel::ProcessScheduler::The().Leak().CurrentProcess().Leak().New(rdxInf->fTheSz);
 	};
 
 	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -136,7 +136,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		// delete ptr with sz in mind.
-		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
+		Kernel::ProcessScheduler::The().Leak().CurrentProcess().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
 
 	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -156,7 +156,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		Kernel::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
-		Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().Exit(rdxEi->fCode);
+		Kernel::ProcessScheduler::The().Leak().CurrentProcess().Leak().Exit(rdxEi->fCode);
 	};
 
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {

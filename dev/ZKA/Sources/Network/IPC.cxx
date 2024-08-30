@@ -63,7 +63,7 @@ namespace Kernel
 		if (!pckt ||
 			!ipc_int_sanitize_packet(pckt))
 		{
-			ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+			ProcessScheduler::The().CurrentProcess().Leak().Crash();
 			return false;
 		}
 
@@ -82,7 +82,7 @@ namespace Kernel
 		// crash process if the packet pointer of pointer is NULL.
 		if (!pckt_in)
 		{
-			ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+			ProcessScheduler::The().CurrentProcess().Leak().Crash();
 			return false;
 		}
 
@@ -98,12 +98,12 @@ namespace Kernel
 
 			(*pckt_in)->IpcEndianess		= static_cast<UInt8>(endian);
 			(*pckt_in)->IpcPacketSize		= sizeof(IPC_MESSAGE_STRUCT);
-			(*pckt_in)->IpcFrom.ProcessID	= Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().ProcessId;
-			(*pckt_in)->IpcFrom.ProcessTeam = Kernel::ProcessScheduler::The().Leak().CurrentTeam().mTeamId;
+			(*pckt_in)->IpcFrom.ProcessID	= Kernel::ProcessScheduler::The().CurrentProcess().Leak().ProcessId;
+			(*pckt_in)->IpcFrom.ProcessTeam = Kernel::ProcessScheduler::The().CurrentTeam().mTeamId;
 			return true;
 		}
 
-		ProcessScheduler::The().Leak().TheCurrent().Leak().Crash();
+		ProcessScheduler::The().CurrentProcess().Leak().Crash();
 		return false;
 	}
 } // namespace Kernel

@@ -16,9 +16,8 @@ inline T* tls_new_ptr(void) noexcept
 {
 	using namespace Kernel;
 
-	MUST_PASS(ProcessScheduler::The().Leak().TheCurrent());
-
-	auto ref_process = ProcessScheduler::The().Leak().TheCurrent();
+	auto ref_process = ProcessScheduler::The().CurrentProcess();
+	MUST_PASS(ref_process);
 
 	T* pointer = (T*)ref_process.Leak().New(sizeof(T));
 	return pointer;
@@ -33,9 +32,9 @@ inline Kernel::Bool tls_delete_ptr(T* ptr) noexcept
 
 	using namespace Kernel;
 
-	MUST_PASS(ProcessScheduler::The().Leak().TheCurrent());
+	auto ref_process = ProcessScheduler::The().CurrentProcess();
+	MUST_PASS(ref_process);
 
-	auto ref_process = ProcessScheduler::The().Leak().TheCurrent();
 	return ref_process.Leak().Delete(ptr, sizeof(T));
 }
 

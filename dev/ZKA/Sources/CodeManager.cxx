@@ -21,9 +21,8 @@ namespace Kernel
 
 		PROCESS_HEADER_BLOCK proc((VoidPtr)main);
 		proc.Kind = PROCESS_HEADER_BLOCK::kExeKind;
-		rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(proc.Name));
-		proc.Image = (VoidPtr)main;
+		rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(processName));
 
-		return ProcessScheduler::The().Leak().Add(proc);
+		return ProcessScheduler::The().Add(proc) == kErrorSuccess;
 	}
 } // namespace Kernel

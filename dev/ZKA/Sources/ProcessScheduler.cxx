@@ -211,71 +211,71 @@ namespace Kernel
 	/// @brief Add process to list.
 	/// @param process the process *Ref* class.
 	/// @return the process index inside the team.
-	SizeT ProcessScheduler::Add(Ref<PROCESS_HEADER_BLOCK> process)
+	SizeT ProcessScheduler::Add(PROCESS_HEADER_BLOCK& process)
 	{
-		if (!process.Leak().Image)
+		if (!process.Image)
 		{
 			return -kErrorInvalidData;
 		}
 
-		if (mTeam.AsArray().Count() > kSchedProcessLimitPerTeam)
-			return -kErrorOutOfTeamSlot;
-
 		kcout << "ProcessScheduler: Adding process to team...\r";
 
 		// Create heap according to type of process.
-		if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kExeKind)
+		if (process.Kind == PROCESS_HEADER_BLOCK::kExeKind)
 		{
-			process.Leak().HeapPtr = mm_new_ke_heap(process.Leak().SizeMemory, true, true);
+			process.HeapPtr = mm_new_ke_heap(process.SizeMemory, true, true);
 		}
-		else if (process.Leak().Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
+		else if (process.Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
 		{
-			process.Leak().DLLPtr = rtl_init_shared_object(&process.Leak());
-			process.Leak().HeapPtr = mm_new_ke_heap(process.Leak().SizeMemory, true, true);
+			process.DLLPtr	= rtl_init_shared_object(&process);
+			process.HeapPtr = mm_new_ke_heap(process.SizeMemory, true, true);
 		}
 		else
 		{
 			// Something went wrong, do not continue, process may be incorrect.
-			process.Leak().Crash();
+			process.Crash();
 			return -kErrorProcessFault;
 		}
 
-		process.Leak().StackFrame = reinterpret_cast<HAL::StackFrame*>(
+		process.StackFrame = reinterpret_cast<HAL::StackFrame*>(
 			mm_new_ke_heap(sizeof(HAL::StackFrame), Yes, Yes));
 
-		MUST_PASS(process.Leak().StackFrame);
+		MUST_PASS(process.StackFrame);
 
-		if (process.Leak().Image)
+		if (process.Image)
 		{
-			process.Leak().StackFrame->BP = reinterpret_cast<HAL::Reg>(process.Leak().Image);
+			process.StackFrame->BP = reinterpret_cast<HAL::Reg>(process.Image);
 		}
 		else
 		{
-			if (process.Leak().Kind != PROCESS_HEADER_BLOCK::kSharedObjectKind)
+			if (process.Kind != PROCESS_HEADER_BLOCK::kSharedObjectKind)
 			{
-				process.Leak().Crash();
+				process.Crash();
 				return -kErrorProcessFault;
 			}
 		}
 
-		if (!process.Leak().StackFrame->SP)
-			process.Leak().StackFrame->SP = reinterpret_cast<HAL::Reg>(mm_new_ke_heap(sizeof(UInt8) * 8196, Yes, Yes));
+		if (!process.StackFrame->SP)
+			process.StackFrame->SP = reinterpret_cast<HAL::Reg>(mm_new_ke_heap(sizeof(UInt8) * 8196, Yes, Yes));
 
-		process.Leak().Status = ProcessStatus::kStarting;
+		process.Status = ProcessStatus::kStarting;
 
-		process.Leak().ProcessId  = (mTeam.AsArray().Count() - 1);
-		process.Leak().HeapCursor = process.Leak().HeapPtr;
+		process.ProcessId = (mTeam.mCurrentProcess);
 
-		mTeam.AsArray()[process.Leak().ProcessId] = process.Leak();
+		++mTeam.mProcessAmount;
+
+		process.HeapCursor = process.HeapPtr;
+
+		mTeam.AsArray()[process.ProcessId] = process;
 
 		kcout << "ProcessScheduler: Adding process to team [ OK ]...\r";
 
-		return (mTeam.AsArray().Count() - 1);
+		return process.ProcessId;
 	}
 
 	/***********************************************************************************/
 
-	Ref<ProcessScheduler> ProcessScheduler::The()
+	ProcessScheduler& ProcessScheduler::The()
 	{
 		MUST_PASS(cProcessScheduler);
 		return *cProcessScheduler;
@@ -287,7 +287,7 @@ namespace Kernel
 	/// @param processSlot process slot inside team.
 	/// @retval true process was removed.
 	/// @retval false process doesn't exist in team.
-	Bool ProcessScheduler::Remove(SizeT processSlot)
+	Bool ProcessScheduler::Remove(ProcessID processSlot)
 	{
 		// check if process is within range.
 		if (processSlot > mTeam.AsArray().Count())
@@ -299,6 +299,7 @@ namespace Kernel
 
 		kcout << "ProcessScheduler: Removing process...\r";
 
+		--mTeam.mProcessAmount;
 		mTeam.AsArray()[processSlot].Status = ProcessStatus::kDead;
 		return true;
 	}
@@ -349,7 +350,7 @@ namespace Kernel
 
 	/// @brief Gets current running process.
 	/// @return
-	Ref<PROCESS_HEADER_BLOCK>& ProcessScheduler::TheCurrent()
+	Ref<PROCESS_HEADER_BLOCK>& ProcessScheduler::CurrentProcess()
 	{
 		return mTeam.AsRef();
 	}
@@ -359,7 +360,7 @@ namespace Kernel
 	PID& ProcessHelper::TheCurrentPID()
 	{
 		kcout << "ProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-		return cProcessScheduler->TheCurrent().Leak().ProcessId;
+		return cProcessScheduler->CurrentProcess().Leak().ProcessId;
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -377,16 +378,16 @@ namespace Kernel
 			if (auto start = process.DLLPtr->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart), kPefCode);
 				start)
 			{
-				process.Image		  = start;
+				process.Image		   = start;
 				process.StackFrame->BP = reinterpret_cast<HAL::Reg>(start);
 			}
 		}
 
-		return process.PTime > 0;
+		return process.PTime < 0;
 	}
 
 	/**
-	 * @brief Spin scheduler class.
+	 * @brief Scheduler helper class.
 	 */
 
 	SizeT ProcessHelper::StartScheduling()

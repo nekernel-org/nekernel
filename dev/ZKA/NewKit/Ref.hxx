@@ -37,7 +37,7 @@ namespace Kernel
 		}
 
 	public:
-		T& operator->() const
+		T operator->() const
 		{
 		    MUST_PASS(*fClass);
 			return *fClass;

@@ -11,9 +11,9 @@
 /// @file LPC.hxx
 /// @brief Local Process Codes.
 
-#define ErrLocalIsOk()	 (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() == Kernel::kErrorSuccess)
-#define ErrLocalFailed() (Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode() != Kernel::kErrorSuccess)
-#define ErrLocal()		 Kernel::ProcessScheduler::The().Leak().TheCurrent().Leak().GetLocalCode()
+#define ErrLocalIsOk()	 (Kernel::ProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() == Kernel::kErrorSuccess)
+#define ErrLocalFailed() (Kernel::ProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)
+#define ErrLocal()		 Kernel::ProcessScheduler::The().CurrentProcess().Leak().GetLocalCode()
 
 namespace Kernel
 {

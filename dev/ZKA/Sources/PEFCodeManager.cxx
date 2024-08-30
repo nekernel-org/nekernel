@@ -79,12 +79,12 @@ namespace Kernel
 			return;
 		}
 
-		kcout << "CodeManagerPEF: Warning: Executable format error!\r";
 		fBad = true;
 
 		if (fCachedBlob)
 			mm_delete_ke_heap(fCachedBlob);
 
+		kcout << "CodeManagerPEF: Warning: Executable format error!\r";
 		fCachedBlob = nullptr;
 	}
 
@@ -200,11 +200,9 @@ namespace Kernel
 				return false;
 
 			PROCESS_HEADER_BLOCK	  proc(errOrStart.Leak().Leak());
-			Ref<PROCESS_HEADER_BLOCK> refProc = proc;
-
 			proc.Kind = procKind;
 
-			return ProcessScheduler::The().Leak().Add(refProc);
+			return ProcessScheduler::The().Add(proc);
 		}
 	} // namespace Utils
 

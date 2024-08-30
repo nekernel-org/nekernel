@@ -14,7 +14,7 @@ namespace Kernel
 {
 	class PROCESS_HEADER_BLOCK;
 
-	typedef PROCESS_HEADER_BLOCK* ProcessHeaderRef;
+	typedef PROCESS_HEADER_BLOCK* PROCESS_HEADER_BLOCK_PTR;
 
 	/// @brief Access control class, which locks a task until one is done.
 	class Semaphore final
@@ -38,6 +38,6 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(Semaphore);
 
 	private:
-		ProcessHeaderRef fLockingProcess{nullptr};
+		PROCESS_HEADER_BLOCK_PTR fLockingProcess{nullptr};
 	};
 } // namespace Kernel

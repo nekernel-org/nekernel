@@ -91,6 +91,11 @@ struct HAL_SYSCALL_RECORD final
 	Kernel::Int64	fHash;
 	Kernel::Bool	fHooked;
 	rt_syscall_proc fProc;
+
+	operator bool()
+	{
+		return fHooked;
+	}
 };
 
 inline Kernel::Array<HAL_SYSCALL_RECORD,
