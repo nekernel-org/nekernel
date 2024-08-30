@@ -188,7 +188,7 @@ namespace Kernel
 	 * @tparam Encoding file encoding (char, wchar_t...)
 	 * @tparam FSClass Filesystem contract who takes care of it.
 	 */
-	template <typename Encoding = char,
+	template <typename Encoding = Char,
 			  typename FSClass	= FilesystemManagerInterface>
 	class FileStream final
 	{

@@ -79,8 +79,7 @@ Int32 HardwareTimer::Wait() noexcept
 
 	*(fDigitalTimer + cHPETCompValue) = prev + ticks;
 
-	while (*(fDigitalTimer + cHPETCounterValue) < (ticks))
-		kcout << "MS: " << number(*(fDigitalTimer + cHPETCounterValue)) << endl;
+	while (*(fDigitalTimer + cHPETCounterValue) < (ticks));
 
 	return 0;
 }

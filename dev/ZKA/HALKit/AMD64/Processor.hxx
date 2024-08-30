@@ -35,10 +35,10 @@ EXTERN_C
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
-#define kInterruptGate	 (0x8E)
-#define kTrapGate		 (0xEF)
-#define kTaskGate		 (0b10001100)
-#define kGdtCodeSelector (0x08)
+#define kInterruptGate		 (0x8E)
+#define kTrapGate			 (0xEF)
+#define kTaskGate			 (0b10001100)
+#define kGdtCodeSelector	 (0x08)
 #define kGdtUserCodeSelector (0x10)
 
 namespace Kernel
@@ -64,66 +64,40 @@ namespace Kernel::HAL
 	/// @brief Virtual memory flags.
 	enum
 	{
+		eFlagsPresent,
 		eFlagsUser,
 		eFlagsRw,
-		eFlagsExecDisable
+		eFlagsExecDisable,
+		eFlagsSetPhysAddress,
+		eFlagsCount,
 	};
 
-	/// @brief Map address to PDE.
-	/// @param pde a valid page directory.
+	/// @brief Updates a PTE from pd_base.
+	/// @param pd_base a valid PDE address.
 	/// @param phys_addr a valid phyiscal address.
 	/// @param virt_addr a valid virtual address.
 	/// @param flags the flags to put on the page.
-	inline Int32 ke_map_address(PDE* pde, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
+	inline Int32 mm_update_page(VoidPtr pd_base, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
 	{
-		UInt16 pml4_index = (virt_addr >> 39) & 0x1FF;
+		UIntPtr pde_idx = (UIntPtr)virt_addr >> 22;
+		UIntPtr pte_idx = (UIntPtr)virt_addr >> 12 & 0x03FF;
 
-		if (pde && !pde->Pte[pml4_index].Present)
+		volatile PTE* pte = (volatile PTE*)((UIntPtr)pd_base + (kPTEAlign * pde_idx));
+
+		if (pte)
 		{
-			pde->Pte[pml4_index].Present = true;
+			if ((flags & eFlagsSetPhysAddress))
+				pte->PhysicalAddress = phys_addr;
 
-			pde->Pte[pml4_index].PhysicalAddress = phys_addr;
-			pde->Pte[pml4_index].Rw				 = flags & eFlagsRw;
-			pde->Pte[pml4_index].User			 = flags & eFlagsUser;
-			pde->Pte[pml4_index].ExecDisable	 = flags & eFlagsExecDisable;
-
-			kcout << "newoskrnl: PTE is present now.\r";
-
-			return 0;
-		}
-		else
-		{
-			kcout << "newoskrnl: PM is already present.\r";
-
-			kcout << "PhysicalAddress: " << hex_number(pde->Pte[pml4_index].PhysicalAddress);
-			kcout << "\r";
-
-			kcout << "User: " << (pde->Pte[pml4_index].User ? "true" : "false") << "\r";
-			kcout << "RW: " << (pde->Pte[pml4_index].Rw ? "true" : "false") << "\r";
+			pte->Present	 = flags & eFlagsPresent;
+			pte->Rw			 = flags & eFlagsRw;
+			pte->User		 = flags & eFlagsUser;
+			pte->ExecDisable = flags & eFlagsExecDisable;
 
 			return 0;
 		}
 
 		return 1;
-	}
-
-	/// @brief Map address to PDE.
-	/// @param pde
-	/// @param phys_addr
-	/// @param virt_addr
-	/// @param flags
-	inline Void ke_unmap_address(PDE* pde, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
-	{
-		UInt16 pml4_index = (virt_addr >> 39) & 0x1FF;
-
-		if (pde->Pte[pml4_index].Present)
-		{
-			pde->Pte[pml4_index].Present		 = false;
-			pde->Pte[pml4_index].PhysicalAddress = 0;
-			pde->Pte[pml4_index].Rw				 = 0;
-			pde->Pte[pml4_index].User			 = 0;
-			pde->Pte[pml4_index].ExecDisable	 = 0;
-		}
 	}
 
 	EXTERN_C UChar	In8(UInt16 port);
@@ -340,7 +314,7 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 #define kKernelIdtSize	   0x100
 #define kKernelInterruptId 0x32
 
-inline Kernel::VoidPtr kKernelVMHStart = nullptr;
+inline Kernel::VoidPtr kKernelVMHStart	   = nullptr;
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
 inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 

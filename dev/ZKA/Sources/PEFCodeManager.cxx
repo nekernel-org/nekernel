@@ -51,44 +51,41 @@ namespace Kernel
 		: fCachedBlob(nullptr), fBad(false), fFatBinary(false)
 	{
 		fFile.New(const_cast<Char*>(path), cRestrictRB);
+		fPath = StringBuilder::Construct(path).Leak();
 
-		if (StringBuilder::Equals(fFile->MIME(), this->MIME()))
+		auto cPefHeader = "PEF_CONTAINER";
+
+		fCachedBlob = fFile->Read(cPefHeader);
+
+		PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
+
+		if (container->Cpu == Detail::rt_get_pef_platform() &&
+			container->Magic[0] == kPefMagic[0] &&
+			container->Magic[1] == kPefMagic[1] &&
+			container->Magic[2] == kPefMagic[2] &&
+			container->Magic[3] == kPefMagic[3] &&
+			container->Magic[4] == kPefMagic[4] && container->Abi == kPefAbi)
 		{
-			fPath = StringBuilder::Construct(path).Leak();
+			return;
+		}
+		else if (container->Magic[4] == kPefMagic[0] &&
+				 container->Magic[3] == kPefMagic[1] &&
+				 container->Magic[2] == kPefMagic[2] &&
+				 container->Magic[1] == kPefMagic[3] &&
+				 container->Magic[0] == kPefMagic[0] && container->Abi == kPefAbi)
+		{
+			/// This is a fat binary.
+			this->fFatBinary = true;
+			return;
+		}
 
-			auto cPefHeader = "PEF_CONTAINER";
+		kcout << "CodeManagerPEF: Warning: Executable format error!\r";
+		fBad = true;
 
-			fCachedBlob = fFile->Read(cPefHeader);
-
-			PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
-
-			if (container->Cpu == Detail::rt_get_pef_platform() &&
-				container->Magic[0] == kPefMagic[0] &&
-				container->Magic[1] == kPefMagic[1] &&
-				container->Magic[2] == kPefMagic[2] &&
-				container->Magic[3] == kPefMagic[3] &&
-				container->Magic[4] == kPefMagic[4] && container->Abi == kPefAbi)
-			{
-				return;
-			}
-			else if (container->Magic[4] == kPefMagic[0] &&
-					 container->Magic[3] == kPefMagic[1] &&
-					 container->Magic[2] == kPefMagic[2] &&
-					 container->Magic[1] == kPefMagic[3] &&
-					 container->Magic[0] == kPefMagic[0] && container->Abi == kPefAbi)
-			{
-				/// This is a fat binary.
-				this->fFatBinary = true;
-				return;
-			}
-
-			kcout << "CodeManagerPEF: Warning: Executable format error!\n";
-			fBad = true;
-
+		if (fCachedBlob)
 			mm_delete_ke_heap(fCachedBlob);
 
-			fCachedBlob = nullptr;
-		}
+		fCachedBlob = nullptr;
 	}
 
 	/// @brief PEF destructor.

@@ -65,12 +65,6 @@ namespace Kernel
 
 		auto catalog = fImpl->GetCatalog(path);
 
-		if (catalog->Kind != kNewFSCatalogKindFile)
-		{
-			fImpl->CloseCatalog(catalog);
-			return nullptr;
-		}
-
 		return node_cast(catalog);
 	}
 

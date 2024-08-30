@@ -22,7 +22,7 @@
 #include <NewKit/KernelCheck.hxx>
 #include <NewKit/String.hxx>
 #include <NewKit/Utils.hxx>
-#include <KernelKit/CodeManager.hxx>
+#include <KernelKit/PEFCodeManager.hxx>
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/WindowRenderer.hxx>
 #include <KernelKit/Timer.hxx>
@@ -52,22 +52,22 @@ namespace Kernel::Detail
 		{
 			if (Kernel::FilesystemManagerInterface::GetMounted())
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: NewFS already mounted by HAL...", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: NewFS IFS already mounted by HAL (A:)...", 10, 10, RGB(0, 0, 0));
 				fNewFS = reinterpret_cast<Kernel::NewFilesystemManager*>(Kernel::FilesystemManagerInterface::GetMounted());
 			}
 			else
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Mounted NewFS filesystem...", 10, 10, RGB(0, 0, 0));
-
 				// Mounts a NewFS from main drive.
 				fNewFS = new Kernel::NewFilesystemManager();
 
 				Kernel::FilesystemManagerInterface::Mount(fNewFS);
+
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Mounted NewFS IFS (A:)...", 10, 10, RGB(0, 0, 0));
 			}
 
-			const auto cDirCount = 7;
+			const Kernel::SizeT cDirCount = 7UL;
 
-			const char* cDirStr[cDirCount] = {
+			const Kernel::Char* cDirStr[cDirCount] = {
 				"\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
 				"\\Users\\", "\\Library\\", "\\Mount\\"};
 
@@ -79,10 +79,8 @@ namespace Kernel::Detail
 
 					if (catalogDir)
 					{
-						Kernel::kcout << "newoskrnl: Already exists.\r";
-
-						CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog directory already exists: ")), RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog directory already exists: ")), RGB(0, 0, 0));
 
 						delete catalogDir;
 						continue;
@@ -91,8 +89,8 @@ namespace Kernel::Detail
 					catalogDir = fNewFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
 																	kNewFSCatalogKindDir);
 
-					CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog has been created: ")), RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog has been created: ")), RGB(0, 0, 0));
 
 					delete catalogDir;
 				}
@@ -104,17 +102,15 @@ namespace Kernel::Detail
 
 			if (catalogDisk)
 			{
-
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog swap file already exists: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
-				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog swap file already exists: ")), RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog swap file already exists: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog swap file already exists: ")), RGB(0, 0, 0));
 
 				delete catalogDisk;
 			}
 			else
 			{
-
-				CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Catalog swap file created: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
-				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("NewOSKrnl: Catalog swap file created: ")), RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog swap file created: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog swap file created: ")), RGB(0, 0, 0));
 
 				catalogDisk =
 					(NFS_CATALOG_STRUCT*)this->Leak()->CreateSwapFile(kSysPage);
@@ -180,16 +176,42 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	/// Now run kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
 
-	cKernelWnd->w_sub_type = CG::cWndFlagCloseControlSelect;
+	cKernelWnd->w_sub_type		= CG::cWndFlagCloseControlSelect;
 	cKernelWnd->w_needs_repaint = Yes;
 
 	CG::CGDrawWindowList(&cKernelWnd, 1);
 
-	CG::CGDrawStringToWnd(cKernelWnd, "NewOSKrnl: Running System Component: ", 10, 10, RGB(0, 0, 0));
-	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("NewOSKrnl: Running System Component: ")), RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Running System Component: ", 10, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Running System Component: ")), RGB(0, 0, 0));
 
 	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 	Kernel::cProcessScheduler = nullptr;
+	Kernel::ProcessHelper::StartScheduling();
+
+	Kernel::PEFLoader sys_user_drv(kSysDrv);
+
+	if (sys_user_drv.IsLoaded())
+	{
+		auto err_start = sys_user_drv.FindStart();
+
+		if (!err_start.Error())
+		{
+			auto start = err_start.Leak().Leak();
+			CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: System component successfully loaded...", 20, 10, RGB(0, 0, 0));
+		}
+		else
+		{
+			CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Missing entrypoint symbol: ", 20, 10, RGB(0, 0, 0));
+			CG::CGDrawStringToWnd(cKernelWnd, kPefStart, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing entrypoint symbol: ")), RGB(0, 0, 0));
+		}
+	}
+	else
+	{
+		CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Missing catalog: ", 20, 10, RGB(0, 0, 0));
+		CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing catalog: ")), RGB(0, 0, 0));
+	}
+
+	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting the scheduler...", 30, 10, RGB(0, 0, 0));
 
 	while (Yes)
 	{

@@ -46,11 +46,16 @@ namespace Kernel
 		bool IsLoaded() noexcept;
 
 	private:
+#ifdef __FSKIT_USE_NEWFS__
+		OwnPtr<FileStream<Char, NewFilesystemManager>> fFile;
+#else
 		OwnPtr<FileStream<Char>> fFile;
-		Ref<StringView>			 fPath;
-		VoidPtr					 fCachedBlob;
-		bool					 fFatBinary;
-		bool					 fBad;
+#endif // __FSKIT_USE_NEWFS__
+
+		Ref<StringView> fPath;
+		VoidPtr			fCachedBlob;
+		bool			fFatBinary;
+		bool			fBad;
 	};
 
 	namespace Utils
