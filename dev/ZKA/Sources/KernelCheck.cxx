@@ -55,7 +55,7 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			CGDrawString("0x00000008 UserProcess execution fault, this is a catasrophic failure.", start_y, x, panicTxt);
+			CGDrawString("0x00000008 No more processes to run, this is because that ZKA ran out of processes.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {

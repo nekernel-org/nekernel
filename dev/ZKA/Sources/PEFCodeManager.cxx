@@ -202,12 +202,14 @@ namespace Kernel
 			UserProcess proc;
 
 			proc.SetEntrypoint(errOrStart.Leak().Leak());
-			proc.Kind = procKind;
+			proc.Kind	   = procKind;
 			proc.StackSize = *(UIntPtr*)exec.FindSymbol("__STACK_SIZE", kPefData);
 
 			if (!proc.StackSize)
 			{
-				proc.StackSize = mib_cast(8);
+				const auto cDefaultStackSizeMib = 8;
+
+				proc.StackSize = mib_cast(cDefaultStackSizeMib);
 			}
 
 			return UserProcessScheduler::The().Add(proc);

@@ -58,6 +58,8 @@ namespace Kernel
 		this->Status = ProcessStatus::kDead;
 
 		this->Exit(kErrorProcessFault);
+
+		ProcessHelper::StartScheduling();
 	}
 
 	/// @brief Gets the local last exit code.

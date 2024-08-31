@@ -20,6 +20,7 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
     Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Handle math fault.
@@ -27,6 +28,7 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
     Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Handle any generic fault.
@@ -34,6 +36,7 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
     Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Handle #UD fault.
@@ -41,6 +44,7 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
     Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Enter syscall from assembly.

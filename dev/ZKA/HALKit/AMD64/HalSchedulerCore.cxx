@@ -14,7 +14,6 @@ Void UserProcess::SetEntrypoint(VoidPtr imageStart) noexcept
 	if (imageStart == nullptr)
 		this->Crash();
 
-
 	VoidPtr cr3_pd;
 
 	asm volatile(
