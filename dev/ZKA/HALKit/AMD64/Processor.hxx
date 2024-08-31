@@ -128,18 +128,23 @@ namespace Kernel::HAL
 	};
 
 	using RawRegister = UInt64;
-
-	using InterruptId		= UInt16; /* For each element in the IVT */
-
-	typedef UIntPtr Reg;
+	using Reg = RawRegister;
+	using InterruptId = UInt16; /* For each element in the IVT */
+	
 
 	/// @brief Stack frame (as retrieved from assembly.)
 	struct PACKED StackFrame final
 	{
-		Reg IntNum, Exception;
-		Reg A0, A2, BP, SP, A3, A4, A5, A6;
-		Reg R8, R9, R10, R11, R12, R13, R14, R15;
-		Reg Gs, Fs;
+		UIntPtr R8{0};
+		UIntPtr R9{0};
+		UIntPtr R10{0};
+		UIntPtr R11{0};
+		UIntPtr R12{0};
+		UIntPtr R13{0};
+		UIntPtr R14{0};
+		UIntPtr R15{0};
+		UIntPtr BP{0};
+		UIntPtr SP{0};
 	};
 
 	typedef StackFrame* StackFramePtr;

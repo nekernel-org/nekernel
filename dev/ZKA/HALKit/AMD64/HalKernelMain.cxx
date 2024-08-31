@@ -52,7 +52,7 @@ namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
 	/// @param rsdPtr The 'RSD PTR' data structure.
-	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr);
+	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr) noexcept;
 } // namespace Kernel::HAL
 
 /* GDT. */

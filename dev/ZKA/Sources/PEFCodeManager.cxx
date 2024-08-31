@@ -199,8 +199,9 @@ namespace Kernel
 			if (errOrStart.Error() != kErrorSuccess)
 				return false;
 
-			UserProcess proc(errOrStart.Leak().Leak());
+			UserProcess proc;
 
+			proc.SetEntrypoint(errOrStart.Leak().Leak());
 			proc.Kind = procKind;
 			proc.StackSize = *(UIntPtr*)exec.FindSymbol("__STACK_SIZE", kPefData);
 

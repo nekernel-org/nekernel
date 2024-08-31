@@ -243,8 +243,7 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
-		process.StackFrame = reinterpret_cast<HAL::StackFrame*>(
-			mm_new_ke_heap(sizeof(HAL::StackFrame), Yes, Yes));
+		process.StackFrame = new HAL::StackFrame();
 
 		MUST_PASS(process.StackFrame);
 
@@ -253,15 +252,13 @@ namespace Kernel
 			// get preferred stack size by app.
 			const auto cMaxStackSize = process.StackSize;
 
-			process.StackFrame->BP = reinterpret_cast<HAL::Reg>(process.Image);
-			process.StackFrame->SP = reinterpret_cast<HAL::Reg>(mm_new_ke_heap(cMaxStackSize, Yes, Yes));
+			process.StackReserve = (UInt8*)mm_new_ke_heap(cMaxStackSize, Yes, Yes);
 
-			if (!process.StackFrame->SP)
+			// if stack pointer isn't valid.
+			if (!process.StackReserve)
 			{
-				process.StackReserve = new UInt8[cMaxStackSz];
-				process.StackFrame->SP = reinterpret_cast<HAL::Reg>(process.StackReserve);
-
-				kcout << "newoskrnl: use fallback reserve.\r";
+				process.StackReserve = (UInt8*)mm_new_ke_heap(kSchedMaxStackSz, Yes, Yes);
+				kcout << "newoskrnl: Use fallback reserve.\r";
 			}
 		}
 		else
@@ -342,9 +339,13 @@ namespace Kernel
 				kcout << process.Name << ": will be runned.\r";
 
 				// tell helper to find a core to schedule on.
-				if (!ProcessHelper::Switch(process.StackFrame,
+				if (!ProcessHelper::Switch(process.Image, process.StackReserve, process.StackFrame,
 										   process.ProcessId))
+				{
 					process.Crash();
+				}
+
+				process.Exit();
 
 				continue;
 			}
@@ -429,9 +430,9 @@ namespace Kernel
 	 * \param new_pid the process's PID.
 	 */
 
-	bool ProcessHelper::Switch(HAL::StackFrame* the_stack, const PID& new_pid)
+	bool ProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
 	{
-		if (!the_stack || new_pid < 0)
+		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
 			return false;
 
 		kcout << "newoskrnl: Finding hardware thread...\r";
@@ -455,7 +456,7 @@ namespace Kernel
 
 				kcout << "newoskrnl: Found hardware thread...\r";
 
-				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(the_stack);
+				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
 
 				HardwareThreadScheduler::The()[index].Leak()->Busy(false);
 

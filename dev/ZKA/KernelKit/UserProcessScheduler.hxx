@@ -14,7 +14,7 @@
 
 #define kSchedMinMicroTime (AffinityKind::kStandard)
 #define kSchedInvalidPID   (-1)
-#define cMaxStackSz (4096) /* Max stack sz */
+#define kSchedMaxStackSz (4096) /* Max stack sz */
 #define kSchedProcessLimitPerTeam (16U)
 
 ////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcess)
 
 	public:
-		void		  SetEntrypoint(UIntPtr& imageStart) noexcept;
+		void		  SetEntrypoint(VoidPtr imageStart) noexcept;
 		const UInt32& GetExitCode() noexcept;
 
 	public:
@@ -286,7 +286,7 @@ namespace Kernel
 	class ProcessHelper final
 	{
 	public:
-		STATIC bool	 Switch(HAL::StackFramePtr new_stack, const PID& new_pid);
+		STATIC bool	 Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid);
 		STATIC bool	 CanBeScheduled(UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();

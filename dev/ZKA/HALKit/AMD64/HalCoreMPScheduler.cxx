@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <HALKit/AMD64/Processor.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <ArchKit/ArchKit.hxx>
@@ -133,13 +134,13 @@ namespace Kernel::HAL
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
-	EXTERN_C Void hal_switch_context(HAL::StackFramePtr stack_frame);
+	EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame);
 
 	/// @brief Called when the AP is ready.
 	/// @internal
 	EXTERN_C Void hal_on_ap_startup(HAL::StackFramePtr stack_frame)
 	{
-		hal_switch_context(stack_frame);
+		mp_register_process(stack_frame);
 		ke_stop(RUNTIME_CHECK_FAILED);
 	}
 
@@ -147,20 +148,24 @@ namespace Kernel::HAL
 	{
 		UserProcessPtr	   f_Process;
 		HAL::StackFramePtr f_Frame;
-	} fBlocks[cMaxHWThreads] = {0};
+	} fBlocks[kSchedProcessLimitPerTeam] = {0};
 
 	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
 	{
-		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxHWThreads].f_Frame;
+		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
 	}
 
-	EXTERN_C Void hal_switch_context(HAL::StackFramePtr stack_frame)
+	EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame)
 	{
 		if (kSMPAware)
 		{
-			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxHWThreads].f_Process   = &UserProcessScheduler::The().CurrentProcess().Leak();
-			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxHWThreads].f_Frame = stack_frame;
+			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Process   = &UserProcessScheduler::The().CurrentProcess().Leak();
+			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
+		
+			return true;
 		}
+
+		return false;
 	}
 
 	/***********************************************************************************/

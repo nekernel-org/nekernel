@@ -50,7 +50,7 @@ link-arm64-epm:
 
 .PHONY: all
 all: newos-arm64-epm link-arm64-epm
-	@echo "Krnl => OK."
+	@echo "Kernel => OK."
 
 .PHONY: help
 help:

@@ -33,10 +33,16 @@ namespace Kernel::HAL
 	/// @note let's keep the same name as AMD64 HAL.
 	struct PACKED StackFrame final
 	{
-		Reg IntNum, Exception;
-		Reg A0, A2, BP, SP, A3, A4, A5, A6;
-		Reg R8, R9, R10, R11, R12, R13, R14, R15;
-		Reg Gs, Fs;
+		Reg R8{0};
+		Reg R9{0};
+		Reg R10{0};
+		Reg R11{0};
+		Reg R12{0};
+		Reg R13{0};
+		Reg R14{0};
+		Reg R15{0};
+		Reg BP{0};
+		Reg SP{0};
 	};
 
 	typedef StackFrame* StackFramePtr;

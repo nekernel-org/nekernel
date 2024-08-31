@@ -17,7 +17,7 @@
 
 namespace Kernel
 {
-    /***********************************************************************************/
+	/***********************************************************************************/
 	/// @brief MP object container property.
 	/***********************************************************************************/
 
@@ -83,20 +83,30 @@ namespace Kernel
 	/// @note Those symbols are needed in order to switch and validate the stack.
 
 	EXTERN Bool	  hal_check_stack(HAL::StackFramePtr stackPtr);
-	EXTERN_C Void hal_switch_context(HAL::StackFramePtr stackPtr);
+	EXTERN_C Bool mp_register_process(HAL::StackFramePtr stackPtr);
 
 	/// @brief Switch to hardware thread.
 	/// @param stack the new hardware thread.
 	/// @retval true stack was changed, code is running.
 	/// @retval false stack is invalid, previous code is running.
-	Bool HardwareThread::Switch(HAL::StackFramePtr stack)
+	Bool HardwareThread::Switch(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr frame)
 	{
-		fStack = stack;
+		fStack = frame;
 
-		hal_switch_context(fStack);
-		mp_do_context_switch(fStack);
+		if (!fStack ||
+			!image ||
+			!stack_ptr)
+			return false;
 
-		return true;
+		auto ret = mp_register_process(fStack);
+
+		if (!ret)
+		{
+			/// TODO: start timer to schedule another process here.
+			return mp_do_context_switch(image, stack_ptr, fStack) != 0;
+		}
+
+		return ret;
 	}
 
 	///! @brief Tells if processor is waked up.
@@ -137,54 +147,8 @@ namespace Kernel
 		return fThreadList[fCurrentThread].fStack;
 	}
 
-	/// @brief Finds and switch to a free core.
-	bool HardwareThreadScheduler::Switch(HAL::StackFramePtr stack)
-	{
-		if (stack == nullptr)
-			return false;
-
-		for (SizeT idx = 0; idx < cMaxHWThreads; ++idx)
-		{
-			// stack != nullptr -> if core is used, then continue.
-			if (!fThreadList[idx] ||
-				!fThreadList[idx].IsWakeup() ||
-				fThreadList[idx].IsBusy())
-				continue;
-
-			// to avoid any null deref.
-			if (!fThreadList[idx].fStack)
-				continue;
-			if (fThreadList[idx].fStack->SP == 0)
-				continue;
-			if (fThreadList[idx].fStack->BP == 0)
-				continue;
-
-			fThreadList[idx].Busy(true);
-
-			fThreadList[idx].fID = idx;
-
-			/// I figured out this:
-			/// Allocate stack
-			/// Set APIC base to stack
-			/// Do stuff and relocate stack based on this code.
-			/// - Amlel
-			rt_copy_memory(stack, fThreadList[idx].fStack,
-						   sizeof(HAL::StackFrame));
-
-			fThreadList[idx].Switch(fThreadList[idx].fStack);
-
-			fThreadList[idx].fSourcePID = ProcessHelper::TheCurrentPID();
-
-			fThreadList[idx].Busy(false);
-
-			return true;
-		}
-
-		return false;
-	}
-
 	/**
-	 * Index Hardware thread
+	 * Get Hardware thread at index.
 	 * @param idx the index
 	 * @return the reference to the hardware thread.
 	 */

@@ -59,17 +59,17 @@ namespace Kernel
 		void Busy(const bool busy = false) noexcept;
 
 	public:
-		bool Switch(HAL::StackFrame* stack);
+		bool Switch(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr frame);
 		bool IsWakeup() noexcept;
 
 	public:
-		HAL::StackFrame*  StackFrame() noexcept;
+		HAL::StackFramePtr  StackFrame() noexcept;
 		const ThreadKind& Kind() noexcept;
 		bool			  IsBusy() noexcept;
 		const ThreadID&	  ID() noexcept;
 
 	private:
-		HAL::StackFrame* fStack{nullptr};
+		HAL::StackFramePtr fStack{nullptr};
 		ThreadKind		 fKind{ThreadKind::kHartStandard};
 		ThreadID		 fID{0};
 		ProcessID		 fSourcePID{-1};
@@ -95,7 +95,6 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(HardwareThreadScheduler);
 
 	public:
-		bool			   Switch(HAL::StackFramePtr the);
 		HAL::StackFramePtr Leak() noexcept;
 
 	public:

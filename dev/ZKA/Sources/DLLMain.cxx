@@ -213,13 +213,12 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 		CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing catalog: ")), RGB(0, 0, 0));
 	}
 
-	auto hey = []() -> void {
+	STATIC auto main_kind = []() -> void {
 		auto number_own = 8;
-		Kernel::kcout << "I have my own stack: " << Kernel::number(number_own);
 		while (Yes);
 	};
 
-	Kernel::execute_from_image(hey, "ZKA Logger");
+	Kernel::execute_from_image(main_kind, "ZKA Logger");
 
 	while (Yes)
 	{

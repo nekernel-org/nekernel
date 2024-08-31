@@ -10,6 +10,8 @@
 #include <KernelKit/DLLInterface.hxx>
 #include <KernelKit/DebugOutput.hxx>
 
+#include <KernelKit/UserProcessScheduler.hxx>
+
 using namespace Kernel;
 
 /***********************************************************************************/
@@ -19,5 +21,6 @@ using namespace Kernel;
 
 EXTERN_C void __zka_pure_call(void)
 {
-	kcout << "newoskrnl: unimplemented symbol!\r";
+	kcout << "newoskrnl: Unimplemented entrypoint symbol!\r";
+	UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }
