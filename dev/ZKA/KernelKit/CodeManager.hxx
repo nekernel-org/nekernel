@@ -27,5 +27,5 @@ namespace Kernel
 	/// @note This sets up a new stack, anything on the main function that calls the Kernel will not be accessible.
 	/// @param main the start of the process.
 	/// @return if the process was started or not.
-	bool execute_from_image(MainKind main, const Char* process_name) noexcept;
+	bool sched_execute_thread(MainKind main, const Char* process_name) noexcept;
 } // namespace Kernel

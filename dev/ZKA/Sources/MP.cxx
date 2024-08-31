@@ -102,7 +102,6 @@ namespace Kernel
 
 		if (!ret)
 		{
-			/// TODO: start timer to schedule another process here.
 			return mp_do_context_switch(image, stack_ptr, fStack) != 0;
 		}
 

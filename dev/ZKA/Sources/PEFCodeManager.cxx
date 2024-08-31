@@ -13,6 +13,9 @@
 #include <NewKit/OwnPtr.hxx>
 #include <NewKit/String.hxx>
 
+/// @brief PEF stack size symbol.
+#define cPefStackSizeSymbol "SizeOfReserveStack"
+
 namespace Kernel
 {
 	namespace Detail
@@ -203,7 +206,7 @@ namespace Kernel
 
 			proc.SetEntrypoint(errOrStart.Leak().Leak());
 			proc.Kind	   = procKind;
-			proc.StackSize = *(UIntPtr*)exec.FindSymbol("__STACK_SIZE", kPefData);
+			proc.StackSize = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
 
 			if (!proc.StackSize)
 			{
