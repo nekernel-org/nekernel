@@ -3,7 +3,7 @@
 	Copyright ZKA Technologies
 
 	File: Main.cxx
-	Purpose: Main entrypoint of kernel.
+	Purpose: Main entrypoint of Kernel.
 
 ------------------------------------------- */
 
@@ -16,7 +16,7 @@
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Json.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <NewKit/String.hxx>
@@ -28,7 +28,7 @@
 #include <KernelKit/Timer.hxx>
 
 /***********************************************************************************/
-/* Returns kernel's version. */
+/* Returns Kernel's version. */
 /***********************************************************************************/
 
 EXTERN Kernel::Property cKernelVersion;
@@ -152,7 +152,7 @@ namespace Kernel::Detail
 
 namespace Kernel
 {
-	EXTERN ProcessScheduler* cProcessScheduler;
+	EXTERN UserProcessScheduler* cProcessScheduler;
 } // namespace Kernel
 
 /// @brief Application entrypoint.
@@ -173,7 +173,7 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawWindowList(&cKernelWnd, 1);
 
-	/// Now run kernel loop, until no process are running.
+	/// Now run Kernel loop, until no process are running.
 	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
 
 	cKernelWnd->w_sub_type		= CG::cWndFlagCloseControlSelect;
@@ -213,9 +213,13 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 		CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing catalog: ")), RGB(0, 0, 0));
 	}
 
-	Kernel::execute_from_image([]() -> void {
-	},
-							   "ZKA Logger");
+	auto hey = []() -> void {
+		auto number_own = 8;
+		Kernel::kcout << "I have my own stack: " << Kernel::number(number_own);
+		while (Yes);
+	};
+
+	Kernel::execute_from_image(hey, "ZKA Logger");
 
 	while (Yes)
 	{

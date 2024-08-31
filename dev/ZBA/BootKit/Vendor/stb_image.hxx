@@ -257,7 +257,7 @@ RECENT REVISION HISTORY:
 //
 // SIMD support
 //
-// The JPEG decoder will try to automatically use SIMD kernels on x86 when
+// The JPEG decoder will try to automatically use SIMD Kernels on x86 when
 // supported by the compiler. For ARM Neon support, you must explicitly
 // request it.
 //
@@ -2143,7 +2143,7 @@ static stbi_uc* stbi__hdr_to_ldr(float* data, int x, int y, int comp)
 //      - quality integer IDCT derived from IJG's 'slow'
 //    performance
 //      - fast huffman; reasonable integer IDCT
-//      - some SIMD kernels for common paths on targets with SSE2/NEON
+//      - some SIMD Kernels for common paths on targets with SSE2/NEON
 //      - uses a lot of intermediate memory, could cache poorly
 
 #ifndef STBI_NO_JPEG
@@ -2210,10 +2210,10 @@ typedef struct
 	int scan_n, order[4];
 	int restart_interval, todo;
 
-	// kernels
-	void (*idct_block_kernel)(stbi_uc* out, int out_stride, short data[64]);
-	void (*YCbCr_to_RGB_kernel)(stbi_uc* out, const stbi_uc* y, const stbi_uc* pcb, const stbi_uc* pcr, int count, int step);
-	stbi_uc* (*resample_row_hv_2_kernel)(stbi_uc* out, stbi_uc* in_near, stbi_uc* in_far, int w, int hs);
+	// Kernels
+	void (*idct_block_Kernel)(stbi_uc* out, int out_stride, short data[64]);
+	void (*YCbCr_to_RGB_Kernel)(stbi_uc* out, const stbi_uc* y, const stbi_uc* pcb, const stbi_uc* pcr, int count, int step);
+	stbi_uc* (*resample_row_hv_2_Kernel)(stbi_uc* out, stbi_uc* in_near, stbi_uc* in_far, int w, int hs);
 } stbi__jpeg;
 
 static int stbi__build_huffman(stbi__huffman* h, int* count)
@@ -3330,7 +3330,7 @@ static int stbi__parse_entropy_coded_data(stbi__jpeg* z)
 					int ha = z->img_comp[n].ha;
 					if (!stbi__jpeg_decode_block(z, data, z->huff_dc + z->img_comp[n].hd, z->huff_ac + ha, z->fast_ac[ha], n, z->dequant[z->img_comp[n].tq]))
 						return 0;
-					z->idct_block_kernel(z->img_comp[n].data + z->img_comp[n].w2 * j * 8 + i * 8, z->img_comp[n].w2, data);
+					z->idct_block_Kernel(z->img_comp[n].data + z->img_comp[n].w2 * j * 8 + i * 8, z->img_comp[n].w2, data);
 					// every data block is an MCU, so countdown the restart interval
 					if (--z->todo <= 0)
 					{
@@ -3369,7 +3369,7 @@ static int stbi__parse_entropy_coded_data(stbi__jpeg* z)
 								int ha = z->img_comp[n].ha;
 								if (!stbi__jpeg_decode_block(z, data, z->huff_dc + z->img_comp[n].hd, z->huff_ac + ha, z->fast_ac[ha], n, z->dequant[z->img_comp[n].tq]))
 									return 0;
-								z->idct_block_kernel(z->img_comp[n].data + z->img_comp[n].w2 * y2 + x2, z->img_comp[n].w2, data);
+								z->idct_block_Kernel(z->img_comp[n].data + z->img_comp[n].w2 * y2 + x2, z->img_comp[n].w2, data);
 							}
 						}
 					}
@@ -3494,7 +3494,7 @@ static void stbi__jpeg_finish(stbi__jpeg* z)
 				{
 					short* data = z->img_comp[n].coeff + 64 * (i + j * z->img_comp[n].coeff_w);
 					stbi__jpeg_dequantize(data, z->dequant[z->img_comp[n].tq]);
-					z->idct_block_kernel(z->img_comp[n].data + z->img_comp[n].w2 * j * 8 + i * 8, z->img_comp[n].w2, data);
+					z->idct_block_Kernel(z->img_comp[n].data + z->img_comp[n].w2 * j * 8 + i * 8, z->img_comp[n].w2, data);
 				}
 			}
 		}
@@ -4362,26 +4362,26 @@ static void stbi__YCbCr_to_RGB_simd(stbi_uc* out, stbi_uc const* y, stbi_uc cons
 }
 #endif
 
-// set up the kernels
+// set up the Kernels
 static void stbi__setup_jpeg(stbi__jpeg* j)
 {
-	j->idct_block_kernel		= stbi__idct_block;
-	j->YCbCr_to_RGB_kernel		= stbi__YCbCr_to_RGB_row;
-	j->resample_row_hv_2_kernel = stbi__resample_row_hv_2;
+	j->idct_block_Kernel		= stbi__idct_block;
+	j->YCbCr_to_RGB_Kernel		= stbi__YCbCr_to_RGB_row;
+	j->resample_row_hv_2_Kernel = stbi__resample_row_hv_2;
 
 #ifdef STBI_SSE2
 	if (stbi__sse2_available())
 	{
-		j->idct_block_kernel		= stbi__idct_simd;
-		j->YCbCr_to_RGB_kernel		= stbi__YCbCr_to_RGB_simd;
-		j->resample_row_hv_2_kernel = stbi__resample_row_hv_2_simd;
+		j->idct_block_Kernel		= stbi__idct_simd;
+		j->YCbCr_to_RGB_Kernel		= stbi__YCbCr_to_RGB_simd;
+		j->resample_row_hv_2_Kernel = stbi__resample_row_hv_2_simd;
 	}
 #endif
 
 #ifdef STBI_NEON
-	j->idct_block_kernel		= stbi__idct_simd;
-	j->YCbCr_to_RGB_kernel		= stbi__YCbCr_to_RGB_simd;
-	j->resample_row_hv_2_kernel = stbi__resample_row_hv_2_simd;
+	j->idct_block_Kernel		= stbi__idct_simd;
+	j->YCbCr_to_RGB_Kernel		= stbi__YCbCr_to_RGB_simd;
+	j->resample_row_hv_2_Kernel = stbi__resample_row_hv_2_simd;
 #endif
 }
 
@@ -4479,7 +4479,7 @@ static stbi_uc* load_jpeg_image(stbi__jpeg* z, int* out_x, int* out_y, int* comp
 			else if (r->hs == 2 && r->vs == 1)
 				r->resample = stbi__resample_row_h_2;
 			else if (r->hs == 2 && r->vs == 2)
-				r->resample = z->resample_row_hv_2_kernel;
+				r->resample = z->resample_row_hv_2_Kernel;
 			else
 				r->resample = stbi__resample_row_generic;
 		}
@@ -4530,7 +4530,7 @@ static stbi_uc* load_jpeg_image(stbi__jpeg* z, int* out_x, int* out_y, int* comp
 					}
 					else
 					{
-						z->YCbCr_to_RGB_kernel(out, y, coutput[1], coutput[2], z->s->img_x, n);
+						z->YCbCr_to_RGB_Kernel(out, y, coutput[1], coutput[2], z->s->img_x, n);
 					}
 				}
 				else if (z->s->img_n == 4)
@@ -4549,7 +4549,7 @@ static stbi_uc* load_jpeg_image(stbi__jpeg* z, int* out_x, int* out_y, int* comp
 					}
 					else if (z->app14_color_transform == 2)
 					{ // YCCK
-						z->YCbCr_to_RGB_kernel(out, y, coutput[1], coutput[2], z->s->img_x, n);
+						z->YCbCr_to_RGB_Kernel(out, y, coutput[1], coutput[2], z->s->img_x, n);
 						for (i = 0; i < z->s->img_x; ++i)
 						{
 							stbi_uc m = coutput[3][i];
@@ -4561,7 +4561,7 @@ static stbi_uc* load_jpeg_image(stbi__jpeg* z, int* out_x, int* out_y, int* comp
 					}
 					else
 					{ // YCbCr + alpha?  Ignore the fourth channel for now
-						z->YCbCr_to_RGB_kernel(out, y, coutput[1], coutput[2], z->s->img_x, n);
+						z->YCbCr_to_RGB_Kernel(out, y, coutput[1], coutput[2], z->s->img_x, n);
 					}
 				}
 				else

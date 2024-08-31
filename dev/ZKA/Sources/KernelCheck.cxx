@@ -55,7 +55,7 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			CGDrawString("0x00000008 Process execution fault, this is a catasrophic failure.", start_y, x, panicTxt);
+			CGDrawString("0x00000008 UserProcess execution fault, this is a catasrophic failure.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
@@ -89,7 +89,7 @@ namespace Kernel
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
-			CGDrawString("0x00000003 Bad kernel IPC error.", start_y, x, panicTxt);
+			CGDrawString("0x00000003 Bad Kernel IPC error.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
@@ -98,7 +98,7 @@ namespace Kernel
 			RecoveryFactory::Recover();
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			CGDrawString("0x0000000B Catasrophic kernel failure.", start_y, x, panicTxt);
+			CGDrawString("0x0000000B Catasrophic Kernel failure.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
@@ -108,7 +108,7 @@ namespace Kernel
 		}
 		default: {
 			RecoveryFactory::Recover();
-			CGDrawString("0xFFFFFFFC Unknown kernel error.", start_y, x, panicTxt);
+			CGDrawString("0xFFFFFFFC Unknown Kernel error.", start_y, x, panicTxt);
 			break;
 		}
 		}
@@ -125,7 +125,7 @@ namespace Kernel
 		HardwareTimer timer(cMaxSeconds);
 		timer.Wait();
 
-		kcout << "newoskrnl: Shutting down...\r";
+		kcout << "newoskrnl: Shutting down computer...\r";
 
 		PowerFactoryInterface power(nullptr);
 		power.Shutdown();

@@ -75,9 +75,9 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 		return;
 	}
 
-	EfiFileProtocol* kernelFile = nullptr;
+	EfiFileProtocol* KernelFile = nullptr;
 
-	if (mRootFs->Open(mRootFs, &kernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
+	if (mRootFs->Open(mRootFs, &KernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
 		kEfiOk)
 	{
 		mWriter.Write(L"newosldr: Fetch-Protocol: No-Such-Path: ")
@@ -91,7 +91,7 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 	}
 
 	mSizeFile  = 0;
-	mFile	   = kernelFile;
+	mFile	   = KernelFile;
 	mErrorCode = kOperationOkay;
 }
 

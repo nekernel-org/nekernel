@@ -129,8 +129,7 @@ namespace Kernel::HAL
 
 	using RawRegister = UInt64;
 
-	using InterruptId		= UShort; /* For each element in the IVT */
-	using InterruptTrapKind = UIntPtr(UIntPtr sp);
+	using InterruptId		= UInt16; /* For each element in the IVT */
 
 	typedef UIntPtr Reg;
 
@@ -141,7 +140,6 @@ namespace Kernel::HAL
 		Reg A0, A2, BP, SP, A3, A4, A5, A6;
 		Reg R8, R9, R10, R11, R12, R13, R14, R15;
 		Reg Gs, Fs;
-		Reg ControlWord;
 	};
 
 	typedef StackFrame* StackFramePtr;
@@ -211,7 +209,7 @@ namespace Kernel::HAL
 		static Void Load(Ref<Register64>& idt);
 	};
 
-	Void hal_system_get_cores(VoidPtr rsdPtr);
+	Void mp_get_cores(VoidPtr rsdPtr) noexcept;
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 

@@ -37,6 +37,11 @@ namespace Kernel
 			return true;
 		}
 
+		const SizeT Capacity()
+		{
+			return N;
+		}
+
 		const SizeT Count()
 		{
 			SizeT count = 0;

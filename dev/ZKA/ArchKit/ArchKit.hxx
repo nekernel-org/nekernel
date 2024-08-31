@@ -106,5 +106,5 @@ inline Kernel::Array<HAL_SYSCALL_RECORD,
 					 kKernelMaxSystemCalls>
 	kKerncalls;
 
-EXTERN_C Kernel::HAL::StackFramePtr rt_get_current_context();
+EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context();
 EXTERN_C Kernel::Void mp_do_context_switch(Kernel::HAL::StackFramePtr stack_frame);

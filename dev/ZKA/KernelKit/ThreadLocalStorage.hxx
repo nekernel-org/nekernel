@@ -9,11 +9,11 @@
 
 #include <NewKit/Defines.hxx>
 
-//! @brief TLS implementation in C++
+///! @brief Thread Local Storage for newoskrnl.
 
-#define kCookieMag0 'H'
-#define kCookieMag1 'C'
-#define kCookieMag2 'R'
+#define kCookieMag0 'Z'
+#define kCookieMag1 'K'
+#define kCookieMag2 'A'
 
 #define kTLSCookieLen (3U)
 
@@ -23,8 +23,8 @@ struct THREAD_INFORMATION_BLOCK;
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED THREAD_INFORMATION_BLOCK final
 {
-	Kernel::Char	f_Cookie[kTLSCookieLen]{0}; // Thread magic number.
-	Kernel::VoidPtr f_ThreadRecord{nullptr};
+	Kernel::Char	f_Cookie[kTLSCookieLen]{0}; //! Thread magic number.
+	Kernel::VoidPtr f_ThreadRecord{nullptr}; //! Thread information record.
 };
 
 ///! @brief Cookie Sanity check.
@@ -42,7 +42,7 @@ template <typename T, typename... Args>
 T* tls_new_class(Args&&... args);
 
 /// @brief TLS install TIB and PIB. (syscall)
-EXTERN_C void rt_install_tib(THREAD_INFORMATION_BLOCK* TIB, THREAD_INFORMATION_BLOCK* PIB);
+EXTERN_C Kernel::Void rt_install_tib(THREAD_INFORMATION_BLOCK* TIB, THREAD_INFORMATION_BLOCK* PIB);
 
 /// @brief TLS check (syscall)
 EXTERN_C Kernel::Bool tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept;

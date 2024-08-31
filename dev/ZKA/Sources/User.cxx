@@ -5,7 +5,7 @@
  * 	Copyright ZKA Technologies., all rights reserved.
  *
  *	File: User.cxx
- * 	Purpose: User concept and management.
+ * 	Purpose: User concept class.
  *
  * 	========================================================
  */
@@ -14,7 +14,7 @@
 #include <KernelKit/User.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <KernelKit/FileManager.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 
 #include <KernelKit/Heap.hxx>
 
@@ -120,6 +120,8 @@ namespace Kernel
 		return this->fUserName;
 	}
 
+	/// @brief Returns the user's ring.
+	/// @return The king of ring the user is attached to.
 	const RingKind& User::Ring() noexcept
 	{
 		return this->fRing;

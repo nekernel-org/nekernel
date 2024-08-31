@@ -4,11 +4,11 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 
 using namespace Kernel;
 
-Void PROCESS_HEADER_BLOCK::SetEntrypoint(UIntPtr& imageStart) noexcept
+Void UserProcess::SetEntrypoint(UIntPtr& imageStart) noexcept
 {
 	if (imageStart == 0)
 		this->Crash();
@@ -19,11 +19,12 @@ Void PROCESS_HEADER_BLOCK::SetEntrypoint(UIntPtr& imageStart) noexcept
 
 namespace Kernel
 {
-	bool hal_check_stack(HAL::StackFramePtr stackPtr)
+	bool hal_check_stack(HAL::StackFramePtr stack_ptr)
 	{
-		if (!stackPtr)
+		if (!stack_ptr)
 			return false;
-		if (stackPtr->BP == 0 || stackPtr->SP == 0)
+
+		if (stack_ptr->BP == 0 || stack_ptr->SP == 0)
 			return false;
 
 		return true;

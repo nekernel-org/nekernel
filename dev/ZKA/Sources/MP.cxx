@@ -5,19 +5,23 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/MP.hxx>
 #include <CFKit/Property.hxx>
 
 ///! BUGS: 0
 
 ///! @file MP.cxx
-///! @brief This file handles multi processing in the kernel.
+///! @brief This file handles multi processing in the Kernel.
 ///! @brief Multi processing is needed for multi-tasking operations.
 
 namespace Kernel
 {
-	STATIC Property cSMPCoreName;
+    /***********************************************************************************/
+	/// @brief MP object container property.
+	/***********************************************************************************/
+
+	Property cSMPCoreName;
 
 	///! A HardwareThread class takes care of it's owned hardware thread.
 	///! It has a stack for it's core.
@@ -87,29 +91,10 @@ namespace Kernel
 	/// @retval false stack is invalid, previous code is running.
 	Bool HardwareThread::Switch(HAL::StackFramePtr stack)
 	{
-		/// provide 'nullptr' to free the stack frame.
-		if (stack == nullptr)
-		{
-			delete fStack;
-			fStack = nullptr;
-
-			return true;
-		}
-
-		if (!hal_check_stack(stack))
-		{
-			return false;
-		}
-
-		if (fStack)
-		{
-			delete fStack;
-			fStack = nullptr;
-		}
-
 		fStack = stack;
 
 		hal_switch_context(fStack);
+		mp_do_context_switch(fStack);
 
 		return true;
 	}
@@ -120,28 +105,30 @@ namespace Kernel
 		return fWakeup;
 	}
 
-	//! @brief Constructor and destructor
+	///! @brief Internal Hardware Thread list.
+	STATIC HardwareThread cThreadList[cMaxHWThreads];
+
+	///! @brief Constructor and destructors.
 
 	///! @brief Default constructor.
 	HardwareThreadScheduler::HardwareThreadScheduler()
 	{
-		StringView strCoreName(512);
-		strCoreName += "\\Class\\Smp\\MPClass";
+		kcout << "newoskrnl: initializing HardwareThreadScheduler." << endl;
 
-		cSMPCoreName.GetKey()	= strCoreName;
-		cSMPCoreName.GetValue() = (UIntPtr)this;
+		cSMPCoreName.GetKey() += "Property\\MPClass";
+		cSMPCoreName.GetValue() = (PropertyId)this;
 
-		kcout << "newoskrnl: initializing " << strCoreName.CData() << endl;
+		kcout << "newoskrnl: initialized HardwareThreadScheduler." << endl;
 	}
 
 	///! @brief Default destructor.
 	HardwareThreadScheduler::~HardwareThreadScheduler() = default;
 
 	/// @brief Shared singleton function
-	Ref<HardwareThreadScheduler> HardwareThreadScheduler::The()
+	HardwareThreadScheduler& HardwareThreadScheduler::The()
 	{
-		static HardwareThreadScheduler manager;
-		return {manager};
+		STATIC HardwareThreadScheduler sched;
+		return sched;
 	}
 
 	/// @brief Get Stack Frame of Core

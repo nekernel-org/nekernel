@@ -9,15 +9,15 @@
 #include <DDK/KernelStd.h>
 
 /**
-    \brief Allocates a new heap on the kernel's side.
+    \brief Allocates a new heap on the Kernel's side.
     \param sz the size of the heap block.
     \return the newly allocated pointer.
 */
-DK_EXTERN void* kernelAlloc(size_t sz)
+DK_EXTERN void* KernelAlloc(size_t sz)
 {
     if (!sz) ++sz;
 
-	void* ptr = kernelCall("NewHeap", 1, &sz, sizeof(size_t));
+	void* ptr = KernelCall("NewHeap", 1, &sz, sizeof(size_t));
 
     return ptr;
 }
@@ -26,9 +26,9 @@ DK_EXTERN void* kernelAlloc(size_t sz)
     \brief Frees a pointer from the heap.
     \param ptr the pointer to free.
 */
-DK_EXTERN void kernelFree(void* ptr)
+DK_EXTERN void KernelFree(void* ptr)
 {
     if (!ptr) return;
 
-	kernelCall("DeleteHeap", 1, ptr, 0);
+	KernelCall("DeleteHeap", 1, ptr, 0);
 }

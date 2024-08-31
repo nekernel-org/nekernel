@@ -11,7 +11,7 @@
 #include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/Json.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
@@ -50,7 +50,7 @@ namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
 	/// @param rsdPtr The 'RSD PTR' data structure.
-	EXTERN void hal_system_get_cores(Kernel::voidPtr rsdPtr);
+	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr);
 } // namespace Kernel::HAL
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -113,7 +113,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
 		if (tls_check_syscall_impl(rdx) == false)
 		{
-			Kernel::ProcessScheduler::The().Leak().CurrentProcess().Leak().Crash();
+			Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().Crash();
 		}
 	};
 
@@ -125,7 +125,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		// assign the fThe field with the pointer.
-		rdxInf->fThe = Kernel::ProcessScheduler::The().Leak().CurrentProcess().Leak().New(rdxInf->fTheSz);
+		rdxInf->fThe = Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().New(rdxInf->fTheSz);
 	};
 
 	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -136,7 +136,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		// delete ptr with sz in mind.
-		Kernel::ProcessScheduler::The().Leak().CurrentProcess().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
+		Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
 	};
 
 	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -156,7 +156,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 			return;
 
 		Kernel::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
-		Kernel::ProcessScheduler::The().Leak().CurrentProcess().Leak().Exit(rdxEi->fCode);
+		Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().Exit(rdxEi->fCode);
 	};
 
 	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
@@ -188,7 +188,9 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
 
 	if (kHandoverHeader->f_MultiProcessingEnabled)
-		Kernel::HAL::hal_system_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+	else
+		Kernel::HAL::mp_get_cores(nullptr);
 
 	Kernel::kcout << "newoskrnl: Creating filesystem and such.\r";
 

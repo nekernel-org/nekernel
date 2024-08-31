@@ -7,7 +7,7 @@ CC			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -fshort-wchar -c -shared -D__ZKA_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
 			-std=c++20 -D__ZKA_SUPPORT_NX__ -I../Vendor -D__FSKIT_USE_NEWFS__ \
-			-D__NEWOSKRNL__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I./ -I../ -I../ZBA
+			-D__NEWOSKRNL__ -D__HAVE_ZKA_APIS__ -D__FREESTANDING__ -D__ZKA__ -I./ -I../ -I../ZBA
 
 ASM 		= nasm
 
@@ -38,7 +38,7 @@ ASMFLAGS	= -f win64
 LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x10000000
 LDOBJ		= Objects/*.obj
 
-# This file is the kernel, responsible of task management and memory.
+# This file is the Kernel, responsible of task management and memory.
 KERNEL		= newoskrnl.dll
 
 .PHONY: error
@@ -76,9 +76,9 @@ all: newos-amd64-epm link-amd64-epm
 .PHONY: help
 help:
 	@echo "=== HELP ==="
-	@echo "all: Build kernel and link it."
-	@echo "link-amd64-epm: Link kernel for EPM based disks."
-	@echo "newos-amd64-epm: Build kernel for EPM based disks."
+	@echo "all: Build Kernel and link it."
+	@echo "link-amd64-epm: Link Kernel for EPM based disks."
+	@echo "newos-amd64-epm: Build Kernel for EPM based disks."
 
 .PHONY: clean
 clean:

@@ -10,20 +10,20 @@
 
 void* operator new(size_t sz)
 {
-    return kernelAlloc(sz);
+    return KernelAlloc(sz);
 }
 
 void operator delete(void* ptr)
 {
-    kernelFree(ptr);
+    KernelFree(ptr);
 }
 
 void* operator new[](size_t sz)
 {
-    return kernelAlloc(sz);
+    return KernelAlloc(sz);
 }
 
 void operator delete[](void* ptr)
 {
-    kernelFree(ptr);
+    KernelFree(ptr);
 }

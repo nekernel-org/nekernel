@@ -18,7 +18,7 @@ section .text
 
 rt_install_tib:
 	mov rcx, gs ;; TIB -> Thread Information Block
-	mov rdx, fs ;; PIB -> Process Information Block
+	mov rdx, fs ;; PIB -> UserProcess Information Block
 	ret
 
 ;; //////////////////////////////////////////////////// ;;

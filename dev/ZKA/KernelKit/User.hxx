@@ -22,9 +22,6 @@
 #define kMaxUserNameLen	 (255)
 #define kMaxUserTokenLen (255)
 
-// hash password.
-// use this data to then fetch specific data of the user..
-
 namespace Kernel
 {
 	class User;
@@ -34,7 +31,7 @@ namespace Kernel
 		kRingStdUser   = 1,
 		kRingSuperUser = 2,
 		kRingGuestUser = 5,
-		kRingCount	   = 5,
+		kRingCount	   = 3,
 	};
 
 	class User final

@@ -10,7 +10,7 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/PEF.hxx>
 #include <KernelKit/PEFDLLInterface.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
 #include <NewKit/Defines.hxx>
 
@@ -37,7 +37,7 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C DLLInterfacePtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header)
+EXTERN_C DLLInterfacePtr rtl_init_shared_object(UserProcess* header)
 {
 	DLLInterfacePtr sharedObj = tls_new_class<PEFDLLInterface>();
 
@@ -80,7 +80,7 @@ EXTERN_C DLLInterfacePtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, DLLInterfacePtr lib, Bool* successful)
+EXTERN_C Void rtl_fini_shared_object(UserProcess* header, DLLInterfacePtr lib, Bool* successful)
 {
 	MUST_PASS(successful);
 

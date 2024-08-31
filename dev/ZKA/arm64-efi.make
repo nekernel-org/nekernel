@@ -1,6 +1,6 @@
 ##################################################
 # (C) ZKA Technologies, all rights reserved.
-# This is the microkernel makefile.
+# This is the microKernel makefile.
 ##################################################
 
 CC			= clang++
@@ -22,7 +22,7 @@ COPY		= cp
 LDFLAGS		= -subsystem:efi_application -entry:hal_init_platform /nodefaultlib
 LDOBJ		= Objects/*.obj
 
-# This file is the kernel, responsible of task management and memory.
+# This file is the Kernel, responsible of task management and memory.
 KERNEL		= newoskrnl.so
 
 .PHONY: error
@@ -55,9 +55,9 @@ all: newos-arm64-epm link-arm64-epm
 .PHONY: help
 help:
 	@echo "=== HELP ==="
-	@echo "all: Build kernel and link it."
-	@echo "link-arm64-epm: Link kernel for EPM based disks."
-	@echo "newos-arm64-epm: Build kernel for EPM based disks."
+	@echo "all: Build Kernel and link it."
+	@echo "link-arm64-epm: Link Kernel for EPM based disks."
+	@echo "newos-arm64-epm: Build Kernel for EPM based disks."
 
 .PHONY: clean
 clean:

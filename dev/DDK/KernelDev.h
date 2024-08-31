@@ -10,23 +10,23 @@
 
 #include <DDK/KernelStd.h>
 
-struct _kernelDevice;
+struct _KERNEL_DEVICE;
 
 /// @brief Kernel Device driver.
-typedef struct _kernelDevice
+typedef struct _KERNEL_DEVICE
 {
 	char name[255];					   // the device name. Could be /./DEVICE_NAME/
 	void* (*read)(void* arg, int len); // read from device.
 	void (*write)(void* arg, int len);
 	void (*wait)(void);								 // write to device.
-	struct _kernelDevice* (*open)(const char* path); // open device.
-	void (*close)(struct _kernelDevice* dev);		 // close device.
-} kernelDevice, *kernelDeviceRef;
+	struct _KERNEL_DEVICE* (*open)(const char* path); // open device.
+	void (*close)(struct _KERNEL_DEVICE* dev);		 // close device.
+} KERNEL_DEVICE, *KERNEL_DEVICE_PTR;
 
 /// @brief Open a new device from path.
 /// @param devicePath the device's path.
-DK_EXTERN kernelDeviceRef kernelOpenDevice(const char* devicePath);
+DK_EXTERN KERNEL_DEVICE_PTR KernelOpenDevice(const char* devicePath);
 
 /// @brief Close any device.
 /// @param device valid device.
-DK_EXTERN void kernelCloseDevice(kernelDeviceRef device);
+DK_EXTERN void KernelCloseDevice(KERNEL_DEVICE_PTR device);

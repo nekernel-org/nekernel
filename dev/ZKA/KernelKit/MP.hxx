@@ -26,9 +26,9 @@ namespace Kernel
 	enum ThreadKind
 	{
 		kHartSystemReserved, // System reserved thread, well user can't use it
-		kHartStandard,		 // user thread, cannot be used by kernel
+		kHartStandard,		 // user thread, cannot be used by Kernel
 		kHartFallback,		 // fallback thread, cannot be used by user if not clear or
-							 // used by kernel.
+							 // used by Kernel.
 		kHartBoot,			 // The core we booted from, the mama.
 		kInvalidHart,
 		kHartCount,
@@ -70,7 +70,7 @@ namespace Kernel
 
 	private:
 		HAL::StackFrame* fStack{nullptr};
-		ThreadKind		 fKind{ThreadKind::kInvalidHart};
+		ThreadKind		 fKind{ThreadKind::kHartStandard};
 		ThreadID		 fID{0};
 		ProcessID		 fSourcePID{-1};
 		bool			 fWakeup{false};
@@ -106,7 +106,7 @@ namespace Kernel
 	public:
 		/// @brief Shared instance of the MP Manager.
 		/// @return the reference to the mp manager class.
-		static Ref<HardwareThreadScheduler> The();
+		STATIC HardwareThreadScheduler& The();
 
 	public:
 		/// @brief Returns the amount of threads present in the system.

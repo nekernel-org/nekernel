@@ -9,11 +9,11 @@
 #include <NewKit/Defines.hxx>
 
 /// @file LPC.hxx
-/// @brief Local Process Codes.
+/// @brief Local UserProcess Codes.
 
-#define ErrLocalIsOk()	 (Kernel::ProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() == Kernel::kErrorSuccess)
-#define ErrLocalFailed() (Kernel::ProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)
-#define ErrLocal()		 Kernel::ProcessScheduler::The().CurrentProcess().Leak().GetLocalCode()
+#define ErrLocalIsOk()	 (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() == Kernel::kErrorSuccess)
+#define ErrLocalFailed() (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)
+#define ErrLocal()		 Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode()
 
 namespace Kernel
 {

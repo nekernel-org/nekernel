@@ -7,7 +7,7 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Defines.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <NewKit/OwnPtr.hxx>
@@ -192,17 +192,24 @@ namespace Kernel
 
 	namespace Utils
 	{
-		bool execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept
+		Bool execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept
 		{
 			auto errOrStart = exec.FindStart();
 
-			if (errOrStart.Error() != 0)
+			if (errOrStart.Error() != kErrorSuccess)
 				return false;
 
-			PROCESS_HEADER_BLOCK	  proc(errOrStart.Leak().Leak());
-			proc.Kind = procKind;
+			UserProcess proc(errOrStart.Leak().Leak());
 
-			return ProcessScheduler::The().Add(proc);
+			proc.Kind = procKind;
+			proc.StackSize = *(UIntPtr*)exec.FindSymbol("__STACK_SIZE", kPefData);
+
+			if (!proc.StackSize)
+			{
+				proc.StackSize = mib_cast(8);
+			}
+
+			return UserProcessScheduler::The().Add(proc);
 		}
 	} // namespace Utils
 

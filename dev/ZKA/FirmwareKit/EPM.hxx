@@ -114,7 +114,7 @@ enum
 	kEPMMpUx  = 0xcf, // Bridge or other embedded OS
 	kEPMLinux = 0x8f,
 	kEPMBSD	  = 0x9f,
-	kEPMNewOS = 0x1f, // This kernel.
+	kEPMNewOS = 0x1f, // This Kernel.
 };
 
 typedef struct _BOOT_BLOCK_STRUCT BOOT_BLOCK_STRUCT;

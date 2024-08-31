@@ -7,7 +7,7 @@
 .section .boot_hdr
 .align 4
 
-/* NewBoot boot header begin for a 64x000 kernel. */
+/* NewBoot boot header begin for a 64x000 Kernel. */
 
 boot_hdr_mag:
         .ascii "CB"

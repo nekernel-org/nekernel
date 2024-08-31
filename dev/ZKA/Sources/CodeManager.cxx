@@ -6,12 +6,12 @@
 
 #include <NewKit/Utils.hxx>
 #include <KernelKit/CodeManager.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 
 namespace Kernel
 {
-	/// @brief Executes a new process from a function. kernel code only.
-	/// @note This sets up a new stack, anything on the main function that calls the kernel will not be accessible.
+	/// @brief Executes a new process from a function. Kernel code only.
+	/// @note This sets up a new stack, anything on the main function that calls the Kernel will not be accessible.
 	/// @param main the start of the process.
 	/// @return if the process was started or not.
 	bool execute_from_image(MainKind main, const Char* processName) noexcept
@@ -19,10 +19,12 @@ namespace Kernel
 		if (!main)
 			return false;
 
-		PROCESS_HEADER_BLOCK proc((VoidPtr)main);
-		proc.Kind = PROCESS_HEADER_BLOCK::kExeKind;
+		UserProcess proc((VoidPtr)main);
+		proc.Kind = UserProcess::kExeKind;
+		proc.StackSize = mib_cast(1);
+
 		rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(processName));
 
-		return ProcessScheduler::The().Add(proc) == kErrorSuccess;
+		return UserProcessScheduler::The().Add(proc) == kErrorSuccess;
 	}
 } // namespace Kernel

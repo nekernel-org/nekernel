@@ -19,13 +19,13 @@ namespace Kernel
 
 	URL::~URL() = default;
 
-	/// @brief internal and reserved protocols by kernel.
+	/// @brief internal and reserved protocols by Kernel.
 	constexpr const Char* kURLProtocols[] = {
 		"file", // Filesystem protocol
 		"zup",	// ZKA update protocol
 		"oscc", // Open System Configuration Connectivity.
 		"odbc", // ODBC connectivity.
-		"https", // HTTPS layer driver (HTTPS.sys). 
+		"https", // HTTPS layer driver (HTTPS.sys).
 	};
 
 	constexpr const int kUrlOutSz	 = 1; //! such as: ://

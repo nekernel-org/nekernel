@@ -1,4 +1,4 @@
 ##################################################
 # (C) ZKA Technologies, all rights reserved.
-# This is the microkernel makefile.
+# This is the microKernel makefile.
 ##################################################

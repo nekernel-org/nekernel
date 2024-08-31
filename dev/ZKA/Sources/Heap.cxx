@@ -22,6 +22,7 @@ namespace Kernel
 	PageManager kHeapPageManager;
 	Bool kOperationInProgress = No;
 
+	/// @brief Contains data structures and algorithms for the heap.
 	namespace Detail
 	{
 		/// @brief Kernel heap information block.
@@ -57,6 +58,8 @@ namespace Kernel
 			kOperationInProgress = No;
 		}
 	} // namespace Detail
+
+	Detail::HEAP_INFORMATION_BLOCK_PTR kLatestAllocation = nullptr;
 
 	/// @brief Declare a new size for allocatedPtr.
 	/// @param allocatedPtr the pointer.
@@ -102,15 +105,17 @@ namespace Kernel
 
 		heap_info_ptr->fTargetPtrSize = szFix;
 		heap_info_ptr->fMagic		 = kKernelHeapMagic;
-		heap_info_ptr->fCRC32		 = 0; // dont fill it for now.
-		heap_info_ptr->fTargetPtr	 = wrapper.VirtualAddress();
-		heap_info_ptr->fPagePtr		 = 0;
+		heap_info_ptr->fCRC32		 = 0U; // dont fill it for now.
+		heap_info_ptr->fTargetPtr	 = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		heap_info_ptr->fPagePtr		 = 0UL;
 
 		++kHeapCount;
 
+		kLatestAllocation = heap_info_ptr;
+
 		Detail::mm_alloc_fini_timeout();
 
-		return reinterpret_cast<VoidPtr>(wrapper.VirtualAddress() +
+		return reinterpret_cast<VoidPtr>(heap_info_ptr +
 										 sizeof(Detail::HEAP_INFORMATION_BLOCK));
 	}
 
@@ -196,7 +201,7 @@ namespace Kernel
 		return -kErrorInternal;
 	}
 
-	/// @brief Check if pointer is a valid kernel pointer.
+	/// @brief Check if pointer is a valid Kernel pointer.
 	/// @param heap_ptr the pointer
 	/// @return if it exists.
 	Boolean mm_is_valid_heap(VoidPtr heap_ptr)

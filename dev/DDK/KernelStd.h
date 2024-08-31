@@ -44,41 +44,41 @@ struct DDK_STATUS_STRUCT DK_FINAL
 	void*   s_object;
 };
 
-/// @brief Call kernel (interrupt 0x33)
-/// @param kernelRpcName
+/// @brief Call Kernel (interrupt 0x33)
+/// @param KernelRpcName
 /// @param cnt number of elements in **dat**
 /// @param dat data ptr
 /// @param sz sz of whole data ptr.
 /// @return result of call
-DK_EXTERN void* kernelCall(const char* kernelRpcName, int32_t cnt, void* dat, size_t sz);
+DK_EXTERN void* KernelCall(const char* KernelRpcName, int32_t cnt, void* dat, size_t sz);
 
 /// @brief add system call.
 /// @param slot system call slot
 /// @param slotFn, syscall slot.
-DK_EXTERN void kernelAddSyscall(const int slot, void (*slotFn)(void* a0));
+DK_EXTERN void KernelAddSyscall(const int slot, void (*slotFn)(void* a0));
 
 /// @brief allocate heap ptr.
 /// @param sz size of ptr.
 /// @return the pointer allocated or **nil**.
-DK_EXTERN void* kernelAlloc(size_t sz);
+DK_EXTERN void* KernelAlloc(size_t sz);
 
 /// @brief free heap ptr.
 /// @param pointer to free
-DK_EXTERN void kernelFree(void*);
+DK_EXTERN void KernelFree(void*);
 
 
-/// @brief Get a kernel property.
+/// @brief Get a Kernel property.
 /// @param slot property id (always 0)
 /// @param name the property's name.
 /// @return property's object.
-DK_EXTERN void* kernelGetProperty(const int slot, const char* name);
+DK_EXTERN void* KernelGetProperty(const int slot, const char* name);
 
-/// @brief Set a kernel property.
+/// @brief Set a Kernel property.
 /// @param slot property id (always 0)
 /// @param name the property's name.
 /// @param ddk_pr pointer to a  property's DDK_PROPERTY_RECORD.
 /// @return property's object.
-DK_EXTERN void* kernelSetProperty(const int slot, const struct DDK_PROPERTY_RECORD* ddk_pr);
+DK_EXTERN void* KernelSetProperty(const int slot, const struct DDK_PROPERTY_RECORD* ddk_pr);
 
 /// @brief The highest API version of the DDK.
 DK_EXTERN int32_t c_api_version_highest;

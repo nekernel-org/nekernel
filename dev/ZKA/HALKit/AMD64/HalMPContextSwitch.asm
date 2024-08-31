@@ -9,7 +9,7 @@
 
 [bits 64]
 
-[global rt_get_current_context]
+[global mp_get_current_context]
 [global mp_do_context_switch]
 [global _hal_spin_core]
 [extern _hal_switch_context]
@@ -21,49 +21,13 @@ section .text
 ;; rcx: Stack Pointer
 ;; rdx: SMP core address.
 mp_do_context_switch:
-    ;; Take care of context switching within AP.
-
-    mov r9, rcx
-
-    mov rbp, [r9 + (8 * 5)]
-    mov rsp, [r9 + (8 * 6)]
-
-    mov gs,  [r9 + (8 * 19)]
-    mov fs,  [r9 + (8 * 20)]
-
-    mov rcx, [r9 + (8 * 3)]
-    mov rdx, [r9 + (8 * 4)]
-    mov rbx, [r9 + (8 * 7)]
-    mov rax, [r9 + (8 * 8)]
-    movq xmm0, [r9 + (8 * 9)]
-    movq xmm1, [r9 + (8 * 10)]
-
-    mov r8, [r9 + (8 * 11)]
-    mov r10, [r9 + (8 * 13)]
-    mov r11, [r9 + (8 * 14)]
-    mov r12, [r9 + (8 * 15)]
-    mov r13, [r9 + (8 * 16)]
-    mov r14, [r9 + (8 * 17)]
-    mov r15, [r9 + (8 * 18)]
-
-    fldcw word [r9 + (8 * 21)]
-
-    mov r9, [r9 + (8 * 12)]
-    
+    jmp $
     ret
 
-;; gets the current stack frame.
-rt_get_current_context:
-    push rax
-
+;; @brief Gets the current stack frame.
+mp_get_current_context:
     call _hal_leak_current_context
-
-    mov rax, r9
-    pop rax
-
-    mov r9, rax
-
-    retfq
+    ret
 
 _hal_spin_core:
     jmp $

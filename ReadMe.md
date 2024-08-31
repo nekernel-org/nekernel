@@ -4,11 +4,11 @@
 
 # ZKA Kernel Architecture (Mark 1)
 
-ZKA is an operating system kernel of New OS.
+ZKA is an operating system Kernel of New OS.
 
 ## Installation:
 
-- MinGW/GCC for the kernel and bootloader.
+- MinGW/GCC for the Kernel and bootloader.
 - Netwide Assembler/NDK to output COFF/PEF object code.
 
 ### Start by cloning the OS:

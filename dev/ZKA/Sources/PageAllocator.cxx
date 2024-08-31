@@ -8,7 +8,7 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <NewKit/PageAllocator.hxx>
 
-/// @brief Internal namespace, used internally by kernel.
+/// @brief Internal namespace, used internally by Kernel.
 namespace Kernel::Detail
 {
 	VoidPtr create_page_wrapper(Boolean rw, Boolean user, SizeT pageSz)

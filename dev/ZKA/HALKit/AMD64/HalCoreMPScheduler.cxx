@@ -9,7 +9,7 @@
 #include <NewKit/KernelCheck.hxx>
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/Semaphore.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/Timer.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
@@ -45,11 +45,11 @@ namespace Kernel::HAL
 	EXTERN_C Void _hal_spin_core(Void);
 
 	STATIC struct MADT_TABLE* kMADTBlock = nullptr;
-	STATIC Bool		   kSMPAware  = false;
-	STATIC Int64	   kSMPCount  = 0;
+	STATIC Bool				  kSMPAware	 = false;
+	STATIC Int64			  kSMPCount	 = 0;
 
 	STATIC Int32   cSMPInterrupt	  = 0;
-	STATIC UInt64   cSMPCores[cSMPMax] = {0};
+	STATIC UInt64  cSMPCores[cSMPMax] = {0};
 	STATIC VoidPtr kRawMADT			  = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
@@ -143,51 +143,43 @@ namespace Kernel::HAL
 		ke_stop(RUNTIME_CHECK_FAILED);
 	}
 
-	constexpr auto cMaxPCBBlocks = cMaxHWThreads;
-
 	struct PROCESS_CONTROL_BLOCK final
 	{
-		PROCESS_HEADER_BLOCK* f_PHB;
-		HAL::StackFramePtr	  f_Frame;
-	} fBlocks[cMaxPCBBlocks] = {0};
+		UserProcessPtr	   f_Process;
+		HAL::StackFramePtr f_Frame;
+	} fBlocks[cMaxHWThreads] = {0};
 
 	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
 	{
-		return fBlocks[ProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxPCBBlocks].f_Frame;
+		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxHWThreads].f_Frame;
 	}
 
 	EXTERN_C Void hal_switch_context(HAL::StackFramePtr stack_frame)
 	{
-		Semaphore semaphore_process;
-
-		const auto cDurationSeconds = Seconds(5);
-
-		HardwareTimer timer(cDurationSeconds);
-		semaphore_process.LockOrWait(&ProcessScheduler::The().CurrentProcess().Leak(), &timer);
-
-		fBlocks[ProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxPCBBlocks].f_PHB	  = &ProcessScheduler::The().CurrentProcess().Leak();
-		fBlocks[ProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxPCBBlocks].f_Frame = stack_frame;
-
-		semaphore_process.Unlock();
-		ke_stop(RUNTIME_CHECK_FAILED);
+		if (kSMPAware)
+		{
+			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxHWThreads].f_Process   = &UserProcessScheduler::The().CurrentProcess().Leak();
+			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % cMaxHWThreads].f_Frame = stack_frame;
+		}
 	}
 
 	/***********************************************************************************/
 	/// @brief Fetch and enable cores inside main CPU.
 	/// @param vendor_ptr RSD PTR structure.
 	/***********************************************************************************/
-	Void hal_system_get_cores(voidPtr vendor_ptr)
+	Void mp_get_cores(VoidPtr vendor_ptr) noexcept
 	{
+		kSMPAware = false;
+
+		if (!vendor_ptr)
+			return;
+
 		auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
 		kRawMADT			= hw_and_pow_int.Find(kApicSignature).Leak().Leak();
 
 		kMADTBlock = reinterpret_cast<MADT_TABLE*>(kRawMADT);
 
-		if (!kMADTBlock)
-		{
-			kSMPAware = false;
-		}
-		else
+		if (kMADTBlock)
 		{
 			SizeT index = 0;
 
@@ -227,7 +219,7 @@ namespace Kernel::HAL
 			kcout << "newoskrnl: # of cores: " << number(kSMPCount) << endl;
 
 			// Kernel is now SMP aware.
-			// That means that the scheduler is now available (on MP kernels)
+			// That means that the scheduler is now available (on MP Kernels)
 
 			kSMPAware = true;
 

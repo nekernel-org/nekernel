@@ -75,8 +75,7 @@ Int32 HardwareTimer::Wait() noexcept
 	}
 
 	UInt64 ticks = fWaitFor / ((*(fDigitalTimer) >> 32) & __UINT32_MAX__);
-
-	auto prev = *(fDigitalTimer + cHPETCounterRegValue);
+	UInt64 prev = *(fDigitalTimer + cHPETCounterRegValue);
 
 	prev += ticks;
 

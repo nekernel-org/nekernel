@@ -1,6 +1,6 @@
 # Kernel modules
 
-Pluggable modules for builtin hardware support within the kernel.
+Pluggable modules for builtin hardware support within the Kernel.
 
 ## Maintainers
 

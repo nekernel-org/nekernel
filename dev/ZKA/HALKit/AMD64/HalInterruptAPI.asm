@@ -142,7 +142,7 @@ IntNormal 48
 IntNormal 49
 
 [extern hal_system_call_enter]
-[extern hal_kernel_call_enter]
+[extern hal_Kernel_call_enter]
 
 __NEW_INT_50:
     cli
@@ -169,7 +169,7 @@ __NEW_INT_51:
     push r9
     push rax
 
-    call hal_kernel_call_enter
+    call hal_Kernel_call_enter
 
     pop rax
     pop r9

@@ -5,42 +5,42 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/String.hxx>
 
 /// @brief Handle GPF fault.
 /// @param rsp
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
-	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+    Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle page fault.
 /// @param rsp
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
-	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+    Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle math fault.
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
-	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+    Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
-	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+    Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle #UD fault.
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
-	Kernel::ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+    Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }
 
 /// @brief Enter syscall from assembly.
@@ -59,10 +59,10 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 	}
 }
 
-/// @brief Enter kernel call from assembly (DDK only).
+/// @brief Enter Kernel call from assembly (DDK only).
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx, Kernel::UIntPtr r8, Kernel::UIntPtr r9)
+EXTERN_C Kernel::Void hal_Kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx, Kernel::UIntPtr r8, Kernel::UIntPtr r9)
 {
 	if (rcx <= (kSyscalls.Count() - 1))
 	{

@@ -189,9 +189,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_VirtualStart =
 		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
 
-	handoverHdrPtr->f_HeapStart = nullptr;
+	handoverHdrPtr->f_HeapStart = 0;
 
-	while (BS->AllocatePool(EfiLoaderCode, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk)
+	while (BS->AllocatePool(EfiRuntimeServicesCode, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk)
 		;
 
 	handoverHdrPtr->f_VirtualSize =
@@ -268,7 +268,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	EFI::ExitBootServices(MapKey, ImageHandle);
 
 	// ---------------------------------------------------- //
-	// finally load kernel.
+	// finally load Kernel.
 	// ---------------------------------------------------- //
 
 	loader->Start(handoverHdrPtr);

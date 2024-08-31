@@ -8,7 +8,7 @@
 
 #include <DDK/KernelString.h>
 
-DK_EXTERN size_t kernelStringLength(const char* in)
+DK_EXTERN size_t KernelStringLength(const char* in)
 {
 	if (in == nil)
 		return 0;
@@ -25,7 +25,7 @@ DK_EXTERN size_t kernelStringLength(const char* in)
 	return index;
 }
 
-DK_EXTERN int kernelStringCopy(char* dst, const char* src, size_t len)
+DK_EXTERN int KernelStringCopy(char* dst, const char* src, size_t len)
 {
 	size_t index = 0;
 

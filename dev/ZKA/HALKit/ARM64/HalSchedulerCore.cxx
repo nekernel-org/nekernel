@@ -4,11 +4,11 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 
 using namespace Kernel;
 
-Void PROCESS_HEADER_BLOCK::SetEntrypoint(UIntPtr& imageStart) noexcept
+Void UserProcess::SetEntrypoint(UIntPtr& imageStart) noexcept
 {
 	if (imageStart == 0)
 		this->Crash();

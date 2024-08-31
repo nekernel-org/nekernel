@@ -8,7 +8,7 @@
 
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/Heap.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/LPC.hxx>
 #include <NewKit/Defines.hxx>
 #include <NewKit/Utils.hxx>

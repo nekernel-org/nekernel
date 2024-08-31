@@ -14,7 +14,7 @@
 
 #define kSchedMinMicroTime (AffinityKind::kStandard)
 #define kSchedInvalidPID   (-1)
-
+#define cMaxStackSz (4096) /* Max stack sz */
 #define kSchedProcessLimitPerTeam (16U)
 
 ////////////////////////////////////////////////////
@@ -26,20 +26,20 @@
 namespace Kernel
 {
 	//! @brief Forward declarations.
-	struct PROCESS_HEADER_BLOCK;
+	struct UserProcess;
 
 	class PEFDLLInterface;
 	class ProcessTeam;
-	class ProcessScheduler;
+	class UserProcessScheduler;
 	class ProcessHelper;
 
-	//! @brief Process identifier.
+	//! @brief UserProcess identifier.
 	typedef Int64 ProcessID;
 
-	//! @brief Process name length.
+	//! @brief UserProcess name length.
 	inline constexpr SizeT kProcessLen = 256U;
 
-	//! @brief Process status enum.
+	//! @brief UserProcess status enum.
 	enum class ProcessStatus : Int32
 	{
 		kStarting,
@@ -53,12 +53,12 @@ namespace Kernel
 	//! to run.
 	enum class AffinityKind : Int32
 	{
-		kInvalid	  = 300,
-		kVeryHigh	  = 250,
-		kHigh		  = 200,
-		kStandard	  = 150,
-		kLowUsage	  = 100,
-		kVeryLowUsage = 50,
+		kRealTime	  = 0000,
+		kVeryHigh	  = 2500,
+		kHigh		  = 2000,
+		kStandard	  = 1500,
+		kLowUsage	  = 1000,
+		kVeryLowUsage = 5000,
 	};
 
 	// operator overloading.
@@ -122,20 +122,20 @@ namespace Kernel
 	using ImagePtr	  = VoidPtr;
 	using HeapPtrKind = VoidPtr;
 
-	/// @name PROCESS_HEADER_BLOCK
-	/// @brief Process Header Block (PHB).
+	/// @name UserProcess
+	/// @brief User process block.
 	/// Holds information about the running process/thread.
-	struct PROCESS_HEADER_BLOCK final
+	struct UserProcess final
 	{
 	public:
-		explicit PROCESS_HEADER_BLOCK(VoidPtr startImage = nullptr)
+		explicit UserProcess(VoidPtr startImage = nullptr)
 			: Image(startImage)
 		{
 		}
 
-		~PROCESS_HEADER_BLOCK() = default;
+		~UserProcess() = default;
 
-		ZKA_COPY_DEFAULT(PROCESS_HEADER_BLOCK)
+		ZKA_COPY_DEFAULT(UserProcess)
 
 	public:
 		void		  SetEntrypoint(UIntPtr& imageStart) noexcept;
@@ -144,19 +144,22 @@ namespace Kernel
 	public:
 		Char			   Name[kProcessLen] = {"PROCESS #0 (TEAM 0)"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
-		User*			   AssignedOwner{nullptr};
+		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatus	   Status{ProcessStatus::kDead};
+		UInt8* StackReserve{ nullptr };
 
 		// Memory, images pointers.
 		HeapPtrKind HeapCursor{nullptr};
 		ImagePtr	Image{nullptr};
 		HeapPtrKind HeapPtr{nullptr};
 
-		// shared library handle, reserved for kSharedObjectKind types of executables only.
+		SizeT StackSize{mib_cast(8)};
+
+		// shared library handle, reserved for kDLLKind types of executables only.
 		PEFDLLInterface*	  DLLPtr{nullptr};
-		PROCESS_HEADER_BLOCK* Parent{nullptr};
+		UserProcess* Parent{nullptr};
 
 		// Memory usage.
 		SizeT UsedMemory{0};
@@ -166,7 +169,7 @@ namespace Kernel
 		enum
 		{
 			kExeKind		  = 1,
-			kSharedObjectKind = 2,
+			kDLLKind = 2,
 			kKindCount,
 		};
 
@@ -199,7 +202,7 @@ namespace Kernel
 		///! @brief Wakes up threads.
 		Void Wake(const bool wakeup = false);
 
-		// PROCESS_HEADER_BLOCK getters.
+		// UserProcess getters.
 	public:
 		///! @brief Get the process's name
 		///! @example 'C Runtime Library'
@@ -217,7 +220,7 @@ namespace Kernel
 		UInt32 fLastExitCode{0};
 		Int32  fLocalCode{0};
 
-		friend ProcessScheduler;
+		friend UserProcessScheduler;
 		friend ProcessHelper;
 	};
 
@@ -231,29 +234,29 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(ProcessTeam);
 
-		Array<PROCESS_HEADER_BLOCK, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<PROCESS_HEADER_BLOCK>&								AsRef();
+		Array<UserProcess, kSchedProcessLimitPerTeam>& AsArray();
+		Ref<UserProcess>&								AsRef();
 		ProcessID&													Id() noexcept;
 
 	public:
-		Array<PROCESS_HEADER_BLOCK, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<PROCESS_HEADER_BLOCK>							   mCurrentProcess;
+		Array<UserProcess, kSchedProcessLimitPerTeam> mProcessList;
+		Ref<UserProcess>							   mCurrentProcess;
 		SizeT												   mProcessAmount{0};
 		ProcessID											   mTeamId{0};
 	};
 
-	using PROCESS_HEADER_BLOCK_PTR = PROCESS_HEADER_BLOCK*;
+	using UserProcessPtr = UserProcess*;
 
-	/// @brief PROCESS_HEADER_BLOCK manager class.
-	/// The main class which you call to schedule an app.
-	class ProcessScheduler final
+	/// @brief UserProcess scheduler class.
+	/// The main class which you call to schedule processes.
+	class UserProcessScheduler final
 	{
 	public:
-		explicit ProcessScheduler() = default;
+		explicit UserProcessScheduler() = default;
 
-		~ProcessScheduler() = default;
+		~UserProcessScheduler() = default;
 
-		ZKA_COPY_DEFAULT(ProcessScheduler)
+		ZKA_COPY_DEFAULT(UserProcessScheduler)
 
 		operator bool();
 		bool operator!();
@@ -262,29 +265,29 @@ namespace Kernel
 		ProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(PROCESS_HEADER_BLOCK& processRef);
+		SizeT Add(UserProcess& processRef);
 		Bool  Remove(ProcessID processSlot);
 
 	public:
-		Ref<PROCESS_HEADER_BLOCK>& CurrentProcess();
+		Ref<UserProcess>& CurrentProcess();
 		SizeT					   Run() noexcept;
 
 	public:
-		STATIC ProcessScheduler& The();
+		STATIC UserProcessScheduler& The();
 
 	private:
 		ProcessTeam mTeam;
 	};
 
 	/*
-	 * \brief Process helper class, which contains needed utilities for the scheduler.
+	 * \brief UserProcess helper class, which contains needed utilities for the scheduler.
 	 */
 
 	class ProcessHelper final
 	{
 	public:
 		STATIC bool	 Switch(HAL::StackFramePtr new_stack, const PID& new_pid);
-		STATIC bool	 CanBeScheduled(PROCESS_HEADER_BLOCK& process);
+		STATIC bool	 CanBeScheduled(UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
 	};

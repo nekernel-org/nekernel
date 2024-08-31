@@ -8,18 +8,18 @@
 
 #include <DDK/KernelPrint.h>
 
-DK_EXTERN void kernelPrintChar(const char ch)
+DK_EXTERN void KernelPrintChar(const char ch)
 {
 	char assembled[2] = {0};
 	assembled[0]	  = ch;
 	assembled[1]	  = 0;
 
-	kernelCall("WriteCharacter", 1, assembled, 1);
+	KernelCall("WriteCharacter", 1, assembled, 1);
 }
 
 /// @brief print string to UART.
 /// @param message UART to transmit.
-DK_EXTERN void kernelPrintStr(const char* message)
+DK_EXTERN void KernelPrintStr(const char* message)
 {
 	if (!message)
 		return;
@@ -27,11 +27,11 @@ DK_EXTERN void kernelPrintStr(const char* message)
 		return;
 
 	size_t index = 0;
-	size_t len	 = kernelStringLength(message);
+	size_t len	 = KernelStringLength(message);
 
 	while (index < len)
 	{
-		kernelPrintChar(message[index]);
+		KernelPrintChar(message[index]);
 		++index;
 	}
 }

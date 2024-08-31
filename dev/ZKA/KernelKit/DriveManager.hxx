@@ -7,7 +7,7 @@
 #ifndef __INC_DRIVE_MANAGER_HXX__
 #define __INC_DRIVE_MANAGER_HXX__
 
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/DeviceManager.hxx>

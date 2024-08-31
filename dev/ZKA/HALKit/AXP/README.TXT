@@ -1,1 +1,1 @@
-An toy HAL to test the kernel portability.
+An toy HAL to test the Kernel portability.

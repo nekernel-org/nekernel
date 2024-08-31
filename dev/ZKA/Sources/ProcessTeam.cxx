@@ -6,16 +6,16 @@
 
 /***********************************************************************************/
 /// @file ProcessTeam.cxx
-/// @brief Process teams implementation.
+/// @brief UserProcess teams implementation.
 /***********************************************************************************/
 
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 
 namespace Kernel
 {
-	/// @brief Process list array getter.
+	/// @brief UserProcess list array getter.
 	/// @return The list of process to schedule.
-	Array<PROCESS_HEADER_BLOCK, kSchedProcessLimitPerTeam>& ProcessTeam::AsArray()
+	Array<UserProcess, kSchedProcessLimitPerTeam>& ProcessTeam::AsArray()
 	{
 		return mProcessList;
 	}
@@ -29,7 +29,7 @@ namespace Kernel
 
 	/// @brief Current process getter.
 	/// @return The current process header.
-	Ref<PROCESS_HEADER_BLOCK>& ProcessTeam::AsRef()
+	Ref<UserProcess>& ProcessTeam::AsRef()
 	{
 		return mCurrentProcess;
 	}

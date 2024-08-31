@@ -16,7 +16,7 @@
 #include <NewKit/String.hxx>
 #include <NewKit/Utils.hxx>
 #include <FirmwareKit/EPM.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/User.hxx>
 
 using namespace Kernel;

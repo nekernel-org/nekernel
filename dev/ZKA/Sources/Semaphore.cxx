@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/Semaphore.hxx>
 
 namespace Kernel
@@ -17,7 +17,7 @@ namespace Kernel
 		return fLockingProcess == nullptr;
 	}
 
-	bool Semaphore::Lock(PROCESS_HEADER_BLOCK* process)
+	bool Semaphore::Lock(UserProcess* process)
 	{
 		if (!process || fLockingProcess)
 			return false;
@@ -32,7 +32,7 @@ namespace Kernel
 		return fLockingProcess;
 	}
 
-	bool Semaphore::LockOrWait(PROCESS_HEADER_BLOCK* process, TimerInterface* timer)
+	bool Semaphore::LockOrWait(UserProcess* process, TimerInterface* timer)
 	{
 		if (process == nullptr)
 			return false;

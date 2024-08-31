@@ -8,7 +8,7 @@
 //! @brief Allocate resources from the process's heap storage.
 
 #ifndef _INC_PROCESS_SCHEDULER_HXX_
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #endif
 
 template <typename T>
@@ -16,7 +16,7 @@ inline T* tls_new_ptr(void) noexcept
 {
 	using namespace Kernel;
 
-	auto ref_process = ProcessScheduler::The().CurrentProcess();
+	auto ref_process = UserProcessScheduler::The().CurrentProcess();
 	MUST_PASS(ref_process);
 
 	T* pointer = (T*)ref_process.Leak().New(sizeof(T));
@@ -32,7 +32,7 @@ inline Kernel::Bool tls_delete_ptr(T* ptr) noexcept
 
 	using namespace Kernel;
 
-	auto ref_process = ProcessScheduler::The().CurrentProcess();
+	auto ref_process = UserProcessScheduler::The().CurrentProcess();
 	MUST_PASS(ref_process);
 
 	return ref_process.Leak().Delete(ptr, sizeof(T));

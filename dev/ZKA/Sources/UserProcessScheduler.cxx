@@ -5,11 +5,11 @@
 ------------------------------------------- */
 
 /***********************************************************************************/
-/// @file ProcessScheduler.cxx
-/// @brief User Process scheduler.
+/// @file UserProcessScheduler.cxx
+/// @brief User UserProcess scheduler.
 /***********************************************************************************/
 
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/PEFDLLInterface.hxx>
 #include <KernelKit/MP.hxx>
 #include <KernelKit/Heap.hxx>
@@ -19,7 +19,7 @@
 ///! BUGS: 0
 
 /***********************************************************************************/
-/* TODO: Document more the kernel, sdk and kits. */
+/* TODO: Document more the Kernel, sdk and kits. */
 /***********************************************************************************/
 
 namespace Kernel
@@ -30,8 +30,11 @@ namespace Kernel
 
 	UInt32 cLastExitCode = 0U;
 
-	/// @brief The main process object.
-	ProcessScheduler* cProcessScheduler = nullptr;
+	/***********************************************************************************/
+	/// @brief UserProcess scheduler instance.
+	/***********************************************************************************/
+
+	UserProcessScheduler* cProcessScheduler = nullptr;
 
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
@@ -45,7 +48,7 @@ namespace Kernel
 	/// @brief crash current process.
 	/***********************************************************************************/
 
-	void PROCESS_HEADER_BLOCK::Crash()
+	void UserProcess::Crash()
 	{
 		constexpr auto cUnknownProcess = "?";
 
@@ -60,7 +63,7 @@ namespace Kernel
 	/// @brief Gets the local last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
-	const UInt32& PROCESS_HEADER_BLOCK::GetExitCode() noexcept
+	const UInt32& UserProcess::GetExitCode() noexcept
 	{
 		return this->fLastExitCode;
 	}
@@ -69,12 +72,12 @@ namespace Kernel
 	/// @brief Error code variable getter.
 	/***********************************************************************************/
 
-	Int32& PROCESS_HEADER_BLOCK::GetLocalCode() noexcept
+	Int32& UserProcess::GetLocalCode() noexcept
 	{
 		return fLocalCode;
 	}
 
-	void PROCESS_HEADER_BLOCK::Wake(const bool should_wakeup)
+	void UserProcess::Wake(const bool should_wakeup)
 	{
 		this->Status =
 			should_wakeup ? ProcessStatus::kRunning : ProcessStatus::kFrozen;
@@ -82,7 +85,7 @@ namespace Kernel
 
 	/***********************************************************************************/
 
-	VoidPtr PROCESS_HEADER_BLOCK::New(const SizeT& sz)
+	VoidPtr UserProcess::New(const SizeT& sz)
 	{
 		if (this->HeapCursor)
 		{
@@ -125,7 +128,7 @@ namespace Kernel
 	}
 
 	/* @brief free pointer from usage. */
-	Boolean PROCESS_HEADER_BLOCK::Delete(VoidPtr ptr, const SizeT& sz)
+	Boolean UserProcess::Delete(VoidPtr ptr, const SizeT& sz)
 	{
 		if (sz < 1 || this->HeapCursor == this->HeapPtr)
 			return false;
@@ -148,20 +151,20 @@ namespace Kernel
 		return false;
 	}
 
-	/// @brief process name getter.
-	const Char* PROCESS_HEADER_BLOCK::GetProcessName() noexcept
+	/// @brief UserProcess name getter.
+	const Char* UserProcess::GetProcessName() noexcept
 	{
 		return this->Name;
 	}
 
-	/// @brief process selector getter.
-	const User* PROCESS_HEADER_BLOCK::GetOwner() noexcept
+	/// @brief UserProcess user getter.
+	const User* UserProcess::GetOwner() noexcept
 	{
-		return this->AssignedOwner;
+		return this->Owner;
 	}
 
-	/// @brief process status getter.
-	const ProcessStatus& PROCESS_HEADER_BLOCK::GetStatus() noexcept
+	/// @brief UserProcess status getter.
+	const ProcessStatus& UserProcess::GetStatus() noexcept
 	{
 		return this->Status;
 	}
@@ -171,7 +174,7 @@ namespace Kernel
 	/**
 	@brief Affinity is the time slot allowed for the process.
 	*/
-	const AffinityKind& PROCESS_HEADER_BLOCK::GetAffinity() noexcept
+	const AffinityKind& UserProcess::GetAffinity() noexcept
 	{
 		return this->Affinity;
 	}
@@ -179,7 +182,7 @@ namespace Kernel
 	/**
 	@brief Standard exit proc.
 	*/
-	void PROCESS_HEADER_BLOCK::Exit(const Int32& exit_code)
+	void UserProcess::Exit(const Int32& exit_code)
 	{
 		fLastExitCode = exit_code;
 		cLastExitCode = exit_code;
@@ -194,9 +197,9 @@ namespace Kernel
 		this->Image		 = nullptr;
 		this->StackFrame = nullptr;
 
-		if (this->Kind == kSharedObjectKind)
+		if (this->Kind == kDLLKind)
 		{
-			bool success = false;
+			Bool success = false;
 			rtl_fini_shared_object(this, this->DLLPtr, &success);
 
 			if (success)
@@ -205,27 +208,30 @@ namespace Kernel
 			}
 		}
 
+		if (this->StackReserve)
+			delete[] this->StackReserve;
+
 		cProcessScheduler->Remove(this->ProcessId);
 	}
 
 	/// @brief Add process to list.
 	/// @param process the process *Ref* class.
 	/// @return the process index inside the team.
-	SizeT ProcessScheduler::Add(PROCESS_HEADER_BLOCK& process)
+	SizeT UserProcessScheduler::Add(UserProcess& process)
 	{
 		if (!process.Image)
 		{
 			return -kErrorInvalidData;
 		}
 
-		kcout << "ProcessScheduler: Adding process to team...\r";
+		kcout << "UserProcessScheduler: Adding process to team...\r";
 
 		// Create heap according to type of process.
-		if (process.Kind == PROCESS_HEADER_BLOCK::kExeKind)
+		if (process.Kind == UserProcess::kExeKind)
 		{
 			process.HeapPtr = mm_new_ke_heap(process.SizeMemory, true, true);
 		}
-		else if (process.Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
+		else if (process.Kind == UserProcess::kDLLKind)
 		{
 			process.DLLPtr	= rtl_init_shared_object(&process);
 			process.HeapPtr = mm_new_ke_heap(process.SizeMemory, true, true);
@@ -244,23 +250,32 @@ namespace Kernel
 
 		if (process.Image)
 		{
+			// get preferred stack size by app.
+			const auto cMaxStackSize = process.StackSize;
+
 			process.StackFrame->BP = reinterpret_cast<HAL::Reg>(process.Image);
+			process.StackFrame->SP = reinterpret_cast<HAL::Reg>(mm_new_ke_heap(cMaxStackSize, Yes, Yes));
+
+			if (!process.StackFrame->SP)
+			{
+				process.StackReserve = new UInt8[cMaxStackSz];
+				process.StackFrame->SP = reinterpret_cast<HAL::Reg>(process.StackReserve);
+
+				kcout << "newoskrnl: use fallback reserve.\r";
+			}
 		}
 		else
 		{
-			if (process.Kind != PROCESS_HEADER_BLOCK::kSharedObjectKind)
+			if (process.Kind != UserProcess::kDLLKind)
 			{
 				process.Crash();
 				return -kErrorProcessFault;
 			}
 		}
 
-		if (!process.StackFrame->SP)
-			process.StackFrame->SP = reinterpret_cast<HAL::Reg>(mm_new_ke_heap(sizeof(UInt8) * 8196, Yes, Yes));
-
 		process.Status = ProcessStatus::kStarting;
 
-		process.ProcessId = (mTeam.mCurrentProcess);
+		process.ProcessId = mTeam.mProcessAmount;
 
 		++mTeam.mProcessAmount;
 
@@ -268,14 +283,14 @@ namespace Kernel
 
 		mTeam.AsArray()[process.ProcessId] = process;
 
-		kcout << "ProcessScheduler: Adding process to team [ OK ]...\r";
+		kcout << "UserProcessScheduler: Adding process to team [ OK ]...\r";
 
 		return process.ProcessId;
 	}
 
 	/***********************************************************************************/
 
-	ProcessScheduler& ProcessScheduler::The()
+	UserProcessScheduler& UserProcessScheduler::The()
 	{
 		MUST_PASS(cProcessScheduler);
 		return *cProcessScheduler;
@@ -287,7 +302,7 @@ namespace Kernel
 	/// @param processSlot process slot inside team.
 	/// @retval true process was removed.
 	/// @retval false process doesn't exist in team.
-	Bool ProcessScheduler::Remove(ProcessID processSlot)
+	Bool UserProcessScheduler::Remove(ProcessID processSlot)
 	{
 		// check if process is within range.
 		if (processSlot > mTeam.AsArray().Count())
@@ -297,23 +312,24 @@ namespace Kernel
 		if (mTeam.AsArray()[processSlot].Image == nullptr)
 			return false;
 
-		kcout << "ProcessScheduler: Removing process...\r";
+		kcout << "UserProcessScheduler: Removing process...\r";
 
-		--mTeam.mProcessAmount;
 		mTeam.AsArray()[processSlot].Status = ProcessStatus::kDead;
+		--mTeam.mProcessAmount;
+
 		return true;
 	}
 
 	/// @brief Run scheduler.
 	/// @return
-	SizeT ProcessScheduler::Run() noexcept
+	SizeT UserProcessScheduler::Run() noexcept
 	{
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
-		for (; process_index < mTeam.AsArray().Count(); ++process_index)
+		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
-			auto process = mTeam.AsArray()[process_index];
+			auto& process = mTeam.AsArray()[process_index];
 
 			//! check if process needs to be scheduled.
 			if (ProcessHelper::CanBeScheduled(process))
@@ -326,13 +342,16 @@ namespace Kernel
 				kcout << process.Name << ": will be runned.\r";
 
 				// tell helper to find a core to schedule on.
-				ProcessHelper::Switch(process.StackFrame,
-									  process.ProcessId);
+				if (!ProcessHelper::Switch(process.StackFrame,
+										   process.ProcessId))
+					process.Crash();
+
+				continue;
 			}
 			else
 			{
 				// otherwise increment the P-time.
-				--mTeam.AsRef().Leak().PTime;
+				--process.PTime;
 			}
 		}
 
@@ -341,7 +360,7 @@ namespace Kernel
 
 	/// @brief Gets the current scheduled team.
 	/// @return
-	ProcessTeam& ProcessScheduler::CurrentTeam()
+	ProcessTeam& UserProcessScheduler::CurrentTeam()
 	{
 		return mTeam;
 	}
@@ -350,13 +369,13 @@ namespace Kernel
 
 	/// @brief Gets current running process.
 	/// @return
-	Ref<PROCESS_HEADER_BLOCK>& ProcessScheduler::CurrentProcess()
+	Ref<UserProcess>& UserProcessScheduler::CurrentProcess()
 	{
 		return mTeam.AsRef();
 	}
 
 	/// @brief Current proccess id getter.
-	/// @return Process ID integer.
+	/// @return UserProcess ID integer.
 	PID& ProcessHelper::TheCurrentPID()
 	{
 		kcout << "ProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
@@ -367,13 +386,13 @@ namespace Kernel
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
-	bool ProcessHelper::CanBeScheduled(PROCESS_HEADER_BLOCK& process)
+	bool ProcessHelper::CanBeScheduled(UserProcess& process)
 	{
 		if (process.Status == ProcessStatus::kFrozen ||
 			process.Status == ProcessStatus::kDead)
 			return false;
 
-		if (process.Kind == PROCESS_HEADER_BLOCK::kSharedObjectKind)
+		if (process.Kind == UserProcess::kDLLKind)
 		{
 			if (auto start = process.DLLPtr->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart), kPefCode);
 				start)
@@ -383,7 +402,7 @@ namespace Kernel
 			}
 		}
 
-		return process.PTime < 0;
+		return process.PTime < 1;
 	}
 
 	/**
@@ -393,7 +412,12 @@ namespace Kernel
 	SizeT ProcessHelper::StartScheduling()
 	{
 		if (!cProcessScheduler)
-			cProcessScheduler = new ProcessScheduler();
+		{
+			cProcessScheduler = new UserProcessScheduler();
+			MUST_PASS(cProcessScheduler);
+
+			kcout << "newoskrnl: Team capacity: " << number(cProcessScheduler->CurrentTeam().AsArray().Capacity()) << endl;
+		}
 
 		SizeT ret = cProcessScheduler->Run();
 		return ret;
@@ -410,29 +434,32 @@ namespace Kernel
 		if (!the_stack || new_pid < 0)
 			return false;
 
-		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Leak().Count(); ++index)
+		kcout << "newoskrnl: Finding hardware thread...\r";
+
+		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
 		{
-			if (HardwareThreadScheduler::The().Leak()[index].Leak()->Kind() == kInvalidHart)
+			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidHart)
 				continue;
 
-			if (HardwareThreadScheduler::The().Leak()[index].Leak()->StackFrame() == the_stack)
-			{
-				HardwareThreadScheduler::The().Leak()[index].Leak()->Busy(false);
-				continue;
-			}
-
-			if (HardwareThreadScheduler::The().Leak()[index].Leak()->IsBusy())
+			if (HardwareThreadScheduler::The()[index].Leak()->IsBusy())
 				continue;
 
-			if (HardwareThreadScheduler::The().Leak()[index].Leak()->Kind() !=
+			if (HardwareThreadScheduler::The()[index].Leak()->Kind() !=
 					ThreadKind::kHartBoot &&
-				HardwareThreadScheduler::The().Leak()[index].Leak()->Kind() !=
+				HardwareThreadScheduler::The()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				HardwareThreadScheduler::The().Leak()[index].Leak()->Busy(true);
+				HardwareThreadScheduler::The()[index].Leak()->Busy(true);
+
 				ProcessHelper::TheCurrentPID() = new_pid;
 
-				return HardwareThreadScheduler::The().Leak()[index].Leak()->Switch(the_stack);
+				kcout << "newoskrnl: Found hardware thread...\r";
+
+				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(the_stack);
+
+				HardwareThreadScheduler::The()[index].Leak()->Busy(false);
+
+				return ret;
 			}
 		}
 
@@ -440,13 +467,13 @@ namespace Kernel
 	}
 
 	/// @brief this checks if any process is on the team.
-	ProcessScheduler::operator bool()
+	UserProcessScheduler::operator bool()
 	{
 		return mTeam.AsArray().Count() > 0;
 	}
 
 	/// @brief this checks if no process is on the team.
-	bool ProcessScheduler::operator!()
+	bool UserProcessScheduler::operator!()
 	{
 		return mTeam.AsArray().Count() == 0;
 	}

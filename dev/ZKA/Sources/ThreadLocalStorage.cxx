@@ -9,21 +9,21 @@
 
 #include <NewKit/String.hxx>
 #include <CFKit/Property.hxx>
-#include <KernelKit/ProcessScheduler.hxx>
+#include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
 
 ///! BUGS: 0
 
 /***********************************************************************************/
 /// @file ThreadLocalStorage.cxx
-/// @brief TLS inside the kernel.
+/// @brief TLS inside the Kernel.
 /***********************************************************************************/
 
 using namespace Kernel;
 
 namespace Detail
 {
-	/// \brief Process thread information header.
+	/// \brief UserProcess thread information header.
 	struct THREAD_HEADER_BLOCK final
 	{
 		STATIC constexpr SizeT cMaxLen = 256;

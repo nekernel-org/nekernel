@@ -9,7 +9,7 @@
 
 // last-rev 30/01/24
 // file: KernelHeap.hxx
-// description: heap allocation for the kernel.
+// description: heap allocation for the Kernel.
 
 #include <NewKit/Defines.hxx>
 
@@ -25,7 +25,7 @@ namespace Kernel
 	/// @return
 	voidPtr mm_realloc_ke_heap(voidPtr allocatedPtr, SizeT newSz);
 
-	/// @brief Check if pointer is a valid kernel pointer.
+	/// @brief Check if pointer is a valid Kernel pointer.
 	/// @param allocatedPtr the pointer
 	/// @return if it exists.
 	Boolean mm_is_valid_heap(VoidPtr allocatedPtr);
@@ -35,14 +35,14 @@ namespace Kernel
 	/// @param rw read write (true to enable it)
 	/// @param user is it accesible by user processes?
 	/// @return The newly allocated pointer.
-	voidPtr mm_new_ke_heap(const SizeT sz, const Bool rw, const Bool user);
+	VoidPtr mm_new_ke_heap(const SizeT sz, const Bool rw, const Bool user);
 
 	/// @brief Protect the heap with a CRC value.
 	/// @param allocatedPtr pointer.
 	/// @return if it valid: point has crc now., otherwise fail.
 	Boolean mm_protect_ke_heap(VoidPtr allocatedPtr);
 
-	/// @brief Makes a kernel heap page.
+	/// @brief Makes a Kernel page.
 	/// @param allocatedPtr the page pointer.
 	/// @return
 	Int32 mm_make_ke_page(VoidPtr allocatedPtr);

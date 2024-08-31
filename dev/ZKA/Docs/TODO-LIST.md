@@ -6,8 +6,8 @@
 - We need a bootloader for AMD64 [ X ]
   - Implement Boot Services [ X ]
   - Design Handover [ X ]
-  - Load kernel into memory [ X ]
-  - Fix bug in kernel loader, which causes a 06 #UD. [ X ]
+  - Load Kernel into memory [ X ]
+  - Fix bug in Kernel loader, which causes a 06 #UD. [ X ]
   - Load Kernel [ X ]
   - Add IDT [ X ]
   - AHCI driver [ WiP ]
@@ -22,4 +22,4 @@ newosldr: Need to boot from EPM partition. [ X ]
 <br>
 NewKernel: New Filesystem is done. [ X ]
 
-**Refer to Jira!**
+**Refer to Jira please!**

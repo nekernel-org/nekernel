@@ -98,8 +98,8 @@ namespace Kernel
 
 	typedef PEFDLLInterface* DLLInterfacePtr;
 
-	EXTERN_C DLLInterfacePtr rtl_init_shared_object(PROCESS_HEADER_BLOCK* header);
-	EXTERN_C Void			 rtl_fini_shared_object(PROCESS_HEADER_BLOCK* header, DLLInterfacePtr lib, Bool* successful);
+	EXTERN_C DLLInterfacePtr rtl_init_shared_object(UserProcess* header);
+	EXTERN_C Void			 rtl_fini_shared_object(UserProcess* header, DLLInterfacePtr lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */

@@ -2,13 +2,13 @@
 
 You need:
 
-- MinGW for the kernel and bootloader.
+- MinGW for the Kernel and bootloader.
 - Netwide Assembler to output COFF object code.
 
 Start by cloning the repo:
 
 ```
-git clone git@bitbucket.org:mahrouss/microkernel.git
+git clone git@bitbucket.org:mahrouss/microKernel.git
 ```
 
 And then execute:

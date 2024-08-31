@@ -6,8 +6,8 @@
 
 #include <ArchKit/ArchKit.hxx>
 
-#define cVMHMagic (0xDEEFD00D)
-#define cPaddingVMH (512)
+#define cVMHMagic	(0xDEEFD00D)
+#define cPaddingVMH (16)
 
 #ifdef __ZKA_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
@@ -43,7 +43,7 @@ namespace Kernel
 				VIRTUAL_MEMORY_HEADER* Next(VIRTUAL_MEMORY_HEADER* current)
 				{
 					if (current->Magic != cVMHMagic)
-						current->Size = cPaddingVMH;
+						return current;
 
 					return current + sizeof(VIRTUAL_MEMORY_HEADER) + current->Size;
 				}
@@ -54,7 +54,7 @@ namespace Kernel
 				VIRTUAL_MEMORY_HEADER* Prev(VIRTUAL_MEMORY_HEADER* current)
 				{
 					if (current->Magic != cVMHMagic)
-						current->Size = cPaddingVMH;
+						return current;
 
 					return current - sizeof(VIRTUAL_MEMORY_HEADER) - current->Size;
 				}
@@ -84,16 +84,16 @@ namespace Kernel
 
 				if (vmh_header == reinterpret_cast<VoidPtr>(kBadPtr))
 				{
-				    ke_stop(RUNTIME_CHECK_POINTER);
-				    return nullptr;
+					ke_stop(RUNTIME_CHECK_POINTER);
+					return nullptr;
 				}
 			}
 
-			vmh_header->Magic		= cVMHMagic;
-			vmh_header->Present	= true;
+			vmh_header->Magic	  = cVMHMagic;
+			vmh_header->Present	  = true;
 			vmh_header->ReadWrite = rw;
-			vmh_header->User		= user;
-			vmh_header->Size		= size;
+			vmh_header->User	  = user;
+			vmh_header->Size	  = size;
 
 			kAllocationInProgress = false;
 
@@ -106,12 +106,12 @@ namespace Kernel
 		/// @return
 		auto hal_alloc_page(Boolean rw, Boolean user, SizeT size) -> VoidPtr
 		{
-			kcout << "Waiting now...";
+			kcout << "PageAlloc: Waiting now...";
 
 			// Wait for a ongoing allocation to complete.
 			while (kAllocationInProgress)
 			{
-				(void)0;
+				(Void)0;
 			}
 
 			kcout << ", done waiting, allocating...\r";
@@ -119,7 +119,7 @@ namespace Kernel
 			if (size == 0)
 				++size;
 
-			// allocate new page.
+			// Now allocate the page.
 			return hal_try_alloc_new_page(rw, user, size);
 		}
 	} // namespace HAL

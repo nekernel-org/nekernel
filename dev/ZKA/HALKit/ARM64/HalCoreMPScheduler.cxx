@@ -10,20 +10,20 @@
 
 namespace Kernel
 {
-	/// @brief wakes up thread.
-	/// wakes up thread from hang.
-	void mp_wakeup_thread(HAL::StackFrame* stack)
+	/// @brief Wakes up thread.
+	/// Wakes up thread from the hang state.
+	Void mp_wakeup_thread(HAL::StackFrame* stack)
 	{
 		mp_do_context_switch(stack);
 	}
 
 	/// @brief makes the thread sleep on a loop.
 	/// hooks and hangs thread to prevent code from executing.
-	void mp_hang_thread(HAL::StackFrame* stack)
+	Void mp_hang_thread(HAL::StackFrame* stack)
 	{
-		while (true)
+		while (Yes)
 		{
-			/* nohing, code is spinning */
+			/* Nothing to do, code is spinning */
 		}
 	}
 } // namespace Kernel
