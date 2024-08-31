@@ -14,18 +14,16 @@
 %define kInterruptId 0x21
 
 %macro IntExp 1
-global __NEW_INT_%1
-__NEW_INT_%1:
+global __ZKA_INT_%1
+__ZKA_INT_%1:
     cld
-
     iretq
 %endmacro
 
 %macro IntNormal 1
-global __NEW_INT_%1
-__NEW_INT_%1:
+global __ZKA_INT_%1
+__ZKA_INT_%1:
     cld
-
     iretq
 %endmacro
 
@@ -52,7 +50,7 @@ IntNormal 4
 IntNormal 5
 
 ;; Invalid opcode interrupt
-__NEW_INT_6:
+__ZKA_INT_6:
     cli
 
     push rax
@@ -73,7 +71,7 @@ IntExp   11
 
 IntExp 12
 
-__NEW_INT_13:
+__ZKA_INT_13:
     cli
 
     push rax
@@ -86,7 +84,7 @@ __NEW_INT_13:
     sti
     iretq
 
-__NEW_INT_14:
+__ZKA_INT_14:
     cli
 
     push rax
@@ -144,7 +142,7 @@ IntNormal 49
 [extern hal_system_call_enter]
 [extern hal_Kernel_call_enter]
 
-__NEW_INT_50:
+__ZKA_INT_50:
     cli
 
     push rcx
@@ -160,7 +158,7 @@ __NEW_INT_50:
     sti
     iretq
 
-__NEW_INT_51:
+__ZKA_INT_51:
     cli
 
     push rcx
@@ -194,7 +192,7 @@ GRAN_4K       equ 1 << 7
 SZ_32         equ 1 << 6
 LONG_MODE     equ 1 << 5
 
-__NEW_INT_52:
+__ZKA_INT_52:
     cli
     jmp hal_on_ap_startup
     sti
@@ -235,17 +233,63 @@ rt_reload_segments:
     ret
 
 global hal_load_idt
+global hal_user_code_start
 
 hal_load_idt:
     lidt [rcx]
     sti
     ret
 
+[global hal_switch_to_user_code]
+
+hal_switch_to_user_code:
+    ; Enable SCE that enables sysret and syscall
+	mov rcx, 0xc0000082
+	wrmsr
+	mov rcx, 0xc0000080
+	rdmsr
+	or eax, 1
+	wrmsr
+	mov rcx, 0xc0000081
+	rdmsr
+	mov edx, 0x00180008
+	wrmsr
+
+    mov rbx, 0x28
+    mov ds, rbx
+    
+    mov rbx, 0x28
+    mov fs, rbx
+
+    mov rbx, 0x28
+    mov gs, rbx
+
+    mov rbx, 0x28
+    mov es, rbx
+
+    mov rsp, [hal_user_code_stack_end]
+    mov rcx, hal_user_code_start
+
+    mov r11, 0x0202
+
+    o64 sysret
+
+hal_user_code_start:
+L0:
+    nop
+    jmp $
+
+section .bss
+
+hal_user_code_stack:
+    resb 4096*4
+hal_user_code_stack_end:
+
 section .data
 
 kInterruptVectorTable:
     %assign i 0
     %rep 256
-        dq __NEW_INT_%+i
+        dq __ZKA_INT_%+i
     %assign i i+1
     %endrep

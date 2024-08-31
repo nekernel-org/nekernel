@@ -174,8 +174,6 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	Void mp_get_cores(VoidPtr vendor_ptr) noexcept
 	{
-		kSMPAware = false;
-
 		if (!vendor_ptr)
 			return;
 
@@ -183,6 +181,8 @@ namespace Kernel::HAL
 		kRawMADT			= hw_and_pow_int.Find(kApicSignature).Leak().Leak();
 
 		kMADTBlock = reinterpret_cast<MADT_TABLE*>(kRawMADT);
+
+		kSMPAware = false;
 
 		if (kMADTBlock)
 		{

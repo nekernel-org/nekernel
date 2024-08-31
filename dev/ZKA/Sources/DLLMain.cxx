@@ -39,6 +39,8 @@ EXTERN Kernel::Property cKernelVersion;
 
 STATIC CG::UI_WINDOW_STRUCT* cKernelWnd = nullptr;
 
+EXTERN_C void hal_switch_to_user_code(void);
+
 namespace Kernel::Detail
 {
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
@@ -212,6 +214,8 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 		CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Missing catalog: ", 20, 10, RGB(0, 0, 0));
 		CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing catalog: ")), RGB(0, 0, 0));
 	}
+
+	hal_switch_to_user_code();
 
 	while (Yes)
 	{

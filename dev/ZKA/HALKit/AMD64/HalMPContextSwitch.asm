@@ -22,7 +22,7 @@ section .text
 mp_do_context_switch:
     mov r11, rdx
     mov r12, rcx
-
+    
     ; Enable SCE that enables sysret and syscall
 	mov rcx, 0xc0000082
 	wrmsr
@@ -35,17 +35,26 @@ mp_do_context_switch:
 	mov edx, 0x00180008
 	wrmsr
 
-    mov rcx, r11
-    mov rdx, r12
-    mov r11, 0x202
+    mov rbx, 0x28
+    mov ds, rbx
+    
+    mov rbx, 0x28
+    mov fs, rbx
+
+    mov rbx, 0x28
+    mov gs, rbx
+
+    mov rbx, 0x28
+    mov es, rbx
+
+    ;; Swap registers, since it's the other way around.
+
+    mov rcx, r12 ;; code ptr
+    mov rsp, [r11] ;; stack ptr
+    mov r11, 0x0202
 
     ;; rcx and rdx already set.
     o64 sysret
-    ret
-
-mp_do_context_switch_fail:
-    jmp $
-    
 
 ;; @brief Gets the current stack frame.
 mp_get_current_context:

@@ -263,7 +263,7 @@ namespace Kernel::HAL
 		  @brief Global descriptor table entry, either null, code or data.
 		*/
 
-		struct PACKED NewOSGDTRecord final
+		struct PACKED ZKA_GDT_ENTRY final
 		{
 			UInt16 fLimit0;
 			UInt16 fBase0;
@@ -273,14 +273,14 @@ namespace Kernel::HAL
 			UInt8  fBase2;
 		};
 
-		struct PACKED ALIGN(0x1000) NewOSGDT final
+		struct PACKED ALIGN(0x1000) ZKA_GDT final
 		{
-			NewOSGDTRecord fNull;
-			NewOSGDTRecord fKernCode;
-			NewOSGDTRecord fKernData;
-			NewOSGDTRecord fUserNull;
-			NewOSGDTRecord fUserCode;
-			NewOSGDTRecord fUserData;
+			ZKA_GDT_ENTRY fNull;
+			ZKA_GDT_ENTRY fKernCode;
+			ZKA_GDT_ENTRY fKernData;
+			ZKA_GDT_ENTRY fUserNull;
+			ZKA_GDT_ENTRY fUserCode;
+			ZKA_GDT_ENTRY fUserData;
 		};
 	} // namespace Detail
 

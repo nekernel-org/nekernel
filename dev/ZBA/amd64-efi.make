@@ -36,7 +36,7 @@ EMU_FLAGS=-net none -m 12G -M q35 \
 			file=fat:rw:Sources/Root/,index=2,format=raw \
 			-drive id=disk_2,file=$(IMG_2),if=none \
             -device ahci,id=ahci \
-            -device ide-hd,drive=disk_2,bus=ahci.0 -d int
+            -device ide-hd,drive=disk_2,bus=ahci.0 -d int -no-reboot
 
 LD_FLAGS=-e Main --subsystem=10
 

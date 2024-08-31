@@ -34,6 +34,12 @@ struct HEAP_ALLOC_INFO final
 	Kernel::Size	fTheSz;
 };
 
+struct CREATE_THREAD_INFO final
+{
+	Kernel::MainKind fMain;
+	Kernel::Char	 fName[kPefNameLen];
+};
+
 struct PROCESS_BLOCK_INFO final
 {
 	THREAD_INFORMATION_BLOCK* fTIB;
@@ -56,16 +62,18 @@ namespace Kernel::HAL
 } // namespace Kernel::HAL
 
 /* GDT. */
-STATIC Kernel::HAL::Detail::NewOSGDT cGdt = {
-	{0, 0, 0, 0x00, 0x00, 0}, // null entry
-	{0, 0, 0, 0x9a, 0xaf, 0}, // Kernel code
-	{0, 0, 0, 0x92, 0xaf, 0}, // Kernel data
-	{0, 0, 0, 0x00, 0x00, 0}, // null entry
-	{0, 0, 0, 0x9a, 0xaf, 0}, // user code
-	{0, 0, 0, 0x92, 0xaf, 0}, // user data
+STATIC Kernel::HAL::Detail::ZKA_GDT cGdt = {
+	{0, 0, 0, 0x00, 0x00, 0}, // Null entry
+	{0, 0, 0, 0x9A, 0xA0, 0}, // Kernel code
+	{0, 0, 0, 0x92, 0xA0, 0}, // Kernel data
+	{0, 0, 0, 0x00, 0x00, 0}, // Null entry
+	{0, 0, 0, 0xFA, 0xA0, 0}, // User code
+	{0, 0, 0, 0xF2, 0xA0, 0}, // User data
 };
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
+
+EXTERN_C void hal_user_code_start(void);
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
 EXTERN_C void hal_init_platform(
@@ -106,7 +114,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::HAL::RegisterGDT gdtBase;
 
 	gdtBase.Base  = reinterpret_cast<Kernel::UIntPtr>(&cGdt);
-	gdtBase.Limit = sizeof(Kernel::HAL::Detail::NewOSGDT) - 1;
+	gdtBase.Limit = sizeof(Kernel::HAL::Detail::ZKA_GDT) - 1;
 
 	CONST Kernel::HAL::GDTLoader cGDT;
 	cGDT.Load(gdtBase);
@@ -122,23 +130,24 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	// Register the basic system calls.
 
-	constexpr auto cTlsInterrupt		= 0x11;
-	constexpr auto cTlsInstallInterrupt = 0x12;
-	constexpr auto cNewInterrupt		= 0x13;
-	constexpr auto cDeleteInterrupt		= 0x14;
-	constexpr auto cExitInterrupt		= 0x15;
-	constexpr auto cLastExitInterrupt	= 0x16;
-	constexpr auto cCatalogOpen			= 0x17;
-	constexpr auto cForkRead			= 0x18;
-	constexpr auto cForkWrite			= 0x19;
-	constexpr auto cCatalogClose		= 0x20;
-	constexpr auto cCatalogRemove		= 0x21;
-	constexpr auto cCatalogCreate		= 0x22;
-	constexpr auto cRebootInterrupt		= 0x23;
-	constexpr auto cShutdownInterrupt	= 0x24;
-	constexpr auto cLPCSendMsg			= 0x25;
-	constexpr auto cLPCOpenMsg			= 0x26;
-	constexpr auto cLPCCloseMsg			= 0x27;
+	constexpr auto cTlsInterrupt		  = 0x11;
+	constexpr auto cTlsInstallInterrupt	  = 0x12;
+	constexpr auto cNewInterrupt		  = 0x13;
+	constexpr auto cDeleteInterrupt		  = 0x14;
+	constexpr auto cExitInterrupt		  = 0x15;
+	constexpr auto cLastExitInterrupt	  = 0x16;
+	constexpr auto cCatalogOpen			  = 0x17;
+	constexpr auto cForkRead			  = 0x18;
+	constexpr auto cForkWrite			  = 0x19;
+	constexpr auto cCatalogClose		  = 0x20;
+	constexpr auto cCatalogRemove		  = 0x21;
+	constexpr auto cCatalogCreate		  = 0x22;
+	constexpr auto cRebootInterrupt		  = 0x23;
+	constexpr auto cShutdownInterrupt	  = 0x24;
+	constexpr auto cLPCSendMsg			  = 0x25;
+	constexpr auto cLPCOpenMsg			  = 0x26;
+	constexpr auto cLPCCloseMsg			  = 0x27;
+	constexpr auto cCreateThreadInterrupt = 0x28;
 
 	kSyscalls[cTlsInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		if (tls_check_syscall_impl(rdx) == false)
@@ -179,6 +188,16 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		rt_install_tib(rdxPb->fTIB, rdxPb->fGIB);
 	};
 
+	kSyscalls[cCreateThreadInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
+		CREATE_THREAD_INFO* rdxPb = reinterpret_cast<CREATE_THREAD_INFO*>(rdx);
+
+		if (!rdxPb)
+			return;
+
+		// install the fTIB and fGIB.
+		Kernel::sched_execute_thread(rdxPb->fMain, rdxPb->fName);
+	};
+
 	kSyscalls[cExitInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
 		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
 
@@ -208,14 +227,15 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		pow.Shutdown();
 	};
 
-	kSyscalls[cTlsInterrupt].fHooked		   = true;
-	kSyscalls[cTlsInstallInterrupt].fHooked = true;
-	kSyscalls[cDeleteInterrupt].fHooked	   = true;
-	kSyscalls[cNewInterrupt].fHooked		   = true;
-	kSyscalls[cExitInterrupt].fHooked	   = true;
-	kSyscalls[cLastExitInterrupt].fHooked   = true;
-	kSyscalls[cShutdownInterrupt].fHooked   = true;
-	kSyscalls[cRebootInterrupt].fHooked	   = true;
+	kSyscalls[cTlsInterrupt].fHooked		  = true;
+	kSyscalls[cTlsInstallInterrupt].fHooked	  = true;
+	kSyscalls[cDeleteInterrupt].fHooked		  = true;
+	kSyscalls[cNewInterrupt].fHooked		  = true;
+	kSyscalls[cExitInterrupt].fHooked		  = true;
+	kSyscalls[cLastExitInterrupt].fHooked	  = true;
+	kSyscalls[cShutdownInterrupt].fHooked	  = true;
+	kSyscalls[cRebootInterrupt].fHooked		  = true;
+	kSyscalls[cCreateThreadInterrupt].fHooked = true;
 
 	if (kHandoverHeader->f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
