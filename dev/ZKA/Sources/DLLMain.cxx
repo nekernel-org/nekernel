@@ -192,28 +192,12 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA System...", 30, 10, RGB(0, 0, 0));
 
-	Kernel::PEFLoader sys_user_drv(kSysDrv);
+	auto main_logger = []() -> void {
+		/// TODO: Write code which calls the login process.
+		while (Yes);
+	};
 
-	if (sys_user_drv.IsLoaded())
-	{
-		auto err_start = sys_user_drv.FindStart();
-
-		if (!err_start.Error())
-		{
-			auto start = err_start.Leak().Leak();
-			CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: System component successfully loaded...", 20, 10, RGB(0, 0, 0));
-		}
-		else
-		{
-			CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Missing entrypoint symbol: ", 20, 10, RGB(0, 0, 0));
-			CG::CGDrawStringToWnd(cKernelWnd, kPefStart, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing entrypoint symbol: ")), RGB(0, 0, 0));
-		}
-	}
-	else
-	{
-		CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Missing catalog: ", 20, 10, RGB(0, 0, 0));
-		CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing catalog: ")), RGB(0, 0, 0));
-	}
+	Kernel::sched_execute_thread(main_logger, "ZKA Init Thread");
 
 	Kernel::ProcessHelper::StartScheduling();
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

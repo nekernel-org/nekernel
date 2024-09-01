@@ -41,8 +41,6 @@ namespace Kernel::HAL
 	/// @return
 	Void GDTLoader::Load(RegisterGDT& gdt)
 	{
-		MUST_PASS(gdt.Base != 0);
-
 		Detail::kRegGdt.Base  = gdt.Base;
 		Detail::kRegGdt.Limit = gdt.Limit;
 
@@ -52,8 +50,6 @@ namespace Kernel::HAL
 	Void IDTLoader::Load(Register64& idt)
 	{
 		volatile ::Kernel::UIntPtr** baseIdt = (volatile ::Kernel::UIntPtr**)idt.Base;
-
-		MUST_PASS(baseIdt);
 
 		for (UInt16 i = 0; i < kKernelIdtSize; ++i)
 		{

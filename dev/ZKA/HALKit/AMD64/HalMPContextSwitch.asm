@@ -22,7 +22,6 @@ section .text
 ;; rdx: stack ptr.
 mp_do_context_switch:
     mov r11, 0x0202
-    mov rsp, rdx
     o64 sysret
 
 ;; @brief Gets the current stack frame.
@@ -41,7 +40,6 @@ mp_do_context_switch_pre:
 	mov rcx, 0xc0000081
 	rdmsr
 	mov edx, 0x00180008
-
 	wrmsr
     
     ret

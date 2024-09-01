@@ -61,14 +61,18 @@ namespace Kernel::HAL
 	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr) noexcept;
 } // namespace Kernel::HAL
 
-/* GDT. */
-STATIC Kernel::HAL::Detail::ZKA_GDT cGdt = {
-	.fKernNull = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  0, .fAccessByte = 0x00, .fLimit1_Flags = 0x00, .fBase2 = 0}, // Null entry
-	.fKernCode = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0x9A, .fLimit1_Flags = 0xA0, .fBase2 = 0}, // Kernel code
-	.fKernData = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0x92, .fLimit1_Flags = 0xA0, .fBase2 = 0}, // Kernel data
-	.fUserNull = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0x00, .fLimit1_Flags = 0x00, .fBase2 = 0}, // Null entry
-	.fUserCode = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0xCF, .fLimit1_Flags = 0xA0, .fBase2 = 0}, // User code
-	.fUserData = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0x92, .fLimit1_Flags = 0xA0, .fBase2 = 0}, // User data
+/* GDT, mostly descriptors for user and kernel segments. */
+STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY cGdt[9] = {
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},		// Null entry
+	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0x9A, .fGranularity = 0xA0, .fBase2 = 0}, // Kernel code
+	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0x92, .fGranularity = 0xA0, .fBase2 = 0}, // Kernel data
+	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0xFA, .fGranularity = 0xA0, .fBase2 = 0}, // User code
+	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBase2 = 0}, // User data
+	// reserve them for later.
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},		// Null entry
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},	
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},	
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},	
 };
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -80,6 +84,8 @@ EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
 {
 	/* Setup globals. */
+
+	sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY);
 
 	kHandoverHeader = HandoverHeader;
 
@@ -113,8 +119,8 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	// Load memory descriptors.
 	Kernel::HAL::RegisterGDT gdtBase;
 
-	gdtBase.Base  = reinterpret_cast<Kernel::UIntPtr>(&cGdt);
-	gdtBase.Limit = sizeof(Kernel::HAL::Detail::ZKA_GDT) - 1;
+	gdtBase.Base  = reinterpret_cast<Kernel::UIntPtr>(cGdt);
+	gdtBase.Limit = (sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY) * 9);
 
 	CONST Kernel::HAL::GDTLoader cGDT;
 	cGDT.Load(gdtBase);

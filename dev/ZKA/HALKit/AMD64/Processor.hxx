@@ -247,18 +247,8 @@ namespace Kernel::HAL
 			UInt16 fBase0;
 			UInt8  fBase1;
 			UInt8  fAccessByte;
-			UInt8  fLimit1_Flags;
+			UInt8  fGranularity;
 			UInt8  fBase2;
-		};
-
-		struct PACKED ALIGN(0x1000) ZKA_GDT final
-		{
-			ZKA_GDT_ENTRY fKernNull;
-			ZKA_GDT_ENTRY fKernCode;
-			ZKA_GDT_ENTRY fKernData;
-			ZKA_GDT_ENTRY fUserNull;
-			ZKA_GDT_ENTRY fUserCode;
-			ZKA_GDT_ENTRY fUserData;
 		};
 	} // namespace Detail
 
