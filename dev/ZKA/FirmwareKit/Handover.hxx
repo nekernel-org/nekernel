@@ -65,20 +65,25 @@ namespace Kernel::HEL
 		VoidPtr f_VirtualStart;
 		SizeT	f_VirtualSize;
 		VoidPtr f_PhysicalStart;
-
 		VoidPtr f_HeapStart;
+
+		VoidPtr f_KernelImage;
+		VoidPtr f_StartupChime;
+		VoidPtr f_StartupImage;
+		VoidPtr f_TTFallbackFont;
 
 		WideChar f_FirmwareVendorName[32];
 		SizeT	 f_FirmwareVendorLen;
+
+		VoidPtr f_FirmwareCustomTables[2]; // On EFI 0: BS 1: ST
 
 		struct
 		{
 			VoidPtr f_SmBios;
 			VoidPtr f_VendorPtr;
 			VoidPtr f_MpPtr;
+			Bool	f_MultiProcessingEnabled;
 		} f_HardwareTables;
-
-		Bool f_MultiProcessingEnabled;
 
 		struct
 		{
@@ -91,7 +96,6 @@ namespace Kernel::HEL
 		} f_GOP;
 
 		UInt64 f_FirmwareSpecific[8];
-		Char   f_CommandLine[255][kHandoverMaxCmdLine];
 	};
 
 	enum

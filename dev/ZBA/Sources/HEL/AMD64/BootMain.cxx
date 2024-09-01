@@ -149,7 +149,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	CGDrawString("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "MULTIPROCESSOR SYSTEM." : "UNIPROCESSOR SYSTEM.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 
-	handoverHdrPtr->f_MultiProcessingEnabled = cnt_enabled > 1
+	handoverHdrPtr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1
 	;
 	// Fill handover header now.
 
@@ -233,10 +233,13 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// format the disk.
 	// ---------------------------------------------------- //
 
+	handoverHdrPtr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
+	handoverHdrPtr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
+
 	BFileReader readerSysChk(L"syschk.sys", ImageHandle);
 	readerSysChk.ReadAll(0);
 
-	Boot::BThread* loaderBootScr = nullptr;
+	Boot::BThread* loaderSysChk = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
@@ -244,11 +247,16 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	if (readerSysChk.Blob())
 	{
-		loaderBootScr = new Boot::BThread(readerSysChk.Blob());
-		loaderBootScr->SetName("64-bit System Check DLL.");
+		loaderSysChk = new Boot::BThread(readerSysChk.Blob());
+		loaderSysChk->SetName("64-bit System Check DLL.");
 	}
 
-	loaderBootScr->Start(handoverHdrPtr);
+	loaderSysChk->Start(handoverHdrPtr);
+
+	// nullify these fields, to avoid being reused later.
+
+	handoverHdrPtr->f_FirmwareCustomTables[0] = nullptr;
+	handoverHdrPtr->f_FirmwareCustomTables[1] = nullptr;
 
 	BFileReader readerKernel(L"newoskrnl.dll", ImageHandle);
 
@@ -264,10 +272,32 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	{
 		loader = new Boot::BThread(readerKernel.Blob());
 		loader->SetName("64-bit Kernel DLL.");
+
+		handoverHdrPtr->f_KernelImage = readerKernel.Blob();
 	}
 	else
 	{
-		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL KERNEL DLL.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+	}
+
+	BFileReader chimeWav(L"ZKA\\startup.wav", ImageHandle);
+	BFileReader readerSysDrv(L"ZKA\\startup.sys", ImageHandle);
+	BFileReader urbanistTTF(L"ZKA\\urbanist.ttf", ImageHandle);
+
+	readerSysDrv.ReadAll(0);
+	chimeWav.ReadAll(0);
+	urbanistTTF.ReadAll(0);
+
+	if (readerSysDrv.Blob() &&
+		chimeWav.Blob())
+	{
+		handoverHdrPtr->f_StartupChime = chimeWav.Blob();
+		handoverHdrPtr->f_StartupImage = readerKernel.Blob();
+		handoverHdrPtr->f_TTFallbackFont = urbanistTTF.Blob();
+	}
+	else
+	{
+		CGDrawString("NEWOSLDR: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REINSTALL THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 	}
 
 	EFI::ExitBootServices(MapKey, ImageHandle);

@@ -118,4 +118,4 @@
 #define kSysPage "\\System\\syspage.sys"
 
 /// @brief The main system driver.
-#define kSysDrv "\\System\\sysdrv.sys"
+#define kSysDrv "\\System\\startup.sys"

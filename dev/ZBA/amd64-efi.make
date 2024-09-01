@@ -57,6 +57,7 @@ DDK=ddk.dll
 SCI=sci.dll
 CRT=ndkcrt.dll
 SYS_CHK=syschk.sys
+STARTUP=startup.sys
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -72,6 +73,7 @@ all: compile-amd64
 	$(COPY) ../SCI/$(SCI) Sources/Root/$(SCI)
 	$(COPY) ../DDK/$(DDK) Sources/Root/$(DDK)
 	$(COPY) ./Modules/SysChk/$(SYS_CHK) Sources/Root/$(SYS_CHK)
+	$(COPY) ./Modules/SysChk/$(SYS_CHK) Sources/Root/ZKA/$(STARTUP)
 	$(COPY) ../CRT/$(CRT) Sources/Root/$(CRT)
 	$(COPY) Sources/$(BOOT_LOADER) Sources/Root/$(BOOT_LOADER)
 

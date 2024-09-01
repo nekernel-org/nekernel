@@ -243,7 +243,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kSyscalls[cRebootInterrupt].fHooked		  = true;
 	kSyscalls[cCreateThreadInterrupt].fHooked = true;
 
-	if (kHandoverHeader->f_MultiProcessingEnabled)
+	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::kcout << "newoskrnl.dll: Creating filesystem and such.\r";

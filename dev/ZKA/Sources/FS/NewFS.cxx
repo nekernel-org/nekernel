@@ -62,8 +62,7 @@ STATIC MountpointInterface sMountpointInterface;
 _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 												 _Input NFS_FORK_STRUCT& theFork)
 {
-	if (catalog && theFork.ForkName[0] != 0 &&
-		theFork.DataSize <= kNewFSForkSz)
+	if (catalog && theFork.ForkName[0] != 0)
 	{
 		Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
@@ -710,7 +709,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 
 		prevFork = *forkDataIn;
 
-		startFork = forkDataIn->NextSibling + forkDataIn->DataSize;
+		startFork = forkDataIn->NextSibling;
 	}
 
 	return false;
