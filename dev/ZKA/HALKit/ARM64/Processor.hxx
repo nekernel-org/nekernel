@@ -11,10 +11,6 @@
 #include <NewKit/Utils.hxx>
 #include <FirmwareKit/Handover.hxx>
 
-#ifdef kCPUBackendName
-#undef kCPUBackendName
-#endif // ifdef kCPUBackendName
-
 #define kPTESize 512 /* 64-bit PT */
 
 #define kCPUBackendName "ARMv8"

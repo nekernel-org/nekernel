@@ -24,12 +24,6 @@ EXTERN_C
 #include <cpuid.h>
 }
 
-#ifdef kCPUBackendName
-#undef kCPUBackendName
-#endif // ifdef kCPUBackendName
-
-#define kCPUBackendName "AMD64"
-
 #define kSyscallRoute (0x32)
 
 #define IsActiveLow(FLG)	  (FLG & 2)
