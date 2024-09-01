@@ -18,25 +18,31 @@ namespace Kernel::HAL
 {
 	EXTERN_C Int32 mm_update_page(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags)
 	{
-		UIntPtr pde_idx = (UIntPtr)virt_addr >> 22;
-		UIntPtr pte_idx = (UIntPtr)virt_addr >> 12 & 0x03FF;
+		UIntPtr pte_idx = (UIntPtr)virt_addr >> 12;
 
-		volatile PTE* pte = (volatile PTE*)((UIntPtr)pd_base + (kPTEAlign * pde_idx));
+		volatile PTE* pte = (volatile PTE*)((UIntPtr)pd_base + (kPTEAlign * pte_idx));
 
 		if (pte)
 		{
-			if ((flags & eFlagsSetPhysAddress))
-				pte->PhysicalAddress = (UInt32)(UIntPtr)phys_addr;
+			if (flags & eFlagsSetPhysAddress)
+				pte->PhysicalAddress = (UIntPtr)phys_addr >> 12;
 
-			pte->Present	 = flags & eFlagsPresent;
-			pte->Rw			 = flags & eFlagsRw;
-			pte->User		 = flags & eFlagsUser;
-			pte->ExecDisable = flags & eFlagsExecDisable;
+			if (flags & eFlagsPresent)
+				pte->Present = flags & eFlagsPresent;
 
-			return 0;
+			if (flags & eFlagsRw)
+				pte->Rw = flags & eFlagsRw;
+
+			if (flags & eFlagsUser)
+				pte->User = flags & eFlagsUser;
+
+			if (flags & eFlagsExecDisable)
+				pte->ExecDisable = flags & eFlagsExecDisable;
+
+			return Yes;
 		}
 
-		return 1;
+		return No;
 	}
 
 	Void Out8(UInt16 port, UInt8 value)

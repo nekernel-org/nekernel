@@ -39,8 +39,6 @@ EXTERN Kernel::Property cKernelVersion;
 
 STATIC CG::UI_WINDOW_STRUCT* cKernelWnd = nullptr;
 
-EXTERN_C void hal_switch_to_user_code(void);
-
 namespace Kernel::Detail
 {
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
@@ -191,13 +189,6 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	Kernel::ProcessHelper::StartScheduling();
 
 	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA System...", 30, 10, RGB(0, 0, 0));
-
-	auto main_logger = []() -> void {
-		/// TODO: Write code which calls the login process.
-		while (Yes);
-	};
-
-	Kernel::sched_execute_thread(main_logger, "ZKA Init Thread");
 
 	Kernel::ProcessHelper::StartScheduling();
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);

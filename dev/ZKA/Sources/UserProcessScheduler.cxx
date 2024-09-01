@@ -363,7 +363,7 @@ namespace Kernel
 
 	/// @brief Gets the current scheduled team.
 	/// @return
-	ProcessTeam& UserProcessScheduler::CurrentTeam()
+	UserProcessTeam& UserProcessScheduler::CurrentTeam()
 	{
 		return mTeam;
 	}

@@ -40,18 +40,23 @@ EXTERN_C Kernel::VoidPtr hal_read_cr3(); // @brief Page table.
 
 namespace Kernel::HAL
 {
-	struct PACKED PageTable64 final
+	struct PACKED ZKA_PTE final
 	{
-		bool		   Present : 1;
-		bool		   Rw : 1;
-		bool		   User : 1;
-		bool		   Wt : 1;
-		bool		   Cache : 1;
-		bool		   Accessed : 1;
-		Kernel::Int32  Reserved : 6;
-		Kernel::UInt64 PhysicalAddress : 36;
-		Kernel::Int32  Reserved1 : 15;
-		bool		   ExecDisable : 1;
+		UInt8  Present : 1;
+		UInt8  Rw : 1;
+		UInt8  User : 1;
+		UInt8  Wt : 1;
+		UInt8  Cache : 1;
+		UInt8  Accessed : 1;
+		UInt8  Dirty : 1;
+		UInt8  PageSize : 1;
+		UInt8  Global : 1;
+		UInt8  Available : 3;
+		UInt64 PhysicalAddress : 39;
+		UInt8  Reserved : 6;
+		UInt8  ProtectionKey : 1;
+		UInt8  ExecDisable : 1;
+		UInt8  ReservedEx : 3;
 	};
 
 	namespace Detail
@@ -77,9 +82,9 @@ namespace Kernel::HAL
 		}
 	} // namespace Detail
 
-	struct PageDirectory64 final
+	struct ZKA_PDE final
 	{
-		PageTable64 ALIGN(kPTEAlign) Pte[kPTEMax];
+		ZKA_PTE ALIGN(kPTEAlign) Pte[kPTEMax];
 	};
 
 	auto hal_alloc_page(Boolean rw, Boolean user, SizeT size) -> VoidPtr;
@@ -88,6 +93,6 @@ namespace Kernel::HAL
 
 namespace Kernel
 {
-	typedef HAL::PageTable64	 PTE;
-	typedef HAL::PageDirectory64 PDE;
+	typedef HAL::ZKA_PTE	 PTE;
+	typedef HAL::ZKA_PDE PDE;
 } // namespace Kernel

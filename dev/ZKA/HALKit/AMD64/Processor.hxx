@@ -33,7 +33,7 @@ EXTERN_C
 #define kTrapGate			 (0xEF)
 #define kTaskGate			 (0b10001100)
 #define kGdtCodeSelector	 (0x08)
-#define kGdtUserCodeSelector (0x10)
+#define kGdtUserCodeSelector (0x2b)
 
 namespace Kernel
 {

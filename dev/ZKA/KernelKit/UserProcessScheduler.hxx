@@ -25,11 +25,11 @@
 
 namespace Kernel
 {
-	//! @brief Forward declarations.
-	struct UserProcess;
+	//! @note Forward declarations.
 
+	class UserProcess;
 	class PEFDLLInterface;
-	class ProcessTeam;
+	class UserProcessTeam;
 	class UserProcessScheduler;
 	class ProcessHelper;
 
@@ -226,13 +226,13 @@ namespace Kernel
 
 	/// \brief Processs Team (contains multiple processes inside it.)
 	/// Equivalent to a process batch
-	class ProcessTeam final
+	class UserProcessTeam final
 	{
 	public:
-		explicit ProcessTeam() = default;
-		~ProcessTeam()		   = default;
+		explicit UserProcessTeam() = default;
+		~UserProcessTeam()		   = default;
 
-		ZKA_COPY_DEFAULT(ProcessTeam);
+		ZKA_COPY_DEFAULT(UserProcessTeam);
 
 		Array<UserProcess, kSchedProcessLimitPerTeam>& AsArray();
 		Ref<UserProcess>&								AsRef();
@@ -262,7 +262,7 @@ namespace Kernel
 		bool operator!();
 
 	public:
-		ProcessTeam& CurrentTeam();
+		UserProcessTeam& CurrentTeam();
 
 	public:
 		SizeT Add(UserProcess& processRef);
@@ -276,7 +276,7 @@ namespace Kernel
 		STATIC UserProcessScheduler& The();
 
 	private:
-		ProcessTeam mTeam;
+		UserProcessTeam mTeam;
 	};
 
 	/*

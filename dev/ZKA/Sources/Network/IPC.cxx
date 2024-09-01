@@ -98,8 +98,8 @@ namespace Kernel
 
 			(*pckt_in)->IpcEndianess		= static_cast<UInt8>(endian);
 			(*pckt_in)->IpcPacketSize		= sizeof(IPC_MESSAGE_STRUCT);
-			(*pckt_in)->IpcFrom.ProcessID	= Kernel::UserProcessScheduler::The().CurrentProcess().Leak().ProcessId;
-			(*pckt_in)->IpcFrom.ProcessTeam = Kernel::UserProcessScheduler::The().CurrentTeam().mTeamId;
+			(*pckt_in)->IpcFrom.UserProcessID	= Kernel::UserProcessScheduler::The().CurrentProcess().Leak().ProcessId;
+			(*pckt_in)->IpcFrom.UserProcessTeam = Kernel::UserProcessScheduler::The().CurrentTeam().mTeamId;
 			return true;
 		}
 

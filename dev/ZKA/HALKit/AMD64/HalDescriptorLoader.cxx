@@ -49,21 +49,21 @@ namespace Kernel::HAL
 
 	Void IDTLoader::Load(Register64& idt)
 	{
-		volatile ::Kernel::UIntPtr** baseIdt = (volatile ::Kernel::UIntPtr**)idt.Base;
+		volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
-		for (UInt16 i = 0; i < kKernelIdtSize; ++i)
+		for (UInt16 idt_indx = 0; idt_indx < kKernelIdtSize; ++idt_indx)
 		{
-			MUST_PASS(baseIdt[i]);
+			MUST_PASS(ptr_ivt[idt_indx]);
 
-			Detail::kInterruptVectorTable[i].Selector		= kGdtCodeSelector;
-			Detail::kInterruptVectorTable[i].Ist			= 0x0;
-			Detail::kInterruptVectorTable[i].TypeAttributes = kInterruptGate;
-			Detail::kInterruptVectorTable[i].OffsetLow		= ((UIntPtr)baseIdt[i] & __INT16_MAX__);
-			Detail::kInterruptVectorTable[i].OffsetMid		= (((UIntPtr)baseIdt[i] >> 16) & __INT16_MAX__);
-			Detail::kInterruptVectorTable[i].OffsetHigh =
-				(((UIntPtr)baseIdt[i] >> 32) & __INT32_MAX__);
+			Detail::kInterruptVectorTable[idt_indx].Selector		= idt_indx == kSyscallRoute ? kGdtUserCodeSelector : kGdtCodeSelector;
+			Detail::kInterruptVectorTable[idt_indx].Ist			= 0;
+			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kInterruptGate;
+			Detail::kInterruptVectorTable[idt_indx].OffsetLow		= ((UIntPtr)ptr_ivt[idt_indx] & __INT16_MAX__);
+			Detail::kInterruptVectorTable[idt_indx].OffsetMid		= (((UIntPtr)ptr_ivt[idt_indx] >> 16) & __INT16_MAX__);
+			Detail::kInterruptVectorTable[idt_indx].OffsetHigh =
+				(((UIntPtr)ptr_ivt[idt_indx] >> 32) & __INT32_MAX__);
 
-			Detail::kInterruptVectorTable[i].Zero = 0x0;
+			Detail::kInterruptVectorTable[idt_indx].Zero = 0x0;
 		}
 
 		Detail::kRegIdt.Base  = reinterpret_cast<UIntPtr>(Detail::kInterruptVectorTable);

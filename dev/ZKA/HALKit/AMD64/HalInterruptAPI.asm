@@ -37,6 +37,7 @@ extern idt_handle_gpf
 extern idt_handle_pf
 extern ke_io_write
 extern idt_handle_ud
+extern idt_handle_generic
 
 section .text
 
@@ -64,7 +65,21 @@ __ZKA_INT_6:
     iretq
 
 IntNormal 7
-IntExp   8
+
+;; Invalid opcode interrupt
+__ZKA_INT_8:
+    cli
+
+    push rax
+
+    mov rcx, rsp
+    call idt_handle_generic
+
+    pop rax
+
+    sti
+    iretq
+
 IntNormal 9
 IntExp   10
 IntExp   11

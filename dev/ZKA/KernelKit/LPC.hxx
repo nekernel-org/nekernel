@@ -9,7 +9,7 @@
 #include <NewKit/Defines.hxx>
 
 /// @file LPC.hxx
-/// @brief Local UserProcess Codes.
+/// @brief Local Process Codes.
 
 #define ErrLocalIsOk()	 (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() == Kernel::kErrorSuccess)
 #define ErrLocalFailed() (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)

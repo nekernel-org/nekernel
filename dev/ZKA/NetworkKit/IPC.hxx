@@ -34,8 +34,8 @@ namespace Kernel
 	/// @brief 128-bit IPC address.
 	struct PACKED IPC_ADDRESS_STRUCT final
 	{
-		UInt64 ProcessID;
-		UInt64 ProcessTeam;
+		UInt64 UserProcessID;
+		UInt64 UserProcessTeam;
 
 		////////////////////////////////////
 		// some operators.
@@ -43,12 +43,12 @@ namespace Kernel
 
 		bool operator==(const IPC_ADDRESS_STRUCT& addr) noexcept
 		{
-			return addr.ProcessID == this->ProcessID && addr.ProcessTeam == this->ProcessTeam;
+			return addr.UserProcessID == this->UserProcessID && addr.UserProcessTeam == this->UserProcessTeam;
 		}
 
 		bool operator==(IPC_ADDRESS_STRUCT& addr) noexcept
 		{
-			return addr.ProcessID == this->ProcessID && addr.ProcessTeam == this->ProcessTeam;
+			return addr.UserProcessID == this->UserProcessID && addr.UserProcessTeam == this->UserProcessTeam;
 		}
 	};
 
