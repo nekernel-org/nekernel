@@ -92,14 +92,19 @@ namespace Kernel
 
 		if (*pckt_in)
 		{
-			(*pckt_in)->IpcHeaderMagic = cXPCOMHeaderMagic;
-
 			auto endian = DEDUCE_ENDIAN((*pckt_in), ((Char*)(*pckt_in))[0]);
+
+			(*pckt_in)->IpcHeaderMagic = cXPCOMHeaderMagic;
 
 			(*pckt_in)->IpcEndianess		= static_cast<UInt8>(endian);
 			(*pckt_in)->IpcPacketSize		= sizeof(IPC_MESSAGE_STRUCT);
+			
+			(*pckt_in)->IpcTo.UserProcessID	= 0;
+			(*pckt_in)->IpcTo.UserProcessTeam = 0;
+
 			(*pckt_in)->IpcFrom.UserProcessID	= Kernel::UserProcessScheduler::The().CurrentProcess().Leak().ProcessId;
 			(*pckt_in)->IpcFrom.UserProcessTeam = Kernel::UserProcessScheduler::The().CurrentTeam().mTeamId;
+			
 			return true;
 		}
 

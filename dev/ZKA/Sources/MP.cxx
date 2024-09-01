@@ -91,12 +91,12 @@ namespace Kernel
 	/// @retval false stack is invalid, previous code is running.
 	Bool HardwareThread::Switch(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr frame)
 	{
-		fStack = frame;
-
-		if (!fStack ||
+		if (!frame ||
 			!image ||
 			!stack_ptr)
 			return false;
+
+		fStack = frame;
 
 		auto ret = mp_register_process(fStack);
 

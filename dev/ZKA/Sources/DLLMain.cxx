@@ -52,7 +52,7 @@ namespace Kernel::Detail
 		{
 			if (Kernel::FilesystemManagerInterface::GetMounted())
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: NewFS IFS already mounted by HAL (A:)...", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: NewFS IFS already mounted by HAL (A:)", 10, 10, RGB(0, 0, 0));
 				fNewFS = reinterpret_cast<Kernel::NewFilesystemManager*>(Kernel::FilesystemManagerInterface::GetMounted());
 			}
 			else
@@ -62,7 +62,7 @@ namespace Kernel::Detail
 
 				Kernel::FilesystemManagerInterface::Mount(fNewFS);
 
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Mounted NewFS IFS (A:)...", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Mounted NewFS IFS (A:)", 10, 10, RGB(0, 0, 0));
 			}
 
 			const Kernel::SizeT cDirCount = 7UL;
