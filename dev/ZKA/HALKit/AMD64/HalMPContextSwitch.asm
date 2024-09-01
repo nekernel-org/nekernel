@@ -50,7 +50,7 @@ mp_do_context_switch:
     ;; Swap registers, since it's the other way around.
 
     mov rcx, r12 ;; code ptr
-    mov rsp, [r11] ;; stack ptr
+    mov rsp, r11 ;; stack ptr
     mov r11, 0x0202
 
     ;; rcx and rdx already set.

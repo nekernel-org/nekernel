@@ -37,7 +37,7 @@ typedef char			 Char;
 #include <SCI/sci_err.hxx>
 
 #ifdef __SCI_IMPL__
-#include <SCI/scm_core.hxx>
+#include <SCI/xpcom_core.hxx>
 #else
 class IUnknown; // Refrenced from an IDB entry.
 class UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: WordUCLSID.
@@ -49,10 +49,10 @@ class UUID;
 /// @param uclsidOfCls
 /// @return
 template <typename TCLS, typename UCLSID, typename... Args>
-TCLS* ScmQueryInterface(UCLSID uclsidOfCls, Args... args);
+TCLS* XPCOMQueryInterface(UCLSID uclsidOfCls, Args... args);
 
 template <typename TCLS>
-SInt32 ScmReleaseClass(TCLS** cls);
+SInt32 XPCOMReleaseClass(TCLS** cls);
 
 /// @brief Release SCM class.
 /// @tparam TCLS
@@ -169,23 +169,23 @@ IMPORT_C UInt32 TlsInstallIB(UInt0);
 /// @param uclsidOfCls UCLS factory class
 /// @return TCLS interface
 template <typename TCLS, typename UCLSID, typename... Args>
-TCLS* ScmQueryInterface(_Input UCLSID* uclsidOfCls, _Input Args&&... args);
+TCLS* XPCOMQueryInterface(_Input UCLSID* uclsidOfCls, _Input Args&&... args);
 
 /// @brief Release SCM object.
 /// @tparam TCLS the class type.
 /// @param cls the class to release.
 /// @return status code.
 template <typename TCLS>
-SInt32 ScmReleaseClass(_Input TCLS* cls);
+SInt32 XPCOMReleaseClass(_Input TCLS* cls);
 
 /// @brief Creates an SCM instance in the process.
 /// @param handle_instance the SCM handle.
 /// @param flags the SCM flags.
-IMPORT_C SInt32 ScmCreateInstance(_Input UInt32 flags, _Output ZKAObject* handle_instance);
+IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output ZKAObject* handle_instance);
 
 /// @brief Destroys an SCM instance of the process.
 /// @param handle_instance the SCM handle.
-IMPORT_C UInt0  ScmDestroyInstance(_Input ZKAObject handle_instance);
+IMPORT_C UInt0  XPCOMDestroyInstance(_Input ZKAObject handle_instance);
 
 // ------------------------------------------------------------------------
 // Memory Management API.
@@ -195,12 +195,18 @@ IMPORT_C UInt0  ScmDestroyInstance(_Input ZKAObject handle_instance);
 /// @param len the length of it.
 /// @param flags the flags of it.
 /// @return heap pointer.
-IMPORT_C VoidPtr RtlCreateHeap(_Input SizeT len, _Input UInt32 flags);
+IMPORT_C VoidPtr MmCreateHeap(_Input SizeT len, _Input UInt32 flags);
 
 /// @brief Destroys the pointer
 /// @param heap the heap itself.
 /// @return void.
-IMPORT_C UInt0 RtlDestroyHeap(_Input VoidPtr heap);
+IMPORT_C UInt0 MmDestroyHeap(_Input VoidPtr heap);
+
+/// @brief Change protection flags of memory region.
+IMPORT_C UInt32 MmChangeHeapFlags(_Input VoidPtr heap, _Input UInt32 flags);
+
+/// @brief Fill memory region with CRC32.
+IMPORT_C UInt32 MmFillCRC32Heap(_Input VoidPtr heap);
 
 // ------------------------------------------------------------------------
 // Error handling API.

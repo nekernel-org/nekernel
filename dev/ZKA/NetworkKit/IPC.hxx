@@ -19,12 +19,12 @@
 /// @brief IPC EP protocol.
 
 /// IA separator.
-#define cIPCEPRemoteSeparator ":"
+#define cXPCOMRemoteSeparator ":"
 
 /// Interchange address, consists of PID:TEAM.
-#define cIPCEPRemoteInvalid "00:00"
+#define cXPCOMRemoteInvalid "00:00"
 
-#define cIPCEPHeaderMagic (0x4950434)
+#define cXPCOMHeaderMagic (0x4950434)
 
 namespace Kernel
 {
@@ -61,7 +61,7 @@ namespace Kernel
 		eIPCEPMixedEndian = 2,
 	};
 
-	constexpr auto cIPCEPMsgSize = 6094U;
+	constexpr auto cXPCOMMsgSize = 6094U;
 
 	/// @brief IPC connection header, message cannot be greater than 6K.
 	typedef struct IPC_MESSAGE_STRUCT final
@@ -74,7 +74,7 @@ namespace Kernel
 		UInt32			 IpcCRC32;
 		UInt32			 IpcMsg;
 		UInt32			 IpcMsgSz;
-		UInt8			 IpcData[cIPCEPMsgSize];
+		UInt8			 IpcData[cXPCOMMsgSize];
 	} PACKED IPC_MESSAGE_STRUCT;
 
 	/// @brief Sanitize packet function

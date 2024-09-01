@@ -267,7 +267,7 @@ hal_switch_to_user_code:
     mov rbx, 0x28
     mov es, rbx
 
-    mov rsp, [hal_user_code_stack_end]
+    mov rsp, hal_user_code_stack_end
     mov rcx, hal_user_code_start
 
     mov r11, 0x0202
@@ -275,9 +275,14 @@ hal_switch_to_user_code:
     o64 sysret
 
 hal_user_code_start:
-L0:
+    hlt
     nop
     jmp $
+hal_user_code_end:
+
+section .data
+
+hal_user_code_sz: dq hal_user_code_end - hal_user_code_start
 
 section .bss
 

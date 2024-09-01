@@ -13,7 +13,7 @@
 struct _KERNEL_DEVICE;
 
 /// @brief Kernel Device driver.
-typedef struct _KERNEL_DEVICE
+typedef struct _KERNEL_DEVICE DK_FINAL
 {
 	char name[255];					   // the device name. Could be /./DEVICE_NAME/
 	void* (*read)(void* arg, int len); // read from device.

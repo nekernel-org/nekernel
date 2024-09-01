@@ -32,7 +32,7 @@ struct DDK_PROPERTY_RECORD DK_FINAL
 {
     char* p_name;
     void* p_object;
-    void* p_scm_object;
+    void* p_xpcom_object;
 };
 
 /// \brief DDK status structure (__at_enable, __at_disable...)

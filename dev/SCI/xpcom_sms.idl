@@ -25,10 +25,8 @@ Purpose: Base code of SCM.
 #warning ! You may be using the clang version of the ZKA kit, please be cautious that some thing mayn't be present. !
 #endif // !__NDK__
 
-protocol IPXCOMSocket;
-
 clsid("0943A614-0201-4107-8F8D-E909DF7F53C9")
-protocol IPXCOMSocket
+protocol ISMS
 {
 interface:
     interface_method INT32 SendMessage(_Input CONST CHAR* bytes, _Input SIZE_T bytes_size);

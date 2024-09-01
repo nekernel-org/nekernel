@@ -82,8 +82,9 @@ namespace Kernel
 	{
 		if (wrapper)
 		{
-			if (!Detail::page_disable(wrapper->VirtualAddress()))
+			if (!Kernel::HAL::hal_free_page((VoidPtr)wrapper->VirtualAddress()))
 				return false;
+
 			return true;
 		}
 

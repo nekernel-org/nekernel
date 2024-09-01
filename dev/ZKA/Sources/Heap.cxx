@@ -34,6 +34,8 @@ namespace Kernel
 			UInt32 fMagic;
 			///! @brief Boolean value which tells if the heap is allocated.
 			Boolean fPresent;
+			/// @brief Is this valued owned by the user?
+			Boolean fUserOwned;
 			///! @brief 32-bit CRC checksum.
 			UInt32 fCRC32;
 			/// @brief 64-bit pointer size.
@@ -108,6 +110,8 @@ namespace Kernel
 		heap_info_ptr->fCRC32		 = 0U; // dont fill it for now.
 		heap_info_ptr->fTargetPtr	 = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
 		heap_info_ptr->fPagePtr		 = 0UL;
+		heap_info_ptr->fUserOwned = user;
+		heap_info_ptr->fPresent = true;
 
 		++kHeapCount;
 
@@ -176,7 +180,10 @@ namespace Kernel
 					ke_calculate_crc32((Char*)heapInfoBlk->fTargetPtr,
 									   heapInfoBlk->fTargetPtrSize))
 				{
-					ke_stop(RUNTIME_CHECK_POINTER);
+					if (!heapInfoBlk->fUserOwned)
+					{
+						ke_stop(RUNTIME_CHECK_POINTER);
+					}
 				}
 			}
 

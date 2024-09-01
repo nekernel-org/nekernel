@@ -135,5 +135,23 @@ namespace Kernel
 			// Now allocate the page.
 			return hal_try_alloc_new_page(rw, user, size);
 		}
+
+		auto hal_free_page(VoidPtr page_ptr) -> Bool
+		{
+			if (!page_ptr)
+				return false;
+
+			Detail::VIRTUAL_MEMORY_HEADER* result = reinterpret_cast<Detail::VIRTUAL_MEMORY_HEADER*>((UIntPtr)page_ptr - sizeof(Detail::VIRTUAL_MEMORY_HEADER));
+			
+			if (result->Magic != cVMHMagic)
+				return false;
+			
+			if (result->Present != true)
+				return true;
+
+			result->Present = false;
+
+			return true;
+		}
 	} // namespace HAL
 } // namespace Kernel

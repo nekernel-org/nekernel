@@ -41,12 +41,12 @@ Bool ipc_int_sanitize_packet(IPC_MESSAGE_STRUCT* pckt)
 	}
 
 	if (pckt->IpcFrom == pckt->IpcTo ||
-		pckt->IpcPacketSize > cIPCEPMsgSize)
+		pckt->IpcPacketSize > cXPCOMMsgSize)
 	{
 		goto ipc_check_failed;
 	}
 
-	return pckt->IpcPacketSize > 1 && pckt->IpcHeaderMagic == cIPCEPHeaderMagic;
+	return pckt->IpcPacketSize > 1 && pckt->IpcHeaderMagic == cXPCOMHeaderMagic;
 
 ipc_check_failed:
 	ErrLocal() = kErrorIPC;
@@ -92,7 +92,7 @@ namespace Kernel
 
 		if (*pckt_in)
 		{
-			(*pckt_in)->IpcHeaderMagic = cIPCEPHeaderMagic;
+			(*pckt_in)->IpcHeaderMagic = cXPCOMHeaderMagic;
 
 			auto endian = DEDUCE_ENDIAN((*pckt_in), ((Char*)(*pckt_in))[0]);
 

@@ -82,7 +82,8 @@ namespace Kernel::HAL
 		PageTable64 ALIGN(kPTEAlign) Pte[kPTEMax];
 	};
 
-	VoidPtr hal_alloc_page(Boolean rw, Boolean user, SizeT size);
+	auto hal_alloc_page(Boolean rw, Boolean user, SizeT size) -> VoidPtr;
+	auto hal_free_page(VoidPtr page_ptr) -> Bool;
 } // namespace Kernel::HAL
 
 namespace Kernel

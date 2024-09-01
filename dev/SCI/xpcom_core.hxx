@@ -17,13 +17,11 @@ Purpose: Base code of SCM.
 #warning ! You may be using the clang version of the ZKA kit, please be cautious that some thing mayn't be present. !
 #endif // !__NDK__
 
-// Interfaces are divided between classes.
-// So that they aren't too big.
-
 protocol IUnknown; // Refrenced from an IDB entry.
 protocol UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: TextUCLSID.
 object UUID;
 
+/// @brief Unknown XPCOM interface
 protocol clsid("d7c144b6-0792-44b8-b06b-02b227b547df") IUnknown
 {
 public:
@@ -45,7 +43,7 @@ public:
 /// @param uclsidOfCls UCLS factory class
 /// @return TCLS interface
 template <typename TCLS, typename UCLSID, typename... Args>
-inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
+inline TCLS* XPCOMQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 {
     uclsidOfCls->AddRef();
 	return uclsidOfCls->QueryInterfaceWithArgs(args...);
@@ -56,7 +54,7 @@ inline TCLS* ScmQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 /// @param cls the class to release.
 /// @return status code.
 template <typename TCLS>
-inline SInt32 ScmReleaseClass(TCLS** cls)
+inline SInt32 XPCOMReleaseClass(TCLS** cls)
 {
 	if (!cls)
 		return -1;
