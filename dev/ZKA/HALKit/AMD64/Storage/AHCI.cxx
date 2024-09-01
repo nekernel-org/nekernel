@@ -63,7 +63,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 			{
 				if (ports_implemented)
 				{
-					kcout << "newoskrnl: Port is implemented by host.\r";
+					kcout << "newoskrnl.dll: Port is implemented by host.\r";
 
 					UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
 					UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
@@ -72,8 +72,8 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 						det == cAhciPresent &&
 						ipm == cAhciIPMActive)
 					{
-						kcout << "newoskrnl: Found AHCI controller.\r";
-						kcout << "newoskrnl: Device is of SATA type.\r";
+						kcout << "newoskrnl.dll: Found AHCI controller.\r";
+						kcout << "newoskrnl.dll: Device is of SATA type.\r";
 
 						detected = true;
 

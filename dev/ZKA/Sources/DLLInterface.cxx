@@ -21,6 +21,6 @@ using namespace Kernel;
 
 EXTERN_C void __zka_pure_call(void)
 {
-	kcout << "newoskrnl: Unimplemented entrypoint symbol!\r";
+	kcout << "newoskrnl.dll: Unimplemented entrypoint symbol!\r";
 	UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }

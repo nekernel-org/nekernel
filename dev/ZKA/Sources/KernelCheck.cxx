@@ -79,7 +79,7 @@ namespace Kernel
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			CGDrawString("0x0000000A End of boot code, but nothing to continue.", start_y, x, panicTxt);
+			CGDrawString("0x0000000A End of boot code...", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
@@ -125,7 +125,7 @@ namespace Kernel
 		HardwareTimer timer(cMaxSeconds);
 		timer.Wait();
 
-		kcout << "newoskrnl: Shutting down computer...\r";
+		kcout << "newoskrnl.dll: Shutting down computer...\r";
 
 		PowerFactoryInterface power(nullptr);
 		power.Shutdown();

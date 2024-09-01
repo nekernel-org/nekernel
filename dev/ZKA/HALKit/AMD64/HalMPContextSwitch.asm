@@ -13,6 +13,7 @@
 [global mp_do_context_switch]
 [extern _hal_switch_context]
 [extern _hal_leak_current_context]
+[global mp_do_context_switch_pre]
 
 section .text
 
@@ -20,9 +21,16 @@ section .text
 ;; rcx: code ptr.
 ;; rdx: stack ptr.
 mp_do_context_switch:
-    mov r11, rdx
-    mov r12, rcx
-    
+    mov r11, 0x0202
+    mov rsp, rdx
+    o64 sysret
+
+;; @brief Gets the current stack frame.
+mp_get_current_context:
+    call _hal_leak_current_context
+    ret
+
+mp_do_context_switch_pre:
     ; Enable SCE that enables sysret and syscall
 	mov rcx, 0xc0000082
 	wrmsr
@@ -33,30 +41,7 @@ mp_do_context_switch:
 	mov rcx, 0xc0000081
 	rdmsr
 	mov edx, 0x00180008
+
 	wrmsr
-
-    mov rbx, 0x28
-    mov ds, rbx
     
-    mov rbx, 0x28
-    mov fs, rbx
-
-    mov rbx, 0x28
-    mov gs, rbx
-
-    mov rbx, 0x28
-    mov es, rbx
-
-    ;; Swap registers, since it's the other way around.
-
-    mov rcx, r12 ;; code ptr
-    mov rsp, r11 ;; stack ptr
-    mov r11, 0x0202
-
-    ;; rcx and rdx already set.
-    o64 sysret
-
-;; @brief Gets the current stack frame.
-mp_get_current_context:
-    call _hal_leak_current_context
     ret

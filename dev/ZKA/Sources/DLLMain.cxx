@@ -215,12 +215,6 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 		CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 20, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Missing catalog: ")), RGB(0, 0, 0));
 	}
 
-	hal_switch_to_user_code();
-
-	while (Yes)
-	{
-		Kernel::ProcessHelper::StartScheduling();
-	}
-
+	Kernel::ProcessHelper::StartScheduling();
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

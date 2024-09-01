@@ -2,6 +2,9 @@
 
 	Copyright ZKA Technologies.
 
+	File: FileManager.hxx
+	Purpose: Kernel file manager.
+
 ------------------------------------------- */
 
 /* -------------------------------------------
@@ -405,7 +408,7 @@ namespace Kernel
 			}
 		}
 
-		kcout << "newoskrnl: new file: " << path << ".\r";
+		kcout << "newoskrnl.dll: new file: " << path << ".\r";
 	}
 
 	/// @brief destructor

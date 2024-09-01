@@ -4,7 +4,7 @@
 ;; * 	Copyright ZKA Technologies., all rights reserved.
 ;; *
 ;; *    File: HalInterruptAPI.asm
-;; *    Purpose: Interrupt routing, redirect raw interrupts into their handlers.
+;; *    Purpose: Interrupt API, redirect raw interrupts into their handlers.
 ;; *
 ;; *    ---------------------------------------------------
 ;; */
@@ -239,56 +239,6 @@ hal_load_idt:
     lidt [rcx]
     sti
     ret
-
-[global hal_switch_to_user_code]
-
-hal_switch_to_user_code:
-    ; Enable SCE that enables sysret and syscall
-	mov rcx, 0xc0000082
-	wrmsr
-	mov rcx, 0xc0000080
-	rdmsr
-	or eax, 1
-	wrmsr
-	mov rcx, 0xc0000081
-	rdmsr
-	mov edx, 0x00180008
-	wrmsr
-
-    mov rbx, 0x28
-    mov ds, rbx
-    
-    mov rbx, 0x28
-    mov fs, rbx
-
-    mov rbx, 0x28
-    mov gs, rbx
-
-    mov rbx, 0x28
-    mov es, rbx
-
-    mov rsp, hal_user_code_stack_end
-    mov rcx, hal_user_code_start
-
-    mov r11, 0x0202
-
-    o64 sysret
-
-hal_user_code_start:
-    hlt
-    nop
-    jmp $
-hal_user_code_end:
-
-section .data
-
-hal_user_code_sz: dq hal_user_code_end - hal_user_code_start
-
-section .bss
-
-hal_user_code_stack:
-    resb 4096*4
-hal_user_code_stack_end:
 
 section .data
 

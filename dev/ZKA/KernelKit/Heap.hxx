@@ -16,19 +16,19 @@
 namespace Kernel
 {
 	/// @brief Declare pointer as free.
-	/// @param allocatedPtr the pointer.
+	/// @param heap_ptr the pointer.
 	/// @return
-	Int32 mm_delete_ke_heap(voidPtr allocatedPtr);
+	Int32 mm_delete_ke_heap(voidPtr heap_ptr);
 
-	/// @brief Declare a new size for allocatedPtr.
-	/// @param allocatedPtr the pointer.
+	/// @brief Declare a new size for heap_ptr.
+	/// @param heap_ptr the pointer.
 	/// @return
-	voidPtr mm_realloc_ke_heap(voidPtr allocatedPtr, SizeT newSz);
+	voidPtr mm_realloc_ke_heap(voidPtr heap_ptr, SizeT new_sz);
 
 	/// @brief Check if pointer is a valid Kernel pointer.
-	/// @param allocatedPtr the pointer
+	/// @param heap_ptr the pointer
 	/// @return if it exists.
-	Boolean mm_is_valid_heap(VoidPtr allocatedPtr);
+	Boolean mm_is_valid_heap(VoidPtr heap_ptr);
 
 	/// @brief allocate chunk of memory.
 	/// @param sz size of pointer
@@ -38,14 +38,14 @@ namespace Kernel
 	VoidPtr mm_new_ke_heap(const SizeT sz, const Bool rw, const Bool user);
 
 	/// @brief Protect the heap with a CRC value.
-	/// @param allocatedPtr pointer.
+	/// @param heap_ptr pointer.
 	/// @return if it valid: point has crc now., otherwise fail.
-	Boolean mm_protect_ke_heap(VoidPtr allocatedPtr);
+	Boolean mm_protect_ke_heap(VoidPtr heap_ptr);
 
 	/// @brief Makes a Kernel page.
-	/// @param allocatedPtr the page pointer.
+	/// @param heap_ptr the page pointer.
 	/// @return
-	Int32 mm_make_ke_page(VoidPtr allocatedPtr);
+	Int32 mm_make_ke_page(VoidPtr heap_ptr);
 } // namespace Kernel
 
 #endif // !_INC_KERNEL_HEAP_HXX_

@@ -63,12 +63,12 @@ namespace Kernel::HAL
 
 /* GDT. */
 STATIC Kernel::HAL::Detail::ZKA_GDT cGdt = {
-	{0, 0, 0, 0x00, 0x00, 0}, // Null entry
-	{0, 0, 0, 0x9A, 0xA0, 0}, // Kernel code
-	{0, 0, 0, 0x92, 0xA0, 0}, // Kernel data
-	{0, 0, 0, 0x00, 0x00, 0}, // Null entry
-	{0, 0, 0, 0xFA, 0xA0, 0}, // User code
-	{0, 0, 0, 0xF2, 0xA0, 0}, // User data
+	.fKernNull = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  0, .fAccessByte = 0x00, .fLimit1_Flags = 0x00, .fBase2 = 0}, // Null entry
+	.fKernCode = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0x9A, .fLimit1_Flags = 0xA0, .fBase2 = 0}, // Kernel code
+	.fKernData = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0x92, .fLimit1_Flags = 0xA0, .fBase2 = 0}, // Kernel data
+	.fUserNull = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0x00, .fLimit1_Flags = 0x00, .fBase2 = 0}, // Null entry
+	.fUserCode = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0xCF, .fLimit1_Flags = 0xA0, .fBase2 = 0}, // User code
+	.fUserData = { .fLimit0 = 0, .fBase0 = 0, .fBase1 =  00, .fAccessByte = 0x92, .fLimit1_Flags = 0xA0, .fBase2 = 0}, // User data
 };
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -204,7 +204,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		if (!rdxEi)
 			return;
 
-		Kernel::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
+		Kernel::kcout << "newoskrnl.dll: " << rdxEi->fReason << "\r";
 		Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Exit(rdxEi->fCode);
 	};
 
@@ -240,7 +240,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	if (kHandoverHeader->f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	Kernel::kcout << "newoskrnl: Creating filesystem and such.\r";
+	Kernel::kcout << "newoskrnl.dll: Creating filesystem and such.\r";
 
 	auto fs = new Kernel::NewFilesystemManager();
 

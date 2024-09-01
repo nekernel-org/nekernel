@@ -260,7 +260,7 @@ namespace Kernel
 			if (!process.StackReserve)
 			{
 				process.StackReserve = (UInt8*)mm_new_ke_heap(kSchedMaxStackSz, Yes, Yes);
-				kcout << "newoskrnl: Use fallback reserve.\r";
+				kcout << "newoskrnl.dll: Use fallback reserve.\r";
 			}
 		}
 		else
@@ -419,7 +419,7 @@ namespace Kernel
 			cProcessScheduler = new UserProcessScheduler();
 			MUST_PASS(cProcessScheduler);
 
-			kcout << "newoskrnl: Team capacity: " << number(cProcessScheduler->CurrentTeam().AsArray().Capacity()) << endl;
+			kcout << "newoskrnl.dll: Team capacity: " << number(cProcessScheduler->CurrentTeam().AsArray().Capacity()) << endl;
 		}
 
 		SizeT ret = cProcessScheduler->Run();
@@ -437,7 +437,7 @@ namespace Kernel
 		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
 			return false;
 
-		kcout << "newoskrnl: Finding hardware thread...\r";
+		kcout << "newoskrnl.dll: Finding hardware thread...\r";
 
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
 		{
@@ -456,7 +456,7 @@ namespace Kernel
 
 				ProcessHelper::TheCurrentPID() = new_pid;
 
-				kcout << "newoskrnl: Found hardware thread...\r";
+				kcout << "newoskrnl.dll: Found hardware thread...\r";
 
 				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
 

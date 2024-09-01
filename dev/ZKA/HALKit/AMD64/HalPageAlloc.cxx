@@ -99,16 +99,9 @@ namespace Kernel
 
 			auto result = reinterpret_cast<VoidPtr>(vmh_header + sizeof(Detail::VIRTUAL_MEMORY_HEADER));
 
-			VoidPtr cr3_value;
+			VoidPtr cr3 = hal_read_cr3();
 
-			asm volatile(
-				"mov %%cr3, %0"	  // Move CR3 into the variable
-				: "=r"(cr3_value) // Output operand, cr3 page directory.
-				:				  // No input operands
-				: "memory"		  
-			);
-
-			mm_update_page(cr3_value, 0, (UIntPtr)result, eFlagsPresent | (rw ? eFlagsRw : 0) | (user ? eFlagsUser : 0));
+			mm_update_page(cr3, 0, result, eFlagsPresent | (rw ? eFlagsRw : 0) | (user ? eFlagsUser : 0));
 
 			return result;
 		}

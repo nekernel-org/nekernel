@@ -155,7 +155,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 		if (!rdxEi)
 			return;
 
-		Kernel::kcout << "newoskrnl: " << rdxEi->fReason << "\r";
+		Kernel::kcout << "newoskrnl.dll: " << rdxEi->fReason << "\r";
 		Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().Exit(rdxEi->fCode);
 	};
 
@@ -192,7 +192,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	else
 		Kernel::HAL::mp_get_cores(nullptr);
 
-	Kernel::kcout << "newoskrnl: Creating filesystem and such.\r";
+	Kernel::kcout << "newoskrnl.dll: Creating filesystem and such.\r";
 
 	auto fs = new Kernel::NewFilesystemManager();
 

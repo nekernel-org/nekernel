@@ -147,12 +147,11 @@ namespace Kernel::HAL
 	struct PROCESS_CONTROL_BLOCK final
 	{
 		UserProcessPtr	   f_Process;
-		HAL::StackFramePtr f_Frame;
 	} fBlocks[kSchedProcessLimitPerTeam] = {0};
 
 	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
 	{
-		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
+		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Process->StackFrame;
 	}
 
 	EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame)
@@ -160,8 +159,7 @@ namespace Kernel::HAL
 		if (kSMPAware)
 		{
 			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Process   = &UserProcessScheduler::The().CurrentProcess().Leak();
-			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
-		
+
 			return true;
 		}
 
@@ -193,7 +191,7 @@ namespace Kernel::HAL
 			cSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
-			kcout << "newoskrnl: Probing MADT cores...\r";
+			kcout << "newoskrnl.dll: Probing MADT cores...\r";
 
 			UIntPtr madt_address = kMADTBlock->Address;
 
@@ -207,13 +205,13 @@ namespace Kernel::HAL
 				{
 				case 0x00: {
 					cSMPCores[index] = kMADTBlock->List[index].LAPIC.ProcessorID;
-					kcout << "newoskrnl: Core ID: " << number(cSMPCores[index]) << endl;
+					kcout << "newoskrnl.dll: Core ID: " << number(cSMPCores[index]) << endl;
 					++kSMPCount;
 					break;
 				}
 				case 0x05: {
 					madt_address = kMADTBlock->List[index].LAPIC_ADDRESS_OVERRIDE.Address;
-					kcout << "newoskrnl: Address: " << number(madt_address) << endl;
+					kcout << "newoskrnl.dll: Address: " << number(madt_address) << endl;
 					break;
 				}
 				}
@@ -221,7 +219,7 @@ namespace Kernel::HAL
 				++index;
 			}
 
-			kcout << "newoskrnl: # of cores: " << number(kSMPCount) << endl;
+			kcout << "newoskrnl.dll: # of cores: " << number(kSMPCount) << endl;
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)

@@ -14,15 +14,7 @@ Void UserProcess::SetEntrypoint(VoidPtr imageStart) noexcept
 	if (imageStart == nullptr)
 		this->Crash();
 
-	VoidPtr cr3_pd;
-
-	asm volatile(
-		"mov %%cr3, %0"	  // Move CR3 into the variable
-		: "=r"(cr3_pd) // Output operand, cr3 page directory.
-		:				  // No input operands
-		: "memory");
-
-	HAL::mm_update_page(cr3_pd, 0, (UIntPtr)imageStart, HAL::eFlagsPresent | HAL::eFlagsRw | HAL::eFlagsUser);
+	HAL::mm_update_page(hal_read_cr3(), 0, imageStart, HAL::eFlagsPresent | HAL::eFlagsRw | HAL::eFlagsUser);
 
 	this->Image = imageStart;
 }

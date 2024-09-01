@@ -13,6 +13,7 @@
 #include <BootKit/BootKit.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <FirmwareKit/EFI/API.hxx>
+#include <Modules/CoreCG/TextRenderer.hxx>
 
 /// @file BootFileReader
 /// @brief Bootloader File reader.
@@ -84,6 +85,8 @@ BFileReader::BFileReader(const CharacterTypeUTF16* path,
 			.Write(mPath)
 			.Write(L"\r");
 		this->mErrorCode = kNotSupported;
+
+		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
 		mRootFs->Close(mRootFs);
 

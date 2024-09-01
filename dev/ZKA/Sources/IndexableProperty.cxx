@@ -52,7 +52,7 @@ namespace Kernel
 				indexer.AddFlag(kIndexerClaimed);
 				rt_copy_memory((VoidPtr)indexer.Leak().Path, (VoidPtr)filename, filenameLen);
 
-				kcout << "newoskrnl: filesystem: index new file: " << filename << endl;
+				kcout << "newoskrnl.dll: filesystem: index new file: " << filename << endl;
 			}
 		}
 	} // namespace Indexer

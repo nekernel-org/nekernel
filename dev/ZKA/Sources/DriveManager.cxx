@@ -139,7 +139,7 @@ namespace Kernel
 		trait.fVerify	 = ke_drv_check_disk;
 		trait.fDriveKind = io_drive_kind;
 
-		kcout << "newoskrnl: Construct drive with success.\r";
+		kcout << "newoskrnl.dll: Construct drive with success.\r";
 
 		return trait;
 	}

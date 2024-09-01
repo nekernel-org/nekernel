@@ -30,7 +30,7 @@ EXTERN_C
 
 #define kCPUBackendName "AMD64"
 
-#define kSyscallRoute 0x32
+#define kSyscallRoute (0x32)
 
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
@@ -77,28 +77,7 @@ namespace Kernel::HAL
 	/// @param phys_addr a valid phyiscal address.
 	/// @param virt_addr a valid virtual address.
 	/// @param flags the flags to put on the page.
-	inline Int32 mm_update_page(VoidPtr pd_base, UIntPtr phys_addr, UIntPtr virt_addr, UInt32 flags)
-	{
-		UIntPtr pde_idx = (UIntPtr)virt_addr >> 22;
-		UIntPtr pte_idx = (UIntPtr)virt_addr >> 12 & 0x03FF;
-
-		volatile PTE* pte = (volatile PTE*)((UIntPtr)pd_base + (kPTEAlign * pde_idx));
-
-		if (pte)
-		{
-			if ((flags & eFlagsSetPhysAddress))
-				pte->PhysicalAddress = phys_addr;
-
-			pte->Present	 = flags & eFlagsPresent;
-			pte->Rw			 = flags & eFlagsRw;
-			pte->User		 = flags & eFlagsUser;
-			pte->ExecDisable = flags & eFlagsExecDisable;
-
-			return 0;
-		}
-
-		return 1;
-	}
+	EXTERN_C Int32 mm_update_page(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags);
 
 	EXTERN_C UChar	In8(UInt16 port);
 	EXTERN_C UShort In16(UInt16 port);
@@ -128,9 +107,8 @@ namespace Kernel::HAL
 	};
 
 	using RawRegister = UInt64;
-	using Reg = RawRegister;
+	using Reg		  = RawRegister;
 	using InterruptId = UInt16; /* For each element in the IVT */
-	
 
 	/// @brief Stack frame (as retrieved from assembly.)
 	struct PACKED StackFrame final
@@ -275,7 +253,7 @@ namespace Kernel::HAL
 
 		struct PACKED ALIGN(0x1000) ZKA_GDT final
 		{
-			ZKA_GDT_ENTRY fNull;
+			ZKA_GDT_ENTRY fKernNull;
 			ZKA_GDT_ENTRY fKernCode;
 			ZKA_GDT_ENTRY fKernData;
 			ZKA_GDT_ENTRY fUserNull;

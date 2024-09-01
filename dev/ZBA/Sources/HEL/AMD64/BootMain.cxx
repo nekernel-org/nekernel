@@ -265,6 +265,10 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		loader = new Boot::BThread(readerKernel.Blob());
 		loader->SetName("64-bit Kernel DLL.");
 	}
+	else
+	{
+		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+	}
 
 	EFI::ExitBootServices(MapKey, ImageHandle);
 

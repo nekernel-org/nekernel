@@ -2,6 +2,9 @@
 
 	Copyright ZKA Technologies.
 
+	File: HalProcessor.cxx
+	Purpose: Platform processor routines.
+
 ------------------------------------------- */
 
 #include <HALKit/AMD64/Processor.hxx>
@@ -13,6 +16,29 @@
 
 namespace Kernel::HAL
 {
+	EXTERN_C Int32 mm_update_page(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags)
+	{
+		UIntPtr pde_idx = (UIntPtr)virt_addr >> 22;
+		UIntPtr pte_idx = (UIntPtr)virt_addr >> 12 & 0x03FF;
+
+		volatile PTE* pte = (volatile PTE*)((UIntPtr)pd_base + (kPTEAlign * pde_idx));
+
+		if (pte)
+		{
+			if ((flags & eFlagsSetPhysAddress))
+				pte->PhysicalAddress = (UInt32)(UIntPtr)phys_addr;
+
+			pte->Present	 = flags & eFlagsPresent;
+			pte->Rw			 = flags & eFlagsRw;
+			pte->User		 = flags & eFlagsUser;
+			pte->ExecDisable = flags & eFlagsExecDisable;
+
+			return 0;
+		}
+
+		return 1;
+	}
+
 	Void Out8(UInt16 port, UInt8 value)
 	{
 		asm volatile("outb %%al, %1"

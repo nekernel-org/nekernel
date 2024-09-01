@@ -102,6 +102,7 @@ namespace Kernel
 
 		if (!ret)
 		{
+			mp_do_context_switch_pre();
 			return mp_do_context_switch(image, stack_ptr, fStack) != 0;
 		}
 
@@ -122,12 +123,12 @@ namespace Kernel
 	///! @brief Default constructor.
 	HardwareThreadScheduler::HardwareThreadScheduler()
 	{
-		kcout << "newoskrnl: initializing HardwareThreadScheduler." << endl;
+		kcout << "newoskrnl.dll: initializing HardwareThreadScheduler." << endl;
 
 		cSMPCoreName.GetKey() += "Property\\MPClass";
 		cSMPCoreName.GetValue() = (PropertyId)this;
 
-		kcout << "newoskrnl: initialized HardwareThreadScheduler." << endl;
+		kcout << "newoskrnl.dll: initialized HardwareThreadScheduler." << endl;
 	}
 
 	///! @brief Default destructor.

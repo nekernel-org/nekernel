@@ -5,7 +5,7 @@
  * 	Copyright ZKA Technologies., all rights reserved.
  *
  *	File: User.cxx
- * 	Purpose: User concept class.
+ * 	Purpose: User class, used to provide authentication and security.
  *
  * 	========================================================
  */
@@ -100,7 +100,7 @@ namespace Kernel
 		delete[] password;
 		password = nullptr;
 
-		kcout << "newoskrnl: Saved password...\r";
+		kcout << "newoskrnl.dll: Saved password...\r";
 
 		return true;
 	}

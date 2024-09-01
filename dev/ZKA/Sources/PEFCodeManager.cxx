@@ -166,6 +166,8 @@ namespace Kernel
 
 					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
 
+					HAL::mm_update_page(hal_read_cr3(), 0, blobRet, HAL::eFlagsPresent | HAL::eFlagsUser | (container_header->Kind != kPefCode ? HAL::eFlagsRw : 0));
+
 					mm_delete_ke_heap(blob);
 					return blobRet;
 				}

@@ -34,9 +34,9 @@ EXTERN_C void hal_flush_tlb();
 EXTERN_C void hal_write_cr3(Kernel::UIntPtr pde);
 EXTERN_C void hal_write_cr0(Kernel::UIntPtr bit);
 
-EXTERN_C Kernel::UIntPtr hal_read_cr0(); // @brief CPU control register.
-EXTERN_C Kernel::UIntPtr hal_read_cr2(); // @brief Fault address.
-EXTERN_C Kernel::UIntPtr hal_read_cr3(); // @brief Page table.
+EXTERN_C Kernel::VoidPtr hal_read_cr0(); // @brief CPU control register.
+EXTERN_C Kernel::VoidPtr hal_read_cr2(); // @brief Fault address.
+EXTERN_C Kernel::VoidPtr hal_read_cr3(); // @brief Page table.
 
 namespace Kernel::HAL
 {
