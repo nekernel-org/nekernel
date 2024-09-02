@@ -63,16 +63,16 @@ namespace Kernel::HAL
 
 /* GDT, mostly descriptors for user and kernel segments. */
 STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY cGdt[9] = {
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},		// Null entry
-	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0x9A, .fGranularity = 0xA0, .fBase2 = 0}, // Kernel code
-	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0x92, .fGranularity = 0xA0, .fBase2 = 0}, // Kernel data
-	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0xFA, .fGranularity = 0xA0, .fBase2 = 0}, // User code
-	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBase2 = 0}, // User data
+	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBaseHigh = 0},		// Null entry
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fGranularity = 0xA0, .fBaseHigh = 0}, // Kernel code
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fGranularity = 0xA0, .fBaseHigh = 0}, // Kernel data
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fGranularity = 0xA0, .fBaseHigh = 0}, // User code
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
 	// reserve them for later.
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0}, // Null entry
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
 };
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -133,115 +133,6 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	CONST Kernel::HAL::IDTLoader cIDT;
 	cIDT.Load(idtBase);
-
-	// Register the basic system calls.
-
-	constexpr auto cTlsInterrupt		  = 0x11;
-	constexpr auto cTlsInstallInterrupt	  = 0x12;
-	constexpr auto cNewInterrupt		  = 0x13;
-	constexpr auto cDeleteInterrupt		  = 0x14;
-	constexpr auto cExitInterrupt		  = 0x15;
-	constexpr auto cLastExitInterrupt	  = 0x16;
-	constexpr auto cCatalogOpen			  = 0x17;
-	constexpr auto cForkRead			  = 0x18;
-	constexpr auto cForkWrite			  = 0x19;
-	constexpr auto cCatalogClose		  = 0x20;
-	constexpr auto cCatalogRemove		  = 0x21;
-	constexpr auto cCatalogCreate		  = 0x22;
-	constexpr auto cRebootInterrupt		  = 0x23;
-	constexpr auto cShutdownInterrupt	  = 0x24;
-	constexpr auto cLPCSendMsg			  = 0x25;
-	constexpr auto cLPCOpenMsg			  = 0x26;
-	constexpr auto cLPCCloseMsg			  = 0x27;
-	constexpr auto cCreateThreadInterrupt = 0x28;
-
-	kSyscalls[cTlsInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		if (tls_check_syscall_impl(rdx) == false)
-		{
-			Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
-		}
-	};
-
-	kSyscalls[cNewInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		// get HAC struct.
-		HEAP_ALLOC_INFO* rdxInf = reinterpret_cast<HEAP_ALLOC_INFO*>(rdx);
-
-		if (!rdxInf)
-			return;
-
-		// assign the fThe field with the pointer.
-		rdxInf->fThe = Kernel::UserProcessScheduler::The().CurrentProcess().Leak().New(rdxInf->fTheSz);
-	};
-
-	kSyscalls[cDeleteInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		// get HAC struct.
-		HEAP_ALLOC_INFO* rdxInf = reinterpret_cast<HEAP_ALLOC_INFO*>(rdx);
-
-		if (!rdxInf)
-			return;
-
-		// delete ptr with sz in mind.
-		Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
-	};
-
-	kSyscalls[cTlsInstallInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		PROCESS_BLOCK_INFO* rdxPb = reinterpret_cast<PROCESS_BLOCK_INFO*>(rdx);
-
-		if (!rdxPb)
-			return;
-
-		// install the fTIB and fGIB.
-		rt_install_tib(rdxPb->fTIB, rdxPb->fGIB);
-	};
-
-	kSyscalls[cCreateThreadInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		CREATE_THREAD_INFO* rdxPb = reinterpret_cast<CREATE_THREAD_INFO*>(rdx);
-
-		if (!rdxPb)
-			return;
-
-		// install the fTIB and fGIB.
-		Kernel::sched_execute_thread(rdxPb->fMain, rdxPb->fName);
-	};
-
-	kSyscalls[cExitInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
-
-		if (!rdxEi)
-			return;
-
-		Kernel::kcout << "newoskrnl.dll: " << rdxEi->fReason << "\r";
-		Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Exit(rdxEi->fCode);
-	};
-
-	kSyscalls[cLastExitInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
-
-		if (!rdxEi)
-			return;
-
-		rdxEi->fCode = Kernel::sched_get_exit_code();
-	};
-
-	kSyscalls[cRebootInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::PowerFactoryInterface pow(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-		pow.Reboot();
-	};
-
-	kSyscalls[cShutdownInterrupt].fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::PowerFactoryInterface pow(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-		pow.Shutdown();
-	};
-
-	kSyscalls[cTlsInterrupt].fHooked		  = true;
-	kSyscalls[cTlsInstallInterrupt].fHooked	  = true;
-	kSyscalls[cDeleteInterrupt].fHooked		  = true;
-	kSyscalls[cNewInterrupt].fHooked		  = true;
-	kSyscalls[cExitInterrupt].fHooked		  = true;
-	kSyscalls[cLastExitInterrupt].fHooked	  = true;
-	kSyscalls[cShutdownInterrupt].fHooked	  = true;
-	kSyscalls[cRebootInterrupt].fHooked		  = true;
-	kSyscalls[cCreateThreadInterrupt].fHooked = true;
 
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);

@@ -138,7 +138,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcess)
 
 	public:
-		void		  SetEntrypoint(VoidPtr imageStart) noexcept;
+		void		  SetImageStart(VoidPtr imageStart) noexcept;
 		const UInt32& GetExitCode() noexcept;
 
 	public:

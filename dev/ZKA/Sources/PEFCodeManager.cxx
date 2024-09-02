@@ -206,7 +206,7 @@ namespace Kernel
 
 			UserProcess proc;
 
-			proc.SetEntrypoint(errOrStart.Leak().Leak());
+			proc.SetImageStart(errOrStart.Leak().Leak());
 			proc.Kind	   = procKind;
 			proc.StackSize = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
 

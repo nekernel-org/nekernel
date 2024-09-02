@@ -66,7 +66,7 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 /// @brief Enter Kernel call from assembly (DDK only).
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C Kernel::Void hal_Kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx, Kernel::UIntPtr r8, Kernel::UIntPtr r9)
+EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx, Kernel::UIntPtr r8, Kernel::UIntPtr r9)
 {
 	if (rcx <= (kSyscalls.Count() - 1))
 	{

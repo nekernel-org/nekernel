@@ -24,7 +24,7 @@ EXTERN_C
 #include <cpuid.h>
 }
 
-#define kSyscallRoute (0x32)
+#define kSyscallRoute (51)
 
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
@@ -32,8 +32,8 @@ EXTERN_C
 #define kInterruptGate		 (0x8E)
 #define kTrapGate			 (0xEF)
 #define kTaskGate			 (0b10001100)
-#define kGdtCodeSelector	 (0x08)
-#define kGdtUserCodeSelector (0x2b)
+#define kGdtKernelCodeSelector	 (0x08)
+#define kGdtUserCodeSelector (0x23)
 
 namespace Kernel
 {
@@ -110,7 +110,7 @@ namespace Kernel::HAL
 		UIntPtr R8{0};
 		UIntPtr R9{0};
 		UIntPtr R10{0};
-		UIntPtr R11{0};
+		UIntPtr R11{0}; // not tied to r11, rax this time!
 		UIntPtr R12{0};
 		UIntPtr R13{0};
 		UIntPtr R14{0};
@@ -237,12 +237,12 @@ namespace Kernel::HAL
 
 		struct PACKED ZKA_GDT_ENTRY final
 		{
-			UInt16 fLimit0;
-			UInt16 fBase0;
-			UInt8  fBase1;
+			UInt16 fLimitLow;
+			UInt16 fBaseLow;
+			UInt8  fBaseMid;
 			UInt8  fAccessByte;
 			UInt8  fGranularity;
-			UInt8  fBase2;
+			UInt8  fBaseHigh;
 		};
 	} // namespace Detail
 

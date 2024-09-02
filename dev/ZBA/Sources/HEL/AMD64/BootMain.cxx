@@ -191,7 +191,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_HeapStart = 0;
 
-	while (BS->AllocatePool(EfiRuntimeServicesCode, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk)
+	while (BS->AllocatePool(EfiLoaderData, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk)
 		;
 
 	handoverHdrPtr->f_VirtualSize =

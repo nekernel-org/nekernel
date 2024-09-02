@@ -9,7 +9,7 @@
 
 using namespace Kernel;
 
-Void UserProcess::SetEntrypoint(VoidPtr imageStart) noexcept
+Void UserProcess::SetImageStart(VoidPtr imageStart) noexcept
 {
 	if (imageStart == nullptr)
 		this->Crash();

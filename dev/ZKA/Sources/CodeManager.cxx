@@ -20,7 +20,7 @@ namespace Kernel
 			return false;
 
 		UserProcess proc;
-		proc.SetEntrypoint(reinterpret_cast<VoidPtr>(main));
+		proc.SetImageStart(reinterpret_cast<VoidPtr>(main));
 
 		proc.Kind	   = UserProcess::kExeKind;
 		proc.StackSize = mib_cast(1);

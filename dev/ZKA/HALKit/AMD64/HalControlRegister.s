@@ -15,7 +15,7 @@
 
 hal_flush_tlb:
     call hal_read_cr3
-    mov %rcx, %rax
+    mov %rax, %rcx
     call hal_write_cr3
     ret
 
@@ -24,17 +24,17 @@ hal_read_cr3:
     ret
 
 hal_read_cr0:
-    movq %rax, %cr0
+    movq %cr0, %rax
     ret
 
 hal_read_cr2:
-    movq %rax, %cr2
+    movq %cr3, %rax
     ret
 
 hal_write_cr3:
-    movq %cr3, %rdi
+    movq %rcx, %cr3
     ret
 
 hal_write_cr0:
-    movq %cr0, %rdi
+    movq %rcx, %cr3
     ret

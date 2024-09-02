@@ -8,7 +8,7 @@
 
 using namespace Kernel;
 
-Void UserProcess::SetEntrypoint(UIntPtr& imageStart) noexcept
+Void UserProcess::SetImageStart(UIntPtr& imageStart) noexcept
 {
 	if (imageStart == 0)
 		this->Crash();

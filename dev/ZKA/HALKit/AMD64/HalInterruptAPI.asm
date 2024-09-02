@@ -129,15 +129,11 @@ IntNormal 26
 IntNormal 27
 IntNormal 28
 IntNormal 29
-
 IntExp    30
-
 IntNormal 31
-
 IntNormal 32
-IntNormal 34
-
 IntNormal 33
+IntNormal 34
 IntNormal 35
 IntNormal 36
 IntNormal 37
@@ -154,25 +150,10 @@ IntNormal 47
 IntNormal 48
 IntNormal 49
 
-[extern hal_system_call_enter]
-[extern hal_Kernel_call_enter]
+[extern hal_kernel_call_enter]
 
-__ZKA_INT_50:
-    cli
-
-    push rcx
-    push rdx
-    push rax
-
-    call hal_system_call_enter
-
-    pop rax
-    pop rdx
-    pop rcx
-
-    sti
-    iretq
-
+IntNormal 50
+    
 __ZKA_INT_51:
     cli
 
@@ -182,7 +163,7 @@ __ZKA_INT_51:
     push r9
     push rax
 
-    call hal_Kernel_call_enter
+    call hal_kernel_call_enter
 
     pop rax
     pop r9

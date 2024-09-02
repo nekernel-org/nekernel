@@ -188,8 +188,15 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	Kernel::cProcessScheduler = nullptr;
 	Kernel::ProcessHelper::StartScheduling();
 
-	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA System...", 30, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA System...", 20, 10, RGB(0, 0, 0));
 
-	Kernel::ProcessHelper::StartScheduling();
+	static Kernel::MainKind fn = []() -> void {while(1); };
+	Kernel::sched_execute_thread(fn, "ZKA Logger");
+
+	while (Yes)
+	{
+		Kernel::ProcessHelper::StartScheduling();
+	}
+
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

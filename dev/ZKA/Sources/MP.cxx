@@ -98,15 +98,15 @@ namespace Kernel
 
 		fStack = frame;
 
-		auto ret = mp_register_process(fStack);
-
-		if (!ret)
+		if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		{
-			mp_do_context_switch_pre();
-			return mp_do_context_switch(image, stack_ptr, fStack) != 0;
+			return mp_register_process(fStack);
 		}
 
-		return ret;
+		kcout << "newoskrnl: Switching now...\r";
+
+		mp_do_context_switch_pre();
+		return mp_do_context_switch(image, stack_ptr, fStack) != 0;
 	}
 
 	///! @brief Tells if processor is waked up.

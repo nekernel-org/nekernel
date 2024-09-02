@@ -12,7 +12,6 @@
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeManager.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
-#include <KernelKit/ProcessHeap.hxx>
 #include <NewKit/Json.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeManager.hxx>
@@ -50,7 +49,7 @@ namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
 	/// @param rsdPtr The 'RSD PTR' data structure.
-	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr);
+	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr) noexcept;
 } // namespace Kernel::HAL
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -90,104 +89,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PhysicalStart));
 
-	// Register the basic system calls.
-
-	constexpr auto cTlsInterrupt		= 0x11;
-	constexpr auto cTlsInstallInterrupt = 0x12;
-	constexpr auto cNewInterrupt		= 0x13;
-	constexpr auto cDeleteInterrupt		= 0x14;
-	constexpr auto cExitInterrupt		= 0x15;
-	constexpr auto cLastExitInterrupt	= 0x16;
-	constexpr auto cCatalogOpen			= 0x17;
-	constexpr auto cForkRead			= 0x18;
-	constexpr auto cForkWrite			= 0x19;
-	constexpr auto cCatalogClose		= 0x20;
-	constexpr auto cCatalogRemove		= 0x21;
-	constexpr auto cCatalogCreate		= 0x22;
-	constexpr auto cRebootInterrupt		= 0x23;
-	constexpr auto cShutdownInterrupt	= 0x24;
-	constexpr auto cLPCSendMsg			= 0x25;
-	constexpr auto cLPCOpenMsg			= 0x26;
-	constexpr auto cLPCCloseMsg			= 0x27;
-
-	kSyscalls[cTlsInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		if (tls_check_syscall_impl(rdx) == false)
-		{
-			Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().Crash();
-		}
-	};
-
-	kSyscalls[cNewInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		// get HAC struct.
-		HEAP_ALLOC_INFO* rdxInf = reinterpret_cast<HEAP_ALLOC_INFO*>(rdx);
-
-		if (!rdxInf)
-			return;
-
-		// assign the fThe field with the pointer.
-		rdxInf->fThe = Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().New(rdxInf->fTheSz);
-	};
-
-	kSyscalls[cDeleteInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		// get HAC struct.
-		HEAP_ALLOC_INFO* rdxInf = reinterpret_cast<HEAP_ALLOC_INFO*>(rdx);
-
-		if (!rdxInf)
-			return;
-
-		// delete ptr with sz in mind.
-		Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().Delete(rdxInf->fThe, rdxInf->fTheSz);
-	};
-
-	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		PROCESS_BLOCK_INFO* rdxPb = reinterpret_cast<PROCESS_BLOCK_INFO*>(rdx);
-
-		if (!rdxPb)
-			return;
-
-		// install the fTIB and fGIB.
-		rt_install_tib(rdxPb->fTIB, rdxPb->fGIB);
-	};
-
-	kSyscalls[cExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
-
-		if (!rdxEi)
-			return;
-
-		Kernel::kcout << "newoskrnl.dll: " << rdxEi->fReason << "\r";
-		Kernel::UserProcessScheduler::The().Leak().CurrentProcess().Leak().Exit(rdxEi->fCode);
-	};
-
-	kSyscalls[cLastExitInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		PROCESS_EXIT_INFO* rdxEi = reinterpret_cast<PROCESS_EXIT_INFO*>(rdx);
-
-		if (!rdxEi)
-			return;
-
-		rdxEi->fCode = Kernel::sched_get_exit_code();
-	};
-
-	kSyscalls[cRebootInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::PowerFactoryInterface pow(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-		pow.Reboot();
-	};
-
-	kSyscalls[cShutdownInterrupt].Leak().Leak()->fProc = [](Kernel::VoidPtr rdx) -> void {
-		Kernel::PowerFactoryInterface pow(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-		pow.Shutdown();
-	};
-
-	kSyscalls[cTlsInterrupt].Leak().Leak()->fHooked		   = true;
-	kSyscalls[cTlsInstallInterrupt].Leak().Leak()->fHooked = true;
-	kSyscalls[cDeleteInterrupt].Leak().Leak()->fHooked	   = true;
-	kSyscalls[cNewInterrupt].Leak().Leak()->fHooked		   = true;
-	kSyscalls[cExitInterrupt].Leak().Leak()->fHooked	   = true;
-	kSyscalls[cLastExitInterrupt].Leak().Leak()->fHooked   = true;
-	kSyscalls[cShutdownInterrupt].Leak().Leak()->fHooked   = true;
-	kSyscalls[cRebootInterrupt].Leak().Leak()->fHooked	   = true;
-
-	if (kHandoverHeader->f_MultiProcessingEnabled)
+	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 	else
 		Kernel::HAL::mp_get_cores(nullptr);
