@@ -18,7 +18,7 @@ namespace Kernel
 	public:
 		explicit StringView()
 		{
-		    fSz = 4096;
+			fSz = 4096;
 
 			fData = new Char[fSz];
 			MUST_PASS(fData);

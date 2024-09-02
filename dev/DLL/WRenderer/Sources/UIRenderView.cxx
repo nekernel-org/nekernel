@@ -11,7 +11,7 @@
 
 namespace System
 {
-	UIRenderView::UIRenderView() = default;
+	UIRenderView::UIRenderView()  = default;
 	UIRenderView::~UIRenderView() = default;
 
 	UIRenderEffect* UIRenderView::GetEffect(const SizeT& at)

@@ -27,10 +27,10 @@ namespace Kernel
 		if (!ptrDos)
 			return nullptr;
 
-        auto exec = ldr_find_exec_header(ptrDos);
+		auto exec = ldr_find_exec_header(ptrDos);
 
-        if (!exec)
-            return nullptr;
+		if (!exec)
+			return nullptr;
 
 		return (LDR_OPTIONAL_HEADER_PTR)(VoidPtr)(&exec->mCharacteristics + 1);
 	}
@@ -39,15 +39,14 @@ namespace Kernel
 	/// @note overloaded function.
 	inline auto ldr_find_exec_header(const Char* ptrDos) -> LDR_EXEC_HEADER_PTR
 	{
-	   return ldr_find_exec_header((DosHeaderPtr)ptrDos);
+		return ldr_find_exec_header((DosHeaderPtr)ptrDos);
 	}
-
 
 	/// @brief Find the PE header inside the blob.
 	/// @note overloaded function.
 	inline auto ldr_find_opt_exec_header(const Char* ptrDos) -> LDR_OPTIONAL_HEADER_PTR
 	{
-	   return ldr_find_opt_exec_header((DosHeaderPtr)ptrDos);
+		return ldr_find_opt_exec_header((DosHeaderPtr)ptrDos);
 	}
 } // namespace Kernel
 

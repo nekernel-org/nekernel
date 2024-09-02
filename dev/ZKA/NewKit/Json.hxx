@@ -15,9 +15,9 @@
 #include <NewKit/String.hxx>
 #include <NewKit/Utils.hxx>
 
-#define cMaxJsonPath  4096
-#define cJSONLen 32
-#define cJSONNull "null"
+#define cMaxJsonPath 4096
+#define cJSONLen	 32
+#define cJSONNull	 "null"
 
 namespace Kernel
 {
@@ -27,11 +27,11 @@ namespace Kernel
 	public:
 		explicit JsonType()
 		{
-		    auto len = cJSONLen;
+			auto	   len = cJSONLen;
 			StringView key = StringView(len);
 			key += cJSONNull;
 
-			this->AsKey() = key;
+			this->AsKey()	= key;
 			this->AsValue() = key;
 		}
 
@@ -44,10 +44,13 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(JsonType);
 
-		const Bool& IsUndefined() { return fUndefined; }
+		const Bool& IsUndefined()
+		{
+			return fUndefined;
+		}
 
 	private:
-	    Bool fUndefined; // is this instance undefined?
+		Bool	   fUndefined; // is this instance undefined?
 		StringView fKey;
 		StringView fValue;
 

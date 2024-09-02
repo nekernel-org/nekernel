@@ -51,22 +51,22 @@ namespace Kernel
 	enum ACPI_ADDRESS_SPACE_KIND : UInt8
 	{
 		eSystemMemory = 0,
-		eSystemIO	 = 1,
-		ePci			 = 2,
-		eController	 = 3,
-		eSmBus		 = 4,
-		eCount		 = 5,
-		eInvalid		 = 0xFF,
+		eSystemIO	  = 1,
+		ePci		  = 2,
+		eController	  = 3,
+		eSmBus		  = 4,
+		eCount		  = 5,
+		eInvalid	  = 0xFF,
 	};
 
 	class PACKED ACPI_ADDRESS final
 	{
 	public:
-		UInt8 AddressSpaceId;
-		UInt8		 RegisterBitWidth;
-		UInt8		 RegisterBitOffset;
-		UInt8		 Reserved;
-		UIntPtr		 Address;
+		UInt8	AddressSpaceId;
+		UInt8	RegisterBitWidth;
+		UInt8	RegisterBitOffset;
+		UInt8	Reserved;
+		UIntPtr Address;
 	};
 
 	class PACKED RSDT final

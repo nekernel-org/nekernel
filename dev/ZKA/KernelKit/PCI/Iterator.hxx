@@ -13,8 +13,8 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/Ref.hxx>
 
-#define ZKA_BUS_COUNT		 (256)
-#define ZKA_DEVICE_COUNT	 (33)
+#define ZKA_BUS_COUNT	   (256)
+#define ZKA_DEVICE_COUNT   (33)
 #define ZKA_FUNCTION_COUNT (8)
 
 namespace Kernel::PCI
@@ -28,7 +28,7 @@ namespace Kernel::PCI
 		explicit Iterator(const Types::PciDeviceKind& deviceType);
 
 		Iterator& operator=(const Iterator&) = default;
-		Iterator(const Iterator&) = default;
+		Iterator(const Iterator&)			 = default;
 
 		~Iterator();
 

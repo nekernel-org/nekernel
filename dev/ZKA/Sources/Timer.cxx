@@ -23,14 +23,13 @@ Int32 TimerInterface::Wait() noexcept
 SoftwareTimer::SoftwareTimer(Int64 seconds)
 	: fWaitFor(seconds)
 {
-    fDigitalTimer = new IntPtr();
-    MUST_PASS(fDigitalTimer);
-
+	fDigitalTimer = new IntPtr();
+	MUST_PASS(fDigitalTimer);
 }
 
 SoftwareTimer::~SoftwareTimer()
 {
-    delete fDigitalTimer;
+	delete fDigitalTimer;
 	fWaitFor = 0;
 }
 

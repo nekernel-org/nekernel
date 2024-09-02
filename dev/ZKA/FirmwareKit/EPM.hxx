@@ -92,18 +92,18 @@ typedef struct _BLOCK_GUID_STRUCT
  */
 struct PACKED _BOOT_BLOCK_STRUCT
 {
-	Kernel::Char  Magic[kEPMMagicLength];
-	Kernel::Char  Name[kEPMNameLength];
-	BLOCK_GUID_STRUCT	  Uuid;
-	Kernel::Int32 Version;
-	Kernel::Int64 NumBlocks;
-	Kernel::Int64 SectorSz;
-	Kernel::Int64 LbaStart; // base offset
-	Kernel::Int64 LbaEnd; // addition of lba_start to get the end of partition.
-	Kernel::Int16 Kind;
-	Kernel::Int32 FsVersion;
-	Kernel::Char  Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
-	Kernel::Char  Reserved[401];			// to fill a full sector.
+	Kernel::Char	  Magic[kEPMMagicLength];
+	Kernel::Char	  Name[kEPMNameLength];
+	BLOCK_GUID_STRUCT Uuid;
+	Kernel::Int32	  Version;
+	Kernel::Int64	  NumBlocks;
+	Kernel::Int64	  SectorSz;
+	Kernel::Int64	  LbaStart; // base offset
+	Kernel::Int64	  LbaEnd;	// addition of lba_start to get the end of partition.
+	Kernel::Int16	  Kind;
+	Kernel::Int32	  FsVersion;
+	Kernel::Char	  Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
+	Kernel::Char	  Reserved[401];			// to fill a full sector.
 };
 
 ///! @brief Version kind enum.

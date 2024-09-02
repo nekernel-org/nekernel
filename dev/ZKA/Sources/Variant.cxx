@@ -24,5 +24,8 @@ namespace Kernel
 	}
 
 	/// @brief Leak variant's instance.
-	VoidPtr Variant::Leak() { return fPtr; }
+	VoidPtr Variant::Leak()
+	{
+		return fPtr;
+	}
 } // namespace Kernel

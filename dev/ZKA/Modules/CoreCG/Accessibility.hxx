@@ -15,13 +15,13 @@
 
 namespace CG
 {
-    using namespace Kernel;
+	using namespace Kernel;
 
 	/// @brief common User interface class.
 	class UIAccessibilty final
 	{
 		explicit UIAccessibilty() = default;
-		~UIAccessibilty() = default;
+		~UIAccessibilty()		  = default;
 
 	public:
 		ZKA_COPY_DELETE(UIAccessibilty);
@@ -42,6 +42,6 @@ namespace CG
 			return kHandoverHeader->f_GOP.f_Height;
 		}
 	};
-} // namespace Kernel
+} // namespace CG
 
 #endif // !__CORECG_ACCESS_HXX__

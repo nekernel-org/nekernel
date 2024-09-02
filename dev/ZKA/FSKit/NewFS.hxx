@@ -31,7 +31,7 @@ default.
 #define kNewFSNodeNameLen	 (256)
 
 #define kNewFSSectorSz (512)
-#define kNewFSForkSz (8192)
+#define kNewFSForkSz   (8192)
 
 #define kNewFSIdentLen (8)
 #define kNewFSIdent	   " NewFS"
@@ -86,8 +86,8 @@ default.
 #define kNewFSLbaType  (Kernel::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
-#define kNewFSRootCatalogStartAddress			  (1024)
-#define kNewFSCatalogStartAddress ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK))
+#define kNewFSRootCatalogStartAddress (1024)
+#define kNewFSCatalogStartAddress	  ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK))
 
 #define kResourceTypeDialog (10)
 #define kResourceTypeString (11)
@@ -267,7 +267,7 @@ namespace Kernel
 
 		VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 							_Input Bool						   isRsrcFork,
-							_Input SizeT							   dataSz,
+							_Input SizeT					   dataSz,
 							_Input const Char* forkName);
 
 		bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);

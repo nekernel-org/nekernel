@@ -22,7 +22,7 @@
 #include <Modules/CoreCG/TextRenderer.hxx>
 
 Kernel::Property cKernelVersion;
-Kernel::User cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
+Kernel::User	 cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
 EXTERN Kernel::Boolean kAllocationInProgress;
 

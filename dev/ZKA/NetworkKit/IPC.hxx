@@ -58,7 +58,7 @@ namespace Kernel
 	{
 		eIPCEPLittleEndian = 0,
 		eIPCEPBigEndian	   = 1,
-		eIPCEPMixedEndian = 2,
+		eIPCEPMixedEndian  = 2,
 	};
 
 	constexpr auto cXPCOMMsgSize = 6094U;

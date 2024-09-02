@@ -9,6 +9,6 @@
 
 enum
 {
-    eEFSFlagEncrypted = 0x3f,
-    eEFSFlagEncryptedEPM = 0xf3,
+	eEFSFlagEncrypted	 = 0x3f,
+	eEFSFlagEncryptedEPM = 0xf3,
 };

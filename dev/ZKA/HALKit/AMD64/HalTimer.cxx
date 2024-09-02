@@ -17,10 +17,10 @@
 
 // timer slot 0
 
-#define cHPETCounterRegValue (0x00)
-#define cHPETConfigRegValue  (0x20)
-#define cHPETCompRegValue	  (0x24)
-#define cHPETInterruptRegValue	  (0x2C)
+#define cHPETCounterRegValue   (0x00)
+#define cHPETConfigRegValue	   (0x20)
+#define cHPETCompRegValue	   (0x24)
+#define cHPETInterruptRegValue (0x2C)
 
 ///! BUGS: 0
 ///! @file HalTimer.cxx
@@ -36,7 +36,7 @@ namespace Kernel::Detail
 		Kernel::UInt8  reserved : 1;
 		Kernel::UInt8  legacy_replacement : 1;
 		Kernel::UInt16 pci_vendor_id;
-		ACPI_ADDRESS address;
+		ACPI_ADDRESS   address;
 		Kernel::UInt8  hpet_number;
 		Kernel::UInt16 minimum_tick;
 		Kernel::UInt8  page_protection;
@@ -75,11 +75,12 @@ Int32 HardwareTimer::Wait() noexcept
 	}
 
 	UInt64 ticks = fWaitFor / ((*(fDigitalTimer) >> 32) & __UINT32_MAX__);
-	UInt64 prev = *(fDigitalTimer + cHPETCounterRegValue);
+	UInt64 prev	 = *(fDigitalTimer + cHPETCounterRegValue);
 
 	prev += ticks;
 
-	while (*(fDigitalTimer + cHPETCounterRegValue) < (ticks));
+	while (*(fDigitalTimer + cHPETCounterRegValue) < (ticks))
+		;
 
 	return 0;
 }

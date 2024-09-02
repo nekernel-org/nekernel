@@ -11,7 +11,7 @@
 #endif
 
 #ifndef kib_cast
-#define kib_cast(X) ((X) * 1024)
+#define kib_cast(X) ((X)*1024)
 #endif
 
 #ifndef MIB
@@ -94,10 +94,10 @@
 #define CANT_REACH() __builtin_unreachable()
 #endif
 
-#define kBadPtr	 0xFBFBFBFBFBFBFBFB
+#define kBadPtr		0xFBFBFBFBFBFBFBFB
 #define kBadAddress 0x00000000000000
-#define kMaxAddr 0xFFFFFFFFFFFFFFFF
-#define kPathLen 255
+#define kMaxAddr	0xFFFFFFFFFFFFFFFF
+#define kPathLen	255
 
 #define PACKED	ATTRIBUTE(packed)
 #define NO_EXEC ATTRIBUTE(noexec)
@@ -107,7 +107,7 @@
 
 #define CONST const
 
-#define STRINGIFY(X)	#X
+#define STRINGIFY(X)  #X
 #define ZKA_UNUSED(X) ((Kernel::Void)X)
 
 #ifndef RGB

@@ -39,7 +39,7 @@ namespace Kernel
 	public:
 		T operator->() const
 		{
-		    MUST_PASS(*fClass);
+			MUST_PASS(*fClass);
 			return *fClass;
 		}
 
@@ -50,7 +50,7 @@ namespace Kernel
 
 		T& TryLeak() const noexcept
 		{
-		    MUST_PASS(*fClass);
+			MUST_PASS(*fClass);
 			return *fClass;
 		}
 
@@ -70,7 +70,7 @@ namespace Kernel
 		}
 
 	private:
-	    T*	 fClass{nullptr};
+		T*	 fClass{nullptr};
 		Bool fStrong{false};
 	};
 

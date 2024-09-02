@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
 	}
 
 	if (!std::filesystem::exists(argv[1]) ||
-			!std::string(argv[1]).ends_with(kDriverExt))
-			return -1;
+		!std::string(argv[1]).ends_with(kDriverExt))
+		return -1;
 
 	details::SIGNED_DRIVER_HEADER sig{0};
 

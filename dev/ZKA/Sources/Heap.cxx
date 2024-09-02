@@ -18,9 +18,9 @@
 
 namespace Kernel
 {
-	SizeT	   kHeapCount = 0UL;
+	SizeT		kHeapCount = 0UL;
 	PageManager kHeapPageManager;
-	Bool kOperationInProgress = No;
+	Bool		kOperationInProgress = No;
 
 	/// @brief Contains data structures and algorithms for the heap.
 	namespace Detail
@@ -106,12 +106,12 @@ namespace Kernel
 				wrapper.VirtualAddress());
 
 		heap_info_ptr->fTargetPtrSize = szFix;
-		heap_info_ptr->fMagic		 = kKernelHeapMagic;
-		heap_info_ptr->fCRC32		 = 0U; // dont fill it for now.
-		heap_info_ptr->fTargetPtr	 = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
-		heap_info_ptr->fPagePtr		 = 0UL;
-		heap_info_ptr->fUserOwned = user;
-		heap_info_ptr->fPresent = true;
+		heap_info_ptr->fMagic		  = kKernelHeapMagic;
+		heap_info_ptr->fCRC32		  = 0U; // dont fill it for now.
+		heap_info_ptr->fTargetPtr	  = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		heap_info_ptr->fPagePtr		  = 0UL;
+		heap_info_ptr->fUserOwned	  = user;
+		heap_info_ptr->fPresent		  = true;
 
 		++kHeapCount;
 

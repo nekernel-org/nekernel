@@ -24,7 +24,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(LoaderInterface);
 
 	public:
-		virtual _Output const Char* AsString()											= 0;
+		virtual _Output const Char* AsString()													= 0;
 		virtual _Output const Char* MIME()														= 0;
 		virtual _Output const Char* Path()														= 0;
 		virtual _Output ErrorOr<VoidPtr> FindStart()											= 0;

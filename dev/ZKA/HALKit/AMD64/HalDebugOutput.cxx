@@ -78,7 +78,7 @@ namespace Kernel
 		SizeT len	= 0;
 
 		index = 0;
-		len	= rt_string_len(bytes, 255);
+		len	  = rt_string_len(bytes, 255);
 
 		while (index < len)
 		{

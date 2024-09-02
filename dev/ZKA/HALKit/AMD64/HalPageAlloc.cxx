@@ -135,10 +135,10 @@ namespace Kernel
 				return false;
 
 			Detail::VIRTUAL_MEMORY_HEADER* result = reinterpret_cast<Detail::VIRTUAL_MEMORY_HEADER*>((UIntPtr)page_ptr - sizeof(Detail::VIRTUAL_MEMORY_HEADER));
-			
+
 			if (result->Magic != cVMHMagic)
 				return false;
-			
+
 			if (result->Present != true)
 				return true;
 

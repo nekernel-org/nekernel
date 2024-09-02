@@ -1,12 +1,12 @@
 #ifndef QR_HXX
 #define QR_HXX
 
-extern "C" {
+extern "C"
+{
 
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
-
 }
 
 #include <BootKit/Vendor/Shared/base.h>

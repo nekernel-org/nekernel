@@ -69,10 +69,10 @@ STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY cGdt[9] = {
 	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0xFA, .fGranularity = 0xA0, .fBase2 = 0}, // User code
 	{.fLimit0 = 0xFFFF, .fBase0 = 0, .fBase1 = 00, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBase2 = 0}, // User data
 	// reserve them for later.
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},		// Null entry
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},	
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},	
-	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},	
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0}, // Null entry
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},
+	{.fLimit0 = 0, .fBase0 = 0, .fBase1 = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBase2 = 0},
 };
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;

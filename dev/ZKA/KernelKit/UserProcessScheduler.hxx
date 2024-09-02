@@ -12,9 +12,9 @@
 #include <KernelKit/User.hxx>
 #include <NewKit/MutableArray.hxx>
 
-#define kSchedMinMicroTime (AffinityKind::kStandard)
-#define kSchedInvalidPID   (-1)
-#define kSchedMaxStackSz (4096) /* Max stack sz */
+#define kSchedMinMicroTime		  (AffinityKind::kStandard)
+#define kSchedInvalidPID		  (-1)
+#define kSchedMaxStackSz		  (4096) /* Max stack sz */
 #define kSchedProcessLimitPerTeam (16U)
 
 ////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ namespace Kernel
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatus	   Status{ProcessStatus::kDead};
-		UInt8* StackReserve{ nullptr };
+		UInt8*			   StackReserve{nullptr};
 
 		// Memory, images pointers.
 		HeapPtrKind HeapCursor{nullptr};
@@ -158,8 +158,8 @@ namespace Kernel
 		SizeT StackSize{mib_cast(8)};
 
 		// shared library handle, reserved for kDLLKind types of executables only.
-		PEFDLLInterface*	  DLLPtr{nullptr};
-		UserProcess* Parent{nullptr};
+		PEFDLLInterface* DLLPtr{nullptr};
+		UserProcess*	 Parent{nullptr};
 
 		// Memory usage.
 		SizeT UsedMemory{0};
@@ -168,7 +168,7 @@ namespace Kernel
 
 		enum
 		{
-			kExeKind		  = 1,
+			kExeKind = 1,
 			kDLLKind = 2,
 			kKindCount,
 		};
@@ -235,14 +235,14 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcessTeam);
 
 		Array<UserProcess, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<UserProcess>&								AsRef();
-		ProcessID&													Id() noexcept;
+		Ref<UserProcess>&							   AsRef();
+		ProcessID&									   Id() noexcept;
 
 	public:
 		Array<UserProcess, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<UserProcess>							   mCurrentProcess;
-		SizeT												   mProcessAmount{0};
-		ProcessID											   mTeamId{0};
+		Ref<UserProcess>							  mCurrentProcess;
+		SizeT										  mProcessAmount{0};
+		ProcessID									  mTeamId{0};
 	};
 
 	using UserProcessPtr = UserProcess*;
@@ -258,7 +258,7 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(UserProcessScheduler)
 
-		operator bool();
+			 operator bool();
 		bool operator!();
 
 	public:
@@ -270,7 +270,7 @@ namespace Kernel
 
 	public:
 		Ref<UserProcess>& CurrentProcess();
-		SizeT					   Run() noexcept;
+		SizeT			  Run() noexcept;
 
 	public:
 		STATIC UserProcessScheduler& The();
@@ -286,8 +286,8 @@ namespace Kernel
 	class ProcessHelper final
 	{
 	public:
-		STATIC bool	 Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
-		STATIC bool	 CanBeScheduled(UserProcess& process);
+		STATIC bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
+		STATIC bool CanBeScheduled(UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
 	};

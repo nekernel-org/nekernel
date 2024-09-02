@@ -228,7 +228,7 @@ namespace Kernel
 	STATIC void rt_string_append(Char* lhs, const Char* rhs, Int32 cur)
 	{
 		SizeT sz_rhs = rt_string_len(rhs);
-		SizeT rhs_i = 0;
+		SizeT rhs_i	 = 0;
 
 		for (; rhs_i < sz_rhs; ++rhs_i)
 		{

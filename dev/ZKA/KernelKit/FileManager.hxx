@@ -101,7 +101,7 @@ namespace Kernel
 		virtual NodePtr Create(_Input const Char* path)			 = 0;
 		virtual NodePtr CreateAlias(_Input const Char* path)	 = 0;
 		virtual NodePtr CreateDirectory(_Input const Char* path) = 0;
-		virtual NodePtr CreateSwapFile(const Char* path) = 0;
+		virtual NodePtr CreateSwapFile(const Char* path)		 = 0;
 
 	public:
 		virtual bool Remove(_Input const Char* path) = 0;
@@ -375,7 +375,7 @@ namespace Kernel
 			Int32 fMappedTo;
 		};
 
-		const SizeT		cRestrictCount	= cRestrictMax;
+		const SizeT		   cRestrictCount  = cRestrictMax;
 		const RESTRICT_MAP cRestrictList[] = {
 			{
 				.fRestrict = cRestrictR,

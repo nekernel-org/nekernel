@@ -146,7 +146,7 @@ namespace Kernel::HAL
 
 	struct PROCESS_CONTROL_BLOCK final
 	{
-		UserProcessPtr	   f_Process;
+		UserProcessPtr f_Process;
 	} fBlocks[kSchedProcessLimitPerTeam] = {0};
 
 	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
@@ -158,7 +158,7 @@ namespace Kernel::HAL
 	{
 		if (kSMPAware)
 		{
-			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Process   = &UserProcessScheduler::The().CurrentProcess().Leak();
+			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Process = &UserProcessScheduler::The().CurrentProcess().Leak();
 
 			return true;
 		}

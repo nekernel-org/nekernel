@@ -39,8 +39,8 @@ typedef char			 Char;
 #ifdef __SCI_IMPL__
 #include <SCI/xpcom_core.hxx>
 #else
-class IUnknown; // Refrenced from an IDB entry.
-class UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: WordUCLSID.
+class IUnknown;		 // Refrenced from an IDB entry.
+class UnknownUCLSID; // From the IDB, the constructor of the object, e.g: WordUCLSID.
 class UUID;
 
 /// @brief Allocate new SCM class.
@@ -70,10 +70,10 @@ public:
 	IUnknown& operator=(const IUnknown&) = default;
 	IUnknown(const IUnknown&)			 = default;
 
-	virtual SInt32			  Release()					   = 0;
-	virtual void			  RemoveRef()			   = 0;
-	virtual IUnknown* AddRef()			   = 0;
-	virtual VoidPtr			  QueryInterface(UUID* p_uuid) = 0;
+	virtual SInt32	  Release()					   = 0;
+	virtual void	  RemoveRef()				   = 0;
+	virtual IUnknown* AddRef()					   = 0;
+	virtual VoidPtr	  QueryInterface(UUID* p_uuid) = 0;
 };
 
 template <typename FnSign, typename ClsID>
@@ -86,7 +86,7 @@ public:
 	IEventListener& operator=(const IEventListener&) = default;
 	IEventListener(const IEventListener&)			 = default;
 
-    virtual IEventListener& operator +=(FnSign arg) = 0;
+	virtual IEventListener& operator+=(FnSign arg) = 0;
 };
 #endif
 
@@ -185,7 +185,7 @@ IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output ZKAObject* hand
 
 /// @brief Destroys an SCM instance of the process.
 /// @param handle_instance the SCM handle.
-IMPORT_C UInt0  XPCOMDestroyInstance(_Input ZKAObject handle_instance);
+IMPORT_C UInt0 XPCOMDestroyInstance(_Input ZKAObject handle_instance);
 
 // ------------------------------------------------------------------------
 // Memory Management API.

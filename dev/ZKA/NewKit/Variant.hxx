@@ -55,7 +55,7 @@ namespace Kernel
 
 	public:
 		const Char* ToString();
-		VoidPtr Leak();
+		VoidPtr		Leak();
 
 	private:
 		voidPtr		fPtr{nullptr};

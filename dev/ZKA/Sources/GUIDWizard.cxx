@@ -26,9 +26,9 @@ namespace Kernel::XRN::Version1
 
 		Ref<GUIDSequence*> sequenceReference{seq, true};
 
-		sequenceReference->fMs1 = uuidSeq[0];
-		sequenceReference->fMs2 = uuidSeq[1];
-		sequenceReference->fMs3 = uuidSeq[2];
+		sequenceReference->fMs1	   = uuidSeq[0];
+		sequenceReference->fMs2	   = uuidSeq[1];
+		sequenceReference->fMs3	   = uuidSeq[2];
 		sequenceReference->fMs4[0] = uuidSeq[3];
 		sequenceReference->fMs4[1] = uuidSeq[4];
 		sequenceReference->fMs4[2] = uuidSeq[5];

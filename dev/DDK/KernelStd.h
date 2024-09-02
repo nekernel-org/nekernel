@@ -14,7 +14,7 @@
 #if defined(__cplusplus)
 #define DK_EXTERN extern "C"
 #define nil		  nullptr
-#define DK_FINAL final
+#define DK_FINAL  final
 #else
 #define DK_EXTERN extern
 #define nil		  ((void*)0)
@@ -30,9 +30,9 @@ struct DDK_PROPERTY_RECORD;
 
 struct DDK_PROPERTY_RECORD DK_FINAL
 {
-    char* p_name;
-    void* p_object;
-    void* p_xpcom_object;
+	char* p_name;
+	void* p_object;
+	void* p_xpcom_object;
 };
 
 /// \brief DDK status structure (__at_enable, __at_disable...)
@@ -41,7 +41,7 @@ struct DDK_STATUS_STRUCT DK_FINAL
 	int32_t s_action_id;
 	int32_t s_issuer_id;
 	int32_t s_group_id;
-	void*   s_object;
+	void*	s_object;
 };
 
 /// @brief Call Kernel (interrupt 0x33)
@@ -65,7 +65,6 @@ DK_EXTERN void* KernelAlloc(size_t sz);
 /// @brief free heap ptr.
 /// @param pointer to free
 DK_EXTERN void KernelFree(void*);
-
 
 /// @brief Get a Kernel property.
 /// @param slot property id (always 0)

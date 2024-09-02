@@ -74,7 +74,7 @@ namespace Kernel
 
 	private:
 		Void (*fOut)(T Data) = {nullptr};
-		Void (*fIn)(T Data) = {nullptr};
+		Void (*fIn)(T Data)	 = {nullptr};
 	};
 
 	///

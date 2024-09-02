@@ -80,7 +80,7 @@ ATAInit_Retry:
 
 	if (statRdy & ATA_SR_ERR)
 	{
-	Kernel::kcout << "newoskrnl.dll: Failing drive...\r";
+		Kernel::kcout << "newoskrnl.dll: Failing drive...\r";
 
 		return false;
 	}
@@ -114,7 +114,7 @@ ATAInit_Retry:
 
 Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
 {
-    Lba /= SectorSz;
+	Lba /= SectorSz;
 
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
@@ -125,7 +125,7 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 	Out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
-	Out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+	Out8(IO + ATA_REG_LBA0, (Lba)&0xFF);
 	Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
 	Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
@@ -146,7 +146,7 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
 {
-    Lba /= SectorSz;
+	Lba /= SectorSz;
 
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
@@ -157,7 +157,7 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 
 	Out8(IO + ATA_REG_SEC_COUNT0, ((Size + (SectorSz)) / SectorSz));
 
-	Out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+	Out8(IO + ATA_REG_LBA0, (Lba)&0xFF);
 	Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
 	Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	Out8(IO + ATA_REG_LBA3, (Lba) >> 24);

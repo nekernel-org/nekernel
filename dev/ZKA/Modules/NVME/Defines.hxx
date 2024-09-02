@@ -55,9 +55,7 @@ namespace Kernel
 	};
 
 	template <Int32 Opcode>
-	inline Bool nvme_create_admin_command(NVMEQueue* entry, UInt32 nsid,
-	UInt32 prpTransfer[3],
-	UInt32 startingLba[2], UInt32 lowTransferBlocks)
+	inline Bool nvme_create_admin_command(NVMEQueue* entry, UInt32 nsid, UInt32 prpTransfer[3], UInt32 startingLba[2], UInt32 lowTransferBlocks)
 	{
 		if (entry == nullptr)
 			return false;
@@ -77,9 +75,7 @@ namespace Kernel
 	}
 
 	template <Int32 Opcode>
-	inline Bool nvme_create_io_command(NVMEQueue* entry, UInt64 baseAddress,
-	UInt32 identLoAndQueueSizeHi, UInt32 flagsLoAndQueueComplIdHi,
-	UInt32 identify, Bool provideIdentify = false, Bool namespaceIdentify = false)
+	inline Bool nvme_create_io_command(NVMEQueue* entry, UInt64 baseAddress, UInt32 identLoAndQueueSizeHi, UInt32 flagsLoAndQueueComplIdHi, UInt32 identify, Bool provideIdentify = false, Bool namespaceIdentify = false)
 	{
 		if (entry == nullptr)
 			return false;

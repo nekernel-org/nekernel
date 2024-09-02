@@ -21,10 +21,10 @@ namespace Kernel
 
 	/// @brief internal and reserved protocols by Kernel.
 	constexpr const Char* kURLProtocols[] = {
-		"file", // Filesystem protocol
-		"zup",	// ZKA update protocol
-		"oscc", // Open System Configuration Connectivity.
-		"odbc", // ODBC connectivity.
+		"file",	 // Filesystem protocol
+		"zup",	 // ZKA update protocol
+		"oscc",	 // Open System Configuration Connectivity.
+		"odbc",	 // ODBC connectivity.
 		"https", // HTTPS layer driver (HTTPS.sys).
 	};
 

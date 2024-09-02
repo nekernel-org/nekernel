@@ -865,7 +865,7 @@ typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_ENABLEDISABLEAP)(
 	IN Boolean						  EnableAP,
 	IN UInt32* HealthFlag OPTIONAL);
 
-typedef EfiStatusType EFI_API(* EFI_MP_SERVICES_WHOAMI)(
+typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_WHOAMI)(
 	IN struct _EfiMpServicesProtocol* This,
 	OUT UInt32* ProcessorNumber);
 

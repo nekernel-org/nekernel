@@ -18,5 +18,5 @@
 namespace EncryptFS
 {
 	using namespace Kernel;
-	
+
 }

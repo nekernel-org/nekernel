@@ -24,7 +24,7 @@ namespace Kernel
 	class Property
 	{
 	public:
-	    Property() = default;
+		Property() = default;
 		virtual ~Property();
 
 	public:
@@ -36,8 +36,8 @@ namespace Kernel
 		StringView& GetKey();
 
 	private:
-		StringView      fName{cMaxPropLen};
-		PropertyId		fAction{No};
+		StringView fName{cMaxPropLen};
+		PropertyId fAction{No};
 	};
 
 	template <SizeT N>

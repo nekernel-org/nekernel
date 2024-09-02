@@ -46,7 +46,7 @@ namespace Boot
 		if (firstBytes[0] == kMagMz0 &&
 			firstBytes[1] == kMagMz1)
 		{
-			LDR_EXEC_HEADER_PTR		  hdrPtr = ldr_find_exec_header(firstBytes);
+			LDR_EXEC_HEADER_PTR		hdrPtr = ldr_find_exec_header(firstBytes);
 			LDR_OPTIONAL_HEADER_PTR optHdr = ldr_find_opt_exec_header(firstBytes);
 
 			if (hdrPtr->mMachine != kPeMachineAMD64 ||

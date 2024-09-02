@@ -24,7 +24,7 @@ struct THREAD_INFORMATION_BLOCK;
 struct PACKED THREAD_INFORMATION_BLOCK final
 {
 	Kernel::Char	f_Cookie[kTLSCookieLen]{0}; //! Thread magic number.
-	Kernel::VoidPtr f_ThreadRecord{nullptr}; //! Thread information record.
+	Kernel::VoidPtr f_ThreadRecord{nullptr};	//! Thread information record.
 };
 
 ///! @brief Cookie Sanity check.

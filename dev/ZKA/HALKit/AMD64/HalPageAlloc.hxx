@@ -93,6 +93,6 @@ namespace Kernel::HAL
 
 namespace Kernel
 {
-	typedef HAL::ZKA_PTE	 PTE;
+	typedef HAL::ZKA_PTE PTE;
 	typedef HAL::ZKA_PDE PDE;
 } // namespace Kernel

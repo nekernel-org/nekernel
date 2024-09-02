@@ -19,8 +19,8 @@ typedef struct NetBootInternetHeader
 	Kernel::Char NB3; /// magic char 3 'T'
 	Kernel::Char NB4; /// magic char 4 'B'
 
-	Kernel::Char PatchName[255];	/// example: ColdChoco
-	Kernel::Int32 PatchLength;		/// the patch length.
-	Kernel::Char PatchTarget[255]; /// the target file.
-	Kernel::Boolean	ImpliesROM;		/// does it imply an EEPROM reprogram?
+	Kernel::Char	PatchName[255];	  /// example: ColdChoco
+	Kernel::Int32	PatchLength;	  /// the patch length.
+	Kernel::Char	PatchTarget[255]; /// the target file.
+	Kernel::Boolean ImpliesROM;		  /// does it imply an EEPROM reprogram?
 } NetBootInternetHeader;

@@ -21,5 +21,5 @@
 #endif // !cDDKVersion
 
 int32_t c_api_version_highest = cDDKVersionHighest;
-int32_t c_api_version_least = cDDKVersionLowest;
-int32_t c_api_version = cDDKVersion;
+int32_t c_api_version_least	  = cDDKVersionLowest;
+int32_t c_api_version		  = cDDKVersion;

@@ -22,7 +22,7 @@ namespace Kernel
 		UserProcess proc;
 		proc.SetEntrypoint(reinterpret_cast<VoidPtr>(main));
 
-		proc.Kind = UserProcess::kExeKind;
+		proc.Kind	   = UserProcess::kExeKind;
 		proc.StackSize = mib_cast(1);
 
 		rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(processName));

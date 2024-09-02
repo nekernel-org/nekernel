@@ -34,7 +34,7 @@ typedef struct LDR_EXEC_HEADER final
 	Kernel::UInt32 mNumberOfSymbols;
 	Kernel::UInt16 mSizeOfOptionalHeader;
 	Kernel::UInt16 mCharacteristics;
-}  LDR_EXEC_HEADER, *LDR_EXEC_HEADER_PTR;
+} LDR_EXEC_HEADER, *LDR_EXEC_HEADER_PTR;
 
 typedef struct LDR_OPTIONAL_HEADER final
 {
@@ -68,21 +68,21 @@ typedef struct LDR_OPTIONAL_HEADER final
 	Kernel::UInt32 mSizeOfHeapCommit;
 	Kernel::UInt32 mLoaderFlags;
 	Kernel::UInt32 mNumberOfRvaAndSizes;
-}  LDR_OPTIONAL_HEADER, *LDR_OPTIONAL_HEADER_PTR;
+} LDR_OPTIONAL_HEADER, *LDR_OPTIONAL_HEADER_PTR;
 
 typedef struct LDR_SECTION_HEADER final
 {
-	Kernel::Char       mName[8];
-	Kernel::UInt32		mVirtualSize;
-	Kernel::UInt32		mVirtualAddress;
-	Kernel::UInt32		mSizeOfRawData;
-	Kernel::UInt32		mPointerToRawData;
-	Kernel::UInt32		mPointerToRelocations;
-	Kernel::UInt32		mPointerToLineNumbers;
-	Kernel::UInt16		mNumberOfRelocations;
-	Kernel::UInt16		mNumberOfLinenumbers;
-	Kernel::UInt32		mCharacteristics;
-}  LDR_SECTION_HEADER, *LDR_SECTION_HEADER_PTR;
+	Kernel::Char   mName[8];
+	Kernel::UInt32 mVirtualSize;
+	Kernel::UInt32 mVirtualAddress;
+	Kernel::UInt32 mSizeOfRawData;
+	Kernel::UInt32 mPointerToRawData;
+	Kernel::UInt32 mPointerToRelocations;
+	Kernel::UInt32 mPointerToLineNumbers;
+	Kernel::UInt16 mNumberOfRelocations;
+	Kernel::UInt16 mNumberOfLinenumbers;
+	Kernel::UInt32 mCharacteristics;
+} LDR_SECTION_HEADER, *LDR_SECTION_HEADER_PTR;
 
 enum kExecDataDirParams
 {
@@ -105,7 +105,7 @@ typedef struct LDR_EXPORT_DIRECTORY
 	Kernel::UInt32 mAddressOfFunctions; // export table rva
 	Kernel::UInt32 mAddressOfNames;
 	Kernel::UInt32 mAddressOfNameOrdinal; // ordinal table rva
-}  LDR_EXPORT_DIRECTORY, *LDR_EXPORT_DIRECTORY_PTR;
+} LDR_EXPORT_DIRECTORY, *LDR_EXPORT_DIRECTORY_PTR;
 
 typedef struct LDR_IMPORT_DIRECTORY
 {
@@ -117,21 +117,23 @@ typedef struct LDR_IMPORT_DIRECTORY
 	Kernel::UInt32 mForwarderChain;
 	Kernel::UInt32 mNameRva;
 	Kernel::UInt32 mThunkTableRva;
-}  LDR_IMPORT_DIRECTORY, *LDR_IMPORT_DIRECTORY_PTR;
+} LDR_IMPORT_DIRECTORY, *LDR_IMPORT_DIRECTORY_PTR;
 
-typedef struct LDR_DATA_DIRECTORY {
-  Kernel::UInt32 VirtualAddress;
-  Kernel::UInt32 Size;
+typedef struct LDR_DATA_DIRECTORY
+{
+	Kernel::UInt32 VirtualAddress;
+	Kernel::UInt32 Size;
 } LDR_DATA_DIRECTORY, *LDR_DATA_DIRECTORY_PTR;
 
-typedef struct LDR_IMAGE_HEADER {
-	LDR_EXEC_HEADER mHeader;
+typedef struct LDR_IMAGE_HEADER
+{
+	LDR_EXEC_HEADER		mHeader;
 	LDR_OPTIONAL_HEADER mOptHdr;
 } LDR_IMAGE_HEADER, *LDR_IMAGE_HEADER_PTR;
 
 enum
 {
-	eUserSection = 0x00000020,
+	eUserSection  = 0x00000020,
 	cPEResourceId = 0xFFaadd00,
 };
 

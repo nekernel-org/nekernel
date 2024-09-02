@@ -63,18 +63,18 @@ namespace Kernel
 		bool IsWakeup() noexcept;
 
 	public:
-		HAL::StackFramePtr  StackFrame() noexcept;
-		const ThreadKind& Kind() noexcept;
-		bool			  IsBusy() noexcept;
-		const ThreadID&	  ID() noexcept;
+		HAL::StackFramePtr StackFrame() noexcept;
+		const ThreadKind&  Kind() noexcept;
+		bool			   IsBusy() noexcept;
+		const ThreadID&	   ID() noexcept;
 
 	private:
 		HAL::StackFramePtr fStack{nullptr};
-		ThreadKind		 fKind{ThreadKind::kHartStandard};
-		ThreadID		 fID{0};
-		ProcessID		 fSourcePID{-1};
-		bool			 fWakeup{false};
-		bool			 fBusy{false};
+		ThreadKind		   fKind{ThreadKind::kHartStandard};
+		ThreadID		   fID{0};
+		ProcessID		   fSourcePID{-1};
+		bool			   fWakeup{false};
+		bool			   fBusy{false};
 
 	private:
 		friend class HardwareThreadScheduler;
@@ -100,7 +100,7 @@ namespace Kernel
 	public:
 		Ref<HardwareThread*> operator[](const SizeT& idx);
 		bool				 operator!() noexcept;
-		operator bool() noexcept;
+							 operator bool() noexcept;
 
 	public:
 		/// @brief Shared instance of the MP Manager.
@@ -114,7 +114,7 @@ namespace Kernel
 
 	private:
 		Array<HardwareThread, cMaxHWThreads> fThreadList;
-		ThreadID						 fCurrentThread{0};
+		ThreadID							 fCurrentThread{0};
 	};
 
 	/// @brief wakes up thread.

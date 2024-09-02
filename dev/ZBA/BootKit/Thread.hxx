@@ -22,7 +22,7 @@ namespace Boot
 	{
 	public:
 		explicit BThread() = delete;
-		~BThread()		 = default;
+		~BThread()		   = default;
 
 		explicit BThread(Kernel::VoidPtr blob);
 
@@ -32,10 +32,10 @@ namespace Boot
 		void		Start(HEL::HandoverInformationHeader* handover);
 		const char* GetName();
 		void		SetName(const char* name);
-		bool 		IsValid();
+		bool		IsValid();
 
 	private:
-		Char	fBlobName[255] = { "BootThread" };
+		Char	fBlobName[255] = {"BootThread"};
 		VoidPtr fStartAddress{nullptr};
 		VoidPtr fBlob{nullptr};
 	};

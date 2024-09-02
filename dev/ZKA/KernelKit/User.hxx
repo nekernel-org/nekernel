@@ -17,7 +17,7 @@
 #define kGuestUser "ZKA USER\\GUEST"
 
 #define kUsersFile "\\Users\\$UsrRcrd"
-#define kUsersDir "\\Users\\"
+#define kUsersDir  "\\Users\\"
 
 #define kMaxUserNameLen	 (255)
 #define kMaxUserTokenLen (255)
@@ -67,9 +67,9 @@ namespace Kernel
 		Bool TrySave(const Char* password) noexcept;
 
 	private:
-		RingKind   fRing{RingKind::kRingStdUser};
-		Char fUserName[kMaxUserNameLen] = { 0 };
-		Char fUserToken[kMaxUserTokenLen] = { 0 };
+		RingKind fRing{RingKind::kRingStdUser};
+		Char	 fUserName[kMaxUserNameLen]	  = {0};
+		Char	 fUserToken[kMaxUserTokenLen] = {0};
 	};
 } // namespace Kernel
 

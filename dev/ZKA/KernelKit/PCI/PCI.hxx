@@ -9,11 +9,11 @@
 #include <NewKit/Defines.hxx>
 
 #define cPCIConfigAddressPort (0xCF8)
-#define cPCIConfigDataPort	   (0xCFC)
+#define cPCIConfigDataPort	  (0xCFC)
 
 #define cPCIDeviceCount (32)
-#define cPCIFuncCount	 (8)
-#define cPCIBusCount	 (255)
+#define cPCIFuncCount	(8)
+#define cPCIBusCount	(255)
 
 namespace Kernel::PCI
 {

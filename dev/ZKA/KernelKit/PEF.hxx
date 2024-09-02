@@ -104,11 +104,11 @@ namespace Kernel
 #define kPefDriverExt ".sys"
 
 // Kernel System Binary Interface.
-#define kPefAbi 	   (0x5046)
+#define kPefAbi (0x5046)
 
 #define kPefBaseOrigin (0x40000000)
 
-#define kPefStart 		"__ImageStart"
+#define kPefStart "__ImageStart"
 
 #define kPefForkKind	kPefMagic
 #define kPefForkKindFAT kPefMagicFat

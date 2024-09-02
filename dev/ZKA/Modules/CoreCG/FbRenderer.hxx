@@ -102,7 +102,7 @@
 	{                                                                                 \
 		for (Kernel::SizeT y_base = _BaseY; y_base < (_Height + _BaseY); ++y_base)    \
 		{                                                                             \
-			*(((volatile Kernel::UInt32*)(_Rgn +                                 \
+			*(((volatile Kernel::UInt32*)(_Rgn +                                      \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  x_base +                                \
 										  4 * y_base))) = _Clr[__GXCursor];           \
@@ -120,12 +120,12 @@
 			*(((volatile Kernel::UInt32*)(_VideoRgn +                                 \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  x_base +                                \
-										  4 * y_base))) = _Clr;           \
+										  4 * y_base))) = _Clr;                       \
 			++__GXCursor;                                                             \
 		}                                                                             \
 	}
 
-#define CGDrawInRegionToVideoRgnA(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)    \
+#define CGDrawInRegionToVideoRgnA(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)   \
 	__GXCursor = 0;                                                                   \
                                                                                       \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
@@ -135,7 +135,7 @@
 			*(((volatile Kernel::UInt32*)(_VideoRgn +                                 \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  x_base +                                \
-										  4 * y_base))) |= _Clr;           \
+										  4 * y_base))) |= _Clr;                      \
 			++__GXCursor;                                                             \
 		}                                                                             \
 	}

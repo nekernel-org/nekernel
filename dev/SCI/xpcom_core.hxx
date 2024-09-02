@@ -10,16 +10,16 @@ Purpose: Base code of SCM.
 /// @internal
 
 #ifndef __NDK__
-#define object class
+#define object	 class
 #define protocol class
 #define clsid(X)
 
 #warning ! You may be using the clang version of the ZKA kit, please be cautious that some thing mayn't be present. !
 #endif // !__NDK__
 
-protocol IUnknown; // Refrenced from an IDB entry.
-protocol UnknownUCLSID;	// From the IDB, the constructor of the object, e.g: TextUCLSID.
-object UUID;
+protocol IUnknown;		// Refrenced from an IDB entry.
+protocol UnknownUCLSID; // From the IDB, the constructor of the object, e.g: TextUCLSID.
+object	 UUID;
 
 /// @brief Unknown XPCOM interface
 protocol clsid("d7c144b6-0792-44b8-b06b-02b227b547df") IUnknown
@@ -31,10 +31,10 @@ public:
 	IUnknown& operator=(const IUnknown&) = default;
 	IUnknown(const IUnknown&)			 = default;
 
-	virtual SInt32 Release() = 0;
-	virtual void RemoveRef() = 0;
-	virtual IUnknown* AddRef() = 0;
-	virtual VoidPtr QueryInterface(UUID* p_uuid) = 0;
+	virtual SInt32	  Release()						= 0;
+	virtual void	  RemoveRef()					= 0;
+	virtual IUnknown* AddRef()						= 0;
+	virtual VoidPtr	  QueryInterface(UUID * p_uuid) = 0;
 };
 
 /// @brief Allocate new SCM object.
@@ -45,7 +45,7 @@ public:
 template <typename TCLS, typename UCLSID, typename... Args>
 inline TCLS* XPCOMQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 {
-    uclsidOfCls->AddRef();
+	uclsidOfCls->AddRef();
 	return uclsidOfCls->QueryInterfaceWithArgs(args...);
 }
 
@@ -77,9 +77,9 @@ public:
 	IEventListener& operator=(const IEventListener&) = default;
 	IEventListener(const IEventListener&)			 = default;
 
-    virtual IEventListener& operator +=(FnSign arg)
+	virtual IEventListener& operator+=(FnSign arg)
 	{
-        this->AddEventListener(arg);
-        return *this;
-    }
+		this->AddEventListener(arg);
+		return *this;
+	}
 };
