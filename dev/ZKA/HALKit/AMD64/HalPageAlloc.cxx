@@ -98,11 +98,9 @@ namespace Kernel
 			kAllocationInProgress = false;
 
 			VoidPtr result = reinterpret_cast<VoidPtr>(vmh_header + sizeof(Detail::VIRTUAL_MEMORY_HEADER));
-			VoidPtr cr3 = hal_read_cr3();
 
-			mm_update_pte(cr3, 0, result, eFlagsPresent | (rw ? eFlagsRw : 0) | (user ? eFlagsUser : 0));
-			mm_update_pte(cr3, 0, result, (rw ? eFlagsRw : 0));
-			mm_update_pte(cr3, 0, result, (user ? eFlagsUser : 0));
+			mm_update_pte(result, (rw ? eFlagsRw : 0));
+			mm_update_pte(result, (user ? eFlagsUser : 0));
 
 			return result;
 		}

@@ -24,16 +24,16 @@ EXTERN_C
 #include <cpuid.h>
 }
 
-#define kSyscallRoute (51)
+#define kSyscallRoute (0x29)
 
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
-#define kInterruptGate		 (0x8E)
-#define kTrapGate			 (0xEF)
-#define kTaskGate			 (0b10001100)
-#define kGdtKernelCodeSelector	 (0x08)
-#define kGdtUserCodeSelector (0x23)
+#define kInterruptGate		   (0x8E)
+#define kTrapGate			   (0xEF)
+#define kTaskGate			   (0b10001100)
+#define kGdtKernelCodeSelector (0x08)
+#define kGdtUserCodeSelector   (0x23)
 
 namespace Kernel
 {
@@ -62,16 +62,13 @@ namespace Kernel::HAL
 		eFlagsUser,
 		eFlagsRw,
 		eFlagsExecDisable,
-		eFlagsSetPhysAddress,
 		eFlagsCount,
 	};
 
 	/// @brief Updates a PTE from pd_base.
-	/// @param pd_base a valid PDE address.
-	/// @param phys_addr a valid phyiscal address.
 	/// @param virt_addr a valid virtual address.
 	/// @param flags the flags to put on the page.
-	EXTERN_C Int32 mm_update_pte(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags);
+	EXTERN_C Int32 mm_update_pte(VoidPtr virt_addr, UInt32 flags);
 
 	EXTERN_C UChar	In8(UInt16 port);
 	EXTERN_C UShort In16(UInt16 port);
@@ -230,6 +227,26 @@ namespace Kernel::HAL
 	/// @brief Processor specific namespace.
 	namespace Detail
 	{
+		/* @brief TSS struct. */
+		struct ZKA_TSS final
+		{
+			UInt32 fReserved1;
+			UInt64 fRsp0;
+			UInt64 fRsp1;
+			UInt64 fRsp2;
+			UInt64 fReserved2;
+			UInt64 fIst1;
+			UInt64 fIst2;
+			UInt64 fIst3;
+			UInt64 fIst4;
+			UInt64 fIst5;
+			UInt64 fIst6;
+			UInt64 fIst7;
+			UInt64 fReserved3;
+			UInt16 fReserved4;
+			UInt16 fIopb;
+		};
+
 		/**
 		  @brief Global descriptor table entry, either null, code or data.
 		*/

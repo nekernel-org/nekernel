@@ -84,7 +84,7 @@ namespace Kernel
 			if (!ret)
 			{
 				if (kind == kPefCode)
-					return (VoidPtr)__zka_pure_call;
+					return (VoidPtr)&__zka_pure_call;
 
 				return nullptr;
 			}

@@ -15,6 +15,10 @@
 ///! @brief This file handles multi processing in the Kernel.
 ///! @brief Multi processing is needed for multi-tasking operations.
 
+#ifdef __ZKA_AMD64__
+EXTERN Kernel::HAL::Detail::ZKA_TSS cTSS;
+#endif // ifdef __ZKA_AMD64__
+
 namespace Kernel
 {
 	/***********************************************************************************/
@@ -100,13 +104,18 @@ namespace Kernel
 
 		if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		{
+#ifdef __ZKA_AMD64__
+			cTSS.fRsp0 = (UIntPtr)stack_ptr;
+#endif  // ifdef __ZKA_AMD64__
 			return mp_register_process(fStack);
 		}
 
 		//! SMP is disabled here.
 
 		mp_do_context_switch_pre();
-		return mp_do_context_switch(image, stack_ptr, fStack) != 0;
+		mp_do_context_switch(image, stack_ptr, fStack);
+
+		return true;
 	}
 
 	///! @brief Tells if processor is waked up.

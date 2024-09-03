@@ -15,27 +15,27 @@
 #endif
 
 #ifndef MIB
-#define MIB(X) ((UInt64)KIB(X) / 1024)
+#define MIB(X) ((Kernel::UInt64)KIB(X) / 1024)
 #endif
 
 #ifndef mib_cast
-#define mib_cast(X) ((UInt64)kib_cast(X) * 1024)
+#define mib_cast(X) ((Kernel::UInt64)kib_cast(X) * 1024)
 #endif
 
 #ifndef GIB
-#define GIB(X) ((UInt64)MIB(X) / 1024)
+#define GIB(X) ((Kernel::UInt64)MIB(X) / 1024)
 #endif
 
 #ifndef gib_cast
-#define gib_cast(X) ((UInt64)mib_cast(X) * 1024)
+#define gib_cast(X) ((Kernel::UInt64)mib_cast(X) * 1024)
 #endif
 
 #ifndef TIB
-#define TIB(X) ((UInt64)GIB(X) / 1024)
+#define TIB(X) ((Kernel::UInt64)GIB(X) / 1024)
 #endif
 
 #ifndef tib_cast
-#define tib_cast(X) ((UInt64)gib_cast(X) * 1024)
+#define tib_cast(X) ((Kernel::UInt64)gib_cast(X) * 1024)
 #endif
 
 #ifndef ARRAY_SIZE

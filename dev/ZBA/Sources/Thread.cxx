@@ -22,6 +22,9 @@ EXTERN_C{
 #include <string.h>
 }
 
+EXTERN_C Void
+rt_jump_to_address(VoidPtr start, VoidPtr handover);
+
 // External boot services symbol.
 EXTERN EfiBootServices* BS;
 
@@ -162,7 +165,7 @@ namespace Boot
 			err_fn(handover);
 		}
 
-		reinterpret_cast<HEL::HandoverProc>(fStartAddress)(handover);
+		rt_jump_to_address(fStartAddress, handover);
 	}
 
 	const Char* BThread::GetName()

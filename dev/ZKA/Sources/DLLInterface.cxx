@@ -13,14 +13,3 @@
 #include <KernelKit/UserProcessScheduler.hxx>
 
 using namespace Kernel;
-
-/***********************************************************************************/
-/// @brief Unimplemented function (crashes by default)
-/// @param
-/***********************************************************************************/
-
-EXTERN_C void __zka_pure_call(void)
-{
-	kcout << "newoskrnl.exe: Unimplemented entrypoint symbol!\r";
-	UserProcessScheduler::The().CurrentProcess().Leak().Crash();
-}

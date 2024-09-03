@@ -166,14 +166,6 @@ namespace Kernel
 
 					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
 
-#ifdef __ZKA_AMD64__
-			HAL::mm_update_pte(hal_read_cr3(), 0, blobRet, HAL::eFlagsPresent);
-			HAL::mm_update_pte(hal_read_cr3(), 0, blobRet, HAL::eFlagsUser);
-			HAL::mm_update_pte(hal_read_cr3(), 0, blobRet, (container_header->Kind != kPefCode ? HAL::eFlagsRw : 0));
-#else
-#warning ! No page bits set fo blob !
-#endif
-
 					mm_delete_ke_heap(blob);
 					return blobRet;
 				}

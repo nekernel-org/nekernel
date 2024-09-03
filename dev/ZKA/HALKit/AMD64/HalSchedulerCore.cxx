@@ -14,14 +14,24 @@ Void UserProcess::SetImageStart(VoidPtr imageStart) noexcept
 	if (imageStart == nullptr)
 		this->Crash();
 
-	HAL::mm_update_pte(hal_read_cr3(), 0, imageStart, HAL::eFlagsPresent | HAL::eFlagsUser);
+	HAL::mm_update_pte(imageStart, HAL::eFlagsPresent | HAL::eFlagsUser);
 
 	this->Image = imageStart;
 }
 
 namespace Kernel
 {
-	bool hal_check_stack(HAL::StackFramePtr stack_ptr)
+	/***********************************************************************************/
+	/// @brief Unimplemented function (crashes by default)
+	/// @param
+	/***********************************************************************************/
+
+	EXTERN_C Void __zka_pure_call(void)
+	{
+		asm volatile ("mov %r8, 0; mov %r9, 1; syscall");
+	}
+
+	Bool hal_check_stack(HAL::StackFramePtr stack_ptr)
 	{
 		if (!stack_ptr)
 			return false;

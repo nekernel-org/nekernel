@@ -21,6 +21,9 @@ section .text
 ;; rcx: code ptr.
 ;; rdx: stack ptr.
 mp_do_context_switch:
+    mov rsp, rdx
+    mov rbp, rsp
+
     mov r9,  [r8 + (8 * 2)]
     mov r10, [r8 + (8 * 3)]
     mov fs, [r8 + (8 * 4)]
@@ -31,11 +34,11 @@ mp_do_context_switch:
     mov gs, [r8 + (8 * 9)]
     mov r8,  [r8]
 
-    mov r11, 0x202
-    mov rsp, rdx
+    mov rax, rcx
 
-    xor rax, rax
-	o64 sysret
+    mov r11, 0x202
+
+    o64 sysret
 
 ;; @brief Gets the current stack frame.
 mp_get_current_context:
@@ -43,35 +46,41 @@ mp_get_current_context:
     ret
 
 extern hal_system_call_enter
+global mp_system_call_handler
 
 mp_system_call_handler:
+    swapgs
+
     push r8
     push r9
     push r10
 
-    call hal_system_call_enter
+    jmp hal_system_call_enter
 
     pop r10
     pop r9
     pop r8
 
-    sysret
+    swapgs
+    sti
+
+    o64 sysret
 
 mp_do_context_switch_pre:
+	mov rcx, 0xc0000080
+	rdmsr
+	or eax, 1
+	wrmsr
 
-    xor rdx, rdx
-	mov rax, 0x202
-	mov rcx, 0xc0000084
+	mov rcx, 0xc0000081
+	rdmsr
+    mov rax, 0x00000000
+	mov edx, 0x00180008
 	wrmsr
-    xor rax, rax
-	mov rax, mp_system_call_handler
-    mov rdx, rax
-    shr rdx, 32
+
 	mov rcx, 0xc0000082
-	wrmsr
-    xor rax, rax
-	mov rdx, 0x230008
-    mov rcx, 0xc0000081
+	mov rax, mp_system_call_handler
+	mov rdx, 0x0
 	wrmsr
 
     ret

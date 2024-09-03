@@ -16,25 +16,38 @@
 
 namespace Kernel::HAL
 {
-	EXTERN_C Int32 mm_update_pte(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags)
+	EXTERN_C Int32 mm_update_pte(VoidPtr virt_addr, UInt32 flags)
 	{
-		UIntPtr pte_idx = (UIntPtr)virt_addr >> 12;
+		VoidPtr pml4_base = hal_read_cr3();
 
-		volatile PTE* pte = (volatile PTE*)((UIntPtr)pd_base + (kPTEAlign * pte_idx));
+		UIntPtr pml4_idx = ((UIntPtr)virt_addr >> 39) & 0x1FFF;
+		UIntPtr pdpt_idx = ((UIntPtr)virt_addr >> 30) & 0x1FFF;
+		UIntPtr pd_idx	 = ((UIntPtr)virt_addr >> 21) & 0x1FFF;
+		UIntPtr pte_idx	 = ((UIntPtr)virt_addr >> 12) & 0x1FFF;
 
-		if (pte)
+		// Access PML4 entry
+		volatile UInt64* pml4_entry = (volatile UInt64*)(pml4_base + pml4_idx * sizeof(UIntPtr));
+		UInt64		   pdpt_base  = *pml4_entry & ~0xFFF; // Remove flags (assuming 4KB pages)
+
+		// Access PDPT entry
+		volatile UInt64* pdpt_entry = (volatile UInt64*)(pdpt_base + pdpt_idx * sizeof(UIntPtr));
+		UInt64		   pd_base	  = *pdpt_entry & ~0xFFF; // Remove flags
+
+		volatile UInt64* pd_entry = (volatile UInt64*)(pd_base + pd_idx * sizeof(UIntPtr));
+		UInt64			 pt_base  = *pd_entry & ~0xFFF; // Remove flags
+
+		volatile UInt64* page_addr = (volatile UInt64*)((UIntPtr)pt_base + (pte_idx * sizeof(UIntPtr)));
+
+		if (page_addr)
 		{
 			if (flags & eFlagsPresent)
-				pte->Present = flags & eFlagsPresent;
+				*page_addr |= 0x01; // present bit
 
 			if (flags & eFlagsRw)
-				pte->Rw = flags & eFlagsRw;
+				*page_addr |= 0x02;
 
 			if (flags & eFlagsUser)
-				pte->User = flags & eFlagsUser;
-
-			if (flags & eFlagsExecDisable)
-				pte->ExecDisable = flags & eFlagsExecDisable;
+				*page_addr |= 0x02;
 
 			return Yes;
 		}

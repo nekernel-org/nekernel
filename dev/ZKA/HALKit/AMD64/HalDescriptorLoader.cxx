@@ -10,9 +10,6 @@ namespace Kernel::HAL
 {
 	namespace Detail
 	{
-		STATIC RegisterGDT kRegGdt;
-		STATIC HAL::Register64 kRegIdt;
-
 		STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64
 			kInterruptVectorTable[kKernelIdtSize];
 
@@ -41,10 +38,7 @@ namespace Kernel::HAL
 	/// @return
 	Void GDTLoader::Load(RegisterGDT& gdt)
 	{
-		Detail::kRegGdt.Base  = gdt.Base;
-		Detail::kRegGdt.Limit = gdt.Limit;
-
-		hal_load_gdt(Detail::kRegGdt);
+		hal_load_gdt(gdt);
 	}
 
 	Void IDTLoader::Load(Register64& idt)
@@ -81,11 +75,7 @@ namespace Kernel::HAL
 			Detail::kInterruptVectorTable[idt_indx].Zero = 0x0;
 		}
 
-		Detail::kRegIdt.Base  = reinterpret_cast<UIntPtr>(Detail::kInterruptVectorTable);
-		Detail::kRegIdt.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) *
-								(kKernelIdtSize - 1);
-
-		hal_load_idt(Detail::kRegIdt);
+		hal_load_idt(idt);
 
 		Detail::hal_remap_intel_pic_ctrl();
 	}

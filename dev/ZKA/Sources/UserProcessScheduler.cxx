@@ -260,7 +260,7 @@ namespace Kernel
 			if (!process.StackReserve)
 			{
 				process.StackReserve = (UInt8*)mm_new_ke_heap(kSchedMaxStackSz, Yes, Yes);
-				kcout << "newoskrnl.exe: Use fallback reserve.\r";
+				kcout << "newoskrnl.exe: Use fallback reserve size.\r";
 			}
 		}
 		else
@@ -341,10 +341,11 @@ namespace Kernel
 				kcout << process.Name << ": will be runned.\r";
 
 				// tell helper to find a core to schedule on.
-				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
+				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize], process.StackFrame,
 										   process.ProcessId))
 				{
 					process.Crash();
+					continue;
 				}
 
 				process.Exit();

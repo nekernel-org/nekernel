@@ -155,7 +155,7 @@ namespace Kernel
 	EXTERN UserProcessScheduler* cProcessScheduler;
 } // namespace Kernel
 
-Kernel::Void HangCPU(Kernel::Void)
+EXTERN_C Kernel::Void HangCPU(Kernel::Void)
 {
 	while (1);
 }
