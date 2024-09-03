@@ -22,7 +22,7 @@ Purpose: Base code of SCM.
 #define _Input
 #define clsid(X)
 
-#warning ! You may be using the clang version of the ZKA kit, please be cautious that some thing mayn't be present. !
+#warning ! You may be using the clang version of the ZKAKit, please be cautious that some features mayn't be present. !
 #endif // !__NDK__
 
 clsid("0943A614-0201-4107-8F8D-E909DF7F53C9")

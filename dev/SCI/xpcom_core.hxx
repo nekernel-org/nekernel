@@ -14,7 +14,7 @@ Purpose: Base code of SCM.
 #define protocol class
 #define clsid(X)
 
-#warning ! You may be using the clang version of the ZKA kit, please be cautious that some thing mayn't be present. !
+#warning ! You may be using the clang version of the ZKAKit, please be cautious that some features mayn't be present. !
 #endif // !__NDK__
 
 protocol IUnknown;		// Refrenced from an IDB entry.
