@@ -48,18 +48,16 @@ namespace Kernel
 	/// @brief crash current process.
 	/***********************************************************************************/
 
-	void UserProcess::Crash()
+	Void UserProcess::Crash()
 	{
-		constexpr auto cUnknownProcess = "?";
+		if (this->Name == 0)
+			return;
 
-		kcout << (*this->Name == 0 ? cUnknownProcess : this->Name) << ": crashed. (id = " << number(kErrorProcessFault);
-		kcout << ")\r";
-
-		this->Status = ProcessStatus::kDead;
+		kcout << this->Name << ": crashed. (id = " << number(kErrorProcessFault) << endl;
 
 		this->Exit(kErrorProcessFault);
 
-		ProcessHelper::StartScheduling();
+		UserProcessHelper::StartScheduling();
 	}
 
 	/// @brief Gets the local last exit code.
@@ -186,6 +184,8 @@ namespace Kernel
 	*/
 	void UserProcess::Exit(const Int32& exit_code)
 	{
+		this->Status = ProcessStatus::kDead;
+		
 		fLastExitCode = exit_code;
 		cLastExitCode = exit_code;
 
@@ -260,7 +260,7 @@ namespace Kernel
 			if (!process.StackReserve)
 			{
 				process.StackReserve = (UInt8*)mm_new_ke_heap(kSchedMaxStackSz, Yes, Yes);
-				kcout << "newoskrnl.dll: Use fallback reserve.\r";
+				kcout << "newoskrnl.exe: Use fallback reserve.\r";
 			}
 		}
 		else
@@ -331,7 +331,7 @@ namespace Kernel
 			auto& process = mTeam.AsArray()[process_index];
 
 			//! check if process needs to be scheduled.
-			if (ProcessHelper::CanBeScheduled(process))
+			if (UserProcessHelper::CanBeScheduled(process))
 			{
 				// set the current process.
 				mTeam.AsRef() = process;
@@ -341,7 +341,7 @@ namespace Kernel
 				kcout << process.Name << ": will be runned.\r";
 
 				// tell helper to find a core to schedule on.
-				if (!ProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
+				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
 										   process.ProcessId))
 				{
 					process.Crash();
@@ -379,9 +379,9 @@ namespace Kernel
 
 	/// @brief Current proccess id getter.
 	/// @return UserProcess ID integer.
-	PID& ProcessHelper::TheCurrentPID()
+	PID& UserProcessHelper::TheCurrentPID()
 	{
-		kcout << "ProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
+		kcout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
 		return cProcessScheduler->CurrentProcess().Leak().ProcessId;
 	}
 
@@ -389,7 +389,7 @@ namespace Kernel
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
-	bool ProcessHelper::CanBeScheduled(UserProcess& process)
+	bool UserProcessHelper::CanBeScheduled(UserProcess& process)
 	{
 		if (process.Status == ProcessStatus::kFrozen ||
 			process.Status == ProcessStatus::kDead)
@@ -401,7 +401,6 @@ namespace Kernel
 				start)
 			{
 				process.Image		   = start;
-				process.StackFrame->BP = reinterpret_cast<HAL::Reg>(start);
 			}
 		}
 
@@ -412,14 +411,14 @@ namespace Kernel
 	 * @brief Scheduler helper class.
 	 */
 
-	SizeT ProcessHelper::StartScheduling()
+	SizeT UserProcessHelper::StartScheduling()
 	{
 		if (!cProcessScheduler)
 		{
 			cProcessScheduler = new UserProcessScheduler();
 			MUST_PASS(cProcessScheduler);
 
-			kcout << "newoskrnl.dll: Team capacity: " << number(cProcessScheduler->CurrentTeam().AsArray().Capacity()) << endl;
+			kcout << "newoskrnl.exe: Team capacity: " << number(cProcessScheduler->CurrentTeam().AsArray().Capacity()) << endl;
 		}
 
 		SizeT ret = cProcessScheduler->Run();
@@ -432,12 +431,12 @@ namespace Kernel
 	 * \param new_pid the process's PID.
 	 */
 
-	bool ProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
+	bool UserProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
 	{
 		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
 			return false;
 
-		kcout << "newoskrnl.dll: Finding hardware thread...\r";
+		kcout << "newoskrnl.exe: Finding hardware thread...\r";
 
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
 		{
@@ -454,9 +453,9 @@ namespace Kernel
 			{
 				HardwareThreadScheduler::The()[index].Leak()->Busy(true);
 
-				ProcessHelper::TheCurrentPID() = new_pid;
+				UserProcessHelper::TheCurrentPID() = new_pid;
 
-				kcout << "newoskrnl.dll: Found hardware thread...\r";
+				kcout << "newoskrnl.exe: Found hardware thread...\r";
 
 				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
 

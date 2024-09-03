@@ -24,9 +24,6 @@ namespace Kernel::HAL
 
 		if (pte)
 		{
-			if (flags & eFlagsSetPhysAddress)
-				pte->PhysicalAddress = (UIntPtr)phys_addr >> 12;
-
 			if (flags & eFlagsPresent)
 				pte->Present = flags & eFlagsPresent;
 

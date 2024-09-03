@@ -39,7 +39,7 @@ namespace Kernel
 		auto start_y = 10;
 		auto x		 = 10;
 
-		CGDrawString("newoskrnl.dll Stopped working properly so it had to stop.", start_y, x, panicTxt);
+		CGDrawString("newoskrnl.exe Stopped working properly so it had to stop.", start_y, x, panicTxt);
 		start_y += 10;
 
 		// simply offset from previous string and then write the website.
@@ -125,7 +125,7 @@ namespace Kernel
 		HardwareTimer timer(cMaxSeconds);
 		timer.Wait();
 
-		kcout << "newoskrnl.dll: Shutting down computer...\r";
+		kcout << "newoskrnl.exe: Shutting down computer...\r";
 
 		PowerFactoryInterface power(nullptr);
 		power.Shutdown();

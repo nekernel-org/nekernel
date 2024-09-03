@@ -53,13 +53,13 @@ namespace Kernel
 	/// @brief Enable flash memory at slot.
 	STATIC Void drv_enable_flash(Int32 arg)
 	{
-		kcout << "newoskrnl.dll: Enabled FLSH hardware.\r";
+		kcout << "newoskrnl.exe: Enabled FLSH hardware.\r";
 	}
 
 	/// @brief Disable flash memory at slot.
 	STATIC Void drv_disable_flash(Int32 arg)
 	{
-		kcout << "newoskrnl.dll: Disabled FLSH hardware.\r";
+		kcout << "newoskrnl.exe: Disabled FLSH hardware.\r";
 	}
 } // namespace Kernel
 

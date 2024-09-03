@@ -14,11 +14,11 @@ EXTERN_C void rt_syscall_handle(Kernel::HAL::StackFrame* stack)
 {
 	if (stack->Rcx <= (kSyscalls.Count() - 1))
 	{
-		Kernel::kcout << "newoskrnl.dll: syscall: enter.\r";
+		Kernel::kcout << "newoskrnl.exe: syscall: enter.\r";
 
 		if (kSyscalls[stack->Rcx].Leak().Leak().fHooked)
 			(kSyscalls[stack->Rcx].Leak().Leak().fProc)(stack);
 
-		Kernel::kcout << "newoskrnl.dll: syscall: exit.\r";
+		Kernel::kcout << "newoskrnl.exe: syscall: exit.\r";
 	}
 }

@@ -37,8 +37,6 @@ namespace Kernel::HAL
 		Reg R13{0};
 		Reg R14{0};
 		Reg R15{0};
-		Reg BP{0};
-		Reg SP{0};
 	};
 
 	typedef StackFrame* StackFramePtr;

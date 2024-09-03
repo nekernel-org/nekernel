@@ -110,13 +110,12 @@ namespace Kernel::HAL
 		UIntPtr R8{0};
 		UIntPtr R9{0};
 		UIntPtr R10{0};
-		UIntPtr R11{0}; // not tied to r11, rax this time!
+		UIntPtr FS{0};
 		UIntPtr R12{0};
 		UIntPtr R13{0};
 		UIntPtr R14{0};
 		UIntPtr R15{0};
-		UIntPtr BP{0};
-		UIntPtr SP{0};
+		UIntPtr GS{0};
 	};
 
 	typedef StackFrame* StackFramePtr;
@@ -241,7 +240,7 @@ namespace Kernel::HAL
 			UInt16 fBaseLow;
 			UInt8  fBaseMid;
 			UInt8  fAccessByte;
-			UInt8  fGranularity;
+			UInt8  fFlags;
 			UInt8  fBaseHigh;
 		};
 	} // namespace Detail

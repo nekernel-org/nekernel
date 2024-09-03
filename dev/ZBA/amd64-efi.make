@@ -29,7 +29,7 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -m 12G -M q35 \
+EMU_FLAGS=-net none -m 8G -M q35 -cpu qemu64 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
@@ -52,7 +52,7 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSL
                         -std=c++20 -D__HAVE_ZKA_APIS__ -D__ZKA_AMD64__ -D__ZKA__
 
 BOOT_LOADER=newosldr.exe
-KERNEL=newoskrnl.dll
+KERNEL=newoskrnl.exe
 DDK=ddk.dll
 SCI=sci.dll
 CRT=ndkcrt.dll

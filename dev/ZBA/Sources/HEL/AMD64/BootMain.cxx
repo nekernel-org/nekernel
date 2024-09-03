@@ -257,7 +257,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_FirmwareCustomTables[0] = nullptr;
 	handoverHdrPtr->f_FirmwareCustomTables[1] = nullptr;
 
-	BFileReader readerKernel(L"newoskrnl.dll", ImageHandle);
+	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
 	readerKernel.ReadAll(0);
 

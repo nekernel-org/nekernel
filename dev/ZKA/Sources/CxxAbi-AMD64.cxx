@@ -19,7 +19,7 @@ Kernel::UIntPtr __dso_handle;
 
 EXTERN_C void __cxa_pure_virtual()
 {
-	Kernel::kcout << "newoskrnl.dll: C++ placeholder method.\n";
+	Kernel::kcout << "newoskrnl.exe: C++ placeholder method.\n";
 }
 
 EXTERN_C void ___chkstk_ms(void)

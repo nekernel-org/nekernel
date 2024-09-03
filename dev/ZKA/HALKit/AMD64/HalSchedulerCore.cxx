@@ -26,9 +26,6 @@ namespace Kernel
 		if (!stack_ptr)
 			return false;
 
-		if (stack_ptr->BP == 0 || stack_ptr->SP == 0)
-			return false;
-
 		return true;
 	}
 
@@ -36,7 +33,7 @@ namespace Kernel
 	/// Wakes up thread from the hang state.
 	Void mp_wakeup_thread(HAL::StackFrame* stack)
 	{
-		mp_do_context_switch((VoidPtr)stack->BP, (UInt8*)stack->SP, stack);
+		Kernel::UserProcessHelper::StartScheduling();
 	}
 
 	/// @brief makes the thread sleep on a loop.

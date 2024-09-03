@@ -39,7 +39,7 @@ LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x10000000
 LDOBJ		= Objects/*.obj
 
 # This file is the Kernel, responsible of task management and memory.
-KERNEL		= newoskrnl.dll
+KERNEL		= newoskrnl.exe
 
 .PHONY: error
 error:

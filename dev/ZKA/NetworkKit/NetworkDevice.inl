@@ -15,7 +15,7 @@ namespace Kernel
 								 void (*on_cleanup)(void))
 		: DeviceInterface<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup)
 	{
-		kcout << "newoskrnl.dll: NetworkDevice initialized.\r";
+		kcout << "newoskrnl.exe: NetworkDevice initialized.\r";
 
 		MUST_PASS(out && in && on_cleanup);
 	}
@@ -24,7 +24,7 @@ namespace Kernel
 	{
 		MUST_PASS(fCleanup);
 
-		kcout << "newoskrnl.dll: NetworkDevice cleanup.\r";
+		kcout << "newoskrnl.exe: NetworkDevice cleanup.\r";
 
 		if (fCleanup)
 			fCleanup();

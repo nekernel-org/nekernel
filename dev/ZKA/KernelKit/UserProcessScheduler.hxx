@@ -31,7 +31,7 @@ namespace Kernel
 	class PEFDLLInterface;
 	class UserProcessTeam;
 	class UserProcessScheduler;
-	class ProcessHelper;
+	class UserProcessHelper;
 
 	//! @brief UserProcess identifier.
 	typedef Int64 ProcessID;
@@ -221,7 +221,7 @@ namespace Kernel
 		Int32  fLocalCode{0};
 
 		friend UserProcessScheduler;
-		friend ProcessHelper;
+		friend UserProcessHelper;
 	};
 
 	/// \brief Processs Team (contains multiple processes inside it.)
@@ -283,7 +283,7 @@ namespace Kernel
 	 * \brief UserProcess helper class, which contains needed utilities for the scheduler.
 	 */
 
-	class ProcessHelper final
+	class UserProcessHelper final
 	{
 	public:
 		STATIC bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);

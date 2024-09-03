@@ -103,7 +103,7 @@ namespace Kernel
 			return mp_register_process(fStack);
 		}
 
-		kcout << "newoskrnl: Switching now...\r";
+		//! SMP is disabled here.
 
 		mp_do_context_switch_pre();
 		return mp_do_context_switch(image, stack_ptr, fStack) != 0;
@@ -123,12 +123,12 @@ namespace Kernel
 	///! @brief Default constructor.
 	HardwareThreadScheduler::HardwareThreadScheduler()
 	{
-		kcout << "newoskrnl.dll: initializing HardwareThreadScheduler." << endl;
+		kcout << "newoskrnl.exe: initializing HardwareThreadScheduler." << endl;
 
 		cSMPCoreName.GetKey() += "Property\\MPClass";
 		cSMPCoreName.GetValue() = (PropertyId)this;
 
-		kcout << "newoskrnl.dll: initialized HardwareThreadScheduler." << endl;
+		kcout << "newoskrnl.exe: initialized HardwareThreadScheduler." << endl;
 	}
 
 	///! @brief Default destructor.

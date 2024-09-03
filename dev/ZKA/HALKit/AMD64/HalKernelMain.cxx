@@ -20,14 +20,6 @@
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
-Kernel::Property cKernelVersion;
-
-Kernel::User cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
-
-EXTERN Kernel::Boolean kAllocationInProgress;
-
-EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
-
 struct HEAP_ALLOC_INFO final
 {
 	Kernel::VoidPtr fThe;
@@ -61,31 +53,36 @@ namespace Kernel::HAL
 	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr) noexcept;
 } // namespace Kernel::HAL
 
-/* GDT, mostly descriptors for user and kernel segments. */
-STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY cGdt[9] = {
-	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fGranularity = 0x00, .fBaseHigh = 0},		// Null entry
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fGranularity = 0xA0, .fBaseHigh = 0}, // Kernel code
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fGranularity = 0xA0, .fBaseHigh = 0}, // Kernel data
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fGranularity = 0xA0, .fBaseHigh = 0}, // User code
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
-	// reserve them for later.
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fGranularity = 0xA0, .fBaseHigh = 0}, // User data
-};
+Kernel::Property cKernelVersion;
+Kernel::User cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
+
+EXTERN Kernel::Boolean kAllocationInProgress;
+EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
 
 EXTERN_C void hal_user_code_start(void);
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
+
+/* GDT, mostly descriptors for user and kernel segments. */
+STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY cGdt[9] = {
+	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},		// Null entry
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xA0, .fBaseHigh = 0}, // Kernel code
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xA0, .fBaseHigh = 0}, // Kernel data
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fFlags = 0xA0, .fBaseHigh = 0}, // User code
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fFlags = 0xA0, .fBaseHigh = 0}, // User data
+	// reserve them for later.
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0}, // User data
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0}, // User data
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0}, // User data
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0}, // User data
+};
+
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
 {
 	/* Setup globals. */
-
-	sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY);
 
 	kHandoverHeader = HandoverHeader;
 
@@ -137,7 +134,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	Kernel::kcout << "newoskrnl.dll: Creating filesystem and such.\r";
+	Kernel::kcout << "newoskrnl.exe: Creating filesystem and such.\r";
 
 	auto fs = new Kernel::NewFilesystemManager();
 

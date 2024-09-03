@@ -72,7 +72,7 @@ Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* the_tib)
 	Encoder		encoder;
 	const char* tibAsBytes = encoder.AsBytes(the_tib);
 
-	kcout << "newoskrnl.dll: checking for a valid cookie inside the TIB...\r";
+	kcout << "newoskrnl.exe: checking for a valid cookie inside the TIB...\r";
 
 	return tibAsBytes[0] == kCookieMag0 && tibAsBytes[1] == kCookieMag1 &&
 		   tibAsBytes[2] == kCookieMag2;
@@ -87,7 +87,7 @@ EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 {
 	if (!tib_ptr)
 	{
-		kcout << "newoskrnl.dll: failing because of an invalid TIB...\r";
+		kcout << "newoskrnl.exe: failing because of an invalid TIB...\r";
 		return false;
 	}
 
@@ -95,10 +95,10 @@ EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 
 	if (!tls_check_tib(tib_struct))
 	{
-		kcout << "newoskrnl.dll: crashing because of an invalid TIB...\r";
+		kcout << "newoskrnl.exe: crashing because of an invalid TIB...\r";
 		return false;
 	}
 
-	kcout << "newoskrnl.dll: Verification succeeded! staying alive...\r";
+	kcout << "newoskrnl.exe: Verification succeeded! staying alive...\r";
 	return true;
 }

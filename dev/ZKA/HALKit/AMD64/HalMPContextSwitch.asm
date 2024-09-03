@@ -21,22 +21,21 @@ section .text
 ;; rcx: code ptr.
 ;; rdx: stack ptr.
 mp_do_context_switch:
-	jmp mp_jump_user_mode
-mp_jump_user_mode:
-    mov r11, 0x0202
-	mov r13, rdx
-	mov r12, rcx
+    mov r9,  [r8 + (8 * 2)]
+    mov r10, [r8 + (8 * 3)]
+    mov fs, [r8 + (8 * 4)]
+    mov r12, [r8 + (8 * 5)]
+    mov r13, [r8 + (8 * 6)]
+    mov r14, [r8 + (8 * 7)]
+    mov r15, [r8 + (8 * 8)]
+    mov gs, [r8 + (8 * 9)]
+    mov r8,  [r8]
 
-	mov eax, 0x23
-	mov 	ds, eax
-    mov     gs, eax
-    mov     es, eax
-    mov     fs, eax
+    mov r11, 0x202
+    mov rsp, rdx
 
-	mov rcx, r12
-	mov rsp, r13
-
-    o64 sysret
+    xor rax, rax
+	o64 sysret
 
 ;; @brief Gets the current stack frame.
 mp_get_current_context:
@@ -46,8 +45,6 @@ mp_get_current_context:
 extern hal_system_call_enter
 
 mp_system_call_handler:
-    cli
-
     push r8
     push r9
     push r10
@@ -58,21 +55,23 @@ mp_system_call_handler:
     pop r9
     pop r8
 
-    sti
     sysret
 
 mp_do_context_switch_pre:
-    ; Enable SCE that enables sysret and syscall
+
+    xor rdx, rdx
+	mov rax, 0x202
+	mov rcx, 0xc0000084
+	wrmsr
+    xor rax, rax
 	mov rax, mp_system_call_handler
+    mov rdx, rax
+    shr rdx, 32
 	mov rcx, 0xc0000082
 	wrmsr
-	mov rcx, 0xc0000080
-	rdmsr
-	or eax, 1
+    xor rax, rax
+	mov rdx, 0x230008
+    mov rcx, 0xc0000081
 	wrmsr
-	mov rcx, 0xc0000081
-	rdmsr
-	mov edx, 0x00180008
-	wrmsr
-    
+
     ret

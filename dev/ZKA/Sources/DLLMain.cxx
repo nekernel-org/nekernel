@@ -52,7 +52,7 @@ namespace Kernel::Detail
 		{
 			if (Kernel::FilesystemManagerInterface::GetMounted())
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: NewFS IFS already mounted by HAL (A:)", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: NewFS IFS already mounted by HAL (A:)", 10, 10, RGB(0, 0, 0));
 				fNewFS = reinterpret_cast<Kernel::NewFilesystemManager*>(Kernel::FilesystemManagerInterface::GetMounted());
 			}
 			else
@@ -62,7 +62,7 @@ namespace Kernel::Detail
 
 				Kernel::FilesystemManagerInterface::Mount(fNewFS);
 
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Mounted NewFS IFS (A:)", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Mounted NewFS IFS (A:)", 10, 10, RGB(0, 0, 0));
 			}
 
 			const Kernel::SizeT cDirCount = 7UL;
@@ -79,8 +79,8 @@ namespace Kernel::Detail
 
 					if (catalogDir)
 					{
-						CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog directory already exists: ")), RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Catalog directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.exe: Catalog directory already exists: ")), RGB(0, 0, 0));
 
 						delete catalogDir;
 						continue;
@@ -89,8 +89,8 @@ namespace Kernel::Detail
 					catalogDir = fNewFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
 																	kNewFSCatalogKindDir);
 
-					CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog directory has been created: ")), RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Catalog directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.exe: Catalog directory has been created: ")), RGB(0, 0, 0));
 
 					delete catalogDir;
 				}
@@ -102,15 +102,15 @@ namespace Kernel::Detail
 
 			if (catalogDisk)
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog swap file already exists: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
-				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog swap file already exists: ")), RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Catalog swap file already exists: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.exe: Catalog swap file already exists: ")), RGB(0, 0, 0));
 
 				delete catalogDisk;
 			}
 			else
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Catalog swap file created: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
-				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.dll: Catalog swap file created: ")), RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Catalog swap file created: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.exe: Catalog swap file created: ")), RGB(0, 0, 0));
 
 				catalogDisk =
 					(NFS_CATALOG_STRUCT*)this->Leak()->CreateSwapFile(kSysPage);
@@ -155,6 +155,11 @@ namespace Kernel
 	EXTERN UserProcessScheduler* cProcessScheduler;
 } // namespace Kernel
 
+Kernel::Void HangCPU(Kernel::Void)
+{
+	while (1);
+}
+
 /// @brief Application entrypoint.
 /// @param Void
 /// @return Void
@@ -181,21 +186,20 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawWindowList(&cKernelWnd, 1);
 
-	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Running System Component: ", 10, 10, RGB(0, 0, 0));
-	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.dll: Running System Component: ")), RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Running System Component: ", 10, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.exe: Running System Component: ")), RGB(0, 0, 0));
 
 	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 	Kernel::cProcessScheduler = nullptr;
-	Kernel::ProcessHelper::StartScheduling();
+	Kernel::UserProcessHelper::StartScheduling();
 
-	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.dll: Starting ZKA System...", 20, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Starting ZKA System...", 20, 10, RGB(0, 0, 0));
 
-	static Kernel::MainKind fn = []() -> void {while(1); };
-	Kernel::sched_execute_thread(fn, "ZKA Logger");
+	Kernel::sched_execute_thread(HangCPU, "HANG TEST");
 
 	while (Yes)
 	{
-		Kernel::ProcessHelper::StartScheduling();
+		Kernel::UserProcessHelper::StartScheduling();
 	}
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
