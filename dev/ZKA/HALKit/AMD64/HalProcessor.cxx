@@ -26,17 +26,17 @@ namespace Kernel::HAL
 		UIntPtr pte_idx	 = ((UIntPtr)virt_addr >> 12) & 0x1FFF;
 
 		// Access PML4 entry
-		volatile UInt64* pml4_entry = (volatile UInt64*)(pml4_base + pml4_idx * sizeof(UIntPtr));
+		volatile UInt64* pml4_entry = (volatile UInt64*)(((UInt64)pml4_base) + pml4_idx * sizeof(UIntPtr));
 		UInt64		   pdpt_base  = *pml4_entry & ~0xFFF; // Remove flags (assuming 4KB pages)
 
 		// Access PDPT entry
-		volatile UInt64* pdpt_entry = (volatile UInt64*)(pdpt_base + pdpt_idx * sizeof(UIntPtr));
+		volatile UInt64* pdpt_entry = (volatile UInt64*)(((UInt64)pdpt_base) + pdpt_idx * sizeof(UIntPtr));
 		UInt64		   pd_base	  = *pdpt_entry & ~0xFFF; // Remove flags
 
-		volatile UInt64* pd_entry = (volatile UInt64*)(pd_base + pd_idx * sizeof(UIntPtr));
+		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pd_base) + pd_idx * sizeof(UIntPtr));
 		UInt64			 pt_base  = *pd_entry & ~0xFFF; // Remove flags
 
-		volatile UInt64* page_addr = (volatile UInt64*)((UIntPtr)pt_base + (pte_idx * sizeof(UIntPtr)));
+		volatile UInt64* page_addr = (volatile UInt64*)(((UInt64)pt_base) + (pte_idx * sizeof(UIntPtr)));
 
 		if (page_addr)
 		{

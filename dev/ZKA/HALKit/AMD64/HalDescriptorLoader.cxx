@@ -64,7 +64,7 @@ namespace Kernel::HAL
 		{
 			MUST_PASS(ptr_ivt[idt_indx]);
 
-			Detail::kInterruptVectorTable[idt_indx].Selector	   = (idt_indx == kSyscallRoute) ? kGdtUserCodeSelector : kGdtKernelCodeSelector;
+			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtKernelCodeSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
 			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kInterruptGate;
 			Detail::kInterruptVectorTable[idt_indx].OffsetLow	   = ((UIntPtr)ptr_ivt[idt_indx] & __INT16_MAX__);

@@ -64,26 +64,6 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept;
 EXTERN_C void hal_user_code_start(void);
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
-/* @brief TSS */
-
-Kernel::HAL::Detail::ZKA_TSS cTSS = {
-	.fReserved1 = 0x0,
-	.fRsp0 = 0x0,
-	.fRsp1 = 0x0,
-	.fRsp2 = 0x0,
-	.fReserved2 = 0x0,
-	.fIst1 = 0x0,
-	.fIst2 = 0x0,
-	.fIst3 = 0x0,
-	.fIst4 = 0x0,
-	.fIst5 = 0x0,
-	.fIst6 = 0x0,
-	.fIst7 = 0x0,
-	.fReserved3 = 0x0,
-	.fReserved4 = 0x0,
-	.fIopb = 0x0,
-};
-
 /* GDT, mostly descriptors for user and kernel segments. */
 STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY cGdt[6] = {
 	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},		// Null entry

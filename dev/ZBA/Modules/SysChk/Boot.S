@@ -19,10 +19,3 @@
 .quad kHandoverMagic
 .word kTypeDriver
 
-.text
-
-.extern main
-.global __main
-
-__main:
-    ret

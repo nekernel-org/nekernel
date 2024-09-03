@@ -164,6 +164,12 @@ namespace Kernel
 
 					Char* blobRet = new Char[container_header->Size];
 
+					HAL::mm_update_pte(blobRet, HAL::eFlagsPresent);
+					HAL::mm_update_pte(blobRet, HAL::eFlagsUser);
+
+					if (container_header->Kind != kPefCode)
+						HAL::mm_update_pte(blobRet, HAL::eFlagsRw);
+
 					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
 
 					mm_delete_ke_heap(blob);

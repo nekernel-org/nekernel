@@ -24,8 +24,6 @@ EXTERN_C
 #include <cpuid.h>
 }
 
-#define kSyscallRoute (0x29)
-
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
