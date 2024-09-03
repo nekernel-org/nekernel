@@ -16,17 +16,18 @@
 
 section .data
 
-kInstallTitle: db "Install ZKA", 0
+kInstallTitle: db "ZKA Installer", 0
 
 section .text
 
 ;; @param r8 arg 1
 ;; @param r9 arg 2
-;; @note PEF procedure.
+;; @return rax, return status of syscall.
+;; @note MS-ABI procedure.
 InstInstallToDir:
-	mov rcx, r8 ; file
-	mov rdx, r9 ; dest dir
-	int 0x32
+	mov r8, rcx ; FILE_INFO_STRUCT (SRC)
+	mov r9, rdx ; FILE_INFO_STRUCT (DST)
+	syscall ;; 0 = GOOD, 1 = BAD FIS (SRC), 2 = BAD FIS (DST)
 	ret
 
 
