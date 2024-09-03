@@ -29,7 +29,7 @@ namespace Detail
 		STATIC constexpr SizeT cMaxLen = 256;
 
 		Char		  fName[cMaxLen] = {"THREAD #0 (PROCESS 0)"};
-		ProcessStatus fThreadStatus;
+		ProcessStatusKind fThreadStatus;
 		Int64		  fThreadID;
 		UIntPtr		  fCode{0};
 		UIntPtr		  fStack{0};
@@ -37,7 +37,7 @@ namespace Detail
 
 		Void Exit() noexcept
 		{
-			this->fThreadStatus = ProcessStatus::kKilled;
+			this->fThreadStatus = ProcessStatusKind::kKilled;
 		}
 
 		UIntPtr GetStack() noexcept

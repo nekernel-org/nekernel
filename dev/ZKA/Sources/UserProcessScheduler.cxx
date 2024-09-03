@@ -80,7 +80,7 @@ namespace Kernel
 	void UserProcess::Wake(const bool should_wakeup)
 	{
 		this->Status =
-			should_wakeup ? ProcessStatus::kRunning : ProcessStatus::kFrozen;
+			should_wakeup ? ProcessStatusKind::kRunning : ProcessStatusKind::kFrozen;
 	}
 
 	/***********************************************************************************/
@@ -164,7 +164,7 @@ namespace Kernel
 	}
 
 	/// @brief UserProcess status getter.
-	const ProcessStatus& UserProcess::GetStatus() noexcept
+	const ProcessStatusKind& UserProcess::GetStatus() noexcept
 	{
 		return this->Status;
 	}
@@ -184,7 +184,7 @@ namespace Kernel
 	*/
 	void UserProcess::Exit(const Int32& exit_code)
 	{
-		this->Status = ProcessStatus::kDead;
+		this->Status = ProcessStatusKind::kDead;
 		
 		fLastExitCode = exit_code;
 		cLastExitCode = exit_code;
@@ -272,7 +272,7 @@ namespace Kernel
 			}
 		}
 
-		process.Status = ProcessStatus::kStarting;
+		process.Status = ProcessStatusKind::kStarting;
 
 		process.ProcessId = mTeam.mProcessAmount;
 
@@ -313,7 +313,7 @@ namespace Kernel
 
 		kcout << "UserProcessScheduler: Removing process...\r";
 
-		mTeam.AsArray()[processSlot].Status = ProcessStatus::kDead;
+		mTeam.AsArray()[processSlot].Status = ProcessStatusKind::kDead;
 		--mTeam.mProcessAmount;
 
 		return true;
@@ -391,8 +391,8 @@ namespace Kernel
 	/// @retval false cannot be schedulded.
 	bool UserProcessHelper::CanBeScheduled(UserProcess& process)
 	{
-		if (process.Status == ProcessStatus::kFrozen ||
-			process.Status == ProcessStatus::kDead)
+		if (process.Status == ProcessStatusKind::kFrozen ||
+			process.Status == ProcessStatusKind::kDead)
 			return false;
 
 		if (process.Kind == UserProcess::kDLLKind)

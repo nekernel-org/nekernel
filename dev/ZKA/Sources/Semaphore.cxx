@@ -52,7 +52,7 @@ namespace Kernel
 	{
 		while (fLockingProcess)
 		{
-			if (fLockingProcess->GetStatus() != ProcessStatus::kRunning)
+			if (fLockingProcess->GetStatus() != ProcessStatusKind::kRunning)
 			{
 				this->Unlock();
 				break;

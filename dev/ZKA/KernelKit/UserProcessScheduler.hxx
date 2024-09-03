@@ -40,7 +40,7 @@ namespace Kernel
 	inline constexpr SizeT kProcessLen = 256U;
 
 	//! @brief UserProcess status enum.
-	enum class ProcessStatus : Int32
+	enum class ProcessStatusKind : Int32
 	{
 		kStarting,
 		kRunning,
@@ -138,7 +138,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcess)
 
 	public:
-		void		  SetImageStart(VoidPtr imageStart) noexcept;
+		Void		  SetImageStart(VoidPtr imageStart) noexcept;
 		const UInt32& GetExitCode() noexcept;
 
 	public:
@@ -147,7 +147,7 @@ namespace Kernel
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
-		ProcessStatus	   Status{ProcessStatus::kDead};
+		ProcessStatusKind	   Status{ProcessStatusKind::kDead};
 		UInt8*			   StackReserve{nullptr};
 
 		// Memory, images pointers.
@@ -181,7 +181,7 @@ namespace Kernel
 		//! @brief boolean operator, check status.
 		operator bool()
 		{
-			return Status != ProcessStatus::kDead;
+			return Status != ProcessStatusKind::kDead;
 		}
 
 		///! @brief Crashes the app, exits with code ~0.
@@ -213,7 +213,7 @@ namespace Kernel
 		Int32& GetLocalCode() noexcept;
 
 		const User*			 GetOwner() noexcept;
-		const ProcessStatus& GetStatus() noexcept;
+		const ProcessStatusKind& GetStatus() noexcept;
 		const AffinityKind&	 GetAffinity() noexcept;
 
 	private:
