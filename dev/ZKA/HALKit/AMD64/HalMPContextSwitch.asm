@@ -48,15 +48,15 @@ extern hal_system_call_enter
 mp_system_call_handler:
     cli
 
-    push rcx
-    push rdx
-    push rax
+    push r8
+    push r9
+    push r10
 
     call hal_system_call_enter
 
-    pop rax
-    pop rdx
-    pop rcx
+    pop r10
+    pop r9
+    pop r8
 
     sti
     sysret

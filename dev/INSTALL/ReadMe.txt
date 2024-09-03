@@ -1,3 +1,1 @@
-ZKA installer ReadMe:
-
-- X64: x64 editions installer.
+This installs ZKA onto a EPM compliant drive.

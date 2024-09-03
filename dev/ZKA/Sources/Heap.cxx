@@ -35,15 +35,15 @@ namespace Kernel
 			///! @brief Boolean value which tells if the heap is allocated.
 			Boolean fPresent;
 			/// @brief Is this valued owned by the user?
-			Boolean fUserOwned;
+			Boolean fUser;
+			/// @brief Is this a page pointer?
+			Boolean fPage;
 			///! @brief 32-bit CRC checksum.
 			UInt32 fCRC32;
 			/// @brief 64-bit pointer size.
-			SizeT fTargetPtrSize;
+			SizeT fHeapSize;
 			/// @brief 64-bit target pointer.
-			UIntPtr fTargetPtr;
-			/// @brief Is this a page pointer?
-			Boolean fPagePtr;
+			UIntPtr fHeapPtr;
 			/// @brief Padding bytes for header.
 			UInt8 fPadding[kKernelHeapHeaderPaddingSz];
 		};
@@ -75,7 +75,7 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)allocatedPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		heapInfoBlk->fTargetPtrSize = newSz;
+		heapInfoBlk->fHeapSize = newSz;
 
 		if (heapInfoBlk->fCRC32 > 0)
 		{
@@ -105,12 +105,12 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				wrapper.VirtualAddress());
 
-		heap_info_ptr->fTargetPtrSize = szFix;
+		heap_info_ptr->fHeapSize = szFix;
 		heap_info_ptr->fMagic		  = kKernelHeapMagic;
 		heap_info_ptr->fCRC32		  = 0U; // dont fill it for now.
-		heap_info_ptr->fTargetPtr	  = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
-		heap_info_ptr->fPagePtr		  = 0UL;
-		heap_info_ptr->fUserOwned	  = user;
+		heap_info_ptr->fHeapPtr	  = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		heap_info_ptr->fPage		  = 0UL;
+		heap_info_ptr->fUser	  = user;
 		heap_info_ptr->fPresent		  = true;
 
 		++kHeapCount;
@@ -141,7 +141,7 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		heapInfoBlk->fPagePtr = 1;
+		heapInfoBlk->fPage = true;
 
 		Detail::mm_alloc_fini_timeout();
 
@@ -177,19 +177,19 @@ namespace Kernel
 			if (heapInfoBlk->fCRC32 != 0)
 			{
 				if (heapInfoBlk->fCRC32 !=
-					ke_calculate_crc32((Char*)heapInfoBlk->fTargetPtr,
-									   heapInfoBlk->fTargetPtrSize))
+					ke_calculate_crc32((Char*)heapInfoBlk->fHeapPtr,
+									   heapInfoBlk->fHeapSize))
 				{
-					if (!heapInfoBlk->fUserOwned)
+					if (!heapInfoBlk->fUser)
 					{
 						ke_stop(RUNTIME_CHECK_POINTER);
 					}
 				}
 			}
 
-			heapInfoBlk->fTargetPtrSize = 0UL;
+			heapInfoBlk->fHeapSize = 0UL;
 			heapInfoBlk->fPresent		= false;
-			heapInfoBlk->fTargetPtr		= 0;
+			heapInfoBlk->fHeapPtr		= 0;
 			heapInfoBlk->fCRC32			= 0;
 			heapInfoBlk->fMagic			= 0;
 
@@ -245,7 +245,7 @@ namespace Kernel
 			if (heapInfoBlk->fPresent && kKernelHeapMagic == heapInfoBlk->fMagic)
 			{
 				heapInfoBlk->fCRC32 =
-					ke_calculate_crc32((Char*)heapInfoBlk->fTargetPtr, heapInfoBlk->fTargetPtrSize);
+					ke_calculate_crc32((Char*)heapInfoBlk->fHeapPtr, heapInfoBlk->fHeapSize);
 
 				return true;
 			}

@@ -71,7 +71,7 @@ namespace Kernel::HAL
 	/// @param phys_addr a valid phyiscal address.
 	/// @param virt_addr a valid virtual address.
 	/// @param flags the flags to put on the page.
-	EXTERN_C Int32 mm_update_page(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags);
+	EXTERN_C Int32 mm_update_pte(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags);
 
 	EXTERN_C UChar	In8(UInt16 port);
 	EXTERN_C UShort In16(UInt16 port);

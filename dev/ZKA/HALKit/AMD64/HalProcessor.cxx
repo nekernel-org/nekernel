@@ -16,7 +16,7 @@
 
 namespace Kernel::HAL
 {
-	EXTERN_C Int32 mm_update_page(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags)
+	EXTERN_C Int32 mm_update_pte(VoidPtr pd_base, VoidPtr phys_addr, VoidPtr virt_addr, UInt32 flags)
 	{
 		UIntPtr pte_idx = (UIntPtr)virt_addr >> 12;
 
