@@ -63,26 +63,26 @@ namespace Kernel
 
 	Detail::HEAP_INFORMATION_BLOCK_PTR kLatestAllocation = nullptr;
 
-	/// @brief Declare a new size for allocatedPtr.
-	/// @param allocatedPtr the pointer.
+	/// @brief Declare a new size for ptr_heap.
+	/// @param ptr_heap the pointer.
 	/// @return
-	voidPtr mm_realloc_ke_heap(voidPtr allocatedPtr, SizeT newSz)
+	voidPtr mm_realloc_ke_heap(voidPtr ptr_heap, SizeT new_sz)
 	{
-		if (!allocatedPtr || newSz < 1)
+		if (!ptr_heap || new_sz < 1)
 			return nullptr;
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)allocatedPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+				(UIntPtr)ptr_heap - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		heap_blk->fHeapSize = newSz;
+		heap_blk->fHeapSize = new_sz;
 
 		if (heap_blk->fCRC32 > 0)
 		{
-			MUST_PASS(mm_protect_ke_heap(allocatedPtr));
+			MUST_PASS(mm_protect_ke_heap(ptr_heap));
 		}
 
-		return allocatedPtr;
+		return ptr_heap;
 	}
 
 	/// @brief Allocate chunk of memory.

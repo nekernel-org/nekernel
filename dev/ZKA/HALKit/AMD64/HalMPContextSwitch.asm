@@ -21,8 +21,6 @@ section .text
 ;; rcx: code ptr.
 ;; rdx: stack ptr.
 mp_do_context_switch:
-    swapgs
-
     mov fs, rcx
     mov gs, rdx
 
@@ -36,26 +34,11 @@ mp_do_context_switch:
     mov r11, gs
     mov r12, fs
 
-    ; Enable SCE that enables sysret and syscall
-	mov rcx, 0xc0000082
-	wrmsr
-	mov rcx, 0xc0000080
-	rdmsr
-	or eax, 1
-	wrmsr
-	mov rcx, 0xc0000081
-	rdmsr
-	mov edx, 0x00180008
-	wrmsr
-
     mov r11, 0x202
 
     mov fs, [r8 + (8 * 4)]
     mov gs, [r8 + (8 * 9)]
     mov r8,  [r8]
-
-    swapgs
-    sti
 
     o64 sysret
 
@@ -68,8 +51,6 @@ extern hal_system_call_enter
 global mp_system_call_handler
 
 mp_system_call_handler:
-    swapgs
-
     push r8
     push r9
     push r10
@@ -79,9 +60,6 @@ mp_system_call_handler:
     pop r10
     pop r9
     pop r8
-
-    swapgs
-    sti
 
     o64 sysret
 
@@ -95,5 +73,17 @@ mp_do_context_switch_pre:
     shr rdx, 32
     mov rcx, 0xc0000082
     wrmsr
+
+    ; Enable SCE that enables sysret and syscall
+	mov rcx, 0xc0000082
+	wrmsr
+	mov rcx, 0xc0000080
+	rdmsr
+	or eax, 1
+	wrmsr
+	mov rcx, 0xc0000081
+	rdmsr
+	mov edx, 0x00180008
+	wrmsr
 
     ret

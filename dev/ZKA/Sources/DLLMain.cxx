@@ -189,6 +189,8 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Starting ZKA System...", 20, 10, RGB(0, 0, 0));
 
+	Kernel::UserProcessHelper::Init();
+	
 	Kernel::sched_execute_thread(HangCPU, "HANG TEST");
 
 	while (Yes)

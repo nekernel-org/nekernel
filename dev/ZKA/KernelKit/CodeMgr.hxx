@@ -16,7 +16,7 @@
 
 #include <KernelKit/PECodeMgr.hxx>
 #include <KernelKit/PEFCodeMgr.hxx>
-#include <KernelKit/PEFDLLInterface.hxx>
+#include <KernelKit/IPEFDLLObject.hxx>
 
 namespace Kernel
 {

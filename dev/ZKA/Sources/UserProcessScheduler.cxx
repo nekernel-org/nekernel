@@ -6,11 +6,11 @@
 
 /***********************************************************************************/
 /// @file UserProcessScheduler.cxx
-/// @brief User UserProcess scheduler.
+/// @brief User Process scheduler.
 /***********************************************************************************/
 
 #include <KernelKit/UserProcessScheduler.hxx>
-#include <KernelKit/PEFDLLInterface.hxx>
+#include <KernelKit/IPEFDLLObject.hxx>
 #include <KernelKit/MP.hxx>
 #include <KernelKit/Heap.hxx>
 #include <NewKit/String.hxx>
@@ -19,7 +19,7 @@
 ///! BUGS: 0
 
 /***********************************************************************************/
-/* TODO: Document more the Kernel, sdk and kits. */
+/* TODO: Document the Kernel, SDK and kits. */
 /***********************************************************************************/
 
 namespace Kernel
@@ -53,7 +53,7 @@ namespace Kernel
 		if (this->Name == 0)
 			return;
 
-		kcout << this->Name << ": crashed, ID = " << number(kErrorProcessFault)  << endl;
+		kcout << this->Name << ": crashed, ID = " << number(kErrorProcessFault) << endl;
 
 		this->Exit(kErrorProcessFault);
 	}
@@ -83,27 +83,45 @@ namespace Kernel
 
 	/***********************************************************************************/
 
+	/** @brief Add pointer to entry. */
 	VoidPtr UserProcess::New(const SizeT& sz)
 	{
-		if (this->HeapCursor)
+#ifdef __ZKA_AMD64__
+		auto pd = hal_read_cr3();
+		hal_write_cr3(this->MemoryPD);
+
+		auto ptr = mm_new_ke_heap(sz, Yes, Yes);
+
+		hal_write_cr3(reinterpret_cast<UIntPtr>(pd));
+#else
+		auto ptr = mm_new_ke_heap(sz, Yes, Yes);
+#endif
+
+		if (!this->MemoryEntryList)
 		{
-			if (this->FreeMemory < 1)
+			this->MemoryEntryList			   = new UserProcess::PROCESS_MEMORY_ENTRY();
+			this->MemoryEntryList->MemoryEntry = ptr;
+
+			this->MemoryEntryList->MemoryPrev = nullptr;
+			this->MemoryEntryList->MemoryNext = nullptr;
+
+			return ptr;
+		}
+		else
+		{
+			auto entry = this->MemoryEntryList;
+
+			while (entry->MemoryNext)
 			{
-				ErrLocal() = kErrorHeapOutOfMemory;
-
-				/* We're going out of memory! crash... */
-				this->Crash();
-
-				return nullptr;
+				if (entry->MemoryNext)
+					entry = entry->MemoryNext;
 			}
 
-			this->HeapCursor = reinterpret_cast<VoidPtr>((UIntPtr)this->HeapCursor + (sizeof(sz)));
-			VoidPtr cursor	 = this->HeapCursor;
+			entry->MemoryNext			   = new UserProcess::PROCESS_MEMORY_ENTRY();
+			entry->MemoryNext->MemoryEntry = ptr;
 
-			++this->UsedMemory;
-			--this->FreeMemory;
-
-			return cursor;
+			entry->MemoryNext->MemoryPrev = entry;
+			entry->MemoryNext->MemoryNext = nullptr;
 		}
 
 		return nullptr;
@@ -111,39 +129,31 @@ namespace Kernel
 
 	/***********************************************************************************/
 
-	/* @brief checks if runtime pointer is in region. */
-	bool rt_is_in_pool(VoidPtr pool_ptr, VoidPtr pool, const SizeT& pool_ptr_cur_sz, const SizeT& pool_ptr_used_sz)
-	{
-		if (pool == nullptr ||
-			pool_ptr == nullptr)
-			return false;
-
-		UIntPtr* uint_pool_ptr = (UIntPtr*)pool_ptr;
-		UIntPtr* uint_pool	   = (UIntPtr*)pool;
-
-		return (UIntPtr)&uint_pool > (UIntPtr)&uint_pool_ptr &&
-			   pool_ptr_cur_sz > pool_ptr_used_sz;
-	}
-
-	/* @brief free pointer from usage. */
+	/** @brief Free pointer from usage. */
 	Boolean UserProcess::Delete(VoidPtr ptr, const SizeT& sz)
 	{
-		if (sz < 1 || this->HeapCursor == this->HeapPtr)
-			return false;
+		auto entry = this->MemoryEntryList;
 
-		// also check for the amount of allocations we've done so far.
-		if (this->UsedMemory < 1)
-			return false;
-
-		if (rt_is_in_pool(ptr, this->HeapCursor, this->UsedMemory, this->FreeMemory))
+		while (entry->MemoryNext)
 		{
-			this->HeapCursor = (VoidPtr)((UIntPtr)this->HeapCursor - (sizeof(sz)));
-			rt_zero_memory(ptr, sz);
+			if (entry->MemoryEntry == ptr)
+			{
+#ifdef __ZKA_AMD64__
+				auto pd = hal_read_cr3();
+				hal_write_cr3(this->MemoryPD);
 
-			++this->FreeMemory;
-			--this->UsedMemory;
+				bool ret = mm_delete_ke_heap(ptr);
+				hal_write_cr3(reinterpret_cast<UIntPtr>(pd));
 
-			return true;
+				return ret;
+#else
+				bool ret = mm_delete_ke_heap(ptr);
+				return ret;
+#endif
+			}
+
+			if (entry->MemoryNext)
+				entry = entry->MemoryNext;
 		}
 
 		return false;
@@ -183,7 +193,7 @@ namespace Kernel
 	void UserProcess::Exit(const Int32& exit_code)
 	{
 		this->Status = ProcessStatusKind::kDead;
-		
+
 		fLastExitCode = exit_code;
 		cLastExitCode = exit_code;
 
@@ -211,7 +221,8 @@ namespace Kernel
 		if (this->StackReserve)
 			delete[] this->StackReserve;
 
-		cProcessScheduler->Remove(this->ProcessId);
+		if (this->ProcessId > 0)
+			UserProcessScheduler::The().Remove(this->ProcessId);
 	}
 
 	/// @brief Add process to list.
@@ -219,72 +230,49 @@ namespace Kernel
 	/// @return the process index inside the team.
 	SizeT UserProcessScheduler::Add(UserProcess& process)
 	{
-		if (!process.Image)
-		{
-			return -kErrorInvalidData;
-		}
+#ifdef __ZKA_AMD64__
+		process.MemoryPD = reinterpret_cast<UIntPtr>(hal_read_cr3());
+#endif // __ZKA_AMD64__
 
-		kcout << "UserProcessScheduler: Adding process to team...\r";
+		process.StackFrame	 = (HAL::StackFrame*)process.New(sizeof(HAL::StackFrame));
 
-		// Create heap according to type of process.
-		if (process.Kind == UserProcess::kExeKind)
-		{
-			process.HeapPtr = mm_new_ke_heap(process.SizeMemory, true, true);
-		}
-		else if (process.Kind == UserProcess::kDLLKind)
-		{
-			process.DLLPtr	= rtl_init_shared_object(&process);
-			process.HeapPtr = mm_new_ke_heap(process.SizeMemory, true, true);
-		}
-		else
-		{
-			// Something went wrong, do not continue, process may be incorrect.
-			process.Crash();
-			return -kErrorProcessFault;
-		}
-
-		process.StackFrame = new HAL::StackFrame();
-		
 		if (!process.StackFrame)
 		{
-			process.Crash();
 			return -kErrorProcessFault;
 		}
 
+		// Create heap according to type of process.
+		if (process.Kind == UserProcess::kDLLKind)
+		{
+			process.DLLPtr = rtl_init_shared_object(&process);
+		}
+		
 		if (process.Image)
 		{
 			// get preferred stack size by app.
 			const auto cMaxStackSize = process.StackSize;
-
-			process.StackReserve = (UInt8*)mm_new_ke_heap(cMaxStackSize, Yes, Yes);
+			process.StackReserve	 = (UInt8*)process.New(sizeof(UInt8) * cMaxStackSize);
 
 			// if stack pointer isn't valid.
 			if (!process.StackReserve)
 			{
-				process.StackReserve = (UInt8*)mm_new_ke_heap(kSchedMaxStackSz, Yes, Yes);
-				kcout << "newoskrnl.exe: Use fallback reserve size.\r";
+				return -kErrorProcessFault;
 			}
 		}
 		else
 		{
 			if (process.Kind != UserProcess::kDLLKind)
 			{
-				process.Crash();
 				return -kErrorProcessFault;
 			}
 		}
 
-		process.Status = ProcessStatusKind::kStarting;
-
+		process.Status	  = ProcessStatusKind::kStarting;
 		process.ProcessId = mTeam.mProcessAmount;
 
 		++mTeam.mProcessAmount;
 
-		process.HeapCursor = process.HeapPtr;
-
 		mTeam.AsArray()[process.ProcessId] = process;
-
-		kcout << "UserProcessScheduler: Adding process to team [ OK ]...\r";
 
 		return process.ProcessId;
 	}
@@ -293,11 +281,6 @@ namespace Kernel
 
 	UserProcessScheduler& UserProcessScheduler::The()
 	{
-		if (!cProcessScheduler)
-		{
-			cProcessScheduler = new UserProcessScheduler();
-		}
-
 		MUST_PASS(cProcessScheduler);
 		return *cProcessScheduler;
 	}
@@ -341,7 +324,7 @@ namespace Kernel
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
 				// set the current process.
-				mTeam.AsRef() = process;
+				mTeam.AsRef() = mTeam.AsArray()[process.ProcessId];
 
 				process.PTime = static_cast<Int32>(process.Affinity);
 
@@ -349,7 +332,7 @@ namespace Kernel
 
 				// tell helper to find a core to schedule on.
 				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize], process.StackFrame,
-										   process.ProcessId))
+											   process.ProcessId))
 				{
 					process.Crash();
 					continue;
@@ -393,6 +376,14 @@ namespace Kernel
 		return cProcessScheduler->CurrentProcess().Leak().ProcessId;
 	}
 
+	Void UserProcessHelper::Init()
+	{
+		if (!cProcessScheduler)
+		{
+			cProcessScheduler = new UserProcessScheduler();
+		}
+	}
+
 	/// @brief Check if process can be schedulded.
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
@@ -408,7 +399,7 @@ namespace Kernel
 			if (auto start = process.DLLPtr->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart), kPefCode);
 				start)
 			{
-				process.Image		   = start;
+				process.Image = start;
 			}
 		}
 

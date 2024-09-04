@@ -10,12 +10,10 @@
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/LockDelegate.hxx>
 #include <KernelKit/User.hxx>
-#include <KernelKit/DLLInterface.hxx>
 #include <NewKit/MutableArray.hxx>
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
 #define kSchedInvalidPID		  (-1)
-#define kSchedMaxStackSz		  (4096) /* Max stack sz */
 #define kSchedProcessLimitPerTeam (16U)
 
 ////////////////////////////////////////////////////
@@ -29,7 +27,7 @@ namespace Kernel
 	//! @note Forward declarations.
 
 	class UserProcess;
-	class PEFDLLInterface;
+	class IPEFDLLObject;
 	class UserProcessTeam;
 	class UserProcessScheduler;
 	class UserProcessHelper;
@@ -148,24 +146,33 @@ namespace Kernel
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
-		ProcessStatusKind	   Status{ProcessStatusKind::kDead};
+		ProcessStatusKind  Status{ProcessStatusKind::kDead};
 		UInt8*			   StackReserve{nullptr};
 
 		// Memory, images pointers.
-		HeapPtrKind HeapCursor{nullptr};
 		ImagePtr	Image{nullptr};
-		HeapPtrKind HeapPtr{nullptr};
 
 		SizeT StackSize{mib_cast(8)};
 
-		// shared library handle, reserved for kDLLKind types of executables only.
-		DLLInterface* DLLPtr{nullptr};
-		UserProcess*	 Parent{nullptr};
+		//! @brief Shared library handle, reserved for kDLLKind types of executables only.
+		IPEFDLLObject* DLLPtr{nullptr};
+
+		/// @brief Parent process, reserved for threads only.
+		UserProcess* Parent{nullptr};
 
 		// Memory usage.
-		SizeT UsedMemory{0};
-		SizeT FreeMemory{0};
-		SizeT SizeMemory{mib_cast(64)};
+		SizeT MemoryCursor{0};
+		SizeT MemoryLimit{gib_cast(128)};
+
+		struct PROCESS_MEMORY_ENTRY
+		{
+			VoidPtr MemoryEntry;
+
+			struct PROCESS_MEMORY_ENTRY *MemoryPrev;
+			struct PROCESS_MEMORY_ENTRY *MemoryNext;
+		} * MemoryEntryList{nullptr};
+
+		SizeT MemoryPD{0};
 
 		enum
 		{
@@ -213,9 +220,9 @@ namespace Kernel
 		//! @return Int32 local error code.
 		Int32& GetLocalCode() noexcept;
 
-		const User*			 GetOwner() noexcept;
+		const User*				 GetOwner() noexcept;
 		const ProcessStatusKind& GetStatus() noexcept;
-		const AffinityKind&	 GetAffinity() noexcept;
+		const AffinityKind&		 GetAffinity() noexcept;
 
 	private:
 		UInt32 fLastExitCode{0};
@@ -291,6 +298,7 @@ namespace Kernel
 		STATIC bool CanBeScheduled(UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
+		STATIC Void Init();
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;
