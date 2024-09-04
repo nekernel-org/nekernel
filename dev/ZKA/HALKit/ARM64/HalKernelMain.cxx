@@ -7,14 +7,14 @@
 #include <ArchKit/ArchKit.hxx>
 #include <Modules/CoreCG/FbRenderer.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Json.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
-#include <KernelKit/CodeManager.hxx>
+#include <KernelKit/CodeMgr.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
@@ -94,12 +94,12 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::kcout << "newoskrnl.exe: Creating filesystem and such.\r";
 
-	auto fs = new Kernel::NewFilesystemManager();
+	auto fs = new Kernel::NewFilesystemMgr();
 
 	MUST_PASS(fs);
 	MUST_PASS(fs->GetParser());
 
-	Kernel::NewFilesystemManager::Mount(fs);
+	Kernel::NewFilesystemMgr::Mount(fs);
 
 	const auto cPassword = "ZKA_KERNEL_AUTHORITY";
 

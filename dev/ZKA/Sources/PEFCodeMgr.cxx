@@ -6,7 +6,7 @@
 
 #include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/Heap.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Defines.hxx>
 #include <NewKit/KernelCheck.hxx>
@@ -87,7 +87,7 @@ namespace Kernel
 		if (fCachedBlob)
 			mm_delete_ke_heap(fCachedBlob);
 
-		kcout << "CodeManagerPEF: Warning: Executable format error!\r";
+		kcout << "CodeMgrPEF: Warning: Executable format error!\r";
 		fCachedBlob = nullptr;
 	}
 

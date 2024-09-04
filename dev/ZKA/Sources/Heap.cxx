@@ -8,7 +8,7 @@
 #include <KernelKit/LPC.hxx>
 #include <KernelKit/Heap.hxx>
 #include <NewKit/Crc32.hxx>
-#include <NewKit/PageManager.hxx>
+#include <NewKit/PageMgr.hxx>
 
 //! @file KernelHeap.cxx
 //! @brief Kernel heap allocator.
@@ -19,7 +19,7 @@
 namespace Kernel
 {
 	SizeT		kHeapCount = 0UL;
-	PageManager kHeapPageManager;
+	PageMgr kHeapPageMgr;
 	Bool		kOperationInProgress = No;
 
 	/// @brief Contains data structures and algorithms for the heap.
@@ -71,13 +71,13 @@ namespace Kernel
 		if (!allocatedPtr || newSz < 1)
 			return nullptr;
 
-		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+		Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)allocatedPtr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		heapInfoBlk->fHeapSize = newSz;
+		heap_blk->fHeapSize = newSz;
 
-		if (heapInfoBlk->fCRC32 > 0)
+		if (heap_blk->fCRC32 > 0)
 		{
 			MUST_PASS(mm_protect_ke_heap(allocatedPtr));
 		}
@@ -97,9 +97,9 @@ namespace Kernel
 		auto szFix = sz;
 
 		if (szFix == 0)
-			++szFix;
+			return nullptr;
 
-		auto wrapper = kHeapPageManager.Request(rw, user, No, szFix);
+		auto wrapper = kHeapPageMgr.Request(rw, user, No, szFix);
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
@@ -107,11 +107,11 @@ namespace Kernel
 
 		heap_info_ptr->fHeapSize = szFix;
 		heap_info_ptr->fMagic	 = kKernelHeapMagic;
-		heap_info_ptr->fCRC32	 = 0U; // dont fill it for now.
-		heap_info_ptr->fHeapPtr	 = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
-		heap_info_ptr->fPage	 = 0UL;
+		heap_info_ptr->fCRC32	 = No; // dont fill it for now.
+		heap_info_ptr->fHeapPtr	 = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		heap_info_ptr->fPage	 = No;
 		heap_info_ptr->fUser	 = user;
-		heap_info_ptr->fPresent	 = true;
+		heap_info_ptr->fPresent	 = No;
 
 		++kHeapCount;
 
@@ -138,11 +138,11 @@ namespace Kernel
 
 		Detail::mm_alloc_init_timeout();
 
-		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+		Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		heapInfoBlk->fPage = true;
+		heap_blk->fPage = true;
 
 		Detail::mm_alloc_fini_timeout();
 
@@ -156,48 +156,47 @@ namespace Kernel
 	{
 		if (kHeapCount < 1)
 			return -kErrorInternal;
-		if (((IntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK)) <= 0)
-			return -kErrorInternal;
-		if (((IntPtr)heap_ptr - kInvalidAddress) < 0)
-			return -kErrorInternal;
+
+		if (!heap_ptr)
+			return -kErrorInvalidData;
 
 		Detail::mm_alloc_init_timeout();
 
-		Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+		Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		if (heapInfoBlk && heapInfoBlk->fMagic == kKernelHeapMagic)
+		if (heap_blk && heap_blk->fMagic == kKernelHeapMagic)
 		{
-			if (!heapInfoBlk->fPresent)
+			if (!heap_blk->fPresent)
 			{
 				Detail::mm_alloc_fini_timeout();
 				return -kErrorHeapNotPresent;
 			}
 
-			if (heapInfoBlk->fCRC32 != 0)
+			if (heap_blk->fCRC32 != 0)
 			{
-				if (heapInfoBlk->fCRC32 !=
-					ke_calculate_crc32((Char*)heapInfoBlk->fHeapPtr,
-									   heapInfoBlk->fHeapSize))
+				if (heap_blk->fCRC32 !=
+					ke_calculate_crc32((Char*)heap_blk->fHeapPtr,
+									   heap_blk->fHeapSize))
 				{
-					if (!heapInfoBlk->fUser)
+					if (!heap_blk->fUser)
 					{
 						ke_stop(RUNTIME_CHECK_POINTER);
 					}
 				}
 			}
 
-			heapInfoBlk->fHeapSize = 0UL;
-			heapInfoBlk->fPresent  = false;
-			heapInfoBlk->fHeapPtr  = 0;
-			heapInfoBlk->fCRC32	   = 0;
-			heapInfoBlk->fMagic	   = 0;
+			heap_blk->fHeapSize = 0UL;
+			heap_blk->fPresent  = No;
+			heap_blk->fHeapPtr  = 0;
+			heap_blk->fCRC32	   = 0;
+			heap_blk->fMagic	   = 0;
 
-			PTEWrapper		 pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heapInfoBlk) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
-			Ref<PTEWrapper*> pteAddress{&pageWrapper};
+			PTEWrapper		 pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+			Ref<PTEWrapper> pteAddress{pageWrapper};
 
-			kHeapPageManager.Free(pteAddress);
+			kHeapPageMgr.Free(pteAddress);
 
 			--kHeapCount;
 
@@ -239,14 +238,14 @@ namespace Kernel
 	{
 		if (heap_ptr)
 		{
-			Detail::HEAP_INFORMATION_BLOCK_PTR heapInfoBlk =
+			Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 					(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-			if (heapInfoBlk->fPresent && kKernelHeapMagic == heapInfoBlk->fMagic)
+			if (heap_blk->fPresent && kKernelHeapMagic == heap_blk->fMagic)
 			{
-				heapInfoBlk->fCRC32 =
-					ke_calculate_crc32((Char*)heapInfoBlk->fHeapPtr, heapInfoBlk->fHeapSize);
+				heap_blk->fCRC32 =
+					ke_calculate_crc32((Char*)heap_blk->fHeapPtr, heap_blk->fHeapSize);
 
 				return true;
 			}

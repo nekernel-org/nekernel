@@ -8,7 +8,7 @@
 
 #include <CFKit/Property.hxx>
 #include <CompilerKit/CompilerKit.hxx>
-#include <KernelKit/DriveManager.hxx>
+#include <KernelKit/DriveMgr.hxx>
 
 #define kIndexerNodeNameLength 255
 #define kIndexerClaimed		   0xCF

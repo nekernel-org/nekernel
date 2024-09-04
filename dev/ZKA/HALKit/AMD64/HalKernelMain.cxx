@@ -7,14 +7,14 @@
 #include <ArchKit/ArchKit.hxx>
 #include <Modules/CoreCG/FbRenderer.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Json.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
-#include <KernelKit/CodeManager.hxx>
+#include <KernelKit/CodeMgr.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
@@ -64,14 +64,14 @@ EXTERN_C void hal_user_code_start(void);
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
 /* GDT, mostly descriptors for user and kernel segments. */
-STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY cGdt[6] = {
+STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x1000) cGdt[6] = {
 	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},		// Null entry
 	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xA0, .fBaseHigh = 0}, // Kernel code
 	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xA0, .fBaseHigh = 0}, // Kernel data
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fFlags = 0xA0, .fBaseHigh = 0}, // User code
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fFlags = 0xA0, .fBaseHigh = 0}, // User data
-	// reserve them for later.
 	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xA0, .fBaseHigh = 0}, // User code
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xA0, .fBaseHigh = 0}, // User data
+	// reserve them for later.
 };
 
 EXTERN_C void hal_init_platform(
@@ -127,11 +127,11 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::kcout << "newoskrnl.exe: Creating filesystem and such.\r";
 
-	auto fs = new Kernel::NewFilesystemManager();
+	auto fs = new Kernel::NewFilesystemMgr();
 
 	MUST_PASS(fs);
 
-	Kernel::NewFilesystemManager::Mount(fs);
+	Kernel::NewFilesystemMgr::Mount(fs);
 
 	const auto cPassword = "ZKA_KERNEL_AUTHORITY";
 

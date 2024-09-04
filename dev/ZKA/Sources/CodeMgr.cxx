@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <NewKit/Utils.hxx>
-#include <KernelKit/CodeManager.hxx>
+#include <KernelKit/CodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 
 namespace Kernel

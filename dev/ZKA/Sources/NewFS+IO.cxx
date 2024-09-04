@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DriveManager.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/DriveMgr.hxx>
+#include <KernelKit/FileMgr.hxx>
 
 /*************************************************************
  *

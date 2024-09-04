@@ -5,12 +5,12 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.hxx>
-#include <KernelKit/DriveManager.hxx>
+#include <KernelKit/DriveMgr.hxx>
 #include <Modules/ATA/ATA.hxx>
 #include <Modules/AHCI/AHCI.hxx>
 #include <NewKit/Utils.hxx>
 
-/// @file DriveManager.cxx
+/// @file DriveMgr.cxx
 /// @brief Kernel drive manager.
 
 namespace Kernel

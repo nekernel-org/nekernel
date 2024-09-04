@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.hxx>
-#include <NewKit/PageManager.hxx>
+#include <NewKit/PageMgr.hxx>
 
 #ifdef __ZKA_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
@@ -35,7 +35,7 @@ namespace Kernel
 
 	/// @brief Flush virtual address.
 	/// @param VirtAddr
-	Void PageManager::FlushTLB()
+	Void PageMgr::FlushTLB()
 	{
 		hal_flush_tlb();
 	}
@@ -58,7 +58,7 @@ namespace Kernel
 	/// @param User user mode?
 	/// @param ExecDisable disable execution on page?
 	/// @return
-	PTEWrapper PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz)
+	PTEWrapper PageMgr::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz)
 	{
 		// Store PTE wrapper right after PTE.
 		VoidPtr ptr = Kernel::HAL::mm_alloc_bitmap(Rw, User, Sz);
@@ -69,9 +69,9 @@ namespace Kernel
 	/// @brief Disable BitMap.
 	/// @param wrapper the wrapper.
 	/// @return If the page bitmap was cleared or not.
-	Bool PageManager::Free(Ref<PTEWrapper*>& wrapper)
+	Bool PageMgr::Free(Ref<PTEWrapper>& wrapper)
 	{
-		if (!Kernel::HAL::mm_free_bitmap((VoidPtr)wrapper->VirtualAddress()))
+		if (!Kernel::HAL::mm_free_bitmap((VoidPtr)wrapper.Leak().VirtualAddress()))
 			return false;
 
 		return true;

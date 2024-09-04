@@ -10,7 +10,7 @@
 #include <KernelKit/PEF.hxx>
 #include <NewKit/ErrorOr.hxx>
 #include <NewKit/String.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 
 #define kPefApplicationMime "application/x-newos-exec"
 
@@ -47,7 +47,7 @@ namespace Kernel
 
 	private:
 #ifdef __FSKIT_USE_NEWFS__
-		OwnPtr<FileStream<Char, NewFilesystemManager>> fFile;
+		OwnPtr<FileStream<Char, NewFilesystemMgr>> fFile;
 #else
 		OwnPtr<FileStream<Char>> fFile;
 #endif // __FSKIT_USE_NEWFS__

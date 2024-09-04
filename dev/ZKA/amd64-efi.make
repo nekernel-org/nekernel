@@ -35,7 +35,7 @@ COPY		= cp
 ASMFLAGS	= -f win64
 
 # Kernel subsystem is 17 and entrypoint is __ImageStart
-LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x1000000
+LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x10000000
 LDOBJ		= Objects/*.obj
 
 # This file is the Kernel, responsible of task, memory, driver, sci, disk and device management.

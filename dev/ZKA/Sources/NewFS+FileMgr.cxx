@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Heap.hxx>
 
 #ifdef __FSKIT_USE_NEWFS__
@@ -15,16 +15,16 @@
 namespace Kernel
 {
 	/// @brief C++ constructor
-	NewFilesystemManager::NewFilesystemManager()
+	NewFilesystemMgr::NewFilesystemMgr()
 	{
 		MUST_PASS(Detail::fs_init_newfs());
 		fImpl = new NewFSParser();
 		MUST_PASS(fImpl);
 
-		kcout << "newoskrnl.exe: We are done here... (NewFilesystemManager).\r";
+		kcout << "newoskrnl.exe: We are done here... (NewFilesystemMgr).\r";
 	}
 
-	NewFilesystemManager::~NewFilesystemManager()
+	NewFilesystemMgr::~NewFilesystemMgr()
 	{
 		kcout << "newoskrnl.exe: Destroying it...\r";
 
@@ -37,7 +37,7 @@ namespace Kernel
 	/// @brief Removes a node from the filesystem.
 	/// @param fileName The filename
 	/// @return If it was deleted or not.
-	bool NewFilesystemManager::Remove(const Char* fileName)
+	bool NewFilesystemMgr::Remove(const Char* fileName)
 	{
 		if (fileName == nullptr || *fileName == 0)
 			return false;
@@ -48,7 +48,7 @@ namespace Kernel
 	/// @brief Creates a node with the specified.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NewFilesystemManager::Create(const Char* path)
+	NodePtr NewFilesystemMgr::Create(const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path));
 	}
@@ -56,7 +56,7 @@ namespace Kernel
 	/// @brief Creates a node with is a directory.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NewFilesystemManager::CreateDirectory(const Char* path)
+	NodePtr NewFilesystemMgr::CreateDirectory(const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindDir));
 	}
@@ -64,7 +64,7 @@ namespace Kernel
 	/// @brief Creates a node with is a alias.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NewFilesystemManager::CreateAlias(const Char* path)
+	NodePtr NewFilesystemMgr::CreateAlias(const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindAlias));
 	}
@@ -72,7 +72,7 @@ namespace Kernel
 	/// @brief Creates a node with is a page file.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NewFilesystemManager::CreateSwapFile(const Char* path)
+	NodePtr NewFilesystemMgr::CreateSwapFile(const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindPage));
 	}

@@ -11,18 +11,18 @@
 #include <ArchKit/ArchKit.hxx>
 #include <CompilerKit/Detail.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEF.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Json.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <NewKit/String.hxx>
 #include <NewKit/Utils.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/CodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
+#include <KernelKit/CodeMgr.hxx>
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/WindowRenderer.hxx>
 #include <KernelKit/Timer.hxx>
@@ -44,23 +44,23 @@ namespace Kernel::Detail
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
 	class FilesystemInstaller final
 	{
-		Kernel::NewFilesystemManager* fNewFS{nullptr};
+		Kernel::NewFilesystemMgr* fNewFS{nullptr};
 
 	public:
 		/// @brief wizard constructor.
 		explicit FilesystemInstaller()
 		{
-			if (Kernel::FilesystemManagerInterface::GetMounted())
+			if (Kernel::FilesystemMgrInterface::GetMounted())
 			{
 				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: NewFS IFS already mounted by HAL (A:)", 10, 10, RGB(0, 0, 0));
-				fNewFS = reinterpret_cast<Kernel::NewFilesystemManager*>(Kernel::FilesystemManagerInterface::GetMounted());
+				fNewFS = reinterpret_cast<Kernel::NewFilesystemMgr*>(Kernel::FilesystemMgrInterface::GetMounted());
 			}
 			else
 			{
 				// Mounts a NewFS from main drive.
-				fNewFS = new Kernel::NewFilesystemManager();
+				fNewFS = new Kernel::NewFilesystemMgr();
 
-				Kernel::FilesystemManagerInterface::Mount(fNewFS);
+				Kernel::FilesystemMgrInterface::Mount(fNewFS);
 
 				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Mounted NewFS IFS (A:)", 10, 10, RGB(0, 0, 0));
 			}
@@ -142,8 +142,8 @@ namespace Kernel::Detail
 		ZKA_COPY_DEFAULT(FilesystemInstaller);
 
 		/// @brief Grab the disk's NewFS reference.
-		/// @return NewFilesystemManager the filesystem interface
-		Kernel::NewFilesystemManager* Leak()
+		/// @return NewFilesystemMgr the filesystem interface
+		Kernel::NewFilesystemMgr* Leak()
 		{
 			return fNewFS;
 		}

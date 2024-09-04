@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DeviceManager.hxx>
+#include <KernelKit/DeviceMgr.hxx>

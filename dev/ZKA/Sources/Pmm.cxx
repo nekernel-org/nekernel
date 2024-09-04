@@ -19,9 +19,9 @@ namespace Kernel
 {
 	/// @brief Pmm constructor.
 	Pmm::Pmm()
-		: fPageManager()
+		: fPageMgr()
 	{
-		kcout << "[PMM] Allocate PageMemoryManager";
+		kcout << "[PMM] Allocate PageMemoryMgr";
 	}
 
 	Pmm::~Pmm() = default;
@@ -31,17 +31,15 @@ namespace Kernel
 	/// @param readWrite is it r/w?
 	Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite)
 	{
-		PTEWrapper pt = fPageManager.Leak().Request(user, readWrite, false, kPTESize);
+		PTEWrapper pt = fPageMgr.Leak().Request(user, readWrite, false, kPTESize);
 
 		if (pt.fPresent)
 		{
-			kcout << "[PMM]: Allocation was successful.\r";
-			return Ref<PTEWrapper>(pt);
+			kcout << "[PMM]: Allocation failed.\r";
+			return {};
 		}
 
-		kcout << "[PMM]: Allocation failed.\r";
-
-		return {};
+		return Ref<PTEWrapper>(pt);
 	}
 
 	Boolean Pmm::FreePage(Ref<PTEWrapper> PageRef)

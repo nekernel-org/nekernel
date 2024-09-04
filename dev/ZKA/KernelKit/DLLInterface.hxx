@@ -35,8 +35,15 @@ namespace Kernel
 		virtual DLL_TRAITS** GetAddressOf() = 0;
 		virtual DLL_TRAITS*	 Get()			= 0;
 
-		virtual void Mount(DLL_TRAITS* to_mount) = 0;
-		virtual void Unmount()					 = 0;
+		virtual Void Mount(DLL_TRAITS* to_mount) = 0;
+		virtual Void Unmount()					 = 0;
+
+
+		template <typename SymbolType>
+		SymbolType Load(const Char* symbol_name, SizeT len, Int32 kind)
+		{
+			return nullptr;
+		}
 	};
 
 	/// @brief Pure implementation, missing method/function handler.

@@ -11,7 +11,7 @@
 #define __KERNELKIT_SHARED_OBJECT_HXX__
 
 #include <KernelKit/PEF.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
 #include <NewKit/Defines.hxx>
 #include <KernelKit/DLLInterface.hxx>
 
@@ -96,7 +96,7 @@ namespace Kernel
 		PEFLoader* fLoader{nullptr};
 	};
 
-	typedef PEFDLLInterface* DLLInterfacePtr;
+	typedef DLLInterface* DLLInterfacePtr;
 
 	EXTERN_C DLLInterfacePtr rtl_init_shared_object(UserProcess* header);
 	EXTERN_C Void			 rtl_fini_shared_object(UserProcess* header, DLLInterfacePtr lib, Bool* successful);

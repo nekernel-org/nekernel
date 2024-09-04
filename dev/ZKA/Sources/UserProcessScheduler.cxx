@@ -34,7 +34,7 @@ namespace Kernel
 	/// @brief UserProcess scheduler instance.
 	/***********************************************************************************/
 
-	STATIC UserProcessScheduler* cProcessScheduler;
+	STATIC UserProcessScheduler* cProcessScheduler = nullptr;
 
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.

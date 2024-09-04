@@ -18,7 +18,7 @@ default.
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
-#include <KernelKit/DriveManager.hxx>
+#include <KernelKit/DriveMgr.hxx>
 #include <NewKit/Defines.hxx>
 
 /**

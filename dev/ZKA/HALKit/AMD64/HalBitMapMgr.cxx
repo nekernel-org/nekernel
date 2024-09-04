@@ -49,10 +49,10 @@ namespace Kernel
 							if (user)
 								mm_update_pte(base_ptr, eFlagsUser);
 
-							return (VoidPtr)(ptr_bit_set + 2);
+							return (VoidPtr)(&ptr_bit_set[2]);
 						}
 
-						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + size);
+						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + 1 + ptr_bit_set[1]);
 					}
 
 					return nullptr;
@@ -71,7 +71,7 @@ namespace Kernel
 
 			ptr_new = traits.FindBitMap(kKernelVirtualStart, size, rw, user);
 
-			return ptr_new;
+			return &((UIntPtr*)ptr_new)[1];
 		}
 
 		auto mm_free_bitmap(VoidPtr page_ptr) -> Bool
@@ -79,7 +79,7 @@ namespace Kernel
 			if (!page_ptr)
 				return false;
 
-			UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr) - 2;
+			UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr) - 3;
 
 			if (!ptr_bit_set[0] ||
 				ptr_bit_set[0] != cVMHMagic)

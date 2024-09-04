@@ -10,12 +10,12 @@
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/DebugOutput.hxx>
-#include <KernelKit/DeviceManager.hxx>
+#include <KernelKit/DeviceMgr.hxx>
 #include <KernelKit/LPC.hxx>
 #include <NewKit/Defines.hxx>
 #include <NewKit/String.hxx>
 
-#define kDriveManagerCount (4U)
+#define kDriveMgrCount (4U)
 
 #define kDriveInvalidID (-1)
 #define kDriveNameLen	(32)

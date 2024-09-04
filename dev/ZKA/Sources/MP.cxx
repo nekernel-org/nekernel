@@ -17,12 +17,6 @@
 
 namespace Kernel
 {
-	/***********************************************************************************/
-	/// @brief MP object container property.
-	/***********************************************************************************/
-
-	Property cSMPCoreName;
-
 	///! A HardwareThread class takes care of it's owned hardware thread.
 	///! It has a stack for it's core.
 
@@ -102,13 +96,13 @@ namespace Kernel
 		{
 			return mp_register_process(fStack);
 		}
-
-		//! SMP is disabled here.
-
-		mp_do_context_switch_pre();
-		mp_do_context_switch(image, stack_ptr, fStack);
-
-		return true;
+		else
+		{
+			mp_do_context_switch_pre();
+			mp_do_context_switch(image, stack_ptr, fStack);
+			
+			return false;
+		}
 	}
 
 	///! @brief Tells if processor is waked up.
@@ -123,15 +117,7 @@ namespace Kernel
 	///! @brief Constructor and destructors.
 
 	///! @brief Default constructor.
-	HardwareThreadScheduler::HardwareThreadScheduler()
-	{
-		kcout << "newoskrnl.exe: Initializing HardwareThreadScheduler." << endl;
-
-		cSMPCoreName.GetKey() += "Property\\MPClass";
-		cSMPCoreName.GetValue() = (PropertyId)this;
-
-		kcout << "newoskrnl.exe: Initialized HardwareThreadScheduler." << endl;
-	}
+	HardwareThreadScheduler::HardwareThreadScheduler() = default;
 
 	///! @brief Default destructor.
 	HardwareThreadScheduler::~HardwareThreadScheduler() = default;

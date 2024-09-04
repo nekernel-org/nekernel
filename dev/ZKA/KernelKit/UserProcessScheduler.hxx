@@ -10,6 +10,7 @@
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/LockDelegate.hxx>
 #include <KernelKit/User.hxx>
+#include <KernelKit/DLLInterface.hxx>
 #include <NewKit/MutableArray.hxx>
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
@@ -158,13 +159,13 @@ namespace Kernel
 		SizeT StackSize{mib_cast(8)};
 
 		// shared library handle, reserved for kDLLKind types of executables only.
-		PEFDLLInterface* DLLPtr{nullptr};
+		DLLInterface* DLLPtr{nullptr};
 		UserProcess*	 Parent{nullptr};
 
 		// Memory usage.
 		SizeT UsedMemory{0};
 		SizeT FreeMemory{0};
-		SizeT SizeMemory{gib_cast(4)};
+		SizeT SizeMemory{mib_cast(64)};
 
 		enum
 		{

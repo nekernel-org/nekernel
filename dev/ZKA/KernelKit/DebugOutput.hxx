@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <KernelKit/DeviceManager.hxx>
+#include <KernelKit/DeviceMgr.hxx>
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/OwnPtr.hxx>
 #include <NewKit/Stream.hxx>

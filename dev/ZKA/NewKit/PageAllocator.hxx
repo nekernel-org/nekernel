@@ -7,7 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.hxx>
-#include <NewKit/PageManager.hxx>
+#include <NewKit/PageMgr.hxx>
 
 namespace Kernel
 {
