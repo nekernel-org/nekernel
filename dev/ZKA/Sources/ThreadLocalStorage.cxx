@@ -21,7 +21,7 @@
 
 using namespace Kernel;
 
-namespace Detail
+namespace Kernel::Detail
 {
 	/// \brief UserProcess thread information header.
 	struct THREAD_HEADER_BLOCK final

@@ -11,7 +11,7 @@ namespace Kernel
 {
 	namespace HAL
 	{
-		UIntPtr hal_alloc_page(bool rw, bool user)
+		UIntPtr mm_alloc_bitmap(bool rw, bool user)
 		{
 			return 0;
 		}

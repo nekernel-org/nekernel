@@ -107,7 +107,7 @@ ATAInit_Retry:
 
 	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
-	Kernel::kcout << "newoskrnl.exe: Create ATA module.\r";
+	Kernel::kcout << "newoskrnl.exe: Created IDE module.\r";
 
 	return true;
 }

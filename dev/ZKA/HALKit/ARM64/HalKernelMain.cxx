@@ -76,14 +76,12 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	// reset kAllocationInProgress field to zero.
 	kAllocationInProgress = false;
 
-	kKernelVMHStart = kHandoverHeader->f_HeapStart;
-
 	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
 
 	// get virtual address start (for the heap)
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart));
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
 	// get physical address start.
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(

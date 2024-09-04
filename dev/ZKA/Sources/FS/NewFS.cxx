@@ -1035,11 +1035,11 @@ namespace Kernel::Detail
 		sMountpointInterface.C() = io_construct_drive();
 		sMountpointInterface.D() = io_construct_drive();
 
-		kcout << "newoskrnl.exe: Testing main drive...\r";
+		kcout << "newoskrnl.exe: Testing A:\r";
 
 		sMountpointInterface.A().fVerify(&sMountpointInterface.A().fPacket);
 
-		kcout << "newoskrnl.exe: Testing main drive [ OK ]...\r";
+		kcout << "newoskrnl.exe: Testing A: [ OK ]\r";
 
 		return true;
 	}

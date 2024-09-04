@@ -7,31 +7,31 @@
 #pragma once
 
 #ifndef KIB
-#define KIB(X) ((X) / 1024)
+#define KIB(X) (Kernel::UInt64)((X) / 1024)
 #endif
 
 #ifndef kib_cast
-#define kib_cast(X) ((X)*1024)
+#define kib_cast(X) (Kernel::UInt64)((X)*1024)
 #endif
 
 #ifndef MIB
-#define MIB(X) ((Kernel::UInt64)KIB(X) / 1024)
+#define MIB(X) (Kernel::UInt64)((Kernel::UInt64)KIB(X) / 1024)
 #endif
 
 #ifndef mib_cast
-#define mib_cast(X) ((Kernel::UInt64)kib_cast(X) * 1024)
+#define mib_cast(X) (Kernel::UInt64)((Kernel::UInt64)kib_cast(X) * 1024)
 #endif
 
 #ifndef GIB
-#define GIB(X) ((Kernel::UInt64)MIB(X) / 1024)
+#define GIB(X) (Kernel::UInt64)((Kernel::UInt64)MIB(X) / 1024)
 #endif
 
 #ifndef gib_cast
-#define gib_cast(X) ((Kernel::UInt64)mib_cast(X) * 1024)
+#define gib_cast(X) (Kernel::UInt64)((Kernel::UInt64)mib_cast(X) * 1024)
 #endif
 
 #ifndef TIB
-#define TIB(X) ((Kernel::UInt64)GIB(X) / 1024)
+#define TIB(X) (Kernel::UInt64)((Kernel::UInt64)GIB(X) / 1024)
 #endif
 
 #ifndef tib_cast
@@ -94,7 +94,7 @@
 #define CANT_REACH() __builtin_unreachable()
 #endif
 
-#define kBadPtr		0xFBFBFBFBFBFBFBFB
+#define kInvalidAddress		0xFBFBFBFBFBFBFBFB
 #define kBadAddress 0x00000000000000
 #define kMaxAddr	0xFFFFFFFFFFFFFFFF
 #define kPathLen	255

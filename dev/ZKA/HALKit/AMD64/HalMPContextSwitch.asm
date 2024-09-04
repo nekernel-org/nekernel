@@ -67,20 +67,15 @@ mp_system_call_handler:
     o64 sysret
 
 mp_do_context_switch_pre:
+	mov rcx, 0xc0000082
+	wrmsr
 	mov rcx, 0xc0000080
 	rdmsr
 	or eax, 1
 	wrmsr
-
 	mov rcx, 0xc0000081
 	rdmsr
-    mov rax, 0x00000000
 	mov edx, 0x00180008
-	wrmsr
-
-	mov rcx, 0xc0000082
-	mov rax, mp_system_call_handler
-	mov rdx, 0x0
 	wrmsr
 
     ret

@@ -85,10 +85,10 @@ namespace Kernel
 		return allocatedPtr;
 	}
 
-	/// @brief allocate chunk of memory.
-	/// @param sz size of pointer
-	/// @param rw read write (true to enable it)
-	/// @param user is it accesible by user processes?
+	/// @brief Allocate chunk of memory.
+	/// @param sz Size of pointer
+	/// @param rw Read Write bit.
+	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
 	VoidPtr mm_new_ke_heap(const SizeT sz, const bool rw, const bool user)
 	{
@@ -99,28 +99,29 @@ namespace Kernel
 		if (szFix == 0)
 			++szFix;
 
-		auto wrapper = kHeapPageManager.Request(rw, user, false, szFix);
+		auto wrapper = kHeapPageManager.Request(rw, user, No, szFix);
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				wrapper.VirtualAddress());
+				wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 		heap_info_ptr->fHeapSize = szFix;
-		heap_info_ptr->fMagic		  = kKernelHeapMagic;
-		heap_info_ptr->fCRC32		  = 0U; // dont fill it for now.
-		heap_info_ptr->fHeapPtr	  = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
-		heap_info_ptr->fPage		  = 0UL;
-		heap_info_ptr->fUser	  = user;
-		heap_info_ptr->fPresent		  = true;
+		heap_info_ptr->fMagic	 = kKernelHeapMagic;
+		heap_info_ptr->fCRC32	 = 0U; // dont fill it for now.
+		heap_info_ptr->fHeapPtr	 = wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		heap_info_ptr->fPage	 = 0UL;
+		heap_info_ptr->fUser	 = user;
+		heap_info_ptr->fPresent	 = true;
 
 		++kHeapCount;
+
+		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fHeapPtr);
 
 		kLatestAllocation = heap_info_ptr;
 
 		Detail::mm_alloc_fini_timeout();
 
-		return reinterpret_cast<VoidPtr>(heap_info_ptr +
-										 sizeof(Detail::HEAP_INFORMATION_BLOCK));
+		return result;
 	}
 
 	/// @brief Makes a page heap.
@@ -132,7 +133,7 @@ namespace Kernel
 			return -kErrorInternal;
 		if (((IntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK)) <= 0)
 			return -kErrorInternal;
-		if (((IntPtr)heap_ptr - kBadPtr) < 0)
+		if (((IntPtr)heap_ptr - kInvalidAddress) < 0)
 			return -kErrorInternal;
 
 		Detail::mm_alloc_init_timeout();
@@ -157,7 +158,7 @@ namespace Kernel
 			return -kErrorInternal;
 		if (((IntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK)) <= 0)
 			return -kErrorInternal;
-		if (((IntPtr)heap_ptr - kBadPtr) < 0)
+		if (((IntPtr)heap_ptr - kInvalidAddress) < 0)
 			return -kErrorInternal;
 
 		Detail::mm_alloc_init_timeout();
@@ -188,12 +189,12 @@ namespace Kernel
 			}
 
 			heapInfoBlk->fHeapSize = 0UL;
-			heapInfoBlk->fPresent		= false;
-			heapInfoBlk->fHeapPtr		= 0;
-			heapInfoBlk->fCRC32			= 0;
-			heapInfoBlk->fMagic			= 0;
+			heapInfoBlk->fPresent  = false;
+			heapInfoBlk->fHeapPtr  = 0;
+			heapInfoBlk->fCRC32	   = 0;
+			heapInfoBlk->fMagic	   = 0;
 
-			PTEWrapper		 pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heapInfoBlk));
+			PTEWrapper		 pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heapInfoBlk) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 			Ref<PTEWrapper*> pteAddress{&pageWrapper};
 
 			kHeapPageManager.Free(pteAddress);

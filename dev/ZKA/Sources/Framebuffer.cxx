@@ -44,7 +44,7 @@ namespace Kernel
 	{
 		return fFrameBufferAddr.Leak()->fBase != 0 &&
 			   fColour != FramebufferColorKind::INVALID &&
-			   fFrameBufferAddr.Leak()->fBase != kBadPtr;
+			   fFrameBufferAddr.Leak()->fBase != kInvalidAddress;
 	}
 
 	/// @brief Set color kind of framebuffer.

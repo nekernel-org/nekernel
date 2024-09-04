@@ -27,32 +27,37 @@ namespace Kernel::HAL
 
 		// Access PML4 entry
 		volatile UInt64* pml4_entry = (volatile UInt64*)(((UInt64)pml4_base) + pml4_idx * sizeof(UIntPtr));
-		UInt64		   pdpt_base  = *pml4_entry & ~0xFFF; // Remove flags (assuming 4KB pages)
+		UInt64			 pdpt_base	= *pml4_entry & ~0xFFF; // Remove flags (assuming 4KB pages)
 
 		// Access PDPT entry
 		volatile UInt64* pdpt_entry = (volatile UInt64*)(((UInt64)pdpt_base) + pdpt_idx * sizeof(UIntPtr));
-		UInt64		   pd_base	  = *pdpt_entry & ~0xFFF; // Remove flags
+		UInt64			 pd_base	= *pdpt_entry & ~0xFFF; // Remove flags
 
+		// Now PD
 		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pd_base) + pd_idx * sizeof(UIntPtr));
 		UInt64			 pt_base  = *pd_entry & ~0xFFF; // Remove flags
 
+		// And then PTE
 		volatile UInt64* page_addr = (volatile UInt64*)(((UInt64)pt_base) + (pte_idx * sizeof(UIntPtr)));
 
-		if (page_addr)
-		{
-			if (flags & eFlagsPresent)
-				*page_addr |= 0x01; // present bit
+		if (flags & eFlagsPresent)
+			*page_addr |= 0x01; // present bit
+		else if (flags & ~eFlagsPresent)
+			*page_addr &= 0x01; // present bit
 
-			if (flags & eFlagsRw)
-				*page_addr |= 0x02;
+		if (flags & eFlagsRw)
+			*page_addr |= 0x02;
+		else if (flags & ~eFlagsRw)
+			*page_addr &= 0x02; // present bit
 
-			if (flags & eFlagsUser)
-				*page_addr |= 0x02;
+		if (flags & eFlagsUser)
+			*page_addr |= 0x04;
+		else if (flags & ~eFlagsUser)
+			*page_addr &= 0x04; // present bit
 
-			return Yes;
-		}
+		hal_write_cr3((UIntPtr)pml4_base);
 
-		return No;
+		return 0;
 	}
 
 	Void Out8(UInt16 port, UInt8 value)

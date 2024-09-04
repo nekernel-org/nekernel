@@ -62,10 +62,9 @@ namespace Kernel::HEL
 		UInt64 f_Magic;
 		UInt64 f_Version;
 
-		VoidPtr f_VirtualStart;
+		VoidPtr f_BitMapStart;
 		SizeT	f_VirtualSize;
 		VoidPtr f_PhysicalStart;
-		VoidPtr f_HeapStart;
 
 		VoidPtr f_KernelImage;
 		VoidPtr f_StartupChime;

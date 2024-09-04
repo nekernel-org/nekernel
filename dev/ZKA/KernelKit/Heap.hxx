@@ -30,10 +30,10 @@ namespace Kernel
 	/// @return if it exists.
 	Boolean mm_is_valid_heap(VoidPtr heap_ptr);
 
-	/// @brief allocate chunk of memory.
-	/// @param sz size of pointer
-	/// @param rw read write (true to enable it)
-	/// @param user is it accesible by user processes?
+	/// @brief Allocate chunk of memory.
+	/// @param sz Size of pointer
+	/// @param rw Read Write bit.
+	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
 	VoidPtr mm_new_ke_heap(const SizeT sz, const Bool rw, const Bool user);
 

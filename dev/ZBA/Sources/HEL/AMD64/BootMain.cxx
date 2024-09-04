@@ -79,6 +79,8 @@ STATIC Bool CheckBootDevice(BootDeviceATA& ataDev)
 	return true;
 }
 
+EXTERN_C Void write_cr3(VoidPtr new_cr3);
+
 /// @brief Main EFI entrypoint.
 /// @param ImageHandle Handle of this image.
 /// @param SystemTable The system table of it.
@@ -186,16 +188,44 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
 		(UIntPtr)Descriptor;
 
-	handoverHdrPtr->f_VirtualStart =
-		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
+	handoverHdrPtr->f_BitMapStart = 0;
 
-	handoverHdrPtr->f_HeapStart = 0;
+	while (BS->AllocatePool(EfiRuntimeServicesData, kHandoverHeapSz, &handoverHdrPtr->f_BitMapStart) != kEfiOk)
+		;
 
-	while (BS->AllocatePool(EfiLoaderData, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk)
+	auto extended_heap = (VoidPtr)((UIntPtr)handoverHdrPtr->f_BitMapStart + kHandoverHeapSz);
+	
+	while (BS->AllocatePool(EfiRuntimeServicesData, kHandoverHeapSz, &extended_heap) != kEfiOk)
 		;
 
 	handoverHdrPtr->f_VirtualSize =
 		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
+
+
+	handoverHdrPtr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
+	handoverHdrPtr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
+
+	BFileReader readerSysChk(L"syschk.sys", ImageHandle);
+	readerSysChk.ReadAll(0);
+
+	Boot::BThread* loaderSysChk = nullptr;
+
+	// ------------------------------------------ //
+	// If we succeed in reading the blob, then execute it.
+	// ------------------------------------------ //
+
+	if (readerSysChk.Blob())
+	{
+		loaderSysChk = new Boot::BThread(readerSysChk.Blob());
+		loaderSysChk->SetName("System Check SYS.");
+	}
+
+	loaderSysChk->Start(handoverHdrPtr);
+
+	// nullify these fields, to avoid being reused later.
+
+	handoverHdrPtr->f_FirmwareCustomTables[0] = nullptr;
+	handoverHdrPtr->f_FirmwareCustomTables[1] = nullptr;
 
 	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
@@ -213,6 +243,12 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	BDiskFormatFactory<BootDeviceATA> checkPart;
 
+	// ---------------------------------------------------- //
+	// The following checks for an exisiting partition
+	// inside the disk, if it doesn't have one,
+	// format the disk.
+	// ---------------------------------------------------- //
+
 	if (!checkPart.IsPartitionValid())
 	{
 		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
@@ -225,37 +261,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 		rt_reset_hardware();
 	}
-
-	// ---------------------------------------------------- //
-	// The following checks for an exisiting partition
-	// inside the disk, if it doesn't have one,
-	// format the disk.
-	// ---------------------------------------------------- //
-
-	handoverHdrPtr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
-	handoverHdrPtr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
-
-	BFileReader readerSysChk(L"syschk.sys", ImageHandle);
-	readerSysChk.ReadAll(0);
-
-	Boot::BThread* loaderSysChk = nullptr;
-
-	// ------------------------------------------ //
-	// If we succeed in reading the blob, then execute it.
-	// ------------------------------------------ //
-
-	if (readerSysChk.Blob())
-	{
-		loaderSysChk = new Boot::BThread(readerSysChk.Blob());
-		loaderSysChk->SetName("64-bit System Check DLL.");
-	}
-
-	loaderSysChk->Start(handoverHdrPtr);
-
-	// nullify these fields, to avoid being reused later.
-
-	handoverHdrPtr->f_FirmwareCustomTables[0] = nullptr;
-	handoverHdrPtr->f_FirmwareCustomTables[1] = nullptr;
 
 	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
@@ -270,7 +275,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::BThread(readerKernel.Blob());
-		loader->SetName("64-bit Kernel DLL.");
+		loader->SetName("64-Bit Kernel EXE.");
 
 		handoverHdrPtr->f_KernelImage = readerKernel.Blob();
 	}

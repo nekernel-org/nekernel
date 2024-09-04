@@ -39,3 +39,9 @@ wait_gate2:
     mov cr4,rax
 reset_wait:
     jmp reset_wait
+
+.global write_cr3
+
+write_cr3:
+    mov cr3, rcx
+    ret

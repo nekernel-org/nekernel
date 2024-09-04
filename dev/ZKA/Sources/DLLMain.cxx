@@ -150,14 +150,12 @@ namespace Kernel::Detail
 	};
 } // namespace Kernel::Detail
 
-namespace Kernel
+EXTERN_C ATTRIBUTE(naked) Kernel::Void HangCPU(Kernel::Void)
 {
-	EXTERN UserProcessScheduler* cProcessScheduler;
-} // namespace Kernel
+	while (Yes)
+	{
 
-EXTERN_C Kernel::Void HangCPU(Kernel::Void)
-{
-	while (1);
+	}
 }
 
 /// @brief Application entrypoint.
@@ -189,10 +187,6 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Running System Component: ", 10, 10, RGB(0, 0, 0));
 	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.exe: Running System Component: ")), RGB(0, 0, 0));
 
-	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
-	Kernel::cProcessScheduler = nullptr;
-	Kernel::UserProcessHelper::StartScheduling();
-
 	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Starting ZKA System...", 20, 10, RGB(0, 0, 0));
 
 	Kernel::sched_execute_thread(HangCPU, "HANG TEST");
@@ -201,6 +195,4 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	{
 		Kernel::UserProcessHelper::StartScheduling();
 	}
-
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

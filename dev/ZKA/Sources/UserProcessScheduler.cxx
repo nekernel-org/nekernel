@@ -28,13 +28,13 @@ namespace Kernel
 	/// @brief Exit Code global variable.
 	/***********************************************************************************/
 
-	UInt32 cLastExitCode = 0U;
+	STATIC UInt32 cLastExitCode = 0U;
 
 	/***********************************************************************************/
 	/// @brief UserProcess scheduler instance.
 	/***********************************************************************************/
 
-	UserProcessScheduler* cProcessScheduler = nullptr;
+	STATIC UserProcessScheduler* cProcessScheduler;
 
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
@@ -53,11 +53,9 @@ namespace Kernel
 		if (this->Name == 0)
 			return;
 
-		kcout << this->Name << ": crashed. (id = " << number(kErrorProcessFault) << endl;
+		kcout << this->Name << ": crashed, ID = " << number(kErrorProcessFault)  << endl;
 
 		this->Exit(kErrorProcessFault);
-
-		UserProcessHelper::StartScheduling();
 	}
 
 	/// @brief Gets the local last exit code.
@@ -246,8 +244,12 @@ namespace Kernel
 		}
 
 		process.StackFrame = new HAL::StackFrame();
-
-		MUST_PASS(process.StackFrame);
+		
+		if (!process.StackFrame)
+		{
+			process.Crash();
+			return -kErrorProcessFault;
+		}
 
 		if (process.Image)
 		{
@@ -291,6 +293,11 @@ namespace Kernel
 
 	UserProcessScheduler& UserProcessScheduler::The()
 	{
+		if (!cProcessScheduler)
+		{
+			cProcessScheduler = new UserProcessScheduler();
+		}
+
 		MUST_PASS(cProcessScheduler);
 		return *cProcessScheduler;
 	}
@@ -414,14 +421,6 @@ namespace Kernel
 
 	SizeT UserProcessHelper::StartScheduling()
 	{
-		if (!cProcessScheduler)
-		{
-			cProcessScheduler = new UserProcessScheduler();
-			MUST_PASS(cProcessScheduler);
-
-			kcout << "newoskrnl.exe: Team capacity: " << number(cProcessScheduler->CurrentTeam().AsArray().Capacity()) << endl;
-		}
-
 		SizeT ret = cProcessScheduler->Run();
 		return ret;
 	}

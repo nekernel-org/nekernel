@@ -56,11 +56,10 @@ namespace Kernel::HAL
 	/// @brief Virtual memory flags.
 	enum
 	{
-		eFlagsPresent,
-		eFlagsUser,
-		eFlagsRw,
-		eFlagsExecDisable,
-		eFlagsCount,
+		eFlagsPresent = 0x01,
+		eFlagsRw = 0x02,
+		eFlagsUser = 0x04,
+		eFlagsCount = 0x3,
 	};
 
 	/// @brief Updates a PTE from pd_base.
@@ -100,7 +99,7 @@ namespace Kernel::HAL
 	using InterruptId = UInt16; /* For each element in the IVT */
 
 	/// @brief Stack frame (as retrieved from assembly.)
-	struct PACKED StackFrame final
+	struct StackFrame final
 	{
 		UIntPtr R8{0};
 		UIntPtr R9{0};
@@ -293,7 +292,6 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 #define kKernelIdtSize	   0x100
 #define kKernelInterruptId 0x32
 
-inline Kernel::VoidPtr kKernelVMHStart	   = nullptr;
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
 inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 

@@ -35,11 +35,8 @@ namespace Kernel
 
 	/// @brief Flush virtual address.
 	/// @param VirtAddr
-	Void PageManager::FlushTLB(UIntPtr VirtAddr)
+	Void PageManager::FlushTLB()
 	{
-		if (VirtAddr == kBadAddress)
-			return;
-
 		hal_flush_tlb();
 	}
 
@@ -64,31 +61,20 @@ namespace Kernel
 	PTEWrapper PageManager::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz)
 	{
 		// Store PTE wrapper right after PTE.
-		VoidPtr ptr = Kernel::HAL::hal_alloc_page(Rw, User, Sz);
-
-		if (ptr == kBadAddress)
-		{
-			kcout << "[create_page_wrapper] kBadAddress returned\n";
-			ke_stop(RUNTIME_CHECK_POINTER);
-		}
+		VoidPtr ptr = Kernel::HAL::mm_alloc_bitmap(Rw, User, Sz);
 
 		return PTEWrapper{Rw, User, ExecDisable, reinterpret_cast<UIntPtr>(ptr)};
 	}
 
-	/// @brief Disable PTE.
+	/// @brief Disable BitMap.
 	/// @param wrapper the wrapper.
-	/// @return
-	bool PageManager::Free(Ref<PTEWrapper*>& wrapper)
+	/// @return If the page bitmap was cleared or not.
+	Bool PageManager::Free(Ref<PTEWrapper*>& wrapper)
 	{
-		if (wrapper)
-		{
-			if (!Kernel::HAL::hal_free_page((VoidPtr)wrapper->VirtualAddress()))
-				return false;
+		if (!Kernel::HAL::mm_free_bitmap((VoidPtr)wrapper->VirtualAddress()))
+			return false;
 
-			return true;
-		}
-
-		return false;
+		return true;
 	}
 
 	/// @brief Virtual PTE address.

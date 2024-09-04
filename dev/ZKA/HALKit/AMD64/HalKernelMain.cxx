@@ -56,7 +56,6 @@ namespace Kernel::HAL
 Kernel::Property cKernelVersion;
 Kernel::User cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
-EXTERN Kernel::Boolean kAllocationInProgress;
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -93,17 +92,12 @@ EXTERN_C void hal_init_platform(
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	// reset kAllocationInProgress field to zero.
-	kAllocationInProgress = false;
-
-	kKernelVMHStart = kHandoverHeader->f_HeapStart;
-
 	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
 
 	// get virtual address start (for the heap)
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart));
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
 	// get physical address start.
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
@@ -136,7 +130,6 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	auto fs = new Kernel::NewFilesystemManager();
 
 	MUST_PASS(fs);
-	MUST_PASS(fs->GetParser());
 
 	Kernel::NewFilesystemManager::Mount(fs);
 

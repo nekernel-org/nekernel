@@ -47,8 +47,6 @@ namespace Kernel::HAL
 
 		for (UInt16 idt_indx = 0; idt_indx < 12; ++idt_indx)
 		{
-			MUST_PASS(ptr_ivt[idt_indx]);
-
 			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtKernelCodeSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
 			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kTrapGate;
@@ -62,8 +60,6 @@ namespace Kernel::HAL
 
 		for (UInt16 idt_indx = 13; idt_indx < kKernelIdtSize; ++idt_indx)
 		{
-			MUST_PASS(ptr_ivt[idt_indx]);
-
 			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtKernelCodeSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
 			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kInterruptGate;

@@ -25,7 +25,7 @@
 */
 BTextWriter& BTextWriter::Write(const CharacterTypeUTF16* str)
 {
-#ifdef __DEBUG__
+#ifdef __DEBUG_OUTPUT__
 	if (!str || *str == 0)
 		return *this;
 
@@ -57,7 +57,7 @@ BTextWriter& BTextWriter::Write(const CharacterTypeUTF16* str)
 /// @param str the input string.
 BTextWriter& BTextWriter::Write(const Char* str)
 {
-#ifdef __DEBUG__
+#ifdef __DEBUG_OUTPUT__
 	if (!str || *str == 0)
 		return *this;
 
@@ -87,7 +87,7 @@ BTextWriter& BTextWriter::Write(const Char* str)
 
 BTextWriter& BTextWriter::Write(const UChar* str)
 {
-#ifdef __DEBUG__
+#ifdef __DEBUG_OUTPUT__
 	if (!str || *str == 0)
 		return *this;
 
@@ -120,7 +120,7 @@ BTextWriter& BTextWriter::Write(const UChar* str)
 */
 BTextWriter& BTextWriter::WriteCharacter(CharacterTypeUTF16 c)
 {
-#ifdef __DEBUG__
+#ifdef __DEBUG_OUTPUT__
 	EfiCharType str[2];
 
 	str[0] = c;

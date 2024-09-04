@@ -77,7 +77,6 @@ namespace Kernel
 		SizeT len = rt_string_len(password_to_fill);
 
 		Char* password = new Char[len];
-
 		MUST_PASS(password);
 
 		// fill data first, generate hash.

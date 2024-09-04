@@ -19,6 +19,7 @@ namespace Kernel
 	{
 		MUST_PASS(Detail::fs_init_newfs());
 		fImpl = new NewFSParser();
+		MUST_PASS(fImpl);
 
 		kcout << "newoskrnl.exe: We are done here... (NewFilesystemManager).\r";
 	}

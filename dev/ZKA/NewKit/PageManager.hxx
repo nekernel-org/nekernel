@@ -33,6 +33,8 @@ namespace Kernel
 		void		NoExecute(const bool enable = false);
 		const bool& NoExecute();
 
+		operator bool() { return fVirtAddr; }
+
 		bool Reclaim();
 		bool Shareable();
 		bool Present();
@@ -68,7 +70,7 @@ namespace Kernel
 		bool	   Free(Ref<PTEWrapper*>& wrapper);
 
 	private:
-		void FlushTLB(UIntPtr VirtAddr);
+		void FlushTLB();
 
 	private:
 		friend PTEWrapper;

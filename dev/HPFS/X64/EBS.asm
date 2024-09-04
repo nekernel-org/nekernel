@@ -9,7 +9,7 @@
 
 HPFS_EBS_HEADER:
     db "   HPFS", 0 ;; MAGIC NUMBER OF FILESYSTEM
-    db 1 ;; VERSION
+    dw 1 ;; VERSION
     dw 0 ;; PARTITION TYPE
     dw 0 ;; DISK TYPE (INVALID = 0, CDROM = 1, SSD = 2, USB = 3)
     dw 0 ;; CHECKSUM OF PARTITION

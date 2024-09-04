@@ -160,10 +160,10 @@ namespace Kernel::HAL
 		{
 			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Process = &UserProcessScheduler::The().CurrentProcess().Leak();
 
-			return true;
+			return Yes;
 		}
 
-		return false;
+		return No;
 	}
 
 	/***********************************************************************************/

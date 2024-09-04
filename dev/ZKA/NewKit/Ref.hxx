@@ -84,7 +84,7 @@ namespace Kernel
 		NonNullRef(T* ref)
 			: fRef(ref, true)
 		{
-			MUST_PASS(ref != nullptr);
+			MUST_PASS(ref);
 		}
 
 		Ref<T>& operator->()
