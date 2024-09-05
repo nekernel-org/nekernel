@@ -125,7 +125,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	Kernel::kcout << "newoskrnl.exe: Creating filesystem and such.\r";
+	kcout << "Creating filesystem and such.\r";
 
 	auto fs = new Kernel::NewFilesystemMgr();
 

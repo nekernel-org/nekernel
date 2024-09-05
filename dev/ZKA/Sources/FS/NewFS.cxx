@@ -67,7 +67,7 @@ _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* cata
 		Lba lba = (theFork.Kind == kNewFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
 
-		kcout << "newoskrnl.exe: fork lba: " << hex_number(lba) << endl;
+		kcout << "fork lba: " << hex_number(lba) << endl;
 
 		if (lba <= kNewFSCatalogStartAddress)
 			return nullptr;
@@ -96,22 +96,22 @@ _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* cata
 
 			if (curFork.NextSibling > kBadAddress)
 			{
-				kcout << "newoskrnl.exe: bad fork: " << hex_number(curFork.NextSibling) << endl;
+				kcout << "bad fork: " << hex_number(curFork.NextSibling) << endl;
 				break;
 			}
 
-			kcout << "newoskrnl.exe: next fork: " << hex_number(curFork.NextSibling) << endl;
+			kcout << "next fork: " << hex_number(curFork.NextSibling) << endl;
 
 			if (curFork.Flags == kNewFSFlagCreated)
 			{
-				kcout << "newoskrnl.exe: fork already exists.\r";
+				kcout << "fork already exists.\r";
 
 				/// sanity check.
 				if (StringBuilder::Equals(curFork.ForkName, theFork.ForkName) &&
 					StringBuilder::Equals(curFork.CatalogName, catalog->Name))
 					return nullptr;
 
-				kcout << "newoskrnl.exe: next fork: " << hex_number(curFork.NextSibling) << endl;
+				kcout << "next fork: " << hex_number(curFork.NextSibling) << endl;
 
 				lbaOfPreviousFork = lba;
 				lba				  = curFork.NextSibling;
@@ -153,10 +153,10 @@ _Output NFS_FORK_STRUCT* NewFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* cata
 		drv.fOutput(&drv.fPacket);
 
 		/// log what we have now.
-		kcout << "newoskrnl.exe: Wrote fork data at: " << hex_number(theFork.DataOffset)
+		kcout << "Wrote fork data at: " << hex_number(theFork.DataOffset)
 			  << endl;
 
-		kcout << "newoskrnl.exe: Wrote fork at: " << hex_number(lba) << endl;
+		kcout << "Wrote fork at: " << hex_number(lba) << endl;
 
 		return &theFork;
 	}
@@ -241,11 +241,11 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 													   _Input const Int32& flags,
 													   _Input const Int32& kind)
 {
-	kcout << "newoskrnl.exe: CreateCatalog(...)\r";
+	kcout << "CreateCatalog(...)\r";
 
 	Lba out_lba = 0UL;
 
-	kcout << "newoskrnl.exe: Checking for extension...\r";
+	kcout << "Checking for extension...\r";
 
 	/// a directory should have a slash in the end.
 	if (kind == kNewFSCatalogKindDir &&
@@ -261,7 +261,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 
 	if (catalog_copy)
 	{
-		kcout << "newoskrnl.exe: Catalog already exists: " << name << ".\r";
+		kcout << "Catalog already exists: " << name << ".\r";
 		ErrLocal() = kErrorFileExists;
 
 		return catalog_copy;
@@ -276,7 +276,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 
 	if (*parentName == 0)
 	{
-		kcout << "newoskrnl.exe: Parent name is NUL.\r";
+		kcout << "Parent name is NUL.\r";
 		ErrLocal() = kErrorFileNotFound;
 		return nullptr;
 	}
@@ -308,7 +308,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 
 	if (catalog && catalog->Kind == kNewFSCatalogKindFile)
 	{
-		kcout << "newoskrnl.exe: Parent name is file.\r";
+		kcout << "Parent name is file.\r";
 		delete catalog;
 		return nullptr;
 	}
@@ -433,9 +433,9 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::CreateCatalog(_Input const Char* name,
 
 			drive.fOutput(&drive.fPacket);
 
-			kcout << "newoskrnl.exe: Create new catalog, status: "
+			kcout << "Create new catalog, status: "
 				  << hex_number(catalogChild->Flags) << endl;
-			kcout << "newoskrnl.exe: Create new catalog, name: " << catalogChild->Name
+			kcout << "Create new catalog, name: " << catalogChild->Name
 				  << endl;
 
 			delete catalog;
@@ -599,14 +599,14 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endL
 
 			drive->fOutput(&drive->fPacket);
 
-			kcout << "newoskrnl.exe: drive kind: " << drive->fDriveKind() << endl;
+			kcout << "drive kind: " << drive->fDriveKind() << endl;
 
-			kcout << "newoskrnl.exe: partition name: " << partBlock->PartitionName << endl;
-			kcout << "newoskrnl.exe: start: " << hex_number(partBlock->StartCatalog) << endl;
-			kcout << "newoskrnl.exe: number of catalogs: " << hex_number(partBlock->CatalogCount) << endl;
-			kcout << "newoskrnl.exe: free catalog: " << hex_number(partBlock->FreeCatalog) << endl;
-			kcout << "newoskrnl.exe: free sectors: " << hex_number(partBlock->FreeSectors) << endl;
-			kcout << "newoskrnl.exe: sector size: " << hex_number(partBlock->SectorSize) << endl;
+			kcout << "partition name: " << partBlock->PartitionName << endl;
+			kcout << "start: " << hex_number(partBlock->StartCatalog) << endl;
+			kcout << "number of catalogs: " << hex_number(partBlock->CatalogCount) << endl;
+			kcout << "free catalog: " << hex_number(partBlock->FreeCatalog) << endl;
+			kcout << "free sectors: " << hex_number(partBlock->FreeSectors) << endl;
+			kcout << "sector size: " << hex_number(partBlock->SectorSize) << endl;
 
 			// write the root catalog.
 			this->CreateCatalog(kNewFSRoot, 0, kNewFSCatalogKindDir);
@@ -614,7 +614,7 @@ bool NewFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endL
 			return true;
 		}
 
-		kcout << "newoskrnl.exe: partition block already exists.\r";
+		kcout << "partition block already exists.\r";
 
 		start += partBlock->DiskSize;
 
@@ -659,7 +659,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 		{
 			ErrLocal() = kErrorDiskIsCorrupted;
 
-			kcout << "newoskrnl.exe: Invalid fork offset.\r";
+			kcout << "Invalid fork offset.\r";
 
 			return false;
 		}
@@ -688,7 +688,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 			drive.fPacket.fPacketSize	 = sizeOfData;
 			drive.fPacket.fLba			 = startFork + sizeof(NFS_FORK_STRUCT);
 
-			kcout << "newoskrnl.exe: data offset: " << hex_number(forkDataIn->DataOffset) << endl;
+			kcout << "data offset: " << hex_number(forkDataIn->DataOffset) << endl;
 
 			drive.fOutput(&drive.fPacket);
 
@@ -698,7 +698,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 
 			drive.fOutput(&drive.fPacket);
 
-			kcout << "newoskrnl.exe: wrote fork at offset: " << hex_number(forkDataIn->DataOffset) << endl;
+			kcout << "wrote fork at offset: " << hex_number(forkDataIn->DataOffset) << endl;
 
 			delete catalog;
 
@@ -721,7 +721,7 @@ bool NewFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool 
 _Output NFS_CATALOG_STRUCT* NewFSParser::FindCatalog(_Input const Char* catalogName,
 													 Lba&				out_lba)
 {
-	kcout << "newoskrnl.exe: start finding catalog...\r";
+	kcout << "start finding catalog...\r";
 
 	NFS_ROOT_PARTITION_BLOCK fs_buf{0};
 	auto					 drive = sMountpointInterface.A();
@@ -789,7 +789,7 @@ _Output NFS_CATALOG_STRUCT* NewFSParser::FindCatalog(_Input const Char* catalogN
 		}
 	}
 
-	kcout << "newoskrnl.exe: fetching catalog...\r";
+	kcout << "fetching catalog...\r";
 
 NewFSSearchThroughCatalogList:
 	while (drive.fPacket.fPacketGood)
@@ -813,8 +813,8 @@ NewFSSearchThroughCatalogList:
 			NFS_CATALOG_STRUCT* catalogPtr = new NFS_CATALOG_STRUCT();
 			rt_copy_memory(catalog, catalogPtr, sizeof(NFS_CATALOG_STRUCT));
 
-			kcout << "newoskrnl.exe: found catalog at: " << hex_number(startCatalogList) << endl;
-			kcout << "newoskrnl.exe: found catalog at: " << catalog->Name << endl;
+			kcout << "found catalog at: " << hex_number(startCatalogList) << endl;
+			kcout << "found catalog at: " << catalog->Name << endl;
 
 			out_lba = startCatalogList;
 			return catalogPtr;
@@ -944,7 +944,7 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 	Lba	 dataForkLba  = (!isRsrcFork) ? catalog->DataFork : catalog->ResourceFork;
 	Size dataForkSize = (!isRsrcFork) ? catalog->DataForkSize : catalog->ResourceForkSize;
 
-	kcout << "newoskrnl.exe: catalog " << catalog->Name
+	kcout << "catalog " << catalog->Name
 		  << ", fork: " << hex_number(dataForkLba) << endl;
 
 	NFS_FORK_STRUCT* fs_buf = new NFS_FORK_STRUCT();
@@ -965,8 +965,8 @@ VoidPtr NewFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 
 		fs_fork_data = fs_buf;
 
-		kcout << "newoskrnl.exe: ForkName: " << fs_fork_data->ForkName << endl;
-		kcout << "newoskrnl.exe: CatalogName: " << fs_fork_data->CatalogName << endl;
+		kcout << "ForkName: " << fs_fork_data->ForkName << endl;
+		kcout << "CatalogName: " << fs_fork_data->CatalogName << endl;
 
 		if (StringBuilder::Equals(forkName, fs_fork_data->ForkName) &&
 			StringBuilder::Equals(catalog->Name, fs_fork_data->CatalogName))
@@ -1028,18 +1028,18 @@ namespace Kernel::Detail
 	/***********************************************************************************/
 	Boolean fs_init_newfs(Void) noexcept
 	{
-		kcout << "newoskrnl.exe: Creating drives...\r";
+		kcout << "Creating drives...\r";
 
 		sMountpointInterface.A() = io_construct_main_drive();
 		sMountpointInterface.B() = io_construct_drive();
 		sMountpointInterface.C() = io_construct_drive();
 		sMountpointInterface.D() = io_construct_drive();
 
-		kcout << "newoskrnl.exe: Testing A:\r";
+		kcout << "Testing A:\r";
 
 		sMountpointInterface.A().fVerify(&sMountpointInterface.A().fPacket);
 
-		kcout << "newoskrnl.exe: Testing A: [ OK ]\r";
+		kcout << "Testing A: [ OK ]\r";
 
 		return true;
 	}

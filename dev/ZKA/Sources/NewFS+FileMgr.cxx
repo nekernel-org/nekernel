@@ -21,12 +21,12 @@ namespace Kernel
 		fImpl = new NewFSParser();
 		MUST_PASS(fImpl);
 
-		kcout << "newoskrnl.exe: We are done here... (NewFilesystemMgr).\r";
+		kcout << "We are done here... (NewFilesystemMgr).\r";
 	}
 
 	NewFilesystemMgr::~NewFilesystemMgr()
 	{
-		kcout << "newoskrnl.exe: Destroying it...\r";
+		kcout << "Destroying it...\r";
 
 		if (fImpl)
 		{

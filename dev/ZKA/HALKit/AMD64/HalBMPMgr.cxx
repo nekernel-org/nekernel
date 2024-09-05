@@ -37,11 +37,13 @@ namespace Kernel
 						{
 							ptr_bit_set[0] = cVMHMagic;
 							ptr_bit_set[1] = size;
+							ptr_bit_set[2] = __BIGGEST_ALIGNMENT__;
 
-							kcout << "BBP: STATUS\r";
-							kcout << "BBP: MAG: " << hex_number(ptr_bit_set[0]) << endl;
-							kcout << "BBP: ADDRESS: " << hex_number((UIntPtr)ptr_bit_set) << endl;
-							kcout << "BBP: SIZE: " << hex_number(ptr_bit_set[1]) << endl;
+							kcout << "ALLOC STATUS\r";
+							kcout << "MAG: " << hex_number(ptr_bit_set[0]) << endl;
+							kcout << "ADDRESS: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+							kcout << "SIZE: " << hex_number(ptr_bit_set[1]) << endl;
+							kcout << "ALLOC STATUS\r";
 
 							if (rw)
 								mm_update_pte(base_ptr, eFlagsRw);
@@ -49,10 +51,10 @@ namespace Kernel
 							if (user)
 								mm_update_pte(base_ptr, eFlagsUser);
 
-							return (VoidPtr)(&ptr_bit_set[2]);
+							return (VoidPtr)ptr_bit_set;
 						}
 
-						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + 1 + ptr_bit_set[1]);
+						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + __BIGGEST_ALIGNMENT__ + ptr_bit_set[1]);
 					}
 
 					return nullptr;
@@ -71,7 +73,7 @@ namespace Kernel
 
 			ptr_new = traits.FindBitMap(kKernelVirtualStart, size, rw, user);
 
-			return &((UIntPtr*)ptr_new)[1];
+			return ((UIntPtr*)ptr_new);
 		}
 
 		auto mm_free_bitmap(VoidPtr page_ptr) -> Bool
@@ -79,19 +81,21 @@ namespace Kernel
 			if (!page_ptr)
 				return false;
 
-			UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr) - 3;
+			UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
 			if (!ptr_bit_set[0] ||
 				ptr_bit_set[0] != cVMHMagic)
-					return false;
+				return false;
 
-			kcout << "BBP: FREE STATUS\r";
-			kcout << "BBP: MAG: " << hex_number(ptr_bit_set[0]) << endl;
-			kcout << "BBP: ADDRESSS: " << hex_number((UIntPtr)ptr_bit_set) << endl;
-			kcout << "BBP: SIZE: " << hex_number(ptr_bit_set[1]) << endl;
+			kcout << "FREE STATUS\r";
+			kcout << "MAG: " << hex_number(ptr_bit_set[0]) << endl;
+			kcout << "ADDRESSS: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+			kcout << "SIZE: " << hex_number(ptr_bit_set[1]) << endl;
+			kcout << "FREE STATUS\r";
 
 			ptr_bit_set[0] = 0UL;
 			ptr_bit_set[1] = 0UL;
+			ptr_bit_set[2] = __BIGGEST_ALIGNMENT__;
 
 			return true;
 		}

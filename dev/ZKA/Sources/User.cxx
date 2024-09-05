@@ -99,7 +99,7 @@ namespace Kernel
 		delete[] password;
 		password = nullptr;
 
-		kcout << "newoskrnl.exe: Saved password...\r";
+		kcout << "Saved password...\r";
 
 		return true;
 	}

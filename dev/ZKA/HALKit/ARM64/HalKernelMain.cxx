@@ -92,7 +92,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	else
 		Kernel::HAL::mp_get_cores(nullptr);
 
-	Kernel::kcout << "newoskrnl.exe: Creating filesystem and such.\r";
+	kcout << "Creating filesystem and such.\r";
 
 	auto fs = new Kernel::NewFilesystemMgr();
 

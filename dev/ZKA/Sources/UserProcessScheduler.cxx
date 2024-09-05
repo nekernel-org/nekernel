@@ -234,10 +234,11 @@ namespace Kernel
 		process.MemoryPD = reinterpret_cast<UIntPtr>(hal_read_cr3());
 #endif // __ZKA_AMD64__
 
-		process.StackFrame	 = (HAL::StackFrame*)process.New(sizeof(HAL::StackFrame));
+		process.StackFrame = (HAL::StackFrame*)process.New(sizeof(HAL::StackFrame));
 
 		if (!process.StackFrame)
 		{
+			process.Crash();
 			return -kErrorProcessFault;
 		}
 
@@ -246,16 +247,16 @@ namespace Kernel
 		{
 			process.DLLPtr = rtl_init_shared_object(&process);
 		}
-		
+
 		if (process.Image)
 		{
 			// get preferred stack size by app.
 			const auto cMaxStackSize = process.StackSize;
 			process.StackReserve	 = (UInt8*)process.New(sizeof(UInt8) * cMaxStackSize);
 
-			// if stack pointer isn't valid.
-			if (!process.StackReserve)
+			if (process.StackReserve)
 			{
+				process.Crash();
 				return -kErrorProcessFault;
 			}
 		}
@@ -296,11 +297,7 @@ namespace Kernel
 		// check if process is within range.
 		if (processSlot > mTeam.AsArray().Count())
 			return false;
-
-		// also check if the process isn't a dummy one.
-		if (mTeam.AsArray()[processSlot].Image == nullptr)
-			return false;
-
+			
 		kcout << "UserProcessScheduler: Removing process...\r";
 
 		mTeam.AsArray()[processSlot].Status = ProcessStatusKind::kDead;
@@ -427,7 +424,7 @@ namespace Kernel
 		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
 			return false;
 
-		kcout << "newoskrnl.exe: Finding hardware thread...\r";
+		kcout << "Finding hardware thread...\r";
 
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
 		{
@@ -446,7 +443,7 @@ namespace Kernel
 
 				UserProcessHelper::TheCurrentPID() = new_pid;
 
-				kcout << "newoskrnl.exe: Found hardware thread...\r";
+				kcout << "Found hardware thread...\r";
 
 				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
 

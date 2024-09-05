@@ -116,7 +116,7 @@ namespace Kernel
 				return &mD;
 			default: {
 				ErrLocal() = kErrorNoSuchDisk;
-				kcout << "newoskrnl.exe: No such disk.\n";
+				kcout << "No such disk.\n";
 
 				break;
 			}

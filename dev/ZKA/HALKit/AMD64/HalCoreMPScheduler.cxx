@@ -191,7 +191,7 @@ namespace Kernel::HAL
 			cSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
-			kcout << "newoskrnl.exe: Probing MADT cores...\r";
+			kcout << "Probing MADT cores...\r";
 
 			UIntPtr madt_address = kMADTBlock->Address;
 
@@ -205,13 +205,13 @@ namespace Kernel::HAL
 				{
 				case 0x00: {
 					cSMPCores[index] = kMADTBlock->List[index].LAPIC.ProcessorID;
-					kcout << "newoskrnl.exe: Core ID: " << number(cSMPCores[index]) << endl;
+					kcout << "Core ID: " << number(cSMPCores[index]) << endl;
 					++kSMPCount;
 					break;
 				}
 				case 0x05: {
 					madt_address = kMADTBlock->List[index].LAPIC_ADDRESS_OVERRIDE.Address;
-					kcout << "newoskrnl.exe: Address: " << number(madt_address) << endl;
+					kcout << "Address: " << number(madt_address) << endl;
 					break;
 				}
 				}
@@ -219,7 +219,7 @@ namespace Kernel::HAL
 				++index;
 			}
 
-			kcout << "newoskrnl.exe: # of cores: " << number(kSMPCount) << endl;
+			kcout << "# of cores: " << number(kSMPCount) << endl;
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)

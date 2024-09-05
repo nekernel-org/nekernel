@@ -408,7 +408,7 @@ namespace Kernel
 			}
 		}
 
-		kcout << "newoskrnl.exe: new file: " << path << ".\r";
+		kcout << "new file: " << path << ".\r";
 	}
 
 	/// @brief destructor

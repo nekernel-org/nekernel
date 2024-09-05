@@ -68,7 +68,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 	drv_std_select(IO);
 
-	Kernel::kcout << "newoskrnl.exe: Initializing drive...\r";
+	kcout << "Initializing drive...\r";
 
 ATAInit_Retry:
 	// Bus init, NEIN bit.
@@ -80,7 +80,7 @@ ATAInit_Retry:
 
 	if (statRdy & ATA_SR_ERR)
 	{
-		Kernel::kcout << "newoskrnl.exe: Failing drive...\r";
+		kcout << "Failing drive...\r";
 
 		return false;
 	}
@@ -107,7 +107,7 @@ ATAInit_Retry:
 
 	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
-	Kernel::kcout << "newoskrnl.exe: Created IDE module.\r";
+	kcout << "Created IDE module.\r";
 
 	return true;
 }

@@ -20,7 +20,7 @@ namespace Kernel
 {
 	SizeT		kHeapCount = 0UL;
 	PageMgr kHeapPageMgr;
-	Bool		kOperationInProgress = No;
+	Bool		kHeapLock = No;
 
 	/// @brief Contains data structures and algorithms for the heap.
 	namespace Detail
@@ -52,12 +52,12 @@ namespace Kernel
 
 		Void mm_alloc_init_timeout(Void) noexcept
 		{
-			kOperationInProgress = Yes;
+			kHeapLock = Yes;
 		}
 
 		Void mm_alloc_fini_timeout(Void) noexcept
 		{
-			kOperationInProgress = No;
+			kHeapLock = No;
 		}
 	} // namespace Detail
 
@@ -111,7 +111,7 @@ namespace Kernel
 		heap_info_ptr->fHeapPtr	 = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
 		heap_info_ptr->fPage	 = No;
 		heap_info_ptr->fUser	 = user;
-		heap_info_ptr->fPresent	 = No;
+		heap_info_ptr->fPresent	 = Yes;
 
 		++kHeapCount;
 
@@ -168,6 +168,7 @@ namespace Kernel
 
 		if (heap_blk && heap_blk->fMagic == kKernelHeapMagic)
 		{
+
 			if (!heap_blk->fPresent)
 			{
 				Detail::mm_alloc_fini_timeout();
@@ -195,6 +196,8 @@ namespace Kernel
 
 			PTEWrapper		 pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pteAddress{pageWrapper};
+
+			kcout << "Freeing pointer address: " << hex_number(reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK)) << endl;
 
 			kHeapPageMgr.Free(pteAddress);
 

@@ -63,12 +63,12 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 {
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
-		Kernel::kcout << "newoskrnl.exe: syscall: enter.\r";
+		kcout << "syscall: enter.\r";
 
 		if (kSyscalls[rcx].fHooked)
 			(kSyscalls[rcx].fProc)((Kernel::VoidPtr)rdx);
 
-		Kernel::kcout << "newoskrnl.exe: syscall: exit.\r";
+		kcout << "syscall: exit.\r";
 	}
 }
 
@@ -79,11 +79,11 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 {
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
-		Kernel::kcout << "newoskrnl.exe: kerncall: enter.\r";
+		kcout << "kerncall: enter.\r";
 
 		if (kKerncalls[rcx].fHooked)
 			(kKerncalls[rcx].fProc)((Kernel::VoidPtr)rdx);
 
-		Kernel::kcout << "newoskrnl.exe: kerncall: exit.\r";
+		kcout << "kerncall: exit.\r";
 	}
 }

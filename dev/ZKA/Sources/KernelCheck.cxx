@@ -99,11 +99,16 @@ namespace Kernel
 			RecoveryFactory::Recover();
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			CGDrawString("0x0000000B Catasrophic Kernel failure.", start_y, x, panicTxt);
+			CGDrawString("0x0000000B Unexpected Kernel failure.", start_y, x, panicTxt);
+			break;
+		}
+		case RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM: {
+			CGDrawString("0x10000001 Out of Virtual Memory. (Catastrophic Failure)", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			CGDrawString("0x10000001 Kernel bug-check failure.", start_y, x, panicTxt);
+			CGDrawString("0x10000001 Kernel Check.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
@@ -129,8 +134,8 @@ namespace Kernel
 	{
 		if (!expr)
 		{
-			kcout << "ASSERTION FAILED: FILE: " << file << endl;
-			kcout << "ASSERTION FAILED: LINE: " << line << endl;
+			kcout << "FAILED: FILE: " << file << endl;
+			kcout << "FAILED: LINE: " << line << endl;
 
 			ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
 		}
