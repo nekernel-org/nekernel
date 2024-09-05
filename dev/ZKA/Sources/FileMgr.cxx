@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 #include <NewKit/Utils.hxx>
 
 /// BUGS: 0
@@ -12,18 +12,18 @@
 
 namespace Kernel
 {
-	STATIC FilesystemManagerInterface* kMounted = nullptr;
+	STATIC FilesystemMgrInterface* kMounted = nullptr;
 
-	/// @brief FilesystemManager getter.
+	/// @brief FilesystemMgr getter.
 	/// @return The mounted filesystem.
-	_Output FilesystemManagerInterface* FilesystemManagerInterface::GetMounted()
+	_Output FilesystemMgrInterface* FilesystemMgrInterface::GetMounted()
 	{
 		return kMounted;
 	}
 
 	/// @brief Unmount filesystem.
 	/// @return The unmounted filesystem.
-	_Output FilesystemManagerInterface* FilesystemManagerInterface::Unmount()
+	_Output FilesystemMgrInterface* FilesystemMgrInterface::Unmount()
 	{
 		if (kMounted)
 		{
@@ -39,7 +39,7 @@ namespace Kernel
 	/// @brief Mount filesystem.
 	/// @param mount_ptr The filesystem to mount.
 	/// @return if it succeeded true, otherwise false.
-	bool FilesystemManagerInterface::Mount(_Input FilesystemManagerInterface* mount_ptr)
+	bool FilesystemMgrInterface::Mount(_Input FilesystemMgrInterface* mount_ptr)
 	{
 		if (mount_ptr != nullptr)
 		{
@@ -50,12 +50,12 @@ namespace Kernel
 		return false;
 	}
 
-#ifdef __FSKIT_USE_NEWFS__
+#ifdef __FSKIT_USE_NEFS__
 	/// @brief Opens a new file.
 	/// @param path
 	/// @param r
 	/// @return
-	_Output NodePtr NewFilesystemManager::Open(_Input const Char* path, _Input const Char* r)
+	_Output NodePtr NewFilesystemMgr::Open(_Input const Char* path, _Input const Char* r)
 	{
 		if (!path || *path == 0)
 			return nullptr;
@@ -73,14 +73,14 @@ namespace Kernel
 	/// @param data the data.
 	/// @param flags the size.
 	/// @return
-	Void NewFilesystemManager::Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size)
+	Void NewFilesystemMgr::Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size)
 	{
 		if (!node)
 			return;
 		if (!size)
 			return;
 
-		constexpr auto cDataForkName = kNewFSDataFork;
+		constexpr auto cDataForkName = kNeFSDataFork;
 		this->Write(cDataForkName, node, data, flags, size);
 	}
 
@@ -89,25 +89,25 @@ namespace Kernel
 	/// @param flags the flags with it.
 	/// @param sz the size to read.
 	/// @return
-	_Output VoidPtr NewFilesystemManager::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
+	_Output VoidPtr NewFilesystemMgr::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
 	{
 		if (!node)
 			return nullptr;
 		if (!size)
 			return nullptr;
 
-		constexpr auto cDataForkName = kNewFSDataFork;
+		constexpr auto cDataForkName = kNeFSDataFork;
 		return this->Read(cDataForkName, node, flags, size);
 	}
 
-	Void NewFilesystemManager::Write(_Input const Char* name,
+	Void NewFilesystemMgr::Write(_Input const Char* name,
 									 _Input NodePtr		node,
 									 _Input VoidPtr		data,
 									 _Input Int32		flags,
 									 _Input SizeT		size)
 	{
 		if (!size ||
-			size > kNewFSForkSize)
+			size > kNeFSForkSize)
 			return;
 
 		if (!data)
@@ -115,17 +115,17 @@ namespace Kernel
 
 		ZKA_UNUSED(flags);
 
-		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
+		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
 			fImpl->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & cFileFlagRsrc ? true : false), data, size,
 								name);
 	}
 
-	_Output VoidPtr NewFilesystemManager::Read(_Input const Char* name,
+	_Output VoidPtr NewFilesystemMgr::Read(_Input const Char* name,
 											   _Input NodePtr	  node,
 											   _Input Int32		  flags,
 											   _Input SizeT		  sz)
 	{
-		if (sz > kNewFSForkSize)
+		if (sz > kNeFSForkSize)
 			return nullptr;
 
 		if (!sz)
@@ -133,7 +133,7 @@ namespace Kernel
 
 		ZKA_UNUSED(flags);
 
-		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
+		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
 			return fImpl->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & cFileFlagRsrc ? true : false), sz,
 									  name);
 
@@ -146,7 +146,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	_Output Bool NewFilesystemManager::Seek(NodePtr node, SizeT off)
+	_Output Bool NewFilesystemMgr::Seek(NodePtr node, SizeT off)
 	{
 		if (!node || off == 0)
 			return false;
@@ -159,7 +159,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	_Output SizeT NewFilesystemManager::Tell(NodePtr node)
+	_Output SizeT NewFilesystemMgr::Tell(NodePtr node)
 	{
 		if (!node)
 			return kNPos;
@@ -172,7 +172,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	_Output Bool NewFilesystemManager::Rewind(NodePtr node)
+	_Output Bool NewFilesystemMgr::Rewind(NodePtr node)
 	{
 		if (!node)
 			return false;
@@ -182,9 +182,9 @@ namespace Kernel
 
 	/// @brief Returns the filesystem parser.
 	/// @return the Filesystem parser class.
-	_Output NewFSParser* NewFilesystemManager::GetParser() noexcept
+	_Output NeFSParser* NewFilesystemMgr::GetParser() noexcept
 	{
 		return fImpl;
 	}
-#endif // __FSKIT_USE_NEWFS__
+#endif // __FSKIT_USE_NEFS__
 } // namespace Kernel

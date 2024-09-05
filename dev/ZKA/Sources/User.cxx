@@ -13,7 +13,7 @@
 #include <KernelKit/LPC.hxx>
 #include <KernelKit/User.hxx>
 #include <NewKit/KernelCheck.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 
 #include <KernelKit/Heap.hxx>
@@ -77,7 +77,6 @@ namespace Kernel
 		SizeT len = rt_string_len(password_to_fill);
 
 		Char* password = new Char[len];
-
 		MUST_PASS(password);
 
 		// fill data first, generate hash.
@@ -100,7 +99,7 @@ namespace Kernel
 		delete[] password;
 		password = nullptr;
 
-		kcout << "newoskrnl.exe: Saved password...\r";
+		kcout << "Saved password...\r";
 
 		return true;
 	}

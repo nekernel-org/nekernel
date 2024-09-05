@@ -13,6 +13,9 @@
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+
+	Kernel::UserProcessHelper::StartScheduling();
+	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Handle page fault.
@@ -20,7 +23,14 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+
+	Kernel::UserProcessHelper::StartScheduling();
 	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
+}
+
+EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
+{
+	Kernel::UserProcessHelper::StartScheduling();
 }
 
 /// @brief Handle math fault.
@@ -28,6 +38,8 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+
+	Kernel::UserProcessHelper::StartScheduling();
 	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
@@ -44,6 +56,8 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+
+	Kernel::UserProcessHelper::StartScheduling();
 	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
@@ -54,12 +68,12 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 {
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
-		Kernel::kcout << "newoskrnl.exe: syscall: enter.\r";
+		kcout << "syscall: enter.\r";
 
 		if (kSyscalls[rcx].fHooked)
 			(kSyscalls[rcx].fProc)((Kernel::VoidPtr)rdx);
 
-		Kernel::kcout << "newoskrnl.exe: syscall: exit.\r";
+		kcout << "syscall: exit.\r";
 	}
 }
 
@@ -70,11 +84,11 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 {
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
-		Kernel::kcout << "newoskrnl.exe: kerncall: enter.\r";
+		kcout << "kerncall: enter.\r";
 
 		if (kKerncalls[rcx].fHooked)
 			(kKerncalls[rcx].fProc)((Kernel::VoidPtr)rdx);
 
-		Kernel::kcout << "newoskrnl.exe: kerncall: exit.\r";
+		kcout << "kerncall: exit.\r";
 	}
 }

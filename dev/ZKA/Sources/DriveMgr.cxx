@@ -5,18 +5,21 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.hxx>
-#include <KernelKit/DriveManager.hxx>
-#include <Modules/ATA/ATA.hxx>
-#include <Modules/AHCI/AHCI.hxx>
+#include <KernelKit/DriveMgr.hxx>
 #include <NewKit/Utils.hxx>
 
-/// @file DriveManager.cxx
+
+#include <Modules/ATA/ATA.hxx>
+#include <Modules/AHCI/AHCI.hxx>
+#include <Modules/NVME/Defines.hxx>
+
+/// @file DriveMgr.cxx
 /// @brief Kernel drive manager.
 
 namespace Kernel
 {
-	static UInt16 kATAIO	 = 0U;
-	static UInt8  kATAMaster = 0U;
+	STATIC UInt16 kATAIO	 = 0U;
+	STATIC UInt8  kATAMaster = 0U;
 
 	/// @brief reads from an ATA drive.
 	/// @param pckt
@@ -106,6 +109,7 @@ namespace Kernel
 	/// @return
 	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt)
 	{
+		ZKA_UNUSED(pckt);
 	}
 
 	/// @brief Makes a new drive.
@@ -139,7 +143,7 @@ namespace Kernel
 		trait.fVerify	 = ke_drv_check_disk;
 		trait.fDriveKind = io_drive_kind;
 
-		kcout << "newoskrnl.exe: Construct drive with success.\r";
+		kcout << "Construct drive with success.\r";
 
 		return trait;
 	}

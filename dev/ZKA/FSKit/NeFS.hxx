@@ -2,14 +2,14 @@
 
 	Copyright ZKA Technologies.
 
-	File: NewFS.hxx
-	Purpose:
+	FILE: NeFS.hxx
+	PURPOSE: NeFS (New FileSystem) support, can be used with kernel, HPFS is preferred.
 
 	Revision History:
 
 	?/?/?: Added file (amlel)
 	12/02/24: Add UUID macro for EPM and GPT partition schemes.
-	3/16/24: Add mandatory sector size, kNewFSSectorSz is set to 2048 by
+	3/16/24: Add mandatory sector size, kNeFSSectorSz is set to 2048 by
 default.
 
 ------------------------------------------- */
@@ -18,7 +18,7 @@ default.
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
-#include <KernelKit/DriveManager.hxx>
+#include <KernelKit/DriveMgr.hxx>
 #include <NewKit/Defines.hxx>
 
 /**
@@ -26,68 +26,69 @@ default.
 	@author Amlal EL Mahrouss
 */
 
-#define kNewFSInvalidFork	 (-1)
-#define kNewFSInvalidCatalog (-1)
-#define kNewFSNodeNameLen	 (256)
+#define kNeFSInvalidFork	 (-1)
+#define kNeFSInvalidCatalog (-1)
+#define kNeFSNodeNameLen	 (256)
 
-#define kNewFSSectorSz (512)
-#define kNewFSForkSz   (8192)
+#define kNeFSSectorSz (512)
+#define kNeFSForkDataSz   (kib_cast(8))
 
-#define kNewFSIdentLen (8)
-#define kNewFSIdent	   " NewFS"
-#define kNewFSPadLen   (400)
+#define kNeFSIdentLen (8)
+#define kNeFSIdent	   "  NeFS"
+#define kNeFSPadLen   (392)
 
-#define kNewFSMetaFilePrefix '$'
+#define kNeFSMetaFilePrefix '$'
 
-#define kNewFSVersionInteger (0x0128)
-#define kNewFSVerionString	 "1.28"
+#define kNeFSVersionInteger (0x0128)
+#define kNeFSVerionString	 "1.28"
 
 /// @brief Standard fork types.
-#define kNewFSDataFork	   "main_data"
-#define kNewFSResourceFork "main_rsrc"
+#define kNeFSDataFork	   "main_data"
+#define kNeFSResourceFork "main_rsrc"
 
-#define kNewFSCatalogKindFile  (1)
-#define kNewFSCatalogKindDir   (2)
-#define kNewFSCatalogKindAlias (3)
+#define kNeFSCatalogKindFile  (1)
+#define kNeFSCatalogKindDir   (2)
+#define kNeFSCatalogKindAlias (3)
 
-#define kNewFSForkSize (512)
+#define kNeFSForkSize (512)
 
 //! shared between network or
 //! other filesystems. Export forks as .zip when copying.
-#define kNewFSCatalogKindShared (4)
+#define kNeFSCatalogKindShared (4)
 
-#define kNewFSCatalogKindResource	(5)
-#define kNewFSCatalogKindExecutable (6)
+#define kNeFSCatalogKindResource	(5)
+#define kNeFSCatalogKindExecutable (6)
 
-#define kNewFSCatalogKindPage (8)
+#define kNeFSCatalogKindPage (8)
 
-#define kNewFSPartitionTypeStandard (7)
-#define kNewFSPartitionTypePage		(8)
-#define kNewFSPartitionTypeBoot		(9)
+#define kNeFSPartitionTypeStandard (7)
+#define kNeFSPartitionTypePage		(8)
+#define kNeFSPartitionTypeBoot		(9)
 
-#define kNewFSCatalogKindDevice (9)
-#define kNewFSCatalogKindLock	(10)
+#define kNeFSCatalogKindDevice (9)
+#define kNeFSCatalogKindLock	(10)
 
-#define kNewFSCatalogKindRLE (11)
+#define kNeFSCatalogKindRLE (11)
+#define kNeFSCatalogKindMetaFile (12)
+#define kNeFSCatalogKindTTF (13)
+#define kNeFSCatalogKindRIFF (14)
 
-#define kNewFSCatalogKindMetaFile (12)
+#define kNeFSSeparator	   '\\'
+#define kNeFSSeparatorAlt '/'
 
-#define kNewFSSeparator	   '\\'
-#define kNewFSSeparatorAlt '/'
+#define kNeFSUpDir	  ".."
+#define kNeFSRoot	  "\\"
+#define kNeFSRootAlt "/"
 
-#define kNewFSUpDir	  ".."
-#define kNewFSRoot	  "\\"
-#define kNewFSRootAlt "/"
+#define kNeFSLF  '\r'
+#define kNeFSEOF (-1)
 
-#define kNewFSLF  '\r'
-#define kNewFSEOF (-1)
-
-#define kNewFSBitWidth (sizeof(Kernel::Char))
-#define kNewFSLbaType  (Kernel::Lba)
+#define kNeFSBitWidth (sizeof(Kernel::Char))
+#define kNeFSLbaType  (Kernel::Lba)
 
 /// Start After the PM headers, pad 1024 bytes.
-#define kNewFSRootCatalogStartAddress (1024)
-#define kNewFSCatalogStartAddress	  ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK))
+#define kNeFSRootCatalogStartAddress (1024)
+#define kNeFSCatalogStartAddress	  ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK))
 
 #define kResourceTypeDialog (10)
 #define kResourceTypeString (11)
@@ -96,13 +97,13 @@ default.
 #define kConfigLen (64)
 #define kPartLen   (32)
 
-#define kNewFSFlagDeleted	  (70)
-#define kNewFSFlagUnallocated (0)
-#define kNewFSFlagCreated	  (71)
+#define kNeFSFlagDeleted	  (70)
+#define kNeFSFlagUnallocated (0)
+#define kNeFSFlagCreated	  (71)
 
-#define kNewFSMimeNameLen (200)
+#define kNeFSMimeNameLen (200)
 
-#define kNewFSForkNameLen (200U)
+#define kNeFSForkNameLen (200U)
 
 struct NFS_CATALOG_STRUCT;
 struct NFS_FORK_STRUCT;
@@ -110,21 +111,21 @@ struct NFS_ROOT_PARTITION_BLOCK;
 
 enum
 {
-	kNewFSHardDrive			= 0xC0, // Hard Drive
-	kNewFSSolidStateDrive	= 0xC1, // Solid State Drive
-	kNewFSOpticalDrive		= 0x0C, // Blu-Ray/DVD
-	kNewFSMassStorageDevice = 0xCC, // USB
-	kNewFSScsi				= 0xC4, // SCSI Hard Drive
-	kNewFSFlashDrive		= 0xC6,
-	kNewFSUnknown			= 0xFF, // Unknown device.
-	kNewFSDriveCount		= 7,
+	kNeFSHardDrive			= 0xC0, // Hard Drive
+	kNeFSSolidStateDrive	= 0xC1, // Solid State Drive
+	kNeFSOpticalDrive		= 0x0C, // Blu-Ray/DVD
+	kNeFSMassStorageDevice = 0xCC, // USB
+	kNeFSScsi				= 0xC4, // SCSI Hard Drive
+	kNeFSFlashDrive		= 0xC6,
+	kNeFSUnknown			= 0xFF, // Unknown device.
+	kNeFSDriveCount		= 7,
 };
 
 /// @brief Catalog type.
 struct PACKED NFS_CATALOG_STRUCT final
 {
-	Kernel::Char Name[kNewFSNodeNameLen];
-	Kernel::Char Mime[kNewFSMimeNameLen];
+	Kernel::Char Name[kNeFSNodeNameLen];
+	Kernel::Char Mime[kNeFSMimeNameLen];
 
 	/// Catalog status flag.
 	Kernel::UInt16 Flags;
@@ -152,8 +153,8 @@ struct PACKED NFS_CATALOG_STRUCT final
 /// whereas the data fork is reserved for file data.
 struct PACKED NFS_FORK_STRUCT final
 {
-	Kernel::Char ForkName[kNewFSForkNameLen];
-	Kernel::Char CatalogName[kNewFSNodeNameLen];
+	Kernel::Char ForkName[kNeFSForkNameLen];
+	Kernel::Char CatalogName[kNeFSNodeNameLen];
 
 	Kernel::Int32 Flags;
 	Kernel::Int32 Kind;
@@ -172,7 +173,7 @@ struct PACKED NFS_FORK_STRUCT final
 /// @brief Partition block type
 struct PACKED NFS_ROOT_PARTITION_BLOCK final
 {
-	Kernel::Char Ident[kNewFSIdentLen];
+	Kernel::Char Ident[kNeFSIdentLen];
 	Kernel::Char PartitionName[kPartLen];
 
 	Kernel::Int32 Flags;
@@ -193,41 +194,41 @@ struct PACKED NFS_ROOT_PARTITION_BLOCK final
 
 	Kernel::Lba EpmBlock;
 
-	Kernel::Char Pad[kNewFSPadLen - sizeof(Kernel::Lba)];
+	Kernel::Char Pad[kNeFSPadLen];
 };
 
 namespace Kernel
 {
 	enum
 	{
-		kNewFSSubDriveA,
-		kNewFSSubDriveB,
-		kNewFSSubDriveC,
-		kNewFSSubDriveD,
-		kNewFSSubDriveInvalid,
-		kNewFSSubDriveCount,
+		kNeFSSubDriveA,
+		kNeFSSubDriveB,
+		kNeFSSubDriveC,
+		kNeFSSubDriveD,
+		kNeFSSubDriveInvalid,
+		kNeFSSubDriveCount,
 	};
 
 	/// \brief Resource fork kind.
 	enum
 	{
-		kNewFSRsrcForkKind = 0,
-		kNewFSDataForkKind = 1
+		kNeFSRsrcForkKind = 0,
+		kNeFSDataForkKind = 1
 	};
 
 	///
-	/// \name NewFSParser
-	/// \brief NewFS parser class. (catalog creation, remove removal, root,
+	/// \name NeFSParser
+	/// \brief NeFS parser class. (catalog creation, remove removal, root,
 	/// forks...) Designed like the DOM, detects the filesystem automatically.
 	///
-	class NewFSParser final
+	class NeFSParser final
 	{
 	public:
-		explicit NewFSParser() = default;
-		~NewFSParser()		   = default;
+		explicit NeFSParser() = default;
+		~NeFSParser()		   = default;
 
 	public:
-		ZKA_COPY_DEFAULT(NewFSParser);
+		ZKA_COPY_DEFAULT(NeFSParser);
 
 	public:
 		/// @brief Creates a new fork inside the New filesystem partition.
@@ -278,13 +279,13 @@ namespace Kernel
 
 		bool CloseCatalog(_InOut NFS_CATALOG_STRUCT* catalog);
 
-		/// @brief Make a EPM+NewFS drive out of the disk.
+		/// @brief Make a EPM+NeFS drive out of the disk.
 		/// @param drive The drive to write on.
 		/// @return If it was sucessful, see ErrLocal().
 		bool Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name);
 
 	public:
-		Int32 fDriveIndex{kNewFSSubDriveA};
+		Int32 fDriveIndex{kNeFSSubDriveA};
 	};
 
 	///

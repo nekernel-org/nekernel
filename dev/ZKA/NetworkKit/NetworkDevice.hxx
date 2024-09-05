@@ -7,7 +7,7 @@
 #ifndef __INC_NETWORK_DEVICE_HPP__
 #define __INC_NETWORK_DEVICE_HPP__
 
-#include <KernelKit/DeviceManager.hxx>
+#include <KernelKit/DeviceMgr.hxx>
 #include <NetworkKit/IP.hxx>
 
 /// @note Can either work with: Ethernet, GPRS, WiFi

@@ -7,7 +7,7 @@
  *  ========================================================
  */
 
-#include <KernelKit/DLLInterface.hxx>
+#include <KernelKit/IDLLObject.hxx>
 #include <KernelKit/DebugOutput.hxx>
 
 #include <KernelKit/UserProcessScheduler.hxx>

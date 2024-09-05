@@ -56,11 +56,10 @@ namespace Kernel::HAL
 	/// @brief Virtual memory flags.
 	enum
 	{
-		eFlagsPresent,
-		eFlagsUser,
-		eFlagsRw,
-		eFlagsExecDisable,
-		eFlagsCount,
+		eFlagsPresent = 0x01,
+		eFlagsRw = 0x02,
+		eFlagsUser = 0x04,
+		eFlagsCount = 0x3,
 	};
 
 	/// @brief Updates a PTE from pd_base.
@@ -102,15 +101,15 @@ namespace Kernel::HAL
 	/// @brief Stack frame (as retrieved from assembly.)
 	struct PACKED StackFrame final
 	{
-		UIntPtr R8{0};
-		UIntPtr R9{0};
-		UIntPtr R10{0};
-		UIntPtr FS{0};
-		UIntPtr R12{0};
-		UIntPtr R13{0};
-		UIntPtr R14{0};
-		UIntPtr R15{0};
-		UIntPtr GS{0};
+		RawRegister R8{0};
+		RawRegister R9{0};
+		RawRegister R10{0};
+		RawRegister FS{0};
+		RawRegister R12{0};
+		RawRegister R13{0};
+		RawRegister R14{0};
+		RawRegister R15{0};
+		RawRegister GS{0};
 	};
 
 	typedef StackFrame* StackFramePtr;
@@ -293,7 +292,6 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 #define kKernelIdtSize	   0x100
 #define kKernelInterruptId 0x32
 
-inline Kernel::VoidPtr kKernelVMHStart	   = nullptr;
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
 inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
 

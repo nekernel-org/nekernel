@@ -96,7 +96,7 @@ namespace Kernel::HAL
 		LongDescLevel3 ALIGN(kPTEAlign) Pte[kPTEMax];
 	};
 
-	VoidPtr hal_alloc_page(Boolean rw, Boolean user, SizeT size);
+	VoidPtr mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size);
 } // namespace Kernel::HAL
 
 namespace Kernel

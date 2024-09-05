@@ -10,7 +10,7 @@
 #include <KernelKit/PEF.hxx>
 #include <NewKit/ErrorOr.hxx>
 #include <NewKit/String.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 
 #define kPefApplicationMime "application/x-newos-exec"
 
@@ -46,11 +46,11 @@ namespace Kernel
 		bool IsLoaded() noexcept;
 
 	private:
-#ifdef __FSKIT_USE_NEWFS__
-		OwnPtr<FileStream<Char, NewFilesystemManager>> fFile;
+#ifdef __FSKIT_USE_NEFS__
+		OwnPtr<FileStream<Char, NewFilesystemMgr>> fFile;
 #else
 		OwnPtr<FileStream<Char>> fFile;
-#endif // __FSKIT_USE_NEWFS__
+#endif // __FSKIT_USE_NEFS__
 
 		Ref<StringView> fPath;
 		VoidPtr			fCachedBlob;

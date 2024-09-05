@@ -2,6 +2,11 @@
 
 	Copyright ZKA Technologies.
 
+	FILE: IFSMain.rs
+	PURPOSE: HPFS IFS.
+
 ------------------------------------------- */
 
-#include <KernelKit/DeviceManager.hxx>
+fn IFSStart() {
+    
+}

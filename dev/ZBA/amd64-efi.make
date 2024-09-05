@@ -29,14 +29,14 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -m 8G -M q35 -cpu qemu64 \
+EMU_FLAGS=-net none -m 8G -M q35 \
 			-bios $(BIOS) -device piix3-ide,id=ide \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-device ide-hd,drive=disk,bus=ide.0 -drive \
 			file=fat:rw:Sources/Root/,index=2,format=raw \
 			-drive id=disk_2,file=$(IMG_2),if=none \
             -device ahci,id=ahci \
-            -device ide-hd,drive=disk_2,bus=ahci.0 -d int
+            -device ide-hd,drive=disk_2,bus=ahci.0 -serial stdio -no-reboot
 
 LD_FLAGS=-e Main --subsystem=10
 

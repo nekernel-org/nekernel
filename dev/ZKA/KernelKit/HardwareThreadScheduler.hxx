@@ -103,7 +103,7 @@ namespace Kernel
 							 operator bool() noexcept;
 
 	public:
-		/// @brief Shared instance of the MP Manager.
+		/// @brief Shared instance of the MP Mgr.
 		/// @return the reference to the mp manager class.
 		STATIC HardwareThreadScheduler& The();
 

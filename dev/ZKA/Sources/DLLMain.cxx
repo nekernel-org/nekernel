@@ -11,18 +11,18 @@
 #include <ArchKit/ArchKit.hxx>
 #include <CompilerKit/Detail.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEF.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Json.hxx>
 #include <NewKit/KernelCheck.hxx>
 #include <NewKit/String.hxx>
 #include <NewKit/Utils.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/CodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
+#include <KernelKit/CodeMgr.hxx>
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/WindowRenderer.hxx>
 #include <KernelKit/Timer.hxx>
@@ -44,25 +44,25 @@ namespace Kernel::Detail
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
 	class FilesystemInstaller final
 	{
-		Kernel::NewFilesystemManager* fNewFS{nullptr};
+		Kernel::NewFilesystemMgr* fNeFS{nullptr};
 
 	public:
 		/// @brief wizard constructor.
 		explicit FilesystemInstaller()
 		{
-			if (Kernel::FilesystemManagerInterface::GetMounted())
+			if (Kernel::FilesystemMgrInterface::GetMounted())
 			{
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: NewFS IFS already mounted by HAL (A:)", 10, 10, RGB(0, 0, 0));
-				fNewFS = reinterpret_cast<Kernel::NewFilesystemManager*>(Kernel::FilesystemManagerInterface::GetMounted());
+				CG::CGDrawStringToWnd(cKernelWnd, "NeFS IFS already mounted by HAL (A:)", 10, 10, RGB(0, 0, 0));
+				fNeFS = reinterpret_cast<Kernel::NewFilesystemMgr*>(Kernel::FilesystemMgrInterface::GetMounted());
 			}
 			else
 			{
-				// Mounts a NewFS from main drive.
-				fNewFS = new Kernel::NewFilesystemManager();
+				// Mounts a NeFS from main drive.
+				fNeFS = new Kernel::NewFilesystemMgr();
 
-				Kernel::FilesystemManagerInterface::Mount(fNewFS);
+				Kernel::FilesystemMgrInterface::Mount(fNeFS);
 
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Mounted NewFS IFS (A:)", 10, 10, RGB(0, 0, 0));
+				CG::CGDrawStringToWnd(cKernelWnd, "Mounted NeFS IFS (A:)", 10, 10, RGB(0, 0, 0));
 			}
 
 			const Kernel::SizeT cDirCount = 7UL;
@@ -71,69 +71,29 @@ namespace Kernel::Detail
 				"\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
 				"\\Users\\", "\\Library\\", "\\Mount\\"};
 
-			if (fNewFS->GetParser())
+			if (fNeFS->GetParser())
 			{
 				for (Kernel::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
 				{
-					auto catalogDir = fNewFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
+					auto catalogDir = fNeFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
 
 					if (catalogDir)
 					{
-						CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Catalog directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.exe: Catalog directory already exists: ")), RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, "Directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("Directory already exists: ")), RGB(0, 0, 0));
 
 						delete catalogDir;
 						continue;
 					}
 
-					catalogDir = fNewFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
-																	kNewFSCatalogKindDir);
+					catalogDir = fNeFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
+																	kNeFSCatalogKindDir);
 
-					CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Catalog directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.exe: Catalog directory has been created: ")), RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, "Directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("Directory has been created: ")), RGB(0, 0, 0));
 
 					delete catalogDir;
 				}
-			}
-
-			NFS_CATALOG_STRUCT* catalogDisk =
-				this->fNewFS->GetParser()->GetCatalog(kSysPage);
-			const Kernel::Char* cSrcName = "8K_SYS_PAGE_KERNEL";
-
-			if (catalogDisk)
-			{
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Catalog swap file already exists: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
-				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.exe: Catalog swap file already exists: ")), RGB(0, 0, 0));
-
-				delete catalogDisk;
-			}
-			else
-			{
-				CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Catalog swap file created: ", 10 + (10 * (cDirCount + 1)), 10, RGB(0, 0, 0));
-				CG::CGDrawStringToWnd(cKernelWnd, kSysPage, 10 + (10 * (cDirCount + 1)), 10 + (FONT_SIZE_X * rt_string_len("newoskrnl.exe: Catalog swap file created: ")), RGB(0, 0, 0));
-
-				catalogDisk =
-					(NFS_CATALOG_STRUCT*)this->Leak()->CreateSwapFile(kSysPage);
-
-				NFS_FORK_STRUCT theDiskFork{0};
-
-				Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theDiskFork.ForkName,
-									   Kernel::rt_string_len(cSrcName));
-
-				Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDisk->Name),
-									   theDiskFork.CatalogName,
-									   Kernel::rt_string_len(catalogDisk->Name));
-
-				Kernel::Size sz_hdr = kNewFSForkSz;
-
-				theDiskFork.DataSize	 = sz_hdr;
-				theDiskFork.ResourceId	 = kNewFSCatalogKindExecutable | kNewFSCatalogKindPage;
-				theDiskFork.ResourceKind = Kernel::kNewFSDataForkKind;
-				theDiskFork.Kind		 = Kernel::kNewFSDataForkKind;
-
-				fNewFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
-
-				delete catalogDisk;
 			}
 		}
 
@@ -141,23 +101,20 @@ namespace Kernel::Detail
 
 		ZKA_COPY_DEFAULT(FilesystemInstaller);
 
-		/// @brief Grab the disk's NewFS reference.
-		/// @return NewFilesystemManager the filesystem interface
-		Kernel::NewFilesystemManager* Leak()
+		/// @brief Grab the disk's NeFS reference.
+		/// @return NewFilesystemMgr the filesystem interface
+		Kernel::NewFilesystemMgr* Leak()
 		{
-			return fNewFS;
+			return fNeFS;
 		}
 	};
 } // namespace Kernel::Detail
 
-namespace Kernel
+EXTERN_C ATTRIBUTE(naked) Kernel::Void HangCPU(Kernel::Void)
 {
-	EXTERN UserProcessScheduler* cProcessScheduler;
-} // namespace Kernel
-
-EXTERN_C Kernel::Void HangCPU(Kernel::Void)
-{
-	while (1);
+	while (Yes)
+	{
+	}
 }
 
 /// @brief Application entrypoint.
@@ -186,14 +143,12 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawWindowList(&cKernelWnd, 1);
 
-	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Running System Component: ", 10, 10, RGB(0, 0, 0));
-	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("newoskrnl.exe: Running System Component: ")), RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, "Running System Component: ", 10, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("Running System Component: ")), RGB(0, 0, 0));
 
-	/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
-	Kernel::cProcessScheduler = nullptr;
-	Kernel::UserProcessHelper::StartScheduling();
+	CG::CGDrawStringToWnd(cKernelWnd, "Starting ZKA System...", 20, 10, RGB(0, 0, 0));
 
-	CG::CGDrawStringToWnd(cKernelWnd, "newoskrnl.exe: Starting ZKA System...", 20, 10, RGB(0, 0, 0));
+	Kernel::UserProcessHelper::Init();
 
 	Kernel::sched_execute_thread(HangCPU, "HANG TEST");
 
@@ -201,6 +156,4 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	{
 		Kernel::UserProcessHelper::StartScheduling();
 	}
-
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

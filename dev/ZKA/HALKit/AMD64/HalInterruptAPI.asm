@@ -141,12 +141,7 @@ IntNormal 38
 IntNormal 39
 IntNormal 40
 
-extern mp_system_call_handler
-
-__ZKA_INT_41:
-    cmp rcx, 0
-    jne mp_system_call_handler
-    iretq
+IntNormal 41
 
 IntNormal 42
 IntNormal 43
@@ -222,17 +217,18 @@ section .text
 
 hal_load_gdt:
     lgdt [rcx]
-    push 0x08
-    lea rax, [rel rt_reload_segments]
-    push rax
+    cli
+    push 8
+    push hal_reload_segments
     o64 retf
-rt_reload_segments:
-    mov ax, 0x10
+hal_reload_segments:
+    mov ax, 16
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
     mov ss, ax
+    sti
     ret
 
 global hal_load_idt

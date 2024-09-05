@@ -15,7 +15,7 @@
 
 namespace Kernel
 {
-	class PageManager;
+	class PageMgr;
 
 	class PTEWrapper final
 	{
@@ -31,7 +31,9 @@ namespace Kernel
 		const UIntPtr VirtualAddress();
 
 		void		NoExecute(const bool enable = false);
-		const bool& NoExecute();
+		const Bool& NoExecute();
+
+		operator bool() { return fVirtAddr; }
 
 		bool Reclaim();
 		bool Shareable();
@@ -50,25 +52,25 @@ namespace Kernel
 		Boolean fAccessed;
 
 	private:
-		friend class PageManager;
+		friend class PageMgr;
 		friend class Pmm;
 	};
 
-	struct PageManager final
+	struct PageMgr final
 	{
 	public:
-		PageManager()  = default;
-		~PageManager() = default;
+		PageMgr()  = default;
+		~PageMgr() = default;
 
-		PageManager& operator=(const PageManager&) = default;
-		PageManager(const PageManager&)			   = default;
+		PageMgr& operator=(const PageMgr&) = default;
+		PageMgr(const PageMgr&)			   = default;
 
 	public:
 		PTEWrapper Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz);
-		bool	   Free(Ref<PTEWrapper*>& wrapper);
+		bool	   Free(Ref<PTEWrapper>& wrapper);
 
 	private:
-		void FlushTLB(UIntPtr VirtAddr);
+		void FlushTLB();
 
 	private:
 		friend PTEWrapper;

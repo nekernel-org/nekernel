@@ -15,12 +15,15 @@ namespace Kernel::HAL
 
 		STATIC Void hal_remap_intel_pic_ctrl(Void) noexcept
 		{
-			// Remap PIC.
+			auto a1 = HAL::In8(0xa1);                        // save masks
+			auto a2 = HAL::In8(0xa2);
+
 			HAL::Out8(0x20, 0x11);
+			
 			HAL::Out8(0xA0, 0x11);
 
-			HAL::Out8(0x21, 40);
-			HAL::Out8(0xA1, 32);
+			HAL::Out8(0x21, 32);
+			HAL::Out8(0xA1, 40);
 
 			HAL::Out8(0x21, 4);
 			HAL::Out8(0xA1, 2);
@@ -28,8 +31,8 @@ namespace Kernel::HAL
 			HAL::Out8(0x21, 0x01);
 			HAL::Out8(0xA1, 0x01);
 
-			HAL::Out8(0x21, 0xFD);
-			HAL::Out8(0xA1, 0xFF);
+			HAL::Out8(0x21, a2);
+			HAL::Out8(0xA1, a1);
 		}
 	} // namespace Detail
 
@@ -47,8 +50,6 @@ namespace Kernel::HAL
 
 		for (UInt16 idt_indx = 0; idt_indx < 12; ++idt_indx)
 		{
-			MUST_PASS(ptr_ivt[idt_indx]);
-
 			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtKernelCodeSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
 			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kTrapGate;
@@ -62,8 +63,6 @@ namespace Kernel::HAL
 
 		for (UInt16 idt_indx = 13; idt_indx < kKernelIdtSize; ++idt_indx)
 		{
-			MUST_PASS(ptr_ivt[idt_indx]);
-
 			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtKernelCodeSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
 			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kInterruptGate;
@@ -77,7 +76,8 @@ namespace Kernel::HAL
 
 		hal_load_idt(idt);
 
-		Detail::hal_remap_intel_pic_ctrl();
+		HAL::Out8(0xA1, 0xFF);
+		HAL::Out8(0x21, 0xFF);
 	}
 
 	void GDTLoader::Load(Ref<RegisterGDT>& gdt)

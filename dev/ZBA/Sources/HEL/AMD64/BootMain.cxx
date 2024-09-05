@@ -79,6 +79,8 @@ STATIC Bool CheckBootDevice(BootDeviceATA& ataDev)
 	return true;
 }
 
+EXTERN_C Void write_cr3(VoidPtr new_cr3);
+
 /// @brief Main EFI entrypoint.
 /// @param ImageHandle Handle of this image.
 /// @param SystemTable The system table of it.
@@ -152,6 +154,27 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
 	// Fill handover header now.
 
+	BDiskFormatFactory<BootDeviceATA> checkPart;
+
+	// ---------------------------------------------------- //
+	// The following checks for an exisiting partition
+	// inside the disk, if it doesn't have one,
+	// format the disk.
+	// ---------------------------------------------------- //
+
+	if (!checkPart.IsPartitionValid())
+	{
+		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
+		root.fFileName[0] = kNeFSRoot[0];
+		root.fFileName[1] = 0;
+
+		root.fKind = kNeFSCatalogKindDir;
+
+		checkPart.Format("ZKA (A:)", &root, 1);
+
+		rt_reset_hardware();
+	}
+
 	BS->GetMemoryMap(&SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc);
 
 	Descriptor = new EfiMemoryDescriptor[SzDesc];
@@ -186,51 +209,13 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
 		(UIntPtr)Descriptor;
 
-	handoverHdrPtr->f_VirtualStart =
-		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
+	handoverHdrPtr->f_BitMapStart = 0;
 
-	handoverHdrPtr->f_HeapStart = 0;
-
-	while (BS->AllocatePool(EfiLoaderData, kHandoverHeapSz, &handoverHdrPtr->f_HeapStart) != kEfiOk)
+	while (BS->AllocatePool(EfiRuntimeServicesData, kHandoverHeapSz, &handoverHdrPtr->f_BitMapStart) != kEfiOk)
 		;
 
 	handoverHdrPtr->f_VirtualSize =
 		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
-
-	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
-
-	handoverHdrPtr->f_Magic	  = kHandoverMagic;
-	handoverHdrPtr->f_Version = kHandoverVersion;
-
-	// Provide fimware vendor name.
-
-	BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
-			 handoverHdrPtr->f_FirmwareVendorLen);
-
-	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
-
-	// Assign to global 'kHandoverHeader'.
-
-	BDiskFormatFactory<BootDeviceATA> checkPart;
-
-	if (!checkPart.IsPartitionValid())
-	{
-		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
-		root.fFileName[0] = kNewFSRoot[0];
-		root.fFileName[1] = 0;
-
-		root.fKind = kNewFSCatalogKindDir;
-
-		checkPart.Format("ZKA (A:)", &root, 1);
-
-		rt_reset_hardware();
-	}
-
-	// ---------------------------------------------------- //
-	// The following checks for an exisiting partition
-	// inside the disk, if it doesn't have one,
-	// format the disk.
-	// ---------------------------------------------------- //
 
 	handoverHdrPtr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handoverHdrPtr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
@@ -247,7 +232,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerSysChk.Blob())
 	{
 		loaderSysChk = new Boot::BThread(readerSysChk.Blob());
-		loaderSysChk->SetName("64-bit System Check DLL.");
+		loaderSysChk->SetName("System Check SYS.");
 	}
 
 	loaderSysChk->Start(handoverHdrPtr);
@@ -256,6 +241,20 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_FirmwareCustomTables[0] = nullptr;
 	handoverHdrPtr->f_FirmwareCustomTables[1] = nullptr;
+
+	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
+
+	handoverHdrPtr->f_Magic	  = kHandoverMagic;
+	handoverHdrPtr->f_Version = kHandoverVersion;
+
+	// Provide fimware vendor name.
+
+	BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
+			 handoverHdrPtr->f_FirmwareVendorLen);
+
+	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
+
+	// Assign to global 'kHandoverHeader'.
 
 	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
@@ -270,7 +269,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::BThread(readerKernel.Blob());
-		loader->SetName("64-bit Kernel DLL.");
+		loader->SetName("64-Bit Kernel EXE.");
 
 		handoverHdrPtr->f_KernelImage = readerKernel.Blob();
 	}
@@ -288,11 +287,17 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	urbanistTTF.ReadAll(0);
 
 	if (readerSysDrv.Blob() &&
-		chimeWav.Blob())
+		chimeWav.Blob() &&
+		urbanistTTF.Blob())
 	{
 		handoverHdrPtr->f_StartupChime	 = chimeWav.Blob();
-		handoverHdrPtr->f_StartupImage	 = readerKernel.Blob();
+		handoverHdrPtr->f_ChimeSz	 = chimeWav.Size();
+		handoverHdrPtr->f_StartupImage	 = readerSysDrv.Blob();
+		handoverHdrPtr->f_StartupSz	 = readerSysDrv.Size();
+		handoverHdrPtr->f_KernelImage	 = readerKernel.Blob();
+		handoverHdrPtr->f_KernelSz	 = readerKernel.Size();
 		handoverHdrPtr->f_TTFallbackFont = urbanistTTF.Blob();
+		handoverHdrPtr->f_FontSz	 = urbanistTTF.Size();
 	}
 	else
 	{

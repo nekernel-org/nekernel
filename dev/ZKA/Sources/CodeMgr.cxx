@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <NewKit/Utils.hxx>
-#include <KernelKit/CodeManager.hxx>
+#include <KernelKit/CodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 
 namespace Kernel
@@ -23,7 +23,7 @@ namespace Kernel
 		proc.SetImageStart(reinterpret_cast<VoidPtr>(main));
 
 		proc.Kind	   = UserProcess::kExeKind;
-		proc.StackSize = kib_cast(8);
+		proc.StackSize = mib_cast(4);
 
 		rt_copy_memory((VoidPtr)processName, proc.Name, rt_string_len(processName));
 

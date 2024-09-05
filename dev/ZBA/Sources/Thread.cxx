@@ -165,7 +165,7 @@ namespace Boot
 			err_fn(handover);
 		}
 
-		rt_jump_to_address(fStartAddress, handover);
+		reinterpret_cast<HEL::HandoverProc>(fStartAddress)(handover);
 	}
 
 	const Char* BThread::GetName()

@@ -2,8 +2,8 @@
 
 	Copyright ZKA Technologies.
 
-	File: CodeManager.hpp
-	Purpose: Code Manager and Shared Objects.
+	File: CodeMgr.hpp
+	Purpose: Code Mgr and Shared Objects.
 
 	Revision History:
 
@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <KernelKit/PECodeManager.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
-#include <KernelKit/PEFDLLInterface.hxx>
+#include <KernelKit/PECodeMgr.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
+#include <KernelKit/IPEFDLLObject.hxx>
 
 namespace Kernel
 {

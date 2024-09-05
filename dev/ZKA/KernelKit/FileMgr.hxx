@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies.
 
-	File: FileManager.hxx
+	File: FileMgr.hxx
 	Purpose: Kernel file manager.
 
 ------------------------------------------- */
@@ -12,16 +12,16 @@
  Revision History:
 
 	 31/01/24: Update documentation (amlel)
-	 05/07/24: NewFS support, and fork support, updated constants and specs
+	 05/07/24: NeFS support, and fork support, updated constants and specs
 		as well.
 
  ------------------------------------------- */
 
 #pragma once
 
-#ifdef __FSKIT_USE_NEWFS__
-#include <FSKit/NewFS.hxx>
-#endif // __FSKIT_USE_NEWFS__
+#ifdef __FSKIT_USE_NEFS__
+#include <FSKit/NeFS.hxx>
+#endif // __FSKIT_USE_NEFS__
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <HintKit/CompilerHint.hxx>
@@ -71,31 +71,31 @@ namespace Kernel
 	typedef VoidPtr NodePtr;
 
 	/**
-	@brief Filesystem Manager Interface class
+	@brief Filesystem Mgr Interface class
 	@brief Used to provide common I/O for a specific filesystem.
 */
-	class FilesystemManagerInterface
+	class FilesystemMgrInterface
 	{
 	public:
-		explicit FilesystemManagerInterface() = default;
-		virtual ~FilesystemManagerInterface() = default;
+		explicit FilesystemMgrInterface() = default;
+		virtual ~FilesystemMgrInterface() = default;
 
 	public:
-		ZKA_COPY_DEFAULT(FilesystemManagerInterface);
+		ZKA_COPY_DEFAULT(FilesystemMgrInterface);
 
 	public:
 		/// @brief Mounts a new filesystem into an active state.
 		/// @param interface the filesystem interface
 		/// @return
-		static bool Mount(FilesystemManagerInterface* interface);
+		static bool Mount(FilesystemMgrInterface* interface);
 
 		/// @brief Unmounts the active filesystem
 		/// @return
-		static FilesystemManagerInterface* Unmount();
+		static FilesystemMgrInterface* Unmount();
 
 		/// @brief Getter, gets the active filesystem.
 		/// @return
-		static FilesystemManagerInterface* GetMounted();
+		static FilesystemMgrInterface* GetMounted();
 
 	public:
 		virtual NodePtr Create(_Input const Char* path)			 = 0;
@@ -135,19 +135,19 @@ namespace Kernel
 		virtual bool  Rewind(_Input NodePtr node) = 0;
 	};
 
-#ifdef __FSKIT_USE_NEWFS__
+#ifdef __FSKIT_USE_NEFS__
 	/**
-	 * @brief Based of FilesystemManagerInterface, takes care of managing NewFS
+	 * @brief Based of FilesystemMgrInterface, takes care of managing NeFS
 	 * disks.
 	 */
-	class NewFilesystemManager final : public FilesystemManagerInterface
+	class NewFilesystemMgr final : public FilesystemMgrInterface
 	{
 	public:
-		explicit NewFilesystemManager();
-		~NewFilesystemManager() override;
+		explicit NewFilesystemMgr();
+		~NewFilesystemMgr() override;
 
 	public:
-		ZKA_COPY_DEFAULT(NewFilesystemManager);
+		ZKA_COPY_DEFAULT(NewFilesystemMgr);
 
 	public:
 		NodePtr Create(const Char* path) override;
@@ -176,15 +176,15 @@ namespace Kernel
 							 _Input SizeT		sz) override;
 
 	public:
-		/// @brief Get NewFS parser class.
+		/// @brief Get NeFS parser class.
 		/// @return The filesystem parser class.
-		NewFSParser* GetParser() noexcept;
+		NeFSParser* GetParser() noexcept;
 
 	private:
-		NewFSParser* fImpl{nullptr};
+		NeFSParser* fImpl{nullptr};
 	};
 
-#endif // ifdef __FSKIT_USE_NEWFS__
+#endif // ifdef __FSKIT_USE_NEFS__
 
 	/**
 	 * Usable FileStream
@@ -192,7 +192,7 @@ namespace Kernel
 	 * @tparam FSClass Filesystem contract who takes care of it.
 	 */
 	template <typename Encoding = Char,
-			  typename FSClass	= FilesystemManagerInterface>
+			  typename FSClass	= FilesystemMgrInterface>
 	class FileStream final
 	{
 	public:
@@ -408,7 +408,7 @@ namespace Kernel
 			}
 		}
 
-		kcout << "newoskrnl.exe: new file: " << path << ".\r";
+		kcout << "new file: " << path << ".\r";
 	}
 
 	/// @brief destructor

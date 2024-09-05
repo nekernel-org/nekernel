@@ -56,6 +56,7 @@ namespace Kernel
 		{
 		case RUNTIME_CHECK_PROCESS: {
 			CGDrawString("0x00000008 No more processes to run, this is because that ZKA ran out of processes.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
@@ -98,11 +99,16 @@ namespace Kernel
 			RecoveryFactory::Recover();
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			CGDrawString("0x0000000B Catasrophic Kernel failure.", start_y, x, panicTxt);
+			CGDrawString("0x0000000B Unexpected Kernel failure.", start_y, x, panicTxt);
+			break;
+		}
+		case RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM: {
+			CGDrawString("0x10000001 Out of Virtual Memory. (Catastrophic Failure)", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			CGDrawString("0x10000001 Assertion failed.", start_y, x, panicTxt);
+			CGDrawString("0x10000001 Kernel Check.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
@@ -120,13 +126,6 @@ namespace Kernel
 
 	Void RecoveryFactory::Recover() noexcept
 	{
-		const auto cMaxSeconds = Seconds(4);
-
-		HardwareTimer timer(cMaxSeconds);
-		timer.Wait();
-
-		kcout << "newoskrnl.exe: Shutting down computer...\r";
-
 		PowerFactoryInterface power(nullptr);
 		power.Shutdown();
 	}
@@ -135,6 +134,9 @@ namespace Kernel
 	{
 		if (!expr)
 		{
+			kcout << "FAILED: FILE: " << file << endl;
+			kcout << "FAILED: LINE: " << line << endl;
+
 			ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
 		}
 	}

@@ -15,7 +15,7 @@ EXTERN_C Int32 ModuleMain(Kernel::HEL::HandoverInformationHeader* Handover)
 	
 	cST->ConOut->ClearScreen(cST->ConOut);
 
-	cST->ConOut->OutputString(cST->ConOut, L"SYSCHK: CHECKING FOR VALID NEWFS OR EXT4 PARTITIONS...\r\n");
+	cST->ConOut->OutputString(cST->ConOut, L"SYSCHK: CHECKING FOR VALID NEWFS OR HPFS PARTITIONS...\r\n");
 	cST->ConOut->OutputString(cST->ConOut, L"SYSCHK: GOOD TO GO!\r\n");
 
 	return kEfiOk;

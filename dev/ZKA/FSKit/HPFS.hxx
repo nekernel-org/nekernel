@@ -8,5 +8,5 @@
 
 #include <NewKit/Defines.hxx>
 
-/// @file FAT32.hxx
-/// @brief FAT32 support.
+/// @file HPFS.hxx
+/// @brief HPFS support.

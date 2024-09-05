@@ -24,13 +24,7 @@
 #define kHandoverMagic	 0xBADCC
 #define kHandoverVersion 0x114
 
-#define kHandoverMaxCmdLine 8
-
-#define kHandoverBetterEFI	 "ZKA_EFI"
-#define kHandoverBetterEFI_U L"ZKA_EFI"
-
-#define kHandoverHeapSz gib_cast(2)
-
+#define kHandoverHeapSz gib_cast(3)
 #define kHandoverStructSz sizeof(HEL::HandoverInformationHeader)
 
 namespace Kernel::HEL
@@ -62,15 +56,18 @@ namespace Kernel::HEL
 		UInt64 f_Magic;
 		UInt64 f_Version;
 
-		VoidPtr f_VirtualStart;
+		VoidPtr f_BitMapStart;
 		SizeT	f_VirtualSize;
 		VoidPtr f_PhysicalStart;
-		VoidPtr f_HeapStart;
 
 		VoidPtr f_KernelImage;
+		SizeT   f_KernelSz;
 		VoidPtr f_StartupChime;
+		SizeT   f_ChimeSz;
 		VoidPtr f_StartupImage;
+		SizeT   f_StartupSz;
 		VoidPtr f_TTFallbackFont;
+		SizeT   f_FontSz;
 
 		WideChar f_FirmwareVendorName[32];
 		SizeT	 f_FirmwareVendorLen;

@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <FSKit/NewFS.hxx>
+#include <FSKit/NeFS.hxx>
 
 namespace EncryptFS
 {

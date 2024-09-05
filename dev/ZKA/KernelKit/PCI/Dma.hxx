@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <KernelKit/DeviceManager.hxx>
+#include <KernelKit/DeviceMgr.hxx>
 #include <KernelKit/PCI/Device.hxx>
 #include <NewKit/Array.hxx>
 #include <NewKit/OwnPtr.hxx>

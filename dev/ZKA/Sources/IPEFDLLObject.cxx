@@ -9,7 +9,7 @@
 
 #include <KernelKit/DebugOutput.hxx>
 #include <KernelKit/PEF.hxx>
-#include <KernelKit/PEFDLLInterface.hxx>
+#include <KernelKit/IPEFDLLObject.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
 #include <NewKit/Defines.hxx>
@@ -37,9 +37,9 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C DLLInterfacePtr rtl_init_shared_object(UserProcess* header)
+EXTERN_C IDLL rtl_init_shared_object(UserProcess* header)
 {
-	DLLInterfacePtr sharedObj = tls_new_class<PEFDLLInterface>();
+	IDLL sharedObj = tls_new_class<IPEFDLLObject>();
 
 	if (!sharedObj)
 	{
@@ -48,7 +48,7 @@ EXTERN_C DLLInterfacePtr rtl_init_shared_object(UserProcess* header)
 		return nullptr;
 	}
 
-	sharedObj->Mount(tls_new_class<PEFDLLInterface::DLL_TRAITS>());
+	sharedObj->Mount(tls_new_class<IPEFDLLObject::DLL_TRAITS>());
 
 	if (!sharedObj->Get())
 	{
@@ -80,7 +80,7 @@ EXTERN_C DLLInterfacePtr rtl_init_shared_object(UserProcess* header)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_shared_object(UserProcess* header, DLLInterfacePtr lib, Bool* successful)
+EXTERN_C Void rtl_fini_shared_object(UserProcess* header, IDLL lib, Bool* successful)
 {
 	MUST_PASS(successful);
 

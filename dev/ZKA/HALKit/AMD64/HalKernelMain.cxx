@@ -7,14 +7,14 @@
 #include <ArchKit/ArchKit.hxx>
 #include <Modules/CoreCG/FbRenderer.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
-#include <KernelKit/PEFCodeManager.hxx>
+#include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Json.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
-#include <KernelKit/CodeManager.hxx>
+#include <KernelKit/CodeMgr.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
@@ -56,7 +56,6 @@ namespace Kernel::HAL
 Kernel::Property cKernelVersion;
 Kernel::User cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
-EXTERN Kernel::Boolean kAllocationInProgress;
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -65,14 +64,14 @@ EXTERN_C void hal_user_code_start(void);
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
 /* GDT, mostly descriptors for user and kernel segments. */
-STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY cGdt[6] = {
+STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x1000) cGdt[6] = {
 	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},		// Null entry
 	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xA0, .fBaseHigh = 0}, // Kernel code
 	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xA0, .fBaseHigh = 0}, // Kernel data
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fFlags = 0xA0, .fBaseHigh = 0}, // User code
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fFlags = 0xA0, .fBaseHigh = 0}, // User data
-	// reserve them for later.
 	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xA0, .fBaseHigh = 0}, // User code
+	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xA0, .fBaseHigh = 0}, // User data
+	// reserve them for later.
 };
 
 EXTERN_C void hal_init_platform(
@@ -93,17 +92,12 @@ EXTERN_C void hal_init_platform(
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	// reset kAllocationInProgress field to zero.
-	kAllocationInProgress = false;
-
-	kKernelVMHStart = kHandoverHeader->f_HeapStart;
-
 	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
 
 	// get virtual address start (for the heap)
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_VirtualStart));
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
 	// get physical address start.
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
@@ -131,14 +125,13 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	Kernel::kcout << "newoskrnl.exe: Creating filesystem and such.\r";
+	kcout << "Creating filesystem and such.\r";
 
-	auto fs = new Kernel::NewFilesystemManager();
+	auto fs = new Kernel::NewFilesystemMgr();
 
 	MUST_PASS(fs);
-	MUST_PASS(fs->GetParser());
 
-	Kernel::NewFilesystemManager::Mount(fs);
+	Kernel::NewFilesystemMgr::Mount(fs);
 
 	const auto cPassword = "ZKA_KERNEL_AUTHORITY";
 

@@ -14,12 +14,14 @@
 
 #pragma once
 
-/* Kernel device interface manager. */
-/* @file KernelKit/DeviceManager.hpp */
+/* Device manager. */
+/* @file KernelKit/DeviceMgr.hpp */
 /* @brief Device abstraction and I/O buffer. */
 
 #include <NewKit/ErrorOr.hxx>
 #include <NewKit/Ref.hxx>
+
+#define cDevicePath "\\Mount\\"
 
 // Last Rev
 // Wed, Apr  3, 2024  9:09:41 AM

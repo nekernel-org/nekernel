@@ -15,10 +15,10 @@
 #include <FirmwareKit/EPM.hxx>
 #include <CompilerKit/Version.hxx>
 
-/// include NewFS header and Support header as well.
+/// include NeFS header and Support header as well.
 
 #include <cstring>
-#include <FSKit/NewFS.hxx>
+#include <FSKit/NeFS.hxx>
 #include <BootKit/Support.hxx>
 
 /***********************************************************************************/
@@ -193,7 +193,7 @@ public:
 	/// @brief File entry for **BDiskFormatFactory**.
 	struct BFileDescriptor final
 	{
-		Char  fFileName[kNewFSNodeNameLen];
+		Char  fFileName[kNeFSNodeNameLen];
 		Int32 fKind;
 	};
 
@@ -219,7 +219,7 @@ public:
 	/// @brief check if partition is good.
 	Bool IsPartitionValid() noexcept
 	{
-		fDiskDev.Leak().mBase = (kNewFSRootCatalogStartAddress);
+		fDiskDev.Leak().mBase = (kNeFSRootCatalogStartAddress);
 		fDiskDev.Leak().mSize = BootDev::kSectorSize;
 
 		Char buf[BootDev::kSectorSize] = {0};
@@ -230,18 +230,18 @@ public:
 
 		BTextWriter writer;
 
-		for (SizeT indexMag = 0UL; indexMag < kNewFSIdentLen; ++indexMag)
+		for (SizeT indexMag = 0UL; indexMag < kNeFSIdentLen; ++indexMag)
 		{
-			if (blockPart->Ident[indexMag] != kNewFSIdent[indexMag])
+			if (blockPart->Ident[indexMag] != kNeFSIdent[indexMag])
 				return false;
 		}
 
-		writer.Write(L"newosldr: Disk size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
+		writer.Write(L"newosldr: Disk is ").Write(GIB(this->fDiskDev.GetDiskSize())).Write(L" GB.\r");
 
 		if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
 			blockPart->DiskSize < 1 ||
 			blockPart->SectorSize != BootDev::kSectorSize ||
-			blockPart->Version != kNewFSVersionInteger ||
+			blockPart->Version != kNeFSVersionInteger ||
 			blockPart->StartCatalog == 0)
 		{
 			return false;
@@ -251,7 +251,7 @@ public:
 			return false;
 		}
 
-		writer.Write(L"newosldr: Partition name: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
+		writer.Write(L"newosldr: Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
 		return true;
 	}
@@ -260,7 +260,7 @@ private:
 	/// @brief Write all of the requested catalogs into the filesystem.
 	/// @param fileBlobs the blobs.
 	/// @param blobCount the number of blobs to write.
-	/// @param partBlock the NewFS partition block.
+	/// @param partBlock the NeFS partition block.
 	Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount, NFS_ROOT_PARTITION_BLOCK& partBlock)
 	{
 		BFileDescriptor* blob	  = fileBlobs;
@@ -269,14 +269,14 @@ private:
 
 		NFS_CATALOG_STRUCT catalogKind{0};
 
-		constexpr auto cNewFSCatalogPadding = 4;
+		constexpr auto cNeFSCatalogPadding = 4;
 
 		catalogKind.PrevSibling = startLba;
-		catalogKind.NextSibling = (startLba + sizeof(NFS_CATALOG_STRUCT) * cNewFSCatalogPadding);
+		catalogKind.NextSibling = (startLba + sizeof(NFS_CATALOG_STRUCT) * cNeFSCatalogPadding);
 
 		/// Fill catalog kind.
 		catalogKind.Kind  = blob->fKind;
-		catalogKind.Flags = kNewFSFlagCreated;
+		catalogKind.Flags = kNeFSFlagCreated;
 
 		--partBlock.FreeCatalog;
 		--partBlock.FreeSectors;
@@ -316,7 +316,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 
 	/// @note A catalog roughly equal to a sector.
 
-	constexpr auto cMinimumDiskSize = 10; // at minimum.
+	constexpr auto cMinimumDiskSize = 4; // at minimum.
 
 	/// @note also look at EPM headers, for free part blocks.
 
@@ -325,70 +325,37 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 		EFI::ThrowError(L"Disk-Too-Tiny", L"Can't format a New Filesystem partition here.");
 		return false;
 	}
-
-	fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
-	fDiskDev.Leak().mSize = sectorSz;
-
+	
 	NFS_ROOT_PARTITION_BLOCK partBlock{0};
 
-	fDiskDev.Read((Char*)&partBlock, sizeof(NFS_ROOT_PARTITION_BLOCK));
-
-	if (strncmp(kNewFSIdent, partBlock.Ident, kNewFSIdentLen) == 0 &&
-		partBlock.Version != kNewFSVersionInteger)
-	{
-		if (partBlock.Version != 0)
-		{
-			BTextWriter writer;
-			writer.Write(L"newosldr: Disk partition updated.\r");
-
-			partBlock.Version = kNewFSVersionInteger;
-
-			fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
-			fDiskDev.Leak().mSize = sectorSz;
-
-			fDiskDev.Write((Char*)&partBlock, sectorSz);
-
-			return true;
-		}
-	}
-	else if (strncmp(kNewFSIdent, partBlock.Ident, kNewFSIdentLen))
-	{
-		BTextWriter writer;
-		writer.Write(L"newosldr: Disk partition error, not a valid one.\r");
-
-		// TODO: Find a way to use EFI::Stop.
-		while (1)
-			;
-	}
-
-	CopyMem(partBlock.Ident, kNewFSIdent, kNewFSIdentLen - 1);
+	CopyMem(partBlock.Ident, kNeFSIdent, kNeFSIdentLen - 1);
 	CopyMem(partBlock.PartitionName, partName, strlen(partName));
 
-	partBlock.Version	   = kNewFSVersionInteger;
+	partBlock.Version	   = kNeFSVersionInteger;
 	partBlock.CatalogCount = blobCount;
-	partBlock.Kind		   = kNewFSHardDrive;
+	partBlock.Kind		   = kNeFSHardDrive;
 	partBlock.SectorSize   = sectorSz;
 	partBlock.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
 	partBlock.SectorCount  = fDiskDev.GetSectorsCount();
 	partBlock.FreeSectors  = fDiskDev.GetSectorsCount();
-	partBlock.StartCatalog = kNewFSCatalogStartAddress;
+	partBlock.StartCatalog = kNeFSCatalogStartAddress;
 	partBlock.DiskSize	   = fDiskDev.GetDiskSize();
-	partBlock.Flags		   = kNewFSPartitionTypeBoot | kNewFSPartitionTypeStandard;
+	partBlock.Flags		   = kNeFSPartitionTypeBoot | kNeFSPartitionTypeStandard;
 
-	fDiskDev.Leak().mBase = kNewFSRootCatalogStartAddress;
+	fDiskDev.Leak().mBase = kNeFSRootCatalogStartAddress;
 	fDiskDev.Leak().mSize = sectorSz;
 
 	fDiskDev.Write((Char*)&partBlock, sectorSz);
 
 	BOOT_BLOCK_STRUCT epmBoot{0};
 
-	constexpr auto cFsName	  = "NewFS";
+	constexpr auto cFsName	  = "NeFS";
 	constexpr auto cBlockName = "ZKA:";
 
 	CopyMem(epmBoot.Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), StrLen(cFsName));
 
-	epmBoot.FsVersion = kNewFSVersionInteger;
-	epmBoot.LbaStart  = kNewFSRootCatalogStartAddress;
+	epmBoot.FsVersion = kNeFSVersionInteger;
+	epmBoot.LbaStart  = kNeFSRootCatalogStartAddress;
 	epmBoot.SectorSz  = partBlock.SectorSize;
 	epmBoot.NumBlocks = partBlock.CatalogCount;
 

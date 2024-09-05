@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <NewKit/PageManager.hxx>
+#include <NewKit/PageMgr.hxx>
 #include <NewKit/Ref.hxx>
 
 namespace Kernel
@@ -33,12 +33,12 @@ namespace Kernel
 		Boolean ToggleShare(Ref<PTEWrapper> refPage, Boolean enable = true);
 
 		/// @brief Get the page manager of this.
-		Ref<PageManager>& Leak()
+		Ref<PageMgr>& Leak()
 		{
-			return fPageManager;
+			return fPageMgr;
 		}
 
 	private:
-		Ref<PageManager> fPageManager;
+		Ref<PageMgr> fPageMgr;
 	};
 } // namespace Kernel

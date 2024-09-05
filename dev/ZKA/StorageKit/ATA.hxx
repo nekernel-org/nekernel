@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <KernelKit/DeviceManager.hxx>
-#include <KernelKit/DriveManager.hxx>
+#include <KernelKit/DeviceMgr.hxx>
+#include <KernelKit/DriveMgr.hxx>
 #include <NewKit/OwnPtr.hxx>
 #include <NewKit/Utils.hxx>
 

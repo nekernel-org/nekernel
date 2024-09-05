@@ -109,4 +109,4 @@ inline Kernel::Array<HAL_SYSCALL_RECORD,
 EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context();
 EXTERN_C Kernel::Void mp_do_context_switch_pre(Kernel::Void);
 /// @note The context gives out the return address in return register.
-EXTERN_C Kernel::UIntPtr mp_do_context_switch(Kernel::VoidPtr image, Kernel::UInt8* stack_ptr, Kernel::HAL::StackFramePtr stackPtr);
+EXTERN_C Kernel::Void mp_do_context_switch(Kernel::VoidPtr image, Kernel::UInt8* stack_ptr, Kernel::HAL::StackFramePtr stackPtr);

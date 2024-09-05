@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
-#ifdef __FSKIT_INCLUDES_FAT32__
+#ifdef __FSKIT_INCLUDES_HPFS__
 
 #include <FirmwareKit/GPT.hxx>
 #include <FirmwareKit/EPM.hxx>
 
-#endif // ifdef __FSKIT_INCLUDES_FAT32__
+#endif // ifdef __FSKIT_INCLUDES_HPFS__

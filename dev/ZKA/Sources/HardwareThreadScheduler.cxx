@@ -6,7 +6,7 @@
 
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
-#include <KernelKit/MP.hxx>
+#include <KernelKit/HardwareThreadScheduler.hxx>
 #include <CFKit/Property.hxx>
 
 ///! BUGS: 0
@@ -17,12 +17,6 @@
 
 namespace Kernel
 {
-	/***********************************************************************************/
-	/// @brief MP object container property.
-	/***********************************************************************************/
-
-	Property cSMPCoreName;
-
 	///! A HardwareThread class takes care of it's owned hardware thread.
 	///! It has a stack for it's core.
 
@@ -96,19 +90,26 @@ namespace Kernel
 			!stack_ptr)
 			return false;
 
+		if (this->IsBusy())
+			return false;
+
 		fStack = frame;
 
 		if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		{
-			return mp_register_process(fStack);
+			this->Busy(true);
+			Bool ret = mp_register_process(fStack);
+			this->Busy(true);
+
+			return ret;
 		}
-
-		//! SMP is disabled here.
-
-		mp_do_context_switch_pre();
-		mp_do_context_switch(image, stack_ptr, fStack);
-
-		return true;
+		else
+		{
+			mp_do_context_switch_pre();
+			mp_do_context_switch(image, stack_ptr, fStack);
+			
+			return true;
+		}
 	}
 
 	///! @brief Tells if processor is waked up.
@@ -123,15 +124,7 @@ namespace Kernel
 	///! @brief Constructor and destructors.
 
 	///! @brief Default constructor.
-	HardwareThreadScheduler::HardwareThreadScheduler()
-	{
-		kcout << "newoskrnl.exe: initializing HardwareThreadScheduler." << endl;
-
-		cSMPCoreName.GetKey() += "Property\\MPClass";
-		cSMPCoreName.GetValue() = (PropertyId)this;
-
-		kcout << "newoskrnl.exe: initialized HardwareThreadScheduler." << endl;
-	}
+	HardwareThreadScheduler::HardwareThreadScheduler() = default;
 
 	///! @brief Default destructor.
 	HardwareThreadScheduler::~HardwareThreadScheduler() = default;

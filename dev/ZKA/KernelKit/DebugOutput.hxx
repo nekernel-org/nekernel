@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <KernelKit/DeviceManager.hxx>
+#include <KernelKit/DeviceMgr.hxx>
 #include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/OwnPtr.hxx>
 #include <NewKit/Stream.hxx>
@@ -59,21 +59,24 @@ namespace Kernel
 	inline TerminalDevice end_line()
 	{
 		TerminalDevice selfTerm = TerminalDevice::The();
-		selfTerm << "\r";
+
+		selfTerm.operator<<("\r");
 		return selfTerm;
 	}
 
 	inline TerminalDevice carriage_return()
 	{
 		TerminalDevice selfTerm = TerminalDevice::The();
-		selfTerm << "\r";
+
+		selfTerm.operator<<("\r");
 		return selfTerm;
 	}
 
 	inline TerminalDevice tabulate()
 	{
 		TerminalDevice selfTerm = TerminalDevice::The();
-		selfTerm << "\t";
+
+		selfTerm.operator<<("\t");
 		return selfTerm;
 	}
 
@@ -81,7 +84,8 @@ namespace Kernel
 	inline TerminalDevice bell()
 	{
 		TerminalDevice selfTerm = TerminalDevice::The();
-		selfTerm << "\a";
+		
+		selfTerm.operator<<("\a");
 		return selfTerm;
 	}
 
@@ -111,7 +115,7 @@ namespace Kernel
 			buf[0] = cNumbers[h];
 			buf[1] = 0;
 
-			term << buf;
+			term.operator<<(buf);
 			return term;
 		}
 
@@ -139,7 +143,7 @@ namespace Kernel
 			buf[0] = cNumbers[h];
 			buf[1] = 0;
 
-			term << buf;
+			term.operator<<(buf);
 			return term;
 		}
 	} // namespace Detail
@@ -148,7 +152,7 @@ namespace Kernel
 	{
 		TerminalDevice selfTerm = TerminalDevice::The();
 
-		selfTerm << "0x";
+		selfTerm.operator<<("0x");
 		Detail::_write_number_hex(x, selfTerm);
 
 		return selfTerm;
@@ -186,5 +190,5 @@ namespace Kernel
 #undef kcout
 #endif // ifdef kcout
 
-#define kcout TerminalDevice::The()
-#define endl  kcout << Kernel::end_line()
+#define kcout (Kernel::TerminalDevice::The() << "\e[0;31m [ " << __FILE__ << ": LINE: " << Kernel::number(__LINE__)); (Kernel::TerminalDevice::The() << " ] \e[0m" << ": ")
+#define endl  Kernel::TerminalDevice::The() << Kernel::end_line()

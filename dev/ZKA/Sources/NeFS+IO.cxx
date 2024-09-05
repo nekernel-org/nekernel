@@ -4,12 +4,12 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/DriveManager.hxx>
-#include <KernelKit/FileManager.hxx>
+#include <KernelKit/DriveMgr.hxx>
+#include <KernelKit/FileMgr.hxx>
 
 /*************************************************************
  *
- * File: NewFS+IO.cxx
+ * File: NeFS+IO.cxx
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
  *
@@ -17,14 +17,14 @@
  *
  *************************************************************/
 
-#ifdef __FSKIT_USE_NEWFS__
+#ifdef __FSKIT_USE_NEFS__
 
 #include <FirmwareKit/EPM.hxx>
 
 /// Useful macros.
 
-#define NEWFS_WRITE(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
-#define NEWFS_READ(DRV, TRAITS, MP)	 (MP->DRV()).fInput(&TRAITS)
+#define NEFS_WRITE(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
+#define NEFS_READ(DRV, TRAITS, MP)	 (MP->DRV()).fInput(&TRAITS)
 
 using namespace Kernel;
 
@@ -42,20 +42,20 @@ Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
 
 	switch (DrvIndex)
 	{
-	case kNewFSSubDriveA: {
-		NEWFS_READ(A, DrvTrait.fPacket, Mnt);
+	case kNeFSSubDriveA: {
+		NEFS_READ(A, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveB: {
-		NEWFS_READ(B, DrvTrait.fPacket, Mnt);
+	case kNeFSSubDriveB: {
+		NEFS_READ(B, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveC: {
-		NEWFS_READ(C, DrvTrait.fPacket, Mnt);
+	case kNeFSSubDriveC: {
+		NEFS_READ(C, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveD: {
-		NEWFS_READ(D, DrvTrait.fPacket, Mnt);
+	case kNeFSSubDriveD: {
+		NEFS_READ(D, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	}
@@ -77,20 +77,20 @@ Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIn
 
 	switch (DrvIndex)
 	{
-	case kNewFSSubDriveA: {
-		NEWFS_WRITE(A, DrvTrait.fPacket, Mnt);
+	case kNeFSSubDriveA: {
+		NEFS_WRITE(A, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveB: {
-		NEWFS_WRITE(B, DrvTrait.fPacket, Mnt);
+	case kNeFSSubDriveB: {
+		NEFS_WRITE(B, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveC: {
-		NEWFS_WRITE(C, DrvTrait.fPacket, Mnt);
+	case kNeFSSubDriveC: {
+		NEFS_WRITE(C, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveD: {
-		NEWFS_WRITE(D, DrvTrait.fPacket, Mnt);
+	case kNeFSSubDriveD: {
+		NEFS_WRITE(D, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	}
@@ -98,4 +98,4 @@ Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIn
 	return DrvTrait.fPacket.fPacketGood;
 }
 
-#endif // ifdef __FSKIT_USE_NEWFS__
+#endif // ifdef __FSKIT_USE_NEFS__

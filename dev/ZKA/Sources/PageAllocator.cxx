@@ -11,19 +11,6 @@
 /// @brief Internal namespace, used internally by Kernel.
 namespace Kernel::Detail
 {
-	VoidPtr create_page_wrapper(Boolean rw, Boolean user, SizeT pageSz)
-	{
-		auto addr = HAL::hal_alloc_page(rw, user, pageSz);
-
-		if (addr == kBadAddress)
-		{
-			kcout << "[create_page_wrapper] kBadAddress returned\n";
-			ke_stop(RUNTIME_CHECK_POINTER);
-		}
-
-		return addr;
-	}
-
 	void exec_disable(UIntPtr VirtualAddr)
 	{
 #ifdef __ZKA_SUPPORT_NX__
