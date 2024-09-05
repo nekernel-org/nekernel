@@ -79,8 +79,8 @@ namespace Kernel::Detail
 
 					if (catalogDir)
 					{
-						CG::CGDrawStringToWnd(cKernelWnd, "Catalog directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("Catalog directory already exists: ")), RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, "Directory already exists: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("Directory already exists: ")), RGB(0, 0, 0));
 
 						delete catalogDir;
 						continue;
@@ -89,99 +89,10 @@ namespace Kernel::Detail
 					catalogDir = fNeFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
 																	kNeFSCatalogKindDir);
 
-					CG::CGDrawStringToWnd(cKernelWnd, "Catalog directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("Catalog directory has been created: ")), RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, "Directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("Directory has been created: ")), RGB(0, 0, 0));
 
 					delete catalogDir;
-				}
-			}
-
-			constexpr auto cFileToFormatCnt = 5;
-
-			struct
-			{
-				VoidPtr fBlob;
-				Size	fBlobSz;
-				Int32   fFlags;
-				Char	fName[kNeFSNodeNameLen];
-			} cFiles[cFileToFormatCnt] = {
-				{
-					.fBlob = kHandoverHeader->f_KernelImage,
-					.fBlobSz = kHandoverHeader->f_KernelSz,
-					.fFlags = kNeFSCatalogKindExecutable,
-					.fName = kSysKrnl,
-				},
-				{
-					.fBlob = kHandoverHeader->f_StartupImage,
-					.fBlobSz = kHandoverHeader->f_StartupSz,
-					.fFlags = kNeFSCatalogKindExecutable,
-					.fName = kSysDrv,
-				},
-				{
-					.fBlob = 0,
-					.fBlobSz = mib_cast(32),
-					.fFlags = kNeFSCatalogKindPage,
-					.fName = kSysPage,
-				},
-				{
-					.fBlob = kHandoverHeader->f_TTFallbackFont,
-					.fBlobSz = kHandoverHeader->f_FontSz,
-					.fFlags = kNeFSCatalogKindResource,
-					.fName = kSysTTF,
-				},
-				{
-					.fBlob	 = kHandoverHeader->f_StartupChime,
-					.fBlobSz = kHandoverHeader->f_ChimeSz,
-					.fFlags = kNeFSCatalogKindResource,
-					.fName	 = kSysChime,
-				}
-
-			};
-
-			for (size_t i = 0; i < cFileToFormatCnt; i++)
-			{
-				NFS_CATALOG_STRUCT* catalogDisk =
-					this->fNeFS->GetParser()->GetCatalog(cFiles[i].fName);
-
-				const Kernel::Char* cSrcName = cFiles[i].fName;
-
-				if (catalogDisk)
-				{
-					CG::CGDrawStringToWnd(cKernelWnd, "File already exists: ", 10 + (10 * (cDirCount + i + 1)), 10, RGB(0, 0, 0));
-					CG::CGDrawStringToWnd(cKernelWnd, cFiles[i].fName, 10 + (10 * (cDirCount + i+ 1)), 10 + (FONT_SIZE_X * rt_string_len("File already exists: ")), RGB(0, 0, 0));
-
-					delete catalogDisk;
-				}
-				else
-				{
-					CG::CGDrawStringToWnd(cKernelWnd, "File created: ", 10 + (10 * (cDirCount + i+ 1)), 10, RGB(0, 0, 0));
-					CG::CGDrawStringToWnd(cKernelWnd, cFiles[i].fName, 10 + (10 * (cDirCount + i + 1)), 10 + (FONT_SIZE_X * rt_string_len("File created: ")), RGB(0, 0, 0));
-
-					catalogDisk =
-						(NFS_CATALOG_STRUCT*)this->Leak()->CreateSwapFile(cFiles[i].fName);
-
-					NFS_FORK_STRUCT theDiskFork{0};
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theDiskFork.ForkName,
-										   Kernel::rt_string_len(cSrcName));
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDisk->Name),
-										   theDiskFork.CatalogName,
-										   Kernel::rt_string_len(catalogDisk->Name));
-
-					theDiskFork.DataSize	 = cFiles[i].fBlobSz;
-					theDiskFork.ResourceId	 = cFiles[i].fFlags;
-					theDiskFork.ResourceKind = Kernel::kNeFSDataForkKind;
-					theDiskFork.Kind		 = Kernel::kNeFSDataForkKind;
-
-					fNeFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
-
-					if (theDiskFork.ResourceId != kNeFSCatalogKindPage)
-					{
-						fNeFS->GetParser()->WriteCatalog(catalogDisk, false, cFiles[i].fBlob, cFiles[i].fBlobSz, theDiskFork.ForkName);
-					}
-
-					delete catalogDisk;
 				}
 			}
 		}

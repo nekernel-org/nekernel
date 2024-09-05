@@ -2,6 +2,9 @@
 
 	Copyright ZKA Technologies.
 
+	FILE: UserProcessScheduler.cxx
+	PURPOSE: User sided process scheduler.
+
 ------------------------------------------- */
 
 /***********************************************************************************/
@@ -34,7 +37,7 @@ namespace Kernel
 	/// @brief User Process scheduler global object.
 	/***********************************************************************************/
 
-	STATIC UserProcessScheduler* cProcessScheduler = nullptr;
+	UserProcessScheduler* cProcessScheduler = nullptr;
 
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
@@ -264,6 +267,7 @@ namespace Kernel
 		{
 			if (process.Kind != UserProcess::kDLLKind)
 			{
+				process.Crash();
 				return -kErrorProcessFault;
 			}
 		}
@@ -272,6 +276,9 @@ namespace Kernel
 		process.ProcessId = mTeam.mProcessAmount;
 
 		++mTeam.mProcessAmount;
+
+		while (1)
+			;
 
 		mTeam.AsArray()[process.ProcessId] = process;
 
@@ -297,7 +304,7 @@ namespace Kernel
 		// check if process is within range.
 		if (process_id > mTeam.AsArray().Count())
 			return false;
-		
+
 		mTeam.AsArray()[process_id].Status = ProcessStatusKind::kDead;
 		--mTeam.mProcessAmount;
 
@@ -373,10 +380,12 @@ namespace Kernel
 
 	Void UserProcessHelper::Init()
 	{
-		if (!cProcessScheduler)
-		{
-			cProcessScheduler = new UserProcessScheduler();
-		}
+		if (mm_is_valid_heap(cProcessScheduler))
+			delete cProcessScheduler;
+
+		cProcessScheduler = nullptr;
+		cProcessScheduler = new UserProcessScheduler();
+		MUST_PASS(cProcessScheduler);
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -435,7 +444,7 @@ namespace Kernel
 				HardwareThreadScheduler::The()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				PID prev_pid = UserProcessHelper::TheCurrentPID();
+				PID prev_pid					   = UserProcessHelper::TheCurrentPID();
 				UserProcessHelper::TheCurrentPID() = new_pid;
 
 				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);

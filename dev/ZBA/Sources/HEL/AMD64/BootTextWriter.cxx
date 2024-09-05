@@ -134,7 +134,6 @@ BTextWriter& BTextWriter::WriteCharacter(CharacterTypeUTF16 c)
 BTextWriter& BTextWriter::Write(const Long& x)
 {
 #ifdef __DEBUG__
-	this->Write(L"0x");
 	this->_Write(x);
 
 #endif // ifdef __DEBUG__
@@ -145,14 +144,14 @@ BTextWriter& BTextWriter::Write(const Long& x)
 BTextWriter& BTextWriter::_Write(const Long& x)
 {
 #ifdef __DEBUG__
-	UInt64 y = (x > 0 ? x : -x) / 16;
-	UInt64 h = (x > 0 ? x : -x) % 16;
+	UInt64 y = (x > 0 ? x : -x) / 10;
+	UInt64 h = (x > 0 ? x : -x) % 10;
 
 	if (y)
 		this->_Write(y);
 
 	/* fail if the hex number is not base-16 */
-	if (h > 15)
+	if (h > 10)
 	{
 		this->WriteCharacter('?');
 		return *this;
@@ -161,7 +160,7 @@ BTextWriter& BTextWriter::_Write(const Long& x)
 	if (y < 0)
 		y = -y;
 
-	const char cNumbers[17] = "0123456789ABCDEF";
+	const char cNumbers[] = "0123456789";
 
 	this->WriteCharacter(cNumbers[h]);
 #endif // ifdef __DEBUG__

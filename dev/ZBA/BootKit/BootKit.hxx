@@ -236,7 +236,7 @@ public:
 				return false;
 		}
 
-		writer.Write(L"newosldr: Disk size: ").Write(this->fDiskDev.GetDiskSize()).Write(L"\r");
+		writer.Write(L"newosldr: Disk is ").Write(GIB(this->fDiskDev.GetDiskSize())).Write(L" GB.\r");
 
 		if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
 			blockPart->DiskSize < 1 ||
@@ -251,7 +251,7 @@ public:
 			return false;
 		}
 
-		writer.Write(L"newosldr: Partition name: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
+		writer.Write(L"newosldr: Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
 		return true;
 	}

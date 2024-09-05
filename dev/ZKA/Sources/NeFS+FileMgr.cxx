@@ -7,7 +7,7 @@
 #include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Heap.hxx>
 
-#ifdef __FSKIT_USE_NEWFS__
+#ifdef __FSKIT_USE_NEFS__
 
 /// @brief NeFS File manager.
 /// BUGS: 0
@@ -106,4 +106,4 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#endif // ifdef __FSKIT_USE_NEWFS__
+#endif // ifdef __FSKIT_USE_NEFS__

@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef __FSKIT_USE_NEWFS__
+#ifdef __FSKIT_USE_NEFS__
 
 #include <Modules/AHCI/AHCI.hxx>
 #include <Modules/ATA/ATA.hxx>
@@ -143,9 +143,9 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 			4; /// this value gives us space for the data offset.
 
 		theFork.Flags			= kNeFSFlagCreated;
-		theFork.DataOffset		= lba - sizeof(NFS_FORK_STRUCT) * cForkPadding;
+		theFork.DataOffset		= lba - sizeof(NFS_FORK_STRUCT) - theFork.DataSize;
 		theFork.PreviousSibling = lbaOfPreviousFork;
-		theFork.NextSibling		= theFork.DataOffset - theFork.DataSize;
+		theFork.NextSibling		= theFork.DataOffset + sizeof(NFS_FORK_STRUCT) + theFork.DataSize;
 
 		drv.fPacket.fLba		   = lba;
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
@@ -635,8 +635,12 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 /// @return if the catalog w rote the contents successfully.
 bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool isRsrcFork, _Input VoidPtr data, _Input SizeT sizeOfData, _Input const Char* forkName)
 {
-	if (sizeOfData > kNeFSForkDataSz)
+	if (sizeOfData > kNeFSForkDataSz ||
+		sizeOfData == 0)
 		return No;
+
+	auto buf = new UInt8[kNeFSForkDataSz];
+	rt_copy_memory(data, buf, sizeOfData);
 
 	auto drive = sMountpointInterface.A();
 
@@ -671,31 +675,31 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 		if (forkDataIn->Flags != kNeFSFlagUnallocated &&
 			forkDataIn->Flags != kNeFSFlagDeleted &&
 			StringBuilder::Equals(forkDataIn->ForkName, forkName) &&
-			StringBuilder::Equals(forkDataIn->CatalogName, catalog->Name))
+			StringBuilder::Equals(forkDataIn->CatalogName, catalog->Name) &&
+			forkDataIn->DataSize == sizeOfData)
 		{
 			// ===================================================== //
 			// Store the blob now.
 			// ===================================================== //
 
 			forkDataIn->Flags	   = kNeFSFlagCreated;
-			forkDataIn->DataOffset = startFork - sizeof(NFS_FORK_STRUCT);
-			forkDataIn->DataSize   = sizeOfData;
 
-			drive.fPacket.fPacketContent = data;
-			drive.fPacket.fPacketSize	 = sizeOfData;
+			drive.fPacket.fPacketContent = buf;
+			drive.fPacket.fPacketSize	 = kNeFSForkDataSz;
 			drive.fPacket.fLba			 = forkDataIn->DataOffset;
 
 			kcout << "data offset: " << hex_number(forkDataIn->DataOffset) << endl;
 
 			drive.fOutput(&drive.fPacket);
 
-			drive.fPacket.fPacketContent = &forkDataIn;
+			drive.fPacket.fPacketContent = forkDataIn;
 			drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
-			drive.fPacket.fLba			 = startFork;
+			drive.fPacket.fLba			 = startFork - sizeof(NFS_FORK_STRUCT);
 
 			drive.fOutput(&drive.fPacket);
 
 			kcout << "wrote fork at offset: " << hex_number(forkDataIn->DataOffset) << endl;
+			kcout << "wrote fork at offset: " << hex_number(startFork - sizeof(NFS_FORK_STRUCT)) << endl;
 
 			delete catalog;
 
@@ -1042,4 +1046,4 @@ namespace Kernel::Detail
 	}
 } // namespace Kernel::Detail
 
-#endif // ifdef __FSKIT_USE_NEWFS__
+#endif // ifdef __FSKIT_USE_NEFS__

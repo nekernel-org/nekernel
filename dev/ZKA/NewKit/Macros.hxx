@@ -126,5 +126,3 @@
 /// @brief The main kernel file.
 #define kSysChime "\\System\\startup.wav"
 
-/// @brief The main kernel file.
-#define kSysKrnl "\\System\\newoskrnl.exe"

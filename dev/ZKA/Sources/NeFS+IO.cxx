@@ -17,14 +17,14 @@
  *
  *************************************************************/
 
-#ifdef __FSKIT_USE_NEWFS__
+#ifdef __FSKIT_USE_NEFS__
 
 #include <FirmwareKit/EPM.hxx>
 
 /// Useful macros.
 
-#define NEWFS_WRITE(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
-#define NEWFS_READ(DRV, TRAITS, MP)	 (MP->DRV()).fInput(&TRAITS)
+#define NEFS_WRITE(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
+#define NEFS_READ(DRV, TRAITS, MP)	 (MP->DRV()).fInput(&TRAITS)
 
 using namespace Kernel;
 
@@ -43,19 +43,19 @@ Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
 	switch (DrvIndex)
 	{
 	case kNeFSSubDriveA: {
-		NEWFS_READ(A, DrvTrait.fPacket, Mnt);
+		NEFS_READ(A, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveB: {
-		NEWFS_READ(B, DrvTrait.fPacket, Mnt);
+		NEFS_READ(B, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveC: {
-		NEWFS_READ(C, DrvTrait.fPacket, Mnt);
+		NEFS_READ(C, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveD: {
-		NEWFS_READ(D, DrvTrait.fPacket, Mnt);
+		NEFS_READ(D, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	}
@@ -78,19 +78,19 @@ Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIn
 	switch (DrvIndex)
 	{
 	case kNeFSSubDriveA: {
-		NEWFS_WRITE(A, DrvTrait.fPacket, Mnt);
+		NEFS_WRITE(A, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveB: {
-		NEWFS_WRITE(B, DrvTrait.fPacket, Mnt);
+		NEFS_WRITE(B, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveC: {
-		NEWFS_WRITE(C, DrvTrait.fPacket, Mnt);
+		NEFS_WRITE(C, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveD: {
-		NEWFS_WRITE(D, DrvTrait.fPacket, Mnt);
+		NEFS_WRITE(D, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	}
@@ -98,4 +98,4 @@ Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIn
 	return DrvTrait.fPacket.fPacketGood;
 }
 
-#endif // ifdef __FSKIT_USE_NEWFS__
+#endif // ifdef __FSKIT_USE_NEFS__

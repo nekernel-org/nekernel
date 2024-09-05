@@ -3,7 +3,7 @@
 	Copyright ZKA Technologies.
 
 	FILE: NeFS.hxx
-	PURPOSE: NeFS (New FileSystem) kernel support.
+	PURPOSE: NeFS (New FileSystem) support, can be used with kernel, HPFS is preferred.
 
 	Revision History:
 
@@ -31,11 +31,11 @@ default.
 #define kNeFSNodeNameLen	 (256)
 
 #define kNeFSSectorSz (512)
-#define kNeFSForkDataSz   (gib_cast(16))
+#define kNeFSForkDataSz   (kib_cast(8))
 
 #define kNeFSIdentLen (8)
-#define kNeFSIdent	   " NewFS"
-#define kNeFSPadLen   (400)
+#define kNeFSIdent	   "  NeFS"
+#define kNeFSPadLen   (392)
 
 #define kNeFSMetaFilePrefix '$'
 
@@ -69,8 +69,9 @@ default.
 #define kNeFSCatalogKindLock	(10)
 
 #define kNeFSCatalogKindRLE (11)
-
 #define kNeFSCatalogKindMetaFile (12)
+#define kNeFSCatalogKindTTF (13)
+#define kNeFSCatalogKindRIFF (14)
 
 #define kNeFSSeparator	   '\\'
 #define kNeFSSeparatorAlt '/'
@@ -193,7 +194,7 @@ struct PACKED NFS_ROOT_PARTITION_BLOCK final
 
 	Kernel::Lba EpmBlock;
 
-	Kernel::Char Pad[kNeFSPadLen - sizeof(Kernel::Lba)];
+	Kernel::Char Pad[kNeFSPadLen];
 };
 
 namespace Kernel

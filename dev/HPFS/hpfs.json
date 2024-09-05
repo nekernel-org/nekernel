@@ -1,7 +1,7 @@
 {
     "compiler_path": "rustc",
     "compiler_std": "",
-    "sources_path": ["*.rs"],
+    "sources_path": ["Sources/*.rs"],
     "output_name": "hpfs.sys",
     "compiler_flags": [
     ],

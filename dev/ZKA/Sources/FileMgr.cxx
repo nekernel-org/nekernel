@@ -50,7 +50,7 @@ namespace Kernel
 		return false;
 	}
 
-#ifdef __FSKIT_USE_NEWFS__
+#ifdef __FSKIT_USE_NEFS__
 	/// @brief Opens a new file.
 	/// @param path
 	/// @param r
@@ -186,5 +186,5 @@ namespace Kernel
 	{
 		return fImpl;
 	}
-#endif // __FSKIT_USE_NEWFS__
+#endif // __FSKIT_USE_NEFS__
 } // namespace Kernel
