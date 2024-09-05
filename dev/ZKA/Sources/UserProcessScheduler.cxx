@@ -11,7 +11,7 @@
 
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/IPEFDLLObject.hxx>
-#include <KernelKit/MP.hxx>
+#include <KernelKit/HardwareThreadScheduler.hxx>
 #include <KernelKit/Heap.hxx>
 #include <NewKit/String.hxx>
 #include <KernelKit/LPC.hxx>
@@ -435,11 +435,16 @@ namespace Kernel
 				HardwareThreadScheduler::The()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
+				PID prev_pid = UserProcessHelper::TheCurrentPID();
 				UserProcessHelper::TheCurrentPID() = new_pid;
 
 				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
 
-				return ret;
+				if (!ret)
+				{
+					UserProcessHelper::TheCurrentPID() = prev_pid;
+					continue;
+				}
 			}
 		}
 

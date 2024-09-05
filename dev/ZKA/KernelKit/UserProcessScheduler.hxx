@@ -52,12 +52,12 @@ namespace Kernel
 	//! to run.
 	enum class AffinityKind : Int32
 	{
-		kRealTime	  = 0500,
-		kVeryHigh	  = 2500,
-		kHigh		  = 2000,
-		kStandard	  = 1500,
-		kLowUsage	  = 1000,
-		kVeryLowUsage = 5000,
+		kRealTime	  = 500,
+		kVeryHigh	  = 250,
+		kHigh		  = 200,
+		kStandard	  = 1000,
+		kLowUsage	  = 1500,
+		kVeryLowUsage = 2000,
 	};
 
 	// operator overloading.

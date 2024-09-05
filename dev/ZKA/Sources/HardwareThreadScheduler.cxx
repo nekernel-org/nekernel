@@ -6,7 +6,7 @@
 
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
-#include <KernelKit/MP.hxx>
+#include <KernelKit/HardwareThreadScheduler.hxx>
 #include <CFKit/Property.hxx>
 
 ///! BUGS: 0
@@ -88,6 +88,9 @@ namespace Kernel
 		if (!frame ||
 			!image ||
 			!stack_ptr)
+			return false;
+
+		if (this->IsBusy())
 			return false;
 
 		fStack = frame;

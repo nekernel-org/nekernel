@@ -16,7 +16,7 @@
 
 // Needed for SMP. //
 #include <FirmwareKit/EFI.hxx>
-#include <KernelKit/MP.hxx>
+#include <KernelKit/HardwareThreadScheduler.hxx>
 
 #define kApicSignature "APIC"
 

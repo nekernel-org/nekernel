@@ -28,6 +28,11 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
+EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
+{
+	Kernel::UserProcessHelper::StartScheduling();
+}
+
 /// @brief Handle math fault.
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
