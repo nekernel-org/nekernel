@@ -94,14 +94,18 @@ namespace Kernel
 
 		if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		{
-			return mp_register_process(fStack);
+			this->Busy(true);
+			Bool ret = mp_register_process(fStack);
+			this->Busy(true);
+
+			return ret;
 		}
 		else
 		{
 			mp_do_context_switch_pre();
 			mp_do_context_switch(image, stack_ptr, fStack);
 			
-			return false;
+			return true;
 		}
 	}
 

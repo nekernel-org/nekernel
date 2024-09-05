@@ -19,7 +19,7 @@
 ///! BUGS: 0
 
 /***********************************************************************************/
-/* TODO: Document the Kernel, SDK and kits. */
+/** TODO: Document the Kernel, SDK and kits. */
 /***********************************************************************************/
 
 namespace Kernel
@@ -31,7 +31,7 @@ namespace Kernel
 	STATIC UInt32 cLastExitCode = 0U;
 
 	/***********************************************************************************/
-	/// @brief UserProcess scheduler instance.
+	/// @brief User Process scheduler global object.
 	/***********************************************************************************/
 
 	STATIC UserProcessScheduler* cProcessScheduler = nullptr;
@@ -289,18 +289,16 @@ namespace Kernel
 	/***********************************************************************************/
 
 	/// @brief Remove process from list.
-	/// @param processSlot process slot inside team.
+	/// @param process_id process slot inside team.
 	/// @retval true process was removed.
 	/// @retval false process doesn't exist in team.
-	Bool UserProcessScheduler::Remove(ProcessID processSlot)
+	Bool UserProcessScheduler::Remove(ProcessID process_id)
 	{
 		// check if process is within range.
-		if (processSlot > mTeam.AsArray().Count())
+		if (process_id > mTeam.AsArray().Count())
 			return false;
-			
-		kcout << "UserProcessScheduler: Removing process...\r";
-
-		mTeam.AsArray()[processSlot].Status = ProcessStatusKind::kDead;
+		
+		mTeam.AsArray()[process_id].Status = ProcessStatusKind::kDead;
 		--mTeam.mProcessAmount;
 
 		return true;
@@ -424,8 +422,6 @@ namespace Kernel
 		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
 			return false;
 
-		kcout << "Finding hardware thread...\r";
-
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
 		{
 			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidHart)
@@ -439,15 +435,9 @@ namespace Kernel
 				HardwareThreadScheduler::The()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				HardwareThreadScheduler::The()[index].Leak()->Busy(true);
-
 				UserProcessHelper::TheCurrentPID() = new_pid;
 
-				kcout << "Found hardware thread...\r";
-
 				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
-
-				HardwareThreadScheduler::The()[index].Leak()->Busy(false);
 
 				return ret;
 			}
