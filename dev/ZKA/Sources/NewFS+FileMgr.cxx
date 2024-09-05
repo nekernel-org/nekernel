@@ -9,7 +9,7 @@
 
 #ifdef __FSKIT_USE_NEWFS__
 
-/// @brief NewFS File manager.
+/// @brief NeFS File manager.
 /// BUGS: 0
 
 namespace Kernel
@@ -18,7 +18,7 @@ namespace Kernel
 	NewFilesystemMgr::NewFilesystemMgr()
 	{
 		MUST_PASS(Detail::fs_init_newfs());
-		fImpl = new NewFSParser();
+		fImpl = new NeFSParser();
 		MUST_PASS(fImpl);
 
 		kcout << "We are done here... (NewFilesystemMgr).\r";
@@ -58,7 +58,7 @@ namespace Kernel
 	/// @return The Node pointer.
 	NodePtr NewFilesystemMgr::CreateDirectory(const Char* path)
 	{
-		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindDir));
+		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindDir));
 	}
 
 	/// @brief Creates a node with is a alias.
@@ -66,7 +66,7 @@ namespace Kernel
 	/// @return The Node pointer.
 	NodePtr NewFilesystemMgr::CreateAlias(const Char* path)
 	{
-		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindAlias));
+		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindAlias));
 	}
 
 	/// @brief Creates a node with is a page file.
@@ -74,35 +74,35 @@ namespace Kernel
 	/// @return The Node pointer.
 	NodePtr NewFilesystemMgr::CreateSwapFile(const Char* path)
 	{
-		return node_cast(fImpl->CreateCatalog(path, 0, kNewFSCatalogKindPage));
+		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindPage));
 	}
 
 	/// @brief Gets the root directory.
 	/// @return
 	const Char* NewFilesystemHelper::Root()
 	{
-		return kNewFSRoot;
+		return kNeFSRoot;
 	}
 
 	/// @brief Gets the up-dir directory.
 	/// @return
 	const Char* NewFilesystemHelper::UpDir()
 	{
-		return kNewFSUpDir;
+		return kNeFSUpDir;
 	}
 
 	/// @brief Gets the separator character.
 	/// @return
 	const Char NewFilesystemHelper::Separator()
 	{
-		return kNewFSSeparator;
+		return kNeFSSeparator;
 	}
 
 	/// @brief Gets the metafile character.
 	/// @return
 	const Char NewFilesystemHelper::MetaFile()
 	{
-		return kNewFSMetaFilePrefix;
+		return kNeFSMetaFilePrefix;
 	}
 } // namespace Kernel
 

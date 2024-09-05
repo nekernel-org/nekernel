@@ -119,3 +119,12 @@
 
 /// @brief The main system driver.
 #define kSysDrv "\\System\\startup.sys"
+
+/// @brief The main font file.
+#define kSysTTF "\\System\\urbanist.ttf"
+
+/// @brief The main kernel file.
+#define kSysChime "\\System\\startup.wav"
+
+/// @brief The main kernel file.
+#define kSysKrnl "\\System\\newoskrnl.exe"

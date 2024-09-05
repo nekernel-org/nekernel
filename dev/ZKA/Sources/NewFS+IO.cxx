@@ -9,7 +9,7 @@
 
 /*************************************************************
  *
- * File: NewFS+IO.cxx
+ * File: NeFS+IO.cxx
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
  *
@@ -42,19 +42,19 @@ Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
 
 	switch (DrvIndex)
 	{
-	case kNewFSSubDriveA: {
+	case kNeFSSubDriveA: {
 		NEWFS_READ(A, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveB: {
+	case kNeFSSubDriveB: {
 		NEWFS_READ(B, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveC: {
+	case kNeFSSubDriveC: {
 		NEWFS_READ(C, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveD: {
+	case kNeFSSubDriveD: {
 		NEWFS_READ(D, DrvTrait.fPacket, Mnt);
 		break;
 	}
@@ -77,19 +77,19 @@ Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIn
 
 	switch (DrvIndex)
 	{
-	case kNewFSSubDriveA: {
+	case kNeFSSubDriveA: {
 		NEWFS_WRITE(A, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveB: {
+	case kNeFSSubDriveB: {
 		NEWFS_WRITE(B, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveC: {
+	case kNeFSSubDriveC: {
 		NEWFS_WRITE(C, DrvTrait.fPacket, Mnt);
 		break;
 	}
-	case kNewFSSubDriveD: {
+	case kNeFSSubDriveD: {
 		NEWFS_WRITE(D, DrvTrait.fPacket, Mnt);
 		break;
 	}

@@ -12,7 +12,7 @@
  Revision History:
 
 	 31/01/24: Update documentation (amlel)
-	 05/07/24: NewFS support, and fork support, updated constants and specs
+	 05/07/24: NeFS support, and fork support, updated constants and specs
 		as well.
 
  ------------------------------------------- */
@@ -20,7 +20,7 @@
 #pragma once
 
 #ifdef __FSKIT_USE_NEWFS__
-#include <FSKit/NewFS.hxx>
+#include <FSKit/NeFS.hxx>
 #endif // __FSKIT_USE_NEWFS__
 
 #include <CompilerKit/CompilerKit.hxx>
@@ -137,7 +137,7 @@ namespace Kernel
 
 #ifdef __FSKIT_USE_NEWFS__
 	/**
-	 * @brief Based of FilesystemMgrInterface, takes care of managing NewFS
+	 * @brief Based of FilesystemMgrInterface, takes care of managing NeFS
 	 * disks.
 	 */
 	class NewFilesystemMgr final : public FilesystemMgrInterface
@@ -176,12 +176,12 @@ namespace Kernel
 							 _Input SizeT		sz) override;
 
 	public:
-		/// @brief Get NewFS parser class.
+		/// @brief Get NeFS parser class.
 		/// @return The filesystem parser class.
-		NewFSParser* GetParser() noexcept;
+		NeFSParser* GetParser() noexcept;
 
 	private:
-		NewFSParser* fImpl{nullptr};
+		NeFSParser* fImpl{nullptr};
 	};
 
 #endif // ifdef __FSKIT_USE_NEWFS__

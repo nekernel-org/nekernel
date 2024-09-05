@@ -102,7 +102,7 @@ struct PACKED _BOOT_BLOCK_STRUCT
 	Kernel::Int64	  LbaEnd;	// addition of lba_start to get the end of partition.
 	Kernel::Int16	  Kind;
 	Kernel::Int32	  FsVersion;
-	Kernel::Char	  Fs[kEPMFilesystemLength]; /* NewFS, ffs2... */
+	Kernel::Char	  Fs[kEPMFilesystemLength]; /* NeFS, ffs2... */
 	Kernel::Char	  Reserved[401];			// to fill a full sector.
 };
 

@@ -80,7 +80,7 @@ namespace Kernel
 		if (!size)
 			return;
 
-		constexpr auto cDataForkName = kNewFSDataFork;
+		constexpr auto cDataForkName = kNeFSDataFork;
 		this->Write(cDataForkName, node, data, flags, size);
 	}
 
@@ -96,7 +96,7 @@ namespace Kernel
 		if (!size)
 			return nullptr;
 
-		constexpr auto cDataForkName = kNewFSDataFork;
+		constexpr auto cDataForkName = kNeFSDataFork;
 		return this->Read(cDataForkName, node, flags, size);
 	}
 
@@ -107,7 +107,7 @@ namespace Kernel
 									 _Input SizeT		size)
 	{
 		if (!size ||
-			size > kNewFSForkSize)
+			size > kNeFSForkSize)
 			return;
 
 		if (!data)
@@ -115,7 +115,7 @@ namespace Kernel
 
 		ZKA_UNUSED(flags);
 
-		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
+		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
 			fImpl->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & cFileFlagRsrc ? true : false), data, size,
 								name);
 	}
@@ -125,7 +125,7 @@ namespace Kernel
 											   _Input Int32		  flags,
 											   _Input SizeT		  sz)
 	{
-		if (sz > kNewFSForkSize)
+		if (sz > kNeFSForkSize)
 			return nullptr;
 
 		if (!sz)
@@ -133,7 +133,7 @@ namespace Kernel
 
 		ZKA_UNUSED(flags);
 
-		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNewFSCatalogKindFile)
+		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
 			return fImpl->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & cFileFlagRsrc ? true : false), sz,
 									  name);
 
@@ -182,7 +182,7 @@ namespace Kernel
 
 	/// @brief Returns the filesystem parser.
 	/// @return the Filesystem parser class.
-	_Output NewFSParser* NewFilesystemMgr::GetParser() noexcept
+	_Output NeFSParser* NewFilesystemMgr::GetParser() noexcept
 	{
 		return fImpl;
 	}

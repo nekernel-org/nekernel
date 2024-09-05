@@ -154,6 +154,27 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
 	// Fill handover header now.
 
+	BDiskFormatFactory<BootDeviceATA> checkPart;
+
+	// ---------------------------------------------------- //
+	// The following checks for an exisiting partition
+	// inside the disk, if it doesn't have one,
+	// format the disk.
+	// ---------------------------------------------------- //
+
+	if (!checkPart.IsPartitionValid())
+	{
+		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
+		root.fFileName[0] = kNeFSRoot[0];
+		root.fFileName[1] = 0;
+
+		root.fKind = kNeFSCatalogKindDir;
+
+		checkPart.Format("ZKA (A:)", &root, 1);
+
+		rt_reset_hardware();
+	}
+
 	BS->GetMemoryMap(&SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc);
 
 	Descriptor = new EfiMemoryDescriptor[SzDesc];
@@ -193,14 +214,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	while (BS->AllocatePool(EfiRuntimeServicesData, kHandoverHeapSz, &handoverHdrPtr->f_BitMapStart) != kEfiOk)
 		;
 
-	auto extended_heap = (VoidPtr)((UIntPtr)handoverHdrPtr->f_BitMapStart + kHandoverHeapSz);
-	
-	while (BS->AllocatePool(EfiRuntimeServicesData, kHandoverHeapSz, &extended_heap) != kEfiOk)
-		;
-
 	handoverHdrPtr->f_VirtualSize =
 		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
-
 
 	handoverHdrPtr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handoverHdrPtr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
@@ -241,27 +256,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	BDiskFormatFactory<BootDeviceATA> checkPart;
-
-	// ---------------------------------------------------- //
-	// The following checks for an exisiting partition
-	// inside the disk, if it doesn't have one,
-	// format the disk.
-	// ---------------------------------------------------- //
-
-	if (!checkPart.IsPartitionValid())
-	{
-		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
-		root.fFileName[0] = kNewFSRoot[0];
-		root.fFileName[1] = 0;
-
-		root.fKind = kNewFSCatalogKindDir;
-
-		checkPart.Format("ZKA (A:)", &root, 1);
-
-		rt_reset_hardware();
-	}
-
 	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
 	readerKernel.ReadAll(0);
@@ -293,11 +287,17 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	urbanistTTF.ReadAll(0);
 
 	if (readerSysDrv.Blob() &&
-		chimeWav.Blob())
+		chimeWav.Blob() &&
+		urbanistTTF.Blob())
 	{
 		handoverHdrPtr->f_StartupChime	 = chimeWav.Blob();
-		handoverHdrPtr->f_StartupImage	 = readerKernel.Blob();
+		handoverHdrPtr->f_ChimeSz	 = chimeWav.Size();
+		handoverHdrPtr->f_StartupImage	 = readerSysDrv.Blob();
+		handoverHdrPtr->f_StartupSz	 = readerSysDrv.Size();
+		handoverHdrPtr->f_KernelImage	 = readerKernel.Blob();
+		handoverHdrPtr->f_KernelSz	 = readerKernel.Size();
 		handoverHdrPtr->f_TTFallbackFont = urbanistTTF.Blob();
+		handoverHdrPtr->f_FontSz	 = urbanistTTF.Size();
 	}
 	else
 	{

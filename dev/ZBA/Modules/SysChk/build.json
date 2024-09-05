@@ -11,7 +11,7 @@
     "-fPIC",
     "-fno-rtti",
     "-fno-exceptions",
-    "-Wl,--subsystem=17,--image-base,0x1000000,-e,ModuleMain"
+    "-Wl,--subsystem=17,--image-base,0x10000000,-e,ModuleMain"
   ],
   "cpp_macros": [
     "__NEWOSKRNL__",

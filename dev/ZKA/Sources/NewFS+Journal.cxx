@@ -10,8 +10,8 @@
 #ifdef __FSKIT_USE_NEWFS__
 
 ///! BUGS: 0
-///! @file NewFS+Journal.cxx
-///! @brief Journaling for NewFS.
+///! @file NeFS+Journal.cxx
+///! @brief Journaling for NeFS.
 
 namespace Kernel::Journal
 {

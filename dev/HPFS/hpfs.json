@@ -1,0 +1,11 @@
+{
+    "compiler_path": "rustc",
+    "compiler_std": "",
+    "sources_path": ["*.rs"],
+    "output_name": "hpfs.sys",
+    "compiler_flags": [
+    ],
+    "cpp_macros": [
+    ]
+  }
+  
