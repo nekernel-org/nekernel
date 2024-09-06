@@ -27,10 +27,10 @@ EXTERN_C
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
-#define kInterruptGate		   (0x8E)
-#define kTrapGate			   (0xEF)
-#define kTaskGate			   (0b10001100)
-#define kGdtCodeSelector (0x08)
+#define kInterruptGate (0x8E)
+#define kTrapGate	   (0xEF)
+#define kTaskGate	   (0b10001100)
+#define kIDTSelector   (0x08)
 
 namespace Kernel
 {
@@ -56,9 +56,9 @@ namespace Kernel::HAL
 	enum
 	{
 		eFlagsPresent = 0x01,
-		eFlagsRw = 0x02,
-		eFlagsUser = 0x04,
-		eFlagsCount = 0x3,
+		eFlagsRw	  = 0x02,
+		eFlagsUser	  = 0x04,
+		eFlagsCount	  = 0x3,
 	};
 
 	/// @brief Updates a PTE from pd_base.

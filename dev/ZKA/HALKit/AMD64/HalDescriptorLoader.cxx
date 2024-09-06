@@ -50,7 +50,7 @@ namespace Kernel::HAL
 
 		for (UInt16 idt_indx = 0; idt_indx < (kKernelIdtSize); ++idt_indx)
 		{
-			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtCodeSelector;
+			Detail::kInterruptVectorTable[idt_indx].Selector	   = kIDTSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
 			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kInterruptGate;
 			Detail::kInterruptVectorTable[idt_indx].OffsetLow	   = ((UIntPtr)ptr_ivt[idt_indx] & 0xFFFF);
