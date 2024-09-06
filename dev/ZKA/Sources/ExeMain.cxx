@@ -65,11 +65,11 @@ namespace Kernel::Detail
 				CG::CGDrawStringToWnd(cKernelWnd, "Mounted NeFS IFS (A:)", 10, 10, RGB(0, 0, 0));
 			}
 
-			const Kernel::SizeT cDirCount = 7UL;
+			const Kernel::SizeT cDirCount = 9UL;
 
 			const Kernel::Char* cDirStr[cDirCount] = {
 				"\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
-				"\\Users\\", "\\Library\\", "\\Mount\\"};
+				"\\Users\\", "\\Library\\", "\\Mount\\", "\\Games\\", "\\Applications\\Java\\"};
 
 			if (fNeFS->GetParser())
 			{
@@ -117,11 +117,18 @@ EXTERN_C ATTRIBUTE(naked) Kernel::Void HangCPU(Kernel::Void)
 	}
 }
 
+namespace Kernel
+{
+    EXTERN UserProcessScheduler* cProcessScheduler;
+}
+
 /// @brief Application entrypoint.
 /// @param Void
 /// @return Void
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 {
+    Kernel::cProcessScheduler = nullptr;
+
 	CG::CGDrawBackground();
 
 	cKernelWnd = nullptr;
@@ -148,8 +155,7 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawStringToWnd(cKernelWnd, "Starting ZKA System...", 20, 10, RGB(0, 0, 0));
 
-	Kernel::UserProcessHelper::Init();
-
+	Kernel::UserProcessHelper::StartScheduling();
 	Kernel::sched_execute_thread(HangCPU, "HANG TEST");
 
 	while (Yes)

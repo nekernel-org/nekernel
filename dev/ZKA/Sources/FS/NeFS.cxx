@@ -814,8 +814,8 @@ NeFSSearchThroughCatalogList:
 			NFS_CATALOG_STRUCT* catalogPtr = new NFS_CATALOG_STRUCT();
 			rt_copy_memory(catalog, catalogPtr, sizeof(NFS_CATALOG_STRUCT));
 
-			kcout << "found catalog at: " << hex_number(startCatalogList) << endl;
-			kcout << "found catalog at: " << catalog->Name << endl;
+			kcout << "Found catalog at: " << hex_number(startCatalogList) << endl;
+			kcout << "Found catalog at: " << catalog->Name << endl;
 
 			out_lba = startCatalogList;
 			return catalogPtr;

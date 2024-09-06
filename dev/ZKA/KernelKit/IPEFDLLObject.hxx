@@ -98,8 +98,8 @@ namespace Kernel
 
 	typedef IPEFDLLObject* IDLL;
 
-	EXTERN_C IDLL rtl_init_shared_object(UserProcess* header);
-	EXTERN_C Void			 rtl_fini_shared_object(UserProcess* header, IDLL lib, Bool* successful);
+	EXTERN_C IDLL rtl_init_dll(UserProcess* header);
+	EXTERN_C Void			 rtl_fini_dll(UserProcess* header, IDLL lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */

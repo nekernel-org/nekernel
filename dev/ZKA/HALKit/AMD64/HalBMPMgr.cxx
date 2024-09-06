@@ -6,7 +6,7 @@
 
 #include <ArchKit/ArchKit.hxx>
 
-#define cVMHMagic ((Kernel::UIntPtr)0x10210)
+#define cBitMpMagic ((Kernel::UIntPtr)0x10210)
 
 #ifdef __ZKA_AMD64__
 #include <HALKit/AMD64/HalPageAlloc.hxx>
@@ -29,21 +29,47 @@ namespace Kernel
 				/// @return The new address which was found.
 				VoidPtr FindBitMap(VoidPtr base_ptr, SizeT size, Bool rw, Bool user) noexcept
 				{
+					auto base = reinterpret_cast<UIntPtr>(base_ptr);
+
 					while (base_ptr && size)
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
 
-						if (ptr_bit_set[0] != cVMHMagic)
+						if (ptr_bit_set[0] == cBitMpMagic)
 						{
-							ptr_bit_set[0] = cVMHMagic;
-							ptr_bit_set[1] = size;
-							ptr_bit_set[2] = __BIGGEST_ALIGNMENT__;
+							if (ptr_bit_set[1] != 0 &&
+								ptr_bit_set[1] <= size &&
+								ptr_bit_set[2] == No)
+							{
+								ptr_bit_set[1] = size;
+								ptr_bit_set[2] = Yes;
 
-							kcout << "ALLOC STATUS\r";
-							kcout << "MAG: " << hex_number(ptr_bit_set[0]) << endl;
-							kcout << "ADDRESS: " << hex_number((UIntPtr)ptr_bit_set) << endl;
-							kcout << "SIZE: " << hex_number(ptr_bit_set[1]) << endl;
-							kcout << "ALLOC STATUS\r";
+								kcout << "BMPMgr: Allocated pointer!\r";
+								kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
+								kcout << "Size of pointer: " << hex_number(ptr_bit_set[1]) << endl;
+								kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+
+								if (rw)
+									mm_update_pte(base_ptr, eFlagsRw);
+
+								if (user)
+									mm_update_pte(base_ptr, eFlagsUser);
+
+								return (VoidPtr)ptr_bit_set;
+							}
+						}
+						else
+						{
+							UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
+
+							ptr_bit_set[0] = cBitMpMagic;
+							ptr_bit_set[1] = size;
+							ptr_bit_set[2] = Yes;
+
+							kcout << "BMPMgr: Allocated pointer!\r";
+							kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
+							kcout << "Size of pointer: " << hex_number(ptr_bit_set[1]) << endl;
+							kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
 							if (rw)
 								mm_update_pte(base_ptr, eFlagsRw);
@@ -54,7 +80,10 @@ namespace Kernel
 							return (VoidPtr)ptr_bit_set;
 						}
 
-						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + __BIGGEST_ALIGNMENT__ + ptr_bit_set[1]);
+						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != cBitMpMagic ? size : ptr_bit_set[1]));
+
+						if (reinterpret_cast<UIntPtr>(base_ptr) >= (kHandoverHeader->f_BitMapSize + base))
+							break;
 					}
 
 					return nullptr;
@@ -73,6 +102,11 @@ namespace Kernel
 
 			ptr_new = traits.FindBitMap(kKernelVirtualStart, size, rw, user);
 
+			if (!ptr_new)
+			{
+				ke_stop(RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM);
+			}
+
 			return ((UIntPtr*)ptr_new);
 		}
 
@@ -84,18 +118,16 @@ namespace Kernel
 			UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
 			if (!ptr_bit_set[0] ||
-				ptr_bit_set[0] != cVMHMagic)
+				ptr_bit_set[0] != cBitMpMagic)
 				return false;
 
-			kcout << "FREE STATUS\r";
-			kcout << "MAG: " << hex_number(ptr_bit_set[0]) << endl;
-			kcout << "ADDRESSS: " << hex_number((UIntPtr)ptr_bit_set) << endl;
-			kcout << "SIZE: " << hex_number(ptr_bit_set[1]) << endl;
-			kcout << "FREE STATUS\r";
+			kcout << "BMPMgr: Freed pointer!\r";
+			kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
+			kcout << "Size of pointer: " << hex_number(ptr_bit_set[1]) << endl;
+			kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
-			ptr_bit_set[0] = 0UL;
-			ptr_bit_set[1] = 0UL;
-			ptr_bit_set[2] = __BIGGEST_ALIGNMENT__;
+			ptr_bit_set[0] = cBitMpMagic;
+			ptr_bit_set[2] = No;
 
 			return true;
 		}

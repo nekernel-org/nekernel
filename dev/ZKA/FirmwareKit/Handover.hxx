@@ -24,7 +24,7 @@
 #define kHandoverMagic	 0xBADCC
 #define kHandoverVersion 0x114
 
-#define kHandoverHeapSz gib_cast(3)
+#define kHandoverBitMapSz gib_cast(3)
 #define kHandoverStructSz sizeof(HEL::HandoverInformationHeader)
 
 namespace Kernel::HEL
@@ -57,7 +57,7 @@ namespace Kernel::HEL
 		UInt64 f_Version;
 
 		VoidPtr f_BitMapStart;
-		SizeT	f_VirtualSize;
+		SizeT	f_BitMapSize;
 		VoidPtr f_PhysicalStart;
 
 		VoidPtr f_KernelImage;

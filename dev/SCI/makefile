@@ -1,6 +1,6 @@
 ######################
 # (C) ZKA
-# SCM/SCI kit makefile.
+# XPCOM/SCI kit makefile.
 ######################
 
 CC=g++

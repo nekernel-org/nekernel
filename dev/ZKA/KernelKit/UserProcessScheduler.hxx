@@ -295,10 +295,10 @@ namespace Kernel
 	{
 	public:
 		STATIC bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
-		STATIC bool CanBeScheduled(UserProcess& process);
+		STATIC bool CanBeScheduled(const UserProcess process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
-		STATIC Void Init();
+
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

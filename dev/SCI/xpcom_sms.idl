@@ -3,7 +3,7 @@
 Copyright ZKA Technologies.
 
 File: rt.internal.inl
-Purpose: Base code of SCM.
+Purpose: Base code of XPCOM.
 
 ------------------------------------------- */
 

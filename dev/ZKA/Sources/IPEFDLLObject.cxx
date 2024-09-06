@@ -18,11 +18,11 @@
 
  Revision History:
 
-	 01/02/24: Rework shared sharedObj ABI, except a rtl_init_shared_object and
- rtl_fini_shared_object (amlel) 15/02/24: Breaking changes, changed the name of the
+	 01/02/24: Rework shared sharedObj ABI, except a rtl_init_dll and
+ rtl_fini_dll (amlel) 15/02/24: Breaking changes, changed the name of the
  routines. (amlel)
 
-	07/28/24: Replace rt_library_free with rtl_fini_shared_object
+	07/28/24: Replace rt_library_free with rtl_fini_dll
 
  ------------------------------------------- */
 
@@ -37,7 +37,7 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C IDLL rtl_init_shared_object(UserProcess* header)
+EXTERN_C IDLL rtl_init_dll(UserProcess* header)
 {
 	IDLL sharedObj = tls_new_class<IPEFDLLObject>();
 
@@ -80,7 +80,7 @@ EXTERN_C IDLL rtl_init_shared_object(UserProcess* header)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_shared_object(UserProcess* header, IDLL lib, Bool* successful)
+EXTERN_C Void rtl_fini_dll(UserProcess* header, IDLL lib, Bool* successful)
 {
 	MUST_PASS(successful);
 

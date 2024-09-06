@@ -90,6 +90,8 @@ namespace Kernel
 	private:
 		explicit HardwareThreadScheduler();
 
+		friend class UserProcessHelper;
+
 	public:
 		~HardwareThreadScheduler();
 		ZKA_COPY_DEFAULT(HardwareThreadScheduler);

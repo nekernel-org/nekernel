@@ -32,7 +32,7 @@ namespace Kernel
 			if (!fClass)
 				return *this;
 
-			*fClass = ref;
+			fClass = &ref;
 			return *this;
 		}
 

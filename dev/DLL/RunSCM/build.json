@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "./", "../../"],
   "sources_path": ["Sources/*.cxx"],
-  "output_name": "runscm.exe",
+  "output_name": "runxpcom.exe",
   "compiler_flags": [
     "-ffreestanding",
     "-fno-rtti",

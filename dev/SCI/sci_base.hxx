@@ -43,7 +43,7 @@ class IUnknown;		 // Refrenced from an IDB entry.
 class UnknownUCLSID; // From the IDB, the constructor of the object, e.g: WordUCLSID.
 class UUID;
 
-/// @brief Allocate new SCM class.
+/// @brief Allocate new XPCOM class.
 /// @tparam TCLS
 /// @tparam UCLSID
 /// @param uclsidOfCls
@@ -54,7 +54,7 @@ TCLS* XPCOMQueryInterface(UCLSID uclsidOfCls, Args... args);
 template <typename TCLS>
 SInt32 XPCOMReleaseClass(TCLS** cls);
 
-/// @brief Release SCM class.
+/// @brief Release XPCOM class.
 /// @tparam TCLS
 /// @param cls
 /// @return
@@ -157,13 +157,13 @@ IMPORT_C UInt64 IoSeekFile(_Input ZKAObject file_desc, UInt64 file_offset);
 /// @brief Installs the Thread Information Block and Global Information Block inside the current process.
 /// @param void.
 /// @return > 0 error ocurred or already present, = 0 success.
-IMPORT_C UInt32 TlsInstallIB(UInt0);
+IMPORT_C UInt32 TlsInstall(UInt0);
 
 // ------------------------------------------------------------------------
-// SCM API.
+// XPCOM API.
 // ------------------------------------------------------------------------
 
-/// @brief Allocate new SCM object.
+/// @brief Allocate new XPCOM object.
 /// @tparam TCLS the class type.
 /// @tparam UCLSID UCLS factory class type.
 /// @param uclsidOfCls UCLS factory class
@@ -171,20 +171,20 @@ IMPORT_C UInt32 TlsInstallIB(UInt0);
 template <typename TCLS, typename UCLSID, typename... Args>
 TCLS* XPCOMQueryInterface(_Input UCLSID* uclsidOfCls, _Input Args&&... args);
 
-/// @brief Release SCM object.
+/// @brief Release XPCOM object.
 /// @tparam TCLS the class type.
 /// @param cls the class to release.
 /// @return status code.
 template <typename TCLS>
 SInt32 XPCOMReleaseClass(_Input TCLS* cls);
 
-/// @brief Creates an SCM instance in the process.
-/// @param handle_instance the SCM handle.
-/// @param flags the SCM flags.
+/// @brief Creates an XPCOM instance in the process.
+/// @param handle_instance the XPCOM handle.
+/// @param flags the XPCOM flags.
 IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output ZKAObject* handle_instance);
 
-/// @brief Destroys an SCM instance of the process.
-/// @param handle_instance the SCM handle.
+/// @brief Destroys an XPCOM instance of the process.
+/// @param handle_instance the XPCOM handle.
 IMPORT_C UInt0 XPCOMDestroyInstance(_Input ZKAObject handle_instance);
 
 // ------------------------------------------------------------------------
@@ -218,12 +218,16 @@ IMPORT_C SInt32 ErrGetLastError(UInt0);
 // Threading API.
 // ------------------------------------------------------------------------
 
-IMPORT_C UInt0 ThrExitCurrentThread(SInt32 exit_code);
-IMPORT_C UInt0 ThrExitMainThread(SInt32 exit_code);
+IMPORT_C UInt0 ThrExitCurrentThread(_Input SInt32 exit_code);
+IMPORT_C UInt0 ThrExitMainThread(_Input SInt32 exit_code);
 
 IMPORT_C UInt0 ThrExitYieldThread(UInt0);
 
 IMPORT_C UInt0 ThrExitJoinThread(UInt0);
 IMPORT_C UInt0 ThrExitDetachThread(UInt0);
+
+// ------------------------------------------------------------------------
+// Disk Management API.
+// ------------------------------------------------------------------------
 
 #endif // ifndef __SCI_BASE_HXX__

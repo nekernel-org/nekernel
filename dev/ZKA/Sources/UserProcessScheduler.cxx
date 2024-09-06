@@ -12,6 +12,7 @@
 /// @brief User Process scheduler.
 /***********************************************************************************/
 
+#include "HALKit/AMD64/Processor.hxx"
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/IPEFDLLObject.hxx>
 #include <KernelKit/HardwareThreadScheduler.hxx>
@@ -213,7 +214,7 @@ namespace Kernel
 		if (this->Kind == kDLLKind)
 		{
 			Bool success = false;
-			rtl_fini_shared_object(this, this->DLLPtr, &success);
+			rtl_fini_dll(this, this->DLLPtr, &success);
 
 			if (success)
 			{
@@ -237,7 +238,7 @@ namespace Kernel
 		process.MemoryPD = reinterpret_cast<UIntPtr>(hal_read_cr3());
 #endif // __ZKA_AMD64__
 
-		process.StackFrame = (HAL::StackFrame*)process.New(sizeof(HAL::StackFrame));
+		process.StackFrame = new HAL::StackFrame(0);
 
 		if (!process.StackFrame)
 		{
@@ -248,22 +249,10 @@ namespace Kernel
 		// Create heap according to type of process.
 		if (process.Kind == UserProcess::kDLLKind)
 		{
-			process.DLLPtr = rtl_init_shared_object(&process);
+			process.DLLPtr = rtl_init_dll(&process);
 		}
 
-		if (process.Image)
-		{
-			// get preferred stack size by app.
-			const auto cMaxStackSize = process.StackSize;
-			process.StackReserve	 = (UInt8*)process.New(sizeof(UInt8) * cMaxStackSize);
-
-			if (process.StackReserve)
-			{
-				process.Crash();
-				return -kErrorProcessFault;
-			}
-		}
-		else
+		if (!process.Image)
 		{
 			if (process.Kind != UserProcess::kDLLKind)
 			{
@@ -272,13 +261,20 @@ namespace Kernel
 			}
 		}
 
+		// get preferred stack size by app.
+		const auto cMaxStackSize = process.StackSize;
+		process.StackReserve	 = new UInt8[cMaxStackSize];
+
+		if (!process.StackReserve)
+		{
+			process.Crash();
+			return -kErrorProcessFault;
+		}
+
 		process.Status	  = ProcessStatusKind::kStarting;
 		process.ProcessId = mTeam.mProcessAmount;
 
 		++mTeam.mProcessAmount;
-
-		while (1)
-			;
 
 		mTeam.AsArray()[process.ProcessId] = process;
 
@@ -318,6 +314,8 @@ namespace Kernel
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
+		kcout << "Finding available process...\r";
+
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
 			auto& process = mTeam.AsArray()[process_index];
@@ -326,7 +324,7 @@ namespace Kernel
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
 				// set the current process.
-				mTeam.AsRef() = mTeam.AsArray()[process.ProcessId];
+				mTeam.AsRef() = process;
 
 				process.PTime = static_cast<Int32>(process.Affinity);
 
@@ -339,10 +337,6 @@ namespace Kernel
 					process.Crash();
 					continue;
 				}
-
-				process.Exit();
-
-				continue;
 			}
 			else
 			{
@@ -378,34 +372,15 @@ namespace Kernel
 		return cProcessScheduler->CurrentProcess().Leak().ProcessId;
 	}
 
-	Void UserProcessHelper::Init()
-	{
-		if (mm_is_valid_heap(cProcessScheduler))
-			delete cProcessScheduler;
-
-		cProcessScheduler = nullptr;
-		cProcessScheduler = new UserProcessScheduler();
-		MUST_PASS(cProcessScheduler);
-	}
-
 	/// @brief Check if process can be schedulded.
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
-	bool UserProcessHelper::CanBeScheduled(UserProcess& process)
+	bool UserProcessHelper::CanBeScheduled(const UserProcess process)
 	{
 		if (process.Status == ProcessStatusKind::kFrozen ||
 			process.Status == ProcessStatusKind::kDead)
 			return false;
-
-		if (process.Kind == UserProcess::kDLLKind)
-		{
-			if (auto start = process.DLLPtr->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart), kPefCode);
-				start)
-			{
-				process.Image = start;
-			}
-		}
 
 		return process.PTime < 1;
 	}
@@ -414,8 +389,21 @@ namespace Kernel
 	 * @brief Scheduler helper class.
 	 */
 
+	EXTERN
+	HardwareThreadScheduler* cHardwareThreadScheduler;
+
 	SizeT UserProcessHelper::StartScheduling()
 	{
+		if (!cHardwareThreadScheduler)
+		{
+			cHardwareThreadScheduler = new HardwareThreadScheduler();
+		}
+
+		if (!cProcessScheduler)
+		{
+			cProcessScheduler = new UserProcessScheduler();
+		}
+
 		SizeT ret = cProcessScheduler->Run();
 		return ret;
 	}

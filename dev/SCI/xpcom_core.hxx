@@ -3,7 +3,7 @@
 Copyright ZKA Technologies.
 
 File: rt.internal.inl
-Purpose: Base code of SCM.
+Purpose: Base code of XPCOM.
 
 ------------------------------------------- */
 
@@ -37,7 +37,7 @@ public:
 	virtual VoidPtr	  QueryInterface(UUID * p_uuid) = 0;
 };
 
-/// @brief Allocate new SCM object.
+/// @brief Allocate new XPCOM object.
 /// @tparam TCLS the class type.
 /// @tparam UCLSID UCLS factory class type.
 /// @param uclsidOfCls UCLS factory class
@@ -49,7 +49,7 @@ inline TCLS* XPCOMQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 	return uclsidOfCls->QueryInterfaceWithArgs(args...);
 }
 
-/// @brief Release SCM object.
+/// @brief Release XPCOM object.
 /// @tparam TCLS the class type.
 /// @param cls the class to release.
 /// @return status code.

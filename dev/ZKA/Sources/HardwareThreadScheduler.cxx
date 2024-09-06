@@ -17,6 +17,8 @@
 
 namespace Kernel
 {
+	HardwareThreadScheduler* cHardwareThreadScheduler = nullptr;
+
 	///! A HardwareThread class takes care of it's owned hardware thread.
 	///! It has a stack for it's core.
 
@@ -107,7 +109,7 @@ namespace Kernel
 		{
 			mp_do_context_switch_pre();
 			mp_do_context_switch(image, stack_ptr, fStack);
-			
+
 			return true;
 		}
 	}
@@ -124,7 +126,10 @@ namespace Kernel
 	///! @brief Constructor and destructors.
 
 	///! @brief Default constructor.
-	HardwareThreadScheduler::HardwareThreadScheduler() = default;
+	HardwareThreadScheduler::HardwareThreadScheduler()
+	{
+		kcout << "Initializing class done!" << endl;
+	}
 
 	///! @brief Default destructor.
 	HardwareThreadScheduler::~HardwareThreadScheduler() = default;
@@ -132,8 +137,8 @@ namespace Kernel
 	/// @brief Shared singleton function
 	HardwareThreadScheduler& HardwareThreadScheduler::The()
 	{
-		STATIC HardwareThreadScheduler sched;
-		return sched;
+		MUST_PASS(cHardwareThreadScheduler);
+		return *cHardwareThreadScheduler;
 	}
 
 	/// @brief Get Stack Frame of Core

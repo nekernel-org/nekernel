@@ -211,11 +211,10 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handoverHdrPtr->f_BitMapStart = 0;
 
-	while (BS->AllocatePool(EfiRuntimeServicesData, kHandoverHeapSz, &handoverHdrPtr->f_BitMapStart) != kEfiOk)
+	while (BS->AllocatePool(EfiRuntimeServicesData, kHandoverBitMapSz, &handoverHdrPtr->f_BitMapStart) != kEfiOk)
 		;
 
-	handoverHdrPtr->f_VirtualSize =
-		Descriptor[cDefaultMemoryMap].NumberOfPages; /* # of pages */
+	handoverHdrPtr->f_BitMapSize = kHandoverBitMapSz; /* # of pages */
 
 	handoverHdrPtr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handoverHdrPtr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
@@ -291,13 +290,13 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		urbanistTTF.Blob())
 	{
 		handoverHdrPtr->f_StartupChime	 = chimeWav.Blob();
-		handoverHdrPtr->f_ChimeSz	 = chimeWav.Size();
+		handoverHdrPtr->f_ChimeSz		 = chimeWav.Size();
 		handoverHdrPtr->f_StartupImage	 = readerSysDrv.Blob();
-		handoverHdrPtr->f_StartupSz	 = readerSysDrv.Size();
+		handoverHdrPtr->f_StartupSz		 = readerSysDrv.Size();
 		handoverHdrPtr->f_KernelImage	 = readerKernel.Blob();
-		handoverHdrPtr->f_KernelSz	 = readerKernel.Size();
+		handoverHdrPtr->f_KernelSz		 = readerKernel.Size();
 		handoverHdrPtr->f_TTFallbackFont = urbanistTTF.Blob();
-		handoverHdrPtr->f_FontSz	 = urbanistTTF.Size();
+		handoverHdrPtr->f_FontSz		 = urbanistTTF.Size();
 	}
 	else
 	{

@@ -26,80 +26,83 @@ default.
 	@author Amlal EL Mahrouss
 */
 
-#define kNeFSInvalidFork	 (-1)
+#define kNeFSInvalidFork	(-1)
 #define kNeFSInvalidCatalog (-1)
-#define kNeFSNodeNameLen	 (256)
+#define kNeFSNodeNameLen	(256)
 
-#define kNeFSSectorSz (512)
-#define kNeFSForkDataSz   (kib_cast(8))
+#define kNeFSSectorSz	(512)
+#define kNeFSForkDataSz (kib_cast(8))
 
 #define kNeFSIdentLen (8)
-#define kNeFSIdent	   "  NeFS"
-#define kNeFSPadLen   (392)
+#define kNeFSIdent	  "  NeFS"
+#define kNeFSPadLen	  (392)
 
 #define kNeFSMetaFilePrefix '$'
 
 #define kNeFSVersionInteger (0x0128)
-#define kNeFSVerionString	 "1.28"
+#define kNeFSVerionString	"1.28"
 
 /// @brief Standard fork types.
-#define kNeFSDataFork	   "main_data"
+#define kNeFSDataFork	  "main_data"
 #define kNeFSResourceFork "main_rsrc"
 
+#define kNeFSForkSize (sizeof(NFS_FORK_STRUCT))
+
+#define kNeFSPartitionTypeStandard (7)
+#define kNeFSPartitionTypePage	   (8)
+#define kNeFSPartitionTypeBoot	   (9)
+
+
 #define kNeFSCatalogKindFile  (1)
-#define kNeFSCatalogKindDir   (2)
+#define kNeFSCatalogKindDir	  (2)
 #define kNeFSCatalogKindAlias (3)
 
-#define kNeFSForkSize (512)
-
-//! shared between network or
-//! other filesystems. Export forks as .zip when copying.
+//! Shared between network and/or partitions. Export forks as .zip when copying.
 #define kNeFSCatalogKindShared (4)
 
-#define kNeFSCatalogKindResource	(5)
+#define kNeFSCatalogKindResource   (5)
 #define kNeFSCatalogKindExecutable (6)
 
 #define kNeFSCatalogKindPage (8)
 
-#define kNeFSPartitionTypeStandard (7)
-#define kNeFSPartitionTypePage		(8)
-#define kNeFSPartitionTypeBoot		(9)
-
 #define kNeFSCatalogKindDevice (9)
-#define kNeFSCatalogKindLock	(10)
+#define kNeFSCatalogKindLock   (10)
 
-#define kNeFSCatalogKindRLE (11)
+#define kNeFSCatalogKindRLE		 (11)
 #define kNeFSCatalogKindMetaFile (12)
-#define kNeFSCatalogKindTTF (13)
-#define kNeFSCatalogKindRIFF (14)
 
-#define kNeFSSeparator	   '\\'
+#define kNeFSCatalogKindTTF		 (13)
+#define kNeFSCatalogKindRIFF	 (14)
+
+#define kNeFSSeparator	  '\\'
 #define kNeFSSeparatorAlt '/'
 
-#define kNeFSUpDir	  ".."
-#define kNeFSRoot	  "\\"
+#define kNeFSUpDir	 ".."
+#define kNeFSRoot	 "\\"
 #define kNeFSRootAlt "/"
 
-#define kNeFSLF  '\r'
+#define kNeFSLF	 '\r'
 #define kNeFSEOF (-1)
 
 #define kNeFSBitWidth (sizeof(Kernel::Char))
 #define kNeFSLbaType  (Kernel::Lba)
 
-/// Start After the PM headers, pad 1024 bytes.
+/// @note Start after the partition map header. (Virtual addressing)
 #define kNeFSRootCatalogStartAddress (1024)
-#define kNeFSCatalogStartAddress	  ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK))
+#define kNeFSCatalogStartAddress	 ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK))
 
 #define kResourceTypeDialog (10)
 #define kResourceTypeString (11)
 #define kResourceTypeMenu	(12)
+#define kResourceTypeSound	(13)
+#define kResourceTypeFont	(14)
 
 #define kConfigLen (64)
 #define kPartLen   (32)
 
-#define kNeFSFlagDeleted	  (70)
+#define kNeFSFlagDeleted	 (70)
 #define kNeFSFlagUnallocated (0)
-#define kNeFSFlagCreated	  (71)
+#define kNeFSFlagCreated	 (71)
 
 #define kNeFSMimeNameLen (200)
 
@@ -111,14 +114,14 @@ struct NFS_ROOT_PARTITION_BLOCK;
 
 enum
 {
-	kNeFSHardDrive			= 0xC0, // Hard Drive
-	kNeFSSolidStateDrive	= 0xC1, // Solid State Drive
-	kNeFSOpticalDrive		= 0x0C, // Blu-Ray/DVD
+	kNeFSHardDrive		   = 0xC0, // Hard Drive
+	kNeFSSolidStateDrive   = 0xC1, // Solid State Drive
+	kNeFSOpticalDrive	   = 0x0C, // Blu-Ray/DVD
 	kNeFSMassStorageDevice = 0xCC, // USB
-	kNeFSScsi				= 0xC4, // SCSI Hard Drive
-	kNeFSFlashDrive		= 0xC6,
-	kNeFSUnknown			= 0xFF, // Unknown device.
-	kNeFSDriveCount		= 7,
+	kNeFSScsi			   = 0xC4, // SCSI Hard Drive
+	kNeFSFlashDrive		   = 0xC6,
+	kNeFSUnknown		   = 0xFF, // Unknown device.
+	kNeFSDriveCount		   = 7,
 };
 
 /// @brief Catalog type.
@@ -225,7 +228,7 @@ namespace Kernel
 	{
 	public:
 		explicit NeFSParser() = default;
-		~NeFSParser()		   = default;
+		~NeFSParser()		  = default;
 
 	public:
 		ZKA_COPY_DEFAULT(NeFSParser);
@@ -236,15 +239,15 @@ namespace Kernel
 		/// @param theFork the fork itself.
 		/// @return the fork
 		_Output NFS_FORK_STRUCT* CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-											_Input NFS_FORK_STRUCT& theFork);
+											_Input NFS_FORK_STRUCT&	   theFork);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
 		/// @param name the fork name.
 		/// @return the fork.
 		_Output NFS_FORK_STRUCT* FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-										  _Input const Char* name,
-										  Boolean			 dataOrRsrc);
+										  _Input const Char*		 name,
+										  Boolean					 dataOrRsrc);
 
 		_Output Void RemoveFork(_Input NFS_FORK_STRUCT* fork);
 
@@ -254,7 +257,7 @@ namespace Kernel
 
 		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const Char* name);
 
-		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name,
+		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char*  name,
 												  _Input const Int32& flags,
 												  _Input const Int32& kind);
 
@@ -264,12 +267,12 @@ namespace Kernel
 						  _Input Bool						 isRsrcFork,
 						  _Input VoidPtr					 data,
 						  _Input SizeT						 sizeOfData,
-						  _Input const Char* forkName);
+						  _Input const Char*				 forkName);
 
 		VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 							_Input Bool						   isRsrcFork,
 							_Input SizeT					   dataSz,
-							_Input const Char* forkName);
+							_Input const Char*				   forkName);
 
 		bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);
 

@@ -21,42 +21,6 @@
 
 using namespace Kernel;
 
-namespace Kernel::Detail
-{
-	/// \brief UserProcess thread information header.
-	struct THREAD_HEADER_BLOCK final
-	{
-		STATIC constexpr SizeT cMaxLen = 256;
-
-		Char		  fName[cMaxLen] = {"THREAD #0 (PROCESS 0)"};
-		ProcessStatusKind fThreadStatus;
-		Int64		  fThreadID;
-		UIntPtr		  fCode{0};
-		UIntPtr		  fStack{0};
-		UIntPtr		  fData{0};
-
-		Void Exit() noexcept
-		{
-			this->fThreadStatus = ProcessStatusKind::kKilled;
-		}
-
-		UIntPtr GetStack() noexcept
-		{
-			return fStack;
-		}
-
-		UIntPtr GetData() noexcept
-		{
-			return fData;
-		}
-
-		UIntPtr GetPC() noexcept
-		{
-			return fCode;
-		}
-	};
-} // namespace Detail
-
 /**
  * @brief Checks for cookie inside the TIB.
  * @param tib the TIB to check.

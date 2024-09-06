@@ -93,7 +93,7 @@ EXTERN_C void hal_init_platform(
 Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	// get page size.
-	kKernelVirtualSize = kHandoverHeader->f_VirtualSize;
+	kKernelVirtualSize = kHandoverHeader->f_BitMapSize;
 
 	// get virtual address start (for the heap)
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
