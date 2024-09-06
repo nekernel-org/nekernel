@@ -57,7 +57,7 @@ mp_pre_switch:
 	mov rdx, [mp_system_call_handler]
     shr rdx, 32
 	mov rcx, 0xc0000082
-    wrsmr
+    wrmsr
 
     ret
 

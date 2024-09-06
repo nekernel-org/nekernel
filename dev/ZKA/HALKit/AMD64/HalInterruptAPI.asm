@@ -244,6 +244,7 @@ global hal_load_idt
 global hal_user_code_start
 
 hal_load_idt:
+    cli
     lidt [rcx]
     sti
     ret

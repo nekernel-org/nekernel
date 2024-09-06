@@ -30,8 +30,7 @@ EXTERN_C
 #define kInterruptGate		   (0x8E)
 #define kTrapGate			   (0xEF)
 #define kTaskGate			   (0b10001100)
-#define kGdtKernelCodeSelector (0x08)
-#define kGdtUserCodeSelector   (0x23)
+#define kGdtCodeSelector (0x08)
 
 namespace Kernel
 {
@@ -289,7 +288,7 @@ EXTERN_C Kernel::Void hal_load_idt(Kernel::HAL::Register64 ptr);
 EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 
 /// @brief Maximum size of the IDT.
-#define kKernelIdtSize	   0x100
+#define kKernelIdtSize	   (0x100)
 #define kKernelInterruptId 0x32
 
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;

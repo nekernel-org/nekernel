@@ -57,10 +57,7 @@ Kernel::Property cKernelVersion;
 Kernel::User	 cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
-
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept;
-
-EXTERN_C void hal_user_code_start(void);
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
 EXTERN_C void hal_init_platform(
@@ -87,7 +84,7 @@ EXTERN_C void hal_init_platform(
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PhysicalStart));
 
-	STATIC CONST auto cEntriesCount = 5;
+	STATIC CONST auto cEntriesCount = 6;
 
 	/* GDT, mostly descriptors for user and kernel segments. */
 	STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x08) cGdt[cEntriesCount] = {
@@ -96,7 +93,6 @@ EXTERN_C void hal_init_platform(
 		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xCF, .fBaseHigh = 0}, // Kernel data
 		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fFlags = 0xCF, .fBaseHigh = 0}, // User data
 		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fFlags = 0xAF, .fBaseHigh = 0}, // User code
-
 	};
 
 	// Load memory descriptors.
@@ -117,8 +113,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	Kernel::HAL::Register64 idtBase;
 	idtBase.Base  = (Kernel::UIntPtr)kInterruptVectorTable;
-	idtBase.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) *
-					(kKernelIdtSize - 1);
 
 	CONST Kernel::HAL::IDTLoader cIDT;
 	cIDT.Load(idtBase);

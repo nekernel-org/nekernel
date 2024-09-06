@@ -48,23 +48,26 @@ namespace Kernel::HAL
 	{
 		volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
-		for (UInt16 idt_indx = 0; idt_indx < kKernelIdtSize; ++idt_indx)
+		for (UInt16 idt_indx = 0; idt_indx < (kKernelIdtSize); ++idt_indx)
 		{
-			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtKernelCodeSelector;
+			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtCodeSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
 			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kInterruptGate;
-			Detail::kInterruptVectorTable[idt_indx].OffsetLow	   = ((UIntPtr)ptr_ivt[idt_indx] & __INT16_MAX__);
-			Detail::kInterruptVectorTable[idt_indx].OffsetMid	   = (((UIntPtr)ptr_ivt[idt_indx] >> 16) & __INT16_MAX__);
+			Detail::kInterruptVectorTable[idt_indx].OffsetLow	   = ((UIntPtr)ptr_ivt[idt_indx] & 0xFFFF);
+			Detail::kInterruptVectorTable[idt_indx].OffsetMid	   = (((UIntPtr)ptr_ivt[idt_indx] >> 16) & 0xFFFF);
 			Detail::kInterruptVectorTable[idt_indx].OffsetHigh =
-				(((UIntPtr)ptr_ivt[idt_indx] >> 32) & __INT32_MAX__);
+				(((UIntPtr)ptr_ivt[idt_indx] >> 32) & 0xFFFFFFFF);
 
 			Detail::kInterruptVectorTable[idt_indx].Zero = 0x0;
 		}
 
+		idt.Base = (UIntPtr)&Detail::kInterruptVectorTable;
+		idt.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) *
+						(kKernelIdtSize) - 1;
+
 		hal_load_idt(idt);
 
-		HAL::Out8(0xA1, 0xFF);
-		HAL::Out8(0x21, 0xFF);
+		Detail::hal_remap_intel_pic_ctrl();
 	}
 
 	void GDTLoader::Load(Ref<RegisterGDT>& gdt)

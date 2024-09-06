@@ -107,7 +107,7 @@ namespace Kernel
 		}
 		else
 		{
-			kcout << "Switching to task...\r";
+			kcout << "Switching to the Process's thread...\r";
 
 			mp_do_context_switch(image, stack_ptr, fStack);
 
