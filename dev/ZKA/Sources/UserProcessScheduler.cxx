@@ -12,7 +12,6 @@
 /// @brief User Process scheduler.
 /***********************************************************************************/
 
-#include "HALKit/AMD64/Processor.hxx"
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/IPEFDLLObject.hxx>
 #include <KernelKit/HardwareThreadScheduler.hxx>
@@ -424,15 +423,9 @@ namespace Kernel
 		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
 			return No;
 
-		while (Yes)
-			;
-
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
 		{
 			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidHart)
-				continue;
-
-			if (HardwareThreadScheduler::The()[index].Leak()->IsBusy())
 				continue;
 
 			if (HardwareThreadScheduler::The()[index].Leak()->Kind() !=

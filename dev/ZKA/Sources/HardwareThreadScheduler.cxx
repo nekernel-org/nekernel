@@ -92,21 +92,23 @@ namespace Kernel
 			!stack_ptr)
 			return false;
 
-		if (this->IsBusy())
-			return false;
-
 		fStack = frame;
 
 		if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		{
+			if (this->IsBusy())
+				return false;
+
 			this->Busy(true);
 			Bool ret = mp_register_process(fStack);
-			this->Busy(true);
+			this->Busy(false);
 
 			return ret;
 		}
 		else
 		{
+			kcout << "Switching...\r";
+
 			mp_do_context_switch_pre();
 			mp_do_context_switch(image, stack_ptr, fStack);
 
@@ -120,16 +122,10 @@ namespace Kernel
 		return fWakeup;
 	}
 
-	///! @brief Internal Hardware Thread list.
-	STATIC HardwareThread cThreadList[cMaxHWThreads];
-
 	///! @brief Constructor and destructors.
 
 	///! @brief Default constructor.
-	HardwareThreadScheduler::HardwareThreadScheduler()
-	{
-		kcout << "Initializing class done!" << endl;
-	}
+	HardwareThreadScheduler::HardwareThreadScheduler() = default;
 
 	///! @brief Default destructor.
 	HardwareThreadScheduler::~HardwareThreadScheduler() = default;
@@ -163,15 +159,7 @@ namespace Kernel
 		}
 		else if (idx >= cMaxHWThreads)
 		{
-			static HardwareThread* fakeThread = new HardwareThread();
-
-			if (!fakeThread)
-			{
-				fakeThread = new HardwareThread();
-			}
-
-			fakeThread->fKind = kInvalidHart;
-
+			static HardwareThread* fakeThread = nullptr;
 			return {fakeThread};
 		}
 
@@ -200,6 +188,6 @@ namespace Kernel
 	/// @return the number of cores.
 	SizeT HardwareThreadScheduler::Count() noexcept
 	{
-		return fThreadList.Count();
+		return fThreadList.Capacity();
 	}
 } // namespace Kernel

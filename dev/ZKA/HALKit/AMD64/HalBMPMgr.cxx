@@ -52,6 +52,12 @@ namespace Kernel
 								kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
 								kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
+								if (rw)
+									mm_update_pte(base_ptr, eFlagsRw);
+
+								if (user)
+									mm_update_pte(base_ptr, eFlagsUser);
+
 								return (VoidPtr)ptr_bit_set;
 							}
 						}

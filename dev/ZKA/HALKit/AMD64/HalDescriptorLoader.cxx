@@ -19,7 +19,7 @@ namespace Kernel::HAL
 			auto a2 = HAL::In8(0xa2);
 
 			HAL::Out8(0x20, 0x11);
-			
+
 			HAL::Out8(0xA0, 0x11);
 
 			HAL::Out8(0x21, 32);
@@ -48,20 +48,7 @@ namespace Kernel::HAL
 	{
 		volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
-		for (UInt16 idt_indx = 0; idt_indx < 12; ++idt_indx)
-		{
-			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtKernelCodeSelector;
-			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
-			Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kTrapGate;
-			Detail::kInterruptVectorTable[idt_indx].OffsetLow	   = ((UIntPtr)ptr_ivt[idt_indx] & __INT16_MAX__);
-			Detail::kInterruptVectorTable[idt_indx].OffsetMid	   = (((UIntPtr)ptr_ivt[idt_indx] >> 16) & __INT16_MAX__);
-			Detail::kInterruptVectorTable[idt_indx].OffsetHigh =
-				(((UIntPtr)ptr_ivt[idt_indx] >> 32) & __INT32_MAX__);
-
-			Detail::kInterruptVectorTable[idt_indx].Zero = 0x0;
-		}
-
-		for (UInt16 idt_indx = 13; idt_indx < kKernelIdtSize; ++idt_indx)
+		for (UInt16 idt_indx = 0; idt_indx < kKernelIdtSize; ++idt_indx)
 		{
 			Detail::kInterruptVectorTable[idt_indx].Selector	   = kGdtKernelCodeSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;

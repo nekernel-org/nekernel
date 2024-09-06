@@ -155,7 +155,7 @@ IntNormal 49
 [extern hal_kernel_call_enter]
 
 IntNormal 50
-    
+
 __ZKA_INT_51:
     cli
 
@@ -216,19 +216,28 @@ section .text
 [global hal_load_gdt]
 
 hal_load_gdt:
-    lgdt [rcx]
     cli
-    push 8
-    push hal_reload_segments
-    o64 retf
-hal_reload_segments:
-    mov ax, 16
+
+    lgdt [rcx]
+
+    mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
     mov ss, ax
+
+    mov rax, 0x08
+    push rax
+    push hal_reload_segments
+
+    o64 retf
+
+extern hal_real_init
+
+hal_reload_segments:
     sti
+    jmp hal_real_init
     ret
 
 global hal_load_idt

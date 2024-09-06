@@ -87,7 +87,7 @@ namespace Kernel::Detail
 					}
 
 					catalogDir = fNeFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
-																	kNeFSCatalogKindDir);
+																   kNeFSCatalogKindDir);
 
 					CG::CGDrawStringToWnd(cKernelWnd, "Directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
 					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("Directory has been created: ")), RGB(0, 0, 0));
@@ -114,12 +114,14 @@ EXTERN_C ATTRIBUTE(naked) Kernel::Void HangCPU(Kernel::Void)
 {
 	while (Yes)
 	{
+		Kernel::Char* p = nullptr;
+		*p				= 4;
 	}
 }
 
 namespace Kernel
 {
-    EXTERN UserProcessScheduler* cProcessScheduler;
+	EXTERN UserProcessScheduler* cProcessScheduler;
 }
 
 /// @brief Application entrypoint.
@@ -127,7 +129,7 @@ namespace Kernel
 /// @return Void
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 {
-    Kernel::cProcessScheduler = nullptr;
+	Kernel::cProcessScheduler = nullptr;
 
 	CG::CGDrawBackground();
 

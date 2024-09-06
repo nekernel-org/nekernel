@@ -54,25 +54,14 @@ namespace Kernel::HAL
 } // namespace Kernel::HAL
 
 Kernel::Property cKernelVersion;
-Kernel::User cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
+Kernel::User	 cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
-Kernel::Void hal_real_init(Kernel::Void) noexcept;
+EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept;
 
 EXTERN_C void hal_user_code_start(void);
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
-
-/* GDT, mostly descriptors for user and kernel segments. */
-STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x1000) cGdt[6] = {
-	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},		// Null entry
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xA0, .fBaseHigh = 0}, // Kernel code
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xA0, .fBaseHigh = 0}, // Kernel data
-	{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xA0, .fBaseHigh = 0}, // User code
-	{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xA0, .fBaseHigh = 0}, // User data
-	// reserve them for later.
-};
 
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
@@ -87,11 +76,6 @@ EXTERN_C void hal_init_platform(
 		return;
 	}
 
-	hal_real_init();
-}
-
-Kernel::Void hal_real_init(Kernel::Void) noexcept
-{
 	// get page size.
 	kKernelVirtualSize = kHandoverHeader->f_BitMapSize;
 
@@ -102,6 +86,18 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	// get physical address start.
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PhysicalStart));
+
+	/* GDT, mostly descriptors for user and kernel segments. */
+	STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x08) cGdt[6] = {
+		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},	  // Null entry
+		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel code
+		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel data
+		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},
+		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // User code
+		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xAF, .fBaseHigh = 0}, // User data
+																												  // reserve them for later.
+																												  //
+	};
 
 	// Load memory descriptors.
 	Kernel::HAL::RegisterGDT gdtBase;
@@ -114,10 +110,15 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	// Load IDT now.
 
+	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+}
+
+EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
+{
 	Kernel::HAL::Register64 idtBase;
 	idtBase.Base  = (Kernel::UIntPtr)kInterruptVectorTable;
 	idtBase.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) *
-								(kKernelIdtSize - 1);
+					(kKernelIdtSize - 1);
 
 	CONST Kernel::HAL::IDTLoader cIDT;
 	cIDT.Load(idtBase);
