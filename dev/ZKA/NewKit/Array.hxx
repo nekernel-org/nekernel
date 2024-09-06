@@ -15,8 +15,16 @@ namespace Kernel
 	class Array final
 	{
 	public:
-		explicit Array() = default;
-		~Array()		 = default;
+		explicit Array()
+		{
+			for (SizeT i = 0; i < N; i++)
+			{
+				if (!fArray[i])
+					fArray[i] = T();
+			}
+		}
+
+		~Array() = default;
 
 		Array& operator=(const Array&) = default;
 		Array(const Array&)			   = default;
@@ -28,13 +36,7 @@ namespace Kernel
 
 		Boolean Empty() const
 		{
-			for (auto Val : fArray)
-			{
-				if (Val)
-					return false;
-			}
-
-			return true;
+			return No;
 		}
 
 		const SizeT Capacity()

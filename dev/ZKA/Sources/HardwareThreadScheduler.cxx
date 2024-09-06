@@ -107,12 +107,11 @@ namespace Kernel
 		}
 		else
 		{
-			kcout << "Switching...\r";
+			kcout << "Switching to task...\r";
 
-			mp_do_context_switch_pre();
 			mp_do_context_switch(image, stack_ptr, fStack);
 
-			return true;
+			return Yes;
 		}
 	}
 

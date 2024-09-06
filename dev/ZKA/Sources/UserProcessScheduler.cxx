@@ -335,7 +335,7 @@ namespace Kernel
 				kcout << process.Name << ": will be runned.\r";
 
 				// tell helper to find a core to schedule on.
-				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize], process.StackFrame,
+				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
 											   process.ProcessId))
 				{
 					process.Crash();
