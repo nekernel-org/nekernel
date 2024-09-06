@@ -724,7 +724,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogName,
 													 Lba&				out_lba)
 {
-	kcout << "start finding catalog...\r";
+	kcout << "Start finding catalog...\r";
 
 	NFS_ROOT_PARTITION_BLOCK fs_buf{0};
 	auto					 drive = sMountpointInterface.A();

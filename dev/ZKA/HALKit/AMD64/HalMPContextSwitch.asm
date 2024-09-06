@@ -34,11 +34,12 @@ mp_do_context_switch:
     mov r11, gs
     mov r12, fs
 
-    mov r11, 0x202
-
     mov fs, [r8 + (8 * 4)]
     mov gs, [r8 + (8 * 9)]
     mov r8,  [r8]
+
+    mov r11, 0x202
+    mov rsp, rdx
 
     o64 sysret
 

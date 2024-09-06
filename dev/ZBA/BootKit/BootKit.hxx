@@ -236,7 +236,7 @@ public:
 				return false;
 		}
 
-		writer.Write(L"newosldr: Disk is ").Write(GIB(this->fDiskDev.GetDiskSize())).Write(L" GB.\r");
+		writer.Write(L"NEWOSLDR: Disk is ").Write(GIB(this->fDiskDev.GetDiskSize())).Write(L" GB.\r");
 
 		if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
 			blockPart->DiskSize < 1 ||
@@ -251,7 +251,7 @@ public:
 			return false;
 		}
 
-		writer.Write(L"newosldr: Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
+		writer.Write(L"NEWOSLDR: Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
 		return true;
 	}
@@ -288,7 +288,7 @@ private:
 
 		fDiskDev.Write((Char*)&catalogKind, sizeof(NFS_CATALOG_STRUCT));
 
-		writer.Write(L"newosldr: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
+		writer.Write(L"NEWOSLDR: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
 
 		return true;
 	}
@@ -325,7 +325,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 		EFI::ThrowError(L"Disk-Too-Tiny", L"Can't format a New Filesystem partition here.");
 		return false;
 	}
-	
+
 	NFS_ROOT_PARTITION_BLOCK partBlock{0};
 
 	CopyMem(partBlock.Ident, kNeFSIdent, kNeFSIdentLen - 1);
@@ -371,7 +371,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 	if (this->WriteRootCatalog(fileBlobs, blobCount, partBlock))
 	{
 		BTextWriter writer;
-		writer.Write(L"newosldr: Disk formatted.\r");
+		writer.Write(L"NEWOSLDR: Disk formatted.\r");
 
 		return true;
 	}

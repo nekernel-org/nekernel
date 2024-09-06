@@ -54,7 +54,7 @@ namespace Kernel
 
 	Void UserProcess::Crash()
 	{
-		if (this->Name == 0)
+		if (*this->Name == 0)
 			return;
 
 		kcout << this->Name << ": crashed, ID = " << number(kErrorProcessFault) << endl;
@@ -202,10 +202,10 @@ namespace Kernel
 		cLastExitCode = exit_code;
 
 		//! Delete image if not done already.
-		if (this->Image)
+		if (this->Image && mm_is_valid_heap(this->Image))
 			mm_delete_ke_heap(this->Image);
 
-		if (this->StackFrame)
+		if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
 			mm_delete_ke_heap((VoidPtr)this->StackFrame);
 
 		this->Image		 = nullptr;
@@ -224,6 +224,8 @@ namespace Kernel
 
 		if (this->StackReserve)
 			delete[] this->StackReserve;
+
+		this->ProcessId = 0;
 
 		if (this->ProcessId > 0)
 			UserProcessScheduler::The().Remove(this->ProcessId);
@@ -271,10 +273,13 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
-		process.Status	  = ProcessStatusKind::kStarting;
-		process.ProcessId = mTeam.mProcessAmount;
+		if (mTeam.mProcessAmount > kSchedProcessLimitPerTeam)
+			mTeam.mProcessAmount = 0UL;
 
 		++mTeam.mProcessAmount;
+
+		process.ProcessId = mTeam.mProcessAmount;
+		process.Status	  = ProcessStatusKind::kStarting;
 
 		mTeam.AsArray()[process.ProcessId] = process;
 
@@ -414,10 +419,13 @@ namespace Kernel
 	 * \param new_pid the process's PID.
 	 */
 
-	bool UserProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
+	Bool UserProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
 	{
 		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
-			return false;
+			return No;
+
+		while (Yes)
+			;
 
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
 		{

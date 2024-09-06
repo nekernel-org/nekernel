@@ -23,7 +23,7 @@ namespace Kernel
 
 		T& operator[](const SizeT& At)
 		{
-			return (fArray[At]);
+			return fArray[At];
 		}
 
 		Boolean Empty() const

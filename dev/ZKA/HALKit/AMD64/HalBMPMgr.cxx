@@ -46,14 +46,11 @@ namespace Kernel
 
 								kcout << "BMPMgr: Allocated pointer!\r";
 								kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
-								kcout << "Size of pointer: " << hex_number(ptr_bit_set[1]) << endl;
+								kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
+								kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
+								kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
+								kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
 								kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
-
-								if (rw)
-									mm_update_pte(base_ptr, eFlagsRw);
-
-								if (user)
-									mm_update_pte(base_ptr, eFlagsUser);
 
 								return (VoidPtr)ptr_bit_set;
 							}
@@ -68,7 +65,10 @@ namespace Kernel
 
 							kcout << "BMPMgr: Allocated pointer!\r";
 							kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
-							kcout << "Size of pointer: " << hex_number(ptr_bit_set[1]) << endl;
+							kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
+							kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
+							kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
+							kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
 							kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
 							if (rw)
@@ -123,7 +123,10 @@ namespace Kernel
 
 			kcout << "BMPMgr: Freed pointer!\r";
 			kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
-			kcout << "Size of pointer: " << hex_number(ptr_bit_set[1]) << endl;
+			kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
+			kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
+			kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
+			kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
 			kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
 			ptr_bit_set[0] = cBitMpMagic;

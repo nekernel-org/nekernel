@@ -14,7 +14,7 @@ namespace Kernel
 	/// @note This sets up a new stack, anything on the main function that calls the Kernel will not be accessible.
 	/// @param main the start of the process.
 	/// @return if the process was started or not.
-	bool sched_execute_thread(MainKind main, const Char* process_name) noexcept
+	Bool sched_execute_thread(MainKind main, const Char* process_name) noexcept
 	{
 		if (!main)
 			return No;
@@ -27,6 +27,6 @@ namespace Kernel
 
 		rt_copy_memory((VoidPtr)process_name, proc.Name, rt_string_len(process_name));
 
-		return UserProcessScheduler::The().Add(proc) != 0;
+		return UserProcessScheduler::The().Add(proc) > 0;
 	}
 } // namespace Kernel

@@ -18,7 +18,7 @@
 
 Status:
 
-newosldr: Need to boot from EPM partition. [ X ]
+NEWOSLDR: Need to boot from EPM partition. [ X ]
 <br>
 newoskrnl: New Filesystem is done. [ X ]
 

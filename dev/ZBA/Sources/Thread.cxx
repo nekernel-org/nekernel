@@ -55,32 +55,32 @@ namespace Boot
 			if (hdrPtr->mMachine != kPeMachineAMD64 ||
 				hdrPtr->mSignature != kPeMagic)
 			{
-				writer.Write("newosldr: Not a PE32+ executable.\r");
+				writer.Write("NEWOSLDR: Not a PE32+ executable.\r");
 				return;
 			}
 
 			if (optHdr->mSubsystem != kZKASubsystem)
 			{
-				writer.Write("newosldr: Not a ZKA Subsystem executable.\r");
+				writer.Write("NEWOSLDR: Not a ZKA Subsystem executable.\r");
 				return;
 			}
 
-			writer.Write("newosldr: PE32+ executable detected (ZKA Subsystem).\r");
+			writer.Write("NEWOSLDR: PE32+ executable detected (ZKA Subsystem).\r");
 
 			auto numSecs = hdrPtr->mNumberOfSections;
 
-			writer.Write("newosldr: Major Linker Ver: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
-			writer.Write("newosldr: Minor Linker Ver: ").Write(optHdr->mMinorLinkerVersion).Write("\r");
-			writer.Write("newosldr: Major Subsystem Ver: ").Write(optHdr->mMajorSubsystemVersion).Write("\r");
-			writer.Write("newosldr: Minor Subsystem Ver: ").Write(optHdr->mMinorSubsystemVersion).Write("\r");
-			writer.Write("newosldr: Magic: ").Write(hdrPtr->mSignature).Write("\r");
+			writer.Write("NEWOSLDR: Major Linker Ver: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
+			writer.Write("NEWOSLDR: Minor Linker Ver: ").Write(optHdr->mMinorLinkerVersion).Write("\r");
+			writer.Write("NEWOSLDR: Major Subsystem Ver: ").Write(optHdr->mMajorSubsystemVersion).Write("\r");
+			writer.Write("NEWOSLDR: Minor Subsystem Ver: ").Write(optHdr->mMinorSubsystemVersion).Write("\r");
+			writer.Write("NEWOSLDR: Magic: ").Write(hdrPtr->mSignature).Write("\r");
 
 			constexpr auto cPageSize = 512;
 
 			EfiPhysicalAddress loadStartAddress = optHdr->mImageBase;
 			loadStartAddress += optHdr->mBaseOfData;
 
-			writer.Write("newosldr: ImageBase: ").Write(loadStartAddress).Write("\r");
+			writer.Write("NEWOSLDR: ImageBase: ").Write(loadStartAddress).Write("\r");
 
 			auto numPages = optHdr->mSizeOfImage / cPageSize;
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
@@ -95,14 +95,12 @@ namespace Boot
 			{
 				LDR_SECTION_HEADER_PTR sect = &sectPtr[sectIndex];
 
+				SetMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), 0, sect->mSizeOfRawData);
+
 				if (StrCmp(sectionForCode, sect->mName) == 0)
 				{
 					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + optHdr->mAddressOfEntryPoint);
-					writer.Write("newosldr: Entrypoint of DLL: ").Write((UIntPtr)fStartAddress).Write("\r");
-				}
-				else if (StrCmp(sectionForBSS, sect->mName) == 0)
-				{
-					SetMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), 0, sect->mSizeOfRawData);
+					writer.Write("NEWOSLDR: Entrypoint of DLL: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
 				else if (StrCmp(sectionForNewLdr, sect->mName) == 0)
 				{
@@ -115,12 +113,12 @@ namespace Boot
 					if (structHandover->HandoverMagic != kHandoverMagic &&
 						structHandover->HandoverType != HEL::kTypeKernel)
 					{
-						writer.Write("newosldr: Entrypoint of EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
+						writer.Write("NEWOSLDR: Entrypoint of EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
 						CGDrawString("NEWOSLDR: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 					}
 				}
 
-				writer.Write("newosldr: offset ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
+				writer.Write("NEWOSLDR: offset ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
 
 				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
@@ -135,12 +133,12 @@ namespace Boot
 			//  =========================================  //
 
 			fStartAddress = nullptr;
-			writer.Write("newosldr: PEF executable detected, won't load it.\r");
-			writer.Write("newosldr: note: PEF executables aren't loadable by default.\r");
+			writer.Write("NEWOSLDR: PEF executable detected, won't load it.\r");
+			writer.Write("NEWOSLDR: note: PEF executables aren't loadable by default.\r");
 		}
 		else
 		{
-			writer.Write("newosldr: Invalid executable. (note: SIGG executables aren't loadable by default).\r");
+			writer.Write("NEWOSLDR: Invalid executable. (note: SIGG executables aren't loadable by default).\r");
 		}
 	}
 
@@ -151,7 +149,7 @@ namespace Boot
 
 		if (!handover)
 		{
-			writer.Write("newosldr: Exec format error.\r");
+			writer.Write("NEWOSLDR: Exec format error.\r");
 			return;
 		}
 
