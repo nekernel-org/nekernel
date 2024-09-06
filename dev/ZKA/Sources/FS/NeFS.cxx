@@ -633,37 +633,39 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 /// @param catalog the catalog itself
 /// @param data the data.
 /// @return if the catalog w rote the contents successfully.
-bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool isRsrcFork, _Input VoidPtr data, _Input SizeT sizeOfData, _Input const Char* forkName)
+bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool is_rsrc_fork, _Input VoidPtr data, _Input SizeT size_of_data, _Input const Char* forkName)
 {
-	if (sizeOfData > kNeFSForkDataSz ||
-		sizeOfData == 0)
+	if (size_of_data > kNeFSForkDataSz ||
+		size_of_data == 0)
 		return No;
 
 	auto buf = new UInt8[kNeFSForkDataSz];
-	rt_copy_memory(data, buf, sizeOfData);
+	rt_set_memory(buf, 0, kNeFSForkDataSz);
+
+	rt_copy_memory(data, buf, size_of_data);
 
 	auto drive = sMountpointInterface.A();
 
 	rt_copy_memory((VoidPtr) "fs/newfs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/newfs-packet"));
 
-	auto startFork = (!isRsrcFork) ? catalog->DataFork
+	auto startFork = (!is_rsrc_fork) ? catalog->DataFork
 								   : catalog->ResourceFork;
 
-	NFS_FORK_STRUCT* forkDataIn = new NFS_FORK_STRUCT();
+	NFS_FORK_STRUCT* fork_data_input = new NFS_FORK_STRUCT();
 	NFS_FORK_STRUCT	 prevFork{};
 
 	// sanity check of the fork position as the condition to run the loop.
 	while (startFork >= kNeFSCatalogStartAddress)
 	{
-		drive.fPacket.fPacketContent = forkDataIn;
+		drive.fPacket.fPacketContent = fork_data_input;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
 		drive.fPacket.fLba			 = startFork;
 
 		drive.fInput(&drive.fPacket);
 
 		// check the fork, if it's position is valid.
-		if (forkDataIn->DataOffset <= kNeFSCatalogStartAddress)
+		if (fork_data_input->DataOffset <= kNeFSCatalogStartAddress)
 		{
 			ErrLocal() = kErrorDiskIsCorrupted;
 
@@ -672,33 +674,33 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 			return false;
 		}
 
-		if (forkDataIn->Flags != kNeFSFlagUnallocated &&
-			forkDataIn->Flags != kNeFSFlagDeleted &&
-			StringBuilder::Equals(forkDataIn->ForkName, forkName) &&
-			StringBuilder::Equals(forkDataIn->CatalogName, catalog->Name) &&
-			forkDataIn->DataSize == sizeOfData)
+		if (fork_data_input->Flags != kNeFSFlagUnallocated &&
+			fork_data_input->Flags != kNeFSFlagDeleted &&
+			StringBuilder::Equals(fork_data_input->ForkName, forkName) &&
+			StringBuilder::Equals(fork_data_input->CatalogName, catalog->Name) &&
+			fork_data_input->DataSize == size_of_data)
 		{
 			// ===================================================== //
 			// Store the blob now.
 			// ===================================================== //
 
-			forkDataIn->Flags	   = kNeFSFlagCreated;
+			fork_data_input->Flags	   = kNeFSFlagCreated;
 
 			drive.fPacket.fPacketContent = buf;
 			drive.fPacket.fPacketSize	 = kNeFSForkDataSz;
-			drive.fPacket.fLba			 = forkDataIn->DataOffset;
+			drive.fPacket.fLba			 = fork_data_input->DataOffset;
 
-			kcout << "data offset: " << hex_number(forkDataIn->DataOffset) << endl;
+			kcout << "data offset: " << hex_number(fork_data_input->DataOffset) << endl;
 
 			drive.fOutput(&drive.fPacket);
 
-			drive.fPacket.fPacketContent = forkDataIn;
+			drive.fPacket.fPacketContent = fork_data_input;
 			drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
 			drive.fPacket.fLba			 = startFork - sizeof(NFS_FORK_STRUCT);
 
 			drive.fOutput(&drive.fPacket);
 
-			kcout << "wrote fork at offset: " << hex_number(forkDataIn->DataOffset) << endl;
+			kcout << "wrote fork at offset: " << hex_number(fork_data_input->DataOffset) << endl;
 			kcout << "wrote fork at offset: " << hex_number(startFork - sizeof(NFS_FORK_STRUCT)) << endl;
 
 			delete catalog;
@@ -708,9 +710,9 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 
 		// stumble upon a fork, store it.
 
-		prevFork = *forkDataIn;
+		prevFork = *fork_data_input;
 
-		startFork = forkDataIn->NextSibling;
+		startFork = fork_data_input->NextSibling;
 	}
 
 	return false;
@@ -930,7 +932,7 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 /***********************************************************************************/
 
 VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-								 _Input Bool						isRsrcFork,
+								 _Input Bool						is_rsrc_fork,
 								 _Input SizeT						dataSz,
 								 _Input const Char* forkName)
 {
@@ -942,8 +944,8 @@ VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 
 	constexpr auto cNeFSCatalogPadding = 4;
 
-	Lba	 dataForkLba  = (!isRsrcFork) ? catalog->DataFork : catalog->ResourceFork;
-	Size dataForkSize = (!isRsrcFork) ? catalog->DataForkSize : catalog->ResourceForkSize;
+	Lba	 dataForkLba  = (!is_rsrc_fork) ? catalog->DataFork : catalog->ResourceFork;
+	Size dataForkSize = (!is_rsrc_fork) ? catalog->DataForkSize : catalog->ResourceForkSize;
 
 	kcout << "catalog " << catalog->Name
 		  << ", fork: " << hex_number(dataForkLba) << endl;
