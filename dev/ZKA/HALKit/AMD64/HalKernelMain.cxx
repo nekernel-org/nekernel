@@ -87,14 +87,16 @@ EXTERN_C void hal_init_platform(
 	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PhysicalStart));
 
+	STATIC CONST auto cEntriesCount = 6;
+
 	/* GDT, mostly descriptors for user and kernel segments. */
-	STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x08) cGdt[6] = {
+	STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x08) cGdt[cEntriesCount] = {
 		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},	  // Null entry
 		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel code
-		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel data
+		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xCF, .fBaseHigh = 0}, // Kernel data
 		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},
 		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // User code
-		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xAF, .fBaseHigh = 0}, // User data
+		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xCF, .fBaseHigh = 0}, // User data
 																												  // reserve them for later.
 																												  //
 	};
@@ -103,7 +105,7 @@ EXTERN_C void hal_init_platform(
 	Kernel::HAL::RegisterGDT gdtBase;
 
 	gdtBase.Base  = reinterpret_cast<Kernel::UIntPtr>(cGdt);
-	gdtBase.Limit = (sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY) * 6) - 1;
+	gdtBase.Limit = (sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY) * cEntriesCount) - 1;
 
 	CONST Kernel::HAL::GDTLoader cGDT;
 	cGDT.Load(gdtBase);
