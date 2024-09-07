@@ -131,6 +131,7 @@ namespace Kernel
 
 			kcout << "BMPMgr: Freed pointer!\r";
 			kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
+			kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
 			kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
 			kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
 			kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;

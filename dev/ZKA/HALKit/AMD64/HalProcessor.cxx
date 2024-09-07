@@ -30,9 +30,10 @@ namespace Kernel::HAL
 		// Now PD
 		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pml4_base) + pd_idx * sizeof(UIntPtr));
 
-		kcout << (*pd_entry & 0x01 ? "PageDir present." : "PageDir not present") << endl;
+		kcout << (*pd_entry & 0x01 ? "Dir Present." : "Dir Not present.") << endl;
 
-		if ((*pd_entry & 0x01) == 0)
+		// Don't bother allocate directory.
+		if (!(*pd_entry & 0x01))
 		{
 		    ke_stop(RUNTIME_CHECK_PAGE);
 		}
@@ -42,8 +43,8 @@ namespace Kernel::HAL
 		// And then PTE
 		volatile UIntPtr* page_addr = (volatile UIntPtr*)(((UInt64)pt_base) + (pte_idx * sizeof(UIntPtr)));
 
-		kcout << (*page_addr & 0x01 ? "Page present." : "Page not present") << endl;
-		kcout << (*page_addr & 0x04 ? "User bit present." : "User bit not present") << endl;
+		kcout << (*page_addr & 0x01 ? "Page Present." : "Page Not Present.") << endl;
+		kcout << (*page_addr & 0x04 ? "User." : "Not User.") << endl;
 
 		if (phys_addr == nullptr)
 		{

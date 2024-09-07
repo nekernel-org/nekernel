@@ -159,11 +159,7 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	Kernel::UserProcessHelper::StartScheduling();
 
-	Kernel::UInt8* hang_proc = (Kernel::UInt8*)Kernel::mm_new_ke_heap(sizeof(Kernel::UInt8) * 512, Yes, Yes);	
-	Kernel::rt_set_memory((Kernel::VoidPtr)HangCPU, 0x90, 512);
-
-
-	Kernel::sched_execute_thread((Kernel::MainKind)hang_proc, "HANG TEST");
+	Kernel::sched_execute_thread((Kernel::MainKind)HangCPU, "HANG TEST");
 
 	while (Yes)
 	{
