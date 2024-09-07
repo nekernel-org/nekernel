@@ -157,10 +157,13 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	CG::CGDrawStringToWnd(cKernelWnd, "Running System Component: ", 10, 10, RGB(0, 0, 0));
 	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("Running System Component: ")), RGB(0, 0, 0));
 
-	CG::CGDrawStringToWnd(cKernelWnd, "Starting ZKA System...", 20, 10, RGB(0, 0, 0));
-
 	Kernel::UserProcessHelper::StartScheduling();
-	Kernel::sched_execute_thread(HangCPU, "HANG TEST");
+
+	Kernel::UInt8* hang_proc = (Kernel::UInt8*)Kernel::mm_new_ke_heap(sizeof(Kernel::UInt8) * 512, Yes, Yes);	
+	Kernel::rt_set_memory((Kernel::VoidPtr)HangCPU, 0x90, 512);
+
+
+	Kernel::sched_execute_thread((Kernel::MainKind)hang_proc, "HANG TEST");
 
 	while (Yes)
 	{
