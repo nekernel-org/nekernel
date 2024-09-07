@@ -16,46 +16,41 @@
 
 namespace Kernel::HAL
 {
-	EXTERN_C Int32 mm_update_pte(VoidPtr virt_addr, UInt32 flags)
+	/// @brief Set a PTE from pd_base.
+	/// @param virt_addr a valid virtual address.
+	/// @param phys_addr point to physical address.
+	/// @param flags the flags to put on the page.
+	/// @return Status code of page manip.
+	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, VoidPtr phys_addr, UInt32 flags)
 	{
 		VoidPtr pml4_base = hal_read_cr3();
 
-		UIntPtr pml4_idx = ((UIntPtr)virt_addr >> 39) & 0x1FFF;
-		UIntPtr pdpt_idx = ((UIntPtr)virt_addr >> 30) & 0x1FFF;
-		UIntPtr pd_idx	 = ((UIntPtr)virt_addr >> 21) & 0x1FFF;
-		UIntPtr pte_idx	 = ((UIntPtr)virt_addr >> 12) & 0x1FFF;
-
-		// Access PML4 entry
-		volatile UInt64* pml4_entry = (volatile UInt64*)(((UInt64)pml4_base) + pml4_idx * sizeof(UIntPtr));
-		UInt64			 pdpt_base	= *pml4_entry & ~0xFFF; // Remove flags (assuming 4KB pages)
-
-		// Access PDPT entry
-		volatile UInt64* pdpt_entry = (volatile UInt64*)(((UInt64)pdpt_base) + pdpt_idx * sizeof(UIntPtr));
-		UInt64			 pd_base	= *pdpt_entry & ~0xFFF; // Remove flags
-
+		UIntPtr pd_idx	 = ((UIntPtr)virt_addr >> 22);
+		UIntPtr pte_idx	 = ((UIntPtr)virt_addr >> 12) & 0x3FFF;
 		// Now PD
-		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pd_base) + pd_idx * sizeof(UIntPtr));
+		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pml4_base) + pd_idx * sizeof(UIntPtr));
+
+		kcout << (*pd_entry & 0x01 ? "PageDir present." : "PageDir not present") << endl;
+
+		if ((*pd_entry & 0x01) == 0)
+		{
+			*pd_entry |= 0x01;
+		}
+
 		UInt64			 pt_base  = *pd_entry & ~0xFFF; // Remove flags
 
 		// And then PTE
-		volatile UInt64* page_addr = (volatile UInt64*)(((UInt64)pt_base) + (pte_idx * sizeof(UIntPtr)));
+		volatile UIntPtr* page_addr = (volatile UIntPtr*)(((UInt64)pt_base) + (pte_idx * sizeof(UIntPtr)));
 
-		if (flags & eFlagsPresent)
-			*page_addr |= 0x01; // present bit
-		else if (flags & ~eFlagsPresent)
-			*page_addr &= 0x01; // present bit
+		kcout << (*page_addr & 0x01 ? "Page present." : "Page not present") << endl;
+		kcout << (*page_addr & 0x04 ? "User bit present." : "User bit not present") << endl;
 
-		if (flags & eFlagsRw)
-			*page_addr |= 0x02;
-		else if (flags & ~eFlagsRw)
-			*page_addr &= 0x02; // present bit
+		if (phys_addr == nullptr)
+		{
+			phys_addr = (VoidPtr)((*page_addr & ~0xFFF) + ((UIntPtr)virt_addr & 0xFFF));
+		}
 
-		if (flags & eFlagsUser)
-			*page_addr |= 0x04;
-		else if (flags & ~eFlagsUser)
-			*page_addr &= 0x04; // present bit
-
-		hal_write_cr3((UIntPtr)pml4_base);
+		(*page_addr) = ((UIntPtr)phys_addr) | (flags & 0xFFF) | 0x01;
 
 		return 0;
 	}

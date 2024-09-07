@@ -134,31 +134,36 @@ namespace Kernel::HAL
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
-	EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame);
+	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame);
 
 	/// @brief Called when the AP is ready.
 	/// @internal
-	EXTERN_C Void hal_on_ap_startup(HAL::StackFramePtr stack_frame)
+	EXTERN_C Void hal_on_ap_startup(Void)
 	{
-		mp_register_process(stack_frame);
-		ke_stop(RUNTIME_CHECK_FAILED);
+		while (Yes)
+		{
+		}
 	}
 
 	struct PROCESS_CONTROL_BLOCK final
 	{
-		UserProcessPtr f_Process;
+		HAL::StackFramePtr f_Frame;
+		UInt8* f_Stack;
+		VoidPtr f_Image;
 	} fBlocks[kSchedProcessLimitPerTeam] = {0};
 
 	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
 	{
-		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Process->StackFrame;
+		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
 	}
 
-	EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame)
+	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame)
 	{
 		if (kSMPAware)
 		{
-			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Process = &UserProcessScheduler::The().CurrentProcess().Leak();
+			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
+			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Stack = stack_ptr;
+			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Image = image;
 
 			return Yes;
 		}

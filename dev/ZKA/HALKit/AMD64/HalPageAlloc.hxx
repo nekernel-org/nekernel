@@ -31,7 +31,8 @@
 #endif // !kAlign
 
 EXTERN_C void hal_flush_tlb();
-EXTERN_C void hal_write_cr3(Kernel::UIntPtr phys_addr);
+EXTERN_C void hal_invl_tlb(Kernel::UIntPtr addr);
+EXTERN_C void hal_write_cr3(Kernel::UIntPtr pml4);
 EXTERN_C void hal_write_cr0(Kernel::UIntPtr bit);
 
 EXTERN_C Kernel::VoidPtr hal_read_cr0(); // @brief CPU control register.
@@ -82,7 +83,7 @@ namespace Kernel::HAL
 		}
 	} // namespace Detail
 
-	struct ZKA_PDE final
+	struct ALIGN(0x08) ZKA_PDE final
 	{
 		ZKA_PTE ALIGN(kPTEAlign) Pte[kPTEMax];
 	};

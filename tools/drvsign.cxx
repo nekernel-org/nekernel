@@ -11,14 +11,15 @@
 #include <sstream>
 #include <filesystem>
 
-#define kDriverSignedExt   ".sigg"
+#define kDriverSignedExt   ".vxd"
 #define kDriverExt		   ".sys"
-#define kSignedDriverMagic "SIGG"
+#define kSignedDriverMagic " VXD"
 
 namespace details
 {
 	struct SIGNED_DRIVER_HEADER final
 	{
+		char d_binary_padding[512];
 		// doesn't change.
 		char d_binary_magic[5];
 		int	 d_binary_version;
@@ -26,7 +27,6 @@ namespace details
 		char		  d_binary_name[4096];
 		std::uint64_t d_binary_checksum;
 		std::uint64_t d_binary_size;
-		char		  d_binary_padding[512];
 	};
 
 	/***********************************************************************************/
@@ -97,8 +97,8 @@ int main(int argc, char* argv[])
 
 	sig.d_binary_checksum ^= sig.d_binary_size;
 
-	of_drv.write((char*)&sig, sizeof(details::SIGNED_DRIVER_HEADER));
 	of_drv.write(ss.str().c_str(), ss.str().size());
+	of_drv.write((char*)&sig, sizeof(details::SIGNED_DRIVER_HEADER));
 
 	std::cout << "drvsign: Signing is done, quiting, here is the key: " << sig.d_binary_checksum << ".\n";
 

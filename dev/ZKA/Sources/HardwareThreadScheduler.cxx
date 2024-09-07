@@ -79,7 +79,7 @@ namespace Kernel
 	/// @note Those symbols are needed in order to switch and validate the stack.
 
 	EXTERN Bool	  hal_check_stack(HAL::StackFramePtr stackPtr);
-	EXTERN_C Bool mp_register_process(HAL::StackFramePtr stackPtr);
+	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr);
 
 	/// @brief Switch to hardware thread.
 	/// @param stack the new hardware thread.
@@ -99,8 +99,10 @@ namespace Kernel
 			if (this->IsBusy())
 				return false;
 
+			kcout << "Switching to the Process's HW thread...\r";
+
 			this->Busy(true);
-			Bool ret = mp_register_process(fStack);
+			Bool ret = mp_register_process(image, stack_ptr, fStack);
 			this->Busy(false);
 
 			return ret;

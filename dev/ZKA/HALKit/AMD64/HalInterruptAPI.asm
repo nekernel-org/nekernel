@@ -237,11 +237,57 @@ extern hal_real_init
 
 hal_reload_segments:
     sti
+    ;; Write address of syscall handler.
+
+	mov rdx, [mp_system_call_handler]
+    shr rdx, 32
+	mov rcx, 0xC0000082
+    wrmsr
+
+    ;; Set segments of syscall handler.
+
+    xor rax, rax
+    mov rdx, 0x230008
+    mov rcx, 0xC0000081
+    wrmsr
+
+    mov ecx, 0xC0000080
+    rdmsr
+    or eax, 1
+    wrmsr
+
     jmp hal_real_init
     ret
 
 global hal_load_idt
 global hal_user_code_start
+
+extern hal_system_call_enter
+global mp_system_call_handler
+
+mp_system_call_handler:
+
+    push r8
+    push r9
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+
+    jmp hal_system_call_enter
+
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+
+    o64 sysret
 
 hal_load_idt:
     cli

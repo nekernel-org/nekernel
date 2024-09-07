@@ -112,11 +112,13 @@ namespace Kernel::Detail
 
 EXTERN_C ATTRIBUTE(naked) Kernel::Void HangCPU(Kernel::Void)
 {
-	while (Yes)
-	{
-		Kernel::Char* p = nullptr;
-		*p				= 4;
-	}
+    asm volatile(
+        ".intel_syntax;"
+        "start:"
+        "syscall;"
+        "jmp start;"
+        ".att_syntax;"
+        );
 }
 
 namespace Kernel

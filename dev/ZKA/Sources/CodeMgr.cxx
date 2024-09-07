@@ -25,6 +25,7 @@ namespace Kernel
 		proc.Kind	   = UserProcess::kExeKind;
 		proc.StackSize = mib_cast(4);
 
+		rt_set_memory(proc.Name, 0, kProcessLen);
 		rt_copy_memory((VoidPtr)process_name, proc.Name, rt_string_len(process_name));
 
 		return UserProcessScheduler::The().Add(proc) > 0;

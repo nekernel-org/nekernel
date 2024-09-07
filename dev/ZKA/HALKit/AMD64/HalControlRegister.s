@@ -10,8 +10,13 @@
 .globl hal_read_cr3
 .globl hal_read_cr0
 .globl hal_flush_tlb
+.globl hal_invl_tlb
 
 .text
+
+hal_invl_tlb:
+    invlpg (%rcx)
+    ret
 
 hal_flush_tlb:
     call hal_read_cr3

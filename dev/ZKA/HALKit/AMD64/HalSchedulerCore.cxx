@@ -14,8 +14,7 @@ Void UserProcess::SetImageStart(VoidPtr imageStart) noexcept
 	if (imageStart == nullptr)
 		this->Crash();
 
-	HAL::mm_update_pte(imageStart, HAL::eFlagsPresent);
-	HAL::mm_update_pte(imageStart, HAL::eFlagsUser);
+	HAL::mm_map_page(imageStart, 0, HAL::eFlagsUser);
 
 	this->Image = imageStart;
 }

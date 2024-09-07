@@ -15,6 +15,7 @@
 
 /// @brief PEF stack size symbol.
 #define cPefStackSizeSymbol "SizeOfReserveStack"
+#define cPefNameSymbol		"ProgramName"
 
 namespace Kernel
 {
@@ -164,11 +165,10 @@ namespace Kernel
 
 					Char* blobRet = new Char[container_header->Size];
 
-					HAL::mm_update_pte(blobRet, HAL::eFlagsPresent);
-					HAL::mm_update_pte(blobRet, HAL::eFlagsUser);
-
 					if (container_header->Kind != kPefCode)
-						HAL::mm_update_pte(blobRet, HAL::eFlagsRw);
+						HAL::mm_map_page(blobRet, 0, HAL::eFlagsRw | HAL::eFlagsUser);
+					else
+						HAL::mm_map_page(blobRet, 0, HAL::eFlagsUser);
 
 					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
 
@@ -213,6 +213,13 @@ namespace Kernel
 			proc.SetImageStart(errOrStart.Leak().Leak());
 			proc.Kind	   = procKind;
 			proc.StackSize = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
+
+			rt_set_memory(proc.Name, 0, kProcessLen);
+
+			if (exec.FindSymbol(cPefNameSymbol, kPefData))
+				rt_copy_memory((VoidPtr)exec.FindSymbol(cPefNameSymbol, kPefData), proc.Name, rt_string_len((Char*)exec.FindSymbol(cPefNameSymbol, kPefData)));
+			else
+				rt_copy_memory((VoidPtr) "UNNAMED PROCESS.", proc.Name, rt_string_len("UNNAMED PROCESS."));
 
 			if (!proc.StackSize)
 			{
