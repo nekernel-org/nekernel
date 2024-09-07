@@ -1,7 +1,10 @@
 #include <SCI/sci_base.hxx>
 
-typedef int (*rpc_call_t)(IUnknown*);
+typedef SInt32 (*RPCProcKind)(IUnknown*);
 
+/**
+ * @brief Main procedure for DLL runner.
+ */
 int WinMain(int argc, char* argv[])
 {
 	if (argc < 4)
@@ -10,7 +13,7 @@ int WinMain(int argc, char* argv[])
 	auto mainDll = LdrOpenDLL(argv[1], argv[2]);
 
 	IUnknown*  interface = (IUnknown*)LdrGetDLLProc(argv[3], mainDll);
-	rpc_call_t dllRpc	 = (rpc_call_t)LdrGetDLLProc(argv[4], mainDll);
+	RPCProcKind dllRpc	 = (RPCProcKind)LdrGetDLLProc(argv[4], mainDll);
 
 	if (!dllRpc)
 		return -1;
