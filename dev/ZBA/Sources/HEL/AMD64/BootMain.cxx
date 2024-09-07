@@ -128,6 +128,10 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
 	handoverHdrPtr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
 
+	// ------------------------------------------- //
+	// Grab MP services, extended to runtime.	   //
+	// ------------------------------------------- //
+
 	auto				   guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
 	EfiMpServicesProtocol* mp	   = nullptr;
 
@@ -149,7 +153,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
 	CGDrawString("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
-	CGDrawString((cnt_enabled > 1) ? "MULTIPROCESSOR SYSTEM." : "UNIPROCESSOR SYSTEM.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString((cnt_enabled > 1) ? "MULTIPLE PROCESSORS DETECTED." : "SINGLE PROCESSOR DETECTED.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 
 	handoverHdrPtr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
 	// Fill handover header now.
@@ -170,7 +174,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 		root.fKind = kNeFSCatalogKindDir;
 
-		checkPart.Format("ZKA (A:)", &root, 1);
+		checkPart.Format("FileSystem (A:)", &root, 1);
 
 		rt_reset_hardware();
 	}
@@ -180,7 +184,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	Descriptor = new EfiMemoryDescriptor[SzDesc];
 	BS->GetMemoryMap(&SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc);
 
-	auto cDefaultMemoryMap = 0; // The sixth entry.
+	auto cDefaultMemoryMap = 0; // Grab any usable entries.
 
 	//-----------------------------------------------------------//
 	// A simple loop which finds a usable memory region for us.
