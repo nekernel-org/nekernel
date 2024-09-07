@@ -357,6 +357,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 	epmBoot.FsVersion = kNeFSVersionInteger;
 	epmBoot.LbaStart  = kNeFSRootCatalogStartAddress;
 	epmBoot.SectorSz  = partBlock.SectorSize;
+	epmBoot.Kind = kEPMNewOS;
 	epmBoot.NumBlocks = partBlock.CatalogCount;
 
 	CopyMem(epmBoot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), StrLen(cBlockName));
