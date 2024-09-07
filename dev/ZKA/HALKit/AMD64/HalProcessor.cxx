@@ -34,7 +34,7 @@ namespace Kernel::HAL
 
 		if ((*pd_entry & 0x01) == 0)
 		{
-			*pd_entry |= 0x01;
+		    ke_stop(RUNTIME_CHECK_PAGE);
 		}
 
 		UInt64			 pt_base  = *pd_entry & ~0xFFF; // Remove flags

@@ -239,7 +239,7 @@ namespace Kernel
 		process.MemoryPD = reinterpret_cast<UIntPtr>(hal_read_cr3());
 #endif // __ZKA_AMD64__
 
-		process.StackFrame = new HAL::StackFrame(0);
+		process.StackFrame = (HAL::StackFramePtr)mm_new_ke_heap(sizeof(HAL::StackFrame), Yes, Yes);
 
 		if (!process.StackFrame)
 		{
@@ -264,7 +264,7 @@ namespace Kernel
 
 		// get preferred stack size by app.
 		const auto cMaxStackSize = process.StackSize;
-		process.StackReserve	 = new UInt8[cMaxStackSize];
+		process.StackReserve	 = (UInt8*)mm_new_ke_heap(sizeof(UInt8) * cMaxStackSize, Yes, Yes);
 
 		if (!process.StackReserve)
 		{

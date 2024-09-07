@@ -64,6 +64,10 @@ namespace Kernel
 			RecoveryFactory::Recover();
 			break;
 		}
+		case RUNTIME_CHECK_PAGE: {
+			CGDrawString("0x0000000B Write/Read in non paged area.", start_y, x, panicTxt);
+			RecoveryFactory::Recover();
+		}
 		case RUNTIME_CHECK_FILESYSTEM: {
 			CGDrawString("0x0000000A Filesystem corruption error.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
