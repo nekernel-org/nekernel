@@ -31,9 +31,9 @@
 #endif // !kAlign
 
 EXTERN_C void hal_flush_tlb();
-EXTERN_C void hal_invl_tlb(Kernel::UIntPtr addr);
-EXTERN_C void hal_write_cr3(Kernel::UIntPtr pml4);
-EXTERN_C void hal_write_cr0(Kernel::UIntPtr bit);
+EXTERN_C void hal_invl_tlb(Kernel::VoidPtr addr);
+EXTERN_C void hal_write_cr3(Kernel::VoidPtr cr3);
+EXTERN_C void hal_write_cr0(Kernel::VoidPtr bit);
 
 EXTERN_C Kernel::VoidPtr hal_read_cr0(); // @brief CPU control register.
 EXTERN_C Kernel::VoidPtr hal_read_cr2(); // @brief Fault address.

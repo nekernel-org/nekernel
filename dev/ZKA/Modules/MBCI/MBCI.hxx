@@ -26,11 +26,11 @@
 
 namespace Kernel
 {
-	struct MBCIHostInterface;
-	struct MBCIHostInterfacePacketFrame;
+	struct IMBCIHost;
+	struct IMBCIHostPacketFrame;
 
 	/// @brief MBCI Packet frame header
-	struct PACKED MBCIHostInterfacePacketFrame final
+	struct PACKED IMBCIHostPacketFrame final
 	{
 		UInt32 Magic;
 		UInt32 HostId;
@@ -51,7 +51,7 @@ namespace Kernel
 	};
 
 	/// @brief MBCI Host Interface header.
-	struct PACKED MBCIHostInterface final
+	struct PACKED IMBCIHost final
 	{
 		UInt32 Magic;
 		UInt32 HostId;

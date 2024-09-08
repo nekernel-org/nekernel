@@ -88,11 +88,10 @@ namespace Kernel
 	class HardwareThreadScheduler final
 	{
 	private:
-		explicit HardwareThreadScheduler();
-
 		friend class UserProcessHelper;
 
 	public:
+		explicit HardwareThreadScheduler();
 		~HardwareThreadScheduler();
 		ZKA_COPY_DEFAULT(HardwareThreadScheduler);
 
@@ -102,7 +101,7 @@ namespace Kernel
 	public:
 		Ref<HardwareThread*> operator[](const SizeT& idx);
 		bool				 operator!() noexcept;
-							 operator bool() noexcept;
+		operator bool() noexcept;
 
 	public:
 		/// @brief Shared instance of the MP Mgr.

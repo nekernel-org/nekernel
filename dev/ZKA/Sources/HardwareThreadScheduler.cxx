@@ -90,7 +90,10 @@ namespace Kernel
 		if (!frame ||
 			!image ||
 			!stack_ptr)
-			return false;
+			return No;
+
+		if (!this->IsWakeup())
+			return No;
 
 		fStack = frame;
 

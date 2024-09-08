@@ -12,18 +12,18 @@
 
 namespace Kernel
 {
-	STATIC FilesystemMgrInterface* kMounted = nullptr;
+	STATIC IFilesystemMgr* kMounted = nullptr;
 
 	/// @brief FilesystemMgr getter.
 	/// @return The mounted filesystem.
-	_Output FilesystemMgrInterface* FilesystemMgrInterface::GetMounted()
+	_Output IFilesystemMgr* IFilesystemMgr::GetMounted()
 	{
 		return kMounted;
 	}
 
 	/// @brief Unmount filesystem.
 	/// @return The unmounted filesystem.
-	_Output FilesystemMgrInterface* FilesystemMgrInterface::Unmount()
+	_Output IFilesystemMgr* IFilesystemMgr::Unmount()
 	{
 		if (kMounted)
 		{
@@ -39,7 +39,7 @@ namespace Kernel
 	/// @brief Mount filesystem.
 	/// @param mount_ptr The filesystem to mount.
 	/// @return if it succeeded true, otherwise false.
-	bool FilesystemMgrInterface::Mount(_Input FilesystemMgrInterface* mount_ptr)
+	bool IFilesystemMgr::Mount(_Input IFilesystemMgr* mount_ptr)
 	{
 		if (mount_ptr != nullptr)
 		{

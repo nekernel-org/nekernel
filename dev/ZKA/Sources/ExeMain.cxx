@@ -50,17 +50,17 @@ namespace Kernel::Detail
 		/// @brief wizard constructor.
 		explicit FilesystemInstaller()
 		{
-			if (Kernel::FilesystemMgrInterface::GetMounted())
+			if (Kernel::IFilesystemMgr::GetMounted())
 			{
 				CG::CGDrawStringToWnd(cKernelWnd, "NeFS IFS already mounted by HAL (A:)", 10, 10, RGB(0, 0, 0));
-				fNeFS = reinterpret_cast<Kernel::NewFilesystemMgr*>(Kernel::FilesystemMgrInterface::GetMounted());
+				fNeFS = reinterpret_cast<Kernel::NewFilesystemMgr*>(Kernel::IFilesystemMgr::GetMounted());
 			}
 			else
 			{
 				// Mounts a NeFS from main drive.
 				fNeFS = new Kernel::NewFilesystemMgr();
 
-				Kernel::FilesystemMgrInterface::Mount(fNeFS);
+				Kernel::IFilesystemMgr::Mount(fNeFS);
 
 				CG::CGDrawStringToWnd(cKernelWnd, "Mounted NeFS IFS (A:)", 10, 10, RGB(0, 0, 0));
 			}
@@ -154,15 +154,12 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 
 	CG::CGDrawWindowList(&cKernelWnd, 1);
 
-	CG::CGDrawStringToWnd(cKernelWnd, "Running System Component: ", 10, 10, RGB(0, 0, 0));
-	CG::CGDrawStringToWnd(cKernelWnd, kSysDrv, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("Running System Component: ")), RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, "Running: ", 10, 10, RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, kSysLdr, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("Running: ")), RGB(0, 0, 0));
 
 	Kernel::UserProcessHelper::StartScheduling();
 
-	Kernel::sched_execute_thread((Kernel::MainKind)HangCPU, "HANG TEST");
+	Kernel::sched_execute_thread(HangCPU, kSysLdr);
 
-	while (Yes)
-	{
-		Kernel::UserProcessHelper::StartScheduling();
-	}
+	Kernel::UserProcessHelper::StartScheduling();
 }

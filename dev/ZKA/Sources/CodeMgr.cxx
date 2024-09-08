@@ -23,7 +23,7 @@ namespace Kernel
 		proc.SetImageStart(reinterpret_cast<VoidPtr>(main));
 
 		proc.Kind	   = UserProcess::kExeKind;
-		proc.StackSize = mib_cast(4);
+		proc.StackSize = kib_cast(32);
 
 		rt_set_memory(proc.Name, 0, kProcessLen);
 		rt_copy_memory((VoidPtr)process_name, proc.Name, rt_string_len(process_name));

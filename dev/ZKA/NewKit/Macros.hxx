@@ -94,10 +94,10 @@
 #define CANT_REACH() __builtin_unreachable()
 #endif
 
-#define kInvalidAddress		0xFBFBFBFBFBFBFBFB
+#define kInvalidAddress	0xFBFBFBFBFBFBFBFB
 #define kBadAddress 0x00000000000000
 #define kMaxAddr	0xFFFFFFFFFFFFFFFF
-#define kPathLen	255
+#define kPathLen	256
 
 #define PACKED	ATTRIBUTE(packed)
 #define NO_EXEC ATTRIBUTE(noexec)
@@ -126,3 +126,5 @@
 /// @brief The main kernel file.
 #define kSysChime "\\System\\startup.wav"
 
+/// @brief The main system loader.
+#define kSysLdr "SystemLdr"

@@ -44,8 +44,16 @@ namespace Kernel
 
 	/// @brief Makes a Kernel page.
 	/// @param heap_ptr the page pointer.
-	/// @return
+	/// @return status code
 	Int32 mm_make_ke_page(VoidPtr heap_ptr);
+
+
+	template <typename T, typename... Args>
+	inline T* mm_new_class(Args&&... args)
+	{
+		T* ptr = new T(move(args)...);
+		return ptr;
+	}
 } // namespace Kernel
 
 #endif // !_INC_KERNEL_HEAP_HXX_

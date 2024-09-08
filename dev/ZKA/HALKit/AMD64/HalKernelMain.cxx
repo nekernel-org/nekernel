@@ -122,7 +122,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	kcout << "Creating filesystem and such.\r";
 
-	auto fs = new Kernel::NewFilesystemMgr();
+	auto fs = Kernel::mm_new_class<Kernel::NewFilesystemMgr>();
 
 	MUST_PASS(fs);
 

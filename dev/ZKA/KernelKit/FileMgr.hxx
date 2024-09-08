@@ -74,28 +74,28 @@ namespace Kernel
 	@brief Filesystem Mgr Interface class
 	@brief Used to provide common I/O for a specific filesystem.
 */
-	class FilesystemMgrInterface
+	class IFilesystemMgr
 	{
 	public:
-		explicit FilesystemMgrInterface() = default;
-		virtual ~FilesystemMgrInterface() = default;
+		explicit IFilesystemMgr() = default;
+		virtual ~IFilesystemMgr() = default;
 
 	public:
-		ZKA_COPY_DEFAULT(FilesystemMgrInterface);
+		ZKA_COPY_DEFAULT(IFilesystemMgr);
 
 	public:
 		/// @brief Mounts a new filesystem into an active state.
 		/// @param interface the filesystem interface
 		/// @return
-		static bool Mount(FilesystemMgrInterface* interface);
+		static bool Mount(IFilesystemMgr* interface);
 
 		/// @brief Unmounts the active filesystem
 		/// @return
-		static FilesystemMgrInterface* Unmount();
+		static IFilesystemMgr* Unmount();
 
 		/// @brief Getter, gets the active filesystem.
 		/// @return
-		static FilesystemMgrInterface* GetMounted();
+		static IFilesystemMgr* GetMounted();
 
 	public:
 		virtual NodePtr Create(_Input const Char* path)			 = 0;
@@ -137,10 +137,10 @@ namespace Kernel
 
 #ifdef __FSKIT_USE_NEFS__
 	/**
-	 * @brief Based of FilesystemMgrInterface, takes care of managing NeFS
+	 * @brief Based of IFilesystemMgr, takes care of managing NeFS
 	 * disks.
 	 */
-	class NewFilesystemMgr final : public FilesystemMgrInterface
+	class NewFilesystemMgr final : public IFilesystemMgr
 	{
 	public:
 		explicit NewFilesystemMgr();
@@ -192,7 +192,7 @@ namespace Kernel
 	 * @tparam FSClass Filesystem contract who takes care of it.
 	 */
 	template <typename Encoding = Char,
-			  typename FSClass	= FilesystemMgrInterface>
+			  typename FSClass	= IFilesystemMgr>
 	class FileStream final
 	{
 	public:

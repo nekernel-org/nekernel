@@ -150,7 +150,7 @@ namespace Kernel
 		UInt8*			   StackReserve{nullptr};
 
 		// Memory, images pointers.
-		ImagePtr	Image{nullptr};
+		ImagePtr Image{nullptr};
 
 		SizeT StackSize{mib_cast(8)};
 
@@ -168,9 +168,9 @@ namespace Kernel
 		{
 			VoidPtr MemoryEntry;
 
-			struct PROCESS_MEMORY_ENTRY *MemoryPrev;
-			struct PROCESS_MEMORY_ENTRY *MemoryNext;
-		} * MemoryEntryList{nullptr};
+			struct PROCESS_MEMORY_ENTRY* MemoryPrev;
+			struct PROCESS_MEMORY_ENTRY* MemoryNext;
+		}* MemoryEntryList{nullptr};
 
 		SizeT MemoryPD{0};
 
@@ -259,6 +259,8 @@ namespace Kernel
 	/// The main class which you call to schedule processes.
 	class UserProcessScheduler final
 	{
+		friend class UserProcessHelper;
+
 	public:
 		explicit UserProcessScheduler() = default;
 
@@ -266,14 +268,14 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(UserProcessScheduler)
 
-			 operator bool();
+		operator bool();
 		bool operator!();
 
 	public:
 		UserProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(UserProcess& processRef);
+		SizeT Add(UserProcess processRef);
 		Bool  Remove(ProcessID processSlot);
 
 	public:
@@ -294,11 +296,10 @@ namespace Kernel
 	class UserProcessHelper final
 	{
 	public:
-		STATIC bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
-		STATIC bool CanBeScheduled(const UserProcess process);
+		STATIC bool	 Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
+		STATIC bool	 CanBeScheduled(const UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
-
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

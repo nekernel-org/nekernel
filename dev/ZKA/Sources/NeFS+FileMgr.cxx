@@ -18,7 +18,7 @@ namespace Kernel
 	NewFilesystemMgr::NewFilesystemMgr()
 	{
 		MUST_PASS(Detail::fs_init_newfs());
-		fImpl = new NeFSParser();
+		fImpl = mm_new_class<NeFSParser>();
 		MUST_PASS(fImpl);
 
 		kcout << "We are done here... (NewFilesystemMgr).\r";

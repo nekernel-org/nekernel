@@ -25,33 +25,39 @@ namespace Kernel::HAL
 	{
 		VoidPtr pml4_base = hal_read_cr3();
 
-		UIntPtr pd_idx	 = ((UIntPtr)virt_addr >> 22);
-		UIntPtr pte_idx	 = ((UIntPtr)virt_addr >> 12) & 0x3FFF;
-		// Now PD
-		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pml4_base) + pd_idx * sizeof(UIntPtr));
+		UIntPtr pd_idx	= ((UIntPtr)virt_addr >> 22);
+		UIntPtr pte_idx = ((UIntPtr)virt_addr >> 12) & 0x03FF;
 
-		kcout << (*pd_entry & 0x01 ? "Dir Present." : "Dir Not present.") << endl;
+		// Now get pd_entry
+		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pml4_base) + (pd_idx * kPTEAlign));
 
 		// Don't bother allocate directory.
 		if (!(*pd_entry & 0x01))
 		{
-		    ke_stop(RUNTIME_CHECK_PAGE);
+			ke_stop(RUNTIME_CHECK_PAGE);
 		}
 
-		UInt64			 pt_base  = *pd_entry & ~0xFFF; // Remove flags
+		UInt64 pt_base = pd_entry[pd_idx] & ~0xFFF; // Remove flags
 
 		// And then PTE
-		volatile UIntPtr* page_addr = (volatile UIntPtr*)(((UInt64)pt_base) + (pte_idx * sizeof(UIntPtr)));
+		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pt_base + (pte_idx * kPTEAlign));
 
-		kcout << (*page_addr & 0x01 ? "Page Present." : "Page Not Present.") << endl;
-		kcout << (*page_addr & 0x04 ? "User." : "Not User.") << endl;
+		kcout << (pt_entry[pte_idx] & 0x01 ? "Page Present." : "Page Not Present.") << endl;
+		kcout << (pt_entry[pte_idx] & 0x02 ? "Page RW." : "Page Not RW.") << endl;
+		kcout << (pt_entry[pte_idx] & 0x04 ? "Page User." : "Page Not User.") << endl;
 
-		if (phys_addr == nullptr)
+		switch ((UIntPtr)phys_addr)
 		{
-			phys_addr = (VoidPtr)((*page_addr & ~0xFFF) + ((UIntPtr)virt_addr & 0xFFF));
+		case kBadAddress: {
+			phys_addr = (VoidPtr)((pt_entry[pte_idx] & ~0xFFF) + ((UIntPtr)virt_addr & 0xFFF));
+			break;
+		}
+		default: {
+			break;
+		}
 		}
 
-		(*page_addr) = ((UIntPtr)phys_addr) | (flags & 0xFFF) | 0x01;
+		pt_entry[pte_idx] = ((UIntPtr)phys_addr) | (flags & 0xFFF) | 0x01;
 
 		return 0;
 	}

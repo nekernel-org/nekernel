@@ -91,11 +91,11 @@ namespace Kernel
 	{
 #ifdef __ZKA_AMD64__
 		auto pd = hal_read_cr3();
-		hal_write_cr3(this->MemoryPD);
+		hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
 
 		auto ptr = mm_new_ke_heap(sz, Yes, Yes);
 
-		hal_write_cr3(reinterpret_cast<UIntPtr>(pd));
+		hal_write_cr3(reinterpret_cast<VoidPtr>(pd));
 #else
 		auto ptr = mm_new_ke_heap(sz, Yes, Yes);
 #endif
@@ -143,10 +143,10 @@ namespace Kernel
 			{
 #ifdef __ZKA_AMD64__
 				auto pd = hal_read_cr3();
-				hal_write_cr3(this->MemoryPD);
+				hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
 
 				bool ret = mm_delete_ke_heap(ptr);
-				hal_write_cr3(reinterpret_cast<UIntPtr>(pd));
+				hal_write_cr3(reinterpret_cast<VoidPtr>(pd));
 
 				return ret;
 #else
@@ -233,11 +233,16 @@ namespace Kernel
 	/// @brief Add process to list.
 	/// @param process the process *Ref* class.
 	/// @return the process index inside the team.
-	SizeT UserProcessScheduler::Add(UserProcess& process)
+	SizeT UserProcessScheduler::Add(UserProcess process)
 	{
+		if (mTeam.mProcessAmount > kSchedProcessLimitPerTeam)
+			return 0;
+
 #ifdef __ZKA_AMD64__
 		process.MemoryPD = reinterpret_cast<UIntPtr>(hal_read_cr3());
 #endif // __ZKA_AMD64__
+
+		process.Status = ProcessStatusKind::kStarting;
 
 		process.StackFrame = (HAL::StackFramePtr)mm_new_ke_heap(sizeof(HAL::StackFrame), Yes, Yes);
 
@@ -268,21 +273,22 @@ namespace Kernel
 
 		if (!process.StackReserve)
 		{
-			process.Crash();
+			mm_delete_ke_heap(process.StackFrame);
+			process.StackFrame = nullptr;
 			return -kErrorProcessFault;
 		}
-
-		if (mTeam.mProcessAmount > kSchedProcessLimitPerTeam)
-			mTeam.mProcessAmount = 0UL;
 
 		++mTeam.mProcessAmount;
 
 		process.ProcessId = mTeam.mProcessAmount;
-		process.Status	  = ProcessStatusKind::kStarting;
+		process.Status	  = ProcessStatusKind::kRunning;
 
-		mTeam.AsArray()[process.ProcessId] = process;
+		// avoid the pitfalls of moving process.
+		auto ret_pid = process.ProcessId;
 
-		return process.ProcessId;
+		mTeam.AsArray()[process.ProcessId] = move(process);
+
+		return ret_pid;
 	}
 
 	/***********************************************************************************/
@@ -318,21 +324,21 @@ namespace Kernel
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
-		kcout << "Finding available process...\r";
-
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
+			kcout << "Grabbing available process...\r";
+
 			auto& process = mTeam.AsArray()[process_index];
 
 			//! check if process needs to be scheduled.
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
-				// set the current process.
-				mTeam.AsRef() = process;
+				kcout << process.Name << ": will be runned.\r";
+
+				// Set current process header.
+				this->CurrentProcess() = process;
 
 				process.PTime = static_cast<Int32>(process.Affinity);
-
-				kcout << process.Name << ": will be runned.\r";
 
 				// tell helper to find a core to schedule on.
 				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
@@ -348,6 +354,8 @@ namespace Kernel
 				--process.PTime;
 			}
 		}
+
+		kcout << "Scheduled Process Count: " << number(process_index) << endl;
 
 		return process_index;
 	}
@@ -380,13 +388,17 @@ namespace Kernel
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
-	bool UserProcessHelper::CanBeScheduled(const UserProcess process)
+	bool UserProcessHelper::CanBeScheduled(const UserProcess& process)
 	{
+		kcout << "Checking Status...\r";
+
 		if (process.Status == ProcessStatusKind::kFrozen ||
 			process.Status == ProcessStatusKind::kDead)
-			return false;
+			return No;
 
-		return process.PTime < 1;
+		kcout << "Checking PTime...\r";
+
+		return process.PTime <= 0;
 	}
 
 	/**
@@ -400,12 +412,14 @@ namespace Kernel
 	{
 		if (!cHardwareThreadScheduler)
 		{
-			cHardwareThreadScheduler = new HardwareThreadScheduler();
+			cHardwareThreadScheduler = mm_new_class<HardwareThreadScheduler>();
+			MUST_PASS(cHardwareThreadScheduler);
 		}
 
 		if (!cProcessScheduler)
 		{
-			cProcessScheduler = new UserProcessScheduler();
+			cProcessScheduler = mm_new_class<UserProcessScheduler>();
+			MUST_PASS(cProcessScheduler);
 		}
 
 		SizeT ret = cProcessScheduler->Run();
