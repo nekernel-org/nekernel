@@ -97,27 +97,16 @@ namespace Kernel
 
 		fStack = frame;
 
-		if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
-		{
-			if (this->IsBusy())
-				return false;
+		if (this->IsBusy())
+			return false;
 
-			kcout << "Switching to the Process's HW thread...\r";
+		kcout << "Registering process bank...\r";
 
-			this->Busy(true);
-			Bool ret = mp_register_process(image, stack_ptr, fStack);
-			this->Busy(false);
+		this->Busy(true);
+		Bool ret = mp_register_process(image, stack_ptr, fStack);
+		this->Busy(false);
 
-			return ret;
-		}
-		else
-		{
-			kcout << "Switching to the Process's thread...\r";
-
-			mp_do_context_switch(image, stack_ptr, fStack);
-
-			return Yes;
-		}
+		return ret;
 	}
 
 	///! @brief Tells if processor is waked up.

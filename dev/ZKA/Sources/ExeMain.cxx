@@ -69,7 +69,7 @@ namespace Kernel::Detail
 
 			const Kernel::Char* cDirStr[cDirCount] = {
 				"\\Boot\\", "\\System\\", "\\Support\\", "\\Applications\\",
-				"\\Users\\", "\\Library\\", "\\Mount\\", "\\Games\\", "\\Applications\\Java\\"};
+				"\\Users\\", "\\Library\\", "\\Mount\\", "\\Store\\", "\\Applications\\Store\\"};
 
 			if (fNeFS->GetParser())
 			{
@@ -146,8 +146,5 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	CG::CGDrawStringToWnd(cKernelWnd, "Running: ", 10, 10, RGB(0, 0, 0));
 	CG::CGDrawStringToWnd(cKernelWnd, kSysProcess, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("Running: ")), RGB(0, 0, 0));
 
-	while (Yes)
-	{
-		Kernel::UserProcessHelper::StartScheduling();
-	}
+	mp_do_user_switch();
 }

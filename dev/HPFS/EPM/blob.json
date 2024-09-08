@@ -1,0 +1,6 @@
+{
+  "compiler_path": "nasm",
+  "sources_path": ["EPM.asm"],
+  "output_name": "hpfs.bin",
+  "compiler_flags": ["-f bin"]
+}

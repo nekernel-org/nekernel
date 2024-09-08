@@ -9,6 +9,8 @@
 
 #include <HPFS/Defines.hxx>
 
-HPFS_INT32 IFSStart(HPFS_VOID) {
+/** @brief HPFS IFS main. */
+HPFS_INT32 IFSStart(HPFS_VOID)
+{
     return 0;
 }

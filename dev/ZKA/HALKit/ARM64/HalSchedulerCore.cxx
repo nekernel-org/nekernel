@@ -33,7 +33,7 @@ namespace Kernel
 	/// Wakes up thread from the hang state.
 	Void mp_wakeup_thread(HAL::StackFrame* stack)
 	{
-		mp_do_context_switch(stack);
+	   ZKA_UNUSED(stack);
 	}
 
 	/// @brief makes the thread sleep on a loop.

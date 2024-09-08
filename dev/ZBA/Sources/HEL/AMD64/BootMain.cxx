@@ -310,7 +310,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	EFI::ExitBootServices(MapKey, ImageHandle);
 
 	// ---------------------------------------------------- //
-	// finally load Kernel.
+	// Finally load Kernel, and the cr3 to it.
 	// ---------------------------------------------------- //
 
 	loader->Start(handoverHdrPtr);

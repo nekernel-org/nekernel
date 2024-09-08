@@ -152,7 +152,7 @@ namespace Kernel::HAL
 		VoidPtr f_Image;
 	} fBlocks[kSchedProcessLimitPerTeam] = {0};
 
-	EXTERN_C HAL::StackFramePtr _hal_leak_current_context(Void)
+	EXTERN_C HAL::StackFramePtr mp_get_current_context(Void)
 	{
 		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
 	}

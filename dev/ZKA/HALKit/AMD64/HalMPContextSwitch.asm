@@ -9,10 +9,7 @@
 
 [bits 64]
 
-[global mp_get_current_context]
-[global mp_do_context_switch]
-[extern _hal_switch_context]
-[extern _hal_leak_current_context]
+[global mp_do_user_switch]
 [global mp_do_context_switch_pre]
 
 section .text
@@ -20,7 +17,7 @@ section .text
 ;; Does a user mode switch, and then loads the task to be run.
 ;; rcx: code ptr.
 ;; rdx: stack ptr.
-mp_do_context_switch:
+mp_do_user_switch:
     mov ax, 0x18 | 3
     mov ds, ax
     mov es, ax
@@ -28,14 +25,28 @@ mp_do_context_switch:
     mov fs, ax
 
     push 0x18 | 3
-    push rdx
-    push 0x200
+
+    mov rax, mp_user_switch_proc_end
+    push rax
+
+    o64 pushf
+
     push 0x20 | 3
-    push rcx
+
+    mov rdx, mp_user_switch_proc
+    push rdx
+
+    mov rsp, mp_user_switch_proc_end
 
     o64 iret
 
-;; @brief Gets the current stack frame.
-mp_get_current_context:
-    call _hal_leak_current_context
-    ret
+section .bss
+
+mp_user_switch_proc_begin:
+    resb 4*4096
+mp_user_switch_proc_end:
+
+section .text
+
+mp_user_switch_proc:
+    jmp $

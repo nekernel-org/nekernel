@@ -7,10 +7,10 @@
 .align 4
 .type name, @function
 .text
-.globl mp_do_context_switch
+.globl mp_do_user_switch
 
 /* r3 (3) = assigner stack, r4 (4) = assignee stack */
-mp_do_context_switch:
+mp_do_user_switch:
     lwz 0(%4), 0(%3)
     lwz 4(%4), 4(%3)
     lwz 8(%4), 8(%3)
@@ -23,6 +23,8 @@ mp_do_context_switch:
     lwz 32(%4), 32(%3)
     lwz 34(%4), 34(%3)
     lwz 38(%4), 38(%3)
+
+    /* also change exception level */
 
     /* we are done here, the assignee should start executing code now. */
     blr

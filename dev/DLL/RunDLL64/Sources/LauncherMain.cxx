@@ -1,6 +1,6 @@
 #include <SCI/sci_base.hxx>
 
-typedef int (*main_t)(int, char**);
+typedef int (*MainKind)(int, char**);
 
 int WinMain(int argc, char* argv[])
 {
@@ -9,7 +9,7 @@ int WinMain(int argc, char* argv[])
 
 	auto mainDll = LdrOpenDLL(argv[1], argv[2]);
 
-	int (*entrypointOff)(int, char**) = (main_t)LdrGetDLLProc(argv[3], mainDll);
+	int (*entrypointOff)(int, char**) = (MainKind)LdrGetDLLProc(argv[3], mainDll);
 
 	if (!entrypointOff)
 		return -1;
