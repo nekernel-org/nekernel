@@ -42,14 +42,14 @@ namespace Kernel::HAL
 		// And then PTE
 		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pt_base + (pte_idx * kPTEAlign));
 
-		kcout << (pt_entry[pte_idx] & 0x01 ? "Page Present." : "Page Not Present.") << endl;
-		kcout << (pt_entry[pte_idx] & 0x02 ? "Page RW." : "Page Not RW.") << endl;
-		kcout << (pt_entry[pte_idx] & 0x04 ? "Page User." : "Page Not User.") << endl;
+		kcout << (pt_entry[0] & 0x01 ? "Page Present." : "Page Not Present.") << endl;
+		kcout << (pt_entry[0] & 0x02 ? "Page RW." : "Page Not RW.") << endl;
+		kcout << (pt_entry[0] & 0x04 ? "Page User." : "Page Not User.") << endl;
 
 		switch ((UIntPtr)phys_addr)
 		{
 		case kBadAddress: {
-			phys_addr = (VoidPtr)((pt_entry[pte_idx] & ~0xFFF) + ((UIntPtr)virt_addr & 0xFFF));
+			phys_addr = (VoidPtr)((pt_entry[0] & ~0xFFF) + ((UIntPtr)virt_addr & 0xFFF));
 			break;
 		}
 		default: {
@@ -57,7 +57,15 @@ namespace Kernel::HAL
 		}
 		}
 
-		pt_entry[pte_idx] = ((UIntPtr)phys_addr) | (flags & 0xFFF) | 0x01;
+		if (!(pt_entry[0] & 0x01))
+		{
+			pt_entry[0] = ((UIntPtr)phys_addr) | (flags & 0xFFF) | 0x01;
+			hal_write_cr3(pml4_base);
+
+			return 0;
+		}
+
+		pt_entry[0] = ((UIntPtr)phys_addr) | (flags & 0xFFF);
 
 		return 0;
 	}

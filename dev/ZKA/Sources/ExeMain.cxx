@@ -110,17 +110,6 @@ namespace Kernel::Detail
 	};
 } // namespace Kernel::Detail
 
-EXTERN_C ATTRIBUTE(naked) Kernel::Void HangCPU(Kernel::Void)
-{
-    asm volatile(
-        ".intel_syntax;"
-        "start:"
-        "syscall;"
-        "jmp start;"
-        ".att_syntax;"
-        );
-}
-
 namespace Kernel
 {
 	EXTERN UserProcessScheduler* cProcessScheduler;
@@ -157,9 +146,8 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	CG::CGDrawStringToWnd(cKernelWnd, "Running: ", 10, 10, RGB(0, 0, 0));
 	CG::CGDrawStringToWnd(cKernelWnd, kSysLdr, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("Running: ")), RGB(0, 0, 0));
 
-	Kernel::UserProcessHelper::StartScheduling();
-
-	Kernel::sched_execute_thread(HangCPU, kSysLdr);
-
-	Kernel::UserProcessHelper::StartScheduling();
+	while (Yes)
+	{
+		Kernel::UserProcessHelper::StartScheduling();
+	}
 }
