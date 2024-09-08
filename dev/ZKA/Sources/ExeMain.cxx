@@ -144,7 +144,7 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
 	CG::CGDrawWindowList(&cKernelWnd, 1);
 
 	CG::CGDrawStringToWnd(cKernelWnd, "Running: ", 10, 10, RGB(0, 0, 0));
-	CG::CGDrawStringToWnd(cKernelWnd, kSysLdr, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("Running: ")), RGB(0, 0, 0));
+	CG::CGDrawStringToWnd(cKernelWnd, kSysProcess, 10, 10 + (FONT_SIZE_X * Kernel::rt_string_len("Running: ")), RGB(0, 0, 0));
 
 	while (Yes)
 	{

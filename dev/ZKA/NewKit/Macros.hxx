@@ -127,4 +127,4 @@
 #define kSysChime "\\System\\startup.wav"
 
 /// @brief The main system loader.
-#define kSysLdr "SystemLdr"
+#define kSysProcess "ZKA AUTHORITY\\KERNEL"
