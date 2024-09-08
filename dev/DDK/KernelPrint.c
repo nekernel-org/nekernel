@@ -14,7 +14,7 @@ DK_EXTERN void KernelPrintChar(const char ch)
 	assembled[0]	  = ch;
 	assembled[1]	  = 0;
 
-	KernelCall("WriteCharacter", 1, assembled, 1);
+	KernelCall("SrWriteCharacter", 1, assembled, 1);
 }
 
 /// @brief print string to UART.

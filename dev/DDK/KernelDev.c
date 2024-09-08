@@ -15,7 +15,7 @@ DK_EXTERN KERNEL_DEVICE_PTR KernelOpenDevice(const char* devicePath)
 	if (!devicePath)
 		return nil;
 
-	return KernelCall("OpenDevice", 1, (void*)devicePath, KernelStringLength(devicePath));
+	return KernelCall("ZkOpenDevice", 1, (void*)devicePath, KernelStringLength(devicePath));
 }
 
 /// @brief Close any device.
@@ -25,5 +25,5 @@ DK_EXTERN void KernelCloseDevice(KERNEL_DEVICE_PTR device)
 	if (!device)
 		return;
 
-	KernelCall("CloseDevice", 1, device, sizeof(KERNEL_DEVICE));
+	KernelCall("ZkCloseDevice", 1, device, sizeof(KERNEL_DEVICE));
 }

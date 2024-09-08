@@ -18,7 +18,7 @@ DK_EXTERN void* KernelAlloc(size_t sz)
 	if (!sz)
 		++sz;
 
-	void* ptr = KernelCall("NewHeap", 1, &sz, sizeof(size_t));
+	void* ptr = KernelCall("MmNewKeHeap", 1, &sz, sizeof(size_t));
 
 	return ptr;
 }
@@ -32,5 +32,5 @@ DK_EXTERN void KernelFree(void* ptr)
 	if (!ptr)
 		return;
 
-	KernelCall("DeleteHeap", 1, ptr, 0);
+	KernelCall("MmDeleteKeHeap", 1, ptr, 0);
 }

@@ -30,7 +30,7 @@ __KernelCallDispatch:
 /* args x0, x8, x9, x10, x11 is kept to tell that this is a Kernel call */
 __KernelCallDispatch:
     /* There is no specific interrupt request id for a system call in ARM64 as well. */
-    mov x11, #0x33
+    mov x9, #0x33
     svc #0
 
 #endif

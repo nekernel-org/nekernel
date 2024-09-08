@@ -11,13 +11,13 @@
 #include <sstream>
 #include <filesystem>
 
-#define kDriverSignedExt   ".vxd"
+#define kDriverSignedExt   ".zxd"
 #define kDriverExt		   ".sys"
-#define kSignedDriverMagic " VXD"
+#define kSignedDriverMagic " ZXD"
 
 namespace details
 {
-	struct SIGNED_DRIVER_HEADER final
+	struct ZKA_DRIVER_HEADER final
 	{
 		char d_binary_padding[512];
 		// doesn't change.
@@ -40,15 +40,15 @@ namespace details
 	}
 } // namespace details
 
-/// @brief This program converts a PE32+ driver, into a custom format, the SIGG.
-/// @note SIGG is used to tell that we're dealing with a ZKA driver.
+/// @brief This program converts a PE32+ driver, into a custom format, the ZXD.
+/// @note ZXD is a format for ZKA signed drivers.
 int main(int argc, char* argv[])
 {
 	for (size_t i = 1ul; i < argc; ++i)
 	{
 		if (strcmp(argv[i], "/?") == 0)
 		{
-			std::cout << "drvsign: ZKA Driver Signing Tool.\n";
+			std::cout << "drvsign: ZKA ZKA Driver Tool.\n";
 			std::cout << "drvsign: © ZKA Technologies, all rights reserved.\n";
 
 			return 0;
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 		!std::string(argv[1]).ends_with(kDriverExt))
 		return -1;
 
-	details::SIGNED_DRIVER_HEADER sig{0};
+	details::ZKA_DRIVER_HEADER sig{0};
 
 	sig.d_binary_version = 1;
 
@@ -97,8 +97,8 @@ int main(int argc, char* argv[])
 
 	sig.d_binary_checksum ^= sig.d_binary_size;
 
+	of_drv.write((char*)&sig, sizeof(details::ZKA_DRIVER_HEADER));
 	of_drv.write(ss.str().c_str(), ss.str().size());
-	of_drv.write((char*)&sig, sizeof(details::SIGNED_DRIVER_HEADER));
 
 	std::cout << "drvsign: Signing is done, quiting, here is the key: " << sig.d_binary_checksum << ".\n";
 
