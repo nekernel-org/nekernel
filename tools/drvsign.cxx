@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <filesystem>
 
@@ -15,9 +16,9 @@
 #define kDriverExt		   ".sys"
 #define kSignedDriverMagic " ZXD"
 
-namespace details
+namespace ZXD
 {
-	struct ZKA_DRIVER_HEADER final
+	struct ZXD_HEADER final
 	{
 		char d_binary_padding[512];
 		// doesn't change.
@@ -38,7 +39,7 @@ namespace details
 		return mz_blob[0] == 'M' &&
 			   mz_blob[1] == 'Z';
 	}
-} // namespace details
+} // namespace ZXD
 
 /// @brief This program converts a PE32+ driver, into a custom format, the ZXD.
 /// @note ZXD is a format for ZKA signed drivers.
@@ -48,7 +49,7 @@ int main(int argc, char* argv[])
 	{
 		if (strcmp(argv[i], "/?") == 0)
 		{
-			std::cout << "drvsign: ZKA ZKA Driver Tool.\n";
+			std::cout << "drvsign: ZKA ZXD Driver Tool.\n";
 			std::cout << "drvsign: © ZKA Technologies, all rights reserved.\n";
 
 			return 0;
@@ -59,7 +60,7 @@ int main(int argc, char* argv[])
 		!std::string(argv[1]).ends_with(kDriverExt))
 		return -1;
 
-	details::ZKA_DRIVER_HEADER sig{0};
+	ZXD::ZXD_HEADER sig{0};
 
 	sig.d_binary_version = 1;
 
@@ -82,7 +83,7 @@ int main(int argc, char* argv[])
 	std::stringstream ss;
 	ss << if_drv.rdbuf();
 
-	if (!details::drvsign_check_for_mz(ss.str()))
+	if (!ZXD::drvsign_check_for_mz(ss.str()))
 	{
 		std::filesystem::remove(signed_path);
 		std::cout << "drvsign: Couldn't sign current driver, Input driver isn't a valid executable.\n";
@@ -97,7 +98,7 @@ int main(int argc, char* argv[])
 
 	sig.d_binary_checksum ^= sig.d_binary_size;
 
-	of_drv.write((char*)&sig, sizeof(details::ZKA_DRIVER_HEADER));
+	of_drv.write((char*)&sig, sizeof(ZXD::ZXD_HEADER));
 	of_drv.write(ss.str().c_str(), ss.str().size());
 
 	std::cout << "drvsign: Signing is done, quiting, here is the key: " << sig.d_binary_checksum << ".\n";

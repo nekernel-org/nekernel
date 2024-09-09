@@ -15,9 +15,6 @@
 #include <CFKit/LoaderUtils.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
-//! Get SIGG header from formats directory.
-#include <FMT/SIGG.hxx>
-
 EXTERN_C{
 #include <string.h>
 }
@@ -138,7 +135,7 @@ namespace Boot
 		}
 		else
 		{
-			writer.Write("NEWOSLDR: Invalid executable. (note: SIGG executables aren't loadable by default).\r");
+			writer.Write("NEWOSLDR: Invalid executable.\r");
 		}
 	}
 

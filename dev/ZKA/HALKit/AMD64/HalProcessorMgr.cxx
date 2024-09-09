@@ -10,8 +10,8 @@
 #include <HALKit/AMD64/Processor.hxx>
 
 /**
- * @file HalProcessor.cxx
- * @brief This file is about processor specific functions (in/out/cli/std...)
+ * @file HalProcessorMgr.cxx
+ * @brief CPU Processor managers.
  */
 
 namespace Kernel::HAL
@@ -61,6 +61,7 @@ namespace Kernel::HAL
 			kcout << "=================================================\r";
 			kcout << "Post page allocation.\r";
 			kcout << "=================================================\r";
+
 			kcout << (*pt_entry & eFlagsPresent ? "Page Present." : "Page Not Present.") << endl;
 			kcout << (*pt_entry & eFlagsRw ? "Page RW." : "Page Not RW.") << endl;
 			kcout << (*pt_entry & eFlagsUser ? "Page User." : "Page Not User.") << endl;
@@ -76,6 +77,7 @@ namespace Kernel::HAL
 		kcout << "=================================================\r";
 		kcout << "Post page change.\r";
 		kcout << "=================================================\r";
+
 		kcout << (*pt_entry & eFlagsPresent ? "Page Present." : "Page Not Present.") << endl;
 		kcout << (*pt_entry & eFlagsRw ? "Page RW." : "Page Not RW.") << endl;
 		kcout << (*pt_entry & eFlagsUser ? "Page User." : "Page Not User.") << endl;
