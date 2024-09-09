@@ -34,7 +34,7 @@ COPY		= cp
 # Add assembler, linker, and object files variables.
 ASMFLAGS	= -f win64
 
-# Kernel subsystem is 17 and entrypoint is __ImageStart
+# Kernel subsystem is 17 and entrypoint is hal_init_platform
 LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x10000000
 LDOBJ		= Objects/*.obj
 

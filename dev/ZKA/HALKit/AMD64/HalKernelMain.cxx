@@ -56,6 +56,9 @@ namespace Kernel::HAL
 Kernel::Property cKernelVersion;
 Kernel::User	 cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
+EXTERN_C ATTRIBUTE(naked) void mp_user_switch_proc(void);
+EXTERN_C Kernel::UInt8* mp_user_switch_proc_end;
+
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept;
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
@@ -112,7 +115,7 @@ EXTERN_C void hal_init_platform(
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	Kernel::HAL::Register64 idtBase;
-	idtBase.Base  = (Kernel::UIntPtr)kInterruptVectorTable;
+	idtBase.Base = (Kernel::UIntPtr)kInterruptVectorTable;
 
 	CONST Kernel::HAL::IDTLoader cIDT;
 	cIDT.Load(idtBase);
@@ -125,6 +128,9 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	auto fs = Kernel::mm_new_class<Kernel::NewFilesystemMgr>();
 
 	MUST_PASS(fs);
+
+	Kernel::HAL::mm_map_page((Kernel::VoidPtr)mp_user_switch_proc, 0, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsRw  | Kernel::HAL::eFlagsPresent);
+	Kernel::HAL::mm_map_page((Kernel::VoidPtr)mp_user_switch_proc_end, 0, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsPresent);
 
 	Kernel::NewFilesystemMgr::Mount(fs);
 

@@ -11,13 +11,18 @@
 
 [global mp_do_user_switch]
 [global mp_do_context_switch_pre]
+[global mp_user_switch_proc]
+[global mp_user_switch_proc_end]
 
 section .text
 
-;; Does a user mode switch, and then loads the task to be run.
-;; rcx: code ptr.
-;; rdx: stack ptr.
+;; @brief Switch to user mode.
 mp_do_user_switch:
+    mov rbp, rsp
+    mov rsp, mp_user_switch_proc_end
+
+    invlpg [0]
+
     mov ax, 0x18 | 3
     mov ds, ax
     mov es, ax
@@ -35,8 +40,6 @@ mp_do_user_switch:
 
     mov rdx, mp_user_switch_proc
     push rdx
-
-    mov rsp, mp_user_switch_proc_end
 
     o64 iret
 

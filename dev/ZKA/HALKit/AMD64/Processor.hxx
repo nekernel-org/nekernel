@@ -55,10 +55,16 @@ namespace Kernel::HAL
 	/// @brief Virtual memory flags.
 	enum
 	{
-		eFlagsPresent = 0x01,
-		eFlagsRw	  = 0x02,
-		eFlagsUser	  = 0x04,
-		eFlagsCount	  = 0x3,
+		eFlagsPresent = 1 << 0,
+		eFlagsRw	  = 1 << 1,
+		eFlagsUser	  = 1 << 2,
+		eFlagsWt	  = 1 << 3,
+		eFlagsNoCache = 1 << 4,
+		eFlagsAccess  = 1 << 5,
+		eFlagsDirty	  = 1 << 6,
+		eFlagsHuge	  = 1 << 7,
+		eFlagsGlobal  = 1 << 8,
+		eFlagsCount	  = 8,
 	};
 
 	/// @brief Set a PTE from pd_base.

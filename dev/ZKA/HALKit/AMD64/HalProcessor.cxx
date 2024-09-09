@@ -10,7 +10,7 @@
 #include <HALKit/AMD64/Processor.hxx>
 
 /**
- * @file Processor.cpp
+ * @file HalProcessor.cxx
  * @brief This file is about processor specific functions (in/out/cli/std...)
  */
 
@@ -23,6 +23,11 @@ namespace Kernel::HAL
 	/// @return Status code of page manip.
 	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, VoidPtr phys_addr, UInt32 flags)
 	{
+		rt_cli();
+
+		const auto cPAddrMask = 0x000ffffffffff000;
+		const auto cFlagsMask = 0xFFF;
+
 		VoidPtr pml4_base = hal_read_cr3();
 
 		UIntPtr pd_idx	= ((UIntPtr)virt_addr >> 22);
@@ -31,25 +36,12 @@ namespace Kernel::HAL
 		// Now get pd_entry
 		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pml4_base) + (pd_idx * kPTEAlign));
 
-		// Don't bother allocate directory.
-		if (!(*pd_entry & 0x01))
-		{
-			ke_stop(RUNTIME_CHECK_PAGE);
-		}
-
-		UInt64 pt_base = pd_entry[pd_idx] & ~0xFFF; // Remove flags
-
-		// And then PTE
-		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pt_base + (pte_idx * kPTEAlign));
-
-		kcout << (pt_entry[0] & 0x01 ? "Page Present." : "Page Not Present.") << endl;
-		kcout << (pt_entry[0] & 0x02 ? "Page RW." : "Page Not RW.") << endl;
-		kcout << (pt_entry[0] & 0x04 ? "Page User." : "Page Not User.") << endl;
+		UInt64 pt_base = *pd_entry & ~0xFFF; // Remove flags
 
 		switch ((UIntPtr)phys_addr)
 		{
 		case kBadAddress: {
-			phys_addr = (VoidPtr)((pt_entry[0] & ~0xFFF) + ((UIntPtr)virt_addr & 0xFFF));
+			phys_addr = (VoidPtr)((pt_base & cPAddrMask) + ((UIntPtr)virt_addr & cFlagsMask));
 			break;
 		}
 		default: {
@@ -57,16 +49,38 @@ namespace Kernel::HAL
 		}
 		}
 
-		if (!(pt_entry[0] & 0x01))
-		{
-			pt_entry[0] = ((UIntPtr)phys_addr) | (flags & 0xFFF) | 0x01;
-			hal_write_cr3(pml4_base);
+		// And then PTE
+		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pt_base + (pte_idx * kPTEAlign));
 
+		if (!(*pt_entry & eFlagsPresent))
+		{
+			*pt_entry = ((UIntPtr)phys_addr) | (flags & 0xFFF) | eFlagsPresent;
+
+			hal_invl_tlb((VoidPtr)virt_addr);
+
+			kcout << "=================================================\r";
+			kcout << "Post page allocation.\r";
+			kcout << "=================================================\r";
+			kcout << (*pt_entry & eFlagsPresent ? "Page Present." : "Page Not Present.") << endl;
+			kcout << (*pt_entry & eFlagsRw ? "Page RW." : "Page Not RW.") << endl;
+			kcout << (*pt_entry & eFlagsUser ? "Page User." : "Page Not User.") << endl;
+
+			rt_sti();
 			return 0;
 		}
 
-		pt_entry[0] = ((UIntPtr)phys_addr) | (flags & 0xFFF);
+		*pt_entry = ((UIntPtr)phys_addr) | (flags & 0xFFF) | eFlagsPresent;
 
+		hal_invl_tlb((VoidPtr)virt_addr);
+
+		kcout << "=================================================\r";
+		kcout << "Post page change.\r";
+		kcout << "=================================================\r";
+		kcout << (*pt_entry & eFlagsPresent ? "Page Present." : "Page Not Present.") << endl;
+		kcout << (*pt_entry & eFlagsRw ? "Page RW." : "Page Not RW.") << endl;
+		kcout << (*pt_entry & eFlagsUser ? "Page User." : "Page Not User.") << endl;
+
+		rt_sti();
 		return 0;
 	}
 
