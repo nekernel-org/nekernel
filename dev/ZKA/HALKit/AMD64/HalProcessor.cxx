@@ -25,17 +25,17 @@ namespace Kernel::HAL
 	{
 		UInt8 cPageBitMp[cBmpPgSz] = {0}; // Bitmap to track free/used pages
 
-		void pg_set_used(Int64 page_index)
+		Void pg_set_used(Int64 page_index)
 		{
 			cPageBitMp[page_index / 8] |= (1 << (page_index % 8));
 		}
 
-		void pg_set_free(Int64 page_index)
+		Void pg_set_free(Int64 page_index)
 		{
 			cPageBitMp[page_index / 8] &= ~(1 << (page_index % 8));
 		}
 
-		int pg_is_free(Int64 page_index)
+		Int32 pg_is_free(Int64 page_index)
 		{
 			return !(cPageBitMp[page_index / 8] & (1 << (page_index % 8)));
 		}
@@ -56,7 +56,7 @@ namespace Kernel::HAL
 			return nullptr; // No free page found
 		}
 
-		void pg_delete(void* addr)
+		Void pg_delete(void* addr)
 		{
 			Int64 page_index = (UIntPtr)addr / cPageSz;
 			kcout << "Page has been freed at: " << number(page_index) << endl;

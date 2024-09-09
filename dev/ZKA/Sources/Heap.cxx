@@ -94,18 +94,20 @@ namespace Kernel
 	{
 		Detail::mm_alloc_init_timeout();
 
-		auto szFix = sz;
+		auto sz_fix = sz;
 
-		if (szFix == 0)
+		if (sz_fix == 0)
 			return nullptr;
 
-		auto wrapper = kHeapPageMgr.Request(rw, user, No, szFix);
+		sz_fix += sizeof(Detail::HEAP_INFORMATION_BLOCK);
+
+		auto wrapper = kHeapPageMgr.Request(rw, user, No, sz_fix);
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		heap_info_ptr->fHeapSize = szFix;
+		heap_info_ptr->fHeapSize = sz_fix;
 		heap_info_ptr->fMagic	 = kKernelHeapMagic;
 		heap_info_ptr->fCRC32	 = No; // dont fill it for now.
 		heap_info_ptr->fHeapPtr	 = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);

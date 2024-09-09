@@ -141,7 +141,7 @@ namespace Kernel
 			ptr_bit_set[0] = cBitMpMagic;
 			ptr_bit_set[2] = No;
 
-			mm_map_page(page_ptr, ~eFlagsPresent);
+			mm_map_page(page_ptr, ~eFlagsPresent | ~eFlagsUser);
 
 			return true;
 		}
