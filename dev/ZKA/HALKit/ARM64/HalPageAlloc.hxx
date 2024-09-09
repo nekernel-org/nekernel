@@ -14,17 +14,17 @@
 
 #include <NewKit/Defines.hxx>
 
-#ifndef kPTEMax
-#define kPTEMax (0x200)
-#endif //! kPTEMax
+#ifndef kPageMax
+#define kPageMax (0x200)
+#endif //! kPageMax
 
-#ifndef kPTEAlign
-#define kPTEAlign (0x1000)
-#endif //! kPTEAlign
+#ifndef kPageAlign
+#define kPageAlign (0x1000)
+#endif //! kPageAlign
 
-#ifndef kPTESize
-#define kPTESize (0x1000)
-#endif // !kPTESize
+#ifndef kPageSize
+#define kPageSize (0x1000)
+#endif // !kPageSize
 
 //! short format address range
 
@@ -93,7 +93,7 @@ namespace Kernel::HAL
 
 	struct PageDirectory64 final
 	{
-		LongDescLevel3 ALIGN(kPTEAlign) Pte[kPTEMax];
+		LongDescLevel3 ALIGN(kPageAlign) Pte[kPageMax];
 	};
 
 	VoidPtr mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size);

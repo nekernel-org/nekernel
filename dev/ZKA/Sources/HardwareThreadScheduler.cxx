@@ -43,6 +43,14 @@ namespace Kernel
 	//! @brief is the thread busy?
 	Bool HardwareThread::IsBusy() noexcept
 	{
+		STATIC Int64 busy_timer = 0U;
+
+		if (busy_timer > this->fPTime)
+		{
+			busy_timer = 0U;
+			fBusy	   = No;
+		}
+
 		return fBusy;
 	}
 
@@ -95,16 +103,17 @@ namespace Kernel
 		if (!this->IsWakeup())
 			return No;
 
+		if (this->IsBusy())
+			return No;
+
 		fStack = frame;
 
-		if (this->IsBusy())
-			return false;
+		kcout << "Trying to register progress...\r";
 
-		kcout << "Registering process bank...\r";
-
-		this->Busy(true);
 		Bool ret = mp_register_process(image, stack_ptr, fStack);
-		this->Busy(false);
+
+		if (ret)
+			this->Busy(true);
 
 		return ret;
 	}

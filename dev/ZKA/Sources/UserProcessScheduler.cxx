@@ -348,11 +348,6 @@ namespace Kernel
 					continue;
 				}
 			}
-			else
-			{
-				// otherwise increment the P-time.
-				--process.PTime;
-			}
 		}
 
 		kcout << "Scheduled Process Count: " << number(process_index) << endl;
@@ -390,15 +385,17 @@ namespace Kernel
 	/// @retval false cannot be schedulded.
 	bool UserProcessHelper::CanBeScheduled(const UserProcess& process)
 	{
-		kcout << "Checking Status...\r";
+		kcout << "Checking process status...\r";
 
 		if (process.Status == ProcessStatusKind::kFrozen ||
 			process.Status == ProcessStatusKind::kDead)
 			return No;
 
-		kcout << "Checking PTime...\r";
+		if (!process.Image &&
+			process.Kind == UserProcess::kExeKind)
+			return No;
 
-		return process.PTime <= 0;
+		return Yes;
 	}
 
 	/**
@@ -450,11 +447,15 @@ namespace Kernel
 				PID prev_pid					   = UserProcessHelper::TheCurrentPID();
 				UserProcessHelper::TheCurrentPID() = new_pid;
 
-				bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
+				auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
+				HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].ProcessId;
+				Bool ret											 = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
 
 				if (!ret)
 				{
-					UserProcessHelper::TheCurrentPID() = prev_pid;
+					HardwareThreadScheduler::The()[index].Leak()->fPTime = prev_ptime;
+					UserProcessHelper::TheCurrentPID()					 = prev_pid;
+
 					continue;
 				}
 			}

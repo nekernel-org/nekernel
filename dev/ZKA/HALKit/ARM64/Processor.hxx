@@ -11,7 +11,7 @@
 #include <NewKit/Utils.hxx>
 #include <FirmwareKit/Handover.hxx>
 
-#define kPTESize 512 /* 64-bit PT */
+#define kPageSize 512 /* 64-bit PT */
 
 #define kCPUBackendName "ARMv8"
 

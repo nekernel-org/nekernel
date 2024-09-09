@@ -55,16 +55,10 @@ namespace Kernel::HAL
 	/// @brief Virtual memory flags.
 	enum
 	{
-		eFlagsPresent = 1 << 0,
-		eFlagsRw	  = 1 << 1,
-		eFlagsUser	  = 1 << 2,
-		eFlagsWt	  = 1 << 3,
-		eFlagsNoCache = 1 << 4,
-		eFlagsAccess  = 1 << 5,
-		eFlagsDirty	  = 1 << 6,
-		eFlagsHuge	  = 1 << 7,
-		eFlagsGlobal  = 1 << 8,
-		eFlagsCount	  = 8,
+		eFlagsPresent = 1,
+		eFlagsRw	  = 2,
+		eFlagsUser	  = 4,
+		eFlagsCount	  = 3,
 	};
 
 	/// @brief Set a PTE from pd_base.
@@ -72,7 +66,7 @@ namespace Kernel::HAL
 	/// @param phys_addr point to physical address.
 	/// @param flags the flags to put on the page.
 	/// @return Status code of page manip.
-	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, VoidPtr phys_addr, UInt32 flags);
+	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, UInt32 flags);
 
 	EXTERN_C UChar	In8(UInt16 port);
 	EXTERN_C UShort In16(UInt16 port);

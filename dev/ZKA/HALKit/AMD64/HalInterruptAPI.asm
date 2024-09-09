@@ -17,14 +17,14 @@
 global __ZKA_INT_%1
 __ZKA_INT_%1:
     cld
-    iretq
+    o64 iret
 %endmacro
 
 %macro IntNormal 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
     cld
-    iretq
+    o64 iret
 %endmacro
 
 ; This file handles the core interrupt table
@@ -62,7 +62,7 @@ __ZKA_INT_6:
     pop rax
 
     sti
-    iretq
+    o64 iret
 
 IntNormal 7
 
@@ -78,7 +78,7 @@ __ZKA_INT_8:
     pop rax
 
     sti
-    iretq
+    o64 iret
 
 IntNormal 9
 IntExp   10
@@ -97,7 +97,7 @@ __ZKA_INT_13:
     pop rax
 
     sti
-    iretq
+    o64 iret
 
 __ZKA_INT_14:
     cli
@@ -110,7 +110,7 @@ __ZKA_INT_14:
     pop rax
 
     sti
-    iretq
+    o64 iret
 
 IntNormal 15
 IntNormal 16
@@ -152,9 +152,27 @@ IntNormal 47
 IntNormal 48
 IntNormal 49
 
+[extern hal_system_call_enter]
 [extern hal_kernel_call_enter]
 
-IntNormal 50
+__ZKA_INT_50:
+    cli
+
+    push r8
+    push r9
+    push r10
+    push rsp
+
+    jmp hal_system_call_enter
+
+    add rsp, 16
+    pop rsp
+    pop r10
+    pop r9
+    pop r8
+
+    sti
+    o64 iret
 
 __ZKA_INT_51:
     cli
@@ -174,7 +192,7 @@ __ZKA_INT_51:
     pop rcx
 
     sti
-    iretq
+    o64 iret
 
 [extern hal_on_ap_startup]
 

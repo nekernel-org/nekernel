@@ -14,17 +14,17 @@
 
 #include <NewKit/Defines.hxx>
 
-#ifndef kPTEMax
-#define kPTEMax (0x200)
-#endif //! kPTEMax
+#ifndef kPageMax
+#define kPageMax (0x200)
+#endif //! kPageMax
 
-#ifndef kPTEAlign
-#define kPTEAlign (0x1000)
-#endif //! kPTEAlign
+#ifndef kPageAlign
+#define kPageAlign (0x1000)
+#endif //! kPageAlign
 
-#ifndef kPTESize
-#define kPTESize (0x1000)
-#endif // !kPTESize
+#ifndef kPageSize
+#define kPageSize (0x200)
+#endif // !kPageSize
 
 #ifndef kAlign
 #define kAlign __BIGGEST_ALIGNMENT__
@@ -85,7 +85,7 @@ namespace Kernel::HAL
 
 	struct ALIGN(0x08) ZKA_PDE final
 	{
-		ZKA_PTE ALIGN(kPTEAlign) Pte[kPTEMax];
+		ZKA_PTE ALIGN(kPageAlign) Pte[kPageMax];
 	};
 
 	auto mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size) -> VoidPtr;

@@ -73,11 +73,13 @@ namespace Kernel
 		ThreadKind		   fKind{ThreadKind::kHartStandard};
 		ThreadID		   fID{0};
 		ProcessID		   fSourcePID{-1};
-		bool			   fWakeup{false};
-		bool			   fBusy{false};
+		Bool			   fWakeup{false};
+		Bool			   fBusy{false};
+		UInt64			   fPTime{0};
 
 	private:
 		friend class HardwareThreadScheduler;
+		friend class UserProcessHelper;
 	};
 
 	///

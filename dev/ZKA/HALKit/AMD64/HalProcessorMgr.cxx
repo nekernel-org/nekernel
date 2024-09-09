@@ -14,73 +14,137 @@
  * @brief CPU Processor managers.
  */
 
+#define cPageSz		kPageSize				// 4KB pages
+#define cTotalPgMem gib_cast(16)			// 16MB total memory
+#define cTotalPages (cTotalPgMem / cPageSz) // Total number of pages
+#define cBmpPgSz	(cTotalPages / 8)		// 1 bit per page in the bitmap
+
 namespace Kernel::HAL
 {
-	/// @brief Set a PTE from pd_base.
+	namespace MM
+	{
+		UInt8 cPageBitMp[cBmpPgSz] = {0}; // Bitmap to track free/used pages
+
+		void pg_set_used(Int64 page_index)
+		{
+			cPageBitMp[page_index / 8] |= (1 << (page_index % 8));
+		}
+
+		void pg_set_free(Int64 page_index)
+		{
+			cPageBitMp[page_index / 8] &= ~(1 << (page_index % 8));
+		}
+
+		int pg_is_free(Int64 page_index)
+		{
+			return !(cPageBitMp[page_index / 8] & (1 << (page_index % 8)));
+		}
+
+		VoidPtr pg_allocate()
+		{
+			for (SizeT i = 0; i < cTotalPages; i++)
+			{
+				if (pg_is_free(i))
+				{
+					pg_set_used(i);
+					kcout << "Page has been allocated at index: " << number(i) << endl;
+
+					return (VoidPtr)(i * cPageSz); // Return physical address of the page
+				}
+			}
+
+			return nullptr; // No free page found
+		}
+
+		void pg_delete(void* addr)
+		{
+			Int64 page_index = (UIntPtr)addr / cPageSz;
+			kcout << "Page has been freed at: " << number(page_index) << endl;
+
+			pg_set_free(page_index);
+		}
+
+	} // namespace MM
+
+	/// @brief Maps or allocates a page from virt_addr.
 	/// @param virt_addr a valid virtual address.
 	/// @param phys_addr point to physical address.
 	/// @param flags the flags to put on the page.
 	/// @return Status code of page manip.
-	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, VoidPtr phys_addr, UInt32 flags)
+	EXTERN_C Int32 mm_map_page(VoidPtr p_virt_addr, UInt32 flags)
 	{
 		rt_cli();
 
-		const auto cPAddrMask = 0x000ffffffffff000;
-		const auto cFlagsMask = 0xFFF;
+		const auto cPageMask = 0xFFFF;
 
-		VoidPtr pml4_base = hal_read_cr3();
+		volatile UIntPtr* pml4_base = (volatile UIntPtr*)(hal_read_cr3());
 
-		UIntPtr pd_idx	= ((UIntPtr)virt_addr >> 22);
-		UIntPtr pte_idx = ((UIntPtr)virt_addr >> 12) & 0x03FF;
+		UIntPtr virt_addr = (UIntPtr)p_virt_addr;
 
-		// Now get pd_entry
-		volatile UInt64* pd_entry = (volatile UInt64*)(((UInt64)pml4_base) + (pd_idx * kPTEAlign));
+		UInt16 pml4_index = (virt_addr >> 39) & 0x1FF;
+		UInt16 pdpt_index = (virt_addr >> 30) & 0x1FF;
+		UInt16 pd_index	  = (virt_addr >> 21) & 0x1FF;
+		UInt16 pt_index	  = (virt_addr >> 12) & 0x1FF;
+		UInt16 offset	  = virt_addr & 0xFFF;
 
-		UInt64 pt_base = *pd_entry & ~0xFFF; // Remove flags
+		const auto cIndexAlign = kPageAlign;
 
-		switch ((UIntPtr)phys_addr)
+		// Now get pml4_entry
+		volatile UIntPtr* pml4_entry = (volatile UInt64*)((pml4_base[pml4_index + cIndexAlign]));
+
+		if (!(*pml4_entry & eFlagsPresent))
 		{
-		case kBadAddress: {
-			phys_addr = (VoidPtr)((pt_base & cPAddrMask) + ((UIntPtr)virt_addr & cFlagsMask));
-			break;
-		}
-		default: {
-			break;
-		}
+			auto pml_addr = MM::pg_allocate();
+			*pml4_entry	  = (UIntPtr)pml_addr | eFlagsPresent | eFlagsRw;
 		}
 
-		// And then PTE
-		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pt_base + (pte_idx * kPTEAlign));
+		volatile UIntPtr* pdpt_entry = (volatile UIntPtr*)(pml4_entry[pdpt_index + cIndexAlign]);
+
+		if (!(*pdpt_entry & eFlagsPresent))
+		{
+			auto pdpt_addr = MM::pg_allocate();
+			*pdpt_entry	   = (UIntPtr)pdpt_addr | eFlagsPresent | eFlagsRw;
+		}
+
+		volatile UIntPtr* pd_entry = (volatile UIntPtr*)(pdpt_entry[pd_index + cIndexAlign]);
+
+		if (!(*pd_entry & eFlagsPresent))
+		{
+			auto pd_addr = MM::pg_allocate();
+			*pd_entry	 = (UIntPtr)pd_addr | eFlagsPresent | eFlagsRw;
+		}
+
+		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pd_entry[pt_index + cIndexAlign]);
 
 		if (!(*pt_entry & eFlagsPresent))
 		{
-			*pt_entry = ((UIntPtr)phys_addr) | (flags & 0xFFF) | eFlagsPresent;
+			PTE* frame = (PTE*)pt_entry;
 
-			hal_invl_tlb((VoidPtr)virt_addr);
+			MM::pg_delete((VoidPtr)frame->PhysicalAddress);
 
-			kcout << "=================================================\r";
-			kcout << "Post page allocation.\r";
-			kcout << "=================================================\r";
+			auto pt_addr = MM::pg_allocate();
+			*pt_entry	 = (UIntPtr)pt_addr | eFlagsPresent | flags;
 
-			kcout << (*pt_entry & eFlagsPresent ? "Page Present." : "Page Not Present.") << endl;
-			kcout << (*pt_entry & eFlagsRw ? "Page RW." : "Page Not RW.") << endl;
-			kcout << (*pt_entry & eFlagsUser ? "Page User." : "Page Not User.") << endl;
+			kcout << (frame->Present ? "Page Present." : "Page Not Present.") << endl;
+			kcout << (frame->Rw ? "Page RW." : "Page Not RW.") << endl;
+			kcout << (frame->User ? "Page User." : "Page Not User.") << endl;
 
-			rt_sti();
-			return 0;
+			kcout << "Physical Address: " << number(frame->PhysicalAddress) << endl;
+		}
+		else
+		{
+			PTE* frame = (PTE*)pt_entry;
+
+			*pt_entry = (UIntPtr)(frame->PhysicalAddress / cPageSz) | flags;
+
+			kcout << (frame->Present ? "Page Present." : "Page Not Present.") << endl;
+			kcout << (frame->Rw ? "Page RW." : "Page Not RW.") << endl;
+			kcout << (frame->User ? "Page User." : "Page Not User.") << endl;
+
+			kcout << "Physical Address: " << number(frame->PhysicalAddress) << endl;
 		}
 
-		*pt_entry = ((UIntPtr)phys_addr) | (flags & 0xFFF) | eFlagsPresent;
-
-		hal_invl_tlb((VoidPtr)virt_addr);
-
-		kcout << "=================================================\r";
-		kcout << "Post page change.\r";
-		kcout << "=================================================\r";
-
-		kcout << (*pt_entry & eFlagsPresent ? "Page Present." : "Page Not Present.") << endl;
-		kcout << (*pt_entry & eFlagsRw ? "Page RW." : "Page Not RW.") << endl;
-		kcout << (*pt_entry & eFlagsUser ? "Page User." : "Page Not User.") << endl;
+		hal_invl_tlb(p_virt_addr);
 
 		rt_sti();
 		return 0;

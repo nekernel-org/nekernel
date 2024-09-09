@@ -8,9 +8,13 @@
 ------------------------------------------- */
 
 #include <HPFS/Defines.hxx>
+#include <DDK/KernelStd.h>
 
 /** @brief HPFS IFS main. */
-HPFS_INT32 IFSStart(HPFS_VOID)
+HPFS_INT32 ModuleMain(HPFS_VOID)
 {
+    auto ifs_handle = KernelGetProperty(0, "\\.\\IFSObject");
+    // TODO: Register IFS...
+
     return 0;
 }

@@ -56,8 +56,9 @@ namespace Kernel::HAL
 Kernel::Property cKernelVersion;
 Kernel::User	 cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
 
-EXTERN_C ATTRIBUTE(naked) void mp_user_switch_proc(void);
-EXTERN_C Kernel::UInt8* mp_user_switch_proc_end;
+EXTERN_C Kernel::UInt8* mp_user_switch_proc;
+EXTERN_C Kernel::UInt8* mp_user_switch_proc_stack_end;
+EXTERN_C Kernel::VoidPtr mp_user_switch_proc_real;
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -129,8 +130,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	MUST_PASS(fs);
 
-	Kernel::HAL::mm_map_page((Kernel::VoidPtr)mp_user_switch_proc, 0, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsRw  | Kernel::HAL::eFlagsPresent);
-	Kernel::HAL::mm_map_page((Kernel::VoidPtr)mp_user_switch_proc_end, 0, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsPresent);
+	Kernel::HAL::mm_map_page((Kernel::VoidPtr)mp_user_switch_proc, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsPresent);
+	Kernel::HAL::mm_map_page((Kernel::VoidPtr)mp_user_switch_proc_stack_end, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsPresent);
 
 	Kernel::NewFilesystemMgr::Mount(fs);
 

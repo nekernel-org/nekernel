@@ -12,16 +12,18 @@
 [global mp_do_user_switch]
 [global mp_do_context_switch_pre]
 [global mp_user_switch_proc]
-[global mp_user_switch_proc_end]
+[global mp_user_switch_proc_real]
+[global mp_user_switch_proc_stack_end]
 
 section .text
 
 ;; @brief Switch to user mode.
 mp_do_user_switch:
     mov rbp, rsp
-    mov rsp, mp_user_switch_proc_end
+    mov rsp, mp_user_switch_proc_stack_end
 
-    invlpg [0]
+    mov rdx, mp_user_switch_proc
+    invlpg [rdx]
 
     mov ax, 0x18 | 3
     mov ds, ax
@@ -31,7 +33,7 @@ mp_do_user_switch:
 
     push 0x18 | 3
 
-    mov rax, mp_user_switch_proc_end
+    mov rax, mp_user_switch_proc_stack_end
     push rax
 
     o64 pushf
@@ -45,11 +47,13 @@ mp_do_user_switch:
 
 section .bss
 
-mp_user_switch_proc_begin:
+mp_user_switch_proc_stack_begin:
     resb 4*4096
-mp_user_switch_proc_end:
+mp_user_switch_proc_stack_end:
 
 section .text
 
 mp_user_switch_proc:
+    nop
     jmp $
+mp_user_switch_proc_end:

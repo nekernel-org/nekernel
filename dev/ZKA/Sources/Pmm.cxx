@@ -31,7 +31,7 @@ namespace Kernel
 	/// @param readWrite is it r/w?
 	Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite)
 	{
-		PTEWrapper pt = fPageMgr.Leak().Request(user, readWrite, false, kPTESize);
+		PTEWrapper pt = fPageMgr.Leak().Request(user, readWrite, false, kPageSize);
 
 		if (pt.fPresent)
 		{

@@ -54,10 +54,10 @@ namespace Kernel
 								kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
 								if (rw)
-									mm_map_page(base_ptr, 0, eFlagsRw | eFlagsPresent);
+									mm_map_page(base_ptr, eFlagsRw | eFlagsPresent);
 
 								if (user)
-									mm_map_page(base_ptr, 0, eFlagsRw | eFlagsUser | eFlagsPresent);
+									mm_map_page(base_ptr, eFlagsUser | eFlagsPresent);
 
 								return (VoidPtr)ptr_bit_set;
 							}
@@ -80,10 +80,10 @@ namespace Kernel
 							kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
 							if (rw)
-								mm_map_page(base_ptr, 0, eFlagsRw | eFlagsPresent);
+								mm_map_page(base_ptr, eFlagsRw | eFlagsPresent);
 
 							if (user)
-								mm_map_page(base_ptr, 0, eFlagsRw | eFlagsUser | eFlagsPresent);
+								mm_map_page(base_ptr, eFlagsUser | eFlagsPresent);
 
 							return (VoidPtr)ptr_bit_set;
 						}
@@ -141,7 +141,7 @@ namespace Kernel
 			ptr_bit_set[0] = cBitMpMagic;
 			ptr_bit_set[2] = No;
 
-			mm_map_page(page_ptr, 0, 0);
+			mm_map_page(page_ptr, ~eFlagsPresent);
 
 			return true;
 		}
