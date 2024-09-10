@@ -185,15 +185,15 @@ Boolean drv_std_detected(Void)
 /***
 	@brief Getter, gets the number of sectors inside the drive.
 */
-Kernel::SizeT drv_std_get_sector_count()
+Kernel::SizeT drv_get_sector_count()
 {
 	return (kATAData[61] << 16) | kATAData[60];
 }
 
 /// @brief Get the drive size.
-Kernel::SizeT drv_std_get_drv_size()
+Kernel::SizeT drv_get_size()
 {
-	return drv_std_get_sector_count() * kATASectorSize;
+	return drv_get_sector_count() * kATASectorSize;
 }
 
 #endif /* ifdef __ATA_PIO__ */

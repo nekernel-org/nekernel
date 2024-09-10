@@ -53,9 +53,6 @@ namespace Kernel::HAL
 	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr) noexcept;
 } // namespace Kernel::HAL
 
-Kernel::Property cKernelVersion;
-Kernel::User	 cUserSuper{Kernel::RingKind::kRingSuperUser, kSuperUser};
-
 EXTERN_C Kernel::UInt8* mp_user_switch_proc;
 EXTERN_C Kernel::UInt8* mp_user_switch_proc_stack_end;
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc_real;
@@ -84,7 +81,7 @@ EXTERN_C void hal_init_platform(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
 	// get physical address start.
-	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
+	kKernelPageStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PageStart));
 
 	STATIC CONST auto cEntriesCount = 6;
@@ -123,17 +120,9 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	kcout << "Creating filesystem and such.\r";
-
 	auto fs = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 
-	MUST_PASS(fs);
-
 	Kernel::NeFileSystemMgr::Mount(fs);
-
-	const auto cPassword = "ZKA_KERNEL_AUTHORITY";
-
-	cUserSuper.TrySave(cPassword);
 
 	ke_dll_entrypoint();
 

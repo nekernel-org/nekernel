@@ -17,7 +17,7 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/Utils.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <HALKit/AMD64/HalPageAlloc.hxx>
+#include <HALKit/AMD64/Paging.hxx>
 
 EXTERN_C
 {
@@ -26,11 +26,6 @@ EXTERN_C
 
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
-
-#define cPageSz		kPageSize				// 4KB pages
-#define cTotalPgMem mib_cast(16)			// 16MB total memory
-#define cTotalPages (cTotalPgMem / cPageSz) // Total number of pages
-#define cBmpPgSz	(cTotalPages / 8)		// 1 bit per page in the bitmap
 
 #define kInterruptGate (0x8E)
 #define kTrapGate	   (0xEF)
@@ -45,12 +40,11 @@ namespace Kernel
 		{
 			UInt16 OffsetLow; // offset bits 0..15
 			UInt16 Selector;  // a code segment selector in GDT or LDT
-			UInt8
-				   Ist;			   // bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.
-			UInt8  TypeAttributes; // gate type, dpl, and p fields
-			UInt16 OffsetMid;	   // offset bits 16..31
-			UInt32 OffsetHigh;	   // offset bits 32..63
-			UInt32 Zero;		   // reserved
+			UInt8  Ist;
+			UInt8  TypeAttributes;
+			UInt16 OffsetMid;
+			UInt32 OffsetHigh;
+			UInt32 Zero; // reserved
 		};
 	} // namespace Detail::AMD64
 } // namespace Kernel
@@ -60,9 +54,9 @@ namespace Kernel::HAL
 	/// @brief Virtual memory flags.
 	enum
 	{
-		eFlagsPresent = 1,
-		eFlagsRw	  = 2,
-		eFlagsUser	  = 4,
+		eFlagsPresent = 0x1,
+		eFlagsRw	  = 0x2,
+		eFlagsUser	  = 0x4,
 		eFlagsCount	  = 3,
 	};
 
@@ -299,6 +293,6 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 #define kKernelInterruptId 0x32
 
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
-inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
+inline Kernel::UIntPtr kKernelBitMpSize	   = 0UL;
 
-inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
+inline Kernel::VoidPtr kKernelPageStart = nullptr;

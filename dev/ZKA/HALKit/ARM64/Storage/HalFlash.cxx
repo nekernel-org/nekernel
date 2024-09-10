@@ -32,7 +32,7 @@ namespace Kernel
 
 	/// @brief get sector count.
 	/// @return drive sector count.
-	SizeT drv_std_get_sector_count(Int32 slot)
+	SizeT drv_get_sector_count(Int32 slot)
 	{
 		if (slot > cMaxFlash)
 			return 0;
@@ -42,7 +42,7 @@ namespace Kernel
 
 	/// @brief get device size.
 	/// @return drive size
-	SizeT drv_std_get_drv_size(Int32 slot)
+	SizeT drv_get_size(Int32 slot)
 	{
 		if (slot > cMaxFlash)
 			return 0;

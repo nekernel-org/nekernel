@@ -147,10 +147,10 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::UInt16 IO, Kernel::UInt8 M
 Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::UInt16 IO, Kernel::UInt8 Master, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size);
 
 /// @brief get sector count.
-Kernel::SizeT drv_std_get_sector_count();
+Kernel::SizeT drv_get_sector_count();
 
 /// @brief get device size.
-Kernel::SizeT drv_std_get_drv_size();
+Kernel::SizeT drv_get_size();
 
 #endif // ifdef __NEWOSKRNL__
 #endif // ifndef __ATA_PIO__ || __AHCI__

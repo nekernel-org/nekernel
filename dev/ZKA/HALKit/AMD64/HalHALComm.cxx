@@ -49,7 +49,7 @@ namespace Kernel::HAL
 					pg_set_used(i);
 					kcout << "Page has been allocated at index: " << number(i) << endl;
 
-					return (VoidPtr)(i * cPageSz); // Return physical address of the page
+					return (VoidPtr)((UIntPtr)kKernelPageStart + (i * cPageSz)); // Return physical address of the page
 				}
 			}
 
@@ -90,58 +90,65 @@ namespace Kernel::HAL
 		const auto cIndexAlign = kPageAlign;
 
 		// Now get pml4_entry
-		volatile UIntPtr* pml4_entry = (volatile UInt64*)((pml4_base[pml4_index + cIndexAlign]));
+		volatile UIntPtr* pml4_entry = (volatile UInt64*)((pml4_base[pml4_index]));
 
 		if (!(*pml4_entry & eFlagsPresent))
 		{
 			auto pml_addr = MM::pg_allocate();
-			*pml4_entry	  = (UIntPtr)pml_addr | eFlagsPresent | eFlagsRw;
+			*pml4_entry	  = (UIntPtr)pml_addr | (eFlagsPresent | eFlagsRw) & 0xFFF;
 		}
 
-		volatile UIntPtr* pdpt_entry = (volatile UIntPtr*)(pml4_entry[pdpt_index + cIndexAlign]);
+		volatile UIntPtr* pdpt_entry = (volatile UIntPtr*)(pml4_entry[pdpt_index]);
 
 		if (!(*pdpt_entry & eFlagsPresent))
 		{
 			auto pdpt_addr = MM::pg_allocate();
-			*pdpt_entry	   = (UIntPtr)pdpt_addr | eFlagsPresent | eFlagsRw;
+			*pdpt_entry	   = (UIntPtr)pdpt_addr | (eFlagsPresent | eFlagsRw) & 0xFFF;
 		}
 
-		volatile UIntPtr* pd_entry = (volatile UIntPtr*)(pdpt_entry[pd_index + cIndexAlign]);
+		volatile UIntPtr* pd_entry = (volatile UIntPtr*)(pdpt_entry[pd_index]);
 
 		if (!(*pd_entry & eFlagsPresent))
 		{
 			auto pd_addr = MM::pg_allocate();
-			*pd_entry	 = (UIntPtr)pd_addr | eFlagsPresent | eFlagsRw;
+			*pd_entry	 = (UIntPtr)pd_addr | (eFlagsPresent | eFlagsRw) & 0xFFF;
 		}
 
-		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pd_entry[pt_index + cIndexAlign]);
+		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pd_entry[pd_index]);
 
-		if (!(pt_entry[offset] & eFlagsPresent))
+		if (!(pt_entry[pt_index] & eFlagsPresent))
 		{
-			PTE* frame = (PTE*)pt_entry[offset];
+			PTE* page_frame = (PTE*)pt_entry[pt_index];
 
-			MM::pg_delete((VoidPtr)frame->PhysicalAddress);
+			if (page_frame->PhysicalAddress == 0)
+			{
+				auto pt_addr	 = MM::pg_allocate();
+				pt_entry[pt_index] = (UIntPtr)pt_addr | eFlagsPresent | (flags & 0xFFF);
+			}
+			else
+			{
+				pt_entry[pt_index] = page_frame->PhysicalAddress | eFlagsPresent | (flags & 0xFFF);
+			}
 
-			auto pt_addr = MM::pg_allocate();
-			pt_entry[offset]	 = (UIntPtr)pt_addr | eFlagsPresent | flags;
+			kcout << (page_frame->Present ? "Page Present." : "Page Not Present.") << endl;
+			kcout << (page_frame->Wr ? "Page W/R." : "Page Not W/R.") << endl;
+			kcout << (page_frame->User ? "Page User." : "Page Not User.") << endl;
 
-			kcout << (frame->Present ? "Page Present." : "Page Not Present.") << endl;
-			kcout << (frame->Rw ? "Page RW." : "Page Not RW.") << endl;
-			kcout << (frame->User ? "Page User." : "Page Not User.") << endl;
+			kcout << "Physical Address: " << hex_number(page_frame->PhysicalAddress) << endl;
 
-			kcout << "Physical Address: " << number(frame->PhysicalAddress) << endl;
+			hal_flush_tlb();
 		}
 		else
 		{
-			PTE* frame = (PTE*)pt_entry[offset];
+			PTE* page_frame = (PTE*)pt_entry[pt_index];
 
-			pt_entry[offset] = (UIntPtr)(frame->PhysicalAddress / cPageSz) | flags;
+			pt_entry[pt_index] = page_frame->PhysicalAddress | (flags & 0xFFF);
 
-			kcout << (frame->Present ? "Page Present." : "Page Not Present.") << endl;
-			kcout << (frame->Rw ? "Page RW." : "Page Not RW.") << endl;
-			kcout << (frame->User ? "Page User." : "Page Not User.") << endl;
+			kcout << (page_frame->Present ? "Page Present." : "Page Not Present.") << endl;
+			kcout << (page_frame->Wr ? "Page W/R." : "Page Not W/R.") << endl;
+			kcout << (page_frame->User ? "Page User." : "Page Not User.") << endl;
 
-			kcout << "Physical Address: " << number(frame->PhysicalAddress) << endl;
+			kcout << "Physical Address: " << hex_number(page_frame->PhysicalAddress) << endl;
 		}
 
 		rt_sti();

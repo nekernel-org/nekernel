@@ -110,13 +110,13 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 /***
 	@brief Getter, gets the number of sectors inside the drive.
 */
-Kernel::SizeT drv_std_get_sector_count()
+Kernel::SizeT drv_get_sector_count()
 {
 	return 0;
 }
 
 /// @brief Get the drive size.
-Kernel::SizeT drv_std_get_drv_size()
+Kernel::SizeT drv_get_size()
 {
 	return 0;
 }

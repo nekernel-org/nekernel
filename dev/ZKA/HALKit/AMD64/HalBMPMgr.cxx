@@ -9,9 +9,9 @@
 #define cBitMpMagic ((Kernel::UIntPtr)0x10210)
 
 #ifdef __ZKA_AMD64__
-#include <HALKit/AMD64/HalPageAlloc.hxx>
+#include <HALKit/AMD64/Paging.hxx>
 #elif defined(__ZKA_ARM64__)
-#include <HALKit/ARM64/HalPageAlloc.hxx>
+#include <HALKit/ARM64/Paging.hxx>
 #endif
 
 #include <NewKit/Defines.hxx>
@@ -35,6 +35,8 @@ namespace Kernel
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
 
+						mm_map_page(ptr_bit_set, eFlagsPresent | eFlagsRw);
+
 						if (ptr_bit_set[0] == cBitMpMagic)
 						{
 							if (ptr_bit_set[1] != 0 &&
@@ -44,7 +46,7 @@ namespace Kernel
 								ptr_bit_set[1] = size;
 								ptr_bit_set[2] = Yes;
 
-								kcout << "BMPMgr: Allocated pointer!\r";
+								kcout << "BMPMgr: Allocated Range!\r";
 								kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
 								kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
 								kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
@@ -54,13 +56,13 @@ namespace Kernel
 								kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
 								if (rw)
-									mm_map_page(base_ptr, eFlagsRw);
-
-								if (user && rw)
-									mm_map_page(base_ptr, eFlagsUser | eFlagsRw);
-
-								if (user)
-									mm_map_page(base_ptr, eFlagsUser);
+									mm_map_page(base_ptr, eFlagsRw | eFlagsPresent);
+								else if (user && rw)
+									mm_map_page(base_ptr, eFlagsUser | eFlagsRw | eFlagsPresent);
+								else if (user)
+									mm_map_page(base_ptr, eFlagsUser | eFlagsPresent);
+								else
+									mm_map_page(base_ptr, eFlagsPresent);
 
 								return (VoidPtr)ptr_bit_set;
 							}
@@ -73,7 +75,7 @@ namespace Kernel
 							ptr_bit_set[1] = size;
 							ptr_bit_set[2] = Yes;
 
-							kcout << "BMPMgr: Allocated pointer!\r";
+							kcout << "BMPMgr: Allocated Range!\r";
 							kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
 							kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
 							kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
@@ -84,9 +86,12 @@ namespace Kernel
 
 							if (rw)
 								mm_map_page(base_ptr, eFlagsRw | eFlagsPresent);
-
-							if (user)
+							else if (user && rw)
+								mm_map_page(base_ptr, eFlagsUser | eFlagsRw | eFlagsPresent);
+							else if (user)
 								mm_map_page(base_ptr, eFlagsUser | eFlagsPresent);
+							else
+								mm_map_page(base_ptr, eFlagsPresent);
 
 							return (VoidPtr)ptr_bit_set;
 						}
@@ -94,7 +99,7 @@ namespace Kernel
 						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != cBitMpMagic ? size : ptr_bit_set[1]));
 
 						if (reinterpret_cast<UIntPtr>(base_ptr) >= (kHandoverHeader->f_BitMapSize + base))
-							break;
+							ke_stop(RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM);
 					}
 
 					return nullptr;
@@ -113,11 +118,6 @@ namespace Kernel
 
 			ptr_new = traits.FindBitMap(kKernelVirtualStart, size, rw, user);
 
-			if (!ptr_new)
-			{
-				ke_stop(RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM);
-			}
-
 			return ((UIntPtr*)ptr_new);
 		}
 
@@ -132,7 +132,7 @@ namespace Kernel
 				ptr_bit_set[0] != cBitMpMagic)
 				return false;
 
-			kcout << "BMPMgr: Freed pointer!\r";
+			kcout << "BMPMgr: Freed Range!\r";
 			kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
 			kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
 			kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
@@ -144,7 +144,7 @@ namespace Kernel
 			ptr_bit_set[0] = cBitMpMagic;
 			ptr_bit_set[2] = No;
 
-			mm_map_page(page_ptr, ~eFlagsPresent | ~eFlagsUser);
+			mm_map_page(page_ptr, ~eFlagsPresent);
 
 			return true;
 		}

@@ -23,7 +23,7 @@
 #endif //! kPageAlign
 
 #ifndef kPageSize
-#define kPageSize (0x200)
+#define kPageSize (0x100)
 #endif // !kPageSize
 
 #ifndef kAlign
@@ -41,23 +41,40 @@ EXTERN_C Kernel::VoidPtr hal_read_cr3(); // @brief Page table.
 
 namespace Kernel::HAL
 {
+
+	struct PACKED ZKA_PTE_GENERIC
+	{
+		Bool   Present : 1;
+		Bool   Wr : 1;
+		Bool   User : 1;
+		Bool   Wt : 1;
+		Int32  Dirty : 1;
+		Int32  MemoryType : 1;
+		Int32  Global : 1;
+		Int32  Resvered_0 : 3;
+		UInt64 PhysicalAddress : 36;
+		Int32  Reserved_1 : 10;
+		Bool   ProtectionKey : 5;
+		Bool   ExecDisable : 1;
+	};
+
+	/// @brief Final page entry (Not PML, PDPT)
 	struct PACKED ZKA_PTE final
 	{
-		UInt8  Present : 1;
-		UInt8  Rw : 1;
-		UInt8  User : 1;
-		UInt8  Wt : 1;
-		UInt8  Cache : 1;
-		UInt8  Accessed : 1;
-		UInt8  Dirty : 1;
-		UInt8  PageSize : 1;
-		UInt8  Global : 1;
-		UInt8  Available : 3;
-		UInt32 PhysicalAddress : 20;
-		UInt8  Reserved : 6;
-		UInt8  ProtectionKey : 1;
-		UInt8  ExecDisable : 1;
-		UInt8  ReservedEx : 3;
+		Bool   Present : 1;
+		Bool   Wr : 1;
+		Bool   User : 1;
+		Bool   Wt : 1;
+		Bool   Cache : 1;
+		Bool   Accessed : 1;
+		Int32  Dirty : 1;
+		Int32  MemoryType : 1;
+		Int32  Global : 1;
+		Int32  Resvered_0 : 3;
+		UInt64 PhysicalAddress : 36;
+		Int32  Reserved_1 : 10;
+		Bool   ProtectionKey : 5;
+		Bool   ExecDisable : 1;
 	};
 
 	namespace Detail
@@ -85,7 +102,7 @@ namespace Kernel::HAL
 
 	struct ALIGN(0x08) ZKA_PDE final
 	{
-		ZKA_PTE ALIGN(kPageAlign) Pte[kPageMax];
+		ZKA_PTE ALIGN(kPageAlign) fEntries[kPageMax];
 	};
 
 	auto mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size) -> VoidPtr;

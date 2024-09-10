@@ -204,7 +204,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	//-----------------------------------------------------------//
 
 	handoverHdrPtr->f_PageStart =
-		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
+		(VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
 
 	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
 		Descriptor[cDefaultMemoryMap].Attribute;
@@ -213,10 +213,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
 		(UIntPtr)Descriptor;
 
-	handoverHdrPtr->f_BitMapStart = 0;
-
-	while (BS->AllocatePool(EfiRuntimeServicesData, kHandoverBitMapSz, &handoverHdrPtr->f_BitMapStart) != kEfiOk)
-		;
+	handoverHdrPtr->f_BitMapStart = (VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
 
 	handoverHdrPtr->f_BitMapSize = kHandoverBitMapSz; /* # of pages */
 

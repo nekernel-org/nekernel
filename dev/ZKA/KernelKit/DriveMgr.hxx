@@ -20,7 +20,7 @@
 #define kDriveInvalidID (-1)
 #define kDriveNameLen	(32)
 
-#define drv_get_sector_count(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
+#define DrvSectorCnt(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
 
 namespace Kernel
 {

@@ -58,7 +58,7 @@ namespace Kernel::Detail
 			else
 			{
 				// Mounts a NeFS from main drive.
-				fNeFS = new Kernel::NeFileSystemMgr();
+				fNeFS =  Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 
 				Kernel::IFilesystemMgr::Mount(fNeFS);
 

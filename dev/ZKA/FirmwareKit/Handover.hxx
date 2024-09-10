@@ -24,7 +24,8 @@
 #define kHandoverMagic	 0xBADCC
 #define kHandoverVersion 0x0115
 
-#define kHandoverBitMapSz gib_cast(3)
+/* per page. */
+#define kHandoverBitMapSz gib_cast(32)
 #define kHandoverStructSz sizeof(HEL::HandoverInformationHeader)
 
 namespace Kernel::HEL

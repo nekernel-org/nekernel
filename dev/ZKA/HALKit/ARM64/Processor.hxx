@@ -47,4 +47,4 @@ inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
 inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
 
-#include <HALKit/ARM64/HalPageAlloc.hxx>
+#include <HALKit/ARM64/Paging.hxx>

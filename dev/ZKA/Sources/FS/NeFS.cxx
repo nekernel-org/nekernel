@@ -31,12 +31,12 @@ using namespace Kernel;
 /***********************************************************************************/
 /// @brief get sector count.
 /***********************************************************************************/
-Kernel::SizeT drv_std_get_sector_count();
+Kernel::SizeT drv_get_sector_count();
 
 /***********************************************************************************/
 /// @brief get device size.
 /***********************************************************************************/
-Kernel::SizeT drv_std_get_drv_size();
+Kernel::SizeT drv_get_size();
 
 #endif
 
@@ -583,8 +583,8 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 
 			SizeT catalogCount = 0UL;
 
-			SizeT sectorCount = drv_std_get_sector_count();
-			SizeT diskSize	  = drv_std_get_drv_size();
+			SizeT sectorCount = drv_get_sector_count();
+			SizeT diskSize	  = drv_get_size();
 
 			partBlock->Kind			= kNeFSPartitionTypeStandard;
 			partBlock->StartCatalog = kNeFSCatalogStartAddress;

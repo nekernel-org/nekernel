@@ -52,7 +52,7 @@ IntNormal 5
 
 ;; Invalid opcode interrupt
 __ZKA_INT_6:
-    cli
+    cld
 
     push rax
 
@@ -61,14 +61,14 @@ __ZKA_INT_6:
 
     pop rax
 
-    sti
+    std
     o64 iret
 
 IntNormal 7
 
 ;; Invalid opcode interrupt
 __ZKA_INT_8:
-    cli
+    cld
 
     push rax
 
@@ -77,7 +77,7 @@ __ZKA_INT_8:
 
     pop rax
 
-    sti
+    std
     o64 iret
 
 IntNormal 9
@@ -87,7 +87,7 @@ IntExp   11
 IntExp 12
 
 __ZKA_INT_13:
-    cli
+    cld
 
     push rax
 
@@ -96,11 +96,11 @@ __ZKA_INT_13:
 
     pop rax
 
-    sti
+    std
     o64 iret
 
 __ZKA_INT_14:
-    cli
+    cld
 
     push rax
 
@@ -109,7 +109,7 @@ __ZKA_INT_14:
 
     pop rax
 
-    sti
+    std
     o64 iret
 
 IntNormal 15
@@ -156,7 +156,7 @@ IntNormal 49
 [extern hal_kernel_call_enter]
 
 __ZKA_INT_50:
-    cli
+    cld
 
     push r8
     push r9
@@ -171,11 +171,11 @@ __ZKA_INT_50:
     pop r9
     pop r8
 
-    sti
+    std
     o64 iret
 
 __ZKA_INT_51:
-    cli
+    cld
 
     push rcx
     push rdx
@@ -191,7 +191,7 @@ __ZKA_INT_51:
     pop rdx
     pop rcx
 
-    sti
+    std
     o64 iret
 
 [extern hal_on_ap_startup]
@@ -209,9 +209,9 @@ SZ_32         equ 1 << 6
 LONG_MODE     equ 1 << 5
 
 __ZKA_INT_52:
-    cli
+    cld
     jmp hal_on_ap_startup
-    sti
+    std
     ret
 
 IntNormal 53
@@ -234,7 +234,7 @@ section .text
 [global hal_load_gdt]
 
 hal_load_gdt:
-    cli
+    cld
 
     lgdt [rcx]
 
@@ -254,7 +254,7 @@ hal_load_gdt:
 extern hal_real_init
 
 hal_reload_segments:
-    sti
+    std
     ;; Write address of syscall handler.
 
 	mov rdx, [mp_system_call_handler]
@@ -308,9 +308,9 @@ mp_system_call_handler:
     o64 sysret
 
 hal_load_idt:
-    cli
+    cld
     lidt [rcx]
-    sti
+    std
     ret
 
 section .data

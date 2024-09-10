@@ -84,7 +84,7 @@ namespace Kernel
 	inline TerminalDevice bell()
 	{
 		TerminalDevice selfTerm = TerminalDevice::The();
-		
+
 		selfTerm.operator<<("\a");
 		return selfTerm;
 	}
@@ -152,8 +152,8 @@ namespace Kernel
 	{
 		TerminalDevice selfTerm = TerminalDevice::The();
 
-		selfTerm.operator<<("0x");
 		Detail::_write_number_hex(x, selfTerm);
+		selfTerm.operator<<("h");
 
 		return selfTerm;
 	}

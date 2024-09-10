@@ -13,7 +13,7 @@
 #include <FirmwareKit/Handover.hxx>
 
 #ifdef __ZKA_AMD64__
-#include <HALKit/AMD64/HalPageAlloc.hxx>
+#include <HALKit/AMD64/Paging.hxx>
 #include <HALKit/AMD64/Hypervisor.hxx>
 #include <HALKit/AMD64/Processor.hxx>
 #elif defined(__ZKA_POWER64__)

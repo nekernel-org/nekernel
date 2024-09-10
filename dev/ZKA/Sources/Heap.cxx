@@ -14,11 +14,10 @@
 //! @brief Kernel heap allocator.
 
 #define kKernelHeapMagic		   (0xD4D7D5)
-#define kKernelHeapHeaderPaddingSz (16U)
+#define kKernelHeapHeaderPaddingSz (__BIGGEST_ALIGNMENT__)
 
 namespace Kernel
 {
-	SizeT		kHeapCount = 0UL;
 	PageMgr kHeapPageMgr;
 	Bool		kHeapLock = No;
 
@@ -115,8 +114,6 @@ namespace Kernel
 		heap_info_ptr->fUser	 = user;
 		heap_info_ptr->fPresent	 = Yes;
 
-		++kHeapCount;
-
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fHeapPtr);
 
 		kLatestAllocation = heap_info_ptr;
@@ -131,8 +128,6 @@ namespace Kernel
 	/// @return
 	Int32 mm_make_ke_page(VoidPtr heap_ptr)
 	{
-		if (kHeapCount < 1)
-			return -kErrorInternal;
 		if (((IntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK)) <= 0)
 			return -kErrorInternal;
 		if (((IntPtr)heap_ptr - kInvalidAddress) < 0)
@@ -156,9 +151,6 @@ namespace Kernel
 	/// @return
 	Int32 mm_delete_ke_heap(VoidPtr heap_ptr)
 	{
-		if (kHeapCount < 1)
-			return -kErrorInternal;
-
 		if (!heap_ptr)
 			return -kErrorInvalidData;
 
@@ -203,8 +195,6 @@ namespace Kernel
 
 			kHeapPageMgr.Free(pteAddress);
 
-			--kHeapCount;
-
 			Detail::mm_alloc_fini_timeout();
 
 			return 0;
@@ -218,9 +208,6 @@ namespace Kernel
 	/// @return if it exists.
 	Boolean mm_is_valid_heap(VoidPtr heap_ptr)
 	{
-		if (kHeapCount < 1)
-			return false;
-
 		if (heap_ptr)
 		{
 			Detail::HEAP_INFORMATION_BLOCK_PTR virtualAddress =
