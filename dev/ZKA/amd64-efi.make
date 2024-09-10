@@ -11,22 +11,22 @@ CCFLAGS		= -fshort-wchar -c -D__ZKA_AMD64__ -mno-red-zone -fno-rtti -fno-excepti
 
 ASM 		= nasm
 
-DISKDRIVER  =
+DISK_DRV  =
 
 ifneq ($(ATA_PIO_SUPPORT), )
-DISKDRIVER =  -D__ATA_PIO__
+DISK_DRV =  -D__ATA_PIO__
 endif
 
 ifneq ($(ATA_DMA_SUPPORT), )
-DISKDRIVER =  -D__ATA_DMA__
+DISK_DRV =  -D__ATA_DMA__
 endif
 
 ifneq ($(AHCI_SUPPORT), )
-DISKDRIVER =  -D__AHCI__
+DISK_DRV =  -D__AHCI__
 endif
 
 ifneq ($(DEBUG_SUPPORT), )
-DEBUG =  -D__DEBUG__
+DEBUG_MACRO =  -D__DEBUG__
 endif
 
 COPY		= cp
@@ -39,7 +39,7 @@ LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x10000000
 LDOBJ		= Objects/*.obj
 
 # This file is the Kernel, responsible of task, memory, driver, sci, disk and device management.
-KERNEL		= newoskrnl.exe
+KERNEL_IMG		= newoskrnl.exe
 
 .PHONY: error
 error:
@@ -52,7 +52,7 @@ WINDRES=x86_64-w64-mingw32-windres
 .PHONY: newos-amd64-epm
 newos-amd64-epm: clean
 	$(WINDRES) KernelRsrc.rsrc -O coff -o KernelRsrc.obj
-	$(CC) $(CCFLAGS) $(DISKDRIVER) $(DEBUG) $(wildcard Sources/*.cxx) \
+	$(CC) $(CCFLAGS) $(DISK_DRV) $(DEBUG_MACRO) $(wildcard Sources/*.cxx) \
 	       $(wildcard Sources/FS/*.cxx) $(wildcard HALKit/AMD64/Storage/*.cxx) \
 			$(wildcard HALKit/AMD64/PCI/*.cxx) $(wildcard Sources/Network/*.cxx) $(wildcard Sources/Storage/*.cxx) \
 			$(wildcard HALKit/AMD64/*.cxx) $(wildcard HALKit/AMD64/*.cpp) \
@@ -67,7 +67,7 @@ OBJCOPY=x86_64-w64-mingw32-objcopy
 
 .PHONY: link-amd64-epm
 link-amd64-epm:
-	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL)
+	$(LD) $(LDFLAGS) $(LDOBJ) -o $(KERNEL_IMG)
 
 .PHONY: all
 all: newos-amd64-epm link-amd64-epm
@@ -82,4 +82,4 @@ help:
 
 .PHONY: clean
 clean:
-	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL)
+	rm -f $(LDOBJ) $(wildcard *.o) $(KERNEL_IMG)
