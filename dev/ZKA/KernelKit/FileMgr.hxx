@@ -140,14 +140,14 @@ namespace Kernel
 	 * @brief Based of IFilesystemMgr, takes care of managing NeFS
 	 * disks.
 	 */
-	class NewFilesystemMgr final : public IFilesystemMgr
+	class NeFileSystemMgr final : public IFilesystemMgr
 	{
 	public:
-		explicit NewFilesystemMgr();
-		~NewFilesystemMgr() override;
+		explicit NeFileSystemMgr();
+		~NeFileSystemMgr() override;
 
 	public:
-		ZKA_COPY_DEFAULT(NewFilesystemMgr);
+		ZKA_COPY_DEFAULT(NeFileSystemMgr);
 
 	public:
 		NodePtr Create(const Char* path) override;

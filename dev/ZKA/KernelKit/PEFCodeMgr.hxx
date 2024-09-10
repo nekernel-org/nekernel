@@ -47,7 +47,7 @@ namespace Kernel
 
 	private:
 #ifdef __FSKIT_USE_NEFS__
-		OwnPtr<FileStream<Char, NewFilesystemMgr>> fFile;
+		OwnPtr<FileStream<Char, NeFileSystemMgr>> fFile;
 #else
 		OwnPtr<FileStream<Char>> fFile;
 #endif // __FSKIT_USE_NEFS__

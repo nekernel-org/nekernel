@@ -116,14 +116,14 @@ namespace Kernel::HAL
 
 		volatile UIntPtr* pt_entry = (volatile UIntPtr*)(pd_entry[pt_index + cIndexAlign]);
 
-		if (!(*pt_entry & eFlagsPresent))
+		if (!(pt_entry[offset] & eFlagsPresent))
 		{
-			PTE* frame = (PTE*)pt_entry;
+			PTE* frame = (PTE*)pt_entry[offset];
 
 			MM::pg_delete((VoidPtr)frame->PhysicalAddress);
 
 			auto pt_addr = MM::pg_allocate();
-			*pt_entry	 = (UIntPtr)pt_addr | eFlagsPresent | flags;
+			pt_entry[offset]	 = (UIntPtr)pt_addr | eFlagsPresent | flags;
 
 			kcout << (frame->Present ? "Page Present." : "Page Not Present.") << endl;
 			kcout << (frame->Rw ? "Page RW." : "Page Not RW.") << endl;
@@ -133,9 +133,9 @@ namespace Kernel::HAL
 		}
 		else
 		{
-			PTE* frame = (PTE*)pt_entry;
+			PTE* frame = (PTE*)pt_entry[offset];
 
-			*pt_entry = (UIntPtr)(frame->PhysicalAddress / cPageSz) | flags;
+			pt_entry[offset] = (UIntPtr)(frame->PhysicalAddress / cPageSz) | flags;
 
 			kcout << (frame->Present ? "Page Present." : "Page Not Present.") << endl;
 			kcout << (frame->Rw ? "Page RW." : "Page Not RW.") << endl;
@@ -143,8 +143,6 @@ namespace Kernel::HAL
 
 			kcout << "Physical Address: " << number(frame->PhysicalAddress) << endl;
 		}
-
-		hal_invl_tlb(p_virt_addr);
 
 		rt_sti();
 		return 0;

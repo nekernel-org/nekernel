@@ -77,7 +77,7 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 	kAllocationInProgress = false;
 
 	// get page size.
-	kKernelVirtualSize = kHandoverHeader->f_BitMapSize;
+	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
 
 	// get virtual address start (for the heap)
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
@@ -94,12 +94,12 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	kcout << "Creating filesystem and such.\r";
 
-	auto fs = new Kernel::NewFilesystemMgr();
+	auto fs = new Kernel::NeFileSystemMgr();
 
 	MUST_PASS(fs);
 	MUST_PASS(fs->GetParser());
 
-	Kernel::NewFilesystemMgr::Mount(fs);
+	Kernel::NeFileSystemMgr::Mount(fs);
 
 	const auto cPassword = "ZKA_KERNEL_AUTHORITY";
 

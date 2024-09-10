@@ -15,16 +15,16 @@
 namespace Kernel
 {
 	/// @brief C++ constructor
-	NewFilesystemMgr::NewFilesystemMgr()
+	NeFileSystemMgr::NeFileSystemMgr()
 	{
 		MUST_PASS(Detail::fs_init_newfs());
 		fImpl = mm_new_class<NeFSParser>();
 		MUST_PASS(fImpl);
 
-		kcout << "We are done here... (NewFilesystemMgr).\r";
+		kcout << "We are done here... (NeFileSystemMgr).\r";
 	}
 
-	NewFilesystemMgr::~NewFilesystemMgr()
+	NeFileSystemMgr::~NeFileSystemMgr()
 	{
 		kcout << "Destroying it...\r";
 
@@ -37,7 +37,7 @@ namespace Kernel
 	/// @brief Removes a node from the filesystem.
 	/// @param fileName The filename
 	/// @return If it was deleted or not.
-	bool NewFilesystemMgr::Remove(const Char* fileName)
+	bool NeFileSystemMgr::Remove(const Char* fileName)
 	{
 		if (fileName == nullptr || *fileName == 0)
 			return false;
@@ -48,7 +48,7 @@ namespace Kernel
 	/// @brief Creates a node with the specified.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NewFilesystemMgr::Create(const Char* path)
+	NodePtr NeFileSystemMgr::Create(const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path));
 	}
@@ -56,7 +56,7 @@ namespace Kernel
 	/// @brief Creates a node with is a directory.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NewFilesystemMgr::CreateDirectory(const Char* path)
+	NodePtr NeFileSystemMgr::CreateDirectory(const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindDir));
 	}
@@ -64,7 +64,7 @@ namespace Kernel
 	/// @brief Creates a node with is a alias.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NewFilesystemMgr::CreateAlias(const Char* path)
+	NodePtr NeFileSystemMgr::CreateAlias(const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindAlias));
 	}
@@ -72,35 +72,35 @@ namespace Kernel
 	/// @brief Creates a node with is a page file.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NewFilesystemMgr::CreateSwapFile(const Char* path)
+	NodePtr NeFileSystemMgr::CreateSwapFile(const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindPage));
 	}
 
 	/// @brief Gets the root directory.
 	/// @return
-	const Char* NewFilesystemHelper::Root()
+	const Char* NeFileSystemHelper::Root()
 	{
 		return kNeFSRoot;
 	}
 
 	/// @brief Gets the up-dir directory.
 	/// @return
-	const Char* NewFilesystemHelper::UpDir()
+	const Char* NeFileSystemHelper::UpDir()
 	{
 		return kNeFSUpDir;
 	}
 
 	/// @brief Gets the separator character.
 	/// @return
-	const Char NewFilesystemHelper::Separator()
+	const Char NeFileSystemHelper::Separator()
 	{
 		return kNeFSSeparator;
 	}
 
 	/// @brief Gets the metafile character.
 	/// @return
-	const Char NewFilesystemHelper::MetaFile()
+	const Char NeFileSystemHelper::MetaFile()
 	{
 		return kNeFSMetaFilePrefix;
 	}

@@ -203,8 +203,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Update handover file specific table and phyiscal start field.
 	//-----------------------------------------------------------//
 
-	handoverHdrPtr->f_PhysicalStart =
-		(VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
+	handoverHdrPtr->f_PageStart =
+		(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
 
 	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
 		Descriptor[cDefaultMemoryMap].Attribute;

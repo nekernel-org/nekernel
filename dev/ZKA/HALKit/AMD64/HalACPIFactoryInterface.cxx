@@ -102,11 +102,26 @@ namespace Kernel
 	Void ACPIFactoryInterface::Reboot()
 	{
 	failed_to_reboot:
-		// in case no acpi mode, or it's not available.
-		while (Yes)
-		{
-			asm volatile("cli; hlt");
-		}
+		asm volatile(".intel_syntax noprefix; "
+					 "rt_reset_hardware:; "
+					 "cli; "
+					 "wait_gate1: ; "
+					 "in al,0x64 ; "
+					 "and al,2 ; "
+					 "jnz wait_gate1 ; "
+					 "mov al,0x0D1 ; "
+					 "out 0x64,al ; "
+					 "wait_gate2: ; "
+					 "in al,0x64 ; "
+					 "and al,2 ; "
+					 "jnz wait_gate2 ; "
+					 "mov al,0x0FE ; "
+					 "out 0x60,al ; "
+					 "xor rax,rax ; "
+					 "lidt [rax] ; "
+					 "reset_wait: ; "
+					 "jmp reset_wait ; "
+					 ".att_syntax; ");
 	}
 
 	/// @brief Finds a descriptor table inside ACPI XSDT.

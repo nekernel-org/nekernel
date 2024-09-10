@@ -55,7 +55,7 @@ namespace Kernel
 	/// @param path
 	/// @param r
 	/// @return
-	_Output NodePtr NewFilesystemMgr::Open(_Input const Char* path, _Input const Char* r)
+	_Output NodePtr NeFileSystemMgr::Open(_Input const Char* path, _Input const Char* r)
 	{
 		if (!path || *path == 0)
 			return nullptr;
@@ -73,7 +73,7 @@ namespace Kernel
 	/// @param data the data.
 	/// @param flags the size.
 	/// @return
-	Void NewFilesystemMgr::Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size)
+	Void NeFileSystemMgr::Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT size)
 	{
 		if (!node)
 			return;
@@ -89,7 +89,7 @@ namespace Kernel
 	/// @param flags the flags with it.
 	/// @param sz the size to read.
 	/// @return
-	_Output VoidPtr NewFilesystemMgr::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
+	_Output VoidPtr NeFileSystemMgr::Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT size)
 	{
 		if (!node)
 			return nullptr;
@@ -100,7 +100,7 @@ namespace Kernel
 		return this->Read(cDataForkName, node, flags, size);
 	}
 
-	Void NewFilesystemMgr::Write(_Input const Char* name,
+	Void NeFileSystemMgr::Write(_Input const Char* name,
 									 _Input NodePtr		node,
 									 _Input VoidPtr		data,
 									 _Input Int32		flags,
@@ -120,7 +120,7 @@ namespace Kernel
 								name);
 	}
 
-	_Output VoidPtr NewFilesystemMgr::Read(_Input const Char* name,
+	_Output VoidPtr NeFileSystemMgr::Read(_Input const Char* name,
 											   _Input NodePtr	  node,
 											   _Input Int32		  flags,
 											   _Input SizeT		  sz)
@@ -146,7 +146,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	_Output Bool NewFilesystemMgr::Seek(NodePtr node, SizeT off)
+	_Output Bool NeFileSystemMgr::Seek(NodePtr node, SizeT off)
 	{
 		if (!node || off == 0)
 			return false;
@@ -159,7 +159,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	_Output SizeT NewFilesystemMgr::Tell(NodePtr node)
+	_Output SizeT NeFileSystemMgr::Tell(NodePtr node)
 	{
 		if (!node)
 			return kNPos;
@@ -172,7 +172,7 @@ namespace Kernel
 	/// @retval true always returns false, this is unimplemented.
 	/// @retval false always returns this, it is unimplemented.
 
-	_Output Bool NewFilesystemMgr::Rewind(NodePtr node)
+	_Output Bool NeFileSystemMgr::Rewind(NodePtr node)
 	{
 		if (!node)
 			return false;
@@ -182,7 +182,7 @@ namespace Kernel
 
 	/// @brief Returns the filesystem parser.
 	/// @return the Filesystem parser class.
-	_Output NeFSParser* NewFilesystemMgr::GetParser() noexcept
+	_Output NeFSParser* NeFileSystemMgr::GetParser() noexcept
 	{
 		return fImpl;
 	}

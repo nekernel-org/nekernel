@@ -54,10 +54,13 @@ namespace Kernel
 								kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
 								if (rw)
-									mm_map_page(base_ptr, eFlagsRw | eFlagsPresent);
+									mm_map_page(base_ptr, eFlagsRw);
+
+								if (user && rw)
+									mm_map_page(base_ptr, eFlagsUser | eFlagsRw);
 
 								if (user)
-									mm_map_page(base_ptr, eFlagsUser | eFlagsPresent);
+									mm_map_page(base_ptr, eFlagsUser);
 
 								return (VoidPtr)ptr_bit_set;
 							}

@@ -11,7 +11,7 @@
 #include <NewKit/String.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
-
+#include <KernelKit/FileMgr.hxx>
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <Modules/CoreCG/FbRenderer.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
@@ -69,50 +69,58 @@ namespace Kernel
 			RecoveryFactory::Recover();
 		}
 		case RUNTIME_CHECK_FILESYSTEM: {
-			CGDrawString("0x0000000A Filesystem corruption error.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x0000000A Filesystem error.", start_y, x, panicTxt);
+
+			PowerFactoryInterface power(nullptr);
+			power.Shutdown();
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
-			CGDrawString("0x00000000 Kernel heap pointer error, surely corrupted.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x00000000 Heap error, the heap is corrupted.", start_y, x, panicTxt);
+
+			PowerFactoryInterface power(nullptr);
+			power.Shutdown();
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {
-			CGDrawString("0x00000009 Undefined behavior error, image had to stop.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x00000009 CPU access error.", start_y, x, panicTxt);
+
+			PowerFactoryInterface power(nullptr);
+			power.Shutdown();
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			CGDrawString("0x0000000A End of boot code...", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x0000000A Boot Processor finished executing.", start_y, x, panicTxt);
+
+			PowerFactoryInterface power(nullptr);
+			power.Shutdown();
 			break;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
-			CGDrawString("0x00000005 Bad handshake error.", start_y, x, panicTxt);
+			CGDrawString("0x00000005 Handshake fault.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
-			CGDrawString("0x00000003 Bad Kernel IPC error.", start_y, x, panicTxt);
+			CGDrawString("0x00000003 Bad IPC/XPCOM message.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_INVALID_PRIVILEGE: {
-			CGDrawString("0x00000007 Kernel privilege violation.", start_y, x, panicTxt);
+			CGDrawString("0x00000007 Privilege access violation.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			CGDrawString("0x0000000B Unexpected Kernel failure.", start_y, x, panicTxt);
+			CGDrawString("0x0000000B Kernel access violation.", start_y, x, panicTxt);
 			break;
 		}
 		case RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM: {
-			CGDrawString("0x10000001 Out of Virtual Memory. (Catastrophic Failure)", start_y, x, panicTxt);
+			CGDrawString("0x10000001 Out of virtual memory.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			CGDrawString("0x10000001 Kernel Check.", start_y, x, panicTxt);
+			CGDrawString("0x10000001 Kernel Bug check failed.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
@@ -130,8 +138,14 @@ namespace Kernel
 
 	Void RecoveryFactory::Recover() noexcept
 	{
+		if (NeFileSystemMgr::GetMounted())
+		{
+			NeFileSystemMgr::GetMounted()->CreateSwapFile("\\Boot\\$DUMP");
+			NeFileSystemMgr::GetMounted()->CreateSwapFile("\\Support\\$CHKDSK");
+		}
+
 		PowerFactoryInterface power(nullptr);
-		power.Shutdown();
+		power.Reboot();
 	}
 
 	void ke_runtime_check(bool expr, const Char* file, const Char* line)

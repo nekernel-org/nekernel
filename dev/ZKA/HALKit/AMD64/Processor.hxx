@@ -27,6 +27,11 @@ EXTERN_C
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
+#define cPageSz		kPageSize				// 4KB pages
+#define cTotalPgMem mib_cast(16)			// 16MB total memory
+#define cTotalPages (cTotalPgMem / cPageSz) // Total number of pages
+#define cBmpPgSz	(cTotalPages / 8)		// 1 bit per page in the bitmap
+
 #define kInterruptGate (0x8E)
 #define kTrapGate	   (0xEF)
 #define kTaskGate	   (0b10001100)
@@ -294,6 +299,6 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 #define kKernelInterruptId 0x32
 
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
-inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
+inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
-inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
+inline Kernel::VoidPtr kKernelBitMpStart = nullptr;

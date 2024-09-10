@@ -53,7 +53,7 @@ namespace Kernel::HAL
 		UInt8  PageSize : 1;
 		UInt8  Global : 1;
 		UInt8  Available : 3;
-		UInt64 PhysicalAddress : 39;
+		UInt32 PhysicalAddress : 20;
 		UInt8  Reserved : 6;
 		UInt8  ProtectionKey : 1;
 		UInt8  ExecDisable : 1;

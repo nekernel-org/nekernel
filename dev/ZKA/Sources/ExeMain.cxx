@@ -44,7 +44,7 @@ namespace Kernel::Detail
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
 	class FilesystemInstaller final
 	{
-		Kernel::NewFilesystemMgr* fNeFS{nullptr};
+		Kernel::NeFileSystemMgr* fNeFS{nullptr};
 
 	public:
 		/// @brief wizard constructor.
@@ -53,12 +53,12 @@ namespace Kernel::Detail
 			if (Kernel::IFilesystemMgr::GetMounted())
 			{
 				CG::CGDrawStringToWnd(cKernelWnd, "NeFS IFS already mounted by HAL (A:)", 10, 10, RGB(0, 0, 0));
-				fNeFS = reinterpret_cast<Kernel::NewFilesystemMgr*>(Kernel::IFilesystemMgr::GetMounted());
+				fNeFS = reinterpret_cast<Kernel::NeFileSystemMgr*>(Kernel::IFilesystemMgr::GetMounted());
 			}
 			else
 			{
 				// Mounts a NeFS from main drive.
-				fNeFS = new Kernel::NewFilesystemMgr();
+				fNeFS = new Kernel::NeFileSystemMgr();
 
 				Kernel::IFilesystemMgr::Mount(fNeFS);
 
@@ -92,6 +92,22 @@ namespace Kernel::Detail
 					CG::CGDrawStringToWnd(cKernelWnd, "Directory has been created: ", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
 					CG::CGDrawStringToWnd(cKernelWnd, catalogDir->Name, 10 + (10 * (dirIndx + 1)), 10 + (FONT_SIZE_X * rt_string_len("Directory has been created: ")), RGB(0, 0, 0));
 
+					NFS_FORK_STRUCT theFork{ 0 };
+
+					rt_copy_memory(catalogDir->Name, theFork.CatalogName, rt_string_len(catalogDir->Name));
+					rt_copy_memory(catalogDir->Name, theFork.ForkName, rt_string_len(catalogDir->Name));
+
+					theFork.DataSize = kNeFSForkDataSz;
+					theFork.Kind = kNeFSDataForkKind;
+					theFork.ResourceId = 0;
+
+					fNeFS->GetParser()->CreateFork(catalogDir, theFork);
+
+					auto data_len = 4096;
+					Char data[4096] = R"({ "FolderKind": "System", "Owner": "ZKA USER\\SUPER", "Important": true })";
+
+					fNeFS->GetParser()->WriteCatalog(catalogDir, false, data, data_len, theFork.ForkName);
+
 					delete catalogDir;
 				}
 			}
@@ -102,8 +118,8 @@ namespace Kernel::Detail
 		ZKA_COPY_DEFAULT(FilesystemInstaller);
 
 		/// @brief Grab the disk's NeFS reference.
-		/// @return NewFilesystemMgr the filesystem interface
-		Kernel::NewFilesystemMgr* Leak()
+		/// @return NeFileSystemMgr the filesystem interface
+		Kernel::NeFileSystemMgr* Leak()
 		{
 			return fNeFS;
 		}

@@ -64,11 +64,10 @@ EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept;
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
+/// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
 {
-	/* Setup globals. */
-
 	kHandoverHeader = HandoverHeader;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
@@ -78,15 +77,15 @@ EXTERN_C void hal_init_platform(
 	}
 
 	// get page size.
-	kKernelVirtualSize = kHandoverHeader->f_BitMapSize;
+	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
 
 	// get virtual address start (for the heap)
 	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
 	// get physical address start.
-	kKernelPhysicalStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PhysicalStart));
+	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PageStart));
 
 	STATIC CONST auto cEntriesCount = 6;
 
@@ -126,14 +125,11 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	kcout << "Creating filesystem and such.\r";
 
-	auto fs = Kernel::mm_new_class<Kernel::NewFilesystemMgr>();
+	auto fs = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 
 	MUST_PASS(fs);
 
-	Kernel::HAL::mm_map_page((Kernel::VoidPtr)mp_user_switch_proc, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsPresent);
-	Kernel::HAL::mm_map_page((Kernel::VoidPtr)mp_user_switch_proc_stack_end, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsPresent);
-
-	Kernel::NewFilesystemMgr::Mount(fs);
+	Kernel::NeFileSystemMgr::Mount(fs);
 
 	const auto cPassword = "ZKA_KERNEL_AUTHORITY";
 

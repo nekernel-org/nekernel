@@ -22,7 +22,7 @@
 /* useful macros */
 
 #define kHandoverMagic	 0xBADCC
-#define kHandoverVersion 0x114
+#define kHandoverVersion 0x0115
 
 #define kHandoverBitMapSz gib_cast(3)
 #define kHandoverStructSz sizeof(HEL::HandoverInformationHeader)
@@ -58,7 +58,8 @@ namespace Kernel::HEL
 
 		VoidPtr f_BitMapStart;
 		SizeT	f_BitMapSize;
-		VoidPtr f_PhysicalStart;
+
+		VoidPtr f_PageStart;
 
 		VoidPtr f_KernelImage;
 		SizeT   f_KernelSz;

@@ -43,7 +43,7 @@ namespace Kernel::HAL
 } // namespace Kernel::HAL
 
 inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
-inline Kernel::UIntPtr kKernelVirtualSize  = 0UL;
+inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
 inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
 

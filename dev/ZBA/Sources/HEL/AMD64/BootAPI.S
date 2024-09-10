@@ -18,15 +18,14 @@ rt_jump_to_address:
 rt_reset_hardware:
     /* dont raise any interrupts. (except ofc NMIs.) */
     cli
+    /* remap PIC */
 wait_gate1:
-    /* wait for gate 1 to be ready? */
     in al,0x64
     and al,2
     jnz wait_gate1
     mov al,0x0D1
     out 0x64,al
 wait_gate2:
-    /* wait for gate 2 to be ready? */
     in al,0x64
     and al,2
     jnz wait_gate2
@@ -35,8 +34,9 @@ wait_gate2:
 
     /* trigger triple fault, by writing to cr4 */
 
-    xor rax,rax
-    mov cr4,rax
+    mov rax, 0
+    lidt [rax]
+
 reset_wait:
     jmp reset_wait
 

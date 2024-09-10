@@ -10,7 +10,6 @@
 #pragma once
 
 #include <NewKit/Defines.hxx>
-#include <NewKit/PageAllocator.hxx>
 #include <NewKit/Ref.hxx>
 
 namespace Kernel

@@ -31,7 +31,7 @@ default.
 #define kNeFSNodeNameLen	(256)
 
 #define kNeFSSectorSz	(512)
-#define kNeFSForkDataSz (kib_cast(8))
+#define kNeFSForkDataSz (mib_cast(16))
 
 #define kNeFSIdentLen (8)
 #define kNeFSIdent	  "  NeFS"
@@ -292,11 +292,11 @@ namespace Kernel
 	};
 
 	///
-	/// \name NewFilesystemHelper
+	/// \name NeFileSystemHelper
 	/// \brief Filesystem helper and utils.
 	///
 
-	class NewFilesystemHelper final
+	class NeFileSystemHelper final
 	{
 	public:
 		STATIC const Char* Root();
