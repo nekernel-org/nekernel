@@ -79,7 +79,10 @@ STATIC Bool CheckBootDevice(BootDeviceATA& ataDev)
 	return true;
 }
 
-EXTERN_C Void write_cr3(VoidPtr new_cr3);
+EXTERN_C VoidPtr boot_read_cr3();
+EXTERN_C Void boot_write_cr3(VoidPtr new_cr3);
+
+EXTERN EfiBootServices* BS;
 
 /// @brief Main EFI entrypoint.
 /// @param ImageHandle Handle of this image.
@@ -134,8 +137,6 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	auto				   guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
 	EfiMpServicesProtocol* mp	   = nullptr;
-
-	EXTERN EfiBootServices* BS;
 
 	BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
 
@@ -203,19 +204,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Update handover file specific table and phyiscal start field.
 	//-----------------------------------------------------------//
 
-	handover_hdr->f_PageStart =
-		(VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
-
-	handover_hdr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
-		Descriptor[cDefaultMemoryMap].Attribute;
-	handover_hdr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] =
-		Descriptor[cDefaultMemoryMap].Kind;
-	handover_hdr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
-		(UIntPtr)Descriptor;
-
-	handover_hdr->f_BitMapStart =
-	(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
-
+	handover_hdr->f_BitMapStart = reinterpret_cast<VoidPtr>(kHandoverBitMapStart); /* # of pages */
 	handover_hdr->f_BitMapSize = kHandoverBitMapSz; /* # of pages */
 
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;

@@ -22,10 +22,11 @@
 /* Handover macros. */
 
 #define kHandoverMagic	 0xBADCC
-#define kHandoverVersion 0x0116
+#define kHandoverVersion 0x0117
 
 /* Initial bitmap size. */
-#define kHandoverBitMapSz gib_cast(3)
+#define kHandoverBitMapStart 0x100000000
+#define kHandoverBitMapSz gib_cast(4)
 #define kHandoverStructSz sizeof(HEL::HANDOVER_INFO_HEADER)
 
 namespace Kernel::HEL

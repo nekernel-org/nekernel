@@ -294,5 +294,3 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize	   = 0UL;
-
-inline Kernel::VoidPtr kKernelPageStart = nullptr;

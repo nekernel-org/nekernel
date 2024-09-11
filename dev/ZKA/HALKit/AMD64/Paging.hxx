@@ -19,7 +19,7 @@
 #endif //! kPageMax
 
 #ifndef kPageAlign
-#define kPageAlign (0x1000)
+#define kPageAlign (0x08)
 #endif //! kPageAlign
 
 #ifndef kPageSize
@@ -41,7 +41,6 @@ EXTERN_C Kernel::VoidPtr hal_read_cr3(); // @brief Page table.
 
 namespace Kernel::HAL
 {
-
 	struct PACKED ZKA_PTE_GENERIC
 	{
 		Bool   Present : 1;
@@ -100,9 +99,14 @@ namespace Kernel::HAL
 		}
 	} // namespace Detail
 
-	struct ALIGN(0x08) ZKA_PDE final
+	struct ZKA_PDE final
 	{
-		ZKA_PTE ALIGN(kPageAlign) fEntries[kPageMax];
+		ZKA_PTE* ALIGN(kPageAlign) fEntries[kPageMax];
+	};
+
+	struct ZKA_PDE_GENERIC final
+	{
+		ZKA_PTE_GENERIC* ALIGN(kPageAlign) fEntries[kPageMax];
 	};
 
 	auto mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size) -> VoidPtr;

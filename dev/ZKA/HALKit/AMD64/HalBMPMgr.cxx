@@ -107,6 +107,9 @@ namespace Kernel
 						}
 
 						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != cBitMpMagic ? size : ptr_bit_set[1]));
+
+						if ((UIntPtr)base_ptr < (base + kHandoverHeader->f_BitMapSize))
+							return nullptr;
 					}
 
 					return nullptr;

@@ -40,8 +40,13 @@ wait_gate2:
 reset_wait:
     jmp reset_wait
 
-.global write_cr3
+.global boot_write_cr3
+.global boot_read_cr3
 
-write_cr3:
+boot_read_cr3:
+    mov rax, rax
+    ret
+
+boot_write_cr3:
     mov cr3, rcx
     ret

@@ -21,32 +21,6 @@
 #include <Modules/CoreCG/TextRenderer.hxx>
 #include <Modules/CoreCG/WindowRenderer.hxx>
 
-struct HEAP_ALLOC_INFO final
-{
-	Kernel::VoidPtr fThe;
-	Kernel::Size	fTheSz;
-};
-
-struct CREATE_THREAD_INFO final
-{
-	Kernel::MainKind fMain;
-	Kernel::Char	 fName[kPefNameLen];
-};
-
-struct PROCESS_BLOCK_INFO final
-{
-	THREAD_INFORMATION_BLOCK* fTIB;
-	THREAD_INFORMATION_BLOCK* fGIB;
-};
-
-struct PROCESS_EXIT_INFO final
-{
-	STATIC constexpr auto cReasonLen = 512;
-
-	Kernel::Int64 fCode;
-	Kernel::Char  fReason[cReasonLen];
-};
-
 namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
@@ -54,13 +28,7 @@ namespace Kernel::HAL
 	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr) noexcept;
 } // namespace Kernel::HAL
 
-EXTERN_C Kernel::UInt8* mp_user_switch_proc;
-EXTERN_C Kernel::UInt8* mp_user_switch_proc_stack_end;
-EXTERN_C Kernel::VoidPtr mp_user_switch_proc_real;
-
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
-EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept;
-EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
@@ -68,13 +36,13 @@ EXTERN_C void hal_init_platform(
 {
 	kHandoverHeader = HandoverHeader;
 
-	Kernel::HAL::mm_map_page(kHandoverHeader->f_PageStart, Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsPresent);
-
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
 		kHandoverHeader->f_Version != kHandoverVersion)
 	{
 		return;
 	}
+
+	CG::CGDrawBackground();
 
 	// get page size.
 	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
@@ -82,10 +50,6 @@ EXTERN_C void hal_init_platform(
 	// get virtual address start (for the heap)
 	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
-
-	// get physical address start.
-	kKernelPageStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_PageStart));
 
 	STATIC CONST auto cEntriesCount = 6;
 
@@ -104,10 +68,9 @@ EXTERN_C void hal_init_platform(
 	gdtBase.Base  = reinterpret_cast<Kernel::UIntPtr>(cGdt);
 	gdtBase.Limit = (sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY) * cEntriesCount) - 1;
 
+	//! GDT will load hal_read_init after it successfully loads the segments.
 	CONST Kernel::HAL::GDTLoader cGDT;
 	cGDT.Load(gdtBase);
-
-	// Load IDT now.
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
@@ -124,10 +87,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::NeFileSystemMgr::Mount(Kernel::mm_new_class<Kernel::NeFileSystemMgr>());
-
-	CG::CGDrawBackground();
-
-	Kernel::HAL::mm_map_page(mp_user_switch_proc, Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsPresent);
 
 	mp_do_user_switch();
 

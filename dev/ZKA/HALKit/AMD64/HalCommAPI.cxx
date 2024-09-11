@@ -7,17 +7,13 @@
 
 ------------------------------------------- */
 
+#include <HALKit/AMD64/Paging.hxx>
 #include <HALKit/AMD64/Processor.hxx>
 
 /**
- * @file HalProcessorMgr.cxx
- * @brief CPU Processor managers.
+ * @file HalCommAPI.cxx
+ * @brief CPU Processor common API.
  */
-
-#define cPageSz		kPageSize				// 4KB pages
-#define cTotalPgMem gib_cast(16)			// 16MB total memory
-#define cTotalPages (cTotalPgMem / cPageSz) // Total number of pages
-#define cBmpPgSz	(cTotalPages / 8)		// 1 bit per page in the bitmap
 
 namespace Kernel::HAL
 {
@@ -28,6 +24,9 @@ namespace Kernel::HAL
 	/// @return Status code of page manip.
 	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, UInt32 flags)
 	{
+	    ZKA_UNUSED(virt_addr);
+	    ZKA_UNUSED(flags);
+
 		return 0;
 	}
 
