@@ -67,7 +67,7 @@ namespace Kernel
 	using WideChar	= wchar_t;
 	using Utf32Char = char32_t;
 
-	typedef UInt32 PhysicalAddressKind;
+	typedef UInt32	PhysicalAddressKind;
 	typedef UIntPtr VirtualAddressKind;
 
 	using Void = void;
@@ -103,16 +103,16 @@ namespace Kernel
 		return static_cast<Args&&>(arg);
 	}
 
-	/// @brief Encoder class
+	/// @brief Coder/Decoder class, used as a proxy to convert T to Char*
 	/// Used to cast A to B or B to A.
-	class Encoder final
+	class IEncoderObject final
 	{
 	public:
-		explicit Encoder() = default;
-		~Encoder()		   = default;
+		explicit IEncoderObject() = default;
+		~IEncoderObject()		  = default;
 
-		Encoder& operator=(const Encoder&) = default;
-		Encoder(const Encoder&)			   = default;
+		IEncoderObject& operator=(const IEncoderObject&) = default;
+		IEncoderObject(const IEncoderObject&)			 = default;
 
 	public:
 		/// @brief Convert type to bytes.
@@ -122,7 +122,7 @@ namespace Kernel
 		template <typename T>
 		Char* AsBytes(T type) noexcept
 		{
-			return reinterpret_cast<Char*>(type);
+			return nullptr;
 		}
 
 		/// @brief Convert T class to Y class.
@@ -133,8 +133,39 @@ namespace Kernel
 		template <typename T, typename Y>
 		Y As(T type) noexcept
 		{
+			if (type.IsCastable())
+			{
+				return reinterpret_cast<Char*>(type);
+			}
+
 			return type.template As<Y>();
 		}
+	};
+
+	class ISchedulerObject
+	{
+	public:
+		explicit ISchedulerObject() = default;
+		virtual ~ISchedulerObject() = default;
+
+		ISchedulerObject& operator=(const ISchedulerObject&) = default;
+		ISchedulerObject(const ISchedulerObject&)			 = default;
+
+		virtual const Bool IsUser()
+		{
+			return false;
+		}
+
+		virtual const Bool IsKernel()
+		{
+			return false;
+		}
+
+		virtual const Bool HasMP()
+		{
+			return false;
+		}
+
 	};
 } // namespace Kernel
 

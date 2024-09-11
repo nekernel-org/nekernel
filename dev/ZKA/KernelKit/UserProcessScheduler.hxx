@@ -257,7 +257,7 @@ namespace Kernel
 
 	/// @brief UserProcess scheduler class.
 	/// The main class which you call to schedule processes.
-	class UserProcessScheduler final
+	class UserProcessScheduler final : public ISchedulerObject
 	{
 		friend class UserProcessHelper;
 
@@ -277,6 +277,21 @@ namespace Kernel
 	public:
 		SizeT Add(UserProcess processRef);
 		Bool  Remove(ProcessID processSlot);
+
+		const Bool IsUser() override
+		{
+			return Yes;
+		}
+
+		const Bool IsKernel() override
+		{
+			return No;
+		}
+
+		const Bool HasMP() override
+		{
+			return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
+		}
 
 	public:
 		Ref<UserProcess>& CurrentProcess();

@@ -87,7 +87,7 @@ namespace Kernel
 	/// \brief Class to manage the thread scheduling.
 	///
 
-	class HardwareThreadScheduler final
+	class HardwareThreadScheduler final : public ISchedulerObject
 	{
 	private:
 		friend class UserProcessHelper;
@@ -104,6 +104,21 @@ namespace Kernel
 		Ref<HardwareThread*> operator[](const SizeT& idx);
 		bool				 operator!() noexcept;
 		operator bool() noexcept;
+
+		const Bool IsUser() override
+		{
+			return Yes;
+		}
+
+		const Bool IsKernel() override
+		{
+			return No;
+		}
+
+		const Bool HasMP() override
+		{
+		return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
+		}
 
 	public:
 		/// @brief Shared instance of the MP Mgr.

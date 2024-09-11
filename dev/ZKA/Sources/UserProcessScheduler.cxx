@@ -3,7 +3,7 @@
 	Copyright ZKA Technologies.
 
 	FILE: UserProcessScheduler.cxx
-	PURPOSE: User sided process scheduler.
+	PURPOSE: Low Exception Process scheduler.
 
 ------------------------------------------- */
 

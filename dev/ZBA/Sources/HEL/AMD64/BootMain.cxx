@@ -135,7 +135,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	auto				   guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
 	EfiMpServicesProtocol* mp	   = nullptr;
 
-	extern EfiBootServices* BS;
+	EXTERN EfiBootServices* BS;
 
 	BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
 
