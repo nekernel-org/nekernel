@@ -292,7 +292,7 @@ EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 #define kKernelIdtSize	   (0x100)
 #define kKernelInterruptId 0x32
 
-inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
+inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize	   = 0UL;
 
 inline Kernel::VoidPtr kKernelPageStart = nullptr;

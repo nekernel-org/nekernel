@@ -121,12 +121,12 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// draw background color.
 	// ------------------------------------------ //
 
-	handover_hdr->f_GOP.f_The			 = kGop->Mode->FrameBufferBase;
-	handover_hdr->f_GOP.f_Width		 = kGop->Mode->Info->VerticalResolution;
-	handover_hdr->f_GOP.f_Height		 = kGop->Mode->Info->HorizontalResolution;
+	handover_hdr->f_GOP.f_The		   = kGop->Mode->FrameBufferBase;
+	handover_hdr->f_GOP.f_Width		   = kGop->Mode->Info->VerticalResolution;
+	handover_hdr->f_GOP.f_Height	   = kGop->Mode->Info->HorizontalResolution;
 	handover_hdr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
-	handover_hdr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
-	handover_hdr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
+	handover_hdr->f_GOP.f_PixelFormat  = kGop->Mode->Info->PixelFormat;
+	handover_hdr->f_GOP.f_Size		   = kGop->Mode->FrameBufferSize;
 
 	// ------------------------------------------- //
 	// Grab MP services, extended to runtime.	   //
@@ -194,7 +194,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	for (; Descriptor[lookIndex].Kind != EfiMemoryType::EfiConventionalMemory; ++lookIndex)
 	{
-		;
+		ZKA_UNUSED(0);
 	}
 
 	cDefaultMemoryMap = lookIndex;
@@ -213,7 +213,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handover_hdr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
 		(UIntPtr)Descriptor;
 
-	handover_hdr->f_BitMapStart = (VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
+	handover_hdr->f_BitMapStart =
+	(VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
 
 	handover_hdr->f_BitMapSize = kHandoverBitMapSz; /* # of pages */
 
@@ -244,7 +245,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	handover_hdr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
-	handover_hdr->f_Magic	  = kHandoverMagic;
+	handover_hdr->f_Magic	= kHandoverMagic;
 	handover_hdr->f_Version = kHandoverVersion;
 
 	// Provide fimware vendor name.
@@ -290,14 +291,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		chimeWav.Blob() &&
 		urbanistTTF.Blob())
 	{
-		handover_hdr->f_StartupChime	 = chimeWav.Blob();
-		handover_hdr->f_ChimeSz		 = chimeWav.Size();
-		handover_hdr->f_StartupImage	 = readerSysDrv.Blob();
-		handover_hdr->f_StartupSz		 = readerSysDrv.Size();
-		handover_hdr->f_KernelImage	 = readerKernel.Blob();
-		handover_hdr->f_KernelSz		 = readerKernel.Size();
+		handover_hdr->f_StartupChime   = chimeWav.Blob();
+		handover_hdr->f_ChimeSz		   = chimeWav.Size();
+		handover_hdr->f_StartupImage   = readerSysDrv.Blob();
+		handover_hdr->f_StartupSz	   = readerSysDrv.Size();
+		handover_hdr->f_KernelImage	   = readerKernel.Blob();
+		handover_hdr->f_KernelSz	   = readerKernel.Size();
 		handover_hdr->f_TTFallbackFont = urbanistTTF.Blob();
-		handover_hdr->f_FontSz		 = urbanistTTF.Size();
+		handover_hdr->f_FontSz		   = urbanistTTF.Size();
 	}
 	else
 	{

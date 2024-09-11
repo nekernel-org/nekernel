@@ -42,7 +42,7 @@ namespace Kernel::HAL
 	typedef StackFrame* StackFramePtr;
 } // namespace Kernel::HAL
 
-inline Kernel::VoidPtr kKernelVirtualStart = nullptr;
+inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
 inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;

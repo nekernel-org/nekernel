@@ -25,7 +25,7 @@
 #define kHandoverVersion 0x0116
 
 /* Initial bitmap size. */
-#define kHandoverBitMapSz gib_cast(64)
+#define kHandoverBitMapSz gib_cast(3)
 #define kHandoverStructSz sizeof(HEL::HANDOVER_INFO_HEADER)
 
 namespace Kernel::HEL

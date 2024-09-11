@@ -27,7 +27,8 @@ namespace Kernel
 			{
 				Bool FreeBitMap(VoidPtr page_ptr)
 				{
-				    if (!page_ptr) return No;
+					if (!page_ptr)
+						return No;
 
 					UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
@@ -47,7 +48,9 @@ namespace Kernel
 					ptr_bit_set[0] = cBitMpMagic;
 					ptr_bit_set[2] = No;
 
-					mm_map_page(page_ptr, ~eFlagsPresent);
+					mm_map_page(ptr_bit_set, ~eFlagsPresent);
+					mm_map_page(ptr_bit_set, ~eFlagsRw);
+					mm_map_page(ptr_bit_set, ~eFlagsUser);
 
 					return Yes;
 				}
@@ -80,15 +83,6 @@ namespace Kernel
 								kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
 								kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 
-								if (rw)
-									mm_map_page(base_ptr, eFlagsRw | eFlagsPresent);
-								else if (user && rw)
-									mm_map_page(base_ptr, eFlagsUser | eFlagsRw | eFlagsPresent);
-								else if (user)
-									mm_map_page(base_ptr, eFlagsUser | eFlagsPresent);
-								else
-									mm_map_page(base_ptr, eFlagsPresent);
-
 								return (VoidPtr)ptr_bit_set;
 							}
 						}
@@ -108,15 +102,6 @@ namespace Kernel
 							kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
 							kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
 							kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
-
-							if (rw)
-								mm_map_page(base_ptr, eFlagsRw | eFlagsPresent);
-							else if (user && rw)
-								mm_map_page(base_ptr, eFlagsUser | eFlagsRw | eFlagsPresent);
-							else if (user)
-								mm_map_page(base_ptr, eFlagsUser | eFlagsPresent);
-							else
-								mm_map_page(base_ptr, eFlagsPresent);
 
 							return (VoidPtr)ptr_bit_set;
 						}
@@ -138,9 +123,21 @@ namespace Kernel
 			VoidPtr					 ptr_new = nullptr;
 			Detail::IBitMapAllocator traits;
 
-			ptr_new = traits.FindBitMap(kKernelVirtualStart, size, rw, user);
+			ptr_new = traits.FindBitMap(kKernelBitMpStart, size, rw, user);
 
-			return ((UIntPtr*)ptr_new);
+			if (!ptr_new)
+				return nullptr;
+
+			if (rw)
+				mm_map_page(ptr_new, eFlagsRw | eFlagsPresent);
+			else if (user && rw)
+				mm_map_page(ptr_new, eFlagsUser | eFlagsRw | eFlagsPresent);
+			else if (user)
+				mm_map_page(ptr_new, eFlagsUser | eFlagsPresent);
+			else
+				mm_map_page(ptr_new, eFlagsPresent);
+
+			return (UIntPtr*)ptr_new;
 		}
 
 		auto mm_free_bitmap(VoidPtr page_ptr) -> Bool
@@ -149,7 +146,14 @@ namespace Kernel
 				return No;
 
 			Detail::IBitMapAllocator traits;
-			return traits.FreeBitMap(page_ptr);
+			Bool					 ret = traits.FreeBitMap(page_ptr);
+
+			if (ret)
+			{
+				mm_map_page(page_ptr, ~eFlagsPresent);
+			}
+
+			return ret;
 		}
 	} // namespace HAL
 } // namespace Kernel

@@ -19,6 +19,7 @@
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
+#include <Modules/CoreCG/WindowRenderer.hxx>
 
 struct HEAP_ALLOC_INFO final
 {
@@ -67,6 +68,8 @@ EXTERN_C void hal_init_platform(
 {
 	kHandoverHeader = HandoverHeader;
 
+	Kernel::HAL::mm_map_page(kHandoverHeader->f_PageStart, Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsPresent);
+
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
 		kHandoverHeader->f_Version != kHandoverVersion)
 	{
@@ -77,7 +80,7 @@ EXTERN_C void hal_init_platform(
 	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
 
 	// get virtual address start (for the heap)
-	kKernelVirtualStart = reinterpret_cast<Kernel::VoidPtr>(
+	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
 	// get physical address start.
@@ -120,11 +123,13 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	auto fs = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
+	Kernel::NeFileSystemMgr::Mount(Kernel::mm_new_class<Kernel::NeFileSystemMgr>());
 
-	Kernel::NeFileSystemMgr::Mount(fs);
+	CG::CGDrawBackground();
 
-	ke_dll_entrypoint();
+	Kernel::HAL::mm_map_page(mp_user_switch_proc, Kernel::HAL::eFlagsRw | Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsPresent);
 
-	Kernel::ke_stop(RUNTIME_CHECK_FAILED);
+	mp_do_user_switch();
+
+	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
