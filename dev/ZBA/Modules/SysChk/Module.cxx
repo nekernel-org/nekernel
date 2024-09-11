@@ -9,10 +9,10 @@
 
 #include <BootKit/BootKit.hxx>
 
-EXTERN_C Int32 ModuleMain(Kernel::HEL::HandoverInformationHeader* Handover)
+EXTERN_C Int32 ModuleMain(Kernel::HEL::HANDOVER_INFO_HEADER* Handover)
 {
 	EfiSystemTable* cST = (EfiSystemTable*)Handover->f_FirmwareCustomTables[1];
-	
+
 	cST->ConOut->ClearScreen(cST->ConOut);
 
 	cST->ConOut->OutputString(cST->ConOut, L"SYSCHK: CHECKING FOR VALID NEWFS OR HPFS PARTITIONS...\r\n");

@@ -32,11 +32,11 @@ Kernel::Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* the_tib);
 
 ///! @brief new ptr syscall.
 template <typename T>
-T* tls_new_ptr(void);
+T* tls_new_ptr(void) noexcept;
 
 ///! @brief delete ptr syscall.
 template <typename T>
-Kernel::Boolean tls_delete_ptr(T* ptr);
+Kernel::Boolean tls_delete_ptr(T* ptr) noexcept;
 
 template <typename T, typename... Args>
 T* tls_new_class(Args&&... args);

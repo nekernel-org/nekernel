@@ -15,12 +15,13 @@
 #include <CFKit/LoaderUtils.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
 
-EXTERN_C{
+EXTERN_C
+{
 #include <string.h>
-}
 
-EXTERN_C Void
-rt_jump_to_address(VoidPtr start, VoidPtr handover);
+	Void
+	rt_jump_to_address(VoidPtr start, VoidPtr handover);
+}
 
 // External boot services symbol.
 EXTERN EfiBootServices* BS;
@@ -140,7 +141,7 @@ namespace Boot
 	}
 
 	/// @note handover header has to be valid!
-	Void BThread::Start(HEL::HandoverInformationHeader* handover)
+	Void BThread::Start(HEL::HANDOVER_INFO_HEADER* handover)
 	{
 		BTextWriter writer;
 
@@ -150,7 +151,7 @@ namespace Boot
 			return;
 		}
 
-		HEL::HandoverProc err_fn = [](HEL::HandoverInformationHeader* rcx) -> void {
+		HEL::HandoverProc err_fn = [](HEL::HANDOVER_INFO_HEADER* rcx) -> void {
 			CGDrawString("NEWOSLDR: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			EFI::Stop();
 		};

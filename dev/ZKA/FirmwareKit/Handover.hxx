@@ -8,7 +8,7 @@
  * @file Handover.hxx
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
  * @brief The handover boot protocol.
- * @version 0.3
+ * @version 1.15
  * @date 2024-02-23
  *
  * @copyright Copyright (c) 2024, ZKA Technologies
@@ -19,20 +19,20 @@
 
 #include <NewKit/Defines.hxx>
 
-/* useful macros */
+/* Handover macros. */
 
 #define kHandoverMagic	 0xBADCC
-#define kHandoverVersion 0x0115
+#define kHandoverVersion 0x0116
 
-/* per page. */
-#define kHandoverBitMapSz gib_cast(32)
-#define kHandoverStructSz sizeof(HEL::HandoverInformationHeader)
+/* Initial bitmap size. */
+#define kHandoverBitMapSz gib_cast(64)
+#define kHandoverStructSz sizeof(HEL::HANDOVER_INFO_HEADER)
 
 namespace Kernel::HEL
 {
 	/**
-	@brief the kind of executable we're loading.
-*/
+	@brief The executable type enum.
+	*/
 	enum
 	{
 		kTypeKernel		  = 100,
@@ -43,16 +43,18 @@ namespace Kernel::HEL
 	};
 
 	/**
-	@brief The executable architecture.
-*/
+	@brief The executable architecture enum.
+	*/
 
 	enum
 	{
-		kArchAmd64 = 122,
-		kArchCount = 2,
+		kArchAMD64 = 122,
+		kArchARM64 = 123,
+		kArchRISCV = 124,
+		kArchCount = 3,
 	};
 
-	struct HandoverInformationHeader
+	struct HANDOVER_INFO_HEADER final
 	{
 		UInt64 f_Magic;
 		UInt64 f_Version;
@@ -105,11 +107,11 @@ namespace Kernel::HEL
 	};
 
 	/// @brief Bootloader main type.
-	typedef void (*BootMainKind)(HandoverInformationHeader* handoverInfo);
+	typedef void (*BootMainKind)(HANDOVER_INFO_HEADER* handoverInfo);
 
 	/// @brief Alias of bootloader main type.
-	typedef void (*HandoverProc)(HandoverInformationHeader* handoverInfo);
+	typedef void (*HandoverProc)(HANDOVER_INFO_HEADER* handoverInfo);
 } // namespace Kernel::HEL
 
 /// @brief Bootloader global header.
-inline Kernel::HEL::HandoverInformationHeader* kHandoverHeader = nullptr;
+inline Kernel::HEL::HANDOVER_INFO_HEADER* kHandoverHeader = nullptr;

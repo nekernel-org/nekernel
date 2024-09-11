@@ -97,8 +97,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	UInt32				 SzDesc		= sizeof(EfiMemoryDescriptor);
 	UInt32				 RevDesc	= 0;
 
-	HEL::HandoverInformationHeader* handoverHdrPtr =
-		new HEL::HandoverInformationHeader();
+	HEL::HANDOVER_INFO_HEADER* handover_hdr =
+		new HEL::HANDOVER_INFO_HEADER();
 
 	for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
 		 ++indexVT)
@@ -112,7 +112,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
 			vendorTable[6] == 'R' && vendorTable[7] == ' ')
 		{
-			handoverHdrPtr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendorTable;
+			handover_hdr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendorTable;
 			break;
 		}
 	}
@@ -121,12 +121,12 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// draw background color.
 	// ------------------------------------------ //
 
-	handoverHdrPtr->f_GOP.f_The			 = kGop->Mode->FrameBufferBase;
-	handoverHdrPtr->f_GOP.f_Width		 = kGop->Mode->Info->VerticalResolution;
-	handoverHdrPtr->f_GOP.f_Height		 = kGop->Mode->Info->HorizontalResolution;
-	handoverHdrPtr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
-	handoverHdrPtr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
-	handoverHdrPtr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
+	handover_hdr->f_GOP.f_The			 = kGop->Mode->FrameBufferBase;
+	handover_hdr->f_GOP.f_Width		 = kGop->Mode->Info->VerticalResolution;
+	handover_hdr->f_GOP.f_Height		 = kGop->Mode->Info->HorizontalResolution;
+	handover_hdr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
+	handover_hdr->f_GOP.f_PixelFormat	 = kGop->Mode->Info->PixelFormat;
+	handover_hdr->f_GOP.f_Size		 = kGop->Mode->FrameBufferSize;
 
 	// ------------------------------------------- //
 	// Grab MP services, extended to runtime.	   //
@@ -139,12 +139,12 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
 
-	handoverHdrPtr->f_HardwareTables.f_MpPtr = reinterpret_cast<VoidPtr>(mp);
+	handover_hdr->f_HardwareTables.f_MpPtr = reinterpret_cast<VoidPtr>(mp);
 
-	kHandoverHeader = handoverHdrPtr;
+	kHandoverHeader = handover_hdr;
 
 	CGInit();
-	CGDrawInRegion(CGColor(0xFF, 0x3A, 0x3A), handoverHdrPtr->f_GOP.f_Height, handoverHdrPtr->f_GOP.f_Width, 0, 0);
+	CGDrawInRegion(CGColor(0xFF, 0x3A, 0x3A), handover_hdr->f_GOP.f_Height, handover_hdr->f_GOP.f_Width, 0, 0);
 	CGFini();
 
 	UInt32 cnt_enabled	= 0;
@@ -155,7 +155,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	CGDrawString("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "MULTIPLE PROCESSORS DETECTED." : "SINGLE PROCESSOR DETECTED.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 
-	handoverHdrPtr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
+	handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
 	// Fill handover header now.
 
 	BDiskFormatFactory<BootDeviceATA> checkPart;
@@ -203,22 +203,22 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Update handover file specific table and phyiscal start field.
 	//-----------------------------------------------------------//
 
-	handoverHdrPtr->f_PageStart =
+	handover_hdr->f_PageStart =
 		(VoidPtr)Descriptor[cDefaultMemoryMap].PhysicalStart;
 
-	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
+	handover_hdr->f_FirmwareSpecific[HEL::kHandoverSpecificAttrib] =
 		Descriptor[cDefaultMemoryMap].Attribute;
-	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] =
+	handover_hdr->f_FirmwareSpecific[HEL::kHandoverSpecificKind] =
 		Descriptor[cDefaultMemoryMap].Kind;
-	handoverHdrPtr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
+	handover_hdr->f_FirmwareSpecific[HEL::kHandoverSpecificMemoryEfi] =
 		(UIntPtr)Descriptor;
 
-	handoverHdrPtr->f_BitMapStart = (VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
+	handover_hdr->f_BitMapStart = (VoidPtr)Descriptor[cDefaultMemoryMap].VirtualStart;
 
-	handoverHdrPtr->f_BitMapSize = kHandoverBitMapSz; /* # of pages */
+	handover_hdr->f_BitMapSize = kHandoverBitMapSz; /* # of pages */
 
-	handoverHdrPtr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
-	handoverHdrPtr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
+	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
+	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
 
 	BFileReader readerSysChk(L"syschk.sys", ImageHandle);
 	readerSysChk.ReadAll(0);
@@ -235,24 +235,24 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		loaderSysChk->SetName("System Check SYS.");
 	}
 
-	loaderSysChk->Start(handoverHdrPtr);
+	loaderSysChk->Start(handover_hdr);
 
 	// nullify these fields, to avoid being reused later.
 
-	handoverHdrPtr->f_FirmwareCustomTables[0] = nullptr;
-	handoverHdrPtr->f_FirmwareCustomTables[1] = nullptr;
+	handover_hdr->f_FirmwareCustomTables[0] = nullptr;
+	handover_hdr->f_FirmwareCustomTables[1] = nullptr;
 
-	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
+	handover_hdr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
-	handoverHdrPtr->f_Magic	  = kHandoverMagic;
-	handoverHdrPtr->f_Version = kHandoverVersion;
+	handover_hdr->f_Magic	  = kHandoverMagic;
+	handover_hdr->f_Version = kHandoverVersion;
 
 	// Provide fimware vendor name.
 
-	BCopyMem(handoverHdrPtr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
-			 handoverHdrPtr->f_FirmwareVendorLen);
+	BCopyMem(handover_hdr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
+			 handover_hdr->f_FirmwareVendorLen);
 
-	handoverHdrPtr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
+	handover_hdr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
 
 	// Assign to global 'kHandoverHeader'.
 
@@ -271,7 +271,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		loader = new Boot::BThread(readerKernel.Blob());
 		loader->SetName("64-Bit Kernel EXE.");
 
-		handoverHdrPtr->f_KernelImage = readerKernel.Blob();
+		handover_hdr->f_KernelImage = readerKernel.Blob();
 	}
 	else
 	{
@@ -290,14 +290,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		chimeWav.Blob() &&
 		urbanistTTF.Blob())
 	{
-		handoverHdrPtr->f_StartupChime	 = chimeWav.Blob();
-		handoverHdrPtr->f_ChimeSz		 = chimeWav.Size();
-		handoverHdrPtr->f_StartupImage	 = readerSysDrv.Blob();
-		handoverHdrPtr->f_StartupSz		 = readerSysDrv.Size();
-		handoverHdrPtr->f_KernelImage	 = readerKernel.Blob();
-		handoverHdrPtr->f_KernelSz		 = readerKernel.Size();
-		handoverHdrPtr->f_TTFallbackFont = urbanistTTF.Blob();
-		handoverHdrPtr->f_FontSz		 = urbanistTTF.Size();
+		handover_hdr->f_StartupChime	 = chimeWav.Blob();
+		handover_hdr->f_ChimeSz		 = chimeWav.Size();
+		handover_hdr->f_StartupImage	 = readerSysDrv.Blob();
+		handover_hdr->f_StartupSz		 = readerSysDrv.Size();
+		handover_hdr->f_KernelImage	 = readerKernel.Blob();
+		handover_hdr->f_KernelSz		 = readerKernel.Size();
+		handover_hdr->f_TTFallbackFont = urbanistTTF.Blob();
+		handover_hdr->f_FontSz		 = urbanistTTF.Size();
 	}
 	else
 	{
@@ -310,7 +310,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Finally load Kernel, and the cr3 to it.
 	// ---------------------------------------------------- //
 
-	loader->Start(handoverHdrPtr);
+	loader->Start(handover_hdr);
 
 	EFI::Stop();
 

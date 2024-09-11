@@ -23,8 +23,35 @@ namespace Kernel
 	{
 		namespace Detail
 		{
-			struct AllocatorTraits final
+			struct IBitMapAllocator final
 			{
+				Bool FreeBitMap(VoidPtr page_ptr)
+				{
+				    if (!page_ptr) return No;
+
+					UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
+
+					if (!ptr_bit_set[0] ||
+						ptr_bit_set[0] != cBitMpMagic)
+						return No;
+
+					kcout << "BMPMgr: Freed Range!\r";
+					kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
+					kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
+					kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
+					kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
+					kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
+					kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
+					kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+
+					ptr_bit_set[0] = cBitMpMagic;
+					ptr_bit_set[2] = No;
+
+					mm_map_page(page_ptr, ~eFlagsPresent);
+
+					return Yes;
+				}
+
 				/// @brief Iterate over availables pages for a free one.
 				/// @return The new address which was found.
 				VoidPtr FindBitMap(VoidPtr base_ptr, SizeT size, Bool rw, Bool user) noexcept
@@ -34,8 +61,6 @@ namespace Kernel
 					while (base_ptr && size)
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
-
-						mm_map_page(ptr_bit_set, eFlagsPresent | eFlagsRw);
 
 						if (ptr_bit_set[0] == cBitMpMagic)
 						{
@@ -97,9 +122,6 @@ namespace Kernel
 						}
 
 						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != cBitMpMagic ? size : ptr_bit_set[1]));
-
-						if (reinterpret_cast<UIntPtr>(base_ptr) >= (kHandoverHeader->f_BitMapSize + base))
-							ke_stop(RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM);
 					}
 
 					return nullptr;
@@ -113,8 +135,8 @@ namespace Kernel
 		/// @return
 		auto mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size) -> VoidPtr
 		{
-			VoidPtr					ptr_new = nullptr;
-			Detail::AllocatorTraits traits;
+			VoidPtr					 ptr_new = nullptr;
+			Detail::IBitMapAllocator traits;
 
 			ptr_new = traits.FindBitMap(kKernelVirtualStart, size, rw, user);
 
@@ -124,29 +146,10 @@ namespace Kernel
 		auto mm_free_bitmap(VoidPtr page_ptr) -> Bool
 		{
 			if (!page_ptr)
-				return false;
+				return No;
 
-			UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
-
-			if (!ptr_bit_set[0] ||
-				ptr_bit_set[0] != cBitMpMagic)
-				return false;
-
-			kcout << "BMPMgr: Freed Range!\r";
-			kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
-			kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
-			kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
-			kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
-			kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
-			kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
-			kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
-
-			ptr_bit_set[0] = cBitMpMagic;
-			ptr_bit_set[2] = No;
-
-			mm_map_page(page_ptr, ~eFlagsPresent);
-
-			return true;
+			Detail::IBitMapAllocator traits;
+			return traits.FreeBitMap(page_ptr);
 		}
 	} // namespace HAL
 } // namespace Kernel

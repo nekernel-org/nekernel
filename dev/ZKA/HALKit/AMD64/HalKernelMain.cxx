@@ -63,7 +63,7 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
-	Kernel::HEL::HandoverInformationHeader* HandoverHeader)
+	Kernel::HEL::HANDOVER_INFO_HEADER* HandoverHeader)
 {
 	kHandoverHeader = HandoverHeader;
 

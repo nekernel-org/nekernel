@@ -1,9 +1,0 @@
--nostdlib
--ffreestanding
--std=c++20
--I./
--I$(HOME)/
--D__ZKA_AMD64__
--I../Vendor
--D__x86_64__
--D__ED__

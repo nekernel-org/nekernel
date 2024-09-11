@@ -21,8 +21,6 @@ class BTextWriter;
 #define __BOOTKIT_NO_INCLUDE__ 1
 
 #include <BootKit/BootKit.hxx>
-#include <BootKit/Rsrc/NewBootFatal.rsrc>
-#include <BootKit/Vendor/Qr.hxx>
 #include <Modules/CoreCG/FbRenderer.hxx>
 #endif // ifdef __NEWOSLDR__
 
