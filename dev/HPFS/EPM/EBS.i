@@ -10,7 +10,7 @@ HPFS_EBS_HEADER:
     db "   HPFS" ;; MAGIC NUMBER OF FILESYSTEM
     dw 8 ;; MAGIC NUMBER LENGTH.
     dq 0 ;; RESERVED 4
-    dw 1 ;; VERSION
+    dw 0x0100 ;; VERSION
     dw 0 ;; PARTITION TYPE
     dq 0 ;; RESERVED 3
     dw 0 ;; DISK TYPE (INVALID = 0, CDROM = 1, SSD = 2, USB = 3)

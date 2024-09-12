@@ -185,7 +185,7 @@ static inline const UInt32 kRgbWhite = 0x00FFFFFF;
 #define kBKBootFileMime "boot-x/file"
 #define kBKBootDirMime	"boot-x/dir"
 
-/// @brief BootKit Disk Formatter.
+/// @brief BootKit Drive Formatter.
 template <typename BootDev>
 class BDiskFormatFactory final
 {
@@ -236,7 +236,7 @@ public:
 				return false;
 		}
 
-		writer.Write(L"NEWOSLDR: Disk is ").Write(GIB(this->fDiskDev.GetDiskSize())).Write(L" GB.\r");
+		writer.Write(L"NEWOSLDR: Drive is ").Write(GIB(this->fDiskDev.GetDiskSize())).Write(L" GB.\r");
 
 		if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() ||
 			blockPart->DiskSize < 1 ||
@@ -322,7 +322,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 
 	if (GIB(fDiskDev.GetDiskSize()) < cMinimumDiskSize)
 	{
-		EFI::ThrowError(L"Disk-Too-Tiny", L"Can't format a New Filesystem partition here.");
+		EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a New Filesystem partition here.");
 		return false;
 	}
 
@@ -372,7 +372,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
 	if (this->WriteRootCatalog(fileBlobs, blobCount, partBlock))
 	{
 		BTextWriter writer;
-		writer.Write(L"NEWOSLDR: Disk formatted.\r");
+		writer.Write(L"NEWOSLDR: Drive formatted.\r");
 
 		return true;
 	}

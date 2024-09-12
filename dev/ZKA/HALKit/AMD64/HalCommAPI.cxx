@@ -12,8 +12,10 @@
 
 /**
  * @file HalCommAPI.cxx
- * @brief CPU Processor common API.
+ * @brief CPU Common API.
  */
+
+#define PhysShift36(ADDR) ((UInt64)ADDR >> 12)
 
 namespace Kernel::HAL
 {

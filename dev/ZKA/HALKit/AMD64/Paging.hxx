@@ -41,39 +41,23 @@ EXTERN_C Kernel::VoidPtr hal_read_cr3(); // @brief Page table.
 
 namespace Kernel::HAL
 {
-	struct PACKED ZKA_PTE_GENERIC
-	{
-		Bool   Present : 1;
-		Bool   Wr : 1;
-		Bool   User : 1;
-		Bool   Wt : 1;
-		Int32  Dirty : 1;
-		Int32  MemoryType : 1;
-		Int32  Global : 1;
-		Int32  Resvered_0 : 3;
-		UInt64 PhysicalAddress : 36;
-		Int32  Reserved_1 : 10;
-		Bool   ProtectionKey : 5;
-		Bool   ExecDisable : 1;
-	};
-
 	/// @brief Final page entry (Not PML, PDPT)
 	struct PACKED ZKA_PTE final
 	{
-		Bool   Present : 1;
-		Bool   Wr : 1;
-		Bool   User : 1;
-		Bool   Wt : 1;
-		Bool   Cache : 1;
-		Bool   Accessed : 1;
-		Int32  Dirty : 1;
-		Int32  MemoryType : 1;
-		Int32  Global : 1;
-		Int32  Resvered_0 : 3;
+		UInt64 Present : 1;
+		UInt64 Wr : 1;
+		UInt64 User : 1;
+		UInt64 Wt : 1;
+		UInt64 Cache : 1;
+		UInt64 Accessed : 1;
+		UInt64 Dirty : 1;
+		UInt64 MemoryType : 1;
+		UInt64 Global : 1;
+		UInt64 Resvered1 : 3;
 		UInt64 PhysicalAddress : 36;
-		Int32  Reserved_1 : 10;
-		Bool   ProtectionKey : 5;
-		Bool   ExecDisable : 1;
+		UInt64 Reserved2 : 10;
+		UInt64 ProtectionKey : 5;
+		UInt64 ExecDisable : 1;
 	};
 
 	namespace Detail
@@ -102,11 +86,6 @@ namespace Kernel::HAL
 	struct ZKA_PDE final
 	{
 		ZKA_PTE* ALIGN(kPageAlign) fEntries[kPageMax];
-	};
-
-	struct ZKA_PDE_GENERIC final
-	{
-		ZKA_PTE_GENERIC* ALIGN(kPageAlign) fEntries[kPageMax];
 	};
 
 	auto mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size) -> VoidPtr;

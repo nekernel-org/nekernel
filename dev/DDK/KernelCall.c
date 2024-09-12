@@ -10,7 +10,7 @@
 #include <stdarg.h>
 
 /// @brief this is an internal call, do not use it.
-DK_EXTERN __attribute__((naked)) void* __KernelCallDispatch(const char* name, int32_t cnt, void* data, size_t sz);
+DK_EXTERN ATTRIBUTE(naked) void* __KernelCallDispatch(const char* name, int32_t cnt, void* data, size_t sz);
 
 /// @brief Interupt Kernel
 /// @param KernelRpcName RPC name
@@ -19,12 +19,12 @@ DK_EXTERN __attribute__((naked)) void* __KernelCallDispatch(const char* name, in
 /// @param sz The size of the whole data pointer.
 /// @retval void* Kernel call was successful.
 /// @retval nil Kernel call failed, call KernelLastError(void)
-DK_EXTERN void* KernelCall(const char* KernelRpcName, int32_t cnt, void* data, size_t sz)
+DK_EXTERN void* KernelCall(const char* name, int32_t cnt, void* data, size_t sz)
 {
-	if (!KernelRpcName || cnt == 0)
+	if (!name || *name == 0 || cnt == 0)
 		return nil;
 
-	return __KernelCallDispatch(KernelRpcName, cnt, data, sz);
+	return __KernelCallDispatch(name, cnt, data, sz);
 }
 
 /// @brief Add system call.
@@ -37,19 +37,24 @@ DK_EXTERN void KernelAddSyscall(const int slot, void (*slotFn)(void* a0))
 
 /// @brief Get a Kernel property.
 /// @param slot property id (always 0)
-/// @param name the prperty's name.
-/// @return property's object.
-DK_EXTERN void* KernelGetProperty(const int slot, const char* name)
+/// @param name the object's name.
+/// @return Object manifest.
+DK_EXTERN struct DDK_OBJECT_MANIFEST* KernelGetObject(const int slot, const char* name)
 {
-	return KernelCall("RtlGetProperty", slot, (void*)name, 1);
+    struct DDK_OBJECT_MANIFEST* manifest = (struct DDK_OBJECT_MANIFEST*)KernelCall("RtlGetObject", slot, (void*)name, 1);
+
+    if (!manifest)
+        return nil;
+
+	return manifest;
 }
 
 /// @brief Set a Kernel property.
 /// @param slot property id (always 0)
-/// @param name the property's name.
-/// @param ddk_pr pointer to a  property's DDK_PROPERTY_RECORD.
+/// @param name the object's name.
+/// @param ddk_pr pointer to a object's DDK_OBJECT_MANIFEST.
 /// @return property's object.
-DK_EXTERN void* KernelSetProperty(const int slot, const struct DDK_PROPERTY_RECORD* ddk_pr)
+DK_EXTERN void* KernelSetObject(const int slot, const struct DDK_OBJECT_MANIFEST* ddk_pr)
 {
-	return KernelCall("RtlSetProperty", slot, (void*)ddk_pr, 1);
+	return KernelCall("RtlSetObject", slot, (void*)ddk_pr, 1);
 }

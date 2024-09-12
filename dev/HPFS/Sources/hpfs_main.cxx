@@ -7,14 +7,14 @@
 
 ------------------------------------------- */
 
-#include <HPFS/Defines.hxx>
+#include <HPFS/hpfs_specs.hxx>
 #include <DDK/KernelStd.h>
 
 /** @brief HPFS IFS main. */
 HPFS_INT32 ModuleMain(HPFS_VOID)
 {
-    auto ifs_handle = KernelGetProperty(0, "\\.\\IFSObject");
-    // TODO: Register IFS...
+    auto ifs_handle = KernelGetObject(0, "IFS_OBJECT");
+    // TODO: Register this IFS with necessary I/O functions...
 
     return 0;
 }

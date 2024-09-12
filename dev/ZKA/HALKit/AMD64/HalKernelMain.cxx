@@ -69,8 +69,8 @@ EXTERN_C void hal_init_platform(
 	gdtBase.Limit = (sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY) * cEntriesCount) - 1;
 
 	//! GDT will load hal_read_init after it successfully loads the segments.
-	CONST Kernel::HAL::GDTLoader cGDT;
-	cGDT.Load(gdtBase);
+	Kernel::HAL::GDTLoader gdtLoader;
+	gdtLoader.Load(gdtBase);
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
@@ -80,8 +80,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::HAL::Register64 idtBase;
 	idtBase.Base = (Kernel::UIntPtr)kInterruptVectorTable;
 
-	CONST Kernel::HAL::IDTLoader cIDT;
-	cIDT.Load(idtBase);
+	Kernel::HAL::IDTLoader idtLoader;
+	idtLoader.Load(idtBase);
 
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);

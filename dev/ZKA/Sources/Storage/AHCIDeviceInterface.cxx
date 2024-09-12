@@ -9,9 +9,9 @@
 using namespace Kernel;
 
 /// @brief Class constructor
-/// @param Out Disk output
-/// @param In  Disk input
-/// @param Cleanup Disk cleanup.
+/// @param Out Drive output
+/// @param In  Drive input
+/// @param Cleanup Drive cleanup.
 AHCIDeviceInterface::AHCIDeviceInterface(void (*Out)(MountpointInterface* outpacket),
 										 void (*In)(MountpointInterface* inpacket),
 										 void (*Cleanup)(void))

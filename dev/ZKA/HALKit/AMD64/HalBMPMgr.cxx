@@ -17,6 +17,10 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/KernelCheck.hxx>
 
+#define cBitMapMagIdx  0
+#define cBitMapSizeIdx 1
+#define cBitMapUsedIdx 2
+
 namespace Kernel
 {
 	namespace HAL
@@ -32,21 +36,14 @@ namespace Kernel
 
 					UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
-					if (!ptr_bit_set[0] ||
-						ptr_bit_set[0] != cBitMpMagic)
+					if (!ptr_bit_set[cBitMapMagIdx] ||
+						ptr_bit_set[cBitMapMagIdx] != cBitMpMagic)
 						return No;
 
-					kcout << "BMPMgr: Freed Range!\r";
-					kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
-					kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
-					kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
-					kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
-					kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
-					kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
-					kcout << "Address Of Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+					ptr_bit_set[cBitMapMagIdx]	= cBitMpMagic;
+					ptr_bit_set[cBitMapUsedIdx] = No;
 
-					ptr_bit_set[0] = cBitMpMagic;
-					ptr_bit_set[2] = No;
+					this->PrintStatus(ptr_bit_set);
 
 					mm_map_page(ptr_bit_set, ~eFlagsPresent);
 					mm_map_page(ptr_bit_set, ~eFlagsRw);
@@ -65,23 +62,16 @@ namespace Kernel
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
 
-						if (ptr_bit_set[0] == cBitMpMagic)
+						if (ptr_bit_set[cBitMapMagIdx] == cBitMpMagic)
 						{
-							if (ptr_bit_set[1] != 0 &&
-								ptr_bit_set[1] <= size &&
-								ptr_bit_set[2] == No)
+							if (ptr_bit_set[cBitMapSizeIdx] != 0 &&
+								ptr_bit_set[cBitMapSizeIdx] <= size &&
+								ptr_bit_set[cBitMapUsedIdx] == No)
 							{
-								ptr_bit_set[1] = size;
-								ptr_bit_set[2] = Yes;
+								ptr_bit_set[cBitMapSizeIdx] = size;
+								ptr_bit_set[cBitMapUsedIdx] = Yes;
 
-								kcout << "BMPMgr: Allocated Range!\r";
-								kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
-								kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
-								kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
-								kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
-								kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
-								kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
-								kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+								this->PrintStatus(ptr_bit_set);
 
 								return (VoidPtr)ptr_bit_set;
 							}
@@ -90,18 +80,12 @@ namespace Kernel
 						{
 							UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
 
-							ptr_bit_set[0] = cBitMpMagic;
-							ptr_bit_set[1] = size;
-							ptr_bit_set[2] = Yes;
+							ptr_bit_set[cBitMapMagIdx] = cBitMpMagic;
 
-							kcout << "BMPMgr: Allocated Range!\r";
-							kcout << "Magic Number: " << hex_number(ptr_bit_set[0]) << endl;
-							kcout << "Size of pointer (B): " << number(ptr_bit_set[1]) << endl;
-							kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[1])) << endl;
-							kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[1])) << endl;
-							kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[1])) << endl;
-							kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[1])) << endl;
-							kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+							ptr_bit_set[cBitMapSizeIdx] = size;
+							ptr_bit_set[cBitMapUsedIdx] = Yes;
+
+							this->PrintStatus(ptr_bit_set);
 
 							return (VoidPtr)ptr_bit_set;
 						}
@@ -113,6 +97,19 @@ namespace Kernel
 					}
 
 					return nullptr;
+				}
+
+				/// @brief Print Bitmap status
+				Void PrintStatus(UIntPtr* ptr_bit_set)
+				{
+					kcout << "Magic Number: " << hex_number(ptr_bit_set[cBitMapMagIdx]) << endl;
+					kcout << "Allocated: " << (ptr_bit_set[cBitMapUsedIdx] ? "Yes" : "No") << endl;
+					kcout << "Size of pointer (B): " << number(ptr_bit_set[cBitMapSizeIdx]) << endl;
+					kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 				}
 			};
 		} // namespace Detail

@@ -19,14 +19,16 @@
 
 #include <NewKit/Defines.hxx>
 
-/* Handover macros. */
-
 #define kHandoverMagic	 0xBADCC
 #define kHandoverVersion 0x0117
 
-/* Initial bitmap size. */
-#define kHandoverBitMapStart 0x100000000
-#define kHandoverBitMapSz gib_cast(4)
+/* Initial bitmap pointer location and size. */
+#define kHandoverBitMapStart (0x100000000)
+#define kHandoverBitMapSz (gib_cast(4))
+
+/* Executable base */
+#define kHandoverExecBase (0x4000000)
+
 #define kHandoverStructSz sizeof(HEL::HANDOVER_INFO_HEADER)
 
 namespace Kernel::HEL

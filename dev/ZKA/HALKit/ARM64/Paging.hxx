@@ -58,14 +58,25 @@
 
 namespace Kernel::HAL
 {
-	struct PACKED LongDescLevel3 final
+	struct PACKED PTE_4KB final
 	{
-		Boolean Present : 1;
-		Boolean Rw : 1;
-		UInt16	Lpat : 9;
-		UInt32	Address : 27;
-		UInt32	Sbzp : 12;
-		UInt32	UPat : 11;
+		UInt64 Valid : 1;
+		UInt64 Table : 1;
+		UInt64 AttrIndex : 3;
+		UInt64 NS : 1;
+		UInt64 AP : 2;
+		UInt64 SH : 2;
+		UInt64 AF : 1;
+		UInt64 NG : 1;
+		UInt64 Reserved1 : 1;
+		UInt64 Contiguous : 1;
+		UInt64 Dirty : 1;
+		UInt64 Reserved : 2;
+		UInt64 PhysicalAddress : 36;
+		UInt64 Reserved3 : 4;
+		UInt64 PXN : 1;
+		UInt64 XN : 1;
+		UInt64 Reserved4 : 9;
 	};
 
 	namespace Detail
@@ -91,18 +102,19 @@ namespace Kernel::HAL
 		}
 	} // namespace Detail
 
-	struct PageDirectory64 final
+	struct PDE_4KB final
 	{
-		LongDescLevel3 ALIGN(kPageAlign) Pte[kPageMax];
+		PTE_4KB ALIGN(kPageAlign) fEntries[kPageMax];
 	};
 
-	VoidPtr mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size);
+	auto mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size) -> VoidPtr;
+	auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
 } // namespace Kernel::HAL
 
 namespace Kernel
 {
-	typedef HAL::LongDescLevel3	 PTE;
-	typedef HAL::PageDirectory64 PDE;
+	typedef HAL::PTE_4KB PTE;
+	typedef HAL::PDE_4KB PDE;
 } // namespace Kernel
 
 EXTERN_C void hal_flush_tlb();

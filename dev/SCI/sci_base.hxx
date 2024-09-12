@@ -227,7 +227,7 @@ IMPORT_C UInt0 ThrExitJoinThread(UInt0);
 IMPORT_C UInt0 ThrExitDetachThread(UInt0);
 
 // ------------------------------------------------------------------------
-// Disk Management API.
+// Drive Management API.
 // ------------------------------------------------------------------------
 
 #endif // ifndef __SCI_BASE_HXX__
