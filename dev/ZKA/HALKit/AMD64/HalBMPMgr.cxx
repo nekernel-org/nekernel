@@ -27,9 +27,16 @@ namespace Kernel
 	{
 		namespace Detail
 		{
-			struct IBitMapAllocator final
+			/// \brief Proxy Interface to allocate a bitmap.
+			class IBitMapAllocator final
 			{
-				Bool FreeBitMap(VoidPtr page_ptr)
+			public:
+				explicit IBitMapAllocator() = default;
+				~IBitMapAllocator()			= default;
+
+				ZKA_COPY_DELETE(IBitMapAllocator);
+
+				auto IsBitMap(VoidPtr page_ptr) -> Bool
 				{
 					if (!page_ptr)
 						return No;
@@ -40,10 +47,20 @@ namespace Kernel
 						ptr_bit_set[cBitMapMagIdx] != cBitMpMagic)
 						return No;
 
+					return Yes;
+				}
+
+				auto FreeBitMap(VoidPtr page_ptr) -> Bool
+				{
+					if (this->IsBitMap(page_ptr) == No)
+						return No;
+
+					UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
+
 					ptr_bit_set[cBitMapMagIdx]	= cBitMpMagic;
 					ptr_bit_set[cBitMapUsedIdx] = No;
 
-					this->PrintStatus(ptr_bit_set);
+					this->GetBitMapStatus(ptr_bit_set);
 
 					mm_map_page(ptr_bit_set, ~eFlagsPresent);
 					mm_map_page(ptr_bit_set, ~eFlagsRw);
@@ -54,7 +71,7 @@ namespace Kernel
 
 				/// @brief Iterate over availables pages for a free one.
 				/// @return The new address which was found.
-				VoidPtr FindBitMap(VoidPtr base_ptr, SizeT size, Bool rw, Bool user) noexcept
+				auto FindBitMap(VoidPtr base_ptr, SizeT size, Bool rw, Bool user) -> VoidPtr
 				{
 					auto base = reinterpret_cast<UIntPtr>(base_ptr);
 
@@ -71,7 +88,7 @@ namespace Kernel
 								ptr_bit_set[cBitMapSizeIdx] = size;
 								ptr_bit_set[cBitMapUsedIdx] = Yes;
 
-								this->PrintStatus(ptr_bit_set);
+								this->GetBitMapStatus(ptr_bit_set);
 
 								return (VoidPtr)ptr_bit_set;
 							}
@@ -85,7 +102,7 @@ namespace Kernel
 							ptr_bit_set[cBitMapSizeIdx] = size;
 							ptr_bit_set[cBitMapUsedIdx] = Yes;
 
-							this->PrintStatus(ptr_bit_set);
+							this->GetBitMapStatus(ptr_bit_set);
 
 							return (VoidPtr)ptr_bit_set;
 						}
@@ -100,8 +117,14 @@ namespace Kernel
 				}
 
 				/// @brief Print Bitmap status
-				Void PrintStatus(UIntPtr* ptr_bit_set)
+				auto GetBitMapStatus(UIntPtr* ptr_bit_set) -> Void
 				{
+					if (!this->IsBitMap(ptr_bit_set))
+					{
+						kcout << "Not a BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+						return;
+					}
+
 					kcout << "Magic Number: " << hex_number(ptr_bit_set[cBitMapMagIdx]) << endl;
 					kcout << "Allocated: " << (ptr_bit_set[cBitMapUsedIdx] ? "Yes" : "No") << endl;
 					kcout << "Size of pointer (B): " << number(ptr_bit_set[cBitMapSizeIdx]) << endl;

@@ -18,6 +18,9 @@
 
 #define kPeMagic 0x00004550
 
+#define kPeDLLBase 0x4000000
+#define kPeEXEBase 0x1000000
+
 #define kMagPE32 0x010b
 #define kMagPE64 0x020b
 
