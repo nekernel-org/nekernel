@@ -153,7 +153,7 @@ namespace Boot
 
 		HEL::HandoverProc err_fn = [](HEL::HANDOVER_INFO_HEADER* rcx) -> void {
 			CGDrawString("NEWOSLDR: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
-			EFI::Stop();
+			::EFI::Stop();
 		};
 
 		if (!fStartAddress)

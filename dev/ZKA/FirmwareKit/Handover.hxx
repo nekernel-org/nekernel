@@ -23,8 +23,7 @@
 #define kHandoverVersion 0x0117
 
 /* Initial bitmap pointer location and size. */
-#define kHandoverBitMapStart (0x100000000)
-#define kHandoverBitMapSz (gib_cast(4))
+#define kHandoverBitMapSz (gib_cast(3))
 
 /* Executable base */
 #define kHandoverExecBase (0x4000000)

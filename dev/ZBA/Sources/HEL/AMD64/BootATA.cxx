@@ -21,6 +21,8 @@
 
 /// bugs: 0
 
+using namespace Boot;
+
 #define kATADataLen 256
 
 static Boolean kATADetected			 = false;

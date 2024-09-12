@@ -126,7 +126,9 @@ namespace Kernel
 			ptr_new = traits.FindBitMap(kKernelBitMpStart, size, rw, user);
 
 			if (!ptr_new)
-				return nullptr;
+			{
+				ke_stop(RUNTIME_CHECK_PAGE);
+			}
 
 			if (rw)
 				mm_map_page(ptr_new, eFlagsRw | eFlagsPresent);

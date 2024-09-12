@@ -63,6 +63,7 @@ namespace Kernel
 		Void (*fInput)(DrivePacket* packetPtr);
 		Void (*fOutput)(DrivePacket* packetPtr);
 		Void (*fVerify)(DrivePacket* packetPtr);
+		Void (*fInit)(DrivePacket* packetPtr);
 		const Char* (*fDriveKind)(Void);
 	};
 

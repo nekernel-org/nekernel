@@ -23,7 +23,7 @@
 /**
 @brief puts wrapper over EFI ConOut.
 */
-BTextWriter& BTextWriter::Write(const CharacterTypeUTF16* str)
+Boot::BTextWriter& Boot::BTextWriter::Write(const CharacterTypeUTF16* str)
 {
 #ifdef __DEBUG__
 	if (!str || *str == 0)
@@ -55,7 +55,7 @@ BTextWriter& BTextWriter::Write(const CharacterTypeUTF16* str)
 
 /// @brief UTF-8 equivalent of Write (UTF-16).
 /// @param str the input string.
-BTextWriter& BTextWriter::Write(const Char* str)
+Boot::BTextWriter& Boot::BTextWriter::Write(const Char* str)
 {
 #ifdef __DEBUG__
 	if (!str || *str == 0)
@@ -85,7 +85,7 @@ BTextWriter& BTextWriter::Write(const Char* str)
 	return *this;
 }
 
-BTextWriter& BTextWriter::Write(const UChar* str)
+Boot::BTextWriter& Boot::BTextWriter::Write(const UChar* str)
 {
 #ifdef __DEBUG__
 	if (!str || *str == 0)
@@ -118,7 +118,7 @@ BTextWriter& BTextWriter::Write(const UChar* str)
 /**
 @brief putc wrapper over EFI ConOut.
 */
-BTextWriter& BTextWriter::WriteCharacter(CharacterTypeUTF16 c)
+Boot::BTextWriter& Boot::BTextWriter::WriteCharacter(CharacterTypeUTF16 c)
 {
 #ifdef __DEBUG__
 	EfiCharType str[2];
@@ -131,7 +131,7 @@ BTextWriter& BTextWriter::WriteCharacter(CharacterTypeUTF16 c)
 	return *this;
 }
 
-BTextWriter& BTextWriter::Write(const Long& x)
+Boot::BTextWriter& Boot::BTextWriter::Write(const Long& x)
 {
 #ifdef __DEBUG__
 	this->_Write(x);
@@ -141,7 +141,7 @@ BTextWriter& BTextWriter::Write(const Long& x)
 	return *this;
 }
 
-BTextWriter& BTextWriter::_Write(const Long& x)
+Boot::BTextWriter& Boot::BTextWriter::_Write(const Long& x)
 {
 #ifdef __DEBUG__
 	UInt64 y = (x > 0 ? x : -x) / 16;

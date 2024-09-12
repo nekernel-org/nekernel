@@ -58,7 +58,7 @@ namespace Kernel
 	/// @brief Executes a disk check on the ATA drive.
 	/// @param pckt
 	/// @return
-	Void ke_drv_check_disk(DriveTrait::DrivePacket* pckt)
+	Void ke_drv_init(DriveTrait::DrivePacket* pckt)
 	{
 		if (!pckt)
 		{
@@ -84,21 +84,21 @@ namespace Kernel
 /// @param
 /// @return
 #ifdef __ATA_PIO__
-	const Char* io_drive_kind(Void)
+	const Char* ke_drv_kind(Void)
 	{
 		return "ATA-PIO";
 	}
 #endif
 
 #ifdef __ATA_DMA__
-	const Char* io_drive_kind(Void)
+	const Char* ke_drv_kind(Void)
 	{
 		return "ATA-DMA";
 	}
 #endif
 
 #ifdef __AHCI__
-	const Char* io_drive_kind(Void)
+	const Char* ke_drv_kind(Void)
 	{
 		return "AHCI";
 	}
@@ -124,7 +124,8 @@ namespace Kernel
 		trait.fInput	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_unimplemented;
 		trait.fVerify	 = io_drv_unimplemented;
-		trait.fDriveKind = io_drive_kind;
+		trait.fInit	 = io_drv_unimplemented;
+		trait.fDriveKind = ke_drv_kind;
 
 		return trait;
 	}
@@ -140,8 +141,9 @@ namespace Kernel
 
 		trait.fInput	 = ke_drv_input;
 		trait.fOutput	 = ke_drv_output;
-		trait.fVerify	 = ke_drv_check_disk;
-		trait.fDriveKind = io_drive_kind;
+		trait.fVerify	 = io_drv_unimplemented;
+		trait.fInit	 = ke_drv_init;
+		trait.fDriveKind = ke_drv_kind;
 
 		kcout << "Construct drive with success.\r";
 

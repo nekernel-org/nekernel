@@ -80,7 +80,7 @@ STATIC Bool CheckBootDevice(BootDeviceATA& ataDev)
 }
 
 EXTERN_C VoidPtr boot_read_cr3();
-EXTERN_C Void boot_write_cr3(VoidPtr new_cr3);
+EXTERN_C Void	 boot_write_cr3(VoidPtr new_cr3);
 
 EXTERN EfiBootServices* BS;
 
@@ -159,7 +159,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
 	// Fill handover header now.
 
-	BDiskFormatFactory<BootDeviceATA> checkPart;
+	Boot::BDiskFormatFactory<BootDeviceATA> checkPart;
 
 	// ---------------------------------------------------- //
 	// The following checks for an exisiting partition
@@ -169,7 +169,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	if (!checkPart.IsPartitionValid())
 	{
-		BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
+		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
 		root.fFileName[0] = kNeFSRoot[0];
 		root.fFileName[1] = 0;
 
@@ -204,13 +204,22 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Update handover file specific table and phyiscal start field.
 	//-----------------------------------------------------------//
 
-	handover_hdr->f_BitMapStart = reinterpret_cast<VoidPtr>(kHandoverBitMapStart); /* # of pages */
-	handover_hdr->f_BitMapSize = kHandoverBitMapSz; /* # of pages */
+	handover_hdr->f_BitMapStart = nullptr;			 /* # of pages */
+	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* # of pages */
+
+	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
+	{
+		if (handover_hdr->f_BitMapStart)
+		{
+			BS->FreePool(handover_hdr->f_BitMapStart);
+			handover_hdr->f_BitMapStart = nullptr;
+		}
+	}
 
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
 
-	BFileReader readerSysChk(L"syschk.sys", ImageHandle);
+	Boot::BFileReader readerSysChk(L"syschk.sys", ImageHandle);
 	readerSysChk.ReadAll(0);
 
 	Boot::BThread* loaderSysChk = nullptr;
@@ -232,21 +241,21 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handover_hdr->f_FirmwareCustomTables[0] = nullptr;
 	handover_hdr->f_FirmwareCustomTables[1] = nullptr;
 
-	handover_hdr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
+	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(SystemTable->FirmwareVendor);
 
 	handover_hdr->f_Magic	= kHandoverMagic;
 	handover_hdr->f_Version = kHandoverVersion;
 
 	// Provide fimware vendor name.
 
-	BCopyMem(handover_hdr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
+	Boot::BCopyMem(handover_hdr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
 			 handover_hdr->f_FirmwareVendorLen);
 
-	handover_hdr->f_FirmwareVendorLen = BStrLen(SystemTable->FirmwareVendor);
+	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(SystemTable->FirmwareVendor);
 
 	// Assign to global 'kHandoverHeader'.
 
-	BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
+	Boot::BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
 
 	readerKernel.ReadAll(0);
 
@@ -268,9 +277,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL KERNEL DLL.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 	}
 
-	BFileReader chimeWav(L"ZKA\\startup.wav", ImageHandle);
-	BFileReader readerSysDrv(L"ZKA\\startup.sys", ImageHandle);
-	BFileReader urbanistTTF(L"ZKA\\urbanist.ttf", ImageHandle);
+	Boot::BFileReader chimeWav(L"ZKA\\startup.wav", ImageHandle);
+	Boot::BFileReader readerSysDrv(L"ZKA\\startup.sys", ImageHandle);
+	Boot::BFileReader urbanistTTF(L"ZKA\\urbanist.ttf", ImageHandle);
 
 	readerSysDrv.ReadAll(0);
 	chimeWav.ReadAll(0);

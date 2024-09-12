@@ -790,9 +790,13 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogNa
 		{
 			delete parentCatalog;
 		}
+		else
+		{
+		    return nullptr;
+		}
 	}
 
-	kcout << "fetching catalog...\r";
+	kcout << "Fetching catalog...\r";
 
 NeFSSearchThroughCatalogList:
 	while (drive.fPacket.fPacketGood)
@@ -980,7 +984,7 @@ VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 
 	if (dataForkLba < kNeFSCatalogStartAddress)
 	{
-		delete[] fs_buf;
+		delete fs_buf;
 		return nullptr;
 	}
 
@@ -1038,11 +1042,11 @@ namespace Kernel::Detail
 		sMountpointInterface.C() = io_construct_drive();
 		sMountpointInterface.D() = io_construct_drive();
 
-		kcout << "Testing A:\r";
+		kcout << "Constructing A:\r";
 
-		sMountpointInterface.A().fVerify(&sMountpointInterface.A().fPacket);
+		sMountpointInterface.A().fInit(&sMountpointInterface.A().fPacket);
 
-		kcout << "Testing A: [ OK ]\r";
+		kcout << "Constructing A: [ OK ]\r";
 
 		return true;
 	}

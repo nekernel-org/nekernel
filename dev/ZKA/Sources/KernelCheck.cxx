@@ -138,12 +138,6 @@ namespace Kernel
 
 	Void RecoveryFactory::Recover() noexcept
 	{
-		if (NeFileSystemMgr::GetMounted())
-		{
-			NeFileSystemMgr::GetMounted()->CreateSwapFile("\\Boot\\$DUMP");
-			NeFileSystemMgr::GetMounted()->CreateSwapFile("\\Support\\$CHKDSK");
-		}
-
 		PowerFactoryInterface power(nullptr);
 		power.Reboot();
 	}

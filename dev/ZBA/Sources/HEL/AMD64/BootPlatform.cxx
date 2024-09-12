@@ -10,6 +10,8 @@
 
 #ifdef __STANDALONE__
 
+using namespace Boot;
+
 EXTERN_C void rt_hlt()
 {
 	asm volatile("hlt");

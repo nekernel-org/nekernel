@@ -15,11 +15,11 @@
 #include <BootKit/Protocol.hxx>
 #include <BootKit/BootKit.hxx>
 
-/// bugs 0
+/// BUGS: 0
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Kernel::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const Kernel::SizeT len)
+Kernel::SizeT Boot::BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const Kernel::SizeT len)
 {
 	if (!dest || !src)
 		return 0;
@@ -33,7 +33,7 @@ Kernel::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const 
 	return index;
 }
 
-Kernel::SizeT BStrLen(const CharacterTypeUTF16* ptr)
+Kernel::SizeT Boot::BStrLen(const CharacterTypeUTF16* ptr)
 {
 	if (!ptr)
 		return 0;
@@ -49,7 +49,7 @@ Kernel::SizeT BStrLen(const CharacterTypeUTF16* ptr)
 	return cnt;
 }
 
-Kernel::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const Kernel::SizeT len)
+Kernel::SizeT Boot::BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const Kernel::SizeT len)
 {
 	if (!src)
 		return 0;
@@ -70,7 +70,7 @@ Kernel::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, co
 	return cnt;
 }
 
-Kernel::SizeT BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const Kernel::SizeT len)
+Kernel::SizeT Boot::BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const Kernel::SizeT len)
 {
 	if (!src)
 		return 0;

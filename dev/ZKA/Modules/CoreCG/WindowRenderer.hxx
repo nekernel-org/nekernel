@@ -47,7 +47,7 @@ namespace CG
 		Size					 w_child_count{0};
 		struct UI_WINDOW_STRUCT* w_child_elements[cChildElementCount]{0};
 		struct UI_WINDOW_STRUCT* w_parent{nullptr};
-		UInt32*					 display_ptr{nullptr};
+		UInt32*					 w_display_ptr{nullptr};
 		Bool					 w_needs_repaint{false};
 	};
 
@@ -92,8 +92,8 @@ namespace CG
 		wnd->w_w = width;
 		wnd->w_h = height;
 
-		wnd->display_ptr = new UInt32[width * height];
-		rt_set_memory(wnd->display_ptr, CGColor(0xF5, 0xF5, 0xF5), width * height);
+		wnd->w_display_ptr = new UInt32[width * height];
+		rt_set_memory(wnd->w_display_ptr, CGColor(0xF5, 0xF5, 0xF5), width * height);
 
 		return wnd;
 	}
@@ -182,7 +182,7 @@ namespace CG
 			// Draw fake controls, just for the looks of it (WINDOW ONLY)
 			if (wnd[index]->w_type == cWndFlagWindow)
 			{
-				CGDrawBitMapInRegion(wnd[index]->display_ptr, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
+				CGDrawBitMapInRegion(wnd[index]->w_display_ptr, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
 				CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), wnd[index]->w_w, FLATCONTROLS_HEIGHT, wnd[index]->w_y, wnd[index]->w_x);
 
 				if (wnd[index]->w_sub_type != cWndFlagHideCloseControl)
