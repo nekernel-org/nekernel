@@ -18,8 +18,6 @@
 
 namespace Kernel
 {
-	PageMgr kHeapPageMgr;
-	Bool		kHeapLock = No;
 
 	/// @brief Contains data structures and algorithms for the heap.
 	namespace Detail
@@ -51,12 +49,12 @@ namespace Kernel
 
 		Void mm_alloc_init_timeout(Void) noexcept
 		{
-			kHeapLock = Yes;
+			ZKA_UNUSED(0);
 		}
 
 		Void mm_alloc_fini_timeout(Void) noexcept
 		{
-			kHeapLock = No;
+			ZKA_UNUSED(0);
 		}
 	} // namespace Detail
 
@@ -100,7 +98,8 @@ namespace Kernel
 
 		sz_fix += sizeof(Detail::HEAP_INFORMATION_BLOCK);
 
-		auto wrapper = kHeapPageMgr.Request(rw, user, No, sz_fix);
+		PageMgr heap_mgr;
+		auto	wrapper = heap_mgr.Request(rw, user, No, sz_fix);
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
@@ -128,10 +127,8 @@ namespace Kernel
 	/// @return
 	Int32 mm_make_ke_page(VoidPtr heap_ptr)
 	{
-		if (((IntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK)) <= 0)
-			return -kErrorInternal;
-		if (((IntPtr)heap_ptr - kInvalidAddress) < 0)
-			return -kErrorInternal;
+		if (!heap_ptr)
+			return -kErrorHeapNotPresent;
 
 		Detail::mm_alloc_init_timeout();
 
@@ -139,11 +136,14 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
+		if (!heap_ptr)
+			return -kErrorHeapNotPresent;
+
 		heap_blk->fPage = true;
 
 		Detail::mm_alloc_fini_timeout();
 
-		return 0;
+		return kErrorSuccess;
 	}
 
 	/// @brief Declare pointer as free.
@@ -158,11 +158,10 @@ namespace Kernel
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+				(UIntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 		if (heap_blk && heap_blk->fMagic == kKernelHeapMagic)
 		{
-
 			if (!heap_blk->fPresent)
 			{
 				Detail::mm_alloc_fini_timeout();
@@ -183,21 +182,22 @@ namespace Kernel
 			}
 
 			heap_blk->fHeapSize = 0UL;
-			heap_blk->fPresent  = No;
-			heap_blk->fHeapPtr  = 0;
-			heap_blk->fCRC32	   = 0;
-			heap_blk->fMagic	   = 0;
+			heap_blk->fPresent	= No;
+			heap_blk->fHeapPtr	= 0;
+			heap_blk->fCRC32	= 0;
+			heap_blk->fMagic	= 0;
 
-			PTEWrapper		 pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+			PTEWrapper		pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pteAddress{pageWrapper};
 
 			kcout << "Freeing pointer address: " << hex_number(reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK)) << endl;
 
-			kHeapPageMgr.Free(pteAddress);
+			PageMgr heap_mgr;
+			heap_mgr.Free(pteAddress);
 
 			Detail::mm_alloc_fini_timeout();
 
-			return 0;
+			return kErrorSuccess;
 		}
 
 		return -kErrorInternal;
@@ -210,17 +210,17 @@ namespace Kernel
 	{
 		if (heap_ptr)
 		{
-			Detail::HEAP_INFORMATION_BLOCK_PTR virtualAddress =
+			Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+					(UIntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-			if (virtualAddress->fPresent && virtualAddress->fMagic == kKernelHeapMagic)
+			if (heap_blk && heap_blk->fPresent && heap_blk->fMagic == kKernelHeapMagic)
 			{
-				return true;
+				return Yes;
 			}
 		}
 
-		return false;
+		return No;
 	}
 
 	/// @brief Protect the heap with a CRC value.
@@ -232,17 +232,17 @@ namespace Kernel
 		{
 			Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+					(UIntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-			if (heap_blk->fPresent && kKernelHeapMagic == heap_blk->fMagic)
+			if (heap_ptr && heap_blk->fPresent && kKernelHeapMagic == heap_blk->fMagic)
 			{
 				heap_blk->fCRC32 =
 					ke_calculate_crc32((Char*)heap_blk->fHeapPtr, heap_blk->fHeapSize);
 
-				return true;
+				return Yes;
 			}
 		}
 
-		return false;
+		return No;
 	}
 } // namespace Kernel
