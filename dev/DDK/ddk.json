@@ -16,6 +16,7 @@
   "cpp_macros": [
     "__NEWOSKRNL__",
     "__DDK_AMD64__",
+    "__DDK__",
     "cDDKVersionHighest=0x0100",
     "cDDKVersionLowest=0x0100",
     "cDDKVersion=0x0100"

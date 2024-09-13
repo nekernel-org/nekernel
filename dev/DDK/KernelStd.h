@@ -13,14 +13,27 @@
 #include <stddef.h>
 
 #if defined(__cplusplus)
-#define DK_EXTERN extern "C"
+#define DK_EXTERN extern "C" __declspec(dllexport)
 #define nil		  nullptr
+#undef NULL
+#define NULL	  0
 #define DK_FINAL  final
 #else
-#define DK_EXTERN extern
+#define DK_EXTERN extern __declspec(dllexport)
 #define nil		  ((void*)0)
+#undef NULL
+#define NULL	  ((void*)0)
 #define DK_FINAL
 #endif // defined(__cplusplus)
+
+#ifndef __DDK__
+#undef DK_EXTERN
+#if defined(__cplusplus)
+#define DK_EXTERN extern "C" __declspec(dllimport)
+#else
+#define DK_EXTERN __declspec(dllimport)
+#endif
+#endif
 
 #define ATTRIBUTE(X) __attribute__((X))
 
@@ -33,9 +46,9 @@ struct DDK_OBJECT_MANIFEST;
 
 struct DDK_OBJECT_MANIFEST DK_FINAL
 {
-	char* p_name;
+	char*	p_name;
 	int32_t p_kind;
-	void* p_object;
+	void*	p_object;
 };
 
 /// \brief DDK status structure (__at_enable, __at_disable...)

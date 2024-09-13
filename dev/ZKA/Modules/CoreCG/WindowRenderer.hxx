@@ -53,12 +53,23 @@ namespace CG
 
 	typedef struct UI_WINDOW_STRUCT UI_WINDOW_STRUCT;
 
-	inline Void CGDrawBackground() noexcept
+	/// \brief Draw background (either image or solid color)
+	inline Void CGDrawBackground(UInt32* raw_bmp, SizeT width, SizeT height) noexcept
 	{
 		CGInit();
 
-		CGDrawInRegion(CGColor(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
-					   0, 0);
+		if (!raw_bmp)
+		{
+			const auto cColorBackground = CGColor(0x45, 0x00, 0x06);
+
+			CGDrawInRegion(cColorBackground, CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
+						   0, 0);
+		}
+		else
+		{
+			CGDrawBitMapInRegion(raw_bmp, height, width,
+								 0, 0);
+		}
 
 		CGFini();
 	}
@@ -98,19 +109,28 @@ namespace CG
 		return wnd;
 	}
 
-	inline bool CGDestroyWindow(struct UI_WINDOW_STRUCT* wnd)
+	/// \brief Destroys a window and it's contents.
+	inline Bool CGDestroyWindow(struct UI_WINDOW_STRUCT* wnd)
 	{
 		if (wnd)
 		{
-			delete wnd;
-
 			if (!mm_is_valid_heap(wnd))
 			{
 				wnd = nullptr;
 				return true;
 			}
 
+			wnd->w_needs_repaint = No;
+
+			for (SizeT index = 0UL; index < wnd->w_child_count; ++index)
+			{
+				CGDestroyWindow(wnd->w_child_elements[index]);
+			}
+
+			delete wnd;
 			wnd = nullptr;
+
+			return true;
 		}
 
 		return false;
