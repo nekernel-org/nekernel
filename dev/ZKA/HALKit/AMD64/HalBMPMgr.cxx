@@ -109,7 +109,7 @@ namespace Kernel
 
 						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != cBitMpMagic ? size : ptr_bit_set[1]));
 
-						if ((UIntPtr)base_ptr < (base + kHandoverHeader->f_BitMapSize))
+						if ((UIntPtr)base_ptr < ((base) + kHandoverHeader->f_BitMapSize))
 							return nullptr;
 					}
 
@@ -121,18 +121,18 @@ namespace Kernel
 				{
 					if (!this->IsBitMap(ptr_bit_set))
 					{
-						kcout << "Not a BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+						kcout << "Not a BitMap: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 						return;
 					}
 
-					kcout << "Magic Number: " << hex_number(ptr_bit_set[cBitMapMagIdx]) << endl;
+					kcout << "Magic BitMap Number: " << hex_number(ptr_bit_set[cBitMapMagIdx]) << endl;
 					kcout << "Allocated: " << (ptr_bit_set[cBitMapUsedIdx] ? "Yes" : "No") << endl;
-					kcout << "Size of pointer (B): " << number(ptr_bit_set[cBitMapSizeIdx]) << endl;
-					kcout << "Size of pointer (KIB): " << number(KIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
-					kcout << "Size of pointer (MIB): " << number(MIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
-					kcout << "Size of pointer (GIB): " << number(GIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
-					kcout << "Size of pointer (TIB): " << number(TIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
-					kcout << "Address Of BMP: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+					kcout << "Size of BitMap (B): " << number(ptr_bit_set[cBitMapSizeIdx]) << endl;
+					kcout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Address Of BitMap: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 				}
 			};
 		} // namespace Detail

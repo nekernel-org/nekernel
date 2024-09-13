@@ -103,13 +103,13 @@ namespace Kernel
 		return static_cast<Args&&>(arg);
 	}
 
-	/// @brief Coder/Decoder class, used as a proxy to convert T to Char*
+	/// @brief Encoding interface, used as a proxy to convert T to Char*
 	/// Used to cast A to B or B to A.
-	class IEncoderObject final
+	class IEncoderObject
 	{
 	public:
 		explicit IEncoderObject() = default;
-		~IEncoderObject()		  = default;
+		virtual ~IEncoderObject()		  = default;
 
 		IEncoderObject& operator=(const IEncoderObject&) = default;
 		IEncoderObject(const IEncoderObject&)			 = default;
@@ -133,7 +133,7 @@ namespace Kernel
 		template <typename T, typename Y>
 		Y As(T type) noexcept
 		{
-			if (type.IsCastable())
+			if (type.IsSerializable())
 			{
 				return reinterpret_cast<Char*>(type);
 			}
@@ -142,6 +142,7 @@ namespace Kernel
 		}
 	};
 
+	/// \brief Scheduler interface, represents a scheduler object.
 	class ISchedulerObject
 	{
 	public:
@@ -151,16 +152,19 @@ namespace Kernel
 		ISchedulerObject& operator=(const ISchedulerObject&) = default;
 		ISchedulerObject(const ISchedulerObject&)			 = default;
 
+		/// @brief Is this object only accepting user tasks?
 		virtual const Bool IsUser()
 		{
 			return false;
 		}
 
+		/// @brief Is this object only accepting kernel tasks?
 		virtual const Bool IsKernel()
 		{
 			return false;
 		}
 
+		/// @brief Is this object offloading to another CPU?
 		virtual const Bool HasMP()
 		{
 			return false;
