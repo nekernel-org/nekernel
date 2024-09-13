@@ -73,11 +73,11 @@ namespace Kernel
 				/// @return The new address which was found.
 				auto FindBitMap(VoidPtr base_ptr, SizeT size, Bool rw, Bool user) -> VoidPtr
 				{
-					auto base = reinterpret_cast<UIntPtr>(base_ptr);
+					VoidPtr base = base_ptr + kPageSize;
 
-					while (base_ptr && size)
+					while (base && size)
 					{
-						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
+						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
 
 						if (ptr_bit_set[cBitMapMagIdx] == cBitMpMagic)
 						{
@@ -107,9 +107,9 @@ namespace Kernel
 							return (VoidPtr)ptr_bit_set;
 						}
 
-						base_ptr = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != cBitMpMagic ? size : ptr_bit_set[1]));
+						base = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != cBitMpMagic ? size : ptr_bit_set[1]));
 
-						if ((UIntPtr)base_ptr < ((base) + kHandoverHeader->f_BitMapSize))
+						if ((UIntPtr)base_ptr < (reinterpret_cast<UIntPtr>(base) + kHandoverHeader->f_BitMapSize))
 							return nullptr;
 					}
 

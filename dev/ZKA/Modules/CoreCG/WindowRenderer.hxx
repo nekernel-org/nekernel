@@ -54,7 +54,7 @@ namespace CG
 	typedef struct UI_WINDOW_STRUCT UI_WINDOW_STRUCT;
 
 	/// \brief Draw background (either image or solid color)
-	inline Void CGDrawBackground(UInt32* raw_bmp, SizeT width, SizeT height) noexcept
+	inline Void CGDrawBackground(UInt32* raw_bmp = nullptr, SizeT width = 0, SizeT height = 0) noexcept
 	{
 		CGInit();
 
