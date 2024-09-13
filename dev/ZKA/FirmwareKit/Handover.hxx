@@ -108,9 +108,6 @@ namespace Kernel::HEL
 		kHandoverSpecificMemoryEfi,
 	};
 
-	/// @brief Bootloader main type.
-	typedef void (*BootMainKind)(HANDOVER_INFO_HEADER* handoverInfo);
-
 	/// @brief Alias of bootloader main type.
 	typedef void (*HandoverProc)(HANDOVER_INFO_HEADER* handoverInfo);
 } // namespace Kernel::HEL
