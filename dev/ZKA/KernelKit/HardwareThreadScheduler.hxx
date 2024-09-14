@@ -117,7 +117,7 @@ namespace Kernel
 
 		const Bool HasMP() override
 		{
-		return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
+			return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
 		}
 
 	public:

@@ -41,10 +41,10 @@ DK_EXTERN void KernelAddSyscall(const int slot, void (*slotFn)(void* a0))
 /// @return Object manifest.
 DK_EXTERN struct DDK_OBJECT_MANIFEST* KernelGetObject(const int slot, const char* name)
 {
-    struct DDK_OBJECT_MANIFEST* manifest = (struct DDK_OBJECT_MANIFEST*)KernelCall("RtlGetObject", slot, (void*)name, 1);
+	struct DDK_OBJECT_MANIFEST* manifest = (struct DDK_OBJECT_MANIFEST*)KernelCall("RtlGetObject", slot, (void*)name, 1);
 
-    if (!manifest)
-        return nil;
+	if (!manifest)
+		return nil;
 
 	return manifest;
 }

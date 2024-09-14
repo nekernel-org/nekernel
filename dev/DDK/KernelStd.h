@@ -16,13 +16,13 @@
 #define DK_EXTERN extern "C" __declspec(dllexport)
 #define nil		  nullptr
 #undef NULL
-#define NULL	  0
-#define DK_FINAL  final
+#define NULL	 0
+#define DK_FINAL final
 #else
 #define DK_EXTERN extern __declspec(dllexport)
 #define nil		  ((void*)0)
 #undef NULL
-#define NULL	  ((void*)0)
+#define NULL ((void*)0)
 #define DK_FINAL
 #endif // defined(__cplusplus)
 

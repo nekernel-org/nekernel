@@ -109,7 +109,7 @@ namespace Kernel
 	{
 	public:
 		explicit IEncoderObject() = default;
-		virtual ~IEncoderObject()		  = default;
+		virtual ~IEncoderObject() = default;
 
 		IEncoderObject& operator=(const IEncoderObject&) = default;
 		IEncoderObject(const IEncoderObject&)			 = default;
@@ -169,7 +169,6 @@ namespace Kernel
 		{
 			return false;
 		}
-
 	};
 } // namespace Kernel
 

@@ -1,8 +1,8 @@
 /* -------------------------------------------
 
-    Copyright ZKA Technologies.
+	Copyright ZKA Technologies.
 
-    Purpose: DDK C++ runtime.
+	Purpose: DDK C++ runtime.
 
 ------------------------------------------- */
 

@@ -26,8 +26,8 @@ namespace Kernel::HAL
 	/// @return Status code of page manip.
 	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, UInt32 flags)
 	{
-	    ZKA_UNUSED(virt_addr);
-	    ZKA_UNUSED(flags);
+		ZKA_UNUSED(virt_addr);
+		ZKA_UNUSED(flags);
 
 		return 0;
 	}

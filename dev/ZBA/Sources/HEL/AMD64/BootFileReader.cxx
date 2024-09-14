@@ -32,7 +32,7 @@
 	@brief File Reader constructor.
 */
 Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
-						 EfiHandlePtr			   ImageHandle)
+							   EfiHandlePtr				 ImageHandle)
 {
 	if (path != nullptr)
 	{

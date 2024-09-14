@@ -52,7 +52,6 @@ default.
 #define kNeFSPartitionTypePage	   (8)
 #define kNeFSPartitionTypeBoot	   (9)
 
-
 #define kNeFSCatalogKindFile  (1)
 #define kNeFSCatalogKindDir	  (2)
 #define kNeFSCatalogKindAlias (3)
@@ -71,8 +70,8 @@ default.
 #define kNeFSCatalogKindRLE		 (11)
 #define kNeFSCatalogKindMetaFile (12)
 
-#define kNeFSCatalogKindTTF		 (13)
-#define kNeFSCatalogKindRIFF	 (14)
+#define kNeFSCatalogKindTTF	 (13)
+#define kNeFSCatalogKindRIFF (14)
 
 #define kNeFSSeparator	  '\\'
 #define kNeFSSeparatorAlt '/'

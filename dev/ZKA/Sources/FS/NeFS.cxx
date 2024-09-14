@@ -60,7 +60,7 @@ STATIC MountpointInterface sMountpointInterface;
 /// @return the fork
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-												 _Input NFS_FORK_STRUCT& the_fork)
+												_Input NFS_FORK_STRUCT&	   the_fork)
 {
 	if (catalog && the_fork.ForkName[0] != 0 &&
 		the_fork.DataSize <= kNeFSForkDataSz)
@@ -142,10 +142,10 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 		constexpr auto cForkPadding =
 			4; /// this value gives us space for the data offset.
 
-		the_fork.Flags			|= kNeFSFlagCreated;
-		the_fork.DataOffset		= lba - sizeof(NFS_FORK_STRUCT);
+		the_fork.Flags |= kNeFSFlagCreated;
+		the_fork.DataOffset		 = lba - sizeof(NFS_FORK_STRUCT);
 		the_fork.PreviousSibling = lbaOfPreviousFork;
-		the_fork.NextSibling		= the_fork.DataOffset - the_fork.DataSize - sizeof(NFS_FORK_STRUCT);
+		the_fork.NextSibling	 = the_fork.DataOffset - the_fork.DataSize - sizeof(NFS_FORK_STRUCT);
 
 		drv.fPacket.fLba		   = lba;
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
@@ -172,10 +172,10 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 /// @return the fork.
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-											   _Input const Char* name,
-											   Boolean			  isDataFork)
+											  _Input const Char*		 name,
+											  Boolean					 isDataFork)
 {
-	auto			 drv	 = sMountpointInterface.A();
+	auto			 drv	  = sMountpointInterface.A();
 	NFS_FORK_STRUCT* the_fork = nullptr;
 
 	Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
@@ -238,9 +238,9 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name)
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
-													   _Input const Int32& flags,
-													   _Input const Int32& kind)
+_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
+													  _Input const Int32& flags,
+													  _Input const Int32& kind)
 {
 	kcout << "CreateCatalog(...)\r";
 
@@ -650,7 +650,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 				   rt_string_len("fs/newfs-packet"));
 
 	auto startFork = (!is_rsrc_fork) ? catalog->DataFork
-								   : catalog->ResourceFork;
+									 : catalog->ResourceFork;
 
 	NFS_FORK_STRUCT* fork_data_input = new NFS_FORK_STRUCT();
 	NFS_FORK_STRUCT	 prevFork{};
@@ -684,7 +684,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 			// Store the blob now.
 			// ===================================================== //
 
-			fork_data_input->Flags	   |= kNeFSFlagCreated;
+			fork_data_input->Flags |= kNeFSFlagCreated;
 
 			drive.fPacket.fPacketContent = buf;
 			drive.fPacket.fPacketSize	 = kNeFSForkDataSz;
@@ -722,7 +722,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 /// @param catalogName the catalog name.
 /// @return the newly found catalog.
 _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogName,
-													 Lba&				out_lba)
+													Lba&			   out_lba)
 {
 	kcout << "Start finding catalog...\r";
 
@@ -792,7 +792,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogNa
 		}
 		else
 		{
-		    return nullptr;
+			return nullptr;
 		}
 	}
 
@@ -936,9 +936,9 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 /***********************************************************************************/
 
 VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-								 _Input Bool						is_rsrc_fork,
-								 _Input SizeT						dataSz,
-								 _Input const Char* forkName)
+								_Input Bool						   is_rsrc_fork,
+								_Input SizeT					   dataSz,
+								_Input const Char*				   forkName)
 {
 	if (!catalog)
 	{

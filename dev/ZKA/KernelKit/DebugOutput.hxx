@@ -190,5 +190,7 @@ namespace Kernel
 #undef kcout
 #endif // ifdef kcout
 
-#define kcout (Kernel::TerminalDevice::The() << "\e[0;31m [ " << __FILE__ << ": LINE: " << Kernel::number(__LINE__)); (Kernel::TerminalDevice::The() << " ] \e[0m" << ": ")
-#define endl  Kernel::TerminalDevice::The() << Kernel::end_line()
+#define kcout                                                                                               \
+	(Kernel::TerminalDevice::The() << "\e[0;31m [ " << __FILE__ << ": LINE: " << Kernel::number(__LINE__)); \
+	(Kernel::TerminalDevice::The() << " ] \e[0m" << ": ")
+#define endl Kernel::TerminalDevice::The() << Kernel::end_line()

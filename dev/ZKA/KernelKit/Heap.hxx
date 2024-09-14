@@ -47,7 +47,6 @@ namespace Kernel
 	/// @return status code
 	Int32 mm_make_ke_page(VoidPtr heap_ptr);
 
-
 	template <typename T, typename... Args>
 	inline T* mm_new_class(Args&&... args)
 	{

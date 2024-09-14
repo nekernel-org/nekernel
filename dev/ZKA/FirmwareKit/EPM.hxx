@@ -111,10 +111,10 @@ struct PACKED _BOOT_BLOCK_STRUCT
 
 enum
 {
-	kEPMEmbeddedOS  = 0xcf, // Embedded OS
-	kEPMLinux = 0x8f, // Linux on EPM
-	kEPMBSD	  = 0x9f, // Berkeley Soft. Distribution
-	kEPMNewOS = 0x1f, // This OS.
+	kEPMEmbeddedOS = 0xcf, // Embedded OS
+	kEPMLinux	   = 0x8f, // Linux on EPM
+	kEPMBSD		   = 0x9f, // Berkeley Soft. Distribution
+	kEPMNewOS	   = 0x1f, // This OS.
 };
 
 typedef struct _BOOT_BLOCK_STRUCT BOOT_BLOCK_STRUCT;

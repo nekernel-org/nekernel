@@ -37,7 +37,6 @@ namespace Kernel
 
 		virtual Void Mount(DLL_TRAITS* to_mount) = 0;
 		virtual Void Unmount()					 = 0;
-
 	};
 
 	/// @brief Pure implementation, missing method/function handler.

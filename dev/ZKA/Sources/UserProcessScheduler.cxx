@@ -53,10 +53,8 @@ namespace Kernel
 
 	Void UserProcess::Crash()
 	{
-		if (*this->Name == 0)
-			return;
-
-		kcout << this->Name << ": crashed, ID = " << number(kErrorProcessFault) << endl;
+		if (*this->Name != 0)
+			kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
 
 		this->Exit(kErrorProcessFault);
 	}
@@ -112,12 +110,13 @@ namespace Kernel
 		}
 		else
 		{
-			auto entry = this->MemoryEntryList;
+			auto				  entry		 = this->MemoryEntryList;
+			PROCESS_MEMORY_ENTRY* prev_entry = nullptr;
 
-			while (entry->MemoryNext)
+			while (!entry)
 			{
-				if (entry->MemoryNext)
-					entry = entry->MemoryNext;
+				prev_entry = entry;
+				entry	   = entry->MemoryNext;
 			}
 
 			entry->MemoryNext			   = new UserProcess::PROCESS_MEMORY_ENTRY();
@@ -137,7 +136,7 @@ namespace Kernel
 	{
 		auto entry = this->MemoryEntryList;
 
-		while (entry->MemoryNext)
+		while (entry)
 		{
 			if (entry->MemoryEntry == ptr)
 			{
@@ -145,7 +144,7 @@ namespace Kernel
 				auto pd = hal_read_cr3();
 				hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
 
-				bool ret = mm_delete_ke_heap(ptr);
+				Bool ret = mm_delete_ke_heap(ptr);
 				hal_write_cr3(reinterpret_cast<VoidPtr>(pd));
 
 				return ret;
@@ -155,8 +154,7 @@ namespace Kernel
 #endif
 			}
 
-			if (entry->MemoryNext)
-				entry = entry->MemoryNext;
+			entry = entry->MemoryNext;
 		}
 
 		return false;
@@ -305,6 +303,9 @@ namespace Kernel
 	/// @param process_id process slot inside team.
 	/// @retval true process was removed.
 	/// @retval false process doesn't exist in team.
+
+	/***********************************************************************************/
+
 	Bool UserProcessScheduler::Remove(ProcessID process_id)
 	{
 		// check if process is within range.
@@ -317,8 +318,13 @@ namespace Kernel
 		return true;
 	}
 
-	/// @brief Run scheduler.
-	/// @return
+	/***********************************************************************************/
+
+	/// @brief Run User scheduler object.
+	/// @return Process executed within team.
+
+	/***********************************************************************************/
+
 	SizeT UserProcessScheduler::Run() noexcept
 	{
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
@@ -326,7 +332,7 @@ namespace Kernel
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
-			kcout << "Grabbing available process...\r";
+			kcout << "Grabbing available process in team...\r";
 
 			auto& process = mTeam.AsArray()[process_index];
 

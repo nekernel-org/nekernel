@@ -32,7 +32,10 @@ namespace Kernel
 		void		NoExecute(const bool enable = false);
 		const Bool& NoExecute();
 
-		operator bool() { return fVirtAddr; }
+		operator bool()
+		{
+			return fVirtAddr;
+		}
 
 		bool Reclaim();
 		bool Shareable();

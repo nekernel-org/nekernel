@@ -11,7 +11,7 @@
 #endif
 
 #ifndef kib_cast
-#define kib_cast(X) (Kernel::UInt64)((X)*1024)
+#define kib_cast(X) (Kernel::UInt64)((X) * 1024)
 #endif
 
 #ifndef MIB
@@ -94,10 +94,10 @@
 #define CANT_REACH() __builtin_unreachable()
 #endif
 
-#define kInvalidAddress	0xFBFBFBFBFBFBFBFB
-#define kBadAddress 0x00000000000000
-#define kMaxAddr	0xFFFFFFFFFFFFFFFF
-#define kPathLen	256
+#define kInvalidAddress 0xFBFBFBFBFBFBFBFB
+#define kBadAddress		0x00000000000000
+#define kMaxAddr		0xFFFFFFFFFFFFFFFF
+#define kPathLen		256
 
 #define PACKED	ATTRIBUTE(packed)
 #define NO_EXEC ATTRIBUTE(noexec)

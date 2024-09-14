@@ -148,8 +148,8 @@ namespace Kernel::HAL
 	struct PROCESS_CONTROL_BLOCK final
 	{
 		HAL::StackFramePtr f_Frame;
-		UInt8* f_Stack;
-		VoidPtr f_Image;
+		UInt8*			   f_Stack;
+		VoidPtr			   f_Image;
 	} fBlocks[kSchedProcessLimitPerTeam] = {0};
 
 	EXTERN_C HAL::StackFramePtr mp_get_current_context(Void)

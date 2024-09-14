@@ -15,6 +15,7 @@
 
 /// @brief PEF stack size symbol.
 #define cPefStackSizeSymbol "SizeOfReserveStack"
+#define cPefHeapSizeSymbol	"SizeOfReserveHeap"
 #define cPefNameSymbol		"ProgramName"
 
 namespace Kernel
@@ -206,8 +207,9 @@ namespace Kernel
 			UserProcess proc;
 
 			proc.SetImageStart(errOrStart.Leak().Leak());
-			proc.Kind	   = procKind;
-			proc.StackSize = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
+			proc.Kind		 = procKind;
+			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
+			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(cPefHeapSizeSymbol, kPefData);
 
 			rt_set_memory(proc.Name, 0, kProcessLen);
 
@@ -235,15 +237,17 @@ namespace Kernel
 	const Char* PEFLoader::AsString()
 	{
 #ifdef __32x0__
-		return "32x0 PEF format.";
+		return "32x0 PEF executable.";
 #elif defined(__64x0__)
-		return "64x0 PEF format.";
+		return "64x0 PEF executable.";
 #elif defined(__x86_64__)
-		return "x86_64 PEF format.";
+		return "x86_64 PEF executable.";
+#elif defined(__aarch64__)
+		return "aarch64 PEF executable.";
 #elif defined(__powerpc64__)
-		return "POWER PEF format.";
+		return "POWER64 PEF executable.";
 #else
-		return "Unknown PEF format.";
+		return "???? PEF executable.";
 #endif // __32x0__ || __64x0__ || __x86_64__ || __powerpc64__
 	}
 

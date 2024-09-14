@@ -12,8 +12,8 @@ int WinMain(int argc, char* argv[])
 
 	auto mainDll = LdrOpenDLL(argv[1], argv[2]);
 
-	IUnknown*  interface = (IUnknown*)LdrGetDLLProc(argv[3], mainDll);
-	RPCProcKind dllRpc	 = (RPCProcKind)LdrGetDLLProc(argv[4], mainDll);
+	IUnknown*	interface = (IUnknown*)LdrGetDLLProc(argv[3], mainDll);
+	RPCProcKind dllRpc	  = (RPCProcKind)LdrGetDLLProc(argv[4], mainDll);
 
 	if (!dllRpc)
 		return -1;

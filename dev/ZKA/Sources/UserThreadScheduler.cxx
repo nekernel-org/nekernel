@@ -18,13 +18,13 @@ namespace Kernel
 	{
 		STATIC constexpr SizeT cMaxLen = 256;
 
-		Char		  fName[cMaxLen] = {"THREAD #0 (PROCESS 0)"};
+		Char			  fName[cMaxLen] = {"THREAD #0 (PROCESS 0)"};
 		ProcessStatusKind fThreadStatus;
-		Int64		  fThreadID;
-		Int64*        fProcessID{nullptr};
-		VoidPtr		  fCode{nullptr};
-		VoidPtr		  fStack{nullptr};
-		VoidPtr		  fData{nullptr};
+		Int64			  fThreadID;
+		Int64*			  fProcessID{nullptr};
+		VoidPtr			  fCode{nullptr};
+		VoidPtr			  fStack{nullptr};
+		VoidPtr			  fData{nullptr};
 
 		Void Exit() noexcept
 		{
@@ -46,4 +46,4 @@ namespace Kernel
 			return fCode;
 		}
 	};
-} // namespace Detail
+} // namespace Kernel

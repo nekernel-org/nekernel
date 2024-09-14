@@ -67,13 +67,13 @@ namespace Kernel::HEL
 		VoidPtr f_PageStart;
 
 		VoidPtr f_KernelImage;
-		SizeT   f_KernelSz;
+		SizeT	f_KernelSz;
 		VoidPtr f_StartupChime;
-		SizeT   f_ChimeSz;
+		SizeT	f_ChimeSz;
 		VoidPtr f_StartupImage;
-		SizeT   f_StartupSz;
+		SizeT	f_StartupSz;
 		VoidPtr f_TTFallbackFont;
-		SizeT   f_FontSz;
+		SizeT	f_FontSz;
 
 		WideChar f_FirmwareVendorName[32];
 		SizeT	 f_FirmwareVendorLen;

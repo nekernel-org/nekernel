@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-    Copyright ZKA Technologies.
+	Copyright ZKA Technologies.
 
-    Purpose: DDK allocator.
+	Purpose: DDK allocator.
 
 ------------------------------------------- */
 
 #include <DDK/KernelStd.h>
 
 /**
-    \brief Allocates a new heap on the Kernel's side.
-    \param sz the size of the heap block.
-    \return the newly allocated pointer.
+	\brief Allocates a new heap on the Kernel's side.
+	\param sz the size of the heap block.
+	\return the newly allocated pointer.
 */
 DK_EXTERN void* KernelAlloc(size_t sz)
 {
@@ -24,8 +24,8 @@ DK_EXTERN void* KernelAlloc(size_t sz)
 }
 
 /**
-    \brief Frees a pointer from the heap.
-    \param ptr the pointer to free.
+	\brief Frees a pointer from the heap.
+	\param ptr the pointer to free.
 */
 DK_EXTERN void KernelFree(void* ptr)
 {

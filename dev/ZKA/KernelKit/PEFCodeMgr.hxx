@@ -12,7 +12,7 @@
 #include <NewKit/String.hxx>
 #include <KernelKit/FileMgr.hxx>
 
-#define kPefApplicationMime "application/x-newos-exec"
+#define kPefApplicationMime "application/vnd-zka-executable"
 
 namespace Kernel
 {

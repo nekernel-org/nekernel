@@ -15,7 +15,7 @@ namespace Kernel::HAL
 
 		STATIC Void hal_remap_intel_pic_ctrl(Void) noexcept
 		{
-			auto a1 = HAL::In8(0xa1);                        // save masks
+			auto a1 = HAL::In8(0xa1); // save masks
 			auto a2 = HAL::In8(0xa2);
 
 			HAL::Out8(0x20, 0x11);
@@ -61,9 +61,9 @@ namespace Kernel::HAL
 			Detail::kInterruptVectorTable[idt_indx].Zero = 0x0;
 		}
 
-		idt.Base = (UIntPtr)&Detail::kInterruptVectorTable;
+		idt.Base  = (UIntPtr)&Detail::kInterruptVectorTable;
 		idt.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) *
-						(kKernelIdtSize) - 1;
+					(kKernelIdtSize)-1;
 
 		hal_load_idt(idt);
 

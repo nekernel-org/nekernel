@@ -24,7 +24,7 @@
 /// Useful macros.
 
 #define NEFS_WRITE(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
-#define NEFS_READ(DRV, TRAITS, MP)	 (MP->DRV()).fInput(&TRAITS)
+#define NEFS_READ(DRV, TRAITS, MP)	(MP->DRV()).fInput(&TRAITS)
 
 using namespace Kernel;
 

@@ -249,7 +249,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Provide fimware vendor name.
 
 	Boot::BCopyMem(handover_hdr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
-			 handover_hdr->f_FirmwareVendorLen);
+				   handover_hdr->f_FirmwareVendorLen);
 
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(SystemTable->FirmwareVendor);
 

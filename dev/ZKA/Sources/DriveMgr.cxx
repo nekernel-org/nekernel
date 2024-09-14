@@ -8,7 +8,6 @@
 #include <KernelKit/DriveMgr.hxx>
 #include <NewKit/Utils.hxx>
 
-
 #include <Modules/ATA/ATA.hxx>
 #include <Modules/AHCI/AHCI.hxx>
 #include <Modules/NVME/Defines.hxx>
@@ -124,7 +123,7 @@ namespace Kernel
 		trait.fInput	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_unimplemented;
 		trait.fVerify	 = io_drv_unimplemented;
-		trait.fInit	 = io_drv_unimplemented;
+		trait.fInit		 = io_drv_unimplemented;
 		trait.fDriveKind = ke_drv_kind;
 
 		return trait;
@@ -142,7 +141,7 @@ namespace Kernel
 		trait.fInput	 = ke_drv_input;
 		trait.fOutput	 = ke_drv_output;
 		trait.fVerify	 = io_drv_unimplemented;
-		trait.fInit	 = ke_drv_init;
+		trait.fInit		 = ke_drv_init;
 		trait.fDriveKind = ke_drv_kind;
 
 		kcout << "Construct drive with success.\r";

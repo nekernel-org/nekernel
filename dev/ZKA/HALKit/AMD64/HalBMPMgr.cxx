@@ -79,11 +79,10 @@ namespace Kernel
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
 
-						if (ptr_bit_set[cBitMapMagIdx] == cBitMpMagic)
+						if (ptr_bit_set[cBitMapMagIdx] == cBitMpMagic &&
+							ptr_bit_set[cBitMapSizeIdx] <= size)
 						{
-							if (ptr_bit_set[cBitMapSizeIdx] != 0 &&
-								ptr_bit_set[cBitMapSizeIdx] <= size &&
-								ptr_bit_set[cBitMapUsedIdx] == No)
+							if (ptr_bit_set[cBitMapUsedIdx] == No)
 							{
 								ptr_bit_set[cBitMapSizeIdx] = size;
 								ptr_bit_set[cBitMapUsedIdx] = Yes;
@@ -93,12 +92,11 @@ namespace Kernel
 								return (VoidPtr)ptr_bit_set;
 							}
 						}
-						else
+						else if (ptr_bit_set[cBitMapMagIdx] != cBitMpMagic)
 						{
 							UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
 
-							ptr_bit_set[cBitMapMagIdx] = cBitMpMagic;
-
+							ptr_bit_set[cBitMapMagIdx]	= cBitMpMagic;
 							ptr_bit_set[cBitMapSizeIdx] = size;
 							ptr_bit_set[cBitMapUsedIdx] = Yes;
 
