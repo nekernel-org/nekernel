@@ -16,6 +16,15 @@
         <mxCell id="5xbXWvOdvmnQnRAweQaM-4" value="ZXD STUB [1..N]" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="40" y="340" width="310" height="60" as="geometry" />
         </mxCell>
+        <mxCell id="FgewEam9b60nFajCTQDb-1" value="StubHeapSz, StubStackSz, StubPageFlags..." style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="380" y="355" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="FgewEam9b60nFajCTQDb-2" value="Executable image type..." style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="380" y="274" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="FgewEam9b60nFajCTQDb-5" value="ZKA executable header." style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="380" y="194" width="290" height="30" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
