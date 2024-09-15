@@ -9,6 +9,7 @@
 #include <KernelKit/Heap.hxx>
 #include <NewKit/Crc32.hxx>
 #include <NewKit/PageMgr.hxx>
+#include <NewKit/Utils.hxx>
 
 //! @file KernelHeap.cxx
 //! @brief Kernel heap allocator.
@@ -112,6 +113,8 @@ namespace Kernel
 		heap_info_ptr->fPage	 = No;
 		heap_info_ptr->fUser	 = user;
 		heap_info_ptr->fPresent	 = Yes;
+
+		rt_set_memory(heap_info_ptr->fPadding, 0, kKernelHeapHeaderPaddingSz);
 
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fHeapPtr);
 
