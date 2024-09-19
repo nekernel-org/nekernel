@@ -23,6 +23,8 @@ namespace Kernel
 	/// @brief Contains data structures and algorithms for the heap.
 	namespace Detail
 	{
+		struct PACKED HEAP_INFORMATION_BLOCK;
+
 		/// @brief Kernel heap information block.
 		/// Located before the address bytes.
 		/// | HIB |  ADDRESS  |
@@ -46,6 +48,26 @@ namespace Kernel
 			UInt8 fPadding[kKernelHeapHeaderPaddingSz];
 		};
 
+		/// @brief Check for heap address validity.
+		/// @param heap_ptr The address_ptr
+		/// @return Bool if the pointer is valid or not.
+		auto mm_check_heap_address(VoidPtr heap_ptr) -> Bool
+		{
+			if (!heap_ptr)
+				return false;
+
+			/// Add that check in case we're having an integer underflow. ///
+
+			auto base_heap = (IntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK);
+
+			if (base_heap < 0)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		typedef HEAP_INFORMATION_BLOCK* HEAP_INFORMATION_BLOCK_PTR;
 
 		Void mm_alloc_init_timeout(Void) noexcept
@@ -63,24 +85,19 @@ namespace Kernel
 
 	/// @brief Declare a new size for ptr_heap.
 	/// @param ptr_heap the pointer.
-	/// @return
+	/// @return Newly allocated heap header.
 	voidPtr mm_realloc_ke_heap(voidPtr ptr_heap, SizeT new_sz)
 	{
+		if (Detail::mm_check_heap_address(ptr_heap) == No)
+			return nullptr;
+
 		if (!ptr_heap || new_sz < 1)
 			return nullptr;
 
-		Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
-			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)ptr_heap - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+		kcout << "This function is not implemented in the kernel, please refrain from using that.\r";
+		ke_stop(RUNTIME_CHECK_PROCESS);
 
-		heap_blk->fHeapSize = new_sz;
-
-		if (heap_blk->fCRC32 > 0)
-		{
-			MUST_PASS(mm_protect_ke_heap(ptr_heap));
-		}
-
-		return ptr_heap;
+		return nullptr;
 	}
 
 	/// @brief Allocate chunk of memory.
@@ -130,7 +147,7 @@ namespace Kernel
 	/// @return
 	Int32 mm_make_ke_page(VoidPtr heap_ptr)
 	{
-		if (!heap_ptr)
+		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return -kErrorHeapNotPresent;
 
 		Detail::mm_alloc_init_timeout();
@@ -154,8 +171,8 @@ namespace Kernel
 	/// @return
 	Int32 mm_delete_ke_heap(VoidPtr heap_ptr)
 	{
-		if (!heap_ptr)
-			return -kErrorInvalidData;
+		if (Detail::mm_check_heap_address(heap_ptr) == No)
+			return -kErrorHeapNotPresent;
 
 		Detail::mm_alloc_init_timeout();
 

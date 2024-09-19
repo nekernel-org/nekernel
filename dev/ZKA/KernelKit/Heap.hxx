@@ -23,7 +23,7 @@ namespace Kernel
 	/// @brief Declare a new size for heap_ptr.
 	/// @param heap_ptr the pointer.
 	/// @return
-	voidPtr mm_realloc_ke_heap(voidPtr heap_ptr, SizeT new_sz);
+	VoidPtr mm_realloc_ke_heap(voidPtr heap_ptr, SizeT new_sz);
 
 	/// @brief Check if pointer is a valid Kernel pointer.
 	/// @param heap_ptr the pointer
@@ -52,6 +52,13 @@ namespace Kernel
 	{
 		T* ptr = new T(move(args)...);
 		return ptr;
+	}
+
+	template <typename T>
+	inline Void mm_delete_class(T* cls)
+	{
+		cls->~T();
+		delete cls;
 	}
 } // namespace Kernel
 

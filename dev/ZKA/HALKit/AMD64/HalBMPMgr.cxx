@@ -73,7 +73,7 @@ namespace Kernel
 				/// @return The new address which was found.
 				auto FindBitMap(VoidPtr base_ptr, SizeT size, Bool rw, Bool user) -> VoidPtr
 				{
-					VoidPtr base = base_ptr + kPageSize;
+					VoidPtr base = reinterpret_cast<VoidPtr>(((UIntPtr)base_ptr) + kPageSize);
 
 					while (base && size)
 					{

@@ -89,8 +89,9 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::NeFileSystemMgr* mgr = (Kernel::mm_new_class<Kernel::NeFileSystemMgr>());
 	Kernel::NeFileSystemMgr::Mount(mgr);
 
-	delete (NFS_CATALOG_STRUCT*)mgr->CreateDirectory("\\Boot\\");
-	delete (NFS_CATALOG_STRUCT*)mgr->CreateDirectory("\\Support\\");
+	/// Do filesystem stuff here... (TODO)
+
+	Kernel::mm_delete_class(mgr);
 
 	mp_do_user_switch();
 
