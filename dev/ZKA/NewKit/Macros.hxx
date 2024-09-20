@@ -95,9 +95,9 @@
 #endif
 
 #define kInvalidAddress 0xFBFBFBFBFBFBFBFB
-#define kBadAddress		0x00000000000000
+#define kBadAddress		0x0000000000000000
 #define kMaxAddr		0xFFFFFFFFFFFFFFFF
-#define kPathLen		256
+#define kPathLen		0x100
 
 #define PACKED	ATTRIBUTE(packed)
 #define NO_EXEC ATTRIBUTE(noexec)
@@ -122,6 +122,9 @@
 
 /// @brief The main font file.
 #define kSysTTF "\\System\\urbanist.ttf"
+
+/// @brief License file
+#define kLicenseTxt "\\System\\License.txt"
 
 /// @brief The main kernel file.
 #define kSysChime "\\System\\startup.wav"
