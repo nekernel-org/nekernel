@@ -26,11 +26,12 @@ namespace Kernel
 
 	NeFileSystemMgr::~NeFileSystemMgr()
 	{
-		kcout << "Destroying it...\r";
-
 		if (fImpl)
 		{
+			kcout << "Destroying FS class (NeFS)...\r";
+
 			delete fImpl;
+			fImpl = nullptr;
 		}
 	}
 

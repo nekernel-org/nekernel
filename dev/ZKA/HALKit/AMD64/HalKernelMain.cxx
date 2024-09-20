@@ -86,12 +86,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	Kernel::NeFileSystemMgr* mgr = (Kernel::mm_new_class<Kernel::NeFileSystemMgr>());
+	Kernel::NeFileSystemMgr* mgr = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 	Kernel::NeFileSystemMgr::Mount(mgr);
-
-	/// Do filesystem stuff here... (TODO)
-
-	Kernel::mm_delete_class(mgr);
 
 	mp_do_user_switch();
 

@@ -86,7 +86,7 @@ namespace Kernel
 	/// @brief Declare a new size for ptr_heap.
 	/// @param ptr_heap the pointer.
 	/// @return Newly allocated heap header.
-	voidPtr mm_realloc_ke_heap(voidPtr ptr_heap, SizeT new_sz)
+	voidPtr mm_realloc_heap(voidPtr ptr_heap, SizeT new_sz)
 	{
 		if (Detail::mm_check_heap_address(ptr_heap) == No)
 			return nullptr;
@@ -105,7 +105,7 @@ namespace Kernel
 	/// @param rw Read Write bit.
 	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
-	VoidPtr mm_new_ke_heap(const SizeT sz, const bool rw, const bool user)
+	VoidPtr mm_new_heap(const SizeT sz, const bool rw, const bool user)
 	{
 		Detail::mm_alloc_init_timeout();
 
@@ -169,7 +169,7 @@ namespace Kernel
 	/// @brief Declare pointer as free.
 	/// @param heap_ptr the pointer.
 	/// @return
-	Int32 mm_delete_ke_heap(VoidPtr heap_ptr)
+	Int32 mm_delete_heap(VoidPtr heap_ptr)
 	{
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return -kErrorHeapNotPresent;
@@ -246,7 +246,7 @@ namespace Kernel
 	/// @brief Protect the heap with a CRC value.
 	/// @param heap_ptr HIB pointer.
 	/// @return if it valid: point has crc now., otherwise fail.
-	Boolean mm_protect_ke_heap(VoidPtr heap_ptr)
+	Boolean mm_protect_heap(VoidPtr heap_ptr)
 	{
 		if (heap_ptr)
 		{

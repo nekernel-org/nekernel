@@ -18,12 +18,12 @@ namespace Kernel
 	/// @brief Declare pointer as free.
 	/// @param heap_ptr the pointer.
 	/// @return
-	Int32 mm_delete_ke_heap(voidPtr heap_ptr);
+	Int32 mm_delete_heap(VoidPtr heap_ptr);
 
 	/// @brief Declare a new size for heap_ptr.
 	/// @param heap_ptr the pointer.
 	/// @return
-	VoidPtr mm_realloc_ke_heap(voidPtr heap_ptr, SizeT new_sz);
+	VoidPtr mm_realloc_heap(VoidPtr heap_ptr, SizeT new_sz);
 
 	/// @brief Check if pointer is a valid Kernel pointer.
 	/// @param heap_ptr the pointer
@@ -35,12 +35,12 @@ namespace Kernel
 	/// @param rw Read Write bit.
 	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
-	VoidPtr mm_new_ke_heap(const SizeT sz, const Bool rw, const Bool user);
+	VoidPtr mm_new_heap(const SizeT sz, const Bool rw, const Bool user);
 
 	/// @brief Protect the heap with a CRC value.
 	/// @param heap_ptr pointer.
 	/// @return if it valid: point has crc now., otherwise fail.
-	Boolean mm_protect_ke_heap(VoidPtr heap_ptr);
+	Boolean mm_protect_heap(VoidPtr heap_ptr);
 
 	/// @brief Makes a Kernel page.
 	/// @param heap_ptr the page pointer.
@@ -50,15 +50,21 @@ namespace Kernel
 	template <typename T, typename... Args>
 	inline T* mm_new_class(Args&&... args)
 	{
-		T* ptr = new T(move(args)...);
-		return ptr;
+		T* cls = (T*)mm_new_heap(sizeof(T), No, No);
+		MUST_PASS(cls);
+
+		*cls   = T(move(args)...);
+
+		return cls;
 	}
 
 	template <typename T>
 	inline Void mm_delete_class(T* cls)
 	{
 		cls->~T();
-		delete cls;
+		mm_delete_heap((VoidPtr)cls);
+
+		cls = nullptr;
 	}
 } // namespace Kernel
 

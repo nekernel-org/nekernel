@@ -21,7 +21,7 @@ namespace Kernel
 		Char			  fName[cMaxLen] = {"THREAD #0 (PROCESS 0)"};
 		ProcessStatusKind fThreadStatus;
 		Int64			  fThreadID;
-		Int64*			  fProcessID{nullptr};
+		UserProcessPtr	  fProcess{nullptr};
 		VoidPtr			  fCode{nullptr};
 		VoidPtr			  fStack{nullptr};
 		VoidPtr			  fData{nullptr};

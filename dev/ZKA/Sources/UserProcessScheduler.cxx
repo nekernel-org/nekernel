@@ -91,11 +91,11 @@ namespace Kernel
 		auto pd = hal_read_cr3();
 		hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
 
-		auto ptr = mm_new_ke_heap(sz, Yes, Yes);
+		auto ptr = mm_new_heap(sz, Yes, Yes);
 
 		hal_write_cr3(reinterpret_cast<VoidPtr>(pd));
 #else
-		auto ptr = mm_new_ke_heap(sz, Yes, Yes);
+		auto ptr = mm_new_heap(sz, Yes, Yes);
 #endif
 
 		if (!this->MemoryEntryList)
@@ -144,12 +144,12 @@ namespace Kernel
 				auto pd = hal_read_cr3();
 				hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
 
-				Bool ret = mm_delete_ke_heap(ptr);
+				Bool ret = mm_delete_heap(ptr);
 				hal_write_cr3(reinterpret_cast<VoidPtr>(pd));
 
 				return ret;
 #else
-				bool ret = mm_delete_ke_heap(ptr);
+				bool ret = mm_delete_heap(ptr);
 				return ret;
 #endif
 			}
@@ -200,10 +200,10 @@ namespace Kernel
 
 		//! Delete image if not done already.
 		if (this->Image && mm_is_valid_heap(this->Image))
-			mm_delete_ke_heap(this->Image);
+			mm_delete_heap(this->Image);
 
 		if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
-			mm_delete_ke_heap((VoidPtr)this->StackFrame);
+			mm_delete_heap((VoidPtr)this->StackFrame);
 
 		this->Image		 = nullptr;
 		this->StackFrame = nullptr;
@@ -242,7 +242,7 @@ namespace Kernel
 
 		process.Status = ProcessStatusKind::kStarting;
 
-		process.StackFrame = (HAL::StackFramePtr)mm_new_ke_heap(sizeof(HAL::StackFrame), Yes, Yes);
+		process.StackFrame = (HAL::StackFramePtr)mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes);
 
 		if (!process.StackFrame)
 		{
@@ -267,11 +267,11 @@ namespace Kernel
 
 		// get preferred stack size by app.
 		const auto cMaxStackSize = process.StackSize;
-		process.StackReserve	 = (UInt8*)mm_new_ke_heap(sizeof(UInt8) * cMaxStackSize, Yes, Yes);
+		process.StackReserve	 = (UInt8*)mm_new_heap(sizeof(UInt8) * cMaxStackSize, Yes, Yes);
 
 		if (!process.StackReserve)
 		{
-			mm_delete_ke_heap(process.StackFrame);
+			mm_delete_heap(process.StackFrame);
 			process.StackFrame = nullptr;
 			return -kErrorProcessFault;
 		}

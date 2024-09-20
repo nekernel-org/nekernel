@@ -87,7 +87,7 @@ namespace Kernel
 		fBad = true;
 
 		if (fCachedBlob)
-			mm_delete_ke_heap(fCachedBlob);
+			mm_delete_heap(fCachedBlob);
 
 		kcout << "CodeMgrPEF: Warning: Executable format error!\r";
 		fCachedBlob = nullptr;
@@ -97,7 +97,7 @@ namespace Kernel
 	PEFLoader::~PEFLoader()
 	{
 		if (fCachedBlob)
-			mm_delete_ke_heap(fCachedBlob);
+			mm_delete_heap(fCachedBlob);
 
 		fFile.Delete();
 	}
@@ -159,7 +159,7 @@ namespace Kernel
 					{
 						if (!this->fFatBinary)
 						{
-							mm_delete_ke_heap(blob);
+							mm_delete_heap(blob);
 							return nullptr;
 						}
 					}
@@ -167,14 +167,14 @@ namespace Kernel
 					Char* blobRet = new Char[container_header->Size];
 
 					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
-					mm_delete_ke_heap(blob);
+					mm_delete_heap(blob);
 
 					return blobRet;
 				}
 			}
 		}
 
-		mm_delete_ke_heap(blob);
+		mm_delete_heap(blob);
 		return nullptr;
 	}
 

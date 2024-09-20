@@ -156,13 +156,13 @@ namespace Kernel
 		NodePtr CreateSwapFile(const Char* path) override;
 
 	public:
-		bool	Remove(const Char* path) override;
-		NodePtr Open(const Char* path, const Char* r) override;
-		Void	Write(NodePtr node, VoidPtr data, Int32 flags, SizeT sz) override;
-		VoidPtr Read(NodePtr node, Int32 flags, SizeT sz) override;
-		bool	Seek(NodePtr node, SizeT off) override;
-		SizeT	Tell(NodePtr node) override;
-		bool	Rewind(NodePtr node) override;
+		bool	Remove(_Input const Char* path) override;
+		NodePtr Open(_Input const Char* path, _Input const Char* r) override;
+		Void	Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags, _Input SizeT sz) override;
+		VoidPtr Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT sz) override;
+		bool	Seek(_Input NodePtr node, _Input SizeT off) override;
+		SizeT	Tell(_Input NodePtr node) override;
+		bool	Rewind(_Input NodePtr node) override;
 
 		Void Write(_Input const Char* name,
 				   _Input NodePtr	  node,
@@ -415,6 +415,6 @@ namespace Kernel
 	template <typename Encoding, typename Class>
 	FileStream<Encoding, Class>::~FileStream()
 	{
-		mm_delete_ke_heap(fFile);
+		mm_delete_heap(fFile);
 	}
 } // namespace Kernel

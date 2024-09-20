@@ -17,9 +17,9 @@
 #define STBI_ONLY_GIF  1
 
 #define STBI_ASSERT(x)			 MUST_PASS(x)
-#define STBI_MALLOC(x)			 Kernel::mm_new_ke_heap(x, true, true)
-#define STBI_REALLOC(p, x)		 Kernel::mm_realloc_ke_heap(p, x);
-#define STBI_FREE(x)			 Kernel::mm_delete_ke_heap(x)
+#define STBI_MALLOC(x)			 Kernel::mm_new_heap(x, true, true)
+#define STBI_REALLOC(p, x)		 Kernel::mm_realloc_heap(p, x);
+#define STBI_FREE(x)			 Kernel::mm_delete_heap(x)
 #define STB_IMAGE_IMPLEMENTATION 1
 
 #include <KernelKit/Heap.hxx>
