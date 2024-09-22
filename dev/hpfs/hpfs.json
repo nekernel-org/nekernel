@@ -1,0 +1,22 @@
+{
+  "compiler_path": "x86_64-w64-mingw32-g++",
+  "compiler_std": "c++20",
+  "headers_path": ["../"],
+  "sources_path": ["src/*.cxx"],
+  "output_name": "hpfs.sys",
+  "compiler_flags": [
+    "-fPIC",
+    "-ffreestanding",
+    "-shared",
+    "-fno-rtti",
+    "-fno-exceptions",
+    "-Wl,--subsystem=17"
+  ],
+  "cpp_macros": [
+    "__HPFS_IMPL__",
+    "__NEWOSKRNL__",
+    "cHPFSVersion=0x0100",
+    "cHPFSVersionHighest=0x0100",
+    "cHPFSVersionLowest=0x0100"
+  ]
+}

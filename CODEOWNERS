@@ -1,6 +1,6 @@
 # HPFS and ZKA are owned by Amlal.
-/dev/ZKA/ @ZKA-Technologies
-/dev/HPFS/ @ZKA-Technologies
+/dev/zka/ @ZKA-Technologies
+/dev/hpfs/ @ZKA-Technologies
 
 # Need someone to own ZKA Boot Architecture.
-/dev/ZBA/ @ZKA-Technologies
+/dev/zba/ @ZKA-Technologies

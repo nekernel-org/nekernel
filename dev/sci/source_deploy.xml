@@ -1,0 +1,9 @@
+<SourceDeploy>
+<HiddenFiles>
+    <SourceFile>src/*.cxx</SourceFile>
+    <SourceFile>*.drawio</SourceFile>
+    <SourceFile>*.hxx</SourceFile>
+    <SourceFile>*.inl</SourceFile>
+    <SourceFile>*.idl</SourceFile>
+</HiddenFiles>
+</SourceDeploy>
