@@ -1,4 +1,4 @@
--Idev/ZKA
+-Idev/zka
 -Idev/
 -Idev/zba/
 -Idev/zba/BootKit
