@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies.
 
-	File: HalProcessor.cxx
+	File: HalCPU.cxx
 	Purpose: Platform processor routines.
 
 ------------------------------------------- */
@@ -11,27 +11,12 @@
 #include <HALKit/AMD64/Processor.hxx>
 
 /**
- * @file HalCommAPI.cxx
+ * @file HalCPU.cxx
  * @brief CPU Common API.
  */
 
-#define PhysShift36(ADDR) ((UInt64)ADDR >> 12)
-
 namespace Kernel::HAL
 {
-	/// @brief Maps or allocates a page from virt_addr.
-	/// @param virt_addr a valid virtual address.
-	/// @param phys_addr point to physical address.
-	/// @param flags the flags to put on the page.
-	/// @return Status code of page manip.
-	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, UInt32 flags)
-	{
-		ZKA_UNUSED(virt_addr);
-		ZKA_UNUSED(flags);
-
-		return 0;
-	}
-
 	Void Out8(UInt16 port, UInt8 value)
 	{
 		asm volatile("outb %%al, %1"

@@ -53,7 +53,7 @@ namespace Kernel
 		T* cls = (T*)mm_new_heap(sizeof(T), No, No);
 		MUST_PASS(cls);
 
-		*cls   = T(move(args)...);
+		*cls = T(move(args)...);
 
 		return cls;
 	}

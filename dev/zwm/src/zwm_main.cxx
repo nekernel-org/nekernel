@@ -2,13 +2,12 @@
 
 	Copyright ZKA Technologies.
 
-	FILE: IFSMain.cxx
-	PURPOSE: HPFS IFS entrypoint.
+	FILE: main.cxx
+	PURPOSE: ZWM entrypoint.
 
 ------------------------------------------- */
 
 #include <ddk/KernelStd.h>
-#include <cstdint>
 
 static uint32_t					   cGPUIndexHW = 0U;
 static struct DDK_OBJECT_MANIFEST* cGPUObject  = nullptr;

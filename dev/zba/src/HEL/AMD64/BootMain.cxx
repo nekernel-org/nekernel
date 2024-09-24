@@ -204,8 +204,8 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Update handover file specific table and phyiscal start field.
 	//-----------------------------------------------------------//
 
-	handover_hdr->f_BitMapStart = nullptr;			 /* # of pages */
-	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* # of pages */
+	handover_hdr->f_BitMapStart = nullptr;			 /* Start of bitmap. */
+	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* Size of bitmap. */
 
 	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
 	{
