@@ -1,5 +1,7 @@
+// (C) ZKA Technologies
+
 #pragma once
 
 /// <COMMIT NUMBER>.<YEAR>.<PROGRAM VERSION>
-#define BOOTLOADER_VERSION "843.2024.1"
-#define KERNEL_VERSION	   "843.2024.1"
+#define BOOTLOADER_VERSION "930.2024.1"
+#define KERNEL_VERSION	   "930.2024.1"
