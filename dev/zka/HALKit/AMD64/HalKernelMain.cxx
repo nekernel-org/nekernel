@@ -29,6 +29,7 @@ namespace Kernel::HAL
 } // namespace Kernel::HAL
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
+EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
 
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
@@ -88,6 +89,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::NeFileSystemMgr* mgr = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 	Kernel::NeFileSystemMgr::Mount(mgr);
+
+	Kernel::HAL::mm_map_page(mp_user_switch_proc, Kernel::HAL::eFlagsUser);
 
 	mp_do_user_switch();
 

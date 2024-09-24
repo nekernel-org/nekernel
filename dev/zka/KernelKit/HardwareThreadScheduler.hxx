@@ -14,7 +14,7 @@
 /// @note Last Rev Sun 28 Jul CET 2024
 /// @note Last Rev Thu, Aug  1, 2024  9:07:38 AM
 
-#define cMaxHWThreads (8U)
+#define cMaxHartInsideSched (8U)
 
 namespace Kernel
 {
@@ -37,10 +37,12 @@ namespace Kernel
 	typedef enum ThreadKind ThreadKind;
 	typedef ThreadID		ThreadID;
 
+	/***********************************************************************************/
 	///
 	/// \name HardwareThread
 	/// \brief Abstraction over the CPU's core, used to run processes or threads.
 	///
+	/***********************************************************************************/
 
 	class HardwareThread final
 	{
@@ -131,7 +133,7 @@ namespace Kernel
 		SizeT Count() noexcept;
 
 	private:
-		Array<HardwareThread, cMaxHWThreads> fThreadList;
+		Array<HardwareThread, cMaxHartInsideSched> fThreadList;
 		ThreadID							 fCurrentThread{0};
 	};
 

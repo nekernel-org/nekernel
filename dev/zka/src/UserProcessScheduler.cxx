@@ -59,6 +59,12 @@ namespace Kernel
 		this->Exit(kErrorProcessFault);
 	}
 
+	//! @brief boolean operator, check status.
+	UserProcess::operator bool()
+	{
+		return this->Status != ProcessStatusKind::kDead;
+	}
+
 	/// @brief Gets the local last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
@@ -83,8 +89,9 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-
 	/** @brief Add pointer to entry. */
+	/***********************************************************************************/
+
 	VoidPtr UserProcess::New(const SizeT& sz)
 	{
 #ifdef __ZKA_AMD64__
@@ -110,16 +117,19 @@ namespace Kernel
 		}
 		else
 		{
-			auto				  entry		 = this->MemoryEntryList;
+			PROCESS_MEMORY_ENTRY* entry		 = this->MemoryEntryList;
 			PROCESS_MEMORY_ENTRY* prev_entry = nullptr;
 
 			while (!entry)
 			{
+				if (entry->MemoryEntry == nullptr)
+					break; // chose to break here, when we get an already allocated memory entry for our needs.
+
 				prev_entry = entry;
 				entry	   = entry->MemoryNext;
 			}
 
-			entry->MemoryNext			   = new UserProcess::PROCESS_MEMORY_ENTRY();
+			entry->MemoryNext			   = new PROCESS_MEMORY_ENTRY();
 			entry->MemoryNext->MemoryEntry = ptr;
 
 			entry->MemoryNext->MemoryPrev = entry;
@@ -130,13 +140,18 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-
 	/** @brief Free pointer from usage. */
+	/***********************************************************************************/
+
 	Boolean UserProcess::Delete(VoidPtr ptr, const SizeT& sz)
 	{
-		auto entry = this->MemoryEntryList;
+		if (!ptr ||
+			sz == 0)
+			return No;
 
-		while (entry)
+		PROCESS_MEMORY_ENTRY* entry = this->MemoryEntryList;
+
+		while (entry != nullptr)
 		{
 			if (entry->MemoryEntry == ptr)
 			{
@@ -149,7 +164,7 @@ namespace Kernel
 
 				return ret;
 #else
-				bool ret = mm_delete_heap(ptr);
+				Bool ret = mm_delete_heap(ptr);
 				return ret;
 #endif
 			}
@@ -157,16 +172,16 @@ namespace Kernel
 			entry = entry->MemoryNext;
 		}
 
-		return false;
+		return No;
 	}
 
-	/// @brief UserProcess name getter.
+	/// @brief Gets the name of the current process..
 	const Char* UserProcess::GetProcessName() noexcept
 	{
 		return this->Name;
 	}
 
-	/// @brief UserProcess user getter.
+	/// @brief Gets the owner of the process.
 	const User* UserProcess::GetOwner() noexcept
 	{
 		return this->Owner;
@@ -179,18 +194,22 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-
 	/**
 	@brief Affinity is the time slot allowed for the process.
 	*/
+	/***********************************************************************************/
+
 	const AffinityKind& UserProcess::GetAffinity() noexcept
 	{
 		return this->Affinity;
 	}
 
+	/***********************************************************************************/
 	/**
-	@brief Standard exit proc.
+	@brief Process exit method.
 	*/
+	/***********************************************************************************/
+
 	void UserProcess::Exit(const Int32& exit_code)
 	{
 		this->Status = ProcessStatusKind::kDead;
@@ -208,14 +227,14 @@ namespace Kernel
 		this->Image		 = nullptr;
 		this->StackFrame = nullptr;
 
-		if (this->Kind == kDLLKind)
+		if (this->Kind == eExecutableDLLKind)
 		{
 			Bool success = false;
-			rtl_fini_dll(this, this->DLLPtr, &success);
+			rtl_fini_dll(this, this->PefDLLDelegate, &success);
 
 			if (success)
 			{
-				this->DLLPtr = nullptr;
+				this->PefDLLDelegate = nullptr;
 			}
 		}
 
@@ -251,14 +270,14 @@ namespace Kernel
 		}
 
 		// Create heap according to type of process.
-		if (process.Kind == UserProcess::kDLLKind)
+		if (process.Kind == UserProcess::eExecutableDLLKind)
 		{
-			process.DLLPtr = rtl_init_dll(&process);
+			process.PefDLLDelegate = rtl_init_dll(&process);
 		}
 
 		if (!process.Image)
 		{
-			if (process.Kind != UserProcess::kDLLKind)
+			if (process.Kind != UserProcess::eExecutableDLLKind)
 			{
 				process.Crash();
 				return -kErrorProcessFault;
@@ -398,18 +417,20 @@ namespace Kernel
 			return No;
 
 		if (!process.Image &&
-			process.Kind == UserProcess::kExeKind)
+			process.Kind == UserProcess::eExecutableKind)
 			return No;
 
 		return Yes;
 	}
 
+	/***********************************************************************************/
 	/**
 	 * @brief Scheduler helper class.
 	 */
+	/***********************************************************************************/
 
 	EXTERN
-	HardwareThreadScheduler* cHardwareThreadScheduler;
+	HardwareThreadScheduler* cHardwareThreadScheduler; //! @brief Ask linker for the hardware thread scheduler.
 
 	SizeT UserProcessHelper::StartScheduling()
 	{
@@ -429,11 +450,13 @@ namespace Kernel
 		return ret;
 	}
 
+	/***********************************************************************************/
 	/**
 	 * \brief Does a context switch in a CPU.
 	 * \param the_stack the stackframe of the running app.
 	 * \param new_pid the process's PID.
 	 */
+	/***********************************************************************************/
 
 	Bool UserProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
 	{

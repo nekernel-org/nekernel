@@ -159,7 +159,7 @@ namespace Kernel
 				fThreadList[idx].fKind = kHartBoot;
 			}
 		}
-		else if (idx >= cMaxHWThreads)
+		else if (idx >= cMaxHartInsideSched)
 		{
 			static HardwareThread* fakeThread = nullptr;
 			return {fakeThread};

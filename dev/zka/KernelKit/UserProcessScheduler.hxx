@@ -16,6 +16,9 @@
 #define kSchedInvalidPID		  (-1)
 #define kSchedProcessLimitPerTeam (16U)
 
+#define kSchedMaxMemoryLimit gib_cast(128)
+#define kSchedMaxStackSz mib_cast(8)
+
 ////////////////////////////////////////////////////
 
 // LAST REV: Mon Feb 12 13:52:01 CET 2024
@@ -149,48 +152,48 @@ namespace Kernel
 		ProcessStatusKind  Status{ProcessStatusKind::kDead};
 		UInt8*			   StackReserve{nullptr};
 
-		// Memory, images pointers.
+		//! @brief Code Image.
 		ImagePtr Image{nullptr};
 
-		SizeT StackSize{mib_cast(8)};
+		SizeT StackSize{kSchedMaxStackSz};
 
-		//! @brief Shared library handle, reserved for kDLLKind types of executables only.
-		IPEFDLLObject* DLLPtr{nullptr};
+		//! @brief Shared library handle, reserved for eExecutableDLLKind types of executables only.
+		IPEFDLLObject* PefDLLDelegate{nullptr};
 
 		/// @brief Parent process, reserved for threads only.
 		UserProcess* Parent{nullptr};
 
 		// Memory usage.
 		SizeT MemoryCursor{0};
-		SizeT MemoryLimit{gib_cast(128)};
+		SizeT MemoryLimit{kSchedMaxMemoryLimit};
 
-		struct PROCESS_MEMORY_ENTRY
+		struct PROCESS_MEMORY_ENTRY final
 		{
 			VoidPtr MemoryEntry;
 
 			struct PROCESS_MEMORY_ENTRY* MemoryPrev;
 			struct PROCESS_MEMORY_ENTRY* MemoryNext;
-		}* MemoryEntryList{nullptr};
+		};
+
+		PROCESS_MEMORY_ENTRY* MemoryEntryList{nullptr};
 
 		SizeT MemoryPD{0};
 
 		enum
 		{
-			kExeKind = 1,
-			kDLLKind = 2,
-			kKindCount,
+			eExecutableKind,
+			eExecutableDLLKind,
+			eExecutableKindCount,
 		};
 
-		ProcessTime PTime{0};
+		ProcessTime PTime{0}; //! @brief Process allocated tine.
+
 		PID			ProcessId{kSchedInvalidPID};
-		Int32		Kind{kExeKind};
+		Int32		Kind{eExecutableKind};
 
 	public:
 		//! @brief boolean operator, check status.
-		operator bool()
-		{
-			return Status != ProcessStatusKind::kDead;
-		}
+		operator bool();
 
 		///! @brief Crashes the app, exits with code ~0.
 		Void Crash();
