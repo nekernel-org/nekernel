@@ -1,7 +1,7 @@
-# ZKA User DLLs/Programs.
+# ZKA User apps and services.
 
 ## Description:
 
-- Used to provide features to a program from the sci.dll.
+- Provides firewall, filesystem encrypter and rundll/runxpcom tools.
 
 ###### Copyright ZKA Technologies, all rights reserved.

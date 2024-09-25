@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "./"],
   "sources_path": ["src/*.cxx"],
-  "output_name": "efs.sys",
+  "output_name": "efs.zsc",
   "compiler_flags": [
     "-ffreestanding",
     "-shared",

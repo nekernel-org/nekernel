@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2024 ZKA Technologies
+ */
+
 #include <sci/sci_base.hxx>
 
 typedef SInt32 (*RPCProcKind)(IUnknown*);
