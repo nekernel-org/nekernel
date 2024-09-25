@@ -36,7 +36,7 @@ ASMFLAGS	= -f win64
 
 # Kernel subsystem is 17 and entrypoint is hal_init_platform
 LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x4000000
-LDOBJ		= Objects/*.obj
+LDOBJ		= obj/*.obj
 
 # This file is the Kernel, responsible of task, memory, driver, sci, disk and device management.
 KERNEL_IMG		= newoskrnl.exe

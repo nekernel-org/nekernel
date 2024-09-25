@@ -1,5 +1,11 @@
 # ZKA Encrypted File System.
 
-This is ZKA's Encrypted file system DLL.
+### Purpose:
+
+This is ZKA's Encrypted File System DLL.
+
+### Building:
+
+`btb build.json`
 
 ###### (c) ZKA Technologies, all rights reserved.

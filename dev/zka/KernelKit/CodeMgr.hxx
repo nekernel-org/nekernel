@@ -3,7 +3,7 @@
 	Copyright ZKA Technologies.
 
 	File: CodeMgr.hpp
-	Purpose: Code Mgr and Shared Objects.
+	Purpose: Code Mgr and DLL mgr.
 
 	Revision History:
 

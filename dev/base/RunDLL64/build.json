@@ -8,7 +8,7 @@
     "-ffreestanding",
     "-fno-rtti",
     "-fno-exceptions",
-    " -Wl,--subsystem=17"
+    "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
     "__RUNDLL_AMD64__",

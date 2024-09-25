@@ -117,7 +117,7 @@ enum
 	kNeFSSolidStateDrive   = 0xC1, // Solid State Drive
 	kNeFSOpticalDrive	   = 0x0C, // Blu-Ray/DVD
 	kNeFSMassStorageDevice = 0xCC, // USB
-	kNeFSScsi			   = 0xC4, // SCSI Hard Drive
+	kNeFSScsiDrive		   = 0xC4, // SCSI Hard Drive
 	kNeFSFlashDrive		   = 0xC6,
 	kNeFSUnknown		   = 0xFF, // Unknown device.
 	kNeFSDriveCount		   = 7,

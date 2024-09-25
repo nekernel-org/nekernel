@@ -5,7 +5,7 @@ typedef SInt32 (*RPCProcKind)(IUnknown*);
 /**
  * @brief Main procedure for DLL runner.
  */
-int WinMain(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	if (argc < 4)
 		return -1;

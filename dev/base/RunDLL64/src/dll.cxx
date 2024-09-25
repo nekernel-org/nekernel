@@ -2,7 +2,7 @@
 
 typedef int (*MainKind)(int, char**);
 
-int WinMain(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	if (argc < 3)
 		return -1;

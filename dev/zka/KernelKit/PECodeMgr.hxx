@@ -3,7 +3,7 @@
 	Copyright ZKA Technologies.
 
 	File: PECodeMgr.hxx
-	Purpose: PE32+ Code Mgr and Shared Objects.
+	Purpose: PE32+ Code Mgr and DLL mgr.
 
 	Revision History:
 
