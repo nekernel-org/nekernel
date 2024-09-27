@@ -15,7 +15,7 @@
 #include <Modules/CoreCG/Accessibility.hxx>
 #include <Modules/CoreCG/FbRenderer.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
-#include <Modules/CoreCG/WindowRenderer.hxx>
+#include <Modules/CoreCG/DesktopRenderer.hxx>
 
 #define SetMem(dst, byte, sz) Kernel::rt_set_memory((Kernel::VoidPtr)dst, byte, sz)
 #define CopyMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
@@ -34,7 +34,7 @@ namespace Kernel
 
 		auto panicTxt = RGB(0xff, 0xff, 0xff);
 
-		CG::CGDrawBackground();
+		CG::CGDrawDesktopBackground();
 
 		auto start_y = 10;
 		auto x		 = 10;

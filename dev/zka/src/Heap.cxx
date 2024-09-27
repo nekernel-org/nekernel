@@ -102,10 +102,10 @@ namespace Kernel
 
 	/// @brief Allocate chunk of memory.
 	/// @param sz Size of pointer
-	/// @param rw Read Write bit.
+	/// @param wr Read Write bit.
 	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
-	VoidPtr mm_new_heap(const SizeT sz, const bool rw, const bool user)
+	VoidPtr mm_new_heap(const SizeT sz, const bool wr, const bool user)
 	{
 		Detail::mm_alloc_init_timeout();
 
@@ -117,7 +117,7 @@ namespace Kernel
 		sz_fix += sizeof(Detail::HEAP_INFORMATION_BLOCK);
 
 		PageMgr heap_mgr;
-		auto	wrapper = heap_mgr.Request(rw, user, No, sz_fix);
+		auto	wrapper = heap_mgr.Request(wr, user, No, sz_fix);
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(

@@ -88,7 +88,7 @@ namespace Kernel::HAL
 		ZKA_PTE* ALIGN(kPageAlign) fEntries[kPageMax];
 	};
 
-	auto mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size) -> VoidPtr;
+	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size) -> VoidPtr;
 	auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
 } // namespace Kernel::HAL
 

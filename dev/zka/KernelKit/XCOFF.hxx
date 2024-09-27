@@ -36,7 +36,7 @@ typedef struct XCoffFileHeader
 	Kernel::UIntPtr fSymPtr;
 	Kernel::UInt32	fNumSyms;
 	Kernel::UInt16	fOptHdr; // ?: Number of bytes in optional header
-} XCoffFileHeader32, XCoffFileHeader64;
+} XCoffFileHeader64;
 
 #define cForkNameLen (255)
 

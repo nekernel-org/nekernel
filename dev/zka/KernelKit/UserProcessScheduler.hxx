@@ -17,7 +17,7 @@
 #define kSchedProcessLimitPerTeam (16U)
 
 #define kSchedMaxMemoryLimit gib_cast(128)
-#define kSchedMaxStackSz mib_cast(8)
+#define kSchedMaxStackSz	 mib_cast(8)
 
 ////////////////////////////////////////////////////
 
@@ -188,8 +188,8 @@ namespace Kernel
 
 		ProcessTime PTime{0}; //! @brief Process allocated tine.
 
-		PID			ProcessId{kSchedInvalidPID};
-		Int32		Kind{eExecutableKind};
+		PID	  ProcessId{kSchedInvalidPID};
+		Int32 Kind{eExecutableKind};
 
 	public:
 		//! @brief boolean operator, check status.

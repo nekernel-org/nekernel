@@ -6,7 +6,6 @@
 
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/DebugOutput.hxx>
-#include <KernelKit/Framebuffer.hxx>
 #include <NewKit/Utils.hxx>
 #include <NewKit/New.hxx>
 

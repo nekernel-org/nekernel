@@ -17,18 +17,18 @@ namespace CG
 {
 	using namespace Kernel;
 
-	/// @brief common User interface class.
-	class UIAccessibilty final
+	/// @brief Accessibilty manager class.
+	class CGAccessibilty final
 	{
-		explicit UIAccessibilty() = default;
-		~UIAccessibilty()		  = default;
+		explicit CGAccessibilty() = default;
+		~CGAccessibilty()		  = default;
 
 	public:
-		ZKA_COPY_DELETE(UIAccessibilty);
+		ZKA_COPY_DELETE(CGAccessibilty);
 
-		STATIC UIAccessibilty& The()
+		STATIC CGAccessibilty& The()
 		{
-			STATIC UIAccessibilty the;
+			STATIC CGAccessibilty the;
 			return the;
 		}
 

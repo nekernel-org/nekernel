@@ -134,7 +134,7 @@ namespace Kernel
 
 	private:
 		Array<HardwareThread, cMaxHartInsideSched> fThreadList;
-		ThreadID							 fCurrentThread{0};
+		ThreadID								   fCurrentThread{0};
 	};
 
 	/// @brief wakes up thread.

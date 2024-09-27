@@ -161,7 +161,9 @@ inline Kernel::Void CGRenderStringFromBitMap(const Kernel::UInt8* bitmap, const 
 			set = bitmap[x] & (1 << y);
 
 			if (set)
+			{
 				CGDrawInRegion(color, 1, 1, ((x_dst) + x), ((y_dst) + y));
+			}
 		}
 	}
 }

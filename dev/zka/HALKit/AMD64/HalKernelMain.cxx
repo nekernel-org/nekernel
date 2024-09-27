@@ -8,7 +8,6 @@
 #include <Modules/CoreCG/FbRenderer.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileMgr.hxx>
-#include <KernelKit/Framebuffer.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
@@ -19,7 +18,7 @@
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
 #include <Modules/CoreCG/TextRenderer.hxx>
-#include <Modules/CoreCG/WindowRenderer.hxx>
+#include <Modules/CoreCG/DesktopRenderer.hxx>
 
 namespace Kernel::HAL
 {
@@ -28,8 +27,14 @@ namespace Kernel::HAL
 	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr) noexcept;
 } // namespace Kernel::HAL
 
+namespace Kernel
+{
+	EXTERN UserProcessScheduler* cProcessScheduler;
+}
+
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
+EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
 
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
@@ -37,13 +42,13 @@ EXTERN_C void hal_init_platform(
 {
 	kHandoverHeader = HandoverHeader;
 
+	Kernel::cProcessScheduler = nullptr;
+
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
 		kHandoverHeader->f_Version != kHandoverVersion)
 	{
 		return;
 	}
-
-	CG::CGDrawBackground();
 
 	// get page size.
 	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
@@ -90,7 +95,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::NeFileSystemMgr* mgr = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 	Kernel::NeFileSystemMgr::Mount(mgr);
 
-	Kernel::HAL::mm_map_page(mp_user_switch_proc, Kernel::HAL::eFlagsUser);
+	Kernel::HAL::mm_map_page(mp_user_switch_proc, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsWr | Kernel::HAL::eFlagsPresent);
+	Kernel::HAL::mm_map_page(mp_user_switch_proc_stack_begin, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsWr | Kernel::HAL::eFlagsPresent);
 
 	mp_do_user_switch();
 

@@ -1,9 +1,9 @@
 {
   "compiler_path": "x86_64-w64-mingw32-g++",
   "compiler_std": "c++20",
-  "headers_path": ["../"],
+  "headers_path": ["../", "../zka"],
   "sources_path": ["src/*.cxx"],
-  "output_name": "zwm.sys",
+  "output_name": "corecg.sys",
   "compiler_flags": [
     "-fPIC",
     "-ffreestanding",
@@ -13,10 +13,11 @@
     "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
-    "__ZWM_IMPL__",
+    "__CORECG_IMPL__",
     "__NEWOSKRNL__",
-    "cZWMVersion=0x0100",
-    "cZWMVersionHighest=0x0100",
-    "cZWMVersionLowest=0x0100"
+    "__ZKA_AMD64__",
+    "cCoreCGVersion=0x0100",
+    "cCoreCGVersionHighest=0x0100",
+    "cCoreCGVersionLowest=0x0100"
   ]
 }

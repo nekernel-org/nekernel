@@ -54,9 +54,10 @@ namespace Kernel::HAL
 	/// @brief Virtual memory flags.
 	enum
 	{
-		eFlagsPresent = 0x1,
-		eFlagsRw	  = 0x2,
-		eFlagsUser	  = 0x4,
+		eFlagsPresent = 1 << 0,
+		eFlagsWr	  = 1 << 1,
+		eFlagsUser	  = 1 << 2,
+		eFlagsNX	  = 1 << 3,
 		eFlagsCount	  = 3,
 	};
 

@@ -21,7 +21,7 @@
 
 namespace Kernel
 {
-	/// @brief Json value class
+	/// @brief Json class
 	class JsonType final
 	{
 	public:
@@ -77,11 +77,22 @@ namespace Kernel
 	{
 		STATIC JsonType In(const Char* full_array)
 		{
-			if (full_array[0] != '{')
-				return JsonType::kNull;
+			auto start_val = '{';
+			auto end_val   = '}';
+			Boolean probe_value = false;
+
+			if (full_array[0] != start_val)
+			{
+				if (full_array[0] != '[')
+					return JsonType::kNull;
+
+				start_val = '[';
+				end_val = ']';
+
+				probe_value = true;
+			}
 
 			SizeT	len			= rt_string_len(full_array);
-			Boolean probe_value = false;
 
 			SizeT key_len	= 0;
 			SizeT value_len = 0;
@@ -96,7 +107,7 @@ namespace Kernel
 
 				if (probe_value)
 				{
-					if (full_array[i] == '}' ||
+					if (full_array[i] == end_val ||
 						full_array[i] == ',')
 					{
 						probe_value = false;
@@ -112,6 +123,9 @@ namespace Kernel
 				}
 				else
 				{
+				    if (start_val == '[')
+						continue;
+
 					if (full_array[i] == ':')
 					{
 						probe_value					 = true;

@@ -268,18 +268,18 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	if (readerKernel.Blob())
 	{
 		loader = new Boot::BThread(readerKernel.Blob());
-		loader->SetName("64-Bit Kernel EXE.");
+		loader->SetName("64-Bit Kernel executable.");
 
 		handover_hdr->f_KernelImage = readerKernel.Blob();
 	}
 	else
 	{
-		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL KERNEL DLL.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL KERNEL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 	}
 
-	Boot::BFileReader chimeWav(L"ZKA\\startup.wav", ImageHandle);
-	Boot::BFileReader readerSysDrv(L"ZKA\\startup.sys", ImageHandle);
-	Boot::BFileReader urbanistTTF(L"ZKA\\urbanist.ttf", ImageHandle);
+	Boot::BFileReader chimeWav(L"zka\\startup.wav", ImageHandle);
+	Boot::BFileReader readerSysDrv(L"zka\\startup.sys", ImageHandle);
+	Boot::BFileReader urbanistTTF(L"zka\\urbanist.ttf", ImageHandle);
 
 	readerSysDrv.ReadAll(0);
 	chimeWav.ReadAll(0);
@@ -300,7 +300,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	}
 	else
 	{
-		CGDrawString("NEWOSLDR: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REINSTALL THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("NEWOSLDR: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REFORMAT THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 	}
 
 	EFI::ExitBootServices(MapKey, ImageHandle);

@@ -6,21 +6,11 @@
 
 #pragma once
 
-#include <Modules/CoreCG/Accessibility.hxx>
-#include <KernelKit/Heap.hxx>
-#include <KernelKit/UserProcessScheduler.hxx>
-#include <KernelKit/LPC.hxx>
-#include <NewKit/Defines.hxx>
-#include <NewKit/Utils.hxx>
-#include <Modules/CoreCG/FbRenderer.hxx>
-#include <Modules/CoreCG/Rsrc/WndControls.rsrc>
-#include <Modules/CoreCG/TextRenderer.hxx>
+#include <Modules/CoreCG/DesktopRenderer.hxx>
 
-namespace CG
+namespace CG::WM
 {
-	using namespace Kernel;
-
-	struct UI_WINDOW_STRUCT;
+	struct CG_WINDOW_STRUCT;
 
 	enum
 	{
@@ -28,13 +18,18 @@ namespace CG
 		cWndFlagButton			   = 0x04,
 		cWndFlagWindow			   = 0x06,
 		cWndFlagButtonSelect	   = 0x08,
-		cWndFlagHideCloseControl   = 0x010,
-		cWndFlagCloseControlSelect = 0x012,
+		cWndFlagNoCloseButton	   = 0x010,
+		cWndFlagCloseButton		   = 0x012,
+		cWndFlagSelectBox		   = 0x014,
+		cWndFlagInputBox		   = 0x016,
+		cWndFlagCheckBoxFirstState = 0x018,
+		cWndFlagCheckBoxTwoState   = 0x018,
+		cWndFlagCheckBoxThreeState = 0x018,
 	};
 
-	struct UI_WINDOW_STRUCT final
+	struct CG_WINDOW_STRUCT final
 	{
-		static constexpr auto cChildElementCount = 255;
+		static constexpr auto cChildElementCount = 4096;
 
 		Char					 w_window_name[255]{0};
 		Char					 w_class_name[255]{0};
@@ -45,38 +40,17 @@ namespace CG
 		Int32					 w_w{0};
 		Int32					 w_h{0};
 		Size					 w_child_count{0};
-		struct UI_WINDOW_STRUCT* w_child_elements[cChildElementCount]{0};
-		struct UI_WINDOW_STRUCT* w_parent{nullptr};
-		UInt32*					 w_display_ptr{nullptr};
+		struct CG_WINDOW_STRUCT* w_child_list[cChildElementCount]{0};
+		struct CG_WINDOW_STRUCT* w_parent_wnd{nullptr};
+		UInt32*					 w_canvas{nullptr};
 		Bool					 w_needs_repaint{false};
 	};
 
-	typedef struct UI_WINDOW_STRUCT UI_WINDOW_STRUCT;
+	typedef struct CG_WINDOW_STRUCT CG_WINDOW_STRUCT;
 
-	/// \brief Draw background (either image or solid color)
-	inline Void CGDrawBackground(UInt32* raw_bmp = nullptr, SizeT width = 0, SizeT height = 0) noexcept
+	inline struct CG_WINDOW_STRUCT* CGCreateWindow(Int32 kind, const Char* window_name, const Char* class_name, Int32 x, Int32 y, Int32 width, Int32 height, CG_WINDOW_STRUCT* parent = nullptr)
 	{
-		CGInit();
-
-		if (!raw_bmp)
-		{
-			const auto cColorBackground = CGColor(0x45, 0x00, 0x06);
-
-			CGDrawInRegion(cColorBackground, CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
-						   0, 0);
-		}
-		else
-		{
-			CGDrawBitMapInRegion(raw_bmp, height, width,
-								 0, 0);
-		}
-
-		CGFini();
-	}
-
-	inline struct UI_WINDOW_STRUCT* CGCreateWindow(Int32 kind, const Char* window_name, const Char* class_name, Int32 x, Int32 y, Int32 width, Int32 height, UI_WINDOW_STRUCT* parent = nullptr)
-	{
-		UI_WINDOW_STRUCT* wnd = new UI_WINDOW_STRUCT();
+		CG_WINDOW_STRUCT* wnd = new CG_WINDOW_STRUCT();
 
 		if (!wnd)
 		{
@@ -89,10 +63,10 @@ namespace CG
 
 		if (parent)
 		{
-			wnd->w_parent = parent;
+			wnd->w_parent_wnd = parent;
 
-			++wnd->w_parent->w_child_count;
-			wnd->w_parent->w_child_elements[wnd->w_parent->w_child_count - 1] = wnd;
+			++wnd->w_parent_wnd->w_child_count;
+			wnd->w_parent_wnd->w_child_list[wnd->w_parent_wnd->w_child_count - 1] = wnd;
 		}
 
 		wnd->w_sub_type = 0;
@@ -103,14 +77,14 @@ namespace CG
 		wnd->w_w = width;
 		wnd->w_h = height;
 
-		wnd->w_display_ptr = new UInt32[width * height];
-		rt_set_memory(wnd->w_display_ptr, CGColor(0xF5, 0xF5, 0xF5), width * height);
+		wnd->w_canvas = new UInt32[width * height];
+		rt_set_memory(wnd->w_canvas, CGColor(0xF5, 0xF5, 0xF5), width * height);
 
 		return wnd;
 	}
 
 	/// \brief Destroys a window and it's contents.
-	inline Bool CGDestroyWindow(struct UI_WINDOW_STRUCT* wnd)
+	inline Bool CGDestroyWindow(struct CG_WINDOW_STRUCT* wnd)
 	{
 		if (wnd)
 		{
@@ -124,7 +98,7 @@ namespace CG
 
 			for (SizeT index = 0UL; index < wnd->w_child_count; ++index)
 			{
-				CGDestroyWindow(wnd->w_child_elements[index]);
+				CGDestroyWindow(wnd->w_child_list[index]);
 			}
 
 			delete wnd;
@@ -136,7 +110,7 @@ namespace CG
 		return false;
 	}
 
-	inline Kernel::Void CGDrawStringToWnd(UI_WINDOW_STRUCT* wnd, const Kernel::Char* text, Kernel::Int32 y_dst, Kernel::Int32 x_dst, Kernel::Int32 color)
+	inline Kernel::Void CGDrawStringToWnd(CG_WINDOW_STRUCT* wnd, const Kernel::Char* text, Kernel::Int32 y_dst, Kernel::Int32 x_dst, Kernel::Int32 color)
 	{
 		y_dst += wnd->w_y + FLATCONTROLS_HEIGHT;
 		x_dst += wnd->w_x;
@@ -154,7 +128,7 @@ namespace CG
 		}
 	}
 
-	inline SizeT CGDrawWindowList(UI_WINDOW_STRUCT** wnd, SizeT wnd_cnt)
+	inline SizeT CGDrawWindowList(CG_WINDOW_STRUCT** wnd, SizeT wnd_cnt)
 	{
 		if (wnd_cnt == 0 ||
 			!wnd)
@@ -173,11 +147,11 @@ namespace CG
 
 			wnd[index]->w_needs_repaint = false;
 
-			if (UIAccessibilty::The().Width() < wnd[index]->w_x)
+			if (CGAccessibilty::The().Width() < wnd[index]->w_x)
 			{
-				if ((wnd[index]->w_x - UIAccessibilty::The().Width()) > 1)
+				if ((wnd[index]->w_x - CGAccessibilty::The().Width()) > 1)
 				{
-					wnd[index]->w_x -= wnd[index]->w_x - UIAccessibilty::The().Width();
+					wnd[index]->w_x -= wnd[index]->w_x - CGAccessibilty::The().Width();
 				}
 				else
 				{
@@ -185,11 +159,11 @@ namespace CG
 				}
 			}
 
-			if (UIAccessibilty::The().Height() < wnd[index]->w_y)
+			if (CGAccessibilty::The().Height() < wnd[index]->w_y)
 			{
-				if ((wnd[index]->w_y - UIAccessibilty::The().Height()) > 1)
+				if ((wnd[index]->w_y - CGAccessibilty::The().Height()) > 1)
 				{
-					wnd[index]->w_y -= wnd[index]->w_y - UIAccessibilty::The().Width();
+					wnd[index]->w_y -= wnd[index]->w_y - CGAccessibilty::The().Width();
 				}
 				else
 				{
@@ -202,12 +176,12 @@ namespace CG
 			// Draw fake controls, just for the looks of it (WINDOW ONLY)
 			if (wnd[index]->w_type == cWndFlagWindow)
 			{
-				CGDrawBitMapInRegion(wnd[index]->w_display_ptr, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
+				CGDrawBitMapInRegion(wnd[index]->w_canvas, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
 				CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), wnd[index]->w_w, FLATCONTROLS_HEIGHT, wnd[index]->w_y, wnd[index]->w_x);
 
-				if (wnd[index]->w_sub_type != cWndFlagHideCloseControl)
+				if (wnd[index]->w_sub_type != cWndFlagNoCloseButton)
 				{
-					if (wnd[index]->w_sub_type == cWndFlagCloseControlSelect)
+					if (wnd[index]->w_sub_type == cWndFlagCloseButton)
 					{
 						CGDrawBitMapInRegion(FlatControlsClose, FLATCONTROLS_CLOSE_HEIGHT, FLATCONTROLS_CLOSE_WIDTH, wnd[index]->w_y, wnd[index]->w_x + wnd[index]->w_w - FLATCONTROLS_WIDTH);
 					}
@@ -247,14 +221,14 @@ namespace CG
 
 			for (SizeT child = 0; child < wnd[index]->w_child_count; ++child)
 			{
-				wnd[index]->w_child_elements[child]->w_x += wnd[index]->w_x;
-				wnd[index]->w_child_elements[child]->w_y += wnd[index]->w_y + FLATCONTROLS_HEIGHT;
+				wnd[index]->w_child_list[child]->w_x += wnd[index]->w_x;
+				wnd[index]->w_child_list[child]->w_y += wnd[index]->w_y + FLATCONTROLS_HEIGHT;
 
-				if ((wnd[index]->w_child_elements[child]->w_w + wnd[index]->w_child_elements[child]->w_x) > (wnd[index]->w_x + wnd[index]->w_w) ||
-					(wnd[index]->w_child_elements[child]->w_h + wnd[index]->w_child_elements[child]->w_y) > (wnd[index]->w_y + wnd[index]->w_h))
+				if ((wnd[index]->w_child_list[child]->w_w + wnd[index]->w_child_list[child]->w_x) > (wnd[index]->w_x + wnd[index]->w_w) ||
+					(wnd[index]->w_child_list[child]->w_h + wnd[index]->w_child_list[child]->w_y) > (wnd[index]->w_y + wnd[index]->w_h))
 					continue;
 
-				CGDrawWindowList(&wnd[index]->w_child_elements[child], 1);
+				CGDrawWindowList(&wnd[index]->w_child_list[child], 1);
 			}
 
 			CGFini();
@@ -262,4 +236,4 @@ namespace CG
 
 		return cnt;
 	}
-} // namespace CG
+} // namespace CG::WM

@@ -12,8 +12,7 @@
 [global mp_do_user_switch]
 [global mp_do_context_switch_pre]
 [global mp_user_switch_proc]
-[global mp_user_switch_proc_real]
-[global mp_user_switch_proc_stack_end]
+[global mp_user_switch_proc_stack_begin]
 
 section .text
 

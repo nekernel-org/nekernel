@@ -10,7 +10,7 @@
 
 #include <Modules/ATA/ATA.hxx>
 #include <Modules/AHCI/AHCI.hxx>
-#include <Modules/NVME/Defines.hxx>
+#include <Modules/NVME/NVME.hxx>
 
 /// @file DriveMgr.cxx
 /// @brief Kernel drive manager.

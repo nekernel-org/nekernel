@@ -63,15 +63,29 @@ namespace Kernel
 					this->GetBitMapStatus(ptr_bit_set);
 
 					mm_map_page(ptr_bit_set, ~eFlagsPresent);
-					mm_map_page(ptr_bit_set, ~eFlagsRw);
+					mm_map_page(ptr_bit_set, ~eFlagsWr);
 					mm_map_page(ptr_bit_set, ~eFlagsUser);
 
 					return Yes;
 				}
 
+				UInt32 MakeFlags(Bool wr, Bool user)
+				{
+
+					UInt32 flags = eFlagsPresent;
+
+					if (wr)
+						flags |= eFlagsWr;
+
+					if (user)
+						flags |= eFlagsUser;
+
+					return flags;
+				}
+
 				/// @brief Iterate over availables pages for a free one.
 				/// @return The new address which was found.
-				auto FindBitMap(VoidPtr base_ptr, SizeT size, Bool rw, Bool user) -> VoidPtr
+				auto FindBitMap(VoidPtr base_ptr, SizeT size, Bool wr, Bool user) -> VoidPtr
 				{
 					VoidPtr base = reinterpret_cast<VoidPtr>(((UIntPtr)base_ptr) + kPageSize);
 
@@ -89,6 +103,9 @@ namespace Kernel
 
 								this->GetBitMapStatus(ptr_bit_set);
 
+								UInt32 flags = this->MakeFlags(wr, user);
+								mm_map_page(ptr_bit_set, flags);
+
 								return (VoidPtr)ptr_bit_set;
 							}
 						}
@@ -101,6 +118,9 @@ namespace Kernel
 							ptr_bit_set[cBitMapUsedIdx] = Yes;
 
 							this->GetBitMapStatus(ptr_bit_set);
+
+							UInt32 flags = this->MakeFlags(wr, user);
+							mm_map_page(ptr_bit_set, flags);
 
 							return (VoidPtr)ptr_bit_set;
 						}
@@ -136,25 +156,25 @@ namespace Kernel
 		} // namespace Detail
 
 		/// @brief Allocate a new page to be used by the OS.
-		/// @param rw read/write bit.
+		/// @param wr read/write bit.
 		/// @param user user bit.
 		/// @return
-		auto mm_alloc_bitmap(Boolean rw, Boolean user, SizeT size) -> VoidPtr
+		auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size) -> VoidPtr
 		{
 			VoidPtr					 ptr_new = nullptr;
 			Detail::IBitMapAllocator traits;
 
-			ptr_new = traits.FindBitMap(kKernelBitMpStart, size, rw, user);
+			ptr_new = traits.FindBitMap(kKernelBitMpStart, size, wr, user);
 
 			if (!ptr_new)
 			{
 				ke_stop(RUNTIME_CHECK_PAGE);
 			}
 
-			if (rw)
-				mm_map_page(ptr_new, eFlagsRw | eFlagsPresent);
-			else if (user && rw)
-				mm_map_page(ptr_new, eFlagsUser | eFlagsRw | eFlagsPresent);
+			if (wr)
+				mm_map_page(ptr_new, eFlagsWr | eFlagsPresent);
+			else if (user && wr)
+				mm_map_page(ptr_new, eFlagsUser | eFlagsWr | eFlagsPresent);
 			else if (user)
 				mm_map_page(ptr_new, eFlagsUser | eFlagsPresent);
 			else

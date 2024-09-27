@@ -24,8 +24,8 @@ namespace Kernel
 
 	struct ALIGN_NVME NVMEBar0 final
 	{
-		NVMEInt32 fCap;
-		NVMEInt32 fVer;
+		NVMEInt32 fCapabilities;
+		NVMEInt32 fVersion;
 		NVMEInt32 fIntMaskSet;
 		NVMEInt32 fIntMaskClr;
 		NVMEInt32 fContrlConf;

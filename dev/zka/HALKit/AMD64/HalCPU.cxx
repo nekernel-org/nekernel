@@ -12,7 +12,7 @@
 
 /**
  * @file HalCPU.cxx
- * @brief CPU Common API.
+ * @brief Common CPU API.
  */
 
 namespace Kernel::HAL

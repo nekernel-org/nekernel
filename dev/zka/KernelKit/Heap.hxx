@@ -32,10 +32,10 @@ namespace Kernel
 
 	/// @brief Allocate chunk of memory.
 	/// @param sz Size of pointer
-	/// @param rw Read Write bit.
+	/// @param wr Read Write bit.
 	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
-	VoidPtr mm_new_heap(const SizeT sz, const Bool rw, const Bool user);
+	VoidPtr mm_new_heap(const SizeT sz, const Bool wr, const Bool user);
 
 	/// @brief Protect the heap with a CRC value.
 	/// @param heap_ptr pointer.
@@ -47,6 +47,7 @@ namespace Kernel
 	/// @return status code
 	Int32 mm_make_ke_page(VoidPtr heap_ptr);
 
+	/// @brief Allocate C++ class.
 	template <typename T, typename... Args>
 	inline T* mm_new_class(Args&&... args)
 	{
@@ -58,6 +59,7 @@ namespace Kernel
 		return cls;
 	}
 
+	/// @brief Free C++ class.
 	template <typename T>
 	inline Void mm_delete_class(T* cls)
 	{

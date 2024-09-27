@@ -12,6 +12,8 @@ namespace Kernel
 	{
 		switch (fKind)
 		{
+		case VariantKind::kXML:
+			return ("Class:{XML}");
 		case VariantKind::kJson:
 			return ("Class:{Json}");
 		case VariantKind::kString:

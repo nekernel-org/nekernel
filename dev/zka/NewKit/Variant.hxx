@@ -21,25 +21,25 @@ namespace Kernel
 			kBlob,
 			kNull,
 			kJson,
+			kXML,
 		};
 
 	public:
 		explicit Variant() = delete;
 
 	public:
-		Variant& operator=(const Variant&) = default;
-		Variant(const Variant&)			   = default;
+		ZKA_COPY_DEFAULT(Variant);
 
 		~Variant() = default;
 
 	public:
 		explicit Variant(StringView* stringView)
-			: fPtr((voidPtr)stringView), fKind(VariantKind::kString)
+			: fPtr((VoidPtr)stringView), fKind(VariantKind::kString)
 		{
 		}
 
 		explicit Variant(JsonType* json)
-			: fPtr((voidPtr)json), fKind(VariantKind::kJson)
+			: fPtr((VoidPtr)json), fKind(VariantKind::kJson)
 		{
 		}
 
@@ -48,7 +48,7 @@ namespace Kernel
 		{
 		}
 
-		explicit Variant(voidPtr ptr)
+		explicit Variant(VoidPtr ptr)
 			: fPtr(ptr), fKind(VariantKind::kBlob)
 		{
 		}
@@ -56,6 +56,12 @@ namespace Kernel
 	public:
 		const Char* ToString();
 		VoidPtr		Leak();
+
+		template <typename T>
+		T* As()
+		{
+			return reinterpret_cast<T*>(fPtr);
+		}
 
 	private:
 		voidPtr		fPtr{nullptr};
