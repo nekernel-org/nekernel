@@ -1,0 +1,19 @@
+{
+  "compiler_path": "x86_64-w64-mingw32-g++.exe",
+  "compiler_std": "c++20",
+  "headers_path": [ "../", "./", "../../" ],
+  "sources_path": [ "src/*.cc" ],
+  "output_name": "firewall.zsc",
+  "compiler_flags": [
+    "-ffreestanding",
+    "-fno-rtti",
+    "-fno-exceptions",
+    "-Wl,--subsystem=17"
+  ],
+  "cpp_macros": [
+    "__FIREWALL_AMD64__",
+    "cFWVersion=0x0100",
+    "cFWVersionHighest=0x0100",
+    "cFWVersionLowest=0x0100"
+  ]
+}
