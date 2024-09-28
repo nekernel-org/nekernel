@@ -12,7 +12,7 @@
 #define NEWKIT_VERSION_CB 0x0101
 
 #if !defined(_INC_NO_STDC_HEADERS) && defined(__GNUC__)
-#include <crt/__ndk_defines.hxx>
+#include <crt/defines.hxx>
 #endif
 
 #ifdef __has_feature
