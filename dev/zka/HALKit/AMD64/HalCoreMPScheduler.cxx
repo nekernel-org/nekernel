@@ -12,7 +12,7 @@
 #include <KernelKit/Semaphore.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/Timer.hxx>
-#include <Modules/CoreCG/TextRenderer.hxx>
+#include <Modules/CoreCG/Text.hxx>
 
 // Needed for SMP. //
 #include <FirmwareKit/EFI.hxx>

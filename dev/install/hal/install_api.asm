@@ -16,7 +16,7 @@
 
 section .data
 
-kInstallTitle: db "ZKA Installer", 0
+kInstallTitle: db "Formatting...", 0
 
 section .text
 
@@ -29,6 +29,3 @@ InstInstallToDir:
 	mov r9, rdx ; FILE_INFO_STRUCT (DST)
 	syscall ;; 0 = GOOD, 1 = BAD FIS (SRC), 2 = BAD FIS (DST)
 	ret
-
-
-

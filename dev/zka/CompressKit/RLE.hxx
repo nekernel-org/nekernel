@@ -11,8 +11,8 @@
 
 namespace Kernel
 {
-	EXTERN_C Void rle_compress(VoidPtr data, Size sz, VoidPtr out, Size out_sz);
-	EXTERN_C Void rle_decompress(VoidPtr data, Size sz, VoidPtr out, Size out_sz);
+	Void rle_compress(VoidPtr data, Size sz, VoidPtr out, Size out_sz);
+	Void rle_decompress(VoidPtr data, Size sz, VoidPtr out, Size out_sz);
 } // namespace Kernel
 
 #endif // !ifndef __KERNELKIT_RLE_HXX__

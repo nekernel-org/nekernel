@@ -12,7 +12,7 @@
 /** @brief CoreCG main, ZWM acts a proxy to the Installed GPU Driver. */
 CG::Int32 ModuleMain(CG::Void)
 {
-    CG::CGDrawDesktopBackground();
+    CG::CGFillBackground();
 
 	return 0;
 }

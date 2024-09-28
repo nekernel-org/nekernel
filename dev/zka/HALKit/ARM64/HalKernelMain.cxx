@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
-#include <Modules/CoreCG/FbRenderer.hxx>
+#include <Modules/CoreCG/FB.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Heap.hxx>
@@ -17,7 +17,7 @@
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
-#include <Modules/CoreCG/DesktopRenderer.hxx>
+#include <Modules/CoreCG/Desktop.hxx>
 
 namespace Kernel::HAL
 {
@@ -42,7 +42,7 @@ EXTERN_C void hal_init_platform(
 		return;
 	}
 
-	CG::CGDrawDesktopBackground();
+	CG::CGFillBackground();
 
 	// get page size.
 	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;

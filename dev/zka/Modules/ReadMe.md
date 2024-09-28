@@ -1,4 +1,4 @@
-# Kernel modules
+# Kernel Modules.
 
 Pluggable modules for builtin hardware support within the Kernel.
 

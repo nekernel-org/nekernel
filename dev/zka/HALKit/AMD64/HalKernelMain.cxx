@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
-#include <Modules/CoreCG/FbRenderer.hxx>
+#include <Modules/CoreCG/FB.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Heap.hxx>
@@ -17,8 +17,8 @@
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
-#include <Modules/CoreCG/TextRenderer.hxx>
-#include <Modules/CoreCG/DesktopRenderer.hxx>
+#include <Modules/CoreCG/Text.hxx>
+#include <Modules/CoreCG/Desktop.hxx>
 
 namespace Kernel::HAL
 {

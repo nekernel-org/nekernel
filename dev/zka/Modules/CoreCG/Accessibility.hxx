@@ -9,9 +9,9 @@
 
 #include <NewKit/NewKit.hxx>
 #include <KernelKit/LPC.hxx>
-#include <Modules/CoreCG/FbRenderer.hxx>
-#include <Modules/CoreCG/Math.hxx>
+#include <Modules/CoreCG/FB.hxx>
 #include <ArchKit/ArchKit.hxx>
+#include <crt/math.hxx>
 
 namespace CG
 {

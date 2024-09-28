@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <Modules/CoreCG/DesktopRenderer.hxx>
+#include <Modules/CoreCG/Desktop.hxx>
 
 namespace CG::WM
 {
@@ -112,7 +112,7 @@ namespace CG::WM
 
 	inline Kernel::Void CGDrawStringToWnd(CG_WINDOW_STRUCT* wnd, const Kernel::Char* text, Kernel::Int32 y_dst, Kernel::Int32 x_dst, Kernel::Int32 color)
 	{
-		y_dst += wnd->w_y + FLATCONTROLS_HEIGHT;
+		y_dst += wnd->w_y + cFlatCtrlsHeight;
 		x_dst += wnd->w_x;
 
 		if (y_dst > (wnd->w_h + wnd->w_y))
@@ -177,17 +177,17 @@ namespace CG::WM
 			if (wnd[index]->w_type == cWndFlagWindow)
 			{
 				CGDrawBitMapInRegion(wnd[index]->w_canvas, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
-				CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), wnd[index]->w_w, FLATCONTROLS_HEIGHT, wnd[index]->w_y, wnd[index]->w_x);
+				CGDrawInRegion(CGColor(0xFF, 0xFF, 0xFF), wnd[index]->w_w, cFlatCtrlsHeight, wnd[index]->w_y, wnd[index]->w_x);
 
 				if (wnd[index]->w_sub_type != cWndFlagNoCloseButton)
 				{
 					if (wnd[index]->w_sub_type == cWndFlagCloseButton)
 					{
-						CGDrawBitMapInRegion(FlatControlsClose, FLATCONTROLS_CLOSE_HEIGHT, FLATCONTROLS_CLOSE_WIDTH, wnd[index]->w_y, wnd[index]->w_x + wnd[index]->w_w - FLATCONTROLS_WIDTH);
+						CGDrawBitMapInRegion(FlatControlsClose, cFlatCtrlsHeight, cFlatCtrlsWidth, wnd[index]->w_y, wnd[index]->w_x + wnd[index]->w_w - cFlatCtrlsWidth);
 					}
 					else
 					{
-						CGDrawBitMapInRegion(FlatControls, FLATCONTROLS_HEIGHT, FLATCONTROLS_WIDTH, wnd[index]->w_y, wnd[index]->w_x + wnd[index]->w_w - FLATCONTROLS_WIDTH);
+						CGDrawBitMapInRegion(FlatControls, cFlatCtrlsHeight, cFlatCtrlsWidth, wnd[index]->w_y, wnd[index]->w_x + wnd[index]->w_w - cFlatCtrlsWidth);
 					}
 				}
 
@@ -222,7 +222,7 @@ namespace CG::WM
 			for (SizeT child = 0; child < wnd[index]->w_child_count; ++child)
 			{
 				wnd[index]->w_child_list[child]->w_x += wnd[index]->w_x;
-				wnd[index]->w_child_list[child]->w_y += wnd[index]->w_y + FLATCONTROLS_HEIGHT;
+				wnd[index]->w_child_list[child]->w_y += wnd[index]->w_y + cFlatCtrlsHeight;
 
 				if ((wnd[index]->w_child_list[child]->w_w + wnd[index]->w_child_list[child]->w_x) > (wnd[index]->w_x + wnd[index]->w_w) ||
 					(wnd[index]->w_child_list[child]->w_h + wnd[index]->w_child_list[child]->w_y) > (wnd[index]->w_y + wnd[index]->w_h))

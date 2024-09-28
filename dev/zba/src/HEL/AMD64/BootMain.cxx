@@ -6,8 +6,8 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
-#include <Modules/CoreCG/FbRenderer.hxx>
-#include <Modules/CoreCG/TextRenderer.hxx>
+#include <Modules/CoreCG/FB.hxx>
+#include <Modules/CoreCG/Text.hxx>
 #include <FirmwareKit/EFI.hxx>
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
@@ -304,6 +304,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	}
 
 	EFI::ExitBootServices(MapKey, ImageHandle);
+
+	CGDrawInRegion(CGColor(0xFF, 0x3A, 0x3A), handover_hdr->f_GOP.f_Height, handover_hdr->f_GOP.f_Width, 0, 0);
+	CGFini();
 
 	// ---------------------------------------------------- //
 	// Finally load Kernel, and the cr3 to it.

@@ -111,6 +111,8 @@ namespace Kernel::HAL
 		RawRegister R14{0};
 		RawRegister R15{0};
 		RawRegister GS{0};
+		RawRegister SP{0};
+		RawRegister BP{0};
 	};
 
 	typedef StackFrame* StackFramePtr;
