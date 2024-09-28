@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <crt/__ndk_defines.hxx>
+#include <crt/defines.hxx>
 
 /// @brief CRT exit, with exit code (!!! exits all threads. !!!)
 /// @param code

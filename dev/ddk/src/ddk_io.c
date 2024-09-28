@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <ddk/KernelPrint.h>
+#include <ddk/io.h>
 
 DK_EXTERN void KernelPrintChar(const char ch)
 {

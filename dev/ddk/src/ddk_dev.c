@@ -6,8 +6,8 @@
 
 ------------------------------------------- */
 
-#include <ddk/KernelDev.h>
-#include <ddk/KernelString.h>
+#include <ddk/dev.h>
+#include <ddk/str.h>
 
 /// @brief Open a new binary device from path.
 DK_EXTERN KERNEL_DEVICE_PTR KernelOpenDevice(const char* devicePath)

@@ -7,6 +7,9 @@
 #ifndef __NDK_DEFINES_HXX__
 #define __NDK_DEFINES_HXX__
 
+#include <stdint.h>
+#include <stddef.h>
+
 #ifndef __GNUC__
 
 typedef __SIZE_TYPE__ size_t;

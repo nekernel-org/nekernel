@@ -6,24 +6,22 @@
 
 #pragma once
 
-#include <NewKit/Defines.hxx>
+#include <crt/defines.hxx>
 
 /// @file Math.hxx
 /// @brief Math functions.
 
-namespace CRT
-{
-	using namespace Kernel;
-
 #ifdef __ZKA_USE_DOUBLE__
-	typedef double Real;
+typedef double real_type;
 #else
-	typedef float Real;
+typedef float real_type;
 #endif
 
+namespace std::math
+{
 	/// @brief Power function, with Repeat argument.
-	template <SizeT Exponent>
-	inline Real Pow(Real in)
+	template <size_t Exponent>
+	inline real_type pow(real_type in)
 	{
 		if (Exponent == 0)
 			return 1; // Any number to the power of 0 is 1.
@@ -31,11 +29,11 @@ namespace CRT
 		if (Exponent == 1)
 			return in; // Any number to the power of 1 is itself.
 
-		UInt64 cnt = Exponent;
+		size_t cnt = Exponent;
 
-		Real result = 1;
+		real_type result = 1;
 
-		for (auto i = 0; i < (cnt); ++i)
+		for (auto i = 0; i < cnt; ++i)
 			result *= in;
 
 		return result;
@@ -43,22 +41,22 @@ namespace CRT
 
 	/// @brief Square of function, with Base template argument.
 	/// @param of Base argument to find sqquare of
-	template <SizeT Base>
-	inline Real SqrOf(Real in)
+	template <size_t Base>
+	inline real_type sqr(real_type in)
 	{
 		if (in == 0)
 			return 0;
 
-		return Pow<1 / Base>(in);
+		return pow<1 / Base>(in);
 	}
 
 	/// @brief Linear interpolation equation solver.
 	/// @param from where?
 	/// @param to to?
 	/// @param Updated diff value according to difference.
-	inline Real CGLerp(Real to, Real from, Real stat)
+	inline real_type lerp(real_type to, real_type from, real_type stat)
 	{
-		Real diff = (to - from);
+		real_type diff = (to - from);
 		return from + (diff * stat);
 	}
-} // namespace CRT
+} // namespace std::math

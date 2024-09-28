@@ -54,8 +54,8 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSL
 BOOT_LOADER=newosldr.exe
 KERNEL=newoskrnl.exe
 DDK=ddk.dll
-SCI=sci.dll
-CRT=ndkcrt.dll
+SCI=zka-sci-cxx.dll
+CRT=zka-crt-cxx.dll
 SYS_CHK=syschk.sys
 STARTUP=startup.sys
 

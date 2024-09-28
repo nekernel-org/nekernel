@@ -3,13 +3,13 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "./"],
   "sources_path": ["src/*.cxx"],
-  "output_name": "ndkcrt.dll",
+  "output_name": "zka-crt-cxx.dll",
   "compiler_flags": [
     "-ffreestanding",
     "-shared",
     "-fno-rtti",
     "-fno-exceptions",
-    " -Wl,--subsystem=17"
+    "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
     "__CRT_AMD64__",

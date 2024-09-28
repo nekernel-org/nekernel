@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies.
 
-	File: __ndk_alloca.hxx
+	File: alloca.hxx
 	Purpose: Stack allocation functions.
 
 ------------------------------------------- */

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <ddk/KernelStd.h>
+#include <ddk/ddk.h>
 
 /// @brief DDK equivalent of POSIX's string.h
 /// @file KernelString.h

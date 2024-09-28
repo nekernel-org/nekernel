@@ -2,12 +2,9 @@
 
 Copyright ZKA Technologies.
 
-File: rt.internal.inl
-Purpose: Base code of XPCOM.
+Purpose: SMS XPCOM interface
 
 ------------------------------------------- */
-
-/// @internal
 
 #ifndef __NDK__
 #define object class
