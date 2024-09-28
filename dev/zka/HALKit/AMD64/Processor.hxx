@@ -61,28 +61,6 @@ namespace Kernel::HAL
 		eFlagsCount	  = 3,
 	};
 
-	/// @brief Set a PTE from pd_base.
-	/// @param virt_addr a valid virtual address.
-	/// @param phys_addr point to physical address.
-	/// @param flags the flags to put on the page.
-	/// @return Status code of page manip.
-	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, UInt32 flags);
-
-	EXTERN_C UChar	In8(UInt16 port);
-	EXTERN_C UShort In16(UInt16 port);
-	EXTERN_C UInt	In32(UInt16 port);
-
-	EXTERN_C void Out16(UShort port, UShort byte);
-	EXTERN_C void Out8(UShort port, UChar byte);
-	EXTERN_C void Out32(UShort port, UInt byte);
-
-	EXTERN_C void rt_wait_400ns();
-	EXTERN_C void rt_halt();
-	EXTERN_C void rt_cli();
-	EXTERN_C void rt_sti();
-	EXTERN_C void rt_cld();
-	EXTERN_C void rt_std();
-
 	struct PACKED Register64 final
 	{
 		UShort	Limit;
@@ -281,6 +259,28 @@ namespace Kernel::HAL
 	private:
 		VoidPtr fApic{nullptr};
 	};
+
+	/// @brief Set a PTE from pd_base.
+	/// @param virt_addr a valid virtual address.
+	/// @param phys_addr point to physical address.
+	/// @param flags the flags to put on the page.
+	/// @return Status code of page manip.
+	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, UInt32 flags);
+
+	EXTERN_C UChar	In8(UInt16 port);
+	EXTERN_C UShort In16(UInt16 port);
+	EXTERN_C UInt	In32(UInt16 port);
+
+	EXTERN_C void Out16(UShort port, UShort byte);
+	EXTERN_C void Out8(UShort port, UChar byte);
+	EXTERN_C void Out32(UShort port, UInt byte);
+
+	EXTERN_C void rt_wait_400ns();
+	EXTERN_C void rt_halt();
+	EXTERN_C void rt_cli();
+	EXTERN_C void rt_sti();
+	EXTERN_C void rt_cld();
+	EXTERN_C void rt_std();
 } // namespace Kernel::HAL
 
 EXTERN_C Kernel::Void idt_handle_generic(Kernel::UIntPtr rsp);
