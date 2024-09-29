@@ -7,7 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.hxx>
-#include <Modules/CoreCG/FB.hxx>
+#include <Modules/FB/FB.hxx>
 
 #define FONT_SIZE_X	   8
 #define FONT_SIZE_Y	   8

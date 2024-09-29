@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <base/EncryptFS/disk_crypt.hxx>
+#include <EncryptFS/disk_crypt.hxx>
 
 enum
 {

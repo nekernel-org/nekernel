@@ -5,20 +5,12 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
-#include <Modules/CoreCG/FB.hxx>
-#include <FirmwareKit/Handover.hxx>
-#include <KernelKit/FileMgr.hxx>
-#include <KernelKit/Heap.hxx>
-#include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
-#include <NewKit/Json.hxx>
-#include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeMgr.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
-#include <Modules/CoreCG/Text.hxx>
-#include <Modules/CoreCG/Desktop.hxx>
+#include <Modules/FB/Text.hxx>
 
 namespace Kernel::HAL
 {

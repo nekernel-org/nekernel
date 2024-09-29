@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <corecg/pdf.hxx>
+#include <pdm/pdf_pdm.hxx>

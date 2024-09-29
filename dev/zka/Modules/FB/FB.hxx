@@ -18,7 +18,7 @@
 
 /// @brief Performs OR drawing on the framebuffer.
 #define CGDrawBitMapInRegionA(_BitMp, _Height, _Width, _BaseX, _BaseY)       \
-	__CG_CURSOR = 0;                                                          \
+	__CG_CURSOR = 0;                                                         \
                                                                              \
 	for (Kernel::SizeT i = _BaseX; i < (_Height + _BaseX); ++i)              \
 	{                                                                        \
@@ -27,15 +27,15 @@
 			*(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 								 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 									 i +                                     \
-								 4 * u))) |= (_BitMp)[__CG_CURSOR];           \
+								 4 * u))) |= (_BitMp)[__CG_CURSOR];          \
                                                                              \
-			++__CG_CURSOR;                                                    \
+			++__CG_CURSOR;                                                   \
 		}                                                                    \
 	}
 
 /// @brief Draws a resource.
 #define CGDrawBitMapInRegion(_BitMp, _Height, _Width, _BaseX, _BaseY)        \
-	__CG_CURSOR = 0;                                                          \
+	__CG_CURSOR = 0;                                                         \
                                                                              \
 	for (Kernel::SizeT i = _BaseX; i < (_Height + _BaseX); ++i)              \
 	{                                                                        \
@@ -44,14 +44,14 @@
 			*(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 								 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 									 i +                                     \
-								 4 * u))) = (_BitMp)[__CG_CURSOR];            \
+								 4 * u))) = (_BitMp)[__CG_CURSOR];           \
                                                                              \
-			++__CG_CURSOR;                                                    \
+			++__CG_CURSOR;                                                   \
 		}                                                                    \
 	}
 
 #define CGDrawBitMapInRegionToRgn(_Rgn, _BitMp, _Height, _Width, _BaseX, _BaseY) \
-	__CG_CURSOR = 0;                                                              \
+	__CG_CURSOR = 0;                                                             \
                                                                                  \
 	for (Kernel::SizeT i = _BaseX; i < (_Height + _BaseX); ++i)                  \
 	{                                                                            \
@@ -60,9 +60,9 @@
 			*(((Kernel::UInt32*)(_Rgn +                                          \
 								 4 * kHandoverHeader->f_GOP.f_PixelPerLine *     \
 									 i +                                         \
-								 4 * u))) = (_BitMp)[__CG_CURSOR];                \
+								 4 * u))) = (_BitMp)[__CG_CURSOR];               \
                                                                                  \
-			++__CG_CURSOR;                                                        \
+			++__CG_CURSOR;                                                       \
 		}                                                                        \
 	}
 
@@ -96,7 +96,7 @@
 
 /// @brief Draws inside a zone.
 #define CGDrawInRegionToRgn(_Rgn, _Clr, _Height, _Width, _BaseX, _BaseY)              \
-	__CG_CURSOR = 0;                                                                   \
+	__CG_CURSOR = 0;                                                                  \
                                                                                       \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
 	{                                                                                 \
@@ -105,13 +105,13 @@
 			*(((volatile Kernel::UInt32*)(_Rgn +                                      \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  x_base +                                \
-										  4 * y_base))) = _Clr[__CG_CURSOR];           \
-			++__CG_CURSOR;                                                             \
+										  4 * y_base))) = _Clr[__CG_CURSOR];          \
+			++__CG_CURSOR;                                                            \
 		}                                                                             \
 	}
 
 #define CGDrawInRegionToVideoRgn(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)    \
-	__CG_CURSOR = 0;                                                                   \
+	__CG_CURSOR = 0;                                                                  \
                                                                                       \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
 	{                                                                                 \
@@ -121,12 +121,12 @@
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  x_base +                                \
 										  4 * y_base))) = _Clr;                       \
-			++__CG_CURSOR;                                                             \
+			++__CG_CURSOR;                                                            \
 		}                                                                             \
 	}
 
 #define CGDrawInRegionToVideoRgnA(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)   \
-	__CG_CURSOR = 0;                                                                   \
+	__CG_CURSOR = 0;                                                                  \
                                                                                       \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
 	{                                                                                 \
@@ -136,7 +136,7 @@
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  x_base +                                \
 										  4 * y_base))) |= _Clr;                      \
-			++__CG_CURSOR;                                                             \
+			++__CG_CURSOR;                                                            \
 		}                                                                             \
 	}
 

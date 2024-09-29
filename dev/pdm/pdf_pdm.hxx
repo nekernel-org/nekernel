@@ -9,10 +9,8 @@
 #include <CompilerKit/Detail.hxx>
 #include <NewKit/Defines.hxx>
 
-namespace CG::PDF
+namespace Kernel::PDF
 {
-    using namespace Kernel;
-
 	class IPDFRenderViewport;
 	class IPDFDocument;
 	class IPDFTimestamp;

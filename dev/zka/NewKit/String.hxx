@@ -9,7 +9,7 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/ErrorOr.hxx>
 #include <NewKit/Utils.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <NewKit/Stop.hxx>
 
 namespace Kernel
 {

@@ -8,7 +8,7 @@
 #pragma once
 
 #include <NewKit/Defines.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <NewKit/Stop.hxx>
 #include <NewKit/Ref.hxx>
 
 namespace Kernel

@@ -15,7 +15,7 @@
 #endif
 
 #include <NewKit/Defines.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <NewKit/Stop.hxx>
 
 #define cBitMapMagIdx  0
 #define cBitMapSizeIdx 1

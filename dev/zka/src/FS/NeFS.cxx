@@ -12,7 +12,7 @@
 #include <FSKit/NeFS.hxx>
 #include <KernelKit/LPC.hxx>
 #include <NewKit/Crc32.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <NewKit/Stop.hxx>
 #include <NewKit/String.hxx>
 #include <NewKit/Utils.hxx>
 #include <FirmwareKit/EPM.hxx>

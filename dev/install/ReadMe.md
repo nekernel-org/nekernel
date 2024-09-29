@@ -1,5 +1,5 @@
-# ReadMe: INST
+# ReadMe: install
 
-This file installs ZKA OS into an HDD.
-</br>
-It can do both EPM and GPT partitions.
+This is the ZKA installer, installs the OS into an Hard-Drive.
+
+###### Copyright ZKA Technologies, all rights reserved.

@@ -9,7 +9,7 @@
 #define _NEWKIT_REF_HPP_
 
 #include <NewKit/Defines.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <NewKit/Stop.hxx>
 #include <KernelKit/Heap.hxx>
 
 namespace Kernel
@@ -22,7 +22,7 @@ namespace Kernel
 		~Ref() = default;
 
 	public:
-		Ref(T cls, const bool& strong = false)
+		Ref(T cls, const Bool& strong = false)
 			: fClass(&cls), fStrong(strong)
 		{
 		}

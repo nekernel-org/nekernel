@@ -5,19 +5,17 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
-#include <Modules/CoreCG/FB.hxx>
+#include <Modules/FB/FB.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Heap.hxx>
 #include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Json.hxx>
-#include <Modules/CoreCG/Accessibility.hxx>
 #include <KernelKit/CodeMgr.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
-#include <Modules/CoreCG/Desktop.hxx>
 
 namespace Kernel::HAL
 {
@@ -32,8 +30,6 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HANDOVER_INFO_HEADER* HandoverHeader)
 {
-	/* Setup globals. */
-
 	kHandoverHeader = HandoverHeader;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
@@ -41,8 +37,6 @@ EXTERN_C void hal_init_platform(
 	{
 		return;
 	}
-
-	CG::CGFillBackground();
 
 	// get page size.
 	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;

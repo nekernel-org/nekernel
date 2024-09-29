@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/LPC.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <NewKit/Stop.hxx>
 
 namespace Kernel
 {

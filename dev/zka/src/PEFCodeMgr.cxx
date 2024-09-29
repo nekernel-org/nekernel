@@ -9,7 +9,7 @@
 #include <KernelKit/PEFCodeMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Defines.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <NewKit/Stop.hxx>
 #include <NewKit/OwnPtr.hxx>
 #include <NewKit/String.hxx>
 

@@ -10,9 +10,9 @@
  * 	========================================================
  */
 
-#include <KernelKit/LPC.hxx>
 #include <KernelKit/User.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <KernelKit/LPC.hxx>
+#include <NewKit/Stop.hxx>
 #include <KernelKit/FileMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 

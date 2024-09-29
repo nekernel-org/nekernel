@@ -8,5 +8,5 @@
 
 namespace Kernel
 {
-	/// Leave it empty for now.
+	/// @note Leave it empty for now.
 } // namespace Kernel

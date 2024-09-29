@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "../zka"],
   "sources_path": ["src/*.cxx"],
-  "output_name": "corecg.sys",
+  "output_name": "pdm.sys",
   "compiler_flags": [
     "-fPIC",
     "-ffreestanding",
@@ -13,11 +13,11 @@
     "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
-    "__CORECG_IMPL__",
+    "__PDM_IMPL__",
     "__NEWOSKRNL__",
     "__ZKA_AMD64__",
-    "cCoreCGVersion=0x0100",
-    "cCoreCGVersionHighest=0x0100",
-    "cCoreCGVersionLowest=0x0100"
+    "cPDMVersion=0x0100",
+    "cPDMVersionHighest=0x0100",
+    "cPDMVersionLowest=0x0100"
   ]
 }

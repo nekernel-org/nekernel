@@ -4,22 +4,17 @@
 
 ------------------------------------------- */
 
+#include <NewKit/Stop.hxx>
+
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/Timer.hxx>
 #include <KernelKit/DebugOutput.hxx>
-#include <NewKit/KernelCheck.hxx>
 #include <NewKit/String.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <KernelKit/FileMgr.hxx>
-#include <Modules/CoreCG/Accessibility.hxx>
-#include <Modules/CoreCG/FB.hxx>
-#include <Modules/CoreCG/Text.hxx>
-#include <Modules/CoreCG/Desktop.hxx>
-
-#define SetMem(dst, byte, sz) Kernel::rt_set_memory((Kernel::VoidPtr)dst, byte, sz)
-#define CopyMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
-#define MoveMem(dst, src, sz) Kernel::rt_copy_memory((Kernel::VoidPtr)src, (Kernel::VoidPtr)dst, sz)
+#include <Modules/FB/FB.hxx>
+#include <Modules/FB/Text.hxx>
 
 #define cWebsiteMacro "https://help.el-mahrouss-logic.com/"
 
@@ -33,8 +28,6 @@ namespace Kernel
 		CGInit();
 
 		auto panicTxt = RGB(0xff, 0xff, 0xff);
-
-		CG::CGFillBackground();
 
 		auto start_y = 10;
 		auto x		 = 10;

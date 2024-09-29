@@ -7,12 +7,12 @@
 #include <Modules/ACPI/ACPIFactoryInterface.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <HALKit/AMD64/Processor.hxx>
-#include <NewKit/KernelCheck.hxx>
+#include <NewKit/Stop.hxx>
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/Semaphore.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/Timer.hxx>
-#include <Modules/CoreCG/Text.hxx>
+#include <Modules/FB/Text.hxx>
 
 // Needed for SMP. //
 #include <FirmwareKit/EFI.hxx>

@@ -2,8 +2,8 @@
 
 	Copyright ZKA Technologies.
 
-	File: Encrypt.hxx
-	Purpose: Encrypted File System
+	File: disk_encrypt.hxx
+	Purpose: Disk Encryption File System
 
 	Revision History:
 
@@ -15,14 +15,17 @@
 
 #include <FSKit/NeFS.hxx>
 
-/**************************************** */
-/// @brief Locks an EFS partition.
-/**************************************** */
+namespace Kernel
+{
+	/**************************************** */
+	/// @brief Locks an EFS partition.
+	/**************************************** */
 
-Kernel::Int32 efs_lock_partition(Kernel::Char* partition_name, Kernel::Char* password, Kernel::Size length);
+	Int32 efs_lock_partition(const Char* partition_name, const Char* password, SizeT length);
 
-/**************************************** */
-/// @brief Unlocks an EFS partition.
-/**************************************** */
+	/**************************************** */
+	/// @brief Unlocks an EFS partition.
+	/**************************************** */
 
-Kernel::Int32 efs_unlock_partition(Kernel::Char* partition_name, Kernel::Char* password, Kernel::Size length);
+	Int32 efs_unlock_partition(const Char* partition_name, const Char* password, SizeT length);
+} // namespace Kernel
