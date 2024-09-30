@@ -21,8 +21,16 @@
 
 EXTERN_C
 {
-#include <cpuid.h>
+#   include <cpuid.h>
 }
+
+#include <HALKit/AMD64/CPUID.hxx>
+
+/// @brief Maximum entries of the interrupt descriptor table.
+#define kKernelIdtSize	   (0x100)
+
+/// @brief interrupt for system call.
+#define kKernelInterruptId (0x32)
 
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
@@ -290,10 +298,6 @@ EXTERN_C Kernel::Void idt_handle_pf(Kernel::UIntPtr rsp);
 
 EXTERN_C Kernel::Void hal_load_idt(Kernel::HAL::Register64 ptr);
 EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
-
-/// @brief Maximum size of the IDT.
-#define kKernelIdtSize	   (0x100)
-#define kKernelInterruptId 0x32
 
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize	 = 0UL;

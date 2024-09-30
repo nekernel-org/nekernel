@@ -17,9 +17,9 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/Stop.hxx>
 
-#define cBitMapMagIdx  0
-#define cBitMapSizeIdx 1
-#define cBitMapUsedIdx 2
+#define cBitMapMagIdx  (0)
+#define cBitMapSizeIdx (1)
+#define cBitMapUsedIdx (2)
 
 namespace Kernel
 {
