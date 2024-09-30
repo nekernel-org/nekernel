@@ -12,34 +12,34 @@
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
 
-///! BUGS: 0
 
 /***********************************************************************************/
+/// @bugs: 0
 /// @file ThreadLocalStorage.cxx
-/// @brief TLS inside the Kernel.
+/// @brief Process Thread Local Storage.
 /***********************************************************************************/
 
 using namespace Kernel;
 
 /**
  * @brief Checks for cookie inside the TIB.
- * @param tib the TIB to check.
- * @return if the cookie is enabled.
+ * @param tib_ptr the TIB to check.
+ * @return if the cookie is enabled, true; false otherwise
  */
 
-Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* the_tib)
+Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr)
 {
-	if (!the_tib ||
-		!the_tib->f_ThreadRecord)
+	if (!tib_ptr ||
+		!tib_ptr->f_ThreadRecord)
 		return false;
 
 	IEncoderObject encoder;
-	const char*	   tibAsBytes = encoder.AsBytes(the_tib);
+	const char*	   tib_as_bytes = encoder.AsBytes(tib_ptr);
 
-	kcout << "checking for a valid cookie inside the TIB...\r";
+	kcout << "Checking for a valid cookie inside the TIB...\r";
 
-	return tibAsBytes[0] == kCookieMag0 && tibAsBytes[1] == kCookieMag1 &&
-		   tibAsBytes[2] == kCookieMag2;
+	return tib_as_bytes[0] == kCookieMag0 && tib_as_bytes[1] == kCookieMag1 &&
+		   tib_as_bytes[2] == kCookieMag2;
 }
 
 /**
@@ -51,15 +51,15 @@ EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 {
 	if (!tib_ptr)
 	{
-		kcout << "failing because of an invalid TIB...\r";
+		kcout << "Failing because of an invalid TIB...\r";
 		return false;
 	}
 
-	THREAD_INFORMATION_BLOCK* tib_struct = (THREAD_INFORMATION_BLOCK*)tib_ptr;
+	THREAD_INFORMATION_BLOCK* tib = (THREAD_INFORMATION_BLOCK*)tib_ptr;
 
-	if (!tls_check_tib(tib_struct))
+	if (!tls_check_tib(tib))
 	{
-		kcout << "crashing because of an invalid TIB...\r";
+		kcout << "Crashing because of an invalid TIB...\r";
 		return false;
 	}
 
