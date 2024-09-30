@@ -12,11 +12,15 @@ Purpose: sci/M core header file (C++)
 
 #include <sci/sci_hint.hxx>
 
+#define ATTRIBUTE(X) __attribute__((X))
+
 #define IMPORT_CXX extern "C++"
 #define IMPORT_C   extern "C"
 
 typedef bool Bool;
 typedef void UInt0;
+
+typedef UInt0 Void;
 
 typedef __UINT64_TYPE__ UInt64;
 typedef __UINT32_TYPE__ UInt32;
@@ -39,29 +43,11 @@ typedef char			 Char;
 #ifdef __SCI_IMPL__
 #include <sci/xpcom_core.hxx>
 #else
-class IUnknown;		 // Refrenced from an IDB entry.
-class UnknownUCLSID; // From the IDB, the constructor of the object, e.g: WordUCLSID.
+class IUnknown; // Refrenced from an IDB entry.
+class ICLSID;	// From the IDB, the constructor of the object, e.g: WordUCLSID.
 class UUID;
 
-/// @brief Allocate new XPCOM class.
-/// @tparam TCLS
-/// @tparam UCLSID
-/// @param uclsidOfCls
-/// @return
-template <typename TCLS, typename UCLSID, typename... Args>
-TCLS* XPCOMQueryInterface(UCLSID uclsidOfCls, Args... args);
-
-template <typename TCLS>
-SInt32 XPCOMReleaseClass(TCLS** cls);
-
-/// @brief Release XPCOM class.
-/// @tparam TCLS
-/// @param cls
-/// @return
-template <typename TCLS>
-SInt32 RtlReleaseClass(TCLS* cls);
-
-class __attribute__((uuid("d7c144b6-0792-44b8-b06b-02b227b547df"))) IUnknown
+class ATTRIBUTE(uuid("d7c144b6-0792-44b8-b06b-02b227b547df")) IUnknown
 {
 public:
 	explicit IUnknown() = default;
@@ -70,22 +56,24 @@ public:
 	IUnknown& operator=(const IUnknown&) = default;
 	IUnknown(const IUnknown&)			 = default;
 
-	virtual SInt32	  Release()					   = 0;
-	virtual void	  RemoveRef()				   = 0;
-	virtual IUnknown* AddRef()					   = 0;
-	virtual VoidPtr	  QueryInterface(UUID* p_uuid) = 0;
+	virtual SInt32	  Release()				   = 0;
+	virtual void	  RemoveRef()			   = 0;
+	virtual IUnknown* AddRef()				   = 0;
+	virtual VoidPtr	  QueryClass(UUID* p_uuid) = 0;
 };
 
 template <typename FnSign, typename ClsID>
 class IEventListener : public ClsID
 {
-public:
+	friend ClsID;
+
 	explicit IEventListener() = default;
 	virtual ~IEventListener() = default;
 
 	IEventListener& operator=(const IEventListener&) = default;
 	IEventListener(const IEventListener&)			 = default;
 
+	virtual IEventListener& operator-=(const Char* event_name);
 	virtual IEventListener& operator+=(FnSign arg) = 0;
 };
 #endif
@@ -157,7 +145,9 @@ IMPORT_C UInt64 IoSeekFile(_Input ZKAObject file_desc, UInt64 file_offset);
 /// @brief Installs the Thread Information Block and Global Information Block inside the current process.
 /// @param void.
 /// @return > 0 error ocurred or already present, = 0 success.
-IMPORT_C UInt32 TlsInstall(UInt0);
+IMPORT_C UInt32 RtlTlsInstall(Void);
+
+#ifndef __SCI_IMPL__
 
 // ------------------------------------------------------------------------
 // XPCOM API.
@@ -169,7 +159,7 @@ IMPORT_C UInt32 TlsInstall(UInt0);
 /// @param uclsidOfCls UCLS factory class
 /// @return TCLS interface
 template <typename TCLS, typename UCLSID, typename... Args>
-TCLS* XPCOMQueryInterface(_Input UCLSID* uclsidOfCls, _Input Args&&... args);
+TCLS* XPCOMQueryClass(_Input UCLSID* uclsidOfCls, _Input Args&&... args);
 
 /// @brief Release XPCOM object.
 /// @tparam TCLS the class type.
@@ -186,6 +176,8 @@ IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output ZKAObject* hand
 /// @brief Destroys an XPCOM instance of the process.
 /// @param handle_instance the XPCOM handle.
 IMPORT_C UInt0 XPCOMDestroyInstance(_Input ZKAObject handle_instance);
+
+#endif // !__SCI_IMPL__
 
 // ------------------------------------------------------------------------
 // Memory Management API.

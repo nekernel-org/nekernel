@@ -7,18 +7,18 @@ Purpose: Base code of XPCOM.
 
 ------------------------------------------- */
 
-/// @internal
+/// @internal Reserved for internal definitions only.
 
 #ifndef __NDK__
 #define object	 class
 #define protocol class
 #define clsid(X)
 
-#warning ! You may be using the clang version of the ZKAKit, please be cautious that some features mayn't be present. !
+#warning ! You may be using the clang compiler, please be cautious that some features mayn't be present. !
 #endif // !__NDK__
 
-protocol IUnknown;		// Refrenced from an IDB entry.
-protocol UnknownUCLSID; // From the IDB, the constructor of the object, e.g: TextUCLSID.
+protocol IUnknown; // Refrenced from an IDB entry.
+protocol ICLSID;   // From the IDB, the constructor of the object, e.g: TextUCLSID.
 object	 UUID;
 
 /// @brief Unknown XPCOM interface
@@ -31,10 +31,10 @@ public:
 	IUnknown& operator=(const IUnknown&) = default;
 	IUnknown(const IUnknown&)			 = default;
 
-	virtual SInt32	  Release()						= 0;
-	virtual void	  RemoveRef()					= 0;
-	virtual IUnknown* AddRef()						= 0;
-	virtual VoidPtr	  QueryInterface(UUID * p_uuid) = 0;
+	virtual SInt32	  Release()					= 0;
+	virtual Void	  RemoveRef()				= 0;
+	virtual IUnknown* AddRef()					= 0;
+	virtual VoidPtr	  QueryClass(UUID * p_uuid) = 0;
 };
 
 /// @brief Allocate new XPCOM object.
@@ -70,12 +70,19 @@ inline SInt32 XPCOMReleaseClass(TCLS** cls)
 template <typename FnSign, typename ClsID>
 protocol IEventListener : public ClsID
 {
-public:
+	friend ClsID;
+
 	explicit IEventListener() = default;
 	virtual ~IEventListener() = default;
 
 	IEventListener& operator=(const IEventListener&) = default;
 	IEventListener(const IEventListener&)			 = default;
+
+	virtual IEventListener& operator-=(const Char* event_name)
+	{
+		this->RemoveEventListener(event_name);
+		return *this;
+	}
 
 	virtual IEventListener& operator+=(FnSign arg)
 	{
