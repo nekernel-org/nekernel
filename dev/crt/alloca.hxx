@@ -9,10 +9,11 @@
 
 #pragma once
 
-typedef void*		  ptr_type;
-typedef __SIZE_TYPE__ size_type;
+#include <crt/defines.hxx>
 
 inline ptr_type __ndk_alloca(size_type sz)
 {
 	return __builtin_alloca(sz);
 }
+
+#define alloca __ndk_alloca

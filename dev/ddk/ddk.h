@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies.
 
-	FILE: KernelStd.h
+	FILE: ddk.h
 	PURPOSE: DDK Driver model base header.
 
 ------------------------------------------- */
@@ -37,6 +37,8 @@
 
 #define ATTRIBUTE(X) __attribute__((X))
 
+#define DDK_SMS_MAX_SZ 128
+
 #ifndef __NEWOSKRNL__
 #error !!! including header in low exception/ring-3 mode !!!
 #endif // __NEWOSKRNL__
@@ -44,6 +46,7 @@
 struct DDK_STATUS_STRUCT;
 struct DDK_OBJECT_MANIFEST;
 
+/// \brief Object handle manifest.
 struct DDK_OBJECT_MANIFEST DK_FINAL
 {
 	char*	p_name;
@@ -51,13 +54,22 @@ struct DDK_OBJECT_MANIFEST DK_FINAL
 	void*	p_object;
 };
 
-/// \brief DDK status structure (__at_enable, __at_disable...)
+/// \brief DDK status ping structure.
 struct DDK_STATUS_STRUCT DK_FINAL
 {
 	int32_t s_action_id;
 	int32_t s_issuer_id;
 	int32_t s_group_id;
 	void*	s_object;
+};
+
+/// \brief Simple Message Struct
+struct DDK_SMS_STRUCT DK_FINAL
+{
+	char s_msg[DDK_SMS_MAX_SZ];
+	int32_t s_type;
+	int64_t s_sender;
+	int64_t s_receiver;
 };
 
 /// @brief Call Kernel (interrupt 0x33)
@@ -79,8 +91,8 @@ DK_EXTERN void KernelAddSyscall(const int32_t slot, void (*slotFn)(void* a0));
 DK_EXTERN void* KernelAlloc(size_t sz);
 
 /// @brief free heap ptr.
-/// @param pointer to free
-DK_EXTERN void KernelFree(void*);
+/// @param pointer kernel pointer to free.
+DK_EXTERN void KernelFree(void* the_ptr);
 
 /// @brief Get a Kernel property.
 /// @param slot property id (always 0)

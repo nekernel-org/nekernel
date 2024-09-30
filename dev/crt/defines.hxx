@@ -20,6 +20,9 @@ typedef long int ssize_t;
 typedef int ssize_t;
 #endif // __LP64__
 
+typedef void*		  ptr_type;
+typedef __SIZE_TYPE__ size_type;
+
 typedef size_t ptrdiff_t;
 typedef size_t uintptr_t;
 typedef void*  voidptr_t;
@@ -31,10 +34,8 @@ typedef char*  caddr_t;
 #endif // !null
 
 #ifdef __GNUC__
-#include <crt/__ndk_alloca.hxx>
-#define __ndk_alloca(sz) __ndk_alloca(sz)
+#include <crt/alloca.hxx>
 #elif defined(__NDK__)
-
 #define __alloca(sz) __ndk_alloca(sz)
 #endif
 
@@ -59,7 +60,7 @@ typedef char*  caddr_t;
 #endif
 #define __alloca alloca
 #else
-#warning alloca not detected
+#warning ! alloca not detected !
 #endif
 
 typedef long long		   off_t;
@@ -93,8 +94,8 @@ typedef union double_cast {
 
 #ifdef __STD_CXX__
 
-#include <crt/__ndk_exception.hxx>
-#include <crt/__ndk_malloc.hxx>
+#include <crt/base_exception.hxx>
+#include <crt/base_alloc.hxx>
 
 #endif // ifdef __STD_CXX__
 
