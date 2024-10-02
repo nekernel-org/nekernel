@@ -12,7 +12,6 @@
 #include <NewKit/ErrorOr.hxx>
 #include <NewKit/Json.hxx>
 #include <NewKit/Stop.hxx>
-#include <KernelKit/LockDelegate.hxx>
 #include <NewKit/MutableArray.hxx>
 #include <NewKit/New.hxx>
 #include <NewKit/OwnPtr.hxx>

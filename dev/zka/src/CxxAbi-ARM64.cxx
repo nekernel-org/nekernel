@@ -68,7 +68,7 @@ EXTERN_C void __cdecl _Init_thread_footer(int* const pOnce) noexcept
 
 EXTERN_C void _purecall()
 {
-	kcout << "C++ placeholder method.\n";
+	ZKA_UNUSED(0);
 }
 
 #endif // ifdef __ZKA_ARM64__

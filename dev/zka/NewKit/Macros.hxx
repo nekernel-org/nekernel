@@ -115,19 +115,19 @@
 #endif // !RGB
 
 /// @brief The system page file.
-#define kSysPage "\\System\\syspage.sys"
+#define kPageSys "\\System\\syspage.sys"
 
 /// @brief The main system driver.
-#define kSysDrv "\\System\\startup.sys"
+#define kStartupSys "\\Boot\\startup.sys"
 
 /// @brief The main font file.
-#define kSysTTF "\\System\\urbanist.ttf"
+#define kUrbanistTTF "\\Fonts\\urbanist.ttf"
 
 /// @brief License file
-#define kLicenseTxt "\\System\\License.txt"
+#define kEulaTxt "\\Misc\\EULA.txt"
 
 /// @brief The main kernel file.
-#define kSysChime "\\System\\startup.wav"
+#define kStartupWav "\\Rsrc\\startup.wav"
 
 /// @brief The main system loader.
-#define kKernelProcessName "ZKA AUTHORITY\\KERNEL"
+#define kUserName "ZKA AUTHORITY\\KERNEL"
