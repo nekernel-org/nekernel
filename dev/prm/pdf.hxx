@@ -30,6 +30,11 @@ namespace Kernel::PDF
 
 		virtual IPDFDocument* GetPage(const UInt32& page_number);
 
+		virtual Void SetProducer(const Char*) = 0;
+		virtual Void SetTitle(const Char*)	  = 0;
+		virtual Void SetAuthor(const Char*)	  = 0;
+		virtual Void SetSubject(const Char*)  = 0;
+
 		virtual const Char* GetProducer() = 0;
 		virtual const Char* GetTitle()	  = 0;
 		virtual const Char* GetAuthor()	  = 0;

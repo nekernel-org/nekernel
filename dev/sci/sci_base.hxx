@@ -14,8 +14,9 @@ Purpose: sci/M core header file (C++)
 
 #define ATTRIBUTE(X) __attribute__((X))
 
-#define IMPORT_CXX extern "C++"
-#define IMPORT_C   extern "C"
+#define IMPORT_XPCOM extern "XPCOM"
+#define IMPORT_CXX	 extern "C++"
+#define IMPORT_C	 extern "C"
 
 typedef bool Bool;
 typedef void UInt0;
@@ -82,13 +83,13 @@ class IEventListener : public ClsID
 /// @note Handle types.
 // ------------------------------------------------------------------------------------------ //
 
-typedef VoidPtr ZKAObject;
+typedef VoidPtr Object;
 
-typedef ZKAObject ZKADLLObject;
-typedef ZKAObject ZKAIOObject;
-typedef ZKAObject ZKASCMObject;
-typedef ZKAObject ZKAThreadObject;
-typedef ZKAObject ZKASocketObject;
+typedef Object DLLObject;
+typedef Object IOObject;
+typedef Object SCMObject;
+typedef Object ThreadObject;
+typedef Object SocketObject;
 
 // ------------------------------------------------------------------------------------------ //
 
@@ -100,18 +101,18 @@ typedef ZKAObject ZKASocketObject;
 /// @param symbol the symbol to look for
 /// @param dll_handle the DLL handle.
 /// @return the proc pointer.
-IMPORT_C ZKAObject LdrGetDLLProc(_Input const Char* symbol, _Input ZKAObject dll_handle);
+IMPORT_C Object LdrGetDLLProc(_Input const Char* symbol, _Input Object dll_handle);
 
 /// @brief Open DLL handle.
 /// @param path
 /// @param drv
 /// @return
-IMPORT_C ZKAObject LdrOpenDLL(_Input const Char* path, _Input const Char* drive_letter);
+IMPORT_C Object LdrOpenDLL(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close DLL handle
 /// @param dll_handle
 /// @return
-IMPORT_C UInt0 LdrCloseDLL(_Input ZKAObject dll_handle);
+IMPORT_C UInt0 LdrCloseDLL(_Input Object dll_handle);
 
 // ------------------------------------------------------------------------------------------ //
 // File API.
@@ -121,22 +122,22 @@ IMPORT_C UInt0 LdrCloseDLL(_Input ZKAObject dll_handle);
 /// @param fs_path the filesystem path.
 /// @param drive_letter drive name, use NULL to use default one.
 /// @return the file descriptor of the file.
-IMPORT_C ZKAObject IoOpenFile(const Char* fs_path, const Char* drive_letter);
+IMPORT_C Object IoOpenFile(const Char* fs_path, const Char* drive_letter);
 
 /// @brief Closes a file and flushes its content.
 /// @param file_desc the file descriptor.
 /// @return void.
-IMPORT_C UInt0 IoCloseFile(_Input ZKAObject file_desc);
+IMPORT_C UInt0 IoCloseFile(_Input Object file_desc);
 
-IMPORT_C UInt32 IoWriteFile(_Input ZKAObject file_desc, _Output VoidPtr out_data, SizeT sz_data);
+IMPORT_C UInt32 IoWriteFile(_Input Object file_desc, _Output VoidPtr out_data, SizeT sz_data);
 
-IMPORT_C UInt32 IoReadFile(_Input ZKAObject file_desc, _Output VoidPtr* out_data, SizeT sz_data);
+IMPORT_C UInt32 IoReadFile(_Input Object file_desc, _Output VoidPtr* out_data, SizeT sz_data);
 
-IMPORT_C UInt64 IoRewindFile(_Input ZKAObject file_desc);
+IMPORT_C UInt64 IoRewindFile(_Input Object file_desc);
 
-IMPORT_C UInt64 IoTellFile(_Input ZKAObject file_desc);
+IMPORT_C UInt64 IoTellFile(_Input Object file_desc);
 
-IMPORT_C UInt64 IoSeekFile(_Input ZKAObject file_desc, UInt64 file_offset);
+IMPORT_C UInt64 IoSeekFile(_Input Object file_desc, UInt64 file_offset);
 
 // ------------------------------------------------------------------------
 // TLS API.
@@ -171,11 +172,11 @@ SInt32 XPCOMReleaseClass(_Input TCLS* cls);
 /// @brief Creates an XPCOM instance in the process.
 /// @param handle_instance the XPCOM handle.
 /// @param flags the XPCOM flags.
-IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output ZKAObject* handle_instance);
+IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output Object* handle_instance);
 
 /// @brief Destroys an XPCOM instance of the process.
 /// @param handle_instance the XPCOM handle.
-IMPORT_C UInt0 XPCOMDestroyInstance(_Input ZKAObject handle_instance);
+IMPORT_C UInt0 XPCOMDestroyInstance(_Input Object handle_instance);
 
 #endif // !__SCI_IMPL__
 

@@ -2,6 +2,7 @@
 
 Copyright ZKA Technologies.
 
+File: xpcom_sms.idl
 Purpose: SMS XPCOM interface
 
 ------------------------------------------- */
@@ -11,10 +12,12 @@ Purpose: SMS XPCOM interface
 #define protocol class
 #define interface private
 #define interface_method
+
 #define CONST const
 #define CHAR char
 #define INT32 __INT32_TYPE__
 #define SIZE_T __SIZE_TYPE__
+
 #define _Output
 #define _Input
 #define clsid(X)

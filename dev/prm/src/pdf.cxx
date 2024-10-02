@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <pdm/pdf_pdm.hxx>
+#include <prm/pdf.hxx>

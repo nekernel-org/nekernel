@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "../zka"],
   "sources_path": ["src/*.cxx"],
-  "output_name": "pdm.sys",
+  "output_name": "prm.sys",
   "compiler_flags": [
     "-fPIC",
     "-ffreestanding",
@@ -13,11 +13,11 @@
     "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
-    "__PDM_IMPL__",
+    "__PRM_IMPL__",
     "__NEWOSKRNL__",
     "__ZKA_AMD64__",
-    "cPDMVersion=0x0100",
-    "cPDMVersionHighest=0x0100",
-    "cPDMVersionLowest=0x0100"
+    "cPRMVersion=0x0100",
+    "cPRMVersionHighest=0x0100",
+    "cPRMVersionLowest=0x0100"
   ]
 }
