@@ -68,8 +68,6 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 	drv_std_select(IO);
 
-	kcout << "Initializing drive...\r";
-
 ATAInit_Retry:
 	// Bus init, NEIN bit.
 	Out8(IO + ATA_REG_NEIN, 1);
@@ -80,7 +78,7 @@ ATAInit_Retry:
 
 	if (statRdy & ATA_SR_ERR)
 	{
-		kcout << "Failing drive...\r";
+		kcout << "ERROR: ATA DRIVE RETURNED ERROR BIT! ABORTING...\r";
 
 		return false;
 	}
@@ -107,7 +105,7 @@ ATAInit_Retry:
 
 	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
-	kcout << "Created IDE module.\r";
+	kcout << "INFO: INITIALIZED ATA DRIVE!\r";
 
 	return true;
 }

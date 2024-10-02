@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <KernelKit/PCI/Dma.hxx>
+#include <KernelKit/PCI/DMA.hxx>
 #include <KernelKit/PCI/Iterator.hxx>
 #include <NewKit/Ref.hxx>
 

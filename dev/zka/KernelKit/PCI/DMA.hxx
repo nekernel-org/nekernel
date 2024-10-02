@@ -78,4 +78,4 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#include <KernelKit/PCI/Dma.inl>
+#include <KernelKit/PCI/DMA.inl>

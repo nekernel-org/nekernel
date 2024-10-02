@@ -114,9 +114,9 @@ namespace Kernel::HAL
 		UInt64 pt_entry = (pt_base + pt_index * cPmlEntrySize);
 
 		// Lastly, grab the pte entry.
-		ZKA_PTE* pte_struct = reinterpret_cast<ZKA_PTE*>(pt_entry);
+		ZKA_PDE* pte_struct = reinterpret_cast<ZKA_PDE*>(pt_base);
 
-		return mmi_map_page_table_entry(virtual_address, flags, pte_struct);
+		return mmi_map_page_table_entry(virtual_address, flags, pte_struct->fEntries[pt_entry]);
 	}
 
 	/// @brief Maps flags for a specific pte.
