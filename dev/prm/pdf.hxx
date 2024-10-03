@@ -47,4 +47,4 @@ namespace Kernel::PDF
 
 		virtual SizeT GetPageCount() = 0;
 	};
-} // namespace CG::PDF
+} // namespace Kernel::PDF

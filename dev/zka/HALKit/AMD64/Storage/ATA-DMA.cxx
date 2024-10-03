@@ -17,7 +17,7 @@
 
 #include <StorageKit/PRDT.hxx>
 
-#include <Modules/ATA/ATA.hxx>
+#include <modules/ATA/ATA.hxx>
 #include <ArchKit/ArchKit.hxx>
 
 using namespace Kernel;

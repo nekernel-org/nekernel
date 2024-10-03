@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <Modules/ATA/ATA.hxx>
+#include <modules/ATA/ATA.hxx>
 #include <BootKit/Device.hxx>
 
 using namespace Kernel;

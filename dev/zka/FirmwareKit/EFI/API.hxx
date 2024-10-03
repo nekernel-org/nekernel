@@ -21,7 +21,7 @@ class BTextWriter;
 #define __BOOTKIT_NO_INCLUDE__ 1
 
 #include <BootKit/BootKit.hxx>
-#include <Modules/FB/FB.hxx>
+#include <modules/FB/FB.hxx>
 #endif // ifdef __NEWOSLDR__
 
 inline EfiSystemTable*	ST = nullptr;

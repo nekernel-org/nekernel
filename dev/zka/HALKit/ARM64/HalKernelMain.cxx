@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
-#include <Modules/FB/FB.hxx>
+#include <modules/FB/FB.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Heap.hxx>
@@ -13,7 +13,7 @@
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/Json.hxx>
 #include <KernelKit/CodeMgr.hxx>
-#include <Modules/ACPI/ACPIFactoryInterface.hxx>
+#include <modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
 

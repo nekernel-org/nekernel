@@ -8,7 +8,7 @@
 #define __MOD_ACPI_HXX__
 
 #include <KernelKit/DebugOutput.hxx>
-#include <Modules/ACPI/ACPI.hxx>
+#include <modules/ACPI/ACPI.hxx>
 #include <NewKit/ErrorOr.hxx>
 #include <NewKit/Defines.hxx>
 #include <NewKit/Ref.hxx>

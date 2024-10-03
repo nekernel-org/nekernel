@@ -8,9 +8,9 @@
 #include <KernelKit/DriveMgr.hxx>
 #include <NewKit/Utils.hxx>
 
-#include <Modules/ATA/ATA.hxx>
-#include <Modules/AHCI/AHCI.hxx>
-#include <Modules/NVME/NVME.hxx>
+#include <modules/ATA/ATA.hxx>
+#include <modules/AHCI/AHCI.hxx>
+#include <modules/NVME/NVME.hxx>
 
 /// @file DriveMgr.cxx
 /// @brief Kernel drive manager.

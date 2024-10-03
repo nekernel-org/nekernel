@@ -3,10 +3,10 @@
 # This is the bootloader makefile.
 ##################################################
 
-CC_GNU=x86_64-w64-mingw32-g++
-LD_GNU=x86_64-w64-mingw32-ld
+CC_GNU=x86_64-w64-mingw32-g++.exe
+LD_GNU=x86_64-w64-mingw32-ld.exe
 
-WINDRES=x86_64-w64-mingw32-windres
+WINDRES=x86_64-w64-mingw32-windres.exe
 
 ADD_FILE=touch
 COPY=cp
@@ -72,8 +72,8 @@ all: compile-amd64
 	$(COPY) ../zka/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ../sci/$(SCI) src/Root/$(SCI)
 	$(COPY) ../ddk/$(DDK) src/Root/$(DDK)
-	$(COPY) ./Modules/SysChk/$(SYS_CHK) src/Root/$(SYS_CHK)
-	$(COPY) ./Modules/SysChk/$(SYS_CHK) src/Root/zka/$(STARTUP)
+	$(COPY) ./modules/SysChk/$(SYS_CHK) src/Root/$(SYS_CHK)
+	$(COPY) ./modules/SysChk/$(SYS_CHK) src/Root/zka/$(STARTUP)
 	$(COPY) ../crt/$(CRT) src/Root/$(CRT)
 	$(COPY) src/$(BOOT_LOADER) src/Root/$(BOOT_LOADER)
 

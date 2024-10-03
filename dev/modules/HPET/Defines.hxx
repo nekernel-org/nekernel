@@ -12,7 +12,7 @@
 #pragma once
 
 #include <NewKit/Defines.hxx>
-#include <Modules/ACPI/ACPI.hxx>
+#include <modules/ACPI/ACPI.hxx>
 
 namespace Kernel
 {

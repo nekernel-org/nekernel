@@ -7,10 +7,10 @@
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/CodeMgr.hxx>
-#include <Modules/ACPI/ACPIFactoryInterface.hxx>
+#include <modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
 #include <CFKit/Property.hxx>
-#include <Modules/FB/Text.hxx>
+#include <modules/FB/Text.hxx>
 
 namespace Kernel::HAL
 {

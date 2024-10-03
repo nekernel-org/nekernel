@@ -11,10 +11,10 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <NewKit/String.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <Modules/ACPI/ACPIFactoryInterface.hxx>
+#include <modules/ACPI/ACPIFactoryInterface.hxx>
 #include <KernelKit/FileMgr.hxx>
-#include <Modules/FB/FB.hxx>
-#include <Modules/FB/Text.hxx>
+#include <modules/FB/FB.hxx>
+#include <modules/FB/Text.hxx>
 
 #define cWebsiteMacro "https://help.el-mahrouss-logic.com/"
 

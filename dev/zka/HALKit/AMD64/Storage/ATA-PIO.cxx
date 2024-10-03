@@ -15,7 +15,7 @@
  *
  */
 
-#include <Modules/ATA/ATA.hxx>
+#include <modules/ATA/ATA.hxx>
 #include <ArchKit/ArchKit.hxx>
 
 #ifdef __ATA_PIO__

@@ -15,7 +15,7 @@
  *
  */
 
-#include <Modules/AHCI/AHCI.hxx>
+#include <modules/AHCI/AHCI.hxx>
 #include <KernelKit/PCI/Iterator.hxx>
 
 #ifdef __AHCI__

@@ -39,13 +39,13 @@ typedef void*			 VoidPtr;
 typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
 
-#include <sci/sci_err.hxx>
+#include <sci/sci_lpc.hxx>
 
 #ifdef __SCI_IMPL__
 #include <sci/xpcom_core.hxx>
 #else
 class IUnknown; // Refrenced from an IDB entry.
-class ICLSID;	// From the IDB, the constructor of the object, e.g: WordUCLSID.
+class ICLSID;	// From the IDB, the constructor of the object, e.g: IAppCLSID.
 class UUID;
 
 class ATTRIBUTE(uuid("d7c144b6-0792-44b8-b06b-02b227b547df")) IUnknown
@@ -213,6 +213,12 @@ IMPORT_C SInt32 ErrGetLastError(UInt0);
 
 IMPORT_C UInt0 ThrExitCurrentThread(_Input SInt32 exit_code);
 IMPORT_C UInt0 ThrExitMainThread(_Input SInt32 exit_code);
+
+IMPORT_C UInt0 ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
+
+typedef Void(*GenericThreadFn)(Void);
+
+IMPORT_C ThreadObject ThrCreateThread(GenericThreadFn proc);
 
 IMPORT_C UInt0 ThrExitYieldThread(UInt0);
 

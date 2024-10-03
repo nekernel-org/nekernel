@@ -13,7 +13,7 @@
 #include <BootKit/BootKit.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <FirmwareKit/EFI/API.hxx>
-#include <Modules/FB/Text.hxx>
+#include <modules/FB/Text.hxx>
 
 /// @file BootFileReader
 /// @brief Bootloader File reader.

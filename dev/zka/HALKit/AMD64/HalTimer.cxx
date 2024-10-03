@@ -11,7 +11,7 @@
 
 ------------------------------------------- */
 
-#include <Modules/ACPI/ACPIFactoryInterface.hxx>
+#include <modules/ACPI/ACPIFactoryInterface.hxx>
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/Timer.hxx>
 

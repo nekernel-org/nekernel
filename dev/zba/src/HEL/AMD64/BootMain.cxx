@@ -6,8 +6,8 @@
 
 #include <BootKit/BootKit.hxx>
 #include <BootKit/Rsrc/NewBoot.rsrc>
-#include <Modules/FB/FB.hxx>
-#include <Modules/FB/Text.hxx>
+#include <modules/FB/FB.hxx>
+#include <modules/FB/Text.hxx>
 #include <FirmwareKit/EFI.hxx>
 #include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>

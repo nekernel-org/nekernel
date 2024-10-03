@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <Modules/ACPI/ACPIFactoryInterface.hxx>
+#include <modules/ACPI/ACPIFactoryInterface.hxx>
 #include <HALKit/AMD64/Processor.hxx>
 #include <NewKit/String.hxx>
 #include <ArchKit/ArchKit.hxx>

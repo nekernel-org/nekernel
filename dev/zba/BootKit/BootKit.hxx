@@ -26,7 +26,7 @@
 /***********************************************************************************/
 
 #include <NewKit/Defines.hxx>
-#include <Modules/ATA/ATA.hxx>
+#include <modules/ATA/ATA.hxx>
 
 #include <FirmwareKit/EFI.hxx>
 

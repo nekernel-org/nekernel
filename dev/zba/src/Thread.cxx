@@ -13,7 +13,7 @@
 #include <KernelKit/PE.hxx>
 #include <KernelKit/MSDOS.hxx>
 #include <CFKit/LoaderUtils.hxx>
-#include <Modules/FB/Text.hxx>
+#include <modules/FB/Text.hxx>
 
 EXTERN_C
 {

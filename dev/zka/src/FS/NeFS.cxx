@@ -6,9 +6,9 @@
 
 #ifdef __FSKIT_USE_NEFS__
 
-#include <Modules/AHCI/AHCI.hxx>
-#include <Modules/ATA/ATA.hxx>
-#include <Modules/Flash/Flash.hxx>
+#include <modules/AHCI/AHCI.hxx>
+#include <modules/ATA/ATA.hxx>
+#include <modules/Flash/Flash.hxx>
 #include <FSKit/NeFS.hxx>
 #include <KernelKit/LPC.hxx>
 #include <NewKit/Crc32.hxx>

@@ -7,4 +7,4 @@
 #pragma once
 
 #include <NewKit/Defines.hxx>
-#include <Modules/MBCI/MBCI.hxx>
+#include <modules/MBCI/MBCI.hxx>

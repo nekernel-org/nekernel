@@ -59,6 +59,10 @@ namespace Kernel
 	using IntFast64 = __INT_FAST64_TYPE__;
 	using PtrDiff	= __PTRDIFF_TYPE__;
 
+	using SInt16 = Int16;
+	using SInt32 = Int32;
+	using SInt64 = Int64;
+
 	typedef UIntPtr* Ptr64;
 	typedef UInt32*	 Ptr32;
 
