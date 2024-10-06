@@ -59,15 +59,21 @@ namespace Kernel
 		this->Exit(kErrorProcessFault);
 	}
 
+	/***********************************************************************************/
 	//! @brief boolean operator, check status.
+	/***********************************************************************************/
+
 	UserProcess::operator bool()
 	{
 		return this->Status != ProcessStatusKind::kDead;
 	}
 
+	/***********************************************************************************/
 	/// @brief Gets the local last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
+	/***********************************************************************************/
+
 	const UInt32& UserProcess::GetExitCode() noexcept
 	{
 		return this->fLastExitCode;
@@ -81,6 +87,10 @@ namespace Kernel
 	{
 		return fLocalCode;
 	}
+
+	/***********************************************************************************/
+	/// @brief Wake process.
+	/***********************************************************************************/
 
 	void UserProcess::Wake(const bool should_wakeup)
 	{
@@ -175,13 +185,19 @@ namespace Kernel
 		return No;
 	}
 
-	/// @brief Gets the name of the current process..
+	/***********************************************************************************/
+	/// @brief Gets the name of the current process.
+	/***********************************************************************************/
+
 	const Char* UserProcess::GetProcessName() noexcept
 	{
 		return this->Name;
 	}
 
+	/***********************************************************************************/
 	/// @brief Gets the owner of the process.
+	/***********************************************************************************/
+
 	const User* UserProcess::GetOwner() noexcept
 	{
 		return this->Owner;
@@ -247,9 +263,12 @@ namespace Kernel
 			UserProcessScheduler::The().Remove(this->ProcessId);
 	}
 
+	/***********************************************************************************/
 	/// @brief Add process to list.
 	/// @param process the process *Ref* class.
 	/// @return the process index inside the team.
+	/***********************************************************************************/
+
 	SizeT UserProcessScheduler::Add(UserProcess process)
 	{
 		if (mTeam.mProcessAmount > kSchedProcessLimitPerTeam)
@@ -308,6 +327,8 @@ namespace Kernel
 		return ret_pid;
 	}
 
+	/***********************************************************************************/
+	/// @brief Retrieves the singleton of the process scheduler.
 	/***********************************************************************************/
 
 	UserProcessScheduler& UserProcessScheduler::The()

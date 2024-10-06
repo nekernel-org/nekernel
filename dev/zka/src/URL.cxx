@@ -29,7 +29,7 @@ namespace Kernel
 	};
 
 	constexpr const int kUrlOutSz	 = 1; //! such as: ://
-	constexpr const int kProtosCount = 5;
+	constexpr const int kProtosCount = 5; //! Number of protocols registered as of right now.
 	constexpr const int kRangeSz	 = 4096;
 
 	ErrorOr<StringView> url_extract_location(const Char* url)
