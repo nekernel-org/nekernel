@@ -9,7 +9,7 @@
 
 namespace Kernel
 {
-	bool Semaphore::Unlock() noexcept
+	Bool Semaphore::Unlock() noexcept
 	{
 		if (fLockingProcess)
 			fLockingProcess = nullptr;
@@ -17,7 +17,7 @@ namespace Kernel
 		return fLockingProcess == nullptr;
 	}
 
-	bool Semaphore::Lock(UserProcess* process)
+	Bool Semaphore::Lock(UserProcess* process)
 	{
 		if (!process || fLockingProcess)
 			return false;
@@ -27,12 +27,12 @@ namespace Kernel
 		return true;
 	}
 
-	bool Semaphore::IsLocked() const
+	Bool Semaphore::IsLocked() const
 	{
 		return fLockingProcess;
 	}
 
-	bool Semaphore::LockOrWait(UserProcess* process, TimerInterface* timer)
+	Bool Semaphore::LockOrWait(UserProcess* process, TimerInterface* timer)
 	{
 		if (process == nullptr)
 			return false;

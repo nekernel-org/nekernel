@@ -72,7 +72,7 @@ namespace Kernel
 	{
 		if (!password_to_fill ||
 			*password_to_fill == 0)
-			return false;
+			return No;
 
 		SizeT len = rt_string_len(password_to_fill);
 
@@ -89,7 +89,7 @@ namespace Kernel
 			delete[] password;
 			password = nullptr;
 
-			return false;
+			return No;
 		}
 
 		// then store password.
@@ -101,15 +101,15 @@ namespace Kernel
 
 		kcout << "Saved password...\r";
 
-		return true;
+		return Yes;
 	}
 
-	bool User::operator==(const User& lhs)
+	Bool User::operator==(const User& lhs)
 	{
 		return lhs.fRing == this->fRing;
 	}
 
-	bool User::operator!=(const User& lhs)
+	Bool User::operator!=(const User& lhs)
 	{
 		return lhs.fRing != this->fRing;
 	}

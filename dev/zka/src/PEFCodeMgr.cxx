@@ -23,9 +23,9 @@ namespace Kernel
 	namespace Detail
 	{
 		/// @brief Get the PEF platform signature according to the compiled backebnd
-		UInt32 rt_get_pef_platform(void) noexcept
+		UInt32 ldr_get_platform(void) noexcept
 		{
-#ifdef __ZKA_32X0__
+#if defined(__ZKA_32X0__)
 			return kPefArch32x0;
 #elif defined(__ZKA_64X0__)
 			return kPefArch64x0;
@@ -64,7 +64,7 @@ namespace Kernel
 
 		PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-		if (container->Cpu == Detail::rt_get_pef_platform() &&
+		if (container->Cpu == Detail::ldr_get_platform() &&
 			container->Magic[0] == kPefMagic[0] &&
 			container->Magic[1] == kPefMagic[1] &&
 			container->Magic[2] == kPefMagic[2] &&
@@ -155,7 +155,7 @@ namespace Kernel
 			{
 				if (container_header->Kind == kind)
 				{
-					if (container_header->Cpu != Detail::rt_get_pef_platform())
+					if (container_header->Cpu != Detail::ldr_get_platform())
 					{
 						if (!this->fFatBinary)
 						{
