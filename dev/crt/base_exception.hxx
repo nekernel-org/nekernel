@@ -7,18 +7,14 @@
 #pragma once
 
 #include <crt/defines.hxx>
-
-/// @brief CRT exit, with exit code (!!! exits all threads. !!!)
-/// @param code
-/// @return
-extern "C" int __exit(int code);
+#include <crt/exit.hxx>
 
 /// @brief Standard C++ namespace
 namespace std
 {
 	inline void __throw_general(void)
 	{
-		__exit(33);
+		exit(33);
 	}
 
 	inline void __throw_domain_error(const char* error)
