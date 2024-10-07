@@ -16,7 +16,7 @@
 #include <NewKit/Defines.hxx>
 #include <modules/ACPI/ACPI.hxx>
 
-// Forward declarations of structs.
+/// @note Forward declarations of structs.
 
 #define kAHCISectorSize (512U)
 
@@ -328,8 +328,6 @@ typedef struct HbaCmdTbl final
 	struct HbaPrdtEntry prdtEntries[1]; // Physical region descriptor table entries, 0 ~ 65535
 } HbaCmdTbl;
 
-/* EOF */
-
 #if defined(__AHCI__)
 
 /// @brief Initializes an AHCI disk.
@@ -367,4 +365,6 @@ Kernel::SizeT drv_get_sector_count();
 /// @brief get device size.
 Kernel::SizeT drv_get_size();
 
-#endif // ifdef __NEWOSKRNL__
+#endif // ifdef __AHCI__
+
+/* EOF */

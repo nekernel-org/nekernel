@@ -16,46 +16,47 @@
 
 /// TODO: checklist in: https://wiki.osdev.org/NVMe
 
-#define ALIGN_NVME ATTRIBUTE(aligned(sizeof(Kernel::NVMEInt32)))
+#define ALIGN_NVME ATTRIBUTE(aligned(sizeof(Kernel::UInt32)))
 
 namespace Kernel
 {
-	typedef UInt32 NVMEInt32;
-
-	struct ALIGN_NVME NVMEBar0 final
+	struct ALIGN_NVME HAL_NVME_BAR_0 final
 	{
-		NVMEInt32 fCapabilities;
-		NVMEInt32 fVersion;
-		NVMEInt32 fIntMaskSet;
-		NVMEInt32 fIntMaskClr;
-		NVMEInt32 fContrlConf;
-		NVMEInt32 fContrlStat;
-		NVMEInt32 fAdminQueueAttr;
-		NVMEInt32 fAdminSubmissionQueue;
-		NVMEInt32 fAdminCompletionQueue;
+		UInt32 fCapabilities;
+		UInt32 fVersion;
+		UInt32 fIntMaskSet;
+		UInt32 fIntMaskClr;
+		UInt32 fContrlConf;
+		UInt32 fContrlStat;
+		UInt32 fAdminQueueAttr;
+		UInt32 fAdminSubmissionQueue;
+		UInt32 fAdminCompletionQueue;
 	};
 
-	struct ALIGN_NVME NVMEQueue final
+	struct ALIGN_NVME HAL_NVME_QUEUE final
 	{
-		NVMEInt32 fOpcode;
-		NVMEInt32 fNSID;
-		NVMEInt32 fReserved[3];
-		NVMEInt32 fMetadataPtr[5];
-		NVMEInt32 fDataPtr[9];
-		NVMEInt32 CommandSpecific[15];
+		UInt32 fOpcode;
+		UInt32 fNSID;
+		UInt32 fReserved[3];
+		UInt32 fMetadataPtr[5];
+		UInt32 fDataPtr[9];
+		UInt32 CommandSpecific[15];
 	};
 
 	enum
 	{
-		eCreateCompletionQueueNVME = 0x05,
-		eCreateSubmissionQueueNVME = 0x01,
-		eIdentifyNVME			   = 0x06,
-		eReadNVME				   = 0x02,
-		eWriteNVME				   = 0x01,
+		kCreateCompletionQueueNVME = 0x05,
+		kCreateSubmissionQueueNVME = 0x01,
+		kIdentifyNVME			   = 0x06,
+		kReadNVME				   = 0x02,
+		kWriteNVME				   = 0x01,
 	};
 
+	/// @brief Creates an admin command for a DMA operation.
 	template <Int32 Opcode>
-	inline Bool nvme_create_admin_command(NVMEQueue* entry, UInt32 nsid, UInt32 prpTransfer[3], UInt32 startingLba[2], UInt32 lowTransferBlocks)
+	inline Bool nvme_create_admin_command(HAL_NVME_QUEUE* entry, UInt32 nsid, 
+											UInt32 prpTransfer[3], UInt32 startingLba[2], 
+											UInt32 lowTransferBlocks)
 	{
 		if (entry == nullptr)
 			return false;
@@ -74,8 +75,12 @@ namespace Kernel
 		return true;
 	}
 
+	/// @brief Creates an I/O command for a DMA operation.
 	template <Int32 Opcode>
-	inline Bool nvme_create_io_command(NVMEQueue* entry, UInt64 baseAddress, UInt32 identLoAndQueueSizeHi, UInt32 flagsLoAndQueueComplIdHi, UInt32 identify, Bool provideIdentify = false, Bool namespaceIdentify = false)
+	inline Bool nvme_create_io_command(HAL_NVME_QUEUE* entry, UInt64 baseAddress, 
+										UInt32 identLoAndQueueSizeHi, UInt32 flagsLoAndQueueComplIdHi, 
+										UInt32 identify, Bool provideIdentify = false,
+										 Bool namespaceIdentify = false)
 	{
 		if (entry == nullptr)
 			return false;
@@ -103,7 +108,7 @@ namespace Kernel
 			}
 		}
 
-		// use (1 << 0) as contigunous is better supported.
+		// Use (1 << 0) as contigunous is better supported.
 
 		return true;
 	}

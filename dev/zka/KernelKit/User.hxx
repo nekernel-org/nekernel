@@ -13,10 +13,9 @@
 #include <NewKit/Defines.hxx>
 
 // user mode users.
-#define kSuperUser "ZKA USER\\SUPER"
-#define kGuestUser "ZKA USER\\GUEST"
+#define kSuperUser "ZKA AUTHORITY\\SUPER"
+#define kGuestUser "ZKA AUTHORITY\\GUEST"
 
-#define kUsersFile "\\Users\\$UsrRcrd"
 #define kUsersDir  "\\Users\\"
 
 #define kMaxUserNameLen	 (255)

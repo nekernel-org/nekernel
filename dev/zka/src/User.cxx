@@ -11,15 +11,15 @@
  */
 
 #include <KernelKit/User.hxx>
+
 #include <KernelKit/LPC.hxx>
 #include <NewKit/Stop.hxx>
 #include <KernelKit/FileMgr.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
-
 #include <KernelKit/Heap.hxx>
 
-#define cStdUser   (0xCF)
-#define cSuperUser (0xEF)
+#define cStdUser   (0xCEEF)
+#define cSuperUser (0xECCF)
 
 /// BUGS: 0
 
@@ -99,7 +99,7 @@ namespace Kernel
 		delete[] password;
 		password = nullptr;
 
-		kcout << "Saved password...\r";
+		kcout << "Saved password successfully...\r";
 
 		return Yes;
 	}
