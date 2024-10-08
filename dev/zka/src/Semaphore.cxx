@@ -47,7 +47,7 @@ namespace Kernel
 		return this->Lock(process);
 	}
 
-	/// @brief Wait with process, either wait for process being invalid, or not being run.
+	/// @brief Wait with process, either wait for it to be being invalid, or not being run.
 	Void Semaphore::WaitForProcess() noexcept
 	{
 		while (fLockingProcess)

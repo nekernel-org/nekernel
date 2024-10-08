@@ -19,9 +19,7 @@ Purpose: sci/M core header file (C++)
 #define IMPORT_C	 extern "C"
 
 typedef bool Bool;
-typedef void UInt0;
-
-typedef UInt0 Void;
+typedef void Void;
 
 typedef __UINT64_TYPE__ UInt64;
 typedef __UINT32_TYPE__ UInt32;
@@ -112,7 +110,7 @@ IMPORT_C Object LdrOpenDLL(_Input const Char* path, _Input const Char* drive_let
 /// @brief Close DLL handle
 /// @param dll_handle
 /// @return
-IMPORT_C UInt0 LdrCloseDLL(_Input Object dll_handle);
+IMPORT_C Void LdrCloseDLL(_Input Object dll_handle);
 
 // ------------------------------------------------------------------------------------------ //
 // File API.
@@ -127,7 +125,7 @@ IMPORT_C Object IoOpenFile(const Char* fs_path, const Char* drive_letter);
 /// @brief Closes a file and flushes its content.
 /// @param file_desc the file descriptor.
 /// @return void.
-IMPORT_C UInt0 IoCloseFile(_Input Object file_desc);
+IMPORT_C Void IoCloseFile(_Input Object file_desc);
 
 IMPORT_C UInt32 IoWriteFile(_Input Object file_desc, _Output VoidPtr out_data, SizeT sz_data);
 
@@ -176,7 +174,7 @@ IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output Object* handle_
 
 /// @brief Destroys an XPCOM instance of the process.
 /// @param handle_instance the XPCOM handle.
-IMPORT_C UInt0 XPCOMDestroyInstance(_Input Object handle_instance);
+IMPORT_C Void XPCOMDestroyInstance(_Input Object handle_instance);
 
 #endif // !__SCI_IMPL__
 
@@ -193,7 +191,7 @@ IMPORT_C VoidPtr MmCreateHeap(_Input SizeT len, _Input UInt32 flags);
 /// @brief Destroys the pointer
 /// @param heap the heap itself.
 /// @return void.
-IMPORT_C UInt0 MmDestroyHeap(_Input VoidPtr heap);
+IMPORT_C Void MmDestroyHeap(_Input VoidPtr heap);
 
 /// @brief Change protection flags of memory region.
 IMPORT_C UInt32 MmChangeHeapFlags(_Input VoidPtr heap, _Input UInt32 flags);
@@ -205,25 +203,25 @@ IMPORT_C UInt32 MmFillCRC32Heap(_Input VoidPtr heap);
 // Error handling API.
 // ------------------------------------------------------------------------
 
-IMPORT_C SInt32 ErrGetLastError(UInt0);
+IMPORT_C SInt32 ErrGetLastError(Void);
 
 // ------------------------------------------------------------------------
 // Threading API.
 // ------------------------------------------------------------------------
 
-IMPORT_C UInt0 ThrExitCurrentThread(_Input SInt32 exit_code);
-IMPORT_C UInt0 ThrExitMainThread(_Input SInt32 exit_code);
+IMPORT_C Void ThrExitCurrentThread(_Input SInt32 exit_code);
+IMPORT_C Void ThrExitMainThread(_Input SInt32 exit_code);
 
-IMPORT_C UInt0 ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
+IMPORT_C Void ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
 
 typedef Void(*GenericThreadFn)(Void);
 
 IMPORT_C ThreadObject ThrCreateThread(GenericThreadFn proc);
 
-IMPORT_C UInt0 ThrExitYieldThread(UInt0);
+IMPORT_C Void ThrExitYieldThread(Void);
 
-IMPORT_C UInt0 ThrExitJoinThread(UInt0);
-IMPORT_C UInt0 ThrExitDetachThread(UInt0);
+IMPORT_C Void ThrExitJoinThread(Void);
+IMPORT_C Void ThrExitDetachThread(Void);
 
 // ------------------------------------------------------------------------
 // Drive Management API.

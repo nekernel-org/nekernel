@@ -3,7 +3,7 @@
 
 #define ZkaAppName "ZKA SDK"
 #define ZkaAppVersion "1.00"
-#define ZkaAppPublisher "ZKA Software B.V"
+#define ZkaAppPublisher "ZKA Software B.V."
 #define ZkaAppURL "https://www.zka-software.com/"
 
 [Setup]
@@ -27,7 +27,6 @@ OutputBaseFilename=zka-sdk
 Compression=lzma
 SolidCompression=yes
 WizardStyle=classic
-SetupIconFile=.\setup.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -55,7 +54,7 @@ Name: "{userdesktop}\ZKA C++ Compiler (CLI)"; Filename: "{app}\bin\cl.exe"; \
 Name: "{userdesktop}\ZKA Assembler (CLI)"; Filename: "{app}\bin\asm.exe"; \
     IconFilename: "shell32.dll"; IconIndex: 12
 [Files]
-Source: ".\background.bmp"; Flags: dontcopy
+Source: ".\zka_background.bmp"; Flags: dontcopy
 
 [Setup]
 WindowVisible=yes
@@ -70,6 +69,6 @@ begin
   BackgroundImage.Parent := MainForm;
   BackgroundImage.SetBounds(0, 0, MainForm.ClientWidth, MainForm.ClientHeight);
   BackgroundImage.Stretch := True;
-  ExtractTemporaryFile('background.bmp');
-  BackgroundImage.Bitmap.LoadFromFile(ExpandConstant('{tmp}\background.bmp'));
+  ExtractTemporaryFile('zka_background.bmp');
+  BackgroundImage.Bitmap.LoadFromFile(ExpandConstant('{tmp}\zka_background.bmp'));
 end;

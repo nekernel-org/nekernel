@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "MinKrnl and ZKA OS",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "compilerPath": "x86_64-pc-cygwin-g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}

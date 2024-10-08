@@ -89,7 +89,8 @@ namespace Kernel
 		if (fCachedBlob)
 			mm_delete_heap(fCachedBlob);
 
-		kcout << "CodeMgrPEF: Warning: Executable format error!\r";
+		kcout << "PEFLoader: Warning: Executable format error!\r";
+
 		fCachedBlob = nullptr;
 	}
 
@@ -168,6 +169,8 @@ namespace Kernel
 
 					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
 					mm_delete_heap(blob);
+
+					kcout << "PEFLoader: INFO: Load stub: " << container_header->Name << "!\r";
 
 					return blobRet;
 				}

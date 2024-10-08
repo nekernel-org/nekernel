@@ -6,30 +6,35 @@
 
 #pragma once
 
+#include <CompilerKit/CompilerKit.hxx>
 #include <NewKit/Defines.hxx>
 #include <NewKit/ErrorOr.hxx>
 #include <NewKit/Utils.hxx>
 #include <NewKit/Stop.hxx>
 
+#define cMinimumStringSize 8196
+
 namespace Kernel
 {
+	/// @brief StringView class, using dynamic or static memory.
 	class StringView final
 	{
 	public:
 		explicit StringView()
 		{
-			fSz = 4096;
+			fDataSz = cMinimumStringSize;
 
-			fData = new Char[fSz];
+			fData = new Char[fDataSz];
 			MUST_PASS(fData);
 
-			rt_set_memory(fData, 0, fSz);
+			rt_set_memory(fData, 0, fDataSz);
 		}
 
-		explicit StringView(Size Sz)
-			: fSz(Sz)
+		explicit StringView(const SizeT& Sz)
+			: fDataSz(Sz)
 		{
 			MUST_PASS(Sz > 1);
+
 			fData = new Char[Sz];
 			MUST_PASS(fData);
 
@@ -42,8 +47,7 @@ namespace Kernel
 				delete[] fData;
 		}
 
-		StringView& operator=(const StringView&) = default;
-		StringView(const StringView&)			 = default;
+		ZKA_COPY_DEFAULT(StringView);
 
 		Char*		Data();
 		const Char* CData() const;
@@ -70,7 +74,7 @@ namespace Kernel
 
 	private:
 		Char* fData{nullptr};
-		Size  fSz{0};
+		Size  fDataSz{0};
 		Size  fCur{0};
 
 		friend class StringBuilder;

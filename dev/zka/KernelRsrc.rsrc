@@ -9,12 +9,12 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "ZKA Technologies."
-	  VALUE "FileDescription", "ZKA Kernel and System."
+	  VALUE "FileDescription", "ZKA Minimal Kernel."
       VALUE "FileVersion", KERNEL_VERSION
-	  VALUE "InternalName", "newoskrnl"
+	  VALUE "InternalName", "minkrnl"
       VALUE "LegalCopyright", "(c) ZKA Technologies, all rights reserved."
-      VALUE "OriginalFilename", "newoskrnl.exe"
-      VALUE "ProductName", "ZKA Operating System"
+      VALUE "OriginalFilename", "minkrnl.exe"
+      VALUE "ProductName", "ZKA Operating System Kernel."
       VALUE "ProductVersion", KERNEL_VERSION
     END
   END

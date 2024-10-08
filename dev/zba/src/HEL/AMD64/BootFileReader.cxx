@@ -86,7 +86,7 @@ Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
 			.Write(L"\r");
 		this->mErrorCode = kNotSupported;
 
-		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR MINKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
 		mRootFs->Close(mRootFs);
 

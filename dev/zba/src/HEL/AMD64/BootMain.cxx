@@ -255,11 +255,11 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	Boot::BFileReader readerKernel(L"newoskrnl.exe", ImageHandle);
+	Boot::BFileReader readerKernel(L"minkrnl.exe", ImageHandle);
 
 	readerKernel.ReadAll(0);
 
-	Boot::BThread* loader = nullptr;
+	Boot::BThread* kernel_loader = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
@@ -267,14 +267,14 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	if (readerKernel.Blob())
 	{
-		loader = new Boot::BThread(readerKernel.Blob());
-		loader->SetName("64-Bit Kernel executable.");
+		kernel_loader = new Boot::BThread(readerKernel.Blob());
+		kernel_loader->SetName("Minimal Kernel.");
 
 		handover_hdr->f_KernelImage = readerKernel.Blob();
 	}
 	else
 	{
-		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR NEWOSKRNL KERNEL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR MINKRNL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 	}
 
 	Boot::BFileReader chimeWav(L"zka\\startup.wav", ImageHandle);
@@ -312,7 +312,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	// Finally load Kernel, and the cr3 to it.
 	// ---------------------------------------------------- //
 
-	loader->Start(handover_hdr);
+	kernel_loader->Start(handover_hdr);
 
 	EFI::Stop();
 

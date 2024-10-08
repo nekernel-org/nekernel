@@ -23,7 +23,7 @@
 #endif
 #endif
 
-/// @brief The **newoskrnl** namespace where it's API resides.
+/// @brief The **Kernel** namespace where it's API resides.
 namespace Kernel
 {
 	using voidPtr = void*;

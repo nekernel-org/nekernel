@@ -1,6 +1,6 @@
 ##################################################
 # (C) ZKA Technologies, all rights reserved.
-# This is the newoskrnl's makefile.
+# This is the minkrnl's makefile.
 ##################################################
 
 CC			= x86_64-w64-mingw32-g++.exe
@@ -39,7 +39,7 @@ LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x4000000
 LDOBJ		= obj/*.obj
 
 # This file is the Kernel, responsible of task, memory, driver, sci, disk and device management.
-KERNEL_IMG		= newoskrnl.exe
+KERNEL_IMG		= minkrnl.exe
 
 .PHONY: error
 error:

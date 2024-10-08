@@ -1,7 +1,7 @@
 /*
  * ========================================================
  *
- * newoskrnl
+ * minkrnl
  * Copyright ZKA Technologies., all rights reserved.
  *
  *  ========================================================
@@ -11,7 +11,6 @@
 #include <CFKit/Property.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/ThreadLocalStorage.hxx>
-
 
 /***********************************************************************************/
 /// @bugs: 0

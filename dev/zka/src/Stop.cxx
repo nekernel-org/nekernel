@@ -16,7 +16,7 @@
 #include <modules/FB/FB.hxx>
 #include <modules/FB/Text.hxx>
 
-#define cWebsiteMacro "https://help.el-mahrouss-logic.com/"
+#define cWebsiteMacro "https://help.zka-software.com/"
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
@@ -32,7 +32,7 @@ namespace Kernel
 		auto start_y = 10;
 		auto x		 = 10;
 
-		CGDrawString("newoskrnl.exe Stopped working properly so it had to stop.", start_y, x, panicTxt);
+		CGDrawString("minkrnl.exe stopped working properly so it had to stop.", start_y, x, panicTxt);
 		start_y += 10;
 
 		// simply offset from previous string and then write the website.
@@ -48,7 +48,7 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			CGDrawString("0x00000008 No more processes to run, this is because that ZKA ran out of processes.", start_y, x, panicTxt);
+			CGDrawString("0x00000008 Scheduler error.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
