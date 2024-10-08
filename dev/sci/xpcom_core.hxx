@@ -20,6 +20,7 @@ Purpose: Base code of XPCOM.
 protocol IUnknown; // Refrenced from an IDB entry.
 protocol ICLSID;   // From the IDB, the constructor of the object, e.g: TextUCLSID.
 object	 UUID;
+object   IStr;
 
 /// @brief Unknown XPCOM interface
 protocol clsid("d7c144b6-0792-44b8-b06b-02b227b547df") IUnknown
@@ -45,6 +46,9 @@ public:
 template <typename TCLS, typename UCLSID, typename... Args>
 inline TCLS* XPCOMQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 {
+	if (uclsidOfCls == nullptr)
+		return nullptr;
+
 	uclsidOfCls->AddRef();
 	return uclsidOfCls->QueryInterfaceWithArgs(args...);
 }
@@ -56,17 +60,20 @@ inline TCLS* XPCOMQueryInterface(UCLSID* uclsidOfCls, Args&&... args)
 template <typename TCLS>
 inline SInt32 XPCOMReleaseClass(TCLS** cls)
 {
-	if (!cls)
-		return -1;
+	if (!*cls)
+		return -kErrorInvalidData;
 
-	cls->RemoveRef();
-	cls->Release();
+	(*cls)->RemoveRef();
+	(*cls)->Release();
 
-	cls = nullptr;
+	*cls = nullptr;
 
-	return 0;
+	return kErrorSuccess;
 }
 
+/// @brief Event listener interface.
+/// @tparam FnSign the event listener function type.
+/// @tparam ClsID the event listener class ID.
 template <typename FnSign, typename ClsID>
 protocol IEventListener : public ClsID
 {
@@ -78,7 +85,7 @@ protocol IEventListener : public ClsID
 	IEventListener& operator=(const IEventListener&) = default;
 	IEventListener(const IEventListener&)			 = default;
 
-	virtual IEventListener& operator-=(const Char* event_name)
+	virtual IEventListener& operator-=(const IStr* event_name)
 	{
 		this->RemoveEventListener(event_name);
 		return *this;

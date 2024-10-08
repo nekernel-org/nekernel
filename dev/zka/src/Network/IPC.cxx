@@ -14,7 +14,7 @@ using namespace Kernel;
 /// @brief The internal sanitize function.
 Bool ipc_int_sanitize_packet(IPC_MESSAGE_STRUCT* pckt)
 {
-	auto endian = DEDUCE_ENDIAN(pckt, ((Char*)pckt)[0]);
+	auto endian = cDeduceEndian(pckt, ((Char*)pckt)[0]);
 
 	switch (endian)
 	{
@@ -92,7 +92,7 @@ namespace Kernel
 
 		if (*pckt_in)
 		{
-			auto endian = DEDUCE_ENDIAN((*pckt_in), ((Char*)(*pckt_in))[0]);
+			auto endian = cDeduceEndian((*pckt_in), ((Char*)(*pckt_in))[0]);
 
 			(*pckt_in)->IpcHeaderMagic = cXPCOMHeaderMagic;
 

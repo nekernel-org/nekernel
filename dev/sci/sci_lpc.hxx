@@ -44,4 +44,6 @@ inline constexpr ErrObject kErrorSign				 = 60;
 inline constexpr ErrObject kErrorInvalidCreds		 = 61;
 inline constexpr ErrObject kErrorUnimplemented		 = 0;
 
+/// @brief The last error reported by the system to the process.
 IMPORT_C ErrObject kLastError;
+

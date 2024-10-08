@@ -147,6 +147,7 @@ namespace Kernel
 	};
 
 	/// \brief Scheduler interface, represents a scheduler object.
+	/// @note This is used to schedule tasks, such as threads, drivers, user threads, etc.
 	class ISchedulerObject
 	{
 	public:
@@ -176,7 +177,7 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#define DEDUCE_ENDIAN(address, value)                           \
+#define cDeduceEndian(address, value)                           \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))

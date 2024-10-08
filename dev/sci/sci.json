@@ -13,7 +13,7 @@
     "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
-    "__SCI_IMPL__",
+    "__XPCOM_IMPL__",
     "cSCIVersion=0x0100",
     "cSCIVersionHighest=0x0100",
     "cSCIVersionLowest=0x0100"

@@ -19,7 +19,7 @@
  ------------------------------------------- */
 
 //! @file Heap.cxx
-//! @brief Kernel's heap allocator.
+//! @brief Kernel's heap manager, serves as the main memory manager.
 
 #define kKernelHeapMagic (0xD4D7D5)
 #define kKernelAlignSz	 (__BIGGEST_ALIGNMENT__)
@@ -33,7 +33,7 @@ namespace Kernel
 
 		/// @brief Kernel heap information block.
 		/// Located before the address bytes.
-		/// | HIB |  ADDRESS  |
+		/// | HIB |  CLASS/STRUCT/DATA TYPES... |
 		struct PACKED HEAP_INFORMATION_BLOCK final
 		{
 			///! @brief 32-bit value which contains the magic number of the heap.
@@ -65,7 +65,7 @@ namespace Kernel
 		};
 
 		/// @brief Check for heap address validity.
-		/// @param heap_ptr The address_ptr
+		/// @param heap_ptr The address_ptr to check.
 		/// @return Bool if the pointer is valid or not.
 		auto mm_check_heap_address(VoidPtr heap_ptr) -> Bool
 		{
@@ -160,8 +160,8 @@ namespace Kernel
 	}
 
 	/// @brief Makes a page heap.
-	/// @param heap_ptr
-	/// @return
+	/// @param heap_ptr the pointer to make a page heap.
+	/// @return kErrorSuccess if successful, otherwise an error code.
 	Int32 mm_make_ke_page(VoidPtr heap_ptr)
 	{
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
@@ -271,7 +271,7 @@ namespace Kernel
 		{
 			Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+					(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 			if (heap_ptr && heap_blk->fPresent && kKernelHeapMagic == heap_blk->fMagic)
 			{
