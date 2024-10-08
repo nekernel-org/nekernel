@@ -18,11 +18,13 @@
 
  Revision History:
 
-	 01/02/24: Rework shared dll_obj ABI, except a rtl_init_dll and
+	 01/02/24: Reworked dll ABI, expect a rtl_init_dll and
  rtl_fini_dll (amlel) 15/02/24: Breaking changes, changed the name of the
  routines. (amlel)
 
 	07/28/24: Replace rt_library_free with rtl_fini_dll
+
+	10/8/24: FIX: Fix log comment.
 
  ------------------------------------------- */
 
