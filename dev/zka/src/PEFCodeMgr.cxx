@@ -77,7 +77,7 @@ namespace Kernel
 				 container->Magic[3] == kPefMagic[1] &&
 				 container->Magic[2] == kPefMagic[2] &&
 				 container->Magic[1] == kPefMagic[3] &&
-				 container->Magic[0] == kPefMagic[0] && container->Abi == kPefAbi)
+				 container->Magic[0] == kPefMagic[4] && container->Abi == kPefAbi)
 		{
 			/// This is a fat binary.
 			this->fFatBinary = true;
