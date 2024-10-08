@@ -11,15 +11,21 @@
 #include <NewKit/PageMgr.hxx>
 #include <NewKit/Utils.hxx>
 
-//! @file KernelHeap.cxx
-//! @brief Kernel heap allocator.
+/* -------------------------------------------
 
-#define kKernelHeapMagic		   (0xD4D7D5)
-#define kKernelHeapHeaderPaddingSz (__BIGGEST_ALIGNMENT__)
+ Revision History:
+	10/8/24: FIX: Fix useless long name, alongside a new WR (WriteRead) field.
+
+ ------------------------------------------- */
+
+//! @file Heap.cxx
+//! @brief Kernel's heap allocator.
+
+#define kKernelHeapMagic (0xD4D7D5)
+#define kKernelAlignSz	 (__BIGGEST_ALIGNMENT__)
 
 namespace Kernel
 {
-
 	/// @brief Contains data structures and algorithms for the heap.
 	namespace Detail
 	{
@@ -31,21 +37,31 @@ namespace Kernel
 		struct PACKED HEAP_INFORMATION_BLOCK final
 		{
 			///! @brief 32-bit value which contains the magic number of the heap.
-			UInt32 fMagic;
+			UInt32 fMagic : 24;
+
 			///! @brief Boolean value which tells if the heap is allocated.
-			Boolean fPresent;
+			Boolean fPresent : 1;
+
 			/// @brief Is this valued owned by the user?
-			Boolean fUser;
+			Boolean fWr : 1;
+
+			/// @brief Is this valued owned by the user?
+			Boolean fUser : 1;
+
 			/// @brief Is this a page pointer?
-			Boolean fPage;
+			Boolean fPage : 1;
+
 			///! @brief 32-bit CRC checksum.
 			UInt32 fCRC32;
+
 			/// @brief 64-bit pointer size.
 			SizeT fHeapSize;
+
 			/// @brief 64-bit target pointer.
 			UIntPtr fHeapPtr;
+
 			/// @brief Padding bytes for header.
-			UInt8 fPadding[kKernelHeapHeaderPaddingSz];
+			UInt8 fPadding[kKernelAlignSz];
 		};
 
 		/// @brief Check for heap address validity.
@@ -128,10 +144,11 @@ namespace Kernel
 		heap_info_ptr->fCRC32	 = No; // dont fill it for now.
 		heap_info_ptr->fHeapPtr	 = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
 		heap_info_ptr->fPage	 = No;
+		heap_info_ptr->fWr		 = wr;
 		heap_info_ptr->fUser	 = user;
 		heap_info_ptr->fPresent	 = Yes;
 
-		rt_set_memory(heap_info_ptr->fPadding, 0, kKernelHeapHeaderPaddingSz);
+		rt_set_memory(heap_info_ptr->fPadding, 0, kKernelAlignSz);
 
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fHeapPtr);
 
@@ -205,9 +222,11 @@ namespace Kernel
 			heap_blk->fPresent	= No;
 			heap_blk->fHeapPtr	= 0;
 			heap_blk->fCRC32	= 0;
+			heap_blk->fWr		= No;
+			heap_blk->fUser		= No;
 			heap_blk->fMagic	= 0;
 
-			PTEWrapper		pageWrapper(false, false, false, reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+			PTEWrapper		pageWrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pteAddress{pageWrapper};
 
 			kcout << "Freeing pointer address: " << hex_number(reinterpret_cast<UIntPtr>(heap_blk) - sizeof(Detail::HEAP_INFORMATION_BLOCK)) << endl;
