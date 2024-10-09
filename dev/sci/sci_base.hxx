@@ -78,7 +78,7 @@ class IEventListener : public ClsID
 #endif
 
 // ------------------------------------------------------------------------------------------ //
-/// @note Handle types.
+/// @note Handle typedefs.
 // ------------------------------------------------------------------------------------------ //
 
 typedef VoidPtr Object;
@@ -88,6 +88,8 @@ typedef Object IOObject;
 typedef Object SCMObject;
 typedef Object ThreadObject;
 typedef Object SocketObject;
+typedef Object ShellObject;
+typedef Object UIObject;
 
 // ------------------------------------------------------------------------------------------ //
 
