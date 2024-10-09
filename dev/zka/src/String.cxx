@@ -22,7 +22,7 @@ namespace Kernel
 
 	Size StringView::Length() const
 	{
-		return fSz;
+		return fDataSz;
 	}
 
 	bool StringView::operator==(const StringView& rhs) const
