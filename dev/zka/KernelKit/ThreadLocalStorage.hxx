@@ -9,7 +9,7 @@
 
 #include <NewKit/Defines.hxx>
 
-///! @brief Thread Local Storage for minkrnl.
+///! @brief Thread Local Storage for minoskrnl.
 
 #define kCookieMag0 'Z'
 #define kCookieMag1 'K'

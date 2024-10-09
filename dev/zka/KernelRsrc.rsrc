@@ -11,9 +11,9 @@ BEGIN
       VALUE "CompanyName", "ZKA Technologies."
 	  VALUE "FileDescription", "ZKA Minimal Kernel."
       VALUE "FileVersion", KERNEL_VERSION
-	  VALUE "InternalName", "minkrnl"
+	  VALUE "InternalName", "minoskrnl"
       VALUE "LegalCopyright", "(c) ZKA Technologies, all rights reserved."
-      VALUE "OriginalFilename", "minkrnl.exe"
+      VALUE "OriginalFilename", "minoskrnl.exe"
       VALUE "ProductName", "ZKA Operating System Kernel."
       VALUE "ProductVersion", KERNEL_VERSION
     END

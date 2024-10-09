@@ -52,7 +52,7 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSL
                         -std=c++20 -D__HAVE_ZKA_APIS__ -D__ZKA_AMD64__ -D__ZKA__
 
 BOOT_LOADER=newosldr.exe
-KERNEL=minkrnl.exe
+KERNEL=minoskrnl.exe
 DDK=ddk.dll
 SCI=zka-sci-cxx.dll
 CRT=zka-crt-cxx.dll
@@ -105,7 +105,7 @@ download-edk:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=newosldr.exe minkrnl.dll OVMF.fd
+EXECUTABLES=newosldr.exe minoskrnl.exe OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

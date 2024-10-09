@@ -255,7 +255,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	Boot::BFileReader readerKernel(L"minkrnl.exe", ImageHandle);
+	Boot::BFileReader readerKernel(L"minoskrnl.exe", ImageHandle);
 
 	readerKernel.ReadAll(0);
 

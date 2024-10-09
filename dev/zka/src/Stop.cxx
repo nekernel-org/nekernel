@@ -32,7 +32,7 @@ namespace Kernel
 		auto start_y = 10;
 		auto x		 = 10;
 
-		CGDrawString("minkrnl.exe stopped working properly so it had to stop.", start_y, x, panicTxt);
+		CGDrawString("minoskrnl.exe stopped working properly so it had to stop.", start_y, x, panicTxt);
 		start_y += 10;
 
 		// simply offset from previous string and then write the website.
@@ -69,21 +69,21 @@ namespace Kernel
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
-			CGDrawString("0x00000000 Heap error, the heap is corrupted.", start_y, x, panicTxt);
+			CGDrawString("0x00000000 Heap is corrupted.", start_y, x, panicTxt);
 
 			PowerFactoryInterface power(nullptr);
 			power.Shutdown();
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {
-			CGDrawString("0x00000009 CPU access error.", start_y, x, panicTxt);
+			CGDrawString("0x00000009 Bad behavior error.", start_y, x, panicTxt);
 
 			PowerFactoryInterface power(nullptr);
 			power.Shutdown();
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			CGDrawString("0x0000000A Boot Processor finished executing.", start_y, x, panicTxt);
+			CGDrawString("0x0000000A OS finished executing.", start_y, x, panicTxt);
 
 			PowerFactoryInterface power(nullptr);
 			power.Shutdown();
@@ -113,13 +113,13 @@ namespace Kernel
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			CGDrawString("0x10000001 Kernel Bug check failed.", start_y, x, panicTxt);
+			CGDrawString("0x10000001 Kernel Bug check appears to have failed, a dump has been written to the storage.", start_y, x, panicTxt);
 			RecoveryFactory::Recover();
 			break;
 		}
 		default: {
 			RecoveryFactory::Recover();
-			CGDrawString("0xFFFFFFFC Unknown Kernel error.", start_y, x, panicTxt);
+			CGDrawString("0xFFFFFFFC Unknown Kernel Error.", start_y, x, panicTxt);
 			break;
 		}
 		}

@@ -20,6 +20,6 @@ Status:
 
 NEWOSLDR: Need to boot from EPM partition. [ X ]
 <br>
-minkrnl: New Filesystem is done. [ X ]
+minoskrnl: New Filesystem is done. [ X ]
 
 **Refer to Jira please!**
