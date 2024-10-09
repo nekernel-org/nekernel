@@ -208,8 +208,11 @@ IMPORT_C VoidPtr MmCreateHeap(_Input SizeT len, _Input UInt32 flags);
 /// @return void.
 IMPORT_C Void MmDestroyHeap(_Input VoidPtr heap);
 
-/// @brief Change protection flags of memory region.
-IMPORT_C UInt32 MmChangeHeapFlags(_Input VoidPtr heap, _Input UInt32 flags);
+/// @brief Change protection flags of a memory region.
+IMPORT_C Void MmSetHeapFlags(_Input VoidPtr heap, _Input UInt32 flags);
+
+/// @brief Change protection flags of a memory region.
+IMPORT_C UInt32 MmGetHeapFlags(_Input VoidPtr heap);
 
 /// @brief Fill memory region with CRC32.	
 IMPORT_C UInt32 MmFillCRC32Heap(_Input VoidPtr heap);
@@ -243,12 +246,14 @@ IMPORT_C Void ThrExitMainThread(_Input SInt32 exit_code);
 /// @param exit_code the exit code.
 IMPORT_C Void ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
 
-typedef Void(*GenericThreadFn)(Void);
+typedef Void(*ThreadProc)(Void);
 
 /// @brief Create a thread.
-/// @param proc the thread procedure.
+/// @param procedure the thread procedure.
+/// @param argument_count number of arguments inside that thread.
+/// @param flags Thread flags.
 /// @return the thread object.
-IMPORT_C ThreadObject ThrCreateThread(GenericThreadFn proc);
+IMPORT_C ThreadObject ThrCreateThread(ThreadProc procedure, SInt32 argument_count, SInt32 flags);
 
 /// @brief Yield the current thread.
 /// @param thread the thread to yield.

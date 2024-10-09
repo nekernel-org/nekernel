@@ -6,29 +6,30 @@
 
 #pragma once
 
-#include <CompilerKit/Detail.hxx>
-#include <NewKit/Defines.hxx>
+#include <sci/sci_base.hxx>
 
-namespace Kernel::PDF
+namespace View::PDF
 {
-	class IPDFRenderViewport;
+	class IPDF;
 	class IPDFDocument;
 	class IPDFTimestamp;
 	class IPDFTag;
 
-	/// \brief PDF rendering class.
-	class IPDFRenderViewport
+	/// \brief PDF manipulator class.
+	class IPDF
 	{
 	public:
-		explicit IPDFRenderViewport() = default;
-		virtual ~IPDFRenderViewport() = default;
+		explicit IPDF() = default;
+		virtual ~IPDF() = default;
 
-		ZKA_COPY_DELETE(IPDFRenderViewport);
+		IPDF& operator=(const IPDF&) = delete;
+		IPDF(const IPDF&)			 = delete;
 
 		virtual IPDFDocument* GetFirstPage() = 0;
 		virtual IPDFDocument* GetLastPage()	 = 0;
 
 		virtual IPDFDocument* GetPage(const UInt32& page_number);
+		virtual SInt32 SetPage(const UInt32& page_number, IPDFDocument* new_page);
 
 		virtual Void SetProducer(const Char*) = 0;
 		virtual Void SetTitle(const Char*)	  = 0;
@@ -47,4 +48,4 @@ namespace Kernel::PDF
 
 		virtual SizeT GetPageCount() = 0;
 	};
-} // namespace Kernel::PDF
+} // namespace View::PDF

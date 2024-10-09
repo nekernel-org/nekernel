@@ -160,9 +160,6 @@ namespace Kernel
 		//! @brief Shared library handle, reserved for eExecutableDLLKind types of executables only.
 		IPEFDLLObject* PefDLLDelegate{nullptr};
 
-		/// @brief Parent process, reserved for threads only.
-		UserProcess* Parent{nullptr};
-
 		// Memory usage.
 		SizeT MemoryCursor{0};
 		SizeT MemoryLimit{kSchedMaxMemoryLimit};
