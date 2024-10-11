@@ -9,26 +9,26 @@
 
 namespace Kernel
 {
-	STATIC Bool cRaise = false;
+	STATIC Bool kRaiseOnBugCheck = false;
 
 	/// @brief Does a system wide bug check.
 	/// @param void no params.
 	/// @return if error-free: false, otherwise true.
 	Boolean err_bug_check(void) noexcept
 	{
-		if (cRaise)
+		if (kRaiseOnBugCheck)
 		{
 			ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
 		}
 
-		return false;
+		return No;
 	}
 
 	/// @brief Tells if we should raise a bug check not.
-	/// @param  void
+	/// @param void
 	/// @return void
 	Void err_bug_check_raise(Void) noexcept
 	{
-		cRaise = true;
+		kRaiseOnBugCheck = true;
 	}
 } // namespace Kernel

@@ -43,7 +43,7 @@ ATADeviceInterface& ATADeviceInterface::operator<<(MountpointInterface* Data)
 	if (!Data)
 		return *this;
 
-	for (SizeT driveCount = 0; driveCount < kDriveMgrCount; ++driveCount)
+	for (SizeT driveCount = 0; driveCount < kMaxDriveCountPerMountpoint; ++driveCount)
 	{
 		auto interface = Data->GetAddressOf(driveCount);
 		if ((interface) && rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) == 0)
@@ -69,7 +69,7 @@ ATADeviceInterface& ATADeviceInterface::operator>>(MountpointInterface* Data)
 	if (!Data)
 		return *this;
 
-	for (SizeT driveCount = 0; driveCount < kDriveMgrCount; ++driveCount)
+	for (SizeT driveCount = 0; driveCount < kMaxDriveCountPerMountpoint; ++driveCount)
 	{
 		auto interface = Data->GetAddressOf(driveCount);
 		if ((interface) && rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) == 0)

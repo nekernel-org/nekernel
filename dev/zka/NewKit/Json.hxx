@@ -22,10 +22,10 @@
 namespace Kernel
 {
 	/// @brief Json class
-	class JsonType final
+	class JSON final
 	{
 	public:
-		explicit JsonType()
+		explicit JSON()
 		{
 			auto	   len = cJSONLen;
 			StringView key = StringView(len);
@@ -35,14 +35,14 @@ namespace Kernel
 			this->AsValue() = key;
 		}
 
-		explicit JsonType(SizeT lhsLen, SizeT rhsLen)
+		explicit JSON(SizeT lhsLen, SizeT rhsLen)
 			: fKey(lhsLen), fValue(rhsLen)
 		{
 		}
 
-		~JsonType() = default;
+		~JSON() = default;
 
-		ZKA_COPY_DEFAULT(JsonType);
+		ZKA_COPY_DEFAULT(JSON);
 
 		const Bool& IsUndefined()
 		{
@@ -69,13 +69,13 @@ namespace Kernel
 			return fValue;
 		}
 
-		static JsonType kNull;
+		static JSON kNull;
 	};
 
 	/// @brief Json stream reader helper.
 	struct JsonStreamReader final
 	{
-		STATIC JsonType In(const Char* full_array)
+		STATIC JSON In(const Char* full_array)
 		{
 			auto start_val = '{';
 			auto end_val   = '}';
@@ -84,7 +84,7 @@ namespace Kernel
 			if (full_array[0] != start_val)
 			{
 				if (full_array[0] != '[')
-					return JsonType::kNull;
+					return JSON::kNull;
 
 				start_val = '[';
 				end_val = ']';
@@ -97,7 +97,7 @@ namespace Kernel
 			SizeT key_len	= 0;
 			SizeT value_len = 0;
 
-			JsonType type(cMaxJsonPath, cMaxJsonPath);
+			JSON type(cMaxJsonPath, cMaxJsonPath);
 
 			for (SizeT i = 1; i < len; ++i)
 			{
@@ -147,5 +147,5 @@ namespace Kernel
 		}
 	};
 
-	using JsonStream = Stream<JsonStreamReader, JsonType>;
+	using JsonStream = Stream<JsonStreamReader, JSON>;
 } // namespace Kernel

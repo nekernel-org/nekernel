@@ -15,7 +15,7 @@
 #include <NewKit/Defines.hxx>
 #include <NewKit/String.hxx>
 
-#define kDriveMgrCount (4U)
+#define kMaxDriveCountPerMountpoint (4U)
 
 #define kDriveInvalidID (-1)
 #define kDriveNameLen	(32)
