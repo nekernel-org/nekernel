@@ -1,5 +1,17 @@
 syntax: glob
 
+xcuserdata/
+
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+*/xcuserdata/*
+*.xcworkspacedata
+
+minoskrnl/minoskrnl.xcodeproj/project.xcworkspace/xcshareddata/
+
 html/
 latex/
 

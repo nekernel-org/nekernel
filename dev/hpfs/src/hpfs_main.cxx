@@ -2,7 +2,7 @@
 
 	Copyright ZKA Technologies.
 
-	FILE: IFSMain.cxx
+	FILE: hpfs_main.cxx
 	PURPOSE: HPFS IFS entrypoint.
 
 ------------------------------------------- */
@@ -12,7 +12,7 @@
 
 static DDK_OBJECT_MANIFEST* kIfsObject = nullptr;
 
-/** @brief HPFS IFS main. */
+/** @brief HPFS IFS main module function. */
 int32_t ModuleMain(void)
 {
 	auto ifs_handle = KernelGetObject(0, "IFS_OBJECT");
