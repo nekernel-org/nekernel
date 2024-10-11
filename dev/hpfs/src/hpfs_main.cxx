@@ -8,9 +8,9 @@
 ------------------------------------------- */
 
 #include <hpfs/hpfs_specs.hxx>
-#include <ddk/KernelStd.h>
+#include <ddk/ddk.h>
 
-static DDK_OBJECT_MANIFEST* cIFSObject = nullptr;
+static DDK_OBJECT_MANIFEST* kIfsObject = nullptr;
 
 /** @brief HPFS IFS main. */
 int32_t ModuleMain(void)
@@ -18,7 +18,7 @@ int32_t ModuleMain(void)
 	auto ifs_handle = KernelGetObject(0, "IFS_OBJECT");
 	// TODO: Register this IFS with necessary I/O functions...
 
-	cIFSObject = ifs_handle;
+	kIfsObject = ifs_handle;
 
 	return 0;
 }
