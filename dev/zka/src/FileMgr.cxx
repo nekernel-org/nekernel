@@ -8,7 +8,7 @@
 #include <NewKit/Utils.hxx>
 
 /// BUGS: 0
-//! @brief File manager for Kernel.
+//! @brief File System Manager API.
 
 namespace Kernel
 {

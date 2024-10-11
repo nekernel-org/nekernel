@@ -63,7 +63,7 @@ struct DDK_STATUS_STRUCT DK_FINAL
 	void*	s_object;
 };
 
-/// \brief Simple Message Struct
+/// \brief Simple Message Struct structure.
 struct DDK_SMS_STRUCT DK_FINAL
 {
 	char s_msg[DDK_SMS_MAX_SZ];
@@ -72,39 +72,39 @@ struct DDK_SMS_STRUCT DK_FINAL
 	int64_t s_receiver;
 };
 
-/// @brief Call Kernel (interrupt 0x33)
-/// @param KernelRpcName
+/// @brief Call Kernel procedure.
+/// @param name the procedure name.
 /// @param cnt number of elements in **dat**
-/// @param dat data ptr
-/// @param sz sz of whole data ptr.
+/// @param dat data argument pointer.
+/// @param sz sz of whole data argument pointer.
 /// @return result of call
 DK_EXTERN void* KernelCall(const char* name, int32_t cnt, void* dat, size_t sz);
 
-/// @brief add system call.
-/// @param slot system call slot
+/// @brief add a system call.
+/// @param slot system call slot id.
 /// @param slotFn, syscall slot.
 DK_EXTERN void KernelAddSyscall(const int32_t slot, void (*slotFn)(void* a0));
 
-/// @brief allocate heap ptr.
-/// @param sz size of ptr.
+/// @brief Allocates an heap ptr.
+/// @param sz size of the allocated struct/type.
 /// @return the pointer allocated or **nil**.
 DK_EXTERN void* KernelAlloc(size_t sz);
 
-/// @brief free heap ptr.
+/// @brief Frees an heap ptr.
 /// @param pointer kernel pointer to free.
 DK_EXTERN void KernelFree(void* the_ptr);
 
-/// @brief Get a Kernel property.
-/// @param slot property id (always 0)
+/// @brief Gets a Kernel object.
+/// @param slot object id (can be 0)
 /// @param name the property's name.
-/// @return property's object.
+/// @return DDK_OBJECT_MANIFEST.
 DK_EXTERN struct DDK_OBJECT_MANIFEST* KernelGetObject(const int slot, const char* name);
 
-/// @brief Set a Kernel property.
-/// @param slot property id (always 0)
+/// @brief Set a Kernel object.
+/// @param slot object id (can be 0)
 /// @param name the property's name.
-/// @param ddk_pr pointer to a  property's DDK_OBJECT_MANIFEST.
-/// @return property's object.
+/// @param ddk_pr pointer to a object's DDK_OBJECT_MANIFEST.
+/// @return returned object.
 DK_EXTERN void* KernelSetObject(const int32_t slot, const struct DDK_OBJECT_MANIFEST* ddk_pr);
 
 /// @brief The highest API version of the DDK.
