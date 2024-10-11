@@ -37,7 +37,7 @@ namespace Kernel
 	/// @brief Get current process getter as Ref.
 	/// @return The current process header.
 	/***********************************************************************************/
-	
+
 	Ref<UserProcess>& UserProcessTeam::AsRef()
 	{
 		return mCurrentProcess;

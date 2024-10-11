@@ -66,7 +66,7 @@ struct DDK_STATUS_STRUCT DK_FINAL
 /// \brief Simple Message Struct structure.
 struct DDK_SMS_STRUCT DK_FINAL
 {
-	char s_msg[DDK_SMS_MAX_SZ];
+	char	s_msg[DDK_SMS_MAX_SZ];
 	int32_t s_type;
 	int64_t s_sender;
 	int64_t s_receiver;

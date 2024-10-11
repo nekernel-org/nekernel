@@ -77,8 +77,8 @@ namespace Kernel
 	{
 		STATIC JSON In(const Char* full_array)
 		{
-			auto start_val = '{';
-			auto end_val   = '}';
+			auto	start_val	= '{';
+			auto	end_val		= '}';
 			Boolean probe_value = false;
 
 			if (full_array[0] != start_val)
@@ -87,12 +87,12 @@ namespace Kernel
 					return JSON::kNull;
 
 				start_val = '[';
-				end_val = ']';
+				end_val	  = ']';
 
 				probe_value = true;
 			}
 
-			SizeT	len			= rt_string_len(full_array);
+			SizeT len = rt_string_len(full_array);
 
 			SizeT key_len	= 0;
 			SizeT value_len = 0;
@@ -123,7 +123,7 @@ namespace Kernel
 				}
 				else
 				{
-				    if (start_val == '[')
+					if (start_val == '[')
 						continue;
 
 					if (full_array[i] == ':')

@@ -19,7 +19,7 @@ namespace Kernel::HAL
 		MUST_PASS(this->fApic);
 
 		UInt32 volatile* io_apic = (UInt32 volatile*)this->fApic;
-		io_apic[cIOAPICRegReg]				= (reg & 0xFF);
+		io_apic[cIOAPICRegReg]	 = (reg & 0xFF);
 
 		return io_apic[cIOAPICRegVal];
 	}

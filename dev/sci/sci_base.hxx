@@ -216,7 +216,7 @@ IMPORT_C Void MmSetHeapFlags(_Input VoidPtr heap, _Input UInt32 flags);
 /// @brief Change protection flags of a memory region.
 IMPORT_C UInt32 MmGetHeapFlags(_Input VoidPtr heap);
 
-/// @brief Fill memory region with CRC32.	
+/// @brief Fill memory region with CRC32.
 IMPORT_C UInt32 MmFillCRC32Heap(_Input VoidPtr heap);
 
 /// @brief Copy memory region.
@@ -248,7 +248,7 @@ IMPORT_C Void ThrExitMainThread(_Input SInt32 exit_code);
 /// @param exit_code the exit code.
 IMPORT_C Void ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
 
-typedef Void(*ThreadProc)(Void);
+typedef Void (*ThreadProc)(Void);
 
 /// @brief Create a thread.
 /// @param procedure the thread procedure.

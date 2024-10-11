@@ -54,9 +54,7 @@ namespace Kernel
 
 	/// @brief Creates an admin command for a DMA operation.
 	template <Int32 Opcode>
-	inline Bool nvme_create_admin_command(HAL_NVME_QUEUE* entry, UInt32 nsid, 
-											UInt32 prpTransfer[3], UInt32 startingLba[2], 
-											UInt32 lowTransferBlocks)
+	inline Bool nvme_create_admin_command(HAL_NVME_QUEUE* entry, UInt32 nsid, UInt32 prpTransfer[3], UInt32 startingLba[2], UInt32 lowTransferBlocks)
 	{
 		if (entry == nullptr)
 			return false;
@@ -77,10 +75,7 @@ namespace Kernel
 
 	/// @brief Creates an I/O command for a DMA operation.
 	template <Int32 Opcode>
-	inline Bool nvme_create_io_command(HAL_NVME_QUEUE* entry, UInt64 baseAddress, 
-										UInt32 identLoAndQueueSizeHi, UInt32 flagsLoAndQueueComplIdHi, 
-										UInt32 identify, Bool provideIdentify = false,
-										 Bool namespaceIdentify = false)
+	inline Bool nvme_create_io_command(HAL_NVME_QUEUE* entry, UInt64 baseAddress, UInt32 identLoAndQueueSizeHi, UInt32 flagsLoAndQueueComplIdHi, UInt32 identify, Bool provideIdentify = false, Bool namespaceIdentify = false)
 	{
 		if (entry == nullptr)
 			return false;

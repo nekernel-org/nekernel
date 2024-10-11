@@ -28,10 +28,10 @@ namespace ZXD
 	/// </summary>
 	struct ZXD_HEADER final
 	{
-		char		  d_binary_padding[cZXDPaddingSize];
+		char d_binary_padding[cZXDPaddingSize];
 		// doesn't change.
-		char	      d_binary_magic[cZXDMagicSize];
-		std::int32_t  d_binary_version;
+		char		 d_binary_magic[cZXDMagicSize];
+		std::int32_t d_binary_version;
 		// can change.
 		char		  d_binary_name[4096];
 		std::uint64_t d_binary_checksum;

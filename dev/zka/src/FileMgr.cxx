@@ -12,23 +12,23 @@
 
 namespace Kernel
 {
-	STATIC IFilesystemMgr* kMounted = nullptr;
+	STATIC IFilesystemMgr* kMountedFilesystem = nullptr;
 
 	/// @brief FilesystemMgr getter.
 	/// @return The mounted filesystem.
 	_Output IFilesystemMgr* IFilesystemMgr::GetMounted()
 	{
-		return kMounted;
+		return kMountedFilesystem;
 	}
 
 	/// @brief Unmount filesystem.
 	/// @return The unmounted filesystem.
 	_Output IFilesystemMgr* IFilesystemMgr::Unmount()
 	{
-		if (kMounted)
+		if (kMountedFilesystem)
 		{
-			auto mount = kMounted;
-			kMounted   = nullptr;
+			auto mount		   = kMountedFilesystem;
+			kMountedFilesystem = nullptr;
 
 			return mount;
 		}
@@ -43,7 +43,7 @@ namespace Kernel
 	{
 		if (mount_ptr != nullptr)
 		{
-			kMounted = mount_ptr;
+			kMountedFilesystem = mount_ptr;
 			return true;
 		}
 

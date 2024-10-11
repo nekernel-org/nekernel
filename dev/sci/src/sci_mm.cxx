@@ -10,8 +10,8 @@
 /// @brief Base Memory Manager functions for SCI.dll
 
 /// @brief Debug error prompt, when a function misbehaves.
-/// @param msg 
-/// @return 
+/// @param msg
+/// @return
 IMPORT_C Void __RtlRaiseSoftError(const char* msg);
 
 /// @brief Copy memory region.
@@ -29,7 +29,7 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
 	{
 		((Char*)dest)[i] = ((Char*)src)[i];
 	}
-	
+
 	return dest;
 }
 
@@ -47,6 +47,6 @@ IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt
 	{
 		((Char*)dest)[i] = value;
 	}
-	
+
 	return dest;
 }

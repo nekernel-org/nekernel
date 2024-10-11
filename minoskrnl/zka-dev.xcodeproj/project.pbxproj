@@ -21,18 +21,61 @@
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
-		1D5F70822CB94B8200868632 /* minoskrnl */ = {
+		1D5F70892CB9772C00868632 /* ddk */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(ACTION)";
-			buildConfigurationList = 1D5F70852CB94B8200868632 /* Build configuration list for PBXLegacyTarget "minoskrnl" */;
+			buildArgumentsString = ddk.json;
+			buildConfigurationList = 1D5F708A2CB9772C00868632 /* Build configuration list for PBXLegacyTarget "ddk" */;
 			buildPhases = (
 			);
 			buildToolPath = /usr/local/bin/btb;
+			buildWorkingDirectory = ../dev/crt;
+			dependencies = (
+			);
+			name = ddk;
+			passBuildSettingsInEnvironment = 1;
+			productName = ddk;
+		};
+		1D5F708D2CB9796200868632 /* crt */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = crt.json;
+			buildConfigurationList = 1D5F708E2CB9796200868632 /* Build configuration list for PBXLegacyTarget "crt" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/local/bin/btb;
+			buildWorkingDirectory = ../dev/crt;
+			dependencies = (
+			);
+			name = crt;
+			passBuildSettingsInEnvironment = 1;
+			productName = crt;
+		};
+		1D5F70912CB9798800868632 /* minoskrnl */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "-f amd64-efi.make";
+			buildConfigurationList = 1D5F70922CB9798800868632 /* Build configuration list for PBXLegacyTarget "minoskrnl" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/local/bin/make;
+			buildWorkingDirectory = ../dev/zka;
 			dependencies = (
 			);
 			name = minoskrnl;
 			passBuildSettingsInEnvironment = 1;
 			productName = minoskrnl;
+		};
+		1D5F70952CB97AC000868632 /* sci */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = sci.json;
+			buildConfigurationList = 1D5F70962CB97AC000868632 /* Build configuration list for PBXLegacyTarget "sci" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/local/bin/btb;
+			buildWorkingDirectory = ../dev/sci;
+			dependencies = (
+			);
+			name = sci;
+			passBuildSettingsInEnvironment = 1;
+			productName = sci;
 		};
 /* End PBXLegacyTarget section */
 
@@ -43,12 +86,21 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
-					1D5F70822CB94B8200868632 = {
+					1D5F70892CB9772C00868632 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					1D5F708D2CB9796200868632 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					1D5F70912CB9798800868632 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					1D5F70952CB97AC000868632 = {
 						CreatedOnToolsVersion = 15.4;
 					};
 				};
 			};
-			buildConfigurationList = 1D5F70812CB94B8200868632 /* Build configuration list for PBXProject "minoskrnl" */;
+			buildConfigurationList = 1D5F70812CB94B8200868632 /* Build configuration list for PBXProject "zka-dev" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -60,7 +112,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1D5F70822CB94B8200868632 /* minoskrnl */,
+				1D5F70892CB9772C00868632 /* ddk */,
+				1D5F708D2CB9796200868632 /* crt */,
+				1D5F70912CB9798800868632 /* minoskrnl */,
+				1D5F70952CB97AC000868632 /* sci */,
 			);
 		};
 /* End PBXProject section */
@@ -177,7 +232,7 @@
 			};
 			name = Release;
 		};
-		1D5F70862CB94B8200868632 /* Debug */ = {
+		1D5F708B2CB9772C00868632 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -191,7 +246,82 @@
 			};
 			name = Debug;
 		};
-		1D5F70872CB94B8200868632 /* Release */ = {
+		1D5F708C2CB9772C00868632 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1D5F708F2CB9796200868632 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1D5F70902CB9796200868632 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1D5F70932CB9798800868632 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1D5F70942CB9798800868632 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1D5F70972CB97AC000868632 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1D5F70982CB97AC000868632 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -205,7 +335,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D5F70812CB94B8200868632 /* Build configuration list for PBXProject "minoskrnl" */ = {
+		1D5F70812CB94B8200868632 /* Build configuration list for PBXProject "zka-dev" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D5F70832CB94B8200868632 /* Debug */,
@@ -214,11 +344,38 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1D5F70852CB94B8200868632 /* Build configuration list for PBXLegacyTarget "minoskrnl" */ = {
+		1D5F708A2CB9772C00868632 /* Build configuration list for PBXLegacyTarget "ddk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1D5F70862CB94B8200868632 /* Debug */,
-				1D5F70872CB94B8200868632 /* Release */,
+				1D5F708B2CB9772C00868632 /* Debug */,
+				1D5F708C2CB9772C00868632 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1D5F708E2CB9796200868632 /* Build configuration list for PBXLegacyTarget "crt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D5F708F2CB9796200868632 /* Debug */,
+				1D5F70902CB9796200868632 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1D5F70922CB9798800868632 /* Build configuration list for PBXLegacyTarget "minoskrnl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D5F70932CB9798800868632 /* Debug */,
+				1D5F70942CB9798800868632 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1D5F70962CB97AC000868632 /* Build configuration list for PBXLegacyTarget "sci" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D5F70972CB97AC000868632 /* Debug */,
+				1D5F70982CB97AC000868632 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

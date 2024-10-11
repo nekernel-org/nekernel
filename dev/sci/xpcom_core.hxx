@@ -20,7 +20,7 @@ Purpose: Base code of XPCOM.
 protocol IUnknown; // Refrenced from an IDB entry.
 protocol ICLSID;   // From the IDB, the constructor of the object, e.g: TextUCLSID.
 object	 UUID;
-object   IStr;
+object	 IStr;
 
 /// @brief Unknown XPCOM interface
 protocol clsid("d7c144b6-0792-44b8-b06b-02b227b547df") IUnknown

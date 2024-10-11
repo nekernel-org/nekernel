@@ -21,13 +21,13 @@
 
 EXTERN_C
 {
-#   include <cpuid.h>
+#include <cpuid.h>
 }
 
 #include <HALKit/AMD64/CPUID.hxx>
 
 /// @brief Maximum entries of the interrupt descriptor table.
-#define kKernelIdtSize	   (0x100)
+#define kKernelIdtSize (0x100)
 
 /// @brief interrupt for system call.
 #define kKernelInterruptId (0x32)

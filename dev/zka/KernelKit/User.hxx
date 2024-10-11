@@ -16,7 +16,7 @@
 #define kSuperUser "ZKA AUTHORITY\\SUPER"
 #define kGuestUser "ZKA AUTHORITY\\GUEST"
 
-#define kUsersDir  "\\Users\\"
+#define kUsersDir "\\Users\\"
 
 #define kMaxUserNameLen	 (255)
 #define kMaxUserTokenLen (255)

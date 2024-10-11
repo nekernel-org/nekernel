@@ -29,7 +29,7 @@ namespace View::PDF
 		virtual IPDFDocument* GetLastPage()	 = 0;
 
 		virtual IPDFDocument* GetPage(const UInt32& page_number);
-		virtual SInt32 SetPage(const UInt32& page_number, IPDFDocument* new_page);
+		virtual SInt32		  SetPage(const UInt32& page_number, IPDFDocument* new_page);
 
 		virtual Void SetProducer(const Char*) = 0;
 		virtual Void SetTitle(const Char*)	  = 0;

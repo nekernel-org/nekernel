@@ -89,7 +89,7 @@ namespace Kernel
 		if (fCachedBlob)
 			mm_delete_heap(fCachedBlob);
 
-		kcout << "PEFLoader: Warning: Executable format error!\r";
+		kcout << "PEFLoader: warn: Executable format error!\r";
 
 		fCachedBlob = nullptr;
 	}
@@ -117,42 +117,43 @@ namespace Kernel
 		constexpr auto cMangleCharacter	 = '$';
 		const Char*	   cContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
 
-		ErrorOr<StringView> errOrSym;
+		ErrorOr<StringView> error_or_symbol;
 
 		switch (kind)
 		{
 		case kPefCode: {
-			errOrSym = StringBuilder::Construct(cContainerKinds[0]); // code symbol.
+			error_or_symbol = StringBuilder::Construct(cContainerKinds[0]); // code symbol.
 			break;
 		}
 		case kPefData: {
-			errOrSym = StringBuilder::Construct(cContainerKinds[1]); // data symbol.
+			error_or_symbol = StringBuilder::Construct(cContainerKinds[1]); // data symbol.
 			break;
 		}
 		case kPefZero: {
-			errOrSym = StringBuilder::Construct(cContainerKinds[2]); // block starting symbol.
+			error_or_symbol = StringBuilder::Construct(cContainerKinds[2]); // block starting symbol.
 			break;
 		}
 		default:
-			return nullptr;
+			return nullptr; // prevent that from the kernel's mode perspective, let that happen if it were
+							// a user process.
 		}
 
-		char* unconstSymbol = const_cast<char*>(name);
+		Char* unconst_symbol = const_cast<Char*>(name);
 
-		for (SizeT i = 0UL; i < rt_string_len(unconstSymbol, kPefNameLen); ++i)
+		for (SizeT i = 0UL; i < rt_string_len(unconst_symbol, kPefNameLen); ++i)
 		{
-			if (unconstSymbol[i] == ' ')
+			if (unconst_symbol[i] == ' ')
 			{
-				unconstSymbol[i] = cMangleCharacter;
+				unconst_symbol[i] = cMangleCharacter;
 			}
 		}
 
-		errOrSym.Leak().Leak() += name;
+		error_or_symbol.Leak().Leak() += name;
 
 		for (SizeT index = 0; index < container->Count; ++index)
 		{
 			if (StringBuilder::Equals(container_header->Name,
-									  errOrSym.Leak().Leak().CData()))
+									  error_or_symbol.Leak().Leak().CData()))
 			{
 				if (container_header->Kind == kind)
 				{
@@ -165,14 +166,14 @@ namespace Kernel
 						}
 					}
 
-					Char* blobRet = new Char[container_header->Size];
+					Char* container_blob_value = new Char[container_header->Size];
 
-					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), blobRet, container_header->Size);
+					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), container_blob_value, container_header->Size);
 					mm_delete_heap(blob);
 
 					kcout << "PEFLoader: INFO: Load stub: " << container_header->Name << "!\r";
 
-					return blobRet;
+					return container_blob_value;
 				}
 			}
 		}

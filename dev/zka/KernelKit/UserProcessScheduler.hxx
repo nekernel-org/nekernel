@@ -268,7 +268,7 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(UserProcessScheduler)
 
-		operator bool();
+			 operator bool();
 		bool operator!();
 
 	public:
@@ -311,8 +311,8 @@ namespace Kernel
 	class UserProcessHelper final
 	{
 	public:
-		STATIC bool	 Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
-		STATIC bool	 CanBeScheduled(const UserProcess& process);
+		STATIC bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
+		STATIC bool CanBeScheduled(const UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
 	};
