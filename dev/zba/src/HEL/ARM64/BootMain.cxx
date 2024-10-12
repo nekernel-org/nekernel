@@ -5,6 +5,8 @@
 ------------------------------------------- */
 
 #include <FirmwareKit/EFI.hxx>
+#include <BootKit/Thread.hxx>
+#include <BootKit/BootKit.hxx>
 
 EXTERN EfiBootServices* BS;
 
@@ -15,6 +17,8 @@ EXTERN EfiBootServices* BS;
 EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 							  EfiSystemTable* SystemTable)
 {
+    SystemTable->ConOut->OutputString(SystemTable->ConOut, L"NEWSOLDR, (C) ZKA TECHNOLOGIES, ALL RIGHTS RESERVED.\r\n");
+    SystemTable->ConOut->OutputString(SystemTable->ConOut, L"NEWSOLDR: BOOTING KERNEL...\r\n");
 
-    return 0;
+    CANT_REACH();
 }

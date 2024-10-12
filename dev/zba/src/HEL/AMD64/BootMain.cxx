@@ -8,6 +8,7 @@
 #include <modules/FB/FB.hxx>
 #include <modules/FB/Text.hxx>
 #include <FirmwareKit/EFI.hxx>
+#include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
@@ -32,7 +33,7 @@
 /** Graphics related. */
 
 STATIC EfiGraphicsOutputProtocol* kGop	  = nullptr;
-STATIC UInt16					  kStride = 0U;
+STATIC UInt16					  kGopStride = 0U;
 STATIC EfiGUID					  kGopGuid;
 
 EXTERN_C Void rt_reset_hardware();
@@ -41,7 +42,7 @@ EXTERN_C Void rt_reset_hardware();
 	@brief Finds and stores the GOP.
 */
 
-STATIC Void InitVideoFB() noexcept
+STATIC Void boot_init_fb() noexcept
 {
 	kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
 	kGop	 = nullptr;
@@ -50,7 +51,7 @@ STATIC Void InitVideoFB() noexcept
 
 	BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop);
 
-	kStride = 4;
+	kGopStride = 4;
 
 	for (SizeT i = 0; i < kGop->Mode->MaxMode; ++i)
 	{
@@ -92,21 +93,21 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 	UInt32				 rev_desc		 = 0;
 
 #ifdef __ZKA_USE_FB__
-	InitVideoFB(); ///! Init the GOP.
+	boot_init_fb(); ///! Init the GOP.
 
 	for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
 		 ++indexVT)
 	{
-		Char* vendorTable = reinterpret_cast<Char*>(
+		Char* vendor_table = reinterpret_cast<Char*>(
 			SystemTable->ConfigurationTable[indexVT].VendorTable);
 
 		/// ACPI's 'RSD PTR', which contains hardware tables (MADT, FACP...)
-		if (vendorTable[0] == 'R' && vendorTable[1] == 'S' &&
-			vendorTable[2] == 'D' && vendorTable[3] == ' ' &&
-			vendorTable[4] == 'P' && vendorTable[5] == 'T' &&
-			vendorTable[6] == 'R' && vendorTable[7] == ' ')
+		if (vendor_table[0] == 'R' && vendor_table[1] == 'S' &&
+			vendor_table[2] == 'D' && vendor_table[3] == ' ' &&
+			vendor_table[4] == 'P' && vendor_table[5] == 'T' &&
+			vendor_table[6] == 'R' && vendor_table[7] == ' ')
 		{
-			handover_hdr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendorTable;
+			handover_hdr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendor_table;
 			break;
 		}
 	}
@@ -155,7 +156,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 	handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
 	// Fill handover header now.
 
-	Boot::BDiskFormatFactory<BootDeviceATA> checkPart;
+	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	// ---------------------------------------------------- //
 	// The following checks for an exisiting partition
@@ -163,7 +164,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 	// format the disk.
 	// ---------------------------------------------------- //
 
-	if (!checkPart.IsPartitionValid())
+	if (!partition_factory.IsPartitionValid())
 	{
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
 		root.fFileName[0] = kNeFSRoot[0];
@@ -171,7 +172,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 
 		root.fKind = kNeFSCatalogKindDir;
 
-		checkPart.Format("FileSystem (A:)", &root, 1);
+		partition_factory.Format("FileSystem (A:)", &root, 1);
 
 		rt_reset_hardware();
 	}
@@ -187,14 +188,14 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 	// A simple loop which finds a usable memory region for us.
 	//-----------------------------------------------------------//
 
-	SizeT lookIndex = 0UL;
+	SizeT lookup_index = 0UL;
 
-	for (; struct_ptr[lookIndex].Kind != EfiMemoryType::EfiConventionalMemory; ++lookIndex)
+	for (; struct_ptr[lookup_index].Kind != EfiMemoryType::EfiConventionalMemory; ++lookup_index)
 	{
 		ZKA_UNUSED(0);
 	}
 
-	cDefaultMemoryMap = lookIndex;
+	cDefaultMemoryMap = lookup_index;
 
 	//-----------------------------------------------------------//
 	// Update handover file specific table and phyiscal start field.
@@ -215,22 +216,22 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
 
-	Boot::BFileReader readerSysChk(L"syschk.sys", ImageHandle);
-	readerSysChk.ReadAll(0);
+	Boot::BFileReader reader_syschk(L"syschk.sys", ImageHandle);
+	reader_syschk.ReadAll(0);
 
-	Boot::BThread* loaderSysChk = nullptr;
+	Boot::BThread* syschk_thread = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
 	// ------------------------------------------ //
 
-	if (readerSysChk.Blob())
+	if (reader_syschk.Blob())
 	{
-		loaderSysChk = new Boot::BThread(readerSysChk.Blob());
-		loaderSysChk->SetName("System Check SYS.");
+		syschk_thread = new Boot::BThread(reader_syschk.Blob());
+		syschk_thread->SetName("System Check SYS.");
 	}
 
-	loaderSysChk->Start(handover_hdr);
+	syschk_thread->Start(handover_hdr);
 
 	// nullify these fields, to avoid being reused later.
 
@@ -251,27 +252,27 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	Boot::BFileReader readerKernel(L"minoskrnl.exe", ImageHandle);
+	Boot::BFileReader reader_kernel(L"minoskrnl.exe", ImageHandle);
 
-	readerKernel.ReadAll(0);
+	reader_kernel.ReadAll(0);
 
-	Boot::BThread* kernel_loader = nullptr;
+	Boot::BThread* kernel_thread = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
 	// ------------------------------------------ //
 
-	if (readerKernel.Blob())
+	if (reader_kernel.Blob())
 	{
-		kernel_loader = new Boot::BThread(readerKernel.Blob());
-		kernel_loader->SetName("Minimal Kernel.");
+		kernel_thread = new Boot::BThread(reader_kernel.Blob());
+		kernel_thread->SetName("Minimal Kernel.");
 
-		handover_hdr->f_KernelImage = readerKernel.Blob();
+		handover_hdr->f_KernelImage = reader_kernel.Blob();
 	}
 	else
 	{
 #ifdef __ZKA_USE_FB__
-		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR MINKRNL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR KERNEL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // __ZKA_USE_FB__
 	}
 
@@ -291,15 +292,15 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 		handover_hdr->f_ChimeSz		   = chimeWav.Size();
 		handover_hdr->f_StartupImage   = readerSysDrv.Blob();
 		handover_hdr->f_StartupSz	   = readerSysDrv.Size();
-		handover_hdr->f_KernelImage	   = readerKernel.Blob();
-		handover_hdr->f_KernelSz	   = readerKernel.Size();
+		handover_hdr->f_KernelImage	   = reader_kernel.Blob();
+		handover_hdr->f_KernelSz	   = reader_kernel.Size();
 		handover_hdr->f_TTFallbackFont = urbanistTTF.Blob();
 		handover_hdr->f_FontSz		   = urbanistTTF.Size();
 	}
 	else
 	{
 #ifdef __ZKA_USE_FB__
-		CGDrawString("NEWOSLDR: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REFORMAT THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("NEWOSLDR: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REINSTALL THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // __ZKA_USE_FB__
 	}
 
@@ -314,9 +315,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 	// Finally load Kernel, and the cr3 to it.
 	// ---------------------------------------------------- //
 
-	kernel_loader->Start(handover_hdr);
-
-	EFI::Stop();
+	kernel_thread->Start(handover_hdr);
 
 	CANT_REACH();
 }

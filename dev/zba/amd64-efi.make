@@ -49,7 +49,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSLDR__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../zka -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__HAVE_ZKA_APIS__ -D__ZKA_AMD64__ -D__ZKA__
+                        -std=c++20 -D__HAVE_ZKA_APIS__ -D__ZKA_USE_FB__ -D__ZKA_AMD64__ -D__ZKA__
 
 BOOT_LOADER=newosldr.exe
 KERNEL=minoskrnl.exe
