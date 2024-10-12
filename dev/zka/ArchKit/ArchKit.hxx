@@ -56,30 +56,6 @@ namespace Kernel
 	{
 		return *(volatile UInt32*)((UInt64)base + reg);
 	}
-
-	/// @brief Print a region of memory.
-	/// @param start
-	/// @param length
-	inline Void ke_print_raw_memory(const void* start, Size length)
-	{
-		const UInt8* ptr = (const UInt8*)start;
-
-		for (Size i = 0; i < length; i++)
-		{
-			if (i % 16 == 0)
-			{
-				kcout << hex_number((UIntPtr)ptr + i);
-			}
-			else
-			{
-				kcout << hex_number(ptr[i]);
-			}
-
-			kcout << " ";
-		}
-
-		kcout << "\r";
-	}
 } // namespace Kernel
 
 #define kKernelMaxSystemCalls (256)

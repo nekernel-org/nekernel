@@ -74,9 +74,7 @@ EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight)
 	return len;
 }
 
-/// @brief somthing specific to the Microsoft's ABI, When the stack grows too big.
-EXTERN_C void ___chkstk_ms(void)
-{
-}
+/// @brief something specific to the Microsoft's ABI, When the stack grows too big.
+EXTERN_C void ___chkstk_ms(void) {}
 
 #endif

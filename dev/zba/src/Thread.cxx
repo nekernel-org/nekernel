@@ -15,14 +15,6 @@
 #include <CFKit/LoaderUtils.hxx>
 #include <modules/FB/Text.hxx>
 
-EXTERN_C
-{
-#include <string.h>
-
-	Void
-	rt_jump_to_address(VoidPtr start, VoidPtr handover);
-}
-
 // External boot services symbol.
 EXTERN EfiBootServices* BS;
 
@@ -160,8 +152,6 @@ namespace Boot
 		{
 			err_fn(handover);
 		}
-
-		rt_jump_to_address(fStartAddress, handover);
 
 		reinterpret_cast<HEL::HandoverProc>(fStartAddress)(handover);
 	}

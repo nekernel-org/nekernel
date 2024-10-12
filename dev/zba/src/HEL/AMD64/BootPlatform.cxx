@@ -1,3 +1,4 @@
+
 /* -------------------------------------------
 
 	Copyright ZKA Technologies.
@@ -102,4 +103,4 @@ void rt_hlt()
 	Kernel::HAL::rt_halt();
 }
 
-#endif // 0
+#endif // __STANDALONE__

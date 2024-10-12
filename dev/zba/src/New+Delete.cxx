@@ -9,8 +9,6 @@
 #include <BootKit/BootKit.hxx>
 
 #ifdef __STANDALONE__
-#include <cstddef> /* Since we're using GCC for this EFI program. */
-
 EXTERN EfiBootServices* BS;
 
 /// @brief Allocates a new object.

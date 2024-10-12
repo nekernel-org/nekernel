@@ -5,11 +5,9 @@
 ------------------------------------------- */
 
 #include <BootKit/BootKit.hxx>
-#include <BootKit/Rsrc/NewBoot.rsrc>
 #include <modules/FB/FB.hxx>
 #include <modules/FB/Text.hxx>
 #include <FirmwareKit/EFI.hxx>
-#include <FirmwareKit/EFI/API.hxx>
 #include <FirmwareKit/Handover.hxx>
 #include <KernelKit/MSDOS.hxx>
 #include <KernelKit/PE.hxx>
@@ -17,7 +15,6 @@
 #include <NewKit/Macros.hxx>
 #include <NewKit/Ref.hxx>
 #include <BootKit/Thread.hxx>
-#include <cstring>
 
 // make the compiler shut up.
 #ifndef kMachineModel
@@ -71,14 +68,6 @@ STATIC Void InitVideoFB() noexcept
 	}
 }
 
-/// @brief check the BootDevice if suitable.
-STATIC Bool CheckBootDevice(BootDeviceATA& ataDev)
-{
-	if (ataDev.Leak().mErr)
-		return false;
-	return true;
-}
-
 EXTERN_C VoidPtr boot_read_cr3();
 EXTERN_C Void	 boot_write_cr3(VoidPtr new_cr3);
 
@@ -88,20 +77,22 @@ EXTERN EfiBootServices* BS;
 /// @param ImageHandle Handle of this image.
 /// @param SystemTable The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
+EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 							  EfiSystemTable* SystemTable)
 {
 	InitEFI(SystemTable); ///! Init the EFI library.
-	InitVideoFB();		  ///! Init the GOP.
-
-	UInt32				 MapKey		= 0;
-	UInt32				 SizePtr	= sizeof(EfiMemoryDescriptor);
-	EfiMemoryDescriptor* Descriptor = nullptr;
-	UInt32				 SzDesc		= sizeof(EfiMemoryDescriptor);
-	UInt32				 RevDesc	= 0;
 
 	HEL::HANDOVER_INFO_HEADER* handover_hdr =
 		new HEL::HANDOVER_INFO_HEADER();
+
+	UInt32				 map_key		 = 0;
+	UInt32				 size_struct_ptr = sizeof(EfiMemoryDescriptor);
+	EfiMemoryDescriptor* struct_ptr		 = nullptr;
+	UInt32				 sz_desc		 = sizeof(EfiMemoryDescriptor);
+	UInt32				 rev_desc		 = 0;
+
+#ifdef __ZKA_USE_FB__
+	InitVideoFB(); ///! Init the GOP.
 
 	for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
 		 ++indexVT)
@@ -130,6 +121,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	handover_hdr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
 	handover_hdr->f_GOP.f_PixelFormat  = kGop->Mode->Info->PixelFormat;
 	handover_hdr->f_GOP.f_Size		   = kGop->Mode->FrameBufferSize;
+#endif // __ZKA_USE_FB__
 
 	// ------------------------------------------- //
 	// Grab MP services, extended to runtime.	   //
@@ -144,17 +136,21 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	kHandoverHeader = handover_hdr;
 
+#ifdef __ZKA_USE_FB__
 	CGInit();
 	CGDrawInRegion(CGColor(0xFF, 0x3A, 0x3A), handover_hdr->f_GOP.f_Height, handover_hdr->f_GOP.f_Width, 0, 0);
 	CGFini();
+#endif // __ZKA_USE_FB__
 
 	UInt32 cnt_enabled	= 0;
 	UInt32 cnt_disabled = 0;
 
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
+#ifdef __ZKA_USE_FB__
 	CGDrawString("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "MULTIPLE PROCESSORS DETECTED." : "SINGLE PROCESSOR DETECTED.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
+#endif // __ZKA_USE_FB__
 
 	handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
 	// Fill handover header now.
@@ -180,10 +176,10 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 		rt_reset_hardware();
 	}
 
-	BS->GetMemoryMap(&SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc);
+	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
-	Descriptor = new EfiMemoryDescriptor[SzDesc];
-	BS->GetMemoryMap(&SizePtr, Descriptor, &MapKey, &SzDesc, &RevDesc);
+	struct_ptr = new EfiMemoryDescriptor[sz_desc];
+	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
 	auto cDefaultMemoryMap = 0; // Grab any usable entries.
 
@@ -193,7 +189,7 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 
 	SizeT lookIndex = 0UL;
 
-	for (; Descriptor[lookIndex].Kind != EfiMemoryType::EfiConventionalMemory; ++lookIndex)
+	for (; struct_ptr[lookIndex].Kind != EfiMemoryType::EfiConventionalMemory; ++lookIndex)
 	{
 		ZKA_UNUSED(0);
 	}
@@ -274,7 +270,9 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	}
 	else
 	{
+#ifdef __ZKA_USE_FB__
 		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR MINKRNL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+#endif // __ZKA_USE_FB__
 	}
 
 	Boot::BFileReader chimeWav(L"zka\\startup.wav", ImageHandle);
@@ -300,13 +298,17 @@ EFI_EXTERN_C EFI_API Int Main(EfiHandlePtr	  ImageHandle,
 	}
 	else
 	{
+#ifdef __ZKA_USE_FB__
 		CGDrawString("NEWOSLDR: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REFORMAT THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+#endif // __ZKA_USE_FB__
 	}
 
-	EFI::ExitBootServices(MapKey, ImageHandle);
+	EFI::ExitBootServices(map_key, ImageHandle);
 
+#ifdef __ZKA_USE_FB__
 	CGDrawInRegion(CGColor(0xFF, 0x3A, 0x3A), handover_hdr->f_GOP.f_Height, handover_hdr->f_GOP.f_Width, 0, 0);
 	CGFini();
+#endif // __ZKA_USE_FB__
 
 	// ---------------------------------------------------- //
 	// Finally load Kernel, and the cr3 to it.

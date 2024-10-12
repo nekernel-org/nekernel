@@ -14,6 +14,24 @@
 
 #ifdef __NEWOSLDR__
 
+/// @brief memset definition in C++.
+/// @param dst destination pointer.
+/// @param byte value to fill in.
+/// @param len length of of src.
+EXTERN_C void* memset(void* dst, int byte, long long unsigned int len);
+
+/// @brief memcpy definition in C++.
+/// @param dst destination pointer.
+/// @param  src source pointer.
+/// @param len length of of src.
+EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len);
+
+/// @brief strlen definition in C++.
+EXTERN_C size_t strlen(const char* whatToCheck);
+
+/// @brief strcmp definition in C++.
+EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight);
+
 #define SetMem(dst, c, sz)	  memset(dst, c, sz)
 #define MoveMem(dst, src, sz) memcpy(dst, src, sz)
 #define CopyMem(dst, src, sz) memcpy(dst, src, sz)

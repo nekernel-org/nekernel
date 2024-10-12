@@ -6,19 +6,16 @@
 
 #include <KernelKit/UserProcessScheduler.hxx>
 
-using namespace Kernel;
-
-Void UserProcess::SetImageStart(UIntPtr& imageStart) noexcept
-{
-	if (imageStart == 0)
-		this->Crash();
-
-	this->StackFrame->BP = imageStart;
-	this->StackFrame->SP = this->StackFrame->BP;
-}
-
 namespace Kernel
 {
+	Void UserProcess::SetImageStart(VoidPtr image_start) noexcept
+	{
+		if (image_start == 0)
+			this->Crash();
+
+		this->Image = image_start;
+	}
+
 	bool hal_check_stack(HAL::StackFramePtr stackPtr)
 	{
 		if (!stackPtr)

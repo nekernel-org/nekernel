@@ -17,7 +17,6 @@
 
 /// include NeFS header and Support header as well.
 
-#include <cstring>
 #include <FSKit/NeFS.hxx>
 #include <BootKit/Support.hxx>
 
