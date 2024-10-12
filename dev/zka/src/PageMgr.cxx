@@ -13,9 +13,6 @@
 #include <HALKit/ARM64/Paging.hxx>
 #endif // ifdef __ZKA_AMD64__ || defined(__ZKA_ARM64__)
 
-//! null deref will throw (Page Zero detected, aborting app!)
-#define kProtectedRegionEnd (512)
-
 namespace Kernel
 {
 	PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable, UIntPtr VirtAddr)

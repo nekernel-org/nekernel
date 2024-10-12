@@ -11,8 +11,8 @@
 
 namespace Kernel
 {
-	Void rle_compress(VoidPtr data, Size sz, VoidPtr out, Size out_sz);
-	Void rle_decompress(VoidPtr data, Size sz, VoidPtr out, Size out_sz);
+	class IRleObject;
+	class IRleProxy;
 } // namespace Kernel
 
 #endif // !ifndef __KERNELKIT_RLE_HXX__
