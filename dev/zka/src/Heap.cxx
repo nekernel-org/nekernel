@@ -85,16 +85,6 @@ namespace Kernel
 		}
 
 		typedef HEAP_INFORMATION_BLOCK* HEAP_INFORMATION_BLOCK_PTR;
-
-		Void mm_alloc_init_timeout(Void) noexcept
-		{
-			ZKA_UNUSED(0);
-		}
-
-		Void mm_alloc_fini_timeout(Void) noexcept
-		{
-			ZKA_UNUSED(0);
-		}
 	} // namespace Detail
 
 	Detail::HEAP_INFORMATION_BLOCK_PTR kLatestAllocation = nullptr;
@@ -102,7 +92,7 @@ namespace Kernel
 	/// @brief Declare a new size for ptr_heap.
 	/// @param ptr_heap the pointer.
 	/// @return Newly allocated heap header.
-	voidPtr mm_realloc_heap(voidPtr ptr_heap, SizeT new_sz)
+	VoidPtr mm_realloc_heap(VoidPtr ptr_heap, SizeT new_sz)
 	{
 		if (Detail::mm_check_heap_address(ptr_heap) == No)
 			return nullptr;
@@ -123,8 +113,6 @@ namespace Kernel
 	/// @return The newly allocated pointer.
 	VoidPtr mm_new_heap(const SizeT sz, const bool wr, const bool user)
 	{
-		Detail::mm_alloc_init_timeout();
-
 		auto sz_fix = sz;
 
 		if (sz_fix == 0)
@@ -154,8 +142,6 @@ namespace Kernel
 
 		kLatestAllocation = heap_info_ptr;
 
-		Detail::mm_alloc_fini_timeout();
-
 		return result;
 	}
 
@@ -167,8 +153,6 @@ namespace Kernel
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return -kErrorHeapNotPresent;
 
-		Detail::mm_alloc_init_timeout();
-
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
@@ -177,8 +161,6 @@ namespace Kernel
 			return -kErrorHeapNotPresent;
 
 		heap_blk->fPage = true;
-
-		Detail::mm_alloc_fini_timeout();
 
 		return kErrorSuccess;
 	}
@@ -191,8 +173,6 @@ namespace Kernel
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return -kErrorHeapNotPresent;
 
-		Detail::mm_alloc_init_timeout();
-
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_blk =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
@@ -201,7 +181,6 @@ namespace Kernel
 		{
 			if (!heap_blk->fPresent)
 			{
-				Detail::mm_alloc_fini_timeout();
 				return -kErrorHeapNotPresent;
 			}
 
@@ -233,8 +212,6 @@ namespace Kernel
 
 			PageMgr heap_mgr;
 			heap_mgr.Free(pteAddress);
-
-			Detail::mm_alloc_fini_timeout();
 
 			return kErrorSuccess;
 		}

@@ -13,7 +13,7 @@
 #include <modules/NVME/NVME.hxx>
 
 /// @file DriveMgr.cxx
-/// @brief Kernel drive manager.
+/// @brief Drive manager.
 
 namespace Kernel
 {
