@@ -115,7 +115,7 @@ namespace Kernel
 	/// @return the new drive.
 	DriveTrait io_construct_drive() noexcept
 	{
-		DriveTrait trait{};
+		DriveTrait trait;
 
 		rt_copy_memory((VoidPtr) "\\Mount\\NUL:", trait.fName, rt_string_len("\\Mount\\NUL:"));
 		trait.fKind = kInvalidDrive;
@@ -133,7 +133,7 @@ namespace Kernel
 	/// @return the new drive.
 	DriveTrait io_construct_main_drive() noexcept
 	{
-		DriveTrait trait{};
+		DriveTrait trait;
 
 		rt_copy_memory((VoidPtr) "\\Mount\\MainDisk:", trait.fName, rt_string_len("\\Mount\\MainDisk:"));
 		trait.fKind = kMassStorage;

@@ -21,7 +21,7 @@
 
 using namespace Kernel;
 
-#ifdef __ED__
+#ifdef __ZKA_IN_EDITOR__
 /***********************************************************************************/
 /**
 	Define those external symbols, to make the editor shutup

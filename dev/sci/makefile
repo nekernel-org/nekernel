@@ -5,7 +5,7 @@
 
 CC=g++
 FLAGS=-I../ -shared -fPIC -D__ZKA_SYMS__
-OUTPUT=zka-sci-cxx.dll
+OUTPUT=sci.dll
 
 .PHONY: build-sci
 build-sci:

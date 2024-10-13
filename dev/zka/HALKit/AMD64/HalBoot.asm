@@ -18,5 +18,11 @@
 
 section .ldr
 
-HandoverMagic: dq kHandoverMagic
-HandoverType: dw kTypeKernel
+HandoverMagic:
+    dq kHandoverMagic
+HandoverType:
+    dw kTypeKernel
+HandoverPad:
+    dw 0
+HandoverArch:
+    dw kArchAmd64

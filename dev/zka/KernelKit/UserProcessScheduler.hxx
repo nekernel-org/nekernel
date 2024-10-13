@@ -174,7 +174,7 @@ namespace Kernel
 
 		PROCESS_MEMORY_ENTRY* MemoryEntryList{nullptr};
 
-		SizeT MemoryPD{0};
+		UIntPtr MemoryPD{0UL};
 
 		enum
 		{

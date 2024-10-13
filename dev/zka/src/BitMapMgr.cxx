@@ -6,7 +6,7 @@
 
 #include <ArchKit/ArchKit.hxx>
 
-#define cBitMpMagic ((Kernel::UIntPtr)0x10210)
+#define kBitMapMagic (0x10210)
 
 #ifdef __ZKA_AMD64__
 #include <HALKit/AMD64/Paging.hxx>
@@ -44,7 +44,7 @@ namespace Kernel
 					UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
 					if (!ptr_bit_set[cBitMapMagIdx] ||
-						ptr_bit_set[cBitMapMagIdx] != cBitMpMagic)
+						ptr_bit_set[cBitMapMagIdx] != kBitMapMagic)
 						return No;
 
 					return Yes;
@@ -57,7 +57,7 @@ namespace Kernel
 
 					UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
-					ptr_bit_set[cBitMapMagIdx]	= cBitMpMagic;
+					ptr_bit_set[cBitMapMagIdx]	= kBitMapMagic;
 					ptr_bit_set[cBitMapUsedIdx] = No;
 
 					this->GetBitMapStatus(ptr_bit_set);
@@ -93,7 +93,7 @@ namespace Kernel
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
 
-						if (ptr_bit_set[cBitMapMagIdx] == cBitMpMagic &&
+						if (ptr_bit_set[cBitMapMagIdx] == kBitMapMagic &&
 							ptr_bit_set[cBitMapSizeIdx] <= size)
 						{
 							if (ptr_bit_set[cBitMapUsedIdx] == No)
@@ -109,11 +109,11 @@ namespace Kernel
 								return (VoidPtr)ptr_bit_set;
 							}
 						}
-						else if (ptr_bit_set[cBitMapMagIdx] != cBitMpMagic)
+						else if (ptr_bit_set[cBitMapMagIdx] != kBitMapMagic)
 						{
 							UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
 
-							ptr_bit_set[cBitMapMagIdx]	= cBitMpMagic;
+							ptr_bit_set[cBitMapMagIdx]	= kBitMapMagic;
 							ptr_bit_set[cBitMapSizeIdx] = size;
 							ptr_bit_set[cBitMapUsedIdx] = Yes;
 
@@ -125,7 +125,7 @@ namespace Kernel
 							return (VoidPtr)ptr_bit_set;
 						}
 
-						base = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != cBitMpMagic ? size : ptr_bit_set[1]));
+						base = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != kBitMapMagic ? size : ptr_bit_set[1]));
 
 						if ((UIntPtr)base_ptr < (reinterpret_cast<UIntPtr>(base) + kHandoverHeader->f_BitMapSize))
 							return nullptr;
@@ -158,8 +158,8 @@ namespace Kernel
 		/// @brief Allocate a new page to be used by the OS.
 		/// @param wr read/write bit.
 		/// @param user user bit.
-		/// @return
-		auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size) -> VoidPtr
+		/// @return a new bitmap allocated pointer.
+		auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page) -> VoidPtr
 		{
 			VoidPtr					 ptr_new = nullptr;
 			Detail::IBitMapAllocator traits;
@@ -183,6 +183,7 @@ namespace Kernel
 			return (UIntPtr*)ptr_new;
 		}
 
+		/// @brief Free Bitmap, and mark it a absent in page terms.
 		auto mm_free_bitmap(VoidPtr page_ptr) -> Bool
 		{
 			if (!page_ptr)

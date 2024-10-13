@@ -58,7 +58,7 @@ namespace Kernel
 	PTEWrapper PageMgr::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz)
 	{
 		// Store PTE wrapper right after PTE.
-		VoidPtr ptr = Kernel::HAL::mm_alloc_bitmap(Rw, User, Sz);
+		VoidPtr ptr = Kernel::HAL::mm_alloc_bitmap(Rw, User, Sz, false);
 
 		return PTEWrapper{Rw, User, ExecDisable, reinterpret_cast<UIntPtr>(ptr)};
 	}

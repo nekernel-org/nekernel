@@ -90,7 +90,7 @@ namespace Boot
 				if (StrCmp(sectionForCode, sect->mName) == 0)
 				{
 					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + optHdr->mAddressOfEntryPoint);
-					writer.Write("NEWOSLDR: Entrypoint of DLL: ").Write((UIntPtr)fStartAddress).Write("\r");
+					writer.Write("NEWOSLDR: ENTRY OF EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
 				else if (StrCmp(sectionForNewLdr, sect->mName) == 0)
 				{
@@ -98,17 +98,42 @@ namespace Boot
 					{
 						UInt64 HandoverMagic;
 						UInt32 HandoverType;
-					}* structHandover = (struct HANDOVER_INFORMATION_STUB*)((UIntPtr)fBlob + sect->mPointerToRawData);
+						UInt32 HandoverPad;
+						UInt32 HandoverArch;
+					}* handover_struc = (struct HANDOVER_INFORMATION_STUB*)((UIntPtr)fBlob + sect->mPointerToRawData);
 
-					if (structHandover->HandoverMagic != kHandoverMagic &&
-						structHandover->HandoverType != HEL::kTypeKernel)
+					if (handover_struc->HandoverMagic != kHandoverMagic &&
+						handover_struc->HandoverType != HEL::kTypeKernel)
 					{
-						writer.Write("NEWOSLDR: Entrypoint of EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
+#ifdef __ZKA_AMD64__
+						if (handover_struc->HandoverArch != HEL::kArchAMD64)
+						{
+							writer.Write("NEWOSLDR: ARCH OF EXE: ").Write(handover_struc->HandoverArch).Write("\r");
+							writer.Write("NEWOSLDR: ENTRY OF EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
+							CGDrawString("NEWOSLDR: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+
+							::EFI::Stop();
+						}
+#endif
+
+#ifdef __ZKA_ARM64__
+						if (handover_struc->HandoverArch != HEL::kArchARM64)
+						{
+							writer.Write("NEWOSLDR: ARCH OF EXE: ").Write(handover_struc->HandoverArch).Write("\r");
+							writer.Write("NEWOSLDR: ENTRY OF EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
+							CGDrawString("NEWOSLDR: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+
+							::EFI::Stop();
+						}
+#endif
+						writer.Write("NEWOSLDR: ENTRY OF EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
 						CGDrawString("NEWOSLDR: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+
+						::EFI::Stop();
 					}
 				}
 
-				writer.Write("NEWOSLDR: offset ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
+				writer.Write("NEWOSLDR: OFFSET ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
 
 				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
@@ -139,7 +164,7 @@ namespace Boot
 
 		if (!handover)
 		{
-			writer.Write("NEWOSLDR: Exec format error.\r");
+			writer.Write("NEWOSLDR: EXEC FORMAT ERROR.\r");
 			return;
 		}
 

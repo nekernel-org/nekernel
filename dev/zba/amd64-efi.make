@@ -54,8 +54,8 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSL
 BOOT_LOADER=newosldr.exe
 KERNEL=minoskrnl.exe
 DDK=ddk.dll
-SCI=zka-sci-cxx.dll
-CRT=zka-crt-cxx.dll
+SCI=sci.dll
+CRT=crt.dll
 SYS_CHK=syschk.sys
 STARTUP=startup.sys
 
@@ -72,8 +72,8 @@ all: compile-amd64
 	$(COPY) ../zka/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ../sci/$(SCI) src/Root/$(SCI)
 	$(COPY) ../ddk/$(DDK) src/Root/$(DDK)
-	$(COPY) ./modules/SysChk/$(SYS_CHK) src/Root/$(SYS_CHK)
-	$(COPY) ./modules/SysChk/$(SYS_CHK) src/Root/zka/$(STARTUP)
+	$(COPY) ./Modules/SysChk/$(SYS_CHK) src/Root/$(SYS_CHK)
+	$(COPY) ./Modules/SysChk/$(SYS_CHK) src/Root/zka/$(STARTUP)
 	$(COPY) ../crt/$(CRT) src/Root/$(CRT)
 	$(COPY) src/$(BOOT_LOADER) src/Root/$(BOOT_LOADER)
 

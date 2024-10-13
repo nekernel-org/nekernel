@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../"],
   "sources_path": ["src/*.cxx"],
-  "output_name": "zka-sci-cxx.dll",
+  "output_name": "sci.dll",
   "compiler_flags": [
     "-fPIC",
     "-ffreestanding",

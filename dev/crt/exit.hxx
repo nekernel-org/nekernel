@@ -13,6 +13,6 @@ namespace std
 {
 	inline int exit(int code)
 	{
-		exit(code);
+		return exit(code);
 	}
 } // namespace std

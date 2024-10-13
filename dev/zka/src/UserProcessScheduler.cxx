@@ -12,6 +12,7 @@
 /// @brief User Process scheduler.
 /***********************************************************************************/
 
+#include <ArchKit/ArchKit.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <KernelKit/IPEFDLLObject.hxx>
 #include <KernelKit/HardwareThreadScheduler.hxx>
@@ -169,8 +170,9 @@ namespace Kernel
 				auto pd = hal_read_cr3();
 				hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
 
-				Bool ret = mm_delete_heap(ptr);
-				hal_write_cr3(reinterpret_cast<VoidPtr>(pd));
+				auto ret = mm_delete_heap(entry->MemoryEntry);
+
+				hal_write_cr3(pd);
 
 				return ret;
 #else
@@ -233,6 +235,32 @@ namespace Kernel
 		fLastExitCode = exit_code;
 		cLastExitCode = exit_code;
 
+		auto memory_list = this->MemoryEntryList;
+
+		// Deleting memory lists. Make sure to free all of them.
+		while (memory_list)
+		{
+			if (memory_list->MemoryEntry)
+			{
+				auto pd = hal_read_cr3();
+				hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
+
+				MUST_PASS(mm_delete_heap(memory_list->MemoryEntry));
+
+				hal_write_cr3(pd);
+			}
+
+			auto next = memory_list->MemoryNext;
+
+			mm_delete_heap(memory_list);
+			memory_list = nullptr;
+
+			memory_list = next;
+		}
+
+		//! Free the memory's page directory.
+		HAL::mm_free_bitmap(reinterpret_cast<VoidPtr>(this->MemoryPD));
+
 		//! Delete image if not done already.
 		if (this->Image && mm_is_valid_heap(this->Image))
 			mm_delete_heap(this->Image);
@@ -275,7 +303,7 @@ namespace Kernel
 			return 0;
 
 #ifdef __ZKA_AMD64__
-		process.MemoryPD = reinterpret_cast<UIntPtr>(hal_read_cr3());
+		process.MemoryPD = reinterpret_cast<UIntPtr>(HAL::mm_alloc_bitmap(Yes, Yes, sizeof(PDE), Yes));
 #endif // __ZKA_AMD64__
 
 		process.Status = ProcessStatusKind::kStarting;

@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <NewKit/Defines.hxx>
+
 enum
 {
 	eCPUFeatureSSE3		  = 1 << 0,
@@ -78,4 +80,4 @@ enum
 	eCPUFeaturePBE		  = 1 << 31
 };
 
-typedef __INT64_TYPE__ hal_cpu_feature_type;
+typedef Kernel::Int64 hal_cpu_feature_type;
