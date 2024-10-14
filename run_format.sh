@@ -15,6 +15,3 @@ echo -e "Files found to format = \n\"\"\"\n$FILE_LIST\n\"\"\""
 #   of as a new-line separated list of *many* file names!
 clang-format --verbose -i --style=file $FILE_LIST
 
-foreach i ( $FILE_LIST )
-	./camel_2_snake.py i
-end
