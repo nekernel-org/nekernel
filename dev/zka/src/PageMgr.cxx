@@ -34,7 +34,9 @@ namespace Kernel
 	/// @param VirtAddr
 	Void PageMgr::FlushTLB()
 	{
+#ifndef __ZKA_MINIMAL_OS__
 		hal_flush_tlb();
+#endif // !__ZKA_MINIMAL_OS__
 	}
 
 	/// @brief Reclaim freed page.

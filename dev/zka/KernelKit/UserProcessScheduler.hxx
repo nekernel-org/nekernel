@@ -14,7 +14,7 @@
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
 #define kSchedInvalidPID		  (-1)
-#define kSchedProcessLimitPerTeam (16U)
+#define kSchedProcessLimitPerTeam (32U)
 
 #define kSchedMaxMemoryLimit gib_cast(128)
 #define kSchedMaxStackSz	 mib_cast(8)
@@ -157,7 +157,7 @@ namespace Kernel
 
 		SizeT StackSize{kSchedMaxStackSz};
 
-		//! @brief Shared library handle, reserved for eExecutableDLLKind types of executables only.
+		//! @brief Shared library handle, reserved for kExectuableDLLKind types of executables only.
 		IPEFDLLObject* PefDLLDelegate{nullptr};
 
 		// Memory usage.
@@ -178,15 +178,15 @@ namespace Kernel
 
 		enum
 		{
-			eExecutableKind,
-			eExecutableDLLKind,
-			eExecutableKindCount,
+			kExectuableKind,
+			kExectuableDLLKind,
+			kExectuableKindCount,
 		};
 
 		ProcessTime PTime{0}; //! @brief Process allocated tine.
 
 		PID	  ProcessId{kSchedInvalidPID};
-		Int32 Kind{eExecutableKind};
+		Int32 Kind{kExectuableKind};
 
 	public:
 		//! @brief boolean operator, check status.
@@ -263,7 +263,6 @@ namespace Kernel
 
 	public:
 		explicit UserProcessScheduler() = default;
-
 		~UserProcessScheduler() = default;
 
 		ZKA_COPY_DEFAULT(UserProcessScheduler)
@@ -275,23 +274,13 @@ namespace Kernel
 		UserProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(UserProcess processRef);
-		Bool  Remove(ProcessID processSlot);
+		SizeT Add(UserProcess process);
+		Bool  Remove(ProcessID process_id);
 
-		const Bool IsUser() override
-		{
-			return Yes;
-		}
+		const Bool IsUser() override;
+		const Bool IsKernel() override;
+		const Bool HasMP() override;
 
-		const Bool IsKernel() override
-		{
-			return No;
-		}
-
-		const Bool HasMP() override
-		{
-			return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
-		}
 
 	public:
 		Ref<UserProcess>& CurrentProcess();
@@ -315,6 +304,7 @@ namespace Kernel
 		STATIC bool CanBeScheduled(const UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
+		STATIC Bool InitializeScheduling();
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

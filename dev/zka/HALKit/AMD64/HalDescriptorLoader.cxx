@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.hxx>
+#include <HALKit/AMD64/Processor.hxx>
 
 namespace Kernel::HAL
 {
@@ -15,24 +16,32 @@ namespace Kernel::HAL
 
 		STATIC Void hal_remap_intel_pic_ctrl(Void) noexcept
 		{
-			auto a1 = HAL::In8(0xa1); // save masks
-			auto a2 = HAL::In8(0xa2);
+			uint8_t a1_saved = In8(kPICData);
+			uint8_t a2_saved = In8(kPIC2Data);
 
-			HAL::Out8(0x20, 0x11);
+			Out8(kPICCommand, 0x11); // Start initialization
+			Out8(kPICData, 0x20);	 // Master PIC offset
+			Out8(kPICData, 0x04);	 // Tell master PIC there is a slave
+			Out8(kPICData, 0x01);	 // 8086 mode
 
-			HAL::Out8(0xA0, 0x11);
+			Out8(kPIC2Command, 0x11); // Start initialization
+			Out8(kPIC2Data, 0x28);	  // Slave PIC offset
+			Out8(kPIC2Data, 0x02);	  // Tell slave PIC its cascade
+			Out8(kPIC2Data, 0x01);	  // 8086 mode
 
-			HAL::Out8(0x21, 32);
-			HAL::Out8(0xA1, 40);
+			Out8(kPICData, a1_saved); // Restore saved masks
+			Out8(kPIC2Data, a2_saved);
+		}
 
-			HAL::Out8(0x21, 4);
-			HAL::Out8(0xA1, 2);
+		STATIC Void hal_enable_pit() noexcept
+		{
+			// Configure PIT to receieve scheduler interrupts.
 
-			HAL::Out8(0x21, 0x01);
-			HAL::Out8(0xA1, 0x01);
+			UInt32 cCommonDivisor = kPITFrequency / 100; // 100 Hz.
 
-			HAL::Out8(0x21, a2);
-			HAL::Out8(0xA1, a1);
+			HAL::Out8(kPITControlPort, 0x36);						  // Command to PIT
+			HAL::Out8(kPITChannel0Port, cCommonDivisor & 0xFF);		  // Send low byte
+			HAL::Out8(kPITControlPort, (cCommonDivisor >> 8) & 0xFF); // Send high byte
 		}
 	} // namespace Detail
 
@@ -46,6 +55,9 @@ namespace Kernel::HAL
 
 	Void IDTLoader::Load(Register64& idt)
 	{
+		Detail::hal_remap_intel_pic_ctrl();
+		Detail::hal_enable_pit();
+
 		volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
 		for (UInt16 idt_indx = 0; idt_indx < (kKernelIdtSize); ++idt_indx)
@@ -66,8 +78,6 @@ namespace Kernel::HAL
 					(kKernelIdtSize)-1;
 
 		hal_load_idt(idt);
-
-		Detail::hal_remap_intel_pic_ctrl();
 	}
 
 	void GDTLoader::Load(Ref<RegisterGDT>& gdt)

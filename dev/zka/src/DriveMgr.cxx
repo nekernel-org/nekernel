@@ -88,18 +88,22 @@ namespace Kernel
 		return "ATA-PIO";
 	}
 #endif
-
 #ifdef __ATA_DMA__
 	const Char* io_drv_kind(Void)
 	{
 		return "ATA-DMA";
 	}
 #endif
-
 #ifdef __AHCI__
 	const Char* io_drv_kind(Void)
 	{
 		return "AHCI";
+	}
+#endif
+#ifdef __ZKA_MINIMAL_OS__
+	const Char* io_drv_kind(Void)
+	{
+		return "Unknown";
 	}
 #endif
 
@@ -118,7 +122,7 @@ namespace Kernel
 		DriveTrait trait;
 
 		rt_copy_memory((VoidPtr) "\\Mount\\NUL:", trait.fName, rt_string_len("\\Mount\\NUL:"));
-		trait.fKind = kInvalidDrive;
+		trait.fKind = kInvalidStorage;
 
 		trait.fInput	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_unimplemented;
@@ -136,7 +140,7 @@ namespace Kernel
 		DriveTrait trait;
 
 		rt_copy_memory((VoidPtr) "\\Mount\\MainDisk:", trait.fName, rt_string_len("\\Mount\\MainDisk:"));
-		trait.fKind = kMassStorage;
+		trait.fKind = kMassStorage | kEPMDrive;
 
 		trait.fVerify	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_output;

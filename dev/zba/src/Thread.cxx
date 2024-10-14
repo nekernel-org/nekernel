@@ -26,30 +26,42 @@ namespace Boot
 		: fBlob(blob), fStartAddress(nullptr)
 	{
 		// detect the format.
-		const Char* firstBytes = reinterpret_cast<char*>(fBlob);
+		const Char* blob_bytes = reinterpret_cast<char*>(fBlob);
 
 		BTextWriter writer;
 
-		if (!firstBytes)
+		if (!blob_bytes)
 		{
 			// failed to provide a valid pointer.
 			return;
 		}
 
-		if (firstBytes[0] == kMagMz0 &&
-			firstBytes[1] == kMagMz1)
+		if (blob_bytes[0] == kMagMz0 &&
+			blob_bytes[1] == kMagMz1)
 		{
-			LDR_EXEC_HEADER_PTR		hdrPtr = ldr_find_exec_header(firstBytes);
-			LDR_OPTIONAL_HEADER_PTR optHdr = ldr_find_opt_exec_header(firstBytes);
+			LDR_EXEC_HEADER_PTR		header_ptr = ldr_find_exec_header(blob_bytes);
+			LDR_OPTIONAL_HEADER_PTR opt_header_ptr = ldr_find_opt_exec_header(blob_bytes);
 
-			if (hdrPtr->mMachine != kPeMachineAMD64 ||
-				hdrPtr->mSignature != kPeMagic)
+			if (!header_ptr || !opt_header_ptr)
+			    return;
+
+#ifdef __ZKA_AMD64__
+			if (header_ptr->mMachine != kPeMachineAMD64 ||
+				header_ptr->mSignature != kPeMagic)
 			{
 				writer.Write("NEWOSLDR: Not a PE32+ executable.\r");
 				return;
 			}
+#elif defined(__ZKA_ARM64__)
+			if (header_ptr->mMachine != kPeMachineAMD64 ||
+				header_ptr->mSignature != kPeMagic)
+			{
+				writer.Write("NEWOSLDR: Not a PE32+ executable.\r");
+				return;
+			}
+#endif // __ZKA_AMD64__ || __ZKA_ARM64__
 
-			if (optHdr->mSubsystem != kZKASubsystem)
+			if (opt_header_ptr->mSubsystem != kZKASubsystem)
 			{
 				writer.Write("NEWOSLDR: Not a ZKA Subsystem executable.\r");
 				return;
@@ -57,25 +69,25 @@ namespace Boot
 
 			writer.Write("NEWOSLDR: PE32+ executable detected (ZKA Subsystem).\r");
 
-			auto numSecs = hdrPtr->mNumberOfSections;
+			auto numSecs = header_ptr->mNumberOfSections;
 
-			writer.Write("NEWOSLDR: Major Linker Ver: ").Write(optHdr->mMajorLinkerVersion).Write("\r");
-			writer.Write("NEWOSLDR: Minor Linker Ver: ").Write(optHdr->mMinorLinkerVersion).Write("\r");
-			writer.Write("NEWOSLDR: Major Subsystem Ver: ").Write(optHdr->mMajorSubsystemVersion).Write("\r");
-			writer.Write("NEWOSLDR: Minor Subsystem Ver: ").Write(optHdr->mMinorSubsystemVersion).Write("\r");
-			writer.Write("NEWOSLDR: Magic: ").Write(hdrPtr->mSignature).Write("\r");
+			writer.Write("NEWOSLDR: Major Linker Ver: ").Write(opt_header_ptr->mMajorLinkerVersion).Write("\r");
+			writer.Write("NEWOSLDR: Minor Linker Ver: ").Write(opt_header_ptr->mMinorLinkerVersion).Write("\r");
+			writer.Write("NEWOSLDR: Major Subsystem Ver: ").Write(opt_header_ptr->mMajorSubsystemVersion).Write("\r");
+			writer.Write("NEWOSLDR: Minor Subsystem Ver: ").Write(opt_header_ptr->mMinorSubsystemVersion).Write("\r");
+			writer.Write("NEWOSLDR: Magic: ").Write(header_ptr->mSignature).Write("\r");
 
 			constexpr auto cPageSize = 512;
 
-			EfiPhysicalAddress loadStartAddress = optHdr->mImageBase;
-			loadStartAddress += optHdr->mBaseOfData;
+			EfiPhysicalAddress loadStartAddress = opt_header_ptr->mImageBase;
+			loadStartAddress += opt_header_ptr->mBaseOfData;
 
 			writer.Write("NEWOSLDR: ImageBase: ").Write(loadStartAddress).Write("\r");
 
-			auto numPages = optHdr->mSizeOfImage / cPageSize;
+			auto numPages = opt_header_ptr->mSizeOfImage / cPageSize;
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
 
-			LDR_SECTION_HEADER_PTR sectPtr = (LDR_SECTION_HEADER_PTR)(((Char*)optHdr) + hdrPtr->mSizeOfOptionalHeader);
+			LDR_SECTION_HEADER_PTR sectPtr = (LDR_SECTION_HEADER_PTR)(((Char*)opt_header_ptr) + header_ptr->mSizeOfOptionalHeader);
 
 			constexpr auto sectionForCode	= ".text";
 			constexpr auto sectionForNewLdr = ".ldr";
@@ -89,7 +101,7 @@ namespace Boot
 
 				if (StrCmp(sectionForCode, sect->mName) == 0)
 				{
-					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + optHdr->mAddressOfEntryPoint);
+					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + opt_header_ptr->mAddressOfEntryPoint);
 					writer.Write("NEWOSLDR: ENTRY OF EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
 				else if (StrCmp(sectionForNewLdr, sect->mName) == 0)
@@ -111,8 +123,6 @@ namespace Boot
 							writer.Write("NEWOSLDR: ARCH OF EXE: ").Write(handover_struc->HandoverArch).Write("\r");
 							writer.Write("NEWOSLDR: ENTRY OF EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
 							CGDrawString("NEWOSLDR: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
-
-							::EFI::Stop();
 						}
 #endif
 
@@ -122,8 +132,6 @@ namespace Boot
 							writer.Write("NEWOSLDR: ARCH OF EXE: ").Write(handover_struc->HandoverArch).Write("\r");
 							writer.Write("NEWOSLDR: ENTRY OF EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
 							CGDrawString("NEWOSLDR: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
-
-							::EFI::Stop();
 						}
 #endif
 						writer.Write("NEWOSLDR: ENTRY OF EXE: ").Write((UIntPtr)fStartAddress).Write("\r");
@@ -138,10 +146,10 @@ namespace Boot
 				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
 		}
-		else if (firstBytes[0] == kPefMagic[0] &&
-				 firstBytes[1] == kPefMagic[1] &&
-				 firstBytes[2] == kPefMagic[2] &&
-				 firstBytes[3] == kPefMagic[3])
+		else if (blob_bytes[0] == kPefMagic[0] &&
+				 blob_bytes[1] == kPefMagic[1] &&
+				 blob_bytes[2] == kPefMagic[2] &&
+				 blob_bytes[3] == kPefMagic[3])
 		{
 			//  =========================================  //
 			//  PEF executable detected.
@@ -160,14 +168,6 @@ namespace Boot
 	/// @note handover header has to be valid!
 	Void BThread::Start(HEL::HANDOVER_INFO_HEADER* handover)
 	{
-		BTextWriter writer;
-
-		if (!handover)
-		{
-			writer.Write("NEWOSLDR: EXEC FORMAT ERROR.\r");
-			return;
-		}
-
 		HEL::HandoverProc err_fn = [](HEL::HANDOVER_INFO_HEADER* rcx) -> void {
 			CGDrawString("NEWOSLDR: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			::EFI::Stop();

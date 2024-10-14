@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "NewKit/Stop.hxx"
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/String.hxx>
@@ -43,13 +44,9 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
-EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
+/// @brief Handle scheduler interrupt.
+EXTERN_C void idt_handle_scheduler()
 {
-	if (Kernel::cProcessScheduler == nullptr)
-	{
-		Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
-	}
-
 	Kernel::UserProcessHelper::StartScheduling();
 }
 
@@ -101,6 +98,8 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 /// @return nothing.
 EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx)
 {
+    Kernel::HAL::Out8(0x20, 0x20); // Acknowledge interrupt to master PIC
+
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
 		kcout << "syscall: Enter Fn.\r";
@@ -117,6 +116,8 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 /// @return nothing.
 EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx, Kernel::UIntPtr r8, Kernel::UIntPtr r9)
 {
+    Kernel::HAL::Out8(0x20, 0x20); // Acknowledge interrupt to master PIC
+
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
 		kcout << "kerncall: Enter Fn.\r";

@@ -8,6 +8,11 @@
 
 namespace Kernel
 {
+   	EXTERN_C Void __zka_pure_call(void)
+	{
+	    UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	}
+
 	Void UserProcess::SetImageStart(VoidPtr image_start) noexcept
 	{
 		if (image_start == 0)

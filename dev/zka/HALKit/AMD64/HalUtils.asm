@@ -25,9 +25,3 @@ rt_install_tib:
 
 [extern cBspDone]
 [extern kApicMadtAddressesCount]
-[extern hal_on_ap_startup]
-[global hal_ap_trampoline]
-
-hal_ap_trampoline:
-hal_ap_trampoline_1:
-    jmp    hal_on_ap_startup

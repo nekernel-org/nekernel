@@ -242,12 +242,16 @@ namespace Kernel
 		{
 			if (memory_list->MemoryEntry)
 			{
+#ifdef __ZKA_AMD64__
 				auto pd = hal_read_cr3();
 				hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
+#endif
 
 				MUST_PASS(mm_delete_heap(memory_list->MemoryEntry));
 
+#ifdef __ZKA_AMD64__
 				hal_write_cr3(pd);
+#endif
 			}
 
 			auto next = memory_list->MemoryNext;
@@ -271,7 +275,7 @@ namespace Kernel
 		this->Image		 = nullptr;
 		this->StackFrame = nullptr;
 
-		if (this->Kind == eExecutableDLLKind)
+		if (this->Kind == kExectuableDLLKind)
 		{
 			Bool success = false;
 			rtl_fini_dll(this, this->PefDLLDelegate, &success);
@@ -317,14 +321,14 @@ namespace Kernel
 		}
 
 		// Create heap according to type of process.
-		if (process.Kind == UserProcess::eExecutableDLLKind)
+		if (process.Kind == UserProcess::kExectuableDLLKind)
 		{
 			process.PefDLLDelegate = rtl_init_dll(&process);
 		}
 
 		if (!process.Image)
 		{
-			if (process.Kind != UserProcess::eExecutableDLLKind)
+			if (process.Kind != UserProcess::kExectuableDLLKind)
 			{
 				process.Crash();
 				return -kErrorProcessFault;
@@ -378,12 +382,27 @@ namespace Kernel
 	{
 		// check if process is within range.
 		if (process_id > mTeam.AsArray().Count())
-			return false;
+			return No;
 
 		mTeam.AsArray()[process_id].Status = ProcessStatusKind::kDead;
 		--mTeam.mProcessAmount;
 
-		return true;
+		return Yes;
+	}
+
+	const Bool UserProcessScheduler::IsUser()
+	{
+		return Yes;
+	}
+
+	const Bool UserProcessScheduler::IsKernel()
+	{
+		return No;
+	}
+
+	const Bool UserProcessScheduler::HasMP()
+	{
+		return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
 	}
 
 	/***********************************************************************************/
@@ -466,7 +485,7 @@ namespace Kernel
 			return No;
 
 		if (!process.Image &&
-			process.Kind == UserProcess::eExecutableKind)
+			process.Kind == UserProcess::kExectuableKind)
 			return No;
 
 		return Yes;
@@ -474,26 +493,31 @@ namespace Kernel
 
 	/***********************************************************************************/
 	/**
-	 * @brief Scheduler helper class.
+	 * @brief Allocate a scheduler.
 	 */
 	/***********************************************************************************/
 
-	EXTERN
-	HardwareThreadScheduler* cHardwareThreadScheduler; //! @brief Ask linker for the hardware thread scheduler.
-
-	SizeT UserProcessHelper::StartScheduling()
+	Bool UserProcessHelper::InitializeScheduling()
 	{
-		if (!cHardwareThreadScheduler)
-		{
-			cHardwareThreadScheduler = mm_new_class<HardwareThreadScheduler>();
-			MUST_PASS(cHardwareThreadScheduler);
-		}
-
 		if (!cProcessScheduler)
 		{
 			cProcessScheduler = mm_new_class<UserProcessScheduler>();
-			MUST_PASS(cProcessScheduler);
+			return cProcessScheduler;
 		}
+
+		return No;
+	}
+
+	/***********************************************************************************/
+	/**
+	 * @brief Start the scheduler.
+	 */
+	/***********************************************************************************/
+
+	SizeT UserProcessHelper::StartScheduling()
+	{
+		if (!cProcessScheduler)
+			return 0;
 
 		SizeT ret = cProcessScheduler->Run();
 		return ret;

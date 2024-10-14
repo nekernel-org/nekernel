@@ -131,8 +131,24 @@ IntNormal 28
 IntNormal 29
 IntExp    30
 IntNormal 31
-IntNormal 32
+
+[extern idt_handle_scheduler]
+
+__ZKA_INT_32:
+    cli
+
+    push rsp
+
+    jmp idt_handle_scheduler
+
+    add rsp, 16
+    pop rsp
+
+    sti
+    o64 iret
+
 IntNormal 33
+
 IntNormal 34
 IntNormal 35
 IntNormal 36
@@ -194,25 +210,7 @@ __ZKA_INT_51:
     std
     o64 iret
 
-[extern hal_on_ap_startup]
-
-PRESENT        equ 1 << 7
-NOT_SYS        equ 1 << 4
-EXEC           equ 1 << 3
-DC             equ 1 << 2
-RW             equ 1 << 1
-ACCESSED       equ 1 << 0
-
-; Flags bits
-GRAN_4K       equ 1 << 7
-SZ_32         equ 1 << 6
-LONG_MODE     equ 1 << 5
-
-__ZKA_INT_52:
-    cld
-    jmp hal_on_ap_startup
-    std
-    ret
+IntNormal 52
 
 IntNormal 53
 IntNormal 54

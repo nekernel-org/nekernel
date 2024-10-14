@@ -7,6 +7,7 @@
 #include <KernelKit/FileMgr.hxx>
 #include <KernelKit/Heap.hxx>
 
+#ifndef __ZKA_MINIMAL_OS__
 #ifdef __FSKIT_USE_NEFS__
 
 /// @brief NeFS File manager.
@@ -14,7 +15,6 @@
 
 namespace Kernel
 {
-#ifdef __FSKIT_USE_NEFS__
 	/// @brief C++ constructor
 	NeFileSystemMgr::NeFileSystemMgr()
 	{
@@ -242,7 +242,7 @@ namespace Kernel
 	{
 		return fImpl;
 	}
-#endif // __FSKIT_USE_NEFS__
 } // namespace Kernel
 
 #endif // ifdef __FSKIT_USE_NEFS__
+#endif // ifndef __ZKA_MINIMAL_OS__

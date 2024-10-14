@@ -11,7 +11,6 @@
 #include <KernelKit/DebugOutput.hxx>
 #include <NewKit/String.hxx>
 #include <FirmwareKit/Handover.hxx>
-#include <modules/ACPI/ACPIFactoryInterface.hxx>
 #include <KernelKit/FileMgr.hxx>
 #include <modules/FB/FB.hxx>
 #include <modules/FB/Text.hxx>
@@ -27,17 +26,17 @@ namespace Kernel
 	{
 		CGInit();
 
-		auto panicTxt = RGB(0xff, 0xff, 0xff);
+		auto panic_text = RGB(0xff, 0xff, 0xff);
 
 		auto start_y = 10;
 		auto x		 = 10;
 
-		CGDrawString("minoskrnl.exe stopped working properly so it had to stop.", start_y, x, panicTxt);
+		CGDrawString("minoskrnl.exe stopped working properly so it had to stop.", start_y, x, panic_text);
 		start_y += 10;
 
 		// simply offset from previous string and then write the website.
-		CGDrawString("Please visit: ", start_y, x, panicTxt);
-		CGDrawString(cWebsiteMacro, start_y, x + (FONT_SIZE_X * rt_string_len("Please visit: ")), panicTxt);
+		CGDrawString("Please visit: ", start_y, x, panic_text);
+		CGDrawString(cWebsiteMacro, start_y, x + (FONT_SIZE_X * rt_string_len("Please visit: ")), panic_text);
 
 		CGFini();
 
@@ -48,91 +47,77 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			CGDrawString("0x00000008 Scheduler error.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x00000008 Scheduler error.", start_y, x, panic_text);
+
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
-			CGDrawString("0x00000006 ACPI configuration error.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x00000006 ACPI configuration error.", start_y, x, panic_text);
+
 			break;
 		}
 		case RUNTIME_CHECK_PAGE: {
-			CGDrawString("0x0000000B Write/Read in non paged area.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x0000000B Write/Read in non paged area.", start_y, x, panic_text);
+
 		}
 		case RUNTIME_CHECK_FILESYSTEM: {
-			CGDrawString("0x0000000A Filesystem error.", start_y, x, panicTxt);
-
-			PowerFactoryInterface power(nullptr);
-			power.Shutdown();
+			CGDrawString("0x0000000A Filesystem error.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
-			CGDrawString("0x00000000 Heap is corrupted.", start_y, x, panicTxt);
-
-			PowerFactoryInterface power(nullptr);
-			power.Shutdown();
+			CGDrawString("0x00000000 Heap is corrupted.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {
-			CGDrawString("0x00000009 Bad behavior error.", start_y, x, panicTxt);
-
-			PowerFactoryInterface power(nullptr);
-			power.Shutdown();
+			CGDrawString("0x00000009 Bad Behavior.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			CGDrawString("0x0000000A OS finished executing.", start_y, x, panicTxt);
-
-			PowerFactoryInterface power(nullptr);
-			power.Shutdown();
-			break;
+			CGDrawString("0x0000000A Boot code has finished executing, waiting for scheduler and other cores.", start_y, x, panic_text);
+			return;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
-			CGDrawString("0x00000005 Handshake fault.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x00000005 Handshake fault.", start_y, x, panic_text);
+
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
-			CGDrawString("0x00000003 Bad IPC/XPCOM message.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x00000003 Bad IPC/XPCOM message.", start_y, x, panic_text);
+
 			break;
 		}
 		case RUNTIME_CHECK_INVALID_PRIVILEGE: {
-			CGDrawString("0x00000007 Privilege access violation.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x00000007 Privilege access violation.", start_y, x, panic_text);
+
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			CGDrawString("0x0000000B Kernel access violation.", start_y, x, panicTxt);
+			CGDrawString("0x0000000B Unexpected violation.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM: {
-			CGDrawString("0x10000001 Out of virtual memory.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x10000001 Out of virtual memory.", start_y, x, panic_text);
+
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			CGDrawString("0x10000001 Kernel Bug check appears to have failed, a dump has been written to the storage.", start_y, x, panicTxt);
-			RecoveryFactory::Recover();
+			CGDrawString("0x10000001 Kernel Bug check appears to have failed, a dump has been written to the storage.", start_y, x, panic_text);
+
 			break;
 		}
 		default: {
-			RecoveryFactory::Recover();
-			CGDrawString("0xFFFFFFFC Unknown Kernel Error.", start_y, x, panicTxt);
+
+			CGDrawString("0xFFFFFFFC Unknown Kernel Error.", start_y, x, panic_text);
 			break;
 		}
 		}
 		};
 
-		PowerFactoryInterface power(nullptr);
-		power.Reboot();
+		RecoveryFactory::Recover();
 	}
 
 	Void RecoveryFactory::Recover() noexcept
 	{
-		PowerFactoryInterface power(nullptr);
-		power.Reboot();
+		HAL::rt_halt();
 	}
 
 	void ke_runtime_check(bool expr, const Char* file, const Char* line)

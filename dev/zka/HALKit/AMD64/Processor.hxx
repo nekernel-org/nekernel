@@ -19,6 +19,15 @@
 #include <FirmwareKit/Handover.hxx>
 #include <HALKit/AMD64/Paging.hxx>
 
+#define kPITControlPort	 0x43
+#define kPITChannel0Port 0x40
+#define kPITFrequency	 1193180
+
+#define kPICCommand 0x20
+#define kPICData    0x21
+#define kPIC2Command 0xA0
+#define kPIC2Data    0xA1
+
 EXTERN_C
 {
 #include <cpuid.h>
@@ -35,7 +44,7 @@ EXTERN_C
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
-#define kInterruptGate (0x8E)
+#define kInterruptGate (0x0E)
 #define kTrapGate	   (0xEF)
 #define kTaskGate	   (0b10001100)
 #define kIDTSelector   (0x08)
@@ -59,7 +68,7 @@ namespace Kernel
 
 namespace Kernel::HAL
 {
-	/// @brief Virtual memory flags.
+	/// @brief Memory Manager mapping flags.
 	enum
 	{
 		eFlagsPresent = 1 << 0,
@@ -168,7 +177,7 @@ namespace Kernel::HAL
 		static Void Load(Ref<Register64>& idt);
 	};
 
-	Void mp_get_cores(VoidPtr rsdPtr) noexcept;
+	Void mp_get_cores(VoidPtr rsp_ptr) noexcept;
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 

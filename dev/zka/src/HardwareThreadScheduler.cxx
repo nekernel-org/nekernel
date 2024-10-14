@@ -108,8 +108,6 @@ namespace Kernel
 
 		fStack = frame;
 
-		kcout << "Trying to register progress...\r";
-
 		Bool ret = mp_register_process(image, stack_ptr, fStack);
 
 		if (ret)

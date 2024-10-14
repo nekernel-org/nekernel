@@ -7,10 +7,10 @@
 .align 4
 .type name, @function
 .text
-.globl mp_do_user_switch
+.globl mp_do_task_switch
 
 /* r3 (3) = assigner stack, r4 (4) = assignee stack */
-mp_do_user_switch:
+mp_do_task_switch:
     lwz 0(%4), 0(%3)
     lwz 4(%4), 4(%3)
     lwz 8(%4), 8(%3)

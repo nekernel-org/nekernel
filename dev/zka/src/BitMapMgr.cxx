@@ -168,7 +168,7 @@ namespace Kernel
 
 			if (!ptr_new)
 			{
-				ke_stop(RUNTIME_CHECK_PAGE);
+				return nullptr;
 			}
 
 			if (wr)

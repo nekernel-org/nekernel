@@ -83,4 +83,3 @@ inline Kernel::Array<HAL_SYSCALL_RECORD,
 	kKerncalls;
 
 EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context();
-EXTERN_C Kernel::Void mp_do_user_switch(Kernel::Void);
