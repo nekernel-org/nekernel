@@ -221,9 +221,7 @@ namespace Kernel::HAL
 
 			kSMPAware = true;
 
-			const auto cStartIPI = 0x34;
-
-			/// TODO: Notify AP core that it must start.
+			/// TODO: Notify Boot AP that it must start.
 		}
 	}
 } // namespace Kernel::HAL

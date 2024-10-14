@@ -497,7 +497,7 @@ namespace Kernel
 	 */
 	/***********************************************************************************/
 
-	Bool UserProcessHelper::InitializeScheduling()
+	Bool UserProcessHelper::InitializeScheduler()
 	{
 		if (!cProcessScheduler)
 		{
@@ -516,8 +516,12 @@ namespace Kernel
 
 	SizeT UserProcessHelper::StartScheduling()
 	{
+		kcout << "Sched: Trying to schedule processes...\r";
+
 		if (!cProcessScheduler)
 			return 0;
+
+		kcout << "Sched: Scheduling processes...\r";
 
 		SizeT ret = cProcessScheduler->Run();
 		return ret;

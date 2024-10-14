@@ -44,7 +44,7 @@ EXTERN_C
 #define IsActiveLow(FLG)	  (FLG & 2)
 #define IsLevelTriggered(FLG) (FLG & 8)
 
-#define kInterruptGate (0x0E)
+#define kInterruptGate (0x8E)
 #define kTrapGate	   (0xEF)
 #define kTaskGate	   (0b10001100)
 #define kIDTSelector   (0x08)

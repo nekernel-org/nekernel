@@ -48,17 +48,15 @@ namespace Kernel
 		{
 		case RUNTIME_CHECK_PROCESS: {
 			CGDrawString("0x00000008 Scheduler error.", start_y, x, panic_text);
-
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
 			CGDrawString("0x00000006 ACPI configuration error.", start_y, x, panic_text);
-
 			break;
 		}
 		case RUNTIME_CHECK_PAGE: {
 			CGDrawString("0x0000000B Write/Read in non paged area.", start_y, x, panic_text);
-
+			break;
 		}
 		case RUNTIME_CHECK_FILESYSTEM: {
 			CGDrawString("0x0000000A Filesystem error.", start_y, x, panic_text);
@@ -78,17 +76,14 @@ namespace Kernel
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
 			CGDrawString("0x00000005 Handshake fault.", start_y, x, panic_text);
-
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
 			CGDrawString("0x00000003 Bad IPC/XPCOM message.", start_y, x, panic_text);
-
 			break;
 		}
 		case RUNTIME_CHECK_INVALID_PRIVILEGE: {
 			CGDrawString("0x00000007 Privilege access violation.", start_y, x, panic_text);
-
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
 			CGDrawString("0x0000000B Unexpected violation.", start_y, x, panic_text);
@@ -101,11 +96,9 @@ namespace Kernel
 		}
 		case RUNTIME_CHECK_FAILED: {
 			CGDrawString("0x10000001 Kernel Bug check appears to have failed, a dump has been written to the storage.", start_y, x, panic_text);
-
 			break;
 		}
 		default: {
-
 			CGDrawString("0xFFFFFFFC Unknown Kernel Error.", start_y, x, panic_text);
 			break;
 		}

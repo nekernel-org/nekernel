@@ -40,16 +40,3 @@ mp_do_task_switch:
     push rax
 
     o64 iret
-
-section .bss
-
-mp_user_switch_proc_stack_begin:
-    resb 4*4096
-mp_user_switch_proc_stack_end:
-
-section .text
-
-mp_user_switch_proc:
-    nop
-    jmp $
-mp_user_switch_proc_end:

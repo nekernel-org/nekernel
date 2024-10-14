@@ -95,7 +95,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::NeFileSystemMgr* mgr = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 	Kernel::NeFileSystemMgr::Mount(mgr);
 
-	Kernel::UserProcessHelper::InitializeScheduling();
+	Kernel::UserProcessHelper::InitializeScheduler();
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

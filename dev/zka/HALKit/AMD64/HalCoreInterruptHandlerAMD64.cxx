@@ -24,9 +24,6 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 	}
 
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
-
-	Kernel::UserProcessHelper::StartScheduling();
-	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Handle page fault.
@@ -39,9 +36,6 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	}
 
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
-
-	Kernel::UserProcessHelper::StartScheduling();
-	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Handle scheduler interrupt.

@@ -304,7 +304,7 @@ namespace Kernel
 		STATIC bool CanBeScheduled(const UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
-		STATIC Bool InitializeScheduling();
+		STATIC Bool InitializeScheduler();
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

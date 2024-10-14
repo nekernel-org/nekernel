@@ -16,14 +16,16 @@
 %macro IntExp 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
-    cld
+    cli
+    sti
     o64 iret
 %endmacro
 
 %macro IntNormal 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
-    cld
+    cli
+    sti
     o64 iret
 %endmacro
 
@@ -52,7 +54,10 @@ IntNormal 5
 
 ;; Invalid opcode interrupt
 __ZKA_INT_6:
-    cld
+    cli
+
+    mov al, 0x20
+    out 0x20, al
 
     push rax
 
@@ -61,14 +66,17 @@ __ZKA_INT_6:
 
     pop rax
 
-    std
+    sti
     o64 iret
 
 IntNormal 7
 
 ;; Invalid opcode interrupt
 __ZKA_INT_8:
-    cld
+    cli
+
+    mov al, 0x20
+    out 0x21, al
 
     push rax
 
@@ -77,7 +85,7 @@ __ZKA_INT_8:
 
     pop rax
 
-    std
+    sti
     o64 iret
 
 IntNormal 9
@@ -87,7 +95,10 @@ IntExp   11
 IntExp 12
 
 __ZKA_INT_13:
-    cld
+    cli
+
+    mov al, 0x20
+    out 0x21, al
 
     push rax
 
@@ -96,11 +107,14 @@ __ZKA_INT_13:
 
     pop rax
 
-    std
+    sti
     o64 iret
 
 __ZKA_INT_14:
-    cld
+    cli
+
+    mov al, 0x20
+    out 0x21, al
 
     push rax
 
@@ -109,7 +123,8 @@ __ZKA_INT_14:
 
     pop rax
 
-    std
+    sti
+
     o64 iret
 
 IntNormal 15
@@ -135,16 +150,21 @@ IntNormal 31
 [extern idt_handle_scheduler]
 
 __ZKA_INT_32:
-    cli
+    mov al, 0x20
+    out 0x21, al
 
+    push rbp
     push rsp
-
+    push rcx
+    push rdx
+    push r8
     jmp idt_handle_scheduler
-
-    add rsp, 16
     pop rsp
+    pop rbp
+    pop rcx
+    pop rdx
+    pop r8
 
-    sti
     o64 iret
 
 IntNormal 33
@@ -172,7 +192,8 @@ IntNormal 49
 [extern hal_kernel_call_enter]
 
 __ZKA_INT_50:
-    cld
+    mov al, 0x20
+    out 0x21, al
 
     push r8
     push r9
@@ -187,27 +208,25 @@ __ZKA_INT_50:
     pop r9
     pop r8
 
-    std
     o64 iret
 
 __ZKA_INT_51:
-    cld
+    mov al, 0x20
+    out 0x21, al
 
-    push rcx
-    push rdx
     push r8
     push r9
-    push rax
+    push r10
+    push rsp
 
     call hal_kernel_call_enter
 
-    pop rax
+    add rsp, 16
+    pop rsp
+    pop r10
     pop r9
     pop r8
-    pop rdx
-    pop rcx
 
-    std
     o64 iret
 
 IntNormal 52
@@ -306,9 +325,33 @@ mp_system_call_handler:
     o64 sysret
 
 hal_load_idt:
-    cld
     lidt [rcx]
-    std
+
+    ; Master PIC initialization
+    mov al, 0x11          ; Start initialization in cascade mode
+    out 0x20, al          ; Send initialization command to Master PIC
+    out 0xA0, al          ; Send initialization command to Slave PIC
+
+    ; Remap the PIC to use vectors 32-39 for Master and 40-47 for Slave
+    mov al, 0x20          ; Set Master PIC offset to 32
+    out 0x21, al          ; Send offset to Master PIC
+
+    mov al, 0x28          ; Set Slave PIC offset to 40
+    out 0xA1, al          ; Send offset to Slave PIC
+
+    ; Configure Master PIC to inform Slave PIC at IRQ2
+    mov al, 0x04          ; Tell Master PIC there is a Slave PIC at IRQ2
+    out 0x21, al
+
+    ; Configure Slave PIC identity
+    mov al, 0x02          ; Tell Slave PIC its cascade identity
+    out 0xA1, al
+
+    ; Set both PICs to 8086 mode
+    mov al, 0x01          ; 8086 mode
+    out 0x21, al
+    out 0xA1, al
+
     ret
 
 section .data
