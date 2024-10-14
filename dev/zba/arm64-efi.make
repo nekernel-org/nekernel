@@ -27,12 +27,13 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -m 8G -cpu max -M virt-9.1 -vga std \
+EMU_FLAGS=-net none -smp 4 -m 8G -cpu max -M virt-9.1 \
 			-bios $(BIOS) \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-drive \
 			file=fat:rw:src/Root/,index=1,format=raw \
-		    -d int -no-shutdown -no-reboot
+			-device virtio-tablet-pci \
+		    -d int -no-shutdown -no-reboot -device virtio-gpu-pci,xres=844,yres=390
 
 LD_FLAGS=-subsystem:efi_application -entry:Main /nodefaultlib
 
@@ -66,11 +67,6 @@ all: compile-amd64
 	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/BOOTAA64.EFI
 	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/NEWOSLDR.EFI
 	$(COPY) ../zka/$(KERNEL) src/Root/$(KERNEL)
-	$(COPY) ../sci/$(SCI) src/Root/$(SCI)
-	$(COPY) ../ddk/$(DDK) src/Root/$(DDK)
-	$(COPY) ./Modules/SysChk/$(SYS_CHK) src/Root/$(SYS_CHK)
-	$(COPY) ./Modules/SysChk/$(SYS_CHK) src/Root/zka/$(STARTUP)
-	$(COPY) ../crt/$(CRT) src/Root/$(CRT)
 	$(COPY) src/$(BOOT_LOADER) src/Root/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )

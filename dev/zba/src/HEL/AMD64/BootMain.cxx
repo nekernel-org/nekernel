@@ -42,12 +42,12 @@ EXTERN_C Void rt_reset_hardware();
 	@brief Finds and stores the GOP.
 */
 
+EXTERN EfiBootServices* BS;
+
 STATIC Void boot_init_fb() noexcept
 {
 	kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
 	kGop	 = nullptr;
-
-	extern EfiBootServices* BS;
 
 	BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop);
 
@@ -228,7 +228,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 	if (reader_syschk.Blob())
 	{
 		syschk_thread = new Boot::BThread(reader_syschk.Blob());
-		syschk_thread->SetName("System Check SYS.");
+		syschk_thread->SetName("System Check.");
 	}
 
 	syschk_thread->Start(handover_hdr);

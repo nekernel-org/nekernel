@@ -136,15 +136,6 @@ namespace Kernel::HAL
 
 	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame);
 
-	/// @brief Called when the AP is ready.
-	/// @internal
-	EXTERN_C Void hal_on_ap_startup(Void)
-	{
-		while (Yes)
-		{
-		}
-	}
-
 	struct PROCESS_CONTROL_BLOCK final
 	{
 		HAL::StackFramePtr f_Frame;
@@ -157,18 +148,17 @@ namespace Kernel::HAL
 		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
 	}
 
+	EXTERN_C Void mp_do_task_switch(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame);
+
 	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame)
 	{
-		if (kSMPAware)
-		{
-			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
-			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Stack = stack_ptr;
-			fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Image = image;
+		fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
+		fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Stack = stack_ptr;
+		fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Image = image;
 
-			return Yes;
-		}
+		mp_do_task_switch(image, stack_ptr, stack_frame);
 
-		return No;
+		return Yes;
 	}
 
 	/***********************************************************************************/

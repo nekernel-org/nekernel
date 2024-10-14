@@ -52,8 +52,6 @@ namespace Kernel
 	inline T* mm_new_class(Args&&... args)
 	{
 		T* cls = (T*)mm_new_heap(sizeof(T), No, No);
-		MUST_PASS(cls);
-
 		*cls = T(move(args)...);
 
 		return cls;

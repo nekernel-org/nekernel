@@ -18,12 +18,17 @@ namespace Kernel
 	class Ref final
 	{
 	public:
-		Ref()  = default;
-		~Ref() = default;
+		Ref() = default;
+
+		~Ref()
+		{
+			if (mm_is_valid_heap(fClass))
+				delete fClass;
+		}
 
 	public:
-		Ref(T cls, const Bool& strong = false)
-			: fClass(&cls), fStrong(strong)
+		Ref(T cls)
+			: fClass(&cls)
 		{
 		}
 
@@ -59,19 +64,13 @@ namespace Kernel
 			return *fClass;
 		}
 
-		bool IsStrong() const
-		{
-			return fStrong;
-		}
-
 		operator bool() noexcept
 		{
-			return fStrong;
+			return fClass;
 		}
 
 	private:
 		T*	 fClass{nullptr};
-		Bool fStrong{false};
 	};
 
 	template <typename T>
@@ -82,7 +81,7 @@ namespace Kernel
 		NonNullRef(nullPtr) = delete;
 
 		NonNullRef(T* ref)
-			: fRef(ref, true)
+			: fRef(ref)
 		{
 			MUST_PASS(ref);
 		}

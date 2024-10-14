@@ -26,7 +26,7 @@ namespace Kernel
 
 	EXTERN_C Void __zka_pure_call(void)
 	{
-		asm volatile("mov %r8, 0; mov %r9, 1; syscall");
+		UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 	}
 
 	Bool hal_check_stack(HAL::StackFramePtr stack_ptr)

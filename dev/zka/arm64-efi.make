@@ -7,7 +7,7 @@ CC			= clang++
 LD			= lld-link
 CCFLAGS		= -fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__ZKA_ARM64__ -fno-rtti -fno-exceptions -I./ \
 			 -target aarch64-unknown-windows \
-				-std=c++20 -D__FSKIT_USE_NEFS__ -D__NEWOSKRNL__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../
+				-std=c++20 -O3 -D__NEWOSKRNL__ -D__ZKA_MINIMAL_OS__ -D__ZKA_NO_BUILTIN__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../
 
 ASM 		= clang++
 
@@ -23,7 +23,7 @@ LDFLAGS		= -subsystem:efi_application -entry:hal_init_platform /nodefaultlib
 LDOBJ		= obj/*.obj
 
 # This file is the Kernel, responsible of task management and memory.
-KERNEL		= minoskrnl.so
+KERNEL		= minoskrnl.exe
 
 .PHONY: error
 error:
@@ -38,7 +38,7 @@ newos-arm64-epm: clean
 	       $(wildcard src/FS/*.cxx) $(wildcard HALKit/ARM64/Storage/*.cxx) \
 			$(wildcard HALKit/ARM64/PCI/*.cxx) $(wildcard src/Network/*.cxx) $(wildcard src/Storage/*.cxx) \
 			$(wildcard HALKit/ARM64/*.cxx) $(wildcard HALKit/ARM64/*.cpp) \
-			$(wildcard HALKit/ARM64/*.s)
+			$(wildcard HALKit/ARM64/*.s) $(wildcard HALKit/ARM64/APM/*.cxx)
 
 	$(MOVEALL)
 

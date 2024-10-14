@@ -22,7 +22,7 @@ namespace Kernel
 	class ACPIFactoryInterface final
 	{
 	public:
-		explicit ACPIFactoryInterface(voidPtr rsdPtr);
+		explicit ACPIFactoryInterface(voidPtr rsp_ptr);
 		~ACPIFactoryInterface() = default;
 
 		ACPIFactoryInterface& operator=(const ACPIFactoryInterface&) = default;

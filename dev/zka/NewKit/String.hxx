@@ -83,7 +83,6 @@ namespace Kernel
 	struct StringBuilder final
 	{
 		static ErrorOr<StringView> Construct(const Char* data);
-		static const Char*		   FromInt(const Char* fmt, int n);
 		static const Char*		   FromBool(const Char* fmt, bool n);
 		static const Char*		   Format(const Char* fmt, const Char* from);
 		static bool				   Equals(const Char* lhs, const Char* rhs);

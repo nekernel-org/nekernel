@@ -86,52 +86,10 @@ namespace Kernel
 		if (!data || *data == 0)
 			return {};
 
-		StringView view(rt_string_len(data));
+		StringView* view = new StringView(rt_string_len(data));
+		(*view) += data;
 
-		view += data;
-
-		return ErrorOr<StringView>(view);
-	}
-
-	const Char* StringBuilder::FromInt(const Char* fmt, int i)
-	{
-		if (!fmt)
-			return ("-1");
-
-		char* ret = (char*)ALLOCA(sizeof(char) * 8 + rt_string_len(fmt));
-
-		if (!ret)
-			return ("-1");
-
-		Char result[8];
-
-		if (!rt_to_string(result, sizeof(int), i))
-		{
-			return ("-1");
-		}
-
-		const auto fmt_len = rt_string_len(fmt);
-		const auto res_len = rt_string_len(result);
-
-		for (Size idx = 0; idx < fmt_len; ++idx)
-		{
-			if (fmt[idx] == '%')
-			{
-				SizeT result_cnt = idx;
-
-				for (auto y_idx = idx; y_idx < res_len; ++y_idx)
-				{
-					ret[result_cnt] = result[y_idx];
-					++result_cnt;
-				}
-
-				break;
-			}
-
-			ret[idx] = fmt[idx];
-		}
-
-		return ret; /* Copy that ret into a buffer, 'ALLOCA' allocates to the stack */
+		return ErrorOr<StringView>(*view);
 	}
 
 	const Char* StringBuilder::FromBool(const Char* fmt, bool i)

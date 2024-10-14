@@ -6,6 +6,7 @@
 
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
+#include <KernelKit/HardwareThreadScheduler.hxx>
 #include <KernelKit/CodeMgr.hxx>
 #include <modules/ACPI/ACPIFactoryInterface.hxx>
 #include <NetworkKit/IPC.hxx>
@@ -15,13 +16,14 @@
 namespace Kernel::HAL
 {
 	/// @brief Gets the system cores using the MADT.
-	/// @param rsdPtr The 'RSD PTR' data structure.
-	EXTERN void mp_get_cores(Kernel::voidPtr rsdPtr) noexcept;
+	/// @param rsp_ptr The 'RSD PTR' data structure.
+	EXTERN void mp_get_cores(Kernel::voidPtr rsp_ptr) noexcept;
 } // namespace Kernel::HAL
 
 namespace Kernel
 {
 	EXTERN UserProcessScheduler* cProcessScheduler;
+	EXTERN HardwareThreadScheduler* cHardwareThreadScheduler;
 }
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
@@ -35,6 +37,7 @@ EXTERN_C void hal_init_platform(
 	kHandoverHeader = HandoverHeader;
 
 	Kernel::cProcessScheduler = nullptr;
+	Kernel::cHardwareThreadScheduler = nullptr;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
 		kHandoverHeader->f_Version != kHandoverVersion)
@@ -42,12 +45,17 @@ EXTERN_C void hal_init_platform(
 		return;
 	}
 
-	// get page size.
-	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
+	/************************************** */
+	/*     INITIALIZE BIT MAP.              */
+	/************************************** */
 
-	// get virtual address start (for the heap)
+	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
 	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
+
+	/************************************** */
+	/*     INITIALIZE GDT AND SEGMENTS. */
+	/************************************** */
 
 	STATIC CONST auto cEntriesCount = 6;
 
@@ -61,25 +69,25 @@ EXTERN_C void hal_init_platform(
 	};
 
 	// Load memory descriptors.
-	Kernel::HAL::RegisterGDT gdtBase;
+	Kernel::HAL::RegisterGDT gdt_reg;
 
-	gdtBase.Base  = reinterpret_cast<Kernel::UIntPtr>(cGdt);
-	gdtBase.Limit = (sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY) * cEntriesCount) - 1;
+	gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(cGdt);
+	gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::ZKA_GDT_ENTRY) * cEntriesCount) - 1;
 
 	//! GDT will load hal_read_init after it successfully loads the segments.
-	Kernel::HAL::GDTLoader gdtLoader;
-	gdtLoader.Load(gdtBase);
+	Kernel::HAL::GDTLoader gdt_loader;
+	gdt_loader.Load(gdt_reg);
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	Kernel::HAL::Register64 idtBase;
-	idtBase.Base = (Kernel::UIntPtr)kInterruptVectorTable;
+	Kernel::HAL::Register64 idt_reg;
+	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
 
-	Kernel::HAL::IDTLoader idtLoader;
-	idtLoader.Load(idtBase);
+	Kernel::HAL::IDTLoader idt_loader;
+	idt_loader.Load(idt_reg);
 
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
@@ -87,10 +95,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::NeFileSystemMgr* mgr = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 	Kernel::NeFileSystemMgr::Mount(mgr);
 
-	Kernel::HAL::mm_map_page(mp_user_switch_proc, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsWr | Kernel::HAL::eFlagsPresent);
-	Kernel::HAL::mm_map_page(mp_user_switch_proc_stack_begin, Kernel::HAL::eFlagsUser | Kernel::HAL::eFlagsWr | Kernel::HAL::eFlagsPresent);
-
-	mp_do_user_switch();
+	Kernel::UserProcessHelper::InitializeScheduling();
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

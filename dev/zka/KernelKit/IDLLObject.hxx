@@ -10,6 +10,7 @@
 #pragma once
 
 #include <NewKit/Defines.hxx>
+#include <CompilerKit/CompilerKit.hxx>
 
 namespace Kernel
 {

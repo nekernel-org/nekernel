@@ -10,65 +10,79 @@
 #include <NewKit/CxxAbi.hxx>
 #include <KernelKit/LPC.hxx>
 
-EXTERN_C
+atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
+
+uarch_t __atexit_func_count;
+
+/// @brief Dynamic Shared Object Handle.
+Kernel::UIntPtr __dso_handle;
+
+EXTERN_C void __chkstk(void) {}
+
+EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)
 {
-#include <limits.h>
+	if (__atexit_func_count >= kDSOMaxObjects)
+		return -1;
+
+	__atexit_funcs[__atexit_func_count].destructor_func = f;
+	__atexit_funcs[__atexit_func_count].obj_ptr			= arg;
+	__atexit_funcs[__atexit_func_count].dso_handle		= dso;
+
+	__atexit_func_count++;
+
+	return 0;
 }
 
-int const cUninitialized	= 0;
-int const cBeingInitialized = -1;
-int const cEpochStart		= INT_MIN;
-
-EXTERN_C
+EXTERN_C void __cxa_finalize(void* f)
 {
-	int			 _Init_global_epoch = cEpochStart;
-	__thread int _Init_thread_epoch = cEpochStart;
-}
-
-Kernel::UInt32 const cNKTimeout = 100; // ms
-
-EXTERN_C void __cdecl _Init_thread_wait(Kernel::UInt32 const timeout)
-{
-	MUST_PASS(timeout != INT_MAX);
-}
-
-EXTERN_C void __cdecl _Init_thread_header(int* const pOnce) noexcept
-{
-	if (*pOnce == cUninitialized)
+	uarch_t i = __atexit_func_count;
+	if (!f)
 	{
-		*pOnce = cBeingInitialized;
-	}
-	else
-	{
-		while (*pOnce == cBeingInitialized)
+		while (i--)
 		{
-			_Init_thread_wait(cNKTimeout);
-
-			if (*pOnce == cUninitialized)
+			if (__atexit_funcs[i].destructor_func)
 			{
-				*pOnce = cBeingInitialized;
-				return;
-			}
+				(*__atexit_funcs[i].destructor_func)(__atexit_funcs[i].obj_ptr);
+			};
 		}
-		_Init_thread_epoch = _Init_global_epoch;
+
+		return;
+	}
+
+	while (i--)
+	{
+		if (__atexit_funcs[i].destructor_func)
+		{
+			(*__atexit_funcs[i].destructor_func)(__atexit_funcs[i].obj_ptr);
+			__atexit_funcs[i].destructor_func = 0;
+		};
 	}
 }
 
-EXTERN_C void __cdecl _Init_thread_abort(int* const pOnce) noexcept
+namespace cxxabiv1
 {
-	*pOnce = cUninitialized;
-}
+	EXTERN_C int __cxa_guard_acquire(__guard* g)
+	{
+		(void)g;
+		return 0;
+	}
 
-EXTERN_C void __cdecl _Init_thread_footer(int* const pOnce) noexcept
-{
-	++_Init_global_epoch;
-	*pOnce			   = _Init_global_epoch;
-	_Init_thread_epoch = _Init_global_epoch;
-}
+	EXTERN_C int __cxa_guard_release(__guard* g)
+	{
+		*(char*)g = 1;
+		return 0;
+	}
 
-EXTERN_C void _purecall()
+	EXTERN_C void __cxa_guard_abort(__guard* g)
+	{
+		(void)g;
+	}
+} // namespace cxxabiv1
+
+EXTERN_C Kernel::Void _purecall(void* self)
 {
-	ZKA_UNUSED(0);
+	kcout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
+	kcout << ", has unimplemented virtual functions.\r";
 }
 
 #endif // ifdef __ZKA_ARM64__

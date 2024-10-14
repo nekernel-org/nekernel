@@ -26,17 +26,19 @@ namespace Kernel
 {
 	enum
 	{
-		kInvalidDrive = -1,
+	    /// Storage type.
+		kInvalidStorage = -1,
 		kBlockDevice  = 0xAD,
 		kMassStorage  = 0xDA,
 		kFloppyDisc	  = 0xCD,
 		kOpticalDisc  = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
-		/// combine with below.
+		/// Storage flags, combine with below.
 		kReadOnly = 0x10, // Read only drive
 		kEPMDrive = 0x11, // Explicit Partition Map.
 		kEPTDrive = 0x12, // ESP w/ EPM partition.
-		kMBRDrive = 0x13, // IBM PC classic partition scheme
-		kDriveCnt = 9,
+		kMBRDrive = 0x13, // PC classic partition scheme
+		kGPTDrive = 0x14, // PC new partition scheme
+		kStorageCount = 9,
 	};
 
 	typedef Int64 rt_drive_id_type;

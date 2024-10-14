@@ -17,15 +17,16 @@ uarch_t __atexit_func_count;
 /// @brief Dynamic Shared Object Handle.
 Kernel::UIntPtr __dso_handle;
 
-EXTERN_C void __cxa_pure_virtual()
+EXTERN_C Kernel::Void __cxa_pure_virtual(void* self)
 {
-	kcout << "C++ placeholder method.\n";
+	kcout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
+	kcout << ", has unimplemented virtual functions.\r";
 }
 
 EXTERN_C void ___chkstk_ms(void)
 {
-	Kernel::err_bug_check_raise();
-	Kernel::err_bug_check();
+    kcout << "Stack pointer has grown too much.\r";
+    Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 }
 
 EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)
