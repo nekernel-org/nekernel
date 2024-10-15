@@ -47,14 +47,14 @@ namespace Boot
 
 #ifdef __ZKA_AMD64__
 			if (header_ptr->mMachine != kPeMachineAMD64 ||
-				header_ptr->mSignature != kPeMagic)
+				header_ptr->mSignature != kPeSignature)
 			{
 				writer.Write("NEWOSLDR: Not a PE32+ executable.\r");
 				return;
 			}
 #elif defined(__ZKA_ARM64__)
 			if (header_ptr->mMachine != kPeMachineAMD64 ||
-				header_ptr->mSignature != kPeMagic)
+				header_ptr->mSignature != kPeSignature)
 			{
 				writer.Write("NEWOSLDR: Not a PE32+ executable.\r");
 				return;
