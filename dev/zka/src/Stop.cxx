@@ -15,7 +15,7 @@
 #include <modules/FB/FB.hxx>
 #include <modules/FB/Text.hxx>
 
-#define cWebsiteMacro "https://help.zka-software.com/"
+#define cWebsiteMacro "https://help.zka-technologies.com/"
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
