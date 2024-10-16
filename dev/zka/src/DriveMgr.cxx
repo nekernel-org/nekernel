@@ -12,8 +12,10 @@
 #include <modules/AHCI/AHCI.hxx>
 #include <modules/NVME/NVME.hxx>
 
+/***********************************************************************************/
 /// @file DriveMgr.cxx
-/// @brief Drive manager.
+/// @brief Drive Manager API.
+/***********************************************************************************/
 
 namespace Kernel
 {
@@ -103,12 +105,18 @@ namespace Kernel
 #ifdef __ZKA_MINIMAL_OS__
 	const Char* io_drv_kind(Void)
 	{
-		return "Unknown";
+		return "Not Loaded";
+	}
+#endif
+#ifdef __ZKA_ED__
+	const Char* io_drv_kind(Void)
+	{
+		return "C++ Code Editor";
 	}
 #endif
 
-	/// @brief Unimplemented drive.
-	/// @param pckt
+	/// @brief Unimplemented drive function.
+	/// @param pckt the packet to read.
 	/// @return
 	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt)
 	{

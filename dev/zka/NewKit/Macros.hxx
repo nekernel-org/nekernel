@@ -86,9 +86,9 @@
 #define END_STRING_ENUM() }
 #endif
 
-#ifndef ALLOCA
-#define ALLOCA(Sz) __builtin_alloca(Sz)
-#endif // #ifndef ALLOCA
+#ifndef cAlloca
+#define cAlloca(Sz) __builtin_alloca(Sz)
+#endif // #ifndef cAlloca
 
 #ifndef CANT_REACH
 #define CANT_REACH() __builtin_unreachable()

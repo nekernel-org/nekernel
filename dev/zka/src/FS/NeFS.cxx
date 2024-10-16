@@ -77,8 +77,8 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 		auto drv = sMountpointInterface.A();
 
 		/// special treatment.
-		rt_copy_memory((VoidPtr) "fs/newfs-packet", drv.fPacket.fPacketMime,
-					   rt_string_len("fs/newfs-packet"));
+		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime,
+					   rt_string_len("fs/nefs-packet"));
 
 		NFS_FORK_STRUCT curFork{0};
 		NFS_FORK_STRUCT prevFork{0};
@@ -187,7 +187,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 		drv.fPacket.fPacketContent = (VoidPtr)the_fork;
 
-		rt_copy_memory((VoidPtr) "fs/newfs-packet", drv.fPacket.fPacketMime, 16);
+		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime, 16);
 
 		if (auto res =
 				fs_newfs_read(&sMountpointInterface, drv, this->fDriveIndex);
@@ -351,8 +351,8 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 	Lba start_free = out_lba;
 
-	rt_copy_memory((VoidPtr) "fs/newfs-packet", drive.fPacket.fPacketMime,
-				   rt_string_len("fs/newfs-packet"));
+	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+				   rt_string_len("fs/nefs-packet"));
 
 	drive.fPacket.fPacketContent = &temporary_catalog;
 	drive.fPacket.fPacketSize	 = kNeFSSectorSz;
@@ -477,8 +477,8 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 	// verify disk.
 	drive->fVerify(&drive->fPacket);
 
-	rt_copy_memory((VoidPtr) "fs/newfs-packet", drive->fPacket.fPacketMime,
-				   rt_string_len("fs/newfs-packet"));
+	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive->fPacket.fPacketMime,
+				   rt_string_len("fs/nefs-packet"));
 
 	// if disk isn't good, then error out.
 	if (false == drive->fPacket.fPacketGood)
@@ -647,8 +647,8 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 
 	auto drive = sMountpointInterface.A();
 
-	rt_copy_memory((VoidPtr) "fs/newfs-packet", drive.fPacket.fPacketMime,
-				   rt_string_len("fs/newfs-packet"));
+	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+				   rt_string_len("fs/nefs-packet"));
 
 	auto startFork = (!is_rsrc_fork) ? catalog->DataFork
 									 : catalog->ResourceFork;
@@ -730,8 +730,8 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogNa
 	NFS_ROOT_PARTITION_BLOCK fs_buf{0};
 	auto					 drive = sMountpointInterface.A();
 
-	rt_copy_memory((VoidPtr) "fs/newfs-packet", drive.fPacket.fPacketMime,
-				   rt_string_len("fs/newfs-packet"));
+	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+				   rt_string_len("fs/nefs-packet"));
 
 	drive.fPacket.fPacketContent = &fs_buf;
 	drive.fPacket.fPacketSize	 = sizeof(NFS_ROOT_PARTITION_BLOCK);
@@ -892,8 +892,8 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 
 		auto drive = sMountpointInterface.A();
 
-		rt_copy_memory((VoidPtr) "fs/newfs-packet", drive.fPacket.fPacketMime,
-					   rt_string_len("fs/newfs-packet"));
+		rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+					   rt_string_len("fs/nefs-packet"));
 
 		drive.fPacket.fLba = out_lba; // the catalog position.
 		drive.fPacket.fPacketSize =
@@ -958,8 +958,8 @@ VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 	NFS_FORK_STRUCT* fs_buf = new NFS_FORK_STRUCT();
 	auto			 drive	= sMountpointInterface.A();
 
-	rt_copy_memory((VoidPtr) "fs/newfs-packet", drive.fPacket.fPacketMime,
-				   rt_string_len("fs/newfs-packet"));
+	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+				   rt_string_len("fs/nefs-packet"));
 
 	NFS_FORK_STRUCT* fs_fork_data = nullptr;
 

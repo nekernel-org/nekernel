@@ -140,7 +140,7 @@ namespace Kernel
 	/// @brief Gets the drive kind (ATA, SCSI, AHCI...)
 	/// @param
 	/// @return the drive kind (ATA, Flash, NVM)
-	const Char* io_drive_kind(Void);
+	const Char* io_drv_kind(Void);
 
 	/// @brief Makes a new drive.
 	/// @return the new drive as a trait.

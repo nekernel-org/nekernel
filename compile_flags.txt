@@ -7,3 +7,4 @@
 -D__ZKA_AMD64__
 -D__NEWOSKRNL__
 -D__FSKIT_USE_NEFS__
+-D__ZKA_ED__
