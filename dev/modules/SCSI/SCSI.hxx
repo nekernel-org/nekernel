@@ -11,4 +11,5 @@
 /// @file SCSI.hxx
 /// @brief Serial SCSI driver.
 
-typedef Kernel::UInt16 scsi_packet_type[12];
+template <int PacketBitLen>
+using scsi_packet_type = Kernel::UInt16[PacketBitLen];
