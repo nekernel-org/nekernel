@@ -2,8 +2,8 @@
   "compiler_path": "x86_64-w64-mingw32-g++",
   "compiler_std": "c++20",
   "headers_path": ["../", "./"],
-  "sources_path": ["src/*.cxx"],
-  "output_name": "crt.dll",
+  "sources_path": ["src/*.cxx", "src/hal/x86/*.cxx"],
+  "output_name": "crtx64.dll",
   "compiler_flags": [
     "-ffreestanding",
     "-shared",

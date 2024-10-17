@@ -79,6 +79,7 @@ typedef union double_cast {
 
 #endif // ifdef __STD_CXX__
 
+/// @brief Standard C++ namespace.
 namespace std
 {
 	/// @brief Forward object.

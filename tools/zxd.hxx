@@ -6,13 +6,7 @@
 
 #pragma once
 
-#include <cstdint>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstring>
-#include <sstream>
-#include <filesystem>
+#include <common_zka.hxx>
 
 #define kDriverSignedExt   ".zxd"
 #define kDriverExt		   ".sys"

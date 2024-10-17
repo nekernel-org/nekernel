@@ -55,7 +55,7 @@ BOOT_LOADER=newosldr.exe
 KERNEL=minoskrnl.exe
 DDK=ddk.dll
 SCI=sci.dll
-CRT=crt.dll
+CRT=crtx64.dll
 SYS_CHK=syschk.sys
 STARTUP=startup.sys
 

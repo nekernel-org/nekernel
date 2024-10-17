@@ -1,6 +1,7 @@
 -Idev/zka
 -Idev/
 -Idev/zba/
+-Itools
 -Idev/zba/BootKit
 -Idev/base/
 -std=c++20

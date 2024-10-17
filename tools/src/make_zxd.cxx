@@ -14,8 +14,8 @@ int main(int argc, char* argv[])
 	{
 		if (strcmp(argv[i], "/?") == 0)
 		{
-			std::cout << "zxdmake: ZKA ZXD Driver Tool.\n";
-			std::cout << "zxdmake: © ZKA Technologies, all rights reserved.\n";
+			std::cout << "make_zxd: ZXD Tool.\n";
+			std::cout << "make_zxd: © ZKA Technologies, all rights reserved.\n";
 
 			return 0;
 		}
