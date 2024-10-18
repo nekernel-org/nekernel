@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 	File: HalCPU.cxx
 	Purpose: Platform processor routines.

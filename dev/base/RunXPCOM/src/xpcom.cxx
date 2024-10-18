@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 ZKA Technologies
+ * Copyright (c) 2024 ZKA Web Services Co
  */
 
 #include <sci/sci_base.hxx>

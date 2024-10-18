@@ -1,6 +1,6 @@
 /**
     Thu Oct 17 07:57:43 CEST 2024
-    (C) ZKA Technologies.
+    (C) ZKA Web Services Co.
 */
 
 #pragma once

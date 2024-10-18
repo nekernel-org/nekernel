@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
  * @version 1.15
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, ZKA Technologies
+ * @copyright Copyright (c) 2024, ZKA Web Services Co
  *
  */
 

@@ -2,7 +2,7 @@
  *      ========================================================
  *
  *      Kernel
- *      Copyright ZKA Technologies., all rights reserved.
+ *      Copyright ZKA Web Services Co., all rights reserved.
  *
  *      ========================================================
  */

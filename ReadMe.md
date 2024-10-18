@@ -24,4 +24,4 @@ cd boot-krnl-dll
 make -f amd64-efi.make all
 ```
 
-###### Copyright ZKA Technologies. All rights reserved.
+###### Copyright ZKA Web Services Co. All rights reserved.

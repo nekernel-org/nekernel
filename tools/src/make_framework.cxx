@@ -1,7 +1,7 @@
 /*
  * Created on Thu Oct 17 08:00:42 CEST 2024
  *
- * Copyright (c) 2024 ZKA Technologies
+ * Copyright (c) 2024 ZKA Web Services Co
  */
 
 #include <filesystem>
@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 		if (strcmp(argv[i], "/?") == 0)
 		{
 			std::cout << "make_framework: Framework Tool.\n";
-			std::cout << "make_framework: © ZKA Technologies, all rights reserved.\n";
+			std::cout << "make_framework: © ZKA Web Services Co, all rights reserved.\n";
 
 			return 0;
 		}

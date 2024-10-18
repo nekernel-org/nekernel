@@ -2,4 +2,4 @@
 
 System Call and Component Interface, used maninly to communicate with Kernel and registered objects.
 
-###### (c) ZKA Technologies, all rights reserved.
+###### (c) ZKA Web Services Co, all rights reserved.

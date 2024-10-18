@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 	File: MSDOS.hpp
 	Purpose: MS-DOS header for Kernel.

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 	File: PECodeMgr.hxx
 	Purpose: PE32+ Code Mgr and DLL mgr.

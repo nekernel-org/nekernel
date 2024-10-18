@@ -2,7 +2,7 @@
  *	========================================================
  *
  *  ZKA
- * 	Copyright ZKA Technologies., all rights reserved.
+ * 	Copyright ZKA Web Services Co., all rights reserved.
  *
  *	File: User.cxx
  * 	Purpose: User class, used to provide authentication and security.

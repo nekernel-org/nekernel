@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright ZKA Technologies.
+Copyright ZKA Web Services Co.
 
 File: rt.internal.inl
 Purpose: Base code of XPCOM.

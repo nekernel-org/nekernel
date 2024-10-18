@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 	FILE: ddk.h
 	PURPOSE: DDK Driver model base header.

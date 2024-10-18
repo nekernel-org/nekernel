@@ -1,7 +1,7 @@
 /*
  * Created on Thu Aug 22 09:29:13 CEST 2024
  *
- * Copyright (c) 2024 ZKA Technologies
+ * Copyright (c) 2024 ZKA Web Services Co
  */
 
 #include <zxd.hxx>
@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 		if (strcmp(argv[i], "/?") == 0)
 		{
 			std::cout << "make_zxd: ZXD Tool.\n";
-			std::cout << "make_zxd: © ZKA Technologies, all rights reserved.\n";
+			std::cout << "make_zxd: © ZKA Web Services Co, all rights reserved.\n";
 
 			return 0;
 		}

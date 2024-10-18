@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright ZKA Technologies..
+Copyright ZKA Web Services Co..
 
 File: LTE\LTE.hxx.
 Purpose: LTE Standard Library.

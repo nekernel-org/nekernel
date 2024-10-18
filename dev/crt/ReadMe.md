@@ -2,4 +2,4 @@
 
 This is the public interface of ZKA' C++ RunTime.
 
-###### (c) ZKA Technologies, all rights reserved.
+###### (c) ZKA Web Services Co, all rights reserved.

@@ -1,4 +1,4 @@
-// (C) ZKA Technologies
+// (C) ZKA Web Services Co
 
 #pragma once
 

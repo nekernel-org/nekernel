@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 	FILE: NeFS.hxx
 	PURPOSE: NeFS (New FileSystem) support, can be used with kernel, HPFS is preferred.

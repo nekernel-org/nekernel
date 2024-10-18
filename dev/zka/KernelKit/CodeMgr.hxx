@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 	File: CodeMgr.hpp
 	Purpose: Code Mgr and DLL mgr.

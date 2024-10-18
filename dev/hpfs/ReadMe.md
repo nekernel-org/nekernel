@@ -6,4 +6,4 @@ Filesystem driver for the HPFS specification.
 
 - Use BTB to build filesystem and partition blobs.
 
-###### Copyright ZKA Technologies. All rights reserved.
+###### Copyright ZKA Web Services Co. All rights reserved.

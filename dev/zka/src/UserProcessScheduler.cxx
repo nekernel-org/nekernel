@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 	FILE: UserProcessScheduler.cxx
 	PURPOSE: Low Exception Process scheduler.

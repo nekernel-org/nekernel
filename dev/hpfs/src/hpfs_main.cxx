@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright ZKA Web Services Co.
 
 	FILE: hpfs_main.cxx
 	PURPOSE: HPFS IFS entrypoint.

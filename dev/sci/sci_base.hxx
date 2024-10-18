@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright ZKA Technologies.
+Copyright ZKA Web Services Co.
 
 File: sci_base.hxx
 Purpose: SCI core header file (C++ only).

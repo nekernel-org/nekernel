@@ -6,4 +6,4 @@ A kit used to write Kernel HALs, using the NDK compiler suite.
 
 Simply link against ddk.dll.
 
-###### Copyright 2024 ZKA Technologies, all rights reserved.
+###### Copyright 2024 ZKA Web Services Co, all rights reserved.
