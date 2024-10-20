@@ -100,10 +100,9 @@ namespace Kernel::HAL
 		hal_load_idt(idt);
 
 		Detail::hal_enable_pit(cPITTickForScheduler);
-		Detail::hal_clear_irq_mask(32);
-
-		rt_sti();
-	}
+        
+        rt_sti();
+    }
 
 	void GDTLoader::Load(Ref<RegisterGDT>& gdt)
 	{

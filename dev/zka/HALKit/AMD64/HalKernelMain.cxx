@@ -83,19 +83,25 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	Kernel::HAL::Register64 idt_reg;
-	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
-
-	Kernel::HAL::IDTLoader idt_loader;
-	idt_loader.Load(idt_reg);
-
-	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
-		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-
+    /* Initialize filesystem. */
 	Kernel::NeFileSystemMgr* mgr = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 	Kernel::NeFileSystemMgr::Mount(mgr);
-
+    
+    /* Initialize scheduler. */
 	Kernel::UserProcessHelper::InitializeScheduler();
+
+    /* Start any cores. */
+	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
+		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+        
+    /* Load System.exe here (TODO) */
+        
+    Kernel::HAL::Register64 idt_reg;
+	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
+
+    /* Load interrupts. */
+	Kernel::HAL::IDTLoader idt_loader;
+	idt_loader.Load(idt_reg);
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

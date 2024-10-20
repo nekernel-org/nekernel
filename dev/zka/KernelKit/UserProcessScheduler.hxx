@@ -14,7 +14,7 @@
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
 #define kSchedInvalidPID		  (-1)
-#define kSchedProcessLimitPerTeam (32U)
+#define kSchedProcessLimitPerTeam (16U)
 
 #define kSchedMaxMemoryLimit gib_cast(128)
 #define kSchedMaxStackSz	 mib_cast(8)
@@ -106,7 +106,7 @@ namespace Kernel
 		kProcessSubsystemService,
 		kProcessSubsystemDriver,
 		kProcessSubsystemInvalid = 255,
-		kProcessSubsystemCount = 4,
+		kProcessSubsystemCount	 = 4,
 	};
 
 	using ProcessSubsystem = ProcessSubsystemEnum;
@@ -264,8 +264,8 @@ namespace Kernel
 		friend class UserProcessHelper;
 
 	public:
-		explicit UserProcessScheduler() = default;
-		~UserProcessScheduler() = default;
+		explicit UserProcessScheduler()	 = default;
+		~UserProcessScheduler() override = default;
 
 		ZKA_COPY_DEFAULT(UserProcessScheduler)
 
@@ -282,7 +282,6 @@ namespace Kernel
 		const Bool IsUser() override;
 		const Bool IsKernel() override;
 		const Bool HasMP() override;
-
 
 	public:
 		Ref<UserProcess>& CurrentProcess();
@@ -306,7 +305,7 @@ namespace Kernel
 		STATIC bool CanBeScheduled(const UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
-		STATIC Bool InitializeScheduler();
+		STATIC Bool	 InitializeScheduler();
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

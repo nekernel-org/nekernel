@@ -40,5 +40,7 @@ EXTERN_C void hal_init_platform(
 	/*     INITIALIZE BIT MAP.              */
 	/************************************** */
 
-	while (Yes) {}
+	while (Yes)
+	{
+	}
 }

@@ -11,8 +11,8 @@
 /// @file HPFS.hxx
 /// @brief HPFS filesystem support.
 
-#define kHPFSVersion 0x01000
-#define kHPFSMagic "  HPFS"
+#define kHPFSVersion  0x01000
+#define kHPFSMagic	  "  HPFS"
 #define kHPFSMagicLen 8
 
 #define kHPFSMinimumDiskSize (gib_cast(64))

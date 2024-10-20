@@ -23,7 +23,7 @@ namespace Kernel
 	STATIC UInt8  kATAMaster = 0U;
 
 	/// @brief reads from an ATA drive.
-	/// @param pckt
+	/// @param pckt Packet structure (fPacketContent must be non null)
 	/// @return
 	Void io_drv_input(DriveTrait::DrivePacket* pckt)
 	{
@@ -33,9 +33,9 @@ namespace Kernel
 		}
 
 #ifdef __AHCI__
-		drv_std_read(pckt->fLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
+		drv_std_read(pckt->fLba, (Char*)pckt->fPacketContent.Leak(), kAHCISectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
+		drv_std_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent.Leak(), kATASectorSize, pckt->fPacketSize);
 #endif
 	}
 
@@ -50,9 +50,9 @@ namespace Kernel
 		}
 
 #ifdef __AHCI__
-		drv_std_write(pckt->fLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fLba, (Char*)pckt->fPacketContent.Leak(), kAHCISectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent.Leak(), kATASectorSize, pckt->fPacketSize);
 #endif
 	}
 

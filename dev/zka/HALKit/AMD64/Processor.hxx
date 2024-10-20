@@ -23,10 +23,10 @@
 #define kPITChannel0Port 0x40
 #define kPITFrequency	 1193180
 
-#define kPICCommand 0x20
-#define kPICData    0x21
+#define kPICCommand	 0x20
+#define kPICData	 0x21
 #define kPIC2Command 0xA0
-#define kPIC2Data    0xA1
+#define kPIC2Data	 0xA1
 
 EXTERN_C
 {

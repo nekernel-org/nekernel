@@ -14,6 +14,7 @@
 #include <KernelKit/LPC.hxx>
 #include <NewKit/Defines.hxx>
 #include <NewKit/String.hxx>
+#include <NewKit/Ref.hxx>
 
 #define kMaxDriveCountPerMountpoint (4U)
 
@@ -26,18 +27,18 @@ namespace Kernel
 {
 	enum
 	{
-	    /// Storage type.
+		/// Storage type.
 		kInvalidStorage = -1,
-		kBlockDevice  = 0xAD,
-		kMassStorage  = 0xDA,
-		kFloppyDisc	  = 0xCD,
-		kOpticalDisc  = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
+		kBlockDevice	= 0xAD,
+		kMassStorage	= 0xDA,
+		kFloppyDisc		= 0xCD,
+		kOpticalDisc	= 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
 		/// Storage flags, combine with below.
-		kReadOnly = 0x10, // Read only drive
-		kEPMDrive = 0x11, // Explicit Partition Map.
-		kEPTDrive = 0x12, // ESP w/ EPM partition.
-		kMBRDrive = 0x13, // PC classic partition scheme
-		kGPTDrive = 0x14, // PC new partition scheme
+		kReadOnly	  = 0x10, // Read only drive
+		kEPMDrive	  = 0x11, // Explicit Partition Map.
+		kEPTDrive	  = 0x12, // ESP w/ EPM partition.
+		kMBRDrive	  = 0x13, // PC classic partition scheme
+		kGPTDrive	  = 0x14, // PC new partition scheme
 		kStorageCount = 9,
 	};
 
@@ -54,12 +55,12 @@ namespace Kernel
 		/// @brief Packet drive (StorageKit compilant.)
 		struct DrivePacket final
 		{
-			VoidPtr fPacketContent;				//! packet body.
-			Char	fPacketMime[kDriveNameLen]; //! identify what we're sending.
-			SizeT	fPacketSize;				//! packet size
-			UInt32	fPacketCRC32;				//! sanity crc, in case if good is set to false
-			Boolean fPacketGood;
-			Lba		fLba;
+			Ref<VoidPtr> fPacketContent;			 //! packet body.
+			Char		 fPacketMime[kDriveNameLen]; //! identify what we're sending.
+			SizeT		 fPacketSize;				 //! packet size
+			UInt32		 fPacketCRC32;				 //! sanity crc, in case if good is set to false
+			Boolean		 fPacketGood;
+			Lba			 fLba;
 		} fPacket;
 
 		Void (*fInput)(DrivePacket* packetPtr);

@@ -11,8 +11,8 @@
 
 #include <ddk/ddk.h>
 
-#define kHPFSVersion 0x01000
-#define kHPFSMagic "  HPFS"
+#define kHPFSVersion  0x01000
+#define kHPFSMagic	  "  HPFS"
 #define kHPFSMagicLen 8
 
 /** @brief Drive type enum. */

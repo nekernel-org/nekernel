@@ -51,9 +51,7 @@ namespace Kernel
 	template <typename T, typename... Args>
 	inline T* mm_new_class(Args&&... args)
 	{
-		T* cls = (T*)mm_new_heap(sizeof(T), No, No);
-		*cls = T(move(args)...);
-
+		T* cls = new T(move(args)...);
 		return cls;
 	}
 
@@ -61,9 +59,7 @@ namespace Kernel
 	template <typename T>
 	inline Void mm_delete_class(T* cls)
 	{
-		cls->~T();
-		mm_delete_heap((VoidPtr)cls);
-
+		delete cls;
 		cls = nullptr;
 	}
 } // namespace Kernel

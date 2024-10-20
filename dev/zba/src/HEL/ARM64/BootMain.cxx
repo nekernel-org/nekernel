@@ -19,7 +19,7 @@
 
 EXTERN EfiBootServices* BS;
 
-STATIC EfiGraphicsOutputProtocol* kGop	  = nullptr;
+STATIC EfiGraphicsOutputProtocol* kGop		 = nullptr;
 STATIC UInt16					  kGopStride = 0U;
 STATIC EfiGUID					  kGopGuid;
 

@@ -17,7 +17,9 @@ uarch_t __atexit_func_count;
 /// @brief Dynamic Shared Object Handle.
 Kernel::UIntPtr __dso_handle;
 
-EXTERN_C void __chkstk(void) {}
+EXTERN_C void __chkstk(void)
+{
+}
 
 EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)
 {

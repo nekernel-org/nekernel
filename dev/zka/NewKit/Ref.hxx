@@ -70,7 +70,7 @@ namespace Kernel
 		}
 
 	private:
-		T*	 fClass{nullptr};
+		T* fClass{nullptr};
 	};
 
 	template <typename T>

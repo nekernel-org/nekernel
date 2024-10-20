@@ -32,7 +32,7 @@
 
 /** Graphics related. */
 
-STATIC EfiGraphicsOutputProtocol* kGop	  = nullptr;
+STATIC EfiGraphicsOutputProtocol* kGop		 = nullptr;
 STATIC UInt16					  kGopStride = 0U;
 STATIC EfiGUID					  kGopGuid;
 
@@ -78,8 +78,8 @@ EXTERN EfiBootServices* BS;
 /// @param ImageHandle Handle of this image.
 /// @param SystemTable The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
-							  EfiSystemTable* SystemTable)
+EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
+								EfiSystemTable* SystemTable)
 {
 	InitEFI(SystemTable); ///! Init the EFI library.
 
@@ -149,7 +149,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	  ImageHandle,
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
 #ifdef __ZKA_USE_FB__
-	CGDrawString("NEWOSLDR (C) ZKA TECHNOLOGIES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString("NEWOSLDR (C) ZKA WEB SERVICES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "MULTIPLE PROCESSORS DETECTED." : "SINGLE PROCESSOR DETECTED.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // __ZKA_USE_FB__
 

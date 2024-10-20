@@ -35,10 +35,12 @@ namespace Kernel
 	STATIC UInt32 cLastExitCode = 0U;
 
 	/***********************************************************************************/
-	/// @brief User Process scheduler global object.
+	/// @brief User Process scheduler global and external reference of thread scheduler.
 	/***********************************************************************************/
 
 	UserProcessScheduler* cProcessScheduler = nullptr;
+	EXTERN HardwareThreadScheduler* cHardwareThreadScheduler;
+
 
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
@@ -54,8 +56,15 @@ namespace Kernel
 
 	Void UserProcess::Crash()
 	{
-		if (*this->Name != 0)
-			kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
+		if (*this->Name != 0 &&
+            *this->Name > 'A')
+{
+    kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
+}
+        else
+        {
+             return;
+        }
 
 		this->Exit(kErrorProcessFault);
 	}
@@ -505,11 +514,15 @@ namespace Kernel
 	{
 		if (!cProcessScheduler)
 		{
-			cProcessScheduler = mm_new_class<UserProcessScheduler>();
-			return Yes;
+			cProcessScheduler = new UserProcessScheduler();
 		}
+        
+        if (!cHardwareThreadScheduler)
+        {
+            cHardwareThreadScheduler = new HardwareThreadScheduler();
+        }
 
-		return No;
+		return Yes;
 	}
 
 	/***********************************************************************************/
@@ -520,12 +533,12 @@ namespace Kernel
 
 	SizeT UserProcessHelper::StartScheduling()
 	{
-		kcout << "Sched: Trying to schedule processes...\r";
+		kcout << "UserProcessScheduler: Trying to schedule user processes...\r";
 
 		if (!cProcessScheduler)
 			return 0;
 
-		kcout << "Sched: Scheduling processes...\r";
+		kcout << "UserProcessScheduler: Object is valid, scheduling user processes...\r";
 
 		SizeT ret = cProcessScheduler->Run();
 		return ret;

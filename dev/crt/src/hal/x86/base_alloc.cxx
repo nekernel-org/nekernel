@@ -20,7 +20,7 @@ void* operator new(size_t length)
 		: "=r"(ptr));
 
 	if (!ptr)
-	   std::__throw_bad_alloc();
+		std::__throw_bad_alloc();
 
 	return ptr;
 }
@@ -35,7 +35,7 @@ void* operator new[](size_t length)
 		: "=r"(ptr));
 
 	if (!ptr)
-		   std::__throw_bad_alloc();
+		std::__throw_bad_alloc();
 
 	return ptr;
 }

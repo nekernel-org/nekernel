@@ -7,7 +7,7 @@
 
 #include <common_zka.hxx>
 
-#define kFKDLLDirectory "ZKA/DLL/"
+#define kFKDLLDirectory		 "ZKA/DLL/"
 #define kFKManifestDirectory "ZKA/Manifests/"
-#define kFKRootDirectory "ZKA/"
-#define kFKExtension ".framework"
+#define kFKRootDirectory	 "ZKA/"
+#define kFKExtension		 ".framework"

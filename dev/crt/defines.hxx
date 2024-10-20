@@ -15,9 +15,9 @@
 typedef void*		  ptr_type;
 typedef __SIZE_TYPE__ size_type;
 
-typedef void*  voidptr_t;
-typedef void*  any_t;
-typedef char*  caddr_t;
+typedef void* voidptr_t;
+typedef void* any_t;
+typedef char* caddr_t;
 
 #ifndef NULL
 #define NULL ((voidptr_t)0)

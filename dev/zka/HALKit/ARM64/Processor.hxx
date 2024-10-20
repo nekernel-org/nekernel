@@ -62,7 +62,6 @@ namespace Kernel::HAL
 	{
 		while (Yes)
 		{
-
 		}
 	}
 

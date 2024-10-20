@@ -36,7 +36,6 @@ namespace Kernel::HAL
 	/// \brief Retrieve the page status of a PTE.
 	STATIC Void mmi_page_status(PTE* pte)
 	{
-
 	}
 
 	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE* pt_entry);

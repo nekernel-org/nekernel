@@ -327,7 +327,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 		constexpr auto cNeFSCatalogPadding = 4;
 
 		NFS_ROOT_PARTITION_BLOCK* part_block = (NFS_ROOT_PARTITION_BLOCK*)sectorBufPartBlock;
-		out_lba								= part_block->StartCatalog;
+		out_lba								 = part_block->StartCatalog;
 	}
 
 	constexpr SizeT cDefaultForkSize = kNeFSForkSize;
@@ -337,12 +337,12 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 	Int32 flagsList = flags;
 
 	child_catalog->ResourceForkSize = cDefaultForkSize;
-	child_catalog->DataForkSize	   = cDefaultForkSize;
+	child_catalog->DataForkSize		= cDefaultForkSize;
 
 	child_catalog->NextSibling = out_lba;
 	child_catalog->PrevSibling = out_lba;
-	child_catalog->Kind		  = kind;
-	child_catalog->Flags		  = kNeFSFlagCreated | flagsList;
+	child_catalog->Kind		   = kind;
+	child_catalog->Flags	   = kNeFSFlagCreated | flagsList;
 
 	rt_copy_memory((VoidPtr)name, (VoidPtr)child_catalog->Name,
 				   rt_string_len(name));
@@ -404,7 +404,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 				return nullptr;
 			}
 
-			child_catalog->DataFork	   = part_block->DiskSize - start_free;
+			child_catalog->DataFork		= part_block->DiskSize - start_free;
 			child_catalog->ResourceFork = child_catalog->DataFork;
 
 			// Write the new catalog next sibling, if we don't know this parent. //
@@ -587,13 +587,13 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 			SizeT sectorCount = drv_get_sector_count();
 			SizeT diskSize	  = drv_get_size();
 
-			part_block->Kind			= kNeFSPartitionTypeStandard;
+			part_block->Kind		 = kNeFSPartitionTypeStandard;
 			part_block->StartCatalog = kNeFSCatalogStartAddress;
-			part_block->Flags		= kNeFSPartitionTypeStandard;
+			part_block->Flags		 = kNeFSPartitionTypeStandard;
 			part_block->CatalogCount = sectorCount / sizeof(NFS_CATALOG_STRUCT);
-			part_block->SectorCount	= sectorCount;
-			part_block->DiskSize		= diskSize;
-			part_block->FreeCatalog	= sectorCount / sizeof(NFS_CATALOG_STRUCT);
+			part_block->SectorCount	 = sectorCount;
+			part_block->DiskSize	 = diskSize;
+			part_block->FreeCatalog	 = sectorCount / sizeof(NFS_CATALOG_STRUCT);
 
 			drive->fPacket.fPacketContent = fs_buf;
 			drive->fPacket.fPacketSize	  = kNeFSSectorSz;

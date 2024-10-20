@@ -92,7 +92,7 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 /// @return nothing.
 EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx)
 {
-    Kernel::HAL::Out8(0x20, 0x20); // Acknowledge interrupt to master PIC
+	Kernel::HAL::Out8(0x20, 0x20); // Acknowledge interrupt to master PIC
 
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
@@ -110,7 +110,7 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 /// @return nothing.
 EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx, Kernel::UIntPtr r8, Kernel::UIntPtr r9)
 {
-    Kernel::HAL::Out8(0x20, 0x20); // Acknowledge interrupt to master PIC
+	Kernel::HAL::Out8(0x20, 0x20); // Acknowledge interrupt to master PIC
 
 	if (rcx <= (kSyscalls.Count() - 1))
 	{

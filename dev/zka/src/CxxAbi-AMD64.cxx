@@ -25,8 +25,6 @@ EXTERN_C Kernel::Void __cxa_pure_virtual(void* self)
 
 EXTERN_C void ___chkstk_ms(void)
 {
-    kcout << "Stack pointer has grown too much.\r";
-    Kernel::ke_stop(RUNTIME_CHECK_FAILED);
 }
 
 EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)

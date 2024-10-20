@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 	auto path = std::string(argv[1]);
 
 	if (!path.ends_with(kFKExtension))
-	   return 1;
+		return 1;
 
 	std::filesystem::path path_arg = path;
 
