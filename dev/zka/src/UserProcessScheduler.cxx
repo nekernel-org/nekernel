@@ -41,7 +41,6 @@ namespace Kernel
 	UserProcessScheduler* cProcessScheduler = nullptr;
 	EXTERN HardwareThreadScheduler* cHardwareThreadScheduler;
 
-
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
@@ -57,14 +56,14 @@ namespace Kernel
 	Void UserProcess::Crash()
 	{
 		if (*this->Name != 0 &&
-            *this->Name > 'A')
-{
-    kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
-}
-        else
-        {
-             return;
-        }
+			*this->Name > 'A')
+		{
+			kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
+		}
+		else
+		{
+			return;
+		}
 
 		this->Exit(kErrorProcessFault);
 	}
@@ -516,11 +515,11 @@ namespace Kernel
 		{
 			cProcessScheduler = new UserProcessScheduler();
 		}
-        
-        if (!cHardwareThreadScheduler)
-        {
-            cHardwareThreadScheduler = new HardwareThreadScheduler();
-        }
+
+		if (!cHardwareThreadScheduler)
+		{
+			cHardwareThreadScheduler = new HardwareThreadScheduler();
+		}
 
 		return Yes;
 	}

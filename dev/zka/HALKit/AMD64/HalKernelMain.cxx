@@ -24,7 +24,7 @@ namespace Kernel
 {
 	EXTERN UserProcessScheduler* cProcessScheduler;
 	EXTERN HardwareThreadScheduler* cHardwareThreadScheduler;
-}
+} // namespace Kernel
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
@@ -36,7 +36,7 @@ EXTERN_C void hal_init_platform(
 {
 	kHandoverHeader = HandoverHeader;
 
-	Kernel::cProcessScheduler = nullptr;
+	Kernel::cProcessScheduler		 = nullptr;
 	Kernel::cHardwareThreadScheduler = nullptr;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
@@ -49,7 +49,7 @@ EXTERN_C void hal_init_platform(
 	/*     INITIALIZE BIT MAP.              */
 	/************************************** */
 
-	kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
+	kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
 	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
@@ -83,23 +83,23 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-    /* Initialize filesystem. */
+	/* Initialize filesystem. */
 	Kernel::NeFileSystemMgr* mgr = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
 	Kernel::NeFileSystemMgr::Mount(mgr);
-    
-    /* Initialize scheduler. */
+
+	/* Initialize scheduler. */
 	Kernel::UserProcessHelper::InitializeScheduler();
 
-    /* Start any cores. */
+	/* Start any cores. */
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-        
-    /* Load System.exe here (TODO) */
-        
-    Kernel::HAL::Register64 idt_reg;
+
+	/* Load System.exe here (TODO) */
+
+	Kernel::HAL::Register64 idt_reg;
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
 
-    /* Load interrupts. */
+	/* Load interrupts. */
 	Kernel::HAL::IDTLoader idt_loader;
 	idt_loader.Load(idt_reg);
 
