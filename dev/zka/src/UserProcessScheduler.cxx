@@ -441,6 +441,10 @@ namespace Kernel
 					continue;
 				}
 			}
+			else
+			{
+				--process.PTime;
+			}
 		}
 
 		kcout << "Scheduled Process Count: " << number(process_index) << endl;
@@ -476,9 +480,9 @@ namespace Kernel
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
-	bool UserProcessHelper::CanBeScheduled(const UserProcess& process)
+	Bool UserProcessHelper::CanBeScheduled(const UserProcess& process)
 	{
-		kcout << "Checking process status...\r";
+		kcout << "Checking UserProcess status...\r";
 
 		if (process.Status == ProcessStatusKind::kFrozen ||
 			process.Status == ProcessStatusKind::kDead)
@@ -488,7 +492,7 @@ namespace Kernel
 			process.Kind == UserProcess::kExectuableKind)
 			return No;
 
-		return Yes;
+		return process.PTime < 1 && process.Status == ProcessStatusKind::kRunning;
 	}
 
 	/***********************************************************************************/
@@ -502,7 +506,7 @@ namespace Kernel
 		if (!cProcessScheduler)
 		{
 			cProcessScheduler = mm_new_class<UserProcessScheduler>();
-			return cProcessScheduler;
+			return Yes;
 		}
 
 		return No;

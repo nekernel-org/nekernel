@@ -1,4 +1,4 @@
-# High Performance File System
+# High Performance File System.
 
 Filesystem driver for the HPFS specification.
 

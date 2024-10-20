@@ -99,12 +99,14 @@ namespace Kernel
 
 	// end of operator overloading.
 
-	enum ProcessSubsystemEnum
+	enum ProcessSubsystemEnum : Int32
 	{
-		eProcessSubsystemSecurity,
-		eProcessSubsystemNative,
-		eProcessSubsystemInvalid,
-		eProcessSubsystemCount,
+		kProcessSubsystemSecurity = 100,
+		kProcessSubsystemApplication,
+		kProcessSubsystemService,
+		kProcessSubsystemDriver,
+		kProcessSubsystemInvalid = 255,
+		kProcessSubsystemCount = 4,
 	};
 
 	using ProcessSubsystem = ProcessSubsystemEnum;
@@ -144,8 +146,8 @@ namespace Kernel
 		const UInt32& GetExitCode() noexcept;
 
 	public:
-		Char			   Name[kProcessLen] = {"PROCESS #0 (TEAM 0)"};
-		ProcessSubsystem   SubSystem{ProcessSubsystem::eProcessSubsystemInvalid};
+		Char			   Name[kProcessLen] = {"ZKA Process"};
+		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};

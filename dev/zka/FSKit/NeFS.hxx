@@ -30,6 +30,8 @@ default.
 #define kNeFSInvalidCatalog (-1)
 #define kNeFSNodeNameLen	(256)
 
+#define kNeFSMinimumDiskSize (gib_cast(4))
+
 #define kNeFSSectorSz	(512)
 #define kNeFSForkDataSz (mib_cast(16))
 

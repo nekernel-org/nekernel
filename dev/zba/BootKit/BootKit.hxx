@@ -315,11 +315,11 @@ namespace Boot
 
 		/// @note A catalog roughly equal to a sector.
 
-		constexpr auto cMinimumDiskSize = 4; // at minimum.
+		constexpr auto cMinimumDiskSize = kNeFSMinimumDiskSize; // at minimum.
 
 		/// @note also look at EPM headers, for free part blocks.
 
-		if (GIB(fDiskDev.GetDiskSize()) < cMinimumDiskSize)
+		if (fDiskDev.GetDiskSize() < cMinimumDiskSize)
 		{
 			EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a New Filesystem partition here.");
 			return false;

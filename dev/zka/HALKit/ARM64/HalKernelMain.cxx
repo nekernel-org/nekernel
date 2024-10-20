@@ -23,6 +23,11 @@ EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HANDOVER_INFO_HEADER* HandoverHeader)
 {
+
+	/************************************************** */
+	/*     INITIALIZE AND VALIDATE HEADER.              */
+	/************************************************** */
+
 	kHandoverHeader = HandoverHeader;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
@@ -30,6 +35,10 @@ EXTERN_C void hal_init_platform(
 	{
 		return;
 	}
+
+	/************************************** */
+	/*     INITIALIZE BIT MAP.              */
+	/************************************** */
 
 	while (Yes) {}
 }

@@ -4,17 +4,15 @@
 
 ------------------------------------------- */
 
-//! @brief Filesystem Indexer.
-
 #include <CompilerKit/CompilerKit.hxx>
 #include <FSKit/IndexableProperty.hxx>
 #include <NewKit/MutableArray.hxx>
 #include <NewKit/Utils.hxx>
 
-/// @brief File Indexer.
+/// @brief File indexer API for fast path access.
 /// BUGS: 0
 
-#define kMaxLenIndexer 256
+#define kMaxLenIndexer (256U)
 
 namespace Kernel
 {
@@ -41,10 +39,10 @@ namespace Kernel
 		}
 
 		/// @brief Index a file into the indexer instance.
-		/// @param filename path
+		/// @param filename filesystem path to access.
 		/// @param filenameLen used bytes in path.
 		/// @param indexer the filesystem indexer.
-		/// @return none.
+		/// @return none, check before if indexer can be claimed (using indexer.HasFlag(kIndexerClaimed)).
 		Void fs_index_file(const Char* filename, SizeT filenameLen, IndexableProperty& indexer)
 		{
 			if (!indexer.HasFlag(kIndexerClaimed))
@@ -52,7 +50,7 @@ namespace Kernel
 				indexer.AddFlag(kIndexerClaimed);
 				rt_copy_memory((VoidPtr)indexer.Leak().Path, (VoidPtr)filename, filenameLen);
 
-				kcout << "filesystem: index new file: " << filename << endl;
+				kcout << "FSKit: Indexed new file: " << filename << endl;
 			}
 		}
 	} // namespace Indexer
