@@ -57,14 +57,27 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 /// @brief Enter syscall from assembly.
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx)
+EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index, Kernel::UIntPtr rdx_syscall_struct)
 {
-	if (rcx <= (kSyscalls.Count() - 1))
+	if (rcx_syscall_index < kSyscalls.Count())
 	{
 		kcout << "syscall: Enter Syscall.\r";
 
-		if (kSyscalls[rcx].fHooked)
-			(kSyscalls[rcx].fProc)((Kernel::VoidPtr)rdx);
+		if (kSyscalls[rcx_syscall_index].fHooked)
+		{
+			if (kSyscalls[rcx_syscall_index].fProc)
+			{
+				(kSyscalls[rcx_syscall_index].fProc)((Kernel::VoidPtr)rdx_syscall_struct);
+			}
+			else
+			{
+			    kcout << "syscall: syscall isn't valid at all! (is nullptr)\r";
+			}
+		}
+		else
+		{
+		    kcout << "syscall: syscall isn't hooked at all! (is set to false)\r";
+		}
 
 		kcout << "syscall: Exit Syscall.\r";
 	}
@@ -73,14 +86,27 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 /// @brief Enter Kernel call from assembly (DDK only).
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx, Kernel::UIntPtr r8, Kernel::UIntPtr r9)
+EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, Kernel::UIntPtr rdx_kerncall_struct)
 {
-	if (rcx <= (kSyscalls.Count() - 1))
+	if (rcx_kerncall_index < kKerncalls.Count())
 	{
 		kcout << "kerncall: Enter Kcall.\r";
 
-		if (kKerncalls[rcx].fHooked)
-			(kKerncalls[rcx].fProc)((Kernel::VoidPtr)rdx);
+		if (kKerncalls[rcx_kerncall_index].fHooked)
+		{
+			if (kKerncalls[rcx_kerncall_index].fProc)
+			{
+				(kKerncalls[rcx_kerncall_index].fProc)((Kernel::VoidPtr)rdx_kerncall_struct);
+			}
+			else
+			{
+			    kcout << "kerncall: syscall isn't valid at all! (is nullptr)\r";
+			}
+		}
+		else
+		{
+		    kcout << "kerncall: syscall isn't hooked at all! (is set to false)\r";
+		}
 
 		kcout << "kerncall: Exit Kcall.\r";
 	}

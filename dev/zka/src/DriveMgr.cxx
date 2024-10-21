@@ -72,10 +72,14 @@ namespace Kernel
 		kATAMaster = true;
 		kATAIO	   = ATA_PRIMARY_IO;
 
-		MUST_PASS(drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster));
+		if (!drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster))
+		    return;
+
 #elif defined(__AHCI__)
 		UInt16 pi = 0;
-		MUST_PASS(drv_std_init(pi));
+
+		if (!drv_std_init(pi))
+		    return;
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
 
 		pckt->fPacketGood = true;
