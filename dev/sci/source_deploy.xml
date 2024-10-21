@@ -1,6 +1,6 @@
 <SourceDeploy>
 <HiddenFiles>
-    <SourceFile>*.hxx</SourceFile>
+    <SourceFile>*.h</SourceFile>
     <SourceFile>*.idl</SourceFile>
 </HiddenFiles>
 </SourceDeploy>

@@ -5,7 +5,7 @@ THIS_DIR="$(dirname "$THIS_PATH")"
 
 # Find all files in THIS_DIR which end in .ino, .cpp, etc., as specified
 # in the regular expression just below
-FILE_LIST="$(find "$THIS_DIR" | grep -E ".*(\.cc|\.cpp|\.c|\.h|\.hpp|\.hxx|\.cxx|\.hh|\.inl)$")"
+FILE_LIST="$(find "$THIS_DIR" | grep -E ".*(\.cc|\.cpp|\.c|\.h|\.hpp|\.h|\.cxx|\.hh|\.inl)$")"
 
 echo -e "Files found to format = \n\"\"\"\n$FILE_LIST\n\"\"\""
 
@@ -14,4 +14,3 @@ echo -e "Files found to format = \n\"\"\"\n$FILE_LIST\n\"\"\""
 #   mistakenly see the entire blob of newline-separated file names as a SINGLE file name instead
 #   of as a new-line separated list of *many* file names!
 clang-format --verbose -i --style=file $FILE_LIST
-

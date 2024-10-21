@@ -9,4 +9,4 @@ OUTPUT=sci.dll
 
 .PHONY: build-sci
 build-sci:
-	$(CC) $(wildcard *.cxx) $(FLAGS) -o $(OUTPUT)
+	$(CC) $(wildcard .cc) $(FLAGS) -o $(OUTPUT)

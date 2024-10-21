@@ -2,7 +2,7 @@
   "compiler_path": "x86_64-w64-mingw32-gcc",
   "compiler_std": "c++20",
   "headers_path": ["../", "./"],
-  "sources_path": ["src/*.c", "src/*.cxx", "src/*.S"],
+  "sources_path": ["src/*.c", "src/*.cc", "src/*.S"],
   "output_name": "ddk.dll",
   "compiler_flags": [
     "-ffreestanding",

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.hxx>
-#include <HALKit/AXP/Processor.hxx>
+#include <ArchKit/ArchKit.h>
+#include <HALKit/AXP/Processor.h>
 
 /// @brief Internal call for syscall, to work with C++.
 /// @param stack

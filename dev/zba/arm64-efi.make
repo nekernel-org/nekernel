@@ -77,9 +77,9 @@ endif
 compile-amd64:
 	$(RESCMD)
 	$(CC_GNU) $(ZKA_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
-	$(wildcard src/HEL/ARM64/*.cxx) \
+	$(wildcard src/HEL/ARM64/*.cc) \
 	$(wildcard src/HEL/ARM64/*.S) \
-	$(wildcard src/*.cxx)
+	$(wildcard src/*.cc)
 
 .PHONY: run-efi-amd64
 run-efi-amd64:

@@ -11,4 +11,4 @@ OUTPUT=ddk.dll
 
 .PHONY: x86_64-build
 x86_64-build:
-	$(CC) $(INC) $(FLAGS) $(VERSION) $(wildcard *.c) $(wildcard *.S) $(wildcard *.cxx) -o $(OUTPUT)
+	$(CC) $(INC) $(FLAGS) $(VERSION) $(wildcard *.c) $(wildcard *.S) $(wildcard .cc) -o $(OUTPUT)

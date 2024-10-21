@@ -32,8 +32,8 @@ WizardStyle=classic
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "..\dev\sci\*.hxx"; DestDir: "{app}\sci"; Flags: ignoreversion
-Source: "..\dev\crt\*.hxx"; DestDir: "{app}\crt"; Flags: ignoreversion
+Source: "..\dev\sci\*.h"; DestDir: "{app}\sci"; Flags: ignoreversion
+Source: "..\dev\crt\*.h"; DestDir: "{app}\crt"; Flags: ignoreversion
 Source: "..\dev\comm\*.idl"; DestDir: "{app}\comm"; Flags: ignoreversion
 Source: "..\..\cl-dev\*.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\cl-dev\tools\*.exe"; DestDir: "{app}\bin"; Flags: ignoreversion

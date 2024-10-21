@@ -34,11 +34,11 @@ MOVEALL=./MoveAll.ARM64.sh
 
 .PHONY: newos-arm64-epm
 newos-arm64-epm: clean
-	$(CC) $(CCFLAGS) $(DISKDRIVER) $(DEBUG) $(wildcard src/*.cxx) \
-	       $(wildcard src/FS/*.cxx) $(wildcard HALKit/ARM64/Storage/*.cxx) \
-			$(wildcard HALKit/ARM64/PCI/*.cxx) $(wildcard src/Network/*.cxx) $(wildcard src/Storage/*.cxx) \
-			$(wildcard HALKit/ARM64/*.cxx) $(wildcard HALKit/ARM64/*.cpp) \
-			$(wildcard HALKit/ARM64/*.s) $(wildcard HALKit/ARM64/APM/*.cxx)
+	$(CC) $(CCFLAGS) $(DISKDRIVER) $(DEBUG) $(wildcard src/*.cc) \
+	       $(wildcard src/FS/*.cc) $(wildcard HALKit/ARM64/Storage/*.cc) \
+			$(wildcard HALKit/ARM64/PCI/*.cc) $(wildcard src/Network/*.cc) $(wildcard src/Storage/*.cc) \
+			$(wildcard HALKit/ARM64/*.cc) $(wildcard HALKit/ARM64/*.cpp) \
+			$(wildcard HALKit/ARM64/*.s) $(wildcard HALKit/ARM64/APM/*.cc)
 
 	$(MOVEALL)
 
