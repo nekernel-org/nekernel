@@ -128,7 +128,7 @@ namespace Kernel
 	}
 
 	/// @brief Makes a new drive.
-	/// @return the new drive.
+	/// @return the new blank drive.
 	DriveTrait io_construct_drive() noexcept
 	{
 		DriveTrait trait;
