@@ -7,7 +7,7 @@
 //! @file ThreadLocalStorage.inl
 //! @brief Allocate resources from the process's heap storage.
 
-#ifndef _INC_PROCESS_SCHEDULER_HXX_
+#ifndef INC_PROCESS_SCHEDULER_HXX
 #include <KernelKit/UserProcessScheduler.hxx>
 #endif
 

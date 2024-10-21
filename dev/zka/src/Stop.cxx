@@ -47,7 +47,7 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			CGDrawString("0x00000008 Scheduler error.", start_y, x, panic_text);
+			CGDrawString("0x00000008 Multi-Task error.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {

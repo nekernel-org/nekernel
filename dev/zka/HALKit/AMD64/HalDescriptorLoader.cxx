@@ -14,8 +14,14 @@ namespace Kernel::HAL
 		STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64
 			kInterruptVectorTable[kKernelIdtSize];
 
+		STATIC void hal_set_irq_mask(UInt8 irql);
+		STATIC void hal_clear_irq_mask(UInt8 irql);
+
 		STATIC Void hal_enable_pit(UInt16 ticks) noexcept
 		{
+			if (ticks == 0)
+				ticks = 1000;
+
 			// Configure PIT to receieve scheduler interrupts.
 
 			UInt16 cCommonDivisor = kPITFrequency / ticks; // 100 Hz.
@@ -23,6 +29,8 @@ namespace Kernel::HAL
 			HAL::Out8(kPITControlPort, 0x36);						   // Command to PIT
 			HAL::Out8(kPITChannel0Port, cCommonDivisor & 0xFF);		   // Send low byte
 			HAL::Out8(kPITChannel0Port, (cCommonDivisor >> 8) & 0xFF); // Send high byte
+
+			hal_clear_irq_mask(32);
 		}
 
 		STATIC void hal_set_irq_mask(UInt8 irql)
@@ -74,9 +82,7 @@ namespace Kernel::HAL
 
 	Void IDTLoader::Load(Register64& idt)
 	{
-		rt_cli();
-
-		const auto cPITTickForScheduler = 1000;
+		const auto kPITTickForScheduler = 100;
 
 		volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
@@ -99,9 +105,7 @@ namespace Kernel::HAL
 
 		hal_load_idt(idt);
 
-		Detail::hal_enable_pit(cPITTickForScheduler);
-
-		rt_sti();
+		Detail::hal_enable_pit(kPITTickForScheduler);
 	}
 
 	void GDTLoader::Load(Ref<RegisterGDT>& gdt)

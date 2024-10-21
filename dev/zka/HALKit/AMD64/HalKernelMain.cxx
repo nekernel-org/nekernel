@@ -22,8 +22,8 @@ namespace Kernel::HAL
 
 namespace Kernel
 {
-	EXTERN UserProcessScheduler* cProcessScheduler;
-	EXTERN HardwareThreadScheduler* cHardwareThreadScheduler;
+	EXTERN UserProcessScheduler* kProcessScheduler;
+	EXTERN HardwareThreadScheduler* kHardwareThreadScheduler;
 } // namespace Kernel
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
@@ -36,8 +36,8 @@ EXTERN_C void hal_init_platform(
 {
 	kHandoverHeader = HandoverHeader;
 
-	Kernel::cProcessScheduler		 = nullptr;
-	Kernel::cHardwareThreadScheduler = nullptr;
+	Kernel::kProcessScheduler		 = nullptr;
+	Kernel::kHardwareThreadScheduler = nullptr;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
 		kHandoverHeader->f_Version != kHandoverVersion)
@@ -94,7 +94,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	/* Load System.exe here (TODO) */
+	/* Load OSLdr.exe here (TODO) */
 
 	Kernel::HAL::Register64 idt_reg;
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
@@ -103,5 +103,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::HAL::IDTLoader idt_loader;
 	idt_loader.Load(idt_reg);
 
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+	while (Yes)
+		;
 }

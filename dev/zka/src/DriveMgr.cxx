@@ -156,7 +156,7 @@ namespace Kernel
 		trait.fInit		 = io_drv_init;
 		trait.fDriveKind = io_drv_kind;
 
-		kcout << "Constructed drive successfully..\r";
+		kcout << "Constructed drive successfully.\r";
 
 		return trait;
 	}

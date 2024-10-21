@@ -64,7 +64,7 @@ namespace Kernel
 
 				if (signature_index == (cAcpiSignatureLength - 1))
 				{
-					kcout << "ACPI: Found the SDT. " << endl;
+					kcout << "ACPI: Found the SDT" << endl;
 					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(xsdt->AddressArr[index]));
 				}
 			}

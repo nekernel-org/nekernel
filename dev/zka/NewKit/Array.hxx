@@ -3,6 +3,7 @@
 	Copyright ZKA Web Services Co.
 
 ------------------------------------------- */
+
 #pragma once
 
 #include <KernelKit/DebugOutput.hxx>
@@ -11,7 +12,7 @@
 
 namespace Kernel
 {
-	template <typename T, Size N>
+	template <typename T, SizeT N>
 	class Array final
 	{
 	public:

@@ -102,7 +102,7 @@ namespace Boot
 		~BFileReader();
 
 	public:
-		Void ReadAll(SizeT until, SizeT chunk = kib_cast(4), UIntPtr outAddress = 0UL);
+		Void ReadAll(SizeT until, SizeT chunk = kib_cast(4), UIntPtr out_address = 0UL);
 
 		enum
 		{

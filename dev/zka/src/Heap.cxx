@@ -15,6 +15,7 @@
 
  Revision History:
 	10/8/24: FIX: Fix useless long name, alongside a new WR (WriteRead) field.
+	20/10/24: Fix mm_new_ and mm_delete_ APIs inside Heap.hxx header. (amlal)
 
  ------------------------------------------- */
 

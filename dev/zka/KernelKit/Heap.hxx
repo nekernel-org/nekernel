@@ -4,37 +4,38 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_KERNEL_HEAP_HXX_
-#define _INC_KERNEL_HEAP_HXX_
+#ifndef INC_KERNEL_HEAP_HXX
+#define INC_KERNEL_HEAP_HXX
 
 // last-rev 30/01/24
-// file: KernelHeap.hxx
+// file: Heap.hxx
 // description: heap allocation for the Kernel.
 
 #include <NewKit/Defines.hxx>
+#include <NewKit/Stop.hxx>
 
 namespace Kernel
 {
 	/// @brief Declare pointer as free.
 	/// @param heap_ptr the pointer.
-	/// @return
+	/// @return a status code regarding the deallocation.
 	Int32 mm_delete_heap(VoidPtr heap_ptr);
 
 	/// @brief Declare a new size for heap_ptr.
 	/// @param heap_ptr the pointer.
-	/// @return
+	/// @return unsupported always returns nullptr.
 	VoidPtr mm_realloc_heap(VoidPtr heap_ptr, SizeT new_sz);
 
 	/// @brief Check if pointer is a valid Kernel pointer.
 	/// @param heap_ptr the pointer
-	/// @return if it exists.
+	/// @return if it exists it returns true.
 	Boolean mm_is_valid_heap(VoidPtr heap_ptr);
 
 	/// @brief Allocate chunk of memory.
 	/// @param sz Size of pointer
 	/// @param wr Read Write bit.
 	/// @param user User enable bit.
-	/// @return The newly allocated pointer.
+	/// @return The newly allocated pointer, or nullptr.
 	VoidPtr mm_new_heap(const SizeT sz, const Bool wr, const Bool user);
 
 	/// @brief Protect the heap with a CRC value.
@@ -52,6 +53,12 @@ namespace Kernel
 	inline T* mm_new_class(Args&&... args)
 	{
 		T* cls = new T(move(args)...);
+
+		if (cls == nullptr)
+		{
+			ke_stop(RUNTIME_CHECK_POINTER);
+		}
+
 		return cls;
 	}
 
@@ -64,4 +71,4 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#endif // !_INC_KERNEL_HEAP_HXX_
+#endif // !INC_KERNEL_HEAP_HXX

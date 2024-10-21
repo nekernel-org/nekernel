@@ -8,7 +8,7 @@
 
 enum
 {
-	eEFSFlagEncryptedFree	= 0x00,
-	eEFSFlagEncryptedUnlock = 0x3f,
-	eEFSFlagEncryptedLock	= 0xf3,
+	kEFSFlagEncryptedFree	  = 0x00,
+	kEFSFlagEncryptedUnlocked = 0x3f,
+	kEFSFlagEncryptedLock	  = 0xf3,
 };

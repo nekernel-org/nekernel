@@ -143,8 +143,8 @@ namespace Kernel
 						return;
 					}
 
-					kcout << "Magic BitMap Number: " << hex_number(ptr_bit_set[cBitMapMagIdx]) << endl;
-					kcout << "Allocated: " << (ptr_bit_set[cBitMapUsedIdx] ? "Yes" : "No") << endl;
+					kcout << "Magic Number: " << hex_number(ptr_bit_set[cBitMapMagIdx]) << endl;
+					kcout << "Is Allocated: " << (ptr_bit_set[cBitMapUsedIdx] ? "Yes" : "No") << endl;
 					kcout << "Size of BitMap (B): " << number(ptr_bit_set[cBitMapSizeIdx]) << endl;
 					kcout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
 					kcout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[cBitMapSizeIdx])) << endl;

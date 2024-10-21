@@ -4,25 +4,19 @@
 
 ------------------------------------------- */
 
-#include "NewKit/Stop.hxx"
 #include <ArchKit/ArchKit.hxx>
 #include <KernelKit/UserProcessScheduler.hxx>
 #include <NewKit/String.hxx>
 
 namespace Kernel
 {
-	EXTERN UserProcessScheduler* cProcessScheduler;
+	EXTERN UserProcessScheduler* kProcessScheduler;
 }
 
 /// @brief Handle GPF fault.
 /// @param rsp
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
-	if (Kernel::cProcessScheduler == nullptr)
-	{
-		Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
-	}
-
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }
 
@@ -30,16 +24,11 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
-	if (Kernel::cProcessScheduler == nullptr)
-	{
-		Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
-	}
-
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle scheduler interrupt.
-EXTERN_C void idt_handle_scheduler()
+EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 {
 	Kernel::UserProcessHelper::StartScheduling();
 }
@@ -48,43 +37,21 @@ EXTERN_C void idt_handle_scheduler()
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
-	if (Kernel::cProcessScheduler == nullptr)
-	{
-		Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
-	}
-
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
-
-	Kernel::UserProcessHelper::StartScheduling();
-	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
-	if (Kernel::cProcessScheduler == nullptr)
-	{
-		Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
-	}
-
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
-	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Handle #UD fault.
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
-	if (Kernel::cProcessScheduler == nullptr)
-	{
-		Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
-	}
-
 	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
-
-	Kernel::UserProcessHelper::StartScheduling();
-	Kernel::ke_stop(RUNTIME_CHECK_PROCESS);
 }
 
 /// @brief Enter syscall from assembly.
@@ -92,16 +59,14 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 /// @return nothing.
 EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx)
 {
-	Kernel::HAL::Out8(0x20, 0x20); // Acknowledge interrupt to master PIC
-
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
-		kcout << "syscall: Enter Fn.\r";
+		kcout << "syscall: Enter Syscall.\r";
 
 		if (kSyscalls[rcx].fHooked)
 			(kSyscalls[rcx].fProc)((Kernel::VoidPtr)rdx);
 
-		kcout << "syscall: Exit Fn.\r";
+		kcout << "syscall: Exit Syscall.\r";
 	}
 }
 
@@ -110,15 +75,13 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr
 /// @return nothing.
 EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx, Kernel::UIntPtr rdx, Kernel::UIntPtr r8, Kernel::UIntPtr r9)
 {
-	Kernel::HAL::Out8(0x20, 0x20); // Acknowledge interrupt to master PIC
-
 	if (rcx <= (kSyscalls.Count() - 1))
 	{
-		kcout << "kerncall: Enter Fn.\r";
+		kcout << "kerncall: Enter Kcall.\r";
 
 		if (kKerncalls[rcx].fHooked)
 			(kKerncalls[rcx].fProc)((Kernel::VoidPtr)rdx);
 
-		kcout << "kerncall: Exit Fn.\r";
+		kcout << "kerncall: Exit Kcall.\r";
 	}
 }

@@ -16,16 +16,18 @@
 %macro IntExp 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
-    cli
-    sti
+    mov al, 0x20
+    out 0x21, al
+
     o64 iret
 %endmacro
 
 %macro IntNormal 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
-    cli
-    sti
+    mov al, 0x20
+    out 0x21, al
+
     o64 iret
 %endmacro
 
@@ -54,38 +56,24 @@ IntNormal 5
 
 ;; Invalid opcode interrupt
 __ZKA_INT_6:
-    cli
-
     mov al, 0x20
     out 0x20, al
-
-    push rax
 
     mov rcx, rsp
     call idt_handle_ud
 
-    pop rax
-
-    sti
     o64 iret
 
 IntNormal 7
 
 ;; Invalid opcode interrupt
 __ZKA_INT_8:
-    cli
-
     mov al, 0x20
     out 0x21, al
-
-    push rax
 
     mov rcx, rsp
     call idt_handle_generic
 
-    pop rax
-
-    sti
     o64 iret
 
 IntNormal 9
@@ -95,35 +83,20 @@ IntExp   11
 IntExp 12
 
 __ZKA_INT_13:
-    cli
-
     mov al, 0x20
     out 0x21, al
-
-    push rax
 
     mov rcx, rsp
     call idt_handle_gpf
 
-    pop rax
-
-    sti
     o64 iret
 
 __ZKA_INT_14:
-    cli
-
     mov al, 0x20
     out 0x21, al
 
-    push rax
-
     mov rcx, rsp
     call idt_handle_pf
-
-    pop rax
-
-    sti
 
     o64 iret
 
@@ -153,17 +126,8 @@ __ZKA_INT_32:
     mov al, 0x20
     out 0x21, al
 
-    push rbp
-    push rsp
-    push rcx
-    push rdx
-    push r8
-    jmp idt_handle_scheduler
-    pop rsp
-    pop rbp
-    pop rcx
-    pop rdx
-    pop r8
+    mov rcx, rsp
+    call idt_handle_scheduler
 
     o64 iret
 
@@ -192,40 +156,32 @@ IntNormal 49
 [extern hal_kernel_call_enter]
 
 __ZKA_INT_50:
+    cli
+
     mov al, 0x20
     out 0x21, al
 
-    push r8
-    push r9
-    push r10
-    push rsp
+    mov rcx, r8
+    mov rdx, r9
 
     jmp hal_system_call_enter
 
-    add rsp, 16
-    pop rsp
-    pop r10
-    pop r9
-    pop r8
+    sti
 
     o64 iret
 
 __ZKA_INT_51:
+    cli
+
     mov al, 0x20
     out 0x21, al
 
-    push r8
-    push r9
-    push r10
-    push rsp
+    mov rcx, r8
+    mov rdx, r9
 
     call hal_kernel_call_enter
 
-    add rsp, 16
-    pop rsp
-    pop r10
-    pop r9
-    pop r8
+    sti
 
     o64 iret
 
@@ -351,6 +307,8 @@ hal_load_idt:
     mov al, 0x01          ; 8086 mode
     out 0x21, al
     out 0xA1, al
+
+    sti
 
     ret
 

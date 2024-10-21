@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_USER_HXX_
-#define _INC_USER_HXX_
+#ifndef INC_USER_HXX
+#define INC_USER_HXX
 
 #include <CompilerKit/CompilerKit.hxx>
 #include <KernelKit/LPC.hxx>
@@ -72,4 +72,4 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#endif /* ifndef _INC_USER_HXX_ */
+#endif /* ifndef INC_USER_HXX */

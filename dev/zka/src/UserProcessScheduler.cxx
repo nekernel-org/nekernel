@@ -3,13 +3,13 @@
 	Copyright ZKA Web Services Co.
 
 	FILE: UserProcessScheduler.cxx
-	PURPOSE: Low Exception Process scheduler.
+	PURPOSE: EL0/Ring-3 Process scheduler.
 
 ------------------------------------------- */
 
 /***********************************************************************************/
 /// @file UserProcessScheduler.cxx
-/// @brief User Process scheduler.
+/// @brief User process scheduler.
 /***********************************************************************************/
 
 #include <ArchKit/ArchKit.hxx>
@@ -38,8 +38,8 @@ namespace Kernel
 	/// @brief User Process scheduler global and external reference of thread scheduler.
 	/***********************************************************************************/
 
-	UserProcessScheduler* cProcessScheduler = nullptr;
-	EXTERN HardwareThreadScheduler* cHardwareThreadScheduler;
+	UserProcessScheduler* kProcessScheduler = nullptr;
+	EXTERN HardwareThreadScheduler* kHardwareThreadScheduler;
 
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
@@ -55,14 +55,12 @@ namespace Kernel
 
 	Void UserProcess::Crash()
 	{
-		if (*this->Name != 0 &&
-			*this->Name > 'A')
+		if (this->Status != ProcessStatusKind::kRunning)
+			return;
+
+		if (*this->Name != 0)
 		{
 			kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
-		}
-		else
-		{
-			return;
 		}
 
 		this->Exit(kErrorProcessFault);
@@ -373,8 +371,8 @@ namespace Kernel
 
 	UserProcessScheduler& UserProcessScheduler::The()
 	{
-		MUST_PASS(cProcessScheduler);
-		return *cProcessScheduler;
+		MUST_PASS(kProcessScheduler);
+		return *kProcessScheduler;
 	}
 
 	/***********************************************************************************/
@@ -427,19 +425,20 @@ namespace Kernel
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
-			kcout << "Grabbing available process in team...\r";
-
 			auto& process = mTeam.AsArray()[process_index];
 
 			//! check if process needs to be scheduled.
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
-				kcout << process.Name << ": will be runned.\r";
-
 				// Set current process header.
 				this->CurrentProcess() = process;
 
 				process.PTime = static_cast<Int32>(process.Affinity);
+
+				UserProcessScheduler::The().CurrentProcess().Leak().Status = ProcessStatusKind::kFrozen;
+				UserProcessScheduler::The().CurrentProcess()			   = process;
+
+				kcout << "Switch to '" << process.Name << "'.\r";
 
 				// tell helper to find a core to schedule on.
 				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
@@ -451,7 +450,8 @@ namespace Kernel
 			}
 			else
 			{
-				--process.PTime;
+				if (process.Status == ProcessStatusKind::kRunning)
+					--process.PTime;
 			}
 		}
 
@@ -481,7 +481,7 @@ namespace Kernel
 	PID& UserProcessHelper::TheCurrentPID()
 	{
 		kcout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-		return cProcessScheduler->CurrentProcess().Leak().ProcessId;
+		return kProcessScheduler->CurrentProcess().Leak().ProcessId;
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -490,9 +490,7 @@ namespace Kernel
 	/// @retval false cannot be schedulded.
 	Bool UserProcessHelper::CanBeScheduled(const UserProcess& process)
 	{
-		kcout << "Checking UserProcess status...\r";
-
-		if (process.Status == ProcessStatusKind::kFrozen ||
+		if (process.Status == ProcessStatusKind::kKilled ||
 			process.Status == ProcessStatusKind::kDead)
 			return No;
 
@@ -511,14 +509,14 @@ namespace Kernel
 
 	Bool UserProcessHelper::InitializeScheduler()
 	{
-		if (!cProcessScheduler)
+		if (!kProcessScheduler)
 		{
-			cProcessScheduler = new UserProcessScheduler();
+			kProcessScheduler = new UserProcessScheduler();
 		}
 
-		if (!cHardwareThreadScheduler)
+		if (!kHardwareThreadScheduler)
 		{
-			cHardwareThreadScheduler = new HardwareThreadScheduler();
+			kHardwareThreadScheduler = new HardwareThreadScheduler();
 		}
 
 		return Yes;
@@ -526,21 +524,15 @@ namespace Kernel
 
 	/***********************************************************************************/
 	/**
-	 * @brief Start the scheduler.
+	 * @brief Start scheduling current AP/Hart/Core.
 	 */
 	/***********************************************************************************/
-
 	SizeT UserProcessHelper::StartScheduling()
 	{
-		kcout << "UserProcessScheduler: Trying to schedule user processes...\r";
-
-		if (!cProcessScheduler)
+		if (!kProcessScheduler)
 			return 0;
 
-		kcout << "UserProcessScheduler: Object is valid, scheduling user processes...\r";
-
-		SizeT ret = cProcessScheduler->Run();
-		return ret;
+		return kProcessScheduler->Run();
 	}
 
 	/***********************************************************************************/

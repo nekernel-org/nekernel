@@ -126,7 +126,7 @@ Boot::BFileReader::~BFileReader()
 	@param **readUntil** size of file
 	@param **chunkToRead** chunk to read each time.
 */
-Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr outAddress)
+Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_address)
 {
 	if (mBlob == nullptr)
 	{
@@ -142,10 +142,10 @@ Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr outA
 			else if (readUntil < 1)
 				readUntil = newPtrInfo.FileSize;
 
-			mWriter.Write(L"NEWOSLDR: SIZE: ").Write(readUntil).Write("\r");
+			mWriter.Write(L"NEWOSLDR: FileSize: ").Write(readUntil).Write("\r");
 		}
 
-		if (!outAddress)
+		if (!out_address)
 		{
 			if (auto err = BS->AllocatePool(EfiLoaderCode, readUntil, (VoidPtr*)&mBlob) !=
 						   kEfiOk)
@@ -156,7 +156,7 @@ Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr outA
 		}
 		else
 		{
-			mBlob = (VoidPtr)outAddress;
+			mBlob = (VoidPtr)out_address;
 		}
 	}
 
