@@ -7,19 +7,19 @@
 .section .boot_hdr
 .align 4
 
-/* NewBoot boot header begin for a 64x000 Kernel. */
+/* ZBA boot header begin for a 64x000 Kernel. */
 
 boot_hdr_mag:
         .ascii "CB"
 boot_hdr_name:
         // it has to match ten bytes.
-        .asciz "newosldr\0\0"
+        .asciz "zbaosldr\0\0"
 boot_hdr_ver:
         .word 0x104
 boot_hdr_proc:
         .long bootloader_start
 
-/* NewBoot boot header end */
+/* ZBA boot header end */
 
 .extern bootloader_main
 .extern bootloader_stack

@@ -149,7 +149,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
 #ifdef __ZKA_USE_FB__
-	CGDrawString("NEWOSLDR (C) ZKA WEB SERVICES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString("ZBA (C) ZKA WEB SERVICES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "MULTIPLE PROCESSORS DETECTED." : "SINGLE PROCESSOR DETECTED.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // __ZKA_USE_FB__
 
@@ -275,7 +275,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	else
 	{
 #ifdef __ZKA_USE_FB__
-		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR KERNEL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("ZBA: PLEASE RECOVER YOUR KERNEL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // __ZKA_USE_FB__
 	}
 
@@ -303,7 +303,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	else
 	{
 #ifdef __ZKA_USE_FB__
-		CGDrawString("NEWOSLDR: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REINSTALL THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("ZBA: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REINSTALL THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // __ZKA_USE_FB__
 	}
 

@@ -250,7 +250,7 @@ namespace Boot
 				return false;
 			}
 
-			writer.Write(L"NEWOSLDR: Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
+			writer.Write(L"ZBA: Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
 			return true;
 		}
@@ -287,7 +287,7 @@ namespace Boot
 
 			fDiskDev.Write((Char*)&catalogKind, sizeof(NFS_CATALOG_STRUCT));
 
-			writer.Write(L"NEWOSLDR: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
+			writer.Write(L"ZBA: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
 
 			return true;
 		}
@@ -371,7 +371,7 @@ namespace Boot
 		if (this->WriteRootCatalog(fileBlobs, blobCount, partBlock))
 		{
 			BTextWriter writer;
-			writer.Write(L"NEWOSLDR: Drive formatted.\r");
+			writer.Write(L"ZBA: Drive formatted.\r");
 
 			return true;
 		}

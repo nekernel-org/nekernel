@@ -56,13 +56,13 @@ Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
 	if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk)
 	{
-		mWriter.Write(L"NEWOSLDR: Handle-Protocol: No-Such-Protocol").Write(L"\r");
+		mWriter.Write(L"ZBA: Handle-Protocol: No-Such-Protocol").Write(L"\r");
 		this->mErrorCode = kNotSupported;
 	}
 
 	if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk)
 	{
-		mWriter.Write(L"NEWOSLDR: Handle-Protocol: No-Such-Protocol").Write(L"\r");
+		mWriter.Write(L"ZBA: Handle-Protocol: No-Such-Protocol").Write(L"\r");
 		this->mErrorCode = kNotSupported;
 		return;
 	}
@@ -71,7 +71,7 @@ Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
 
 	if (efp->OpenVolume(efp, &mRootFs) != kEfiOk)
 	{
-		mWriter.Write(L"NEWOSLDR: Fetch-Protocol: No-Such-Volume").Write(L"\r");
+		mWriter.Write(L"ZBA: Fetch-Protocol: No-Such-Volume").Write(L"\r");
 		this->mErrorCode = kNotSupported;
 		return;
 	}
@@ -81,12 +81,12 @@ Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
 	if (mRootFs->Open(mRootFs, &KernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
 		kEfiOk)
 	{
-		mWriter.Write(L"NEWOSLDR: Fetch-Protocol: No-Such-Path: ")
+		mWriter.Write(L"ZBA: Fetch-Protocol: No-Such-Path: ")
 			.Write(mPath)
 			.Write(L"\r");
 		this->mErrorCode = kNotSupported;
 
-		CGDrawString("NEWOSLDR: PLEASE RECOVER YOUR MINKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("ZBA: PLEASE RECOVER YOUR MINKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
 		mRootFs->Close(mRootFs);
 
@@ -142,7 +142,7 @@ Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_
 			else if (readUntil < 1)
 				readUntil = newPtrInfo.FileSize;
 
-			mWriter.Write(L"NEWOSLDR: FileSize: ").Write(readUntil).Write("\r");
+			mWriter.Write(L"ZBA: FileSize: ").Write(readUntil).Write("\r");
 		}
 
 		if (!out_address)

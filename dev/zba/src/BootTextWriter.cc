@@ -3,7 +3,7 @@
 	Copyright ZKA Web Services Co.
 
 	File: String.cxx
-	Purpose: NewBoot string library
+	Purpose: ZBA string library
 
 	Revision History:
 

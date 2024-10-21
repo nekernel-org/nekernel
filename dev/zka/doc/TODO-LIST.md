@@ -18,7 +18,7 @@
 
 Status:
 
-NEWOSLDR: Need to boot from EPM partition. [ X ]
+ZBA: Need to boot from EPM partition. [ X ]
 <br>
 minoskrnl: New Filesystem is done. [ X ]
 

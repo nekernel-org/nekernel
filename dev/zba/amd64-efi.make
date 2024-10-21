@@ -49,7 +49,7 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSL
 			-DEFI_FUNCTION_WRAPPER -I./ -I../zka -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -D__HAVE_ZKA_APIS__ -D__ZKA_USE_FB__ -D__ZKA_AMD64__ -D__ZKA__
 
-BOOT_LOADER=newosldr.exe
+BOOT_LOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe
 DDK=ddk.dll
 SCI=sci.dll
@@ -66,7 +66,7 @@ all: compile-amd64
 	mkdir -p src/Root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o src/$(BOOT_LOADER)
 	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/BOOTX64.EFI
-	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/NEWOSLDR.EFI
+	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/ZBA.EFI
 	$(COPY) ../zka/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ../sci/$(SCI) src/Root/$(SCI)
 	$(COPY) ../ddk/$(DDK) src/Root/$(DDK)
@@ -103,7 +103,7 @@ download-edk:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=newosldr.exe minoskrnl.exe OVMF.fd
+EXECUTABLES=zbaosldr.exe minoskrnl.exe OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

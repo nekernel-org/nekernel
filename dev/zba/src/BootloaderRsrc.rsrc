@@ -11,10 +11,10 @@ BEGIN
       VALUE "CompanyName", "ZKA Web Services Co"
       VALUE "FileDescription", "ZKA OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
-      VALUE "InternalName", "newosldr"
+      VALUE "InternalName", "zbaosldr"
       VALUE "LegalCopyright", "Copyright ZKA Web Services Co., all rights reserved."
-      VALUE "OriginalFilename", "newosldr.exe"
-      VALUE "ProductName", "newosldr"
+      VALUE "OriginalFilename", "zbaosldr.exe"
+      VALUE "ProductName", "zbaosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION
     END
   END

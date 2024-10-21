@@ -48,7 +48,7 @@ FLAG_GNU=-fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__ZKA_ARM64__ -fno
 			 -target aarch64-unknown-windows \
 				-std=c++20 -D__FSKIT_USE_NEFS__ -D__STANDALONE__ -D__NEWOSKRNL__ -D__NEWOSLDR__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../ -I../zka
 
-BOOT_LOADER=newosldr.exe
+BOOT_LOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe
 DDK=ddk.dll
 SCI=sci.dll
@@ -65,7 +65,7 @@ all: compile-amd64
 	mkdir -p src/Root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) /out:src/$(BOOT_LOADER)
 	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/BOOTAA64.EFI
-	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/NEWOSLDR.EFI
+	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/ZBA.EFI
 	$(COPY) ../zka/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) src/$(BOOT_LOADER) src/Root/$(BOOT_LOADER)
 
@@ -97,7 +97,7 @@ download-edk:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGAARCH64_QEMU_EFI.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=newosldr.exe minoskrnl.exe OVMF.fd
+EXECUTABLES=zbaosldr.exe minoskrnl.exe OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

@@ -83,7 +83,7 @@ ATAInit_Retry:
 	if (statRdy & ATA_SR_ERR)
 	{
 		writer.Write(
-			L"NEWOSLDR: ATA: error, not an IDE based hard-drive.\r");
+			L"ZBA: ATA: error, not an IDE based hard-drive.\r");
 
 		return false;
 	}
