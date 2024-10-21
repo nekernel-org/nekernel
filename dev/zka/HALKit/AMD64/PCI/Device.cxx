@@ -39,9 +39,6 @@ namespace Kernel::PCI
 	Device::Device(UShort bus, UShort device, UShort func, UInt32 bar)
 		: fBus(bus), fDevice(device), fFunction(func), fBar(bar)
 	{
-		// get bar 0
-		auto bar_zero = 0x10 + bar * sizeof(UInt32);
-		fBar		  = this->Read(bar_zero, 4);
 	}
 
 	Device::~Device() = default;
@@ -107,21 +104,22 @@ namespace Kernel::PCI
 		return (UChar)(ZKA_PCIReadRaw(0xC, fBus, fDevice, fFunction) >> 16);
 	}
 
-	void Device::EnableMmio()
+	void Device::EnableMmio(UInt32 bar_in)
 	{
-		bool enable = Read(0x04, sizeof(UChar)) | (1 << 1);
-		Write(0x04, enable, sizeof(UShort));
+		bool enable = Read(bar_in, sizeof(UChar)) | (1 << 1);
+		Write(bar_in, enable, sizeof(UShort));
 	}
 
-	void Device::BecomeBusMaster()
+	void Device::BecomeBusMaster(UInt32 bar_in)
 	{
-		bool enable = Read(0x04, sizeof(UShort)) | (1 << 2);
-		Write(0x04, enable, sizeof(UShort));
+		bool enable = Read(bar_in, sizeof(UShort)) | (1 << 2);
+		Write(bar_in, enable, sizeof(UShort));
 	}
 
-	UInt32 Device::Bar()
+	UInt32 Device::Bar(UInt32 bar_in)
 	{
-		return fBar;
+		UInt32 bar = ZKA_PCIReadRaw(bar_in, fBus, fDevice, fFunction);
+		return bar;
 	}
 
 	UShort Device::Vendor()

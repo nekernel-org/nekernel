@@ -164,6 +164,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	// format the disk.
 	// ---------------------------------------------------- //
 
+#ifdef __AHCI__
 	if (!partition_factory.IsPartitionValid())
 	{
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
@@ -176,10 +177,12 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		rt_reset_hardware();
 	}
+#endif
 
 	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
 	struct_ptr = new EfiMemoryDescriptor[sz_desc];
+
 	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
 	auto cDefaultMemoryMap = 0; // Grab any usable entries.

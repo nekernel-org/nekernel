@@ -60,11 +60,11 @@ namespace Kernel::PCI
 		UChar  Subclass();
 		UChar  ProgIf();
 		UChar  HeaderType();
-		UInt32 Bar();
+		UInt32 Bar(UInt32 bar_in);
 
 	public:
-		void EnableMmio();
-		void BecomeBusMaster(); // for PCI-DMA, PC-DMA does not need that.
+		void EnableMmio(UInt32 bar_in);
+		void BecomeBusMaster(UInt32 bar_in); // for PCI-DMA, PC-DMA does not need that.
 
 		UShort Vendor();
 

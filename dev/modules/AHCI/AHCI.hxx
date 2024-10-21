@@ -261,10 +261,10 @@ typedef struct HbaMem final
 	Kernel::UInt32 Cap2;	// 0x24, Host capabilities extended
 	Kernel::UInt32 Bohc;	// 0x28, BIOS/OS handoff control and status
 
-	Kernel::UInt16 Resv0;
-	Kernel::UInt32 Resv2;
+	Kernel::UInt8 Resv0[0xA0 - 0x2C];
+	Kernel::UInt8 Vendor[0x100 - 0xA0];
 
-	HbaPort Ports[1]; // 1 ~ 32, 32 is the max ahci devices per controller.
+	HbaPort Ports[32]; // 1 ~ 32, 32 is the max ahci devices per controller.
 } HbaMem;
 
 typedef struct HbaCmdHeader final

@@ -17,7 +17,9 @@ namespace Kernel::PCI
 			{
 				for (int function = 0; function < ZKA_FUNCTION_COUNT; ++function)
 				{
-					Device dev(bus, device, function, type == Types::PciDeviceKind::MassStorageController ? 5 : 1);
+				    auto bar = 0x00;
+
+					Device dev(bus, device, function, bar);
 
 					if (dev.Class() == (UChar)type)
 					{
