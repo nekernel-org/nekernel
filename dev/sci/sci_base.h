@@ -13,11 +13,9 @@ Purpose: SCI core header file (C++ only).
 #include <sci/sci_hint.h>
 
 #define ATTRIBUTE(X) __attribute__((X))
-
 #define IMPORT_XPCOM extern "XPCOM"
 #define IMPORT_CXX	 extern "C++"
 #define IMPORT_C	 extern "C"
-
 typedef bool Bool;
 typedef void Void;
 
@@ -36,7 +34,6 @@ typedef __INT8_TYPE__  SInt8;
 typedef void*			 VoidPtr;
 typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
-
 #include <sci/sci_lpc.h>
 
 #ifdef __XPCOM_IMPL__
@@ -45,7 +42,6 @@ typedef char			 Char;
 class IUnknown; // Refrenced from an IDB entry.
 class ICLSID;	// From the IDB, the constructor of the object, e.g: IAppCLSID.
 class UUID;
-
 class ATTRIBUTE(uuid("d7c144b6-0792-44b8-b06b-02b227b547df")) IUnknown
 {
 public:
@@ -60,7 +56,6 @@ public:
 	virtual IUnknown* AddRef()				   = 0;
 	virtual VoidPtr	  QueryClass(UUID* p_uuid) = 0;
 };
-
 template <typename FnSign, typename ClsID>
 class IEventListener : public ClsID
 {

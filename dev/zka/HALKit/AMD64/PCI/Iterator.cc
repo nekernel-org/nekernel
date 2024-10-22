@@ -17,7 +17,7 @@ namespace Kernel::PCI
 			{
 				for (int function = 0; function < ZKA_FUNCTION_COUNT; ++function)
 				{
-				    auto bar = 0x00;
+					auto bar = 0x00;
 
 					Device dev(bus, device, function, bar);
 

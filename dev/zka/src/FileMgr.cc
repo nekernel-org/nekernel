@@ -39,14 +39,14 @@ namespace Kernel
 	/// @brief Mount filesystem.
 	/// @param mount_ptr The filesystem to mount.
 	/// @return if it succeeded true, otherwise false.
-	bool IFilesystemMgr::Mount(_Input IFilesystemMgr* mount_ptr)
+	_Output Bool IFilesystemMgr::Mount(_Input IFilesystemMgr* mount_ptr)
 	{
 		if (mount_ptr != nullptr)
 		{
 			kMountedFilesystem = mount_ptr;
-			return true;
+			return Yes;
 		}
 
-		return false;
+		return No;
 	}
 } // namespace Kernel

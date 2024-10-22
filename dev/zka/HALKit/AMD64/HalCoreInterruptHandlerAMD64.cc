@@ -71,12 +71,12 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index, K
 			}
 			else
 			{
-			    kcout << "syscall: syscall isn't valid at all! (is nullptr)\r";
+				kcout << "syscall: syscall isn't valid at all! (is nullptr)\r";
 			}
 		}
 		else
 		{
-		    kcout << "syscall: syscall isn't hooked at all! (is set to false)\r";
+			kcout << "syscall: syscall isn't hooked at all! (is set to false)\r";
 		}
 
 		kcout << "syscall: Exit Syscall.\r";
@@ -100,12 +100,12 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, 
 			}
 			else
 			{
-			    kcout << "kerncall: syscall isn't valid at all! (is nullptr)\r";
+				kcout << "kerncall: syscall isn't valid at all! (is nullptr)\r";
 			}
 		}
 		else
 		{
-		    kcout << "kerncall: syscall isn't hooked at all! (is set to false)\r";
+			kcout << "kerncall: syscall isn't hooked at all! (is set to false)\r";
 		}
 
 		kcout << "kerncall: Exit Kcall.\r";

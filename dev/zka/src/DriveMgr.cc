@@ -73,13 +73,13 @@ namespace Kernel
 		kATAIO	   = ATA_PRIMARY_IO;
 
 		if (!drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster))
-		    return;
+			return;
 
 #elif defined(__AHCI__)
 		UInt16 pi = 0;
 
 		if (!drv_std_init(pi))
-		    return;
+			return;
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
 
 		pckt->fPacketGood = true;
