@@ -16,18 +16,26 @@
 %macro IntExp 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
-    mov al, 0x20
-    out 0x21, al
+    cli
 
+    mov al, 0x20
+    out 0x20, al
+    out 0xA0, al
+
+    sti
     o64 iret
 %endmacro
 
 %macro IntNormal 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
-    mov al, 0x20
-    out 0x21, al
+    cli
 
+    mov al, 0x20
+    out 0x20, al
+    out 0xA0, al
+
+    sti
     o64 iret
 %endmacro
 
@@ -56,24 +64,42 @@ IntNormal 5
 
 ;; Invalid opcode interrupt
 __ZKA_INT_6:
+    cli
+
     mov al, 0x20
     out 0x20, al
+    out 0xA0, al
+
+    push rax
+    mov rax, idt_handle_ud
 
     mov rcx, rsp
-    call idt_handle_ud
 
+    call rax
+    pop rax
+
+    sti
     o64 iret
 
 IntNormal 7
 
 ;; Invalid opcode interrupt
 __ZKA_INT_8:
+    cli
+
     mov al, 0x20
-    out 0x21, al
+    out 0x20, al
+    out 0xA0, al
+
+    push rax
+    mov rax, idt_handle_generic
 
     mov rcx, rsp
-    call idt_handle_generic
 
+    call rax
+    pop rax
+
+    sti
     o64 iret
 
 IntNormal 9
@@ -83,21 +109,38 @@ IntExp   11
 IntExp 12
 
 __ZKA_INT_13:
+    cli
+
     mov al, 0x20
-    out 0x21, al
+    out 0x20, al
+    out 0xA0, al
+
+    push rax
+    mov rax, idt_handle_gpf
 
     mov rcx, rsp
-    call idt_handle_gpf
 
+    call rax
+    pop rax
+
+    sti
     o64 iret
 
 __ZKA_INT_14:
+    cli
+
     mov al, 0x20
-    out 0x21, al
+    out 0x20, al
+    out 0xA0, al
+    push rax
+    mov rax, idt_handle_pf
 
     mov rcx, rsp
-    call idt_handle_pf
 
+    call rax
+    pop rax
+
+    sti
     o64 iret
 
 IntNormal 15
@@ -123,12 +166,19 @@ IntNormal 31
 [extern idt_handle_scheduler]
 
 __ZKA_INT_32:
+    cli
+
     mov al, 0x20
-    out 0x21, al
+    out 0x20, al
+    out 0xA0, al
 
+    push rax
     mov rcx, rsp
-    call idt_handle_scheduler
+    mov rax, idt_handle_scheduler
+    call rax
+    pop rax
 
+    sti
     o64 iret
 
 IntNormal 33
@@ -159,12 +209,17 @@ __ZKA_INT_50:
     cli
 
     mov al, 0x20
-    out 0x21, al
+    out 0x20, al
+    out 0xA0, al
+
+    push rax
+    mov rax, hal_system_call_enter
 
     mov rcx, r8
     mov rdx, r9
 
-    jmp hal_system_call_enter
+    call rax
+    pop rax
 
     sti
 
@@ -174,12 +229,17 @@ __ZKA_INT_51:
     cli
 
     mov al, 0x20
-    out 0x21, al
+    out 0x20, al
+    out 0xA0, al
+
+    push rax
+    mov rax, hal_kernel_call_enter
 
     mov rcx, r8
     mov rdx, r9
 
-    call hal_kernel_call_enter
+    call rax
+    pop rax
 
     sti
 
@@ -229,10 +289,9 @@ extern hal_real_init
 hal_reload_segments:
     std
     ;; Write address of syscall handler.
-
-	mov rdx, [mp_system_call_handler]
+    mov rdx, [mp_system_call_handler]
     shr rdx, 32
-	mov rcx, 0xC0000082
+    mov rcx, 0xC0000082
     wrmsr
 
     ;; Set segments of syscall handler.

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __NDK_DEFINES_HXX__
-#define __NDK_DEFINES_HXX__
+#ifndef __TOOLCHAINKIT_DEFINES_HXX__
+#define __TOOLCHAINKIT_DEFINES_HXX__
 
 #include <stdint.h>
 #include <stddef.h>
@@ -25,7 +25,7 @@ typedef char* caddr_t;
 
 #ifdef __GNUC__
 #include <crt/alloca.h>
-#elif defined(__NDK__)
+#elif defined(__TOOLCHAINKIT__)
 #define __alloca(sz) __ndk_alloca(sz)
 #endif
 
@@ -103,4 +103,4 @@ namespace std
 	}
 } // namespace std
 
-#endif /* __NDK_DEFINES_HXX__ */
+#endif /* __TOOLCHAINKIT_DEFINES_HXX__ */

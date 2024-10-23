@@ -9,13 +9,13 @@ Purpose: Base code of XPCOM.
 
 /// @internal Reserved for internal definitions only.
 
-#ifndef __NDK__
+#ifndef __TOOLCHAINKIT__
 #define object	 class
 #define protocol class
 #define clsid(X)
 
 #warning ! You may be using the clang compiler, please be cautious that some features mayn't be present. !
-#endif // !__NDK__
+#endif // !__TOOLCHAINKIT__
 
 protocol IUnknown; // Refrenced from an IDB entry.
 protocol ICLSID;   // From the IDB, the constructor of the object, e.g: TextUCLSID.

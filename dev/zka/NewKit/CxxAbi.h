@@ -7,7 +7,7 @@
 
 #include <NewKit/Defines.h>
 
-#ifndef __NDK__
+#ifndef __TOOLCHAINKIT__
 
 #define kDSOMaxObjects (128)
 

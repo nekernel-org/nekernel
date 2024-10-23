@@ -29,11 +29,11 @@ namespace Kernel
 
 		RSDT* xsdt = reinterpret_cast<RSDT*>(rsp_ptr->RsdtAddress);
 
-		Int64 num = (xsdt->Length - sizeof(SDT)) / sizeof(UInt32);
+		Int64 num = (xsdt->Length - sizeof(SDT)) / sizeof(Int64);
 
 		/***
-			crucial to avoid - overflows.
-			*/
+			crucial to avoid underflows.
+		*/
 		if (num < 1)
 		{
 			/// stop here, we should have entries...
@@ -64,7 +64,8 @@ namespace Kernel
 
 				if (signature_index == (cAcpiSignatureLength - 1))
 				{
-					kcout << "ACPI: Found the SDT" << endl;
+					kcout << "ACPI: SDT Signature: " << sdt->Signature << endl;
+					kcout << "ACPI: SDT OEM ID: " << sdt->OemId << endl;
 					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(xsdt->AddressArr[index]));
 				}
 			}
@@ -74,10 +75,10 @@ namespace Kernel
 	}
 
 	/***
-	@brief check SDT header
+	@brief Checksum on SDT header.
 	@param checksum the header to checksum
 	@param len the length of it.
-*/
+	*/
 	bool ACPIFactoryInterface::Checksum(const Char* checksum, SSizeT len)
 	{
 		if (len == 0)

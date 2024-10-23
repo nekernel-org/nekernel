@@ -423,6 +423,12 @@ namespace Kernel
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
+		if (mTeam.mProcessAmount < 1)
+		{
+			kcout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
+			return 0;
+		}
+
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
 			auto& process = mTeam.AsArray()[process_index];
@@ -430,15 +436,15 @@ namespace Kernel
 			//! check if process needs to be scheduled.
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
-				// Set current process header.
-				this->CurrentProcess() = process;
-
 				process.PTime = static_cast<Int32>(process.Affinity);
 
 				UserProcessScheduler::The().CurrentProcess().Leak().Status = ProcessStatusKind::kFrozen;
 				UserProcessScheduler::The().CurrentProcess()			   = process;
 
 				kcout << "Switch to '" << process.Name << "'.\r";
+
+				// Set current process header.
+				this->CurrentProcess() = process;
 
 				// tell helper to find a core to schedule on.
 				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
@@ -493,6 +499,10 @@ namespace Kernel
 		if (process.Status == ProcessStatusKind::kKilled ||
 			process.Status == ProcessStatusKind::kDead)
 			return No;
+
+		if (process.Status == ProcessStatusKind::kStarting &&
+			process.Image)
+			return Yes;
 
 		if (!process.Image &&
 			process.Kind == UserProcess::kExectuableKind)
