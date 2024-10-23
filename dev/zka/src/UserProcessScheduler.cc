@@ -38,7 +38,7 @@ namespace Kernel
 	/// @brief User Process scheduler global and external reference of thread scheduler.
 	/***********************************************************************************/
 
-	UserProcessScheduler* kProcessScheduler = nullptr;
+	UserProcessScheduler*			kProcessScheduler = nullptr;
 	EXTERN HardwareThreadScheduler* kHardwareThreadScheduler;
 
 	/// @brief Gets the last exit code.

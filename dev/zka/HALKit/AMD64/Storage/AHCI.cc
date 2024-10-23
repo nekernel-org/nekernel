@@ -28,7 +28,7 @@ enum
 };
 
 STATIC Kernel::PCI::Device kAhciDevice;
-STATIC HbaPort* kAhciPort = nullptr;
+STATIC HbaPort*			   kAhciPort = nullptr;
 
 /// @brief Initializes an AHCI disk.
 /// @param PortsImplemented the amount of kAhciPort that have been detected.

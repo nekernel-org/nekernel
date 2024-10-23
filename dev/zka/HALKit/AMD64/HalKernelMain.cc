@@ -22,7 +22,7 @@ namespace Kernel::HAL
 
 namespace Kernel
 {
-	EXTERN UserProcessScheduler* kProcessScheduler;
+	EXTERN UserProcessScheduler*	kProcessScheduler;
 	EXTERN HardwareThreadScheduler* kHardwareThreadScheduler;
 } // namespace Kernel
 

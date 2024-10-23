@@ -61,7 +61,7 @@ STATIC MountpointInterface sMountpointInterface;
 /// @return the fork
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-												_Input NFS_FORK_STRUCT& the_fork)
+												_Input NFS_FORK_STRUCT&	   the_fork)
 {
 	if (catalog && the_fork.ForkName[0] != 0 &&
 		the_fork.DataSize <= kNeFSForkDataSz)
@@ -173,8 +173,8 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 /// @return the fork.
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-											  _Input const Char* name,
-											  Boolean			 isDataFork)
+											  _Input const Char*		 name,
+											  Boolean					 isDataFork)
 {
 	auto			 drv	  = sMountpointInterface.A();
 	NFS_FORK_STRUCT* the_fork = nullptr;
@@ -239,7 +239,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name)
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
+_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
 													  _Input const Int32& flags,
 													  _Input const Int32& kind)
 {
@@ -939,7 +939,7 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 								_Input Bool						   is_rsrc_fork,
 								_Input SizeT					   dataSz,
-								_Input const Char* forkName)
+								_Input const Char*				   forkName)
 {
 	if (!catalog)
 	{
