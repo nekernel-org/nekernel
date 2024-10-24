@@ -59,9 +59,9 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 			Kernel::UInt16 ahci_index		 = 0;
 
 			const Kernel::UInt16 kMaxPortsImplemented = 32;
-			const Kernel::UInt32 kSATASignature		   = 0x00000101;
-			const Kernel::UInt8 kAhciPresent	   = 0x03;
-			const Kernel::UInt8 kAhciIPMActive  = 0x01;
+			const Kernel::UInt32 kSATASignature		  = 0x00000101;
+			const Kernel::UInt8	 kAhciPresent		  = 0x03;
+			const Kernel::UInt8	 kAhciIPMActive		  = 0x01;
 
 			Kernel::Boolean detected = false;
 
@@ -202,17 +202,17 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 
 	Kernel::Int64 free_slot = 0;
 
-		   // Prepare command header.
+	// Prepare command header.
 
 	HbaCmdHeader* cmd_header = (HbaCmdHeader*)kAhciPort->Clb;
 	cmd_header += free_slot;
 
-		   // Read operation/set entries count.
+	// Read operation/set entries count.
 
 	cmd_header->Write = Yes;
 	cmd_header->Prdtl = (Kernel::UInt16)((Size - 1) >> 4) + 1; // PRDT entries count
 
-		   // Prepare command table.
+	// Prepare command table.
 
 	HbaCmdTbl* cmd_tbl = (HbaCmdTbl*)cmd_header->Ctba;
 	Kernel::rt_set_memory(cmd_tbl, 0, sizeof(HbaCmdTbl));
@@ -230,12 +230,12 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 		Buf += 4 * 1024; // Move the Buf pointer forward
 	}
 
-		   // Last PRDT entry
+	// Last PRDT entry
 	cmd_tbl->prdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)Buf;
 	cmd_tbl->prdtEntries[index_byte].Dbc		  = Size - 1; // Byte count left
 	cmd_tbl->prdtEntries[index_byte].InterruptBit = 1;
 
-		   // 5. Prepare the command FIS (Frame Information Structure)
+	// 5. Prepare the command FIS (Frame Information Structure)
 	FisRegH2D* cmd_fis = (FisRegH2D*)(&cmd_tbl->Cfis);
 	Kernel::rt_set_memory(cmd_fis, 0, sizeof(FisRegH2D));
 
@@ -255,10 +255,10 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 	cmd_fis->CountLow  = Size & 0xFF;
 	cmd_fis->CountHigh = (Size >> 8) & 0xFF;
 
-		   // 6. Issue the command by writing to the kAhciPort's command issue register (CI)
+	// 6. Issue the command by writing to the kAhciPort's command issue register (CI)
 	kAhciPort->Ci = 1 << free_slot;
 
-		   // 7. Wait for the command to complete (simple spinlock, no need for an object here)
+	// 7. Wait for the command to complete (simple spinlock, no need for an object here)
 	while (Yes)
 	{
 		if (!(kAhciPort->Ci & (1 << free_slot)))

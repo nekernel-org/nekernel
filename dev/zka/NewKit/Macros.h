@@ -56,6 +56,10 @@
 #define __ZKA_VER__ (2024)
 #endif // !__ZKA_VER__
 
+#ifndef EXTERN
+#define EXTERN extern
+#endif
+
 #ifndef EXTERN_C
 #define EXTERN_C extern "C"
 #endif

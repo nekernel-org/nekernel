@@ -35,7 +35,7 @@
 
 namespace EFI
 {
-	extern void ThrowError(const WideChar* errorCode,
+	EXTERN void ThrowError(const WideChar* errorCode,
 						   const WideChar* reason) noexcept;
 } // namespace EFI
 
