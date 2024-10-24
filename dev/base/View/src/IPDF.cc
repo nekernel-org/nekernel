@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <View/pdf.h>
+#include <View/IPDF.h>

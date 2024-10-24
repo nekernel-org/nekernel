@@ -17,6 +17,15 @@
 
 #define kHPFSMinimumDiskSize (gib_cast(64))
 
+enum
+{
+	kHPFSInvalidDrive,
+	kHPFSCDROMDrive,
+	kHPFSHDDDrive,
+	kHPFSSSDDrive,
+	kHPFSUSBDrive,
+};
+
 struct HPFS_EXPLICIT_BOOT_SECTOR;
 
 struct HPFS_EXPLICIT_BOOT_SECTOR final

@@ -15,6 +15,8 @@
 #define kHPFSMagic	  "  HPFS"
 #define kHPFSMagicLen 8
 
+#define kHPFSMinimumDiskSize (gib_cast(64))
+
 /** @brief Drive type enum. */
 enum
 {

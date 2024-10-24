@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": [ "../", "./", "../../" ],
   "sources_path": [ "src/*.cc" ],
-  "output_name": "firewall.zsc",
+  "output_name": "firewall.exe",
   "compiler_flags": [
     "-ffreestanding",
     "-fno-rtti",

@@ -40,13 +40,13 @@
 #define DDK_SMS_MAX_SZ 128
 
 #ifndef __NEWOSKRNL__
-#error !!! including header in low exception/ring-3 mode !!!
+#error !!! including header in l0/ring-3 mode !!!
 #endif // __NEWOSKRNL__
 
 struct DDK_STATUS_STRUCT;
 struct DDK_OBJECT_MANIFEST;
 
-/// \brief Object handle manifest.
+/// \brief manifest structure, represents a structure with methods and fields.
 struct DDK_OBJECT_MANIFEST DK_FINAL
 {
 	char*	p_name;

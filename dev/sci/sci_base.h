@@ -16,6 +16,7 @@ Purpose: SCI core header file (C++ only).
 #define IMPORT_XPCOM extern "XPCOM"
 #define IMPORT_CXX	 extern "C++"
 #define IMPORT_C	 extern "C"
+
 typedef bool Bool;
 typedef void Void;
 
@@ -76,15 +77,15 @@ class IEventListener : public ClsID
 /// @note Handle typedefs.
 // ------------------------------------------------------------------------------------------ //
 
-typedef VoidPtr Object;
+typedef VoidPtr SCIObject;
 
-typedef Object DLLObject;
-typedef Object IOObject;
-typedef Object SCMObject;
-typedef Object ThreadObject;
-typedef Object SocketObject;
-typedef Object ShellObject;
-typedef Object UIObject;
+typedef SCIObject DLLObject;
+typedef SCIObject IOObject;
+typedef SCIObject SCMObject;
+typedef SCIObject ThreadObject;
+typedef SCIObject SocketObject;
+typedef SCIObject ShellObject;
+typedef SCIObject UIObject;
 
 // ------------------------------------------------------------------------------------------ //
 
@@ -96,18 +97,18 @@ typedef Object UIObject;
 /// @param symbol the symbol to look for
 /// @param dll_handle the DLL handle.
 /// @return the proc pointer.
-IMPORT_C Object LdrGetDLLSymbolFromHandle(_Input const Char* symbol, _Input Object dll_handle);
+IMPORT_C SCIObject LdrGetDLLSymbolFromHandle(_Input const Char* symbol, _Input SCIObject dll_handle);
 
 /// @brief Open DLL handle.
 /// @param path
 /// @param drv
 /// @return
-IMPORT_C Object LdrOpenDLLHandle(_Input const Char* path, _Input const Char* drive_letter);
+IMPORT_C SCIObject LdrOpenDLLHandle(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close DLL handle
 /// @param dll_handle
 /// @return
-IMPORT_C Void LdrCloseDLLHandle(_Input Object* dll_handle);
+IMPORT_C Void LdrCloseDLLHandle(_Input SCIObject* dll_handle);
 
 // ------------------------------------------------------------------------------------------ //
 // File API.
@@ -117,37 +118,38 @@ IMPORT_C Void LdrCloseDLLHandle(_Input Object* dll_handle);
 /// @param fs_path the filesystem path.
 /// @param drive_letter drive name, use NULL to use default one.
 /// @return the file descriptor of the file.
-IMPORT_C Object IoOpenFile(const Char* fs_path, const Char* drive_letter);
+IMPORT_C SCIObject IoOpenFile(const Char* fs_path, const Char* drive_letter);
 
 /// @brief Closes a file and flushes its content.
 /// @param file_desc the file descriptor.
 /// @return void.
-IMPORT_C Void IoCloseFile(_Input Object file_desc);
+IMPORT_C Void IoCloseFile(_Input SCIObject file_desc);
 
 /// @brief Write data to a file.
 /// @param file_desc the file descriptor.
 /// @param out_data the data to write.
 /// @param sz_data the size of the data to write.
 /// @return the number of bytes written.
-IMPORT_C UInt32 IoWriteFile(_Input Object file_desc, _Output VoidPtr out_data, SizeT sz_data);
+IMPORT_C UInt32 IoWriteFile(_Input SCIObject file_desc, _Output VoidPtr out_data, SizeT sz_data);
 
 /// @brief Read data from a file.
 /// @param file_desc the file descriptor.
 /// @param out_data the data to read.
 /// @param sz_data the size of the data to read.
-IMPORT_C UInt32 IoReadFile(_Input Object file_desc, _Output VoidPtr* out_data, SizeT sz_data);
+IMPORT_C UInt32 IoReadFile(_Input SCIObject file_desc, _Output VoidPtr* out_data, SizeT sz_data);
 
 /// @brief Rewind the file pointer to the beginning of the file.
 /// @param file_desc the file descriptor.
 /// @return the number of bytes read.
-IMPORT_C UInt64 IoRewindFile(_Input Object file_desc);
+IMPORT_C UInt64 IoRewindFile(_Input SCIObject file_desc);
 
 /// @brief Tell the current position of the file pointer.
 /// @param file_desc the file descriptor.
 /// @return the current position of the file pointer.
-IMPORT_C UInt64 IoTellFile(_Input Object file_desc);
+IMPORT_C UInt64 IoTellFile(_Input SCIObject file_desc);
 
-IMPORT_C UInt64 IoSeekFile(_Input Object file_desc, UInt64 file_offset);
+/// @brief Seek file offset from file descriptor.
+IMPORT_C UInt64 IoSeekFile(_Input SCIObject file_desc, UInt64 file_offset);
 
 // ------------------------------------------------------------------------
 // TLS API.
@@ -182,11 +184,11 @@ SInt32 XPCOMReleaseClass(_Input TCLS* cls);
 /// @brief Creates an XPCOM instance in the process.
 /// @param handle_instance the XPCOM handle.
 /// @param flags the XPCOM flags.
-IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output Object* handle_instance);
+IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output SCIObject* handle_instance);
 
 /// @brief Destroys an XPCOM instance of the process.
 /// @param handle_instance the XPCOM handle.
-IMPORT_C Void XPCOMDestroyInstance(_Input Object handle_instance);
+IMPORT_C Void XPCOMDestroyInstance(_Input SCIObject handle_instance);
 
 #endif // !__XPCOM_IMPL__
 
@@ -281,7 +283,7 @@ IMPORT_C Char* DrvGetDriveLetterFromPath(_Input const Char* path);
 /// @brief Get a mounted drive from a letter.
 /// @param letter the letter (A..Z).
 /// @return the drive object.
-IMPORT_C Object DrvGetMountedDrive(_Input const Char letter);
+IMPORT_C SCIObject DrvGetMountedDrive(_Input const Char letter);
 
 /// @brief Mount a drive.
 /// @param path the path to mount.
@@ -300,13 +302,13 @@ IMPORT_C Void DrvUnmountDrive(_Input const Char letter);
 /// @param event_name the event name.
 /// @param listener the listener to add.
 /// @return the event listener.
-IMPORT_C Void EvtAddListener(_Input const Char* event_name, _Input Object listener);
+IMPORT_C Void EvtAddListener(_Input const Char* event_name, _Input SCIObject listener);
 
 /// @brief Remove an event listener.
 /// @param event_name the event name.
 /// @param listener the listener to remove.
 /// @return the event listener.
-IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input Object listener);
+IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input SCIObject listener);
 
 /// @brief Dispatch an event.
 /// @param event_name the event name.

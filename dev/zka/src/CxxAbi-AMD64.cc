@@ -14,7 +14,7 @@ atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
 
 uarch_t __atexit_func_count;
 
-/// @brief Dynamic Shared Object Handle.
+/// @brief dynamic shared object Handle.
 Kernel::UIntPtr __dso_handle;
 
 EXTERN_C Kernel::Void __cxa_pure_virtual(void* self)

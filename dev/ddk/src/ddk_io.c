@@ -8,11 +8,16 @@
 
 #include <ddk/io.h>
 
-DK_EXTERN void KernelPrintChar(const char ch)
+DK_EXTERN void KernelPrintChar(const char msg_ch)
 {
 	char assembled[2] = {0};
-	assembled[0]	  = ch;
-	assembled[1]	  = 0;
+
+	assembled[0]	  = msg_ch;
+
+	if (msg_ch != 0)
+	{
+		assembled[1]	  = 0;
+	}
 
 	KernelCall("SrWriteCharacter", 1, assembled, 1);
 }

@@ -1,7 +1,7 @@
 ;; /*
 ;; *    ---------------------------------------------------
 ;; *
-;; * 	Copyright ZKA Web Services Co., all rights reserved.
+;; * 	Copyright ZKA Web Services Co.
 ;; *
 ;; *    File: Install.asm
 ;; *    Purpose: ZKA installer program, runs at ring-0.
