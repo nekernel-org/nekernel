@@ -7,8 +7,8 @@ Purpose: SCI core header file (C++ only).
 
 ------------------------------------------- */
 
-#ifndef __SCI_BASE_HXX__
-#define __SCI_BASE_HXX__
+#ifndef __SCI_BASE_H__
+#define __SCI_BASE_H__
 
 #include <sci/sci_hint.h>
 
@@ -316,4 +316,4 @@ IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input SCIObject 
 /// @return the event data.
 IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr event_data);
 
-#endif // ifndef __SCI_BASE_HXX__
+#endif // ifndef __SCI_BASE_H__

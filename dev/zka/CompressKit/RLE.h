@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __KERNELKIT_RLE_HXX__
-#define __KERNELKIT_RLE_HXX__
+#ifndef __KERNELKIT_RLE_H__
+#define __KERNELKIT_RLE_H__
 
 #include <NewKit/Defines.h>
 
@@ -15,4 +15,4 @@ namespace Kernel
 	class IRleProxy;
 } // namespace Kernel
 
-#endif // !ifndef __KERNELKIT_RLE_HXX__
+#endif // !ifndef __KERNELKIT_RLE_H__

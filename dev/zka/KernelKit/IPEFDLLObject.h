@@ -7,8 +7,8 @@
  *      ========================================================
  */
 
-#ifndef __KERNELKIT_SHARED_OBJECT_HXX__
-#define __KERNELKIT_SHARED_OBJECT_HXX__
+#ifndef __KERNELKIT_SHARED_OBJECT_H__
+#define __KERNELKIT_SHARED_OBJECT_H__
 
 #include <KernelKit/PEF.h>
 #include <NewKit/Defines.h>
@@ -103,4 +103,4 @@ namespace Kernel
 	EXTERN_C Void rtl_fini_dll(UserProcess* header, IDLL lib, Bool* successful);
 } // namespace Kernel
 
-#endif /* ifndef __KERNELKIT_SHARED_OBJECT_HXX__ */
+#endif /* ifndef __KERNELKIT_SHARED_OBJECT_H__ */

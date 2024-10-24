@@ -8,8 +8,8 @@
 	@brief The Explicit Partition Map scheme.
 */
 
-#ifndef __FIRMWARE_EPM_HXX__
-#define __FIRMWARE_EPM_HXX__
+#ifndef __FIRMWARE_EPM_H__
+#define __FIRMWARE_EPM_H__
 
 #include <NewKit/Defines.h>
 
@@ -119,4 +119,4 @@ enum
 
 typedef struct _BOOT_BLOCK_STRUCT BOOT_BLOCK_STRUCT;
 
-#endif // ifndef __FIRMWARE_EPM_HXX__
+#endif // ifndef __FIRMWARE_EPM_H__

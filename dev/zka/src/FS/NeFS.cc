@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef __FSKIT_USE_NEFS__
+#ifdef __FSKIT_INCLUDES_NEFS__
 
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
@@ -1054,4 +1054,4 @@ namespace Kernel::Detail
 } // namespace Kernel::Detail
 #endif // !__ZKA_MINIMAL_OS__
 
-#endif // ifdef __FSKIT_USE_NEFS__
+#endif // ifdef __FSKIT_INCLUDES_NEFS__

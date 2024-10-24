@@ -11,9 +11,9 @@
 
 #include <crt/defines.h>
 
-inline ptr_type __ndk_alloca(size_type sz)
+inline ptr_type __rt_alloca(size_type sz)
 {
 	return __builtin_alloca(sz);
 }
 
-#define alloca __ndk_alloca
+#define alloca __rt_alloca

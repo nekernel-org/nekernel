@@ -19,9 +19,9 @@
 
 #pragma once
 
-#ifdef __FSKIT_USE_NEFS__
+#ifdef __FSKIT_INCLUDES_NEFS__
 #include <FSKit/NeFS.h>
-#endif // __FSKIT_USE_NEFS__
+#endif // __FSKIT_INCLUDES_NEFS__
 
 #include <CompilerKit/CompilerKit.h>
 #include <HintKit/CompilerHint.h>
@@ -135,7 +135,7 @@ namespace Kernel
 		virtual bool  Rewind(_Input NodePtr node) = 0;
 	};
 
-#ifdef __FSKIT_USE_NEFS__
+#ifdef __FSKIT_INCLUDES_NEFS__
 	/**
 	 * @brief Based of IFilesystemMgr, takes care of managing NeFS
 	 * disks.
@@ -184,7 +184,7 @@ namespace Kernel
 		NeFSParser* fImpl{nullptr};
 	};
 
-#endif // ifdef __FSKIT_USE_NEFS__
+#endif // ifdef __FSKIT_INCLUDES_NEFS__
 
 	/**
 	 * Usable FileStream

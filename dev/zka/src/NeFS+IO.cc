@@ -17,7 +17,7 @@
  *
  *************************************************************/
 
-#ifdef __FSKIT_USE_NEFS__
+#ifdef __FSKIT_INCLUDES_NEFS__
 
 #include <FirmwareKit/EPM.h>
 
@@ -98,4 +98,4 @@ Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIn
 	return DrvTrait.fPacket.fPacketGood;
 }
 
-#endif // ifdef __FSKIT_USE_NEFS__
+#endif // ifdef __FSKIT_INCLUDES_NEFS__

@@ -11,8 +11,8 @@
 
 ------------------------------------------- */
 
-#ifndef __KERNELKIT_INC_PEF_HXX__
-#define __KERNELKIT_INC_PEF_HXX__
+#ifndef __KERNELKIT_INC_PEF_H__
+#define __KERNELKIT_INC_PEF_H__
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/LoaderInterface.h>
@@ -113,4 +113,4 @@ namespace Kernel
 #define kPefForkKind	kPefMagic
 #define kPefForkKindFAT kPefMagicFat
 
-#endif /* ifndef __KERNELKIT_INC_PEF_HXX__ */
+#endif /* ifndef __KERNELKIT_INC_PEF_H__ */

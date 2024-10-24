@@ -9,8 +9,8 @@
 
 ------------------------------------------- */
 
-#ifndef __MODULE_NVME_HXX__
-#define __MODULE_NVME_HXX__
+#ifndef __MODULE_NVME_H__
+#define __MODULE_NVME_H__
 
 #include <NewKit/Defines.h>
 
@@ -109,4 +109,4 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#endif // ifndef __MODULE_NVME_HXX__
+#endif // ifndef __MODULE_NVME_H__

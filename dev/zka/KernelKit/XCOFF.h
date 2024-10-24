@@ -11,8 +11,8 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_XCOFF_HXX__
-#define __INC_XCOFF_HXX__
+#ifndef INC_XOCFF_H
+#define INC_XOCFF_H
 
 #include <NewKit/Defines.h>
 
@@ -48,4 +48,4 @@ typedef struct XCoffForkHeader
 	Kernel::Char fCodeSignFork[cForkNameLen];
 } XCoffForkHeader;
 
-#endif // ifndef __INC_XCOFF_HXX__
+#endif // ifndef INC_XOCFF_H

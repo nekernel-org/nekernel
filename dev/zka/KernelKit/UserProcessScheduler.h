@@ -99,7 +99,7 @@ namespace Kernel
 
 	// end of operator overloading.
 
-	enum ProcessSubsystemEnum : Int32
+	enum class ProcessSubsystem: Int32
 	{
 		kProcessSubsystemSecurity = 100,
 		kProcessSubsystemApplication,
@@ -109,7 +109,6 @@ namespace Kernel
 		kProcessSubsystemCount	 = 4,
 	};
 
-	using ProcessSubsystem = ProcessSubsystemEnum;
 	using ProcessTime	   = UInt64;
 	using PID			   = Int64;
 

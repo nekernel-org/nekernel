@@ -8,7 +8,7 @@
 #include <KernelKit/Heap.h>
 
 #ifndef __ZKA_MINIMAL_OS__
-#ifdef __FSKIT_USE_NEFS__
+#ifdef __FSKIT_INCLUDES_NEFS__
 
 /// @brief NeFS File manager.
 /// BUGS: 0
@@ -244,5 +244,5 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#endif // ifdef __FSKIT_USE_NEFS__
+#endif // ifdef __FSKIT_INCLUDES_NEFS__
 #endif // ifndef __ZKA_MINIMAL_OS__

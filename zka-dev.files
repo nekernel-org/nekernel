@@ -8,11 +8,6 @@ dev/base/RunDLL64/build.json
 dev/base/RunDLL64/src/Main.cc
 dev/base/RunXPCOM/build.json
 dev/base/RunXPCOM/src/Main.cc
-dev/base/View/IPDF.h
-dev/base/View/VPainter.h
-dev/base/View/build.json
-dev/base/View/src/IPDF.cc
-dev/base/View/src/VPainter.cc
 dev/crt/alloca.h
 dev/crt/base_alloc.h
 dev/crt/base_exception.h
@@ -42,7 +37,6 @@ dev/hpfs/epm/epm.asm
 dev/hpfs/hpfs.json
 dev/hpfs/hpfs_specs.h
 dev/hpfs/src/hpfs_main.cc
-dev/install/hal/install_api.asm
 dev/modules/ACPI/ACPI.h
 dev/modules/ACPI/ACPIFactoryInterface.h
 dev/modules/AHCI/AHCI.h

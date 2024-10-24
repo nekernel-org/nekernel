@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_DRIVE_MANAGER_HXX__
-#define __INC_DRIVE_MANAGER_HXX__
+#ifndef __INC_DRIVE_MANAGER_H__
+#define __INC_DRIVE_MANAGER_H__
 
 #include <KernelKit/UserProcessScheduler.h>
 #include <CompilerKit/CompilerKit.h>
@@ -152,4 +152,4 @@ namespace Kernel
 	DriveTrait io_construct_main_drive(void) noexcept;
 } // namespace Kernel
 
-#endif /* ifndef __INC_DRIVE_MANAGER_HXX__ */
+#endif /* ifndef __INC_DRIVE_MANAGER_H__ */

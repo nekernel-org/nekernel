@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __MOD_ACPI_HXX__
-#define __MOD_ACPI_HXX__
+#ifndef __MOD_ACPI_H__
+#define __MOD_ACPI_H__
 
 #include <KernelKit/DebugOutput.h>
 #include <modules/ACPI/ACPI.h>
@@ -57,4 +57,4 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#endif // !__MOD_ACPI_HXX__
+#endif // !__MOD_ACPI_H__

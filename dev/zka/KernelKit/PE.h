@@ -11,8 +11,8 @@
 
 ------------------------------------------- */
 
-#ifndef __KERNELKIT_INC_PE_HXX__
-#define __KERNELKIT_INC_PE_HXX__
+#ifndef __KERNELKIT_INC_PE_H__
+#define __KERNELKIT_INC_PE_H__
 
 #include <NewKit/Defines.h>
 
@@ -140,4 +140,4 @@ enum
 	cPEResourceId = 0xFFaadd00,
 };
 
-#endif /* ifndef __KERNELKIT_INC_PE_HXX__ */
+#endif /* ifndef __KERNELKIT_INC_PE_H__ */
