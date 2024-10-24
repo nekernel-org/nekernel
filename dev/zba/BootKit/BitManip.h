@@ -7,8 +7,8 @@
 #ifndef __BITMANIP_H__
 #define __BITMANIP_H__
 
-/// Name: Bits API.
-/// Purpose: Bit manip helpers, based on CoreBoot header.
+/// File: BitManip.h
+/// Purpose: Bit manipulation helpers, based on coreboot-dev.
 
 #define bk_set_bit(X, O)	  X = (1 << O) | X
 #define bk_clear_bit(X, O)	  X = ~(1 << O) & X

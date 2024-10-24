@@ -33,16 +33,18 @@ namespace Kernel
 		{
 			auto spin = 0U;
 
-			while (spin != N)
+			while (spin < N)
 			{
 				if (*expr)
 				{
 					fLockStatus | kLockDone;
 					break;
 				}
+
+				++spin;
 			}
 
-			if (spin == N)
+			if (spin > N)
 				fLockStatus | kLockTimedOut;
 		}
 

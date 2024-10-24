@@ -51,11 +51,11 @@ namespace Kernel
 	inline constexpr HError kErrorInvalidCreds		 = 61;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
-	/// @brief Reports a bug to system check.
+	/// @brief Raises a bug check stop code.
 	Void err_bug_check_raise(void) noexcept;
 
 	/// @brief Does a system wide bug check.
-	/// @param void no params.
+	/// @param void no params are needed.
 	/// @return if error-free: false, otherwise true.
 	Boolean err_bug_check(void) noexcept;
 } // namespace Kernel
