@@ -7,7 +7,7 @@ Purpose: SMS XPCOM interface
 
 ------------------------------------------- */
 
-#ifndef __NDK__
+#ifndef __TOOLCHAINKIT__
 #define object class
 #define protocol class
 #define interface private
@@ -22,13 +22,12 @@ Purpose: SMS XPCOM interface
 #define _Input
 #define clsid(X)
 
-#warning ! You may be using the clang version of the NDK, please be cautious that some features mayn't be present. !
-#endif // !__NDK__
+#warning !! You may be using the clang version of the ToolchainKit, please be cautious that some features mayn't be present. !!
+#endif // ifndef __TOOLCHAINKIT__
 
-clsid("0943A614-0201-4107-8F8D-E909DF7F53C9")
-protocol ISMS
+interface("0943A614-0201-4107-8F8D-E909DF7F53C9") ISMS
 {
-interface:
+interface_public:
     interface_method INT32 SendMessage(_Input CONST CHAR* bytes, _Input SIZE_T bytes_size);
     interface_method INT32 RecvMessage(_Output CONST CHAR** bytes_in, _Input SIZE_T bytes_size);
 };

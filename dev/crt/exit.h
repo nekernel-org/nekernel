@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <crt/defines.h>
+
 extern "C" int exit(int code);
 
 /// @brief Standard C++ namespace

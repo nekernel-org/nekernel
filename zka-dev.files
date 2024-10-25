@@ -14,6 +14,7 @@ dev/crt/base_exception.h
 dev/crt/crtx64.json
 dev/crt/defines.h
 dev/crt/exit.h
+dev/comm/xpcom_sms.idl
 dev/crt/math.h
 dev/crt/src/alloca.cc
 dev/crt/src/base_exception.cc
