@@ -49,12 +49,9 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSL
 			-DEFI_FUNCTION_WRAPPER -I./ -I../zka -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -D__HAVE_ZKA_APIS__ -D__ZKA_USE_FB__ -D__ZKA_AMD64__ -D__ZKA__
 
-BOOT_LOADER=zbaosldr.exe
+BOOTLOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe
-DDK=ddk.dll
-SCI=sci.dll
-CRT=crtx64.dll
-SYS_CHK=syschk.sys
+SYSCHK=syschk.sys
 STARTUP=startup.sys
 
 .PHONY: invalid-recipe
@@ -65,15 +62,13 @@ invalid-recipe:
 all: compile-amd64
 	mkdir -p src/Root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o src/$(BOOT_LOADER)
-	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/BOOTX64.EFI
-	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/ZBA.EFI
+	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTX64.EFI
+	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/ZBAOSLDR.EFI
 	$(COPY) ../zka/$(KERNEL) src/Root/$(KERNEL)
-	$(COPY) ../sci/$(SCI) src/Root/$(SCI)
-	$(COPY) ../ddk/$(DDK) src/Root/$(DDK)
-	$(COPY) ./Modules/SysChk/$(SYS_CHK) src/Root/$(SYS_CHK)
-	$(COPY) ./Modules/SysChk/$(SYS_CHK) src/Root/zka/$(STARTUP)
+	$(COPY) ./Modules/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
+	$(COPY) ./Modules/SysChk/$(STARTUP) src/Root/zka/$(STARTUP)
 	$(COPY) ../crt/$(CRT) src/Root/$(CRT)
-	$(COPY) src/$(BOOT_LOADER) src/Root/$(BOOT_LOADER)
+	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__

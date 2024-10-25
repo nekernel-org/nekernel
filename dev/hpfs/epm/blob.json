@@ -1,6 +1,0 @@
-{
-  "compiler_path": "nasm",
-  "sources_path": ["epm.asm"],
-  "output_name": "bl.bin",
-  "compiler_flags": ["-f bin"]
-}

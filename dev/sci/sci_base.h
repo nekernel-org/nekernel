@@ -10,8 +10,6 @@ Purpose: SCI core header file (C++ only).
 #ifndef __SCI_BASE_H__
 #define __SCI_BASE_H__
 
-#include <sci/sci_hint.h>
-
 #define ATTRIBUTE(X) __attribute__((X))
 #define IMPORT_XPCOM extern "XPCOM"
 #define IMPORT_CXX	 extern "C++"
@@ -35,46 +33,12 @@ typedef __INT8_TYPE__  SInt8;
 typedef void*			 VoidPtr;
 typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
+
+#include <sci/sci_hint.h>
 #include <sci/sci_lpc.h>
 
-#ifdef __XPCOM_IMPL__
-#include <sci/xpcom_core.h>
-#else
-class IUnknown; // Refrenced from an IDB entry.
-class ICLSID;	// From the IDB, the constructor of the object, e.g: IAppCLSID.
-class UUID;
-class ATTRIBUTE(uuid("d7c144b6-0792-44b8-b06b-02b227b547df")) IUnknown
-{
-public:
-	explicit IUnknown() = default;
-	virtual ~IUnknown() = default;
-
-	IUnknown& operator=(const IUnknown&) = default;
-	IUnknown(const IUnknown&)			 = default;
-
-	virtual SInt32	  Release()				   = 0;
-	virtual void	  RemoveRef()			   = 0;
-	virtual IUnknown* AddRef()				   = 0;
-	virtual VoidPtr	  QueryClass(UUID* p_uuid) = 0;
-};
-template <typename FnSign, typename ClsID>
-class IEventListener : public ClsID
-{
-	friend ClsID;
-
-	explicit IEventListener() = default;
-	virtual ~IEventListener() = default;
-
-	IEventListener& operator=(const IEventListener&) = default;
-	IEventListener(const IEventListener&)			 = default;
-
-	virtual IEventListener& operator-=(const Char* event_name);
-	virtual IEventListener& operator+=(FnSign arg) = 0;
-};
-#endif
-
 // ------------------------------------------------------------------------------------------ //
-/// @note Handle typedefs.
+/// @brief Handle Type Definitions.
 // ------------------------------------------------------------------------------------------ //
 
 typedef VoidPtr SCIObject;
@@ -88,9 +52,7 @@ typedef SCIObject ShellObject;
 typedef SCIObject UIObject;
 
 // ------------------------------------------------------------------------------------------ //
-
-// ------------------------------------------------------------------------------------------ //
-/// @note Dynamic Loader API.
+/// @brief Dynamic Loader API.
 // ------------------------------------------------------------------------------------------ //
 
 /// @brief Get function which is part of the DLL.
