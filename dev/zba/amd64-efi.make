@@ -61,7 +61,7 @@ invalid-recipe:
 .PHONY: all
 all: compile-amd64
 	mkdir -p src/Root/EFI/BOOT
-	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o src/$(BOOT_LOADER)
+	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o src/$(BOOTLOADER)
 	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTX64.EFI
 	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/ZBAOSLDR.EFI
 	$(COPY) ../zka/$(KERNEL) src/Root/$(KERNEL)

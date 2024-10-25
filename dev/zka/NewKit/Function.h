@@ -1,5 +1,5 @@
-#ifndef _INC_FUNCTION_HPP__
-#define _INC_FUNCTION_HPP__
+#ifndef _INC_FUNCTION_H__
+#define _INC_FUNCTION_H__
 
 #include <NewKit/Defines.h>
 
@@ -50,4 +50,4 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#endif // !_INC_FUNCTION_HPP__
+#endif // !_INC_FUNCTION_H__

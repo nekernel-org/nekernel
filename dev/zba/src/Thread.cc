@@ -39,8 +39,8 @@ namespace Boot
 		if (blob_bytes[0] == kMagMz0 &&
 			blob_bytes[1] == kMagMz1)
 		{
-			LDR_EXEC_HEADER_PTR		header_ptr	   = ldr_find_exec_header(blob_bytes);
-			LDR_OPTIONAL_HEADER_PTR opt_header_ptr = ldr_find_opt_exec_header(blob_bytes);
+			LDR_EXEC_HEADER_PTR		header_ptr	   = CFKit::ldr_find_exec_header(blob_bytes);
+			LDR_OPTIONAL_HEADER_PTR opt_header_ptr = CFKit::ldr_find_opt_exec_header(blob_bytes);
 
 			if (!header_ptr || !opt_header_ptr)
 				return;

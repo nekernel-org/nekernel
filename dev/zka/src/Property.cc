@@ -6,7 +6,7 @@
 
 #include <CFKit/Property.h>
 
-namespace Kernel
+namespace CFKit
 {
 	Property::~Property() = default;
 
@@ -24,4 +24,4 @@ namespace Kernel
 	{
 		return fAction;
 	}
-} // namespace Kernel
+} // namespace CFKit

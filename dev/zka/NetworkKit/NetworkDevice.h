@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_NETWORK_DEVICE_HPP__
-#define __INC_NETWORK_DEVICE_HPP__
+#ifndef __INC_NETWORK_DEVICE_H__
+#define __INC_NETWORK_DEVICE_H__
 
 #include <KernelKit/DeviceMgr.h>
 #include <NetworkKit/IP.h>
@@ -35,7 +35,7 @@ namespace Kernel
 
 	public:
 		const Char* Name() const override;
-		Boolean		Name(const Char* strView);
+		Boolean		Name(const Char* newStr);
 
 	private:
 		static constexpr auto cNetworkNameLen = 512;
@@ -71,10 +71,13 @@ namespace Kernel
 	/// @brief GSM device.
 	using GSMNetworkDevice = NetworkDevice;
 
+	/// @brief Bluetooth device.
+	using BTNetworkDevice = NetworkDevice;
+
 	/// @brief LTE device.
 	using LTENetworkDevice = NetworkDevice;
 } // namespace Kernel
 
 #include <NetworkKit/NetworkDevice.inl>
 
-#endif // !__INC_NETWORK_DEVICE_HPP__
+#endif // !__INC_NETWORK_DEVICE_H__

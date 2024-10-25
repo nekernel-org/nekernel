@@ -6,6 +6,9 @@
 
 #include <KernelKit/DebugOutput.h>
 
+#include <stdint.h>
+#include <stddef.h>
+
 using namespace Kernel;
 
 /// @brief memset definition in C++.

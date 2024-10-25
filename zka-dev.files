@@ -247,7 +247,7 @@ dev/zka/src/Array.cc
 dev/zka/src/ArrayList.cc
 dev/zka/src/Atom.cc
 dev/zka/src/BitMapMgr.cc
-dev/zka/src/CRuntime.cc
+dev/zka/src/CRuntimeLibrary.cc
 dev/zka/src/CodeMgr.cc
 dev/zka/src/Crc32.cc
 dev/zka/src/CxxAbi-AMD64.cc

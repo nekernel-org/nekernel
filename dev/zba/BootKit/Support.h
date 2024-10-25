@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 /// @file Support.h
 /// @brief Purpose of this file is to help port libs into the bootloader.
 

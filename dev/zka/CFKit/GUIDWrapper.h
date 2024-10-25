@@ -15,8 +15,10 @@
 #define kXRNNil "@{........-....-M...-N...-............}"
 
 // eXtensible Resource Information
-namespace Kernel::XRN
+namespace CFKit::XRN
 {
+	using namespace Kernel;
+
 	union GUIDSequence {
 		alignas(8) UShort u8[16];
 		alignas(8) UShort u16[8];
@@ -55,4 +57,4 @@ namespace Kernel::XRN
 	private:
 		GUIDSequence fUUID;
 	};
-} // namespace Kernel::XRN
+} // namespace CFKit::XRN

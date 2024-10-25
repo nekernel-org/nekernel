@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_PROPS_HPP__
-#define __INC_PROPS_HPP__
+#ifndef __INC_PROPS_H__
+#define __INC_PROPS_H__
 
 #include <NewKit/Array.h>
 #include <NewKit/Defines.h>
@@ -14,8 +14,10 @@
 
 #define cMaxPropLen 4096
 
-namespace Kernel
+namespace CFKit
 {
+	using namespace Kernel;
+
 	/// @brief handle to anything (number, ptr, string...)
 	using PropertyId = UIntPtr;
 
@@ -42,6 +44,11 @@ namespace Kernel
 
 	template <SizeT N>
 	using PropertyArray = Array<Property, N>;
-} // namespace Kernel
+} // namespace CFKit
 
-#endif // !__INC_PROPS_HPP__
+namespace Kernel
+{
+	using namespace CFKit;
+}
+
+#endif // !__INC_PROPS_H__

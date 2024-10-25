@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_MP_MANAGER_HPP__
-#define __INC_MP_MANAGER_HPP__
+#ifndef __INC_MP_MANAGER_H__
+#define __INC_MP_MANAGER_H__
 
 #include <ArchKit/ArchKit.h>
 #include <CompilerKit/CompilerKit.h>
@@ -146,4 +146,4 @@ namespace Kernel
 	Void mp_hang_thread(HAL::StackFramePtr stack);
 } // namespace Kernel
 
-#endif // !__INC_MP_MANAGER_HPP__
+#endif // !__INC_MP_MANAGER_H__

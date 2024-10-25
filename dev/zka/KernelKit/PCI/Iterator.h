@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __PCI_ITERATOR_HPP__
-#define __PCI_ITERATOR_HPP__
+#ifndef __PCI_ITERATOR_H__
+#define __PCI_ITERATOR_H__
 
 #include <KernelKit/PCI/Database.h>
 #include <KernelKit/PCI/Device.h>
@@ -40,4 +40,4 @@ namespace Kernel::PCI
 	};
 } // namespace Kernel::PCI
 
-#endif // __PCI_ITERATOR_HPP__
+#endif // __PCI_ITERATOR_H__

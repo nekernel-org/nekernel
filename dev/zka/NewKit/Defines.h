@@ -8,12 +8,8 @@
 
 #include <NewKit/Macros.h>
 
-#define NEWKIT_VERSION	  "1.01"
-#define NEWKIT_VERSION_CB 0x0101
-
-#if !defined(_INC_NO_STDC_HEADERS) && defined(__GNUC__)
-#include <crt/defines.h>
-#endif
+#define NEWKIT_VERSION	  "1.1.0"
+#define NEWKIT_VERSION_CB 0x01100
 
 #ifdef __has_feature
 #if !__has_feature(cxx_nullptr)
