@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __EFI__
-#define __EFI__
+#ifndef __EFI_H__
+#define __EFI_H__
 
 /**
 @brief Kernel Implementation of EFI.
@@ -880,4 +880,4 @@ typedef struct _EfiMpServicesProtocol
 	EFI_MP_SERVICES_WHOAMI					 WhoAmI;
 } EfiMpServicesProtocol;
 
-#endif // ifndef __EFI__
+#endif // ifndef __EFI_H__

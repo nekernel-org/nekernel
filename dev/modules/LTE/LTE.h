@@ -7,8 +7,8 @@ Purpose: LTE Standard Library.
 
 ------------------------------------------- */
 
-#ifndef _INC_NETWORK_LTE_HXX_
-#define _INC_NETWORK_LTE_HXX_
+#ifndef _INC_NETWORK_LTE_H_
+#define _INC_NETWORK_LTE_H_
 
 #include <NewKit/Defines.h>
 #include <NewKit/String.h>
@@ -37,4 +37,4 @@ Kernel::VoidPtr lte_read_sim_file(Kernel::Char* file,
 								  Kernel::Size	offset,
 								  Kernel::Int32 simSlot);
 
-#endif // ifndef _INC_NETWORK_LTE_HXX_
+#endif // ifndef _INC_NETWORK_LTE_H_

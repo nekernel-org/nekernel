@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef INC_PROCESS_SCHEDULER_HXX
-#define INC_PROCESS_SCHEDULER_HXX
+#ifndef INC_PROCESS_SCHEDULER_H
+#define INC_PROCESS_SCHEDULER_H
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/LockDelegate.h>
@@ -318,4 +318,4 @@ namespace Kernel
 
 ////////////////////////////////////////////////////
 
-#endif /* ifndef INC_PROCESS_SCHEDULER_HXX */
+#endif /* ifndef INC_PROCESS_SCHEDULER_H */

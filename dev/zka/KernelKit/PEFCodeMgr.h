@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_CODE_MANAGER_PEF_HXX_
-#define _INC_CODE_MANAGER_PEF_HXX_
+#ifndef _INC_CODE_MANAGER_PEF_H_
+#define _INC_CODE_MANAGER_PEF_H_
 
 #include <KernelKit/PEF.h>
 #include <NewKit/ErrorOr.h>
@@ -64,4 +64,4 @@ namespace Kernel
 	} // namespace Utils
 } // namespace Kernel
 
-#endif // ifndef _INC_CODE_MANAGER_PEF_HXX_
+#endif // ifndef _INC_CODE_MANAGER_PEF_H_

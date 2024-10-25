@@ -7,8 +7,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_IPC_ENDPOINT_HXX_
-#define _INC_IPC_ENDPOINT_HXX_
+#ifndef _INC_IPC_ENDPOINT_H_
+#define _INC_IPC_ENDPOINT_H_
 
 #include <NewKit/Defines.h>
 #include <NewKit/String.h>
@@ -88,4 +88,4 @@ namespace Kernel
 	Bool ipc_construct_packet(_Output IPC_MESSAGE_STRUCT** pckt_in);
 } // namespace Kernel
 
-#endif // _INC_IPC_ENDPOINT_HXX_
+#endif // _INC_IPC_ENDPOINT_H_

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _INC_MODULE_MBCI_HXX_
-#define _INC_MODULE_MBCI_HXX_
+#ifndef _INC_MODULE_MBCI_H_
+#define _INC_MODULE_MBCI_H_
 
 #include <NewKit/Defines.h>
 #include <modules/ACPI/ACPI.h>
@@ -96,4 +96,4 @@ namespace Kernel
 	typedef UInt64 MBCIAuthyKeyType;
 } // namespace Kernel
 
-#endif // ifndef _INC_MODULE_MBCI_HXX_
+#endif // ifndef _INC_MODULE_MBCI_H_

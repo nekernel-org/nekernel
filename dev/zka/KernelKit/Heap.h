@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef INC_KERNEL_HEAP_HXX
-#define INC_KERNEL_HEAP_HXX
+#ifndef INC_KERNEL_HEAP_H
+#define INC_KERNEL_HEAP_H
 
 // last-rev 30/01/24
 // file: Heap.h
@@ -71,4 +71,4 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#endif // !INC_KERNEL_HEAP_HXX
+#endif // !INC_KERNEL_HEAP_H
