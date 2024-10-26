@@ -41,6 +41,7 @@ namespace Kernel
 	}
 
 	//! @brief is the thread busy?
+	//! @return whether the thread is busy or not.
 	Bool HardwareThread::IsBusy() noexcept
 	{
 		STATIC Int64 busy_timer = 0U;
@@ -50,6 +51,8 @@ namespace Kernel
 			busy_timer = 0U;
 			fBusy	   = No;
 		}
+
+		++busy_timer;
 
 		return fBusy;
 	}

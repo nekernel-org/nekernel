@@ -35,13 +35,13 @@ namespace Kernel
 	class UserProcessScheduler;
 	class UserProcessHelper;
 
-	//! @brief UserProcess identifier.
+	//! @brief Local Process identifier.
 	typedef Int64 ProcessID;
 
-	//! @brief UserProcess name length.
+	//! @brief Local Process name length.
 	inline constexpr SizeT kProcessLen = 256U;
 
-	//! @brief UserProcess status enum.
+	//! @brief Local Process status enum.
 	enum class ProcessStatusKind : Int32
 	{
 		kStarting,
@@ -138,10 +138,8 @@ namespace Kernel
 
 		~UserProcess() = default;
 
-		ZKA_COPY_DEFAULT(UserProcess)
-
 	public:
-		const UInt32& GetExitCode() noexcept;
+		ZKA_COPY_DEFAULT(UserProcess)
 
 	public:
 		Char			   Name[kProcessLen] = {"Process"};
@@ -151,16 +149,9 @@ namespace Kernel
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatusKind  Status{ProcessStatusKind::kDead};
 		UInt8*			   StackReserve{nullptr};
-
-		//! @brief Code Image.
 		ImagePtr Image{nullptr};
-
 		SizeT StackSize{kSchedMaxStackSz};
-
-		//! @brief Shared library handle, reserved for kExectuableDLLKind types of executables only.
 		IPEFDLLObject* PefDLLDelegate{nullptr};
-
-		// Memory usage.
 		SizeT MemoryCursor{0};
 		SizeT MemoryLimit{kSchedMaxMemoryLimit};
 
@@ -211,8 +202,10 @@ namespace Kernel
 		///! @brief Wakes up threads.
 		Void Wake(const bool wakeup = false);
 
-		// UserProcess getters.
 	public:
+		//! @brief Gets the local exit code.
+		const UInt32& GetExitCode() noexcept;
+
 		///! @brief Get the process's name
 		///! @example 'C Runtime Library'
 		const Char* GetProcessName() noexcept;

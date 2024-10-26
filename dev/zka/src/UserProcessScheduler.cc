@@ -451,8 +451,7 @@ namespace Kernel
 			}
 			else
 			{
-				if (process.Status == ProcessStatusKind::kRunning)
-					--process.PTime;
+				--process.PTime;
 			}
 		}
 

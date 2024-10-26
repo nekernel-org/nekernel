@@ -23,6 +23,11 @@
 #include <FSKit/NeFS.h>
 #endif // __FSKIT_INCLUDES_NEFS__
 
+#ifdef __FSKIT_INCLUDES_HPFS__
+#include <FSKit/HPFS.h>
+#endif // __FSKIT_INCLUDES_HPFS__
+
+
 #include <CompilerKit/CompilerKit.h>
 #include <HintKit/CompilerHint.h>
 #include <KernelKit/LPC.h>
@@ -35,21 +40,21 @@
 /// @brief Filesystem manager, abstraction over mounted filesystem.
 /// Works like the VFS or IFS.
 
-#define cRestrictR	 "r"
-#define cRestrictRB	 "rb"
-#define cRestrictW	 "w"
-#define cRestrictWB	 "rw"
-#define cRestrictRWB "rwb"
+#define kRestrictR	 "r"
+#define kRestrictRB	 "rb"
+#define kRestrictW	 "w"
+#define kRestrictWB	 "rw"
+#define kRestrictRWB "rwb"
 
-#define cRestrictMax 5
+#define kRestrictMax (5U)
 
 #define node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)
 
 /**
 	@note Refer to first enum.
 */
-#define cFileOpsCount	 4
-#define cFileMimeGeneric "n-application-kind/all"
+#define kFileOpsCount	 (4U)
+#define kFileMimeGeneric "n-application-kind/all"
 
 /** @brief invalid position. (n-pos) */
 #define kNPos (SizeT)(-1);
@@ -58,14 +63,14 @@ namespace Kernel
 {
 	enum
 	{
-		cFileWriteAll	= 100,
-		cFileReadAll	= 101,
-		cFileReadChunk	= 102,
-		cFileWriteChunk = 103,
-		cFileIOCnt		= (cFileWriteChunk - cFileWriteAll) + 1,
+		kFileWriteAll	= 100,
+		kFileReadAll	= 101,
+		kFileReadChunk	= 102,
+		kFileWriteChunk = 103,
+		kFileIOCnt		= (kFileWriteChunk - kFileWriteAll) + 1,
 		// file flags
-		cFileFlagRsrc = 104,
-		cFileFlagData = 105,
+		kFileFlagRsrc = 104,
+		kFileFlagData = 105,
 	};
 
 	typedef VoidPtr NodePtr;
@@ -219,7 +224,7 @@ namespace Kernel
 
 			if (man)
 			{
-				man->Write(fFile, data, cFileWriteAll);
+				man->Write(fFile, data, kFileWriteAll);
 				return ErrorOr<Int64>(0);
 			}
 
@@ -238,7 +243,7 @@ namespace Kernel
 
 			if (man)
 			{
-				VoidPtr ret = man->Read(fFile, cFileReadAll, 0);
+				VoidPtr ret = man->Read(fFile, kFileReadAll, 0);
 				return ret;
 			}
 
@@ -260,7 +265,7 @@ namespace Kernel
 
 			if (man)
 			{
-				man->Write(fName, fFile, data, cFileWriteAll);
+				man->Write(fName, fFile, data, kFileWriteAll);
 				return ErrorOr<Int64>(0);
 			}
 
@@ -279,7 +284,7 @@ namespace Kernel
 
 			if (man)
 			{
-				VoidPtr ret = man->Read(fName, fFile, cFileReadAll, 0);
+				VoidPtr ret = man->Read(fName, fFile, kFileReadAll, 0);
 				return ret;
 			}
 
@@ -299,7 +304,7 @@ namespace Kernel
 			if (man)
 			{
 				man->Seek(fFile, offset);
-				auto ret = man->Read(fFile, cFileReadChunk, sz);
+				auto ret = man->Read(fFile, kFileReadChunk, sz);
 
 				return ret;
 			}
@@ -320,7 +325,7 @@ namespace Kernel
 			if (man)
 			{
 				man->Seek(fFile, offset);
-				man->Write(fFile, data, sz, cFileReadChunk);
+				man->Write(fFile, data, sz, kFileReadChunk);
 			}
 		}
 
@@ -352,7 +357,7 @@ namespace Kernel
 	private:
 		NodePtr		fFile{nullptr};
 		Int32		fFileRestrict{};
-		const Char* fMime{cFileMimeGeneric};
+		const Char* fMime{kFileMimeGeneric};
 	};
 
 	using FileStreamUTF8  = FileStream<Char>;
@@ -375,35 +380,35 @@ namespace Kernel
 			Int32 fMappedTo;
 		};
 
-		const SizeT		   cRestrictCount  = cRestrictMax;
-		const RESTRICT_MAP cRestrictList[] = {
+		const SizeT		   kRestrictCount  = kRestrictMax;
+		const RESTRICT_MAP kRestrictList[] = {
 			{
-				.fRestrict = cRestrictR,
+				.fRestrict = kRestrictR,
 				.fMappedTo = eRestrictRead,
 			},
 			{
-				.fRestrict = cRestrictRB,
+				.fRestrict = kRestrictRB,
 				.fMappedTo = eRestrictReadBinary,
 			},
 			{
-				.fRestrict = cRestrictRWB,
+				.fRestrict = kRestrictRWB,
 				.fMappedTo = eRestrictReadWriteBinary,
 			},
 			{
-				.fRestrict = cRestrictW,
+				.fRestrict = kRestrictW,
 				.fMappedTo = eRestrictWrite,
 			},
 			{
-				.fRestrict = cRestrictWB,
+				.fRestrict = kRestrictWB,
 				.fMappedTo = eRestrictReadWrite,
 			}};
 
-		for (SizeT index = 0; index < cRestrictCount; ++index)
+		for (SizeT index = 0; index < kRestrictCount; ++index)
 		{
-			if (rt_string_cmp(restrict_type, cRestrictList[index].fRestrict,
-							  rt_string_len(cRestrictList[index].fRestrict)) == 0)
+			if (rt_string_cmp(restrict_type, kRestrictList[index].fRestrict,
+							  rt_string_len(kRestrictList[index].fRestrict)) == 0)
 			{
-				fFileRestrict = cRestrictList[index].fMappedTo;
+				fFileRestrict = kRestrictList[index].fMappedTo;
 				break;
 			}
 		}

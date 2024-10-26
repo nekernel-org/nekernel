@@ -133,9 +133,9 @@ Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_
 		EfiFileInfo newPtrInfo;
 		UInt32		szInfo = 0;
 
-		EfiGUID cFileInfoGUID = EFI_FILE_INFO_GUID;
+		EfiGUID kFileInfoGUID = EFI_FILE_INFO_GUID;
 
-		if (mFile->GetInfo(mFile, &cFileInfoGUID, &szInfo, &newPtrInfo) == kEfiOk)
+		if (mFile->GetInfo(mFile, &kFileInfoGUID, &szInfo, &newPtrInfo) == kEfiOk)
 		{
 			if (newPtrInfo.FileSize < readUntil)
 				readUntil = newPtrInfo.FileSize;

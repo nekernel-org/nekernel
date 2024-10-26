@@ -55,7 +55,7 @@ namespace Kernel
 	PEFLoader::PEFLoader(const Char* path)
 		: fCachedBlob(nullptr), fBad(false), fFatBinary(false)
 	{
-		fFile.New(const_cast<Char*>(path), cRestrictRB);
+		fFile.New(const_cast<Char*>(path), kRestrictRB);
 		fPath = StringBuilder::Construct(path).Leak();
 
 		auto cPefHeader = "PEF_CONTAINER";

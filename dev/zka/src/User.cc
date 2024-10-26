@@ -11,15 +11,14 @@
  */
 
 #include <KernelKit/User.h>
-
 #include <KernelKit/LPC.h>
 #include <NewKit/Stop.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Heap.h>
 
-#define cStdUser   (0xCEEF)
-#define cSuperUser (0xECCF)
+#define kStdUserType   (0xCEEF)
+#define kSuperUserType (0xECCF)
 
 /// BUGS: 0
 
@@ -35,19 +34,19 @@ namespace Kernel
 			if (!password || !user)
 				return -1;
 
-			kcout << "Constructing password...\r";
+			kcout << "Hashing password...\r";
 
 			for (Size i_pass = 0; i_pass < length; ++i_pass)
 			{
-				Char cur_chr = in_password[i_pass];
+				Char& cur_chr = in_password[i_pass];
 
 				if (cur_chr == 0)
 					break;
 
-				password[i_pass] = cur_chr + (user->IsStdUser() ? cStdUser : cSuperUser);
+				password[i_pass] = cur_chr + (user->IsStdUser() ? kStdUserType : kSuperUserType);
 			}
 
-			kcout << "Done constructing password...\r";
+			kcout << "Done hashing password!\r";
 
 			return 0;
 		}
