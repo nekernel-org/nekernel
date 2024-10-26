@@ -48,7 +48,7 @@ STATIC Bool boot_init_fb() noexcept
 	kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
 	kGop	 = nullptr;
 
-	if (BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop) /= kEfiOk)
+	if (BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop) != kEfiOk)
 		return No;
 
 	kGopStride = 4;
@@ -64,9 +64,11 @@ STATIC Bool boot_init_fb() noexcept
 			infoPtr->VerticalResolution == kExpectedHeight)
 		{
 			kGop->SetMode(kGop, i);
-			break;
+			return Yes;
 		}
 	}
+
+	return No;
 }
 
 EXTERN_C VoidPtr boot_read_cr3();
