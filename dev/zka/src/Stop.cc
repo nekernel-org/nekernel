@@ -5,7 +5,6 @@
 ------------------------------------------- */
 
 #include <NewKit/Stop.h>
-
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/Timer.h>
 #include <KernelKit/DebugOutput.h>
@@ -15,7 +14,7 @@
 #include <modules/FB/FB.h>
 #include <modules/FB/Text.h>
 
-#define cWebsiteMacro "https://help.zws.com/"
+#define kWebsiteURL "https://www.zws.zka.com/zka-os/help/"
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
@@ -36,7 +35,7 @@ namespace Kernel
 
 		// simply offset from previous string and then write the website.
 		CGDrawString("Please visit: ", start_y, x, panic_text);
-		CGDrawString(cWebsiteMacro, start_y, x + (FONT_SIZE_X * rt_string_len("Please visit: ")), panic_text);
+		CGDrawString(kWebsiteURL, start_y, x + (FONT_SIZE_X * rt_string_len("Please visit: ")), panic_text);
 
 		CGFini();
 
@@ -47,7 +46,7 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			CGDrawString("0x00000008 Multi-Task error.", start_y, x, panic_text);
+			CGDrawString("0x00000008 Process check error.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
