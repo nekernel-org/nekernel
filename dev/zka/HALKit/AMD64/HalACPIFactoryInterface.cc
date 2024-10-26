@@ -56,7 +56,7 @@ namespace Kernel
 			UInt8  Century;
 
 			// reserved in ACPI 1.0; used since ACPI 2.0+
-			UInt16 BootArchitectureFlags;
+			UInt16 BootArchitecturkMMFlags;
 
 			UInt8  Reserved2;
 			UInt32 Flags;

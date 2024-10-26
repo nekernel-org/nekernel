@@ -34,14 +34,15 @@ namespace Kernel
 	Size rt_string_len(const Char* str, SizeT _len)
 	{
 		Size len{0};
+
 		while (str[len] != '\0')
 		{
 			if (len > _len)
 			{
-				return 0;
+				return _len;
 			}
 
-			len++;
+			++len;
 		}
 
 		return len;
@@ -49,14 +50,11 @@ namespace Kernel
 
 	Size rt_string_len(const Char* ptr)
 	{
-		if (*ptr == 0)
-			return 0;
+		SizeT cnt{0};
 
-		SizeT cnt = 0;
-
-		while (ptr[cnt] != (Char)0)
+		while (ptr[cnt] != 0)
 		{
-			cnt++;
+			++cnt;
 		}
 
 		return cnt;
@@ -104,7 +102,7 @@ namespace Kernel
 	Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len)
 	{
 		if (len < 1)
-			return -2;
+			return 0;
 
 		char* srcChr  = reinterpret_cast<char*>(src);
 		char* dstChar = reinterpret_cast<char*>(dst);
@@ -125,11 +123,13 @@ namespace Kernel
 			return nullptr;
 
 		const Char* string = new Char[rt_string_len(text)];
+
 		if (!string)
 			return nullptr;
 
 		voidPtr vText = reinterpret_cast<voidPtr>(const_cast<char*>(text));
 		voidPtr vStr  = reinterpret_cast<voidPtr>(const_cast<char*>(string));
+
 		rt_copy_memory(vText, vStr, rt_string_len(text));
 
 		return string;

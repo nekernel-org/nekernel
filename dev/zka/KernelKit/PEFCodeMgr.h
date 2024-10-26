@@ -60,7 +60,7 @@ namespace Kernel
 
 	namespace Utils
 	{
-		bool execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept;
+		SizeT execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept;
 	} // namespace Utils
 } // namespace Kernel
 

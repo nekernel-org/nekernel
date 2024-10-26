@@ -71,11 +71,12 @@ namespace Kernel::HAL
 	/// @brief Memory Manager mapping flags.
 	enum
 	{
-		eFlagsPresent = 1 << 0,
-		eFlagsWr	  = 1 << 1,
-		eFlagsUser	  = 1 << 2,
-		eFlagsNX	  = 1 << 3,
-		eFlagsCount	  = 3,
+		kMMFlagsInvalid = 0 << 0,
+		kMMFlagsPresent = 1 << 0,
+		kMMFlagsWr		= 1 << 1,
+		kMMFlagsUser	= 1 << 2,
+		kMMFlagsNX		= 1 << 3,
+		kMMFlagsCount	= 4,
 	};
 
 	struct PACKED Register64 final

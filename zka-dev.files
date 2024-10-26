@@ -117,8 +117,9 @@ dev/zka/HALKit/AMD64/CPUID.h
 dev/zka/HALKit/AMD64/HalACPIFactoryInterface.cc
 dev/zka/HALKit/AMD64/HalAPICController.cc
 dev/zka/HALKit/AMD64/HalBoot.asm
-dev/zka/HALKit/AMD64/HalCPU.cc
+dev/zka/HALKit/AMD64/HalCPUAMD64.cc
 dev/zka/HALKit/AMD64/HalCommonAPI.asm
+dev/zka/HALKit/AMD64/HalContextSwitchAMD64.asm
 dev/zka/HALKit/AMD64/HalControlRegister.s
 dev/zka/HALKit/AMD64/HalCoreInterruptHandlerAMD64.cc
 dev/zka/HALKit/AMD64/HalCoreMPScheduler.cc
@@ -127,11 +128,10 @@ dev/zka/HALKit/AMD64/HalDebugPort.cc
 dev/zka/HALKit/AMD64/HalDescriptorLoader.cc
 dev/zka/HALKit/AMD64/HalInterruptAPI.asm
 dev/zka/HALKit/AMD64/HalKernelMain.cc
-dev/zka/HALKit/AMD64/HalMPContextSwitch.asm
-dev/zka/HALKit/AMD64/HalPagingMgr.cc
+dev/zka/HALKit/AMD64/HalPagingMgrAMD64.cc
 dev/zka/HALKit/AMD64/HalRoutineWait.s
-dev/zka/HALKit/AMD64/HalSchedulerCore.cc
-dev/zka/HALKit/AMD64/HalTimer.cc
+dev/zka/HALKit/AMD64/HalSchedulerCoreAMD64.cc
+dev/zka/HALKit/AMD64/HalTimerAMD64.cc
 dev/zka/HALKit/AMD64/HalUtils.asm
 dev/zka/HALKit/AMD64/Hypervisor.h
 dev/zka/HALKit/AMD64/PCI/DMA.cc
@@ -153,7 +153,7 @@ dev/zka/HALKit/ARM64/HalDebugOutput.cc
 dev/zka/HALKit/ARM64/HalKernelMain.cc
 dev/zka/HALKit/ARM64/HalPageInternal.S
 dev/zka/HALKit/ARM64/HalPagingMgr.cc
-dev/zka/HALKit/ARM64/HalSchedulerCore.cc
+dev/zka/HALKit/ARM64/HalSchedulerCoreARM64.cc
 dev/zka/HALKit/ARM64/HalTimer.cc
 dev/zka/HALKit/ARM64/Paging.h
 dev/zka/HALKit/ARM64/Processor.h

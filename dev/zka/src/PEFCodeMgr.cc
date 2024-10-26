@@ -201,16 +201,16 @@ namespace Kernel
 
 	namespace Utils
 	{
-		Bool execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept
+		SizeT execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept
 		{
 			auto errOrStart = exec.FindStart();
 
 			if (errOrStart.Error() != kErrorSuccess)
-				return false;
+				return No;
 
 			UserProcess proc;
 
-			proc.SetImageStart(errOrStart.Leak().Leak());
+			proc.Image		 = errOrStart.Leak().Leak();
 			proc.Kind		 = procKind;
 			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
 			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(cPefHeapSizeSymbol, kPefData);
@@ -218,18 +218,15 @@ namespace Kernel
 			rt_set_memory(proc.Name, 0, kProcessLen);
 
 			if (exec.FindSymbol(cPefNameSymbol, kPefData))
-				rt_copy_memory((VoidPtr)exec.FindSymbol(cPefNameSymbol, kPefData), proc.Name, rt_string_len((Char*)exec.FindSymbol(cPefNameSymbol, kPefData)));
-			else
-				rt_copy_memory((VoidPtr) "UNNAMED PROCESS.", proc.Name, rt_string_len("UNNAMED PROCESS."));
+				rt_copy_memory(exec.FindSymbol(cPefNameSymbol, kPefData), proc.Name, rt_string_len((Char*)exec.FindSymbol(cPefNameSymbol, kPefData)));
 
 			if (!proc.StackSize)
 			{
 				const auto cDefaultStackSizeMib = 8;
-
 				proc.StackSize = mib_cast(cDefaultStackSizeMib);
 			}
 
-			return UserProcessScheduler::The().Add(proc) > 0;
+			return UserProcessScheduler::The().Add(proc);
 		}
 	} // namespace Utils
 

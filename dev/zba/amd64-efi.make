@@ -66,8 +66,6 @@ all: compile-amd64
 	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/ZBAOSLDR.EFI
 	$(COPY) ../zka/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ./Modules/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
-	$(COPY) ./Modules/SysChk/$(STARTUP) src/Root/zka/$(STARTUP)
-	$(COPY) ../crt/$(CRT) src/Root/$(CRT)
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
 
 ifneq ($(DEBUG_SUPPORT), )

@@ -17,9 +17,9 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Stop.h>
 
-#define cBitMapMagIdx  (0)
-#define cBitMapSizeIdx (1)
-#define cBitMapUsedIdx (2)
+#define kBitMapMagIdx  (0)
+#define kBitMapSizeIdx (1)
+#define kBitMapUsedIdx (2)
 
 namespace Kernel
 {
@@ -43,8 +43,8 @@ namespace Kernel
 
 					UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
-					if (!ptr_bit_set[cBitMapMagIdx] ||
-						ptr_bit_set[cBitMapMagIdx] != kBitMapMagic)
+					if (!ptr_bit_set[kBitMapMagIdx] ||
+						ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
 						return No;
 
 					return Yes;
@@ -57,28 +57,24 @@ namespace Kernel
 
 					UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
-					ptr_bit_set[cBitMapMagIdx]	= kBitMapMagic;
-					ptr_bit_set[cBitMapUsedIdx] = No;
+					ptr_bit_set[kBitMapMagIdx]	= kBitMapMagic;
+					ptr_bit_set[kBitMapUsedIdx] = No;
 
 					this->GetBitMapStatus(ptr_bit_set);
-
-					mm_map_page(ptr_bit_set, ~eFlagsPresent);
-					mm_map_page(ptr_bit_set, ~eFlagsWr);
-					mm_map_page(ptr_bit_set, ~eFlagsUser);
 
 					return Yes;
 				}
 
-				UInt32 MakeFlags(Bool wr, Bool user)
+				UInt32 MakeMMFlags(Bool wr, Bool user)
 				{
 
-					UInt32 flags = eFlagsPresent;
+					UInt32 flags = kMMFlagsPresent;
 
 					if (wr)
-						flags |= eFlagsWr;
+						flags |= kMMFlagsWr;
 
 					if (user)
-						flags |= eFlagsUser;
+						flags |= kMMFlagsUser;
 
 					return flags;
 				}
@@ -93,33 +89,33 @@ namespace Kernel
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
 
-						if (ptr_bit_set[cBitMapMagIdx] == kBitMapMagic &&
-							ptr_bit_set[cBitMapSizeIdx] <= size)
+						if (ptr_bit_set[kBitMapMagIdx] == kBitMapMagic &&
+							ptr_bit_set[kBitMapSizeIdx] <= size)
 						{
-							if (ptr_bit_set[cBitMapUsedIdx] == No)
+							if (ptr_bit_set[kBitMapUsedIdx] == No)
 							{
-								ptr_bit_set[cBitMapSizeIdx] = size;
-								ptr_bit_set[cBitMapUsedIdx] = Yes;
+								ptr_bit_set[kBitMapSizeIdx] = size;
+								ptr_bit_set[kBitMapUsedIdx] = Yes;
 
 								this->GetBitMapStatus(ptr_bit_set);
 
-								UInt32 flags = this->MakeFlags(wr, user);
+								UInt32 flags = this->MakeMMFlags(wr, user);
 								mm_map_page(ptr_bit_set, flags);
 
 								return (VoidPtr)ptr_bit_set;
 							}
 						}
-						else if (ptr_bit_set[cBitMapMagIdx] != kBitMapMagic)
+						else if (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
 						{
 							UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
 
-							ptr_bit_set[cBitMapMagIdx]	= kBitMapMagic;
-							ptr_bit_set[cBitMapSizeIdx] = size;
-							ptr_bit_set[cBitMapUsedIdx] = Yes;
+							ptr_bit_set[kBitMapMagIdx]	= kBitMapMagic;
+							ptr_bit_set[kBitMapSizeIdx] = size;
+							ptr_bit_set[kBitMapUsedIdx] = Yes;
 
 							this->GetBitMapStatus(ptr_bit_set);
 
-							UInt32 flags = this->MakeFlags(wr, user);
+							UInt32 flags = this->MakeMMFlags(wr, user);
 							mm_map_page(ptr_bit_set, flags);
 
 							return (VoidPtr)ptr_bit_set;
@@ -143,13 +139,13 @@ namespace Kernel
 						return;
 					}
 
-					kcout << "Magic Number: " << hex_number(ptr_bit_set[cBitMapMagIdx]) << endl;
-					kcout << "Is Allocated: " << (ptr_bit_set[cBitMapUsedIdx] ? "Yes" : "No") << endl;
-					kcout << "Size of BitMap (B): " << number(ptr_bit_set[cBitMapSizeIdx]) << endl;
-					kcout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
-					kcout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
-					kcout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
-					kcout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[cBitMapSizeIdx])) << endl;
+					kcout << "Magic Number: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << endl;
+					kcout << "Is Allocated: " << (ptr_bit_set[kBitMapUsedIdx] ? "Yes" : "No") << endl;
+					kcout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << endl;
+					kcout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
+					kcout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
+					kcout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
+					kcout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
 					kcout << "Address Of BitMap: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 				}
 			};
@@ -171,15 +167,6 @@ namespace Kernel
 				return nullptr;
 			}
 
-			if (wr)
-				mm_map_page(ptr_new, eFlagsWr | eFlagsPresent);
-			else if (user && wr)
-				mm_map_page(ptr_new, eFlagsUser | eFlagsWr | eFlagsPresent);
-			else if (user)
-				mm_map_page(ptr_new, eFlagsUser | eFlagsPresent);
-			else
-				mm_map_page(ptr_new, eFlagsPresent);
-
 			return (UIntPtr*)ptr_new;
 		}
 
@@ -191,11 +178,6 @@ namespace Kernel
 
 			Detail::IBitMapAllocator traits;
 			Bool					 ret = traits.FreeBitMap(page_ptr);
-
-			if (ret)
-			{
-				mm_map_page(page_ptr, ~eFlagsPresent);
-			}
 
 			return ret;
 		}

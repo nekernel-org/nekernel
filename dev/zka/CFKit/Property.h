@@ -4,15 +4,15 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_PROPS_H__
-#define __INC_PROPS_H__
+#ifndef CFKIT_PROPS_H
+#define CFKIT_PROPS_H
 
 #include <NewKit/Array.h>
 #include <NewKit/Defines.h>
 #include <NewKit/Function.h>
 #include <NewKit/String.h>
 
-#define cMaxPropLen 4096
+#define kMaxPropLen 255
 
 namespace CFKit
 {
@@ -38,7 +38,7 @@ namespace CFKit
 		StringView& GetKey();
 
 	private:
-		StringView fName{cMaxPropLen};
+		StringView fName{kMaxPropLen};
 		PropertyId fAction{No};
 	};
 
@@ -51,4 +51,4 @@ namespace Kernel
 	using namespace CFKit;
 }
 
-#endif // !__INC_PROPS_H__
+#endif // !CFKIT_PROPS_H

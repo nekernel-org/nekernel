@@ -167,6 +167,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	// format the disk.
 	// ---------------------------------------------------- //
 
+#ifdef __ZKA_AUTO_FORMAT__
 	if (!partition_factory.IsPartitionValid())
 	{
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
@@ -179,6 +180,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		rt_reset_hardware();
 	}
+#endif // __ZKA_AUTO_FORMAT__
 
 	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
@@ -280,26 +282,21 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 #endif // __ZKA_USE_FB__
 	}
 
-	Boot::BFileReader chimeWav(L"zka\\startup.wav", ImageHandle);
-	Boot::BFileReader readerSysDrv(L"zka\\startup.sys", ImageHandle);
-	Boot::BFileReader urbanistTTF(L"zka\\urbanist.ttf", ImageHandle);
+	Boot::BFileReader chime_wav(L"zka\\startup.wav", ImageHandle);
+	Boot::BFileReader ttf_font(L"zka\\urbanist.ttf", ImageHandle);
 
-	readerSysDrv.ReadAll(0);
-	chimeWav.ReadAll(0);
-	urbanistTTF.ReadAll(0);
+	chime_wav.ReadAll(0);
+	ttf_font.ReadAll(0);
 
-	if (readerSysDrv.Blob() &&
-		chimeWav.Blob() &&
-		urbanistTTF.Blob())
+	if (chime_wav.Blob() &&
+		ttf_font.Blob())
 	{
-		handover_hdr->f_StartupChime   = chimeWav.Blob();
-		handover_hdr->f_ChimeSz		   = chimeWav.Size();
-		handover_hdr->f_StartupImage   = readerSysDrv.Blob();
-		handover_hdr->f_StartupSz	   = readerSysDrv.Size();
+		handover_hdr->f_StartupChime   = chime_wav.Blob();
+		handover_hdr->f_ChimeSz		   = chime_wav.Size();
 		handover_hdr->f_KernelImage	   = reader_kernel.Blob();
 		handover_hdr->f_KernelSz	   = reader_kernel.Size();
-		handover_hdr->f_TTFallbackFont = urbanistTTF.Blob();
-		handover_hdr->f_FontSz		   = urbanistTTF.Size();
+		handover_hdr->f_TTFallbackFont = ttf_font.Blob();
+		handover_hdr->f_FontSz		   = ttf_font.Size();
 	}
 	else
 	{

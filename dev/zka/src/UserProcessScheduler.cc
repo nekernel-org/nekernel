@@ -113,7 +113,7 @@ namespace Kernel
 	{
 #ifdef __ZKA_AMD64__
 		auto pd = hal_read_cr3();
-		hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
+		hal_write_cr3(reinterpret_cast<VoidPtr>(this->VMRegister));
 
 		auto ptr = mm_new_heap(sz, Yes, Yes);
 
@@ -174,7 +174,7 @@ namespace Kernel
 			{
 #ifdef __ZKA_AMD64__
 				auto pd = hal_read_cr3();
-				hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
+				hal_write_cr3(reinterpret_cast<VoidPtr>(this->VMRegister));
 
 				auto ret = mm_delete_heap(entry->MemoryEntry);
 
@@ -250,7 +250,7 @@ namespace Kernel
 			{
 #ifdef __ZKA_AMD64__
 				auto pd = hal_read_cr3();
-				hal_write_cr3(reinterpret_cast<VoidPtr>(this->MemoryPD));
+				hal_write_cr3(reinterpret_cast<VoidPtr>(this->VMRegister));
 #endif
 
 				MUST_PASS(mm_delete_heap(memory_list->MemoryEntry));
@@ -269,7 +269,7 @@ namespace Kernel
 		}
 
 		//! Free the memory's page directory.
-		HAL::mm_free_bitmap(reinterpret_cast<VoidPtr>(this->MemoryPD));
+		HAL::mm_free_bitmap(reinterpret_cast<VoidPtr>(this->VMRegister));
 
 		//! Delete image if not done already.
 		if (this->Image && mm_is_valid_heap(this->Image))
@@ -310,13 +310,11 @@ namespace Kernel
 	SizeT UserProcessScheduler::Add(UserProcess process)
 	{
 		if (mTeam.mProcessAmount > kSchedProcessLimitPerTeam)
-			return 0;
+			return -kErrorInvalidData;
 
 #ifdef __ZKA_AMD64__
-		process.MemoryPD = reinterpret_cast<UIntPtr>(HAL::mm_alloc_bitmap(Yes, Yes, sizeof(PDE), Yes));
+		process.VMRegister = reinterpret_cast<UIntPtr>(HAL::mm_alloc_bitmap(Yes, Yes, sizeof(PDE), Yes));
 #endif // __ZKA_AMD64__
-
-		process.Status = ProcessStatusKind::kStarting;
 
 		process.StackFrame = (HAL::StackFramePtr)mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes);
 
@@ -347,22 +345,18 @@ namespace Kernel
 
 		if (!process.StackReserve)
 		{
-			mm_delete_heap(process.StackFrame);
-			process.StackFrame = nullptr;
+			process.Crash();
 			return -kErrorProcessFault;
 		}
 
 		++mTeam.mProcessAmount;
 
 		process.ProcessId = mTeam.mProcessAmount;
-		process.Status	  = ProcessStatusKind::kRunning;
+		process.Status	  = ProcessStatusKind::kStarting;
 
-		// avoid the pitfalls of moving process.
-		auto ret_pid = process.ProcessId;
+		mTeam.AsArray()[process.ProcessId] = process;
 
-		mTeam.AsArray()[process.ProcessId] = move(process);
-
-		return ret_pid;
+		return process.ProcessId;
 	}
 
 	/***********************************************************************************/
@@ -384,7 +378,7 @@ namespace Kernel
 
 	/***********************************************************************************/
 
-	Bool UserProcessScheduler::Remove(ProcessID process_id)
+	const Bool UserProcessScheduler::Remove(ProcessID process_id)
 	{
 		// check if process is within range.
 		if (process_id > mTeam.AsArray().Count())
@@ -408,6 +402,7 @@ namespace Kernel
 
 	const Bool UserProcessScheduler::HasMP()
 	{
+		MUST_PASS(kHandoverHeader);
 		return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
 	}
 
@@ -447,7 +442,7 @@ namespace Kernel
 				this->CurrentProcess() = process;
 
 				// tell helper to find a core to schedule on.
-				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
+				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize], process.StackFrame,
 											   process.ProcessId))
 				{
 					process.Crash();

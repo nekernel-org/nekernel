@@ -126,9 +126,9 @@ namespace Kernel
 	using HeapPtrKind = VoidPtr;
 
 	/// @name UserProcess
-	/// @brief User process block.
+	/// @brief User process header.
 	/// Holds information about the running process/thread.
-	struct UserProcess final
+	class UserProcess final
 	{
 	public:
 		explicit UserProcess(VoidPtr startImage = nullptr)
@@ -141,11 +141,10 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcess)
 
 	public:
-		Void		  SetImageStart(VoidPtr imageStart) noexcept;
 		const UInt32& GetExitCode() noexcept;
 
 	public:
-		Char			   Name[kProcessLen] = {"ZKA Process"};
+		Char			   Name[kProcessLen] = {"Process"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
@@ -175,10 +174,11 @@ namespace Kernel
 
 		PROCESS_MEMORY_ENTRY* MemoryEntryList{nullptr};
 
-		UIntPtr MemoryPD{0UL};
+		UIntPtr VMRegister{0UL};
 
 		enum
 		{
+			kInvalidExecutableKind,
 			kExectuableKind,
 			kExectuableDLLKind,
 			kExectuableKindCount,
@@ -256,8 +256,8 @@ namespace Kernel
 
 	using UserProcessPtr = UserProcess*;
 
-	/// @brief UserProcess scheduler class.
-	/// The main class which you call to schedule processes.
+	/// @brief Process scheduler class.
+	/// The main class which you call to schedule user processes.
 	class UserProcessScheduler final : public ISchedulerObject
 	{
 		friend class UserProcessHelper;
@@ -276,7 +276,7 @@ namespace Kernel
 
 	public:
 		SizeT Add(UserProcess process);
-		Bool  Remove(ProcessID process_id);
+		const Bool  Remove(ProcessID process_id);
 
 		const Bool IsUser() override;
 		const Bool IsKernel() override;

@@ -7,8 +7,8 @@ Purpose: SCI core header file (C++ only).
 
 ------------------------------------------- */
 
-#ifndef SCI_BASE_H
-#define SCI_BASE_H
+#ifndef SCIKIT_FOUNDATION_H
+#define SCIKIT_FOUNDATION_H
 
 #define ATTRIBUTE(X) __attribute__((X))
 #define IMPORT_CXX	 extern "C++"
@@ -246,4 +246,4 @@ IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input SCIObject 
 /// @return the event data.
 IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr event_data);
 
-#endif // ifndef SCI_BASE_H
+#endif // ifndef SCIKIT_FOUNDATION_H

@@ -134,7 +134,7 @@ struct PACKED NFS_CATALOG_STRUCT final
 	/// Catalog status flag.
 	Kernel::UInt16 Flags;
 	/// Custom catalog flags.
-	Kernel::UInt16 FileFlags;
+	Kernel::UInt16 FilkMMFlags;
 	/// Catalog kind.
 	Kernel::Int32 Kind;
 
@@ -165,7 +165,7 @@ struct PACKED NFS_FORK_STRUCT final
 
 	Kernel::Int64 ResourceId;
 	Kernel::Int32 ResourceKind;
-	Kernel::Int32 ResourceFlags;
+	Kernel::Int32 ResourckMMFlags;
 
 	Kernel::Lba	  DataOffset; // 8 Where to look for this data?
 	Kernel::SizeT DataSize;	  /// Data size according using sector count.

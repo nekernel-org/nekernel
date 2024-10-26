@@ -26,6 +26,6 @@ namespace Kernel
 	/// @brief Executes a new process from a function. Kernel code only.
 	/// @note This sets up a new stack, anything on the main function that calls the Kernel will not be accessible.
 	/// @param main the start of the process.
-	/// @return if the process was started or not.
-	bool sched_execute_thread(MainKind main, const Char* process_name) noexcept;
+	/// @return The team's process id.
+	SizeT rtl_create_process(MainKind main, const Char* process_name) noexcept;
 } // namespace Kernel

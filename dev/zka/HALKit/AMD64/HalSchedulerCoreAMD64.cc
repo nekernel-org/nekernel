@@ -7,16 +7,6 @@
 #include <HALKit/AMD64/Processor.h>
 #include <KernelKit/UserProcessScheduler.h>
 
-using namespace Kernel;
-
-Void UserProcess::SetImageStart(VoidPtr imageStart) noexcept
-{
-	if (imageStart == nullptr)
-		this->Crash();
-
-	this->Image = imageStart;
-}
-
 namespace Kernel
 {
 	/***********************************************************************************/

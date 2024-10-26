@@ -123,24 +123,21 @@ namespace Kernel::HAL
 	/// @internal Internal function.
 	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE* pt_entry)
 	{
-		if (flags & ~eFlagsPresent)
-			pt_entry->Present = false;
-		else if (flags & eFlagsPresent)
-			pt_entry->Present = true;
+		pt_entry->Present = true;
 
-		if (flags & eFlagsWr)
+		if (flags & kMMFlagsWr)
 			pt_entry->Wr = true;
-		else if (flags & ~eFlagsWr)
+		else if (flags & ~kMMFlagsWr)
 			pt_entry->Wr = false;
 
-		if (flags & eFlagsNX)
+		if (flags & kMMFlagsNX)
 			pt_entry->ExecDisable = true;
-		else if (flags & ~eFlagsNX)
+		else if (flags & ~kMMFlagsNX)
 			pt_entry->ExecDisable = false;
 
-		if (flags & eFlagsUser)
+		if (flags & kMMFlagsUser)
 			pt_entry->User = true;
-		else if (flags & ~eFlagsUser)
+		else if (flags & ~kMMFlagsUser)
 			pt_entry->User = false;
 
 		hal_invl_tlb(reinterpret_cast<VoidPtr>(pt_entry));

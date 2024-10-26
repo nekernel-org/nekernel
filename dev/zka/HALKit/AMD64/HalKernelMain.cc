@@ -81,20 +81,27 @@ EXTERN_C void hal_init_platform(
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
 
+EXTERN_C Kernel::Void hal_kernel_server(Kernel::Void) noexcept
+{
+	while (Yes)
+		;
+}
+
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	/* Initialize filesystem. */
-	Kernel::NeFileSystemMgr* mgr = Kernel::mm_new_class<Kernel::NeFileSystemMgr>();
-	Kernel::NeFileSystemMgr::Mount(mgr);
+	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
 
 	/* Initialize scheduler. */
 	Kernel::UserProcessHelper::InitializeScheduler();
 
+	const Kernel::Char kKernelServerName[255] = "KernelServer";
+
+	Kernel::rtl_create_process(&hal_kernel_server, kKernelServerName);
+
 	/* Start any cores. */
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-
-	/* Load OSLdr.exe here (TODO) */
 
 	Kernel::HAL::Register64 idt_reg;
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;

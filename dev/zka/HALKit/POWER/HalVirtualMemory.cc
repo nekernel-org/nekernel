@@ -4,32 +4,30 @@
 
 ------------------------------------------- */
 
-#include <HALKit/POWER/ppc-cpu.h>
-#include <HALKit/POWER/ppc-mmu.h>
-
 #include <HALKit/POWER/Processor.h>
 #include <KernelKit/DebugOutput.h>
+#include <HALKit/POWER/MMU.h>
 
-/// @note refer to the SoC documentation.
+/// @note Refer to SoC documentation.
 
 using namespace Kernel;
 
-Void hal_write_tlb(UInt32 mas0, UInt32 mas1, UInt32 mas2, UInt32 mas3, UInt32 mas7)
+EXTERN_C Void hal_write_tlb(UInt32 mas0, UInt32 mas1, UInt32 mas2, UInt32 mas3, UInt32 mas7)
 {
-	mtspr(MAS0, mas0);
-	mtspr(MAS1, mas1);
-	mtspr(MAS2, mas2);
-	mtspr(MAS3, mas3);
-	mtspr(MAS7, mas7);
+	hal_mtspr(MAS0, mas0);
+	hal_mtspr(MAS1, mas1);
+	hal_mtspr(MAS2, mas2);
+	hal_mtspr(MAS3, mas3);
+	hal_mtspr(MAS7, mas7);
 
 	hal_flush_tlb();
 }
 
-Bool hal_set_tlb(UInt8 tlb, UInt32 epn, UInt64 rpn, UInt8 perms, UInt8 wimge, UInt8 ts, UInt8 esel, UInt8 tsize, UInt8 iprot)
+EXTERN_C Bool hal_set_tlb(UInt8 tlb, UInt32 epn, UInt64 rpn, UInt8 perms, UInt8 wimge, UInt8 ts, UInt8 esel, UInt8 tsize, UInt8 iprot)
 {
-	if ((mfspr(SPRN_MMUCFG) & MMUCFG_MAVN) == MMUCFG_MAVN_V1 && (tsize & 1))
+	if ((hal_mfspr(SPRN_MMUCFG) & MMUCFG_MAVN) == MMUCFG_MAVN_V1 && (tsize & 1))
 	{
-		// this mmu-version does not allow odd tsize values
+		// this MMU does not allow odd tsize values
 		return false;
 	}
 

@@ -30,7 +30,7 @@ namespace Kernel
 			explicit IndexableProperty()
 				: Property()
 			{
-				Kernel::StringView strProp(cMaxPropLen);
+				Kernel::StringView strProp(kMaxPropLen);
 				strProp += "\\Properties\\Indexable";
 
 				this->GetKey() = strProp;

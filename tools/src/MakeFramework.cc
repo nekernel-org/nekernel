@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 {
 	for (size_t i = 1ul; i < argc; ++i)
 	{
-		if (strcmp(argv[i], "/?") == 0)
+		if (strcmp(argv[i], "-h") == 0)
 		{
 			std::cout << "make_framework: Framework Creation Tool.\n";
 			std::cout << "make_framework: © ZKA Web Services Co, all rights reserved.\n";

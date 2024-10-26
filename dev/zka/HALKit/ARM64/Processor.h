@@ -24,11 +24,11 @@ namespace Kernel::HAL
 	/// @brief Memory Manager mapping flags.
 	enum
 	{
-		eFlagsPresent = 1 << 0,
-		eFlagsWr	  = 1 << 1,
-		eFlagsUser	  = 1 << 2,
-		eFlagsNX	  = 1 << 3,
-		eFlagsCount	  = 3,
+		kMMFlagsPresent = 1 << 0,
+		kMMFlagsWr		= 1 << 1,
+		kMMFlagsUser	= 1 << 2,
+		kMMFlagsNX		= 1 << 3,
+		kMMFlagsCount	= 3,
 	};
 
 	/// @brief Set a PTE from pd_base.

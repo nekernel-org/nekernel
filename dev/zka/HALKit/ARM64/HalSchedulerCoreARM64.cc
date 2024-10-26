@@ -13,22 +13,15 @@ namespace Kernel
 		UserProcessScheduler::The().CurrentProcess().Leak().Crash();
 	}
 
-	Void UserProcess::SetImageStart(VoidPtr image_start) noexcept
-	{
-		if (image_start == 0)
-			this->Crash();
-
-		this->Image = image_start;
-	}
-
 	bool hal_check_stack(HAL::StackFramePtr stackPtr)
 	{
 		if (!stackPtr)
-			return false;
-		if (stackPtr->BP == 0 || stackPtr->SP == 0)
-			return false;
+			return No;
 
-		return true;
+		if (stackPtr->BP == 0 || stackPtr->SP == 0)
+			return No;
+
+		return Yes;
 	}
 
 	/// @brief Wakes up thread.
@@ -42,9 +35,6 @@ namespace Kernel
 	/// hooks and hangs thread to prevent code from executing.
 	Void mp_hang_thread(HAL::StackFrame* stack)
 	{
-		while (Yes)
-		{
-			/* Nothing to do, code is spinning */
-		}
+		ZKA_UNUSUED(stack);
 	}
 } // namespace Kernel

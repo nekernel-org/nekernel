@@ -25,7 +25,7 @@ typedef struct HAL_HARDWARE_THREAD
 {
 	Kernel::UIntPtr fStartAddress;
 	Kernel::UInt8	fPrivleged : 1;
-	Kernel::UInt32	fPageFlags;
+	Kernel::UInt32	fPagkMMFlags;
 	PPCHartType		fIdentNumber;
 } HAL_HARDWARE_THREAD;
 

@@ -82,7 +82,7 @@ namespace Kernel::HAL
 
 	Void IDTLoader::Load(Register64& idt)
 	{
-		const auto kPITTickForScheduler = 100;
+		const Int16 kPITTickForScheduler = 100;
 
 		volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
