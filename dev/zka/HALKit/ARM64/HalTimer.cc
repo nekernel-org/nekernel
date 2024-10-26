@@ -2,7 +2,7 @@
 
 	Copyright ZKA Web Services Co.
 
-	File: HalTimer.cxx
+	File: HalTimer.cc
 	Purpose: HAL timer
 
 	Revision History:

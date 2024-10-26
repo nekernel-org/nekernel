@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <common_zka.h>
+#include <Common.h>
 
 #define kFKDLLDirectory		 "ZKA/DLL/"
 #define kFKManifestDirectory "ZKA/Manifests/"

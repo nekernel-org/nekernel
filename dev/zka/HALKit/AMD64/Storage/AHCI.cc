@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /**
- * @file AHCI.cxx
+ * @file AHCI.cc
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
  * @brief AHCI driver.
  * @version 0.1

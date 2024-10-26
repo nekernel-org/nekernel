@@ -19,7 +19,7 @@
 
  ------------------------------------------- */
 
-//! @file Heap.cxx
+//! @file Heap.cc
 //! @brief Kernel's heap manager, serves as the main memory manager.
 
 #define kKernelHeapMagic (0xD4D7D5)

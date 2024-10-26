@@ -2,7 +2,7 @@
 
 	Copyright ZKA Web Services Co.
 
-	File: HalTimer.cxx
+	File: HalTimer.cc
 	Purpose: HAL timer
 
 	Revision History:
@@ -23,7 +23,7 @@
 #define cHPETInterruptRegValue (0x2C)
 
 ///! BUGS: 0
-///! @file HalTimer.cxx
+///! @file HalTimer.cc
 ///! @brief Hardware Timer (HPET)
 
 namespace Kernel::Detail

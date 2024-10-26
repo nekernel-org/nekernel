@@ -9,7 +9,7 @@
 
 /*************************************************************
  *
- * File: NeFS+IO.cxx
+ * File: NeFS+IO.cc
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
  *

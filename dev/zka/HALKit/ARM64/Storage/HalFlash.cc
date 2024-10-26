@@ -7,7 +7,7 @@
 #include <NewKit/Defines.h>
 #include <ArchKit/ArchKit.h>
 
-/// @file Flash.cxx
+/// @file Flash.cc
 /// @brief Flash memory builtin.
 
 #ifdef __USE_MBCI_FLASH__

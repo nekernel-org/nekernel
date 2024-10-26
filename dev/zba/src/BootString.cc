@@ -2,7 +2,7 @@
 
 	Copyright ZKA Web Services Co.
 
-	File: String.cxx
+	File: String.cc
 	Purpose: ZBA string library
 
 	Revision History:

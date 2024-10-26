@@ -7,11 +7,10 @@ Purpose: SCI core header file (C++ only).
 
 ------------------------------------------- */
 
-#ifndef __SCI_BASE_H__
-#define __SCI_BASE_H__
+#ifndef SCI_BASE_H
+#define SCI_BASE_H
 
 #define ATTRIBUTE(X) __attribute__((X))
-#define IMPORT_XPCOM extern "XPCOM"
 #define IMPORT_CXX	 extern "C++"
 #define IMPORT_C	 extern "C"
 
@@ -34,8 +33,8 @@ typedef void*			 VoidPtr;
 typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
 
-#include <sci/sci_hint.h>
-#include <sci/sci_lpc.h>
+#include <SCIKit/CompilerHint.h>
+#include <SCIKit/LPC.h>
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Handle Type Definitions.
@@ -122,38 +121,6 @@ IMPORT_C UInt64 IoSeekFile(_Input SCIObject file_desc, UInt64 file_offset);
 /// @return > 0 error ocurred or already present, = 0 success.
 IMPORT_C UInt32 RtlTlsInstall(Void);
 
-#ifndef __XPCOM_IMPL__
-
-// ------------------------------------------------------------------------
-// XPCOM API.
-// ------------------------------------------------------------------------
-
-/// @brief Allocate new XPCOM object.
-/// @tparam TCLS the class type.
-/// @tparam UCLSID UCLS factory class type.
-/// @param uclsidOfCls UCLS factory class
-/// @return TCLS interface
-template <typename TCLS, typename UCLSID, typename... Args>
-TCLS* XPCOMQueryClass(_Input UCLSID* uclsidOfCls, _Input Args&&... args);
-
-/// @brief Release XPCOM object.
-/// @tparam TCLS the class type.
-/// @param cls the class to release.
-/// @return status code.
-template <typename TCLS>
-SInt32 XPCOMReleaseClass(_Input TCLS* cls);
-
-/// @brief Creates an XPCOM instance in the process.
-/// @param handle_instance the XPCOM handle.
-/// @param flags the XPCOM flags.
-IMPORT_C SInt32 XPCOMCreateInstance(_Input UInt32 flags, _Output SCIObject* handle_instance);
-
-/// @brief Destroys an XPCOM instance of the process.
-/// @param handle_instance the XPCOM handle.
-IMPORT_C Void XPCOMDestroyInstance(_Input SCIObject handle_instance);
-
-#endif // !__XPCOM_IMPL__
-
 // ------------------------------------------------------------------------
 // Memory Management API.
 // ------------------------------------------------------------------------
@@ -207,26 +174,27 @@ IMPORT_C Void ThrExitMainThread(_Input SInt32 exit_code);
 /// @param exit_code the exit code.
 IMPORT_C Void ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
 
+/// @brief Thread procedure function type.
 typedef Void (*ThreadProc)(Void);
 
-/// @brief Create a thread.
+/// @brief Creates a thread.
 /// @param procedure the thread procedure.
 /// @param argument_count number of arguments inside that thread.
 /// @param flags Thread flags.
 /// @return the thread object.
 IMPORT_C ThreadObject ThrCreateThread(ThreadProc procedure, SInt32 argument_count, SInt32 flags);
 
-/// @brief Yield the current thread.
+/// @brief Yields the current thread.
 /// @param thread the thread to yield.
-IMPORT_C Void ThrExitYieldThread(Void);
+IMPORT_C Void ThrYieldThread(Void);
 
-/// @brief Join a thread.
+/// @brief Joins a thread.
 /// @param thread the thread to join.
-IMPORT_C Void ThrExitJoinThread(Void);
+IMPORT_C Void ThrJoinThread(Void);
 
-/// @brief Detach a thread.
+/// @brief Detach sa thread.
 /// @param thread the thread to detach.
-IMPORT_C Void ThrExitDetachThread(Void);
+IMPORT_C Void ThrDetachThread(Void);
 
 // ------------------------------------------------------------------------
 // Drive Management API.
@@ -278,4 +246,4 @@ IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input SCIObject 
 /// @return the event data.
 IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr event_data);
 
-#endif // ifndef __SCI_BASE_H__
+#endif // ifndef SCI_BASE_H

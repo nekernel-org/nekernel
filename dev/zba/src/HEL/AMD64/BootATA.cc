@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /**
- * @file ATA.cxx
+ * @file BootATA.cc
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
  * @brief ATA driver.
  * @version 0.1

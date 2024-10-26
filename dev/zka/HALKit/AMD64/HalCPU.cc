@@ -2,7 +2,7 @@
 
 	Copyright ZKA Web Services Co.
 
-	File: HalCPU.cxx
+	File: HalCPU.cc
 	Purpose: Platform processor routines.
 
 ------------------------------------------- */
@@ -11,7 +11,7 @@
 #include <HALKit/AMD64/Processor.h>
 
 /**
- * @file HalCPU.cxx
+ * @file HalCPU.cc
  * @brief Common CPU API.
  */
 

@@ -19,6 +19,6 @@ namespace CFKit::XRN::Version1
 {
 	using namespace Kernel;
 
-	Ref<GUIDSequence>				 cf_make_sequence(const ArrayList<UInt32>& seq);
-	ErrorOr<Ref<Kernel::StringView>> cf_try_guid_to_string(Ref<GUIDSequence>& guid);
+	Ref<GUIDSequence*>				 cf_make_sequence(const ArrayList<UInt32>& seq);
+	ErrorOr<Ref<Kernel::StringView>> cf_try_guid_to_string(Ref<GUIDSequence*>& guid);
 } // namespace CFKit::XRN::Version1

@@ -12,7 +12,7 @@
 #include <KernelKit/PEF.h>
 #include <KernelKit/PE.h>
 #include <KernelKit/MSDOS.h>
-#include <CFKit/LoaderUtils.h>
+#include <CFKit/Utils.h>
 #include <modules/FB/Text.h>
 
 // External boot services symbol.

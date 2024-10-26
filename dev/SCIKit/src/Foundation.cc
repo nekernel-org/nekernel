@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
-#include <sci/sci_base.h>
+#include <SCIKit/Foundation.h>
 
-/// @file sci_base.cxx
+/// @file sci_base.cc
 /// @brief Base Memory Manager functions for SCI.dll
 
 /// @brief Copy memory region.

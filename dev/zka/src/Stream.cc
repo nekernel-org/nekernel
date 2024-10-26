@@ -2,7 +2,7 @@
 
 	Copyright ZKA Web Services Co.
 
-	File: Stream.cxx
+	File: Stream.cc
 	Purpose: Stream object
 
 	Revision History:

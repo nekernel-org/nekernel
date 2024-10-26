@@ -17,17 +17,17 @@
 #include <NewKit/Ref.h>
 #include <BootKit/Thread.h>
 
-// make the compiler shut up.
+// Makes the compiler shut up.
 #ifndef kMachineModel
 #define kMachineModel "ZKA SSD"
 #endif // !kMachineModel
 
-#ifndef cExpectedWidth
-#define cExpectedWidth 1280
+#ifndef kExpectedWidth
+#define kExpectedWidth 1280
 #endif
 
-#ifndef cExpectedHeight
-#define cExpectedHeight 720
+#ifndef kExpectedHeight
+#define kExpectedHeight 720
 #endif
 
 /** Graphics related. */
@@ -38,18 +38,18 @@ STATIC EfiGUID					  kGopGuid;
 
 EXTERN_C Void rt_reset_hardware();
 
-/**
-	@brief Finds and stores the GOP.
-*/
-
 EXTERN EfiBootServices* BS;
 
-STATIC Void boot_init_fb() noexcept
+/**
+	@brief Finds and stores the GOP object.
+*/
+STATIC Bool boot_init_fb() noexcept
 {
 	kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
 	kGop	 = nullptr;
 
-	BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop);
+	if (BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop) /= kEfiOk)
+		return No;
 
 	kGopStride = 4;
 
@@ -60,8 +60,8 @@ STATIC Void boot_init_fb() noexcept
 
 		kGop->QueryMode(kGop, i, &sz, &infoPtr);
 
-		if (infoPtr->HorizontalResolution == cExpectedWidth &&
-			infoPtr->VerticalResolution == cExpectedHeight)
+		if (infoPtr->HorizontalResolution == kExpectedWidth &&
+			infoPtr->VerticalResolution == kExpectedHeight)
 		{
 			kGop->SetMode(kGop, i);
 			break;
@@ -93,15 +93,16 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	UInt32				 rev_desc		 = 0;
 
 #ifdef __ZKA_USE_FB__
-	boot_init_fb(); ///! Init the GOP.
+	if (!boot_init_fb())
+		return -1; ///! Init the GOP.
 
-	for (SizeT indexVT = 0; indexVT < SystemTable->NumberOfTableEntries;
-		 ++indexVT)
+	for (SizeT index_vt = 0; index_vt < SystemTable->NumberOfTableEntries;
+		 ++index_vt)
 	{
 		Char* vendor_table = reinterpret_cast<Char*>(
-			SystemTable->ConfigurationTable[indexVT].VendorTable);
+			SystemTable->ConfigurationTable[index_vt].VendorTable);
 
-		/// ACPI's 'RSD PTR', which contains hardware tables (MADT, FACP...)
+		// ACPI's 'RSD PTR', which contains the ACPI SDT (MADT, FACP...)
 		if (vendor_table[0] == 'R' && vendor_table[1] == 'S' &&
 			vendor_table[2] == 'D' && vendor_table[3] == ' ' &&
 			vendor_table[4] == 'P' && vendor_table[5] == 'T' &&
@@ -164,7 +165,6 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	// format the disk.
 	// ---------------------------------------------------- //
 
-#ifdef __AHCI__
 	if (!partition_factory.IsPartitionValid())
 	{
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
@@ -177,7 +177,6 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		rt_reset_hardware();
 	}
-#endif
 
 	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
@@ -231,7 +230,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	if (reader_syschk.Blob())
 	{
 		syschk_thread = new Boot::BThread(reader_syschk.Blob());
-		syschk_thread->SetName("System Check.");
+		syschk_thread->SetName("System Check (Integrity check)");
 	}
 
 	syschk_thread->Start(handover_hdr);
@@ -268,7 +267,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	if (reader_kernel.Blob())
 	{
 		kernel_thread = new Boot::BThread(reader_kernel.Blob());
-		kernel_thread->SetName("Minimal Kernel.");
+		kernel_thread->SetName("OS Kernel (Microkernel).");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
 	}
@@ -315,7 +314,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 #endif // __ZKA_USE_FB__
 
 	// ---------------------------------------------------- //
-	// Finally load Kernel, and the cr3 to it.
+	// Finally load the operating system kernel.
 	// ---------------------------------------------------- //
 
 	kernel_thread->Start(handover_hdr);

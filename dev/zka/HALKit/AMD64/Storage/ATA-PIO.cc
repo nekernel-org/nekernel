@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /**
- * @file ATA-PIO.cxx
+ * @file ATA-PIO.cc
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
  * @brief ATA driver (PIO mode).
  * @version 0.1

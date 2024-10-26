@@ -1,5 +1,5 @@
-#ifndef __CFKIT_LOADER_UTILS_H__
-#define __CFKIT_LOADER_UTILS_H__
+#ifndef CFKIT_UTILS_H
+#define CFKIT_UTILS_H
 
 #include <KernelKit/PE.h>
 #include <KernelKit/MSDOS.h>
@@ -52,4 +52,4 @@ namespace CFKit
 	}
 } // namespace CFKit
 
-#endif // ifndef __CFKIT_LOADER_UTILS_H__
+#endif // ifndef CFKIT_UTILS_H

@@ -2,13 +2,13 @@
 
 	Copyright ZKA Web Services Co.
 
-	FILE: UserProcessScheduler.cxx
+	FILE: UserProcessScheduler.cc
 	PURPOSE: EL0/Ring-3 Process scheduler.
 
 ------------------------------------------- */
 
 /***********************************************************************************/
-/// @file UserProcessScheduler.cxx
+/// @file UserProcessScheduler.cc
 /// @brief User process scheduler.
 /***********************************************************************************/
 

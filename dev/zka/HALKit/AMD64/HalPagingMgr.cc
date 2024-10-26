@@ -2,7 +2,7 @@
 
 	Copyright ZKA Web Services Co.
 
-	File: HalPagingMgr.cxx
+	File: HalPagingMgr.cc
 	Purpose: Platform Paging Manager..
 
 ------------------------------------------- */

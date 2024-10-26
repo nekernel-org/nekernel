@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-//! @file DebuggerPort.cxx
+//! @file DebuggerPort.cc
 //! @brief UART debug via packets.
 
 #include <ArchKit/ArchKit.h>

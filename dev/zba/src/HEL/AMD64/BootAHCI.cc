@@ -5,9 +5,9 @@
 ------------------------------------------- */
 
 /**
- * @file AHCI.cxx
+ * @file BootAHCI.cc
  * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
- * @brief AHCI driver.
+ * @brief AHCI support for ZBA.
  * @version 0.1
  * @date 2024-02-02
  *

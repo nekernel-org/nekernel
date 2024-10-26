@@ -1,6 +1,0 @@
-<SourceDeploy>
-<HiddenFiles>
-    <SourceFile>*.h</SourceFile>
-    <SourceFile>*.idl</SourceFile>
-</HiddenFiles>
-</SourceDeploy>

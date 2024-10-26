@@ -11,7 +11,7 @@
 
 ///! BUGS: 0
 
-///! @file MP.cxx
+///! @file MP.cc
 ///! @brief This file handles multi processing in the Kernel.
 ///! @brief Multi processing is needed for multi-tasking operations.
 

@@ -31,7 +31,7 @@
 using namespace Kernel;
 
 /***********************************************************************************/
-/// @file PEFSharedObjectRT.cxx
+/// @file PEFSharedObjectRT.cc
 /// @brief PEF's shared object runtime.
 /***********************************************************************************/
 

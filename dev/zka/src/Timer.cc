@@ -7,7 +7,7 @@
 #include <KernelKit/Timer.h>
 
 ///! BUGS: 0
-///! @file Timer.cxx
+///! @file Timer.cc
 ///! @brief Software Timer implementation
 
 using namespace Kernel;

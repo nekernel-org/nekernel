@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 	{
 		if (strcmp(argv[i], "/?") == 0)
 		{
-			std::cout << "make_framework: Framework Tool.\n";
+			std::cout << "make_framework: Framework Creation Tool.\n";
 			std::cout << "make_framework: © ZKA Web Services Co, all rights reserved.\n";
 
 			return 0;

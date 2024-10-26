@@ -2,7 +2,7 @@
 
 	Copyright ZKA Web Services Co.
 
-	File: FileReader.cxx
+	File: FileReader.cc
 	Purpose: New Boot FileReader,
 	Read complete file and store it in a buffer.
 
