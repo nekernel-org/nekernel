@@ -45,17 +45,18 @@ namespace Kernel
 	{
 		kPefSubArchAMD,
 		kPefSubArchIntel,
+		kPefSubArchARM,
 		kPefSubArchGeneric,
 		kPefSubArchIBM,
 	};
 
 	enum
 	{
-		kPefKindExec		 = 1, /* .exe */
-		kPefKindSharedObject = 2, /* .lib */
-		kPefKindObject		 = 4, /* .obj */
-		kPefKindDebug		 = 5, /* .dbg */
-		kPefKindDriver		 = 6,
+		kPefKindExec   = 1, /* .exe */
+		kPefKindDylib  = 2, /* .dylib */
+		kPefKindObject = 4, /* .obj */
+		kPefKindDebug  = 5, /* .dbg */
+		kPefKindDriver = 6,
 		kPefKindCount,
 	};
 

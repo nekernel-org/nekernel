@@ -223,7 +223,7 @@ namespace Kernel
 			if (!proc.StackSize)
 			{
 				const auto cDefaultStackSizeMib = 8;
-				proc.StackSize = mib_cast(cDefaultStackSizeMib);
+				proc.StackSize					= mib_cast(cDefaultStackSizeMib);
 			}
 
 			return UserProcessScheduler::The().Add(proc);

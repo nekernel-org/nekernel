@@ -27,7 +27,6 @@
 #include <FSKit/HPFS.h>
 #endif // __FSKIT_INCLUDES_HPFS__
 
-
 #include <CompilerKit/CompilerKit.h>
 #include <HintKit/CompilerHint.h>
 #include <KernelKit/LPC.h>

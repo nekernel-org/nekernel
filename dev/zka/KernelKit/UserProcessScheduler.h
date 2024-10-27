@@ -149,11 +149,11 @@ namespace Kernel
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatusKind  Status{ProcessStatusKind::kDead};
 		UInt8*			   StackReserve{nullptr};
-		ImagePtr Image{nullptr};
-		SizeT StackSize{kSchedMaxStackSz};
-		IPEFDLLObject* PefDLLDelegate{nullptr};
-		SizeT MemoryCursor{0};
-		SizeT MemoryLimit{kSchedMaxMemoryLimit};
+		ImagePtr		   Image{nullptr};
+		SizeT			   StackSize{kSchedMaxStackSz};
+		IPEFDLLObject*	   PefDLLDelegate{nullptr};
+		SizeT			   MemoryCursor{0};
+		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 
 		struct PROCESS_MEMORY_ENTRY final
 		{
@@ -268,8 +268,8 @@ namespace Kernel
 		UserProcessTeam& CurrentTeam();
 
 	public:
-		SizeT Add(UserProcess process);
-		const Bool  Remove(ProcessID process_id);
+		SizeT	   Add(UserProcess process);
+		const Bool Remove(ProcessID process_id);
 
 		const Bool IsUser() override;
 		const Bool IsKernel() override;
