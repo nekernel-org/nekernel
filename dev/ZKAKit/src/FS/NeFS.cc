@@ -518,7 +518,7 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), epmBoot->Name, rt_string_len(cBlockName));
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epmBoot->Magic, rt_string_len(kEPMMagic));
 
-		Lba outEpmLba = kEpmBase;
+		Lba outEpmLba = kEPMBaseLba;
 
 		Char buf[kNeFSSectorSz];
 

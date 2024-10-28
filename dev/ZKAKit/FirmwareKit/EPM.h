@@ -70,7 +70,7 @@
 #define kEPMRevisionUEFI (0xAF)
 
 /// !@brief EPM base address.
-#define kEpmBase (0U)
+#define kEPMBaseLba (0U)
 
 struct _BLOCK_GUID_STRUCT;
 struct _BOOT_BLOCK_STRUCT;

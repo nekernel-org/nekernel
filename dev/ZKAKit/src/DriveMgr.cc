@@ -7,7 +7,7 @@
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Utils.h>
-
+#include <FirmwareKit/EPM.h>
 #include <Modules/ATA/ATA.h>
 #include <Modules/AHCI/AHCI.h>
 #include <Modules/NVME/NVME.h>
@@ -112,12 +112,6 @@ namespace Kernel
 		return "Not Loaded";
 	}
 #endif
-#ifdef __ZKA_ED__
-	const Char* io_drv_kind(Void)
-	{
-		return "C++ Code Editor";
-	}
-#endif
 
 	/// @brief Unimplemented drive function.
 	/// @param pckt the packet to read.
@@ -142,17 +136,37 @@ namespace Kernel
 		trait.fInit		 = io_drv_unimplemented;
 		trait.fDriveKind = io_drv_kind;
 
+		kcout << "Construct: " << trait.fName << ".\r";
+
 		return trait;
 	}
 
 	/// @brief Fetches the main drive.
-	/// @return the new drive.
+	/// @return the new drive. (returns kEPMDrive if EPM formatted)
 	DriveTrait io_construct_main_drive() noexcept
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "\\Mount\\MainDisk:", trait.fName, rt_string_len("\\Mount\\MainDisk:"));
-		trait.fKind = kMassStorage | kEPMDrive;
+		rt_copy_memory((VoidPtr) "\\Mount\\OS:", trait.fName, rt_string_len("\\Mount\\OS:"));
+
+		_BOOT_BLOCK_STRUCT block_struct;
+
+		trait.fPacket.fLba = kEPMBaseLba;
+		trait.fPacket.fPacketSize = sizeof(_BOOT_BLOCK_STRUCT);
+		trait.fPacket.fPacketContent = &block_struct;
+
+		io_drv_input(&trait.fPacket);
+
+		trait.fKind = kMassStorage;
+
+		if (rt_string_cmp(block_struct.Magic, kEPMMagic, kEPMMagicLength) == 0)
+		{
+			trait.fKind |= kEPMDrive;
+		}
+
+		trait.fPacket.fLba = 0;
+		trait.fPacket.fPacketSize = 0UL;
+		trait.fPacket.fPacketContent = nullptr;
 
 		trait.fVerify	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_output;
@@ -160,7 +174,7 @@ namespace Kernel
 		trait.fInit		 = io_drv_init;
 		trait.fDriveKind = io_drv_kind;
 
-		kcout << "Constructed drive successfully.\r";
+		kcout << "Construct: " << trait.fName << ".\r";
 
 		return trait;
 	}
