@@ -43,7 +43,7 @@ namespace CFKit::XRN::Version1
 
 	// @brief Tries to make a guid out of a string.
 	// This function is not complete for now
-	auto cf_try_guid_to_string(Ref<GUIDSequence*>& seq) -> ErrorOr<Ref<StringView>>
+	auto cf_try_guid_to_string(Ref<GUIDSequence*>& seq) -> ErrorOr<Ref<KString>>
 	{
 		Char buf[kUUIDSize];
 
@@ -65,8 +65,8 @@ namespace CFKit::XRN::Version1
 		auto view = StringBuilder::Construct(buf);
 
 		if (view)
-			return ErrorOr<Ref<StringView>>{view.Leak()};
+			return ErrorOr<Ref<KString>>{view.Leak()};
 
-		return ErrorOr<Ref<StringView>>{-1};
+		return ErrorOr<Ref<KString>>{-1};
 	}
 } // namespace CFKit::XRN::Version1

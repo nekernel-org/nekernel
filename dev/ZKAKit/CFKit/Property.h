@@ -10,7 +10,7 @@
 #include <NewKit/Array.h>
 #include <NewKit/Defines.h>
 #include <NewKit/Function.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 
 #define kMaxPropLen 255
 
@@ -33,12 +33,12 @@ namespace CFKit
 		Property& operator=(const Property&) = default;
 		Property(const Property&)			 = default;
 
-		bool		StringEquals(StringView& name);
+		bool		StringEquals(KString& name);
 		PropertyId& GetValue();
-		StringView& GetKey();
+		KString& GetKey();
 
 	private:
-		StringView fName{kMaxPropLen};
+		KString fName{kMaxPropLen};
 		PropertyId fAction{No};
 	};
 

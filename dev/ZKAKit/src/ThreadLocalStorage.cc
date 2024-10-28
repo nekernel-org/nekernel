@@ -7,7 +7,7 @@
  *  ========================================================
  */
 
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <CFKit/Property.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/ThreadLocalStorage.h>

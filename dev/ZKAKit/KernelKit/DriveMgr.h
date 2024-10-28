@@ -13,7 +13,7 @@
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/LPC.h>
 #include <NewKit/Defines.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <NewKit/Ref.h>
 
 #define kMaxDriveCountPerMountpoint (4U)

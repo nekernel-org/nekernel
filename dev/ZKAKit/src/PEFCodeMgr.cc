@@ -11,7 +11,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Stop.h>
 #include <NewKit/OwnPtr.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 
 /// @brief PEF stack size symbol.
 #define cPefStackSizeSymbol "SizeOfReserveStack"
@@ -117,7 +117,7 @@ namespace Kernel
 		constexpr auto cMangleCharacter	 = '$';
 		const Char*	   cContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
 
-		ErrorOr<StringView> error_or_symbol;
+		ErrorOr<KString> error_or_symbol;
 
 		switch (kind)
 		{

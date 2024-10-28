@@ -27,6 +27,11 @@ namespace Kernel
 		}
 
 	public:
+		Ref(T* cls)
+			: fClass(cls)
+		{
+		}
+
 		Ref(T cls)
 			: fClass(&cls)
 		{

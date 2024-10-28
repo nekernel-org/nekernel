@@ -7,7 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <NewKit/Json.h>
 
 namespace Kernel
@@ -33,7 +33,7 @@ namespace Kernel
 		~Variant() = default;
 
 	public:
-		explicit Variant(StringView* stringView)
+		explicit Variant(KString* stringView)
 			: fPtr((VoidPtr)stringView), fKind(VariantKind::kString)
 		{
 		}

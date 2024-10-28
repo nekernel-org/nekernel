@@ -8,7 +8,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/Timer.h>
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
 #include <Modules/FB/FB.h>

@@ -9,7 +9,7 @@
 
 #include <KernelKit/PEF.h>
 #include <NewKit/ErrorOr.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <KernelKit/FileMgr.h>
 
 #define kPefApplicationMime "application/vnd-zka-executable"
@@ -52,7 +52,7 @@ namespace Kernel
 		OwnPtr<FileStream<Char>> fFile;
 #endif // __FSKIT_INCLUDES_NEFS__
 
-		Ref<StringView> fPath;
+		Ref<KString> fPath;
 		VoidPtr			fCachedBlob;
 		bool			fFatBinary;
 		bool			fBad;

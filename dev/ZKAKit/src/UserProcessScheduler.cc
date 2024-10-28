@@ -17,7 +17,7 @@
 #include <KernelKit/IPEFDLLObject.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/Heap.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <KernelKit/LPC.h>
 
 ///! BUGS: 0
@@ -32,7 +32,7 @@ namespace Kernel
 	/// @brief Exit Code global variable.
 	/***********************************************************************************/
 
-	STATIC UInt32 cLastExitCode = 0U;
+	STATIC UInt32 kLastExitCode = 0U;
 
 	/***********************************************************************************/
 	/// @brief User Process scheduler global and external reference of thread scheduler.
@@ -41,12 +41,16 @@ namespace Kernel
 	UserProcessScheduler*			kProcessScheduler = nullptr;
 	EXTERN HardwareThreadScheduler* kHardwareThreadScheduler;
 
+	UserProcess::UserProcess(VoidPtr start_image) : Image(start_image) {}
+
+	UserProcess::~UserProcess() = default;
+
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
 	const UInt32& sched_get_exit_code(void) noexcept
 	{
-		return cLastExitCode;
+		return kLastExitCode;
 	}
 
 	/***********************************************************************************/
@@ -99,7 +103,7 @@ namespace Kernel
 	/// @brief Wake process.
 	/***********************************************************************************/
 
-	void UserProcess::Wake(const bool should_wakeup)
+	Void UserProcess::Wake(const bool should_wakeup)
 	{
 		this->Status =
 			should_wakeup ? ProcessStatusKind::kRunning : ProcessStatusKind::kFrozen;
@@ -109,33 +113,37 @@ namespace Kernel
 	/** @brief Add pointer to entry. */
 	/***********************************************************************************/
 
-	VoidPtr UserProcess::New(const SizeT& sz)
+	ErrorOr<VoidPtr> UserProcess::New(const SizeT& sz, const SizeT& pad_amount)
 	{
 #ifdef __ZKA_AMD64__
-		auto pd = hal_read_cr3();
+		auto vm_register = hal_read_cr3();
 		hal_write_cr3(reinterpret_cast<VoidPtr>(this->VMRegister));
 
-		auto ptr = mm_new_heap(sz, Yes, Yes);
+		auto ptr = mm_new_heap(sz + pad_amount, Yes, Yes);
 
-		hal_write_cr3(reinterpret_cast<VoidPtr>(pd));
+		hal_write_cr3(reinterpret_cast<VoidPtr>(vm_register));
 #else
-		auto ptr = mm_new_heap(sz, Yes, Yes);
+		auto ptr = mm_new_heap(sz + pad_amount, Yes, Yes);
 #endif
 
-		if (!this->MemoryEntryList)
+		if (!this->MemoryHeap)
 		{
-			this->MemoryEntryList			   = new UserProcess::PROCESS_MEMORY_ENTRY();
-			this->MemoryEntryList->MemoryEntry = ptr;
+			this->MemoryHeap			   = new UserProcess::USER_PROCESS_HEAP();
 
-			this->MemoryEntryList->MemoryPrev = nullptr;
-			this->MemoryEntryList->MemoryNext = nullptr;
+			this->MemoryHeap->MemoryEntryPad = pad_amount;
+			this->MemoryHeap->MemoryEntrySize = sz;
 
-			return ptr;
+			this->MemoryHeap->MemoryEntry = ptr;
+
+			this->MemoryHeap->MemoryPrev = nullptr;
+			this->MemoryHeap->MemoryNext = nullptr;
+
+			return ErrorOr<VoidPtr>(ptr);
 		}
 		else
 		{
-			PROCESS_MEMORY_ENTRY* entry		 = this->MemoryEntryList;
-			PROCESS_MEMORY_ENTRY* prev_entry = nullptr;
+			USER_PROCESS_HEAP* entry		 = this->MemoryHeap;
+			USER_PROCESS_HEAP* prev_entry = nullptr;
 
 			while (!entry)
 			{
@@ -146,31 +154,31 @@ namespace Kernel
 				entry	   = entry->MemoryNext;
 			}
 
-			entry->MemoryNext			   = new PROCESS_MEMORY_ENTRY();
+			entry->MemoryNext			   = new USER_PROCESS_HEAP();
 			entry->MemoryNext->MemoryEntry = ptr;
 
 			entry->MemoryNext->MemoryPrev = entry;
 			entry->MemoryNext->MemoryNext = nullptr;
 		}
 
-		return nullptr;
+		return ErrorOr<VoidPtr>(nullptr);
 	}
 
 	/***********************************************************************************/
 	/** @brief Free pointer from usage. */
 	/***********************************************************************************/
 
-	Boolean UserProcess::Delete(VoidPtr ptr, const SizeT& sz)
+	Boolean UserProcess::Delete(ErrorOr<VoidPtr> ptr, const SizeT& sz)
 	{
 		if (!ptr ||
 			sz == 0)
 			return No;
 
-		PROCESS_MEMORY_ENTRY* entry = this->MemoryEntryList;
+		USER_PROCESS_HEAP* entry = this->MemoryHeap;
 
 		while (entry != nullptr)
 		{
-			if (entry->MemoryEntry == ptr)
+			if (entry->MemoryEntry == ptr.Leak().Leak())
 			{
 #ifdef __ZKA_AMD64__
 				auto pd = hal_read_cr3();
@@ -197,7 +205,7 @@ namespace Kernel
 	/// @brief Gets the name of the current process.
 	/***********************************************************************************/
 
-	const Char* UserProcess::GetProcessName() noexcept
+	const Char* UserProcess::GetName() noexcept
 	{
 		return this->Name;
 	}
@@ -239,9 +247,9 @@ namespace Kernel
 		this->Status = ProcessStatusKind::kDead;
 
 		fLastExitCode = exit_code;
-		cLastExitCode = exit_code;
+		kLastExitCode = exit_code;
 
-		auto memory_list = this->MemoryEntryList;
+		auto memory_list = this->MemoryHeap;
 
 		// Deleting memory lists. Make sure to free all of them.
 		while (memory_list)
@@ -302,7 +310,7 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	/// @brief Add process to list.
+	/// @brief Add process to team.
 	/// @param process the process *Ref* class.
 	/// @return the process index inside the team.
 	/***********************************************************************************/
@@ -316,7 +324,7 @@ namespace Kernel
 		process.VMRegister = reinterpret_cast<UIntPtr>(HAL::mm_alloc_bitmap(Yes, Yes, sizeof(PDE), Yes));
 #endif // __ZKA_AMD64__
 
-		process.StackFrame = (HAL::StackFramePtr)mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes);
+		process.StackFrame = reinterpret_cast<HAL::StackFramePtr>(mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes));
 
 		if (!process.StackFrame)
 		{
@@ -339,9 +347,9 @@ namespace Kernel
 			}
 		}
 
-		// get preferred stack size by app.
+		// Get preferred stack size by app.
 		const auto cMaxStackSize = process.StackSize;
-		process.StackReserve	 = (UInt8*)mm_new_heap(sizeof(UInt8) * cMaxStackSize, Yes, Yes);
+		process.StackReserve	 = reinterpret_cast<UInt8*>(mm_new_heap(sizeof(UInt8) * cMaxStackSize, Yes, Yes));
 
 		if (!process.StackReserve)
 		{
@@ -367,6 +375,14 @@ namespace Kernel
 	{
 		MUST_PASS(kProcessScheduler);
 		return *kProcessScheduler;
+	}
+
+	ErrorOr<UserProcessScheduler> UserProcessScheduler::TheSafe()
+	{
+		if (!kProcessScheduler)
+			return ErrorOr<UserProcessScheduler>(nullptr);
+
+		return ErrorOr<UserProcessScheduler>(kProcessScheduler);
 	}
 
 	/***********************************************************************************/
@@ -413,7 +429,7 @@ namespace Kernel
 
 	/***********************************************************************************/
 
-	SizeT UserProcessScheduler::Run() noexcept
+	const SizeT UserProcessScheduler::Run() noexcept
 	{
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
@@ -433,13 +449,13 @@ namespace Kernel
 			{
 				process.PTime = static_cast<Int32>(process.Affinity);
 
-				UserProcessScheduler::The().CurrentProcess().Leak().Status = ProcessStatusKind::kFrozen;
-				UserProcessScheduler::The().CurrentProcess()			   = process;
+				UserProcessScheduler::The().GetCurrentProcess().Leak().Status = ProcessStatusKind::kFrozen;
+				UserProcessScheduler::The().GetCurrentProcess()			   = process;
 
 				kcout << "Switch to '" << process.Name << "'.\r";
 
 				// Set current process header.
-				this->CurrentProcess() = process;
+				this->GetCurrentProcess() = process;
 
 				// tell helper to find a core to schedule on.
 				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize], process.StackFrame,
@@ -471,7 +487,7 @@ namespace Kernel
 
 	/// @brief Gets current running process.
 	/// @return
-	Ref<UserProcess>& UserProcessScheduler::CurrentProcess()
+	Ref<UserProcess>& UserProcessScheduler::GetCurrentProcess()
 	{
 		return mTeam.AsRef();
 	}
@@ -481,7 +497,7 @@ namespace Kernel
 	PID& UserProcessHelper::TheCurrentPID()
 	{
 		kcout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-		return kProcessScheduler->CurrentProcess().Leak().ProcessId;
+		return kProcessScheduler->GetCurrentProcess().Leak().ProcessId;
 	}
 
 	/// @brief Check if process can be schedulded.

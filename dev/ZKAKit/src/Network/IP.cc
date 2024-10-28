@@ -90,13 +90,13 @@ namespace Kernel
 		return true;
 	}
 
-	ErrorOr<StringView> IPFactory::ToStringView(Ref<RawIPAddress6>& ipv6)
+	ErrorOr<KString> IPFactory::ToKString(Ref<RawIPAddress6>& ipv6)
 	{
 		auto str = StringBuilder::Construct(ipv6.Leak().Address());
 		return str;
 	}
 
-	ErrorOr<StringView> IPFactory::ToStringView(Ref<RawIPAddress>& ipv4)
+	ErrorOr<KString> IPFactory::ToKString(Ref<RawIPAddress>& ipv4)
 	{
 		auto str = StringBuilder::Construct(ipv4.Leak().Address());
 		return str;

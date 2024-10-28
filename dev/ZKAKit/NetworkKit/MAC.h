@@ -8,7 +8,7 @@
 
 #include <NewKit/Array.h>
 #include <NewKit/Defines.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 
 namespace Kernel
 {
@@ -22,7 +22,7 @@ namespace Kernel
 		explicit MacAddressGetter() = default;
 
 	public:
-		StringView&			 AsString();
+		KString&			 AsString();
 		Array<WideChar, 12>& AsBytes();
 	};
 

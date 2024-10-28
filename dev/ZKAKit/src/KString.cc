@@ -4,30 +4,30 @@
 
 ------------------------------------------- */
 
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 
-/// @file String.cc
-/// @brief String manipulation file.
+/// @file KString.cc
+/// @brief Kernel String manipulation file.
 
 namespace Kernel
 {
-	Char* StringView::Data()
+	Char* KString::Data()
 	{
 		return fData;
 	}
 
-	const Char* StringView::CData() const
+	const Char* KString::CData() const
 	{
 		return fData;
 	}
 
-	Size StringView::Length() const
+	Size KString::Length() const
 	{
 		return fDataSz;
 	}
 
-	bool StringView::operator==(const StringView& rhs) const
+	bool KString::operator==(const KString& rhs) const
 	{
 		if (rhs.Length() != this->Length())
 			return false;
@@ -41,7 +41,7 @@ namespace Kernel
 		return true;
 	}
 
-	bool StringView::operator==(const Char* rhs) const
+	bool KString::operator==(const Char* rhs) const
 	{
 		if (rt_string_len(rhs) != this->Length())
 			return false;
@@ -55,7 +55,7 @@ namespace Kernel
 		return true;
 	}
 
-	bool StringView::operator!=(const StringView& rhs) const
+	bool KString::operator!=(const KString& rhs) const
 	{
 		if (rhs.Length() != this->Length())
 			return false;
@@ -69,7 +69,7 @@ namespace Kernel
 		return true;
 	}
 
-	bool StringView::operator!=(const Char* rhs) const
+	bool KString::operator!=(const Char* rhs) const
 	{
 		if (rt_string_len(rhs) != this->Length())
 			return false;
@@ -83,15 +83,15 @@ namespace Kernel
 		return true;
 	}
 
-	ErrorOr<StringView> StringBuilder::Construct(const Char* data)
+	ErrorOr<KString> StringBuilder::Construct(const Char* data)
 	{
 		if (!data || *data == 0)
 			return {};
 
-		StringView* view = new StringView(rt_string_len(data));
+		KString* view = new KString(rt_string_len(data));
 		(*view) += data;
 
-		return ErrorOr<StringView>(*view);
+		return ErrorOr<KString>(*view);
 	}
 
 	const Char* StringBuilder::FromBool(const Char* fmt, bool i)
@@ -196,7 +196,7 @@ namespace Kernel
 		}
 	}
 
-	StringView& StringView::operator+=(const Char* rhs)
+	KString& KString::operator+=(const Char* rhs)
 	{
 		rt_string_append(this->fData, rhs, this->fCur);
 		this->fCur += rt_string_len(rhs);
@@ -204,7 +204,7 @@ namespace Kernel
 		return *this;
 	}
 
-	StringView& StringView::operator+=(const StringView& rhs)
+	KString& KString::operator+=(const KString& rhs)
 	{
 		if (rt_string_len(rhs.fData) > this->Length())
 			return *this;

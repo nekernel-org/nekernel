@@ -9,7 +9,7 @@
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 
 namespace Kernel
 {
@@ -76,8 +76,8 @@ namespace Kernel
 	class IPFactory final
 	{
 	public:
-		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress6>& ipv6);
-		static ErrorOr<StringView> ToStringView(Ref<RawIPAddress>& ipv4);
+		static ErrorOr<KString> ToKString(Ref<RawIPAddress6>& ipv6);
+		static ErrorOr<KString> ToKString(Ref<RawIPAddress>& ipv4);
 		static bool				   IpCheckVersion4(const Char* ip);
 	};
 } // namespace Kernel

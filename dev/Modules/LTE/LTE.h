@@ -11,7 +11,7 @@ Purpose: LTE Standard Library.
 #define _INC_NETWORK_LTE_H_
 
 #include <NewKit/Defines.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 
 /// @brief Long Term Evolution I/O routines.
 

@@ -9,7 +9,7 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/LPC.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <NewKit/Defines.h>
 
 // user mode users.

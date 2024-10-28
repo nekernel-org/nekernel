@@ -6,7 +6,7 @@
 
 #include <Modules/ACPI/ACPIFactoryInterface.h>
 #include <HALKit/AMD64/Processor.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/Heap.h>
 

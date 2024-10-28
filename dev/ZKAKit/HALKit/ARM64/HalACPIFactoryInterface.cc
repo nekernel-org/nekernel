@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <Modules/ACPI/ACPIFactoryInterface.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/Heap.h>
 #include <Modules/APM/APM.h>

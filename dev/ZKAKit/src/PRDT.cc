@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <StorageKit/PRDT.h>
 
 namespace Kernel

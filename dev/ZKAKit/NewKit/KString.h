@@ -16,11 +16,11 @@
 
 namespace Kernel
 {
-	/// @brief StringView class, using dynamic or static memory.
-	class StringView final
+	/// @brief KString static string class.
+	class KString final
 	{
 	public:
-		explicit StringView()
+		explicit KString()
 		{
 			fDataSz = cMinimumStringSize;
 
@@ -30,7 +30,7 @@ namespace Kernel
 			rt_set_memory(fData, 0, fDataSz);
 		}
 
-		explicit StringView(const SizeT& Sz)
+		explicit KString(const SizeT& Sz)
 			: fDataSz(Sz)
 		{
 			MUST_PASS(Sz > 1);
@@ -41,13 +41,16 @@ namespace Kernel
 			rt_set_memory(fData, 0, Sz);
 		}
 
-		~StringView()
+		~KString()
 		{
 			if (fData)
+			{
 				delete[] fData;
+				fData = nullptr;
+			}
 		}
 
-		ZKA_COPY_DEFAULT(StringView);
+		ZKA_COPY_DEFAULT(KString);
 
 		Char*		Data();
 		const Char* CData() const;
@@ -56,11 +59,11 @@ namespace Kernel
 		bool operator==(const Char* rhs) const;
 		bool operator!=(const Char* rhs) const;
 
-		bool operator==(const StringView& rhs) const;
-		bool operator!=(const StringView& rhs) const;
+		bool operator==(const KString& rhs) const;
+		bool operator!=(const KString& rhs) const;
 
-		StringView& operator+=(const Char* rhs);
-		StringView& operator+=(const StringView& rhs);
+		KString& operator+=(const Char* rhs);
+		KString& operator+=(const KString& rhs);
 
 		operator bool()
 		{
@@ -82,7 +85,7 @@ namespace Kernel
 
 	struct StringBuilder final
 	{
-		static ErrorOr<StringView> Construct(const Char* data);
+		static ErrorOr<KString> Construct(const Char* data);
 		static const Char*		   FromBool(const Char* fmt, bool n);
 		static const Char*		   Format(const Char* fmt, const Char* from);
 		static bool				   Equals(const Char* lhs, const Char* rhs);

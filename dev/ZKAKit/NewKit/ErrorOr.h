@@ -33,6 +33,11 @@ namespace Kernel
 		{
 		}
 
+		explicit ErrorOr(T* Class)
+			: mRef(Class)
+		{
+		}
+
 		explicit ErrorOr(T Class)
 			: mRef(Class)
 		{

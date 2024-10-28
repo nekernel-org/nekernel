@@ -12,7 +12,7 @@
 #include <CompilerKit/CompilerKit.h>
 #include <NewKit/Defines.h>
 #include <NewKit/Stream.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 
 #define cMaxJsonPath 4096
@@ -28,7 +28,7 @@ namespace Kernel
 		explicit JSON()
 		{
 			auto	   len = cJSONLen;
-			StringView key = StringView(len);
+			KString key = KString(len);
 			key += cJSONNull;
 
 			this->AsKey()	= key;
@@ -51,20 +51,20 @@ namespace Kernel
 
 	private:
 		Bool	   fUndefined; // is this instance undefined?
-		StringView fKey;
-		StringView fValue;
+		KString fKey;
+		KString fValue;
 
 	public:
 		/// @brief returns the key of the json
 		/// @return the key as string view.
-		StringView& AsKey()
+		KString& AsKey()
 		{
 			return fKey;
 		}
 
 		/// @brief returns the value of the json.
 		/// @return the key as string view.
-		StringView& AsValue()
+		KString& AsValue()
 		{
 			return fValue;
 		}

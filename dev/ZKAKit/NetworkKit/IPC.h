@@ -11,7 +11,7 @@
 #define _INC_IPC_ENDPOINT_H_
 
 #include <NewKit/Defines.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <HintKit/CompilerHint.h>
 #include <CompressKit/RLE.h>
 

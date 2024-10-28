@@ -21,4 +21,4 @@
 
 #include <KernelKit/PE.h>
 #include <NewKit/ErrorOr.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>

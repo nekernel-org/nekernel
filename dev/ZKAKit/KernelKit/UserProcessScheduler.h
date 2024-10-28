@@ -39,7 +39,7 @@ namespace Kernel
 	typedef Int64 ProcessID;
 
 	//! @brief Local Process name length.
-	inline constexpr SizeT kProcessLen = 256U;
+	inline constexpr SizeT kProcessLen = 4096U;
 
 	//! @brief Local Process status enum.
 	enum class ProcessStatusKind : Int32
@@ -131,18 +131,14 @@ namespace Kernel
 	class UserProcess final
 	{
 	public:
-		explicit UserProcess(VoidPtr startImage = nullptr)
-			: Image(startImage)
-		{
-		}
-
-		~UserProcess() = default;
+		explicit UserProcess(VoidPtr startImage = nullptr);
+		~UserProcess();
 
 	public:
 		ZKA_COPY_DEFAULT(UserProcess)
 
 	public:
-		Char			   Name[kProcessLen] = {"Process"};
+		Char			   Name[kProcessLen] = {"Application Process (Unnamed)"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
@@ -155,15 +151,17 @@ namespace Kernel
 		SizeT			   MemoryCursor{0};
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 
-		struct PROCESS_MEMORY_ENTRY final
+		struct USER_PROCESS_HEAP final
 		{
-			VoidPtr MemoryEntry;
+			VoidPtr MemoryEntry{nullptr};
+			SizeT   MemoryEntrySize{0UL};
+			SizeT   MemoryEntryPad{0UL};
 
-			struct PROCESS_MEMORY_ENTRY* MemoryPrev;
-			struct PROCESS_MEMORY_ENTRY* MemoryNext;
+			struct USER_PROCESS_HEAP* MemoryPrev{nullptr};
+			struct USER_PROCESS_HEAP* MemoryNext{nullptr};
 		};
 
-		PROCESS_MEMORY_ENTRY* MemoryEntryList{nullptr};
+		USER_PROCESS_HEAP* MemoryHeap{nullptr};
 
 		UIntPtr VMRegister{0UL};
 
@@ -192,15 +190,15 @@ namespace Kernel
 
 		///! @brief TLS allocate.
 		///! @param sz size of new ptr.
-		VoidPtr New(const SizeT& sz);
+		ErrorOr<VoidPtr> New(const SizeT& sz, const SizeT& pad_amount = 0);
 
 		///! @brief TLS free.
 		///! @param ptr the pointer to free.
 		///! @param sz the size of it.
-		Boolean Delete(VoidPtr ptr, const SizeT& sz);
+		Boolean Delete(ErrorOr<VoidPtr> ptr, const SizeT& sz);
 
 		///! @brief Wakes up threads.
-		Void Wake(const bool wakeup = false);
+		Void Wake(const Bool wakeup = false);
 
 	public:
 		//! @brief Gets the local exit code.
@@ -208,7 +206,7 @@ namespace Kernel
 
 		///! @brief Get the process's name
 		///! @example 'C Runtime Library'
-		const Char* GetProcessName() noexcept;
+		const Char* GetName() noexcept;
 
 		//! @brief return local error code of process.
 		//! @return Int32 local error code.
@@ -276,10 +274,11 @@ namespace Kernel
 		const Bool HasMP() override;
 
 	public:
-		Ref<UserProcess>& CurrentProcess();
-		SizeT			  Run() noexcept;
+		Ref<UserProcess>& GetCurrentProcess();
+		const SizeT			  Run() noexcept;
 
 	public:
+		STATIC ErrorOr<UserProcessScheduler> TheSafe();
 		STATIC UserProcessScheduler& The();
 
 	private:

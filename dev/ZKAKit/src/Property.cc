@@ -10,12 +10,12 @@ namespace CFKit
 {
 	Property::~Property() = default;
 
-	Bool Property::StringEquals(StringView& name)
+	Bool Property::StringEquals(KString& name)
 	{
 		return this->fName && this->fName == name;
 	}
 
-	StringView& Property::GetKey()
+	KString& Property::GetKey()
 	{
 		return this->fName;
 	}

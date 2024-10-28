@@ -145,16 +145,16 @@ namespace Kernel::HAL
 
 	EXTERN_C HAL::StackFramePtr mp_get_current_context(Void)
 	{
-		return fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
+		return fBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
 	}
 
 	EXTERN_C Void mp_do_task_switch(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame);
 
 	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame)
 	{
-		fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
-		fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Stack = stack_ptr;
-		fBlocks[UserProcessScheduler::The().CurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Image = image;
+		fBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
+		fBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Stack = stack_ptr;
+		fBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Image = image;
 
 		mp_do_task_switch(image, stack_ptr, stack_frame);
 

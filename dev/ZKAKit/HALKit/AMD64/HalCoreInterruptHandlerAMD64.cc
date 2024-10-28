@@ -6,7 +6,7 @@
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 
 namespace Kernel
 {
@@ -17,14 +17,14 @@ namespace Kernel
 /// @param rsp
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
-	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle page fault.
 /// @param rsp
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
-	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle scheduler interrupt.
@@ -37,21 +37,21 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
-	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
-	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle #UD fault.
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
-	Kernel::UserProcessScheduler::The().CurrentProcess().Leak().Crash();
+	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
 /// @brief Enter syscall from assembly.

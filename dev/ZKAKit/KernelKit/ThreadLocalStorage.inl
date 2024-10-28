@@ -16,11 +16,15 @@ inline T* tls_new_ptr(void) noexcept
 {
 	using namespace Kernel;
 
-	auto ref_process = UserProcessScheduler::The().CurrentProcess();
+	auto ref_process = UserProcessScheduler::The().GetCurrentProcess();
 	MUST_PASS(ref_process);
 
-	T* pointer = (T*)ref_process.Leak().New(sizeof(T));
-	return pointer;
+	auto pointer = ref_process.Leak().New(sizeof(T));
+
+	if (pointer.Error())
+		return nullptr;
+
+	return reinterpret_cast<T*>(pointer.Leak().Leak());
 }
 
 //! @brief TLS delete implementation.
@@ -28,21 +32,21 @@ template <typename T>
 inline Kernel::Bool tls_delete_ptr(T* ptr) noexcept
 {
 	if (!ptr)
-		return false;
+		return No;
 
 	using namespace Kernel;
 
-	auto ref_process = UserProcessScheduler::The().CurrentProcess();
+	auto ref_process = UserProcessScheduler::The().GetCurrentProcess();
 	MUST_PASS(ref_process);
 
 	return ref_process.Leak().Delete(ptr, sizeof(T));
 }
 
 /// @brief Allocate a C++ class, and then call the constructor of it.
-/// @tparam T
-/// @tparam ...Args
-/// @param ...args
-/// @return
+/// @tparam T class type.
+/// @tparam ...Args varg class type.
+/// @param ...args arguments list.
+/// @return Class instance.
 template <typename T, typename... Args>
 T* tls_new_class(Args&&... args)
 {

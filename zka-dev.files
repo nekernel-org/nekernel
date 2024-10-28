@@ -221,6 +221,7 @@ dev/ZKAKit/NewKit/Defines.h
 dev/ZKAKit/NewKit/ErrorOr.h
 dev/ZKAKit/NewKit/Function.h
 dev/ZKAKit/NewKit/Json.h
+dev/ZKAKit/NewKit/KString.h
 dev/ZKAKit/NewKit/Macros.h
 dev/ZKAKit/NewKit/MutableArray.h
 dev/ZKAKit/NewKit/New.h
@@ -232,7 +233,6 @@ dev/ZKAKit/NewKit/Pmm.h
 dev/ZKAKit/NewKit/Ref.h
 dev/ZKAKit/NewKit/Stop.h
 dev/ZKAKit/NewKit/Stream.h
-dev/ZKAKit/NewKit/String.h
 dev/ZKAKit/NewKit/Utils.h
 dev/ZKAKit/NewKit/Variant.h
 dev/ZKAKit/StorageKit/AHCI.h
@@ -266,6 +266,7 @@ dev/ZKAKit/src/IDLLObject.cc
 dev/ZKAKit/src/IPEFDLLObject.cc
 dev/ZKAKit/src/IndexableProperty.cc
 dev/ZKAKit/src/Json.cc
+dev/ZKAKit/src/KString.cc
 dev/ZKAKit/src/LPC.cc
 dev/ZKAKit/src/LockDelegate.cc
 dev/ZKAKit/src/MutableArray.cc
@@ -289,7 +290,6 @@ dev/ZKAKit/src/Storage/ATADeviceInterface.cc
 dev/ZKAKit/src/Storage/NVMEDeviceInterface.cc
 dev/ZKAKit/src/Storage/SCSIDeviceInterface.cc
 dev/ZKAKit/src/Stream.cc
-dev/ZKAKit/src/String.cc
 dev/ZKAKit/src/ThreadLocalStorage.cc
 dev/ZKAKit/src/Timer.cc
 dev/ZKAKit/src/User.cc
