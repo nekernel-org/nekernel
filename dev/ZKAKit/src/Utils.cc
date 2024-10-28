@@ -5,7 +5,6 @@
 ------------------------------------------- */
 
 #include <NewKit/Utils.h>
-#include <KernelKit/DebugOutput.h>
 
 namespace Kernel
 {

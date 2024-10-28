@@ -6,7 +6,9 @@
 
 #include <NewKit/String.h>
 #include <NewKit/Utils.h>
-#include <KernelKit/DebugOutput.h>
+
+/// @file String.cc
+/// @brief String manipulation file.
 
 namespace Kernel
 {
@@ -97,7 +99,7 @@ namespace Kernel
 		if (!fmt)
 			return ("?");
 
-		const Char* boolean_expr = i ? "True" : "False";
+		const Char* boolean_expr = i ? "YES" : "NO";
 		char*		ret			 = (char*)cAlloca((sizeof(char) * i) ? 4 : 5 + rt_string_len(fmt));
 
 		if (!ret)

@@ -15,7 +15,7 @@
 
 #define kDebugUnboundPort 0x0FEED
 
-#define kDebugMag0 'N'
+#define kDebugMag0 'Z'
 #define kDebugMag1 'D'
 #define kDebugMag2 'B'
 #define kDebugMag3 'G'
