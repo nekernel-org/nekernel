@@ -141,6 +141,35 @@ namespace Kernel
 		return trait;
 	}
 
+	namespace Detail
+	{
+		Void ioi_detect_drive(DriveTrait& trait)
+		{
+			_BOOT_BLOCK_STRUCT block_struct;
+
+			trait.fPacket.fLba = kEPMBaseLba;
+			trait.fPacket.fPacketSize = sizeof(_BOOT_BLOCK_STRUCT);
+			trait.fPacket.fPacketContent = &block_struct;
+
+			io_drv_input(&trait.fPacket);
+
+			trait.fKind = kMassStorage;
+
+			if (rt_string_cmp(block_struct.Magic, kEPMMagic, kEPMMagicLength) == 0)
+			{
+				trait.fKind |= kEPMDrive;
+			}
+			else
+			{
+				trait.fKind |= kUnformattedDrive;
+			}
+
+			trait.fPacket.fLba = 0;
+			trait.fPacket.fPacketSize = 0UL;
+			trait.fPacket.fPacketContent = nullptr;
+		}
+	}
+
 	/// @brief Fetches the main drive.
 	/// @return the new drive. (returns kEPMDrive if EPM formatted)
 	DriveTrait io_construct_main_drive() noexcept
@@ -149,24 +178,7 @@ namespace Kernel
 
 		rt_copy_memory((VoidPtr) "\\Mount\\OS:", trait.fName, rt_string_len("\\Mount\\OS:"));
 
-		_BOOT_BLOCK_STRUCT block_struct;
-
-		trait.fPacket.fLba = kEPMBaseLba;
-		trait.fPacket.fPacketSize = sizeof(_BOOT_BLOCK_STRUCT);
-		trait.fPacket.fPacketContent = &block_struct;
-
-		io_drv_input(&trait.fPacket);
-
-		trait.fKind = kMassStorage;
-
-		if (rt_string_cmp(block_struct.Magic, kEPMMagic, kEPMMagicLength) == 0)
-		{
-			trait.fKind |= kEPMDrive;
-		}
-
-		trait.fPacket.fLba = 0;
-		trait.fPacket.fPacketSize = 0UL;
-		trait.fPacket.fPacketContent = nullptr;
+		Detail::ioi_detect_drive(trait);
 
 		trait.fVerify	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_output;

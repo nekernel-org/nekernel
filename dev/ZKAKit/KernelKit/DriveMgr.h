@@ -39,6 +39,7 @@ namespace Kernel
 		kEPTDrive	  = 0x12, // ESP w/ EPM partition.
 		kMBRDrive	  = 0x13, // PC classic partition scheme
 		kGPTDrive	  = 0x14, // PC new partition scheme
+		kUnformattedDrive = 0x15,
 		kStorageCount = 9,
 	};
 
