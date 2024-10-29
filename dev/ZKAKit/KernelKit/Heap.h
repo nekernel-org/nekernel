@@ -53,12 +53,6 @@ namespace Kernel
 	inline T* mm_new_class(Args&&... args)
 	{
 		T* cls = new T(move(args)...);
-
-		if (cls == nullptr)
-		{
-			ke_stop(RUNTIME_CHECK_POINTER);
-		}
-
 		return cls;
 	}
 

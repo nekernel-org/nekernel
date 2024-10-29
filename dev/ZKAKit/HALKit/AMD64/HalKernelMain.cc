@@ -13,19 +13,6 @@
 #include <CFKit/Property.h>
 #include <Modules/FB/Text.h>
 
-namespace Kernel::HAL
-{
-	/// @brief Gets the system cores using the MADT.
-	/// @param rsp_ptr The 'RSD PTR' data structure.
-	EXTERN void mp_get_cores(Kernel::voidPtr rsp_ptr) noexcept;
-} // namespace Kernel::HAL
-
-namespace Kernel
-{
-	EXTERN UserProcessScheduler*	kProcessScheduler;
-	EXTERN HardwareThreadScheduler* kHardwareThreadScheduler;
-} // namespace Kernel
-
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
 EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
@@ -35,9 +22,6 @@ EXTERN_C void hal_init_platform(
 	Kernel::HEL::HANDOVER_INFO_HEADER* HandoverHeader)
 {
 	kHandoverHeader = HandoverHeader;
-
-	Kernel::kProcessScheduler		 = nullptr;
-	Kernel::kHardwareThreadScheduler = nullptr;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
 		kHandoverHeader->f_Version != kHandoverVersion)
@@ -81,23 +65,10 @@ EXTERN_C void hal_init_platform(
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
 
-EXTERN_C Kernel::Void hal_kernel_server(Kernel::Void) noexcept
-{
-	while (Yes)
-		;
-}
-
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	/* Initialize filesystem. */
 	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
-
-	/* Initialize scheduler. */
-	Kernel::UserProcessHelper::InitializeScheduler();
-
-	const Kernel::Char kKernelServerName[255] = "KernelServer";
-
-	Kernel::rtl_create_process(&hal_kernel_server, kKernelServerName);
 
 	/* Start any cores. */
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)

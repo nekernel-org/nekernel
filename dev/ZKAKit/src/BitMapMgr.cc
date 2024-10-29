@@ -162,11 +162,6 @@ namespace Kernel
 
 			ptr_new = traits.FindBitMap(kKernelBitMpStart, size, wr, user);
 
-			if (!ptr_new)
-			{
-				return nullptr;
-			}
-
 			return (UIntPtr*)ptr_new;
 		}
 

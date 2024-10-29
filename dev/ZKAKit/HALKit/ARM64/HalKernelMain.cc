@@ -40,7 +40,13 @@ EXTERN_C void hal_init_platform(
 	/*     INITIALIZE BIT MAP.              */
 	/************************************** */
 
-	while (Yes)
-	{
-	}
+	kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
+	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
+
+	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
+
+
+
+	while (Yes);
 }

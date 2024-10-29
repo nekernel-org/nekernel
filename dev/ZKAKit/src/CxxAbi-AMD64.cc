@@ -10,7 +10,7 @@
 #include <NewKit/CxxAbi.h>
 #include <KernelKit/LPC.h>
 
-atexit_func_entry_t __atexit_funcs[kDSOMaxObjects];
+atexit_func_entry_t __atexit_funcs[kAtExitMacDestructors];
 
 uarch_t __atexit_func_count;
 
@@ -29,7 +29,7 @@ EXTERN_C void ___chkstk_ms(void)
 
 EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)
 {
-	if (__atexit_func_count >= kDSOMaxObjects)
+	if (__atexit_func_count >= kAtExitMacDestructors)
 		return -1;
 
 	__atexit_funcs[__atexit_func_count].destructor_func = f;

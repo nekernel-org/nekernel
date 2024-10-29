@@ -20,7 +20,7 @@
 #include <NewKit/Utils.h>
 #include <KernelKit/LockDelegate.h>
 
-#define kMaxAhciPoll 100000
+#define kMaxAhciPoll (100000U)
 
 #ifdef __AHCI__
 enum

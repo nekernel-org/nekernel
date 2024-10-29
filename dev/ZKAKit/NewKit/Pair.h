@@ -10,5 +10,5 @@
 
 namespace Kernel
 {
-
+	class Pair;
 } // namespace Kernel

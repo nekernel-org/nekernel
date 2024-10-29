@@ -9,7 +9,7 @@
 
 #ifndef __TOOLCHAINKIT__
 
-#define kDSOMaxObjects (128)
+#define kAtExitMacDestructors (128)
 
 struct atexit_func_entry_t
 {

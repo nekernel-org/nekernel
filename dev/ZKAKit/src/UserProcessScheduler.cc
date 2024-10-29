@@ -12,10 +12,10 @@
 /// @brief User process scheduler.
 /***********************************************************************************/
 
-#include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
-#include <KernelKit/IPEFDLLObject.h>
 #include <KernelKit/HardwareThreadScheduler.h>
+#include <KernelKit/IPEFDLLObject.h>
+#include <ArchKit/ArchKit.h>
 #include <KernelKit/Heap.h>
 #include <NewKit/KString.h>
 #include <KernelKit/LPC.h>
@@ -38,8 +38,7 @@ namespace Kernel
 	/// @brief User Process scheduler global and external reference of thread scheduler.
 	/***********************************************************************************/
 
-	UserProcessScheduler*			kProcessScheduler = nullptr;
-	EXTERN HardwareThreadScheduler* kHardwareThreadScheduler;
+	UserProcessScheduler			kProcessScheduler;
 
 	UserProcess::UserProcess(VoidPtr start_image) : Image(start_image) {}
 
@@ -373,16 +372,7 @@ namespace Kernel
 
 	UserProcessScheduler& UserProcessScheduler::The()
 	{
-		MUST_PASS(kProcessScheduler);
-		return *kProcessScheduler;
-	}
-
-	ErrorOr<UserProcessScheduler> UserProcessScheduler::TheSafe()
-	{
-		if (!kProcessScheduler)
-			return ErrorOr<UserProcessScheduler>(nullptr);
-
-		return ErrorOr<UserProcessScheduler>(kProcessScheduler);
+		return kProcessScheduler;
 	}
 
 	/***********************************************************************************/
@@ -397,7 +387,7 @@ namespace Kernel
 	const Bool UserProcessScheduler::Remove(ProcessID process_id)
 	{
 		// check if process is within range.
-		if (process_id > mTeam.AsArray().Count())
+		if (process_id > mTeam.mProcessAmount)
 			return No;
 
 		mTeam.AsArray()[process_id].Status = ProcessStatusKind::kDead;
@@ -458,7 +448,7 @@ namespace Kernel
 				this->GetCurrentProcess() = process;
 
 				// tell helper to find a core to schedule on.
-				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize], process.StackFrame,
+				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
 											   process.ProcessId))
 				{
 					process.Crash();
@@ -497,7 +487,7 @@ namespace Kernel
 	PID& UserProcessHelper::TheCurrentPID()
 	{
 		kcout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-		return kProcessScheduler->GetCurrentProcess().Leak().ProcessId;
+		return kProcessScheduler.GetCurrentProcess().Leak().ProcessId;
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -523,36 +513,12 @@ namespace Kernel
 
 	/***********************************************************************************/
 	/**
-	 * @brief Allocate a scheduler.
-	 */
-	/***********************************************************************************/
-
-	Bool UserProcessHelper::InitializeScheduler()
-	{
-		if (!kProcessScheduler)
-		{
-			kProcessScheduler = new UserProcessScheduler();
-		}
-
-		if (!kHardwareThreadScheduler)
-		{
-			kHardwareThreadScheduler = new HardwareThreadScheduler();
-		}
-
-		return Yes;
-	}
-
-	/***********************************************************************************/
-	/**
 	 * @brief Start scheduling current AP/Hart/Core.
 	 */
 	/***********************************************************************************/
 	SizeT UserProcessHelper::StartScheduling()
 	{
-		if (!kProcessScheduler)
-			return 0;
-
-		return kProcessScheduler->Run();
+		return kProcessScheduler.Run();
 	}
 
 	/***********************************************************************************/

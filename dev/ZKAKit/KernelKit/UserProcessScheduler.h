@@ -14,7 +14,7 @@
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
 #define kSchedInvalidPID		  (-1)
-#define kSchedProcessLimitPerTeam (16U)
+#define kSchedProcessLimitPerTeam (32U)
 
 #define kSchedMaxMemoryLimit gib_cast(128)
 #define kSchedMaxStackSz	 mib_cast(8)
@@ -278,7 +278,6 @@ namespace Kernel
 		const SizeT			  Run() noexcept;
 
 	public:
-		STATIC ErrorOr<UserProcessScheduler> TheSafe();
 		STATIC UserProcessScheduler& The();
 
 	private:
@@ -296,7 +295,6 @@ namespace Kernel
 		STATIC bool	 CanBeScheduled(const UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
-		STATIC Bool	 InitializeScheduler();
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

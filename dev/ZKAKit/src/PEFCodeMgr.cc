@@ -199,37 +199,6 @@ namespace Kernel
 		return !fBad && fCachedBlob;
 	}
 
-	namespace Utils
-	{
-		SizeT execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept
-		{
-			auto errOrStart = exec.FindStart();
-
-			if (errOrStart.Error() != kErrorSuccess)
-				return No;
-
-			UserProcess proc;
-
-			proc.Image		 = errOrStart.Leak().Leak();
-			proc.Kind		 = procKind;
-			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
-			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(cPefHeapSizeSymbol, kPefData);
-
-			rt_set_memory(proc.Name, 0, kProcessLen);
-
-			if (exec.FindSymbol(cPefNameSymbol, kPefData))
-				rt_copy_memory(exec.FindSymbol(cPefNameSymbol, kPefData), proc.Name, rt_string_len((Char*)exec.FindSymbol(cPefNameSymbol, kPefData)));
-
-			if (!proc.StackSize)
-			{
-				const auto cDefaultStackSizeMib = 8;
-				proc.StackSize					= mib_cast(cDefaultStackSizeMib);
-			}
-
-			return UserProcessScheduler::The().Add(proc);
-		}
-	} // namespace Utils
-
 	const Char* PEFLoader::Path()
 	{
 		return fPath.Leak().CData();
@@ -256,4 +225,35 @@ namespace Kernel
 	{
 		return kPefApplicationMime;
 	}
+
+	namespace Utils
+	{
+		ProcessID execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept
+		{
+			auto errOrStart = exec.FindStart();
+
+			if (errOrStart.Error() != kErrorSuccess)
+				return No;
+
+			UserProcess proc{};
+
+			proc.Image		 = errOrStart.Leak().Leak();
+			proc.Kind		 = procKind;
+			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
+			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(cPefHeapSizeSymbol, kPefData);
+
+			rt_set_memory(proc.Name, 0, kProcessLen);
+
+			if (exec.FindSymbol(cPefNameSymbol, kPefData))
+				rt_copy_memory(exec.FindSymbol(cPefNameSymbol, kPefData), proc.Name, rt_string_len((Char*)exec.FindSymbol(cPefNameSymbol, kPefData)));
+
+			if (!proc.StackSize)
+			{
+				const auto cDefaultStackSizeMib = 8;
+				proc.StackSize					= mib_cast(cDefaultStackSizeMib);
+			}
+
+			return UserProcessScheduler::The().Add(proc);
+		}
+	} // namespace Utils
 } // namespace Kernel

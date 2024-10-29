@@ -17,7 +17,7 @@
 
 namespace Kernel
 {
-	HardwareThreadScheduler* kHardwareThreadScheduler = nullptr;
+	HardwareThreadScheduler kHardwareThreadScheduler;
 
 	///! A HardwareThread class takes care of it's owned hardware thread.
 	///! It has a stack for it's core.
@@ -136,8 +136,7 @@ namespace Kernel
 	/// @brief Shared singleton function
 	HardwareThreadScheduler& HardwareThreadScheduler::The()
 	{
-		MUST_PASS(kHardwareThreadScheduler);
-		return *kHardwareThreadScheduler;
+		return kHardwareThreadScheduler;
 	}
 
 	/// @brief Get Stack Frame of Core

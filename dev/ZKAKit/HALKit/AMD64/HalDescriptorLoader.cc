@@ -7,6 +7,8 @@
 #include <ArchKit/ArchKit.h>
 #include <HALKit/AMD64/Processor.h>
 
+#define kPITDefaultTicks (1000U)
+
 namespace Kernel::HAL
 {
 	namespace Detail
@@ -20,7 +22,7 @@ namespace Kernel::HAL
 		STATIC Void hal_enable_pit(UInt16 ticks) noexcept
 		{
 			if (ticks == 0)
-				ticks = 1000;
+				ticks = kPITDefaultTicks;
 
 			// Configure PIT to receieve scheduler interrupts.
 
@@ -82,7 +84,7 @@ namespace Kernel::HAL
 
 	Void IDTLoader::Load(Register64& idt)
 	{
-		const Int16 kPITTickForScheduler = 100;
+		const Int16 kPITTickForScheduler = kPITDefaultTicks;
 
 		volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
