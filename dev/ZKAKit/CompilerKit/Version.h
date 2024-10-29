@@ -1,4 +1,4 @@
-// (C) ZKA Web Services Co
+// (C) EL Mahrouss Logic
 
 #pragma once
 

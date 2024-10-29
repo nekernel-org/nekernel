@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 	File: PECodeMgr.h
 	Purpose: PE32+ Code Mgr and DLL mgr.

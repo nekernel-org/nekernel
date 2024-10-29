@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright ZKA Web Services Co.
+ * @copyright EL Mahrouss Logic.
  *
  */
 

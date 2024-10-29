@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 	File: Hart.h
 	Purpose: POWER hardware threads.

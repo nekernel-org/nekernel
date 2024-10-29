@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 	File: String.cc
 	Purpose: ZBA string library

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 	File: PEF.h
 	Purpose: Preferred Executable Format for Kernel.

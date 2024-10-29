@@ -2,7 +2,7 @@
  *	========================================================
  *
  *  ZKA
- * 	Copyright ZKA Web Services Co., all rights reserved.
+ * 	Copyright EL Mahrouss Logic., all rights reserved.
  *
  *	File: User.cc
  * 	Purpose: User class, used to provide authentication and security.

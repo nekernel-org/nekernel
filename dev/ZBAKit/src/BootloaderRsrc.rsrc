@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "ZKA Web Services Co"
+      VALUE "CompanyName", "EL Mahrouss Logic"
       VALUE "FileDescription", "ZKA OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "zbaosldr"
-      VALUE "LegalCopyright", "Copyright ZKA Web Services Co., all rights reserved."
+      VALUE "LegalCopyright", "Copyright EL Mahrouss Logic., all rights reserved."
       VALUE "OriginalFilename", "zbaosldr.exe"
       VALUE "ProductName", "zbaosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION

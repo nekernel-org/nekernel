@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "ZKA Web Services Co."
+      VALUE "CompanyName", "EL Mahrouss Logic."
 	  VALUE "FileDescription", "ZKA Minimal Kernel."
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "minoskrnl"
-      VALUE "LegalCopyright", "(c) ZKA Web Services Co, all rights reserved."
+      VALUE "LegalCopyright", "(c) EL Mahrouss Logic, all rights reserved."
       VALUE "OriginalFilename", "minoskrnl.exe"
       VALUE "ProductName", "ZKA Operating System Kernel."
       VALUE "ProductVersion", KERNEL_VERSION

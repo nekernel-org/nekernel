@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 	File: CodeMgr.hpp
 	Purpose: Code Mgr and DLL mgr.

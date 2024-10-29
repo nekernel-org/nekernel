@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 	FILE: NeFS.h
 	PURPOSE: NeFS (New FileSystem) support, can be used with kernel, HPFS is preferred.

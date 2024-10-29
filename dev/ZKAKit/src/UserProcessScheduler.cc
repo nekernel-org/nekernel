@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 	FILE: UserProcessScheduler.cc
 	PURPOSE: EL0/Ring-3 Process scheduler.

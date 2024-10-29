@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 	File: IO-Impl-AMD64.hpp
 	Purpose: I/O for AMD64.

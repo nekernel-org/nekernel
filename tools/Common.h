@@ -1,6 +1,6 @@
 /**
 	Sat Oct 26 07:03:28 AM CEST 2024
-	(C) ZKA Web Services Co.
+	(C) EL Mahrouss Logic.
 */
 
 #pragma once

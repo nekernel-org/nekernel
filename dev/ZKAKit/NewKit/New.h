@@ -1,7 +1,7 @@
 
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 ------------------------------------------- */
 #pragma once

@@ -1,4 +1,4 @@
 ##################################################
-# (C) ZKA Web Services Co, all rights reserved.
+# (C) EL Mahrouss Logic, all rights reserved.
 # This is the microKernel makefile.
 ##################################################

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 ------------------------------------------- */
 
@@ -152,7 +152,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
 #ifdef __ZKA_USE_FB__
-	CGDrawString("ZBA (C) ZKA WEB SERVICES.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString("ZBA (C) EL MAHROUSS LOGIC", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "MULTIPLE PROCESSORS DETECTED." : "SINGLE PROCESSOR DETECTED.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // __ZKA_USE_FB__
 

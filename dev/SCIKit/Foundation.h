@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright ZKA Web Services Co.
+Copyright EL Mahrouss Logic.
 
 File: sci_base.h
 Purpose: SCI core header file (C++ only).

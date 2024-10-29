@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Web Services Co.
+	Copyright EL Mahrouss Logic.
 
 ------------------------------------------- */
 
@@ -13,7 +13,7 @@
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
  *
- * Copyright ZKA Web Services Co., all rights reserved.
+ * Copyright EL Mahrouss Logic., all rights reserved.
  *
  *************************************************************/
 

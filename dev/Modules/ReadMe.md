@@ -4,4 +4,4 @@
 
 They are pluggable modules for builtin hardware support.
 
-###### Copyright ZKA Web Services Co. All rights reserved.
+###### Copyright EL Mahrouss Logic. All rights reserved.
