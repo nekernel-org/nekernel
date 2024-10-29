@@ -1,7 +1,7 @@
 ;; /*
 ;; *    ---------------------------------------------------
 ;; *
-;; * 	Copyright EL Mahrouss Logic., all rights reserved.
+;; * 	Copyright EL Mahrouss Logic, all rights reserved.
 ;; *
 ;; *    File: HalInterruptAPI.asm
 ;; *    Purpose: Interrupt API, redirect raw interrupts into their handlers.

@@ -34,7 +34,7 @@ namespace Kernel
 			HAL::rt_wait_400ns();
 
 			if (HAL::In16(theHook->fPort[i] != kDebugUnboundPort))
-				theHook->fBoundCnt++;
+				++theHook->fBoundCnt;
 		}
 	}
 } // namespace Kernel

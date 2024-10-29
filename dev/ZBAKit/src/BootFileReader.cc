@@ -76,9 +76,9 @@ Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
 		return;
 	}
 
-	EfiFileProtocol* KernelFile = nullptr;
+	EfiFileProtocol* fileFs = nullptr;
 
-	if (mRootFs->Open(mRootFs, &KernelFile, mPath, kEFIFileRead, kEFIReadOnly) !=
+	if (mRootFs->Open(mRootFs, &fileFs, mPath, kEFIFileRead, kEFIReadOnly) !=
 		kEfiOk)
 	{
 		mWriter.Write(L"ZBA: Fetch-Protocol: No-Such-Path: ")
@@ -94,7 +94,7 @@ Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
 	}
 
 	mSizeFile  = 0;
-	mFile	   = KernelFile;
+	mFile	   = fileFs;
 	mErrorCode = kOperationOkay;
 }
 
@@ -130,8 +130,8 @@ Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_
 {
 	if (mBlob == nullptr)
 	{
-		EfiFileInfo newPtrInfo;
-		UInt32		szInfo = 0;
+		EfiFileInfo newPtrInfo{};
+		UInt32		szInfo = 0U;
 
 		EfiGUID kFileInfoGUID = EFI_FILE_INFO_GUID;
 
@@ -142,7 +142,7 @@ Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_
 			else if (readUntil < 1)
 				readUntil = newPtrInfo.FileSize;
 
-			mWriter.Write(L"ZBA: FileSize: ").Write(readUntil).Write("\r");
+			mWriter.Write(L"ZBA: File size: ").Write(readUntil).Write("\r");
 		}
 
 		if (!out_address)
