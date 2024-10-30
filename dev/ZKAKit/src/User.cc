@@ -53,13 +53,13 @@ namespace Kernel
 	} // namespace Detail
 
 	User::User(const Int32& sel, const Char* userName)
-		: fRing((RingKind)sel)
+		: fRing((UserRingKind)sel)
 	{
 		MUST_PASS(sel >= 0);
 		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
 	}
 
-	User::User(const RingKind& ringKind, const Char* userName)
+	User::User(const UserRingKind& ringKind, const Char* userName)
 		: fRing(ringKind)
 	{
 		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
@@ -67,7 +67,7 @@ namespace Kernel
 
 	User::~User() = default;
 
-	Bool User::TrySave(const Char* password_to_fill) noexcept
+	Bool User::TrySave(const UserPublicKey password_to_fill) noexcept
 	{
 		if (!password_to_fill ||
 			*password_to_fill == 0)
@@ -120,18 +120,18 @@ namespace Kernel
 
 	/// @brief Returns the user's ring.
 	/// @return The king of ring the user is attached to.
-	const RingKind& User::Ring() noexcept
+	const UserRingKind& User::Ring() noexcept
 	{
 		return this->fRing;
 	}
 
 	Bool User::IsStdUser() noexcept
 	{
-		return this->Ring() == RingKind::kRingStdUser;
+		return this->Ring() == UserRingKind::kRingStdUser;
 	}
 
 	Bool User::IsSuperUser() noexcept
 	{
-		return this->Ring() == RingKind::kRingSuperUser;
+		return this->Ring() == UserRingKind::kRingSuperUser;
 	}
 } // namespace Kernel

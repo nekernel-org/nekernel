@@ -6,6 +6,9 @@
 
 #pragma once
 
+/// @file LPC.h
+/// @brief Local Process Codes.
+///
 #define ErrLocalIsOk()	 (kLastError == kErrorSuccess)
 #define ErrLocalFailed() (kLastError != kErrorSuccess)
 #define ErrLocal()		 (kLastError)

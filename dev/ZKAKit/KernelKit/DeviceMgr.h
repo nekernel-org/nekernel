@@ -21,7 +21,7 @@
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Ref.h>
 
-#define cDevicePath "\\Mount\\"
+#define kDeviceRootDirPath "/Mount/"
 
 // Last Rev
 // Wed, Apr  3, 2024  9:09:41 AM
@@ -122,11 +122,14 @@ namespace Kernel
 		kDeviceTypeIDE,
 		kDeviceTypeEthernet,
 		kDeviceTypeWiFi,
+		kDeviceTypeFW,
+		kDeviceTypeBT,
 		kDeviceTypeRS232,
 		kDeviceTypeSCSI,
-		kDeviceTypeSHCI,
+		kDeviceTypeAHCI,
+		kDeviceTypeMBCI,
 		kDeviceTypeUSB,
-		kDeviceTypeMedia,
+		kDeviceTypeMediaCtrl,
 		kDeviceTypeCount,
 	};
 } // namespace Kernel

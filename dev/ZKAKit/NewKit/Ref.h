@@ -5,8 +5,8 @@
 
 ------------------------------------------- */
 
-#ifndef _NEWKIT_REF_HPP_
-#define _NEWKIT_REF_HPP_
+#ifndef _NEWKIT_REF_H_
+#define _NEWKIT_REF_H_
 
 #include <NewKit/Defines.h>
 #include <NewKit/Stop.h>
@@ -105,4 +105,4 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#endif // ifndef _NEWKIT_REF_HPP_
+#endif // ifndef _NEWKIT_REF_H_

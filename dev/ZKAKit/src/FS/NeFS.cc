@@ -46,13 +46,13 @@ Kernel::SizeT drv_get_size();
 /***********************************************************************************/
 /// This file implements the New File System.
 ///	New File System implements a B-Tree based algortihm.
-///		\\
-///	\\Path1\\		\\ath2\\
-/// \\readme.rtf		\\ListContents.pef \\readme.lnk <-- symlink.
-///								\\Path1\\readme.rtf
+///		/
+///	/Path1/		/ath2/
+/// /readme.rtf		/ListContents.pef /readme.lnk <-- symlink.
+///								/Path1/readme.rtf
 /***********************************************************************************/
 
-STATIC MountpointInterface sMountpointInterface;
+STATIC MountpointInterface kDiskMountpoint;
 
 /***********************************************************************************/
 /// @brief Creates a new fork inside the New filesystem partition.
@@ -69,12 +69,12 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 		Lba lba = (the_fork.Kind == kNeFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
 
-		kcout << "fork lba: " << hex_number(lba) << endl;
+		kcout << "Fork LBA: " << hex_number(lba) << endl;
 
 		if (lba <= kNeFSCatalogStartAddress)
 			return nullptr;
 
-		auto drv = sMountpointInterface.A();
+		auto drv = kDiskMountpoint.A();
 
 		/// special treatment.
 		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime,
@@ -98,22 +98,22 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 
 			if (curFork.NextSibling > kBadAddress)
 			{
-				kcout << "bad fork: " << hex_number(curFork.NextSibling) << endl;
+				kcout << "Bad fork: " << hex_number(curFork.NextSibling) << endl;
 				break;
 			}
 
-			kcout << "next fork: " << hex_number(curFork.NextSibling) << endl;
+			kcout << "Next fork: " << hex_number(curFork.NextSibling) << endl;
 
 			if (curFork.Flags & kNeFSFlagCreated)
 			{
-				kcout << "fork already exists.\r";
+				kcout << "Fork already exists.\r";
 
 				/// sanity check.
 				if (StringBuilder::Equals(curFork.ForkName, the_fork.ForkName) &&
 					StringBuilder::Equals(curFork.CatalogName, catalog->Name))
 					return nullptr;
 
-				kcout << "next fork: " << hex_number(curFork.NextSibling) << endl;
+				kcout << "Next fork: " << hex_number(curFork.NextSibling) << endl;
 
 				lbaOfPreviousFork = lba;
 				lba				  = curFork.NextSibling;
@@ -139,9 +139,6 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 				break;
 			}
 		}
-
-		constexpr auto cForkPadding =
-			4; /// this value gives us space for the data offset.
 
 		the_fork.Flags |= kNeFSFlagCreated;
 		the_fork.DataOffset		 = lba - sizeof(NFS_FORK_STRUCT);
@@ -176,7 +173,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog
 											  _Input const Char*		 name,
 											  Boolean					 isDataFork)
 {
-	auto			 drv	  = sMountpointInterface.A();
+	auto			 drv	  = kDiskMountpoint.A();
 	NFS_FORK_STRUCT* the_fork = nullptr;
 
 	Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
@@ -190,7 +187,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog
 		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime, 16);
 
 		if (auto res =
-				fs_newfs_read(&sMountpointInterface, drv, this->fDriveIndex);
+				fs_newfs_read(&kDiskMountpoint, drv, this->fDriveIndex);
 			res)
 		{
 			switch (res)
@@ -306,7 +303,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
 
 	NFS_CATALOG_STRUCT* catalog = this->FindCatalog(parentName, out_lba);
 
-	auto drive = sMountpointInterface.A();
+	auto drive = kDiskMountpoint.A();
 
 	if (catalog && catalog->Kind == kNeFSCatalogKindFile)
 	{
@@ -645,7 +642,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 
 	rt_copy_memory(data, buf, size_of_data);
 
-	auto drive = sMountpointInterface.A();
+	auto drive = kDiskMountpoint.A();
 
 	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/nefs-packet"));
@@ -728,7 +725,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogNa
 	kcout << "Start finding catalog...\r";
 
 	NFS_ROOT_PARTITION_BLOCK fs_buf{0};
-	auto					 drive = sMountpointInterface.A();
+	auto					 drive = kDiskMountpoint.A();
 
 	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/nefs-packet"));
@@ -890,7 +887,7 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 	{
 		catalog->Flags |= kNeFSFlagDeleted;
 
-		auto drive = sMountpointInterface.A();
+		auto drive = kDiskMountpoint.A();
 
 		rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 					   rt_string_len("fs/nefs-packet"));
@@ -956,7 +953,7 @@ VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 		  << ", fork: " << hex_number(dataForkLba) << endl;
 
 	NFS_FORK_STRUCT* fs_buf = new NFS_FORK_STRUCT();
-	auto			 drive	= sMountpointInterface.A();
+	auto			 drive	= kDiskMountpoint.A();
 
 	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/nefs-packet"));
@@ -1038,14 +1035,14 @@ namespace Kernel::Detail
 	{
 		kcout << "Creating drives...\r";
 
-		sMountpointInterface.A() = io_construct_main_drive();
-		sMountpointInterface.B() = io_construct_drive();
-		sMountpointInterface.C() = io_construct_drive();
-		sMountpointInterface.D() = io_construct_drive();
+		kDiskMountpoint.A() = io_construct_main_drive();
+		kDiskMountpoint.B() = io_construct_drive();
+		kDiskMountpoint.C() = io_construct_drive();
+		kDiskMountpoint.D() = io_construct_drive();
 
 		kcout << "Constructing A:\r";
 
-		sMountpointInterface.A().fInit(&sMountpointInterface.A().fPacket);
+		kDiskMountpoint.A().fInit(&kDiskMountpoint.A().fPacket);
 
 		kcout << "Constructing A: [ OK ]\r";
 

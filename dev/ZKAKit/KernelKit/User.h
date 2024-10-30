@@ -13,19 +13,19 @@
 #include <NewKit/Defines.h>
 
 // user mode users.
-#define kSuperUser "ZKA AUTHORITY\\SUPER"
-#define kGuestUser "ZKA AUTHORITY\\GUEST"
+#define kSuperUser "OS AUTHORITY/SUPER"
+#define kGuestUser "OS AUTHORITY/GUEST"
 
-#define kUsersDir "\\Users\\"
+#define kUsersDir "/Users/"
 
 #define kMaxUserNameLen	 (255)
-#define kMaxUserTokenLen (255)
+#define kMaxUserTokenLen (4096)
 
 namespace Kernel
 {
 	class User;
 
-	enum class RingKind
+	enum class UserRingKind
 	{
 		kRingStdUser   = 1,
 		kRingSuperUser = 2,
@@ -33,13 +33,15 @@ namespace Kernel
 		kRingCount	   = 3,
 	};
 
+	typedef Char* UserPublicKey;
+
 	class User final
 	{
 	public:
 		explicit User() = delete;
 
 		User(const Int32& sel, const Char* userName);
-		User(const RingKind& kind, const Char* userName);
+		User(const UserRingKind& kind, const Char* userName);
 
 		~User();
 
@@ -52,7 +54,7 @@ namespace Kernel
 
 	public:
 		/// @brief Get software ring
-		const RingKind& Ring() noexcept;
+		const UserRingKind& Ring() noexcept;
 
 		/// @brief Get user name
 		Char* Name() noexcept;
@@ -63,10 +65,10 @@ namespace Kernel
 		/// @brief Is she a super user?
 		Bool IsSuperUser() noexcept;
 
-		Bool TrySave(const Char* password) noexcept;
+		Bool TrySave(const UserPublicKey password) noexcept;
 
 	private:
-		RingKind fRing{RingKind::kRingStdUser};
+		UserRingKind fRing{UserRingKind::kRingStdUser};
 		Char	 fUserName[kMaxUserNameLen]	  = {0};
 		Char	 fUserToken[kMaxUserTokenLen] = {0};
 	};

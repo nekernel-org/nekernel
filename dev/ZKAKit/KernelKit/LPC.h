@@ -13,7 +13,7 @@
 
 #define ErrLocalIsOk()	 (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode() == Kernel::kErrorSuccess)
 #define ErrLocalFailed() (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)
-#define ErrLocal()		 Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode()
+#define ErrLocal()		 (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode())
 
 namespace Kernel
 {

@@ -75,11 +75,11 @@ default.
 #define kNeFSCatalogKindTTF	 (13)
 #define kNeFSCatalogKindRIFF (14)
 
-#define kNeFSSeparator	  '\\'
+#define kNeFSSeparator	  '/'
 #define kNeFSSeparatorAlt '/'
 
 #define kNeFSUpDir	 ".."
-#define kNeFSRoot	 "\\"
+#define kNeFSRoot	 "/"
 #define kNeFSRootAlt "/"
 
 #define kNeFSLF	 '\r'

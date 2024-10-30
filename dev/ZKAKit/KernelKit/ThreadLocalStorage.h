@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _KERNELKIT_TLS_HPP
-#define _KERNELKIT_TLS_HPP
+#ifndef _KERNELKIT_TLS_H
+#define _KERNELKIT_TLS_H
 
 #include <NewKit/Defines.h>
 
@@ -51,4 +51,4 @@ EXTERN_C Kernel::Bool tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept;
 
 // last rev 7/7/24
 
-#endif /* ifndef _KERNELKIT_TLS_HPP */
+#endif /* ifndef _KERNELKIT_TLS_H */

@@ -16,9 +16,9 @@
 
 namespace Kernel
 {
-	/// /:\\BRIDGE\\FLSH\\1
-	constexpr auto cFlashBridgeMagic	= "FLSH";
-	constexpr auto cFlashBridgeRevision = 1;
+	/// /:/BRIDGE/FLSH/1
+	constexpr auto kFlashBridgeMagic	= "FLSH";
+	constexpr auto kFlashBridgeRevision = 1;
 
 	STATIC const Boolean kFlashEnabled			   = No;
 	STATIC SizeT		 kFlashSize[cMaxFlash]	   = {};
