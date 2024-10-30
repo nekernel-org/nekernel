@@ -1,11 +1,11 @@
 ######################
 # (C) ZKA
-# XPCOM/SCI kit makefile.
+# SCIKit makefile.
 ######################
 
-CC=g++
+CC=clang++
 FLAGS=-I../ -shared -fPIC
-OUTPUT=sci.dll
+OUTPUT=SCIKit.dll
 
 .PHONY: build-sci
 build-sci:
