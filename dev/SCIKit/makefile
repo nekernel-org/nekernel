@@ -4,9 +4,9 @@
 ######################
 
 CC=g++
-FLAGS=-I../ -shared -fPIC -D__ZKA_SYMS__
+FLAGS=-I../ -shared -fPIC
 OUTPUT=sci.dll
 
 .PHONY: build-sci
 build-sci:
-	$(CC) $(wildcard .cc) $(FLAGS) -o $(OUTPUT)
+	$(CC) $(wildcard src/*.cc) $(FLAGS) -o $(OUTPUT)
