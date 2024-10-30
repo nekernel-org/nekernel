@@ -16,15 +16,7 @@ namespace Kernel
 	class Array final
 	{
 	public:
-		explicit Array()
-		{
-			for (SizeT i = 0; i < N; i++)
-			{
-				if (!fArray[i])
-					fArray[i] = T();
-			}
-		}
-
+		explicit Array() = default;
 		~Array() = default;
 
 		Array& operator=(const Array&) = default;

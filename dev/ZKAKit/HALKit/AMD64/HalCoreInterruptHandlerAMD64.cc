@@ -8,11 +8,6 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <NewKit/KString.h>
 
-namespace Kernel
-{
-	EXTERN UserProcessScheduler* kProcessScheduler;
-}
-
 /// @brief Handle GPF fault.
 /// @param rsp
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)

@@ -14,7 +14,9 @@ namespace Kernel::HAL
 {
 	typedef UInt32 PageTableIndex;
 
+	/***********************************************************************************/
 	/// \brief Page store type.
+	/***********************************************************************************/
 	struct ZKA_PAGE_STORE final
 	{
 		struct
@@ -24,7 +26,7 @@ namespace Kernel::HAL
 			VoidPtr fVAddr{nullptr};
 		} fInternalStore;
 
-		Bool fStoreOp{No}; // Store operation in progress.
+		Bool fStoreOp{No}; // Store operation is in progress.
 
 		bool IsValidPage(PTE* pte)
 		{
@@ -48,7 +50,10 @@ namespace Kernel::HAL
 		}
 	};
 
+	/***********************************************************************************/
 	/// \brief Retrieve the page status of a PTE.
+	/// \param pte Page Table Entry pointer.
+	/***********************************************************************************/
 	STATIC Void mmi_page_status(PTE* pte)
 	{
 		kcout << (pte->Present ? "Present" : "Not Present") << endl;
@@ -57,13 +62,15 @@ namespace Kernel::HAL
 		kcout << (pte->User ? "User" : "Not User") << endl;
 	}
 
-	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE* pt_entry);
+	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, ZKA_PTE* pt_entry,	ZKA_PDE* pd_entry);
 
+	/***********************************************************************************/
 	/// @brief Maps or allocates a page from virtual_address.
 	/// @param virtual_address a valid virtual address.
 	/// @param phys_addr point to physical address.
 	/// @param flags the flags to put on the page.
 	/// @return Status code of page manipulation process.
+	/***********************************************************************************/
 	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, UInt32 flags)
 	{
 		if (!virtual_address ||
@@ -84,15 +91,12 @@ namespace Kernel::HAL
 		UInt64 pd_index	  = ((UIntPtr)virtual_address >> 21) & cPmlIndexMask;
 		UInt64 pt_index	  = ((UIntPtr)virtual_address >> 12) & cPmlIndexMask;
 
-		while (page_store.fStoreOp)
-			;
-
 		page_store.fStoreOp = Yes;
 
 		if (page_store.fInternalStore.fVAddr == virtual_address)
 		{
 			page_store.fStoreOp = No;
-			return mmi_map_page_table_entry(page_store.fInternalStore.fVAddr, flags, page_store.fInternalStore.fPte);
+			return mmi_map_page_table_entry(page_store.fInternalStore.fVAddr, flags, page_store.fInternalStore.fPte, page_store.fInternalStore.fPde);
 		}
 
 		const auto cPmlEntrySize = 8;
@@ -114,15 +118,19 @@ namespace Kernel::HAL
 		UInt64 pt_entry = (pt_base + pt_index * cPmlEntrySize);
 
 		// Lastly, grab the pte entry.
-		ZKA_PDE* pte_struct = reinterpret_cast<ZKA_PDE*>(pt_base);
+		ZKA_PDE* pde_struct = reinterpret_cast<ZKA_PDE*>(pt_base);
 
-		return mmi_map_page_table_entry(virtual_address, flags, pte_struct->fEntries[pt_entry]);
+		return mmi_map_page_table_entry(virtual_address, flags, pde_struct->fEntries[pt_entry], pde_struct);
 	}
 
+	/***********************************************************************************/
 	/// @brief Maps flags for a specific pte.
 	/// @internal Internal function.
-	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE* pt_entry)
+	/***********************************************************************************/
+	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, ZKA_PTE* pt_entry,	ZKA_PDE* pd_entry)
 	{
+		if (!pt_entry) return -1;
+
 		pt_entry->Present = true;
 
 		if (flags & kMMFlagsWr)
@@ -148,7 +156,7 @@ namespace Kernel::HAL
 
 		// Update Internal store.
 
-		page_store.fInternalStore.fPde	 = nullptr;
+		page_store.fInternalStore.fPde	 = pd_entry;
 		page_store.fInternalStore.fPte	 = pt_entry;
 		page_store.fInternalStore.fVAddr = virtual_address;
 

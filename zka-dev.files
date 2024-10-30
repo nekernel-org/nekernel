@@ -152,7 +152,7 @@ dev/ZKAKit/HALKit/ARM64/HalCoreMPScheduler.cc
 dev/ZKAKit/HALKit/ARM64/HalDebugOutput.cc
 dev/ZKAKit/HALKit/ARM64/HalKernelMain.cc
 dev/ZKAKit/HALKit/ARM64/HalPageInternal.S
-dev/ZKAKit/HALKit/ARM64/HalPagingMgr.cc
+dev/ZKAKit/HALKit/ARM64/HalPagingMgrARM64.cc
 dev/ZKAKit/HALKit/ARM64/HalSchedulerCoreARM64.cc
 dev/ZKAKit/HALKit/ARM64/HalTimer.cc
 dev/ZKAKit/HALKit/ARM64/Paging.h

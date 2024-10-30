@@ -320,7 +320,7 @@ namespace Kernel
 			return -kErrorInvalidData;
 
 #ifdef __ZKA_AMD64__
-		process.VMRegister = reinterpret_cast<UIntPtr>(HAL::mm_alloc_bitmap(Yes, Yes, sizeof(PDE), Yes));
+		process.VMRegister = reinterpret_cast<UIntPtr>(mm_new_heap(sizeof(PDE), No, Yes));
 #endif // __ZKA_AMD64__
 
 		process.StackFrame = reinterpret_cast<HAL::StackFramePtr>(mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes));
@@ -339,16 +339,13 @@ namespace Kernel
 
 		if (!process.Image)
 		{
-			if (process.Kind != UserProcess::kExectuableDLLKind)
-			{
-				process.Crash();
-				return -kErrorProcessFault;
-			}
+			process.Crash();
+			return -kErrorProcessFault;
 		}
 
 		// Get preferred stack size by app.
-		const auto cMaxStackSize = process.StackSize;
-		process.StackReserve	 = reinterpret_cast<UInt8*>(mm_new_heap(sizeof(UInt8) * cMaxStackSize, Yes, Yes));
+		const auto kMaxStackSize = process.StackSize;
+		process.StackReserve	 = reinterpret_cast<UInt8*>(mm_new_heap(sizeof(UInt8) * kMaxStackSize, Yes, Yes));
 
 		if (!process.StackReserve)
 		{
@@ -424,11 +421,13 @@ namespace Kernel
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
-		if (mTeam.mProcessAmount < 1)
+		if (mTeam.mProcessAmount == 0)
 		{
 			kcout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
 			return 0;
 		}
+
+		kcout << "UserProcessScheduler::Run(): This team has process # " << number(mTeam.mProcessAmount) << endl;
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
@@ -500,12 +499,7 @@ namespace Kernel
 			process.Status == ProcessStatusKind::kDead)
 			return No;
 
-		if (process.Status == ProcessStatusKind::kStarting &&
-			process.Image)
-			return Yes;
-
-		if (!process.Image &&
-			process.Kind == UserProcess::kExectuableKind)
+		if (!process.Image)
 			return No;
 
 		return process.PTime < 1 && process.Status == ProcessStatusKind::kRunning;
