@@ -1,8 +1,8 @@
-<!-- README of ZKA 1 -->
+<!-- README of ZKA -->
 
 ![ZKA](res/zka.svg)
 
-# ZKA Kernel Architecture (Mark 1)
+# ZKA Kernel Architecture.
 
 ZKA is an general purpose entreprise OS.
 </br>
@@ -14,15 +14,15 @@ A Win32 compat layer is available, as well as XPCOM and ZT frameworks support.
 
 - MinGW/GCC for the Kernel, Bootloader and their Components.
 - Netwide Assembler, for the x64 assemblies if needed.
-- The NDK, to embed a C++ suite into the distribution (if XPCOM apps are needed)
+- The ToolchainKit, to embed a C++ suite in the OS.
 
 ### Installation
 
 Clone repository:
 
 ```
-git clone git@bitbucket.org:mahrouss/boot-krnl-dll.git
-cd boot-krnl-dll
+git clone git@github.com:ElMahroussLogic/zka-dev.git
+cd zka-dev
 ```
 
 </br>
