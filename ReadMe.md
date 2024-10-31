@@ -12,7 +12,7 @@ A Win32 compat layer is available, as well as XPCOM and ZT frameworks support.
 
 ## Installation:
 
-- MinGW/GCC for the Kernel, Bootloader and their Components.
+- MinGW/GCC for the Kernel, Bootloader and the SCI.
 - Netwide Assembler, for the x64 assemblies if needed.
 - The ToolchainKit, to embed a C++ suite in the OS.
 
