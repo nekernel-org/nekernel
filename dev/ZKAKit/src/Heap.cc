@@ -20,7 +20,7 @@
  ------------------------------------------- */
 
 //! @file Heap.cc
-//! @brief Kernel's heap manager, serves as the main memory manager.
+//! @brief The Kernel's heap manager serves as the main memory manager.
 
 #define kKernelHeapMagic (0xD4D7D5)
 #define kKernelAlignSz	 (__BIGGEST_ALIGNMENT__)
