@@ -51,7 +51,7 @@ namespace Kernel
 	/// @brief Overwrites and set the flags of a heap header.
 	/// @param heap_ptr the pointer to update.
 	/// @param flags the flags to set.
-	Int32 mm_make_flags(VoidPtr heap_ptr, UInt64 flags)
+	Int32 mm_make_flags(VoidPtr heap_ptr, UInt64 flags);
 
 	/// @brief Gets the flags of a heap header.
 	/// @param heap_ptr the pointer to get.
