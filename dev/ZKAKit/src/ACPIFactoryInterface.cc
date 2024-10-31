@@ -82,7 +82,7 @@ namespace Kernel
 	bool ACPIFactoryInterface::Checksum(const Char* checksum, SSizeT len)
 	{
 		if (len == 0)
-			return -1;
+			return 1;
 
 		char chr = 0;
 

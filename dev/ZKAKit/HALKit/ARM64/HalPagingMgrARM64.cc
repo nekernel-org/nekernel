@@ -64,7 +64,7 @@ namespace Kernel::HAL
 			return mmi_map_page_table_entry(page_store.fInternalStore.fVAddr, flags, page_store.fInternalStore.fPte);
 		}
 
-		return -1;
+		return 1;
 	}
 
 	/// @brief Maps flags for a specific pte.

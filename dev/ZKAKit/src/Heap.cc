@@ -52,8 +52,11 @@ namespace Kernel
 			/// @brief Is this a page pointer?
 			Boolean fPage : 1;
 
-			///! @brief 32-bit CRC checksum.
+			/// @brief 32-bit CRC checksum.
 			UInt32 fCRC32;
+
+			/// @brief 64-bit Allocation flags.
+			UInt64 fFlags;
 
 			/// @brief 64-bit pointer size.
 			SizeT fHeapSize;
@@ -99,7 +102,7 @@ namespace Kernel
 		if (!ptr_heap || new_sz < 1)
 			return nullptr;
 
-		kcout << "This function is not implemented in the kernel, please refrain from using that.\r";
+		kcout << "This function is not implemented by the MicroKernel, please use the BSD layer realloc instead.\r";
 		ke_stop(RUNTIME_CHECK_PROCESS);
 
 		return nullptr;
@@ -147,17 +150,17 @@ namespace Kernel
 	/// @brief Makes a page heap.
 	/// @param heap_ptr the pointer to make a page heap.
 	/// @return kErrorSuccess if successful, otherwise an error code.
-	Int32 mm_make_ke_page(VoidPtr heap_ptr)
+	Int32 mm_make_page(VoidPtr heap_ptr)
 	{
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
-			return -kErrorHeapNotPresent;
+			return kErrorHeapNotPresent;
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
 		if (!heap_ptr)
-			return -kErrorHeapNotPresent;
+			return kErrorHeapNotPresent;
 
 		heap_info_ptr->fPage = true;
 
@@ -166,13 +169,47 @@ namespace Kernel
 		return kErrorSuccess;
 	}
 
+	/// @brief Overwrites and set the flags of a heap header.
+	/// @param heap_ptr the pointer to update.
+	/// @param flags the flags to set.
+	Int32 mm_make_flags(VoidPtr heap_ptr, UInt64 flags)
+	{
+		if (Detail::mm_check_heap_address(heap_ptr) == No)
+			return kErrorHeapNotPresent;
+
+		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
+			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+
+		if (!heap_ptr)
+			return kErrorHeapNotPresent;
+
+		heap_info_ptr->fFlags = flags;
+
+		return kErrorSuccess;
+	}
+
+	/// @brief Gets the flags of a heap header.
+	/// @param heap_ptr the pointer to get.
+	UInt64 mm_get_flags(VoidPtr heap_ptr)
+	{
+		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
+			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+
+		if (!heap_ptr)
+			return kErrorHeapNotPresent;
+
+		return heap_info_ptr->fFlags;
+	}
+
 	/// @brief Declare pointer as free.
 	/// @param heap_ptr the pointer.
 	/// @return
 	Int32 mm_delete_heap(VoidPtr heap_ptr)
 	{
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
-			return -kErrorHeapNotPresent;
+			return kErrorHeapNotPresent;
 
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
@@ -182,7 +219,7 @@ namespace Kernel
 		{
 			if (!heap_info_ptr->fPresent)
 			{
-				return -kErrorHeapNotPresent;
+				return kErrorHeapNotPresent;
 			}
 
 			if (heap_info_ptr->fCRC32 != 0)
@@ -217,7 +254,7 @@ namespace Kernel
 			return kErrorSuccess;
 		}
 
-		return -kErrorInternal;
+		return kErrorInternal;
 	}
 
 	/// @brief Check if pointer is a valid Kernel pointer.

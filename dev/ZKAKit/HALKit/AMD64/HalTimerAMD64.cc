@@ -65,7 +65,7 @@ HardwareTimer::~HardwareTimer()
 Int32 HardwareTimer::Wait() noexcept
 {
 	if (fWaitFor < 1)
-		return -1;
+		return 1;
 
 	// if not enabled yet.
 	if (!(*(fDigitalTimer + cHPETConfigRegValue) & (1 << 0)))

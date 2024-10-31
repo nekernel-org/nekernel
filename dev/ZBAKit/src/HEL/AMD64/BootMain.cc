@@ -96,7 +96,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 #ifdef __ZKA_USE_FB__
 	if (!boot_init_fb())
-		return -1; ///! Init the GOP.
+		return 1; ///! Init the GOP.
 
 	for (SizeT index_vt = 0; index_vt < SystemTable->NumberOfTableEntries;
 		 ++index_vt)

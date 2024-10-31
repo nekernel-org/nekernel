@@ -30,7 +30,7 @@ EXTERN_C void ___chkstk_ms(void)
 EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)
 {
 	if (__atexit_func_count >= kAtExitMacDestructors)
-		return -1;
+		return 1;
 
 	__atexit_funcs[__atexit_func_count].destructor_func = f;
 	__atexit_funcs[__atexit_func_count].obj_ptr			= arg;

@@ -36,7 +36,7 @@ SoftwareTimer::~SoftwareTimer()
 Int32 SoftwareTimer::Wait() noexcept
 {
 	if (fWaitFor < 1)
-		return -1;
+		return 1;
 
 	while (*fDigitalTimer < (*fDigitalTimer + fWaitFor))
 	{

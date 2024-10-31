@@ -46,7 +46,16 @@ namespace Kernel
 	/// @brief Makes a Kernel page.
 	/// @param heap_ptr the page pointer.
 	/// @return status code
-	Int32 mm_make_ke_page(VoidPtr heap_ptr);
+	Int32 mm_make_page(VoidPtr heap_ptr);
+
+	/// @brief Overwrites and set the flags of a heap header.
+	/// @param heap_ptr the pointer to update.
+	/// @param flags the flags to set.
+	Int32 mm_make_flags(VoidPtr heap_ptr, UInt64 flags)
+
+	/// @brief Gets the flags of a heap header.
+	/// @param heap_ptr the pointer to get.
+	UInt64 mm_get_flags(VoidPtr heap_ptr);
 
 	/// @brief Allocate C++ class.
 	template <typename T, typename... Args>

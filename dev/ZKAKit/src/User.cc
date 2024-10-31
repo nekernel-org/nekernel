@@ -32,7 +32,7 @@ namespace Kernel
 		const Int32 cred_construct_token(Char* password, const Char* in_password, User* user, SizeT length)
 		{
 			if (!password || !user)
-				return -1;
+				return 1;
 
 			kcout << "Hashing password...\r";
 

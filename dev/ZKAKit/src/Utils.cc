@@ -79,9 +79,9 @@ namespace Kernel
 	Int rt_move_memory(const voidPtr src, voidPtr dst, Size len)
 	{
 		if (len < 1)
-			return -2;
+			return 2;
 		if (!src || !dst)
-			return -1;
+			return 1;
 
 		char* srcChr  = reinterpret_cast<Char*>(src);
 		char* dstChar = reinterpret_cast<Char*>(dst);

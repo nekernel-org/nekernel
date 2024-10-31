@@ -317,7 +317,7 @@ namespace Kernel
 	SizeT UserProcessScheduler::Add(UserProcess process)
 	{
 		if (mTeam.mProcessAmount > kSchedProcessLimitPerTeam)
-			return -kErrorInvalidData;
+			return kErrorInvalidData;
 
 #ifdef __ZKA_AMD64__
 		process.VMRegister = reinterpret_cast<UIntPtr>(mm_new_heap(sizeof(PDE), No, Yes));
@@ -328,7 +328,7 @@ namespace Kernel
 		if (!process.StackFrame)
 		{
 			process.Crash();
-			return -kErrorProcessFault;
+			return kErrorProcessFault;
 		}
 
 		// Create heap according to type of process.
@@ -340,7 +340,7 @@ namespace Kernel
 		if (!process.Image)
 		{
 			process.Crash();
-			return -kErrorProcessFault;
+			return kErrorProcessFault;
 		}
 
 		// Get preferred stack size by app.
@@ -350,7 +350,7 @@ namespace Kernel
 		if (!process.StackReserve)
 		{
 			process.Crash();
-			return -kErrorProcessFault;
+			return kErrorProcessFault;
 		}
 
 		++mTeam.mProcessAmount;

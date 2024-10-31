@@ -36,7 +36,7 @@ using namespace Kernel;
 Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex)
 {
 	if (!Mnt)
-		return -1;
+		return 1;
 
 	DrvTrait.fPacket.fPacketGood = false;
 
@@ -71,7 +71,7 @@ Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
 Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex)
 {
 	if (!Mnt)
-		return -1;
+		return 1;
 
 	DrvTrait.fPacket.fPacketGood = false;
 
