@@ -6,10 +6,11 @@
 
 #ifdef __FSKIT_INCLUDES_NEFS__
 
+#include <FSKit/NeFS.h>
+
 #include <Modules/AHCI/AHCI.h>
 #include <Modules/ATA/ATA.h>
 #include <Modules/Flash/Flash.h>
-#include <FSKit/NeFS.h>
 #include <KernelKit/LPC.h>
 #include <NewKit/Crc32.h>
 #include <NewKit/Stop.h>
@@ -19,7 +20,6 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/User.h>
 
-#ifndef __ZKA_MINIMAL_OS__
 using namespace Kernel;
 
 #ifdef __ZKA_NO_BUILTIN__
@@ -1049,6 +1049,5 @@ namespace Kernel::Detail
 		return true;
 	}
 } // namespace Kernel::Detail
-#endif // !__ZKA_MINIMAL_OS__
 
 #endif // ifdef __FSKIT_INCLUDES_NEFS__
