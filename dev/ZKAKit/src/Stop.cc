@@ -14,7 +14,7 @@
 #include <Modules/FB/FB.h>
 #include <Modules/FB/Text.h>
 
-#define kWebsiteURL "https://www.zws.zka.com/zka-os/help/"
+#define kWebsiteURL "https://www.el-mahrouss-logic.com/zka-os/help/"
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
