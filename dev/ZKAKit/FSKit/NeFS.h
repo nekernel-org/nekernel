@@ -3,8 +3,8 @@
 	Copyright EL Mahrouss Logic.
 
 	FILE: NeFS.h
-	PURPOSE: NeFS (New FileSystem) support, can be used with kernel, HPFS is preferred.
-
+	PURPOSE: NeFS (New FileSystem) support.
+	
 	Revision History:
 
 	?/?/?: Added file (amlel)
@@ -41,8 +41,8 @@ default.
 
 #define kNeFSMetaFilePrefix '$'
 
-#define kNeFSVersionInteger (0x0128)
-#define kNeFSVerionString	"1.28"
+#define kNeFSVersionInteger (0x0129)
+#define kNeFSVerionString	"1.2.9"
 
 /// @brief Standard fork types.
 #define kNeFSDataFork	  "main_data"
@@ -106,8 +106,7 @@ default.
 #define kNeFSFlagCreated	 (71)
 
 #define kNeFSMimeNameLen (200)
-
-#define kNeFSForkNameLen (200U)
+#define kNeFSForkNameLen (200)
 
 struct NFS_CATALOG_STRUCT;
 struct NFS_FORK_STRUCT;
