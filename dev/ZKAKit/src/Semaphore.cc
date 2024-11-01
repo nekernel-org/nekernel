@@ -13,8 +13,10 @@ namespace Kernel
 	{
 		if (fLockingProcess)
 			fLockingProcess = nullptr;
+		else
+			return No;
 
-		return fLockingProcess == nullptr;
+		return Yes;
 	}
 
 	Bool Semaphore::Lock(UserProcess* process)
