@@ -8,7 +8,7 @@
 
 namespace Kernel
 {
-	Int rt_string_cmp(const Char* src, const Char* cmp, Size size)
+	Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size)
 	{
 		if (!cmp ||
 			!src)
@@ -25,14 +25,14 @@ namespace Kernel
 		return counter;
 	}
 
-	void rt_zero_memory(voidPtr pointer, Size len)
+	Void rt_zero_memory(voidPtr pointer, Size len)
 	{
 		rt_set_memory(pointer, 0, len);
 	}
 
-	Size rt_string_len(const Char* str, SizeT _len)
+	SizeT rt_string_len(const Char* str, SizeT _len)
 	{
-		Size len{0};
+		SizeT len{0};
 
 		while (str[len] != '\0')
 		{
@@ -80,12 +80,13 @@ namespace Kernel
 	{
 		if (len < 1)
 			return 2;
+
 		if (!src || !dst)
 			return 1;
 
-		char* srcChr  = reinterpret_cast<Char*>(src);
-		char* dstChar = reinterpret_cast<Char*>(dst);
-		Size  index	  = 0;
+		Char* srcChr  = reinterpret_cast<Char*>(src);
+		Char* dstChar = reinterpret_cast<Char*>(dst);
+		SizeT index	  = 0;
 
 		while (index < len)
 		{
@@ -134,7 +135,7 @@ namespace Kernel
 		return string;
 	}
 
-	Int rt_to_uppercase(Int character)
+	Int32 rt_to_uppercase(Int32 character)
 	{
 		if (character >= 'a' && character <= 'z')
 			return character - 0x20;
@@ -142,7 +143,7 @@ namespace Kernel
 		return character;
 	}
 
-	Int rt_to_lower(Int character)
+	Int32 rt_to_lower(Int32 character)
 	{
 		if (character >= 'A' && character <= 'Z')
 			return character + 0x20;
@@ -150,7 +151,7 @@ namespace Kernel
 		return character;
 	}
 
-	bool rt_to_string(Char* str, Int limit, Int base)
+	Bool rt_to_string(Char* str, Int32 limit, Int32 base)
 	{
 		if (limit == 0)
 			return false;
@@ -196,7 +197,7 @@ namespace Kernel
 
 	// @brief Checks for a string start at the character.
 
-	char* rt_string_has_char(char* str, const Char chr)
+	Char* rt_string_has_char(Char* str, const Char chr)
 	{
 		while (*str != chr)
 		{
