@@ -21,8 +21,7 @@
 - GND (IN) (OUT for MCU)
  */
 
-#define cMBCIZeroSz (8)
-#define cMBCIMagic	"MBCI  "
+#define kMBCIZeroSz (8)
 
 namespace Kernel
 {
@@ -39,15 +38,15 @@ namespace Kernel
 		UInt32 DeviceId;
 		UInt32 DeviceSpeed;
 		Bool   Acknowledge;
-		Char   Zero[cMBCIZeroSz];
+		Char   Zero[kMBCIZeroSz];
 	};
 
 	enum
 	{
-		eMBCISpeedDeviceInvalid,
-		eMBCILowSpeedDevice,
-		eMBCIHighSpeedDevice,
-		eMBCISpeedDeviceCount,
+		kMBCISpeedDeviceInvalid,
+		kMBCILowSpeedDevice,
+		kMBCIHighSpeedDevice,
+		kMBCISpeedDeviceCount,
 	};
 
 	/// @brief MBCI Host Interface header.
@@ -65,31 +64,31 @@ namespace Kernel
 		UInt8  InterruptEnable;
 		UInt64 BaseAddressRegister;
 		UInt64 BaseAddressRegisterSize;
-		Char   Zero[cMBCIZeroSz];
+		Char   Zero[kMBCIZeroSz];
 	};
 
 	/// @brief MBCI host flags.
 	enum MBCIHostFlags
 	{
-		eMBCIHostFlagsSupportsNothing,			 // Invalid MBCI device.
-		eMBCIHostFlagsSupportsAPM,				 // Advanced Power Management.
-		eMBCIHostFlagsSupportsDaisyChain,		 // Is daisy chained.
-		eMBCIHostFlagsSupportsHWInterrupts,		 // Has HW interrupts.
-		eMBCIHostFlagsSupportsDMA,				 // Has DMA.
-		eMBCIHostFlagsExtended = __UINT16_MAX__, // Extended flags table.
+		kMBCIHostFlagsSupportsNothing,			 // Invalid MBCI device.
+		kMBCIHostFlagsSupportsAPM,				 // Advanced Power Management.
+		kMBCIHostFlagsSupportsDaisyChain,		 // Is daisy chained.
+		kMBCIHostFlagsSupportsHWInterrupts,		 // Has HW interrupts.
+		kMBCIHostFlagsSupportsDMA,				 // Has DMA.
+		kMBCIHostFlagsExtended = __UINT16_MAX__, // Extended flags table.
 	};
 
 	enum MBCIHostKind
 	{
-		eMBCIHostKindHardDisk,
-		eMBCIHostKindOpticalDisk,
-		eMBCIHostKindKeyboardLow,
-		eMBCIHostKindMouseLow,
-		eMBCIHostKindMouseHigh,
-		eMBCIHostKindKeyboardHigh,
-		eMBCIHostKindNetworkInterface,
-		eMBCIHostKindDaisyChain,
-		eMBCIHostKindStartExtended = __UINT16_MAX__, // Extended vendor table.
+		kMBCIHostKindHardDisk,
+		kMBCIHostKindOpticalDisk,
+		kMBCIHostKindKeyboardLow,
+		kMBCIHostKindMouseLow,
+		kMBCIHostKindMouseHigh,
+		kMBCIHostKindKeyboardHigh,
+		kMBCIHostKindNetworkInterface,
+		kMBCIHostKindDaisyChain,
+		kMBCIHostKindStartExtended = __UINT16_MAX__, // Extended vendor table limit.
 	};
 
 	/// @brief An AuthKey is a context used to decrpy data from an MBCI packet.

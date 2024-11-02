@@ -61,6 +61,7 @@ namespace Kernel
 
 	typedef UIntPtr* Ptr64;
 	typedef UInt32*	 Ptr32;
+	typedef UInt8*	 Ptr8;
 
 	using Utf8Char	= char8_t;
 	using Utf16Char = char16_t;

@@ -38,9 +38,12 @@ namespace Kernel
 	/// @brief User Process scheduler global and external reference of thread scheduler.
 	/***********************************************************************************/
 
-	UserProcessScheduler			kProcessScheduler;
+	UserProcessScheduler kProcessScheduler;
 
-	UserProcess::UserProcess(VoidPtr start_image) : Image(start_image) {}
+	UserProcess::UserProcess(VoidPtr start_image)
+		: Image(start_image)
+	{
+	}
 
 	UserProcess::~UserProcess() = default;
 
@@ -127,9 +130,9 @@ namespace Kernel
 
 		if (!this->MemoryHeap)
 		{
-			this->MemoryHeap			   = new UserProcess::USER_PROCESS_HEAP();
+			this->MemoryHeap = new UserProcess::USER_PROCESS_HEAP();
 
-			this->MemoryHeap->MemoryEntryPad = pad_amount;
+			this->MemoryHeap->MemoryEntryPad  = pad_amount;
 			this->MemoryHeap->MemoryEntrySize = sz;
 
 			this->MemoryHeap->MemoryEntry = ptr;
@@ -141,7 +144,7 @@ namespace Kernel
 		}
 		else
 		{
-			USER_PROCESS_HEAP* entry		 = this->MemoryHeap;
+			USER_PROCESS_HEAP* entry	  = this->MemoryHeap;
 			USER_PROCESS_HEAP* prev_entry = nullptr;
 
 			while (!entry)
@@ -439,7 +442,7 @@ namespace Kernel
 				process.PTime = static_cast<Int32>(process.Affinity);
 
 				UserProcessScheduler::The().GetCurrentProcess().Leak().Status = ProcessStatusKind::kFrozen;
-				UserProcessScheduler::The().GetCurrentProcess()			   = process;
+				UserProcessScheduler::The().GetCurrentProcess()				  = process;
 
 				kcout << "Switch to '" << process.Name << "'.\r";
 
@@ -541,10 +544,18 @@ namespace Kernel
 				PID prev_pid					   = UserProcessHelper::TheCurrentPID();
 				UserProcessHelper::TheCurrentPID() = new_pid;
 
+				////////////////////////////////////////////////////////////
+				///	Prepare task switch.								 ///
+				////////////////////////////////////////////////////////////
+
 				auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
 				HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].ProcessId;
 				Bool ret											 = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
 
+				////////////////////////////////////////////////////////////
+				///	Rollback on fail.    								 ///
+				////////////////////////////////////////////////////////////
+				///
 				if (!ret)
 				{
 					HardwareThreadScheduler::The()[index].Leak()->fPTime = prev_ptime;

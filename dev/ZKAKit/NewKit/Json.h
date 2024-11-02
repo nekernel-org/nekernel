@@ -27,7 +27,7 @@ namespace Kernel
 	public:
 		explicit JSON()
 		{
-			auto	   len = cJSONLen;
+			auto	len = cJSONLen;
 			KString key = KString(len);
 			key += cJSONNull;
 
@@ -50,7 +50,7 @@ namespace Kernel
 		}
 
 	private:
-		Bool	   fUndefined; // is this instance undefined?
+		Bool	fUndefined; // is this instance undefined?
 		KString fKey;
 		KString fValue;
 

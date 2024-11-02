@@ -4,7 +4,7 @@
 
 	FILE: NeFS.h
 	PURPOSE: NeFS (New FileSystem) support.
-	
+
 	Revision History:
 
 	?/?/?: Added file (amlel)

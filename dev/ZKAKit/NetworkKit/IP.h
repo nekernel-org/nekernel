@@ -78,6 +78,6 @@ namespace Kernel
 	public:
 		static ErrorOr<KString> ToKString(Ref<RawIPAddress6>& ipv6);
 		static ErrorOr<KString> ToKString(Ref<RawIPAddress>& ipv4);
-		static bool				   IpCheckVersion4(const Char* ip);
+		static bool				IpCheckVersion4(const Char* ip);
 	};
 } // namespace Kernel

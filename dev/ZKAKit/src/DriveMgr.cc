@@ -147,8 +147,8 @@ namespace Kernel
 		{
 			_BOOT_BLOCK_STRUCT block_struct;
 
-			trait.fPacket.fLba = kEPMBaseLba;
-			trait.fPacket.fPacketSize = sizeof(_BOOT_BLOCK_STRUCT);
+			trait.fPacket.fLba			 = kEPMBaseLba;
+			trait.fPacket.fPacketSize	 = sizeof(_BOOT_BLOCK_STRUCT);
 			trait.fPacket.fPacketContent = &block_struct;
 
 			io_drv_input(&trait.fPacket);
@@ -164,11 +164,11 @@ namespace Kernel
 				trait.fKind |= kUnformattedDrive;
 			}
 
-			trait.fPacket.fLba = 0;
-			trait.fPacket.fPacketSize = 0UL;
+			trait.fPacket.fLba			 = 0;
+			trait.fPacket.fPacketSize	 = 0UL;
 			trait.fPacket.fPacketContent = nullptr;
 		}
-	}
+	} // namespace Detail
 
 	/// @brief Fetches the main drive.
 	/// @return the new drive. (returns kEPMDrive if EPM formatted)

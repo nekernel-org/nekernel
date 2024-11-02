@@ -65,12 +65,17 @@ namespace Kernel
 		/// @brief Is she a super user?
 		Bool IsSuperUser() noexcept;
 
-		Bool TrySave(const UserPublicKey password) noexcept;
+		/// @brief Saves a password from the public key.
+		Bool Save(const UserPublicKey password) noexcept;
+
+		/// @brief Checks if a password matches the **password**.
+		/// @param password the password to check.
+		Bool Matches(const UserPublicKey password) noexcept;
 
 	private:
 		UserRingKind fRing{UserRingKind::kRingStdUser};
-		Char	 fUserName[kMaxUserNameLen]	  = {0};
-		Char	 fUserToken[kMaxUserTokenLen] = {0};
+		Char		 fUserName[kMaxUserNameLen]	  = {0};
+		Char		 fUserToken[kMaxUserTokenLen] = {0};
 	};
 } // namespace Kernel
 

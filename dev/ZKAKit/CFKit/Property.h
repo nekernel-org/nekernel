@@ -35,10 +35,10 @@ namespace CFKit
 
 		bool		StringEquals(KString& name);
 		PropertyId& GetValue();
-		KString& GetKey();
+		KString&	GetKey();
 
 	private:
-		KString fName{kMaxPropLen};
+		KString	   fName{kMaxPropLen};
 		PropertyId fAction{No};
 	};
 

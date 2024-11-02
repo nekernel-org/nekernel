@@ -22,9 +22,9 @@ namespace Kernel
 	Bool hal_check_stack(HAL::StackFramePtr stack_ptr)
 	{
 		if (!stack_ptr)
-			return false;
+			return No;
 
-		return true;
+		return Yes;
 	}
 
 	/// @brief Wakes up thread.

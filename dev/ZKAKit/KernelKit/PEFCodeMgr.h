@@ -53,9 +53,9 @@ namespace Kernel
 #endif // __FSKIT_INCLUDES_NEFS__
 
 		Ref<KString> fPath;
-		VoidPtr			fCachedBlob;
-		bool			fFatBinary;
-		bool			fBad;
+		VoidPtr		 fCachedBlob;
+		bool		 fFatBinary;
+		bool		 fBad;
 	};
 
 	namespace Utils

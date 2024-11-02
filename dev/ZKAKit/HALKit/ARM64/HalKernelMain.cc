@@ -46,5 +46,6 @@ EXTERN_C void hal_init_platform(
 
 	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
 
-	while (Yes);
+	while (Yes)
+		;
 }

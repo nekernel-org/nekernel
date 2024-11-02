@@ -17,8 +17,8 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Heap.h>
 
-#define kStdUserType   (0xCEEF)
-#define kSuperUserType (0xECCF)
+#define kStdUserType   (0xCE)
+#define kSuperUserType (0xEC)
 
 /// BUGS: 0
 
@@ -43,7 +43,7 @@ namespace Kernel
 				if (cur_chr == 0)
 					break;
 
-				password[i_pass] = cur_chr + (user->IsStdUser() ? kStdUserType : kSuperUserType);
+				password[i_pass] = cur_chr | (user->IsStdUser() ? kStdUserType : kSuperUserType);
 			}
 
 			kcout << "Done hashing password!\r";
@@ -67,7 +67,7 @@ namespace Kernel
 
 	User::~User() = default;
 
-	Bool User::TrySave(const UserPublicKey password_to_fill) noexcept
+	Bool User::Save(const UserPublicKey password_to_fill) noexcept
 	{
 		if (!password_to_fill ||
 			*password_to_fill == 0)
@@ -101,6 +101,30 @@ namespace Kernel
 		kcout << "Saved password successfully...\r";
 
 		return Yes;
+	}
+
+	Bool User::Matches(const UserPublicKey password_to_fill) noexcept
+	{
+		Char* password = new Char[len];
+		MUST_PASS(password);
+
+		// fill data first, generate hash.
+		// return false on error.
+
+		rt_copy_memory((VoidPtr)password_to_fill, password, len);
+
+		if (!Detail::cred_construct_token(password, password_to_fill, this, len))
+		{
+			delete[] password;
+			password = nullptr;
+
+			return No;
+		}
+
+		kcout << "Validating hashed passwords...\r";
+
+		// now check if the password matches.
+		return rt_string_cmp(password, this->fUserToken, rt_string_len(this->fUserToken)) == 0;
 	}
 
 	Bool User::operator==(const User& lhs)

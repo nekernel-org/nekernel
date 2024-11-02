@@ -61,7 +61,7 @@ namespace Kernel
 		void Busy(const bool busy = false) noexcept;
 
 	public:
-		bool Switch(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr frame);
+		bool Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame);
 		bool IsWakeup() noexcept;
 
 	public:

@@ -17,7 +17,7 @@ namespace Kernel
 	{
 	public:
 		explicit Array() = default;
-		~Array() = default;
+		~Array()		 = default;
 
 		Array& operator=(const Array&) = default;
 		Array(const Array&)			   = default;

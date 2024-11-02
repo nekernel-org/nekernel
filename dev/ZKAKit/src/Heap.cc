@@ -102,7 +102,7 @@ namespace Kernel
 		if (!ptr_heap || new_sz < 1)
 			return nullptr;
 
-		kcout << "This function is not implemented by the MicroKernel, please use the BSD layer realloc instead.\r";
+		kcout << "This function is not implemented by minOSKrnl, please use the BSD's realloc instead.\r";
 		ke_stop(RUNTIME_CHECK_PROCESS);
 
 		return nullptr;
@@ -119,6 +119,9 @@ namespace Kernel
 
 		if (sz_fix == 0)
 			return nullptr;
+
+		// We can't allocate that big now.
+		MUST_PASS(sz <= gib_cast(2));
 
 		sz_fix += sizeof(Detail::HEAP_INFORMATION_BLOCK);
 
@@ -236,12 +239,12 @@ namespace Kernel
 			}
 
 			heap_info_ptr->fHeapSize = 0UL;
-			heap_info_ptr->fPresent	= No;
-			heap_info_ptr->fHeapPtr	= 0;
-			heap_info_ptr->fCRC32	= 0;
-			heap_info_ptr->fWr		= No;
-			heap_info_ptr->fUser		= No;
-			heap_info_ptr->fMagic	= 0;
+			heap_info_ptr->fPresent	 = No;
+			heap_info_ptr->fHeapPtr	 = 0;
+			heap_info_ptr->fCRC32	 = 0;
+			heap_info_ptr->fWr		 = No;
+			heap_info_ptr->fUser	 = No;
+			heap_info_ptr->fMagic	 = 0;
 
 			PTEWrapper		pageWrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pteAddress{pageWrapper};

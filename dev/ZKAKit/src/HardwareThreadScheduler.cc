@@ -89,14 +89,14 @@ namespace Kernel
 
 	/// @note Those symbols are needed in order to switch and validate the stack.
 
-	EXTERN Bool	  hal_check_stack(HAL::StackFramePtr stackPtr);
-	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr);
+	EXTERN Bool	  hal_check_stack(HAL::StackFramePtr frame_ptr);
+	EXTERN_C Bool mp_register_process(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame_ptr);
 
 	/// @brief Switch to hardware thread.
 	/// @param stack the new hardware thread.
 	/// @retval true stack was changed, code is running.
 	/// @retval false stack is invalid, previous code is running.
-	Bool HardwareThread::Switch(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr frame)
+	Bool HardwareThread::Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame)
 	{
 		if (!frame ||
 			!image ||
@@ -107,6 +107,9 @@ namespace Kernel
 			return No;
 
 		if (this->IsBusy())
+			return No;
+
+		if (!hal_check_stack(frame))
 			return No;
 
 		fStack = frame;

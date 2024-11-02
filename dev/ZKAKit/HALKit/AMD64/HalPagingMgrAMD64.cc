@@ -62,7 +62,7 @@ namespace Kernel::HAL
 		kcout << (pte->User ? "User" : "Not User") << endl;
 	}
 
-	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, ZKA_PTE* pt_entry,	ZKA_PDE* pd_entry);
+	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, ZKA_PTE* pt_entry, ZKA_PDE* pd_entry);
 
 	/***********************************************************************************/
 	/// @brief Maps or allocates a page from virtual_address.
@@ -127,9 +127,10 @@ namespace Kernel::HAL
 	/// @brief Maps flags for a specific pte.
 	/// @internal Internal function.
 	/***********************************************************************************/
-	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, ZKA_PTE* pt_entry,	ZKA_PDE* pd_entry)
+	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, ZKA_PTE* pt_entry, ZKA_PDE* pd_entry)
 	{
-		if (!pt_entry) return 1;
+		if (!pt_entry)
+			return 1;
 
 		pt_entry->Present = true;
 

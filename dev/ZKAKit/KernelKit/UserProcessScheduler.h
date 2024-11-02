@@ -154,8 +154,8 @@ namespace Kernel
 		struct USER_PROCESS_HEAP final
 		{
 			VoidPtr MemoryEntry{nullptr};
-			SizeT   MemoryEntrySize{0UL};
-			SizeT   MemoryEntryPad{0UL};
+			SizeT	MemoryEntrySize{0UL};
+			SizeT	MemoryEntryPad{0UL};
 
 			struct USER_PROCESS_HEAP* MemoryPrev{nullptr};
 			struct USER_PROCESS_HEAP* MemoryNext{nullptr};
@@ -275,7 +275,7 @@ namespace Kernel
 
 	public:
 		Ref<UserProcess>& GetCurrentProcess();
-		const SizeT			  Run() noexcept;
+		const SizeT		  Run() noexcept;
 
 	public:
 		STATIC UserProcessScheduler& The();
