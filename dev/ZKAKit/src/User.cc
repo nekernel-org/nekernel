@@ -105,6 +105,12 @@ namespace Kernel
 
 	Bool User::Matches(const UserPublicKey password_to_fill) noexcept
 	{
+		if (!password_to_fill ||
+			*password_to_fill)
+			return No;
+
+		SizeT len = rt_string_len(password_to_fill);
+
 		Char* password = new Char[len];
 		MUST_PASS(password);
 
