@@ -7,7 +7,7 @@
 #include <ArchKit/ArchKit.h>
 #include <HALKit/AMD64/Processor.h>
 
-#define kPITDefaultTicks (100U)
+#define kPITDefaultTicks (1000U)
 
 namespace Kernel::HAL
 {

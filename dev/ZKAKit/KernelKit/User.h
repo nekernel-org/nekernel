@@ -27,6 +27,7 @@ namespace Kernel
 
 	enum class UserRingKind
 	{
+		kRingInvalid   = 0,
 		kRingStdUser   = 1,
 		kRingSuperUser = 2,
 		kRingGuestUser = 5,

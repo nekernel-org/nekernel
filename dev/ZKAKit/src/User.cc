@@ -34,7 +34,7 @@ namespace Kernel
 			if (!password || !user)
 				return 1;
 
-			kcout << "Hashing password...\r";
+			kcout << "Hashing user password...\r";
 
 			for (Size i_pass = 0; i_pass < length; ++i_pass)
 			{
@@ -46,12 +46,13 @@ namespace Kernel
 				password[i_pass] = cur_chr | (user->IsStdUser() ? kStdUserType : kSuperUserType);
 			}
 
-			kcout << "Done hashing password!\r";
+			kcout << "Done hashing user password!\r";
 
 			return 0;
 		}
 	} // namespace Detail
 
+	/// @brief User ring constructor.
 	User::User(const Int32& sel, const Char* userName)
 		: fRing((UserRingKind)sel)
 	{
@@ -59,12 +60,14 @@ namespace Kernel
 		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
 	}
 
+	/// @brief User ring constructor.
 	User::User(const UserRingKind& ringKind, const Char* userName)
 		: fRing(ringKind)
 	{
 		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
 	}
 
+	/// @brief User destructor class.
 	User::~User() = default;
 
 	Bool User::Save(const UserPublicKey password_to_fill) noexcept
@@ -130,7 +133,14 @@ namespace Kernel
 		kcout << "Validating hashed passwords...\r";
 
 		// now check if the password matches.
-		return rt_string_cmp(password, this->fUserToken, rt_string_len(this->fUserToken)) == 0;
+		if (rt_string_cmp(password, this->fUserToken, rt_string_len(this->fUserToken)) == 0)
+		{
+			kcout << "Password is valid.\r";
+			return Yes;
+		}
+
+		kcout << "Password isn't valid.\r";
+		return No;
 	}
 
 	Bool User::operator==(const User& lhs)

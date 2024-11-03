@@ -32,7 +32,7 @@ namespace Kernel
 	/// @brief Exit Code global variable.
 	/***********************************************************************************/
 
-	STATIC UInt32 kLastExitCode = 0U;
+	UInt32 kLastExitCode = 0U;
 
 	/***********************************************************************************/
 	/// @brief User Process scheduler global and external reference of thread scheduler.
@@ -61,14 +61,7 @@ namespace Kernel
 
 	Void UserProcess::Crash()
 	{
-		if (this->Status != ProcessStatusKind::kRunning)
-			return;
-
-		if (*this->Name != 0)
-		{
-			kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
-		}
-
+		kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
 		this->Exit(kErrorProcessFault);
 	}
 
@@ -78,7 +71,7 @@ namespace Kernel
 
 	UserProcess::operator bool()
 	{
-		return this->Status != ProcessStatusKind::kDead;
+		return this->Status == ProcessStatusKind::kRunning && this->Image != nullptr;
 	}
 
 	/***********************************************************************************/
@@ -319,12 +312,24 @@ namespace Kernel
 
 	SizeT UserProcessScheduler::Add(UserProcess process)
 	{
-		if (mTeam.mProcessAmount > kSchedProcessLimitPerTeam)
+		kcout << "Creating process: " << process.Name << ", prevous process count: " << number(mTeam.mProcessList.Count()) << endl;
+
+		if (mTeam.mProcessList.Count() >= kSchedProcessLimitPerTeam)
 			return kErrorInvalidData;
+
+		kcout << "Create vm_register of: " << process.Name << endl;
 
 #ifdef __ZKA_AMD64__
 		process.VMRegister = reinterpret_cast<UIntPtr>(mm_new_heap(sizeof(PDE), No, Yes));
+
+		if (!process.VMRegister)
+		{
+			process.Crash();
+			return kErrorProcessFault;
+		}
 #endif // __ZKA_AMD64__
+
+		kcout << "Create stack_frame of: " << process.Name << endl;
 
 		process.StackFrame = reinterpret_cast<HAL::StackFramePtr>(mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes));
 
@@ -334,17 +339,23 @@ namespace Kernel
 			return kErrorProcessFault;
 		}
 
+		kcout << "Create delegate if DLL for: " << process.Name << endl;
+
 		// Create heap according to type of process.
 		if (process.Kind == UserProcess::kExectuableDLLKind)
 		{
 			process.PefDLLDelegate = rtl_init_dll(&process);
 		}
 
+		kcout << "Validate image of: " << process.Name << endl;
+
 		if (!process.Image)
 		{
 			process.Crash();
 			return kErrorProcessFault;
 		}
+
+		kcout << "Validate stack reserve of: " << process.Name << endl;
 
 		// Get preferred stack size by app.
 		const auto kMaxStackSize = process.StackSize;
@@ -356,12 +367,12 @@ namespace Kernel
 			return kErrorProcessFault;
 		}
 
-		++mTeam.mProcessAmount;
-
-		process.ProcessId = mTeam.mProcessAmount;
-		process.Status	  = ProcessStatusKind::kStarting;
+		process.ProcessId = 0UL;
+		process.Status	  = ProcessStatusKind::kRunning;
 
 		mTeam.AsArray()[process.ProcessId] = process;
+
+		kcout << "Create process: " << process.Name << endl;
 
 		return process.ProcessId;
 	}
@@ -372,6 +383,7 @@ namespace Kernel
 
 	UserProcessScheduler& UserProcessScheduler::The()
 	{
+		kcout << "Return user scheduler object.\r";
 		return kProcessScheduler;
 	}
 
@@ -387,11 +399,10 @@ namespace Kernel
 	const Bool UserProcessScheduler::Remove(ProcessID process_id)
 	{
 		// check if process is within range.
-		if (process_id > mTeam.mProcessAmount)
+		if (process_id > mTeam.mProcessList.Count())
 			return No;
 
 		mTeam.AsArray()[process_id].Status = ProcessStatusKind::kDead;
-		--mTeam.mProcessAmount;
 
 		return Yes;
 	}
@@ -424,13 +435,13 @@ namespace Kernel
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
-		if (mTeam.mProcessAmount == 0)
+		if (mTeam.mProcessList.Empty())
 		{
 			kcout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
 			return 0;
 		}
 
-		kcout << "UserProcessScheduler::Run(): This team has process # " << number(mTeam.mProcessAmount) << endl;
+		kcout << "UserProcessScheduler::Run(): This team has a process capacity of: " << number(mTeam.mProcessList.Capacity()) << endl;
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
@@ -440,9 +451,6 @@ namespace Kernel
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
 				process.PTime = static_cast<Int32>(process.Affinity);
-
-				UserProcessScheduler::The().GetCurrentProcess().Leak().Status = ProcessStatusKind::kFrozen;
-				UserProcessScheduler::The().GetCurrentProcess()				  = process;
 
 				kcout << "Switch to '" << process.Name << "'.\r";
 
@@ -462,8 +470,6 @@ namespace Kernel
 				--process.PTime;
 			}
 		}
-
-		kcout << "Scheduled Process Count: " << number(process_index) << endl;
 
 		return process_index;
 	}

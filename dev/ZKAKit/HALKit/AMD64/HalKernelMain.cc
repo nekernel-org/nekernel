@@ -24,8 +24,10 @@ STATIC Kernel::Void hal_init_cxx_ctors()
 {
 	for (Kernel::SizeT index = 0UL; __CTOR_LIST__[index] != __DTOR_LIST__[0]; ++index)
 	{
-		Kernel::MainKind ctor = (Kernel::MainKind)__CTOR_LIST__[index];
-		ctor();
+		Kernel::MainKind constructor_cxx = (Kernel::MainKind)__CTOR_LIST__[index];
+		constructor_cxx();
+
+		kcout << "Called constrcutor.\r";
 	}
 }
 
@@ -83,6 +85,14 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	/* Initialize filesystem. */
 	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
+
+	Kernel::rtl_create_process([]() -> void {
+		while (Yes)
+		{
+			kcout << "Hello.\r";
+		}
+	},
+							   "RtlProcess");
 
 	/* Start any cores. */
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)

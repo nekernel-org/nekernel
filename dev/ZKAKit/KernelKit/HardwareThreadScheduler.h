@@ -14,7 +14,7 @@
 /// @note Last Rev Sun 28 Jul CET 2024
 /// @note Last Rev Thu, Aug  1, 2024  9:07:38 AM
 
-#define cMaxHartInsideSched (8U)
+#define kMaxHartInsideSched (8U)
 
 namespace Kernel
 {
@@ -105,7 +105,7 @@ namespace Kernel
 	public:
 		Ref<HardwareThread*> operator[](const SizeT& idx);
 		bool				 operator!() noexcept;
-		operator bool() noexcept;
+							 operator bool() noexcept;
 
 		const Bool IsUser() override
 		{
@@ -133,7 +133,7 @@ namespace Kernel
 		SizeT Count() noexcept;
 
 	private:
-		Array<HardwareThread, cMaxHartInsideSched> fThreadList;
+		Array<HardwareThread, kMaxHartInsideSched> fThreadList;
 		ThreadID								   fCurrentThread{0};
 	};
 

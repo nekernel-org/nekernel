@@ -21,7 +21,7 @@
 
 namespace Kernel
 {
-	void ke_stop(const Kernel::Int& id)
+	Void ke_stop(const Kernel::Int& id)
 	{
 		CGInit();
 
@@ -46,7 +46,7 @@ namespace Kernel
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			CGDrawString("0x00000008 Process check error.", start_y, x, panic_text);
+			CGDrawString("0x00000008 Invalid process behavior, aborting.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {

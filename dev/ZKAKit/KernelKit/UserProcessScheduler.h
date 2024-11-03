@@ -122,8 +122,7 @@ namespace Kernel
 	};
 
 	// Helper types.
-	using ImagePtr	  = VoidPtr;
-	using HeapPtrKind = VoidPtr;
+	using ImagePtr = VoidPtr;
 
 	/// @name UserProcess
 	/// @brief User process header.
@@ -131,7 +130,7 @@ namespace Kernel
 	class UserProcess final
 	{
 	public:
-		explicit UserProcess(VoidPtr startImage = nullptr);
+		UserProcess(VoidPtr start_image = nullptr);
 		~UserProcess();
 
 	public:
@@ -241,7 +240,6 @@ namespace Kernel
 	public:
 		Array<UserProcess, kSchedProcessLimitPerTeam> mProcessList;
 		Ref<UserProcess>							  mCurrentProcess;
-		SizeT										  mProcessAmount{0};
 		ProcessID									  mTeamId{0};
 	};
 
@@ -259,7 +257,7 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(UserProcessScheduler)
 
-		operator bool();
+			 operator bool();
 		bool operator!();
 
 	public:
@@ -281,7 +279,7 @@ namespace Kernel
 		STATIC UserProcessScheduler& The();
 
 	private:
-		UserProcessTeam mTeam;
+		UserProcessTeam mTeam{};
 	};
 
 	/*
@@ -291,8 +289,8 @@ namespace Kernel
 	class UserProcessHelper final
 	{
 	public:
-		STATIC bool	 Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
-		STATIC bool	 CanBeScheduled(const UserProcess& process);
+		STATIC bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
+		STATIC bool CanBeScheduled(const UserProcess& process);
 		STATIC PID&	 TheCurrentPID();
 		STATIC SizeT StartScheduling();
 	};

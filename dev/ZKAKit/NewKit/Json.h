@@ -15,9 +15,9 @@
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 
-#define cMaxJsonPath 4096
-#define cJSONLen	 32
-#define cJSONNull	 "null"
+#define kMaxJsonPath 4096
+#define kJSONLen	 32
+#define kJSONNull	 "null"
 
 namespace Kernel
 {
@@ -27,9 +27,9 @@ namespace Kernel
 	public:
 		explicit JSON()
 		{
-			auto	len = cJSONLen;
+			auto	len = kJSONLen;
 			KString key = KString(len);
-			key += cJSONNull;
+			key += kJSONNull;
 
 			this->AsKey()	= key;
 			this->AsValue() = key;
@@ -97,7 +97,7 @@ namespace Kernel
 			SizeT key_len	= 0;
 			SizeT value_len = 0;
 
-			JSON type(cMaxJsonPath, cMaxJsonPath);
+			JSON type(kMaxJsonPath, kMaxJsonPath);
 
 			for (SizeT i = 1; i < len; ++i)
 			{

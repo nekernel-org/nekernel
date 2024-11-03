@@ -210,3 +210,8 @@ namespace Kernel
 		return str;
 	}
 } // namespace Kernel
+
+EXTERN_C void* memset(void* dst, char c, Kernel::Size len)
+{
+	return Kernel::rt_set_memory(dst, c, len);
+}

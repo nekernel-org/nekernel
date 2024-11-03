@@ -12,7 +12,7 @@
 
 #ifdef __USE_MBCI_FLASH__
 
-#define cMaxFlash (4U)
+#define kMaxFlash (4U)
 
 namespace Kernel
 {
@@ -21,8 +21,8 @@ namespace Kernel
 	constexpr auto kFlashBridgeRevision = 1;
 
 	STATIC const Boolean kFlashEnabled			   = No;
-	STATIC SizeT		 kFlashSize[cMaxFlash]	   = {};
-	STATIC SizeT		 kFlashSectorSz[cMaxFlash] = {};
+	STATIC SizeT		 kFlashSize[kMaxFlash]	   = {};
+	STATIC SizeT		 kFlashSectorSz[kMaxFlash] = {};
 
 	/// @brief Enable flash memory builtin.
 	STATIC Void drv_enable_flash(Int32 slot);
@@ -34,7 +34,7 @@ namespace Kernel
 	/// @return drive sector count.
 	SizeT drv_get_sector_count(Int32 slot)
 	{
-		if (slot > cMaxFlash)
+		if (slot > kMaxFlash)
 			return 0;
 
 		return kFlashSectorSz[slot];
@@ -44,7 +44,7 @@ namespace Kernel
 	/// @return drive size
 	SizeT drv_get_size(Int32 slot)
 	{
-		if (slot > cMaxFlash)
+		if (slot > kMaxFlash)
 			return 0;
 
 		return kFlashSize[slot];

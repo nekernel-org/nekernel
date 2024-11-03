@@ -14,9 +14,9 @@
 #include <NewKit/KString.h>
 
 /// @brief PEF stack size symbol.
-#define cPefStackSizeSymbol "SizeOfReserveStack"
-#define cPefHeapSizeSymbol	"SizeOfReserveHeap"
-#define cPefNameSymbol		"ProgramName"
+#define kPefStackSizeSymbol "SizeOfReserveStack"
+#define kPefHeapSizeSymbol	"SizeOfReserveHeap"
+#define kPefNameSymbol		"ProgramName"
 
 namespace Kernel
 {
@@ -58,9 +58,9 @@ namespace Kernel
 		fFile.New(const_cast<Char*>(path), kRestrictRB);
 		fPath = StringBuilder::Construct(path).Leak();
 
-		auto cPefHeader = "PEF_CONTAINER";
+		auto kPefHeader = "PEF_CONTAINER";
 
-		fCachedBlob = fFile->Read(cPefHeader);
+		fCachedBlob = fFile->Read(kPefHeader);
 
 		PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
@@ -228,32 +228,32 @@ namespace Kernel
 
 	namespace Utils
 	{
-		ProcessID execute_from_image(PEFLoader& exec, const Int32& procKind) noexcept
+		ProcessID rtl_create_process(PEFLoader& exec, const Int32& procKind) noexcept
 		{
 			auto errOrStart = exec.FindStart();
 
 			if (errOrStart.Error() != kErrorSuccess)
 				return No;
 
-			UserProcess proc{};
+			UserProcess* proc = new UserProcess{errOrStart.Leak().Leak()};
 
-			proc.Image		 = errOrStart.Leak().Leak();
-			proc.Kind		 = procKind;
-			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(cPefStackSizeSymbol, kPefData);
-			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(cPefHeapSizeSymbol, kPefData);
+			proc->Kind		  = procKind;
+			proc->StackSize	  = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
+			proc->MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
+			proc->PTime		  = 0UL;
 
-			rt_set_memory(proc.Name, 0, kProcessLen);
+			rt_set_memory(proc->Name, 0, kProcessLen);
 
-			if (exec.FindSymbol(cPefNameSymbol, kPefData))
-				rt_copy_memory(exec.FindSymbol(cPefNameSymbol, kPefData), proc.Name, rt_string_len((Char*)exec.FindSymbol(cPefNameSymbol, kPefData)));
+			if (exec.FindSymbol(kPefNameSymbol, kPefData))
+				rt_copy_memory(exec.FindSymbol(kPefNameSymbol, kPefData), proc->Name, rt_string_len((Char*)exec.FindSymbol(kPefNameSymbol, kPefData)));
 
-			if (!proc.StackSize)
+			if (!proc->StackSize)
 			{
 				const auto cDefaultStackSizeMib = 8;
-				proc.StackSize					= mib_cast(cDefaultStackSizeMib);
+				proc->StackSize					= mib_cast(cDefaultStackSizeMib);
 			}
 
-			return UserProcessScheduler::The().Add(proc);
+			return UserProcessScheduler::The().Add(*proc);
 		}
 	} // namespace Utils
 } // namespace Kernel
