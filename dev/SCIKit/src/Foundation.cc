@@ -6,8 +6,8 @@
 
 #include <SCIKit/Foundation.h>
 
-/// @file sci_base.cc
-/// @brief Base Memory Manager functions for SCI.dll
+/// @file Foundation.cc
+/// @brief Foundation source file for SCI Kit.
 
 /// @brief Copy memory region.
 IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len)

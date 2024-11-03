@@ -3,11 +3,14 @@
 	(C) EL Mahrouss Logic.
 */
 
-#pragma once
+#ifndef TOOLS_FRAMEWORK_H
+#define TOOLS_FRAMEWORK_H
 
 #include <Common.h>
 
-#define kFKDLLDirectory		 "ZKA/DLL/"
-#define kFKManifestDirectory "ZKA/Manifests/"
-#define kFKRootDirectory	 "ZKA/"
-#define kFKExtension		 ".framework"
+#define kExecDirectory "ZKA/Exec/"
+#define kRootDirectory "ZKA/"
+#define kFKExtension   ".fwrk"
+#define kAppExtension  ".app"
+
+#endif // !TOOLS_FRAMEWORK_H
