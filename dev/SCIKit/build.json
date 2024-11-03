@@ -13,7 +13,6 @@
     "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
-    "__SCI_IMPL__",
     "kSCIVersion=0x0100",
     "kSCIVersionHighest=0x0100",
     "kSCIVersionLowest=0x0100"

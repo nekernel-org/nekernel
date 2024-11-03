@@ -17,9 +17,8 @@
     "__NEWOSKRNL__",
     "__NEWOSLDR__",
     "__ZKA_AMD64__",
-    "__BOOTSCR__",
-    "cSCRVersionHighest=0x0100",
-    "cSCRVersionLowest=0x0100",
-    "cSCRVersion=0x0100"
+    "kChkVersionHighest=0x0100",
+    "kChkVersionLowest=0x0100",
+    "kChkVersion=0x0100"
   ]
 }

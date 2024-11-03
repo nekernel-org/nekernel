@@ -5,7 +5,6 @@
   "sources_path": ["src/Framework.cc"],
   "output_name": "make_framework.o",
   "cpp_macros": [
-    "__MKF_AMD64__",
     "kMKFVersion=0x0100",
     "kMKFVersionHighest=0x0100",
     "kMKFVersionLowest=0x0100"

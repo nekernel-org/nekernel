@@ -11,12 +11,12 @@
 
 EXTERN_C Int32 ModuleMain(Kernel::HEL::HANDOVER_INFO_HEADER* Handover)
 {
-	EfiSystemTable* cST = (EfiSystemTable*)Handover->f_FirmwareCustomTables[1];
+	EfiSystemTable* system_table = (EfiSystemTable*)Handover->f_FirmwareCustomTables[1];
 
-	cST->ConOut->ClearScreen(cST->ConOut);
+	system_table->ConOut->ClearScreen(system_table->ConOut);
 
-	cST->ConOut->OutputString(cST->ConOut, L"SYSCHK: CHECKING FOR VALID NEFS OR HPFS PARTITIONS...\r\n");
-	cST->ConOut->OutputString(cST->ConOut, L"SYSCHK: GOOD TO GO!\r\n");
+	system_table->ConOut->OutputString(system_table->ConOut, L"SYSCHK: CHECKING FOR VALID NEFS OR HPFS PARTITIONS...\r\n");
+	system_table->ConOut->OutputString(system_table->ConOut, L"SYSCHK: GOOD TO GO!\r\n");
 
 	return kEfiOk;
 }
