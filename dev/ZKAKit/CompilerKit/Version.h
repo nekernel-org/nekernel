@@ -1,4 +1,4 @@
-// (C) Amlal EL Mahrouss
+// (c) EL Mahrouss Logic
 
 #pragma once
 

@@ -155,7 +155,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
 #ifdef ZBA_USE_FB
-	CGDrawString("ZBA (C) Amlal EL Mahrouss", 10, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString("ZBA (c) EL Mahrouss Logic", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "MULTIPLE PROCESSORS DETECTED." : "SINGLE PROCESSOR DETECTED.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 

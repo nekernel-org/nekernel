@@ -1,6 +1,6 @@
 /**
 	Thu Oct 17 07:57:43 CEST 2024
-	(C) Amlal EL Mahrouss.
+	(c) EL Mahrouss Logic.
 */
 
 #ifndef APPS_FRAMEWORK_H

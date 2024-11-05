@@ -1,6 +1,6 @@
 /**
 	Sat Oct 26 07:03:28 AM CEST 2024
-	(C) Amlal EL Mahrouss.
+	(c) EL Mahrouss Logic.
 */
 
 #pragma once
