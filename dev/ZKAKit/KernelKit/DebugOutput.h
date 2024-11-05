@@ -38,9 +38,7 @@ namespace Kernel
 	{
 	public:
 		TerminalDevice(void (*print)(const Char*), void (*get)(const Char*))
-			: DeviceInterface<const Char*>(print, get)
-		{
-		}
+			: DeviceInterface<const Char*>(print, get) {}
 
 		virtual ~TerminalDevice() = default;
 
