@@ -298,8 +298,8 @@ dev/ZKAKit/src/UserProcessScheduler.cc
 dev/ZKAKit/src/UserProcessTeam.cc
 dev/ZKAKit/src/Utils.cc
 dev/ZKAKit/src/Variant.cc
-tools/Common.h
-tools/Framework.h
-tools/make_framework.json
+apps/Common.h
+apps/Framework.h
+apps/make_framework.json
 compile_flags.txt
-tools/src/MakeFramework.cc
+apps/src/MakeFramework.cc
