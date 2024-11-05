@@ -17,9 +17,9 @@
 #include <NewKit/Ref.h>
 
 #define kMaxDriveCountPerMountpoint (4U)
-
-#define kDriveInvalidID (-1)
-#define kDriveNameLen	(32)
+#define kDriveSectorSz				(512U)
+#define kDriveInvalidID				(-1)
+#define kDriveNameLen				(32)
 
 #define DrvSectorCnt(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
 

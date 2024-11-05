@@ -50,11 +50,11 @@ int main(int argc, char* argv[])
 
 		for (auto& file : files)
 		{
-		    std::string file_cpy = file;
+			std::string file_cpy = file;
 
 			while (file_cpy.find("/") != std::string::npos)
 			{
-			    file_cpy.erase(0, file_cpy.find("/"));
+				file_cpy.erase(0, file_cpy.find("/"));
 				file_cpy.erase(file_cpy.find("/"), 1);
 			}
 

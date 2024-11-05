@@ -23,15 +23,15 @@ namespace Kernel
 
 		UserProcess* proc = new UserProcess{reinterpret_cast<VoidPtr>(main)};
 
-		kcout << "Setting-up process...\r";
+		kcout << "Setting-up process data...\r";
 
 		proc->Kind		= UserProcess::kExectuableKind;
-		proc->StackSize = kib_cast(8);
-		proc->PTime		= 0UL;
+		proc->StackSize = kib_cast(4);
 
+		rt_set_memory(proc->Name, 0, kProcessNameLen);
 		rt_copy_memory((VoidPtr)process_name, proc->Name, rt_string_len(process_name));
 
-		ProcessID id = UserProcessScheduler::The().Add(*proc);
+		ProcessID id = UserProcessScheduler::The().Add(proc);
 
 		delete proc;
 

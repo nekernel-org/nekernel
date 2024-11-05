@@ -24,12 +24,19 @@ namespace Kernel
 
 		T& operator[](const SizeT& At)
 		{
+			MUST_PASS(At < N);
 			return fArray[At];
 		}
 
-		Boolean Empty() const
+		T& Assign(const SizeT& At, T& NewVal)
 		{
-			return No;
+			fArray[At] = NewVal;
+			return fArray[At];
+		}
+
+		Boolean Empty()
+		{
+			return this->Count() > 0;
 		}
 
 		const SizeT Capacity()

@@ -116,7 +116,7 @@ namespace Kernel::PCI
 		Write(bar_in, enable, sizeof(UShort));
 	}
 
-	UInt32 Device::Bar(UInt32 bar_in)
+	UIntPtr Device::Bar(UInt32 bar_in)
 	{
 		UInt32 bar = ZKA_PCIReadRaw(bar_in, fBus, fDevice, fFunction);
 		return bar;

@@ -110,7 +110,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 
 	Kernel::LockDelegate<kMaxAhciPoll> lock(&kSlotIsUsed);
 
-	if (lock.HasTimedOut())
+	if (kSlotIsUsed)
 		return;
 
 	kSlotIsUsed = Yes;
@@ -119,7 +119,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 
 	// Prepare command header.
 
-	HbaCmdHeader* cmd_header = (HbaCmdHeader*)kAhciPort->Clb;
+	HbaCmdHeader* cmd_header = (HbaCmdHeader*)(Kernel::UIntPtr)kAhciPort->Clb;
 	cmd_header += free_slot;
 
 	// Read operation/set entries count.
@@ -129,7 +129,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 
 	// Prepare command table.
 
-	HbaCmdTbl* cmd_tbl = (HbaCmdTbl*)cmd_header->Ctba;
+	HbaCmdTbl* cmd_tbl = (HbaCmdTbl*)(Kernel::UIntPtr)cmd_header->Ctba;
 	Kernel::rt_set_memory(cmd_tbl, 0, sizeof(HbaCmdTbl));
 
 	Kernel::UInt64 size		  = Size * kAHCISectorSize;
@@ -193,9 +193,7 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 {
 	STATIC Kernel::Boolean kSlotIsUsed = No;
 
-	Kernel::LockDelegate<kMaxAhciPoll> lock(&kSlotIsUsed);
-
-	if (lock.HasTimedOut())
+	if (kSlotIsUsed)
 		return;
 
 	kSlotIsUsed = Yes;
@@ -204,7 +202,7 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 
 	// Prepare command header.
 
-	HbaCmdHeader* cmd_header = (HbaCmdHeader*)kAhciPort->Clb;
+	HbaCmdHeader* cmd_header = (HbaCmdHeader*)(Kernel::UIntPtr)kAhciPort->Clb;
 	cmd_header += free_slot;
 
 	// Read operation/set entries count.
@@ -214,7 +212,7 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 
 	// Prepare command table.
 
-	HbaCmdTbl* cmd_tbl = (HbaCmdTbl*)cmd_header->Ctba;
+	HbaCmdTbl* cmd_tbl = (HbaCmdTbl*)(Kernel::UIntPtr)cmd_header->Ctba;
 	Kernel::rt_set_memory(cmd_tbl, 0, sizeof(HbaCmdTbl));
 
 	Kernel::UInt64 size		  = Size * kAHCISectorSize;
@@ -267,6 +265,8 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 		}
 		else if (kAhciPort->Is & (1 << 30))
 		{
+			kcout << "Error in task file. (AHCI Drv)\r";
+			Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
 			return; // Error in task file
 		}
 	}

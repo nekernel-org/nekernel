@@ -109,10 +109,10 @@ namespace Kernel
 			if (y < 0)
 				y = -y;
 
-			const Char cNumbers[11] = "0123456789";
+			const Char kNumbers[11] = "0123456789";
 
 			Char buf[2];
-			buf[0] = cNumbers[h];
+			buf[0] = kNumbers[h];
 			buf[1] = 0;
 
 			term.operator<<(buf);
@@ -128,7 +128,7 @@ namespace Kernel
 				_write_number_hex(y, term);
 
 			/* fail if the hex number is not base-16 */
-			if (h > 15)
+			if (h > 16)
 			{
 				_write_number_hex('?', term);
 				return term;
@@ -137,10 +137,10 @@ namespace Kernel
 			if (y < 0)
 				y = -y;
 
-			const Char cNumbers[17] = "0123456789ABCDEF";
+			const Char kNumbers[17] = "0123456789ABCDEF";
 
 			Char buf[2];
-			buf[0] = cNumbers[h];
+			buf[0] = kNumbers[h];
 			buf[1] = 0;
 
 			term.operator<<(buf);

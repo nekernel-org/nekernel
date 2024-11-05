@@ -501,18 +501,18 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 
 		BOOT_BLOCK_STRUCT* epmBoot = (BOOT_BLOCK_STRUCT*)bufEpmHdr;
 
-		// EPM header.
+		// Write a new EPM entry.
 
-		constexpr auto cFsName	  = "NeFS";
-		constexpr auto cBlockName = "ZKA:";
+		constexpr auto kFsName	  = "NeFS";
+		constexpr auto kBlockName = "ZKA:";
 
-		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), epmBoot->Fs, rt_string_len(cFsName));
+		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), epmBoot->Fs, rt_string_len(kFsName));
 
 		epmBoot->FsVersion = kNeFSVersionInteger;
 		epmBoot->LbaStart  = start;
 		epmBoot->SectorSz  = kNeFSSectorSz;
 
-		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), epmBoot->Name, rt_string_len(cBlockName));
+		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), epmBoot->Name, rt_string_len(kBlockName));
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epmBoot->Magic, rt_string_len(kEPMMagic));
 
 		Lba outEpmLba = kEPMBaseLba;

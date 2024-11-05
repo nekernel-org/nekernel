@@ -39,16 +39,18 @@ namespace Kernel
 	typedef Int64 ProcessID;
 
 	//! @brief Local Process name length.
-	inline constexpr SizeT kProcessLen = 4096U;
+	inline constexpr SizeT kProcessNameLen = 4096U;
 
 	//! @brief Local Process status enum.
 	enum class ProcessStatusKind : Int32
 	{
+		kInvalid,
 		kStarting,
 		kRunning,
 		kKilled,
 		kFrozen,
-		kDead
+		kDead,
+		kCount,
 	};
 
 	//! @brief Affinity is the amount of nano-seconds this process is going
@@ -134,17 +136,18 @@ namespace Kernel
 		~UserProcess();
 
 	public:
-		ZKA_COPY_DEFAULT(UserProcess)
+		ZKA_COPY_DEFAULT(UserProcess);
 
 	public:
-		Char			   Name[kProcessLen] = {"Application Process (Unnamed)"};
+		Char			   Name[kProcessNameLen] = {"Application Process (Unnamed)"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatusKind  Status{ProcessStatusKind::kDead};
 		UInt8*			   StackReserve{nullptr};
-		ImagePtr		   Image{nullptr};
+		ImagePtr		   Code{nullptr};
+		ImagePtr		   ExecImg{nullptr};
 		SizeT			   StackSize{kSchedMaxStackSz};
 		IPEFDLLObject*	   PefDLLDelegate{nullptr};
 		SizeT			   MemoryCursor{0};
@@ -264,7 +267,7 @@ namespace Kernel
 		UserProcessTeam& CurrentTeam();
 
 	public:
-		SizeT	   Add(UserProcess process);
+		ProcessID  Add(UserProcess* process);
 		const Bool Remove(ProcessID process_id);
 
 		const Bool IsUser() override;
@@ -289,10 +292,10 @@ namespace Kernel
 	class UserProcessHelper final
 	{
 	public:
-		STATIC bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
-		STATIC bool CanBeScheduled(const UserProcess& process);
-		STATIC PID&	 TheCurrentPID();
-		STATIC SizeT StartScheduling();
+		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
+		STATIC Bool CanBeScheduled(const UserProcess& process);
+		STATIC ErrorOr<PID> TheCurrentPID();
+		STATIC SizeT		StartScheduling();
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

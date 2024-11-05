@@ -3,8 +3,8 @@
 	(C) EL Mahrouss Logic.
 */
 
-#ifndef TOOLS_FRAMEWORK_H
-#define TOOLS_FRAMEWORK_H
+#ifndef APPS_FRAMEWORK_H
+#define APPS_FRAMEWORK_H
 
 #include <Common.h>
 
@@ -13,4 +13,4 @@
 #define kFKExtension   ".fwrk"
 #define kAppExtension  ".app"
 
-#endif // !TOOLS_FRAMEWORK_H
+#endif // !APPS_FRAMEWORK_H

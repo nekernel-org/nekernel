@@ -158,10 +158,12 @@ namespace Kernel
 			if (rt_string_cmp(block_struct.Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
 				trait.fKind |= kEPMDrive;
+				kcout << "Formatted drive is EPM.\r";
 			}
 			else
 			{
 				trait.fKind |= kUnformattedDrive;
+				kcout << "Formatted drive is blank.\r";
 			}
 
 			trait.fPacket.fLba			 = 0;
@@ -178,13 +180,13 @@ namespace Kernel
 
 		rt_copy_memory((VoidPtr) "/Mount/OS:", trait.fName, rt_string_len("/Mount/OS:"));
 
-		Detail::ioi_detect_drive(trait);
-
 		trait.fVerify	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_output;
 		trait.fInput	 = io_drv_input;
 		trait.fInit		 = io_drv_init;
 		trait.fDriveKind = io_drv_kind;
+
+		Detail::ioi_detect_drive(trait);
 
 		kcout << "Construct: " << trait.fName << ".\r";
 

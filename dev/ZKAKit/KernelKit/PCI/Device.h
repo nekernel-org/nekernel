@@ -53,14 +53,14 @@ namespace Kernel::PCI
 		}
 
 	public:
-		UShort DeviceId();
-		UShort VendorId();
-		UShort InterfaceId();
-		UChar  Class();
-		UChar  Subclass();
-		UChar  ProgIf();
-		UChar  HeaderType();
-		UInt32 Bar(UInt32 bar_in);
+		UShort	DeviceId();
+		UShort	VendorId();
+		UShort	InterfaceId();
+		UChar	Class();
+		UChar	Subclass();
+		UChar	ProgIf();
+		UChar	HeaderType();
+		UIntPtr Bar(UInt32 bar_in);
 
 	public:
 		void EnableMmio(UInt32 bar_in);

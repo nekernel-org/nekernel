@@ -226,6 +226,11 @@ namespace Kernel
 		return kPefApplicationMime;
 	}
 
+	ErrorOr<VoidPtr> PEFLoader::GetBlob()
+	{
+		return ErrorOr<VoidPtr>{this->fCachedBlob};
+	}
+
 	namespace Utils
 	{
 		ProcessID rtl_create_process(PEFLoader& exec, const Int32& procKind) noexcept
@@ -238,11 +243,12 @@ namespace Kernel
 			UserProcess* proc = new UserProcess{errOrStart.Leak().Leak()};
 
 			proc->Kind		  = procKind;
+			proc->ExecImg	  = exec.GetBlob().Leak().Leak();
 			proc->StackSize	  = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 			proc->MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
 			proc->PTime		  = 0UL;
 
-			rt_set_memory(proc->Name, 0, kProcessLen);
+			rt_set_memory(proc->Name, 0, kProcessNameLen);
 
 			if (exec.FindSymbol(kPefNameSymbol, kPefData))
 				rt_copy_memory(exec.FindSymbol(kPefNameSymbol, kPefData), proc->Name, rt_string_len((Char*)exec.FindSymbol(kPefNameSymbol, kPefData)));
@@ -253,7 +259,7 @@ namespace Kernel
 				proc->StackSize					= mib_cast(cDefaultStackSizeMib);
 			}
 
-			return UserProcessScheduler::The().Add(*proc);
+			return UserProcessScheduler::The().Add(proc);
 		}
 	} // namespace Utils
 } // namespace Kernel

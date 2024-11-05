@@ -21,7 +21,7 @@
 
 namespace Kernel
 {
-	Void ke_stop(const Kernel::Int& id)
+	Void ke_stop(const Kernel::Int32& id)
 	{
 		CGInit();
 
@@ -30,7 +30,7 @@ namespace Kernel
 		auto start_y = 10;
 		auto x		 = 10;
 
-		CGDrawString("minoskrnl.exe stopped working properly so it had to stop.", start_y, x, panic_text);
+		CGDrawString("minoskrnl.exe, bug check error raised, stopping...", start_y, x, panic_text);
 		start_y += 10;
 
 		// simply offset from previous string and then write the website.

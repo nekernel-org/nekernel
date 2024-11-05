@@ -118,6 +118,10 @@
 #define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
 #endif // !RGB
 
+#define BREAK_POINT() \
+	while (Yes)       \
+		;
+
 /// @brief The system page file.
 #define kPageSys "/System/syspage.sys"
 

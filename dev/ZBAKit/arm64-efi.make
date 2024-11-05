@@ -19,7 +19,7 @@ EMU=qemu-system-aarch64
 endif
 
 ifeq ($(NEWS_MODEL), )
-ZKA_MODEL=-DkMachineModel="\"ZKA SSD\""
+ZKA_MODEL=-DkMachineModel="\"ZKA\""
 endif
 
 BIOS=OVMF.fd

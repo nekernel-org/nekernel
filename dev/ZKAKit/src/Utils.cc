@@ -34,7 +34,7 @@ namespace Kernel
 	{
 		SizeT len{0};
 
-		while (str[len] != '\0')
+		do
 		{
 			if (len > _len)
 			{
@@ -42,7 +42,7 @@ namespace Kernel
 			}
 
 			++len;
-		}
+		} while (str[len] != '\0');
 
 		return len;
 	}
@@ -51,10 +51,10 @@ namespace Kernel
 	{
 		SizeT cnt{0};
 
-		while (ptr[cnt] != 0)
+		do
 		{
 			++cnt;
-		}
+		} while (ptr[cnt] != 0);
 
 		return cnt;
 	}
@@ -211,7 +211,7 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-EXTERN_C void* memset(void* dst, char c, Kernel::Size len)
+EXTERN_C Kernel::VoidPtr memset(Kernel::VoidPtr dst, Kernel::UInt32 c, Kernel::Size len)
 {
 	return Kernel::rt_set_memory(dst, c, len);
 }

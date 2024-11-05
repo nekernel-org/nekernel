@@ -22,8 +22,9 @@
 //! @file Heap.cc
 //! @brief The Kernel's heap manager serves as the main memory manager.
 
-#define kKernelHeapMagic (0xD4D7D5)
-#define kKernelAlignSz	 (__BIGGEST_ALIGNMENT__)
+#define kKernelHeapMagic   (0xD4D7D5)
+#define kKernelHeapAlignSz (__BIGGEST_ALIGNMENT__)
+#define kKernelHeapMaxSize (gib_cast(2))
 
 namespace Kernel
 {
@@ -65,7 +66,7 @@ namespace Kernel
 			UIntPtr fHeapPtr;
 
 			/// @brief Padding bytes for header.
-			UInt8 fPadding[kKernelAlignSz];
+			UInt8 fPadding[kKernelHeapAlignSz];
 		};
 
 		/// @brief Check for heap address validity.
@@ -121,7 +122,7 @@ namespace Kernel
 			return nullptr;
 
 		// We can't allocate that big now.
-		MUST_PASS(sz <= gib_cast(2));
+		MUST_PASS(sz < kKernelHeapMaxSize);
 
 		sz_fix += sizeof(Detail::HEAP_INFORMATION_BLOCK);
 
@@ -141,7 +142,7 @@ namespace Kernel
 		heap_info_ptr->fUser	 = user;
 		heap_info_ptr->fPresent	 = Yes;
 
-		rt_set_memory(heap_info_ptr->fPadding, 0, kKernelAlignSz);
+		rt_set_memory(heap_info_ptr->fPadding, 0, kKernelHeapAlignSz);
 
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fHeapPtr);
 

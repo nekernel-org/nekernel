@@ -60,7 +60,7 @@ EXTERN_C IDLL rtl_init_dll(UserProcess* header)
 	}
 
 	dll_obj->Get()->fImageObject =
-		header->Image;
+		header->ExecImg;
 
 	if (!dll_obj->Get()->fImageObject)
 	{

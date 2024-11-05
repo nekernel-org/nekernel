@@ -35,13 +35,19 @@ namespace Kernel
 	UInt32 kLastExitCode = 0U;
 
 	/***********************************************************************************/
+	/// @brief Process count global variable.
+	/***********************************************************************************/
+
+	ProcessID kProcessIDCounter = 0UL;
+
+	/***********************************************************************************/
 	/// @brief User Process scheduler global and external reference of thread scheduler.
 	/***********************************************************************************/
 
 	UserProcessScheduler kProcessScheduler;
 
 	UserProcess::UserProcess(VoidPtr start_image)
-		: Image(start_image)
+		: Code(start_image)
 	{
 	}
 
@@ -71,7 +77,7 @@ namespace Kernel
 
 	UserProcess::operator bool()
 	{
-		return this->Status == ProcessStatusKind::kRunning && this->Image != nullptr;
+		return this->Status == ProcessStatusKind::kRunning;
 	}
 
 	/***********************************************************************************/
@@ -239,7 +245,10 @@ namespace Kernel
 
 	void UserProcess::Exit(const Int32& exit_code)
 	{
-		this->Status = ProcessStatusKind::kDead;
+		if (exit_code > 0)
+			this->Status = ProcessStatusKind::kKilled;
+		else
+			this->Status = ProcessStatusKind::kDead;
 
 		fLastExitCode = exit_code;
 		kLastExitCode = exit_code;
@@ -275,13 +284,13 @@ namespace Kernel
 		HAL::mm_free_bitmap(reinterpret_cast<VoidPtr>(this->VMRegister));
 
 		//! Delete image if not done already.
-		if (this->Image && mm_is_valid_heap(this->Image))
-			mm_delete_heap(this->Image);
+		if (this->Code && mm_is_valid_heap(this->Code))
+			mm_delete_heap(this->Code);
 
 		if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
 			mm_delete_heap((VoidPtr)this->StackFrame);
 
-		this->Image		 = nullptr;
+		this->Code		 = nullptr;
 		this->StackFrame = nullptr;
 
 		if (this->Kind == kExectuableDLLKind)
@@ -310,71 +319,61 @@ namespace Kernel
 	/// @return the process index inside the team.
 	/***********************************************************************************/
 
-	SizeT UserProcessScheduler::Add(UserProcess process)
+	ProcessID UserProcessScheduler::Add(UserProcess* process)
 	{
-		kcout << "Creating process: " << process.Name << ", prevous process count: " << number(mTeam.mProcessList.Count()) << endl;
-
-		if (mTeam.mProcessList.Count() >= kSchedProcessLimitPerTeam)
-			return kErrorInvalidData;
-
-		kcout << "Create vm_register of: " << process.Name << endl;
+		kcout << "Create VMRegister of: " << process->Name << endl;
 
 #ifdef __ZKA_AMD64__
-		process.VMRegister = reinterpret_cast<UIntPtr>(mm_new_heap(sizeof(PDE), No, Yes));
+		process->VMRegister = reinterpret_cast<UIntPtr>(mm_new_heap(sizeof(PDE), No, Yes));
 
-		if (!process.VMRegister)
+		if (!process->VMRegister)
 		{
-			process.Crash();
-			return kErrorProcessFault;
+			process->Crash();
+			return -kErrorProcessFault;
 		}
 #endif // __ZKA_AMD64__
 
-		kcout << "Create stack_frame of: " << process.Name << endl;
+		kcout << "Create StackFrame of: " << process->Name << endl;
 
-		process.StackFrame = reinterpret_cast<HAL::StackFramePtr>(mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes));
+		process->StackFrame = reinterpret_cast<HAL::StackFramePtr>(mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes));
 
-		if (!process.StackFrame)
+		if (!process->StackFrame)
 		{
-			process.Crash();
-			return kErrorProcessFault;
+			process->Crash();
+			return -kErrorProcessFault;
 		}
 
-		kcout << "Create delegate if DLL for: " << process.Name << endl;
-
-		// Create heap according to type of process.
-		if (process.Kind == UserProcess::kExectuableDLLKind)
+		// Create heap according to type of process->
+		if (process->Kind == UserProcess::kExectuableDLLKind)
 		{
-			process.PefDLLDelegate = rtl_init_dll(&process);
+			kcout << "Create delegate dylib for: " << process->Name << endl;
+			process->PefDLLDelegate = rtl_init_dll(process);
 		}
 
-		kcout << "Validate image of: " << process.Name << endl;
+		process->StackReserve = reinterpret_cast<UInt8*>(mm_new_heap(sizeof(UInt8) * process->StackSize, Yes, Yes));
 
-		if (!process.Image)
+		kcout << "Validate stack reserve: " << number((UIntPtr)process->StackReserve) << endl;
+
+		if (!process->StackReserve)
 		{
-			process.Crash();
-			return kErrorProcessFault;
+			process->Crash();
+			return -kErrorProcessFault;
 		}
 
-		kcout << "Validate stack reserve of: " << process.Name << endl;
+		auto pid = 0UL;
 
-		// Get preferred stack size by app.
-		const auto kMaxStackSize = process.StackSize;
-		process.StackReserve	 = reinterpret_cast<UInt8*>(mm_new_heap(sizeof(UInt8) * kMaxStackSize, Yes, Yes));
+		process->ProcessId = pid;
+		process->Status	   = ProcessStatusKind::kRunning;
+		process->PTime	   = (UIntPtr)AffinityKind::kStandard;
 
-		if (!process.StackReserve)
-		{
-			process.Crash();
-			return kErrorProcessFault;
-		}
+		mTeam.AsArray().Assign(pid, *process);
 
-		process.ProcessId = 0UL;
-		process.Status	  = ProcessStatusKind::kRunning;
+		kcout << "Process Name: " << mTeam.AsArray()[pid].Name << endl;
+		kcout << "PID: " << number(mTeam.AsArray()[pid].ProcessId) << endl;
 
-		mTeam.AsArray()[process.ProcessId] = process;
+		BREAK_POINT();
 
-		kcout << "Create process: " << process.Name << endl;
-
-		return process.ProcessId;
+		return pid;
 	}
 
 	/***********************************************************************************/
@@ -402,7 +401,7 @@ namespace Kernel
 		if (process_id > mTeam.mProcessList.Count())
 			return No;
 
-		mTeam.AsArray()[process_id].Status = ProcessStatusKind::kDead;
+		--kProcessIDCounter;
 
 		return Yes;
 	}
@@ -445,24 +444,23 @@ namespace Kernel
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
-			auto& process = mTeam.AsArray()[process_index];
+			auto process = mTeam.AsArray()[process_index];
 
 			//! check if process needs to be scheduled.
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
+				// Set current process header.
+				this->GetCurrentProcess() = process;
+
 				process.PTime = static_cast<Int32>(process.Affinity);
 
 				kcout << "Switch to '" << process.Name << "'.\r";
 
-				// Set current process header.
-				this->GetCurrentProcess() = process;
-
 				// tell helper to find a core to schedule on.
-				if (!UserProcessHelper::Switch(process.Image, &process.StackReserve[process.StackSize - 1], process.StackFrame,
+				if (!UserProcessHelper::Switch(process.Code, &process.StackReserve[process.StackSize - 1], process.StackFrame,
 											   process.ProcessId))
 				{
 					process.Crash();
-					continue;
 				}
 			}
 			else
@@ -492,10 +490,13 @@ namespace Kernel
 
 	/// @brief Current proccess id getter.
 	/// @return UserProcess ID integer.
-	PID& UserProcessHelper::TheCurrentPID()
+	ErrorOr<PID> UserProcessHelper::TheCurrentPID()
 	{
+		if (!kProcessScheduler.GetCurrentProcess())
+			return ErrorOr<PID>{kErrorProcessFault};
+
 		kcout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-		return kProcessScheduler.GetCurrentProcess().Leak().ProcessId;
+		return ErrorOr<PID>{kProcessScheduler.GetCurrentProcess().Leak().ProcessId};
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -505,13 +506,17 @@ namespace Kernel
 	Bool UserProcessHelper::CanBeScheduled(const UserProcess& process)
 	{
 		if (process.Status == ProcessStatusKind::kKilled ||
-			process.Status == ProcessStatusKind::kDead)
+			process.Status == ProcessStatusKind::kDead ||
+			process.Status == ProcessStatusKind::kFrozen)
 			return No;
 
-		if (!process.Image)
+		if (process.Status == ProcessStatusKind::kInvalid)
 			return No;
 
-		return process.PTime < 1 && process.Status == ProcessStatusKind::kRunning;
+		if (!process.Code)
+			return No;
+
+		return process.PTime < 1;
 	}
 
 	/***********************************************************************************/
@@ -537,6 +542,9 @@ namespace Kernel
 		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
 			return No;
 
+		if (!mm_is_valid_heap(image_ptr))
+			return No;
+
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
 		{
 			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidHart)
@@ -547,8 +555,8 @@ namespace Kernel
 				HardwareThreadScheduler::The()[index].Leak()->Kind() !=
 					ThreadKind::kHartSystemReserved)
 			{
-				PID prev_pid					   = UserProcessHelper::TheCurrentPID();
-				UserProcessHelper::TheCurrentPID() = new_pid;
+				PID prev_pid									 = UserProcessHelper::TheCurrentPID();
+				UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
 
 				////////////////////////////////////////////////////////////
 				///	Prepare task switch.								 ///
@@ -565,7 +573,7 @@ namespace Kernel
 				if (!ret)
 				{
 					HardwareThreadScheduler::The()[index].Leak()->fPTime = prev_ptime;
-					UserProcessHelper::TheCurrentPID()					 = prev_pid;
+					UserProcessHelper::TheCurrentPID().Leak().Leak()	 = prev_pid;
 
 					continue;
 				}
