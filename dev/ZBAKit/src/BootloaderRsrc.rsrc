@@ -12,7 +12,7 @@ BEGIN
       VALUE "FileDescription", "ZKA OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "zbaosldr"
-      VALUE "LegalCopyright", "Copyright Amlal EL Mahrouss., all rights reserved."
+      VALUE "LegalCopyright", "Copyright (C) 2024, EL Mahrouss Logic, all rights reserved., all rights reserved."
       VALUE "OriginalFilename", "zbaosldr.exe"
       VALUE "ProductName", "zbaosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION

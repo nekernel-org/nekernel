@@ -4,4 +4,4 @@
 
 They are pluggable modules for builtin hardware support.
 
-###### Copyright Amlal EL Mahrouss. All rights reserved.
+###### Copyright (C) 2024, EL Mahrouss Logic, all rights reserved. All rights reserved.

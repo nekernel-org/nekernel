@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Amlal EL Mahrouss.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 ------------------------------------------- */
 
@@ -13,7 +13,7 @@
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
  *
- * Copyright Amlal EL Mahrouss., all rights reserved.
+ * Copyright (C) 2024, EL Mahrouss Logic, all rights reserved., all rights reserved.
  *
  *************************************************************/
 

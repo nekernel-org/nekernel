@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Amlal EL Mahrouss.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 	FILE: UserProcessScheduler.cc
 	PURPOSE: EL0/Ring-3 Process scheduler.

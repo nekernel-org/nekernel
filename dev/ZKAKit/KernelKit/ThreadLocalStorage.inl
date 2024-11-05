@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-	Copyright Amlal EL Mahrouss.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 ------------------------------------------- */
 
 //! @file ThreadLocalStorage.inl
 //! @brief Allocate resources from the process's heap storage.
 
-#ifndef INC_PROCESS_SCHEDULER_HXX
+#ifndef INC_PROCESS_SCHEDULER_H
 #include <KernelKit/UserProcessScheduler.h>
 #endif
 
