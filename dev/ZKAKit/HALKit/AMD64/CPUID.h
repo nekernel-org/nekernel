@@ -47,7 +47,7 @@ enum CPUFeatureEnum
 	kCPUFeatureAVX		  = 1 << 28,
 	kCPUFeatureF16C		  = 1 << 29,
 	kCPUFeatureRDRAND	  = 1 << 30,
-	kCPUFeatureHYPERVISOR     = 1 << 31,
+	kCPUFeatureHYPERVISOR = 1 << 31,
 	kCPUFeatureFPU		  = 1 << 0,
 	kCPUFeatureVME		  = 1 << 1,
 	kCPUFeatureDE		  = 1 << 2,
