@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 	File: Prcoessor.h
 	Purpose: AMD64 processor abstraction.

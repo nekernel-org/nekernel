@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright EL Mahrouss Logic.
+Copyright Amlal EL Mahrouss.
 
 File: sci_base.h
 Purpose: SCI core header file (C++ only).

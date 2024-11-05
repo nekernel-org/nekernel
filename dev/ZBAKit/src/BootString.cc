@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 	File: String.cc
 	Purpose: ZBA string library

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 ------------------------------------------- */
 
@@ -8,8 +8,8 @@
 
 #include <NewKit/Macros.h>
 
-#define NEWKIT_VERSION	  "1.1.0"
-#define NEWKIT_VERSION_CB 0x01100
+#define NEWKIT_VERSION_STR "1.1.0"
+#define NEWKIT_VERSION_BCD 0x01100
 
 #ifdef __has_feature
 #if !__has_feature(cxx_nullptr)

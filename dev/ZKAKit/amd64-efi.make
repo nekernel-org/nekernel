@@ -1,5 +1,5 @@
 ##################################################
-# (C) EL Mahrouss Logic, all rights reserved.
+# (C) Amlal EL Mahrouss, all rights reserved.
 # This is the minoskrnl's makefile.
 ##################################################
 

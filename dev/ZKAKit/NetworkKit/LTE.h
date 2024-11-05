@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic..
+	Copyright Amlal EL Mahrouss..
 
 	File: LTE.h.
 	Purpose: LTE protocol classes.

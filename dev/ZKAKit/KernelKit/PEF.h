@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 	File: PEF.h
 	Purpose: Preferred Executable Format for Kernel.

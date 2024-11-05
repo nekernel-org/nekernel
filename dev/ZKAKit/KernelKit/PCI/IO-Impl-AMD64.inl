@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 	File: IO-Impl-AMD64.hpp
 	Purpose: I/O for AMD64.

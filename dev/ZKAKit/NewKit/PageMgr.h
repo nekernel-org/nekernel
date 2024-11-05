@@ -3,7 +3,7 @@
 
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 ------------------------------------------- */
 

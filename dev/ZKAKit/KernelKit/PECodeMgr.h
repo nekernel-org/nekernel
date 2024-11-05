@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 	File: PECodeMgr.h
 	Purpose: PE32+ Code Mgr and DLL mgr.

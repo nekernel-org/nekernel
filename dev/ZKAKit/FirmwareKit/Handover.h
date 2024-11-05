@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
  * @version 1.15
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, EL Mahrouss Logic
+ * @copyright Copyright (c) 2024, Amlal EL Mahrouss
  *
  */
 

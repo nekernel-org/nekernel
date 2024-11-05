@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 	File: CodeMgr.hpp
 	Purpose: Code Mgr and DLL mgr.

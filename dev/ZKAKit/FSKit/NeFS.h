@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright EL Mahrouss Logic.
+	Copyright Amlal EL Mahrouss.
 
 	FILE: NeFS.h
 	PURPOSE: NeFS (New FileSystem) support.
