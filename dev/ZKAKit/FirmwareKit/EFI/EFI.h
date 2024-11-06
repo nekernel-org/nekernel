@@ -11,7 +11,7 @@
 @brief Kernel Implementation of EFI.
 @note This API is in WiP, so it's not 'pretty', just deal with it. We'll be
 improving that later.
-@author Amlal El Mahrouss
+@author Amlal EL Mahrouss
 */
 
 #include <NewKit/Defines.h>

@@ -6,12 +6,12 @@
 
 /**
  * @file Handover.h
- * @author Amlal El Mahrouss (amlalelmahrouss@icloud.com)
+ * @author Amlal EL Mahrouss (amlalelmahrouss@icloud.com)
  * @brief The handover boot protocol.
  * @version 1.15
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, Amlal EL Mahrouss
+ * @copyright Copyright (c) 2024, EL Mahrouss Logic
  *
  */
 

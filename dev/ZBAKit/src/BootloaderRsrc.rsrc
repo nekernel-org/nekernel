@@ -8,7 +8,7 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Amlal EL Mahrouss"
+      VALUE "CompanyName", "EL Mahrouss Logic"
       VALUE "FileDescription", "ZKA OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "zbaosldr"
