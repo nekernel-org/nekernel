@@ -8,8 +8,9 @@
 
 #include <Common.h>
 
-#define kExecDirectory "ZKA/Exec/"
-#define kRootDirectory "ZKA/"
+#define kExecDirectory "ML/Exec/"
+#define kRsrcDirectory "ML/Resources/"
+#define kRootDirectory "ML/"
 #define kFKExtension   ".fwrk"
 #define kAppExtension  ".app"
 
