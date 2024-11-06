@@ -33,7 +33,7 @@ EMU_FLAGS=-net none -smp 4 -m 8G -cpu max -M virt-9.1 \
 			-drive \
 			file=fat:rw:src/Root/,index=1,format=raw \
 			-device virtio-tablet-pci \
-		    -d int -no-shutdown -no-reboot -device virtio-gpu-pci,xres=844,yres=390
+		    -d int -no-shutdown -no-reboot -device virtio-gpu-pci,xres=844,yres=390 -serial stdio
 
 LD_FLAGS=-subsystem:efi_application -entry:Main /nodefaultlib
 

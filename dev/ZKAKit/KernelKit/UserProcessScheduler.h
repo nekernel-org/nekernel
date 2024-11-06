@@ -132,7 +132,9 @@ namespace Kernel
 	class UserProcess final
 	{
 	public:
-		UserProcess(VoidPtr start_image = nullptr);
+		explicit UserProcess(VoidPtr start_image);
+		explicit UserProcess() = default;
+
 		~UserProcess();
 
 	public:

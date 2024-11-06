@@ -38,7 +38,7 @@ EXTERN_C void rt_std()
 	asm volatile("std");
 }
 
-EXTERN_C void Out8(UInt16 port, UInt8 value)
+EXTERN_C void rt_out8(UInt16 port, UInt8 value)
 {
 	asm volatile("outb %%al, %1"
 				 :
@@ -46,7 +46,7 @@ EXTERN_C void Out8(UInt16 port, UInt8 value)
 				 : "memory");
 }
 
-EXTERN_C void Out16(UInt16 port, UInt16 value)
+EXTERN_C void rt_out16(UInt16 port, UInt16 value)
 {
 	asm volatile("outw %%ax, %1"
 				 :
@@ -54,7 +54,7 @@ EXTERN_C void Out16(UInt16 port, UInt16 value)
 				 : "memory");
 }
 
-EXTERN_C void Out32(UInt16 port, UInt32 value)
+EXTERN_C void rt_out32(UInt16 port, UInt32 value)
 {
 	asm volatile("outl %%eax, %1"
 				 :
@@ -62,7 +62,7 @@ EXTERN_C void Out32(UInt16 port, UInt32 value)
 				 : "memory");
 }
 
-EXTERN_C UInt8 In8(UInt16 port)
+EXTERN_C UInt8 rt_in8(UInt16 port)
 {
 	UInt8 value;
 	asm volatile("inb %1, %%al"
@@ -73,7 +73,7 @@ EXTERN_C UInt8 In8(UInt16 port)
 	return value;
 }
 
-EXTERN_C UInt16 In16(UInt16 port)
+EXTERN_C UInt16 rt_in16(UInt16 port)
 {
 	UInt16 value;
 	asm volatile("inw %%dx, %%ax"
@@ -83,7 +83,7 @@ EXTERN_C UInt16 In16(UInt16 port)
 	return value;
 }
 
-EXTERN_C UInt32 In32(UInt16 port)
+EXTERN_C UInt32 rt_in32(UInt16 port)
 {
 	UInt32 value;
 	asm volatile("inl %1, %%eax"

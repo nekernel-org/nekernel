@@ -28,9 +28,9 @@ namespace Kernel::HAL
 
 			UInt16 cCommonDivisor = kPITFrequency / ticks; // 100 Hz.
 
-			HAL::Out8(kPITControlPort, 0x36);						   // Command to PIT
-			HAL::Out8(kPITChannel0Port, cCommonDivisor & 0xFF);		   // Send low byte
-			HAL::Out8(kPITChannel0Port, (cCommonDivisor >> 8) & 0xFF); // Send high byte
+			HAL::rt_out8(kPITControlPort, 0x36);						   // Command to PIT
+			HAL::rt_out8(kPITChannel0Port, cCommonDivisor & 0xFF);		   // Send low byte
+			HAL::rt_out8(kPITChannel0Port, (cCommonDivisor >> 8) & 0xFF); // Send high byte
 
 			hal_clear_irq_mask(32);
 		}
@@ -50,8 +50,8 @@ namespace Kernel::HAL
 				irql -= 8;
 			}
 
-			value = In8(port) | (1 << irql);
-			Out8(port, value);
+			value = rt_in8(port) | (1 << irql);
+			rt_out8(port, value);
 		}
 
 		STATIC void hal_clear_irq_mask(UInt8 irql)
@@ -69,8 +69,8 @@ namespace Kernel::HAL
 				irql -= 8;
 			}
 
-			value = In8(port) & ~(1 << irql);
-			Out8(port, value);
+			value = rt_in8(port) & ~(1 << irql);
+			rt_out8(port, value);
 		}
 	} // namespace Detail
 

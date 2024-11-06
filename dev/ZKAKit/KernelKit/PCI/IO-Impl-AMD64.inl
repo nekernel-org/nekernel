@@ -22,11 +22,11 @@ namespace Kernel
 		{
 #ifdef __ZKA_AMD64__
 		case 4:
-			return HAL::In32(fPorts[index].Leak());
+			return HAL::rt_in32(fPorts[index].Leak());
 		case 2:
-			return HAL::In16(fPorts[index].Leak());
+			return HAL::rt_in16(fPorts[index].Leak());
 		case 1:
-			return HAL::In8(fPorts[index].Leak());
+			return HAL::rt_in8(fPorts[index].Leak());
 #endif
 		default:
 			return 0xFFFF;
@@ -41,11 +41,11 @@ namespace Kernel
 		{
 #ifdef __ZKA_AMD64__
 		case 4:
-			HAL::Out32(fPorts[index].Leak(), value);
+			HAL::rt_out32(fPorts[index].Leak(), value);
 		case 2:
-			HAL::Out16(fPorts[index].Leak(), value);
+			HAL::rt_out16(fPorts[index].Leak(), value);
 		case 1:
-			HAL::Out8(fPorts[index].Leak(), value);
+			HAL::rt_out8(fPorts[index].Leak(), value);
 #endif
 		default:
 			break;

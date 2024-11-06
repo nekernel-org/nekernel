@@ -31,6 +31,11 @@ STATIC Kernel::Void hal_init_cxx_ctors()
 	}
 }
 
+namespace Kernel
+{
+	EXTERN ProcessID kProcessIDCounter;
+}
+
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::HANDOVER_INFO_HEADER* HandoverHeader)
@@ -44,6 +49,8 @@ EXTERN_C void hal_init_platform(
 	}
 
 	hal_init_cxx_ctors();
+
+	Kernel::kProcessIDCounter = 0UL;
 
 	/************************************** */
 	/*     INITIALIZE BIT MAP.              */
@@ -89,8 +96,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::rtl_create_process([]() -> void {
 		while (Yes)
 			;
-	},
-							   "RtlProcess\0");
+	}, "RtlProcess");
 
 	/* Start any cores. */
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)

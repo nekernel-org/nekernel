@@ -285,13 +285,13 @@ namespace Kernel::HAL
 	/// @return Status code of page manip.
 	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, UInt32 flags);
 
-	EXTERN_C UChar	In8(UInt16 port);
-	EXTERN_C UShort In16(UInt16 port);
-	EXTERN_C UInt	In32(UInt16 port);
+	EXTERN_C UChar	rt_in8(UInt16 port);
+	EXTERN_C UShort rt_in16(UInt16 port);
+	EXTERN_C UInt	rt_in32(UInt16 port);
 
-	EXTERN_C void Out16(UShort port, UShort byte);
-	EXTERN_C void Out8(UShort port, UChar byte);
-	EXTERN_C void Out32(UShort port, UInt byte);
+	EXTERN_C void rt_out16(UShort port, UShort byte);
+	EXTERN_C void rt_out8(UShort port, UChar byte);
+	EXTERN_C void rt_out32(UShort port, UInt byte);
 
 	EXTERN_C void rt_wait_400ns();
 	EXTERN_C void rt_halt();

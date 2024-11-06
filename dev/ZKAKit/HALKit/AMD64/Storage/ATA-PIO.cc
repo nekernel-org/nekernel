@@ -34,16 +34,16 @@ STATIC Char	   kATAData[kATADataLen] = {0};
 Boolean drv_std_wait_io(UInt16 IO)
 {
 	for (int i = 0; i < 400; i++)
-		In8(IO + ATA_REG_STATUS);
+		rt_in8(IO + ATA_REG_STATUS);
 
 ATAWaitForIO_Retry:
-	auto statRdy = In8(IO + ATA_REG_STATUS);
+	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
 
 	if ((statRdy & ATA_SR_BSY))
 		goto ATAWaitForIO_Retry;
 
 ATAWaitForIO_Retry2:
-	statRdy = In8(IO + ATA_REG_STATUS);
+	statRdy = rt_in8(IO + ATA_REG_STATUS);
 
 	if (statRdy & ATA_SR_ERR)
 		return false;
@@ -57,9 +57,9 @@ ATAWaitForIO_Retry2:
 Void drv_std_select(UInt16 Bus)
 {
 	if (Bus == ATA_PRIMARY_IO)
-		Out8(Bus + ATA_REG_HDDEVSEL, ATA_PRIMARY_SEL);
+		rt_out8(Bus + ATA_REG_HDDEVSEL, ATA_PRIMARY_SEL);
 	else
-		Out8(Bus + ATA_REG_HDDEVSEL, ATA_SECONDARY_SEL);
+		rt_out8(Bus + ATA_REG_HDDEVSEL, ATA_SECONDARY_SEL);
 }
 
 Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
@@ -70,11 +70,11 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 ATAInit_Retry:
 	// Bus init, NEIN bit.
-	Out8(IO + ATA_REG_NEIN, 1);
+	rt_out8(IO + ATA_REG_NEIN, 1);
 
 	// identify until it's good
 
-	auto statRdy = In8(IO + ATA_REG_STATUS);
+	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
 
 	if (statRdy & ATA_SR_ERR)
 	{
@@ -89,7 +89,7 @@ ATAInit_Retry:
 		goto ATAInit_Retry;
 	}
 
-	Out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
+	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
 	/// fetch serial info
 	/// model, speed, number of sectors...
@@ -98,7 +98,7 @@ ATAInit_Retry:
 
 	for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData)
 	{
-		kATAData[indexData] = In16(IO + ATA_REG_DATA);
+		kATAData[indexData] = rt_in16(IO + ATA_REG_DATA);
 	}
 
 	OutBus = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
@@ -119,23 +119,23 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 	drv_std_wait_io(IO);
 	drv_std_select(IO);
 
-	Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
+	rt_out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
-	Out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
+	rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
-	Out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
-	Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
-	Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
-	Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
+	rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+	rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
+	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
+	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
-	Out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
+	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
 	drv_std_wait_io(IO);
 
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
 		drv_std_wait_io(IO);
-		Buf[IndexOff] = In16(IO + ATA_REG_DATA);
+		Buf[IndexOff] = rt_in16(IO + ATA_REG_DATA);
 		drv_std_wait_io(IO);
 	}
 
@@ -151,23 +151,23 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 	drv_std_wait_io(IO);
 	drv_std_select(IO);
 
-	Out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
+	rt_out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
-	Out8(IO + ATA_REG_SEC_COUNT0, ((Size + (SectorSz)) / SectorSz));
+	rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + (SectorSz)) / SectorSz));
 
-	Out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
-	Out8(IO + ATA_REG_LBA1, (Lba) >> 8);
-	Out8(IO + ATA_REG_LBA2, (Lba) >> 16);
-	Out8(IO + ATA_REG_LBA3, (Lba) >> 24);
+	rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+	rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
+	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
+	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
-	Out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
+	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
 	drv_std_wait_io(IO);
 
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
 		drv_std_wait_io(IO);
-		Out16(IO + ATA_REG_DATA, Buf[IndexOff]);
+		rt_out16(IO + ATA_REG_DATA, Buf[IndexOff]);
 		drv_std_wait_io(IO);
 	}
 

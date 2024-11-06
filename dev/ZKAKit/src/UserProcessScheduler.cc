@@ -287,9 +287,13 @@ namespace Kernel
 		if (this->Code && mm_is_valid_heap(this->Code))
 			mm_delete_heap(this->Code);
 
+		if (this->ExecImg && mm_is_valid_heap(this->ExecImg))
+			mm_delete_heap(this->ExecImg);
+
 		if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
 			mm_delete_heap((VoidPtr)this->StackFrame);
 
+		this->ExecImg	 = nullptr;
 		this->Code		 = nullptr;
 		this->StackFrame = nullptr;
 
@@ -298,19 +302,19 @@ namespace Kernel
 			Bool success = false;
 			rtl_fini_dll(this, this->PefDLLDelegate, &success);
 
-			if (success)
+			if (!success)
 			{
-				this->PefDLLDelegate = nullptr;
+				ke_stop(RUNTIME_CHECK_PROCESS);
 			}
+
+			this->PefDLLDelegate = nullptr;
 		}
 
 		if (this->StackReserve)
-			delete[] this->StackReserve;
+			mm_delete_heap(reinterpret_cast<VoidPtr>(this->StackReserve));
 
 		this->ProcessId = 0;
-
-		if (this->ProcessId > 0)
-			UserProcessScheduler::The().Remove(this->ProcessId);
+		--kProcessIDCounter;
 	}
 
 	/***********************************************************************************/
@@ -350,7 +354,13 @@ namespace Kernel
 			process->PefDLLDelegate = rtl_init_dll(process);
 		}
 
-		process->StackReserve = reinterpret_cast<UInt8*>(mm_new_heap(sizeof(UInt8) * process->StackSize, Yes, Yes));
+		process->StackReserve = new UInt8[process->StackSize];
+
+		UInt32 flags = HAL::kMMFlagsPresent;
+		flags |= HAL::kMMFlagsWr;
+		flags |= HAL::kMMFlagsUser;
+
+		HAL::mm_map_page((VoidPtr)process->StackReserve, flags);
 
 		kcout << "Validate stack reserve: " << number((UIntPtr)process->StackReserve) << endl;
 
@@ -360,7 +370,7 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
-		auto pid = 0UL;
+		auto pid = kProcessIDCounter;
 
 		process->ProcessId = pid;
 		process->Status	   = ProcessStatusKind::kRunning;
@@ -371,7 +381,7 @@ namespace Kernel
 		kcout << "Process Name: " << mTeam.AsArray()[pid].Name << endl;
 		kcout << "PID: " << number(mTeam.AsArray()[pid].ProcessId) << endl;
 
-		BREAK_POINT();
+		++kProcessIDCounter;
 
 		return pid;
 	}
@@ -401,7 +411,7 @@ namespace Kernel
 		if (process_id > mTeam.mProcessList.Count())
 			return No;
 
-		--kProcessIDCounter;
+		mTeam.mProcessList[process_id].Exit(0);
 
 		return Yes;
 	}

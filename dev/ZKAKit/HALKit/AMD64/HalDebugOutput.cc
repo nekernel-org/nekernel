@@ -33,19 +33,19 @@ namespace Kernel
 			if (kState == kStateReady || kState == kStateTransmit)
 				return true;
 
-			HAL::Out8(PORT + 1, 0x00); // Disable all interrupts
-			HAL::Out8(PORT + 3, 0x80); // Enable DLAB (set baud rate divisor)
-			HAL::Out8(PORT + 0, 0x03); // Set divisor to 3 (lo byte) 38400 baud
-			HAL::Out8(PORT + 1, 0x00); //                  (hi byte)
-			HAL::Out8(PORT + 3, 0x03); // 8 bits, no parity, one stop bit
-			HAL::Out8(PORT + 2, 0xC7); // Enable FIFO, clear them, with 14-byte threshold
-			HAL::Out8(PORT + 4, 0x0B); // IRQs enabled, RTS/DSR set
-			HAL::Out8(PORT + 4, 0x1E); // Set in loopback mode, test the serial chip
-			HAL::Out8(PORT + 0, 0xAE); // Test serial chip (send byte 0xAE and check if
+			HAL::rt_out8(PORT + 1, 0x00); // Disable all interrupts
+			HAL::rt_out8(PORT + 3, 0x80); // Enable DLAB (set baud rate divisor)
+			HAL::rt_out8(PORT + 0, 0x03); // Set divisor to 3 (lo byte) 38400 baud
+			HAL::rt_out8(PORT + 1, 0x00); //                  (hi byte)
+			HAL::rt_out8(PORT + 3, 0x03); // 8 bits, no parity, one stop bit
+			HAL::rt_out8(PORT + 2, 0xC7); // Enable FIFO, clear them, with 14-byte threshold
+			HAL::rt_out8(PORT + 4, 0x0B); // IRQs enabled, RTS/DSR set
+			HAL::rt_out8(PORT + 4, 0x1E); // Set in loopback mode, test the serial chip
+			HAL::rt_out8(PORT + 0, 0xAE); // Test serial chip (send byte 0xAE and check if
 									   // serial returns same byte)
 
 			// Check if serial is faulty (i.e: not same byte as sent)
-			if (HAL::In8(PORT) != 0xAE)
+			if (HAL::rt_in8(PORT) != 0xAE)
 			{
 				ke_stop(RUNTIME_CHECK_HANDSHAKE);
 			}
@@ -54,7 +54,7 @@ namespace Kernel
 
 			// If serial is not faulty set it in normal operation mode
 			// (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
-			HAL::Out8(Detail::PORT + 4, 0x0F);
+			HAL::rt_out8(Detail::PORT + 4, 0x0F);
 #endif // __DEBUG__
 
 			return true;
@@ -82,9 +82,9 @@ namespace Kernel
 		while (index < len)
 		{
 			if (bytes[index] == '\r')
-				HAL::Out8(Detail::PORT, '\r');
+				HAL::rt_out8(Detail::PORT, '\r');
 
-			HAL::Out8(Detail::PORT, bytes[index] == '\r' ? '\n' : bytes[index]);
+			HAL::rt_out8(Detail::PORT, bytes[index] == '\r' ? '\n' : bytes[index]);
 			++index;
 		}
 
@@ -107,7 +107,7 @@ namespace Kernel
 		///! TODO: Look on how to wait for the UART to complete.
 		while (true)
 		{
-			auto in = HAL::In8(Detail::PORT);
+			auto in = HAL::rt_in8(Detail::PORT);
 
 			///! If enter pressed then break.
 			if (in == 0xD)

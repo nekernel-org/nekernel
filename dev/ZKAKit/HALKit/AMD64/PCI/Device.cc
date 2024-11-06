@@ -13,10 +13,10 @@ Kernel::UInt ZKA_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
 						  (bar & 0xFC);
 
-	Kernel::HAL::Out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
+	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
 					   target);
 
-	return Kernel::HAL::In32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
+	return Kernel::HAL::rt_in32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
 
 void ZKA_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
@@ -25,7 +25,7 @@ void ZKA_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort de
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
 						  (bar & ~3);
 
-	Kernel::HAL::Out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
+	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
 					   target);
 }
 
@@ -48,11 +48,11 @@ namespace Kernel::PCI
 		ZKA_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
 
 		if (sz == 4)
-			return HAL::In32((UShort)PciConfigKind::ConfigData + (bar & 3));
+			return HAL::rt_in32((UShort)PciConfigKind::ConfigData + (bar & 3));
 		if (sz == 2)
-			return HAL::In16((UShort)PciConfigKind::ConfigData + (bar & 3));
+			return HAL::rt_in16((UShort)PciConfigKind::ConfigData + (bar & 3));
 		if (sz == 1)
-			return HAL::In8((UShort)PciConfigKind::ConfigData + (bar & 3));
+			return HAL::rt_in8((UShort)PciConfigKind::ConfigData + (bar & 3));
 
 		return 0xFFFF;
 	}
@@ -62,11 +62,11 @@ namespace Kernel::PCI
 		ZKA_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
 
 		if (sz == 4)
-			HAL::Out32((UShort)PciConfigKind::ConfigData + (fBar & 3), (UInt)data);
+			HAL::rt_out32((UShort)PciConfigKind::ConfigData + (fBar & 3), (UInt)data);
 		if (sz == 2)
-			HAL::Out16((UShort)PciConfigKind::ConfigData + (fBar & 3), (UShort)data);
+			HAL::rt_out16((UShort)PciConfigKind::ConfigData + (fBar & 3), (UShort)data);
 		if (sz == 1)
-			HAL::Out8((UShort)PciConfigKind::ConfigData + (fBar & 3), (UChar)data);
+			HAL::rt_out8((UShort)PciConfigKind::ConfigData + (fBar & 3), (UChar)data);
 	}
 
 	UShort Device::DeviceId()
