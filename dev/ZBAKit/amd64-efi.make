@@ -1,5 +1,5 @@
 ##################################################
-# (c) Amlal EL Mahrouss, all rights reserved.
+# (c) EL Mahrouss Logic, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 
