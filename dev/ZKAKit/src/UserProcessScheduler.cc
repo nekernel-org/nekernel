@@ -118,11 +118,11 @@ namespace Kernel
 	{
 #ifdef __ZKA_AMD64__
 		auto vm_register = hal_read_cr3();
-		hal_write_cr3(reinterpret_cast<VoidPtr>(this->VMRegister));
+		hal_write_cr3(this->VMRegister);
 
 		auto ptr = mm_new_heap(sz + pad_amount, Yes, Yes);
 
-		hal_write_cr3(reinterpret_cast<VoidPtr>(vm_register));
+		hal_write_cr3(vm_register);
 #else
 		auto ptr = mm_new_heap(sz + pad_amount, Yes, Yes);
 #endif
@@ -183,7 +183,7 @@ namespace Kernel
 			{
 #ifdef __ZKA_AMD64__
 				auto pd = hal_read_cr3();
-				hal_write_cr3(reinterpret_cast<VoidPtr>(this->VMRegister));
+				hal_write_cr3(this->VMRegister);
 
 				auto ret = mm_delete_heap(entry->MemoryEntry);
 
@@ -262,7 +262,7 @@ namespace Kernel
 			{
 #ifdef __ZKA_AMD64__
 				auto pd = hal_read_cr3();
-				hal_write_cr3(reinterpret_cast<VoidPtr>(this->VMRegister));
+				hal_write_cr3(this->VMRegister);
 #endif
 
 				MUST_PASS(mm_delete_heap(memory_list->MemoryEntry));
@@ -281,7 +281,7 @@ namespace Kernel
 		}
 
 		//! Free the memory's page directory.
-		HAL::mm_free_bitmap(reinterpret_cast<VoidPtr>(this->VMRegister));
+		HAL::mm_free_bitmap(this->VMRegister);
 
 		//! Delete image if not done already.
 		if (this->Code && mm_is_valid_heap(this->Code))
@@ -325,10 +325,8 @@ namespace Kernel
 
 	ProcessID UserProcessScheduler::Add(UserProcess* process)
 	{
-		kcout << "Create VMRegister of: " << process->Name << endl;
-
 #ifdef __ZKA_AMD64__
-		process->VMRegister = reinterpret_cast<UIntPtr>(mm_new_heap(sizeof(PDE), No, Yes));
+		process->VMRegister = mm_new_heap(sizeof(PDE), No, Yes);
 
 		if (!process->VMRegister)
 		{
@@ -337,7 +335,7 @@ namespace Kernel
 		}
 #endif // __ZKA_AMD64__
 
-		kcout << "Create StackFrame of: " << process->Name << endl;
+		kcout << "Create page directory for: " << process->Name << endl;
 
 		process->StackFrame = reinterpret_cast<HAL::StackFramePtr>(mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes));
 
@@ -347,11 +345,15 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
+		kcout << "Create stack for: " << process->Name << endl;
+
 		// Create heap according to type of process->
 		if (process->Kind == UserProcess::kExectuableDLLKind)
 		{
-			kcout << "Create delegate dylib for: " << process->Name << endl;
 			process->PefDLLDelegate = rtl_init_dll(process);
+			MUST_PASS(process->PefDLLDelegate);
+
+			kcout << "Create delegate dylib for: " << process->Name << endl;
 		}
 
 		process->StackReserve = new UInt8[process->StackSize];
@@ -362,13 +364,13 @@ namespace Kernel
 
 		HAL::mm_map_page((VoidPtr)process->StackReserve, flags);
 
-		kcout << "Validate stack reserve: " << number((UIntPtr)process->StackReserve) << endl;
-
 		if (!process->StackReserve)
 		{
 			process->Crash();
 			return -kErrorProcessFault;
 		}
+
+		kcout << "Created stack reserve for: " << process->Name << endl;
 
 		auto pid = kProcessIDCounter;
 

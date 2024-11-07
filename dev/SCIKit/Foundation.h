@@ -11,8 +11,6 @@ Purpose: SCIKit Foundation header.
 #define SCIKIT_FOUNDATION_H
 
 #include <SCIKit/Macros.h>
-#include <SCIKit/CompilerHint.h>
-#include <SCIKit/LPC.h>
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Dynamic Loader API.

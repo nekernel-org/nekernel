@@ -21,75 +21,73 @@
 
 namespace Kernel
 {
+	/***********************************************************************************/
+	/// @brief Stops execution of the kernel.
+	/// @param id kernel stop ID.
+	/***********************************************************************************/
 	Void ke_stop(const Kernel::Int32& id)
 	{
 		CGInit();
 
 		auto panic_text = RGB(0xff, 0xff, 0xff);
 
-		auto start_y = 10;
+		auto start_y = 30;
 		auto x		 = 10;
 
-		CGDrawString("minoskrnl.exe, bug check error raised, stopping...", start_y, x, panic_text);
+		CGDrawString("Kernel Panic!", start_y, x, panic_text);
 		start_y += 10;
-
-		// simply offset from previous string and then write the website.
-		CGDrawString("Please visit: ", start_y, x, panic_text);
-		CGDrawString(kWebsiteURL, start_y, x + (FONT_SIZE_X * rt_string_len("Please visit: ")), panic_text);
 
 		CGFini();
-
-		start_y += 10;
 
 		// show text according to error id.
 
 		switch (id)
 		{
 		case RUNTIME_CHECK_PROCESS: {
-			CGDrawString("0x00000008 Invalid process behavior, aborting.", start_y, x, panic_text);
+			CGDrawString("0x00000008: Invalid process behavior.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_ACPI: {
-			CGDrawString("0x00000006 ACPI configuration error.", start_y, x, panic_text);
+			CGDrawString("0x00000006: ACPI configuration error.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_PAGE: {
-			CGDrawString("0x0000000B Write/Read in non paged area.", start_y, x, panic_text);
+			CGDrawString("0x0000000B: Write/Read in non paged area.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_FILESYSTEM: {
-			CGDrawString("0x0000000A Filesystem error.", start_y, x, panic_text);
+			CGDrawString("0x0000000A: Filesystem driver error.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
-			CGDrawString("0x00000000 Heap is corrupted.", start_y, x, panic_text);
+			CGDrawString("0x00000000: Kernel heap is corrupted.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {
-			CGDrawString("0x00000009 Bad Behavior.", start_y, x, panic_text);
+			CGDrawString("0x00000009: Bad behavior.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			CGDrawString("0x0000000A Boot code has finished executing, waiting for scheduler and other cores.", start_y, x, panic_text);
+			CGDrawString("0x0000000A: Boot code has finished executing, waiting for scheduler and other cores.", start_y, x, panic_text);
 			return;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
-			CGDrawString("0x00000005 Handshake fault.", start_y, x, panic_text);
+			CGDrawString("0x00000005: Handshake fault.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_IPC: {
-			CGDrawString("0x00000003 Bad IPC/XPCOM message.", start_y, x, panic_text);
+			CGDrawString("0x00000003: Bad LPC message.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_INVALID_PRIVILEGE: {
-			CGDrawString("0x00000007 Privilege access violation.", start_y, x, panic_text);
+			CGDrawString("0x00000007: Privilege access violation.", start_y, x, panic_text);
 			break;
 		case RUNTIME_CHECK_UNEXCPECTED: {
-			CGDrawString("0x0000000B Unexpected violation.", start_y, x, panic_text);
+			CGDrawString("0x0000000B: Unexpected violation.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM: {
-			CGDrawString("0x10000001 Out of virtual memory.", start_y, x, panic_text);
+			CGDrawString("0x10000001: Out of virtual memory.", start_y, x, panic_text);
 
 			break;
 		}

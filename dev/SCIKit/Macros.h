@@ -1,12 +1,17 @@
 #pragma once
 
-// ------------------------------------------------------------------------------------------ //
-/// @brief Handle Type and Macros definitions.
-// ------------------------------------------------------------------------------------------ //
+/***********************************************************************************/
+/// @file SCIKit/Macros.h
+/// @brief Macros and core types.
+/***********************************************************************************/
+
+#include <SCIKit/CompilerHint.h>
 
 #define ATTRIBUTE(X) __attribute__((X))
 #define IMPORT_CXX	 extern "C++"
 #define IMPORT_C	 extern "C"
+
+#define DEPRECATED ATTRIBUTE(deprecated)
 
 typedef bool Bool;
 typedef void Void;
@@ -29,10 +34,8 @@ typedef char			 Char;
 
 typedef VoidPtr SCIObject;
 
-typedef SCIObject DLLObject;
 typedef SCIObject IOObject;
-typedef SCIObject SCMObject;
+typedef IOObject FSObject;
+typedef SCIObject DLLObject;
 typedef SCIObject ThreadObject;
 typedef SCIObject SocketObject;
-typedef SCIObject ShellObject;
-typedef SCIObject UIObject;

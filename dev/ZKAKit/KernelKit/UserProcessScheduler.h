@@ -167,7 +167,7 @@ namespace Kernel
 
 		USER_PROCESS_HEAP* MemoryHeap{nullptr};
 
-		UIntPtr VMRegister{0UL};
+		VoidPtr VMRegister{0UL};
 
 		enum
 		{

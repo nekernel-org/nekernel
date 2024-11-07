@@ -17,7 +17,9 @@
 
 namespace Kernel
 {
+	/***********************************************************************************/
 	/// @brief Pmm constructor.
+	/***********************************************************************************/
 	Pmm::Pmm()
 		: fPageMgr()
 	{
@@ -26,9 +28,11 @@ namespace Kernel
 
 	Pmm::~Pmm() = default;
 
-	/* If this returns Null pointer, enter emergency mode */
+	/***********************************************************************************/
+	/// @param If this returns Null pointer, enter emergency mode.
 	/// @param user is this a user page?
 	/// @param readWrite is it r/w?
+	/***********************************************************************************/
 	Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite)
 	{
 		PTEWrapper pt = fPageMgr.Leak().Request(user, readWrite, false, kPageSize);

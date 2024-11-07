@@ -22,7 +22,9 @@ namespace Kernel
 {
 	namespace Detail
 	{
-		/// @brief Get the PEF platform signature according to the compiled backebnd
+		/***********************************************************************************/
+		/// @brief Get the PEF platform signature according to the compiled architecture.
+		/***********************************************************************************/
 		UInt32 ldr_get_platform(void) noexcept
 		{
 #if defined(__ZKA_32X0__)
@@ -41,8 +43,10 @@ namespace Kernel
 		}
 	} // namespace Detail
 
+	/***********************************************************************************/
 	/// @brief PEF loader constructor w/ blob.
-	/// @param blob
+	/// @param blob file blob.
+	/***********************************************************************************/
 	PEFLoader::PEFLoader(const VoidPtr blob)
 		: fCachedBlob(blob)
 	{
@@ -50,8 +54,10 @@ namespace Kernel
 		fBad = false;
 	}
 
+	/***********************************************************************************/
 	/// @brief PEF loader constructor.
 	/// @param path the filesystem path.
+	/***********************************************************************************/
 	PEFLoader::PEFLoader(const Char* path)
 		: fCachedBlob(nullptr), fBad(false), fFatBinary(false)
 	{
@@ -94,7 +100,9 @@ namespace Kernel
 		fCachedBlob = nullptr;
 	}
 
+	/***********************************************************************************/
 	/// @brief PEF destructor.
+	/***********************************************************************************/
 	PEFLoader::~PEFLoader()
 	{
 		if (fCachedBlob)
@@ -103,6 +111,11 @@ namespace Kernel
 		fFile.Delete();
 	}
 
+	/***********************************************************************************/
+	/// @brief Finds the symbol according to it's name.
+	/// @param name name of symbol.
+	/// @param kind kind of symbol we want.
+	/***********************************************************************************/
 	VoidPtr PEFLoader::FindSymbol(const Char* name, Int32 kind)
 	{
 		if (!fCachedBlob || fBad || !name)

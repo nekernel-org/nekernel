@@ -26,7 +26,7 @@ namespace CFKit
 	class Property
 	{
 	public:
-		Property() = default;
+		Property();
 		virtual ~Property();
 
 	public:
@@ -39,7 +39,7 @@ namespace CFKit
 
 	private:
 		KString	   fName{kMaxPropLen};
-		PropertyId fAction{No};
+		PropertyId fValue{0UL};
 	};
 
 	template <SizeT N>

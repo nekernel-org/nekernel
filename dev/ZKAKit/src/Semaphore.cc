@@ -9,6 +9,9 @@
 
 namespace Kernel
 {
+	/***********************************************************************************/
+	/// @brief Unlocks process out of the semaphore.
+	/***********************************************************************************/
 	Bool Semaphore::Unlock() noexcept
 	{
 		if (fLockingProcess)
@@ -19,28 +22,37 @@ namespace Kernel
 		return Yes;
 	}
 
+	/***********************************************************************************/
+	/// @brief Locks process in the semaphore.
+	/***********************************************************************************/
 	Bool Semaphore::Lock(UserProcess* process)
 	{
 		if (!process || fLockingProcess)
-			return false;
+			return No;
 
 		fLockingProcess = process;
 
-		return true;
+		return Yes;
 	}
 
+	/***********************************************************************************/
+	/// @brief Checks if process is locked.
+	/***********************************************************************************/
 	Bool Semaphore::IsLocked() const
 	{
 		return fLockingProcess;
 	}
 
+	/***********************************************************************************/
+	/// @brief Try lock or wait.
+	/***********************************************************************************/
 	Bool Semaphore::LockOrWait(UserProcess* process, TimerInterface* timer)
 	{
 		if (process == nullptr)
-			return false;
+			return No;
 
 		if (timer == nullptr)
-			return false;
+			return No;
 
 		this->Lock(process);
 
@@ -49,16 +61,11 @@ namespace Kernel
 		return this->Lock(process);
 	}
 
-	/// @brief Wait with process, either wait for it to be being invalid, or not being run.
+	/***********************************************************************************/
+	/// @brief Wait for process to be free.
+	/***********************************************************************************/
 	Void Semaphore::WaitForProcess() noexcept
 	{
-		while (fLockingProcess)
-		{
-			if (fLockingProcess->GetStatus() != ProcessStatusKind::kRunning)
-			{
-				this->Unlock();
-				break;
-			}
-		}
+		while (fLockingProcess);
 	}
 } // namespace Kernel

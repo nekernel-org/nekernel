@@ -6,9 +6,10 @@
 
 #pragma once
 
+#include <SCIKit/Macros.h>
+
 /// @file LPC.h
-/// @brief Local Process Codes.
-///
+/// @brief Local Process Code type and values.
 #define ErrLocalIsOk()	 (kLastError == kErrorSuccess)
 #define ErrLocalFailed() (kLastError != kErrorSuccess)
 #define ErrLocal()		 (kLastError)
