@@ -7,15 +7,14 @@
 #include <Modules/ACPI/ACPIFactoryInterface.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <HALKit/AMD64/Processor.h>
-#include <NewKit/Stop.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/Semaphore.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Timer.h>
 #include <Modules/FB/Text.h>
+#include <NewKit/Stop.h>
 
-// Needed for SMP. //
-#include <FirmwareKit/EFI.h>
+// Needed for SMP.
 #include <KernelKit/HardwareThreadScheduler.h>
 
 #define kApicSignature "APIC"
@@ -108,10 +107,10 @@ namespace Kernel::HAL
 	///////////////////////////////////////////////////////////////////////////////////////
 
 	/***********************************************************************************/
-	/// @brief Send start IPI for CPU.
-	/// @param apicId
-	/// @param vector
-	/// @param targetAddress
+	/// @brief Send IPI command to APIC.
+	/// @param apicId programmable interrupt controller id.
+	/// @param vector vector interrupt.
+	/// @param targetAddress target APIC adress.
 	/// @return
 	/***********************************************************************************/
 
@@ -136,27 +135,25 @@ namespace Kernel::HAL
 
 	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame);
 
-	struct PROCESS_CONTROL_BLOCK final
+	STATIC struct PROCESS_CONTROL_BLOCK final
 	{
 		HAL::StackFramePtr f_Frame;
 		UInt8*			   f_Stack;
 		VoidPtr			   f_Image;
-	} fBlocks[kSchedProcessLimitPerTeam] = {0};
+	} kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
 
 	EXTERN_C HAL::StackFramePtr mp_get_current_context(Void)
 	{
-		return fBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
+		return kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
 	}
-
-	EXTERN_C Void mp_do_task_switch(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame);
 
 	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame)
 	{
-		fBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
-		fBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Stack = stack_ptr;
-		fBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Image = image;
+		MUST_PASS(image && stack_ptr && stack_frame);
 
-		mp_do_task_switch(image, stack_ptr, stack_frame);
+		kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
+		kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Stack = stack_ptr;
+		kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Image = image;
 
 		return Yes;
 	}
