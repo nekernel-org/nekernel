@@ -1,0 +1,40 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" version="24.8.4">
+  <diagram name="Page-1" id="yf45V2V4Ppj0j8o4dQoi">
+    <mxGraphModel dx="1114" dy="487" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-1" target="mspNsT0Gx7HsNPX6GqQO-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-1" value="IBKit (Window &lt;span style=&quot;background-color: initial;&quot;&gt;Runtime)&lt;/span&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
+          <mxGeometry x="40" y="210" width="150" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-2" value="Graphics Kit" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="450" width="450" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-3" value="GUIKit" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="210" width="270" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.093;entryY=1.019;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-2" target="mspNsT0Gx7HsNPX6GqQO-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-12" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;GUI System&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/h1&gt;&lt;p&gt;The system works by a set of&lt;/p&gt;&lt;p&gt;Interface files (.ib) and Style files&lt;/p&gt;&lt;p&gt;(.style) describing how a control should look. an Interface can also contain C code.&lt;/p&gt;&lt;p&gt;Lets put it straight, we need to support&lt;/p&gt;&lt;p&gt;the GPU for our Graphics stack.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="560" y="260" width="220" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-13" value="zkaOS Subsystem&lt;div&gt;App&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="55" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-13" target="mspNsT0Gx7HsNPX6GqQO-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.526;entryY=-0.025;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-13" target="mspNsT0Gx7HsNPX6GqQO-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mspNsT0Gx7HsNPX6GqQO-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.743;entryY=0.002;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-3" target="mspNsT0Gx7HsNPX6GqQO-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
