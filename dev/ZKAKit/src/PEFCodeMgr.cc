@@ -226,7 +226,7 @@ namespace Kernel
 #elif defined(__x86_64__)
 		return "x86_64 PEF executable.";
 #elif defined(__aarch64__)
-		return "aarch64 PEF executable.";
+		return "AARCH64 PEF executable.";
 #elif defined(__powerpc64__)
 		return "POWER64 PEF executable.";
 #else
@@ -253,26 +253,27 @@ namespace Kernel
 			if (errOrStart.Error() != kErrorSuccess)
 				return No;
 
-			UserProcess* proc = new UserProcess{errOrStart.Leak().Leak()};
+			STATIC UserProcess proc;
 
-			proc->Kind		  = procKind;
-			proc->ExecImg	  = exec.GetBlob().Leak().Leak();
-			proc->StackSize	  = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
-			proc->MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
-			proc->PTime		  = 0UL;
+			proc.Kind		  = procKind;
+			proc.ExecImg	  = errOrStart.Leak().Leak();
+			proc.ExecImg	  = exec.GetBlob().Leak().Leak();
+			proc.StackSize	  = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
+			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
+			proc.PTime		  = 0UL;
 
-			rt_set_memory(proc->Name, 0, kProcessNameLen);
+			rt_set_memory(proc.Name, 0, kProcessNameLen);
 
 			if (exec.FindSymbol(kPefNameSymbol, kPefData))
-				rt_copy_memory(exec.FindSymbol(kPefNameSymbol, kPefData), proc->Name, rt_string_len((Char*)exec.FindSymbol(kPefNameSymbol, kPefData)));
+				rt_copy_memory(exec.FindSymbol(kPefNameSymbol, kPefData), proc.Name, rt_string_len((Char*)exec.FindSymbol(kPefNameSymbol, kPefData)));
 
-			if (!proc->StackSize)
+			if (!proc.StackSize)
 			{
 				const auto cDefaultStackSizeMib = 8;
-				proc->StackSize					= mib_cast(cDefaultStackSizeMib);
+				proc.StackSize					= mib_cast(cDefaultStackSizeMib);
 			}
 
-			return UserProcessScheduler::The().Add(proc);
+			return UserProcessScheduler::The().Add(&proc);
 		}
 	} // namespace Utils
 } // namespace Kernel

@@ -82,4 +82,4 @@ inline Kernel::Array<HAL_SYSCALL_RECORD,
 					 kKernelMaxSystemCalls>
 	kKerncalls;
 
-EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context();
+EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);

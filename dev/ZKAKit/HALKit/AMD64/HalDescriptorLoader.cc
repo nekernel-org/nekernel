@@ -7,14 +7,14 @@
 #include <ArchKit/ArchKit.h>
 #include <HALKit/AMD64/Processor.h>
 
-#define kPITDefaultTicks (1000U)
+#define kPITDefaultTicks (100U)
 
 namespace Kernel::HAL
 {
 	namespace Detail
 	{
 		STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64
-			kInterruptVectorTable[kKernelIdtSize];
+			kInterruptVectorTable[kKernelIdtSize] = { };
 
 		STATIC void hal_set_irq_mask(UInt8 irql);
 		STATIC void hal_clear_irq_mask(UInt8 irql);
@@ -84,11 +84,13 @@ namespace Kernel::HAL
 
 	Void IDTLoader::Load(Register64& idt)
 	{
+		rt_cli();
+
 		const Int16 kPITTickForScheduler = kPITDefaultTicks;
 
 		volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**)idt.Base;
 
-		for (UInt16 idt_indx = 0; idt_indx < kKernelIdtSize; ++idt_indx)
+		for (SizeT idt_indx = 0; idt_indx < kKernelIdtSize; ++idt_indx)
 		{
 			Detail::kInterruptVectorTable[idt_indx].Selector	   = kIDTSelector;
 			Detail::kInterruptVectorTable[idt_indx].Ist			   = 0;
@@ -103,11 +105,13 @@ namespace Kernel::HAL
 
 		idt.Base  = (UIntPtr)&Detail::kInterruptVectorTable[0];
 		idt.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) *
-					(kKernelIdtSize)-1;
+					(kKernelIdtSize);
 
 		hal_load_idt(idt);
 
 		Detail::hal_enable_pit(kPITTickForScheduler);
+
+		rt_sti();
 	}
 
 	void GDTLoader::Load(Ref<RegisterGDT>& gdt)

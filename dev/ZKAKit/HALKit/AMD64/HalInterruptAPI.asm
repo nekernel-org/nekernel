@@ -340,8 +340,6 @@ mp_system_call_handler:
     o64 sysret
 
 hal_load_idt:
-    cli
-
     lidt [rcx]
 
     ; Master PIC initialization
@@ -368,8 +366,6 @@ hal_load_idt:
     mov al, 0x01          ; 8086 mode
     out 0x21, al
     out 0xA1, al
-
-    sti
 
     ret
 

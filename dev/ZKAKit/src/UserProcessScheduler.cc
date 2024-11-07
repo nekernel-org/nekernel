@@ -325,6 +325,12 @@ namespace Kernel
 
 	ProcessID UserProcessScheduler::Add(UserProcess* process)
 	{
+		if (*process->Name == 0)
+		{
+			Char process_name[] = "System Process";
+			rt_copy_memory((VoidPtr)process_name, process->Name, rt_string_len(process_name));
+		}
+
 #ifdef __ZKA_AMD64__
 		process->VMRegister = mm_new_heap(sizeof(PDE), No, Yes);
 
@@ -353,7 +359,7 @@ namespace Kernel
 			process->PefDLLDelegate = rtl_init_dll(process);
 			MUST_PASS(process->PefDLLDelegate);
 
-			kcout << "Create delegate dylib for: " << process->Name << endl;
+			kcout << "Create DLL Delegate for: " << process->Name << endl;
 		}
 
 		process->StackReserve = new UInt8[process->StackSize];
@@ -370,7 +376,7 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
-		kcout << "Created stack reserve for: " << process->Name << endl;
+		kcout << "Create stack reserve for: " << process->Name << endl;
 
 		auto pid = kProcessIDCounter;
 
@@ -575,8 +581,8 @@ namespace Kernel
 				////////////////////////////////////////////////////////////
 
 				auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
-				HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].ProcessId;
-				Bool ret											 = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr);
+				HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
+				Bool ret											 = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid);
 
 				////////////////////////////////////////////////////////////
 				///	Rollback on fail.    								 ///

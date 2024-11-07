@@ -306,8 +306,8 @@ EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp);
 EXTERN_C Kernel::Void idt_handle_math(Kernel::UIntPtr rsp);
 EXTERN_C Kernel::Void idt_handle_pf(Kernel::UIntPtr rsp);
 
-EXTERN_C Kernel::Void hal_load_idt(Kernel::HAL::Register64 ptr);
-EXTERN_C Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
+EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_idt(Kernel::HAL::Register64 ptr);
+EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize	 = 0UL;

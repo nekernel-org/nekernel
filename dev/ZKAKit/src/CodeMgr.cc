@@ -16,24 +16,23 @@ namespace Kernel
 	/// @return if the process was started or not.
 	ProcessID rtl_create_process(MainKind main, const Char* process_name) noexcept
 	{
-		kcout << "Validating process...\r";
+		kcout << "Validating process header...\r";
 
 		if (!main)
 			return No;
 
-		UserProcess* proc = new UserProcess{reinterpret_cast<VoidPtr>(main)};
-
+		static UserProcess proc;
+		
 		kcout << "Setting-up process data...\r";
 
-		proc->Kind		= UserProcess::kExectuableKind;
-		proc->StackSize = kib_cast(4);
+		proc.Code = reinterpret_cast<VoidPtr>(main);
+		proc.Kind		= UserProcess::kExectuableKind;
+		proc.StackSize = kib_cast(16);
 
-		rt_set_memory(proc->Name, 0, kProcessNameLen);
-		rt_copy_memory((VoidPtr)process_name, proc->Name, rt_string_len(process_name));
+		rt_set_memory(proc.Name, 0, kProcessNameLen);
+		rt_copy_memory((VoidPtr)process_name, proc.Name, rt_string_len(process_name));
 
-		ProcessID id = UserProcessScheduler::The().Add(proc);
-
-		delete proc;
+		ProcessID id = UserProcessScheduler::The().Add(&proc);
 
 		return id;
 	}

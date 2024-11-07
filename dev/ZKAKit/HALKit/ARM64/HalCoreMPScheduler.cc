@@ -16,12 +16,12 @@ STATIC struct PROCESS_CONTROL_BLOCK final
 	VoidPtr			   f_Image;
 } kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
 
-EXTERN_C HAL::StackFramePtr mp_get_current_context(Void)
+EXTERN_C HAL::StackFramePtr mp_get_current_context(ProcessID pid)
 {
-	return kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
+	return kProcessBlocks[pid % kSchedProcessLimitPerTeam].f_Frame;
 }
 
-EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame)
+EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame, ProcessID pid)
 {
 	MUST_PASS(image && stack_ptr && stack_frame);
 	return No;

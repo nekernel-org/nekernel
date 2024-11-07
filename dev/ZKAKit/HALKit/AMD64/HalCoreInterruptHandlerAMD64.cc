@@ -12,6 +12,7 @@
 /// @param rsp
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
+	kcout << "Kernel: GPF.\r";
 	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
@@ -19,12 +20,14 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
+	kcout << "Kernel: Page Fault.\r";
 	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 {
+	kcout << "Kernel: IRQ0.\r";
 	Kernel::UserProcessHelper::StartScheduling();
 }
 
@@ -32,6 +35,7 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
+	kcout << "Kernel: Math.\r";
 	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
@@ -39,6 +43,7 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
+	kcout << "Kernel: Generic Fault.\r";
 	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 
@@ -46,6 +51,7 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
+	kcout << "Kernel: Undefined Opcode.\r";
 	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 }
 

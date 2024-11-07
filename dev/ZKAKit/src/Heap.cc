@@ -253,7 +253,7 @@ namespace Kernel
 			PageMgr heap_mgr;
 			heap_mgr.Free(pteAddress);
 
-			kcout << "Freed Heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
+			kcout << "Freed Heap address successfully." << endl;
 
 			return kErrorSuccess;
 		}

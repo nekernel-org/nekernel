@@ -133,8 +133,6 @@ namespace Kernel::HAL
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
-	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame);
-
 	STATIC struct PROCESS_CONTROL_BLOCK final
 	{
 		HAL::StackFramePtr f_Frame;
@@ -142,18 +140,21 @@ namespace Kernel::HAL
 		VoidPtr			   f_Image;
 	} kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
 
-	EXTERN_C HAL::StackFramePtr mp_get_current_context(Void)
+	EXTERN_C HAL::StackFramePtr mp_get_current_context(Int64 pid)
 	{
-		return kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame;
+		const auto process_index = pid % kSchedProcessLimitPerTeam;
+		return kProcessBlocks[process_index].f_Frame;
 	}
 
-	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame)
+	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame, ProcessID pid)
 	{
 		MUST_PASS(image && stack_ptr && stack_frame);
 
-		kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Frame = stack_frame;
-		kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Stack = stack_ptr;
-		kProcessBlocks[UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId % kSchedProcessLimitPerTeam].f_Image = image;
+		const auto process_index = pid % kSchedProcessLimitPerTeam;
+
+		kProcessBlocks[process_index].f_Frame = stack_frame;
+		kProcessBlocks[process_index].f_Stack = stack_ptr;
+		kProcessBlocks[process_index].f_Image = image;
 
 		return Yes;
 	}

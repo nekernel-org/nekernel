@@ -29,12 +29,12 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
+EMU_FLAGS=-net none -smp 1 -m 8G -M q35 \
 			-bios $(BIOS) -drive \
 			file=fat:rw:src/Root/,index=2,format=raw \
 			-drive id=disk_2,file=$(IMG),if=none \
             -device ahci,id=ahci \
-            -device ide-hd,drive=disk_2,bus=ahci.0 -d int
+            -device ide-hd,drive=disk_2,bus=ahci.0 -d int -no-shutdown -no-reboot 
 
 LD_FLAGS=-e Main --subsystem=10
 

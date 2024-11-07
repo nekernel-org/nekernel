@@ -67,7 +67,6 @@ namespace Kernel
 
 				UInt32 MakeMMFlags(Bool wr, Bool user)
 				{
-
 					UInt32 flags = kMMFlagsPresent;
 
 					if (wr)
@@ -170,6 +169,7 @@ namespace Kernel
 		{
 			if (!page_ptr)
 				return No;
+
 
 			Detail::IBitMapAllocator traits;
 			Bool					 ret = traits.FreeBitMap(page_ptr);

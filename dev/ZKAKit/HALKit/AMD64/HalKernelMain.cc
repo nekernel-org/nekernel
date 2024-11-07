@@ -20,20 +20,20 @@ EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
 EXTERN_C Kernel::MainKind __CTOR_LIST__[];
 EXTERN_C Kernel::MainKind __DTOR_LIST__[];
 
+namespace Kernel
+{
+	EXTERN ProcessID kProcessIDCounter;
+}
+
 STATIC Kernel::Void hal_init_cxx_ctors()
 {
+	Kernel::kProcessIDCounter = 0UL;
+
 	for (Kernel::SizeT index = 0UL; __CTOR_LIST__[index] != __DTOR_LIST__[0]; ++index)
 	{
 		Kernel::MainKind constructor_cxx = (Kernel::MainKind)__CTOR_LIST__[index];
 		constructor_cxx();
-
-		kcout << "Called constrcutor.\r";
 	}
-}
-
-namespace Kernel
-{
-	EXTERN ProcessID kProcessIDCounter;
 }
 
 /// @brief Kernel init procedure.
@@ -49,8 +49,6 @@ EXTERN_C void hal_init_platform(
 	}
 
 	hal_init_cxx_ctors();
-
-	Kernel::kProcessIDCounter = 0UL;
 
 	/************************************** */
 	/*     INITIALIZE BIT MAP.              */
@@ -93,22 +91,23 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	/* Initialize filesystem. */
 	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
 
+	const Kernel::Char process_name[] = "Kernel";
+
 	Kernel::rtl_create_process([]() -> void {
 		while (Yes)
 			;
-	}, "RtlProcess");
+	}, process_name);
 
-	/* Start any cores. */
+	/* Load interrupts and start SMP. */
+
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::HAL::Register64 idt_reg;
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
 
-	/* Load interrupts. */
 	Kernel::HAL::IDTLoader idt_loader;
 	idt_loader.Load(idt_reg);
 
-	while (Yes)
-		;
+	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
