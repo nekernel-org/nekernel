@@ -1,3 +1,7 @@
+.clang-format
+.editorconfig
+.gitattributes
+.gitignore
 CODEOWNERS
 Doxyfile
 MailMap
@@ -373,4 +377,8 @@ make_docs.sh
 res/zka.svg
 run_format.sh
 zka-dev.cflags
+zka-dev.config
+zka-dev.creator
 zka-dev.cxxflags
+zka-dev.files
+zka-dev.includes

@@ -184,8 +184,8 @@ namespace Kernel
 
 #define VoidStar Kernel::VoidPtr
 
-#ifdef cInitObject
-#undef cInitObject
-#endif // ifdef cInitObject
+#ifdef kInitCxx
+#undef kInitCxx
+#endif // ifdef kInitCxx
 
-#define cInitObject(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
+#define kInitCxx(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
