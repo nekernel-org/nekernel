@@ -33,4 +33,4 @@ And then select the makefile (arm64 and amd64 are stable and EFI based) to execu
 make -f amd64-efi.make all
 ```
 
-###### Copyright (C) 2024, EL Mahrouss Logic, all rights reserved. All rights reserved.
+###### Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved. All rights reserved.
