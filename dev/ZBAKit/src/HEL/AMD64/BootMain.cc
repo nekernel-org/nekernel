@@ -156,7 +156,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 #ifdef ZBA_USE_FB
 	CGDrawString("ZBA (c) EL Mahrouss Logic", 10, 10, RGB(0xFF, 0xFF, 0xFF));
-	CGDrawString((cnt_enabled > 1) ? "MULTIPLE PROCESSORS DETECTED." : "SINGLE PROCESSOR DETECTED.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString((cnt_enabled > 1) ? "SMP detected." : "Single processor configuration detected.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 
 	handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
