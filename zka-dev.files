@@ -367,6 +367,7 @@ dev/hpfs/hpfs_specs.h
 dev/hpfs/src/hpfs_main.cc
 doc/DDK.pdf
 doc/EPM.pdf
+doc/GUI-System.drawio
 doc/NeFS.pdf
 doc/OS-Design.drawio
 doc/OS-Scheduler-Design.drawio
@@ -375,6 +376,7 @@ doc/SCHED-DESIGN.drawio
 doc/ZXD.drawio
 make_docs.sh
 res/zka.svg
+resources/zka.svg
 run_format.sh
 zka-dev.cflags
 zka-dev.config
