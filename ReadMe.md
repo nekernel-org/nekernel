@@ -1,6 +1,6 @@
 <!-- README of ZKA -->
 
-![ZKA](res/zka.svg)
+![ZKA](resources/zka.svg)
 
 # ZKA Kernel Architecture.
 
