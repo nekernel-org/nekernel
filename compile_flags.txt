@@ -8,3 +8,4 @@
 -D__NEWOSKRNL__
 -D__FSKIT_INCLUDES_NEFS__
 -D__ZKA_ED__
+-xc++
