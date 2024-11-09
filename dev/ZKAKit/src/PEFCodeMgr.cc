@@ -255,12 +255,12 @@ namespace Kernel
 
 			STATIC UserProcess proc;
 
-			proc.Kind		  = procKind;
-			proc.ExecImg	  = errOrStart.Leak().Leak();
-			proc.ExecImg	  = exec.GetBlob().Leak().Leak();
-			proc.StackSize	  = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
+			proc.Kind		 = procKind;
+			proc.ExecImg	 = errOrStart.Leak().Leak();
+			proc.ExecImg	 = exec.GetBlob().Leak().Leak();
+			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
-			proc.PTime		  = 0UL;
+			proc.PTime		 = 0UL;
 
 			rt_set_memory(proc.Name, 0, kProcessNameLen);
 

@@ -42,7 +42,7 @@ namespace Kernel
 			HAL::rt_out8(PORT + 4, 0x0B); // IRQs enabled, RTS/DSR set
 			HAL::rt_out8(PORT + 4, 0x1E); // Set in loopback mode, test the serial chip
 			HAL::rt_out8(PORT + 0, 0xAE); // Test serial chip (send byte 0xAE and check if
-									   // serial returns same byte)
+										  // serial returns same byte)
 
 			// Check if serial is faulty (i.e: not same byte as sent)
 			if (HAL::rt_in8(PORT) != 0xAE)

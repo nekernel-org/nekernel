@@ -170,7 +170,6 @@ namespace Kernel
 			if (!page_ptr)
 				return No;
 
-
 			Detail::IBitMapAllocator traits;
 			Bool					 ret = traits.FreeBitMap(page_ptr);
 

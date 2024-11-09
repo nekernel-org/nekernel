@@ -23,7 +23,7 @@
 #ifdef __AHCI__
 #define kMaxAhciPoll (100000U)
 
-#define kCmdOrCtrlCmd 1
+#define kCmdOrCtrlCmd  1
 #define kCmdOrCtrlCtrl 0
 
 enum
@@ -34,27 +34,98 @@ enum
 };
 
 STATIC Kernel::PCI::Device kAhciDevice;
-STATIC HbaPort*			   kAhciPort = nullptr;
+STATIC HbaPort* kAhciPort				   = nullptr;
+STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
+
+Kernel::Void drv_calculate_disk_geometry()
+{
+	// Slot is now used, OS uses slot 0, driver must not use slot 0.
+
+	// Prepare command header.
+
+	HbaCmdHeader* cmd_header = (HbaCmdHeader*)(Kernel::UIntPtr)kAhciPort->Clb;
+
+	// Read operation/set entries count.
+
+	Kernel::UInt16 identify_data[256] = {0};
+	Kernel::UInt64 size				  = 512 - 1; // Adjust size for 512 bytes of data (Dbc should be 511)
+
+	cmd_header->Cfl	  = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
+	cmd_header->Prdtl = 1; // 1 PRDT entry
+
+	// Prepare command table.
+	HbaCmdTbl* cmd_tbl = (HbaCmdTbl*)(Kernel::UIntPtr)cmd_header->Ctba;
+
+	// First PRD entry
+	cmd_tbl->PrdtEntries[0].Dba			 = (Kernel::UInt32)(Kernel::UIntPtr)identify_data;
+	cmd_tbl->PrdtEntries[0].Dbc			 = size; // Byte count (511 for 512 bytes of data)
+	cmd_tbl->PrdtEntries[0].InterruptBit = 1;	 // Set interrupt flag
+
+	// 5. Prepare the command FIS (Frame Information Structure)
+	FisRegH2D* cmd_fis = (FisRegH2D*)(cmd_tbl->Cfis);
+	cmd_fis->FisType   = kFISTypeRegH2D;
+	cmd_fis->CmdOrCtrl = kCmdOrCtrlCmd; // Command
+	cmd_fis->Command   = kAHCICmdIdentify;
+
+	// 6. Issue the command by writing to the port's command issue register (CI)
+	kAhciPort->Ci = 1; // Issue command slot 0
+
+	// Polling loop for command completion
+	while (kAhciPort->Ci)
+	{
+		// Check for errors in the Task File Data register (PxTFD)
+		if (kAhciPort->Tfd & (1 << 0))
+		{ // Error bit
+			kcout << "Error in task file, can't get disk geometry." << endl;
+			Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
+		}
+
+		// If the device is busy, wait
+		if (kAhciPort->Tfd & (1 << 7))
+		{
+			kcout << "Device is busy, waiting..." << endl;
+			continue;
+		}
+
+		// If command completes, clear the PxCI register
+		if (kAhciPort->Is & (1 << 30))
+		{ // If an interrupt occurred (device ready)
+			kcout << "Command completed successfully." << endl;
+			break;
+		}
+	}
+
+	// Retrieve the max LBA value
+	kCurrentDiskSectorCount = 0UL;
+	kCurrentDiskSectorCount |= identify_data[100];
+	kCurrentDiskSectorCount |= identify_data[101] << 16;
+	kCurrentDiskSectorCount |= identify_data[102] << 32;
+	kCurrentDiskSectorCount |= identify_data[103] << 48;
+
+	kcout << "Max LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
+
+	BREAK_POINT();
+}
 
 /// @brief Initializes an AHCI disk.
 /// @param PortsImplemented the amount of kAhciPort that have been detected.
-/// @return
+/// @return if the disk was successfully initialized or not.
 Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 {
 	using namespace Kernel;
 
 	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
 
-	for (SizeT devIndex = 0; devIndex < ZKA_BUS_COUNT; ++devIndex)
+	for (SizeT device_index = 0; device_index < ZKA_BUS_COUNT; ++device_index)
 	{
-		// if SATA and then interface is AHCI...
-		if (iterator[devIndex].Leak().Subclass() == kSATASubClass &&
-			iterator[devIndex].Leak().ProgIf() == kSATAProgIfAHCI)
-		{
-			iterator[devIndex].Leak().EnableMmio(0x24);		 // Enable the memory index_byte/o for this ahci device.
-			iterator[devIndex].Leak().BecomeBusMaster(0x24); // Become bus master for this ahci device, so that we can control it.
+		kAhciDevice = iterator[device_index].Leak(); // And then leak the reference.
 
-			kAhciDevice = iterator[devIndex].Leak(); // And then leak the reference.
+		// if SATA and then interface is AHCI...
+		if (kAhciDevice.Subclass() == kSATASubClass &&
+			kAhciDevice.ProgIf() == kSATAProgIfAHCI)
+		{
+			kAhciDevice.EnableMmio(0x24);		 // Enable the memory index_byte/o for this ahci device.
+			kAhciDevice.BecomeBusMaster(0x24); // Become bus master for this ahci device, so that we can control it.
 
 			HbaMem* mem_ahci = (HbaMem*)kAhciDevice.Bar(0x24);
 
@@ -83,9 +154,9 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 						detected = true;
 
-						mem_ahci->Ghc |= (1 << kAhciGHC_AE);
-
 						kAhciPort = &mem_ahci->Ports[ahci_index];
+
+						drv_calculate_disk_geometry();
 
 						break;
 					}
@@ -109,23 +180,11 @@ Kernel::Boolean drv_std_detected(Kernel::Void)
 
 Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
 {
-	STATIC Kernel::Boolean kSlotIsUsed = No;
-
-	Kernel::LockDelegate<kMaxAhciPoll> lock(&kSlotIsUsed);
-
-	if (kSlotIsUsed)
-		return;
-
 	// Slot is now used, OS uses slot 0, driver must not use slot 0.
-
-	kSlotIsUsed = Yes;
-
-	Kernel::Int64 free_slot = 0L;
 
 	// Prepare command header.
 
 	HbaCmdHeader* cmd_header = (HbaCmdHeader*)(Kernel::UIntPtr)kAhciPort->Clb;
-	cmd_header += free_slot;
 
 	// Read operation/set entries count.
 
@@ -140,15 +199,9 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 	Kernel::UInt64 size		  = size * kAHCISectorSize;
 	Kernel::Int64  index_byte = 0L;
 
-	for (index_byte = 0; index_byte < (cmd_header->Prdtl - 1); ++index_byte)
-	{
-		cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
-		cmd_tbl->PrdtEntries[index_byte].Dbc		  = (kib_cast(8)) - 1; // 8KB buffer size
-		cmd_tbl->PrdtEntries[index_byte].InterruptBit = 1;				// Interrupt on completion
-
-		size -= kib_cast(8);
-		buffer += kib_cast(4); // Move the buffer pointer forward
-	}
+	cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
+	cmd_tbl->PrdtEntries[index_byte].Dbc		  = size; // 8KB buffer size
+	cmd_tbl->PrdtEntries[index_byte].InterruptBit = 1;	  // Interrupt on completion
 
 	// Last PRDT entry
 	cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
@@ -176,12 +229,12 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 	cmd_fis->CountHigh = (size >> 8) & 0xFF;
 
 	// 6. Issue the command by writing to the port's command issue register (CI)
-	kAhciPort->Ci = 1 << free_slot;
+	kAhciPort->Ci = 1;
 
 	// 7. Wait for the command to complete (simple spinlock, no need for an object here)
 	while (Yes)
 	{
-		if (!(kAhciPort->Ci & (1 << free_slot)))
+		if (!(kAhciPort->Ci & 1))
 		{
 			break; // Command has completed
 		}
@@ -189,26 +242,16 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 		{
 			return; // Error in task file
 		}
-	}
 
-	kSlotIsUsed = No;
+		kcout << Kernel::number((kAhciPort->Ci & 1)) << endl;
+	}
 }
 
 Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
 {
-	STATIC Kernel::Boolean kSlotIsUsed = No;
-
-	if (kSlotIsUsed)
-		return;
-
-	kSlotIsUsed = Yes;
-
-	Kernel::Int64 free_slot = 0L;
-
 	// Prepare command header.
 
 	HbaCmdHeader* cmd_header = (HbaCmdHeader*)(Kernel::UIntPtr)kAhciPort->Clb;
-	cmd_header += free_slot;
 
 	// Read operation/set entries count.
 
@@ -223,15 +266,9 @@ Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Siz
 	Kernel::UInt64 size		  = size * kAHCISectorSize;
 	Kernel::Int64  index_byte = 0L;
 
-	for (index_byte = 0; index_byte < (cmd_header->Prdtl - 1); ++index_byte)
-	{
-		cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
-		cmd_tbl->PrdtEntries[index_byte].Dbc		  = (kib_cast(8)) - 1; // 8KB buffer size
-		cmd_tbl->PrdtEntries[index_byte].InterruptBit = 1;				// Interrupt on completion
-
-		size -= kib_cast(8);
-		buffer += kib_cast(4); // Move the buffer pointer forward
-	}
+	cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
+	cmd_tbl->PrdtEntries[index_byte].Dbc		  = size; // 8KB buffer size
+	cmd_tbl->PrdtEntries[index_byte].InterruptBit = 1;	  // Interrupt on completion
 
 	// Last PRDT entry
 	cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
@@ -259,12 +296,12 @@ Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Siz
 	cmd_fis->CountHigh = (size >> 8) & 0xFF;
 
 	// 6. Issue the command by writing to the port's command issue register (CI)
-	kAhciPort->Ci = 1 << free_slot;
+	kAhciPort->Ci = 1;
 
 	// 7. Wait for the command to complete (simple spinlock, no need for an object here)
 	while (Yes)
 	{
-		if (!(kAhciPort->Ci & (1 << free_slot)))
+		if (!(kAhciPort->Ci & 1))
 		{
 			break; // Command has completed
 		}
@@ -274,9 +311,9 @@ Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Siz
 			Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
 			return; // Error in task file
 		}
-	}
 
-	kSlotIsUsed = No;
+		kcout << Kernel::number((kAhciPort->Ci & 1)) << endl;
+	}
 }
 
 /***
@@ -285,7 +322,7 @@ Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Siz
  */
 Kernel::SizeT drv_get_sector_count()
 {
-	return 0;
+	return kCurrentDiskSectorCount;
 }
 
 /// @brief Get the drive size.

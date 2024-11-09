@@ -19,7 +19,7 @@ namespace CFKit
 	Property::Property() = default;
 
 	/***********************************************************************************/
-	/// @brief Check if property's name equals to name. 
+	/// @brief Check if property's name equals to name.
 	/// @param name string to check.
 	/***********************************************************************************/
 	Bool Property::StringEquals(KString& name)

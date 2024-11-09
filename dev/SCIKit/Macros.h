@@ -44,7 +44,7 @@ typedef char			 Char;
 typedef VoidPtr SCIObject;
 
 typedef SCIObject IOObject;
-typedef IOObject FSObject;
+typedef IOObject  FSObject;
 typedef SCIObject DLLObject;
 typedef SCIObject ThreadObject;
 typedef SCIObject SocketObject;

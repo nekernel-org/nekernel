@@ -22,11 +22,11 @@ namespace Kernel
 			return No;
 
 		static UserProcess proc;
-		
+
 		kcout << "Setting-up process data...\r";
 
-		proc.Code = reinterpret_cast<VoidPtr>(main);
-		proc.Kind		= UserProcess::kExectuableKind;
+		proc.Code	   = reinterpret_cast<VoidPtr>(main);
+		proc.Kind	   = UserProcess::kExectuableKind;
 		proc.StackSize = kib_cast(16);
 
 		rt_set_memory(proc.Name, 0, kProcessNameLen);

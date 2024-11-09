@@ -151,6 +151,7 @@ namespace Kernel
 			trait.fPacket.fPacketSize	 = sizeof(_BOOT_BLOCK_STRUCT);
 			trait.fPacket.fPacketContent = &block_struct;
 
+			trait.fInit(&trait.fPacket);
 			io_drv_input(&trait.fPacket);
 
 			trait.fKind = kMassStorage;

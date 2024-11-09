@@ -96,7 +96,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::rtl_create_process([]() -> void {
 		while (Yes)
 			;
-	}, process_name);
+	},
+							   process_name);
 
 	/* Load interrupts and start SMP. */
 

@@ -14,7 +14,7 @@ Kernel::UInt ZKA_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort
 						  (bar & 0xFC);
 
 	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
-					   target);
+						  target);
 
 	return Kernel::HAL::rt_in32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
@@ -26,7 +26,7 @@ void ZKA_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort de
 						  (bar & ~3);
 
 	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
-					   target);
+						  target);
 }
 
 #define PCI_BAR_IO		 0x01

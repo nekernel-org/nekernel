@@ -14,7 +14,7 @@ namespace Kernel::HAL
 	namespace Detail
 	{
 		STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64
-			kInterruptVectorTable[kKernelIdtSize] = { };
+			kInterruptVectorTable[kKernelIdtSize] = {};
 
 		STATIC void hal_set_irq_mask(UInt8 irql);
 		STATIC void hal_clear_irq_mask(UInt8 irql);
@@ -28,8 +28,8 @@ namespace Kernel::HAL
 
 			UInt16 cCommonDivisor = kPITFrequency / ticks; // 100 Hz.
 
-			HAL::rt_out8(kPITControlPort, 0x36);						   // Command to PIT
-			HAL::rt_out8(kPITChannel0Port, cCommonDivisor & 0xFF);		   // Send low byte
+			HAL::rt_out8(kPITControlPort, 0x36);						  // Command to PIT
+			HAL::rt_out8(kPITChannel0Port, cCommonDivisor & 0xFF);		  // Send low byte
 			HAL::rt_out8(kPITChannel0Port, (cCommonDivisor >> 8) & 0xFF); // Send high byte
 
 			hal_clear_irq_mask(32);

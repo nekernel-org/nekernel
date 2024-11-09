@@ -112,9 +112,8 @@ namespace Kernel
 		if (!hal_check_stack(frame))
 			return No;
 
-		this->fStack = frame;
+		this->fStack	 = frame;
 		this->fSourcePID = pid;
-
 
 		Bool ret = mp_register_process(image, stack_ptr, fStack, this->fSourcePID);
 

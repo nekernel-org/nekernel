@@ -2,8 +2,8 @@
 
 	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 
-	File: Defines.h
-	Purpose: AHCI header.
+	File: AHCI.h
+	Purpose: AHCI protocol defines.
 
 	Revision History:
 
@@ -352,12 +352,6 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 /// @param Size
 /// @return
 Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size);
-
-/// @brief get sector count.
-Kernel::SizeT drv_get_sector_count();
-
-/// @brief get device size.
-Kernel::SizeT drv_get_size();
 
 /// @brief get sector count.
 Kernel::SizeT drv_get_sector_count();

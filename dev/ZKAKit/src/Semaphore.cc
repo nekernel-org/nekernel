@@ -66,6 +66,7 @@ namespace Kernel
 	/***********************************************************************************/
 	Void Semaphore::WaitForProcess() noexcept
 	{
-		while (fLockingProcess);
+		while (fLockingProcess)
+			;
 	}
 } // namespace Kernel
