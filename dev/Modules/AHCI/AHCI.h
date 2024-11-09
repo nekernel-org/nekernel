@@ -325,7 +325,7 @@ typedef struct HbaCmdTbl final
 	Kernel::UInt8		Cfis[64];		// Command FIS
 	Kernel::UInt8		Acmd[16];		// ATAPI command, 12 or 16 bytes
 	Kernel::UInt8		Rsv[48];		// Reserved
-	struct HbaPrdtEntry prdtEntries[1]; // Physical region descriptor table entries, 0 ~ 65535
+	struct HbaPrdtEntry PrdtEntries[1]; // Physical region descriptor table entries, 0 ~ 65535
 } HbaCmdTbl;
 
 #if defined(__AHCI__)

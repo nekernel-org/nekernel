@@ -53,6 +53,7 @@ BOOTLOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe
 SYSCHK=syschk.sys
 STARTUP=startup.sys
+SCIKIT=SCIKit.dylib
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -67,6 +68,7 @@ all: compile-amd64
 	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/ZBAOSLDR.EFI
 	$(COPY) ../ZKAKit/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ./Modules/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
+	$(COPY) ../SCIKit/$(SCIKIT) src/Root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
 
 ifneq ($(DEBUG_SUPPORT), )

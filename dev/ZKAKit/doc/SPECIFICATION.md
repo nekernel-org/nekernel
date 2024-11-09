@@ -48,6 +48,7 @@
 - Kernel -> ke_init_x
 - RunTime -> rt_copy_mem
 - Hal -> hal_foo_bar
+- Class methods -> Class::FooBar
 
 ===================================
 

@@ -1,3 +1,11 @@
+##################################################
+# (c) Amlal EL Mahrouss, all rights reserved.
+# This is the bootloader makefile.
+##################################################
+
+ASM=nasm
+FLAGS=-f win64
+
 .PHONY: syscall_unit
 syscall_unit:
-	nasm -f win64 DispatchSysCalls.asm -o DispatchSysCalls.obj
+	$(ASM) $(FLAGS) DispatchSysCalls.asm -o DispatchSysCalls.obj

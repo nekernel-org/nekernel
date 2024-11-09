@@ -39,7 +39,7 @@ dev/SCIKit/build.json
 dev/SCIKit/sci.dll
 dev/SCIKit/scm-design.drawio
 dev/SCIKit/src/DispatchSysCalls.asm
-dev/SCIKit/src/Foundation.cc
+dev/SCIKit/src/MemoryMgr.cc
 dev/SCIKit/src/Syscall.asm
 dev/SCIKit/xpcom_core.h
 dev/ZBAKit/BootKit/BitManip.h

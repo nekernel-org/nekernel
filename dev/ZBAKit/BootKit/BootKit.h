@@ -209,10 +209,10 @@ namespace Boot
 
 		ZKA_COPY_DELETE(BDiskFormatFactory);
 
-		/// @brief Format disk.
-		/// @param Partition Name
-		/// @param Blobs.
-		/// @param Number of blobs.
+		/// @brief Format disk using partition name and fileBlobs.
+		/// @param Partition partName the target partition name.
+		/// @param fileBlobs blobs array.
+		/// @param blobCount blobs array count.
 		/// @retval True disk has been formatted.
 		/// @retval False failed to format.
 		Boolean Format(const Char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
@@ -377,7 +377,7 @@ namespace Boot
 		}
 		else
 		{
-			EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned.");
+			EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned, this drive cannot be formatted as an explicit partition map.");
 		}
 
 		return false;

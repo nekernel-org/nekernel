@@ -39,13 +39,13 @@ IMPORT_C Void LdrCloseDLLHandle(_Input SCIObject* dll_handle);
 
 /// @brief Opens a file from a drive.
 /// @param fs_path the filesystem path.
-/// @param drive_letter drive name, use NULL to use default one.
+/// @param drive_letter drive name, use NULL to use default drive location.
 /// @return the file descriptor of the file.
 IMPORT_C SCIObject IoOpenFile(const Char* fs_path, const Char* drive_letter);
 
 /// @brief Closes a file and flushes its content.
 /// @param file_desc the file descriptor.
-/// @return void.
+/// @return Function doesn't return a type.
 IMPORT_C Void IoCloseFile(_Input SCIObject file_desc);
 
 /// @brief Write data to a file.

@@ -173,7 +173,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 #ifdef ZKA_AUTO_FORMAT
 	if (!partition_factory.IsPartitionValid())
 	{
-		CGDrawString("FORMATTING EPM DISK...", 20, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("Formatting EPM disk...", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
 		root.fFileName[0] = kNeFSRoot[0];
@@ -187,7 +187,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	}
 	else
 	{
-		CGDrawString("BOOTING FROM EPM DISK...", 20, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("Booting from EPM disk...", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 	}
 #endif // ZKA_AUTO_FORMAT
 
@@ -243,7 +243,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	if (reader_syschk.Blob())
 	{
 		syschk_thread = new Boot::BThread(reader_syschk.Blob());
-		syschk_thread->SetName("System Check (ZBA Driver)");
+		syschk_thread->SetName("System Check (ZBA EFI Driver)");
 	}
 
 	syschk_thread->Start(handover_hdr);
@@ -287,7 +287,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	else
 	{
 #ifdef ZBA_USE_FB
-		CGDrawString("ZBA: PLEASE RECOVER YOUR KERNEL IMAGE.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("ZBA: Please recover your kernel image.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 
 		EFI::Stop();
@@ -312,7 +312,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	else
 	{
 #ifdef ZBA_USE_FB
-		CGDrawString("ZBA: ONE OR MORE SYSTEM COMPONENTS ARE MISSING, PLEASE REINSTALL THE OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("ZBA: OS resources are not present, please reinstall the OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 
 		EFI::Stop();
@@ -321,7 +321,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	EFI::ExitBootServices(map_key, ImageHandle);
 
 	// ---------------------------------------------------- //
-	// Finally load the operating system kernel.
+	// Finally load the OS kernel.
 	// ---------------------------------------------------- //
 
 	kernel_thread->Start(handover_hdr);

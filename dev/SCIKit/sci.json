@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../"],
   "sources_path": ["src/*.cc", "src/*.obj"],
-  "output_name": "SCIKit.dll",
+  "output_name": "SCIKit.dylib",
   "compiler_flags": [
     "-fPIC",
     "-ffreestanding",

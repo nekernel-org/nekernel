@@ -1,13 +1,15 @@
 ;; /*
 ;; *	========================================================
 ;; *
-;; *	ZKA
+;; *	SCI
 ;; * 	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved., all rights reserved.
 ;; *
 ;; * 	========================================================
 ;; */
 
 [bits 64]
+
+section .text
 
 global sci_syscall_arg_1
 global sci_syscall_arg_2
