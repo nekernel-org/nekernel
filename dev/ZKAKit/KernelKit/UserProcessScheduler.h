@@ -155,17 +155,25 @@ namespace Kernel
 		SizeT			   MemoryCursor{0};
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 
-		struct USER_PROCESS_HEAP final
+		struct UserProcessHeapList final
 		{
 			VoidPtr MemoryEntry{nullptr};
 			SizeT	MemoryEntrySize{0UL};
 			SizeT	MemoryEntryPad{0UL};
 
-			struct USER_PROCESS_HEAP* MemoryPrev{nullptr};
-			struct USER_PROCESS_HEAP* MemoryNext{nullptr};
+			struct UserProcessHeapList* MemoryPrev{nullptr};
+			struct UserProcessHeapList* MemoryNext{nullptr};
 		};
 
-		USER_PROCESS_HEAP* MemoryHeap{nullptr};
+		struct UserProcessSignal final
+		{
+			UIntPtr SignalIP;
+			ProcessStatusKind PreviousStatus;
+			UIntPtr SignalID;
+		};
+
+		UserProcessSignal ProcessSignal;
+		UserProcessHeapList* MemoryHeap{nullptr};
 
 		VoidPtr VMRegister{0UL};
 

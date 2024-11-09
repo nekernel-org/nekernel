@@ -118,24 +118,44 @@
 #define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
 #endif // !RGB
 
-#define BREAK_POINT() \
-	while (Yes)       \
-		;
+#define BREAK_POINT() asm volatile ("int $3")
 
-/// @brief The system page file.
-#define kPageSys "/System/syspage.sys"
+/// @brief The system page file, located on the mount directory, as mulitple system pages can be mounted.
+#define kPageSys "/Mount/syspage.sys"
 
 /// @brief The main system driver.
 #define kStartupSys "/Boot/startup.sys"
 
 /// @brief The main font file.
-#define kUrbanistTTF "/Fonts/urbanist.ttf"
+#define kUrbanistTTF "/Resources/Fonts/urbanist.ttf"
 
 /// @brief License file
-#define kEulaTxt "/Misc/EULA.txt"
+#define kEulaTxt "/Resources/EULA.txt"
 
 /// @brief The main kernel file.
-#define kStartupWav "/Rsrc/startup.wav"
+#define kStartupWav "/Resources/startup.wav"
 
 /// @brief The main system loader.
 #define kUserName "ZKA AUTHORITY/KERNEL"
+
+#define DEDUCE_ENDIAN(address, value)                           \
+	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
+		 ? (Kernel::Endian::kEndianBig)                         \
+		 : (Kernel::Endian::kEndianLittle))
+
+#define Yes true
+#define No	false
+
+#define YES true
+#define NO false
+
+#define TRUE true
+#define FALSE false
+
+#define BOOL Kernel::Boolean
+
+#ifdef INIT_OBJECT
+#undef INIT_OBJECT
+#endif // ifdef INIT_OBJECT
+
+#define INIT_OBJECT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)

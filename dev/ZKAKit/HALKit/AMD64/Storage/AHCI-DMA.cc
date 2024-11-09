@@ -242,8 +242,6 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 		{
 			return; // Error in task file
 		}
-
-		kcout << Kernel::number((kAhciPort->Ci & 1)) << endl;
 	}
 }
 
@@ -311,8 +309,6 @@ Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Siz
 			Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
 			return; // Error in task file
 		}
-
-		kcout << Kernel::number((kAhciPort->Ci & 1)) << endl;
 	}
 }
 

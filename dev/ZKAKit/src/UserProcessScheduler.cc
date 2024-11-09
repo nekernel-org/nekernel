@@ -129,7 +129,7 @@ namespace Kernel
 
 		if (!this->MemoryHeap)
 		{
-			this->MemoryHeap = new UserProcess::USER_PROCESS_HEAP();
+			this->MemoryHeap = new UserProcess::UserProcessHeapList();
 
 			this->MemoryHeap->MemoryEntryPad  = pad_amount;
 			this->MemoryHeap->MemoryEntrySize = sz;
@@ -143,8 +143,8 @@ namespace Kernel
 		}
 		else
 		{
-			USER_PROCESS_HEAP* entry	  = this->MemoryHeap;
-			USER_PROCESS_HEAP* prev_entry = nullptr;
+			UserProcessHeapList* entry	  = this->MemoryHeap;
+			UserProcessHeapList* prev_entry = nullptr;
 
 			while (!entry)
 			{
@@ -155,7 +155,7 @@ namespace Kernel
 				entry	   = entry->MemoryNext;
 			}
 
-			entry->MemoryNext			   = new USER_PROCESS_HEAP();
+			entry->MemoryNext			   = new UserProcessHeapList();
 			entry->MemoryNext->MemoryEntry = ptr;
 
 			entry->MemoryNext->MemoryPrev = entry;
@@ -175,7 +175,7 @@ namespace Kernel
 			sz == 0)
 			return No;
 
-		USER_PROCESS_HEAP* entry = this->MemoryHeap;
+		UserProcessHeapList* entry = this->MemoryHeap;
 
 		while (entry != nullptr)
 		{

@@ -7,6 +7,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <NewKit/KString.h>
+#include <PosixKit/Signals.h>
 
 /// @brief Handle GPF fault.
 /// @param rsp
@@ -21,13 +22,26 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
 	kcout << "Kernel: Page Fault.\r";
-	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
+
+	kcout << "Kernel: SIGKILL set.\r";
+
+	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	process.Leak().ProcessSignal.SignalIP = 0UL;
+	process.Leak().ProcessSignal.SignalID = SIGKILL;
+	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+
+	kcout << "Kernel: PRCFROZE status set..\r";
+
+	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
+
+	process.Leak().Crash();
 }
 
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 {
-	kcout << "Kernel: IRQ0.\r";
+	kcout << "Kernel: Timer IRQ (Scheduler Notification).\r";
 	Kernel::UserProcessHelper::StartScheduling();
 }
 
@@ -35,16 +49,56 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
-	kcout << "Kernel: Math.\r";
-	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
+	kcout << "Kernel: Math error (division by zero?).\r";
+
+	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	process.Leak().ProcessSignal.SignalIP = 0UL;
+	process.Leak().ProcessSignal.SignalID = SIGKILL;
+	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+
+	kcout << "Kernel: PRCFROZE status set..\r";
+
+	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
+
+	process.Leak().Crash();
 }
 
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
-	kcout << "Kernel: Generic Fault.\r";
-	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
+	kcout << "Kernel: Generic Process Fault.\r";
+
+	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	process.Leak().ProcessSignal.SignalIP = 0UL;
+	process.Leak().ProcessSignal.SignalID = SIGKILL;
+	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+
+	kcout << "Kernel: PRCFROZE status set..\r";
+
+	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
+
+	process.Leak().Crash();
+}
+
+EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
+{
+	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	kcout << "Kernel: Process RIP: " << Kernel::number(rip) << endl;
+	kcout << "Kernel: Process Name: " << process.Leak().Name << endl;
+
+	kcout << "Kernel: SIGTRAP set.\r";
+
+	process.Leak().ProcessSignal.SignalIP = rip;
+	process.Leak().ProcessSignal.SignalID = SIGTRAP;
+	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+
+	kcout << "Kernel: PRCFROZE status set..\r";
+
+	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 }
 
 /// @brief Handle #UD fault.
@@ -52,7 +106,18 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
 	kcout << "Kernel: Undefined Opcode.\r";
-	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
+
+	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	process.Leak().ProcessSignal.SignalIP = 0UL;
+	process.Leak().ProcessSignal.SignalID = SIGKILL;
+	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+
+	kcout << "Kernel: PRCFROZE status set..\r";
+
+	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
+
+	process.Leak().Crash();
 }
 
 /// @brief Enter syscall from assembly.
@@ -91,7 +156,7 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, 
 {
 	if (rcx_kerncall_index < kKerncalls.Count())
 	{
-		kcout << "kerncall: Enter Kcall.\r";
+		kcout << "kerncall: Enter Kernel Call List.\r";
 
 		if (kKerncalls[rcx_kerncall_index].fHooked)
 		{
@@ -101,14 +166,14 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, 
 			}
 			else
 			{
-				kcout << "kerncall: syscall isn't valid at all! (is nullptr)\r";
+				kcout << "kerncall: Kernel call isn't valid at all! (is nullptr)\r";
 			}
 		}
 		else
 		{
-			kcout << "kerncall: syscall isn't hooked at all! (is set to false)\r";
+			kcout << "kerncall: Kernel call isn't hooked at all! (is set to false)\r";
 		}
 
-		kcout << "kerncall: Exit Kcall.\r";
+		kcout << "kerncall: Exit Kernel Calls.\r";
 	}
 }

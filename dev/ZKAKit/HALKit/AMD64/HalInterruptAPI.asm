@@ -50,15 +50,42 @@ extern idt_handle_pf
 extern ke_io_write
 extern idt_handle_ud
 extern idt_handle_generic
+extern idt_handle_breakpoint
 
 section .text
 
 IntNormal 0
 IntNormal 1
-
 IntNormal 2
 
-IntNormal 3
+section .data
+
+__ZKA_INT_3_GET_RIP:
+    dq 0
+__ZKA_INT_3_GET_RIP_END:
+
+section .text
+
+;; @brief Triggers a breakpoint and freeze the process. RIP is also fetched.
+__ZKA_INT_3:
+    cli
+
+    mov al, 0x20
+    out 0x20, al
+    out 0xA0, al
+
+    push rax
+    mov rax, idt_handle_breakpoint
+
+    lea rcx, [rel __ZKA_INT_3_GET_RIP]
+    mov [rcx], rcx
+
+    call rax
+    pop rax
+
+    sti
+    o64 iret
+
 IntNormal 4
 IntNormal 5
 

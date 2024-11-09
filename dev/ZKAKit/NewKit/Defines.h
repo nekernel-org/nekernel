@@ -173,19 +173,3 @@ namespace Kernel
 		}
 	};
 } // namespace Kernel
-
-#define DEDUCE_ENDIAN(address, value)                           \
-	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
-		 ? (Kernel::Endian::kEndianBig)                         \
-		 : (Kernel::Endian::kEndianLittle))
-
-#define Yes true
-#define No	false
-
-#define VoidStar Kernel::VoidPtr
-
-#ifdef INIT_OBJECT
-#undef INIT_OBJECT
-#endif // ifdef INIT_OBJECT
-
-#define INIT_OBJECT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
