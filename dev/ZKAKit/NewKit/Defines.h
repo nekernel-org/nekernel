@@ -174,7 +174,7 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-#define cDeduceEndian(address, value)                           \
+#define DEDUCE_ENDIAN(address, value)                           \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))
@@ -184,8 +184,8 @@ namespace Kernel
 
 #define VoidStar Kernel::VoidPtr
 
-#ifdef kInitCxx
-#undef kInitCxx
-#endif // ifdef kInitCxx
+#ifdef INIT_OBJECT
+#undef INIT_OBJECT
+#endif // ifdef INIT_OBJECT
 
-#define kInitCxx(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
+#define INIT_OBJECT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)

@@ -1,3 +1,12 @@
+/* -------------------------------------------
+
+Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+
+File: Macros.h
+Purpose: SCIKit Macros header.
+
+------------------------------------------- */
+
 #pragma once
 
 /***********************************************************************************/
@@ -39,3 +48,9 @@ typedef IOObject FSObject;
 typedef SCIObject DLLObject;
 typedef SCIObject ThreadObject;
 typedef SCIObject SocketObject;
+
+#ifdef SYSCALL_DECL
+#undef SYSCALL_DECL
+#endif // SYSCALL_DECL
+
+#define SYSCALL_DECL(NAME, ...) IMPORT_C VoidPtr NAME(__VA_ARGS__);

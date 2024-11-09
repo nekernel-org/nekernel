@@ -9,4 +9,4 @@
 using namespace Kernel;
 
 /// @brief Undefined object, is null in length.
-kInitCxx(Kernel::JSON::kNull, Kernel::JSON);
+INIT_OBJECT(Kernel::JSON::kNull, Kernel::JSON);
