@@ -3,7 +3,7 @@
  *
  *  ZKA
  *  Date Added: 13/02/2023
- * 	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved., all rights reserved.
+ * 	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved., all rights reserved.
  *
  * 	========================================================
  */
