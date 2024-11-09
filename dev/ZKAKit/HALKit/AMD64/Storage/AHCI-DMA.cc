@@ -107,7 +107,7 @@ Kernel::Boolean drv_std_detected(Kernel::Void)
 	return kAhciDevice.DeviceId() != 0xFFFF;
 }
 
-Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size)
+Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
 {
 	STATIC Kernel::Boolean kSlotIsUsed = No;
 
@@ -120,7 +120,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 
 	kSlotIsUsed = Yes;
 
-	Kernel::Int64 free_slot = 0;
+	Kernel::Int64 free_slot = 0L;
 
 	// Prepare command header.
 
@@ -130,29 +130,29 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 	// Read operation/set entries count.
 
 	cmd_header->Write = No;
-	cmd_header->Prdtl = (Kernel::UInt16)((Size - 1) >> 4) + 1; // PRDT entries count
+	cmd_header->Prdtl = (Kernel::UInt16)((size_buffer - 1) >> 4) + 1; // PRDT entries count
 
 	// Prepare command table.
 
 	HbaCmdTbl* cmd_tbl = (HbaCmdTbl*)(Kernel::UIntPtr)cmd_header->Ctba;
 	Kernel::rt_set_memory(cmd_tbl, 0, sizeof(HbaCmdTbl));
 
-	Kernel::UInt64 size		  = Size * kAHCISectorSize;
+	Kernel::UInt64 size		  = size * kAHCISectorSize;
 	Kernel::Int64  index_byte = 0L;
 
 	for (index_byte = 0; index_byte < (cmd_header->Prdtl - 1); ++index_byte)
 	{
-		cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)Buf;
-		cmd_tbl->PrdtEntries[index_byte].Dbc		  = (8 * 1024) - 1; // 8KB Buf size
+		cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
+		cmd_tbl->PrdtEntries[index_byte].Dbc		  = (kib_cast(8)) - 1; // 8KB buffer size
 		cmd_tbl->PrdtEntries[index_byte].InterruptBit = 1;				// Interrupt on completion
 
-		Size -= 8 * 1024;
-		Buf += 4 * 1024; // Move the Buf pointer forward
+		size -= kib_cast(8);
+		buffer += kib_cast(4); // Move the buffer pointer forward
 	}
 
 	// Last PRDT entry
-	cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)Buf;
-	cmd_tbl->PrdtEntries[index_byte].Dbc		  = Size - 1; // Byte count left
+	cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
+	cmd_tbl->PrdtEntries[index_byte].Dbc		  = size - 1; // Byte count left
 	cmd_tbl->PrdtEntries[index_byte].InterruptBit = 1;
 
 	// 5. Prepare the command FIS (Frame Information Structure)
@@ -163,17 +163,17 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 	cmd_fis->CmdOrCtrl = kCmdOrCtrlCmd; // Command
 	cmd_fis->Command   = kAHCICmdReadDmaEx;
 
-	cmd_fis->Lba0	= (Kernel::UInt8)Lba;
-	cmd_fis->Lba1	= (Kernel::UInt8)(Lba >> 8);
-	cmd_fis->Lba2	= (Kernel::UInt8)(Lba >> 16);
+	cmd_fis->Lba0	= (Kernel::UInt8)lba;
+	cmd_fis->Lba1	= (Kernel::UInt8)(lba >> 8);
+	cmd_fis->Lba2	= (Kernel::UInt8)(lba >> 16);
 	cmd_fis->Device = 1 << 6; // LBA mode
 
-	cmd_fis->Lba3 = (Kernel::UInt8)(Lba >> 24);
-	cmd_fis->Lba4 = (Kernel::UInt8)(Lba >> 32);
-	cmd_fis->Lba5 = (Kernel::UInt8)(Lba >> 40);
+	cmd_fis->Lba3 = (Kernel::UInt8)(lba >> 24);
+	cmd_fis->Lba4 = (Kernel::UInt8)(lba >> 32);
+	cmd_fis->Lba5 = (Kernel::UInt8)(lba >> 40);
 
-	cmd_fis->CountLow  = Size & 0xFF;
-	cmd_fis->CountHigh = (Size >> 8) & 0xFF;
+	cmd_fis->CountLow  = size & 0xFF;
+	cmd_fis->CountHigh = (size >> 8) & 0xFF;
 
 	// 6. Issue the command by writing to the port's command issue register (CI)
 	kAhciPort->Ci = 1 << free_slot;
@@ -194,7 +194,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 	kSlotIsUsed = No;
 }
 
-Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size)
+Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
 {
 	STATIC Kernel::Boolean kSlotIsUsed = No;
 
@@ -203,7 +203,7 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 
 	kSlotIsUsed = Yes;
 
-	Kernel::Int64 free_slot = 0;
+	Kernel::Int64 free_slot = 0L;
 
 	// Prepare command header.
 
@@ -213,29 +213,29 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 	// Read operation/set entries count.
 
 	cmd_header->Write = Yes;
-	cmd_header->Prdtl = (Kernel::UInt16)((Size - 1) >> 4) + 1; // PRDT entries count
+	cmd_header->Prdtl = (Kernel::UInt16)((size_buffer - 1) >> 4) + 1; // PRDT entries count, put in low of prdt.
 
 	// Prepare command table.
 
 	HbaCmdTbl* cmd_tbl = (HbaCmdTbl*)(Kernel::UIntPtr)cmd_header->Ctba;
 	Kernel::rt_set_memory(cmd_tbl, 0, sizeof(HbaCmdTbl));
 
-	Kernel::UInt64 size		  = Size * kAHCISectorSize;
+	Kernel::UInt64 size		  = size * kAHCISectorSize;
 	Kernel::Int64  index_byte = 0L;
 
 	for (index_byte = 0; index_byte < (cmd_header->Prdtl - 1); ++index_byte)
 	{
-		cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)Buf;
-		cmd_tbl->PrdtEntries[index_byte].Dbc		  = (8 * 1024) - 1; // 8KB Buf size
+		cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
+		cmd_tbl->PrdtEntries[index_byte].Dbc		  = (kib_cast(8)) - 1; // 8KB buffer size
 		cmd_tbl->PrdtEntries[index_byte].InterruptBit = 1;				// Interrupt on completion
 
-		Size -= 8 * 1024;
-		Buf += 4 * 1024; // Move the Buf pointer forward
+		size -= kib_cast(8);
+		buffer += kib_cast(4); // Move the buffer pointer forward
 	}
 
 	// Last PRDT entry
-	cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)Buf;
-	cmd_tbl->PrdtEntries[index_byte].Dbc		  = Size - 1; // Byte count left
+	cmd_tbl->PrdtEntries[index_byte].Dba		  = (Kernel::UInt32)(Kernel::UIntPtr)buffer;
+	cmd_tbl->PrdtEntries[index_byte].Dbc		  = size - 1; // Byte count left
 	cmd_tbl->PrdtEntries[index_byte].InterruptBit = 1;
 
 	// 5. Prepare the command FIS (Frame Information Structure)
@@ -246,17 +246,17 @@ Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT 
 	cmd_fis->CmdOrCtrl = kCmdOrCtrlCmd; // Command
 	cmd_fis->Command   = kAHCICmdReadDmaEx;
 
-	cmd_fis->Lba0	= (Kernel::UInt8)Lba;
-	cmd_fis->Lba1	= (Kernel::UInt8)(Lba >> 8);
-	cmd_fis->Lba2	= (Kernel::UInt8)(Lba >> 16);
+	cmd_fis->Lba0	= (Kernel::UInt8)lba;
+	cmd_fis->Lba1	= (Kernel::UInt8)(lba >> 8);
+	cmd_fis->Lba2	= (Kernel::UInt8)(lba >> 16);
 	cmd_fis->Device = 1 << 6; // LBA mode
 
-	cmd_fis->Lba3 = (Kernel::UInt8)(Lba >> 24);
-	cmd_fis->Lba4 = (Kernel::UInt8)(Lba >> 32);
-	cmd_fis->Lba5 = (Kernel::UInt8)(Lba >> 40);
+	cmd_fis->Lba3 = (Kernel::UInt8)(lba >> 24);
+	cmd_fis->Lba4 = (Kernel::UInt8)(lba >> 32);
+	cmd_fis->Lba5 = (Kernel::UInt8)(lba >> 40);
 
-	cmd_fis->CountLow  = Size & 0xFF;
-	cmd_fis->CountHigh = (Size >> 8) & 0xFF;
+	cmd_fis->CountLow  = size & 0xFF;
+	cmd_fis->CountHigh = (size >> 8) & 0xFF;
 
 	// 6. Issue the command by writing to the port's command issue register (CI)
 	kAhciPort->Ci = 1 << free_slot;
@@ -292,6 +292,7 @@ Kernel::SizeT drv_get_sector_count()
 /// @return Disk size in bytes.
 Kernel::SizeT drv_get_size()
 {
-	return 0;
+	return drv_get_sector_count() * kAHCISectorSize;
 }
+
 #endif // __AHCI__
