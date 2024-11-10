@@ -177,14 +177,30 @@ namespace Kernel::HAL
 		static Void Load(Register64& idt);
 		static Void Load(Ref<Register64>& idt);
 	};
+	/***********************************************************************************/
+	/// @brief Is the current config SMP aware?
+	/// @return True if YES, False if not.
+	/***********************************************************************************/
+	Bool mp_is_smp(Void) noexcept;
 
-	Void mp_get_cores(VoidPtr rsp_ptr) noexcept;
+	/***********************************************************************************/
+	/// @brief Fetch and enable SMP scheduler.
+	/// @param vendor_ptr SMP containing structure.
+	/***********************************************************************************/
+	Void mp_get_cores(VoidPtr vendor_ptr) noexcept;
+
+	/***********************************************************************************/
+
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 
+	/***********************************************************************************/
+
+	/***********************************************************************************/
 	/// @brief Do a cpuid to check if MSR exists on CPU.
 	/// @retval true it does exists.
 	/// @retval false it doesn't.
+	/***********************************************************************************/
 	inline Bool hal_has_msr() noexcept
 	{
 		static UInt32 eax, unused, edx; // eax, edx
@@ -195,10 +211,12 @@ namespace Kernel::HAL
 		return edx & (1 << 5);
 	}
 
-	/// @brief Get Model-specific register.
+	/***********************************************************************************/
+	/// @brief Get Model specific register inside core.
 	/// @param msr MSR
 	/// @param lo low byte
 	/// @param hi high byte
+	/***********************************************************************************/
 	inline Void hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept
 	{
 		if (!lo || !hi)

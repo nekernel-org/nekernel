@@ -49,7 +49,7 @@ namespace Kernel::HAL
 	STATIC Int64			  kSMPCount	 = 0;
 
 	STATIC Int32   cSMPInterrupt	  = 0;
-	STATIC UInt64  cSMPCores[cSMPMax] = {0};
+	STATIC UInt64  kAPICLocales[cSMPMax] = {0};
 	STATIC VoidPtr kRawMADT			  = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
@@ -156,12 +156,23 @@ namespace Kernel::HAL
 		kProcessBlocks[process_index].f_Stack = stack_ptr;
 		kProcessBlocks[process_index].f_Image = image;
 
+		if (!mp_is_smp())
+		{
+			/// TODO: Switch from process_index in hash list.
+		}
+
 		return Yes;
 	}
 
 	/***********************************************************************************/
-	/// @brief Fetch and enable cores inside main CPU.
-	/// @param vendor_ptr RSD PTR structure.
+	/// @brief Is the current config SMP aware?
+	/// @return True if YES, False if not.
+	/***********************************************************************************/
+	Bool mp_is_smp(Void) noexcept { return kSMPAware; }
+
+	/***********************************************************************************/
+	/// @brief Fetch and enable SMP scheduler.
+	/// @param vendor_ptr SMP containing structure.
 	/***********************************************************************************/
 	Void mp_get_cores(VoidPtr vendor_ptr) noexcept
 	{
@@ -184,7 +195,7 @@ namespace Kernel::HAL
 			cSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
-			kcout << "Probing MADT cores...\r";
+			kcout << "SMP: Probing Local APICs...\r";
 
 			UIntPtr madt_address = kMADTBlock->Address;
 
@@ -197,14 +208,14 @@ namespace Kernel::HAL
 				switch (kMADTBlock->List[index].Type)
 				{
 				case 0x00: {
-					cSMPCores[index] = kMADTBlock->List[index].LAPIC.ProcessorID;
-					kcout << "Core ID: " << number(cSMPCores[index]) << endl;
+					kAPICLocales[index] = kMADTBlock->List[index].LAPIC.ProcessorID;
+					kcout << "SMP: APIC ID: " << number(kAPICLocales[index]) << endl;
 					++kSMPCount;
 					break;
 				}
 				case 0x05: {
 					madt_address = kMADTBlock->List[index].LAPIC_ADDRESS_OVERRIDE.Address;
-					kcout << "Address: " << number(madt_address) << endl;
+					kcout << "SMP: APIC address: " << number(madt_address) << endl;
 					break;
 				}
 				}
@@ -212,7 +223,7 @@ namespace Kernel::HAL
 				++index;
 			}
 
-			kcout << "# of cores: " << number(kSMPCount) << endl;
+			kcout << "SMP: number of cores: " << number(kSMPCount) << endl;
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)
