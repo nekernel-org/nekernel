@@ -28,6 +28,7 @@
 namespace Kernel
 {
 	class TerminalDevice;
+	class DTraceDevice;
 
 	inline TerminalDevice end_line();
 	inline TerminalDevice number(const Long& x);
