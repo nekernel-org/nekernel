@@ -33,6 +33,10 @@ namespace Kernel
 	template <typename T>
 	class DeviceInterface;
 
+ /***********************************************************************************/
+	/// @brief Device interface class.
+	/// @note This is a class which represents an hardware device.
+	/***********************************************************************************/
 	template <typename T>
 	class DeviceInterface
 	{
