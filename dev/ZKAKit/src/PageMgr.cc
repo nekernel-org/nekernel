@@ -83,28 +83,28 @@ namespace Kernel
 		return (fVirtAddr);
 	}
 
-	bool PTEWrapper::Shareable()
+	Bool PTEWrapper::Shareable()
 	{
 		return fShareable;
 	}
 
-	bool PTEWrapper::Present()
+	Bool PTEWrapper::Present()
 	{
 		return fPresent;
 	}
 
-	bool PTEWrapper::Access()
+	Bool PTEWrapper::Access()
 	{
 		return fAccessed;
 	}
 
-	void PTEWrapper::NoExecute(const bool enable)
+	Void PTEWrapper::NoExecute(const bool enable)
 	{
-		this->fExecDisable = enable;
+		fExecDisable = enable;
 	}
 
-	const bool& PTEWrapper::NoExecute()
+	Bool PTEWrapper::NoExecute()
 	{
-		return this->fExecDisable;
+		return fExecDisable;
 	}
 } // namespace Kernel
