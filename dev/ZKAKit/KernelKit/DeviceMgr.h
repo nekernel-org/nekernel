@@ -9,13 +9,14 @@
  Revision History:
 
 	 31/01/24: Add kDeviceCnt (amlel)
+		15/11/24: Add ZKA_DEVICE macro, to inherit from device object.
 
  ------------------------------------------- */
 
 #pragma once
 
 /* Device manager. */
-/* @file KernelKit/DeviceMgr.hpp */
+/* @file KernelKit/DeviceMgr.h */
 /* @brief Device abstraction and I/O buffer. */
 
 #include <NewKit/ErrorOr.h>
@@ -23,8 +24,9 @@
 
 #define kDeviceRootDirPath "/Mount/"
 
-// Last Rev
-// Wed, Apr  3, 2024  9:09:41 AM
+#define ZKA_DEVICE(T) : public ::Kernel::DeviceInterface<T>
+
+// Last Rev: Wed, Apr  3, 2024  9:09:41 AM
 
 namespace Kernel
 {
@@ -81,7 +83,7 @@ namespace Kernel
 
 	///
 	/// @brief Input Output Buffer
-	/// Used mainly to communicate between hardware.
+	/// Used mainly to communicate between OS to hardware.
 	///
 	template <typename T>
 	class IOBuf final
