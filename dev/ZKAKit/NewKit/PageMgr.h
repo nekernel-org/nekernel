@@ -29,8 +29,8 @@ namespace Kernel
 	public:
 		const UIntPtr VirtualAddress();
 
-		void		NoExecute(const bool enable = false);
-		const Bool& NoExecute();
+		Void		NoExecute(const bool enable = false);
+		Bool NoExecute();
 
 		operator bool()
 		{
