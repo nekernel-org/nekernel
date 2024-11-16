@@ -2,7 +2,7 @@
 
 ![ZKA](resources/zka.svg)
 
-# ZKA Kernel Architecture.
+# Zeta Kernel Architecture.
 
 ZKA is an general purpose entreprise OS.
 </br>
