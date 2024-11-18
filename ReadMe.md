@@ -8,7 +8,7 @@ ZKA is an general purpose entreprise OS.
 </br>
 It is designed for heavy loads and low tolerance environements (such as servers)
 </br>
-A Win32 compat layer is available, as well as XPCOM and ZT frameworks support.
+A Win32 compatibility layer is available as well as ML Kits support.
 
 ## Installation:
 
