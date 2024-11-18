@@ -15,16 +15,16 @@
 
 #pragma once
 
-/* Device manager. */
+/* @note Device Mgr. */
 /* @file KernelKit/DeviceMgr.h */
 /* @brief Device abstraction and I/O buffer. */
 
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Ref.h>
 
-#define kDeviceRootDirPath "/Mount/"
+#define kDeviceMgrRootDirPath "/Devices/"
 
-#define ZKA_DEVICE(T) : public ::Kernel::DeviceInterface<T>
+#define ZKA_DEVICE : public ::Kernel::DeviceInterface
 
 // Last Rev: Wed, Apr  3, 2024  9:09:41 AM
 
@@ -34,17 +34,14 @@ namespace Kernel
 	class DeviceInterface;
 
 	/***********************************************************************************/
-	/// @brief Device interface class.
-	/// @note This is a class which represents an hardware device.
+	/// @brief Device contract interface, represents an HW device.
 	/***********************************************************************************/
 	template <typename T>
 	class DeviceInterface
 	{
 	public:
 		explicit DeviceInterface(void (*Out)(T), void (*In)(T))
-			: fOut(Out), fIn(In)
-		{
-		}
+			: fOut(Out), fIn(In) {}
 
 		virtual ~DeviceInterface() = default;
 
@@ -86,18 +83,18 @@ namespace Kernel
 	};
 
 	///
-	/// @brief Input Output Buffer
+	/// @brief Input Output abstract class.
 	/// Used mainly to communicate between OS to hardware.
 	///
 	template <typename T>
 	class IOBuf final
 	{
 	public:
-		explicit IOBuf(T Dat)
-			: fData(Dat)
+		explicit IOBuf(T dma_addr)
+			: fData(dma_addr)
 		{
-			// at least pass something valid when instancating this struct.
-			MUST_PASS(Dat);
+			// At least pass something valid when instancating this struct.
+			MUST_PASS(fData);
 		}
 
 		IOBuf& operator=(const IOBuf<T>&) = default;
@@ -135,7 +132,7 @@ namespace Kernel
 		kDeviceTypeAHCI,
 		kDeviceTypeMBCI,
 		kDeviceTypeUSB,
-		kDeviceTypeMediaCtrl,
+		kDeviceTypeMediaCtrl, // MM controller
 		kDeviceTypeCount,
 	};
 } // namespace Kernel
