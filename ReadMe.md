@@ -4,7 +4,7 @@
 
 # Zeta Kernel Architecture.
 
-ZKA is an general purpose entreprise OS.
+ZKA is a general purpose OS kernel.
 </br>
 It is designed for heavy loads and low tolerance environements (such as servers)
 </br>
