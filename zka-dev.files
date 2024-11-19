@@ -260,7 +260,7 @@ dev/ZKAKit/StorageKit/ATA.h
 dev/ZKAKit/StorageKit/NVME.h
 dev/ZKAKit/StorageKit/PRDT.h
 dev/ZKAKit/StorageKit/SCSI.h
-dev/ZKAKit/StorageKit/Storage.h
+dev/ZKAKit/StorageKit/StorageKit.h
 dev/ZKAKit/amd64-efi.make
 dev/ZKAKit/arm64-efi.make
 dev/ZKAKit/doc/Explicit Partition Map.pdf
