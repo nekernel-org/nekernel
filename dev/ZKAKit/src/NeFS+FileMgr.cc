@@ -19,38 +19,39 @@ namespace Kernel
 	NeFileSystemMgr::NeFileSystemMgr()
 	{
 		MUST_PASS(Detail::fs_init_newfs());
-		fImpl = mm_new_class<NeFSParser>();
+		
+		NeFSParser* fImpl;
+		mm_new_class<NeFSParser>(&fImpl);
 		MUST_PASS(fImpl);
 
-		kcout << "We are done here... (NeFileSystemMgr).\r";
+		kcout << "We are done allocating NeFSParser...\r";
 	}
 
 	NeFileSystemMgr::~NeFileSystemMgr()
 	{
 		if (fImpl)
 		{
-			kcout << "Destroying FS class (NeFS)...\r";
+			kcout << "Destroying NeFSParser...\r";
 
-			delete fImpl;
-			fImpl = nullptr;
+			mm_delete_class(&fImpl);
 		}
 	}
 
 	/// @brief Removes a node from the filesystem.
-	/// @param fileName The filename
+	/// @param path The filename
 	/// @return If it was deleted or not.
-	bool NeFileSystemMgr::Remove(const Char* fileName)
+	bool NeFileSystemMgr::Remove(_Input const Char* path)
 	{
-		if (fileName == nullptr || *fileName == 0)
+		if (path == nullptr || *path == 0)
 			return false;
 
-		return fImpl->RemoveCatalog(fileName);
+		return fImpl->RemoveCatalog(path);
 	}
 
 	/// @brief Creates a node with the specified.
 	/// @param path The filename path.
 	/// @return The Node pointer.
-	NodePtr NeFileSystemMgr::Create(const Char* path)
+	NodePtr NeFileSystemMgr::Create(_Input const Char* path)
 	{
 		return node_cast(fImpl->CreateCatalog(path));
 	}

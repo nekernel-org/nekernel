@@ -96,11 +96,7 @@ Kernel::Void drv_calculate_disk_geometry()
 	}
 
 	// Retrieve the max LBA value
-	kCurrentDiskSectorCount = 0UL;
-	kCurrentDiskSectorCount |= identify_data[100];
-	kCurrentDiskSectorCount |= identify_data[101] << 16;
-	kCurrentDiskSectorCount |= identify_data[102] << 32;
-	kCurrentDiskSectorCount |= identify_data[103] << 48;
+	kCurrentDiskSectorCount = *(Kernel::UIntPtr*)identify_data;
 
 	kcout << "Max LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
 

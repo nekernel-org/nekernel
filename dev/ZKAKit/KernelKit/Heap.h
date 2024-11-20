@@ -9,10 +9,11 @@
 
 // last-rev 30/01/24
 // file: Heap.h
-// description: heap allocation for the Kernel.
+// description: heap allocation support.
 
-#include <NewKit/Defines.h>
 #include <NewKit/Stop.h>
+#include <KernelKit/LPC.h>
+#include <HintKit/CompilerHint.h>
 
 namespace Kernel
 {
@@ -58,19 +59,27 @@ namespace Kernel
 	UInt64 mm_get_flags(VoidPtr heap_ptr);
 
 	/// @brief Allocate C++ class.
+	/// @param cls The class to allocate.
+	/// @param args The args to pass.
 	template <typename T, typename... Args>
-	inline T* mm_new_class(Args&&... args)
+	inline Void mm_new_class(_Input _Output T** cls, _Input Args&&... args)
 	{
-		T* cls = new T(move(args)...);
-		return cls;
+		if (*cls)
+		{
+			ErrGlobal() = Kernel::kErrorInvalidData;
+			return;
+		}
+
+		*cls = new T(move(args)...);
 	}
 
-	/// @brief Free C++ class.
+	/// @brief Delete and nullify C++ class.
+	/// @param cls The class to delete.
 	template <typename T>
-	inline Void mm_delete_class(T* cls)
+	inline Void mm_delete_class(_Input _Output T** cls)
 	{
-		delete cls;
-		cls = nullptr;
+		delete *cls;
+		*cls = nullptr;
 	}
 } // namespace Kernel
 

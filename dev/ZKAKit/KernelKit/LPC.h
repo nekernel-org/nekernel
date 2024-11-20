@@ -15,9 +15,15 @@
 #define ErrLocalFailed() (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)
 #define ErrLocal()		 (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode())
 
+#define ErrGlobalIsOk()	 (Kernel::kErrorLocalNumber == Kernel::kErrorSuccess)
+#define ErrGlobalFailed() (Kernel::kErrorLocalNumber != Kernel::kErrorSuccess)
+#define ErrGlobal()		 (Kernel::kErrorLocalNumber)
+
 namespace Kernel
 {
 	typedef Int32 HError;
+
+	inline HError kErrorLocalNumber = 0UL;
 
 	inline constexpr HError kErrorSuccess			 = 0;
 	inline constexpr HError kErrorExecutable		 = 33;

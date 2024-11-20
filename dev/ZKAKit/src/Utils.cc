@@ -211,7 +211,7 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-EXTERN_C Kernel::VoidPtr memset(Kernel::VoidPtr dst, Kernel::UInt32 c, Kernel::Size len)
+EXTERN_C void* memset(void* dst, int c, __SIZE_TYPE__ len)
 {
 	return Kernel::rt_set_memory(dst, c, len);
 }

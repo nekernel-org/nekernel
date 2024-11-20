@@ -72,7 +72,7 @@ namespace Kernel
 		/// @brief Check for heap address validity.
 		/// @param heap_ptr The address_ptr to check.
 		/// @return Bool if the pointer is valid or not.
-		auto mm_check_heap_address(VoidPtr heap_ptr) -> Bool
+		_Output auto mm_check_heap_address(VoidPtr heap_ptr) -> Bool
 		{
 			if (!heap_ptr)
 				return false;
@@ -114,7 +114,7 @@ namespace Kernel
 	/// @param wr Read Write bit.
 	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
-	VoidPtr mm_new_heap(const SizeT sz, const bool wr, const bool user)
+	_Output VoidPtr mm_new_heap(const SizeT sz, const bool wr, const bool user)
 	{
 		auto sz_fix = sz;
 
@@ -154,7 +154,7 @@ namespace Kernel
 	/// @brief Makes a page heap.
 	/// @param heap_ptr the pointer to make a page heap.
 	/// @return kErrorSuccess if successful, otherwise an error code.
-	Int32 mm_make_page(VoidPtr heap_ptr)
+	_Output Int32 mm_make_page(VoidPtr heap_ptr)
 	{
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return kErrorHeapNotPresent;
@@ -176,7 +176,7 @@ namespace Kernel
 	/// @brief Overwrites and set the flags of a heap header.
 	/// @param heap_ptr the pointer to update.
 	/// @param flags the flags to set.
-	Int32 mm_make_flags(VoidPtr heap_ptr, UInt64 flags)
+	_Output Int32 mm_make_flags(VoidPtr heap_ptr, UInt64 flags)
 	{
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return kErrorHeapNotPresent;
@@ -195,7 +195,7 @@ namespace Kernel
 
 	/// @brief Gets the flags of a heap header.
 	/// @param heap_ptr the pointer to get.
-	UInt64 mm_get_flags(VoidPtr heap_ptr)
+	_Output UInt64 mm_get_flags(VoidPtr heap_ptr)
 	{
 		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
@@ -210,7 +210,7 @@ namespace Kernel
 	/// @brief Declare pointer as free.
 	/// @param heap_ptr the pointer.
 	/// @return
-	Int32 mm_delete_heap(VoidPtr heap_ptr)
+	_Output Int32 mm_delete_heap(VoidPtr heap_ptr)
 	{
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return kErrorHeapNotPresent;
@@ -264,7 +264,7 @@ namespace Kernel
 	/// @brief Check if pointer is a valid Kernel pointer.
 	/// @param heap_ptr the pointer
 	/// @return if it exists.
-	Boolean mm_is_valid_heap(VoidPtr heap_ptr)
+	_Output Boolean mm_is_valid_heap(VoidPtr heap_ptr)
 	{
 		if (heap_ptr)
 		{

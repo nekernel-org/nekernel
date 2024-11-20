@@ -61,6 +61,8 @@ namespace Kernel
 		}
 	} // namespace Detail
 
+	TerminalDevice::~TerminalDevice() = default;
+
 	EXTERN_C void ke_io_write(const Char* bytes)
 	{
 #ifdef __DEBUG__

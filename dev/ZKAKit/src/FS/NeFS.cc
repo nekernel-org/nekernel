@@ -1033,15 +1033,15 @@ namespace Kernel::Detail
 	/***********************************************************************************/
 	Boolean fs_init_newfs(Void) noexcept
 	{
-		kcout << "Creating drives...\r";
-		kcout << "Constructing A:\r";
+		kcout << "Creating A: drive...\r";
+		kcout << "Creating A:\r";
 
 		kDiskMountpoint.A() = io_construct_main_drive();
 		kDiskMountpoint.B() = io_construct_drive();
 		kDiskMountpoint.C() = io_construct_drive();
 		kDiskMountpoint.D() = io_construct_drive();
 
-		kcout << "Constructing A: [ OK ]\r";
+		kcout << "Creating A: [ OK ]\r";
 
 		return true;
 	}

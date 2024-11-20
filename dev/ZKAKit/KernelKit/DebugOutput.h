@@ -11,7 +11,7 @@
 #include <NewKit/OwnPtr.h>
 #include <NewKit/Stream.h>
 
-#define kDebugMaxPorts 16
+#define kDebugMaxPorts 56
 
 #define kDebugUnboundPort 0x0FEED
 
@@ -35,7 +35,7 @@ namespace Kernel
 	inline TerminalDevice hex_number(const Long& x);
 
 	// @brief Emulates a VT100 terminal.
-	class TerminalDevice final : public DeviceInterface<const Char*>
+	class TerminalDevice final ZKA_DEVICE<const Char*>
 	{
 	public:
 		TerminalDevice(void (*print)(const Char*), void (*get)(const Char*))
@@ -43,7 +43,7 @@ namespace Kernel
 		{
 		}
 
-		virtual ~TerminalDevice() = default;
+		~TerminalDevice() override;
 
 		/// @brief returns device name (terminal name)
 		/// @return string type (const Char*)
