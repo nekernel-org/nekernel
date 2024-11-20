@@ -1,6 +1,6 @@
 # Kernel Modules.
 
-## Why?
+## About:
 
 They are pluggable modules for builtin hardware support.
 
