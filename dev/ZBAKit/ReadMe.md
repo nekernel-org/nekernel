@@ -8,7 +8,7 @@ You need:
 Start by cloning the repo:
 
 ```
-git clone git@bitbucket.org:mahrouss/microKernel.git
+git clone git@github.com:ElMahroussLogic/zka-dev.git
 ```
 
 And then execute:

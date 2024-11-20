@@ -130,7 +130,7 @@ namespace Kernel
 	public:
 		/// @brief Returns the amount of threads present in the system.
 		/// @returns SizeT the amount of cores present.
-		SizeT Count() noexcept;
+		SizeT Capacity() noexcept;
 
 	private:
 		Array<HardwareThread, kMaxHartInsideSched> fThreadList;

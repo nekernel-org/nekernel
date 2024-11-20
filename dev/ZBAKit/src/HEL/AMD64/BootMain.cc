@@ -155,7 +155,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
 #ifdef ZBA_USE_FB
-	CGDrawString("ZBA (c) EL Mahrouss Logic", 10, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString("ZBA (c) EL Mahrouss Logic.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "SMP detected." : "Single processor configuration detected.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 
@@ -173,7 +173,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 #ifdef ZKA_AUTO_FORMAT
 	if (!partition_factory.IsPartitionValid())
 	{
-		CGDrawString("Formatting EPM disk...", 20, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("Formatting EPM disk...", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
 		root.fFileName[0] = kNeFSRoot[0];
@@ -187,7 +187,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	}
 	else
 	{
-		CGDrawString("Booting from EPM disk...", 20, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("Booting from EPM disk...", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 	}
 #endif // ZKA_AUTO_FORMAT
 

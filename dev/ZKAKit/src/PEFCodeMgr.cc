@@ -273,7 +273,7 @@ namespace Kernel
 				proc.StackSize					= mib_cast(cDefaultStackSizeMib);
 			}
 
-			return UserProcessScheduler::The().Add(&proc);
+			return UserProcessScheduler::The().Spawn(&proc);
 		}
 	} // namespace Utils
 } // namespace Kernel

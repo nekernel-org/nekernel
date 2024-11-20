@@ -32,9 +32,7 @@ IMG_3=epm-master-2.img
 EMU_FLAGS=-net none -smp 1 -m 8G -M q35 \
 			-bios $(BIOS) -drive \
 			file=fat:rw:src/Root/,index=2,format=raw \
-			-drive id=disk_2,file=$(IMG),if=none \
-            -device ahci,id=ahci \
-            -device ide-hd,drive=disk_2,bus=ahci.0 -serial stdio -no-shutdown -no-reboot 
+            -serial stdio -no-shutdown -no-reboot 
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -47,7 +45,9 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEWOSKRNL__ -D__NEWOSLDR__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../ZKAKit -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__HAVE_ZKA_APIS__ -DZBA_USE_FB -D__ZKA_AMD64__ -D__ZKA__
+                        -std=c++20 -D__HAVE_ZKA_APIS__ -DZBA_USE_FB -D__ZKA_AMD64__ -D__ZKA__ 
+
+# -DZKA_AUTO_FORMAT
 
 BOOTLOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe
@@ -83,11 +83,15 @@ compile-amd64:
 	$(wildcard src/HEL/AMD64/*.S) \
 	$(wildcard src/*.cc)
 
-.PHONY: run-efi-amd64
-run-efi-amd64:
-	$(EMU) $(EMU_FLAGS)
+.PHONY: run-efi-amd64-ahci
+run-efi-amd64-ahci:
+	$(EMU) $(EMU_FLAGS) -hdd $(IMG)
 
-# img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta.
+.PHONY: run-efi-amd64-ata
+run-efi-amd64-ata:
+	$(EMU) $(EMU_FLAGS) -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0
+
+# img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta specs.
 .PHONY: epm-img
 epm-img:
 	qemu-img create -f raw $(IMG) 10G

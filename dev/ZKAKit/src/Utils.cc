@@ -215,3 +215,8 @@ EXTERN_C void* memset(void* dst, int c, __SIZE_TYPE__ len)
 {
 	return Kernel::rt_set_memory(dst, c, len);
 }
+
+EXTERN_C __UINT32_TYPE__ memcpy(void* dst, void* src, __SIZE_TYPE__ len)
+{
+	return Kernel::rt_copy_memory(src, dst, len);
+}

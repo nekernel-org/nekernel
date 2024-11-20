@@ -21,18 +21,19 @@ namespace Kernel
 		if (!main)
 			return No;
 
-		static UserProcess proc;
+		UserProcess* process_hdr = new UserProcess();
 
 		kcout << "Setting-up process data...\r";
 
-		proc.Code	   = reinterpret_cast<VoidPtr>(main);
-		proc.Kind	   = UserProcess::kExectuableKind;
-		proc.StackSize = kib_cast(16);
+		process_hdr->Code	   = reinterpret_cast<VoidPtr>(main);
+		process_hdr->Kind	   = UserProcess::kExectuableKind;
+		process_hdr->StackSize = kib_cast(16);
 
-		rt_set_memory(proc.Name, 0, kProcessNameLen);
-		rt_copy_memory((VoidPtr)process_name, proc.Name, rt_string_len(process_name));
+		rt_set_memory(process_hdr->Name, 0, kProcessNameLen);
 
-		ProcessID id = UserProcessScheduler::The().Add(&proc);
+		ProcessID id = UserProcessScheduler::The().Spawn(process_hdr);
+
+		delete process_hdr;
 
 		return id;
 	}

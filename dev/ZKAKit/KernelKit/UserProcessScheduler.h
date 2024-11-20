@@ -39,7 +39,7 @@ namespace Kernel
 	typedef Int64 ProcessID;
 
 	//! @brief Local Process name length.
-	inline constexpr SizeT kProcessNameLen = 4096U;
+	inline constexpr SizeT kProcessNameLen = 129U;
 
 	//! @brief Local Process status enum.
 	enum class ProcessStatusKind : Int32
@@ -141,7 +141,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcess);
 
 	public:
-		Char			   Name[kProcessNameLen] = {"Application Process (Unnamed)"};
+		Char			   Name[kProcessNameLen] = {"Process (Unnamed)"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
@@ -277,7 +277,7 @@ namespace Kernel
 		UserProcessTeam& CurrentTeam();
 
 	public:
-		ProcessID  Add(UserProcess* process);
+		ProcessID  Spawn(UserProcess* process);
 		const Bool Remove(ProcessID process_id);
 
 		const Bool IsUser() override;
@@ -306,6 +306,7 @@ namespace Kernel
 		STATIC Bool CanBeScheduled(const UserProcess& process);
 		STATIC ErrorOr<PID> TheCurrentPID();
 		STATIC SizeT		StartScheduling();
+		STATIC Void 		InitScheduler();
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

@@ -121,7 +121,7 @@
 #define BREAK_POINT() asm volatile ("int $3")
 
 /// @brief The system page file, located on the mount directory, as mulitple system pages can be mounted.
-#define kPageSys "/Mount/syspage.sys"
+#define kPageSys "/Disks/syspage.sys"
 
 /// @brief The main system driver.
 #define kStartupSys "/Boot/startup.sys"

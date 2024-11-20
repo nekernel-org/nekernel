@@ -56,12 +56,12 @@ namespace Kernel
 		/// @brief Packet drive (StorageKit compilant.)
 		struct DrivePacket final
 		{
-			Ref<VoidPtr> fPacketContent;			 //! packet body.
-			Char		 fPacketMime[kDriveNameLen]; //! identify what we're sending.
-			SizeT		 fPacketSize;				 //! packet size
-			UInt32		 fPacketCRC32;				 //! sanity crc, in case if good is set to false
-			Boolean		 fPacketGood;
-			Lba			 fLba;
+			VoidPtr fPacketContent;				//! packet body.
+			Char	fPacketMime[kDriveNameLen]; //! identify what we're sending.
+			SizeT	fPacketSize;				//! packet size
+			UInt32	fPacketCRC32;				//! sanity crc, in case if good is set to false
+			Boolean fPacketGood;
+			Lba		fLba;
 		} fPacket;
 
 		Void (*fInput)(DrivePacket* packetPtr);

@@ -192,7 +192,7 @@ namespace Kernel
 
 	/// @brief Returns the amount of core present.
 	/// @return the number of cores.
-	SizeT HardwareThreadScheduler::Count() noexcept
+	SizeT HardwareThreadScheduler::Capacity() noexcept
 	{
 		return fThreadList.Capacity();
 	}

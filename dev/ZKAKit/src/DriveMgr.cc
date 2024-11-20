@@ -33,9 +33,9 @@ namespace Kernel
 		}
 
 #ifdef __AHCI__
-		drv_std_read(pckt->fLba, (Char*)pckt->fPacketContent.Leak(), kAHCISectorSize, pckt->fPacketSize);
+		drv_std_read(pckt->fLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent.Leak(), kATASectorSize, pckt->fPacketSize);
+		drv_std_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
 #endif
 	}
 
@@ -50,9 +50,9 @@ namespace Kernel
 		}
 
 #ifdef __AHCI__
-		drv_std_write(pckt->fLba, (Char*)pckt->fPacketContent.Leak(), kAHCISectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent.Leak(), kATASectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
 #endif
 	}
 
@@ -66,23 +66,32 @@ namespace Kernel
 			return;
 		}
 
-		pckt->fPacketGood = false;
+		kATAMaster = 0;
+		kATAIO	   = 0;
 
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 		kATAMaster = true;
 		kATAIO	   = ATA_PRIMARY_IO;
 
+		if (drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster))
+		{
+			pckt->fPacketGood = YES;
+			return;
+		}
+
+		kATAMaster = false;
+		kATAIO	   = ATA_SECONDARY_IO;
+
 		if (!drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster))
 			return;
 
+		pckt->fPacketGood = YES;
 #elif defined(__AHCI__)
 		UInt16 pi = 0;
 
 		if (!drv_std_init(pi))
 			return;
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
-
-		pckt->fPacketGood = true;
 	}
 
 /// @brief Gets the drive kind (ATA, SCSI, AHCI...)
@@ -127,7 +136,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "/Mount/NUL:", trait.fName, rt_string_len("/Mount/NUL:"));
+		rt_copy_memory((VoidPtr) "/Disks/NUL:", trait.fName, rt_string_len("/Disks/NUL:"));
 		trait.fKind = kInvalidStorage;
 
 		trait.fInput	 = io_drv_unimplemented;
@@ -143,33 +152,39 @@ namespace Kernel
 
 	namespace Detail
 	{
-		Void ioi_detect_drive(DriveTrait& trait)
+		Void ioi_detect_drive(DriveTrait* trait)
 		{
-			_BOOT_BLOCK_STRUCT block_struct;
+			static _BOOT_BLOCK_STRUCT block_struct;
 
-			trait.fPacket.fLba			 = kEPMBaseLba;
-			trait.fPacket.fPacketSize	 = sizeof(_BOOT_BLOCK_STRUCT);
-			trait.fPacket.fPacketContent = &block_struct;
+			trait->fPacket.fLba			  = kEPMBaseLba;
+			trait->fPacket.fPacketSize	  = sizeof(_BOOT_BLOCK_STRUCT);
+			trait->fPacket.fPacketContent = &block_struct;
 
-			trait.fInit(&trait.fPacket);
-			io_drv_input(&trait.fPacket);
+			rt_copy_memory((VoidPtr) "fs/detect-packet", trait->fPacket.fPacketMime,
+						   rt_string_len("fs/detect-packet"));
 
-			trait.fKind = kMassStorage;
+			trait->fInit(&trait->fPacket);
 
-			if (rt_string_cmp(block_struct.Magic, kEPMMagic, kEPMMagicLength) == 0)
+			trait->fInput(&trait->fPacket);
+
+			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait->fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
-				trait.fKind |= kEPMDrive;
+				trait->fKind = kMassStorage;
+				trait->fKind |= kEPMDrive;
 				kcout << "Formatted drive is EPM.\r";
 			}
 			else
 			{
-				trait.fKind |= kUnformattedDrive;
-				kcout << "Formatted drive is blank.\r";
+				trait->fKind = kUnformattedDrive;
+				kcout << "Scheme Found: " << block_struct.Name << endl;
+
+				if (block_struct.Name[0] == 0)
+					kcout << "Formatted drive is blank.\r";
 			}
 
-			trait.fPacket.fLba			 = 0;
-			trait.fPacket.fPacketSize	 = 0UL;
-			trait.fPacket.fPacketContent = nullptr;
+			trait->fPacket.fLba			  = 0;
+			trait->fPacket.fPacketSize	  = 0UL;
+			trait->fPacket.fPacketContent = nullptr;
 		}
 	} // namespace Detail
 
@@ -179,7 +194,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "/Mount/OS:", trait.fName, rt_string_len("/Mount/OS:"));
+		rt_copy_memory((VoidPtr) "/Disks/OS:", trait.fName, rt_string_len("/Disks/OS:"));
 
 		trait.fVerify	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_output;
@@ -187,9 +202,12 @@ namespace Kernel
 		trait.fInit		 = io_drv_init;
 		trait.fDriveKind = io_drv_kind;
 
-		Detail::ioi_detect_drive(trait);
+		kcout << "Detect partiton scheme of: " << trait.fName << ".\r";
 
-		kcout << "Construct: " << trait.fName << ".\r";
+		Detail::ioi_detect_drive(&trait);
+
+		while (YES)
+			;
 
 		return trait;
 	}

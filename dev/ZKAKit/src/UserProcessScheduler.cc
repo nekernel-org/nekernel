@@ -32,19 +32,13 @@ namespace Kernel
 	/// @brief Exit Code global variable.
 	/***********************************************************************************/
 
-	UInt32 kLastExitCode = 0U;
-
-	/***********************************************************************************/
-	/// @brief Process count global variable.
-	/***********************************************************************************/
-
-	ProcessID kProcessIDCounter = 0UL;
+	STATIC UInt32 kLastExitCode = 0U;
 
 	/***********************************************************************************/
 	/// @brief User Process scheduler global and external reference of thread scheduler.
 	/***********************************************************************************/
 
-	UserProcessScheduler kProcessScheduler;
+	STATIC UserProcessScheduler kProcessScheduler;
 
 	UserProcess::UserProcess(VoidPtr start_image)
 		: Code(start_image)
@@ -314,7 +308,6 @@ namespace Kernel
 			mm_delete_heap(reinterpret_cast<VoidPtr>(this->StackReserve));
 
 		this->ProcessId = 0;
-		--kProcessIDCounter;
 	}
 
 	/***********************************************************************************/
@@ -323,11 +316,11 @@ namespace Kernel
 	/// @return the process index inside the team.
 	/***********************************************************************************/
 
-	ProcessID UserProcessScheduler::Add(UserProcess* process)
+	ProcessID UserProcessScheduler::Spawn(UserProcess* process)
 	{
 		if (*process->Name == 0)
 		{
-			Char process_name[] = "System Process";
+			Char process_name[] = "Process (Unnamed)";
 			rt_copy_memory((VoidPtr)process_name, process->Name, rt_string_len(process_name));
 		}
 
@@ -378,18 +371,16 @@ namespace Kernel
 
 		kcout << "Create stack reserve for: " << process->Name << endl;
 
-		auto pid = kProcessIDCounter;
+		auto pid = mTeam.mProcessList.Count();
 
 		process->ProcessId = pid;
 		process->Status	   = ProcessStatusKind::kRunning;
 		process->PTime	   = (UIntPtr)AffinityKind::kStandard;
 
-		mTeam.AsArray().Assign(pid, *process);
+		mTeam.mProcessList.Assign(pid, *process);
 
-		kcout << "Process Name: " << mTeam.AsArray()[pid].Name << endl;
-		kcout << "PID: " << number(mTeam.AsArray()[pid].ProcessId) << endl;
-
-		++kProcessIDCounter;
+		kcout << "Process Name: " << mTeam.mProcessList[pid].Name << endl;
+		kcout << "PID: " << number(mTeam.mProcessList[pid].ProcessId) << endl;
 
 		return pid;
 	}
@@ -539,12 +530,22 @@ namespace Kernel
 
 	/***********************************************************************************/
 	/**
-	 * @brief Start scheduling current AP/Hart/Core.
+	 * @brief Start scheduling current AP.
 	 */
 	/***********************************************************************************/
 	SizeT UserProcessHelper::StartScheduling()
 	{
 		return kProcessScheduler.Run();
+	}
+
+	/***********************************************************************************/
+	/**
+	 * @brief Initializes the scheduler.
+	 */
+	/***********************************************************************************/
+	Void UserProcessHelper::InitScheduler()
+	{
+		/// TODO: code to init scheduler here.
 	}
 
 	/***********************************************************************************/
@@ -563,7 +564,7 @@ namespace Kernel
 		if (!mm_is_valid_heap(image_ptr))
 			return No;
 
-		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Count(); ++index)
+		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index)
 		{
 			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidHart)
 				continue;
