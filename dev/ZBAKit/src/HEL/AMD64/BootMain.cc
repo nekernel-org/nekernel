@@ -86,8 +86,8 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 {
 	InitEFI(SystemTable); ///! Init the EFI library.
 
-	HEL::HANDOVER_INFO_HEADER* handover_hdr =
-		new HEL::HANDOVER_INFO_HEADER();
+	HEL::BootInfoHeader* handover_hdr =
+		new HEL::BootInfoHeader();
 
 	UInt32				 map_key		 = 0;
 	UInt32				 size_struct_ptr = sizeof(EfiMemoryDescriptor);

@@ -9,7 +9,7 @@
 
 #include <BootKit/BootKit.h>
 
-EXTERN_C Int32 ModuleMain(Kernel::HEL::HANDOVER_INFO_HEADER* Handover)
+EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* Handover)
 {
 	EfiSystemTable* system_table = (EfiSystemTable*)Handover->f_FirmwareCustomTables[1];
 

@@ -12,26 +12,26 @@ using namespace Kernel;
 
 /// @internal
 /// @brief The internal sanitize function.
-Bool ipc_int_sanitize_packet(IPC_MESSAGE_STRUCT* pckt)
+Bool ipc_int_sanitize_packet(IPCMessage* pckt)
 {
-	auto endian = DEDUCE_ENDIAN(pckt, ((Char*)pckt)[0]);
+	auto endian = rtl_deduce_endianess(pckt, ((Char*)pckt)[0]);
 
 	switch (endian)
 	{
 	case Endian::kEndianBig: {
-		if (pckt->IpcEndianess == eIPCEPLittleEndian)
+		if (pckt->IpcEndianess == kIPCLittleEndian)
 			goto ipc_check_failed;
 
 		break;
 	}
 	case Endian::kEndianLittle: {
-		if (pckt->IpcEndianess == eIPCEPBigEndian)
+		if (pckt->IpcEndianess == kIPCBigEndian)
 			goto ipc_check_failed;
 
 		break;
 	}
 	case Endian::kEndianMixed: {
-		if (pckt->IpcEndianess == eIPCEPMixedEndian)
+		if (pckt->IpcEndianess == kIPCMixedEndian)
 			goto ipc_check_failed;
 
 		break;
@@ -41,12 +41,12 @@ Bool ipc_int_sanitize_packet(IPC_MESSAGE_STRUCT* pckt)
 	}
 
 	if (pckt->IpcFrom == pckt->IpcTo ||
-		pckt->IpcPacketSize > cXPCOMMsgSize)
+		pckt->IpcPacketSize > kIPCMsgSize)
 	{
 		goto ipc_check_failed;
 	}
 
-	return pckt->IpcPacketSize > 1 && pckt->IpcHeaderMagic == cXPCOMHeaderMagic;
+	return pckt->IpcPacketSize > 1 && pckt->IpcHeaderMagic == kIPCHeaderMagic;
 
 ipc_check_failed:
 	ErrLocal() = kErrorIPC;
@@ -58,7 +58,7 @@ namespace Kernel
 	/// @brief Sanitize packet function
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
-	Bool ipc_sanitize_packet(IPC_MESSAGE_STRUCT* pckt)
+	Bool ipc_sanitize_packet(IPCMessage* pckt)
 	{
 		if (!pckt ||
 			!ipc_int_sanitize_packet(pckt))
@@ -73,7 +73,7 @@ namespace Kernel
 	/// @brief Construct packet function
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
-	Bool ipc_construct_packet(_Output IPC_MESSAGE_STRUCT** pckt_in)
+	Bool ipc_construct_packet(_Output IPCMessage** pckt_in)
 	{
 		// don't do anything if it's valid already.
 		if (*pckt_in)
@@ -86,18 +86,16 @@ namespace Kernel
 			return false;
 		}
 
-		*pckt_in = new IPC_MESSAGE_STRUCT();
-
-		MUST_PASS((*pckt_in));
+		*pckt_in = new IPCMessage();
 
 		if (*pckt_in)
 		{
-			auto endian = DEDUCE_ENDIAN((*pckt_in), ((Char*)(*pckt_in))[0]);
+			auto endian = rtl_deduce_endianess((*pckt_in), ((Char*)(*pckt_in))[0]);
 
-			(*pckt_in)->IpcHeaderMagic = cXPCOMHeaderMagic;
+			(*pckt_in)->IpcHeaderMagic = kIPCHeaderMagic;
 
 			(*pckt_in)->IpcEndianess  = static_cast<UInt8>(endian);
-			(*pckt_in)->IpcPacketSize = sizeof(IPC_MESSAGE_STRUCT);
+			(*pckt_in)->IpcPacketSize = sizeof(IPCMessage);
 
 			(*pckt_in)->IpcTo.UserProcessID	  = 0;
 			(*pckt_in)->IpcTo.UserProcessTeam = 0;
@@ -105,10 +103,9 @@ namespace Kernel
 			(*pckt_in)->IpcFrom.UserProcessID	= Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId;
 			(*pckt_in)->IpcFrom.UserProcessTeam = Kernel::UserProcessScheduler::The().CurrentTeam().mTeamId;
 
-			return true;
+			return Yes;
 		}
 
-		UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
-		return false;
+		return No;
 	}
 } // namespace Kernel

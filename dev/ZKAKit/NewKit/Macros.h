@@ -140,7 +140,7 @@
 /// @brief The main system loader.
 #define kUserName "ZKA AUTHORITY/KERNEL"
 
-#define DEDUCE_ENDIAN(address, value)                           \
+#define rtl_deduce_endianess(address, value)                           \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))

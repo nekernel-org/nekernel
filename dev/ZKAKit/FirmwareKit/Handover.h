@@ -24,11 +24,7 @@
 
 /* Initial bitmap pointer location and size. */
 #define kHandoverBitMapSz (gib_cast(4))
-
-/* Executable base */
-#define kHandoverExecBase (0x4000000)
-
-#define kHandoverStructSz sizeof(HEL::HANDOVER_INFO_HEADER)
+#define kHandoverStructSz sizeof(HEL::BootInfoHeader)
 
 namespace Kernel::HEL
 {
@@ -56,7 +52,7 @@ namespace Kernel::HEL
 		kArchCount = 3,
 	};
 
-	struct HANDOVER_INFO_HEADER final
+	struct BootInfoHeader final
 	{
 		UInt64 f_Magic;
 		UInt64 f_Version;
@@ -109,8 +105,8 @@ namespace Kernel::HEL
 	};
 
 	/// @brief Alias of bootloader main type.
-	typedef void (*HandoverProc)(HANDOVER_INFO_HEADER* handoverInfo);
+	typedef void (*HandoverProc)(BootInfoHeader* boot_info);
 } // namespace Kernel::HEL
 
-/// @brief Bootloader global header.
-inline Kernel::HEL::HANDOVER_INFO_HEADER* kHandoverHeader = nullptr;
+/// @brief Bootloader information header global variable.
+inline Kernel::HEL::BootInfoHeader* kHandoverHeader = nullptr;

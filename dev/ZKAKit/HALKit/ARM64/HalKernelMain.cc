@@ -21,14 +21,14 @@ Kernel::Void hal_real_init(Kernel::Void) noexcept;
 EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
 
 EXTERN_C void hal_init_platform(
-	Kernel::HEL::HANDOVER_INFO_HEADER* HandoverHeader)
+	Kernel::HEL::BootInfoHeader* handover_hdr)
 {
 
 	/************************************************** */
 	/*     INITIALIZE AND VALIDATE HEADER.              */
 	/************************************************** */
 
-	kHandoverHeader = HandoverHeader;
+	kHandoverHeader = handover_hdr;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
 		kHandoverHeader->f_Version != kHandoverVersion)

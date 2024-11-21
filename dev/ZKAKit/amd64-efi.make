@@ -55,7 +55,7 @@ newos-amd64-epm: clean
 	$(CC) $(CCFLAGS) $(DISK_DRV) $(DEBUG_MACRO) $(wildcard src/*.cc) \
 	       $(wildcard src/FS/*.cc) $(wildcard HALKit/AMD64/Storage/*.cc) \
 			$(wildcard HALKit/AMD64/PCI/*.cc) $(wildcard src/Network/*.cc) $(wildcard src/Storage/*.cc) \
-			$(wildcard HALKit/AMD64/*.cc) $(wildcard HALKit/AMD64/*.cpp) \
+			$(wildcard HALKit/AMD64/*.cc) $(wildcard src/WS/*.cc) \
 			$(wildcard HALKit/AMD64/*.s)
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalBoot.asm

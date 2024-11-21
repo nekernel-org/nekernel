@@ -31,9 +31,9 @@ STATIC Kernel::Void hal_init_cxx_ctors()
 
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
-	Kernel::HEL::HANDOVER_INFO_HEADER* HandoverHeader)
+	Kernel::HEL::BootInfoHeader* handover_hdr)
 {
-	kHandoverHeader = HandoverHeader;
+	kHandoverHeader = handover_hdr;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
 		kHandoverHeader->f_Version != kHandoverVersion)

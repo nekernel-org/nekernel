@@ -22,7 +22,7 @@ EXTERN EfiBootServices* BS;
 
 namespace Boot
 {
-	EXTERN_C Void rt_jump_to_address(VoidPtr code, HEL::HANDOVER_INFO_HEADER* handover, UInt8* stack);
+	EXTERN_C Void rt_jump_to_address(VoidPtr code, HEL::BootInfoHeader* handover, UInt8* stack);
 
 	BThread::BThread(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
@@ -167,9 +167,9 @@ namespace Boot
 	}
 
 	/// @note handover header has to be valid!
-	Void BThread::Start(HEL::HANDOVER_INFO_HEADER* handover, Bool own_stack)
+	Void BThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
 	{
-		HEL::HandoverProc err_fn = [](HEL::HANDOVER_INFO_HEADER* rcx) -> void {
+		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> void {
 			CGDrawString("ZBA: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			::EFI::Stop();
 		};
