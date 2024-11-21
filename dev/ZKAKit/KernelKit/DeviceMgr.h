@@ -24,39 +24,39 @@
 
 #define kDeviceMgrRootDirPath "/Devices/"
 
-#define ZKA_DEVICE : public ::Kernel::DeviceInterface
+#define ZKA_DEVICE : public ::Kernel::IDeviceObject
 
 // Last Rev: Wed, Apr  3, 2024  9:09:41 AM
 
 namespace Kernel
 {
 	template <typename T>
-	class DeviceInterface;
+	class IDeviceObject;
 
 	/***********************************************************************************/
 	/// @brief Device contract interface, represents an HW device.
 	/***********************************************************************************/
 	template <typename T>
-	class DeviceInterface
+	class IDeviceObject
 	{
 	public:
-		explicit DeviceInterface(void (*Out)(T), void (*In)(T))
+		explicit IDeviceObject(void (*Out)(T), void (*In)(T))
 			: fOut(Out), fIn(In) {}
 
-		virtual ~DeviceInterface() = default;
+		virtual ~IDeviceObject() = default;
 
 	public:
-		DeviceInterface& operator=(const DeviceInterface<T>&) = default;
-		DeviceInterface(const DeviceInterface<T>&)			  = default;
+		IDeviceObject& operator=(const IDeviceObject<T>&) = default;
+		IDeviceObject(const IDeviceObject<T>&)			  = default;
 
 	public:
-		virtual DeviceInterface<T>& operator<<(T Data)
+		virtual IDeviceObject<T>& operator<<(T Data)
 		{
 			fOut(Data);
 			return *this;
 		}
 
-		virtual DeviceInterface<T>& operator>>(T Data)
+		virtual IDeviceObject<T>& operator>>(T Data)
 		{
 			fIn(Data);
 			return *this;
@@ -64,7 +64,7 @@ namespace Kernel
 
 		virtual const char* Name() const
 		{
-			return "DeviceInterface";
+			return "IDeviceObject";
 		}
 
 		operator bool()

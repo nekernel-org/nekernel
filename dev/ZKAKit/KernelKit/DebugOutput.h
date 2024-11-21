@@ -39,7 +39,7 @@ namespace Kernel
 	{
 	public:
 		TerminalDevice(void (*print)(const Char*), void (*get)(const Char*))
-			: DeviceInterface<const Char*>(print, get)
+			: IDeviceObject<const Char*>(print, get)
 		{
 		}
 

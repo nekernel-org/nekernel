@@ -40,11 +40,7 @@ namespace Kernel
 
 	STATIC UserProcessScheduler kProcessScheduler;
 
-	UserProcess::UserProcess(VoidPtr start_image)
-		: Code(start_image)
-	{
-	}
-
+	UserProcess::UserProcess() = default;
 	UserProcess::~UserProcess() = default;
 
 	/// @brief Gets the last exit code.
@@ -278,23 +274,24 @@ namespace Kernel
 		HAL::mm_free_bitmap(this->VMRegister);
 
 		//! Delete image if not done already.
-		if (this->Code && mm_is_valid_heap(this->Code))
-			mm_delete_heap(this->Code);
+		if (this->Image.fCode && mm_is_valid_heap(this->Image.fCode))
+			mm_delete_heap(this->Image.fCode);
 
-		if (this->ExecImg && mm_is_valid_heap(this->ExecImg))
-			mm_delete_heap(this->ExecImg);
+		if (this->Image.fBlob && mm_is_valid_heap(this->Image.fBlob))
+			mm_delete_heap(this->Image.fBlob);
 
 		if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
 			mm_delete_heap((VoidPtr)this->StackFrame);
 
-		this->ExecImg	 = nullptr;
-		this->Code		 = nullptr;
+		this->Image.fBlob	 = nullptr;
+		this->Image.fCode		 = nullptr;
 		this->StackFrame = nullptr;
 
 		if (this->Kind == kExectuableDLLKind)
 		{
 			Bool success = false;
-			rtl_fini_dll(this, this->PefDLLDelegate, &success);
+			
+			rtl_fini_dll(this, reinterpret_cast<IPEFDLLObject*>(this->PefDLLDelegate), &success);
 
 			if (!success)
 			{
@@ -318,10 +315,10 @@ namespace Kernel
 
 	ProcessID UserProcessScheduler::Spawn(UserProcess* process)
 	{
-		if (*process->Name == 0)
+		if (!process ||
+			*process->Name == 0)
 		{
-			Char process_name[] = "Process (Unnamed)";
-			rt_copy_memory((VoidPtr)process_name, process->Name, rt_string_len(process_name));
+			return kProcessInvalidID;
 		}
 
 #ifdef __ZKA_AMD64__
@@ -391,7 +388,6 @@ namespace Kernel
 
 	UserProcessScheduler& UserProcessScheduler::The()
 	{
-		kcout << "Return user scheduler object.\r";
 		return kProcessScheduler;
 	}
 
@@ -466,7 +462,7 @@ namespace Kernel
 				kcout << "Switch to '" << process.Name << "'.\r";
 
 				// tell helper to find a core to schedule on.
-				if (!UserProcessHelper::Switch(process.Code, &process.StackReserve[process.StackSize - 1], process.StackFrame,
+				if (!UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
 											   process.ProcessId))
 				{
 					process.Crash();
@@ -522,7 +518,7 @@ namespace Kernel
 		if (process.Status == ProcessStatusKind::kInvalid)
 			return No;
 
-		if (!process.Code)
+		if (!process.Image.fCode)
 			return No;
 
 		return process.PTime < 1;
@@ -537,17 +533,7 @@ namespace Kernel
 	{
 		return kProcessScheduler.Run();
 	}
-
-	/***********************************************************************************/
-	/**
-	 * @brief Initializes the scheduler.
-	 */
-	/***********************************************************************************/
-	Void UserProcessHelper::InitScheduler()
-	{
-		/// TODO: code to init scheduler here.
-	}
-
+	
 	/***********************************************************************************/
 	/**
 	 * \brief Does a context switch in a CPU.
@@ -588,7 +574,6 @@ namespace Kernel
 				////////////////////////////////////////////////////////////
 				///	Rollback on fail.    								 ///
 				////////////////////////////////////////////////////////////
-				///
 				if (!ret)
 				{
 					HardwareThreadScheduler::The()[index].Leak()->fPTime = prev_ptime;

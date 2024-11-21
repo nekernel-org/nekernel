@@ -251,13 +251,13 @@ namespace Kernel
 			auto errOrStart = exec.FindStart();
 
 			if (errOrStart.Error() != kErrorSuccess)
-				return No;
+				return kProcessInvalidID;
 
 			STATIC UserProcess proc;
 
 			proc.Kind		 = procKind;
-			proc.ExecImg	 = errOrStart.Leak().Leak();
-			proc.ExecImg	 = exec.GetBlob().Leak().Leak();
+			proc.Image.fCode	 = errOrStart.Leak().Leak();
+			proc.Image.fBlob	 = exec.GetBlob().Leak().Leak();
 			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
 			proc.PTime		 = 0UL;

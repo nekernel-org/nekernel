@@ -11,7 +11,7 @@ namespace Kernel
 	NVMEDeviceInterface::NVMEDeviceInterface(void (*out)(MountpointInterface* outpacket),
 											 void (*in)(MountpointInterface* inpacket),
 											 void (*cleanup)(void))
-		: DeviceInterface(out, in), fCleanup(cleanup)
+		: IDeviceObject(out, in), fCleanup(cleanup)
 	{
 	}
 

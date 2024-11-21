@@ -83,17 +83,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	/* Initialize filesystem. */
 	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
-	Kernel::UserProcessHelper::InitScheduler();
-
-	const Kernel::Char process_name[] = "Kernel";
-
-	Kernel::rtl_create_process([]() -> void {
-		while (Yes)
-		{
-			kcout << "Scheduling...\r";
-		}
-	},
-							   process_name);
 
 	/* Load interrupts and start SMP. */
 

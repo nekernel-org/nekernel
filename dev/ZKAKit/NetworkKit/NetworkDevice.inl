@@ -13,7 +13,7 @@ namespace Kernel
 	NetworkDevice::NetworkDevice(void (*out)(NetworkDeviceCommand),
 								 void (*in)(NetworkDeviceCommand),
 								 void (*on_cleanup)(void))
-		: DeviceInterface<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup)
+		: IDeviceObject<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup)
 	{
 		kcout << "NetworkDevice initialized.\r";
 

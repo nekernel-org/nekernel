@@ -23,8 +23,9 @@
 
 #ifdef __AHCI__
 
-#define kAhciCmdTblBase mib_cast(1) // 4M
+#define AHCI_START_ADDRESS mib_cast(4) // 4M
 
+#define HBA_ERR_TFE (1 << 30)
 #define HBA_PxCMD_ST  0x0001
 #define HBA_PxCMD_FRE 0x0010
 #define HBA_PxCMD_FR  0x4000
@@ -52,7 +53,7 @@ STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
 Kernel::Void drv_calculate_disk_geometry()
 {
 	kCurrentDiskSectorCount = 0UL;
-	kcout << "Max LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
+	kcout << "Highest AHCI LBA (48-bit): " << Kernel::number(kCurrentDiskSectorCount) << endl;
 }
 
 /// @brief Initializes an AHCI disk.
@@ -124,13 +125,13 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 						// do in-between
 
-						kAhciPort->Clb	= kAhciCmdTblBase + (ahci_index << 10);
+						kAhciPort->Clb	= AHCI_START_ADDRESS + (ahci_index << 10);
 						kAhciPort->Clbu = 0;
 						rt_set_memory((void*)(kAhciPort->Clb), 0, 1024);
 
 						// FIS offset: 32K+256*ahci_index
 						// FIS entry size = 256 bytes per port
-						kAhciPort->Fb  = kAhciCmdTblBase + (32 << 10) + (ahci_index << 8);
+						kAhciPort->Fb  = AHCI_START_ADDRESS + (32 << 10) + (ahci_index << 8);
 						kAhciPort->Fbu = 0;
 						rt_set_memory((void*)(kAhciPort->Fb), 0, 256);
 
@@ -143,7 +144,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 							cmdheader[i].Prdtl = 8; // 8 prdt entries per command table
 													// 256 bytes per command table, 64+16+48+16*8
 							// Command table offset: 40K + 8K*ahci_index + cmdheader_index*256
-							cmdheader[i].Ctba  = kAhciCmdTblBase + (40 << 10) + (ahci_index << 13) + (i << 8);
+							cmdheader[i].Ctba  = AHCI_START_ADDRESS + (40 << 10) + (ahci_index << 13) + (i << 8);
 							cmdheader[i].Ctbau = 0;
 
 							rt_set_memory((void*)cmdheader[i].Ctba, 0, 256);
@@ -268,7 +269,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 		// in the PxIS port field as well (1 << 5)
 		if ((kAhciPort->Ci & (1 << port)) == 0)
 			break;
-		if (kAhciPort->Is & (1 << 30)) // Task file error
+		if (kAhciPort->Is & HBA_ERR_TFE) // Task file error
 		{
 			kcout << ("Read disk error\r");
 			return;
@@ -276,7 +277,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 	}
 
 	// Check again for the last time.
-	if (kAhciPort->Is & (1 << 30)) // task file error status
+	if (kAhciPort->Is & HBA_ERR_TFE) // task file error status
 	{
 		kcout << ("Read disk error\r");
 		*buffer = 0;

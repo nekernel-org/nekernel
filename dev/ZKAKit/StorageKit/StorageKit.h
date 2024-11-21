@@ -13,7 +13,7 @@
 namespace Kernel
 {
 	template <typename T>
-	class DeviceInterface;
+	class IDeviceObject;
 
 	class NVMEDeviceInterface;
 	class AHCIDeviceInterface;

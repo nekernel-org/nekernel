@@ -174,6 +174,6 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, 
 			kcout << "kerncall: Kernel call isn't hooked at all! (is set to false)\r";
 		}
 
-		kcout << "kerncall: Exit Kernel Calls.\r";
+		kcout << "kerncall: Exit Kernel Call List.\r";
 	}
 }

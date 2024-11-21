@@ -44,6 +44,8 @@
 	  (static_cast<Kernel::Size>(!(sizeof(a) % sizeof(*(a)))))))
 #endif
 
+#define DEPRECATED ATTRIBUTE(deprecated)
+
 #ifndef ALIGN
 #define ALIGN(X) __attribute__((aligned(X)))
 #endif // #ifndef ALIGN
@@ -90,9 +92,9 @@
 #define END_STRING_ENUM() }
 #endif
 
-#ifndef cAlloca
-#define cAlloca(Sz) __builtin_alloca(Sz)
-#endif // #ifndef cAlloca
+#ifndef rtl_alloca
+#define rtl_alloca(sz) __builtin_alloca(sz)
+#endif // #ifndef rtl_alloca
 
 #ifndef CANT_REACH
 #define CANT_REACH() __builtin_unreachable()

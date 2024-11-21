@@ -15,13 +15,15 @@
 #include <CFKit/Utils.h>
 #include <Modules/FB/Text.h>
 
-// External boot services symbol.
+/// @brief External boot services symbol.
 EXTERN EfiBootServices* BS;
 
 /// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 
 namespace Boot
 {
+	EXTERN_C Void rt_jump_to_address(VoidPtr code, HEL::HANDOVER_INFO_HEADER* handover, UInt8* stack);
+
 	BThread::BThread(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
 	{
@@ -158,12 +160,14 @@ namespace Boot
 		}
 		else
 		{
-			writer.Write("ZBA: Invalid executable.\r");
+			writer.Write("ZBA: INVALID EXECUTABLE.\r");
 		}
+
+		fStack = new UInt8[mib_cast(8)];
 	}
 
 	/// @note handover header has to be valid!
-	Void BThread::Start(HEL::HANDOVER_INFO_HEADER* handover)
+	Void BThread::Start(HEL::HANDOVER_INFO_HEADER* handover, Bool own_stack)
 	{
 		HEL::HandoverProc err_fn = [](HEL::HANDOVER_INFO_HEADER* rcx) -> void {
 			CGDrawString("ZBA: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
@@ -175,7 +179,15 @@ namespace Boot
 			err_fn(handover);
 		}
 
-		reinterpret_cast<HEL::HandoverProc>(fStartAddress)(handover);
+		fHandover = handover;
+
+		if (own_stack)
+			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(8) - 1]);
+		else
+		{
+			delete [] fStack;
+			reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
+		}
 	}
 
 	const Char* BThread::GetName()

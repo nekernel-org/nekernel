@@ -145,7 +145,7 @@ namespace Kernel
 		trait.fInit		 = io_drv_unimplemented;
 		trait.fDriveKind = io_drv_kind;
 
-		kcout << "Construct: " << trait.fName << ".\r";
+		kcout << "Construct: " << trait.fName << "\r";
 
 		return trait;
 	}
@@ -205,9 +205,6 @@ namespace Kernel
 		kcout << "Detect partiton scheme of: " << trait.fName << ".\r";
 
 		Detail::ioi_detect_drive(&trait);
-
-		while (YES)
-			;
 
 		return trait;
 	}

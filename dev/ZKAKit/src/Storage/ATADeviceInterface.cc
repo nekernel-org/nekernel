@@ -16,7 +16,7 @@ ATADeviceInterface::ATADeviceInterface(
 	void (*Out)(MountpointInterface* outpacket),
 	void (*In)(MountpointInterface* inpacket),
 	void (*Cleanup)(void))
-	: DeviceInterface(Out, In), fCleanup(Cleanup)
+	: IDeviceObject(Out, In), fCleanup(Cleanup)
 {
 }
 
@@ -57,7 +57,7 @@ ATADeviceInterface& ATADeviceInterface::operator<<(MountpointInterface* Data)
 		}
 	}
 
-	return (ATADeviceInterface&)DeviceInterface<MountpointInterface*>::operator<<(
+	return (ATADeviceInterface&)IDeviceObject<MountpointInterface*>::operator<<(
 		Data);
 }
 
@@ -83,6 +83,6 @@ ATADeviceInterface& ATADeviceInterface::operator>>(MountpointInterface* Data)
 		}
 	}
 
-	return (ATADeviceInterface&)DeviceInterface<MountpointInterface*>::operator>>(
+	return (ATADeviceInterface&)IDeviceObject<MountpointInterface*>::operator>>(
 		Data);
 }

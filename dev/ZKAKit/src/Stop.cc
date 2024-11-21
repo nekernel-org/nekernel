@@ -14,7 +14,7 @@
 #include <Modules/FB/FB.h>
 #include <Modules/FB/Text.h>
 
-#define kWebsiteURL "https://www.el-mahrouss-logic.com/zka-os/help/"
+#define kWebsiteURL "https://www.el-mahrouss-logic.com/metal-os/help/"
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
@@ -31,7 +31,7 @@ namespace Kernel
 
 		auto panic_text = RGB(0xff, 0xff, 0xff);
 
-		auto start_y = 30;
+		auto start_y = 50;
 		auto x		 = 10;
 
 		CGDrawString("Kernel Panic!", start_y, x, panic_text);

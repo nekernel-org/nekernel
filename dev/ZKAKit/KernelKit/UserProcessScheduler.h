@@ -27,10 +27,10 @@
 
 namespace Kernel
 {
-	//! @note Forward declarations.
+	//! @note Forward class declarations.
 
 	class UserProcess;
-	class IPEFDLLObject;
+	class IDLLObject;
 	class UserProcessTeam;
 	class UserProcessScheduler;
 	class UserProcessHelper;
@@ -39,7 +39,8 @@ namespace Kernel
 	typedef Int64 ProcessID;
 
 	//! @brief Local Process name length.
-	inline constexpr SizeT kProcessNameLen = 129U;
+	inline constexpr SizeT kProcessNameLen = 128U;
+	inline constexpr ProcessID kProcessInvalidID = -1;
 
 	//! @brief Local Process status enum.
 	enum class ProcessStatusKind : Int32
@@ -123,18 +124,32 @@ namespace Kernel
 		kRingCount	   = 5,
 	};
 
-	// Helper types.
+	/// @brief Helper type to describe a code image.
 	using ImagePtr = VoidPtr;
 
+	struct UserProcessImage
+	{
+		ImagePtr fCode;
+		ImagePtr fBlob;
+	
+		operator bool()
+		{
+			return this->fCode;
+		}
+
+		Bool HasImage()
+		{
+			return this->fBlob != nullptr;
+		}
+	};
+
 	/// @name UserProcess
-	/// @brief User process header.
+	/// @brief User process class.
 	/// Holds information about the running process/thread.
 	class UserProcess final
 	{
 	public:
-		explicit UserProcess(VoidPtr start_image);
-		explicit UserProcess() = default;
-
+		explicit UserProcess();
 		~UserProcess();
 
 	public:
@@ -148,10 +163,9 @@ namespace Kernel
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatusKind  Status{ProcessStatusKind::kDead};
 		UInt8*			   StackReserve{nullptr};
-		ImagePtr		   Code{nullptr};
-		ImagePtr		   ExecImg{nullptr};
+		UserProcessImage   Image;
 		SizeT			   StackSize{kSchedMaxStackSz};
-		IPEFDLLObject*	   PefDLLDelegate{nullptr};
+		IDLLObject*	   PefDLLDelegate{nullptr};
 		SizeT			   MemoryCursor{0};
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 
@@ -306,7 +320,6 @@ namespace Kernel
 		STATIC Bool CanBeScheduled(const UserProcess& process);
 		STATIC ErrorOr<PID> TheCurrentPID();
 		STATIC SizeT		StartScheduling();
-		STATIC Void 		InitScheduler();
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;

@@ -15,7 +15,7 @@ using namespace Kernel;
 AHCIDeviceInterface::AHCIDeviceInterface(void (*Out)(MountpointInterface* outpacket),
 										 void (*In)(MountpointInterface* inpacket),
 										 void (*Cleanup)(void))
-	: DeviceInterface(Out, In), fCleanup(Cleanup)
+	: IDeviceObject(Out, In), fCleanup(Cleanup)
 {
 }
 

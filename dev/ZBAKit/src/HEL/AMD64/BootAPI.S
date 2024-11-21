@@ -11,7 +11,15 @@
 rt_jump_to_address:
     mov rbx, rcx
     mov rcx, rdx
+    push rbx
+    push rdx
+    mov rsp, r8
+    push rax
     jmp rbx
+
+    pop rdx
+    pop rbx
+    pop rax
 
     ret
 

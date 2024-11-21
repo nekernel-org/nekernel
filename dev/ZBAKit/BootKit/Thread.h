@@ -29,14 +29,16 @@ namespace Boot
 		BThread& operator=(const BThread&) = default;
 		BThread(const BThread&)			   = default;
 
-		void		Start(HEL::HANDOVER_INFO_HEADER* handover);
-		const char* GetName();
+		void		Start(HEL::HANDOVER_INFO_HEADER* handover, BOOL is_own_stack);
 		void		SetName(const char* name);
+		const char* GetName();
 		bool		IsValid();
 
 	private:
 		Char	fBlobName[255] = {"BootThread"};
 		VoidPtr fStartAddress{nullptr};
 		VoidPtr fBlob{nullptr};
+		UInt8*  fStack{nullptr};
+		HEL::HANDOVER_INFO_HEADER* fHandover{nullptr};
 	};
 } // namespace Boot

@@ -20,7 +20,7 @@ namespace Kernel
 	/**
 	 * \brief Network device interface, establishes a connection to the NIC.
 	 */
-	class NetworkDevice final : public DeviceInterface<NetworkDeviceCommand>
+	class NetworkDevice final : public IDeviceObject<NetworkDeviceCommand>
 	{
 	public:
 		NetworkDevice(void (*out)(NetworkDeviceCommand),

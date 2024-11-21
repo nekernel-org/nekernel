@@ -246,7 +246,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 		syschk_thread->SetName("System Check (ZBA EFI Driver)");
 	}
 
-	syschk_thread->Start(handover_hdr);
+	syschk_thread->Start(handover_hdr, NO);
 
 	// nullify these fields, to avoid being reused later.
 
@@ -324,7 +324,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	// Finally load the OS kernel.
 	// ---------------------------------------------------- //
 
-	kernel_thread->Start(handover_hdr);
+	kernel_thread->Start(handover_hdr, YES);
 
 	CANT_REACH();
 }
