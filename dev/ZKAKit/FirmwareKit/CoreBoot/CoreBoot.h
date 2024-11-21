@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
+	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
 namespace Kernel
 {
 	/// @brief Linear Executable Header
-	/// @author EL Mahrouss Logic
+	/// @author Amlal EL Mahrouss
 	struct ATTRIBUTE(aligned(4)) mp_boot_header
 	{
 		const Char	 fMagic[2];		// magic number

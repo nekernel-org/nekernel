@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
+	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file BootATA.cc
- * @author EL Mahrouss Logic (amlalelmahrouss@icloud.com)
+ * @author Amlal EL Mahrouss (amlalelmahrouss@icloud.com)
  * @brief ATA driver.
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) EL Mahrouss Logic
+ * @copyright Copyright (c) Amlal EL Mahrouss
  *
  */
 
