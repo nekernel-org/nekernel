@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __INC_DRIVE_MANAGER_H__
-#define __INC_DRIVE_MANAGER_H__
+#ifndef INC_DRIVE_MANAGER_H
+#define INC_DRIVE_MANAGER_H
 
 #include <KernelKit/UserProcessScheduler.h>
 #include <CompilerKit/CompilerKit.h>
@@ -16,25 +16,28 @@
 #include <NewKit/KString.h>
 #include <NewKit/Ref.h>
 
-#define kMaxDriveCountPerMountpoint (4U)
+#define kDriveMaxCount (4U)
 #define kDriveSectorSz				(512U)
 #define kDriveInvalidID				(-1)
 #define kDriveNameLen				(32)
 
-#define DrvSectorCnt(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
+#define drv_sector_cnt(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
 
 namespace Kernel
 {
 	enum
 	{
-		/// Storage type.
-		kInvalidStorage = -1,
+		kInvalidDisc = -1,
+
+		/// Storage types, combine with flags.
 		kBlockDevice	= 0xAD,
-		kMassStorage	= 0xDA,
+		kMassStorageDisc = 0xDA,
 		kFloppyDisc		= 0xCD,
 		kOpticalDisc	= 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
-		/// Storage flags, combine with below.
-		kReadOnly		  = 0x10, // Read only drive
+		kTapeDisc = 0xD7,
+
+		/// Storage flags, combine with types.
+		kReadOnlyDrive		  = 0x10, // Read only drive
 		kEPMDrive		  = 0x11, // Explicit Partition Map.
 		kEPTDrive		  = 0x12, // ESP w/ EPM partition.
 		kMBRDrive		  = 0x13, // PC classic partition scheme
@@ -43,25 +46,23 @@ namespace Kernel
 		kStorageCount	  = 9,
 	};
 
-	typedef Int64 rt_drive_id_type;
-
 	/// @brief Media drive trait type.
 	struct DriveTrait final
 	{
 		Char			 fName[kDriveNameLen]; // /System, /Boot, //./Devices/USB...
 		Int32			 fKind;				   // fMassStorage, fFloppy, fOpticalDisc.
-		rt_drive_id_type fId;				   // Drive id.
 		Int32			 fFlags;			   // fReadOnly, fXPMDrive, fXPTDrive
 
 		/// @brief Packet drive (StorageKit compilant.)
 		struct DrivePacket final
 		{
-			VoidPtr fPacketContent;				//! packet body.
-			Char	fPacketMime[kDriveNameLen]; //! identify what we're sending.
-			SizeT	fPacketSize;				//! packet size
-			UInt32	fPacketCRC32;				//! sanity crc, in case if good is set to false
-			Boolean fPacketGood;
-			Lba		fLba;
+			VoidPtr fPacketContent{nullptr};				//! packet body.
+			Char	fPacketMime[kDriveNameLen] = "*/*"; //! identify what we're sending.
+			SizeT	fPacketSize{0UL};				//! packet size
+			UInt32	fPacketCRC32{0UL};				//! sanity crc, in case if good is set to false
+			Boolean fPacketGood{YES};
+			Lba		fPacketLba{0UL};
+			Boolean fPacketReadOnly{NO};
 		} fPacket;
 
 		Void (*fInput)(DrivePacket* packetPtr);
@@ -153,4 +154,4 @@ namespace Kernel
 	DriveTrait io_construct_main_drive(void) noexcept;
 } // namespace Kernel
 
-#endif /* ifndef __INC_DRIVE_MANAGER_H__ */
+#endif /* ifndef INC_DRIVE_MANAGER_H */

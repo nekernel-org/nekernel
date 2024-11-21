@@ -12,14 +12,14 @@
 #include <NewKit/KString.h>
 #include <NewKit/Defines.h>
 
-// user mode users.
+///! We got the Super and guest user, both used to make authorization operations on the OS.
 #define kSuperUser "OS AUTHORITY/SUPER"
 #define kGuestUser "OS AUTHORITY/GUEST"
 
 #define kUsersDir "/Users/"
 
-#define kMaxUserNameLen	 (255)
-#define kMaxUserTokenLen (4096)
+#define kMaxUserNameLen	 (255U)
+#define kMaxUserTokenLen (255U)
 
 namespace Kernel
 {

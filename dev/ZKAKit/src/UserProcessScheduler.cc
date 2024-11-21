@@ -9,7 +9,7 @@
 
 /***********************************************************************************/
 /// @file UserProcessScheduler.cc
-/// @brief EL0/Ring-3 Process scheduler.
+/// @brief EL0/Ring-3 process scheduler.
 /***********************************************************************************/
 
 #include <KernelKit/UserProcessScheduler.h>
@@ -52,7 +52,7 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	/// @brief crash current process.
+	/// @brief Crashes the current process.
 	/***********************************************************************************/
 
 	Void UserProcess::Crash()
@@ -87,7 +87,7 @@ namespace Kernel
 
 	Int32& UserProcess::GetLocalCode() noexcept
 	{
-		return fLocalCode;
+		return this->fLocalCode;
 	}
 
 	/***********************************************************************************/

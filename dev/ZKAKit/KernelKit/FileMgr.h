@@ -17,7 +17,8 @@
 
  ------------------------------------------- */
 
-#pragma once
+#ifndef INC_FILEMGR_H
+#define INC_FILEMGR_H
 
 #ifdef __FSKIT_INCLUDES_NEFS__
 #include <FSKit/NeFS.h>
@@ -210,10 +211,10 @@ namespace Kernel
 	public:
 		ErrorOr<Int64> WriteAll(const VoidPtr data) noexcept
 		{
-			if (this->fFileRestrict != eRestrictReadWrite &&
-				this->fFileRestrict != eRestrictReadWriteBinary &&
-				this->fFileRestrict != eRestrictWrite &&
-				this->fFileRestrict != eRestrictWriteBinary)
+			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
+				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
+				this->fFileRestrict != kFileMgrRestrictWrite &&
+				this->fFileRestrict != kFileMgrRestrictWriteBinary)
 				return ErrorOr<Int64>(kErrorInvalidData);
 
 			if (data == nullptr)
@@ -232,10 +233,10 @@ namespace Kernel
 
 		VoidPtr ReadAll() noexcept
 		{
-			if (this->fFileRestrict != eRestrictReadWrite &&
-				this->fFileRestrict != eRestrictReadWriteBinary &&
-				this->fFileRestrict != eRestrictRead &&
-				this->fFileRestrict != eRestrictReadBinary)
+			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
+				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
+				this->fFileRestrict != kFileMgrRestrictRead &&
+				this->fFileRestrict != kFileMgrRestrictReadBinary)
 				return nullptr;
 
 			auto man = FSClass::GetMounted();
@@ -251,10 +252,10 @@ namespace Kernel
 
 		ErrorOr<Int64> WriteAll(const Char* fName, const VoidPtr data) noexcept
 		{
-			if (this->fFileRestrict != eRestrictReadWrite &&
-				this->fFileRestrict != eRestrictReadWriteBinary &&
-				this->fFileRestrict != eRestrictWrite &&
-				this->fFileRestrict != eRestrictWriteBinary)
+			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
+				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
+				this->fFileRestrict != kFileMgrRestrictWrite &&
+				this->fFileRestrict != kFileMgrRestrictWriteBinary)
 				return ErrorOr<Int64>(kErrorInvalidData);
 
 			if (data == nullptr)
@@ -273,10 +274,10 @@ namespace Kernel
 
 		VoidPtr Read(const Char* fName) noexcept
 		{
-			if (this->fFileRestrict != eRestrictReadWrite &&
-				this->fFileRestrict != eRestrictReadWriteBinary &&
-				this->fFileRestrict != eRestrictRead &&
-				this->fFileRestrict != eRestrictReadBinary)
+			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
+				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
+				this->fFileRestrict != kFileMgrRestrictRead &&
+				this->fFileRestrict != kFileMgrRestrictReadBinary)
 				return nullptr;
 
 			auto man = FSClass::GetMounted();
@@ -292,10 +293,10 @@ namespace Kernel
 
 		VoidPtr Read(SizeT offset, SizeT sz)
 		{
-			if (this->fFileRestrict != eRestrictReadWrite &&
-				this->fFileRestrict != eRestrictReadWriteBinary &&
-				this->fFileRestrict != eRestrictRead &&
-				this->fFileRestrict != eRestrictReadBinary)
+			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
+				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
+				this->fFileRestrict != kFileMgrRestrictRead &&
+				this->fFileRestrict != kFileMgrRestrictReadBinary)
 				return nullptr;
 
 			auto man = FSClass::GetMounted();
@@ -313,10 +314,10 @@ namespace Kernel
 
 		Void Write(SizeT offset, voidPtr data, SizeT sz)
 		{
-			if (this->fFileRestrict != eRestrictReadWrite &&
-				this->fFileRestrict != eRestrictReadWriteBinary &&
-				this->fFileRestrict != eRestrictWrite &&
-				this->fFileRestrict != eRestrictWriteBinary)
+			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
+				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
+				this->fFileRestrict != kFileMgrRestrictWrite &&
+				this->fFileRestrict != kFileMgrRestrictWriteBinary)
 				return;
 
 			auto man = FSClass::GetMounted();
@@ -340,22 +341,22 @@ namespace Kernel
 		/// @return The MIME.
 		Char* MIME() noexcept
 		{
-			return const_cast<char*>(fMime);
+			return const_cast<Char*>(fMime);
 		}
 
 		enum
 		{
-			eRestrictRead,
-			eRestrictReadBinary,
-			eRestrictWrite,
-			eRestrictWriteBinary,
-			eRestrictReadWrite,
-			eRestrictReadWriteBinary,
+			kFileMgrRestrictRead,
+			kFileMgrRestrictReadBinary,
+			kFileMgrRestrictWrite,
+			kFileMgrRestrictWriteBinary,
+			kFileMgrRestrictReadWrite,
+			kFileMgrRestrictReadWriteBinary,
 		};
 
 	private:
 		NodePtr		fFile{nullptr};
-		Int32		fFileRestrict{};
+		Int32		fFileRestrict{kFileMgrRestrictReadBinary | kFileMgrRestrictRead};
 		const Char* fMime{kFileMimeGeneric};
 	};
 
@@ -370,37 +371,37 @@ namespace Kernel
 											const Encoding* restrict_type)
 		: fFile(Class::GetMounted()->Open(path, restrict_type))
 	{
-		static const auto cLength = 255;
+		static const auto kLength = 255U;
 
 		/// @brief restrict information about the file descriptor.
-		struct RESTRICT_MAP final
+		struct FileRestrictKind final
 		{
-			Char  fRestrict[cLength];
-			Int32 fMappedTo;
+			Char  fRestrict[kLength] = "";
+			Int32 fMappedTo{0U};
 		};
 
 		const SizeT		   kRestrictCount  = kRestrictMax;
-		const RESTRICT_MAP kRestrictList[] = {
+		const FileRestrictKind kRestrictList[] = {
 			{
 				.fRestrict = kRestrictR,
-				.fMappedTo = eRestrictRead,
+				.fMappedTo = kFileMgrRestrictRead,
 			},
 			{
 				.fRestrict = kRestrictRB,
-				.fMappedTo = eRestrictReadBinary,
+				.fMappedTo = kFileMgrRestrictReadBinary,
 			},
 			{
 				.fRestrict = kRestrictRWB,
-				.fMappedTo = eRestrictReadWriteBinary,
+				.fMappedTo = kFileMgrRestrictReadWriteBinary,
 			},
 			{
 				.fRestrict = kRestrictW,
-				.fMappedTo = eRestrictWrite,
+				.fMappedTo = kFileMgrRestrictWrite,
 			},
 			{
 				.fRestrict = kRestrictWB,
-				.fMappedTo = eRestrictReadWrite,
-			}};
+				.fMappedTo = kFileMgrRestrictReadWrite,
+		}};
 
 		for (SizeT index = 0; index < kRestrictCount; ++index)
 		{
@@ -415,10 +416,12 @@ namespace Kernel
 		kcout << "new file: " << path << ".\r";
 	}
 
-	/// @brief destructor
+	/// @brief destructor of the file stream.
 	template <typename Encoding, typename Class>
 	FileStream<Encoding, Class>::~FileStream()
 	{
 		mm_delete_heap(fFile);
 	}
 } // namespace Kernel
+
+#endif // ifndef INC_FILEMGR_H

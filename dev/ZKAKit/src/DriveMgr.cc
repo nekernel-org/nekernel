@@ -33,9 +33,9 @@ namespace Kernel
 		}
 
 #ifdef __AHCI__
-		drv_std_read(pckt->fLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
+		drv_std_read(pckt->fPacketLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_read(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
+		drv_std_read(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
 #endif
 	}
 
@@ -50,9 +50,9 @@ namespace Kernel
 		}
 
 #ifdef __AHCI__
-		drv_std_write(pckt->fLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_write(pckt->fLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
 #endif
 	}
 
@@ -83,14 +83,18 @@ namespace Kernel
 		kATAIO	   = ATA_SECONDARY_IO;
 
 		if (!drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster))
+		{
 			return;
+		}
 
 		pckt->fPacketGood = YES;
 #elif defined(__AHCI__)
 		UInt16 pi = 0;
 
 		if (!drv_std_init(pi))
+		{
 			return;
+		}
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
 	}
 
@@ -137,7 +141,7 @@ namespace Kernel
 		DriveTrait trait;
 
 		rt_copy_memory((VoidPtr) "/Disks/NUL:", trait.fName, rt_string_len("/Disks/NUL:"));
-		trait.fKind = kInvalidStorage;
+		trait.fKind = kInvalidDisc;
 
 		trait.fInput	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_unimplemented;
@@ -156,7 +160,7 @@ namespace Kernel
 		{
 			static _BOOT_BLOCK_STRUCT block_struct;
 
-			trait->fPacket.fLba			  = kEPMBaseLba;
+			trait->fPacket.fPacketLba			  = kEPMBaseLba;
 			trait->fPacket.fPacketSize	  = sizeof(_BOOT_BLOCK_STRUCT);
 			trait->fPacket.fPacketContent = &block_struct;
 
@@ -169,20 +173,24 @@ namespace Kernel
 
 			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait->fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
-				trait->fKind = kMassStorage;
-				trait->fKind |= kEPMDrive;
-				kcout << "Formatted drive is EPM.\r";
+				trait->fPacket.fPacketReadOnly = NO;
+				trait->fKind = kMassStorageDisc | kEPMDrive;
+				kcout << "Formatted Disc is EPM (Mass Storage).\r";
 			}
 			else
 			{
-				trait->fKind = kUnformattedDrive;
+				trait->fPacket.fPacketReadOnly = YES;
+				trait->fKind = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
 				kcout << "Scheme Found: " << block_struct.Name << endl;
 
 				if (block_struct.Name[0] == 0)
-					kcout << "Formatted drive is blank.\r";
+					kcout << "Disc partition is unknown (set to Read Only).\r";
 			}
 
-			trait->fPacket.fLba			  = 0;
+			rt_copy_memory((VoidPtr) "*/*", trait->fPacket.fPacketMime,
+						   rt_string_len("*/*"));
+
+			trait->fPacket.fPacketLba			  = 0;
 			trait->fPacket.fPacketSize	  = 0UL;
 			trait->fPacket.fPacketContent = nullptr;
 		}

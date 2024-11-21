@@ -90,7 +90,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 			if (lba <= kNeFSCatalogStartAddress)
 				break;
 
-			drv.fPacket.fLba		   = lba;
+			drv.fPacket.fPacketLba		   = lba;
 			drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 			drv.fPacket.fPacketContent = &curFork;
 
@@ -126,7 +126,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 				/// entry.
 				if (lba >= kNeFSCatalogStartAddress)
 				{
-					drv.fPacket.fLba		   = lbaOfPreviousFork;
+					drv.fPacket.fPacketLba		   = lbaOfPreviousFork;
 					drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 					drv.fPacket.fPacketContent = &prevFork;
 
@@ -145,7 +145,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 		the_fork.PreviousSibling = lbaOfPreviousFork;
 		the_fork.NextSibling	 = the_fork.DataOffset - the_fork.DataSize - sizeof(NFS_FORK_STRUCT);
 
-		drv.fPacket.fLba		   = lba;
+		drv.fPacket.fPacketLba		   = lba;
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 		drv.fPacket.fPacketContent = &the_fork;
 
@@ -180,7 +180,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog
 
 	while (lba != 0)
 	{
-		drv.fPacket.fLba		   = lba;
+		drv.fPacket.fPacketLba		   = lba;
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 		drv.fPacket.fPacketContent = (VoidPtr)the_fork;
 
@@ -317,7 +317,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 		drive.fPacket.fPacketContent = sectorBufPartBlock;
 		drive.fPacket.fPacketSize	 = kNeFSSectorSz;
-		drive.fPacket.fLba			 = kNeFSRootCatalogStartAddress;
+		drive.fPacket.fPacketLba			 = kNeFSRootCatalogStartAddress;
 
 		drive.fInput(&drive.fPacket);
 
@@ -353,7 +353,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 	drive.fPacket.fPacketContent = &temporary_catalog;
 	drive.fPacket.fPacketSize	 = kNeFSSectorSz;
-	drive.fPacket.fLba			 = start_free;
+	drive.fPacket.fPacketLba			 = start_free;
 
 	drive.fInput(&drive.fPacket);
 
@@ -363,7 +363,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 	child_catalog->PrevSibling = out_lba;
 
-	drive.fPacket.fLba = start_free;
+	drive.fPacket.fPacketLba = start_free;
 	drive.fInput(&drive.fPacket);
 
 	while (drive.fPacket.fPacketGood)
@@ -387,7 +387,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 			drive.fPacket.fPacketContent = sectorBufPartBlock;
 			drive.fPacket.fPacketSize	 = kNeFSSectorSz;
-			drive.fPacket.fLba			 = kNeFSRootCatalogStartAddress;
+			drive.fPacket.fPacketLba			 = kNeFSRootCatalogStartAddress;
 
 			drive.fInput(&drive.fPacket);
 
@@ -414,7 +414,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 			drive.fPacket.fPacketContent = child_catalog;
 			drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
-			drive.fPacket.fLba			 = start_free;
+			drive.fPacket.fPacketLba			 = start_free;
 
 			drive.fOutput(&drive.fPacket);
 
@@ -422,7 +422,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 			drive.fPacket.fPacketContent = sectorBufPartBlock;
 			drive.fPacket.fPacketSize	 = kNeFSSectorSz;
-			drive.fPacket.fLba			 = kNeFSRootCatalogStartAddress;
+			drive.fPacket.fPacketLba			 = kNeFSRootCatalogStartAddress;
 
 			drive.fInput(&drive.fPacket);
 
@@ -453,7 +453,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 		drive.fPacket.fPacketContent = &temporary_catalog;
 		drive.fPacket.fPacketSize	 = kNeFSSectorSz;
-		drive.fPacket.fLba			 = start_free;
+		drive.fPacket.fPacketLba			 = start_free;
 
 		drive.fInput(&drive.fPacket);
 	}
@@ -490,7 +490,7 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 
 	drive->fPacket.fPacketContent = fs_buf;
 	drive->fPacket.fPacketSize	  = kNeFSSectorSz;
-	drive->fPacket.fLba			  = start;
+	drive->fPacket.fPacketLba			  = start;
 
 	drive->fInput(&drive->fPacket);
 
@@ -526,7 +526,7 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 		{
 			drive->fPacket.fPacketContent = buf;
 			drive->fPacket.fPacketSize	  = kNeFSSectorSz;
-			drive->fPacket.fLba			  = outEpmLba;
+			drive->fPacket.fPacketLba			  = outEpmLba;
 
 			drive->fInput(&drive->fPacket);
 
@@ -542,7 +542,7 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 
 				drive->fPacket.fPacketContent = bufEpmHdr;
 				drive->fPacket.fPacketSize	  = kNeFSSectorSz;
-				drive->fPacket.fLba			  = outEpmLba;
+				drive->fPacket.fPacketLba			  = outEpmLba;
 
 				drive->fOutput(&drive->fPacket);
 
@@ -594,7 +594,7 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 
 			drive->fPacket.fPacketContent = fs_buf;
 			drive->fPacket.fPacketSize	  = kNeFSSectorSz;
-			drive->fPacket.fLba			  = kNeFSRootCatalogStartAddress;
+			drive->fPacket.fPacketLba			  = kNeFSRootCatalogStartAddress;
 
 			drive->fOutput(&drive->fPacket);
 
@@ -619,7 +619,7 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 
 		drive->fPacket.fPacketContent = fs_buf;
 		drive->fPacket.fPacketSize	  = kNeFSSectorSz;
-		drive->fPacket.fLba			  = start;
+		drive->fPacket.fPacketLba			  = start;
 
 		drive->fInput(&drive->fPacket);
 	}
@@ -658,7 +658,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 	{
 		drive.fPacket.fPacketContent = fork_data_input;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
-		drive.fPacket.fLba			 = startFork;
+		drive.fPacket.fPacketLba			 = startFork;
 
 		drive.fInput(&drive.fPacket);
 
@@ -686,7 +686,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 
 			drive.fPacket.fPacketContent = buf;
 			drive.fPacket.fPacketSize	 = kNeFSForkDataSz;
-			drive.fPacket.fLba			 = fork_data_input->DataOffset;
+			drive.fPacket.fPacketLba			 = fork_data_input->DataOffset;
 
 			kcout << "data offset: " << hex_number(fork_data_input->DataOffset) << endl;
 
@@ -694,7 +694,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 
 			drive.fPacket.fPacketContent = fork_data_input;
 			drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
-			drive.fPacket.fLba			 = startFork - sizeof(NFS_FORK_STRUCT);
+			drive.fPacket.fPacketLba			 = startFork - sizeof(NFS_FORK_STRUCT);
 
 			drive.fOutput(&drive.fPacket);
 
@@ -732,7 +732,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogNa
 
 	drive.fPacket.fPacketContent = &fs_buf;
 	drive.fPacket.fPacketSize	 = sizeof(NFS_ROOT_PARTITION_BLOCK);
-	drive.fPacket.fLba			 = kNeFSRootCatalogStartAddress;
+	drive.fPacket.fPacketLba			 = kNeFSRootCatalogStartAddress;
 
 	drive.fInput(&drive.fPacket);
 
@@ -745,7 +745,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogNa
 
 	NFS_CATALOG_STRUCT temporary_catalog{0};
 
-	drive.fPacket.fLba			 = startCatalogList;
+	drive.fPacket.fPacketLba			 = startCatalogList;
 	drive.fPacket.fPacketContent = &temporary_catalog;
 	drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
 
@@ -799,7 +799,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogNa
 NeFSSearchThroughCatalogList:
 	while (drive.fPacket.fPacketGood)
 	{
-		drive.fPacket.fLba			 = startCatalogList;
+		drive.fPacket.fPacketLba			 = startCatalogList;
 		drive.fPacket.fPacketContent = &temporary_catalog;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
 
@@ -892,7 +892,7 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 		rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 					   rt_string_len("fs/nefs-packet"));
 
-		drive.fPacket.fLba = out_lba; // the catalog position.
+		drive.fPacket.fPacketLba = out_lba; // the catalog position.
 		drive.fPacket.fPacketSize =
 			sizeof(NFS_CATALOG_STRUCT);			// size of catalog. roughly the sector size.
 		drive.fPacket.fPacketContent = catalog; // the catalog itself.
@@ -901,7 +901,7 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 
 		Char partitionBlockBuf[sizeof(NFS_ROOT_PARTITION_BLOCK)] = {0};
 
-		drive.fPacket.fLba			 = kNeFSRootCatalogStartAddress;
+		drive.fPacket.fPacketLba			 = kNeFSRootCatalogStartAddress;
 		drive.fPacket.fPacketContent = partitionBlockBuf;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_ROOT_PARTITION_BLOCK);
 
@@ -962,7 +962,7 @@ VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 
 	while (dataForkLba > kNeFSCatalogStartAddress)
 	{
-		drive.fPacket.fLba			 = dataForkLba;
+		drive.fPacket.fPacketLba			 = dataForkLba;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
 		drive.fPacket.fPacketContent = fs_buf;
 
