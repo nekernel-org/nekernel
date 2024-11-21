@@ -57,8 +57,8 @@ namespace Kernel
 	enum
 	{
 		kIPCLittleEndian = 0,
-		kIPCBigEndian	   = 1,
-		kIPCMixedEndian  = 2,
+		kIPCBigEndian	 = 1,
+		kIPCMixedEndian	 = 2,
 	};
 
 	constexpr inline auto kIPCMsgSize = 6094U;

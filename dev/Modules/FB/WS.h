@@ -16,43 +16,42 @@
 
 namespace WS
 {
-    using namespace Kernel;
+	using namespace Kernel;
 
-    struct WSWindowContainer;
+	struct WSWindowContainer;
 
-    typedef UInt32* WSBackBufferKind;
+	typedef UInt32* WSBackBufferKind;
 
-    class WSWindowContainer final
-    {
-    public:
-        WSWindowContainer() = default;
-        ~WSWindowContainer() = default;
+	class WSWindowContainer final
+	{
+	public:
+		WSWindowContainer()	 = default;
+		~WSWindowContainer() = default;
 
-        ZKA_COPY_DEFAULT(WSWindowContainer);
+		ZKA_COPY_DEFAULT(WSWindowContainer);
 
-        /// @note the trick is, it could be GPU processed data, that's the cool thing.
-        BOOL PopulateWindow(WSBackBufferKind contents_buf, SizeT contents_len)
-        {
-            if (contents_len > BackBufferLength)
-                return NO;
+		/// @note the trick is, it could be GPU processed data, that's the cool thing.
+		BOOL PopulateWindow(WSBackBufferKind contents_buf, SizeT contents_len)
+		{
+			if (contents_len > BackBufferLength)
+				return NO;
 
-            if (!contents_buf)
-                return NO;
+			if (!contents_buf)
+				return NO;
 
-            if (!BackBuffer ||
-                !BackBufferLength)
-                return NO;
+			if (!BackBuffer ||
+				!BackBufferLength)
+				return NO;
 
-            rt_copy_memory(contents_buf, BackBuffer, contents_len);
-            return YES;
-        }
+			rt_copy_memory(contents_buf, BackBuffer, contents_len);
+			return YES;
+		}
 
-    public:
-        WSBackBufferKind BackBuffer{nullptr};
-        SizeT BackBufferLength{0UL};
-
-    };
-}
+	public:
+		WSBackBufferKind BackBuffer{nullptr};
+		SizeT			 BackBufferLength{0UL};
+	};
+} // namespace WS
 
 #define rtl_allocate_backbuffer(width, height) new WS::WSBackBufferKind[width * height]
 #define rtl_compute_fb_geometry(width, height) (width * height)

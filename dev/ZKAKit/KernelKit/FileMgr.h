@@ -377,10 +377,10 @@ namespace Kernel
 	/// @brief constructor
 	template <typename Encoding, typename Class>
 	inline FileStream<Encoding, Class>::FileStream(const Encoding* path,
-											const Encoding* restrict_type)
+												   const Encoding* restrict_type)
 		: fFile(Class::GetMounted()->Open(path, restrict_type))
 	{
-		const SizeT		   kRestrictCount  = kRestrictMax;
+		const SizeT			   kRestrictCount  = kRestrictMax;
 		const FileRestrictKind kRestrictList[] = {
 			{
 				.fRestrict = kRestrictR,

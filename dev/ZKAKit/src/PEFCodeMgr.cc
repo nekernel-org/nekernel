@@ -256,8 +256,8 @@ namespace Kernel
 			STATIC UserProcess proc;
 
 			proc.Kind		 = procKind;
-			proc.Image.fCode	 = errOrStart.Leak().Leak();
-			proc.Image.fBlob	 = exec.GetBlob().Leak().Leak();
+			proc.Image.fCode = errOrStart.Leak().Leak();
+			proc.Image.fBlob = exec.GetBlob().Leak().Leak();
 			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
 			proc.PTime		 = 0UL;

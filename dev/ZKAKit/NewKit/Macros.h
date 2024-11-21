@@ -120,7 +120,7 @@
 #define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
 #endif // !RGB
 
-#define BREAK_POINT() asm volatile ("int $3")
+#define BREAK_POINT() asm volatile("int $3")
 
 /// @brief The system page file, located on the mount directory, as mulitple system pages can be mounted.
 #define kPageSys "/Disks/syspage.sys"
@@ -140,7 +140,7 @@
 /// @brief The main system loader.
 #define kUserName "ZKA AUTHORITY/KERNEL"
 
-#define rtl_deduce_endianess(address, value)                           \
+#define rtl_deduce_endianess(address, value)                    \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))
@@ -149,9 +149,9 @@
 #define No	false
 
 #define YES true
-#define NO false
+#define NO	false
 
-#define TRUE true
+#define TRUE  true
 #define FALSE false
 
 #define BOOL Kernel::Boolean

@@ -160,7 +160,7 @@ namespace Kernel
 		{
 			static _BOOT_BLOCK_STRUCT block_struct;
 
-			trait->fPacket.fPacketLba			  = kEPMBaseLba;
+			trait->fPacket.fPacketLba	  = kEPMBaseLba;
 			trait->fPacket.fPacketSize	  = sizeof(_BOOT_BLOCK_STRUCT);
 			trait->fPacket.fPacketContent = &block_struct;
 
@@ -174,13 +174,13 @@ namespace Kernel
 			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait->fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
 				trait->fPacket.fPacketReadOnly = NO;
-				trait->fKind = kMassStorageDisc | kEPMDrive;
+				trait->fKind				   = kMassStorageDisc | kEPMDrive;
 				kcout << "Formatted Disc is EPM (Mass Storage).\r";
 			}
 			else
 			{
 				trait->fPacket.fPacketReadOnly = YES;
-				trait->fKind = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
+				trait->fKind				   = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
 				kcout << "Scheme Found: " << block_struct.Name << endl;
 
 				if (block_struct.Name[0] == 0)
@@ -190,7 +190,7 @@ namespace Kernel
 			rt_copy_memory((VoidPtr) "*/*", trait->fPacket.fPacketMime,
 						   rt_string_len("*/*"));
 
-			trait->fPacket.fPacketLba			  = 0;
+			trait->fPacket.fPacketLba	  = 0;
 			trait->fPacket.fPacketSize	  = 0UL;
 			trait->fPacket.fPacketContent = nullptr;
 		}

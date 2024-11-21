@@ -18,14 +18,14 @@ namespace Kernel
 	{
 		if (!main ||
 			!process_name ||
-			*process_name ==  0)
+			*process_name == 0)
 			return kProcessInvalidID;
 
 		UserProcess* process_hdr = new UserProcess();
 
-		process_hdr->Image.fCode	   = reinterpret_cast<VoidPtr>(main);
-		process_hdr->Kind	   = UserProcess::kExectuableKind;
-		process_hdr->StackSize = kib_cast(16);
+		process_hdr->Image.fCode = reinterpret_cast<VoidPtr>(main);
+		process_hdr->Kind		 = UserProcess::kExectuableKind;
+		process_hdr->StackSize	 = kib_cast(16);
 
 		rt_set_memory(process_hdr->Name, 0, kProcessNameLen);
 

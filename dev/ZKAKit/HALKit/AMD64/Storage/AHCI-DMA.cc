@@ -25,7 +25,7 @@
 
 #define AHCI_START_ADDRESS mib_cast(4) // 4M
 
-#define HBA_ERR_TFE (1 << 30)
+#define HBA_ERR_TFE	  (1 << 30)
 #define HBA_PxCMD_ST  0x0001
 #define HBA_PxCMD_FRE 0x0010
 #define HBA_PxCMD_FR  0x4000

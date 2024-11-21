@@ -48,9 +48,9 @@ namespace Kernel::HAL
 	STATIC Bool				  kSMPAware	 = false;
 	STATIC Int64			  kSMPCount	 = 0;
 
-	STATIC Int32   cSMPInterrupt	  = 0;
+	STATIC Int32   cSMPInterrupt		 = 0;
 	STATIC UInt64  kAPICLocales[cSMPMax] = {0};
-	STATIC VoidPtr kRawMADT			  = nullptr;
+	STATIC VoidPtr kRawMADT				 = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
 	struct MADT_TABLE final : public SDT
@@ -168,7 +168,10 @@ namespace Kernel::HAL
 	/// @brief Is the current config SMP aware?
 	/// @return True if YES, False if not.
 	/***********************************************************************************/
-	Bool mp_is_smp(Void) noexcept { return kSMPAware; }
+	Bool mp_is_smp(Void) noexcept
+	{
+		return kSMPAware;
+	}
 
 	/***********************************************************************************/
 	/// @brief Fetch and enable SMP scheduler.

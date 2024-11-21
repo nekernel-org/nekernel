@@ -15,9 +15,9 @@
 #define ErrLocalFailed() (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)
 #define ErrLocal()		 (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode())
 
-#define ErrGlobalIsOk()	 (Kernel::kErrorLocalNumber == Kernel::kErrorSuccess)
+#define ErrGlobalIsOk()	  (Kernel::kErrorLocalNumber == Kernel::kErrorSuccess)
 #define ErrGlobalFailed() (Kernel::kErrorLocalNumber != Kernel::kErrorSuccess)
-#define ErrGlobal()		 (Kernel::kErrorLocalNumber)
+#define ErrGlobal()		  (Kernel::kErrorLocalNumber)
 
 namespace Kernel
 {

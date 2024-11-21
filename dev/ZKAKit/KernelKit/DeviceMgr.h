@@ -41,7 +41,9 @@ namespace Kernel
 	{
 	public:
 		explicit IDeviceObject(void (*Out)(T), void (*In)(T))
-			: fOut(Out), fIn(In) {}
+			: fOut(Out), fIn(In)
+		{
+		}
 
 		virtual ~IDeviceObject() = default;
 

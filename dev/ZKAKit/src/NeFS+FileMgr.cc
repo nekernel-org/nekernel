@@ -19,7 +19,7 @@ namespace Kernel
 	NeFileSystemMgr::NeFileSystemMgr()
 	{
 		MUST_PASS(Detail::fs_init_newfs());
-		
+
 		NeFSParser* fImpl;
 		mm_new_class<NeFSParser>(&fImpl);
 		MUST_PASS(fImpl);

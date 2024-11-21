@@ -185,7 +185,7 @@ namespace Boot
 			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(8) - 1]);
 		else
 		{
-			delete [] fStack;
+			delete[] fStack;
 			reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
 		}
 	}

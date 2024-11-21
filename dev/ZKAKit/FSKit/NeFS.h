@@ -33,7 +33,7 @@ default.
 #define kNeFSMinimumDiskSize (gib_cast(4))
 
 #define kNeFSSectorSz	(512)
-#define kNeFSForkDataSz (mib_cast(4))
+#define kNeFSForkDataSz (mib_cast(16))
 
 #define kNeFSIdentLen (8)
 #define kNeFSIdent	  "  NeFS"

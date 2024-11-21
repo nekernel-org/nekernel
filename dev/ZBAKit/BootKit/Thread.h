@@ -35,10 +35,10 @@ namespace Boot
 		bool		IsValid();
 
 	private:
-		Char	fBlobName[255] = {"BootThread"};
-		VoidPtr fStartAddress{nullptr};
-		VoidPtr fBlob{nullptr};
-		UInt8*  fStack{nullptr};
+		Char				 fBlobName[255] = {"BootThread"};
+		VoidPtr				 fStartAddress{nullptr};
+		VoidPtr				 fBlob{nullptr};
+		UInt8*				 fStack{nullptr};
 		HEL::BootInfoHeader* fHandover{nullptr};
 	};
 } // namespace Boot

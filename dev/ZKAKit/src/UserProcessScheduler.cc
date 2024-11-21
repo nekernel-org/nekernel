@@ -40,7 +40,7 @@ namespace Kernel
 
 	STATIC UserProcessScheduler kProcessScheduler;
 
-	UserProcess::UserProcess() = default;
+	UserProcess::UserProcess()	= default;
 	UserProcess::~UserProcess() = default;
 
 	/// @brief Gets the last exit code.
@@ -133,7 +133,7 @@ namespace Kernel
 		}
 		else
 		{
-			UserProcessHeapList* entry	  = this->MemoryHeap;
+			UserProcessHeapList* entry		= this->MemoryHeap;
 			UserProcessHeapList* prev_entry = nullptr;
 
 			while (!entry)
@@ -235,32 +235,29 @@ namespace Kernel
 
 	void UserProcess::Exit(const Int32& exit_code)
 	{
-		if (exit_code > 0)
-			this->Status = ProcessStatusKind::kKilled;
-		else
-			this->Status = ProcessStatusKind::kDead;
+		this->Status		= exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::KFinishing;
+		this->fLastExitCode = exit_code;
 
-		fLastExitCode = exit_code;
 		kLastExitCode = exit_code;
 
 		auto memory_list = this->MemoryHeap;
+
+#ifdef __ZKA_AMD64__
+		auto pd = hal_read_cr3();
+		hal_write_cr3(this->VMRegister);
+#endif
 
 		// Deleting memory lists. Make sure to free all of them.
 		while (memory_list)
 		{
 			if (memory_list->MemoryEntry)
 			{
-#ifdef __ZKA_AMD64__
-				auto pd = hal_read_cr3();
-				hal_write_cr3(this->VMRegister);
-#endif
-
 				MUST_PASS(mm_delete_heap(memory_list->MemoryEntry));
+			}
 
 #ifdef __ZKA_AMD64__
-				hal_write_cr3(pd);
+			hal_write_cr3(pd);
 #endif
-			}
 
 			auto next = memory_list->MemoryNext;
 
@@ -283,14 +280,14 @@ namespace Kernel
 		if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
 			mm_delete_heap((VoidPtr)this->StackFrame);
 
-		this->Image.fBlob	 = nullptr;
-		this->Image.fCode		 = nullptr;
-		this->StackFrame = nullptr;
+		this->Image.fBlob = nullptr;
+		this->Image.fCode = nullptr;
+		this->StackFrame  = nullptr;
 
 		if (this->Kind == kExectuableDLLKind)
 		{
 			Bool success = false;
-			
+
 			rtl_fini_dll(this, reinterpret_cast<IPEFDLLObject*>(this->PefDLLDelegate), &success);
 
 			if (!success)
@@ -305,6 +302,8 @@ namespace Kernel
 			mm_delete_heap(reinterpret_cast<VoidPtr>(this->StackReserve));
 
 		this->ProcessId = 0;
+
+		this->Status = ProcessStatusKind::kFinished;
 	}
 
 	/***********************************************************************************/
@@ -430,7 +429,7 @@ namespace Kernel
 	/***********************************************************************************/
 
 	/// @brief Run User scheduler object.
-	/// @return Process executed within team.
+	/// @return Process count executed within a team.
 
 	/***********************************************************************************/
 
@@ -511,7 +510,7 @@ namespace Kernel
 	Bool UserProcessHelper::CanBeScheduled(const UserProcess& process)
 	{
 		if (process.Status == ProcessStatusKind::kKilled ||
-			process.Status == ProcessStatusKind::kDead ||
+			process.Status == ProcessStatusKind::kFinished ||
 			process.Status == ProcessStatusKind::kFrozen)
 			return No;
 
@@ -533,7 +532,7 @@ namespace Kernel
 	{
 		return kProcessScheduler.Run();
 	}
-	
+
 	/***********************************************************************************/
 	/**
 	 * \brief Does a context switch in a CPU.

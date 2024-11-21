@@ -20,8 +20,8 @@ namespace Kernel
 		const UInt32 fStartAddress; // start address (master/slave(s) thread)
 
 #ifdef ZKA_IS_EXTENDED_COREBOOT
-        const UIntPtr fMasterStructure; // master structure for MP/PM and device tree and such (ARM)
-        const UIntPtr fMasterStructureVersion; // master structure version.
+		const UIntPtr fMasterStructure;		   // master structure for MP/PM and device tree and such (ARM)
+		const UIntPtr fMasterStructureVersion; // master structure version.
 #endif
 	};
 } // namespace Kernel

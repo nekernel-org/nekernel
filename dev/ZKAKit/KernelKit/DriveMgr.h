@@ -16,10 +16,10 @@
 #include <NewKit/KString.h>
 #include <NewKit/Ref.h>
 
-#define kDriveMaxCount (4U)
-#define kDriveSectorSz				(512U)
-#define kDriveInvalidID				(-1)
-#define kDriveNameLen				(32)
+#define kDriveMaxCount	(4U)
+#define kDriveSectorSz	(512U)
+#define kDriveInvalidID (-1)
+#define kDriveNameLen	(32)
 
 #define drv_sector_cnt(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
 
@@ -30,14 +30,14 @@ namespace Kernel
 		kInvalidDisc = -1,
 
 		/// Storage types, combine with flags.
-		kBlockDevice	= 0xAD,
+		kBlockDevice	 = 0xAD,
 		kMassStorageDisc = 0xDA,
-		kFloppyDisc		= 0xCD,
-		kOpticalDisc	= 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
-		kTapeDisc = 0xD7,
+		kFloppyDisc		 = 0xCD,
+		kOpticalDisc	 = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
+		kTapeDisc		 = 0xD7,
 
 		/// Storage flags, combine with types.
-		kReadOnlyDrive		  = 0x10, // Read only drive
+		kReadOnlyDrive	  = 0x10, // Read only drive
 		kEPMDrive		  = 0x11, // Explicit Partition Map.
 		kEPTDrive		  = 0x12, // ESP w/ EPM partition.
 		kMBRDrive		  = 0x13, // PC classic partition scheme
@@ -49,17 +49,17 @@ namespace Kernel
 	/// @brief Media drive trait type.
 	struct DriveTrait final
 	{
-		Char			 fName[kDriveNameLen]; // /System, /Boot, //./Devices/USB...
-		Int32			 fKind;				   // fMassStorage, fFloppy, fOpticalDisc.
-		Int32			 fFlags;			   // fReadOnly, fXPMDrive, fXPTDrive
+		Char  fName[kDriveNameLen]; // /System, /Boot, //./Devices/USB...
+		Int32 fKind;				// fMassStorage, fFloppy, fOpticalDisc.
+		Int32 fFlags;				// fReadOnly, fXPMDrive, fXPTDrive
 
 		/// @brief Packet drive (StorageKit compilant.)
 		struct DrivePacket final
 		{
-			VoidPtr fPacketContent{nullptr};				//! packet body.
+			VoidPtr fPacketContent{nullptr};			//! packet body.
 			Char	fPacketMime[kDriveNameLen] = "*/*"; //! identify what we're sending.
-			SizeT	fPacketSize{0UL};				//! packet size
-			UInt32	fPacketCRC32{0UL};				//! sanity crc, in case if good is set to false
+			SizeT	fPacketSize{0UL};					//! packet size
+			UInt32	fPacketCRC32{0UL};					//! sanity crc, in case if good is set to false
 			Boolean fPacketGood{YES};
 			Lba		fPacketLba{0UL};
 			Boolean fPacketReadOnly{NO};

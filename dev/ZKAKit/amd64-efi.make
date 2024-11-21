@@ -7,7 +7,7 @@ CC			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -fshort-wchar -c -D__ZKA_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
 			-std=c++20 -D__ZKA_SUPPORT_NX__ -O0 -I../Vendor -D__FSKIT_INCLUDES_NEFS__ \
-			-D__NEWOSKRNL__ -D__HAVE_ZKA_APIS__ -D__FREESTANDING__ -D__ZKA__ -I./ -I../ -I../zba
+			-D__NEWOSKRNL__ -D__HAVE_ZKA_APIS__ -D__FREESTANDING__ -D__ZKA__ -I./ -I../ -I../zba -Wall
 
 ASM 		= nasm
 

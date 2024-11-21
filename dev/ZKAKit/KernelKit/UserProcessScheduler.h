@@ -39,7 +39,7 @@ namespace Kernel
 	typedef Int64 ProcessID;
 
 	//! @brief Local Process name length.
-	inline constexpr SizeT kProcessNameLen = 128U;
+	inline constexpr SizeT	   kProcessNameLen	 = 128U;
 	inline constexpr ProcessID kProcessInvalidID = -1;
 
 	//! @brief Local Process status enum.
@@ -50,7 +50,8 @@ namespace Kernel
 		kRunning,
 		kKilled,
 		kFrozen,
-		kDead,
+		KFinishing,
+		kFinished,
 		kCount,
 	};
 
@@ -131,7 +132,7 @@ namespace Kernel
 	{
 		ImagePtr fCode;
 		ImagePtr fBlob;
-	
+
 		operator bool()
 		{
 			return this->fCode;
@@ -161,11 +162,11 @@ namespace Kernel
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
-		ProcessStatusKind  Status{ProcessStatusKind::kDead};
+		ProcessStatusKind  Status{ProcessStatusKind::kFinished};
 		UInt8*			   StackReserve{nullptr};
 		UserProcessImage   Image;
 		SizeT			   StackSize{kSchedMaxStackSz};
-		IDLLObject*	   PefDLLDelegate{nullptr};
+		IDLLObject*		   PefDLLDelegate{nullptr};
 		SizeT			   MemoryCursor{0};
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 
@@ -181,12 +182,12 @@ namespace Kernel
 
 		struct UserProcessSignal final
 		{
-			UIntPtr SignalIP;
+			UIntPtr			  SignalIP;
 			ProcessStatusKind PreviousStatus;
-			UIntPtr SignalID;
+			UIntPtr			  SignalID;
 		};
 
-		UserProcessSignal ProcessSignal;
+		UserProcessSignal	 ProcessSignal;
 		UserProcessHeapList* MemoryHeap{nullptr};
 
 		VoidPtr VMRegister{0UL};

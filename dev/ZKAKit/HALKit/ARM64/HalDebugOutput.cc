@@ -37,7 +37,7 @@ namespace Kernel
 	}
 
 	TerminalDevice::~TerminalDevice() = default;
-	
+
 	EXTERN_C void ke_io_read(const Char* bytes)
 	{
 #ifdef __DEBUG__

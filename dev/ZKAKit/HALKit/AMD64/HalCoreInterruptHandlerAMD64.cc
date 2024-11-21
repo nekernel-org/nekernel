@@ -27,8 +27,8 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	process.Leak().ProcessSignal.SignalIP = 0UL;
-	process.Leak().ProcessSignal.SignalID = SIGKILL;
+	process.Leak().ProcessSignal.SignalIP		= 0UL;
+	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
 	kcout << "Kernel: PRCFROZE status set..\r";
@@ -53,8 +53,8 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	process.Leak().ProcessSignal.SignalIP = 0UL;
-	process.Leak().ProcessSignal.SignalID = SIGKILL;
+	process.Leak().ProcessSignal.SignalIP		= 0UL;
+	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
 	kcout << "Kernel: PRCFROZE status set..\r";
@@ -72,8 +72,8 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	process.Leak().ProcessSignal.SignalIP = 0UL;
-	process.Leak().ProcessSignal.SignalID = SIGKILL;
+	process.Leak().ProcessSignal.SignalIP		= 0UL;
+	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
 	kcout << "Kernel: PRCFROZE status set..\r";
@@ -92,8 +92,8 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 
 	kcout << "Kernel: SIGTRAP set.\r";
 
-	process.Leak().ProcessSignal.SignalIP = rip;
-	process.Leak().ProcessSignal.SignalID = SIGTRAP;
+	process.Leak().ProcessSignal.SignalIP		= rip;
+	process.Leak().ProcessSignal.SignalID		= SIGTRAP;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
 	kcout << "Kernel: PRCFROZE status set..\r";
@@ -109,8 +109,8 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	process.Leak().ProcessSignal.SignalIP = 0UL;
-	process.Leak().ProcessSignal.SignalID = SIGKILL;
+	process.Leak().ProcessSignal.SignalIP		= 0UL;
+	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
 	kcout << "Kernel: PRCFROZE status set..\r";
