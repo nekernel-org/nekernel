@@ -356,7 +356,7 @@ namespace Kernel
 
 	private:
 		NodePtr		fFile{nullptr};
-		Int32		fFileRestrict{kFileMgrRestrictReadBinary | kFileMgrRestrictRead};
+		Int32		fFileRestrict{kFileMgrRestrictReadBinary};
 		const Char* fMime{kFileMimeGeneric};
 	};
 
@@ -365,21 +365,21 @@ namespace Kernel
 
 	typedef UInt64 CursorType;
 
+	inline static const auto kRestrictStrLen = 8U;
+
+	/// @brief restrict information about the file descriptor.
+	struct FileRestrictKind final
+	{
+		Char  fRestrict[kRestrictStrLen];
+		Int32 fMappedTo;
+	};
+
 	/// @brief constructor
 	template <typename Encoding, typename Class>
-	FileStream<Encoding, Class>::FileStream(const Encoding* path,
+	inline FileStream<Encoding, Class>::FileStream(const Encoding* path,
 											const Encoding* restrict_type)
 		: fFile(Class::GetMounted()->Open(path, restrict_type))
 	{
-		static const auto kLength = 255U;
-
-		/// @brief restrict information about the file descriptor.
-		struct FileRestrictKind final
-		{
-			Char  fRestrict[kLength] = "";
-			Int32 fMappedTo{0U};
-		};
-
 		const SizeT		   kRestrictCount  = kRestrictMax;
 		const FileRestrictKind kRestrictList[] = {
 			{
@@ -401,7 +401,7 @@ namespace Kernel
 			{
 				.fRestrict = kRestrictWB,
 				.fMappedTo = kFileMgrRestrictReadWrite,
-		}};
+			}};
 
 		for (SizeT index = 0; index < kRestrictCount; ++index)
 		{
@@ -418,7 +418,7 @@ namespace Kernel
 
 	/// @brief destructor of the file stream.
 	template <typename Encoding, typename Class>
-	FileStream<Encoding, Class>::~FileStream()
+	inline FileStream<Encoding, Class>::~FileStream()
 	{
 		mm_delete_heap(fFile);
 	}
