@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 	File: Defines.h
 	Purpose: ATA header.
@@ -134,17 +134,17 @@ enum
 
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 
-Kernel::Boolean drv_std_init(Kernel::UInt16 Bus, Kernel::UInt8 Drive, Kernel::UInt16& OutBus, Kernel::UInt8& OutMaster);
+Kernel::Boolean drv_std_init(Kernel::UInt16 _Input bus, Kernel::UInt8 _Input drive, Kernel::UInt16& _Output out_bus, Kernel::UInt8& _Output out_master);
 
 Kernel::Boolean drv_std_detected(Kernel::Void);
 
-Kernel::Void drv_std_select(Kernel::UInt16 Bus);
+Kernel::Void drv_std_select(Kernel::UInt16 bus);
 
-Kernel::Boolean drv_std_wait_io(Kernel::UInt16 IO);
+Kernel::Boolean drv_std_wait_io(Kernel::UInt16 io);
 
-Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::UInt16 IO, Kernel::UInt8 Master, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size);
+Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::UInt16 io, Kernel::UInt8 is_master, Kernel::Char* buf, Kernel::SizeT sec_sz, Kernel::SizeT buf_sz);
 
-Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::UInt16 IO, Kernel::UInt8 Master, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size);
+Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::UInt16 io, Kernel::UInt8 is_master, Kernel::Char* buf, Kernel::SizeT sec_sz, Kernel::SizeT buf_sz);
 
 /// @brief get sector count.
 Kernel::SizeT drv_get_sector_count();

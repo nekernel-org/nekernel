@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file Handover.h
- * @author Amlal EL Mahrouss (amlalelmahrouss@icloud.com)
+ * @author EL Mahrouss Logic (amlalelmahrouss@icloud.com)
  * @brief The handover boot protocol.
  * @version 1.15
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, Amlal EL Mahrouss
+ * @copyright Copyright (c) 2024, EL Mahrouss Logic
  *
  */
 

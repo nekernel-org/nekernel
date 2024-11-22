@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 ------------------------------------------- */
 
@@ -65,10 +65,10 @@ namespace Kernel
 			Boolean fPacketReadOnly{NO};
 		} fPacket;
 
-		Void (*fInput)(DrivePacket* packetPtr);
-		Void (*fOutput)(DrivePacket* packetPtr);
-		Void (*fVerify)(DrivePacket* packetPtr);
-		Void (*fInit)(DrivePacket* packetPtr);
+		Void (*fInput)(DrivePacket* packet_ptr);
+		Void (*fOutput)(DrivePacket* packet_ptr);
+		Void (*fVerify)(DrivePacket* packet_ptr);
+		Void (*fInit)(DrivePacket* packet_ptr);
 		const Char* (*fDriveKind)(Void);
 	};
 
@@ -147,11 +147,11 @@ namespace Kernel
 
 	/// @brief Makes a new drive.
 	/// @return the new drive as a trait.
-	DriveTrait io_construct_drive(void) noexcept;
+	DriveTrait io_construct_blank_drive(Void) noexcept;
 
 	/// @brief Fetches the main drive.
 	/// @return the new drive as a trait.
-	DriveTrait io_construct_main_drive(void) noexcept;
+	DriveTrait io_construct_main_drive(Void) noexcept;
 } // namespace Kernel
 
 #endif /* ifndef INC_DRIVE_MANAGER_H */

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 ------------------------------------------- */
 
@@ -136,7 +136,7 @@ namespace Kernel
 
 	/// @brief Makes a new drive.
 	/// @return the new blank drive.
-	DriveTrait io_construct_drive() noexcept
+	DriveTrait io_construct_blank_drive() noexcept
 	{
 		DriveTrait trait;
 

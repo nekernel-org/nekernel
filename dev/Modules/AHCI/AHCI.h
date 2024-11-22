@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 	File: AHCI.h
 	Purpose: AHCI protocol defines.
@@ -343,7 +343,7 @@ Kernel::Boolean drv_std_detected(Kernel::Void);
 /// @param SectorSz
 /// @param Size
 /// @return
-Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size);
+Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buf, Kernel::SizeT sector_sz, Kernel::SizeT buf_sz);
 
 /// @brief Write to disk.
 /// @param Lba
@@ -351,7 +351,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT S
 /// @param SectorSz
 /// @param Size
 /// @return
-Kernel::Void drv_std_write(Kernel::UInt64 Lba, Kernel::Char* Buf, Kernel::SizeT SectorSz, Kernel::SizeT Size);
+Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buf, Kernel::SizeT sector_sz, Kernel::SizeT buf_sz);
 
 /// @brief get sector count.
 Kernel::SizeT drv_get_sector_count();

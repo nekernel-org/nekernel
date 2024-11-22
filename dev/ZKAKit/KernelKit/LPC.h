@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 ------------------------------------------- */
 
@@ -58,10 +58,10 @@ namespace Kernel
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
 	/// @brief Raises a bug check stop code.
-	Void err_bug_check_raise(void) noexcept;
+	Void err_bug_check_raise(Void) noexcept;
 
 	/// @brief Does a system wide bug check.
 	/// @param void no params are needed.
 	/// @return if error-free: false, otherwise true.
-	Boolean err_bug_check(void) noexcept;
+	Boolean err_bug_check(Void) noexcept;
 } // namespace Kernel

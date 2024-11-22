@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
 
 ------------------------------------------- */
 
@@ -27,37 +27,38 @@ inline T* tls_new_ptr(void) noexcept
 	return reinterpret_cast<T*>(pointer.Leak().Leak());
 }
 
-//! @brief TLS delete implementation.
+//! @brief Delete process pointer.
+//! @param obj The pointer to delete.
 template <typename T>
-inline Kernel::Bool tls_delete_ptr(T* ptr) noexcept
+inline Kernel::Bool tls_delete_ptr(T* obj) noexcept
 {
-	if (!ptr)
-		return No;
-
 	using namespace Kernel;
+
+	if (!obj)
+		return No;
 
 	auto ref_process = UserProcessScheduler::The().GetCurrentProcess();
 	MUST_PASS(ref_process);
 
-	return ref_process.Leak().Delete(ptr, sizeof(T));
+	return ref_process.Leak().Delete(obj, sizeof(T));
 }
 
 /// @brief Allocate a C++ class, and then call the constructor of it.
 /// @tparam T class type.
 /// @tparam ...Args varg class type.
-/// @param ...args arguments list.
+/// @param args arguments list.
 /// @return Class instance.
 template <typename T, typename... Args>
 T* tls_new_class(Args&&... args)
 {
-	T* ptr = tls_new_ptr<T>();
-
 	using namespace Kernel;
 
-	if (ptr)
+	T* obj = tls_new_ptr<T>();
+
+	if (obj)
 	{
-		*ptr = T(forward(args)...);
-		return ptr;
+		*obj = T(forward(args)...);
+		return obj;
 	}
 
 	return nullptr;
@@ -65,14 +66,16 @@ T* tls_new_class(Args&&... args)
 
 /// @brief Delete a C++ class (call constructor first.)
 /// @tparam T
-/// @param ptr
+/// @param obj
 /// @return
 template <typename T>
-inline Kernel::Bool tls_delete_class(T* ptr)
+inline Kernel::Bool tls_delete_class(T* obj)
 {
-	if (!ptr)
-		return false;
+	using namespace Kernel;
+	
+	if (!obj)
+		return No;
 
-	ptr->~T();
-	return tls_delete_ptr(ptr);
+	obj->~T();
+	return tls_delete_ptr(obj);
 }
