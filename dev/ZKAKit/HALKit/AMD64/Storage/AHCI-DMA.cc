@@ -31,6 +31,8 @@
 #define HBA_PxCMD_FR  0x4000
 #define HBA_PxCMD_CR  0x8000
 
+#define AHCI_LBA_MODE (1 << 6)
+
 #define kMaxAhciPoll (100000U)
 
 #define kCmdOrCtrlCmd  1
@@ -219,13 +221,13 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 	for (int i = 0; i < cmd_hdr->Prdtl - 1; i++)
 	{
 		cmd_tbl->PrdtEntries[i].Dba			 = (Kernel::UInt32)(Kernel::UInt64)buffer;
-		cmd_tbl->PrdtEntries[i].Dba			 = (Kernel::UInt32)((Kernel::UInt64)(buffer) >> 32);
+		cmd_tbl->PrdtEntries[i].Dbau			 = (Kernel::UInt32)((Kernel::UInt64)(buffer) >> 32);
 		cmd_tbl->PrdtEntries[i].Dbc			 = size_buffer - 1; // 8K bytes (this value should always be set to 1 less than the actual value)
 		cmd_tbl->PrdtEntries[i].InterruptBit = 1;
 	}
 
 	cmd_tbl->PrdtEntries[i].Dba			 = (Kernel::UInt32)(Kernel::UInt64)buffer;
-	cmd_tbl->PrdtEntries[i].Dba			 = (Kernel::UInt32)((Kernel::UInt64)(buffer) >> 32);
+	cmd_tbl->PrdtEntries[i].Dbau			 = (Kernel::UInt32)((Kernel::UInt64)(buffer) >> 32);
 	cmd_tbl->PrdtEntries[i].Dbc			 = size_buffer - 1; // 8K bytes (this value should always be set to 1 less than the actual value)
 	cmd_tbl->PrdtEntries[i].InterruptBit = 1;
 
@@ -238,7 +240,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 	cmd_fis->Lba0	= (Kernel::UInt8)(Kernel::UInt32)lba & 0xFF;
 	cmd_fis->Lba1	= (Kernel::UInt8)((Kernel::UInt32)lba >> 8);
 	cmd_fis->Lba2	= (Kernel::UInt8)((Kernel::UInt32)lba >> 16);
-	cmd_fis->Device = (1 << 6); // LBA mode
+	cmd_fis->Device = AHCI_LBA_MODE; // LBA mode
 
 	cmd_fis->Lba3 = (Kernel::UInt8)((Kernel::UInt32)lba >> 24);
 	cmd_fis->Lba4 = (Kernel::UInt8)(lba >> 32);
