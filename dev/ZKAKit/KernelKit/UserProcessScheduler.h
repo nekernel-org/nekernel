@@ -50,7 +50,6 @@ namespace Kernel
 		kRunning,
 		kKilled,
 		kFrozen,
-		KFinishing,
 		kFinished,
 		kCount,
 	};
