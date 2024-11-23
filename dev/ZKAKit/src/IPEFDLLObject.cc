@@ -46,7 +46,6 @@ EXTERN_C IDLL rtl_init_dll(UserProcess* header)
 	if (!dll_obj)
 	{
 		header->Crash();
-
 		return nullptr;
 	}
 
@@ -54,22 +53,22 @@ EXTERN_C IDLL rtl_init_dll(UserProcess* header)
 
 	if (!dll_obj->Get())
 	{
+		tls_delete_class(dll_obj);
 		header->Crash();
-
 		return nullptr;
 	}
 
-	dll_obj->Get()->fImageObject =
+	dll_obj->Get()->ImageObject =
 		header->Image.fBlob;
 
-	if (!dll_obj->Get()->fImageObject)
+	if (!dll_obj->Get()->ImageObject)
 	{
+		tls_delete_class(dll_obj);
 		header->Crash();
-
 		return nullptr;
 	}
 
-	dll_obj->Get()->fImageEntrypointOffset =
+	dll_obj->Get()->ImageEntrypointOffset =
 		dll_obj->Load<VoidPtr>(kPefStart, rt_string_len(kPefStart, 0), kPefCode);
 
 	return dll_obj;
