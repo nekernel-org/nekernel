@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef _KERNELKIT_TLS_H
-#define _KERNELKIT_TLS_H
+#ifndef KERNELKIT_TLS_H
+#define KERNELKIT_TLS_H
 
 #include <NewKit/Defines.h>
 
@@ -23,8 +23,8 @@ struct THREAD_INFORMATION_BLOCK;
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED THREAD_INFORMATION_BLOCK final
 {
-	Kernel::Char	f_Cookie[kTLSCookieLen]{0}; //! Thread magic number.
-	Kernel::VoidPtr f_ThreadRecord{nullptr};	//! Thread information record.
+	Kernel::Char	Cookie[kTLSCookieLen]{0}; //! Thread magic number.
+	Kernel::VoidPtr Record{nullptr};	//! Thread information record.
 };
 
 ///! @brief Cookie Sanity check.
@@ -51,4 +51,4 @@ EXTERN_C Kernel::Bool tls_check_syscall_impl(Kernel::VoidPtr TIB) noexcept;
 
 // last rev 7/7/24
 
-#endif /* ifndef _KERNELKIT_TLS_H */
+#endif /* ifndef KERNELKIT_TLS_H */

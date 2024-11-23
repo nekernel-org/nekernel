@@ -29,7 +29,7 @@ using namespace Kernel;
 Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr)
 {
 	if (!tib_ptr ||
-		!tib_ptr->f_ThreadRecord)
+		!tib_ptr->Record)
 		return false;
 
 	IEncoderObject encoder;
