@@ -93,36 +93,48 @@ namespace Kernel
 		{
 			return mA;
 		}
+
 		DriveTrait& B()
 		{
 			return mB;
 		}
+
 		DriveTrait& C()
 		{
 			return mC;
 		}
+
 		DriveTrait& D()
 		{
 			return mD;
 		}
 
-		DriveTraitPtr GetAddressOf(Int32 index)
+		enum
+		{
+			kDriveIndexA = 0,
+			kDriveIndexB,
+			kDriveIndexC,
+			kDriveIndexD,
+			kDriveIndexInvalid,
+		};
+
+		DriveTraitPtr GetAddressOf(const Int32& index)
 		{
 			ErrLocal() = kErrorSuccess;
 
 			switch (index)
 			{
-			case 0:
+			case kDriveIndexA:
 				return &mA;
-			case 1:
+			case kDriveIndexB:
 				return &mB;
-			case 2:
+			case kDriveIndexC:
 				return &mC;
-			case 3:
+			case kDriveIndexD:
 				return &mD;
 			default: {
 				ErrLocal() = kErrorNoSuchDisk;
-				kcout << "No such disk.\n";
+				kcout << "No such disk index.\n";
 
 				break;
 			}
@@ -133,15 +145,16 @@ namespace Kernel
 
 	private:
 		DriveTrait mA, mB, mC, mD;
+
 	};
 
 	/// @brief Unimplemented drive.
-	/// @param pckt
+	/// @param pckt the packet to read.
 	/// @return
 	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt);
 
 	/// @brief Gets the drive kind (ATA, SCSI, AHCI...)
-	/// @param
+	/// @param void none.
 	/// @return the drive kind (ATA, Flash, NVM)
 	const Char* io_drv_kind(Void);
 

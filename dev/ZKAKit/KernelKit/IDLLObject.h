@@ -14,6 +14,7 @@
 
 namespace Kernel
 {
+	/// @brief DLL class object. A handle to a shared library.
 	class IDLLObject
 	{
 	public:
@@ -22,12 +23,12 @@ namespace Kernel
 
 		struct DLL_TRAITS final
 		{
-			VoidPtr fImageObject{nullptr};
-			VoidPtr fImageEntrypointOffset{nullptr};
+			VoidPtr ImageObject{nullptr};
+			VoidPtr ImageEntrypointOffset{nullptr};
 
 			Bool IsValid()
 			{
-				return fImageObject && fImageEntrypointOffset;
+				return ImageObject && ImageEntrypointOffset;
 			}
 		};
 

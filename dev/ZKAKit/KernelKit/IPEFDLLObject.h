@@ -48,7 +48,7 @@ namespace Kernel
 	public:
 		void Mount(DLL_TRAITS* to_mount)
 		{
-			if (!to_mount || !to_mount->fImageObject)
+			if (!to_mount || !to_mount->ImageObject)
 				return;
 
 			fMounted = to_mount;
@@ -61,7 +61,7 @@ namespace Kernel
 
 			if (!fLoader)
 			{
-				fLoader = new PEFLoader(fMounted->fImageObject);
+				fLoader = new PEFLoader(fMounted->ImageObject);
 			}
 		}
 

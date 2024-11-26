@@ -120,25 +120,11 @@
 #define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
 #endif // !RGB
 
-#define BREAK_POINT() asm volatile("int $3")
-
-/// @brief The system page file, located on the mount directory, as mulitple system pages can be mounted.
-#define kPageSys "/Disks/syspage.sys"
-
-/// @brief The main system driver.
-#define kStartupSys "/Boot/startup.sys"
-
-/// @brief The main font file.
-#define kUrbanistTTF "/Resources/Fonts/urbanist.ttf"
-
-/// @brief License file
-#define kEulaTxt "/Resources/EULA.txt"
-
-/// @brief The main kernel file.
-#define kStartupWav "/Resources/startup.wav"
-
-/// @brief The main system loader.
-#define kUserName "ZKA AUTHORITY/KERNEL"
+#ifdef __ZKA_AMD64__
+#define dbg_break_point() asm volatile("int $3")
+#else
+#define dbg_break_point() ((void)0)
+#endif
 
 #define rtl_deduce_endianess(address, value)                    \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \

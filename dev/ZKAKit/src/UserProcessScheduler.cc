@@ -229,18 +229,19 @@ namespace Kernel
 
 	/***********************************************************************************/
 	/**
-	@brief Process exit method.
+	@brief Exit process method.
+	@param exit_code The process's exit code.
 	*/
 	/***********************************************************************************/
 
-	void UserProcess::Exit(const Int32& exit_code)
+	Void UserProcess::Exit(const Int32& exit_code)
 	{
-		this->Status		= exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::KFinishing;
+		this->Status		= exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
 		this->fLastExitCode = exit_code;
 
 		kLastExitCode = exit_code;
 
-		auto memory_list = this->MemoryHeap;
+		auto memory_heap_list = this->MemoryHeap;
 
 #ifdef __ZKA_AMD64__
 		auto pd = hal_read_cr3();
@@ -248,23 +249,23 @@ namespace Kernel
 #endif
 
 		// Deleting memory lists. Make sure to free all of them.
-		while (memory_list)
+		while (memory_heap_list)
 		{
-			if (memory_list->MemoryEntry)
+			if (memory_heap_list->MemoryEntry)
 			{
-				MUST_PASS(mm_delete_heap(memory_list->MemoryEntry));
+				MUST_PASS(mm_delete_heap(memory_heap_list->MemoryEntry));
 			}
 
 #ifdef __ZKA_AMD64__
 			hal_write_cr3(pd);
 #endif
 
-			auto next = memory_list->MemoryNext;
+			auto next = memory_heap_list->MemoryNext;
 
-			mm_delete_heap(memory_list);
-			memory_list = nullptr;
+			mm_delete_heap(memory_heap_list);
 
-			memory_list = next;
+			memory_heap_list = nullptr;
+			memory_heap_list = next;
 		}
 
 		//! Free the memory's page directory.
