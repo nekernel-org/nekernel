@@ -1,6 +1,6 @@
 /**
 	Sat Oct 26 07:03:28 AM CEST 2024
-	(c) EL Mahrouss Logic.
+	(c) ELMH Group.
 */
 
 #ifndef APPS_COMMON_H

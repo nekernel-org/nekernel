@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
+	Copyright (C) 2024, ELMH Group, all rights reserved.
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
 @brief Kernel Implementation of EFI.
 @note This API is in WiP, so it's not 'pretty', just deal with it. We'll be
 improving that later.
-@author EL Mahrouss Logic
+@author ELMH Group
 */
 
 #include <NewKit/Defines.h>

@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
+	Copyright (C) 2024, ELMH Group, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file AHCI.cc
- * @author EL Mahrouss Logic (amlalelmahrouss@icloud.com)
+ * @author ELMH Group (amlalelmahrouss@icloud.com)
  * @brief AHCI driver.
  * @version 0.1
  * @date 2024-02-02
  *
- * @Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
+ * @Copyright (C) 2024, ELMH Group, all rights reserved.
  *
  */
 

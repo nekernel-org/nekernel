@@ -2,7 +2,7 @@
  *	========================================================
  *
  *  ZKA
- * 	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved., all rights reserved.
+ * 	Copyright (C) 2024, ELMH Group, all rights reserved., all rights reserved.
  *
  *	File: User.cc
  * 	Purpose: User class, used to provide authentication and security.

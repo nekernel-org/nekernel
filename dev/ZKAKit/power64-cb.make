@@ -1,4 +1,4 @@
 ##################################################
-# (c) EL Mahrouss Logic, all rights reserved.
+# (c) ELMH Group, all rights reserved.
 # This is the microKernel makefile.
 ##################################################
