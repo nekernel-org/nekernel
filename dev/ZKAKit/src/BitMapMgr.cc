@@ -6,8 +6,6 @@
 
 #include <ArchKit/ArchKit.h>
 
-#define kBitMapMagic (0x10210)
-
 #ifdef __ZKA_AMD64__
 #include <HALKit/AMD64/Paging.h>
 #elif defined(__ZKA_ARM64__)
@@ -17,9 +15,11 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Stop.h>
 
-#define kBitMapMagIdx  (0)
-#define kBitMapSizeIdx (1)
-#define kBitMapUsedIdx (2)
+#define kBitMapMagic (0x10210U)
+
+#define kBitMapMagIdx  (0U)
+#define kBitMapSizeIdx (1U)
+#define kBitMapUsedIdx (2U)
 
 namespace Kernel
 {
