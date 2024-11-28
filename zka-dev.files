@@ -21,7 +21,6 @@ dev/Modules/APM/APM.h
 dev/Modules/ATA/ATA.h
 dev/Modules/FB/FB.h
 dev/Modules/FB/Text.h
-dev/Modules/FB/WS.h
 dev/Modules/Flash/Flash.h
 dev/Modules/GLCG/GLCG.h
 dev/Modules/GPRS/.keepme
@@ -36,7 +35,6 @@ dev/Modules/OHCI/.gitkeep
 dev/Modules/ReadMe.md
 dev/Modules/SCSI/.gitkeep
 dev/Modules/SCSI/SCSI.h
-dev/Modules/WSGL/WSGL.h
 dev/Modules/WiFi/.gitkeep
 dev/Modules/XHCI/.gitkeep
 dev/Modules/XHCI/Defines.h
@@ -370,8 +368,6 @@ dev/ZKAKit/src/UserProcessScheduler.cc
 dev/ZKAKit/src/UserProcessTeam.cc
 dev/ZKAKit/src/Utils.cc
 dev/ZKAKit/src/Variant.cc
-dev/ZKAKit/src/WS/WS.cc
-dev/ZKAKit/src/WS/WSGL.cc
 dev/base/EncryptFS/build.json
 dev/base/EncryptFS/disk_crypt.h
 dev/base/EncryptFS/src/disk_crypt.cc
