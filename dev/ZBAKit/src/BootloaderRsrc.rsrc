@@ -1,4 +1,4 @@
-#include "../../Kernel/CompilerKit/Version.h"
+#include "../../ZKAKit/CompilerKit/Version.h"
 
 1 VERSIONINFO
 FILEVERSION     1,0,0,0
@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "EL Mahrouss Logic"
+      VALUE "CompanyName", "ELMH Group"
       VALUE "FileDescription", "ZKA OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "zbaosldr"
-      VALUE "LegalCopyright", "Copyright (C) 2024, EL Mahrouss Logic, all rights reserved., all rights reserved."
+      VALUE "LegalCopyright", "Copyright (C) 2024, ELMH Group all rights reserved."
       VALUE "OriginalFilename", "zbaosldr.exe"
       VALUE "ProductName", "zbaosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION
