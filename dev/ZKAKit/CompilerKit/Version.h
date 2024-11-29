@@ -1,4 +1,4 @@
-// (c) EL Mahrouss Logic
+// (c) ELMH Group
 
 #pragma once
 

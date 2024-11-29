@@ -17,4 +17,4 @@ And then execute:
 make all
 ```
 
-##### Copyright, EL Mahrouss Logic, all rights reserved.
+##### Copyright, ELMH Group, all rights reserved.

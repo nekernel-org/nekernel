@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, EL Mahrouss Logic, all rights reserved.
+	Copyright (C) 2024, ELMH Group, all rights reserved.
 
 ------------------------------------------- */
 
@@ -19,10 +19,11 @@
 #define kSchedMaxMemoryLimit gib_cast(128)
 #define kSchedMaxStackSz	 mib_cast(8)
 
+#define kProcessInvalidID (-1)
+#define kProcessNameLen (128U)
+
 ////////////////////////////////////////////////////
-
-// LAST REV: Mon Feb 12 13:52:01 CET 2024
-
+// The current date is: Thu 11/28/2024			  //
 ////////////////////////////////////////////////////
 
 namespace Kernel
@@ -37,10 +38,6 @@ namespace Kernel
 
 	//! @brief Local Process identifier.
 	typedef Int64 ProcessID;
-
-	//! @brief Local Process name length.
-	inline constexpr SizeT	   kProcessNameLen	 = 128U;
-	inline constexpr ProcessID kProcessInvalidID = -1;
 
 	//! @brief Local Process status enum.
 	enum class ProcessStatusKind : Int32
