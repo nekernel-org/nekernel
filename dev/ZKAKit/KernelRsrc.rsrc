@@ -12,9 +12,9 @@ BEGIN
 	  VALUE "FileDescription", "ZKA Minimal Kernel."
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "minoskrnl"
-      VALUE "LegalCopyright", "(c) ELMH Group, all rights reserved."
+      VALUE "LegalCopyright", "(c) 2024 ELMH Group, all rights reserved."
       VALUE "OriginalFilename", "minoskrnl.exe"
-      VALUE "ProductName", "ZKA Operating System Kernel."
+      VALUE "ProductName", "ZKA Minimal Kernel."
       VALUE "ProductVersion", KERNEL_VERSION
     END
   END
