@@ -124,8 +124,10 @@ namespace Kernel
 	/// @brief Helper type to describe a code image.
 	using ImagePtr = VoidPtr;
 
-	struct UserProcessImage
+	struct UserProcessImage final
 	{
+		explicit UserProcessImage() = default;
+
 		ImagePtr fCode;
 		ImagePtr fBlob;
 
@@ -141,8 +143,7 @@ namespace Kernel
 	};
 
 	/// @name UserProcess
-	/// @brief User process class.
-	/// Holds information about the running process/thread.
+	/// @brief User process class, holds information about the running process/thread.
 	class UserProcess final
 	{
 	public:
