@@ -20,7 +20,7 @@
 #define kSchedMaxStackSz	 mib_cast(8)
 
 #define kProcessInvalidID (-1)
-#define kProcessNameLen (128U)
+#define kProcessNameLen	  (128U)
 
 ////////////////////////////////////////////////////
 // The current date is: Thu 11/28/2024			  //

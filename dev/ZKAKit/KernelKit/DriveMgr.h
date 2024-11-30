@@ -145,7 +145,6 @@ namespace Kernel
 
 	private:
 		DriveTrait mA, mB, mC, mD;
-
 	};
 
 	/// @brief Unimplemented drive.

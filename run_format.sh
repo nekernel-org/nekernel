@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 THIS_PATH="$(realpath "$0")"
 THIS_DIR="$(dirname "$THIS_PATH")"

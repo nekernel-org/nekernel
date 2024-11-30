@@ -7,6 +7,7 @@
 #ifdef __FSKIT_INCLUDES_NEFS__
 
 #include <FSKit/NeFS.h>
+#include <FirmwareKit/EPM.h>
 
 #include <Modules/AHCI/AHCI.h>
 #include <Modules/ATA/ATA.h>
@@ -16,7 +17,6 @@
 #include <NewKit/Stop.h>
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>
-#include <FirmwareKit/EPM.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/User.h>
 
@@ -61,7 +61,7 @@ STATIC MountpointInterface kDiskMountpoint;
 /// @return the fork
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-												_Input NFS_FORK_STRUCT& the_fork)
+												_Input NFS_FORK_STRUCT&	   the_fork)
 {
 	if (catalog && the_fork.ForkName[0] != 0 &&
 		the_fork.DataSize <= kNeFSForkDataSz)
@@ -170,8 +170,8 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 /// @return the fork.
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-											  _Input const Char* name,
-											  Boolean			 isDataFork)
+											  _Input const Char*		 name,
+											  Boolean					 isDataFork)
 {
 	auto			 drv	  = kDiskMountpoint.A();
 	NFS_FORK_STRUCT* the_fork = nullptr;
@@ -236,7 +236,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name)
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
+_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
 													  _Input const Int32& flags,
 													  _Input const Int32& kind)
 {
@@ -244,7 +244,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 
 	Lba out_lba = 0UL;
 
-	kcout << "Checking for extension...\r";
+	kcout << "Checking for path separator...\r";
 
 	/// a directory should have a slash in the end.
 	if (kind == kNeFSCatalogKindDir &&
@@ -936,7 +936,7 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 								_Input Bool						   is_rsrc_fork,
 								_Input SizeT					   dataSz,
-								_Input const Char* forkName)
+								_Input const Char*				   forkName)
 {
 	if (!catalog)
 	{

@@ -55,6 +55,7 @@ namespace Kernel
 	inline constexpr HError kErrorIPC				 = 59;
 	inline constexpr HError kErrorSign				 = 60;
 	inline constexpr HError kErrorInvalidCreds		 = 61;
+	inline constexpr HError kErrorCDTrayBroken		 = 62;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
 	/// @brief Raises a bug check stop code.

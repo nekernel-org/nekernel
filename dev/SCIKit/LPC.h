@@ -47,6 +47,7 @@ inline constexpr ErrObject kErrorNonBlocking		= 58;
 inline constexpr ErrObject kErrorIPC				= 59;
 inline constexpr ErrObject kErrorSign				= 60;
 inline constexpr ErrObject kErrorInvalidCreds		= 61;
+inline constexpr ErrObject kErrorCDTrayBroken		= 62;
 inline constexpr ErrObject kErrorUnimplemented		= 0;
 
 /// @brief The last error reported by the system to the process.

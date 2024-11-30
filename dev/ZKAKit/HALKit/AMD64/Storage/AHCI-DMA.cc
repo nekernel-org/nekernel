@@ -49,7 +49,7 @@ enum
 };
 
 STATIC Kernel::PCI::Device kAhciDevice;
-STATIC HbaPort* kAhciPort				   = nullptr;
+STATIC HbaPort*			   kAhciPort	   = nullptr;
 STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
 
 Kernel::Void drv_calculate_disk_geometry()
@@ -221,13 +221,13 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 	for (int i = 0; i < cmd_hdr->Prdtl - 1; i++)
 	{
 		cmd_tbl->PrdtEntries[i].Dba			 = (Kernel::UInt32)(Kernel::UInt64)buffer;
-		cmd_tbl->PrdtEntries[i].Dbau			 = (Kernel::UInt32)((Kernel::UInt64)(buffer) >> 32);
+		cmd_tbl->PrdtEntries[i].Dbau		 = (Kernel::UInt32)((Kernel::UInt64)(buffer) >> 32);
 		cmd_tbl->PrdtEntries[i].Dbc			 = size_buffer - 1; // 8K bytes (this value should always be set to 1 less than the actual value)
 		cmd_tbl->PrdtEntries[i].InterruptBit = 1;
 	}
 
 	cmd_tbl->PrdtEntries[i].Dba			 = (Kernel::UInt32)(Kernel::UInt64)buffer;
-	cmd_tbl->PrdtEntries[i].Dbau			 = (Kernel::UInt32)((Kernel::UInt64)(buffer) >> 32);
+	cmd_tbl->PrdtEntries[i].Dbau		 = (Kernel::UInt32)((Kernel::UInt64)(buffer) >> 32);
 	cmd_tbl->PrdtEntries[i].Dbc			 = size_buffer - 1; // 8K bytes (this value should always be set to 1 less than the actual value)
 	cmd_tbl->PrdtEntries[i].InterruptBit = 1;
 

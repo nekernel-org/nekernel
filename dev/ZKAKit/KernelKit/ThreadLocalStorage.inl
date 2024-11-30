@@ -72,7 +72,7 @@ template <typename T>
 inline Kernel::Bool tls_delete_class(T* obj)
 {
 	using namespace Kernel;
-	
+
 	if (!obj)
 		return No;
 

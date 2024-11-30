@@ -208,4 +208,23 @@ IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input SCIObject 
 /// @return the event data.
 IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr event_data);
 
+// ------------------------------------------------------------------------------------------ //
+// Power API.
+// ------------------------------------------------------------------------------------------ //
+
+IMPORT_C Void PwrShutdownMachine(const Char* _Input msg, _Input SInt32 code);
+IMPORT_C Void PwrRebootMachine(const Char* _Input msg, _Input SInt32 code);
+IMPORT_C Void PwrSleepMachine(const Char* _Input msg, _Input SInt32 code);
+
+IMPORT_C SInt32 PwrGetCode(_Output SInt32& code);
+
+// ------------------------------------------------------------------------------------------ //
+// CD-ROM API.
+// ------------------------------------------------------------------------------------------ //
+
+IMPORT_C SInt32 CdEjectDrive(_Input const Char drv_letter);
+
+IMPORT_C SInt32 CdOpenTray(Void);
+IMPORT_C SInt32 CdCloseTray(Void);
+
 #endif // ifndef SCIKIT_FOUNDATION_H
