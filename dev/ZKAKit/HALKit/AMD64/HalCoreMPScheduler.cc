@@ -186,8 +186,7 @@ namespace Kernel::HAL
 		kRawMADT			= hw_and_pow_int.Find(kApicSignature).Leak().Leak();
 
 		kMADTBlock = reinterpret_cast<MADT_TABLE*>(kRawMADT);
-
-		kSMPAware = false;
+		kSMPAware  = NO;
 
 		if (kMADTBlock)
 		{

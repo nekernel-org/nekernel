@@ -4,14 +4,11 @@
 
 ------------------------------------------- */
 
-#ifndef __EFI_H__
-#define __EFI_H__
+#ifndef FIRMWARE_KIT_EFI_H
+#define FIRMWARE_KIT_EFI_H
 
 /**
-@brief Kernel Implementation of EFI.
-@note This API is in WiP, so it's not 'pretty', just deal with it. We'll be
-improving that later.
-@author ELMH Group
+@brief Implementation of EFI protocols.
 */
 
 #include <NewKit/Defines.h>
@@ -47,7 +44,7 @@ struct EfiFileProtocol;
 typedef UInt64 EfiStatusType;
 
 /// @brief Core Handle Kind
-/// This is like NT's Win32 HANDLE type.
+/// Self is like NT's Win32 HANDLE type.
 typedef struct EfiHandle
 {
 } * EfiHandlePtr;
@@ -63,15 +60,15 @@ typedef UIntPtr EfiVirtualAddress;
 /// that the boot manager is attempting to load FilePath as a boot selection. If
 /// FALSE, then FilePath must match an exact file to be loaded.
 
-typedef UInt64(EFI_API* EfiTextString)(struct EfiSimpleTextOutputProtocol* This,
+typedef UInt64(EFI_API* EfiTextString)(struct EfiSimpleTextOutputProtocol* Self,
 									   const WideChar*					   OutputString);
 
-typedef UInt64(EFI_API* EfiTextAttrib)(struct EfiSimpleTextOutputProtocol* This,
+typedef UInt64(EFI_API* EfiTextAttrib)(struct EfiSimpleTextOutputProtocol* Self,
 									   const WideChar					   Attribute);
 
-typedef UInt64(EFI_API* EfiTextClear)(struct EfiSimpleTextOutputProtocol* This);
+typedef UInt64(EFI_API* EfiTextClear)(struct EfiSimpleTextOutputProtocol* Self);
 
-typedef UInt64(EFI_API* EfiLoadFile)(EfiLoadFileProtocol*		This,
+typedef UInt64(EFI_API* EfiLoadFile)(EfiLoadFileProtocol*		Self,
 									 EfiFileDevicePathProtocol* FilePath,
 									 Boolean					BootPolicy,
 									 UInt32*					BufferSize,
@@ -371,13 +368,13 @@ typedef struct EfiGraphicsOutputProtocolModeInformation
 } EfiGraphicsOutputProtocolModeInformation;
 
 typedef UInt64(EFI_API* EfiGraphicsOutputProtocolQueryMode)(
-	EfiGraphicsOutputProtocol* This, UInt32 ModeNumber, UInt32* SizeOfInfo, EfiGraphicsOutputProtocolModeInformation** Info);
+	EfiGraphicsOutputProtocol* Self, UInt32 ModeNumber, UInt32* SizeOfInfo, EfiGraphicsOutputProtocolModeInformation** Info);
 
 typedef UInt64(EFI_API* EfiGraphicsOutputProtocolSetMode)(
-	EfiGraphicsOutputProtocol* This, UInt32 ModeNumber);
+	EfiGraphicsOutputProtocol* Self, UInt32 ModeNumber);
 
 typedef UInt64(EFI_API* EfiGraphicsOutputProtocolBlt)(
-	EfiGraphicsOutputProtocol* This, EfiGraphicsOutputBltPixel* BltBuffer, EfiGraphicsOutputProtocolBltOperation BltOperation, UInt32 SourceX, UInt32 SourceY, UInt32 DestinationX, UInt32 DestinationY, UInt32 Width, UInt32 Height, UInt32 Delta);
+	EfiGraphicsOutputProtocol* Self, EfiGraphicsOutputBltPixel* BltBuffer, EfiGraphicsOutputProtocolBltOperation BltOperation, UInt32 SourceX, UInt32 SourceY, UInt32 DestinationX, UInt32 DestinationY, UInt32 Width, UInt32 Height, UInt32 Delta);
 
 typedef struct
 {
@@ -487,7 +484,7 @@ typedef UInt64(EFI_API* EfiLocateProtocol)(EfiGUID* Protocol,
 
 typedef UInt64(EFI_API* EfiOpenProtocol)(EfiHandlePtr Handle, EfiGUID* Guid, VoidPtr* Interface, EfiHandlePtr AgentHandle, EfiHandlePtr ControllerHandle, UInt32 Attributes);
 
-typedef UInt64(EFI_API* EfiEnableCursor)(EfiSimpleTextOutputProtocol* This, Boolean Visible);
+typedef UInt64(EFI_API* EfiEnableCursor)(EfiSimpleTextOutputProtocol* Self, Boolean Visible);
 
 /**
 @name EfiBootServices
@@ -589,6 +586,7 @@ typedef struct EfiSystemTable
 	VoidPtr						 RuntimeServices;
 	EfiBootServices*			 BootServices;
 	UInt64						 NumberOfTableEntries;
+	/// The configuration table (contains the RSD PTR entry.)
 	struct
 	{
 		EfiGUID VendorGUID;
@@ -651,6 +649,27 @@ enum
 #define kEFIDirectory 0x10
 #define kEFIArchive	  0x20
 
+#define EFI_FILE_PROTOCOL_REVISION		  0x00010000
+#define EFI_FILE_PROTOCOL_REVISION2		  0x00020000
+#define EFI_FILE_PROTOCOL_LATEST_REVISION EFI_FILE_PROTOCOL_REVISION2
+
+#define EFI_EXTRA_DESCRIPTOR_SIZE 8
+
+#define EFI_MP_SERVICES_PROTOCOL_GUID  \
+	{                                  \
+		0x3fdda605, 0xa76e, 0x4f46,    \
+		{                              \
+			0xad, 0x29, 0x12, 0xf4,    \
+				0x53, 0x1b, 0x3d, 0x08 \
+		}                              \
+	}
+
+#define PROCESSOR_AS_BSP_BIT		0x00000001
+#define PROCESSOR_ENABLED_BIT		0x00000002
+#define PROCESSOR_HEALTH_STATUS_BIT 0x00000004
+
+#define END_OF_CPU_LIST 0xffffffff
+
 typedef struct EfiIOToken
 {
 	//
@@ -693,23 +712,23 @@ typedef struct EfiFileProtocol
 {
 	UInt64 Revision;
 
-	EfiStatusType(EFI_API* Open)(struct EfiFileProtocol*  This,
+	EfiStatusType(EFI_API* Open)(struct EfiFileProtocol*  Self,
 								 struct EfiFileProtocol** Out,
 								 EfiCharType*			  CharType,
 								 UInt64					  OpenMode,
 								 UInt64					  Attrib);
 
-	EfiStatusType(EFI_API* Close)(struct EfiFileProtocol* This);
+	EfiStatusType(EFI_API* Close)(struct EfiFileProtocol* Self);
 
-	EfiStatusType(EFI_API* Delete)(struct EfiFileProtocol* This);
+	EfiStatusType(EFI_API* Delete)(struct EfiFileProtocol* Self);
 
-	EfiStatusType(EFI_API* Read)(struct EfiFileProtocol* This, UInt64* BufSize, VoidPtr BufOut);
+	EfiStatusType(EFI_API* Read)(struct EfiFileProtocol* Self, UInt64* BufSize, VoidPtr BufOut);
 
-	EfiStatusType(EFI_API* Write)(struct EfiFileProtocol* This, UInt64* BufSize, VoidPtr BufOut);
+	EfiStatusType(EFI_API* Write)(struct EfiFileProtocol* Self, UInt64* BufSize, VoidPtr BufOut);
 
-	EfiStatusType(EFI_API* GetPosition)(EfiFileProtocol* This, UInt64* Position);
+	EfiStatusType(EFI_API* GetPosition)(EfiFileProtocol* Self, UInt64* Position);
 
-	EfiStatusType(EFI_API* SetPosition)(EfiFileProtocol* This, UInt64* Position);
+	EfiStatusType(EFI_API* SetPosition)(EfiFileProtocol* Self, UInt64* Position);
 
 	EfiStatusType(EFI_API* GetInfo)(struct EfiFileProtocol*, struct EfiGUID*, UInt32*, void*);
 
@@ -717,20 +736,20 @@ typedef struct EfiFileProtocol
 
 	EfiStatusType(EFI_API* Flush)(EfiFileProtocol*);
 
-	EfiStatusType(EFI_API* OpenEx)(EfiFileProtocol*	  This,
+	EfiStatusType(EFI_API* OpenEx)(EfiFileProtocol*	  Self,
 								   EfiFileProtocol**  OutHandle,
 								   EfiCharType*		  Path,
 								   UInt64			  Mode,
 								   UInt64			  Attrib,
 								   struct EfiIOToken* Token);
 
-	EfiStatusType(EFI_API* ReadEx)(EfiFileProtocol*	  This,
+	EfiStatusType(EFI_API* ReadEx)(EfiFileProtocol*	  Self,
 								   struct EfiIOToken* Token);
 
-	EfiStatusType(EFI_API* WriteEx)(EfiFileProtocol*   This,
+	EfiStatusType(EFI_API* WriteEx)(EfiFileProtocol*   Self,
 									struct EfiIOToken* Token);
 
-	EfiStatusType(EFI_API* FlushEx)(EfiFileProtocol*   This,
+	EfiStatusType(EFI_API* FlushEx)(EfiFileProtocol*   Self,
 									struct EfiIOToken* Token);
 } EfiFileProtocol, *EfiFileProtocolPtr;
 
@@ -779,21 +798,6 @@ struct EfiFileInfo final
 	WideChar FileName[1];
 };
 
-#define EFI_FILE_PROTOCOL_REVISION		  0x00010000
-#define EFI_FILE_PROTOCOL_REVISION2		  0x00020000
-#define EFI_FILE_PROTOCOL_LATEST_REVISION EFI_FILE_PROTOCOL_REVISION2
-
-#define EFI_EXTRA_DESCRIPTOR_SIZE 8
-
-#define EFI_MP_SERVICES_PROTOCOL_GUID  \
-	{                                  \
-		0x3fdda605, 0xa76e, 0x4f46,    \
-		{                              \
-			0xad, 0x29, 0x12, 0xf4,    \
-				0x53, 0x1b, 0x3d, 0x08 \
-		}                              \
-	}
-
 //*******************************************************
 // EFI_CPU_PHYSICAL_LOCATION
 // @note As in the EFI specs.
@@ -817,27 +821,21 @@ typedef struct _EfiProcessorInformation
 	EfiExtendedProcessorInformation ExtendedInformation;
 } EfiProcessorInformation;
 
-#define PROCESSOR_AS_BSP_BIT		0x00000001
-#define PROCESSOR_ENABLED_BIT		0x00000002
-#define PROCESSOR_HEALTH_STATUS_BIT 0x00000004
-
-typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS)(
+typedef EfiStatusType EFI_API (*EfiMpServicesGetNumberOfProcessors)(
 	IN struct _EfiMpServicesProtocol* Self,
 	OUT UInt32* NumberOfProcessors,
 	OUT UInt32* NumberOfEnabledProcessors);
 
-typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_GET_PROCESSOR_INFO)(
+typedef EfiStatusType EFI_API (*EfiMpServicesGetProcessorInfo)(
 	IN struct _EfiMpServicesProtocol* Self,
 	IN UInt32*							 ProcessorNumber,
 	OUT struct _EfiProcessorInformation* NumberOfEnabledProcessors);
 
-#define END_OF_CPU_LIST 0xffffffff
-
 typedef void EFI_API (*EFI_AP_PROCEDURE)(
 	IN VoidPtr ProcedureArgument);
 
-typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_STARTUP_ALL_APS)(
-	IN struct _EfiMpServicesProtocol* This,
+typedef EfiStatusType EFI_API (*EfiMpServicesStartupAllAPS)(
+	IN struct _EfiMpServicesProtocol* Self,
 	IN EFI_AP_PROCEDURE				  Procedure,
 	IN Boolean						  SingleThread,
 	IN VoidPtr WaitEvent			  OPTIONAL, // EFI_EVENT first, but unused here.
@@ -845,13 +843,13 @@ typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_STARTUP_ALL_APS)(
 	IN Void* ProcedureArgument OPTIONAL,
 	OUT UInt32** FailedCpuList OPTIONAL);
 
-typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_SWITCH_BSP)(
-	IN struct _EfiMpServicesProtocol* This,
+typedef EfiStatusType EFI_API (*EfiMpServicesSwitchBSP)(
+	IN struct _EfiMpServicesProtocol* Self,
 	IN UInt32						  ProcessorNumber,
 	IN Boolean						  EnableOldBSP);
 
-typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_STARTUP_THIS_AP)(
-	IN struct _EfiMpServicesProtocol* This,
+typedef EfiStatusType EFI_API (*EfiMpServicesStartupThisAP)(
+	IN struct _EfiMpServicesProtocol* Self,
 	IN EFI_AP_PROCEDURE				  Procedure,
 	IN UInt32						  ProcessorNumber,
 	IN VoidPtr WaitEvent			  OPTIONAL,
@@ -859,25 +857,25 @@ typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_STARTUP_THIS_AP)(
 	IN Void* ProcedureArgument OPTIONAL,
 	OUT Boolean* Finished OPTIONAL);
 
-typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_ENABLEDISABLEAP)(
-	IN struct _EfiMpServicesProtocol* This,
+typedef EfiStatusType EFI_API (*EfiMpServicesDisableThisAP)(
+	IN struct _EfiMpServicesProtocol* Self,
 	IN UInt32						  ProcessorNumber,
 	IN Boolean						  EnableAP,
 	IN UInt32* HealthFlag OPTIONAL);
 
-typedef EfiStatusType EFI_API (*EFI_MP_SERVICES_WHOAMI)(
-	IN struct _EfiMpServicesProtocol* This,
+typedef EfiStatusType EFI_API (*EfiMpServicesWhoAmI)(
+	IN struct _EfiMpServicesProtocol* Self,
 	OUT UInt32* ProcessorNumber);
 
 typedef struct _EfiMpServicesProtocol
 {
-	EFI_MP_SERVICES_GET_NUMBER_OF_PROCESSORS GetNumberOfProcessors;
-	EFI_MP_SERVICES_GET_PROCESSOR_INFO		 GetProcessorInfo;
-	EFI_MP_SERVICES_STARTUP_ALL_APS			 StartupAllAPs;
-	EFI_MP_SERVICES_STARTUP_THIS_AP			 StartupThisAP;
-	EFI_MP_SERVICES_SWITCH_BSP				 SwitchBSP;
-	EFI_MP_SERVICES_ENABLEDISABLEAP			 EnableDisableAP;
-	EFI_MP_SERVICES_WHOAMI					 WhoAmI;
+	EfiMpServicesGetNumberOfProcessors GetNumberOfProcessors;
+	EfiMpServicesGetProcessorInfo	   GetProcessorInfo;
+	EfiMpServicesStartupAllAPS		   StartupAllAPs;
+	EfiMpServicesStartupThisAP		   StartupThisAP;
+	EfiMpServicesSwitchBSP			   SwitchBSP;
+	EfiMpServicesDisableThisAP		   EnableDisableAP;
+	EfiMpServicesWhoAmI				   WhoAmI;
 } EfiMpServicesProtocol;
 
-#endif // ifndef __EFI_H__
+#endif // ifndef FIRMWARE_KIT_EFI_H

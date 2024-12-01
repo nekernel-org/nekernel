@@ -8,11 +8,15 @@
 
 #include <NewKit/Defines.h>
 
-namespace Kernel
+namespace Firmware::Details::CoreBoot
 {
+	using namespace Kernel;
+
+	struct LEHeader;
+
 	/// @brief Linear Executable Header
 	/// @author ELMH Group
-	struct ATTRIBUTE(aligned(4)) mp_boot_header
+	struct ATTRIBUTE(aligned(4)) LEHeader
 	{
 		const Char	 fMagic[2];		// magic number
 		const Char	 fName[10];		// operating system name
@@ -24,4 +28,4 @@ namespace Kernel
 		const UIntPtr fMasterStructureVersion; // master structure version.
 #endif
 	};
-} // namespace Kernel
+} // namespace Firmware::Details::CoreBoot

@@ -4,15 +4,12 @@
 
 ------------------------------------------- */
 
-#ifndef COMPRESSKIT_RLE_H
-#define COMPRESSKIT_RLE_H
+#pragma once
 
 #include <NewKit/Defines.h>
 
-namespace Kernel
+namespace Firmware::Details::EFI
 {
-	class IRleObject;
-	class IRleProxy;
-} // namespace Kernel
-
-#endif // !ifndef COMPRESSKIT_RLE_H
+	using namespace Kernel;
+#include <FirmwareKit/EFI/EFI.h>
+} // namespace Firmware::Details::EFI

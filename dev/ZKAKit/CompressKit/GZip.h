@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __KERNELKIT_GZIP_H__
-#define __KERNELKIT_GZIP_H__
+#ifndef COMPRESSKIT_GZIP_H
+#define COMPRESSKIT_GZIP_H
 
 #include <NewKit/Defines.h>
 
@@ -15,4 +15,4 @@ namespace Kernel::GZip
 	class IGZipProxy;
 } // namespace Kernel::GZip
 
-#endif // !__KERNELKIT_GZIP_H__
+#endif // !COMPRESSKIT_GZIP_H
