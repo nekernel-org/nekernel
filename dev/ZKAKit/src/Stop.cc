@@ -27,7 +27,7 @@ namespace Kernel
 	/***********************************************************************************/
 	Void ke_stop(const Kernel::Int32& id)
 	{
-		CGInit();
+		cg_init();
 
 		auto panic_text = RGB(0xff, 0xff, 0xff);
 
@@ -37,7 +37,7 @@ namespace Kernel
 		CGDrawString("Kernel Panic!", start_y, x, panic_text);
 		start_y += 10;
 
-		CGFini();
+		cg_fini();
 
 		// show text according to error id.
 

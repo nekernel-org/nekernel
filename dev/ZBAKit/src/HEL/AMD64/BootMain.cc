@@ -142,11 +142,11 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	kHandoverHeader = handover_hdr;
 
 #ifdef ZBA_USE_FB
-	CGInit();
-	CGDrawInRegion(CGColor(0x00, 0x00, 0x00), handover_hdr->f_GOP.f_Height, handover_hdr->f_GOP.f_Width, 0, 0);
-	CGFini();
+	cg_init();
+	CGDrawInRegion(cg_color(0x00, 0x00, 0x00), handover_hdr->f_GOP.f_Height, handover_hdr->f_GOP.f_Width, 0, 0);
+	cg_fini();
 
-	CGFini();
+	cg_fini();
 #endif // ZBA_USE_FB
 
 	UInt32 cnt_enabled	= 0;

@@ -8,13 +8,13 @@
 
 #include <NewKit/Defines.h>
 
-#define CGInit() Kernel::SizeT kCGCursor = 0
+#define cg_init() Kernel::SizeT kCGCursor = 0
 
-#define CGColor(R, G, B) RGB(R, G, B)
+#define cg_color(R, G, B) RGB(R, G, B)
 
-#define cCGClearClr CGColor(0x0, 0x0, 0x0)
+#define cg_get_clear_clr() cg_color(0xB2, 0xB2, 0xB2)
 
-#define CGFini() kCGCursor = 0
+#define cg_fini() kCGCursor = 0
 
 /// @brief Performs OR drawing on the framebuffer.
 #define CGDrawBitMapInRegionA(_BitMp, _Height, _Width, _BaseX, _BaseY)       \
@@ -76,7 +76,7 @@
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
-										  4 * u))) = cCGClearClr;                     \
+										  4 * u))) = cg_get_clear_clr();                     \
 		}                                                                             \
 	}
 
