@@ -134,7 +134,7 @@ enum
 
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 
-Kernel::Boolean drv_std_init(Kernel::UInt16 _Input bus, Kernel::UInt8 _Input drive, Kernel::UInt16& _Output out_bus, Kernel::UInt8& _Output out_master);
+Kernel::Boolean drv_std_init(Kernel::UInt16 in_bus, Kernel::UInt8 drive, Kernel::UInt16& out_bus, Kernel::UInt8& out_master);
 
 Kernel::Boolean drv_std_detected(Kernel::Void);
 

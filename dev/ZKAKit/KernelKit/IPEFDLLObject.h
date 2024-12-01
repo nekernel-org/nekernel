@@ -22,7 +22,7 @@ namespace Kernel
 	 * @brief Shared Library class
 	 * Load library from this class
 	 */
-	class IPEFDLLObject final : public IDLLObject
+	class IPEFDLLObject final ZKA_DLL_OBJECT
 	{
 	public:
 		explicit IPEFDLLObject() = default;

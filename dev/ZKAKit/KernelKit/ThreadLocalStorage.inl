@@ -7,6 +7,7 @@
 //! @file ThreadLocalStorage.inl
 //! @brief Allocate resources from the process's heap storage.
 
+#include "NewKit/ErrorOr.h"
 #ifndef INC_PROCESS_SCHEDULER_H
 #include <KernelKit/UserProcessScheduler.h>
 #endif
@@ -40,7 +41,25 @@ inline Kernel::Bool tls_delete_ptr(T* obj) noexcept
 	auto ref_process = UserProcessScheduler::The().GetCurrentProcess();
 	MUST_PASS(ref_process);
 
-	return ref_process.Leak().Delete(obj, sizeof(T));
+	ErrorOr<T*> obj_wrapped{obj};
+
+	return ref_process.Leak().Delete(obj_wrapped, sizeof(T));
+}
+
+//! @brief Delete process pointer.
+//! @param obj The pointer to delete.
+template <typename T>
+inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T> obj) noexcept
+{
+	return tls_delete_ptr(obj.Leak());
+}
+
+//! @brief Delete process pointer.
+//! @param obj The pointer to delete.
+template <typename T>
+inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T*> obj) noexcept
+{
+	return tls_delete_ptr(obj->Leak());
 }
 
 /// @brief Allocate a C++ class, and then call the constructor of it.

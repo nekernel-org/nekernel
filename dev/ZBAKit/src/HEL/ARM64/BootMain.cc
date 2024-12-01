@@ -9,12 +9,12 @@
 #include <BootKit/Thread.h>
 #include <BootKit/BootKit.h>
 
-#ifndef cExpectedWidth
-#define cExpectedWidth 844
+#ifndef kExpectedWidth
+#define kExpectedWidth 844
 #endif
 
-#ifndef cExpectedHeight
-#define cExpectedHeight 390
+#ifndef kExpectedHeight
+#define kExpectedHeight 390
 #endif
 
 EXTERN EfiBootServices* BS;
@@ -52,8 +52,8 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 		writer.Write(infoPtr->VerticalResolution);
 		writer.Write("\r");
 
-		if (infoPtr->HorizontalResolution == cExpectedWidth &&
-			infoPtr->VerticalResolution == cExpectedHeight)
+		if (infoPtr->HorizontalResolution == kExpectedWidth &&
+			infoPtr->VerticalResolution == kExpectedHeight)
 		{
 			kGop->SetMode(kGop, i);
 			break;
@@ -69,7 +69,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 		auto kernel_thread = Boot::BThread(reader_kernel.Blob());
 
 		if (kernel_thread.IsValid())
-			kernel_thread.Start(nullptr);
+			kernel_thread.Start(nullptr, YES);
 	}
 
 	CANT_REACH();

@@ -219,7 +219,8 @@ namespace Kernel
 		///! @brief TLS free.
 		///! @param ptr the pointer to free.
 		///! @param sz the size of it.
-		Boolean Delete(ErrorOr<VoidPtr> ptr, const SizeT& sz);
+		template <typename T>
+		Boolean Delete(ErrorOr<T*> ptr, const SizeT& sz);
 
 		///! @brief Wakes up threads.
 		Void Wake(const Bool wakeup = false);
@@ -324,6 +325,7 @@ namespace Kernel
 } // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.h>
+#include <KernelKit/UserProcessScheduler.inl>
 
 ////////////////////////////////////////////////////
 

@@ -12,6 +12,8 @@
 #include <NewKit/Defines.h>
 #include <CompilerKit/CompilerKit.h>
 
+#define ZKA_DLL_OBJECT : public IDLLObject
+
 namespace Kernel
 {
 	/// @brief DLL class object. A handle to a shared library.

@@ -44,8 +44,5 @@ EXTERN_C void hal_init_platform(
 	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
-	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
-
-	while (Yes)
-		;
+	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

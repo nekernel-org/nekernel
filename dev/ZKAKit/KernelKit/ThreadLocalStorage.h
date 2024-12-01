@@ -8,6 +8,7 @@
 #define KERNELKIT_TLS_H
 
 #include <NewKit/Defines.h>
+#include <NewKit/ErrorOr.h>
 
 ///! @brief Thread Local Storage for minoskrnl.
 
@@ -37,6 +38,16 @@ T* tls_new_ptr(void) noexcept;
 ///! @brief delete ptr syscall.
 template <typename T>
 Kernel::Boolean tls_delete_ptr(T* ptr) noexcept;
+
+//! @brief Delete process pointer.
+//! @param obj The pointer to delete.
+template <typename T>
+inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T> obj) noexcept;
+
+//! @brief Delete process pointer.
+//! @param obj The pointer to delete.
+template <typename T>
+inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T*> obj) noexcept;
 
 template <typename T, typename... Args>
 T* tls_new_class(Args&&... args);

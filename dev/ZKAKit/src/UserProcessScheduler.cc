@@ -156,43 +156,6 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	/** @brief Free pointer from usage. */
-	/***********************************************************************************/
-
-	Boolean UserProcess::Delete(ErrorOr<VoidPtr> ptr, const SizeT& sz)
-	{
-		if (!ptr ||
-			sz == 0)
-			return No;
-
-		UserProcessHeapList* entry = this->MemoryHeap;
-
-		while (entry != nullptr)
-		{
-			if (entry->MemoryEntry == ptr.Leak().Leak())
-			{
-#ifdef __ZKA_AMD64__
-				auto pd = hal_read_cr3();
-				hal_write_cr3(this->VMRegister);
-
-				auto ret = mm_delete_heap(entry->MemoryEntry);
-
-				hal_write_cr3(pd);
-
-				return ret;
-#else
-				Bool ret = mm_delete_heap(ptr);
-				return ret;
-#endif
-			}
-
-			entry = entry->MemoryNext;
-		}
-
-		return No;
-	}
-
-	/***********************************************************************************/
 	/// @brief Gets the name of the current process.
 	/***********************************************************************************/
 

@@ -87,4 +87,19 @@ EXTERN_C Kernel::Void _purecall(void* self)
 	kcout << ", has unimplemented virtual functions.\r";
 }
 
+EXTERN_C Kernel::Void _Init_thread_footer(Kernel::Int* thread_obj)
+{
+	ZKA_UNUSED(thread_obj);
+}
+
+EXTERN_C Kernel::Void _Init_thread_epoch(Kernel::Void)
+{
+}
+
+EXTERN_C Kernel::Void _Init_thread_header(Kernel::Int* thread_obj)
+{
+}
+
+EXTERN_C Kernel::Int _tls_index = 0UL;
+
 #endif // ifdef __ZKA_ARM64__

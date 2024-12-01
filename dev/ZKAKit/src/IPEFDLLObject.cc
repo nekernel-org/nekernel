@@ -7,6 +7,7 @@
  *  ========================================================
  */
 
+#include "KernelKit/IDLLObject.h"
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/PEF.h>
 #include <KernelKit/IPEFDLLObject.h>
@@ -55,6 +56,7 @@ EXTERN_C IDLL rtl_init_dll(UserProcess* header)
 	{
 		tls_delete_class(dll_obj);
 		header->Crash();
+
 		return nullptr;
 	}
 
@@ -65,6 +67,7 @@ EXTERN_C IDLL rtl_init_dll(UserProcess* header)
 	{
 		tls_delete_class(dll_obj);
 		header->Crash();
+
 		return nullptr;
 	}
 

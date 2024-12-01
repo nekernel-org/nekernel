@@ -12,6 +12,10 @@
 #include <NewKit/KString.h>
 #include <KernelKit/FileMgr.h>
 
+#ifndef INC_PROCESS_SCHEDULER_H
+#include <KernelKit/UserProcessScheduler.h>
+#endif
+
 #define kPefApplicationMime "application/vnd-zka-executable"
 
 namespace Kernel

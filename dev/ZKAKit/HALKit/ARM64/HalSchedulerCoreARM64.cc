@@ -35,6 +35,6 @@ namespace Kernel
 	/// hooks and hangs thread to prevent code from executing.
 	Void mp_hang_thread(HAL::StackFrame* stack)
 	{
-		ZKA_UNUSUED(stack);
+		ZKA_UNUSED(stack);
 	}
 } // namespace Kernel

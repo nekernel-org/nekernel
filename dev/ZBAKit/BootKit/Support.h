@@ -6,13 +6,11 @@
 
 #pragma once
 
-#include <cstddef>
-
 /// @file Support.h
 /// @brief Purpose of this file is to help port libs into the bootloader.
 
-#define cLongMax ((long)(~0UL >> 1))
-#define cLongMin (~cLongMax)
+#define kLongMax ((long)(~0UL >> 1))
+#define kLongMin (~kLongMax)
 
 #ifdef __NEWOSLDR__
 
@@ -65,7 +63,7 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 	const char *p	   = nptr, *endp;
 	bool		is_neg = 0, overflow = 0;
 
-	/* Need unsigned so (-cLongMin) can fit in these: */
+	/* Need unsigned so (-kLongMin) can fit in these: */
 	unsigned long n = 0UL, cutoff;
 	int			  cutlim;
 
@@ -124,8 +122,8 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 		base = 10;
 	}
 
-	cutoff = (is_neg) ? -(cLongMin / base) : cLongMax / base;
-	cutlim = (is_neg) ? -(cLongMin % base) : cLongMax % base;
+	cutoff = (is_neg) ? -(kLongMin / base) : kLongMax / base;
+	cutlim = (is_neg) ? -(kLongMin % base) : kLongMax % base;
 
 	while (1)
 	{
@@ -160,7 +158,7 @@ inline long StringToLong(const char* nptr, char** endptr, int base)
 
 	if (overflow)
 	{
-		return ((is_neg) ? cLongMin : cLongMax);
+		return ((is_neg) ? kLongMin : kLongMax);
 	}
 
 	return (long)((is_neg) ? -n : n);
