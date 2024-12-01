@@ -8,8 +8,8 @@
  * 	========================================================
  */
 
-#ifndef __CRC32_H__
-#define __CRC32_H__
+#ifndef CRC32_H
+#define CRC32_H
 
 #include <NewKit/Defines.h>
 
@@ -20,4 +20,4 @@ namespace Kernel
 	UInt ke_calculate_crc32(const Char* crc, UInt len) noexcept;
 } // namespace Kernel
 
-#endif // !__CRC32_H__
+#endif // !CRC32_H
