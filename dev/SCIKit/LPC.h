@@ -11,9 +11,9 @@
 /// @file LPC.h
 /// @brief Local Process Code type and values.
 
-#define ErrLocalIsOk()	 (kLastError == kErrorSuccess)
-#define ErrLocalFailed() (kLastError != kErrorSuccess)
-#define ErrLocal()		 (kLastError)
+#define err_local_ok()	 (kLastError == kErrorSuccess)
+#define err_local_fail() (kLastError != kErrorSuccess)
+#define err_local_get()	 (kLastError)
 
 typedef SInt32 ErrObject;
 

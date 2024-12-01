@@ -61,7 +61,7 @@ STATIC MountpointInterface kDiskMountpoint;
 /// @return the fork
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-												_Input NFS_FORK_STRUCT&	   the_fork)
+												_Input NFS_FORK_STRUCT& the_fork)
 {
 	if (catalog && the_fork.ForkName[0] != 0 &&
 		the_fork.DataSize <= kNeFSForkDataSz)
@@ -170,8 +170,8 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 /// @return the fork.
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-											  _Input const Char*		 name,
-											  Boolean					 isDataFork)
+											  _Input const Char* name,
+											  Boolean			 isDataFork)
 {
 	auto			 drv	  = kDiskMountpoint.A();
 	NFS_FORK_STRUCT* the_fork = nullptr;
@@ -193,12 +193,12 @@ _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog
 			switch (res)
 			{
 			case 1:
-				ErrLocal() = kErrorDiskReadOnly;
+				err_local_get() = kErrorDiskReadOnly;
 				break;
 			case 2:
-				ErrLocal() = kErrorDiskIsFull;
+				err_local_get() = kErrorDiskIsFull;
 				break;
-				ErrLocal() = kErrorNoSuchDisk;
+				err_local_get() = kErrorNoSuchDisk;
 				break;
 
 			default:
@@ -236,7 +236,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name)
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
+_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name,
 													  _Input const Int32& flags,
 													  _Input const Int32& kind)
 {
@@ -261,7 +261,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
 	if (catalog_copy)
 	{
 		kcout << "Catalog already exists: " << name << ".\r";
-		ErrLocal() = kErrorFileExists;
+		err_local_get() = kErrorFileExists;
 
 		return catalog_copy;
 	}
@@ -276,7 +276,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
 	if (*parentName == 0)
 	{
 		kcout << "Parent name is NUL.\r";
-		ErrLocal() = kErrorFileNotFound;
+		err_local_get() = kErrorFileNotFound;
 		return nullptr;
 	}
 
@@ -464,7 +464,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
 
 /// @brief Make a EPM+NeFS drive out of the disk.
 /// @param drive The drive to write on.
-/// @return If it was sucessful, see ErrLocal().
+/// @return If it was sucessful, see err_local_get().
 bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
 {
 	if (*part_name == 0 ||
@@ -480,7 +480,7 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 	// if disk isn't good, then error out.
 	if (false == drive->fPacket.fPacketGood)
 	{
-		ErrLocal() = kErrorDiskIsCorrupted;
+		err_local_get() = kErrorDiskIsCorrupted;
 		return false;
 	}
 
@@ -665,7 +665,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 		// check the fork, if it's position is valid.
 		if (fork_data_input->DataOffset <= kNeFSCatalogStartAddress)
 		{
-			ErrLocal() = kErrorDiskIsCorrupted;
+			err_local_get() = kErrorDiskIsCorrupted;
 
 			kcout << "Invalid fork offset.\r";
 
@@ -875,7 +875,7 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 	if (!catalogName ||
 		StringBuilder::Equals(catalogName, NeFileSystemHelper::Root()))
 	{
-		ErrLocal() = kErrorInternal;
+		err_local_get() = kErrorInternal;
 		return false;
 	}
 
@@ -936,11 +936,11 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 								_Input Bool						   is_rsrc_fork,
 								_Input SizeT					   dataSz,
-								_Input const Char*				   forkName)
+								_Input const Char* forkName)
 {
 	if (!catalog)
 	{
-		ErrLocal() = kErrorFileNotFound;
+		err_local_get() = kErrorFileNotFound;
 		return nullptr;
 	}
 
@@ -1000,11 +1000,11 @@ bool NeFSParser::Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off)
 {
 	if (!catalog)
 	{
-		ErrLocal() = kErrorFileNotFound;
+		err_local_get() = kErrorFileNotFound;
 		return false;
 	}
 
-	ErrLocal() = kErrorUnimplemented;
+	err_local_get() = kErrorUnimplemented;
 	return false;
 }
 
@@ -1018,11 +1018,11 @@ SizeT NeFSParser::Tell(_Input _Output NFS_CATALOG_STRUCT* catalog)
 {
 	if (!catalog)
 	{
-		ErrLocal() = kErrorFileNotFound;
+		err_local_get() = kErrorFileNotFound;
 		return 0;
 	}
 
-	ErrLocal() = kErrorUnimplemented;
+	err_local_get() = kErrorUnimplemented;
 	return 0;
 }
 

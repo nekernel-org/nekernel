@@ -8,4 +8,4 @@ FLAGS=-f win64
 
 .PHONY: syscall_unit
 syscall_unit:
-	$(ASM) $(FLAGS) DispatchSysCalls.asm -o DispatchSysCalls.obj
+	$(ASM) $(FLAGS) SysCallDispatcher.asm -o SysCallDispatcher.o

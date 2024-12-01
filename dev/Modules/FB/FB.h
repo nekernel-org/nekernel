@@ -76,7 +76,7 @@
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
-										  4 * u))) = cg_get_clear_clr();                     \
+										  4 * u))) = cg_get_clear_clr();              \
 		}                                                                             \
 	}
 

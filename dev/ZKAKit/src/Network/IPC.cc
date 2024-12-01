@@ -49,7 +49,7 @@ Bool ipc_int_sanitize_packet(IPCMessage* pckt)
 	return pckt->IpcPacketSize > 1 && pckt->IpcHeaderMagic == kIPCHeaderMagic;
 
 ipc_check_failed:
-	ErrLocal() = kErrorIPC;
+	err_local_get() = kErrorIPC;
 	return false;
 }
 

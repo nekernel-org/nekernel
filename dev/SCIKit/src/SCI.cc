@@ -4,10 +4,10 @@
 
 ------------------------------------------- */
 
-#include <SCIKit/Foundation.h>
+#include <SCIKit/SCI.h>
 
-/// @file MemoryMgr.cc
-/// @brief Source file for the memory functions.
+/// @file SCI.cc
+/// @brief Source file for the memory functions of the SCI.
 
 /// @brief Copy memory region.
 IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len)

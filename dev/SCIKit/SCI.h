@@ -2,8 +2,8 @@
 
 Copyright (C) 2024, ELMH Group, all rights reserved.
 
-File: Foundation.h
-Purpose: SCIKit Foundation header.
+File: SCI.h
+Purpose: System Calls.
 
 ------------------------------------------- */
 
@@ -137,75 +137,94 @@ IMPORT_C Void ThrExitMainThread(_Input SInt32 exit_code);
 IMPORT_C Void ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
 
 /// @brief Thread procedure function type.
-typedef Void (*ThreadProc)(Void);
+typedef Void (*thread_proc_kind)(Void);
 
 /// @brief Creates a thread.
 /// @param procedure the thread procedure.
 /// @param argument_count number of arguments inside that thread.
 /// @param flags Thread flags.
 /// @return the thread object.
-IMPORT_C ThreadObject ThrCreateThread(ThreadProc procedure, SInt32 argument_count, SInt32 flags);
+IMPORT_C ThreadObject ThrCreateThread(thread_proc_kind procedure, SInt32 argument_count, SInt32 flags);
 
 /// @brief Yields the current thread.
 /// @param thread the thread to yield.
-IMPORT_C Void ThrYieldThread(Void);
+IMPORT_C Void ThrYieldThread(ThreadObject thrd);
 
 /// @brief Joins a thread.
 /// @param thread the thread to join.
-IMPORT_C Void ThrJoinThread(Void);
+IMPORT_C Void ThrJoinThread(ThreadObject thrd);
 
-/// @brief Detach sa thread.
+/// @brief Detach a thread.
 /// @param thread the thread to detach.
-IMPORT_C Void ThrDetachThread(Void);
+IMPORT_C Void ThrDetachThread(ThreadObject thrd);
 
 // ------------------------------------------------------------------------
 // Drive Management API.
 // ------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------------------------ //
 /// @brief Get the default drive letter.
 /// @param void.
 /// @return the drive letter.
+// ------------------------------------------------------------------------------------------ //
 IMPORT_C Char* DrvGetDefaultDriveLetter(Void);
 
+// ------------------------------------------------------------------------------------------ //
 /// @brief Get the drive letter from a path.
 /// @param path the path.
 /// @return the drive letter.
+// ------------------------------------------------------------------------------------------ //
 IMPORT_C Char* DrvGetDriveLetterFromPath(_Input const Char* path);
 
+// ------------------------------------------------------------------------------------------ //
 /// @brief Get a mounted drive from a letter.
 /// @param letter the letter (A..Z).
 /// @return the drive object.
+// ------------------------------------------------------------------------------------------ //
 IMPORT_C SCIObject DrvGetMountedDrive(_Input const Char letter);
 
+// ------------------------------------------------------------------------------------------ //
 /// @brief Mount a drive.
 /// @param path the path to mount.
 /// @param letter the letter to mount.
+// ------------------------------------------------------------------------------------------ //
 IMPORT_C Void DrvMountDrive(_Input const Char* path, _Input const Char* letter);
 
+// ------------------------------------------------------------------------------------------ //
 /// @brief Unmount a drive.
 /// @param letter the letter to unmount.
+// ------------------------------------------------------------------------------------------ //
 IMPORT_C Void DrvUnmountDrive(_Input const Char letter);
 
 // ------------------------------------------------------------------------
 // Event handling API, use to listen to OS specific events.
 // ------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------------------------ //
 /// @brief Add an event listener.
 /// @param event_name the event name.
 /// @param listener the listener to add.
 /// @return the event listener.
+// ------------------------------------------------------------------------------------------ //
+
 IMPORT_C Void EvtAddListener(_Input const Char* event_name, _Input SCIObject listener);
 
+// ------------------------------------------------------------------------------------------ //
 /// @brief Remove an event listener.
 /// @param event_name the event name.
 /// @param listener the listener to remove.
 /// @return the event listener.
+// ------------------------------------------------------------------------------------------ //
+
 IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input SCIObject listener);
 
+// ------------------------------------------------------------------------------------------ //
 /// @brief Dispatch an event.
 /// @param event_name the event name.
 /// @param event_data the event data.
 /// @return the event data.
+// ------------------------------------------------------------------------------------------ //
+
 IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr event_data);
 
 // ------------------------------------------------------------------------------------------ //
@@ -213,7 +232,9 @@ IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr 
 // ------------------------------------------------------------------------------------------ //
 
 IMPORT_C Void PwrShutdownMachine(const Char* _Input msg, _Input SInt32 code);
+
 IMPORT_C Void PwrRebootMachine(const Char* _Input msg, _Input SInt32 code);
+
 IMPORT_C Void PwrSleepMachine(const Char* _Input msg, _Input SInt32 code);
 
 IMPORT_C SInt32 PwrGetCode(_Output SInt32& code);

@@ -49,7 +49,7 @@ enum
 };
 
 STATIC Kernel::PCI::Device kAhciDevice;
-STATIC HbaPort*			   kAhciPort	   = nullptr;
+STATIC HbaPort* kAhciPort				   = nullptr;
 STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
 
 Kernel::Void drv_calculate_disk_geometry()

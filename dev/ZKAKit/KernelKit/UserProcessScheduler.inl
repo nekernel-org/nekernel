@@ -4,7 +4,7 @@ namespace Kernel
 	/** @brief Free pointer from usage. */
 	/***********************************************************************************/
 
-    template <typename T>
+	template <typename T>
 	Boolean UserProcess::Delete(ErrorOr<T*> ptr, const SizeT& sz)
 	{
 		if (!ptr ||

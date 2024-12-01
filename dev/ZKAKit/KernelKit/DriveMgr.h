@@ -120,7 +120,7 @@ namespace Kernel
 
 		DriveTraitPtr GetAddressOf(const Int32& index)
 		{
-			ErrLocal() = kErrorSuccess;
+			err_local_get() = kErrorSuccess;
 
 			switch (index)
 			{
@@ -133,7 +133,7 @@ namespace Kernel
 			case kDriveIndexD:
 				return &mD;
 			default: {
-				ErrLocal() = kErrorNoSuchDisk;
+				err_local_get() = kErrorNoSuchDisk;
 				kcout << "No such disk index.\n";
 
 				break;
