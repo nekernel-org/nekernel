@@ -5,8 +5,8 @@
 ------------------------------------------- */
 
 /***********************************************************************************/
-/// @file Boot.h
-/// @brief Bootloader Programming Interface.
+/// @file BootKit.h
+/// @brief Bootloader Application Programming Interface.
 /***********************************************************************************/
 
 #pragma once
