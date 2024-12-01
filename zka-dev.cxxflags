@@ -6,6 +6,6 @@
 -Idev/base/
 -std=c++20
 -D__ZKA_AMD64__
--D__NEWOSKRNL__
+-D__MINOSKRNL__
 -D__FSKIT_INCLUDES_NEFS__
 -D__ZKA_ED__

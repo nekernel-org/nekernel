@@ -7,7 +7,7 @@ CC			= clang++
 LD			= lld-link
 CCFLAGS		= -fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__ZKA_ARM64__ -fno-rtti -fno-exceptions -I./ \
 			 -target aarch64-unknown-windows \
-				-std=c++20 -O3 -D__NEWOSKRNL__ -D__ZKA_MINIMAL_OS__ -D__ZKA_NO_BUILTIN__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../
+				-std=c++20 -O3 -D__MINOSKRNL__ -D__ZKA_MINIMAL_OS__ -D__ZKA_NO_BUILTIN__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../
 
 ASM 		= clang++
 

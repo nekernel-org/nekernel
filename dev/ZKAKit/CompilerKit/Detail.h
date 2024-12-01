@@ -6,9 +6,9 @@
 
 #pragma once
 
-#ifdef __NEWOSKRNL__
+#ifdef __MINOSKRNL__
 #include <NewKit/Defines.h>
-#endif // ifdef __NEWOSKRNL__
+#endif // ifdef __MINOSKRNL__
 
 #define ZKA_COPY_DELETE(KLASS)               \
 	KLASS& operator=(const KLASS&) = delete; \
