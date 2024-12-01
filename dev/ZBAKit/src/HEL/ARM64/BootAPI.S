@@ -8,5 +8,5 @@
 rt_jump_to_address:
     mov x19, x0
     mov sp, x2
-    br x19
+    blr x19
 
