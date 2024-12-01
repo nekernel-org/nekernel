@@ -15,7 +15,7 @@
   ],
   "cpp_macros": [
     "__MINOSKRNL__",
-    "__NEWOSLDR__",
+    "__ZBAOSLDR__",
     "__ZKA_AMD64__",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",

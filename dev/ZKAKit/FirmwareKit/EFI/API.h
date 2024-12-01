@@ -14,7 +14,7 @@
 
 #define kZKASubsystem 17
 
-#ifdef __NEWOSLDR__
+#ifdef __ZBAOSLDR__
 // forward decl.
 class BTextWriter;
 
@@ -22,7 +22,7 @@ class BTextWriter;
 
 #include <BootKit/BootKit.h>
 #include <Modules/FB/FB.h>
-#endif // ifdef __NEWOSLDR__
+#endif // ifdef __ZBAOSLDR__
 
 inline EfiSystemTable*	ST = nullptr;
 inline EfiBootServices* BS = nullptr;
@@ -105,10 +105,10 @@ inline void InitEFI(EfiSystemTable* SystemTable) noexcept
 	ST->ConOut->EnableCursor(ST->ConOut, false);
 }
 
-#ifdef __NEWOSLDR__
+#ifdef __ZBAOSLDR__
 
 #include <BootKit/Platform.h>
 
-#endif // ifdef __NEWOSLDR__
+#endif // ifdef __ZBAOSLDR__
 
 #endif /* ifndef __EFI_API__ */

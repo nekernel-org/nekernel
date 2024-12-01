@@ -12,7 +12,7 @@
 #define kLongMax ((long)(~0UL >> 1))
 #define kLongMin (~kLongMax)
 
-#ifdef __NEWOSLDR__
+#ifdef __ZBAOSLDR__
 
 /// @brief memset definition in C++.
 /// @param dst destination pointer.
@@ -38,7 +38,7 @@ EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight);
 #define StrLen(src)			  strlen(src)
 #define StrCmp(dst, src)	  strcmp(dst, src)
 
-#endif // __NEWOSLDR__
+#endif // __ZBAOSLDR__
 
 inline int IsSpace(int c)
 {
