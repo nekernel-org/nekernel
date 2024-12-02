@@ -7,7 +7,6 @@
 //! @file ThreadLocalStorage.inl
 //! @brief Allocate resources from the process's heap storage.
 
-#include "NewKit/ErrorOr.h"
 #ifndef INC_PROCESS_SCHEDULER_H
 #include <KernelKit/UserProcessScheduler.h>
 #endif

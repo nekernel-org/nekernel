@@ -7,7 +7,6 @@
  *  ========================================================
  */
 
-#include "KernelKit/IDLLObject.h"
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/PEF.h>
 #include <KernelKit/IPEFDLLObject.h>
