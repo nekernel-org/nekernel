@@ -94,10 +94,12 @@ EXTERN_C Kernel::Void _Init_thread_footer(Kernel::Int* thread_obj)
 
 EXTERN_C Kernel::Void _Init_thread_epoch(Kernel::Void)
 {
+	ZKA_UNUSED(0);
 }
 
 EXTERN_C Kernel::Void _Init_thread_header(Kernel::Int* thread_obj)
 {
+	ZKA_UNUSED(0);
 }
 
 EXTERN_C Kernel::Int _tls_index = 0UL;
