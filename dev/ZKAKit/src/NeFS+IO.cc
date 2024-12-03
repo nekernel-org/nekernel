@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, ELMH Group, all rights reserved.
+	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -13,7 +13,7 @@
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
  *
- * Copyright (C) 2024, ELMH Group, all rights reserved., all rights reserved.
+ * Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved., all rights reserved.
  *
  *************************************************************/
 

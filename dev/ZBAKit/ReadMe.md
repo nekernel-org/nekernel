@@ -17,4 +17,4 @@ And then execute:
 make all
 ```
 
-##### Copyright, ELMH Group, all rights reserved.
+##### Copyright, Amlal EL Mahrouss, all rights reserved.

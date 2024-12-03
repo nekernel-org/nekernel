@@ -1,7 +1,7 @@
 
 /* -------------------------------------------
 
-	Copyright (C) 2024, ELMH Group, all rights reserved.
+	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 #pragma once

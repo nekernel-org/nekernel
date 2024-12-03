@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, ELMH Group, all rights reserved.
+	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file BootATA.cc
- * @author ELMH Group (amlalelmahrouss@icloud.com)
+ * @author Amlal EL Mahrouss (amlalelmahrouss@icloud.com)
  * @brief ATA driver.
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) ELMH Group
+ * @copyright Copyright (c) Amlal EL Mahrouss
  *
  */
 
