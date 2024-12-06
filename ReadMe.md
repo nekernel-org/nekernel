@@ -1,7 +1,5 @@
 <!-- README of ZKA -->
 
-![ZKA](resources/zka.svg)
-
 # Zeta Kernel Architecture.
 
 ZKA is a general purpose OS kernel.
