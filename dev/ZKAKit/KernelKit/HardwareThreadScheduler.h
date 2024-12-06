@@ -14,7 +14,7 @@
 /// @note Last Rev Sun 28 Jul CET 2024
 /// @note Last Rev Thu, Aug  1, 2024  9:07:38 AM
 
-#define kMaxHartInsideSched (8U)
+#define kMaxAPInsideSched (8U)
 
 namespace Kernel
 {
@@ -25,13 +25,13 @@ namespace Kernel
 
 	enum ThreadKind
 	{
-		kHartSystemReserved, // System reserved thread, well user can't use it
-		kHartStandard,		 // user thread, cannot be used by Kernel
-		kHartFallback,		 // fallback thread, cannot be used by user if not clear or
+		kAPSystemReserved, // System reserved thread, well user can't use it
+		kAPStandard,		 // user thread, cannot be used by Kernel
+		kAPFallback,		 // fallback thread, cannot be used by user if not clear or
 							 // used by Kernel.
-		kHartBoot,			 // The core we booted from, the mama.
-		kInvalidHart,
-		kHartCount,
+		kAPBoot,			 // The core we booted from, the mama.
+		kInvalidAP,
+		kAPCount,
 	};
 
 	typedef enum ThreadKind ThreadKind;
@@ -72,7 +72,7 @@ namespace Kernel
 
 	private:
 		HAL::StackFramePtr fStack{nullptr};
-		ThreadKind		   fKind{ThreadKind::kHartStandard};
+		ThreadKind		   fKind{ThreadKind::kAPStandard};
 		ThreadID		   fID{0};
 		ProcessID		   fSourcePID{-1};
 		Bool			   fWakeup{false};
@@ -89,7 +89,7 @@ namespace Kernel
 	/// \brief Class to manage the thread scheduling.
 	///
 
-	class HardwareThreadScheduler final : public ISchedulerObject
+	class HardwareThreadScheduler final : public ISchedulable
 	{
 	private:
 		friend class UserProcessHelper;
@@ -133,7 +133,7 @@ namespace Kernel
 		SizeT Capacity() noexcept;
 
 	private:
-		Array<HardwareThread, kMaxHartInsideSched> fThreadList;
+		Array<HardwareThread, kMaxAPInsideSched> fThreadList;
 		ThreadID								   fCurrentThread{0};
 	};
 

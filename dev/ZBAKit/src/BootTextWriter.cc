@@ -2,7 +2,7 @@
 
 	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 
-	File: String.cc
+	File: BootTextWriter.cc
 	Purpose: ZBA string library
 
 	Revision History:

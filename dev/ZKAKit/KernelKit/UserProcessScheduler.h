@@ -273,7 +273,7 @@ namespace Kernel
 
 	/// @brief Process scheduler class.
 	/// The main class which you call to schedule user processes.
-	class UserProcessScheduler final : public ISchedulerObject
+	class UserProcessScheduler final : public ISchedulable
 	{
 		friend class UserProcessHelper;
 

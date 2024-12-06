@@ -7,7 +7,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <NewKit/KString.h>
-#include <PosixKit/Signals.h>
+#include <POSIXKit/Signals.h>
 
 /// @brief Handle GPF fault.
 /// @param rsp

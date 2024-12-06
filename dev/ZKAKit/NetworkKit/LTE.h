@@ -11,6 +11,6 @@
 #define _INC_NETWORK_LTE_H_
 
 #include <NewKit/Defines.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 
 #endif // ifndef _INC_NETWORK_LTE_H_

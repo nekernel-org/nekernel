@@ -19,12 +19,17 @@ namespace Kernel
 		UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 	}
 
+	/***********************************************************************************/
+	/// @brief Validate user stack.
+	/// @param stack_ptr the frame pointer.
+	/***********************************************************************************/
+
 	Bool hal_check_stack(HAL::StackFramePtr stack_ptr)
 	{
 		if (!stack_ptr)
 			return No;
 
-		return Yes;
+		return stack_ptr->SP != 0 && stack_ptr->BP != 0;
 	}
 
 	/// @brief Wakes up thread.

@@ -81,7 +81,7 @@ namespace Kernel
 		kEndianBig,
 		kEndianLittle,
 		kEndianMixed,
-		kCount
+		kEndianCount
 	};
 
 	/// @brief Forward object.
@@ -106,14 +106,14 @@ namespace Kernel
 
 	/// @brief Encoding interface, used as a proxy to convert T to Char*
 	/// Used to cast A to B or B to A.
-	class IEncoderObject
+	class ICodec
 	{
 	public:
-		explicit IEncoderObject() = default;
-		virtual ~IEncoderObject() = default;
+		explicit ICodec() = default;
+		virtual ~ICodec() = default;
 
-		IEncoderObject& operator=(const IEncoderObject&) = default;
-		IEncoderObject(const IEncoderObject&)			 = default;
+		ICodec& operator=(const ICodec&) = default;
+		ICodec(const ICodec&)			 = default;
 
 	public:
 		/// @brief Convert type to bytes.
@@ -126,6 +126,17 @@ namespace Kernel
 			return nullptr;
 		}
 
+		/// @brief Construct from type to class.
+		/// @tparam T the type to convert.
+		/// @param type (a1) the data.
+		/// @return a1 as Char*
+		template <typename OutputClass, typename FactoryClass>
+		OutputClass* Construct(Char* type) noexcept
+		{
+			FactoryClass class_fac;
+			return class_fac.template From<OutputClass>(type);
+		}
+
 		/// @brief Convert T class to Y class.
 		/// @tparam T the class type of type.
 		/// @tparam Y the result class.
@@ -134,7 +145,7 @@ namespace Kernel
 		template <typename T, typename Y>
 		Y As(T type) noexcept
 		{
-			if (type.IsSerializable())
+			if (type.template IsSerializable())
 			{
 				return reinterpret_cast<Char*>(type);
 			}
@@ -145,31 +156,31 @@ namespace Kernel
 
 	/// \brief Scheduler interface, represents a scheduler object.
 	/// @note This is used to schedule tasks, such as threads, drivers, user threads, etc.
-	class ISchedulerObject
+	class ISchedulable
 	{
 	public:
-		explicit ISchedulerObject() = default;
-		virtual ~ISchedulerObject() = default;
+		explicit ISchedulable() = default;
+		virtual ~ISchedulable() = default;
 
-		ISchedulerObject& operator=(const ISchedulerObject&) = default;
-		ISchedulerObject(const ISchedulerObject&)			 = default;
+		ISchedulable& operator=(const ISchedulable&) = default;
+		ISchedulable(const ISchedulable&)			 = default;
 
 		/// @brief Is this object only accepting user tasks?
 		virtual const Bool IsUser()
 		{
-			return false;
+			return NO;
 		}
 
 		/// @brief Is this object only accepting kernel tasks?
 		virtual const Bool IsKernel()
 		{
-			return false;
+			return NO;
 		}
 
 		/// @brief Is this object offloading to another CPU?
 		virtual const Bool HasMP()
 		{
-			return false;
+			return NO;
 		}
 	};
 } // namespace Kernel

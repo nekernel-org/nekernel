@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef __SCI_HINT_H__
-#define __SCI_HINT_H__
+#ifndef SCI_HINT_H
+#define SCI_HINT_H
 
 #ifdef __TK__
 #pragma compiler(hint_manifest)
@@ -22,4 +22,4 @@
 #define _InOut
 #define _StrictInOut
 
-#endif // ifndef __SCI_HINT_H__
+#endif // ifndef SCI_HINT_H

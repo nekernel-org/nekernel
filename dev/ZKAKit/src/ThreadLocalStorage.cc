@@ -32,8 +32,8 @@ Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr)
 		!tib_ptr->Record)
 		return false;
 
-	IEncoderObject encoder;
-	const char*	   tib_as_bytes = encoder.AsBytes(tib_ptr);
+	ICodec encoder;
+	const Char*	   tib_as_bytes = encoder.AsBytes(tib_ptr);
 
 	kcout << "Checking for a valid cookie inside the TIB...\r";
 

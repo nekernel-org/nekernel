@@ -11,8 +11,8 @@
 
 namespace Kernel
 {
-	class IRleObject;
-	class IRleProxy;
+	class IRLEObject;
+	class IRLEProxy;
 } // namespace Kernel
 
 #endif // !ifndef COMPRESSKIT_RLE_H

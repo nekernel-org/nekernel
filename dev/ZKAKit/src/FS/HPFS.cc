@@ -13,7 +13,7 @@
 #include <KernelKit/LPC.h>
 #include <NewKit/Crc32.h>
 #include <NewKit/Stop.h>
-#include <NewKit/String.h>
+#include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 #include <FirmwareKit/EPM.h>
 #include <KernelKit/UserProcessScheduler.h>

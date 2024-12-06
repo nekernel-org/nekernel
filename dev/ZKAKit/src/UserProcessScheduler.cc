@@ -515,13 +515,16 @@ namespace Kernel
 
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index)
 		{
-			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidHart)
+			if (!HardwareThreadScheduler::The()[index].Leak())
+				continue;
+
+			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidAP)
 				continue;
 
 			if (HardwareThreadScheduler::The()[index].Leak()->Kind() !=
-					ThreadKind::kHartBoot &&
+					ThreadKind::kAPBoot &&
 				HardwareThreadScheduler::The()[index].Leak()->Kind() !=
-					ThreadKind::kHartSystemReserved)
+					ThreadKind::kAPSystemReserved)
 			{
 				PID prev_pid									 = UserProcessHelper::TheCurrentPID();
 				UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;

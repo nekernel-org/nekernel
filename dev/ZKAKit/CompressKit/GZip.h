@@ -11,8 +11,8 @@
 
 namespace Kernel::GZip
 {
-	class IGZipObject;
-	class IGZipProxy;
+	class IGZIPObject;
+	class IGZIPProxy;
 } // namespace Kernel::GZip
 
 #endif // !COMPRESSKIT_GZIP_H
