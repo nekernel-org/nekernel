@@ -83,6 +83,8 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
+    Kernel::rtl_create_process(ke_dll_entrypoint, "Kernel System");
+
 	/* Initialize filesystem. */
 	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
 
@@ -93,8 +95,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::HAL::Register64 idt_reg;
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
-
-	Kernel::rtl_create_process(ke_dll_entrypoint, "Kernel System");
 
 	Kernel::HAL::IDTLoader idt_loader;
 	idt_loader.Load(idt_reg);

@@ -417,8 +417,6 @@ namespace Kernel
 		{
 			auto process = mTeam.AsArray()[process_index];
 
-			kcout << "UserProcessScheduler::Run(): Process: " << process.Name << endl;
-
 			//! check if process needs to be scheduled.
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
