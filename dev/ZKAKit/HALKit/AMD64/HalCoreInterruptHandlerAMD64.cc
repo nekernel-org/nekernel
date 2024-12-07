@@ -122,7 +122,7 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 {
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	kcout << "Kernel: Process RIP: " << Kernel::number(rip) << endl;
+	kcout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << endl;
 	kcout << "Kernel: Process Name: " << process.Leak().Name << endl;
 
 	kcout << "Kernel: SIGTRAP set.\r";
@@ -134,8 +134,6 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 	kcout << "Kernel: PRCFROZE status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
-
-	Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
 }
 
 /// @brief Handle #UD fault.

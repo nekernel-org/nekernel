@@ -334,7 +334,7 @@ namespace Kernel
 
 		kcout << "Create stack reserve for: " << process->Name << endl;
 
-		auto pid = mTeam.mProcessList.Count();
+		auto pid = mTeam.mProcessList.Capacity() - kSchedProcessLimitPerTeam;
 
 		process->ProcessId = pid;
 		process->Status	   = ProcessStatusKind::kRunning;
