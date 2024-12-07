@@ -14,7 +14,20 @@
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
 	kcout << "Kernel: GPF.\r";
-	Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
+
+	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	process.Leak().ProcessSignal.SignalIP		= 0UL;
+	process.Leak().ProcessSignal.SignalID		= SIGKILL;
+	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+
+	kcout << "Kernel: PRCFROZE status set..\r";
+
+	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
+
+	process.Leak().Crash();
+
+	Kernel::ke_stop(RUNTIME_CHECK_POINTER);
 }
 
 /// @brief Handle page fault.
@@ -36,6 +49,8 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 
 	process.Leak().Crash();
+
+	Kernel::ke_stop(RUNTIME_CHECK_PAGE);
 }
 
 /// @brief Handle scheduler interrupt.
@@ -62,6 +77,8 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 
 	process.Leak().Crash();
+
+	Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
 }
 
 /// @brief Handle any generic fault.
@@ -81,6 +98,8 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 
 	process.Leak().Crash();
+
+	Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
@@ -99,6 +118,8 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 	kcout << "Kernel: PRCFROZE status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
+
+	Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
 }
 
 /// @brief Handle #UD fault.
@@ -118,6 +139,8 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 
 	process.Leak().Crash();
+
+	Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
 }
 
 /// @brief Enter syscall from assembly.

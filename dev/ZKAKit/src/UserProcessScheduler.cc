@@ -57,6 +57,9 @@ namespace Kernel
 
 	Void UserProcess::Crash()
 	{
+	    if (this->Status != ProcessStatusKind::kRunning)
+			return;
+
 		kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
 		this->Exit(kErrorProcessFault);
 	}
