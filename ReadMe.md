@@ -6,7 +6,7 @@
 
 ZKA is a general purpose OS kernel.
 </br>
-It is designed for heavy loads and low tolerance environements (such as servers)
+It is designed for real time environements (such as servers)
 </br>
 A Win32 compatibility layer is available as well as ML Kits support.
 
@@ -37,4 +37,4 @@ make -f amd64-efi.make all
 
 ![ZKA](resources/zka-window-server.png)
 
-###### Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved. All rights reserved.
+###### Copyright (C) 2024, ELMH GROUP, all rights reserved. All rights reserved.

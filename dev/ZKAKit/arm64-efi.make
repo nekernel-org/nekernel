@@ -1,5 +1,5 @@
 ##################################################
-# (c) Amlal EL Mahrouss, all rights reserved.
+# (c) ELMH GROUP, all rights reserved.
 # This is the microKernel makefile.
 ##################################################
 

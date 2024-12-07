@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, ELMH GROUP, all rights reserved.
 
 	FILE: NeFS.h
 	PURPOSE: NeFS (New FileSystem) support.
@@ -23,7 +23,7 @@ default.
 
 /**
 	@brief New File System specification.
-	@author Amlal EL Mahrouss (Amlal EL Mahrouss amlalelmahrouss at icloud dot com)
+	@author ELMH GROUP (ELMH GROUP amlalelmahrouss at icloud dot com)
 */
 
 #define kNeFSInvalidFork	(-1)
