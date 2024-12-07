@@ -21,7 +21,7 @@ A Win32 compatibility layer is available as well as ML Kits support.
 Clone repository:
 
 ```
-git clone git@github.com:amlel-el-mahrouss/zka.git
+git clone git@github.com:ELMH-Group/zka.git
 cd zka-dev
 ```
 
