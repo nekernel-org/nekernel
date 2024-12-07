@@ -253,27 +253,27 @@ namespace Kernel
 			if (errOrStart.Error() != kErrorSuccess)
 				return kProcessInvalidID;
 
-			STATIC UserProcess proc;
+			UserProcess* proc = new UserProcess();
 
-			proc.Kind		 = procKind;
-			proc.Image.fCode = errOrStart.Leak().Leak();
-			proc.Image.fBlob = exec.GetBlob().Leak().Leak();
-			proc.StackSize	 = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
-			proc.MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
-			proc.PTime		 = 0UL;
+			proc->Kind		 = procKind;
+			proc->Image.fCode = errOrStart.Leak().Leak();
+			proc->Image.fBlob = exec.GetBlob().Leak().Leak();
+			proc->StackSize	 = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
+			proc->MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
+			proc->PTime		 = 0UL;
 
-			rt_set_memory(proc.Name, 0, kProcessNameLen);
+			rt_set_memory(proc->Name, 0, kProcessNameLen);
 
 			if (exec.FindSymbol(kPefNameSymbol, kPefData))
-				rt_copy_memory(exec.FindSymbol(kPefNameSymbol, kPefData), proc.Name, rt_string_len((Char*)exec.FindSymbol(kPefNameSymbol, kPefData)));
+				rt_copy_memory(exec.FindSymbol(kPefNameSymbol, kPefData), proc->Name, rt_string_len((Char*)exec.FindSymbol(kPefNameSymbol, kPefData)));
 
-			if (!proc.StackSize)
+			if (!proc->StackSize)
 			{
 				const auto kDefaultStackSizeMib = 8;
-				proc.StackSize					= mib_cast(kDefaultStackSizeMib);
+				proc->StackSize					= mib_cast(kDefaultStackSizeMib);
 			}
 
-			return UserProcessScheduler::The().Spawn(&proc);
+			return UserProcessScheduler::The().Spawn(proc);
 		}
 	} // namespace Utils
 } // namespace Kernel

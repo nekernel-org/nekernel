@@ -259,12 +259,12 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(UserProcessTeam);
 
-		Array<UserProcess, kSchedProcessLimitPerTeam>& AsArray();
+		Array<UserProcess*, kSchedProcessLimitPerTeam>& AsArray();
 		Ref<UserProcess>&							   AsRef();
 		ProcessID&									   Id() noexcept;
 
 	public:
-		Array<UserProcess, kSchedProcessLimitPerTeam> mProcessList;
+		Array<UserProcess*, kSchedProcessLimitPerTeam> mProcessList;
 		Ref<UserProcess>							  mCurrentProcess;
 		ProcessID									  mTeamId{0};
 	};
@@ -316,7 +316,7 @@ namespace Kernel
 	{
 	public:
 		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
-		STATIC Bool CanBeScheduled(const UserProcess& process);
+		STATIC Bool CanBeScheduled(const UserProcess* process);
 		STATIC ErrorOr<PID> TheCurrentPID();
 		STATIC SizeT		StartScheduling();
 	};
