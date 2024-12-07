@@ -57,7 +57,7 @@ namespace Kernel
 
 	Void UserProcess::Crash()
 	{
-	    if (this->Status != ProcessStatusKind::kRunning)
+		if (this->Status != ProcessStatusKind::kRunning)
 			return;
 
 		kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
@@ -417,6 +417,8 @@ namespace Kernel
 		{
 			auto process = mTeam.AsArray()[process_index];
 
+			kcout << "UserProcessScheduler::Run(): Process: " << process.Name << endl;
+
 			//! check if process needs to be scheduled.
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
@@ -485,6 +487,9 @@ namespace Kernel
 			return No;
 
 		if (!process.Image.fCode)
+			return No;
+
+		if (!process.Name[0])
 			return No;
 
 		return process.PTime < 1;
