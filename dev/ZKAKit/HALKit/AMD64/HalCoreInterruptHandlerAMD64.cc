@@ -56,8 +56,24 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 {
+	static BOOL			 is_scheduling			= NO;
+	static Kernel::Int64 try_count_before_brute = 100000UL;
+
+	while (is_scheduling)
+	{
+		--try_count_before_brute;
+
+		if (try_count_before_brute < 1)
+			break;
+	}
+
+	try_count_before_brute = 100000UL;
+	is_scheduling = YES;
+
 	kcout << "Kernel: Timer IRQ (Scheduler Notification).\r";
 	Kernel::UserProcessHelper::StartScheduling();
+
+	is_scheduling = NO;
 }
 
 /// @brief Handle math fault.

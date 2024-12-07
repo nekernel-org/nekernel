@@ -44,7 +44,9 @@ EXTERN_C void hal_init_platform(
 	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
 		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
-	ke_dll_entrypoint();
+	/// @note do initialize the interrupts after it.
+
+	Kernel::rtl_create_process(ke_dll_entrypoint, "Kernel System");
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }
