@@ -13,6 +13,14 @@
 
 namespace Kernel
 {
+	UserProcessTeam::UserProcessTeam()
+	{
+		for (SizeT i = 0U; i < mProcessList.Count(); ++i)
+		{
+			mProcessList[i] = nullptr;
+		}
+	}
+
 	/***********************************************************************************/
 	/// @brief UserProcess list array getter.
 	/// @return The list of process to schedule.

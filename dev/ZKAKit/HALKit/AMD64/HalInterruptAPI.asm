@@ -202,8 +202,7 @@ __ZKA_INT_32:
 
     push rax
     mov rcx, rsp
-    mov rax, idt_handle_scheduler
-    call rax
+    call idt_handle_scheduler
     pop rax
 
     sti

@@ -120,23 +120,23 @@ namespace Kernel
 		auto ptr = mm_new_heap(sz + pad_amount, Yes, Yes);
 #endif
 
-		if (!this->MemoryHeap)
+		if (!this->ProcessMemoryHeap)
 		{
-			this->MemoryHeap = new UserProcess::UserProcessHeapList();
+			this->ProcessMemoryHeap = new UserProcess::UserProcessHeapList();
 
-			this->MemoryHeap->MemoryEntryPad  = pad_amount;
-			this->MemoryHeap->MemoryEntrySize = sz;
+			this->ProcessMemoryHeap->MemoryEntryPad	 = pad_amount;
+			this->ProcessMemoryHeap->MemoryEntrySize = sz;
 
-			this->MemoryHeap->MemoryEntry = ptr;
+			this->ProcessMemoryHeap->MemoryEntry = ptr;
 
-			this->MemoryHeap->MemoryPrev = nullptr;
-			this->MemoryHeap->MemoryNext = nullptr;
+			this->ProcessMemoryHeap->MemoryPrev = nullptr;
+			this->ProcessMemoryHeap->MemoryNext = nullptr;
 
 			return ErrorOr<VoidPtr>(ptr);
 		}
 		else
 		{
-			UserProcessHeapList* entry		= this->MemoryHeap;
+			UserProcessHeapList* entry		= this->ProcessMemoryHeap;
 			UserProcessHeapList* prev_entry = nullptr;
 
 			while (!entry)
@@ -207,7 +207,7 @@ namespace Kernel
 
 		kLastExitCode = exit_code;
 
-		auto memory_heap_list = this->MemoryHeap;
+		auto memory_heap_list = this->ProcessMemoryHeap;
 
 #ifdef __ZKA_AMD64__
 		auto pd = hal_read_cr3();
@@ -270,6 +270,8 @@ namespace Kernel
 
 		this->ProcessId = 0;
 		this->Status	= ProcessStatusKind::kFinished;
+
+		--this->ProcessParentTeam->mProcessCount;
 
 		delete this;
 	}
@@ -334,22 +336,17 @@ namespace Kernel
 
 		kcout << "Create stack reserve for: " << process->Name << endl;
 
-		ProcessID pid = kProcessInvalidID;
+		ProcessID pid = mTeam.mProcessCount;
 
-		for (SizeT free_pid = 0UL; free_pid < kSchedProcessLimitPerTeam; ++free_pid)
-		{
-			if (mTeam.mProcessList[free_pid] && mm_is_valid_heap(mTeam.mProcessList[free_pid]) && mTeam.mProcessList[free_pid]->Status == ProcessStatusKind::kFinished)
-			{
-				pid = free_pid;
-				break;
-			}
-		}
+		if (pid > kSchedProcessLimitPerTeam)
+			return kProcessInvalidID;
 
-		if (pid == kProcessInvalidID)
-			return pid;
+		++mTeam.mProcessCount;
+
+		process->ProcessParentTeam = &mTeam;
 
 		process->ProcessId = pid;
-		process->Status	   = ProcessStatusKind::kRunning;
+		process->Status	   = ProcessStatusKind::kStarting;
 		process->PTime	   = (UIntPtr)AffinityKind::kStandard;
 
 		kcout << "Process Name: " << process->Name << endl;

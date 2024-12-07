@@ -823,11 +823,11 @@ typedef struct _EfiProcessorInformation
 
 typedef EfiStatusType EFI_API (*EfiMpServicesGetNumberOfProcessors)(
 	IN struct _EfiMpServicesProtocol* Self,
-	OUT UInt32*						  NumberOfProcessors,
-	OUT UInt32*						  NumberOfEnabledProcessors);
+	OUT UInt32* NumberOfProcessors,
+	OUT UInt32* NumberOfEnabledProcessors);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesGetProcessorInfo)(
-	IN struct _EfiMpServicesProtocol*	 Self,
+	IN struct _EfiMpServicesProtocol* Self,
 	IN UInt32*							 ProcessorNumber,
 	OUT struct _EfiProcessorInformation* NumberOfEnabledProcessors);
 
@@ -840,8 +840,8 @@ typedef EfiStatusType EFI_API (*EfiMpServicesStartupAllAPS)(
 	IN Boolean						  SingleThread,
 	IN VoidPtr WaitEvent			  OPTIONAL, // EFI_EVENT first, but unused here.
 	IN UInt32						  TimeoutInMicroSeconds,
-	IN Void* ProcedureArgument		  OPTIONAL,
-	OUT UInt32** FailedCpuList		  OPTIONAL);
+	IN Void* ProcedureArgument OPTIONAL,
+	OUT UInt32** FailedCpuList OPTIONAL);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesSwitchBSP)(
 	IN struct _EfiMpServicesProtocol* Self,
@@ -854,18 +854,18 @@ typedef EfiStatusType EFI_API (*EfiMpServicesStartupThisAP)(
 	IN UInt32						  ProcessorNumber,
 	IN VoidPtr WaitEvent			  OPTIONAL,
 	IN UInt32						  TimeoutInMicroseconds,
-	IN Void* ProcedureArgument		  OPTIONAL,
-	OUT Boolean* Finished			  OPTIONAL);
+	IN Void* ProcedureArgument OPTIONAL,
+	OUT Boolean* Finished OPTIONAL);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesDisableThisAP)(
 	IN struct _EfiMpServicesProtocol* Self,
 	IN UInt32						  ProcessorNumber,
 	IN Boolean						  EnableAP,
-	IN UInt32* HealthFlag			  OPTIONAL);
+	IN UInt32* HealthFlag OPTIONAL);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesWhoAmI)(
 	IN struct _EfiMpServicesProtocol* Self,
-	OUT UInt32*						  ProcessorNumber);
+	OUT UInt32* ProcessorNumber);
 
 typedef struct _EfiMpServicesProtocol
 {

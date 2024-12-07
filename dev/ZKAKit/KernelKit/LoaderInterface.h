@@ -25,9 +25,9 @@ namespace Kernel
 
 	public:
 		virtual _Output ErrorOr<VoidPtr> GetBlob()												= 0;
-		virtual _Output const Char*		 AsString()												= 0;
-		virtual _Output const Char*		 MIME()													= 0;
-		virtual _Output const Char*		 Path()													= 0;
+		virtual _Output const Char* AsString()													= 0;
+		virtual _Output const Char* MIME()														= 0;
+		virtual _Output const Char* Path()														= 0;
 		virtual _Output ErrorOr<VoidPtr> FindStart()											= 0;
 		virtual _Output VoidPtr			 FindSymbol(_Input const Char* name, _Input Int32 kind) = 0;
 	};

@@ -17,6 +17,9 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
+	if (!process)
+		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
@@ -35,10 +38,12 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
 	kcout << "Kernel: Page Fault.\r";
-
 	kcout << "Kernel: SIGKILL set.\r";
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	if (!process)
+		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
 
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
@@ -68,7 +73,7 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 	}
 
 	try_count_before_brute = 100000UL;
-	is_scheduling = YES;
+	is_scheduling		   = YES;
 
 	kcout << "Kernel: Timer IRQ (Scheduler Notification).\r";
 	Kernel::UserProcessHelper::StartScheduling();
@@ -83,6 +88,9 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 	kcout << "Kernel: Math error (division by zero?).\r";
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	if (!process)
+		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
 
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
@@ -105,6 +113,9 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
+	if (!process)
+		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
@@ -122,13 +133,15 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 {
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	kcout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << endl;
-	kcout << "Kernel: Process Name: " << process.Leak().Name << endl;
+	if (!process)
+		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
 
+	kcout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << endl;
 	kcout << "Kernel: SIGTRAP set.\r";
 
-	process.Leak().ProcessSignal.SignalIP		= rip;
-	process.Leak().ProcessSignal.SignalID		= SIGTRAP;
+	process.Leak().ProcessSignal.SignalIP = rip;
+	process.Leak().ProcessSignal.SignalID = SIGTRAP;
+
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
 	kcout << "Kernel: PRCFROZE status set..\r";
@@ -143,6 +156,9 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 	kcout << "Kernel: Undefined Opcode.\r";
 
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
+
+	if (!process)
+		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
 
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;

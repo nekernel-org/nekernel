@@ -24,11 +24,10 @@ namespace Kernel
 
 		T& operator[](const SizeT& At)
 		{
-			MUST_PASS(At < N);
 			return fArray[At];
 		}
 
-		T& Assign(const SizeT& At, T& NewVal)
+		T Assign(const SizeT& At, T NewVal)
 		{
 			fArray[At] = NewVal;
 			return fArray[At];

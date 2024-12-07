@@ -26,7 +26,7 @@ namespace Kernel
 		process_hdr->StackSize	 = kib_cast(8);
 
 		rt_set_memory(process_hdr->Name, 0, kProcessNameLen);
-		rt_copy_memory((VoidPtr)process_name, process_hdr->Name, rt_string_len(process_name) + 1);
+		rt_copy_memory((VoidPtr)process_name, process_hdr->Name, rt_string_len(process_name));
 
 		ProcessID id = UserProcessScheduler::The().Spawn(process_hdr);
 

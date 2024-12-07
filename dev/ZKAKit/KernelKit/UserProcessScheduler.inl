@@ -11,7 +11,7 @@ namespace Kernel
 			sz == 0)
 			return No;
 
-		UserProcessHeapList* entry = this->MemoryHeap;
+		UserProcessHeapList* entry = this->ProcessMemoryHeap;
 
 		while (entry != nullptr)
 		{

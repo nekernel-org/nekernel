@@ -110,7 +110,10 @@ namespace Kernel
 
 	Void RecoveryFactory::Recover() noexcept
 	{
-		HAL::rt_halt();
+		while (YES)
+		{
+			HAL::rt_halt();
+		}
 	}
 
 	void ke_runtime_check(bool expr, const Char* file, const Char* line)

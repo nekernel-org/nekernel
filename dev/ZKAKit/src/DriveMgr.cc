@@ -210,7 +210,7 @@ namespace Kernel
 		trait.fInit		 = io_drv_init;
 		trait.fDriveKind = io_drv_kind;
 
-		kcout << "Detect partiton scheme of: " << trait.fName << ".\r";
+		kcout << "Detect partition scheme of: " << trait.fName << ".\r";
 
 		Detail::ioi_detect_drive(&trait);
 

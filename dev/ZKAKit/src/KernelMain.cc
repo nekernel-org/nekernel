@@ -89,7 +89,7 @@ namespace Kernel::Detail
 					}
 
 					catalogDir = fNeFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
-																	kNeFSCatalogKindDir);
+																   kNeFSCatalogKindDir);
 
 					NFS_FORK_STRUCT theFork{0};
 

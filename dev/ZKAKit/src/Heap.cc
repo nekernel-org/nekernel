@@ -10,6 +10,7 @@
 #include <NewKit/Crc32.h>
 #include <NewKit/PageMgr.h>
 #include <NewKit/Utils.h>
+#include <ArchKit/ArchKit.h>
 
 /* -------------------------------------------
 
@@ -266,7 +267,7 @@ namespace Kernel
 	/// @return if it exists.
 	_Output Boolean mm_is_valid_heap(VoidPtr heap_ptr)
 	{
-		if (heap_ptr)
+		if (heap_ptr && HAL::mm_is_bitmap(heap_ptr))
 		{
 			Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
 				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(

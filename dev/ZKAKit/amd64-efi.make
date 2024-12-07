@@ -58,6 +58,7 @@ newos-amd64-epm: clean
 			$(wildcard HALKit/AMD64/*.cc) $(wildcard src/WS/*.cc) \
 			$(wildcard HALKit/AMD64/*.s)
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalCommonAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalBoot.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalUtils.asm
 	$(MOVEALL)

@@ -56,6 +56,11 @@ namespace Kernel
 	{
 		return *(volatile UInt32*)((UInt64)base + reg);
 	}
+
+	namespace HAL
+	{
+		auto mm_is_bitmap(VoidPtr ptr) -> Bool;
+	}
 } // namespace Kernel
 
 #define kKernelMaxSystemCalls (256)

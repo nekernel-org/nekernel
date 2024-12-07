@@ -255,12 +255,12 @@ namespace Kernel
 
 			UserProcess* proc = new UserProcess();
 
-			proc->Kind		 = procKind;
+			proc->Kind		  = procKind;
 			proc->Image.fCode = errOrStart.Leak().Leak();
 			proc->Image.fBlob = exec.GetBlob().Leak().Leak();
-			proc->StackSize	 = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
+			proc->StackSize	  = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 			proc->MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
-			proc->PTime		 = 0UL;
+			proc->PTime		  = 0UL;
 
 			rt_set_memory(proc->Name, 0, kProcessNameLen);
 
@@ -273,7 +273,12 @@ namespace Kernel
 				proc->StackSize					= mib_cast(kDefaultStackSizeMib);
 			}
 
-			return UserProcessScheduler::The().Spawn(proc);
+			auto id = UserProcessScheduler::The().Spawn(proc);
+
+			if (id == kProcessInvalidID)
+				delete proc;
+
+			return id;
 		}
 	} // namespace Utils
 } // namespace Kernel

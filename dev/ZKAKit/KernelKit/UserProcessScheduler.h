@@ -185,7 +185,8 @@ namespace Kernel
 		};
 
 		UserProcessSignal	 ProcessSignal;
-		UserProcessHeapList* MemoryHeap{nullptr};
+		UserProcessHeapList* ProcessMemoryHeap{nullptr};
+		UserProcessTeam*	 ProcessParentTeam;
 
 		VoidPtr VMRegister{0UL};
 
@@ -254,19 +255,20 @@ namespace Kernel
 	class UserProcessTeam final
 	{
 	public:
-		explicit UserProcessTeam() = default;
-		~UserProcessTeam()		   = default;
+		explicit UserProcessTeam();
+		~UserProcessTeam() = default;
 
 		ZKA_COPY_DEFAULT(UserProcessTeam);
 
 		Array<UserProcess*, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<UserProcess>&							   AsRef();
-		ProcessID&									   Id() noexcept;
+		Ref<UserProcess>&								AsRef();
+		ProcessID&										Id() noexcept;
 
 	public:
 		Array<UserProcess*, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<UserProcess>							  mCurrentProcess;
-		ProcessID									  mTeamId{0};
+		Ref<UserProcess>							   mCurrentProcess;
+		ProcessID									   mTeamId{0};
+		ProcessID									   mProcessCount{0};
 	};
 
 	using UserProcessPtr = UserProcess*;

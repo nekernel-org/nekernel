@@ -150,6 +150,12 @@ namespace Kernel
 			};
 		} // namespace Detail
 
+		auto mm_is_bitmap(VoidPtr ptr) -> Bool
+		{
+			Detail::IBitMapAllocator traits;
+			return traits.IsBitMap(ptr);
+		}
+
 		/// @brief Allocate a new page to be used by the OS.
 		/// @param wr read/write bit.
 		/// @param user user bit.
