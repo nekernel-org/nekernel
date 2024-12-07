@@ -20,7 +20,7 @@
  ------------------------------------------- */
 
 //! @file Heap.cc
-//! @brief The Kernel's heap manager serves as the main memory manager.
+//! @brief This serves as the main memory manager.
 
 #define kKernelHeapMagic   (0xD4D7D5)
 #define kKernelHeapAlignSz (__BIGGEST_ALIGNMENT__)
@@ -95,7 +95,7 @@ namespace Kernel
 	/// @brief Declare a new size for ptr_heap.
 	/// @param ptr_heap the pointer.
 	/// @return Newly allocated heap header.
-	VoidPtr mm_realloc_heap(VoidPtr ptr_heap, SizeT new_sz)
+	_Output VoidPtr mm_realloc_heap(VoidPtr ptr_heap, SizeT new_sz)
 	{
 		if (Detail::mm_check_heap_address(ptr_heap) == No)
 			return nullptr;
@@ -168,7 +168,7 @@ namespace Kernel
 
 		heap_info_ptr->fPage = true;
 
-		kcout << "Created Page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
+		kcout << "Created page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
 
 		return kErrorSuccess;
 	}
@@ -284,7 +284,7 @@ namespace Kernel
 	/// @brief Protect the heap with a CRC value.
 	/// @param heap_ptr HIB pointer.
 	/// @return if it valid: point has crc now., otherwise fail.
-	Boolean mm_protect_heap(VoidPtr heap_ptr)
+	_Output Boolean mm_protect_heap(VoidPtr heap_ptr)
 	{
 		if (heap_ptr)
 		{
@@ -292,7 +292,7 @@ namespace Kernel
 				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 					(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-			if (heap_ptr && heap_info_ptr->fPresent && kKernelHeapMagic == heap_info_ptr->fMagic)
+			if (heap_info_ptr && heap_info_ptr->fPresent && kKernelHeapMagic == heap_info_ptr->fMagic)
 			{
 				heap_info_ptr->fCRC32 =
 					ke_calculate_crc32((Char*)heap_info_ptr->fHeapPtr, heap_info_ptr->fHeapSize);

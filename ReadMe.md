@@ -1,6 +1,6 @@
 <!-- README of ZKA -->
 
-![Logo](resources/zka.svg)
+![ZKA](resources/zka.svg)
 
 # Zeta Kernel Architecture.
 
@@ -21,7 +21,7 @@ A Win32 compatibility layer is available as well as ML Kits support.
 Clone repository:
 
 ```
-git clone git@github.com:amlel-el-mahrouss/zka-dev.git
+git clone git@github.com:ElMahroussLogic/zka-dev.git
 cd zka-dev
 ```
 

@@ -11,7 +11,7 @@ Purpose: SCIKit Macros header.
 
 #include <SCIKit/Macros.h>
 
-/// @brief Here we define filesystem calls.
+/// @brief In this file we define filesystem calls.
 
 SYSCALL_DECL(FCloseFile, const SCIObject handle);
 SYSCALL_DECL(FOpenFile, const Char* name, const Char* rest);

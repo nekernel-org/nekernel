@@ -66,7 +66,7 @@ namespace Kernel
 	{
 		if (*cls)
 		{
-			ErrGlobal() = Kernel::kErrorInvalidData;
+			err_global_get() = Kernel::kErrorInvalidData;
 			return;
 		}
 

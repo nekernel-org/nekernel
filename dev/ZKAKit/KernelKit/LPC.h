@@ -15,9 +15,9 @@
 #define err_local_fail() (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)
 #define err_local_get()	 (Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().GetLocalCode())
 
-#define ErrGlobalIsOk()	  (Kernel::kErrorLocalNumber == Kernel::kErrorSuccess)
-#define ErrGlobalFailed() (Kernel::kErrorLocalNumber != Kernel::kErrorSuccess)
-#define ErrGlobal()		  (Kernel::kErrorLocalNumber)
+#define err_global_ok()	  (Kernel::kErrorLocalNumber == Kernel::kErrorSuccess)
+#define err_global_fail() (Kernel::kErrorLocalNumber != Kernel::kErrorSuccess)
+#define err_global_get()  (Kernel::kErrorLocalNumber)
 
 namespace Kernel
 {
@@ -56,6 +56,7 @@ namespace Kernel
 	inline constexpr HError kErrorSign				 = 60;
 	inline constexpr HError kErrorInvalidCreds		 = 61;
 	inline constexpr HError kErrorCDTrayBroken		 = 62;
+	inline constexpr HError kErrorUnrecoverableDisk	 = 63;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
 	/// @brief Raises a bug check stop code.

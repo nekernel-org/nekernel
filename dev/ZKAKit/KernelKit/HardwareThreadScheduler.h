@@ -26,10 +26,10 @@ namespace Kernel
 	enum ThreadKind
 	{
 		kAPSystemReserved, // System reserved thread, well user can't use it
-		kAPStandard,		 // user thread, cannot be used by Kernel
-		kAPFallback,		 // fallback thread, cannot be used by user if not clear or
-							 // used by Kernel.
-		kAPBoot,			 // The core we booted from, the mama.
+		kAPStandard,	   // user thread, cannot be used by Kernel
+		kAPFallback,	   // fallback thread, cannot be used by user if not clear or
+						   // used by Kernel.
+		kAPBoot,		   // The core we booted from, the mama.
 		kInvalidAP,
 		kAPCount,
 	};
@@ -134,7 +134,7 @@ namespace Kernel
 
 	private:
 		Array<HardwareThread, kMaxAPInsideSched> fThreadList;
-		ThreadID								   fCurrentThread{0};
+		ThreadID								 fCurrentThread{0};
 	};
 
 	/// @brief wakes up thread.

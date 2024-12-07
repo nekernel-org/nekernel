@@ -8,7 +8,7 @@ You need:
 Start by cloning the repo:
 
 ```
-git clone git@github.com:amlel-el-mahrouss/zka-dev.git
+git clone git@github.com:ElMahroussLogic/zka-dev.git
 ```
 
 And then execute:

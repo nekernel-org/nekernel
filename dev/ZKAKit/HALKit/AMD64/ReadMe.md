@@ -1,4 +1,8 @@
 # AMD64 Hardware Abstraction Layer
 
-- Supported CPU: AMD64 CPU.
-- Supported Firmware: EDK 2 w/ ZKA's own extensions for EPM.
+## Brief
+
+- Supported CPU: AMD64 BASED CPUs.
+- Supported Firmware: EDK 2.
+
+###### Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved. All rights reserved.
