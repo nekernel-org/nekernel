@@ -197,7 +197,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
-	auto cDefaultMemoryMap = 0; // Grab any usable entries.
+	auto kDefaultMemoryMap = 0; // Grab any usable entries.
 
 	//-----------------------------------------------------------//
 	// A simple loop which finds a usable memory region for us.
@@ -210,7 +210,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 		ZKA_UNUSED(0);
 	}
 
-	cDefaultMemoryMap = lookup_index;
+	kDefaultMemoryMap = lookup_index;
 
 	//-----------------------------------------------------------//
 	// Update handover file specific table and phyiscal start field.

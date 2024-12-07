@@ -9,6 +9,8 @@
 /// @file Support.h
 /// @brief Purpose of this file is to help port libs into the bootloader.
 
+#include <string.h>
+
 #define kLongMax ((long)(~0UL >> 1))
 #define kLongMin (~kLongMax)
 

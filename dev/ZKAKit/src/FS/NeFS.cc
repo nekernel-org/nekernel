@@ -327,14 +327,14 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
 		out_lba								 = part_block->StartCatalog;
 	}
 
-	constexpr SizeT cDefaultForkSize = kNeFSForkSize;
+	constexpr SizeT kDefaultForkSize = kNeFSForkSize;
 
 	NFS_CATALOG_STRUCT* child_catalog = new NFS_CATALOG_STRUCT();
 
 	Int32 flagsList = flags;
 
-	child_catalog->ResourceForkSize = cDefaultForkSize;
-	child_catalog->DataForkSize		= cDefaultForkSize;
+	child_catalog->ResourceForkSize = kDefaultForkSize;
+	child_catalog->DataForkSize		= kDefaultForkSize;
 
 	child_catalog->NextSibling = out_lba;
 	child_catalog->PrevSibling = out_lba;

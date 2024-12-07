@@ -20,6 +20,8 @@ EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
 EXTERN_C Kernel::MainKind __CTOR_LIST__[];
 EXTERN_C Kernel::MainKind __DTOR_LIST__[];
 
+EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
+
 STATIC Kernel::Void hal_init_cxx_ctors()
 {
 	for (Kernel::SizeT index = 0UL; __CTOR_LIST__[index] != __DTOR_LIST__[0]; ++index)
@@ -94,6 +96,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::HAL::IDTLoader idt_loader;
 	idt_loader.Load(idt_reg);
+
+	ke_dll_entrypoint();
 
 	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
 }

@@ -45,7 +45,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__MINOSKRNL__ -D__ZBAOSLDR__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../ZKAKit -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -D__HAVE_ZKA_APIS__ -DZBA_USE_FB -D__ZKA_AMD64__ -D__ZKA__ -DZKA_AUTO_FORMAT -Wall
+                        -std=c++20 -D__HAVE_ZKA_APIS__ -DZBA_USE_FB -D__ZKA_AMD64__ -D__ZKA__ -DZKA_AUTO_FORMAT
 
 BOOTLOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe
@@ -116,4 +116,4 @@ help:
 	@echo "gpt-img: Format a disk using the Explicit Partition Map."
 	@echo "clean: clean bootloader."
 	@echo "bootloader-amd64: Build bootloader. (PC AMD64)"
-	@echo "run-efi-amd64: Run bootloader. (PC AMD64)"
+	@echo "run-efi-amd64-<ahci, ata>: Run bootloader. (PC AMD64)"
