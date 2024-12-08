@@ -15,6 +15,7 @@ namespace Kernel
 {
 	typedef EfiGUID GPT_GUID;
 	struct GPT_PARTITION_TABLE;
+	struct GPT_PARTITION_ENTRY;
 
 	struct PACKED GPT_PARTITION_TABLE final
 	{
