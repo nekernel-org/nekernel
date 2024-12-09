@@ -22,7 +22,7 @@ Clone repository:
 
 ```
 git clone git@github.com:ELMH-Group/zka.git
-cd zka-dev
+cd zka
 ```
 
 </br>
