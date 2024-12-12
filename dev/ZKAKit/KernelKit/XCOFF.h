@@ -16,12 +16,12 @@
 
 #include <NewKit/Defines.h>
 
-#define cXCOFF64Magic (0x01F7)
+#define kXCOFF64Magic (0x01F7)
 
-#define cXCOFFRelFlg	 (0x0001)
-#define cXCOFFExecutable (0x0002)
-#define cXCOFFLnno		 (0x0004)
-#define cXCOFFLSyms		 (0x0008)
+#define kXCOFFRelFlg	 (0x0001)
+#define kXCOFFExecutable (0x0002)
+#define kXCOFFLnno		 (0x0004)
+#define kXCOFFLSyms		 (0x0008)
 
 struct XCoffFileHeader;
 struct XCoffForkHeader;

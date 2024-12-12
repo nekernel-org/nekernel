@@ -34,7 +34,7 @@ namespace Kernel
 		kRingCount	   = 3,
 	};
 
-	typedef Char* UserPublicKey;
+	typedef Char* usr_public_key_kind;
 
 	class User final
 	{
@@ -67,16 +67,16 @@ namespace Kernel
 		Bool IsSuperUser() noexcept;
 
 		/// @brief Saves a password from the public key.
-		Bool Save(const UserPublicKey password) noexcept;
+		Bool Save(const usr_public_key_kind password) noexcept;
 
 		/// @brief Checks if a password matches the **password**.
 		/// @param password the password to check.
-		Bool Matches(const UserPublicKey password) noexcept;
+		Bool Matches(const usr_public_key_kind password) noexcept;
 
 	private:
-		UserRingKind fRing{UserRingKind::kRingStdUser};
-		Char		 fUserName[kMaxUserNameLen]	  = {0};
-		Char		 fUserToken[kMaxUserTokenLen] = {0};
+		UserRingKind mUserRing{UserRingKind::kRingStdUser};
+		Char		 mUserName[kMaxUserNameLen]	  = {0};
+		Char		 mUserToken[kMaxUserTokenLen] = {0};
 	};
 } // namespace Kernel
 

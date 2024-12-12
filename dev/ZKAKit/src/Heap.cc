@@ -46,13 +46,13 @@ namespace Kernel
 			Boolean fPresent : 1;
 
 			/// @brief Is this valued owned by the user?
-			Boolean fWr : 1;
+			Boolean fWriteRead : 1;
 
 			/// @brief Is this valued owned by the user?
 			Boolean fUser : 1;
 
 			/// @brief Is this a page pointer?
-			Boolean fPage : 1;
+			Boolean fPagePtr : 1;
 
 			/// @brief 32-bit CRC checksum.
 			UInt32 fCRC32;
@@ -134,14 +134,14 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		heap_info_ptr->fHeapSize = sz_fix;
-		heap_info_ptr->fMagic	 = kKernelHeapMagic;
-		heap_info_ptr->fCRC32	 = No; // dont fill it for now.
-		heap_info_ptr->fHeapPtr	 = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
-		heap_info_ptr->fPage	 = No;
-		heap_info_ptr->fWr		 = wr;
-		heap_info_ptr->fUser	 = user;
-		heap_info_ptr->fPresent	 = Yes;
+		heap_info_ptr->fHeapSize  = sz_fix;
+		heap_info_ptr->fMagic	  = kKernelHeapMagic;
+		heap_info_ptr->fCRC32	  = No; // dont fill it for now.
+		heap_info_ptr->fHeapPtr	  = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		heap_info_ptr->fPagePtr	  = No;
+		heap_info_ptr->fWriteRead = wr;
+		heap_info_ptr->fUser	  = user;
+		heap_info_ptr->fPresent	  = Yes;
 
 		rt_set_memory(heap_info_ptr->fPadding, 0, kKernelHeapAlignSz);
 
@@ -164,10 +164,10 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		if (!heap_ptr)
+		if (!heap_info_ptr)
 			return kErrorHeapNotPresent;
 
-		heap_info_ptr->fPage = true;
+		heap_info_ptr->fPagePtr = true;
 
 		kcout << "Created page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
 
@@ -186,7 +186,7 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		if (!heap_ptr)
+		if (!heap_info_ptr)
 			return kErrorHeapNotPresent;
 
 		heap_info_ptr->fFlags = flags;
@@ -202,7 +202,7 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		if (!heap_ptr)
+		if (!heap_info_ptr)
 			return kErrorHeapNotPresent;
 
 		return heap_info_ptr->fFlags;
@@ -240,13 +240,13 @@ namespace Kernel
 				}
 			}
 
-			heap_info_ptr->fHeapSize = 0UL;
-			heap_info_ptr->fPresent	 = No;
-			heap_info_ptr->fHeapPtr	 = 0;
-			heap_info_ptr->fCRC32	 = 0;
-			heap_info_ptr->fWr		 = No;
-			heap_info_ptr->fUser	 = No;
-			heap_info_ptr->fMagic	 = 0;
+			heap_info_ptr->fHeapSize  = 0UL;
+			heap_info_ptr->fPresent	  = No;
+			heap_info_ptr->fHeapPtr	  = 0;
+			heap_info_ptr->fCRC32	  = 0;
+			heap_info_ptr->fWriteRead = No;
+			heap_info_ptr->fUser	  = No;
+			heap_info_ptr->fMagic	  = 0;
 
 			PTEWrapper		pageWrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pteAddress{pageWrapper};

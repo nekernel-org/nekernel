@@ -6,7 +6,7 @@
 
 /***********************************************************************************/
 /// @file UserProcessTeam.cc
-/// @brief UserProcess teams implementation.
+/// @brief Process teams implementation.
 /***********************************************************************************/
 
 #include <KernelKit/UserProcessScheduler.h>
@@ -15,9 +15,9 @@ namespace Kernel
 {
 	UserProcessTeam::UserProcessTeam()
 	{
-		for (SizeT i = 0U; i < mProcessList.Count(); ++i)
+		for (SizeT i = 0U; i < this->mProcessList.Count(); ++i)
 		{
-			mProcessList[i] = nullptr;
+			this->mProcessList[i] = nullptr;
 		}
 	}
 
@@ -28,7 +28,7 @@ namespace Kernel
 
 	Array<UserProcess*, kSchedProcessLimitPerTeam>& UserProcessTeam::AsArray()
 	{
-		return mProcessList;
+		return this->mProcessList;
 	}
 
 	/***********************************************************************************/
@@ -38,7 +38,7 @@ namespace Kernel
 
 	ProcessID& UserProcessTeam::Id() noexcept
 	{
-		return mTeamId;
+		return this->mTeamId;
 	}
 
 	/***********************************************************************************/
@@ -48,7 +48,7 @@ namespace Kernel
 
 	Ref<UserProcess>& UserProcessTeam::AsRef()
 	{
-		return mCurrentProcess;
+		return this->mCurrentProcess;
 	}
 } // namespace Kernel
 

@@ -46,7 +46,7 @@ namespace Kernel
 				password[i_pass] = cur_chr | (user->IsStdUser() ? kStdUserType : kSuperUserType);
 			}
 
-			kcout << "Done hashing user password!\r";
+			kcout << "DONE: hashed user password.\r";
 
 			return 0;
 		}
@@ -54,23 +54,23 @@ namespace Kernel
 
 	/// @brief User ring constructor.
 	User::User(const Int32& sel, const Char* userName)
-		: fRing((UserRingKind)sel)
+		: mUserRing((UserRingKind)sel)
 	{
 		MUST_PASS(sel >= 0);
-		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
+		rt_copy_memory((VoidPtr)userName, this->mUserName, rt_string_len(userName));
 	}
 
 	/// @brief User ring constructor.
 	User::User(const UserRingKind& ringKind, const Char* userName)
-		: fRing(ringKind)
+		: mUserRing(ringKind)
 	{
-		rt_copy_memory((VoidPtr)userName, this->fUserName, rt_string_len(userName));
+		rt_copy_memory((VoidPtr)userName, this->mUserName, rt_string_len(userName));
 	}
 
 	/// @brief User destructor class.
 	User::~User() = default;
 
-	Bool User::Save(const UserPublicKey password_to_fill) noexcept
+	Bool User::Save(const usr_public_key_kind password_to_fill) noexcept
 	{
 		if (!password_to_fill ||
 			*password_to_fill == 0)
@@ -96,7 +96,7 @@ namespace Kernel
 
 		// then store password.
 
-		rt_copy_memory(password, this->fUserToken, rt_string_len(password_to_fill));
+		rt_copy_memory(password, this->mUserToken, rt_string_len(password_to_fill));
 
 		delete[] password;
 		password = nullptr;
@@ -106,7 +106,7 @@ namespace Kernel
 		return Yes;
 	}
 
-	Bool User::Matches(const UserPublicKey password_to_fill) noexcept
+	Bool User::Matches(const usr_public_key_kind password_to_fill) noexcept
 	{
 		if (!password_to_fill ||
 			*password_to_fill)
@@ -133,7 +133,7 @@ namespace Kernel
 		kcout << "Validating hashed passwords...\r";
 
 		// now check if the password matches.
-		if (rt_string_cmp(password, this->fUserToken, rt_string_len(this->fUserToken)) == 0)
+		if (rt_string_cmp(password, this->mUserToken, rt_string_len(this->mUserToken)) == 0)
 		{
 			kcout << "Password is valid.\r";
 			return Yes;
@@ -145,24 +145,24 @@ namespace Kernel
 
 	Bool User::operator==(const User& lhs)
 	{
-		return lhs.fRing == this->fRing;
+		return lhs.mUserRing == this->mUserRing;
 	}
 
 	Bool User::operator!=(const User& lhs)
 	{
-		return lhs.fRing != this->fRing;
+		return lhs.mUserRing != this->mUserRing;
 	}
 
 	Char* User::Name() noexcept
 	{
-		return this->fUserName;
+		return this->mUserName;
 	}
 
 	/// @brief Returns the user's ring.
 	/// @return The king of ring the user is attached to.
 	const UserRingKind& User::Ring() noexcept
 	{
-		return this->fRing;
+		return this->mUserRing;
 	}
 
 	Bool User::IsStdUser() noexcept

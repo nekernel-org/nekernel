@@ -40,9 +40,9 @@ namespace Kernel
 	{
 		GPT_GUID PartitionTypeGUID;
 		GPT_GUID UniquePartitionGUID;
-		UInt64 StartLBA;
-		UInt64 EndLBA;
-		UInt64 Attributes;
-		UInt8  Name[72];
+		UInt64	 StartLBA;
+		UInt64	 EndLBA;
+		UInt64	 Attributes;
+		UInt8	 Name[72];
 	};
 } // namespace Kernel

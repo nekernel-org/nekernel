@@ -305,7 +305,7 @@ namespace Kernel::HAL
 
 	EXTERN_C UInt8	rt_in8(UInt16 port);
 	EXTERN_C UInt16 rt_in16(UInt16 port);
-	EXTERN_C UInt32	rt_in32(UInt16 port);
+	EXTERN_C UInt32 rt_in32(UInt16 port);
 
 	EXTERN_C void rt_out16(UShort port, UShort byte);
 	EXTERN_C void rt_out8(UShort port, UChar byte);
