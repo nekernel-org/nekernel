@@ -25,19 +25,6 @@
 #include <Modules/FB/KWindow.h>
 #include <KernelKit/Timer.h>
 
-/***********************************************************************************/
-/* Returns kernel's version. */
-/***********************************************************************************/
-
-EXTERN Kernel::Property cKernelVersion;
-
-/***********************************************************************************/
-/* This is an external C symbol. */
-/***********************************************************************************/
-
-EXTERN_C Kernel::Void _hal_init_mouse();
-EXTERN_C Kernel::Boolean _hal_draw_mouse();
-
 STATIC CG::ML_WINDOW_STRUCT* kKernelWnd = nullptr;
 
 namespace Kernel::Detail
@@ -49,34 +36,21 @@ namespace Kernel::Detail
 
 	public:
 		/// @brief wizard constructor.
-		explicit FilesystemInstaller()
+		FilesystemInstaller()
 		{
-			if (Kernel::IFilesystemMgr::GetMounted())
-			{
-				CG::CGDrawStringToWnd(kKernelWnd, "MinOSKrnl: No need to allocate a NewFS filesystem here...", 10, 10, RGB(0, 0, 0));
-				fNeFS = reinterpret_cast<Kernel::NeFileSystemMgr*>(Kernel::IFilesystemMgr::GetMounted());
-			}
-			else
-			{
-				CG::CGDrawStringToWnd(kKernelWnd, "MinOSKrnl: Allocating a NewFS filesystem here...", 10, 10, RGB(0, 0, 0));
+			fNeFS = (Kernel::NeFileSystemMgr*)Kernel::IFilesystemMgr::GetMounted();
 
-				// Mounts a NewFS from main drive.
-				fNeFS = new Kernel::NeFileSystemMgr();
-
-				Kernel::IFilesystemMgr::Mount(fNeFS);
-			}
-
-			if (fNeFS->GetParser())
+			if (fNeFS && fNeFS->GetParser())
 			{
-				constexpr auto cFolderInfo		  = "META-INF";
-				const auto	   cDirCount		  = 7;
-				const char*	   cDirStr[cDirCount] = {
+				constexpr auto kFolderInfo		  = "META-INF";
+				const auto	   kFolderCount		  = 7;
+				const char*	   kFolderStr[kFolderCount] = {
 					   "/Boot/", "/System/", "/Support/", "/Applications/",
 					   "/Users/", "/Library/", "/Mount/"};
 
-				for (Kernel::SizeT dirIndx = 0UL; dirIndx < cDirCount; ++dirIndx)
+				for (Kernel::SizeT dirIndx = 0UL; dirIndx < kFolderCount; ++dirIndx)
 				{
-					auto catalogDir = fNeFS->GetParser()->GetCatalog(cDirStr[dirIndx]);
+					auto catalogDir = fNeFS->GetParser()->GetCatalog(kFolderStr[dirIndx]);
 
 					if (catalogDir)
 					{
@@ -88,15 +62,15 @@ namespace Kernel::Detail
 						continue;
 					}
 
-					catalogDir = fNeFS->GetParser()->CreateCatalog(cDirStr[dirIndx], 0,
+					catalogDir = fNeFS->GetParser()->CreateCatalog(kFolderStr[dirIndx], 0,
 																   kNeFSCatalogKindDir);
 
 					NFS_FORK_STRUCT theFork{0};
 
-					const Kernel::Char* cSrcName = cFolderInfo;
+					const Kernel::Char* kSrcFolderName = kFolderInfo;
 
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theFork.ForkName,
-										   Kernel::rt_string_len(cSrcName));
+					Kernel::rt_copy_memory((Kernel::VoidPtr)(kSrcFolderName), theFork.ForkName,
+										   Kernel::rt_string_len(kSrcFolderName));
 
 					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDir->Name),
 										   theFork.CatalogName,
@@ -114,7 +88,7 @@ namespace Kernel::Detail
 						"system</p>\r<p>Volume Type: Zeta</p>\r";
 
 					metadataFolder += "<p>Path: ";
-					metadataFolder += cDirStr[dirIndx];
+					metadataFolder += kFolderStr[dirIndx];
 					metadataFolder += "</p>\r";
 
 					const Kernel::SizeT metadataSz = kNeFSSectorSz;
@@ -123,7 +97,7 @@ namespace Kernel::Detail
 
 					fNeFS->GetParser()->WriteCatalog(
 						catalogDir, true, (Kernel::VoidPtr)(metadataFolder.CData()),
-						metadataSz, cFolderInfo);
+						metadataSz, kFolderInfo);
 
 					CG::CGDrawStringToWnd(kKernelWnd, "MinOSKrnl: Catalog has been created...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
 
@@ -136,7 +110,7 @@ namespace Kernel::Detail
 			NFS_CATALOG_STRUCT* catalogDisk =
 				this->fNeFS->GetParser()->GetCatalog(kSysPage);
 
-			const Kernel::Char* cSrcName = "8K_SYS_PAGE_KERNEL";
+			const Kernel::Char* kSrcFolderName = "8K_SYS_PAGE_KERNEL";
 
 			if (catalogDisk)
 			{
@@ -149,8 +123,8 @@ namespace Kernel::Detail
 
 				NFS_FORK_STRUCT theDiskFork{0};
 
-				Kernel::rt_copy_memory((Kernel::VoidPtr)(cSrcName), theDiskFork.ForkName,
-									   Kernel::rt_string_len(cSrcName));
+				Kernel::rt_copy_memory((Kernel::VoidPtr)(kSrcFolderName), theDiskFork.ForkName,
+									   Kernel::rt_string_len(kSrcFolderName));
 
 				Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDisk->Name),
 									   theDiskFork.CatalogName,
@@ -185,23 +159,23 @@ namespace Kernel::Detail
 /// @brief Application entrypoint.
 /// @param Void
 /// @return Void
-EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void)
+EXTERN_C Kernel::Void gsh_dll_main(Kernel::Void)
 {
-	CG::CGDrawBackground();
-
-	kKernelWnd = nullptr;
-	kKernelWnd = CG::CGCreateWindow(CG::kWndFlagWindow, "ZKA Operating System Kernel Log", "Window", 20, 20, CG::UIAccessibilty::The().Height() - 20, CG::UIAccessibilty::The().Width() - 20);
-
-	kKernelWnd->w_sub_type = CG::kWndFlagCloseControlSelect;
-	kKernelWnd->w_x		   = 10;
-	kKernelWnd->w_y		   = 10;
-
-	kKernelWnd->w_needs_repaint = Yes;
-
-	CG::CGDrawWindowList(&kKernelWnd, 1);
-
-	/// Now run kernel loop, until no process are running.
-	Kernel::Detail::FilesystemInstaller(); // automatic filesystem creation.
+	Kernel::IFilesystemMgr::Mount(new Kernel::NeFileSystemMgr());
+	Kernel::Detail::FilesystemInstaller installer;
 
 	CG::CGDrawBackground();
+
+	kKernelWnd = CG::CGCreateWindow(CG::kWndFlagWindow, "ZKA | System Build: " KERNEL_VERSION, "Window", 20, 20, 800, 600);
+
+	if (kKernelWnd)
+	{
+		kKernelWnd->w_sub_type = CG::kWndFlagCloseControlSelect;
+		kKernelWnd->w_x		   = 10;
+		kKernelWnd->w_y		   = 10;
+
+		kKernelWnd->w_needs_repaint = Yes;
+
+		CG::CGDrawWindowList(&kKernelWnd, 1);
+	}
 }

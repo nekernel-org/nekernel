@@ -13,7 +13,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
 #include <HintKit/CompilerHint.h>
-#include <CompressKit/RLE.h>
+#include <CompressKit/API.h>
 
 /// @file IPC.h
 /// @brief IPC comm. protocol.

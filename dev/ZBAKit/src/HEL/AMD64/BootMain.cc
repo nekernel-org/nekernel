@@ -24,11 +24,11 @@
 #endif // !kMachineModel
 
 #ifndef kExpectedWidth
-#define kExpectedWidth 1280
+#define kExpectedWidth 1920
 #endif
 
 #ifndef kExpectedHeight
-#define kExpectedHeight 720
+#define kExpectedHeight 1080
 #endif
 
 /** Graphics related. */

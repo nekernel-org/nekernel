@@ -11,6 +11,7 @@
 #include <Modules/ACPI/ACPIFactoryInterface.h>
 #include <NetworkKit/IPC.h>
 #include <CFKit/Property.h>
+#include <Modules/FB/KWindow.h>
 #include <Modules/FB/Text.h>
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
@@ -20,7 +21,7 @@ EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
 EXTERN_C Kernel::MainKind __CTOR_LIST__[];
 EXTERN_C Kernel::VoidPtr __DTOR_LIST__;
 
-EXTERN_C Kernel::Void ke_dll_entrypoint(Kernel::Void);
+EXTERN_C Kernel::Void gsh_dll_main(Kernel::Void);
 
 STATIC Kernel::Void hal_init_cxx_ctors()
 {
@@ -83,12 +84,9 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	Kernel::rtl_create_process(ke_dll_entrypoint, "Kernel System");
+	CG::CGDrawBackground();
 
-	/* Initialize filesystem. */
-	Kernel::NeFileSystemMgr::Mount(new Kernel::NeFileSystemMgr());
-
-	/* Load interrupts and start SMP. */
+	Kernel::rtl_create_process(gsh_dll_main, "GSh");
 
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
@@ -99,5 +97,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::HAL::IDTLoader idt_loader;
 	idt_loader.Load(idt_reg);
 
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+	while (YES)
+	{
+	}
 }

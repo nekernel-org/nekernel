@@ -134,8 +134,7 @@ namespace CG
 
 	inline SizeT CGDrawWindowList(ML_WINDOW_STRUCT** wnd, SizeT wnd_cnt)
 	{
-		if (wnd_cnt == 0 ||
-			!wnd)
+		if (!wnd_cnt)
 			return 0;
 
 		SizeT cnt = 0;
