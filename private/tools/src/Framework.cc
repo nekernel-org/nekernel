@@ -1,7 +1,7 @@
 /*
  * Created on Thu Oct 17 08:00:42 CEST 2024
  *
- * Copyright (c) 2024 ELMH GROUP
+ * Copyright (c) 2024 Theater Quality Incorporated.
  */
 
 #include <cstdlib>
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 		if (strcmp(argv[i], "-h") == 0)
 		{
 			std::cout << "make_framework: Framework/Application Creation Tool.\n";
-			std::cout << "make_framework: © ELMH GROUP, all rights reserved.\n";
+			std::cout << "make_framework: © Theater Quality Incorporated., all rights reserved.\n";
 
 			return EXIT_SUCCESS;
 		}

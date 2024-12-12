@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, ELMH GROUP, all rights reserved.
+	Copyright (C) 2024, Theater Quality Incorporated., all rights reserved.
 
 	FILE: NeFS.h
 	PURPOSE: NeFS (New FileSystem) support.
@@ -23,7 +23,7 @@ default.
 
 /**
 	@brief New File System specification.
-	@author ELMH GROUP (Amlal EL Mahrouss, amlalelmahrouss at icloud dot com)
+	@author Theater Quality Incorporated. (Amlal EL Mahrouss, amlalelmahrouss at icloud dot com)
 */
 
 #define kNeFSInvalidFork	(-1)

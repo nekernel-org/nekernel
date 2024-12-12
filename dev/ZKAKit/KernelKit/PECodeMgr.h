@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, ELMH GROUP, all rights reserved.
+	Copyright (C) 2024, Theater Quality Incorporated., all rights reserved.
 
 	File: PECodeMgr.h
 	Purpose: PE32+ Code Mgr and DLL mgr.

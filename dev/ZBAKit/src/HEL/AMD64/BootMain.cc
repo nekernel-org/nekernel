@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, ELMH GROUP, all rights reserved.
+	Copyright (C) 2024, Theater Quality Incorporated., all rights reserved.
 
 ------------------------------------------- */
 
@@ -155,7 +155,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
 #ifdef ZBA_USE_FB
-	CGDrawString("ZBA (c) ELMH GROUP.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString("ZBA (c) Theater Quality Incorporated..", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "SMP detected." : "Single processor configuration detected.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 

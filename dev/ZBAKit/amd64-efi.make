@@ -1,5 +1,5 @@
 ##################################################
-# (c) ELMH GROUP, all rights reserved.
+# (c) Theater Quality Incorporated., all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 

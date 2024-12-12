@@ -1,4 +1,4 @@
-// (c) ELMH GROUP
+// (c) Theater Quality Incorporated.
 
 #pragma once
 

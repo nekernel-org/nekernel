@@ -3,7 +3,7 @@
  *
  *  ZKA
  *  Date Added: 13/02/2023
- * 	Copyright (C) 2024, ELMH GROUP, all rights reserved., all rights reserved.
+ * 	Copyright (C) 2024, Theater Quality Incorporated., all rights reserved., all rights reserved.
  *
  * 	========================================================
  */

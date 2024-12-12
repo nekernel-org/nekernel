@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, ELMH GROUP, all rights reserved.
+	Copyright (C) 2024, Theater Quality Incorporated., all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file ATA-DMA.cc
- * @author ELMH GROUP (amlalelmahrouss@icloud.com)
+ * @author Theater Quality Incorporated. (amlalelmahrouss@icloud.com)
  * @brief ATA driver (DMA mode).
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) ELMH GROUP
+ * @copyright Copyright (c) Theater Quality Incorporated.
  *
  */
 
