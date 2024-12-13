@@ -315,6 +315,7 @@ namespace Kernel
 		STATIC const Char  MetaFile();
 	};
 
+	/// @brief Journal class for NeFS.
 	class NeFileSystemJournal final
 	{
 	public:
@@ -322,7 +323,7 @@ namespace Kernel
 		{
 			if (!stamp)
 			{
-				kcout << "Invalid: Journal Stamp.\r";
+				kcout << "Invalid: Journal Stamp, using default name.\r";
 				return;
 			}
 
