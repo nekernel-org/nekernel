@@ -368,6 +368,10 @@ namespace Kernel
 			return NO;
 		}
 
+		Void Commit() {}
+		
+		Void Start() {}
+
 	private:
 		Char mStamp[255] = { "/System/FileSystemStamp.jrnl" };
 
