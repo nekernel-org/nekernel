@@ -110,6 +110,10 @@ default.
 #define kNeFSMimeNameLen (200)
 #define kNeFSForkNameLen (200)
 
+#define kNeFSFrameworkExt ".fwrk"
+#define kNeFSApplicationExt ".app"
+#define kNeFSJournalExt ".jrnl"
+
 struct NFS_CATALOG_STRUCT;
 struct NFS_FORK_STRUCT;
 struct NFS_ROOT_PARTITION_BLOCK;
@@ -198,12 +202,16 @@ struct PACKED NFS_ROOT_PARTITION_BLOCK final
 	Kernel::UInt64 Version;
 
 	Kernel::Lba EpmBlock;
-
+	
 	Kernel::Char Pad[kNeFSPadLen];
 };
 
 namespace Kernel
 {
+	class NeFileSystemParser;
+	class NeFileSystemJournal;
+	class NeFileSystemHelper;
+
 	enum
 	{
 		kNeFSSubDriveA,
@@ -222,18 +230,18 @@ namespace Kernel
 	};
 
 	///
-	/// \name NeFSParser
+	/// \name NeFileSystemParser
 	/// \brief NeFS parser class. (catalog creation, remove removal, root,
 	/// forks...) Designed like the DOM, detects the filesystem automatically.
 	///
-	class NeFSParser final
+	class NeFileSystemParser final
 	{
 	public:
-		explicit NeFSParser() = default;
-		~NeFSParser()		  = default;
+		explicit NeFileSystemParser() = default;
+		~NeFileSystemParser()		  = default;
 
 	public:
-		ZKA_COPY_DEFAULT(NeFSParser);
+		ZKA_COPY_DEFAULT(NeFileSystemParser);
 
 	public:
 		/// @brief Creates a new fork inside the New filesystem partition.
@@ -290,7 +298,7 @@ namespace Kernel
 		bool Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name);
 
 	public:
-		Int32 fDriveIndex{kNeFSSubDriveA};
+		Int32 mDriveIndex{kNeFSSubDriveA};
 	};
 
 	///
@@ -307,6 +315,63 @@ namespace Kernel
 		STATIC const Char  MetaFile();
 	};
 
+	class NeFileSystemJournal final
+	{
+	public:
+		explicit NeFileSystemJournal(const char* stamp)
+		{
+			if (!stamp)
+			{
+				kcout << "Invalid: Journal Stamp.\r";
+				return;
+			}
+
+			kcout << "Info: Journal stamp: " << stamp << endl;
+			rt_copy_memory((VoidPtr)stamp, this->mStamp, rt_string_len(stamp));
+		}
+
+		~NeFileSystemJournal() = default;
+
+		ZKA_COPY_DEFAULT(NeFileSystemJournal);
+
+		Bool CreateJournal(NeFileSystemParser* parser)
+		{
+			if (!parser)
+				return NO;
+
+			auto node = parser->CreateCatalog(mStamp);
+			
+			if (!node)
+				return NO;
+
+			delete node;
+			node = nullptr;
+
+			return YES;
+		}
+
+		Bool IsJournalValid(NeFileSystemParser* parser)
+		{
+			if (!parser)
+				return NO;
+
+			if (auto node = parser->GetCatalog(mStamp);
+				node)
+			{
+				delete node;
+				node = nullptr;
+				
+				return YES;
+			}
+
+			return NO;
+		}
+
+	private:
+		Char mStamp[255] = { "/System/FileSystemStamp.jrnl" };
+
+	};
+
 	namespace Detail
 	{
 		Boolean fs_init_newfs(Void) noexcept;
@@ -314,19 +379,19 @@ namespace Kernel
 } // namespace Kernel
 
 /// @brief Write to newfs disk.
-/// @param Mnt mounted interface.
-/// @param DrvTrait drive info
-/// @param DrvIndex drive index.
-/// @return
-Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* Mnt,
-							 Kernel::DriveTrait&		  DrvTrait,
-							 Kernel::Int32				  DrvIndex);
+/// @param drv_mnt mounted interface.
+/// @param drv_trait drive info
+/// @param drv_indx drive index.
+/// @return status code.
+Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* drv_mnt,
+							 Kernel::DriveTrait&		  drv_trait,
+							 Kernel::Int32				  drv_indx);
 
 /// @brief Read from newfs disk.
-/// @param Mnt mounted interface.
-/// @param DrvTrait drive info
-/// @param DrvIndex drive index.
-/// @return
-Kernel::Int32 fs_newfs_read(Kernel::MountpointInterface* Mnt,
-							Kernel::DriveTrait&			 DrvTrait,
-							Kernel::Int32				 DrvIndex);
+/// @param drv_mnt mounted interface.
+/// @param drv_trait drive info
+/// @param drv_indx drive index.
+/// @return status code.
+Kernel::Int32 fs_newfs_read(Kernel::MountpointInterface* drv_mnt,
+							Kernel::DriveTrait&			 drv_trait,
+							Kernel::Int32				 drv_indx);

@@ -60,7 +60,7 @@ STATIC MountpointInterface kDiskMountpoint;
 /// @param the_fork the fork itself.
 /// @return the fork
 /***********************************************************************************/
-_Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
+_Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 												_Input NFS_FORK_STRUCT&	   the_fork)
 {
 	if (catalog && the_fork.ForkName[0] != 0 &&
@@ -169,7 +169,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::CreateFork(_Input NFS_CATALOG_STRUCT* catal
 /// @param name the fork name.
 /// @return the fork.
 /***********************************************************************************/
-_Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
+_Output NFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
 											  _Input const Char*		 name,
 											  Boolean					 isDataFork)
 {
@@ -187,7 +187,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog
 		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime, 16);
 
 		if (auto res =
-				fs_newfs_read(&kDiskMountpoint, drv, this->fDriveIndex);
+				fs_newfs_read(&kDiskMountpoint, drv, this->mDriveIndex);
 			res)
 		{
 			switch (res)
@@ -224,7 +224,7 @@ _Output NFS_FORK_STRUCT* NeFSParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog
 /// @param name
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name)
+_Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char* name)
 {
 	return this->CreateCatalog(name, 0, kNeFSCatalogKindFile);
 }
@@ -236,7 +236,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char* name)
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
+_Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*  name,
 													  _Input const Int32& flags,
 													  _Input const Int32& kind)
 {
@@ -465,7 +465,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::CreateCatalog(_Input const Char*  name,
 /// @brief Make a EPM+NeFS drive out of the disk.
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see err_local_get().
-bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
+bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
 {
 	if (*part_name == 0 ||
 		endLba == 0)
@@ -631,7 +631,7 @@ bool NeFSParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLb
 /// @param catalog the catalog itself
 /// @param data the data.
 /// @return if the catalog w rote the contents successfully.
-bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool is_rsrc_fork, _Input VoidPtr data, _Input SizeT size_of_data, _Input const Char* forkName)
+bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool is_rsrc_fork, _Input VoidPtr data, _Input SizeT size_of_data, _Input const Char* forkName)
 {
 	if (size_of_data > kNeFSForkDataSz ||
 		size_of_data == 0)
@@ -719,7 +719,7 @@ bool NeFSParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool i
 /// @brief
 /// @param catalogName the catalog name.
 /// @return the newly found catalog.
-_Output NFS_CATALOG_STRUCT* NeFSParser::FindCatalog(_Input const Char* catalogName,
+_Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* catalogName,
 													Lba&			   out_lba)
 {
 	kcout << "Start finding catalog...\r";
@@ -847,7 +847,7 @@ NeFSSearchThroughCatalogList:
 /// @brief Get catalog from filesystem.
 /// @param name the catalog's name/
 /// @return
-_Output NFS_CATALOG_STRUCT* NeFSParser::GetCatalog(_Input const Char* name)
+_Output NFS_CATALOG_STRUCT* NeFileSystemParser::GetCatalog(_Input const Char* name)
 {
 	Lba unused = 0;
 	return this->FindCatalog(name, unused);
@@ -856,7 +856,7 @@ _Output NFS_CATALOG_STRUCT* NeFSParser::GetCatalog(_Input const Char* name)
 /// @brief Closes a catalog, (frees it).
 /// @param catalog the catalog to close.
 /// @return
-Boolean NeFSParser::CloseCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog)
+Boolean NeFileSystemParser::CloseCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog)
 {
 	if (!catalog)
 		return false;
@@ -870,7 +870,7 @@ Boolean NeFSParser::CloseCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog)
 /// @brief Mark catalog as removed.
 /// @param catalog The catalog structure.
 /// @return if the catalog was removed or not.
-Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
+Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalogName)
 {
 	if (!catalogName ||
 		StringBuilder::Equals(catalogName, NeFileSystemHelper::Root()))
@@ -933,7 +933,7 @@ Boolean NeFSParser::RemoveCatalog(_Input const Char* catalogName)
 /// @return
 /***********************************************************************************/
 
-VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
+VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 								_Input Bool						   is_rsrc_fork,
 								_Input SizeT					   dataSz,
 								_Input const Char*				   forkName)
@@ -996,7 +996,7 @@ VoidPtr NeFSParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 /// @return if the seeking was successful.
 /***********************************************************************************/
 
-bool NeFSParser::Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off)
+bool NeFileSystemParser::Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off)
 {
 	if (!catalog)
 	{
@@ -1014,7 +1014,7 @@ bool NeFSParser::Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off)
 /// @return The position on the file.
 /***********************************************************************************/
 
-SizeT NeFSParser::Tell(_Input _Output NFS_CATALOG_STRUCT* catalog)
+SizeT NeFileSystemParser::Tell(_Input _Output NFS_CATALOG_STRUCT* catalog)
 {
 	if (!catalog)
 	{

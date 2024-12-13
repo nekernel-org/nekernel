@@ -20,18 +20,18 @@ namespace Kernel
 	{
 		MUST_PASS(Detail::fs_init_newfs());
 
-		NeFSParser* fImpl;
-		mm_new_class<NeFSParser>(&fImpl);
+		NeFileSystemParser* fImpl;
+		mm_new_class<NeFileSystemParser>(&fImpl);
 		MUST_PASS(fImpl);
 
-		kcout << "We are done allocating NeFSParser...\r";
+		kcout << "We are done allocating NeFileSystemParser...\r";
 	}
 
 	NeFileSystemMgr::~NeFileSystemMgr()
 	{
 		if (fImpl)
 		{
-			kcout << "Destroying NeFSParser...\r";
+			kcout << "Destroying NeFileSystemParser...\r";
 
 			mm_delete_class(&fImpl);
 		}
@@ -239,7 +239,7 @@ namespace Kernel
 
 	/// @brief Returns the filesystem parser.
 	/// @return the Filesystem parser class.
-	_Output NeFSParser* NeFileSystemMgr::GetParser() noexcept
+	_Output NeFileSystemParser* NeFileSystemMgr::GetParser() noexcept
 	{
 		return fImpl;
 	}

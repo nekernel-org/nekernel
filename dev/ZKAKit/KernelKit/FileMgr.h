@@ -183,10 +183,10 @@ namespace Kernel
 	public:
 		/// @brief Get NeFS parser class.
 		/// @return The filesystem parser class.
-		NeFSParser* GetParser() noexcept;
+		NeFileSystemParser* GetParser() noexcept;
 
 	private:
-		NeFSParser* fImpl{nullptr};
+		NeFileSystemParser* fImpl{nullptr};
 	};
 
 #endif // ifdef __FSKIT_INCLUDES_NEFS__
