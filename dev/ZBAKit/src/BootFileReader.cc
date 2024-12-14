@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 	File: FileReader.cc
 	Purpose: New Boot FileReader,

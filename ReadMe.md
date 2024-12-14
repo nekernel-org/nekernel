@@ -37,4 +37,4 @@ make -f amd64-efi.make all
 
 ![ZKA](resources/zka-window-server.png)
 
-###### Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved. All rights reserved.
+###### Copyright (C) 2024, Theater Quality Inc, all rights reserved. All rights reserved.

@@ -1,6 +1,6 @@
 /**
 	Thu Oct 17 07:57:43 CEST 2024
-	(c) Amlal EL Mahrouss.
+	(c) Theater Quality Inc.
 */
 
 #ifndef APPS_FRAMEWORK_H

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved..
+Copyright (C) 2024, Theater Quality Inc, all rights reserved..
 
 File: LTE\LTE.h.
 Purpose: LTE Standard Library.

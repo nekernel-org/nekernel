@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 	FILE: NeFS.h
 	PURPOSE: NeFS (New FileSystem) support.
@@ -23,7 +23,7 @@ default.
 
 /**
 	@brief New File System specification.
-	@author Amlal EL Mahrouss (Amlal EL Mahrouss, amlalelmahrouss at icloud dot com)
+	@author Theater Quality Inc (Theater Quality Inc, amlalelmahrouss at icloud dot com)
 */
 
 #define kNeFSInvalidFork	(-1)
