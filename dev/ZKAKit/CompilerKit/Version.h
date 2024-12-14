@@ -1,4 +1,4 @@
-// (c) Theater Quality Incorporated.
+// (c) Amlal EL Mahrouss
 
 #pragma once
 

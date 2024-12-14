@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Theater Quality Incorporated., all rights reserved.
+	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -15,7 +15,7 @@ namespace Firmware::Details::CoreBoot
 	struct LEHeader;
 
 	/// @brief Linear Executable Header
-	/// @author Theater Quality Incorporated.
+	/// @author Amlal EL Mahrouss
 	struct ATTRIBUTE(aligned(4)) LEHeader
 	{
 		const Char	 fMagic[2];		// magic number

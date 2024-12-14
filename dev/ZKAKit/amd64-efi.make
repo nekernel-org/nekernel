@@ -1,5 +1,5 @@
 ##################################################
-# (c) Theater Quality Incorporated., all rights reserved.
+# (c) Amlal EL Mahrouss, all rights reserved.
 # This is the minoskrnl's makefile.
 ##################################################
 

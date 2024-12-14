@@ -1,6 +1,6 @@
 /**
 	Sat Oct 26 07:03:28 AM CEST 2024
-	(c) Theater Quality Incorporated..
+	(c) Amlal EL Mahrouss.
 */
 
 #ifndef APPS_COMMON_H

@@ -1,7 +1,7 @@
 ;; /*
 ;; *    ---------------------------------------------------
 ;; *
-;; * 	Copyright (C) 2024, Theater Quality Incorporated., all rights reserved.
+;; * 	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
 ;; *
 ;; *    File: HalInterruptAPI.asm
 ;; *    Purpose: Interrupt API, redirect raw interrupts into their handlers.
