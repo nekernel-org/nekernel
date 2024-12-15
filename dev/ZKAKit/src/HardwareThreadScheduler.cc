@@ -63,7 +63,7 @@ namespace Kernel
 	{
 		STATIC Int64 busy_timer = 0U;
 
-		if (busy_timer > this->fPTime)
+		if (fBusy && busy_timer > this->fPTime)
 		{
 			busy_timer = 0U;
 			fBusy	   = No;

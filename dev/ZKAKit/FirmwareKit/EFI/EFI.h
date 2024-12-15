@@ -8,7 +8,7 @@
 #define FIRMWARE_KIT_EFI_H
 
 /**
-@brief Implementation of EFI protocols.
+@brief Implementation of the main EFI protocols.
 */
 
 #include <NewKit/Defines.h>
@@ -24,6 +24,8 @@ using namespace Kernel;
 #define IN
 #define OUT
 #define OPTIONAL
+
+#define EFI_FINAL final
 
 // Forward decls
 
@@ -75,6 +77,7 @@ typedef UInt64(EFI_API* EfiLoadFile)(EfiLoadFileProtocol*		Self,
 									 VoidPtr					Buffer);
 
 typedef UInt64(EFI_API* EfiCopyMem)(VoidPtr DstBuf, VoidPtr SrcBuf, SizeT Length);
+
 typedef UInt64(EFI_API* EfiSetMem)(VoidPtr DstBuf, Char Byte, SizeT Length);
 
 typedef UInt64(EFI_API* EfiHandleProtocol)(EfiHandlePtr Handle, EfiGUID* Guid, VoidPtr* Device);
@@ -458,7 +461,7 @@ typedef UInt64(EFI_API* EfiGetMemoryMap)(UInt32*			  MapSize,
 /**
  * @brief GUID type, something you can also find in CFKit.
  */
-typedef struct EfiGUID final
+typedef struct EfiGUID EFI_FINAL
 {
 	UInt32 Data1;
 	UInt16 Data2;
@@ -778,7 +781,7 @@ typedef struct EfiTime
 		}                                                  \
 	}
 
-struct EfiFileInfo final
+struct EfiFileInfo EFI_FINAL
 {
 	/// @brief Structure size.
 	UInt64 Size;
