@@ -14,7 +14,7 @@ namespace Kernel
 	/// @note This sets up a new stack, anything on the main function that calls the Kernel will not be accessible.
 	/// @param main the start of the process.
 	/// @return if the process was started or not.
-	ProcessID rtl_create_process(MainKind main, const Char* process_name) noexcept
+	ProcessID rtl_create_process(rtl_main_kind main, const Char* process_name) noexcept
 	{
 		if (*process_name == 0)
 			return kProcessInvalidID;
