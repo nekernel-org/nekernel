@@ -26,18 +26,12 @@ namespace CG
 	public:
 		ZKA_COPY_DELETE(UIAccessibilty);
 
-		STATIC UIAccessibilty& The()
-		{
-			STATIC UIAccessibilty the;
-			return the;
-		}
-
-		Int64 Width() noexcept
+		static Int64 Width() noexcept
 		{
 			return kHandoverHeader->f_GOP.f_Width;
 		}
 
-		Int64 Height() noexcept
+		static Int64 Height() noexcept
 		{
 			return kHandoverHeader->f_GOP.f_Height;
 		}

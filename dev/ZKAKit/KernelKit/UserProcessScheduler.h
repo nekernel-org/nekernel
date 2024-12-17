@@ -163,7 +163,7 @@ namespace Kernel
 		UInt8*			   StackReserve{nullptr};
 		UserProcessImage   Image;
 		SizeT			   StackSize{kSchedMaxStackSz};
-		IDLLObject*		   PefDLLDelegate{nullptr};
+		IDLLObject*		   DylibDelegate{nullptr};
 		SizeT			   MemoryCursor{0};
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 

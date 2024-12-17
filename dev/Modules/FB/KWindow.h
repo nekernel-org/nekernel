@@ -55,7 +55,7 @@ namespace CG
 	{
 		cg_init();
 
-		CGDrawInRegion(cg_color(0x45, 0x00, 0x06), CG::UIAccessibilty::The().Height(), CG::UIAccessibilty::The().Width(),
+		CGDrawInRegion(cg_color(0x45, 0x00, 0x06), CG::UIAccessibilty::Height(), CG::UIAccessibilty::Width(),
 					   0, 0);
 
 		cg_fini();
@@ -150,11 +150,13 @@ namespace CG
 
 			wnd[index]->w_needs_repaint = false;
 
-			if (UIAccessibilty::The().Width() < wnd[index]->w_x)
+			kcout << "Begin paint\r";
+
+			if (UIAccessibilty::Width() < wnd[index]->w_x)
 			{
-				if ((wnd[index]->w_x - UIAccessibilty::The().Width()) > 1)
+				if ((wnd[index]->w_x - UIAccessibilty::Width()) > 1)
 				{
-					wnd[index]->w_x -= wnd[index]->w_x - UIAccessibilty::The().Width();
+					wnd[index]->w_x -= wnd[index]->w_x - UIAccessibilty::Width();
 				}
 				else
 				{
@@ -162,11 +164,11 @@ namespace CG
 				}
 			}
 
-			if (UIAccessibilty::The().Height() < wnd[index]->w_y)
+			if (UIAccessibilty::Height() < wnd[index]->w_y)
 			{
-				if ((wnd[index]->w_y - UIAccessibilty::The().Height()) > 1)
+				if ((wnd[index]->w_y - UIAccessibilty::Height()) > 1)
 				{
-					wnd[index]->w_y -= wnd[index]->w_y - UIAccessibilty::The().Width();
+					wnd[index]->w_y -= wnd[index]->w_y - UIAccessibilty::Width();
 				}
 				else
 				{
@@ -174,11 +176,11 @@ namespace CG
 				}
 			}
 
-			++cnt;
-
 			// Draw fake controls, just for the looks of it (WINDOW ONLY)
 			if (wnd[index]->w_type == kWndFlagWindow)
 			{
+				kcout << "Begin paint window\r";
+			
 				CGDrawBitMapInRegion(wnd[index]->display_ptr, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
 				CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd[index]->w_w, FLATCONTROLS_HEIGHT, wnd[index]->w_y, wnd[index]->w_x);
 
@@ -233,6 +235,8 @@ namespace CG
 
 				CGDrawWindowList(&wnd[index]->w_child_elements[child], 1);
 			}
+
+			++cnt;
 
 			cg_fini();
 		}

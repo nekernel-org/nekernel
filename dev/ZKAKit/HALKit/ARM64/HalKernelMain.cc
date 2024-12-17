@@ -19,7 +19,7 @@
 #include <CFKit/Property.h>
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
-EXTERN_C Kernel::Void gsh_dll_main(Kernel::Void);
+EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len);
 
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::BootInfoHeader* handover_hdr)
@@ -49,7 +49,7 @@ EXTERN_C void hal_init_platform(
 
 	CG::CGDrawBackground();
 
-	Kernel::rtl_create_process(gsh_dll_main, "GSh");
+	rtl_kernel_main(0, nullptr, nullptr, 0);
 
 	while (YES)
 	{

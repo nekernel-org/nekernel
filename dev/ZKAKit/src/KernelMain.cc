@@ -50,58 +50,58 @@ namespace Kernel::Detail
 
 				for (Kernel::SizeT dirIndx = 0UL; dirIndx < kFolderCount; ++dirIndx)
 				{
-					auto catalogDir = fNeFS->GetParser()->GetCatalog(kFolderStr[dirIndx]);
+					auto catalog_folder = fNeFS->GetParser()->GetCatalog(kFolderStr[dirIndx]);
 
-					if (catalogDir)
+					if (catalog_folder)
 					{
 						kcout << "newoskrnl: Already exists.\r";
 
 						CG::CGDrawStringToWnd(kKernelWnd, "MinOSKrnl: Catalog already exists...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
 
-						delete catalogDir;
+						delete catalog_folder;
 						continue;
 					}
 
-					catalogDir = fNeFS->GetParser()->CreateCatalog(kFolderStr[dirIndx], 0,
+					catalog_folder = fNeFS->GetParser()->CreateCatalog(kFolderStr[dirIndx], 0,
 																   kNeFSCatalogKindDir);
 
-					NFS_FORK_STRUCT theFork{0};
+					NFS_FORK_STRUCT fork_folder{0};
 
 					const Kernel::Char* kSrcFolderName = kFolderInfo;
 
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(kSrcFolderName), theFork.ForkName,
+					Kernel::rt_copy_memory((Kernel::VoidPtr)(kSrcFolderName), fork_folder.ForkName,
 										   Kernel::rt_string_len(kSrcFolderName));
 
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDir->Name),
-										   theFork.CatalogName,
-										   Kernel::rt_string_len(catalogDir->Name));
+					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalog_folder->Name),
+										   fork_folder.CatalogName,
+										   Kernel::rt_string_len(catalog_folder->Name));
 
-					theFork.DataSize	 = kNeFSForkSize;
-					theFork.ResourceId	 = 0;
-					theFork.ResourceKind = Kernel::kNeFSRsrcForkKind;
-					theFork.Kind		 = Kernel::kNeFSDataForkKind;
+					fork_folder.DataSize	 = kNeFSForkSize;
+					fork_folder.ResourceId	 = 0;
+					fork_folder.ResourceKind = Kernel::kNeFSRsrcForkKind;
+					fork_folder.Kind		 = Kernel::kNeFSDataForkKind;
 
-					Kernel::KString metadataFolder(kNeFSSectorSz);
+					Kernel::KString folder_metadata(kNeFSSectorSz);
 
-					metadataFolder +=
+					folder_metadata +=
 						"<!properties/>\r<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
 						"system</p>\r<p>Volume Type: Zeta</p>\r";
 
-					metadataFolder += "<p>Path: ";
-					metadataFolder += kFolderStr[dirIndx];
-					metadataFolder += "</p>\r";
+					folder_metadata += "<p>Path: ";
+					folder_metadata += kFolderStr[dirIndx];
+					folder_metadata += "</p>\r";
 
-					const Kernel::SizeT metadataSz = kNeFSSectorSz;
+					const Kernel::SizeT kMetaDataSz = kNeFSSectorSz;
 
-					fNeFS->GetParser()->CreateFork(catalogDir, theFork);
+					fNeFS->GetParser()->CreateFork(catalog_folder, fork_folder);
 
 					fNeFS->GetParser()->WriteCatalog(
-						catalogDir, true, (Kernel::VoidPtr)(metadataFolder.CData()),
-						metadataSz, kFolderInfo);
+						catalog_folder, true, (Kernel::VoidPtr)(folder_metadata.CData()),
+						kMetaDataSz, kFolderInfo);
 
 					CG::CGDrawStringToWnd(kKernelWnd, "MinOSKrnl: Catalog has been created...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
 
-					delete catalogDir;
+					delete catalog_folder;
 				}
 			}
 
@@ -159,23 +159,21 @@ namespace Kernel::Detail
 /// @brief Application entrypoint.
 /// @param Void
 /// @return Void
-EXTERN_C Kernel::Void gsh_dll_main(Kernel::Void)
+EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len)
 {
 	Kernel::IFilesystemMgr::Mount(new Kernel::NeFileSystemMgr());
-	Kernel::Detail::FilesystemInstaller installer;
 
-	CG::CGDrawBackground();
-
-	kKernelWnd = CG::CGCreateWindow(CG::kWndFlagWindow, "ZKA | System Build: " KERNEL_VERSION, "Window", 20, 20, 800, 600);
+	kKernelWnd = CG::CGCreateWindow(CG::kWndFlagWindow, "ZKA | System Build: " KERNEL_VERSION, "Window", 10, 10, 1280, 720);
 
 	if (kKernelWnd)
 	{
 		kKernelWnd->w_sub_type = CG::kWndFlagCloseControlSelect;
-		kKernelWnd->w_x		   = 10;
-		kKernelWnd->w_y		   = 10;
+		kKernelWnd->w_child_count = 0;
 
 		kKernelWnd->w_needs_repaint = Yes;
 
 		CG::CGDrawWindowList(&kKernelWnd, 1);
+
+		Kernel::Detail::FilesystemInstaller installer;
 	}
 }

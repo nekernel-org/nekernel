@@ -717,11 +717,15 @@ bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog
 }
 
 /// @brief
-/// @param catalogName the catalog name.
+/// @param catalog_name the catalog name.
 /// @return the newly found catalog.
-_Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* catalogName,
+_Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* catalog_name,
 													Lba&			   out_lba)
 {
+	if (!catalog_name ||
+		*catalog_name == 0)
+		return nullptr;
+
 	kcout << "Start finding catalog...\r";
 
 	NFS_ROOT_PARTITION_BLOCK fs_buf{0};
@@ -751,13 +755,13 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 
 	drive.fInput(&drive.fPacket);
 
-	if (!StringBuilder::Equals(catalogName, NeFileSystemHelper::Root()))
+	if (!StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()))
 	{
 		Char parentName[kNeFSNodeNameLen] = {0};
 
-		for (SizeT indexFill = 0; indexFill < rt_string_len(catalogName); ++indexFill)
+		for (SizeT indexFill = 0; indexFill < rt_string_len(catalog_name); ++indexFill)
 		{
-			parentName[indexFill] = catalogName[indexFill];
+			parentName[indexFill] = catalog_name[indexFill];
 		}
 
 		SizeT indexReverseCopy = rt_string_len(parentName);
@@ -807,7 +811,7 @@ NeFSSearchThroughCatalogList:
 
 		NFS_CATALOG_STRUCT* catalog = (NFS_CATALOG_STRUCT*)&temporary_catalog;
 
-		if (StringBuilder::Equals(catalogName, catalog->Name))
+		if (StringBuilder::Equals(catalog_name, catalog->Name))
 		{
 			/// ignore unallocated catalog, break
 			if (!(catalog->Flags & kNeFSFlagCreated))
@@ -870,17 +874,17 @@ Boolean NeFileSystemParser::CloseCatalog(_Input _Output NFS_CATALOG_STRUCT* cata
 /// @brief Mark catalog as removed.
 /// @param catalog The catalog structure.
 /// @return if the catalog was removed or not.
-Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalogName)
+Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
 {
-	if (!catalogName ||
-		StringBuilder::Equals(catalogName, NeFileSystemHelper::Root()))
+	if (!catalog_name ||
+		StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()))
 	{
 		err_local_get() = kErrorInternal;
 		return false;
 	}
 
 	Lba	 out_lba = 0;
-	auto catalog = this->FindCatalog(catalogName, out_lba);
+	auto catalog = this->FindCatalog(catalog_name, out_lba);
 
 	if (out_lba >= kNeFSCatalogStartAddress ||
 		catalog->Flags & kNeFSFlagCreated)

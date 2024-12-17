@@ -20,7 +20,8 @@
 #define kStdUserType   (0xCE)
 #define kSuperUserType (0xEC)
 
-/// BUGS: 0
+/// @file User.cc
+/// @brief User support (or also called )
 
 namespace Kernel
 {
@@ -34,7 +35,7 @@ namespace Kernel
 			if (!password || !user)
 				return 1;
 
-			kcout << "Hashing user password...\r";
+			kcout << "cred_construct_token: Hashing user password...\r";
 
 			for (Size i_pass = 0; i_pass < length; ++i_pass)
 			{
@@ -46,7 +47,7 @@ namespace Kernel
 				password[i_pass] = cur_chr | (user->IsStdUser() ? kStdUserType : kSuperUserType);
 			}
 
-			kcout << "DONE: hashed user password.\r";
+			kcout << "cred_construct_token: Hashed user password.\r";
 
 			return 0;
 		}
@@ -101,7 +102,7 @@ namespace Kernel
 		delete[] password;
 		password = nullptr;
 
-		kcout << "Saved password successfully...\r";
+		kcout << "User::Save: Saved password successfully...\r";
 
 		return Yes;
 	}
@@ -130,16 +131,16 @@ namespace Kernel
 			return No;
 		}
 
-		kcout << "Validating hashed passwords...\r";
+		kcout << "User::Matches: Validating hashed passwords...\r";
 
 		// now check if the password matches.
 		if (rt_string_cmp(password, this->mUserToken, rt_string_len(this->mUserToken)) == 0)
 		{
-			kcout << "Password is valid.\r";
+			kcout << "User::Matches: Password is valid.\r";
 			return Yes;
 		}
 
-		kcout << "Password isn't valid.\r";
+		kcout << "User::Matches: Password isn't valid.\r";
 		return No;
 	}
 

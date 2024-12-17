@@ -18,11 +18,11 @@
 
  Revision History:
 
-	 01/02/24: Reworked dll ABI, expect a rtl_init_dll and
- rtl_fini_dll (amlel) 15/02/24: Breaking changes, changed the name of the
+	 01/02/24: Reworked dll ABI, expect a rtl_init_dylib and
+ rtl_fini_dylib (amlel) 15/02/24: Breaking changes, changed the name of the
  routines. (amlel)
 
-	07/28/24: Replace rt_library_free with rtl_fini_dll
+	07/28/24: Replace rt_library_free with rtl_fini_dylib
 
 	10/8/24: FIX: Fix log comment.
 
@@ -39,7 +39,7 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C IDLL rtl_init_dll(UserProcess* header)
+EXTERN_C IDLL rtl_init_dylib(UserProcess* header)
 {
 	IDLL dll_obj = tls_new_class<IPEFDLLObject>();
 
@@ -83,7 +83,7 @@ EXTERN_C IDLL rtl_init_dll(UserProcess* header)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_dll(UserProcess* header, IDLL dll_obj, Bool* successful)
+EXTERN_C Void rtl_fini_dylib(UserProcess* header, IDLL dll_obj, Bool* successful)
 {
 	MUST_PASS(successful);
 

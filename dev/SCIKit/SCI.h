@@ -75,16 +75,29 @@ IMPORT_C UInt64 IoTellFile(_Input SCIObject file_desc);
 IMPORT_C UInt64 IoSeekFile(_Input SCIObject file_desc, UInt64 file_offset);
 
 // ------------------------------------------------------------------------
-// TLS API.
+// Process API.
 // ------------------------------------------------------------------------
 
-/// @brief Installs the Thread Information Block and Global Information Block inside the current process.
+/// @brief Spawns a Thread Information Block and Global Information Block inside the current process.
 /// @param void.
 /// @return > 0 error ocurred or already present, = 0 success.
-IMPORT_C UInt32 RtlTlsInstall(Void);
+IMPORT_C UInt32 RtlSpawnIB(Void);
+
+/// @brief Spawns a process with a unique pid (stored as UIntPtr).
+/// @param process_path process filesystem path.
+/// @return > 0 process was created.
+IMPORT_C UIntPtr RtlSpawnProcess(const Char* process_path, SizeT argc, Char** argv, Char** envp, SizeT envp_len);
+
+/// @brief Exits a process with an exit_code.
+/// @return if it has succeeded true, otherwise false.
+IMPORT_C Bool RtlExitProcess(UIntPtr handle, UIntPtr exit_code);
+
+/// @brief Get current PID of process.
+/// @return Current process ID.
+IMPORT_C UIntPtr RtlCurrentPID(Void);
 
 // ------------------------------------------------------------------------
-// Memory Management API.
+// Memory Manager API.
 // ------------------------------------------------------------------------
 
 /// @brief Creates a new heap from the process's address space.
@@ -114,7 +127,7 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
 IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt8 value);
 
 // ------------------------------------------------------------------------
-// Error handling API.
+// Error API.
 // ------------------------------------------------------------------------
 
 IMPORT_C SInt32 ErrGetLastError(Void);
@@ -137,7 +150,7 @@ IMPORT_C Void ThrExitMainThread(_Input SInt32 exit_code);
 IMPORT_C Void ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
 
 /// @brief Thread procedure function type.
-typedef Void (*thread_proc_kind)(Void);
+typedef Void (*thread_proc_kind)(int argc, char** argv);
 
 /// @brief Creates a thread.
 /// @param procedure the thread procedure.

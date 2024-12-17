@@ -21,7 +21,13 @@
 namespace Kernel
 {
 	/// @brief Main process entrypoint.
-	typedef void (*rtl_main_kind)(void);
+	typedef void (*rtl_main_kind)(SizeT argc, char** argv, char** envp, SizeT envp_len);
+	
+	/// @brief C++ Constructor entrypoint.
+	typedef void(*rtl_ctor_kind)(void);
+
+	/// @brief C++ Destructor entrypoint.
+	typedef void(*rtl_dtor_kind)(void);
 
 	/// @brief Executes a new process from a function. Kernel code only.
 	/// @note This sets up a new stack, anything on the main function that calls the Kernel will not be accessible.

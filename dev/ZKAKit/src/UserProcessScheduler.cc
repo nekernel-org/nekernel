@@ -255,14 +255,14 @@ namespace Kernel
 		{
 			Bool success = false;
 
-			rtl_fini_dll(this, reinterpret_cast<IPEFDLLObject*>(this->PefDLLDelegate), &success);
+			rtl_fini_dylib(this, reinterpret_cast<IPEFDLLObject*>(this->DylibDelegate), &success);
 
 			if (!success)
 			{
 				ke_stop(RUNTIME_CHECK_PROCESS);
 			}
 
-			this->PefDLLDelegate = nullptr;
+			this->DylibDelegate = nullptr;
 		}
 
 		if (this->StackReserve)
@@ -314,10 +314,10 @@ namespace Kernel
 		// Create heap according to type of process->
 		if (process->Kind == UserProcess::kExectuableDLLKind)
 		{
-			process->PefDLLDelegate = rtl_init_dll(process);
-			MUST_PASS(process->PefDLLDelegate);
+			process->DylibDelegate = rtl_init_dylib(process);
+			MUST_PASS(process->DylibDelegate);
 
-			kcout << "Create DLL Delegate for: " << process->Name << endl;
+			kcout << "Created Library Interface for process: " << process->Name << endl;
 		}
 
 		process->StackReserve = new UInt8[process->StackSize];
@@ -334,7 +334,7 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
-		kcout << "Create stack reserve for: " << process->Name << endl;
+		kcout << "Created Reserved Stack for process: " << process->Name << endl;
 
 		ProcessID pid = mTeam.mProcessCount;
 
