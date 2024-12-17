@@ -311,15 +311,15 @@ namespace Boot
 			return false; /// sanity check
 
 		/// convert the sector into something that the disk understands.
-		SizeT sectorSz = BootDev::kSectorSize;
+		SizeT sectorSz = sizeof(NFS_ROOT_PARTITION_BLOCK);
 
 		/// @note A catalog roughly equal to a sector.
 
-		constexpr auto cMinimumDiskSize = kNeFSMinimumDiskSize; // at minimum.
+		constexpr auto kMinimumDiskSize = kNeFSMinimumDiskSize; // at minimum.
 
 		/// @note also look at EPM headers, for free part blocks.
 
-		if (fDiskDev.GetDiskSize() < cMinimumDiskSize)
+		if (fDiskDev.GetDiskSize() < kMinimumDiskSize)
 		{
 			EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a New Filesystem partition here.");
 			return false;
@@ -328,7 +328,7 @@ namespace Boot
 		NFS_ROOT_PARTITION_BLOCK partBlock{0};
 
 		CopyMem(partBlock.Ident, kNeFSIdent, kNeFSIdentLen - 1);
-		CopyMem(partBlock.PartitionName, partName, strlen(partName));
+		CopyMem(partBlock.PartitionName, partName, StrLen(partName));
 
 		partBlock.Version	   = kNeFSVersionInteger;
 		partBlock.CatalogCount = blobCount;

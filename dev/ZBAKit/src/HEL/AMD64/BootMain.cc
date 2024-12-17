@@ -156,7 +156,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 #ifdef ZBA_USE_FB
 	CGDrawString("ZBA (c) Theater Quality Inc.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
-	CGDrawString((cnt_enabled > 1) ? "SMP detected." : "Single processor configuration detected.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString((cnt_enabled > 1) ? "Multi processor configuration detected." : "Single processor configuration detected.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 
 	handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
@@ -181,13 +181,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		root.fKind = kNeFSCatalogKindDir;
 
-		partition_factory.Format("FileSystem (A:)", &root, 1);
-
-		rt_reset_hardware();
-	}
-	else
-	{
-		CGDrawString("Booting from EPM disk...", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		partition_factory.Format("FileSystem (A:)\0", &root, 1);
 	}
 #endif // ZKA_AUTO_FORMAT
 

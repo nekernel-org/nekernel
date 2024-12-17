@@ -42,35 +42,31 @@ namespace Kernel::Detail
 
 			if (fNeFS && fNeFS->GetParser())
 			{
-				constexpr auto kFolderInfo		  = "META-INF";
+				constexpr auto kFolderInfo		  = "META-XML";
 				const auto	   kFolderCount		  = 7;
 				const char*	   kFolderStr[kFolderCount] = {
 					   "/Boot/", "/System/", "/Support/", "/Applications/",
 					   "/Users/", "/Library/", "/Mount/"};
 
-				for (Kernel::SizeT dirIndx = 0UL; dirIndx < kFolderCount; ++dirIndx)
+				for (Kernel::SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
 				{
-					auto catalog_folder = fNeFS->GetParser()->GetCatalog(kFolderStr[dirIndx]);
+					auto catalog_folder = fNeFS->GetParser()->GetCatalog(kFolderStr[dir_index]);
 
 					if (catalog_folder)
 					{
-						kcout << "newoskrnl: Already exists.\r";
-
-						CG::CGDrawStringToWnd(kKernelWnd, "ZkaOS: Catalog already exists...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-
 						delete catalog_folder;
+						catalog_folder = nullptr;
+
 						continue;
 					}
 
-					catalog_folder = fNeFS->GetParser()->CreateCatalog(kFolderStr[dirIndx], 0,
+					catalog_folder = fNeFS->GetParser()->CreateCatalog(kFolderStr[dir_index], 0,
 																   kNeFSCatalogKindDir);
 
 					NFS_FORK_STRUCT fork_folder{0};
 
-					const Kernel::Char* kSrcFolderName = kFolderInfo;
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(kSrcFolderName), fork_folder.ForkName,
-										   Kernel::rt_string_len(kSrcFolderName));
+					Kernel::rt_copy_memory((Kernel::VoidPtr)(kFolderInfo), fork_folder.ForkName,
+										   Kernel::rt_string_len(kFolderInfo));
 
 					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalog_folder->Name),
 										   fork_folder.CatalogName,
@@ -81,14 +77,14 @@ namespace Kernel::Detail
 					fork_folder.ResourceKind = Kernel::kNeFSRsrcForkKind;
 					fork_folder.Kind		 = Kernel::kNeFSDataForkKind;
 
-					Kernel::KString folder_metadata(kNeFSSectorSz);
+					Kernel::KString folder_metadata(2048);
 
 					folder_metadata +=
 						"<!properties/>\r<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
 						"system</p>\r<p>Volume Type: Zeta</p>\r";
 
 					folder_metadata += "<p>Path: ";
-					folder_metadata += kFolderStr[dirIndx];
+					folder_metadata += kFolderStr[dir_index];
 					folder_metadata += "</p>\r";
 
 					const Kernel::SizeT kMetaDataSz = kNeFSSectorSz;
@@ -99,47 +95,9 @@ namespace Kernel::Detail
 						catalog_folder, true, (Kernel::VoidPtr)(folder_metadata.CData()),
 						kMetaDataSz, kFolderInfo);
 
-					CG::CGDrawStringToWnd(kKernelWnd, "ZkaOS: Catalog has been created...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
-
 					delete catalog_folder;
+					catalog_folder = nullptr;
 				}
-			}
-
-			const auto kSysPage = "/System/syspage.sys";
-
-			NFS_CATALOG_STRUCT* catalogDisk =
-				this->fNeFS->GetParser()->GetCatalog(kSysPage);
-
-			const Kernel::Char* kSrcFolderName = "8K_SYS_PAGE_KERNEL";
-
-			if (catalogDisk)
-			{
-				delete catalogDisk;
-			}
-			else
-			{
-				catalogDisk =
-					(NFS_CATALOG_STRUCT*)this->Leak()->CreateAlias(kSysPage);
-
-				NFS_FORK_STRUCT theDiskFork{0};
-
-				Kernel::rt_copy_memory((Kernel::VoidPtr)(kSrcFolderName), theDiskFork.ForkName,
-									   Kernel::rt_string_len(kSrcFolderName));
-
-				Kernel::rt_copy_memory((Kernel::VoidPtr)(catalogDisk->Name),
-									   theDiskFork.CatalogName,
-									   Kernel::rt_string_len(catalogDisk->Name));
-
-				Kernel::Size sz_hdr = kNeFSForkSize;
-
-				theDiskFork.DataSize	 = sz_hdr;
-				theDiskFork.ResourceId	 = kNeFSCatalogKindExecutable | kNeFSCatalogKindPage;
-				theDiskFork.ResourceKind = Kernel::kNeFSDataForkKind;
-				theDiskFork.Kind		 = Kernel::kNeFSDataForkKind;
-
-				fNeFS->GetParser()->CreateFork(catalogDisk, theDiskFork);
-
-				delete catalogDisk;
 			}
 		}
 
