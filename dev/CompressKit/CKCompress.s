@@ -4,8 +4,4 @@
 
 ------------------------------------------- */
 
-.section .copyright
-
-.asciiz "Theater Quality Inc, 2024"
-
 .text

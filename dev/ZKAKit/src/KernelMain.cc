@@ -56,7 +56,7 @@ namespace Kernel::Detail
 					{
 						kcout << "newoskrnl: Already exists.\r";
 
-						CG::CGDrawStringToWnd(kKernelWnd, "MinOSKrnl: Catalog already exists...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+						CG::CGDrawStringToWnd(kKernelWnd, "ZkaOS: Catalog already exists...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
 
 						delete catalog_folder;
 						continue;
@@ -99,7 +99,7 @@ namespace Kernel::Detail
 						catalog_folder, true, (Kernel::VoidPtr)(folder_metadata.CData()),
 						kMetaDataSz, kFolderInfo);
 
-					CG::CGDrawStringToWnd(kKernelWnd, "MinOSKrnl: Catalog has been created...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
+					CG::CGDrawStringToWnd(kKernelWnd, "ZkaOS: Catalog has been created...", 10 + (10 * (dirIndx + 1)), 10, RGB(0, 0, 0));
 
 					delete catalog_folder;
 				}
@@ -163,16 +163,17 @@ EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** en
 {
 	Kernel::IFilesystemMgr::Mount(new Kernel::NeFileSystemMgr());
 
-	kKernelWnd = CG::CGCreateWindow(CG::kWndFlagWindow, "ZKA | System Build: " KERNEL_VERSION, "Window", 10, 10, 1280, 720);
+	kKernelWnd = CG::CGCreateWindow(CG::kWndFlagWindow, "ZkaOS | " KERNEL_VERSION, "WindowBoot", 10, 10, 1280, 720);
 
 	if (kKernelWnd)
 	{
 		kKernelWnd->w_sub_type = CG::kWndFlagCloseControlSelect;
 		kKernelWnd->w_child_count = 0;
-
+		kKernelWnd->w_type = CG::kWndFlagWindow;
 		kKernelWnd->w_needs_repaint = Yes;
+		kKernelWnd->w_display_ptr = nullptr;
 
-		CG::CGDrawWindowList(&kKernelWnd, 1);
+		CG::CGDrawWindow(kKernelWnd);
 
 		Kernel::Detail::FilesystemInstaller installer;
 	}

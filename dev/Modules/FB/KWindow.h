@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "NewKit/Macros.h"
 #include <Modules/FB/Accessibility.h>
 #include <KernelKit/Heap.h>
 #include <KernelKit/UserProcessScheduler.h>
@@ -42,10 +43,12 @@ namespace CG
 		Int32					 w_y{0};
 		Int32					 w_w{0};
 		Int32					 w_h{0};
-		Size					 w_child_count{0};
+		Int32 				     w_display_ptr_w{0};
+		Int32 				     w_display_ptr_h{0};
+		SizeT					 w_child_count{0};
 		struct ML_WINDOW_STRUCT* w_child_elements[255]{0};
 		struct ML_WINDOW_STRUCT* w_parent{nullptr};
-		UInt32*					 display_ptr{nullptr};
+		UInt32*					 w_display_ptr{nullptr};
 		Bool					 w_needs_repaint{false};
 	};
 
@@ -86,12 +89,9 @@ namespace CG
 		wnd->w_type		= kind;
 		wnd->w_x		= x;
 		wnd->w_y		= y;
-
+		wnd->w_display_ptr = nullptr;
 		wnd->w_w = width;
 		wnd->w_h = height;
-
-		wnd->display_ptr = new UInt32[width * height];
-		rt_set_memory(wnd->display_ptr, cg_color(0xF5, 0xF5, 0xF5), width * height);
 
 		return wnd;
 	}
@@ -132,115 +132,112 @@ namespace CG
 		}
 	}
 
-	inline SizeT CGDrawWindowList(ML_WINDOW_STRUCT** wnd, SizeT wnd_cnt)
+	inline SizeT CGDrawWindow(ML_WINDOW_STRUCT* wnd)
 	{
-		if (!wnd_cnt)
-			return 0;
+		if (!wnd ||
+			(wnd->w_type == kWndFlagNoShow) ||
+			!wnd->w_needs_repaint)
+			return 1;
 
-		SizeT cnt = 0;
+		cg_init();
 
-		for (SizeT index = 0; index < wnd_cnt; ++index)
+		wnd->w_needs_repaint = false;
+
+		kcout << "Begin paint\r";
+
+		if (UIAccessibilty::Width() < wnd->w_x)
 		{
-			if (!wnd[index] ||
-				(wnd[index]->w_type == kWndFlagNoShow) ||
-				!wnd[index]->w_needs_repaint)
-				continue;
-
-			cg_init();
-
-			wnd[index]->w_needs_repaint = false;
-
-			kcout << "Begin paint\r";
-
-			if (UIAccessibilty::Width() < wnd[index]->w_x)
+			if ((wnd->w_x - UIAccessibilty::Width()) > 1)
 			{
-				if ((wnd[index]->w_x - UIAccessibilty::Width()) > 1)
-				{
-					wnd[index]->w_x -= wnd[index]->w_x - UIAccessibilty::Width();
-				}
-				else
-				{
-					wnd[index]->w_x = 0;
-				}
+				wnd->w_x -= wnd->w_x - UIAccessibilty::Width();
 			}
-
-			if (UIAccessibilty::Height() < wnd[index]->w_y)
+			else
 			{
-				if ((wnd[index]->w_y - UIAccessibilty::Height()) > 1)
-				{
-					wnd[index]->w_y -= wnd[index]->w_y - UIAccessibilty::Width();
-				}
-				else
-				{
-					wnd[index]->w_y = 0;
-				}
+				wnd->w_x = 0;
 			}
-
-			// Draw fake controls, just for the looks of it (WINDOW ONLY)
-			if (wnd[index]->w_type == kWndFlagWindow)
-			{
-				kcout << "Begin paint window\r";
-			
-				CGDrawBitMapInRegion(wnd[index]->display_ptr, wnd[index]->w_h, wnd[index]->w_w, wnd[index]->w_y, wnd[index]->w_x);
-				CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd[index]->w_w, FLATCONTROLS_HEIGHT, wnd[index]->w_y, wnd[index]->w_x);
-
-				if (wnd[index]->w_sub_type != kWndFlagHideCloseControl)
-				{
-					if (wnd[index]->w_sub_type == kWndFlagCloseControlSelect)
-					{
-						CGDrawBitMapInRegion(FlatControlsClose, FLATCONTROLS_CLOSE_HEIGHT, FLATCONTROLS_CLOSE_WIDTH, wnd[index]->w_y, wnd[index]->w_x + wnd[index]->w_w - FLATCONTROLS_WIDTH);
-					}
-					else
-					{
-						CGDrawBitMapInRegion(FlatControls, FLATCONTROLS_HEIGHT, FLATCONTROLS_WIDTH, wnd[index]->w_y, wnd[index]->w_x + wnd[index]->w_w - FLATCONTROLS_WIDTH);
-					}
-				}
-
-				CGDrawString(wnd[index]->w_window_name, wnd[index]->w_y + 8, wnd[index]->w_x + 8, cg_color(0x00, 0x00, 0x00));
-			}
-			/// @note buttons in this library are dynamic, it's because we want to avoid as much as computations as possible.
-			/// (Such as getting the middle coordinates of a button, to center the text.)
-			else if (wnd[index]->w_type == kWndFlagButtonSelect)
-			{
-				auto x_center = wnd[index]->w_x + 6;
-				auto y_center = wnd[index]->w_y + 7;
-
-				CGDrawInRegion(cg_color(0xD3, 0x74, 0x00), wnd[index]->w_w + 1, wnd[index]->w_h + 1, wnd[index]->w_y, wnd[index]->w_x);
-				CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd[index]->w_w - 1, wnd[index]->w_h - 1, wnd[index]->w_y + 1, wnd[index]->w_x + 1);
-				CGDrawStringToWnd(wnd[index], wnd[index]->w_window_name, y_center, x_center, cg_color(0x00, 0x00, 0x00));
-			}
-			else if (wnd[index]->w_type == kWndFlagButton)
-			{
-				auto x_center = wnd[index]->w_x + 6;
-				auto y_center = wnd[index]->w_y + 7;
-
-				CGDrawInRegion(cg_color(0xDC, 0xDC, 0xDC), wnd[index]->w_w + 1, wnd[index]->w_h + 1, wnd[index]->w_y, wnd[index]->w_x);
-				CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd[index]->w_w - 1, wnd[index]->w_h - 1, wnd[index]->w_y + 1, wnd[index]->w_x + 1);
-				CGDrawString(wnd[index]->w_window_name, y_center, x_center, cg_color(0x00, 0x00, 0x00));
-			}
-
-			cg_fini();
-
-			// draw child windows and controls.
-			// doesn't have to be a window, enabling then windows in windows.
-
-			for (SizeT child = 0; child < wnd[index]->w_child_count; ++child)
-			{
-				wnd[index]->w_child_elements[child]->w_x += wnd[index]->w_x;
-				wnd[index]->w_child_elements[child]->w_y += wnd[index]->w_y + FLATCONTROLS_HEIGHT;
-
-				if ((wnd[index]->w_child_elements[child]->w_w + wnd[index]->w_child_elements[child]->w_x) > (wnd[index]->w_x + wnd[index]->w_w) ||
-					(wnd[index]->w_child_elements[child]->w_h + wnd[index]->w_child_elements[child]->w_y) > (wnd[index]->w_y + wnd[index]->w_h))
-					continue;
-
-				CGDrawWindowList(&wnd[index]->w_child_elements[child], 1);
-			}
-
-			++cnt;
-
-			cg_fini();
 		}
 
-		return cnt;
+		if (UIAccessibilty::Height() < wnd->w_y)
+		{
+			if ((wnd->w_y - UIAccessibilty::Height()) > 1)
+			{
+				wnd->w_y -= wnd->w_y - UIAccessibilty::Width();
+			}
+			else
+			{
+				wnd->w_y = 0;
+			}
+		}
+
+		// Draw fake controls, just for the looks of it (WINDOW ONLY)
+		if (wnd->w_type == kWndFlagWindow)
+		{
+			kcout << "Begin paint window\r";
+
+			if (wnd->w_display_ptr)
+			{
+				CGDrawInRegion(cg_color(0xDF, 0xDF, 0xDF), wnd->w_h, wnd->w_w, wnd->w_x, wnd->w_y);
+				CGDrawBitMapInRegion(wnd->w_display_ptr, wnd->w_display_ptr_h, wnd->w_display_ptr_w, wnd->w_x, wnd->w_y);
+			}
+			else
+			{
+				CGDrawInRegion(cg_color(0xDF, 0xDF, 0xDF), wnd->w_w, wnd->w_h, wnd->w_y, wnd->w_x);
+			}
+
+			CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd->w_w, FLATCONTROLS_HEIGHT, wnd->w_y, wnd->w_x);
+
+			if (wnd->w_sub_type != kWndFlagHideCloseControl)
+			{	
+				CGDrawBitMapInRegion(FlatControls, FLATCONTROLS_HEIGHT, FLATCONTROLS_WIDTH, wnd->w_y, wnd->w_x + wnd->w_w - FLATCONTROLS_WIDTH);
+			}
+			else if (wnd->w_sub_type == kWndFlagCloseControlSelect)
+			{
+				CGDrawBitMapInRegion(FlatControlsClose, FLATCONTROLS_CLOSE_HEIGHT, FLATCONTROLS_CLOSE_WIDTH, wnd->w_y, wnd->w_x + wnd->w_w - FLATCONTROLS_WIDTH);
+			}
+
+			CGDrawString(wnd->w_window_name, wnd->w_x + 8, wnd->w_y + 8, cg_color(0x00, 0x00, 0x00));
+		}
+		/// @note buttons in this library are dynamic, it's because we want to avoid as much as computations as possible.
+		/// (Such as getting the middle coordinates of a button, to center the text.)
+		else if (wnd->w_type == kWndFlagButtonSelect)
+		{
+			auto x_center = wnd->w_x + 6;
+			auto y_center = wnd->w_y + 7;
+
+			CGDrawInRegion(cg_color(0xD3, 0x74, 0x00), wnd->w_w + 1, wnd->w_h + 1, wnd->w_x, wnd->w_y);
+			CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd->w_w - 1, wnd->w_h - 1, wnd->w_x + 1, wnd->w_y + 1);
+			CGDrawStringToWnd(wnd, wnd->w_window_name, y_center, x_center, cg_color(0x00, 0x00, 0x00));
+		}
+		else if (wnd->w_type == kWndFlagButton)
+		{
+			auto x_center = wnd->w_x + 6;
+			auto y_center = wnd->w_y + 7;
+
+			CGDrawInRegion(cg_color(0xDC, 0xDC, 0xDC), wnd->w_w + 1, wnd->w_h + 1, wnd->w_y, wnd->w_x);
+			CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd->w_w - 1, wnd->w_h - 1, wnd->w_y + 1, wnd->w_x + 1);
+			CGDrawString(wnd->w_window_name, y_center, x_center, cg_color(0x00, 0x00, 0x00));
+		}
+
+		cg_fini();
+
+		// draw child windows and controls.
+		// doesn't have to be a window, enabling then windows in windows.
+
+		for (SizeT child = 0; child < wnd->w_child_count; ++child)
+		{
+			wnd->w_child_elements[child]->w_x += wnd->w_x;
+			wnd->w_child_elements[child]->w_y += wnd->w_y + FLATCONTROLS_HEIGHT;
+
+			if ((wnd->w_child_elements[child]->w_w + wnd->w_child_elements[child]->w_x) > (wnd->w_x + wnd->w_w) ||
+				(wnd->w_child_elements[child]->w_h + wnd->w_child_elements[child]->w_y) > (wnd->w_y + wnd->w_h))
+				continue;
+
+			CGDrawWindow(wnd->w_child_elements[child]);
+		}
+
+
+		cg_fini();
+
+		return 0;
 	}
 } // namespace CG
