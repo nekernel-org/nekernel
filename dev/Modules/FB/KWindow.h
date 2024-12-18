@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "NewKit/Macros.h"
 #include <Modules/FB/Accessibility.h>
 #include <KernelKit/Heap.h>
 #include <KernelKit/UserProcessScheduler.h>
@@ -58,7 +57,7 @@ namespace CG
 	{
 		cg_init();
 
-		CGDrawInRegion(cg_color(0x45, 0x00, 0x06), CG::UIAccessibilty::Height(), CG::UIAccessibilty::Width(),
+		CGDrawInRegion(cg_get_clear_clr(), CG::UIAccessibilty::Height(), CG::UIAccessibilty::Width(),
 					   0, 0);
 
 		cg_fini();
@@ -116,7 +115,7 @@ namespace CG
 
 	inline Kernel::Void CGDrawStringToWnd(ML_WINDOW_STRUCT* wnd, const Kernel::Char* text, Kernel::Int32 y_dst, Kernel::Int32 x_dst, Kernel::Int32 color)
 	{
-		y_dst += wnd->w_y + FLATCONTROLS_HEIGHT;
+		y_dst += wnd->w_y + FLAT_CONTROLS_HEIGHT;
 		x_dst += wnd->w_x;
 
 		if (y_dst > (wnd->w_h + wnd->w_y))
@@ -184,15 +183,15 @@ namespace CG
 				CGDrawInRegion(cg_color(0xDF, 0xDF, 0xDF), wnd->w_w, wnd->w_h, wnd->w_y, wnd->w_x);
 			}
 
-			CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd->w_w, FLATCONTROLS_HEIGHT, wnd->w_y, wnd->w_x);
+			CGDrawInRegion(cg_color(0xFF, 0xFF, 0xFF), wnd->w_w, FLAT_CONTROLS_HEIGHT, wnd->w_y, wnd->w_x);
 
 			if (wnd->w_sub_type != kWndFlagHideCloseControl)
 			{	
-				CGDrawBitMapInRegion(FlatControls, FLATCONTROLS_HEIGHT, FLATCONTROLS_WIDTH, wnd->w_y, wnd->w_x + wnd->w_w - FLATCONTROLS_WIDTH);
+				CGDrawBitMapInRegion(zka_flat_controls, FLAT_CONTROLS_HEIGHT, FLAT_CONTROLS_WIDTH, wnd->w_y, wnd->w_x + wnd->w_w - FLAT_CONTROLS_WIDTH);
 			}
 			else if (wnd->w_sub_type == kWndFlagCloseControlSelect)
 			{
-				CGDrawBitMapInRegion(FlatControlsClose, FLATCONTROLS_CLOSE_HEIGHT, FLATCONTROLS_CLOSE_WIDTH, wnd->w_y, wnd->w_x + wnd->w_w - FLATCONTROLS_WIDTH);
+				CGDrawBitMapInRegion(zka_flat_controls_active, FLAT_CONTROLS_CLOSEHEIGHT, FLAT_CONTROLS_CLOSEWIDTH, wnd->w_y, wnd->w_x + wnd->w_w - FLAT_CONTROLS_WIDTH);
 			}
 
 			CGDrawString(wnd->w_window_name, wnd->w_x + 8, wnd->w_y + 8, cg_color(0x00, 0x00, 0x00));
@@ -226,7 +225,7 @@ namespace CG
 		for (SizeT child = 0; child < wnd->w_child_count; ++child)
 		{
 			wnd->w_child_elements[child]->w_x += wnd->w_x;
-			wnd->w_child_elements[child]->w_y += wnd->w_y + FLATCONTROLS_HEIGHT;
+			wnd->w_child_elements[child]->w_y += wnd->w_y + FLAT_CONTROLS_HEIGHT;
 
 			if ((wnd->w_child_elements[child]->w_w + wnd->w_child_elements[child]->w_x) > (wnd->w_x + wnd->w_w) ||
 				(wnd->w_child_elements[child]->w_h + wnd->w_child_elements[child]->w_y) > (wnd->w_y + wnd->w_h))

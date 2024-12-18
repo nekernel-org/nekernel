@@ -1,4 +1,4 @@
-# ZBA (Zeta Bootloader Architecture)
+# BootZ (Zeta Bootloader Architecture)
 
 You need:
 

@@ -62,7 +62,7 @@ all: compile-amd64
 	mkdir -p src/Root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) /out:src/$(BOOT_LOADER)
 	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/BOOTAA64.EFI
-	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/ZBA.EFI
+	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/BootZ.EFI
 	$(COPY) ../ZKAKit/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) src/$(BOOT_LOADER) src/Root/$(BOOT_LOADER)
 

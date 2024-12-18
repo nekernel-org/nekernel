@@ -7,7 +7,7 @@
 /**
  * @file BootAHCI.cc
  * @author Theater Quality Inc (amlalelmahrouss@icloud.com)
- * @brief AHCI support for ZBA.
+ * @brief AHCI support for BootZ.
  * @version 0.1
  * @date 2024-02-02
  *

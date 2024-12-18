@@ -14,6 +14,11 @@
 #include <BootKit/HW/ATA.h>
 #include <FirmwareKit/EPM.h>
 #include <CompilerKit/Version.h>
+#include <Modules/FB/FB.h>
+#include <Modules/FB/KWindow.h>
+#include <BootKit/Rsrc/zka_disk.rsrc>
+#include <BootKit/Rsrc/zka_no_disk.rsrc>
+#include <BootKit/Rsrc/zka_has_disk.rsrc>
 
 /// include NeFS header and Support header as well.
 
@@ -250,7 +255,7 @@ namespace Boot
 				return false;
 			}
 
-			writer.Write(L"ZBA: Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
+			writer.Write(L"BootZ: Partition: ").Write(blockPart->PartitionName).Write(L" is healthy.\r");
 
 			return true;
 		}
@@ -287,7 +292,7 @@ namespace Boot
 
 			fDiskDev.Write((Char*)&catalogKind, sizeof(NFS_CATALOG_STRUCT));
 
-			writer.Write(L"ZBA: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
+			writer.Write(L"BootZ: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
 
 			return true;
 		}
@@ -321,6 +326,9 @@ namespace Boot
 
 		if (fDiskDev.GetDiskSize() < kMinimumDiskSize)
 		{
+			cg_init();
+
+			CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
 			EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a New Filesystem partition here.");
 			return false;
 		}
@@ -371,7 +379,7 @@ namespace Boot
 		if (this->WriteRootCatalog(fileBlobs, blobCount, partBlock))
 		{
 			BTextWriter writer;
-			writer.Write(L"ZBA: Drive formatted.\r");
+			writer.Write(L"BootZ: Drive formatted.\r");
 
 			return true;
 		}

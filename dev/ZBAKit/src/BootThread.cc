@@ -51,40 +51,40 @@ namespace Boot
 			if (header_ptr->mMachine != kPeMachineAMD64 ||
 				header_ptr->mSignature != kPeSignature)
 			{
-				writer.Write("ZBA: Not a PE32+ executable.\r");
+				writer.Write("BootZ: Not a PE32+ executable.\r");
 				return;
 			}
 #elif defined(__ZKA_ARM64__)
 			if (header_ptr->mMachine != kPeMachineAMD64 ||
 				header_ptr->mSignature != kPeSignature)
 			{
-				writer.Write("ZBA: Not a PE32+ executable.\r");
+				writer.Write("BootZ: Not a PE32+ executable.\r");
 				return;
 			}
 #endif // __ZKA_AMD64__ || __ZKA_ARM64__
 
 			if (opt_header_ptr->mSubsystem != kZKASubsystem)
 			{
-				writer.Write("ZBA: Not a ZKA Subsystem executable.\r");
+				writer.Write("BootZ: Not a ZKA Subsystem executable.\r");
 				return;
 			}
 
-			writer.Write("ZBA: PE32+ executable detected (ZKA Subsystem).\r");
+			writer.Write("BootZ: PE32+ executable detected (ZKA Subsystem).\r");
 
 			auto numSecs = header_ptr->mNumberOfSections;
 
-			writer.Write("ZBA: Major Linker Ver: ").Write(opt_header_ptr->mMajorLinkerVersion).Write("\r");
-			writer.Write("ZBA: Minor Linker Ver: ").Write(opt_header_ptr->mMinorLinkerVersion).Write("\r");
-			writer.Write("ZBA: Major Subsystem Ver: ").Write(opt_header_ptr->mMajorSubsystemVersion).Write("\r");
-			writer.Write("ZBA: Minor Subsystem Ver: ").Write(opt_header_ptr->mMinorSubsystemVersion).Write("\r");
-			writer.Write("ZBA: Magic: ").Write(header_ptr->mSignature).Write("\r");
+			writer.Write("BootZ: Major Linker Ver: ").Write(opt_header_ptr->mMajorLinkerVersion).Write("\r");
+			writer.Write("BootZ: Minor Linker Ver: ").Write(opt_header_ptr->mMinorLinkerVersion).Write("\r");
+			writer.Write("BootZ: Major Subsystem Ver: ").Write(opt_header_ptr->mMajorSubsystemVersion).Write("\r");
+			writer.Write("BootZ: Minor Subsystem Ver: ").Write(opt_header_ptr->mMinorSubsystemVersion).Write("\r");
+			writer.Write("BootZ: Magic: ").Write(header_ptr->mSignature).Write("\r");
 
 			constexpr auto cPageSize = 512;
 
 			EfiPhysicalAddress loadStartAddress = opt_header_ptr->mImageBase;
 			loadStartAddress += opt_header_ptr->mBaseOfData;
 
-			writer.Write("ZBA: ImageBase: ").Write(loadStartAddress).Write("\r");
+			writer.Write("BootZ: ImageBase: ").Write(loadStartAddress).Write("\r");
 
 			auto numPages = opt_header_ptr->mSizeOfImage / cPageSize;
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
@@ -104,7 +104,7 @@ namespace Boot
 				if (StrCmp(sectionForCode, sect->mName) == 0)
 				{
 					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + opt_header_ptr->mAddressOfEntryPoint);
-					writer.Write("ZBA: Executable entry address: ").Write((UIntPtr)fStartAddress).Write("\r");
+					writer.Write("BootZ: Executable entry address: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
 				else if (StrCmp(sectionForNewLdr, sect->mName) == 0)
 				{
@@ -122,7 +122,7 @@ namespace Boot
 #ifdef __ZKA_AMD64__
 						if (handover_struc->HandoverArch != HEL::kArchAMD64)
 						{
-							CGDrawString("ZBA: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+							CGDrawString("BootZ: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 							::EFI::Stop();
 						}
 #endif
@@ -130,17 +130,17 @@ namespace Boot
 #ifdef __ZKA_ARM64__
 						if (handover_struc->HandoverArch != HEL::kArchARM64)
 						{
-							CGDrawString("ZBA: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+							CGDrawString("BootZ: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 							::EFI::Stop();
 						}
 #endif
-						CGDrawString("ZBA: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+						CGDrawString("BootZ: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
 						::EFI::Stop();
 					}
 				}
 
-				writer.Write("ZBA: Raw offset: ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
+				writer.Write("BootZ: Raw offset: ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
 
 				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
 			}
@@ -155,12 +155,12 @@ namespace Boot
 			//  =========================================  //
 
 			fStartAddress = nullptr;
-			writer.Write("ZBA: PEF executable detected, won't load it.\r");
-			writer.Write("ZBA: note: PEF executables aren't loadable by default.\r");
+			writer.Write("BootZ: PEF executable detected, won't load it.\r");
+			writer.Write("BootZ: note: PEF executables aren't loadable by default.\r");
 		}
 		else
 		{
-			writer.Write("ZBA: INVALID EXECUTABLE.\r");
+			writer.Write("BootZ: INVALID EXECUTABLE.\r");
 		}
 
 		fStack = new UInt8[mib_cast(8)];
@@ -170,7 +170,7 @@ namespace Boot
 	Void BThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
 	{
 		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> void {
-			CGDrawString("ZBA: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
+			CGDrawString("BootZ: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			::EFI::Stop();
 		};
 

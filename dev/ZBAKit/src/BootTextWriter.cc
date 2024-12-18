@@ -3,7 +3,7 @@
 	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 	File: BootTextWriter.cc
-	Purpose: ZBA string library
+	Purpose: BootZ string library
 
 	Revision History:
 

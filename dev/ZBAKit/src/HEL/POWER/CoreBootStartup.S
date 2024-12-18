@@ -7,7 +7,7 @@
 .section .boot_hdr
 .align 4
 
-/* ZBA boot header begin */
+/* BootZ boot header begin */
 
 boot_hdr_mag:
 	.ascii "CB"
@@ -19,7 +19,7 @@ boot_hdr_ver:
 boot_hdr_proc:
 	.long bootloader_start
 
-/* ZBA boot header end */
+/* BootZ boot header end */
 
 .extern bootloader_main
 .extern bootloader_stack

@@ -121,7 +121,7 @@ EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** en
 {
 	Kernel::IFilesystemMgr::Mount(new Kernel::NeFileSystemMgr());
 
-	kKernelWnd = CG::CGCreateWindow(CG::kWndFlagWindow, "ZkaOS | " KERNEL_VERSION, "WindowBoot", 10, 10, 1280, 720);
+	kKernelWnd = CG::CGCreateWindow(CG::kWndFlagWindow, "ZkaOS | " KERNEL_VERSION, "ZkaWindow", 10, 10, 305, 114);
 
 	if (kKernelWnd)
 	{
@@ -132,6 +132,8 @@ EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** en
 		kKernelWnd->w_display_ptr = nullptr;
 
 		CG::CGDrawWindow(kKernelWnd);
+
+		CG::CGDrawStringToWnd(kKernelWnd, "Welcome to ZKA.", 10, 10, RGB(0, 0, 0));
 
 		Kernel::Detail::FilesystemInstaller installer;
 	}

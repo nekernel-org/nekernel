@@ -14,7 +14,7 @@
 #include <Modules/FB/FB.h>
 #include <Modules/FB/Text.h>
 
-#define kWebsiteURL "https://www.el-mahrouss-logic.com/metal-os/help/"
+#define kWebsiteURL "https://el-mahrouss-logic.com/products/help/"
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
@@ -37,7 +37,8 @@ namespace Kernel
 		if (id != RUNTIME_CHECK_BOOTSTRAP)
 			CGDrawString("Kernel Panic!", start_y, x, panic_text);
 		else
-			CGDrawString("Kernel Splash:", start_y, x, panic_text);
+			CGDrawString("Kernel Bootstrap:", start_y, x, panic_text);
+
 		start_y += 10;
 
 		cg_fini();
@@ -71,7 +72,7 @@ namespace Kernel
 			break;
 		}
 		case RUNTIME_CHECK_BOOTSTRAP: {
-			CGDrawString("0x0000000A: Boot Code has finished running, running Kernel process...", start_y, x, panic_text);
+			CGDrawString("0x0000000A: Kernel has finished running, running OSLdr...", start_y, x, panic_text);
 			return;
 		}
 		case RUNTIME_CHECK_HANDSHAKE: {
@@ -95,11 +96,11 @@ namespace Kernel
 			break;
 		}
 		case RUNTIME_CHECK_FAILED: {
-			CGDrawString("0x10000001 Kernel Bug check appears to have failed, a dump has been written to the storage.", start_y, x, panic_text);
+			CGDrawString("0x10000001: Kernel Bug check appears to have failed, a dump has been written to the storage.", start_y, x, panic_text);
 			break;
 		}
 		default: {
-			CGDrawString("0xFFFFFFFC Unknown Kernel Error.", start_y, x, panic_text);
+			CGDrawString("0xFFFFFFFC: Unknown Kernel Error code.", start_y, x, panic_text);
 			break;
 		}
 		}

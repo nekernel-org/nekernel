@@ -20,7 +20,7 @@
 
 // Makes the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "ZKA"
+#define kMachineModel "ZkaOS"
 #endif // !kMachineModel
 
 #ifndef kExpectedWidth
@@ -141,13 +141,13 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	kHandoverHeader = handover_hdr;
 
-#ifdef ZBA_USE_FB
 	cg_init();
-	CGDrawInRegion(cg_color(0x00, 0x00, 0x00), handover_hdr->f_GOP.f_Height, handover_hdr->f_GOP.f_Width, 0, 0);
-	cg_fini();
+
+	CG::CGDrawBackground();
+
+	CGDrawBitMapInRegion(zka_disk, ZKA_DISK_HEIGHT, ZKA_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_DISK_HEIGHT) / 2);
 
 	cg_fini();
-#endif // ZBA_USE_FB
 
 	UInt32 cnt_enabled	= 0;
 	UInt32 cnt_disabled = 0;
@@ -155,7 +155,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
 
 #ifdef ZBA_USE_FB
-	CGDrawString("ZBA (c) Theater Quality Inc.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
+	CGDrawString("BootZ (c) 2024 Theater Quality Inc.", 10, 10, RGB(0xFF, 0xFF, 0xFF));
 	CGDrawString((cnt_enabled > 1) ? "Multi processor configuration detected." : "Single processor configuration detected.", 20, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 
@@ -173,15 +173,28 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 #ifdef ZKA_AUTO_FORMAT
 	if (!partition_factory.IsPartitionValid())
 	{
+		CG::CGDrawBackground();
+
+		CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
+
+		cg_fini();
+
 		CGDrawString("Formatting EPM disk...", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
+
 		root.fFileName[0] = kNeFSRoot[0];
 		root.fFileName[1] = 0;
 
 		root.fKind = kNeFSCatalogKindDir;
 
 		partition_factory.Format("FileSystem (A:)\0", &root, 1);
+		
+		CG::CGDrawBackground();
+
+		CGDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_HEIGHT, ZKA_HAS_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
+
+		cg_fini();
 	}
 #endif // ZKA_AUTO_FORMAT
 
@@ -237,7 +250,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	if (reader_syschk.Blob())
 	{
 		syschk_thread = new Boot::BThread(reader_syschk.Blob());
-		syschk_thread->SetName("System Check (ZBA EFI Driver)");
+		syschk_thread->SetName("System Check (BootZ EFI Driver)");
 	}
 
 	syschk_thread->Start(handover_hdr, NO);
@@ -281,7 +294,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	else
 	{
 #ifdef ZBA_USE_FB
-		CGDrawString("ZBA: Please recover your kernel image.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("BootZ: Please recover your kernel image.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 
 		EFI::Stop();
@@ -306,7 +319,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	else
 	{
 #ifdef ZBA_USE_FB
-		CGDrawString("ZBA: OS resources are not present, please reinstall the OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
+		CGDrawString("BootZ: OS resources are not present, please reinstall the OS.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 #endif // ZBA_USE_FB
 
 		EFI::Stop();
