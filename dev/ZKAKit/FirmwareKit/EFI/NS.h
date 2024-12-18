@@ -8,8 +8,8 @@
 
 #include <NewKit/Defines.h>
 
-namespace Firmware::Details::EFI
+namespace Firmware::Detail::EFI
 {
 	using namespace Kernel;
 #include <FirmwareKit/EFI/EFI.h>
-} // namespace Firmware::Details::EFI
+} // namespace Firmware::Detail::EFI

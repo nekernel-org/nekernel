@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.h>
 
-namespace Firmware::Details::CoreBoot
+namespace Firmware::Detail::CoreBoot
 {
 	using namespace Kernel;
 
@@ -28,4 +28,4 @@ namespace Firmware::Details::CoreBoot
 		const UIntPtr fMasterStructureVersion; // master structure version.
 #endif
 	};
-} // namespace Firmware::Details::CoreBoot
+} // namespace Firmware::Detail::CoreBoot
