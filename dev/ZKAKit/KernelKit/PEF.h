@@ -11,8 +11,8 @@
 
 ------------------------------------------- */
 
-#ifndef __KERNELKIT_INC_PEF_H__
-#define __KERNELKIT_INC_PEF_H__
+#ifndef KERNELKIT_PEF_H
+#define KERNELKIT_PEF_H
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/LoaderInterface.h>
@@ -25,6 +25,24 @@
 
 #define kPefVersion 3
 #define kPefNameLen 255
+
+/* not mandatory, only for non fork based filesystems. */
+#define kPefExt		  ".o"
+#define kPefDylibExt  ".dylib"
+#define kPefLibExt	  ".lib"
+#define kPefObjectExt ".obj"
+#define kPefDebugExt  ".dbg"
+#define kPefDriverExt ".sys"
+
+// Kernel System Binary Interface.
+#define kPefAbi (0x5046)
+
+#define kPefBaseOrigin (0x40000000)
+
+#define kPefStart "__ImageStart"
+
+#define kPefForkKind	kPefMagic
+#define kPefForkKindFAT kPefMagicFat
 
 namespace Kernel
 {
@@ -96,22 +114,4 @@ namespace Kernel
 	};
 } // namespace Kernel
 
-/* not mandatory, only for non fork based filesystems */
-#define kPefExt		  ".o"
-#define kPefDylibExt  ".dylib"
-#define kPefLibExt	  ".lib"
-#define kPefObjectExt ".obj"
-#define kPefDebugExt  ".dbg"
-#define kPefDriverExt ".sys"
-
-// Kernel System Binary Interface.
-#define kPefAbi (0x5046)
-
-#define kPefBaseOrigin (0x40000000)
-
-#define kPefStart "__ImageStart"
-
-#define kPefForkKind	kPefMagic
-#define kPefForkKindFAT kPefMagicFat
-
-#endif /* ifndef __KERNELKIT_INC_PEF_H__ */
+#endif /* ifndef KERNELKIT_PEF_H */
