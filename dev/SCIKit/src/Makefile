@@ -1,11 +1,16 @@
 ##################################################
-# (c) Theater Quality Inc, all rights reserved.
+# (c) TQ B.V, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 
 ASM=nasm
 FLAGS=-f win64
 
-.PHONY: syscall_unit
-syscall_unit:
-	$(ASM) $(FLAGS) SysCallDispatcher.asm -o SysCallDispatcher.o
+.PHONY: error
+error:
+	@echo "==> Invalid rule."
+	@echo "==> Use sci_asm_io instead."
+
+.PHONY: sci_asm_io
+sci_asm_io:
+	$(ASM) $(FLAGS) SCI+IO.asm -o SCI+IO.o

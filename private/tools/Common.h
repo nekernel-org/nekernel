@@ -1,6 +1,6 @@
 /**
 	Sat Oct 26 07:03:28 AM CEST 2024
-	(c) Theater Quality Inc.
+	(c) TQ B.V.
 */
 
 #ifndef APPS_COMMON_H

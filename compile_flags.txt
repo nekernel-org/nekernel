@@ -1,8 +1,8 @@
--Idev/ZKAKit
+-Idev/Kernel
 -Idev/
--Idev/ZBAKit/
+-Idev/BootLoader/
 -Iprivate/tools
--Idev/ZBAKit/BootKit
+-Idev/BootLoader/BootKit
 -std=c++20
 -D__ZKA_AMD64__
 -D__MINOSKRNL__

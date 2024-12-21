@@ -1,14 +1,8 @@
-<!-- README of ZKA -->
+<!-- README of ZkaOS -->
 
-![ZKA](resources/zka.svg)
+# Zeta Kernel Architecture OS.
 
-# Zeta Kernel Architecture.
-
-ZKA is a general purpose OS kernel.
-</br>
-It is designed for real time environements (such as servers)
-</br>
-A Win32 compatibility layer is available as well as ML Kits support.
+ZkaOS is designed for real time environements (such as servers or workstations.)
 
 ## Installation:
 
@@ -33,8 +27,4 @@ And then select the makefile (arm64 and amd64 are stable and EFI based) to execu
 make -f amd64-efi.make all
 ```
 
-## Boot Process of ZKA
-
-![ZKA](resources/zka-window-server.png)
-
-###### Copyright (C) 2024, Theater Quality Inc, all rights reserved. All rights reserved.
+###### Copyright (C) 2024, TQ B.V, all rights reserved. All rights reserved.

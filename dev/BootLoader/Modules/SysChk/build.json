@@ -1,0 +1,24 @@
+{
+  "compiler_path": "x86_64-w64-mingw32-g++",
+  "compiler_std": "c++20",
+  "headers_path": ["../", "../../", "../../../Kernel", "../../../", "./"],
+  "sources_path": ["*.cc", "*.S"],
+  "output_name": "syschk.sys",
+  "compiler_flags": [
+    "-ffreestanding",
+    "-nostdlib",
+    "-std=c++20",
+    "-fPIC",
+    "-fno-rtti",
+    "-fno-exceptions",
+    "-Wl,--subsystem=17,--image-base,0x10000000,-e,ModuleMain"
+  ],
+  "cpp_macros": [
+    "__MINOSKRNL__",
+    "__ZBAOSLDR__",
+    "__ZKA_AMD64__",
+    "kChkVersionHighest=0x0100",
+    "kChkVersionLowest=0x0100",
+    "kChkVersion=0x0100"
+  ]
+}

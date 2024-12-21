@@ -1,7 +1,0 @@
-// (c) Theater Quality Inc
-
-#pragma once
-
-/// <COMMIT NUMBER>.<YEAR>.<PROGRAM VERSION>
-#define BOOTLOADER_VERSION "1104.2024.110"
-#define KERNEL_VERSION	   "1104.2024.110"

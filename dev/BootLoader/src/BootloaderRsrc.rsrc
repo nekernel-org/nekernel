@@ -1,0 +1,25 @@
+#include "../../Kernel/CompilerKit/Version.h"
+
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "TQ B.V"
+      VALUE "FileDescription", "ZKA OS Loader."
+      VALUE "FileVersion", BOOTLOADER_VERSION
+      VALUE "InternalName", "zbaosldr"
+      VALUE "LegalCopyright", "Copyright (C) 2024, TQ B.V all rights reserved."
+      VALUE "OriginalFilename", "zbaosldr.exe"
+      VALUE "ProductName", "zbaosldr"
+      VALUE "ProductVersion", BOOTLOADER_VERSION
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END
