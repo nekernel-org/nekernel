@@ -284,7 +284,8 @@ namespace Kernel
 
 	ProcessID UserProcessScheduler::Spawn(UserProcess* process)
 	{
-		if (!process)
+		if (!process ||
+			!process->Image)
 		{
 			return kProcessInvalidID;
 		}
@@ -522,7 +523,7 @@ namespace Kernel
 
 	Bool UserProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
 	{
-		if (!stack || !frame_ptr || !image_ptr || new_pid < 0)
+		if (!stack || !frame_ptr || !image_ptr)
 			return No;
 
 		if (!mm_is_valid_heap(image_ptr))

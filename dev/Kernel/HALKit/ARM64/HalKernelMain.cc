@@ -49,7 +49,7 @@ EXTERN_C void hal_init_platform(
 
 	CG::CGDrawBackground();
 
-	rtl_kernel_main(0, nullptr, nullptr, 0);
+	Kernel::rtl_create_process(rtl_kernel_main, "ZkaOS System Kernel");
 
 	while (YES)
 	{

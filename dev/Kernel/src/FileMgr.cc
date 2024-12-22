@@ -7,7 +7,7 @@
 #include <KernelKit/FileMgr.h>
 #include <NewKit/Utils.h>
 
-/// BUGS: 0
+/// @file FileMgr.cc
 //! @brief File System Manager API.
 
 namespace Kernel

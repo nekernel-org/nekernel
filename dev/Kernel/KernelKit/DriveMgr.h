@@ -134,7 +134,7 @@ namespace Kernel
 				return &mD;
 			default: {
 				err_local_get() = kErrorNoSuchDisk;
-				kcout << "No such disk index.\n";
+				kcout << "No such disc letter.\n";
 
 				break;
 			}
@@ -150,7 +150,7 @@ namespace Kernel
 	/// @brief Unimplemented drive.
 	/// @param pckt the packet to read.
 	/// @return
-	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt);
+	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt) noexcept;
 
 	/// @brief Gets the drive kind (ATA, SCSI, AHCI...)
 	/// @param void none.

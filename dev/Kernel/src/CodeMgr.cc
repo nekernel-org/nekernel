@@ -16,7 +16,8 @@ namespace Kernel
 	/// @return if the process was started or not.
 	ProcessID rtl_create_process(rtl_main_kind main, const Char* process_name) noexcept
 	{
-		if (*process_name == 0)
+		if (!process_name ||
+			*process_name == 0)
 			return kProcessInvalidID;
 
 		UserProcess* process_hdr = new UserProcess();

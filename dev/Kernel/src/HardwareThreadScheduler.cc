@@ -114,7 +114,7 @@ namespace Kernel
 	/// @retval true stack was changed, code is running.
 	/// @retval false stack is invalid, previous code is running.
 	/***********************************************************************************/
-	Bool HardwareThread::Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ProcessID& pid)
+	Bool HardwareThread::Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid)
 	{
 		if (!frame ||
 			!image ||

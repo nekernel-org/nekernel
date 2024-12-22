@@ -61,7 +61,7 @@ namespace Kernel
 		void Busy(const bool busy = false) noexcept;
 
 	public:
-		bool Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ProcessID& pid);
+		bool Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid);
 		bool IsWakeup() noexcept;
 
 	public:
@@ -74,9 +74,9 @@ namespace Kernel
 		HAL::StackFramePtr fStack{nullptr};
 		ThreadKind		   fKind{ThreadKind::kAPStandard};
 		ThreadID		   fID{0};
-		ProcessID		   fSourcePID{-1};
-		Bool			   fWakeup{false};
-		Bool			   fBusy{false};
+		ThreadID		   fSourcePID{0};
+		Bool			   fWakeup{NO};
+		Bool			   fBusy{NO};
 		UInt64			   fPTime{0};
 
 	private:

@@ -86,7 +86,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	CG::CGDrawBackground();
 
-	rtl_kernel_main(0, nullptr, nullptr, 0);
+	Kernel::rtl_create_process(rtl_kernel_main, "ZkaOS System Kernel");
 
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);

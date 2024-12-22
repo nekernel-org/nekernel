@@ -129,7 +129,7 @@ namespace Kernel
 	/// @brief Unimplemented drive function.
 	/// @param pckt the packet to read.
 	/// @return
-	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt)
+	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt) noexcept
 	{
 		ZKA_UNUSED(pckt);
 	}

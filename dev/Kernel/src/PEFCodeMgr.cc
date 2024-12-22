@@ -14,9 +14,9 @@
 #include <NewKit/KString.h>
 
 /// @brief PEF stack size symbol.
-#define kPefStackSizeSymbol "SizeOfReserveStack"
-#define kPefHeapSizeSymbol	"SizeOfReserveHeap"
-#define kPefNameSymbol		"ProgramName"
+#define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
+#define kPefHeapSizeSymbol	"__PEFSizeOfReserveHeap"
+#define kPefNameSymbol		"__PEFProgramName"
 
 namespace Kernel
 {
