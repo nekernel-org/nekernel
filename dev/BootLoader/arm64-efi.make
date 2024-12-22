@@ -1,5 +1,5 @@
 ##################################################
-# (c) TQ B.V, all rights reserved.
+# (c) Theater Quality Inc, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 
@@ -37,7 +37,7 @@ EMU_FLAGS=-net none -smp 4 -m 8G -cpu max -M virt-9.1 \
 
 LD_FLAGS=-subsystem:efi_application -entry:Main /nodefaultlib
 
-STANDALONE_MACRO=-D__STANDALONE__
+STANDALONE_MACRO=-D__BOOTLDR_STANDALONE__
 OBJ=*.o
 
 REM=rm
@@ -46,7 +46,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__ZKA_ARM64__ -fno-rtti -fno-exceptions -I./ \
 			 -target aarch64-unknown-windows \
-				-std=c++20 -D__FSKIT_USE_NEFS__ -D__STANDALONE__ -D__MINOSKRNL__ -D__ZBAOSLDR__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../ -I../Kernel
+				-std=c++20 -D__FSKIT_USE_NEFS__ -D__BOOTLDR_STANDALONE__ -D__MINOSKRNL__ -D__ZBAOSLDR__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../ -I../Kernel
 
 BOOT_LOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe

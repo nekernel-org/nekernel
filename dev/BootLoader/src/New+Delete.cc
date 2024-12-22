@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, TQ B.V, all rights reserved.
+	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 ------------------------------------------- */
 
@@ -8,7 +8,7 @@
 #include <BootKit/Protocol.h>
 #include <BootKit/BootKit.h>
 
-#ifdef __STANDALONE__
+#ifdef __BOOTLDR_STANDALONE__
 EXTERN EfiBootServices* BS;
 
 /// @brief Allocates a new object.
@@ -57,4 +57,4 @@ void operator delete(void* buf, size_t size)
 	BS->FreePool(buf);
 }
 
-#endif // __STANDALONE__
+#endif // __BOOTLDR_STANDALONE__

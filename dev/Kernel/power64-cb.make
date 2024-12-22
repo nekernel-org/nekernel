@@ -1,4 +1,4 @@
 ##################################################
-# (c) TQ B.V, all rights reserved.
+# (c) Theater Quality Inc, all rights reserved.
 # This is the microKernel makefile.
 ##################################################

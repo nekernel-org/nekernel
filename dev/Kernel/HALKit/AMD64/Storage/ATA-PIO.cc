@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, TQ B.V, all rights reserved.
+	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file ATA-PIO.cc
- * @author TQ B.V (amlalelmahrouss@icloud.com)
+ * @author Amlal EL Mahrouss (amlalelmahrouss@icloud.com)
  * @brief ATA driver (PIO mode).
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) TQ B.V
+ * @copyright Copyright (c) Theater Quality Inc
  *
  */
 

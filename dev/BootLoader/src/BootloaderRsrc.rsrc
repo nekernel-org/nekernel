@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "TQ B.V"
+      VALUE "CompanyName", "Theater Quality Inc"
       VALUE "FileDescription", "ZKA OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "zbaosldr"
-      VALUE "LegalCopyright", "Copyright (C) 2024, TQ B.V all rights reserved."
+      VALUE "LegalCopyright", "Copyright (C) 2024, Theater Quality Inc all rights reserved."
       VALUE "OriginalFilename", "zbaosldr.exe"
       VALUE "ProductName", "zbaosldr"
       VALUE "ProductVersion", BOOTLOADER_VERSION

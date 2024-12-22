@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, TQ B.V, all rights reserved.
+	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file Handover.h
- * @author TQ B.V (amlalelmahrouss@icloud.com)
+ * @author Amlal EL Mahrouss (amlalelmahrouss@icloud.com)
  * @brief The handover boot protocol.
  * @version 1.15
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, TQ B.V
+ * @copyright Copyright (c) 2024, Theater Quality Inc
  *
  */
 

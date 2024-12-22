@@ -1,5 +1,5 @@
 ##################################################
-# (c) TQ B.V, all rights reserved.
+# (c) Theater Quality Inc, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 
@@ -36,7 +36,7 @@ EMU_FLAGS=-net none -smp 1 -m 8G -M q35 \
 
 LD_FLAGS=-e Main --subsystem=10
 
-STANDALONE_MACRO=-D__STANDALONE__
+STANDALONE_MACRO=-D__BOOTLDR_STANDALONE__
 OBJ=*.o
 
 REM=rm

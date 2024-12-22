@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, TQ B.V, all rights reserved.
+	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 ------------------------------------------- */
 
@@ -12,7 +12,7 @@
 #include <KernelKit/MSDOS.h>
 #include <KernelKit/PE.h>
 
-#ifdef __STANDALONE__
+#ifdef __BOOTLDR_STANDALONE__
 
 /// @brief memset definition in C++.
 /// @param dst destination pointer.

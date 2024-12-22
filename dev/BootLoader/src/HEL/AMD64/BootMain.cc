@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, TQ B.V, all rights reserved.
+	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 ------------------------------------------- */
 
@@ -24,11 +24,11 @@
 #endif // !kMachineModel
 
 #ifndef kExpectedWidth
-#define kExpectedWidth 1920
+#define kExpectedWidth (1920)
 #endif
 
 #ifndef kExpectedHeight
-#define kExpectedHeight 1080
+#define kExpectedHeight (1080)
 #endif
 
 /** Graphics related. */
@@ -132,7 +132,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	// Grab MP services, extended to runtime.	   //
 	// ------------------------------------------- //
 
-	auto				   guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
+	EfiGUID				   guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
 	EfiMpServicesProtocol* mp	   = nullptr;
 
 	BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
@@ -173,8 +173,6 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 		CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
 
 		cg_fini();
-
-		CGDrawString("Formatting EPM disk...", 30, 10, RGB(0xFF, 0xFF, 0xFF));
 
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
 
@@ -250,7 +248,9 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	syschk_thread->Start(handover_hdr, NO);
 
-	// nullify these fields, to avoid being reused later.
+	// ------------------------------------------ //
+	// null these fields, to avoid being reused later.
+	// ------------------------------------------ //
 
 	handover_hdr->f_FirmwareCustomTables[0] = nullptr;
 	handover_hdr->f_FirmwareCustomTables[1] = nullptr;
@@ -288,9 +288,8 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	}
 	else
 	{
-#ifdef ZBA_USE_FB
-		CGDrawString("BootZ: Please recover your kernel image.", 30, 10, RGB(0xFF, 0xFF, 0xFF));
-#endif // ZBA_USE_FB
+		cg_init();
+		CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
 
 		EFI::Stop();
 	}
