@@ -20,6 +20,7 @@ default.
 #include <HintKit/CompilerHint.h>
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Defines.h>
+#include <NewKit/KString.h>
 
 /**
 	@brief New File System specification.
@@ -318,8 +319,11 @@ namespace Kernel
 	/// @brief Journal class for NeFS.
 	class NeFileSystemJournal final
 	{
+	private:
+		NFS_CATALOG_STRUCT* mNode{nullptr};
+
 	public:
-		explicit NeFileSystemJournal(const char* stamp)
+		explicit NeFileSystemJournal(const char* stamp = "/System" kNeFSJournalExt)
 		{
 			if (!stamp)
 			{
@@ -340,37 +344,36 @@ namespace Kernel
 			if (!parser)
 				return NO;
 
-			auto node = parser->CreateCatalog(mStamp);
+			mNode = parser->CreateCatalog(mStamp);
 			
-			if (!node)
+			if (!mNode)
 				return NO;
-
-			delete node;
-			node = nullptr;
 
 			return YES;
 		}
 
-		Bool IsJournalValid(NeFileSystemParser* parser)
+		Bool GetJournal(NeFileSystemParser* parser)
 		{
 			if (!parser)
 				return NO;
 
-			if (auto node = parser->GetCatalog(mStamp);
-				node)
+			if (mNode = parser->GetCatalog(mStamp);
+				mNode)
 			{
-				delete node;
-				node = nullptr;
-				
 				return YES;
 			}
 
 			return NO;
 		}
 
-		Void Commit() {}
-		
-		Void Start() {}
+		Bool Commit(NeFileSystemParser* parser,
+					KString xml_data, KString journal_name) 
+		{
+			if (!parser)
+				return NO;
+
+			return parser->WriteCatalog(mNode, YES, xml_data.Data(), xml_data.Length(), journal_name.CData());
+		}
 
 	private:
 		Char mStamp[255] = { "/System/FileSystemStamp.jrnl" };

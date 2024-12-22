@@ -99,5 +99,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	while (YES)
 	{
+		continue;
 	}
 }

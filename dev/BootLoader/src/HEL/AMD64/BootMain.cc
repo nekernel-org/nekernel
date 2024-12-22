@@ -174,7 +174,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		cg_fini();
 
-		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root;
+		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
 
 		root.fFileName[0] = kNeFSRoot[0];
 		root.fFileName[1] = 0;

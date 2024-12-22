@@ -315,9 +315,6 @@ namespace Boot
 		if (!fileBlobs || !blobCount)
 			return false; /// sanity check
 
-		/// convert the sector into something that the disk understands.
-		SizeT sectorSz = sizeof(NFS_ROOT_PARTITION_BLOCK);
-
 		/// @note A catalog roughly equal to a sector.
 
 		constexpr auto kMinimumDiskSize = kNeFSMinimumDiskSize; // at minimum.
@@ -341,7 +338,7 @@ namespace Boot
 		partBlock.Version	   = kNeFSVersionInteger;
 		partBlock.CatalogCount = blobCount;
 		partBlock.Kind		   = kNeFSHardDrive;
-		partBlock.SectorSize   = sectorSz;
+		partBlock.SectorSize   = sizeof(NFS_ROOT_PARTITION_BLOCK);
 		partBlock.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
 		partBlock.SectorCount  = fDiskDev.GetSectorsCount();
 		partBlock.FreeSectors  = fDiskDev.GetSectorsCount();
@@ -350,16 +347,16 @@ namespace Boot
 		partBlock.Flags		   = kNeFSPartitionTypeBoot | kNeFSPartitionTypeStandard;
 
 		fDiskDev.Leak().mBase = kNeFSRootCatalogStartAddress;
-		fDiskDev.Leak().mSize = sectorSz;
+		fDiskDev.Leak().mSize = sizeof(NFS_ROOT_PARTITION_BLOCK);
 
-		fDiskDev.Write((Char*)&partBlock, sectorSz);
+		fDiskDev.Write((Char*)&partBlock, sizeof(NFS_ROOT_PARTITION_BLOCK));
 
 		BOOT_BLOCK_STRUCT epm_boot{0};
 
-		constexpr auto cFsName	  = "NeFS";
-		constexpr auto cBlockName = "ZKA:";
+		constexpr auto kFsName	  = "NeFS";
+		constexpr auto kBlockName = "ZKA:";
 
-		CopyMem(epm_boot.Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(cFsName)), StrLen(cFsName));
+		CopyMem(epm_boot.Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), StrLen(kFsName));
 
 		epm_boot.FsVersion = kNeFSVersionInteger;
 		epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
@@ -367,24 +364,27 @@ namespace Boot
 		epm_boot.Kind	  = kEPMZkaOS;
 		epm_boot.NumBlocks = partBlock.CatalogCount;
 
-		CopyMem(epm_boot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(cBlockName)), StrLen(cBlockName));
+		CopyMem(epm_boot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), StrLen(kBlockName));
 		CopyMem(epm_boot.Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
 
-		fDiskDev.Leak().mBase = 1; // always always resies at zero block.
-		fDiskDev.Leak().mSize = BootDev::kSectorSize;
+		fDiskDev.Leak().mBase = kEPMBootBlockLba; // always always resies at zero block.
+		fDiskDev.Leak().mSize = sizeof(BOOT_BLOCK_STRUCT);
 
-		fDiskDev.Write((Char*)&epm_boot, sectorSz);
+		fDiskDev.Write((Char*)&epm_boot, sizeof(BOOT_BLOCK_STRUCT));
 
 		/// if we can write a root catalog, then write the partition block.
 		if (this->WriteRootCatalog(fileBlobs, blobCount, partBlock))
 		{
 			BTextWriter writer;
-			writer.Write(L"BootZ: Drive formatted.\r");
+			writer.Write(L"BootZ: Drive Formatted Successfully.\r");
 
 			return true;
 		}
 		else
 		{
+			cg_init();
+			CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
+
 			EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned, this drive cannot be formatted as an explicit partition map.");
 		}
 

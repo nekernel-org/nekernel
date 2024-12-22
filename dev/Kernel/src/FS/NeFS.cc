@@ -742,14 +742,14 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 
 	NFS_ROOT_PARTITION_BLOCK* part = (NFS_ROOT_PARTITION_BLOCK*)&fs_buf;
 
-	auto	   startCatalogList	 = part->StartCatalog;
-	const auto cCtartCatalogList = startCatalogList;
+	auto	   start_catalog_lba	 = part->StartCatalog;
+	const auto kStartCatalogList = start_catalog_lba;
 
 	auto localSearchFirst = false;
 
 	NFS_CATALOG_STRUCT temporary_catalog{0};
 
-	drive.fPacket.fPacketLba	 = startCatalogList;
+	drive.fPacket.fPacketLba	 = start_catalog_lba;
 	drive.fPacket.fPacketContent = &temporary_catalog;
 	drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
 
@@ -783,7 +783,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 		if (parentCatalog &&
 			!StringBuilder::Equals(parentName, NeFileSystemHelper::Root()))
 		{
-			startCatalogList = parentCatalog->NextSibling;
+			start_catalog_lba = parentCatalog->NextSibling;
 			delete parentCatalog;
 
 			localSearchFirst = true;
@@ -803,7 +803,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 NeFSSearchThroughCatalogList:
 	while (drive.fPacket.fPacketGood)
 	{
-		drive.fPacket.fPacketLba	 = startCatalogList;
+		drive.fPacket.fPacketLba	 = start_catalog_lba;
 		drive.fPacket.fPacketContent = &temporary_catalog;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
 
@@ -822,24 +822,24 @@ NeFSSearchThroughCatalogList:
 			NFS_CATALOG_STRUCT* catalogPtr = new NFS_CATALOG_STRUCT();
 			rt_copy_memory(catalog, catalogPtr, sizeof(NFS_CATALOG_STRUCT));
 
-			kcout << "Found catalog at: " << hex_number(startCatalogList) << endl;
+			kcout << "Found catalog at: " << hex_number(start_catalog_lba) << endl;
 			kcout << "Found catalog at: " << catalog->Name << endl;
 
-			out_lba = startCatalogList;
+			out_lba = start_catalog_lba;
 			return catalogPtr;
 		}
 
 	NeFSContinueSearch:
-		startCatalogList = catalog->NextSibling;
+		start_catalog_lba = catalog->NextSibling;
 
-		if (startCatalogList <= kNeFSRootCatalogStartAddress)
+		if (start_catalog_lba <= kNeFSRootCatalogStartAddress)
 			break;
 	}
 
 	if (localSearchFirst)
 	{
 		localSearchFirst = false;
-		startCatalogList = cCtartCatalogList;
+		start_catalog_lba = kStartCatalogList;
 
 		goto NeFSSearchThroughCatalogList;
 	}

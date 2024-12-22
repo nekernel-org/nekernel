@@ -25,32 +25,37 @@
 #include <Modules/FB/KWindow.h>
 #include <KernelKit/Timer.h>
 
+#define kKeCachedName "/System/CacheKernel"
+
 STATIC CG::ML_WINDOW_STRUCT* kKernelWnd = nullptr;
 
 namespace Kernel::Detail
 {
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
-	class FilesystemInstaller final
+	class NeFilesystemInstaller final
 	{
-		Kernel::NeFileSystemMgr* fNeFS{nullptr};
+		Kernel::NeFileSystemMgr* mNeFS{nullptr};
+		Kernel::NeFileSystemJournal mJournal;
 
 	public:
 		/// @brief wizard constructor.
-		FilesystemInstaller()
+		explicit NeFilesystemInstaller()
 		{
-			fNeFS = (Kernel::NeFileSystemMgr*)Kernel::IFilesystemMgr::GetMounted();
+			mNeFS = new Kernel::NeFileSystemMgr();
 
-			if (fNeFS && fNeFS->GetParser())
+			if (mNeFS)
 			{
+				mJournal.CreateJournal(mNeFS->GetParser());
+
 				constexpr auto kFolderInfo		  = "META-XML";
-				const auto	   kFolderCount		  = 7;
-				const char*	   kFolderStr[kFolderCount] = {
+				const SizeT	   kFolderCount		  = 7;
+				const Char*	   kFolderStr[kFolderCount] = {
 					   "/Boot/", "/System/", "/Support/", "/Applications/",
 					   "/Users/", "/Library/", "/Mount/"};
 
 				for (Kernel::SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
 				{
-					auto catalog_folder = fNeFS->GetParser()->GetCatalog(kFolderStr[dir_index]);
+					auto catalog_folder = mNeFS->GetParser()->GetCatalog(kFolderStr[dir_index]);
 
 					if (catalog_folder)
 					{
@@ -60,7 +65,7 @@ namespace Kernel::Detail
 						continue;
 					}
 
-					catalog_folder = fNeFS->GetParser()->CreateCatalog(kFolderStr[dir_index], 0,
+					catalog_folder = mNeFS->GetParser()->CreateCatalog(kFolderStr[dir_index], 0,
 																   kNeFSCatalogKindDir);
 
 					NFS_FORK_STRUCT fork_folder{0};
@@ -87,11 +92,16 @@ namespace Kernel::Detail
 					folder_metadata += kFolderStr[dir_index];
 					folder_metadata += "</p>\r";
 
+					Kernel::KString folder_name(2048);
+					folder_name += catalog_folder->Name;
+
+					mJournal.Commit(mNeFS->GetParser(), folder_metadata,folder_name);
+
 					const Kernel::SizeT kMetaDataSz = kNeFSSectorSz;
 
-					fNeFS->GetParser()->CreateFork(catalog_folder, fork_folder);
+					mNeFS->GetParser()->CreateFork(catalog_folder, fork_folder);
 
-					fNeFS->GetParser()->WriteCatalog(
+					mNeFS->GetParser()->WriteCatalog(
 						catalog_folder, true, (Kernel::VoidPtr)(folder_metadata.CData()),
 						kMetaDataSz, kFolderInfo);
 
@@ -99,17 +109,26 @@ namespace Kernel::Detail
 					catalog_folder = nullptr;
 				}
 			}
+			
+			while (1);
 		}
 
-		~FilesystemInstaller() = default;
+		~NeFilesystemInstaller()
+		{
+			if (mNeFS)
+				delete mNeFS;
+			
+			mNeFS = nullptr;
+		}
 
-		ZKA_COPY_DEFAULT(FilesystemInstaller);
+		ZKA_COPY_DEFAULT(NeFilesystemInstaller);
 
 		/// @brief Grab the disk's NewFS reference.
 		/// @return NeFileSystemMgr the filesystem interface
-		Kernel::NeFileSystemMgr* Leak()
+		Kernel::NeFileSystemMgr* Leak() noexcept
 		{
-			return fNeFS;
+			MUST_PASS(mNeFS);
+			return mNeFS;
 		}
 	};
 } // namespace Kernel::Detail
@@ -119,8 +138,7 @@ namespace Kernel::Detail
 /// @return Void
 EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len)
 {
-	Kernel::IFilesystemMgr::Mount(new Kernel::NeFileSystemMgr());
-	Kernel::Detail::FilesystemInstaller installer;
-
+	Kernel::Detail::fs_init_newfs();
 	
+	Kernel::Detail::NeFilesystemInstaller installer{};
 }

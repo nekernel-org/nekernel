@@ -9,7 +9,7 @@
 
 /***********************************************************************************/
 /// @file UserProcessScheduler.cc
-/// @brief EL0/Ring-3 process scheduler.
+/// @brief Low level/Ring-3 process scheduler.
 /***********************************************************************************/
 
 #include <KernelKit/UserProcessScheduler.h>

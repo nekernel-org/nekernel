@@ -18,22 +18,18 @@ namespace Kernel
 	/// @brief C++ constructor
 	NeFileSystemMgr::NeFileSystemMgr()
 	{
-		MUST_PASS(Detail::fs_init_newfs());
-
-		NeFileSystemParser* fImpl;
-		mm_new_class<NeFileSystemParser>(&fImpl);
-		MUST_PASS(fImpl);
+		NeFileSystemParser* mParser = new NeFileSystemParser();
+		MUST_PASS(mParser);
 
 		kcout << "We are done allocating NeFileSystemParser...\r";
 	}
 
 	NeFileSystemMgr::~NeFileSystemMgr()
 	{
-		if (fImpl)
+		if (mParser)
 		{
 			kcout << "Destroying NeFileSystemParser...\r";
-
-			mm_delete_class(&fImpl);
+			mm_delete_class(&mParser);
 		}
 	}
 
@@ -45,7 +41,7 @@ namespace Kernel
 		if (path == nullptr || *path == 0)
 			return false;
 
-		return fImpl->RemoveCatalog(path);
+		return mParser->RemoveCatalog(path);
 	}
 
 	/// @brief Creates a node with the specified.
@@ -53,7 +49,7 @@ namespace Kernel
 	/// @return The Node pointer.
 	NodePtr NeFileSystemMgr::Create(_Input const Char* path)
 	{
-		return node_cast(fImpl->CreateCatalog(path));
+		return node_cast(mParser->CreateCatalog(path));
 	}
 
 	/// @brief Creates a node with is a directory.
@@ -61,7 +57,7 @@ namespace Kernel
 	/// @return The Node pointer.
 	NodePtr NeFileSystemMgr::CreateDirectory(const Char* path)
 	{
-		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindDir));
+		return node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindDir));
 	}
 
 	/// @brief Creates a node with is a alias.
@@ -69,7 +65,7 @@ namespace Kernel
 	/// @return The Node pointer.
 	NodePtr NeFileSystemMgr::CreateAlias(const Char* path)
 	{
-		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindAlias));
+		return node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindAlias));
 	}
 
 	/// @brief Creates a node with is a page file.
@@ -77,7 +73,7 @@ namespace Kernel
 	/// @return The Node pointer.
 	NodePtr NeFileSystemMgr::CreateSwapFile(const Char* path)
 	{
-		return node_cast(fImpl->CreateCatalog(path, 0, kNeFSCatalogKindPage));
+		return node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindPage));
 	}
 
 	/// @brief Gets the root directory.
@@ -120,7 +116,7 @@ namespace Kernel
 		if (!r || *r == 0)
 			return nullptr;
 
-		auto catalog = fImpl->GetCatalog(path);
+		auto catalog = mParser->GetCatalog(path);
 
 		return node_cast(catalog);
 	}
@@ -173,7 +169,7 @@ namespace Kernel
 		ZKA_UNUSED(flags);
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
-			fImpl->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & kFileFlagRsrc ? true : false), data, size,
+			mParser->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & kFileFlagRsrc ? true : false), data, size,
 								name);
 	}
 
@@ -191,7 +187,7 @@ namespace Kernel
 		ZKA_UNUSED(flags);
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
-			return fImpl->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & kFileFlagRsrc ? true : false), sz,
+			return mParser->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & kFileFlagRsrc ? true : false), sz,
 									  name);
 
 		return nullptr;
@@ -208,7 +204,7 @@ namespace Kernel
 		if (!node || off == 0)
 			return false;
 
-		return fImpl->Seek(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), off);
+		return mParser->Seek(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), off);
 	}
 
 	/// @brief Tell where the catalog is.
@@ -221,7 +217,7 @@ namespace Kernel
 		if (!node)
 			return kNPos;
 
-		return fImpl->Tell(reinterpret_cast<NFS_CATALOG_STRUCT*>(node));
+		return mParser->Tell(reinterpret_cast<NFS_CATALOG_STRUCT*>(node));
 	}
 
 	/// @brief Rewinds the catalog.
@@ -241,7 +237,7 @@ namespace Kernel
 	/// @return the Filesystem parser class.
 	_Output NeFileSystemParser* NeFileSystemMgr::GetParser() noexcept
 	{
-		return fImpl;
+		return mParser;
 	}
 } // namespace Kernel
 

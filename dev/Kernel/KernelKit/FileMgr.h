@@ -186,7 +186,7 @@ namespace Kernel
 		NeFileSystemParser* GetParser() noexcept;
 
 	private:
-		NeFileSystemParser* fImpl{nullptr};
+		NeFileSystemParser* mParser{nullptr};
 	};
 
 #endif // ifdef __FSKIT_INCLUDES_NEFS__
