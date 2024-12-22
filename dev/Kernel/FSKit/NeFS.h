@@ -323,7 +323,7 @@ namespace Kernel
 		NFS_CATALOG_STRUCT* mNode{nullptr};
 
 	public:
-		explicit NeFileSystemJournal(const char* stamp = "/System" kNeFSJournalExt)
+		explicit NeFileSystemJournal(const char* stamp = nullptr)
 		{
 			if (!stamp)
 			{

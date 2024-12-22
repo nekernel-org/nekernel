@@ -34,18 +34,18 @@ namespace Kernel::Detail
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
 	class NeFilesystemInstaller final
 	{
-		Kernel::NeFileSystemMgr* mNeFS{nullptr};
+		Kernel::NeFileSystemParser* mNeFS{nullptr};
 		Kernel::NeFileSystemJournal mJournal;
 
 	public:
 		/// @brief wizard constructor.
 		explicit NeFilesystemInstaller()
 		{
-			mNeFS = new Kernel::NeFileSystemMgr();
+			mNeFS = new Kernel::NeFileSystemParser();
 
 			if (mNeFS)
 			{
-				mJournal.CreateJournal(mNeFS->GetParser());
+				mJournal.CreateJournal(mNeFS);
 
 				constexpr auto kFolderInfo		  = "META-XML";
 				const SizeT	   kFolderCount		  = 7;
@@ -55,7 +55,7 @@ namespace Kernel::Detail
 
 				for (Kernel::SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
 				{
-					auto catalog_folder = mNeFS->GetParser()->GetCatalog(kFolderStr[dir_index]);
+					auto catalog_folder = mNeFS->GetCatalog(kFolderStr[dir_index]);
 
 					if (catalog_folder)
 					{
@@ -65,7 +65,7 @@ namespace Kernel::Detail
 						continue;
 					}
 
-					catalog_folder = mNeFS->GetParser()->CreateCatalog(kFolderStr[dir_index], 0,
+					catalog_folder = mNeFS->CreateCatalog(kFolderStr[dir_index], 0,
 																   kNeFSCatalogKindDir);
 
 					NFS_FORK_STRUCT fork_folder{0};
@@ -95,13 +95,13 @@ namespace Kernel::Detail
 					Kernel::KString folder_name(2048);
 					folder_name += catalog_folder->Name;
 
-					mJournal.Commit(mNeFS->GetParser(), folder_metadata,folder_name);
+					mJournal.Commit(mNeFS, folder_metadata,folder_name);
 
 					const Kernel::SizeT kMetaDataSz = kNeFSSectorSz;
 
-					mNeFS->GetParser()->CreateFork(catalog_folder, fork_folder);
+					mNeFS->CreateFork(catalog_folder, fork_folder);
 
-					mNeFS->GetParser()->WriteCatalog(
+					mNeFS->WriteCatalog(
 						catalog_folder, true, (Kernel::VoidPtr)(folder_metadata.CData()),
 						kMetaDataSz, kFolderInfo);
 
@@ -109,8 +109,6 @@ namespace Kernel::Detail
 					catalog_folder = nullptr;
 				}
 			}
-			
-			while (1);
 		}
 
 		~NeFilesystemInstaller()
@@ -122,14 +120,6 @@ namespace Kernel::Detail
 		}
 
 		ZKA_COPY_DEFAULT(NeFilesystemInstaller);
-
-		/// @brief Grab the disk's NewFS reference.
-		/// @return NeFileSystemMgr the filesystem interface
-		Kernel::NeFileSystemMgr* Leak() noexcept
-		{
-			MUST_PASS(mNeFS);
-			return mNeFS;
-		}
 	};
 } // namespace Kernel::Detail
 
