@@ -16,7 +16,7 @@ namespace Kernel
 	voidPtr		rt_set_memory(voidPtr dst, UInt32 val, Size len);
 	void		rt_zero_memory(voidPtr pointer, Size len);
 	Int			rt_string_cmp(const Char* src, const Char* cmp, Size len);
-	const Char* alloc_string(const Char* text);
+	const Char* rt_alloc_string(const Char* text);
 	Size		rt_string_len(const Char* str);
 	Size		rt_string_len(const Char* str, SizeT _len);
 	Boolean		rt_to_string(Char* buf, Int limit, Int base);

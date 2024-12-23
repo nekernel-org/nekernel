@@ -285,7 +285,7 @@ namespace Kernel
 	ProcessID UserProcessScheduler::Spawn(UserProcess* process)
 	{
 		if (!process ||
-			!process->Image)
+			!process->Image.HasCode())
 		{
 			return kProcessInvalidID;
 		}

@@ -17,7 +17,7 @@ ifneq ($(findstring CYGWIN_NT-10.0,$(shell uname)), )
 EMU=qemu-system-x86_64w.exe
 else
 # this for NT distributions
-EMU=qemu-system-x86_64
+EMU=qemu-system-x86_64  -net none
 endif
 
 ifeq ($(NEWS_MODEL), )
@@ -92,7 +92,7 @@ run-efi-amd64-ata:
 # img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta specs.
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f raw $(IMG) 10G
+	qemu-img create -f raw $(IMG) 4G
 	qemu-img create -f raw $(IMG_2) 4G
 	qemu-img create -f raw $(IMG_3) 4G
 

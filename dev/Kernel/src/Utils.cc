@@ -117,9 +117,9 @@ namespace Kernel
 		return index;
 	}
 
-	const Char* alloc_string(const Char* text)
+	const Char* rt_alloc_string(const Char* text)
 	{
-		if (!text)
+		if (!text[0])
 			return nullptr;
 
 		const Char* string = new Char[rt_string_len(text)];

@@ -131,9 +131,9 @@ namespace Kernel
 		ImagePtr fCode;
 		ImagePtr fBlob;
 
-		operator bool()
+		Bool HasCode()
 		{
-			return this->fCode;
+			return this->fCode != nullptr;
 		}
 
 		Bool HasImage()
