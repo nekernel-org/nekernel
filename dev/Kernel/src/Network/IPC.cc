@@ -75,6 +75,10 @@ namespace Kernel
 	/// @retval false packet is incorrect and process has crashed.
 	Bool ipc_construct_packet(_Output IPCMessage** pckt_in)
 	{
+		// don't act if it's not even valid.
+		if (!pckt_in)
+			return false;
+
 		// don't do anything if it's valid already.
 		if (*pckt_in)
 			return true;
