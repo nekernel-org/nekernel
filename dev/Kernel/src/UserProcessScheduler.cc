@@ -3,7 +3,7 @@
 	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 	FILE: UserProcessScheduler.cc
-	PURPOSE: EL0/Ring-3 Process scheduler.
+	PURPOSE: Low level/Ring-3 Process scheduler.
 
 ------------------------------------------- */
 
@@ -21,10 +21,6 @@
 #include <KernelKit/LPC.h>
 
 ///! BUGS: 0
-
-/***********************************************************************************/
-/** TODO: Document the Kernel, SDK and kits. */
-/***********************************************************************************/
 
 namespace Kernel
 {
