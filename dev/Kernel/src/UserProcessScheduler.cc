@@ -256,7 +256,7 @@ namespace Kernel
 
 			if (!success)
 			{
-				ke_stop(RUNTIME_CHECK_PROCESS);
+				ke_panic(RUNTIME_CHECK_PROCESS);
 			}
 
 			this->DylibDelegate = nullptr;

@@ -7,7 +7,7 @@
 #pragma once
 
 #include <NewKit/Defines.h>
-#include <Modules/FB/FB.h>
+#include <Modules/GfxMgr/FBMgr.h>
 
 #define FONT_SIZE_X	   8
 #define FONT_SIZE_Y	   8
@@ -162,7 +162,7 @@ inline Kernel::Void fb_render_string_for_bitmap(const Kernel::UInt8* bitmap, con
 
 			if (set)
 			{
-				CGDrawInRegion(color, 1, 1, ((x_dst) + x), ((y_dst) + y));
+				FBDrawInRegion(color, 1, 1, ((x_dst) + x), ((y_dst) + y));
 			}
 		}
 	}

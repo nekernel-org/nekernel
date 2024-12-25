@@ -12,7 +12,7 @@
 #include <FSKit/HPFS.h>
 #include <KernelKit/LPC.h>
 #include <NewKit/Crc32.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 #include <FirmwareKit/EPM.h>

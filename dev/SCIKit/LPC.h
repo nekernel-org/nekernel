@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <SCIKit/Macros.h>
+#include <Macros.h>
 
 /// @file LPC.h
 /// @brief Local Process Code type and values.

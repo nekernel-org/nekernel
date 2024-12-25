@@ -105,7 +105,7 @@ namespace Kernel
 			return nullptr;
 
 		kcout << "This function is not implemented by minOSKrnl, please use the BSD's realloc instead.\r";
-		ke_stop(RUNTIME_CHECK_PROCESS);
+		ke_panic(RUNTIME_CHECK_PROCESS);
 
 		return nullptr;
 	}
@@ -235,7 +235,7 @@ namespace Kernel
 				{
 					if (!heap_info_ptr->fUser)
 					{
-						ke_stop(RUNTIME_CHECK_POINTER);
+						ke_panic(RUNTIME_CHECK_POINTER);
 					}
 				}
 			}

@@ -14,8 +14,8 @@
 #include <BootKit/HW/ATA.h>
 #include <FirmwareKit/EPM.h>
 #include <CompilerKit/Version.h>
-#include <Modules/FB/FB.h>
-#include <Modules/FB/AppearanceMgr.h>
+#include <Modules/GfxMgr/FBMgr.h>
+#include <Modules/GfxMgr/AppearanceMgr.h>
 #include <BootKit/Rsrc/zka_disk.rsrc>
 #include <BootKit/Rsrc/zka_no_disk.rsrc>
 #include <BootKit/Rsrc/zka_has_disk.rsrc>
@@ -323,9 +323,9 @@ namespace Boot
 
 		if (fDiskDev.GetDiskSize() < kMinimumDiskSize)
 		{
-			cg_init();
+			fb_init();
 
-			CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
+			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
 			EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a New Filesystem partition here.");
 			return false;
 		}
@@ -382,8 +382,8 @@ namespace Boot
 		}
 		else
 		{
-			cg_init();
-			CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
+			fb_init();
+			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
 
 			EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned, this drive cannot be formatted as an explicit partition map.");
 		}

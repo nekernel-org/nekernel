@@ -10,7 +10,7 @@ Purpose: System Calls.
 #ifndef SCIKIT_FOUNDATION_H
 #define SCIKIT_FOUNDATION_H
 
-#include <SCIKit/Macros.h>
+#include <Macros.h>
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Dynamic Loader API.

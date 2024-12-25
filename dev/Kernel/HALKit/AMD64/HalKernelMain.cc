@@ -11,8 +11,8 @@
 #include <Modules/ACPI/ACPIFactoryInterface.h>
 #include <NetworkKit/IPC.h>
 #include <CFKit/Property.h>
-#include <Modules/FB/AppearanceMgr.h>
-#include <Modules/FB/Text.h>
+#include <Modules/GfxMgr/AppearanceMgr.h>
+#include <Modules/GfxMgr/TextMgr.h>
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
@@ -79,12 +79,12 @@ EXTERN_C void hal_init_platform(
 	Kernel::HAL::GDTLoader gdt_loader;
 	gdt_loader.Load(gdt_reg);
 
-	Kernel::ke_stop(RUNTIME_CHECK_BOOTSTRAP);
+	Kernel::ke_panic(RUNTIME_CHECK_BOOTSTRAP);
 }
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	CG::ui_draw_background();
+	UI::ui_draw_background();
 
 	auto str_proc = Kernel::rt_alloc_string("System");
 	Kernel::rtl_create_process(rtl_kernel_main, str_proc);

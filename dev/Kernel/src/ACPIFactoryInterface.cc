@@ -37,7 +37,7 @@ namespace Kernel
 		if (num < 1)
 		{
 			/// stop here, we should have entries...
-			ke_stop(RUNTIME_CHECK_ACPI);
+			ke_panic(RUNTIME_CHECK_ACPI);
 			return ErrorOr<voidPtr>{-1};
 		}
 

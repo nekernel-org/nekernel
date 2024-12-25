@@ -57,7 +57,7 @@ namespace Kernel
 		STATIC Void Recover() noexcept;
 	};
 
-	void ke_stop(const Int32& id);
+	void ke_panic(const Int32& id);
 } // namespace Kernel
 
 #ifdef TRY

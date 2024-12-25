@@ -10,7 +10,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Utils.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 
 #define cMinimumStringSize 8196
 

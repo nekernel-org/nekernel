@@ -14,7 +14,7 @@
 #include <Modules/Flash/Flash.h>
 #include <KernelKit/LPC.h>
 #include <NewKit/Crc32.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 #include <KernelKit/UserProcessScheduler.h>

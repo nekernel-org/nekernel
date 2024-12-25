@@ -13,7 +13,7 @@
 #endif
 
 #include <NewKit/Defines.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 
 #define kBitMapMagic (0x10210U)
 

@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/LPC.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 
 namespace Kernel
 {
@@ -18,7 +18,7 @@ namespace Kernel
 	{
 		if (kRaiseOnBugCheck)
 		{
-			ke_stop(RUNTIME_CHECK_BAD_BEHAVIOR);
+			ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR);
 		}
 
 		return No;

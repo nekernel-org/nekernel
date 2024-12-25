@@ -9,7 +9,7 @@
 #define _NEWKIT_REF_H_
 
 #include <NewKit/Defines.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 #include <KernelKit/Heap.h>
 
 namespace Kernel

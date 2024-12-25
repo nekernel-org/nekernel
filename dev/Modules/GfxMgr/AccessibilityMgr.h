@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright ZKA Technologies.
+	Copyright Theater Quality Inc.
 
 ------------------------------------------- */
 
@@ -9,11 +9,11 @@
 
 #include <NewKit/NewKit.h>
 #include <KernelKit/LPC.h>
-#include <Modules/FB/FB.h>
-#include <Modules/FB/Math.h>
+#include <Modules/GfxMgr/FBMgr.h>
+#include <Modules/GfxMgr/MathMgr.h>
 #include <ArchKit/ArchKit.h>
 
-namespace CG
+namespace UI
 {
 	using namespace Kernel;
 

@@ -11,7 +11,7 @@
 #include <NewKit/ArrayList.h>
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Json.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 #include <NewKit/MutableArray.h>
 #include <NewKit/New.h>
 #include <NewKit/OwnPtr.h>

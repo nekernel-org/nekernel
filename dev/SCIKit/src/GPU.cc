@@ -7,4 +7,4 @@ Purpose: GPU Interface.
 
 ------------------------------------------- */
 
-#include <SCIKit/LPC.h>
+#include <LPC.h>

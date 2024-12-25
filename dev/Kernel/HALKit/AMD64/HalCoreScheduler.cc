@@ -11,8 +11,8 @@
 #include <KernelKit/Semaphore.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Timer.h>
-#include <Modules/FB/Text.h>
-#include <NewKit/Stop.h>
+#include <Modules/GfxMgr/TextMgr.h>
+#include <NewKit/KernelPanic.h>
 
 // Needed for SMP.
 #include <KernelKit/HardwareThreadScheduler.h>

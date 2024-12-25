@@ -14,7 +14,7 @@ Purpose: SCIKit Macros header.
 /// @brief Macros and core types.
 /***********************************************************************************/
 
-#include <SCIKit/CompilerHint.h>
+#include <CompilerHint.h>
 
 #define ATTRIBUTE(X) __attribute__((X))
 #define IMPORT_CXX	 extern "C++"

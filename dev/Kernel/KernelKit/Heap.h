@@ -11,7 +11,7 @@
 // file: Heap.h
 // description: heap allocation support.
 
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 #include <KernelKit/LPC.h>
 #include <HintKit/CompilerHint.h>
 

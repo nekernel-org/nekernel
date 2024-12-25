@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <SCIKit/SCI.h>
+#include <SCI.h>
 
 /// @file SCI.cc
 /// @brief Source file for the memory functions of the SCI.

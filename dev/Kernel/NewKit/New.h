@@ -4,11 +4,13 @@
 	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
 ------------------------------------------- */
+
 #pragma once
 
 #include <KernelKit/Heap.h>
 
-typedef __SIZE_TYPE__ size_t; // gcc will complain about that
+/// @note compatible with tk too.
+typedef __SIZE_TYPE__ size_t;
 
 void* operator new(size_t ptr);
 void* operator new[](size_t ptr);

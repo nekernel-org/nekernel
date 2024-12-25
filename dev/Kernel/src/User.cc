@@ -12,7 +12,7 @@
 
 #include <KernelKit/User.h>
 #include <KernelKit/LPC.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Heap.h>

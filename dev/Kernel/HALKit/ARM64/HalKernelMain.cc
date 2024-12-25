@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.h>
-#include <Modules/FB/FB.h>
+#include <Modules/GfxMgr/FBMgr.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/Heap.h>
@@ -15,7 +15,7 @@
 #include <KernelKit/CodeMgr.h>
 #include <Modules/ACPI/ACPIFactoryInterface.h>
 #include <NetworkKit/IPC.h>
-#include <Modules/FB/AppearanceMgr.h>
+#include <Modules/GfxMgr/AppearanceMgr.h>
 #include <CFKit/Property.h>
 
 Kernel::Void hal_real_init(Kernel::Void) noexcept;
@@ -47,7 +47,7 @@ EXTERN_C void hal_init_platform(
 
 	/// @note do initialize the interrupts after it.
 
-	CG::ui_draw_background();
+	UI::ui_draw_background();
 
 	auto str_proc = Kernel::rt_alloc_string("System");
 	Kernel::rtl_create_process(rtl_kernel_main, str_proc);

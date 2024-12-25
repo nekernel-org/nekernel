@@ -8,7 +8,7 @@
 #pragma once
 
 #include <NewKit/Defines.h>
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 #include <NewKit/Ref.h>
 
 namespace Kernel

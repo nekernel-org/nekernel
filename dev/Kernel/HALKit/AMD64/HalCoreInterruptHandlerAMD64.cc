@@ -18,7 +18,7 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
 	if (!process)
-		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
@@ -30,7 +30,7 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 
 	process.Leak().Crash();
 
-	Kernel::ke_stop(RUNTIME_CHECK_POINTER);
+	Kernel::ke_panic(RUNTIME_CHECK_POINTER);
 }
 
 /// @brief Handle page fault.
@@ -43,7 +43,7 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
 	if (!process)
-		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
@@ -55,7 +55,7 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 
 	process.Leak().Crash();
 
-	Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+	Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 }
 
 /// @brief Handle scheduler interrupt.
@@ -90,7 +90,7 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
 	if (!process)
-		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
@@ -102,7 +102,7 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 
 	process.Leak().Crash();
 
-	Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
+	Kernel::ke_panic(RUNTIME_CHECK_UNEXCPECTED);
 }
 
 /// @brief Handle any generic fault.
@@ -114,7 +114,7 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
 	if (!process)
-		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
@@ -126,7 +126,7 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 
 	process.Leak().Crash();
 
-	Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
+	Kernel::ke_panic(RUNTIME_CHECK_UNEXCPECTED);
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
@@ -134,7 +134,7 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
 	if (!process)
-		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 
 	kcout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << endl;
 	kcout << "Kernel: SIGTRAP set.\r";
@@ -158,7 +158,7 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
 	if (!process)
-		Kernel::ke_stop(RUNTIME_CHECK_PAGE);
+		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 
 	process.Leak().ProcessSignal.SignalIP		= 0UL;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
@@ -170,7 +170,7 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 
 	process.Leak().Crash();
 
-	Kernel::ke_stop(RUNTIME_CHECK_UNEXCPECTED);
+	Kernel::ke_panic(RUNTIME_CHECK_UNEXCPECTED);
 }
 
 /// @brief Enter syscall from assembly.

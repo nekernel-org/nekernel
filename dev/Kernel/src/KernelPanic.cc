@@ -4,15 +4,15 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Stop.h>
+#include <NewKit/KernelPanic.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/Timer.h>
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/KString.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
-#include <Modules/FB/FB.h>
-#include <Modules/FB/Text.h>
+#include <Modules/GfxMgr/FBMgr.h>
+#include <Modules/GfxMgr/TextMgr.h>
 
 #define kWebsiteURL "https://el-mahrouss-logic.com/products/help/"
 
@@ -25,9 +25,9 @@ namespace Kernel
 	/// @brief Stops execution of the kernel.
 	/// @param id kernel stop ID.
 	/***********************************************************************************/
-	Void ke_stop(const Kernel::Int32& id)
+	Void ke_panic(const Kernel::Int32& id)
 	{
-		cg_init();
+		fb_init();
 
 		auto panic_text = RGB(0xff, 0xff, 0xff);
 
@@ -41,7 +41,7 @@ namespace Kernel
 
 		start_y += 10;
 
-		cg_fini();
+		fb_fini();
 
 		// show text according to error id.
 
@@ -124,7 +124,7 @@ namespace Kernel
 			kcout << "FAILED: FILE: " << file << endl;
 			kcout << "FAILED: LINE: " << line << endl;
 
-			ke_stop(RUNTIME_CHECK_FAILED); // Runtime Check failed
+			ke_panic(RUNTIME_CHECK_FAILED); // Runtime Check failed
 		}
 	}
 } // namespace Kernel

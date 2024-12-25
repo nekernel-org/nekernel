@@ -7,4 +7,4 @@ Purpose: Local Procedure Codes.
 
 ------------------------------------------- */
 
-#include <SCIKit/LPC.h>
+#include <LPC.h>

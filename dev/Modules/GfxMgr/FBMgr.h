@@ -8,18 +8,16 @@
 
 #include <NewKit/Defines.h>
 
-#define cg_init() Kernel::SizeT kCGCursor = 0
+#define fb_init() Kernel::SizeT kCGCursor = 0
 
-#define cg_color(R, G, B) RGB(R, G, B)
+#define fb_color(R, G, B) RGB(R, G, B)
 
-#define cg_get_clear_clr() cg_color(0x20, 0x20, 0x20)
+#define fb_get_clear_clr() fb_color(0x20, 0x20, 0x20)
 
-#define cg_fini() kCGCursor = 0
+#define fb_fini() kCGCursor = 0
 
 /// @brief Performs OR drawing on the framebuffer.
-#define CGDrawBitMapInRegionA(_BitMp, _Height, _Width, _BaseX, _BaseY)       \
-	kCGCursor = 0;                                                           \
-                                                                             \
+#define FBDrawBitMapInRegionA(_BitMp, _Height, _Width, _BaseX, _BaseY)       \
 	for (Kernel::SizeT i = _BaseX; i < (_Height + _BaseX); ++i)              \
 	{                                                                        \
 		for (Kernel::SizeT u = _BaseY; u < (_Width + _BaseY); ++u)           \
@@ -34,9 +32,7 @@
 	}
 
 /// @brief Draws a resource.
-#define CGDrawBitMapInRegion(_BitMp, _Height, _Width, _BaseX, _BaseY)        \
-	kCGCursor = 0;                                                           \
-                                                                             \
+#define FBDrawBitMapInRegion(_BitMp, _Height, _Width, _BaseX, _BaseY)        \
 	for (Kernel::SizeT i = _BaseX; i < (_Height + _BaseX); ++i)              \
 	{                                                                        \
 		for (Kernel::SizeT u = _BaseY; u < (_Width + _BaseY); ++u)           \
@@ -50,9 +46,7 @@
 		}                                                                    \
 	}
 
-#define CGDrawBitMapInRegionToRgn(_Rgn, _BitMp, _Height, _Width, _BaseX, _BaseY) \
-	kCGCursor = 0;                                                               \
-                                                                                 \
+#define FBDrawBitMapInRegionToRgn(_Rgn, _BitMp, _Height, _Width, _BaseX, _BaseY) \
 	for (Kernel::SizeT i = _BaseX; i < (_Height + _BaseX); ++i)                  \
 	{                                                                            \
 		for (Kernel::SizeT u = _BaseY; u < (_Width + _BaseY); ++u)               \
@@ -68,7 +62,6 @@
 
 /// @brief Cleans a resource.
 #define CGClearRegion(_Height, _Width, _BaseX, _BaseY)                                \
-                                                                                      \
 	for (Kernel::SizeT i = _BaseX; i < _Height + _BaseX; ++i)                         \
 	{                                                                                 \
 		for (Kernel::SizeT u = _BaseY; u < _Width + _BaseY; ++u)                      \
@@ -76,13 +69,12 @@
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
 											  i +                                     \
-										  4 * u))) = cg_get_clear_clr();              \
+										  4 * u))) = fb_get_clear_clr();              \
 		}                                                                             \
 	}
 
 /// @brief Draws inside a zone.
-#define CGDrawInRegion(_Clr, _Height, _Width, _BaseX, _BaseY)                         \
-                                                                                      \
+#define FBDrawInRegion(_Clr, _Height, _Width, _BaseX, _BaseY)                         \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
 	{                                                                                 \
 		for (Kernel::SizeT y_base = _BaseY; y_base < (_Height + _BaseY); ++y_base)    \
@@ -95,9 +87,7 @@
 	}
 
 /// @brief Draws inside a zone.
-#define CGDrawInRegionToRgn(_Rgn, _Clr, _Height, _Width, _BaseX, _BaseY)              \
-	kCGCursor = 0;                                                                    \
-                                                                                      \
+#define FBDrawInRegionToRgn(_Rgn, _Clr, _Height, _Width, _BaseX, _BaseY)              \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
 	{                                                                                 \
 		for (Kernel::SizeT y_base = _BaseY; y_base < (_Height + _BaseY); ++y_base)    \
@@ -110,7 +100,7 @@
 		}                                                                             \
 	}
 
-#define CGDrawInRegionToVideoRgn(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)    \
+#define FBDrawInRegionToVideoRgn(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)    \
 	kCGCursor = 0;                                                                    \
                                                                                       \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
@@ -125,9 +115,7 @@
 		}                                                                             \
 	}
 
-#define CGDrawInRegionToVideoRgnA(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)   \
-	kCGCursor = 0;                                                                    \
-                                                                                      \
+#define FBDrawInRegionToVideoRgnA(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)   \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
 	{                                                                                 \
 		for (Kernel::SizeT y_base = _BaseY; y_base < (_Height + _BaseY); ++y_base)    \
@@ -140,8 +128,7 @@
 		}                                                                             \
 	}
 
-#define CGDrawInRegionA(_Clr, _Height, _Width, _BaseX, _BaseY)                        \
-                                                                                      \
+#define FBDrawInRegionA(_Clr, _Height, _Width, _BaseX, _BaseY)                        \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
 	{                                                                                 \
 		for (Kernel::SizeT y_base = _BaseY; y_base < (_Height + _BaseY); ++y_base)    \

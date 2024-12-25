@@ -10,13 +10,13 @@
 /// @file Flash.cc
 /// @brief Flash memory builtin.
 
-#ifdef __USE_MBCI_FLASH__
+#ifdef ZKA_USE_MBCI_FLASH
 
 #define kMaxFlash (4U)
 
 namespace Kernel
 {
-	/// /:/BRIDGE/FLSH/1
+	/// /Mount/Flash/n
 	constexpr auto kFlashBridgeMagic	= "FLSH";
 	constexpr auto kFlashBridgeRevision = 1;
 
@@ -63,4 +63,4 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#endif // if __USE_MBCI_FLASH__ (Bridge)
+#endif // if ZKA_USE_MBCI_FLASH (Bridge)

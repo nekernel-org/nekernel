@@ -5,8 +5,8 @@
 ------------------------------------------- */
 
 #include <BootKit/BootKit.h>
-#include <Modules/FB/FB.h>
-#include <Modules/FB/Text.h>
+#include <Modules/GfxMgr/FBMgr.h>
+#include <Modules/GfxMgr/TextMgr.h>
 #include <FirmwareKit/EFI.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/Handover.h>
@@ -16,7 +16,7 @@
 #include <NewKit/Macros.h>
 #include <NewKit/Ref.h>
 #include <BootKit/Thread.h>
-#include <Modules/FB/FB.h>
+#include <Modules/GfxMgr/FBMgr.h>
 
 // Makes the compiler shut up.
 #ifndef kMachineModel
@@ -24,11 +24,11 @@
 #endif // !kMachineModel
 
 #ifndef kExpectedWidth
-#define kExpectedWidth (1920)
+#define kExpectedWidth (1280)
 #endif
 
 #ifndef kExpectedHeight
-#define kExpectedHeight (1080)
+#define kExpectedHeight (720)
 #endif
 
 /** Graphics related. */
@@ -141,13 +141,13 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	kHandoverHeader = handover_hdr;
 
-	cg_init();
+	fb_init();
 
-	CG::ui_draw_background();
+	UI::ui_draw_background();
 
-	CGDrawBitMapInRegion(zka_disk, ZKA_DISK_HEIGHT, ZKA_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_DISK_HEIGHT) / 2);
+	FBDrawBitMapInRegion(zka_disk, ZKA_DISK_HEIGHT, ZKA_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_DISK_HEIGHT) / 2);
 
-	cg_fini();
+	fb_fini();
 
 	UInt32 cnt_enabled	= 0;
 	UInt32 cnt_disabled = 0;
@@ -168,11 +168,11 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 #ifdef ZKA_AUTO_FORMAT
 	if (!partition_factory.IsPartitionValid())
 	{
-		CG::ui_draw_background();
+		UI::ui_draw_background();
 
-		CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
+		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
 
-		cg_fini();
+		fb_fini();
 
 		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
 
@@ -183,11 +183,11 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		partition_factory.Format("FileSystem (A:)\0", &root, 1);
 		
-		CG::ui_draw_background();
+		UI::ui_draw_background();
 
-		CGDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_HEIGHT, ZKA_HAS_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
+		FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_HEIGHT, ZKA_HAS_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
 
-		cg_fini();
+		fb_fini();
 	}
 #endif // ZKA_AUTO_FORMAT
 
@@ -288,8 +288,8 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	}
 	else
 	{
-		cg_init();
-		CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
+		fb_init();
+		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
 
 		EFI::Stop();
 	}
@@ -307,8 +307,8 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	}
 	else
 	{
-		cg_init();
-		CGDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
+		fb_init();
+		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
 			
 		EFI::Stop();
 	}
