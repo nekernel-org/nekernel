@@ -50,7 +50,7 @@ namespace CG
 		UInt32*					 w_display_ptr{nullptr};
 		Bool					 w_needs_repaint{false};
 
-		Void (*w_display_custom_draw)(struct UIObject* am_win);
+		Void (*w_display_custom_draw)(struct UIObject* am_win){nullptr};
 	};
 
 	typedef struct UIObject UIObject;
