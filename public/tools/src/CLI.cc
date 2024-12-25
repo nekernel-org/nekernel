@@ -4,10 +4,8 @@
  * Copyright (c) 2024 Theater Quality Inc
  */
 
-#include <cstdlib>
-#include <filesystem>
 #include <Framework.h>
-#include <vector>
+#include <Steps.h>
 
 /// @brief This program makes a framework directory for ZKA OS.
 
@@ -21,27 +19,42 @@ int main(int argc, char* argv[])
 	{
 		if (strcmp(argv[i], "-h") == 0)
 		{
-			std::cout << "make_framework: Framework/Application Creation Tool.\n";
-			std::cout << "make_framework: © Theater Quality Inc, All rights reserved.\n";
+			std::cout << "make_container: Framework/Application Creation Tool.\n";
+			std::cout << "make_container: © Theater Quality Inc, All rights reserved.\n";
+
+			std::cout << "make_container: -app: Application directory.\n";
+			std::cout << "make_container: -steps: Steps directory.\n";
+			std::cout << "make_container: -fwrk: Framework directory.\n";
 
 			return EXIT_SUCCESS;
 		}
 
-		if (strcmp(argv[i], "-a") == 0)
+		if (strcmp(argv[i], "-app") == 0)
 		{
 			ext = kAppExtension;
 			continue;
 		}
+		else if (strcmp(argv[i], "-steps") == 0)
+		{
+			ext = kStepsExtension;
+			continue;
+		}
+		else if (strcmp(argv[i], "-fwrk") == 0)
+		{
+			ext = kFKExtension;
+			continue;
+		}
+
 
 		files.push_back(argv[i]);
 	}
 
 	auto path = std::string(argv[1]);
 
-	if (!path.ends_with(ext))
+	if (!std::filesystem::exists(path))
 		return EXIT_FAILURE;
 
-	std::filesystem::path path_arg = path;
+	std::filesystem::path path_arg = path + ext;
 
 	if (std::filesystem::create_directory(path_arg))
 	{

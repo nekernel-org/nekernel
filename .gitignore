@@ -10,10 +10,14 @@ xcuserdata/
 */xcuserdata/*
 *.xcworkspacedata
 
+public/tools/make_container
+
 minoskrnl/minoskrnl.xcodeproj/project.xcworkspace/xcshareddata/
 
 html/
 latex/
+
+public/tools/src.fwrk
 
 .cmake/
 .qtc_clangd/

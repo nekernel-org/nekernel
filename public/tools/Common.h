@@ -13,5 +13,7 @@
 #include <cstring>
 #include <sstream>
 #include <filesystem>
+#include <cstdlib>
+#include <vector>
 
 #endif // APPS_COMMON_H
