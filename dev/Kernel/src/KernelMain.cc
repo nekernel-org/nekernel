@@ -22,12 +22,8 @@
 #include <NewKit/Utils.h>
 #include <KernelKit/CodeMgr.h>
 #include <CFKit/Property.h>
-#include <Modules/FB/KWindow.h>
+#include <Modules/FB/AppearanceMgr.h>
 #include <KernelKit/Timer.h>
-
-#define kKeCachedName "/System/CacheKernel"
-
-STATIC CG::ML_WINDOW_STRUCT* kKernelWnd = nullptr;
 
 namespace Kernel::Detail
 {
@@ -129,6 +125,5 @@ namespace Kernel::Detail
 EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len)
 {
 	Kernel::Detail::fs_init_newfs();
-	
 	Kernel::Detail::NeFilesystemInstaller installer{};
 }

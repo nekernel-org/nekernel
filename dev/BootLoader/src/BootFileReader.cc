@@ -86,7 +86,7 @@ Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
 			.Write(L"\r");
 		this->mErrorCode = kNotSupported;
 
-		CGDrawString("BootZ: PLEASE RECOVER YOUR MINKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+		fb_render_string("BootZ: PLEASE RECOVER YOUR MINKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
 		mRootFs->Close(mRootFs);
 

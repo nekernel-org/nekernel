@@ -15,7 +15,7 @@
 #include <FirmwareKit/EPM.h>
 #include <CompilerKit/Version.h>
 #include <Modules/FB/FB.h>
-#include <Modules/FB/KWindow.h>
+#include <Modules/FB/AppearanceMgr.h>
 #include <BootKit/Rsrc/zka_disk.rsrc>
 #include <BootKit/Rsrc/zka_no_disk.rsrc>
 #include <BootKit/Rsrc/zka_has_disk.rsrc>

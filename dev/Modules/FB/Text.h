@@ -13,7 +13,7 @@
 #define FONT_SIZE_Y	   8
 #define FONT_NOF_CHARS 128
 
-inline const Kernel::UInt8 cFontBitmap[FONT_NOF_CHARS][FONT_SIZE_X] = {
+inline const Kernel::UInt8 kFontBitmap[FONT_NOF_CHARS][FONT_SIZE_X] = {
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0000 (nul)
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0001
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0002
@@ -145,7 +145,7 @@ inline const Kernel::UInt8 cFontBitmap[FONT_NOF_CHARS][FONT_SIZE_X] = {
 
 };
 
-inline Kernel::Void CGRenderStringFromBitMap(const Kernel::UInt8* bitmap, const Kernel::SizeT& x_sz, const Kernel::SizeT& y_sz, Kernel::Int32& x_dst, Kernel::Int32& y_dst, Kernel::Int32& color)
+inline Kernel::Void fb_render_string_for_bitmap(const Kernel::UInt8* bitmap, const Kernel::SizeT& x_sz, const Kernel::SizeT& y_sz, Kernel::Int32& x_dst, Kernel::Int32& y_dst, Kernel::Int32& color)
 {
 	Kernel::Int32 x, y;
 	Kernel::Int32 set;
@@ -168,11 +168,11 @@ inline Kernel::Void CGRenderStringFromBitMap(const Kernel::UInt8* bitmap, const 
 	}
 }
 
-inline Kernel::Void CGDrawString(const Kernel::Char* text, Kernel::Int32 x_dst, Kernel::Int32 y_dst, Kernel::Int32 color)
+inline Kernel::Void fb_render_string(const Kernel::Char* text, Kernel::Int32 x_dst, Kernel::Int32 y_dst, Kernel::Int32 color)
 {
 	for (Kernel::SizeT i = 0; text[i] != 0; ++i)
 	{
-		CGRenderStringFromBitMap(&cFontBitmap[text[i]][0], FONT_SIZE_X, FONT_SIZE_Y, x_dst, y_dst, color);
+		fb_render_string_for_bitmap(&kFontBitmap[text[i]][0], FONT_SIZE_X, FONT_SIZE_Y, x_dst, y_dst, color);
 		y_dst += FONT_SIZE_Y;
 	}
 }

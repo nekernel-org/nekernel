@@ -90,7 +90,8 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	/// @brief Wake process->
+	/// @brief Wakes process header.
+	/// @param should_wakeup if the program shall wakeup or not.
 	/***********************************************************************************/
 
 	Void UserProcess::Wake(const bool should_wakeup)
@@ -118,7 +119,7 @@ namespace Kernel
 
 		if (!this->ProcessMemoryHeap)
 		{
-			this->ProcessMemoryHeap = new UserProcess::UserProcessHeapList();
+			this->ProcessMemoryHeap = new UserProcess::ProcessMemoryHeapList();
 
 			this->ProcessMemoryHeap->MemoryEntryPad	 = pad_amount;
 			this->ProcessMemoryHeap->MemoryEntrySize = sz;
@@ -132,8 +133,8 @@ namespace Kernel
 		}
 		else
 		{
-			UserProcessHeapList* entry		= this->ProcessMemoryHeap;
-			UserProcessHeapList* prev_entry = nullptr;
+			ProcessMemoryHeapList* entry		= this->ProcessMemoryHeap;
+			ProcessMemoryHeapList* prev_entry = nullptr;
 
 			while (!entry)
 			{
@@ -144,7 +145,7 @@ namespace Kernel
 				entry	   = entry->MemoryNext;
 			}
 
-			entry->MemoryNext			   = new UserProcessHeapList();
+			entry->MemoryNext			   = new ProcessMemoryHeapList();
 			entry->MemoryNext->MemoryEntry = ptr;
 
 			entry->MemoryNext->MemoryPrev = entry;

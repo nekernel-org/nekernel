@@ -9,14 +9,18 @@
 /// @file Math.h
 /// @brief Linear interpolation implementation.
 
-typedef float CGReal;
+#ifdef ZKA_FB_USE_DOUBLE
+typedef double fb_real_t;
+#else
+typedef float fb_real_t;
+#endif
 
 /// @brief Linear interpolation equation solver.
 /// @param from where?
 /// @param to to?
 /// @param at which state we're at **to**.
-inline CGReal CGLerp(CGReal to, CGReal from, CGReal stat)
+inline fb_real_t fb_math_lerp(fb_real_t to, fb_real_t from, fb_real_t stat)
 {
-	CGReal difference = to - from;
+	fb_real_t difference = to - from;
 	return from + (difference * stat);
 }

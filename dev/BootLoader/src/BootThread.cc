@@ -122,7 +122,7 @@ namespace Boot
 #ifdef __ZKA_AMD64__
 						if (handover_struc->HandoverArch != HEL::kArchAMD64)
 						{
-							CGDrawString("BootZ: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+							fb_render_string("BootZ: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 							::EFI::Stop();
 						}
 #endif
@@ -130,11 +130,11 @@ namespace Boot
 #ifdef __ZKA_ARM64__
 						if (handover_struc->HandoverArch != HEL::kArchARM64)
 						{
-							CGDrawString("BootZ: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+							fb_render_string("BootZ: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 							::EFI::Stop();
 						}
 #endif
-						CGDrawString("BootZ: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+						fb_render_string("BootZ: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
 						::EFI::Stop();
 					}
@@ -170,7 +170,7 @@ namespace Boot
 	Void BThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
 	{
 		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> void {
-			CGDrawString("BootZ: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
+			fb_render_string("BootZ: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			::EFI::Stop();
 		};
 
