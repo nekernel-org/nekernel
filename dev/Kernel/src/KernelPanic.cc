@@ -14,8 +14,6 @@
 #include <Mod/GfxMgr/FBMgr.h>
 #include <Mod/GfxMgr/TextMgr.h>
 
-#define kWebsiteURL "https://el-mahrouss-logic.com/products/help/"
-
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
 

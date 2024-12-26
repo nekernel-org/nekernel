@@ -27,11 +27,11 @@
 
 namespace Kernel
 {
-	struct IPCAddress;
-	struct IPCMessage;
+	struct IPC_ADDR;
+	struct IPC_MSG;
 
 	/// @brief 128-bit IPC address.
-	struct PACKED IPCAddress final
+	struct PACKED IPC_ADDR final
 	{
 		UInt64 UserProcessID;
 		UInt64 UserProcessTeam;
@@ -40,18 +40,18 @@ namespace Kernel
 		// some operators.
 		////////////////////////////////////
 
-		bool operator==(const IPCAddress& addr) noexcept
+		bool operator==(const IPC_ADDR& addr) noexcept
 		{
 			return addr.UserProcessID == this->UserProcessID && addr.UserProcessTeam == this->UserProcessTeam;
 		}
 
-		bool operator==(IPCAddress& addr) noexcept
+		bool operator==(IPC_ADDR& addr) noexcept
 		{
 			return addr.UserProcessID == this->UserProcessID && addr.UserProcessTeam == this->UserProcessTeam;
 		}
 	};
 
-	typedef struct IPCAddress IPCEPAddressKind;
+	typedef struct IPC_ADDR IPCEPAddressKind;
 
 	enum
 	{
@@ -63,7 +63,7 @@ namespace Kernel
 	constexpr inline auto kIPCMsgSize = 6094U;
 
 	/// @brief IPC connection header, message cannot be greater than 6K.
-	typedef struct IPCMessage final
+	typedef struct IPC_MSG final
 	{
 		UInt32			 IpcHeaderMagic; // cRemoteHeaderMagic
 		UInt8			 IpcEndianess;	 // 0 : LE, 1 : BE
@@ -76,7 +76,7 @@ namespace Kernel
 		UInt8			 IpcData[kIPCMsgSize];
 
 		/// @brief Passes the message to target, could be anything, HTTP packet, JSON or whatever.
-		Bool Pass(IPCMessage* target) noexcept
+		Bool Pass(IPC_MSG* target) noexcept
 		{
 			if (target && target->IpcFrom == this->IpcTo)
 			{
@@ -90,17 +90,17 @@ namespace Kernel
 
 			return No;
 		}
-	} PACKED IPCMessage;
+	} PACKED IPC_MSG;
 
 	/// @brief Sanitize packet function
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
-	Bool ipc_sanitize_packet(_Input IPCMessage* pckt_in);
+	Bool ipc_sanitize_packet(_Input IPC_MSG* pckt_in);
 
 	/// @brief Construct packet function
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
-	Bool ipc_construct_packet(_Output _Input IPCMessage** pckt_in);
+	Bool ipc_construct_packet(_Output _Input IPC_MSG** pckt_in);
 } // namespace Kernel
 
 #endif // INC_IPC_H

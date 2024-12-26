@@ -10,7 +10,7 @@ Purpose: GFX System Calls.
 #ifndef SCIKIT_GPU_H
 #define SCIKIT_GPU_H
 
-#include <LibSCI.h>
+#include <SCI.h>
 
 // ------------------------------------------------------------------------------------------ //
 // GPU API.

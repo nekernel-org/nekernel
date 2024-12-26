@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <LibSCI.h>
+#include <SCI.h>
 
 /// @file LibSCI.cc
 /// @brief Source file for the memory functions of the LibSCI.

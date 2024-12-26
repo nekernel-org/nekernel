@@ -2,7 +2,7 @@
 
 Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
-File: LibSCI.h
+File: SCI.h
 Purpose: System Calls.
 
 ------------------------------------------- */

@@ -232,7 +232,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		root.fKind = kNeFSCatalogKindDir;
 
-		partition_factory.Format("FileSystem (A:) <System_Build\"" __DATE__ "\">", &root, 1);
+		partition_factory.Format("Zka HD", &root, 1);
 
 		UI::ui_draw_background();
 

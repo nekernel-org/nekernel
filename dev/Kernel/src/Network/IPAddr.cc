@@ -104,9 +104,12 @@ namespace Kernel
 
 	bool IPFactory::IpCheckVersion4(const Char* ip)
 	{
-		int cnter = 0;
+		if (!ip)
+			return NO;
 
-		for (Size base = 0; base < rt_string_len(ip); ++base)
+		Int32 cnter = 0;
+
+		for (SizeT base = 0; base < rt_string_len(ip); ++base)
 		{
 			if (ip[base] == '.')
 			{

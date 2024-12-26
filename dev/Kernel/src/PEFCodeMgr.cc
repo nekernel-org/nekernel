@@ -66,7 +66,7 @@ namespace Kernel
 
 		auto kPefHeader = "PEF_CONTAINER";
 
-		fCachedBlob = fFile->Read(kPefHeader);
+		fCachedBlob = fFile->Read(kPefHeader, mib_cast(16));
 
 		PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
@@ -123,7 +123,7 @@ namespace Kernel
 
 		PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-		auto blob = fFile->Read(name);
+		auto blob = fFile->Read(name, mib_cast(16));
 
 		PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(blob);
 

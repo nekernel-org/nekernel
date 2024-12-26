@@ -209,7 +209,7 @@ namespace Kernel
 		FileStream(const FileStream&);
 
 	public:
-		ErrorOr<Int64> WriteAll(const VoidPtr data) noexcept
+		ErrorOr<Int64> Write(const SizeT offset, const VoidPtr data, SizeT len) noexcept
 		{
 			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
 				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
@@ -224,33 +224,14 @@ namespace Kernel
 
 			if (man)
 			{
-				man->Write(fFile, data, kFileWriteAll);
+				man->Write(offset, fFile, data, len);
 				return ErrorOr<Int64>(0);
 			}
 
 			return ErrorOr<Int64>(kErrorInvalidData);
 		}
 
-		VoidPtr ReadAll() noexcept
-		{
-			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
-				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
-				this->fFileRestrict != kFileMgrRestrictRead &&
-				this->fFileRestrict != kFileMgrRestrictReadBinary)
-				return nullptr;
-
-			auto man = FSClass::GetMounted();
-
-			if (man)
-			{
-				VoidPtr ret = man->Read(fFile, kFileReadAll, 0);
-				return ret;
-			}
-
-			return nullptr;
-		}
-
-		ErrorOr<Int64> WriteAll(const Char* fName, const VoidPtr data) noexcept
+		ErrorOr<Int64> Write(const Char* name, const VoidPtr data, SizeT len) noexcept
 		{
 			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
 				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
@@ -265,14 +246,14 @@ namespace Kernel
 
 			if (man)
 			{
-				man->Write(fName, fFile, data, kFileWriteAll);
+				man->Write(name, fFile, data, len);
 				return ErrorOr<Int64>(0);
 			}
 
 			return ErrorOr<Int64>(kErrorInvalidData);
 		}
 
-		VoidPtr Read(const Char* fName) noexcept
+		VoidPtr Read(const Char* name, const SizeT sz) noexcept
 		{
 			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
 				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
@@ -284,14 +265,14 @@ namespace Kernel
 
 			if (man)
 			{
-				VoidPtr ret = man->Read(fName, fFile, kFileReadAll, 0);
+				VoidPtr ret = man->Read(name, fFile, kFileReadAll, 0);
 				return ret;
 			}
 
 			return nullptr;
 		}
 
-		VoidPtr Read(SizeT offset, SizeT sz)
+		VoidPtr Read(SizeT offset, const SizeT sz)
 		{
 			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
 				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
@@ -310,23 +291,6 @@ namespace Kernel
 			}
 
 			return nullptr;
-		}
-
-		Void Write(SizeT offset, voidPtr data, SizeT sz)
-		{
-			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
-				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
-				this->fFileRestrict != kFileMgrRestrictWrite &&
-				this->fFileRestrict != kFileMgrRestrictWriteBinary)
-				return;
-
-			auto man = FSClass::GetMounted();
-
-			if (man)
-			{
-				man->Seek(fFile, offset);
-				man->Write(fFile, data, sz, kFileReadChunk);
-			}
 		}
 
 	public:
