@@ -139,3 +139,19 @@
 										  4 * y_base))) |= _Clr;                      \
 		}                                                                             \
 	}
+
+#include <Modules/GfxMgr/AccessibilityMgr.h>
+
+namespace UI
+{
+	inline void ui_draw_background() noexcept
+	{
+		fb_init();
+
+		FBDrawInRegion(fb_get_clear_clr(), UI::UIAccessibilty::Height(), UI::UIAccessibilty::Width(),
+					   0, 0);
+
+		fb_fini();
+	}
+
+} // namespace UI

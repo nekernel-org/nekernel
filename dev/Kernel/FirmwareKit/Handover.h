@@ -103,7 +103,7 @@ namespace Kernel::HEL
 	};
 
 	/// @brief Alias of bootloader main type.
-	typedef void (*HandoverProc)(BootInfoHeader* boot_info);
+	typedef Int32 (*HandoverProc)(BootInfoHeader* boot_info);
 } // namespace Kernel::HEL
 
 /// @brief Bootloader information header global variable.

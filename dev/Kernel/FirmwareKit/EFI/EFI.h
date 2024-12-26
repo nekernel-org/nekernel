@@ -42,6 +42,7 @@ struct EfiHandle;
 struct EfiGraphicsOutputProtocol;
 struct EfiBitmask;
 struct EfiFileProtocol;
+struct EfiSimpleTextInputProtocol;
 
 typedef UInt64 EfiStatusType;
 
@@ -473,6 +474,14 @@ typedef struct EfiGUID EFI_FINAL
  * Protocol stuff...
  */
 
+#define EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID                \
+	{                                                      \
+		0x387477c1, 0x69c7, 0x11d2,                        \
+		{                                                  \
+			0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
+		}                                                  \
+	}
+
 /** some helpers */
 #define EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL  0x00000001
 #define EFI_OPEN_PROTOCOL_GET_PROTOCOL		  0x00000002
@@ -563,6 +572,36 @@ typedef struct EfiSimpleTextOutputProtocol
 	VoidPtr			Mode;
 } EfiSimpleTextOutputProtocol;
 
+typedef struct
+{
+	UInt16 ScanCode;
+	char16_t UnicodeChar;
+} EfiInputKey;
+
+typedef EfiStatusType(EFI_API* EfiInputReadKey)(
+	IN EfiSimpleTextInputProtocol* This,
+	OUT EfiInputKey* Key);
+
+typedef EfiStatusType(EFI_API* EfiInputReset)(
+	IN EfiSimpleTextInputProtocol* This,
+	IN Boolean ExtendedChk );
+
+typedef
+EfiStatusType
+(EFI_API *EfiWaitForEvent) (
+   IN UInt32             NumberOfEvents,
+   IN VoidPtr         Event,
+   OUT UInt32            *Index
+  );
+
+typedef struct EfiSimpleTextInputProtocol
+{
+	EfiInputReset	   Reset;
+	EfiInputReadKey ReadKeyStroke;
+	EfiWaitForEvent		   WaitForKey;
+} EfiSimpleTextInputProtocol;
+
+/// @biref Open Volume procedure ptr.
 typedef UInt64(EFI_API* EfiOpenVolume)(struct EfiSimpleFilesystemProtocol*,
 									   struct EfiFileProtocol**);
 
@@ -581,7 +620,7 @@ typedef struct EfiSystemTable
 	WideChar*					 FirmwareVendor;
 	UInt32						 FirmwareRevision;
 	EfiHandlePtr				 ConsoleInHandle;
-	VoidPtr						 ConIn;
+	EfiSimpleTextInputProtocol*	 ConIn;
 	EfiHandlePtr				 ConsoleOutHandle;
 	EfiSimpleTextOutputProtocol* ConOut;
 	EfiHandlePtr				 StandardErrorHandle;
@@ -826,11 +865,11 @@ typedef struct _EfiProcessorInformation
 
 typedef EfiStatusType EFI_API (*EfiMpServicesGetNumberOfProcessors)(
 	IN struct _EfiMpServicesProtocol* Self,
-	OUT UInt32*						  NumberOfProcessors,
-	OUT UInt32*						  NumberOfEnabledProcessors);
+	OUT UInt32* NumberOfProcessors,
+	OUT UInt32* NumberOfEnabledProcessors);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesGetProcessorInfo)(
-	IN struct _EfiMpServicesProtocol*	 Self,
+	IN struct _EfiMpServicesProtocol* Self,
 	IN UInt32*							 ProcessorNumber,
 	OUT struct _EfiProcessorInformation* NumberOfEnabledProcessors);
 
@@ -843,8 +882,8 @@ typedef EfiStatusType EFI_API (*EfiMpServicesStartupAllAPS)(
 	IN Boolean						  SingleThread,
 	IN VoidPtr WaitEvent			  OPTIONAL, // EFI_EVENT first, but unused here.
 	IN UInt32						  TimeoutInMicroSeconds,
-	IN Void* ProcedureArgument		  OPTIONAL,
-	OUT UInt32** FailedCpuList		  OPTIONAL);
+	IN Void* ProcedureArgument OPTIONAL,
+	OUT UInt32** FailedCpuList OPTIONAL);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesSwitchBSP)(
 	IN struct _EfiMpServicesProtocol* Self,
@@ -857,18 +896,18 @@ typedef EfiStatusType EFI_API (*EfiMpServicesStartupThisAP)(
 	IN UInt32						  ProcessorNumber,
 	IN VoidPtr WaitEvent			  OPTIONAL,
 	IN UInt32						  TimeoutInMicroseconds,
-	IN Void* ProcedureArgument		  OPTIONAL,
-	OUT Boolean* Finished			  OPTIONAL);
+	IN Void* ProcedureArgument OPTIONAL,
+	OUT Boolean* Finished OPTIONAL);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesDisableThisAP)(
 	IN struct _EfiMpServicesProtocol* Self,
 	IN UInt32						  ProcessorNumber,
 	IN Boolean						  EnableAP,
-	IN UInt32* HealthFlag			  OPTIONAL);
+	IN UInt32* HealthFlag OPTIONAL);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesWhoAmI)(
 	IN struct _EfiMpServicesProtocol* Self,
-	OUT UInt32*						  ProcessorNumber);
+	OUT UInt32* ProcessorNumber);
 
 typedef struct _EfiMpServicesProtocol
 {

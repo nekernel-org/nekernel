@@ -122,7 +122,7 @@ namespace Boot
 #ifdef __ZKA_AMD64__
 						if (handover_struc->HandoverArch != HEL::kArchAMD64)
 						{
-							fb_render_string("BootZ: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 							::EFI::Stop();
 						}
 #endif
@@ -130,11 +130,11 @@ namespace Boot
 #ifdef __ZKA_ARM64__
 						if (handover_struc->HandoverArch != HEL::kArchARM64)
 						{
-							fb_render_string("BootZ: NOT AN HANDOVER IMAGE, BAD ARCHITECTURE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 							::EFI::Stop();
 						}
 #endif
-						fb_render_string("BootZ: NOT AN HANDOVER IMAGE...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+						fb_render_string("BootZ: Not an handover header...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
 						::EFI::Stop();
 					}
@@ -160,18 +160,20 @@ namespace Boot
 		}
 		else
 		{
-			writer.Write("BootZ: INVALID EXECUTABLE.\r");
+			writer.Write("BootZ: Invalid Executable.\r");
 		}
 
 		fStack = new UInt8[mib_cast(8)];
 	}
 
 	/// @note handover header has to be valid!
-	Void BThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
+	Int32 BThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
 	{
-		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> void {
-			fb_render_string("BootZ: INVALID IMAGE! ABORTING...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
+		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> Int32 {
+			fb_render_string("BootZ: Invalid Boot Image...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			::EFI::Stop();
+
+			return NO;
 		};
 
 		if (!fStartAddress)
@@ -182,12 +184,16 @@ namespace Boot
 		fHandover = handover;
 
 		if (own_stack)
+		{	
 			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(8) - 1]);
+		}
 		else
 		{
 			delete[] fStack;
-			reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
+			return reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
 		}
+
+		return NO;
 	}
 
 	const Char* BThread::GetName()

@@ -15,7 +15,6 @@
 #include <FirmwareKit/EPM.h>
 #include <CompilerKit/Version.h>
 #include <Modules/GfxMgr/FBMgr.h>
-#include <Modules/GfxMgr/AppearanceMgr.h>
 #include <BootKit/Rsrc/zka_disk.rsrc>
 #include <BootKit/Rsrc/zka_no_disk.rsrc>
 #include <BootKit/Rsrc/zka_has_disk.rsrc>

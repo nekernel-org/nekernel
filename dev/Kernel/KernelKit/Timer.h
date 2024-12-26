@@ -26,7 +26,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(TimerInterface);
 
 	public:
-		virtual Int32 Wait() noexcept;
+		virtual BOOL Wait() noexcept;
 	};
 
 	class SoftwareTimer final : public TimerInterface
@@ -39,7 +39,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(SoftwareTimer);
 
 	public:
-		Int32 Wait() noexcept override;
+		BOOL Wait() noexcept override;
 
 	private:
 		IntPtr* fDigitalTimer{nullptr};
@@ -56,7 +56,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(HardwareTimer);
 
 	public:
-		Int32 Wait() noexcept override;
+		BOOL Wait() noexcept override;
 
 	private:
 		IntPtr* fDigitalTimer{nullptr};

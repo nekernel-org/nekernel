@@ -10,7 +10,7 @@
 #include <NetBoot.h>
 #include <BootKit/BootKit.h>
 
-EXTERN_C Int32 main(Kernel::HEL::BootInfoHeader* Handover)
+EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* Handover)
 {
 	return kEfiOk;
 }

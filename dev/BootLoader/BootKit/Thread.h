@@ -29,7 +29,7 @@ namespace Boot
 		BThread& operator=(const BThread&) = default;
 		BThread(const BThread&)			   = default;
 
-		void		Start(HEL::BootInfoHeader* handover, BOOL is_own_stack);
+		Int32		Start(HEL::BootInfoHeader* handover, BOOL is_own_stack);
 		void		SetName(const char* name);
 		const char* GetName();
 		bool		IsValid();

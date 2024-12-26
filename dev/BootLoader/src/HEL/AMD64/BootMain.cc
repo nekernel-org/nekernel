@@ -157,39 +157,11 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
 	// Fill handover header now.
 
-	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
-
 	// ---------------------------------------------------- //
 	// The following checks for an exisiting partition
 	// inside the disk, if it doesn't have one,
 	// format the disk.
 	// ---------------------------------------------------- //
-
-#ifdef ZKA_AUTO_FORMAT
-	if (!partition_factory.IsPartitionValid())
-	{
-		UI::ui_draw_background();
-
-		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
-
-		fb_fini();
-
-		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
-
-		root.fFileName[0] = kNeFSRoot[0];
-		root.fFileName[1] = 0;
-
-		root.fKind = kNeFSCatalogKindDir;
-
-		partition_factory.Format("FileSystem (A:)\0", &root, 1);
-		
-		UI::ui_draw_background();
-
-		FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_HEIGHT, ZKA_HAS_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
-
-		fb_fini();
-	}
-#endif // ZKA_AUTO_FORMAT
 
 	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
@@ -243,10 +215,31 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	if (reader_syschk.Blob())
 	{
 		syschk_thread = new Boot::BThread(reader_syschk.Blob());
-		syschk_thread->SetName("BootZ: System Check");
+		syschk_thread->SetName("BootZ: System Recovery Check");
 	}
 
-	syschk_thread->Start(handover_hdr, NO);
+	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
+
+	if (partition_factory.IsPartitionValid() == false &&
+		syschk_thread->Start(handover_hdr, NO) == kEfiOk)
+	{
+		fb_init();
+
+		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
+
+		root.fFileName[0] = kNeFSRoot[0];
+		root.fFileName[1] = 0;
+
+		root.fKind = kNeFSCatalogKindDir;
+
+		partition_factory.Format("FileSystem (A:) <System_Build\"" __DATE__ "\">", &root, 1);
+
+		UI::ui_draw_background();
+
+		FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_HEIGHT, ZKA_HAS_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
+
+		fb_fini();
+	}
 
 	// ------------------------------------------ //
 	// null these fields, to avoid being reused later.
@@ -289,7 +282,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	else
 	{
 		fb_init();
-		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
+		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
 
 		EFI::Stop();
 	}
@@ -300,16 +293,16 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	if (ttf_font.Blob())
 	{
-		handover_hdr->f_KernelImage	   = reader_kernel.Blob();
-		handover_hdr->f_KernelSz	   = reader_kernel.Size();
-		handover_hdr->f_FontImage 	   = ttf_font.Blob();
-		handover_hdr->f_FontSz		   = ttf_font.Size();
+		handover_hdr->f_KernelImage = reader_kernel.Blob();
+		handover_hdr->f_KernelSz	= reader_kernel.Size();
+		handover_hdr->f_FontImage	= ttf_font.Blob();
+		handover_hdr->f_FontSz		= ttf_font.Size();
 	}
 	else
 	{
 		fb_init();
 		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
-			
+
 		EFI::Stop();
 	}
 

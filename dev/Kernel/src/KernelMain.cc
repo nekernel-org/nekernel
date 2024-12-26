@@ -22,7 +22,6 @@
 #include <NewKit/Utils.h>
 #include <KernelKit/CodeMgr.h>
 #include <CFKit/Property.h>
-#include <Modules/GfxMgr/AppearanceMgr.h>
 #include <KernelKit/Timer.h>
 
 namespace Kernel::Detail
