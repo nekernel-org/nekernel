@@ -6,6 +6,6 @@
 
 #pragma once
 
-#include <Modules/SCSI/SCSI.h>
+#include <Mod/SCSI/SCSI.h>
 
 extern const scsi_packet_type<12> kCDRomPacketTemplate;

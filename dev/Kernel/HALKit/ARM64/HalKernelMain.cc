@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.h>
-#include <Modules/GfxMgr/FBMgr.h>
+#include <Mod/GfxMgr/FBMgr.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/Heap.h>
@@ -13,7 +13,7 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <NewKit/Json.h>
 #include <KernelKit/CodeMgr.h>
-#include <Modules/ACPI/ACPIFactoryInterface.h>
+#include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <NetworkKit/IPC.h>
 #include <CFKit/Property.h>
 

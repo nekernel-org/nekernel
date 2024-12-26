@@ -8,9 +8,9 @@
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Utils.h>
 #include <FirmwareKit/EPM.h>
-#include <Modules/ATA/ATA.h>
-#include <Modules/AHCI/AHCI.h>
-#include <Modules/NVME/NVME.h>
+#include <Mod/ATA/ATA.h>
+#include <Mod/AHCI/AHCI.h>
+#include <Mod/NVME/NVME.h>
 
 /***********************************************************************************/
 /// @file DriveMgr.cc

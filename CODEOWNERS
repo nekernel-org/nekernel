@@ -1,4 +1,4 @@
-# BootZ, SCI and ZKA are owned by Amlal.
+# BootZ, LibSCI and ZKA are owned by Amlal.
 /dev/Kernel/ @amlel-el-mahrouss
-/dev/BootLoader/ @amlel-el-mahrouss
-/dev/SCIKit/ @amlel-el-mahrouss
+/dev/Boot/ @amlel-el-mahrouss
+/dev/LibSCI/ @amlel-el-mahrouss

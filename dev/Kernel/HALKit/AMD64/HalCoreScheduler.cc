@@ -4,14 +4,14 @@
 
 ------------------------------------------- */
 
-#include <Modules/ACPI/ACPIFactoryInterface.h>
+#include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <HALKit/AMD64/Processor.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/Semaphore.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Timer.h>
-#include <Modules/GfxMgr/TextMgr.h>
+#include <Mod/GfxMgr/TextMgr.h>
 #include <NewKit/KernelPanic.h>
 
 // Needed for SMP.

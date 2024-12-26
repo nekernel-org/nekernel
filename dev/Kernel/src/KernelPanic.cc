@@ -11,8 +11,8 @@
 #include <NewKit/KString.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
-#include <Modules/GfxMgr/FBMgr.h>
-#include <Modules/GfxMgr/TextMgr.h>
+#include <Mod/GfxMgr/FBMgr.h>
+#include <Mod/GfxMgr/TextMgr.h>
 
 #define kWebsiteURL "https://el-mahrouss-logic.com/products/help/"
 

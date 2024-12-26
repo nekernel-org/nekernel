@@ -21,7 +21,7 @@ class BTextWriter;
 #define __BOOTKIT_NO_INCLUDE__ 1
 
 #include <BootKit/BootKit.h>
-#include <Modules/GfxMgr/FBMgr.h>
+#include <Mod/GfxMgr/FBMgr.h>
 #endif // ifdef __ZBAOSLDR__
 
 inline EfiSystemTable*	ST = nullptr;

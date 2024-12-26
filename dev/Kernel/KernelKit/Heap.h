@@ -13,7 +13,7 @@
 
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/LPC.h>
-#include <HintKit/CompilerHint.h>
+#include <Hints/CompilerHint.h>
 
 namespace Kernel
 {

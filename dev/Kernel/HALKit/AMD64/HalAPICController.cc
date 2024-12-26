@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <Modules/ACPI/ACPIFactoryInterface.h>
+#include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <HALKit/AMD64/Processor.h>
 
 #define cIOAPICRegVal (4)

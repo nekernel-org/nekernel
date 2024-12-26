@@ -9,9 +9,9 @@
 #include <FSKit/NeFS.h>
 #include <FirmwareKit/EPM.h>
 
-#include <Modules/AHCI/AHCI.h>
-#include <Modules/ATA/ATA.h>
-#include <Modules/Flash/Flash.h>
+#include <Mod/AHCI/AHCI.h>
+#include <Mod/ATA/ATA.h>
+#include <Mod/Flash/Flash.h>
 #include <KernelKit/LPC.h>
 #include <NewKit/Crc32.h>
 #include <NewKit/KernelPanic.h>

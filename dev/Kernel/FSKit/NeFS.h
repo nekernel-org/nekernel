@@ -17,7 +17,7 @@ default.
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <HintKit/CompilerHint.h>
+#include <Hints/CompilerHint.h>
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
@@ -376,7 +376,7 @@ namespace Kernel
 		}
 
 	private:
-		Char mStamp[255] = { "/System/FileSystemStamp.jrnl" };
+		Char mStamp[255] = { "/Boot/Journal" kNeFSJournalExt };
 
 	};
 

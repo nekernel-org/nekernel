@@ -29,7 +29,7 @@
 #endif // __FSKIT_INCLUDES_HPFS__
 
 #include <CompilerKit/CompilerKit.h>
-#include <HintKit/CompilerHint.h>
+#include <Hints/CompilerHint.h>
 #include <KernelKit/LPC.h>
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Stream.h>

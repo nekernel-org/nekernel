@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <Modules/ACPI/ACPIFactoryInterface.h>
+#include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <KernelKit/UserProcessScheduler.h>
 
 using namespace Kernel;

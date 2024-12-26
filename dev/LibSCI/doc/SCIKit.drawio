@@ -1,0 +1,28 @@
+<mxfile host="65bd71144e">
+    <diagram name="Page-1" id="_vc7fxBdNKI2W8YhI8VA">
+        <mxGraphModel dx="756" dy="528" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="eRehIIeIVOPW1y23kRkx-2" target="eRehIIeIVOPW1y23kRkx-8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-2" value="LibSCI Header (Foundation.h)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="450" width="226" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="eRehIIeIVOPW1y23kRkx-3" target="eRehIIeIVOPW1y23kRkx-2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-3" value="LibSCI" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
+                    <mxGeometry x="283" y="290" width="60" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-8" value="WindowMgr" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="253" y="570" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="eRehIIeIVOPW1y23kRkx-10" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;System Call Interface&lt;/h1&gt;&lt;p&gt;A set of core functions made to call the microkernel.&lt;/p&gt;&lt;p&gt;These calls takes care of I/O, Heap and process control.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="240" width="320" height="100" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

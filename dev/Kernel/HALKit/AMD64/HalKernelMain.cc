@@ -8,10 +8,10 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/CodeMgr.h>
-#include <Modules/ACPI/ACPIFactoryInterface.h>
+#include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <NetworkKit/IPC.h>
 #include <CFKit/Property.h>
-#include <Modules/GfxMgr/TextMgr.h>
+#include <Mod/GfxMgr/TextMgr.h>
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;

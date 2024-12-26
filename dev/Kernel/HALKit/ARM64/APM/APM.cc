@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <Modules/APM/APM.h>
+#include <Mod/APM/APM.h>
 #include <KernelKit/LPC.h>
 
 using namespace Kernel;

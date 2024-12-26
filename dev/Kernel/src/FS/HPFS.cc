@@ -6,9 +6,9 @@
 
 #ifdef __FSKIT_INCLUDES_HPFS__
 
-#include <Modules/AHCI/AHCI.h>
-#include <Modules/ATA/ATA.h>
-#include <Modules/Flash/Flash.h>
+#include <Mod/AHCI/AHCI.h>
+#include <Mod/ATA/ATA.h>
+#include <Mod/Flash/Flash.h>
 #include <FSKit/HPFS.h>
 #include <KernelKit/LPC.h>
 #include <NewKit/Crc32.h>

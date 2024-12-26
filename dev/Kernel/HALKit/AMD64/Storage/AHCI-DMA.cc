@@ -18,8 +18,8 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
-#include <Modules/ATA/ATA.h>
-#include <Modules/AHCI/AHCI.h>
+#include <Mod/ATA/ATA.h>
+#include <Mod/AHCI/AHCI.h>
 #include <KernelKit/PCI/Iterator.h>
 #include <NewKit/Utils.h>
 #include <KernelKit/LockDelegate.h>
