@@ -2,7 +2,7 @@
 
 	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
-	File: MSDOS.hpp
+	File: MSDOS.h
 	Purpose: MS-DOS header for Kernel.
 
 	Revision History:

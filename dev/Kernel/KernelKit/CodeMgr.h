@@ -2,7 +2,7 @@
 
 	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
-	File: CodeMgr.hpp
+	File: CodeMgr.h
 	Purpose: Code Mgr.
 
 	Revision History:
@@ -21,7 +21,7 @@
 namespace Kernel
 {
 	/// @brief Main process entrypoint.
-	typedef void (*rtl_main_kind)(SizeT argc, char** argv, char** envp, SizeT envp_len);
+	typedef void (*rtl_main_kind)(const SizeT argc, Char** argv, Char** envp, const SizeT envp_len);
 	
 	/// @brief C++ Constructor entrypoint.
 	typedef void(*rtl_ctor_kind)(void);

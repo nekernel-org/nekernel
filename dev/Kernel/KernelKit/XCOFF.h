@@ -2,7 +2,7 @@
 
 	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
 
-	File: XCOFF.hpp
+	File: XCOFF.h
 	Purpose: XCOFF for Kernel.
 
 	Revision History:
