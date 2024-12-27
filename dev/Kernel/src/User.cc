@@ -27,9 +27,11 @@ namespace Kernel
 {
 	namespace Detail
 	{
+		////////////////////////////////////////////////////////////
 		/// \brief Constructs a password by hashing the password.
 		/// \param password password to hash.
 		/// \return the hashed password
+		////////////////////////////////////////////////////////////
 		const Int32 cred_construct_token(Char* password, const Char* in_password, User* user, SizeT length)
 		{
 			if (!password || !user)
@@ -53,7 +55,9 @@ namespace Kernel
 		}
 	} // namespace Detail
 
+	////////////////////////////////////////////////////////////
 	/// @brief User ring constructor.
+	////////////////////////////////////////////////////////////
 	User::User(const Int32& sel, const Char* userName)
 		: mUserRing((UserRingKind)sel)
 	{
@@ -61,14 +65,18 @@ namespace Kernel
 		rt_copy_memory((VoidPtr)userName, this->mUserName, rt_string_len(userName));
 	}
 
+	////////////////////////////////////////////////////////////
 	/// @brief User ring constructor.
+	////////////////////////////////////////////////////////////
 	User::User(const UserRingKind& ringKind, const Char* userName)
 		: mUserRing(ringKind)
 	{
 		rt_copy_memory((VoidPtr)userName, this->mUserName, rt_string_len(userName));
 	}
 
+	////////////////////////////////////////////////////////////
 	/// @brief User destructor class.
+	////////////////////////////////////////////////////////////
 	User::~User() = default;
 
 	Bool User::Save(const usr_public_key_kind password_to_fill) noexcept
@@ -159,8 +167,11 @@ namespace Kernel
 		return this->mUserName;
 	}
 
+	////////////////////////////////////////////////////////////
 	/// @brief Returns the user's ring.
 	/// @return The king of ring the user is attached to.
+	////////////////////////////////////////////////////////////
+
 	const UserRingKind& User::Ring() noexcept
 	{
 		return this->mUserRing;

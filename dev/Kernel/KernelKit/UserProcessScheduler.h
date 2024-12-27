@@ -7,6 +7,7 @@
 #ifndef INC_PROCESS_SCHEDULER_H
 #define INC_PROCESS_SCHEDULER_H
 
+#include "NewKit/Defines.h"
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/LockDelegate.h>
 #include <KernelKit/User.h>
@@ -30,8 +31,8 @@ namespace Kernel
 {
 	//! @note Forward class declarations.
 
-	class UserProcess;
 	class IDLLObject;
+	class UserProcess;
 	class UserProcessTeam;
 	class UserProcessScheduler;
 	class UserProcessHelper;
@@ -164,8 +165,9 @@ namespace Kernel
 		UserProcessImage   Image;
 		SizeT			   StackSize{kSchedMaxStackSz};
 		IDLLObject*		   DylibDelegate{nullptr};
-		SizeT			   MemoryCursor{0};
+		SizeT			   MemoryCursor{0UL};
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
+		SizeT			   UsedMemory{0UL};
 
 		struct ProcessMemoryHeapList final
 		{

@@ -128,12 +128,10 @@ namespace Kernel
 
 			this->ProcessMemoryHeap->MemoryPrev = nullptr;
 			this->ProcessMemoryHeap->MemoryNext = nullptr;
-
-			return ErrorOr<VoidPtr>(ptr);
 		}
 		else
 		{
-			ProcessMemoryHeapList* entry		= this->ProcessMemoryHeap;
+			ProcessMemoryHeapList* entry	  = this->ProcessMemoryHeap;
 			ProcessMemoryHeapList* prev_entry = nullptr;
 
 			while (!entry)
@@ -152,7 +150,9 @@ namespace Kernel
 			entry->MemoryNext->MemoryNext = nullptr;
 		}
 
-		return ErrorOr<VoidPtr>(nullptr);
+		this->UsedMemory += sz;
+
+		return ErrorOr<VoidPtr>(ptr);
 	}
 
 	/***********************************************************************************/
@@ -566,13 +566,17 @@ namespace Kernel
 		return false;
 	}
 
+	////////////////////////////////////////////////////////////
 	/// @brief this checks if any process is on the team.
+	////////////////////////////////////////////////////////////
 	UserProcessScheduler::operator bool()
 	{
 		return mTeam.AsArray().Count() > 0;
 	}
 
+	////////////////////////////////////////////////////////////
 	/// @brief this checks if no process is on the team.
+	////////////////////////////////////////////////////////////
 	bool UserProcessScheduler::operator!()
 	{
 		return mTeam.AsArray().Count() == 0;
