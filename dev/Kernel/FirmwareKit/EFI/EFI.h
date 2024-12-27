@@ -46,6 +46,8 @@ struct EfiSimpleTextInputProtocol;
 
 typedef UInt64 EfiStatusType;
 
+typedef Char16 EfiChar16Type;
+
 /// @brief Core Handle Kind
 /// Self is like NT's Win32 HANDLE type.
 typedef struct EfiHandle
@@ -575,7 +577,7 @@ typedef struct EfiSimpleTextOutputProtocol
 typedef struct
 {
 	UInt16 ScanCode;
-	char16_t UnicodeChar;
+	EfiChar16Type UnicodeChar;
 } EfiInputKey;
 
 typedef EfiStatusType(EFI_API* EfiInputReadKey)(
