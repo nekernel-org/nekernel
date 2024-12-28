@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Theater Quality Inc.
+	Copyright Theater Quality Corp.
 
 ------------------------------------------- */
 

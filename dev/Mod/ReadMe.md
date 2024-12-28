@@ -9,4 +9,4 @@ They are pluggable modules for builtin hardware support.
 - [X] AHCI kernel module.
 - [X] MBCI kernel module.
 
-###### Copyright (C) 2024, Theater Quality Inc, all rights reserved. All rights reserved.
+###### Copyright (C) 2024, Theater Quality Corp, all rights reserved. All rights reserved.

@@ -1,7 +1,7 @@
 /*
  * Created on Thu Oct 17 08:00:42 CEST 2024
  *
- * Copyright (c) 2024 Theater Quality Inc
+ * Copyright (c) 2024 Theater Quality Corp
  */
 
 #include <Framework.h>
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 		if (strcmp(argv[i], "-h") == 0)
 		{
 			std::cout << "make_container: Framework/Application Creation Tool.\n";
-			std::cout << "make_container: © Theater Quality Inc, All rights reserved.\n";
+			std::cout << "make_container: © Theater Quality Corp, All rights reserved.\n";
 
 			std::cout << "make_container: -app: Application directory.\n";
 			std::cout << "make_container: -steps: Steps directory.\n";

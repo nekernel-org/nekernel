@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
+	Copyright (C) 2024, Theater Quality Corp, all rights reserved.
 
 	FILE: UserProcessScheduler.cc
 	PURPOSE: Low level/Ring-3 Process scheduler.
@@ -505,7 +505,7 @@ namespace Kernel
 	 * @brief Start scheduling current AP.
 	 */
 	/***********************************************************************************/
-	
+
 	SizeT UserProcessHelper::StartScheduling()
 	{
 		return kProcessScheduler.Run();

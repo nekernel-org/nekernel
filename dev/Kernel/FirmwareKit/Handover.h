@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
+	Copyright (C) 2024, Theater Quality Corp, all rights reserved.
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
  * @version 1.15
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, Theater Quality Inc
+ * @copyright Copyright (c) 2024, Theater Quality Corp
  *
  */
 

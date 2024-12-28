@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	NetBoot
- * 	Copyright (C) 2024, Theater Quality Inc, all rights reserved., all rights reserved.
+ * 	Copyright (C) 2024, Theater Quality Corp, all rights reserved., all rights reserved.
  *
  * 	========================================================
  */

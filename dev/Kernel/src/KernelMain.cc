@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Theater Quality Inc
+	Copyright Theater Quality Corp
 
 	File: Main.cxx
 	Purpose: Main entrypoint of kernel.
