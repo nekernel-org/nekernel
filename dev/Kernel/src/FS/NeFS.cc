@@ -11,7 +11,7 @@
 
 #include <Mod/AHCI/AHCI.h>
 #include <Mod/ATA/ATA.h>
-#include <Mod/Flash/Flash.h>
+#include <Mod/MFlash/MFlash.h>
 #include <KernelKit/LPC.h>
 #include <NewKit/Crc32.h>
 #include <NewKit/KernelPanic.h>

@@ -10,11 +10,11 @@
 #include <BootKit/BootKit.h>
 
 #ifndef kExpectedWidth
-#define kExpectedWidth 844
+#define kExpectedWidth (1280)
 #endif
 
 #ifndef kExpectedHeight
-#define kExpectedHeight 390
+#define kExpectedHeight (720)
 #endif
 
 EXTERN EfiBootServices* BS;

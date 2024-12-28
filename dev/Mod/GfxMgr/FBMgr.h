@@ -14,7 +14,7 @@
 
 #define fb_get_clear_clr() fb_color(0x20, 0x20, 0x20)
 
-#define fb_fini() kCGCursor = 0
+#define fb_clear() kCGCursor = 0
 
 /// @brief Performs OR drawing on the framebuffer.
 #define FBDrawBitMapInRegionA(_BitMp, _Height, _Width, _BaseX, _BaseY)       \
@@ -100,34 +100,6 @@
 		}                                                                             \
 	}
 
-#define FBDrawInRegionToVideoRgn(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)    \
-	kCGCursor = 0;                                                                    \
-                                                                                      \
-	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
-	{                                                                                 \
-		for (Kernel::SizeT y_base = _BaseY; y_base < (_Height + _BaseY); ++y_base)    \
-		{                                                                             \
-			*(((volatile Kernel::UInt32*)(_VideoRgn +                                 \
-										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-											  x_base +                                \
-										  4 * y_base))) = _Clr;                       \
-			++kCGCursor;                                                              \
-		}                                                                             \
-	}
-
-#define FBDrawInRegionToVideoRgnA(_VideoRgn, _Clr, _Height, _Width, _BaseX, _BaseY)   \
-	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
-	{                                                                                 \
-		for (Kernel::SizeT y_base = _BaseY; y_base < (_Height + _BaseY); ++y_base)    \
-		{                                                                             \
-			*(((volatile Kernel::UInt32*)(_VideoRgn +                                 \
-										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-											  x_base +                                \
-										  4 * y_base))) |= _Clr;                      \
-			++kCGCursor;                                                              \
-		}                                                                             \
-	}
-
 #define FBDrawInRegionA(_Clr, _Height, _Width, _BaseX, _BaseY)                        \
 	for (Kernel::SizeT x_base = _BaseX; x_base < (_Width + _BaseX); ++x_base)         \
 	{                                                                                 \
@@ -140,7 +112,9 @@
 		}                                                                             \
 	}
 
+#ifndef GFX_MGR_ACCESSIBILITY_H
 #include <Mod/GfxMgr/AccessibilityMgr.h>
+#endif // ifndef GFX_MGR_ACCESSIBILITY_H
 
 namespace UI
 {
@@ -151,7 +125,7 @@ namespace UI
 		FBDrawInRegion(fb_get_clear_clr(), UI::UIAccessibilty::Height(), UI::UIAccessibilty::Width(),
 					   0, 0);
 
-		fb_fini();
+		fb_clear();
 	}
 
 } // namespace UI

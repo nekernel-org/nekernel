@@ -4,13 +4,14 @@
 
 ------------------------------------------- */
 
+#ifdef ZKA_USE_MBCI_FLASH
+
 #include <NewKit/Defines.h>
 #include <ArchKit/ArchKit.h>
+#include <Mod/MFlash/MFlash.h>
 
-/// @file Flash.cc
-/// @brief Flash memory builtin.
-
-#ifdef ZKA_USE_MBCI_FLASH
+/// @file HalMFlash.cc
+/// @brief MBCI Flash builtin.
 
 #define kMaxFlash (4U)
 
@@ -20,7 +21,7 @@ namespace Kernel
 	constexpr auto kFlashBridgeMagic	= "FLSH";
 	constexpr auto kFlashBridgeRevision = 1;
 
-	STATIC const Boolean kFlashEnabled			   = No;
+	STATIC CONST Boolean kFlashEnabled			   = No;
 	STATIC SizeT		 kFlashSize[kMaxFlash]	   = {};
 	STATIC SizeT		 kFlashSectorSz[kMaxFlash] = {};
 

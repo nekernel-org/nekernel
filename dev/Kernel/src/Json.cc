@@ -7,4 +7,4 @@
 #include <NewKit/Json.h>
 
 /// @brief Undefined object, is null in length.
-INIT_OBJECT(Kernel::JSON::kNull, Kernel::JSON);
+RTL_INIT_OBJECT(Kernel::JSON::kNull, Kernel::JSON);

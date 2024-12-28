@@ -142,8 +142,8 @@
 
 #define BOOL Kernel::Boolean
 
-#ifdef INIT_OBJECT
-#undef INIT_OBJECT
-#endif // ifdef INIT_OBJECT
+#ifdef RTL_INIT_OBJECT
+#undef RTL_INIT_OBJECT
+#endif // ifdef RTL_INIT_OBJECT
 
-#define INIT_OBJECT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
+#define RTL_INIT_OBJECT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)

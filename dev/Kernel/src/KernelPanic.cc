@@ -39,7 +39,7 @@ namespace Kernel
 
 		start_y += 10;
 
-		fb_fini();
+		fb_clear();
 
 		// show text according to error id.
 

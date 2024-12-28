@@ -147,7 +147,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	FBDrawBitMapInRegion(zka_disk, ZKA_DISK_HEIGHT, ZKA_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_DISK_HEIGHT) / 2);
 
-	fb_fini();
+	fb_clear();
 
 	UInt32 cnt_enabled	= 0;
 	UInt32 cnt_disabled = 0;
@@ -220,8 +220,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
-	if (partition_factory.IsPartitionValid() == false &&
-		syschk_thread->Start(handover_hdr, NO) == kEfiOk)
+	if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
 	{
 		fb_init();
 
@@ -232,13 +231,13 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		root.fKind = kNeFSCatalogKindDir;
 
-		partition_factory.Format("Zka HD", &root, 1);
+		partition_factory.Format(kMachineModel " HD", &root, 1);
 
 		UI::ui_draw_background();
 
 		FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_HEIGHT, ZKA_HAS_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
 
-		fb_fini();
+		fb_clear();
 	}
 
 	// ------------------------------------------ //

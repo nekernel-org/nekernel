@@ -75,7 +75,7 @@ namespace Kernel
 
 	using Lba = UInt64;
 
-	using EfiChar16Type = char16_t;
+	using Char16 = char16_t;
 
 	enum class Endian : UInt8
 	{
