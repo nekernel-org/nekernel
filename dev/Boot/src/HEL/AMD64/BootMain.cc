@@ -145,7 +145,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	UI::ui_draw_background();
 
-	FBDrawBitMapInRegion(zka_disk, ZKA_DISK_HEIGHT, ZKA_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_DISK_HEIGHT) / 2);
+	FBDrawBitMapInRegion(zka_disk, ZKA_DISK_WIDTH, ZKA_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_DISK_HEIGHT) / 2);
 
 	fb_clear();
 
@@ -235,7 +235,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		UI::ui_draw_background();
 
-		FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_HEIGHT, ZKA_HAS_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
+		FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_WIDTH, ZKA_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
 
 		fb_clear();
 	}
@@ -281,7 +281,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	else
 	{
 		fb_init();
-		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
+		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_WIDTH, ZKA_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
 
 		EFI::Stop();
 	}

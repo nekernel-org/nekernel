@@ -213,13 +213,13 @@ namespace Boot
 
 		ZKA_COPY_DELETE(BDiskFormatFactory);
 
-		/// @brief Format disk using partition name and fileBlobs.
-		/// @param Partition partName the target partition name.
-		/// @param fileBlobs blobs array.
-		/// @param blobCount blobs array count.
+		/// @brief Format disk using partition name and blob_list.
+		/// @param Partition part_name the target partition name.
+		/// @param blob_list blobs array.
+		/// @param blob_cnt blobs array count.
 		/// @retval True disk has been formatted.
 		/// @retval False failed to format.
-		Boolean Format(const Char* partName, BFileDescriptor* fileBlobs, SizeT blobCount);
+		Boolean Format(const Char* part_name, BFileDescriptor* blob_list, SizeT blob_cnt);
 
 		/// @brief check if partition is good.
 		Bool IsPartitionValid() noexcept
@@ -261,12 +261,12 @@ namespace Boot
 
 	private:
 		/// @brief Write all of the requested catalogs into the filesystem.
-		/// @param fileBlobs the blobs.
-		/// @param blobCount the number of blobs to write.
+		/// @param blob_list the blobs.
+		/// @param blob_cnt the number of blobs to write.
 		/// @param partBlock the NeFS partition block.
-		Boolean WriteRootCatalog(BFileDescriptor* fileBlobs, SizeT blobCount, NFS_ROOT_PARTITION_BLOCK& partBlock)
+		Boolean WriteRootCatalog(BFileDescriptor* blob_list, SizeT blob_cnt, NFS_ROOT_PARTITION_BLOCK& partBlock)
 		{
-			BFileDescriptor* blob	  = fileBlobs;
+			BFileDescriptor* blob	  = blob_list;
 			Lba				 startLba = partBlock.StartCatalog;
 			BTextWriter		 writer;
 
@@ -307,11 +307,11 @@ namespace Boot
 	/// @retval True disk has been formatted.
 	/// @retval False failed to format.
 	template <typename BootDev>
-	inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							partName,
-													   BDiskFormatFactory::BFileDescriptor* fileBlobs,
-													   SizeT								blobCount)
+	inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							part_name,
+													   BDiskFormatFactory::BFileDescriptor* blob_list,
+													   SizeT								blob_cnt)
 	{
-		if (!fileBlobs || !blobCount)
+		if (!blob_list || !blob_cnt)
 			return false; /// sanity check
 
 		/// @note A catalog roughly equal to a sector.
@@ -324,18 +324,18 @@ namespace Boot
 		{
 			fb_init();
 
-			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
-			EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a New Filesystem partition here.");
+			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_WIDTH, ZKA_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
+			EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a NeFS partition here.");
 			return false;
 		}
 
 		NFS_ROOT_PARTITION_BLOCK partBlock{0};
 
 		CopyMem(partBlock.Ident, kNeFSIdent, kNeFSIdentLen - 1);
-		CopyMem(partBlock.PartitionName, partName, StrLen(partName));
+		CopyMem(partBlock.PartitionName, part_name, StrLen(part_name));
 
 		partBlock.Version	   = kNeFSVersionInteger;
-		partBlock.CatalogCount = blobCount;
+		partBlock.CatalogCount = blob_cnt;
 		partBlock.Kind		   = kNeFSHardDrive;
 		partBlock.SectorSize   = sizeof(NFS_ROOT_PARTITION_BLOCK);
 		partBlock.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
@@ -372,17 +372,17 @@ namespace Boot
 		fDiskDev.Write((Char*)&epm_boot, sizeof(BOOT_BLOCK_STRUCT));
 
 		/// if we can write a root catalog, then write the partition block.
-		if (this->WriteRootCatalog(fileBlobs, blobCount, partBlock))
+		if (this->WriteRootCatalog(blob_list, blob_cnt, partBlock))
 		{
 			BTextWriter writer;
-			writer.Write(L"BootZ: Drive Formatted Successfully.\r");
+			writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
 
 			return true;
 		}
 		else
 		{
 			fb_init();
-			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
+			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_WIDTH, ZKA_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
 
 			EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned, this drive cannot be formatted as an explicit partition map.");
 		}
