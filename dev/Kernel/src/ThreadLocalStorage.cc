@@ -37,14 +37,14 @@ Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr)
 
 	kcout << "TLS: Validating the TIB...\r";
 
-	return tib_as_bytes[0] == kCookieMag0 && tib_as_bytes[1] == kCookieMag1 &&
-		   tib_as_bytes[2] == kCookieMag2;
+	return tib_as_bytes[kCookieMag0Idx] == kCookieMag0 && tib_as_bytes[kCookieMag1Idx] == kCookieMag1 &&
+		   tib_as_bytes[kCookieMag2Idx] == kCookieMag2;
 }
 
 /**
  * @brief System call implementation of the TLS check.
  * @param tib_ptr The TIB record.
- * @return
+ * @return if the TIB record is valid or not.
  */
 EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 {
@@ -54,7 +54,7 @@ EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 		return false;
 	}
 
-	THREAD_INFORMATION_BLOCK* tib = (THREAD_INFORMATION_BLOCK*)tib_ptr;
+	THREAD_INFORMATION_BLOCK* tib = reinterpret_cast<THREAD_INFORMATION_BLOCK*>(tib_ptr);
 
 	if (!tls_check_tib(tib))
 	{
@@ -62,6 +62,6 @@ EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 		return false;
 	}
 
-	kcout << "TLS Check pass.\r";
+	kcout << "TLS Passed checked.\r";
 	return true;
 }

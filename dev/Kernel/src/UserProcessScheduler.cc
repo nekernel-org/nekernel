@@ -297,7 +297,7 @@ namespace Kernel
 		}
 #endif // __ZKA_AMD64__
 
-		kcout << "Create page directory for: " << process->Name << endl;
+		kcout << "Create VMRegister for: " << process->Name << endl;
 
 		process->StackFrame = reinterpret_cast<HAL::StackFramePtr>(mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes));
 
@@ -307,7 +307,7 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
-		kcout << "Create stack for: " << process->Name << endl;
+		kcout << "Create StackFrame for: " << process->Name << endl;
 
 		// Create heap according to type of process->
 		if (process->Kind == UserProcess::kExectuableDLLKind)
@@ -315,7 +315,7 @@ namespace Kernel
 			process->DylibDelegate = rtl_init_dylib(process);
 			MUST_PASS(process->DylibDelegate);
 
-			kcout << "Created Library Interface for process: " << process->Name << endl;
+			kcout << "Created DylibDelegate for process: " << process->Name << endl;
 		}
 
 		process->StackReserve = new UInt8[process->StackSize];
@@ -332,14 +332,14 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
-		kcout << "Created Reserved Stack for process: " << process->Name << endl;
+		kcout << "Created StackReserve for process: " << process->Name << endl;
 
-		ProcessID pid = mTeam.mProcessCount;
+		ProcessID pid = this->mTeam.mProcessCount;
 
 		if (pid > kSchedProcessLimitPerTeam)
 			return kProcessInvalidID;
 
-		++mTeam.mProcessCount;
+		++this->mTeam.mProcessCount;
 
 		process->ProcessParentTeam = &mTeam;
 
@@ -350,7 +350,7 @@ namespace Kernel
 		kcout << "Process Name: " << process->Name << endl;
 		kcout << "PID: " << number(process->ProcessId) << endl;
 
-		mTeam.mProcessList.Assign(pid, process);
+		this->mTeam.mProcessList.Assign(pid, process);
 
 		return process->ProcessId;
 	}
@@ -505,6 +505,7 @@ namespace Kernel
 	 * @brief Start scheduling current AP.
 	 */
 	/***********************************************************************************/
+	
 	SizeT UserProcessHelper::StartScheduling()
 	{
 		return kProcessScheduler.Run();

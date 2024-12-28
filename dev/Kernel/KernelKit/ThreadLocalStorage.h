@@ -12,6 +12,10 @@
 
 ///! @brief Thread Local Storage for minoskrnl.
 
+#define kCookieMag0Idx 0
+#define kCookieMag1Idx 1
+#define kCookieMag2Idx 2
+
 #define kCookieMag0 'Z'
 #define kCookieMag1 'K'
 #define kCookieMag2 'A'

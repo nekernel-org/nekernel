@@ -1,3 +1,12 @@
+/* -------------------------------------------
+
+	Copyright (C) 2024, Theater Quality Inc, all rights reserved.
+
+	FILE: UserProcessScheduler.inl
+	PURPOSE: Low level/Ring-3 Process scheduler.
+
+------------------------------------------- */
+
 namespace Kernel
 {
 	/***********************************************************************************/
