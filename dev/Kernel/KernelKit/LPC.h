@@ -57,6 +57,7 @@ namespace Kernel
 	inline constexpr HError kErrorInvalidCreds		 = 61;
 	inline constexpr HError kErrorCDTrayBroken		 = 62;
 	inline constexpr HError kErrorUnrecoverableDisk	 = 63;
+	inline constexpr HError kErrorFileLocked		 = 64;
 	inline constexpr HError kErrorUnimplemented		 = 0;
 
 	/// @brief Raises a bug check stop code.

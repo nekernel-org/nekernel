@@ -7,7 +7,6 @@
 #pragma once
 
 #include <ArchKit/ArchKit.h>
-#include <CompilerKit/CompilerKit.h>
 #include <KernelKit/LPC.h>
 
 namespace Kernel

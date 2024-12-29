@@ -131,25 +131,33 @@ enum
 	kNeFSDriveCount		   = 7,
 };
 
+enum
+{
+	kNeFSStatusUnlocked,
+	kNeFSStatusLocked,
+	kNeFSStatusError,
+	kNeFSStatusInvalid,
+};
+
 /// @brief Catalog type.
 struct PACKED NFS_CATALOG_STRUCT final
 {
 	Kernel::Char Name[kNeFSNodeNameLen];
 	Kernel::Char Mime[kNeFSMimeNameLen];
 
-	/// Catalog status flag.
+	/// Catalog flags.
 	Kernel::UInt16 Flags;
+	Kernel::UInt16 Status;
 	/// Custom catalog flags.
 	Kernel::UInt16 FilkMMFlags;
 	/// Catalog kind.
 	Kernel::Int32 Kind;
-
 	/// Size of the data fork.
 	Kernel::Lba DataForkSize;
-
 	/// Size of all resource forks.
 	Kernel::Lba ResourceForkSize;
 
+	/// Forks LBA.
 	Kernel::Lba DataFork;
 	Kernel::Lba ResourceFork;
 
@@ -264,7 +272,7 @@ namespace Kernel
 
 		_Output Void CloseFork(_Input NFS_FORK_STRUCT* fork);
 
-		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalogName, Lba& outLba);
+		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalogName, Lba& outLba, Bool searchHidden = YES);
 
 		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const Char* name);
 

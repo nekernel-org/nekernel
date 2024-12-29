@@ -7,7 +7,6 @@
 #ifndef INC_PROCESS_SCHEDULER_H
 #define INC_PROCESS_SCHEDULER_H
 
-#include "NewKit/Defines.h"
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/LockDelegate.h>
 #include <KernelKit/User.h>
@@ -155,14 +154,14 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcess);
 
 	public:
-		Char			   Name[kProcessNameLen] = {"Process (Unnamed)"};
+		Char			   Name[kProcessNameLen] = {"Process (Unnamed, No Subsystem)"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatusKind  Status{ProcessStatusKind::kFinished};
 		UInt8*			   StackReserve{nullptr};
-		UserProcessImage   Image;
+		UserProcessImage   Image{};
 		SizeT			   StackSize{kSchedMaxStackSz};
 		IDLLObject*		   DylibDelegate{nullptr};
 		SizeT			   MemoryCursor{0UL};

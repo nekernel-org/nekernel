@@ -278,8 +278,9 @@ namespace Boot
 			catalogKind.NextSibling = (startLba + sizeof(NFS_CATALOG_STRUCT) * cNeFSCatalogPadding);
 
 			/// Fill catalog kind.
-			catalogKind.Kind  = blob->fKind;
-			catalogKind.Flags = kNeFSFlagCreated;
+			catalogKind.Kind   = blob->fKind;
+			catalogKind.Flags  = kNeFSFlagCreated;
+			catalogKind.Status = kNeFSStatusUnlocked;
 
 			--partBlock.FreeCatalog;
 			--partBlock.FreeSectors;

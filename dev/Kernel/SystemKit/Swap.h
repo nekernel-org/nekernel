@@ -14,5 +14,5 @@
 
 #define kSwapMgrPageFile "/System/pagefile.sys"
 
-/// @file SwapMgr.h
-/// @brief Virtual memory swap manager.
+/// @file Swap.h
+/// @brief Virtual memory swap API.

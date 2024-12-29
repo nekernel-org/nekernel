@@ -9,7 +9,7 @@
 
 #include <NewKit/Defines.h>
 
-/// @file ThreadMgr.h
+/// @file Scheduler.h
 /// @brief This file takes care of creating processes/threads from a subsystem context.
 
 namespace Kernel

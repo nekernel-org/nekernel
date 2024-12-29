@@ -720,7 +720,8 @@ bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog
 /// @param catalog_name the catalog name.
 /// @return the newly found catalog.
 _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* catalog_name,
-															Lba&			   out_lba)
+															Lba&			   out_lba,
+															Bool			   search_hidden)
 {
 	if (!catalog_name ||
 		*catalog_name == 0)
@@ -798,7 +799,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 		}
 	}
 
-	kcout << "Fetching catalog...\r";
+	kcout << "Finding catalog...\r";
 
 NeFSSearchThroughCatalogList:
 	while (drive.fPacket.fPacketGood)
@@ -813,6 +814,14 @@ NeFSSearchThroughCatalogList:
 
 		if (StringBuilder::Equals(catalog_name, catalog->Name))
 		{
+			/// ignore it, it's locked.
+			if (catalog->Status == kNeFSStatusLocked &&
+				!search_hidden)
+			{
+				err_local_get() = kErrorFileLocked;
+				goto NeFSContinueSearch;
+			}
+
 			/// ignore unallocated catalog, break
 			if (!(catalog->Flags & kNeFSFlagCreated))
 			{
@@ -822,8 +831,8 @@ NeFSSearchThroughCatalogList:
 			NFS_CATALOG_STRUCT* catalogPtr = new NFS_CATALOG_STRUCT();
 			rt_copy_memory(catalog, catalogPtr, sizeof(NFS_CATALOG_STRUCT));
 
-			kcout << "Found catalog at: " << hex_number(start_catalog_lba) << endl;
-			kcout << "Found catalog at: " << catalog->Name << endl;
+			kcout << "Found available catalog at: " << hex_number(start_catalog_lba) << endl;
+			kcout << "Found available catalog at: " << catalog->Name << endl;
 
 			out_lba = start_catalog_lba;
 			return catalogPtr;
@@ -844,6 +853,8 @@ NeFSSearchThroughCatalogList:
 		goto NeFSSearchThroughCatalogList;
 	}
 
+	err_local_get() = kErrorFileNotFound;
+
 	out_lba = 0UL;
 	return nullptr;
 }
@@ -854,7 +865,7 @@ NeFSSearchThroughCatalogList:
 _Output NFS_CATALOG_STRUCT* NeFileSystemParser::GetCatalog(_Input const Char* name)
 {
 	Lba unused = 0;
-	return this->FindCatalog(name, unused);
+	return this->FindCatalog(name, unused, true);
 }
 
 /// @brief Closes a catalog, (frees it).
@@ -923,6 +934,8 @@ Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
 	}
 
 	delete catalog;
+	catalog = nullptr;
+
 	return false;
 }
 
