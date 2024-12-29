@@ -7,51 +7,40 @@
 #include <SystemKit/Swap.h>
 #include <KernelKit/FileMgr.h>
 
-namespace Kernel::Detail
+namespace Kernel
 {
-	class SwapDiskDelegate;
-
-	class SwapDiskDelegate final
+	BOOL SwapDiskDelegate::Write(const Char* fork_name, const SizeT fork_name_len, VoidPtr data, const SizeT data_len)
 	{
-	public:
-		explicit SwapDiskDelegate() = default;
-		~SwapDiskDelegate()			= default;
+		if (!fork_name || !fork_name_len)
+			return NO;
 
-		ZKA_COPY_DEFAULT(SwapDiskDelegate);
+		if (data_len > kSwapMgrBlockMaxSize)
+			return NO;
 
-		BOOL Write(const Char* fork_name, const SizeT fork_name_len, VoidPtr data, const SizeT data_len)
+		if (!data)
+			return NO;
+
+		FileStream file(kSwapMgrPageFile, "wb");
+
+		if (file.Write(fork_name, data, data_len).Error())
 		{
-			if (!fork_name || !fork_name_len)
-				return NO;
-
-			if (data_len > mib_cast(16))
-				return NO;
-
-			if (!data)
-				return NO;
-
-			FileStream file(kSwapMgrPageFile, "wb");
-
-			if (file.Write(fork_name, data, data_len).Error())
-			{
-				return NO;
-			}
-
-			return YES;
+			return NO;
 		}
 
-		VoidPtr Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len)
-		{
-			if (!fork_name || !fork_name_len)
-				return nullptr;
+		return YES;
+	}
 
-			if (data_len > mib_cast(16))
-				return nullptr;
+	VoidPtr SwapDiskDelegate::Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len)
+	{
+		if (!fork_name || !fork_name_len)
+			return nullptr;
 
-			FileStream file(kSwapMgrPageFile, "rb");
+		if (data_len > mib_cast(16))
+			return nullptr;
 
-			voidPtr blob = file.Read(fork_name, data_len);
-			return blob;
-		}
-	};
-} // namespace Kernel::Detail
+		FileStream file(kSwapMgrPageFile, "rb");
+
+		voidPtr blob = file.Read(fork_name, data_len);
+		return blob;
+	}
+} // namespace Kernel
