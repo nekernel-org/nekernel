@@ -80,18 +80,18 @@ typedef struct EPM_GUID
  */
 struct PACKED EPM_BOOT_BLOCK
 {
-	Kernel::Char	  Magic[kEPMMagicLength];
-	Kernel::Char	  Name[kEPMNameLength];
-	EPM_GUID 		  Guid;
-	Kernel::Int32	  Version;
-	Kernel::Int64	  NumBlocks;
-	Kernel::Int64	  SectorSz;
-	Kernel::Int64	  LbaStart; // base offset
-	Kernel::Int64	  LbaEnd;	// addition of lba_start to get the end of partition.
-	Kernel::Int16	  Kind;
-	Kernel::Int32	  FsVersion;
-	Kernel::Char	  Fs[kEPMFilesystemLength]; /* NeFS, ffs2... */
-	Kernel::Char	  Reserved[kEPMReserveLen];			// to fill a full sector.
+	Kernel::Char  Magic[kEPMMagicLength];
+	Kernel::Char  Name[kEPMNameLength];
+	EPM_GUID	  Guid;
+	Kernel::Int32 Version;
+	Kernel::Int64 NumBlocks;
+	Kernel::Int64 SectorSz;
+	Kernel::Int64 LbaStart; // base offset
+	Kernel::Int64 LbaEnd;	// addition of lba_start to get the end of partition.
+	Kernel::Int16 Kind;
+	Kernel::Int32 FsVersion;
+	Kernel::Char  Fs[kEPMFilesystemLength]; /* NeFS, ffs2... */
+	Kernel::Char  Reserved[kEPMReserveLen]; // to fill a full sector.
 };
 
 ///! @brief Version kind enum.
@@ -99,12 +99,12 @@ struct PACKED EPM_BOOT_BLOCK
 
 enum
 {
-	kEPMInvalid    = 0x00,
-	kEPMGenericOS  = 0xcf, // Generic OS
-	kEPMLinux	   = 0x8f, // Linux on EPM
-	kEPMBSD		   = 0x9f, // Berkeley Soft. Distribution
-	kEPMZkaOS	   = 0x1f, // This OS.
-	kEPMInvalidOS  = 0xff,
+	kEPMInvalid	  = 0x00,
+	kEPMGenericOS = 0xcf, // Generic OS
+	kEPMLinux	  = 0x8f, // Linux on EPM
+	kEPMBSD		  = 0x9f, // Berkeley Soft. Distribution
+	kEPMZkaOS	  = 0x1f, // This OS.
+	kEPMInvalidOS = 0xff,
 };
 
 typedef struct EPM_BOOT_BLOCK BOOT_BLOCK_STRUCT;

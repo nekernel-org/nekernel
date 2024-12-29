@@ -360,7 +360,7 @@ namespace Boot
 		epm_boot.FsVersion = kNeFSVersionInteger;
 		epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
 		epm_boot.SectorSz  = partBlock.SectorSize;
-		epm_boot.Kind	  = kEPMZkaOS;
+		epm_boot.Kind	   = kEPMZkaOS;
 		epm_boot.NumBlocks = partBlock.CatalogCount;
 
 		CopyMem(epm_boot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), StrLen(kBlockName));
@@ -382,7 +382,7 @@ namespace Boot
 		else
 		{
 			fb_init();
-			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_WIDTH, ZKA_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);			
+			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_WIDTH, ZKA_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
 
 			EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned, this drive cannot be formatted as an explicit partition map.");
 		}

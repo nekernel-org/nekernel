@@ -170,7 +170,7 @@ namespace Kernel
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
 			mParser->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & kFileFlagRsrc ? true : false), data, size,
-								name);
+								  name);
 	}
 
 	_Output VoidPtr NeFileSystemMgr::Read(_Input const Char* name,
@@ -188,7 +188,7 @@ namespace Kernel
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
 			return mParser->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & kFileFlagRsrc ? true : false), sz,
-									  name);
+										name);
 
 		return nullptr;
 	}

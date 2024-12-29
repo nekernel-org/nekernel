@@ -45,7 +45,6 @@ int main(int argc, char* argv[])
 			continue;
 		}
 
-
 		files.push_back(argv[i]);
 	}
 

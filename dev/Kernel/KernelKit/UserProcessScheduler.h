@@ -186,9 +186,9 @@ namespace Kernel
 			UIntPtr			  SignalID;
 		};
 
-		UserProcessSignal	 ProcessSignal;
+		UserProcessSignal	   ProcessSignal;
 		ProcessMemoryHeapList* ProcessMemoryHeap{nullptr};
-		UserProcessTeam*	 ProcessParentTeam;
+		UserProcessTeam*	   ProcessParentTeam;
 
 		VoidPtr VMRegister{0UL};
 

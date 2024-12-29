@@ -42,8 +42,8 @@ namespace Kernel::Detail
 			{
 				mJournal.CreateJournal(mNeFS);
 
-				constexpr auto kFolderInfo		  = "META-XML";
-				const SizeT	   kFolderCount		  = 7;
+				constexpr auto kFolderInfo				= "META-XML";
+				const SizeT	   kFolderCount				= 7;
 				const Char*	   kFolderStr[kFolderCount] = {
 					   "/Boot/", "/System/", "/Support/", "/Applications/",
 					   "/Users/", "/Library/", "/Mount/"};
@@ -61,7 +61,7 @@ namespace Kernel::Detail
 					}
 
 					catalog_folder = mNeFS->CreateCatalog(kFolderStr[dir_index], 0,
-																   kNeFSCatalogKindDir);
+														  kNeFSCatalogKindDir);
 
 					NFS_FORK_STRUCT fork_folder{0};
 
@@ -90,7 +90,7 @@ namespace Kernel::Detail
 					Kernel::KString folder_name(2048);
 					folder_name += catalog_folder->Name;
 
-					mJournal.Commit(mNeFS, folder_metadata,folder_name);
+					mJournal.Commit(mNeFS, folder_metadata, folder_name);
 
 					const Kernel::SizeT kMetaDataSz = kNeFSSectorSz;
 
@@ -110,7 +110,7 @@ namespace Kernel::Detail
 		{
 			if (mNeFS)
 				delete mNeFS;
-			
+
 			mNeFS = nullptr;
 		}
 

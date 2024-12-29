@@ -36,6 +36,6 @@ namespace UI
 			return kHandoverHeader->f_GOP.f_Height;
 		}
 	};
-} // namespace CG
+} // namespace UI
 
 #endif // !GFX_MGR_ACCESSIBILITY_H_

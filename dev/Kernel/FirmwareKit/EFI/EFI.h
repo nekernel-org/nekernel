@@ -576,7 +576,7 @@ typedef struct EfiSimpleTextOutputProtocol
 
 typedef struct
 {
-	UInt16 ScanCode;
+	UInt16		  ScanCode;
 	EfiChar16Type UnicodeChar;
 } EfiInputKey;
 
@@ -586,21 +586,18 @@ typedef EfiStatusType(EFI_API* EfiInputReadKey)(
 
 typedef EfiStatusType(EFI_API* EfiInputReset)(
 	IN EfiSimpleTextInputProtocol* This,
-	IN Boolean ExtendedChk );
+	IN Boolean					   ExtendedChk);
 
-typedef
-EfiStatusType
-(EFI_API *EfiWaitForEvent) (
-   IN UInt32             NumberOfEvents,
-   IN VoidPtr         Event,
-   OUT UInt32            *Index
-  );
+typedef EfiStatusType(EFI_API* EfiWaitForEvent)(
+	IN UInt32  NumberOfEvents,
+	IN VoidPtr Event,
+	OUT UInt32* Index);
 
 typedef struct EfiSimpleTextInputProtocol
 {
-	EfiInputReset	   Reset;
+	EfiInputReset	Reset;
 	EfiInputReadKey ReadKeyStroke;
-	EfiWaitForEvent		   WaitForKey;
+	EfiWaitForEvent WaitForKey;
 } EfiSimpleTextInputProtocol;
 
 /// @biref Open Volume procedure ptr.

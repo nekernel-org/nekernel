@@ -61,7 +61,7 @@ STATIC MountpointInterface kDiskMountpoint;
 /// @return the fork
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-												_Input NFS_FORK_STRUCT&	   the_fork)
+														_Input NFS_FORK_STRUCT& the_fork)
 {
 	if (catalog && the_fork.ForkName[0] != 0 &&
 		the_fork.DataSize <= kNeFSForkDataSz)
@@ -170,8 +170,8 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 /// @return the fork.
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-											  _Input const Char*		 name,
-											  Boolean					 isDataFork)
+													  _Input const Char* name,
+													  Boolean			 isDataFork)
 {
 	auto			 drv	  = kDiskMountpoint.A();
 	NFS_FORK_STRUCT* the_fork = nullptr;
@@ -236,9 +236,9 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*  name,
-													  _Input const Int32& flags,
-													  _Input const Int32& kind)
+_Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char* name,
+															  _Input const Int32& flags,
+															  _Input const Int32& kind)
 {
 	kcout << "CreateCatalog(...)\r";
 
@@ -509,8 +509,8 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), epm_boot->Fs, rt_string_len(kFsName));
 
 		epm_boot->FsVersion = kNeFSVersionInteger;
-		epm_boot->LbaStart  = start;
-		epm_boot->SectorSz  = kNeFSSectorSz;
+		epm_boot->LbaStart	= start;
+		epm_boot->SectorSz	= kNeFSSectorSz;
 
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), epm_boot->Name, rt_string_len(kBlockName));
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epm_boot->Magic, rt_string_len(kEPMMagic));
@@ -537,7 +537,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 				if (epm_boot->LbaStart)
 					epm_boot->LbaStart = outEpmLba;
 
-				epm_boot->LbaEnd	   = endLba;
+				epm_boot->LbaEnd	= endLba;
 				epm_boot->NumBlocks = cnt;
 
 				drive->fPacket.fPacketContent = bufEpmHdr;
@@ -720,7 +720,7 @@ bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog
 /// @param catalog_name the catalog name.
 /// @return the newly found catalog.
 _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* catalog_name,
-													Lba&			   out_lba)
+															Lba&			   out_lba)
 {
 	if (!catalog_name ||
 		*catalog_name == 0)
@@ -742,7 +742,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 
 	NFS_ROOT_PARTITION_BLOCK* part = (NFS_ROOT_PARTITION_BLOCK*)&fs_buf;
 
-	auto	   start_catalog_lba	 = part->StartCatalog;
+	auto	   start_catalog_lba = part->StartCatalog;
 	const auto kStartCatalogList = start_catalog_lba;
 
 	auto localSearchFirst = false;
@@ -838,7 +838,7 @@ NeFSSearchThroughCatalogList:
 
 	if (localSearchFirst)
 	{
-		localSearchFirst = false;
+		localSearchFirst  = false;
 		start_catalog_lba = kStartCatalogList;
 
 		goto NeFSSearchThroughCatalogList;
@@ -938,9 +938,9 @@ Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
 /***********************************************************************************/
 
 VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-								_Input Bool						   is_rsrc_fork,
-								_Input SizeT					   dataSz,
-								_Input const Char*				   forkName)
+										_Input Bool						   is_rsrc_fork,
+										_Input SizeT					   dataSz,
+										_Input const Char* forkName)
 {
 	if (!catalog)
 	{

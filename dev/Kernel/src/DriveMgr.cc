@@ -175,7 +175,7 @@ namespace Kernel
 			{
 				trait->fPacket.fPacketReadOnly = NO;
 				trait->fKind				   = kMassStorageDisc | kEPMDrive;
-				
+
 				kcout << "Formatted Disc is EPM (and Mass Storage too.)\r";
 			}
 			else

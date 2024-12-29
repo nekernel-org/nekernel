@@ -21,7 +21,7 @@ SoftwareTimer::~SoftwareTimer()
 {
 	delete fDigitalTimer;
 	fDigitalTimer = nullptr;
-	
+
 	fWaitFor = 0;
 }
 

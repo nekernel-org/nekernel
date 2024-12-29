@@ -14,7 +14,7 @@
 
 namespace Kernel
 {
-    class UserSubsystem;
-    class UserEnvVar;
-    class UserEnv;
-}
+	class UserSubsystem;
+	class UserEnvVar;
+	class UserEnv;
+} // namespace Kernel

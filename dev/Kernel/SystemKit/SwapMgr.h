@@ -10,7 +10,7 @@
 #include <NewKit/Defines.h>
 
 #define kSwapMgrBlockMaxSize mib_cast(16)
-#define KSwapMgrBlockMagic "SWEP "
+#define KSwapMgrBlockMagic	 "SWEP "
 
 #define kSwapMgrPageFile "/System/pagefile.sys"
 

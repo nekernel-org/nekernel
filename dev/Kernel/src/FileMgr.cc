@@ -28,7 +28,7 @@ namespace Kernel
 		if (kMountedFilesystem)
 		{
 			auto mount		   = kMountedFilesystem;
-			kMountedFilesystem					   = nullptr;
+			kMountedFilesystem = nullptr;
 
 			return mount;
 		}
