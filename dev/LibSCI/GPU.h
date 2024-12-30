@@ -12,14 +12,16 @@ Purpose: GFX System Calls.
 
 #include <SCI.h>
 
-// ------------------------------------------------------------------------------------------ //
-// GPU API.
-// ------------------------------------------------------------------------------------------ //
+struct GPUCmdBuffer;
 
-// ------------------------------------------------------------------------------------------ //
-// @brief Command buffer structure type.
-// ------------------------------------------------------------------------------------------ //
-struct GPU_CMD_BUFFER final
+/// ------------------------------------------------------------------------------------------ //
+/// @brief GPU API.
+/// ------------------------------------------------------------------------------------------ //
+
+/// ------------------------------------------------------------------------------------------ //
+/// @brief Command buffer structure type.
+/// ------------------------------------------------------------------------------------------ //
+struct GPUCmdBuffer final
 {
 	SizeT	X, Y, Z;
 	VoidPtr FrameData;
@@ -45,6 +47,6 @@ IMPORT_C GPUObject GPUNewFromDeviceName(_Input const Char* device_name);
 
 IMPORT_C SInt32 GPUDisposeDevice(GPUObject gpu_handle, Bool cancel_all, Bool flush_all);
 
-IMPORT_C SInt32 GPUSendCmdBufferListWithCnt(GPU_CMD_BUFFER** cmd_list, SizeT cmd_list_cnt);
+IMPORT_C SInt32 GPUSendCmdBufferListWithCnt(GPUCmdBuffer** cmd_list, SizeT cmd_list_cnt);
 
 #endif // ifndef SCIKIT_GPU_H

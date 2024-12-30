@@ -7,9 +7,9 @@
 #ifndef INC_KERNEL_HEAP_H
 #define INC_KERNEL_HEAP_H
 
-// last-rev 30/01/24
-// file: Heap.h
-// description: heap allocation support.
+/// @date 30/01/24
+/// @file: Heap.h
+/// @brief: heap allocation support.
 
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/LPC.h>

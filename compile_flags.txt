@@ -1,5 +1,6 @@
 -Idev/Kernel
 -Idev/
+-Idev/LibSCI
 -Idev/Boot/
 -Iprivate/tools
 -Idev/Boot/BootKit
