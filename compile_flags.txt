@@ -10,3 +10,5 @@
 -D__ZKA_ED__
 -xc++
 -D__AHCI__
+-D__x86_64__
+-D__aarch64__
