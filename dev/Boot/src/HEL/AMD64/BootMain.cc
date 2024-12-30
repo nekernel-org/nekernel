@@ -143,7 +143,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	fb_init();
 
-	UI::ui_draw_background();
+	UI::fb_clear_video();
 
 	FBDrawBitMapInRegion(zka_disk, ZKA_DISK_WIDTH, ZKA_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_DISK_HEIGHT) / 2);
 
@@ -233,7 +233,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 		partition_factory.Format(kMachineModel " HD", &root, 1);
 
-		UI::ui_draw_background();
+		UI::fb_clear_video();
 
 		FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_WIDTH, ZKA_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
 

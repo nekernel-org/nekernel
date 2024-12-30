@@ -118,7 +118,7 @@
 
 namespace UI
 {
-	inline void ui_draw_background() noexcept
+	inline void fb_clear_video() noexcept
 	{
 		fb_init();
 
