@@ -136,7 +136,7 @@ namespace Kernel
 
 		heap_info_ptr->fHeapSize  = sz_fix;
 		heap_info_ptr->fMagic	  = kKernelHeapMagic;
-		heap_info_ptr->fCRC32	  = No; // dont fill it for now.
+		heap_info_ptr->fCRC32	  = 0; // dont fill it for now.
 		heap_info_ptr->fHeapPtr	  = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
 		heap_info_ptr->fPagePtr	  = No;
 		heap_info_ptr->fWriteRead = wr;
@@ -227,19 +227,6 @@ namespace Kernel
 				return kErrorHeapNotPresent;
 			}
 
-			if (heap_info_ptr->fCRC32 != 0)
-			{
-				if (heap_info_ptr->fCRC32 !=
-					ke_calculate_crc32((Char*)heap_info_ptr->fHeapPtr,
-									   heap_info_ptr->fHeapSize))
-				{
-					if (!heap_info_ptr->fUser)
-					{
-						ke_panic(RUNTIME_CHECK_POINTER);
-					}
-				}
-			}
-
 			heap_info_ptr->fHeapSize  = 0UL;
 			heap_info_ptr->fPresent	  = No;
 			heap_info_ptr->fHeapPtr	  = 0;
@@ -275,6 +262,13 @@ namespace Kernel
 
 			if (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kKernelHeapMagic)
 			{
+				if (heap_info_ptr->fCRC32 !=
+					ke_calculate_crc32((Char*)heap_info_ptr->fHeapPtr,
+									   heap_info_ptr->fHeapSize))
+				{
+					return No;
+				}
+
 				return Yes;
 			}
 		}

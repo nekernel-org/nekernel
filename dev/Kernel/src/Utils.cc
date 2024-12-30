@@ -10,10 +10,6 @@ namespace Kernel
 {
 	Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size)
 	{
-		if (!cmp ||
-			!src)
-			return 1;
-
 		Int32 counter = 0;
 
 		for (Size index = 0; index < size; ++index)
@@ -51,19 +47,14 @@ namespace Kernel
 	{
 		SizeT cnt{0};
 
-		do
-		{
+		while (ptr[cnt] != 0)
 			++cnt;
-		} while (ptr[cnt] != 0);
 
 		return cnt;
 	}
 
 	voidPtr rt_set_memory(voidPtr src, UInt32 value, Size len)
 	{
-		if (!src || len < 1)
-			return nullptr;
-
 		UInt32* start = reinterpret_cast<UInt32*>(src);
 
 		while (len)
@@ -78,12 +69,6 @@ namespace Kernel
 
 	Int rt_move_memory(const voidPtr src, voidPtr dst, Size len)
 	{
-		if (len < 1)
-			return 2;
-
-		if (!src || !dst)
-			return 1;
-
 		Char* srcChr  = reinterpret_cast<Char*>(src);
 		Char* dstChar = reinterpret_cast<Char*>(dst);
 		SizeT index	  = 0;
@@ -101,9 +86,6 @@ namespace Kernel
 
 	Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len)
 	{
-		if (len < 1)
-			return 0;
-
 		char* srcChr  = reinterpret_cast<char*>(src);
 		char* dstChar = reinterpret_cast<char*>(dst);
 		Size  index	  = 0;
@@ -114,23 +96,22 @@ namespace Kernel
 			++index;
 		}
 
+		dstChar[index] = 0;
+
 		return index;
 	}
 
-	const Char* rt_alloc_string(const Char* text)
+	const Char* rt_alloc_string(const Char* src)
 	{
-		if (!text[0])
-			return nullptr;
-
-		const Char* string = new Char[rt_string_len(text)];
+		const Char* string = new Char[rt_string_len(src) + 1];
 
 		if (!string)
 			return nullptr;
 
-		voidPtr vText = reinterpret_cast<voidPtr>(const_cast<char*>(text));
-		voidPtr vStr  = reinterpret_cast<voidPtr>(const_cast<char*>(string));
+		voidPtr v_src = reinterpret_cast<voidPtr>(const_cast<char*>(src));
+		voidPtr v_dst  = reinterpret_cast<voidPtr>(const_cast<char*>(string));
 
-		rt_copy_memory(vText, vStr, rt_string_len(text));
+		rt_copy_memory(v_src, v_dst, rt_string_len(src) + 1);
 
 		return string;
 	}

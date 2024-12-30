@@ -154,7 +154,7 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcess);
 
 	public:
-		Char			   Name[kProcessNameLen] = {"Process (Unnamed, No Subsystem)"};
+		Char			   Name[kProcessNameLen] = {"Process"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};

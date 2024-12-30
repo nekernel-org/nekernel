@@ -12,6 +12,7 @@
 /// @brief Low level/Ring-3 process scheduler.
 /***********************************************************************************/
 
+#include "HALKit/AMD64/Processor.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDLLObject.h>
@@ -281,46 +282,46 @@ namespace Kernel
 
 	ProcessID UserProcessScheduler::Spawn(UserProcess* process)
 	{
-		if (!process ||
-			!process->Image.HasCode())
-		{
-			return kProcessInvalidID;
-		}
-
 #ifdef __ZKA_AMD64__
-		process->VMRegister = mm_new_heap(sizeof(PDE), No, Yes);
+		process->VMRegister = new PDE();
 
 		if (!process->VMRegister)
 		{
 			process->Crash();
-			return -kErrorProcessFault;
+			return kErrorProcessFault;
 		}
+
+		UInt32 flags = HAL::kMMFlagsPresent;
+		flags |= HAL::kMMFlagsWr;
+		flags |= HAL::kMMFlagsUser;
+
+		HAL::mm_map_page((VoidPtr)process->VMRegister, flags);
 #endif // __ZKA_AMD64__
 
-		kcout << "Create VMRegister for: " << process->Name << endl;
-
-		process->StackFrame = reinterpret_cast<HAL::StackFramePtr>(mm_new_heap(sizeof(HAL::StackFrame), Yes, Yes));
+		process->StackFrame = new HAL::StackFrame();
 
 		if (!process->StackFrame)
 		{
 			process->Crash();
-			return -kErrorProcessFault;
+			return kErrorProcessFault;
 		}
 
-		kcout << "Create StackFrame for: " << process->Name << endl;
+		flags = HAL::kMMFlagsPresent;
+		flags |= HAL::kMMFlagsWr;
+		flags |= HAL::kMMFlagsUser;
 
-		// Create heap according to type of process->
+		HAL::mm_map_page((VoidPtr)process->StackFrame, flags);
+
+		// Create heap according to type of process.
 		if (process->Kind == UserProcess::kExectuableDLLKind)
 		{
 			process->DylibDelegate = rtl_init_dylib(process);
 			MUST_PASS(process->DylibDelegate);
-
-			kcout << "Created DylibDelegate for process: " << process->Name << endl;
 		}
 
 		process->StackReserve = new UInt8[process->StackSize];
 
-		UInt32 flags = HAL::kMMFlagsPresent;
+		flags = HAL::kMMFlagsPresent;
 		flags |= HAL::kMMFlagsWr;
 		flags |= HAL::kMMFlagsUser;
 
@@ -332,12 +333,14 @@ namespace Kernel
 			return -kErrorProcessFault;
 		}
 
-		kcout << "Created StackReserve for process: " << process->Name << endl;
-
 		ProcessID pid = this->mTeam.mProcessCount;
 
-		if (pid > kSchedProcessLimitPerTeam)
-			return kProcessInvalidID;
+		if (pid > kSchedProcessLimitPerTeam &&
+			pid != (kSchedProcessLimitPerTeam + 1))
+		{
+			this->mTeam.mProcessCount = 0;
+			pid = 0UL;
+		}
 
 		++this->mTeam.mProcessCount;
 
@@ -347,10 +350,9 @@ namespace Kernel
 		process->Status	   = ProcessStatusKind::kStarting;
 		process->PTime	   = (UIntPtr)AffinityKind::kStandard;
 
-		kcout << "Process Name: " << process->Name << endl;
-		kcout << "PID: " << number(process->ProcessId) << endl;
-
 		this->mTeam.mProcessList.Assign(pid, process);
+
+		kcout << "PID: " << number(process->ProcessId) << endl;
 
 		return process->ProcessId;
 	}
@@ -412,7 +414,7 @@ namespace Kernel
 		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
 								 //! things we have scheduled.
 
-		if (mTeam.mProcessList.Empty())
+		if (mTeam.mProcessCount < 1)
 		{
 			kcout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
 			return 0;

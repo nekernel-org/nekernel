@@ -62,7 +62,7 @@ namespace Kernel
 			break;
 		}
 		case RUNTIME_CHECK_POINTER: {
-			fb_render_string("0x00000000: Kernel heap is corrupted.", start_y, x, panic_text);
+			fb_render_string("0x00000000: Pointer is invalid.", start_y, x, panic_text);
 			break;
 		}
 		case RUNTIME_CHECK_BAD_BEHAVIOR: {

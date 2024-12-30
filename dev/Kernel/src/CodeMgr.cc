@@ -34,8 +34,8 @@ namespace Kernel
 
 		ProcessID id = UserProcessScheduler::The().Spawn(process_hdr);
 
-		if (id == kProcessInvalidID)
-			delete process_hdr;
+		delete process_hdr;
+		process_hdr = nullptr;
 
 		return id;
 	}

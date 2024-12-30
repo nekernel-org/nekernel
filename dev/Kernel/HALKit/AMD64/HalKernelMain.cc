@@ -84,6 +84,7 @@ EXTERN_C void hal_init_platform(
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	auto str_proc = Kernel::rt_alloc_string("System");
+
 	Kernel::rtl_create_process(rtl_kernel_main, str_proc);
 
 	delete str_proc;

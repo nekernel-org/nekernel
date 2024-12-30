@@ -82,9 +82,12 @@ namespace Kernel
 				/// @return The new address which was found.
 				auto FindBitMap(VoidPtr base_ptr, SizeT size, Bool wr, Bool user) -> VoidPtr
 				{
+					if (!size)
+						return nullptr;
+
 					VoidPtr base = reinterpret_cast<VoidPtr>(((UIntPtr)base_ptr) + kPageSize);
 
-					while (base && size)
+					while (((UIntPtr)base) < (reinterpret_cast<UIntPtr>(base) + kHandoverHeader->f_BitMapSize))
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
 
@@ -106,8 +109,6 @@ namespace Kernel
 						}
 						else if (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
 						{
-							UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base_ptr);
-
 							ptr_bit_set[kBitMapMagIdx]	= kBitMapMagic;
 							ptr_bit_set[kBitMapSizeIdx] = size;
 							ptr_bit_set[kBitMapUsedIdx] = Yes;
@@ -120,10 +121,7 @@ namespace Kernel
 							return (VoidPtr)ptr_bit_set;
 						}
 
-						base = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base_ptr) + (ptr_bit_set[0] != kBitMapMagic ? size : ptr_bit_set[1]));
-
-						if ((UIntPtr)base_ptr < (reinterpret_cast<UIntPtr>(base) + kHandoverHeader->f_BitMapSize))
-							return nullptr;
+						base = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base) + ((ptr_bit_set[kBitMapMagIdx] != kBitMapMagic) ? size : ptr_bit_set[kBitMapSizeIdx]));
 					}
 
 					return nullptr;
@@ -145,7 +143,7 @@ namespace Kernel
 					kcout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
 					kcout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
 					kcout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
-					kcout << "Address Of BitMap: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+					kcout << "Address Of BitMap Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 				}
 			};
 		} // namespace Detail
