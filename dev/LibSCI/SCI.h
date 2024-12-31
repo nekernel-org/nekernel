@@ -259,6 +259,7 @@ IMPORT_C SInt32 PwrGetCode(_Output SInt32& code);
 IMPORT_C SInt32 CdEjectDrive(_Input const Char drv_letter);
 
 IMPORT_C SInt32 CdOpenTray(Void);
+
 IMPORT_C SInt32 CdCloseTray(Void);
 
 #endif // ifndef SCIKIT_FOUNDATION_H
