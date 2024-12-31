@@ -246,37 +246,23 @@ namespace Kernel
 
 	namespace Utils
 	{
-		ProcessID rtl_create_process(PEFLoader& exec, const Int32& procKind) noexcept
+		ProcessID rtl_create_process(PEFLoader& exec, const Int32& process_kind) noexcept
 		{
 			auto errOrStart = exec.FindStart();
 
 			if (errOrStart.Error() != kErrorSuccess)
 				return kProcessInvalidID;
 
-			UserProcess* proc = new UserProcess();
+			UserThread process;
 
-			proc->Kind		  = procKind;
-			proc->Image.fCode = errOrStart.Leak().Leak();
-			proc->Image.fBlob = exec.GetBlob().Leak().Leak();
-			proc->StackSize	  = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
-			proc->MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
-			proc->PTime		  = 0UL;
+			auto id = UserProcessScheduler::The().Spawn(reinterpret_cast<const Char*>(exec.FindSymbol(kPefNameSymbol, kPefData)), errOrStart.Leak().Leak(), exec.GetBlob().Leak().Leak());
 
-			rt_set_memory(proc->Name, 0, kProcessNameLen);
-
-			if (exec.FindSymbol(kPefNameSymbol, kPefData))
-				rt_copy_memory(exec.FindSymbol(kPefNameSymbol, kPefData), proc->Name, rt_string_len((Char*)exec.FindSymbol(kPefNameSymbol, kPefData)));
-
-			if (!proc->StackSize)
+			if (id != kProcessInvalidID)
 			{
-				const auto kDefaultStackSizeMib = 8;
-				proc->StackSize					= mib_cast(kDefaultStackSizeMib);
+				UserProcessScheduler::The().CurrentTeam().AsArray()[id].Kind = process_kind; 
+				UserProcessScheduler::The().CurrentTeam().AsArray()[id].StackSize = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
+				UserProcessScheduler::The().CurrentTeam().AsArray()[id].MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
 			}
-
-			auto id = UserProcessScheduler::The().Spawn(proc);
-
-			if (id == kProcessInvalidID)
-				delete proc;
 
 			return id;
 		}

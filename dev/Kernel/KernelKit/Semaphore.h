@@ -12,9 +12,9 @@
 
 namespace Kernel
 {
-	class UserProcess;
+	class UserThread;
 
-	typedef UserProcess* UserProcessPtr;
+	typedef UserThread& UserProcessRef;
 
 	/// @brief Access control class, which locks a task until one is done.
 	class Semaphore final
@@ -31,13 +31,13 @@ namespace Kernel
 		void WaitForProcess() noexcept;
 
 	public:
-		bool Lock(UserProcess* process);
-		bool LockOrWait(UserProcess* process, TimerInterface* timer);
+		bool Lock(UserThread& process);
+		bool LockOrWait(UserThread& process, TimerInterface* timer);
 
 	public:
 		ZKA_COPY_DEFAULT(Semaphore);
 
 	private:
-		UserProcessPtr fLockingProcess{nullptr};
+		UserProcessRef fLockingProcess;
 	};
 } // namespace Kernel

@@ -15,7 +15,7 @@ namespace Kernel
 	Bool Semaphore::Unlock() noexcept
 	{
 		if (fLockingProcess)
-			fLockingProcess = nullptr;
+			fLockingProcess = UserThread();
 		else
 			return No;
 
@@ -25,7 +25,7 @@ namespace Kernel
 	/***********************************************************************************/
 	/// @brief Locks process in the semaphore.
 	/***********************************************************************************/
-	Bool Semaphore::Lock(UserProcess* process)
+	Bool Semaphore::Lock(UserThread& process)
 	{
 		if (!process || fLockingProcess)
 			return No;
@@ -46,11 +46,8 @@ namespace Kernel
 	/***********************************************************************************/
 	/// @brief Try lock or wait.
 	/***********************************************************************************/
-	Bool Semaphore::LockOrWait(UserProcess* process, TimerInterface* timer)
+	Bool Semaphore::LockOrWait(UserThread& process, TimerInterface* timer)
 	{
-		if (process == nullptr)
-			return No;
-
 		if (timer == nullptr)
 			return No;
 

@@ -23,5 +23,4 @@ rt_install_tib:
 
 ;; //////////////////////////////////////////////////// ;;
 
-[extern cBspDone]
 [extern kApicMadtAddressesCount]

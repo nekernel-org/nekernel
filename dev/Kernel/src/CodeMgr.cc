@@ -23,20 +23,6 @@ namespace Kernel
 			*process_name == 0)
 			return kProcessInvalidID;
 
-		UserProcess* process_hdr = new UserProcess();
-
-		process_hdr->Image.fCode = reinterpret_cast<VoidPtr>(main);
-		process_hdr->Kind		 = UserProcess::kExectuableKind;
-		process_hdr->StackSize	 = kib_cast(8);
-
-		rt_set_memory(process_hdr->Name, 0, kProcessNameLen);
-		rt_copy_memory((VoidPtr)process_name, process_hdr->Name, rt_string_len(process_name));
-
-		ProcessID id = UserProcessScheduler::The().Spawn(process_hdr);
-
-		delete process_hdr;
-		process_hdr = nullptr;
-
-		return id;
+		return UserProcessScheduler::The().Spawn(process_name, reinterpret_cast<VoidPtr>(main), nullptr);
 	}
 } // namespace Kernel

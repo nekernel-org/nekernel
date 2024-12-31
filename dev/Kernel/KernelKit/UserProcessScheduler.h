@@ -31,7 +31,7 @@ namespace Kernel
 	//! @note Forward class declarations.
 
 	class IDLLObject;
-	class UserProcess;
+	class UserThread;
 	class UserProcessTeam;
 	class UserProcessScheduler;
 	class UserProcessHelper;
@@ -142,16 +142,16 @@ namespace Kernel
 		}
 	};
 
-	/// @name UserProcess
+	/// @name UserThread
 	/// @brief User process class, holds information about the running process/thread.
-	class UserProcess final
+	class UserThread final
 	{
 	public:
-		explicit UserProcess();
-		~UserProcess();
+		explicit UserThread();
+		~UserThread();
 
 	public:
-		ZKA_COPY_DEFAULT(UserProcess);
+		ZKA_COPY_DEFAULT(UserThread);
 
 	public:
 		Char			   Name[kProcessNameLen] = {"Process"};
@@ -261,18 +261,18 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(UserProcessTeam);
 
-		Array<UserProcess*, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<UserProcess>&								AsRef();
+		Array<UserThread, kSchedProcessLimitPerTeam>& AsArray();
+		Ref<UserThread>&								AsRef();
 		ProcessID&										Id() noexcept;
 
 	public:
-		Array<UserProcess*, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<UserProcess>							   mCurrentProcess;
+		Array<UserThread, kSchedProcessLimitPerTeam> mProcessList;
+		Ref<UserThread>							   mCurrentProcess;
 		ProcessID									   mTeamId{0};
 		ProcessID									   mProcessCount{0};
 	};
 
-	using UserProcessPtr = UserProcess*;
+	using UserProcessRef = UserThread&;
 
 	/// @brief Process scheduler class.
 	/// The main class which you call to schedule user processes.
@@ -293,7 +293,7 @@ namespace Kernel
 		UserProcessTeam& CurrentTeam();
 
 	public:
-		ProcessID  Spawn(UserProcess* process);
+		ProcessID  Spawn(const Char* name, VoidPtr code, VoidPtr image);
 		const Bool Remove(ProcessID process_id);
 
 		const Bool IsUser() override;
@@ -301,7 +301,7 @@ namespace Kernel
 		const Bool HasMP() override;
 
 	public:
-		Ref<UserProcess>& GetCurrentProcess();
+		Ref<UserThread>& GetCurrentProcess();
 		const SizeT		  Run() noexcept;
 
 	public:
@@ -312,14 +312,14 @@ namespace Kernel
 	};
 
 	/*
-	 * \brief UserProcess helper class, which contains needed utilities for the scheduler.
+	 * \brief UserThread helper class, which contains needed utilities for the scheduler.
 	 */
 
 	class UserProcessHelper final
 	{
 	public:
 		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
-		STATIC Bool CanBeScheduled(const UserProcess* process);
+		STATIC Bool CanBeScheduled(const UserThread& process);
 		STATIC ErrorOr<PID> TheCurrentPID();
 		STATIC SizeT		StartScheduling();
 	};

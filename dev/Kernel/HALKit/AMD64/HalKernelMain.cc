@@ -24,6 +24,14 @@ EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** en
 
 STATIC Kernel::Void hal_init_cxx_ctors()
 {
+	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
+	{
+		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		 = Kernel::UserThread();
+		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i].Status = Kernel::ProcessStatusKind::kKilled;
+	}
+
+	Kernel::UserProcessScheduler::The().CurrentTeam().mProcessCount = 0UL;
+
 	for (Kernel::SizeT index = 0UL; __CTOR_LIST__[index] != __DTOR_LIST__; ++index)
 	{
 		Kernel::rtl_ctor_kind constructor_cxx = (Kernel::rtl_ctor_kind)__CTOR_LIST__[index];
@@ -85,7 +93,10 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	auto str_proc = Kernel::rt_alloc_string("System");
 
-	Kernel::rtl_create_process(rtl_kernel_main, str_proc);
+	auto pid = Kernel::rtl_create_process(rtl_kernel_main, str_proc);
+
+	Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[pid].PTime = 0;
+	Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[pid].Status = Kernel::ProcessStatusKind::kRunning;
 
 	delete str_proc;
 	str_proc = nullptr;

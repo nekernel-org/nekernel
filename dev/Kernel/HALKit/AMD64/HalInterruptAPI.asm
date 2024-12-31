@@ -16,26 +16,32 @@
 %macro IntExp 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
-    cli
+    cld
 
     mov al, 0x20
     out 0xA0, al
     out 0x20, al
 
-    sti
+    push rcx
+    call idt_handle_generic
+    pop rcx
+
+
+
+    std
     o64 iret
 %endmacro
 
 %macro IntNormal 1
 global __ZKA_INT_%1
 __ZKA_INT_%1:
-    cli
+    cld
 
     mov al, 0x20
     out 0xA0, al
     out 0x20, al
 
-    sti
+    std
     o64 iret
 %endmacro
 
@@ -55,25 +61,16 @@ extern idt_handle_breakpoint
 section .text
 
 __ZKA_INT_0:
-    cli
+    cld
 
     mov al, 0x20
     out 0x20, al
 
-    sti
+    std
     o64 iret
 
 __ZKA_INT_1:
-    cli
-
-    mov al, 0x20
-    out 0x20, al
-
-    sti
-    o64 iret
-
-__ZKA_INT_2:
-    cli
+    cld
 
     mov al, 0x20
     out 0x20, al
@@ -82,12 +79,29 @@ __ZKA_INT_2:
     call idt_handle_generic
     pop rcx
 
-    sti
+
+    
+    std
+    o64 iret
+
+__ZKA_INT_2:
+    cld
+
+    mov al, 0x20
+    out 0x20, al
+
+    push rcx
+    call idt_handle_generic
+    pop rcx
+
+
+    
+    std
     o64 iret
 
 ;; @brief Triggers a breakpoint and freeze the process. RIP is also fetched.
 __ZKA_INT_3:
-    cli
+    cld
 
     mov al, 0x20
     out 0x20, al
@@ -95,11 +109,14 @@ __ZKA_INT_3:
     push rcx
     call idt_handle_generic
     pop rcx
-    sti
+
+
+    
+    std
     o64 iret
 
 __ZKA_INT_4:
-    cli
+    cld
 
     mov al, 0x20
     out 0x20, al
@@ -108,21 +125,27 @@ __ZKA_INT_4:
     push rcx
     call idt_handle_generic
     pop rcx
-    sti
+
+
+    
+
+    std
     o64 iret
 
 __ZKA_INT_5:
-    cli
+    cld
 
     mov al, 0x20
     out 0x20, al
 
-    sti
+
+    
+    std
     o64 iret
 
 ;; Invalid opcode interrupt
 __ZKA_INT_6:
-    cli
+    cld
 
     mov al, 0x20
     out 0x20, al
@@ -131,11 +154,13 @@ __ZKA_INT_6:
     call idt_handle_generic
     pop rcx
 
-    sti
+
+    
+    std
     o64 iret
 
 __ZKA_INT_7:
-    cli
+    cld
 
     mov al, 0x20
     out 0x20, al
@@ -144,12 +169,14 @@ __ZKA_INT_7:
     call idt_handle_generic
     pop rcx
 
-    sti
+
+    
+    std
     o64 iret
 
 ;; Invalid opcode interrupt
 __ZKA_INT_8:
-    cli
+    cld
 
     mov al, 0x20
     out 0xA0, al
@@ -159,7 +186,7 @@ __ZKA_INT_8:
     call idt_handle_generic
     pop rcx
 
-    sti
+    std
     o64 iret
 
 IntNormal 9
@@ -169,7 +196,7 @@ IntExp   11
 IntExp 12
 
 __ZKA_INT_13:
-    cli
+    cld
 
     mov al, 0x20
     out 0xA0, al
@@ -179,11 +206,13 @@ __ZKA_INT_13:
     call idt_handle_gpf
     pop rcx
 
-    sti
+    add qword [rsp + 4], 2
+
+    std
     o64 iret
 
 __ZKA_INT_14:
-    cli
+    cld
 
     mov al, 0x20
     out 0xA0, al
@@ -193,7 +222,9 @@ __ZKA_INT_14:
     call idt_handle_pf
     pop rcx
 
-    sti
+    add qword [rsp + 4], 2
+
+    std
     o64 iret
 
 IntNormal 15
@@ -219,7 +250,7 @@ IntNormal 31
 [extern idt_handle_scheduler]
 
 __ZKA_INT_32:
-    cli
+    cld
 
     mov al, 0x20
     out 0xA0, al
@@ -230,7 +261,7 @@ __ZKA_INT_32:
     call idt_handle_scheduler
     pop rax
 
-    sti
+    std
     o64 iret
 
 IntNormal 33
@@ -258,7 +289,7 @@ IntNormal 49
 [extern hal_kernel_call_enter]
 
 __ZKA_INT_50:
-    cli
+    cld
 
     mov al, 0x20
     out 0xA0, al
@@ -273,12 +304,12 @@ __ZKA_INT_50:
     call rax
     pop rax
 
-    sti
+    std
 
     o64 iret
 
 __ZKA_INT_51:
-    cli
+    cld
 
     mov al, 0x20
     out 0xA0, al
@@ -293,7 +324,7 @@ __ZKA_INT_51:
     call rax
     pop rax
 
-    sti
+    std
 
     o64 iret
 

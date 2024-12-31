@@ -12,4 +12,4 @@
 #define KERNELKIT_VERSION_BCD 0x01020
 
 class UserProcessScheduler;
-class UserProcess;
+class UserThread;

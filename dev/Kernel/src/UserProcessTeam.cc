@@ -17,16 +17,19 @@ namespace Kernel
 	{
 		for (SizeT i = 0U; i < this->mProcessList.Count(); ++i)
 		{
-			this->mProcessList[i] = nullptr;
+			this->mProcessList[i] = UserThread();
+			this->mProcessList[i].Status = ProcessStatusKind::kKilled;
 		}
+
+		this->mProcessCount = 0UL;
 	}
 
 	/***********************************************************************************/
-	/// @brief UserProcess list array getter.
+	/// @brief UserThread list array getter.
 	/// @return The list of process to schedule.
 	/***********************************************************************************/
 
-	Array<UserProcess*, kSchedProcessLimitPerTeam>& UserProcessTeam::AsArray()
+	Array<UserThread, kSchedProcessLimitPerTeam>& UserProcessTeam::AsArray()
 	{
 		return this->mProcessList;
 	}
@@ -46,7 +49,7 @@ namespace Kernel
 	/// @return The current process header.
 	/***********************************************************************************/
 
-	Ref<UserProcess>& UserProcessTeam::AsRef()
+	Ref<UserThread>& UserProcessTeam::AsRef()
 	{
 		return this->mCurrentProcess;
 	}

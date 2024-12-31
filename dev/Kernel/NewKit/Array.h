@@ -22,15 +22,9 @@ namespace Kernel
 		Array& operator=(const Array&) = default;
 		Array(const Array&)			   = default;
 
-		T& operator[](const SizeT& At)
+		T& operator[](const SizeT& at)
 		{
-			return fArray[At];
-		}
-
-		T Assign(const SizeT& At, T NewVal)
-		{
-			fArray[At] = NewVal;
-			return fArray[At];
+			return fArray[at];
 		}
 
 		Boolean Empty()
@@ -45,15 +39,7 @@ namespace Kernel
 
 		const SizeT Count()
 		{
-			SizeT count = 0;
-
-			for (SizeT i = 0; i < N; i++)
-			{
-				if (fArray[i])
-					++count;
-			}
-
-			return count;
+			return N;
 		}
 
 		const T* CData()
