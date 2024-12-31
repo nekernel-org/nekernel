@@ -19,8 +19,8 @@ __ZKA_INT_%1:
     cli
 
     mov al, 0x20
-    out 0x20, al
     out 0xA0, al
+    out 0x20, al
 
     sti
     o64 iret
@@ -32,8 +32,8 @@ __ZKA_INT_%1:
     cli
 
     mov al, 0x20
-    out 0x20, al
     out 0xA0, al
+    out 0x20, al
 
     sti
     o64 iret
@@ -54,17 +54,36 @@ extern idt_handle_breakpoint
 
 section .text
 
-IntNormal 0
-IntNormal 1
-IntNormal 2
+__ZKA_INT_0:
+    cli
 
-section .data
+    mov al, 0x20
+    out 0x20, al
 
-__ZKA_INT_3_GET_RIP:
-    dq 0
-__ZKA_INT_3_GET_RIP_END:
+    sti
+    o64 iret
 
-section .text
+__ZKA_INT_1:
+    cli
+
+    mov al, 0x20
+    out 0x20, al
+
+    sti
+    o64 iret
+
+__ZKA_INT_2:
+    cli
+
+    mov al, 0x20
+    out 0x20, al
+
+    push rcx
+    call idt_handle_generic
+    pop rcx
+
+    sti
+    o64 iret
 
 ;; @brief Triggers a breakpoint and freeze the process. RIP is also fetched.
 __ZKA_INT_3:
@@ -72,23 +91,34 @@ __ZKA_INT_3:
 
     mov al, 0x20
     out 0x20, al
-    out 0xA0, al
 
-    push rax
-    mov rax, idt_handle_breakpoint
-
-    lea rcx, [rel __ZKA_INT_3_GET_RIP]
-    sub rcx, 16
-    mov [rcx], rcx
-
-    call rax
-    pop rax
-
+    push rcx
+    call idt_handle_generic
+    pop rcx
     sti
     o64 iret
 
-IntNormal 4
-IntNormal 5
+__ZKA_INT_4:
+    cli
+
+    mov al, 0x20
+    out 0x20, al
+
+
+    push rcx
+    call idt_handle_generic
+    pop rcx
+    sti
+    o64 iret
+
+__ZKA_INT_5:
+    cli
+
+    mov al, 0x20
+    out 0x20, al
+
+    sti
+    o64 iret
 
 ;; Invalid opcode interrupt
 __ZKA_INT_6:
@@ -96,36 +126,38 @@ __ZKA_INT_6:
 
     mov al, 0x20
     out 0x20, al
-    out 0xA0, al
 
-    push rax
-    mov rax, idt_handle_ud
-
-    mov rcx, rsp
-
-    call rax
-    pop rax
+    push rcx
+    call idt_handle_generic
+    pop rcx
 
     sti
     o64 iret
 
-IntNormal 7
+__ZKA_INT_7:
+    cli
+
+    mov al, 0x20
+    out 0x20, al
+
+    push rcx
+    call idt_handle_generic
+    pop rcx
+
+    sti
+    o64 iret
 
 ;; Invalid opcode interrupt
 __ZKA_INT_8:
     cli
 
     mov al, 0x20
-    out 0x20, al
     out 0xA0, al
+    out 0x20, al
 
-    push rax
-    mov rax, idt_handle_generic
-
-    mov rcx, rsp
-
-    call rax
-    pop rax
+    push rcx
+    call idt_handle_generic
+    pop rcx
 
     sti
     o64 iret
@@ -140,16 +172,12 @@ __ZKA_INT_13:
     cli
 
     mov al, 0x20
-    out 0x20, al
     out 0xA0, al
+    out 0x20, al
 
-    push rax
-    mov rax, idt_handle_gpf
-
-    mov rcx, rsp
-
-    call rax
-    pop rax
+    push rcx
+    call idt_handle_gpf
+    pop rcx
 
     sti
     o64 iret
@@ -158,15 +186,12 @@ __ZKA_INT_14:
     cli
 
     mov al, 0x20
-    out 0x20, al
     out 0xA0, al
-    push rax
-    mov rax, idt_handle_pf
+    out 0x20, al
 
-    mov rcx, rsp
-
-    call rax
-    pop rax
+    push rcx
+    call idt_handle_pf
+    pop rcx
 
     sti
     o64 iret
@@ -197,9 +222,9 @@ __ZKA_INT_32:
     cli
 
     mov al, 0x20
-    out 0x20, al
     out 0xA0, al
-
+    out 0x20, al
+    
     push rax
     mov rcx, rsp
     call idt_handle_scheduler
@@ -236,8 +261,8 @@ __ZKA_INT_50:
     cli
 
     mov al, 0x20
-    out 0x20, al
     out 0xA0, al
+    out 0x20, al
 
     push rax
     mov rax, hal_system_call_enter
@@ -256,8 +281,8 @@ __ZKA_INT_51:
     cli
 
     mov al, 0x20
-    out 0x20, al
     out 0xA0, al
+    out 0x20, al
 
     push rax
     mov rax, hal_kernel_call_enter

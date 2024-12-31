@@ -109,7 +109,7 @@ namespace Kernel
 			return nullptr;
 
 		voidPtr v_src = reinterpret_cast<voidPtr>(const_cast<char*>(src));
-		voidPtr v_dst  = reinterpret_cast<voidPtr>(const_cast<char*>(string));
+		voidPtr v_dst = reinterpret_cast<voidPtr>(const_cast<char*>(string));
 
 		rt_copy_memory(v_src, v_dst, rt_string_len(src) + 1);
 
@@ -132,29 +132,6 @@ namespace Kernel
 		return character;
 	}
 
-	Bool rt_to_string(Char* str, Int32 limit, Int32 base)
-	{
-		if (limit == 0)
-			return false;
-
-		Int copy_limit = limit;
-		Int cnt		   = 0;
-		Int ret		   = base;
-
-		while (limit != 1)
-		{
-			ret		 = ret % 10;
-			str[cnt] = ret;
-
-			++cnt;
-			--limit;
-			--ret;
-		}
-
-		str[copy_limit] = '\0';
-		return true;
-	}
-
 	Boolean is_space(Char chr)
 	{
 		return chr == ' ';
@@ -165,7 +142,7 @@ namespace Kernel
 		return chr == '\n';
 	}
 
-	voidPtr rt_string_in_string(const Char* in, const Char* needle)
+	VoidPtr rt_string_in_string(const Char* in, const Char* needle)
 	{
 		for (SizeT i = 0; i < rt_string_len(in); ++i)
 		{
@@ -176,7 +153,45 @@ namespace Kernel
 		return nullptr;
 	}
 
-	// @brief Checks for a string start at the character.
+	Char rt_to_char(UInt64 base, Int32 limit)
+	{
+		const Char kNumbers[17] = "0123456789ABCDEF";
+		return kNumbers[base % limit];
+	}
+
+	Bool rt_to_string(Char* str, UInt64 base, Int32 limit)
+	{
+#ifdef __ZKA_AMD64__
+		auto i = 0;
+
+		auto final_number = base;
+
+		auto mult  = 1;
+		auto elems = 0L;
+
+		base /= 10;
+
+		while (base > 0)
+		{
+			elems++;
+			mult *= 10;
+			base /= 10;
+		}
+
+		while (elems > -1)
+		{
+			final_number = (final_number % mult) * 10 + final_number / mult;
+			str[i]		 = rt_to_char(final_number, limit);
+
+			--elems;
+			++i;
+		}
+#endif
+
+		return YES;
+	}
+
+	/// @brief Checks for a string start at the character.
 
 	Char* rt_string_has_char(Char* str, const Char chr)
 	{

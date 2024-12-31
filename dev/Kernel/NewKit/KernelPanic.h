@@ -11,7 +11,7 @@
 
 namespace Kernel
 {
-	void ke_runtime_check(bool bExpression, const Char* file, const Char* line);
+	void ke_runtime_check(bool expr, const Char* file, const Char* line);
 }
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)
@@ -29,8 +29,8 @@ namespace Kernel
 
 enum RUNTIME_CHECK
 {
-	RUNTIME_CHECK_FAILED  = -1,
-	RUNTIME_CHECK_POINTER = 0,
+	RUNTIME_CHECK_FAILED  = 1111,
+	RUNTIME_CHECK_POINTER,
 	RUNTIME_CHECK_EXPRESSION,
 	RUNTIME_CHECK_FILE,
 	RUNTIME_CHECK_IPC,
@@ -50,14 +50,7 @@ enum RUNTIME_CHECK
 
 namespace Kernel
 {
-	/// @brief Dumping factory class.
-	class RecoveryFactory final
-	{
-	public:
-		STATIC Void Recover() noexcept;
-	};
-
-	void ke_panic(const Int32& id);
+	void ke_panic(const Int32& id, const Char* message = nullptr);
 } // namespace Kernel
 
 #ifdef TRY

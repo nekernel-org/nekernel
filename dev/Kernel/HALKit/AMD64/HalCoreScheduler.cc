@@ -28,7 +28,7 @@
 #define kAPIC_BASE_MSR_BSP	  0x100
 #define kAPIC_BASE_MSR_ENABLE 0x800
 
-#define cSMPMax (32U)
+#define kSMPMax (32U)
 
 /// @note: _hal_switch_context is internal
 
@@ -48,8 +48,8 @@ namespace Kernel::HAL
 	STATIC Bool				  kSMPAware	 = false;
 	STATIC Int64			  kSMPCount	 = 0;
 
-	STATIC Int32   cSMPInterrupt		 = 0;
-	STATIC UInt64  kAPICLocales[cSMPMax] = {0};
+	STATIC Int32   kSMPInterrupt		 = 0;
+	STATIC UInt64  kAPICLocales[kSMPMax] = {0};
 	STATIC VoidPtr kRawMADT				 = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
@@ -194,7 +194,7 @@ namespace Kernel::HAL
 
 			// reset values.
 
-			cSMPInterrupt = 0;
+			kSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
 			kcout << "SMP: Probing Local APICs...\r";
@@ -204,7 +204,7 @@ namespace Kernel::HAL
 			while (Yes)
 			{
 				if (kMADTBlock->List[index].Type > 9 ||
-					kSMPCount > cSMPMax)
+					kSMPCount > kSMPMax)
 					break;
 
 				switch (kMADTBlock->List[index].Type)

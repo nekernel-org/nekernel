@@ -19,7 +19,7 @@ namespace Kernel
 	const Char* rt_alloc_string(const Char* text);
 	Size		rt_string_len(const Char* str);
 	Size		rt_string_len(const Char* str, SizeT _len);
-	Boolean		rt_to_string(Char* buf, Int limit, Int base);
+	Boolean		rt_to_string(Char* buf, UInt64 base, Int32 limit);
 	Boolean		is_newln(Char chr);
 	Boolean		is_space(Char chr);
 	Int			rt_to_uppercase(Int c);
