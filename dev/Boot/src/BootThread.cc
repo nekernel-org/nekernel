@@ -18,13 +18,13 @@
 /// @brief External boot services symbol.
 EXTERN EfiBootServices* BS;
 
-/// @note BThread doesn't parse the symbols so doesn't nullify them, .bss is though.
+/// @note BootThread doesn't parse the symbols so doesn't nullify them, .bss is though.
 
 namespace Boot
 {
 	EXTERN_C Void rt_jump_to_address(VoidPtr code, HEL::BootInfoHeader* handover, UInt8* stack);
 
-	BThread::BThread(VoidPtr blob)
+	BootThread::BootThread(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
 	{
 		// detect the format.
@@ -167,7 +167,7 @@ namespace Boot
 	}
 
 	/// @note handover header has to be valid!
-	Int32 BThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
+	Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
 	{
 		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> Int32 {
 			fb_render_string("BootZ: Invalid Boot Image...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
@@ -196,17 +196,17 @@ namespace Boot
 		return NO;
 	}
 
-	const Char* BThread::GetName()
+	const Char* BootThread::GetName()
 	{
 		return fBlobName;
 	}
 
-	Void BThread::SetName(const Char* name)
+	Void BootThread::SetName(const Char* name)
 	{
 		CopyMem(fBlobName, name, StrLen(name));
 	}
 
-	bool BThread::IsValid()
+	bool BootThread::IsValid()
 	{
 		return fStartAddress != nullptr;
 	}

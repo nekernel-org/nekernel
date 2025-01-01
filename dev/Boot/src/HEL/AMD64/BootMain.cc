@@ -206,7 +206,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	Boot::BFileReader reader_syschk(L"syschk.sys", image_handle);
 	reader_syschk.ReadAll(0);
 
-	Boot::BThread* syschk_thread = nullptr;
+	Boot::BootThread* syschk_thread = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
@@ -214,7 +214,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	if (reader_syschk.Blob())
 	{
-		syschk_thread = new Boot::BThread(reader_syschk.Blob());
+		syschk_thread = new Boot::BootThread(reader_syschk.Blob());
 		syschk_thread->SetName("BootZ: System Recovery Check");
 	}
 
@@ -265,7 +265,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	reader_kernel.ReadAll(0);
 
-	Boot::BThread* kernel_thread = nullptr;
+	Boot::BootThread* kernel_thread = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
@@ -273,7 +273,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	if (reader_kernel.Blob())
 	{
-		kernel_thread = new Boot::BThread(reader_kernel.Blob());
+		kernel_thread = new Boot::BootThread(reader_kernel.Blob());
 		kernel_thread->SetName("BootZ: ZkaOS Kernel.");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();

@@ -13,8 +13,8 @@
 #define kSwapMgrBlockMaxSize (mib_cast(16))
 #define kSwapMgrPageFile	 "/System/pagefile.sys"
 
-/// @file Swap.h
-/// @brief Virtual memory swap API.
+/// @file SwapDisk.h
+/// @brief Virtual memory swap disk.
 
 namespace Kernel
 {

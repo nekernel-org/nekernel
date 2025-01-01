@@ -14,20 +14,19 @@ namespace Boot
 {
 	using namespace Kernel;
 
-	class BThread;
+	class BootThread;
 
-	/// @brief Program loader class
-	/// @package nl.zeta.boot.api
-	class BThread final
+	/// @brief Bootloader Thread class.
+	class BootThread final
 	{
 	public:
-		explicit BThread() = delete;
-		~BThread()		   = default;
+		explicit BootThread() = delete;
+		~BootThread()		   = default;
 
-		explicit BThread(Kernel::VoidPtr blob);
+		explicit BootThread(Kernel::VoidPtr blob);
 
-		BThread& operator=(const BThread&) = default;
-		BThread(const BThread&)			   = default;
+		BootThread& operator=(const BootThread&) = default;
+		BootThread(const BootThread&)			   = default;
 
 		Int32		Start(HEL::BootInfoHeader* handover, BOOL is_own_stack);
 		void		SetName(const char* name);

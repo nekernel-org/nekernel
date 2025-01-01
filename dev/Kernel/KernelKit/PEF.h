@@ -70,7 +70,7 @@ namespace Kernel
 
 	enum
 	{
-		kPefKindExec   = 1, /* .exe */
+		kPefKindExec   = 1, /* .o */
 		kPefKindDylib  = 2, /* .dylib */
 		kPefKindObject = 4, /* .obj */
 		kPefKindDebug  = 5, /* .dbg */

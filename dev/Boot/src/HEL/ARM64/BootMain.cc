@@ -66,7 +66,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 
 	if (reader_kernel.Blob())
 	{
-		auto kernel_thread = Boot::BThread(reader_kernel.Blob());
+		auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
 
 		if (kernel_thread.IsValid())
 			kernel_thread.Start(nullptr, YES);

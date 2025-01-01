@@ -47,7 +47,7 @@ namespace Boot
 {
 	class BTextWriter;
 	class BFileReader;
-	class BThread;
+	class BootThread;
 	class BVersionString;
 
 	typedef Char* PEFImagePtr;
