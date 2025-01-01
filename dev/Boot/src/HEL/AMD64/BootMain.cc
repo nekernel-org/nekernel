@@ -78,13 +78,13 @@ EXTERN_C Void	 boot_write_cr3(VoidPtr new_cr3);
 EXTERN EfiBootServices* BS;
 
 /// @brief Main EFI entrypoint.
-/// @param ImageHandle Handle of this image.
-/// @param SystemTable The system table of it.
+/// @param image_handle Handle of this image.
+/// @param sys_table The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
-								EfiSystemTable* SystemTable)
+EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
+								EfiSystemTable* sys_table)
 {
-	InitEFI(SystemTable); ///! Init the EFI library.
+	InitEFI(sys_table); ///! Init the EFI library.
 
 	HEL::BootInfoHeader* handover_hdr =
 		new HEL::BootInfoHeader();
@@ -99,11 +99,11 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	if (!boot_init_fb())
 		return 1; ///! Init the GOP.
 
-	for (SizeT index_vt = 0; index_vt < SystemTable->NumberOfTableEntries;
+	for (SizeT index_vt = 0; index_vt < sys_table->NumberOfTableEntries;
 		 ++index_vt)
 	{
 		Char* vendor_table = reinterpret_cast<Char*>(
-			SystemTable->ConfigurationTable[index_vt].VendorTable);
+			sys_table->ConfigurationTable[index_vt].VendorTable);
 
 		// ACPI's 'RSD PTR', which contains the ACPI SDT (MADT, FACP...)
 		if (vendor_table[0] == 'R' && vendor_table[1] == 'S' &&
@@ -203,7 +203,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
 
-	Boot::BFileReader reader_syschk(L"syschk.sys", ImageHandle);
+	Boot::BFileReader reader_syschk(L"syschk.sys", image_handle);
 	reader_syschk.ReadAll(0);
 
 	Boot::BThread* syschk_thread = nullptr;
@@ -247,21 +247,21 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 	handover_hdr->f_FirmwareCustomTables[0] = nullptr;
 	handover_hdr->f_FirmwareCustomTables[1] = nullptr;
 
-	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(SystemTable->FirmwareVendor);
+	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
 	handover_hdr->f_Magic	= kHandoverMagic;
 	handover_hdr->f_Version = kHandoverVersion;
 
 	// Provide fimware vendor name.
 
-	Boot::BCopyMem(handover_hdr->f_FirmwareVendorName, SystemTable->FirmwareVendor,
+	Boot::BCopyMem(handover_hdr->f_FirmwareVendorName, sys_table->FirmwareVendor,
 				   handover_hdr->f_FirmwareVendorLen);
 
-	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(SystemTable->FirmwareVendor);
+	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
 	// Assign to global 'kHandoverHeader'.
 
-	Boot::BFileReader reader_kernel(L"minoskrnl.exe", ImageHandle);
+	Boot::BFileReader reader_kernel(L"minoskrnl.exe", image_handle);
 
 	reader_kernel.ReadAll(0);
 
@@ -286,7 +286,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 		EFI::Stop();
 	}
 
-	Boot::BFileReader ttf_font(L"zka\\fntkrnl.ttf", ImageHandle);
+	Boot::BFileReader ttf_font(L"TQ\\OSFont.ttf", image_handle);
 
 	ttf_font.ReadAll(0);
 
@@ -305,7 +305,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	ImageHandle,
 		EFI::Stop();
 	}
 
-	EFI::ExitBootServices(map_key, ImageHandle);
+	EFI::ExitBootServices(map_key, image_handle);
 
 	// ---------------------------------------------------- //
 	// Finally load the OS kernel.
