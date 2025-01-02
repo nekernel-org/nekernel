@@ -46,8 +46,7 @@ EXTERN_C void hal_init_platform(
 
 	/// @note do initialize the interrupts after it.
 
-	auto str_proc = Kernel::rt_alloc_string("System");
-	Kernel::rtl_create_process(rtl_kernel_main, str_proc);
+	rtl_kernel_main(0, nullptr, nullptr, 0);
 
 	while (YES)
 	{

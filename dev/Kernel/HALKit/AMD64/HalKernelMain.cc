@@ -91,22 +91,7 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	//rtl_kernel_main(0, nullptr, nullptr, 0);
-
-	auto str_proc = Kernel::rt_alloc_string("User Program");
-
-	auto pid = Kernel::rtl_create_process([](const Kernel::SizeT argc, Kernel::Char** argv, Kernel::Char** envp, const Kernel::SizeT envp_len) -> void {
-		while (YES)
-		{
-			kcout << "what\r";
-		}
-	}, str_proc);
-
-	Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[pid].PTime = 0;
-	Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[pid].Status = Kernel::ProcessStatusKind::kRunning;
-
-	delete str_proc;
-	str_proc = nullptr;
+	rtl_kernel_main(0, nullptr, nullptr, 0);
 
 	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
 		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
