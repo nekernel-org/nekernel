@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "NewKit/Macros.h"
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
@@ -101,11 +102,6 @@ namespace Kernel
 	Void HardwareThread::Wake(const bool wakeup) noexcept
 	{
 		fWakeup = wakeup;
-
-		if (!fWakeup)
-			mp_hang_thread(fStack);
-		else
-			mp_wakeup_thread(fStack);
 	}
 
 	/***********************************************************************************/
@@ -116,27 +112,13 @@ namespace Kernel
 	/***********************************************************************************/
 	Bool HardwareThread::Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid)
 	{
-		if (!frame ||
-			!image ||
-			!stack_ptr)
-			return No;
-
-		if (!this->IsWakeup())
-			return No;
-
-		if (this->IsBusy())
-			return No;
-
-		if (!hal_check_stack(frame))
-			return No;
-
 		this->fStack	 = frame;
 		this->fSourcePID = pid;
 
 		Bool ret = mp_register_process(image, stack_ptr, fStack, this->fSourcePID);
 
 		if (ret)
-			this->Busy(true);
+			this->Busy(YES);
 
 		return ret;
 	}
@@ -230,9 +212,6 @@ namespace Kernel
 	/***********************************************************************************/
 	SizeT HardwareThreadScheduler::Capacity() noexcept
 	{
-		if (fThreadList.Empty())
-			return 0UL;
-
-		return fThreadList.Capacity();
+		return fThreadList.Count();
 	}
 } // namespace Kernel

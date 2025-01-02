@@ -62,9 +62,6 @@ namespace Kernel
 
 		fb_render_string(message_cr2, y, x, panic_text);
 
-		kcout << message_apicid;
-		kcout << message_cr2;
-
 		y += 10;
 
 		fb_clear();

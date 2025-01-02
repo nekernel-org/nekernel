@@ -231,7 +231,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 		root.fKind = kNeFSCatalogKindDir;
 
-		partition_factory.Format(kMachineModel " HD", &root, 1);
+		partition_factory.Format("HD", &root, 1);
 
 		UI::fb_clear_video();
 

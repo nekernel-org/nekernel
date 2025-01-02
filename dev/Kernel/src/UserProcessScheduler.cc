@@ -37,7 +37,7 @@ namespace Kernel
 
 	STATIC UserProcessScheduler kProcessScheduler;
 
-	UserThread::UserThread()	= default;
+	UserThread::UserThread()  = default;
 	UserThread::~UserThread() = default;
 
 	/// @brief Gets the last exit code.
@@ -352,8 +352,8 @@ namespace Kernel
 		process.ProcessParentTeam = &mTeam;
 
 		process.ProcessId = pid;
-		process.Status	   = ProcessStatusKind::kStarting;
-		process.PTime	   = (UIntPtr)AffinityKind::kStandard;
+		process.Status	  = ProcessStatusKind::kStarting;
+		process.PTime	  = (UIntPtr)AffinityKind::kStandard;
 
 		kcout << "PID: " << number(process.ProcessId) << endl;
 		kcout << "Name: " << process.Name << endl;
@@ -441,8 +441,12 @@ namespace Kernel
 				kcout << "Switch to '" << process.Name << "'.\r";
 
 				// tell helper to find a core to schedule on.
-				UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
-											   process.ProcessId);
+				if (!UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
+											   process.ProcessId))
+				{
+					kcout << "Invalid process.\r";
+					process.Crash();
+				}
 			}
 			else
 			{
@@ -525,50 +529,44 @@ namespace Kernel
 
 	Bool UserProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
 	{
-		if (!stack || !frame_ptr || !image_ptr)
-			return No;
-
-		if (!mm_is_valid_heap(image_ptr))
-			return No;
-
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index)
 		{
-			if (!HardwareThreadScheduler::The()[index].Leak())
+			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidAP ||
+				HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPBoot)
 				continue;
 
-			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidAP)
-				continue;
+			PID prev_pid									 = UserProcessHelper::TheCurrentPID();
+			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
 
-			if (HardwareThreadScheduler::The()[index].Leak()->Kind() !=
-					ThreadKind::kAPBoot &&
-				HardwareThreadScheduler::The()[index].Leak()->Kind() !=
-					ThreadKind::kAPSystemReserved)
+			////////////////////////////////////////////////////////////
+			///	Prepare task switch.								 ///
+			////////////////////////////////////////////////////////////
+
+			HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
+			HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
+
+			auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
+			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
+
+			Bool ret											 = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid);
+
+			////////////////////////////////////////////////////////////
+			///	Rollback on fail.    								 ///
+			////////////////////////////////////////////////////////////
+			if (!ret)
 			{
-				PID prev_pid									 = UserProcessHelper::TheCurrentPID();
-				UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
+				HardwareThreadScheduler::The()[index].Leak()->fPTime = prev_ptime;
+				UserProcessHelper::TheCurrentPID().Leak().Leak()	 = prev_pid;
 
-				////////////////////////////////////////////////////////////
-				///	Prepare task switch.								 ///
-				////////////////////////////////////////////////////////////
-
-				auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
-				HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
-				Bool ret											 = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid);
-
-				////////////////////////////////////////////////////////////
-				///	Rollback on fail.    								 ///
-				////////////////////////////////////////////////////////////
-				if (!ret)
-				{
-					HardwareThreadScheduler::The()[index].Leak()->fPTime = prev_ptime;
-					UserProcessHelper::TheCurrentPID().Leak().Leak()	 = prev_pid;
-
-					return false;
-				}
+				HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
 			}
+
+			HardwareThreadScheduler::The()[index].Leak()->Wake(NO);
+
+			return Yes;
 		}
 
-		return false;
+		return No;
 	}
 
 	////////////////////////////////////////////////////////////

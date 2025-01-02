@@ -70,10 +70,10 @@ EXTERN_C void hal_init_platform(
 	/* GDT, mostly descriptors for user and kernel segments. */
 	STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
 		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},	  // Null entry
-		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel code
-		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xCF, .fBaseHigh = 0}, // Kernel data
-		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fFlags = 0xCF, .fBaseHigh = 0}, // User data
-		{.fLimitLow = 0xFFFF, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fFlags = 0xAF, .fBaseHigh = 0}, // User code
+		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel code
+		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xCF, .fBaseHigh = 0}, // Kernel data
+		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fFlags = 0xAF, .fBaseHigh = 0}, // User code
+		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fFlags = 0xCF, .fBaseHigh = 0}, // User data
 	};
 
 	// Load memory descriptors.
@@ -91,9 +91,16 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	auto str_proc = Kernel::rt_alloc_string("System");
+	//rtl_kernel_main(0, nullptr, nullptr, 0);
 
-	auto pid = Kernel::rtl_create_process(rtl_kernel_main, str_proc);
+	auto str_proc = Kernel::rt_alloc_string("User Program");
+
+	auto pid = Kernel::rtl_create_process([](const Kernel::SizeT argc, Kernel::Char** argv, Kernel::Char** envp, const Kernel::SizeT envp_len) -> void {
+		while (YES)
+		{
+			kcout << "what\r";
+		}
+	}, str_proc);
 
 	Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[pid].PTime = 0;
 	Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[pid].Status = Kernel::ProcessStatusKind::kRunning;

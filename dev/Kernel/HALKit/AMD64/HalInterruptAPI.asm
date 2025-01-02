@@ -11,7 +11,7 @@
 
 [bits 64]
 
-%define kInterruptId 0x21
+%define kInterruptId 50
 
 %macro IntExp 1
 global __ZKA_INT_%1
@@ -26,9 +26,8 @@ __ZKA_INT_%1:
     call idt_handle_generic
     pop rcx
 
-
-
     std
+
     o64 iret
 %endmacro
 
@@ -42,6 +41,7 @@ __ZKA_INT_%1:
     out 0x20, al
 
     std
+    
     o64 iret
 %endmacro
 
@@ -67,6 +67,7 @@ __ZKA_INT_0:
     out 0x20, al
 
     std
+
     o64 iret
 
 __ZKA_INT_1:
@@ -79,9 +80,8 @@ __ZKA_INT_1:
     call idt_handle_generic
     pop rcx
 
-
-    
     std
+
     o64 iret
 
 __ZKA_INT_2:
@@ -94,9 +94,8 @@ __ZKA_INT_2:
     call idt_handle_generic
     pop rcx
 
-
-    
     std
+
     o64 iret
 
 ;; @brief Triggers a breakpoint and freeze the process. RIP is also fetched.
@@ -110,9 +109,8 @@ __ZKA_INT_3:
     call idt_handle_generic
     pop rcx
 
-
-    
     std
+
     o64 iret
 
 __ZKA_INT_4:
@@ -126,10 +124,8 @@ __ZKA_INT_4:
     call idt_handle_generic
     pop rcx
 
-
-    
-
     std
+
     o64 iret
 
 __ZKA_INT_5:
@@ -138,9 +134,8 @@ __ZKA_INT_5:
     mov al, 0x20
     out 0x20, al
 
-
-    
     std
+
     o64 iret
 
 ;; Invalid opcode interrupt
@@ -154,9 +149,8 @@ __ZKA_INT_6:
     call idt_handle_generic
     pop rcx
 
-
-    
     std
+
     o64 iret
 
 __ZKA_INT_7:
@@ -169,9 +163,8 @@ __ZKA_INT_7:
     call idt_handle_generic
     pop rcx
 
-
-    
     std
+
     o64 iret
 
 ;; Invalid opcode interrupt
@@ -187,6 +180,7 @@ __ZKA_INT_8:
     pop rcx
 
     std
+
     o64 iret
 
 IntNormal 9
@@ -206,9 +200,8 @@ __ZKA_INT_13:
     call idt_handle_gpf
     pop rcx
 
-    add qword [rsp + 4], 2
-
     std
+    
     o64 iret
 
 __ZKA_INT_14:
@@ -222,9 +215,8 @@ __ZKA_INT_14:
     call idt_handle_pf
     pop rcx
 
-    add qword [rsp + 4], 2
-
     std
+
     o64 iret
 
 IntNormal 15
@@ -262,6 +254,7 @@ __ZKA_INT_32:
     pop rax
 
     std
+
     o64 iret
 
 IntNormal 33
@@ -371,23 +364,6 @@ extern hal_real_init
 
 hal_reload_segments:
     std
-    ;; Write address of syscall handler.
-    mov rdx, [mp_system_call_handler]
-    shr rdx, 32
-    mov rcx, 0xC0000082
-    wrmsr
-
-    ;; Set segments of syscall handler.
-
-    xor rax, rax
-    mov rdx, 0x230008
-    mov rcx, 0xC0000081
-    wrmsr
-
-    mov ecx, 0xC0000080
-    rdmsr
-    or eax, 1
-    wrmsr
 
     jmp hal_real_init
     ret

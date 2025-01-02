@@ -118,7 +118,7 @@ namespace Kernel::Detail
 	};
 } // namespace Kernel::Detail
 
-/// @brief Application entrypoint.
+/// @brief Kernel entrypoint.
 /// @param Void
 /// @return Void
 EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len)

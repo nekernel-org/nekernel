@@ -146,7 +146,7 @@ namespace Kernel::HAL
 		return kProcessBlocks[process_index].f_Frame;
 	}
 
-	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame, ProcessID pid)
+	EXTERN_C BOOL mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame, ProcessID pid)
 	{
 		MUST_PASS(image && stack_ptr && stack_frame);
 
@@ -156,12 +156,7 @@ namespace Kernel::HAL
 		kProcessBlocks[process_index].f_Stack = stack_ptr;
 		kProcessBlocks[process_index].f_Image = image;
 
-		if (!mp_is_smp())
-		{
-			/// TODO: Switch from process_index in hash list.
-		}
-
-		return Yes;
+		return NO;
 	}
 
 	/***********************************************************************************/

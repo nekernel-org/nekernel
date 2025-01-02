@@ -17,9 +17,6 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	if (!process)
-		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
-
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
 
@@ -43,9 +40,6 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
-
-	if (!process)
-		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
@@ -96,9 +90,6 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	if (!process)
-		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
-
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
 
@@ -125,9 +116,6 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	if (!process)
-		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
-
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
 
@@ -152,9 +140,6 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 {
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
 
-	if (!process)
-		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
-
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
 
@@ -178,9 +163,6 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
 	auto process = Kernel::UserProcessScheduler::The().GetCurrentProcess();
-
-	if (!process)
-		Kernel::ke_panic(RUNTIME_CHECK_PAGE);
 
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
