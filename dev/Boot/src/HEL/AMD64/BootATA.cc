@@ -169,6 +169,8 @@ Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 		rt_out16(IO + ATA_REG_DATA, Buf[IndexOff]);
 		boot_ata_wait_io(IO);
 	}
+
+	boot_ata_wait_io(IO);
 }
 
 /// @check is ATA detected?
@@ -246,8 +248,11 @@ BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorS
 
 	Leak().mErr = false;
 
-	if (!Buf || SectorSz < 1)
+	if (!Buf || SectorSz < 1 || this->Leak().mSize < 1)
+	{
+		Leak().mErr = true;
 		return *this;
+	}
 
 	boot_ata_write(this->Leak().mBase, this->Leak().mBus, this->Leak().mMaster,
 				   Buf, SectorSz, this->Leak().mSize);

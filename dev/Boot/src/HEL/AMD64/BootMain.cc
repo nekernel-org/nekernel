@@ -222,16 +222,21 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
 	{
+		if (partition_factory.IsPartitionValid() == NO)
+		{
+			Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
+
+			root.fFileName[0] = kNeFSRoot[0];
+			root.fFileName[1] = 0;
+
+			root.fKind = kNeFSCatalogKindDir;
+
+			const auto kFSName = "SSD";
+
+			partition_factory.Format(kFSName, &root, 1);
+		}
+
 		fb_init();
-
-		Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
-
-		root.fFileName[0] = kNeFSRoot[0];
-		root.fFileName[1] = 0;
-
-		root.fKind = kNeFSCatalogKindDir;
-
-		partition_factory.Format("HD", &root, 1);
 
 		UI::fb_clear_video();
 

@@ -353,8 +353,8 @@ namespace Boot
 
 		BOOT_BLOCK_STRUCT epm_boot{0};
 
-		constexpr auto kFsName	  = "NeFS";
-		constexpr auto kBlockName = "ZKA:";
+		const auto kFsName	  = "NeFS";
+		const auto kBlockName = "OS";
 
 		CopyMem(epm_boot.Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), StrLen(kFsName));
 

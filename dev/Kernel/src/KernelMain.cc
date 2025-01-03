@@ -68,13 +68,15 @@ namespace Kernel::Detail
 				}
 
 				mJournal.CreateJournal(mNeFS);
+
 				KString xml;
 				xml += "<LOG_XML>Formatted Filesystem</LOG_XML>";
 
 				KString name;
 				name += "FORMAT";
 
-				mJournal.Commit(mNeFS, xml, name);
+				mJournal.CommitJournal(mNeFS, xml, name);
+				mJournal.ReleaseJournal();
 			}
 		}
 

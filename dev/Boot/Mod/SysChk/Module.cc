@@ -24,5 +24,9 @@
 EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
-	return (!partition_factory.IsPartitionValid()) ? kEfiFail : kEfiOk;
+
+	if (partition_factory.IsPartitionValid())
+		return kEfiOk;
+	
+	return kEfiFail;
 }

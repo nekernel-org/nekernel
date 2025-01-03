@@ -380,12 +380,36 @@ namespace Kernel
 			return NO;
 		}
 
-		Bool Commit(NeFileSystemParser* parser,
+		Bool ReleaseJournal()
+		{
+			if (mNode)
+			{
+				delete mNode;
+				mNode = nullptr;
+				return YES;
+			}
+
+			return NO;
+		}
+
+		Bool CommitJournal(NeFileSystemParser* parser,
 					KString				xml_data,
 					KString				journal_name)
 		{
-			if (!parser)
+			if (!parser ||
+				!mNode)
 				return NO;
+
+			NFS_FORK_STRUCT new_fork{};
+
+			rt_copy_memory(mNode->Name, new_fork.CatalogName, rt_string_len(mNode->Name));
+			rt_copy_memory(journal_name.Data(), new_fork.ForkName, rt_string_len(journal_name.Data()));
+
+			new_fork.DataSize = xml_data.Length();
+
+			new_fork.Kind = kNeFSRsrcForkKind;
+
+			parser->CreateFork(mNode, new_fork);
 
 			return parser->WriteCatalog(mNode, YES, xml_data.Data(), xml_data.Length(), journal_name.CData());
 		}

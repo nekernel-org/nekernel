@@ -85,11 +85,8 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 		Lba				lbaOfPreviousFork = lba;
 
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
-		while (true)
+		while (lba <= kNeFSCatalogStartAddress)
 		{
-			if (lba <= kNeFSCatalogStartAddress)
-				break;
-
 			drv.fPacket.fPacketLba	   = lba;
 			drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 			drv.fPacket.fPacketContent = &curFork;
