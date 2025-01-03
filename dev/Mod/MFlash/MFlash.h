@@ -10,12 +10,12 @@
 
 #include <NewKit/Defines.h>
 
-/// @brief get sector count.
-/// @return drive sector count.
-Kernel::SizeT drv_get_sector_count();
+Kernel::SizeT drv_get_sector_count(Kernel::Int32 slot);
 
-/// @brief get device size.
-/// @return drive size
-Kernel::SizeT drv_get_size();
+Kernel::SizeT drv_get_size(Kernel::Int32 slot);
+
+Kernel::Void drv_enable_at(Kernel::Int32 slot);
+
+Kernel::Void drv_disable_at(Kernel::Int32 slot);
 
 #endif // ifdef ZKA_USE_MBCI_FLASH

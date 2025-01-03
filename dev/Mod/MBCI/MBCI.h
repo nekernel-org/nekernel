@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Theater Quality Corp, all rights reserved.
+	Copyright (C) 2024-2025, Theater Quality Corp, all rights reserved.
 
 ------------------------------------------- */
 
@@ -26,20 +26,6 @@
 namespace Kernel
 {
 	struct IMBCIHost;
-	struct IMBCIHostPacketFrame;
-
-	/// @brief MBCI Packet frame header
-	struct PACKED IMBCIHostPacketFrame final
-	{
-		UInt32 Magic;
-		UInt32 HostId;
-		UInt32 Flags;
-		UInt32 VendorId;
-		UInt32 DeviceId;
-		UInt32 DeviceSpeed;
-		Bool   Acknowledge;
-		Char   Zero[kMBCIZeroSz];
-	};
 
 	enum
 	{
@@ -49,7 +35,7 @@ namespace Kernel
 		kMBCISpeedDeviceCount,
 	};
 
-	/// @brief MBCI Host Interface header.
+	/// @brief MBCI Host header.
 	struct PACKED IMBCIHost final
 	{
 		UInt32 Magic;
@@ -92,7 +78,7 @@ namespace Kernel
 	};
 
 	/// @brief An AuthKey is a context used to decrpy data from an MBCI packet.
-	typedef UInt64 MBCIAuthyKeyType;
+	typedef UInt64 MBCIAuthKeyType;
 } // namespace Kernel
 
 #endif // ifndef _INC_MODULE_MBCI_H_

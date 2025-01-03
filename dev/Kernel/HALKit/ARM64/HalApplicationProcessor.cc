@@ -19,9 +19,9 @@ namespace Kernel::Detail
 	}
 } // namespace Kernel::Detail
 
-/// @brief wakes up thread.
+/// @brief wakes up thread from it's hang state.
 /// wakes up thread from hang.
-void mp_wakeup_thread(HAL::StackFramePtr stack)
+Void mp_wakeup_thread(HAL::StackFramePtr stack)
 {
 	if (!stack)
 		return;
@@ -29,9 +29,9 @@ void mp_wakeup_thread(HAL::StackFramePtr stack)
 	hal_set_pc_to_hart(reinterpret_cast<HAL_HARDWARE_THREAD*>(stack->R15), reinterpret_cast<VoidPtr>(stack->BP));
 }
 
-/// @brief makes thread sleep.
+/// @brief makes thread go to hang state.
 /// hooks and hangs thread to prevent code from executing.
-void mp_hang_thread(HAL::StackFramePtr stack)
+Void mp_hang_thread(HAL::StackFramePtr stack)
 {
 	if (!stack)
 		return;

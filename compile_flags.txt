@@ -13,3 +13,4 @@
 -D__AHCI__
 -D__x86_64__
 -D__aarch64__
+-DZKA_USE_MBCI_FLASH
