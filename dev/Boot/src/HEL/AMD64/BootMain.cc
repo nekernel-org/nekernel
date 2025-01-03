@@ -274,7 +274,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	if (reader_kernel.Blob())
 	{
 		kernel_thread = new Boot::BootThread(reader_kernel.Blob());
-		kernel_thread->SetName("BootZ: ZkaOS Kernel.");
+		kernel_thread->SetName("BootZ: MicroKernel.");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
 	}

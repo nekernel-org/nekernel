@@ -32,7 +32,7 @@ IMG_3=epm-master-2.img
 EMU_FLAGS=-net none -smp 1 -m 8G -M q35 \
 			-bios $(BIOS) -drive \
 			file=fat:rw:src/Root/,index=2,format=raw \
-            -monitor stdio
+            -serial stdio
 
 LD_FLAGS=-e Main --subsystem=10
 

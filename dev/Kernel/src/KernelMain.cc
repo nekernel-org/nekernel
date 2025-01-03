@@ -40,12 +40,9 @@ namespace Kernel::Detail
 
 			if (mNeFS)
 			{
-				mJournal.CreateJournal(mNeFS);
-
-				constexpr auto kFolderInfo				= "META-XML";
-				const SizeT	   kFolderCount				= 7;
+				const SizeT	   kFolderCount				= 8;
 				const Char*	   kFolderStr[kFolderCount] = {
-					   "/Boot/", "/System/", "/Support/", "/Applications/",
+					   "/", "/Boot/", "/System/", "/Support/", "/Applications/",
 					   "/Users/", "/Library/", "/Mount/"};
 
 				for (Kernel::SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
@@ -63,46 +60,21 @@ namespace Kernel::Detail
 					catalog_folder = mNeFS->CreateCatalog(kFolderStr[dir_index], 0,
 														  kNeFSCatalogKindDir);
 
-					NFS_FORK_STRUCT fork_folder{0};
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(kFolderInfo), fork_folder.ForkName,
-										   Kernel::rt_string_len(kFolderInfo));
-
-					Kernel::rt_copy_memory((Kernel::VoidPtr)(catalog_folder->Name),
-										   fork_folder.CatalogName,
-										   Kernel::rt_string_len(catalog_folder->Name));
-
-					fork_folder.DataSize	 = kNeFSForkSize;
-					fork_folder.ResourceId	 = 0;
-					fork_folder.ResourceKind = Kernel::kNeFSRsrcForkKind;
-					fork_folder.Kind		 = Kernel::kNeFSDataForkKind;
-
-					Kernel::KString folder_metadata(2048);
-
-					folder_metadata +=
-						"<!properties/>\r<p>Kind: folder</p>\r<p>Created by: system</p>\r<p>Edited by: "
-						"system</p>\r<p>Volume Type: Zeta</p>\r";
-
-					folder_metadata += "<p>Path: ";
-					folder_metadata += kFolderStr[dir_index];
-					folder_metadata += "</p>\r";
-
-					Kernel::KString folder_name(2048);
-					folder_name += catalog_folder->Name;
-
-					mJournal.Commit(mNeFS, folder_metadata, folder_name);
-
-					const Kernel::SizeT kMetaDataSz = kNeFSSectorSz;
-
-					mNeFS->CreateFork(catalog_folder, fork_folder);
-
-					mNeFS->WriteCatalog(
-						catalog_folder, true, (Kernel::VoidPtr)(folder_metadata.CData()),
-						kMetaDataSz, kFolderInfo);
+					if (!catalog_folder)
+						continue;
 
 					delete catalog_folder;
 					catalog_folder = nullptr;
 				}
+
+				mJournal.CreateJournal(mNeFS);
+				KString xml;
+				xml += "<LOG_XML>Formatted Filesystem</LOG_XML>";
+
+				KString name;
+				name += "FORMAT";
+
+				mJournal.Commit(mNeFS, xml, name);
 			}
 		}
 

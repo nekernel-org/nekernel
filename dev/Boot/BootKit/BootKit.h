@@ -279,8 +279,8 @@ namespace Boot
 
 			/// Fill catalog kind.
 			catalogKind.Kind   = blob->fKind;
-			catalogKind.Flags  = kNeFSFlagCreated;
-			catalogKind.Status = kNeFSStatusUnlocked;
+			catalogKind.Flags  |= kNeFSFlagCreated;
+			catalogKind.CatalogFlags = kNeFSStatusUnlocked;
 
 			--partBlock.FreeCatalog;
 			--partBlock.FreeSectors;
@@ -372,22 +372,9 @@ namespace Boot
 
 		fDiskDev.Write((Char*)&epm_boot, sizeof(BOOT_BLOCK_STRUCT));
 
-		/// if we can write a root catalog, then write the partition block.
-		if (this->WriteRootCatalog(blob_list, blob_cnt, partBlock))
-		{
-			BTextWriter writer;
-			writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
+		BTextWriter writer;
+		writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
 
-			return true;
-		}
-		else
-		{
-			fb_init();
-			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_WIDTH, ZKA_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
-
-			EFI::ThrowError(L"Filesystem-Failure-Part", L"Filesystem couldn't be partitioned, this drive cannot be formatted as an explicit partition map.");
-		}
-
-		return false;
+		return YES;
 	}
 } // namespace Boot

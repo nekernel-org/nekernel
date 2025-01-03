@@ -51,7 +51,7 @@ namespace Kernel
 		}
 	};
 
-	typedef struct IPC_ADDR IPCEPAddressKind;
+	typedef struct IPC_ADDR IPC_ADDR;
 
 	enum
 	{
@@ -68,8 +68,8 @@ namespace Kernel
 		UInt32			 IpcHeaderMagic; // cRemoteHeaderMagic
 		UInt8			 IpcEndianess;	 // 0 : LE, 1 : BE
 		SizeT			 IpcPacketSize;
-		IPCEPAddressKind IpcFrom;
-		IPCEPAddressKind IpcTo;
+		IPC_ADDR IpcFrom;
+		IPC_ADDR IpcTo;
 		UInt32			 IpcCRC32;
 		UInt32			 IpcMsg;
 		UInt32			 IpcMsgSz;

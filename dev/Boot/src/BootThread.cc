@@ -22,7 +22,7 @@ EXTERN EfiBootServices* BS;
 
 namespace Boot
 {
-	EXTERN_C Void rt_jump_to_address(VoidPtr code, HEL::BootInfoHeader* handover, UInt8* stack);
+	EXTERN_C Int32 rt_jump_to_address(VoidPtr code, HEL::BootInfoHeader* handover, UInt8* stack);
 
 	BootThread::BootThread(VoidPtr blob)
 		: fBlob(blob), fStartAddress(nullptr)
@@ -185,7 +185,7 @@ namespace Boot
 
 		if (own_stack)
 		{
-			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(8) - 1]);
+			return rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(8) - 1]);
 		}
 		else
 		{

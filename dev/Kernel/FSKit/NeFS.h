@@ -133,7 +133,7 @@ enum
 
 enum
 {
-	kNeFSStatusUnlocked,
+	kNeFSStatusUnlocked = 0x18,
 	kNeFSStatusLocked,
 	kNeFSStatusError,
 	kNeFSStatusInvalid,
@@ -147,13 +147,19 @@ struct PACKED NFS_CATALOG_STRUCT final
 
 	/// Catalog flags.
 	Kernel::UInt16 Flags;
+
+	/// Catalog allocation status.
 	Kernel::UInt16 Status;
+
 	/// Custom catalog flags.
-	Kernel::UInt16 FilkMMFlags;
+	Kernel::UInt16 CatalogFlags;
+
 	/// Catalog kind.
 	Kernel::Int32 Kind;
+
 	/// Size of the data fork.
 	Kernel::Lba DataForkSize;
+
 	/// Size of all resource forks.
 	Kernel::Lba ResourceForkSize;
 
