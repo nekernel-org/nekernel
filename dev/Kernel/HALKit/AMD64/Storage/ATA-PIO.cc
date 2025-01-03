@@ -78,14 +78,14 @@ ATAInit_Retry:
 
 	if (statRdy & ATA_SR_ERR)
 	{
-		kcout << "ERROR: ATA DRIVE RETURNED ERROR BIT! ABORTING...\r";
+		kcout << "ATA Error, aborting...\r";
 
 		return false;
 	}
 
 	if ((statRdy & ATA_SR_BSY))
 	{
-		kcout << "Retrying...";
+		kcout << "Retrying as controller is busy...\r";
 		goto ATAInit_Retry;
 	}
 
@@ -105,9 +105,7 @@ ATAInit_Retry:
 
 	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
-	kcout << "INFO: INITIALIZED ATA DRIVE!\r";
-
-	return true;
+	return YES;
 }
 
 Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
