@@ -176,7 +176,7 @@ namespace Kernel
 				trait->fPacket.fPacketReadOnly = NO;
 				trait->fKind				   = kMassStorageDisc | kEPMDrive;
 
-				kcout << "Formatted Disc is EPM (and Mass Storage too.)\r";
+				kcout << "Formatted Disk is EPM (and Mass Storage too.)\r";
 			}
 			else
 			{
@@ -186,7 +186,7 @@ namespace Kernel
 				kcout << "Scheme Found: " << block_struct.Name << endl;
 
 				if (block_struct.Name[0] == 0)
-					kcout << "Disc partition is unknown (Was set to Read Only.)\r";
+					kcout << "Disk partition is unknown (Was set to Read Only.)\r";
 			}
 
 			rt_copy_memory((VoidPtr) "*/*", trait->fPacket.fPacketMime,

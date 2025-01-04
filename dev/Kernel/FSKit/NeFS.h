@@ -112,6 +112,7 @@ default.
 #define kNeFSForkNameLen (200)
 
 #define kNeFSFrameworkExt	".fwrk"
+#define kNeFSStepsExt	".step"
 #define kNeFSApplicationExt ".app"
 #define kNeFSJournalExt		".jrnl"
 

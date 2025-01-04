@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-#include "NewKit/Macros.h"
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>

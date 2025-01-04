@@ -83,7 +83,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -hdd $(IMG)
+	$(EMU) $(EMU_FLAGS) -hda $(IMG)
 
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata:
@@ -93,8 +93,6 @@ run-efi-amd64-ata:
 .PHONY: epm-img
 epm-img:
 	qemu-img create -f raw $(IMG) 4G
-	qemu-img create -f raw $(IMG_2) 4G
-	qemu-img create -f raw $(IMG_3) 4G
 
 .PHONY: download-edk
 download-edk:

@@ -12,7 +12,6 @@
 /// @brief Low level/Ring-3 process scheduler.
 /***********************************************************************************/
 
-#include "NewKit/Macros.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDLLObject.h>

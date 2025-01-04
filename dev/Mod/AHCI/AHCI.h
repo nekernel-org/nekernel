@@ -18,7 +18,7 @@
 
 /// @note Forward declarations of structs.
 
-#define kAHCISectorSize (512U)
+#define kAHCISectorSize (512)
 
 struct HbaPort;
 struct FisData;
