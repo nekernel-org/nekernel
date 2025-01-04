@@ -121,7 +121,7 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 	rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
-	rt_out8(IO + ATA_REG_LBA0, (Lba)&0xFF);
+	rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
 	rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
 	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);

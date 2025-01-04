@@ -15,6 +15,7 @@
  *
  */
 
+#include "NewKit/Defines.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -166,65 +167,53 @@ Kernel::Boolean drv_std_detected(Kernel::Void)
 
 Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_cnt, Kernel::SizeT size_buffer)
 {
+	lba /= sector_cnt;
+
 	drv_std_input_output<YES, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_cnt, size_buffer);
 }
 
 Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_cnt, Kernel::SizeT size_buffer)
 {
+	lba /= sector_cnt;
+
 	drv_std_input_output<NO, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_cnt, size_buffer);
 }
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_cnt, Kernel::SizeT size_buffer)
 {
-	Kernel::SizeT  port	 = 0;
-	Kernel::UInt32 slots = (kAhciPort->Sact | kAhciPort->Ci);
+	volatile HbaCmdHeader* command_header = *(HbaCmdHeader**)&kAhciPort->Clb;
 
-	for (; port < slots; ++port)
-	{
-		if ((slots & 1) == 0)
-			break;
+	command_header->Cfl = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
 
-		slots >>= 1;
-	}
+	command_header->Write = Write;
+	command_header->Prdtl = (Kernel::UInt16)((size_buffer - 1) >> 4) + 1;
 
-	if (slots == 0)
-		return;
+	HbaCmdTbl* command_table = (HbaCmdTbl*)(command_header->Ctba);
 
-	Kernel::UInt32* command_list  = new Kernel::UInt32[kib_cast(1)];
-	Kernel::UInt32* command_table = new Kernel::UInt32[kib_cast(4)];
+	command_table->PrdtEntries[0].Dba		   = *(Kernel::UInt32*)&buffer;
+	command_table->PrdtEntries[0].Dbc		   = size_buffer;
+	command_table->PrdtEntries[0].InterruptBit = 1;
 
-	Kernel::rt_set_memory(command_list, 0, kib_cast(1));
-	Kernel::rt_set_memory(command_table, 0, kib_cast(4));
+	FisRegH2D* h2d_fis = (FisRegH2D*)(&command_table->Cfis);
 
-	auto command_table_deref = *(Kernel::UInt32*)&command_table;
+	h2d_fis->Command   = Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx;
+	h2d_fis->FisType   = kFISTypeRegH2D;
+	h2d_fis->CmdOrCtrl = CommandOrCTRL;
 
-	command_table[0] = *(Kernel::UInt32*)&buffer;
+	h2d_fis->Lba0 = lba & 0xFF;
+	h2d_fis->Lba1 = lba >> 8;
+	h2d_fis->Lba2 = lba >> 16;
 
-	command_list[0] = command_table_deref;
-	command_list[1] = size_buffer;
+	h2d_fis->Device = 1 << 6;
 
-	volatile Kernel::UInt32* command_header = (Kernel::UInt32*)kAhciPort + 0x10;
+	h2d_fis->Lba3 = lba >> 24;
+	h2d_fis->Lba4 = lba >> 32;
+	h2d_fis->Lba5 = lba >> 40;
 
-	auto command_list_deref = *(Kernel::UInt32*)&command_list;
+	h2d_fis->CountLow  = sector_cnt & 0xFF;
+	h2d_fis->CountHigh = (sector_cnt >> 8) & 0xFF;
 
-	command_header[0] = 5 | 0 | (Write ? kAHCICmdWriteDma : kAHCICmdReadDma) | 0 | 00000000 | 1 | 00000000000;
-	command_header[0] = command_header[0] | (lba & __UINT32_MAX__);
-	
-	command_header[1] = command_list_deref;
-
-	Kernel::UInt32* fis = command_list;
-
-	fis[0] = kFISTypeRegH2D;
-	fis[1] = CommandOrCTRL;
-
-	fis[2] = Identify ? kAHCICmdIdentify : kAHCICmdReadDmaEx;
-
-	if (Write)
-		fis[2] = kAHCICmdWriteDmaEx;
-
-	// 5. Issue the command
-	// Write command issue bit
 	kAhciPort->Ci |= (1 << 0); // Command Issue
 
 	while (kAhciPort->Ci & (1 << 0))
@@ -251,10 +240,6 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 		return;
 	}
-
-	delete[] command_table;
-
-	command_table = nullptr;
 }
 
 /***
