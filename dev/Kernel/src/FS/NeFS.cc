@@ -263,14 +263,14 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 		return catalog_copy;
 	}
 
-	Char parentName[kNeFSNodeNameLen] = {0};
+	Char parent_name[kNeFSNodeNameLen] = {0};
 
 	for (SizeT indexName = 0UL; indexName < rt_string_len(name); ++indexName)
 	{
-		parentName[indexName] = name[indexName];
+		parent_name[indexName] = name[indexName];
 	}
 
-	if (*parentName == 0)
+	if (*parent_name == 0)
 	{
 		kcout << "Parent name is NUL.\r";
 		err_local_get() = kErrorFileNotFound;
@@ -281,31 +281,32 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	for (SizeT indexFill = 0; indexFill < rt_string_len(name); ++indexFill)
 	{
-		parentName[indexFill] = name[indexFill];
+		parent_name[indexFill] = name[indexFill];
 	}
 
-	SizeT indexReverseCopy = rt_string_len(parentName);
+	SizeT indexReverseCopy = rt_string_len(parent_name);
 
 	// zero character it.
-	parentName[--indexReverseCopy] = 0;
+	parent_name[--indexReverseCopy] = 0;
 
 	// mandatory / character, zero it.
-	parentName[--indexReverseCopy] = 0;
+	parent_name[--indexReverseCopy] = 0;
 
-	while (parentName[indexReverseCopy] != NeFileSystemHelper::Separator())
+	while (parent_name[indexReverseCopy] != NeFileSystemHelper::Separator())
 	{
-		parentName[indexReverseCopy] = 0;
+		parent_name[indexReverseCopy] = 0;
 		--indexReverseCopy;
 	}
 
-	NFS_CATALOG_STRUCT* catalog = this->FindCatalog(parentName, out_lba);
+	NFS_CATALOG_STRUCT* catalog = this->FindCatalog(parent_name, out_lba);
 
 	auto drive = kDiskMountpoint.A();
 
 	if (catalog && catalog->Kind == kNeFSCatalogKindFile)
 	{
-		kcout << "Parent name is a file.\r";
+		kcout << "Parent is a file.\r";
 		delete catalog;
+
 		return nullptr;
 	}
 	
@@ -325,7 +326,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 	rt_copy_memory((VoidPtr)name, (VoidPtr)child_catalog->Name,
 				   rt_string_len(name));
 
-	NFS_CATALOG_STRUCT temporary_catalog;
+	NFS_CATALOG_STRUCT temporary_catalog{};
 
 	Lba start_free = out_lba;
 
@@ -396,7 +397,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 			// Write the new catalog next sibling, if we don't know this parent. //
 			// This is necessary, so that we don't have to get another lba to allocate. //
-			if (!StringBuilder::Equals(parentName, next_sibling->Name))
+			if (!StringBuilder::Equals(parent_name, next_sibling->Name))
 			{
 				child_catalog->NextSibling =
 					start_free + (sizeof(NFS_CATALOG_STRUCT) * kNeFSCatalogPadding);
@@ -738,7 +739,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 	auto	   start_catalog_lba = part->StartCatalog;
 	const auto kStartCatalogList = start_catalog_lba;
 
-	auto localSearchFirst = false;
+	auto local_search_first = false;
 
 	NFS_CATALOG_STRUCT temporary_catalog{0};
 
@@ -750,36 +751,36 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 
 	if (!StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()))
 	{
-		Char parentName[kNeFSNodeNameLen] = {0};
+		Char parent_name[kNeFSNodeNameLen] = {0};
 
 		for (SizeT indexFill = 0; indexFill < rt_string_len(catalog_name); ++indexFill)
 		{
-			parentName[indexFill] = catalog_name[indexFill];
+			parent_name[indexFill] = catalog_name[indexFill];
 		}
 
-		SizeT indexReverseCopy = rt_string_len(parentName);
+		SizeT indexReverseCopy = rt_string_len(parent_name);
 
 		// zero character.
-		parentName[--indexReverseCopy] = 0;
+		parent_name[--indexReverseCopy] = 0;
 
 		// mandatory '/' character.
-		parentName[--indexReverseCopy] = 0;
+		parent_name[--indexReverseCopy] = 0;
 
-		while (parentName[indexReverseCopy] != NeFileSystemHelper::Separator())
+		while (parent_name[indexReverseCopy] != NeFileSystemHelper::Separator())
 		{
-			parentName[indexReverseCopy] = 0;
+			parent_name[indexReverseCopy] = 0;
 			--indexReverseCopy;
 		}
 
-		NFS_CATALOG_STRUCT* parentCatalog = this->FindCatalog(parentName, out_lba);
+		NFS_CATALOG_STRUCT* parentCatalog = this->FindCatalog(parent_name, out_lba);
 
 		if (parentCatalog &&
-			!StringBuilder::Equals(parentName, NeFileSystemHelper::Root()))
+			!StringBuilder::Equals(parent_name, NeFileSystemHelper::Root()))
 		{
 			start_catalog_lba = parentCatalog->NextSibling;
 			delete parentCatalog;
 
-			localSearchFirst = true;
+			local_search_first = true;
 		}
 		else if (parentCatalog)
 		{
@@ -793,7 +794,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 
 	kcout << "Finding catalog...\r";
 
-NeFSSearchThroughCatalogList:
+kNeFSSearchThroughCatalogList:
 	while (drive.fPacket.fPacketGood)
 	{
 		drive.fPacket.fPacketLba	 = start_catalog_lba;
@@ -802,11 +803,9 @@ NeFSSearchThroughCatalogList:
 
 		drive.fInput(&drive.fPacket);
 
-		NFS_CATALOG_STRUCT* catalog = (NFS_CATALOG_STRUCT*)&temporary_catalog;
-
-		if (StringBuilder::Equals(catalog_name, catalog->Name))
+		if (StringBuilder::Equals(catalog_name, temporary_catalog.Name))
 		{
-			if (catalog->Status == kNeFSStatusLocked &&
+			if (temporary_catalog.Status == kNeFSStatusLocked &&
 				!search_hidden)
 			{
 				err_local_get() = kErrorFileLocked;
@@ -816,40 +815,41 @@ NeFSSearchThroughCatalogList:
 			}
 
 			/// ignore unallocated catalog, break
-			if (!(catalog->Flags & kNeFSFlagCreated))
+			if (!(temporary_catalog.Flags & kNeFSFlagCreated))
 			{
 				out_lba = 0UL;
 				return nullptr;
 			}
 
-			NFS_CATALOG_STRUCT* catalogPtr = new NFS_CATALOG_STRUCT();
-			rt_copy_memory(catalog, catalogPtr, sizeof(NFS_CATALOG_STRUCT));
+			NFS_CATALOG_STRUCT* catalog_ptr = new NFS_CATALOG_STRUCT();
+			rt_copy_memory(&temporary_catalog, catalog_ptr, sizeof(NFS_CATALOG_STRUCT));
 
 			kcout << "Found available catalog at: " << hex_number(start_catalog_lba) << endl;
-			kcout << "Found available catalog at: " << catalog->Name << endl;
+			kcout << "Found available catalog at: " << temporary_catalog.Name << endl;
 
 			out_lba = start_catalog_lba;
-			return catalogPtr;
+			return catalog_ptr;
 		}
 
 	NeFSContinueSearch:
-		start_catalog_lba = catalog->NextSibling;
+		start_catalog_lba = temporary_catalog.NextSibling;
 
 		if (start_catalog_lba <= kNeFSRootCatalogStartAddress)
 			break;
 	}
 
-	if (localSearchFirst)
+	if (local_search_first)
 	{
-		localSearchFirst  = false;
+		local_search_first  = false;
 		start_catalog_lba = kStartCatalogList;
 
-		goto NeFSSearchThroughCatalogList;
+		goto kNeFSSearchThroughCatalogList;
 	}
 
 	err_local_get() = kErrorFileNotFound;
 
 	out_lba = 0UL;
+
 	return nullptr;
 }
 

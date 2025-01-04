@@ -264,7 +264,7 @@ namespace Boot
 		/// @param blob_list the blobs.
 		/// @param blob_cnt the number of blobs to write.
 		/// @param partBlock the NeFS partition block.
-		Boolean WriteRootCatalog(BFileDescriptor* blob_list, SizeT blob_cnt, NFS_ROOT_PARTITION_BLOCK& partBlock)
+		Boolean WriteCatalogList(BFileDescriptor* blob_list, SizeT blob_cnt, NFS_ROOT_PARTITION_BLOCK& partBlock)
 		{
 			BFileDescriptor* blob	  = blob_list;
 			Lba				 startLba = partBlock.StartCatalog;
@@ -374,6 +374,8 @@ namespace Boot
 
 		BTextWriter writer;
 		writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
+
+		this->WriteCatalogList(blob_list, blob_cnt, partBlock);
 
 		return YES;
 	}
