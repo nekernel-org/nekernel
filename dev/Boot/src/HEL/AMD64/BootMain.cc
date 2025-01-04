@@ -234,15 +234,15 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 			const auto kFSName = "SSD";
 
 			partition_factory.Format(kFSName, &root, 1);
+
+			fb_init();
+
+			UI::fb_clear_video();
+
+			FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_WIDTH, ZKA_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
+
+			fb_clear();
 		}
-
-		fb_init();
-
-		UI::fb_clear_video();
-
-		FBDrawBitMapInRegion(zka_has_disk, ZKA_HAS_DISK_WIDTH, ZKA_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_HAS_DISK_HEIGHT) / 2);
-
-		fb_clear();
 	}
 
 	// ------------------------------------------ //
