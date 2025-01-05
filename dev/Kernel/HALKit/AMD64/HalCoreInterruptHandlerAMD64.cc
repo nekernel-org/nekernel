@@ -9,7 +9,7 @@
 #include <NewKit/KString.h>
 #include <POSIXKit/signal.h>
 
-STATIC BOOL			 kIsScheduling			= NO;
+STATIC BOOL kIsScheduling = NO;
 
 /// @brief Handle GPF fault.
 /// @param rsp
@@ -58,8 +58,6 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
-	
-
 }
 
 /// @brief Handle scheduler interrupt.
@@ -106,8 +104,6 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
-
-
 }
 
 /// @brief Handle any generic fault.
@@ -132,8 +128,6 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
-	
-
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
@@ -180,8 +174,6 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
-
-
 }
 
 /// @brief Enter syscall from assembly.

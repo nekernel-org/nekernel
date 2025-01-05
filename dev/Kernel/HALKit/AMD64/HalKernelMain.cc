@@ -26,7 +26,7 @@ STATIC Kernel::Void hal_init_cxx_ctors()
 {
 	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
-		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		 = Kernel::UserThread();
+		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		  = Kernel::UserThread();
 		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i].Status = Kernel::ProcessStatusKind::kKilled;
 	}
 
@@ -69,7 +69,7 @@ EXTERN_C void hal_init_platform(
 
 	/* GDT, mostly descriptors for user and kernel segments. */
 	STATIC Kernel::HAL::Detail::ZKA_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
-		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},	  // Null entry
+		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},   // Null entry
 		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel code
 		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xCF, .fBaseHigh = 0}, // Kernel data
 		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fFlags = 0xAF, .fBaseHigh = 0}, // User code

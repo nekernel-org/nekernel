@@ -547,7 +547,7 @@ namespace Kernel
 			auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
 			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 
-			Bool ret											 = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid);
+			Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid);
 
 			////////////////////////////////////////////////////////////
 			///	Rollback on fail.    								 ///

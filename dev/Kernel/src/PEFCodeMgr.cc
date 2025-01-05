@@ -253,14 +253,12 @@ namespace Kernel
 			if (errOrStart.Error() != kErrorSuccess)
 				return kProcessInvalidID;
 
-			UserThread process;
-
 			auto id = UserProcessScheduler::The().Spawn(reinterpret_cast<const Char*>(exec.FindSymbol(kPefNameSymbol, kPefData)), errOrStart.Leak().Leak(), exec.GetBlob().Leak().Leak());
 
 			if (id != kProcessInvalidID)
 			{
-				UserProcessScheduler::The().CurrentTeam().AsArray()[id].Kind = process_kind; 
-				UserProcessScheduler::The().CurrentTeam().AsArray()[id].StackSize = *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
+				UserProcessScheduler::The().CurrentTeam().AsArray()[id].Kind		= process_kind;
+				UserProcessScheduler::The().CurrentTeam().AsArray()[id].StackSize	= *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 				UserProcessScheduler::The().CurrentTeam().AsArray()[id].MemoryLimit = *(UIntPtr*)exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
 			}
 

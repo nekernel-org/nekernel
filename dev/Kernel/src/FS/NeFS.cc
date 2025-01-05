@@ -309,7 +309,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 		return nullptr;
 	}
-	
+
 	constexpr SizeT kDefaultForkSize = kNeFSForkSize;
 
 	NFS_CATALOG_STRUCT* child_catalog = new NFS_CATALOG_STRUCT();
@@ -460,6 +460,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 /// @return If it was sucessful, see err_global_get().
 bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
 {
+#ifdef ZKA_EPM_SUPPORT
 	if (*part_name == 0 ||
 		endLba == 0)
 		return false;
@@ -490,14 +491,14 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 	if (flags & kNeFSPartitionTypeBoot)
 	{
 		// make it bootable when needed.
-		Char bufEpmHdr[kNeFSSectorSz] = {0};
+		Char buf_epm[kNeFSSectorSz] = {0};
 
-		BOOT_BLOCK_STRUCT* epm_boot = (BOOT_BLOCK_STRUCT*)bufEpmHdr;
+		BOOT_BLOCK_STRUCT* epm_boot = (BOOT_BLOCK_STRUCT*)buf_epm;
 
 		// Write a new EPM entry.
 
 		constexpr auto kFsName	  = "NeFS";
-		constexpr auto kBlockName = "ZKA:";
+		constexpr auto kBlockName = "ZkaOS:";
 
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), epm_boot->Fs, rt_string_len(kFsName));
 
@@ -533,7 +534,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 				epm_boot->LbaEnd	= endLba;
 				epm_boot->NumBlocks = cnt;
 
-				drive->fPacket.fPacketContent = bufEpmHdr;
+				drive->fPacket.fPacketContent = buf_epm;
 				drive->fPacket.fPacketSize	  = sizeof(EPM_BOOT_BLOCK);
 				drive->fPacket.fPacketLba	  = outEpmLba;
 
@@ -616,6 +617,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 
 		drive->fInput(&drive->fPacket);
 	}
+#endif // ZKA_EPM_SUPPORT
 
 	return false;
 }
@@ -817,7 +819,6 @@ kNeFSSearchThroughCatalogList:
 				return nullptr;
 			}
 
-
 			/// ignore unallocated catalog, break
 			if (!(temporary_catalog.Flags & kNeFSFlagCreated))
 			{
@@ -846,8 +847,8 @@ kNeFSSearchThroughCatalogList:
 
 	if (local_search_first)
 	{
-		local_search_first  = false;
-		start_catalog_lba = kStartCatalogList;
+		local_search_first = false;
+		start_catalog_lba  = kStartCatalogList;
 
 		goto kNeFSSearchThroughCatalogList;
 	}

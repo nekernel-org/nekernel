@@ -38,8 +38,8 @@ namespace Kernel
 	class TerminalDevice final ZKA_DEVICE<const Char*>
 	{
 	public:
-		TerminalDevice(void (*print)(const Char*), void (*get)(const Char*))
-			: IDeviceObject<const Char*>(print, get)
+		TerminalDevice(void (*print)(const Char*), void (*gets)(const Char*))
+			: IDeviceObject<const Char*>(print, gets)
 		{
 		}
 
@@ -47,7 +47,7 @@ namespace Kernel
 
 		/// @brief returns device name (terminal name)
 		/// @return string type (const Char*)
-		virtual const Char* Name() const override
+		const Char* Name() const override
 		{
 			return ("TerminalDevice");
 		}
@@ -59,35 +59,35 @@ namespace Kernel
 
 	inline TerminalDevice end_line()
 	{
-		TerminalDevice selfTerm = TerminalDevice::The();
+		TerminalDevice self = TerminalDevice::The();
 
-		selfTerm.operator<<("\r");
-		return selfTerm;
+		self.operator<<("\r");
+		return self;
 	}
 
 	inline TerminalDevice carriage_return()
 	{
-		TerminalDevice selfTerm = TerminalDevice::The();
+		TerminalDevice self = TerminalDevice::The();
 
-		selfTerm.operator<<("\r");
-		return selfTerm;
+		self.operator<<("\r");
+		return self;
 	}
 
 	inline TerminalDevice tabulate()
 	{
-		TerminalDevice selfTerm = TerminalDevice::The();
+		TerminalDevice self = TerminalDevice::The();
 
-		selfTerm.operator<<("\t");
-		return selfTerm;
+		self.operator<<("\t");
+		return self;
 	}
 
 	/// @brief emulate a terminal bell, like the VT100 does.
 	inline TerminalDevice bell()
 	{
-		TerminalDevice selfTerm = TerminalDevice::The();
+		TerminalDevice self = TerminalDevice::The();
 
-		selfTerm.operator<<("\a");
-		return selfTerm;
+		self.operator<<("\a");
+		return self;
 	}
 
 	namespace Detail
@@ -151,30 +151,39 @@ namespace Kernel
 
 	inline TerminalDevice hex_number(const Long& x)
 	{
-		TerminalDevice selfTerm = TerminalDevice::The();
+		TerminalDevice self = TerminalDevice::The();
 
-		Detail::_write_number_hex(x, selfTerm);
-		selfTerm.operator<<("h");
+		Detail::_write_number_hex(x, self);
+		self.operator<<("h");
 
-		return selfTerm;
+		return self;
+	}
+
+	inline TerminalDevice number(const Char* x)
+	{
+		TerminalDevice self = TerminalDevice::The();
+
+		self << "?";
+
+		return self;
 	}
 
 	inline TerminalDevice number(const Long& x)
 	{
-		TerminalDevice selfTerm = TerminalDevice::The();
+		TerminalDevice self = TerminalDevice::The();
 
-		Detail::_write_number(x, selfTerm);
+		Detail::_write_number(x, self);
 
-		return selfTerm;
+		return self;
 	}
 
 	inline TerminalDevice get_console_in(Char* buf)
 	{
-		TerminalDevice selfTerm = TerminalDevice::The();
+		TerminalDevice self = TerminalDevice::The();
 
-		selfTerm >> buf;
+		self >> buf;
 
-		return selfTerm;
+		return self;
 	}
 
 	typedef Char rt_debug_type[255];
@@ -185,14 +194,18 @@ namespace Kernel
 		Int16 fPort[kDebugMaxPorts];
 		Int16 fBoundCnt;
 	};
+
+	inline TerminalDevice& operator<<(TerminalDevice& src, auto number)
+	{
+		number(number, src);
+		return src;
+	}
 } // namespace Kernel
 
 #ifdef kcout
 #undef kcout
 #endif // ifdef kcout
 
-#define kcout                                                                                                \
-	(Kernel::TerminalDevice::The() << "\e[0;31m [Kernel] (Path: /" << __FILE__ << ") (Line: " << Kernel::number(__LINE__)); \
-	(Kernel::TerminalDevice::The() << ") \e[0m"                                                             \
-								   << ": ")
+#define kcout Kernel::TerminalDevice::The() << "\e[0;31m [ZKA] " << __FILE__ << " \e[0m: "
+
 #define endl Kernel::TerminalDevice::The() << Kernel::end_line()

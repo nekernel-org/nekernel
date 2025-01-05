@@ -21,12 +21,12 @@ namespace Boot
 	{
 	public:
 		explicit BootThread() = delete;
-		~BootThread()		   = default;
+		~BootThread()		  = default;
 
 		explicit BootThread(Kernel::VoidPtr blob);
 
 		BootThread& operator=(const BootThread&) = default;
-		BootThread(const BootThread&)			   = default;
+		BootThread(const BootThread&)			 = default;
 
 		Int32		Start(HEL::BootInfoHeader* handover, BOOL is_own_stack);
 		void		SetName(const char* name);

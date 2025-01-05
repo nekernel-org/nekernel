@@ -18,7 +18,7 @@
 #include <KernelKit/PEF.h>
 #include <NewKit/Macros.h>
 #include <NewKit/Ref.h>
-#include <BootKit/Thread.h>
+#include <BootKit/BootThread.h>
 #include <Mod/GfxMgr/FBMgr.h>
 
 EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
@@ -27,6 +27,6 @@ EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 
 	if (partition_factory.IsPartitionValid())
 		return kEfiOk;
-	
+
 	return kEfiFail;
 }

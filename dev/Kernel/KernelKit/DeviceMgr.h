@@ -79,7 +79,7 @@ namespace Kernel
 			return !fOut || !fIn;
 		}
 
-	private:
+	protected:
 		Void (*fOut)(T Data) = {nullptr};
 		Void (*fIn)(T Data)	 = {nullptr};
 	};

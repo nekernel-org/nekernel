@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <BootKit/Thread.h>
+#include <BootKit/BootThread.h>
 #include <BootKit/Support.h>
 #include <BootKit/BootKit.h>
 #include <FirmwareKit/EFI/API.h>

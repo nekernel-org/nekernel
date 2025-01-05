@@ -204,7 +204,11 @@ namespace Kernel
 	{
 		DriveTrait trait{};
 
-		rt_copy_memory((VoidPtr) "/Disks/OS:", trait.fName, rt_string_len("/Disks/OS:"));
+		const auto kMainDrive = "/Mount/OS:";
+
+		rt_copy_memory((VoidPtr)kMainDrive, trait.fName, rt_string_len(kMainDrive));
+
+		MUST_PASS(trait.fName[0] != 0);
 
 		trait.fVerify	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_output;

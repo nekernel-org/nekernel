@@ -6,7 +6,7 @@
 
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/EFI.h>
-#include <BootKit/Thread.h>
+#include <BootKit/BootThread.h>
 #include <BootKit/BootKit.h>
 
 #ifndef kExpectedWidth

@@ -73,6 +73,13 @@ namespace Boot
 		BTextWriter& WriteCharacter(CharacterTypeUTF16 c);
 		BTextWriter& Write(const UChar* str);
 
+		template <typename T>
+		BTextWriter& operator<<(T elem)
+		{
+			this->Write(elem);
+			return *this;
+		}
+
 	public:
 		explicit BTextWriter() = default;
 		~BTextWriter()		   = default;
@@ -263,11 +270,11 @@ namespace Boot
 		/// @brief Write all of the requested catalogs into the filesystem.
 		/// @param blob_list the blobs.
 		/// @param blob_cnt the number of blobs to write.
-		/// @param partBlock the NeFS partition block.
-		Boolean WriteCatalogList(BFileDescriptor* blob_list, SizeT blob_cnt, NFS_ROOT_PARTITION_BLOCK& partBlock)
+		/// @param part the NeFS partition block.
+		Boolean WriteCatalogList(BFileDescriptor* blob_list, SizeT blob_cnt, NFS_ROOT_PARTITION_BLOCK& part)
 		{
 			BFileDescriptor* blob	  = blob_list;
-			Lba				 startLba = partBlock.StartCatalog;
+			Lba				 startLba = part.StartCatalog;
 			BTextWriter		 writer;
 
 			NFS_CATALOG_STRUCT catalogKind{0};
@@ -278,12 +285,12 @@ namespace Boot
 			catalogKind.NextSibling = (startLba + sizeof(NFS_CATALOG_STRUCT) * cNeFSCatalogPadding);
 
 			/// Fill catalog kind.
-			catalogKind.Kind   = blob->fKind;
-			catalogKind.Flags  |= kNeFSFlagCreated;
+			catalogKind.Kind = blob->fKind;
+			catalogKind.Flags |= kNeFSFlagCreated;
 			catalogKind.CatalogFlags = kNeFSStatusUnlocked;
 
-			--partBlock.FreeCatalog;
-			--partBlock.FreeSectors;
+			--part.FreeCatalog;
+			--part.FreeSectors;
 
 			CopyMem(catalogKind.Name, blob->fFileName, StrLen(blob->fFileName));
 
@@ -330,27 +337,37 @@ namespace Boot
 			return false;
 		}
 
-		NFS_ROOT_PARTITION_BLOCK partBlock{0};
+		NFS_ROOT_PARTITION_BLOCK part{0};
 
-		CopyMem(partBlock.Ident, kNeFSIdent, kNeFSIdentLen - 1);
-		CopyMem(partBlock.PartitionName, part_name, StrLen(part_name));
+		CopyMem(part.Ident, kNeFSIdent, kNeFSIdentLen - 1);
+		CopyMem(part.PartitionName, part_name, StrLen(part_name));
 
-		partBlock.Version	   = kNeFSVersionInteger;
-		partBlock.CatalogCount = blob_cnt;
-		partBlock.Kind		   = kNeFSHardDrive;
-		partBlock.SectorSize   = sizeof(NFS_ROOT_PARTITION_BLOCK);
-		partBlock.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
-		partBlock.SectorCount  = fDiskDev.GetSectorsCount();
-		partBlock.FreeSectors  = fDiskDev.GetSectorsCount();
-		partBlock.StartCatalog = kNeFSCatalogStartAddress;
-		partBlock.DiskSize	   = fDiskDev.GetDiskSize();
-		partBlock.Flags		   = kNeFSPartitionTypeBoot | kNeFSPartitionTypeStandard;
+		part.Version	  = kNeFSVersionInteger;
+		part.CatalogCount = blob_cnt;
+		part.Kind		  = kNeFSHardDrive;
+		part.SectorSize	  = sizeof(NFS_ROOT_PARTITION_BLOCK);
+		part.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
+		part.SectorCount  = fDiskDev.GetSectorsCount();
+		part.FreeSectors  = fDiskDev.GetSectorsCount();
+		part.StartCatalog = kNeFSCatalogStartAddress;
+		part.DiskSize	  = fDiskDev.GetDiskSize();
+		part.Flags		  = kNeFSPartitionTypeBoot | kNeFSPartitionTypeStandard;
 
 		fDiskDev.Leak().mBase = kNeFSRootCatalogStartAddress;
 		fDiskDev.Leak().mSize = sizeof(NFS_ROOT_PARTITION_BLOCK);
 
-		fDiskDev.Write((Char*)&partBlock, sizeof(NFS_ROOT_PARTITION_BLOCK));
+		fDiskDev.Write((Char*)&part, sizeof(NFS_ROOT_PARTITION_BLOCK));
 
+		BTextWriter writer;
+
+		writer << "partition name: " << part.PartitionName << "\n";
+		writer << "start: " << part.StartCatalog << "\n";
+		writer << "number of catalogs: " << part.CatalogCount << "\n";
+		writer << "free catalog: " << part.FreeCatalog << "\n";
+		writer << "free sectors: " << part.FreeSectors << "\n";
+		writer << "sector size: " << part.SectorSize << "\n";
+
+#ifdef BOOTZ_EPM_SUPPORT
 		BOOT_BLOCK_STRUCT epm_boot{0};
 
 		const auto kFsName	  = "NeFS";
@@ -360,9 +377,9 @@ namespace Boot
 
 		epm_boot.FsVersion = kNeFSVersionInteger;
 		epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
-		epm_boot.SectorSz  = partBlock.SectorSize;
+		epm_boot.SectorSz  = part.SectorSize;
 		epm_boot.Kind	   = kEPMZkaOS;
-		epm_boot.NumBlocks = partBlock.CatalogCount;
+		epm_boot.NumBlocks = part.CatalogCount;
 
 		CopyMem(epm_boot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), StrLen(kBlockName));
 		CopyMem(epm_boot.Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
@@ -374,6 +391,7 @@ namespace Boot
 
 		BTextWriter writer;
 		writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
+#endif
 
 		return YES;
 	}

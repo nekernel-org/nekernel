@@ -46,7 +46,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__ZKA_ARM64__ -fno-rtti -fno-exceptions -I./ \
 			 -target aarch64-unknown-windows \
-				-std=c++20 -D__FSKIT_USE_NEFS__ -D__BOOTLDR_STANDALONE__ -D__MINOSKRNL__ -D__ZBAOSLDR__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../ -I../Kernel
+				-std=c++20 -DBOOTZ_EPM_SUPPORT -D__FSKIT_USE_NEFS__ -D__BOOTLDR_STANDALONE__ -D__MINOSKRNL__ -D__ZBAOSLDR__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../ -I../Kernel
 
 BOOT_LOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe

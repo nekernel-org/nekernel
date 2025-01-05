@@ -15,7 +15,7 @@
 #include <KernelKit/PEF.h>
 #include <NewKit/Macros.h>
 #include <NewKit/Ref.h>
-#include <BootKit/Thread.h>
+#include <BootKit/BootThread.h>
 #include <Mod/GfxMgr/FBMgr.h>
 
 // Makes the compiler shut up.

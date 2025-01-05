@@ -112,7 +112,7 @@ default.
 #define kNeFSForkNameLen (200)
 
 #define kNeFSFrameworkExt	".fwrk"
-#define kNeFSStepsExt	".step"
+#define kNeFSStepsExt		".step"
 #define kNeFSApplicationExt ".app"
 #define kNeFSJournalExt		".jrnl"
 
@@ -394,8 +394,8 @@ namespace Kernel
 		}
 
 		Bool CommitJournal(NeFileSystemParser* parser,
-					KString				xml_data,
-					KString				journal_name)
+						   KString			   xml_data,
+						   KString			   journal_name)
 		{
 			if (!parser ||
 				!mNode)

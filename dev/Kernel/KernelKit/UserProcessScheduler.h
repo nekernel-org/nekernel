@@ -262,14 +262,14 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcessTeam);
 
 		Array<UserThread, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<UserThread>&								AsRef();
-		ProcessID&										Id() noexcept;
+		Ref<UserThread>&							  AsRef();
+		ProcessID&									  Id() noexcept;
 
 	public:
 		Array<UserThread, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<UserThread>							   mCurrentProcess;
-		ProcessID									   mTeamId{0};
-		ProcessID									   mProcessCount{0};
+		Ref<UserThread>								 mCurrentProcess;
+		ProcessID									 mTeamId{0};
+		ProcessID									 mProcessCount{0};
 	};
 
 	using UserProcessRef = UserThread&;
@@ -302,7 +302,7 @@ namespace Kernel
 
 	public:
 		Ref<UserThread>& GetCurrentProcess();
-		const SizeT		  Run() noexcept;
+		const SizeT		 Run() noexcept;
 
 	public:
 		STATIC UserProcessScheduler& The();

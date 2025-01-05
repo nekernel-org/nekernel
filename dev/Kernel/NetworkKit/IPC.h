@@ -65,15 +65,15 @@ namespace Kernel
 	/// @brief IPC connection header, message cannot be greater than 6K.
 	typedef struct IPC_MSG final
 	{
-		UInt32			 IpcHeaderMagic; // cRemoteHeaderMagic
-		UInt8			 IpcEndianess;	 // 0 : LE, 1 : BE
-		SizeT			 IpcPacketSize;
+		UInt32	 IpcHeaderMagic; // cRemoteHeaderMagic
+		UInt8	 IpcEndianess;	 // 0 : LE, 1 : BE
+		SizeT	 IpcPacketSize;
 		IPC_ADDR IpcFrom;
 		IPC_ADDR IpcTo;
-		UInt32			 IpcCRC32;
-		UInt32			 IpcMsg;
-		UInt32			 IpcMsgSz;
-		UInt8			 IpcData[kIPCMsgSize];
+		UInt32	 IpcCRC32;
+		UInt32	 IpcMsg;
+		UInt32	 IpcMsgSz;
+		UInt8	 IpcData[kIPCMsgSize];
 
 		/// @brief Passes the message to target, could be anything, HTTP packet, JSON or whatever.
 		Bool Pass(IPC_MSG* target) noexcept
