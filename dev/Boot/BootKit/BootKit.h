@@ -375,8 +375,6 @@ namespace Boot
 		BTextWriter writer;
 		writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
 
-		this->WriteCatalogList(blob_list, blob_cnt, partBlock);
-
 		return YES;
 	}
 } // namespace Boot

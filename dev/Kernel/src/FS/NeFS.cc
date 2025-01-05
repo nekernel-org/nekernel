@@ -190,12 +190,12 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NFS_CATALOG_STRUCT*
 			switch (res)
 			{
 			case 1:
-				err_local_get() = kErrorDiskReadOnly;
+				err_global_get() = kErrorDiskReadOnly;
 				break;
 			case 2:
-				err_local_get() = kErrorDiskIsFull;
+				err_global_get() = kErrorDiskIsFull;
 				break;
-				err_local_get() = kErrorNoSuchDisk;
+				err_global_get() = kErrorNoSuchDisk;
 				break;
 
 			default:
@@ -258,7 +258,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 	if (catalog_copy)
 	{
 		kcout << "Catalog already exists: " << name << ".\r";
-		err_local_get() = kErrorFileExists;
+		err_global_get() = kErrorFileExists;
 
 		return catalog_copy;
 	}
@@ -273,7 +273,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 	if (*parent_name == 0)
 	{
 		kcout << "Parent name is NUL.\r";
-		err_local_get() = kErrorFileNotFound;
+		err_global_get() = kErrorFileNotFound;
 		return nullptr;
 	}
 
@@ -284,18 +284,18 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 		parent_name[indexFill] = name[indexFill];
 	}
 
-	SizeT indexReverseCopy = rt_string_len(parent_name);
+	SizeT index_reverse_copy = rt_string_len(parent_name);
 
 	// zero character it.
-	parent_name[--indexReverseCopy] = 0;
+	parent_name[--index_reverse_copy] = 0;
 
 	// mandatory / character, zero it.
-	parent_name[--indexReverseCopy] = 0;
+	parent_name[--index_reverse_copy] = 0;
 
-	while (parent_name[indexReverseCopy] != NeFileSystemHelper::Separator())
+	while (parent_name[index_reverse_copy] != NeFileSystemHelper::Separator())
 	{
-		parent_name[indexReverseCopy] = 0;
-		--indexReverseCopy;
+		parent_name[index_reverse_copy] = 0;
+		--index_reverse_copy;
 	}
 
 	NFS_CATALOG_STRUCT* catalog = this->FindCatalog(parent_name, out_lba);
@@ -351,8 +351,6 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	while (drive.fPacket.fPacketGood)
 	{
-		auto next_sibling = reinterpret_cast<NFS_CATALOG_STRUCT*>(&temporary_catalog);
-
 		if (start_free <= kNeFSRootCatalogStartAddress)
 		{
 			delete child_catalog;
@@ -361,20 +359,17 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 			catalog		  = nullptr;
 			child_catalog = nullptr;
 
-			while (YES)
-				;
-
 			return nullptr;
 		}
 
 		// ========================== //
 		// Allocate catalog now...
 		// ========================== //
-		if ((next_sibling->Flags & kNeFSFlagCreated) == 0)
+		if ((temporary_catalog.Flags & kNeFSFlagCreated) == 0)
 		{
-			Char sectorBufPartBlock[kNeFSSectorSz] = {0};
+			Char buf_part_block[kNeFSSectorSz] = {0};
 
-			drive.fPacket.fPacketContent = sectorBufPartBlock;
+			drive.fPacket.fPacketContent = buf_part_block;
 			drive.fPacket.fPacketSize	 = kNeFSSectorSz;
 			drive.fPacket.fPacketLba	 = kNeFSRootCatalogStartAddress;
 
@@ -382,7 +377,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 			constexpr auto kNeFSCatalogPadding = 4;
 
-			NFS_ROOT_PARTITION_BLOCK* part_block = (NFS_ROOT_PARTITION_BLOCK*)sectorBufPartBlock;
+			NFS_ROOT_PARTITION_BLOCK* part_block = (NFS_ROOT_PARTITION_BLOCK*)buf_part_block;
 
 			if (part_block->FreeCatalog < 1)
 			{
@@ -397,7 +392,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 			// Write the new catalog next sibling, if we don't know this parent. //
 			// This is necessary, so that we don't have to get another lba to allocate. //
-			if (!StringBuilder::Equals(parent_name, next_sibling->Name))
+			if (!StringBuilder::Equals(parent_name, temporary_catalog.Name))
 			{
 				child_catalog->NextSibling =
 					start_free + (sizeof(NFS_CATALOG_STRUCT) * kNeFSCatalogPadding);
@@ -411,7 +406,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 			// Get NeFS partition's block.
 
-			drive.fPacket.fPacketContent = sectorBufPartBlock;
+			drive.fPacket.fPacketContent = buf_part_block;
 			drive.fPacket.fPacketSize	 = kNeFSSectorSz;
 			drive.fPacket.fPacketLba	 = kNeFSRootCatalogStartAddress;
 
@@ -431,17 +426,22 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 			delete catalog;
 			catalog = nullptr;
 
-			return child_catalog;
+			NFS_CATALOG_STRUCT* found_catalog = new NFS_CATALOG_STRUCT();
+			rt_copy_memory(&temporary_catalog, found_catalog, sizeof(NFS_CATALOG_STRUCT));
+
+			return found_catalog;
 		}
-		else if ((next_sibling->Flags & kNeFSFlagCreated) &&
-				 StringBuilder::Equals(next_sibling->Name, name))
+		else if ((temporary_catalog.Flags & kNeFSFlagCreated) &&
+				 StringBuilder::Equals(temporary_catalog.Name, name))
 		{
-			return next_sibling;
+			NFS_CATALOG_STRUCT* found_catalog = new NFS_CATALOG_STRUCT();
+			rt_copy_memory(&temporary_catalog, found_catalog, sizeof(NFS_CATALOG_STRUCT));
+
+			return child_catalog;
 		}
 
 		constexpr auto kNeFSCatalogPadding = 4;
 
-		//// @note that's how we find the next catalog in the partition block.
 		start_free = start_free + (sizeof(NFS_CATALOG_STRUCT) * kNeFSCatalogPadding);
 
 		drive.fPacket.fPacketContent = &temporary_catalog;
@@ -457,7 +457,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 /// @brief Make a EPM+NeFS drive out of the disk.
 /// @param drive The drive to write on.
-/// @return If it was sucessful, see err_local_get().
+/// @return If it was sucessful, see err_global_get().
 bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
 {
 	if (*part_name == 0 ||
@@ -473,7 +473,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 	// if disk isn't good, then error out.
 	if (false == drive->fPacket.fPacketGood)
 	{
-		err_local_get() = kErrorDiskIsCorrupted;
+		err_global_get() = kErrorDiskIsCorrupted;
 		return false;
 	}
 
@@ -658,7 +658,7 @@ bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog
 		// check the fork, if it's position is valid.
 		if (fork_data_input->DataOffset <= kNeFSCatalogStartAddress)
 		{
-			err_local_get() = kErrorDiskIsCorrupted;
+			err_global_get() = kErrorDiskIsCorrupted;
 
 			kcout << "Invalid fork offset.\r";
 
@@ -720,7 +720,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 		*catalog_name == 0)
 		return nullptr;
 
-	kcout << "Start finding catalog...\r";
+	kcout << "Start finding catalog: " << catalog_name << "\r";
 
 	NFS_ROOT_PARTITION_BLOCK fs_buf{0};
 	auto					 drive = kDiskMountpoint.A();
@@ -758,33 +758,36 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 			parent_name[indexFill] = catalog_name[indexFill];
 		}
 
-		SizeT indexReverseCopy = rt_string_len(parent_name);
+		SizeT index_reverse_copy = rt_string_len(parent_name);
 
 		// zero character.
-		parent_name[--indexReverseCopy] = 0;
+		parent_name[--index_reverse_copy] = 0;
 
 		// mandatory '/' character.
-		parent_name[--indexReverseCopy] = 0;
+		parent_name[--index_reverse_copy] = 0;
 
-		while (parent_name[indexReverseCopy] != NeFileSystemHelper::Separator())
+		while (parent_name[index_reverse_copy] != NeFileSystemHelper::Separator())
 		{
-			parent_name[indexReverseCopy] = 0;
-			--indexReverseCopy;
+			parent_name[index_reverse_copy] = 0;
+			--index_reverse_copy;
 		}
 
-		NFS_CATALOG_STRUCT* parentCatalog = this->FindCatalog(parent_name, out_lba);
+		NFS_CATALOG_STRUCT* parent_catalog = this->FindCatalog(parent_name, out_lba);
 
-		if (parentCatalog &&
+		if (parent_catalog &&
 			!StringBuilder::Equals(parent_name, NeFileSystemHelper::Root()))
 		{
-			start_catalog_lba = parentCatalog->NextSibling;
-			delete parentCatalog;
+			start_catalog_lba = parent_catalog->NextSibling;
+			delete parent_catalog;
+
+			parent_catalog = nullptr;
 
 			local_search_first = true;
 		}
-		else if (parentCatalog)
+		else if (parent_catalog)
 		{
-			delete parentCatalog;
+			delete parent_catalog;
+			parent_catalog = nullptr;
 		}
 		else
 		{
@@ -808,24 +811,27 @@ kNeFSSearchThroughCatalogList:
 			if (temporary_catalog.Status == kNeFSStatusLocked &&
 				!search_hidden)
 			{
-				err_local_get() = kErrorFileLocked;
+				err_global_get() = kErrorFileLocked;
 
 				out_lba = 0UL;
 				return nullptr;
 			}
+
 
 			/// ignore unallocated catalog, break
 			if (!(temporary_catalog.Flags & kNeFSFlagCreated))
 			{
+				err_global_get() = kErrorFileNotFound;
+
 				out_lba = 0UL;
 				return nullptr;
 			}
 
-			NFS_CATALOG_STRUCT* catalog_ptr = new NFS_CATALOG_STRUCT();
-			rt_copy_memory(&temporary_catalog, catalog_ptr, sizeof(NFS_CATALOG_STRUCT));
-
 			kcout << "Found available catalog at: " << hex_number(start_catalog_lba) << endl;
 			kcout << "Found available catalog at: " << temporary_catalog.Name << endl;
+
+			NFS_CATALOG_STRUCT* catalog_ptr = new NFS_CATALOG_STRUCT();
+			rt_copy_memory(&temporary_catalog, catalog_ptr, sizeof(NFS_CATALOG_STRUCT));
 
 			out_lba = start_catalog_lba;
 			return catalog_ptr;
@@ -846,7 +852,7 @@ kNeFSSearchThroughCatalogList:
 		goto kNeFSSearchThroughCatalogList;
 	}
 
-	err_local_get() = kErrorFileNotFound;
+	err_global_get() = kErrorFileNotFound;
 
 	out_lba = 0UL;
 
@@ -884,7 +890,7 @@ Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
 	if (!catalog_name ||
 		StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()))
 	{
-		err_local_get() = kErrorInternal;
+		err_global_get() = kErrorInternal;
 		return false;
 	}
 
@@ -952,7 +958,7 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catal
 {
 	if (!catalog)
 	{
-		err_local_get() = kErrorFileNotFound;
+		err_global_get() = kErrorFileNotFound;
 		return nullptr;
 	}
 
@@ -1012,11 +1018,11 @@ bool NeFileSystemParser::Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT 
 {
 	if (!catalog)
 	{
-		err_local_get() = kErrorFileNotFound;
+		err_global_get() = kErrorFileNotFound;
 		return false;
 	}
 
-	err_local_get() = kErrorUnimplemented;
+	err_global_get() = kErrorUnimplemented;
 	return false;
 }
 
@@ -1030,11 +1036,11 @@ SizeT NeFileSystemParser::Tell(_Input _Output NFS_CATALOG_STRUCT* catalog)
 {
 	if (!catalog)
 	{
-		err_local_get() = kErrorFileNotFound;
+		err_global_get() = kErrorFileNotFound;
 		return 0;
 	}
 
-	err_local_get() = kErrorUnimplemented;
+	err_global_get() = kErrorUnimplemented;
 	return 0;
 }
 
@@ -1045,7 +1051,6 @@ namespace Kernel::Detail
 	/***********************************************************************************/
 	Boolean fs_init_newfs(Void) noexcept
 	{
-		kcout << "Creating A: drive...\r";
 		kcout << "Creating A:\r";
 
 		kDiskMountpoint.A() = io_construct_main_drive();
