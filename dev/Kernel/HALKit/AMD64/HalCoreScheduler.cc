@@ -19,6 +19,8 @@
 
 #define kApicSignature "APIC"
 
+#define kApicBaseAddress        (0xFEE00000)
+
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
 #define kAPIC_SIPI_Vector 0x00500
@@ -48,9 +50,14 @@ namespace Kernel::HAL
 	STATIC Bool				  kSMPAware	 = false;
 	STATIC Int64			  kSMPCount	 = 0;
 
-	STATIC Int32   kSMPInterrupt		 = 0;
-	STATIC UInt64  kAPICLocales[kSMPMax] = {0};
-	STATIC VoidPtr kRawMADT				 = nullptr;
+	STATIC Int32  kSMPInterrupt			= 0;
+	STATIC UInt64 kAPICLocales[kSMPMax] = {0};
+	STATIC struct
+	{
+		UInt64 mAddress;
+		BOOL   mUsed;
+	} kAPICAddresses[kSMPMax];
+	STATIC VoidPtr kRawMADT = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
 	struct MADT_TABLE final : public SDT
@@ -127,7 +134,7 @@ namespace Kernel::HAL
 	/// @param targetAddress
 	/// @return
 	/***********************************************************************************/
-	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
+	Void hal_send_sipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
 	{
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, (apicId << 24));
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
@@ -156,7 +163,36 @@ namespace Kernel::HAL
 		kProcessBlocks[process_index].f_Stack = stack_ptr;
 		kProcessBlocks[process_index].f_Image = image;
 
-		return NO;
+		if (!mp_is_smp())
+		{
+			ke_panic(RUNTIME_CHECK_PROCESS, "The Kernel does not support non-SMP profiles as of now. We are unable to process this context switch.");
+		}
+		else
+		{
+			for (SizeT smpi = 0UL; smpi < kSMPMax; ++smpi)
+			{
+				if (!kAPICAddresses[smpi].mUsed)
+				{
+					kAPICAddresses[smpi].mUsed = YES;
+
+					hal_send_start_ipi(kAPICLocales[smpi], ((UIntPtr)image) >> 12, kApicBaseAddress);
+
+					for (SizeT i = 0; i < 1000000; ++i)
+						;
+
+					hal_send_sipi(kAPICLocales[smpi], ((UIntPtr)image) >> 12, kApicBaseAddress);
+
+					for (SizeT i = 0; i < 1000000; ++i)
+						;
+
+					hal_send_sipi(kAPICLocales[smpi], ((UIntPtr)image) >> 12, kApicBaseAddress);
+
+					kAPICAddresses[smpi].mUsed = NO;
+				}
+			}
+		}
+
+		return YES;
 	}
 
 	/***********************************************************************************/
@@ -177,6 +213,12 @@ namespace Kernel::HAL
 		if (!vendor_ptr)
 			return;
 
+		if (!kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
+		{
+			kSMPAware = NO;
+			return;
+		}
+
 		auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
 		kRawMADT			= hw_and_pow_int.Find(kApicSignature).Leak().Leak();
 
@@ -185,7 +227,9 @@ namespace Kernel::HAL
 
 		if (kMADTBlock)
 		{
-			SizeT index = 0;
+			SizeT index_address = 0;
+			SizeT index_local	= 0;
+			SizeT index			= 0;
 
 			// reset values.
 
@@ -205,19 +249,23 @@ namespace Kernel::HAL
 				switch (kMADTBlock->List[index].Type)
 				{
 				case 0x00: {
-					kAPICLocales[index] = kMADTBlock->List[index].LAPIC.ProcessorID;
-					kcout << "SMP: APIC ID: " << number(kAPICLocales[index]) << endl;
+					kAPICLocales[index_local] = kMADTBlock->List[index_local].LAPIC.ProcessorID;
+					kcout << "SMP: APIC ID: " << number(kAPICLocales[index_local]) << endl;
 					++kSMPCount;
 					break;
 				}
 				case 0x05: {
-					madt_address = kMADTBlock->List[index].LAPIC_ADDRESS_OVERRIDE.Address;
+					kAPICAddresses[index_address].mAddress = kMADTBlock->List[index_address].LAPIC_ADDRESS_OVERRIDE.Address;
+					kAPICAddresses[index_address].mUsed	   = NO;
+
 					kcout << "SMP: APIC address: " << number(madt_address) << endl;
 					break;
 				}
 				}
 
 				++index;
+				++index_address;
+				++index_local;
 			}
 
 			kcout << "SMP: number of cores: " << number(kSMPCount) << endl;

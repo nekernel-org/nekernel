@@ -93,8 +93,28 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	rtl_kernel_main(0, nullptr, nullptr, 0);
 
-	if (kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled)
-		Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+	auto id = Kernel::rtl_create_process([] (const Kernel::SizeT argc, Kernel::Char** argv, Kernel::Char** envp, const Kernel::SizeT envp_len) -> void {
+		while (YES);
+	}, "SMP Process #1");
+
+	Kernel::UserProcessScheduler::The().CurrentTeam().mProcessList[id].PTime = 0;
+	Kernel::UserProcessScheduler::The().CurrentTeam().mProcessList[id].Status = Kernel::ProcessStatusKind::kRunning;
+
+	id = Kernel::rtl_create_process([] (const Kernel::SizeT argc, Kernel::Char** argv, Kernel::Char** envp, const Kernel::SizeT envp_len) -> void {
+		while (YES);
+	}, "SMP Process #2");
+
+	Kernel::UserProcessScheduler::The().CurrentTeam().mProcessList[id].PTime = 0;
+	Kernel::UserProcessScheduler::The().CurrentTeam().mProcessList[id].Status = Kernel::ProcessStatusKind::kRunning;
+
+	id = Kernel::rtl_create_process([] (const Kernel::SizeT argc, Kernel::Char** argv, Kernel::Char** envp, const Kernel::SizeT envp_len) -> void {
+		while (YES);
+	}, "SMP Process #3");
+
+	Kernel::UserProcessScheduler::The().CurrentTeam().mProcessList[id].PTime = 0;
+	Kernel::UserProcessScheduler::The().CurrentTeam().mProcessList[id].Status = Kernel::ProcessStatusKind::kRunning;
+
+	Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::HAL::Register64 idt_reg;
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;

@@ -29,10 +29,10 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -smp 1 -m 8G -M q35 \
+EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 			-bios $(BIOS) -drive \
 			file=fat:rw:src/Root/,index=2,format=raw \
-            -serial stdio
+            -d int
 
 LD_FLAGS=-e Main --subsystem=10
 

@@ -185,15 +185,19 @@ namespace Boot
 
 		if (own_stack)
 		{
-			return rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(8) - 1]);
+			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(8) - 1]);
 		}
 		else
 		{
-			delete[] fStack;
+			if (fStack)
+				delete[] fStack;
+			
+			fStack = nullptr;
+
 			return reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
 		}
 
-		return NO;
+		return kEfiOk;
 	}
 
 	const Char* BootThread::GetName()
