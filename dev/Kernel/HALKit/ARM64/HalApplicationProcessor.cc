@@ -32,7 +32,7 @@ namespace Kernel
 {
 	struct PROCESS_CONTROL_BLOCK final
 	{
-		HAL::StackFramePtr f_Frame;
+		HAL::StackFramePtr mFrame;
 	};
 
 	STATIC PROCESS_CONTROL_BLOCK kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
@@ -105,7 +105,7 @@ namespace Kernel
 
 	EXTERN_C HAL::StackFramePtr mp_get_current_context(ProcessID pid)
 	{
-		return kProcessBlocks[pid % kSchedProcessLimitPerTeam].f_Frame;
+		return kProcessBlocks[pid % kSchedProcessLimitPerTeam].mFrame;
 	}
 
 	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame, ProcessID pid)
@@ -114,7 +114,7 @@ namespace Kernel
 
 		const auto process_index = pid % kSchedProcessLimitPerTeam;
 
-		kProcessBlocks[process_index].f_Frame = stack_frame;
+		kProcessBlocks[process_index].mFrame = stack_frame;
 
 		return YES;
 	}
