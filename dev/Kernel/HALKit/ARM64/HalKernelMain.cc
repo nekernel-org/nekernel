@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "HALKit/ARM64/ApplicationProcessor.h"
 #include <ArchKit/ArchKit.h>
 #include <Mod/GfxMgr/FBMgr.h>
 #include <FirmwareKit/Handover.h>
@@ -15,10 +16,9 @@
 #include <KernelKit/CodeMgr.h>
 #include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <NetworkKit/IPC.h>
+#include <HALKit/ARM64/Processor.h>
 #include <CFKit/Property.h>
 
-Kernel::Void hal_real_init(Kernel::Void) noexcept;
-EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len);
 
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::BootInfoHeader* handover_hdr)
@@ -46,7 +46,7 @@ EXTERN_C void hal_init_platform(
 
 	/// @note do initialize the interrupts after it.
 
-	rtl_kernel_main(0, nullptr, nullptr, 0);
+	Kernel::mp_initialize_gic();
 
 	while (YES)
 	{

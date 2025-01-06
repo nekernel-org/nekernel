@@ -55,7 +55,7 @@ namespace Boot
 				return;
 			}
 #elif defined(__ZKA_ARM64__)
-			if (header_ptr->mMachine != kPeMachineAMD64 ||
+			if (header_ptr->mMachine != kPeMachineARM64 ||
 				header_ptr->mSignature != kPeSignature)
 			{
 				writer.Write("BootZ: Not a PE32+ executable.\r");

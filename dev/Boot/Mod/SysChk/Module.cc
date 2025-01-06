@@ -23,10 +23,14 @@
 
 EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
+#ifdef __ZKA_AMD64__
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (partition_factory.IsPartitionValid())
 		return kEfiOk;
 
 	return kEfiFail;
+#else
+	return kEfiOk;
+#endif
 }

@@ -13,13 +13,11 @@
 #include <KernelKit/Timer.h>
 #include <Mod/GfxMgr/TextMgr.h>
 #include <NewKit/KernelPanic.h>
-
-// Needed for SMP.
 #include <KernelKit/HardwareThreadScheduler.h>
 
 #define kApicSignature "APIC"
 
-#define kApicBaseAddress        (0xFEE00000)
+#define kApicBaseAddress (0xFEE00000)
 
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
@@ -140,12 +138,12 @@ namespace Kernel::HAL
 		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
 
-	STATIC struct PROCESS_CONTROL_BLOCK final
+	struct PROCESS_CONTROL_BLOCK final
 	{
 		HAL::StackFramePtr f_Frame;
-		UInt8*			   f_Stack;
-		VoidPtr			   f_Image;
-	} kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
+	};
+
+	STATIC PROCESS_CONTROL_BLOCK kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
 
 	EXTERN_C HAL::StackFramePtr mp_get_current_context(Int64 pid)
 	{
@@ -160,37 +158,6 @@ namespace Kernel::HAL
 		const auto process_index = pid % kSchedProcessLimitPerTeam;
 
 		kProcessBlocks[process_index].f_Frame = stack_frame;
-		kProcessBlocks[process_index].f_Stack = stack_ptr;
-		kProcessBlocks[process_index].f_Image = image;
-
-		if (!mp_is_smp())
-		{
-			ke_panic(RUNTIME_CHECK_PROCESS, "The Kernel does not support non-SMP profiles as of now. We are unable to process this context switch.");
-		}
-		else
-		{
-			for (SizeT smpi = 0UL; smpi < kSMPMax; ++smpi)
-			{
-				if (!kAPICAddresses[smpi].mUsed)
-				{
-					kAPICAddresses[smpi].mUsed = YES;
-
-					hal_send_start_ipi(kAPICLocales[smpi], ((UIntPtr)image) >> 12, kApicBaseAddress);
-
-					for (SizeT i = 0; i < 1000000; ++i)
-						;
-
-					hal_send_sipi(kAPICLocales[smpi], ((UIntPtr)image) >> 12, kApicBaseAddress);
-
-					for (SizeT i = 0; i < 1000000; ++i)
-						;
-
-					hal_send_sipi(kAPICLocales[smpi], ((UIntPtr)image) >> 12, kApicBaseAddress);
-
-					kAPICAddresses[smpi].mUsed = NO;
-				}
-			}
-		}
 
 		return YES;
 	}

@@ -11,7 +11,7 @@ CCFLAGS		= -fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__ZKA_ARM64__ -f
 
 ASM 		= clang++
 
-DISKDRIVER = -D__USE_FLASH_MEM__ -D__USE_SAS__ -D__USE_SATA__
+DISKDRIVER = -D__USE_FLASH_MEM__
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__

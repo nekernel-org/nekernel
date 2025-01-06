@@ -1,0 +1,26 @@
+{
+  "compiler_path": "clang++",
+  "compiler_std": "c++20",
+  "headers_path": ["../", "../../", "../../../Kernel", "../../../", "./"],
+  "sources_path": ["*.cc", "*.S", "../../src/HEL/ARM64/*.cc", "../../src/HEL/ARM64/*.S", "../../src/*.cc"],
+  "output_name": "syschk.sys",
+  "compiler_flags": [
+    "-ffreestanding",
+    "-nostdlib",
+    "-std=c++20",
+    "-fno-rtti",
+    "-fno-exceptions",
+    "-fuse-ld=lld",
+    "-Wl,-subsystem:efi_application,-entry:ModuleMain",
+    "-target aarch64-unknown-windows"
+  ],
+  "cpp_macros": [
+    "__MINOSKRNL__",
+    "__ZBAOSLDR__",
+    "__BOOTLDR_STANDALONE__",
+    "__ZKA_ARM64__",
+    "kChkVersionHighest=0x0100",
+    "kChkVersionLowest=0x0100",
+    "kChkVersion=0x0100"
+  ]
+}

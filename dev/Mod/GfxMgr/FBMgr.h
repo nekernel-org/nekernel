@@ -16,6 +16,7 @@
 
 #define fb_clear() kCGCursor = 0
 
+#ifdef __ZKA_AMD64__
 /// @brief Performs Alpha drawing on the framebuffer.
 #define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)        \
 	for (Kernel::SizeT i = base_x; i < (width + base_x); ++i)                \
@@ -111,6 +112,22 @@
 										  4 * y_base))) |= _Clr;                      \
 		}                                                                             \
 	}
+#else
+#define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)
+#define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y) 
+#define FBDrawBitMapInRegionToRgn(_Rgn, reg_ptr, height, width, base_x, base_y) 
+#define CGClearRegion(height, width, base_x, base_y)           
+#define FBDrawInRegion(_Clr, height, width, base_x, base_y)   
+#define FBDrawInRegionToRgn(_Rgn, _Clr, height, width, base_x, base_y)  
+#define FBDrawInRegionA(_Clr, height, width, base_x, base_y) 
+#define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)  
+#define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y) 
+#define FBDrawBitMapInRegionToRgn(_Rgn, reg_ptr, height, width, base_x, base_y) 
+#define CGClearRegion(height, width, base_x, base_y) 
+#define FBDrawInRegion(_Clr, height, width, base_x, base_y) 
+#define FBDrawInRegionToRgn(_Rgn, _Clr, height, width, base_x, base_y)  
+#define FBDrawInRegionA(_Clr, height, width, base_x, base_y)  
+#endif // __ZKA_AMD64__
 
 #ifndef GFX_MGR_ACCESSIBILITY_H
 #include <Mod/GfxMgr/AccessibilityMgr.h>

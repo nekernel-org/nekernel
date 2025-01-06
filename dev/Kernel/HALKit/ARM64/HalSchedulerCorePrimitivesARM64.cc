@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <HALKit/AMD64/Processor.h>
+#include <HALKit/ARM64/Processor.h>
 #include <KernelKit/UserProcessScheduler.h>
 
 namespace Kernel

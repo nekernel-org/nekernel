@@ -4,6 +4,8 @@
 
 ------------------------------------------- */
 
+#ifdef __ZKA_COREBOOT__
+
 .section .boot_hdr
 .align 4
 
@@ -34,3 +36,5 @@ bootloader_start:
 
     bl      bootloader_main             
     ret                                 
+
+#endif // __ZKA_COREBOOT__

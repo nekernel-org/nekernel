@@ -389,7 +389,6 @@ namespace Boot
 
 		fDiskDev.Write((Char*)&epm_boot, sizeof(BOOT_BLOCK_STRUCT));
 
-		BTextWriter writer;
 		writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
 #endif
 

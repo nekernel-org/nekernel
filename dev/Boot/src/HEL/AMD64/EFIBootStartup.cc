@@ -72,9 +72,6 @@ STATIC Bool boot_init_fb() noexcept
 	return No;
 }
 
-EXTERN_C VoidPtr boot_read_cr3();
-EXTERN_C Void	 boot_write_cr3(VoidPtr new_cr3);
-
 EXTERN EfiBootServices* BS;
 
 /// @brief Main EFI entrypoint.
@@ -152,9 +149,15 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	UInt32 cnt_enabled	= 0;
 	UInt32 cnt_disabled = 0;
 
-	mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
-
-	handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
+	if (mp)
+	{
+		mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
+		handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
+	}
+	else
+	{
+		handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = NO;
+	}
 	// Fill handover header now.
 
 	// ---------------------------------------------------- //
@@ -316,7 +319,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	// Finally load the OS kernel.
 	// ---------------------------------------------------- //
 
-	kernel_thread->Start(handover_hdr, YES);
+	kernel_thread->Start(handover_hdr, NO);
 
 	CANT_REACH();
 }

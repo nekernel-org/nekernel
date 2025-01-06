@@ -94,8 +94,8 @@ run-efi-amd64-ata:
 epm-img:
 	qemu-img create -f raw $(IMG) 4G
 
-.PHONY: download-edk
-download-edk:
+.PHONY: efi
+efi:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin

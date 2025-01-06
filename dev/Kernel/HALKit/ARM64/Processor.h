@@ -58,13 +58,24 @@ namespace Kernel::HAL
 
 	typedef StackFrame* StackFramePtr;
 
-	inline Void rt_halt()
+	inline Void rt_halt() noexcept
 	{
 		while (Yes)
 		{
 		}
 	}
 
+	template <typename DataKind>
+	inline void hal_mmio_write(UIntPtr address, DataKind value)
+	{
+		*reinterpret_cast<volatile DataKind*>(address) = value;
+	}
+
+	template <typename DataKind>
+	inline DataKind hal_mmio_read(UIntPtr address)
+	{
+		return *reinterpret_cast<volatile DataKind*>(address);
+	}
 } // namespace Kernel::HAL
 
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;

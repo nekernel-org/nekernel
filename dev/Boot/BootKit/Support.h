@@ -9,7 +9,9 @@
 /// @file Support.h
 /// @brief Purpose of this file is to help port libs into the bootloader.
 
+#ifndef __aarch64__
 #include <string.h>
+#endif
 
 #define kLongMax ((long)(~0UL >> 1))
 #define kLongMin (~kLongMax)
@@ -34,13 +36,17 @@ EXTERN_C size_t strlen(const char* whatToCheck);
 /// @brief strcmp definition in C++.
 EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight);
 
+#else
+
+#include <string.h>
+
+#endif // __ZBAOSLDR__
+
 #define SetMem(dst, c, sz)	  memset(dst, c, sz)
 #define MoveMem(dst, src, sz) memcpy(dst, src, sz)
 #define CopyMem(dst, src, sz) memcpy(dst, src, sz)
 #define StrLen(src)			  strlen(src)
 #define StrCmp(dst, src)	  strcmp(dst, src)
-
-#endif // __ZBAOSLDR__
 
 inline int IsSpace(int c)
 {

@@ -177,10 +177,12 @@ namespace Kernel::HAL
 		static Void Load(Register64& idt);
 		static Void Load(Ref<Register64>& idt);
 	};
+	
 	/***********************************************************************************/
 	/// @brief Is the current config SMP aware?
 	/// @return True if YES, False if not.
 	/***********************************************************************************/
+
 	Bool mp_is_smp(Void) noexcept;
 
 	/***********************************************************************************/
@@ -192,6 +194,9 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 
 	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
+
+	/***********************************************************************************/
+
 	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
 
 	/***********************************************************************************/

@@ -128,23 +128,26 @@ Boot::BFileReader::~BFileReader()
 */
 Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_address)
 {
+	UInt32 szInfo = sizeof(EfiFileInfo);
+
+	EfiFileInfo newPtrInfo{};
+
+	EfiGUID kFileInfoGUID = EFI_FILE_INFO_GUID;
+
+	if (mFile->GetInfo(mFile, &kFileInfoGUID, &szInfo, &newPtrInfo) == kEfiOk)
+	{
+		readUntil = newPtrInfo.FileSize;
+		mWriter.Write(L"BootZ: File size: ").Write(readUntil).Write("\r");
+	}
+
+	if (readUntil == 0)
+	{
+		mErrorCode = kNotSupported;
+		return;
+	}
+
 	if (mBlob == nullptr)
 	{
-		EfiFileInfo newPtrInfo{};
-		UInt32		szInfo = 0U;
-
-		EfiGUID kFileInfoGUID = EFI_FILE_INFO_GUID;
-
-		if (mFile->GetInfo(mFile, &kFileInfoGUID, &szInfo, &newPtrInfo) == kEfiOk)
-		{
-			if (newPtrInfo.FileSize < readUntil)
-				readUntil = newPtrInfo.FileSize;
-			else if (readUntil < 1)
-				readUntil = newPtrInfo.FileSize;
-
-			mWriter.Write(L"BootZ: File size: ").Write(readUntil).Write("\r");
-		}
-
 		if (!out_address)
 		{
 			if (auto err = BS->AllocatePool(EfiLoaderCode, readUntil, (VoidPtr*)&mBlob) !=
@@ -160,7 +163,7 @@ Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_
 		}
 	}
 
-	mErrorCode = kNotSupported;
+	mWriter.Write(L"*** Bytes to read: ").Write(readUntil).Write(L" ***\r");
 
 	UInt64 bufSize = chunkToRead;
 	UInt64 szCnt   = 0UL;
