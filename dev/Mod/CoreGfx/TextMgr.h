@@ -7,13 +7,13 @@
 #pragma once
 
 #include <NewKit/Defines.h>
-#include <Mod/GfxMgr/FBMgr.h>
+#include <Mod/CoreGfx/FBMgr.h>
 
-#define FONT_SIZE_X	   8
-#define FONT_SIZE_Y	   8
-#define FONT_NOF_CHARS 128
+#define kFontSizeX	   8
+#define kFontSizeY	   8
+#define kFontNOFChars 128
 
-inline const Kernel::UInt8 kFontBitmap[FONT_NOF_CHARS][FONT_SIZE_X] = {
+inline const Kernel::UInt8 kFontBitmap[kFontNOFChars][kFontSizeX] = {
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0000 (nul)
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0001
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0002
@@ -172,7 +172,7 @@ inline Kernel::Void fb_render_string(const Kernel::Char* text, Kernel::Int32 x_d
 {
 	for (Kernel::SizeT i = 0; text[i] != 0; ++i)
 	{
-		fb_render_string_for_bitmap(&kFontBitmap[text[i]][0], FONT_SIZE_X, FONT_SIZE_Y, x_dst, y_dst, color);
-		y_dst += FONT_SIZE_Y;
+		fb_render_string_for_bitmap(&kFontBitmap[text[i]][0], kFontSizeX, kFontSizeY, x_dst, y_dst, color);
+		y_dst += kFontSizeY;
 	}
 }

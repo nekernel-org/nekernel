@@ -154,34 +154,34 @@ namespace Kernel
 		return trait;
 	}
 
-	namespace Detail
+	namespace Detect
 	{
-		Void ioi_detect_drive(DriveTrait* trait)
+		Void io_detect_drive(DriveTrait& trait)
 		{
-			static EPM_BOOT_BLOCK block_struct;
+			EPM_BOOT_BLOCK block_struct;
 
-			trait->fPacket.fPacketLba	  = kEPMBootBlockLba;
-			trait->fPacket.fPacketSize	  = sizeof(EPM_BOOT_BLOCK);
-			trait->fPacket.fPacketContent = &block_struct;
+			trait.fPacket.fPacketLba	  = kEPMBootBlockLba;
+			trait.fPacket.fPacketSize	  = sizeof(EPM_BOOT_BLOCK);
+			trait.fPacket.fPacketContent = &block_struct;
 
-			rt_copy_memory((VoidPtr) "fs/detect-packet", trait->fPacket.fPacketMime,
+			rt_copy_memory((VoidPtr) "fs/detect-packet", trait.fPacket.fPacketMime,
 						   rt_string_len("fs/detect-packet"));
 
-			trait->fInit(&trait->fPacket);
+			trait.fInit(&trait.fPacket);
 
-			trait->fInput(&trait->fPacket);
+			trait.fInput(&trait.fPacket);
 
-			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait->fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
+			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait.fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
-				trait->fPacket.fPacketReadOnly = NO;
-				trait->fKind				   = kMassStorageDisc | kEPMDrive;
+				trait.fPacket.fPacketReadOnly = NO;
+				trait.fKind				   = kMassStorageDisc | kEPMDrive;
 
 				kcout << "Formatted Disk is EPM (Mass Storage)\r";
 			}
 			else
 			{
-				trait->fPacket.fPacketReadOnly = YES;
-				trait->fKind				   = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
+				trait.fPacket.fPacketReadOnly = YES;
+				trait.fKind				   = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
 
 				kcout << "Scheme Found: " << block_struct.Name << endl;
 
@@ -189,12 +189,12 @@ namespace Kernel
 					kcout << "Disk partition is unknown (Read Only)\r";
 			}
 
-			rt_copy_memory((VoidPtr) "*/*", trait->fPacket.fPacketMime,
+			rt_copy_memory((VoidPtr) "*/*", trait.fPacket.fPacketMime,
 						   rt_string_len("*/*"));
 
-			trait->fPacket.fPacketLba	  = 0;
-			trait->fPacket.fPacketSize	  = 0UL;
-			trait->fPacket.fPacketContent = nullptr;
+			trait.fPacket.fPacketLba	  = 0;
+			trait.fPacket.fPacketSize	  = 0UL;
+			trait.fPacket.fPacketContent = nullptr;
 		}
 	} // namespace Detail
 
@@ -202,9 +202,9 @@ namespace Kernel
 	/// @return the new drive. (returns kEPMDrive if EPM formatted)
 	DriveTrait io_construct_main_drive() noexcept
 	{
-		DriveTrait trait{};
+		DriveTrait trait;
 
-		const auto kMainDrive = "/Mount/OS:";
+		constexpr auto kMainDrive = "/Mount/OS:";
 
 		rt_copy_memory((VoidPtr)kMainDrive, trait.fName, rt_string_len(kMainDrive));
 
@@ -216,9 +216,9 @@ namespace Kernel
 		trait.fInit		 = io_drv_init;
 		trait.fDriveKind = io_drv_kind;
 
-		kcout << "Detecting partition scheme of: " << trait.fName << ".\r";
+		Detect::io_detect_drive(trait);
 
-		Detail::ioi_detect_drive(&trait);
+		kcout << "Detecting partition scheme of: " << trait.fName << ".\r";
 
 		return trait;
 	}

@@ -11,7 +11,7 @@
 #include <KernelKit/Semaphore.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Timer.h>
-#include <Mod/GfxMgr/TextMgr.h>
+#include <Mod/CoreGfx/TextMgr.h>
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 

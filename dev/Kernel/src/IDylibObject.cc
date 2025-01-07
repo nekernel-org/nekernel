@@ -7,7 +7,7 @@
  *  ========================================================
  */
 
-#include <KernelKit/IDLLObject.h>
+#include <KernelKit/IDylibObject.h>
 #include <KernelKit/DebugOutput.h>
 
 #include <KernelKit/UserProcessScheduler.h>

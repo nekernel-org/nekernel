@@ -11,7 +11,7 @@
 #include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <NetworkKit/IPC.h>
 #include <CFKit/Property.h>
-#include <Mod/GfxMgr/TextMgr.h>
+#include <Mod/CoreGfx/TextMgr.h>
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;

@@ -14,7 +14,7 @@
 #include <NewKit/Defines.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
-#include <KernelKit/IDLLObject.h>
+#include <KernelKit/IDylibObject.h>
 
 namespace Kernel
 {
@@ -22,14 +22,14 @@ namespace Kernel
 	 * @brief Shared Library class
 	 * Load library from this class
 	 */
-	class IPEFDLLObject final ZKA_DLL_OBJECT
+	class IPEFDylibObject final ZKA_DLL_OBJECT
 	{
 	public:
-		explicit IPEFDLLObject() = default;
-		~IPEFDLLObject()		 = default;
+		explicit IPEFDylibObject() = default;
+		~IPEFDylibObject()		 = default;
 
 	public:
-		ZKA_COPY_DEFAULT(IPEFDLLObject);
+		ZKA_COPY_DEFAULT(IPEFDylibObject);
 
 	private:
 		DLL_TRAITS* fMounted{nullptr};
@@ -97,10 +97,10 @@ namespace Kernel
 		PEFLoader* fLoader{nullptr};
 	};
 
-	typedef IPEFDLLObject* IDLL;
+	typedef IPEFDylibObject* IDylib;
 
-	EXTERN_C IDLL rtl_init_dylib(UserThread& header);
-	EXTERN_C Void rtl_fini_dylib(UserThread& header, IDLL lib, Bool* successful);
+	EXTERN_C IDylib rtl_init_dylib(UserThread& header);
+	EXTERN_C Void rtl_fini_dylib(UserThread& header, IDylib lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_H__ */

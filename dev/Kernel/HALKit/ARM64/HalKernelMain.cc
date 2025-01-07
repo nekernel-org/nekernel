@@ -6,7 +6,7 @@
 
 #include "HALKit/ARM64/ApplicationProcessor.h"
 #include <ArchKit/ArchKit.h>
-#include <Mod/GfxMgr/FBMgr.h>
+#include <Mod/CoreGfx/FBMgr.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/Heap.h>

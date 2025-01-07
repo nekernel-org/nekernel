@@ -1055,10 +1055,7 @@ namespace Kernel::Detail
 		kcout << "Creating A:\r";
 
 		kDiskMountpoint.A() = io_construct_main_drive();
-		kDiskMountpoint.B() = io_construct_blank_drive();
-		kDiskMountpoint.C() = io_construct_blank_drive();
-		kDiskMountpoint.D() = io_construct_blank_drive();
-
+		
 		kcout << "Creating A: [ OK ]\r";
 
 		return true;

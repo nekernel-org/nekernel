@@ -30,7 +30,7 @@ namespace Kernel
 {
 	//! @note Forward class declarations.
 
-	class IDLLObject;
+	class IDylibObject;
 	class UserThread;
 	class UserProcessTeam;
 	class UserProcessScheduler;
@@ -163,7 +163,7 @@ namespace Kernel
 		UInt8*			   StackReserve{nullptr};
 		UserProcessImage   Image{};
 		SizeT			   StackSize{kSchedMaxStackSz};
-		IDLLObject*		   DylibDelegate{nullptr};
+		IDylibObject*		   DylibDelegate{nullptr};
 		SizeT			   MemoryCursor{0UL};
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 		SizeT			   UsedMemory{0UL};

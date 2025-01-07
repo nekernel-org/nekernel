@@ -8,8 +8,8 @@
  */
 
 #include <BootKit/BootKit.h>
-#include <Mod/GfxMgr/FBMgr.h>
-#include <Mod/GfxMgr/TextMgr.h>
+#include <Mod/CoreGfx/FBMgr.h>
+#include <Mod/CoreGfx/TextMgr.h>
 #include <FirmwareKit/EFI.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/Handover.h>
@@ -19,7 +19,7 @@
 #include <NewKit/Macros.h>
 #include <NewKit/Ref.h>
 #include <BootKit/BootThread.h>
-#include <Mod/GfxMgr/FBMgr.h>
+#include <Mod/CoreGfx/FBMgr.h>
 
 EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {

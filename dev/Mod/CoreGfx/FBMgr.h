@@ -130,16 +130,18 @@
 #endif // __ZKA_AMD64__
 
 #ifndef GFX_MGR_ACCESSIBILITY_H
-#include <Mod/GfxMgr/AccessibilityMgr.h>
+#include <Mod/CoreGfx/AccessibilityMgr.h>
 #endif // ifndef GFX_MGR_ACCESSIBILITY_H
 
-namespace UI
+namespace FB
 {
+	struct FB_CONTROL_BLOCK;
+
 	inline void fb_clear_video() noexcept
 	{
 		fb_init();
 
-		FBDrawInRegion(fb_get_clear_clr(), UI::UIAccessibilty::Height(), UI::UIAccessibilty::Width(),
+		FBDrawInRegion(fb_get_clear_clr(), FB::UIAccessibilty::Height(), FB::UIAccessibilty::Width(),
 					   0, 0);
 
 		fb_clear();

@@ -164,6 +164,11 @@ namespace Kernel
 	/// @brief Fetches the main drive.
 	/// @return the new drive as a trait.
 	DriveTrait io_construct_main_drive(Void) noexcept;
+
+	namespace Detect
+	{
+		Void io_detect_drive(DriveTrait& trait);
+	}
 } // namespace Kernel
 
 #endif /* ifndef INC_DRIVE_MANAGER_H */

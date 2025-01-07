@@ -12,16 +12,16 @@
 #include <NewKit/Defines.h>
 #include <CompilerKit/CompilerKit.h>
 
-#define ZKA_DLL_OBJECT : public IDLLObject
+#define ZKA_DLL_OBJECT : public IDylibObject
 
 namespace Kernel
 {
 	/// @brief DLL class object. A handle to a shared library.
-	class IDLLObject
+	class IDylibObject
 	{
 	public:
-		explicit IDLLObject() = default;
-		virtual ~IDLLObject() = default;
+		explicit IDylibObject() = default;
+		virtual ~IDylibObject() = default;
 
 		struct DLL_TRAITS final
 		{
@@ -34,7 +34,7 @@ namespace Kernel
 			}
 		};
 
-		ZKA_COPY_DEFAULT(IDLLObject);
+		ZKA_COPY_DEFAULT(IDylibObject);
 
 		virtual DLL_TRAITS** GetAddressOf() = 0;
 		virtual DLL_TRAITS*	 Get()			= 0;

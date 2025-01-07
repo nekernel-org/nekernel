@@ -14,7 +14,7 @@
 
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
-#include <KernelKit/IPEFDLLObject.h>
+#include <KernelKit/IPEFDylibObject.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/Heap.h>
 #include <NewKit/KString.h>
@@ -252,7 +252,7 @@ namespace Kernel
 		{
 			Bool success = false;
 
-			rtl_fini_dylib(*this, reinterpret_cast<IPEFDLLObject*>(this->DylibDelegate), &success);
+			rtl_fini_dylib(*this, reinterpret_cast<IPEFDylibObject*>(this->DylibDelegate), &success);
 
 			if (!success)
 			{

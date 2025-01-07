@@ -9,11 +9,11 @@
 
 #include <NewKit/NewKit.h>
 #include <KernelKit/LPC.h>
-#include <Mod/GfxMgr/FBMgr.h>
-#include <Mod/GfxMgr/MathMgr.h>
+#include <Mod/CoreGfx/FBMgr.h>
+#include <Mod/CoreGfx/MathMgr.h>
 #include <ArchKit/ArchKit.h>
 
-namespace UI
+namespace FB
 {
 	using namespace Kernel;
 

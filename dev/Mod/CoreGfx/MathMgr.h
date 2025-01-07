@@ -18,12 +18,12 @@ namespace UI
 #endif
 
 	/// @brief Linear interpolation equation solver.
-	/// @param from where?
-	/// @param to to?
-	/// @param at which state we're at **to**.
+	/// @param from where to start
+	/// @param to to which value.
+	/// @param stat
+	/// @return Linear interop value.
 	inline fb_real_t fb_math_lerp(fb_real_t to, fb_real_t from, fb_real_t stat)
 	{
-		fb_real_t difference = to - from;
-		return from + (difference * stat);
+		return (from) + (to - from) * stat;
 	}
 } // namespace UI

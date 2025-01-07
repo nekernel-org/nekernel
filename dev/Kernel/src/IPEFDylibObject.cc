@@ -9,7 +9,7 @@
 
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/PEF.h>
-#include <KernelKit/IPEFDLLObject.h>
+#include <KernelKit/IPEFDylibObject.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/ThreadLocalStorage.h>
 #include <NewKit/Defines.h>
@@ -31,41 +31,41 @@
 using namespace Kernel;
 
 /***********************************************************************************/
-/// @file IPEFDLLObject.cc
-/// @brief PEF's DLL runtime.
+/// @file IPEFDylibObject.cc
+/// @brief PEF's Dylib runtime.
 /***********************************************************************************/
 
 /***********************************************************************************/
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C IDLL rtl_init_dylib(UserThread& header)
+EXTERN_C IDylib rtl_init_dylib(UserThread& thread)
 {
-	IDLL dll_obj = tls_new_class<IPEFDLLObject>();
+	IDylib dll_obj = tls_new_class<IPEFDylibObject>();
 
 	if (!dll_obj)
 	{
-		header.Crash();
+		thread.Crash();
 		return nullptr;
 	}
 
-	dll_obj->Mount(tls_new_class<IPEFDLLObject::DLL_TRAITS>());
+	dll_obj->Mount(new IPEFDylibObject::DLL_TRAITS());
 
 	if (!dll_obj->Get())
 	{
 		tls_delete_class(dll_obj);
-		header.Crash();
+		thread.Crash();
 
 		return nullptr;
 	}
 
 	dll_obj->Get()->ImageObject =
-		header.Image.fBlob;
+		thread.Image.fBlob;
 
 	if (!dll_obj->Get()->ImageObject)
 	{
 		tls_delete_class(dll_obj);
-		header.Crash();
+		thread.Crash();
 
 		return nullptr;
 	}
@@ -83,7 +83,7 @@ EXTERN_C IDLL rtl_init_dylib(UserThread& header)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_dylib(UserThread& header, IDLL dll_obj, Bool* successful)
+EXTERN_C Void rtl_fini_dylib(UserThread& thread, IDylib dll_obj, Bool* successful)
 {
 	MUST_PASS(successful);
 
@@ -91,7 +91,7 @@ EXTERN_C Void rtl_fini_dylib(UserThread& header, IDLL dll_obj, Bool* successful)
 	if (dll_obj == nullptr)
 	{
 		*successful = false;
-		header.Crash();
+		thread.Crash();
 	}
 
 	delete dll_obj->Get();
