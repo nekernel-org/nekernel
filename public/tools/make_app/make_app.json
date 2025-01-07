@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["./"],
   "sources_path": ["src/CLI.cc"],
-  "output_name": "make_container",
+  "output_name": "./dist/make_app",
   "cpp_macros": [
     "kMKFVersion=0x0100",
     "kMKFVersionHighest=0x0100",

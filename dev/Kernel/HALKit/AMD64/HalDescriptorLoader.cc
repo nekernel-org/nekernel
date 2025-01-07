@@ -7,7 +7,7 @@
 #include <ArchKit/ArchKit.h>
 #include <HALKit/AMD64/Processor.h>
 
-#define kPITDefaultTicks (100U)
+#define kPITDefaultTicks (1000U)
 
 namespace Kernel::HAL
 {
@@ -26,11 +26,11 @@ namespace Kernel::HAL
 
 			// Configure PIT to receieve scheduler interrupts.
 
-			UInt16 cCommDivisor = kPITFrequency / ticks; // 100 Hz.
+			UInt16 kPITCommDivisor = kPITFrequency / ticks; // 100 Hz.
 
 			HAL::rt_out8(kPITControlPort, 0x36);						// Command to PIT
-			HAL::rt_out8(kPITChannel0Port, cCommDivisor & 0xFF);		// Send low byte
-			HAL::rt_out8(kPITChannel0Port, (cCommDivisor >> 8) & 0xFF); // Send high byte
+			HAL::rt_out8(kPITChannel0Port, kPITCommDivisor & 0xFF);		// Send low byte
+			HAL::rt_out8(kPITChannel0Port, (kPITCommDivisor >> 8) & 0xFF); // Send high byte
 
 			hal_clear_irq_mask(32);
 		}

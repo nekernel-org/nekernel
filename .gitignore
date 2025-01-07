@@ -10,7 +10,7 @@ xcuserdata/
 */xcuserdata/*
 *.xcworkspacedata
 
-public/tools/make_container
+public/tools/make_app/dist/make_app
 
 minoskrnl/minoskrnl.xcodeproj/project.xcworkspace/xcshareddata/
 

@@ -37,18 +37,18 @@ Boolean drv_std_wait_io(UInt16 IO)
 		rt_in8(IO + ATA_REG_STATUS);
 
 ATAWaitForIO_Retry:
-	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
+	auto rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if ((statRdy & ATA_SR_BSY))
+	if ((rdy & ATA_SR_BSY))
 		goto ATAWaitForIO_Retry;
 
 ATAWaitForIO_Retry2:
-	statRdy = rt_in8(IO + ATA_REG_STATUS);
+	rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if (statRdy & ATA_SR_ERR)
+	if (rdy & ATA_SR_ERR)
 		return false;
 
-	if (!(statRdy & ATA_SR_DRDY))
+	if (!(rdy & ATA_SR_DRDY))
 		goto ATAWaitForIO_Retry2;
 
 	return true;
@@ -74,16 +74,16 @@ ATAInit_Retry:
 
 	// identify until it's good
 
-	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
+	auto rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if (statRdy & ATA_SR_ERR)
+	if (rdy & ATA_SR_ERR)
 	{
 		kcout << "ATA Error, aborting...\r";
 
 		return false;
 	}
 
-	if ((statRdy & ATA_SR_BSY))
+	if ((rdy & ATA_SR_BSY))
 	{
 		kcout << "Retrying as controller is busy...\r";
 		goto ATAInit_Retry;
