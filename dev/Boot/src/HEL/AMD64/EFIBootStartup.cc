@@ -294,32 +294,13 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		EFI::Stop();
 	}
 
-	Boot::BFileReader ttf_font(L"TQ\\OSFont.ttf", image_handle);
-
-	ttf_font.ReadAll(0);
-
-	if (ttf_font.Blob())
-	{
-		handover_hdr->f_KernelImage = reader_kernel.Blob();
-		handover_hdr->f_KernelSz	= reader_kernel.Size();
-		handover_hdr->f_FontImage	= ttf_font.Blob();
-		handover_hdr->f_FontSz		= ttf_font.Size();
-	}
-	else
-	{
-		fb_init();
-		FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_HEIGHT, ZKA_NO_DISK_WIDTH, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
-
-		EFI::Stop();
-	}
-
 	EFI::ExitBootServices(map_key, image_handle);
 
 	// ---------------------------------------------------- //
 	// Finally load the OS kernel.
 	// ---------------------------------------------------- //
 
-	kernel_thread->Start(handover_hdr, NO);
+	kernel_thread->Start(handover_hdr, YES);
 
 	CANT_REACH();
 }

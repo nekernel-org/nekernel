@@ -26,8 +26,7 @@ endif
 
 BIOS=OVMF.fd
 IMG=epm-master-1.img
-IMG_2=epm-slave.img
-IMG_3=epm-master-2.img
+IMG_2=epm-master-2.img
 
 EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 			-bios $(BIOS) -drive \
@@ -83,7 +82,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -hda $(IMG)
+	$(EMU) $(EMU_FLAGS) -hdd $(IMG_2) -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0
 
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata:

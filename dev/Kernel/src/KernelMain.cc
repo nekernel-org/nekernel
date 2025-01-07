@@ -30,6 +30,7 @@ namespace Kernel::Detail
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
 	class NeFilesystemInstaller final
 	{
+	private:
 		Kernel::NeFileSystemParser* mNeFS{nullptr};
 		Kernel::NeFileSystemJournal mJournal;
 
