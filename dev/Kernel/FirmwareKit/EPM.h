@@ -50,7 +50,7 @@
 
 ///! @brief partition must start at this address.
 ///! Anything below is reserved for Data backup by the Main OS.
-#define kEPMPartBlockLba (sizeof(EPM_BOOT_BLOCK))
+#define kEPMPartBlockLba (sizeof(EPM_PART_BLOCK))
 
 ///! @brief Current EPM revision.
 #define kEPMRevisionBcd (0x0100)
@@ -61,7 +61,7 @@
 #define kEPMReserveLen (401)
 
 struct EPM_GUID;
-struct EPM_BOOT_BLOCK;
+struct EPM_PART_BLOCK;
 
 /* The first 0 > 128 addresses of a disk contains these headers. */
 
@@ -78,7 +78,7 @@ typedef struct EPM_GUID
  * @brief The EPM boot block.
  * @note NumBlock and LbaStart are ignored on some platforms.
  */
-struct PACKED EPM_BOOT_BLOCK
+struct PACKED EPM_PART_BLOCK
 {
 	Kernel::Char  Magic[kEPMMagicLength];
 	Kernel::Char  Name[kEPMNameLength];
@@ -107,6 +107,6 @@ enum
 	kEPMInvalidOS = 0xff,
 };
 
-typedef struct EPM_BOOT_BLOCK BOOT_BLOCK_STRUCT;
+typedef struct EPM_PART_BLOCK BOOT_BLOCK_STRUCT;
 
 #endif // ifndef FIRMWAREKIT_EPM_H

@@ -158,10 +158,10 @@ namespace Kernel
 	{
 		Void io_detect_drive(DriveTrait& trait)
 		{
-			EPM_BOOT_BLOCK block_struct;
+			EPM_PART_BLOCK block_struct;
 
 			trait.fPacket.fPacketLba	  = kEPMBootBlockLba;
-			trait.fPacket.fPacketSize	  = sizeof(EPM_BOOT_BLOCK);
+			trait.fPacket.fPacketSize	  = sizeof(EPM_PART_BLOCK);
 			trait.fPacket.fPacketContent = &block_struct;
 
 			rt_copy_memory((VoidPtr) "fs/detect-packet", trait.fPacket.fPacketMime,

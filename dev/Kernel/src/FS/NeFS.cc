@@ -519,7 +519,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 		while (drive->fPacket.fPacketGood)
 		{
 			drive->fPacket.fPacketContent = buf;
-			drive->fPacket.fPacketSize	  = sizeof(EPM_BOOT_BLOCK);
+			drive->fPacket.fPacketSize	  = sizeof(EPM_PART_BLOCK);
 			drive->fPacket.fPacketLba	  = outEpmLba;
 
 			drive->fInput(&drive->fPacket);
@@ -535,7 +535,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 				epm_boot->NumBlocks = cnt;
 
 				drive->fPacket.fPacketContent = buf_epm;
-				drive->fPacket.fPacketSize	  = sizeof(EPM_BOOT_BLOCK);
+				drive->fPacket.fPacketSize	  = sizeof(EPM_PART_BLOCK);
 				drive->fPacket.fPacketLba	  = outEpmLba;
 
 				drive->fOutput(&drive->fPacket);
