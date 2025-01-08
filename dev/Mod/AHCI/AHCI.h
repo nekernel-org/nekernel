@@ -13,10 +13,13 @@
 
 #pragma once
 
+#if defined(__AHCI__)
+
 #include <NewKit/Defines.h>
 #include <Mod/ACPI/ACPI.h>
 
-/// @note Forward declarations of structs.
+/// @file AHCI.h
+/// @brief AHCI support.
 
 #define kAHCISectorSize (512)
 
@@ -328,8 +331,6 @@ typedef struct HbaCmdTbl final
 	struct HbaPrdtEntry PrdtEntries[1]; // Physical region descriptor table entries, 0 ~ 65535
 } HbaCmdTbl;
 
-#if defined(__AHCI__)
-
 /// @brief Initializes an AHCI disk.
 /// @param PortsImplemented the amount of port that have been detected.
 /// @return
@@ -337,26 +338,26 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented);
 
 Kernel::Boolean drv_std_detected(Kernel::Void);
 
-/// @brief Read from disk.
-/// @param Lba
-/// @param Buf
-/// @param SectorSz
-/// @param Size
+/// @brief Read from AHCI disk.
+/// @param lba
+/// @param buf
+/// @param sector_sz
+/// @param buf_sz
 /// @return
 Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buf, Kernel::SizeT sector_sz, Kernel::SizeT buf_sz);
 
-/// @brief Write to disk.
-/// @param Lba
-/// @param Buf
-/// @param SectorSz
-/// @param Size
+/// @brief Write to AHCI disk.
+/// @param lba
+/// @param buf
+/// @param sector_sz
+/// @param buf_sz
 /// @return
 Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buf, Kernel::SizeT sector_sz, Kernel::SizeT buf_sz);
 
-/// @brief get sector count.
+/// @brief Gets the sector count from AHCI disk.
 Kernel::SizeT drv_get_sector_count();
 
-/// @brief get device size.
+/// @brief Gets the AHCI disk size.
 Kernel::SizeT drv_get_size();
 
 #endif // ifdef __AHCI__

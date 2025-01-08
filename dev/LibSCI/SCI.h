@@ -244,13 +244,18 @@ IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr 
 // Power API.
 // ------------------------------------------------------------------------------------------ //
 
-IMPORT_C Void PwrShutdownMachine(const Char* _Input msg, _Input SInt32 code);
+enum
+{
+    kPowerCodeShutdown,
+    kPowerCodeReboot,
+    kPowerCodeSleep,
+    kPowerCodeWake,
+    kPowerCodeCount,
+};
 
-IMPORT_C Void PwrRebootMachine(const Char* _Input msg, _Input SInt32 code);
+IMPORT_C SInt32 PwrReadCode(_Output SInt32& code);
 
-IMPORT_C Void PwrSleepMachine(const Char* _Input msg, _Input SInt32 code);
-
-IMPORT_C SInt32 PwrGetCode(_Output SInt32& code);
+IMPORT_C SInt32 PwrSendCode(_Output SInt32& code);
 
 // ------------------------------------------------------------------------------------------ //
 // CD-ROM API.

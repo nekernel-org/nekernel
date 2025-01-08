@@ -12,9 +12,10 @@
 #include <NewKit/KString.h>
 #include <NewKit/Defines.h>
 
-///! We got the Super and guest user, both used to make authorization operations on the OS.
-#define kSuperUser "OS AUTHORITY/SUPER"
-#define kGuestUser "OS AUTHORITY/GUEST"
+///! We got the Super, standard user (%s format) and guest user, all are used to make authorization operations on the OS.
+#define kSuperUser "OS AUTHORITY/SUPER/%s"
+#define kGuestUser "OS AUTHORITY/GUEST/%s"
+#define kFmtUser "OS AUTHORITY/STD/%s"
 
 #define kUsersDir "/Users/"
 
@@ -36,18 +37,19 @@ namespace Kernel
 
 	typedef Char* usr_public_key_kind;
 
+	/// @brief User class.
 	class User final
 	{
 	public:
 		explicit User() = delete;
 
-		User(const Int32& sel, const Char* userName);
-		User(const UserRingKind& kind, const Char* userName);
+		User(const Int32& sel, const Char* username);
+		User(const UserRingKind& kind, const Char* username);
 
 		~User();
 
 	public:
-		ZKA_COPY_DEFAULT(User)
+		ZKA_COPY_DEFAULT(User);
 
 	public:
 		bool operator==(const User& lhs);
