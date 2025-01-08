@@ -44,8 +44,8 @@ namespace Kernel::Detail
 			{
 				const SizeT kFolderCount			 = 8;
 				const Char* kFolderStr[kFolderCount] = {
-					"/", "/Boot/", "/System/", "/Support/", "/Applications/",
-					"/Users/", "/Library/", "/Mount/"};
+					"/", "/boot/", "/sys/", "/apps_support/", "/apps/",
+					"/usr/", "/lib/", "/mnt/"};
 
 				for (Kernel::SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
 				{
@@ -75,7 +75,7 @@ namespace Kernel::Detail
 				xml += "<LOG_XML>Formatted Filesystem</LOG_XML>";
 
 				KString name;
-				name += "FORMAT";
+				name += "NeFS Format System";
 
 				mJournal.CommitJournal(mNeFS, xml, name);
 				mJournal.ReleaseJournal();

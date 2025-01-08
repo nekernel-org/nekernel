@@ -17,7 +17,7 @@
 #define kGuestUser "OS AUTHORITY/GUEST/%s"
 #define kFmtUser "OS AUTHORITY/STD/%s"
 
-#define kUsersDir "/Users/"
+#define kUsersDir "/usr/"
 
 #define kMaxUserNameLen	 (255U)
 #define kMaxUserTokenLen (255U)

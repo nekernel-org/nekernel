@@ -15,8 +15,6 @@
  *
  */
 
-#include "KernelKit/DebugOutput.h"
-#include "NewKit/Defines.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -28,11 +26,11 @@
 
 #ifdef __AHCI__
 
-#define HBA_ERR_TFE	  (1 << 30)
-#define HBA_PxCMD_ST  0x0001
-#define HBA_PxCMD_FRE 0x0010
-#define HBA_PxCMD_FR  0x4000
-#define HBA_PxCMD_CR  0x8000
+#define kHBAErrTaskFile	  (1 << 30)
+#define kHBAPxCmdST  0x0001
+#define kHBAPxCmdFre 0x0010
+#define kHBAPxCmdFR  0x4000
+#define kHBAPxCmdCR  0x8000
 
 #define kSataLBAMode (1 << 6)
 
@@ -122,14 +120,14 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 						kSATAPortIdx = ahci_index;
 						kSATAPort	 = mem_ahci;
 
-						kSATAPort->Ports[kSATAPortIdx].Cmd &= ~HBA_PxCMD_ST;
-						kSATAPort->Ports[kSATAPortIdx].Cmd &= ~HBA_PxCMD_FRE;
+						kSATAPort->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdST;
+						kSATAPort->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdFre;
 
 						while (YES)
 						{
-							if (kSATAPort->Ports[kSATAPortIdx].Cmd & HBA_PxCMD_FR)
+							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdFR)
 								continue;
-							if (kSATAPort->Ports[kSATAPortIdx].Cmd & HBA_PxCMD_CR)
+							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
 								continue;
 
 							break;
@@ -159,12 +157,12 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 							rt_set_memory((VoidPtr)(UIntPtr)cmdheader[i].Ctba, 0, 256);
 						}
 
-						while (kSATAPort->Ports[kSATAPortIdx].Cmd & HBA_PxCMD_CR)
+						while (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
 						{
 						}
 
-						kSATAPort->Ports[kSATAPortIdx].Cmd |= HBA_PxCMD_FRE;
-						kSATAPort->Ports[kSATAPortIdx].Cmd |= HBA_PxCMD_ST;
+						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
+						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
 
 						drv_calculate_disk_geometry();
 
@@ -284,14 +282,14 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 		kcout << "waiting for slot to be ready\r\n";
 	}
 
-	kSATAPort->Is = 0xFFFFFFFF;
+	kSATAPort->Is = -1;
 	kSATAPort->Ports[kSATAPortIdx].Ci |= 1 << slot;
 
 	while (kSATAPort->Ports[kSATAPortIdx].Ci & (1 << slot))
 	{
 		kcout << Kernel::number(slot) << endl;
 
-		if (kSATAPort->Is & (1 << 30)) // check for task file error.
+		if (kSATAPort->Is & kHBAErrTaskFile) // check for task file error.
 		{
 			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 			return;

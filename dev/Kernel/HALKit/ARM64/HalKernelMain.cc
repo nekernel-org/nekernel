@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-#include "HALKit/ARM64/ApplicationProcessor.h"
 #include <ArchKit/ArchKit.h>
 #include <Mod/CoreGfx/FBMgr.h>
 #include <FirmwareKit/Handover.h>

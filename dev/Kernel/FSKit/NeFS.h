@@ -412,11 +412,13 @@ namespace Kernel
 
 			parser->CreateFork(mNode, new_fork);
 
+			kcout << "Commit: " << xml_data.Data() << "\r\nTo: " << journal_name.Data() << endl;
+
 			return parser->WriteCatalog(mNode, YES, xml_data.Data(), xml_data.Length(), journal_name.CData());
 		}
 
 	private:
-		Char mStamp[255] = {"/Boot/Journal" kNeFSJournalExt};
+		Char mStamp[255] = {"/system/zka_journal" kNeFSJournalExt};
 	};
 
 	namespace Detail
