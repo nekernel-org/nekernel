@@ -248,7 +248,7 @@ namespace Kernel
 		this->Image.fCode = nullptr;
 		this->StackFrame  = nullptr;
 
-		if (this->Kind == kExectuableDLLKind)
+		if (this->Kind == kExectuableDylibKind)
 		{
 			Bool success = false;
 
@@ -329,14 +329,28 @@ namespace Kernel
 		HAL::mm_map_page((VoidPtr)process.StackFrame, flags);
 #endif // __ZKA_VIRTUAL_MEMORY_SUPPORT__
 
-		// Create heap according to type of process.
-		if (process.Kind == UserThread::kExectuableDLLKind)
+		// React according to process kind.
+		switch (process.kind) 
+		{
+		case UserThread::kExectuableDylibKind:
 		{
 			process.DylibDelegate = rtl_init_dylib(process);
 			MUST_PASS(process.DylibDelegate);
 		}
+		default:
+		{
+			kcout << "Unknown process kind: " << number(process.Kind) << endl;
+			break;
+		}
+		}
 
 		process.StackReserve = new UInt8[process.StackSize];
+
+		if (!process.StackReserve)
+		{
+			process.Crash();
+			return kErrorProcessFault;
+		}
 
 #ifdef __ZKA_VIRTUAL_MEMORY_SUPPORT__
 		flags = HAL::kMMFlagsPresent;
@@ -345,12 +359,6 @@ namespace Kernel
 
 		HAL::mm_map_page((VoidPtr)process.StackReserve, flags);
 #endif // __ZKA_VIRTUAL_MEMORY_SUPPORT__
-
-		if (!process.StackReserve)
-		{
-			process.Crash();
-			return kErrorProcessFault;
-		}
 
 		process.ProcessParentTeam = &mTeam;
 

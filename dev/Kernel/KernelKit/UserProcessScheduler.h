@@ -195,7 +195,7 @@ namespace Kernel
 		{
 			kInvalidExecutableKind,
 			kExectuableKind,
-			kExectuableDLLKind,
+			kExectuableDylibKind,
 			kExectuableKindCount,
 		};
 
