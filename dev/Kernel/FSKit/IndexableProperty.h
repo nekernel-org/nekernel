@@ -31,7 +31,7 @@ namespace Kernel
 				: Property()
 			{
 				Kernel::KString strProp(kMaxPropLen);
-				strProp += "/Properties/Indexable";
+				strProp += "/prop/indexable";
 
 				this->GetKey() = strProp;
 			}

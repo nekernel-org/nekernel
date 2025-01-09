@@ -12,7 +12,8 @@
 #include <NewKit/KString.h>
 #include <NewKit/Defines.h>
 
-///! We got the Super, standard user (%s format) and guest user, all are used to make authorization operations on the OS.
+///! We got the Super, standard user (%s format) and guest user,
+///! all are used to make authorization operations on the OS.
 #define kSuperUser "OS AUTHORITY/SUPER/%s"
 #define kGuestUser "OS AUTHORITY/GUEST/%s"
 #define kFmtUser "OS AUTHORITY/STD/%s"
@@ -35,7 +36,7 @@ namespace Kernel
 		kRingCount	   = 3,
 	};
 
-	typedef Char* usr_public_key_kind;
+	typedef Char* UserPublicKey;
 
 	/// @brief User class.
 	class User final
@@ -69,16 +70,16 @@ namespace Kernel
 		Bool IsSuperUser() noexcept;
 
 		/// @brief Saves a password from the public key.
-		Bool Save(const usr_public_key_kind password) noexcept;
+		Bool Save(const UserPublicKey password) noexcept;
 
 		/// @brief Checks if a password matches the **password**.
 		/// @param password the password to check.
-		Bool Matches(const usr_public_key_kind password) noexcept;
+		Bool Matches(const UserPublicKey password) noexcept;
 
 	private:
 		UserRingKind mUserRing{UserRingKind::kRingStdUser};
 		Char		 mUserName[kMaxUserNameLen]	  = {0};
-		Char		 mUserToken[kMaxUserTokenLen] = {0};
+		Char		 mUserKey[kMaxUserTokenLen] = {0};
 	};
 } // namespace Kernel
 

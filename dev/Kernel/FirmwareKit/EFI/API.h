@@ -36,10 +36,10 @@ namespace EFI
 	/// @return
 	inline Void Stop() noexcept
 	{
-		while (1)
+		while (YES)
 		{
-			rt_hlt();
 			rt_cli();
+			rt_hlt();
 		}
 	}
 
@@ -54,14 +54,6 @@ Bascially frees everything we have in the EFI side.
 
 		ST->BootServices->ExitBootServices(ImageHandle, MapKey);
 	}
-
-	enum
-	{
-		kPartEPM,
-		kPartGPT,
-		kPartMBR,
-		kPartCnt,
-	};
 
 	inline UInt32 Platform() noexcept
 	{
@@ -78,10 +70,10 @@ Bascially frees everything we have in the EFI side.
 	{
 		ST->ConOut->OutputString(ST->ConOut, L"\r*** STOP ***\r");
 
-		ST->ConOut->OutputString(ST->ConOut, L"*** Error: ");
+		ST->ConOut->OutputString(ST->ConOut, L"*** ERROR: ");
 		ST->ConOut->OutputString(ST->ConOut, ErrorCode);
 
-		ST->ConOut->OutputString(ST->ConOut, L", Reason: ");
+		ST->ConOut->OutputString(ST->ConOut, L" ***\r *** REASON: ");
 		ST->ConOut->OutputString(ST->ConOut, Reason);
 
 		ST->ConOut->OutputString(ST->ConOut, L" ***\r");

@@ -272,6 +272,8 @@ namespace Kernel
 		ProcessID									 mProcessCount{0};
 	};
 
+	typedef Array<UserThread, kSchedProcessLimitPerTeam> UserThreadArray;
+
 	using UserProcessRef = UserThread&;
 
 	/// @brief Process scheduler class.

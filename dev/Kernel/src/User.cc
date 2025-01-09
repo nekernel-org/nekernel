@@ -78,7 +78,7 @@ namespace Kernel
 	////////////////////////////////////////////////////////////
 	User::~User() = default;
 
-	Bool User::Save(const usr_public_key_kind password_to_fill) noexcept
+	Bool User::Save(const UserPublicKey password_to_fill) noexcept
 	{
 		if (!password_to_fill ||
 			*password_to_fill == 0)
@@ -104,7 +104,7 @@ namespace Kernel
 
 		// then store password.
 
-		rt_copy_memory(password, this->mUserToken, rt_string_len(password_to_fill));
+		rt_copy_memory(password, this->mUserKey, rt_string_len(password_to_fill));
 
 		delete[] password;
 		password = nullptr;
@@ -114,7 +114,7 @@ namespace Kernel
 		return Yes;
 	}
 
-	Bool User::Matches(const usr_public_key_kind password_to_fill) noexcept
+	Bool User::Matches(const UserPublicKey password_to_fill) noexcept
 	{
 		if (!password_to_fill ||
 			*password_to_fill)
@@ -141,7 +141,7 @@ namespace Kernel
 		kcout << "User::Matches: Validating hashed passwords...\r";
 
 		// now check if the password matches.
-		if (rt_string_cmp(password, this->mUserToken, rt_string_len(this->mUserToken)) == 0)
+		if (rt_string_cmp(password, this->mUserKey, rt_string_len(this->mUserKey)) == 0)
 		{
 			kcout << "User::Matches: Password is valid.\r";
 			return Yes;

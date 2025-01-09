@@ -19,12 +19,12 @@ int main(int argc, char* argv[])
 	{
 		if (strcmp(argv[i], "-h") == 0)
 		{
-			std::cout << "make_container: Framework/Application Creation Tool.\n";
-			std::cout << "make_container: © Theater Quality Corp, All rights reserved.\n";
+			std::cout << "make_app: Framework/Application Creation Tool.\n";
+			std::cout << "make_app: © Theater Quality Corp, All rights reserved.\n";
 
-			std::cout << "make_container: -app: Application directory.\n";
-			std::cout << "make_container: -steps: Steps directory.\n";
-			std::cout << "make_container: -fwrk: Framework directory.\n";
+			std::cout << "make_app: -app: Application directory.\n";
+			std::cout << "make_app: -steps: Steps directory.\n";
+			std::cout << "make_app: -fwrk: Framework directory.\n";
 
 			return EXIT_SUCCESS;
 		}

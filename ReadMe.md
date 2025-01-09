@@ -4,11 +4,10 @@
 
 ZkaOS is designed for real time environements (such as servers or workstations.)
 
-## Installation:
+## Requirements
 
 - MinGW/GCC for the Kernel, Bootloader and the LibSCI.
 - Netwide Assembler, for the x64 assemblies if needed.
-- The ToolchainKit, to embed a C++ suite in the OS.
 
 ### Installation
 
