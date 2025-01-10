@@ -330,7 +330,7 @@ namespace Kernel
 #endif // __ZKA_VIRTUAL_MEMORY_SUPPORT__
 
 		// React according to process kind.
-		switch (process.kind) 
+		switch (process.Kind) 
 		{
 		case UserThread::kExectuableDylibKind:
 		{
@@ -439,9 +439,9 @@ namespace Kernel
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
-			auto process = mTeam.AsArray()[process_index];
+			auto& process = mTeam.AsArray()[process_index];
 
-			//! check if process needs to be scheduled.
+			//! check if the process needs to be run.
 			if (UserProcessHelper::CanBeScheduled(process))
 			{
 				// Set current process header.
@@ -455,7 +455,7 @@ namespace Kernel
 				if (!UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
 											   process.ProcessId))
 				{
-					kcout << "Invalid process.\r";
+					kcout << "Invalid process (UH OH)\r";
 					process.Crash();
 				}
 			}

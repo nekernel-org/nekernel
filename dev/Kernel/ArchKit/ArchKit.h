@@ -43,9 +43,10 @@ namespace Kernel
 	/// @param base the base address.
 	/// @param reg the register.
 	/// @param value the write to write on it.
-	inline Void ke_dma_write(UInt32 base, UInt32 reg, UInt32 value) noexcept
+	template <typename WordLength>
+	inline Void ke_dma_write(WordLength base, WordLength reg, WordLength value) noexcept
 	{
-		*(volatile UInt32*)((UInt64)base + reg) = value;
+		*(volatile WordLength*)((UInt64)base + reg) = value;
 	}
 
 	/// @brief read from mapped memory register.

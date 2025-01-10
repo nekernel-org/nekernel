@@ -22,7 +22,7 @@ namespace Kernel
 	/***********************************************************************************/
 
 	EXTERN Bool	  hal_check_stack(HAL::StackFramePtr frame_ptr);
-	EXTERN_C Bool mp_register_process(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, ProcessID pid);
+	EXTERN_C Bool mp_register_process(HAL::StackFramePtr frame, ProcessID pid);
 
 	STATIC HardwareThreadScheduler kHardwareThreadScheduler;
 
@@ -109,12 +109,15 @@ namespace Kernel
 	/// @retval true stack was changed, code is running.
 	/// @retval false stack is invalid, previous code is running.
 	/***********************************************************************************/
-	Bool HardwareThread::Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid)
+	Bool HardwareThread::Switch(VoidPtr image_ptr, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid)
 	{
 		this->fStack	 = frame;
 		this->fSourcePID = pid;
 
-		Bool ret = mp_register_process(image, stack_ptr, fStack, this->fSourcePID);
+		fStack->BP = reinterpret_cast<UIntPtr>(image_ptr);
+		fStack->SP = reinterpret_cast<UIntPtr>(stack_ptr);
+
+		Bool ret = mp_register_process(fStack, this->fSourcePID);
 
 		if (ret)
 			this->Busy(YES);

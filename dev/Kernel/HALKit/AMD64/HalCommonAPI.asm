@@ -78,3 +78,64 @@ mp_system_call_handler:
     pop r8
 
     o64 sysret
+
+[bits 16]
+
+section .text
+global hal_ap_start
+
+hal_ap_start:
+    mov ax, 0x0      
+    mov ss, ax
+    mov esp, 0x7000  
+
+    cli    
+    mov eax, cr0
+    or eax, 1        
+    mov cr0, eax
+    jmp .flush       
+.flush:
+    mov ax, 0x10     
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
+    mov eax, cr4
+    or eax, 1 << 5   
+    mov cr4, eax
+
+    mov eax, cr3
+    mov cr3, eax     
+
+    mov ecx, 0xC0000080 
+    rdmsr
+    or eax, 1         
+    wrmsr
+
+    mov eax, cr0
+    or eax, (1 << 31)
+    mov cr0, eax
+
+    jmp 0x08:hal_ap_64bit_entry
+
+[bits 64]
+
+; 64-bit entry point
+section .text
+global hal_ap_64bit_entry
+hal_ap_64bit_entry:
+    mov ax, 0x10     
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
+    mov rsp, 0x8001000 ; Stack Address for scheduler AP.
+
+    jmp hal_ap_64bit_entry_loop
+
+hal_ap_64bit_entry_loop:
+    jmp $

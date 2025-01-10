@@ -17,8 +17,6 @@
 
 #define kApicSignature "APIC"
 
-#define kApicBaseAddress (0xFEE00000)
-
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
 #define kAPIC_SIPI_Vector 0x00500
@@ -27,8 +25,6 @@
 #define kAPIC_BASE_MSR		  0x1B
 #define kAPIC_BASE_MSR_BSP	  0x100
 #define kAPIC_BASE_MSR_ENABLE 0x800
-
-#define kSMPMax (32U)
 
 /// @note: _hal_switch_context is internal
 
@@ -41,6 +37,12 @@
 namespace Kernel::HAL
 {
 	struct MADT_TABLE;
+	struct PROCESS_CONTROL_BLOCK;
+
+	struct PROCESS_CONTROL_BLOCK final
+	{
+		HAL::StackFramePtr mFrame;
+	};
 
 	EXTERN_C Void _hal_spin_core(Void);
 
@@ -48,14 +50,11 @@ namespace Kernel::HAL
 	STATIC Bool				  kSMPAware	 = false;
 	STATIC Int64			  kSMPCount	 = 0;
 
-	STATIC Int32  kSMPInterrupt			= 0;
-	STATIC UInt64 kAPICLocales[kSMPMax] = {0};
-	STATIC struct
-	{
-		UInt64 mAddress;
-		BOOL   mUsed;
-	} kAPICAddresses[kSMPMax];
-	STATIC VoidPtr kRawMADT = nullptr;
+	STATIC UIntPtr kApicBaseAddress = 0UL;
+
+	STATIC Int32   kSMPInterrupt						   = 0;
+	STATIC UInt64  kAPICLocales[kSchedProcessLimitPerTeam] = {0};
+	STATIC VoidPtr kRawMADT								   = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
 	struct MADT_TABLE final : public SDT
@@ -113,35 +112,30 @@ namespace Kernel::HAL
 
 	/***********************************************************************************/
 	/// @brief Send IPI command to APIC.
-	/// @param apicId programmable interrupt controller id.
+	/// @param apic_id programmable interrupt controller id.
 	/// @param vector vector interrupt.
-	/// @param targetAddress target APIC adress.
+	/// @param target target APIC adress.
 	/// @return
 	/***********************************************************************************/
 
-	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
+	Void hal_send_start_ipi(UInt32 apic_id, UInt32 vector, UInt32 target)
 	{
-		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, (apicId << 24));
-		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
+		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, (apic_id << 24));
+		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
 	}
 
 	/***********************************************************************************/
 	/// @brief Send end IPI for CPU.
-	/// @param apicId
+	/// @param apic_id
 	/// @param vector
-	/// @param targetAddress
+	/// @param target
 	/// @return
 	/***********************************************************************************/
-	Void hal_send_sipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress)
+	Void hal_send_sipi(UInt32 apic_id, UInt8 vector, UInt32 target)
 	{
-		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_High, (apicId << 24));
-		Kernel::ke_dma_write(targetAddress, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
+		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, (apic_id << 24));
+		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
 	}
-
-	struct PROCESS_CONTROL_BLOCK final
-	{
-		HAL::StackFramePtr mFrame;
-	};
 
 	STATIC PROCESS_CONTROL_BLOCK kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
 
@@ -151,13 +145,22 @@ namespace Kernel::HAL
 		return kProcessBlocks[process_index].mFrame;
 	}
 
-	EXTERN_C BOOL mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame, ProcessID pid)
+	EXTERN_C BOOL mp_register_process(HAL::StackFramePtr stack_frame, ProcessID pid)
 	{
-		MUST_PASS(image && stack_ptr && stack_frame);
+		MUST_PASS(stack_frame);
 
 		const auto process_index = pid % kSchedProcessLimitPerTeam;
 
 		kProcessBlocks[process_index].mFrame = stack_frame;
+
+		auto first_id = kAPICLocales[0];
+
+		hal_send_sipi(first_id, (stack_frame->BP >> 12), kApicBaseAddress);
+
+		HardwareTimer timer(Kernel::Milliseconds(10));
+		timer.Wait();
+
+		hal_send_sipi(first_id, (stack_frame->BP >> 12), kApicBaseAddress);
 
 		return YES;
 	}
@@ -170,6 +173,11 @@ namespace Kernel::HAL
 	{
 		return kSMPAware;
 	}
+
+	/***********************************************************************************/
+	/// @brief Assembly symbol to bootstrap AP.
+	/***********************************************************************************/
+	EXTERN_C Void hal_ap_start(Void);
 
 	/***********************************************************************************/
 	/// @brief Fetch and enable SMP scheduler.
@@ -194,48 +202,50 @@ namespace Kernel::HAL
 
 		if (kMADTBlock)
 		{
-			SizeT index_address = 0;
-			SizeT index_local	= 0;
-			SizeT index			= 0;
-
-			// reset values.
+			SizeT index = 0;
 
 			kSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
 			kcout << "SMP: Probing Local APICs...\r";
 
-			UIntPtr madt_address = kMADTBlock->Address;
+			kApicBaseAddress = kMADTBlock->Address;
 
 			while (Yes)
 			{
 				if (kMADTBlock->List[index].Type > 9 ||
-					kSMPCount > kSMPMax)
+					kSMPCount > kSchedProcessLimitPerTeam)
 					break;
 
 				switch (kMADTBlock->List[index].Type)
 				{
 				case 0x00: {
-					kAPICLocales[index_local] = kMADTBlock->List[index_local].LAPIC.ProcessorID;
-					kcout << "SMP: APIC ID: " << number(kAPICLocales[index_local]) << endl;
+					if (kMADTBlock->List[kSMPCount].LAPIC.ProcessorID < 1)
+						break;
+
+					kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].LAPIC.ProcessorID;
+					kcout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << endl;
+
+					// I'll just make the AP start from scratch here.
+
+					hal_send_sipi(kAPICLocales[kSMPCount], ((UIntPtr)hal_ap_start >> 12), kApicBaseAddress);
+
+					HardwareTimer timer(Kernel::Milliseconds(10));
+					timer.Wait();
+
+					hal_send_sipi(kAPICLocales[kSMPCount], ((UIntPtr)hal_ap_start >> 12), kApicBaseAddress);
+
 					++kSMPCount;
 					break;
 				}
-				case 0x05: {
-					kAPICAddresses[index_address].mAddress = kMADTBlock->List[index_address].LAPIC_ADDRESS_OVERRIDE.Address;
-					kAPICAddresses[index_address].mUsed	   = NO;
-
-					kcout << "SMP: APIC address: " << number(madt_address) << endl;
+				default:
 					break;
-				}
 				}
 
 				++index;
-				++index_address;
-				++index_local;
 			}
 
-			kcout << "SMP: number of cores: " << number(kSMPCount) << endl;
+			kcout << "SMP: number of APs: " << number(kSMPCount) << endl;
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)

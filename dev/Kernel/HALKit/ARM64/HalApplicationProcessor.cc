@@ -50,12 +50,14 @@ namespace Kernel
 		Void mp_setup_gic_el0(Void)
 		{
 			// enable distributor.
-			HAL::hal_mmio_write(GICD_BASE + GICD_CTLR, 0x1);
+			HAL::hal_mmio_write(GICD_BASE + GICD_CTLR, YES);
 
 			UInt32 gicc_ctlr = HAL::hal_mmio_read<UInt32>(GICC_BASE + GICC_CTLR);
 
-			gicc_ctlr |= 0x1;	   // Enable signaling of interrupts
-			gicc_ctlr |= (1 << 1); // Allow Group 1 interrupts in EL0
+			const auto kEnableSignalInt = YES;
+
+			gicc_ctlr |= kEnableSignalInt;	   // Enable signaling of interrupts
+			gicc_ctlr |= (kEnableSignalInt << 1); // Allow Group 1 interrupts in EL0
 
 			HAL::hal_mmio_write(GICC_BASE + GICC_CTLR, gicc_ctlr);
 
@@ -76,7 +78,7 @@ namespace Kernel
 			// Enable interrupt 32 for AP.
 			HAL::hal_mmio_write(GICD_BASE + GICD_ISENABLER + (32 / 32) * 4, 0x01 << (32 % 32));
 
-			kcout << "AP's GIC configured for interrupt 32." << endl;
+			kcout << "AP's GIC configured in ISR 32." << endl;
 		}
 
 		BOOL mp_handle_gic_interrupt_el0(Void)
@@ -108,9 +110,9 @@ namespace Kernel
 		return kProcessBlocks[pid % kSchedProcessLimitPerTeam].mFrame;
 	}
 
-	EXTERN_C Bool mp_register_process(VoidPtr image, UInt8* stack_ptr, HAL::StackFramePtr stack_frame, ProcessID pid)
+	EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame, ProcessID pid)
 	{
-		MUST_PASS(image && stack_ptr && stack_frame);
+		MUST_PASS(stack_frame);
 
 		const auto process_index = pid % kSchedProcessLimitPerTeam;
 
