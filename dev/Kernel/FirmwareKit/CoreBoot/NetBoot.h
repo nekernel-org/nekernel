@@ -7,3 +7,5 @@
 #pragma once
 
 #include <NewKit/Defines.h>
+
+#include <Mod/NetBoot/NetBoot.h>
