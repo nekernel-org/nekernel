@@ -93,8 +93,7 @@ namespace Kernel
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
 
 						if (ptr_bit_set[kBitMapMagIdx] == kBitMapMagic &&
-							ptr_bit_set[kBitMapSizeIdx] <= size &&
-							!ptr_bit_set[kBitMapUsedIdx])
+							ptr_bit_set[kBitMapSizeIdx] <= size)
 						{
 							if (ptr_bit_set[kBitMapUsedIdx] == No)
 							{
@@ -108,6 +107,8 @@ namespace Kernel
 
 								return (VoidPtr)ptr_bit_set;
 							}
+
+							kcout << "Missed potnetial bitmp!\r\n";
 						}
 						else if (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
 						{

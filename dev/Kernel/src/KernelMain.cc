@@ -69,7 +69,8 @@ namespace Kernel::Detail
 					catalog_folder = nullptr;
 				}
 
-				mJournal.CreateJournal(mNeFS);
+				if (!mJournal.GetJournal(mNeFS))
+					mJournal.CreateJournal(mNeFS);
 
 				mJournal.CommitJournal(mNeFS, "<LOG_XML>Format Filesystem NeFS for ZkaOS.</LOG_XML>", "NeFS Format System");
 				mJournal.ReleaseJournal();

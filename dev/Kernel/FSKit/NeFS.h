@@ -33,7 +33,7 @@ default.
 
 #define kNeFSMinimumDiskSize (gib_cast(4))
 
-#define kNeFSSectorSz	(512)
+#define kNeFSSectorSz (512)
 
 #define kNeFSIdentLen (8)
 #define kNeFSIdent	  "  NeFS"
@@ -75,7 +75,7 @@ default.
 #define kNeFSCatalogKindTTF	 (13)
 #define kNeFSCatalogKindRIFF (14)
 #define kNeFSCatalogKindMPEG (15)
-#define kNeFSCatalogKindDVX	 (16)
+#define kNeFSCatalogKindMOFF (16)
 
 #define kNeFSSeparator	  '/'
 #define kNeFSSeparatorAlt '/'
@@ -177,7 +177,7 @@ struct PACKED NFS_CATALOG_STRUCT final
 /// whereas the data fork is reserved for file data.
 struct PACKED NFS_FORK_STRUCT final
 {
-	Kernel::Char ForkName[kNeFSForkNameLen] = {0};
+	Kernel::Char ForkName[kNeFSForkNameLen]	   = {0};
 	Kernel::Char CatalogName[kNeFSNodeNameLen] = {0};
 
 	Kernel::Int32 Flags;
@@ -185,7 +185,7 @@ struct PACKED NFS_FORK_STRUCT final
 
 	Kernel::Int64 ResourceId;
 	Kernel::Int32 ResourceKind;
-	Kernel::Int32 ResourckMMFlags;
+	Kernel::Int32 ResourceFlags;
 
 	Kernel::Lba	  DataOffset; // 8 Where to look for this data?
 	Kernel::SizeT DataSize;	  /// Data size according using sector count.
@@ -197,7 +197,7 @@ struct PACKED NFS_FORK_STRUCT final
 /// @brief Partition block type
 struct PACKED NFS_ROOT_PARTITION_BLOCK final
 {
-	Kernel::Char Ident[kNeFSIdentLen] = {0};
+	Kernel::Char Ident[kNeFSIdentLen]	 = {0};
 	Kernel::Char PartitionName[kPartLen] = {0};
 
 	Kernel::Int32 Flags;
@@ -264,7 +264,7 @@ namespace Kernel
 		/// @param theFork the fork itself.
 		/// @return the fork
 		_Output BOOL CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-											_Input NFS_FORK_STRUCT& theFork);
+								_Input NFS_FORK_STRUCT& theFork);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
@@ -407,8 +407,11 @@ namespace Kernel
 			rt_copy_memory(mNode->Name, new_fork.CatalogName, rt_string_len(mNode->Name));
 			rt_copy_memory(journal_name, new_fork.ForkName, rt_string_len(journal_name));
 
-			new_fork.DataSize = rt_string_len(xml_data);
-			new_fork.Kind	  = kNeFSRsrcForkKind;
+			new_fork.ResourceKind  = kNeFSCatalogKindMetaFile;
+			new_fork.ResourceId	   = 0;
+			new_fork.ResourceFlags = 0;
+			new_fork.DataSize	   = rt_string_len(xml_data);
+			new_fork.Kind		   = kNeFSRsrcForkKind;
 
 			parser->CreateFork(mNode, new_fork);
 
