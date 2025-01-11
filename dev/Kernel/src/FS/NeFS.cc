@@ -168,6 +168,7 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NFS_CATALOG_STRUCT*
 			case 2:
 				err_global_get() = kErrorDiskIsFull;
 				break;
+			case 3:
 				err_global_get() = kErrorNoSuchDisk;
 				break;
 
