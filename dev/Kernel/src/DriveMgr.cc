@@ -27,15 +27,47 @@ namespace Kernel
 	/// @return
 	Void io_drv_input(DriveTrait::DrivePacket* pckt)
 	{
-		if (!pckt)
+		if (!pckt || !pckt->fPacketDrive)
 		{
 			return;
 		}
 
+		if (pckt->fPacketDrive->fSectorSz == 0)
+		{
+#ifdef __ATA_PIO__
+			pckt->fPacketDrive->fSectorSz = kATASectorSize;
+#elif defined(__AHCI__)
+			pckt->fPacketDrive->fSectorSz = kAHCISectorSize;
+#else
+			pckt->fPacketDrive->fSectorSz = 512;
+#endif
+		}
+
+		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime) &&
+			pckt->fPacketDrive->fLbaStart > 0 && pckt->fPacketDrive->fLbaEnd > 0)
+		{
+			kcout << "LBA END: " << number(pckt->fPacketDrive->fLbaEnd) << endl;
+			kcout << "LBA: " << number(pckt->fPacketLba) << endl;
+			kcout << "LBA START: " << number(pckt->fPacketDrive->fLbaStart) << endl;
+			kcout << "SECTOR SZ: " << number(pckt->fPacketDrive->fLbaStart) << endl;
+
+			if (pckt->fPacketLba < pckt->fPacketDrive->fLbaStart)
+			{
+				pckt->fPacketGood = NO;
+				return;
+			}
+
+			if (pckt->fPacketLba > pckt->fPacketDrive->fLbaEnd)
+			{
+				pckt->fPacketGood = NO;
+				return;
+			}
+		}
+
 #ifdef __AHCI__
-		drv_std_read(pckt->fPacketLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
+		drv_std_read(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_read(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
+		drv_std_read(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
 #endif
 	}
 
@@ -44,15 +76,24 @@ namespace Kernel
 	/// @return
 	Void io_drv_output(DriveTrait::DrivePacket* pckt)
 	{
-		if (!pckt)
+		if (!pckt || !pckt->fPacketDrive)
 		{
 			return;
 		}
 
+		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime))
+		{
+			if (pckt->fPacketLba < pckt->fPacketDrive->fLbaStart)
+				return;
+
+			if (pckt->fPacketLba > pckt->fPacketDrive->fLbaEnd)
+				return;
+		}
+
 #ifdef __AHCI__
-		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, kAHCISectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_write(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, kATASectorSize, pckt->fPacketSize);
+		drv_std_write(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
 #endif
 	}
 
@@ -160,8 +201,17 @@ namespace Kernel
 		{
 			EPM_PART_BLOCK block_struct;
 
-			trait.fPacket.fPacketLba	  = kEPMBootBlockLba;
-			trait.fPacket.fPacketSize	  = sizeof(EPM_PART_BLOCK);
+			trait.fPacket.fPacketDrive = &trait;
+
+#ifdef __ATA_PIO__
+			trait.fSectorSz = kATASectorSize;
+#elif defined(__AHCI__)
+			trait.fSectorSz = kAHCISectorSize;
+#else
+			trait.fSectorSz				  = 512;
+#endif
+			trait.fPacket.fPacketLba	 = kEPMBootBlockLba;
+			trait.fPacket.fPacketSize	 = sizeof(EPM_PART_BLOCK);
 			trait.fPacket.fPacketContent = &block_struct;
 
 			rt_copy_memory((VoidPtr) "fs/detect-packet", trait.fPacket.fPacketMime,
@@ -174,14 +224,23 @@ namespace Kernel
 			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait.fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
 				trait.fPacket.fPacketReadOnly = NO;
-				trait.fKind				   = kMassStorageDisc | kEPMDrive;
+				trait.fKind					  = kMassStorageDisc | kEPMDrive;
 
 				kcout << "Formatted Disk is EPM (Mass Storage)\r";
+
+				trait.fSectorSz = block_struct.SectorSz;
+				trait.fLbaEnd	= block_struct.LbaEnd;
+				trait.fLbaStart = block_struct.LbaStart;
+
+				if (trait.fSectorSz == 0)
+				{
+					ke_panic(RUNTIME_CHECK_FAILED, "Invalid EPM partition!");
+				}
 			}
 			else
 			{
 				trait.fPacket.fPacketReadOnly = YES;
-				trait.fKind				   = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
+				trait.fKind					  = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
 
 				kcout << "Scheme Found: " << block_struct.Name << endl;
 
@@ -192,11 +251,11 @@ namespace Kernel
 			rt_copy_memory((VoidPtr) "*/*", trait.fPacket.fPacketMime,
 						   rt_string_len("*/*"));
 
-			trait.fPacket.fPacketLba	  = 0;
-			trait.fPacket.fPacketSize	  = 0UL;
+			trait.fPacket.fPacketLba	 = 0;
+			trait.fPacket.fPacketSize	 = 0UL;
 			trait.fPacket.fPacketContent = nullptr;
 		}
-	} // namespace Detail
+	} // namespace Detect
 
 	/// @brief Fetches the main drive.
 	/// @return the new drive. (returns kEPMDrive if EPM formatted)
@@ -216,9 +275,9 @@ namespace Kernel
 		trait.fInit		 = io_drv_init;
 		trait.fDriveKind = io_drv_kind;
 
-		Detect::io_detect_drive(trait);
-
 		kcout << "Detecting partition scheme of: " << trait.fName << ".\r";
+
+		Detect::io_detect_drive(trait);
 
 		return trait;
 	}

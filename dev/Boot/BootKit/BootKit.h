@@ -345,7 +345,7 @@ namespace Boot
 		part.Version	  = kNeFSVersionInteger;
 		part.CatalogCount = blob_cnt;
 		part.Kind		  = kNeFSHardDrive;
-		part.SectorSize	  = sizeof(NFS_ROOT_PARTITION_BLOCK);
+		part.SectorSize	  = 512;
 		part.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
 		part.SectorCount  = fDiskDev.GetSectorsCount();
 		part.FreeSectors  = fDiskDev.GetSectorsCount();
@@ -377,6 +377,7 @@ namespace Boot
 
 		epm_boot.FsVersion = kNeFSVersionInteger;
 		epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
+		epm_boot.LbaEnd  = fDiskDev.GetDiskSize();
 		epm_boot.SectorSz  = part.SectorSize;
 		epm_boot.Kind	   = kEPMZkaOS;
 		epm_boot.NumBlocks = part.CatalogCount;

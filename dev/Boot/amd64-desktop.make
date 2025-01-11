@@ -31,7 +31,7 @@ IMG_2=epm-master-2.img
 EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
 			-bios $(BIOS) -drive \
 			file=fat:rw:src/Root/,index=2,format=raw \
-            -monitor stdio
+            -serial stdio
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -44,7 +44,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__MINOSKRNL__ -D__ZBAOSLDR__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -DBOOTZ_GPT_SUPPORT -D__HAVE_ZKA_APIS__ -DZBA_USE_FB -D__ZKA_AMD64__ -D__ZKA__ -DZKA_AUTO_FORMAT
+                        -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_ZKA_APIS__ -DZBA_USE_FB -D__ZKA_AMD64__ -D__ZKA__ -DZKA_AUTO_FORMAT
 
 BOOTLOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe

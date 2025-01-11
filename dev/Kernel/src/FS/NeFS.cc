@@ -360,7 +360,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 				return nullptr;
 			}
 
-			child_catalog->DataFork		= part_block->DiskSize - kNeFSRootCatalogStartAddress - start_free;
+			child_catalog->DataFork		= part_block->DiskSize - kNeFSRootCatalogStartAddress;
 			child_catalog->ResourceFork = child_catalog->DataFork;
 
 			// Write the new catalog next sibling, if we don't know this parent. //
@@ -1028,6 +1028,7 @@ namespace Kernel::Detail
 		kcout << "Creating A:\r";
 
 		kDiskMountpoint.A() = io_construct_main_drive();
+		kDiskMountpoint.A().fPacket.fPacketDrive = &kDiskMountpoint.A();
 
 		kcout << "Creating A: [ OK ]\r";
 
