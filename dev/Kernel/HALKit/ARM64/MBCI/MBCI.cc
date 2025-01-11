@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2025, Theater Quality Corp, all rights reserved.
+	Copyright (C) 2025, t& Corporation, all rights reserved.
 
 ------------------------------------------- */
 

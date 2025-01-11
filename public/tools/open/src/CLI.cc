@@ -1,7 +1,7 @@
 /*
  * Created on Thu Oct 17 08:00:42 CEST 2024
  *
- * Copyright (c) 2024 Theater Quality Corp
+ * Copyright (c) 2024 t& Corporation
  */
 
 #include <iostream>
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 		if (strcmp(argv[i], "-h") == 0)
 		{
 			std::cout << "open: Open Application Tool.\n";
-			std::cout << "open: © Theater Quality Corp, All rights reserved.\n";
+			std::cout << "open: © t& Corporation, All rights reserved.\n";
 
 			std::cout << "open: -a: Application is taken as input.\n";
 			std::cout << "open: -u: URL is taken as input.\n";

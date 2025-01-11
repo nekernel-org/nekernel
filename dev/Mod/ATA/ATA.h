@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Theater Quality Corp, all rights reserved.
+	Copyright (C) 2024, t& Corporation, all rights reserved.
 
 	File: Defines.h
 	Purpose: ATA header.

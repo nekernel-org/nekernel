@@ -1,6 +1,6 @@
 /**
 	Thu Oct 17 07:57:43 CEST 2024
-	(c) Theater Quality Corp.
+	(c) t& Corporation.
 */
 
 #ifndef APPS_STEPS_H

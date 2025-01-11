@@ -17,4 +17,4 @@ And then execute:
 make all
 ```
 
-##### Copyright, Theater Quality Corp, all rights reserved.
+##### Copyright, t& Corporation, all rights reserved.

@@ -1,4 +1,4 @@
-// (c) Theater Quality Corp
+// (c) t& Corporation
 
 #pragma once
 

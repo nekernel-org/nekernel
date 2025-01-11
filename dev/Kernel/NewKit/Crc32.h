@@ -3,7 +3,7 @@
  *
  *  ZKA
  *  Date Added: 13/02/2023
- * 	Copyright (C) 2024, Theater Quality Corp, all rights reserved., all rights reserved.
+ * 	Copyright (C) 2024, t& Corporation, all rights reserved., all rights reserved.
  *
  * 	========================================================
  */
