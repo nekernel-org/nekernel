@@ -50,7 +50,7 @@ BOOTLOADER=zbaosldr.exe
 KERNEL=minoskrnl.exe
 SYSCHK=syschk.sys
 STARTUP=startup.sys
-SCIKIT=LibSCI.dylib
+SCIKIT=libSCI.dylib
 
 .PHONY: invalid-recipe
 invalid-recipe:

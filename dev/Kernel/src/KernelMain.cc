@@ -72,7 +72,7 @@ namespace Kernel::Detail
 				mJournal.CreateJournal(mNeFS);
 
 				KString xml;
-				xml += "<LOG_XML>Formatted Filesystem</LOG_XML>";
+				xml += "<LOG_XML>Format Filesystem NeFS for ZkaOS.</LOG_XML>";
 
 				KString name;
 				name += "NeFS Format System";

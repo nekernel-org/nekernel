@@ -406,19 +406,20 @@ namespace Kernel
 			rt_copy_memory(mNode->Name, new_fork.CatalogName, rt_string_len(mNode->Name));
 			rt_copy_memory(journal_name.Data(), new_fork.ForkName, rt_string_len(journal_name.Data()));
 
-			new_fork.DataSize = xml_data.Length();
-
-			new_fork.Kind = kNeFSRsrcForkKind;
+			new_fork.DataSize = kNeFSForkDataSz;
+			new_fork.Kind	  = kNeFSRsrcForkKind;
 
 			parser->CreateFork(mNode, new_fork);
 
 			kcout << "Commit: " << xml_data.Data() << "\r\nTo: " << journal_name.Data() << endl;
 
-			return parser->WriteCatalog(mNode, YES, xml_data.Data(), xml_data.Length(), journal_name.CData());
+			auto ret = parser->WriteCatalog(mNode, YES, xml_data.Data(), xml_data.Length(), journal_name.CData());
+
+			return ret;
 		}
 
 	private:
-		Char mStamp[255] = {"/system/zka_journal" kNeFSJournalExt};
+		Char mStamp[255] = {"/system/journal_sys" kNeFSJournalExt};
 	};
 
 	namespace Detail
