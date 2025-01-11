@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "NewKit/Defines.h"
 #include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <HALKit/AMD64/Processor.h>
@@ -36,7 +37,7 @@
 
 namespace Kernel::HAL
 {
-	struct MADT_TABLE;
+	struct PROCESS_APIC_MADT;
 	struct PROCESS_CONTROL_BLOCK;
 
 	struct PROCESS_CONTROL_BLOCK final
@@ -46,9 +47,9 @@ namespace Kernel::HAL
 
 	EXTERN_C Void _hal_spin_core(Void);
 
-	STATIC struct MADT_TABLE* kMADTBlock = nullptr;
-	STATIC Bool				  kSMPAware	 = false;
-	STATIC Int64			  kSMPCount	 = 0;
+	STATIC struct PROCESS_APIC_MADT* kMADTBlock = nullptr;
+	STATIC Bool						 kSMPAware	= false;
+	STATIC Int64					 kSMPCount	= 0;
 
 	STATIC UIntPtr kApicBaseAddress = 0UL;
 
@@ -57,7 +58,7 @@ namespace Kernel::HAL
 	STATIC VoidPtr kRawMADT								   = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
-	struct MADT_TABLE final : public SDT
+	struct PROCESS_APIC_MADT final : public SDT
 	{
 		UInt32 Address; // Madt address
 		UInt8  Flags;	// Madt flags
@@ -118,10 +119,15 @@ namespace Kernel::HAL
 	/// @return
 	/***********************************************************************************/
 
-	Void hal_send_start_ipi(UInt32 apic_id, UInt32 vector, UInt32 target)
+	Void hal_send_start_ipi(UInt32 target, UInt32 apic_id)
 	{
-		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, (apic_id << 24));
-		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, kAPIC_SIPI_Vector | vector);
+		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, apic_id << 24);
+		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, 0x00000500 | 0x00004000 | 0x00000000);
+
+		while (Kernel::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000)
+		{
+			;
+		}
 	}
 
 	/***********************************************************************************/
@@ -131,10 +137,15 @@ namespace Kernel::HAL
 	/// @param target
 	/// @return
 	/***********************************************************************************/
-	Void hal_send_sipi(UInt32 apic_id, UInt8 vector, UInt32 target)
+	Void hal_send_sipi(UInt32 target, UInt32 apic_id, UInt8 vector)
 	{
-		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, (apic_id << 24));
-		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, kAPIC_EIPI_Vector | vector);
+		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, apic_id << 24);
+		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, 0x00000600 | 0x00004000 | 0x00000000 | vector);
+
+		while (Kernel::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000)
+		{
+			;
+		}
 	}
 
 	STATIC PROCESS_CONTROL_BLOCK kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
@@ -155,12 +166,7 @@ namespace Kernel::HAL
 
 		auto first_id = kAPICLocales[0];
 
-		hal_send_sipi(first_id, (stack_frame->BP >> 12), kApicBaseAddress);
-
-		HardwareTimer timer(Kernel::Milliseconds(10));
-		timer.Wait();
-
-		hal_send_sipi(first_id, (stack_frame->BP >> 12), kApicBaseAddress);
+		hal_send_sipi(kApicBaseAddress, first_id, (UInt8)(((UIntPtr)stack_frame->BP) >> 12));
 
 		return YES;
 	}
@@ -177,7 +183,12 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	/// @brief Assembly symbol to bootstrap AP.
 	/***********************************************************************************/
-	EXTERN_C Void hal_ap_start(Void);
+	EXTERN_C Char* hal_ap_blob_start;
+
+	/***********************************************************************************/
+	/// @brief Assembly symbol to bootstrap AP.
+	/***********************************************************************************/
+	EXTERN_C Char* hal_ap_blob_end;
 
 	/***********************************************************************************/
 	/// @brief Fetch and enable SMP scheduler.
@@ -197,7 +208,7 @@ namespace Kernel::HAL
 		auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
 		kRawMADT			= hw_and_pow_int.Find(kApicSignature).Leak().Leak();
 
-		kMADTBlock = reinterpret_cast<MADT_TABLE*>(kRawMADT);
+		kMADTBlock = reinterpret_cast<PROCESS_APIC_MADT*>(kRawMADT);
 		kSMPAware  = NO;
 
 		if (kMADTBlock)
@@ -207,9 +218,16 @@ namespace Kernel::HAL
 			kSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
-			kcout << "SMP: Probing Local APICs...\r";
+			kcout << "SMP: Starting APs...\r";
 
 			kApicBaseAddress = kMADTBlock->Address;
+
+			constexpr auto kMemoryAPStart = 0x7C000;
+			Char*		   ptr_ap_code	  = reinterpret_cast<Char*>(kMemoryAPStart);
+			
+			SizeT hal_ap_blob_len = hal_ap_blob_end - hal_ap_blob_start;
+
+			rt_copy_memory((Char*)hal_ap_blob_start, ptr_ap_code, hal_ap_blob_len);
 
 			while (Yes)
 			{
@@ -228,12 +246,14 @@ namespace Kernel::HAL
 
 					// I'll just make the AP start from scratch here.
 
-					hal_send_sipi(kAPICLocales[kSMPCount], ((UIntPtr)hal_ap_start >> 12), kApicBaseAddress);
+					hal_send_start_ipi(kApicBaseAddress, kAPICLocales[kSMPCount]);
 
 					HardwareTimer timer(Kernel::Milliseconds(10));
 					timer.Wait();
 
-					hal_send_sipi(kAPICLocales[kSMPCount], ((UIntPtr)hal_ap_start >> 12), kApicBaseAddress);
+					/// TODO: HAL helper to create an address.
+
+					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)ptr_ap_code) >> 12));
 
 					++kSMPCount;
 					break;

@@ -192,16 +192,6 @@ namespace Kernel::HAL
 	Void mp_get_cores(VoidPtr vendor_ptr) noexcept;
 
 	/***********************************************************************************/
-
-	Void hal_send_start_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
-
-	/***********************************************************************************/
-
-	Void hal_send_end_ipi(UInt32 apicId, UInt8 vector, UInt32 targetAddress);
-
-	/***********************************************************************************/
-
-	/***********************************************************************************/
 	/// @brief Do a cpuid to check if MSR exists on CPU.
 	/// @retval true it does exists.
 	/// @retval false it doesn't.

@@ -46,16 +46,17 @@ namespace Kernel
 	template <typename WordLength>
 	inline Void ke_dma_write(WordLength base, WordLength reg, WordLength value) noexcept
 	{
-		*(volatile WordLength*)((UInt64)base + reg) = value;
+		*(volatile WordLength*)(base + reg) = value;
 	}
 
 	/// @brief read from mapped memory register.
 	/// @param base base address
 	/// @param reg the register.
 	/// @return the value inside the register.
-	inline UInt32 ke_dma_read(UInt32 base, UInt32 reg) noexcept
+	template <typename WordLength>
+	inline UInt32 ke_dma_read(WordLength base, WordLength reg) noexcept
 	{
-		return *(volatile UInt32*)((UInt64)base + reg);
+		return *(volatile WordLength*)((UInt64)base + reg);
 	}
 
 	namespace HAL
