@@ -76,6 +76,7 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 					   rt_string_len("fs/nefs-packet"));
 
 		NFS_FORK_STRUCT cur_fork{0};
+		NFS_FORK_STRUCT prev_fork{0};
 		Lba				lba_prev_fork = lba;
 
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
@@ -87,7 +88,9 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 
 			drv.fInput(&drv.fPacket);
 
-			kcout << "Next fork: " << hex_number(cur_fork.NextSibling) << endl;
+			lba_prev_fork = lba;
+			lba			  = cur_fork.NextSibling;
+			prev_fork	  = cur_fork;
 
 			if (cur_fork.Flags & kNeFSFlagCreated)
 			{
@@ -98,11 +101,6 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 					kcout << "Fork already exists.\r";
 					return nullptr;
 				}
-
-				kcout << "Next fork: " << hex_number(cur_fork.NextSibling) << endl;
-
-				lba_prev_fork = lba;
-				lba				  = cur_fork.NextSibling;
 			}
 			else
 			{
@@ -112,8 +110,8 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 
 		the_fork.Flags |= kNeFSFlagCreated;
 		the_fork.DataOffset		 = lba - sizeof(NFS_FORK_STRUCT);
+		the_fork.NextSibling	 = the_fork.DataOffset - the_fork.DataSize;
 		the_fork.PreviousSibling = lba_prev_fork;
-		the_fork.NextSibling	 = the_fork.DataOffset - the_fork.DataSize - sizeof(NFS_FORK_STRUCT);
 
 		drv.fPacket.fPacketLba	   = lba;
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
@@ -1026,7 +1024,7 @@ namespace Kernel::Detail
 	{
 		kcout << "Creating A:\r";
 
-		kDiskMountpoint.A() = io_construct_main_drive();
+		kDiskMountpoint.A()						 = io_construct_main_drive();
 		kDiskMountpoint.A().fPacket.fPacketDrive = &kDiskMountpoint.A();
 
 		kcout << "Creating A: [ OK ]\r";
