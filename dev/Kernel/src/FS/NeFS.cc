@@ -64,7 +64,7 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 														_Input NFS_FORK_STRUCT& the_fork)
 {
 	if (catalog && the_fork.ForkName[0] != 0 &&
-		the_fork.DataSize == kNeFSForkDataSz)
+		the_fork.DataSize > 0)
 	{
 		Lba lba = (the_fork.Kind == kNeFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
@@ -601,12 +601,11 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 /// @return if the catalog w rote the contents successfully.
 bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog, Bool is_rsrc_fork, _Input VoidPtr data, _Input SizeT size_of_data, _Input const Char* forkName)
 {
-	if (size_of_data > kNeFSForkDataSz ||
-		size_of_data == 0)
+	if (size_of_data < 1)
 		return No;
 
-	auto buf = new UInt8[kNeFSForkDataSz];
-	rt_set_memory(buf, 0, kNeFSForkDataSz);
+	auto buf = new UInt8[size_of_data];
+	rt_set_memory(buf, 0, size_of_data);
 
 	rt_copy_memory(data, buf, size_of_data);
 
@@ -653,7 +652,7 @@ bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog
 			fork_data_input->Flags |= kNeFSFlagCreated;
 
 			drive.fPacket.fPacketContent = buf;
-			drive.fPacket.fPacketSize	 = kNeFSForkDataSz;
+			drive.fPacket.fPacketSize	 = size_of_data;
 			drive.fPacket.fPacketLba	 = fork_data_input->DataOffset;
 
 			kcout << "data offset: " << hex_number(fork_data_input->DataOffset) << endl;
