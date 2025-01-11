@@ -241,9 +241,9 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	Char parent_name[kNeFSNodeNameLen] = {0};
 
-	for (SizeT indexName = 0UL; indexName < rt_string_len(name); ++indexName)
+	for (SizeT index_name = 0UL; index_name < rt_string_len(name); ++index_name)
 	{
-		parent_name[indexName] = name[indexName];
+		parent_name[index_name] = name[index_name];
 	}
 
 	if (*parent_name == 0)
