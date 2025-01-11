@@ -46,17 +46,6 @@ namespace Kernel
 		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime) &&
 			pckt->fPacketDrive->fLbaStart > 0 && pckt->fPacketDrive->fLbaEnd > 0)
 		{
-			kcout << "LBA END: " << number(pckt->fPacketDrive->fLbaEnd) << endl;
-			kcout << "LBA: " << number(pckt->fPacketLba) << endl;
-			kcout << "LBA START: " << number(pckt->fPacketDrive->fLbaStart) << endl;
-			kcout << "SECTOR SZ: " << number(pckt->fPacketDrive->fLbaStart) << endl;
-
-			if (pckt->fPacketLba < pckt->fPacketDrive->fLbaStart)
-			{
-				pckt->fPacketGood = NO;
-				return;
-			}
-
 			if (pckt->fPacketLba > pckt->fPacketDrive->fLbaEnd)
 			{
 				pckt->fPacketGood = NO;
