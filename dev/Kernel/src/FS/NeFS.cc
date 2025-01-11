@@ -89,8 +89,12 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 			drv.fInput(&drv.fPacket);
 
 			lba_prev_fork = lba;
-			lba			  = cur_fork.NextSibling;
 			prev_fork	  = cur_fork;
+
+			if (cur_fork.PreviousSibling <= kNeFSCatalogStartAddress)
+				break;
+
+			lba			  = cur_fork.PreviousSibling;
 
 			if (cur_fork.Flags & kNeFSFlagCreated)
 			{
