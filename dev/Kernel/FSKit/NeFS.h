@@ -142,8 +142,8 @@ enum
 /// @brief Catalog type.
 struct PACKED NFS_CATALOG_STRUCT final
 {
-	Kernel::Char Name[kNeFSNodeNameLen];
-	Kernel::Char Mime[kNeFSMimeNameLen];
+	Kernel::Char Name[kNeFSNodeNameLen] = {0};
+	Kernel::Char Mime[kNeFSMimeNameLen] = {0};
 
 	/// Catalog flags.
 	Kernel::UInt16 Flags;
@@ -177,8 +177,8 @@ struct PACKED NFS_CATALOG_STRUCT final
 /// whereas the data fork is reserved for file data.
 struct PACKED NFS_FORK_STRUCT final
 {
-	Kernel::Char ForkName[kNeFSForkNameLen];
-	Kernel::Char CatalogName[kNeFSNodeNameLen];
+	Kernel::Char ForkName[kNeFSForkNameLen] = {0};
+	Kernel::Char CatalogName[kNeFSNodeNameLen] = {0};
 
 	Kernel::Int32 Flags;
 	Kernel::Int32 Kind;
@@ -197,8 +197,8 @@ struct PACKED NFS_FORK_STRUCT final
 /// @brief Partition block type
 struct PACKED NFS_ROOT_PARTITION_BLOCK final
 {
-	Kernel::Char Ident[kNeFSIdentLen];
-	Kernel::Char PartitionName[kPartLen];
+	Kernel::Char Ident[kNeFSIdentLen] = {0};
+	Kernel::Char PartitionName[kPartLen] = {0};
 
 	Kernel::Int32 Flags;
 	Kernel::Int32 Kind;
@@ -263,7 +263,7 @@ namespace Kernel
 		/// @param catalog it's catalog
 		/// @param theFork the fork itself.
 		/// @return the fork
-		_Output NFS_FORK_STRUCT* CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
+		_Output BOOL CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 											_Input NFS_FORK_STRUCT& theFork);
 
 		/// @brief Find fork inside New filesystem.
@@ -278,7 +278,7 @@ namespace Kernel
 
 		_Output Void CloseFork(_Input NFS_FORK_STRUCT* fork);
 
-		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalogName, Lba& outLba, Bool searchHidden = YES);
+		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalogName, Lba& outLba, Bool searchHidden = YES, Bool local_search = NO);
 
 		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const Char* name);
 
@@ -371,9 +371,11 @@ namespace Kernel
 			if (!parser)
 				return NO;
 
-			if (mNode = parser->GetCatalog(mStamp);
-				mNode)
+			auto node = parser->GetCatalog(mStamp);
+
+			if (node)
 			{
+				mNode = node;
 				return YES;
 			}
 
@@ -393,8 +395,8 @@ namespace Kernel
 		}
 
 		Bool CommitJournal(NeFileSystemParser* parser,
-						   KString			   xml_data,
-						   KString			   journal_name)
+						   Char*			   xml_data,
+						   Char*			   journal_name)
 		{
 			if (!parser ||
 				!mNode)
@@ -403,16 +405,16 @@ namespace Kernel
 			NFS_FORK_STRUCT new_fork{};
 
 			rt_copy_memory(mNode->Name, new_fork.CatalogName, rt_string_len(mNode->Name));
-			rt_copy_memory(journal_name.Data(), new_fork.ForkName, rt_string_len(journal_name.Data()));
+			rt_copy_memory(journal_name, new_fork.ForkName, rt_string_len(journal_name));
 
-			new_fork.DataSize = xml_data.Length();
+			new_fork.DataSize = rt_string_len(xml_data);
 			new_fork.Kind	  = kNeFSRsrcForkKind;
 
 			parser->CreateFork(mNode, new_fork);
 
-			kcout << "Commit: " << xml_data.Data() << "\r\nTo: " << journal_name.Data() << endl;
+			kcout << "Commit: " << xml_data << "\r\nTo: " << journal_name << endl;
 
-			auto ret = parser->WriteCatalog(mNode, YES, xml_data.Data(), xml_data.Length(), journal_name.CData());
+			auto ret = parser->WriteCatalog(mNode, YES, xml_data, rt_string_len(xml_data), new_fork.ForkName);
 
 			return ret;
 		}

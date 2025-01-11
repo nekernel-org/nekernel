@@ -60,57 +60,48 @@ STATIC MountpointInterface kDiskMountpoint;
 /// @param the_fork the fork itself.
 /// @return the fork
 /***********************************************************************************/
-_Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-														_Input NFS_FORK_STRUCT& the_fork)
+_Output BOOL NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
+											_Input NFS_FORK_STRUCT& the_fork)
 {
-	if (catalog && the_fork.ForkName[0] != 0 &&
-		the_fork.DataSize > 0)
+	if (catalog && the_fork.DataSize > 0)
 	{
 		Lba lba = (the_fork.Kind == kNeFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
 
 		auto drv = kDiskMountpoint.A();
 
-		/// special treatment.
-		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime,
-					   rt_string_len("fs/nefs-packet"));
-
-		NFS_FORK_STRUCT cur_fork{0};
-		NFS_FORK_STRUCT prev_fork{0};
+		NFS_FORK_STRUCT cur_fork{};
 		Lba				lba_prev_fork = lba;
+		Lba				lba_next_fork = lba;
 
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
-		while (lba <= kNeFSCatalogStartAddress)
+		while (lba_next_fork >= kNeFSCatalogStartAddress)
 		{
-			drv.fPacket.fPacketLba	   = lba;
+			drv.fPacket.fPacketDrive   = &drv;
+			drv.fPacket.fPacketLba	   = lba_next_fork;
 			drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 			drv.fPacket.fPacketContent = &cur_fork;
 
 			drv.fInput(&drv.fPacket);
 
-			lba_prev_fork = lba;
-			prev_fork	  = cur_fork;
-
-			if (cur_fork.PreviousSibling <= kNeFSCatalogStartAddress)
-				break;
-
-			lba			  = cur_fork.PreviousSibling;
-
 			if (cur_fork.Flags & kNeFSFlagCreated)
 			{
+				lba = cur_fork.NextSibling;
+
 				/// sanity check.
 				if (StringBuilder::Equals(cur_fork.ForkName, the_fork.ForkName) &&
-					StringBuilder::Equals(cur_fork.CatalogName, catalog->Name))
+					StringBuilder::Equals(cur_fork.CatalogName, the_fork.CatalogName))
 				{
 					kcout << "Fork already exists.\r";
-					return nullptr;
+					return NO;
 				}
 			}
-			else
-			{
-				break;
-			}
+
+			lba_next_fork = cur_fork.NextSibling;
 		}
+
+		while (1)
+			;
 
 		the_fork.Flags |= kNeFSFlagCreated;
 		the_fork.DataOffset		 = lba - sizeof(NFS_FORK_STRUCT);
@@ -129,10 +120,10 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUC
 
 		kcout << "Wrote fork at: " << hex_number(lba) << endl;
 
-		return &the_fork;
+		return YES;
 	}
 
-	return nullptr;
+	return NO;
 }
 
 /***********************************************************************************/
@@ -362,7 +353,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 				return nullptr;
 			}
 
-			child_catalog->DataFork		= part_block->DiskSize - kNeFSRootCatalogStartAddress;
+			child_catalog->DataFork		= part_block->DiskSize - start_free;
 			child_catalog->ResourceFork = child_catalog->DataFork;
 
 			// Write the new catalog next sibling, if we don't know this parent. //
@@ -690,7 +681,8 @@ bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog
 /// @return the newly found catalog.
 _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* catalog_name,
 															Lba&			   out_lba,
-															Bool			   search_hidden)
+															Bool			   search_hidden,
+															Bool			   local_search)
 {
 	if (!catalog_name ||
 		*catalog_name == 0)
@@ -725,7 +717,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 
 	drive.fInput(&drive.fPacket);
 
-	if (!StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()))
+	if (!StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()) && !local_search)
 	{
 		Char parent_name[kNeFSNodeNameLen] = {0};
 
@@ -748,7 +740,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 			--index_reverse_copy;
 		}
 
-		NFS_CATALOG_STRUCT* parent_catalog = this->FindCatalog(parent_name, out_lba);
+		NFS_CATALOG_STRUCT* parent_catalog = this->FindCatalog(parent_name, out_lba, YES);
 
 		if (parent_catalog &&
 			!StringBuilder::Equals(parent_name, NeFileSystemHelper::Root()))
@@ -764,10 +756,6 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 		{
 			delete parent_catalog;
 			parent_catalog = nullptr;
-		}
-		else
-		{
-			return nullptr;
 		}
 	}
 

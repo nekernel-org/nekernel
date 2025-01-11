@@ -15,7 +15,8 @@
 #include <NewKit/Defines.h>
 #include <NewKit/KernelPanic.h>
 
-#define kBitMapMagic (0x10210U)
+#define kBitMapMagic   (0x10210U)
+#define kBitMapPadSize (mib_cast(16))
 
 #define kBitMapMagIdx  (0U)
 #define kBitMapSizeIdx (1U)
@@ -87,12 +88,13 @@ namespace Kernel
 
 					VoidPtr base = reinterpret_cast<VoidPtr>(((UIntPtr)base_ptr) + kPageSize);
 
-					while (((UIntPtr)base) < (reinterpret_cast<UIntPtr>(base) + kHandoverHeader->f_BitMapSize))
+					while (YES)
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
 
 						if (ptr_bit_set[kBitMapMagIdx] == kBitMapMagic &&
-							ptr_bit_set[kBitMapSizeIdx] <= size)
+							ptr_bit_set[kBitMapSizeIdx] <= size &&
+							!ptr_bit_set[kBitMapUsedIdx])
 						{
 							if (ptr_bit_set[kBitMapUsedIdx] == No)
 							{
@@ -121,7 +123,7 @@ namespace Kernel
 							return (VoidPtr)ptr_bit_set;
 						}
 
-						base = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base) + ((ptr_bit_set[kBitMapMagIdx] != kBitMapMagic) ? size : ptr_bit_set[kBitMapSizeIdx]));
+						base = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base) + ((ptr_bit_set[kBitMapMagIdx] != kBitMapMagic) ? (size) : ptr_bit_set[kBitMapSizeIdx]));
 					}
 
 					return nullptr;
