@@ -406,7 +406,7 @@ namespace Kernel
 			rt_copy_memory(mNode->Name, new_fork.CatalogName, rt_string_len(mNode->Name));
 			rt_copy_memory(journal_name.Data(), new_fork.ForkName, rt_string_len(journal_name.Data()));
 
-			new_fork.DataSize = kNeFSForkDataSz;
+			new_fork.DataSize = xml_data.Length();
 			new_fork.Kind	  = kNeFSRsrcForkKind;
 
 			parser->CreateFork(mNode, new_fork);
