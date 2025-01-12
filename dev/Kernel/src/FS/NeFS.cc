@@ -60,11 +60,16 @@ STATIC MountpointInterface kDiskMountpoint;
 /// @param the_fork the fork itself.
 /// @return the fork
 /***********************************************************************************/
-_Output BOOL NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
+_Output BOOL NeFileSystemParser::CreateFork(_Input const Char* catalog_name,
 											_Input NFS_FORK_STRUCT& the_fork)
 {
-	if (catalog && the_fork.DataSize > 0)
-	{
+	if (the_fork.DataSize > 0)
+	{		
+		auto catalog = this->GetCatalog(catalog_name);
+
+		if (!catalog)
+			return NO;
+
 		Lba lba = (the_fork.Kind == kNeFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
 
@@ -78,12 +83,6 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 			catalog->DataForkSize += the_fork.DataSize;
 		else
 			catalog->ResourceForkSize += the_fork.DataSize;
-
-		drv.fPacket.fPacketLba	   = catalog->NextSibling - sizeof(NFS_CATALOG_STRUCT);
-		drv.fPacket.fPacketSize	   = sizeof(NFS_CATALOG_STRUCT);
-		drv.fPacket.fPacketContent = catalog;
-
-		drv.fOutput(&drv.fPacket);
 
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
 		while (lba_next_fork >= kNeFSCatalogStartAddress)
@@ -168,7 +167,6 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NFS_CATALOG_STRUCT*
 			case 2:
 				err_global_get() = kErrorDiskIsFull;
 				break;
-			case 3:
 				err_global_get() = kErrorNoSuchDisk;
 				break;
 
@@ -242,9 +240,9 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	Char parent_name[kNeFSNodeNameLen] = {0};
 
-	for (SizeT index_name = 0UL; index_name < rt_string_len(name); ++index_name)
+	for (SizeT indexName = 0UL; indexName < rt_string_len(name); ++indexName)
 	{
-		parent_name[index_name] = name[index_name];
+		parent_name[indexName] = name[indexName];
 	}
 
 	if (*parent_name == 0)

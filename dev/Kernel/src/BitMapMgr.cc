@@ -108,7 +108,7 @@ namespace Kernel
 								return (VoidPtr)ptr_bit_set;
 							}
 
-							kcout << "Missed potnetial bitmp!\r\n";
+							kcout << "Missed potential BitMap as it is already used!\r\n";
 						}
 						else if (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
 						{

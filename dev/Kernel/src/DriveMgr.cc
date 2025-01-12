@@ -32,17 +32,6 @@ namespace Kernel
 			return;
 		}
 
-		if (pckt->fPacketDrive->fSectorSz == 0)
-		{
-#ifdef __ATA_PIO__
-			pckt->fPacketDrive->fSectorSz = kATASectorSize;
-#elif defined(__AHCI__)
-			pckt->fPacketDrive->fSectorSz = kAHCISectorSize;
-#else
-			pckt->fPacketDrive->fSectorSz = 512;
-#endif
-		}
-
 		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime) &&
 			pckt->fPacketDrive->fLbaStart > 0 && pckt->fPacketDrive->fLbaEnd > 0)
 		{
@@ -52,6 +41,8 @@ namespace Kernel
 				return;
 			}
 		}
+
+		kcout << pckt->fPacketMime << endl;
 
 #ifdef __AHCI__
 		drv_std_read(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
@@ -70,14 +61,17 @@ namespace Kernel
 			return;
 		}
 
-		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime))
+		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime) &&
+			pckt->fPacketDrive->fLbaStart > 0 && pckt->fPacketDrive->fLbaEnd > 0)
 		{
-			if (pckt->fPacketLba < pckt->fPacketDrive->fLbaStart)
-				return;
-
 			if (pckt->fPacketLba > pckt->fPacketDrive->fLbaEnd)
+			{
+				pckt->fPacketGood = NO;
 				return;
+			}
 		}
+
+		kcout << pckt->fPacketMime << endl;
 
 #ifdef __AHCI__
 		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
@@ -197,7 +191,7 @@ namespace Kernel
 #elif defined(__AHCI__)
 			trait.fSectorSz = kAHCISectorSize;
 #else
-			trait.fSectorSz				  = 512;
+			trait.fSectorSz = 512;
 #endif
 			trait.fPacket.fPacketLba	 = kEPMBootBlockLba;
 			trait.fPacket.fPacketSize	 = sizeof(EPM_PART_BLOCK);

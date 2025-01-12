@@ -142,6 +142,8 @@ enum
 /// @brief Catalog type.
 struct PACKED NFS_CATALOG_STRUCT final
 {
+	BOOL ForkOrCatalog : 1{0};
+
 	Kernel::Char Name[kNeFSNodeNameLen] = {0};
 	Kernel::Char Mime[kNeFSMimeNameLen] = {0};
 
@@ -177,6 +179,8 @@ struct PACKED NFS_CATALOG_STRUCT final
 /// whereas the data fork is reserved for file data.
 struct PACKED NFS_FORK_STRUCT final
 {
+	BOOL ForkOrCatalog : 1{1};
+
 	Kernel::Char ForkName[kNeFSForkNameLen]	   = {0};
 	Kernel::Char CatalogName[kNeFSNodeNameLen] = {0};
 
@@ -192,6 +196,8 @@ struct PACKED NFS_FORK_STRUCT final
 
 	Kernel::Lba NextSibling;
 	Kernel::Lba PreviousSibling;
+
+	Kernel::Char Pad[2] = {0};
 };
 
 /// @brief Partition block type
@@ -263,7 +269,7 @@ namespace Kernel
 		/// @param catalog it's catalog
 		/// @param theFork the fork itself.
 		/// @return the fork
-		_Output BOOL CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
+		_Output BOOL CreateFork(_Input const Char* catalog,
 								_Input NFS_FORK_STRUCT& theFork);
 
 		/// @brief Find fork inside New filesystem.
@@ -398,13 +404,12 @@ namespace Kernel
 						   Char*			   xml_data,
 						   Char*			   journal_name)
 		{
-			if (!parser ||
-				!mNode)
+			if (!parser)
 				return NO;
 
 			NFS_FORK_STRUCT new_fork{};
 
-			rt_copy_memory(mNode->Name, new_fork.CatalogName, rt_string_len(mNode->Name));
+			rt_copy_memory(mStamp, new_fork.CatalogName, rt_string_len(mStamp));
 			rt_copy_memory(journal_name, new_fork.ForkName, rt_string_len(journal_name));
 
 			new_fork.ResourceKind  = kNeFSCatalogKindMetaFile;
@@ -413,7 +418,8 @@ namespace Kernel
 			new_fork.DataSize	   = rt_string_len(xml_data);
 			new_fork.Kind		   = kNeFSRsrcForkKind;
 
-			parser->CreateFork(mNode, new_fork);
+			if (!parser->CreateFork(mStamp, new_fork))
+				return NO;
 
 			kcout << "Commit: " << xml_data << "\r\nTo: " << journal_name << endl;
 
