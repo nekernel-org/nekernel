@@ -40,6 +40,11 @@ namespace Kernel
 				pckt->fPacketGood = NO;
 				return;
 			}
+			else if (pckt->fPacketLba < pckt->fPacketDrive->fLbaStart)
+			{
+				pckt->fPacketGood = NO;
+				return;
+			}
 		}
 
 		kcout << pckt->fPacketMime << endl;
@@ -65,6 +70,11 @@ namespace Kernel
 			pckt->fPacketDrive->fLbaStart > 0 && pckt->fPacketDrive->fLbaEnd > 0)
 		{
 			if (pckt->fPacketLba > pckt->fPacketDrive->fLbaEnd)
+			{
+				pckt->fPacketGood = NO;
+				return;
+			}
+			else if (pckt->fPacketLba < pckt->fPacketDrive->fLbaStart)
 			{
 				pckt->fPacketGood = NO;
 				return;
