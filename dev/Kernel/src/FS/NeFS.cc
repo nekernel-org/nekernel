@@ -159,7 +159,7 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NFS_CATALOG_STRUCT*
 		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime, 16);
 
 		if (auto res =
-				fs_newfs_read(&kDiskMountpoint, drv, this->mDriveIndex);
+				fs_nefs_read(&kDiskMountpoint, drv, this->mDriveIndex);
 			res)
 		{
 			switch (res)
@@ -986,12 +986,12 @@ SizeT NeFileSystemParser::Tell(_Input _Output NFS_CATALOG_STRUCT* catalog)
 	return 0;
 }
 
-namespace Kernel::Detail
+namespace Kernel::NeFS
 {
 	/***********************************************************************************/
 	/// @brief Construct NeFS drives.
 	/***********************************************************************************/
-	Boolean fs_init_newfs(Void) noexcept
+	Boolean fs_init_nefs(Void) noexcept
 	{
 		kcout << "Creating A:\r";
 

@@ -432,9 +432,9 @@ namespace Kernel
 		Char mStamp[255] = {"/system/journal" kNeFSJournalExt};
 	};
 
-	namespace Detail
+	namespace NeFS
 	{
-		Boolean fs_init_newfs(Void) noexcept;
+		Boolean fs_init_nefs(Void) noexcept;
 	} // namespace Detail
 } // namespace Kernel
 
@@ -443,7 +443,7 @@ namespace Kernel
 /// @param drv_trait drive info
 /// @param drv_indx drive index.
 /// @return status code.
-Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* drv_mnt,
+Kernel::Int32 fs_nefs_write(Kernel::MountpointInterface* drv_mnt,
 							 Kernel::DriveTrait&		  drv_trait,
 							 Kernel::Int32				  drv_indx);
 
@@ -452,6 +452,6 @@ Kernel::Int32 fs_newfs_write(Kernel::MountpointInterface* drv_mnt,
 /// @param drv_trait drive info
 /// @param drv_indx drive index.
 /// @return status code.
-Kernel::Int32 fs_newfs_read(Kernel::MountpointInterface* drv_mnt,
+Kernel::Int32 fs_nefs_read(Kernel::MountpointInterface* drv_mnt,
 							Kernel::DriveTrait&			 drv_trait,
 							Kernel::Int32				 drv_indx);

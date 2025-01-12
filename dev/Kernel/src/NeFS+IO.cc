@@ -23,8 +23,8 @@
 
 /// Useful macros.
 
-#define NEFS_WRITE(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
-#define NEFS_READ(DRV, TRAITS, MP)	(MP->DRV()).fInput(&TRAITS)
+#define rtl_nefs_write(DRV, TRAITS, MP) (MP->DRV()).fOutput(&TRAITS)
+#define rtl_nefs_read(DRV, TRAITS, MP)	(MP->DRV()).fInput(&TRAITS)
 
 using namespace Kernel;
 
@@ -33,7 +33,7 @@ using namespace Kernel;
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return
-Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex)
+Int32 fs_nefs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex)
 {
 	if (!Mnt)
 		return 1;
@@ -43,19 +43,19 @@ Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
 	switch (DrvIndex)
 	{
 	case kNeFSSubDriveA: {
-		NEFS_READ(A, DrvTrait.fPacket, Mnt);
+		rtl_nefs_read(A, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveB: {
-		NEFS_READ(B, DrvTrait.fPacket, Mnt);
+		rtl_nefs_read(B, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveC: {
-		NEFS_READ(C, DrvTrait.fPacket, Mnt);
+		rtl_nefs_read(C, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveD: {
-		NEFS_READ(D, DrvTrait.fPacket, Mnt);
+		rtl_nefs_read(D, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	}
@@ -68,7 +68,7 @@ Int32 fs_newfs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInd
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return
-Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex)
+Int32 fs_nefs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex)
 {
 	if (!Mnt)
 		return 1;
@@ -78,19 +78,19 @@ Int32 fs_newfs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIn
 	switch (DrvIndex)
 	{
 	case kNeFSSubDriveA: {
-		NEFS_WRITE(A, DrvTrait.fPacket, Mnt);
+		rtl_nefs_write(A, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveB: {
-		NEFS_WRITE(B, DrvTrait.fPacket, Mnt);
+		rtl_nefs_write(B, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveC: {
-		NEFS_WRITE(C, DrvTrait.fPacket, Mnt);
+		rtl_nefs_write(C, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	case kNeFSSubDriveD: {
-		NEFS_WRITE(D, DrvTrait.fPacket, Mnt);
+		rtl_nefs_write(D, DrvTrait.fPacket, Mnt);
 		break;
 	}
 	}

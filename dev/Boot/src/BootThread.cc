@@ -84,7 +84,7 @@ namespace Boot
 			EfiPhysicalAddress loadStartAddress = opt_header_ptr->mImageBase;
 			loadStartAddress += opt_header_ptr->mBaseOfData;
 
-			writer.Write("BootZ: ImageBase: ").Write(loadStartAddress).Write("\r");
+			writer.Write("BootZ: Image base: ").Write(loadStartAddress).Write("\r");
 
 			auto numPages = opt_header_ptr->mSizeOfImage / cPageSize;
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);

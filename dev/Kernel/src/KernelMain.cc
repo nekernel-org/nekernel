@@ -96,7 +96,7 @@ namespace Kernel::Detail
 EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len)
 {
 #ifdef __ZKA_AUTO_FORMAT__
-	Kernel::Detail::fs_init_newfs();
+	Kernel::NeFS::fs_init_nefs();
 	Kernel::Detail::NeFilesystemInstaller installer{};
 #endif // __ZKA_AUTO_FORMAT__
 }
