@@ -66,6 +66,12 @@ namespace Kernel
 			return;
 		}
 
+		if (pckt->fPacketReadOnly)
+		{
+			pckt->fPacketGood = NO;
+			return;
+		}
+
 		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime) &&
 			pckt->fPacketDrive->fLbaStart > 0 && pckt->fPacketDrive->fLbaEnd > 0)
 		{

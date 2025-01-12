@@ -421,7 +421,7 @@ namespace Kernel
 			if (!parser->CreateFork(mStamp, new_fork))
 				return NO;
 
-			kcout << "Commit: " << xml_data << "\r\nTo: " << journal_name << endl;
+			kcout << "XML Commited: " << xml_data << "\r\nTo Journal Fork: " << journal_name << endl;
 
 			auto ret = parser->WriteCatalog(mNode, YES, xml_data, rt_string_len(xml_data), new_fork.ForkName);
 
@@ -429,7 +429,7 @@ namespace Kernel
 		}
 
 	private:
-		Char mStamp[255] = {"/system/journal_sys" kNeFSJournalExt};
+		Char mStamp[255] = {"/system/journal" kNeFSJournalExt};
 	};
 
 	namespace Detail

@@ -64,7 +64,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input const Char* catalog_name,
 											_Input NFS_FORK_STRUCT& the_fork)
 {
 	if (the_fork.DataSize > 0)
-	{		
+	{
 		auto catalog = this->GetCatalog(catalog_name);
 
 		if (!catalog)
@@ -75,9 +75,10 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input const Char* catalog_name,
 
 		auto drv = kDiskMountpoint.A();
 
-		NFS_FORK_STRUCT cur_fork;
-		Lba				lba_prev_fork = lba;
-		Lba				lba_next_fork = lba;
+		NFS_FORK_STRUCT cur_fork{};
+
+		Lba lba_prev_fork = lba;
+		Lba lba_next_fork = lba;
 
 		if (the_fork.Kind == kNeFSDataForkKind)
 			catalog->DataForkSize += the_fork.DataSize;
@@ -85,13 +86,15 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input const Char* catalog_name,
 			catalog->ResourceForkSize += the_fork.DataSize;
 
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
-		while (lba_next_fork >= kNeFSCatalogStartAddress)
+		do
 		{
 			drv.fPacket.fPacketLba	   = lba_next_fork;
 			drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 			drv.fPacket.fPacketContent = &cur_fork;
 
 			drv.fInput(&drv.fPacket);
+
+			kcout << "LBA: " << hex_number(lba_next_fork) << endl;
 
 			if (cur_fork.Flags & kNeFSFlagCreated)
 			{
@@ -116,17 +119,17 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input const Char* catalog_name,
 				drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 				drv.fPacket.fPacketContent = &the_fork;
 
-				drv.fOutput(&drv.fPacket);
-
 				/// log what we have now.
 				kcout << "Wrote fork data at: " << hex_number(the_fork.DataOffset)
 					  << endl;
 
 				kcout << "Wrote fork at: " << hex_number(lba) << endl;
 
+				drv.fOutput(&drv.fPacket);
+
 				return YES;
 			}
-		}
+		} while (drv.fPacket.fPacketGood);
 	}
 
 	return NO;

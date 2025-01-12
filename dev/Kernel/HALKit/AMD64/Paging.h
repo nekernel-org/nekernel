@@ -23,7 +23,7 @@
 #endif //! kPageAlign
 
 #ifndef kPageSize
-#define kPageSize (0x100)
+#define kPageSize (0x1000)
 #endif // !kPageSize
 
 #ifndef kAlign
