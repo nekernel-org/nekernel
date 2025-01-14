@@ -315,15 +315,15 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 				   rt_string_len("fs/nefs-packet"));
 
 	drive.fPacket.fPacketContent = &temporary_catalog;
-	drive.fPacket.fPacketSize	 = kNeFSSectorSz;
+	drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
 	drive.fPacket.fPacketLba	 = start_free;
 
 	drive.fInput(&drive.fPacket);
 
-	Char buf_part_block[kNeFSSectorSz] = {0};
+	Char buf_part_block[sizeof(NFS_ROOT_PARTITION_BLOCK)] = {0};
 
 	drive.fPacket.fPacketContent = buf_part_block;
-	drive.fPacket.fPacketSize	 = kNeFSSectorSz;
+	drive.fPacket.fPacketSize	 = sizeof(NFS_ROOT_PARTITION_BLOCK);
 	drive.fPacket.fPacketLba	 = kNeFSRootCatalogStartAddress;
 
 	drive.fInput(&drive.fPacket);
@@ -368,9 +368,9 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 			drive.fOutput(&drive.fPacket);
 
-			kcout << "Create new catalog, status: "
+			kcout << "Create new catalog with flags: "
 				  << hex_number(child_catalog->Flags) << endl;
-			kcout << "Create new catalog, name: " << child_catalog->Name
+			kcout << "Create new catalog with name: " << child_catalog->Name
 				  << endl;
 
 			delete catalog;
