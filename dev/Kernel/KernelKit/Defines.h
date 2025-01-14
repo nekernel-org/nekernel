@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 ------------------------------------------- */
 
@@ -12,4 +12,4 @@
 #define KERNELKIT_VERSION_BCD 0x01020
 
 class UserProcessScheduler;
-class UserThread;
+class UserProcess;

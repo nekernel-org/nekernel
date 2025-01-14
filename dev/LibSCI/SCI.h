@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright (C) 2024, t& Corporation, all rights reserved.
+Copyright (C) 2024, t& Labs, all rights reserved.
 
 File: SCI.h
 Purpose: System Calls.
@@ -123,8 +123,17 @@ IMPORT_C UInt32 MmFillCRC32Heap(_Input VoidPtr heap);
 /// @brief Copy memory region.
 IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len);
 
+/// @brief Compare memory regions.
+IMPORT_C SInt64 MmCmpMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len);
+
 /// @brief Fill memory region.
 IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt8 value);
+
+/// @brief Compare string regions.
+IMPORT_C SInt64 MmStrCmp(_Input const Char* dest, _Input const Char* src);
+
+/// @brief Get length of string.
+IMPORT_C SInt64 MmStrLen(const Char* str);
 
 // ------------------------------------------------------------------------
 // Error API.
@@ -266,5 +275,15 @@ IMPORT_C SInt32 CdEjectDrive(_Input const Char drv_letter);
 IMPORT_C SInt32 CdOpenTray(Void);
 
 IMPORT_C SInt32 CdCloseTray(Void);
+
+// ------------------------------------------------------------------------------------------ //
+// Console API.
+// ------------------------------------------------------------------------------------------ //
+
+IMPORT_C SInt32 ConOut(IOObject file /* nullptr to direct to stdout */, const Char* fmt, ...);
+
+IMPORT_C SInt32 ConIn(IOObject file /* nullptr to direct to stdout */, const Char* fmt, ...);
+
+IMPORT_C IOObject ConGet(const Char* path);
 
 #endif // ifndef SCIKIT_FOUNDATION_H

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 ------------------------------------------- */
 
@@ -12,9 +12,9 @@
 
 namespace Kernel
 {
-	class UserThread;
+	class UserProcess;
 
-	typedef UserThread& UserProcessRef;
+	typedef UserProcess& UserProcessRef;
 
 	/// @brief Access control class, which locks a task until one is done.
 	class Semaphore final
@@ -31,8 +31,8 @@ namespace Kernel
 		void WaitForProcess() noexcept;
 
 	public:
-		bool Lock(UserThread& process);
-		bool LockOrWait(UserThread& process, TimerInterface* timer);
+		bool Lock(UserProcess& process);
+		bool LockOrWait(UserProcess& process, TimerInterface* timer);
 
 	public:
 		ZKA_COPY_DEFAULT(Semaphore);

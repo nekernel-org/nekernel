@@ -8,11 +8,11 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "t& Corporation."
+      VALUE "CompanyName", "t& Labs."
 	  VALUE "FileDescription", "ZKA Minimal Kernel."
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "minoskrnl"
-      VALUE "LegalCopyright", "(c) 2024 t& Corporation, all rights reserved."
+      VALUE "LegalCopyright", "(c) 2024 t& Labs, all rights reserved."
       VALUE "OriginalFilename", "minoskrnl.exe"
       VALUE "ProductName", "ZKA Minimal Kernel."
       VALUE "ProductVersion", KERNEL_VERSION

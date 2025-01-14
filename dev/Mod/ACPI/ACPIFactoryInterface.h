@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 ------------------------------------------- */
 
@@ -51,8 +51,8 @@ namespace Kernel
 		}
 
 	private:
-		VoidPtr fRsdp;	  // pointer to root descriptor.
-		SSizeT	fEntries; // number of entries, -1 tells that no invalid entries were
+		VoidPtr fRsdp{nullptr};	  // pointer to root descriptor.
+		SSizeT	fEntries{0UL}; // number of entries, -1 tells that no invalid entries were
 						  // found.
 	};
 } // namespace Kernel

@@ -1,5 +1,5 @@
 ##################################################
-# (c) t& Corporation, all rights reserved.
+# (c) t& Labs, all rights reserved.
 # This is the minoskrnl's makefile.
 ##################################################
 
@@ -51,6 +51,12 @@ WINDRES=x86_64-w64-mingw32-windres
 
 .PHONY: newos-amd64-epm
 newos-amd64-epm: clean
+	clear
+	@echo "!!! Please build what is needed by HALKit/AMD64/HalApplicationProcessorGNU.s !!!"
+	@echo "!!! Please build what is needed by HALKit/AMD64/HalApplicationProcessorGNU.s !!!"
+	@echo "!!! Please build what is needed by HALKit/AMD64/HalApplicationProcessorGNU.s !!!"
+	@sleep 3
+
 	$(WINDRES) KernelRsrc.rsrc -O coff -o KernelRsrc.obj
 	$(CC) $(CCFLAGS) $(DISK_DRV) $(DEBUG_MACRO) $(wildcard src/*.cc) \
 	       $(wildcard src/FS/*.cc) $(wildcard HALKit/AMD64/Storage/*.cc) \

@@ -2,7 +2,7 @@
  *	========================================================
  *
  *	NetBoot
- * 	Copyright (C) 2024-2025, t& Corporation, all rights reserved., all rights reserved.
+ * 	Copyright (C) 2024-2025, t& Labs, all rights reserved., all rights reserved.
  *
  * 	========================================================
  */

@@ -2,7 +2,7 @@
  *      ========================================================
  *
  *      Kernel
- *      Copyright (C) 2024, t& Corporation, all rights reserved., all rights reserved.
+ *      Copyright (C) 2024, t& Labs, all rights reserved., all rights reserved.
  *
  *      ========================================================
  */
@@ -99,8 +99,8 @@ namespace Kernel
 
 	typedef IPEFDylibObject* IDylib;
 
-	EXTERN_C IDylib rtl_init_dylib(UserThread& header);
-	EXTERN_C Void rtl_fini_dylib(UserThread& header, IDylib lib, Bool* successful);
+	EXTERN_C IDylib rtl_init_dylib(UserProcess& header);
+	EXTERN_C Void rtl_fini_dylib(UserProcess& header, IDylib lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_H__ */

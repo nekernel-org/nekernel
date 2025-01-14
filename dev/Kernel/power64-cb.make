@@ -1,4 +1,4 @@
 ##################################################
-# (c) t& Corporation, all rights reserved.
+# (c) t& Labs, all rights reserved.
 # This is the microKernel makefile.
 ##################################################

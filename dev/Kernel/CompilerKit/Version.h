@@ -1,4 +1,4 @@
-// (c) t& Corporation
+// (c) t& Labs
 
 #pragma once
 

@@ -2,7 +2,7 @@
  * ========================================================
  *
  * minoskrnl
- * Copyright (C) 2024, t& Corporation, all rights reserved., all rights reserved.
+ * Copyright (C) 2024, t& Labs, all rights reserved., all rights reserved.
  *
  *  ========================================================
  */

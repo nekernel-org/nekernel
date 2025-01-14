@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-Copyright (C) 2024, t& Corporation, all rights reserved.
+Copyright (C) 2024, t& Labs, all rights reserved.
 
 File: Macros.h
 Purpose: LibSCI Macros header.
@@ -17,10 +17,16 @@ Purpose: LibSCI Macros header.
 #include <CompilerHint.h>
 
 #define ATTRIBUTE(X) __attribute__((X))
+
 #define IMPORT_CXX	 extern "C++"
 #define IMPORT_C	 extern "C"
 
 #define DEPRECATED ATTRIBUTE(deprecated)
+
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
+
+#define FILE_MAX_LEN 256
 
 typedef bool Bool;
 typedef void Void;

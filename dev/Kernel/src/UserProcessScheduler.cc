@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 	FILE: UserProcessScheduler.cc
 	PURPOSE: Low level/Ring-3 Process scheduler.
@@ -36,8 +36,8 @@ namespace Kernel
 
 	STATIC UserProcessScheduler kProcessScheduler;
 
-	UserThread::UserThread()  = default;
-	UserThread::~UserThread() = default;
+	UserProcess::UserProcess()  = default;
+	UserProcess::~UserProcess() = default;
 
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
@@ -51,7 +51,7 @@ namespace Kernel
 	/// @brief Crashes the current process.
 	/***********************************************************************************/
 
-	Void UserThread::Crash()
+	Void UserProcess::Crash()
 	{
 		if (this->Status != ProcessStatusKind::kRunning)
 			return;
@@ -64,7 +64,7 @@ namespace Kernel
 	//! @brief boolean operator, check status.
 	/***********************************************************************************/
 
-	UserThread::operator bool()
+	UserProcess::operator bool()
 	{
 		return this->Status == ProcessStatusKind::kRunning;
 	}
@@ -75,7 +75,7 @@ namespace Kernel
 	/// @return Int32 the last exit code.
 	/***********************************************************************************/
 
-	const UInt32& UserThread::GetExitCode() noexcept
+	const UInt32& UserProcess::GetExitCode() noexcept
 	{
 		return this->fLastExitCode;
 	}
@@ -84,7 +84,7 @@ namespace Kernel
 	/// @brief Error code variable getter.
 	/***********************************************************************************/
 
-	Int32& UserThread::GetLocalCode() noexcept
+	Int32& UserProcess::GetLocalCode() noexcept
 	{
 		return this->fLocalCode;
 	}
@@ -94,7 +94,7 @@ namespace Kernel
 	/// @param should_wakeup if the program shall wakeup or not.
 	/***********************************************************************************/
 
-	Void UserThread::Wake(const bool should_wakeup)
+	Void UserProcess::Wake(const bool should_wakeup)
 	{
 		this->Status =
 			should_wakeup ? ProcessStatusKind::kRunning : ProcessStatusKind::kFrozen;
@@ -104,7 +104,7 @@ namespace Kernel
 	/** @brief Add pointer to entry. */
 	/***********************************************************************************/
 
-	ErrorOr<VoidPtr> UserThread::New(const SizeT& sz, const SizeT& pad_amount)
+	ErrorOr<VoidPtr> UserProcess::New(const SizeT& sz, const SizeT& pad_amount)
 	{
 #ifdef __ZKA_VIRTUAL_MEMORY_SUPPORT__
 		auto vm_register = hal_read_cr3();
@@ -119,7 +119,7 @@ namespace Kernel
 
 		if (!this->ProcessMemoryHeap)
 		{
-			this->ProcessMemoryHeap = new UserThread::ProcessMemoryHeapList();
+			this->ProcessMemoryHeap = new UserProcess::ProcessMemoryHeapList();
 
 			this->ProcessMemoryHeap->MemoryEntryPad	 = pad_amount;
 			this->ProcessMemoryHeap->MemoryEntrySize = sz;
@@ -159,7 +159,7 @@ namespace Kernel
 	/// @brief Gets the name of the current process.
 	/***********************************************************************************/
 
-	const Char* UserThread::GetName() noexcept
+	const Char* UserProcess::GetName() noexcept
 	{
 		return this->Name;
 	}
@@ -168,13 +168,13 @@ namespace Kernel
 	/// @brief Gets the owner of the process.
 	/***********************************************************************************/
 
-	const User* UserThread::GetOwner() noexcept
+	const User* UserProcess::GetOwner() noexcept
 	{
 		return this->Owner;
 	}
 
-	/// @brief UserThread status getter.
-	const ProcessStatusKind& UserThread::GetStatus() noexcept
+	/// @brief UserProcess status getter.
+	const ProcessStatusKind& UserProcess::GetStatus() noexcept
 	{
 		return this->Status;
 	}
@@ -185,7 +185,7 @@ namespace Kernel
 	*/
 	/***********************************************************************************/
 
-	const AffinityKind& UserThread::GetAffinity() noexcept
+	const AffinityKind& UserProcess::GetAffinity() noexcept
 	{
 		return this->Affinity;
 	}
@@ -197,7 +197,7 @@ namespace Kernel
 	*/
 	/***********************************************************************************/
 
-	Void UserThread::Exit(const Int32& exit_code)
+	Void UserProcess::Exit(const Int32& exit_code)
 	{
 		this->Status		= exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
 		this->fLastExitCode = exit_code;
@@ -290,7 +290,7 @@ namespace Kernel
 
 		++this->mTeam.mProcessCount;
 
-		UserThread& process = this->mTeam.mProcessList[pid];
+		UserProcess& process = this->mTeam.mProcessList[pid];
 
 		process.Image.fCode = code;
 		process.Image.fBlob = image;
@@ -332,7 +332,7 @@ namespace Kernel
 		// React according to process kind.
 		switch (process.Kind) 
 		{
-		case UserThread::kExectuableDylibKind:
+		case UserProcess::kExectuableDylibKind:
 		{
 			process.DylibDelegate = rtl_init_dylib(process);
 			MUST_PASS(process.DylibDelegate);
@@ -479,13 +479,13 @@ namespace Kernel
 
 	/// @brief Gets current running process.
 	/// @return
-	Ref<UserThread>& UserProcessScheduler::GetCurrentProcess()
+	Ref<UserProcess>& UserProcessScheduler::GetCurrentProcess()
 	{
 		return mTeam.AsRef();
 	}
 
 	/// @brief Current proccess id getter.
-	/// @return UserThread ID integer.
+	/// @return UserProcess ID integer.
 	ErrorOr<PID> UserProcessHelper::TheCurrentPID()
 	{
 		if (!kProcessScheduler.GetCurrentProcess())
@@ -499,7 +499,7 @@ namespace Kernel
 	/// @param process the process reference.
 	/// @retval true can be schedulded.
 	/// @retval false cannot be schedulded.
-	Bool UserProcessHelper::CanBeScheduled(const UserThread& process)
+	Bool UserProcessHelper::CanBeScheduled(const UserProcess& process)
 	{
 		if (process.Status == ProcessStatusKind::kKilled ||
 			process.Status == ProcessStatusKind::kFinished ||

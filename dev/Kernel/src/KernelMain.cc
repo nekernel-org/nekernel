@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright t& Corporation
+	Copyright t& Labs
 
 	File: Main.cxx
 	Purpose: Main entrypoint of kernel.

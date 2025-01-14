@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 	FILE: NeFS.h
 	PURPOSE: NeFS (New FileSystem) support.
@@ -23,8 +23,8 @@ default.
 #include <NewKit/KString.h>
 
 /**
-	@brief New File System specification.
-	@author Amlal EL Mahrouss (t& Corporation, amlalelmahrouss at icloud dot com)
+	@brief New extended File System specification.
+	@author t& Labs (t& Labs, amlalelmahrouss at icloud dot com)
 */
 
 #define kNeFSInvalidFork	(-1)

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 ------------------------------------------- */
 
@@ -44,8 +44,8 @@ Kernel::SizeT drv_get_size();
 ///! BUGS: 0
 
 /***********************************************************************************/
-/// This file implements the New File System.
-///	New File System implements a B-Tree based algortihm.
+/// This file implements the New extended File System.
+///	New extended File System implements a B-Tree based algortihm.
 ///		/
 ///	/Path1/		/ath2/
 /// /readme.rtf		/ListContents.pef /readme.lnk <-- symlink.

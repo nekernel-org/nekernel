@@ -2,7 +2,7 @@
  * ========================================================
  *
  * minoskrnl
- * Copyright (C) 2024, t& Corporation, all rights reserved., all rights reserved.
+ * Copyright (C) 2024, t& Labs, all rights reserved., all rights reserved.
  *
  *  ========================================================
  */
@@ -39,7 +39,7 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C IDylib rtl_init_dylib(UserThread& thread)
+EXTERN_C IDylib rtl_init_dylib(UserProcess& thread)
 {
 	IDylib dll_obj = tls_new_class<IPEFDylibObject>();
 
@@ -83,7 +83,7 @@ EXTERN_C IDylib rtl_init_dylib(UserThread& thread)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_dylib(UserThread& thread, IDylib dll_obj, Bool* successful)
+EXTERN_C Void rtl_fini_dylib(UserProcess& thread, IDylib dll_obj, Bool* successful)
 {
 	MUST_PASS(successful);
 

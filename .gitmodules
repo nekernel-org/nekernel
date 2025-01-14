@@ -1,3 +1,0 @@
-[submodule "vendor/os-kit"]
-	path = vendor/os-kit
-	url = git@github.com:tq-corp/os-kit.git

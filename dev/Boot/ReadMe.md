@@ -17,4 +17,4 @@ And then execute:
 make all
 ```
 
-##### Copyright, t& Corporation, all rights reserved.
+##### Copyright, t& Labs, all rights reserved.

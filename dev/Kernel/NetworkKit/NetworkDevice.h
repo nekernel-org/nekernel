@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 ------------------------------------------- */
 
@@ -63,7 +63,7 @@ namespace Kernel
 	using PPPNetworkDevice = NetworkDevice;
 
 	/// @brief IPC device.
-	using IPCEPNetworkDevice = NetworkDevice;
+	using IPCNetworkDevice = NetworkDevice;
 
 	/// @brief GRPS device.
 	using GPRSNetworkDevice = NetworkDevice;

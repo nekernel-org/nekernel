@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 ------------------------------------------- */
 
@@ -26,7 +26,7 @@ STATIC Kernel::Void hal_init_cxx_ctors()
 {
 	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
-		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		  = Kernel::UserThread();
+		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		  = Kernel::UserProcess();
 		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i].Status = Kernel::ProcessStatusKind::kKilled;
 	}
 

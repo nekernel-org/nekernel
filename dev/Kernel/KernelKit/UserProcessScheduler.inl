@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Corporation, all rights reserved.
+	Copyright (C) 2024, t& Labs, all rights reserved.
 
 	FILE: UserProcessScheduler.inl
 	PURPOSE: Low level/Ring-3 Process scheduler.
@@ -14,7 +14,7 @@ namespace Kernel
 	/***********************************************************************************/
 
 	template <typename T>
-	Boolean UserThread::Delete(ErrorOr<T*> ptr, const SizeT& sz)
+	Boolean UserProcess::Delete(ErrorOr<T*> ptr, const SizeT& sz)
 	{
 		if (!ptr ||
 			sz == 0)
