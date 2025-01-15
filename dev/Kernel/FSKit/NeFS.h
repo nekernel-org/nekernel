@@ -142,7 +142,7 @@ enum
 /// @brief Catalog type.
 struct PACKED NFS_CATALOG_STRUCT final
 {
-	BOOL ForkOrCatalog : 1{0};
+	BOOL ForkOrCatalog : 1 {0};
 
 	Kernel::Char Name[kNeFSNodeNameLen] = {0};
 	Kernel::Char Mime[kNeFSMimeNameLen] = {0};
@@ -179,7 +179,7 @@ struct PACKED NFS_CATALOG_STRUCT final
 /// whereas the data fork is reserved for file data.
 struct PACKED NFS_FORK_STRUCT final
 {
-	BOOL ForkOrCatalog : 1{1};
+	BOOL ForkOrCatalog : 1 {1};
 
 	Kernel::Char ForkName[kNeFSForkNameLen]	   = {0};
 	Kernel::Char CatalogName[kNeFSNodeNameLen] = {0};
@@ -269,7 +269,7 @@ namespace Kernel
 		/// @param catalog it's catalog
 		/// @param theFork the fork itself.
 		/// @return the fork
-		_Output BOOL CreateFork(_Input const Char* catalog,
+		_Output BOOL CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 								_Input NFS_FORK_STRUCT& theFork);
 
 		/// @brief Find fork inside New filesystem.
@@ -404,7 +404,8 @@ namespace Kernel
 						   Char*			   xml_data,
 						   Char*			   journal_name)
 		{
-			if (!parser)
+			if (!parser ||
+				!mNode)
 				return NO;
 
 			NFS_FORK_STRUCT new_fork{};
@@ -418,7 +419,7 @@ namespace Kernel
 			new_fork.DataSize	   = rt_string_len(xml_data);
 			new_fork.Kind		   = kNeFSRsrcForkKind;
 
-			if (!parser->CreateFork(mStamp, new_fork))
+			if (!parser->CreateFork(mNode, new_fork))
 				return NO;
 
 			kcout << "XML Commited: " << xml_data << "\r\nTo Journal Fork: " << journal_name << endl;
@@ -429,13 +430,13 @@ namespace Kernel
 		}
 
 	private:
-		Char mStamp[255] = {"/system/journal" kNeFSJournalExt};
+		Char mStamp[255] = {"/sys/journal" kNeFSJournalExt};
 	};
 
 	namespace NeFS
 	{
 		Boolean fs_init_nefs(Void) noexcept;
-	} // namespace Detail
+	} // namespace NeFS
 } // namespace Kernel
 
 /// @brief Write to newfs disk.
@@ -444,8 +445,8 @@ namespace Kernel
 /// @param drv_indx drive index.
 /// @return status code.
 Kernel::Int32 fs_nefs_write(Kernel::MountpointInterface* drv_mnt,
-							 Kernel::DriveTrait&		  drv_trait,
-							 Kernel::Int32				  drv_indx);
+							Kernel::DriveTrait&			 drv_trait,
+							Kernel::Int32				 drv_indx);
 
 /// @brief Read from newfs disk.
 /// @param drv_mnt mounted interface.
@@ -453,5 +454,5 @@ Kernel::Int32 fs_nefs_write(Kernel::MountpointInterface* drv_mnt,
 /// @param drv_indx drive index.
 /// @return status code.
 Kernel::Int32 fs_nefs_read(Kernel::MountpointInterface* drv_mnt,
-							Kernel::DriveTrait&			 drv_trait,
-							Kernel::Int32				 drv_indx);
+						   Kernel::DriveTrait&			drv_trait,
+						   Kernel::Int32				drv_indx);

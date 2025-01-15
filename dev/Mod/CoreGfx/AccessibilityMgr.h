@@ -36,6 +36,6 @@ namespace FB
 			return kHandoverHeader->f_GOP.f_Height;
 		}
 	};
-} // namespace UI
+} // namespace FB
 
 #endif // !GFX_MGR_ACCESSIBILITY_H_

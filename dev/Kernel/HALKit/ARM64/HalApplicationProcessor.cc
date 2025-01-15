@@ -56,7 +56,7 @@ namespace Kernel
 
 			const auto kEnableSignalInt = YES;
 
-			gicc_ctlr |= kEnableSignalInt;	   // Enable signaling of interrupts
+			gicc_ctlr |= kEnableSignalInt;		  // Enable signaling of interrupts
 			gicc_ctlr |= (kEnableSignalInt << 1); // Allow Group 1 interrupts in EL0
 
 			HAL::hal_mmio_write(GICC_BASE + GICC_CTLR, gicc_ctlr);

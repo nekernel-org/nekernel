@@ -28,8 +28,8 @@ namespace Kernel::HAL
 
 			UInt16 kPITCommDivisor = kPITFrequency / ticks; // 100 Hz.
 
-			HAL::rt_out8(kPITControlPort, 0x36);						// Command to PIT
-			HAL::rt_out8(kPITChannel0Port, kPITCommDivisor & 0xFF);		// Send low byte
+			HAL::rt_out8(kPITControlPort, 0x36);						   // Command to PIT
+			HAL::rt_out8(kPITChannel0Port, kPITCommDivisor & 0xFF);		   // Send low byte
 			HAL::rt_out8(kPITChannel0Port, (kPITCommDivisor >> 8) & 0xFF); // Send high byte
 
 			hal_clear_irq_mask(32);

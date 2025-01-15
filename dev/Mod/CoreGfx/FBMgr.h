@@ -114,19 +114,19 @@
 	}
 #else
 #define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)
-#define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y) 
-#define FBDrawBitMapInRegionToRgn(_Rgn, reg_ptr, height, width, base_x, base_y) 
-#define CGClearRegion(height, width, base_x, base_y)           
-#define FBDrawInRegion(_Clr, height, width, base_x, base_y)   
-#define FBDrawInRegionToRgn(_Rgn, _Clr, height, width, base_x, base_y)  
-#define FBDrawInRegionA(_Clr, height, width, base_x, base_y) 
-#define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)  
-#define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y) 
-#define FBDrawBitMapInRegionToRgn(_Rgn, reg_ptr, height, width, base_x, base_y) 
-#define CGClearRegion(height, width, base_x, base_y) 
-#define FBDrawInRegion(_Clr, height, width, base_x, base_y) 
-#define FBDrawInRegionToRgn(_Rgn, _Clr, height, width, base_x, base_y)  
-#define FBDrawInRegionA(_Clr, height, width, base_x, base_y)  
+#define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y)
+#define FBDrawBitMapInRegionToRgn(_Rgn, reg_ptr, height, width, base_x, base_y)
+#define CGClearRegion(height, width, base_x, base_y)
+#define FBDrawInRegion(_Clr, height, width, base_x, base_y)
+#define FBDrawInRegionToRgn(_Rgn, _Clr, height, width, base_x, base_y)
+#define FBDrawInRegionA(_Clr, height, width, base_x, base_y)
+#define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)
+#define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y)
+#define FBDrawBitMapInRegionToRgn(_Rgn, reg_ptr, height, width, base_x, base_y)
+#define CGClearRegion(height, width, base_x, base_y)
+#define FBDrawInRegion(_Clr, height, width, base_x, base_y)
+#define FBDrawInRegionToRgn(_Rgn, _Clr, height, width, base_x, base_y)
+#define FBDrawInRegionA(_Clr, height, width, base_x, base_y)
 #endif // __ZKA_AMD64__
 
 #ifndef GFX_MGR_ACCESSIBILITY_H
@@ -147,4 +147,4 @@ namespace FB
 		fb_clear();
 	}
 
-} // namespace UI
+} // namespace FB

@@ -47,8 +47,6 @@ namespace Kernel
 			}
 		}
 
-		kcout << pckt->fPacketMime << endl;
-
 #ifdef __AHCI__
 		drv_std_read(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
@@ -86,8 +84,6 @@ namespace Kernel
 				return;
 			}
 		}
-
-		kcout << pckt->fPacketMime << endl;
 
 #ifdef __AHCI__
 		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);

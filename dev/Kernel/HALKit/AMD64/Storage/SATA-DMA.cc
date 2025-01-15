@@ -26,11 +26,11 @@
 
 #ifdef __AHCI__
 
-#define kHBAErrTaskFile	  (1 << 30)
-#define kHBAPxCmdST  0x0001
-#define kHBAPxCmdFre 0x0010
-#define kHBAPxCmdFR  0x4000
-#define kHBAPxCmdCR  0x8000
+#define kHBAErrTaskFile (1 << 30)
+#define kHBAPxCmdST		0x0001
+#define kHBAPxCmdFre	0x0010
+#define kHBAPxCmdFR		0x4000
+#define kHBAPxCmdCR		0x8000
 
 #define kSataLBAMode (1 << 6)
 
@@ -135,7 +135,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 						const auto kAHCIBaseAddress = mib_cast(4);
 
-						kSATAPort->Ports[kSATAPortIdx].Clb  = kAHCIBaseAddress + (kSATAPortIdx << 10);
+						kSATAPort->Ports[kSATAPortIdx].Clb	= kAHCIBaseAddress + (kSATAPortIdx << 10);
 						kSATAPort->Ports[kSATAPortIdx].Clbu = 0;
 
 						rt_set_memory((VoidPtr)((UIntPtr)kSATAPort->Ports[kSATAPortIdx].Clb), 0, 1024);

@@ -11,7 +11,7 @@
 
 #include <NewKit/Defines.h>
 
-#define kNetBootINetMagic "NETB"
+#define kNetBootINetMagic		"NETB"
 #define kNetBootINetMagicLength 4
 
 /// @brief the internet header is used to download updates OTA.
@@ -26,6 +26,6 @@ typedef struct NetBootInternetHeader
 	Kernel::Int32	PatchLength;	  /// the patch length.
 	Kernel::Char	PatchTarget[255]; /// the target file.
 	Kernel::Boolean ImpliesROM;		  /// does it imply an EEPROM reprogram?
-	Kernel::Boolean Preflight; 	      /// is it a preflight packet.
-	Kernel::Char    Data[];		  /// non preflight packet has a patch blob for a **PatchTarget**
+	Kernel::Boolean Preflight;		  /// is it a preflight packet.
+	Kernel::Char	Data[];			  /// non preflight packet has a patch blob for a **PatchTarget**
 } NetBootInternetHeader;

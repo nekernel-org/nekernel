@@ -51,9 +51,9 @@ namespace Kernel
 		}
 
 	private:
-		VoidPtr fRsdp{nullptr};	  // pointer to root descriptor.
-		SSizeT	fEntries{0UL}; // number of entries, -1 tells that no invalid entries were
-						  // found.
+		VoidPtr fRsdp{nullptr}; // pointer to root descriptor.
+		SSizeT	fEntries{0UL};	// number of entries, -1 tells that no invalid entries were
+								// found.
 	};
 } // namespace Kernel
 

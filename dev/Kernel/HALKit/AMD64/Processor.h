@@ -177,7 +177,7 @@ namespace Kernel::HAL
 		static Void Load(Register64& idt);
 		static Void Load(Ref<Register64>& idt);
 	};
-	
+
 	/***********************************************************************************/
 	/// @brief Is the current config SMP aware?
 	/// @return True if YES, False if not.

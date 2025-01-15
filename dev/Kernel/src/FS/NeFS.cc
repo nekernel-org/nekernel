@@ -52,7 +52,7 @@ Kernel::SizeT drv_get_size();
 ///								/Path1/readme.rtf
 /***********************************************************************************/
 
-STATIC MountpointInterface kDiskMountpoint;
+STATIC MountpointInterface kMountpoint;
 
 /***********************************************************************************/
 /// @brief Creates a new fork inside the New filesystem partition.
@@ -60,76 +60,104 @@ STATIC MountpointInterface kDiskMountpoint;
 /// @param the_fork the fork itself.
 /// @return the fork
 /***********************************************************************************/
-_Output BOOL NeFileSystemParser::CreateFork(_Input const Char* catalog_name,
+_Output BOOL NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 											_Input NFS_FORK_STRUCT& the_fork)
 {
-	if (the_fork.DataSize > 0)
+	if (catalog && the_fork.ForkName[0] != 0 &&
+		the_fork.DataSize > 0)
 	{
-		auto catalog = this->GetCatalog(catalog_name);
-
-		if (!catalog)
-			return NO;
-
 		Lba lba = (the_fork.Kind == kNeFSDataForkKind) ? catalog->DataFork
 													   : catalog->ResourceFork;
 
-		auto drv = kDiskMountpoint.A();
+		kcout << "Fork lba: " << hex_number(lba) << endl;
 
-		NFS_FORK_STRUCT cur_fork{};
+		if (lba < kNeFSCatalogStartAddress)
+			return NO;
 
-		Lba lba_prev_fork = lba;
-		Lba lba_next_fork = lba;
+		auto drv = kMountpoint.A();
 
-		if (the_fork.Kind == kNeFSDataForkKind)
-			catalog->DataForkSize += the_fork.DataSize;
-		else
-			catalog->ResourceForkSize += the_fork.DataSize;
+		/// special treatment.
+		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime,
+					   rt_string_len("fs/nefs-packet"));
+
+		NFS_FORK_STRUCT curFork{0};
+		NFS_FORK_STRUCT prevFork{0};
+		Lba				lbaOfPreviousFork = lba;
 
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
-		do
+		while (YES)
 		{
-			drv.fPacket.fPacketLba	   = lba_next_fork;
+			drv.fPacket.fPacketLba	   = lba;
 			drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
-			drv.fPacket.fPacketContent = &cur_fork;
+			drv.fPacket.fPacketContent = &curFork;
 
 			drv.fInput(&drv.fPacket);
 
-			kcout << "LBA: " << hex_number(lba_next_fork) << endl;
-
-			if (cur_fork.Flags & kNeFSFlagCreated)
+			if (curFork.NextSibling > kBadAddress)
 			{
-				/// sanity check.
-				if (StringBuilder::Equals(cur_fork.ForkName, the_fork.ForkName) &&
-					StringBuilder::Equals(cur_fork.CatalogName, the_fork.CatalogName))
-				{
-					kcout << "Fork already exists.\r";
-					return NO;
-				}
+				kcout << "Bad fork: " << hex_number(curFork.NextSibling) << endl;
+				return NO;
+			}
 
-				lba_next_fork = cur_fork.NextSibling;
+			kcout << "Next fork: " << hex_number(curFork.NextSibling) << endl;
+
+			if (curFork.Flags & kNeFSFlagCreated)
+			{
+				kcout << "Fork already exists.\r";
+
+				/// sanity check.
+				if (StringBuilder::Equals(curFork.ForkName, the_fork.ForkName) &&
+					StringBuilder::Equals(curFork.CatalogName, catalog->Name))
+					return NO;
+
+				kcout << "Next fork: " << hex_number(curFork.NextSibling) << endl;
+
+				lbaOfPreviousFork = lba;
+				lba				  = curFork.NextSibling;
+
+				prevFork = curFork;
 			}
 			else
 			{
-				the_fork.Flags |= kNeFSFlagCreated;
-				the_fork.DataOffset		 = lba - sizeof(NFS_FORK_STRUCT);
-				the_fork.NextSibling	 = the_fork.DataOffset - the_fork.DataSize;
-				the_fork.PreviousSibling = lba_prev_fork;
+				/// This is a check that we have, in order to link the previous fork
+				/// entry.
+				if (lba >= kNeFSCatalogStartAddress)
+				{
+					drv.fPacket.fPacketLba	   = lbaOfPreviousFork;
+					drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
+					drv.fPacket.fPacketContent = &prevFork;
 
-				drv.fPacket.fPacketLba	   = lba;
-				drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
-				drv.fPacket.fPacketContent = &the_fork;
+					prevFork.NextSibling = lba;
 
-				/// log what we have now.
-				kcout << "Wrote fork data at: " << hex_number(the_fork.DataOffset)
-					  << endl;
+					/// write to disk.
+					drv.fOutput(&drv.fPacket);
+				}
 
-				kcout << "Wrote fork at: " << hex_number(lba) << endl;
-
-				drv.fOutput(&drv.fPacket);
-
-				return YES;
+				break;
 			}
-		} while (drv.fPacket.fPacketGood);
+		}
+
+		constexpr auto kForkPadding =
+			4; /// this value gives us space for the data offset.
+
+		the_fork.Flags |= kNeFSFlagCreated;
+		the_fork.DataOffset		 = lba - sizeof(NFS_FORK_STRUCT);
+		the_fork.PreviousSibling = lbaOfPreviousFork;
+		the_fork.NextSibling	 = (the_fork.DataOffset - the_fork.DataSize - sizeof(NFS_FORK_STRUCT)) * kForkPadding;
+
+		drv.fPacket.fPacketLba	   = lba;
+		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
+		drv.fPacket.fPacketContent = &the_fork;
+
+		drv.fOutput(&drv.fPacket);
+
+		/// log what we have now.
+		kcout << "Wrote fork data at: " << hex_number(the_fork.DataOffset)
+			  << endl;
+
+		kcout << "Wrote fork at: " << hex_number(lba) << endl;
+
+		return YES;
 	}
 
 	return NO;
@@ -145,21 +173,21 @@ _Output NFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NFS_CATALOG_STRUCT*
 													  _Input const Char* name,
 													  Boolean			 isDataFork)
 {
-	auto			 drv	  = kDiskMountpoint.A();
+	auto			 drive	  = kMountpoint.A();
 	NFS_FORK_STRUCT* the_fork = nullptr;
 
 	Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
 
 	while (lba != 0)
 	{
-		drv.fPacket.fPacketLba	   = lba;
-		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
-		drv.fPacket.fPacketContent = (VoidPtr)the_fork;
+		drive.fPacket.fPacketLba	 = lba;
+		drive.fPacket.fPacketSize	 = sizeof(NFS_FORK_STRUCT);
+		drive.fPacket.fPacketContent = (VoidPtr)the_fork;
 
-		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime, 16);
+		rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime, 16);
 
 		if (auto res =
-				fs_nefs_read(&kDiskMountpoint, drv, this->mDriveIndex);
+				fs_nefs_read(&kMountpoint, drive, this->mDriveIndex);
 			res)
 		{
 			switch (res)
@@ -278,7 +306,9 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	NFS_CATALOG_STRUCT* catalog = this->FindCatalog(parent_name, out_lba);
 
-	auto drive = kDiskMountpoint.A();
+	auto drive = kMountpoint.A();
+
+	constexpr auto kNeFSCatalogPadding = 4;
 
 	if (catalog && catalog->Kind == kNeFSCatalogKindFile)
 	{
@@ -287,19 +317,27 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 		return nullptr;
 	}
+	else if (!catalog)
+	{
+		Char part_block[sizeof(NFS_ROOT_PARTITION_BLOCK)] = {0};
 
-	constexpr SizeT kDefaultForkSize = 0UL;
+		drive.fPacket.fPacketContent = part_block;
+		drive.fPacket.fPacketSize	 = sizeof(NFS_ROOT_PARTITION_BLOCK);
+		drive.fPacket.fPacketLba	 = kNeFSRootCatalogStartAddress;
 
-	if (!out_lba)
-		out_lba = kNeFSCatalogStartAddress;
+		drive.fInput(&drive.fPacket);
+
+		NFS_ROOT_PARTITION_BLOCK* blk_nefs = (NFS_ROOT_PARTITION_BLOCK*)part_block;
+		out_lba							   = blk_nefs->StartCatalog;
+	}
 
 	NFS_CATALOG_STRUCT* child_catalog = new NFS_CATALOG_STRUCT();
 
-	child_catalog->ResourceForkSize = kDefaultForkSize;
-	child_catalog->DataForkSize		= kDefaultForkSize;
+	child_catalog->ResourceForkSize = 0UL;
+	child_catalog->DataForkSize		= 0UL;
 	child_catalog->CatalogFlags		= kNeFSStatusUnlocked;
-	child_catalog->NextSibling		= out_lba + sizeof(NFS_CATALOG_STRUCT);
-	child_catalog->PrevSibling		= out_lba - sizeof(NFS_CATALOG_STRUCT);
+	child_catalog->NextSibling		= out_lba;
+	child_catalog->PrevSibling		= out_lba;
 	child_catalog->Kind				= kind;
 	child_catalog->Flags |= kNeFSFlagCreated;
 	child_catalog->CatalogFlags = flags;
@@ -313,12 +351,6 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/nefs-packet"));
-
-	drive.fPacket.fPacketContent = &temporary_catalog;
-	drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
-	drive.fPacket.fPacketLba	 = start_free;
-
-	drive.fInput(&drive.fPacket);
 
 	Char buf_part_block[sizeof(NFS_ROOT_PARTITION_BLOCK)] = {0};
 
@@ -338,13 +370,28 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 		return nullptr;
 	}
 
-	while (start_free >= kNeFSCatalogStartAddress)
+	drive.fPacket.fPacketContent = &temporary_catalog;
+	drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
+	drive.fPacket.fPacketLba	 = start_free;
+
+	drive.fInput(&drive.fPacket);
+
+	while (start_free >= part_block->StartCatalog)
 	{
 		// ========================== //
 		// Allocate catalog now...
 		// ========================== //
 		if ((temporary_catalog.Flags & kNeFSFlagCreated) == 0)
 		{
+			child_catalog->NextSibling =
+				start_free + (sizeof(NFS_CATALOG_STRUCT) * kNeFSCatalogPadding);
+
+			drive.fPacket.fPacketContent = &temporary_catalog;
+			drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
+			drive.fPacket.fPacketLba	 = start_free;
+
+			drive.fOutput(&drive.fPacket);
+
 			child_catalog->DataFork		= part_block->DiskSize - start_free;
 			child_catalog->ResourceFork = child_catalog->DataFork;
 
@@ -357,7 +404,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 			// Get NeFS partition's block.
 
 			drive.fPacket.fPacketContent = buf_part_block;
-			drive.fPacket.fPacketSize	 = kNeFSSectorSz;
+			drive.fPacket.fPacketSize	 = sizeof(NFS_ROOT_PARTITION_BLOCK);
 			drive.fPacket.fPacketLba	 = kNeFSRootCatalogStartAddress;
 
 			drive.fInput(&drive.fPacket);
@@ -389,7 +436,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 			return child_catalog;
 		}
 
-		start_free = start_free + (sizeof(NFS_CATALOG_STRUCT) * 4);
+		start_free = start_free + (sizeof(NFS_CATALOG_STRUCT) * kNeFSCatalogPadding);
 
 		drive.fPacket.fPacketContent = &temporary_catalog;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
@@ -583,7 +630,7 @@ bool NeFileSystemParser::WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog
 
 	rt_copy_memory(data, buf, size_of_data);
 
-	auto drive = kDiskMountpoint.A();
+	auto drive = kMountpoint.A();
 
 	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/nefs-packet"));
@@ -669,87 +716,83 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* c
 		*catalog_name == 0)
 		return nullptr;
 
-	kcout << "Start finding catalog: " << catalog_name << "\r";
-
-	NFS_ROOT_PARTITION_BLOCK fs_buf{0};
-	auto					 drive = kDiskMountpoint.A();
+	NFS_ROOT_PARTITION_BLOCK part{0};
+	auto&					 drive = kMountpoint.A();
 
 	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/nefs-packet"));
 
-	drive.fPacket.fPacketContent = &fs_buf;
+	drive.fPacket.fPacketContent = &part;
 	drive.fPacket.fPacketSize	 = sizeof(NFS_ROOT_PARTITION_BLOCK);
 	drive.fPacket.fPacketLba	 = kNeFSRootCatalogStartAddress;
 
 	drive.fInput(&drive.fPacket);
 
-	NFS_ROOT_PARTITION_BLOCK* part = (NFS_ROOT_PARTITION_BLOCK*)&fs_buf;
-
-	auto	   start_catalog_lba = part->StartCatalog;
+	auto	   start_catalog_lba = kNeFSCatalogStartAddress;
 	const auto kStartCatalogList = start_catalog_lba;
 
-	auto local_search_first = false;
-
-	NFS_CATALOG_STRUCT temporary_catalog{0};
-
-	drive.fPacket.fPacketLba	 = start_catalog_lba;
-	drive.fPacket.fPacketContent = &temporary_catalog;
-	drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
-
-	drive.fInput(&drive.fPacket);
-
-	if (!StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()) && !local_search)
+	if (!StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()) && local_search)
 	{
 		Char parent_name[kNeFSNodeNameLen] = {0};
 
-		for (SizeT index_fill = 0; index_fill < rt_string_len(catalog_name); ++index_fill)
+		for (SizeT indexFill = 0; indexFill < rt_string_len(catalog_name); ++indexFill)
 		{
-			parent_name[index_fill] = catalog_name[index_fill];
+			parent_name[indexFill] = catalog_name[indexFill];
 		}
 
-		SizeT index_reverse_copy = rt_string_len(parent_name);
+		SizeT indexReverseCopy = rt_string_len(parent_name);
 
 		// zero character.
-		parent_name[--index_reverse_copy] = 0;
+		parent_name[--indexReverseCopy] = 0;
 
 		// mandatory '/' character.
-		parent_name[--index_reverse_copy] = 0;
+		parent_name[--indexReverseCopy] = 0;
 
-		while (parent_name[index_reverse_copy] != NeFileSystemHelper::Separator())
+		while (parent_name[indexReverseCopy] != NeFileSystemHelper::Separator())
 		{
-			parent_name[index_reverse_copy] = 0;
-			--index_reverse_copy;
+			parent_name[indexReverseCopy] = 0;
+			--indexReverseCopy;
 		}
 
-		NFS_CATALOG_STRUCT* parent_catalog = this->FindCatalog(parent_name, out_lba, YES);
+		NFS_CATALOG_STRUCT* parent_catalog = this->FindCatalog(parent_name, out_lba);
 
 		if (parent_catalog &&
 			!StringBuilder::Equals(parent_name, NeFileSystemHelper::Root()))
 		{
 			start_catalog_lba = parent_catalog->NextSibling;
-			delete parent_catalog;
 
+			delete parent_catalog;
 			parent_catalog = nullptr;
 
-			local_search_first = true;
+			local_search = YES;
 		}
 		else if (parent_catalog)
 		{
+			start_catalog_lba = parent_catalog->NextSibling;
+
+			local_search = YES;
+
 			delete parent_catalog;
 			parent_catalog = nullptr;
 		}
+		else if (!parent_catalog)
+		{
+			return nullptr;
+		}
 	}
 
-	kcout << "Finding catalog...\r";
+	NFS_CATALOG_STRUCT temporary_catalog{};
 
 kNeFSSearchThroughCatalogList:
-	while (drive.fPacket.fPacketGood)
+	while (YES)
 	{
 		drive.fPacket.fPacketLba	 = start_catalog_lba;
 		drive.fPacket.fPacketContent = &temporary_catalog;
 		drive.fPacket.fPacketSize	 = sizeof(NFS_CATALOG_STRUCT);
 
 		drive.fInput(&drive.fPacket);
+
+		kcout << temporary_catalog.Name << endl;
 
 		if (StringBuilder::Equals(catalog_name, temporary_catalog.Name))
 		{
@@ -758,8 +801,7 @@ kNeFSSearchThroughCatalogList:
 			{
 				err_global_get() = kErrorFileLocked;
 
-				out_lba = 0UL;
-				return nullptr;
+				goto NeFSContinueSearch;
 			}
 
 			/// ignore unallocated catalog, break
@@ -767,8 +809,7 @@ kNeFSSearchThroughCatalogList:
 			{
 				err_global_get() = kErrorFileNotFound;
 
-				out_lba = 0UL;
-				return nullptr;
+				goto NeFSContinueSearch;
 			}
 
 			kcout << "Found available catalog at: " << hex_number(start_catalog_lba) << endl;
@@ -784,14 +825,14 @@ kNeFSSearchThroughCatalogList:
 	NeFSContinueSearch:
 		start_catalog_lba = temporary_catalog.NextSibling;
 
-		if (start_catalog_lba <= kNeFSRootCatalogStartAddress)
+		if (start_catalog_lba < part.StartCatalog)
 			break;
 	}
 
-	if (local_search_first)
+	if (local_search)
 	{
-		local_search_first = false;
-		start_catalog_lba  = kStartCatalogList;
+		local_search	  = false;
+		start_catalog_lba = part.StartCatalog;
 
 		goto kNeFSSearchThroughCatalogList;
 	}
@@ -847,7 +888,7 @@ Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
 		catalog->Flags &= (~kNeFSFlagCreated);
 		catalog->Flags |= kNeFSFlagDeleted;
 
-		auto drive = kDiskMountpoint.A();
+		auto drive = kMountpoint.A();
 
 		rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 					   rt_string_len("fs/nefs-packet"));
@@ -913,7 +954,7 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catal
 		  << ", fork: " << hex_number(dataForkLba) << endl;
 
 	NFS_FORK_STRUCT* fs_buf = new NFS_FORK_STRUCT();
-	auto			 drive	= kDiskMountpoint.A();
+	auto			 drive	= kMountpoint.A();
 
 	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
 				   rt_string_len("fs/nefs-packet"));
@@ -995,13 +1036,13 @@ namespace Kernel::NeFS
 	{
 		kcout << "Creating A:\r";
 
-		kDiskMountpoint.A()						 = io_construct_main_drive();
-		kDiskMountpoint.A().fPacket.fPacketDrive = &kDiskMountpoint.A();
+		kMountpoint.A()						 = io_construct_main_drive();
+		kMountpoint.A().fPacket.fPacketDrive = &kMountpoint.A();
 
 		kcout << "Creating A: [ OK ]\r";
 
 		return true;
 	}
-} // namespace Kernel::Detail
+} // namespace Kernel::NeFS
 
 #endif // ifdef __FSKIT_INCLUDES_NEFS__

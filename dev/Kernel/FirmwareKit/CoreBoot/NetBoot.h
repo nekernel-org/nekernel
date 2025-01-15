@@ -20,6 +20,6 @@ typedef struct NetBootInternetHeader
 	Kernel::Int32	PatchLength;	  /// the patch length.
 	Kernel::Char	PatchTarget[255]; /// the target file.
 	Kernel::Boolean ImpliesROM;		  /// does it imply an EEPROM reprogram?
-	Kernel::Boolean Preflight; 	      /// is it a preflight packet.
-	Kernel::Char    Patch[];		  /// non preflight packet has a patch blob for a **PatchTarget**
+	Kernel::Boolean Preflight;		  /// is it a preflight packet.
+	Kernel::Char	Patch[];		  /// non preflight packet has a patch blob for a **PatchTarget**
 } NetBootInternetHeader;

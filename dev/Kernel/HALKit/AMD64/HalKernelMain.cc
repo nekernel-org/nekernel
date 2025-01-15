@@ -96,7 +96,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::HAL::Register64 idt_reg;
-	
+
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
 
 	Kernel::HAL::IDTLoader idt_loader;

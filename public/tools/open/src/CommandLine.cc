@@ -8,9 +8,9 @@
 
 /// @brief This program opens an application from **OPEN_APP_BASE_PATH**
 
-#define OPEN_APP_APP_FLAG	 "-a"
-#define OPEN_APP_HELP_FLAG	 "-h"
-#define OPEN_APP_BASE_PATH	 "/app/"
+#define OPEN_APP_APP_FLAG  "-a"
+#define OPEN_APP_HELP_FLAG "-h"
+#define OPEN_APP_BASE_PATH "/app/"
 
 int main(int argc, char* argv[])
 {

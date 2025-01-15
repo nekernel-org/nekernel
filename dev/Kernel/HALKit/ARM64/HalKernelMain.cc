@@ -18,7 +18,6 @@
 #include <HALKit/ARM64/Processor.h>
 #include <CFKit/Property.h>
 
-
 EXTERN_C void hal_init_platform(
 	Kernel::HEL::BootInfoHeader* handover_hdr)
 {

@@ -26,7 +26,7 @@ namespace Kernel
 	{
 	public:
 		explicit IPEFDylibObject() = default;
-		~IPEFDylibObject()		 = default;
+		~IPEFDylibObject()		   = default;
 
 	public:
 		ZKA_COPY_DEFAULT(IPEFDylibObject);
@@ -100,7 +100,7 @@ namespace Kernel
 	typedef IPEFDylibObject* IDylib;
 
 	EXTERN_C IDylib rtl_init_dylib(UserProcess& header);
-	EXTERN_C Void rtl_fini_dylib(UserProcess& header, IDylib lib, Bool* successful);
+	EXTERN_C Void	rtl_fini_dylib(UserProcess& header, IDylib lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_H__ */

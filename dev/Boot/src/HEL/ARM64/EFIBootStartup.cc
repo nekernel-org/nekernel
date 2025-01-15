@@ -203,16 +203,16 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
 	// ------------------------------------------ //
-		
+
 	if (reader_kernel.Blob())
 	{
 		auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
 		kernel_thread.SetName("BootZ: MicroKernel.");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
-		
+
 		EFI::ExitBootServices(map_key, image_handle);
-		
+
 		kernel_thread.Start(handover_hdr, YES);
 	}
 

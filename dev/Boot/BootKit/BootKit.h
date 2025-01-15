@@ -377,7 +377,7 @@ namespace Boot
 
 		epm_boot.FsVersion = kNeFSVersionInteger;
 		epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
-		epm_boot.LbaEnd  = fDiskDev.GetDiskSize();
+		epm_boot.LbaEnd	   = fDiskDev.GetDiskSize();
 		epm_boot.SectorSz  = part.SectorSize;
 		epm_boot.Kind	   = kEPMZkaOS;
 		epm_boot.NumBlocks = part.CatalogCount;

@@ -191,7 +191,7 @@ namespace Boot
 		{
 			if (fStack)
 				delete[] fStack;
-			
+
 			fStack = nullptr;
 
 			return reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);

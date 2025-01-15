@@ -163,7 +163,7 @@ namespace Kernel
 		UInt8*			   StackReserve{nullptr};
 		UserProcessImage   Image{};
 		SizeT			   StackSize{kSchedMaxStackSz};
-		IDylibObject*		   DylibDelegate{nullptr};
+		IDylibObject*	   DylibDelegate{nullptr};
 		SizeT			   MemoryCursor{0UL};
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 		SizeT			   UsedMemory{0UL};
@@ -262,14 +262,14 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(UserProcessTeam);
 
 		Array<UserProcess, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<UserProcess>&							  AsRef();
-		ProcessID&									  Id() noexcept;
+		Ref<UserProcess>&							   AsRef();
+		ProcessID&									   Id() noexcept;
 
 	public:
 		Array<UserProcess, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<UserProcess>								 mCurrentProcess;
-		ProcessID									 mTeamId{0};
-		ProcessID									 mProcessCount{0};
+		Ref<UserProcess>							  mCurrentProcess;
+		ProcessID									  mTeamId{0};
+		ProcessID									  mProcessCount{0};
 	};
 
 	typedef Array<UserProcess, kSchedProcessLimitPerTeam> UserThreadArray;
@@ -304,7 +304,7 @@ namespace Kernel
 
 	public:
 		Ref<UserProcess>& GetCurrentProcess();
-		const SizeT		 Run() noexcept;
+		const SizeT		  Run() noexcept;
 
 	public:
 		STATIC UserProcessScheduler& The();

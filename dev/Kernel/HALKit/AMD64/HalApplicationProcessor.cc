@@ -223,7 +223,7 @@ namespace Kernel::HAL
 
 			constexpr auto kMemoryAPStart = 0x7C000;
 			Char*		   ptr_ap_code	  = reinterpret_cast<Char*>(kMemoryAPStart);
-			
+
 			SizeT hal_ap_blob_len = hal_ap_blob_end - hal_ap_blob_start;
 
 			rt_copy_memory((Char*)hal_ap_blob_start, ptr_ap_code, hal_ap_blob_len);

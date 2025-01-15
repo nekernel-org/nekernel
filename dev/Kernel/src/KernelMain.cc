@@ -72,7 +72,7 @@ namespace Kernel::Detail
 				if (!mJournal.GetJournal(mNeFS))
 					mJournal.CreateJournal(mNeFS);
 
-				mJournal.CommitJournal(mNeFS, "<LOG_XML>Format Filesystem NeFS for ZkaOS.</LOG_XML>", "NeFS Format System");
+				mJournal.CommitJournal(mNeFS, "<LOG_XML><FS>NeFS</FS></LOG_XML>", "NeFS Format System");
 				mJournal.ReleaseJournal();
 			}
 		}

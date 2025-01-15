@@ -18,8 +18,8 @@ Purpose: LibSCI Macros header.
 
 #define ATTRIBUTE(X) __attribute__((X))
 
-#define IMPORT_CXX	 extern "C++"
-#define IMPORT_C	 extern "C"
+#define IMPORT_CXX extern "C++"
+#define IMPORT_C   extern "C"
 
 #define DEPRECATED ATTRIBUTE(deprecated)
 

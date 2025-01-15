@@ -12,9 +12,9 @@ namespace Firmware::Detail::EFI
 {
 	using namespace Kernel;
 
-EXTERN_C
-{
+	EXTERN_C
+	{
 #include <FirmwareKit/EFI/EFI.h>
-}
+	}
 
 } // namespace Firmware::Detail::EFI

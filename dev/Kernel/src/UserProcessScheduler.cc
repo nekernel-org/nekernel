@@ -36,7 +36,7 @@ namespace Kernel
 
 	STATIC UserProcessScheduler kProcessScheduler;
 
-	UserProcess::UserProcess()  = default;
+	UserProcess::UserProcess()	= default;
 	UserProcess::~UserProcess() = default;
 
 	/// @brief Gets the last exit code.
@@ -330,15 +330,13 @@ namespace Kernel
 #endif // __ZKA_VIRTUAL_MEMORY_SUPPORT__
 
 		// React according to process kind.
-		switch (process.Kind) 
+		switch (process.Kind)
 		{
-		case UserProcess::kExectuableDylibKind:
-		{
+		case UserProcess::kExectuableDylibKind: {
 			process.DylibDelegate = rtl_init_dylib(process);
 			MUST_PASS(process.DylibDelegate);
 		}
-		default:
-		{
+		default: {
 			kcout << "Unknown process kind: " << number(process.Kind) << endl;
 			break;
 		}

@@ -255,11 +255,11 @@ IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr 
 
 enum
 {
-    kPowerCodeShutdown,
-    kPowerCodeReboot,
-    kPowerCodeSleep,
-    kPowerCodeWake,
-    kPowerCodeCount,
+	kPowerCodeShutdown,
+	kPowerCodeReboot,
+	kPowerCodeSleep,
+	kPowerCodeWake,
+	kPowerCodeCount,
 };
 
 IMPORT_C SInt32 PwrReadCode(_Output SInt32& code);

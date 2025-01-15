@@ -9,8 +9,8 @@
 #include <NewKit/Defines.h>
 #include <Mod/CoreGfx/FBMgr.h>
 
-#define kFontSizeX	   8
-#define kFontSizeY	   8
+#define kFontSizeX	  8
+#define kFontSizeY	  8
 #define kFontNOFChars 128
 
 inline const Kernel::UInt8 kFontBitmap[kFontNOFChars][kFontSizeX] = {
