@@ -206,6 +206,6 @@ namespace Kernel
 #undef kcout
 #endif // ifdef kcout
 
-#define kcout Kernel::TerminalDevice::The() << "\e[0;31m [ZKA] " << __FILE__ << " \e[0m: "
+#define kcout Kernel::TerminalDevice::The() << "\e[0;31m [NeKernel] " << __FILE__ << " \e[0m: "
 
 #define endl Kernel::TerminalDevice::The() << Kernel::end_line()
