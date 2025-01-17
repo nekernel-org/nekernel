@@ -105,7 +105,7 @@ namespace Kernel
 	public:
 		Ref<HardwareThread*> operator[](const SizeT& idx);
 		bool				 operator!() noexcept;
-							 operator bool() noexcept;
+		operator bool() noexcept;
 
 		const Bool IsUser() override
 		{

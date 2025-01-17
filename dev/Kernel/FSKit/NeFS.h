@@ -265,61 +265,60 @@ namespace Kernel
 		ZKA_COPY_DEFAULT(NeFileSystemParser);
 
 	public:
-		/// @brief Creates a new fork inside the New filesystem partition.
+		/// @brief Creates a new fork inside the NeFS  partition.
 		/// @param catalog it's catalog
 		/// @param theFork the fork itself.
 		/// @return the fork
-		_Output BOOL CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-								_Input NFS_FORK_STRUCT& theFork);
+		_Output BOOL CreateFork(_Input NFS_FORK_STRUCT&	   in);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
 		/// @param name the fork name.
 		/// @return the fork.
 		_Output NFS_FORK_STRUCT* FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-										  _Input const Char* name,
-										  Boolean			 dataOrRsrc);
+										  _Input const Char*		 name,
+										  Boolean					 data);
 
 		_Output Void RemoveFork(_Input NFS_FORK_STRUCT* fork);
 
 		_Output Void CloseFork(_Input NFS_FORK_STRUCT* fork);
 
-		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalogName, Lba& outLba, Bool searchHidden = YES, Bool local_search = NO);
+		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalog_name, Lba& ou_lba, Bool search_hidden = YES, Bool local_search = NO);
 
 		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const Char* name);
 
-		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name,
+		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char*  name,
 												  _Input const Int32& flags,
 												  _Input const Int32& kind);
 
 		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name);
 
-		Bool WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-						  _Input Bool						 isRsrcFork,
-						  _Input VoidPtr					 data,
-						  _Input SizeT						 sizeOfData,
-						  _Input const Char* forkName);
+		_Output Bool WriteCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
+								  _Input Bool						 rsrc,
+								  _Input VoidPtr					 data,
+								  _Input SizeT						 sz,
+								  _Input const Char*				 name);
 
-		VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
-							_Input Bool						   isRsrcFork,
-							_Input SizeT					   dataSz,
-							_Input const Char* forkName);
+		_Output VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
+									_Input Bool						   isRsrcFork,
+									_Input SizeT					   dataSz,
+									_Input const Char*				   forkName);
 
-		bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);
+		_Output Bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);
 
-		SizeT Tell(_Input _Output NFS_CATALOG_STRUCT* catalog);
+		_Output SizeT Tell(_Input _Output NFS_CATALOG_STRUCT* catalog);
 
-		bool RemoveCatalog(_Input const Char* catalog);
+		_Output Bool RemoveCatalog(_Input const Char* catalog);
 
-		bool CloseCatalog(_InOut NFS_CATALOG_STRUCT* catalog);
+		_Output Bool CloseCatalog(_InOut NFS_CATALOG_STRUCT* catalog);
 
 		/// @brief Make a EPM+NeFS drive out of the disk.
 		/// @param drive The drive to write on.
 		/// @return If it was sucessful, see err_local_get().
-		bool Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name);
+		_Output Bool Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name);
 
 	public:
-		Int32 mDriveIndex{kNeFSSubDriveA};
+		UInt32 mDriveIndex{kNeFSSubDriveA};
 	};
 
 	///
@@ -364,7 +363,7 @@ namespace Kernel
 			if (!parser)
 				return NO;
 
-      delete parser->CreateCatalog("/etc/xml/", 0, kNeFSCatalogKindDir);
+			delete parser->CreateCatalog("/etc/xml/", 0, kNeFSCatalogKindDir);
 			mNode = parser->CreateCatalog(mStamp);
 
 			if (!mNode)
@@ -420,7 +419,7 @@ namespace Kernel
 			new_fork.DataSize	   = rt_string_len(xml_data);
 			new_fork.Kind		   = kNeFSRsrcForkKind;
 
-			if (!parser->CreateFork(mNode, new_fork))
+			if (!parser->CreateFork(new_fork))
 				return NO;
 
 			kcout << "XML Commited: " << xml_data << "\r\nTo Journal Fork: " << journal_name << endl;

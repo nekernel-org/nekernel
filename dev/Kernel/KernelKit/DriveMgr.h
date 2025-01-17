@@ -51,11 +51,9 @@ namespace Kernel
 	{
 		Char   fName[kDriveNameLen]; // /System, /Boot, //./Devices/USB...
 		Int32  fKind;				 // fMassStorage, fFloppy, fOpticalDisc.
-		Int32  fFlags;				 // fReadOnly, fXPMDrive, fXPTDrive
-		UInt64 fLbaEnd{0};
-		UInt64 fLbaStart{0};
-		UInt64 fSectorSz{512};
-		/// @brief Packet drive (StorageKit compilant.)
+		Int32  fFlags;				 // fReadOnly, fEPMDrive...
+
+    /// @brief Packet drive (StorageKit compilant.)
 		struct DrivePacket final
 		{
 			VoidPtr		fPacketContent{nullptr};			//! packet body.
@@ -64,9 +62,11 @@ namespace Kernel
 			UInt32		fPacketCRC32{0UL};					//! sanity crc, in case if good is set to false
 			Boolean		fPacketGood{YES};
 			Lba			fPacketLba{0UL};
+      SizeT fSectorSz{512};
 			Boolean		fPacketReadOnly{NO};
-			DriveTrait* fPacketDrive{nullptr};
-		} fPacket;
+    } fPacket;
+
+    Lba fLbaStart{0}, fLbaEnd{0};
 
 		Void (*fInput)(DrivePacket* packet_ptr);
 		Void (*fOutput)(DrivePacket* packet_ptr);

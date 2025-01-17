@@ -60,44 +60,40 @@ STATIC MountpointInterface kMountpoint;
 /// @param the_fork the fork itself.
 /// @return the fork
 /***********************************************************************************/
-_Output BOOL NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
-											_Input NFS_FORK_STRUCT& the_fork)
+_Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT&	   the_fork)
 {
-	if (catalog && the_fork.ForkName[0] != 0 &&
-		the_fork.DataSize > 0)
+	if (the_fork.ForkName[0] != 0 &&
+      the_fork.CatalogName[0] != 0 &&
+      the_fork.DataSize > 0)
 	{
-		Lba lba = (the_fork.Kind == kNeFSDataForkKind) ? catalog->DataFork
-													   : catalog->ResourceFork;
+    auto catalog = this->GetCatalog(the_fork.CatalogName);
 
-		kcout << "Fork lba: " << hex_number(lba) << endl;
+    if (!catalog)
+      return NO;
+
+    Lba lba = catalog->DataFork;
+
+		kcout << "Fork LBA: " << hex_number(lba) << endl;
 
 		if (lba < kNeFSCatalogStartAddress)
 			return NO;
 
 		auto drv = kMountpoint.A();
 
-		/// special treatment.
-		rt_copy_memory((VoidPtr) "fs/nefs-packet", drv.fPacket.fPacketMime,
-					   rt_string_len("fs/nefs-packet"));
-
-		NFS_FORK_STRUCT curFork{0};
-		NFS_FORK_STRUCT prevFork{0};
 		Lba				lbaOfPreviousFork = lba;
 
+    NFS_FORK_STRUCT prevFork;
+
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
-		while (YES)
+		while (drv.fPacket.fPacketGood)
 		{
-			drv.fPacket.fPacketLba	   = lba;
+      NFS_FORK_STRUCT curFork;
+
+      drv.fPacket.fPacketLba	   = lba;
 			drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 			drv.fPacket.fPacketContent = &curFork;
 
 			drv.fInput(&drv.fPacket);
-
-			if (curFork.NextSibling > kBadAddress)
-			{
-				kcout << "Bad fork: " << hex_number(curFork.NextSibling) << endl;
-				return NO;
-			}
 
 			kcout << "Next fork: " << hex_number(curFork.NextSibling) << endl;
 
@@ -107,8 +103,8 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 
 				/// sanity check.
 				if (StringBuilder::Equals(curFork.ForkName, the_fork.ForkName) &&
-					StringBuilder::Equals(curFork.CatalogName, catalog->Name))
-					return NO;
+					StringBuilder::Equals(curFork.CatalogName, the_fork.CatalogName))
+					break;
 
 				kcout << "Next fork: " << hex_number(curFork.NextSibling) << endl;
 
@@ -137,17 +133,16 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 			}
 		}
 
-		constexpr auto kForkPadding =
-			4; /// this value gives us space for the data offset.
-
 		the_fork.Flags |= kNeFSFlagCreated;
 		the_fork.DataOffset		 = lba - sizeof(NFS_FORK_STRUCT);
 		the_fork.PreviousSibling = lbaOfPreviousFork;
-		the_fork.NextSibling	 = (the_fork.DataOffset - the_fork.DataSize - sizeof(NFS_FORK_STRUCT)) * kForkPadding;
+		the_fork.NextSibling	 = (the_fork.DataOffset - the_fork.DataSize - sizeof(NFS_FORK_STRUCT));
 
 		drv.fPacket.fPacketLba	   = lba;
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 		drv.fPacket.fPacketContent = &the_fork;
+
+    kcout << "Writing fork...\r";
 
 		drv.fOutput(&drv.fPacket);
 
@@ -170,8 +165,8 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_CATALOG_STRUCT* catalog,
 /// @return the fork.
 /***********************************************************************************/
 _Output NFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-													  _Input const Char* name,
-													  Boolean			 isDataFork)
+													  _Input const Char*		 name,
+													  Boolean					 isDataFork)
 {
 	auto			 drive	  = kMountpoint.A();
 	NFS_FORK_STRUCT* the_fork = nullptr;
@@ -236,7 +231,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char* name,
+_Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*  name,
 															  _Input const Int32& flags,
 															  _Input const Int32& kind)
 {
@@ -939,7 +934,7 @@ Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
 VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 										_Input Bool						   is_rsrc_fork,
 										_Input SizeT					   dataSz,
-										_Input const Char* forkName)
+										_Input const Char*				   forkName)
 {
 	if (!catalog)
 	{
@@ -1037,7 +1032,6 @@ namespace Kernel::NeFS
 		kcout << "Creating A:\r";
 
 		kMountpoint.A()						 = io_construct_main_drive();
-		kMountpoint.A().fPacket.fPacketDrive = &kMountpoint.A();
 
 		kcout << "Creating A: [ OK ]\r";
 

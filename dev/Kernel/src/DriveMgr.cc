@@ -29,30 +29,15 @@ namespace Kernel
 	/// @return
 	Void io_drv_input(DriveTrait::DrivePacket* pckt)
 	{
-		if (!pckt || !pckt->fPacketDrive)
+		if (!pckt)
 		{
 			return;
 		}
 
-		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime) &&
-			pckt->fPacketDrive->fLbaStart > 0 && pckt->fPacketDrive->fLbaEnd > 0)
-		{
-			if (pckt->fPacketLba > pckt->fPacketDrive->fLbaEnd)
-			{
-				pckt->fPacketGood = NO;
-				return;
-			}
-			else if (pckt->fPacketLba < pckt->fPacketDrive->fLbaStart)
-			{
-				pckt->fPacketGood = NO;
-				return;
-			}
-		}
-
 #ifdef __AHCI__
-		drv_std_read(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
+		drv_std_read(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fSectorSz, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_read(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
+		drv_std_read(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, pckt->fSectorSz, pckt->fPacketSize);
 #endif
 	}
 
@@ -61,7 +46,7 @@ namespace Kernel
 	/// @return
 	Void io_drv_output(DriveTrait::DrivePacket* pckt)
 	{
-		if (!pckt || !pckt->fPacketDrive)
+		if (!pckt)
 		{
 			return;
 		}
@@ -72,25 +57,10 @@ namespace Kernel
 			return;
 		}
 
-		if (!StringBuilder::Equals("fs/detect-packet", pckt->fPacketMime) &&
-			pckt->fPacketDrive->fLbaStart > 0 && pckt->fPacketDrive->fLbaEnd > 0)
-		{
-			if (pckt->fPacketLba > pckt->fPacketDrive->fLbaEnd)
-			{
-				pckt->fPacketGood = NO;
-				return;
-			}
-			else if (pckt->fPacketLba < pckt->fPacketDrive->fLbaStart)
-			{
-				pckt->fPacketGood = NO;
-				return;
-			}
-		}
-
 #ifdef __AHCI__
-		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
+		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fSectorSz, pckt->fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		drv_std_write(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, pckt->fPacketDrive->fSectorSz, pckt->fPacketSize);
+		drv_std_write(pckt->fPacketLba, kATAIO, kATAMaster, (Char*)pckt->fPacketContent, pckt->fSectorSz, pckt->fPacketSize);
 #endif
 	}
 
@@ -104,7 +74,7 @@ namespace Kernel
 			return;
 		}
 
-#if defined( __ATA_PIO__ ) || defined( __ATA_DMA__ )
+#if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 		kATAMaster = 0;
 		kATAIO	   = 0;
 #endif
@@ -168,7 +138,6 @@ namespace Kernel
 
 	/// @brief Unimplemented drive function.
 	/// @param pckt the packet to read.
-	/// @return
 	Void io_drv_unimplemented(DriveTrait::DrivePacket* pckt) noexcept
 	{
 		ZKA_UNUSED(pckt);
@@ -200,15 +169,6 @@ namespace Kernel
 		{
 			EPM_PART_BLOCK block_struct;
 
-			trait.fPacket.fPacketDrive = &trait;
-
-#ifdef __ATA_PIO__
-			trait.fSectorSz = kATASectorSize;
-#elif defined(__AHCI__)
-			trait.fSectorSz = kAHCISectorSize;
-#else
-			trait.fSectorSz = 512;
-#endif
 			trait.fPacket.fPacketLba	 = kEPMBootBlockLba;
 			trait.fPacket.fPacketSize	 = sizeof(EPM_PART_BLOCK);
 			trait.fPacket.fPacketContent = &block_struct;
@@ -227,11 +187,11 @@ namespace Kernel
 
 				kcout << "Formatted Disk is EPM (Mass Storage)\r";
 
-				trait.fSectorSz = block_struct.SectorSz;
+				trait.fPacket.fSectorSz = block_struct.SectorSz;
 				trait.fLbaEnd	= block_struct.LbaEnd;
 				trait.fLbaStart = block_struct.LbaStart;
 
-				if (trait.fSectorSz == 0)
+				if (trait.fPacket.fSectorSz == 0)
 				{
 					ke_panic(RUNTIME_CHECK_FAILED, "Invalid EPM partition!");
 				}
@@ -244,7 +204,7 @@ namespace Kernel
 				kcout << "Scheme Found: " << block_struct.Name << endl;
 
 				if (block_struct.Name[0] == 0)
-					kcout << "Disk partition is unknown (Read Only)\r";
+					kcout << "Disk partition is empty (Read Only)\r";
 			}
 
 			rt_copy_memory((VoidPtr) "*/*", trait.fPacket.fPacketMime,

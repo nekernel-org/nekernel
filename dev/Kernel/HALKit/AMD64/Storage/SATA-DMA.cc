@@ -47,7 +47,7 @@ enum
 };
 
 STATIC Kernel::PCI::Device kPCIDevice;
-STATIC HbaMem* kSATAPort				   = nullptr;
+STATIC HbaMem*			   kSATAPort	   = nullptr;
 STATIC Kernel::SizeT kSATAPortIdx		   = 0UL;
 STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
 

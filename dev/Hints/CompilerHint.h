@@ -7,7 +7,7 @@
 #ifndef HINTKIT_HINT_H
 #define HINTKIT_HINT_H
 
-#ifdef __TK__
+#ifdef __LIBCOMPILER__
 #pragma compiler(hint_manifest)
 #endif
 
