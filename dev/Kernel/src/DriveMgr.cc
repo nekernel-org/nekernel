@@ -180,7 +180,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		rt_copy_memory((VoidPtr) "/Disks/NUL:", trait.fName, rt_string_len("/Disks/NUL:"));
+		rt_copy_memory((VoidPtr) "/media/nul", trait.fName, rt_string_len("/media/nul"));
 		trait.fKind = kInvalidDisc;
 
 		trait.fInput	 = io_drv_unimplemented;
@@ -262,7 +262,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		constexpr auto kMainDrive = "/Mount/OS:";
+		constexpr auto kMainDrive = "/media/sda";
 
 		rt_copy_memory((VoidPtr)kMainDrive, trait.fName, rt_string_len(kMainDrive));
 

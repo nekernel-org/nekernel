@@ -42,10 +42,10 @@ namespace Kernel::Detail
 
 			if (mNeFS)
 			{
-				const SizeT kFolderCount			 = 8;
+				const SizeT kFolderCount			 = 13;
 				const Char* kFolderStr[kFolderCount] = {
-					"/", "/boot/", "/sys/", "/apps_support/", "/apps/",
-					"/usr/", "/lib/", "/mnt/"};
+					"/", "/boot/", "/sys/", "/media/", "/etc/",
+					"/usr/", "/lib/", "/mnt/", "/sbin/", "/n/", "/dev/", "/run/", "/root/"};
 
 				for (Kernel::SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
 				{
