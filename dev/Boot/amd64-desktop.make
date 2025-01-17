@@ -82,7 +82,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -hdd $(IMG_2) -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0
+	$(EMU) $(EMU_FLAGS) -hda $(IMG)
 
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata:
