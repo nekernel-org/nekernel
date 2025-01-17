@@ -364,6 +364,7 @@ namespace Kernel
 			if (!parser)
 				return NO;
 
+      delete parser->CreateCatalog("/etc/xml/", 0, kNeFSCatalogKindDir);
 			mNode = parser->CreateCatalog(mStamp);
 
 			if (!mNode)
@@ -413,7 +414,7 @@ namespace Kernel
 			rt_copy_memory(mStamp, new_fork.CatalogName, rt_string_len(mStamp));
 			rt_copy_memory(journal_name, new_fork.ForkName, rt_string_len(journal_name));
 
-			new_fork.ResourceKind  = kNeFSCatalogKindMetaFile;
+			new_fork.ResourceKind  = 0;
 			new_fork.ResourceId	   = 0;
 			new_fork.ResourceFlags = 0;
 			new_fork.DataSize	   = rt_string_len(xml_data);
@@ -430,7 +431,7 @@ namespace Kernel
 		}
 
 	private:
-		Char mStamp[255] = {"/sys/journal" kNeFSJournalExt};
+		Char mStamp[kNeFSNodeNameLen] = {"/etc/xml/journal" kNeFSJournalExt};
 	};
 
 	namespace NeFS
