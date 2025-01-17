@@ -97,10 +97,10 @@ namespace Kernel
 		PEFLoader* fLoader{nullptr};
 	};
 
-	typedef IPEFDylibObject* IDylib;
+	typedef IPEFDylibObject* IDylibRef;
 
-	EXTERN_C IDylib rtl_init_dylib(UserProcess& header);
-	EXTERN_C Void	rtl_fini_dylib(UserProcess& header, IDylib lib, Bool* successful);
+	EXTERN_C IDylibRef rtl_init_dylib(UserProcess& header);
+	EXTERN_C Void	rtl_fini_dylib(UserProcess& header, IDylibRef lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_H__ */

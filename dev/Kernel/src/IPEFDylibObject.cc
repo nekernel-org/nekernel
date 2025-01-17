@@ -39,9 +39,9 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C IDylib rtl_init_dylib(UserProcess& thread)
+EXTERN_C IDylibRef rtl_init_dylib(UserProcess& thread)
 {
-	IDylib dll_obj = tls_new_class<IPEFDylibObject>();
+	IDylibRef dll_obj = tls_new_class<IPEFDylibObject>();
 
 	if (!dll_obj)
 	{
@@ -83,7 +83,7 @@ EXTERN_C IDylib rtl_init_dylib(UserProcess& thread)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_dylib(UserProcess& thread, IDylib dll_obj, Bool* successful)
+EXTERN_C Void rtl_fini_dylib(UserProcess& thread, IDylibRef dll_obj, Bool* successful)
 {
 	MUST_PASS(successful);
 
