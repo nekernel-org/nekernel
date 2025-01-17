@@ -19,8 +19,10 @@
 
 namespace Kernel
 {
+#if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 	STATIC UInt16 kATAIO	 = 0U;
 	STATIC UInt8  kATAMaster = 0U;
+#endif
 
 	/// @brief reads from an ATA drive.
 	/// @param pckt Packet structure (fPacketContent must be non null)
@@ -102,8 +104,10 @@ namespace Kernel
 			return;
 		}
 
+#if defined( __ATA_PIO__ ) || defined( __ATA_DMA__ )
 		kATAMaster = 0;
 		kATAIO	   = 0;
+#endif
 
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 		kATAMaster = true;
