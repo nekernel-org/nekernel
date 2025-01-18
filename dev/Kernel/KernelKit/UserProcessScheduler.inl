@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Labs, all rights reserved.
+	Copyright (C) 2024, MediaSwirl, all rights reserved.
 
 	FILE: UserProcessScheduler.inl
 	PURPOSE: Low level/Ring-3 Process scheduler.

@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Labs, all rights reserved.
+	Copyright (C) 2024, MediaSwirl, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file ATA-PIO.cc
- * @author t& Labs (amlalelmahrouss@icloud.com)
+ * @author MediaSwirl (amlalelmahrouss@icloud.com)
  * @brief ATA driver (PIO mode).
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) t& Labs
+ * @copyright Copyright (c) MediaSwirl
  *
  */
 

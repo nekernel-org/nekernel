@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright t& Labs
+	Copyright MediaSwirl
 
 	File: Main.cxx
 	Purpose: Main entrypoint of kernel.

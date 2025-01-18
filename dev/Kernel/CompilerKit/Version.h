@@ -1,4 +1,4 @@
-// (c) t& Labs
+// (c) MediaSwirl
 
 #pragma once
 

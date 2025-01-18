@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, t& Labs, all rights reserved.
+	Copyright (C) 2024-2025, MediaSwirl, all rights reserved.
 
 ------------------------------------------- */
 

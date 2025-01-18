@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Labs, all rights reserved.
+	Copyright (C) 2024, MediaSwirl, all rights reserved.
 
 	FILE: NeFS.h
 	PURPOSE: NeFS (New FileSystem) support.
@@ -24,7 +24,7 @@ default.
 
 /**
 	@brief New extended File System specification.
-	@author t& Labs (t& Labs, amlalelmahrouss at icloud dot com)
+	@author MediaSwirl (MediaSwirl, amlalelmahrouss at icloud dot com)
 */
 
 #define kNeFSInvalidFork	(-1)

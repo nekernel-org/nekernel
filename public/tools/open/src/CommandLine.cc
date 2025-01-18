@@ -1,7 +1,7 @@
 /*
  * Created on Thu Oct 17 08:00:42 CEST 2024
  *
- * Copyright (c) 2024 t& Labs
+ * Copyright (c) 2024 MediaSwirl
  */
 
 #include <LibSCI/SCI.h>
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 		if (MmStrCmp(argv[i], OPEN_APP_HELP_FLAG) == 0)
 		{
 			ConOut(nullptr, "open: Open Tool.\n");
-			ConOut(nullptr, "open: © t& Labs, All rights reserved.\n");
+			ConOut(nullptr, "open: © MediaSwirl, All rights reserved.\n");
 
 			ConOut(nullptr, "open: %s: Application is taken as input (opens a PEF/PE32+/ELF program depending on architecture).\n", OPEN_APP_APP_FLAG);
 

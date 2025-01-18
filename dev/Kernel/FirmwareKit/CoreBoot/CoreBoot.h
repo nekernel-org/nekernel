@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Labs, all rights reserved.
+	Copyright (C) 2024, MediaSwirl, all rights reserved.
 
 ------------------------------------------- */
 
@@ -15,7 +15,7 @@ namespace Firmware::Detail::CoreBoot
 	struct LEHeader;
 
 	/// @brief Linear Executable Header
-	/// @author t& Labs
+	/// @author MediaSwirl
 	struct ATTRIBUTE(aligned(4)) LEHeader
 	{
 		const Char	 fMagic[2];		// magic number

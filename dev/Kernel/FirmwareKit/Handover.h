@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Labs, all rights reserved.
+	Copyright (C) 2024, MediaSwirl, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file Handover.h
- * @author t& Labs (amlalelmahrouss@icloud.com)
+ * @author MediaSwirl (amlalelmahrouss@icloud.com)
  * @brief The handover boot protocol.
  * @version 1.15
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, t& Labs
+ * @copyright Copyright (c) 2024, MediaSwirl
  *
  */
 

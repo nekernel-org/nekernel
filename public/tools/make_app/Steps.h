@@ -1,6 +1,6 @@
 /**
 	Thu Oct 17 07:57:43 CEST 2024
-	(c) t& Labs.
+	(c) MediaSwirl.
 */
 
 #ifndef APPS_STEPS_H

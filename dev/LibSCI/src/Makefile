@@ -1,5 +1,5 @@
 ##################################################
-# (c) t& Labs, all rights reserved.
+# (c) MediaSwirl, all rights reserved.
 # This is the bootloader makefile.
 ##################################################
 
