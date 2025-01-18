@@ -1,7 +1,7 @@
 
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Labs, all rights reserved.
+	Copyright (C) 2024-2025 MediaSwirl Labs, all rights reserved.
 
 ------------------------------------------- */
 
@@ -10,8 +10,8 @@
 #include <NewKit/Defines.h>
 #include <CompilerKit/CompilerKit.h>
 
-#define kSwapMgrBlockMaxSize (mib_cast(16))
-#define kSwapMgrPageFile	 "/System/pagefile.sys"
+#define kSwapBlockMaxSize (mib_cast(16))
+#define kSwapPageFile	  "/boot/pagefile.sys"
 
 /// @file SwapDisk.h
 /// @brief Virtual memory swap disk.
@@ -19,13 +19,13 @@
 namespace Kernel
 {
 	/// @brief This class is a disk swap delegate for any data. available as a syscall too.
-	class SwapDiskDelegate final
+	class SwapDisk final
 	{
 	public:
-		explicit SwapDiskDelegate() = default;
-		~SwapDiskDelegate()			= default;
+		explicit SwapDisk() = default;
+		~SwapDisk()			= default;
 
-		ZKA_COPY_DEFAULT(SwapDiskDelegate);
+		ZKA_COPY_DEFAULT(SwapDisk);
 
 		BOOL	Write(const Char* fork_name, const SizeT fork_name_len, VoidPtr data, const SizeT data_len);
 		VoidPtr Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len);

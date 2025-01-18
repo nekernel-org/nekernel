@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, t& Labs, all rights reserved.
+	Copyright (C) 2024-2025, MediaSwirl Labs, all rights reserved.
 
 	File: FileMgr.h
 	Purpose: Kernel file manager.
@@ -14,6 +14,7 @@
 	 31/01/24: Update documentation (amlel)
 	 05/07/24: NeFS support, and fork support, updated constants and specs
 		as well.
+    18/01/25: Patches to FileStream class.
 
  ------------------------------------------- */
 
@@ -192,7 +193,7 @@ namespace Kernel
 #endif // ifdef __FSKIT_INCLUDES_NEFS__
 
 	/**
-	 * Usable FileStream
+	 * FileStream class.
 	 * @tparam Encoding file encoding (char, wchar_t...)
 	 * @tparam FSClass Filesystem contract who takes care of it.
 	 */
@@ -246,7 +247,7 @@ namespace Kernel
 
 			if (man)
 			{
-				man->Write(name, fFile, data, len);
+				man->Write(name, fFile, data, 0, len);
 				return ErrorOr<Int64>(0);
 			}
 
