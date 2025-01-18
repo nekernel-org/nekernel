@@ -21,7 +21,7 @@ namespace Kernel
 	/// @note Those symbols are needed in order to switch and validate the stack.
 	/***********************************************************************************/
 
-	EXTERN Bool	  hal_check_stack(HAL::StackFramePtr frame_ptr);
+	EXTERN_C Bool	  hal_check_stack(HAL::StackFramePtr frame_ptr);
 	EXTERN_C Bool mp_register_process(HAL::StackFramePtr frame, ProcessID pid);
 
 	STATIC HardwareThreadScheduler kHardwareThreadScheduler;

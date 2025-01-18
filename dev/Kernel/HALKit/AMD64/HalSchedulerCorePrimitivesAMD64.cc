@@ -14,9 +14,10 @@ namespace Kernel
 	/// @param
 	/***********************************************************************************/
 
-	EXTERN_C Void __zka_pure_call(void)
+	EXTERN_C Void __zka_pure_call(UserProcess* process)
 	{
-		UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
+    if (process)
+      process->Crash();
 	}
 
 	/***********************************************************************************/
@@ -24,7 +25,7 @@ namespace Kernel
 	/// @param stack_ptr the frame pointer.
 	/***********************************************************************************/
 
-	Bool hal_check_stack(HAL::StackFramePtr stack_ptr)
+	EXTERN_C Bool hal_check_stack(HAL::StackFramePtr stack_ptr)
 	{
 		if (!stack_ptr)
 			return No;
