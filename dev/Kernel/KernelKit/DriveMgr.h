@@ -49,24 +49,24 @@ namespace Kernel
 	/// @brief Media drive trait type.
 	struct DriveTrait final
 	{
-		Char   fName[kDriveNameLen]; // /System, /Boot, //./Devices/USB...
-		Int32  fKind;				 // fMassStorage, fFloppy, fOpticalDisc.
-		Int32  fFlags;				 // fReadOnly, fEPMDrive...
+		Char  fName[kDriveNameLen]; // /System, /Boot, //./Devices/USB...
+		Int32 fKind;				// fMassStorage, fFloppy, fOpticalDisc.
+		Int32 fFlags;				// fReadOnly, fEPMDrive...
 
-    /// @brief Packet drive (StorageKit compilant.)
+		/// @brief Packet drive (StorageKit compilant.)
 		struct DrivePacket final
 		{
-			VoidPtr		fPacketContent{nullptr};			//! packet body.
-			Char		fPacketMime[kDriveNameLen] = "*/*"; //! identify what we're sending.
-			SizeT		fPacketSize{0UL};					//! packet size
-			UInt32		fPacketCRC32{0UL};					//! sanity crc, in case if good is set to false
-			Boolean		fPacketGood{YES};
-			Lba			fPacketLba{0UL};
-      SizeT fSectorSz{512};
-			Boolean		fPacketReadOnly{NO};
-    } fPacket;
+			VoidPtr fPacketContent{nullptr};			//! packet body.
+			Char	fPacketMime[kDriveNameLen] = "*/*"; //! identify what we're sending.
+			SizeT	fPacketSize{0UL};					//! packet size
+			UInt32	fPacketCRC32{0UL};					//! sanity crc, in case if good is set to false
+			Boolean fPacketGood{YES};
+			Lba		fPacketLba{0UL};
+			SizeT	fSectorSz{512};
+			Boolean fPacketReadOnly{NO};
+		} fPacket;
 
-    Lba fLbaStart{0}, fLbaEnd{0};
+		Lba fLbaStart{0}, fLbaEnd{0};
 
 		Void (*fInput)(DrivePacket* packet_ptr);
 		Void (*fOutput)(DrivePacket* packet_ptr);

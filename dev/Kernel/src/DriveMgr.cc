@@ -188,8 +188,8 @@ namespace Kernel
 				kcout << "Formatted Disk is EPM (Mass Storage)\r";
 
 				trait.fPacket.fSectorSz = block_struct.SectorSz;
-				trait.fLbaEnd	= block_struct.LbaEnd;
-				trait.fLbaStart = block_struct.LbaStart;
+				trait.fLbaEnd			= block_struct.LbaEnd;
+				trait.fLbaStart			= block_struct.LbaStart;
 
 				if (trait.fPacket.fSectorSz == 0)
 				{

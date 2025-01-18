@@ -61,7 +61,6 @@ namespace Kernel
 		if (!pckt ||
 			!ipc_int_sanitize_packet(pckt))
 		{
-			UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
 			return false;
 		}
 
@@ -77,18 +76,8 @@ namespace Kernel
 		if (!pckt_in)
 			return false;
 
-		// don't do anything if it's valid already.
-		if (*pckt_in)
-			return true;
-
-		// crash process if the packet pointer of pointer is NULL.
-		if (!pckt_in)
-		{
-			UserProcessScheduler::The().GetCurrentProcess().Leak().Crash();
-			return false;
-		}
-
-		*pckt_in = new IPC_MSG();
+		if (!*pckt_in)
+			*pckt_in = new IPC_MSG();
 
 		if (*pckt_in)
 		{
@@ -102,8 +91,8 @@ namespace Kernel
 			(*pckt_in)->IpcTo.UserProcessID	  = 0;
 			(*pckt_in)->IpcTo.UserProcessTeam = 0;
 
-			(*pckt_in)->IpcFrom.UserProcessID	= Kernel::UserProcessScheduler::The().GetCurrentProcess().Leak().ProcessId;
-			(*pckt_in)->IpcFrom.UserProcessTeam = Kernel::UserProcessScheduler::The().CurrentTeam().mTeamId;
+			(*pckt_in)->IpcFrom.UserProcessID	= 0;
+			(*pckt_in)->IpcFrom.UserProcessTeam = 0;
 
 			return Yes;
 		}

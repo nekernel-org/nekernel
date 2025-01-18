@@ -60,18 +60,18 @@ STATIC MountpointInterface kMountpoint;
 /// @param the_fork the fork itself.
 /// @return the fork
 /***********************************************************************************/
-_Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT&	   the_fork)
+_Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 {
 	if (the_fork.ForkName[0] != 0 &&
-      the_fork.CatalogName[0] != 0 &&
-      the_fork.DataSize > 0)
+		the_fork.CatalogName[0] != 0 &&
+		the_fork.DataSize > 0)
 	{
-    auto catalog = this->GetCatalog(the_fork.CatalogName);
+		auto catalog = this->GetCatalog(the_fork.CatalogName);
 
-    if (!catalog)
-      return NO;
+		if (!catalog)
+			return NO;
 
-    Lba lba = catalog->DataFork;
+		Lba lba = catalog->DataFork;
 
 		kcout << "Fork LBA: " << hex_number(lba) << endl;
 
@@ -80,16 +80,16 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT&	   the_fork)
 
 		auto drv = kMountpoint.A();
 
-		Lba				lbaOfPreviousFork = lba;
+		Lba lbaOfPreviousFork = lba;
 
-    NFS_FORK_STRUCT prevFork;
+		NFS_FORK_STRUCT prevFork;
 
 		/// do not check for anything. Loop until we get what we want, that is a free fork zone.
 		while (drv.fPacket.fPacketGood)
 		{
-      NFS_FORK_STRUCT curFork;
+			NFS_FORK_STRUCT curFork;
 
-      drv.fPacket.fPacketLba	   = lba;
+			drv.fPacket.fPacketLba	   = lba;
 			drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 			drv.fPacket.fPacketContent = &curFork;
 
@@ -142,7 +142,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT&	   the_fork)
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 		drv.fPacket.fPacketContent = &the_fork;
 
-    kcout << "Writing fork...\r";
+		kcout << "Writing fork...\r";
 
 		drv.fOutput(&drv.fPacket);
 
@@ -1031,7 +1031,7 @@ namespace Kernel::NeFS
 	{
 		kcout << "Creating A:\r";
 
-		kMountpoint.A()						 = io_construct_main_drive();
+		kMountpoint.A() = io_construct_main_drive();
 
 		kcout << "Creating A: [ OK ]\r";
 

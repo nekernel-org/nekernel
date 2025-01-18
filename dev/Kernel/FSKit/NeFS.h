@@ -269,7 +269,7 @@ namespace Kernel
 		/// @param catalog it's catalog
 		/// @param theFork the fork itself.
 		/// @return the fork
-		_Output BOOL CreateFork(_Input NFS_FORK_STRUCT&	   in);
+		_Output BOOL CreateFork(_Input NFS_FORK_STRUCT& in);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
