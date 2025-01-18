@@ -21,16 +21,15 @@ namespace Kernel
 
 	namespace Detail
 	{
-		constexpr short PORT = 0x3F8;
-
-		static int kState = kStateInvalid;
+		constexpr Int16 kPort = 0x3F8;
+		static Int32 kState = kStateInvalid;
 
 		/// @brief Init COM1.
 		/// @return
+    template <Int16 PORT>
 		bool hal_serial_init() noexcept
 		{
-#ifdef __DEBUG__
-			if (kState == kStateReady || kState == kStateTransmit)
+      if (kState == kStateReady || kState == kStateTransmit)
 				return true;
 
 			HAL::rt_out8(PORT + 1, 0x00); // Disable all interrupts
@@ -54,8 +53,7 @@ namespace Kernel
 
 			// If serial is not faulty set it in normal operation mode
 			// (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
-			HAL::rt_out8(Detail::PORT + 4, 0x0F);
-#endif // __DEBUG__
+			HAL::rt_out8(PORT + 4, 0x0F);
 
 			return true;
 		}
@@ -66,10 +64,11 @@ namespace Kernel
 	EXTERN_C void ke_io_write(const Char* bytes)
 	{
 #ifdef __DEBUG__
-		Detail::hal_serial_init();
+		Detail::hal_serial_init<Detail::kPort>();
 
 		if (!bytes || Detail::kState != kStateReady)
 			return;
+
 		if (*bytes == 0)
 			return;
 
@@ -84,9 +83,9 @@ namespace Kernel
 		while (index < len)
 		{
 			if (bytes[index] == '\r')
-				HAL::rt_out8(Detail::PORT, '\r');
+				HAL::rt_out8(Detail::kPort, '\r');
 
-			HAL::rt_out8(Detail::PORT, bytes[index] == '\r' ? '\n' : bytes[index]);
+			HAL::rt_out8(Detail::kPort, bytes[index] == '\r' ? '\n' : bytes[index]);
 			++index;
 		}
 
@@ -97,7 +96,7 @@ namespace Kernel
 	EXTERN_C void ke_io_read(const Char* bytes)
 	{
 #ifdef __DEBUG__
-		Detail::hal_serial_init();
+		Detail::hal_serial_init<Detail::kPort>();
 
 		if (!bytes || Detail::kState != kStateReady)
 			return;
@@ -109,7 +108,7 @@ namespace Kernel
 		///! TODO: Look on how to wait for the UART to complete.
 		while (true)
 		{
-			auto in = HAL::rt_in8(Detail::PORT);
+			auto in = HAL::rt_in8(Detail::kPort);
 
 			///! If enter pressed then break.
 			if (in == 0xD)
