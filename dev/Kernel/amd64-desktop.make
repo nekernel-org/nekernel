@@ -3,7 +3,8 @@
 # This is the minoskrnl's makefile.
 ##################################################
 
-CC			= x86_64-w64-mingw32-g++
+CXX			= x86_64-w64-mingw32-g++
+CC			= x86_64-w64-mingw32-gcc
 LD			= x86_64-w64-mingw32-ld
 CCFLAGS		= -fshort-wchar -c -D__ZKA_AMD64__ -mno-red-zone -fno-rtti -fno-exceptions \
 			-std=c++20 -D__ZKA_SUPPORT_NX__ -O0 -I../Vendor -D__FSKIT_INCLUDES_NEFS__ \
@@ -58,11 +59,10 @@ newos-amd64-epm: clean
 	@sleep 3
 
 	$(WINDRES) KernelRsrc.rsrc -O coff -o KernelRsrc.obj
-	$(CC) $(CCFLAGS) $(DISK_DRV) $(DEBUG_MACRO) $(wildcard src/*.cc) \
+	$(CXX) $(CCFLAGS) $(DISK_DRV) $(DEBUG_MACRO) $(wildcard src/*.cc) \
 	       $(wildcard src/FS/*.cc) $(wildcard HALKit/AMD64/Storage/*.cc) \
-			$(wildcard HALKit/AMD64/PCI/*.cc) $(wildcard src/Network/*.cc) $(wildcard src/Storage/*.cc) \
-			$(wildcard HALKit/AMD64/*.cc) $(wildcard src/System/*.cc) \
-			$(wildcard HALKit/AMD64/*.s)
+			$(wildcard HALKit/AMD64/PCI/*.cc) $(wildcard src/Network/*.cc) $(wildcard src/Storage/*.cc) $(wildcard src/Trace/*.cc) \
+			$(wildcard HALKit/AMD64/*.cc) $(wildcard src/System/*.cc)  $(wildcard HALKit/AMD64/*.s) \
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalCommonAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalBoot.asm
