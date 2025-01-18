@@ -284,6 +284,10 @@ IMPORT_C SInt32 ConOut(IOObject file /* nullptr to direct to stdout */, const Ch
 
 IMPORT_C SInt32 ConIn(IOObject file /* nullptr to direct to stdout */, const Char* fmt, ...);
 
+IMPORT_C IOObject ConCreate(Void);
+
+IMPORT_C SInt32 ConRelease(IOObject);
+
 IMPORT_C IOObject ConGet(const Char* path);
 
 #endif // ifndef SCIKIT_FOUNDATION_H
