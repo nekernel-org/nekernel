@@ -47,15 +47,12 @@ namespace Kernel
 	Void io_drv_output(DriveTrait::DrivePacket* pckt)
 	{
 		if (!pckt)
-		{
 			return;
-		}
 
-		if (pckt->fPacketReadOnly)
-		{
-			pckt->fPacketGood = NO;
-			return;
-		}
+    if (pckt->fPacketReadOnly)
+      return;
+
+    kcout << "Writing blob to disk...\r";
 
 #ifdef __AHCI__
 		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fSectorSz, pckt->fPacketSize);

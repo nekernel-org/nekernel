@@ -163,7 +163,7 @@ namespace Boot
 			writer.Write("BootZ: Invalid Executable.\r");
 		}
 
-		fStack = new UInt8[mib_cast(8)];
+		fStack = new UInt8[mib_cast(16)];
 	}
 
 	/// @note handover header has to be valid!
@@ -185,7 +185,7 @@ namespace Boot
 
 		if (own_stack)
 		{
-			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(8) - 1]);
+			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(16) - 1]);
 		}
 		else
 		{
