@@ -138,11 +138,11 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 		the_fork.PreviousSibling = lbaOfPreviousFork;
 		the_fork.NextSibling	 = (the_fork.DataOffset - the_fork.DataSize - sizeof(NFS_FORK_STRUCT));
 
-    NFS_FORK_STRUCT* fork = new NFS_FORK_STRUCT;
+		NFS_FORK_STRUCT* fork = new NFS_FORK_STRUCT;
 
-    MUST_PASS(fork); // ?????
+		MUST_PASS(fork); // ?????
 
-    rt_copy_memory(&the_fork, fork, sizeof(NFS_FORK_STRUCT));
+		rt_copy_memory(&the_fork, fork, sizeof(NFS_FORK_STRUCT));
 
 		drv.fPacket.fPacketLba	   = lba;
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
@@ -150,10 +150,10 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 
 		kcout << "Writing fork...\r";
 
-    drv.fOutput(&drv.fPacket);
+		drv.fOutput(&drv.fPacket);
 
-    delete fork;
-    fork = nullptr;
+		delete fork;
+		fork = nullptr;
 
 		/// log what we have now.
 		kcout << "Wrote fork data at: " << hex_number(the_fork.DataOffset)

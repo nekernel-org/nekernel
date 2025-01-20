@@ -21,15 +21,15 @@ namespace Kernel
 
 	namespace Detail
 	{
-		constexpr Int16 kPort = 0x3F8;
-		static Int32 kState = kStateInvalid;
+		constexpr Int16 kPort  = 0x3F8;
+		static Int32	kState = kStateInvalid;
 
 		/// @brief Init COM1.
 		/// @return
-    template <Int16 PORT>
+		template <Int16 PORT>
 		bool hal_serial_init() noexcept
 		{
-      if (kState == kStateReady || kState == kStateTransmit)
+			if (kState == kStateReady || kState == kStateTransmit)
 				return true;
 
 			HAL::rt_out8(PORT + 1, 0x00); // Disable all interrupts

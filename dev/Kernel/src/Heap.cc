@@ -40,7 +40,7 @@ namespace Kernel
 		struct PACKED HEAP_INFORMATION_BLOCK final
 		{
 			///! @brief 32-bit value which contains the magic number of the heap.
-			UInt32 fMagic;
+			UInt64 fMagic;
 
 			///! @brief Boolean value which tells if the heap is allocated.
 			Boolean fPresent : 1;

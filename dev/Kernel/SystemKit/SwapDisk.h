@@ -18,6 +18,8 @@
 
 namespace Kernel
 {
+	struct SWAP_DISK_HEADER;
+
 	/// @brief This class is a disk swap delegate for any data. available as a syscall too.
 	class SwapDisk final
 	{
@@ -27,7 +29,20 @@ namespace Kernel
 
 		ZKA_COPY_DEFAULT(SwapDisk);
 
-		BOOL	Write(const Char* fork_name, const SizeT fork_name_len, VoidPtr data, const SizeT data_len);
-		VoidPtr Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len);
+		BOOL			  Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER* data, const SizeT data_len);
+		SWAP_DISK_HEADER* Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len);
 	};
+
+	typedef struct SWAP_DISK_HEADER
+	{
+		UInt32 fMagic;
+		SizeT  fHeaderSz;
+		UInt64 fTeamID;
+		UInt64 fProcessID;
+		UInt64 fVirtualAddress;
+		SizeT  fBlobSz;
+		Char   fBlob[];
+	} PACKED SWAP_DISK_HEADER;
+
+	typedef SWAP_DISK_HEADER* SWAP_DISK_HEADER_REF;
 } // namespace Kernel

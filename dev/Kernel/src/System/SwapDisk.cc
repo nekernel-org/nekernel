@@ -9,7 +9,7 @@
 
 namespace Kernel
 {
-	BOOL SwapDisk::Write(const Char* fork_name, const SizeT fork_name_len, VoidPtr data, const SizeT data_len)
+	BOOL SwapDisk::Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER_REF data, const SizeT data_len)
 	{
 		if (!fork_name || !fork_name_len)
 			return NO;
@@ -22,7 +22,7 @@ namespace Kernel
 
 		FileStream file(kSwapPageFile, "wb");
 
-		auto ret = file.Write(fork_name, data, data_len);
+		auto ret = file.Write(fork_name, data, sizeof(SWAP_DISK_HEADER) + data_len);
 
 		if (ret.Error())
 			return NO;
@@ -30,7 +30,7 @@ namespace Kernel
 		return YES;
 	}
 
-	VoidPtr SwapDisk::Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len)
+	SWAP_DISK_HEADER_REF SwapDisk::Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len)
 	{
 		if (!fork_name || !fork_name_len)
 			return nullptr;
@@ -40,7 +40,8 @@ namespace Kernel
 
 		FileStream file(kSwapPageFile, "rb");
 
-		VoidPtr blob = file.Read(fork_name, data_len);
-		return blob;
+		VoidPtr blob = file.Read(fork_name, sizeof(SWAP_DISK_HEADER) + data_len);
+
+		return (SWAP_DISK_HEADER_REF)blob;
 	}
 } // namespace Kernel

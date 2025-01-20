@@ -49,10 +49,10 @@ namespace Kernel
 		if (!pckt)
 			return;
 
-    if (pckt->fPacketReadOnly)
-      return;
+		if (pckt->fPacketReadOnly)
+			return;
 
-    kcout << "Writing blob to disk...\r";
+		kcout << "Writing blob to disk...\r";
 
 #ifdef __AHCI__
 		drv_std_write(pckt->fPacketLba, (Char*)pckt->fPacketContent, pckt->fSectorSz, pckt->fPacketSize);

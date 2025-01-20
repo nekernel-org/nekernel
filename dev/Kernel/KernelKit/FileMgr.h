@@ -14,7 +14,7 @@
 	 31/01/24: Update documentation (amlel)
 	 05/07/24: NeFS support, and fork support, updated constants and specs
 		as well.
-    18/01/25: Patches to FileStream class.
+	18/01/25: Patches to FileStream class.
 
  ------------------------------------------- */
 
