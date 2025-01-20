@@ -3,7 +3,7 @@
 	Copyright (C) 2024, MediaSwirl, all rights reserved.
 
 	FILE: NeFS.h
-	PURPOSE: NeFS (New FileSystem) support.
+	PURPOSE: NeFS (New extended File System) support.
 
 	Revision History:
 
