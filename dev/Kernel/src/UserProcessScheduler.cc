@@ -417,10 +417,8 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-
 	/// @brief Run User scheduler object.
 	/// @return Process count executed within a team.
-
 	/***********************************************************************************/
 
 	const SizeT UserProcessScheduler::Run() noexcept
@@ -590,8 +588,9 @@ namespace Kernel
 	////////////////////////////////////////////////////////////
 	/// @brief this checks if no process is on the team.
 	////////////////////////////////////////////////////////////
-	bool UserProcessScheduler::operator!()
+	Bool UserProcessScheduler::operator!()
 	{
 		return mTeam.AsArray().Count() == 0;
 	}
 } // namespace Kernel
+x
