@@ -446,7 +446,7 @@ namespace Kernel
 
 				process.PTime = static_cast<Int32>(process.Affinity);
 
-				kcout << "Switch to '" << process.Name << "'.\r";
+				kcout << "Switch to: '" << process.Name << "'.\r";
 
 				// tell helper to find a core to schedule on.
 				if (!UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
