@@ -42,6 +42,7 @@ namespace Kernel
 	/// @brief Gets the last exit code.
 	/// @note Not thread-safe.
 	/// @return Int32 the last exit code.
+
 	const UInt32& sched_get_exit_code(void) noexcept
 	{
 		return kLastExitCode;
@@ -61,7 +62,7 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	//! @brief boolean operator, check status.
+	/// @brief boolean operator, check status.
 	/***********************************************************************************/
 
 	UserProcess::operator bool()
