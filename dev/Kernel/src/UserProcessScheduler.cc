@@ -593,4 +593,3 @@ namespace Kernel
 		return mTeam.AsArray().Count() == 0;
 	}
 } // namespace Kernel
-x
