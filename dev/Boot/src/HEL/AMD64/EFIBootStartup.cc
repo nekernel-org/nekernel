@@ -236,7 +236,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 			const auto kFSName = "SSD";
 
-			partition_factory.Format(kFSName, &root, 1);
+			//			partition_factory.Format(kFSName, &root, 1);
 
 			fb_init();
 

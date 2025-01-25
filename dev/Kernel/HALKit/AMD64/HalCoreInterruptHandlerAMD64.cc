@@ -7,7 +7,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <NewKit/KString.h>
-#include <POSIXKit/signal.h>
+#include <POSIXKit/Signals.h>
 
 STATIC BOOL kIsScheduling = NO;
 
