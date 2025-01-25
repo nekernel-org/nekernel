@@ -8,7 +8,7 @@
 
 /** https://pubs.opengroup.org/onlinepubs/009695399/basedefs/signal.h.html */
 
-#include <POSIXKit/unix_layer.h>
+#include <POSIXKit/POSIX.h>
 
 typedef Kernel::UInt32 signal_t;
 

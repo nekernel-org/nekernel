@@ -559,8 +559,8 @@ namespace Kernel
 				continue;
 			}
 
-      if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity == AffinityKind::kRealTime)
-        continue;
+			if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity == AffinityKind::kRealTime)
+				continue;
 
 			PID prev_pid									 = UserProcessHelper::TheCurrentPID();
 			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;

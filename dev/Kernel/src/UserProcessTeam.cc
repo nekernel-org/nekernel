@@ -18,6 +18,7 @@ namespace Kernel
 		for (SizeT i = 0U; i < this->mProcessList.Count(); ++i)
 		{
 			this->mProcessList[i]		 = UserProcess();
+			this->mProcessList[i].PTime	 = 0;
 			this->mProcessList[i].Status = ProcessStatusKind::kKilled;
 		}
 

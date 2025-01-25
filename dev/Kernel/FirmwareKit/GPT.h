@@ -9,7 +9,7 @@
 #include <NewKit/Defines.h>
 #include <FirmwareKit/EFI/EFI.h>
 
-#define kSectorSizeGPT 512
+#define kSectorSizeGPT (512U)
 
 namespace Kernel
 {

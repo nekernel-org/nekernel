@@ -100,7 +100,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 
 			if (cur_fork.Flags & kNeFSFlagCreated)
 			{
-				kcout << "Fork already exists.\r";
+				kcout << "Error: Fork does exists.\r";
 
 				/// sanity check.
 				if (StringBuilder::Equals(cur_fork.ForkName, the_fork.ForkName) &&
@@ -143,17 +143,17 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 		drv.fPacket.fPacketContent = &the_fork;
 
-		kcout << "Writing fork...\r";
+		kcout << "Writing fork metadata...\r";
 
 		// drv.fOutput(drv.fPacket);
 
 		fs_ifs_write(&kMountpoint, drv, MountpointInterface::kDriveIndexA);
 
 		/// log what we have now.
-		kcout << "Wrote fork data at: " << hex_number(the_fork.DataOffset)
+		kcout << "Fork offset is at: " << hex_number(the_fork.DataOffset)
 			  << endl;
 
-		kcout << "Wrote fork at: " << hex_number(lba) << endl;
+		kcout << "Wrote fork metadata at: " << hex_number(lba) << endl;
 
 		return YES;
 	}
