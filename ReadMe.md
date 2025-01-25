@@ -13,16 +13,18 @@ A Microkernel written in C++ 20, with a System Call Interface Library, and custo
 
 ## Requirements:
 
-- MinGW/GCC for the Kernel, Boot Loader and the LibSCI.
-- Netwide Assembler for the x64 assembly files (in case you're compiling for AMD64).
+- MinGW/GCC
+- Netwide Assembler
+- Git
+- BTB
 
 ## Installation:
 
 Clone repository:
 
 ```
-git clone git@github.com:mediaswirl/openne.git
-cd openne
+git clone git@github.com:mediaswirl/nekernel.git
+cd nekernel
 ```
 
 </br>
