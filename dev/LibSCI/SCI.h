@@ -290,4 +290,17 @@ IMPORT_C SInt32 ConRelease(IOObject);
 
 IMPORT_C IOObject ConGet(const Char* path);
 
+// ------------------------------------------------------------------------------------------ //
+// Scheduler Interrupts API.
+// ------------------------------------------------------------------------------------------ //
+
+typedef SInt32 AffinityKind;
+typedef UInt64 PID;
+
+IMPORT_C SInt32 SchedAffinity(PID, SInt32 req, AffinityKind* local);
+
+IMPORT_C SInt32 SchedTrace(PID, SInt32 req, VoidPtr address, VoidPtr data);
+
+IMPORT_C SInt32 SchedKill(PID, SInt32 req);
+
 #endif // ifndef SCIKIT_FOUNDATION_H
