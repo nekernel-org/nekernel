@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -10,7 +10,7 @@
 
 namespace Kernel
 {
-	/// @internal
+	/// @internal internal use for IPC system only.
 	/// @brief The internal sanitize function.
 	Bool ipc_int_sanitize_packet(IPC_MSG* pckt)
 	{
@@ -79,13 +79,15 @@ namespace Kernel
 		if (!*pckt_in)
 			*pckt_in = new IPC_MSG();
 
+		MUST_PASS(*pckt_in);
+
 		if (*pckt_in)
 		{
-			auto endian = rtl_deduce_endianess((*pckt_in), ((Char*)(*pckt_in))[0]);
+			const auto endianess = rtl_deduce_endianess((*pckt_in), ((Char*)(*pckt_in))[0]);
 
 			(*pckt_in)->IpcHeaderMagic = kIPCHeaderMagic;
 
-			(*pckt_in)->IpcEndianess  = static_cast<UInt8>(endian);
+			(*pckt_in)->IpcEndianess  = static_cast<UInt8>(endianess);
 			(*pckt_in)->IpcPacketSize = sizeof(IPC_MSG);
 
 			(*pckt_in)->IpcTo.UserProcessID	  = 0;

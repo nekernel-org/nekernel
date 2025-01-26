@@ -136,8 +136,8 @@ typedef struct LDR_IMAGE_HEADER
 
 enum
 {
-	eUserSection  = 0x00000020,
-	cPEResourceId = 0xFFaadd00,
+	kUserSection  = 0x00000020,
+	kPEResourceId = 0xFFaadd00,
 };
 
 #endif /* ifndef __KERNELKIT_INC_PE_H__ */

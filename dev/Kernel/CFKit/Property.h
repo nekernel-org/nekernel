@@ -11,8 +11,9 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Function.h>
 #include <NewKit/KString.h>
+#include <CFKit/GUIDWrapper.h>
 
-#define kMaxPropLen 255
+#define kMaxPropLen (255U)
 
 namespace CFKit
 {
@@ -22,7 +23,7 @@ namespace CFKit
 	using PropertyId = UIntPtr;
 
 	/// @brief Kernel property class.
-	/// @example \Properties\SmpCores or \Properties\KernelVersion
+	/// @example /Properties/SmpCoreClass or /Properties/KernelVersionClass
 	class Property
 	{
 	public:
@@ -38,8 +39,9 @@ namespace CFKit
 		KString&	GetKey();
 
 	private:
-		KString	   fName{kMaxPropLen};
-		PropertyId fValue{0UL};
+		KString		   fName{kMaxPropLen};
+		PropertyId	   fValue{0UL};
+		Ref<XRN::GUID> fGUID{};
 	};
 
 	template <SizeT N>

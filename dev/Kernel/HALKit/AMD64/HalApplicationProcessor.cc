@@ -219,14 +219,8 @@ namespace Kernel::HAL
 
 			kcout << "SMP: Starting APs...\r";
 
+      UInt32 eax, edx;
 			kApicBaseAddress = kMADTBlock->Address;
-
-			constexpr auto kMemoryAPStart = 0x7C000;
-			Char*		   ptr_ap_code	  = reinterpret_cast<Char*>(kMemoryAPStart);
-
-			SizeT hal_ap_blob_len = hal_ap_blob_end - hal_ap_blob_start;
-
-			rt_copy_memory((Char*)hal_ap_blob_start, ptr_ap_code, hal_ap_blob_len);
 
 			while (Yes)
 			{
@@ -252,7 +246,7 @@ namespace Kernel::HAL
 
 					/// TODO: HAL helper to create an address.
 
-					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)ptr_ap_code) >> 12));
+					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)0x7c00) >> 12));
 
 					++kSMPCount;
 					break;

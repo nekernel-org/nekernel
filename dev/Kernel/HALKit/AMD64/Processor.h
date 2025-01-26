@@ -233,14 +233,16 @@ namespace Kernel::HAL
 	/// @param lo low byte
 	/// @param hi high byte
 	/***********************************************************************************/
-	inline Void hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept
+	inline UInt32 hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept
 	{
 		if (!lo || !hi)
-			return;
+			return 0;
 
 		asm volatile("rdmsr"
 					 : "=a"(*lo), "=d"(*hi)
 					 : "c"(msr));
+
+    return *lo + *hi;
 	}
 
 	/// @brief Set Model-specific register.
