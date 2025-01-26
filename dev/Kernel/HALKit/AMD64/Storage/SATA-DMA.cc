@@ -54,6 +54,7 @@ STATIC Kernel::PCI::Device kPCIDevice;
 STATIC HbaMem*			   kSATAPort	   = nullptr;
 STATIC Kernel::SizeT kSATAPortIdx		   = 0UL;
 STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
+STATIC Kernel::Char kModel[41]			   = {0};
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept;
@@ -70,21 +71,27 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 
 	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(8));
 
-	kCurrentDiskSectorCount = (identify_data[61] << 16) | identify_data[60];
-
-	Kernel::Char model[41];
-
-	for (int i = 0; i < 40; i += 2)
+	if (!(identify_data[83] & (1 << 10)))
 	{
-		char temp				  = identify_data[54 + i];
+		kCurrentDiskSectorCount = identify_data[61] << 16;
+		kCurrentDiskSectorCount |= identify_data[60];
+	}
+	else
+	{
+		kCurrentDiskSectorCount = (identify_data[103] << 48) | (identify_data[102] << 32) | (identify_data[101] << 16) | (identify_data[100]);
+	}
+
+	for (Kernel::Int32 i = 0; i < 40; i += 2)
+	{
+		Kernel::Char temp		  = identify_data[54 + i];
 		identify_data[54 + i]	  = identify_data[54 + i + 1];
 		identify_data[54 + i + 1] = temp;
 	}
 
-	Kernel::rt_copy_memory((Kernel::Char*)(identify_data + 54), model, 40);
-	model[40] = '\0';
+	Kernel::rt_copy_memory((Kernel::Char*)(identify_data + 54), kModel, 40);
+	kModel[40] = '\0';
 
-	kcout << "SATA Model: " << model << "\r";
+	kcout << "SATA Model: " << kModel << "\r";
 
 	kcout << "Disk Size: " << Kernel::number(drv_get_size()) << endl;
 	kcout << "Highest LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
@@ -107,10 +114,10 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 		if (kPCIDevice.Subclass() == kSATASubClass &&
 			kPCIDevice.ProgIf() == kSATAProgIfAHCI)
 		{
-			HbaMem* mem_ahci = (HbaMem*)(kPCIDevice.Bar(0x24) & 0xFFFFFFF0);
+			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(kSATABar5);
 
-			kPCIDevice.EnableMmio(0x24);	  // Enable the memory index_byte/o for this ahci device.
-			kPCIDevice.BecomeBusMaster(0x24); // Become bus master for this ahci device, so that we can control it.
+			kPCIDevice.EnableMmio(kSATABar5);	   // Enable the memory index_byte/o for this ahci device.
+			kPCIDevice.BecomeBusMaster(kSATABar5); // Become bus master for this ahci device, so that we can control it.
 
 			Kernel::UInt32 ports_implemented = mem_ahci->Pi;
 			Kernel::UInt16 ahci_index		 = 0;
@@ -162,20 +169,18 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 						rt_set_memory((VoidPtr)((UIntPtr)kSATAPort->Ports[kSATAPortIdx].Fb), 0, 256);
 
-						HbaCmdHeader* cmdheader = (HbaCmdHeader*)((UIntPtr)kSATAPort->Ports[kSATAPortIdx].Clb);
+						HbaCmdHeader* cmd_header = (HbaCmdHeader*)((UIntPtr)kSATAPort->Ports[kSATAPortIdx].Clb);
 
-						for (int i = 0; i < 32; i++)
+						for (Int32 i = 0; i < kMaxPortsImplemented; i++)
 						{
-							cmdheader[i].Prdtl = 8;
+							cmd_header[i].Prdtl = 1;
+							cmd_header[i].Ctba	= kAHCIBaseAddress + (40 << 10) + (kSATAPortIdx << 13) + (i << 8);
 
-							cmdheader[i].Ctba = kAHCIBaseAddress + (40 << 10) + (kSATAPortIdx << 13) + (i << 8);
-
-							rt_set_memory((VoidPtr)(UIntPtr)cmdheader[i].Ctba, 0, 256);
+							rt_set_memory((VoidPtr)(UIntPtr)cmd_header[i].Ctba, 0, 256);
 						}
 
 						while (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
-						{
-						}
+							;
 
 						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
 						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
@@ -263,7 +268,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	MUST_PASS(command_table);
 
-	command_table->PrdtEntries->Dba			 = (Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer);
+	command_table->PrdtEntries->Dba			 = (Kernel::UInt64)buffer;
 	command_table->PrdtEntries->Dbc			 = (size_buffer * sector_sz) - 1;
 	command_table->PrdtEntries->InterruptBit = YES;
 	kcout << "PRDT Entry 0 - Dba: " << Kernel::hex_number(command_table->PrdtEntries->Dba) << endl;
@@ -309,12 +314,6 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	}
 
 	kcout << "Last Command Sent: " << (int)Kernel::number(h2d_fis->Command) << endl;
-
-	kcout << "LBA 1 First 16 Bytes: ";
-	for (int i = 0; i < 16; i++)
-	{
-		kcout << Kernel::hex_number(buffer[i]);
-	}
 
 	Kernel::mm_delete_heap((Kernel::VoidPtr)command_header->Ctba);
 }
