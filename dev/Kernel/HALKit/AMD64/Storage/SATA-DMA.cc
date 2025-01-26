@@ -91,10 +91,9 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 	Kernel::rt_copy_memory((Kernel::Char*)(identify_data + 54), kModel, 40);
 	kModel[40] = '\0';
 
-	kcout << "SATA Model: " << kModel << "\r";
-
+	kcout << "Disk Model: " << kModel << endl;
 	kcout << "Disk Size: " << Kernel::number(drv_get_size()) << endl;
-	kcout << "Highest LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
+	kcout << "Disk Highest LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
 }
 
 /// @brief Initializes an AHCI disk.
