@@ -39,13 +39,13 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C IDylibRef rtl_init_dylib(UserProcess& thread)
+EXTERN_C IDylibRef rtl_init_dylib(UserProcess& process)
 {
 	IDylibRef dll_obj = tls_new_class<IPEFDylibObject>();
 
 	if (!dll_obj)
 	{
-		thread.Crash();
+		process.Crash();
 		return nullptr;
 	}
 
@@ -54,18 +54,18 @@ EXTERN_C IDylibRef rtl_init_dylib(UserProcess& thread)
 	if (!dll_obj->Get())
 	{
 		tls_delete_class(dll_obj);
-		thread.Crash();
+		process.Crash();
 
 		return nullptr;
 	}
 
 	dll_obj->Get()->ImageObject =
-		thread.Image.fBlob;
+		process.Image.fBlob;
 
 	if (!dll_obj->Get()->ImageObject)
 	{
 		tls_delete_class(dll_obj);
-		thread.Crash();
+		process.Crash();
 
 		return nullptr;
 	}
@@ -83,7 +83,7 @@ EXTERN_C IDylibRef rtl_init_dylib(UserProcess& thread)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_dylib(UserProcess& thread, IDylibRef dll_obj, Bool* successful)
+EXTERN_C Void rtl_fini_dylib(UserProcess& process, IDylibRef dll_obj, BOOL* successful)
 {
 	MUST_PASS(successful);
 
@@ -91,7 +91,7 @@ EXTERN_C Void rtl_fini_dylib(UserProcess& thread, IDylibRef dll_obj, Bool* succe
 	if (dll_obj == nullptr)
 	{
 		*successful = false;
-		thread.Crash();
+		process.Crash();
 	}
 
 	delete dll_obj->Get();
