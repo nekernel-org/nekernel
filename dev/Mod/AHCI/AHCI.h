@@ -284,10 +284,10 @@ typedef struct HbaCmdHeader final
 	Kernel::UInt8 Reserved0 : 1; // Reserved
 	Kernel::UInt8 Pmp : 4;		 // Port multiplier port
 
-	Kernel::UInt16			Prdtl; // Physical region descriptor table length in entries
-	volatile Kernel::UInt32 Prdbc; // Physical region descriptor byte count transferred
+	Kernel::UInt16 Prdtl; // Physical region descriptor table length in entries
+	Kernel::UInt32 Prdbc; // Physical region descriptor byte count transferred
 
-	Kernel::UInt64 Ctba; // Command table descriptor base address
+	Kernel::UInt32 Ctba; // Command table descriptor base address
 
 	Kernel::UInt32 Reserved1[4]; // Reserved
 } HbaCmdHeader;
@@ -313,7 +313,8 @@ typedef struct HbaFis final
 
 typedef struct HbaPrdtEntry final
 {
-	Kernel::UInt64 Dba;		  // Data base address
+	Kernel::UInt32 Dba; // Data base address
+	Kernel::UInt32 Dbau;
 	Kernel::UInt32 Reserved0; // Reserved
 	// DW3
 	Kernel::UInt32 Dbc : 22;		 // Byte count, 4M max
@@ -323,10 +324,10 @@ typedef struct HbaPrdtEntry final
 
 typedef struct HbaCmdTbl final
 {
-	Kernel::UInt8		Cfis[64];		// Command FIS
-	Kernel::UInt8		Acmd[16];		// ATAPI command, 12 or 16 bytes
-	Kernel::UInt8		Rsv[48];		// Reserved
-	struct HbaPrdtEntry PrdtEntries[1]; // Physical region descriptor table entries, 0 ~ 65535
+	Kernel::UInt8		Cfis[64]; // Command FIS
+	Kernel::UInt8		Acmd[16]; // ATAPI command, 12 or 16 bytes
+	Kernel::UInt8		Rsv[48];  // Reserved
+	struct HbaPrdtEntry Prdt[1];  // Physical region descriptor table entries, 0 ~ 65535
 } HbaCmdTbl;
 
 /// @brief Initializes an AHCI disk.

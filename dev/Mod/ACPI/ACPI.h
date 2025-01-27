@@ -13,6 +13,8 @@
 
 #include <NewKit/Defines.h>
 
+#define SDT_OBJECT : public Kernel::SDT
+
 namespace Kernel
 {
 	class PACKED SDT

@@ -221,6 +221,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		syschk_thread->SetName("BootZ: System Recovery Check");
 	}
 
+#if 0
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
@@ -236,7 +237,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 			const auto kFSName = "SSD";
 
-			//			partition_factory.Format(kFSName, &root, 1);
+			partition_factory.Format(kFSName, &root, 1);
 
 			fb_init();
 
@@ -247,6 +248,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 			fb_clear();
 		}
 	}
+#endif
 
 	// ------------------------------------------ //
 	// null these fields, to avoid being reused later.

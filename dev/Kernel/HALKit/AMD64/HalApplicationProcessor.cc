@@ -57,7 +57,7 @@ namespace Kernel::HAL
 	STATIC VoidPtr kRawMADT								   = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
-	struct PROCESS_APIC_MADT final : public SDT
+	struct PROCESS_APIC_MADT final SDT_OBJECT
 	{
 		UInt32 Address; // Madt address
 		UInt8  Flags;	// Madt flags
@@ -246,7 +246,7 @@ namespace Kernel::HAL
 
 					/// TODO: HAL helper to create an address.
 
-					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)0x7c00) >> 12));
+					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)hal_ap_blob_start) >> 12));
 
 					++kSMPCount;
 					break;

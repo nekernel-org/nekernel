@@ -16,7 +16,7 @@ namespace Kernel
 	{
 		if (fLockingProcess)
 		{
-			fLockingProcess			= UserProcess();
+			fLockingProcess		   = UserProcess();
 			fLockingProcess.Status = ProcessStatusKind::kFrozen;
 			return Yes;
 		}
@@ -42,7 +42,7 @@ namespace Kernel
 	/***********************************************************************************/
 	Bool Semaphore::IsLocked() const
 	{
-		return fLockingProcess->Status == ProcessStatusKind::kRunning;
+		return fLockingProcess.Status == ProcessStatusKind::kRunning;
 	}
 
 	/***********************************************************************************/

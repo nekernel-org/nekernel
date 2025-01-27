@@ -28,7 +28,7 @@ BIOS=OVMF.fd
 IMG=epm-master-1.img
 IMG_2=epm-master-2.img
 
-EMU_FLAGS=-net none -smp 4 -m 8G -M q35 \
+EMU_FLAGS=-net none -smp 4 -m 8G \
 			-bios $(BIOS) -drive \
 			file=fat:rw:src/Root/,index=2,format=raw \
             -d int
@@ -82,14 +82,15 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -device ahci,id=ahci0 \
-    -drive id=disk,file=$(IMG),if=none,format=raw \
-    -device ide-hd,drive=disk \
+	$(EMU) $(EMU_FLAGS) -M q35 -drive file=$(IMG),format=raw,if=none,id=disk \
+    -device ich9-ahci,id=ahci \
+    -device ide-hd,drive=disk,bus=ahci.0 \
+    -enable-kvm \
     -s -S
 
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata:
-	$(EMU) $(EMU_FLAGS) -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
+	$(EMU) $(EMU_FLAGS) -enable-kvm -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
 
 # img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta specs.
 .PHONY: epm-img

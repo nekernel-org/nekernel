@@ -400,20 +400,25 @@ namespace Kernel
 		return Yes;
 	}
 
+	/// @brief Is it a user scheduler?
+
 	const Bool UserProcessScheduler::IsUser()
 	{
 		return Yes;
 	}
+
+	/// @brief Is it a kernel scheduler?
 
 	const Bool UserProcessScheduler::IsKernel()
 	{
 		return No;
 	}
 
+	/// @brief Is it a SMP scheduler?
+
 	const Bool UserProcessScheduler::HasMP()
 	{
-		MUST_PASS(kHandoverHeader);
-		return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
+		return Yes;
 	}
 
 	/***********************************************************************************/
@@ -423,13 +428,13 @@ namespace Kernel
 
 	const SizeT UserProcessScheduler::Run() noexcept
 	{
-		SizeT process_index = 0; //! we store this guy to tell the scheduler how many
-								 //! things we have scheduled.
+		SizeT process_index = 0UL; //! we store this guy to tell the scheduler how many
+								   //! things we have scheduled.
 
 		if (mTeam.mProcessCount < 1)
 		{
 			kcout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
-			return 0;
+			return 0UL;
 		}
 
 		kcout << "UserProcessScheduler::Run(): This team has a process capacity of: " << number(mTeam.mProcessList.Capacity()) << endl;
@@ -449,10 +454,16 @@ namespace Kernel
 				kcout << "Switch to: '" << process.Name << "'.\r";
 
 				// tell helper to find a core to schedule on.
-				if (!UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
-											   process.ProcessId))
+				BOOL ret = UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
+													 process.ProcessId);
+
+				if (!ret)
 				{
-					kcout << "Invalid process (UH OH)\r";
+					if (process.Affinity == AffinityKind::kRealTime)
+						continue;
+
+					kcout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
+
 					process.Crash();
 				}
 			}
