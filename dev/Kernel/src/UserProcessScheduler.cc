@@ -382,7 +382,7 @@ namespace Kernel
 
 	/***********************************************************************************/
 
-	/// @brief Remove process from list.
+	/// @brief Remove process from the team.
 	/// @param process_id process slot inside team.
 	/// @retval true process was removed.
 	/// @retval false process doesn't exist in team.
