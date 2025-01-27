@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <NewKit/Defines.h>

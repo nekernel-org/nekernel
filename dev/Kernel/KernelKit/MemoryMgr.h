@@ -8,7 +8,7 @@
 #define INC_KERNEL_HEAP_H
 
 /// @date 30/01/24
-/// @file: Heap.h
+/// @file: MemoryMgr.h
 /// @brief: heap allocation support.
 
 #include <NewKit/KernelPanic.h>

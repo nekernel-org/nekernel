@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 #include <NewKit/New.h>
 
 void* operator new[](size_t sz)

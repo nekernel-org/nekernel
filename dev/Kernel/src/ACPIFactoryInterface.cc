@@ -7,14 +7,14 @@
 #include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <NewKit/KString.h>
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 
 namespace Kernel
 {
 	/// @brief Finds a descriptor table inside ACPI XSDT.
 	ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature)
 	{
-		MUST_PASS(fRsdp);
+		MUST_PASS(this->fRsdp);
 
 		if (!signature)
 			return ErrorOr<voidPtr>{-1};

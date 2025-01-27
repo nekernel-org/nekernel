@@ -8,7 +8,7 @@
 #include <Mod/CoreGfx/FBMgr.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <NewKit/Json.h>

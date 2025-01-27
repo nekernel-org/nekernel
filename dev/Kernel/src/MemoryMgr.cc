@@ -1,12 +1,12 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/LPC.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 #include <NewKit/Crc32.h>
 #include <NewKit/PageMgr.h>
 #include <NewKit/Utils.h>
@@ -16,16 +16,16 @@
 
  Revision History:
 	10/8/24: FIX: Fix useless long name, alongside a new WR (WriteRead) field.
-	20/10/24: Fix mm_new_ and mm_delete_ APIs inside Heap.h header. (amlal)
+	20/10/24: Fix mm_new_ and mm_delete_ APIs inside MemoryMgr.h header. (amlal)
+  27/01/25: Reworked code as the memory manager.
 
  ------------------------------------------- */
 
 //! @file Heap.cc
-//! @brief This serves as the main memory manager.
+//! @brief This Heap algorithm serves as the main memory manager.
 
 #define kKernelHeapMagic   (0xD4D7D5)
 #define kKernelHeapAlignSz (__BIGGEST_ALIGNMENT__)
-#define kKernelHeapMaxSize (gib_cast(2))
 
 namespace Kernel
 {
@@ -42,7 +42,7 @@ namespace Kernel
 			///! @brief 32-bit value which contains the magic number of the heap.
 			UInt64 fMagic;
 
-			///! @brief Boolean value which tells if the heap is allocated.
+			///! @brief Is the heap present?
 			Boolean fPresent : 1;
 
 			/// @brief Is this valued owned by the user?
@@ -52,7 +52,7 @@ namespace Kernel
 			Boolean fUser : 1;
 
 			/// @brief Is this a page pointer?
-			Boolean fPagePtr : 1;
+			Boolean fPage : 1;
 
 			/// @brief 32-bit CRC checksum.
 			UInt32 fCRC32;
@@ -61,10 +61,10 @@ namespace Kernel
 			UInt64 fFlags;
 
 			/// @brief 64-bit pointer size.
-			SizeT fHeapSize;
+			SizeT fSize;
 
 			/// @brief 64-bit target offset pointer.
-			UIntPtr fHeapPtr;
+			UIntPtr fOffset;
 
 			/// @brief Padding bytes for header.
 			UInt8 fPadding[kKernelHeapAlignSz];
@@ -104,8 +104,8 @@ namespace Kernel
 		if (!ptr_heap || new_sz < 1)
 			return nullptr;
 
-		kcout << "This function is not implemented by minOSKrnl, please use the BSD's realloc instead.\r";
-		ke_panic(RUNTIME_CHECK_PROCESS);
+		kcout << "This function is not implemented by NeOSKrnl, please use the BSD's realloc instead.\r";
+		ke_panic(RUNTIME_CHECK_INVALID);
 
 		return nullptr;
 	}
@@ -122,9 +122,6 @@ namespace Kernel
 		if (sz_fix == 0)
 			return nullptr;
 
-		// We can't allocate that big now.
-		MUST_PASS(sz < kKernelHeapMaxSize);
-
 		sz_fix += sizeof(Detail::HEAP_INFORMATION_BLOCK);
 
 		PageMgr heap_mgr;
@@ -134,20 +131,20 @@ namespace Kernel
 			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 				wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-		heap_info_ptr->fHeapSize  = sz_fix;
+		heap_info_ptr->fSize	  = sz_fix;
 		heap_info_ptr->fMagic	  = kKernelHeapMagic;
 		heap_info_ptr->fCRC32	  = 0; // dont fill it for now.
-		heap_info_ptr->fHeapPtr	  = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
-		heap_info_ptr->fPagePtr	  = No;
+		heap_info_ptr->fOffset	  = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		heap_info_ptr->fPage	  = No;
 		heap_info_ptr->fWriteRead = wr;
 		heap_info_ptr->fUser	  = user;
 		heap_info_ptr->fPresent	  = Yes;
 
 		rt_set_memory(heap_info_ptr->fPadding, 0, kKernelHeapAlignSz);
 
-		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fHeapPtr);
+		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
-		kcout << "Created Heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
+		kcout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
 
 		return result;
 	}
@@ -167,9 +164,9 @@ namespace Kernel
 		if (!heap_info_ptr)
 			return kErrorHeapNotPresent;
 
-		heap_info_ptr->fPagePtr = true;
+		heap_info_ptr->fPage = true;
 
-		kcout << "Created page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
+		kcout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
 
 		return kErrorSuccess;
 	}
@@ -227,21 +224,21 @@ namespace Kernel
 				return kErrorHeapNotPresent;
 			}
 
-			heap_info_ptr->fHeapSize  = 0UL;
+			heap_info_ptr->fSize	  = 0UL;
 			heap_info_ptr->fPresent	  = No;
-			heap_info_ptr->fHeapPtr	  = 0;
+			heap_info_ptr->fOffset	  = 0;
 			heap_info_ptr->fCRC32	  = 0;
 			heap_info_ptr->fWriteRead = No;
 			heap_info_ptr->fUser	  = No;
 			heap_info_ptr->fMagic	  = 0;
 
-			PTEWrapper		pageWrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
-			Ref<PTEWrapper> pteAddress{pageWrapper};
+			PTEWrapper		page_wrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+			Ref<PTEWrapper> pte_address{page_wrapper};
 
 			PageMgr heap_mgr;
-			heap_mgr.Free(pteAddress);
+			heap_mgr.Free(pte_address);
 
-			kcout << "Freed Heap address successfully." << endl;
+			kcout << "Address has been successfully freed." << endl;
 
 			return kErrorSuccess;
 		}
@@ -260,17 +257,7 @@ namespace Kernel
 				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 					(UIntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
-			if (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kKernelHeapMagic)
-			{
-				if (heap_info_ptr->fCRC32 !=
-					ke_calculate_crc32((Char*)heap_info_ptr->fHeapPtr,
-									   heap_info_ptr->fHeapSize))
-				{
-					return No;
-				}
-
-				return Yes;
-			}
+			return (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kKernelHeapMagic);
 		}
 
 		return No;
@@ -290,7 +277,7 @@ namespace Kernel
 			if (heap_info_ptr && heap_info_ptr->fPresent && kKernelHeapMagic == heap_info_ptr->fMagic)
 			{
 				heap_info_ptr->fCRC32 =
-					ke_calculate_crc32((Char*)heap_info_ptr->fHeapPtr, heap_info_ptr->fHeapSize);
+					ke_calculate_crc32((Char*)heap_info_ptr->fOffset, heap_info_ptr->fSize);
 
 				return Yes;
 			}

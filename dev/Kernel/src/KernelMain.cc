@@ -12,11 +12,11 @@
 #include <CompilerKit/Detail.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 #include <KernelKit/PEF.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 #include <NewKit/Json.h>
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>

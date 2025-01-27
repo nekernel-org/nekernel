@@ -35,7 +35,7 @@
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Stream.h>
 #include <NewKit/ErrorOr.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 #include <NewKit/Ref.h>
 
 /// @brief Filesystem manager, abstraction over mounted filesystem.

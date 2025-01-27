@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
 	FILE: UserProcessScheduler.cc
 	PURPOSE: Low level/Ring-3 Process scheduler.
@@ -16,7 +16,7 @@
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDylibObject.h>
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 #include <NewKit/KString.h>
 #include <KernelKit/LPC.h>
 

@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/FileMgr.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 
 #ifndef __ZKA_MINIMAL_OS__
 #ifdef __FSKIT_INCLUDES_NEFS__

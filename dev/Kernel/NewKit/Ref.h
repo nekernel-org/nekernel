@@ -10,7 +10,7 @@
 
 #include <NewKit/Defines.h>
 #include <NewKit/KernelPanic.h>
-#include <KernelKit/Heap.h>
+#include <KernelKit/MemoryMgr.h>
 
 namespace Kernel
 {

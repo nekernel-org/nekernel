@@ -17,7 +17,7 @@
 
 #include "HALKit/AMD64/Processor.h"
 #include "KernelKit/DebugOutput.h"
-#include "KernelKit/Heap.h"
+#include "KernelKit/MemoryMgr.h"
 #include "NewKit/Defines.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>

@@ -242,7 +242,7 @@ namespace Kernel::HAL
 					 : "=a"(*lo), "=d"(*hi)
 					 : "c"(msr));
 
-    return *lo + *hi;
+		return *lo + *hi;
 	}
 
 	/// @brief Set Model-specific register.

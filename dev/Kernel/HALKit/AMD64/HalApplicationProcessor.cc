@@ -219,7 +219,7 @@ namespace Kernel::HAL
 
 			kcout << "SMP: Starting APs...\r";
 
-      UInt32 eax, edx;
+			UInt32 eax, edx;
 			kApicBaseAddress = kMADTBlock->Address;
 
 			while (Yes)
