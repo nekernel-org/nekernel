@@ -10,16 +10,18 @@
 namespace Kernel
 {
 	/***********************************************************************************/
-	/// @brief Unlocks process out of the semaphore.
+	/// @brief Unlocks the semaphore.
 	/***********************************************************************************/
 	Bool Semaphore::Unlock() noexcept
 	{
 		if (fLockingProcess)
-			fLockingProcess = UserProcess();
-		else
-			return No;
+		{
+			fLockingProcess			= UserProcess();
+			fLockingProcess.Status = ProcessStatusKind::kFrozen;
+			return Yes;
+		}
 
-		return Yes;
+		return No;
 	}
 
 	/***********************************************************************************/
@@ -40,7 +42,7 @@ namespace Kernel
 	/***********************************************************************************/
 	Bool Semaphore::IsLocked() const
 	{
-		return fLockingProcess;
+		return fLockingProcess->Status == ProcessStatusKind::kRunning;
 	}
 
 	/***********************************************************************************/

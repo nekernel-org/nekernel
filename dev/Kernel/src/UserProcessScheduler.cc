@@ -31,7 +31,7 @@ namespace Kernel
 	STATIC UInt32 kLastExitCode = 0U;
 
 	/***********************************************************************************/
-	/// @brief User Process scheduler global and external reference of thread scheduler.
+	/// @brief External reference of the thread scheduler.
 	/***********************************************************************************/
 
 	STATIC UserProcessScheduler kProcessScheduler;
@@ -120,7 +120,7 @@ namespace Kernel
 
 		if (!this->ProcessMemoryHeap)
 		{
-			this->ProcessMemoryHeap = new UserProcess::ProcessMemoryHeapList();
+			this->ProcessMemoryHeap = new ProcessMemoryHeapList();
 
 			this->ProcessMemoryHeap->MemoryEntryPad	 = pad_amount;
 			this->ProcessMemoryHeap->MemoryEntrySize = sz;

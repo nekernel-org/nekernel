@@ -2,7 +2,7 @@
  *	========================================================
  *
  *  	ZKA
- * 	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved., all rights reserved.
+ * 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved., all rights reserved.
  *
  *	File: User.cc
  * 	Purpose: User class, used to provide authentication and security.
@@ -16,8 +16,8 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/MemoryMgr.h>
 
-#define kStdUserType   (0xCE)
-#define kSuperUserType (0xEC)
+#define kStdUserType   (0xEE)
+#define kSuperUserType (0xEF)
 
 /// @file User.cc
 /// @brief User support.
@@ -38,9 +38,9 @@ namespace Kernel
 
 			kcout << "cred_construct_token: Hashing user password...\r";
 
-			for (Size i_pass = 0; i_pass < length; ++i_pass)
+			for (SizeT i_pass = 0UL; i_pass < length; ++i_pass)
 			{
-				const Char& cur_chr = in_password[i_pass];
+				const Char cur_chr = in_password[i_pass];
 
 				if (cur_chr == 0)
 					break;
@@ -143,11 +143,11 @@ namespace Kernel
 		// now check if the password matches.
 		if (rt_string_cmp(password, this->mUserKey, rt_string_len(this->mUserKey)) == 0)
 		{
-			kcout << "User::Matches: Password is valid.\r";
+			kcout << "User::Matches: Password matches.\r";
 			return Yes;
 		}
 
-		kcout << "User::Matches: Password isn't valid.\r";
+		kcout << "User::Matches: Password doesn't match.\r";
 		return No;
 	}
 
@@ -160,6 +160,8 @@ namespace Kernel
 	{
 		return lhs.mUserRing != this->mUserRing;
 	}
+
+	/// @brief Returns the user's name.
 
 	Char* User::Name() noexcept
 	{
