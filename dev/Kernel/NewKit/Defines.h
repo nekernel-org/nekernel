@@ -68,6 +68,10 @@ namespace Kernel
 	using WideChar	= wchar_t;
 	using Utf32Char = char32_t;
 
+	using LongDouble = long double;
+	using Double	 = double;
+	using Float		 = float;
+
 	typedef UInt32	PhysicalAddressKind;
 	typedef UIntPtr VirtualAddressKind;
 

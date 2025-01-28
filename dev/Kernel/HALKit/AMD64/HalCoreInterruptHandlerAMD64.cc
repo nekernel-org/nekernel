@@ -28,7 +28,7 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kcout << "Kernel: PRCFROZE status set..\r";
+	kcout << "Kernel: SIGKILL status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -53,7 +53,7 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kcout << "Kernel: PRCFROZE status set..\r";
+	kcout << "Kernel: SIGKILL status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -99,7 +99,7 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kcout << "Kernel: PRCFROZE status set..\r";
+	kcout << "Kernel: SIGKILL status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -123,7 +123,7 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kcout << "Kernel: PRCFROZE status set..\r";
+	kcout << "Kernel: SIGKILL status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -147,7 +147,7 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kcout << "Kernel: PRCFROZE status set..\r";
+	kcout << "Kernel: SIGKILL status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 }
@@ -169,7 +169,7 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kcout << "Kernel: PRCFROZE status set..\r";
+	kcout << "Kernel: SIGKILL status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
