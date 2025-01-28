@@ -68,14 +68,14 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 
 	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(4));
 
-  uint32_t lba28_sectors = (identify_data[61] << 16) | identify_data[60];
+	uint32_t lba28_sectors = (identify_data[61] << 16) | identify_data[60];
 
-  uint64_t lba48_sectors = ((uint64_t)identify_data[103] << 48) |
-    ((uint64_t)identify_data[102] << 32) |
-    ((uint64_t)identify_data[101] << 16) |
-    ((uint64_t)identify_data[100]);
+	uint64_t lba48_sectors = ((uint64_t)identify_data[103] << 48) |
+							 ((uint64_t)identify_data[102] << 32) |
+							 ((uint64_t)identify_data[101] << 16) |
+							 ((uint64_t)identify_data[100]);
 
-  kCurrentDiskSectorCount = (lba48_sectors) ? lba48_sectors : lba28_sectors;
+	kCurrentDiskSectorCount = (lba48_sectors) ? lba48_sectors : lba28_sectors;
 
 	for (Kernel::Int32 i = 0; i < 40; i += 2)
 	{
@@ -229,7 +229,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
 	command_header->Write = Write;
 	command_header->Prdtl = mib_cast(32) / mib_cast(4);
-  command_header->Prdbc = (1 << slot);
+	command_header->Prdbc = (1 << slot);
 
 	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((Kernel::UInt64)command_header->Ctba);
 

@@ -158,6 +158,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	{
 		handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = NO;
 	}
+
 	// Fill handover header now.
 
 	// ---------------------------------------------------- //
@@ -269,7 +270,10 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	Boot::BFileReader reader_kernel(L"neoskrnl.exe", image_handle);
+	const auto kernel_path	  = L"neoskrnl.exe";
+	const auto kernel_path_sz = 15;
+
+	Boot::BFileReader reader_kernel(kernel_path, image_handle);
 
 	reader_kernel.ReadAll(0);
 

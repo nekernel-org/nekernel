@@ -610,6 +610,20 @@ struct EfiSimpleFilesystemProtocol
 	EfiOpenVolume OpenVolume;
 };
 
+typedef struct EfiRuntimeServices
+{
+	EfiTableHeader SystemTable;
+	VoidPtr		   GetTime, SetTime, GetWakeupTime, SetWakeupTime, SetVirtualAddressMap, ConvertPointer;
+	UInt64(EFI_API* GetVariable)(const Char* Name, EfiGUID VendorGUID, UInt32* Attributes, UInt32* DataSize, VoidPtr Data);
+	VoidPtr GetNextVariable;
+	UInt64(EFI_API* SetVariable)(const Char* Name, EfiGUID VendorGUID, UInt32* Attributes, UInt32* DataSize, VoidPtr Data);
+	VoidPtr GetNextHighMonotonicCount;
+	VoidPtr ResetSystem;
+	VoidPtr UpdateCapsule;
+	VoidPtr QueryCapsuleCapabilites;
+	VoidPtr QueryVariableInfo;
+} EfiRuntimeServices;
+
 /**
 @brief The Structure that they give you when booting.
 */
@@ -624,7 +638,7 @@ typedef struct EfiSystemTable
 	EfiSimpleTextOutputProtocol* ConOut;
 	EfiHandlePtr				 StandardErrorHandle;
 	VoidPtr						 StdErr;
-	VoidPtr						 RuntimeServices;
+	EfiRuntimeServices*			 RuntimeServices;
 	EfiBootServices*			 BootServices;
 	UInt64						 NumberOfTableEntries;
 	/// The configuration table (contains the RSD PTR entry.)
