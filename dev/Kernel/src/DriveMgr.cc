@@ -191,7 +191,9 @@ namespace Kernel
 
 				kcout << "Scheme Found: " << block_struct.Name << endl;
 
-				if (block_struct.Name[0] == 0)
+				if (block_struct.Name[0] == 0 ||
+					block_struct.Name[0] == 0xFF ||
+					block_struct.Name[0] == 0xAF)
 					kcout << "Disk partition is empty (Read Only)\r";
 			}
 

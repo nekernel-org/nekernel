@@ -64,18 +64,13 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 {
 	kCurrentDiskSectorCount = 0UL;
 
-	Kernel::UInt8 __attribute__((aligned(4096))) identify_data[kib_cast(4)] = {};
+	Kernel::UInt8 identify_data[kib_cast(8)] = {};
 
-	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(4));
+	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(8));
 
 	uint32_t lba28_sectors = (identify_data[61] << 16) | identify_data[60];
 
-	uint64_t lba48_sectors = ((uint64_t)identify_data[103] << 48) |
-							 ((uint64_t)identify_data[102] << 32) |
-							 ((uint64_t)identify_data[101] << 16) |
-							 ((uint64_t)identify_data[100]);
-
-	kCurrentDiskSectorCount = (lba48_sectors) ? lba48_sectors : lba28_sectors;
+	kCurrentDiskSectorCount = lba28_sectors;
 
 	for (Kernel::Int32 i = 0; i < 40; i += 2)
 	{
@@ -193,7 +188,7 @@ static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 	if (port == nullptr)
 		return -1;
 
-	kcout << "Finding a slot...";
+	kcout << "Finding a slot...\r";
 
 	Kernel::UInt32 slots = (kSATAPort->Ports[kSATAPortIdx].Sact | kSATAPort->Ports[kSATAPortIdx].Ci);
 
@@ -219,7 +214,8 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	if (slot == -1)
 		return;
 
-	kcout << "Reading AHCI disk...\r";
+	if (size_buffer > kib_cast(8))
+		return;
 
 	volatile HbaCmdHeader* command_header = ((volatile HbaCmdHeader*)((Kernel::UInt64)kSATAPort->Ports[kSATAPortIdx].Clb));
 	command_header += slot;
@@ -237,12 +233,15 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	MUST_PASS(command_table);
 
-	command_table->Prdt[0].Dba			= (Kernel::UInt32)((Kernel::UInt64)buffer);
-	command_table->Prdt[0].Dbau			= (Kernel::UInt32)(((Kernel::UInt64)buffer >> 32));
-	command_table->Prdt[0].Dbc			= size_buffer;
+	Kernel::UInt8 ATTRIBUTE(aligned(kib_cast(4))) buffer_ahci[kib_cast(8)] = {0};
+
+	command_table->Prdt[0].Dba	= (Kernel::UInt32)((Kernel::UInt64)buffer_ahci);
+	command_table->Prdt[0].Dbau = (Kernel::UInt32)((Kernel::UInt64)buffer_ahci << 32);
+
+	command_table->Prdt[0].Dbc			= kib_cast(8) - 1;
 	command_table->Prdt[0].InterruptBit = YES; // Ensure Interrupt-On-Completion is set
 
-	// Debug PRDT entry
+	kcout << "LBA: " << Kernel::hex_number(lba) << endl;
 	kcout << "PRDT Entry - Dba (Low): " << Kernel::hex_number(command_table->Prdt[0].Dba) << endl;
 	kcout << "PRDT Entry - DbaU (High): " << Kernel::hex_number(command_table->Prdt[0].Dbau) << endl;
 	kcout << "PRDT Entry - Dbc: " << Kernel::hex_number(command_table->Prdt[0].Dbc) << endl;
@@ -280,7 +279,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	Kernel::UInt32 ahci_status = kSATAPort->Ports[kSATAPortIdx].Tfd;
 	kcout << "AHCI Status Before Write: " << Kernel::hex_number(ahci_status) << endl;
 
-	kSATAPort->Ports[kSATAPortIdx].Ci = 1 << slot;
+	kSATAPort->Ports[kSATAPortIdx].Ci |= 1 << slot;
 
 	while (kSATAPort->Ports[kSATAPortIdx].Ci & (1 << slot))
 	{
@@ -291,7 +290,12 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	kcout << "Last Command Sent: " << (int)Kernel::number(h2d_fis->Command) << endl;
 
 	ahci_status = kSATAPort->Ports[kSATAPortIdx].Tfd;
-	kcout << "AHCI Status Before Write: " << Kernel::hex_number(ahci_status) << endl;
+
+	kcout << "AHCI Status After Write: " << Kernel::hex_number(ahci_status) << endl;
+	kcout << "AHCI STSS: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Ssts) << endl;
+	kcout << "AHCI SERR: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Serr) << endl;
+
+	Kernel::rt_copy_memory(buffer_ahci, buffer, size_buffer);
 }
 
 /***

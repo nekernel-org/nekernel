@@ -59,21 +59,20 @@ typedef struct FisRegH2D final
 	Kernel::UInt8 Reserved0 : 3; // Reserved
 	Kernel::UInt8 CmdOrCtrl : 1; // 1: Command, 0: Control
 
-	Kernel::UInt8 Command;	  // Command register
-	Kernel::UInt8 FeatureLow; // Feature register, 7:0
+	Kernel::UInt8 Command;	// Command register
+	Kernel::UInt8 Featurel; // Feature register, 7:0
 
 	// DWORD 1
-	Kernel::UInt8 Lba0; // LBA low register, 7:0
-	Kernel::UInt8 Lba1; // LBA mid register, 15:8
-	Kernel::UInt8 Lba2;
-
+	Kernel::UInt8 Lba0;	  // LBA low register, 7:0
+	Kernel::UInt8 Lba1;	  // LBA mid register, 15:8
+	Kernel::UInt8 Lba2;	  // LBA high register, 23:16
 	Kernel::UInt8 Device; // Device register
 
-	Kernel::UInt8 Lba3; // Feature register, 15:8
-	Kernel::UInt8 Lba4;
-	Kernel::UInt8 Lba5;
-
-	Kernel::UInt8 FeatureHigh;
+	// DWORD 2
+	Kernel::UInt8 Lba3;		   // LBA register, 31:24
+	Kernel::UInt8 Lba4;		   // LBA register, 39:32
+	Kernel::UInt8 Lba5;		   // LBA register, 47:40
+	Kernel::UInt8 FeatureHigh; // Feature register, 15:8
 
 	// DWORD 3
 	Kernel::UInt8 CountLow;	 // Count register, 7:0
@@ -192,7 +191,7 @@ typedef struct FisDmaSetup final
 	Kernel::UInt32 Rsvd; // More reserved
 
 	// DWORD 4
-	Kernel::UInt32 DmaBufOffset; // Byte offset into buffer. First 2 bits must be 0
+	Kernel::UInt32 DmabufOffset; // Byte offset into buffer. First 2 bits must be 0
 
 	// DWORD 5
 	Kernel::UInt32 TransferCount; // Number of bytes to transfer. Bit 0 must be 0
@@ -229,7 +228,8 @@ typedef struct FisDevBits final
 
 typedef struct HbaPort final
 {
-	Kernel::UInt64 Clb;
+	Kernel::UInt32 Clb;			  // 0x00, command list base address, 1K-byte aligned
+	Kernel::UInt32 Clbu;		  // 0x04, command list base address upper 32 bits
 	Kernel::UInt32 Fb;			  // 0x08, FIS base address, 256-byte aligned
 	Kernel::UInt32 Fbu;			  // 0x0C, FIS base address upper 32 bits
 	Kernel::UInt32 Is;			  // 0x10, interrupt status
@@ -267,7 +267,7 @@ typedef struct HbaMem final
 	Kernel::UInt8 Resv0[0xA0 - 0x2C];
 	Kernel::UInt8 Vendor[0x100 - 0xA0];
 
-	HbaPort Ports[32]; // 1 ~ 32, 32 is the max ahci devices per controller.
+	HbaPort Ports[1]; // 1 ~ 32, 32 is the max ahci devices per controller.
 } HbaMem;
 
 typedef struct HbaCmdHeader final
@@ -284,10 +284,11 @@ typedef struct HbaCmdHeader final
 	Kernel::UInt8 Reserved0 : 1; // Reserved
 	Kernel::UInt8 Pmp : 4;		 // Port multiplier port
 
-	Kernel::UInt16 Prdtl; // Physical region descriptor table length in entries
-	Kernel::UInt32 Prdbc; // Physical region descriptor byte count transferred
+	Kernel::UInt16			Prdtl; // Physical region descriptor table length in entries
+	volatile Kernel::UInt32 Prdbc; // Physical region descriptor byte count transferred
 
-	Kernel::UInt32 Ctba; // Command table descriptor base address
+	Kernel::UInt32 Ctba;  // Command table descriptor base address
+	Kernel::UInt32 Ctbau; // Command table descriptor base address upper 32 bits
 
 	Kernel::UInt32 Reserved1[4]; // Reserved
 } HbaCmdHeader;
@@ -313,8 +314,8 @@ typedef struct HbaFis final
 
 typedef struct HbaPrdtEntry final
 {
-	Kernel::UInt32 Dba; // Data base address
-	Kernel::UInt32 Dbau;
+	Kernel::UInt32 Dba;		  // Data base address
+	Kernel::UInt32 Dbau;	  // Data base address upper 32 bits
 	Kernel::UInt32 Reserved0; // Reserved
 	// DW3
 	Kernel::UInt32 Dbc : 22;		 // Byte count, 4M max

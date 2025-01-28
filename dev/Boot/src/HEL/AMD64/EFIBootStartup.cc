@@ -74,6 +74,9 @@ STATIC Bool boot_init_fb() noexcept
 
 EXTERN EfiBootServices* BS;
 
+EfiGUID kEfiGlobalNamespaceVarGUID = {
+	0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
+
 /// @brief Main EFI entrypoint.
 /// @param image_handle Handle of this image.
 /// @param sys_table The system table of it.
@@ -222,6 +225,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		syschk_thread->SetName("BootZ: System Recovery Check");
 	}
 
+#if 0
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
@@ -248,6 +252,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 			fb_clear();
 		}
 	}
+#endif
 
 	// ------------------------------------------ //
 	// null these fields, to avoid being reused later.
@@ -270,8 +275,16 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	const auto kernel_path	  = L"neoskrnl.exe";
-	const auto kernel_path_sz = 15;
+	WideChar kernel_path[255] = {0};
+	UInt32	 kernel_path_sz	  = 255;
+
+	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
+	{
+		CopyMem(kernel_path, L"neoskrnl.exe", 15);
+
+		UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
+		ST->RuntimeServices->SetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, &attr, &kernel_path_sz, kernel_path);
+	}
 
 	Boot::BFileReader reader_kernel(kernel_path, image_handle);
 
