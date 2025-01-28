@@ -364,7 +364,6 @@ extern hal_real_init
 
 hal_reload_segments:
     std
-
     jmp hal_real_init
     ret
 

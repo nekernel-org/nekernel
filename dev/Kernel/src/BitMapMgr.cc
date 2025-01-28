@@ -29,13 +29,13 @@ namespace Kernel
 		namespace Detail
 		{
 			/// \brief Proxy Interface to allocate a bitmap.
-			class IBitMapAllocator final
+			class IBitMap final
 			{
 			public:
-				explicit IBitMapAllocator() = default;
-				~IBitMapAllocator()			= default;
+				explicit IBitMap() = default;
+				~IBitMap()		   = default;
 
-				ZKA_COPY_DELETE(IBitMapAllocator);
+				ZKA_COPY_DELETE(IBitMap);
 
 				auto IsBitMap(VoidPtr page_ptr) -> Bool
 				{
@@ -88,12 +88,14 @@ namespace Kernel
 
 					VoidPtr base = reinterpret_cast<VoidPtr>(((UIntPtr)base_ptr) + kPageSize);
 
+					static SizeT biggest_block = 0UL;
+
 					while (YES)
 					{
 						UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
 
 						if (ptr_bit_set[kBitMapMagIdx] == kBitMapMagic &&
-							ptr_bit_set[kBitMapSizeIdx] <= size)
+							ptr_bit_set[kBitMapSizeIdx] == size)
 						{
 							if (ptr_bit_set[kBitMapUsedIdx] == No)
 							{
@@ -105,10 +107,11 @@ namespace Kernel
 								UInt32 flags = this->MakeMMFlags(wr, user);
 								mm_map_page(ptr_bit_set, flags);
 
+								if (biggest_block < size)
+									biggest_block = size;
+
 								return (VoidPtr)ptr_bit_set;
 							}
-
-							kcout << "Missed potential BitMap as it is already used!\r\n";
 						}
 						else if (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
 						{
@@ -120,6 +123,9 @@ namespace Kernel
 
 							UInt32 flags = this->MakeMMFlags(wr, user);
 							mm_map_page(ptr_bit_set, flags);
+
+							if (biggest_block < size)
+								biggest_block = size;
 
 							return (VoidPtr)ptr_bit_set;
 						}
@@ -153,8 +159,8 @@ namespace Kernel
 
 		auto mm_is_bitmap(VoidPtr ptr) -> Bool
 		{
-			Detail::IBitMapAllocator traits;
-			return traits.IsBitMap(ptr);
+			Detail::IBitMap bitmp;
+			return bitmp.IsBitMap(ptr);
 		}
 
 		/// @brief Allocate a new page to be used by the OS.
@@ -163,22 +169,23 @@ namespace Kernel
 		/// @return a new bitmap allocated pointer.
 		auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page) -> VoidPtr
 		{
-			VoidPtr					 ptr_new = nullptr;
-			Detail::IBitMapAllocator traits;
+			VoidPtr			ptr_new = nullptr;
+			Detail::IBitMap bitmp;
 
-			ptr_new = traits.FindBitMap(kKernelBitMpStart, size, wr, user);
+			ptr_new = bitmp.FindBitMap(kKernelBitMpStart, size, wr, user);
 
 			return (UIntPtr*)ptr_new;
 		}
 
 		/// @brief Free Bitmap, and mark it a absent in page terms.
-		auto mm_free_bitmap(VoidPtr page_ptr) -> Bool
+		/// @param ptr the pointer to free.
+		auto mm_free_bitmap(VoidPtr ptr) -> Bool
 		{
-			if (!page_ptr)
+			if (!ptr)
 				return No;
 
-			Detail::IBitMapAllocator traits;
-			Bool					 ret = traits.FreeBitMap(page_ptr);
+			Detail::IBitMap bitmp;
+			Bool			ret = bitmp.FreeBitMap(ptr);
 
 			return ret;
 		}
