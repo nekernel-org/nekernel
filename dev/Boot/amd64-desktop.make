@@ -42,7 +42,7 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__MINOSKRNL__ -D__ZBAOSLDR__ \
+FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__ZBAOSLDR__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_ZKA_APIS__ -DZBA_USE_FB -D__ZKA_AMD64__ -D__ZKA__ -DZKA_AUTO_FORMAT
 
@@ -90,7 +90,7 @@ run-efi-amd64-ahci:
 
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata:
-	$(EMU) $(EMU_FLAGS) -enable-kvm -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
+	$(EMU) $(EMU_FLAGS) -M q35 -enable-kvm -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
 
 # img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta specs.
 .PHONY: epm-img

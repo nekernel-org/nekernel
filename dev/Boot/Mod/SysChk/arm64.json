@@ -15,7 +15,7 @@
     "-target aarch64-unknown-windows"
   ],
   "cpp_macros": [
-    "__MINOSKRNL__",
+    "__NEOSKRNL__",
     "__ZBAOSLDR__",
     "__BOOTLDR_STANDALONE__",
     "__ZKA_ARM64__",

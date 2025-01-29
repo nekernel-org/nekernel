@@ -105,8 +105,10 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	// Step 7: Check if the drive supports DMA
 	if (!(kATAData[63] & (1 << 8)) || !(kATAData[88] & 0xFF))
 	{
-		kcout << "No DMA support, falling back to PIO...\r";
-		return false; // Or switch to PIO mode if needed
+		kcout << "No DMA support...\r";
+    ke_panic(RUNTIME_CHECK_FAILED, "No DMA support on necessry disk driver.");
+
+		return false;
 	}
 
 	// Step 8: Enable DMA Mode

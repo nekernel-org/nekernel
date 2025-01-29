@@ -565,7 +565,14 @@ namespace Kernel
 					continue;
 
 				if (HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid))
+				{
+					auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
+					HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
+					PID prev_pid										 = UserProcessHelper::TheCurrentPID();
+					UserProcessHelper::TheCurrentPID().Leak().Leak()	 = new_pid;
+
 					return YES;
+				}
 
 				continue;
 			}
@@ -573,18 +580,9 @@ namespace Kernel
 			if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity == AffinityKind::kRealTime)
 				continue;
 
-			PID prev_pid									 = UserProcessHelper::TheCurrentPID();
-			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
-
 			////////////////////////////////////////////////////////////
 			///	Prepare task switch.								 ///
 			////////////////////////////////////////////////////////////
-
-			HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
-			HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
-
-			auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
-			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 
 			Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid);
 
@@ -592,19 +590,20 @@ namespace Kernel
 			///	Rollback on fail.    								 ///
 			////////////////////////////////////////////////////////////
 			if (!ret)
-			{
-				HardwareThreadScheduler::The()[index].Leak()->fPTime = prev_ptime;
-				UserProcessHelper::TheCurrentPID().Leak().Leak()	 = prev_pid;
+				return No;
 
-				HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
-			}
+			PID prev_pid									 = UserProcessHelper::TheCurrentPID();
+			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
+
+			auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
+			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 
 			HardwareThreadScheduler::The()[index].Leak()->Wake(NO);
 
-			return Yes;
+			break;
 		}
 
-		return No;
+		return Yes;
 	}
 
 	////////////////////////////////////////////////////////////

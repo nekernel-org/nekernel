@@ -154,5 +154,5 @@ Kernel::SizeT drv_get_sector_count();
 /// @brief get device size.
 Kernel::SizeT drv_get_size();
 
-#endif // ifdef __MINOSKRNL__
+#endif // ifdef __NEOSKRNL__
 #endif // ifndef __ATA_PIO__ || __AHCI__
