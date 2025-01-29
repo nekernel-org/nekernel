@@ -64,18 +64,19 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 {
 	kCurrentDiskSectorCount = 0UL;
 
-	Kernel::UInt8 identify_data[256] = {0};
+	Kernel::UInt16 identify_data[256] = {0};
 
 	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, 256);
 
-	uint32_t lba28_sectors = (identify_data[61] << 16) | identify_data[60];
+	Kernel::UInt32 lba28_sectors = (identify_data[61] << 16) | identify_data[60];
 
 	kCurrentDiskSectorCount = lba28_sectors;
 
-	int i;
+	Kernel::UInt32 i = 0;
 
 	for (i = 0; i < 20; i++)
-	{													  // 20 words = 40 bytes
+	{
+		// 20 words = 40 bytes
 		kModel[i * 2]	  = identify_data[27 + i] >> 8;	  // High byte first
 		kModel[i * 2 + 1] = identify_data[27 + i] & 0xFF; // Low byte
 	}
