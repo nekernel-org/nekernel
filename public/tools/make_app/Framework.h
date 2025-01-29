@@ -8,9 +8,9 @@
 
 #include <Common.h>
 
-#define kExecDirectory "ML/Exec/"
-#define kRsrcDirectory "ML/Resources/"
-#define kRootDirectory "ML/"
+#define kExecDirectory "bin/"
+#define kRsrcDirectory "xml/"
+#define kRootDirectory "/"
 #define kFKExtension   ".fwrk"
 #define kAppExtension  ".app"
 

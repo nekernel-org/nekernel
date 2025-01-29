@@ -22,24 +22,24 @@ int main(int argc, char* argv[])
 			std::cout << "make_app: Framework/Application Creation Tool.\n";
 			std::cout << "make_app: © Amlal EL Mahrouss, All rights reserved.\n";
 
-			std::cout << "make_app: -app: Application directory.\n";
-			std::cout << "make_app: -steps: Steps (Setup pages) directory.\n";
-			std::cout << "make_app: -fwrk: Framework directory.\n";
+			std::cout << "make_app: -a: Application format.\n";
+			std::cout << "make_app: -s: Steps (Setup pages) format.\n";
+			std::cout << "make_app: -f: Framework format.\n";
 
 			return EXIT_SUCCESS;
 		}
 
-		if (strcmp(argv[i], "-app") == 0)
+		if (strcmp(argv[i], "-a") == 0)
 		{
 			ext = kAppExtension;
 			continue;
 		}
-		else if (strcmp(argv[i], "-steps") == 0)
+		else if (strcmp(argv[i], "-s") == 0)
 		{
 			ext = kStepsExtension;
 			continue;
 		}
-		else if (strcmp(argv[i], "-fwrk") == 0)
+		else if (strcmp(argv[i], "-f") == 0)
 		{
 			ext = kFKExtension;
 			continue;
