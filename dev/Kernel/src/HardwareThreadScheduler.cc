@@ -61,8 +61,8 @@ namespace Kernel
 	/***********************************************************************************/
 	Bool HardwareThread::IsBusy() noexcept
 	{
-		STATIC Int64 busy_timer = 0U;
-    STATIC Int64 timeout_max = 0x1000000; // an arbitrary value used to tell if the timeout hasn't been reached yet.
+		STATIC Int64 busy_timer	 = 0U;
+		STATIC Int64 timeout_max = 0x1000000; // an arbitrary value used to tell if the timeout hasn't been reached yet.
 
 		if (fBusy && busy_timer > timeout_max)
 		{
@@ -112,8 +112,8 @@ namespace Kernel
 	/***********************************************************************************/
 	Bool HardwareThread::Switch(VoidPtr image_ptr, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid)
 	{
-    if (this->IsBusy())
-      return NO;
+		if (this->IsBusy())
+			return NO;
 
 		this->fStack	 = frame;
 		this->fSourcePID = pid;

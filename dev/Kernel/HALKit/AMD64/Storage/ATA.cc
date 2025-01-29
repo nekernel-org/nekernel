@@ -106,7 +106,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	if (!(kATAData[63] & (1 << 8)) || !(kATAData[88] & 0xFF))
 	{
 		kcout << "No DMA support...\r";
-    ke_panic(RUNTIME_CHECK_FAILED, "No DMA support on necessry disk driver.");
+		ke_panic(RUNTIME_CHECK_FAILED, "No DMA support on necessry disk driver.");
 
 		return false;
 	}

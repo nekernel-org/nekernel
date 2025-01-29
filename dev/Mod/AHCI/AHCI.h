@@ -59,8 +59,8 @@ typedef struct FisRegH2D final
 	Kernel::UInt8 Reserved0 : 3; // Reserved
 	Kernel::UInt8 CmdOrCtrl : 1; // 1: Command, 0: Control
 
-	Kernel::UInt8 Command;	// Command register
-	Kernel::UInt8 Featurel; // Feature register, 7:0
+	Kernel::UInt8 Command;	  // Command register
+	Kernel::UInt8 FeatureLow; // Feature register, 7:0
 
 	// DWORD 1
 	Kernel::UInt8 Lba0;	  // LBA low register, 7:0

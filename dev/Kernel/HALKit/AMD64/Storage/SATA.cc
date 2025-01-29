@@ -64,23 +64,23 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 {
 	kCurrentDiskSectorCount = 0UL;
 
-	Kernel::UInt8 identify_data[kib_cast(8)] = {};
+	Kernel::UInt8 identify_data[256] = {0};
 
-	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(8));
+	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, 256);
 
 	uint32_t lba28_sectors = (identify_data[61] << 16) | identify_data[60];
 
 	kCurrentDiskSectorCount = lba28_sectors;
 
-	for (Kernel::Int32 i = 0; i < 40; i += 2)
-	{
-		Kernel::Char temp		  = identify_data[54 + i];
-		identify_data[54 + i]	  = identify_data[54 + i + 1];
-		identify_data[54 + i + 1] = temp;
+	int i;
+
+	for (i = 0; i < 20; i++)
+	{													  // 20 words = 40 bytes
+		kModel[i * 2]	  = identify_data[27 + i] >> 8;	  // High byte first
+		kModel[i * 2 + 1] = identify_data[27 + i] & 0xFF; // Low byte
 	}
 
-	Kernel::rt_copy_memory((Kernel::Char*)(identify_data + 54), kModel, 40);
-	kModel[40] = '\0';
+	kModel[40] = '\0'; // Null-terminate
 
 	kcout << "Disk Model: " << kModel << endl;
 	kcout << "Disk Size: " << Kernel::number(drv_get_size()) << endl;
@@ -204,9 +204,6 @@ static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept
 {
-	if (!CommandOrCTRL)
-		return;
-
 	auto slot = 0L;
 
 	slot = drv_find_cmd_slot(&kSATAPort->Ports[kSATAPortIdx]);
@@ -224,8 +221,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
 	command_header->Write = Write;
-	command_header->Prdtl = mib_cast(32) / mib_cast(4);
-	command_header->Prdbc = (1 << slot);
+	command_header->Prdtl = (Kernel::UInt16)(kib_cast(8) - 1) >> 4 + 1;
 
 	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((Kernel::UInt64)command_header->Ctba);
 
@@ -233,13 +229,14 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	MUST_PASS(command_table);
 
-	Kernel::UInt8 ATTRIBUTE(aligned(kib_cast(4))) buffer_ahci[kib_cast(8)] = {0};
+	Kernel::UInt8* buffer_ahci = new Kernel::UInt8[kib_cast(8)];
 
-	command_table->Prdt[0].Dba	= (Kernel::UInt32)((Kernel::UInt64)buffer_ahci);
-	command_table->Prdt[0].Dbau = (Kernel::UInt32)((Kernel::UInt64)buffer_ahci << 32);
+	Kernel::Int32 i = 0;
 
-	command_table->Prdt[0].Dbc			= kib_cast(8) - 1;
-	command_table->Prdt[0].InterruptBit = YES; // Ensure Interrupt-On-Completion is set
+	command_table->Prdt[0].Dba			= (uint32_t)(uint64_t)buffer_ahci & 0xFFFFFFFF;
+	command_table->Prdt[0].Dbau			= (uint32_t)(uint64_t)buffer_ahci >> 32;
+	command_table->Prdt[0].Dbc			= (size_buffer << 9) - 1; // 512 bytes per sector
+	command_table->Prdt[0].InterruptBit = 1;
 
 	kcout << "LBA: " << Kernel::hex_number(lba) << endl;
 	kcout << "PRDT Entry - Dba (Low): " << Kernel::hex_number(command_table->Prdt[0].Dba) << endl;
@@ -250,8 +247,8 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	Kernel::rt_set_memory((void*)h2d_fis, 0, sizeof(FisRegH2D));
 
-	h2d_fis->FisType   = 0x27;
-	h2d_fis->CmdOrCtrl = 1;
+	h2d_fis->FisType   = 0x27; // H2D
+	h2d_fis->CmdOrCtrl = CommandOrCTRL;
 
 	h2d_fis->Command = Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx;
 
@@ -266,7 +263,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	h2d_fis->Lba4 = (Kernel::UInt8)(lba >> 32) & 0xFF;
 	h2d_fis->Lba5 = (Kernel::UInt8)(lba >> 40) & 0xFF;
 
-	h2d_fis->Device = kSataLBAMode;
+	h2d_fis->Device = 0; // master device.
 
 	h2d_fis->CountLow  = sector_sz & 0xFF;
 	h2d_fis->CountHigh = (sector_sz >> 8) & 0xFF;
@@ -279,7 +276,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	Kernel::UInt32 ahci_status = kSATAPort->Ports[kSATAPortIdx].Tfd;
 	kcout << "AHCI Status Before Write: " << Kernel::hex_number(ahci_status) << endl;
 
-	kSATAPort->Ports[kSATAPortIdx].Ci |= 1 << slot;
+	kSATAPort->Ports[kSATAPortIdx].Ci = 1 << slot;
 
 	while (kSATAPort->Ports[kSATAPortIdx].Ci & (1 << slot))
 	{
@@ -296,6 +293,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	kcout << "AHCI SERR: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Serr) << endl;
 
 	Kernel::rt_copy_memory(buffer_ahci, buffer, size_buffer);
+	delete[] buffer_ahci;
 }
 
 /***
