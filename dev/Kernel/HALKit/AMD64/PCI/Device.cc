@@ -106,7 +106,7 @@ namespace Kernel::PCI
 
 	void Device::EnableMmio(UInt32 bar_in)
 	{
-		bool enable = Read(bar_in, sizeof(UChar)) | (1 << 1);
+		bool enable = Read(bar_in, sizeof(UShort)) | (1 << 1);
 		Write(bar_in, enable, sizeof(UShort));
 	}
 

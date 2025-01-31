@@ -22,9 +22,9 @@ namespace Kernel
 	constexpr auto kFlashBridgeMagic	= "FLSH";
 	constexpr auto kFlashBridgeRevision = 1;
 
-	STATIC BOOL		  kFlashEnabled						= NO;
-	STATIC SizeT	  kFlashSize[kMaxFlashSlots]		= {};
-	STATIC SizeT	  kFlashSectorSz[kMaxFlashSlots]	= {};
+	STATIC BOOL	 kFlashEnabled							= NO;
+	STATIC SizeT kFlashSize[kMaxFlashSlots]				= {};
+	STATIC SizeT kFlashSectorSz[kMaxFlashSlots]			= {};
 	STATIC IMBCIHost* kFlashMetaPackets[kMaxFlashSlots] = {};
 	STATIC IMBCIHost* kFlashDataPackets[kMaxFlashSlots] = {};
 

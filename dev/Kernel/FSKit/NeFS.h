@@ -276,8 +276,8 @@ namespace Kernel
 		/// @param name the fork name.
 		/// @return the fork.
 		_Output NFS_FORK_STRUCT* FindFork(_Input NFS_CATALOG_STRUCT* catalog,
-										  _Input const Char*		 name,
-										  Boolean					 data);
+										  _Input const Char* name,
+										  Boolean			 data);
 
 		_Output Void RemoveFork(_Input NFS_FORK_STRUCT* fork);
 
@@ -287,7 +287,7 @@ namespace Kernel
 
 		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const Char* name);
 
-		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char*  name,
+		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name,
 												  _Input const Int32& flags,
 												  _Input const Int32& kind);
 
@@ -302,7 +302,7 @@ namespace Kernel
 		_Output VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
 									_Input Bool						   isRsrcFork,
 									_Input SizeT					   dataSz,
-									_Input const Char*				   forkName);
+									_Input const Char* forkName);
 
 		_Output Bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);
 

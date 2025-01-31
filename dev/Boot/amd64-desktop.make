@@ -83,13 +83,13 @@ compile-amd64:
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
 	$(EMU) $(EMU_FLAGS) -M q35 -drive file=$(IMG),format=raw,if=none,id=disk \
-    -device ich9-ahci,id=ahci \
+    -device ahci,id=ahci \
     -device ide-hd,drive=disk,bus=ahci.0 \
     -s -S
 
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata:
-	$(EMU) $(EMU_FLAGS) -M q35 -enable-kvm -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
+	$(EMU) $(EMU_FLAGS) -M q35 -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
 
 # img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta specs.
 .PHONY: epm-img
