@@ -338,7 +338,7 @@ namespace Kernel
 			MUST_PASS(process.DylibDelegate);
 		}
 		default: {
-			kcout << "Unknown process kind: " << number(process.Kind) << endl;
+			kcout << "Unknown process kind: " << hex_number(process.Kind) << endl;
 			break;
 		}
 		}
@@ -437,7 +437,7 @@ namespace Kernel
 			return 0UL;
 		}
 
-		kcout << "UserProcessScheduler::Run(): This team has a process capacity of: " << number(mTeam.mProcessList.Capacity()) << endl;
+		kcout << "UserProcessScheduler::Run(): This team has a process capacity of: " << hex_number(mTeam.mProcessList.Capacity()) << endl;
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{

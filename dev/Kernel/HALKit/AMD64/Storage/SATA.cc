@@ -64,7 +64,7 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 {
 	kCurrentDiskSectorCount = 0UL;
 
-	Kernel::UInt16 identify_data[256] = {0};
+	Kernel::UInt8 identify_data[256] = {0};
 
 	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, 256);
 
