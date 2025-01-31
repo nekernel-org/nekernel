@@ -297,6 +297,11 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	{
 		kcout << "Waiting for slot to be ready...\r\n";
 	}
+
+
+	if (kSATAPort->Is & kHBAErrTaskFile)
+		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
+  
 }
 
 /***
