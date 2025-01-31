@@ -12,13 +12,13 @@ namespace Kernel
 	/// Wakes up thread from the hang state.
 	Void mp_wakeup_thread(HAL::StackFrame* stack)
 	{
-		ZKA_UNUSED(stack);
+		NE_UNUSED(stack);
 	}
 
 	/// @brief makes the thread sleep on a loop.
 	/// hooks and hangs thread to prevent code from executing.
 	Void mp_hang_thread(HAL::StackFrame* stack)
 	{
-		ZKA_UNUSED(stack);
+		NE_UNUSED(stack);
 	}
 } // namespace Kernel

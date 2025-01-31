@@ -6,9 +6,9 @@
 
 #include <ArchKit/ArchKit.h>
 
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 #include <HALKit/AMD64/Paging.h>
-#elif defined(__ZKA_ARM64__)
+#elif defined(__NE_ARM64__)
 #include <HALKit/ARM64/Paging.h>
 #endif
 
@@ -35,7 +35,7 @@ namespace Kernel
 				explicit IBitMapProxy() = default;
 				~IBitMapProxy()			= default;
 
-				ZKA_COPY_DELETE(IBitMapProxy);
+				NE_COPY_DELETE(IBitMapProxy);
 
 				auto IsBitMap(VoidPtr page_ptr) -> Bool
 				{

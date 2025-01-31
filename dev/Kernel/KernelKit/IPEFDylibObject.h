@@ -22,14 +22,14 @@ namespace Kernel
 	 * @brief Shared Library class
 	 * Load library from this class
 	 */
-	class IPEFDylibObject final ZKA_DLL_OBJECT
+	class IPEFDylibObject final NE_DLL_OBJECT
 	{
 	public:
 		explicit IPEFDylibObject() = default;
 		~IPEFDylibObject()		   = default;
 
 	public:
-		ZKA_COPY_DEFAULT(IPEFDylibObject);
+		NE_COPY_DEFAULT(IPEFDylibObject);
 
 	private:
 		DLL_TRAITS* fMounted{nullptr};

@@ -5,12 +5,12 @@
 -Iprivate/tools
 -Idev/Boot/BootKit
 -std=c++20
--D__ZKA_AMD64__
+-D__NE_AMD64__
 -D__NEOSKRNL__
 -D__FSKIT_INCLUDES_NEFS__
--D__ZKA_ED__
+-D__NE_ED__
 -xc++
 -D__AHCI__
 -D__x86_64__
 -D__aarch64__
--DZKA_USE_MBCI_FLASH
+-DNE_USE_MBCI_FLASH

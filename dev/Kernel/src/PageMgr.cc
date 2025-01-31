@@ -7,11 +7,11 @@
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/PageMgr.h>
 
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 #include <HALKit/AMD64/Paging.h>
-#elif defined(__ZKA_ARM64__)
+#elif defined(__NE_ARM64__)
 #include <HALKit/ARM64/Paging.h>
-#endif // ifdef __ZKA_AMD64__ || defined(__ZKA_ARM64__)
+#endif // ifdef __NE_AMD64__ || defined(__NE_ARM64__)
 
 namespace Kernel
 {
@@ -34,9 +34,9 @@ namespace Kernel
 	/// @param VirtAddr
 	Void PageMgr::FlushTLB()
 	{
-#ifndef __ZKA_MINIMAL_OS__
+#ifndef __NE_MINIMAL_OS__
 		hal_flush_tlb();
-#endif // !__ZKA_MINIMAL_OS__
+#endif // !__NE_MINIMAL_OS__
 	}
 
 	/// @brief Reclaim freed page.

@@ -35,7 +35,7 @@ namespace Kernel
 	inline TerminalDevice hex_number(const Long& x);
 
 	// @brief Emulates a VT100 terminal.
-	class TerminalDevice final ZKA_DEVICE<const Char*>
+	class TerminalDevice final NE_DEVICE<const Char*>
 	{
 	public:
 		TerminalDevice(void (*print)(const Char*), void (*gets)(const Char*))
@@ -52,7 +52,7 @@ namespace Kernel
 			return ("TerminalDevice");
 		}
 
-		ZKA_COPY_DEFAULT(TerminalDevice);
+		NE_COPY_DEFAULT(TerminalDevice);
 
 		STATIC TerminalDevice The() noexcept;
 	};

@@ -28,7 +28,7 @@ namespace Kernel
 		explicit Variant() = delete;
 
 	public:
-		ZKA_COPY_DEFAULT(Variant);
+		NE_COPY_DEFAULT(Variant);
 
 		~Variant() = default;
 

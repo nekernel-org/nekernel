@@ -5,9 +5,9 @@
 
 CC			= clang++
 LD			= lld-link
-CCFLAGS		= -fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__ZKA_ARM64__ -fno-rtti -fno-exceptions -I./ \
+CCFLAGS		= -fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__NE_ARM64__ -fno-rtti -fno-exceptions -I./ \
 			 -target aarch64-unknown-windows \
-				-std=c++20 -O3 -D__NEOSKRNL__ -D__ZKA_MINIMAL_OS__ -D__ZKA_NO_BUILTIN__ -D__HAVE_ZKA_APIS__ -D__ZKA__ -I../
+				-std=c++20 -O3 -D__NEOSKRNL__ -D__NE_MINIMAL_OS__ -D__NE_NO_BUILTIN__ -D__HAVE_NE_APIS__ -D__NE__ -I../
 
 ASM 		= clang++
 

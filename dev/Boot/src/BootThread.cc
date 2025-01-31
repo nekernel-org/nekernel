@@ -47,21 +47,21 @@ namespace Boot
 			if (!header_ptr || !opt_header_ptr)
 				return;
 
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 			if (header_ptr->mMachine != kPeMachineAMD64 ||
 				header_ptr->mSignature != kPeSignature)
 			{
 				writer.Write("BootZ: Not a PE32+ executable.\r");
 				return;
 			}
-#elif defined(__ZKA_ARM64__)
+#elif defined(__NE_ARM64__)
 			if (header_ptr->mMachine != kPeMachineARM64 ||
 				header_ptr->mSignature != kPeSignature)
 			{
 				writer.Write("BootZ: Not a PE32+ executable.\r");
 				return;
 			}
-#endif // __ZKA_AMD64__ || __ZKA_ARM64__
+#endif // __NE_AMD64__ || __NE_ARM64__
 
 			if (opt_header_ptr->mSubsystem != kZKASubsystem)
 			{
@@ -119,7 +119,7 @@ namespace Boot
 					if (handover_struc->HandoverMagic != kHandoverMagic &&
 						handover_struc->HandoverType != HEL::kTypeKernel)
 					{
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 						if (handover_struc->HandoverArch != HEL::kArchAMD64)
 						{
 							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
@@ -127,7 +127,7 @@ namespace Boot
 						}
 #endif
 
-#ifdef __ZKA_ARM64__
+#ifdef __NE_ARM64__
 						if (handover_struc->HandoverArch != HEL::kArchARM64)
 						{
 							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));

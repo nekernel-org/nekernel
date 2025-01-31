@@ -54,9 +54,9 @@
 #define ATTRIBUTE(X) __attribute__((X))
 #endif // #ifndef ATTRIBUTE
 
-#ifndef __ZKA_VER__
-#define __ZKA_VER__ (2024)
-#endif // !__ZKA_VER__
+#ifndef __NE_VER__
+#define __NE_VER__ (2024)
+#endif // !__NE_VER__
 
 #ifndef EXTERN
 #define EXTERN extern
@@ -114,19 +114,19 @@
 #define CONST const
 
 #define STRINGIFY(X)  #X
-#define ZKA_UNUSED(X) ((Kernel::Void)X)
+#define NE_UNUSED(X) ((Kernel::Void)X)
 
 #ifndef RGB
 #define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
 #endif // !RGB
 
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 #define dbg_break_point() asm volatile("int $3")
 #else
 #define dbg_break_point() ((void)0)
 #endif
 
-#define rtl_deduce_endianess(address, value)                    \
+#define RTL_ENDIAN(address, value)                    \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))

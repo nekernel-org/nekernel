@@ -6,7 +6,7 @@
 
 #pragma once
 
-#ifdef ZKA_USE_MBCI_FLASH
+#ifdef NE_USE_MBCI_FLASH
 
 #include <NewKit/Defines.h>
 
@@ -18,4 +18,4 @@ Kernel::Void drv_enable_at(Kernel::Int32 slot);
 
 Kernel::Void drv_disable_at(Kernel::Int32 slot);
 
-#endif // ifdef ZKA_USE_MBCI_FLASH
+#endif // ifdef NE_USE_MBCI_FLASH

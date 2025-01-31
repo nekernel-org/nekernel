@@ -218,7 +218,7 @@ namespace Boot
 
 		~BDiskFormatFactory() = default;
 
-		ZKA_COPY_DELETE(BDiskFormatFactory);
+		NE_COPY_DELETE(BDiskFormatFactory);
 
 		/// @brief Format disk using partition name and blob_list.
 		/// @param Partition part_name the target partition name.
@@ -332,7 +332,7 @@ namespace Boot
 		{
 			fb_init();
 
-			FBDrawBitMapInRegion(zka_no_disk, ZKA_NO_DISK_WIDTH, ZKA_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - ZKA_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - ZKA_NO_DISK_HEIGHT) / 2);
+			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
 			EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a NeFS partition here.");
 			return false;
 		}

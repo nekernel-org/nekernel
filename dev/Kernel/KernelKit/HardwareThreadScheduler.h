@@ -51,7 +51,7 @@ namespace Kernel
 		~HardwareThread();
 
 	public:
-		ZKA_COPY_DEFAULT(HardwareThread)
+		NE_COPY_DEFAULT(HardwareThread)
 
 	public:
 		operator bool();
@@ -97,7 +97,7 @@ namespace Kernel
 	public:
 		explicit HardwareThreadScheduler();
 		~HardwareThreadScheduler();
-		ZKA_COPY_DEFAULT(HardwareThreadScheduler);
+		NE_COPY_DEFAULT(HardwareThreadScheduler);
 
 	public:
 		HAL::StackFramePtr Leak() noexcept;

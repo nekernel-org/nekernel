@@ -17,7 +17,7 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	/// \brief Page store type.
 	/***********************************************************************************/
-	struct ZKA_PAGE_STORE final
+	struct NE_PAGE_STORE final
 	{
 		struct
 		{
@@ -43,9 +43,9 @@ namespace Kernel::HAL
 			return pte && pte->User;
 		}
 
-		static ZKA_PAGE_STORE& The()
+		static NE_PAGE_STORE& The()
 		{
-			static ZKA_PAGE_STORE the;
+			static NE_PAGE_STORE the;
 			return the;
 		}
 	};
@@ -62,7 +62,7 @@ namespace Kernel::HAL
 		kcout << (pte->User ? "User" : "Not User") << endl;
 	}
 
-	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, ZKA_PTE* pt_entry, ZKA_PDE* pd_entry);
+	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry);
 
 	/***********************************************************************************/
 	/// @brief Maps or allocates a page from virtual_address.
@@ -83,7 +83,7 @@ namespace Kernel::HAL
 
 		UInt64 cr3 = (UInt64)hal_read_cr3();
 
-		ZKA_PAGE_STORE& page_store = ZKA_PAGE_STORE::The();
+		NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
 
 		// Extract the indices from the virtual address
 		UInt64 pml4_index = ((UIntPtr)virtual_address >> 39) & cPmlIndexMask;
@@ -118,7 +118,7 @@ namespace Kernel::HAL
 		UInt64 pt_entry = (pt_base + pt_index * cPmlEntrySize);
 
 		// Lastly, grab the pte entry.
-		ZKA_PDE* pde_struct = reinterpret_cast<ZKA_PDE*>(pt_base);
+		NE_PDE* pde_struct = reinterpret_cast<NE_PDE*>(pt_base);
 
 		return mmi_map_page_table_entry(virtual_address, flags, pde_struct->fEntries[pt_entry], pde_struct);
 	}
@@ -127,7 +127,7 @@ namespace Kernel::HAL
 	/// @brief Maps flags for a specific pte.
 	/// @internal Internal function.
 	/***********************************************************************************/
-	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, ZKA_PTE* pt_entry, ZKA_PDE* pd_entry)
+	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry)
 	{
 		if (!pt_entry)
 			return 1;
@@ -153,7 +153,7 @@ namespace Kernel::HAL
 
 		mmi_page_status(pt_entry);
 
-		ZKA_PAGE_STORE& page_store = ZKA_PAGE_STORE::The();
+		NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
 
 		// Update Internal store.
 

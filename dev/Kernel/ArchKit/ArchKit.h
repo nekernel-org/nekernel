@@ -12,13 +12,13 @@
 
 #include <FirmwareKit/Handover.h>
 
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 #include <HALKit/AMD64/Paging.h>
 #include <HALKit/AMD64/Hypervisor.h>
 #include <HALKit/AMD64/Processor.h>
-#elif defined(__ZKA_POWER64__)
+#elif defined(__NE_POWER64__)
 #include <HALKit/POWER/Processor.h>
-#elif defined(__ZKA_ARM64__)
+#elif defined(__NE_ARM64__)
 #include <HALKit/ARM64/Processor.h>
 #else
 #error !!! unknown architecture !!!

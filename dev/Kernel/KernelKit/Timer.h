@@ -22,7 +22,7 @@ namespace Kernel
 		virtual ~TimerInterface() = default;
 
 	public:
-		ZKA_COPY_DEFAULT(TimerInterface);
+		NE_COPY_DEFAULT(TimerInterface);
 
 	public:
 		virtual BOOL Wait() noexcept;
@@ -35,7 +35,7 @@ namespace Kernel
 		~SoftwareTimer() override;
 
 	public:
-		ZKA_COPY_DEFAULT(SoftwareTimer);
+		NE_COPY_DEFAULT(SoftwareTimer);
 
 	public:
 		BOOL Wait() noexcept override;
@@ -52,7 +52,7 @@ namespace Kernel
 		~HardwareTimer() override;
 
 	public:
-		ZKA_COPY_DEFAULT(HardwareTimer);
+		NE_COPY_DEFAULT(HardwareTimer);
 
 	public:
 		BOOL Wait() noexcept override;

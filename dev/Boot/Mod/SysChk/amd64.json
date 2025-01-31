@@ -17,7 +17,7 @@
     "__NEOSKRNL__",
     "__ZBAOSLDR__",
     "__BOOTLDR_STANDALONE__",
-    "__ZKA_AMD64__",
+    "__NE_AMD64__",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",
     "kChkVersion=0x0100"

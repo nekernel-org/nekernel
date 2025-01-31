@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef ZKA_USE_MBCI_FLASH
+#ifdef NE_USE_MBCI_FLASH
 
 #include <NewKit/Defines.h>
 #include <ArchKit/ArchKit.h>
@@ -81,4 +81,4 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#endif // if ZKA_USE_MBCI_FLASH
+#endif // if NE_USE_MBCI_FLASH

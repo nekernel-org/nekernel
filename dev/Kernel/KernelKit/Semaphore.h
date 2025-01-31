@@ -35,7 +35,7 @@ namespace Kernel
 		bool LockOrWait(UserProcess& process, TimerInterface* timer);
 
 	public:
-		ZKA_COPY_DEFAULT(Semaphore);
+		NE_COPY_DEFAULT(Semaphore);
 
 	private:
 		UserProcessRef fLockingProcess;

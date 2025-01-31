@@ -24,7 +24,7 @@
 #include <CFKit/Property.h>
 #include <KernelKit/Timer.h>
 
-#ifdef __ZKA_AUTO_FORMAT__
+#ifdef __NE_AUTO_FORMAT__
 namespace Kernel::Detail
 {
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
@@ -85,18 +85,18 @@ namespace Kernel::Detail
 			mNeFS = nullptr;
 		}
 
-		ZKA_COPY_DEFAULT(NeFilesystemInstaller);
+		NE_COPY_DEFAULT(NeFilesystemInstaller);
 	};
 } // namespace Kernel::Detail
-#endif // ifdef __ZKA_AUTO_FORMAT__
+#endif // ifdef __NE_AUTO_FORMAT__
 
 /// @brief Kernel entrypoint.
 /// @param Void
 /// @return Void
 EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len)
 {
-#ifdef __ZKA_AUTO_FORMAT__
+#ifdef __NE_AUTO_FORMAT__
 	Kernel::NeFS::fs_init_nefs();
 	Kernel::Detail::NeFilesystemInstaller installer{};
-#endif // __ZKA_AUTO_FORMAT__
+#endif // __NE_AUTO_FORMAT__
 }

@@ -12,7 +12,7 @@
 #include <NewKit/Defines.h>
 #include <CompilerKit/CompilerKit.h>
 
-#define ZKA_DLL_OBJECT : public IDylibObject
+#define NE_DLL_OBJECT : public IDylibObject
 
 namespace Kernel
 {
@@ -34,7 +34,7 @@ namespace Kernel
 			}
 		};
 
-		ZKA_COPY_DEFAULT(IDylibObject);
+		NE_COPY_DEFAULT(IDylibObject);
 
 		virtual DLL_TRAITS** GetAddressOf() = 0;
 		virtual DLL_TRAITS*	 Get()			= 0;

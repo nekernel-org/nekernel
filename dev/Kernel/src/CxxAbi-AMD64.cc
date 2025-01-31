@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/CxxAbi.h>
@@ -87,4 +87,4 @@ namespace cxxabiv1
 	}
 } // namespace cxxabiv1
 
-#endif // ifdef __ZKA_AMD64__
+#endif // ifdef __NE_AMD64__

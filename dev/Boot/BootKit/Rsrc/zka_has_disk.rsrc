@@ -1,5 +1,5 @@
-#define ZKA_HAS_DISK_HEIGHT 110
-#define ZKA_HAS_DISK_WIDTH 110
+#define NE_HAS_DISK_HEIGHT 110
+#define NE_HAS_DISK_WIDTH 110
 
 // array size is 36300
 static const unsigned int zka_has_disk[]  = {

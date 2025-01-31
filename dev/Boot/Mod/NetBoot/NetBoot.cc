@@ -12,7 +12,7 @@
 
 EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 	return kEfiFail;
 #else
 	return kEfiOk;

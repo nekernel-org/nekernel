@@ -14,8 +14,8 @@
 %define kInterruptId 50
 
 %macro IntExp 1
-global __ZKA_INT_%1
-__ZKA_INT_%1:
+global __NE_INT_%1
+__NE_INT_%1:
     cld
 
     mov al, 0x20
@@ -32,8 +32,8 @@ __ZKA_INT_%1:
 %endmacro
 
 %macro IntNormal 1
-global __ZKA_INT_%1
-__ZKA_INT_%1:
+global __NE_INT_%1
+__NE_INT_%1:
     cld
 
     mov al, 0x20
@@ -60,7 +60,7 @@ extern idt_handle_breakpoint
 
 section .text
 
-__ZKA_INT_0:
+__NE_INT_0:
     cld
 
     mov al, 0x20
@@ -70,7 +70,7 @@ __ZKA_INT_0:
 
     o64 iret
 
-__ZKA_INT_1:
+__NE_INT_1:
     cld
 
     mov al, 0x20
@@ -84,7 +84,7 @@ __ZKA_INT_1:
 
     o64 iret
 
-__ZKA_INT_2:
+__NE_INT_2:
     cld
 
     mov al, 0x20
@@ -99,7 +99,7 @@ __ZKA_INT_2:
     o64 iret
 
 ;; @brief Triggers a breakpoint and freeze the process. RIP is also fetched.
-__ZKA_INT_3:
+__NE_INT_3:
     cld
 
     mov al, 0x20
@@ -113,7 +113,7 @@ __ZKA_INT_3:
 
     o64 iret
 
-__ZKA_INT_4:
+__NE_INT_4:
     cld
 
     mov al, 0x20
@@ -128,7 +128,7 @@ __ZKA_INT_4:
 
     o64 iret
 
-__ZKA_INT_5:
+__NE_INT_5:
     cld
 
     mov al, 0x20
@@ -139,7 +139,7 @@ __ZKA_INT_5:
     o64 iret
 
 ;; Invalid opcode interrupt
-__ZKA_INT_6:
+__NE_INT_6:
     cld
 
     mov al, 0x20
@@ -153,7 +153,7 @@ __ZKA_INT_6:
 
     o64 iret
 
-__ZKA_INT_7:
+__NE_INT_7:
     cld
 
     mov al, 0x20
@@ -168,7 +168,7 @@ __ZKA_INT_7:
     o64 iret
 
 ;; Invalid opcode interrupt
-__ZKA_INT_8:
+__NE_INT_8:
     cld
 
     mov al, 0x20
@@ -189,7 +189,7 @@ IntExp   11
 
 IntExp 12
 
-__ZKA_INT_13:
+__NE_INT_13:
     cld
 
     mov al, 0x20
@@ -204,7 +204,7 @@ __ZKA_INT_13:
     
     o64 iret
 
-__ZKA_INT_14:
+__NE_INT_14:
     cld
 
     mov al, 0x20
@@ -241,7 +241,7 @@ IntNormal 31
 
 [extern idt_handle_scheduler]
 
-__ZKA_INT_32:
+__NE_INT_32:
     cld
 
     mov al, 0x20
@@ -281,7 +281,7 @@ IntNormal 49
 [extern hal_system_call_enter]
 [extern hal_kernel_call_enter]
 
-__ZKA_INT_50:
+__NE_INT_50:
     cld
 
     mov al, 0x20
@@ -301,7 +301,7 @@ __ZKA_INT_50:
 
     o64 iret
 
-__ZKA_INT_51:
+__NE_INT_51:
     cld
 
     mov al, 0x20
@@ -404,6 +404,6 @@ section .data
 kInterruptVectorTable:
     %assign i 0
     %rep 256
-        dq __ZKA_INT_%+i
+        dq __NE_INT_%+i
     %assign i i+1
     %endrep

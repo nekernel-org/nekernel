@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef __ZKA_ARM64__
+#ifdef __NE_ARM64__
 
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/CxxAbi.h>
@@ -89,19 +89,19 @@ EXTERN_C Kernel::Void _purecall(void* self)
 
 EXTERN_C Kernel::Void _Init_thread_footer(Kernel::Int* thread_obj)
 {
-	ZKA_UNUSED(thread_obj);
+	NE_UNUSED(thread_obj);
 }
 
 EXTERN_C Kernel::Void _Init_thread_epoch(Kernel::Void)
 {
-	ZKA_UNUSED(0);
+	NE_UNUSED(0);
 }
 
 EXTERN_C Kernel::Void _Init_thread_header(Kernel::Int* thread_obj)
 {
-	ZKA_UNUSED(0);
+	NE_UNUSED(0);
 }
 
 EXTERN_C Kernel::Int _tls_index = 0UL;
 
-#endif // ifdef __ZKA_ARM64__
+#endif // ifdef __NE_ARM64__

@@ -7,13 +7,13 @@
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Pmm.h>
 
-#if defined(__ZKA_ARM64__)
+#if defined(__NE_ARM64__)
 #include <HALKit/ARM64/Processor.h>
-#endif // defined(__ZKA_ARM64__)
+#endif // defined(__NE_ARM64__)
 
-#if defined(__ZKA_AMD64__)
+#if defined(__NE_AMD64__)
 #include <HALKit/AMD64/Processor.h>
-#endif // defined(__ZKA_AMD64__)
+#endif // defined(__NE_AMD64__)
 
 namespace Kernel
 {

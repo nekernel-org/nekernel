@@ -11,7 +11,7 @@
 
 namespace Kernel
 {
-	class NVMEDeviceInterface final ZKA_DEVICE<MountpointInterface*>
+	class NVMEDeviceInterface final NE_DEVICE<MountpointInterface*>
 	{
 	public:
 		explicit NVMEDeviceInterface(Void (*out)(MountpointInterface* out_packet),
@@ -21,7 +21,7 @@ namespace Kernel
 		~NVMEDeviceInterface() override;
 
 	public:
-		ZKA_COPY_DEFAULT(NVMEDeviceInterface);
+		NE_COPY_DEFAULT(NVMEDeviceInterface);
 
 		const Char* Name() const override;
 

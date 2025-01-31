@@ -12,7 +12,7 @@
 
 namespace Kernel
 {
-	class AHCIDeviceInterface ZKA_DEVICE<MountpointInterface*>
+	class AHCIDeviceInterface NE_DEVICE<MountpointInterface*>
 	{
 	public:
 		explicit AHCIDeviceInterface(void (*Out)(MountpointInterface* outpacket),

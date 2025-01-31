@@ -24,7 +24,7 @@ namespace FB
 		~UIAccessibilty()		  = default;
 
 	public:
-		ZKA_COPY_DELETE(UIAccessibilty);
+		NE_COPY_DELETE(UIAccessibilty);
 
 		static Int64 Width() noexcept
 		{

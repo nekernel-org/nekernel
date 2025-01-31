@@ -21,7 +21,7 @@ namespace Kernel
 		explicit LoaderInterface() = default;
 		virtual ~LoaderInterface() = default;
 
-		ZKA_COPY_DEFAULT(LoaderInterface);
+		NE_COPY_DEFAULT(LoaderInterface);
 
 	public:
 		virtual _Output ErrorOr<VoidPtr> GetBlob()												= 0;

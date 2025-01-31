@@ -28,7 +28,7 @@ namespace Kernel
 			{
 				this->UsedMemory -= entry->MemoryEntrySize;
 
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 				auto pd = hal_read_cr3();
 				hal_write_cr3(this->VMRegister);
 

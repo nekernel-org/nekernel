@@ -9,7 +9,7 @@
  Revision History:
 
 	 31/01/24: Add kDeviceCnt (amlel)
-		15/11/24: Add ZKA_DEVICE macro, to inherit from device object.
+		15/11/24: Add NE_DEVICE macro, to inherit from device object.
 
  ------------------------------------------- */
 
@@ -24,7 +24,7 @@
 
 #define kDeviceMgrRootDirPath "/Devices/"
 
-#define ZKA_DEVICE : public ::Kernel::IDeviceObject
+#define NE_DEVICE : public ::Kernel::IDeviceObject
 
 // Last Rev: Wed, Apr  3, 2024  9:09:41 AM
 

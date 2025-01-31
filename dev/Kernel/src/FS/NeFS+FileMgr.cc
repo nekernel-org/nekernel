@@ -7,7 +7,7 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/MemoryMgr.h>
 
-#ifndef __ZKA_MINIMAL_OS__
+#ifndef __NE_MINIMAL_OS__
 #ifdef __FSKIT_INCLUDES_NEFS__
 
 /// @brief NeFS File manager.
@@ -166,7 +166,7 @@ namespace Kernel
 		if (!data)
 			return;
 
-		ZKA_UNUSED(flags);
+		NE_UNUSED(flags);
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
 			mParser->WriteCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node)->Name, (flags & kFileFlagRsrc ? true : false), data, size,
@@ -184,7 +184,7 @@ namespace Kernel
 		if (!sz)
 			return nullptr;
 
-		ZKA_UNUSED(flags);
+		NE_UNUSED(flags);
 
 		if ((reinterpret_cast<NFS_CATALOG_STRUCT*>(node))->Kind == kNeFSCatalogKindFile)
 			return mParser->ReadCatalog(reinterpret_cast<NFS_CATALOG_STRUCT*>(node), (flags & kFileFlagRsrc ? true : false), sz,
@@ -242,4 +242,4 @@ namespace Kernel
 } // namespace Kernel
 
 #endif // ifdef __FSKIT_INCLUDES_NEFS__
-#endif // ifndef __ZKA_MINIMAL_OS__
+#endif // ifndef __NE_MINIMAL_OS__

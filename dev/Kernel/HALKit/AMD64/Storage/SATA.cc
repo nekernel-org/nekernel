@@ -81,7 +81,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
 
-	for (SizeT device_index = 0; device_index < ZKA_BUS_COUNT; ++device_index)
+	for (SizeT device_index = 0; device_index < NE_BUS_COUNT; ++device_index)
 	{
 		kPCIDevice = iterator[device_index].Leak(); // And then leak the reference.
 

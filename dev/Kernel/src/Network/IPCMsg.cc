@@ -14,7 +14,7 @@ namespace Kernel
 	/// @brief The internal sanitize function.
 	Bool ipc_int_sanitize_packet(IPC_MSG* pckt)
 	{
-		auto endian = rtl_deduce_endianess(pckt, ((Char*)pckt)[0]);
+		auto endian = RTL_ENDIAN(pckt, ((Char*)pckt)[0]);
 
 		switch (endian)
 		{
@@ -83,7 +83,7 @@ namespace Kernel
 
 		if (*pckt_in)
 		{
-			const auto endianess = rtl_deduce_endianess((*pckt_in), ((Char*)(*pckt_in))[0]);
+			const auto endianess = RTL_ENDIAN((*pckt_in), ((Char*)(*pckt_in))[0]);
 
 			(*pckt_in)->IpcHeaderMagic = kIPCHeaderMagic;
 

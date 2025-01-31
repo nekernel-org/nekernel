@@ -7,7 +7,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/PCI/Device.h>
 
-Kernel::UInt ZKA_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
+Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
@@ -19,7 +19,7 @@ Kernel::UInt ZKA_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort
 	return Kernel::HAL::rt_in32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
 
-void ZKA_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
+void NE_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
@@ -45,7 +45,7 @@ namespace Kernel::PCI
 
 	UInt Device::Read(UInt bar, Size sz)
 	{
-		ZKA_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
+		NE_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
 
 		if (sz == 4)
 			return HAL::rt_in32((UShort)PciConfigKind::ConfigData + (bar & 3));
@@ -59,7 +59,7 @@ namespace Kernel::PCI
 
 	void Device::Write(UInt bar, UIntPtr data, Size sz)
 	{
-		ZKA_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
+		NE_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
 
 		if (sz == 4)
 			HAL::rt_out32((UShort)PciConfigKind::ConfigData + (fBar & 3), (UInt)data);
@@ -71,37 +71,37 @@ namespace Kernel::PCI
 
 	UShort Device::DeviceId()
 	{
-		return (UShort)(ZKA_PCIReadRaw(0x0 >> 16, fBus, fDevice, fFunction));
+		return (UShort)(NE_PCIReadRaw(0x0 >> 16, fBus, fDevice, fFunction));
 	}
 
 	UShort Device::VendorId()
 	{
-		return (UShort)(ZKA_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
+		return (UShort)(NE_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
 	}
 
 	UShort Device::InterfaceId()
 	{
-		return (UShort)(ZKA_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
+		return (UShort)(NE_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
 	}
 
 	UChar Device::Class()
 	{
-		return (UChar)(ZKA_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 24);
+		return (UChar)(NE_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 24);
 	}
 
 	UChar Device::Subclass()
 	{
-		return (UChar)(ZKA_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 16);
+		return (UChar)(NE_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 16);
 	}
 
 	UChar Device::ProgIf()
 	{
-		return (UChar)(ZKA_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 8);
+		return (UChar)(NE_PCIReadRaw(0x08, fBus, fDevice, fFunction) >> 8);
 	}
 
 	UChar Device::HeaderType()
 	{
-		return (UChar)(ZKA_PCIReadRaw(0xC, fBus, fDevice, fFunction) >> 16);
+		return (UChar)(NE_PCIReadRaw(0xC, fBus, fDevice, fFunction) >> 16);
 	}
 
 	void Device::EnableMmio(UInt32 bar_in)
@@ -118,7 +118,7 @@ namespace Kernel::PCI
 
 	UIntPtr Device::Bar(UInt32 bar_in)
 	{
-		UInt32 bar = ZKA_PCIReadRaw(bar_in, fBus, fDevice, fFunction);
+		UInt32 bar = NE_PCIReadRaw(bar_in, fBus, fDevice, fFunction);
 		return bar;
 	}
 

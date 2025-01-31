@@ -107,7 +107,7 @@ namespace Kernel
 
 	ErrorOr<VoidPtr> UserProcess::New(const SizeT& sz, const SizeT& pad_amount)
 	{
-#ifdef __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		auto vm_register = hal_read_cr3();
 		hal_write_cr3(this->VMRegister);
 
@@ -207,7 +207,7 @@ namespace Kernel
 
 		auto memory_heap_list = this->ProcessMemoryHeap;
 
-#ifdef __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		auto pd = hal_read_cr3();
 		hal_write_cr3(this->VMRegister);
 #endif
@@ -220,7 +220,7 @@ namespace Kernel
 				MUST_PASS(mm_delete_heap(memory_heap_list->MemoryEntry));
 			}
 
-#ifdef __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 			hal_write_cr3(pd);
 #endif
 
@@ -298,7 +298,7 @@ namespace Kernel
 
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, rt_string_len(name));
 
-#ifdef __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		process.VMRegister = new PDE();
 
 		if (!process.VMRegister)
@@ -312,7 +312,7 @@ namespace Kernel
 		flags |= HAL::kMMFlagsUser;
 
 		HAL::mm_map_page((VoidPtr)process.VMRegister, flags);
-#endif // __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#endif // __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		process.StackFrame = new HAL::StackFrame();
 
@@ -322,13 +322,13 @@ namespace Kernel
 			return kErrorProcessFault;
 		}
 
-#ifdef __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		flags = HAL::kMMFlagsPresent;
 		flags |= HAL::kMMFlagsWr;
 		flags |= HAL::kMMFlagsUser;
 
 		HAL::mm_map_page((VoidPtr)process.StackFrame, flags);
-#endif // __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#endif // __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		// React according to process kind.
 		switch (process.Kind)
@@ -351,13 +351,13 @@ namespace Kernel
 			return kErrorProcessFault;
 		}
 
-#ifdef __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		flags = HAL::kMMFlagsPresent;
 		flags |= HAL::kMMFlagsWr;
 		flags |= HAL::kMMFlagsUser;
 
 		HAL::mm_map_page((VoidPtr)process.StackReserve, flags);
-#endif // __ZKA_VIRTUAL_MEMORY_SUPPORT__
+#endif // __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		process.ProcessParentTeam = &mTeam;
 

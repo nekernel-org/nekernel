@@ -21,7 +21,7 @@ EMU=qemu-system-x86_64  -net none
 endif
 
 ifeq ($(NEWS_MODEL), )
-ZKA_MODEL=-DkMachineModel="\"NeOS\""
+NE_MODEL=-DkMachineModel="\"NeOS\""
 endif
 
 BIOS=OVMF.fd
@@ -44,7 +44,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__ZBAOSLDR__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_ZKA_APIS__ -DZBA_USE_FB -D__ZKA_AMD64__ -D__ZKA__ -DZKA_AUTO_FORMAT
+                        -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT
 
 BOOTLOADER=zbaosldr.exe
 KERNEL=neoskrnl.exe
@@ -75,7 +75,7 @@ endif
 .PHONY: compile-amd64
 compile-amd64:
 	$(WINDRES) src/BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
-	$(CC_GNU) $(ZKA_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
+	$(CC_GNU) $(NE_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
 	$(wildcard src/HEL/AMD64/*.cc) \
 	$(wildcard src/HEL/AMD64/*.S) \
 	$(wildcard src/*.cc)

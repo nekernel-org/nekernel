@@ -5,7 +5,7 @@
 	Revision History:
 
 	??/??/24: Added file (amlel)
-	23 Jul 24: Update filename to Defines.h and using ZKA_ALIGN_NVME for NVME structs. (amlel)
+	23 Jul 24: Update filename to Defines.h and using NE_ALIGN_NVME for NVME structs. (amlel)
 
 ------------------------------------------- */
 
@@ -17,11 +17,11 @@
 /// @file NVME.h
 /// @brief NVME driver.
 
-#define ZKA_ALIGN_NVME ATTRIBUTE(aligned(sizeof(Kernel::UInt32)))
+#define NE_ALIGN_NVME ATTRIBUTE(aligned(sizeof(Kernel::UInt32)))
 
 namespace Kernel
 {
-	struct ZKA_ALIGN_NVME HAL_NVME_BAR_0 final
+	struct NE_ALIGN_NVME HAL_NVME_BAR_0 final
 	{
 		UInt32 fCapabilities;
 		UInt32 fVersion;
@@ -34,7 +34,7 @@ namespace Kernel
 		UInt32 fAdminCompletionQueue;
 	};
 
-	struct ZKA_ALIGN_NVME HAL_NVME_QUEUE final
+	struct NE_ALIGN_NVME HAL_NVME_QUEUE final
 	{
 		UInt32 fOpcode;
 		UInt32 fNSID;

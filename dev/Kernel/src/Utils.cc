@@ -161,7 +161,7 @@ namespace Kernel
 
 	Bool rt_to_string(Char* str, UInt64 base, Int32 limit)
 	{
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 		auto i = 0;
 
 		auto final_number = base;

@@ -50,7 +50,7 @@ namespace Kernel
 			}
 		}
 
-		ZKA_COPY_DEFAULT(KString);
+		NE_COPY_DEFAULT(KString);
 
 		Char*		Data();
 		const Char* CData() const;

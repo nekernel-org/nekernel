@@ -15,7 +15,7 @@ namespace Kernel::HAL
 	typedef UInt32 PageTableIndex;
 
 	/// \brief Page store type.
-	struct ZKA_PAGE_STORE final
+	struct NE_PAGE_STORE final
 	{
 		struct
 		{
@@ -26,9 +26,9 @@ namespace Kernel::HAL
 
 		Bool fStoreOp{No}; // Store operation in progress.
 
-		static ZKA_PAGE_STORE& The()
+		static NE_PAGE_STORE& The()
 		{
-			static ZKA_PAGE_STORE the;
+			static NE_PAGE_STORE the;
 			return the;
 		}
 	};
@@ -51,7 +51,7 @@ namespace Kernel::HAL
 			!flags)
 			return 0;
 
-		ZKA_PAGE_STORE& page_store = ZKA_PAGE_STORE::The();
+		NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
 
 		while (page_store.fStoreOp)
 			;
@@ -71,7 +71,7 @@ namespace Kernel::HAL
 	/// @internal Internal function.
 	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE* pt_entry)
 	{
-		ZKA_PAGE_STORE& page_store = ZKA_PAGE_STORE::The();
+		NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
 
 		// Update Internal store.
 

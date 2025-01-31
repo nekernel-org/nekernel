@@ -23,7 +23,7 @@ namespace Firmware::Detail::CoreBoot
 		const UInt32 fRevision;		// firmware revision
 		const UInt32 fStartAddress; // start address (master/slave(s) thread)
 
-#ifdef ZKA_IS_EXTENDED_COREBOOT
+#ifdef NE_IS_EXTENDED_COREBOOT
 		const UIntPtr fMasterStructure;		   // master structure for MP/PM and device tree and such (ARM)
 		const UIntPtr fMasterStructureVersion; // master structure version.
 #endif

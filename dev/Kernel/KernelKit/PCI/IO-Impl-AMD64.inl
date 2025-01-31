@@ -20,7 +20,7 @@ namespace Kernel
 	{
 		switch (sizeof(T))
 		{
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 		case 4:
 			return HAL::rt_in32(fPorts[index].Leak());
 		case 2:
@@ -39,7 +39,7 @@ namespace Kernel
 	{
 		switch (sizeof(T))
 		{
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 		case 4:
 			HAL::rt_out32(fPorts[index].Leak(), value);
 		case 2:

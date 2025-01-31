@@ -7,7 +7,7 @@
 ;; * 	========================================================
 ;; */
 
-#ifdef __ZKA_AMD64__
+#ifdef __NE_AMD64__
 .code64
 .intel_syntax noprefix
 #endif
