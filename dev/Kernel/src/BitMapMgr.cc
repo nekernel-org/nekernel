@@ -29,13 +29,13 @@ namespace Kernel
 		namespace Detail
 		{
 			/// \brief Proxy Interface to allocate a bitmap.
-			class IBitMap final
+			class IBitMapProxy final
 			{
 			public:
-				explicit IBitMap() = default;
-				~IBitMap()		   = default;
+				explicit IBitMapProxy() = default;
+				~IBitMapProxy()			= default;
 
-				ZKA_COPY_DELETE(IBitMap);
+				ZKA_COPY_DELETE(IBitMapProxy);
 
 				auto IsBitMap(VoidPtr page_ptr) -> Bool
 				{
@@ -159,7 +159,7 @@ namespace Kernel
 
 		auto mm_is_bitmap(VoidPtr ptr) -> Bool
 		{
-			Detail::IBitMap bitmp;
+			Detail::IBitMapProxy bitmp;
 			return bitmp.IsBitMap(ptr);
 		}
 
@@ -169,23 +169,25 @@ namespace Kernel
 		/// @return a new bitmap allocated pointer.
 		auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page) -> VoidPtr
 		{
-			VoidPtr			ptr_new = nullptr;
-			Detail::IBitMap bitmp;
+			VoidPtr				 ptr_new = nullptr;
+			Detail::IBitMapProxy bitmp;
 
 			ptr_new = bitmp.FindBitMap(kKernelBitMpStart, size, wr, user);
+
+			MUST_PASS(ptr_new);
 
 			return (UIntPtr*)ptr_new;
 		}
 
-		/// @brief Free Bitmap, and mark it a absent in page terms.
+		/// @brief Free Bitmap, and mark it as absent.
 		/// @param ptr the pointer to free.
 		auto mm_free_bitmap(VoidPtr ptr) -> Bool
 		{
 			if (!ptr)
 				return No;
 
-			Detail::IBitMap bitmp;
-			Bool			ret = bitmp.FreeBitMap(ptr);
+			Detail::IBitMapProxy bitmp;
+			Bool				 ret = bitmp.FreeBitMap(ptr);
 
 			return ret;
 		}

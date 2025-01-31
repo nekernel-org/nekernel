@@ -550,7 +550,7 @@ namespace Kernel
 	 */
 	/***********************************************************************************/
 
-	Bool UserProcessHelper::Switch(VoidPtr image_ptr, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
+	Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
 	{
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index)
 		{
@@ -558,18 +558,20 @@ namespace Kernel
 				HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPBoot)
 				continue;
 
-			// a fallback is a special core for real-time tasks which needs immediate execution.
+			// A fallback is a special core for real-time tasks which needs immediate execution.
 			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPFallback)
 			{
 				if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity != AffinityKind::kRealTime)
 					continue;
 
-				if (HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid))
+				if (HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid))
 				{
-					auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
+					PTime prev_ptime = HardwareThreadScheduler::The()[index].Leak()->fPTime;
+
 					HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
-					PID prev_pid										 = UserProcessHelper::TheCurrentPID();
-					UserProcessHelper::TheCurrentPID().Leak().Leak()	 = new_pid;
+
+					PID prev_pid									 = UserProcessHelper::TheCurrentPID();
+					UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
 
 					return YES;
 				}
@@ -584,7 +586,7 @@ namespace Kernel
 			///	Prepare task switch.								 ///
 			////////////////////////////////////////////////////////////
 
-			Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image_ptr, stack, frame_ptr, new_pid);
+			Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid);
 
 			////////////////////////////////////////////////////////////
 			///	Rollback on fail.    								 ///
@@ -595,10 +597,10 @@ namespace Kernel
 			PID prev_pid									 = UserProcessHelper::TheCurrentPID();
 			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
 
-			auto prev_ptime										 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
+			PTime prev_ptime									 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
 			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 
-			HardwareThreadScheduler::The()[index].Leak()->Wake(NO);
+			HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
 
 			break;
 		}

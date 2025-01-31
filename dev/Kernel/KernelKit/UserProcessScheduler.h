@@ -36,6 +36,8 @@ namespace Kernel
 	class UserProcessScheduler;
 	class UserProcessHelper;
 
+	typedef UInt64 PTime;
+
 	//! @brief Local Process identifier.
 	typedef Int64 ProcessID;
 
