@@ -21,7 +21,7 @@ EMU=qemu-system-x86_64  -net none
 endif
 
 ifeq ($(NEWS_MODEL), )
-ZKA_MODEL=-DkMachineModel="\"ZkaOS\""
+ZKA_MODEL=-DkMachineModel="\"NeOS\""
 endif
 
 BIOS=OVMF.fd
@@ -85,7 +85,6 @@ run-efi-amd64-ahci:
 	$(EMU) $(EMU_FLAGS) -M q35 -drive file=$(IMG),format=raw,if=none,id=disk \
     -device ich9-ahci,id=ahci \
     -device ide-hd,drive=disk,bus=ahci.0 \
-    -enable-kvm \
     -s -S
 
 .PHONY: run-efi-amd64-ata

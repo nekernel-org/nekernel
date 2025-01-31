@@ -1,3 +1,3 @@
 #!/bin/sh
 
-gdb -q -x boot/gdbinit
+lldb -o "gdb-remote 1234"
