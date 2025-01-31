@@ -288,7 +288,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
 	// send fis/cmdtbl/cmdhdr.
-	kSATAPort->Ports[kSATAPortIdx].Ci |= 1 << slot;
+	kSATAPort->Ports[kSATAPortIdx].Ci = 1 << slot;
 
 	while (kSATAPort->Ports[kSATAPortIdx].Ci & (1 << slot))
 		;
