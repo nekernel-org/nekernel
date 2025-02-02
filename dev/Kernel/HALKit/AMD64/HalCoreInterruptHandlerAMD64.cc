@@ -150,6 +150,8 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 	kcout << "Kernel: SIGKILL status set..\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
+
+  while (YES); // TODO: Find a workaround for this.
 }
 
 /// @brief Handle #UD fault.

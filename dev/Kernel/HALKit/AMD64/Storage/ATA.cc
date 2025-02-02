@@ -67,6 +67,8 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	UInt16 IO = Bus;
 	drv_std_select(IO);
 
+	rt_out8(IO + ATA_REG_NEIN, 1);
+
 	// Step 1: Wait until drive is not busy
 	int timeout = 100000;
 	while ((rt_in8(IO + ATA_REG_STATUS) & ATA_SR_BSY) && --timeout)
@@ -76,8 +78,6 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 		kcout << "Timeout waiting for drive to become ready...\r";
 		return false;
 	}
-
-	rt_out8(IO + ATA_REG_NEIN, 1);
 
 	// Step 2: Send IDENTIFY command
 	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
@@ -108,7 +108,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	if (!(kATAData[63] & (1 << 8)) || !(kATAData[88] & 0xFF))
 	{
 		kcout << "No DMA support...\r";
-		ke_panic(RUNTIME_CHECK_FAILED, "No DMA support on necessry disk driver.");
+		ke_panic(RUNTIME_CHECK_BOOTSTRAP, "No DMA support on necessary disk driver.");
 
 		return false;
 	}
