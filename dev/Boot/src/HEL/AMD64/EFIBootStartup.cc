@@ -37,8 +37,11 @@ STATIC EfiGraphicsOutputProtocol* kGop		 = nullptr;
 STATIC UInt16					  kGopStride = 0U;
 STATIC EfiGUID					  kGopGuid;
 
+/** Related to jumping to the reset vector. */
+
 EXTERN_C Void rt_reset_hardware();
 
+/** Boot Services symbol. */
 EXTERN EfiBootServices* BS;
 
 /**
@@ -71,8 +74,6 @@ STATIC Bool boot_init_fb() noexcept
 
 	return No;
 }
-
-EXTERN EfiBootServices* BS;
 
 EfiGUID kEfiGlobalNamespaceVarGUID = {
 	0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
