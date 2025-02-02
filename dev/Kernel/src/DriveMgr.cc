@@ -44,8 +44,6 @@ namespace Kernel
 		if (pckt.fPacketReadOnly)
 			return;
 
-		kcout << "Writing blob to disk...\r";
-
 #ifdef __AHCI__
 		drv_std_write(pckt.fPacketLba, (Char*)pckt.fPacketContent, kAHCISectorSize, pckt.fPacketSize);
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)

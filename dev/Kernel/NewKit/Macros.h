@@ -113,7 +113,7 @@
 
 #define CONST const
 
-#define STRINGIFY(X)  #X
+#define STRINGIFY(X) #X
 #define NE_UNUSED(X) ((Kernel::Void)X)
 
 #ifndef RGB
@@ -126,7 +126,7 @@
 #define dbg_break_point() ((void)0)
 #endif
 
-#define RTL_ENDIAN(address, value)                    \
+#define RTL_ENDIAN(address, value)                              \
 	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
 		 ? (Kernel::Endian::kEndianBig)                         \
 		 : (Kernel::Endian::kEndianLittle))

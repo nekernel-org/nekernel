@@ -13,8 +13,8 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
 
-#define NE_BUS_COUNT	   (256)
-#define NE_DEVICE_COUNT   (33)
+#define NE_BUS_COUNT	  (256)
+#define NE_DEVICE_COUNT	  (33)
 #define NE_FUNCTION_COUNT (8)
 
 namespace Kernel::PCI

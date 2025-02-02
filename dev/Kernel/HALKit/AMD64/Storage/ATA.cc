@@ -77,6 +77,8 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 		return false;
 	}
 
+	rt_out8(IO + ATA_REG_NEIN, 1);
+
 	// Step 2: Send IDENTIFY command
 	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
