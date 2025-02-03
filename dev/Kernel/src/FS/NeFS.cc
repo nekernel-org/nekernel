@@ -1,10 +1,9 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
-#include "KernelKit/DebugOutput.h"
 #ifdef __FSKIT_INCLUDES_NEFS__
 
 #include <FSKit/NeFS.h>
