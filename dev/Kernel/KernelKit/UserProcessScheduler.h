@@ -182,7 +182,7 @@ namespace Kernel
 
 		struct UserProcessSignal final
 		{
-			UIntPtr			  SignalIP;
+			UIntPtr			  SignalArg;
 			ProcessStatusKind PreviousStatus;
 			UIntPtr			  SignalID;
 		};

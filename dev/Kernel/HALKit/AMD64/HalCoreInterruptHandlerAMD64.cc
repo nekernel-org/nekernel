@@ -24,7 +24,7 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 
 	kcout << "Kernel: General Protection Fault.\r";
 
-	process.Leak().ProcessSignal.SignalIP		= rsp;
+	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
@@ -49,7 +49,7 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	kcout << "Kernel: Page Fault.\r";
 	kcout << "Kernel: SIGKILL\r";
 
-	process.Leak().ProcessSignal.SignalIP		= rsp;
+	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
@@ -93,7 +93,7 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 
 	kcout << "Kernel: Math error (division by zero?).\r";
 
-	process.Leak().ProcessSignal.SignalIP		= rsp;
+	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
@@ -117,7 +117,7 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 
 	kcout << "Kernel: Generic Process Fault.\r";
 
-	process.Leak().ProcessSignal.SignalIP		= rsp;
+	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
@@ -140,7 +140,7 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 	kcout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << endl;
 	kcout << "Kernel: SIGTRAP\r";
 
-	process.Leak().ProcessSignal.SignalIP = rip;
+	process.Leak().ProcessSignal.SignalArg = rip;
 	process.Leak().ProcessSignal.SignalID = SIGTRAP;
 
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
@@ -165,7 +165,7 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 
 	kcout << "Kernel: Undefined Opcode.\r";
 
-	process.Leak().ProcessSignal.SignalIP		= rsp;
+	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
