@@ -141,15 +141,13 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 	kcout << "Kernel: SIGTRAP\r";
 
 	process.Leak().ProcessSignal.SignalArg = rip;
-	process.Leak().ProcessSignal.SignalID = SIGTRAP;
+	process.Leak().ProcessSignal.SignalID  = SIGTRAP;
 
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
 	kcout << "Kernel: SIGKILL status.\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
-
-  while (YES); // TODO: Find a workaround for this.
 }
 
 /// @brief Handle #UD fault.
