@@ -19,8 +19,8 @@ Kernel::UIntPtr __dso_handle;
 
 EXTERN_C Kernel::Void __cxa_pure_virtual(void* self)
 {
-	kcout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
-	kcout << ", has unimplemented virtual functions.\r";
+	kout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
+	kout << ", has unimplemented virtual functions.\r";
 }
 
 EXTERN_C void ___chkstk_ms(void)

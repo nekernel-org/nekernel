@@ -142,7 +142,7 @@ namespace Kernel
 		trait.fInit		 = io_drv_unimplemented;
 		trait.fDriveKind = io_drv_kind;
 
-		kcout << "Construct: " << trait.fName << "\r";
+		kout << "Construct: " << trait.fName << "\r";
 
 		return trait;
 	}
@@ -169,7 +169,7 @@ namespace Kernel
 				trait.fPacket.fPacketReadOnly = NO;
 				trait.fKind					  = kMassStorageDisc | kEPMDrive;
 
-				kcout << "Disk is EPM.\r";
+				kout << "Disk is EPM.\r";
 
 				trait.fSectorSz = block_struct.SectorSz;
 				trait.fLbaEnd	= block_struct.LbaEnd;
@@ -187,12 +187,12 @@ namespace Kernel
 				trait.fPacket.fPacketReadOnly = YES;
 				trait.fKind					  = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
 
-				kcout << "Scheme Found: " << block_struct.Name << endl;
+				kout << "Scheme Found: " << block_struct.Name << endl;
 
 				if (block_struct.Name[0] == 0 ||
 					block_struct.Name[0] == 0xFF ||
 					block_struct.Name[0] == 0xAF)
-					kcout << "Disk partition is empty (Read Only)\r";
+					kout << "Disk partition is empty (Read Only)\r";
 			}
 
 			rt_copy_memory((VoidPtr) "*/*", trait.fPacket.fPacketMime,
@@ -222,7 +222,7 @@ namespace Kernel
 		trait.fInit		 = io_drv_init;
 		trait.fDriveKind = io_drv_kind;
 
-		kcout << "Detecting partition scheme of: " << trait.fName << ".\r";
+		kout << "Detecting partition scheme of: " << trait.fName << ".\r";
 
 		Detect::io_detect_drive(trait);
 

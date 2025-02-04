@@ -57,7 +57,7 @@ namespace Kernel
 		if (this->Status != ProcessStatusKind::kRunning)
 			return;
 
-		kcout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
+		kout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
 		this->Exit(kErrorProcessFault);
 	}
 
@@ -338,7 +338,7 @@ namespace Kernel
 			MUST_PASS(process.DylibDelegate);
 		}
 		default: {
-			kcout << "Unknown process kind: " << hex_number(process.Kind) << endl;
+			kout << "Unknown process kind: " << hex_number(process.Kind) << endl;
 			break;
 		}
 		}
@@ -365,8 +365,8 @@ namespace Kernel
 		process.Status	  = ProcessStatusKind::kStarting;
 		process.PTime	  = (UIntPtr)AffinityKind::kStandard;
 
-		kcout << "PID: " << number(process.ProcessId) << endl;
-		kcout << "Name: " << process.Name << endl;
+		kout << "PID: " << number(process.ProcessId) << endl;
+		kout << "Name: " << process.Name << endl;
 
 		return pid;
 	}
@@ -433,11 +433,11 @@ namespace Kernel
 
 		if (mTeam.mProcessCount < 1)
 		{
-			kcout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
+			kout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
 			return 0UL;
 		}
 
-		kcout << "UserProcessScheduler::Run(): This team has a process capacity of: " << hex_number(mTeam.mProcessList.Capacity()) << endl;
+		kout << "UserProcessScheduler::Run(): This team has a process capacity of: " << hex_number(mTeam.mProcessList.Capacity()) << endl;
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
@@ -451,7 +451,7 @@ namespace Kernel
 
 				process.PTime = static_cast<Int32>(process.Affinity);
 
-				kcout << "Switch to: '" << process.Name << "'.\r";
+				kout << "Switch to: '" << process.Name << "'.\r";
 
 				// tell helper to find a core to schedule on.
 				BOOL ret = UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
@@ -462,7 +462,7 @@ namespace Kernel
 					if (process.Affinity == AffinityKind::kRealTime)
 						continue;
 
-					kcout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
+					kout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
 
 					process.Crash();
 				}
@@ -499,7 +499,7 @@ namespace Kernel
 		if (!kProcessScheduler.CurrentProcess())
 			return ErrorOr<PID>{kErrorProcessFault};
 
-		kcout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
+		kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
 		return ErrorOr<PID>{kProcessScheduler.CurrentProcess().Leak().ProcessId};
 	}
 

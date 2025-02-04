@@ -202,10 +202,10 @@ namespace Kernel
 	}
 } // namespace Kernel
 
-#ifdef kcout
-#undef kcout
-#endif // ifdef kcout
+#ifdef kout
+#undef kout
+#endif // ifdef kout
 
-#define kcout Kernel::TerminalDevice::The() << "\e[0;31m [NeKernel] " << __FILE__ << " \e[0m: "
+#define kout Kernel::TerminalDevice::The() << "\e[0;31m [NeKernel] " << __FILE__ << " \e[0m: "
 
 #define endl Kernel::TerminalDevice::The() << Kernel::end_line()

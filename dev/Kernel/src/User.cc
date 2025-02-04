@@ -36,7 +36,7 @@ namespace Kernel
 			if (!password || !user)
 				return 1;
 
-			kcout << "cred_construct_token: Hashing user password...\r";
+			kout << "cred_construct_token: Hashing user password...\r";
 
 			for (SizeT i_pass = 0UL; i_pass < length; ++i_pass)
 			{
@@ -48,7 +48,7 @@ namespace Kernel
 				password[i_pass] = cur_chr | (user->IsStdUser() ? kStdUserType : kSuperUserType);
 			}
 
-			kcout << "cred_construct_token: Hashed user password.\r";
+			kout << "cred_construct_token: Hashed user password.\r";
 
 			return 0;
 		}
@@ -109,7 +109,7 @@ namespace Kernel
 		delete[] password;
 		password = nullptr;
 
-		kcout << "User::Save: Saved password successfully...\r";
+		kout << "User::Save: Saved password successfully...\r";
 
 		return Yes;
 	}
@@ -138,16 +138,16 @@ namespace Kernel
 			return No;
 		}
 
-		kcout << "User::Matches: Validating hashed passwords...\r";
+		kout << "User::Matches: Validating hashed passwords...\r";
 
 		// now check if the password matches.
 		if (rt_string_cmp(password, this->mUserKey, rt_string_len(this->mUserKey)) == 0)
 		{
-			kcout << "User::Matches: Password matches.\r";
+			kout << "User::Matches: Password matches.\r";
 			return Yes;
 		}
 
-		kcout << "User::Matches: Password doesn't match.\r";
+		kout << "User::Matches: Password doesn't match.\r";
 		return No;
 	}
 

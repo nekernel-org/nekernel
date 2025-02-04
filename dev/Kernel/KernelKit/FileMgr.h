@@ -378,7 +378,7 @@ namespace Kernel
 			}
 		}
 
-		kcout << "new file: " << path << ".\r";
+		kout << "new file: " << path << ".\r";
 	}
 
 	/// @brief destructor of the file stream.

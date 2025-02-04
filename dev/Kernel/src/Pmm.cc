@@ -23,7 +23,7 @@ namespace Kernel
 	Pmm::Pmm()
 		: fPageMgr()
 	{
-		kcout << "[PMM] Allocate PageMemoryMgr";
+		kout << "[PMM] Allocate PageMemoryMgr";
 	}
 
 	Pmm::~Pmm() = default;
@@ -39,7 +39,7 @@ namespace Kernel
 
 		if (pt.fPresent)
 		{
-			kcout << "[PMM]: Allocation failed.\r";
+			kout << "[PMM]: Allocation failed.\r";
 			return {};
 		}
 

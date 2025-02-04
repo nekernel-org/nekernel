@@ -56,10 +56,10 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	STATIC Void mmi_page_status(PTE* pte)
 	{
-		kcout << (pte->Present ? "Present" : "Not Present") << endl;
-		kcout << (pte->Wr ? "W/R" : "Not W/R") << endl;
-		kcout << (pte->ExecDisable ? "NX" : "Not NX") << endl;
-		kcout << (pte->User ? "User" : "Not User") << endl;
+		kout << (pte->Present ? "Present" : "Not Present") << endl;
+		kout << (pte->Wr ? "W/R" : "Not W/R") << endl;
+		kout << (pte->ExecDisable ? "NX" : "Not NX") << endl;
+		kout << (pte->User ? "User" : "Not User") << endl;
 	}
 
 	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry);

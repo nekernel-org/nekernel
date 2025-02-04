@@ -30,8 +30,8 @@ IMG_2=epm-master-2.img
 
 EMU_FLAGS=-net none -smp 4 -m 8G \
 			-bios $(BIOS) -drive \
-			file=fat:rw:src/Root/,index=2,format=raw \
-            -d int
+			file=fat:rw:src/Root/,index=3,format=raw \
+            -serial stdio
 
 LD_FLAGS=-e Main --subsystem=10
 
@@ -82,10 +82,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -M q35 -drive file=$(IMG),format=raw,if=none,id=disk \
-    -device ahci,id=ahci \
-    -device ide-hd,drive=disk,bus=ahci.0 \
-    -s -S
+	$(EMU) $(EMU_FLAGS) -M q35 -hda $(IMG) -s -S
 
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata:

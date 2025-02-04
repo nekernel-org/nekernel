@@ -74,7 +74,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 
 		Lba lba = catalog->DataFork;
 
-		kcout << "Fork LBA: " << hex_number(lba) << endl;
+		kout << "Fork LBA: " << hex_number(lba) << endl;
 
 		if (lba < kNeFSCatalogStartAddress)
 			return NO;
@@ -95,18 +95,18 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 
 			drv.fInput(drv.fPacket);
 
-			kcout << "Next fork: " << hex_number(cur_fork.NextSibling) << endl;
+			kout << "Next fork: " << hex_number(cur_fork.NextSibling) << endl;
 
 			if (cur_fork.Flags & kNeFSFlagCreated)
 			{
-				kcout << "Error: Fork does exists.\r";
+				kout << "Error: Fork does exists.\r";
 
 				/// sanity check.
 				if (StringBuilder::Equals(cur_fork.ForkName, the_fork.ForkName) &&
 					StringBuilder::Equals(cur_fork.CatalogName, the_fork.CatalogName))
 					break;
 
-				kcout << "Next fork: " << hex_number(cur_fork.NextSibling) << endl;
+				kout << "Next fork: " << hex_number(cur_fork.NextSibling) << endl;
 
 				lba_prev = lba;
 				lba		 = cur_fork.NextSibling;
@@ -142,17 +142,17 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 		drv.fPacket.fPacketSize	   = sizeof(NFS_FORK_STRUCT);
 		drv.fPacket.fPacketContent = &the_fork;
 
-		kcout << "Writing fork metadata...\r";
+		kout << "Writing fork metadata...\r";
 
 		// drv.fOutput(drv.fPacket);
 
 		fs_ifs_write(&kMountpoint, drv, MountpointInterface::kDriveIndexA);
 
 		/// log what we have now.
-		kcout << "Fork offset is at: " << hex_number(the_fork.DataOffset)
+		kout << "Fork offset is at: " << hex_number(the_fork.DataOffset)
 			  << endl;
 
-		kcout << "Wrote fork metadata at: " << hex_number(lba) << endl;
+		kout << "Wrote fork metadata at: " << hex_number(lba) << endl;
 
 		return YES;
 	}
@@ -237,11 +237,11 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 															  _Input const Int32& flags,
 															  _Input const Int32& kind)
 {
-	kcout << "CreateCatalog(...)\r";
+	kout << "CreateCatalog(...)\r";
 
 	Lba out_lba = 0UL;
 
-	kcout << "Checking for path separator...\r";
+	kout << "Checking for path separator...\r";
 
 	/// a directory should have a slash in the end.
 	if (kind == kNeFSCatalogKindDir &&
@@ -257,7 +257,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	if (catalog_copy)
 	{
-		kcout << "Catalog already exists: " << name << ".\r";
+		kout << "Catalog already exists: " << name << ".\r";
 		err_global_get() = kErrorFileExists;
 
 		delete catalog_copy;
@@ -275,7 +275,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	if (*parent_name == 0)
 	{
-		kcout << "Parent name is NUL.\r";
+		kout << "Parent name is NUL.\r";
 		err_global_get() = kErrorFileNotFound;
 		return nullptr;
 	}
@@ -309,7 +309,7 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 	if (catalog && catalog->Kind == kNeFSCatalogKindFile)
 	{
-		kcout << "Parent is a file.\r";
+		kout << "Parent is a file.\r";
 		delete catalog;
 
 		return nullptr;
@@ -412,9 +412,9 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 
 			drive.fOutput(drive.fPacket);
 
-			kcout << "Create new catalog with flags: "
+			kout << "Create new catalog with flags: "
 				  << hex_number(child_catalog->Flags) << endl;
-			kcout << "Create new catalog with name: " << child_catalog->Name
+			kout << "Create new catalog with name: " << child_catalog->Name
 				  << endl;
 
 			delete catalog;
@@ -583,14 +583,14 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 
 			drive->fOutput(&drive->fPacket);
 
-			kcout << "drive kind: " << drive->fDriveKind() << endl;
+			kout << "drive kind: " << drive->fDriveKind() << endl;
 
-			kcout << "partition name: " << part_block->PartitionName << endl;
-			kcout << "start: " << hex_number(part_block->StartCatalog) << endl;
-			kcout << "number of catalogs: " << hex_number(part_block->CatalogCount) << endl;
-			kcout << "free catalog: " << hex_number(part_block->FreeCatalog) << endl;
-			kcout << "free sectors: " << hex_number(part_block->FreeSectors) << endl;
-			kcout << "sector size: " << hex_number(part_block->SectorSize) << endl;
+			kout << "partition name: " << part_block->PartitionName << endl;
+			kout << "start: " << hex_number(part_block->StartCatalog) << endl;
+			kout << "number of catalogs: " << hex_number(part_block->CatalogCount) << endl;
+			kout << "free catalog: " << hex_number(part_block->FreeCatalog) << endl;
+			kout << "free sectors: " << hex_number(part_block->FreeSectors) << endl;
+			kout << "sector size: " << hex_number(part_block->SectorSize) << endl;
 
 			// write the root catalog.
 			this->CreateCatalog(kNeFSRoot, 0, kNeFSCatalogKindDir);
@@ -598,7 +598,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 			return true;
 		}
 
-		kcout << "partition block already exists.\r";
+		kout << "partition block already exists.\r";
 
 		start += part_block->DiskSize;
 
@@ -650,7 +650,7 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 	NFS_FORK_STRUCT* fork_data_input = new NFS_FORK_STRUCT();
 	NFS_FORK_STRUCT	 prev_fork{};
 
-	kcout << hex_number(startFork) << endl;
+	kout << hex_number(startFork) << endl;
 
 	// sanity check of the fork position as the condition to run the loop.
 	while (startFork >= kNeFSCatalogStartAddress)
@@ -661,13 +661,13 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 
 		drive.fInput(drive.fPacket);
 
-		kcout << hex_number(fork_data_input->DataSize) << endl;
-		kcout << hex_number(size_of_data) << endl;
-		kcout << hex_number(fork_data_input->Flags) << endl;
-		kcout << fork_name << endl;
-		kcout << fork_data_input->ForkName << endl;
-		kcout << fork_data_input->CatalogName << endl;
-		kcout << catalog_name << endl;
+		kout << hex_number(fork_data_input->DataSize) << endl;
+		kout << hex_number(size_of_data) << endl;
+		kout << hex_number(fork_data_input->Flags) << endl;
+		kout << fork_name << endl;
+		kout << fork_data_input->ForkName << endl;
+		kout << fork_data_input->CatalogName << endl;
+		kout << catalog_name << endl;
 
 		if ((fork_data_input->Flags & kNeFSFlagCreated) &&
 			StringBuilder::Equals(fork_data_input->ForkName, fork_name) &&
@@ -682,14 +682,14 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 			drive.fPacket.fPacketSize	 = size_of_data;
 			drive.fPacket.fPacketLba	 = fork_data_input->DataOffset;
 
-			kcout << "data offset: " << hex_number(fork_data_input->DataOffset) << endl;
+			kout << "data offset: " << hex_number(fork_data_input->DataOffset) << endl;
 
 			drive.fOutput(drive.fPacket);
 
-			kcout << "wrote data at offset: " << hex_number(fork_data_input->DataOffset) << endl;
+			kout << "wrote data at offset: " << hex_number(fork_data_input->DataOffset) << endl;
 
 			delete fork_data_input;
-			delete buf;
+			delete[] buf;
 
 			return true;
 		}
@@ -701,7 +701,7 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 		startFork = fork_data_input->NextSibling;
 	}
 
-	delete buf;
+	delete[] buf;
 	delete fork_data_input;
 
 	return false;
@@ -795,8 +795,6 @@ kNeFSSearchThroughCatalogList:
 
 		drive.fInput(drive.fPacket);
 
-		kcout << temporary_catalog.Name << endl;
-
 		if (StringBuilder::Equals(catalog_name, temporary_catalog.Name))
 		{
 			if (temporary_catalog.Status == kNeFSStatusLocked &&
@@ -815,8 +813,8 @@ kNeFSSearchThroughCatalogList:
 				goto NeFSContinueSearch;
 			}
 
-			kcout << "Found available catalog at: " << hex_number(start_catalog_lba) << endl;
-			kcout << "Found available catalog at: " << temporary_catalog.Name << endl;
+			kout << "Found available catalog at: " << hex_number(start_catalog_lba) << endl;
+			kout << "Found available catalog at: " << temporary_catalog.Name << endl;
 
 			NFS_CATALOG_STRUCT* catalog_ptr = new NFS_CATALOG_STRUCT();
 			rt_copy_memory(&temporary_catalog, catalog_ptr, sizeof(NFS_CATALOG_STRUCT));
@@ -953,7 +951,7 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catal
 	Lba	 dataForkLba  = (!is_rsrc_fork) ? catalog->DataFork : catalog->ResourceFork;
 	Size dataForkSize = (!is_rsrc_fork) ? catalog->DataForkSize : catalog->ResourceForkSize;
 
-	kcout << "catalog " << catalog->Name
+	kout << "catalog " << catalog->Name
 		  << ", fork: " << hex_number(dataForkLba) << endl;
 
 	NFS_FORK_STRUCT* fs_buf = new NFS_FORK_STRUCT();
@@ -974,8 +972,8 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catal
 
 		fs_fork_data = fs_buf;
 
-		kcout << "ForkName: " << fs_fork_data->ForkName << endl;
-		kcout << "CatalogName: " << fs_fork_data->CatalogName << endl;
+		kout << "ForkName: " << fs_fork_data->ForkName << endl;
+		kout << "CatalogName: " << fs_fork_data->CatalogName << endl;
 
 		if (StringBuilder::Equals(forkName, fs_fork_data->ForkName) &&
 			StringBuilder::Equals(catalog->Name, fs_fork_data->CatalogName))
@@ -1037,11 +1035,11 @@ namespace Kernel::NeFS
 	/***********************************************************************************/
 	Boolean fs_init_nefs(Void) noexcept
 	{
-		kcout << "Creating A:\r";
+		kout << "Creating A:\r";
 
 		kMountpoint.A() = io_construct_main_drive();
 
-		kcout << "Creating A: [ OK ]\r";
+		kout << "Creating A: [ OK ]\r";
 
 		return true;
 	}

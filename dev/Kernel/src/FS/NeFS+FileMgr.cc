@@ -21,14 +21,14 @@ namespace Kernel
 		NeFileSystemParser* mParser = new NeFileSystemParser();
 		MUST_PASS(mParser);
 
-		kcout << "We are done allocating NeFileSystemParser...\r";
+		kout << "We are done allocating NeFileSystemParser...\r";
 	}
 
 	NeFileSystemMgr::~NeFileSystemMgr()
 	{
 		if (mParser)
 		{
-			kcout << "Destroying NeFileSystemParser...\r";
+			kout << "Destroying NeFileSystemParser...\r";
 			mm_delete_class(&mParser);
 		}
 	}

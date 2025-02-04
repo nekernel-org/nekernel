@@ -83,8 +83,8 @@ namespace cxxabiv1
 
 EXTERN_C Kernel::Void _purecall(void* self)
 {
-	kcout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
-	kcout << ", has unimplemented virtual functions.\r";
+	kout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
+	kout << ", has unimplemented virtual functions.\r";
 }
 
 EXTERN_C Kernel::Void _Init_thread_footer(Kernel::Int* thread_obj)

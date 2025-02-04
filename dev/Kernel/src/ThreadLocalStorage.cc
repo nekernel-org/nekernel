@@ -35,7 +35,7 @@ Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr)
 	ICodec		encoder;
 	const Char* tib_as_bytes = encoder.AsBytes(tib_ptr);
 
-	kcout << "TLS: Validating the TIB...\r";
+	kout << "TLS: Validating the TIB...\r";
 
 	return tib_as_bytes[kCookieMag0Idx] == kCookieMag0 && tib_as_bytes[kCookieMag1Idx] == kCookieMag1 &&
 		   tib_as_bytes[kCookieMag2Idx] == kCookieMag2;
@@ -50,7 +50,7 @@ EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 {
 	if (!tib_ptr)
 	{
-		kcout << "TLS: Failing because of an invalid TIB...\r";
+		kout << "TLS: Failing because of an invalid TIB...\r";
 		return false;
 	}
 
@@ -58,10 +58,10 @@ EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
 
 	if (!tls_check_tib(tib))
 	{
-		kcout << "TLS: Failing because of an invalid TIB...\r";
+		kout << "TLS: Failing because of an invalid TIB...\r";
 		return false;
 	}
 
-	kcout << "TLS Passed checked.\r";
+	kout << "TLS Passed checked.\r";
 	return true;
 }

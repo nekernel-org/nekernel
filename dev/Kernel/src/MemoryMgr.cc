@@ -104,7 +104,7 @@ namespace Kernel
 		if (!ptr_heap || new_sz < 1)
 			return nullptr;
 
-		kcout << "This function is not implemented by NeOSKrnl, please use the BSD's realloc instead.\r";
+		kout << "This function is not implemented by NeOSKrnl, please use the BSD's realloc instead.\r";
 		ke_panic(RUNTIME_CHECK_INVALID);
 
 		return nullptr;
@@ -144,7 +144,7 @@ namespace Kernel
 
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
-		kcout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
+		kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
 
 		return result;
 	}
@@ -166,7 +166,7 @@ namespace Kernel
 
 		heap_info_ptr->fPage = true;
 
-		kcout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
+		kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
 
 		return kErrorSuccess;
 	}
@@ -238,7 +238,7 @@ namespace Kernel
 			PageMgr heap_mgr;
 			heap_mgr.Free(pte_address);
 
-			kcout << "Address has been successfully freed." << endl;
+			kout << "Address has been successfully freed." << endl;
 
 			return kErrorSuccess;
 		}

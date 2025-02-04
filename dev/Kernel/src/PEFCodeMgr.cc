@@ -95,7 +95,7 @@ namespace Kernel
 		if (fCachedBlob)
 			mm_delete_heap(fCachedBlob);
 
-		kcout << "PEFLoader: warn: Executable format error!\r";
+		kout << "PEFLoader: warn: Executable format error!\r";
 
 		fCachedBlob = nullptr;
 	}
@@ -184,7 +184,7 @@ namespace Kernel
 					rt_copy_memory((VoidPtr)((Char*)blob + sizeof(PEFCommandHeader)), container_blob_value, container_header->Size);
 					mm_delete_heap(blob);
 
-					kcout << "PEFLoader: INFO: Load stub: " << container_header->Name << "!\r";
+					kout << "PEFLoader: INFO: Load stub: " << container_header->Name << "!\r";
 
 					return container_blob_value;
 				}

@@ -137,7 +137,7 @@ namespace Kernel
 				return &mD;
 			default: {
 				err_local_get() = kErrorNoSuchDisk;
-				kcout << "No such disc letter.\n";
+				kout << "No such disc letter.\n";
 
 				break;
 			}

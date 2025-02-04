@@ -62,7 +62,7 @@ namespace Kernel
 
 		kFlashMetaPackets[slot]->InterruptEnable = YES;
 
-		kcout << "Enabled hardware slot at: " << number(slot) << endl;
+		kout << "Enabled hardware slot at: " << number(slot) << endl;
 
 		return YES;
 	}
@@ -75,7 +75,7 @@ namespace Kernel
 
 		kFlashMetaPackets[slot]->InterruptEnable = NO;
 
-		kcout << "Disabled hardware slot at: " << number(slot) << endl;
+		kout << "Disabled hardware slot at: " << number(slot) << endl;
 
 		return YES;
 	}

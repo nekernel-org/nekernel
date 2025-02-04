@@ -25,7 +25,7 @@ namespace Kernel
 		if (offset == 0)
 			return true;
 
-		kcout << "[DMAWrapper::IsIn] Checking offset..\n";
+		kout << "[DMAWrapper::IsIn] Checking offset..\n";
 		return reinterpret_cast<UIntPtr>(fAddress) >= offset;
 	}
 
@@ -34,7 +34,7 @@ namespace Kernel
 		if (!fAddress)
 			return false;
 
-		kcout << "[DMAWrapper::Write] Writing at address..\n";
+		kout << "[DMAWrapper::Write] Writing at address..\n";
 
 		auto addr =
 			(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(fAddress) + offset);
@@ -45,11 +45,11 @@ namespace Kernel
 
 	UIntPtr DMAWrapper::Read(const UIntPtr& offset)
 	{
-		kcout << "[DMAWrapper::Read] checking fAddress..\n";
+		kout << "[DMAWrapper::Read] checking fAddress..\n";
 		if (!fAddress)
 			return 0;
 
-		kcout << "[DMAWrapper::Read] Reading fAddress..\n";
+		kout << "[DMAWrapper::Read] Reading fAddress..\n";
 		return *(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(fAddress) + offset);
 		;
 	}
@@ -70,7 +70,7 @@ namespace Kernel
 		if (!dmaOwnPtr)
 			return {};
 
-		kcout << "Returning the new OwnPtr<IOBuf<Char*>>!\r";
+		kout << "Returning the new OwnPtr<IOBuf<Char*>>!\r";
 		return dmaOwnPtr;
 	}
 

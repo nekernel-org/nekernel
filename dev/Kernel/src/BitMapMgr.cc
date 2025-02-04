@@ -141,18 +141,18 @@ namespace Kernel
 				{
 					if (!this->IsBitMap(ptr_bit_set))
 					{
-						kcout << "Not a BitMap: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+						kout << "Not a BitMap: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 						return;
 					}
 
-					kcout << "Magic Number: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << endl;
-					kcout << "Is Allocated: " << (ptr_bit_set[kBitMapUsedIdx] ? "Yes" : "No") << endl;
-					kcout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << endl;
-					kcout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
-					kcout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
-					kcout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
-					kcout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
-					kcout << "Address Of BitMap Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
+					kout << "Magic Number: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << endl;
+					kout << "Is Allocated: " << (ptr_bit_set[kBitMapUsedIdx] ? "Yes" : "No") << endl;
+					kout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << endl;
+					kout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
+					kout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
+					kout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
+					kout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx])) << endl;
+					kout << "Address Of BitMap Header: " << hex_number((UIntPtr)ptr_bit_set) << endl;
 				}
 			};
 		} // namespace Detail

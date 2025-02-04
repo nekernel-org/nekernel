@@ -43,10 +43,10 @@ namespace Kernel
 
 		this->fEntries = num;
 
-		kcout << "ACPI: Number of entries: " << number(this->fEntries) << endl;
-		kcout << "ACPI: Revision: " << number(xsdt->Revision) << endl;
-		kcout << "ACPI: Signature: " << xsdt->Signature << endl;
-		kcout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
+		kout << "ACPI: Number of entries: " << number(this->fEntries) << endl;
+		kout << "ACPI: Revision: " << number(xsdt->Revision) << endl;
+		kout << "ACPI: Signature: " << xsdt->Signature << endl;
+		kout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
 
 		const short cAcpiSignatureLength = 4;
 
@@ -54,8 +54,8 @@ namespace Kernel
 		{
 			SDT* sdt = reinterpret_cast<SDT*>(xsdt->AddressArr[index]);
 
-			kcout << "ACPI: Checksum: " << number(sdt->Checksum) << endl;
-			kcout << "ACPI: Revision: " << number(sdt->Revision) << endl;
+			kout << "ACPI: Checksum: " << number(sdt->Checksum) << endl;
+			kout << "ACPI: Revision: " << number(sdt->Revision) << endl;
 
 			for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index)
 			{
@@ -64,8 +64,8 @@ namespace Kernel
 
 				if (signature_index == (cAcpiSignatureLength - 1))
 				{
-					kcout << "ACPI: SDT Signature: " << sdt->Signature << endl;
-					kcout << "ACPI: SDT OEM ID: " << sdt->OemId << endl;
+					kout << "ACPI: SDT Signature: " << sdt->Signature << endl;
+					kout << "ACPI: SDT OEM ID: " << sdt->OemId << endl;
 					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(xsdt->AddressArr[index]));
 				}
 			}

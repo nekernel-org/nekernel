@@ -75,7 +75,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 		;
 	if (!timeout)
 	{
-		kcout << "Timeout waiting for drive to become ready...\r";
+		kout << "Timeout waiting for drive to become ready...\r";
 		return false;
 	}
 
@@ -89,7 +89,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	UInt8 status = rt_in8(IO + ATA_REG_STATUS);
 	if (status & ATA_SR_ERR)
 	{
-		kcout << "ATA Error, aborting...\r";
+		kout << "ATA Error, aborting...\r";
 		return false;
 	}
 
@@ -107,7 +107,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	// Step 7: Check if the drive supports DMA
 	if (!(kATAData[63] & (1 << 8)) || !(kATAData[88] & 0xFF))
 	{
-		kcout << "No DMA support...\r";
+		kout << "No DMA support...\r";
 		ke_panic(RUNTIME_CHECK_BOOTSTRAP, "No DMA support on necessary disk driver.");
 
 		return false;
@@ -123,7 +123,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 		;
 	if (!timeout)
 	{
-		kcout << "DMA Initialization Timeout...\r";
+		kout << "DMA Initialization Timeout...\r";
 		return false;
 	}
 #endif // __ATA_DMA__

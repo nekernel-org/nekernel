@@ -43,7 +43,7 @@ namespace Kernel
 
 	char& RawIPAddress::operator[](const Size& index)
 	{
-		kcout << "[RawIPAddress::operator[]] Fetching Index...\r";
+		kout << "[RawIPAddress::operator[]] Fetching Index...\r";
 
 		static char IP_PLACEHOLDER = '0';
 		if (index > 4)
@@ -59,7 +59,7 @@ namespace Kernel
 
 	char& RawIPAddress6::operator[](const Size& index)
 	{
-		kcout << "[RawIPAddress6::operator[]] Fetching Index...\r";
+		kout << "[RawIPAddress6::operator[]] Fetching Index...\r";
 
 		static char IP_PLACEHOLDER = '0';
 		if (index > 8)

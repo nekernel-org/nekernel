@@ -14,11 +14,11 @@ EXTERN_C void rt_syscall_handle(Kernel::HAL::StackFrame* stack)
 {
 	if (stack->Rcx <= (kSyscalls.Count() - 1))
 	{
-		kcout << "syscall: enter.\r";
+		kout << "syscall: enter.\r";
 
 		if (kSyscalls[stack->Rcx].Leak().Leak().fHooked)
 			(kSyscalls[stack->Rcx].Leak().Leak().fProc)(stack);
 
-		kcout << "syscall: exit.\r";
+		kout << "syscall: exit.\r";
 	}
 }

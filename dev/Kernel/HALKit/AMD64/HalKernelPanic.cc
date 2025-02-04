@@ -81,8 +81,8 @@ namespace Kernel
 	{
 		if (!expr)
 		{
-			kcout << "FAILED: FILE: " << file << endl;
-			kcout << "FAILED: LINE: " << line << endl;
+			kout << "FAILED: FILE: " << file << endl;
+			kout << "FAILED: LINE: " << line << endl;
 
 			ke_panic(RUNTIME_CHECK_FAILED, file); // Runtime Check failed
 		}
