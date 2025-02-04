@@ -167,7 +167,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 
 static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 {
-	Kernel::UInt32 slots = kSATAPort->Ci;
+	Kernel::UInt32 slots = port->Ci;
 
 	for (Kernel::Int32 i = 0; i < (kAhciPortCnt); i++)
 	{
