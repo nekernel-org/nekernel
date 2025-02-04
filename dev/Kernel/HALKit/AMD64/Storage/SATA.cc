@@ -15,7 +15,6 @@
  *
  */
 
-#include "NewKit/Defines.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -123,41 +122,11 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 						while (YES)
 						{
-							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdFR)
-								continue;
-
 							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
 								continue;
 
 							break;
 						}
-
-						const auto kAHCIBaseAddress = mib_cast(4);
-
-						kSATAPort->Ports[kSATAPortIdx].Clb	= kAHCIBaseAddress + (kSATAPortIdx << 10);
-						kSATAPort->Ports[kSATAPortIdx].Clbu = 0;
-
-						rt_set_memory((VoidPtr)((UIntPtr)kSATAPort->Ports[kSATAPortIdx].Clb), 0, 1024);
-
-						kSATAPort->Ports[kSATAPortIdx].Fb  = kAHCIBaseAddress + (32 << 10) + (kSATAPortIdx << 8);
-						kSATAPort->Ports[kSATAPortIdx].Fbu = 0;
-
-						rt_set_memory((VoidPtr)((UIntPtr)kSATAPort->Ports[kSATAPortIdx].Fb), 0, 256);
-
-						HbaCmdHeader* cmd_header = (HbaCmdHeader*)((UIntPtr)kSATAPort->Ports[kSATAPortIdx].Clb);
-
-						for (Int32 i = 0; i < 32; i++)
-						{
-							cmd_header[i].Prdtl = 8;
-
-							cmd_header[i].Ctba	= kAHCIBaseAddress + (40 << 10) + (kSATAPortIdx << 13) + (i << 8);
-							cmd_header[i].Ctbau = 0;
-
-							rt_set_memory((VoidPtr)(UIntPtr)cmd_header[i].Ctba, 0, 256);
-						}
-
-						while (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
-							;
 
 						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
 						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
@@ -198,12 +167,9 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 
 static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 {
-	if (port == nullptr)
-		return -1;
+	Kernel::UInt32 slots = kSATAPort->Ci;
 
-	Kernel::UInt32 slots = (kSATAPort->Ports[kSATAPortIdx].Sact | kSATAPort->Ports[kSATAPortIdx].Ci);
-
-	for (Kernel::Int32 i = 0; i < ((kSATAPort->Cap & 0x1F) + 1); i++)
+	for (Kernel::Int32 i = 0; i < (kAhciPortCnt); i++)
 	{
 		if ((slots & 1) == 0)
 			return i;
@@ -284,10 +250,23 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	if (kSATAPort->Is & kHBAErrTaskFile)
 		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
-	FisRegD2H* d2h_fis = new FisRegD2H();
+	FisDmaSetup* setup_fis = new FisDmaSetup();
+	Kernel::rt_set_memory(reinterpret_cast<Kernel::VoidPtr>(setup_fis), 0, sizeof(FisDmaSetup));
 
-	kSATAPort->Ports[kSATAPortIdx].Fb = (Kernel::UInt32)((Kernel::UInt64)d2h_fis);
-	kSATAPort->Ports[kSATAPortIdx].Fbu = (Kernel::UInt32)((Kernel::UInt64)d2h_fis >> 32);
+	kSATAPort->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdST;
+	kSATAPort->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdFre;
+
+	while (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
+		kout << "Waiting for command engine to stop...\r";
+
+	kSATAPort->Ports[kSATAPortIdx].Fb  = (Kernel::UInt32)((Kernel::UInt64)setup_fis);
+	kSATAPort->Ports[kSATAPortIdx].Fbu = (Kernel::UInt32)((Kernel::UInt64)setup_fis >> 32);
+
+	kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
+	kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
+
+	if (kSATAPort->Is & (1 << 30))
+		kSATAPort->Is = (Kernel::UInt32)-1;
 
 	kSATAPort->Ports[kSATAPortIdx].Ci = (1 << slot);
 
@@ -299,7 +278,8 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 		if (kSATAPort->Is & kHBAErrTaskFile)
 			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
-		kout << "Waiting for the slot to be ready...\r";
+		kout << "Waiting for the slot to be ready:\r";
+		kout << "DTD: " << Kernel::hex_number(setup_fis->DTD) << endl;
 		kout << "CI: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Ci) << endl;
 		kout << "TFD: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Tfd) << endl;
 	}
@@ -311,6 +291,9 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	delete command_table;
 	command_table = nullptr;
+
+	delete setup_fis;
+	setup_fis = nullptr;
 }
 
 /***
