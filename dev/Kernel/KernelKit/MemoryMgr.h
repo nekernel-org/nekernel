@@ -62,16 +62,17 @@ namespace Kernel
 	/// @param cls The class to allocate.
 	/// @param args The args to pass.
 	template <typename T, typename... Args>
-	inline Void mm_new_class(_Input _Output T** cls, _Input Args&&... args)
+	inline BOOL mm_new_class(_Input _Output T** cls, _Input Args&&... args)
 	{
 		if (*cls)
 		{
 			err_global_get() = Kernel::kErrorInvalidData;
-			return;
+			return NO;
 		}
 
 		*cls = new T(move(args)...);
-	}
+    return *cls;
+  }
 
 	/// @brief Delete and nullify C++ class.
 	/// @param cls The class to delete.
