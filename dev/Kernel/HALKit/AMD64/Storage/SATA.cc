@@ -61,7 +61,7 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 
 	Kernel::UInt8 identify_data[kib_cast(4)] = {};
 
-	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(8));
+	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(4));
 
 	kCurrentDiskSectorCount = (identify_data[61] << 16) | identify_data[60];
 
@@ -99,8 +99,6 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 			const Kernel::UInt8	 kAhciPresent		  = 0x03;
 			const Kernel::UInt8	 kAhciIPMActive		  = 0x01;
 
-			Kernel::Boolean detected = false;
-
 			while (ahci_index < kMaxPortsImplemented)
 			{
 				if (ports_implemented)
@@ -133,17 +131,13 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 						drv_calculate_disk_geometry();
 
-						detected = YES;
-
-						break;
+						return YES;
 					}
 				}
 
 				ports_implemented >>= 1;
 				++ahci_index;
 			}
-
-			return detected;
 		}
 	}
 
