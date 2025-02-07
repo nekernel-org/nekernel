@@ -95,7 +95,7 @@ typedef struct FisRegD2H final
 	Kernel::UInt8 Reserved1 : 1;	// Reserved
 
 	Kernel::UInt8 Status; // Status register
-	Kernel::UInt8 Rrror;  // Error register
+	Kernel::UInt8 Error;  // Error register
 
 	// DWORD 1
 	Kernel::UInt8 Lba0;	  // LBA low register, 7:0
@@ -183,7 +183,7 @@ typedef struct FisDmaSetup final
 	Kernel::UInt8 Reserved1[2]; // Reserved
 
 	// DWORD 1&2
-	Kernel::UInt64 DmaBufferId; // DMA Buffer Identifier. Used to Identify DMA buffer in
+	volatile Kernel::UInt64 DmaBufferId; // DMA Buffer Identifier. Used to Identify DMA buffer in
 								// host memory. SATA Spec says host specific and not in
 								// Spec. Trying AHCI spec might work.
 
@@ -243,7 +243,7 @@ typedef struct HbaPort final
 	Kernel::UInt32 Serr;		  // 0x30, SATA error (SCR1:SError)
 	Kernel::UInt32 Sact;		  // 0x34, SATA active (SCR3:SActive)
 	Kernel::UInt32 Ci;			  // 0x38, command issue
-	Kernel::UInt32 Sntf;		  // 0x20, SATA notification (SCR4:SNotification)
+	Kernel::UInt32 Sntf;		  // 0x3C, SATA notification (SCR4:SNotification)
 	Kernel::UInt32 Fbs;			  // 0x40, FIS-based switch control
 	Kernel::UInt32 Reserved1[11]; // 0x44 ~ 0x6F, Reserved
 	Kernel::UInt32 Vendor[4];	  // 0x70 ~ 0x7F, vendor specific
@@ -328,7 +328,7 @@ typedef struct HbaCmdTbl final
 	Kernel::UInt8		Cfis[64]; // Command FIS
 	Kernel::UInt8		Acmd[16]; // ATAPI command, 12 or 16 bytes
 	Kernel::UInt8		Rsv[48];  // Reserved
-	struct HbaPrdtEntry Prdt[1];  // Physical region descriptor table entries, 0 ~ 65535
+	struct HbaPrdtEntry Prdt[];  // Physical region descriptor table entries, 0 ~ 65535
 } HbaCmdTbl;
 
 /// @brief Initializes an AHCI disk.

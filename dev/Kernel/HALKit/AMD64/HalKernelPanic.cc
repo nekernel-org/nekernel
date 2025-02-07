@@ -40,31 +40,9 @@ namespace Kernel
 		auto y = 10;
 		auto x = 10;
 
-		Char* message_apicid = new Char[128];
-		rt_set_memory(message_apicid, 0, 128);
-
-		rt_copy_memory((VoidPtr) "panic id: ", message_apicid, rt_string_len("panic id: "));
-		rt_to_string(message_apicid + rt_string_len("panic id: "), (UIntPtr)id, 10);
-
-		fb_render_string(message_apicid, y, x, panic_text);
-
-		y += 10;
-
-		fb_render_string((message ? message : "message: panic raised, going nowhere after this!"), y, x, panic_text);
-
-		y += 10;
-
-		Char* message_cr2 = new Char[128];
-		rt_set_memory(message_cr2, 0, 128);
-
-		rt_copy_memory((VoidPtr) "cr2: ", message_cr2, rt_string_len("cr2: "));
-		rt_to_string(message_cr2 + rt_string_len("cr2: "), (UIntPtr)hal_read_cr2(), 10);
-
-		fb_render_string(message_cr2, y, x, panic_text);
-
-		y += 10;
-
-		fb_clear();
+		kout << "Kernel_Panic: " << message << endl;
+		kout << "Kernel_Panic_ID: " << hex_number(id) << endl;
+		kout << "Kernel_Panic_CR2:" << hex_number((UIntPtr)hal_read_cr2()) << endl;
 
 		RecoveryFactory::Recover();
 	}
@@ -81,8 +59,8 @@ namespace Kernel
 	{
 		if (!expr)
 		{
-			kout << "FAILED: FILE: " << file << endl;
-			kout << "FAILED: LINE: " << line << endl;
+			kout << "Kernel_Panic_File: " << file << endl;
+			kout << "Kernel_Panic_Line: " << line << endl;
 
 			ke_panic(RUNTIME_CHECK_FAILED, file); // Runtime Check failed
 		}

@@ -67,6 +67,8 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 
 	kout << "Disk Size: " << Kernel::number(drv_get_size()) << endl;
 	kout << "Highest Disk LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
+
+	while(1);
 }
 
 /// @brief Initializes an AHCI disk.
@@ -200,8 +202,8 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	MUST_PASS(command_table);
 
-	command_table->Prdt[0].Dba			= ((Kernel::UInt32)(Kernel::UInt64)buffer);
-	command_table->Prdt[0].Dbau			= (((Kernel::UInt64)buffer >> 32));
+	command_table->Prdt[0].Dba			= ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer));
+	command_table->Prdt[0].Dbau			= (((Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) >> 32));
 	command_table->Prdt[0].Dbc			= ((size_buffer)-1);
 	command_table->Prdt[0].InterruptBit = 1;
 
@@ -219,9 +221,6 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	if (Identify)
 		h2d_fis->Command = kAHCICmdIdentify;
 
-	h2d_fis->FeatureLow = h2d_fis->FeatureLow | 1;
-	h2d_fis->FeatureLow = h2d_fis->FeatureLow | (1 << 2);
-
 	h2d_fis->Lba0 = (lba & 0xFF);
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
 	h2d_fis->Lba2 = (lba >> 16) & 0xFF;
@@ -238,31 +237,13 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kAhciSRBsy | kAhciSRDrq)))
 	{
-		kout << "Waiting for the tfd to be ready...\r";
+		kout << "Waiting for the TFD to be ready...\r";
 	}
 
 	if (kSATAPort->Is & kHBAErrTaskFile)
 		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
-	FisDmaSetup* setup_fis = new FisDmaSetup();
-	Kernel::rt_set_memory(reinterpret_cast<Kernel::VoidPtr>(setup_fis), 0, sizeof(FisDmaSetup));
-
-	kSATAPort->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdST;
-	kSATAPort->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdFre;
-
-	while (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
-		kout << "Waiting for command engine to stop...\r";
-
-	kSATAPort->Ports[kSATAPortIdx].Fb  = (Kernel::UInt32)((Kernel::UInt64)setup_fis);
-	kSATAPort->Ports[kSATAPortIdx].Fbu = (Kernel::UInt32)((Kernel::UInt64)setup_fis >> 32);
-
-	kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
-	kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
-
-	if (kSATAPort->Is & (1 << 30))
-		kSATAPort->Is = (Kernel::UInt32)-1;
-
-	kSATAPort->Ports[kSATAPortIdx].Ci = (1 << slot);
+	kSATAPort->Ports[kSATAPortIdx].Ci |= (1 << slot);
 
 	while (YES)
 	{
@@ -273,7 +254,6 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
 		kout << "Waiting for the slot to be ready:\r";
-		kout << "DTD: " << Kernel::hex_number(setup_fis->DTD) << endl;
 		kout << "CI: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Ci) << endl;
 		kout << "TFD: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Tfd) << endl;
 	}
@@ -285,9 +265,6 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	delete command_table;
 	command_table = nullptr;
-
-	delete setup_fis;
-	setup_fis = nullptr;
 }
 
 /***
