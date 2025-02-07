@@ -167,8 +167,13 @@ struct PACKED NEFS_CATALOG_STRUCT final
 	Kernel::Lba DataFork;
 	Kernel::Lba ResourceFork;
 
+	/// Tree allocation tracker.
 	Kernel::Lba NextSibling;
 	Kernel::Lba PrevSibling;
+
+	/// Best-buddy tracker.
+	Kernel::Lba NextBestSibling;
+	Kernel::Lba NextPrevSibling;
 };
 
 /// @brief Fork type, contains a data page.

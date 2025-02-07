@@ -106,8 +106,6 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 					StringBuilder::Equals(cur_fork.CatalogName, the_fork.CatalogName))
 					break;
 
-				kout << "Next fork: " << hex_number(cur_fork.NextSibling) << endl;
-
 				lba_prev = lba;
 				lba		 = cur_fork.NextSibling;
 
@@ -142,7 +140,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 		drv.fPacket.fPacketSize	   = sizeof(NEFS_FORK_STRUCT);
 		drv.fPacket.fPacketContent = &the_fork;
 
-		kout << "Writing fork metadata...\r";
+		kout << "Allocating fork block...\r";
 
 		// drv.fOutput(drv.fPacket);
 
@@ -857,7 +855,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::GetCatalog(_Input const Char* n
 /// @brief Closes a catalog, (frees it).
 /// @param catalog the catalog to close.
 /// @return
-Boolean NeFileSystemParser::CloseCatalog(_Input _Output NEFS_CATALOG_STRUCT* catalog)
+_Output Boolean NeFileSystemParser::CloseCatalog(_Input _Output NEFS_CATALOG_STRUCT* catalog)
 {
 	if (!catalog)
 		return false;
@@ -871,7 +869,7 @@ Boolean NeFileSystemParser::CloseCatalog(_Input _Output NEFS_CATALOG_STRUCT* cat
 /// @brief Mark catalog as removed.
 /// @param catalog The catalog structure.
 /// @return if the catalog was removed or not.
-Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
+_Output Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
 {
 	if (!catalog_name ||
 		StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()))
