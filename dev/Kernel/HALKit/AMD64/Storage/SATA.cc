@@ -67,8 +67,6 @@ static Kernel::Void drv_calculate_disk_geometry() noexcept
 
 	kout << "Disk Size: " << Kernel::number(drv_get_size()) << endl;
 	kout << "Highest Disk LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
-
-	while(1);
 }
 
 /// @brief Initializes an AHCI disk.

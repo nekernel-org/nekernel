@@ -48,7 +48,7 @@ default.
 #define kNeFSDataFork	  "main_data"
 #define kNeFSResourceFork "main_rsrc"
 
-#define kNeFSForkSize (sizeof(NFS_FORK_STRUCT))
+#define kNeFSForkSize (sizeof(NEFS_FORK_STRUCT))
 
 #define kNeFSPartitionTypeStandard (7)
 #define kNeFSPartitionTypePage	   (8)
@@ -92,16 +92,14 @@ default.
 
 /// @note Start after the partition map header. (Virtual addressing)
 #define kNeFSRootCatalogStartAddress (1024)
-#define kNeFSCatalogStartAddress	 ((2048) + sizeof(NFS_ROOT_PARTITION_BLOCK))
+#define kNeFSCatalogStartAddress	 ((2048) + sizeof(NEFS_ROOT_PARTITION_BLOCK))
 
 #define kResourceTypeDialog (10)
 #define kResourceTypeString (11)
 #define kResourceTypeMenu	(12)
 #define kResourceTypeSound	(13)
 #define kResourceTypeFont	(14)
-
-#define kConfigLen (64)
-#define kPartLen   (32)
+#define kNeFSPartLen   (32)
 
 #define kNeFSFlagDeleted	 (70)
 #define kNeFSFlagUnallocated (0)
@@ -110,14 +108,14 @@ default.
 #define kNeFSMimeNameLen (200)
 #define kNeFSForkNameLen (200)
 
-#define kNeFSFrameworkExt	".fwrk"
-#define kNeFSStepsExt		".step"
-#define kNeFSApplicationExt ".app"
+#define kNeFSFrameworkExt	".fwrk/"
+#define kNeFSStepsExt		".step/"
+#define kNeFSApplicationExt ".app/"
 #define kNeFSJournalExt		".jrnl"
 
-struct NFS_CATALOG_STRUCT;
-struct NFS_FORK_STRUCT;
-struct NFS_ROOT_PARTITION_BLOCK;
+struct NEFS_CATALOG_STRUCT;
+struct NEFS_FORK_STRUCT;
+struct NEFS_ROOT_PARTITION_BLOCK;
 
 enum
 {
@@ -140,7 +138,7 @@ enum
 };
 
 /// @brief Catalog type.
-struct PACKED NFS_CATALOG_STRUCT final
+struct PACKED NEFS_CATALOG_STRUCT final
 {
 	BOOL ForkOrCatalog : 1 {0};
 
@@ -177,7 +175,7 @@ struct PACKED NFS_CATALOG_STRUCT final
 /// @note The way we store is way different than how other filesystems do, specific chunk of code are
 /// written into either the data fork or resource fork, the resource fork is reserved for file metadata.
 /// whereas the data fork is reserved for file data.
-struct PACKED NFS_FORK_STRUCT final
+struct PACKED NEFS_FORK_STRUCT final
 {
 	BOOL ForkOrCatalog : 1 {1};
 
@@ -201,10 +199,10 @@ struct PACKED NFS_FORK_STRUCT final
 };
 
 /// @brief Partition block type
-struct PACKED NFS_ROOT_PARTITION_BLOCK final
+struct PACKED NEFS_ROOT_PARTITION_BLOCK final
 {
 	Kernel::Char Ident[kNeFSIdentLen]	 = {0};
-	Kernel::Char PartitionName[kPartLen] = {0};
+	Kernel::Char PartitionName[kNeFSPartLen] = {0};
 
 	Kernel::Int32 Flags;
 	Kernel::Int32 Kind;
@@ -269,29 +267,29 @@ namespace Kernel
 		/// @param catalog it's catalog
 		/// @param theFork the fork itself.
 		/// @return the fork
-		_Output BOOL CreateFork(_Input NFS_FORK_STRUCT& in);
+		_Output BOOL CreateFork(_Input NEFS_FORK_STRUCT& in);
 
 		/// @brief Find fork inside New filesystem.
 		/// @param catalog the catalog.
 		/// @param name the fork name.
 		/// @return the fork.
-		_Output NFS_FORK_STRUCT* FindFork(_Input NFS_CATALOG_STRUCT* catalog,
+		_Output NEFS_FORK_STRUCT* FindFork(_Input NEFS_CATALOG_STRUCT* catalog,
 										  _Input const Char* name,
 										  Boolean			 data);
 
-		_Output Void RemoveFork(_Input NFS_FORK_STRUCT* fork);
+		_Output Void RemoveFork(_Input NEFS_FORK_STRUCT* fork);
 
-		_Output Void CloseFork(_Input NFS_FORK_STRUCT* fork);
+		_Output Void CloseFork(_Input NEFS_FORK_STRUCT* fork);
 
-		_Output NFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalog_name, Lba& ou_lba, Bool search_hidden = YES, Bool local_search = NO);
+		_Output NEFS_CATALOG_STRUCT* FindCatalog(_Input const Char* catalog_name, Lba& ou_lba, Bool search_hidden = YES, Bool local_search = NO);
 
-		_Output NFS_CATALOG_STRUCT* GetCatalog(_Input const Char* name);
+		_Output NEFS_CATALOG_STRUCT* GetCatalog(_Input const Char* name);
 
-		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name,
+		_Output NEFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name,
 												  _Input const Int32& flags,
 												  _Input const Int32& kind);
 
-		_Output NFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name);
+		_Output NEFS_CATALOG_STRUCT* CreateCatalog(_Input const Char* name);
 
 		_Output Bool WriteCatalog(_Input const Char* catalog,
 								  _Input Bool		 rsrc,
@@ -299,18 +297,18 @@ namespace Kernel
 								  _Input SizeT		 sz,
 								  _Input const Char* name);
 
-		_Output VoidPtr ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catalog,
+		_Output VoidPtr ReadCatalog(_Input _Output NEFS_CATALOG_STRUCT* catalog,
 									_Input Bool						   isRsrcFork,
 									_Input SizeT					   dataSz,
 									_Input const Char* forkName);
 
-		_Output Bool Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off);
+		_Output Bool Seek(_Input _Output NEFS_CATALOG_STRUCT* catalog, SizeT off);
 
-		_Output SizeT Tell(_Input _Output NFS_CATALOG_STRUCT* catalog);
+		_Output SizeT Tell(_Input _Output NEFS_CATALOG_STRUCT* catalog);
 
 		_Output Bool RemoveCatalog(_Input const Char* catalog);
 
-		_Output Bool CloseCatalog(_InOut NFS_CATALOG_STRUCT* catalog);
+		_Output Bool CloseCatalog(_InOut NEFS_CATALOG_STRUCT* catalog);
 
 		/// @brief Make a EPM+NeFS drive out of the disk.
 		/// @param drive The drive to write on.
@@ -339,7 +337,7 @@ namespace Kernel
 	class NeFileSystemJournal final
 	{
 	private:
-		NFS_CATALOG_STRUCT* mNode{nullptr};
+		NEFS_CATALOG_STRUCT* mNode{nullptr};
 
 	public:
 		explicit NeFileSystemJournal(const char* stamp = nullptr)
@@ -408,7 +406,7 @@ namespace Kernel
 				!mNode)
 				return NO;
 
-			NFS_FORK_STRUCT new_fork{};
+			NEFS_FORK_STRUCT new_fork{};
 
 			rt_copy_memory(mStamp, new_fork.CatalogName, rt_string_len(mStamp));
 			rt_copy_memory(journal_name, new_fork.ForkName, rt_string_len(journal_name));

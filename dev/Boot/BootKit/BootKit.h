@@ -238,7 +238,7 @@ namespace Boot
 
 			fDiskDev.Read(buf, BootDev::kSectorSize);
 
-			NFS_ROOT_PARTITION_BLOCK* blockPart = reinterpret_cast<NFS_ROOT_PARTITION_BLOCK*>(buf);
+			NEFS_ROOT_PARTITION_BLOCK* blockPart = reinterpret_cast<NEFS_ROOT_PARTITION_BLOCK*>(buf);
 
 			BTextWriter writer;
 
@@ -271,18 +271,18 @@ namespace Boot
 		/// @param blob_list the blobs.
 		/// @param blob_cnt the number of blobs to write.
 		/// @param part the NeFS partition block.
-		Boolean WriteCatalogList(BFileDescriptor* blob_list, SizeT blob_cnt, NFS_ROOT_PARTITION_BLOCK& part)
+		Boolean WriteCatalogList(BFileDescriptor* blob_list, SizeT blob_cnt, NEFS_ROOT_PARTITION_BLOCK& part)
 		{
 			BFileDescriptor* blob	  = blob_list;
 			Lba				 startLba = part.StartCatalog;
 			BTextWriter		 writer;
 
-			NFS_CATALOG_STRUCT catalogKind{0};
+			NEFS_CATALOG_STRUCT catalogKind{0};
 
 			constexpr auto cNeFSCatalogPadding = 4;
 
 			catalogKind.PrevSibling = startLba;
-			catalogKind.NextSibling = (startLba + sizeof(NFS_CATALOG_STRUCT) * cNeFSCatalogPadding);
+			catalogKind.NextSibling = (startLba + sizeof(NEFS_CATALOG_STRUCT) * cNeFSCatalogPadding);
 
 			/// Fill catalog kind.
 			catalogKind.Kind = blob->fKind;
@@ -295,9 +295,9 @@ namespace Boot
 			CopyMem(catalogKind.Name, blob->fFileName, StrLen(blob->fFileName));
 
 			fDiskDev.Leak().mBase = startLba;
-			fDiskDev.Leak().mSize = sizeof(NFS_CATALOG_STRUCT);
+			fDiskDev.Leak().mSize = sizeof(NEFS_CATALOG_STRUCT);
 
-			fDiskDev.Write((Char*)&catalogKind, sizeof(NFS_CATALOG_STRUCT));
+			fDiskDev.Write((Char*)&catalogKind, sizeof(NEFS_CATALOG_STRUCT));
 
 			writer.Write(L"BootZ: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
 
@@ -337,7 +337,7 @@ namespace Boot
 			return false;
 		}
 
-		NFS_ROOT_PARTITION_BLOCK part{0};
+		NEFS_ROOT_PARTITION_BLOCK part{0};
 
 		CopyMem(part.Ident, kNeFSIdent, kNeFSIdentLen - 1);
 		CopyMem(part.PartitionName, part_name, StrLen(part_name));
@@ -346,7 +346,7 @@ namespace Boot
 		part.CatalogCount = blob_cnt;
 		part.Kind		  = kNeFSHardDrive;
 		part.SectorSize	  = 512;
-		part.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NFS_CATALOG_STRUCT);
+		part.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NEFS_CATALOG_STRUCT);
 		part.SectorCount  = fDiskDev.GetSectorsCount();
 		part.FreeSectors  = fDiskDev.GetSectorsCount();
 		part.StartCatalog = kNeFSCatalogStartAddress;
@@ -354,9 +354,9 @@ namespace Boot
 		part.Flags		  = kNeFSPartitionTypeBoot | kNeFSPartitionTypeStandard;
 
 		fDiskDev.Leak().mBase = kNeFSRootCatalogStartAddress;
-		fDiskDev.Leak().mSize = sizeof(NFS_ROOT_PARTITION_BLOCK);
+		fDiskDev.Leak().mSize = sizeof(NEFS_ROOT_PARTITION_BLOCK);
 
-		fDiskDev.Write((Char*)&part, sizeof(NFS_ROOT_PARTITION_BLOCK));
+		fDiskDev.Write((Char*)&part, sizeof(NEFS_ROOT_PARTITION_BLOCK));
 
 		BTextWriter writer;
 
