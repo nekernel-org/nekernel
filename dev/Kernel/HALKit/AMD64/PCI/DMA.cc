@@ -22,8 +22,9 @@ namespace Kernel
 	{
 		if (!fAddress)
 			return false;
+		
 		if (offset == 0)
-			return true;
+			return false;
 
 		kout << "[DMAWrapper::IsIn] Checking offset..\n";
 		return reinterpret_cast<UIntPtr>(fAddress) >= offset;

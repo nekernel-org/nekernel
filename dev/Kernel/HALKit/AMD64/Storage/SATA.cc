@@ -152,7 +152,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 Kernel::Boolean drv_std_detected(Kernel::Void)
 {
-	return kPCIDevice.DeviceId() != 0xFFFF;
+	return kPCIDevice.DeviceId() != 0xFFFF && kCurrentDiskSectorCount > 0;
 }
 
 Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
