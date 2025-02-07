@@ -106,6 +106,12 @@ namespace Kernel
 
 			x += kFontSizeX;
 
+			if (y > kHandoverHeader->f_GOP.f_Height)
+			{
+				y = kFontSizeY;
+				FB::fb_clear_video();
+			}
+
 			++index;
 		}
 
