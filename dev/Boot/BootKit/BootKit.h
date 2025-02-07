@@ -379,7 +379,7 @@ namespace Boot
 		epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
 		epm_boot.LbaEnd	   = fDiskDev.GetDiskSize();
 		epm_boot.SectorSz  = part.SectorSize;
-		epm_boot.Kind	   = kEPMZkaOS;
+		epm_boot.Kind	   = kEPMNeOS;
 		epm_boot.NumBlocks = part.CatalogCount;
 
 		CopyMem(epm_boot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), StrLen(kBlockName));

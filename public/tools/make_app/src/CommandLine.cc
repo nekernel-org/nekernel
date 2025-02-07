@@ -7,7 +7,7 @@
 #include <Framework.h>
 #include <Steps.h>
 
-/// @brief This program makes a framework directory for ZKA OS.
+/// @brief This program makes a framework directory for NeKernel OS.
 
 int main(int argc, char* argv[])
 {

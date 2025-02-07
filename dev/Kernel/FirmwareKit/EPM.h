@@ -87,8 +87,9 @@ struct PACKED EPM_PART_BLOCK
 	Kernel::Int64 NumBlocks;
 	Kernel::Int64 SectorSz;
 	Kernel::Int64 LbaStart; // base offset
-	Kernel::Int64 LbaEnd;	// addition of lba_start to get the end of partition.
+	Kernel::Int64 LbaEnd;	// end offset
 	Kernel::Int16 Kind;
+	Kernel::Int16 Flags;
 	Kernel::Int32 FsVersion;
 	Kernel::Char  Fs[kEPMFilesystemLength]; /* NeFS, ffs2... */
 	Kernel::Char  Reserved[kEPMReserveLen]; // to fill a full sector.
@@ -103,7 +104,7 @@ enum
 	kEPMGenericOS = 0xcf, // Generic OS
 	kEPMLinux	  = 0x8f, // Linux on EPM
 	kEPMBSD		  = 0x9f, // Berkeley Soft. Distribution
-	kEPMZkaOS	  = 0x1f, // This OS.
+	kEPMNeOS	  = 0x1f, // This OS.
 	kEPMInvalidOS = 0xff,
 };
 

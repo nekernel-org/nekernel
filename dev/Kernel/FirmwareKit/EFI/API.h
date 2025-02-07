@@ -12,7 +12,7 @@
 #include <KernelKit/MSDOS.h>
 #include <KernelKit/PE.h>
 
-#define kZKASubsystem (17)
+#define kNeKernelSubsystem (17)
 
 #ifdef __ZBAOSLDR__
 // forward decl.

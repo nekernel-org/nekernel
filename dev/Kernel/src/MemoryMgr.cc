@@ -24,7 +24,7 @@
 //! @file Heap.cc
 //! @brief This Heap algorithm serves as the main memory manager.
 
-#define kKernelHeapMagic   (0xD4D7D5)
+#define kKernelHeapMagic   (0xD4D75)
 #define kKernelHeapAlignSz (__BIGGEST_ALIGNMENT__)
 
 namespace Kernel
@@ -40,25 +40,25 @@ namespace Kernel
 		struct PACKED HEAP_INFORMATION_BLOCK final
 		{
 			///! @brief 32-bit value which contains the magic number of the heap.
-			UInt64 fMagic;
+			UInt32 fMagic : 24;
 
 			///! @brief Is the heap present?
-			Boolean fPresent : 1;
+			UInt8 fPresent : 1;
 
 			/// @brief Is this valued owned by the user?
-			Boolean fWriteRead : 1;
+			UInt8 fWriteRead : 1;
 
 			/// @brief Is this valued owned by the user?
-			Boolean fUser : 1;
+			UInt8 fUser : 1;
 
 			/// @brief Is this a page pointer?
-			Boolean fPage : 1;
+			UInt8 fPage : 1;
 
 			/// @brief 32-bit CRC checksum.
 			UInt32 fCRC32;
 
 			/// @brief 64-bit Allocation flags.
-			UInt64 fFlags;
+			UInt16 fFlags;
 
 			/// @brief 64-bit pointer size.
 			SizeT fSize;

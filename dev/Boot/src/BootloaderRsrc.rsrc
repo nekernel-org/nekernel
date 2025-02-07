@@ -9,7 +9,7 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "Amlal EL Mahrouss"
-      VALUE "FileDescription", "ZKA OS Loader."
+      VALUE "FileDescription", "NeKernel OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "zbaosldr"
       VALUE "LegalCopyright", "Copyright (C) 2024, Amlal EL Mahrouss all rights reserved."

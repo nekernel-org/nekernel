@@ -71,8 +71,8 @@ namespace Kernel
 		}
 
 		*cls = new T(move(args)...);
-    return *cls;
-  }
+		return *cls;
+	}
 
 	/// @brief Delete and nullify C++ class.
 	/// @param cls The class to delete.

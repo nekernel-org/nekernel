@@ -150,7 +150,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NFS_FORK_STRUCT& the_fork)
 
 		/// log what we have now.
 		kout << "Fork offset is at: " << hex_number(the_fork.DataOffset)
-			  << endl;
+			 << endl;
 
 		kout << "Wrote fork metadata at: " << hex_number(lba) << endl;
 
@@ -413,9 +413,9 @@ _Output NFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*
 			drive.fOutput(drive.fPacket);
 
 			kout << "Create new catalog with flags: "
-				  << hex_number(child_catalog->Flags) << endl;
+				 << hex_number(child_catalog->Flags) << endl;
 			kout << "Create new catalog with name: " << child_catalog->Name
-				  << endl;
+				 << endl;
 
 			delete catalog;
 			catalog = nullptr;
@@ -944,7 +944,7 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catal
 {
 	if (!catalog)
 	{
-		err_global_get() = kErrorFileNotFound;
+		err_global_get() = kErrorInvalidData;
 		return nullptr;
 	}
 
@@ -952,7 +952,7 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catal
 	Size dataForkSize = (!is_rsrc_fork) ? catalog->DataForkSize : catalog->ResourceForkSize;
 
 	kout << "catalog " << catalog->Name
-		  << ", fork: " << hex_number(dataForkLba) << endl;
+		 << ", fork: " << hex_number(dataForkLba) << endl;
 
 	NFS_FORK_STRUCT* fs_buf = new NFS_FORK_STRUCT();
 	auto			 drive	= kMountpoint.A();
@@ -1000,12 +1000,6 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NFS_CATALOG_STRUCT* catal
 
 bool NeFileSystemParser::Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT off)
 {
-	if (!catalog)
-	{
-		err_global_get() = kErrorFileNotFound;
-		return false;
-	}
-
 	err_global_get() = kErrorUnimplemented;
 	return false;
 }
@@ -1018,12 +1012,6 @@ bool NeFileSystemParser::Seek(_Input _Output NFS_CATALOG_STRUCT* catalog, SizeT 
 
 SizeT NeFileSystemParser::Tell(_Input _Output NFS_CATALOG_STRUCT* catalog)
 {
-	if (!catalog)
-	{
-		err_global_get() = kErrorFileNotFound;
-		return 0;
-	}
-
 	err_global_get() = kErrorUnimplemented;
 	return 0;
 }

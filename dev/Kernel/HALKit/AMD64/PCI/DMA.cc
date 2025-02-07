@@ -22,7 +22,7 @@ namespace Kernel
 	{
 		if (!fAddress)
 			return false;
-		
+
 		if (offset == 0)
 			return false;
 

@@ -38,7 +38,7 @@ namespace Kernel
 		{
 		}
 
-		explicit Variant(JSON* json)
+		explicit Variant(Json* json)
 			: fPtr((VoidPtr)json), fKind(VariantKind::kJson)
 		{
 		}

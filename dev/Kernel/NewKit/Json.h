@@ -15,17 +15,17 @@
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 
-#define kMaxJsonPath 4096
-#define kJSONLen	 32
-#define kJSONNull	 "null"
+#define kMaxJsonPath 8196
+#define kJSONLen	 256
+#define kJSONNull	 "[]"
 
 namespace Kernel
 {
-	/// @brief Json class
-	class JSON final
+	/// @brief JavaScript object class
+	class Json final
 	{
 	public:
-		explicit JSON()
+		explicit Json()
 		{
 			auto	len = kJSONLen;
 			KString key = KString(len);
@@ -35,14 +35,14 @@ namespace Kernel
 			this->AsValue() = key;
 		}
 
-		explicit JSON(SizeT lhsLen, SizeT rhsLen)
+		explicit Json(SizeT lhsLen, SizeT rhsLen)
 			: fKey(lhsLen), fValue(rhsLen)
 		{
 		}
 
-		~JSON() = default;
+		~Json() = default;
 
-		NE_COPY_DEFAULT(JSON);
+		NE_COPY_DEFAULT(Json);
 
 		const Bool& IsUndefined()
 		{
@@ -69,13 +69,13 @@ namespace Kernel
 			return fValue;
 		}
 
-		static JSON kNull;
+		static Json kNull;
 	};
 
 	/// @brief Json stream reader helper.
 	struct JsonStreamReader final
 	{
-		STATIC JSON In(const Char* full_array)
+		STATIC Json In(const Char* full_array)
 		{
 			auto	start_val	= '{';
 			auto	end_val		= '}';
@@ -84,7 +84,7 @@ namespace Kernel
 			if (full_array[0] != start_val)
 			{
 				if (full_array[0] != '[')
-					return JSON::kNull;
+					return Json::kNull;
 
 				start_val = '[';
 				end_val	  = ']';
@@ -97,7 +97,7 @@ namespace Kernel
 			SizeT key_len	= 0;
 			SizeT value_len = 0;
 
-			JSON type(kMaxJsonPath, kMaxJsonPath);
+			Json type(kMaxJsonPath, kMaxJsonPath);
 
 			for (SizeT i = 1; i < len; ++i)
 			{
@@ -147,5 +147,5 @@ namespace Kernel
 		}
 	};
 
-	using JsonStream = Stream<JsonStreamReader, JSON>;
+	using JsonStream = Stream<JsonStreamReader, Json>;
 } // namespace Kernel

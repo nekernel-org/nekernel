@@ -8,6 +8,8 @@
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Utils.h>
 #include <NewKit/New.h>
+#include <Mod/CoreGfx/FBMgr.h>
+#include <Mod/CoreGfx/TextMgr.h>
 
 namespace Kernel
 {
@@ -80,12 +82,30 @@ namespace Kernel
 		index = 0;
 		len	  = rt_string_len(bytes, 255);
 
+		static int x = kFontSizeX, y = kFontSizeY;
+		auto	   log_txt = RGB(0xff, 0xff, 0xff);
+
 		while (index < len)
 		{
 			if (bytes[index] == '\r')
 				HAL::rt_out8(Detail::kPort, '\r');
 
 			HAL::rt_out8(Detail::kPort, bytes[index] == '\r' ? '\n' : bytes[index]);
+
+			char tmp_str[2];
+			tmp_str[0] = bytes[index];
+			tmp_str[1] = 0;
+
+			fb_render_string(tmp_str, y, x, log_txt);
+
+			if (bytes[index] == '\r')
+			{
+				y += kFontSizeY;
+				x = kFontSizeX;
+			}
+
+			x += kFontSizeX;
+
 			++index;
 		}
 

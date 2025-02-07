@@ -20,12 +20,12 @@
 
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 
+#define kATADataLen 256
+
 using namespace Kernel;
 using namespace Kernel::HAL;
 
-/// bugs: 0
-
-#define kATADataLen 256
+/// BUGS: 0
 
 STATIC Boolean kATADetected			 = false;
 STATIC Int32   kATADeviceType		 = kATADeviceCount;
@@ -128,6 +128,8 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	}
 #endif // __ATA_DMA__
 
+	kout << "ATA is enabled now.\r";
+
 	return YES;
 }
 
@@ -149,10 +151,6 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
-#ifdef __ATA_PIO__
-	drv_std_wait_io(IO);
-#endif
-
 	drv_std_select(IO);
 
 	rt_out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
@@ -166,8 +164,6 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 #ifdef __ATA_PIO__
 	rt_out8(ATA_REG_COMMAND, ATA_CMD_READ_PIO);
-
-	drv_std_wait_io(IO);
 
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
@@ -201,10 +197,6 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
-#ifdef __ATA_PIO__
-	drv_std_wait_io(IO);
-#endif
-
 	drv_std_select(IO);
 
 	rt_out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
@@ -218,8 +210,6 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 
 #ifdef __ATA_PIO__
 	rt_out8(ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
-
-	drv_std_wait_io(IO);
 
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
@@ -243,6 +233,7 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 
 	while (rt_in8(ATA_REG_STATUS) & 0x01)
 		;
+
 	rt_out8(IO + 0x00, 0x00); // Start DMA engine
 #endif // __ATA_PIO__
 }
