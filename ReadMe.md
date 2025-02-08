@@ -14,9 +14,10 @@ A Microkernel written in C++ 20, with a System Call Interface Library, and custo
 ## Requirements:
 
 - MinGW/GCC
+- LibCompiler
 - Netwide Assembler
 - Git
-- BTB
+- BTB/OpenBTB
 
 ## Installation:
 

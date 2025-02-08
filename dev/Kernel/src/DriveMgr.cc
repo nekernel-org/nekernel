@@ -162,6 +162,8 @@ namespace Kernel
 
 			trait.fInit(trait.fPacket);
 
+			kout << "Reading EPM block...\r";
+
 			trait.fInput(trait.fPacket);
 
 			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait.fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)

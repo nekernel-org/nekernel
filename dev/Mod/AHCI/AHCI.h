@@ -91,7 +91,7 @@ typedef struct FisRegD2H final
 
 	Kernel::UInt8 PortMul : 4;		// Port multiplier
 	Kernel::UInt8 Reserved0 : 2;	// Reserved
-	Kernel::UInt8 InterruptBit : 1; // Interrupt bit
+	Kernel::UInt8 IE : 1; // Interrupt bit
 	Kernel::UInt8 Reserved1 : 1;	// Reserved
 
 	Kernel::UInt8 Status; // Status register
@@ -140,7 +140,7 @@ typedef struct FisPioSetup final
 	Kernel::UInt8 PortMul : 4;		// Port multiplier
 	Kernel::UInt8 Reserved0 : 1;	// Reserved
 	Kernel::UInt8 DTD : 1;			// Data transfer direction, 1 - device to host
-	Kernel::UInt8 InterruptBit : 1; // Interrupt bit
+	Kernel::UInt8 IE : 1; // Interrupt bit
 	Kernel::UInt8 Reserved1 : 1;
 
 	Kernel::UInt8 Status; // Status register
@@ -177,7 +177,7 @@ typedef struct FisDmaSetup final
 	Kernel::UInt8 PortMul : 4;		// Port multiplier
 	Kernel::UInt8 Reserved0 : 1;	// Reserved
 	Kernel::UInt8 DTD : 1;			// Data transfer direction, 1 - device to host
-	Kernel::UInt8 InterruptBit : 1; // Interrupt bit
+	Kernel::UInt8 IE : 1; // Interrupt bit
 	Kernel::UInt8 AutoEnable : 1;	// Auto-activate. Specifies if DMA Activate FIS is needed
 
 	Kernel::UInt8 Reserved1[2]; // Reserved
@@ -207,7 +207,7 @@ typedef struct FisDevBits final
 
 	Kernel::UInt8 Reserved0 : 5; // Reserved
 	Kernel::UInt8 R0 : 1;
-	Kernel::UInt8 InterruptBit : 1;
+	Kernel::UInt8 IE : 1;
 	Kernel::UInt8 N : 1;
 
 	Kernel::UInt8 StatusLow : 3;
@@ -320,7 +320,7 @@ typedef struct HbaPrdtEntry final
 	// DW3
 	Kernel::UInt32 Dbc : 22;		 // Byte count, 4M max
 	Kernel::UInt32 Reserved1 : 9;	 // Reserved
-	Kernel::UInt32 InterruptBit : 1; // Interrupt on completion
+	Kernel::UInt32 IE : 1; // Interrupt on completion
 } HbaPrdtEntry;
 
 typedef struct HbaCmdTbl final

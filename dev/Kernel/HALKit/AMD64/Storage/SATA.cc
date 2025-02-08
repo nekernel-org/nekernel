@@ -184,7 +184,12 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	if (slot == -1)
 		return;
 
+	if (size_buffer > mib_cast(4))
+		Kernel::ke_panic(RUNTIME_CHECK_FAILED, "AHCI only supports < 4mb DMA transfers.");
+
 	HbaCmdHeader* command_header = ((HbaCmdHeader*)((Kernel::UInt64)kSATAPort->Ports[kSATAPortIdx].Clb + kSATAPort->Ports[kSATAPortIdx].Clbu));
+
+	command_header += slot;
 
 	Kernel::rt_set_memory(reinterpret_cast<Kernel::VoidPtr>(command_header), 0, sizeof(HbaCmdHeader));
 
@@ -200,10 +205,10 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	MUST_PASS(command_table);
 
-	command_table->Prdt[0].Dba			= ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer));
-	command_table->Prdt[0].Dbau			= (((Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) >> 32));
-	command_table->Prdt[0].Dbc			= ((size_buffer)-1);
-	command_table->Prdt[0].InterruptBit = 1;
+	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer));
+	command_table->Prdt[0].Dbau = (((Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) >> 32));
+	command_table->Prdt[0].Dbc	= ((size_buffer)-1);
+	command_table->Prdt[0].IE	= 1;
 
 	command_header->Ctba  = ((Kernel::UInt32)(Kernel::UInt64)command_table);
 	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)command_table >> 32));

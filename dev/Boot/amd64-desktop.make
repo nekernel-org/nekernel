@@ -84,9 +84,16 @@ compile-amd64:
 run-efi-amd64-ahci:
 	$(EMU) $(EMU_FLAGS) -M q35 -hda $(IMG) -s -S
 
-.PHONY: run-efi-amd64-ata
-run-efi-amd64-ata:
+.PHONY: run-efi-amd64-ata-pio
+run-efi-amd64-ata-pio:
+	$(EMU) $(EMU_FLAGS) -M q35 -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
+
+.PHONY: run-efi-amd64-ata-dma
+run-efi-amd64-ata-dma:
 	$(EMU) $(EMU_FLAGS) -M q35 -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
+
+.PHONY: run-efi-amd64-ata
+run-efi-amd64-ata: run-efi-amd64-ata-dma
 
 # img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta specs.
 .PHONY: epm-img

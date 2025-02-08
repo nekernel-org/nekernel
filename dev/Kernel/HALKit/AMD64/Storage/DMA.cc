@@ -18,7 +18,7 @@
 #include <Mod/ATA/ATA.h>
 #include <ArchKit/ArchKit.h>
 
-#if defined(__ATA_PIO__) || defined(__ATA_DMA__)
+#if defined(__ATA_DMA__)
 
 #define kATADataLen 256
 
@@ -37,18 +37,18 @@ Boolean drv_std_wait_io(UInt16 IO)
 		rt_in8(IO + ATA_REG_STATUS);
 
 ATAWaitForIO_Retry:
-	auto rdy = rt_in8(IO + ATA_REG_STATUS);
+	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if ((rdy & ATA_SR_BSY))
+	if ((statRdy & ATA_SR_BSY))
 		goto ATAWaitForIO_Retry;
 
 ATAWaitForIO_Retry2:
-	rdy = rt_in8(IO + ATA_REG_STATUS);
+	statRdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if (rdy & ATA_SR_ERR)
+	if (statRdy & ATA_SR_ERR)
 		return false;
 
-	if (!(rdy & ATA_SR_DRDY))
+	if (!(statRdy & ATA_SR_DRDY))
 		goto ATAWaitForIO_Retry2;
 
 	return true;
@@ -64,45 +64,44 @@ Void drv_std_select(UInt16 Bus)
 
 Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 {
+	if (drv_std_detected())
+		return true;
+
 	UInt16 IO = Bus;
+
 	drv_std_select(IO);
 
+	// Bus init, NEIN bit.
 	rt_out8(IO + ATA_REG_NEIN, 1);
 
-	// Step 1: Wait until drive is not busy
-	int timeout = 100000;
-	while ((rt_in8(IO + ATA_REG_STATUS) & ATA_SR_BSY) && --timeout)
-		;
-	if (!timeout)
+	// identify until it's good.
+ATAInit_Retry:
+	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
+
+	if (statRdy & ATA_SR_ERR)
 	{
-		kout << "Timeout waiting for drive to become ready...\r";
 		return false;
 	}
 
-	// Step 2: Send IDENTIFY command
+	if ((statRdy & ATA_SR_BSY))
+		goto ATAInit_Retry;
+
 	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
-	// Step 3: Wait for the drive to be ready (not busy)
+	/// fetch serial info
+	/// model, speed, number of sectors...
+
 	drv_std_wait_io(IO);
 
-	// Step 4: Check for errors
-	UInt8 status = rt_in8(IO + ATA_REG_STATUS);
-	if (status & ATA_SR_ERR)
+	for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData)
 	{
-		kout << "ATA Error, aborting...\r";
-		return false;
+		kATAData[indexData] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
 	}
 
-	// Step 5: Read IDENTIFY DEVICE response
-	for (SizeT indexData = 0UL; indexData < kATADataLen; ++indexData)
-	{
-		kATAData[indexData] = rt_in16(IO + ATA_REG_DATA);
-	}
-
-	// Step 6: Set OutBus & OutMaster correctly
 	OutBus	  = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
-	OutMaster = (Drive == ATA_MASTER) ? ATA_MASTER : ATA_SLAVE;
+	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
+	return true;
 #ifdef __ATA_DMA__
 	// Step 7: Check if the drive supports DMA
 	if (!(kATAData[63] & (1 << 8)) || !(kATAData[88] & 0xFF))
@@ -162,20 +161,10 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
-#ifdef __ATA_PIO__
-	rt_out8(ATA_REG_COMMAND, ATA_CMD_READ_PIO);
-
-	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
-	{
-		drv_std_wait_io(IO);
-		rt_out16(IO + ATA_REG_DATA, Buf[IndexOff]);
-		drv_std_wait_io(IO);
-	}
-#else
 	if (Size > kib_cast(64))
 		ke_panic(RUNTIME_CHECK_FAILED, "ATA-DMA only supports < 64kb DMA transfers.");
 
-	Details::PRD* prd = (Details::PRD*)mib_cast(4);
+	Details::PRD* prd = new Details::PRD();
 	prd->mAddress	  = (UInt32)(UIntPtr)Buf;
 	prd->mByteCount	  = Size;
 	prd->mFlags		  = 0x8000;
@@ -187,8 +176,10 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 	while (rt_in8(ATA_REG_STATUS) & 0x01)
 		;
-	rt_out8(IO + 0x00, 0x00); // Start DMA engine
-#endif // __ATA_PIO__
+	rt_out8(IO + 0x00, 0x00); // Stop DMA engine
+
+	delete prd;
+	prd = nullptr;
 }
 
 Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
@@ -208,20 +199,10 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
-#ifdef __ATA_PIO__
-	rt_out8(ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
-
-	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
-	{
-		drv_std_wait_io(IO);
-		rt_out16(IO + ATA_REG_DATA, Buf[IndexOff]);
-		drv_std_wait_io(IO);
-	}
-#else
 	if (Size > kib_cast(64))
 		ke_panic(RUNTIME_CHECK_FAILED, "ATA-DMA only supports < 64kb DMA transfers.");
 
-	Details::PRD* prd = (Details::PRD*)mib_cast(4);
+	Details::PRD* prd = new Details::PRD();
 	prd->mAddress	  = (UInt32)(UIntPtr)Buf;
 	prd->mByteCount	  = Size;
 	prd->mFlags		  = 0x8000;
@@ -234,8 +215,10 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 	while (rt_in8(ATA_REG_STATUS) & 0x01)
 		;
 
-	rt_out8(IO + 0x00, 0x00); // Start DMA engine
-#endif // __ATA_PIO__
+	rt_out8(IO + 0x00, 0x00); // Stop DMA engine
+
+	delete prd;
+	prd = nullptr;
 }
 
 /// @brief is ATA detected?
@@ -258,4 +241,4 @@ Kernel::SizeT drv_get_size()
 	return (drv_get_sector_count()) * kATASectorSize;
 }
 
-#endif /* ifdef __ATA_PIO__ */
+#endif /* ifdef __ATA_DMA__ */

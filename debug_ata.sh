@@ -1,11 +1,11 @@
 #!/bin/sh
 
 export ATA_PIO_SUPPORT=1
-export ATA_DMA_SUPPORT=
+unset ATA_DMA_SUPPORT
 export DEBUG_SUPPORT=1
 
-cd dev/Kernel
+cd kernel
 make -f amd64-desktop.make all
-cd ../Boot
+cd ../boot
 make -f amd64-desktop.make all
-make -f amd64-desktop.make run-efi-amd64-ata
+make -f amd64-desktop.make run-efi-amd64-ata-pio
