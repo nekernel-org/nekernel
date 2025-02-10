@@ -235,7 +235,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 															   _Input const Int32& flags,
 															   _Input const Int32& kind)
 {
-	kout << "CreateCatalog(...)\r";
+	kout << "CreateCatalog(*...*)\r";
 
 	Lba out_lba = 0UL;
 
