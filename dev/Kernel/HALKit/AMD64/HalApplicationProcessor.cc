@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "NewKit/Macros.h"
 #include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <HALKit/AMD64/Processor.h>
@@ -143,7 +144,7 @@ namespace Kernel::HAL
 
 		while (Kernel::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000)
 		{
-			;
+			NE_UNUSED(0);
 		}
 	}
 
