@@ -89,10 +89,10 @@ typedef struct FisRegD2H final
 	// DWORD 0
 	Kernel::UInt8 FisType; // FIS_TYPE_REG_D2H
 
-	Kernel::UInt8 PortMul : 4;		// Port multiplier
-	Kernel::UInt8 Reserved0 : 2;	// Reserved
-	Kernel::UInt8 IE : 1; // Interrupt bit
-	Kernel::UInt8 Reserved1 : 1;	// Reserved
+	Kernel::UInt8 PortMul : 4;	 // Port multiplier
+	Kernel::UInt8 Reserved0 : 2; // Reserved
+	Kernel::UInt8 IE : 1;		 // Interrupt bit
+	Kernel::UInt8 Reserved1 : 1; // Reserved
 
 	Kernel::UInt8 Status; // Status register
 	Kernel::UInt8 Error;  // Error register
@@ -137,10 +137,10 @@ typedef struct FisPioSetup final
 	// DWORD 0
 	Kernel::UInt8 FisType; // FIS_TYPE_PIO_SETUP
 
-	Kernel::UInt8 PortMul : 4;		// Port multiplier
-	Kernel::UInt8 Reserved0 : 1;	// Reserved
-	Kernel::UInt8 DTD : 1;			// Data transfer direction, 1 - device to host
-	Kernel::UInt8 IE : 1; // Interrupt bit
+	Kernel::UInt8 PortMul : 4;	 // Port multiplier
+	Kernel::UInt8 Reserved0 : 1; // Reserved
+	Kernel::UInt8 DTD : 1;		 // Data transfer direction, 1 - device to host
+	Kernel::UInt8 IE : 1;		 // Interrupt bit
 	Kernel::UInt8 Reserved1 : 1;
 
 	Kernel::UInt8 Status; // Status register
@@ -174,18 +174,18 @@ typedef struct FisDmaSetup final
 	// DWORD 0
 	Kernel::UInt8 FisType; // FIS_TYPE_DMA_SETUP
 
-	Kernel::UInt8 PortMul : 4;		// Port multiplier
-	Kernel::UInt8 Reserved0 : 1;	// Reserved
-	Kernel::UInt8 DTD : 1;			// Data transfer direction, 1 - device to host
-	Kernel::UInt8 IE : 1; // Interrupt bit
-	Kernel::UInt8 AutoEnable : 1;	// Auto-activate. Specifies if DMA Activate FIS is needed
+	Kernel::UInt8 PortMul : 4;	  // Port multiplier
+	Kernel::UInt8 Reserved0 : 1;  // Reserved
+	Kernel::UInt8 DTD : 1;		  // Data transfer direction, 1 - device to host
+	Kernel::UInt8 IE : 1;		  // Interrupt bit
+	Kernel::UInt8 AutoEnable : 1; // Auto-activate. Specifies if DMA Activate FIS is needed
 
 	Kernel::UInt8 Reserved1[2]; // Reserved
 
 	// DWORD 1&2
 	volatile Kernel::UInt64 DmaBufferId; // DMA Buffer Identifier. Used to Identify DMA buffer in
-								// host memory. SATA Spec says host specific and not in
-								// Spec. Trying AHCI spec might work.
+										 // host memory. SATA Spec says host specific and not in
+										 // Spec. Trying AHCI spec might work.
 
 	// DWORD 3
 	Kernel::UInt32 Rsvd; // More reserved
@@ -318,9 +318,9 @@ typedef struct HbaPrdtEntry final
 	Kernel::UInt32 Dbau;	  // Data base address upper 32 bits
 	Kernel::UInt32 Reserved0; // Reserved
 	// DW3
-	Kernel::UInt32 Dbc : 22;		 // Byte count, 4M max
-	Kernel::UInt32 Reserved1 : 9;	 // Reserved
-	Kernel::UInt32 IE : 1; // Interrupt on completion
+	Kernel::UInt32 Dbc : 22;	  // Byte count, 4M max
+	Kernel::UInt32 Reserved1 : 9; // Reserved
+	Kernel::UInt32 IE : 1;		  // Interrupt on completion
 } HbaPrdtEntry;
 
 typedef struct HbaCmdTbl final
@@ -328,7 +328,7 @@ typedef struct HbaCmdTbl final
 	Kernel::UInt8		Cfis[64]; // Command FIS
 	Kernel::UInt8		Acmd[16]; // ATAPI command, 12 or 16 bytes
 	Kernel::UInt8		Rsv[48];  // Reserved
-	struct HbaPrdtEntry Prdt[];  // Physical region descriptor table entries, 0 ~ 65535
+	struct HbaPrdtEntry Prdt[];	  // Physical region descriptor table entries, 0 ~ 65535
 } HbaCmdTbl;
 
 /// @brief Initializes an AHCI disk.

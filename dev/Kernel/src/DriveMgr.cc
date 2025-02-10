@@ -162,7 +162,7 @@ namespace Kernel
 
 			trait.fInit(trait.fPacket);
 
-			kout << "Reading EPM block...\r";
+			kout << "Reading block...\r";
 
 			trait.fInput(trait.fPacket);
 
@@ -191,9 +191,7 @@ namespace Kernel
 
 				kout << "Scheme Found: " << block_struct.Name << endl;
 
-				if (block_struct.Name[0] == 0 ||
-					block_struct.Name[0] == 0xFF ||
-					block_struct.Name[0] == 0xAF)
+				if (block_struct.Name[0] == 0)
 					kout << "Disk partition is empty (Read Only)\r";
 			}
 

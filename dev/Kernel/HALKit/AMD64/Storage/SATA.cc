@@ -15,6 +15,7 @@
  *
  */
 
+#include "NewKit/Macros.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -51,11 +52,11 @@ STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept;
 
-static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
+static Kernel::Int32 drvi_find_cmd_slot(HbaPort* port) noexcept;
 
-static Kernel::Void drv_calculate_disk_geometry() noexcept;
+static Kernel::Void drvi_calculate_disk_geometry() noexcept;
 
-static Kernel::Void drv_calculate_disk_geometry() noexcept
+static Kernel::Void drvi_calculate_disk_geometry() noexcept
 {
 	kCurrentDiskSectorCount = 0UL;
 
@@ -103,8 +104,6 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 			{
 				if (ports_implemented)
 				{
-					kout << "Port is implemented.\r";
-
 					Kernel::UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
 					Kernel::UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
 
@@ -123,13 +122,26 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
 								continue;
 
+							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdFR)
+								continue;
+
+							break;
+						}
+
+						kSATAPort->Ghc |= (1 << 31);
+
+						while (YES)
+						{
+							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
+								continue;
+
 							break;
 						}
 
 						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
 						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
 
-						drv_calculate_disk_geometry();
+						drvi_calculate_disk_geometry();
 
 						return YES;
 					}
@@ -159,7 +171,7 @@ Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::Size
 	drv_std_input_output<NO, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_sz, size_buffer);
 }
 
-static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
+static Kernel::Int32 drvi_find_cmd_slot(HbaPort* port) noexcept
 {
 	Kernel::UInt32 slots = port->Ci;
 
@@ -179,7 +191,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 {
 	auto slot = 0L;
 
-	slot = drv_find_cmd_slot(&kSATAPort->Ports[kSATAPortIdx]);
+	slot = drvi_find_cmd_slot(&kSATAPort->Ports[kSATAPortIdx]);
 
 	if (slot == -1)
 		return;
@@ -191,17 +203,13 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	command_header += slot;
 
-	Kernel::rt_set_memory(reinterpret_cast<Kernel::VoidPtr>(command_header), 0, sizeof(HbaCmdHeader));
-
 	MUST_PASS(command_header);
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
 	command_header->Write = Write;
 	command_header->Prdtl = 1;
 
-	HbaCmdTbl* command_table = new HbaCmdTbl();
-
-	Kernel::rt_set_memory(reinterpret_cast<Kernel::VoidPtr>(command_table), 0, sizeof(HbaCmdTbl));
+	HbaCmdTbl* command_table = (HbaCmdTbl*)((Kernel::UIntPtr)command_header->Ctba + command_header->Ctbau);
 
 	MUST_PASS(command_table);
 
@@ -214,8 +222,6 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)command_table >> 32));
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)((Kernel::UInt64)command_table->Cfis);
-
-	Kernel::rt_set_memory(reinterpret_cast<Kernel::VoidPtr>(h2d_fis), 0, sizeof(FisRegH2D));
 
 	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
@@ -263,11 +269,8 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kAhciSRBsy | kAhciSRDrq)))
 	{
-		kout << "Waiting for the tfd to be ready...\r";
+		kout << "Waiting for the TFD to be ready...\r";
 	}
-
-	delete command_table;
-	command_table = nullptr;
 }
 
 /***
