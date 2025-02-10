@@ -83,7 +83,8 @@ namespace Kernel
 		len	  = rt_string_len(bytes, 255);
 
 		static int x = kFontSizeX, y = kFontSizeY;
-		auto	   log_txt = RGB(0xff, 0xff, 0xff);
+
+		static BOOL not_important = NO;
 
 		while (index < len)
 		{
@@ -96,7 +97,19 @@ namespace Kernel
 			tmp_str[0] = bytes[index];
 			tmp_str[1] = 0;
 
-			fb_render_string(tmp_str, y, x, log_txt);
+			if (bytes[index] == '*')
+			{
+				if (not_important)
+					not_important = NO;
+				else
+					not_important = YES;
+
+				++index;
+
+				continue;
+			}
+
+			fb_render_string(tmp_str, y, x, not_important ? RGB(0xff, 0xff, 0xff) : RGB(0x00, 0x00, 0xff));
 
 			if (bytes[index] == '\r')
 			{

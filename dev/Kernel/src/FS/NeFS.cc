@@ -449,13 +449,12 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 /// @return If it was sucessful, see err_global_get().
 bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
 {
-#ifdef NE_EPM_SUPPORT
 	if (*part_name == 0 ||
 		endLba == 0)
 		return false;
 
 	// verify disk.
-	drive->fVerify(&drive->fPacket);
+	drive->fVerify(drive->fPacket);
 
 	rt_copy_memory((VoidPtr) "fs/nefs-packet", drive->fPacket.fPacketMime,
 				   rt_string_len("fs/nefs-packet"));
@@ -475,7 +474,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 	drive->fPacket.fPacketSize	  = sizeof(NEFS_ROOT_PARTITION_BLOCK);
 	drive->fPacket.fPacketLba	  = start;
 
-	drive->fInput(&drive->fPacket);
+	drive->fInput(drive->fPacket);
 
 	if (flags & kNeFSPartitionTypeBoot)
 	{
@@ -511,7 +510,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 			drive->fPacket.fPacketSize	  = sizeof(EPM_PART_BLOCK);
 			drive->fPacket.fPacketLba	  = outEpmLba;
 
-			drive->fInput(&drive->fPacket);
+			drive->fInput(drive->fPacket);
 
 			if (buf[0] == 0)
 			{
@@ -527,7 +526,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 				drive->fPacket.fPacketSize	  = sizeof(EPM_PART_BLOCK);
 				drive->fPacket.fPacketLba	  = outEpmLba;
 
-				drive->fOutput(&drive->fPacket);
+				drive->fOutput(drive->fPacket);
 
 				break;
 			}
@@ -579,7 +578,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 			drive->fPacket.fPacketSize	  = sizeof(NEFS_ROOT_PARTITION_BLOCK);
 			drive->fPacket.fPacketLba	  = kNeFSRootCatalogStartAddress;
 
-			drive->fOutput(&drive->fPacket);
+			drive->fOutput(drive->fPacket);
 
 			kout << "drive kind: " << drive->fDriveKind() << endl;
 
@@ -604,9 +603,8 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 		drive->fPacket.fPacketSize	  = sizeof(NEFS_ROOT_PARTITION_BLOCK);
 		drive->fPacket.fPacketLba	  = start;
 
-		drive->fInput(&drive->fPacket);
+		drive->fInput(drive->fPacket);
 	}
-#endif // NE_EPM_SUPPORT
 
 	return false;
 }
@@ -785,7 +783,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
 	NEFS_CATALOG_STRUCT temporary_catalog{};
 
 kNeFSSearchThroughCatalogList:
-	while (YES)
+	while (drive.fPacket.fPacketGood || !drive.fPacket.fPacketReadOnly)
 	{
 		drive.fPacket.fPacketLba	 = start_catalog_lba;
 		drive.fPacket.fPacketContent = &temporary_catalog;

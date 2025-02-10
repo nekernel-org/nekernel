@@ -134,7 +134,7 @@ namespace Kernel
 		constexpr auto kBlankDrive = "/media/blank/";
 
 		rt_copy_memory((VoidPtr)kBlankDrive, trait.fName, rt_string_len(kBlankDrive));
-		trait.fKind = kInvalidDisc;
+		trait.fKind = kInvalidDrive;
 
 		trait.fInput	 = io_drv_unimplemented;
 		trait.fOutput	 = io_drv_unimplemented;
@@ -169,7 +169,7 @@ namespace Kernel
 			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait.fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
 				trait.fPacket.fPacketReadOnly = NO;
-				trait.fKind					  = kMassStorageDisc | kEPMDrive;
+				trait.fKind					  = kMassStorageDrive | kEPMDrive;
 
 				kout << "Disk is EPM.\r";
 
@@ -187,12 +187,15 @@ namespace Kernel
 			else
 			{
 				trait.fPacket.fPacketReadOnly = YES;
-				trait.fKind					  = kMassStorageDisc | kUnformattedDrive | kReadOnlyDrive;
+				trait.fKind					  = kMassStorageDrive | kUnformattedDrive | kReadOnlyDrive;
 
 				kout << "Scheme Found: " << block_struct.Name << endl;
 
-				if (block_struct.Name[0] == 0)
+				if (block_struct.Name[0] == 0 ||
+					!rt_is_alnum(block_struct.Name[0]))
+				{
 					kout << "Disk partition is empty (Read Only)\r";
+				}
 			}
 
 			rt_copy_memory((VoidPtr) "*/*", trait.fPacket.fPacketMime,

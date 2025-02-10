@@ -539,7 +539,7 @@ typedef struct EfiBootServices
 	VoidPtr				Stall;
 	EfiStatusType(EFI_API* SetWatchdogTimer)(UInt32 Timeout, UInt64 WatchdogCode, UInt32 DataSize, EfiCharType* Data);
 	VoidPtr			  ConnectController;
-	VoidPtr			  DisconnectController;
+	VoidPtr			  DriveonnectController;
 	EfiOpenProtocol	  OpenProtocol;
 	VoidPtr			  CloseProtocol;
 	VoidPtr			  OpenProtocolInformation;

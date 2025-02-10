@@ -20,8 +20,9 @@ namespace Kernel
 	Size		rt_string_len(const Char* str);
 	Size		rt_string_len(const Char* str, SizeT _len);
 	Boolean		rt_to_string(Char* buf, UInt64 base, Int32 limit);
-	Boolean		is_newln(Char chr);
-	Boolean		is_space(Char chr);
+	Boolean		rt_is_newln(Char chr);
+	Boolean		rt_is_space(Char chr);
+	Int32		rt_is_alnum(Int32 character);
 	Int			rt_to_uppercase(Int c);
 	Int			rt_to_lower(Int c);
 	voidPtr		rt_string_in_string(const Char* in, const Char* needle);

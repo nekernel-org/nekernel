@@ -27,14 +27,14 @@ namespace Kernel
 {
 	enum
 	{
-		kInvalidDisc = -1,
+		kInvalidDrive = -1,
 
 		/// Storage types, combine with flags.
 		kBlockDevice	 = 0xAD,
-		kMassStorageDisc = 0xDA,
-		kFloppyDisc		 = 0xCD,
-		kOpticalDisc	 = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
-		kTapeDisc		 = 0xD7,
+		kMassStorageDrive = 0xDA,
+		kFloppyDrive		 = 0xCD,
+		kOpticalDrive	 = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
+		kTapeDrive		 = 0xD7,
 
 		/// Storage flags, combine with types.
 		kReadOnlyDrive	  = 0x10, // Read only drive
@@ -50,7 +50,7 @@ namespace Kernel
 	struct DriveTrait final
 	{
 		Char  fName[kDriveNameLen]; // /System, /Boot, //./Devices/USB...
-		Int32 fKind;				// fMassStorage, fFloppy, fOpticalDisc.
+		Int32 fKind;				// fMassStorage, fFloppy, fOpticalDrive.
 		Int32 fFlags;				// fReadOnly, fEPMDrive...
 
 		/// @brief Packet drive (StorageKit compilant.)

@@ -99,4 +99,7 @@ EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** en
 	Kernel::NeFS::fs_init_nefs();
 	Kernel::Detail::NeFilesystemInstaller installer{};
 #endif // __NE_AUTO_FORMAT__
+
+	while (YES)
+		;
 }

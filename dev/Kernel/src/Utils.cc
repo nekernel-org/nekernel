@@ -124,6 +124,11 @@ namespace Kernel
 		return character;
 	}
 
+	Int32 rt_is_alnum(Int32 character)
+	{
+		return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || (character >= '0' && character <= '9');
+	}
+
 	Int32 rt_to_lower(Int32 character)
 	{
 		if (character >= 'A' && character <= 'Z')
@@ -132,12 +137,12 @@ namespace Kernel
 		return character;
 	}
 
-	Boolean is_space(Char chr)
+	Boolean rt_is_space(Char chr)
 	{
 		return chr == ' ';
 	}
 
-	Boolean is_newln(Char chr)
+	Boolean rt_is_newln(Char chr)
 	{
 		return chr == '\n';
 	}

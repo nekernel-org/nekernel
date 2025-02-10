@@ -206,6 +206,6 @@ namespace Kernel
 #undef kout
 #endif // ifdef kout
 
-#define kout Kernel::TerminalDevice::The() << "[NeKernel] " << __FILE__ << ": "
+#define kout Kernel::TerminalDevice::The() << "[NeKernel] *" << __FILE__ << "*: "
 
 #define endl Kernel::TerminalDevice::The() << Kernel::end_line()
