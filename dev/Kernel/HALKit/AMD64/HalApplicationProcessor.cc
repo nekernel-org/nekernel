@@ -71,7 +71,7 @@ namespace Kernel::HAL
 				struct
 				{
 					UInt8  IoID;
-					UInt8  Resv;
+					UInt8  Zero;
 					UInt32 IoAddress;
 					UInt32 GISBase;
 				} IOAPIC;
@@ -82,7 +82,7 @@ namespace Kernel::HAL
 					UInt8  IRQSource;
 					UInt32 GSI;
 					UInt16 Flags;
-				} IOAPIC_NMI;
+				} LApicNMI;
 
 				struct
 				{
@@ -95,7 +95,7 @@ namespace Kernel::HAL
 				{
 					UInt16 Reserved;
 					UInt64 Address;
-				} LAPIC_ADDRESS_OVERRIDE;
+				} LApicOverride;
 
 				struct
 				{
@@ -103,7 +103,7 @@ namespace Kernel::HAL
 					UInt32 x2APICID;
 					UInt32 Flags;
 					UInt32 AcpiID;
-				} LAPIC_ADDRESS;
+				} LApic;
 			};
 		} List[]; // Records List
 	};
