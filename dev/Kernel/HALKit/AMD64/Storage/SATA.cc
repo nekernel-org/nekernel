@@ -15,7 +15,6 @@
  *
  */
 
-#include "KernelKit/DebugOutput.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -62,7 +61,7 @@ static Kernel::Void drvi_calculate_disk_geometry() noexcept
 
 	Kernel::UInt8 identify_data[kib_cast(4)] = {};
 
-	drvi_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(4));
+	drvi_std_input_output<NO, NO, YES>(0, identify_data, 0, kib_cast(4));
 
 	kCurrentDiskSectorCount = (identify_data[61] << 16) | identify_data[60];
 
@@ -224,7 +223,7 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	command_header->Ctba  = ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer));
 	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) >> 32));
 
-	FisRegH2D* h2d_fis = (FisRegH2D*)((Kernel::UInt64)command_table->Cfis);
+	FisRegH2D* h2d_fis = (FisRegH2D*)((Kernel::UInt64)&command_table->Cfis);
 
 	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
@@ -264,10 +263,6 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 
 		if (kSATAPort->Is & kHBAErrTaskFile)
 			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
-
-		kout << "Waiting for the slot to be ready:\r";
-		kout << "CI: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Ci) << endl;
-		kout << "TFD: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Tfd) << endl;
 	}
 
 	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kSATASRBsy | kSATASRDrq)))
