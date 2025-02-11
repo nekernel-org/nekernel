@@ -45,7 +45,7 @@ namespace Kernel
 			return fList;
 		}
 
-		SizeT Count()
+		SizeT Count() const
 		{
 			return fLen;
 		}
