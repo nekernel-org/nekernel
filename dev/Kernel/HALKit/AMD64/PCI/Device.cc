@@ -16,6 +16,8 @@ Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort 
 	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
 						  target);
 
+	Kernel::HAL::rt_wait_400ns();
+
 	return Kernel::HAL::rt_in32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
 
@@ -23,10 +25,12 @@ void NE_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
-						  (bar & ~3);
+						  (bar & 0xFC);
 
 	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
 						  target);
+
+	Kernel::HAL::rt_wait_400ns();
 }
 
 #define PCI_BAR_IO		 0x01
@@ -45,38 +49,52 @@ namespace Kernel::PCI
 
 	UInt Device::Read(UInt bar, Size sz)
 	{
-		NE_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
+		// Ensure aligned access by masking to 4-byte boundary
+		NE_PCISetCfgTarget(bar & 0xFC, fBus, fDevice, fFunction);
+
+		// Read 4 bytes and shift out the correct value
+		UInt data = HAL::rt_in32((UShort)PciConfigKind::ConfigData);
 
 		if (sz == 4)
-			return HAL::rt_in32((UShort)PciConfigKind::ConfigData + (bar & 3));
+			return data;
 		if (sz == 2)
-			return HAL::rt_in16((UShort)PciConfigKind::ConfigData + (bar & 3));
+			return (data >> ((bar & 2) * 8)) & 0xFFFF;
 		if (sz == 1)
-			return HAL::rt_in8((UShort)PciConfigKind::ConfigData + (bar & 3));
+			return (data >> ((bar & 3) * 8)) & 0xFF;
 
-		return 0xFFFF;
+		return (UShort)PciConfigKind::Invalid;
 	}
 
 	void Device::Write(UInt bar, UIntPtr data, Size sz)
 	{
-		NE_PCISetCfgTarget(bar, fBus, fDevice, fFunction);
+		NE_PCISetCfgTarget(bar & 0xFC, fBus, fDevice, fFunction);
 
 		if (sz == 4)
-			HAL::rt_out32((UShort)PciConfigKind::ConfigData + (fBar & 3), (UInt)data);
-		if (sz == 2)
-			HAL::rt_out16((UShort)PciConfigKind::ConfigData + (fBar & 3), (UShort)data);
-		if (sz == 1)
-			HAL::rt_out8((UShort)PciConfigKind::ConfigData + (fBar & 3), (UChar)data);
+			HAL::rt_out32((UShort)PciConfigKind::ConfigData, (UInt)data);
+		else if (sz == 2)
+		{
+			UInt temp = HAL::rt_in32((UShort)PciConfigKind::ConfigData);
+			temp &= ~(0xFFFF << ((bar & 2) * 8));
+			temp |= (data & 0xFFFF) << ((bar & 2) * 8);
+			HAL::rt_out32((UShort)PciConfigKind::ConfigData, temp);
+		}
+		else if (sz == 1)
+		{
+			UInt temp = HAL::rt_in32((UShort)PciConfigKind::ConfigData);
+			temp &= ~(0xFF << ((bar & 3) * 8));
+			temp |= (data & 0xFF) << ((bar & 3) * 8);
+			HAL::rt_out32((UShort)PciConfigKind::ConfigData, temp);
+		}
 	}
 
 	UShort Device::DeviceId()
 	{
-		return (UShort)(NE_PCIReadRaw(0x0 >> 16, fBus, fDevice, fFunction));
+		return (UShort)(NE_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
 	}
 
 	UShort Device::VendorId()
 	{
-		return (UShort)(NE_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
+		return (UShort)(NE_PCIReadRaw(0x0, fBus, fDevice, fFunction) & 0xFFFF);
 	}
 
 	UShort Device::InterfaceId()
@@ -106,20 +124,34 @@ namespace Kernel::PCI
 
 	void Device::EnableMmio(UInt32 bar_in)
 	{
-		bool enable = Read(bar_in, sizeof(UShort)) | (1 << 1);
-		Write(bar_in, enable, sizeof(UShort));
+		UInt32 enable = Read((UShort)PciConfigKind::CommandReg, sizeof(UInt32));
+		enable |= (1 << 1);
+
+		Write((UShort)PciConfigKind::CommandReg, enable, sizeof(UInt32));
 	}
 
 	void Device::BecomeBusMaster(UInt32 bar_in)
 	{
-		bool enable = Read(bar_in, sizeof(UShort)) | (1 << 2);
-		Write(bar_in, enable, sizeof(UShort));
+		UInt32 enable = Read((UShort)PciConfigKind::CommandReg, sizeof(UInt32));
+		enable |= (1 << 2);
+
+		Write((UShort)PciConfigKind::CommandReg, enable, sizeof(UInt32));
 	}
 
 	UIntPtr Device::Bar(UInt32 bar_in)
 	{
-		UInt32 bar = NE_PCIReadRaw(bar_in, fBus, fDevice, fFunction);
-		return bar;
+		UInt32 bar = NE_PCIReadRaw(bar_in & 0xFC, fBus, fDevice, fFunction);
+
+		if (bar & PCI_BAR_IO)
+			return bar & ~0x03;
+
+		if (bar & PCI_BAR_64)
+		{
+			UInt32 high = NE_PCIReadRaw((bar_in + 4) & 0xFC, fBus, fDevice, fFunction);
+			return ((UIntPtr)high << 32) | (bar & ~0x0F);
+		}
+
+		return bar & ~0x0F;
 	}
 
 	UShort Device::Vendor()

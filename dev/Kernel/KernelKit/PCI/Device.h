@@ -13,7 +13,8 @@ namespace Kernel::PCI
 	{
 		ConfigAddress = 0xCF8,
 		ConfigData	  = 0xCFC,
-		Invalid		  = 0xFFF
+		CommandReg   = 0x0004,
+		Invalid		  = 0xFFFF,
 	};
 
 	class Device final

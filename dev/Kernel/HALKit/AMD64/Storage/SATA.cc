@@ -91,6 +91,8 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(kSATABar5);
 
+			kout << hex_number((UIntPtr)mem_ahci)  << endl;
+
 			Kernel::UInt32 ports_implemented = mem_ahci->Pi;
 			Kernel::UInt16 ahci_index		 = 0;
 

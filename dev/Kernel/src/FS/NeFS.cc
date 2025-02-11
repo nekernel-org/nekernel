@@ -783,7 +783,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
 	NEFS_CATALOG_STRUCT temporary_catalog{};
 
 kNeFSSearchThroughCatalogList:
-	while (drive.fPacket.fPacketGood || !drive.fPacket.fPacketReadOnly)
+	while (drive.fPacket.fPacketGood)
 	{
 		drive.fPacket.fPacketLba	 = start_catalog_lba;
 		drive.fPacket.fPacketContent = &temporary_catalog;

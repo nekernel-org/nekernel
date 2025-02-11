@@ -17,9 +17,7 @@ namespace Kernel::PCI
 			{
 				for (int function = 0; function < NE_FUNCTION_COUNT; ++function)
 				{
-					auto bar = 0x00;
-
-					Device dev(bus, device, function, bar);
+					Device dev(bus, device, function, 0x00);
 
 					if (dev.Class() == (UChar)type)
 					{

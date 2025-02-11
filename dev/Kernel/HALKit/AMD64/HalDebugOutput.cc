@@ -122,7 +122,13 @@ namespace Kernel
 			if (y > kHandoverHeader->f_GOP.f_Height)
 			{
 				y = kFontSizeY;
-				FB::fb_clear_video();
+
+				fb_init();
+
+				FBDrawInRegion(fb_get_clear_clr(), FB::UIAccessibilty::Height(), FB::UIAccessibilty::Width(),
+				0, 0);
+
+				fb_clear();
 			}
 
 			++index;
