@@ -24,7 +24,7 @@ namespace Kernel
 
 		T& operator[](const SizeT& at)
 		{
-            MUST_PASS(at < this->Count());
+			MUST_PASS(at < this->Count());
 			return fArray[at];
 		}
 

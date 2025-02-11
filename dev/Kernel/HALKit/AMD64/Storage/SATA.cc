@@ -27,6 +27,7 @@
 #ifdef __AHCI__
 
 #define kHBAErrTaskFile (1 << 30)
+#define kHBACmdGhc		(1 << 31)
 #define kHBAPxCmdST		0x0001
 #define kHBAPxCmdFre	0x0010
 #define kHBAPxCmdFR		0x4000
@@ -91,7 +92,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(kSATABar5);
 
-			kout << hex_number((UIntPtr)mem_ahci)  << endl;
+			kout << hex_number((UIntPtr)mem_ahci) << endl;
 
 			Kernel::UInt32 ports_implemented = mem_ahci->Pi;
 			Kernel::UInt16 ahci_index		 = 0;
@@ -115,32 +116,9 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 						kSATAPortIdx = ahci_index;
 						kSATAPort	 = mem_ahci;
 
-						kSATAPort->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdST;
-						kSATAPort->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdFre;
-
-						while (YES)
-						{
-							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
-								continue;
-
-							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdFR)
-								continue;
-
-							break;
-						}
-
-						kSATAPort->Ghc |= (1 << 31);
-
-						while (YES)
-						{
-							if (kSATAPort->Ports[kSATAPortIdx].Cmd & kHBAPxCmdCR)
-								continue;
-
-							break;
-						}
-
 						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
 						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
+						kSATAPort->Ghc |= kHBACmdGhc;
 
 						drvi_calculate_disk_geometry();
 
@@ -204,10 +182,10 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 
 	MUST_PASS(command_header);
 
-	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
-	command_header->Write = Write;
-	command_header->Prdtl = 1;
-	command_header->Atapi = 0;
+	command_header->Cfl			 = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
+	command_header->Write		 = Write;
+	command_header->Prdtl		 = 1;
+	command_header->Atapi		 = 0;
 	command_header->Prefetchable = 1;
 
 	HbaCmdTbl* command_table = new HbaCmdTbl();
@@ -216,15 +194,17 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 
 	MUST_PASS(command_table);
 
-	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) & 0xFFFFFFFF);
-	command_table->Prdt[0].Dbau = (((Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) >> 32));
+	auto phys_dma_buf = Kernel::HAL::hal_get_phys_address(buffer);
+
+	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)phys_dma_buf & 0xFFFFFFFF);
+	command_table->Prdt[0].Dbau = (((Kernel::UInt64)phys_dma_buf << 32));
 	command_table->Prdt[0].Dbc	= ((size_buffer)-1);
 	command_table->Prdt[0].IE	= 1;
 
-	auto phys_dma = Kernel::HAL::hal_get_phys_address(command_table);
-	
-	command_header->Ctba  = ((Kernel::UInt32)(Kernel::UInt64)phys_dma & 0xFFFFFFFF);
-	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)phys_dma >> 32));
+	auto phys_dma_tbl = Kernel::HAL::hal_get_phys_address(command_table);
+
+	command_header->Ctba  = ((Kernel::UInt32)(Kernel::UInt64)phys_dma_tbl & 0xFFFFFFFF);
+	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)phys_dma_tbl << 32));
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)((Kernel::UInt64)&command_table->Cfis);
 
@@ -263,6 +243,9 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	{
 		if (kSATAPort->Ports[kSATAPortIdx].Ci == 0)
 			break;
+
+		kout << "AHCI Interrupt Status: " << Kernel::hex_number(kSATAPort->Is) << endl;
+		kout << "PxCMD: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Cmd) << endl;
 
 		if (kSATAPort->Is & kHBAErrTaskFile)
 			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");

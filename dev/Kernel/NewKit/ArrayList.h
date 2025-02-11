@@ -36,7 +36,7 @@ namespace Kernel
 
 		T& operator[](int index) const
 		{
-            MUST_PASS(index < this->Count());
+			MUST_PASS(index < this->Count());
 			return fList[index];
 		}
 
@@ -51,7 +51,7 @@ namespace Kernel
 		}
 
 	private:
-		T* fList{nullptr};
+		T*	  fList{nullptr};
 		SizeT fLen{0};
 	};
 

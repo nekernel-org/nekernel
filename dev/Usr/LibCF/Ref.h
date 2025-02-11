@@ -101,6 +101,6 @@ namespace LibCF
 	private:
 		Ref<T> fRef{nullptr};
 	};
-} // namespace Kernel
+} // namespace LibCF
 
 #endif // ifndef _NEWKIT_REF_H_

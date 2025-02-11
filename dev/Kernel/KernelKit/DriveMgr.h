@@ -30,11 +30,11 @@ namespace Kernel
 		kInvalidDrive = -1,
 
 		/// Storage types, combine with flags.
-		kBlockDevice	 = 0xAD,
+		kBlockDevice	  = 0xAD,
 		kMassStorageDrive = 0xDA,
-		kFloppyDrive		 = 0xCD,
-		kOpticalDrive	 = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
-		kTapeDrive		 = 0xD7,
+		kFloppyDrive	  = 0xCD,
+		kOpticalDrive	  = 0xDC, // CD-ROM/DVD-ROM/Blu-Ray
+		kTapeDrive		  = 0xD7,
 
 		/// Storage flags, combine with types.
 		kReadOnlyDrive	  = 0x10, // Read only drive

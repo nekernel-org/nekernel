@@ -14,11 +14,11 @@
 
 namespace LibCF
 {
-    class CFString;
-    class CFProperty;
+	class CFString;
+	class CFProperty;
 	class CFGUID;
 
-	template<typename Cls, SizeT N>
+	template <typename Cls, SizeT N>
 	class CFArray;
 
 	/// @brief handle to anything (number, ptr, string...)
@@ -36,18 +36,18 @@ namespace LibCF
 		CFProperty& operator=(const CFProperty&) = default;
 		CFProperty(const CFProperty&)			 = default;
 
-		Bool		StringEquals(CFString& name);
+		Bool		  StringEquals(CFString& name);
 		CFPropertyId& GetValue();
-		CFString&	GetKey();
+		CFString&	  GetKey();
 
 	private:
-		CFString*		   fName{nullptr};
-		CFPropertyId	   fValue{0UL};
-		Ref<CFGUID> fGUID{};
+		CFString*	 fName{nullptr};
+		CFPropertyId fValue{0UL};
+		Ref<CFGUID>	 fGUID{};
 	};
 
 	template <SizeT N>
 	using CFPropertyArray = CFArray<CFProperty, N>;
-} // namespace CFKit
+} // namespace LibCF
 
 #endif // !CFKIT_PROPS_H

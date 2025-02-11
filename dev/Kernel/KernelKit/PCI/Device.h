@@ -13,7 +13,7 @@ namespace Kernel::PCI
 	{
 		ConfigAddress = 0xCF8,
 		ConfigData	  = 0xCFC,
-		CommandReg   = 0x0004,
+		CommandReg	  = 0x0004,
 		Invalid		  = 0xFFFF,
 	};
 
