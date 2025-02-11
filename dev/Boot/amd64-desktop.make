@@ -30,7 +30,7 @@ IMG_2=epm-master-2.img
 
 EMU_FLAGS=-net none -smp 4 -m 8G \
 			-bios $(BIOS) -drive \
-			file=fat:rw:src/Root/,index=3,format=raw
+			file=fat:rw:src/Root/,index=3,format=raw -accel kvm
 
 LD_FLAGS=-e Main --subsystem=10
 
