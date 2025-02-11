@@ -15,6 +15,7 @@
  *
  */
 
+#include "KernelKit/DebugOutput.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -200,7 +201,7 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	if (size_buffer > mib_cast(4))
 		Kernel::ke_panic(RUNTIME_CHECK_FAILED, "AHCI only supports < 4mb DMA transfers.");
 
-	HbaCmdHeader* command_header = ((HbaCmdHeader*)((Kernel::UInt64)kSATAPort->Ports[kSATAPortIdx].Clb + kSATAPort->Ports[kSATAPortIdx].Clbu));
+	HbaCmdHeader* command_header = ((HbaCmdHeader*)((Kernel::UInt64)(kSATAPort->Ports[kSATAPortIdx].Clbu) + kSATAPort->Ports[kSATAPortIdx].Clb));
 
 	command_header += slot;
 
@@ -209,8 +210,9 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
 	command_header->Write = Write;
 	command_header->Prdtl = 1;
+	command_header->Atapi = 0;
 
-	HbaCmdTbl* command_table = (HbaCmdTbl*)((Kernel::UIntPtr)command_header->Ctba + command_header->Ctbau);
+	HbaCmdTbl* command_table = (HbaCmdTbl*)((Kernel::UIntPtr)(command_header->Ctbau) + command_header->Ctba);
 
 	MUST_PASS(command_table);
 
@@ -219,8 +221,8 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	command_table->Prdt[0].Dbc	= ((size_buffer)-1);
 	command_table->Prdt[0].IE	= 1;
 
-	command_header->Ctba  = ((Kernel::UInt32)(Kernel::UInt64)command_table);
-	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)command_table >> 32));
+	command_header->Ctba  = ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer));
+	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) >> 32));
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)((Kernel::UInt64)command_table->Cfis);
 
@@ -253,7 +255,7 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	if (kSATAPort->Is & kHBAErrTaskFile)
 		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
-	kSATAPort->Ports[kSATAPortIdx].Ci |= (1 << slot);
+	kSATAPort->Ports[kSATAPortIdx].Ci = (1 << slot);
 
 	while (YES)
 	{
