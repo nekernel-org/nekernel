@@ -222,9 +222,9 @@ typedef struct FisDevBits final
 } FisDevBits;
 
 /// \brief Enable AHCI device bit in GHC register.
-#ifndef kAhciGHC_AE
-#define kAhciGHC_AE (31)
-#endif //! ifndef kAhciGHC_AE
+#ifndef kSATAGHC_AE
+#define kSATAGHC_AE (31)
+#endif //! ifndef kSATAGHC_AE
 
 typedef struct HbaPort final
 {

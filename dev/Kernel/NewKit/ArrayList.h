@@ -14,7 +14,7 @@ namespace Kernel
 	class ArrayList final
 	{
 	public:
-		explicit ArrayList(T* list)
+		explicit ArrayList(T* list, SizeT length)
 			: fList(reinterpret_cast<T>(list))
 		{
 		}
@@ -36,6 +36,7 @@ namespace Kernel
 
 		T& operator[](int index) const
 		{
+            MUST_PASS(index < this->Count());
 			return fList[index];
 		}
 
@@ -44,10 +45,14 @@ namespace Kernel
 			return fList;
 		}
 
-	private:
-		T* fList;
+		SizeT Count()
+		{
+			return fLen;
+		}
 
-		friend class InitHelpers;
+	private:
+		T* fList{nullptr};
+		SizeT fLen{0};
 	};
 
 	template <typename ValueType>

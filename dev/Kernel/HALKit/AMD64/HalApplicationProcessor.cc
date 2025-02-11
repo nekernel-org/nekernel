@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-#include "NewKit/Macros.h"
 #include <Mod/ACPI/ACPIFactoryInterface.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <HALKit/AMD64/Processor.h>

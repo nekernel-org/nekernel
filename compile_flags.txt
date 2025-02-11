@@ -14,3 +14,4 @@
 -D__x86_64__
 -D__aarch64__
 -DNE_USE_MBCI_FLASH
+-Iusr/

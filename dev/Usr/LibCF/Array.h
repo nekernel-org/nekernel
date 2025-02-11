@@ -6,21 +6,19 @@
 
 #pragma once
 
-#include <KernelKit/DebugOutput.h>
-#include <NewKit/ErrorOr.h>
-#include <NewKit/Defines.h>
+#include <LibSCI/SCI.h>
 
-namespace Kernel
+namespace LibCF
 {
 	template <typename T, SizeT N>
-	class Array final
+	class CFArray final
 	{
 	public:
-		explicit Array() = default;
-		~Array()		 = default;
+		explicit CFArray() = default;
+		~CFArray()		 = default;
 
-		Array& operator=(const Array&) = default;
-		Array(const Array&)			   = default;
+		CFArray& operator=(const CFArray&) = default;
+		CFArray(const CFArray&)			   = default;
 
 		T& operator[](const SizeT& at)
 		{
@@ -28,7 +26,7 @@ namespace Kernel
 			return fArray[at];
 		}
 
-		Boolean Empty()
+		Bool Empty()
 		{
 			return this->Count() > 0;
 		}
@@ -60,6 +58,6 @@ namespace Kernel
 	template <typename ValueType>
 	auto make_list(ValueType val)
 	{
-		return Array<ValueType, ARRAY_SIZE(val)>{val};
+		return CFArray<ValueType, ARRAY_SIZE(val)>{val};
 	}
 } // namespace Kernel

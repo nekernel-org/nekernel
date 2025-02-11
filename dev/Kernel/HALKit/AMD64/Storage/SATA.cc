@@ -15,7 +15,6 @@
  *
  */
 
-#include "NewKit/Macros.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -33,12 +32,12 @@
 #define kHBAPxCmdFR		0x4000
 #define kHBAPxCmdCR		0x8000
 
-#define kSataLBAMode (1 << 6)
+#define kSATALBAMode (1 << 6)
 
-#define kAhciSRBsy (0x80)
-#define kAhciSRDrq (0x08)
+#define kSATASRBsy (0x80)
+#define kSATASRDrq (0x08)
 
-#define kAhciPortCnt (0x20)
+#define kSATAPortCnt (0x20)
 
 #define kSATAProgIfAHCI (0x01)
 #define kSATASubClass	(0x06)
@@ -50,7 +49,7 @@ STATIC Kernel::SizeT kSATAPortIdx		   = 0UL;
 STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
-static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept;
+static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept;
 
 static Kernel::Int32 drvi_find_cmd_slot(HbaPort* port) noexcept;
 
@@ -62,7 +61,7 @@ static Kernel::Void drvi_calculate_disk_geometry() noexcept
 
 	Kernel::UInt8 identify_data[kib_cast(4)] = {};
 
-	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(4));
+	drvi_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(4));
 
 	kCurrentDiskSectorCount = (identify_data[61] << 16) | identify_data[60];
 
@@ -95,10 +94,10 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 			Kernel::UInt32 ports_implemented = mem_ahci->Pi;
 			Kernel::UInt16 ahci_index		 = 0;
 
-			const Kernel::UInt16 kMaxPortsImplemented = kAhciPortCnt;
+			const Kernel::UInt16 kMaxPortsImplemented = kSATAPortCnt;
 			const Kernel::UInt32 kSATASignature		  = 0x00000101;
-			const Kernel::UInt8	 kAhciPresent		  = 0x03;
-			const Kernel::UInt8	 kAhciIPMActive		  = 0x01;
+			const Kernel::UInt8	 kSATAPresent		  = 0x03;
+			const Kernel::UInt8	 kSATAIPMActive		  = 0x01;
 
 			while (ahci_index < kMaxPortsImplemented)
 			{
@@ -163,19 +162,19 @@ Kernel::Boolean drv_std_detected(Kernel::Void)
 
 Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
 {
-	drv_std_input_output<YES, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_sz, size_buffer);
+	drvi_std_input_output<YES, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_sz, size_buffer);
 }
 
 Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
 {
-	drv_std_input_output<NO, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_sz, size_buffer);
+	drvi_std_input_output<NO, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_sz, size_buffer);
 }
 
 static Kernel::Int32 drvi_find_cmd_slot(HbaPort* port) noexcept
 {
 	Kernel::UInt32 slots = port->Ci;
 
-	for (Kernel::Int32 i = 0; i < (kAhciPortCnt); i++)
+	for (Kernel::Int32 i = 0; i < (kSATAPortCnt); i++)
 	{
 		if ((slots & 1) == 0)
 			return i;
@@ -187,7 +186,7 @@ static Kernel::Int32 drvi_find_cmd_slot(HbaPort* port) noexcept
 }
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
-static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept
+static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept
 {
 	auto slot = 0L;
 
@@ -237,14 +236,14 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	h2d_fis->Lba4 = (lba >> 32) & 0xFF;
 	h2d_fis->Lba5 = (lba >> 40) & 0xFF;
 
-	h2d_fis->Device = kSataLBAMode;
+	h2d_fis->Device = kSATALBAMode;
 
 	// 28-bit LBA mode, fis is done being configured.
 
 	h2d_fis->CountLow  = sector_sz & 0xFF;
 	h2d_fis->CountHigh = (sector_sz >> 8) & 0xFF;
 
-	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kAhciSRBsy | kAhciSRDrq)))
+	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kSATASRBsy | kSATASRDrq)))
 	{
 		kout << "Waiting for the TFD to be ready...\r";
 	}
@@ -267,7 +266,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 		kout << "TFD: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Tfd) << endl;
 	}
 
-	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kAhciSRBsy | kAhciSRDrq)))
+	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kSATASRBsy | kSATASRDrq)))
 	{
 		kout << "Waiting for the TFD to be ready...\r";
 	}

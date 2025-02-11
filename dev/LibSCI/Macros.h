@@ -54,3 +54,18 @@ typedef IOObject  FSObject;
 typedef SCIObject DLLObject;
 typedef SCIObject ThreadObject;
 typedef SCIObject SocketObject;
+
+#ifdef __cplusplus
+typedef decltype(nullptr) nullPtr;
+typedef decltype(nullptr) NullPtr;
+#endif
+
+EXTERN_C void _rtl_assert(Bool expr, const Char* origin);
+
+#define MUST_PASS(X) _rtl_assert(X, __FILE__)
+
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(a)              \
+	(((sizeof(a) / sizeof(*(a))) / \
+	  (static_cast<Kernel::Size>(!(sizeof(a) % sizeof(*(a)))))))
+#endif

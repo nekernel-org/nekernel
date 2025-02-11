@@ -23,21 +23,20 @@ struct GPUCmdBuffer;
 /// ------------------------------------------------------------------------------------------ //
 struct GPUCmdBuffer final
 {
-	SizeT	X, Y, Z;
-	VoidPtr FrameData;
-	SizeT	FrameDataSz;
-	SizeT	BackBufferLayer;
+	VoidPtr Data;
+	SizeT	DataSz;
+	SizeT	BufferLayer;
 	Bool	IsGPGPUData;
-	Bool	BackBufferFirst;
+	Bool	BufferFirst;
 
 	Bool isGPGPUData()
 	{
-		return !this->BackBufferFirst && this->IsGPGPUData;
+		return !this->BufferFirst && this->IsGPGPUData;
 	}
 
 	Bool isValid()
 	{
-		return this->FrameData && this->FrameDataSz > 0;
+		return this->Data && (this->DataSz > 0) && (MmGetHeapFlags(this->Data) != -1);
 	}
 };
 

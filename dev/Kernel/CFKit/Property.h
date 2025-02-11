@@ -13,7 +13,7 @@
 #include <NewKit/KString.h>
 #include <CFKit/GUIDWrapper.h>
 
-#define kMaxPropLen (255U)
+#define kMaxPropLen (256U)
 
 namespace CFKit
 {
@@ -23,7 +23,7 @@ namespace CFKit
 	using PropertyId = UIntPtr;
 
 	/// @brief Kernel property class.
-	/// @example /Properties/SmpCoreClass or /Properties/KernelVersionClass
+	/// @example /prop/smp_max or /prop/kern_ver
 	class Property
 	{
 	public:
@@ -34,7 +34,7 @@ namespace CFKit
 		Property& operator=(const Property&) = default;
 		Property(const Property&)			 = default;
 
-		bool		StringEquals(KString& name);
+		BOOL		StringEquals(KString& name);
 		PropertyId& GetValue();
 		KString&	GetKey();
 
