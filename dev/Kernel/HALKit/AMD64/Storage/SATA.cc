@@ -184,7 +184,7 @@ static Kernel::Int32 drvi_find_cmd_slot(HbaPort* port) noexcept
 		slots >>= 1;
 	}
 
-	return -1;
+	return 0;
 }
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
@@ -200,9 +200,7 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	if (size_buffer > mib_cast(4))
 		Kernel::ke_panic(RUNTIME_CHECK_FAILED, "AHCI only supports < 4mb DMA transfers.");
 
-	HbaCmdHeader* command_header = ((HbaCmdHeader*)((Kernel::UInt64)(kSATAPort->Ports[kSATAPortIdx].Clbu) + kSATAPort->Ports[kSATAPortIdx].Clb));
-
-	command_header += slot;
+	HbaCmdHeader* command_header = ((HbaCmdHeader*)((Kernel::UInt64)(kSATAPort->Ports[kSATAPortIdx].Clbu << 32) | kSATAPort->Ports[kSATAPortIdx].Clb)) + slot;
 
 	MUST_PASS(command_header);
 
@@ -210,18 +208,23 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	command_header->Write = Write;
 	command_header->Prdtl = 1;
 	command_header->Atapi = 0;
+	command_header->Prefetchable = 1;
 
-	HbaCmdTbl* command_table = (HbaCmdTbl*)((Kernel::UIntPtr)(command_header->Ctbau) + command_header->Ctba);
+	HbaCmdTbl* command_table = new HbaCmdTbl();
+
+	Kernel::rt_set_memory(command_table, 0, sizeof(HbaCmdTbl));
 
 	MUST_PASS(command_table);
 
-	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer));
+	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) & 0xFFFFFFFF);
 	command_table->Prdt[0].Dbau = (((Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) >> 32));
 	command_table->Prdt[0].Dbc	= ((size_buffer)-1);
 	command_table->Prdt[0].IE	= 1;
 
-	command_header->Ctba  = ((Kernel::UInt32)(Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer));
-	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)Kernel::HAL::hal_get_phys_address(buffer) >> 32));
+	auto phys_dma = Kernel::HAL::hal_get_phys_address(command_table);
+	
+	command_header->Ctba  = ((Kernel::UInt32)(Kernel::UInt64)phys_dma & 0xFFFFFFFF);
+	command_header->Ctbau = ((Kernel::UInt32)((Kernel::UInt64)phys_dma >> 32));
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)((Kernel::UInt64)&command_table->Cfis);
 
@@ -258,7 +261,7 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 
 	while (YES)
 	{
-		if ((kSATAPort->Ports[kSATAPortIdx].Ci & (1 << slot)) == 0)
+		if (kSATAPort->Ports[kSATAPortIdx].Ci == 0)
 			break;
 
 		if (kSATAPort->Is & kHBAErrTaskFile)
@@ -269,6 +272,9 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	{
 		kout << "Waiting for the TFD to be ready...\r";
 	}
+
+	delete command_table;
+	command_table = nullptr;
 }
 
 /***

@@ -289,8 +289,6 @@ typedef struct HbaCmdHeader final
 
 	Kernel::UInt32 Ctba;  // Command table descriptor base address
 	Kernel::UInt32 Ctbau; // Command table descriptor base address upper 32 bits
-
-	Kernel::UInt32 Reserved1[4]; // Reserved
 } HbaCmdHeader;
 
 typedef struct HbaFis final
