@@ -58,7 +58,7 @@
 /// !@brief EPM boot block address.
 #define kEPMBootBlockLba (0U)
 
-#define kEPMReserveLen (401)
+#define kEPMReserveLen (399)
 
 struct EPM_GUID;
 struct EPM_PART_BLOCK;
