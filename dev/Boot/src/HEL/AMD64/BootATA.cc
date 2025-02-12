@@ -85,6 +85,8 @@ ATAInit_Retry:
 		writer.Write(
 			L"BootZ: ATA: Not an IDE based drive.\r");
 
+		EFI::ThrowError(L"ERROR", L"ATA");
+
 		return false;
 	}
 

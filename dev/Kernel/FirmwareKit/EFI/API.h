@@ -11,8 +11,10 @@
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/MSDOS.h>
 #include <KernelKit/PE.h>
+#include <BootKit/Qr.h>
 
 #define kNeKernelSubsystem (17)
+#define kNeWebsiteMacro	   "https://vswirl.com/help"
 
 #ifdef __ZBAOSLDR__
 // forward decl.
@@ -77,6 +79,23 @@ Bascially frees everything we have in the EFI side.
 		ST->ConOut->OutputString(ST->ConOut, Reason);
 
 		ST->ConOut->OutputString(ST->ConOut, L" ***\r");
+
+		constexpr auto ver	 = 4;
+		auto		   ecc	 = qr::Ecc::H;
+		auto		   input = kNeWebsiteMacro;
+		auto		   len	 = StrLen(kNeWebsiteMacro);
+
+		qr::Qr<ver>	   encoder;
+		qr::QrDelegate del;
+
+		encoder.encode(input, len, ecc, 0); // Manual mask 0
+
+		constexpr auto whereX = 10;
+		constexpr auto whereY = 10;
+
+		/// tell delegate to draw encoded QR.
+		del.draw<ver>(encoder, whereX,
+					  whereY);
 
 		EFI::Stop();
 	}
