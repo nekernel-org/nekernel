@@ -28,6 +28,7 @@
 
 #define kHBAErrTaskFile (1 << 30)
 #define kHBACmdGhc		(1 << 31)
+#define kHBACmdAE		(1 << 0)
 #define kHBAPxCmdST		0x0001
 #define kHBAPxCmdFre	0x0010
 #define kHBAPxCmdFR		0x4000
@@ -116,9 +117,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 						kSATAPortIdx = ahci_index;
 						kSATAPort	 = mem_ahci;
 
-						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
-						kSATAPort->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
-						kSATAPort->Ghc |= kHBACmdGhc;
+						kSATAPort->Ghc |= kHBACmdAE;
 
 						drvi_calculate_disk_geometry();
 
@@ -178,7 +177,7 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	if (size_buffer > mib_cast(4))
 		Kernel::ke_panic(RUNTIME_CHECK_FAILED, "AHCI only supports < 4mb DMA transfers.");
 
-	HbaCmdHeader* command_header = ((HbaCmdHeader*)((Kernel::UInt64)(kSATAPort->Ports[kSATAPortIdx].Clbu << 32) | kSATAPort->Ports[kSATAPortIdx].Clb)) + slot;
+	HbaCmdHeader* command_header = ((HbaCmdHeader*)((Kernel::UInt64)(kSATAPort->Ports[kSATAPortIdx].Clbu) | kSATAPort->Ports[kSATAPortIdx].Clb)) + slot;
 
 	MUST_PASS(command_header);
 
@@ -229,11 +228,6 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	h2d_fis->CountLow  = sector_sz & 0xFF;
 	h2d_fis->CountHigh = (sector_sz >> 8) & 0xFF;
 
-	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kSATASRBsy | kSATASRDrq)))
-	{
-		kout << "Waiting for the TFD to be ready...\r";
-	}
-
 	if (kSATAPort->Is & kHBAErrTaskFile)
 		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
@@ -244,16 +238,11 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 		if (kSATAPort->Ports[kSATAPortIdx].Ci == 0)
 			break;
 
-		kout << "AHCI Interrupt Status: " << Kernel::hex_number(kSATAPort->Is) << endl;
+		kout << "PxCI: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Ci) << endl;
 		kout << "PxCMD: " << Kernel::hex_number(kSATAPort->Ports[kSATAPortIdx].Cmd) << endl;
 
 		if (kSATAPort->Is & kHBAErrTaskFile)
 			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
-	}
-
-	while ((kSATAPort->Ports[kSATAPortIdx].Tfd & (kSATASRBsy | kSATASRDrq)))
-	{
-		kout << "Waiting for the TFD to be ready...\r";
 	}
 
 	delete command_table;

@@ -14,7 +14,7 @@ Purpose: LibSCI Macros header.
 /// @brief Macros and core types.
 /***********************************************************************************/
 
-#include <CompilerHint.h>
+#include <LibSCI/CompilerHint.h>
 
 #define ATTRIBUTE(X) __attribute__((X))
 
@@ -29,6 +29,8 @@ Purpose: LibSCI Macros header.
 #define FILE_MAX_LEN 256
 
 typedef bool Bool;
+typedef bool BOOL;
+typedef bool Boolean;
 typedef void Void;
 
 typedef __UINT64_TYPE__ UInt64;
@@ -57,10 +59,10 @@ typedef SCIObject SocketObject;
 
 #ifdef __cplusplus
 typedef decltype(nullptr) nullPtr;
-typedef decltype(nullptr) NullPtr;
+typedef nullPtr			  NullPtr;
 #endif
 
-EXTERN_C void _rtl_assert(Bool expr, const Char* origin);
+IMPORT_C void _rtl_assert(Bool expr, const Char* origin);
 
 #define MUST_PASS(X) _rtl_assert(X, __FILE__)
 

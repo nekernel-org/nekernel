@@ -28,9 +28,17 @@ BIOS=OVMF.fd
 IMG=epm-master-1.img
 IMG_2=epm-master-2.img
 
+ifeq ($(shell uname), Darwin)
+EMU_FLAGS=-net none -smp 4 -m 8G \
+			-bios $(BIOS) -drive \
+			file=fat:rw:src/Root/,index=3,format=raw
+endif
+
+ifneq ($(shell uname), Darwin)
 EMU_FLAGS=-net none -smp 4 -m 8G \
 			-bios $(BIOS) -drive \
 			file=fat:rw:src/Root/,index=3,format=raw -accel kvm
+endif
 
 LD_FLAGS=-e Main --subsystem=10
 

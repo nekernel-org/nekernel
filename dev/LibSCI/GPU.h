@@ -10,7 +10,7 @@ Purpose: GFX System Calls.
 #ifndef SCIKIT_GPU_H
 #define SCIKIT_GPU_H
 
-#include <SCI.h>
+#include <LibSCI/SCI.h>
 
 struct GPUCmdBuffer;
 
@@ -31,7 +31,7 @@ struct GPUCmdBuffer final
 
 	Bool isGPGPUData()
 	{
-		return !this->BufferFirst && this->IsGPGPUData;
+		return this->isValid() && !this->BufferFirst && this->IsGPGPUData;
 	}
 
 	Bool isValid()
