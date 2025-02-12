@@ -46,6 +46,7 @@ namespace Kernel
 		UInt16 HostType;
 		UInt16 HostFlags;
 		UInt8  Error;
+		UInt32 MMIOTest;
 		UInt8  Status;
 		UInt8  InterruptEnable;
 		UInt64 BaseAddressRegister;
