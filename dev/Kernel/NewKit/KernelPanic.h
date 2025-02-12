@@ -16,12 +16,22 @@ namespace Kernel
 
 #define MUST_PASS_COMPILER(EXPR, MSG) static_assert(EXPR, MSG)
 
+#ifdef TRY
+#undef TRY
+#endif
+
+#define TRY(X) { auto fn = X; if ((fn()) == NO) { MUST_PASS(NO); }}
+
+#ifdef __MUST_PASS
+#undef __MUST_PASS
+#endif
+
 #define __MUST_PASS(EXPR, FILE, LINE) \
 	Kernel::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
 
 #ifdef __DEBUG__
 #define MUST_PASS(EXPR) __MUST_PASS((EXPR), __FILE__, __LINE__)
-#define assert(EXPR)	MUST_PASS(EXPR, RUNTIME_CHECK_EXPRESSION)
+#define assert(EXPR)	MUST_PASS(EXPR)
 #else
 #define MUST_PASS(EXPR) (Kernel::Void)(EXPR)
 #define assert(EXPR)	(Kernel::Void)(EXPR)
@@ -55,13 +65,3 @@ namespace Kernel
 {
 	void ke_panic(const Int32& id, const Char* message = nullptr);
 } // namespace Kernel
-
-#ifdef TRY
-#undef TRY
-#endif
-
-#define TRY(FN)           \
-	if (!FN())            \
-	{                     \
-		MUST_PASS(false); \
-	}

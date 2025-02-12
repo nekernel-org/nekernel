@@ -311,7 +311,7 @@ namespace Kernel
 		flags |= HAL::kMMFlagsWr;
 		flags |= HAL::kMMFlagsUser;
 
-		HAL::mm_map_page((VoidPtr)process.VMRegister, flags);
+		HAL::mm_map_page((VoidPtr)process.VMRegister, process.VMRegister, flags);
 #endif // __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		process.StackFrame = new HAL::StackFrame();
@@ -327,7 +327,7 @@ namespace Kernel
 		flags |= HAL::kMMFlagsWr;
 		flags |= HAL::kMMFlagsUser;
 
-		HAL::mm_map_page((VoidPtr)process.StackFrame, flags);
+		HAL::mm_map_page((VoidPtr)process.StackFrame, process.StackFrame, flags);
 #endif // __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		// React according to process kind.
@@ -356,7 +356,7 @@ namespace Kernel
 		flags |= HAL::kMMFlagsWr;
 		flags |= HAL::kMMFlagsUser;
 
-		HAL::mm_map_page((VoidPtr)process.StackReserve, flags);
+		HAL::mm_map_page((VoidPtr)process.StackReserve, process.StackReserve, flags);
 #endif // __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		process.ProcessParentTeam = &mTeam;

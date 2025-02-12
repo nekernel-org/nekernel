@@ -89,7 +89,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -M q35 -hda $(IMG) -s -S -trace ahci_*
+	$(EMU) $(EMU_FLAGS) -M q35 -hdc $(IMG) -s -S -trace ahci_*
 
 .PHONY: run-efi-amd64-ata-pio
 run-efi-amd64-ata-pio:

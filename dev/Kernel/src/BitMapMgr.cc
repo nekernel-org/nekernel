@@ -105,7 +105,7 @@ namespace Kernel
 								this->GetBitMapStatus(ptr_bit_set);
 
 								UInt32 flags = this->MakeMMFlags(wr, user);
-								mm_map_page(ptr_bit_set, flags);
+								mm_map_page(ptr_bit_set, ptr_bit_set, flags);
 
 								if (biggest_block < size)
 									biggest_block = size;
@@ -122,7 +122,7 @@ namespace Kernel
 							this->GetBitMapStatus(ptr_bit_set);
 
 							UInt32 flags = this->MakeMMFlags(wr, user);
-							mm_map_page(ptr_bit_set, flags);
+							mm_map_page(ptr_bit_set, ptr_bit_set, flags);
 
 							if (biggest_block < size)
 								biggest_block = size;

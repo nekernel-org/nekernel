@@ -23,7 +23,7 @@ namespace Kernel::HAL
 		{
 			PDE*	fPde{nullptr};
 			PTE*	fPte{nullptr};
-			VoidPtr fVAddr{nullptr};
+			VoidPtr fPAddr{nullptr};
 		} fInternalStore;
 
 		Bool fStoreOp{No}; // Store operation is in progress.
@@ -62,7 +62,7 @@ namespace Kernel::HAL
 		kout << (pte->User ? "User" : "Not User") << endl;
 	}
 
-	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry);
+	STATIC Int32 mmi_map_page_table_entry(UInt32 virtual_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry);
 
 	/***********************************************************************************/
 	/// @brief Maps or allocates a page from virtual_address.
@@ -71,7 +71,7 @@ namespace Kernel::HAL
 	/// @param flags the flags to put on the page.
 	/// @return Status code of page manipulation process.
 	/***********************************************************************************/
-	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, UInt32 flags)
+	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags)
 	{
 		if (!virtual_address ||
 			!flags)
@@ -92,12 +92,6 @@ namespace Kernel::HAL
 		UInt64 pt_index	  = ((UIntPtr)virtual_address >> 12) & cPmlIndexMask;
 
 		page_store.fStoreOp = Yes;
-
-		if (page_store.fInternalStore.fVAddr == virtual_address)
-		{
-			page_store.fStoreOp = No;
-			return mmi_map_page_table_entry(page_store.fInternalStore.fVAddr, flags, page_store.fInternalStore.fPte, page_store.fInternalStore.fPde);
-		}
 
 		const auto cPmlEntrySize = 8;
 
@@ -120,14 +114,14 @@ namespace Kernel::HAL
 		// Lastly, grab the pte entry.
 		NE_PDE* pde_struct = reinterpret_cast<NE_PDE*>(pt_base);
 
-		return mmi_map_page_table_entry(virtual_address, flags, pde_struct->fEntries[pt_entry], pde_struct);
+		return mmi_map_page_table_entry((UInt32)(UInt64)physical_address, flags, pde_struct->fEntries[pt_entry], pde_struct);
 	}
 
 	/***********************************************************************************/
 	/// @brief Maps flags for a specific pte.
 	/// @internal Internal function.
 	/***********************************************************************************/
-	STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry)
+	STATIC Int32 mmi_map_page_table_entry(UInt32 physical_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry)
 	{
 		if (!pt_entry)
 			return 1;
@@ -149,6 +143,8 @@ namespace Kernel::HAL
 		else if (flags & ~kMMFlagsUser)
 			pt_entry->User = false;
 
+		pt_entry->PhysicalAddress = physical_address;
+
 		hal_invl_tlb(reinterpret_cast<VoidPtr>(pt_entry));
 
 		mmi_page_status(pt_entry);
@@ -159,7 +155,7 @@ namespace Kernel::HAL
 
 		page_store.fInternalStore.fPde	 = pd_entry;
 		page_store.fInternalStore.fPte	 = pt_entry;
-		page_store.fInternalStore.fVAddr = virtual_address;
+		page_store.fInternalStore.fPAddr = (VoidPtr)(UIntPtr)physical_address;
 
 		page_store.fStoreOp = No;
 
