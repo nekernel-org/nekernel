@@ -62,7 +62,7 @@ namespace Kernel
 		kMBCIHostFlagsSupportsDaisyChain,		 // Is daisy chained.
 		kMBCIHostFlagsSupportsHWInterrupts,		 // Has HW interrupts.
 		kMBCIHostFlagsSupportsDMA,				 // Has DMA.
-		kMBCIHostFlagsExtended = __UINT16_MAX__, // Extended flags table.
+		kMBCIHostFlagsExtended, // Extended flags table.
 	};
 
 	enum MBCIHostKind
@@ -75,7 +75,7 @@ namespace Kernel
 		kMBCIHostKindKeyboardHigh,
 		kMBCIHostKindNetworkInterface,
 		kMBCIHostKindDaisyChain,
-		kMBCIHostKindStartExtended = __UINT16_MAX__, // Extended vendor table limit.
+		kMBCIHostKindStartExtended, // Extended vendor table limit.
 	};
 
 	/// @brief An AuthKey is a context used to decrpy data from an MBCI packet.
