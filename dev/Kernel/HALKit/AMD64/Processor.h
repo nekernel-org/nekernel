@@ -19,14 +19,14 @@
 #include <FirmwareKit/Handover.h>
 #include <HALKit/AMD64/Paging.h>
 
-#define kPITControlPort	 0x43
-#define kPITChannel0Port 0x40
-#define kPITFrequency	 1193180
+#define kPITControlPort	 (0x43)
+#define kPITChannel0Port (0x40)
+#define kPITFrequency	 (1193180)
 
-#define kPICCommand	 0x20
-#define kPICData	 0x21
-#define kPIC2Command 0xA0
-#define kPIC2Data	 0xA1
+#define kPICCommand	 (0x20)
+#define kPICData	 (0x21)
+#define kPIC2Command (0xA0)
+#define kPIC2Data	 (0xA1)
 
 EXTERN_C
 {
@@ -294,14 +294,10 @@ namespace Kernel::HAL
 		};
 	} // namespace Detail
 
-	class APICController
+	class APICController final
 	{
 	public:
-		explicit APICController(VoidPtr base)
-			: fApic(base)
-		{
-		}
-
+		explicit APICController(VoidPtr base);
 		~APICController() = default;
 
 		NE_COPY_DEFAULT(APICController);
@@ -325,16 +321,16 @@ namespace Kernel::HAL
 	EXTERN_C UInt16 rt_in16(UInt16 port);
 	EXTERN_C UInt32 rt_in32(UInt16 port);
 
-	EXTERN_C void rt_out16(UShort port, UShort byte);
-	EXTERN_C void rt_out8(UShort port, UChar byte);
-	EXTERN_C void rt_out32(UShort port, UInt byte);
+	EXTERN_C Void rt_out16(UShort port, UShort byte);
+	EXTERN_C Void rt_out8(UShort port, UChar byte);
+	EXTERN_C Void rt_out32(UShort port, UInt byte);
 
-	EXTERN_C void rt_wait_400ns();
-	EXTERN_C void rt_halt();
-	EXTERN_C void rt_cli();
-	EXTERN_C void rt_sti();
-	EXTERN_C void rt_cld();
-	EXTERN_C void rt_std();
+	EXTERN_C Void rt_wait_400ns();
+	EXTERN_C Void rt_halt();
+	EXTERN_C Void rt_cli();
+	EXTERN_C Void rt_sti();
+	EXTERN_C Void rt_cld();
+	EXTERN_C Void rt_std();
 } // namespace Kernel::HAL
 
 EXTERN_C Kernel::Void idt_handle_generic(Kernel::UIntPtr rsp);

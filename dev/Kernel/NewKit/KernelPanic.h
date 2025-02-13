@@ -20,7 +20,14 @@ namespace Kernel
 #undef TRY
 #endif
 
-#define TRY(X) { auto fn = X; if ((fn()) == NO) { MUST_PASS(NO); }}
+#define TRY(X)             \
+	{                      \
+		auto fn = X;       \
+		if ((fn()) == NO)  \
+		{                  \
+			MUST_PASS(NO); \
+		}                  \
+	}
 
 #ifdef __MUST_PASS
 #undef __MUST_PASS

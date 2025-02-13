@@ -15,7 +15,6 @@
  *
  */
 
-#include "KernelKit/DebugOutput.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -46,7 +45,7 @@
 #define kSATASubClass	(0x06)
 #define kSATABar5		(0x24)
 
-STATIC Kernel::PCI::Device kPCIDevice;
+STATIC Kernel::PCI::Device kDevice;
 STATIC HbaMem* kSATA					   = nullptr;
 STATIC Kernel::SizeT kSATAPortIdx		   = 0UL;
 STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
@@ -94,16 +93,16 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 	for (SizeT device_index = 0; device_index < NE_BUS_COUNT; ++device_index)
 	{
-		kPCIDevice = iterator[device_index].Leak(); // And then leak the reference.
+		kDevice = iterator[device_index].Leak(); // And then leak the reference.
 
 		// if SATA and then interface is AHCI...
-		if (kPCIDevice.Subclass() == kSATASubClass &&
-			kPCIDevice.ProgIf() == kSATAProgIfAHCI)
+		if (kDevice.Subclass() == kSATASubClass &&
+			kDevice.ProgIf() == kSATAProgIfAHCI)
 		{
-			kPCIDevice.EnableMmio(kSATABar5);	   // Enable the memory index_byte/o for this ahci device.
-			kPCIDevice.BecomeBusMaster(kSATABar5); // Become bus master for this ahci device, so that we can control it.
+			kDevice.EnableMmio(kSATABar5);		// Enable the memory index_byte/o for this ahci device.
+			kDevice.BecomeBusMaster(kSATABar5); // Become bus master for this ahci device, so that we can control it.
 
-			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(kSATABar5);
+			HbaMem* mem_ahci = (HbaMem*)kDevice.Bar(kSATABar5);
 
 			kout << hex_number((UIntPtr)mem_ahci) << endl;
 
@@ -124,9 +123,6 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 					HAL::mm_map_page(mem_ahci, mem_ahci, HAL::kMMFlagsWr);
 
-					kout << "Virtddr: " << hex_number((UIntPtr)mem_ahci) << endl;
-					kout << "PhysAddr: " << hex_number((UIntPtr)HAL::hal_get_phys_address(mem_ahci)) << endl;
-
 					if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == 3 && ipm == 1 &&
 						(mem_ahci->Ports[ahci_index].Ssts & 0xF))
 					{
@@ -134,6 +130,8 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 						kSATAPortIdx = ahci_index;
 						kSATA		 = mem_ahci;
+
+						// Restart the HBA.
 
 						kSATA->Ports[kSATAPortIdx].Cmd &= ~(kHBAPxCmdST | kHBAPxCmdFre); // Disable command and FIS reception
 
@@ -145,8 +143,8 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 						kSATA->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre; // Re-enable FIS reception
 						kSATA->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;	// Start command engine
-						
-						kSATA->Ghc |= kHBACmdAE;  // Enable AHCI mode
+
+						kSATA->Ghc |= kHBACmdAE; // Enable AHCI mode
 
 						HAL::rt_wait_400ns();
 
@@ -167,7 +165,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 Kernel::Boolean drv_std_detected(Kernel::Void)
 {
-	return kPCIDevice.DeviceId() != 0xFFFF && kCurrentDiskSectorCount > 0;
+	return kDevice.DeviceId() != 0xFFFF && kCurrentDiskSectorCount > 0;
 }
 
 Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)

@@ -40,9 +40,9 @@ namespace Kernel
 		auto y = 10;
 		auto x = 10;
 
-		kout << "Kernel_Panic: " << message << endl;
+		kout << "Kernel_Panic_MSG: " << message << endl;
 		kout << "Kernel_Panic_ID: " << hex_number(id) << endl;
-		kout << "Kernel_Panic_CR2:" << hex_number((UIntPtr)hal_read_cr2()) << endl;
+		kout << "Kernel_Panic_CR2: " << hex_number((UIntPtr)hal_read_cr2()) << endl;
 
 		RecoveryFactory::Recover();
 	}

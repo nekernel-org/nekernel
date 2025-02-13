@@ -189,12 +189,14 @@ namespace Kernel
 				trait.fPacket.fPacketReadOnly = YES;
 				trait.fKind					  = kMassStorageDrive | kUnformattedDrive | kReadOnlyDrive;
 
-				kout << "Scheme Found: " << block_struct.Name << endl;
-
 				if (block_struct.Name[0] == 0 ||
 					!rt_is_alnum(block_struct.Name[0]))
 				{
 					kout << "Disk partition is empty (Read Only)\r";
+				}
+				else
+				{
+					kout << "Scheme Found: " << block_struct.Name << endl;
 				}
 			}
 
@@ -204,6 +206,9 @@ namespace Kernel
 			trait.fPacket.fPacketLba	 = 0;
 			trait.fPacket.fPacketSize	 = 0UL;
 			trait.fPacket.fPacketContent = nullptr;
+
+			while (1)
+				;
 		}
 	} // namespace Detect
 

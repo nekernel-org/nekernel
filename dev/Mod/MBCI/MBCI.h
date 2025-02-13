@@ -57,14 +57,15 @@ namespace Kernel
 	/// @brief MBCI host flags.
 	enum MBCIHostFlags
 	{
-		kMBCIHostFlagsSupportsNothing,			 // Invalid MBCI device.
-		kMBCIHostFlagsSupportsAPM,				 // Advanced Power Management.
-		kMBCIHostFlagsSupportsDaisyChain,		 // Is daisy chained.
-		kMBCIHostFlagsSupportsHWInterrupts,		 // Has HW interrupts.
-		kMBCIHostFlagsSupportsDMA,				 // Has DMA.
-		kMBCIHostFlagsExtended, // Extended flags table.
+		kMBCIHostFlagsSupportsNothing,		// Invalid MBCI device.
+		kMBCIHostFlagsSupportsAPM,			// Advanced Power Management.
+		kMBCIHostFlagsSupportsDaisyChain,	// Is daisy chained.
+		kMBCIHostFlagsSupportsHWInterrupts, // Has HW interrupts.
+		kMBCIHostFlagsSupportsDMA,			// Has DMA.
+		kMBCIHostFlagsExtended,				// Extended flags table.
 	};
 
+	/// @brief MBCI host kind.
 	enum MBCIHostKind
 	{
 		kMBCIHostKindHardDisk,

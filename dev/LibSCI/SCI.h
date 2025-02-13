@@ -303,4 +303,6 @@ IMPORT_C SInt32 SchedTrace(PID, SInt32 req, VoidPtr address, VoidPtr data);
 
 IMPORT_C SInt32 SchedKill(PID, SInt32 req);
 
+IMPORT_C SInt32 SchedBreakPoint(Void);
+
 #endif // ifndef SCIKIT_FOUNDATION_H

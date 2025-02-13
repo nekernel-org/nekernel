@@ -12,6 +12,11 @@
 
 namespace Kernel::HAL
 {
+	APICController::APICController(VoidPtr base)
+		: fApic(base)
+	{
+	}
+
 	/// @brief Read from APIC controller.
 	/// @param reg register.
 	UInt32 APICController::Read(UInt32 reg) noexcept

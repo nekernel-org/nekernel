@@ -133,7 +133,10 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
-		return;
+	{
+		while (YES)
+			;
+	}
 
 	kIsScheduling = NO;
 

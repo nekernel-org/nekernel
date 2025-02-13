@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /**
- * @file ATA-PIO.cc
+ * @file PIO.cc
  * @author Amlal EL Mahrouss (amlalelmahrouss@icloud.com)
  * @brief ATA driver (PIO mode).
  * @version 0.1
@@ -30,6 +30,7 @@ using namespace Kernel::HAL;
 STATIC Boolean kATADetected			 = false;
 STATIC Int32   kATADeviceType		 = kATADeviceCount;
 STATIC Char	   kATAData[kATADataLen] = {0};
+STATIC Char	   kCurrentDiskModel[50] = {"UNKNOWN ATA DRIVE"};
 
 Boolean drv_std_wait_io(UInt16 IO)
 {
@@ -64,9 +65,6 @@ Void drv_std_select(UInt16 Bus)
 
 Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 {
-	if (drv_std_detected())
-		return true;
-
 	UInt16 IO = Bus;
 
 	drv_std_select(IO);
@@ -93,10 +91,22 @@ ATAInit_Retry:
 
 	drv_std_wait_io(IO);
 
-	for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData)
+	for (SizeT i = 0ul; i < kATADataLen; ++i)
 	{
-		kATAData[indexData] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
+		drv_std_wait_io(IO);
+		kATAData[i] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
+		drv_std_wait_io(IO);
 	}
+
+	for (SizeT i = 0; i < 40; i += 2)
+	{
+		kCurrentDiskModel[i]	 = kATAData[54 + i] >> 8;
+		kCurrentDiskModel[i + 1] = kATAData[54 + i] & 0xFF;
+	}
+
+	kCurrentDiskModel[40] = '\0';
+
+	kout << "Drive Model: " << kCurrentDiskModel << endl;
 
 	OutBus	  = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
 	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
@@ -173,7 +183,7 @@ Boolean drv_std_detected(Void)
 }
 
 /***
-     @brief Getter, gets the number of sectors inside the drive.
+	 @brief Getter, gets the number of sectors inside the drive.
  */
 Kernel::SizeT drv_get_sector_count()
 {
