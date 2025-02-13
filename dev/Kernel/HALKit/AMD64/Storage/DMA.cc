@@ -15,8 +15,6 @@
  *
  */
 
-#include "KernelKit/DebugOutput.h"
-#include "NewKit/KernelPanic.h"
 #include <Mod/ATA/ATA.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/PCI/Iterator.h>
