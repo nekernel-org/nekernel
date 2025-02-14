@@ -11,7 +11,7 @@
 #endif
 
 #ifndef kib_cast
-#define kib_cast(X) (Kernel::UInt64)((X)*1024)
+#define kib_cast(X) (Kernel::UInt64)((X) * 1024)
 #endif
 
 #ifndef MIB
@@ -92,9 +92,9 @@
 #define END_STRING_ENUM() }
 #endif
 
-#ifndef rtl_alloca
-#define rtl_alloca(sz) __builtin_alloca(sz)
-#endif // #ifndef rtl_alloca
+#ifndef RTL_ALLOCA
+#define RTL_ALLOCA(sz) __builtin_alloca(sz)
+#endif // #ifndef RTL_ALLOCA
 
 #ifndef CANT_REACH
 #define CANT_REACH() __builtin_unreachable()

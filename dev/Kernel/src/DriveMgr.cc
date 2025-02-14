@@ -24,6 +24,10 @@ namespace Kernel
 	STATIC UInt8  kATAMaster = 0U;
 #endif
 
+#if defined(__AHCI__)
+	STATIC UInt16 kAHCIPortsImplemented = 0UL;
+#endif
+
 	/// @brief reads from an ATA drive.
 	/// @param pckt Packet structure (fPacketContent must be non null)
 	/// @return
@@ -42,7 +46,10 @@ namespace Kernel
 	Void io_drv_output(DriveTrait::DrivePacket pckt)
 	{
 		if (pckt.fPacketReadOnly)
+		{
+			pckt.fPacketGood = NO;
 			return;
+		}
 
 #ifdef __AHCI__
 		drv_std_write(pckt.fPacketLba, (Char*)pckt.fPacketContent, kAHCISectorSize, pckt.fPacketSize);
@@ -59,10 +66,8 @@ namespace Kernel
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 		kATAMaster = 0;
 		kATAIO	   = 0;
-#endif
 
-#if defined(__ATA_PIO__) || defined(__ATA_DMA__)
-		kATAMaster = true;
+		kATAMaster = YES;
 		kATAIO	   = ATA_PRIMARY_IO;
 
 		if (drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster))
@@ -71,22 +76,25 @@ namespace Kernel
 			return;
 		}
 
-		kATAMaster = false;
+		kATAMaster = NO;
 		kATAIO	   = ATA_SECONDARY_IO;
 
 		if (!drv_std_init(kATAIO, kATAMaster, kATAIO, kATAMaster))
 		{
+			pckt.fPacketGood = YES;
 			return;
 		}
 
 		pckt.fPacketGood = YES;
 #elif defined(__AHCI__)
-		UInt16 pi = 0;
+		kAHCIPortsImplemented = 0;
 
-		if (!drv_std_init(pi))
+		if (!drv_std_init(kAHCIPortsImplemented))
 		{
 			return;
 		}
+		
+		pckt.fPacketGood = YES;
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
 	}
 

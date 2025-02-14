@@ -16,7 +16,7 @@
 
 namespace Kernel
 {
-	/// @brief KString static string class.
+	/// @brief Kernel string class, not dynamic.
 	class KString final
 	{
 	public:

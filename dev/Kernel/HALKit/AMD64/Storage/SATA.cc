@@ -46,7 +46,7 @@
 #define kSATABar5		(0x24)
 
 STATIC Kernel::PCI::Device kDevice;
-STATIC HbaMem* kSATA					   = nullptr;
+STATIC HbaMem*			   kSATA		   = nullptr;
 STATIC Kernel::SizeT kSATAPortIdx		   = 0UL;
 STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
 STATIC Kernel::Char kCurrentDiskModel[50]  = {"UNKNOWN SATA DRIVE"};

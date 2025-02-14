@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef CFKIT_PROPS_H
-#define CFKIT_PROPS_H
+#ifndef _PROPS_H
+#define _PROPS_H
 
 #include <LibSCI/SCI.h>
 #include <LibCF/Ref.h>

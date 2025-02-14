@@ -1,7 +1,8 @@
 #!/bin/sh
 
-export ATA_PIO_SUPPORT=
-export ATA_DMA_SUPPORT=1
+export AHCI_SUPPORT=
+export ATA_PIO_SUPPORT=1
+export ATA_DMA_SUPPORT=
 export DEBUG_SUPPORT=1
 
 cd kernel

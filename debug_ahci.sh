@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export AHCI_SUPPORT=1
+export ATA_PIO_SUPPORT=
 export DEBUG_SUPPORT=1
 
 cd dev/Kernel
