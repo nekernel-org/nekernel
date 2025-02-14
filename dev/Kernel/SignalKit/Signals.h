@@ -6,11 +6,9 @@
 
 #pragma once
 
-/** https://pubs.opengroup.org/onlinepubs/009695399/basedefs/signal.h.html */
+#include <NewKit/Defines.h>
 
-#include <POSIXKit/POSIX.h>
-
-typedef Kernel::UInt32 signal_t;
+typedef Kernel::UInt32 SignalKind;
 
 #define SIGKILL 0
 #define SIGPAUS 1

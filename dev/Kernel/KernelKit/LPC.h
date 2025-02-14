@@ -58,7 +58,7 @@ namespace Kernel
 	inline constexpr HError kErrorCDTrayBroken		 = 62;
 	inline constexpr HError kErrorUnrecoverableDisk	 = 63;
 	inline constexpr HError kErrorFileLocked		 = 64;
-	inline constexpr HError kErrorUnimplemented		 = 0;
+	inline constexpr HError kErrorUnimplemented		 = -1;
 
 	/// @brief Raises a bug check stop code.
 	Void err_bug_check_raise(Void) noexcept;
