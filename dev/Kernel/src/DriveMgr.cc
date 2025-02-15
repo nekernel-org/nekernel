@@ -214,9 +214,6 @@ namespace Kernel
 			trait.fPacket.fPacketLba	 = 0;
 			trait.fPacket.fPacketSize	 = 0UL;
 			trait.fPacket.fPacketContent = nullptr;
-
-			while (1)
-				;
 		}
 	} // namespace Detect
 
