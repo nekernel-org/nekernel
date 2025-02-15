@@ -8,12 +8,12 @@
 
 #include <NewKit/Defines.h>
 
-#define cPCIConfigAddressPort (0xCF8)
-#define cPCIConfigDataPort	  (0xCFC)
+#define kPCIConfigAddressPort (0xCF8)
+#define kPCIConfigDataPort	  (0xCFC)
 
-#define cPCIDeviceCount (32)
-#define cPCIFuncCount	(8)
-#define cPCIBusCount	(255)
+#define kPCIDeviceCount (32)
+#define kPCIFuncCount	(8)
+#define kPCIBusCount	(255)
 
 namespace Kernel::PCI
 {
