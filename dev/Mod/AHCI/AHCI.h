@@ -358,6 +358,9 @@ Kernel::SizeT drv_get_sector_count();
 /// @brief Gets the AHCI disk size.
 Kernel::SizeT drv_get_size();
 
+/// @brief Checks if the drive has completed the command.
+BOOL drv_is_ready(void);
+
 #endif // ifdef __AHCI__
 
 /* EOF */

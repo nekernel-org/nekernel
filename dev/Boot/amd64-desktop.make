@@ -28,6 +28,24 @@ BIOS=OVMF.fd
 IMG=epm-master-1.img
 IMG_2=epm-master-2.img
 
+DISK_DRV  =
+
+ifneq ($(ATA_PIO_SUPPORT), )
+DISK_DRV =  -D__ATA_PIO__
+endif
+
+ifneq ($(ATA_DMA_SUPPORT), )
+DISK_DRV =  -D__ATA_DMA__
+endif
+
+ifneq ($(AHCI_SUPPORT), )
+DISK_DRV =  -D__AHCI__
+endif
+
+ifneq ($(DEBUG_SUPPORT), )
+DEBUG_MACRO = -D__DEBUG__
+endif
+
 ifeq ($(shell uname), Darwin)
 EMU_FLAGS=-net none -smp 4 -m 8G \
 			-bios $(BIOS) -drive \
@@ -50,7 +68,7 @@ REM_FLAG=-f
 
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__ZBAOSLDR__ \
-			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel -I../ -c -nostdlib -fno-rtti -fno-exceptions \
+			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel $(DISK_DRV) -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT
 
 BOOTLOADER=zbaosldr.exe
