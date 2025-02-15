@@ -36,12 +36,9 @@ int main(int argc, char* argv[])
 			Char base_path[FILE_MAX_LEN] = OPEN_APP_BASE_PATH;
 			MmCopyMemory(base_path + MmStrLen(OPEN_APP_BASE_PATH), argv[i + 1], MmStrLen(argv[i + 1]));
 
-			Bool ret = RtlSpawnProcess(base_path, 0, nullptr, nullptr, 0);
+			UIntPtr ret = RtlSpawnProcess(base_path, 0, nullptr, nullptr, 0);
 
-			if (ret > 0)
-				return EXIT_SUCCESS;
-
-			break;
+			return ret;
 		}
 	}
 

@@ -9,6 +9,15 @@
 #include <Common.h>
 #include <Framework.h>
 
-#define kStepsExtension ".steps"
+#define kStepsExtension ".stp"
+
+struct StepsCommonRecord final
+{
+	char	setup_name[255];
+	char	setup_company[255];
+	char	setup_author[255];
+	int32_t setup_version;
+	int32_t setup_pages;
+};
 
 #endif // ifndef APPS_STEPS_H

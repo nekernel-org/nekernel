@@ -1,23 +1,18 @@
 <!-- Read Me of NeKernel -->
 
-# New Kernel Architecture (NeKernel)
+# New Kernel Architecture OS (NeOS)
 
 ## Brief:
 
-A Microkernel written in C++ 20, with a System Call Interface Library, and custom bootloader.
-
-## Screenshots:
-
-![doc/apic.png](doc/apic.png)
-![doc/filesystem.png](doc/filesystem.png)
+An OS written in C++ 20, with a System Call Interface Library, and a custom bootloader.
 
 ## Requirements:
 
-- MinGW/GCC
-- LibCompiler
-- Netwide Assembler
-- Git
-- BTB/OpenBTB
+- MinGW/GCC.
+- LibCompiler Runtime Headers and Toolchain.
+- Netwide Assembler.
+- Git.
+- BTB.
 
 ## Installation:
 
@@ -30,7 +25,7 @@ cd nekernel
 
 </br>
 
-And then select the makefile (arm64 and amd64 are stable and EFI based) to execute:
+And then select the makefile (ARM64 and AMD64 are stable and EFI based) to execute:
 
 ```
 make -f amd64-efi.make all

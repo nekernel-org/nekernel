@@ -7,31 +7,38 @@ Purpose: GFX System Calls.
 
 ------------------------------------------- */
 
-#ifndef SCIKIT_GPU_H
-#define SCIKIT_GPU_H
+#ifndef SCI_GPU_H
+#define SCI_GPU_H
 
 #include <LibSCI/SCI.h>
-
-struct GPUCmdBuffer;
 
 /// ------------------------------------------------------------------------------------------ //
 /// @brief GPU API.
 /// ------------------------------------------------------------------------------------------ //
+
+struct GPUCmdBuffer;
+
+typedef VoidPtr GPUObject;
 
 /// ------------------------------------------------------------------------------------------ //
 /// @brief Command buffer structure type.
 /// ------------------------------------------------------------------------------------------ //
 struct GPUCmdBuffer final
 {
-	VoidPtr Data;
-	SizeT	DataSz;
-	SizeT	BufferLayer;
-	Bool	IsGPGPUData;
-	Bool	BufferFirst;
+	VoidPtr Data{nullptr};
+	SizeT	DataSz{0};
+	SizeT	BufferLayer{0};
+	Bool	IsGPGPUData{false};
+	Bool	BufferFirst{false};
 
 	Bool isGPGPUData()
 	{
 		return this->isValid() && !this->BufferFirst && this->IsGPGPUData;
+	}
+
+	Bool isBackBuffer()
+	{
+		return !this->BufferFirst;
 	}
 
 	Bool isValid()
@@ -40,12 +47,10 @@ struct GPUCmdBuffer final
 	}
 };
 
-typedef VoidPtr GPUObject;
-
 IMPORT_C GPUObject GPUNewFromDeviceName(_Input const Char* device_name);
 
 IMPORT_C SInt32 GPUDisposeDevice(GPUObject gpu_handle, Bool cancel_all, Bool flush_all);
 
 IMPORT_C SInt32 GPUSendCmdBufferListWithCnt(GPUCmdBuffer** cmd_list, SizeT cmd_list_cnt);
 
-#endif // ifndef SCIKIT_GPU_H
+#endif // ifndef SCI_GPU_H

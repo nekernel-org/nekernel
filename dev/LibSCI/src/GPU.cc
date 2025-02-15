@@ -7,4 +7,4 @@ Purpose: GPU Interface.
 
 ------------------------------------------- */
 
-#include <LPC.h>
+#include <GPU.h>

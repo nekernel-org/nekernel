@@ -14,7 +14,7 @@
 
 /***********************************************************************************/
 /// @file DriveMgr.cc
-/// @brief Drive Manager of neoskrnl.
+/// @brief Drive Manager of kernel.
 /***********************************************************************************/
 
 namespace Kernel
@@ -93,7 +93,7 @@ namespace Kernel
 		{
 			return;
 		}
-		
+
 		pckt.fPacketGood = YES;
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
 	}

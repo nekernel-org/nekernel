@@ -13,8 +13,6 @@
 
 #pragma once
 
-#ifndef __AHCI__
-
 #include <CompilerKit/CompilerKit.h>
 #include <NewKit/Defines.h>
 
@@ -155,4 +153,3 @@ Kernel::SizeT drv_get_sector_count();
 Kernel::SizeT drv_get_size();
 
 #endif // ifdef __NEOSKRNL__
-#endif // ifndef __ATA_PIO__ || __AHCI__

@@ -49,17 +49,26 @@ typedef void*			 VoidPtr;
 typedef __UINTPTR_TYPE__ UIntPtr;
 typedef char			 Char;
 
-typedef VoidPtr SCIObject;
-
-typedef SCIObject IOObject;
-typedef IOObject  FSObject;
-typedef SCIObject DLLObject;
-typedef SCIObject ThreadObject;
-typedef SCIObject SocketObject;
-
 #ifdef __cplusplus
 typedef decltype(nullptr) nullPtr;
 typedef nullPtr			  NullPtr;
+
+#define SCI_COPY_DELETE(KLASS)               \
+	KLASS& operator=(const KLASS&) = delete; \
+	KLASS(const KLASS&)			   = delete;
+
+#define SCI_COPY_DEFAULT(KLASS)               \
+	KLASS& operator=(const KLASS&) = default; \
+	KLASS(const KLASS&)			   = default;
+
+#define SCI_MOVE_DELETE(KLASS)          \
+	KLASS& operator=(KLASS&&) = delete; \
+	KLASS(KLASS&&)			  = delete;
+
+#define SCI_MOVE_DEFAULT(KLASS)          \
+	KLASS& operator=(KLASS&&) = default; \
+	KLASS(KLASS&&)			  = default;
+
 #endif
 
 IMPORT_C void _rtl_assert(Bool expr, const Char* origin);

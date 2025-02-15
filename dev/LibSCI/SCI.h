@@ -3,14 +3,26 @@
 Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
 File: SCI.h
-Purpose: System Calls.
+Purpose: System Call Interface.
 
 ------------------------------------------- */
 
-#ifndef SCIKIT_FOUNDATION_H
-#define SCIKIT_FOUNDATION_H
+#ifndef SCI_SCI_H
+#define SCI_SCI_H
 
 #include <LibSCI/Macros.h>
+
+// ------------------------------------------------------------------------------------------ //
+/// @brief Types API.
+// ------------------------------------------------------------------------------------------ //
+
+typedef VoidPtr SCIObject;
+
+typedef SCIObject IOObject;
+typedef IOObject  FSObject;
+typedef SCIObject DLLObject;
+typedef SCIObject ThreadObject;
+typedef SCIObject SocketObject;
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Dynamic Loader API.
@@ -79,9 +91,9 @@ IMPORT_C UInt64 IoSeekFile(_Input SCIObject file_desc, UInt64 file_offset);
 // ------------------------------------------------------------------------
 
 /// @brief Spawns a Thread Information Block and Global Information Block inside the current process.
-/// @param void.
+/// @param process_id Target Process ID, must be valid.
 /// @return > 0 error ocurred or already present, = 0 success.
-IMPORT_C UInt32 RtlSpawnIB(Void);
+IMPORT_C UInt32 RtlSpawnIB(UIntPtr process_id);
 
 /// @brief Spawns a process with a unique pid (stored as UIntPtr).
 /// @param process_path process filesystem path.
@@ -136,13 +148,13 @@ IMPORT_C SInt64 MmStrCmp(_Input const Char* dest, _Input const Char* src);
 IMPORT_C SInt64 MmStrLen(const Char* str);
 
 // ------------------------------------------------------------------------
-// Error API.
+// @brief Error API.
 // ------------------------------------------------------------------------
 
 IMPORT_C SInt32 ErrGetLastError(Void);
 
 // ------------------------------------------------------------------------
-// Threading API.
+// @brief Threading API.
 // ------------------------------------------------------------------------
 
 /// @brief Exit the current thread.
@@ -181,7 +193,7 @@ IMPORT_C Void ThrJoinThread(ThreadObject thrd);
 IMPORT_C Void ThrDetachThread(ThreadObject thrd);
 
 // ------------------------------------------------------------------------
-// Drive Management API.
+// @brief Drive Management API.
 // ------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------ //
@@ -291,7 +303,7 @@ IMPORT_C SInt32 ConRelease(IOObject);
 IMPORT_C IOObject ConGet(const Char* path);
 
 // ------------------------------------------------------------------------------------------ //
-// Scheduler Interrupts API.
+// @brief Scheduler/Debug API.
 // ------------------------------------------------------------------------------------------ //
 
 typedef SInt32 AffinityKind;
@@ -305,4 +317,14 @@ IMPORT_C SInt32 SchedKill(PID, SInt32 req);
 
 IMPORT_C SInt32 SchedBreakPoint(Void);
 
-#endif // ifndef SCIKIT_FOUNDATION_H
+// ------------------------------------------------------------------------------------------ //
+// @brief Video API.
+// ------------------------------------------------------------------------------------------ //
+
+IMPORT_C SInt32 VideoGetBuffer(VoidPtr* out);
+
+IMPORT_C Void VideoDisposeBuffer(VoidPtr* in);
+
+IMPORT_C SInt32 VideoGetProfile(VoidPtr* in);
+
+#endif // ifndef SCI_SCI_H
