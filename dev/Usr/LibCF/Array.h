@@ -56,7 +56,7 @@ namespace LibCF
 	};
 
 	template <typename ValueType>
-	auto make_list(ValueType val)
+	auto make_array(ValueType val)
 	{
 		return CFArray<ValueType, ARRAY_SIZE(val)>{val};
 	}
