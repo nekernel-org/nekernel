@@ -11,14 +11,14 @@
 
 namespace LibCF
 {
-	class QObject;
+	class CFObject;
 
-	class QObject
+	class CFObject
 	{
 	public:
-		explicit QObject() = default;
-		~QObject()		   = default;
+		explicit CFObject() = default;
+		virtual ~CFObject()		   = default;
 
-		SCI_COPY_DEFAULT(QObject);
+		SCI_COPY_DEFAULT(CFObject);
 	};
 } // namespace LibCF
