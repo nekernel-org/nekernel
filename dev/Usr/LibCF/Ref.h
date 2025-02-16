@@ -13,29 +13,29 @@
 namespace LibCF
 {
 	template <typename T>
-	class Ref final
+	class CFRef final
 	{
 	public:
-		Ref() = default;
+		CFRef() = default;
 
-		~Ref()
+		~CFRef()
 		{
 			if (MmGetHeapFlags(fClass) != -1)
 				delete fClass;
 		}
 
 	public:
-		Ref(T* cls)
+		CFRef(T* cls)
 			: fClass(cls)
 		{
 		}
 
-		Ref(T cls)
+		CFRef(T cls)
 			: fClass(&cls)
 		{
 		}
 
-		Ref& operator=(T ref)
+		CFRef& operator=(T ref)
 		{
 			if (!fClass)
 				return *this;
@@ -77,29 +77,29 @@ namespace LibCF
 	};
 
 	template <typename T>
-	class NonNullRef final
+	class CFNonNullRef final
 	{
 	public:
-		NonNullRef()		= delete;
-		NonNullRef(nullPtr) = delete;
+		CFNonNullRef()		= delete;
+		CFNonNullRef(nullPtr) = delete;
 
-		NonNullRef(T* ref)
+		CFNonNullRef(T* ref)
 			: fRef(ref)
 		{
 			MUST_PASS(ref);
 		}
 
-		Ref<T>& operator->()
+		CFRef<T>& operator->()
 		{
 			MUST_PASS(fRef);
 			return fRef;
 		}
 
-		NonNullRef& operator=(const NonNullRef<T>& ref) = delete;
-		NonNullRef(const NonNullRef<T>& ref)			= default;
+		CFNonNullRef& operator=(const CFNonNullRef<T>& ref) = delete;
+		CFNonNullRef(const CFNonNullRef<T>& ref)			= default;
 
 	private:
-		Ref<T> fRef{nullptr};
+		CFRef<T> fRef{nullptr};
 	};
 } // namespace LibCF
 
