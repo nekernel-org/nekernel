@@ -208,8 +208,8 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 
 	auto phys_dma_buf = (Kernel::UIntPtr)Kernel::HAL::hal_get_phys_address(buffer);
 
-	command_table->Prdt[0].Dbau	= (((Kernel::UInt64)phys_dma_buf >> 32));
-	command_table->Prdt[0].Dba = ((Kernel::UInt32)(Kernel::UInt64)phys_dma_buf & 0xFFFFFFFF);
+	command_table->Prdt[0].Dbau = (((Kernel::UInt64)phys_dma_buf >> 32));
+	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)phys_dma_buf & 0xFFFFFFFF);
 	command_table->Prdt[0].Dbc	= ((size_buffer)-1);
 	command_table->Prdt[0].IE	= 1;
 

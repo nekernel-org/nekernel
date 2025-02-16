@@ -17,7 +17,7 @@ namespace LibCF
 	{
 	public:
 		explicit CFObject() = default;
-		virtual ~CFObject()		   = default;
+		virtual ~CFObject() = default;
 
 		SCI_COPY_DEFAULT(CFObject);
 	};
