@@ -14,4 +14,6 @@ namespace LibCF
 	class CFString;
 	class CFGUID;
 	class CFProperty;
+	class CFObject;
+	class CFRef; /// TODO: Ref->CFRef
 } // namespace LibCF
