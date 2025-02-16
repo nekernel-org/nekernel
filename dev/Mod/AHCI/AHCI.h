@@ -267,7 +267,7 @@ typedef struct HbaMem final
 	Kernel::UInt8 Resv0[0xA0 - 0x2C];
 	Kernel::UInt8 Vendor[0x100 - 0xA0];
 
-	HbaPort Ports[1]; // 1 ~ 32, 32 is the max ahci devices per controller.
+	HbaPort Ports[32]; // 1 ~ 32, 32 is the max ahci devices per controller.
 } HbaMem;
 
 typedef struct HbaCmdHeader final
@@ -318,7 +318,7 @@ typedef struct HbaPrdtEntry final
 	// DW3
 	Kernel::UInt32 Dbc : 22;	  // Byte count, 4M max
 	Kernel::UInt32 Reserved1 : 9; // Reserved
-	Kernel::UInt32 IE : 1;		  // Interrupt on completion
+	Kernel::UInt32 Ie : 1;		  // Interrupt on completion
 } HbaPrdtEntry;
 
 typedef struct HbaCmdTbl final

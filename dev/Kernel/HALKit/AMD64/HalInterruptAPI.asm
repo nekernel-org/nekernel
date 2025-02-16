@@ -18,14 +18,6 @@ global __NE_INT_%1
 __NE_INT_%1:
     cld
 
-    mov al, 0x20
-    out 0xA0, al
-    out 0x20, al
-
-    push rcx
-    call idt_handle_generic
-    pop rcx
-
     std
 
     o64 iret
@@ -35,10 +27,6 @@ __NE_INT_%1:
 global __NE_INT_%1
 __NE_INT_%1:
     cld
-
-    mov al, 0x20
-    out 0xA0, al
-    out 0x20, al
 
     std
     
@@ -66,6 +54,10 @@ __NE_INT_0:
     mov al, 0x20
     out 0x20, al
 
+    push rcx
+    call idt_handle_generic
+    pop rcx
+    
     std
 
     o64 iret

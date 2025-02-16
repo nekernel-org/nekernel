@@ -201,11 +201,6 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
 	{
-		if (handover_hdr->f_BitMapStart)
-		{
-			BS->FreePool(handover_hdr->f_BitMapStart);
-			handover_hdr->f_BitMapStart = nullptr;
-		}
 	}
 
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
