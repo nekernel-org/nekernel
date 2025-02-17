@@ -102,7 +102,7 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	/** @brief Add pointer to entry. */
+	/** @brief Allocate pointer to track list. */
 	/***********************************************************************************/
 
 	ErrorOr<VoidPtr> UserProcess::New(const SizeT& sz, const SizeT& pad_amount)
