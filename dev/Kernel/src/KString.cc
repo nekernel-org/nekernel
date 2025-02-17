@@ -165,18 +165,19 @@ namespace Kernel
 		if (!ret)
 			return ("?");
 
-		for (Size idx = 0; idx < rt_string_len(fmt); ++idx)
+		const auto len = rt_string_len(fmt);
+
+		for (Size idx = 0; idx < len; ++idx)
 		{
-			if (fmt[idx] == '%')
+			if (fmt[idx] == '%' && idx < rt_string_len(fmt) && fmt[idx] == 's')
 			{
 				Size result_cnt = idx;
+
 				for (Size y_idx = 0; y_idx < rt_string_len(fmt2); ++y_idx)
 				{
 					ret[result_cnt] = fmt2[y_idx];
 					++result_cnt;
 				}
-
-				break;
 			}
 
 			ret[idx] = fmt[idx];
