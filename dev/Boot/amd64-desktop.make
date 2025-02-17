@@ -20,13 +20,15 @@ else
 EMU=qemu-system-x86_64  -net none
 endif
 
-ifeq ($(NEWS_MODEL), )
+ifeq ($(NEOS_MODEL), )
 NE_MODEL=-DkMachineModel="\"NeOS\""
 endif
 
 BIOS=OVMF.fd
 IMG=epm-master-1.img
 IMG_2=epm-master-2.img
+
+BOOT=neos.iso
 
 DISK_DRV  =
 
@@ -48,14 +50,12 @@ endif
 
 ifeq ($(shell uname), Darwin)
 EMU_FLAGS=-net none -smp 4 -m 8G \
-			-bios $(BIOS) -drive \
-			file=fat:rw:src/Root/,index=3,format=raw
+    -bios $(BIOS) -cdrom $(BOOT) -boot d 
 endif
 
 ifneq ($(shell uname), Darwin)
 EMU_FLAGS=-net none -smp 4 -m 8G \
-			-bios $(BIOS) -drive \
-			file=fat:rw:src/Root/,index=3,format=raw -accel kvm
+    -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm 
 endif
 
 LD_FLAGS=-e Main --subsystem=10
@@ -92,6 +92,12 @@ all: compile-amd64
 	$(COPY) ./Mod/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
 	$(COPY) ../LibSCI/$(SCIKIT) src/Root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
+	xorriso -as mkisofs -R -r -J \
+	-no-emul-boot -boot-load-size 4 -boot-info-table -hfsplus \
+	-apm-block-size 2048 --efi-boot EFI/BOOT/BOOTX64.EFI \
+	-efi-boot-part --efi-boot-image --protective-msdos-label \
+	src/Root -o $(BOOT)
+
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__
@@ -107,15 +113,15 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -M q35 -hdc $(IMG) -s -S -trace ahci_*
+	$(EMU) $(EMU_FLAGS) -hda $(IMG) -s -S -trace ahci_* -boot menu=on
 
 .PHONY: run-efi-amd64-ata-pio
 run-efi-amd64-ata-pio:
-	$(EMU) $(EMU_FLAGS) -M q35 -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
+	$(EMU) $(EMU_FLAGS) -device piix3-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
 
 .PHONY: run-efi-amd64-ata-dma
 run-efi-amd64-ata-dma:
-	$(EMU) $(EMU_FLAGS) -M q35 -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
+	$(EMU) $(EMU_FLAGS) -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S
 
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata: run-efi-amd64-ata-dma

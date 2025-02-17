@@ -18,7 +18,7 @@ else
 EMU=qemu-system-aarch64
 endif
 
-ifeq ($(NEWS_MODEL), )
+ifeq ($(NEOS_MODEL), )
 NE_MODEL=-DkMachineModel="\"NeKernel\""
 endif
 

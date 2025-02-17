@@ -15,7 +15,6 @@
  *
  */
 
-#include "HALKit/AMD64/Processor.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -240,30 +239,26 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
 	command_header->Write = Write;
-	command_header->Prdtl = (size_buffer / kib_cast(8)) / sizeof(HbaPrdtEntry) + 1;
+	command_header->Prdtl = (size_buffer / 16) + 1;
 
 	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((Kernel::UInt64)command_header->Ctba + command_header->Ctbau);
 
 	MUST_PASS(command_table);
 
-	auto buffer_phys = Kernel::HAL::hal_get_phys_address(buffer);
+	auto buffer_phys = buffer;
 
-	for (Kernel::SizeT i = 0; i < (command_header->Prdtl - 1); i++)
+	for (Kernel::SizeT i = 0; i < (command_header->Prdtl); ++i)
 	{
 		command_table->Prdt[i].Dba	= ((Kernel::UInt32)(Kernel::UInt64)buffer_phys + (i * 16) & 0xFFFFFFFF);
 		command_table->Prdt[i].Dbau = (((Kernel::UInt64)(buffer_phys + (i * 16)) >> 32) & 0xFFFFFFFF);
 		command_table->Prdt[i].Dbc	= (16 - 1);
 		command_table->Prdt[i].Ie	= YES;
-
-		buffer += 16;
 	}
 
 	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)((Kernel::UInt64)&command_table->Cfis);
 
 	h2d_fis->FisType = kFISTypeRegH2D;
-
-	h2d_fis->CmdOrCtrl = YES;
-
+	h2d_fis->CmdOrCtrl = CommandOrCTRL;
 	h2d_fis->Command = Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx;
 
 	if (Identify)
@@ -278,8 +273,8 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	h2d_fis->Device = kSataLBAMode;
 
-	h2d_fis->CountLow  = sector_sz & 0xFF;
-	h2d_fis->CountHigh = (sector_sz >> 8) & 0xFF;
+	h2d_fis->CountLow  = (size_buffer) & 0xFF;
+	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
 
 	while ((kSATA->Ports[kSATAPortIdx].Tfd & (kAhciSRBsy | kAhciSRDrq)))
 	{
