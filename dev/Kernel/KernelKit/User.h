@@ -16,7 +16,7 @@
 ///! all are used to make authorization operations on the OS.
 #define kSuperUser "OS AUTHORITY/SUPER/%s"
 #define kGuestUser "OS AUTHORITY/GUEST/%s"
-#define kFmtUser   "OS AUTHORITY/STD/%s"
+#define kStdUser   "OS AUTHORITY/STD/%s"
 
 #define kUsersDir "/usr/"
 
