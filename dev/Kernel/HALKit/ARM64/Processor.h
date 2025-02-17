@@ -76,6 +76,11 @@ namespace Kernel::HAL
 	{
 		return *reinterpret_cast<volatile DataKind*>(address);
 	}
+
+	inline Void hal_wfi(Void)
+	{
+		asm volatile ("wfi");
+	}
 } // namespace Kernel::HAL
 
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
