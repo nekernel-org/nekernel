@@ -250,12 +250,11 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	for (Kernel::SizeT i = 0; i < (command_header->Prdtl - 1); i++)
 	{
-		command_table->Prdt[i].Dba	= ((Kernel::UInt32)(Kernel::UInt64)buffer_phys & 0xFFFFFFFF);
-		command_table->Prdt[i].Dbau = (((Kernel::UInt64)buffer_phys >> 32) & 0xFFFFFFFF);
+		command_table->Prdt[i].Dba	= ((Kernel::UInt32)(Kernel::UInt64)buffer_phys + (i * 16) & 0xFFFFFFFF);
+		command_table->Prdt[i].Dbau = (((Kernel::UInt64)(buffer_phys + (i * 16)) >> 32) & 0xFFFFFFFF);
 		command_table->Prdt[i].Dbc	= (16 - 1);
 		command_table->Prdt[i].Ie	= YES;
 
-		size_buffer -= 16;
 		buffer += 16;
 	}
 
@@ -292,9 +291,6 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	while (kSATA->Ports[kSATAPortIdx].Ci & (1 << slot))
 	{
-
-		kout << Kernel::number(slot) << endl;
-
 		if (kSATA->Is & kHBAErrTaskFile) // check for task file error.
 		{
 			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
