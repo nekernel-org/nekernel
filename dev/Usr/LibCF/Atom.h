@@ -5,37 +5,38 @@
 ------------------------------------------- */
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <LibCF/Core.h>
 
-namespace Kernel
+namespace LibCF
 {
 	template <typename T>
-	class Atom final
+	class CFAtom final
 	{
 	public:
-		explicit Atom() = default;
-		~Atom()			= default;
+		explicit CFAtom() = default;
+		~CFAtom()			= default;
 
 	public:
-		Atom& operator=(const Atom&) = delete;
-		Atom(const Atom&)			 = delete;
+		CFAtom& operator=(const CFAtom&) = delete;
+		CFAtom(const CFAtom&)			 = delete;
 
 	public:
-		T operator[](Size bit)
+		T operator[](SizeT bit)
 		{
 			return (fArrayOfAtoms & (1 << bit));
 		}
-		void operator|(Size bit)
+        
+		void operator|(SizeT bit)
 		{
 			fArrayOfAtoms |= (1 << bit);
 		}
 
-		friend Boolean operator==(Atom<T>& atomic, const T& idx)
+		friend Boolean operator==(CFAtom<T>& atomic, const T& idx)
 		{
 			return atomic[idx] == idx;
 		}
 
-		friend Boolean operator!=(Atom<T>& atomic, const T& idx)
+		friend Boolean operator!=(CFAtom<T>& atomic, const T& idx)
 		{
 			return atomic[idx] == idx;
 		}
@@ -43,4 +44,4 @@ namespace Kernel
 	private:
 		T fArrayOfAtoms;
 	};
-} // namespace Kernel
+} // namespace LibCF
