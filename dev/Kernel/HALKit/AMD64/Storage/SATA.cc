@@ -65,14 +65,14 @@ static Kernel::Void drvi_calculate_disk_geometry() noexcept
 
 	Kernel::UInt8* identify_data = new Kernel::UInt8[512];
 
-	drvi_std_input_output<NO, YES, YES>(0, identify_data, 0, 512);
+	drvi_std_input_output<NO, NO, YES>(0, identify_data, 0, 512);
 
 	kCurrentDiskSectorCount = (identify_data[61] << 16) | identify_data[60];
 
 	for (Kernel::Int32 i = 0; i < 20; i++)
 	{
 		kCurrentDiskModel[i * 2]	 = identify_data[27 + i] >> 8;
-		kCurrentDiskModel[i * 2 + 1] = identify_data[27 + i] & 0xFF;
+		kCurrentDiskModel[i * 2 + 1] = identify_data[27 + i + 1] & 0xFF;
 	}
 
 	kCurrentDiskModel[40] = '\0';
@@ -208,7 +208,7 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	command_table->Prdt[0].Dbau = (((Kernel::UInt64)phys_dma_buf >> 32));
 	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)phys_dma_buf);
 	command_table->Prdt[0].Dbc	= ((size_buffer)-1);
-	command_table->Prdt[0].Ie	= 0;
+	command_table->Prdt[0].Ie	= 1;
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)((Kernel::UInt64)&command_table->Cfis);
 
@@ -236,7 +236,7 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	if (kSATA->Is & kHBAErrTaskFile)
 		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
-	kSATA->Ports[kSATAPortIdx].Ie  = 0;
+	kSATA->Ports[kSATAPortIdx].Ie  = 1;
 
 	kSATA->Ports[kSATAPortIdx].Cmd = kHBAPxCmdFR | kHBAPxCmdST;
 	kSATA->Ports[kSATAPortIdx].Ci = (1 << slot);

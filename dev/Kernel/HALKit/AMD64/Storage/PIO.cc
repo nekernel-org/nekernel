@@ -25,7 +25,7 @@ using namespace Kernel::HAL;
 
 /// bugs: 0
 
-#define kATADataLen 256
+#define kATADataLen 512
 
 STATIC Boolean kATADetected			 = false;
 STATIC Int32   kATADeviceType		 = kATADeviceCount;
@@ -38,18 +38,18 @@ Boolean drv_std_wait_io(UInt16 IO)
 		rt_in8(IO + ATA_REG_STATUS);
 
 ATAWaitForIO_Retry:
-	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
+	auto stat_rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if ((statRdy & ATA_SR_BSY))
+	if ((stat_rdy & ATA_SR_BSY))
 		goto ATAWaitForIO_Retry;
 
 ATAWaitForIO_Retry2:
-	statRdy = rt_in8(IO + ATA_REG_STATUS);
+	stat_rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if (statRdy & ATA_SR_ERR)
+	if (stat_rdy & ATA_SR_ERR)
 		return false;
 
-	if (!(statRdy & ATA_SR_DRDY))
+	if (!(stat_rdy & ATA_SR_DRDY))
 		goto ATAWaitForIO_Retry2;
 
 	return true;
@@ -74,42 +74,40 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 	// identify until it's good.
 ATAInit_Retry:
-	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
+	auto stat_rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if (statRdy & ATA_SR_ERR)
+	if (stat_rdy & ATA_SR_ERR)
 	{
 		return false;
 	}
 
-	if ((statRdy & ATA_SR_BSY))
+	if ((stat_rdy & ATA_SR_BSY))
 		goto ATAInit_Retry;
 
-	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
+	OutBus	  = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
+	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
+	rt_out8(OutBus + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
+
+	drv_std_wait_io(IO);
+	
 	/// fetch serial info
 	/// model, speed, number of sectors...
 
-	drv_std_wait_io(IO);
-
 	for (SizeT i = 0ul; i < kATADataLen; ++i)
 	{
-		drv_std_wait_io(IO);
-		kATAData[i] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
-		drv_std_wait_io(IO);
+		kATAData[i] = Kernel::HAL::rt_in16(OutBus + ATA_REG_DATA);
 	}
-
-	for (SizeT i = 0; i < 40; i += 2)
+	
+	for (Kernel::Int32 i = 0; i < 20; i++)
 	{
-		kCurrentDiskModel[i]	 = kATAData[54 + i] >> 8;
-		kCurrentDiskModel[i + 1] = kATAData[54 + i] & 0xFF;
+		kCurrentDiskModel[i * 2]	 = kATAData[27 + i] >> 8;
+		kCurrentDiskModel[i * 2 + 1] = kATAData[27 + i + 1] & 0xFF;
 	}
 
 	kCurrentDiskModel[40] = '\0';
 
 	kout << "Drive Model: " << kCurrentDiskModel << endl;
-
-	OutBus	  = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
-	OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
 	return true;
 }
@@ -134,13 +132,10 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-	drv_std_wait_io(IO);
-
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
 		drv_std_wait_io(IO);
 		Buf[IndexOff] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
-		drv_std_wait_io(IO);
 	}
 }
 
@@ -164,16 +159,11 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 
 	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-	drv_std_wait_io(IO);
-
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
 		drv_std_wait_io(IO);
 		rt_out16(IO + ATA_REG_DATA, Buf[IndexOff]);
-		drv_std_wait_io(IO);
 	}
-
-	drv_std_wait_io(IO);
 }
 
 /// @brief is ATA detected?
