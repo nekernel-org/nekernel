@@ -160,7 +160,7 @@ namespace Kernel
 			return ("?");
 
 		Char* ret =
-			(Char*)RTL_ALLOCA(sizeof(char) * rt_string_len(fmt2) + rt_string_len(fmt));
+			(Char*)RTL_ALLOCA(sizeof(char) * (rt_string_len(fmt2) + rt_string_len(fmt)));
 
 		if (!ret)
 			return ("?");
