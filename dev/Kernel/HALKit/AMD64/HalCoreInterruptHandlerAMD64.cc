@@ -104,6 +104,8 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 	process.Leak().Crash();
 }
 
+EXTERN BOOL kAHCICommandIssued;
+
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
@@ -111,7 +113,10 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
+	{
+		kout << "Getting here.\r";
 		return;
+	}
 
 	kIsScheduling = NO;
 
@@ -134,6 +139,8 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 	{
+		kout << "Kernel: SIGTRAP\r";
+
 		while (YES)
 			;
 	}
@@ -148,7 +155,7 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kout << "Kernel: SIGKILL status.\r";
+	kout << "Kernel: SIGTRAP status.\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 }

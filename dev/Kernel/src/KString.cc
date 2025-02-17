@@ -14,17 +14,17 @@ namespace Kernel
 {
 	Char* KString::Data()
 	{
-		return fData;
+		return this->fData;
 	}
 
 	const Char* KString::CData() const
 	{
-		return fData;
+		return const_cast<const Char*>(this->fData);
 	}
 
 	Size KString::Length() const
 	{
-		return fDataSz;
+		return this->fDataSz;
 	}
 
 	bool KString::operator==(const KString& rhs) const
