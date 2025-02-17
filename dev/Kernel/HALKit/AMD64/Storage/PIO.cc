@@ -90,7 +90,7 @@ ATAInit_Retry:
 	rt_out8(OutBus + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
 	drv_std_wait_io(IO);
-	
+
 	/// fetch serial info
 	/// model, speed, number of sectors...
 
@@ -98,7 +98,7 @@ ATAInit_Retry:
 	{
 		kATAData[i] = Kernel::HAL::rt_in16(OutBus + ATA_REG_DATA);
 	}
-	
+
 	for (Kernel::Int32 i = 0; i < 20; i++)
 	{
 		kCurrentDiskModel[i * 2]	 = kATAData[27 + i] >> 8;

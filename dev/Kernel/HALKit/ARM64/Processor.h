@@ -79,7 +79,7 @@ namespace Kernel::HAL
 
 	inline Void hal_wfi(Void)
 	{
-		asm volatile ("wfi");
+		asm volatile("wfi");
 	}
 } // namespace Kernel::HAL
 

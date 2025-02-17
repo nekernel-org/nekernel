@@ -14,7 +14,7 @@ namespace LibCF
 	{
 	public:
 		explicit CFAtom() = default;
-		~CFAtom()			= default;
+		~CFAtom()		  = default;
 
 	public:
 		CFAtom& operator=(const CFAtom&) = delete;
@@ -25,7 +25,7 @@ namespace LibCF
 		{
 			return (fArrayOfAtoms & (1 << bit));
 		}
-        
+
 		void operator|(SizeT bit)
 		{
 			fArrayOfAtoms |= (1 << bit);

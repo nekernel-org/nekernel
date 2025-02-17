@@ -82,7 +82,7 @@ static Kernel::Void drvi_calculate_disk_geometry() noexcept
 	kout << "Disk Size: " << Kernel::number(drv_get_size()) << endl;
 	kout << "Highest Disk LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
 
-	delete [] identify_data;
+	delete[] identify_data;
 }
 
 /// @brief Initializes an AHCI disk.
@@ -236,10 +236,10 @@ static Kernel::Void drvi_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buf
 	if (kSATA->Is & kHBAErrTaskFile)
 		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 
-	kSATA->Ports[kSATAPortIdx].Ie  = 1;
+	kSATA->Ports[kSATAPortIdx].Ie = 1;
 
 	kSATA->Ports[kSATAPortIdx].Cmd = kHBAPxCmdFR | kHBAPxCmdST;
-	kSATA->Ports[kSATAPortIdx].Ci = (1 << slot);
+	kSATA->Ports[kSATAPortIdx].Ci  = (1 << slot);
 
 	while (!drv_is_ready())
 		;

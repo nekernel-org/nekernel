@@ -47,10 +47,12 @@ namespace Kernel
 		UInt16 HostFlags;
 		UInt8  Error;
 		UInt32 MMIOTest;
+		UInt16 State;
 		UInt8  Status;
 		UInt8  InterruptEnable;
 		UInt64 BaseAddressRegister;
 		UInt64 BaseAddressRegisterSize;
+		UInt32 CommandIssue;
 		Char   Zero[kMBCIZeroSz];
 	};
 
@@ -77,6 +79,18 @@ namespace Kernel
 		kMBCIHostKindNetworkInterface,
 		kMBCIHostKindDaisyChain,
 		kMBCIHostKindStartExtended, // Extended vendor table limit.
+	};
+
+	enum MBCIHostState
+	{
+		kMBCIHostStateInvalid,
+		kMBCIHostStateReset,
+		kMBCIHostStateSuccess,
+		kMBCIHostStateReady,
+		kMBCIHostStateDmaStart,
+		kMBCIHostStateDmaEnd,
+		kMBCIHostStateFail,
+		kMBCIHostStateCount,
 	};
 
 	/// @brief An AuthKey is a context used to decrpy data from an MBCI packet.

@@ -80,7 +80,7 @@ namespace LibCF
 	class CFNonNullRef final
 	{
 	public:
-		CFNonNullRef()		= delete;
+		CFNonNullRef()		  = delete;
 		CFNonNullRef(nullPtr) = delete;
 
 		CFNonNullRef(T* ref)
