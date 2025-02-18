@@ -19,7 +19,7 @@ An OS written in C++ 20, with a System Call Interface Library, and a custom boot
 Clone repository:
 
 ```
-git clone git@github.com:mediaswirl/nekernel.git
+git clone git@github.com:devrije/nekernel.git
 cd nekernel
 ```
 

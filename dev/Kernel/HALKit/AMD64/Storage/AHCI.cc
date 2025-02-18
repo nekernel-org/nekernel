@@ -257,9 +257,9 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)((Kernel::UInt64)&command_table->Cfis);
 
-	h2d_fis->FisType = kFISTypeRegH2D;
+	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
-	h2d_fis->Command = Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx;
+	h2d_fis->Command   = Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx;
 
 	if (Identify)
 		h2d_fis->Command = kAHCICmdIdentify;

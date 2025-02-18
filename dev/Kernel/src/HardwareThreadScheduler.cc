@@ -61,13 +61,15 @@ namespace Kernel
 	/***********************************************************************************/
 	Bool HardwareThread::IsBusy() noexcept
 	{
-		STATIC Int64 busy_timer	 = 0U;
-		STATIC Int64 timeout_max = 0x1000000; // an arbitrary value used to tell if the timeout hasn't been reached yet.
+		STATIC Int64	busy_timer	= 0U;
+		constexpr Int64 kTimeoutMax = 0x1000000; // an arbitrary value used to tell if the timeout hasn't been reached yet.
 
-		if (fBusy && busy_timer > timeout_max)
+		if (fBusy && (busy_timer > kTimeoutMax))
 		{
 			busy_timer = 0U;
 			fBusy	   = No;
+
+			return No;
 		}
 
 		++busy_timer;
@@ -81,13 +83,13 @@ namespace Kernel
 
 	HAL::StackFramePtr HardwareThread::StackFrame() noexcept
 	{
-		MUST_PASS(fStack);
-		return fStack;
+		MUST_PASS(this->fStack);
+		return this->fStack;
 	}
 
 	Void HardwareThread::Busy(const Bool busy) noexcept
 	{
-		fBusy = busy;
+		this->fBusy = busy;
 	}
 
 	HardwareThread::operator bool()
@@ -101,7 +103,7 @@ namespace Kernel
 
 	Void HardwareThread::Wake(const bool wakeup) noexcept
 	{
-		fWakeup = wakeup;
+		this->fWakeup = wakeup;
 	}
 
 	/***********************************************************************************/
@@ -118,8 +120,8 @@ namespace Kernel
 		this->fStack	 = frame;
 		this->fSourcePID = pid;
 
-		fStack->BP = reinterpret_cast<UIntPtr>(image_ptr);
-		fStack->SP = reinterpret_cast<UIntPtr>(stack_ptr);
+		this->fStack->BP = reinterpret_cast<UIntPtr>(image_ptr);
+		this->fStack->SP = reinterpret_cast<UIntPtr>(stack_ptr);
 
 		Bool ret = mp_register_process(fStack, this->fSourcePID);
 
@@ -134,7 +136,7 @@ namespace Kernel
 	/***********************************************************************************/
 	bool HardwareThread::IsWakeup() noexcept
 	{
-		return fWakeup;
+		return this->fWakeup;
 	}
 
 	/***********************************************************************************/
@@ -183,8 +185,8 @@ namespace Kernel
 		}
 		else if (idx >= kMaxAPInsideSched)
 		{
-			static HardwareThread* fakeThread = nullptr;
-			return {fakeThread};
+			static HardwareThread* kFakeThread = nullptr;
+			return {kFakeThread};
 		}
 
 		return &fThreadList[idx];
