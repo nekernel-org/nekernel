@@ -13,7 +13,7 @@ boot_hdr_mag:
 	.ascii "CB"
 boot_hdr_name:
 	// it has to match ten bytes.
-	.asciz "zbaosldr\0\0"
+	.asciz "bootz\0\0\0"
 boot_hdr_ver:
 	.word 0x104
 boot_hdr_proc:

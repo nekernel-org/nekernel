@@ -11,10 +11,10 @@ BEGIN
       VALUE "CompanyName", "Amlal EL Mahrouss"
       VALUE "FileDescription", "NeKernel OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
-      VALUE "InternalName", "zbaosldr"
+      VALUE "InternalName", "bootz"
       VALUE "LegalCopyright", "Copyright (C) 2024, Amlal EL Mahrouss all rights reserved."
-      VALUE "OriginalFilename", "zbaosldr.exe"
-      VALUE "ProductName", "zbaosldr"
+      VALUE "OriginalFilename", "bootz.exe"
+      VALUE "ProductName", "bootz"
       VALUE "ProductVersion", BOOTLOADER_VERSION
     END
   END

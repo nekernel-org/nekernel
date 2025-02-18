@@ -273,8 +273,8 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	h2d_fis->Device = kSataLBAMode;
 
-	h2d_fis->CountLow  = (size_buffer) & 0xFF;
-	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
+	h2d_fis->CountLow  = (size_buffer - 1) & 0xFF;
+	h2d_fis->CountHigh = ((size_buffer - 1) >> 8) & 0xFF;
 
 	while ((kSATA->Ports[kSATAPortIdx].Tfd & (kAhciSRBsy | kAhciSRDrq)))
 	{

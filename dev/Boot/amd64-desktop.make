@@ -67,11 +67,11 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__ZBAOSLDR__ \
+FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__ \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../Kernel $(DISK_DRV) -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT
 
-BOOTLOADER=zbaosldr.exe
+BOOTLOADER=bootz.exe
 KERNEL=neoskrnl.exe
 SYSCHK=syschk.sys
 STARTUP=startup.sys
@@ -87,7 +87,7 @@ all: compile-amd64
 	mkdir -p src/Root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o src/$(BOOTLOADER)
 	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTX64.EFI
-	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/ZBAOSLDR.EFI
+	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTZ.EFI
 	$(COPY) ../Kernel/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ./Mod/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
 	$(COPY) ../LibSCI/$(SCIKIT) src/Root/$(SCIKIT)
@@ -136,7 +136,7 @@ efi:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=zbaosldr.exe neoskrnl.exe OVMF.fd
+EXECUTABLES=bootz.exe neoskrnl.exe OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

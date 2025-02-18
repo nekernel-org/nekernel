@@ -16,7 +16,7 @@
 #define kLongMax ((long)(~0UL >> 1))
 #define kLongMin (~kLongMax)
 
-#ifdef __ZBAOSLDR__
+#ifdef __BOOTZ__
 
 /// @brief memset definition in C++.
 /// @param dst destination pointer.
@@ -40,7 +40,7 @@ EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight);
 
 #include <string.h>
 
-#endif // __ZBAOSLDR__
+#endif // __BOOTZ__
 
 #define SetMem(dst, c, sz)	  memset(dst, c, sz)
 #define MoveMem(dst, src, sz) memcpy(dst, src, sz)

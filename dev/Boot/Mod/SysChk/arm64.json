@@ -16,7 +16,7 @@
   ],
   "cpp_macros": [
     "__NEOSKRNL__",
-    "__ZBAOSLDR__",
+    "__BOOTZ__",
     "__BOOTLDR_STANDALONE__",
     "__NE_ARM64__",
     "kChkVersionHighest=0x0100",

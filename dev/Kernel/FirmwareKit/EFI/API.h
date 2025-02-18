@@ -16,7 +16,7 @@
 #define kNeKernelSubsystem (17)
 #define kNeWebsiteMacro	   "https://vswirl.com/help"
 
-#ifdef __ZBAOSLDR__
+#ifdef __BOOTZ__
 // forward decl.
 class BTextWriter;
 
@@ -24,7 +24,7 @@ class BTextWriter;
 
 #include <BootKit/BootKit.h>
 #include <Mod/CoreGfx/FBMgr.h>
-#endif // ifdef __ZBAOSLDR__
+#endif // ifdef __BOOTZ__
 
 inline EfiSystemTable*	ST = nullptr;
 inline EfiBootServices* BS = nullptr;
@@ -116,10 +116,10 @@ inline void InitEFI(EfiSystemTable* SystemTable) noexcept
 	ST->ConOut->EnableCursor(ST->ConOut, false);
 }
 
-#ifdef __ZBAOSLDR__
+#ifdef __BOOTZ__
 
 #include <BootKit/Platform.h>
 
-#endif // ifdef __ZBAOSLDR__
+#endif // ifdef __BOOTZ__
 
 #endif /* ifndef __EFI_API__ */
