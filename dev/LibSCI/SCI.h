@@ -323,8 +323,10 @@ IMPORT_C SInt32 SchedBreakPoint(Void);
 
 IMPORT_C SInt32 VideoGetBuffer(VoidPtr* out);
 
-IMPORT_C Void VideoDisposeBuffer(VoidPtr* in);
+IMPORT_C SInt32 VideoDisposeBuffer(VoidPtr* in);
 
-IMPORT_C SInt32 VideoGetProfile(VoidPtr* in);
+IMPORT_C SInt32 VideoGetColorProfile(VoidPtr* in);
+
+IMPORT_C SInt32 VideoQueryInfo(VoidPtr* info_ptr, SizeT* info_sz);
 
 #endif // ifndef SCI_SCI_H
