@@ -78,5 +78,5 @@ IMPORT_C void _rtl_assert(Bool expr, const Char* origin);
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a)              \
 	(((sizeof(a) / sizeof(*(a))) / \
-	  (static_cast<Kernel::Size>(!(sizeof(a) % sizeof(*(a)))))))
+	  (static_cast<SizeT>(!(sizeof(a) % sizeof(*(a)))))))
 #endif

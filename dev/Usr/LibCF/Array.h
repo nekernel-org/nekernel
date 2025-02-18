@@ -38,7 +38,15 @@ namespace LibCF
 
 		const SizeT Count()
 		{
-			return N;
+			auto cnt = 0UL;
+
+			for (auto i = 0; i < N; ++i)
+			{
+				if (fArray[i])
+					++cnt;
+			}
+
+			return cnt;
 		}
 
 		const T* CData()
@@ -52,7 +60,7 @@ namespace LibCF
 		}
 
 	private:
-		T fArray[N];
+		T fArray[N] = {nullptr};
 	};
 
 	template <typename ValueType>

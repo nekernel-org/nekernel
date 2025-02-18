@@ -329,4 +329,24 @@ IMPORT_C SInt32 VideoGetColorProfile(VoidPtr* in);
 
 IMPORT_C SInt32 VideoQueryInfo(VoidPtr* info_ptr, SizeT* info_sz);
 
+IMPORT_C BOOL FsCopy(const char* path, const char* dst);
+IMPORT_C BOOL FsMove(const char* path, const char* dst);
+
+IMPORT_C BOOL FsExists(const char* path);
+
+IMPORT_C BOOL FsCreateDir(const char* path);
+IMPORT_C BOOL FsCreateFile(const char* path);
+IMPORT_C BOOL FsCreateAlias(const char* path, const char* from);
+
+IMPORT_C Char* StrFmt(const Char* fmt, ...);
+
+IMPORT_C SInt32 MsgFree(VoidPtr handle);
+IMPORT_C SInt32 MsgShow(VoidPtr handle);
+
+/// @note fmt could be any POSIX argument, or the extended ones (%$, %{})
+IMPORT_C SInt32 MsgSend(VoidPtr handle, const Char* fmt, ...);
+IMPORT_C SInt32 MsgAlloc(VoidPtr handle);
+
+IMPORT_C VoidPtr kAlertMsg, kInfoMsg, kErrorMsg;
+
 #endif // ifndef SCI_SCI_H

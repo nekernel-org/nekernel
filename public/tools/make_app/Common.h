@@ -6,14 +6,7 @@
 #ifndef APPS_COMMON_H
 #define APPS_COMMON_H
 
-#include <cstdint>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstring>
-#include <sstream>
-#include <filesystem>
-#include <cstdlib>
-#include <vector>
+#include <LibSCI/SCI.h>
+#include <LibCF/Core.h>
 
 #endif // APPS_COMMON_H

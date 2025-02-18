@@ -7,70 +7,66 @@
 #include <Framework.h>
 #include <Steps.h>
 
+#include <LibCF/Array.h>
+
 /// @brief This program makes a framework directory for NeKernel OS.
 
 int main(int argc, char* argv[])
 {
-	std::vector<std::string> files;
+	LibCF::CFArray<const char*, 255> files;
 
 	auto ext = kFKExtension;
 
-	for (size_t i = 2UL; i < argc; ++i)
+	for (SizeT i = 2UL; i < argc; ++i)
 	{
-		if (strcmp(argv[i], "-h") == 0)
+		if (MmStrCmp(argv[i], "-h") == 0)
 		{
-			std::cout << "make_app: Framework/Application Creation Tool.\n";
-			std::cout << "make_app: © Amlal EL Mahrouss, All rights reserved.\n";
+			MsgAlloc(kAlertMsg);
 
-			std::cout << "make_app: -a: Application format.\n";
-			std::cout << "make_app: -s: Steps (Setup pages) format.\n";
-			std::cout << "make_app: -f: Framework format.\n";
+			MsgSend(kAlertMsg, "%s", "make_app: Framework/Application Creation Tool.\n");
+			MsgSend(kAlertMsg, "%s", "make_app: © Amlal EL Mahrouss, All rights reserved.\n");
+
+			MsgSend(kAlertMsg, "%s", "make_app: -a: Application format.\n");
+			MsgSend(kAlertMsg, "%s", "make_app: -s: Steps (Setup pages) format.\n");
+			MsgSend(kAlertMsg, "%s", "make_app: -f: Framework format.\n");
+
+			MsgShow(kAlertMsg);
+			MsgFree(kAlertMsg);
 
 			return EXIT_SUCCESS;
 		}
 
-		if (strcmp(argv[i], "-a") == 0)
+		if (MmStrCmp(argv[i], "-a") == 0)
 		{
 			ext = kAppExtension;
 			continue;
 		}
-		else if (strcmp(argv[i], "-s") == 0)
+		else if (MmStrCmp(argv[i], "-s") == 0)
 		{
 			ext = kStepsExtension;
 			continue;
 		}
-		else if (strcmp(argv[i], "-f") == 0)
+		else if (MmStrCmp(argv[i], "-f") == 0)
 		{
 			ext = kFKExtension;
 			continue;
 		}
 
-		files.push_back(argv[i]);
+		files[i] = argv[i];
 	}
 
-	auto path = std::string(argv[1]);
+	auto path = argv[1];
 
-	if (!std::filesystem::exists(path))
-		return EXIT_FAILURE;
-
-	std::filesystem::path path_arg = path + ext;
-
-	if (std::filesystem::create_directory(path_arg))
+	if (FsCreateDir(path))
 	{
-		std::filesystem::create_directory(path_arg / kRootDirectory);
-		std::filesystem::create_directory(path_arg / kExecDirectory);
+		FsCreateDir(StrFmt("{}{}", path, kRootDirectory));
+		FsCreateDir(StrFmt("{}{}", path, kExecDirectory));
 
-		for (auto& file : files)
+		for (SInt32 i = 0; i < files.Count(); ++i)
 		{
-			std::string file_cpy = file;
+			auto& file = files[i];
 
-			while (file_cpy.find("/") != std::string::npos)
-			{
-				file_cpy.erase(0, file_cpy.find("/"));
-				file_cpy.erase(file_cpy.find("/"), 1);
-			}
-
-			std::filesystem::copy(path, path_arg / kExecDirectory / file_cpy);
+			FsCopy(path, StrFmt("{}{}", path, file));
 		}
 
 		return EXIT_SUCCESS;
