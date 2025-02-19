@@ -155,10 +155,12 @@ namespace Kernel
 		return trait;
 	}
 
-	namespace Detect
+	namespace Detail
 	{
 		Void io_detect_drive(DriveTrait& trait)
 		{
+			trait.fInit(trait.fPacket);
+
 			EPM_PART_BLOCK block_struct;
 
 			trait.fPacket.fPacketLba	 = kEPMBootBlockLba;
@@ -167,8 +169,6 @@ namespace Kernel
 
 			rt_copy_memory((VoidPtr) "fs/detect-packet", trait.fPacket.fPacketMime,
 						   rt_string_len("fs/detect-packet"));
-
-			trait.fInit(trait.fPacket);
 
 			trait.fInput(trait.fPacket);
 
@@ -235,7 +235,7 @@ namespace Kernel
 
 		kout << "Detecting partition scheme of: " << trait.fName << ".\r";
 
-		Detect::io_detect_drive(trait);
+		Detail::io_detect_drive(trait);
 
 		return trait;
 	}

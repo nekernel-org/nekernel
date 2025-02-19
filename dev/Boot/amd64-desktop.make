@@ -50,12 +50,14 @@ endif
 
 ifeq ($(shell uname), Darwin)
 EMU_FLAGS=-net none -smp 4 -m 8G \
-    -bios $(BIOS) -cdrom $(BOOT) -boot d 
+    -bios $(BIOS) -cdrom $(BOOT) -boot d  -drive \
+			file=fat:rw:src/Root/,index=3,format=raw
 endif
 
 ifneq ($(shell uname), Darwin)
 EMU_FLAGS=-net none -smp 4 -m 8G \
-    -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm 
+    -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm  -drive \
+			file=fat:rw:src/Root/,index=3,format=raw
 endif
 
 LD_FLAGS=-e Main --subsystem=10
