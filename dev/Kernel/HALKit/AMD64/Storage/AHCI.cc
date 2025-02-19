@@ -110,14 +110,12 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 			{
 				if (ports_implemented)
 				{
-					kout << "Port is implemented.\r";
-
 					Kernel::UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
 					Kernel::UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
 
 					if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kAhciPresent && ipm == kAhciIPMActive)
 					{
-						kout << "Port is SATA.\r";
+						kout << "SATA port found.\r";
 
 						kSATAPortIdx = ahci_index;
 						kSATA		 = mem_ahci;
@@ -166,7 +164,7 @@ static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 
 	Kernel::UInt32 slots = (kSATA->Ports[kSATAPortIdx].Sact | kSATA->Ports[kSATAPortIdx].Ci);
 
-	for (Kernel::Int32 i = 0; i < 32; i++)
+	for (Kernel::Int32 i = 0; i < kAhciPortCnt; ++i)
 	{
 		if ((slots & 1) == 0)
 			return i;
@@ -269,7 +267,7 @@ Kernel::SizeT drv_get_sector_count()
 /// @return Disk size in bytes.
 Kernel::SizeT drv_get_size()
 {
-	return (drv_get_sector_count()) * kAHCISectorSize;
+	return drv_get_sector_count() * kAHCISectorSize;
 }
 
 #endif // ifdef __AHCI__
