@@ -189,7 +189,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	if (slot == -1)
 		return;
 
-	volatile HbaCmdHeader* command_header = ((volatile HbaCmdHeader*)((Kernel::UInt64)kSATA->Ports[kSATAPortIdx].Clb + kSATA->Ports[kSATAPortIdx].Clbu));
+	volatile HbaCmdHeader* command_header = ((volatile HbaCmdHeader*)((Kernel::UInt64)kSATA->Ports[kSATAPortIdx].Clb));
 
 	command_header += slot;
 
