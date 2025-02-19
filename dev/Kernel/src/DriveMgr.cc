@@ -99,7 +99,7 @@ namespace Kernel
 	}
 
 /// @brief Gets the drive kind (ATA, SCSI, AHCI...)
-/// @param no arguments.
+/// @param void no arguments.
 /// @return no arguments.
 #ifdef __ATA_PIO__
 	const Char* io_drv_kind(Void)

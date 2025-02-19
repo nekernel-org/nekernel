@@ -15,8 +15,6 @@
  *
  */
 
-#include "HALKit/AMD64/Processor.h"
-#include "KernelKit/DebugOutput.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -144,7 +142,7 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 Kernel::Boolean drv_std_detected(Kernel::Void)
 {
-	return kPCIDevice.DeviceId() != 0xFFFF;
+	return kPCIDevice.DeviceId() != (Kernel::UShort)Kernel::PCI::PciConfigKind::Invalid;
 }
 
 Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
