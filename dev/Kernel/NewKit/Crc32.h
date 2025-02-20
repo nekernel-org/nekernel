@@ -17,7 +17,7 @@
 
 namespace NeOS
 {
-	UInt ke_calculate_crc32(const Char* crc, UInt len) noexcept;
+	UInt32 ke_calculate_crc32(const Char* crc, Int32 len) noexcept;
 } // namespace NeOS
 
 #endif // !CRC32_H

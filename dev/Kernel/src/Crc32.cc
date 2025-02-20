@@ -69,15 +69,14 @@ namespace NeOS
 	/// @brief Calculate CRC32 of p
 	/// @param p the data to compute.
 	/// @param len the length of the data.
-	/// @return the CRC32.
-	UInt ke_calculate_crc32(const Char* p, UInt len) noexcept
+	/// @return CRC32 of **p**.
+	UInt32 ke_calculate_crc32(const Char* p, Int32 len) noexcept
 	{
-		UInt crc = 0xffffffff;
+		UInt32 crc = 0xffffffff;
 
-		while (len-- != 0)
+		while (--len > 0)
 			crc = kCrcTbl[((UInt8)crc ^ *(p++))] ^ (crc >> 8);
 
-		// return (~crc); also works, does the same thing.
-		return (crc ^ 0xffffffff);
+		return ~crc;
 	}
 } // namespace NeOS
