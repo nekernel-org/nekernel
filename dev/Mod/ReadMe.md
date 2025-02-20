@@ -1,8 +1,8 @@
-# Kernel Mod
+# Kernel Modules
 
 ## Brief
 
-They are pluggable modules for builtin hardware support.
+They are pluggable modules for specific hardware support.
 
 ## To-Do
 
