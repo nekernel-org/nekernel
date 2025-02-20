@@ -18,7 +18,7 @@
 /// @brief Process Thread Local Storage.
 /***********************************************************************************/
 
-using namespace Kernel;
+using namespace NeOS;
 
 /**
  * @brief Checks for cookie inside the TIB.
@@ -46,7 +46,7 @@ Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr)
  * @param tib_ptr The TIB record.
  * @return if the TIB record is valid or not.
  */
-EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept
+EXTERN_C Bool tls_check_syscall_impl(NeOS::VoidPtr tib_ptr) noexcept
 {
 	if (!tib_ptr)
 	{

@@ -14,7 +14,7 @@
 
 #define cMinimumStringSize 8196
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief Kernel string class, not dynamic.
 	class KString final
@@ -91,4 +91,4 @@ namespace Kernel
 		static bool				Equals(const Char* lhs, const Char* rhs);
 		static bool				Equals(const WideChar* lhs, const WideChar* rhs);
 	};
-} // namespace Kernel
+} // namespace NeOS

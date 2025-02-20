@@ -28,7 +28,7 @@
 
 // ================================================================= //
 
-namespace Kernel
+namespace NeOS
 {
 	struct PROCESS_CONTROL_BLOCK final
 	{
@@ -133,4 +133,4 @@ namespace Kernel
 
 		return NO;
 	}
-} // namespace Kernel
+} // namespace NeOS

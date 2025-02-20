@@ -34,7 +34,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-namespace Kernel::HAL
+namespace NeOS::HAL
 {
 	struct PROCESS_APIC_MADT;
 	struct PROCESS_CONTROL_BLOCK;
@@ -120,10 +120,10 @@ namespace Kernel::HAL
 
 	Void hal_send_start_ipi(UInt32 target, UInt32 apic_id)
 	{
-		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, apic_id << 24);
-		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, 0x00000500 | 0x00004000 | 0x00000000);
+		NeOS::ke_dma_write<UInt32>(target, kAPIC_ICR_High, apic_id << 24);
+		NeOS::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, 0x00000500 | 0x00004000 | 0x00000000);
 
-		while (Kernel::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000)
+		while (NeOS::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000)
 		{
 			;
 		}
@@ -138,10 +138,10 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	Void hal_send_sipi(UInt32 target, UInt32 apic_id, UInt8 vector)
 	{
-		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, apic_id << 24);
-		Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, 0x00000600 | 0x00004000 | 0x00000000 | vector);
+		NeOS::ke_dma_write<UInt32>(target, kAPIC_ICR_High, apic_id << 24);
+		NeOS::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, 0x00000600 | 0x00004000 | 0x00000000 | vector);
 
-		while (Kernel::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000)
+		while (NeOS::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000)
 		{
 			NE_UNUSED(0);
 		}
@@ -241,7 +241,7 @@ namespace Kernel::HAL
 
 					hal_send_start_ipi(kApicBaseAddress, kAPICLocales[kSMPCount]);
 
-					HardwareTimer timer(Kernel::Milliseconds(10));
+					HardwareTimer timer(NeOS::Milliseconds(10));
 					timer.Wait();
 
 					/// TODO: HAL helper to create an address.
@@ -268,6 +268,6 @@ namespace Kernel::HAL
 			/// TODO: Notify Boot AP that it must start.
 		}
 	}
-} // namespace Kernel::HAL
+} // namespace NeOS::HAL
 
 ///////////////////////////////////////////////////////////////////////////////////////

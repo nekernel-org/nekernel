@@ -7,7 +7,7 @@
 #include <KernelKit/LPC.h>
 #include <NewKit/KernelPanic.h>
 
-namespace Kernel
+namespace NeOS
 {
 	STATIC Bool kRaiseOnBugCheck = false;
 
@@ -31,4 +31,4 @@ namespace Kernel
 	{
 		kRaiseOnBugCheck = true;
 	}
-} // namespace Kernel
+} // namespace NeOS

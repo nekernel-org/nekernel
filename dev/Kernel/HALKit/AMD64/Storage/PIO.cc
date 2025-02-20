@@ -20,8 +20,8 @@
 
 #ifdef __ATA_PIO__
 
-using namespace Kernel;
-using namespace Kernel::HAL;
+using namespace NeOS;
+using namespace NeOS::HAL;
 
 /// bugs: 0
 
@@ -96,10 +96,10 @@ ATAInit_Retry:
 
 	for (SizeT i = 0ul; i < kATADataLen; ++i)
 	{
-		kATAData[i] = Kernel::HAL::rt_in16(OutBus + ATA_REG_DATA);
+		kATAData[i] = NeOS::HAL::rt_in16(OutBus + ATA_REG_DATA);
 	}
 
-	for (Kernel::Int32 i = 0; i < 20; i++)
+	for (NeOS::Int32 i = 0; i < 20; i++)
 	{
 		kCurrentDiskModel[i * 2]	 = kATAData[27 + i] >> 8;
 		kCurrentDiskModel[i * 2 + 1] = kATAData[27 + i + 1] & 0xFF;
@@ -135,7 +135,7 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
 		drv_std_wait_io(IO);
-		Buf[IndexOff] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
+		Buf[IndexOff] = NeOS::HAL::rt_in16(IO + ATA_REG_DATA);
 	}
 }
 
@@ -175,13 +175,13 @@ Boolean drv_std_detected(Void)
 /***
 	 @brief Getter, gets the number of sectors inside the drive.
  */
-Kernel::SizeT drv_get_sector_count()
+NeOS::SizeT drv_get_sector_count()
 {
 	return (kATAData[61] << 16) | kATAData[60];
 }
 
 /// @brief Get the drive size.
-Kernel::SizeT drv_get_size()
+NeOS::SizeT drv_get_size()
 {
 	return (drv_get_sector_count()) * kATASectorSize;
 }

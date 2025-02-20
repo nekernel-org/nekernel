@@ -12,4 +12,4 @@
 
 #include <KernelKit/UserProcessScheduler.h>
 
-using namespace Kernel;
+using namespace NeOS;

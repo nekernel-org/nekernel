@@ -27,4 +27,18 @@ enum
 	kHPFSDriveCount,
 };
 
-struct HPFS_EXPLICIT_BOOT_SECTOR;
+struct HPFS_BOOT_NODE;
+
+struct HPFS_BOOT_NODE final
+{
+	NeOS::Char	 fMagic[kHPFSMagicLen];
+	NeOS::UInt32 fVersion;
+	NeOS::UInt64 fBadSectors;
+	NeOS::UInt64 fSectorCount;
+	NeOS::UInt64 fSectorSize;
+	NeOS::UInt32 fChecksum;
+	NeOS::UInt8	 fDriveKind;
+	NeOS::UInt8	 fTextEncoding;
+	NeOS::UInt64 fRootINode;
+	NeOS::UInt64 fRecoveryINode;
+};

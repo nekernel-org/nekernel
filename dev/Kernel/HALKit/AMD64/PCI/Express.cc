@@ -6,6 +6,6 @@
 
 #include <KernelKit/PCI/Express.h>
 
-namespace Kernel
+namespace NeOS
 {
 }

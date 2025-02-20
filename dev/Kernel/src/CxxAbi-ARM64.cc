@@ -15,7 +15,7 @@ atexit_func_entry_t __atexit_funcs[kAtExitMacDestructors];
 uarch_t __atexit_func_count;
 
 /// @brief dynamic shared object Handle.
-Kernel::UIntPtr __dso_handle;
+NeOS::UIntPtr __dso_handle;
 
 EXTERN_C void __chkstk(void)
 {
@@ -81,27 +81,27 @@ namespace cxxabiv1
 	}
 } // namespace cxxabiv1
 
-EXTERN_C Kernel::Void _purecall(void* self)
+EXTERN_C NeOS::Void _purecall(void* self)
 {
-	kout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
+	kout << "object: " << NeOS::number(reinterpret_cast<NeOS::UIntPtr>(self));
 	kout << ", has unimplemented virtual functions.\r";
 }
 
-EXTERN_C Kernel::Void _Init_thread_footer(Kernel::Int* thread_obj)
+EXTERN_C NeOS::Void _Init_thread_footer(NeOS::Int* thread_obj)
 {
 	NE_UNUSED(thread_obj);
 }
 
-EXTERN_C Kernel::Void _Init_thread_epoch(Kernel::Void)
+EXTERN_C NeOS::Void _Init_thread_epoch(NeOS::Void)
 {
 	NE_UNUSED(0);
 }
 
-EXTERN_C Kernel::Void _Init_thread_header(Kernel::Int* thread_obj)
+EXTERN_C NeOS::Void _Init_thread_header(NeOS::Int* thread_obj)
 {
 	NE_UNUSED(0);
 }
 
-EXTERN_C Kernel::Int _tls_index = 0UL;
+EXTERN_C NeOS::Int _tls_index = 0UL;
 
 #endif // ifdef __NE_ARM64__

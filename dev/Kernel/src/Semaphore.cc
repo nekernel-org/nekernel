@@ -7,7 +7,7 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Semaphore.h>
 
-namespace Kernel
+namespace NeOS
 {
 	/***********************************************************************************/
 	/// @brief Unlocks the semaphore.
@@ -68,4 +68,4 @@ namespace Kernel
 		while (fLockingProcess)
 			;
 	}
-} // namespace Kernel
+} // namespace NeOS

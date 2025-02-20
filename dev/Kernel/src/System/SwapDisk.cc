@@ -7,7 +7,7 @@
 #include <SystemKit/SwapDisk.h>
 #include <KernelKit/FileMgr.h>
 
-namespace Kernel
+namespace NeOS
 {
 	BOOL SwapDisk::Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER_REF data, const SizeT data_len)
 	{
@@ -44,4 +44,4 @@ namespace Kernel
 
 		return (SWAP_DISK_HEADER_REF)blob;
 	}
-} // namespace Kernel
+} // namespace NeOS

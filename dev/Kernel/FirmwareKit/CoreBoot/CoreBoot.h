@@ -10,7 +10,7 @@
 
 namespace Firmware::Detail::CoreBoot
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	struct LEHeader;
 

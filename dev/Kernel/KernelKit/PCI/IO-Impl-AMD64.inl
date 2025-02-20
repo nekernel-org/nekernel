@@ -12,7 +12,7 @@
 
 ------------------------------------------- */
 
-namespace Kernel
+namespace NeOS
 {
 	template <SizeT Sz>
 	template <typename T>
@@ -51,4 +51,4 @@ namespace Kernel
 			break;
 		}
 	}
-} // namespace Kernel
+} // namespace NeOS

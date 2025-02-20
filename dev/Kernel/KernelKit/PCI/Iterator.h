@@ -17,7 +17,7 @@
 #define NE_DEVICE_COUNT	  (33)
 #define NE_FUNCTION_COUNT (8)
 
-namespace Kernel::PCI
+namespace NeOS::PCI
 {
 	class Iterator final
 	{
@@ -38,6 +38,6 @@ namespace Kernel::PCI
 	private:
 		Array<PCI::Device, NE_BUS_COUNT> fDevices;
 	};
-} // namespace Kernel::PCI
+} // namespace NeOS::PCI
 
 #endif // __PCI_ITERATOR_H__

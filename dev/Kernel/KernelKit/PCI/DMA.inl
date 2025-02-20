@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-namespace Kernel
+namespace NeOS
 {
 	template <class T>
 	T* DMAWrapper::operator->()
@@ -17,4 +17,4 @@ namespace Kernel
 	{
 		return reinterpret_cast<T*>((UIntPtr)fAddress + offset);
 	}
-} // namespace Kernel
+} // namespace NeOS

@@ -10,7 +10,7 @@
 #include <NewKit/PageMgr.h>
 #include <NewKit/Ref.h>
 
-namespace Kernel
+namespace NeOS
 {
 	class Pmm;
 	class PTEWrapper;
@@ -41,4 +41,4 @@ namespace Kernel
 	private:
 		Ref<PageMgr> fPageMgr;
 	};
-} // namespace Kernel
+} // namespace NeOS

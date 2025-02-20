@@ -6,7 +6,7 @@
 
 #include <NewKit/Utils.h>
 
-namespace Kernel
+namespace NeOS
 {
 	Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size)
 	{
@@ -210,15 +210,15 @@ namespace Kernel
 
 		return str;
 	}
-} // namespace Kernel
+} // namespace NeOS
 
 EXTERN_C void* memset(void* dst, int c, long long unsigned int len)
 {
-	return Kernel::rt_set_memory(dst, c, len);
+	return NeOS::rt_set_memory(dst, c, len);
 }
 
 EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len)
 {
-	Kernel::rt_copy_memory(const_cast<void*>(src), dst, len);
+	NeOS::rt_copy_memory(const_cast<void*>(src), dst, len);
 	return dst;
 }

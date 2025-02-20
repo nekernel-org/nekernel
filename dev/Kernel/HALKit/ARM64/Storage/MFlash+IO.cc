@@ -16,7 +16,7 @@
 
 #define kMaxFlashSlots (8U)
 
-namespace Kernel
+namespace NeOS
 {
 	/// /Mount/Flash/n
 	constexpr auto kFlashBridgeMagic	= "FLSH";
@@ -79,6 +79,6 @@ namespace Kernel
 
 		return YES;
 	}
-} // namespace Kernel
+} // namespace NeOS
 
 #endif // if NE_USE_MBCI_FLASH

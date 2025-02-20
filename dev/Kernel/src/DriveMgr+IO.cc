@@ -22,7 +22,7 @@
 #define rtl_nefs_write(DRV, TRAITS, MP) (MP->DRV()).fOutput(TRAITS)
 #define rtl_nefs_read(DRV, TRAITS, MP)	(MP->DRV()).fInput(TRAITS)
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief Read from newfs disk.
 	/// @param Mnt mounted interface.
@@ -93,4 +93,4 @@ namespace Kernel
 
 		return DrvTrait.fPacket.fPacketGood;
 	}
-} // namespace Kernel
+} // namespace NeOS

@@ -7,7 +7,7 @@
 #include <Mod/APM/APM.h>
 #include <KernelKit/LPC.h>
 
-using namespace Kernel;
+using namespace NeOS;
 
 /// @brief Send APM command to it's space.
 /// @param base_dma the IO base port.

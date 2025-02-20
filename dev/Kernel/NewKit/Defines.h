@@ -20,7 +20,7 @@
 #endif
 
 /// @brief The **Kernel** namespace where it's API resides.
-namespace Kernel
+namespace NeOS
 {
 	using voidPtr = void*;
 	using VoidPtr = void*;
@@ -189,4 +189,4 @@ namespace Kernel
 			return NO;
 		}
 	};
-} // namespace Kernel
+} // namespace NeOS

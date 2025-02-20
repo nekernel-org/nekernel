@@ -14,7 +14,7 @@
 #define NoOp()			 asm volatile("mr 0, 0")
 #define kHalPPCAlignment __attribute__((aligned(4)))
 
-namespace Kernel::HAL
+namespace NeOS::HAL
 {
 	typedef UIntPtr Reg;
 
@@ -47,16 +47,16 @@ namespace Kernel::HAL
 	{
 		NoOp(); // no oop
 	}
-} // namespace Kernel::HAL
+} // namespace NeOS::HAL
 
-EXTERN_C Kernel::Void int_handle_math(Kernel::UIntPtr sp);
-EXTERN_C Kernel::Void int_handle_pf(Kernel::UIntPtr sp);
+EXTERN_C NeOS::Void int_handle_math(NeOS::UIntPtr sp);
+EXTERN_C NeOS::Void int_handle_pf(NeOS::UIntPtr sp);
 
 /// @brief Set TLB.
-Kernel::Bool hal_set_tlb(Kernel::UInt8 tlb, Kernel::UInt32 epn, Kernel::UInt64 rpn, Kernel::UInt8 perms, Kernel::UInt8 wimge, Kernel::UInt8 ts, Kernel::UInt8 esel, Kernel::UInt8 tsize, Kernel::UInt8 iprot);
+NeOS::Bool hal_set_tlb(NeOS::UInt8 tlb, NeOS::UInt32 epn, NeOS::UInt64 rpn, NeOS::UInt8 perms, NeOS::UInt8 wimge, NeOS::UInt8 ts, NeOS::UInt8 esel, NeOS::UInt8 tsize, NeOS::UInt8 iprot);
 
 /// @brief Write TLB.
-Kernel::Void hal_write_tlb(Kernel::UInt32 mas0, Kernel::UInt32 mas1, Kernel::UInt32 mas2, Kernel::UInt32 mas3, Kernel::UInt32 mas7);
+NeOS::Void hal_write_tlb(NeOS::UInt32 mas0, NeOS::UInt32 mas1, NeOS::UInt32 mas2, NeOS::UInt32 mas3, NeOS::UInt32 mas7);
 
 /// @brief Flush TLB.
-EXTERN_C Kernel::Void hal_flush_tlb();
+EXTERN_C NeOS::Void hal_flush_tlb();

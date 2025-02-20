@@ -15,11 +15,11 @@ atexit_func_entry_t __atexit_funcs[kAtExitMacDestructors];
 uarch_t __atexit_func_count;
 
 /// @brief dynamic shared object Handle.
-Kernel::UIntPtr __dso_handle;
+NeOS::UIntPtr __dso_handle;
 
-EXTERN_C Kernel::Void __cxa_pure_virtual(void* self)
+EXTERN_C NeOS::Void __cxa_pure_virtual(void* self)
 {
-	kout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
+	kout << "object: " << NeOS::number(reinterpret_cast<NeOS::UIntPtr>(self));
 	kout << ", has unimplemented virtual functions.\r";
 }
 

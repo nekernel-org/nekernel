@@ -10,7 +10,7 @@
 /// @file FileMgr.cc
 //! @brief File System Manager API.
 
-namespace Kernel
+namespace NeOS
 {
 	STATIC IFilesystemMgr* kMountedFilesystem = nullptr;
 
@@ -49,4 +49,4 @@ namespace Kernel
 
 		return No;
 	}
-} // namespace Kernel
+} // namespace NeOS

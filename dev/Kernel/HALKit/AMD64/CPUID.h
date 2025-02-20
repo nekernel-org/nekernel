@@ -80,7 +80,7 @@ enum CPUFeatureEnum
 	kCPUFeaturePBE		  = 1 << 31
 };
 
-namespace Kernel
+namespace NeOS
 {
 	typedef Int64 CPUID;
-} // namespace Kernel
+} // namespace NeOS

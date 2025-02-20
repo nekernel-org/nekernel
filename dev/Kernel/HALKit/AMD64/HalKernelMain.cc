@@ -13,35 +13,35 @@
 #include <CFKit/Property.h>
 #include <Mod/CoreGfx/TextMgr.h>
 
-EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
-EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
-EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
+EXTERN_C NeOS::VoidPtr kInterruptVectorTable[];
+EXTERN_C NeOS::VoidPtr mp_user_switch_proc;
+EXTERN_C NeOS::Char mp_user_switch_proc_stack_begin[];
 
-EXTERN_C Kernel::rtl_ctor_kind __CTOR_LIST__[];
-EXTERN_C Kernel::VoidPtr __DTOR_LIST__;
+EXTERN_C NeOS::rtl_ctor_kind __CTOR_LIST__[];
+EXTERN_C NeOS::VoidPtr __DTOR_LIST__;
 
-EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len);
+EXTERN_C NeOS::Void rtl_kernel_main(NeOS::SizeT argc, char** argv, char** envp, NeOS::SizeT envp_len);
 
-STATIC Kernel::Void hal_init_cxx_ctors()
+STATIC NeOS::Void hal_init_cxx_ctors()
 {
-	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
+	for (NeOS::SizeT i = 0U; i < NeOS::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
-		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		  = Kernel::UserProcess();
-		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i].Status = Kernel::ProcessStatusKind::kKilled;
+		NeOS::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		= NeOS::UserProcess();
+		NeOS::UserProcessScheduler::The().CurrentTeam().AsArray()[i].Status = NeOS::ProcessStatusKind::kKilled;
 	}
 
-	Kernel::UserProcessScheduler::The().CurrentTeam().mProcessCount = 0UL;
+	NeOS::UserProcessScheduler::The().CurrentTeam().mProcessCount = 0UL;
 
-	for (Kernel::SizeT index = 0UL; __CTOR_LIST__[index] != __DTOR_LIST__; ++index)
+	for (NeOS::SizeT index = 0UL; __CTOR_LIST__[index] != __DTOR_LIST__; ++index)
 	{
-		Kernel::rtl_ctor_kind constructor_cxx = (Kernel::rtl_ctor_kind)__CTOR_LIST__[index];
+		NeOS::rtl_ctor_kind constructor_cxx = (NeOS::rtl_ctor_kind)__CTOR_LIST__[index];
 		constructor_cxx();
 	}
 }
 
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
-	Kernel::HEL::BootInfoHeader* handover_hdr)
+	NeOS::HEL::BootInfoHeader* handover_hdr)
 {
 	kHandoverHeader = handover_hdr;
 
@@ -58,8 +58,8 @@ EXTERN_C void hal_init_platform(
 	/************************************** */
 
 	kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
-	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
+	kKernelBitMpStart = reinterpret_cast<NeOS::VoidPtr>(
+		reinterpret_cast<NeOS::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
 	/************************************** */
 	/*     INITIALIZE GDT AND SEGMENTS. */
@@ -68,7 +68,7 @@ EXTERN_C void hal_init_platform(
 	STATIC CONST auto kGDTEntriesCount = 6;
 
 	/* GDT, mostly descriptors for user and kernel segments. */
-	STATIC Kernel::HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
+	STATIC NeOS::HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
 		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},   // Null entry
 		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel code
 		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xCF, .fBaseHigh = 0}, // Kernel data
@@ -77,31 +77,31 @@ EXTERN_C void hal_init_platform(
 	};
 
 	// Load memory descriptors.
-	Kernel::HAL::RegisterGDT gdt_reg;
+	NeOS::HAL::RegisterGDT gdt_reg;
 
-	gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
-	gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
+	gdt_reg.Base  = reinterpret_cast<NeOS::UIntPtr>(kGDTArray);
+	gdt_reg.Limit = (sizeof(NeOS::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
 
 	FB::fb_clear_video();
 
 	//! GDT will load hal_read_init after it successfully loads the segments.
-	Kernel::HAL::GDTLoader gdt_loader;
+	NeOS::HAL::GDTLoader gdt_loader;
 	gdt_loader.Load(gdt_reg);
 
-	Kernel::ke_panic(RUNTIME_CHECK_BOOTSTRAP);
+	NeOS::ke_panic(RUNTIME_CHECK_BOOTSTRAP);
 }
 
-EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
+EXTERN_C NeOS::Void hal_real_init(NeOS::Void) noexcept
 {
 	rtl_kernel_main(0, nullptr, nullptr, 0);
 
-	Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+	NeOS::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	Kernel::HAL::Register64 idt_reg;
+	NeOS::HAL::Register64 idt_reg;
 
-	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
+	idt_reg.Base = (NeOS::UIntPtr)kInterruptVectorTable;
 
-	Kernel::HAL::IDTLoader idt_loader;
+	NeOS::HAL::IDTLoader idt_loader;
 
 	idt_loader.Load(idt_reg);
 

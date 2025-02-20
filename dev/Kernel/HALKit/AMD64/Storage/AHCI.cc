@@ -46,38 +46,38 @@ enum
 	kSATABar5		= 0x24,
 };
 
-STATIC Kernel::PCI::Device kPCIDevice;
-STATIC HbaMem*			   kSATA		   = nullptr;
-STATIC Kernel::SizeT kSATAPortIdx		   = 0UL;
-STATIC Kernel::Lba kCurrentDiskSectorCount = 0UL;
+STATIC NeOS::PCI::Device kPCIDevice;
+STATIC HbaMem*			 kSATA			 = nullptr;
+STATIC NeOS::SizeT kSATAPortIdx			 = 0UL;
+STATIC NeOS::Lba kCurrentDiskSectorCount = 0UL;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
-static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept;
+static NeOS::Void drv_std_input_output(NeOS::UInt64 lba, NeOS::UInt8* buffer, NeOS::SizeT sector_sz, NeOS::SizeT size_buffer) noexcept;
 
-static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
+static NeOS::Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
 
-static Kernel::Void drv_calculate_disk_geometry() noexcept;
+static NeOS::Void drv_calculate_disk_geometry() noexcept;
 
-static Kernel::Void drv_calculate_disk_geometry() noexcept
+static NeOS::Void drv_calculate_disk_geometry() noexcept
 {
 	kCurrentDiskSectorCount = 0UL;
 
-	Kernel::UInt8 identify_data[kib_cast(4)] = {0};
+	NeOS::UInt8 identify_data[kib_cast(4)] = {0};
 
 	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(8));
 
 	kCurrentDiskSectorCount = (identify_data[61] << 16) | identify_data[60];
 
-	kout << "Disk Size: " << Kernel::number(drv_get_size()) << endl;
-	kout << "Highest LBA: " << Kernel::number(kCurrentDiskSectorCount) << endl;
+	kout << "Disk Size: " << NeOS::number(drv_get_size()) << endl;
+	kout << "Highest LBA: " << NeOS::number(kCurrentDiskSectorCount) << endl;
 }
 
 /// @brief Initializes an AHCI disk.
 /// @param PortsImplemented the amount of kSATA that have been detected.
 /// @return if the disk was successfully initialized or not.
-Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
+NeOS::Boolean drv_std_init(NeOS::UInt16& PortsImplemented)
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
 
@@ -94,22 +94,22 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 
 			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(0x24);
 
-			Kernel::UInt32 ports_implemented = mem_ahci->Pi;
-			Kernel::UInt16 ahci_index		 = 0;
+			NeOS::UInt32 ports_implemented = mem_ahci->Pi;
+			NeOS::UInt16 ahci_index		   = 0;
 
-			const Kernel::UInt16 kMaxPortsImplemented = kAhciPortCnt;
-			const Kernel::UInt32 kSATASignature		  = 0x00000101;
-			const Kernel::UInt8	 kAhciPresent		  = 0x03;
-			const Kernel::UInt8	 kAhciIPMActive		  = 0x01;
+			const NeOS::UInt16 kMaxPortsImplemented = kAhciPortCnt;
+			const NeOS::UInt32 kSATASignature		= 0x00000101;
+			const NeOS::UInt8  kAhciPresent			= 0x03;
+			const NeOS::UInt8  kAhciIPMActive		= 0x01;
 
-			Kernel::Boolean detected = false;
+			NeOS::Boolean detected = false;
 
 			while (ahci_index < kMaxPortsImplemented)
 			{
 				if (ports_implemented)
 				{
-					Kernel::UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
-					Kernel::UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
+					NeOS::UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
+					NeOS::UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
 
 					if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kAhciPresent && ipm == kAhciIPMActive)
 					{
@@ -137,29 +137,29 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 	return No;
 }
 
-Kernel::Boolean drv_std_detected(Kernel::Void)
+NeOS::Boolean drv_std_detected(NeOS::Void)
 {
-	return kPCIDevice.DeviceId() != (Kernel::UShort)Kernel::PCI::PciConfigKind::Invalid;
+	return kPCIDevice.DeviceId() != (NeOS::UShort)NeOS::PCI::PciConfigKind::Invalid;
 }
 
-Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
+NeOS::Void drv_std_write(NeOS::UInt64 lba, NeOS::Char* buffer, NeOS::SizeT sector_sz, NeOS::SizeT size_buffer)
 {
-	drv_std_input_output<YES, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_sz, size_buffer);
+	drv_std_input_output<YES, YES, NO>(lba, (NeOS::UInt8*)buffer, sector_sz, size_buffer);
 }
 
-Kernel::Void drv_std_read(Kernel::UInt64 lba, Kernel::Char* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer)
+NeOS::Void drv_std_read(NeOS::UInt64 lba, NeOS::Char* buffer, NeOS::SizeT sector_sz, NeOS::SizeT size_buffer)
 {
-	drv_std_input_output<NO, YES, NO>(lba, (Kernel::UInt8*)buffer, sector_sz, size_buffer);
+	drv_std_input_output<NO, YES, NO>(lba, (NeOS::UInt8*)buffer, sector_sz, size_buffer);
 }
 
-static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
+static NeOS::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 {
 	if (port == nullptr)
 		return -1;
 
-	Kernel::UInt32 slots = (kSATA->Ports[kSATAPortIdx].Sact | kSATA->Ports[kSATAPortIdx].Ci);
+	NeOS::UInt32 slots = (kSATA->Ports[kSATAPortIdx].Sact | kSATA->Ports[kSATAPortIdx].Ci);
 
-	for (Kernel::Int32 i = 0; i < kAhciPortCnt; ++i)
+	for (NeOS::Int32 i = 0; i < kAhciPortCnt; ++i)
 	{
 		if ((slots & 1) == 0)
 			return i;
@@ -173,7 +173,7 @@ static Kernel::Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 BOOL kAHCICommandIssued = NO;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
-static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept
+static NeOS::Void drv_std_input_output(NeOS::UInt64 lba, NeOS::UInt8* buffer, NeOS::SizeT sector_sz, NeOS::SizeT size_buffer) noexcept
 {
 	kSATA->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
 	kSATA->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
@@ -185,33 +185,33 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	if (slot == -1)
 		return;
 
-	volatile HbaCmdHeader* command_header = ((volatile HbaCmdHeader*)((Kernel::UInt64)kSATA->Ports[kSATAPortIdx].Clb));
+	volatile HbaCmdHeader* command_header = ((volatile HbaCmdHeader*)((NeOS::UInt64)kSATA->Ports[kSATAPortIdx].Clb));
 
 	command_header += slot;
 
 	MUST_PASS(command_header);
 
-	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(Kernel::UInt32);
+	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(NeOS::UInt32);
 	command_header->Write = Write;
 	command_header->Prdtl = 2;
 
-	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((Kernel::UInt64)command_header->Ctba);
+	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((NeOS::UInt64)command_header->Ctba);
 
 	MUST_PASS(command_table);
 
-	auto buffer_phys = Kernel::HAL::hal_get_phys_address(buffer);
+	auto buffer_phys = NeOS::HAL::hal_get_phys_address(buffer);
 
-	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)buffer_phys);
-	command_table->Prdt[0].Dbau = (((Kernel::UInt64)(buffer_phys) >> 32));
+	command_table->Prdt[0].Dba	= ((NeOS::UInt32)(NeOS::UInt64)buffer_phys);
+	command_table->Prdt[0].Dbau = (((NeOS::UInt64)(buffer_phys) >> 32));
 	command_table->Prdt[0].Dbc	= ((size_buffer / 2) - 1);
 	command_table->Prdt[0].Ie	= YES;
 
-	command_table->Prdt[1].Dba	= ((Kernel::UInt32)(Kernel::UInt64)(buffer_phys + ((size_buffer / 2) - 1)));
-	command_table->Prdt[1].Dbau = (((Kernel::UInt64)(buffer_phys + ((size_buffer / 2) - 1)) >> 32));
+	command_table->Prdt[1].Dba	= ((NeOS::UInt32)(NeOS::UInt64)(buffer_phys + ((size_buffer / 2) - 1)));
+	command_table->Prdt[1].Dbau = (((NeOS::UInt64)(buffer_phys + ((size_buffer / 2) - 1)) >> 32));
 	command_table->Prdt[1].Dbc	= ((size_buffer / 2) - 1);
 	command_table->Prdt[1].Ie	= YES;
 
-	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)((Kernel::UInt64)&command_table->Cfis);
+	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)((NeOS::UInt64)&command_table->Cfis);
 
 	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
@@ -245,7 +245,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	{
 		if (kSATA->Is & kHBAErrTaskFile) // check for task file error.
 		{
-			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
+			NeOS::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 		}
 	}
 
@@ -254,7 +254,7 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	if (kSATA->Is & kHBAErrTaskFile) // check for task file error.
 	{
-		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
+		NeOS::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 	}
 }
 
@@ -262,14 +262,14 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	@brief Gets the number of sectors inside the drive.
 	@return Sector size in bytes.
  */
-Kernel::SizeT drv_get_sector_count()
+NeOS::SizeT drv_get_sector_count()
 {
 	return kCurrentDiskSectorCount;
 }
 
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
-Kernel::SizeT drv_get_size()
+NeOS::SizeT drv_get_size()
 {
 	return drv_get_sector_count() * kAHCISectorSize;
 }

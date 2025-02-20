@@ -10,7 +10,7 @@
 #include <NewKit/KString.h>
 #include <NewKit/Json.h>
 
-namespace Kernel
+namespace NeOS
 {
 	class Variant final
 	{
@@ -67,4 +67,4 @@ namespace Kernel
 		voidPtr		fPtr{nullptr};
 		VariantKind fKind{VariantKind::kNull};
 	};
-} // namespace Kernel
+} // namespace NeOS

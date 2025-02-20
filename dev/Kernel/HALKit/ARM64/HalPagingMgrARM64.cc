@@ -10,7 +10,7 @@
 #include <HALKit/ARM64/Paging.h>
 #include <HALKit/ARM64/Processor.h>
 
-namespace Kernel::HAL
+namespace NeOS::HAL
 {
 	typedef UInt32 PageTableIndex;
 
@@ -83,4 +83,4 @@ namespace Kernel::HAL
 
 		return 0;
 	}
-} // namespace Kernel::HAL
+} // namespace NeOS::HAL

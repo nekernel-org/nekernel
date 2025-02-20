@@ -27,7 +27,7 @@
 #define kKernelHeapMagic   (0xD4D75)
 #define kKernelHeapAlignSz (__BIGGEST_ALIGNMENT__)
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief Contains data structures and algorithms for the heap.
 	namespace Detail
@@ -285,4 +285,4 @@ namespace Kernel
 
 		return No;
 	}
-} // namespace Kernel
+} // namespace NeOS

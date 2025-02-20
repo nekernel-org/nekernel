@@ -17,7 +17,7 @@
 
 namespace CFKit
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	/// @brief handle to anything (number, ptr, string...)
 	using PropertyId = UIntPtr;
@@ -48,7 +48,7 @@ namespace CFKit
 	using PropertyArray = Array<Property, N>;
 } // namespace CFKit
 
-namespace Kernel
+namespace NeOS
 {
 	using namespace CFKit;
 }

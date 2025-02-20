@@ -13,9 +13,9 @@
 
 #include <NewKit/Defines.h>
 
-#define SDT_OBJECT : public Kernel::SDT
+#define SDT_OBJECT : public NeOS::SDT
 
-namespace Kernel
+namespace NeOS
 {
 	class PACKED SDT
 	{
@@ -85,6 +85,6 @@ namespace Kernel
 		UInt32 CreatorRevision;
 		UInt32 AddressArr[];
 	};
-} // namespace Kernel
+} // namespace NeOS
 
 #endif // !__ACPI__

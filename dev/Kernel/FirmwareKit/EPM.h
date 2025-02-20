@@ -68,10 +68,10 @@ struct EPM_PART_BLOCK;
 /// @brief EPM GUID structure.
 typedef struct EPM_GUID
 {
-	Kernel::UInt32 Data1;
-	Kernel::UInt16 Data2;
-	Kernel::UInt16 Data3;
-	Kernel::UInt8  Data4[8];
+	NeOS::UInt32 Data1;
+	NeOS::UInt16 Data2;
+	NeOS::UInt16 Data3;
+	NeOS::UInt8	 Data4[8];
 } EPM_GUID;
 
 /**
@@ -80,19 +80,19 @@ typedef struct EPM_GUID
  */
 struct PACKED EPM_PART_BLOCK
 {
-	Kernel::Char  Magic[kEPMMagicLength];
-	Kernel::Char  Name[kEPMNameLength];
-	EPM_GUID	  Guid;
-	Kernel::Int32 Version;
-	Kernel::Int64 NumBlocks;
-	Kernel::Int64 SectorSz;
-	Kernel::Int64 LbaStart; // base offset
-	Kernel::Int64 LbaEnd;	// end offset
-	Kernel::Int16 Kind;
-	Kernel::Int16 Flags;
-	Kernel::Int32 FsVersion;
-	Kernel::Char  Fs[kEPMFilesystemLength]; /* NeFS, ffs2... */
-	Kernel::Char  Reserved[kEPMReserveLen]; // to fill a full sector.
+	NeOS::Char	Magic[kEPMMagicLength];
+	NeOS::Char	Name[kEPMNameLength];
+	EPM_GUID	Guid;
+	NeOS::Int32 Version;
+	NeOS::Int64 NumBlocks;
+	NeOS::Int64 SectorSz;
+	NeOS::Int64 LbaStart; // base offset
+	NeOS::Int64 LbaEnd;	  // end offset
+	NeOS::Int16 Kind;
+	NeOS::Int16 Flags;
+	NeOS::Int32 FsVersion;
+	NeOS::Char	Fs[kEPMFilesystemLength]; /* NeFS, ffs2... */
+	NeOS::Char	Reserved[kEPMReserveLen]; // to fill a full sector.
 };
 
 ///! @brief Version kind enum.

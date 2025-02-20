@@ -9,7 +9,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/MemoryMgr.h>
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief Finds a descriptor table inside ACPI XSDT.
 	ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature)
@@ -93,4 +93,4 @@ namespace Kernel
 
 		return chr == 0;
 	}
-} // namespace Kernel
+} // namespace NeOS

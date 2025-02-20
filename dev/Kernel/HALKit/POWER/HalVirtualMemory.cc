@@ -10,7 +10,7 @@
 
 /// @note Refer to SoC documentation.
 
-using namespace Kernel;
+using namespace NeOS;
 
 EXTERN_C Void hal_write_tlb(UInt32 mas0, UInt32 mas1, UInt32 mas2, UInt32 mas3, UInt32 mas7)
 {

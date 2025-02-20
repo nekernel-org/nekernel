@@ -11,7 +11,7 @@
 #include <NewKit/Ref.h>
 #include <NewKit/KString.h>
 
-namespace Kernel
+namespace NeOS
 {
 	class RawIPAddress6;
 	class RawIPAddress;
@@ -80,4 +80,4 @@ namespace Kernel
 		static ErrorOr<KString> ToKString(Ref<RawIPAddress>& ipv4);
 		static bool				IpCheckVersion4(const Char* ip);
 	};
-} // namespace Kernel
+} // namespace NeOS

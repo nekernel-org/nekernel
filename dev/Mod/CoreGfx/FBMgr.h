@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.h>
 
-#define fb_init() Kernel::SizeT kCGCursor = 0
+#define fb_init() NeOS::SizeT kCGCursor = 0
 
 #define fb_color(R, G, B) RGB(R, G, B)
 
@@ -18,99 +18,99 @@
 
 #ifdef __NE_AMD64__
 /// @brief Performs Alpha drawing on the framebuffer.
-#define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)        \
-	for (Kernel::SizeT i = base_x; i < (width + base_x); ++i)                \
-	{                                                                        \
-		for (Kernel::SizeT u = base_y; u < (height + base_y); ++u)           \
-		{                                                                    \
-			*(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
-								 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-									 i +                                     \
-								 4 * u))) |= (reg_ptr)[kCGCursor];           \
-                                                                             \
-			++kCGCursor;                                                     \
-		}                                                                    \
+#define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)      \
+	for (NeOS::SizeT i = base_x; i < (width + base_x); ++i)                \
+	{                                                                      \
+		for (NeOS::SizeT u = base_y; u < (height + base_y); ++u)           \
+		{                                                                  \
+			*(((NeOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+							   4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
+								   i +                                     \
+							   4 * u))) |= (reg_ptr)[kCGCursor];           \
+                                                                           \
+			++kCGCursor;                                                   \
+		}                                                                  \
 	}
 
 /// @brief Performs drawing on the framebuffer.
-#define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y)         \
-	for (Kernel::SizeT i = base_x; i < (width + base_x); ++i)                \
-	{                                                                        \
-		for (Kernel::SizeT u = base_y; u < (height + base_y); ++u)           \
-		{                                                                    \
-			*(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
-								 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-									 i +                                     \
-								 4 * u))) = (reg_ptr)[kCGCursor];            \
-                                                                             \
-			++kCGCursor;                                                     \
-		}                                                                    \
+#define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y)       \
+	for (NeOS::SizeT i = base_x; i < (width + base_x); ++i)                \
+	{                                                                      \
+		for (NeOS::SizeT u = base_y; u < (height + base_y); ++u)           \
+		{                                                                  \
+			*(((NeOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+							   4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
+								   i +                                     \
+							   4 * u))) = (reg_ptr)[kCGCursor];            \
+                                                                           \
+			++kCGCursor;                                                   \
+		}                                                                  \
 	}
 
 #define FBDrawBitMapInRegionToRgn(_Rgn, reg_ptr, height, width, base_x, base_y) \
-	for (Kernel::SizeT i = base_x; i < (width + base_x); ++i)                   \
+	for (NeOS::SizeT i = base_x; i < (width + base_x); ++i)                     \
 	{                                                                           \
-		for (Kernel::SizeT u = base_y; u < (height + base_y); ++u)              \
+		for (NeOS::SizeT u = base_y; u < (height + base_y); ++u)                \
 		{                                                                       \
-			*(((Kernel::UInt32*)(_Rgn +                                         \
-								 4 * kHandoverHeader->f_GOP.f_PixelPerLine *    \
-									 i +                                        \
-								 4 * u))) = (reg_ptr)[kCGCursor];               \
+			*(((NeOS::UInt32*)(_Rgn +                                           \
+							   4 * kHandoverHeader->f_GOP.f_PixelPerLine *      \
+								   i +                                          \
+							   4 * u))) = (reg_ptr)[kCGCursor];                 \
                                                                                 \
 			++kCGCursor;                                                        \
 		}                                                                       \
 	}
 
 /// @brief Cleans a resource.
-#define CGClearRegion(height, width, base_x, base_y)                                  \
-	for (Kernel::SizeT i = base_x; i < (width + base_x); ++i)                         \
-	{                                                                                 \
-		for (Kernel::SizeT u = base_y; u < (height + base_y); ++u)                    \
-		{                                                                             \
-			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
-										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-											  i +                                     \
-										  4 * u))) = fb_get_clear_clr();              \
-		}                                                                             \
+#define CGClearRegion(height, width, base_x, base_y)                                \
+	for (NeOS::SizeT i = base_x; i < (width + base_x); ++i)                         \
+	{                                                                               \
+		for (NeOS::SizeT u = base_y; u < (height + base_y); ++u)                    \
+		{                                                                           \
+			*(((volatile NeOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+										4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
+											i +                                     \
+										4 * u))) = fb_get_clear_clr();              \
+		}                                                                           \
 	}
 
 /// @brief Draws inside a zone.
-#define FBDrawInRegion(_Clr, height, width, base_x, base_y)                           \
-	for (Kernel::SizeT x_base = base_x; x_base < (width + base_x); ++x_base)          \
-	{                                                                                 \
-		for (Kernel::SizeT y_base = base_y; y_base < (height + base_y); ++y_base)     \
-		{                                                                             \
-			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
-										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-											  x_base +                                \
-										  4 * y_base))) = _Clr;                       \
-		}                                                                             \
+#define FBDrawInRegion(_Clr, height, width, base_x, base_y)                         \
+	for (NeOS::SizeT x_base = base_x; x_base < (width + base_x); ++x_base)          \
+	{                                                                               \
+		for (NeOS::SizeT y_base = base_y; y_base < (height + base_y); ++y_base)     \
+		{                                                                           \
+			*(((volatile NeOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+										4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
+											x_base +                                \
+										4 * y_base))) = _Clr;                       \
+		}                                                                           \
 	}
 
 /// @brief Draws inside a zone.
-#define FBDrawInRegionToRgn(_Rgn, _Clr, height, width, base_x, base_y)                \
-	for (Kernel::SizeT x_base = base_x; x_base < (width + base_x); ++x_base)          \
-	{                                                                                 \
-		for (Kernel::SizeT y_base = base_y; y_base < (height + base_y); ++y_base)     \
-		{                                                                             \
-			*(((volatile Kernel::UInt32*)(_Rgn +                                      \
-										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-											  x_base +                                \
-										  4 * y_base))) = _Clr[kCGCursor];            \
-			++kCGCursor;                                                              \
-		}                                                                             \
+#define FBDrawInRegionToRgn(_Rgn, _Clr, height, width, base_x, base_y)              \
+	for (NeOS::SizeT x_base = base_x; x_base < (width + base_x); ++x_base)          \
+	{                                                                               \
+		for (NeOS::SizeT y_base = base_y; y_base < (height + base_y); ++y_base)     \
+		{                                                                           \
+			*(((volatile NeOS::UInt32*)(_Rgn +                                      \
+										4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
+											x_base +                                \
+										4 * y_base))) = _Clr[kCGCursor];            \
+			++kCGCursor;                                                            \
+		}                                                                           \
 	}
 
-#define FBDrawInRegionA(_Clr, height, width, base_x, base_y)                          \
-	for (Kernel::SizeT x_base = base_x; x_base < (width + base_x); ++x_base)          \
-	{                                                                                 \
-		for (Kernel::SizeT y_base = base_y; y_base < (height + base_y); ++y_base)     \
-		{                                                                             \
-			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
-										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
-											  x_base +                                \
-										  4 * y_base))) |= _Clr;                      \
-		}                                                                             \
+#define FBDrawInRegionA(_Clr, height, width, base_x, base_y)                        \
+	for (NeOS::SizeT x_base = base_x; x_base < (width + base_x); ++x_base)          \
+	{                                                                               \
+		for (NeOS::SizeT y_base = base_y; y_base < (height + base_y); ++y_base)     \
+		{                                                                           \
+			*(((volatile NeOS::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
+										4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
+											x_base +                                \
+										4 * y_base))) |= _Clr;                      \
+		}                                                                           \
 	}
 #else
 #define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)

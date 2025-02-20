@@ -21,7 +21,7 @@
 #include <KernelKit/User.h>
 #include <KernelKit/DriveMgr.h>
 
-using namespace Kernel;
+using namespace NeOS;
 
 #ifdef __NE_NO_BUILTIN__
 /***********************************************************************************/
@@ -33,12 +33,12 @@ using namespace Kernel;
 /***********************************************************************************/
 /// @brief get sector count.
 /***********************************************************************************/
-Kernel::SizeT drv_get_sector_count();
+NeOS::SizeT drv_get_sector_count();
 
 /***********************************************************************************/
 /// @brief get device size.
 /***********************************************************************************/
-Kernel::SizeT drv_get_size();
+NeOS::SizeT drv_get_size();
 
 #endif
 
@@ -328,7 +328,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 
 	if (drive.fPacket.fPacketReadOnly)
 		return nullptr;
-	
+
 	NEFS_CATALOG_STRUCT* child_catalog = new NEFS_CATALOG_STRUCT();
 
 	child_catalog->ResourceForkSize = 0UL;
@@ -1017,7 +1017,7 @@ SizeT NeFileSystemParser::Tell(_Input _Output NEFS_CATALOG_STRUCT* catalog)
 	return 0;
 }
 
-namespace Kernel::NeFS
+namespace NeOS::NeFS
 {
 	/***********************************************************************************/
 	/// @brief Construct NeFS drives.
@@ -1032,6 +1032,6 @@ namespace Kernel::NeFS
 
 		return true;
 	}
-} // namespace Kernel::NeFS
+} // namespace NeOS::NeFS
 
 #endif // ifdef __FSKIT_INCLUDES_NEFS__

@@ -8,7 +8,7 @@
 #include <KernelKit/LPC.h>
 #include <KernelKit/UserProcessScheduler.h>
 
-namespace Kernel
+namespace NeOS
 {
 
 }

@@ -13,7 +13,7 @@
 #define kIndexerNodeNameLength 255
 #define kIndexerClaimed		   0xCF
 
-namespace Kernel
+namespace NeOS
 {
 	namespace Indexer
 	{
@@ -30,7 +30,7 @@ namespace Kernel
 			explicit IndexableProperty()
 				: Property()
 			{
-				Kernel::KString strProp(kMaxPropLen);
+				NeOS::KString strProp(kMaxPropLen);
 				strProp += "/prop/indexable";
 
 				this->GetKey() = strProp;
@@ -60,4 +60,4 @@ namespace Kernel
 		/// @return none.
 		Void fs_index_file(const Char* filename, SizeT filenameLen, IndexableProperty& indexer);
 	} // namespace Indexer
-} // namespace Kernel
+} // namespace NeOS

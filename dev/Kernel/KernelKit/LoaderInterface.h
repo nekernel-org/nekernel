@@ -11,7 +11,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/ErrorOr.h>
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief This interface is used to make loader contracts (MSCOFF, PEF).
 	/// @author @Amlal-El-Mahrouss
@@ -31,4 +31,4 @@ namespace Kernel
 		virtual _Output ErrorOr<VoidPtr> FindStart()											= 0;
 		virtual _Output VoidPtr			 FindSymbol(_Input const Char* name, _Input Int32 kind) = 0;
 	};
-} // namespace Kernel
+} // namespace NeOS

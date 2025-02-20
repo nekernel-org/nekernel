@@ -15,22 +15,22 @@
 
 #include <NewKit/Defines.h>
 
-namespace Kernel
+namespace NeOS
 {
 	typedef Int64 hal_ap_kind;
 
 	typedef struct HAL_HARDWARE_THREAD
 	{
-		Kernel::UIntPtr fStartAddress;
-		Kernel::UInt8	fPrivleged : 1;
-		Kernel::UInt32	fPageMemoryFlags;
-		hal_ap_kind		fIdentNumber;
+		NeOS::UIntPtr fStartAddress;
+		NeOS::UInt8	  fPrivleged : 1;
+		NeOS::UInt32  fPageMemoryFlags;
+		hal_ap_kind	  fIdentNumber;
 	} HAL_HARDWARE_THREAD;
 
 	/// @brief Set PC to specific hart.
 	/// @param hart the hart
 	/// @param epc the pc.
 	/// @return
-	EXTERN_C Kernel::Void hal_set_pc_to_hart(HAL_HARDWARE_THREAD* hart, Kernel::VoidPtr epc);
+	EXTERN_C NeOS::Void hal_set_pc_to_hart(HAL_HARDWARE_THREAD* hart, NeOS::VoidPtr epc);
 
-} // namespace Kernel
+} // namespace NeOS

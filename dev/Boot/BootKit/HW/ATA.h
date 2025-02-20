@@ -9,7 +9,7 @@
 #include <Mod/ATA/ATA.h>
 #include <BootKit/Device.h>
 
-using namespace Kernel;
+using namespace NeOS;
 
 class BootDeviceATA final : public Device
 {

@@ -23,7 +23,7 @@
 
 #define kMBCIZeroSz (8)
 
-namespace Kernel
+namespace NeOS
 {
 	struct IMBCIHost;
 
@@ -95,6 +95,6 @@ namespace Kernel
 
 	/// @brief An AuthKey is a context used to decrpy data from an MBCI packet.
 	typedef UInt64 MBCIAuthKeyType;
-} // namespace Kernel
+} // namespace NeOS
 
 #endif // ifndef _INC_MODULE_MBCI_H_

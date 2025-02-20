@@ -29,62 +29,62 @@
 
 typedef struct LDR_EXEC_HEADER final
 {
-	Kernel::UInt32 mSignature;
-	Kernel::UInt16 mMachine;
-	Kernel::UInt16 mNumberOfSections;
-	Kernel::UInt32 mTimeDateStamp;
-	Kernel::UInt32 mPointerToSymbolTable;
-	Kernel::UInt32 mNumberOfSymbols;
-	Kernel::UInt16 mSizeOfOptionalHeader;
-	Kernel::UInt16 mCharacteristics;
+	NeOS::UInt32 mSignature;
+	NeOS::UInt16 mMachine;
+	NeOS::UInt16 mNumberOfSections;
+	NeOS::UInt32 mTimeDateStamp;
+	NeOS::UInt32 mPointerToSymbolTable;
+	NeOS::UInt32 mNumberOfSymbols;
+	NeOS::UInt16 mSizeOfOptionalHeader;
+	NeOS::UInt16 mCharacteristics;
 } LDR_EXEC_HEADER, *LDR_EXEC_HEADER_PTR;
 
 typedef struct LDR_OPTIONAL_HEADER final
 {
-	Kernel::UInt16 mMagic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
-	Kernel::UInt8  mMajorLinkerVersion;
-	Kernel::UInt8  mMinorLinkerVersion;
-	Kernel::UInt32 mSizeOfCode;
-	Kernel::UInt32 mSizeOfInitializedData;
-	Kernel::UInt32 mSizeOfUninitializedData;
-	Kernel::UInt32 mAddressOfEntryPoint;
-	Kernel::UInt32 mBaseOfCode;
-	Kernel::UInt32 mBaseOfData;
-	Kernel::UInt32 mImageBase;
-	Kernel::UInt32 mSectionAlignment;
-	Kernel::UInt32 mFileAlignment;
-	Kernel::UInt16 mMajorOperatingSystemVersion;
-	Kernel::UInt16 mMinorOperatingSystemVersion;
-	Kernel::UInt16 mMajorImageVersion;
-	Kernel::UInt16 mMinorImageVersion;
-	Kernel::UInt16 mMajorSubsystemVersion;
-	Kernel::UInt16 mMinorSubsystemVersion;
-	Kernel::UInt32 mWin32VersionValue;
-	Kernel::UInt32 mSizeOfImage;
-	Kernel::UInt32 mSizeOfHeaders;
-	Kernel::UInt32 mCheckSum;
-	Kernel::UInt16 mSubsystem;
-	Kernel::UInt16 mDllCharacteristics;
-	Kernel::UInt32 mSizeOfStackReserve;
-	Kernel::UInt32 mSizeOfStackCommit;
-	Kernel::UInt32 mSizeOfHeapReserve;
-	Kernel::UInt32 mSizeOfHeapCommit;
-	Kernel::UInt32 mLoaderFlags;
-	Kernel::UInt32 mNumberOfRvaAndSizes;
+	NeOS::UInt16 mMagic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
+	NeOS::UInt8	 mMajorLinkerVersion;
+	NeOS::UInt8	 mMinorLinkerVersion;
+	NeOS::UInt32 mSizeOfCode;
+	NeOS::UInt32 mSizeOfInitializedData;
+	NeOS::UInt32 mSizeOfUninitializedData;
+	NeOS::UInt32 mAddressOfEntryPoint;
+	NeOS::UInt32 mBaseOfCode;
+	NeOS::UInt32 mBaseOfData;
+	NeOS::UInt32 mImageBase;
+	NeOS::UInt32 mSectionAlignment;
+	NeOS::UInt32 mFileAlignment;
+	NeOS::UInt16 mMajorOperatingSystemVersion;
+	NeOS::UInt16 mMinorOperatingSystemVersion;
+	NeOS::UInt16 mMajorImageVersion;
+	NeOS::UInt16 mMinorImageVersion;
+	NeOS::UInt16 mMajorSubsystemVersion;
+	NeOS::UInt16 mMinorSubsystemVersion;
+	NeOS::UInt32 mWin32VersionValue;
+	NeOS::UInt32 mSizeOfImage;
+	NeOS::UInt32 mSizeOfHeaders;
+	NeOS::UInt32 mCheckSum;
+	NeOS::UInt16 mSubsystem;
+	NeOS::UInt16 mDllCharacteristics;
+	NeOS::UInt32 mSizeOfStackReserve;
+	NeOS::UInt32 mSizeOfStackCommit;
+	NeOS::UInt32 mSizeOfHeapReserve;
+	NeOS::UInt32 mSizeOfHeapCommit;
+	NeOS::UInt32 mLoaderFlags;
+	NeOS::UInt32 mNumberOfRvaAndSizes;
 } LDR_OPTIONAL_HEADER, *LDR_OPTIONAL_HEADER_PTR;
 
 typedef struct LDR_SECTION_HEADER final
 {
-	Kernel::Char   mName[8];
-	Kernel::UInt32 mVirtualSize;
-	Kernel::UInt32 mVirtualAddress;
-	Kernel::UInt32 mSizeOfRawData;
-	Kernel::UInt32 mPointerToRawData;
-	Kernel::UInt32 mPointerToRelocations;
-	Kernel::UInt32 mPointerToLineNumbers;
-	Kernel::UInt16 mNumberOfRelocations;
-	Kernel::UInt16 mNumberOfLinenumbers;
-	Kernel::UInt32 mCharacteristics;
+	NeOS::Char	 mName[8];
+	NeOS::UInt32 mVirtualSize;
+	NeOS::UInt32 mVirtualAddress;
+	NeOS::UInt32 mSizeOfRawData;
+	NeOS::UInt32 mPointerToRawData;
+	NeOS::UInt32 mPointerToRelocations;
+	NeOS::UInt32 mPointerToLineNumbers;
+	NeOS::UInt16 mNumberOfRelocations;
+	NeOS::UInt16 mNumberOfLinenumbers;
+	NeOS::UInt32 mCharacteristics;
 } LDR_SECTION_HEADER, *LDR_SECTION_HEADER_PTR;
 
 enum kExecDataDirParams
@@ -97,35 +97,35 @@ enum kExecDataDirParams
 
 typedef struct LDR_EXPORT_DIRECTORY
 {
-	Kernel::UInt32 mCharacteristics;
-	Kernel::UInt32 mTimeDateStamp;
-	Kernel::UInt16 mMajorVersion;
-	Kernel::UInt16 mMinorVersion;
-	Kernel::UInt32 mName;
-	Kernel::UInt32 mBase;
-	Kernel::UInt32 mNumberOfFunctions;
-	Kernel::UInt32 mNumberOfNames;
-	Kernel::UInt32 mAddressOfFunctions; // export table rva
-	Kernel::UInt32 mAddressOfNames;
-	Kernel::UInt32 mAddressOfNameOrdinal; // ordinal table rva
+	NeOS::UInt32 mCharacteristics;
+	NeOS::UInt32 mTimeDateStamp;
+	NeOS::UInt16 mMajorVersion;
+	NeOS::UInt16 mMinorVersion;
+	NeOS::UInt32 mName;
+	NeOS::UInt32 mBase;
+	NeOS::UInt32 mNumberOfFunctions;
+	NeOS::UInt32 mNumberOfNames;
+	NeOS::UInt32 mAddressOfFunctions; // export table rva
+	NeOS::UInt32 mAddressOfNames;
+	NeOS::UInt32 mAddressOfNameOrdinal; // ordinal table rva
 } LDR_EXPORT_DIRECTORY, *LDR_EXPORT_DIRECTORY_PTR;
 
 typedef struct LDR_IMPORT_DIRECTORY
 {
 	union {
-		Kernel::UInt32 mCharacteristics;
-		Kernel::UInt32 mOriginalFirstThunk;
+		NeOS::UInt32 mCharacteristics;
+		NeOS::UInt32 mOriginalFirstThunk;
 	};
-	Kernel::UInt32 mTimeDateStamp;
-	Kernel::UInt32 mForwarderChain;
-	Kernel::UInt32 mNameRva;
-	Kernel::UInt32 mThunkTableRva;
+	NeOS::UInt32 mTimeDateStamp;
+	NeOS::UInt32 mForwarderChain;
+	NeOS::UInt32 mNameRva;
+	NeOS::UInt32 mThunkTableRva;
 } LDR_IMPORT_DIRECTORY, *LDR_IMPORT_DIRECTORY_PTR;
 
 typedef struct LDR_DATA_DIRECTORY
 {
-	Kernel::UInt32 VirtualAddress;
-	Kernel::UInt32 Size;
+	NeOS::UInt32 VirtualAddress;
+	NeOS::UInt32 Size;
 } LDR_DATA_DIRECTORY, *LDR_DATA_DIRECTORY_PTR;
 
 typedef struct LDR_IMAGE_HEADER

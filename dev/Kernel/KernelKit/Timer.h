@@ -9,7 +9,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/LPC.h>
 
-namespace Kernel
+namespace NeOS
 {
 	class SoftwareTimer;
 	class TimerInterface;
@@ -78,4 +78,4 @@ namespace Kernel
 
 		return 1000 * Milliseconds(time);
 	}
-} // namespace Kernel
+} // namespace NeOS

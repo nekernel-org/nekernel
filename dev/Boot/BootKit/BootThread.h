@@ -12,7 +12,7 @@
 
 namespace Boot
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	class BootThread;
 
@@ -23,7 +23,7 @@ namespace Boot
 		explicit BootThread() = delete;
 		~BootThread()		  = default;
 
-		explicit BootThread(Kernel::VoidPtr blob);
+		explicit BootThread(NeOS::VoidPtr blob);
 
 		BootThread& operator=(const BootThread&) = default;
 		BootThread(const BootThread&)			 = default;

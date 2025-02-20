@@ -22,7 +22,7 @@
 #define kBitMapSizeIdx (1U)
 #define kBitMapUsedIdx (2U)
 
-namespace Kernel
+namespace NeOS
 {
 	namespace HAL
 	{
@@ -192,4 +192,4 @@ namespace Kernel
 			return ret;
 		}
 	} // namespace HAL
-} // namespace Kernel
+} // namespace NeOS

@@ -24,7 +24,7 @@
 #error !!! unknown architecture !!!
 #endif
 
-namespace Kernel
+namespace NeOS
 {
 	inline SSizeT rt_hash_seed(const Char* seed, int mul)
 	{
@@ -63,16 +63,16 @@ namespace Kernel
 	{
 		auto mm_is_bitmap(VoidPtr ptr) -> Bool;
 	}
-} // namespace Kernel
+} // namespace NeOS
 
 #define kKernelMaxSystemCalls (256)
 
-typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
+typedef NeOS::Void (*rt_syscall_proc)(NeOS::VoidPtr);
 
 struct HAL_SYSCALL_RECORD final
 {
-	Kernel::Int64	fHash;
-	Kernel::Bool	fHooked;
+	NeOS::Int64		fHash;
+	NeOS::Bool		fHooked;
 	rt_syscall_proc fProc;
 
 	operator bool()
@@ -81,12 +81,12 @@ struct HAL_SYSCALL_RECORD final
 	}
 };
 
-inline Kernel::Array<HAL_SYSCALL_RECORD,
-					 kKernelMaxSystemCalls>
+inline NeOS::Array<HAL_SYSCALL_RECORD,
+				   kKernelMaxSystemCalls>
 	kSyscalls;
 
-inline Kernel::Array<HAL_SYSCALL_RECORD,
-					 kKernelMaxSystemCalls>
+inline NeOS::Array<HAL_SYSCALL_RECORD,
+				   kKernelMaxSystemCalls>
 	kKerncalls;
 
-EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);
+EXTERN_C NeOS::HAL::StackFramePtr mp_get_current_context(NeOS::Int64 pid);

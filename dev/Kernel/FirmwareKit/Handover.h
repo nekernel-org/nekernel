@@ -26,7 +26,7 @@
 #define kHandoverBitMapSz (gib_cast(4))
 #define kHandoverStructSz sizeof(HEL::BootInfoHeader)
 
-namespace Kernel::HEL
+namespace NeOS::HEL
 {
 	/**
 	@brief The executable type enum.
@@ -102,7 +102,7 @@ namespace Kernel::HEL
 
 	/// @brief Alias of bootloader main type.
 	typedef Int32 (*HandoverProc)(BootInfoHeader* boot_info);
-} // namespace Kernel::HEL
+} // namespace NeOS::HEL
 
 /// @brief Bootloader information header global variable.
-inline Kernel::HEL::BootInfoHeader* kHandoverHeader = nullptr;
+inline NeOS::HEL::BootInfoHeader* kHandoverHeader = nullptr;

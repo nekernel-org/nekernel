@@ -19,9 +19,9 @@ public:
 
 	struct SATATrait final
 	{
-		Kernel::SizeT	mBase{1024};
-		Kernel::Boolean mErr{false};
-		Kernel::Boolean mDetected{false};
+		NeOS::SizeT	  mBase{1024};
+		NeOS::Boolean mErr{false};
+		NeOS::Boolean mDetected{false};
 
 		operator bool()
 		{
@@ -34,8 +34,8 @@ public:
 		return this->Leak().mDetected;
 	}
 
-	BootDeviceSATA& Read(Kernel::WideChar* Buf, const Kernel::SizeT& SecCount);
-	BootDeviceSATA& Write(Kernel::WideChar* Buf, const Kernel::SizeT& SecCount);
+	BootDeviceSATA& Read(NeOS::WideChar* Buf, const NeOS::SizeT& SecCount);
+	BootDeviceSATA& Write(NeOS::WideChar* Buf, const NeOS::SizeT& SecCount);
 
 	SATATrait& Leak();
 

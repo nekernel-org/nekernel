@@ -13,7 +13,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
 
-namespace Kernel
+namespace NeOS
 {
 	class ACPIFactoryInterface;
 
@@ -55,6 +55,6 @@ namespace Kernel
 		SSizeT	fEntries{0UL};	// number of entries, -1 tells that no invalid entries were
 								// found.
 	};
-} // namespace Kernel
+} // namespace NeOS
 
 #endif // !__MOD_ACPI_H__

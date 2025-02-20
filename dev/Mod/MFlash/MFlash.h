@@ -10,12 +10,12 @@
 
 #include <NewKit/Defines.h>
 
-Kernel::SizeT drv_get_sector_count(Kernel::Int32 slot);
+NeOS::SizeT drv_get_sector_count(NeOS::Int32 slot);
 
-Kernel::SizeT drv_get_size(Kernel::Int32 slot);
+NeOS::SizeT drv_get_size(NeOS::Int32 slot);
 
-Kernel::Void drv_enable_at(Kernel::Int32 slot);
+NeOS::Void drv_enable_at(NeOS::Int32 slot);
 
-Kernel::Void drv_disable_at(Kernel::Int32 slot);
+NeOS::Void drv_disable_at(NeOS::Int32 slot);
 
 #endif // ifdef NE_USE_MBCI_FLASH

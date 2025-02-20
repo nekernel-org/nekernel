@@ -6,7 +6,7 @@
 
 #include <KernelKit/PCI/DMA.h>
 
-namespace Kernel
+namespace NeOS
 {
 	DMAWrapper::operator bool()
 	{
@@ -80,4 +80,4 @@ namespace Kernel
 		fAddress = Ptr;
 		return *this;
 	}
-} // namespace Kernel
+} // namespace NeOS

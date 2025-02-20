@@ -49,7 +49,7 @@
 
 #define kRestrictMax (5U)
 
-#define node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)
+#define node_cast(PTR) reinterpret_cast<NeOS::NodePtr>(PTR)
 
 /**
 	@note Refer to first enum.
@@ -60,7 +60,7 @@
 /** @brief invalid position. (n-pos) */
 #define kNPos (SizeT)(-1);
 
-namespace Kernel
+namespace NeOS
 {
 	enum
 	{
@@ -387,6 +387,6 @@ namespace Kernel
 	{
 		mm_delete_heap(fFile);
 	}
-} // namespace Kernel
+} // namespace NeOS
 
 #endif // ifndef INC_FILEMGR_H

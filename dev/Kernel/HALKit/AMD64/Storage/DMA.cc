@@ -23,16 +23,16 @@
 
 #define kATADataLen 256
 
-using namespace Kernel;
-using namespace Kernel::HAL;
+using namespace NeOS;
+using namespace NeOS::HAL;
 
 /// BUGS: 0
 
 STATIC Boolean kATADetected			 = false;
 STATIC Int32   kATADeviceType		 = kATADeviceCount;
 STATIC Char	   kATAData[kATADataLen] = {0};
-STATIC Kernel::PCI::Device kATADevice;
-STATIC Char				   kCurrentDiskModel[50] = {"UNKNOWN ATA DRIVE"};
+STATIC NeOS::PCI::Device kATADevice;
+STATIC Char				 kCurrentDiskModel[50] = {"UNKNOWN ATA DRIVE"};
 
 Boolean drv_std_wait_io(UInt16 IO)
 {
@@ -105,7 +105,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 			for (SizeT i = 0ul; i < kATADataLen; ++i)
 			{
 				drv_std_wait_io(IO);
-				kATAData[i] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
+				kATAData[i] = NeOS::HAL::rt_in16(IO + ATA_REG_DATA);
 				drv_std_wait_io(IO);
 			}
 
@@ -133,7 +133,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 namespace Details
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	struct PRD final
 	{
@@ -238,13 +238,13 @@ Boolean drv_std_detected(Void)
 /***
 	@brief Getter, gets the number of sectors inside the drive.
 */
-Kernel::SizeT drv_get_sector_count()
+NeOS::SizeT drv_get_sector_count()
 {
 	return (kATAData[61] << 16) | kATAData[60];
 }
 
 /// @brief Get the drive size.
-Kernel::SizeT drv_get_size()
+NeOS::SizeT drv_get_size()
 {
 	return (drv_get_sector_count()) * kATASectorSize;
 }

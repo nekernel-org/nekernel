@@ -14,7 +14,7 @@
 template <typename T>
 inline T* tls_new_ptr(void) noexcept
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	auto ref_process = UserProcessScheduler::The().CurrentProcess();
 	MUST_PASS(ref_process);
@@ -30,9 +30,9 @@ inline T* tls_new_ptr(void) noexcept
 //! @brief Delete process pointer.
 //! @param obj The pointer to delete.
 template <typename T>
-inline Kernel::Bool tls_delete_ptr(T* obj) noexcept
+inline NeOS::Bool tls_delete_ptr(T* obj) noexcept
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	if (!obj)
 		return No;
@@ -48,7 +48,7 @@ inline Kernel::Bool tls_delete_ptr(T* obj) noexcept
 //! @brief Delete process pointer.
 //! @param obj The pointer to delete.
 template <typename T>
-inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T> obj) noexcept
+inline NeOS::Bool tls_delete_ptr(NeOS::ErrorOr<T> obj) noexcept
 {
 	return tls_delete_ptr(obj.Leak());
 }
@@ -56,7 +56,7 @@ inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T> obj) noexcept
 //! @brief Delete process pointer.
 //! @param obj The pointer to delete.
 template <typename T>
-inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T*> obj) noexcept
+inline NeOS::Bool tls_delete_ptr(NeOS::ErrorOr<T*> obj) noexcept
 {
 	return tls_delete_ptr(obj->Leak());
 }
@@ -69,7 +69,7 @@ inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T*> obj) noexcept
 template <typename T, typename... Args>
 T* tls_new_class(Args&&... args)
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	T* obj = tls_new_ptr<T>();
 
@@ -87,9 +87,9 @@ T* tls_new_class(Args&&... args)
 /// @param obj
 /// @return
 template <typename T>
-inline Kernel::Bool tls_delete_class(T* obj)
+inline NeOS::Bool tls_delete_class(T* obj)
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	if (!obj)
 		return No;

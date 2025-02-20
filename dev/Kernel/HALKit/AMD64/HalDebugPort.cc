@@ -12,7 +12,7 @@
 
 // after that we have start of additional data.
 
-namespace Kernel
+namespace NeOS
 {
 	void rt_debug_listen(DebuggerPortHeader* theHook) noexcept
 	{
@@ -37,4 +37,4 @@ namespace Kernel
 				++theHook->fBoundCnt;
 		}
 	}
-} // namespace Kernel
+} // namespace NeOS

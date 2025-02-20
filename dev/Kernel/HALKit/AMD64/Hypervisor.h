@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.h>
 
-namespace Kernel
+namespace NeOS
 {
 	MAKE_STRING_ENUM(HYPERVISOR)
 	ENUM_STRING(Qemu, "TCGTCGTCGTCG");
@@ -22,4 +22,4 @@ namespace Kernel
 	ENUM_STRING(Bhyve, "bhyve bhyve ");
 	ENUM_STRING(Qnx, " QNXQVMBSQG ");
 	END_STRING_ENUM()
-} // namespace Kernel
+} // namespace NeOS

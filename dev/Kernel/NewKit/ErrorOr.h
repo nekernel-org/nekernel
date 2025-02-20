@@ -12,7 +12,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
 
-namespace Kernel
+namespace NeOS
 {
 	using ErrorT = UInt;
 
@@ -74,4 +74,4 @@ namespace Kernel
 
 	using ErrorOrAny = ErrorOr<voidPtr>;
 
-} // namespace Kernel
+} // namespace NeOS

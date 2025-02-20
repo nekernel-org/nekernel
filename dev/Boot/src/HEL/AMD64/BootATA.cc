@@ -100,7 +100,7 @@ ATAInit_Retry:
 
 	for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData)
 	{
-		kATAData[indexData] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
+		kATAData[indexData] = NeOS::HAL::rt_in16(IO + ATA_REG_DATA);
 	}
 
 	OutBus =
@@ -136,7 +136,7 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, 
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
 		boot_ata_wait_io(IO);
-		Buf[IndexOff] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
+		Buf[IndexOff] = NeOS::HAL::rt_in16(IO + ATA_REG_DATA);
 		boot_ata_wait_io(IO);
 	}
 }

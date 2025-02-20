@@ -10,7 +10,7 @@
 
 namespace Firmware::Detail::EFI
 {
-	using namespace Kernel;
+	using namespace NeOS;
 
 	EXTERN_C
 	{

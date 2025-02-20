@@ -23,7 +23,7 @@
 
 #define drv_sector_cnt(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
 
-namespace Kernel
+namespace NeOS
 {
 	enum
 	{
@@ -186,6 +186,6 @@ namespace Kernel
 	/// @param DrvIndex drive index.
 	/// @return
 	Int32 fs_ifs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
-} // namespace Kernel
+} // namespace NeOS
 
 #endif /* ifndef INC_DRIVE_MANAGER_H */

@@ -18,7 +18,7 @@
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/IPEFDylibObject.h>
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief Main process entrypoint.
 	typedef void (*rtl_main_kind)(const SizeT argc, Char** argv, Char** envp, const SizeT envp_len);
@@ -34,4 +34,4 @@ namespace Kernel
 	/// @param main the start of the process.
 	/// @return The team's process id.
 	ProcessID rtl_create_process(rtl_main_kind main, const Char* process_name) noexcept;
-} // namespace Kernel
+} // namespace NeOS

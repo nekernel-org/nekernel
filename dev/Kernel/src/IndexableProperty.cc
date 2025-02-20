@@ -14,7 +14,7 @@
 
 #define kMaxLenIndexer (256U)
 
-namespace Kernel
+namespace NeOS
 {
 	namespace Indexer
 	{
@@ -54,4 +54,4 @@ namespace Kernel
 			}
 		}
 	} // namespace Indexer
-} // namespace Kernel
+} // namespace NeOS

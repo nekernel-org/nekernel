@@ -11,7 +11,7 @@
 #include <Mod/CoreGfx/FBMgr.h>
 #include <Mod/CoreGfx/TextMgr.h>
 
-namespace Kernel
+namespace NeOS
 {
 	enum CommStatus
 	{
@@ -183,8 +183,8 @@ namespace Kernel
 
 	TerminalDevice TerminalDevice::The() noexcept
 	{
-		TerminalDevice out(Kernel::ke_io_write, Kernel::ke_io_read);
+		TerminalDevice out(NeOS::ke_io_write, NeOS::ke_io_read);
 		return out;
 	}
 
-} // namespace Kernel
+} // namespace NeOS

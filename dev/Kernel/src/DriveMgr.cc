@@ -17,7 +17,7 @@
 /// @brief Drive Manager of kernel.
 /***********************************************************************************/
 
-namespace Kernel
+namespace NeOS
 {
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 	STATIC UInt16 kATAIO	 = 0U;
@@ -239,4 +239,4 @@ namespace Kernel
 
 		return trait;
 	}
-} // namespace Kernel
+} // namespace NeOS

@@ -10,7 +10,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
 
-namespace Kernel
+namespace NeOS
 {
 	class MacAddressGetter;
 
@@ -26,4 +26,4 @@ namespace Kernel
 		Array<WideChar, 12>& AsBytes();
 	};
 
-} // namespace Kernel
+} // namespace NeOS

@@ -15,7 +15,7 @@
 #include <KernelKit/LPC.h>
 #include <Hints/CompilerHint.h>
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief Declare pointer as free.
 	/// @param heap_ptr the pointer.
@@ -66,7 +66,7 @@ namespace Kernel
 	{
 		if (*cls)
 		{
-			err_global_get() = Kernel::kErrorInvalidData;
+			err_global_get() = NeOS::kErrorInvalidData;
 			return NO;
 		}
 
@@ -82,6 +82,6 @@ namespace Kernel
 		delete *cls;
 		*cls = nullptr;
 	}
-} // namespace Kernel
+} // namespace NeOS
 
 #endif // !INC_KERNEL_HEAP_H

@@ -10,7 +10,7 @@
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/OwnPtr.h>
 
-namespace Kernel
+namespace NeOS
 {
 	class AHCIDeviceInterface NE_DEVICE<MountpointInterface*>
 	{
@@ -30,4 +30,4 @@ namespace Kernel
 	private:
 		void (*fCleanup)(void) = {nullptr};
 	};
-} // namespace Kernel
+} // namespace NeOS

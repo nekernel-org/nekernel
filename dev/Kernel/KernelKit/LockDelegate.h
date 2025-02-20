@@ -9,7 +9,7 @@
 #include <NewKit/Atom.h>
 #include <NewKit/Defines.h>
 
-namespace Kernel
+namespace NeOS
 {
 	enum
 	{
@@ -66,4 +66,4 @@ namespace Kernel
 	private:
 		Atom<UInt> fLockStatus;
 	};
-} // namespace Kernel
+} // namespace NeOS

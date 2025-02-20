@@ -19,7 +19,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Kernel::SizeT Boot::BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const Kernel::SizeT len)
+NeOS::SizeT Boot::BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const NeOS::SizeT len)
 {
 	if (!dest || !src)
 		return 0;
@@ -33,12 +33,12 @@ Kernel::SizeT Boot::BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, 
 	return index;
 }
 
-Kernel::SizeT Boot::BStrLen(const CharacterTypeUTF16* ptr)
+NeOS::SizeT Boot::BStrLen(const CharacterTypeUTF16* ptr)
 {
 	if (!ptr)
 		return 0;
 
-	Kernel::SizeT cnt = 0;
+	NeOS::SizeT cnt = 0;
 
 	while (*ptr != (CharacterTypeUTF16)0)
 	{
@@ -49,12 +49,12 @@ Kernel::SizeT Boot::BStrLen(const CharacterTypeUTF16* ptr)
 	return cnt;
 }
 
-Kernel::SizeT Boot::BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const Kernel::SizeT len)
+NeOS::SizeT Boot::BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const NeOS::SizeT len)
 {
 	if (!src)
 		return 0;
 
-	Kernel::SizeT cnt = 0UL;
+	NeOS::SizeT cnt = 0UL;
 
 	while (*src != 0)
 	{
@@ -70,12 +70,12 @@ Kernel::SizeT Boot::BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 by
 	return cnt;
 }
 
-Kernel::SizeT Boot::BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const Kernel::SizeT len)
+NeOS::SizeT Boot::BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const NeOS::SizeT len)
 {
 	if (!src)
 		return 0;
 
-	Kernel::SizeT cnt = 0UL;
+	NeOS::SizeT cnt = 0UL;
 
 	while (*src != 0)
 	{

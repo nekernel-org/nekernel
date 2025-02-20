@@ -6,7 +6,7 @@
 
 #include <StorageKit/NVME.h>
 
-namespace Kernel
+namespace NeOS
 {
 	NVMEDeviceInterface::NVMEDeviceInterface(void (*out)(MountpointInterface* outpacket),
 											 void (*in)(MountpointInterface* inpacket),
@@ -25,4 +25,4 @@ namespace Kernel
 	{
 		return ("NVMEDeviceInterface");
 	}
-} // namespace Kernel
+} // namespace NeOS

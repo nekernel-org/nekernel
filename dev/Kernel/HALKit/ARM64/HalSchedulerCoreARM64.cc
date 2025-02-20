@@ -6,7 +6,7 @@
 
 #include <KernelKit/UserProcessScheduler.h>
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief Wakes up thread.
 	/// Wakes up thread from the hang state.
@@ -21,4 +21,4 @@ namespace Kernel
 	{
 		NE_UNUSED(stack);
 	}
-} // namespace Kernel
+} // namespace NeOS

@@ -19,7 +19,7 @@
 #define kJSONLen	 256
 #define kJSONNull	 "[]"
 
-namespace Kernel
+namespace NeOS
 {
 	/// @brief JavaScript object class
 	class Json final
@@ -148,4 +148,4 @@ namespace Kernel
 	};
 
 	using JsonStream = Stream<JsonStreamReader, Json>;
-} // namespace Kernel
+} // namespace NeOS

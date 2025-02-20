@@ -87,8 +87,8 @@ default.
 #define kNeFSLF	 '\r'
 #define kNeFSEOF (-1)
 
-#define kNeFSBitWidth (sizeof(Kernel::Char))
-#define kNeFSLbaType  (Kernel::Lba)
+#define kNeFSBitWidth (sizeof(NeOS::Char))
+#define kNeFSLbaType  (NeOS::Lba)
 
 /// @note Start after the partition map header. (Virtual addressing)
 #define kNeFSRootCatalogStartAddress (1024)
@@ -142,38 +142,38 @@ struct PACKED NEFS_CATALOG_STRUCT final
 {
 	BOOL ForkOrCatalog : 1 {0};
 
-	Kernel::Char Name[kNeFSNodeNameLen] = {0};
-	Kernel::Char Mime[kNeFSMimeNameLen] = {0};
+	NeOS::Char Name[kNeFSNodeNameLen] = {0};
+	NeOS::Char Mime[kNeFSMimeNameLen] = {0};
 
 	/// Catalog flags.
-	Kernel::UInt16 Flags;
+	NeOS::UInt16 Flags;
 
 	/// Catalog allocation status.
-	Kernel::UInt16 Status;
+	NeOS::UInt16 Status;
 
 	/// Custom catalog flags.
-	Kernel::UInt16 CatalogFlags;
+	NeOS::UInt16 CatalogFlags;
 
 	/// Catalog kind.
-	Kernel::Int32 Kind;
+	NeOS::Int32 Kind;
 
 	/// Size of the data fork.
-	Kernel::Lba DataForkSize;
+	NeOS::Lba DataForkSize;
 
 	/// Size of all resource forks.
-	Kernel::Lba ResourceForkSize;
+	NeOS::Lba ResourceForkSize;
 
 	/// Forks LBA.
-	Kernel::Lba DataFork;
-	Kernel::Lba ResourceFork;
+	NeOS::Lba DataFork;
+	NeOS::Lba ResourceFork;
 
 	/// Tree allocation tracker.
-	Kernel::Lba NextSibling;
-	Kernel::Lba PrevSibling;
+	NeOS::Lba NextSibling;
+	NeOS::Lba PrevSibling;
 
 	/// Best-buddy tracker.
-	Kernel::Lba NextBestSibling;
-	Kernel::Lba NextPrevSibling;
+	NeOS::Lba NextBestSibling;
+	NeOS::Lba NextPrevSibling;
 };
 
 /// @brief Fork type, contains a data page.
@@ -184,53 +184,53 @@ struct PACKED NEFS_FORK_STRUCT final
 {
 	BOOL ForkOrCatalog : 1 {1};
 
-	Kernel::Char ForkName[kNeFSForkNameLen]	   = {0};
-	Kernel::Char CatalogName[kNeFSNodeNameLen] = {0};
+	NeOS::Char ForkName[kNeFSForkNameLen]	 = {0};
+	NeOS::Char CatalogName[kNeFSNodeNameLen] = {0};
 
-	Kernel::Int32 Flags;
-	Kernel::Int32 Kind;
+	NeOS::Int32 Flags;
+	NeOS::Int32 Kind;
 
-	Kernel::Int64 ResourceId;
-	Kernel::Int32 ResourceKind;
-	Kernel::Int32 ResourceFlags;
+	NeOS::Int64 ResourceId;
+	NeOS::Int32 ResourceKind;
+	NeOS::Int32 ResourceFlags;
 
-	Kernel::Lba	  DataOffset; // 8 Where to look for this data?
-	Kernel::SizeT DataSize;	  /// Data size according using sector count.
+	NeOS::Lba	DataOffset; // 8 Where to look for this data?
+	NeOS::SizeT DataSize;	/// Data size according using sector count.
 
-	Kernel::Lba NextSibling;
-	Kernel::Lba PreviousSibling;
+	NeOS::Lba NextSibling;
+	NeOS::Lba PreviousSibling;
 
-	Kernel::Char Pad[2] = {0};
+	NeOS::Char Pad[2] = {0};
 };
 
 /// @brief Partition block type
 struct PACKED NEFS_ROOT_PARTITION_BLOCK final
 {
-	Kernel::Char Ident[kNeFSIdentLen]		 = {0};
-	Kernel::Char PartitionName[kNeFSPartLen] = {0};
+	NeOS::Char Ident[kNeFSIdentLen]		   = {0};
+	NeOS::Char PartitionName[kNeFSPartLen] = {0};
 
-	Kernel::Int32 Flags;
-	Kernel::Int32 Kind;
+	NeOS::Int32 Flags;
+	NeOS::Int32 Kind;
 
-	Kernel::Lba	  StartCatalog;
-	Kernel::SizeT CatalogCount;
+	NeOS::Lba	StartCatalog;
+	NeOS::SizeT CatalogCount;
 
-	Kernel::SizeT DiskSize;
+	NeOS::SizeT DiskSize;
 
-	Kernel::SizeT FreeCatalog;
-	Kernel::SizeT FreeSectors;
+	NeOS::SizeT FreeCatalog;
+	NeOS::SizeT FreeSectors;
 
-	Kernel::SizeT SectorCount;
-	Kernel::SizeT SectorSize;
+	NeOS::SizeT SectorCount;
+	NeOS::SizeT SectorSize;
 
-	Kernel::UInt64 Version;
+	NeOS::UInt64 Version;
 
-	Kernel::Lba EpmBlock;
+	NeOS::Lba EpmBlock;
 
-	Kernel::Char Pad[kNeFSPadLen];
+	NeOS::Char Pad[kNeFSPadLen];
 };
 
-namespace Kernel
+namespace NeOS
 {
 	class NeFileSystemParser;
 	class NeFileSystemJournal;
@@ -440,4 +440,4 @@ namespace Kernel
 	{
 		Boolean fs_init_nefs(Void) noexcept;
 	} // namespace NeFS
-} // namespace Kernel
+} // namespace NeOS

@@ -6,7 +6,7 @@
 
 #include <StorageKit/ATA.h>
 
-using namespace Kernel;
+using namespace NeOS;
 
 /// @brief Class constructor
 /// @param Out Drive output

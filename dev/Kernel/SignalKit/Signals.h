@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.h>
 
-typedef Kernel::UInt32 SignalKind;
+typedef NeOS::UInt32 SignalKind;
 
 #define SIGKILL 0
 #define SIGPAUS 1

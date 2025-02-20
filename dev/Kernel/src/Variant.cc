@@ -6,7 +6,7 @@
 
 #include <NewKit/Variant.h>
 
-namespace Kernel
+namespace NeOS
 {
 	const Char* Variant::ToString()
 	{
@@ -30,4 +30,4 @@ namespace Kernel
 	{
 		return fPtr;
 	}
-} // namespace Kernel
+} // namespace NeOS

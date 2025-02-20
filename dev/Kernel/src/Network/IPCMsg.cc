@@ -8,7 +8,7 @@
 #include <KernelKit/LPC.h>
 #include <KernelKit/UserProcessScheduler.h>
 
-namespace Kernel
+namespace NeOS
 {
 	/// @internal internal use for IPC system only.
 	/// @brief The internal sanitize function.
@@ -101,4 +101,4 @@ namespace Kernel
 
 		return No;
 	}
-} // namespace Kernel
+} // namespace NeOS

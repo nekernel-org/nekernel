@@ -8,16 +8,16 @@
 #include <KernelKit/DebugOutput.h>
 #include <HALKit/POWER/AP.h>
 
-using namespace Kernel;
+using namespace NeOS;
 
-namespace Kernel::Detail
+namespace NeOS::Detail
 {
 	STATIC void mp_hang_fn(void)
 	{
 		while (YES)
 			;
 	}
-} // namespace Kernel::Detail
+} // namespace NeOS::Detail
 
 /// @brief wakes up thread.
 /// wakes up thread from hang.
@@ -36,5 +36,5 @@ void mp_hang_thread(HAL::StackFramePtr stack)
 	if (!stack)
 		return;
 
-	hal_set_pc_to_hart(reinterpret_cast<HAL_HARDWARE_THREAD*>(stack->R15), reinterpret_cast<VoidPtr>(Kernel::Detail::mp_hang_fn));
+	hal_set_pc_to_hart(reinterpret_cast<HAL_HARDWARE_THREAD*>(stack->R15), reinterpret_cast<VoidPtr>(NeOS::Detail::mp_hang_fn));
 }

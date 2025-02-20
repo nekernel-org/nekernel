@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.h>
 
-namespace Kernel
+namespace NeOS
 {
 	typedef Int32 APMPowerCmd;
 
@@ -34,4 +34,4 @@ namespace Kernel
 	/// @param cmd the command.
 	/// @return status code.
 	EXTERN_C Int32 apm_send_io_command(UInt16 cmd, APMPowerCmd value);
-} // namespace Kernel
+} // namespace NeOS

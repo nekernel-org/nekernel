@@ -16,7 +16,7 @@
 /// @file SwapDisk.h
 /// @brief Virtual memory swap disk.
 
-namespace Kernel
+namespace NeOS
 {
 	struct SWAP_DISK_HEADER;
 
@@ -45,4 +45,4 @@ namespace Kernel
 	} PACKED SWAP_DISK_HEADER;
 
 	typedef SWAP_DISK_HEADER* SWAP_DISK_HEADER_REF;
-} // namespace Kernel
+} // namespace NeOS

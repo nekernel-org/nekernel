@@ -25,7 +25,7 @@
 #include <KernelKit/Timer.h>
 
 #ifdef __NE_AUTO_FORMAT__
-namespace Kernel::Detail
+namespace NeOS::Detail
 {
 	/// @brief Filesystem auto formatter, additional checks are also done by the class.
 	class NeFilesystemInstaller final
@@ -87,17 +87,17 @@ namespace Kernel::Detail
 
 		NE_COPY_DEFAULT(NeFilesystemInstaller);
 	};
-} // namespace Kernel::Detail
+} // namespace NeOS::Detail
 #endif // ifdef __NE_AUTO_FORMAT__
 
 /// @brief Kernel entrypoint.
 /// @param Void
 /// @return Void
-EXTERN_C Kernel::Void rtl_kernel_main(Kernel::SizeT argc, char** argv, char** envp, Kernel::SizeT envp_len)
+EXTERN_C NeOS::Void rtl_kernel_main(NeOS::SizeT argc, char** argv, char** envp, NeOS::SizeT envp_len)
 {
 #ifdef __NE_AUTO_FORMAT__
-	Kernel::NeFS::fs_init_nefs();
-	Kernel::Detail::NeFilesystemInstaller installer{};
+	NeOS::NeFS::fs_init_nefs();
+	NeOS::Detail::NeFilesystemInstaller installer{};
 #endif // __NE_AUTO_FORMAT__
 
 	while (YES)

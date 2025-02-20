@@ -22,7 +22,7 @@
 /// @file User.cc
 /// @brief User support.
 
-namespace Kernel
+namespace NeOS
 {
 	namespace Detail
 	{
@@ -187,4 +187,4 @@ namespace Kernel
 	{
 		return this->Ring() == UserRingKind::kRingSuperUser;
 	}
-} // namespace Kernel
+} // namespace NeOS

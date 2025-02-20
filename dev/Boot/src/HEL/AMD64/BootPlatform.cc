@@ -100,7 +100,7 @@ EXTERN_C UInt32 rt_in32(UInt16 port)
 
 void rt_hlt()
 {
-	Kernel::HAL::rt_halt();
+	NeOS::HAL::rt_halt();
 }
 
 #endif // __BOOTLDR_STANDALONE__

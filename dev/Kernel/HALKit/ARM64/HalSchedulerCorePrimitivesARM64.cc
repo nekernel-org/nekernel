@@ -7,7 +7,7 @@
 #include <HALKit/ARM64/Processor.h>
 #include <KernelKit/UserProcessScheduler.h>
 
-namespace Kernel
+namespace NeOS
 {
 	/***********************************************************************************/
 	/// @brief Unimplemented function (crashes by default)
@@ -32,4 +32,4 @@ namespace Kernel
 
 		return stack_ptr->SP != 0 && stack_ptr->BP != 0;
 	}
-} // namespace Kernel
+} // namespace NeOS

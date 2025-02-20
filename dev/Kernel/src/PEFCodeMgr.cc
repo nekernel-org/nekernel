@@ -18,7 +18,7 @@
 #define kPefHeapSizeSymbol	"__PEFSizeOfReserveHeap"
 #define kPefNameSymbol		"__PEFProgramName"
 
-namespace Kernel
+namespace NeOS
 {
 	namespace Detail
 	{
@@ -265,4 +265,4 @@ namespace Kernel
 			return id;
 		}
 	} // namespace Utils
-} // namespace Kernel
+} // namespace NeOS
