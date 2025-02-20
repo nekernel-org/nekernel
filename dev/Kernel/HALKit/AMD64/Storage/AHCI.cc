@@ -78,85 +78,6 @@ STATIC Void drv_calculate_disk_geometry() noexcept
 	kout << "Highest LBA: " << number(kHighestLBA) << endl;
 }
 
-/// @brief Initializes an AHCI disk.
-/// @param pi the amount of kSATA that have been detected.
-/// @return if the disk was successfully initialized or not.
-Boolean drv_std_init(UInt16& pi)
-{
-	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
-
-	for (SizeT device_index = 0; device_index < NE_BUS_COUNT; ++device_index)
-	{
-		kPCIDevice = iterator[device_index].Leak(); // Leak device.
-
-		if (kPCIDevice.Subclass() == kSATASubClass &&
-			kPCIDevice.ProgIf() == kSATAProgIfAHCI)
-		{
-			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(kSATABar5);
-
-			kPCIDevice.EnableMmio((UInt32)(UIntPtr)mem_ahci);	  // Enable the memory index_byte/o for this ahci device.
-			kPCIDevice.BecomeBusMaster((UInt32)(UIntPtr)mem_ahci); // Become bus master for this ahci device, so that we can control it.
-
-			UInt32 ports_implemented = mem_ahci->Pi;
-			UInt16 ahci_index		   = 0;
-
-			const UInt16 kMaxPortsImplemented = kAhciPortCnt;
-			const UInt32 kSATASignature		= 0x00000101;
-			const UInt8  kAhciPresent			= 0x03;
-			const UInt8  kAhciIPMActive		= 0x01;
-
-			Boolean detected = false;
-
-			while (ahci_index < kMaxPortsImplemented)
-			{
-				if (ports_implemented)
-				{
-					UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
-					UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
-
-					if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kAhciPresent && ipm == kAhciIPMActive)
-					{
-						kout << "SATA port found.\r";
-
-						kSATAIndex = ahci_index;
-						kSATA		 = mem_ahci;
-
-						drv_calculate_disk_geometry();
-
-						detected = YES;
-
-						pi = ports_implemented;
-
-						break;
-					}
-				}
-
-				ports_implemented >>= 1;
-				++ahci_index;
-			}
-
-			return detected;
-		}
-	}
-
-	return No;
-}
-
-Boolean drv_std_detected(Void)
-{
-	return kPCIDevice.DeviceId() != (UShort)PCI::PciConfigKind::Invalid;
-}
-
-Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
-{
-	drv_std_input_output<YES, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
-}
-
-Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
-{
-	drv_std_input_output<NO, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
-}
-
 STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 {
 	if (port == nullptr)
@@ -258,6 +179,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
  */
 SizeT drv_get_sector_count()
 {
+	MUST_PASS(kHighestLBA > 0);
 	return kHighestLBA;
 }
 
@@ -266,6 +188,85 @@ SizeT drv_get_sector_count()
 SizeT drv_get_size()
 {
 	return drv_get_sector_count() * kAHCISectorSize;
+}
+
+/// @brief Initializes an AHCI disk.
+/// @param pi the amount of kSATA that have been detected.
+/// @return if the disk was successfully initialized or not.
+Bool drv_std_init(UInt16& pi)
+{
+	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
+
+	for (SizeT device_index = 0; device_index < NE_BUS_COUNT; ++device_index)
+	{
+		kPCIDevice = iterator[device_index].Leak(); // Leak device.
+
+		if (kPCIDevice.Subclass() == kSATASubClass &&
+			kPCIDevice.ProgIf() == kSATAProgIfAHCI)
+		{
+			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(kSATABar5);
+
+			kPCIDevice.EnableMmio((UInt32)(UIntPtr)mem_ahci);	  // Enable the memory index_byte/o for this ahci device.
+			kPCIDevice.BecomeBusMaster((UInt32)(UIntPtr)mem_ahci); // Become bus master for this ahci device, so that we can control it.
+
+			UInt32 ports_implemented = mem_ahci->Pi;
+			UInt16 ahci_index		   = 0;
+
+			const UInt16 kMaxPortsImplemented = kAhciPortCnt;
+			const UInt32 kSATASignature		= 0x00000101;
+			const UInt8  kAhciPresent			= 0x03;
+			const UInt8  kAhciIPMActive		= 0x01;
+
+			Boolean detected = false;
+
+			while (ahci_index < kMaxPortsImplemented)
+			{
+				if (ports_implemented)
+				{
+					UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
+					UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
+
+					if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kAhciPresent && ipm == kAhciIPMActive)
+					{
+						kout << "SATA port found.\r";
+
+						kSATAIndex = ahci_index;
+						kSATA		 = mem_ahci;
+
+						drv_calculate_disk_geometry();
+
+						detected = YES;
+
+						pi = ports_implemented;
+
+						break;
+					}
+				}
+
+				ports_implemented >>= 1;
+				++ahci_index;
+			}
+
+			return detected;
+		}
+	}
+
+	return No;
+}
+
+Bool drv_std_detected(Void)
+{
+	return kPCIDevice.DeviceId() != (UShort)PCI::PciConfigKind::Invalid;
+}
+
+Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
+{
+	drv_std_input_output<YES, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
+}
+
+Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
+{
+	drv_std_input_output<NO, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
 }
 
 #endif // ifdef __AHCI__
