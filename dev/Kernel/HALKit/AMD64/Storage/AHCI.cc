@@ -15,7 +15,6 @@
  *
  */
 
-#include "NewKit/Macros.h"
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -52,7 +51,7 @@ enum
 STATIC PCI::Device kPCIDevice;
 STATIC HbaMem*			 kSATA			 = nullptr;
 STATIC SizeT kSATAIndex			 = 0UL;
-STATIC Lba kCurrentDiskSectorCount = 0UL;
+STATIC Lba kHighestLBA = 0UL;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept;
@@ -63,18 +62,20 @@ STATIC Void drv_calculate_disk_geometry() noexcept;
 
 STATIC Void drv_calculate_disk_geometry() noexcept
 {
-	kCurrentDiskSectorCount = 0UL;
+	kHighestLBA = 0UL;
 
-	UInt8 identify_data[kib_cast(8)] = {0};
+	const auto kSzIdent = 512;
 
-	rt_set_memory(identify_data, 0, kib_cast(8));
+	UInt8 identify_data[kSzIdent] = {0};
 
-	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kib_cast(8));
+	rt_set_memory(identify_data, 0, kSzIdent);
 
-	kCurrentDiskSectorCount = (identify_data[61] << 16) | identify_data[60];
+	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kSzIdent);
+
+	kHighestLBA = (identify_data[61] << 16) | identify_data[60];
 
 	kout << "Disk Size: " << number(drv_get_size()) << endl;
-	kout << "Highest LBA: " << number(kCurrentDiskSectorCount) << endl;
+	kout << "Highest LBA: " << number(kHighestLBA) << endl;
 }
 
 /// @brief Initializes an AHCI disk.
@@ -86,16 +87,15 @@ Boolean drv_std_init(UInt16& pi)
 
 	for (SizeT device_index = 0; device_index < NE_BUS_COUNT; ++device_index)
 	{
-		kPCIDevice = iterator[device_index].Leak(); // And then leak the reference.
+		kPCIDevice = iterator[device_index].Leak(); // Leak device.
 
-		// if SATA and then interface is AHCI...
 		if (kPCIDevice.Subclass() == kSATASubClass &&
 			kPCIDevice.ProgIf() == kSATAProgIfAHCI)
 		{
 			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(kSATABar5);
 
-			kPCIDevice.EnableMmio(kPCIDevice.Bar(kSATABar5));	  // Enable the memory index_byte/o for this ahci device.
-			kPCIDevice.BecomeBusMaster(kPCIDevice.Bar(kSATABar5)); // Become bus master for this ahci device, so that we can control it.
+			kPCIDevice.EnableMmio((UInt32)(UIntPtr)mem_ahci);	  // Enable the memory index_byte/o for this ahci device.
+			kPCIDevice.BecomeBusMaster((UInt32)(UIntPtr)mem_ahci); // Become bus master for this ahci device, so that we can control it.
 
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		   = 0;
@@ -180,9 +180,6 @@ BOOL kAHCICommandIssued = NO;
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept
 {
-	kSATA->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
-	kSATA->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
-
 	auto slot = 0L;
 
 	slot = drv_find_cmd_slot(&kSATA->Ports[kSATAIndex]);
@@ -190,7 +187,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	if (slot == ~0)
 		return;
 
-	volatile HbaCmdHeader* command_header = ((volatile HbaCmdHeader*)((UInt64)kSATA->Ports[kSATAIndex].Clb));
+	HbaCmdHeader* command_header = ((HbaCmdHeader*)((UInt64)kSATA->Ports[kSATAIndex].Clb));
 
 	command_header += slot;
 
@@ -198,25 +195,20 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
 	command_header->Write = Write;
-	command_header->Prdtl = 2;
+	command_header->Prdtl = 1;
 
-	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((UInt64)command_header->Ctba);
+	HbaCmdTbl* command_table = (HbaCmdTbl*)((UInt64)command_header->Ctba);
 
 	MUST_PASS(command_table);
 
 	auto buffer_phys = HAL::hal_get_phys_address(buffer);
 
-	command_table->Prdt[0].Dba	= ((UInt32)(UInt64)buffer_phys);
-	command_table->Prdt[0].Dbau = (((UInt64)(buffer_phys) >> 32));
-	command_table->Prdt[0].Dbc	= ((size_buffer / 2) - 1);
+	command_table->Prdt[0].Dba	= ((UInt32)(UInt64)buffer_phys & __UINT32_MAX__);
+	command_table->Prdt[0].Dbau = (((UInt64)(buffer_phys) >> 32) & __UINT32_MAX__);
+	command_table->Prdt[0].Dbc	= ((size_buffer) - 1);
 	command_table->Prdt[0].Ie	= YES;
 
-	command_table->Prdt[1].Dba	= ((UInt32)(UInt64)(buffer_phys + ((size_buffer / 2) - 1)));
-	command_table->Prdt[1].Dbau = (((UInt64)(buffer_phys + ((size_buffer / 2) - 1)) >> 32));
-	command_table->Prdt[1].Dbc	= ((size_buffer / 2) - 1);
-	command_table->Prdt[1].Ie	= YES;
-
-	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)((UInt64)&command_table->Cfis);
+	FisRegH2D* h2d_fis = (FisRegH2D*)((UInt64)&command_table->Cfis);
 
 	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
@@ -236,7 +228,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->Lba5 = (lba >> 40) & 0xFF;
 
 	h2d_fis->CountLow  = (size_buffer) & 0xFF;
-	h2d_fis->CountHigh = ((size_buffer) >> 8) & 0xFF;
+	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
 
 	while ((kSATA->Ports[kSATAIndex].Tfd & (kAhciSRBsy | kAhciSRDrq)))
 	{
@@ -254,9 +246,6 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 		}
 	}
 
-	kSATA->Ports[kSATAIndex].Cmd &= ~kHBAPxCmdFre;
-	kSATA->Ports[kSATAIndex].Cmd &= ~kHBAPxCmdST;
-
 	if (kSATA->Is & kHBAErrTaskFile) // check for task file error.
 	{
 		ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
@@ -269,7 +258,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
  */
 SizeT drv_get_sector_count()
 {
-	return kCurrentDiskSectorCount;
+	return kHighestLBA;
 }
 
 /// @brief Get the drive size.

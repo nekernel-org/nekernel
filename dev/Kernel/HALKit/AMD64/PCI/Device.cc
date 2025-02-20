@@ -7,6 +7,11 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/PCI/Device.h>
 
+#define PCI_BAR_IO		 0x01
+#define PCI_BAR_LOWMEM	 0x02
+#define PCI_BAR_64		 0x04
+#define PCI_BAR_PREFETCH 0x08
+
 NeOS::UInt NE_PCIReadRaw(NeOS::UInt bar, NeOS::UShort bus, NeOS::UShort dev, NeOS::UShort fun)
 {
 	NeOS::UInt target = 0x80000000 | ((NeOS::UInt)bus << 16) |
@@ -32,11 +37,6 @@ void NE_PCISetCfgTarget(NeOS::UInt bar, NeOS::UShort bus, NeOS::UShort dev, NeOS
 
 	NeOS::HAL::rt_wait_400ns();
 }
-
-#define PCI_BAR_IO		 0x01
-#define PCI_BAR_LOWMEM	 0x02
-#define PCI_BAR_64		 0x04
-#define PCI_BAR_PREFETCH 0x08
 
 namespace NeOS::PCI
 {
@@ -124,34 +124,34 @@ namespace NeOS::PCI
 
 	void Device::EnableMmio(UInt32 bar_in)
 	{
-		UInt32 enable = Read((UShort)PciConfigKind::CommandReg, sizeof(UInt32));
+		UInt32 enable = Read(bar_in, sizeof(UInt32));
 		enable |= (1 << 1);
 
-		Write((UShort)PciConfigKind::CommandReg, enable, sizeof(UInt32));
+		Write(bar_in, enable, sizeof(UInt32));
 	}
 
 	void Device::BecomeBusMaster(UInt32 bar_in)
 	{
-		UInt32 enable = Read((UShort)PciConfigKind::CommandReg, sizeof(UInt32));
+		UInt32 enable = Read(bar_in, sizeof(UInt32));
 		enable |= (1 << 2);
 
-		Write((UShort)PciConfigKind::CommandReg, enable, sizeof(UInt32));
+		Write(bar_in, enable, sizeof(UInt32));
 	}
 
 	UIntPtr Device::Bar(UInt32 bar_in)
 	{
-		UInt32 bar = NE_PCIReadRaw(bar_in & 0xFC, fBus, fDevice, fFunction);
+		UInt32 bar = NE_PCIReadRaw(bar_in & ~0x03, fBus, fDevice, fFunction);
 
 		if (bar & PCI_BAR_IO)
-			return bar & ~0x03;
+			return static_cast<UIntPtr>(bar & ~0x03);
 
 		if (bar & PCI_BAR_64)
 		{
-			UInt32 high = NE_PCIReadRaw((bar_in + 4) & 0xFC, fBus, fDevice, fFunction);
-			return ((UIntPtr)high << 32) | (bar & ~0x0F);
+			UInt32 high = NE_PCIReadRaw((bar_in + 4) & ~0x03, fBus, fDevice, fFunction);
+			return (static_cast<UIntPtr>(high) << 32) | (bar & ~0x0F);
 		}
 
-		return bar & ~0x0F;
+		return static_cast<UIntPtr>(bar & ~0x0F);
 	}
 
 	UShort Device::Vendor()
