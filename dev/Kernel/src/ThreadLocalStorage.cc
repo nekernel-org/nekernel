@@ -50,18 +50,18 @@ EXTERN_C Bool tls_check_syscall_impl(NeOS::VoidPtr tib_ptr) noexcept
 {
 	if (!tib_ptr)
 	{
-		kout << "TLS: Failing because of an invalid TIB...\r";
-		return false;
+		kout << "TLS: Failed because of an invalid TIB...\r";
+		return No;
 	}
 
 	THREAD_INFORMATION_BLOCK* tib = reinterpret_cast<THREAD_INFORMATION_BLOCK*>(tib_ptr);
 
 	if (!tls_check_tib(tib))
 	{
-		kout << "TLS: Failing because of an invalid TIB...\r";
-		return false;
+		kout << "TLS: Failed because of an invalid TIB...\r";
+		return No;
 	}
 
-	kout << "TLS Passed checked.\r";
-	return true;
+	kout << "TLS Pass.\r";
+	return Yes;
 }
