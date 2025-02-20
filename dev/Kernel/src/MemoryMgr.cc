@@ -274,6 +274,7 @@ namespace NeOS
 				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
 					(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
 
+			/// if valid, present and is heap header, then compute crc32
 			if (heap_info_ptr && heap_info_ptr->fPresent && kKernelHeapMagic == heap_info_ptr->fMagic)
 			{
 				heap_info_ptr->fCRC32 =
