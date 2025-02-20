@@ -3,7 +3,7 @@
 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
 	File: HalPagingMgr.cc
-	Purpose: Platform Paging Manager..
+	Purpose: Platform Paging Manager.
 
 ------------------------------------------- */
 

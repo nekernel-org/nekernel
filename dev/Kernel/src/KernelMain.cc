@@ -31,14 +31,14 @@ namespace Kernel::Detail
 	class NeFilesystemInstaller final
 	{
 	private:
-		Kernel::NeFileSystemParser* mNeFS{nullptr};
-		Kernel::NeFileSystemJournal mJournal;
+		NeFileSystemParser* mNeFS{nullptr};
+		NeFileSystemJournal mJournal;
 
 	public:
 		/// @brief wizard constructor.
 		explicit NeFilesystemInstaller()
 		{
-			mNeFS = new Kernel::NeFileSystemParser();
+			mNeFS = new NeFileSystemParser();
 
 			if (mNeFS)
 			{
@@ -47,7 +47,7 @@ namespace Kernel::Detail
 					"/", "/boot/", "/sys/", "/media/", "/etc/",
 					"/usr/", "/lib/", "/mnt/", "/sbin/", "/n/", "/dev/", "/run/", "/root/"};
 
-				for (Kernel::SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
+				for (SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
 				{
 					auto catalog_folder = mNeFS->GetCatalog(kFolderStr[dir_index]);
 
@@ -72,7 +72,7 @@ namespace Kernel::Detail
 				if (!mJournal.GetJournal(mNeFS))
 					mJournal.CreateJournal(mNeFS);
 
-				mJournal.CommitJournal(mNeFS, "['Name': 'NeFS', 'Type': 'AutoFormat']", "FormatLog.json");
+				mJournal.CommitJournal(mNeFS, "['FS': 'NeFS', 'Type': 'AutoFormat']", "FormatLog.json");
 				mJournal.ReleaseJournal();
 			}
 		}

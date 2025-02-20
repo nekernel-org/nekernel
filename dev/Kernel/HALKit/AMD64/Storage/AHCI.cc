@@ -118,9 +118,6 @@ Kernel::Boolean drv_std_init(Kernel::UInt16& PortsImplemented)
 						kSATAPortIdx = ahci_index;
 						kSATA		 = mem_ahci;
 
-						kSATA->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
-						kSATA->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
-
 						drv_calculate_disk_geometry();
 
 						detected = YES;
@@ -178,6 +175,9 @@ BOOL kAHCICommandIssued = NO;
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buffer, Kernel::SizeT sector_sz, Kernel::SizeT size_buffer) noexcept
 {
+	kSATA->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdFre;
+	kSATA->Ports[kSATAPortIdx].Cmd |= kHBAPxCmdST;
+
 	auto slot = 0L;
 
 	slot = drv_find_cmd_slot(&kSATA->Ports[kSATAPortIdx]);
@@ -201,13 +201,13 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	auto buffer_phys = Kernel::HAL::hal_get_phys_address(buffer);
 
-	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)buffer_phys & 0xFFFFFFFF);
-	command_table->Prdt[0].Dbau = (((Kernel::UInt64)(buffer_phys) >> 32) & 0xFFFFFFFF);
+	command_table->Prdt[0].Dba	= ((Kernel::UInt32)(Kernel::UInt64)buffer_phys);
+	command_table->Prdt[0].Dbau = (((Kernel::UInt64)(buffer_phys) >> 32));
 	command_table->Prdt[0].Dbc	= ((size_buffer / 2) - 1);
 	command_table->Prdt[0].Ie	= YES;
 
-	command_table->Prdt[1].Dba	= ((Kernel::UInt32)(Kernel::UInt64)(buffer_phys + ((size_buffer / 2) - 1)) & 0xFFFFFFFF);
-	command_table->Prdt[1].Dbau = (((Kernel::UInt64)(buffer_phys + ((size_buffer / 2) - 1)) >> 32) & 0xFFFFFFFF);
+	command_table->Prdt[1].Dba	= ((Kernel::UInt32)(Kernel::UInt64)(buffer_phys + ((size_buffer / 2) - 1)));
+	command_table->Prdt[1].Dbau = (((Kernel::UInt64)(buffer_phys + ((size_buffer / 2) - 1)) >> 32));
 	command_table->Prdt[1].Dbc	= ((size_buffer / 2) - 1);
 	command_table->Prdt[1].Ie	= YES;
 
@@ -220,17 +220,18 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 	if (Identify)
 		h2d_fis->Command = kAHCICmdIdentify;
 
-	h2d_fis->Lba0 = (lba & 0xFF);
-	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
-	h2d_fis->Lba2 = (lba >> 16) & 0xFF;
-	h2d_fis->Lba3 = (lba >> 24) & 0xFF;
-	h2d_fis->Lba4 = (lba >> 32) & 0xFF;
-	h2d_fis->Lba5 = (lba >> 40) & 0xFF;
+	h2d_fis->Lba0 = (lba);
+	h2d_fis->Lba1 = (lba >> 8);
+	h2d_fis->Lba2 = (lba >> 16);
 
 	h2d_fis->Device = kSataLBAMode;
 
-	h2d_fis->CountLow  = (sector_sz - 1) & 0xFF;
-	h2d_fis->CountHigh = ((sector_sz - 1) >> 8) & 0xFF;
+	h2d_fis->Lba3 = (lba >> 24);
+	h2d_fis->Lba4 = (lba >> 32);
+	h2d_fis->Lba5 = (lba >> 40);
+
+	h2d_fis->CountLow  = (size_buffer) & 0xFF;
+	h2d_fis->CountHigh = ((size_buffer) >> 8) & 0xFF;
 
 	while ((kSATA->Ports[kSATAPortIdx].Tfd & (kAhciSRBsy | kAhciSRDrq)))
 	{
@@ -242,13 +243,18 @@ static Kernel::Void drv_std_input_output(Kernel::UInt64 lba, Kernel::UInt8* buff
 
 	while (kSATA->Ports[kSATAPortIdx].Ci & (1 << slot))
 	{
-		kout << Kernel::hex_number(command_header->Prdtl) << endl;
-	
 		if (kSATA->Is & kHBAErrTaskFile) // check for task file error.
 		{
 			Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
-			return;
 		}
+	}
+
+	kSATA->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdFre;
+	kSATA->Ports[kSATAPortIdx].Cmd &= ~kHBAPxCmdST;
+
+	if (kSATA->Is & kHBAErrTaskFile) // check for task file error.
+	{
+		Kernel::ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 	}
 }
 

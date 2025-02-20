@@ -206,26 +206,7 @@ namespace Kernel::HAL
 		return edx & (1 << 5);
 	}
 
-	inline UInt64 hal_get_phys_address(void* virtual_address)
-	{
-		UInt64 addr = (UInt64)virtual_address;
-		UInt64 cr3	= (UInt64)hal_read_cr3();
-
-		// Extract indices for PML4, PDPT, PD, and PT
-		UInt64 pml4_idx = (addr >> 39) & 0x1FF;
-		UInt64 pdpt_idx = (addr >> 30) & 0x1FF;
-		UInt64 pd_idx	= (addr >> 21) & 0x1FF;
-		UInt64 pt_idx	= (addr >> 12) & 0x1FF;
-
-		// Get PML4 Table
-		UInt64* pml4 = (UInt64*)(cr3 & ~0xFFF);
-		UInt64* pdpt = (UInt64*)(pml4[pml4_idx] & ~0xFFF);
-		UInt64* pd	 = (UInt64*)(pdpt[pdpt_idx] & ~0xFFF);
-		UInt64* pt	 = (UInt64*)(pd[pd_idx] & ~0xFFF);
-
-		// Get Physical Address
-		return (pt[pt_idx] & ~0xFFF) + (addr & 0xFFF);
-	}
+	UIntPtr hal_get_phys_address(void* virtual_address);
 
 	/***********************************************************************************/
 	/// @brief Get Model specific register inside core.

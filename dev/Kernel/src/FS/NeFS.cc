@@ -326,6 +326,9 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 		out_lba								= blk_nefs->StartCatalog;
 	}
 
+	if (drive.fPacket.fPacketReadOnly)
+		return nullptr;
+	
 	NEFS_CATALOG_STRUCT* child_catalog = new NEFS_CATALOG_STRUCT();
 
 	child_catalog->ResourceForkSize = 0UL;
@@ -370,6 +373,8 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 
 		return nullptr;
 	}
+
+	kout << "Start finding catalog to allocate or empty space...\r";
 
 	while (start_free >= part_block->StartCatalog)
 	{

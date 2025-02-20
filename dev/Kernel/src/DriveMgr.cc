@@ -213,7 +213,7 @@ namespace Kernel
 			trait.fPacket.fPacketSize	 = 0UL;
 			trait.fPacket.fPacketContent = nullptr;
 		}
-	} // namespace Detect
+	} // namespace Detail
 
 	/// @brief Fetches the main drive.
 	/// @return the new drive. (returns kEPMDrive if EPM formatted)
