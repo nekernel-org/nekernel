@@ -32,21 +32,18 @@
 #define kHBAPxCmdFR		(0x4000)
 #define kHBAPxCmdCR		(0x8000)
 
-#define kSataLBAMode (1 << 6)
+#define kSATALBAMode (1 << 6)
 
-#define kAhciSRBsy (0x80)
-#define kAhciSRDrq (0x08)
+#define kSATASRBsy (0x80)
+#define kSATASRDrq (0x08)
 
-#define kAhciPortCnt (0x20)
+#define kSATAPortCnt (0x20)
+
+#define kSATAProgIfAHCI (0x01)
+#define kSATASubClass (0x06)
+#define kSATABar5 (0x24)
 
 using namespace NeOS;
-
-enum
-{
-	kSATAProgIfAHCI = 0x01,
-	kSATASubClass	= 0x06,
-	kSATABar5		= 0x24,
-};
 
 STATIC PCI::Device kPCIDevice;
 STATIC HbaMem*	   kSATA	   = nullptr;
@@ -85,7 +82,7 @@ STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 
 	UInt32 slots = (kSATA->Ports[kSATAIndex].Sact | kSATA->Ports[kSATAIndex].Ci);
 
-	for (Int32 i = 0; i < kAhciPortCnt; ++i)
+	for (Int32 i = 0; i < kSATAPortCnt; ++i)
 	{
 		if ((slots & 1) == 0)
 			return i;
@@ -110,7 +107,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	HbaCmdHeader* command_header = ((HbaCmdHeader*)((UInt64)kSATA->Ports[kSATAIndex].Clb));
 
-	command_header += slot;
+	command_header = (sizeof(HbaCmdHeader) * slot) + command_header;
 
 	MUST_PASS(command_header);
 
@@ -129,7 +126,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	command_table->Prdt[0].Dbc	= ((size_buffer)-1);
 	command_table->Prdt[0].Ie	= YES;
 
-	FisRegH2D* h2d_fis = (FisRegH2D*)((UInt64)&command_table->Cfis);
+	FisRegH2D* h2d_fis = (FisRegH2D*)(&command_table->Cfis);
 
 	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
@@ -142,7 +139,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
 	h2d_fis->Lba2 = (lba >> 16) & 0xFF;
 
-	h2d_fis->Device = kSataLBAMode;
+	h2d_fis->Device = kSATALBAMode;
 
 	h2d_fis->Lba3 = (lba >> 24) & 0xFF;
 	h2d_fis->Lba4 = (lba >> 32) & 0xFF;
@@ -151,9 +148,9 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->CountLow  = (size_buffer) & 0xFF;
 	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
 
-	while ((kSATA->Ports[kSATAIndex].Tfd & (kAhciSRBsy | kAhciSRDrq)))
+	while ((kSATA->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq)))
 	{
-		kout << "Waiting for slot to be ready\r";
+		kout << "Waiting for TFD...\r";
 	}
 
 	kSATA->Ports[kSATAIndex].Ci = (1 << slot);
@@ -161,13 +158,14 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	while (kSATA->Ports[kSATAIndex].Ci & (1 << slot))
 	{
-		if (kSATA->Is & kHBAErrTaskFile) // check for task file error.
+		if (kSATA->Is & kHBAErrTaskFile)
 		{
 			ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 		}
 	}
 
-	if (kSATA->Is & kHBAErrTaskFile) // check for task file error.
+	// check again.
+	if (kSATA->Is & kHBAErrTaskFile)
 	{
 		ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
 	}
@@ -212,12 +210,12 @@ Bool drv_std_init(UInt16& pi)
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;
 
-			const UInt16 kMaxPortsImplemented = kAhciPortCnt;
+			const UInt16 kMaxPortsImplemented = kSATAPortCnt;
 			const UInt32 kSATASignature		  = 0x00000101;
-			const UInt8	 kAhciPresent		  = 0x03;
-			const UInt8	 kAhciIPMActive		  = 0x01;
+			const UInt8	 kSATAPresent		  = 0x03;
+			const UInt8	 kSATAIPMActive		  = 0x01;
 
-			Boolean detected = false;
+			Boolean detected = NO;
 
 			while (ahci_index < kMaxPortsImplemented)
 			{
@@ -226,7 +224,7 @@ Bool drv_std_init(UInt16& pi)
 					UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
 					UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
 
-					if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kAhciPresent && ipm == kAhciIPMActive)
+					if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kSATAPresent && ipm == kSATAIPMActive)
 					{
 						kout << "SATA port found.\r";
 
