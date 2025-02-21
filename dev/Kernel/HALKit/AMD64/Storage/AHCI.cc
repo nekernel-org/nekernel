@@ -189,7 +189,7 @@ SizeT drv_get_size()
 }
 
 /// @brief Initializes an AHCI disk.
-/// @param pi the amount of kSATA that have been detected.
+/// @param pi the amount of ports that have been detected.
 /// @return if the disk was successfully initialized or not.
 Bool drv_std_init(UInt16& pi)
 {
