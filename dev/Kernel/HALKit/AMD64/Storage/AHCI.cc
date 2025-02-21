@@ -45,17 +45,19 @@
 
 using namespace NeOS;
 
-STATIC PCI::Device kPCIDevice;
-STATIC HbaMem*	   kSATA	   = nullptr;
-STATIC SizeT	   kSATAIndex  = 0UL;
-STATIC Lba		   kHighestLBA = 0UL;
-
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept;
 
 STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
 
 STATIC Void drv_calculate_disk_geometry() noexcept;
+
+STATIC PCI::Device kPCIDevice;
+STATIC HbaMem*	   kSATA	   = nullptr;
+STATIC SizeT	   kSATAIndex  = 0UL;
+STATIC Lba		   kHighestLBA = 0UL;
+
+BOOL kAHCICommandIssued = NO;
 
 STATIC Void drv_calculate_disk_geometry() noexcept
 {
@@ -92,8 +94,6 @@ STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 
 	return ~0;
 }
-
-BOOL kAHCICommandIssued = NO;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept
