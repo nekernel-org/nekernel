@@ -98,7 +98,7 @@ STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept
 {
-	auto slot = 0L;
+	UIntPtr slot = 0UL;
 
 	slot = drv_find_cmd_slot(&kSATA->Ports[kSATAIndex]);
 
@@ -119,7 +119,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	MUST_PASS(command_table);
 
-	auto buffer_phys = HAL::hal_get_phys_address(buffer);
+	UIntPtr buffer_phys = HAL::hal_get_phys_address(buffer);
 
 	command_table->Prdt[0].Dba	= ((UInt32)(UInt64)buffer_phys & __UINT32_MAX__);
 	command_table->Prdt[0].Dbau = (((UInt64)(buffer_phys) >> 32) & __UINT32_MAX__);
