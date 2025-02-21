@@ -33,6 +33,14 @@ typedef bool BOOL;
 typedef bool Boolean;
 typedef void Void;
 
+#ifndef __cplusplus
+#define true  1
+#define false 0
+#endif
+
+#define YES true
+#define NO	false
+
 typedef __UINT64_TYPE__ UInt64;
 typedef __UINT32_TYPE__ UInt32;
 typedef __UINT16_TYPE__ UInt16;

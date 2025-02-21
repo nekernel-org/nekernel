@@ -49,9 +49,9 @@ enum
 };
 
 STATIC PCI::Device kPCIDevice;
-STATIC HbaMem*			 kSATA			 = nullptr;
-STATIC SizeT kSATAIndex			 = 0UL;
-STATIC Lba kHighestLBA = 0UL;
+STATIC HbaMem*	   kSATA	   = nullptr;
+STATIC SizeT	   kSATAIndex  = 0UL;
+STATIC Lba		   kHighestLBA = 0UL;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept;
@@ -126,7 +126,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	command_table->Prdt[0].Dba	= ((UInt32)(UInt64)buffer_phys & __UINT32_MAX__);
 	command_table->Prdt[0].Dbau = (((UInt64)(buffer_phys) >> 32) & __UINT32_MAX__);
-	command_table->Prdt[0].Dbc	= ((size_buffer) - 1);
+	command_table->Prdt[0].Dbc	= ((size_buffer)-1);
 	command_table->Prdt[0].Ie	= YES;
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)((UInt64)&command_table->Cfis);
@@ -157,7 +157,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	}
 
 	kSATA->Ports[kSATAIndex].Ci = (1 << slot);
-	kAHCICommandIssued			  = YES;
+	kAHCICommandIssued			= YES;
 
 	while (kSATA->Ports[kSATAIndex].Ci & (1 << slot))
 	{
@@ -206,16 +206,16 @@ Bool drv_std_init(UInt16& pi)
 		{
 			HbaMem* mem_ahci = (HbaMem*)kPCIDevice.Bar(kSATABar5);
 
-			kPCIDevice.EnableMmio((UInt32)(UIntPtr)mem_ahci);	  // Enable the memory index_byte/o for this ahci device.
+			kPCIDevice.EnableMmio((UInt32)(UIntPtr)mem_ahci);	   // Enable the memory index_byte/o for this ahci device.
 			kPCIDevice.BecomeBusMaster((UInt32)(UIntPtr)mem_ahci); // Become bus master for this ahci device, so that we can control it.
 
 			UInt32 ports_implemented = mem_ahci->Pi;
-			UInt16 ahci_index		   = 0;
+			UInt16 ahci_index		 = 0;
 
 			const UInt16 kMaxPortsImplemented = kAhciPortCnt;
-			const UInt32 kSATASignature		= 0x00000101;
-			const UInt8  kAhciPresent			= 0x03;
-			const UInt8  kAhciIPMActive		= 0x01;
+			const UInt32 kSATASignature		  = 0x00000101;
+			const UInt8	 kAhciPresent		  = 0x03;
+			const UInt8	 kAhciIPMActive		  = 0x01;
 
 			Boolean detected = false;
 
@@ -231,7 +231,7 @@ Bool drv_std_init(UInt16& pi)
 						kout << "SATA port found.\r";
 
 						kSATAIndex = ahci_index;
-						kSATA		 = mem_ahci;
+						kSATA	   = mem_ahci;
 
 						drv_calculate_disk_geometry();
 

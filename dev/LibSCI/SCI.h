@@ -318,16 +318,8 @@ IMPORT_C SInt32 SchedKill(PID, SInt32 req);
 IMPORT_C SInt32 SchedBreakPoint(Void);
 
 // ------------------------------------------------------------------------------------------ //
-// @brief Video API.
+// @brief Filesystem API.
 // ------------------------------------------------------------------------------------------ //
-
-IMPORT_C SInt32 VideoGetBuffer(VoidPtr* out);
-
-IMPORT_C SInt32 VideoDisposeBuffer(VoidPtr* in);
-
-IMPORT_C SInt32 VideoGetColorProfile(VoidPtr* in);
-
-IMPORT_C SInt32 VideoQueryInfo(VoidPtr* info_ptr, SizeT* info_sz);
 
 IMPORT_C BOOL FsCopy(const char* path, const char* dst);
 IMPORT_C BOOL FsMove(const char* path, const char* dst);
@@ -338,7 +330,15 @@ IMPORT_C BOOL FsCreateDir(const char* path);
 IMPORT_C BOOL FsCreateFile(const char* path);
 IMPORT_C BOOL FsCreateAlias(const char* path, const char* from);
 
+// ------------------------------------------------------------------------------------------ //
+// @brief Format API.
+// ------------------------------------------------------------------------------------------ //
+
 IMPORT_C Char* StrFmt(const Char* fmt, ...);
+
+// ------------------------------------------------------------------------------------------ //
+// @brief Message API.
+// ------------------------------------------------------------------------------------------ //
 
 IMPORT_C SInt32 MsgFree(VoidPtr handle);
 IMPORT_C SInt32 MsgShow(VoidPtr handle);
