@@ -288,7 +288,7 @@ ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
 							   nullptr);
 
 	device.SetPi(kSATAPortsImplemented);
-	device.SetIndex(MountpointInterface::kDriveIndexA);
+	device.SetIndex(drv_index);
 
 	return ErrorOr<AHCIDeviceInterface>(device);
 }
