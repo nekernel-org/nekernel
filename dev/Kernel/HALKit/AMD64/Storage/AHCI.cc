@@ -69,7 +69,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 {
 	kHighestLBA = 0UL;
 
-	const UInt32 kSzIdent = 512U;
+	const UInt16 kSzIdent = 512U;
 
 	UInt8 identify_data[kSzIdent] = {0};
 
