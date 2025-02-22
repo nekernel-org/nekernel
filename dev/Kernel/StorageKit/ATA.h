@@ -17,8 +17,8 @@ namespace NeOS
 	class ATADeviceInterface : public IDeviceObject<MountpointInterface*>
 	{
 	public:
-		explicit ATADeviceInterface(void (*Out)(MountpointInterface* outpacket),
-									void (*In)(MountpointInterface* inpacket),
+		explicit ATADeviceInterface(void (*Out)(IDeviceObject*, MountpointInterface* outpacket),
+									void (*In)(IDeviceObject*, MountpointInterface* inpacket),
 									void (*Cleanup)(void));
 
 		virtual ~ATADeviceInterface();

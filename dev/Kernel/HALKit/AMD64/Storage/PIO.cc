@@ -30,7 +30,7 @@ using namespace NeOS::HAL;
 STATIC Boolean kATADetected			 = false;
 STATIC Int32   kATADeviceType		 = kATADeviceCount;
 STATIC Char	   kATAData[kATADataLen] = {0};
-STATIC Char	   kCurrentDiskModel[50] = {"UNKNOWN ATA DRIVE"};
+STATIC Char	   kCurrentDiskModel[50] = {"UNKNOWN PIO DRIVE"};
 
 Boolean drv_std_wait_io(UInt16 IO)
 {

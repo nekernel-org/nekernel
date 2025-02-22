@@ -57,20 +57,20 @@ namespace NeOS
 	////////////////////////////////////////////////////////////
 	/// @brief User ring constructor.
 	////////////////////////////////////////////////////////////
-	User::User(const Int32& sel, const Char* userName)
+	User::User(const Int32& sel, const Char* user_name)
 		: mUserRing((UserRingKind)sel)
 	{
 		MUST_PASS(sel >= 0);
-		rt_copy_memory((VoidPtr)userName, this->mUserName, rt_string_len(userName));
+		rt_copy_memory((VoidPtr)user_name, this->mUserName, rt_string_len(user_name));
 	}
 
 	////////////////////////////////////////////////////////////
 	/// @brief User ring constructor.
 	////////////////////////////////////////////////////////////
-	User::User(const UserRingKind& ringKind, const Char* userName)
-		: mUserRing(ringKind)
+	User::User(const UserRingKind& ring_kind, const Char* user_name)
+		: mUserRing(ring_kind)
 	{
-		rt_copy_memory((VoidPtr)userName, this->mUserName, rt_string_len(userName));
+		rt_copy_memory((VoidPtr)user_name, this->mUserName, rt_string_len(user_name));
 	}
 
 	////////////////////////////////////////////////////////////
@@ -86,9 +86,12 @@ namespace NeOS
 
 		SizeT len = rt_string_len(password_to_fill);
 
-		Char* password = new Char[len];
+		UserPublicKey password = new UserPublicKeyType[len];
+		
 		MUST_PASS(password);
 
+		rt_set_memory(password, 0, len);
+		
 		// fill data first, generate hash.
 		// return false on error.
 
@@ -161,7 +164,9 @@ namespace NeOS
 		return lhs.mUserRing != this->mUserRing;
 	}
 
+	////////////////////////////////////////////////////////////
 	/// @brief Returns the user's name.
+	////////////////////////////////////////////////////////////
 
 	Char* User::Name() noexcept
 	{

@@ -12,10 +12,10 @@ using namespace NeOS;
 /// @param Out Drive output
 /// @param In  Drive input
 /// @param Cleanup Drive cleanup.
-AHCIDeviceInterface::AHCIDeviceInterface(void (*Out)(MountpointInterface* outpacket),
-										 void (*In)(MountpointInterface* inpacket),
-										 void (*Cleanup)(void))
-	: IDeviceObject(Out, In), fCleanup(Cleanup)
+AHCIDeviceInterface::AHCIDeviceInterface(void (*out)(IDeviceObject* self, MountpointInterface* outpacket),
+										 void (*in)(IDeviceObject* self, MountpointInterface* inpacket),
+										 void (*cleanup)(void))
+	: IDeviceObject(out, in), fCleanup(cleanup)
 {
 }
 
@@ -23,6 +23,7 @@ AHCIDeviceInterface::AHCIDeviceInterface(void (*Out)(MountpointInterface* outpac
 AHCIDeviceInterface::~AHCIDeviceInterface()
 {
 	MUST_PASS(fCleanup);
+	
 	if (fCleanup)
 		fCleanup();
 }
@@ -31,5 +32,5 @@ AHCIDeviceInterface::~AHCIDeviceInterface()
 /// @return it's name as a string.
 const Char* AHCIDeviceInterface::Name() const
 {
-	return "AHCIDeviceInterface";
+	return "/dev/sda{}";
 }

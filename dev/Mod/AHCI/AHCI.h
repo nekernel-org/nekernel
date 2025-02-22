@@ -13,8 +13,6 @@
 
 #pragma once
 
-#if defined(__AHCI__)
-
 #include <NewKit/Defines.h>
 #include <Mod/ACPI/ACPI.h>
 
@@ -360,7 +358,5 @@ NeOS::SizeT drv_get_size();
 
 /// @brief Checks if the drive has completed the command.
 BOOL drv_is_ready(void);
-
-#endif // ifdef __AHCI__
 
 /* EOF */

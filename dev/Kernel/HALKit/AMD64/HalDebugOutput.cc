@@ -63,7 +63,7 @@ namespace NeOS
 
 	TerminalDevice::~TerminalDevice() = default;
 
-	EXTERN_C void ke_io_write(const Char* bytes)
+	EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes)
 	{
 #ifdef __DEBUG__
 		Detail::hal_serial_init<Detail::kPort>();
@@ -138,7 +138,7 @@ namespace NeOS
 #endif // __DEBUG__
 	}
 
-	EXTERN_C void ke_io_read(const Char* bytes)
+	EXTERN_C void ke_io_read(IDeviceObject<const Char*>*, const Char* bytes)
 	{
 #ifdef __DEBUG__
 		Detail::hal_serial_init<Detail::kPort>();

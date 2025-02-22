@@ -38,7 +38,7 @@ namespace NeOS
 	class TerminalDevice final NE_DEVICE<const Char*>
 	{
 	public:
-		TerminalDevice(void (*print)(const Char*), void (*gets)(const Char*))
+		TerminalDevice(void (*print)(IDeviceObject*, const Char*), void (*gets)(IDeviceObject*, const Char*))
 			: IDeviceObject<const Char*>(print, gets)
 		{
 		}

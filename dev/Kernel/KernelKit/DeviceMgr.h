@@ -40,7 +40,7 @@ namespace NeOS
 	class IDeviceObject
 	{
 	public:
-		explicit IDeviceObject(void (*Out)(T), void (*In)(T))
+		explicit IDeviceObject(void (*Out)(IDeviceObject<T>*, T), void (*In)(IDeviceObject<T>*, T))
 			: fOut(Out), fIn(In)
 		{
 		}
@@ -54,19 +54,19 @@ namespace NeOS
 	public:
 		virtual IDeviceObject<T>& operator<<(T Data)
 		{
-			fOut(Data);
+			fOut(this, Data);
 			return *this;
 		}
 
 		virtual IDeviceObject<T>& operator>>(T Data)
 		{
-			fIn(Data);
+			fIn(this, Data);
 			return *this;
 		}
 
 		virtual const char* Name() const
 		{
-			return "IDeviceObject";
+			return "/dev/null";
 		}
 
 		operator bool()
@@ -80,8 +80,8 @@ namespace NeOS
 		}
 
 	protected:
-		Void (*fOut)(T Data) = {nullptr};
-		Void (*fIn)(T Data)	 = {nullptr};
+		Void (*fOut)(IDeviceObject<T>*, T Data) = {nullptr};
+		Void (*fIn)(IDeviceObject<T>*, T Data)	 = {nullptr};
 	};
 
 	///

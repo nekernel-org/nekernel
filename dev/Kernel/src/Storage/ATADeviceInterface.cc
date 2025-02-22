@@ -13,8 +13,8 @@ using namespace NeOS;
 /// @param In  Drive input
 /// @param Cleanup Drive cleanup.
 ATADeviceInterface::ATADeviceInterface(
-	void (*Out)(MountpointInterface* outpacket),
-	void (*In)(MountpointInterface* inpacket),
+	void (*Out)(IDeviceObject*, MountpointInterface* outpacket),
+	void (*In)(IDeviceObject*, MountpointInterface* inpacket),
 	void (*Cleanup)(void))
 	: IDeviceObject(Out, In), fCleanup(Cleanup)
 {
@@ -32,7 +32,7 @@ ATADeviceInterface::~ATADeviceInterface()
 /// @return it's name as a string.
 const Char* ATADeviceInterface::Name() const
 {
-	return "ATADeviceInterface";
+	return "/dev/hda{}";
 }
 
 /// @brief Output operator.

@@ -15,6 +15,8 @@
  *
  */
 
+#include <KernelKit/DeviceMgr.h>
+#include <KernelKit/DriveMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
@@ -24,7 +26,7 @@
 #include <NewKit/Utils.h>
 #include <KernelKit/LockDelegate.h>
 
-#ifdef __AHCI__
+#include <StorageKit/AHCI.h>
 
 #define kHBAErrTaskFile (1 << 30)
 #define kHBAPxCmdST		(0x0001)
@@ -39,9 +41,11 @@
 
 #define kSATAPortCnt (0x20)
 
+#define kSATASig (0x00000101)
+
 #define kSATAProgIfAHCI (0x01)
-#define kSATASubClass (0x06)
-#define kSATABar5 (0x24)
+#define kSATASubClass	(0x06)
+#define kSATABar5		(0x24)
 
 using namespace NeOS;
 
@@ -50,7 +54,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
 
-STATIC Void drv_calculate_disk_geometry() noexcept;
+STATIC Void drv_compute_disk_ahci() noexcept;
 
 STATIC PCI::Device kPCIDevice;
 STATIC HbaMem*	   kSATA	   = nullptr;
@@ -59,7 +63,7 @@ STATIC Lba		   kHighestLBA = 0UL;
 
 BOOL kAHCICommandIssued = NO;
 
-STATIC Void drv_calculate_disk_geometry() noexcept
+STATIC Void drv_compute_disk_ahci() noexcept
 {
 	kHighestLBA = 0UL;
 
@@ -175,7 +179,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	@brief Gets the number of sectors inside the drive.
 	@return Sector size in bytes.
  */
-SizeT drv_get_sector_count()
+SizeT drv_get_sector_count_ahci()
 {
 	MUST_PASS(kHighestLBA > 0);
 	return kHighestLBA;
@@ -183,7 +187,7 @@ SizeT drv_get_sector_count()
 
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
-SizeT drv_get_size()
+SizeT drv_get_size_ahci()
 {
 	return drv_get_sector_count() * kAHCISectorSize;
 }
@@ -191,7 +195,7 @@ SizeT drv_get_size()
 /// @brief Initializes an AHCI disk.
 /// @param pi the amount of ports that have been detected.
 /// @return if the disk was successfully initialized or not.
-Bool drv_std_init(UInt16& pi)
+Bool drv_std_init_ahci(UInt16& pi)
 {
 	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
 
@@ -211,7 +215,7 @@ Bool drv_std_init(UInt16& pi)
 			UInt16 ahci_index		 = 0;
 
 			const UInt16 kMaxPortsImplemented = kSATAPortCnt;
-			const UInt32 kSATASignature		  = 0x00000101;
+			const UInt32 kSATASignature		  = kSATASig;
 			const UInt8	 kSATAPresent		  = 0x03;
 			const UInt8	 kSATAIPMActive		  = 0x01;
 
@@ -226,12 +230,10 @@ Bool drv_std_init(UInt16& pi)
 
 					if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kSATAPresent && ipm == kSATAIPMActive)
 					{
-						kout << "SATA port found.\r";
-
 						kSATAIndex = ahci_index;
 						kSATA	   = mem_ahci;
 
-						drv_calculate_disk_geometry();
+						drv_compute_disk_ahci();
 
 						detected = YES;
 
@@ -252,9 +254,41 @@ Bool drv_std_init(UInt16& pi)
 	return No;
 }
 
+Bool drv_std_detected_ahci()
+{
+	return kPCIDevice.DeviceId() != (UShort)PCI::PciConfigKind::Invalid && kPCIDevice.Bar(kSATABar5) != 0;
+}
+
+ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
+{
+	UInt16 pi = 0;
+
+	if (!drv_std_init_ahci(pi))
+		return ErrorOr<AHCIDeviceInterface>(kErrorDisk);
+
+	AHCIDeviceInterface device([](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
+		AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
+		
+		auto disk = mnt->GetAddressOf(dev->fDriveIndex);
+		drv_std_input_output<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+	},
+	[](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
+		AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
+		
+		auto disk = mnt->GetAddressOf(dev->fDriveIndex);
+		drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+	}, nullptr);
+
+	device.SetPi(pi);
+
+	return ErrorOr<AHCIDeviceInterface>(device);
+}
+
+#ifdef __AHCI__
+
 Bool drv_std_detected(Void)
 {
-	return kPCIDevice.DeviceId() != (UShort)PCI::PciConfigKind::Invalid;
+	drv_std_detected_ahci();
 }
 
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
@@ -262,9 +296,29 @@ Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 	drv_std_input_output<YES, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
 }
 
+Bool drv_std_init(UInt16& pi)
+{
+	return drv_std_init_ahci(pi);
+}
+
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
 	drv_std_input_output<NO, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
 }
 
+/***
+	@brief Gets the number of sectors inside the drive.
+	@return Sector size in bytes.
+ */
+SizeT drv_get_sector_count()
+{
+	return drv_get_sector_count_ahci();
+}
+
+/// @brief Get the drive size.
+/// @return Disk size in bytes.
+SizeT drv_get_size()
+{
+	return drv_get_size_ahci();
+}
 #endif // ifdef __AHCI__

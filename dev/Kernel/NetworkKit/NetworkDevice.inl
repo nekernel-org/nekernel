@@ -10,8 +10,8 @@
 
 namespace NeOS
 {
-	NetworkDevice::NetworkDevice(void (*out)(NetworkDeviceCommand),
-								 void (*in)(NetworkDeviceCommand),
+	NetworkDevice::NetworkDevice(void (*out)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
+								 void (*in)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
 								 void (*on_cleanup)(void))
 		: IDeviceObject<NetworkDeviceCommand>(out, in), fCleanup(on_cleanup)
 	{

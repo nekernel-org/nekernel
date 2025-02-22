@@ -37,18 +37,18 @@ STATIC Boolean boot_ata_wait_io(UInt16 IO)
 		rt_in8(IO + ATA_REG_STATUS);
 
 ATAWaitForIO_Retry:
-	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
+	auto status_rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if ((statRdy & ATA_SR_BSY))
+	if ((status_rdy & ATA_SR_BSY))
 		goto ATAWaitForIO_Retry;
 
 ATAWaitForIO_Retry2:
-	statRdy = rt_in8(IO + ATA_REG_STATUS);
+	status_rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if (statRdy & ATA_SR_ERR)
+	if (status_rdy & ATA_SR_ERR)
 		return false;
 
-	if (!(statRdy & ATA_SR_DRDY))
+	if (!(status_rdy & ATA_SR_DRDY))
 		goto ATAWaitForIO_Retry2;
 
 	return true;
@@ -78,9 +78,9 @@ Boolean boot_ata_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 	// identify until it's good.
 ATAInit_Retry:
-	auto statRdy = rt_in8(IO + ATA_REG_STATUS);
+	auto status_rdy = rt_in8(IO + ATA_REG_STATUS);
 
-	if (statRdy & ATA_SR_ERR)
+	if (status_rdy & ATA_SR_ERR)
 	{
 		writer.Write(
 			L"BootZ: ATA: Not an IDE based drive.\r");
@@ -88,7 +88,7 @@ ATAInit_Retry:
 		return false;
 	}
 
-	if ((statRdy & ATA_SR_BSY))
+	if ((status_rdy & ATA_SR_BSY))
 		goto ATAInit_Retry;
 
 	rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);

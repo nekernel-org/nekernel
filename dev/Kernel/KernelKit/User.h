@@ -37,6 +37,7 @@ namespace NeOS
 	};
 
 	typedef Char* UserPublicKey;
+	typedef Char UserPublicKeyType;
 
 	/// @brief User class.
 	class User final

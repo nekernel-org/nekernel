@@ -23,8 +23,8 @@ namespace NeOS
 	class NetworkDevice final : public IDeviceObject<NetworkDeviceCommand>
 	{
 	public:
-		NetworkDevice(void (*out)(NetworkDeviceCommand),
-					  void (*in)(NetworkDeviceCommand),
+		NetworkDevice(void (*out)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
+					  void (*in)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
 					  void (*onCleanup)(void) = nullptr);
 
 		~NetworkDevice() override;

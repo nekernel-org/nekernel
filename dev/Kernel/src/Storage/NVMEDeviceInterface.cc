@@ -8,8 +8,8 @@
 
 namespace NeOS
 {
-	NVMEDeviceInterface::NVMEDeviceInterface(void (*out)(MountpointInterface* outpacket),
-											 void (*in)(MountpointInterface* inpacket),
+	NVMEDeviceInterface::NVMEDeviceInterface(void (*out)(IDeviceObject*, MountpointInterface* outpacket),
+											 void (*in)(IDeviceObject*, MountpointInterface* inpacket),
 											 void (*cleanup)(void))
 		: IDeviceObject(out, in), fCleanup(cleanup)
 	{
@@ -23,6 +23,6 @@ namespace NeOS
 
 	const Char* NVMEDeviceInterface::Name() const
 	{
-		return ("NVMEDeviceInterface");
+		return ("/dev/nvme{}");
 	}
 } // namespace NeOS

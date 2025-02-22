@@ -15,11 +15,11 @@ namespace NeOS
 	class AHCIDeviceInterface NE_DEVICE<MountpointInterface*>
 	{
 	public:
-		explicit AHCIDeviceInterface(void (*Out)(MountpointInterface* outpacket),
-									 void (*In)(MountpointInterface* inpacket),
-									 void (*Cleanup)(void));
+		explicit AHCIDeviceInterface(void (*out)(IDeviceObject* self, MountpointInterface* out),
+									 void (*in)(IDeviceObject* self, MountpointInterface* in),
+									 void (*cleanup)(void));
 
-		virtual ~AHCIDeviceInterface();
+		virtual ~AHCIDeviceInterface() override;
 
 	public:
 		AHCIDeviceInterface& operator=(const AHCIDeviceInterface&) = default;
@@ -27,7 +27,20 @@ namespace NeOS
 
 		const Char* Name() const override;
 
+		const UInt16& GetPi() { return this->fPortsImplemented; }
+
+		Void SetPi(const UInt16& pi) { MUST_PASS(pi > 0); this->fPortsImplemented = pi; }
+
 	private:
-		void (*fCleanup)(void) = {nullptr};
+		Void (*fCleanup)(Void) = {nullptr};
+	
+	private:
+		UInt16 fPortsImplemented{0U};
+	
+	public:
+		UInt32 fDriveIndex{0U};
+
 	};
+
+	AHCIDeviceInterface sk_acquire_ahci_device(Int32 drv_index);
 } // namespace NeOS
