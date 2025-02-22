@@ -87,11 +87,11 @@ namespace NeOS
 		SizeT len = rt_string_len(password_to_fill);
 
 		UserPublicKey password = new UserPublicKeyType[len];
-		
+
 		MUST_PASS(password);
 
 		rt_set_memory(password, 0, len);
-		
+
 		// fill data first, generate hash.
 		// return false on error.
 

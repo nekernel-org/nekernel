@@ -61,6 +61,8 @@ STATIC HbaMem*	   kSATA	   = nullptr;
 STATIC SizeT	   kSATAIndex  = 0UL;
 STATIC Lba		   kHighestLBA = 0UL;
 
+STATIC UInt16 kSATAPortsImplemented = 0U;
+
 BOOL kAHCICommandIssued = NO;
 
 STATIC Void drv_compute_disk_ahci() noexcept
@@ -214,6 +216,8 @@ Bool drv_std_init_ahci(UInt16& pi)
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;
 
+			kSATAPortsImplemented = ports_implemented;
+
 			const UInt16 kMaxPortsImplemented = kSATAPortCnt;
 			const UInt32 kSATASignature		  = kSATASig;
 			const UInt8	 kSATAPresent		  = 0x03;
@@ -259,27 +263,32 @@ Bool drv_std_detected_ahci()
 	return kPCIDevice.DeviceId() != (UShort)PCI::PciConfigKind::Invalid && kPCIDevice.Bar(kSATABar5) != 0;
 }
 
-ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
+Bool sk_init_ahci_device(BOOL atapi)
 {
 	UInt16 pi = 0;
+	return drv_std_init_ahci(pi);
+}
 
-	if (!drv_std_init_ahci(pi))
+ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
+{
+	if (!drv_std_detected_ahci())
 		return ErrorOr<AHCIDeviceInterface>(kErrorDisk);
 
 	AHCIDeviceInterface device([](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
 		AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
 		
-		auto disk = mnt->GetAddressOf(dev->fDriveIndex);
-		drv_std_input_output<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
-	},
-	[](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
-		AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
-		
-		auto disk = mnt->GetAddressOf(dev->fDriveIndex);
-		drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
-	}, nullptr);
+		auto disk = mnt->GetAddressOf(dev->GetIndex());
+		drv_std_input_output<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize); },
+							   [](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
+								   AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
 
-	device.SetPi(pi);
+								   auto disk = mnt->GetAddressOf(dev->GetIndex());
+								   drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+							   },
+							   nullptr);
+
+	device.SetPi(kSATAPortsImplemented);
+	device.SetIndex(MountpointInterface::kDriveIndexA);
 
 	return ErrorOr<AHCIDeviceInterface>(device);
 }

@@ -23,7 +23,7 @@ AHCIDeviceInterface::AHCIDeviceInterface(void (*out)(IDeviceObject* self, Mountp
 AHCIDeviceInterface::~AHCIDeviceInterface()
 {
 	MUST_PASS(fCleanup);
-	
+
 	if (fCleanup)
 		fCleanup();
 }

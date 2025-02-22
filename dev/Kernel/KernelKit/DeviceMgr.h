@@ -81,7 +81,7 @@ namespace NeOS
 
 	protected:
 		Void (*fOut)(IDeviceObject<T>*, T Data) = {nullptr};
-		Void (*fIn)(IDeviceObject<T>*, T Data)	 = {nullptr};
+		Void (*fIn)(IDeviceObject<T>*, T Data)	= {nullptr};
 	};
 
 	///

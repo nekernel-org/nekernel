@@ -27,20 +27,31 @@ namespace NeOS
 
 		const Char* Name() const override;
 
-		const UInt16& GetPi() { return this->fPortsImplemented; }
+		const UInt16& GetPi()
+		{
+			return this->fPortsImplemented;
+		}
+		Void SetPi(const UInt16& pi)
+		{
+			MUST_PASS(pi > 0);
+			this->fPortsImplemented = pi;
+		}
 
-		Void SetPi(const UInt16& pi) { MUST_PASS(pi > 0); this->fPortsImplemented = pi; }
+		const UInt32& GetIndex()
+		{
+			return this->fDriveIndex;
+		}
+		Void SetIndex(const UInt32& drv)
+		{
+			this->fDriveIndex = drv;
+		}
 
 	private:
 		Void (*fCleanup)(Void) = {nullptr};
-	
-	private:
 		UInt16 fPortsImplemented{0U};
-	
-	public:
 		UInt32 fDriveIndex{0U};
-
 	};
 
+	Bool				sk_init_ahci_device(BOOL atapi);
 	AHCIDeviceInterface sk_acquire_ahci_device(Int32 drv_index);
 } // namespace NeOS
