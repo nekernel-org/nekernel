@@ -1,0 +1,12 @@
+{
+  "compiler_path": "g++",
+  "compiler_std": "c++23",
+  "headers_path": ["./"],
+  "sources_path": ["src/CommandLine.cc"],
+  "output_name": "./dist/ld",
+  "cpp_macros": [
+    "kLDVersion=0x0100",
+    "kLDVersionHighest=0x0100",
+    "kLDVersionLowest=0x0100"
+  ]
+}

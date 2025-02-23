@@ -45,7 +45,7 @@ REM_FLAG=-f
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__NE_ARM64__ -fno-rtti -fno-exceptions -I./ \
 			 -target aarch64-unknown-windows \
-				-std=c++20 -DBOOTZ_EPM_SUPPORT -DZBA_USE_FB -D__FSKIT_USE_NEFS__ -D__BOOTLDR_STANDALONE__ -D__NEOSKRNL__ -D__BOOTZ__ -D__HAVE_NE_APIS__ -D__NE__ -I../ -I../Kernel
+				-std=c++23 -DBOOTZ_EPM_SUPPORT -DZBA_USE_FB -D__FSKIT_USE_NEFS__ -D__BOOTLDR_STANDALONE__ -D__NEOSKRNL__ -D__BOOTZ__ -D__HAVE_NE_APIS__ -D__NE__ -I../ -I../Kernel
 
 BOOT_LOADER=bootz.exe
 KERNEL=neoskrnl.exe

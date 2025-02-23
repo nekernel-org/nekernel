@@ -32,5 +32,4 @@ namespace NeOS
 	/// @param epc the pc.
 	/// @return
 	EXTERN_C NeOS::Void hal_set_pc_to_hart(HAL_HARDWARE_THREAD* hart, NeOS::VoidPtr epc);
-
 } // namespace NeOS

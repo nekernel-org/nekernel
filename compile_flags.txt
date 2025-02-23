@@ -7,7 +7,7 @@
 -Ipublic/tools/make_fs
 -Ipublic/tools/open
 -Idev/Boot/BootKit
--std=c++20
+-std=c++23
 -D__NE_AMD64__
 -D__NEOSKRNL__
 -D__FSKIT_INCLUDES_NEFS__
