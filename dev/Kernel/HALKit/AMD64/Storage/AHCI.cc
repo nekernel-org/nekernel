@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, DeVrije Corporation, all rights reserved.
+	Copyright (C) 2024-2025, DeVrije-Aker Corporation, all rights reserved.
 
 ------------------------------------------- */
 
@@ -11,7 +11,7 @@
  * @version 0.1
  * @date 2024-02-02
  *
- * @Copyright (C) 2024, DeVrije, all rights reserved.
+ * @Copyright (C) 2024, DeVrije-Aker, all rights reserved.
  *
  */
 

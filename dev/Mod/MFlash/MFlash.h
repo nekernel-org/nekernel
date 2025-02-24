@@ -18,4 +18,8 @@ NeOS::Void drv_enable_at(NeOS::Int32 slot);
 
 NeOS::Void drv_disable_at(NeOS::Int32 slot);
 
+NeOS::Void drv_std_write(NeOS::Int32 slot, NeOS::UInt64 lba, NeOS::Char* buf, NeOS::SizeT sector_sz, NeOS::SizeT buf_sz);
+
+NeOS::Void drv_std_read(NeOS::Int32 slot, NeOS::UInt64 lba, NeOS::Char* buf, NeOS::SizeT sector_sz, NeOS::SizeT buf_sz);
+
 #endif // ifdef NE_USE_MBCI_FLASH

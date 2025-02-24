@@ -127,10 +127,8 @@ namespace NeOS
 		{
 			Detail::kGICEnabled = YES;
 			Detail::mp_setup_gic_el0();
-
-			return YES;
 		}
 
-		return NO;
+		return Detail::kGICEnabled;
 	}
 } // namespace NeOS
