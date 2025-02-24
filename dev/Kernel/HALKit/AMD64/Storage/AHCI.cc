@@ -297,7 +297,7 @@ ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
 
 Bool drv_std_detected(Void)
 {
-	drv_std_detected_ahci();
+	return drv_std_detected_ahci();
 }
 
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
