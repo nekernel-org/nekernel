@@ -10,8 +10,8 @@
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DriveMgr.h>
 
-#define kIndexerNodeNameLength 255
-#define kIndexerClaimed		   0xCF
+#define kIndexerCatalogNameLength 255
+#define kIndexerClaimed			  0xCF
 
 namespace NeOS
 {
@@ -21,7 +21,7 @@ namespace NeOS
 		{
 		public:
 			Char Drive[kDriveNameLen];
-			Char Path[kIndexerNodeNameLength];
+			Char Path[kIndexerCatalogNameLength];
 		};
 
 		class IndexableProperty final : public Property

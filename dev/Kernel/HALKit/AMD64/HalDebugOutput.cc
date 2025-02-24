@@ -84,7 +84,7 @@ namespace NeOS
 
 		static int x = kFontSizeX, y = kFontSizeY;
 
-		static BOOL not_important = NO;
+		static BOOL not_important = YES;
 
 		while (index < len)
 		{

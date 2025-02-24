@@ -24,7 +24,7 @@ namespace NeOS
 		explicit MacAddressGetter() = default;
 
 	public:
-		KString&			 AsString();
+		KString&					  AsString();
 		Array<WideChar, kMACAddrLen>& AsBytes();
 	};
 

@@ -29,7 +29,7 @@ default.
 
 #define kNeFSInvalidFork	(-1)
 #define kNeFSInvalidCatalog (-1)
-#define kNeFSNodeNameLen	(256)
+#define kNeFSCatalogNameLen (256)
 
 #define kNeFSMinimumDiskSize (gib_cast(4))
 
@@ -142,8 +142,8 @@ struct PACKED NEFS_CATALOG_STRUCT final
 {
 	BOOL ForkOrCatalog : 1 {0};
 
-	NeOS::Char Name[kNeFSNodeNameLen] = {0};
-	NeOS::Char Mime[kNeFSMimeNameLen] = {0};
+	NeOS::Char Name[kNeFSCatalogNameLen] = {0};
+	NeOS::Char Mime[kNeFSMimeNameLen]	 = {0};
 
 	/// Catalog flags.
 	NeOS::UInt16 Flags;
@@ -167,13 +167,15 @@ struct PACKED NEFS_CATALOG_STRUCT final
 	NeOS::Lba DataFork;
 	NeOS::Lba ResourceFork;
 
-	/// Tree allocation tracker.
+	/// Buddy allocation tracker.
 	NeOS::Lba NextSibling;
 	NeOS::Lba PrevSibling;
 
 	/// Best-buddy tracker.
 	NeOS::Lba NextBestSibling;
 	NeOS::Lba NextPrevSibling;
+
+	NeOS::UInt32 Checksum;
 };
 
 /// @brief Fork type, contains a data page.
@@ -184,8 +186,8 @@ struct PACKED NEFS_FORK_STRUCT final
 {
 	BOOL ForkOrCatalog : 1 {1};
 
-	NeOS::Char ForkName[kNeFSForkNameLen]	 = {0};
-	NeOS::Char CatalogName[kNeFSNodeNameLen] = {0};
+	NeOS::Char ForkName[kNeFSForkNameLen]		= {0};
+	NeOS::Char CatalogName[kNeFSCatalogNameLen] = {0};
 
 	NeOS::Int32 Flags;
 	NeOS::Int32 Kind;
@@ -433,7 +435,7 @@ namespace NeOS
 		}
 
 	private:
-		Char mStamp[kNeFSNodeNameLen] = {"/etc/xml/journal" kNeFSJournalExt};
+		Char mStamp[kNeFSCatalogNameLen] = {"/etc/xml/journal" kNeFSJournalExt};
 	};
 
 	namespace NeFS

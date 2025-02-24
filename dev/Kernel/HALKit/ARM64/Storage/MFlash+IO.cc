@@ -92,13 +92,14 @@ namespace NeOS
 		if (packet_frame[8] != (UInt64)kFlashBridgeRevision)
 			return;
 
-		packet_frame[16+0] = lba;
-		packet_frame[16+4] = sector_sz;
-		packet_frame[16+8] = lba;
-		packet_frame[16+12] = buf_sz;
-		packet_frame[16+14] = (UIntPtr)HAL::hal_get_phys_address(buf);
+		packet_frame[16 + 0]  = lba;
+		packet_frame[16 + 4]  = sector_sz;
+		packet_frame[16 + 8]  = lba;
+		packet_frame[16 + 12] = buf_sz;
+		packet_frame[16 + 14] = (UIntPtr)HAL::hal_get_phys_address(buf);
 
-		while (packet_frame[0] == lba);
+		while (packet_frame[0] == lba)
+			;
 	}
 
 	Void drv_std_read(Int32 slot, UInt64 lba, Char* buf, SizeT sector_sz, SizeT buf_sz)

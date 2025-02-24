@@ -264,7 +264,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 		return nullptr;
 	}
 
-	Char parent_name[kNeFSNodeNameLen] = {0};
+	Char parent_name[kNeFSCatalogNameLen] = {0};
 
 	for (SizeT indexName = 0UL; indexName < rt_string_len(name); ++indexName)
 	{
@@ -331,6 +331,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 
 	NEFS_CATALOG_STRUCT* child_catalog = new NEFS_CATALOG_STRUCT();
 
+	child_catalog->Checksum			= 0;
 	child_catalog->ResourceForkSize = 0UL;
 	child_catalog->DataForkSize		= 0UL;
 	child_catalog->CatalogFlags		= kNeFSStatusUnlocked;
@@ -340,7 +341,18 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 	child_catalog->Flags |= kNeFSFlagCreated;
 	child_catalog->CatalogFlags = flags;
 
-	rt_copy_memory((VoidPtr)name, (VoidPtr)child_catalog->Name,
+	SizeT i = rt_string_len(name);
+
+	// get rid pf \0
+	--i;
+
+	if (kind == kNeFSCatalogKindDir)
+		--i;
+
+	while (name[i] != '/')
+		--i;
+
+	rt_copy_memory((VoidPtr)(name + i), (VoidPtr)child_catalog->Name,
 				   rt_string_len(name));
 
 	NEFS_CATALOG_STRUCT temporary_catalog{};
@@ -737,7 +749,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
 
 	if (!StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()) && local_search)
 	{
-		Char parent_name[kNeFSNodeNameLen] = {0};
+		Char parent_name[kNeFSCatalogNameLen] = {0};
 
 		for (SizeT indexFill = 0; indexFill < rt_string_len(catalog_name); ++indexFill)
 		{
@@ -787,6 +799,19 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
 
 	NEFS_CATALOG_STRUCT temporary_catalog{};
 
+	SizeT i = rt_string_len(catalog_name);
+
+	// get rid of \0
+	--i;
+
+	if (catalog_name[i] == '/')
+		--i;
+
+	while (catalog_name[i] != '/')
+		--i;
+
+	const Char* tmp_name = (catalog_name + i);
+
 kNeFSSearchThroughCatalogList:
 	while (drive.fPacket.fPacketGood)
 	{
@@ -796,7 +821,7 @@ kNeFSSearchThroughCatalogList:
 
 		drive.fInput(drive.fPacket);
 
-		if (StringBuilder::Equals(catalog_name, temporary_catalog.Name))
+		if (StringBuilder::Equals(tmp_name, temporary_catalog.Name))
 		{
 			if (temporary_catalog.Status == kNeFSStatusLocked &&
 				!search_hidden)

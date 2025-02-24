@@ -205,7 +205,7 @@ namespace Boot
 		/// @brief File entry for **BDiskFormatFactory**.
 		struct BFileDescriptor final
 		{
-			Char  fFileName[kNeFSNodeNameLen];
+			Char  fFileName[kNeFSCatalogNameLen];
 			Int32 fKind;
 		};
 
