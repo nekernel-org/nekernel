@@ -91,7 +91,7 @@ struct PACKED EPM_PART_BLOCK
 	NeOS::Int16 Kind;
 	NeOS::Int16 Flags;
 	NeOS::Int32 FsVersion;
-	NeOS::Char	Fs[kEPMFilesystemLength]; /* NeFS, ffs2... */
+	NeOS::Char	Fs[kEPMFilesystemLength]; /* NeFS, HPFS... */
 	NeOS::Char	Reserved[kEPMReserveLen]; // to fill a full sector.
 };
 
@@ -107,7 +107,5 @@ enum
 	kEPMNeOS	  = 0x1f, // This OS.
 	kEPMInvalidOS = 0xff,
 };
-
-typedef struct EPM_PART_BLOCK BOOT_BLOCK_STRUCT;
 
 #endif // ifndef FIRMWAREKIT_EPM_H

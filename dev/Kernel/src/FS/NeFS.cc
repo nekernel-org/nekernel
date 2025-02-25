@@ -498,7 +498,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 		// make it bootable when needed.
 		Char buf_epm[kNeFSSectorSz] = {0};
 
-		BOOT_BLOCK_STRUCT* epm_boot = (BOOT_BLOCK_STRUCT*)buf_epm;
+		EPM_PART_BLOCK* epm_boot = (EPM_PART_BLOCK*)buf_epm;
 
 		// Write a new EPM entry.
 
@@ -549,10 +549,10 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 			}
 			else
 			{
-				prevStart = ((BOOT_BLOCK_STRUCT*)buf)->LbaStart + ((BOOT_BLOCK_STRUCT*)buf)->LbaEnd;
+				prevStart = ((EPM_PART_BLOCK*)buf)->LbaStart + ((EPM_PART_BLOCK*)buf)->LbaEnd;
 			}
 
-			outEpmLba += sizeof(BOOT_BLOCK_STRUCT);
+			outEpmLba += sizeof(EPM_PART_BLOCK);
 			++cnt;
 		}
 	}

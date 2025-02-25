@@ -368,7 +368,7 @@ namespace Boot
 		writer << "sector size: " << part.SectorSize << "\n";
 
 #ifdef BOOTZ_EPM_SUPPORT
-		BOOT_BLOCK_STRUCT epm_boot{0};
+		EPM_PART_BLOCK epm_boot{0};
 
 		const auto kFsName	  = "NeFS";
 		const auto kBlockName = "OS";
@@ -386,9 +386,9 @@ namespace Boot
 		CopyMem(epm_boot.Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
 
 		fDiskDev.Leak().mBase = kEPMBootBlockLba; // always always resies at zero block.
-		fDiskDev.Leak().mSize = sizeof(BOOT_BLOCK_STRUCT);
+		fDiskDev.Leak().mSize = sizeof(EPM_PART_BLOCK);
 
-		fDiskDev.Write((Char*)&epm_boot, sizeof(BOOT_BLOCK_STRUCT));
+		fDiskDev.Write((Char*)&epm_boot, sizeof(EPM_PART_BLOCK));
 
 		writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
 #endif

@@ -172,7 +172,7 @@ namespace NeOS
 
 			trait.fInput(trait.fPacket);
 
-			if (rt_string_cmp(((BOOT_BLOCK_STRUCT*)trait.fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
+			if (rt_string_cmp(((EPM_PART_BLOCK*)trait.fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
 				trait.fPacket.fPacketReadOnly = NO;
 				trait.fKind					  = kMassStorageDrive | kEPMDrive;
