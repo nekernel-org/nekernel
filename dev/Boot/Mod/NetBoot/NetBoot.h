@@ -12,7 +12,9 @@
 #include <NewKit/Defines.h>
 
 #define kNetBootINetMagic		"NETB"
-#define kNetBootINetMagicLength 4
+#define kNetBootINetMagicLength (4)
+
+#define kNetBootNameLen (255)
 
 /// @brief the internet header is used to download updates OTA.
 typedef struct NetBootInternetHeader
@@ -22,10 +24,10 @@ typedef struct NetBootInternetHeader
 	NeOS::Char NB3; /// magic char 3 'T'
 	NeOS::Char NB4; /// magic char 4 'B'
 
-	NeOS::Char	  PatchName[255];	/// example: Modjo
-	NeOS::Int32	  PatchLength;		/// the patch length.
-	NeOS::Char	  PatchTarget[255]; /// the target file.
-	NeOS::Boolean ImpliesROM;		/// does it imply an EEPROM reprogram?
-	NeOS::Boolean Preflight;		/// is it a preflight packet.
-	NeOS::Char	  Data[];			/// non preflight packet has a patch blob for a **PatchTarget**
-} NetBootInternetHeader;
+	NeOS::Char	  PatchName[kNetBootNameLen];	/// example: Modjo
+	NeOS::Int32	  PatchLength;					/// the patch length.
+	NeOS::Char	  PatchTarget[kNetBootNameLen]; /// the target file.
+	NeOS::Boolean EEPROM : 1;					/// does it imply an EEPROM reprogram?
+	NeOS::Boolean Preflight : 1;				/// is it a preflight packet.
+	NeOS::Char	  Data[];						/// non preflight packet has a patch blob for a **PatchTarget**
+} ATTRIBUTE(packed) NetBootInternetHeader;

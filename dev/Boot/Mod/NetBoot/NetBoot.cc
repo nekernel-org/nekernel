@@ -9,12 +9,40 @@
 
 #include <Mod/NetBoot/NetBoot.h>
 #include <BootKit/BootKit.h>
+#include <BootKit/BootThread.h>
 
 EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 {
-#ifdef __NE_AMD64__
+	NetBootInternetHeader inet{};
+
+	/// TODO: Read Packet from localhost
+
+	if (inet.PatchLength < 0)
+	{
+		Boot::BTextWriter writer;
+		writer.Write("NetBootLauncher: No Patch attached to packet.\r");
+
+		return kEfiFail;
+	}
+	else if (inet.Preflight)
+	{
+		Boot::BTextWriter writer;
+		writer.Write("NetBootLauncher: Preflight over preflight response.\r");
+
+		return kEfiFail;
+	}
+	else if (inet.EEPROM)
+	{
+		Boot::BTextWriter writer;
+		writer.Write("NetBootLauncher: EEPROM flash not available for now.\r");
+
+		return kEfiFail;
+	}
+
+	Boot::BootThread thread(inet.Data);
+
+	if (thread.IsValid())
+		return thread.Start(handover, YES);
+
 	return kEfiFail;
-#else
-	return kEfiOk;
-#endif
 }
