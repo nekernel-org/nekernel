@@ -591,15 +591,13 @@ namespace NeOS
 			////////////////////////////////////////////////////////////
 			///	Rollback on fail.    								 ///
 			////////////////////////////////////////////////////////////
+
 			if (!ret)
 				return No;
 
-			PID prev_pid									 = UserProcessHelper::TheCurrentPID();
 			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
-
-			PTime prev_ptime									 = HardwareThreadScheduler::The()[index].Leak()->fPTime;
+			
 			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
-
 			HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
 
 			break;
