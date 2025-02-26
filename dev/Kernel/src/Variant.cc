@@ -28,6 +28,6 @@ namespace NeOS
 	/// @brief Leak variant's instance.
 	VoidPtr Variant::Leak()
 	{
-		return fPtr;
+		return this->fPtr;
 	}
 } // namespace NeOS

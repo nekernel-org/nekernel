@@ -16,3 +16,7 @@ typedef NeOS::UInt32 SignalKind;
 #define SIGTRAP 3
 #define SIGABRT 4
 #define SIGCONT 5
+
+#define SIGBREK 666
+#define SIGATCH 661
+#define SIGDTCH 662

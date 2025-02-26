@@ -11,7 +11,7 @@
  * @version 0.1
  * @date 2024-02-02
  *
- * @Copyright (C) 2024, Amlal El Mahrouss, all rights reserved.
+ * @Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
  *
  */
 

@@ -11,8 +11,5 @@
 
 namespace LibCF
 {
-	class CFWindowContainer_;
-	class CFWindowFrame_;
-	class CFWindowTab_;
-	class CFDesktopMenu_;
+	class CFWindowConnection_;
 } // namespace LibCF

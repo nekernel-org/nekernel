@@ -21,7 +21,7 @@
 
 #if defined(__ATA_DMA__)
 
-#define kATADataLen 256
+#define kATADataLen (256)
 
 using namespace NeOS;
 using namespace NeOS::HAL;
@@ -111,8 +111,8 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 			for (SizeT i = 0; i < 40; i += 2)
 			{
-				kCurrentDiskModel[i]	 = kATAData[54 + i] >> 8;
-				kCurrentDiskModel[i + 1] = kATAData[54 + i] & 0xFF;
+				kCurrentDiskModel[i]	 = kATAData[27 + i] >> 8;
+				kCurrentDiskModel[i + 1] = kATAData[27 + i] & 0xFF;
 			}
 
 			kCurrentDiskModel[40] = '\0';
