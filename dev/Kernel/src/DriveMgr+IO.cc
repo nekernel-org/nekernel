@@ -13,7 +13,7 @@
  * Purpose: Filesystem to mountpoint interface.
  * Date: 3/26/24
  *
- * Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved., all rights reserved.
+ * Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
  *
  *************************************************************/
 
