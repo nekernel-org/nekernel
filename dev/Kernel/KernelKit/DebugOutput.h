@@ -186,13 +186,15 @@ namespace NeOS
 		return self;
 	}
 
-	typedef Char rt_debug_type[255];
+	constexpr SizeT kDebugTypeLen = 255;
+
+	typedef Char rt_debug_type[kDebugTypeLen];
 
 	class DebuggerPortHeader final
 	{
 	public:
 		Int16 fPort[kDebugMaxPorts];
-		Int16 fBoundCnt;
+		Int16 fPortCnt;
 	};
 
 	inline TerminalDevice& operator<<(TerminalDevice& src, auto number)

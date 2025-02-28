@@ -33,8 +33,10 @@ namespace NeOS
 			HAL::rt_out16(theHook->fPort[i], kDebugMag3);
 			HAL::rt_wait_400ns();
 
-			if (HAL::rt_in16(theHook->fPort[i] != kDebugUnboundPort))
-				++theHook->fBoundCnt;
+			if (HAL::rt_in16(theHook->fPort[i]) != kDebugUnboundPort)
+				++theHook->fPortCnt;
+
+			HAL::rt_wait_400ns();
 		}
 	}
 } // namespace NeOS

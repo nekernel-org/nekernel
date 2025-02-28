@@ -11,6 +11,14 @@
 #define NEWKIT_VERSION_STR "1.1.0"
 #define NEWKIT_VERSION_BCD 0x01100
 
+#ifndef __cplusplus
+#error NeOS compiles with a C++ compiler.
+#endif
+
+#if __cplusplus <= 201703L
+#define char8_t char
+#endif
+
 #ifdef __has_feature
 #if !__has_feature(cxx_nullptr)
 #if !__has_nullptr
