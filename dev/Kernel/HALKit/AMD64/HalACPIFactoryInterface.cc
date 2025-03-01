@@ -87,14 +87,10 @@ namespace NeOS
 	{
 	}
 
-	Void ACPIFactoryInterface::Shutdown()
+	Bool ACPIFactoryInterface::Shutdown()
 	{
 	failed_to_shutdown:
-		// in case no acpi mode, or it's not available.
-		while (Yes)
-		{
-			asm volatile("cli; hlt");
-		}
+		return NO;
 	}
 
 	/// @brief Reboot machine in either ACPI or by triple faulting.

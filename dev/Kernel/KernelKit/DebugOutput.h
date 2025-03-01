@@ -197,9 +197,9 @@ namespace NeOS
 		Int16 fPortCnt;
 	};
 
-	inline TerminalDevice& operator<<(TerminalDevice& src, auto number)
+	inline TerminalDevice& operator<<(TerminalDevice& src, const Long& num)
 	{
-		number(number, src);
+		src = number(num);
 		return src;
 	}
 } // namespace NeOS

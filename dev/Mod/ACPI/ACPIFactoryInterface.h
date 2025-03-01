@@ -12,14 +12,16 @@
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
+#include <Mod/Pwr/PowerFactory.h>
 
 namespace NeOS
 {
+	class PowerFactory;
 	class ACPIFactoryInterface;
 
 	typedef ACPIFactoryInterface PowerFactoryInterface;
 
-	class ACPIFactoryInterface final
+	class ACPIFactoryInterface final : public PowerFactory
 	{
 	public:
 		explicit ACPIFactoryInterface(voidPtr rsp_ptr);
@@ -29,7 +31,7 @@ namespace NeOS
 		ACPIFactoryInterface(const ACPIFactoryInterface&)			 = default;
 
 	public:
-		Void Shutdown(); // shutdown
+		Bool Shutdown(); // shutdown
 		Void Reboot();	 // soft-reboot
 
 	public:
