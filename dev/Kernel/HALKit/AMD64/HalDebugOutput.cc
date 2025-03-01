@@ -13,7 +13,7 @@
 
 namespace NeOS
 {
-	enum CommStatus
+	enum CommStatus : UInt16
 	{
 		kStateInvalid,
 		kStateReady	   = 0xCF,
@@ -23,8 +23,8 @@ namespace NeOS
 
 	namespace Detail
 	{
-		constexpr Int16 kPort  = 0x3F8;
-		static Int32	kState = kStateInvalid;
+		constexpr const UInt16 kPort  = 0x3F8;
+		static UInt16	kState = kStateInvalid;
 
 		/// @brief Init COM1.
 		/// @return
