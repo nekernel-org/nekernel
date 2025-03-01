@@ -48,7 +48,7 @@ namespace NeOS
 			// Check if serial is faulty (i.e: not same byte as sent)
 			if (HAL::rt_in8(PORT) != 0xAE)
 			{
-				ke_panic(RUNTIME_CHECK_HANDSHAKE);
+				return false;
 			}
 
 			kState = kStateReady;
