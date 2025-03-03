@@ -1049,13 +1049,11 @@ namespace NeOS::NeFS
 	/***********************************************************************************/
 	Boolean fs_init_nefs(Void) noexcept
 	{
-		kout << "Creating A:\r";
+		kout << "Creating main disk...\r";
 
 		kMountpoint.A() = io_construct_main_drive();
 
-		kout << "Creating A: [ OK ]\r";
-
-		return true;
+		return kMountpoint.A().fPacket.fPacketReadOnly == NO;
 	}
 } // namespace NeOS::NeFS
 

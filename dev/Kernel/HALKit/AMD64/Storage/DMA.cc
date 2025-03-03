@@ -135,7 +135,7 @@ namespace Details
 {
 	using namespace NeOS;
 
-	struct PRD final
+	struct PRDEntry
 	{
 		UInt32 mAddress;
 		UInt16 mByteCount;
@@ -168,10 +168,11 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
-	Details::PRD* prd = (Details::PRD*)(kATADevice.Bar(0x20) + 4);
+	Details::PRDEntry* prd = (Details::PRDEntry*)(kATADevice.Bar(0x20) + 4); // The PRDEntry is not correct.
+
 	prd->mAddress	  = (UInt32)(UIntPtr)kReadAddr;
 	prd->mByteCount	  = Size - 1;
-	prd->mFlags		  = 0x8000;
+	prd->mFlags		  = 0x8000; // indicate the end of prd.
 
 	rt_out32(kATADevice.Bar(0x20) + 0x04, (UInt32)(UIntPtr)prd);
 
@@ -210,7 +211,7 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
-	Details::PRD* prd = (Details::PRD*)(kATADevice.Bar(0x20) + 4);
+	Details::PRDEntry* prd = (Details::PRDEntry*)(kATADevice.Bar(0x20) + 4);
 	prd->mAddress	  = (UInt32)(UIntPtr)kWriteAddr;
 	prd->mByteCount	  = Size - 1;
 	prd->mFlags		  = 0x8000;
