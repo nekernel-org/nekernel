@@ -31,6 +31,7 @@ namespace NeOS
 		{
 			return this->fPortsImplemented;
 		}
+		
 		Void SetPi(const UInt16& pi)
 		{
 			MUST_PASS(pi > 0);
@@ -41,6 +42,7 @@ namespace NeOS
 		{
 			return this->fDriveIndex;
 		}
+
 		Void SetIndex(const UInt32& drv)
 		{
 			this->fDriveIndex = drv;
@@ -52,6 +54,6 @@ namespace NeOS
 		UInt32 fDriveIndex{0U};
 	};
 
-	Bool				sk_init_ahci_device(BOOL atapi);
+	UInt16				sk_init_ahci_device(BOOL atapi);
 	AHCIDeviceInterface sk_acquire_ahci_device(Int32 drv_index);
 } // namespace NeOS

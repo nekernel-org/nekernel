@@ -42,6 +42,7 @@
 #define kSATAPortCnt (0x20)
 
 #define kSATASig (0x00000101)
+#define kSATAPISig (0xEB140101)
 
 #define kSATAProgIfAHCI (0x01)
 #define kSATASubClass	(0x06)
@@ -197,7 +198,7 @@ SizeT drv_get_size_ahci()
 /// @brief Initializes an AHCI disk.
 /// @param pi the amount of ports that have been detected.
 /// @return if the disk was successfully initialized or not.
-Bool drv_std_init_ahci(UInt16& pi)
+STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 {
 	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
 
@@ -219,11 +220,9 @@ Bool drv_std_init_ahci(UInt16& pi)
 			kSATAPortsImplemented = ports_implemented;
 
 			const UInt16 kMaxPortsImplemented = kSATAPortCnt;
-			const UInt32 kSATASignature		  = kSATASig;
+			const UInt32 kSATASignature		  = atapi ? kSATAPISig : kSATASig;
 			const UInt8	 kSATAPresent		  = 0x03;
 			const UInt8	 kSATAIPMActive		  = 0x01;
-
-			Boolean detected = NO;
 
 			while (ahci_index < kMaxPortsImplemented)
 			{
@@ -239,19 +238,15 @@ Bool drv_std_init_ahci(UInt16& pi)
 
 						drv_compute_disk_ahci();
 
-						detected = YES;
-
 						pi = ports_implemented;
 
-						break;
+						return YES;
 					}
 				}
 
 				ports_implemented >>= 1;
 				++ahci_index;
 			}
-
-			return detected;
 		}
 	}
 
@@ -263,10 +258,12 @@ Bool drv_std_detected_ahci()
 	return kPCIDevice.DeviceId() != (UShort)PCI::PciConfigKind::Invalid && kPCIDevice.Bar(kSATABar5) != 0;
 }
 
-Bool sk_init_ahci_device(BOOL atapi)
+UInt16 sk_init_ahci_device(BOOL atapi)
 {
 	UInt16 pi = 0;
-	return drv_std_init_ahci(pi);
+	return drv_std_init_ahci(pi, atapi);
+
+	return pi;
 }
 
 ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
@@ -295,24 +292,24 @@ ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
 
 #ifdef __AHCI__
 
-Bool drv_std_detected(Void)
-{
-	return drv_std_detected_ahci();
-}
-
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
 	drv_std_input_output<YES, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
 }
 
-Bool drv_std_init(UInt16& pi)
-{
-	return drv_std_init_ahci(pi);
-}
-
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
 	drv_std_input_output<NO, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
+}
+
+Bool drv_std_init(UInt16& pi)
+{
+	return drv_std_init_ahci(pi, NO);
+}
+
+Bool drv_std_detected(Void)
+{
+	return drv_std_detected_ahci();
 }
 
 /***
