@@ -24,7 +24,7 @@ namespace NeOS
 	namespace Detail
 	{
 		constexpr const UInt16 kPort  = 0x3F8;
-		static UInt16	kState = kStateInvalid;
+		static UInt16		   kState = kStateInvalid;
 
 		/// @brief Init COM1.
 		/// @return

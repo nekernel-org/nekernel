@@ -52,7 +52,7 @@ namespace NeOS
 		T* Get(const UIntPtr off = 0);
 
 	public:
-		operator bool();
+			 operator bool();
 		bool operator!();
 
 	public:

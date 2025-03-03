@@ -31,7 +31,7 @@ namespace NeOS
 		{
 			return this->fPortsImplemented;
 		}
-		
+
 		Void SetPi(const UInt16& pi)
 		{
 			MUST_PASS(pi > 0);

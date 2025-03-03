@@ -30,7 +30,7 @@ namespace LibCF
 		BOOL		m_bold{NO};
 		BOOL		m_italic{NO};
 
-		CFFont(const CFFont& fnt)			 = delete;
+		CFFont(const CFFont& fnt) = delete;
 		CFFont& operator=(const CFFont& fnt) = delete;
 
 		virtual BOOL render_(CFPoint pos, CFChar16 character, CFColor color) = 0;

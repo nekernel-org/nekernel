@@ -41,7 +41,7 @@
 
 #define kSATAPortCnt (0x20)
 
-#define kSATASig (0x00000101)
+#define kSATASig   (0x00000101)
 #define kSATAPISig (0xEB140101)
 
 #define kSATAProgIfAHCI (0x01)
@@ -58,9 +58,9 @@ STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
 STATIC Void drv_compute_disk_ahci() noexcept;
 
 STATIC PCI::Device kPCIDevice;
-STATIC HbaMem*	   kSATA	   = nullptr;
-STATIC SizeT	   kSATAIndex  = 0UL;
-STATIC Lba		   kHighestLBA = 0UL;
+STATIC HbaMem* kSATA	   = nullptr;
+STATIC SizeT   kSATAIndex  = 0UL;
+STATIC Lba	   kHighestLBA = 0UL;
 
 STATIC UInt16 kSATAPortsImplemented = 0U;
 
@@ -142,7 +142,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	if (Identify)
 		h2d_fis->Command = kAHCICmdIdentify;
 
-	h2d_fis->Lba0 = (lba) & 0xFF;
+	h2d_fis->Lba0 = (lba)&0xFF;
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
 	h2d_fis->Lba2 = (lba >> 16) & 0xFF;
 
@@ -152,7 +152,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->Lba4 = (lba >> 32) & 0xFF;
 	h2d_fis->Lba5 = (lba >> 40) & 0xFF;
 
-	h2d_fis->CountLow  = (size_buffer) & 0xFF;
+	h2d_fis->CountLow  = (size_buffer)&0xFF;
 	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
 
 	while ((kSATA->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq)))

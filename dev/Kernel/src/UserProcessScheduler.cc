@@ -596,7 +596,7 @@ namespace NeOS
 				return No;
 
 			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
-			
+
 			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 			HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
 

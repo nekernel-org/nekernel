@@ -290,7 +290,7 @@ namespace NeOS
 
 		NE_COPY_DEFAULT(UserProcessScheduler)
 
-		operator bool();
+			 operator bool();
 		bool operator!();
 
 	public:

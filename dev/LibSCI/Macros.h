@@ -34,7 +34,7 @@ typedef bool Boolean;
 typedef void Void;
 
 #ifndef __cplusplus
-#define true  1
+#define true 1
 #define false 0
 #endif
 

@@ -22,9 +22,9 @@ namespace NeOS
 	constexpr auto kFlashBridgeMagic	= 0x70768372;
 	constexpr auto kFlashBridgeRevision = 1;
 
-	STATIC BOOL		  kFlashEnabled						= NO;
-	STATIC SizeT	  kFlashSize[kMaxFlashSlots]		= {};
-	STATIC SizeT	  kFlashSectorSz[kMaxFlashSlots]	= {};
+	STATIC BOOL	 kFlashEnabled							= NO;
+	STATIC SizeT kFlashSize[kMaxFlashSlots]				= {};
+	STATIC SizeT kFlashSectorSz[kMaxFlashSlots]			= {};
 	STATIC IMBCIHost* kFlashMetaPackets[kMaxFlashSlots] = {};
 	STATIC IMBCIHost* kFlashDataPackets[kMaxFlashSlots] = {};
 
