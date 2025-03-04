@@ -593,17 +593,17 @@ namespace NeOS
 			////////////////////////////////////////////////////////////
 
 			if (!ret)
-				return No;
+				continue;
 
 			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
 
 			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 			HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
 
-			break;
+			return Yes;
 		}
 
-		return Yes;
+		return No;
 	}
 
 	////////////////////////////////////////////////////////////
