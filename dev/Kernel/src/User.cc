@@ -20,7 +20,7 @@
 #define kSuperUserType (0xEF)
 
 /// @file User.cc
-/// @brief User support.
+/// @brief Multi-user support.
 
 namespace NeOS
 {

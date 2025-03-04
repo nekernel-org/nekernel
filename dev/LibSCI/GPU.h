@@ -13,10 +13,11 @@ Purpose: GPU/FB System Calls.
 #include <LibSCI/SCI.h>
 
 /// ------------------------------------------------------------------------------------------ //
-/// @brief GPU API.
+/// @brief Graphics Processor API.
 /// ------------------------------------------------------------------------------------------ //
 
-struct GPUCmd;
+struct GPUCmdEntry;
+struct GPUCmdEntryTraits;
 
 typedef VoidPtr GPUObject;
 
@@ -24,41 +25,46 @@ typedef VoidPtr GPUObject;
 /// @brief Command structure type.
 /// ------------------------------------------------------------------------------------------ //
 
-struct GPUCmd
+struct GPUCmdEntry
 {
 	VoidPtr Data{nullptr};
 	SizeT	DataSz{0};
-	SizeT	BufferLayer{0};
+	SizeT	Layer{0};
 	BOOL	IsGPGPUData{NO};
+};
+
+struct GPUCmdEntryTraits final
+{
+	GPUCmdEntry* Cmd{nullptr};
 
 	BOOL isGPGPUData()
 	{
-		return this->isValid() && this->IsGPGPUData;
+		return this->isValid() && this->Cmd->IsGPGPUData;
 	}
 
 	BOOL isBackBuffer()
 	{
-		return this->BufferLayer > 0;
+		return this->Cmd->Layer > 0;
 	}
 
 	BOOL isValid()
 	{
-		return this->Data && (this->DataSz > 0) && (MmGetHeapFlags(this->Data) != -1);
+		return this->Cmd->Data && (this->Cmd->DataSz > 0) && (MmGetHeapFlags(this->Cmd->Data) != ~0);
 	}
 };
 
 IMPORT_C BOOL GPUListDevices(const Char** list, SizeT cnt);
 
-IMPORT_C GPUObject GPUGetFromDeviceName(_Input const Char* device_name);
+IMPORT_C GPUObject GPUFindByDeviceName(_Input const Char* device_name);
 
-IMPORT_C GPUObject GPUQueryInfo(_Input const GPUObject* device_name, VoidPtr* out, SizeT out_sz);
+IMPORT_C GPUObject GPUQueryInfo(_Input const GPUObject* gpu_handle, VoidPtr* out, SizeT out_sz);
 
 IMPORT_C SInt32 GPUDisposeDevice(GPUObject gpu_handle, Bool cancel_all, Bool flush_all);
 
-IMPORT_C SInt32 GPUSendCmdBufferListWithCnt(GPUCmd** cmd_list, SizeT cmd_list_cnt);
+IMPORT_C SInt32 GPUSendCmdBufferListWithCnt(GPUObject gpu_handle, GPUCmdEntry** cmd_list, SizeT cmd_list_cnt);
 
 // ------------------------------------------------------------------------------------------ //
-// @brief FB API.
+// @brief Framebuffer API.
 // ------------------------------------------------------------------------------------------ //
 
 IMPORT_C SInt32 FBAcquireBuffer(GPUObject* out, SInt32 width, SInt32 height);

@@ -170,9 +170,9 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 	Details::PRDEntry* prd = (Details::PRDEntry*)(kATADevice.Bar(0x20) + 4); // The PRDEntry is not correct.
 
-	prd->mAddress	  = (UInt32)(UIntPtr)kReadAddr;
-	prd->mByteCount	  = Size - 1;
-	prd->mFlags		  = 0x8000; // indicate the end of prd.
+	prd->mAddress	= (UInt32)(UIntPtr)kReadAddr;
+	prd->mByteCount = Size - 1;
+	prd->mFlags		= 0x8000; // indicate the end of prd.
 
 	rt_out32(kATADevice.Bar(0x20) + 0x04, (UInt32)(UIntPtr)prd);
 
@@ -212,9 +212,9 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
 	Details::PRDEntry* prd = (Details::PRDEntry*)(kATADevice.Bar(0x20) + 4);
-	prd->mAddress	  = (UInt32)(UIntPtr)kWriteAddr;
-	prd->mByteCount	  = Size - 1;
-	prd->mFlags		  = 0x8000;
+	prd->mAddress		   = (UInt32)(UIntPtr)kWriteAddr;
+	prd->mByteCount		   = Size - 1;
+	prd->mFlags			   = 0x8000;
 
 	rt_out32(kATADevice.Bar(0x20) + 0x04, (UInt32)(UIntPtr)prd);
 	rt_out8(kATADevice.Bar(0x20) + ATA_REG_COMMAND, ATA_CMD_WRITE_DMA);

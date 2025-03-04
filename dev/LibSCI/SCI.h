@@ -347,6 +347,6 @@ IMPORT_C SInt32 MsgShow(VoidPtr handle);
 IMPORT_C SInt32 MsgSend(VoidPtr handle, const Char* fmt, ...);
 IMPORT_C SInt32 MsgAlloc(VoidPtr handle);
 
-IMPORT_C VoidPtr kAlertMsg, kInfoMsg, kErrorMsg;
+IMPORT_C VoidPtr kWarnMsg, kInfoMsg, kErrorMsg;
 
 #endif // ifndef SCI_SCI_H

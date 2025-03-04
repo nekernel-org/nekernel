@@ -16,8 +16,8 @@
 #define kSchedInvalidPID		  (-1)
 #define kSchedProcessLimitPerTeam (32U)
 
-#define kSchedMaxMemoryLimit gib_cast(128)
-#define kSchedMaxStackSz	 mib_cast(8)
+#define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
+#define kSchedMaxStackSz	 mib_cast(8)   /* maximum stack size */
 
 #define kProcessInvalidID (-1)
 #define kProcessNameLen	  (128U)

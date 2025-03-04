@@ -117,13 +117,13 @@ namespace NeOS
 		if (this->IsBusy())
 			return NO;
 
-		this->fStack	 = frame;
-		this->fSourcePID = pid;
+		this->fStack = frame;
+		this->fPID	 = pid;
 
 		this->fStack->BP = reinterpret_cast<UIntPtr>(image_ptr);
 		this->fStack->SP = reinterpret_cast<UIntPtr>(stack_ptr);
 
-		Bool ret = mp_register_process(fStack, this->fSourcePID);
+		Bool ret = mp_register_process(fStack, this->fPID);
 
 		if (ret)
 			this->Busy(YES);

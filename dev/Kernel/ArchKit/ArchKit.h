@@ -24,6 +24,8 @@
 #error !!! unknown architecture !!!
 #endif
 
+#define kKernelMaxSystemCalls (512U)
+
 namespace NeOS
 {
 	inline SSizeT rt_hash_seed(const Char* seed, int mul)
@@ -65,11 +67,9 @@ namespace NeOS
 	}
 } // namespace NeOS
 
-#define kKernelMaxSystemCalls (256)
-
 typedef NeOS::Void (*rt_syscall_proc)(NeOS::VoidPtr);
 
-struct HAL_SYSCALL_RECORD final
+struct HalSyscallEntry final
 {
 	NeOS::Int64		fHash;
 	NeOS::Bool		fHooked;
@@ -81,11 +81,11 @@ struct HAL_SYSCALL_RECORD final
 	}
 };
 
-inline NeOS::Array<HAL_SYSCALL_RECORD,
+inline NeOS::Array<HalSyscallEntry,
 				   kKernelMaxSystemCalls>
 	kSyscalls;
 
-inline NeOS::Array<HAL_SYSCALL_RECORD,
+inline NeOS::Array<HalSyscallEntry,
 				   kKernelMaxSystemCalls>
 	kKerncalls;
 

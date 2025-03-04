@@ -7,6 +7,14 @@
 #ifndef INC_USER_H
 #define INC_USER_H
 
+/* -------------------------------------------
+
+ Revision History:
+
+ 04/03/25: Set users directory as /user/ instead of /usr/
+
+ ------------------------------------------- */
+
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/LPC.h>
 #include <NewKit/KString.h>
@@ -18,7 +26,7 @@
 #define kGuestUser "OS AUTHORITY/GUEST/%s"
 #define kStdUser   "OS AUTHORITY/STD/%s"
 
-#define kUsersDir "/usr/"
+#define kUsersDir "/user/"
 
 #define kMaxUserNameLen	 (255U)
 #define kMaxUserTokenLen (255U)
@@ -43,7 +51,7 @@ namespace NeOS
 	class User final
 	{
 	public:
-		explicit User() = delete;
+		User() = delete;
 
 		User(const Int32& sel, const Char* username);
 		User(const UserRingKind& kind, const Char* username);

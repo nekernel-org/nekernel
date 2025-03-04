@@ -18,7 +18,7 @@
 
 namespace NeOS
 {
-	struct SWAP_DISK_HEADER;
+	struct SwapDiskHdr;
 
 	/// @brief This class is a disk swap delegate for any data. available as a syscall too.
 	class SwapDisk final
@@ -29,11 +29,11 @@ namespace NeOS
 
 		NE_COPY_DEFAULT(SwapDisk);
 
-		BOOL			  Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER* data, const SizeT data_len);
-		SWAP_DISK_HEADER* Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len);
+		BOOL		 Write(const Char* fork_name, const SizeT fork_name_len, SwapDiskHdr* data, const SizeT data_len);
+		SwapDiskHdr* Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len);
 	};
 
-	typedef struct SWAP_DISK_HEADER
+	typedef struct SwapDiskHdr
 	{
 		UInt32 fMagic;
 		SizeT  fHeaderSz;
@@ -42,7 +42,7 @@ namespace NeOS
 		UInt64 fVirtualAddress;
 		SizeT  fBlobSz;
 		Char   fBlob[];
-	} PACKED SWAP_DISK_HEADER;
+	} PACKED SwapDiskHdr;
 
-	typedef SWAP_DISK_HEADER* SWAP_DISK_HEADER_REF;
+	typedef SwapDiskHdr* SwapDiskHdrRef;
 } // namespace NeOS

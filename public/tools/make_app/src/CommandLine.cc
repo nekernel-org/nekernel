@@ -21,17 +21,17 @@ int main(int argc, char* argv[])
 	{
 		if (MmStrCmp(argv[i], "-h") == 0)
 		{
-			MsgAlloc(kAlertMsg);
+			MsgAlloc(kWarnMsg);
 
-			MsgSend(kAlertMsg, "%s", "make_app: Framework/Application Creation Tool.\n");
-			MsgSend(kAlertMsg, "%s", "make_app: © Amlal EL Mahrouss, All rights reserved.\n");
+			MsgSend(kWarnMsg, "%s", "make_app: Framework/Application Creation Tool.\n");
+			MsgSend(kWarnMsg, "%s", "make_app: © Amlal EL Mahrouss, All rights reserved.\n");
 
-			MsgSend(kAlertMsg, "%s", "make_app: -a: Application format.\n");
-			MsgSend(kAlertMsg, "%s", "make_app: -s: Steps (Setup pages) format.\n");
-			MsgSend(kAlertMsg, "%s", "make_app: -f: Framework format.\n");
+			MsgSend(kWarnMsg, "%s", "make_app: -a: Application format.\n");
+			MsgSend(kWarnMsg, "%s", "make_app: -s: Steps (Setup pages) format.\n");
+			MsgSend(kWarnMsg, "%s", "make_app: -f: Framework format.\n");
 
-			MsgShow(kAlertMsg);
-			MsgFree(kAlertMsg);
+			MsgShow(kWarnMsg);
+			MsgFree(kWarnMsg);
 
 			return EXIT_SUCCESS;
 		}

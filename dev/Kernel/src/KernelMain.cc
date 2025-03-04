@@ -24,6 +24,14 @@
 #include <CFKit/Property.h>
 #include <KernelKit/Timer.h>
 
+/* -------------------------------------------
+
+ Revision History:
+
+ 04/03/25: Add /user/ directory.
+
+ ------------------------------------------- */
+
 #ifdef __NE_AUTO_FORMAT__
 namespace NeOS::Detail
 {
@@ -42,10 +50,10 @@ namespace NeOS::Detail
 
 			if (mNeFS)
 			{
-				const SizeT kFolderCount			 = 13;
+				const SizeT kFolderCount			 = 14;
 				const Char* kFolderStr[kFolderCount] = {
 					"/", "/boot/", "/sys/", "/media/", "/etc/",
-					"/usr/", "/lib/", "/mnt/", "/sbin/", "/n/", "/dev/", "/run/", "/root/"};
+					"/usr/", "/lib/", "/mnt/", "/sbin/", "/n/", "/dev/", "/run/", "/root/", "/user/"};
 
 				for (SizeT dir_index = 0UL; dir_index < kFolderCount; ++dir_index)
 				{

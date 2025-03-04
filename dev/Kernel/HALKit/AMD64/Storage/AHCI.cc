@@ -11,7 +11,7 @@
  * @version 0.1
  * @date 2024-02-02
  *
- * @Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+ * @copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
  *
  */
 
@@ -58,9 +58,9 @@ STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
 STATIC Void drv_compute_disk_ahci() noexcept;
 
 STATIC PCI::Device kPCIDevice;
-STATIC HbaMem*	   kSATA[kSATAPortCnt] = {};
-STATIC SizeT	   kSATAIndex		   = 0UL;
-STATIC Lba		   kHighestLBA		   = 0UL;
+STATIC HbaMem* kSATA[kSATAPortCnt] = {};
+STATIC SizeT   kSATAIndex		   = 0UL;
+STATIC Lba	   kHighestLBA		   = 0UL;
 
 STATIC UInt16 kSATAPortsImplemented = 0U;
 
@@ -139,7 +139,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	if (Identify)
 		h2d_fis->Command = kAHCICmdIdentify;
 
-	h2d_fis->Lba0 = (lba) & 0xFF;
+	h2d_fis->Lba0 = (lba)&0xFF;
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
 	h2d_fis->Lba2 = (lba >> 16) & 0xFF;
 
@@ -149,7 +149,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->Lba4 = (lba >> 32) & 0xFF;
 	h2d_fis->Lba5 = (lba >> 40) & 0xFF;
 
-	h2d_fis->CountLow  = (size_buffer) & 0xFF;
+	h2d_fis->CountLow  = (size_buffer)&0xFF;
 	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
 
 	while ((kSATA[kSATAIndex]->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq)))
@@ -222,7 +222,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 				{
 					kout << (atapi ? "Detect: /dev/atp" : "Detect: /dev/sat") << number(ahci_index) << endl;
 
-					kSATAIndex = ahci_index;
+					kSATAIndex		  = ahci_index;
 					kSATA[ahci_index] = mem_ahci;
 
 					pi = ports_implemented;
