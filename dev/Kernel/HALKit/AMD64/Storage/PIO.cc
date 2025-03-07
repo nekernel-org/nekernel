@@ -107,7 +107,7 @@ ATAInit_Retry:
 
 	kCurrentDiskModel[40] = '\0';
 
-	kout << "Drive Model: " << kCurrentDiskModel << endl;
+	kout << "Drive Model: " << kCurrentDiskModel << kendl;
 
 	return true;
 }

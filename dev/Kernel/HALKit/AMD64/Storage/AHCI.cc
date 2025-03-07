@@ -80,8 +80,8 @@ STATIC Void drv_compute_disk_ahci() noexcept
 
 	kHighestLBA = (identify_data[61] << 16) | identify_data[60];
 
-	kout << "Disk Size: " << number(drv_get_size()) << endl;
-	kout << "Highest LBA: " << number(kHighestLBA) << endl;
+	kout << "Disk Size: " << number(drv_get_size()) << kendl;
+	kout << "Highest LBA: " << number(kHighestLBA) << kendl;
 }
 
 STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
@@ -220,7 +220,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 
 				if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kSATAPresent && ipm == kSATAIPMActive)
 				{
-					kout << (atapi ? "Detect: /dev/atp" : "Detect: /dev/sat") << number(ahci_index) << endl;
+					kout << (atapi ? "Detect: /dev/atp" : "Detect: /dev/sat") << number(ahci_index) << kendl;
 
 					kSATAIndex		  = ahci_index;
 					kSATA[ahci_index] = mem_ahci;

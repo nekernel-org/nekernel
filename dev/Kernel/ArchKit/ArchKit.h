@@ -20,6 +20,8 @@
 #include <HALKit/POWER/Processor.h>
 #elif defined(__NE_ARM64__)
 #include <HALKit/ARM64/Processor.h>
+#elif defined(__NE_SDK__)
+#include <HALKit/ARM64/Processor.h>
 #else
 #error !!! unknown architecture !!!
 #endif

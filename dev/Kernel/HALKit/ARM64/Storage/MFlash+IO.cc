@@ -64,7 +64,7 @@ namespace NeOS
 
 		kFlashMetaPackets[slot]->InterruptEnable = YES;
 
-		kout << "Enabled hardware slot at: " << number(slot) << endl;
+		kout << "Enabled hardware slot at: " << number(slot) << kendl;
 
 		return YES;
 	}
@@ -77,7 +77,7 @@ namespace NeOS
 
 		kFlashMetaPackets[slot]->InterruptEnable = NO;
 
-		kout << "Disabled hardware slot at: " << number(slot) << endl;
+		kout << "Disabled hardware slot at: " << number(slot) << kendl;
 
 		return YES;
 	}

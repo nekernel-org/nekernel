@@ -71,8 +71,8 @@ namespace NeOS
 	{
 		if (!expr)
 		{
-			kout << "FAILED: FILE: " << file << endl;
-			kout << "FAILED: LINE: " << line << endl;
+			kout << "FAILED: FILE: " << file << kendl;
+			kout << "FAILED: LINE: " << line << kendl;
 
 			ke_panic(RUNTIME_CHECK_FAILED, file); // Runtime Check failed
 		}

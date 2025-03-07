@@ -210,4 +210,4 @@ namespace NeOS
 
 #define kout NeOS::TerminalDevice::The() << "[NeKernel] *" << __FILE__ << "*: "
 
-#define endl NeOS::TerminalDevice::The() << NeOS::end_line()
+#define kendl NeOS::TerminalDevice::The() << NeOS::end_line()

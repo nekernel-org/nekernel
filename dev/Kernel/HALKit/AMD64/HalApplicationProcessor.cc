@@ -235,7 +235,7 @@ namespace NeOS::HAL
 						break;
 
 					kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].LAPIC.ProcessorID;
-					kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << endl;
+					kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl;
 
 					// I'll just make the AP start from scratch here.
 
@@ -258,7 +258,7 @@ namespace NeOS::HAL
 				++index;
 			}
 
-			kout << "SMP: number of APs: " << number(kSMPCount) << endl;
+			kout << "SMP: number of APs: " << number(kSMPCount) << kendl;
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)

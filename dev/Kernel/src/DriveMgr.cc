@@ -202,7 +202,7 @@ namespace NeOS
 				}
 				else
 				{
-					kout << "Scheme Found: " << block_struct.Name << endl;
+					kout << "Scheme Found: " << block_struct.Name << kendl;
 				}
 			}
 

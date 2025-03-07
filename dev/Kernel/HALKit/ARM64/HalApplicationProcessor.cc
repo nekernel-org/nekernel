@@ -78,7 +78,7 @@ namespace NeOS
 			// Enable interrupt 32 for AP.
 			HAL::hal_mmio_write(GICD_BASE + GICD_ISENABLER + (32 / 32) * 4, 0x01 << (32 % 32));
 
-			kout << "AP's GIC configured in ISR 32." << endl;
+			kout << "AP's GIC configured in ISR 32." << kendl;
 		}
 
 		BOOL mp_handle_gic_interrupt_el0(Void)
@@ -89,7 +89,7 @@ namespace NeOS
 			// Check if it's a valid interrupt (not spurious)
 			if ((interrupt_id & 0x3FF) < 1020)
 			{
-				kout << "Handling interrupt for AP: " << (interrupt_id & 0x3FF) << endl;
+				kout << "Handling interrupt for AP: " << (interrupt_id & 0x3FF) << kendl;
 
 				// TODO: Handle code here.
 

@@ -144,7 +144,7 @@ namespace NeOS
 
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
-		kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
+		kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl;
 
 		return result;
 	}
@@ -166,7 +166,7 @@ namespace NeOS
 
 		heap_info_ptr->fPage = true;
 
-		kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << endl;
+		kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl;
 
 		return kErrorSuccess;
 	}
@@ -238,7 +238,7 @@ namespace NeOS
 			PageMgr heap_mgr;
 			heap_mgr.Free(pte_address);
 
-			kout << "Address has been successfully freed." << endl;
+			kout << "Address has been successfully freed." << kendl;
 
 			return kErrorSuccess;
 		}

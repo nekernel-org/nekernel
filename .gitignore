@@ -2,10 +2,15 @@ syntax: glob
 
 xcuserdata/
 
+public/tools/make_fs/dist/make_fs
+
 *.hmap
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+# EPM Image
+*.eimg
 
 */xcuserdata/*
 *.xcworkspacedata

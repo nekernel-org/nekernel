@@ -147,7 +147,7 @@ EXTERN_C NeOS::Void idt_handle_breakpoint(NeOS::UIntPtr rip)
 
 	kIsScheduling = NO;
 
-	kout << "Kernel: Process RIP: " << NeOS::hex_number(rip) << endl;
+	kout << "Kernel: Process RIP: " << NeOS::hex_number(rip) << kendl;
 	kout << "Kernel: SIGTRAP\r";
 
 	process.Leak().ProcessSignal.SignalArg = rip;

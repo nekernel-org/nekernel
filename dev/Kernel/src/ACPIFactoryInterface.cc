@@ -43,10 +43,10 @@ namespace NeOS
 
 		this->fEntries = num;
 
-		kout << "ACPI: Number of entries: " << number(this->fEntries) << endl;
-		kout << "ACPI: Revision: " << number(xsdt->Revision) << endl;
-		kout << "ACPI: Signature: " << xsdt->Signature << endl;
-		kout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << endl;
+		kout << "ACPI: Number of entries: " << number(this->fEntries) << kendl;
+		kout << "ACPI: Revision: " << number(xsdt->Revision) << kendl;
+		kout << "ACPI: Signature: " << xsdt->Signature << kendl;
+		kout << "ACPI: Address of XSDT: " << hex_number((UIntPtr)xsdt) << kendl;
 
 		const short cAcpiSignatureLength = 4;
 
@@ -54,8 +54,8 @@ namespace NeOS
 		{
 			SDT* sdt = reinterpret_cast<SDT*>(xsdt->AddressArr[index]);
 
-			kout << "ACPI: Checksum: " << number(sdt->Checksum) << endl;
-			kout << "ACPI: Revision: " << number(sdt->Revision) << endl;
+			kout << "ACPI: Checksum: " << number(sdt->Checksum) << kendl;
+			kout << "ACPI: Revision: " << number(sdt->Revision) << kendl;
 
 			for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index)
 			{
@@ -64,8 +64,8 @@ namespace NeOS
 
 				if (signature_index == (cAcpiSignatureLength - 1))
 				{
-					kout << "ACPI: SDT Signature: " << sdt->Signature << endl;
-					kout << "ACPI: SDT OEM ID: " << sdt->OemId << endl;
+					kout << "ACPI: SDT Signature: " << sdt->Signature << kendl;
+					kout << "ACPI: SDT OEM ID: " << sdt->OemId << kendl;
 					return ErrorOr<voidPtr>(reinterpret_cast<voidPtr>(xsdt->AddressArr[index]));
 				}
 			}

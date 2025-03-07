@@ -117,7 +117,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 			kCurrentDiskModel[40] = '\0';
 
-			kout << "Drive Model: " << kCurrentDiskModel << endl;
+			kout << "Drive Model: " << kCurrentDiskModel << kendl;
 
 			OutBus	  = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
 			OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;

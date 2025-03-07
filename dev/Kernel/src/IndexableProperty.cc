@@ -50,7 +50,7 @@ namespace NeOS
 				indexer.AddFlag(kIndexerClaimed);
 				rt_copy_memory((VoidPtr)indexer.Leak().Path, (VoidPtr)filename, filenameLen);
 
-				kout << "FSKit: Indexed new file: " << filename << endl;
+				kout << "FSKit: Indexed new file: " << filename << kendl;
 			}
 		}
 	} // namespace Indexer

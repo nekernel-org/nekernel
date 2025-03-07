@@ -100,10 +100,10 @@ namespace NeOS::HAL
 	/***********************************************************************************/
 	STATIC Void mmi_page_status(PTE* pte)
 	{
-		kout << (pte->Present ? "Present" : "Not Present") << endl;
-		kout << (pte->Wr ? "W/R" : "Not W/R") << endl;
-		kout << (pte->ExecDisable ? "NX" : "Not NX") << endl;
-		kout << (pte->User ? "User" : "Not User") << endl;
+		kout << (pte->Present ? "Present" : "Not Present") << kendl;
+		kout << (pte->Wr ? "W/R" : "Not W/R") << kendl;
+		kout << (pte->ExecDisable ? "NX" : "Not NX") << kendl;
+		kout << (pte->User ? "User" : "Not User") << kendl;
 	}
 
 	STATIC Int32 mmi_map_page_table_entry(UInt32 physical_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry);

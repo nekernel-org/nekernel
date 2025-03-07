@@ -57,7 +57,7 @@ namespace NeOS
 		if (this->Status != ProcessStatusKind::kRunning)
 			return;
 
-		kout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << endl;
+		kout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << kendl;
 		this->Exit(kErrorProcessFault);
 	}
 
@@ -338,7 +338,7 @@ namespace NeOS
 			MUST_PASS(process.DylibDelegate);
 		}
 		default: {
-			kout << "Unknown process kind: " << hex_number(process.Kind) << endl;
+			kout << "Unknown process kind: " << hex_number(process.Kind) << kendl;
 			break;
 		}
 		}
@@ -365,8 +365,8 @@ namespace NeOS
 		process.Status	  = ProcessStatusKind::kStarting;
 		process.PTime	  = (UIntPtr)AffinityKind::kStandard;
 
-		kout << "PID: " << number(process.ProcessId) << endl;
-		kout << "Name: " << process.Name << endl;
+		kout << "PID: " << number(process.ProcessId) << kendl;
+		kout << "Name: " << process.Name << kendl;
 
 		return pid;
 	}
@@ -437,7 +437,7 @@ namespace NeOS
 			return 0UL;
 		}
 
-		kout << "UserProcessScheduler::Run(): This team has a process capacity of: " << hex_number(mTeam.mProcessList.Capacity()) << endl;
+		kout << "UserProcessScheduler::Run(): This team has a process capacity of: " << hex_number(mTeam.mProcessList.Capacity()) << kendl;
 
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{

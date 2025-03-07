@@ -355,7 +355,7 @@ namespace NeOS
 				return;
 			}
 
-			kout << "Info: Journal stamp: " << stamp << endl;
+			kout << "Info: Journal stamp: " << stamp << kendl;
 			rt_copy_memory((VoidPtr)stamp, this->mStamp, rt_string_len(stamp));
 		}
 
@@ -427,7 +427,7 @@ namespace NeOS
 			if (!parser->CreateFork(new_fork))
 				return NO;
 
-			kout << "XML Commited: " << xml_data << "\r\nTo Journal Fork: " << journal_name << endl;
+			kout << "XML Commited: " << xml_data << "\r\nTo Journal Fork: " << journal_name << kendl;
 
 			auto ret = parser->WriteCatalog(new_fork.CatalogName, YES, xml_data, rt_string_len(xml_data), new_fork.ForkName);
 
