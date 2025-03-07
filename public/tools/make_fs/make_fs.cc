@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     ::memcpy(block.Name, kDiskName, strlen(kDiskName));
     ::memcpy(block.Magic, kEPMMagic86, strlen(kEPMMagic86));
 
-    uuid_generate_random((NeOS::UInt8*)&block.Guid);
+    ::uuid_generate_random((NeOS::UInt8*)&block.Guid);
 
     std::ofstream output_epm("disk.eimg");
     output_epm.write((NeOS::Char*)&block, sizeof(struct EPM_PART_BLOCK));
