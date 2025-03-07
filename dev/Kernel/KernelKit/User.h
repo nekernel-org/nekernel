@@ -20,7 +20,7 @@
 #include <NewKit/KString.h>
 #include <NewKit/Defines.h>
 
-///! We got the Super, standard user (%s format) and guest user,
+///! We got the Super, Standard (%s format) and Guest user,
 ///! all are used to make authorization operations on the OS.
 #define kSuperUser "OS AUTHORITY/SUPER/%s"
 #define kGuestUser "OS AUTHORITY/GUEST/%s"
