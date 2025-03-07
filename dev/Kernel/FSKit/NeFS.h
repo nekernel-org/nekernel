@@ -92,7 +92,7 @@ default.
 
 /// @note Start after the partition map header. (Virtual addressing)
 #define kNeFSRootCatalogStartAddress (1024)
-#define kNeFSCatalogStartAddress	 ((2048) + sizeof(NEFS_ROOT_PARTITION_BLOCK))
+#define kNeFSCatalogStartAddress	 (kNeFSRootCatalogStartAddress + sizeof(NEFS_ROOT_PARTITION_BLOCK))
 
 #define kResourceTypeDialog (10)
 #define kResourceTypeString (11)

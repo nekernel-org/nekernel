@@ -60,7 +60,7 @@ STATIC Void drv_compute_disk_ahci() noexcept;
 STATIC PCI::Device kPCIDevice;
 STATIC HbaMem* kSATA[kSATAPortCnt] = {};
 STATIC SizeT   kSATAIndex		   = 0UL;
-STATIC Lba	   kHighestLBA		   = 0UL;
+STATIC Lba	   kSATASectorCount		   = 0UL;
 
 STATIC UInt16 kSATAPortsImplemented = 0U;
 
@@ -68,7 +68,7 @@ BOOL kAHCICommandIssued = NO;
 
 STATIC Void drv_compute_disk_ahci() noexcept
 {
-	kHighestLBA = 0UL;
+	kSATASectorCount = 0UL;
 
 	const UInt16 kSzIdent = 512U;
 
@@ -78,10 +78,10 @@ STATIC Void drv_compute_disk_ahci() noexcept
 
 	drv_std_input_output<NO, YES, YES>(0, identify_data, 0, kSzIdent);
 
-	kHighestLBA = (identify_data[61] << 16) | identify_data[60];
+	kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 
 	kout << "Disk Size: " << number(drv_get_size()) << kendl;
-	kout << "Highest LBA: " << number(kHighestLBA) << kendl;
+	kout << "Highest LBA: " << number(kSATASectorCount) << kendl;
 }
 
 STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
@@ -173,8 +173,8 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
  */
 SizeT drv_get_sector_count_ahci()
 {
-	MUST_PASS(kHighestLBA > 0);
-	return kHighestLBA;
+	MUST_PASS(kSATASectorCount > 0);
+	return kSATASectorCount;
 }
 
 /// @brief Get the drive size.
