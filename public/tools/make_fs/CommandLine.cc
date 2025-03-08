@@ -7,105 +7,111 @@
 
    ------------------------------------------- */
 
+#include <string>
 #include <iostream>
 #include <fstream>
+
 #include <FirmwareKit/EPM.h>
 #include <FSKit/NeFS.h>
-#include <string>
 #include <uuid/uuid.h>
 
-static std::string kDiskName = "Disk";
-static int kDiskSectorSz = 512;
-static const int kDiskBlockCnt = 1;
-static size_t kDiskSz = gib_cast(4);
-std::string kOutDisk = "disk.eimg";
+static std::string kDiskName	 = "Disk";
+static int		   kDiskSectorSz = 512;
+static const int   kDiskBlockCnt = 1;
+static size_t	   kDiskSz		 = gib_cast(4);
+static std::string kOutDisk		 = "disk.eimg";
 
 /// @brief Filesystem tool entrypoint.
 int main(int argc, char** argv)
 {
-    for (size_t arg = 0; arg < argc; ++arg) 
-    {
-        std::string arg_s = argv[arg];
-        
-        if (arg_s == "--disk-output-name")
-        {
-            if ((arg + 1) < argc)
-            {
-                kOutDisk = argv[arg + 1];
-            }
-        }
-        else if (arg_s == "--disk-size")
-        {
-            if ((arg + 1) < argc)
-            {
-                kDiskSz = strtol(argv[arg + 1], nullptr, 10);
-            }
-        }
-        else if (arg_s == "--disk-sector-size")
-        {
-            if ((arg + 1) < argc)
-            {
-                kDiskSectorSz = strtol(argv[arg + 1], nullptr, 10);
-            }
-        }
-        else if (arg_s == "--disk-name")
-        {
-            if ((arg + 1) < argc)
-            {
-                kDiskName = argv[arg + 1];
-            }
-        }
-    }
+	for (size_t arg = 0; arg < argc; ++arg)
+	{
+		std::string arg_s = argv[arg];
 
-    std::cout << "make_fs: EPM Image Creator.\n";
+		if (arg_s == "--disk-output-name")
+		{
+			if ((arg + 1) < argc)
+			{
+				kOutDisk = argv[arg + 1];
+			}
+		}
+		else if (arg_s == "--disk-size")
+		{
+			if ((arg + 1) < argc)
+			{
+				kDiskSz = strtol(argv[arg + 1], nullptr, 10);
+			}
+		}
+		else if (arg_s == "--disk-sector-size")
+		{
+			if ((arg + 1) < argc)
+			{
+				kDiskSectorSz = strtol(argv[arg + 1], nullptr, 10);
+			}
+		}
+		else if (arg_s == "--disk-name")
+		{
+			if ((arg + 1) < argc)
+			{
+				kDiskName = argv[arg + 1];
+			}
+		}
+	}
 
-    struct ::EPM_PART_BLOCK block{0};
+	std::cout << "make_fs: EPM Image Creator.\n";
 
-    block.NumBlocks = kDiskBlockCnt;
-    block.SectorSz = kDiskSectorSz;
-    block.Version = kEPMRevisionBcd;
-    block.LbaStart = sizeof(struct ::EPM_PART_BLOCK);
-    block.LbaEnd = 0;
-    block.FsVersion = kNeFSVersionInteger;
-   
-    ::memcpy(block.Name, kDiskName.c_str(), strlen(kDiskName.c_str()));
-    ::memcpy(block.Magic, kEPMMagic86, strlen(kEPMMagic86));
+	struct ::EPM_PART_BLOCK block
+	{
+		0
+	};
 
-    ::uuid_generate_random((NeOS::UInt8*)&block.Guid);
+	block.NumBlocks = kDiskBlockCnt;
+	block.SectorSz	= kDiskSectorSz;
+	block.Version	= kEPMRevisionBcd;
+	block.LbaStart	= sizeof(struct ::EPM_PART_BLOCK);
+	block.LbaEnd	= 0;
+	block.FsVersion = kNeFSVersionInteger;
 
-    std::ofstream output_epm(kOutDisk);
-    output_epm.write((NeOS::Char*)&block, sizeof(struct ::EPM_PART_BLOCK));
-    
-    struct ::NEFS_ROOT_PARTITION_BLOCK rpb{};
+	::memcpy(block.Name, kDiskName.c_str(), strlen(kDiskName.c_str()));
+	::memcpy(block.Magic, kEPMMagic86, strlen(kEPMMagic86));
 
-    ::memcpy(rpb.PartitionName, kDiskName.c_str(), strlen(kDiskName.c_str()));
-    ::memcpy(rpb.Ident, kNeFSIdent, strlen(kNeFSIdent));
+	::uuid_generate_random((NeOS::UInt8*)&block.Guid);
 
-    rpb.Version = kNeFSVersionInteger;
-    rpb.EpmBlock = kEPMBootBlockLba;
+	std::ofstream output_epm(kOutDisk);
+	output_epm.write((NeOS::Char*)&block, sizeof(struct ::EPM_PART_BLOCK));
 
-    rpb.StartCatalog = kNeFSCatalogStartAddress;
-    rpb.CatalogCount = 0;
+	struct ::NEFS_ROOT_PARTITION_BLOCK rpb
+	{
+	};
 
-    rpb.DiskSize = kDiskSz;
+	::memcpy(rpb.PartitionName, kDiskName.c_str(), strlen(kDiskName.c_str()));
+	::memcpy(rpb.Ident, kNeFSIdent, strlen(kNeFSIdent));
 
-    rpb.SectorSize = kDiskSectorSz;
-    rpb.SectorCount = rpb.DiskSize / rpb.SectorSize;
-    
-    rpb.FreeSectors = rpb.SectorCount;
-    rpb.FreeCatalog = rpb.DiskSize / sizeof(NEFS_CATALOG_STRUCT);
+	rpb.Version	 = kNeFSVersionInteger;
+	rpb.EpmBlock = kEPMBootBlockLba;
 
-    auto p_prev = output_epm.tellp();
+	rpb.StartCatalog = kNeFSCatalogStartAddress;
+	rpb.CatalogCount = 0;
 
-    output_epm.seekp(kNeFSRootCatalogStartAddress);
+	rpb.DiskSize = kDiskSz;
 
-    output_epm.write((NeOS::Char*)&rpb, sizeof(struct ::NEFS_ROOT_PARTITION_BLOCK));
+	rpb.SectorSize	= kDiskSectorSz;
+	rpb.SectorCount = rpb.DiskSize / rpb.SectorSize;
 
-    output_epm.seekp(p_prev);
+	rpb.FreeSectors = rpb.SectorCount;
+	rpb.FreeCatalog = rpb.DiskSize / sizeof(NEFS_CATALOG_STRUCT);
 
-    output_epm.close();
+	auto p_prev = output_epm.tellp();
 
-    std::cout << "make_fs: EPM Image has been written to: " << kOutDisk << "\n";
+	output_epm.seekp(kNeFSRootCatalogStartAddress);
 
-    return 0;
+	output_epm.write((NeOS::Char*)&rpb, sizeof(struct ::NEFS_ROOT_PARTITION_BLOCK));
+
+	output_epm.seekp(p_prev);
+
+	output_epm.close();
+
+	std::cout << "make_fs: EPM Image has been written to: " << kOutDisk << "\n";
+
+	return 0;
 }

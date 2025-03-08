@@ -28,8 +28,11 @@ Purpose: LibSCI Macros header.
 
 #define FILE_MAX_LEN 256
 
+#ifndef BOOL
+#define BOOL bool
+#endif
+
 typedef bool Bool;
-typedef bool BOOL;
 typedef bool Boolean;
 typedef void Void;
 
