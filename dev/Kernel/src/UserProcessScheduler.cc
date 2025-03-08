@@ -554,7 +554,7 @@ namespace NeOS
 	{
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index)
 		{
-			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kInvalidAP ||
+			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPInvalid ||
 				HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPBoot)
 				continue;
 
