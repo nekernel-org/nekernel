@@ -20,8 +20,10 @@ namespace NeOS
 			return ("Class:{String}");
 		case VariantKind::kBlob:
 			return ("Class:{Blob}");
-		default:
+		case VariantKind::kNull:
 			return ("Class:{Null}");
+		default:
+			return ("Class:{Unknown}");
 		}
 	}
 

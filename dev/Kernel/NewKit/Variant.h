@@ -43,8 +43,8 @@ namespace NeOS
 		{
 		}
 
-		explicit Variant(nullPtr)
-			: fPtr(nullptr), fKind(VariantKind::kNull)
+		explicit Variant(nullPtr ptr)
+			: fPtr(ptr), fKind(VariantKind::kNull)
 		{
 		}
 
