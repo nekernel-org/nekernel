@@ -11,18 +11,54 @@
 #include <fstream>
 #include <FirmwareKit/EPM.h>
 #include <FSKit/NeFS.h>
+#include <string>
 #include <uuid/uuid.h>
 
-static const char* kDiskName = "Disk";
-static const int kDiskSectorSz = 512;
+static std::string kDiskName = "Disk";
+static int kDiskSectorSz = 512;
 static const int kDiskBlockCnt = 1;
-static const size_t kDiskSz = gib_cast(4);
+static size_t kDiskSz = gib_cast(4);
+std::string kOutDisk = "disk.eimg";
 
 /// @brief Filesystem tool entrypoint.
 int main(int argc, char** argv)
 {
+    for (size_t arg = 0; arg < argc; ++arg) 
+    {
+        std::string arg_s = argv[arg];
+        
+        if (arg_s == "--disk-output-name")
+        {
+            if ((arg + 1) < argc)
+            {
+                kOutDisk = argv[arg + 1];
+            }
+        }
+        else if (arg_s == "--disk-size")
+        {
+            if ((arg + 1) < argc)
+            {
+                kDiskSz = strtol(argv[arg + 1], nullptr, 10);
+            }
+        }
+        else if (arg_s == "--disk-sector-size")
+        {
+            if ((arg + 1) < argc)
+            {
+                kDiskSectorSz = strtol(argv[arg + 1], nullptr, 10);
+            }
+        }
+        else if (arg_s == "--disk-name")
+        {
+            if ((arg + 1) < argc)
+            {
+                kDiskName = argv[arg + 1];
+            }
+        }
+    }
+
     std::cout << "make_fs: EPM Image Creator.\n";
-    
+
     struct ::EPM_PART_BLOCK block{0};
 
     block.NumBlocks = kDiskBlockCnt;
@@ -32,17 +68,17 @@ int main(int argc, char** argv)
     block.LbaEnd = 0;
     block.FsVersion = kNeFSVersionInteger;
    
-    ::memcpy(block.Name, kDiskName, strlen(kDiskName));
+    ::memcpy(block.Name, kDiskName.c_str(), strlen(kDiskName.c_str()));
     ::memcpy(block.Magic, kEPMMagic86, strlen(kEPMMagic86));
 
     ::uuid_generate_random((NeOS::UInt8*)&block.Guid);
 
-    std::ofstream output_epm("disk.eimg");
+    std::ofstream output_epm(kOutDisk);
     output_epm.write((NeOS::Char*)&block, sizeof(struct ::EPM_PART_BLOCK));
     
     struct ::NEFS_ROOT_PARTITION_BLOCK rpb{};
 
-    ::memcpy(rpb.PartitionName, kDiskName, strlen(kDiskName));
+    ::memcpy(rpb.PartitionName, kDiskName.c_str(), strlen(kDiskName.c_str()));
     ::memcpy(rpb.Ident, kNeFSIdent, strlen(kNeFSIdent));
 
     rpb.Version = kNeFSVersionInteger;
@@ -69,7 +105,7 @@ int main(int argc, char** argv)
 
     output_epm.close();
 
-    std::cout << "make_fs: EPM Image has been written to disk.eimg.\n";
+    std::cout << "make_fs: EPM Image has been written to: " << kOutDisk << "\n";
 
     return 0;
 }
