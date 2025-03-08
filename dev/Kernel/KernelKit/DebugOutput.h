@@ -186,7 +186,7 @@ namespace NeOS
 		return self;
 	}
 
-	constexpr SizeT kDebugTypeLen = 255;
+	constexpr SizeT kDebugTypeLen = 256U;
 
 	typedef Char rt_debug_type[kDebugTypeLen];
 

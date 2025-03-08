@@ -276,12 +276,12 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	WideChar kernel_path[255] = {0};
-	UInt32	 kernel_path_sz	  = 255;
+	WideChar kernel_path[256U] = {0};
+	UInt32	 kernel_path_sz	  = 256U;
 
 	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
 	{
-		CopyMem(kernel_path, L"neoskrnl.exe", 15);
+		CopyMem(kernel_path, L"neoskrnl.exe", 13);
 
 		UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
 		ST->RuntimeServices->SetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, &attr, &kernel_path_sz, kernel_path);

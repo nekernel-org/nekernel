@@ -24,7 +24,7 @@
 #define kPefMagicLen 5
 
 #define kPefVersion 3
-#define kPefNameLen 255
+#define kPefNameLen 256U
 
 /* not mandatory, only for non fork based filesystems. */
 #define kPefExt		  ".o"

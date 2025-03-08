@@ -10,7 +10,7 @@
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DriveMgr.h>
 
-#define kIndexerCatalogNameLength 255
+#define kIndexerCatalogNameLength 256U
 #define kIndexerClaimed			  0xCF
 
 namespace NeOS

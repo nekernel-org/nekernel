@@ -28,8 +28,8 @@
 
 #define kUsersDir "/user/"
 
-#define kMaxUserNameLen	 (255U)
-#define kMaxUserTokenLen (255U)
+#define kMaxUserNameLen	 (256U)
+#define kMaxUserTokenLen (256U)
 
 namespace NeOS
 {

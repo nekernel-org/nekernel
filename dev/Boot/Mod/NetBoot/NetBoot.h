@@ -14,7 +14,7 @@
 #define kNetBootINetMagic		"NETB"
 #define kNetBootINetMagicLength (4)
 
-#define kNetBootNameLen (255)
+#define kNetBootNameLen (256U)
 
 /// @brief the internet header is used to download updates OTA.
 typedef struct NetBootInternetHeader

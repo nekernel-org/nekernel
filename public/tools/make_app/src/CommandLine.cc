@@ -13,7 +13,7 @@
 
 int main(int argc, char* argv[])
 {
-	LibCF::CFArray<const char*, 255> files;
+	LibCF::CFArray<const char*, 256U> files;
 
 	auto ext = kFKExtension;
 

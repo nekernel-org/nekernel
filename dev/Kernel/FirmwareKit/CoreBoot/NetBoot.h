@@ -16,9 +16,9 @@ typedef struct NetBootInternetHeader
 	NeOS::Char NB3; /// magic char 3 'T'
 	NeOS::Char NB4; /// magic char 4 'B'
 
-	NeOS::Char	  PatchName[255];	/// example: ColdChoco
+	NeOS::Char	  PatchName[256U];	/// example: ColdChoco
 	NeOS::Int32	  PatchLength;		/// the patch length.
-	NeOS::Char	  PatchTarget[255]; /// the target file.
+	NeOS::Char	  PatchTarget[256U]; /// the target file.
 	NeOS::Boolean ImpliesROM;		/// does it imply an EEPROM reprogram?
 	NeOS::Boolean Preflight;		/// is it a preflight packet.
 	NeOS::Char	  Patch[];			/// non preflight packet has a patch blob for a **PatchTarget**

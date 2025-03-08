@@ -13,9 +13,9 @@
 
 struct StepsCommonRecord final
 {
-	char   setup_name[255];
-	char   setup_company[255];
-	char   setup_author[255];
+	Char   setup_name[256U];
+	Char   setup_company[256U];
+	Char   setup_author[256U];
 	SInt32 setup_version;
 	SInt32 setup_pages;
 };

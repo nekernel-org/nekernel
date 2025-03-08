@@ -13,7 +13,7 @@
 
 #define kPCIDeviceCount (32)
 #define kPCIFuncCount	(8)
-#define kPCIBusCount	(255)
+#define kPCIBusCount	(256U)
 
 namespace NeOS::PCI
 {

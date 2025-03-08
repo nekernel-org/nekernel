@@ -34,7 +34,7 @@ namespace Boot
 		bool		IsValid();
 
 	private:
-		Char				 fBlobName[255] = {"BootThread"};
+		Char				 fBlobName[256U] = {"BootThread"};
 		VoidPtr				 fStartAddress{nullptr};
 		VoidPtr				 fBlob{nullptr};
 		UInt8*				 fStack{nullptr};

@@ -15,8 +15,8 @@
 #define kHPFSMagic	  "  HPFS"
 #define kHPFSMagicLen (8)
 
-#define kHPFSFileNameLen (255)
-#define kHPFSPartNameLen (255)
+#define kHPFSFileNameLen (256U)
+#define kHPFSPartNameLen (256U)
 
 #define kHPFSMinimumDiskSize (gib_cast(64))
 

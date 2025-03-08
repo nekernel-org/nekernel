@@ -21,7 +21,7 @@ namespace NeOS
 		SizeT len	= 0;
 
 		index = 0;
-		len	  = rt_string_len(bytes, 255);
+		len	  = rt_string_len(bytes, 256U);
 
 		volatile UInt8* uart_ptr = (UInt8*)0x09000000;
 

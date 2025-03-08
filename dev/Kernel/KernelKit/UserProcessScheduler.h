@@ -107,7 +107,7 @@ namespace NeOS
 		kProcessSubsystemApplication,
 		kProcessSubsystemService,
 		kProcessSubsystemDriver,
-		kProcessSubsystemInvalid = 255,
+		kProcessSubsystemInvalid = 256U,
 		kProcessSubsystemCount	 = 4,
 	};
 

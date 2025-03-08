@@ -38,14 +38,14 @@ typedef struct XCoffFileHeader
 	NeOS::UInt16  fOptHdr; // ?: Number of bytes in optional header
 } XCoffFileHeader64;
 
-#define cForkNameLen (255)
+#define kForkNameLen (256U)
 
 /// @brief This the executable manifest fork.
 typedef struct XCoffForkHeader
 {
-	NeOS::Char fPropertiesXMLFork[cForkNameLen];
-	NeOS::Char fDynamicLoaderFork[cForkNameLen];
-	NeOS::Char fCodeSignFork[cForkNameLen];
+	NeOS::Char fPropertiesXMLFork[kForkNameLen];
+	NeOS::Char fDynamicLoaderFork[kForkNameLen];
+	NeOS::Char fCodeSignFork[kForkNameLen];
 } XCoffForkHeader;
 
 #endif // ifndef INC_XOCFF_H
