@@ -10,14 +10,16 @@
 #include <Framework.h>
 
 #define kStepsExtension ".stp"
+#define kStepsStrLen (256U)
 
-struct StepsCommonRecord final
+struct STEPS_COMMON_RECORD final
 {
-	Char   setup_name[256U];
-	Char   setup_company[256U];
-	Char   setup_author[256U];
+	Char   setup_name[kStepsStrLen];
+	Char   setup_company[kStepsStrLen];
+	Char   setup_author[kStepsStrLen];
 	SInt32 setup_version;
 	SInt32 setup_pages;
+	SInt32 setup_check_page, setup_eula_page;
 };
 
 #endif // ifndef APPS_STEPS_H

@@ -10,6 +10,9 @@
 
 SInt32 main(SInt32 argc, Char* argv[])
 {
+	if (argc < 3)
+		return ~0;
+
 	UIntPtr exit_code = RtlSpawnProcess(argv[1], argc - 2, argv + 2,
 										nullptr, 0);
 
