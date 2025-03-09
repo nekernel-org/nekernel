@@ -46,6 +46,10 @@ namespace NeOS
 			entry = entry->MemoryNext;
 		}
 
+		kout << "Invalid Pointer: Trying to free a pointer which doesn't exist.\r";
+
+		this->Crash();
+
 		return No;
 	}
 } // namespace NeOS
