@@ -1,5 +1,3 @@
-<MLCoreFoundation>
-<MLAppName>
-    DiskImage
-</MLAppName>
-</MLCoreFoundation>
+<PropertyList/>
+<PLEntry Type="MLString" Name="LibraryName" Len="255" Value="DiskImage" />
+<PLEntry Type="BOOL" Name="CacheLibs" Value="YES" />
