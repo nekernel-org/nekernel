@@ -14,6 +14,7 @@
 
 struct STEPS_COMMON_RECORD final
 {
+	SInt32 setup_magic;
 	Char   setup_name[kStepsStrLen];
 	Char   setup_company[kStepsStrLen];
 	Char   setup_author[kStepsStrLen];

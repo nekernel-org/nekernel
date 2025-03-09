@@ -57,23 +57,31 @@ int main(int argc, char* argv[])
 
 	auto path = argv[1];
 
-	else if (MmStrCmp(ext, kStepsExtension) == 0)
-	{
-		FsCreateFile(FsCreateDir(StrFmt("{}{}{}{}", path, kRootDirectory, "_setup", kStepsExtension)));
-		auto handle = IoOpenFile(StrFmt("{}{}{}{}", path, kRootDirectory, "_setup", kStepsExtension), nullptr);
-		struct STEPS_COMMON_RECORD record{};
-
-		IoWriteFile(handle, (void*)&record, sizeof(STEPS_COMMON_RECORD));
-		IoCloseFile(handle);
-
-		handle = nullptr;
-	}
-
 	if (FsCreateDir(path))
 	{
 		FsCreateDir(StrFmt("{}{}", path, kRootDirectory));
 		FsCreateDir(StrFmt("{}{}", path, kExecDirectory));
 
+		if (MmStrCmp(ext, kStepsExtension) == 0)
+		{
+			FsCreateFile(StrFmt("{}{}{}{}", path, kRootDirectory, "_setup"));
+
+			auto handle = IoOpenFile(StrFmt("{}{}{}{}", path, kRootDirectory, "_setup", kStepsExtension), nullptr);
+
+			struct STEPS_COMMON_RECORD record
+			{
+				0
+			};
+
+			record.setup_magic	 = 0xAABB;
+			record.setup_version = 1;
+
+			IoWriteFile(handle, (void*)&record, sizeof(STEPS_COMMON_RECORD));
+			IoCloseFile(handle);
+
+			handle = nullptr;
+		}
+		
 		for (SInt32 i = 0; i < files.Count(); ++i)
 		{
 			auto& file = files[i];
