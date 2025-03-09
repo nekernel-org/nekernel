@@ -24,7 +24,7 @@ SInt32 DIFormatDiskToFile(const char* kDiskName,
 	block.SectorSz	= kDiskSectorSz;
 	block.Version	= kEPMRevisionBcd;
 	block.LbaStart	= sizeof(struct ::EPM_PART_BLOCK);
-	block.LbaEnd	= 0;
+	block.LbaEnd	= kDiskSz - block.LbaStart;
 	block.FsVersion = kNeFSVersionInteger;
 
 	::MmCopyMemory(block.Name, (VoidPtr)kDiskName, ::MmStrLen(kDiskName));
@@ -37,6 +37,7 @@ SInt32 DIFormatDiskToFile(const char* kDiskName,
 
 	struct ::NEFS_ROOT_PARTITION_BLOCK rpb
 	{
+		0
 	};
 
 	::MmCopyMemory(rpb.PartitionName, (VoidPtr)kDiskName, ::MmStrLen(kDiskName));

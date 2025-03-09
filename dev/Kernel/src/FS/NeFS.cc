@@ -587,7 +587,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 			part_block->StartCatalog = kNeFSCatalogStartAddress;
 			part_block->Flags		 = kNeFSPartitionTypeStandard;
 			part_block->CatalogCount = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
-			part_block->FreeSectors = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
+			part_block->FreeSectors	 = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
 			part_block->SectorCount	 = sectorCount;
 			part_block->DiskSize	 = diskSize;
 			part_block->FreeCatalog	 = sectorCount / sizeof(NEFS_CATALOG_STRUCT);

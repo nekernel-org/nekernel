@@ -60,7 +60,7 @@ STATIC Void drv_compute_disk_ahci() noexcept;
 STATIC PCI::Device kPCIDevice;
 STATIC HbaMem* kSATA[kSATAPortCnt] = {};
 STATIC SizeT   kSATAIndex		   = 0UL;
-STATIC Lba	   kSATASectorCount		   = 0UL;
+STATIC Lba	   kSATASectorCount	   = 0UL;
 
 STATIC UInt16 kSATAPortsImplemented = 0U;
 

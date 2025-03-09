@@ -14,8 +14,8 @@
 #include <uuid/uuid.h>
 #include <LibSCI/SCI.h>
 
-SInt32 DIFormatDiskToFile(const char* kDiskName		= "Disk",
-						  int		  kDiskSectorSz = 512,
-						  const int	  kDiskBlockCnt = 1,
-						  size_t	  kDiskSz		= gib_cast(4),
-						  const char* kOutDisk		= "disk.eimg") noexcept;
+SInt32 DIFormatDiskToFile(const char* disk_name = "Disk",
+						  int		  sector_sz = 512,
+						  const int	  block_cnt = 1,
+						  size_t	  disk_sz	= gib_cast(4),
+						  const char* out_name	= "disk.eimg") noexcept;

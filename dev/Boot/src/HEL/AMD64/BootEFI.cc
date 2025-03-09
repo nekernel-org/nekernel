@@ -277,7 +277,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	// Assign to global 'kHandoverHeader'.
 
 	WideChar kernel_path[256U] = {0};
-	UInt32	 kernel_path_sz	  = 256U;
+	UInt32	 kernel_path_sz	   = 256U;
 
 	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
 	{

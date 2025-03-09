@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
 			handle = nullptr;
 		}
-		
+
 		for (SInt32 i = 0; i < files.Count(); ++i)
 		{
 			auto& file = files[i];

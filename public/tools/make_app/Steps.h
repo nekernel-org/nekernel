@@ -10,7 +10,7 @@
 #include <Framework.h>
 
 #define kStepsExtension ".stp"
-#define kStepsStrLen (256U)
+#define kStepsStrLen	(256U)
 
 struct STEPS_COMMON_RECORD final
 {
