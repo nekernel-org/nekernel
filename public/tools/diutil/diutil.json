@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["./", "../../../dev/Kernel",  "../../../dev/"],
   "sources_path": ["CommandLine.cc"],
-  "output_name": "./dist/make_fs",
+  "output_name": "./dist/diutil",
   "cpp_macros": [
     "kMKFSVersion=0x0100",
     "kMKFSVersionHighest=0x0100",

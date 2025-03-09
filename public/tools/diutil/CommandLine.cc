@@ -7,6 +7,7 @@
 
    ------------------------------------------- */
 
+#include "NewKit/Defines.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -35,7 +36,7 @@ int main(int argc, char** argv)
 				kOutDisk = argv[arg + 1];
 			}
 		}
-		else if (arg_s == "--disk-size")
+		else if (arg_s == "--disk-output-size")
 		{
 			if ((arg + 1) < argc)
 			{
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
 				kDiskSectorSz = strtol(argv[arg + 1], nullptr, 10);
 			}
 		}
-		else if (arg_s == "--disk-name")
+		else if (arg_s == "--disk-part-name")
 		{
 			if ((arg + 1) < argc)
 			{
@@ -58,7 +59,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-	std::cout << "make_fs: EPM Image Creator.\n";
+	std::cout << "diutil: EPM Disk Tool.\n";
 
 	struct ::EPM_PART_BLOCK block
 	{
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
 	block.SectorSz	= kDiskSectorSz;
 	block.Version	= kEPMRevisionBcd;
 	block.LbaStart	= sizeof(struct ::EPM_PART_BLOCK);
-	block.LbaEnd	= 0;
+	block.LbaEnd	= kDiskSz - sizeof(struct ::EPM_PART_BLOCK);
 	block.FsVersion = kNeFSVersionInteger;
 
 	::memcpy(block.Name, kDiskName.c_str(), strlen(kDiskName.c_str()));
@@ -77,11 +78,18 @@ int main(int argc, char** argv)
 
 	::uuid_generate_random((NeOS::UInt8*)&block.Guid);
 
+	uuid_string_t str;
+
+	::uuid_unparse((NeOS::UInt8*)&block.Guid, str);
+
+	std::cout << "diutil: Partition UUID: " << str << std::endl;
+
 	std::ofstream output_epm(kOutDisk);
 	output_epm.write((NeOS::Char*)&block, sizeof(struct ::EPM_PART_BLOCK));
 
 	struct ::NEFS_ROOT_PARTITION_BLOCK rpb
 	{
+		0
 	};
 
 	::memcpy(rpb.PartitionName, kDiskName.c_str(), strlen(kDiskName.c_str()));
@@ -104,14 +112,12 @@ int main(int argc, char** argv)
 	auto p_prev = output_epm.tellp();
 
 	output_epm.seekp(kNeFSRootCatalogStartAddress);
-
 	output_epm.write((NeOS::Char*)&rpb, sizeof(struct ::NEFS_ROOT_PARTITION_BLOCK));
 
 	output_epm.seekp(p_prev);
-
 	output_epm.close();
 
-	std::cout << "make_fs: EPM Image has been written to: " << kOutDisk << "\n";
+	std::cout << "diutil: EPM Disk has been written to: " << kOutDisk << "\n";
 
 	return 0;
 }

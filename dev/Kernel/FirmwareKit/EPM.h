@@ -72,7 +72,7 @@ typedef struct EPM_GUID
 	NeOS::UInt16 Data2;
 	NeOS::UInt16 Data3;
 	NeOS::UInt8	 Data4[8];
-} EPM_GUID;
+} PACKED EPM_GUID;
 
 /**
  * @brief The EPM boot block.

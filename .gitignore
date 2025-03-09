@@ -2,7 +2,7 @@ syntax: glob
 
 xcuserdata/
 
-public/tools/make_fs/dist/make_fs
+public/tools/diutil/dist/diutil
 
 *.hmap
 *.ipa
