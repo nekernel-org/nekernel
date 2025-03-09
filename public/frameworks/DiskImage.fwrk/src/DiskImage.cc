@@ -9,30 +9,30 @@
 
 #include <DiskImage.fwrk/headers/DiskImage.h>
 
-SInt32 DIFormatDiskToFile(const char* kDiskName,
-						  int		  kDiskSectorSz,
-						  const int	  kDiskBlockCnt,
-						  size_t	  kDiskSz,
-						  const char* kOutDisk) noexcept
+SInt32 DIFormatDiskToFile(const char* disk_name,
+						  int		  sector_sz,
+						  const int	  block_cnt,
+						  size_t	  disk_sz,
+						  const char* out) noexcept
 {
 	struct ::EPM_PART_BLOCK block
 	{
 		0
 	};
 
-	block.NumBlocks = kDiskBlockCnt;
-	block.SectorSz	= kDiskSectorSz;
+	block.NumBlocks = block_cnt;
+	block.SectorSz	= sector_sz;
 	block.Version	= kEPMRevisionBcd;
 	block.LbaStart	= sizeof(struct ::EPM_PART_BLOCK);
-	block.LbaEnd	= kDiskSz - block.LbaStart;
+	block.LbaEnd	= disk_sz - block.LbaStart;
 	block.FsVersion = kNeFSVersionInteger;
 
-	::MmCopyMemory(block.Name, (VoidPtr)kDiskName, ::MmStrLen(kDiskName));
+	::MmCopyMemory(block.Name, (VoidPtr)disk_name, ::MmStrLen(disk_name));
 	::MmCopyMemory(block.Magic, (VoidPtr)kEPMMagic86, ::MmStrLen(kEPMMagic86));
 
 	::uuid_generate_random((NeOS::UInt8*)&block.Guid);
 
-	IOObject handle = IoOpenFile(kDiskName, nullptr);
+	IOObject handle = IoOpenFile(out, nullptr);
 	::IoWriteFile(handle, (NeOS::Char*)&block, sizeof(struct ::EPM_PART_BLOCK));
 
 	struct ::NEFS_ROOT_PARTITION_BLOCK rpb
@@ -40,7 +40,7 @@ SInt32 DIFormatDiskToFile(const char* kDiskName,
 		0
 	};
 
-	::MmCopyMemory(rpb.PartitionName, (VoidPtr)kDiskName, ::MmStrLen(kDiskName));
+	::MmCopyMemory(rpb.PartitionName, (VoidPtr)disk_name, ::MmStrLen(disk_name));
 	::MmCopyMemory(rpb.Ident, (VoidPtr)kNeFSIdent, ::MmStrLen(kNeFSIdent));
 
 	rpb.Version	 = kNeFSVersionInteger;
@@ -49,9 +49,9 @@ SInt32 DIFormatDiskToFile(const char* kDiskName,
 	rpb.StartCatalog = kNeFSCatalogStartAddress;
 	rpb.CatalogCount = 0;
 
-	rpb.DiskSize = kDiskSz;
+	rpb.DiskSize = disk_sz;
 
-	rpb.SectorSize	= kDiskSectorSz;
+	rpb.SectorSize	= sector_sz;
 	rpb.SectorCount = rpb.DiskSize / rpb.SectorSize;
 
 	rpb.FreeSectors = rpb.SectorCount;
