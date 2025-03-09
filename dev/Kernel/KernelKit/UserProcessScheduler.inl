@@ -16,8 +16,7 @@ namespace NeOS
 	template <typename T>
 	Boolean UserProcess::Delete(ErrorOr<T*> ptr, const SizeT& sz)
 	{
-		if (!ptr ||
-			sz == 0)
+		if (!ptr)
 			return No;
 
 		ProcessMemoryHeapList* entry = this->ProcessMemoryHeap;
