@@ -158,7 +158,15 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	}
 
 	kSATA[kSATAIndex]->Ports[kSATAIndex].Ci = (1 << slot);
+	
 	kAHCICommandIssued						= YES;
+
+	while (kSATA[kSATAIndex]->Ports[kSATAIndex].Ci & (1 << slot))
+	{
+		;
+	}
+
+	kAHCICommandIssued						= NO;
 
 	// check again.
 	if (kSATA[kSATAIndex]->Is & kHBAErrTaskFile)
