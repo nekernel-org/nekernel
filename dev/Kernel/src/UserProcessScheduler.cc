@@ -559,7 +559,7 @@ namespace NeOS
 				continue;
 
 			// A fallback is a special core for real-time tasks which needs immediate execution.
-			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPFallback)
+			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPRealTime)
 			{
 				if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity != AffinityKind::kRealTime)
 					continue;
