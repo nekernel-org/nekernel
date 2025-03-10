@@ -25,6 +25,7 @@ namespace NeOS
 			: fPorts(ports)
 		{
 		}
+
 		~IOArray()
 		{
 		}
@@ -49,11 +50,26 @@ namespace NeOS
 		Array<UShort, Sz> fPorts;
 	};
 
-	using IOArray16 = IOArray<16>;
+	inline constexpr UInt16 kMaxPorts = 16;
+
+	using IOArray16 = IOArray<kMaxPorts>;
+
+	template <SizeT Sz>
+	inline Array<UShort, Sz> make_ports(UShort base)
+	{
+		Array<UShort, Sz> ports;
+
+		for (UShort i = 0; i < Sz; ++i)
+		{
+			ports[i] = base + i;
+		}
+
+		return ports;
+	}
 } // namespace NeOS
 
 #ifdef __x86_64__
-#include <KernelKit/PCI/IO-Impl-AMD64.inl>
+#include <KernelKit/PCI/IOArray+AMD64.inl>
 #else
 #error Please provide platform specific code for the I/O
 #endif // ifdef __x86_64__

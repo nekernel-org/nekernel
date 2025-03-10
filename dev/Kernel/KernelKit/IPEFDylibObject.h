@@ -22,7 +22,7 @@ namespace NeOS
 	 * @brief Shared Library class
 	 * Load library from this class
 	 */
-	class IPEFDylibObject final NE_DLL_OBJECT
+	class IPEFDylibObject final NE_DYLIB_OBJECT
 	{
 	public:
 		explicit IPEFDylibObject() = default;

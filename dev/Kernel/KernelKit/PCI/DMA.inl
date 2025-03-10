@@ -9,12 +9,12 @@ namespace NeOS
 	template <class T>
 	T* DMAWrapper::operator->()
 	{
-		return fAddress;
+		return this->fAddress;
 	}
 
 	template <class T>
 	T* DMAWrapper::Get(const UIntPtr offset)
 	{
-		return reinterpret_cast<T*>((UIntPtr)fAddress + offset);
+		return reinterpret_cast<T*>((UIntPtr)this->fAddress + offset);
 	}
 } // namespace NeOS

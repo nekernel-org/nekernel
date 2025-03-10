@@ -12,7 +12,7 @@
 #include <NewKit/Defines.h>
 #include <CompilerKit/CompilerKit.h>
 
-#define NE_DLL_OBJECT : public IDylibObject
+#define NE_DYLIB_OBJECT : public IDylibObject
 
 namespace NeOS
 {
