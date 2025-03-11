@@ -49,7 +49,7 @@ DEBUG_MACRO = -D__DEBUG__
 endif
 
 ifeq ($(shell uname), Darwin)
-EMU_FLAGS=-net none -smp 4 -m 8G \
+EMU_FLAGS=-M q35 -net none -smp 4 -m 8G \
     -bios $(BIOS) -cdrom $(BOOT) -boot d -drive \
 			file=fat:rw:src/Root/,index=3,format=raw
 endif
@@ -94,11 +94,14 @@ all: compile-amd64
 	$(COPY) ./Mod/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
 	$(COPY) ../LibSCI/$(SCIKIT) src/Root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
-	xorriso -as mkisofs -R -r -J \
-	-no-emul-boot -boot-load-size 4 -boot-info-table -hfsplus \
-	-apm-block-size 2048 --efi-boot EFI/BOOT/BOOTX64.EFI \
-	-efi-boot-part --efi-boot-image --protective-msdos-label \
-	src/Root -o $(BOOT)
+	xorriso -as mkisofs \
+		-iso-level 3 \
+		-r -V NeOS \
+		-J -joliet-long \
+		-append_partition 2 0xef src/Root/EFI/BOOT/BOOTX64.EFI \
+		-partition_cyl_align all \
+		-o $(BOOT) \
+		src/Root/
 
 
 ifneq ($(DEBUG_SUPPORT), )
@@ -115,7 +118,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -hda $(IMG) -s -S -trace ahci_* -boot menu=on
+	$(EMU) $(EMU_FLAGS) -drive id=disk,file=$(IMG),if=none -device ich9-ahci,id=ahci -device ide-hd,drive=disk,bus=ahci.0 -s -S -trace ahci_* -boot menu=on
 
 .PHONY: run-efi-amd64-ata-pio
 run-efi-amd64-ata-pio:

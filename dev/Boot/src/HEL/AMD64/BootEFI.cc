@@ -196,17 +196,8 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	// Update handover file specific table and phyiscal start field.
 	//-------------------------------------------------------------//
 
-	handover_hdr->f_BitMapStart = nullptr;			 /* Start of bitmap. */
-	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* Size of bitmap. */
-
-	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
-	{
-		if (handover_hdr->f_BitMapStart)
-		{
-			BS->FreePool(handover_hdr->f_BitMapStart);
-			handover_hdr->f_BitMapStart = nullptr;
-		}
-	}
+	handover_hdr->f_BitMapStart = (VoidPtr)struct_ptr[kDefaultMemoryMap].VirtualStart;			 /* Start of bitmap. */
+	handover_hdr->f_BitMapSize	= struct_ptr[kDefaultMemoryMap].NumberOfPages * sizeof(UIntPtr); /* Size of bitmap. */
 
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
@@ -224,6 +215,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	{
 		syschk_thread = new Boot::BootThread(reader_syschk.Blob());
 		syschk_thread->SetName("BootZ: System Recovery Check");
+		syschk_thread->Start(handover_hdr, NO);
 	}
 
 #ifndef __AHCI__
@@ -276,13 +268,11 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	WideChar kernel_path[256U] = {0};
+	WideChar kernel_path[256U] = L"neoskrnl.exe";
 	UInt32	 kernel_path_sz	   = 256U;
 
 	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
 	{
-		CopyMem(kernel_path, L"neoskrnl.exe", 13);
-
 		UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
 		ST->RuntimeServices->SetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, &attr, &kernel_path_sz, kernel_path);
 	}

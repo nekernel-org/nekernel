@@ -159,19 +159,19 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 }
 
 /***********************************************************************************/
-/// @brief Find fork inside New filesystem.
+/// @brief Find fork inside filesystem.
 /// @param catalog the catalog.
 /// @param name the fork name.
-/// @return the fork.
+/// @return the newly found fork.
 /***********************************************************************************/
 _Output NEFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NEFS_CATALOG_STRUCT* catalog,
 													   _Input const Char* name,
-													   Boolean			  isDataFork)
+													   _Input Boolean			  is_data)
 {
 	auto&			  drive	   = kMountpoint.A();
 	NEFS_FORK_STRUCT* the_fork = nullptr;
 
-	Lba lba = isDataFork ? catalog->DataFork : catalog->ResourceFork;
+	Lba lba = is_data ? catalog->DataFork : catalog->ResourceFork;
 
 	while (lba != 0)
 	{

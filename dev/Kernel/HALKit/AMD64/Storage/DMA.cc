@@ -111,8 +111,8 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 
 			for (SizeT i = 0; i < 40; i += 2)
 			{
-				kCurrentDiskModel[i]	 = kATAData[27 + i] >> 8;
-				kCurrentDiskModel[i + 1] = kATAData[27 + i] & 0xFF;
+				kCurrentDiskModel[i * 2]	 = kATAData[27 + i * 2] >> 8;
+				kCurrentDiskModel[i * 2 + 1] = kATAData[27 + i * 2] & 0xFF;
 			}
 
 			kCurrentDiskModel[40] = '\0';

@@ -12,6 +12,8 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
 
+#define NE_POWER_FACTORY : public PowerFactory
+
 namespace NeOS
 {
 	class PowerFactory;

@@ -283,10 +283,12 @@ typedef struct HbaCmdHeader final
 	NeOS::UInt8 Pmp : 4;	   // Port multiplier port
 
 	NeOS::UInt16		  Prdtl; // Physical region descriptor table length in entries
-	volatile NeOS::UInt32 Prdbc; // Physical region descriptor byte count transferred
+	NeOS::UInt32 Prdbc; // Physical region descriptor byte count transferred
 
 	NeOS::UInt32 Ctba;	// Command table descriptor base address
 	NeOS::UInt32 Ctbau; // Command table descriptor base address upper 32 bits
+
+	NeOS::UInt32 Rscv[4];
 } HbaCmdHeader;
 
 typedef struct HbaFis final

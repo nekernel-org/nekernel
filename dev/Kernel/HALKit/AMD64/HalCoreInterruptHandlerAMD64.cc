@@ -104,8 +104,6 @@ EXTERN_C void idt_handle_math(NeOS::UIntPtr rsp)
 	process.Leak().Crash();
 }
 
-EXTERN BOOL kAHCICommandIssued;
-
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(NeOS::UIntPtr rsp)

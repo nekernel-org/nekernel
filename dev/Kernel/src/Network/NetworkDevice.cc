@@ -16,20 +16,20 @@ namespace NeOS
 	}
 
 	/// \brief Setter for fNetworkName.
-	Boolean NetworkDevice::Name(const Char* strView)
+	Boolean NetworkDevice::Name(const Char* devnam)
 	{
-		if (strView == nullptr)
-			return false;
+		if (devnam == nullptr)
+			return NO;
 
-		if (*strView == 0)
-			return false;
+		if (*devnam == 0)
+			return NO;
 
-		if (rt_string_len(strView) > cNetworkNameLen)
-			return false;
+		if (rt_string_len(devnam) > cNetworkNameLen)
+			return NO;
 
-		rt_copy_memory((VoidPtr)strView,
-					   (VoidPtr)this->fNetworkName, rt_string_len(strView));
+		rt_copy_memory((VoidPtr)devnam,
+					   (VoidPtr)this->fNetworkName, rt_string_len(devnam));
 
-		return true;
+		return YES;
 	}
 } // namespace NeOS

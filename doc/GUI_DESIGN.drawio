@@ -1,13 +1,13 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="yf45V2V4Ppj0j8o4dQoi">
-        <mxGraphModel dx="530" dy="567" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1144" dy="442" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="mspNsT0Gx7HsNPX6GqQO-2" value="LibSCI" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="50" y="450" width="450" height="140" as="geometry"/>
+                    <mxGeometry x="50" y="500" width="450" height="140" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="mspNsT0Gx7HsNPX6GqQO-3" target="mspNsT0Gx7HsNPX6GqQO-13">
+                <mxCell id="2" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-3" target="mspNsT0Gx7HsNPX6GqQO-13" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="mspNsT0Gx7HsNPX6GqQO-3" value="LibGUI" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -16,10 +16,10 @@
                 <mxCell id="mspNsT0Gx7HsNPX6GqQO-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.093;entryY=1.019;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-2" target="mspNsT0Gx7HsNPX6GqQO-3" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="mspNsT0Gx7HsNPX6GqQO-12" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;GUI System&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&lt;/h1&gt;&lt;p&gt;The system works by a set of&lt;/p&gt;&lt;p&gt;Interface files (.ib) and Style files&lt;/p&gt;&lt;p&gt;(.style) describing how a control should look. an Interface can also contain C code.&lt;/p&gt;&lt;p&gt;Lets put it straight, we need to support&lt;/p&gt;&lt;p&gt;the GPU for our Graphics stack.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="560" y="260" width="220" height="220" as="geometry"/>
+                <mxCell id="mspNsT0Gx7HsNPX6GqQO-12" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;GUI System&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/h1&gt;&lt;p&gt;The system works as a set of Predefined controls in C++ for a High-Performance C++ app.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="235" width="220" height="110" as="geometry"/>
                 </mxCell>
-                <mxCell id="mspNsT0Gx7HsNPX6GqQO-13" value="ZkaOS Subsystem&lt;div&gt;App&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="mspNsT0Gx7HsNPX6GqQO-13" value="NeOS subsystem&lt;div&gt;App&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="55" y="40" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="mspNsT0Gx7HsNPX6GqQO-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.526;entryY=-0.025;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-13" target="mspNsT0Gx7HsNPX6GqQO-3" edge="1">

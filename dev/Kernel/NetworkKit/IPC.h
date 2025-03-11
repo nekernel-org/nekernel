@@ -40,15 +40,13 @@ namespace NeOS
 		// some operators.
 		////////////////////////////////////
 
-		bool operator==(const IPC_ADDR& addr) noexcept
-		{
-			return addr.UserProcessID == this->UserProcessID && addr.UserProcessTeam == this->UserProcessTeam;
-		}
+		bool operator==(const IPC_ADDR& addr) noexcept;
 
-		bool operator==(IPC_ADDR& addr) noexcept
-		{
-			return addr.UserProcessID == this->UserProcessID && addr.UserProcessTeam == this->UserProcessTeam;
-		}
+		bool operator==(IPC_ADDR& addr) noexcept;
+
+		bool operator!=(const IPC_ADDR& addr) noexcept;
+
+		bool operator!=(IPC_ADDR& addr) noexcept;
 	};
 
 	typedef struct IPC_ADDR IPC_ADDR;
@@ -76,20 +74,7 @@ namespace NeOS
 		UInt8	 IpcData[kIPCMsgSize];
 
 		/// @brief Passes the message to target, could be anything, HTTP packet, JSON or whatever.
-		Bool Pass(IPC_MSG* target) noexcept
-		{
-			if (target && target->IpcFrom == this->IpcTo)
-			{
-				if (this->IpcMsgSz > target->IpcMsgSz)
-					return No;
-
-				rt_copy_memory(this->IpcData, target->IpcData, this->IpcMsgSz);
-
-				return Yes;
-			}
-
-			return No;
-		}
+		static Bool Pass(IPC_MSG* self, IPC_MSG* target) noexcept;
 	} PACKED IPC_MSG;
 
 	/// @brief Sanitize packet function

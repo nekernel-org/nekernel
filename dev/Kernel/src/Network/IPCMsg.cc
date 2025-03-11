@@ -101,4 +101,19 @@ namespace NeOS
 
 		return No;
 	}
+
+	Bool IPC_MSG::Pass(IPC_MSG* self, IPC_MSG* target) noexcept
+	{
+		if (self && target && (target == self))
+		{
+			if (self->IpcMsgSz > target->IpcMsgSz)
+				return No;
+
+			rt_copy_memory(self->IpcData, target->IpcData, self->IpcMsgSz);
+
+			return Yes;
+		}
+
+		return No;
+	}
 } // namespace NeOS

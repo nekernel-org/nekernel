@@ -21,11 +21,17 @@ namespace NeOS
 	class MacAddressGetter final
 	{
 	public:
-		explicit MacAddressGetter() = default;
+		MacAddressGetter() = default;
+		~MacAddressGetter() = default;
+
+		NE_COPY_DEFAULT(MacAddressGetter);
 
 	public:
-		KString&					  AsString();
 		Array<WideChar, kMACAddrLen>& AsBytes();
+
+	private:
+		Array<WideChar, kMACAddrLen> fMacAddress;
+
 	};
 
 } // namespace NeOS

@@ -93,4 +93,9 @@ namespace NeOS
 
 		return chr == 0;
 	}
+
+	ErrorOr<voidPtr> ACPIFactoryInterface::operator[](const Char* signature)
+	{
+		return this->Find(signature);
+	}
 } // namespace NeOS

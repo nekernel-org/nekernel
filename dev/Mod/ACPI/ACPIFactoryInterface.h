@@ -21,7 +21,7 @@ namespace NeOS
 
 	typedef ACPIFactoryInterface PowerFactoryInterface;
 
-	class ACPIFactoryInterface final : public PowerFactory
+	class ACPIFactoryInterface final NE_POWER_FACTORY
 	{
 	public:
 		explicit ACPIFactoryInterface(voidPtr rsp_ptr);
@@ -47,10 +47,7 @@ namespace NeOS
 		bool Checksum(const Char* checksum, SSizeT len); // watch for collides!
 
 	public:
-		ErrorOr<voidPtr> operator[](const Char* signature)
-		{
-			return this->Find(signature);
-		}
+		ErrorOr<voidPtr> operator[](const Char* signature);
 
 	private:
 		VoidPtr fRsdp{nullptr}; // pointer to root descriptor.
