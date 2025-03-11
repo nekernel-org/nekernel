@@ -20,6 +20,8 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/LPC.h>
 
+#include <FirmwareKit/EPM.h>
+
 #include <Mod/ATA/ATA.h>
 #include <Mod/AHCI/AHCI.h>
 #include <KernelKit/PCI/Iterator.h>
@@ -138,9 +140,9 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	for (; i < (command_header->Prdtl - 1); i++)
 	{
-		command_table->Prdt[i].Dba	= ((UInt32)(UInt64)buffer_phys);
-		command_table->Prdt[i].Dbau = (((UInt64)(buffer_phys) >> 32));
 		command_table->Prdt[i].Dbc	= ((size_buffer / command_header->Prdtl - 1) - 1);
+		command_table->Prdt[i].Dba	= ((UInt32)(UInt64)buffer_phys + (i * command_table->Prdt[i].Dbc));
+		command_table->Prdt[i].Dbau = (((UInt64)(buffer_phys) >> 32) + (i * command_table->Prdt[i].Dbc));
 		command_table->Prdt[i].Ie	= YES;
 	}
 

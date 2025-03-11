@@ -50,14 +50,12 @@ endif
 
 ifeq ($(shell uname), Darwin)
 EMU_FLAGS=-M q35 -net none -smp 4 -m 8G \
-    -bios $(BIOS) -cdrom $(BOOT) -boot d -drive \
-			file=fat:rw:src/Root/,index=3,format=raw
+    -bios $(BIOS) -cdrom $(BOOT) -boot d
 endif
 
 ifneq ($(shell uname), Darwin)
 EMU_FLAGS=-net none -smp 4 -m 8G \
-    -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm -drive \
-			file=fat:rw:src/Root/,index=3,format=raw
+    -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm
 endif
 
 LD_FLAGS=-e Main --subsystem=10
@@ -96,11 +94,12 @@ all: compile-amd64
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
 	xorriso -as mkisofs \
 		-iso-level 3 \
-		-r -V NeOS \
-		-J -joliet-long \
-		-append_partition 2 0xef src/Root/EFI/BOOT/BOOTX64.EFI \
-		-partition_cyl_align all \
+		-full-iso9660-filenames \
+		-volid "NEOS_ISO" \
 		-o $(BOOT) \
+		-e EFI/BOOT/BOOTX64.EFI \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+	 	-no-emul-boot -isohybrid-gpt-basdat \
 		src/Root/
 
 
