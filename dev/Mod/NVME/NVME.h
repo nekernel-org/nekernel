@@ -46,11 +46,13 @@ namespace NeOS
 
 	enum
 	{
+		kInvalidNVME,
 		kCreateCompletionQueueNVME = 0x05,
 		kCreateSubmissionQueueNVME = 0x01,
 		kIdentifyNVME			   = 0x06,
 		kReadNVME				   = 0x02,
 		kWriteNVME				   = 0x01,
+		kCountNVME = 5,
 	};
 
 	/// @brief Creates an admin command for a DMA operation.
