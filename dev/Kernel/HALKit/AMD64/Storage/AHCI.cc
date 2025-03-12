@@ -91,7 +91,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	kout << "Drive Model: " << kCurrentDiskModel << kendl;
 
 	kout << "Disk Size: " << number(drv_get_size()) << kendl;
-	kout << "Highest LBA: " << number(kSATASectorCount) << kendl;
+	kout << "Sector Count: " << number(kSATASectorCount) << kendl;
 }
 
 STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
