@@ -268,7 +268,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 
 					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
 					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
-					
+
 					drv_compute_disk_ahci();
 
 					break;

@@ -10,6 +10,6 @@ namespace NeOS
 {
 	Array<WideChar, kMACAddrLen>& MacAddressGetter::AsBytes()
 	{
-        return this->fMacAddress;
+		return this->fMacAddress;
 	}
 } // namespace NeOS

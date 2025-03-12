@@ -135,7 +135,7 @@ namespace NeOS
 			ProcessMemoryHeapList* entry	  = this->ProcessMemoryHeap;
 			ProcessMemoryHeapList* prev_entry = nullptr;
 
-			while (!entry)
+			while (entry)
 			{
 				if (entry->MemoryEntry == nullptr)
 					break; // chose to break here, when we get an already allocated memory entry for our needs.
@@ -228,7 +228,6 @@ namespace NeOS
 
 			mm_delete_heap(memory_heap_list);
 
-			memory_heap_list = nullptr;
 			memory_heap_list = next;
 		}
 
@@ -344,6 +343,7 @@ namespace NeOS
 		}
 
 		process.StackReserve = new UInt8[process.StackSize];
+		rt_set_memory(process.StackReserve, 0, process.StackSize);
 
 		if (!process.StackReserve)
 		{

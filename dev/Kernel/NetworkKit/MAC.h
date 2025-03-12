@@ -21,7 +21,7 @@ namespace NeOS
 	class MacAddressGetter final
 	{
 	public:
-		MacAddressGetter() = default;
+		MacAddressGetter()	= default;
 		~MacAddressGetter() = default;
 
 		NE_COPY_DEFAULT(MacAddressGetter);
@@ -31,7 +31,6 @@ namespace NeOS
 
 	private:
 		Array<WideChar, kMACAddrLen> fMacAddress;
-
 	};
 
 } // namespace NeOS
