@@ -188,7 +188,8 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	// Check IS again.
 	if (kSATAHba->Is & kHBAErrTaskFile)
 	{
-		ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "AHCI Read disk failure, faulty component.");
+		err_global_get() = kErrorDiskIsCorrupted;
+		return;
 	}
 }
 
