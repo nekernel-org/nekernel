@@ -44,8 +44,6 @@ namespace NeOS::HAL
 		HAL::StackFramePtr mFrame;
 	};
 
-	EXTERN_C Void _hal_spin_core(Void);
-
 	STATIC struct PROCESS_APIC_MADT* kMADTBlock = nullptr;
 	STATIC Bool						 kSMPAware	= false;
 	STATIC Int64					 kSMPCount	= 0;
