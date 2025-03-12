@@ -54,10 +54,10 @@ using namespace NeOS;
 
 STATIC PCI::Device kSATADev;
 STATIC HbaMem* kSATAHba;
-STATIC Lba	   kSATASectorCount = 0UL;
-STATIC UInt16  kSATAIndex		= 0U;
-STATIC Char				 kCurrentDiskModel[50] = {"UNKNOWN AHCI DRIVE"};
-STATIC UInt16 kSATAPortsImplemented = 0U;
+STATIC Lba	   kSATASectorCount		 = 0UL;
+STATIC UInt16  kSATAIndex			 = 0U;
+STATIC Char	   kCurrentDiskModel[50] = {"UNKNOWN AHCI DRIVE"};
+STATIC UInt16  kSATAPortsImplemented = 0U;
 
 BOOL kAHCICommandIssued = NO;
 
@@ -119,7 +119,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	if (slot == ~0)
 		return;
 
-	HbaCmdHeader* command_header = ((HbaCmdHeader*)((VoidPtr)((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
+	HbaCmdHeader* command_header = ((HbaCmdHeader*)(((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
 
 	command_header += slot;
 
@@ -163,7 +163,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
 	h2d_fis->Lba2 = (lba >> 16) & 0xFF;
 
-	h2d_fis->Device = kSATALBAMode;
+	h2d_fis->Device = Identify ? 0 : kSATALBAMode;
 
 	h2d_fis->Lba3 = (lba >> 24) & 0xFF;
 	h2d_fis->Lba4 = (lba >> 32) & 0xFF;
@@ -198,7 +198,6 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
  */
 SizeT drv_get_sector_count_ahci()
 {
-	MUST_PASS(kSATASectorCount > 0);
 	return kSATASectorCount;
 }
 
@@ -251,7 +250,11 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kout << "Detect: /dev/sat" << number(ahci_index) << kendl;
 
 					kSATAIndex = ahci_index;
-					kSATAHba->Ports[ahci_index].Cmd |= kHBAPxCmdFre | kHBAPxCmdST;
+
+					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
+					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
+
+					drv_compute_disk_ahci();
 
 					break;
 				}
@@ -262,6 +265,11 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kSATAIndex = ahci_index;
 					kSATAHba->Ports[ahci_index].Cmd |= kHBAPxCmdFre | kHBAPxCmdST;
 
+					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
+					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
+					
+					drv_compute_disk_ahci();
+
 					break;
 				}
 
@@ -269,15 +277,13 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 				++ahci_index;
 			}
 
-			drv_compute_disk_ahci();
-
 			pi = mem_ahci->Pi;
 
 			return YES;
 		}
 	}
 
-	return No;
+	return NO;
 }
 
 Bool drv_std_detected_ahci()

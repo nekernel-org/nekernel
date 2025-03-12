@@ -28,7 +28,7 @@ BIOS=OVMF.fd
 IMG=epm-master-1.img
 IMG_2=epm-master-2.img
 
-BOOT=neos.iso
+BOOT=./src/fat32.img
 
 DISK_DRV  =
 
@@ -92,15 +92,11 @@ all: compile-amd64
 	$(COPY) ./Mod/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
 	$(COPY) ../LibSCI/$(SCIKIT) src/Root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
-	xorriso -as mkisofs \
-		-iso-level 3 \
-		-full-iso9660-filenames \
-		-volid "NEOS_ISO" \
-		-o $(BOOT) \
-		-e EFI/BOOT/BOOTX64.EFI \
-		-no-emul-boot -boot-load-size 4 -boot-info-table \
-	 	-no-emul-boot -isohybrid-gpt-basdat \
-		src/Root/
+
+.PHONY: disk
+disk:
+	dd if=/dev/zero of=$(BOOT) bs=1M count=100
+	mformat -i $(BOOT) -F -v "NEOS_ESP"
 
 
 ifneq ($(DEBUG_SUPPORT), )
@@ -117,7 +113,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -drive id=disk,file=$(IMG),if=none -device ich9-ahci,id=ahci -device ide-hd,drive=disk,bus=ahci.0 -s -S -trace ahci_* -boot menu=on
+	$(EMU) $(EMU_FLAGS) -hda $(IMG) -s -S -trace ahci_* -boot menu=on
 
 .PHONY: run-efi-amd64-ata-pio
 run-efi-amd64-ata-pio:
