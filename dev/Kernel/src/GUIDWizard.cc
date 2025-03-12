@@ -62,7 +62,7 @@ namespace CFKit::XRN::Version1
 			buf[index] = seq.Leak()->u32[index] + kUUIDAsciiBegin;
 		}
 
-		auto view = StringBuilder::Construct(buf);
+		auto view = KStringBuilder::Construct(buf);
 
 		if (view)
 			return ErrorOr<Ref<KString>>{view.Leak()};

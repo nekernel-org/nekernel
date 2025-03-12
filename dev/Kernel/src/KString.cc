@@ -83,7 +83,7 @@ namespace NeOS
 		return true;
 	}
 
-	ErrorOr<KString> StringBuilder::Construct(const Char* data)
+	ErrorOr<KString> KStringBuilder::Construct(const Char* data)
 	{
 		if (!data || *data == 0)
 			return {};
@@ -94,7 +94,7 @@ namespace NeOS
 		return ErrorOr<KString>(*view);
 	}
 
-	const Char* StringBuilder::FromBool(const Char* fmt, bool i)
+	const Char* KStringBuilder::FromBool(const Char* fmt, bool i)
 	{
 		if (!fmt)
 			return ("?");
@@ -129,7 +129,7 @@ namespace NeOS
 		return ret;
 	}
 
-	bool StringBuilder::Equals(const Char* lhs, const Char* rhs)
+	bool KStringBuilder::Equals(const Char* lhs, const Char* rhs)
 	{
 		if (rt_string_len(rhs) != rt_string_len(lhs))
 			return false;
@@ -143,7 +143,7 @@ namespace NeOS
 		return true;
 	}
 
-	bool StringBuilder::Equals(const WideChar* lhs, const WideChar* rhs)
+	bool KStringBuilder::Equals(const WideChar* lhs, const WideChar* rhs)
 	{
 		for (Size index = 0; rhs[index] != 0; ++index)
 		{
@@ -154,7 +154,7 @@ namespace NeOS
 		return true;
 	}
 
-	const Char* StringBuilder::Format(const Char* fmt, const Char* fmt2)
+	const Char* KStringBuilder::Format(const Char* fmt, const Char* fmt2)
 	{
 		if (!fmt || !fmt2)
 			return ("?");

@@ -80,10 +80,10 @@ namespace NeOS
 		Size  fDataSz{0};
 		Size  fCur{0};
 
-		friend class StringBuilder;
+		friend class KStringBuilder;
 	};
 
-	struct StringBuilder final
+	struct KStringBuilder final
 	{
 		static ErrorOr<KString> Construct(const Char* data);
 		static const Char*		FromBool(const Char* fmt, bool n);

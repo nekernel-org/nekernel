@@ -11,5 +11,6 @@
 
 namespace LibCF
 {
-	class CFWindowConnection_;
-} // namespace LibCF
+    class CFString;
+
+}

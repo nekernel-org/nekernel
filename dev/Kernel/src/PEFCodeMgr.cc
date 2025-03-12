@@ -62,7 +62,7 @@ namespace NeOS
 		: fCachedBlob(nullptr), fBad(false), fFatBinary(false)
 	{
 		fFile.New(const_cast<Char*>(path), kRestrictRB);
-		fPath = StringBuilder::Construct(path).Leak();
+		fPath = KStringBuilder::Construct(path).Leak();
 
 		auto kPefHeader = "PEF_CONTAINER";
 
@@ -135,15 +135,15 @@ namespace NeOS
 		switch (kind)
 		{
 		case kPefCode: {
-			error_or_symbol = StringBuilder::Construct(cContainerKinds[0]); // code symbol.
+			error_or_symbol = KStringBuilder::Construct(cContainerKinds[0]); // code symbol.
 			break;
 		}
 		case kPefData: {
-			error_or_symbol = StringBuilder::Construct(cContainerKinds[1]); // data symbol.
+			error_or_symbol = KStringBuilder::Construct(cContainerKinds[1]); // data symbol.
 			break;
 		}
 		case kPefZero: {
-			error_or_symbol = StringBuilder::Construct(cContainerKinds[2]); // block starting symbol.
+			error_or_symbol = KStringBuilder::Construct(cContainerKinds[2]); // block starting symbol.
 			break;
 		}
 		default:
@@ -165,7 +165,7 @@ namespace NeOS
 
 		for (SizeT index = 0; index < container->Count; ++index)
 		{
-			if (StringBuilder::Equals(container_header->Name,
+			if (KStringBuilder::Equals(container_header->Name,
 									  error_or_symbol.Leak().Leak().CData()))
 			{
 				if (container_header->Kind == kind)

@@ -9,6 +9,8 @@
 
 #include <LibCF/Core.h>
 
+#define CF_OBJECT : public LibCF::CFObject
+
 namespace LibCF
 {
 	class CFObject;

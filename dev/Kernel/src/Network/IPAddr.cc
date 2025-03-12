@@ -92,13 +92,13 @@ namespace NeOS
 
 	ErrorOr<KString> IPFactory::ToKString(Ref<RawIPAddress6>& ipv6)
 	{
-		auto str = StringBuilder::Construct(ipv6.Leak().Address());
+		auto str = KStringBuilder::Construct(ipv6.Leak().Address());
 		return str;
 	}
 
 	ErrorOr<KString> IPFactory::ToKString(Ref<RawIPAddress>& ipv4)
 	{
-		auto str = StringBuilder::Construct(ipv4.Leak().Address());
+		auto str = KStringBuilder::Construct(ipv4.Leak().Address());
 		return str;
 	}
 

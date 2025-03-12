@@ -102,8 +102,8 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 				kout << "Error: Fork does exists.\r";
 
 				/// sanity check.
-				if (StringBuilder::Equals(cur_fork.ForkName, the_fork.ForkName) &&
-					StringBuilder::Equals(cur_fork.CatalogName, the_fork.CatalogName))
+				if (KStringBuilder::Equals(cur_fork.ForkName, the_fork.ForkName) &&
+					KStringBuilder::Equals(cur_fork.CatalogName, the_fork.CatalogName))
 					break;
 
 				lba_prev = lba;
@@ -202,7 +202,7 @@ _Output NEFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NEFS_CATALOG_STRUC
 			return nullptr;
 		}
 
-		if (StringBuilder::Equals(the_fork->ForkName, name))
+		if (KStringBuilder::Equals(the_fork->ForkName, name))
 		{
 			break;
 		}
@@ -441,7 +441,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 			return found_catalog;
 		}
 		else if ((temporary_catalog.Flags & kNeFSFlagCreated) &&
-				 StringBuilder::Equals(temporary_catalog.Name, name))
+				 KStringBuilder::Equals(temporary_catalog.Name, name))
 		{
 			rt_copy_memory(&temporary_catalog, child_catalog, sizeof(NEFS_CATALOG_STRUCT));
 
@@ -684,8 +684,8 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 		kout << catalog_name << kendl;
 
 		if ((fork_data_input->Flags & kNeFSFlagCreated) &&
-			StringBuilder::Equals(fork_data_input->ForkName, fork_name) &&
-			StringBuilder::Equals(fork_data_input->CatalogName, catalog_name) &&
+			KStringBuilder::Equals(fork_data_input->ForkName, fork_name) &&
+			KStringBuilder::Equals(fork_data_input->CatalogName, catalog_name) &&
 			fork_data_input->DataSize == size_of_data)
 		{
 			// ===================================================== //
@@ -748,7 +748,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
 	auto	   start_catalog_lba = kNeFSCatalogStartAddress;
 	const auto kStartCatalogList = start_catalog_lba;
 
-	if (!StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()) && local_search)
+	if (!KStringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()) && local_search)
 	{
 		Char parent_name[kNeFSCatalogNameLen] = {0};
 
@@ -774,7 +774,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
 		NEFS_CATALOG_STRUCT* parent_catalog = this->FindCatalog(parent_name, out_lba);
 
 		if (parent_catalog &&
-			!StringBuilder::Equals(parent_name, NeFileSystemHelper::Root()))
+			!KStringBuilder::Equals(parent_name, NeFileSystemHelper::Root()))
 		{
 			start_catalog_lba = parent_catalog->NextSibling;
 
@@ -822,7 +822,7 @@ kNeFSSearchThroughCatalogList:
 
 		drive.fInput(drive.fPacket);
 
-		if (StringBuilder::Equals(tmp_name, temporary_catalog.Name))
+		if (KStringBuilder::Equals(tmp_name, temporary_catalog.Name))
 		{
 			if (temporary_catalog.Status == kNeFSStatusLocked &&
 				!search_hidden)
@@ -901,7 +901,7 @@ _Output Boolean NeFileSystemParser::CloseCatalog(_Input _Output NEFS_CATALOG_STR
 _Output Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_name)
 {
 	if (!catalog_name ||
-		StringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()))
+		KStringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()))
 	{
 		err_global_get() = kErrorInternal;
 		return false;
@@ -1002,8 +1002,8 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NEFS_CATALOG_STRUCT* cata
 		kout << "ForkName: " << fs_fork_data->ForkName << kendl;
 		kout << "CatalogName: " << fs_fork_data->CatalogName << kendl;
 
-		if (StringBuilder::Equals(forkName, fs_fork_data->ForkName) &&
-			StringBuilder::Equals(catalog->Name, fs_fork_data->CatalogName))
+		if (KStringBuilder::Equals(forkName, fs_fork_data->ForkName) &&
+			KStringBuilder::Equals(catalog->Name, fs_fork_data->CatalogName))
 			break;
 
 		dataForkLba = fs_fork_data->NextSibling;
