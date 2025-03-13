@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <LibCF/Core.h>
+#include <LibCF/Foundation.h>
 
 #define kCFFontExt ".ttf"
 

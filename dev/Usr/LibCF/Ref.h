@@ -9,11 +9,15 @@
 #define _REF_H_
 
 #include <LibSCI/SCI.h>
+#include <LibCF/Object.h>
 
 namespace LibCF
 {
 	template <typename T>
-	class CFRef final
+	class CFRef;
+
+	template <typename T>
+	class CFRef final CF_OBJECT
 	{
 	public:
 		CFRef() = default;

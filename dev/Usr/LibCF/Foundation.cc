@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <LibCF/Core.h>
+#include <LibCF/Foundation.h>
 
 LibCF::CFRect::operator bool()
 {
@@ -14,7 +14,7 @@ LibCF::CFRect::operator bool()
 /***********************************************************************************/
 /// @brief returns true if size matches.
 /***********************************************************************************/
-BOOL LibCF::CFRect::sizeMatches(LibCF::CFRect& rect) noexcept
+BOOL LibCF::CFRect::SizeMatches(LibCF::CFRect& rect) noexcept
 {
 	return rect.height == height && rect.width == width;
 }
@@ -22,7 +22,7 @@ BOOL LibCF::CFRect::sizeMatches(LibCF::CFRect& rect) noexcept
 /***********************************************************************************/
 /// @brief returns true if position matches.
 /***********************************************************************************/
-BOOL LibCF::CFRect::positionMatches(LibCF::CFRect& rect) noexcept
+BOOL LibCF::CFRect::PositionMatches(LibCF::CFRect& rect) noexcept
 {
 	return rect.y == y && rect.x == x;
 }
@@ -33,7 +33,7 @@ BOOL LibCF::CFRect::positionMatches(LibCF::CFRect& rect) noexcept
 /// @retval true if point is within this point.
 /// @retval the validations have failed, false otherwise true.
 /***********************************************************************************/
-BOOL LibCF::CFPoint::isWithin(LibCF::CFPoint& withinOf)
+BOOL LibCF::CFPoint::IsWithin(LibCF::CFPoint& withinOf)
 {
 	return x_1 >= withinOf.x_1 && x_2 <= (withinOf.x_2) &&
 		   y_1 >= withinOf.y_1 && y_2 <= (withinOf.y_2);

@@ -3,6 +3,9 @@
 
 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
+	FILE: Foundation.h
+	PURPOSE: Foundation header of the CF framework.
+
 ------------------------------------------- */
 
 #pragma once
@@ -15,6 +18,7 @@ namespace LibCF
 	class CFGUID;
 	class CFProperty;
 	class CFObject;
+	template <typename T>
 	class CFRef;
 	class CFFont;
 	struct CFPoint;
@@ -50,7 +54,7 @@ namespace LibCF
 		/// @param point the current point to check.
 		/// @retval true if point is within this point.
 		/// @retval validations failed.
-		bool isWithin(CFPoint& point);
+		bool IsWithin(CFPoint& point);
 	};
 
 	struct CFColor final
@@ -68,7 +72,7 @@ namespace LibCF
 
 		operator bool();
 
-		BOOL sizeMatches(CFRect& rect) noexcept;
-		BOOL positionMatches(CFRect& rect) noexcept;
+		BOOL SizeMatches(CFRect& rect) noexcept;
+		BOOL PositionMatches(CFRect& rect) noexcept;
 	};
 } // namespace LibCF

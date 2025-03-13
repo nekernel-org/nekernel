@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <LibCF/Core.h>
+#include <LibCF/Foundation.h>
 
 #define CF_OBJECT : public LibCF::CFObject
 

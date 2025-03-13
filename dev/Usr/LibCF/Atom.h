@@ -5,7 +5,7 @@
 ------------------------------------------- */
 #pragma once
 
-#include <LibCF/Core.h>
+#include <LibCF/Foundation.h>
 
 namespace LibCF
 {

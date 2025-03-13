@@ -7,6 +7,6 @@
 #define APPS_COMMON_H
 
 #include <LibSCI/SCI.h>
-#include <LibCF/Core.h>
+#include <LibCF/Foundation.h>
 
 #endif // APPS_COMMON_H

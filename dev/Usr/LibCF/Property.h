@@ -26,7 +26,7 @@ namespace LibCF
 
 	/// @brief User property class.
 	/// @example /prop/foo or /prop/bar
-	class CFProperty
+	class CFProperty final CF_OBJECT
 	{
 	public:
 		CFProperty();
