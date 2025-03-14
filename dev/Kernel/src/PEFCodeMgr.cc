@@ -166,7 +166,7 @@ namespace NeOS
 		for (SizeT index = 0; index < container->Count; ++index)
 		{
 			if (KStringBuilder::Equals(container_header->Name,
-									  error_or_symbol.Leak().Leak().CData()))
+									   error_or_symbol.Leak().Leak().CData()))
 			{
 				if (container_header->Kind == kind)
 				{

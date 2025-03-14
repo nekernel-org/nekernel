@@ -24,8 +24,8 @@ namespace LibCF
 
 		constexpr static SInt16 kMaxPeers = 16;
 
-		Char mConnName[256] = {0};
-		SInt32 mConnPeersCnt{0};
+		Char						mConnName[256] = {0};
+		SInt32						mConnPeersCnt{0};
 		CFArray<VoidPtr, kMaxPeers> mConnPeers;
 	};
 } // namespace LibCF

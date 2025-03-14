@@ -179,10 +179,16 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	kSATAHba->Ports[kSATAIndex].Ci = (1 << slot);
 
-	while (1)
+	while (YES)
 	{
 		if ((kSATAHba->Ports[kSATAIndex].Ci & (1 << slot)) == 0)
 			break;
+
+		if (kSATAHba->Is & kHBAErrTaskFile)
+		{
+			err_global_get() = kErrorDiskIsCorrupted;
+			return;
+		}
 	}
 
 	// Check IS again.

@@ -11,11 +11,10 @@
 
 namespace LibCF
 {
-    class CFString;
+	class CFString;
 
-    class CFString final CF_OBJECT
-    {
-    public:
-
-    };
-}
+	class CFString final CF_OBJECT
+	{
+	public:
+	};
+} // namespace LibCF
