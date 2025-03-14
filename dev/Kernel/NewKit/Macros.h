@@ -51,7 +51,7 @@
 #endif // #ifndef ALIGN
 
 #ifndef ATTRIBUTE
-#define ATTRIBUTE(X) __attribute__((X))
+#define ATTRIBUTE(...) __attribute__((__VA_ARGS__))
 #endif // #ifndef ATTRIBUTE
 
 #ifndef __NE_VER__

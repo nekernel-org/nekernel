@@ -271,16 +271,22 @@ typedef struct HbaMem final
 typedef struct HbaCmdHeader final
 {
 	// DW0
-	NeOS::UInt8 Cfl : 5;		  // Command FIS length in DWORDS, 2 ~ 16
-	NeOS::UInt8 Atapi : 1;		  // ATAPI
-	NeOS::UInt8 Write : 1;		  // Write, 1: H2D, 0: D2H
-	NeOS::UInt8 Prefetchable : 1; // Prefetchable
+	union {
+		struct
+		{
+			NeOS::UInt8 Cfl : 5;		  // Command FIS length in DWORDS, 2 ~ 16
+			NeOS::UInt8 Atapi : 1;		  // ATAPI
+			NeOS::UInt8 Write : 1;		  // Write, 1: H2D, 0: D2H
+			NeOS::UInt8 Prefetchable : 1; // Prefetchable
 
-	NeOS::UInt8 Reset : 1;	   // Reset
-	NeOS::UInt8 BIST : 1;	   // BIST
-	NeOS::UInt8 Clear : 1;	   // Clear busy upon R_OK
-	NeOS::UInt8 Reserved0 : 1; // Reserved
-	NeOS::UInt8 Pmp : 4;	   // Port multiplier port
+			NeOS::UInt8 Reset : 1;	   // Reset
+			NeOS::UInt8 BIST : 1;	   // BIST
+			NeOS::UInt8 Clear : 1;	   // Clear busy upon R_OK
+			NeOS::UInt8 Reserved0 : 1; // Reserved
+			NeOS::UInt8 Pmp : 4;	   // Port multiplier port
+		};
+		NeOS::UInt16 Flags;
+	};
 
 	NeOS::UInt16 Prdtl; // Physical region descriptor table length in entries
 	NeOS::UInt32 Prdbc; // Physical region descriptor byte count transferred
@@ -288,8 +294,8 @@ typedef struct HbaCmdHeader final
 	NeOS::UInt32 Ctba;	// Command table descriptor base address
 	NeOS::UInt32 Ctbau; // Command table descriptor base address upper 32 bits
 
-	NeOS::UInt32 Rscv[4];
-} HbaCmdHeader;
+	NeOS::UInt32 Rsv[4];
+} ATTRIBUTE(packed, aligned(32)) HbaCmdHeader;
 
 typedef struct HbaFis final
 {

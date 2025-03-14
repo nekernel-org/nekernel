@@ -95,7 +95,7 @@ all: compile-amd64
 
 .PHONY: disk
 disk:
-	dd if=/dev/zero of=$(BOOT) bs=1M count=100
+	dd if=/dev/zero of=$(BOOT) bs=30M count=100
 	mformat -i $(BOOT) -F -v "NEOS_ESP"
 
 

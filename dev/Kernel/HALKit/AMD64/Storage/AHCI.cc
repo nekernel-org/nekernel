@@ -41,6 +41,9 @@
 #define kSATASRBsy (0x80)
 #define kSATASRDrq (0x08)
 
+#define kHBABohcBiosOwned (1 << 0)
+#define kHBABohcOSOwned (1 << 1)
+
 #define kSATAPortCnt (0x20)
 
 #define kSATASig   (0x00000101)
@@ -88,6 +91,8 @@ STATIC Void drv_compute_disk_ahci() noexcept
 
 	kCurrentDiskModel[40] = '\0';
 
+	kSATASectorCount = identify_data[60] | identify_data[61];
+
 	kout << "Drive Model: " << kCurrentDiskModel << kendl;
 
 	kout << "Disk Size: " << number(drv_get_size()) << kendl;
@@ -119,9 +124,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	if (slot == ~0)
 		return;
 
-	HbaCmdHeader* command_header = ((HbaCmdHeader*)(((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
-
-	command_header += slot;
+	volatile HbaCmdHeader* command_header = ((HbaCmdHeader*)(((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
 
 	MUST_PASS(command_header);
 
@@ -146,9 +149,10 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 		command_table->Prdt[i].Ie	= YES;
 	}
 
-	command_table->Prdt[i].Dba = ((UInt32)(UInt64)buffer_phys);
-	command_table->Prdt[i].Dbc = ((size_buffer / command_header->Prdtl - 1) - 1);
-	command_table->Prdt[i].Ie  = YES;
+	command_table->Prdt[i].Dba	= ((UInt32)(UInt64)buffer_phys + (i * command_table->Prdt[i].Dbc));
+	command_table->Prdt[i].Dbau = (((UInt64)(buffer_phys) >> 32) + (i * command_table->Prdt[i].Dbc));
+	command_table->Prdt[i].Dbc	= ((size_buffer / command_header->Prdtl - 1) - 1);
+	command_table->Prdt[i].Ie	= YES;
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)(&command_table->Cfis);
 
@@ -163,7 +167,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
 	h2d_fis->Lba2 = (lba >> 16) & 0xFF;
 
-	h2d_fis->Device = Identify ? 0 : kSATALBAMode;
+	h2d_fis->Device = Identify ? 0U : kSATALBAMode;
 
 	h2d_fis->Lba3 = (lba >> 24) & 0xFF;
 	h2d_fis->Lba4 = (lba >> 32) & 0xFF;
@@ -231,8 +235,8 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 		{
 			HbaMem* mem_ahci = (HbaMem*)kSATADev.Bar(kSATABar5);
 
-			kSATADev.BecomeBusMaster((UInt32)(UIntPtr)mem_ahci);
-			kSATADev.EnableMmio((UInt32)(UIntPtr)mem_ahci);
+			kSATADev.EnableMmio((UIntPtr)mem_ahci);
+			kSATADev.BecomeBusMaster((UIntPtr)mem_ahci);
 
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;
@@ -257,6 +261,17 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kout << "Detect: /dev/sat" << number(ahci_index) << kendl;
 
 					kSATAIndex = ahci_index;
+					kSATAHba = mem_ahci;
+
+					if (kSATAHba->Bohc & kHBABohcBiosOwned)
+					{
+						kSATAHba->Bohc |= kHBABohcOSOwned;
+
+						while (kSATAHba->Bohc & kHBABohcBiosOwned)
+						{
+							
+						}
+					}
 
 					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
 					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
@@ -270,6 +285,8 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kout << "Detect: /dev/atp" << number(ahci_index) << kendl;
 
 					kSATAIndex = ahci_index;
+					kSATAHba = mem_ahci;
+
 					kSATAHba->Ports[ahci_index].Cmd |= kHBAPxCmdFre | kHBAPxCmdST;
 
 					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
