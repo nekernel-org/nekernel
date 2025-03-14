@@ -149,6 +149,6 @@ help:
 	@echo "=== HELP ==="
 	@echo "epm-img: Format a disk using the Explicit Partition Map."
 	@echo "gpt-img: Format a disk using the Explicit Partition Map."
-	@echo "clean: clean bootloader."
+	@echo "clean: remove bootloader and files."
 	@echo "bootloader-amd64: Build bootloader. (PC AMD64)"
 	@echo "run-efi-amd64-<ahci, ata>: Run bootloader. (PC AMD64)"
