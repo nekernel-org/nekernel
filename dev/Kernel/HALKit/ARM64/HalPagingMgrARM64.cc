@@ -45,7 +45,7 @@ namespace NeOS::HAL
 	/// @param phys_addr point to physical address.
 	/// @param flags the flags to put on the page.
 	/// @return Status code of page manipulation process.
-	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, UInt32 flags)
+	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags)
 	{
 		if (!virtual_address ||
 			!flags)
@@ -73,7 +73,7 @@ namespace NeOS::HAL
 	{
 		NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
 
-		// Update Internal store.
+		// Update internal store.
 
 		page_store.fInternalStore.fPde	 = nullptr;
 		page_store.fInternalStore.fPte	 = pt_entry;

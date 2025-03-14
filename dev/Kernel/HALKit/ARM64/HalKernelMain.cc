@@ -18,6 +18,8 @@
 #include <HALKit/ARM64/Processor.h>
 #include <CFKit/Property.h>
 
+#include <HALKit/ARM64/ApplicationProcessor.h>
+
 EXTERN_C void hal_init_platform(
 	NeOS::HEL::BootInfoHeader* handover_hdr)
 {

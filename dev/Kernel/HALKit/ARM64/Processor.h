@@ -36,7 +36,7 @@ namespace NeOS::HAL
 	/// @param phys_addr point to physical address.
 	/// @param flags the flags to put on the page.
 	/// @return Status code of page manip.
-	EXTERN_C Int32 mm_map_page(VoidPtr virt_addr, UInt32 flags);
+	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags);
 
 	typedef UIntPtr	   Reg;
 	typedef Register64 Register;

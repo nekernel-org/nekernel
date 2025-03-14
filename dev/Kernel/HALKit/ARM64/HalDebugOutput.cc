@@ -11,7 +11,7 @@
 
 namespace NeOS
 {
-	EXTERN_C void ke_io_write(const Char* bytes)
+	EXTERN_C void ke_io_write(IDeviceObject<const Char*>* self, const Char* bytes)
 	{
 #ifdef __DEBUG__
 		if (*bytes == 0)
@@ -38,7 +38,7 @@ namespace NeOS
 
 	TerminalDevice::~TerminalDevice() = default;
 
-	EXTERN_C void ke_io_read(const Char* bytes)
+	EXTERN_C void ke_io_read(IDeviceObject<const Char*>* self, const Char* bytes)
 	{
 #ifdef __DEBUG__
 		SizeT index = 0;

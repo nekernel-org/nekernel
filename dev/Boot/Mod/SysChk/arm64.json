@@ -7,7 +7,7 @@
   "compiler_flags": [
     "-ffreestanding",
     "-nostdlib",
-    "-std=c++23",
+    "-std=c++20",
     "-fno-rtti",
     "-fno-exceptions",
     "-fuse-ld=lld",

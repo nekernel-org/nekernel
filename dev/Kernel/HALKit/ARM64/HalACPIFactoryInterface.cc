@@ -17,9 +17,10 @@ namespace NeOS
 	{
 	}
 
-	Void ACPIFactoryInterface::Shutdown()
+	BOOL ACPIFactoryInterface::Shutdown()
 	{
 		apm_send_io_command(kAPMPowerCommandShutdown, 0);
+		return NO;
 	}
 
 	/// @brief Reboot machine in either ACPI or by triple faulting.

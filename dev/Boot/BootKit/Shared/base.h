@@ -1,9 +1,9 @@
 #ifndef UTL_BASE_H
 #define UTL_BASE_H
 
-#include <cstdint>
-#include <cstddef>
-#include <cmath>
+#include <stdint.h>
+#include <stddef.h>
+#include <math.h>
 
 namespace utl
 {

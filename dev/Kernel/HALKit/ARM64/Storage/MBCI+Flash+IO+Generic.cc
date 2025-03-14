@@ -11,10 +11,10 @@
 #include <Mod/MFlash/MFlash.h>
 #include <Mod/MBCI/MBCI.h>
 
-/// @file MFlash.cc
+/// @file MBCI+Flash.cc
 /// @brief MBCI Flash support.
 
-#define kMaxFlashSlots (8U)
+#define MBCI_MAX_SLOTS (8U)
 
 namespace NeOS
 {
@@ -23,10 +23,10 @@ namespace NeOS
 	constexpr auto kFlashBridgeRevision = 1;
 
 	STATIC BOOL	 kFlashEnabled							= NO;
-	STATIC SizeT kFlashSize[kMaxFlashSlots]				= {};
-	STATIC SizeT kFlashSectorSz[kMaxFlashSlots]			= {};
-	STATIC IMBCIHost* kFlashMetaPackets[kMaxFlashSlots] = {};
-	STATIC IMBCIHost* kFlashDataPackets[kMaxFlashSlots] = {};
+	STATIC SizeT kFlashSize[MBCI_MAX_SLOTS]				= {};
+	STATIC SizeT kFlashSectorSz[MBCI_MAX_SLOTS]			= {};
+	STATIC IMBCIHost* kFlashMetaPackets[MBCI_MAX_SLOTS] = {};
+	STATIC IMBCIHost* kFlashDataPackets[MBCI_MAX_SLOTS] = {};
 
 	STATIC Void drv_std_io(Int32 slot, UInt64 lba, Char* buf, SizeT sector_sz, SizeT buf_sz);
 
@@ -40,7 +40,7 @@ namespace NeOS
 	/// @return slot sector count.
 	SizeT drv_get_sector_count(Int32 slot)
 	{
-		if (slot > kMaxFlashSlots)
+		if (slot > MBCI_MAX_SLOTS)
 			return 0;
 
 		return kFlashSectorSz[slot];
@@ -50,7 +50,7 @@ namespace NeOS
 	/// @return drive slot size
 	SizeT drv_get_size(Int32 slot)
 	{
-		if (slot > kMaxFlashSlots)
+		if (slot > MBCI_MAX_SLOTS)
 			return 0;
 
 		return kFlashSize[slot];
@@ -59,7 +59,7 @@ namespace NeOS
 	/// @brief Enable flash memory at slot.
 	BOOL drv_enable_at(Int32 slot)
 	{
-		if (slot > kMaxFlashSlots)
+		if (slot > MBCI_MAX_SLOTS)
 			return NO;
 
 		kFlashMetaPackets[slot]->InterruptEnable = YES;
@@ -72,7 +72,7 @@ namespace NeOS
 	/// @brief Disable flash memory at slot.
 	BOOL drv_disable_at(Int32 slot)
 	{
-		if (slot > kMaxFlashSlots)
+		if (slot > MBCI_MAX_SLOTS)
 			return NO;
 
 		kFlashMetaPackets[slot]->InterruptEnable = NO;
