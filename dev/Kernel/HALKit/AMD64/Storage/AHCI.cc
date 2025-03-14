@@ -42,7 +42,7 @@
 #define kSATASRDrq (0x08)
 
 #define kHBABohcBiosOwned (1 << 0)
-#define kHBABohcOSOwned (1 << 1)
+#define kHBABohcOSOwned	  (1 << 1)
 
 #define kSATAPortCnt (0x20)
 
@@ -85,8 +85,8 @@ STATIC Void drv_compute_disk_ahci() noexcept
 
 	for (SizeT i = 0; i < 40; ++i)
 	{
-		kCurrentDiskModel[i * 2]	 = identify_data[27 + i * 2] >> 8;
-		kCurrentDiskModel[i * 2 + 1] = identify_data[27 + i * 2] & 0xFF;
+		kCurrentDiskModel[i * 2]	 = identify_data[27 + (i * 2)] >> 8;
+		kCurrentDiskModel[i * 2 + 1] = identify_data[27 + (i * 2) + 1] & 0xFF;
 	}
 
 	kCurrentDiskModel[40] = '\0';
@@ -261,7 +261,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kout << "Detect: /dev/sat" << number(ahci_index) << kendl;
 
 					kSATAIndex = ahci_index;
-					kSATAHba = mem_ahci;
+					kSATAHba   = mem_ahci;
 
 					if (kSATAHba->Bohc & kHBABohcBiosOwned)
 					{
@@ -269,7 +269,6 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 
 						while (kSATAHba->Bohc & kHBABohcBiosOwned)
 						{
-							
 						}
 					}
 
@@ -285,7 +284,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kout << "Detect: /dev/atp" << number(ahci_index) << kendl;
 
 					kSATAIndex = ahci_index;
-					kSATAHba = mem_ahci;
+					kSATAHba   = mem_ahci;
 
 					kSATAHba->Ports[ahci_index].Cmd |= kHBAPxCmdFre | kHBAPxCmdST;
 

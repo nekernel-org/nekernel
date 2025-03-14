@@ -1056,7 +1056,7 @@ namespace NeOS::NeFS
 		kMountpoint.A() = io_construct_main_drive();
 
 		if (kMountpoint.A().fPacket.fPacketReadOnly == YES)
-			ke_panic(RUNTIME_CHECK_FILESYSTEM, "Filesystem cannot be mounted on a broken driver.");
+			ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main filesystem cannot be mounted.");
 
 		return YES;
 	}

@@ -19,6 +19,12 @@ namespace NeOS
 		if (!ptr)
 			return No;
 
+		if (!this->ProcessMemoryHeap)
+		{
+			kout << "Process Memory is empty.\r";
+			return No;
+		}
+
 		ProcessMemoryHeapList* entry = this->ProcessMemoryHeap;
 
 		while (entry != nullptr)
@@ -29,16 +35,18 @@ namespace NeOS
 
 #ifdef __NE_AMD64__
 				auto pd = hal_read_cr3();
+
 				hal_write_cr3(this->VMRegister);
 
 				auto ret = mm_delete_heap(entry->MemoryEntry);
 
 				hal_write_cr3(pd);
 
-				return ret;
+				return ret == kErrorSuccess;
 #else
 				Bool ret = mm_delete_heap(ptr.Leak().Leak());
-				return ret;
+
+				return ret == kErrorSuccess;
 #endif
 			}
 

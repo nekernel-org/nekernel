@@ -239,7 +239,7 @@ namespace NeOS::HAL
 
 					hal_send_start_ipi(kApicBaseAddress, kAPICLocales[kSMPCount]);
 
-					HardwareTimer timer(NeOS::Milliseconds(10));
+					HardwareTimer timer(NeOS::rtl_ms(10));
 					timer.Wait();
 
 					/// TODO: HAL helper to create an address.

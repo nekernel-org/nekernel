@@ -14,6 +14,8 @@ namespace NeOS
 	class SoftwareTimer;
 	class TimerInterface;
 
+	inline constexpr Int16 kTimeUnit = 1000;
+
 	class TimerInterface
 	{
 	public:
@@ -62,20 +64,20 @@ namespace NeOS
 		Int64	fWaitFor{0};
 	};
 
-	inline Int64 Milliseconds(Int64 time)
+	inline Int64 rtl_ms(Int64 time)
 	{
 		if (time < 0)
 			return 0;
 
 		// TODO: nanoseconds maybe?
-		return 1000 * 1000 * time;
+		return kTimeUnit * kTimeUnit * time;
 	}
 
-	inline Int64 Seconds(Int64 time)
+	inline Int64 rtl_seconds(Int64 time)
 	{
 		if (time < 0)
 			return 0;
 
-		return 1000 * Milliseconds(time);
+		return kTimeUnit * rtl_ms(time);
 	}
 } // namespace NeOS

@@ -67,9 +67,14 @@ namespace NeOS
 			return mRef;
 		}
 
+		BOOL HasError()
+		{
+			return this->mId > 0;
+		}
+
 	private:
 		Ref<T> mRef;
-		Int32  mId{0};
+		UInt32 mId{0};
 	};
 
 	using ErrorOrAny = ErrorOr<voidPtr>;
