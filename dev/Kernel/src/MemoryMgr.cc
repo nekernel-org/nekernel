@@ -21,8 +21,8 @@
 
  ------------------------------------------- */
 
-//! @file Heap.cc
-//! @brief This Heap algorithm serves as the main memory manager.
+//! @file MemoryMgr.cc
+//! @brief Heap algorithm that serves as the main memory manager.
 
 #define kKernelHeapMagic   (0xD4D75)
 #define kKernelHeapAlignSz (__BIGGEST_ALIGNMENT__)
@@ -45,10 +45,10 @@ namespace NeOS
 			///! @brief Is the heap present?
 			UInt8 fPresent : 1;
 
-			/// @brief Is this valued owned by the user?
+			/// @brief Is this value writable?
 			UInt8 fWriteRead : 1;
 
-			/// @brief Is this valued owned by the user?
+			/// @brief Is this value owned by the user?
 			UInt8 fUser : 1;
 
 			/// @brief Is this a page pointer?
@@ -78,10 +78,10 @@ namespace NeOS
 			if (!heap_ptr)
 				return false;
 
+			auto base_heap = ((IntPtr)heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK);
+
 			/// Add that check in case we're having an integer underflow. ///
-
-			auto base_heap = (IntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK);
-
+			
 			if (base_heap < 0)
 			{
 				return false;
@@ -96,7 +96,7 @@ namespace NeOS
 	/// @brief Declare a new size for ptr_heap.
 	/// @param ptr_heap the pointer.
 	/// @return Newly allocated heap header.
-	_Output VoidPtr mm_realloc_heap(VoidPtr ptr_heap, SizeT new_sz)
+	_Output auto mm_realloc_heap(VoidPtr ptr_heap, SizeT new_sz) -> VoidPtr
 	{
 		if (Detail::mm_check_heap_address(ptr_heap) == No)
 			return nullptr;
