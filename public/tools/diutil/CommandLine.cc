@@ -15,7 +15,7 @@
 #include <FSKit/NeFS.h>
 #include <uuid/uuid.h>
 
-#include "vendor/Dialogs.h"
+#include <vendor/Dialogs.h>
 
 static std::string kDiskName	 = "Disk";
 static int		   kDiskSectorSz = 512;
