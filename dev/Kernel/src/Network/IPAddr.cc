@@ -9,7 +9,7 @@
 
 namespace NeOS
 {
-	char* RawIPAddress::Address()
+	Char* RawIPAddress::Address()
 	{
 		return fAddr;
 	}
@@ -19,7 +19,7 @@ namespace NeOS
 		rt_copy_memory(bytes, fAddr, 4);
 	}
 
-	bool RawIPAddress::operator==(const RawIPAddress& ipv4)
+	BOOL RawIPAddress::operator==(const RawIPAddress& ipv4)
 	{
 		for (Size index = 0; index < 4; ++index)
 		{
@@ -30,7 +30,7 @@ namespace NeOS
 		return true;
 	}
 
-	bool RawIPAddress::operator!=(const RawIPAddress& ipv4)
+	BOOL RawIPAddress::operator!=(const RawIPAddress& ipv4)
 	{
 		for (Size index = 0; index < 4; ++index)
 		{
@@ -41,7 +41,7 @@ namespace NeOS
 		return true;
 	}
 
-	char& RawIPAddress::operator[](const Size& index)
+	Char& RawIPAddress::operator[](const Size& index)
 	{
 		kout << "[RawIPAddress::operator[]] Fetching Index...\r";
 

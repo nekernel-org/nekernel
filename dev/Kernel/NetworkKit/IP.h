@@ -27,15 +27,15 @@ namespace NeOS
 		RawIPAddress(const RawIPAddress&)			 = default;
 
 	public:
-		char* Address();
+		Char* Address();
 
-		char& operator[](const Size& index);
+		Char& operator[](const Size& index);
 
-		bool operator==(const RawIPAddress& ipv6);
-		bool operator!=(const RawIPAddress& ipv6);
+		BOOL operator==(const RawIPAddress& ipv6);
+		BOOL operator!=(const RawIPAddress& ipv6);
 
 	private:
-		char fAddr[4];
+		Char fAddr[4];
 
 		friend IPFactory; // it is the one creating these addresses, thus this
 						  // is why the constructors are private.
