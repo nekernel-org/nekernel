@@ -103,11 +103,5 @@ namespace NeOS::Detail
 /// @return Void
 EXTERN_C NeOS::Void rtl_kernel_main(NeOS::SizeT argc, char** argv, char** envp, NeOS::SizeT envp_len)
 {
-#ifdef __NE_AUTO_FORMAT__
 	NeOS::NeFS::fs_init_nefs();
-	NeOS::Detail::NeFilesystemInstaller installer{};
-#endif // __NE_AUTO_FORMAT__
-
-	while (YES)
-		;
 }
