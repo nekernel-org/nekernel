@@ -15,6 +15,8 @@
 #include <FSKit/NeFS.h>
 #include <uuid/uuid.h>
 
+#include "vendor/Dialogs.h"
+
 static std::string kDiskName	 = "Disk";
 static int		   kDiskSectorSz = 512;
 static const int   kDiskBlockCnt = 1;
@@ -58,7 +60,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-	std::cout << "diutil: EPM Disk Tool.\n";
+	std::cout << "diutil: EPM partition tool.\n";
 
 	struct ::EPM_PART_BLOCK block
 	{
@@ -116,7 +118,10 @@ int main(int argc, char** argv)
 	output_epm.seekp(p_prev);
 	output_epm.close();
 
-	std::cout << "diutil: EPM Disk has been written to: " << kOutDisk << "\n";
+	std::cout << "diutil: EPM disk has been written to: " << kOutDisk << "\n";
+
+	pfd::notify("Disk Utility", kOutDisk + " has been formatted successfully.",
+            pfd::icon::info);
 
 	return 0;
 }
