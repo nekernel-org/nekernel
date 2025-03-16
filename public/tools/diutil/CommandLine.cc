@@ -121,7 +121,7 @@ int main(int argc, char** argv)
 	std::cout << "diutil: EPM disk has been written to: " << kOutDisk << "\n";
 
 	pfd::notify("Disk Utility", kOutDisk + " has been formatted successfully.",
-            pfd::icon::info);
+				pfd::icon::info);
 
 	return 0;
 }

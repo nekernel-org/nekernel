@@ -81,7 +81,7 @@ namespace NeOS
 			auto base_heap = ((IntPtr)heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK);
 
 			/// Add that check in case we're having an integer underflow. ///
-			
+
 			if (base_heap < 0)
 			{
 				return false;

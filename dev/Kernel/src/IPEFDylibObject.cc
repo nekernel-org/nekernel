@@ -56,6 +56,8 @@ EXTERN_C IDylibRef rtl_init_dylib(UserProcess& process)
 	if (!dll_obj->Get())
 	{
 		tls_delete_class(dll_obj);
+		dll_obj = nullptr;
+
 		process.Crash();
 
 		return nullptr;
@@ -66,7 +68,11 @@ EXTERN_C IDylibRef rtl_init_dylib(UserProcess& process)
 
 	if (!dll_obj->Get()->ImageObject)
 	{
+		delete dll_obj->Get();
+
 		tls_delete_class(dll_obj);
+		dll_obj = nullptr;
+
 		process.Crash();
 
 		return nullptr;
