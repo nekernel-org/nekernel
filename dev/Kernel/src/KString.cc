@@ -34,7 +34,7 @@ namespace NeOS
 
 		for (Size index = 0; index < this->Length(); ++index)
 		{
-			if (rhs.fData[index] != fData[index])
+			if (rhs.fData[index] != this->fData[index])
 				return false;
 		}
 
@@ -48,7 +48,7 @@ namespace NeOS
 
 		for (Size index = 0; index < rt_string_len(rhs); ++index)
 		{
-			if (rhs[index] != fData[index])
+			if (rhs[index] != this->fData[index])
 				return false;
 		}
 
@@ -62,7 +62,7 @@ namespace NeOS
 
 		for (Size index = 0; index < rhs.Length(); ++index)
 		{
-			if (rhs.fData[index] == fData[index])
+			if (rhs.fData[index] == this->fData[index])
 				return false;
 		}
 
@@ -76,7 +76,7 @@ namespace NeOS
 
 		for (Size index = 0; index < rt_string_len(rhs); ++index)
 		{
-			if (rhs[index] == fData[index])
+			if (rhs[index] == this->fData[index])
 				return false;
 		}
 
