@@ -91,7 +91,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 
 	kCurrentDiskModel[40] = '\0';
 
-	kSATASectorCount = identify_data[60] | identify_data[61];
+	kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 
 	kout << "Drive Model: " << kCurrentDiskModel << kendl;
 
