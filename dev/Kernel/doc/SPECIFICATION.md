@@ -22,7 +22,7 @@
 - Native Filesystem support (NeFS, FAT32 and ffs2).
 - Program Loaders interfaces.
 - TLS (Thread Local Storage) support.
-- Semaphore, Locks, Timers.
+- BinaryMutex, Locks, Timers.
 - Canary mechanisms.
 - Dynamic Sys.
 - Cross Platform.

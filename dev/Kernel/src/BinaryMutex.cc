@@ -5,14 +5,14 @@
 ------------------------------------------- */
 
 #include <KernelKit/UserProcessScheduler.h>
-#include <KernelKit/Semaphore.h>
+#include <KernelKit/BinaryMutex.h>
 
 namespace NeOS
 {
 	/***********************************************************************************/
 	/// @brief Unlocks the semaphore.
 	/***********************************************************************************/
-	Bool Semaphore::Unlock() noexcept
+	Bool BinaryMutex::Unlock() noexcept
 	{
 		if (fLockingProcess)
 		{
@@ -27,7 +27,7 @@ namespace NeOS
 	/***********************************************************************************/
 	/// @brief Locks process in the semaphore.
 	/***********************************************************************************/
-	Bool Semaphore::Lock(UserProcess& process)
+	Bool BinaryMutex::Lock(UserProcess& process)
 	{
 		if (!process || fLockingProcess)
 			return No;
@@ -40,7 +40,7 @@ namespace NeOS
 	/***********************************************************************************/
 	/// @brief Checks if process is locked.
 	/***********************************************************************************/
-	Bool Semaphore::IsLocked() const
+	Bool BinaryMutex::IsLocked() const
 	{
 		return fLockingProcess.Status == ProcessStatusKind::kRunning;
 	}
@@ -48,7 +48,7 @@ namespace NeOS
 	/***********************************************************************************/
 	/// @brief Try lock or wait.
 	/***********************************************************************************/
-	Bool Semaphore::LockOrWait(UserProcess& process, TimerInterface* timer)
+	Bool BinaryMutex::LockOrWait(UserProcess& process, TimerInterface* timer)
 	{
 		if (timer == nullptr)
 			return No;
@@ -61,11 +61,14 @@ namespace NeOS
 	}
 
 	/***********************************************************************************/
-	/// @brief Wait for process to be free.
+	/// @brief Wait for process **sec** until we check if it's free.
+	/// @param sec seconds.
 	/***********************************************************************************/
-	Void Semaphore::WaitForProcess() noexcept
+	BOOL BinaryMutex::WaitForProcess(const Int16& sec) noexcept
 	{
-		while (fLockingProcess)
-			;
+		HardwareTimer hw_timer(rtl_seconds(sec));
+		hw_timer.Wait();
+
+		return !this->IsLocked();
 	}
 } // namespace NeOS

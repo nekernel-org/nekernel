@@ -8,7 +8,7 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <HALKit/AMD64/Processor.h>
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/Semaphore.h>
+#include <KernelKit/BinaryMutex.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/Timer.h>
 #include <Mod/CoreGfx/TextMgr.h>
