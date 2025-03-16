@@ -18,7 +18,7 @@ An OS written in C++ 20, with a System Call Interface Library, and a custom boot
 
 Clone repository:
 
-```
+```sh
 git clone git@github.com:devrije/kernel.git
 cd kernel
 ./debug_ata.sh # Generic ATA PIO target
