@@ -63,6 +63,8 @@ namespace NeOS
 			return reinterpret_cast<T*>(fPtr);
 		}
 
+		VariantKind& Kind();
+
 	private:
 		voidPtr		fPtr{nullptr};
 		VariantKind fKind{VariantKind::kNull};

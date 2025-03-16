@@ -27,6 +27,12 @@ namespace NeOS
 		}
 	}
 
+	/// @brief Return variant's kind.
+	Variant::VariantKind& Variant::Kind()
+	{
+		return this->fKind;
+	}
+
 	/// @brief Leak variant's instance.
 	VoidPtr Variant::Leak()
 	{
