@@ -19,16 +19,13 @@ An OS written in C++ 20, with a System Call Interface Library, and a custom boot
 Clone repository:
 
 ```
-git clone git@github.com:devrije/nekernel.git
-cd nekernel
+git clone git@github.com:devrije/kernel.git
+cd kernel
+./debug_ata.sh # Generic ATA PIO target
 ```
 
-</br>
+## Warning:
 
-And then select the makefile (ARM64 and AMD64 are stable and EFI based) to execute:
-
-```
-make -f amd64-efi.make all
-```
+You have to mount the FAT32 image in order to put the src/Root/ contents in it! (To make the emulator boot NeOS)
 
 ###### Copyright (C) 2024-2025 Amlal EL Mahrouss, All rights reserved.
