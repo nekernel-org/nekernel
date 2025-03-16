@@ -242,6 +242,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 			UInt16 ahci_index		 = 0;
 
 			kSATAPortsImplemented = ports_implemented;
+			pi = kSATAPortsImplemented;
 
 			const UInt16 kMaxPortsImplemented = kSATAPortCnt;
 			const UInt32 kSATASignature		  = kSATASig;
@@ -299,8 +300,6 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 				ports_implemented >>= 1;
 				++ahci_index;
 			}
-
-			pi = mem_ahci->Pi;
 
 			return YES;
 		}
