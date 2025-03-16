@@ -23,7 +23,7 @@
 using namespace NeOS;
 using namespace NeOS::HAL;
 
-/// bugs: 0
+/// BUGS: 0
 
 #define kATADataLen 512
 
@@ -106,6 +106,8 @@ ATAInit_Retry:
 	}
 
 	kCurrentDiskModel[40] = '\0';
+
+	kout << "Detect: /dev/ata0" << kendl;
 
 	kout << "Drive Model: " << kCurrentDiskModel << kendl;
 

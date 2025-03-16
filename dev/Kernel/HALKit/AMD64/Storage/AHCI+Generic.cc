@@ -257,7 +257,10 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 				UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
 				UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
 
-				if (mem_ahci->Ports[ahci_index].Sig == kSATASignature && det == kSATAPresent && ipm == kSATAIPMActive)
+				if (det != kSATAPresent || ipm != kSATAIPMActive)
+					continue;
+
+				if (mem_ahci->Ports[ahci_index].Sig == kSATASignature)
 				{
 					kout << "Detect: /dev/sat" << number(ahci_index) << kendl;
 
