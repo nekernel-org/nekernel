@@ -287,8 +287,6 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
-					kSATAHba->Ports[ahci_index].Cmd |= kHBAPxCmdFre | kHBAPxCmdST;
-
 					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
 					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
 
