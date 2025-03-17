@@ -4,8 +4,6 @@
 
 ------------------------------------------- */
 
-#include "FSKit/NeFS.h"
-#include "NewKit/Defines.h"
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
