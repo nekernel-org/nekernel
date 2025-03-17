@@ -21,7 +21,7 @@ namespace NeOS
 	{
 	public:
 		explicit BinaryMutex() = default;
-		~BinaryMutex()		 = default;
+		~BinaryMutex()		   = default;
 
 	public:
 		bool IsLocked() const;

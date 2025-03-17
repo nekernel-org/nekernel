@@ -25,7 +25,7 @@ namespace NeOS
 		{
 			return (fArrayOfAtoms & (1 << bit));
 		}
-		
+
 		void operator|(Size bit)
 		{
 			fArrayOfAtoms |= (1 << bit);

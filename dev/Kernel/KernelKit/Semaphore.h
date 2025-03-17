@@ -12,5 +12,5 @@
 
 namespace NeOS
 {
-    typedef Int64 Semaphore;
+	typedef Int64 Semaphore;
 } // namespace NeOS
