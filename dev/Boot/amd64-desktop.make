@@ -113,7 +113,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -hda $(IMG) -s -S -trace ahci_* -boot menu=on
+	$(EMU) $(EMU_FLAGS) -d int -hda $(IMG) -s -S -trace ahci_* -boot menu=on
 
 .PHONY: run-efi-amd64-ata-pio
 run-efi-amd64-ata-pio:

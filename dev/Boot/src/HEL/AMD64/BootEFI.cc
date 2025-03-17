@@ -218,7 +218,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		syschk_thread->Start(handover_hdr, NO);
 	}
 
-#ifndef __AHCI__
+#if defined(__ATA_PIO__)
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)

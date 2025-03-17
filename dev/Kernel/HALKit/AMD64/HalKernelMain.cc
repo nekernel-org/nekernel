@@ -4,6 +4,8 @@
 
 ------------------------------------------- */
 
+#include "FSKit/NeFS.h"
+#include "NewKit/Defines.h"
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
@@ -19,8 +21,6 @@ EXTERN_C NeOS::Char mp_user_switch_proc_stack_begin[];
 
 EXTERN_C NeOS::rtl_ctor_kind __CTOR_LIST__[];
 EXTERN_C NeOS::VoidPtr __DTOR_LIST__;
-
-EXTERN_C NeOS::Void rtl_kernel_main(NeOS::SizeT argc, char** argv, char** envp, NeOS::SizeT envp_len);
 
 STATIC NeOS::Void hal_init_cxx_ctors()
 {
@@ -39,10 +39,23 @@ STATIC NeOS::Void hal_init_cxx_ctors()
 	}
 }
 
+STATIC NeOS::UInt64 hal_rdtsc_fn()
+{
+	NeOS::UInt32 lo, hi;
+	__asm__ volatile("rdtsc"
+					 : "=a"(lo), "=d"(hi));
+
+	return ((NeOS::UInt64)hi << 32) | lo;
+}
+
+STATIC NeOS::UInt64 kStart, kEnd;
+
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
 	NeOS::HEL::BootInfoHeader* handover_hdr)
 {
+	kStart = hal_rdtsc_fn();
+
 	kHandoverHeader = handover_hdr;
 
 	if (kHandoverHeader->f_Magic != kHandoverMagic &&
@@ -93,7 +106,7 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C NeOS::Void hal_real_init(NeOS::Void) noexcept
 {
-	rtl_kernel_main(0, nullptr, nullptr, 0);
+	NeOS::NeFS::fs_init_nefs();
 
 	NeOS::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
@@ -102,6 +115,10 @@ EXTERN_C NeOS::Void hal_real_init(NeOS::Void) noexcept
 	idt_reg.Base = (NeOS::UIntPtr)kInterruptVectorTable;
 
 	NeOS::HAL::IDTLoader idt_loader;
+
+	kEnd = hal_rdtsc_fn();
+
+	kout << "Cycles Spent: " << NeOS::number(kEnd - kStart) << kendl;
 
 	idt_loader.Load(idt_reg);
 

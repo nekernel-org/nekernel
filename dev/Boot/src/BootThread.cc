@@ -63,12 +63,6 @@ namespace Boot
 			}
 #endif // __NE_AMD64__ || __NE_ARM64__
 
-			if (opt_header_ptr->mSubsystem != kNeKernelSubsystem)
-			{
-				writer.Write("BootZ: Not a NeKernel Subsystem executable.\r");
-				return;
-			}
-
 			writer.Write("BootZ: PE32+ executable detected (NeKernel Subsystem).\r");
 
 			auto numSecs = header_ptr->mNumberOfSections;
