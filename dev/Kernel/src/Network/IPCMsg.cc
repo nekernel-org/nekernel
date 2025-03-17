@@ -102,14 +102,18 @@ namespace NeOS
 		return No;
 	}
 
-	Bool IPC_MSG::Pass(IPC_MSG* self, IPC_MSG* target) noexcept
+	/// @brief Pass message from **src** to **target**
+	Bool IPC_MSG::Pass(IPC_MSG* src, IPC_MSG* target) noexcept
 	{
-		if (self && target && (target == self))
+		if (src && target && (target != src))
 		{
-			if (self->IpcMsgSz > target->IpcMsgSz)
+			if (src->IpcMsgSz > target->IpcMsgSz)
 				return No;
 
-			rt_copy_memory(self->IpcData, target->IpcData, self->IpcMsgSz);
+			if (target->IpcMsgSz > src->IpcMsgSz)
+				return No;
+
+			rt_copy_memory(src->IpcData, target->IpcData, src->IpcMsgSz);
 
 			return Yes;
 		}
