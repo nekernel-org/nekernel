@@ -103,6 +103,8 @@ namespace NeOS
 	}
 
 	/// @brief Pass message from **src** to **target**
+	/// @param src Source message.
+	/// @param target Target message.
 	Bool IPC_MSG::Pass(IPC_MSG* src, IPC_MSG* target) noexcept
 	{
 		if (src && target && (target != src))
