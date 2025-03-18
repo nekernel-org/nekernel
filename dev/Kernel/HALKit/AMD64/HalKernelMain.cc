@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include <StorageKit/AHCI.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
@@ -17,23 +18,12 @@ EXTERN_C NeOS::VoidPtr kInterruptVectorTable[];
 EXTERN_C NeOS::VoidPtr mp_user_switch_proc;
 EXTERN_C NeOS::Char mp_user_switch_proc_stack_begin[];
 
-EXTERN_C NeOS::rtl_ctor_kind __CTOR_LIST__[];
-EXTERN_C NeOS::VoidPtr __DTOR_LIST__;
-
 STATIC NeOS::Void hal_init_cxx_ctors()
 {
 	for (NeOS::SizeT i = 0U; i < NeOS::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
 		NeOS::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		= NeOS::UserProcess();
 		NeOS::UserProcessScheduler::The().CurrentTeam().AsArray()[i].Status = NeOS::ProcessStatusKind::kKilled;
-	}
-
-	NeOS::UserProcessScheduler::The().CurrentTeam().mProcessCount = 0UL;
-
-	for (NeOS::SizeT index = 0UL; __CTOR_LIST__[index] != __DTOR_LIST__; ++index)
-	{
-		NeOS::rtl_ctor_kind constructor_cxx = (NeOS::rtl_ctor_kind)__CTOR_LIST__[index];
-		constructor_cxx();
 	}
 }
 
@@ -104,7 +94,7 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C NeOS::Void hal_real_init(NeOS::Void) noexcept
 {
-	NeOS::NeFS::fs_init_nefs();
+	auto dev = NeOS::sk_init_ahci_device(NO);
 
 	NeOS::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
@@ -116,7 +106,7 @@ EXTERN_C NeOS::Void hal_real_init(NeOS::Void) noexcept
 
 	kEnd = hal_rdtsc_fn();
 
-	kout << "Cycles Spent: " << NeOS::number(kEnd - kStart) << kendl;
+	kout << "Cycles Spent Before Userland: " << NeOS::number(kEnd - kStart) << kendl;
 
 	idt_loader.Load(idt_reg);
 

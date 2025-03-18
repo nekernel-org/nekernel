@@ -265,7 +265,7 @@ typedef struct HbaMem final
 	NeOS::UInt8 Resv0[0xA0 - 0x2C];
 	NeOS::UInt8 Vendor[0x100 - 0xA0];
 
-	HbaPort Ports[32]; // 1 ~ 32, 32 is the max ahci devices per controller.
+	HbaPort Ports[1]; // 1 ~ 32, 32 is the max ahci devices per controller.
 } HbaMem;
 
 typedef struct HbaCmdHeader final

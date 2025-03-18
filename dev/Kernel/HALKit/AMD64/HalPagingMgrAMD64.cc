@@ -52,7 +52,7 @@ namespace NeOS::HAL
 
 	/// @brief Go over the Page structure and find the address of *virtual_address*
 
-	UInt64 hal_get_phys_address(VoidPtr virtual_address)
+	UIntPtr hal_get_phys_address(VoidPtr virtual_address)
 	{
 		// Constants for table index bits
 		const UInt64 kPmlIndexMask = 0x1FFULL; // Mask for PML4, PDPT, PD, PT index (9 bits)

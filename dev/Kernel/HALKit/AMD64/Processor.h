@@ -206,7 +206,7 @@ namespace NeOS::HAL
 		return edx & (1 << 5);
 	}
 
-	UIntPtr hal_get_phys_address(void* virtual_address);
+	UIntPtr hal_get_phys_address(VoidPtr virtual_address);
 
 	/***********************************************************************************/
 	/// @brief Get Model specific register inside core.

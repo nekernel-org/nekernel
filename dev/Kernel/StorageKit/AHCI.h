@@ -54,6 +54,6 @@ namespace NeOS
 		UInt32 fDriveIndex{0U};
 	};
 
-	UInt16				sk_init_ahci_device(BOOL atapi);
-	AHCIDeviceInterface sk_acquire_ahci_device(Int32 drv_index);
+	UInt16						 sk_init_ahci_device(BOOL atapi);
+	ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index);
 } // namespace NeOS

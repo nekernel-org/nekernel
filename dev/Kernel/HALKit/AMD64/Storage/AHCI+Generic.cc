@@ -75,21 +75,13 @@ STATIC Void drv_compute_disk_ahci() noexcept
 {
 	kSATASectorCount = 0UL;
 
-	const UInt16 kSzIdent = kib_cast(1);
+	const UInt16 kSzIdent = 512;
 
 	UInt8 identify_data[kSzIdent] = {0};
 
 	rt_set_memory(identify_data, 0, kSzIdent);
 
 	drv_std_input_output<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
-
-	for (SizeT i = 0; i < 40; ++i)
-	{
-		kCurrentDiskModel[i * 2]	 = identify_data[27 + (i * 2)] >> 8;
-		kCurrentDiskModel[i * 2 + 1] = identify_data[27 + (i * 2) + 1] & 0xFF;
-	}
-
-	kCurrentDiskModel[40] = '\0';
 
 	kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 
@@ -139,20 +131,20 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	UIntPtr buffer_phys = HAL::hal_get_phys_address(buffer);
 
-	Int32 i = 0;
+	UInt16 prd_i = 0;
 
-	for (; i < (command_header->Prdtl - 1); i++)
+	for (; prd_i < (command_header->Prdtl - 1); prd_i++)
 	{
-		command_table->Prdt[i].Dbc	= ((size_buffer / command_header->Prdtl - 1) - 1);
-		command_table->Prdt[i].Dba	= ((UInt32)(UInt64)buffer_phys + (i * command_table->Prdt[i].Dbc));
-		command_table->Prdt[i].Dbau = (((UInt64)(buffer_phys) >> 32) + (i * command_table->Prdt[i].Dbc));
-		command_table->Prdt[i].Ie	= YES;
+		command_table->Prdt[prd_i].Dbc	= ((size_buffer / command_header->Prdtl - 1) - 1);
+		command_table->Prdt[prd_i].Dba	= ((UInt32)(UInt64)buffer_phys + (prd_i * command_table->Prdt[prd_i].Dbc));
+		command_table->Prdt[prd_i].Dbau = (((UInt64)(buffer_phys) >> 32) + (prd_i * command_table->Prdt[prd_i].Dbc));
+		command_table->Prdt[prd_i].Ie	= YES;
 	}
 
-	command_table->Prdt[i].Dba	= ((UInt32)(UInt64)buffer_phys + (i * command_table->Prdt[i].Dbc));
-	command_table->Prdt[i].Dbau = (((UInt64)(buffer_phys) >> 32) + (i * command_table->Prdt[i].Dbc));
-	command_table->Prdt[i].Dbc	= ((size_buffer / command_header->Prdtl - 1) - 1);
-	command_table->Prdt[i].Ie	= YES;
+	command_table->Prdt[prd_i].Dba	= ((UInt32)(UInt64)buffer_phys + (prd_i * command_table->Prdt[prd_i].Dbc));
+	command_table->Prdt[prd_i].Dbau = (((UInt64)(buffer_phys) >> 32) + (prd_i * command_table->Prdt[prd_i].Dbc));
+	command_table->Prdt[prd_i].Dbc	= ((size_buffer / command_header->Prdtl - 1) - 1);
+	command_table->Prdt[prd_i].Ie	= YES;
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)(&command_table->Cfis);
 
@@ -176,16 +168,14 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->CountLow  = (size_buffer)&0xFF;
 	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
 
-	while ((kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq)))
-	{
-		kout << "Waiting for TFD...\r";
-	}
+	while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq))
+		;
 
 	kSATAHba->Ports[kSATAIndex].Ci = (1 << slot);
 
 	while (YES)
 	{
-		if ((kSATAHba->Ports[kSATAIndex].Ci & (1 << slot)) == 0)
+		if (!(kSATAHba->Ports[kSATAIndex].Ci & (1 << slot)))
 			break;
 
 		if (kSATAHba->Is & kHBAErrTaskFile)
@@ -195,7 +185,6 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 		}
 	}
 
-	// Check IS again.
 	if (kSATAHba->Is & kHBAErrTaskFile)
 	{
 		err_global_get() = kErrorDiskIsCorrupted;
@@ -314,37 +303,40 @@ Bool drv_std_detected_ahci()
 	return kSATADev.DeviceId() != (UShort)PCI::PciConfigKind::Invalid && kSATADev.Bar(kSATABar5) != 0;
 }
 
-UInt16 sk_init_ahci_device(BOOL atapi)
+namespace NeOS
 {
-	UInt16 pi = 0;
-	return drv_std_init_ahci(pi, atapi);
+	UInt16 sk_init_ahci_device(BOOL atapi)
+	{
+		UInt16 pi = 0;
+		return drv_std_init_ahci(pi, atapi);
 
-	return pi;
-}
+		return pi;
+	}
 
-ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
-{
-	if (!drv_std_detected_ahci())
-		return ErrorOr<AHCIDeviceInterface>(kErrorDisk);
+	ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
+	{
+		if (!drv_std_detected_ahci())
+			return ErrorOr<AHCIDeviceInterface>(kErrorDisk);
 
-	AHCIDeviceInterface device([](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
+		AHCIDeviceInterface device([](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
 		AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
 		
 		auto disk = mnt->GetAddressOf(dev->GetIndex());
 		drv_std_input_output<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize); },
-							   [](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
-								   AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
+								   [](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
+									   AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
 
-								   auto disk = mnt->GetAddressOf(dev->GetIndex());
-								   drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
-							   },
-							   nullptr);
+									   auto disk = mnt->GetAddressOf(dev->GetIndex());
+									   drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+								   },
+								   nullptr);
 
-	device.SetPi(kSATAPortsImplemented);
-	device.SetIndex(drv_index);
+		device.SetPi(kSATAPortsImplemented);
+		device.SetIndex(drv_index);
 
-	return ErrorOr<AHCIDeviceInterface>(device);
-}
+		return ErrorOr<AHCIDeviceInterface>(device);
+	}
+} // namespace NeOS
 
 #ifdef __AHCI__
 
