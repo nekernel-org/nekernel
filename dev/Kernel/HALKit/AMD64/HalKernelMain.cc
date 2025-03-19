@@ -36,13 +36,13 @@ STATIC NeOS::UInt64 hal_rdtsc_fn()
 	return ((NeOS::UInt64)hi << 32) | lo;
 }
 
-STATIC NeOS::UInt64 kStart, kEnd;
+STATIC NeOS::UInt64 kStartTim, kEndTim;
 
 /// @brief Kernel init procedure.
 EXTERN_C void hal_init_platform(
 	NeOS::HEL::BootInfoHeader* handover_hdr)
 {
-	kStart = hal_rdtsc_fn();
+	kStartTim = hal_rdtsc_fn();
 
 	kHandoverHeader = handover_hdr;
 
@@ -104,9 +104,9 @@ EXTERN_C NeOS::Void hal_real_init(NeOS::Void) noexcept
 
 	NeOS::HAL::IDTLoader idt_loader;
 
-	kEnd = hal_rdtsc_fn();
+	kEndTim = hal_rdtsc_fn();
 
-	kout << "Cycles Spent Before Userland: " << NeOS::number(kEnd - kStart) << kendl;
+	kout << "Cycles Spent Before Userland: " << NeOS::number(kEndTim - kStartTim) << kendl;
 
 	idt_loader.Load(idt_reg);
 
