@@ -205,6 +205,23 @@ SizeT drv_get_size_ahci()
 	return drv_get_sector_count() * kAHCISectorSize;
 }
 
+STATIC Void ahci_enable_and_probe()
+{
+	if (kSATAHba->Bohc & kHBABohcBiosOwned)
+	{
+		kSATAHba->Bohc |= kHBABohcOSOwned;
+
+		while (kSATAHba->Bohc & kHBABohcBiosOwned)
+		{
+		}
+	}
+
+	kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
+	kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
+
+	drv_compute_disk_ahci();
+}
+
 /// @brief Initializes an AHCI disk.
 /// @param pi the amount of ports that have been detected.
 /// @return if the disk was successfully initialized or not.
@@ -253,19 +270,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
-					if (kSATAHba->Bohc & kHBABohcBiosOwned)
-					{
-						kSATAHba->Bohc |= kHBABohcOSOwned;
-
-						while (kSATAHba->Bohc & kHBABohcBiosOwned)
-						{
-						}
-					}
-
-					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
-					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
-
-					drv_compute_disk_ahci();
+					ahci_enable_and_probe();
 
 					break;
 				}
@@ -276,8 +281,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
-					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
-					kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
+					ahci_enable_and_probe();
 
 					drv_compute_disk_ahci();
 
