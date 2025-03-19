@@ -283,8 +283,6 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 
 					ahci_enable_and_probe();
 
-					drv_compute_disk_ahci();
-
 					break;
 				}
 
