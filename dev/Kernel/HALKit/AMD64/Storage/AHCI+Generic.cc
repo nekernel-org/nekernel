@@ -244,8 +244,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;
 
-			kSATAPortsImplemented = ports_implemented;
-			pi					  = kSATAPortsImplemented;
+			pi = ports_implemented;
 
 			const UInt16 kMaxPortsImplemented = kSATAPortCnt;
 			const UInt32 kSATASignature		  = kSATASig;
@@ -309,6 +308,8 @@ namespace NeOS
 		UInt16 pi = 0;
 		return drv_std_init_ahci(pi, atapi);
 
+		kSATAPortsImplemented = pi;
+
 		return pi;
 	}
 
@@ -330,7 +331,7 @@ namespace NeOS
 								   },
 								   nullptr);
 
-		device.SetPi(kSATAPortsImplemented);
+		device.SetPortsImplemented(kSATAPortsImplemented);
 		device.SetIndex(drv_index);
 
 		return ErrorOr<AHCIDeviceInterface>(device);

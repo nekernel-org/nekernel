@@ -66,13 +66,13 @@ namespace NeOS::HAL
 	}
 
 	template <typename DataKind>
-	inline void hal_mmio_write(UIntPtr address, DataKind value)
+	inline void hal_dma_write(UIntPtr address, DataKind value)
 	{
 		*reinterpret_cast<volatile DataKind*>(address) = value;
 	}
 
 	template <typename DataKind>
-	inline DataKind hal_mmio_read(UIntPtr address)
+	inline DataKind hal_dma_read(UIntPtr address)
 	{
 		return *reinterpret_cast<volatile DataKind*>(address);
 	}

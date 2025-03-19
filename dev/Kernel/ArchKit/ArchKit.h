@@ -47,20 +47,20 @@ namespace NeOS
 	/// @param base the base address.
 	/// @param reg the register.
 	/// @param value the write to write on it.
-	template <typename WordLength>
-	inline Void ke_dma_write(WordLength base, WordLength reg, WordLength value) noexcept
+	template <typename DataKind>
+	inline Void ke_dma_write(UIntPtr base, DataKind reg, DataKind value) noexcept
 	{
-		*(volatile WordLength*)(base + reg) = value;
+		*(volatile DataKind*)(base + reg) = value;
 	}
 
 	/// @brief read from mapped memory register.
 	/// @param base base address
 	/// @param reg the register.
 	/// @return the value inside the register.
-	template <typename WordLength>
-	inline UInt32 ke_dma_read(WordLength base, WordLength reg) noexcept
+	template <typename DataKind>
+	inline UInt32 ke_dma_read(UIntPtr base, DataKind reg) noexcept
 	{
-		return *(volatile WordLength*)((UInt64)base + reg);
+		return *(volatile DataKind*)(base + reg);
 	}
 
 	namespace HAL

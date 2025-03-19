@@ -27,12 +27,12 @@ namespace NeOS
 
 		const Char* Name() const override;
 
-		const UInt16& GetPi()
+		const UInt16& GetPortsImplemented()
 		{
 			return this->fPortsImplemented;
 		}
 
-		Void SetPi(const UInt16& pi)
+		Void SetPortsImplemented(const UInt16& pi)
 		{
 			MUST_PASS(pi > 0);
 			this->fPortsImplemented = pi;
@@ -45,6 +45,7 @@ namespace NeOS
 
 		Void SetIndex(const UInt32& drv)
 		{
+			MUST_PASS(MountpointInterface::kDriveIndexInvalid != drv);
 			this->fDriveIndex = drv;
 		}
 

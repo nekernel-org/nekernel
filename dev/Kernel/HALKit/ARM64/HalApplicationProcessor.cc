@@ -45,57 +45,68 @@ namespace NeOS
 		{
 			while (YES)
 				;
+
+			dbg_break_point();
 		}
 
 		Void mp_setup_gic_el0(Void)
 		{
 			// enable distributor.
-			HAL::hal_mmio_write(GICD_BASE + GICD_CTLR, YES);
+			ke_dma_write<UInt32>(GICD_BASE, GICD_CTLR, YES);
 
-			UInt32 gicc_ctlr = HAL::hal_mmio_read<UInt32>(GICC_BASE + GICC_CTLR);
+			UInt32 gicc_ctlr = ke_dma_read<UInt32>(GICC_BASE, GICC_CTLR);
 
 			const auto kEnableSignalInt = YES;
 
 			gicc_ctlr |= kEnableSignalInt;		  // Enable signaling of interrupts
 			gicc_ctlr |= (kEnableSignalInt << 1); // Allow Group 1 interrupts in EL0
 
-			HAL::hal_mmio_write(GICC_BASE + GICC_CTLR, gicc_ctlr);
+			ke_dma_write<UInt32>(GICC_BASE, GICC_CTLR, gicc_ctlr);
 
 			// Set priority mask (accept all priorities)
-			HAL::hal_mmio_write(GICC_BASE + GICC_PMR, 0xFF);
+			ke_dma_write<UInt32>(GICC_BASE, GICC_PMR, 0xFF);
 
-			UInt32 icfgr = HAL::hal_mmio_read<UInt32>(GICD_BASE + GICD_ICFGR + (32 / 16) * 4);
+			UInt32 icfgr = ke_dma_read<UInt32>(GICD_BASE, GICD_ICFGR + (0x20 / 0x10) * 4);
 
 			icfgr |= (0x2 << ((32 % 16) * 2)); // Edge-triggered
-			HAL::hal_mmio_write(GICD_BASE + GICD_ICFGR + (32 / 16) * 4, icfgr);
+			ke_dma_write<UInt32>(GICD_BASE, GICD_ICFGR + (0x20 / 0x10) * 4, icfgr);
 
 			// Target interrupt 32 to CPU 1
-			HAL::hal_mmio_write(GICD_BASE + GICD_ITARGETSR + (32 / 4) * 4, 0x2 << ((32 % 4) * 8));
+			ke_dma_write<UInt32>(GICD_BASE, GICD_ITARGETSR + (0x20 / 0x04) * 4, 0x2 << ((32 % 4) * 8));
 
 			// Set interrupt 32 priority to lowest (0xFF)
-			HAL::hal_mmio_write(GICD_BASE + GICD_IPRIORITYR + (32 / 4) * 4, 0xFF << ((32 % 4) * 8));
+			ke_dma_write<UInt32>(GICD_BASE, GICD_IPRIORITYR + (0x20 / 0x04) * 4, 0xFF << ((32 % 4) * 8));
 
 			// Enable interrupt 32 for AP.
-			HAL::hal_mmio_write(GICD_BASE + GICD_ISENABLER + (32 / 32) * 4, 0x01 << (32 % 32));
-
-			kout << "AP's GIC configured in ISR 32." << kendl;
+			ke_dma_write<UInt32>(GICD_BASE, GICD_ISENABLER + 4, 0x01);
 		}
 
 		BOOL mp_handle_gic_interrupt_el0(Void)
 		{
 			// Read the interrupt ID
-			UInt32 interrupt_id = HAL::hal_mmio_read<UInt32>(GICC_BASE + GICC_IAR);
+			UInt32 interrupt_id = ke_dma_read<UInt32>(GICC_BASE, GICC_IAR);
 
 			// Check if it's a valid interrupt (not spurious)
 			if ((interrupt_id & 0x3FF) < 1020)
 			{
-				kout << "Handling interrupt for AP: " << (interrupt_id & 0x3FF) << kendl;
+				auto interrupt = interrupt_id & 0x3FF;
 
-				// TODO: Handle code here.
+				const UInt16 kInterruptScheduler = 0x20;
 
-				// End the interrupt
+				kout << "Handling interrupt for AP: " << interrupt << kendl;
 
-				HAL::hal_mmio_write(GICC_BASE + GICC_EOIR, interrupt_id);
+				switch (interrupt)
+				{
+				case kInterruptScheduler: {
+					ke_dma_write<UInt32>(GICC_BASE, GICC_EOIR, interrupt_id);
+					UserProcessHelper::StartScheduling();
+					break;
+				}
+				default: {
+					ke_dma_write<UInt32>(GICC_BASE, GICC_EOIR, interrupt_id);
+					break;
+				}
+				}
 
 				return YES;
 			}
