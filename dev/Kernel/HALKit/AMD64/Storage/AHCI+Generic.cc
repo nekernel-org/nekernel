@@ -62,8 +62,6 @@ STATIC UInt16  kSATAIndex			 = 0U;
 STATIC Char	   kCurrentDiskModel[50] = {"UNKNOWN AHCI DRIVE"};
 STATIC UInt16  kSATAPortsImplemented = 0U;
 
-BOOL kAHCICommandIssued = NO;
-
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept;
 
