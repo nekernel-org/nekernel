@@ -1,0 +1,12 @@
+{
+  "compiler_path": "g++",
+  "compiler_std": "c++23",
+  "headers_path": ["./"],
+  "sources_path": ["src/CommandLine.cc"],
+  "output_name": "./dist/cc",
+  "cpp_macros": [
+    "kCCVersion=0x0100",
+    "kCCVersionHighest=0x0100",
+    "kCCVersionLowest=0x0100"
+  ]
+}

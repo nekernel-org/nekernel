@@ -1,14 +1,10 @@
 <!-- Read Me of NeKernel -->
 
-# New Kernel Architecture OS (NeOS)
-
-## Brief:
-
-An OS written in C++ 20, with a System Call Interface Library, and a custom bootloader.
+# NeKernel Architecture
 
 ## Requirements:
 
-- MinGW/GCC.
+- MinGW/GCC, Clang.
 - LibCompiler Runtime Headers and Toolchain.
 - Netwide Assembler.
 - Git.
@@ -21,8 +17,12 @@ Clone repository:
 ```sh
 git clone git@github.com:devrije/kernel.git
 cd kernel
-./debug_ata.sh # Generic ATA PIO target
+./debug_ahci.sh # Generic AHCI target
 ```
+
+## Good first PRs
+
+- Contribute to the AHCI generic driver (PRDs are not being read)
 
 ## Warning:
 
