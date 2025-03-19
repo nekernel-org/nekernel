@@ -10,35 +10,35 @@ namespace NeOS
 {
 	DMAWrapper::operator bool()
 	{
-		return fAddress;
+		return this->fAddress;
 	}
 
 	bool DMAWrapper::operator!()
 	{
-		return !fAddress;
+		return !this->fAddress;
 	}
 
 	Boolean DMAWrapper::Check(UIntPtr offset) const
 	{
-		if (!fAddress)
+		if (!this->fAddress)
 			return false;
 
 		if (offset == 0)
 			return false;
 
 		kout << "[DMAWrapper::IsIn] Checking offset..\n";
-		return reinterpret_cast<UIntPtr>(fAddress) >= offset;
+		return reinterpret_cast<UIntPtr>(this->fAddress) >= offset;
 	}
 
 	bool DMAWrapper::Write(const UIntPtr& bit, const UIntPtr& offset)
 	{
-		if (!fAddress)
+		if (!this->fAddress)
 			return false;
 
 		kout << "[DMAWrapper::Write] Writing at address..\n";
 
 		auto addr =
-			(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(fAddress) + offset);
+			(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(this->fAddress) + offset);
 		*addr = bit;
 
 		return true;
@@ -46,12 +46,12 @@ namespace NeOS
 
 	UIntPtr DMAWrapper::Read(const UIntPtr& offset)
 	{
-		kout << "[DMAWrapper::Read] checking fAddress..\n";
-		if (!fAddress)
+		kout << "[DMAWrapper::Read] checking this->fAddress..\n";
+		if (!this->fAddress)
 			return 0;
 
-		kout << "[DMAWrapper::Read] Reading fAddress..\n";
-		return *(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(fAddress) + offset);
+		kout << "[DMAWrapper::Read] Reading this->fAddress..\n";
+		return *(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(this->fAddress) + offset);
 		;
 	}
 
@@ -77,7 +77,7 @@ namespace NeOS
 
 	DMAWrapper& DMAWrapper::operator=(voidPtr Ptr)
 	{
-		fAddress = Ptr;
+		this->fAddress = Ptr;
 		return *this;
 	}
 } // namespace NeOS
