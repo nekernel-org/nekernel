@@ -18,7 +18,7 @@ EXTERN_C NeOS::VoidPtr kInterruptVectorTable[];
 EXTERN_C NeOS::VoidPtr mp_user_switch_proc;
 EXTERN_C NeOS::Char mp_user_switch_proc_stack_begin[];
 
-STATIC NeOS::Void hal_init_cxx_ctors()
+STATIC NeOS::Void hal_init_scheduler_team()
 {
 	for (NeOS::SizeT i = 0U; i < NeOS::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
@@ -52,7 +52,7 @@ EXTERN_C void hal_init_platform(
 		return;
 	}
 
-	hal_init_cxx_ctors();
+	hal_init_scheduler_team();
 
 	/************************************** */
 	/*     INITIALIZE BIT MAP.              */

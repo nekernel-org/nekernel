@@ -273,6 +273,8 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
 	{
+		/// access attributes (in order)
+		/// EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
 		UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
 		ST->RuntimeServices->SetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, &attr, &kernel_path_sz, kernel_path);
 	}
