@@ -10,9 +10,9 @@
 - [GIT](https://git-scm.com/)
 - [BTB](https://github.com/ne-gh/btb)
 
-## Building's Notice:
+## Builders's Notice:
 
-You have to mount the FAT32 image in order to put the src/Root/ contents in it! (To make the emulator boot NeOS)
+You must mount the contents to the fat32.img prior running! Otherwise the emulator won't find a valid ESP.
 
 ## Contributors's Notice:
 
