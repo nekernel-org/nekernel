@@ -30,8 +30,10 @@ namespace NeOS
 		return reinterpret_cast<UIntPtr>(this->fAddress) >= offset;
 	}
 
-	bool DMAWrapper::Write(const UIntPtr& bit, const UIntPtr& offset)
+	bool DMAWrapper::Write(const UIntPtr& bit, const UInt32& offset)
 	{
+		kout << "[DMAWrapper::Read] Checking this->fAddress..\n";
+
 		if (!this->fAddress)
 			return false;
 
@@ -44,13 +46,15 @@ namespace NeOS
 		return true;
 	}
 
-	UIntPtr DMAWrapper::Read(const UIntPtr& offset)
+	UIntPtr DMAWrapper::Read(const UInt32& offset)
 	{
-		kout << "[DMAWrapper::Read] checking this->fAddress..\n";
+		kout << "[DMAWrapper::Read] Checking this->fAddress..\n";
+
 		if (!this->fAddress)
 			return 0;
 
 		kout << "[DMAWrapper::Read] Reading this->fAddress..\n";
+
 		return *(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(this->fAddress) + offset);
 		;
 	}

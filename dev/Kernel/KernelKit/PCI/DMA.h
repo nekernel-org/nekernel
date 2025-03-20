@@ -56,8 +56,8 @@ namespace NeOS
 		bool operator!();
 
 	public:
-		bool	Write(const UIntPtr& bit, const UIntPtr& offset);
-		UIntPtr Read(const UIntPtr& offset);
+		bool	Write(const UIntPtr& bit, const UInt32& offset);
+		UIntPtr Read(const UInt32& offset);
 		Boolean Check(UIntPtr offset) const;
 
 	public:
