@@ -14,6 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install Packages
-      run: apt-get install mingw32
+      run: sudo apt install mingw32
     - name: Build Repository
       run: cd dev/Kernel && make -f amd64-desktop.make all && cd ../../ && cd dev/Boot && make -f amd64-desktop.make all
