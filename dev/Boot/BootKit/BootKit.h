@@ -365,12 +365,12 @@ namespace Boot
 
 		BTextWriter writer;
 
-		writer << "partition name: " << part.PartitionName << "\r";
-		writer << "start: " << part.StartCatalog << "\r";
-		writer << "number of catalogs: " << part.CatalogCount << "\r";
-		writer << "free catalog: " << part.FreeCatalog << "\r";
-		writer << "free sectors: " << part.FreeSectors << "\r";
-		writer << "sector size: " << part.SectorSize << "\r";
+		writer << "BootZ: Partition name: " << part.PartitionName << "\r";
+		writer << "BootZ: Start: " << part.StartCatalog << "\r";
+		writer << "BootZ: Number of catalogs: " << part.CatalogCount << "\r";
+		writer << "BootZ: Free catalog: " << part.FreeCatalog << "\r";
+		writer << "BootZ: Free sectors: " << part.FreeSectors << "\r";
+		writer << "BootZ: Sector size: " << part.SectorSize << "\r";
 
 #ifdef BOOTZ_EPM_SUPPORT
 		EPM_PART_BLOCK epm_boot{0};
