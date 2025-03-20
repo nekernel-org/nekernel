@@ -94,7 +94,7 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C NeOS::Void hal_real_init(NeOS::Void) noexcept
 {
-	auto dev = NeOS::sk_init_ahci_device(NO);
+	NeOS::NeFS::fs_init_nefs();
 
 	NeOS::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 

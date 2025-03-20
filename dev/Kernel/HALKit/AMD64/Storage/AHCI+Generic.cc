@@ -73,7 +73,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 {
 	kSATASectorCount = 0UL;
 
-	const UInt16 kSzIdent = 512;
+	const UInt16 kSzIdent = kib_cast(1);
 
 	UInt8 identify_data[kSzIdent] = {0};
 
@@ -205,6 +205,7 @@ SizeT drv_get_size_ahci()
 	return drv_get_sector_count() * kAHCISectorSize;
 }
 
+/// @brief Enable Host and probe using the IDENTIFY command.
 STATIC Void ahci_enable_and_probe()
 {
 	if (kSATAHba->Bohc & kHBABohcBiosOwned)
@@ -213,7 +214,14 @@ STATIC Void ahci_enable_and_probe()
 
 		while (kSATAHba->Bohc & kHBABohcBiosOwned)
 		{
+			;
 		}
+	}
+
+	// Poll until ready.
+	while (kSATAHba->Ports[kSATAIndex].Cmd & kHBAPxCmdCR)
+	{
+		;
 	}
 
 	kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;

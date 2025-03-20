@@ -2,27 +2,28 @@
 
 # NeKernel
 
-## Requirements:
+
+
+## Required:
 
 - MinGW/GCC, Clang.
-- LibCompiler Runtime Headers and Toolchain.
 - Netwide Assembler.
 - Git.
 - BTB.
 
-## Installation:
+## Install:
 
 Clone repository:
 
 ```sh
 git clone git@github.com:ne-gh/kernel.git
 cd kernel
-./debug_ahci.sh # Generic AHCI target
+./debug_ata.sh # Generic ATA PIO target
 ```
 
-## Good first PRs
+## Good first PRs:
 
-- Contribute to the AHCI generic driver (PRDs are not being read)
+- Contribute to the AHCI generic driver, it's the current main effort to bring modern storage standards to the kernel.
 
 ## Warning:
 
