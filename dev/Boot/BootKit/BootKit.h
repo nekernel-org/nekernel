@@ -45,8 +45,8 @@ namespace EFI
 
 namespace Boot
 {
-	class BTextWriter;
-	class BFileReader;
+	class BootTextWriter;
+	class BootFileReader;
 	class BootThread;
 	class BVersionString;
 
@@ -62,31 +62,31 @@ namespace Boot
 	 * @brief BootKit Text Writer class
 	 * Writes to UEFI StdOut.
 	 */
-	class BTextWriter final
+	class BootTextWriter final
 	{
-		BTextWriter& _Write(const Long& num);
+		BootTextWriter& _Write(const Long& num);
 
 	public:
-		BTextWriter& Write(const Long& num);
-		BTextWriter& Write(const Char* str);
-		BTextWriter& Write(const CharacterTypeUTF16* str);
-		BTextWriter& WriteCharacter(CharacterTypeUTF16 c);
-		BTextWriter& Write(const UChar* str);
+		BootTextWriter& Write(const Long& num);
+		BootTextWriter& Write(const Char* str);
+		BootTextWriter& Write(const CharacterTypeUTF16* str);
+		BootTextWriter& WriteCharacter(CharacterTypeUTF16 c);
+		BootTextWriter& Write(const UChar* str);
 
 		template <typename T>
-		BTextWriter& operator<<(T elem)
+		BootTextWriter& operator<<(T elem)
 		{
 			this->Write(elem);
 			return *this;
 		}
 
 	public:
-		explicit BTextWriter() = default;
-		~BTextWriter()		   = default;
+		explicit BootTextWriter() = default;
+		~BootTextWriter()		  = default;
 
 	public:
-		BTextWriter& operator=(const BTextWriter&) = default;
-		BTextWriter(const BTextWriter&)			   = default;
+		BootTextWriter& operator=(const BootTextWriter&) = default;
+		BootTextWriter(const BootTextWriter&)			 = default;
 	};
 
 	NeOS::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const NeOS::SizeT len);
@@ -105,12 +105,12 @@ namespace Boot
 	 * @brief BootKit File Reader class
 	 * Reads the Firmware Boot partition and filesystem.
 	 */
-	class BFileReader final
+	class BootFileReader final
 	{
 	public:
-		explicit BFileReader(const CharacterTypeUTF16* path,
-							 EfiHandlePtr			   ImageHandle);
-		~BFileReader();
+		explicit BootFileReader(const CharacterTypeUTF16* path,
+								EfiHandlePtr			  ImageHandle);
+		~BootFileReader();
 
 	public:
 		Void ReadAll(SizeT until, SizeT chunk = kib_cast(4), UIntPtr out_address = 0UL);
@@ -139,14 +139,14 @@ namespace Boot
 		UInt64& Size();
 
 	public:
-		BFileReader& operator=(const BFileReader&) = default;
-		BFileReader(const BFileReader&)			   = default;
+		BootFileReader& operator=(const BootFileReader&) = default;
+		BootFileReader(const BootFileReader&)			 = default;
 
 	private:
 		Int32			   mErrorCode{kOperationOkay};
 		VoidPtr			   mBlob{nullptr};
 		CharacterTypeUTF16 mPath[kPathLen];
-		BTextWriter		   mWriter;
+		BootTextWriter	   mWriter;
 		EfiFileProtocol*   mFile{nullptr};
 		UInt64			   mSizeFile{0};
 		EfiFileProtocol*   mRootFs;
@@ -240,7 +240,7 @@ namespace Boot
 
 			NEFS_ROOT_PARTITION_BLOCK* blockPart = reinterpret_cast<NEFS_ROOT_PARTITION_BLOCK*>(buf);
 
-			BTextWriter writer;
+			BootTextWriter writer;
 
 			for (SizeT indexMag = 0UL; indexMag < kNeFSIdentLen; ++indexMag)
 			{
@@ -279,8 +279,8 @@ namespace Boot
 			if (!blob)
 				return NO;
 
-			Lba				 startLba = part.StartCatalog;
-			BTextWriter		 writer;
+			Lba			   startLba = part.StartCatalog;
+			BootTextWriter writer;
 
 			NEFS_CATALOG_STRUCT catalogKind{0};
 
@@ -363,7 +363,7 @@ namespace Boot
 
 		fDiskDev.Write((Char*)&part, sizeof(NEFS_ROOT_PARTITION_BLOCK));
 
-		BTextWriter writer;
+		BootTextWriter writer;
 
 		writer << "BootZ: Partition name: " << part.PartitionName << "\r";
 		writer << "BootZ: Start: " << part.StartCatalog << "\r";

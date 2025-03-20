@@ -202,7 +202,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
 
-	Boot::BFileReader reader_syschk(L"syschk.sys", image_handle);
+	Boot::BootFileReader reader_syschk(L"syschk.sys", image_handle);
 	reader_syschk.ReadAll(0);
 
 	Boot::BootThread* syschk_thread = nullptr;
@@ -279,7 +279,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		ST->RuntimeServices->SetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, &attr, &kernel_path_sz, kernel_path);
 	}
 
-	Boot::BFileReader reader_kernel(kernel_path, image_handle);
+	Boot::BootFileReader reader_kernel(kernel_path, image_handle);
 
 	reader_kernel.ReadAll(0);
 

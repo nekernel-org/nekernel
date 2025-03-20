@@ -34,7 +34,7 @@ namespace CFKit
 		if (!exec)
 			return nullptr;
 
-		return (LDR_OPTIONAL_HEADER_PTR)(VoidPtr)(&exec->mCharacteristics + 1);
+		return (LDR_OPTIONAL_HEADER_PTR)(VoidPtr)(&exec->Characteristics + 1);
 	}
 
 	/// @brief Finds the PE header inside the blob.

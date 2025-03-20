@@ -390,14 +390,14 @@ typedef struct
 	UInt32									  SizeOfInfo;
 	UIntPtr									  FrameBufferBase;
 	UInt32									  FrameBufferSize;
-} EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE;
+} EfiGraphicsOutputProtocolMode;
 
 typedef struct EfiGraphicsOutputProtocol
 {
 	EfiGraphicsOutputProtocolQueryMode QueryMode;
 	EfiGraphicsOutputProtocolSetMode   SetMode;
 	EfiGraphicsOutputProtocolBlt	   Blt;
-	EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE* Mode;
+	EfiGraphicsOutputProtocolMode*	   Mode;
 } EfiGraphicsOutputProtocol;
 
 typedef struct EfiLoadImageProtocol

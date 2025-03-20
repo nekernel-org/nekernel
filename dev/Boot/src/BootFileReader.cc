@@ -22,7 +22,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 ///
-///  @name BFileReader class
+///  @name BootFileReader class
 ///  @brief Reads the file as a blob.
 ///
 ///
@@ -31,8 +31,8 @@
 /***
 	@brief File Reader constructor.
 */
-Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
-							   EfiHandlePtr				 ImageHandle)
+Boot::BootFileReader::BootFileReader(const CharacterTypeUTF16* path,
+									 EfiHandlePtr			   ImageHandle)
 {
 	if (path != nullptr)
 	{
@@ -98,7 +98,7 @@ Boot::BFileReader::BFileReader(const CharacterTypeUTF16* path,
 	mErrorCode = kOperationOkay;
 }
 
-Boot::BFileReader::~BFileReader()
+Boot::BootFileReader::~BootFileReader()
 {
 	if (this->mFile)
 	{
@@ -126,7 +126,7 @@ Boot::BFileReader::~BFileReader()
 	@param **readUntil** size of file
 	@param **chunkToRead** chunk to read each time.
 */
-Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_address)
+Void Boot::BootFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_address)
 {
 	UInt32 szInfo = sizeof(EfiFileInfo);
 
@@ -186,21 +186,21 @@ Void Boot::BFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_
 
 /// @brief error code getter.
 /// @return the error code.
-Int32& Boot::BFileReader::Error()
+Int32& Boot::BootFileReader::Error()
 {
 	return mErrorCode;
 }
 
 /// @brief blob getter.
 /// @return the blob.
-VoidPtr Boot::BFileReader::Blob()
+VoidPtr Boot::BootFileReader::Blob()
 {
 	return mBlob;
 }
 
 /// @breif Size getter.
 /// @return the size of the file.
-UInt64& Boot::BFileReader::Size()
+UInt64& Boot::BootFileReader::Size()
 {
 	return mSizeFile;
 }

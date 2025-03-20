@@ -9,7 +9,7 @@
 
 namespace NeOS
 {
-	BOOL SwapDisk::Write(const Char* fork_name, const SizeT fork_name_len, SwapDiskHdrRef data, const SizeT data_len)
+	BOOL SwapDisk::Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER* data, const SizeT data_len)
 	{
 		if (!fork_name || !fork_name_len)
 			return NO;
@@ -22,7 +22,7 @@ namespace NeOS
 
 		FileStream file(kSwapPageFile, "wb");
 
-		auto ret = file.Write(fork_name, data, sizeof(SwapDiskHdr) + data_len);
+		auto ret = file.Write(fork_name, data, sizeof(SWAP_DISK_HEADER) + data_len);
 
 		if (ret.Error())
 			return NO;
@@ -30,7 +30,7 @@ namespace NeOS
 		return YES;
 	}
 
-	SwapDiskHdrRef SwapDisk::Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len)
+	SWAP_DISK_HEADER* SwapDisk::Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len)
 	{
 		if (!fork_name || !fork_name_len)
 			return nullptr;
@@ -40,8 +40,8 @@ namespace NeOS
 
 		FileStream file(kSwapPageFile, "rb");
 
-		VoidPtr blob = file.Read(fork_name, sizeof(SwapDiskHdr) + data_len);
+		VoidPtr blob = file.Read(fork_name, sizeof(SWAP_DISK_HEADER) + data_len);
 
-		return (SwapDiskHdrRef)blob;
+		return (SWAP_DISK_HEADER*)blob;
 	}
 } // namespace NeOS

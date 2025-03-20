@@ -17,7 +17,7 @@
 
 #ifdef __BOOTZ__
 // forward decl.
-class BTextWriter;
+class BootTextWriter;
 
 #define __BOOTKIT_NO_INCLUDE__ 1
 

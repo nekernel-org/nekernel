@@ -196,7 +196,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	Boot::BFileReader reader_kernel(L"neoskrnl.exe", image_handle);
+	Boot::BootFileReader reader_kernel(L"neoskrnl.exe", image_handle);
 
 	reader_kernel.ReadAll(0);
 

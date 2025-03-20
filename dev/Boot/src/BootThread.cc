@@ -30,7 +30,7 @@ namespace Boot
 		// detect the format.
 		const Char* blob_bytes = reinterpret_cast<char*>(fBlob);
 
-		BTextWriter writer;
+		BootTextWriter writer;
 
 		if (!blob_bytes)
 		{
@@ -48,15 +48,15 @@ namespace Boot
 				return;
 
 #ifdef __NE_AMD64__
-			if (header_ptr->mMachine != kPeMachineAMD64 ||
-				header_ptr->mSignature != kPeSignature)
+			if (header_ptr->Machine != kPeMachineAMD64 ||
+				header_ptr->Signature != kPeSignature)
 			{
 				writer.Write("BootZ: Not a PE32+ executable.\r");
 				return;
 			}
 #elif defined(__NE_ARM64__)
-			if (header_ptr->mMachine != kPeMachineARM64 ||
-				header_ptr->mSignature != kPeSignature)
+			if (header_ptr->Machine != kPeMachineARM64 ||
+				header_ptr->Signature != kPeSignature)
 			{
 				writer.Write("BootZ: Not a PE32+ executable.\r");
 				return;
@@ -65,25 +65,25 @@ namespace Boot
 
 			writer.Write("BootZ: PE32+ executable detected (NeKernel Subsystem).\r");
 
-			auto numSecs = header_ptr->mNumberOfSections;
+			auto numSecs = header_ptr->NumberOfSections;
 
-			writer.Write("BootZ: Major Linker Ver: ").Write(opt_header_ptr->mMajorLinkerVersion).Write("\r");
-			writer.Write("BootZ: Minor Linker Ver: ").Write(opt_header_ptr->mMinorLinkerVersion).Write("\r");
-			writer.Write("BootZ: Major Subsystem Ver: ").Write(opt_header_ptr->mMajorSubsystemVersion).Write("\r");
-			writer.Write("BootZ: Minor Subsystem Ver: ").Write(opt_header_ptr->mMinorSubsystemVersion).Write("\r");
-			writer.Write("BootZ: Magic: ").Write(header_ptr->mSignature).Write("\r");
+			writer.Write("BootZ: Major Linker Ver: ").Write(opt_header_ptr->MajorLinkerVersion).Write("\r");
+			writer.Write("BootZ: Minor Linker Ver: ").Write(opt_header_ptr->MinorLinkerVersion).Write("\r");
+			writer.Write("BootZ: Major Subsystem Ver: ").Write(opt_header_ptr->MajorSubsystemVersion).Write("\r");
+			writer.Write("BootZ: Minor Subsystem Ver: ").Write(opt_header_ptr->MinorSubsystemVersion).Write("\r");
+			writer.Write("BootZ: Magic: ").Write(header_ptr->Signature).Write("\r");
 
 			constexpr auto cPageSize = 512;
 
-			EfiPhysicalAddress loadStartAddress = opt_header_ptr->mImageBase;
-			loadStartAddress += opt_header_ptr->mBaseOfData;
+			EfiPhysicalAddress loadStartAddress = opt_header_ptr->ImageBase;
+			loadStartAddress += opt_header_ptr->BaseOfData;
 
 			writer.Write("BootZ: Image base: ").Write(loadStartAddress).Write("\r");
 
-			auto numPages = opt_header_ptr->mSizeOfImage / cPageSize;
+			auto numPages = opt_header_ptr->SizeOfImage / cPageSize;
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
 
-			LDR_SECTION_HEADER_PTR sectPtr = (LDR_SECTION_HEADER_PTR)(((Char*)opt_header_ptr) + header_ptr->mSizeOfOptionalHeader);
+			LDR_SECTION_HEADER_PTR sectPtr = (LDR_SECTION_HEADER_PTR)(((Char*)opt_header_ptr) + header_ptr->SizeOfOptionalHeader);
 
 			constexpr auto sectionForCode	= ".text";
 			constexpr auto sectionForNewLdr = ".ldr";
@@ -93,14 +93,14 @@ namespace Boot
 			{
 				LDR_SECTION_HEADER_PTR sect = &sectPtr[sectIndex];
 
-				SetMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), 0, sect->mSizeOfRawData);
+				SetMem((VoidPtr)(loadStartAddress + sect->VirtualAddress), 0, sect->SizeOfRawData);
 
-				if (StrCmp(sectionForCode, sect->mName) == 0)
+				if (StrCmp(sectionForCode, sect->Name) == 0)
 				{
-					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + opt_header_ptr->mAddressOfEntryPoint);
+					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + opt_header_ptr->AddressOfEntryPoint);
 					writer.Write("BootZ: Executable entry address: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
-				else if (StrCmp(sectionForNewLdr, sect->mName) == 0)
+				else if (StrCmp(sectionForNewLdr, sect->Name) == 0)
 				{
 					struct HANDOVER_INFORMATION_STUB
 					{
@@ -108,7 +108,7 @@ namespace Boot
 						UInt32 HandoverType;
 						UInt32 HandoverPad;
 						UInt32 HandoverArch;
-					}* handover_struc = (struct HANDOVER_INFORMATION_STUB*)((UIntPtr)fBlob + sect->mPointerToRawData);
+					}* handover_struc = (struct HANDOVER_INFORMATION_STUB*)((UIntPtr)fBlob + sect->PointerToRawData);
 
 					if (handover_struc->HandoverMagic != kHandoverMagic &&
 						handover_struc->HandoverType != HEL::kTypeKernel)
@@ -134,9 +134,9 @@ namespace Boot
 					}
 				}
 
-				writer.Write("BootZ: Raw offset: ").Write(sect->mPointerToRawData).Write(" of ").Write(sect->mName).Write("\r");
+				writer.Write("BootZ: Raw offset: ").Write(sect->PointerToRawData).Write(" of ").Write(sect->Name).Write("\r");
 
-				CopyMem((VoidPtr)(loadStartAddress + sect->mVirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->mPointerToRawData), sect->mSizeOfRawData);
+				CopyMem((VoidPtr)(loadStartAddress + sect->VirtualAddress), (VoidPtr)((UIntPtr)fBlob + sect->PointerToRawData), sect->SizeOfRawData);
 			}
 		}
 		else if (blob_bytes[0] == kPefMagic[0] &&

@@ -67,7 +67,7 @@ Boolean boot_ata_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	if (boot_ata_detected())
 		return true;
 
-	BTextWriter writer;
+	BootTextWriter writer;
 
 	UInt16 IO = Bus;
 

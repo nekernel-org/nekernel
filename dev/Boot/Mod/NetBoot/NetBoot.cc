@@ -19,21 +19,21 @@ EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 
 	if (inet.PatchLength < 0)
 	{
-		Boot::BTextWriter writer;
+		Boot::BootTextWriter writer;
 		writer.Write("NetBootLauncher: No Patch attached to packet.\r");
 
 		return kEfiFail;
 	}
 	else if (inet.Preflight)
 	{
-		Boot::BTextWriter writer;
+		Boot::BootTextWriter writer;
 		writer.Write("NetBootLauncher: Preflight over preflight response.\r");
 
 		return kEfiFail;
 	}
 	else if (inet.EEPROM)
 	{
-		Boot::BTextWriter writer;
+		Boot::BootTextWriter writer;
 		writer.Write("NetBootLauncher: EEPROM flash not available for now.\r");
 
 		return kEfiFail;
