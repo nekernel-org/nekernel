@@ -1,6 +1,6 @@
 <!-- Read Me of NeKernel -->
 
-# NeKernel Architecture
+# NeKernel
 
 ## Requirements:
 
