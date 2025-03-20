@@ -220,13 +220,13 @@ namespace Boot
 
 		NE_COPY_DELETE(BDiskFormatFactory);
 
-		/// @brief Format disk using partition name and blob_list.
+		/// @brief Format disk using partition name and blob.
 		/// @param Partition part_name the target partition name.
-		/// @param blob_list blobs array.
-		/// @param blob_cnt blobs array count.
+		/// @param blob blobs array.
+		/// @param blob_sz blobs array count.
 		/// @retval True disk has been formatted.
 		/// @retval False failed to format.
-		Boolean Format(const Char* part_name, BFileDescriptor* blob_list, SizeT blob_cnt);
+		Boolean Format(const Char* part_name, BFileDescriptor* blob, SizeT blob_sz);
 
 		/// @brief check if partition is good.
 		Bool IsPartitionValid() noexcept
@@ -268,12 +268,17 @@ namespace Boot
 
 	private:
 		/// @brief Write all of the requested catalogs into the filesystem.
-		/// @param blob_list the blobs.
-		/// @param blob_cnt the number of blobs to write.
+		/// @param blob the blobs.
+		/// @param blob_sz the number of blobs to write.
 		/// @param part the NeFS partition block.
-		Boolean WriteCatalogList(BFileDescriptor* blob_list, SizeT blob_cnt, NEFS_ROOT_PARTITION_BLOCK& part)
+		Boolean WriteCatalogList(BFileDescriptor* blob, SizeT blob_sz, NEFS_ROOT_PARTITION_BLOCK& part)
 		{
-			BFileDescriptor* blob	  = blob_list;
+			if (blob_sz < sizeof(NEFS_CATALOG_STRUCT))
+				return NO;
+
+			if (!blob)
+				return NO;
+
 			Lba				 startLba = part.StartCatalog;
 			BTextWriter		 writer;
 
@@ -316,10 +321,10 @@ namespace Boot
 	/// @retval False failed to format.
 	template <typename BootDev>
 	inline Boolean BDiskFormatFactory<BootDev>::Format(const Char*							part_name,
-													   BDiskFormatFactory::BFileDescriptor* blob_list,
-													   SizeT								blob_cnt)
+													   BDiskFormatFactory::BFileDescriptor* blob,
+													   SizeT								blob_sz)
 	{
-		if (!blob_list || !blob_cnt)
+		if (!blob || !blob_sz)
 			return false; /// sanity check
 
 		/// @note A catalog roughly equal to a sector.
@@ -343,9 +348,9 @@ namespace Boot
 		CopyMem(part.PartitionName, part_name, StrLen(part_name));
 
 		part.Version	  = kNeFSVersionInteger;
-		part.CatalogCount = blob_cnt;
-		part.Kind		  = kNeFSHardDrive;
-		part.SectorSize	  = 512;
+		part.CatalogCount = blob_sz / sizeof(NEFS_CATALOG_STRUCT);
+		part.Kind		  = BootDev::kSectorSize;
+		part.SectorSize	  = kATASectorSize;
 		part.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NEFS_CATALOG_STRUCT);
 		part.SectorCount  = fDiskDev.GetSectorsCount();
 		part.FreeSectors  = fDiskDev.GetSectorsCount();
@@ -360,12 +365,12 @@ namespace Boot
 
 		BTextWriter writer;
 
-		writer << "partition name: " << part.PartitionName << "\n";
-		writer << "start: " << part.StartCatalog << "\n";
-		writer << "number of catalogs: " << part.CatalogCount << "\n";
-		writer << "free catalog: " << part.FreeCatalog << "\n";
-		writer << "free sectors: " << part.FreeSectors << "\n";
-		writer << "sector size: " << part.SectorSize << "\n";
+		writer << "partition name: " << part.PartitionName << "\r";
+		writer << "start: " << part.StartCatalog << "\r";
+		writer << "number of catalogs: " << part.CatalogCount << "\r";
+		writer << "free catalog: " << part.FreeCatalog << "\r";
+		writer << "free sectors: " << part.FreeSectors << "\r";
+		writer << "sector size: " << part.SectorSize << "\r";
 
 #ifdef BOOTZ_EPM_SUPPORT
 		EPM_PART_BLOCK epm_boot{0};
