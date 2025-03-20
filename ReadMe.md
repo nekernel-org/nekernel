@@ -15,7 +15,7 @@
 Clone repository:
 
 ```sh
-git clone git@github.com:devrije/kernel.git
+git clone git@github.com:ne-gh/kernel.git
 cd kernel
 ./debug_ahci.sh # Generic AHCI target
 ```
