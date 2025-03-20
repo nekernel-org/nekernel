@@ -269,7 +269,7 @@ namespace Boot
 	private:
 		/// @brief Write all of the requested catalogs into the filesystem.
 		/// @param blob the blobs.
-		/// @param blob_sz the number of blobs to write.
+		/// @param blob_sz the number of blobs to write (n * sizeof(blob_struct)).
 		/// @param part the NeFS partition block.
 		Boolean WriteCatalogList(BFileDescriptor* blob, SizeT blob_sz, NEFS_ROOT_PARTITION_BLOCK& part)
 		{
@@ -314,9 +314,9 @@ namespace Boot
 	};
 
 	/// @brief Format disk.
-	/// @param Partition Name
-	/// @param Blobs.
-	/// @param Number of blobs.
+	/// @param part_name partition Name
+	/// @param blob blos.
+	/// @param blob_sz n blobs (n *  sizeof(blob_struct)).
 	/// @retval True disk has been formatted.
 	/// @retval False failed to format.
 	template <typename BootDev>
