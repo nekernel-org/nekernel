@@ -13,8 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: APT
+    - name: Install Packages
       run: apt-get install mingw32
-    - name: Build
-      run: make
-    - name: cd dev/Kernel && make -f amd64-desktop.make all && cd ../../ && cd dev/Boot && make -f amd64-desktop.make all
+    - name: Build Repository
+      run: cd dev/Kernel && make -f amd64-desktop.make all && cd ../../ && cd dev/Boot && make -f amd64-desktop.make all
