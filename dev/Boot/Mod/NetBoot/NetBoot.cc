@@ -24,25 +24,21 @@ EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 
 		return kEfiFail;
 	}
-	else if (inet.Preflight)
-	{
-		Boot::BootTextWriter writer;
-		writer.Write("NetBootLauncher: Preflight over preflight response.\r");
 
-		return kEfiFail;
+	if (!inet.EEPROM)
+	{
+		Boot::BootThread thread(inet.Data);
+
+		if (thread.IsValid())
+			return thread.Start(handover, YES);
 	}
-	else if (inet.EEPROM)
+	else
 	{
 		Boot::BootTextWriter writer;
 		writer.Write("NetBootLauncher: EEPROM flash not available for now.\r");
 
-		return kEfiFail;
+		return kEfiFail; // TODO: Add support for EEPROM firmware update.
 	}
-
-	Boot::BootThread thread(inet.Data);
-
-	if (thread.IsValid())
-		return thread.Start(handover, YES);
 
 	return kEfiFail;
 }
