@@ -17,7 +17,7 @@
 #define kNetBootNameLen (256U)
 
 /// @brief the internet header is used to download updates OTA.
-typedef struct NetBootInternetHeader
+typedef struct NETBOOT_INTERNET_HEADER
 {
 	NeOS::Char NB1; /// magic char 1 'N'
 	NeOS::Char NB2; /// magic char 2 'E'
@@ -30,4 +30,4 @@ typedef struct NetBootInternetHeader
 	NeOS::Boolean EEPROM : 1;					/// does it imply an EEPROM reprogram?
 	NeOS::Boolean Preflight : 1;				/// is it a preflight packet.
 	NeOS::Char	  Data[];						/// non preflight packet has a patch blob for a **PatchTarget**
-} ATTRIBUTE(packed) NetBootInternetHeader;
+} ATTRIBUTE(packed) NETBOOT_INTERNET_HEADER;

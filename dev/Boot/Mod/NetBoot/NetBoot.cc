@@ -13,7 +13,7 @@
 
 EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 {
-	NetBootInternetHeader inet{};
+	NETBOOT_INTERNET_HEADER inet{};
 
 	/// TODO: Read Packet from localhost
 

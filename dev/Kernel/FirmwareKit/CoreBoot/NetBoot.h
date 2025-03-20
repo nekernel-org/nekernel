@@ -9,7 +9,7 @@
 #include <NewKit/Defines.h>
 
 /// @brief the internet header is used to download updates OTA.
-typedef struct NetBootInternetHeader
+typedef struct NETBOOT_INTERNET_HEADER
 {
 	NeOS::Char NB1; /// magic char 1 'N'
 	NeOS::Char NB2; /// magic char 2 'E'
@@ -22,4 +22,4 @@ typedef struct NetBootInternetHeader
 	NeOS::Boolean ImpliesROM;		 /// does it imply an EEPROM reprogram?
 	NeOS::Boolean Preflight;		 /// is it a preflight packet.
 	NeOS::Char	  Patch[];			 /// non preflight packet has a patch blob for a **PatchTarget**
-} NetBootInternetHeader;
+} NETBOOT_INTERNET_HEADER;
