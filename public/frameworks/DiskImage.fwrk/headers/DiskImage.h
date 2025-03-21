@@ -18,8 +18,8 @@
 #define kDIMinDiskSz gib_cast(1)
 #define kDIDefaultOutputName "disk.eimg"
 
-#define kDISuccessStatus 0
-#define kDIFailureStatus 1
+#define kDISuccessStatus (0)
+#define kDIFailureStatus (1)
 
 struct DI_DISK;
 
