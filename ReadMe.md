@@ -29,4 +29,10 @@ cd kernel
 ./debug_ata.sh # Generic ATA PIO target
 ```
 
+## Screenshots:
+
+![FS](doc/filesystem.png)
+
+![APIC](doc/apic.png)
+
 ###### Copyright (C) 2024-2025 Amlal EL Mahrouss, All rights reserved.
