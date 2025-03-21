@@ -29,7 +29,7 @@ namespace NeOS
 
 		NE_COPY_DEFAULT(SwapDisk);
 
-		BOOL		 Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER* data, const SizeT data_len);
+		BOOL			  Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER* data, const SizeT data_len);
 		SWAP_DISK_HEADER* Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len);
 	};
 

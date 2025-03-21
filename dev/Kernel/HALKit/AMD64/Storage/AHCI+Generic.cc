@@ -337,7 +337,7 @@ namespace NeOS
 
 			if (!disk)
 				return;
-			
+
 			drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
 
@@ -358,7 +358,7 @@ namespace NeOS
 
 			drv_std_input_output<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
-	}
+	} // namespace Detail
 
 	ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
 	{
