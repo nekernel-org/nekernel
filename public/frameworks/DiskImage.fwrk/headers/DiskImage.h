@@ -21,7 +21,7 @@
 #define kDISuccessStatus (0)
 #define kDIFailureStatus (1)
 
-struct DI_DISK;
+struct DI_DISK_IMAGE;
 
 struct DI_DISK_IMAGE
 {
