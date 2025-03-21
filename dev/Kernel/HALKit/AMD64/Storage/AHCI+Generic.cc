@@ -321,22 +321,52 @@ namespace NeOS
 		return pi;
 	}
 
+	namespace Detail
+	{
+		/// @brief Read AHCI device.
+		/// @param self device
+		/// @param mnt mounted disk.
+		STATIC Void sk_io_read_ahci(IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt)
+		{
+			AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
+
+			if (!dev)
+				return;
+
+			auto disk = mnt->GetAddressOf(dev->GetIndex());
+
+			if (!disk)
+				return;
+			
+			drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+		}
+
+		/// @brief Write AHCI device.
+		/// @param self device
+		/// @param mnt mounted disk.
+		STATIC Void sk_io_write_ahci(IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt)
+		{
+			AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
+
+			if (!dev)
+				return;
+
+			auto disk = mnt->GetAddressOf(dev->GetIndex());
+
+			if (!disk)
+				return;
+
+			drv_std_input_output<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+		}
+	}
+
 	ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
 	{
 		if (!drv_std_detected_ahci())
 			return ErrorOr<AHCIDeviceInterface>(kErrorDisk);
 
-		AHCIDeviceInterface device([](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
-		AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
-		
-		auto disk = mnt->GetAddressOf(dev->GetIndex());
-		drv_std_input_output<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize); },
-								   [](IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt) -> void {
-									   AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
-
-									   auto disk = mnt->GetAddressOf(dev->GetIndex());
-									   drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
-								   },
+		AHCIDeviceInterface device(Detail::sk_io_read_ahci,
+								   Detail::sk_io_write_ahci,
 								   nullptr);
 
 		device.SetPortsImplemented(kSATAPortsImplemented);
