@@ -9,15 +9,12 @@
 
 #pragma once
 
-#include <FirmwareKit/EPM.h>
-#include <FSKit/NeFS.h>
-#include <uuid/uuid.h>
 #include <LibSCI/SCI.h>
 
 #define kDISectorSz			 (512)
-#define kDIMinDiskSz		 gib_cast(1)
+#define kDIMinDiskSz		 (1024 * 1024 * 1024)
 #define kDIDefaultOutputName "disk.eimg"
-
+#define kDIDefaultDiskName "Disk"
 #define kDISuccessStatus (0)
 #define kDIFailureStatus (1)
 
@@ -25,19 +22,19 @@ struct DI_DISK_IMAGE;
 
 struct DI_DISK_IMAGE
 {
-	char	  disk_name[512] = "Disk Image";
-	int		  sector_sz		 = kDISectorSz;
-	const int block_cnt		 = 0;
-	size_t	  disk_sz		 = kDIMinDiskSz;
-	char	  out_name[256]	 = kDIDefaultOutputName;
+	Char	  disk_name[512] = kDIDefaultDiskName;
+	SInt32		  sector_sz		 = kDISectorSz;
+	SInt32 block_cnt		 = 0;
+	SizeT	  disk_sz		 = kDIMinDiskSz;
+	Char	  out_name[256]	 = kDIDefaultOutputName;
 };
 
-/// @brief EPM format disk
+/// @brief Format with an EPM partition.
 /// @param img disk image structure.
 /// @return Status code upon completion.
-SInt32 DIFormatDisk(struct DI_DISK_IMAGE& img) noexcept;
+SInt32 DIFormatPartitionEPM(struct DI_DISK_IMAGE& img) noexcept;
 
 /// @brief NeFS format over EPM.
 /// @param img disk image structure.
 /// @return Status code upon completion.
-SInt32 DIFormatNeFS(struct DI_DISK_IMAGE& img) noexcept;
+SInt32 DIFormatFilesystemNeFS(struct DI_DISK_IMAGE& img) noexcept;

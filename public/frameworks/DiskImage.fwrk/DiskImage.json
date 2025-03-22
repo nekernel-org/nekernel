@@ -1,0 +1,22 @@
+{
+    "compiler_path": "x86_64-w64-mingw32-g++",
+    "compiler_std": "c++20",
+    "headers_path": ["../", "./", "../../../dev", "../../../dev/Kernel"],
+    "sources_path": ["src/*.cc"],
+    "output_name": "libDiskImage.dylib",
+    "compiler_flags": [
+      "-fPIC",
+      "-ffreestanding",
+      "-shared",
+      "-fno-rtti",
+      "-fno-exceptions",
+      "-Wl,--subsystem=17"
+    ],
+    "cpp_macros": [
+      "kDIVersion=0x0100",
+      "kDIVersionHighest=0x0100",
+      "kDIVersionLowest=0x0100",
+      "__NE_AMD64__"
+    ]
+  }
+  
