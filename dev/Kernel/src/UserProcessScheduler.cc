@@ -436,9 +436,6 @@ namespace NeOS
 			kout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
 			return 0UL;
 		}
-
-		kout << "UserProcessScheduler::Run(): This team has a process capacity of: " << hex_number(mTeam.mProcessList.Capacity()) << kendl;
-
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
 			auto& process = mTeam.AsArray()[process_index];

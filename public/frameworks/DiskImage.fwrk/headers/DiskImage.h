@@ -14,19 +14,19 @@
 #define kDISectorSz			 (512)
 #define kDIMinDiskSz		 (1024 * 1024 * 1024)
 #define kDIDefaultOutputName "disk.eimg"
-#define kDIDefaultDiskName "Disk"
-#define kDISuccessStatus (0)
-#define kDIFailureStatus (1)
+#define kDIDefaultDiskName	 "Disk"
+#define kDISuccessStatus	 (0)
+#define kDIFailureStatus	 (1)
 
 struct DI_DISK_IMAGE;
 
 struct DI_DISK_IMAGE
 {
-	Char	  disk_name[512] = kDIDefaultDiskName;
-	SInt32		  sector_sz		 = kDISectorSz;
-	SInt32 block_cnt		 = 0;
-	SizeT	  disk_sz		 = kDIMinDiskSz;
-	Char	  out_name[256]	 = kDIDefaultOutputName;
+	Char   disk_name[512] = kDIDefaultDiskName;
+	SInt32 sector_sz	  = kDISectorSz;
+	SInt32 block_cnt	  = 0;
+	SizeT  disk_sz		  = kDIMinDiskSz;
+	Char   out_name[256]  = kDIDefaultOutputName;
 };
 
 /// @brief Format with an EPM partition.

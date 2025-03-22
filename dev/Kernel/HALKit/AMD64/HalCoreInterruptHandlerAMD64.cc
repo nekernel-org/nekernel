@@ -74,7 +74,6 @@ EXTERN_C void idt_handle_scheduler(NeOS::UIntPtr rsp)
 	try_count_before_brute = 100000UL;
 	kIsScheduling		   = YES;
 
-	kout << "Kernel: Timer IRQ (Scheduler Notification).\r";
 	NeOS::UserProcessHelper::StartScheduling();
 
 	kIsScheduling = NO;

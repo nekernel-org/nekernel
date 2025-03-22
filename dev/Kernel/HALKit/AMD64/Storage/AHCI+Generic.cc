@@ -115,6 +115,8 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	volatile HbaCmdHeader* command_header = ((HbaCmdHeader*)(((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
 
+	command_header += slot;
+
 	MUST_PASS(command_header);
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
@@ -122,6 +124,7 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	command_header->Prdtl = (UInt16)((size_buffer - 1) >> 4) + 1;
 
 	HbaCmdTbl* command_table = (HbaCmdTbl*)((VoidPtr)((UInt64)command_header->Ctba));
+
 	rt_set_memory(command_table, 0, sizeof(HbaCmdTbl) + (command_header->Prdtl - 1) * sizeof(HbaPrdtEntry));
 
 	MUST_PASS(command_table);
@@ -166,7 +169,9 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
 
 	while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq))
+	{
 		;
+	}
 
 	kSATAHba->Ports[kSATAIndex].Ci = (1 << slot);
 
@@ -232,8 +237,9 @@ STATIC Void ahci_enable_and_probe()
 
 /// @brief Initializes an AHCI disk.
 /// @param pi the amount of ports that have been detected.
+/// @param atapi reference value, tells whether we should detect ATAPI instead of SATA.
 /// @return if the disk was successfully initialized or not.
-STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL atapi)
+STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 {
 	PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
 
@@ -390,7 +396,8 @@ Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 
 Bool drv_std_init(UInt16& pi)
 {
-	return drv_std_init_ahci(pi, NO);
+	BOOL atapi = NO;
+	return drv_std_init_ahci(pi, atapi);
 }
 
 Bool drv_std_detected(Void)

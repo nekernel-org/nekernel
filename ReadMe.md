@@ -10,13 +10,10 @@
 - [GIT](https://git-scm.com/)
 - [BTB](https://github.com/ne-gh/btb)
 
-## Builders's Notice:
+## Notice for Contributors:
 
-You must mount the contents to the fat32.img prior running! Otherwise the emulator won't find a valid ESP.
-
-## Contributors's Notice:
-
-Always use `run_format.sh` before commiting and pushing your code!
+- You must mount the contents to the neos.img prior running! Otherwise the emulator won't find a valid ESP.
+- Always use `run_format.sh` before commiting and pushing your code!
 
 ## Quick Install:
 
@@ -28,11 +25,5 @@ cd kernel
 ./setup_amd64.sh
 ./debug_ata.sh # Generic ATA PIO target
 ```
-
-## Screenshots:
-
-![FS](doc/filesystem.png)
-
-![APIC](doc/apic.png)
 
 ###### Copyright (C) 2024-2025 Amlal EL Mahrouss, All rights reserved.
