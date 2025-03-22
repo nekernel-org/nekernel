@@ -58,10 +58,15 @@ EXTERN_C void idt_handle_pf(NeOS::UIntPtr rsp)
 	process.Leak().Crash();
 }
 
+namespace NeOS::Detail
+{
+	constexpr static Int32 kTimeoutCount = 100000UL; 
+}
+
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(NeOS::UIntPtr rsp)
 {
-	static NeOS::Int64 try_count_before_brute = 100000UL;
+	static NeOS::Int64 try_count_before_brute = NeOS::Detail::kTimeoutCount;
 
 	while (kIsScheduling)
 	{
@@ -71,7 +76,7 @@ EXTERN_C void idt_handle_scheduler(NeOS::UIntPtr rsp)
 			break;
 	}
 
-	try_count_before_brute = 100000UL;
+	try_count_before_brute = NeOS::Detail::kTimeoutCount;
 	kIsScheduling		   = YES;
 
 	NeOS::UserProcessHelper::StartScheduling();
