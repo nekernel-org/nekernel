@@ -36,3 +36,23 @@ namespace NeOS
 		};
 	} // namespace Types
 } // namespace NeOS
+
+inline BOOL operator!=(const NeOS::Types::PciDeviceKind& lhs, NeOS::UChar rhs)
+{
+	return rhs != (NeOS::UChar)lhs;
+}
+
+inline BOOL operator==(const NeOS::Types::PciDeviceKind& lhs, NeOS::UChar rhs)
+{
+	return rhs == (NeOS::UChar)lhs;
+}
+
+inline BOOL operator!=(NeOS::UChar lhs, const NeOS::Types::PciDeviceKind& rhs)
+{
+	return lhs != (NeOS::UChar)rhs;
+}
+
+inline BOOL operator==(NeOS::UChar lhs, const NeOS::Types::PciDeviceKind& rhs)
+{
+	return lhs == (NeOS::UChar)rhs;
+}

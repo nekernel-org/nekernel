@@ -19,7 +19,7 @@ namespace NeOS::PCI
 				{
 					Device dev(bus, device, function, 0x00);
 
-					if (dev.Class() == (UChar)type)
+					if (dev.Class() == type)
 					{
 						fDevices[bus] = dev;
 					}
