@@ -16,5 +16,5 @@ jobs:
     - name: Install Packages
       run: sudo apt update && sudo apt install mingw-w64 qemu-utils nasm
     - name: Build NeKernel (Generic)
-      run: ./setup_amd64.sh && cd dev/kernel && export ATA_SUPPORT=1 && make -f amd64-ci.make all
+      run: ./setup_amd64.sh && cd dev/kernel && export ATA_PIO_SUPPORT=1 && make -f amd64-ci.make all
 
