@@ -14,6 +14,9 @@ namespace NeOS
 		if (!fork_name || !fork_name_len)
 			return NO;
 
+		if (*fork_name == 0)
+			return NO;
+
 		if (data_len > kSwapBlockMaxSize)
 			return NO;
 
@@ -33,6 +36,9 @@ namespace NeOS
 	SWAP_DISK_HEADER* SwapDisk::Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len)
 	{
 		if (!fork_name || !fork_name_len)
+			return nullptr;
+
+		if (*fork_name == 0)
 			return nullptr;
 
 		if (data_len > kSwapBlockMaxSize)
