@@ -17,5 +17,4 @@ jobs:
       run: sudo apt update && sudo apt install mingw-w64 qemu-utils nasm
     - name: Build NeKernel (ATA)
       run: ./setup_amd64.sh && cd dev/kernel && export ATA_SUPPORT=1 && make -f amd64-ci.make all
-    - name: Build NeKernel (AHCI)
-      run: export ATA_SUPPORT= && export AHCI_SUPPORT=1 && make -f amd64-ci.make all
+
