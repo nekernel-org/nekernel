@@ -2,7 +2,9 @@
 
 # NeKernel
 
-## Required:
+Use the doxygen command to build documentation.
+
+## Requirements:
 
 - [MINGW-W64](https://www.mingw-w64.org/)
 - [CLANG](https://clang.llvm.org/)
