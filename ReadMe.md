@@ -20,7 +20,7 @@
 Clone the repository:
 
 ```sh
-git clone git@github.com:ne-gh/kernel.git
+git clone git@github.com:amlel-el-mahrouss/nekernel.git
 cd kernel
 ./setup_amd64.sh
 ./debug_ata.sh # Generic ATA PIO target
