@@ -60,7 +60,7 @@ EXTERN_C void idt_handle_pf(NeOS::UIntPtr rsp)
 
 namespace NeOS::Detail
 {
-	constexpr static Int32 kTimeoutCount = 100000UL; 
+	constexpr static Int32 kTimeoutCount = 100000UL;
 }
 
 /// @brief Handle scheduler interrupt.
