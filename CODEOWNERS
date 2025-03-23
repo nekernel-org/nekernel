@@ -1,4 +1,5 @@
-# Boot, LibSCI, and Kernel are owned by Amlal.
-/dev/Kernel/ @amlel-el-mahrouss
-/dev/Boot/ @amlel-el-mahrouss
-/dev/LibSCI/ @amlel-el-mahrouss
+# boot, libsci, and kernel are owned by Amlal.
+/dev/kernel/ @amlel-el-mahrouss
+/dev/boot/ @amlel-el-mahrouss
+/dev/SCIKit/ @amlel-el-mahrouss
+# some other parts (tooling, frameworks) need ownership too.

@@ -6,7 +6,7 @@
 #ifndef APPS_COMMON_H
 #define APPS_COMMON_H
 
-#include <LibSCI/SCI.h>
-#include <LibCF/Foundation.h>
+#include <SCIKit/SCI.h>
+#include <CoreFoundation.fwrk/headers/Foundation.h>
 
 #endif // APPS_COMMON_H

@@ -4,7 +4,7 @@
  * Copyright (c) 2024 Amlal EL Mahrouss
  */
 
-#include <LibSCI/SCI.h>
+#include <SCIKit/SCI.h>
 
 /// @brief This program opens an application from **OPEN_APP_BASE_PATH**
 
@@ -21,10 +21,10 @@ int main(int argc, char* argv[])
 	{
 		if (MmStrCmp(argv[i], OPEN_APP_HELP_FLAG) == 0)
 		{
-			ConOut(nullptr, "open: Open Tool.\n");
-			ConOut(nullptr, "open: © Amlal EL Mahrouss, All rights reserved.\n");
+			PrintOut(nullptr, "open: Open Tool.\n");
+			PrintOut(nullptr, "open: © Amlal EL Mahrouss, All rights reserved.\n");
 
-			ConOut(nullptr, "open: %s: Application is taken as input (opens a PEF/PE32+/ELF program depending on architecture).\n", OPEN_APP_APP_FLAG);
+			PrintOut(nullptr, "open: %s: Application is taken as input (opens a PEF/PE32+/ELF program depending on architecture).\n", OPEN_APP_APP_FLAG);
 
 			return EXIT_SUCCESS;
 		}

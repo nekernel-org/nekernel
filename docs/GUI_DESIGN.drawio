@@ -4,7 +4,7 @@
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="mspNsT0Gx7HsNPX6GqQO-2" value="LibSCI" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="mspNsT0Gx7HsNPX6GqQO-2" value="libsci" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="50" y="500" width="450" height="140" as="geometry"/>
                 </mxCell>
                 <mxCell id="2" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-3" target="mspNsT0Gx7HsNPX6GqQO-13" edge="1">

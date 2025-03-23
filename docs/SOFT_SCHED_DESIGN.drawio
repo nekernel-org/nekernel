@@ -1,0 +1,25 @@
+<mxfile host="65bd71144e">
+    <diagram name="Page-1" id="lDkK2i6CeL2VbSOVDvrP">
+        <mxGraphModel dx="764" dy="289" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="ifhO3zQZNW-sXvZMTmu8-2" value="libsci DLL inside code (RING 3)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="235.5" y="340" width="360" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ifhO3zQZNW-sXvZMTmu8-3" value="Running code (RING 3)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="235.5" y="295" width="360" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="ifhO3zQZNW-sXvZMTmu8-8" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;NeKernel Scheduler&lt;/span&gt;&lt;/h1&gt;&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;font-size: 12px; font-weight: 400; background-color: initial;&quot;&gt;This describes how NeKernel is structued to schedule tasks.&lt;/span&gt;&lt;br&gt;&lt;/h1&gt;&lt;div&gt;A UserProcess may be attached to another one (thread)&lt;/div&gt;&lt;div&gt;Otherwise it's a process within a team.&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="290" width="180" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="ifhO3zQZNW-sXvZMTmu8-13" value="UserProcess structure (RING 0)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="235.5" y="380" width="360" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="HardwareThread, HardwareThreadScheduler and UserProcessScheduler (RING 0)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="234" y="450" width="360" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

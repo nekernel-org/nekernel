@@ -4,12 +4,12 @@
  * Copyright (c) 2024 Amlal EL Mahrouss
  */
 
-#include <LibSCI/SCI.h>
+#include <SCIKit/SCI.h>
 
 /// @brief This program loads a program for NeOS.
 
 SInt32 main(SInt32 argc, Char* argv[])
 {
-	ConOut(nullptr, "LD: OpenCC or GCC for Ne needs to be installed.\rLD: This program is present as a placeholder.");
+	PrintOut(nullptr, "cc: A C++ compiler to be installed.\rcc: This program is present as a placeholder.");
 	return EXIT_FAILURE;
 }

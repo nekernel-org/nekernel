@@ -7,7 +7,7 @@
 #include <Framework.h>
 #include <Steps.h>
 
-#include <LibCF/Array.h>
+#include <CoreFoundation.fwrk/headers/Array.h>
 
 /// @brief This program makes a framework directory for NeKernel OS.
 
@@ -21,17 +21,12 @@ int main(int argc, char* argv[])
 	{
 		if (MmStrCmp(argv[i], "-h") == 0)
 		{
-			MsgAlloc(kWarnMsg);
+			PrintOut(nullptr, "%s", "make_app: Framework/Application Creation Tool.\n");
+			PrintOut(nullptr, "%s", "make_app: © Amlal EL Mahrouss, All rights reserved.\n");
 
-			MsgSend(kWarnMsg, "%s", "make_app: Framework/Application Creation Tool.\n");
-			MsgSend(kWarnMsg, "%s", "make_app: © Amlal EL Mahrouss, All rights reserved.\n");
-
-			MsgSend(kWarnMsg, "%s", "make_app: -a: Application format.\n");
-			MsgSend(kWarnMsg, "%s", "make_app: -s: Steps (Setup pages) format.\n");
-			MsgSend(kWarnMsg, "%s", "make_app: -f: Framework format.\n");
-
-			MsgShow(kWarnMsg);
-			MsgFree(kWarnMsg);
+			PrintOut(nullptr, "%s", "make_app: -a: Application format.\n");
+			PrintOut(nullptr, "%s", "make_app: -s: Steps (Setup pages) format.\n");
+			PrintOut(nullptr, "%s", "make_app: -f: Framework format.\n");
 
 			return EXIT_SUCCESS;
 		}

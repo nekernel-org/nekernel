@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <LibSCI/SCI.h>
+#include <SCIKit/SCI.h>
 
 #define kDISectorSz			 (512)
 #define kDIMinDiskSz		 (1024 * 1024 * 1024)

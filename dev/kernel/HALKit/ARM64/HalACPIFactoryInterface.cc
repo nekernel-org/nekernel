@@ -1,0 +1,32 @@
+/* -------------------------------------------
+
+	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+
+------------------------------------------- */
+
+#include <modules/ACPI/ACPIFactoryInterface.h>
+#include <NewKit/KString.h>
+#include <ArchKit/ArchKit.h>
+#include <KernelKit/MemoryMgr.h>
+#include <modules/APM/APM.h>
+
+namespace NeOS
+{
+	ACPIFactoryInterface::ACPIFactoryInterface(VoidPtr rsp_ptr)
+		: fRsdp(rsp_ptr), fEntries(0)
+	{
+	}
+
+	BOOL ACPIFactoryInterface::Shutdown()
+	{
+		apm_send_io_command(kAPMPowerCommandShutdown, 0);
+		return NO;
+	}
+
+	/// @brief Reboot machine in either ACPI or by triple faulting.
+	/// @return nothing it's a reboot.
+	Void ACPIFactoryInterface::Reboot()
+	{
+		apm_send_io_command(kAPMPowerCommandReboot, 0);
+	}
+} // namespace NeOS
