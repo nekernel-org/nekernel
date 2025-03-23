@@ -75,7 +75,7 @@ BOOTLOADER=bootz.exe
 KERNEL=neoskrnl.exe
 SYSCHK=syschk.sys
 STARTUP=startup.sys
-SCIKIT=libSCI.dylib
+SCIKIT=libSCIKit.dylib
 
 .PHONY: invalid-recipe
 invalid-recipe:
