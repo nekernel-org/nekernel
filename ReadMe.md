@@ -8,7 +8,7 @@
 - [CLANG](https://clang.llvm.org/)
 - [NASM](https://nasm.us/)
 - [GIT](https://git-scm.com/)
-- [BTB](https://github.com/ne-gh/btb)
+- [BTB](https://github.com/amlel-el-mahrouss/btb)
 
 ## Notice for Contributors:
 
