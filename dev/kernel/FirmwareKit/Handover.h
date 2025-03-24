@@ -6,7 +6,7 @@
 
 /**
  * @file Handover.h
- * @author Amlal EL Mahrouss (amlalelmahrouss@nekernel.org)
+ * @author Amlal EL Mahrouss (amlal@nekernel.org)
  * @brief The handover boot protocol.
  * @version 1.15
  * @date 2024-02-23

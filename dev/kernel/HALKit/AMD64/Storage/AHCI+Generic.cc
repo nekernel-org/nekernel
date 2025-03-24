@@ -6,7 +6,7 @@
 
 /**
  * @file AHCI.cc
- * @author Amlal El Mahrouss (amlalelmahrouss@nekernel.org)
+ * @author Amlal El Mahrouss (amlal@nekernel.org)
  * @brief AHCI driver.
  * @version 0.1
  * @date 2024-02-02
