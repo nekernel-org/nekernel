@@ -6,7 +6,7 @@
 
 /**
  * @file ATA-PIO.cc
- * @author Amlal EL Mahrouss (amlalelmahrouss@icloud.com)
+ * @author Amlal EL Mahrouss (amlalelmahrouss@nekernel.org)
  * @brief ATA driver (PIO mode).
  * @version 0.1
  * @date 2024-02-02
