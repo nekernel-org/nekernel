@@ -9,7 +9,7 @@
 
 #include <CoreFoundation.fwrk/headers/Object.h>
 
-namespace LibCF
+namespace CF
 {
 	class CFString;
 
@@ -17,4 +17,4 @@ namespace LibCF
 	{
 	public:
 	};
-} // namespace LibCF
+} // namespace CF

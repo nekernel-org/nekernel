@@ -8,7 +8,7 @@
 #define GFX_MGR_ACCESSIBILITY_H
 
 #include <NewKit/NewKit.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <modules/CoreGfx/FBMgr.h>
 #include <modules/CoreGfx/MathMgr.h>
 #include <ArchKit/ArchKit.h>

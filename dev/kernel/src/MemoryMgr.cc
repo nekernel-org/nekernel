@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
 #include <NewKit/Crc32.h>
 #include <NewKit/PageMgr.h>
@@ -25,11 +25,11 @@
 //! @brief Heap algorithm that serves as the main memory manager.
 
 #define kKernelHeapMagic   (0xD4D75)
-#define kKernelHeapAlignSz (__BIGGEST_ALIGNMENT__)
+#define kKernelHeapAlignSz (4)
 
 namespace NeOS
 {
-	/// @brief Contains data structures and algorithms for the heap.
+	/// @brief Implementation details.
 	namespace Detail
 	{
 		struct PACKED HEAP_INFORMATION_BLOCK;

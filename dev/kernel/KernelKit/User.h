@@ -16,7 +16,7 @@
  ------------------------------------------- */
 
 #include <CompilerKit/CompilerKit.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <NewKit/KString.h>
 #include <NewKit/Defines.h>
 

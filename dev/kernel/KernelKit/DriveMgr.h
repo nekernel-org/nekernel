@@ -11,7 +11,7 @@
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/DeviceMgr.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
 #include <NewKit/Ref.h>

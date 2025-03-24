@@ -1,7 +1,7 @@
 {
   "compiler_path": "g++",
-  "compiler_std": "c++23",
-  "headers_path": ["./"],
+  "compiler_std": "c++20",
+  "headers_path": ["./", "../../../dev"],
   "sources_path": ["src/CommandLine.cc"],
   "output_name": "./dist/cc",
   "cpp_macros": [

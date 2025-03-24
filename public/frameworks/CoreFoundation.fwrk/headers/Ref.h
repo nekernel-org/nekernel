@@ -8,10 +8,10 @@
 #ifndef _REF_H_
 #define _REF_H_
 
-#include <SCIKit/SCI.h>
+#include <SCIKit/SystemCalls.h>
 #include <CoreFoundation.fwrk/headers/Object.h>
 
-namespace LibCF
+namespace CF
 {
 	template <typename T>
 	class CFRef;
@@ -105,6 +105,6 @@ namespace LibCF
 	private:
 		CFRef<T> fRef{nullptr};
 	};
-} // namespace LibCF
+} // namespace CF
 
 #endif // ifndef _NEWKIT_REF_H_

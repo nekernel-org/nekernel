@@ -12,7 +12,7 @@
 /// @brief: heap allocation support.
 
 #include <NewKit/KernelPanic.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <HintsKit/CompilerHint.h>
 
 namespace NeOS

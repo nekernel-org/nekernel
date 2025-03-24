@@ -14,7 +14,7 @@ Use the doxygen command to build documentation.
 
 ## Notice for Contributors:
 
-- You must mount the contents to the neos.img prior running! Otherwise the emulator won't find a valid ESP.
+- You must mount the contents to the neos_esp.img prior running! Otherwise the emulator won't find a valid ESP.
 - Always use `run_format.sh` before commiting and pushing your code!
 
 ## Quick Install:

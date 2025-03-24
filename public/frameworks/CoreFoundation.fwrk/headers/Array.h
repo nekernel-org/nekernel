@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <SCIKit/SCI.h>
+#include <SCIKit/SystemCalls.h>
 
-namespace LibCF
+namespace CF
 {
 	template <typename T, SizeT N>
 	class CFArray final
@@ -68,4 +68,4 @@ namespace LibCF
 	{
 		return CFArray<ValueType, ARRAY_SIZE(val)>{val};
 	}
-} // namespace LibCF
+} // namespace CF

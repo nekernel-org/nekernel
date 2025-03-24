@@ -4,9 +4,9 @@
  * Copyright (c) 2024 Amlal EL Mahrouss
  */
 
-#include <SCIKit/SCI.h>
+#include <SCIKit/SystemCalls.h>
 
-/// @brief This program loads a program for NeOS.
+/// @brief Placeholder program.
 
 SInt32 main(SInt32 argc, Char* argv[])
 {

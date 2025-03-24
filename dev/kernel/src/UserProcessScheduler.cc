@@ -18,7 +18,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/MemoryMgr.h>
 #include <NewKit/KString.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 
 ///! BUGS: 0
 

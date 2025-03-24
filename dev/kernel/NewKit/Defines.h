@@ -27,7 +27,7 @@
 #endif
 #endif
 
-/// @brief The **Kernel** namespace where it's API resides.
+/// @brief The **Kernel** namespace.
 namespace NeOS
 {
 	using voidPtr = void*;

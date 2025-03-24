@@ -2,7 +2,7 @@
 
 Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
-File: SCI.h
+File: SystemCalls.h
 Purpose: System Call Interface.
 
 ------------------------------------------- */
@@ -335,5 +335,7 @@ IMPORT_C BOOL FsCreateAlias(const char* path, const char* from);
 // ------------------------------------------------------------------------------------------ //
 
 IMPORT_C Char* StrFmt(const Char* fmt, ...);
+
+IMPORT_C UInt64 MathToNumber(const Char* in, const Char** endp, const SInt16 base);
 
 #endif // ifndef SCI_SCI_H

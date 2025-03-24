@@ -11,10 +11,10 @@ Purpose: libsci Macros header.
 
 /***********************************************************************************/
 /// @file SCIKit/Macros.h
-/// @brief Macros and core types.
+/// @brief Macros and Core types.
 /***********************************************************************************/
 
-#include <SCIKit/CompilerHint.h>
+#include <HintsKit/CompilerHint.h>
 
 #define ATTRIBUTE(X) __attribute__((X))
 
@@ -23,10 +23,10 @@ Purpose: libsci Macros header.
 
 #define DEPRECATED ATTRIBUTE(deprecated)
 
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
+#define EXIT_SUCCESS (0)
+#define EXIT_FAILURE (1)
 
-#define FILE_MAX_LEN 256
+#define FILE_MAX_LEN (256)
 
 #ifndef BOOL
 #define BOOL bool
@@ -37,8 +37,8 @@ typedef bool Boolean;
 typedef void Void;
 
 #ifndef __cplusplus
-#define true 1
-#define false 0
+#define true (1)
+#define false (0)
 #endif
 
 #define YES true
@@ -87,7 +87,7 @@ IMPORT_C void _rtl_assert(Bool expr, const Char* origin);
 #define MUST_PASS(X) _rtl_assert(X, __FILE__)
 
 #ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a)              \
-	(((sizeof(a) / sizeof(*(a))) / \
-	  (static_cast<SizeT>(!(sizeof(a) % sizeof(*(a)))))))
+#define ARRAY_SIZE(X)              \
+	(((sizeof(X) / sizeof(*(X))) / \
+	  (static_cast<SizeT>(!(sizeof(X) % sizeof(*(X)))))))
 #endif

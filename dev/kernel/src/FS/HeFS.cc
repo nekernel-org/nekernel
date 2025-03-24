@@ -10,7 +10,7 @@
 #include <modules/ATA/ATA.h>
 #include <modules/Flash/Flash.h>
 #include <FSKit/HeFS.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <NewKit/Crc32.h>
 #include <NewKit/KernelPanic.h>
 #include <NewKit/KString.h>

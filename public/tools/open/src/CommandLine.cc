@@ -4,7 +4,7 @@
  * Copyright (c) 2024 Amlal EL Mahrouss
  */
 
-#include <SCIKit/SCI.h>
+#include <SCIKit/SystemCalls.h>
 
 /// @brief This program opens an application from **OPEN_APP_BASE_PATH**
 

@@ -9,7 +9,7 @@
 #include <SCIKit/Macros.h>
 
 /// @file LPC.h
-/// @brief Local Process Code type and values.
+/// @brief Local Procedure Code type and values.
 
 #define err_local_ok()	 (kLastError == kErrorSuccess)
 #define err_local_fail() (kLastError != kErrorSuccess)

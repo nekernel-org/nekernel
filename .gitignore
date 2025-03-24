@@ -2,7 +2,6 @@ syntax: glob
 
 xcuserdata/
 
-public/tools/diutil/dist/diutil
 
 *.hmap
 *.ipa
@@ -15,7 +14,8 @@ public/tools/diutil/dist/diutil
 */xcuserdata/*
 *.xcworkspacedata
 
-public/tools/make_app/dist/make_app
+public/tools/*/dist/*
+public/frameworks/*/dist/*
 
 neoskrnl/neoskrnl.xcodeproj/project.xcworkspace/xcshareddata/
 

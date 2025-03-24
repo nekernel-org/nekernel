@@ -31,7 +31,7 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <HintsKit/CompilerHint.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Stream.h>
 #include <NewKit/ErrorOr.h>

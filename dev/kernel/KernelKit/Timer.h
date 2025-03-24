@@ -7,7 +7,7 @@
 #pragma once
 
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 
 namespace NeOS
 {

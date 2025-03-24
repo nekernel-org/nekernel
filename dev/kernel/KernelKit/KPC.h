@@ -8,8 +8,8 @@
 
 #include <NewKit/Defines.h>
 
-/// @file LPC.h
-/// @brief Local Process Codes.
+/// @file KPC.h
+/// @brief Kernel Procedure Code.
 
 #define err_local_ok()	 (NeOS::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() == NeOS::kErrorSuccess)
 #define err_local_fail() (NeOS::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() != NeOS::kErrorSuccess)
@@ -60,11 +60,8 @@ namespace NeOS
 	inline constexpr HError kErrorFileLocked		 = 64;
 	inline constexpr HError kErrorUnimplemented		 = -1;
 
-	/// @brief Raises a bug check stop code.
-	Void err_bug_check_raise(Void) noexcept;
-
 	/// @brief Does a system wide bug check.
 	/// @param void no params are needed.
 	/// @return if error-free: false, otherwise true.
-	Boolean err_bug_check(Void) noexcept;
+	Boolean err_bug_check_raise(Void) noexcept;
 } // namespace NeOS

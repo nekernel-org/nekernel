@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <modules/APM/APM.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 
 using namespace NeOS;
 

@@ -9,9 +9,9 @@
 
 #include <CoreFoundation.fwrk/headers/Foundation.h>
 
-#define CF_OBJECT : public LibCF::CFObject
+#define CF_OBJECT : public CF::CFObject
 
-namespace LibCF
+namespace CF
 {
 	class CFObject;
 
@@ -23,4 +23,4 @@ namespace LibCF
 
 		SCI_COPY_DEFAULT(CFObject);
 	};
-} // namespace LibCF
+} // namespace CF

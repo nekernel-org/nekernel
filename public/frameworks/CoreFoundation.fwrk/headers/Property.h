@@ -7,12 +7,12 @@
 #ifndef _PROPS_H
 #define _PROPS_H
 
-#include <SCIKit/SCI.h>
+#include <SCIKit/SystemCalls.h>
 #include <CoreFoundation.fwrk/headers/Ref.h>
 
 #define kMaxPropLen (256U)
 
-namespace LibCF
+namespace CF
 {
 	class CFString;
 	class CFProperty;
@@ -48,6 +48,6 @@ namespace LibCF
 
 	template <SizeT N>
 	using CFPropertyArray = CFArray<CFProperty, N>;
-} // namespace LibCF
+} // namespace CF
 
 #endif // !CFKIT_PROPS_H

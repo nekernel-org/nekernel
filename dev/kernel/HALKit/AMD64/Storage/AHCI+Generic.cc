@@ -18,7 +18,7 @@
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 
 #include <FirmwareKit/EPM.h>
 

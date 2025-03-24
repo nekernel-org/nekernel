@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include <SCIKit/SCI.h>
+#include <SCIKit/SystemCalls.h>
 
-namespace LibCF
+namespace CF
 {
 	class CFString;
 	class CFGUID;
@@ -75,4 +75,4 @@ namespace LibCF
 		BOOL SizeMatches(CFRect& rect) noexcept;
 		BOOL PositionMatches(CFRect& rect) noexcept;
 	};
-} // namespace LibCF
+} // namespace CF

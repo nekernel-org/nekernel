@@ -6,10 +6,9 @@
 
 #include <SCIKit/SystemCalls.h>
 
-/// @brief Placeholder program.
+/// @brief This program loads a code framework into NeOS's memory.
 
 SInt32 main(SInt32 argc, Char* argv[])
 {
-	PrintOut(nullptr, "ld: A linker to be installed.\rld: This program is present as a placeholder.");
 	return EXIT_FAILURE;
 }

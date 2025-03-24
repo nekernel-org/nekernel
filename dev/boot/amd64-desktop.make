@@ -28,7 +28,7 @@ BIOS=OVMF.fd
 IMG=epm-master-1.img
 IMG_2=epm-master-2.img
 
-BOOT=./src/neos.img
+BOOT=./src/neos_esp.img
 
 DISK_DRV  =
 

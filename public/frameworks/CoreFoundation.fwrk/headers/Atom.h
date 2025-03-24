@@ -7,7 +7,7 @@
 
 #include <CoreFoundation.fwrk/headers/Foundation.h>
 
-namespace LibCF
+namespace CF
 {
 	template <typename T>
 	class CFAtom final
@@ -44,4 +44,4 @@ namespace LibCF
 	private:
 		T fArrayOfAtoms;
 	};
-} // namespace LibCF
+} // namespace CF

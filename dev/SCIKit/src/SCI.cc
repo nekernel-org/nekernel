@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <SCIKit/SCI.h>
+#include <SCIKit/SystemCalls.h>
 
 /// @file libsci.cc
 /// @brief Source file for the memory functions of the libsci.

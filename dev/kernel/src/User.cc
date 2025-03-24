@@ -11,7 +11,7 @@
  */
 
 #include <KernelKit/User.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/MemoryMgr.h>

@@ -6,7 +6,7 @@
 #ifndef APPS_COMMON_H
 #define APPS_COMMON_H
 
-#include <SCIKit/SCI.h>
+#include <SCIKit/SystemCalls.h>
 #include <CoreFoundation.fwrk/headers/Foundation.h>
 
 #endif // APPS_COMMON_H

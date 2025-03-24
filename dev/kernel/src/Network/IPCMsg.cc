@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <NetworkKit/IPC.h>
-#include <KernelKit/LPC.h>
+#include <KernelKit/KPC.h>
 #include <KernelKit/UserProcessScheduler.h>
 
 namespace NeOS
