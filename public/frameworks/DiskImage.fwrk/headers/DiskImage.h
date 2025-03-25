@@ -19,7 +19,7 @@
 #define kDIFailureStatus	 (1)
 
 #define kDIDiskNameLen (16)
-#define kDIOutNameLen (256)
+#define kDIOutNameLen  (256)
 
 /// @brief Disk Image file structure.
 /// @param disk_name Disk partition name.
@@ -30,10 +30,10 @@
 struct DI_DISK_IMAGE
 {
 	Char   disk_name[kDIDiskNameLen] = kDIDefaultDiskName;
-	SInt32 sector_sz	  = kDISectorSz;
-	SInt32 block_cnt	  = 0;
-	SizeT  disk_sz		  = kDIMinDiskSz;
-	Char   out_name[kDIOutNameLen]  = kDIDefaultOutputName;
+	SInt32 sector_sz				 = kDISectorSz;
+	SInt32 block_cnt				 = 0;
+	SizeT  disk_sz					 = kDIMinDiskSz;
+	Char   out_name[kDIOutNameLen]	 = kDIDefaultOutputName;
 };
 
 /// @brief Format with an EPM partition.

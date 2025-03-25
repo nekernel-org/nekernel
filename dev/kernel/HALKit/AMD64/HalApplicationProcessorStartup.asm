@@ -4,6 +4,8 @@
 ;; *	NeKernel
 ;; * 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 ;; *
+;; *    25/03/25: FIX: Fix warning regarding resb being used inside a non-bss area (using no-op instead).
+;; *
 ;; * 	========================================================
 ;; */
 
@@ -61,17 +63,17 @@ hal_ap_64bit_entry:
     mov ss, ax
     mov rsp, [hal_ap_64bit_entry_stack_end]
 
-    push 0x33                 
+    push 0x33
     push qword [hal_ap_64bit_entry_loop]      
-    o64 pushf               
-    push rsp                  
-    push 0x33                 
+    o64 pushf
+    push rsp
+    push 0x33
 
-    o64 iret 
+    o64 iret
 
 hal_ap_64bit_entry_loop:
     jmp $
 
 hal_ap_64bit_entry_stack:
-    resb 8196*2
+    times 8196*2 nop
 hal_ap_64bit_entry_stack_end:

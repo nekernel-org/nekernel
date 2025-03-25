@@ -16,28 +16,29 @@
 
  Revision History:
 	10/8/24: FIX: Fix useless long name, alongside a new WR (WriteRead) field.
-	20/10/24: Fix mm_new_ and mm_delete_ APIs inside MemoryMgr.h header. (amlal)
-  27/01/25: Reworked code as the memory manager.
+	20/10/24: FIX: Fix mm_new_ and mm_delete_ APIs inside MemoryMgr.h header. (amlal)
+  	27/01/25: REFACTOR: Reworked code as the memory manager.
+	25/03/25: REFACTOR: Refactor MemoryMgr code and log freed address location.
 
  ------------------------------------------- */
 
 //! @file MemoryMgr.cc
 //! @brief Heap algorithm that serves as the main memory manager.
 
-#define kKernelHeapMagic   (0xD4D75)
-#define kKernelHeapAlignSz (4)
+#define kMemoryMgrMagic	  (0xD4D75)
+#define kMemoryMgrAlignSz (4)
 
 namespace NeOS
 {
 	/// @brief Implementation details.
 	namespace Detail
 	{
-		struct PACKED HEAP_INFORMATION_BLOCK;
+		struct PACKED MM_INFORMATION_BLOCK;
 
 		/// @brief Kernel heap information block.
 		/// Located before the address bytes.
 		/// | HIB |  CLASS/STRUCT/DATA TYPES... |
-		struct PACKED HEAP_INFORMATION_BLOCK final
+		struct PACKED MM_INFORMATION_BLOCK final
 		{
 			///! @brief 32-bit value which contains the magic number of the heap.
 			UInt32 fMagic : 24;
@@ -67,7 +68,7 @@ namespace NeOS
 			UIntPtr fOffset;
 
 			/// @brief Padding bytes for header.
-			UInt8 fPadding[kKernelHeapAlignSz];
+			UInt8 fPadding[kMemoryMgrAlignSz];
 		};
 
 		/// @brief Check for heap address validity.
@@ -78,7 +79,7 @@ namespace NeOS
 			if (!heap_ptr)
 				return false;
 
-			auto base_heap = ((IntPtr)heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK);
+			auto base_heap = ((IntPtr)heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK);
 
 			/// Add that check in case we're having an integer underflow. ///
 
@@ -90,7 +91,7 @@ namespace NeOS
 			return true;
 		}
 
-		typedef HEAP_INFORMATION_BLOCK* HEAP_INFORMATION_BLOCK_PTR;
+		typedef MM_INFORMATION_BLOCK* MM_INFORMATION_BLOCK_PTR;
 	} // namespace Detail
 
 	/// @brief Declare a new size for ptr_heap.
@@ -122,25 +123,25 @@ namespace NeOS
 		if (sz_fix == 0)
 			return nullptr;
 
-		sz_fix += sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		sz_fix += sizeof(Detail::MM_INFORMATION_BLOCK);
 
 		PageMgr heap_mgr;
 		auto	wrapper = heap_mgr.Request(wr, user, No, sz_fix);
 
-		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				wrapper.VirtualAddress() + sizeof(Detail::HEAP_INFORMATION_BLOCK));
+		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
+				wrapper.VirtualAddress() + sizeof(Detail::MM_INFORMATION_BLOCK));
 
 		heap_info_ptr->fSize	  = sz_fix;
-		heap_info_ptr->fMagic	  = kKernelHeapMagic;
+		heap_info_ptr->fMagic	  = kMemoryMgrMagic;
 		heap_info_ptr->fCRC32	  = 0; // dont fill it for now.
-		heap_info_ptr->fOffset	  = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::HEAP_INFORMATION_BLOCK);
+		heap_info_ptr->fOffset	  = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::MM_INFORMATION_BLOCK);
 		heap_info_ptr->fPage	  = No;
 		heap_info_ptr->fWriteRead = wr;
 		heap_info_ptr->fUser	  = user;
 		heap_info_ptr->fPresent	  = Yes;
 
-		rt_set_memory(heap_info_ptr->fPadding, 0, kKernelHeapAlignSz);
+		rt_set_memory(heap_info_ptr->fPadding, 0, kMemoryMgrAlignSz);
 
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
@@ -157,9 +158,9 @@ namespace NeOS
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return kErrorHeapNotPresent;
 
-		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heap_ptr - sizeof(Detail::MM_INFORMATION_BLOCK));
 
 		if (!heap_info_ptr)
 			return kErrorHeapNotPresent;
@@ -179,9 +180,9 @@ namespace NeOS
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return kErrorHeapNotPresent;
 
-		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heap_ptr - sizeof(Detail::MM_INFORMATION_BLOCK));
 
 		if (!heap_info_ptr)
 			return kErrorHeapNotPresent;
@@ -195,9 +196,9 @@ namespace NeOS
 	/// @param heap_ptr the pointer to get.
 	_Output UInt64 mm_get_flags(VoidPtr heap_ptr)
 	{
-		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)heap_ptr - sizeof(Detail::MM_INFORMATION_BLOCK));
 
 		if (!heap_info_ptr)
 			return kErrorHeapNotPresent;
@@ -213,11 +214,11 @@ namespace NeOS
 		if (Detail::mm_check_heap_address(heap_ptr) == No)
 			return kErrorHeapNotPresent;
 
-		Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
+				(UIntPtr)(heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
 
-		if (heap_info_ptr && heap_info_ptr->fMagic == kKernelHeapMagic)
+		if (heap_info_ptr && heap_info_ptr->fMagic == kMemoryMgrMagic)
 		{
 			if (!heap_info_ptr->fPresent)
 			{
@@ -232,13 +233,13 @@ namespace NeOS
 			heap_info_ptr->fUser	  = No;
 			heap_info_ptr->fMagic	  = 0;
 
-			PTEWrapper		page_wrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+			kout << "Address has been successfully freed: " << hex_number((UIntPtr)heap_info_ptr) << kendl;
+
+			PTEWrapper		page_wrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pte_address{page_wrapper};
 
 			PageMgr heap_mgr;
 			heap_mgr.Free(pte_address);
-
-			kout << "Address has been successfully freed." << kendl;
 
 			return kErrorSuccess;
 		}
@@ -253,11 +254,11 @@ namespace NeOS
 	{
 		if (heap_ptr && HAL::mm_is_bitmap(heap_ptr))
 		{
-			Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
-				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)(heap_ptr) - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+			Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+				reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
+					(UIntPtr)(heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
 
-			return (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kKernelHeapMagic);
+			return (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kMemoryMgrMagic);
 		}
 
 		return No;
@@ -270,12 +271,12 @@ namespace NeOS
 	{
 		if (heap_ptr)
 		{
-			Detail::HEAP_INFORMATION_BLOCK_PTR heap_info_ptr =
-				reinterpret_cast<Detail::HEAP_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)heap_ptr - sizeof(Detail::HEAP_INFORMATION_BLOCK));
+			Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+				reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
+					(UIntPtr)heap_ptr - sizeof(Detail::MM_INFORMATION_BLOCK));
 
 			/// if valid, present and is heap header, then compute crc32
-			if (heap_info_ptr && heap_info_ptr->fPresent && kKernelHeapMagic == heap_info_ptr->fMagic)
+			if (heap_info_ptr && heap_info_ptr->fPresent && kMemoryMgrMagic == heap_info_ptr->fMagic)
 			{
 				heap_info_ptr->fCRC32 =
 					ke_calculate_crc32((Char*)heap_info_ptr->fOffset, heap_info_ptr->fSize);

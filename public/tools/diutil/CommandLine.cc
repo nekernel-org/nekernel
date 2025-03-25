@@ -23,28 +23,28 @@ int main(int argc, char** argv)
 	{
 		const Char* arg_s = argv[arg];
 
-		if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr)"--disk-output-name", MmStrLen("--disk-output-name") == 0))
+		if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "--disk-output-name", MmStrLen("--disk-output-name") == 0))
 		{
 			if ((arg + 1) < argc)
 			{
 				MmCopyMemory((VoidPtr)kOutDisk, argv[arg + 1], kDIDiskNameLen);
 			}
 		}
-		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr)"--disk-output-size", MmStrLen("--disk-output-size") == 0))
+		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "--disk-output-size", MmStrLen("--disk-output-size") == 0))
 		{
 			if ((arg + 1) < argc)
 			{
 				kDiskSz = MathToNumber(argv[arg + 1], nullptr, 10);
 			}
 		}
-		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr)"--disk-sector-size", MmStrLen("--disk-sector-size") == 0))
+		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "--disk-sector-size", MmStrLen("--disk-sector-size") == 0))
 		{
 			if ((arg + 1) < argc)
 			{
 				kDiskSectorSz = MathToNumber(argv[arg + 1], nullptr, 10);
 			}
 		}
-		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr)"--disk-part-name", MmStrLen("--disk-part-name") == 0))
+		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "--disk-part-name", MmStrLen("--disk-part-name") == 0))
 		{
 			if ((arg + 1) < argc)
 			{

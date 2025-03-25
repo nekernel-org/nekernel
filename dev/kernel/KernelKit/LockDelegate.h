@@ -13,8 +13,10 @@ namespace NeOS
 {
 	enum
 	{
+		kLockInvalid,
 		kLockDone = 200,
 		kLockTimedOut,
+		kLockCount = 3,
 	};
 
 	/// @brief Lock condition pointer.

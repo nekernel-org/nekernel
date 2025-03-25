@@ -4,25 +4,29 @@
 ;; *	NeKernel
 ;; * 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 ;; *
+;; *    25/03/25: Rename HalBoot.asm to HalBootHeader.asm, expose struct symbols; remove unused external symbol.
+;; *
 ;; * 	========================================================
 ;; */
 
 [bits 64]
 
-;; Global symbol of this unit
-[extern hal_init_platform]
-
 %define kTypeKernel 100
 %define kArchAmd64 122
 %define kHandoverMagic 0xBADCC
 
+global _HandoverMagic
+global _HandoverType
+global _HandoverPad
+global _HandoverArch
+
 section .ldr
 
-HandoverMagic:
+_HandoverMagic:
     dq kHandoverMagic
-HandoverType:
+_HandoverType:
     dw kTypeKernel
-HandoverPad:
+_HandoverPad:
     dw 0
-HandoverArch:
+_HandoverArch:
     dw kArchAmd64

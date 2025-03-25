@@ -101,10 +101,10 @@ struct PACKED EPM_PART_BLOCK
 enum
 {
 	kEPMInvalid	  = 0x00,
-	kEPMGenericOS = 0xcf, // Generic OS
-	kEPMLinux	  = 0x8f, // Linux on EPM
-	kEPMBSD		  = 0x9f, // Berkeley Soft. Distribution
-	kEPMNeOS	  = 0x1f, // This OS.
+	kEPMGenericOS = 0xcf, /// @brief Generic OS
+	kEPMLinux	  = 0x8f, /// @brief Linux on EPM
+	kEPMBSD		  = 0x9f, /// @brief Berkeley Soft. Distribution
+	kEPMNeOS	  = 0x1f, /// @brief NeKernel.
 	kEPMInvalidOS = 0xff,
 };
 
