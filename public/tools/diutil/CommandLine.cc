@@ -8,7 +8,6 @@
    ------------------------------------------- */
 
 #include <DiskImage.fwrk/headers/DiskImage.h>
-#include <NewKit/Defines.h>
 
 static const Char	kDiskName[kDIDiskNameLen] = "Disk";
 static SInt32		kDiskSectorSz			  = 512;
@@ -53,7 +52,17 @@ int main(int argc, char** argv)
 		}
 	}
 
+	// create disk image.
+
 	DI_DISK_IMAGE img{};
 
+	img.disk_sz	  = kDiskSz;
+	img.sector_sz = kDiskSectorSz;
+	img.block_cnt = 0;
+
+	MmCopyMemory((VoidPtr)img.disk_name, (VoidPtr)kDiskName, kDIDiskNameLen);
+	MmCopyMemory((VoidPtr)img.out_name, (VoidPtr)kOutDisk, kDIDiskNameLen);
+
+	// format disk image.
 	return DIFormatPartitionEPM(img);
 }

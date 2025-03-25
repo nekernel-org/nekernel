@@ -10,9 +10,10 @@
 #pragma once
 
 #include <SCIKit/SystemCalls.h>
+#include <NewKit/Defines.h>
 
 #define kDISectorSz			 (512)
-#define kDIMinDiskSz		 (1024 * 1024 * 1024)
+#define kDIMinDiskSz		 mib_cast(1)
 #define kDIDefaultOutputName "disk.eimg"
 #define kDIDefaultDiskName	 "Disk"
 #define kDISuccessStatus	 (0)
