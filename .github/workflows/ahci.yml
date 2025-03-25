@@ -1,0 +1,20 @@
+name: NeKernel CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Packages
+      run: sudo apt update && sudo apt install mingw-w64 qemu-utils nasm
+    - name: Build NeKernel (AHCI)
+      run: ./setup_amd64.sh && cd dev/kernel && export AHCI_SUPPORT=1 && make -f amd64-ci.make all
+
