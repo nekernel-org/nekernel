@@ -5,6 +5,8 @@
 Use the doxygen command to build documentation.
 <br/>
 A documentation regarding building, and developing for NeKernel will also be available soon.
+<br/>
+Or you can just look at the documentation here: https://amlel-el-mahrouss.github.io/nekernel-docs/
 
 ## Requirements:
 
