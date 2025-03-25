@@ -3,6 +3,8 @@
 # NeKernel
 
 Use the doxygen command to build documentation.
+<br/>
+A documentation regarding building, and developing for NeKernel will also be available soon.
 
 ## Requirements:
 
@@ -23,7 +25,7 @@ Clone the repository:
 
 ```sh
 git clone git@github.com:amlel-el-mahrouss/nekernel.git
-cd kernel
+cd nekernel
 ./setup_amd64.sh
 ./debug_ata.sh # Generic ATA PIO target
 ```

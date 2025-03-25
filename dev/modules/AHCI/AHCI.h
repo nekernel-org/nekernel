@@ -268,6 +268,8 @@ typedef struct HbaMem final
 	HbaPort Ports[1]; // 1 ~ 32, 32 is the max ahci devices per controller.
 } HbaMem;
 
+typedef HbaMem* HbaMemRef;
+
 typedef struct HbaCmdHeader final
 {
 	// DW0

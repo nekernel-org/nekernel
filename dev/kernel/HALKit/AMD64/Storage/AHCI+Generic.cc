@@ -56,16 +56,16 @@
 using namespace NeOS;
 
 STATIC PCI::Device kSATADev;
-STATIC HbaMem* kSATAHba;
-STATIC Lba	   kSATASectorCount		 = 0UL;
-STATIC UInt16  kSATAIndex			 = 0U;
-STATIC Char	   kCurrentDiskModel[50] = {"UNKNOWN AHCI DRIVE"};
-STATIC UInt16  kSATAPortsImplemented = 0U;
+STATIC HbaMemRef   kSATAHba;
+STATIC Lba		   kSATASectorCount		 = 0UL;
+STATIC UInt16	   kSATAIndex			 = 0U;
+STATIC Char		   kCurrentDiskModel[50] = {"UNKNOWN AHCI DRIVE"};
+STATIC UInt16	   kSATAPortsImplemented = 0U;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept;
 
-STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
+STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept;
 
 STATIC Void drv_compute_disk_ahci() noexcept;
 
@@ -96,7 +96,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 /// @brief Finds a command slot for a HBA port.
 /// @param port The port to search on.
 /// @return The slot, or ~0.
-STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
+STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept
 {
 	UInt32 slots = (port->Sact | port->Ci);
 
@@ -121,10 +121,14 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 {
 	UIntPtr slot = 0UL;
 
-	slot = drv_find_cmd_slot(&kSATAHba->Ports[kSATAIndex]);
+	slot = drv_find_cmd_slot_ahci(&kSATAHba->Ports[kSATAIndex]);
 
 	if (slot == ~0)
+	{
+		err_global_get() = kErrorDisk;
+
 		return;
+	}
 
 	if (!Write)
 	{
@@ -297,7 +301,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 
 				if (mem_ahci->Ports[ahci_index].Sig == kSATASignature)
 				{
-					kout << "Detect: /dev/sat" << number(ahci_index) << kendl;
+					kout << "detect device: /dev/sat" << number(ahci_index) << kendl;
 
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
@@ -308,7 +312,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 				}
 				else if (atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig)
 				{
-					kout << "Detect: /dev/atp" << number(ahci_index) << kendl;
+					kout << "detect device: /dev/atp" << number(ahci_index) << kendl;
 
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
@@ -325,6 +329,8 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 			return YES;
 		}
 	}
+
+	err_global_get() = kErrorDisk;
 
 	return NO;
 }
@@ -359,6 +365,8 @@ namespace NeOS
 		{
 			AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
 
+			err_global_get() = kErrorDisk;
+
 			if (!dev)
 				return;
 
@@ -366,6 +374,8 @@ namespace NeOS
 
 			if (!disk)
 				return;
+
+			err_global_get() = kErrorSuccess;
 
 			drv_std_input_output_ahci<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
@@ -377,6 +387,8 @@ namespace NeOS
 		{
 			AHCIDeviceInterface* dev = (AHCIDeviceInterface*)self;
 
+			err_global_get() = kErrorDisk;
+
 			if (!dev)
 				return;
 
@@ -384,6 +396,8 @@ namespace NeOS
 
 			if (!disk)
 				return;
+
+			err_global_get() = kErrorSuccess;
 
 			drv_std_input_output_ahci<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
