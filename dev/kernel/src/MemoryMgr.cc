@@ -67,6 +67,9 @@ namespace NeOS
 			/// @brief 64-bit target offset pointer.
 			UIntPtr fOffset;
 
+			/// @brief Padding.
+			UInt32 fPad;
+
 			/// @brief Padding bytes for header.
 			UInt8 fPadding[kMemoryMgrAlignSz];
 		};
@@ -116,7 +119,7 @@ namespace NeOS
 	/// @param wr Read Write bit.
 	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
-	_Output VoidPtr mm_new_heap(const SizeT sz, const bool wr, const bool user)
+	_Output VoidPtr mm_new_heap(const SizeT sz, const Bool wr, const Bool user, const SizeT pad_amount)
 	{
 		auto sz_fix = sz;
 
@@ -126,7 +129,7 @@ namespace NeOS
 		sz_fix += sizeof(Detail::MM_INFORMATION_BLOCK);
 
 		PageMgr heap_mgr;
-		auto	wrapper = heap_mgr.Request(wr, user, No, sz_fix);
+		auto	wrapper = heap_mgr.Request(wr, user, No, sz_fix, pad_amount);
 
 		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
@@ -140,6 +143,7 @@ namespace NeOS
 		heap_info_ptr->fWriteRead = wr;
 		heap_info_ptr->fUser	  = user;
 		heap_info_ptr->fPresent	  = Yes;
+		heap_info_ptr->fPad		  = pad_amount;
 
 		rt_set_memory(heap_info_ptr->fPadding, 0, kMemoryMgrAlignSz);
 
@@ -232,6 +236,7 @@ namespace NeOS
 			heap_info_ptr->fWriteRead = No;
 			heap_info_ptr->fUser	  = No;
 			heap_info_ptr->fMagic	  = 0;
+			heap_info_ptr->fPad		  = 0;
 
 			kout << "Address has been successfully freed: " << hex_number((UIntPtr)heap_info_ptr) << kendl;
 

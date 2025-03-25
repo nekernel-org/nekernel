@@ -57,10 +57,10 @@ namespace NeOS
 	/// @param User user mode?
 	/// @param ExecDisable disable execution on page?
 	/// @return
-	PTEWrapper PageMgr::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz)
+	PTEWrapper PageMgr::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz, SizeT Pad)
 	{
 		// Store PTE wrapper right after PTE.
-		VoidPtr ptr = NeOS::HAL::mm_alloc_bitmap(Rw, User, Sz, false);
+		VoidPtr ptr = NeOS::HAL::mm_alloc_bitmap(Rw, User, Sz, NO, Pad);
 
 		return PTEWrapper{Rw, User, ExecDisable, reinterpret_cast<UIntPtr>(ptr)};
 	}

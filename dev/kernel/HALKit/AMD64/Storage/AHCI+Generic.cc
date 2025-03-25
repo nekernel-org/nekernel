@@ -63,7 +63,7 @@ STATIC Char	   kCurrentDiskModel[50] = {"UNKNOWN AHCI DRIVE"};
 STATIC UInt16  kSATAPortsImplemented = 0U;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
-STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept;
+STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept;
 
 STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept;
 
@@ -73,21 +73,29 @@ STATIC Void drv_compute_disk_ahci() noexcept
 {
 	kSATASectorCount = 0UL;
 
+	/// Normally 512 bytes, but add an additional 512 bytes to make 1 KIB.
 	const UInt16 kSzIdent = kib_cast(1);
 
+	/// Push it to the stack
 	UInt8 identify_data[kSzIdent] = {0};
 
 	rt_set_memory(identify_data, 0, kSzIdent);
 
-	drv_std_input_output<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
+	/// Send AHCI command.
+	drv_std_input_output_ahci<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
 
+	/// Extract 28-bit LBA.
 	kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 
+	/// Show what we got.
 	kout << "Disk Model: " << kCurrentDiskModel << kendl;
 	kout << "Disk Size: " << number(drv_get_size()) << kendl;
 	kout << "Disk Sector Count: " << number(kSATASectorCount) << kendl;
 }
 
+/// @brief Finds a command slot for a HBA port.
+/// @param port The port to search on.
+/// @return The slot, or ~0.
 STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 {
 	UInt32 slots = (port->Sact | port->Ci);
@@ -103,8 +111,13 @@ STATIC Int32 drv_find_cmd_slot(HbaPort* port) noexcept
 	return ~0;
 }
 
+/// @brief Send an AHCI command, according to the template parameters.
+/// @param lba Logical Block Address to look for.
+/// @param buffer The data buffer to transfer.
+/// @param sector_sz The disk's sector size (unused)
+/// @param size_buffer The size of the **buffer** parameter.
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
-STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept
+STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz, SizeT size_buffer) noexcept
 {
 	UIntPtr slot = 0UL;
 
@@ -112,6 +125,12 @@ STATIC Void drv_std_input_output(UInt64 lba, UInt8* buffer, SizeT sector_sz, Siz
 
 	if (slot == ~0)
 		return;
+
+	if (!Write)
+	{
+		// Zero-memory the buffer field.
+		rt_set_memory(buffer, 0, size_buffer);
+	}
 
 	volatile HbaCmdHeader* command_header = ((HbaCmdHeader*)(((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
 
@@ -310,6 +329,8 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 	return NO;
 }
 
+/// @brief Checks if an AHCI device is detected.
+/// @return Either if detected, or not found.
 Bool drv_std_detected_ahci()
 {
 	return kSATADev.DeviceId() != (UShort)PCI::PciConfigKind::Invalid && kSATADev.Bar(kSATABar5) != 0;
@@ -317,6 +338,7 @@ Bool drv_std_detected_ahci()
 
 namespace NeOS
 {
+	/// @brief Initialize an AHCI device (StorageKit)
 	UInt16 sk_init_ahci_device(BOOL atapi)
 	{
 		UInt16 pi = 0;
@@ -327,6 +349,7 @@ namespace NeOS
 		return pi;
 	}
 
+	/// @brief Implementation details namespace.
 	namespace Detail
 	{
 		/// @brief Read AHCI device.
@@ -344,7 +367,7 @@ namespace NeOS
 			if (!disk)
 				return;
 
-			drv_std_input_output<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+			drv_std_input_output_ahci<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
 
 		/// @brief Write AHCI device.
@@ -362,10 +385,13 @@ namespace NeOS
 			if (!disk)
 				return;
 
-			drv_std_input_output<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+			drv_std_input_output_ahci<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
 	} // namespace Detail
 
+	/// @brief Acquires a new AHCI device with drv_index in mind.
+	/// @param drv_index The drive index to assign.
+	/// @return A wrapped device interface if successful, or error code.
 	ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index)
 	{
 		if (!drv_std_detected_ahci())
@@ -382,16 +408,24 @@ namespace NeOS
 	}
 } // namespace NeOS
 
+// ================================================================================================
+
+//
+//	This applies only if we compile with AHCI as a default disk driver.
+//
+
+// ================================================================================================
+
 #ifdef __AHCI__
 
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
-	drv_std_input_output<YES, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
+	drv_std_input_output_ahci<YES, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
 }
 
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
-	drv_std_input_output<NO, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
+	drv_std_input_output_ahci<NO, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
 }
 
 Bool drv_std_init(UInt16& pi)

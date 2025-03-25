@@ -7,7 +7,7 @@
 /**
  * @file ATA-PIO.cc
  * @author Amlal EL Mahrouss (amlal@nekernel.org)
- * @brief ATA driver (PIO mode).
+ * @brief ATA driver (DMA mode).
  * @version 0.1
  * @date 2024-02-02
  *
@@ -131,17 +131,15 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	return NO;
 }
 
-namespace Detail
+namespace NeOS::Detail
 {
-	using namespace NeOS;
-
 	struct PRDEntry
 	{
 		UInt32 mAddress;
 		UInt16 mByteCount;
 		UInt16 mFlags;
 	};
-} // namespace Detail
+} // namespace NeOS::Detail
 
 static UIntPtr kReadAddr  = mib_cast(2);
 static UIntPtr kWriteAddr = mib_cast(4);
@@ -151,7 +149,7 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 	Lba /= SectorSz;
 
 	if (Size > kib_cast(64))
-		ke_panic(RUNTIME_CHECK_FAILED, "ATA-DMA only supports < 64kb DMA transfers.");
+		return;
 
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
@@ -168,7 +166,7 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
-	Detail::PRDEntry* prd = (Detail::PRDEntry*)(kATADevice.Bar(0x20) + 4); // The PRDEntry is not correct.
+	NeOS::Detail::PRDEntry* prd = (NeOS::Detail::PRDEntry*)(kATADevice.Bar(0x20) + 4); // The PRDEntry is not correct.
 
 	prd->mAddress	= (UInt32)(UIntPtr)kReadAddr;
 	prd->mByteCount = Size - 1;
@@ -196,7 +194,7 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 	Lba /= SectorSz;
 
 	if (Size > kib_cast(64))
-		ke_panic(RUNTIME_CHECK_FAILED, "ATA-DMA only supports < 64kb DMA transfers.");
+		return;
 
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
@@ -211,10 +209,11 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 	rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
 	rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
-	Detail::PRDEntry* prd = (Detail::PRDEntry*)(kATADevice.Bar(0x20) + 4);
-	prd->mAddress		  = (UInt32)(UIntPtr)kWriteAddr;
-	prd->mByteCount		  = Size - 1;
-	prd->mFlags			  = 0x8000;
+	NeOS::Detail::PRDEntry* prd = (NeOS::Detail::PRDEntry*)(kATADevice.Bar(0x20) + 4);
+
+	prd->mAddress	= (UInt32)(UIntPtr)kWriteAddr;
+	prd->mByteCount = Size - 1;
+	prd->mFlags		= 0x8000;
 
 	rt_out32(kATADevice.Bar(0x20) + 0x04, (UInt32)(UIntPtr)prd);
 	rt_out8(kATADevice.Bar(0x20) + ATA_REG_COMMAND, ATA_CMD_WRITE_DMA);
@@ -230,21 +229,28 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 	prd = nullptr;
 }
 
-/// @brief is ATA detected?
+/***********************************************************************************/
+/// @brief Is ATA detected?
+/***********************************************************************************/
 Boolean drv_std_detected(Void)
 {
 	return kATADetected;
 }
 
+/***********************************************************************************/
 /***
-	@brief Getter, gets the number of sectors inside the drive.
+	@brief Gets the number of sectors inside the drive.
+	@return Number of sectors, or zero.
 */
+/***********************************************************************************/
 NeOS::SizeT drv_get_sector_count()
 {
 	return (kATAData[61] << 16) | kATAData[60];
 }
 
-/// @brief Get the drive size.
+/***********************************************************************************/
+/// @brief Get the size of the current drive.
+/***********************************************************************************/
 NeOS::SizeT drv_get_size()
 {
 	return (drv_get_sector_count()) * kATASectorSize;

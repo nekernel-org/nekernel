@@ -88,7 +88,7 @@ namespace NeOS::HAL
 		NE_PTE* ALIGN(kPageAlign) fEntries[kPageMax];
 	};
 
-	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page) -> VoidPtr;
+	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, const SizeT pad = 0) -> VoidPtr;
 	auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
 } // namespace NeOS::HAL
 

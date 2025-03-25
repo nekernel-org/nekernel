@@ -38,10 +38,14 @@ namespace NeOS
 
 	typedef UInt64 PTime;
 
+	/***********************************************************************************/
 	//! @brief Local Process identifier.
+	/***********************************************************************************/
 	typedef Int64 ProcessID;
 
+	/***********************************************************************************/
 	//! @brief Local Process status enum.
+	/***********************************************************************************/
 	enum class ProcessStatusKind : Int32
 	{
 		kInvalid,
@@ -53,8 +57,9 @@ namespace NeOS
 		kCount,
 	};
 
-	//! @brief Affinity is the amount of nano-seconds this process is going
-	//! to run.
+	/***********************************************************************************/
+	//! @brief Affinity is the amount of nano-seconds this process is going to run.
+	/***********************************************************************************/
 	enum class AffinityKind : Int32
 	{
 		kRealTime	  = 500,
@@ -65,7 +70,9 @@ namespace NeOS
 		kVeryLowUsage = 2000,
 	};
 
-	// operator overloading.
+	/***********************************************************************************/
+	//! Operators for AffinityKind
+	/***********************************************************************************/
 
 	inline bool operator<(AffinityKind lhs, AffinityKind rhs)
 	{
@@ -99,7 +106,9 @@ namespace NeOS
 		return lhs_int >= rhs_int;
 	}
 
-	// end of operator overloading.
+	/***********************************************************************************/
+	/// @brief Subsystem enum type.
+	/***********************************************************************************/
 
 	enum class ProcessSubsystem : Int32
 	{
@@ -114,7 +123,9 @@ namespace NeOS
 	using ProcessTime = UInt64;
 	using PID		  = Int64;
 
-	// for permission manager, tells where we run the code.
+	/***********************************************************************************/
+	/// @note For User manager, tells where we run the code.
+	/***********************************************************************************/
 	enum class ProcessLevelRing : Int32
 	{
 		kRingStdUser   = 1,
@@ -123,7 +134,9 @@ namespace NeOS
 		kRingCount	   = 5,
 	};
 
+	/***********************************************************************************/
 	/// @brief Helper type to describe a code image.
+	/***********************************************************************************/
 	using ImagePtr = VoidPtr;
 
 	struct UserProcessImage final
@@ -144,8 +157,10 @@ namespace NeOS
 		}
 	};
 
+	/***********************************************************************************/
 	/// @name UserProcess
 	/// @brief User process class, holds information about the running process/thread.
+	/***********************************************************************************/
 	class UserProcess final
 	{
 	public:
@@ -207,38 +222,58 @@ namespace NeOS
 		Int32 Kind{kExectuableKind};
 
 	public:
+		/***********************************************************************************/
 		//! @brief boolean operator, check status.
+		/***********************************************************************************/
 		operator bool();
 
+		/***********************************************************************************/
 		///! @brief Crashes the app, exits with code ~0.
+		/***********************************************************************************/
 		Void Crash();
 
+		/***********************************************************************************/
 		///! @brief Exits the app.
+		/***********************************************************************************/
 		Void Exit(const Int32& exit_code = 0);
 
+		/***********************************************************************************/
 		///! @brief TLS allocate.
-		///! @param sz size of new ptr.
+		///! @param sz size of data structure.
+		///! @param pad_amount amount to add after pointer.
+		///! @return A wrapped pointer, or error code.
+		/***********************************************************************************/
 		ErrorOr<VoidPtr> New(const SizeT& sz, const SizeT& pad_amount = 0);
 
+		/***********************************************************************************/
 		///! @brief TLS free.
 		///! @param ptr the pointer to free.
 		///! @param sz the size of it.
+		/***********************************************************************************/
 		template <typename T>
 		Boolean Delete(ErrorOr<T*> ptr, const SizeT& sz);
 
-		///! @brief Wakes up threads.
+		/***********************************************************************************/
+		///! @brief Wakes up thread.
+		/***********************************************************************************/
 		Void Wake(const Bool wakeup = false);
 
 	public:
+		/***********************************************************************************/
 		//! @brief Gets the local exit code.
+		/***********************************************************************************/
 		const UInt32& GetExitCode() noexcept;
 
+		/***********************************************************************************/
 		///! @brief Get the process's name
 		///! @example 'C Runtime Library'
+		/***********************************************************************************/
 		const Char* GetName() noexcept;
 
+		/***********************************************************************************/
 		//! @brief return local error code of process.
 		//! @return Int32 local error code.
+		/***********************************************************************************/
 		Int32& GetLocalCode() noexcept;
 
 		const User*				 GetOwner() noexcept;
@@ -278,8 +313,10 @@ namespace NeOS
 
 	using UserProcessRef = UserProcess&;
 
+	/***********************************************************************************/
 	/// @brief Process scheduler class.
 	/// The main class which you call to schedule user processes.
+	/***********************************************************************************/
 	class UserProcessScheduler final : public ISchedulable
 	{
 		friend class UserProcessHelper;
@@ -315,9 +352,11 @@ namespace NeOS
 		UserProcessTeam mTeam{};
 	};
 
-	/*
+	/***********************************************************************************/
+	/**
 	 * \brief UserProcess helper class, which contains needed utilities for the scheduler.
 	 */
+	/***********************************************************************************/
 
 	class UserProcessHelper final
 	{
@@ -335,9 +374,7 @@ namespace NeOS
 #include <KernelKit/UserProcessScheduler.inl>
 
 ////////////////////////////////////////////////////
-
 // END
-
 ////////////////////////////////////////////////////
 
 #endif /* ifndef INC_PROCESS_SCHEDULER_H */

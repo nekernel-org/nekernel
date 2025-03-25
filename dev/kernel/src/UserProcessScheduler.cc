@@ -111,11 +111,11 @@ namespace NeOS
 		auto vm_register = hal_read_cr3();
 		hal_write_cr3(this->VMRegister);
 
-		auto ptr = mm_new_heap(sz + pad_amount, Yes, Yes);
+		auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
 
 		hal_write_cr3(vm_register);
 #else
-		auto ptr = mm_new_heap(sz + pad_amount, Yes, Yes);
+		auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
 #endif
 
 		if (!this->ProcessMemoryHeap)
@@ -238,15 +238,23 @@ namespace NeOS
 		if (this->Image.fCode && mm_is_valid_heap(this->Image.fCode))
 			mm_delete_heap(this->Image.fCode);
 
+		//! Delete blob too.
 		if (this->Image.fBlob && mm_is_valid_heap(this->Image.fBlob))
 			mm_delete_heap(this->Image.fBlob);
 
+		//! Delete stack frame.
 		if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
 			mm_delete_heap((VoidPtr)this->StackFrame);
 
-		this->Image.fBlob = nullptr;
-		this->Image.fCode = nullptr;
-		this->StackFrame  = nullptr;
+		//! Delete stack reserve.
+		if (this->StackReserve && mm_is_valid_heap(this->StackReserve))
+			mm_delete_heap(reinterpret_cast<VoidPtr>(this->StackReserve));
+
+		//! Avoid use after free.
+		this->Image.fBlob  = nullptr;
+		this->Image.fCode  = nullptr;
+		this->StackFrame   = nullptr;
+		this->StackReserve = nullptr;
 
 		if (this->Kind == kExectuableDylibKind)
 		{
@@ -262,10 +270,7 @@ namespace NeOS
 			this->DylibDelegate = nullptr;
 		}
 
-		if (this->StackReserve)
-			mm_delete_heap(reinterpret_cast<VoidPtr>(this->StackReserve));
-
-		this->ProcessId = 0;
+		this->ProcessId = 0UL;
 		this->Status	= ProcessStatusKind::kFinished;
 
 		--this->ProcessParentTeam->mProcessCount;
@@ -311,7 +316,7 @@ namespace NeOS
 		flags |= HAL::kMMFlagsUser;
 
 		HAL::mm_map_page((VoidPtr)process.VMRegister, process.VMRegister, flags);
-#endif // __NE_VIRTUAL_MEMORY_SUPPORT__
+#endif // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		process.StackFrame = new HAL::StackFrame();
 
@@ -327,7 +332,7 @@ namespace NeOS
 		flags |= HAL::kMMFlagsUser;
 
 		HAL::mm_map_page((VoidPtr)process.StackFrame, process.StackFrame, flags);
-#endif // __NE_VIRTUAL_MEMORY_SUPPORT__
+#endif // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		// React according to process kind.
 		switch (process.Kind)
@@ -357,7 +362,7 @@ namespace NeOS
 		flags |= HAL::kMMFlagsUser;
 
 		HAL::mm_map_page((VoidPtr)process.StackReserve, process.StackReserve, flags);
-#endif // __NE_VIRTUAL_MEMORY_SUPPORT__
+#endif // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
 		process.ProcessParentTeam = &mTeam;
 

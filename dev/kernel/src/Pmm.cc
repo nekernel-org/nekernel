@@ -23,7 +23,7 @@ namespace NeOS
 	Pmm::Pmm()
 		: fPageMgr()
 	{
-		kout << "[PMM] Allocate PageMemoryMgr";
+		kout << "[PMM] Allocate PageMemoryMgr.\r";
 	}
 
 	Pmm::~Pmm() = default;
@@ -35,7 +35,7 @@ namespace NeOS
 	/***********************************************************************************/
 	Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite)
 	{
-		PTEWrapper pt = fPageMgr.Leak().Request(user, readWrite, false, kPageSize);
+		PTEWrapper pt = fPageMgr.Leak().Request(user, readWrite, false, kPageSize, 0);
 
 		if (pt.fPresent)
 		{

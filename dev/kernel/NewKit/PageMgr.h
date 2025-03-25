@@ -68,7 +68,7 @@ namespace NeOS
 		PageMgr(const PageMgr&)			   = default;
 
 	public:
-		PTEWrapper Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz);
+		PTEWrapper Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz, SizeT Pad);
 		bool	   Free(Ref<PTEWrapper>& wrapper);
 
 	private:
