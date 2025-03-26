@@ -9,6 +9,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
 #include <NewKit/Json.h>
+#include <SwapKit/SwapDisk.h>
 
 namespace NeOS
 {
@@ -22,6 +23,7 @@ namespace NeOS
 			kNull,
 			kJson,
 			kXML,
+			kSwap,
 		};
 
 	public:
@@ -45,6 +47,11 @@ namespace NeOS
 
 		explicit Variant(nullPtr ptr)
 			: fPtr(ptr), fKind(VariantKind::kNull)
+		{
+		}
+
+		explicit Variant(SWAP_DISK_HEADER* ptr)
+			: fPtr(ptr), fKind(VariantKind::kSwap)
 		{
 		}
 

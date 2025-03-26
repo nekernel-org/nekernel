@@ -8,8 +8,6 @@
 
 #include <NewKit/Defines.h>
 
-typedef NeOS::UInt32 SignalKind;
-
 #define SIGKILL 0
 #define SIGPAUS 1
 #define SIGEXEC 2
@@ -20,3 +18,8 @@ typedef NeOS::UInt32 SignalKind;
 #define SIGBREK 666
 #define SIGATCH 661
 #define SIGDTCH 662
+
+namespace NeOS
+{
+	typedef UInt32 SignalKind;
+}

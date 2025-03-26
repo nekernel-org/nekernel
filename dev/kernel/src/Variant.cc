@@ -22,6 +22,8 @@ namespace NeOS
 			return ("Class:{Blob}");
 		case VariantKind::kNull:
 			return ("Class:{Null}");
+		case VariantKind::kSwap:
+			return ("Class:{Swap}");
 		default:
 			return ("Class:{Unknown}");
 		}
