@@ -279,6 +279,14 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		ST->RuntimeServices->SetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, &attr, &kernel_path_sz, kernel_path);
 	}
 
+	UInt32 sz_ver = sizeof(UInt64);
+	UInt64 ver = KERNEL_VERSION_BCD;
+
+	ST->RuntimeServices->GetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
+
+	Boot::BootTextWriter writer;
+	writer.Write("BootZ: Kernel Version: ").Write(ver).Write("\r");
+
 	Boot::BootFileReader reader_kernel(kernel_path, image_handle);
 
 	reader_kernel.ReadAll(0);
@@ -292,7 +300,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	if (reader_kernel.Blob())
 	{
 		kernel_thread = new Boot::BootThread(reader_kernel.Blob());
-		kernel_thread->SetName("BootZ: MicroKernel.");
+		kernel_thread->SetName("BootZ: Kernel");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
 	}
