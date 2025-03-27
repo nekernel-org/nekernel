@@ -9,7 +9,7 @@
 #include <BootKit/Protocol.h>
 #include <BootKit/BootKit.h>
 
-#ifdef __BOOTLDR_STANDALONE__
+#ifdef __BOOTZ_STANDALONE__
 
 using namespace Boot;
 
@@ -103,4 +103,4 @@ void rt_hlt()
 	NeOS::HAL::rt_halt();
 }
 
-#endif // __BOOTLDR_STANDALONE__
+#endif // __BOOTZ_STANDALONE__

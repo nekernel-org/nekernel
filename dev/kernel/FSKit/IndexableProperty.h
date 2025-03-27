@@ -17,7 +17,7 @@ namespace NeOS
 {
 	namespace Indexer
 	{
-		struct IndexProperty final
+		struct Index final
 		{
 		public:
 			Char Drive[kDriveNameLen];
@@ -41,7 +41,7 @@ namespace NeOS
 			NE_COPY_DEFAULT(IndexableProperty);
 
 		public:
-			IndexProperty& Leak() noexcept;
+			Index& Leak() noexcept;
 
 		public:
 			void  AddFlag(Int16 flag);
@@ -49,8 +49,8 @@ namespace NeOS
 			Int16 HasFlag(Int16 flag);
 
 		private:
-			IndexProperty fIndex;
-			UInt32		  fFlags;
+			Index  fIndex;
+			UInt32 fFlags;
 		};
 
 		/// @brief Index a file into the indexer instance.

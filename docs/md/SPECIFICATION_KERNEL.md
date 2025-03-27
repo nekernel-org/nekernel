@@ -10,7 +10,7 @@
 
 ===================================
 
-# 1: The Kernel
+# 1: The Kernel (NeOSKrnl)
 
 ===================================
 
@@ -30,7 +30,7 @@
 
 ===================================
 
-# 2: The Filesystem
+# 2: The Filesystem (NeFS)
 
 ===================================
 
@@ -38,6 +38,7 @@
 - Large storage support.
 - Long file names.
 - UNIX path style.
+- Can be formated under 8mb.
 
 ==================================
 
@@ -52,7 +53,7 @@
 
 ===================================
 
-# 4: The BootZ
+# 4: The Bootloader (BootZ)
 
 ===================================
 

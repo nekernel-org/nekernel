@@ -12,7 +12,7 @@
 #include <KernelKit/MSDOS.h>
 #include <KernelKit/PE.h>
 
-#ifdef __BOOTLDR_STANDALONE__
+#ifdef __BOOTZ_STANDALONE__
 
 /// @brief memset definition in C++.
 /// @param dst destination pointer.

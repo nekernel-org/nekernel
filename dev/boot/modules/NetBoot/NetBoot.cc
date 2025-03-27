@@ -15,12 +15,14 @@ EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 {
 	NETBOOT_INTERNET_HEADER inet{};
 
+	memset(&inet, 0, sizeof(NETBOOT_INTERNET_HEADER));
+
 	/// TODO: Read packet from JSON file 'netboot.json'
 
-	if (inet.PatchLength < 0)
+	if (inet.PatchLength < 1)
 	{
 		Boot::BootTextWriter writer;
-		writer.Write("NetBootLauncher: No Patch attached to packet.\r");
+		writer.Write("NetBootLauncher: No executable attached to the packet, aborting.\r");
 
 		return kEfiFail;
 	}
@@ -31,6 +33,8 @@ EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 
 		if (thread.IsValid())
 			return thread.Start(handover, YES);
+
+		return kEfiFail;
 	}
 	else
 	{

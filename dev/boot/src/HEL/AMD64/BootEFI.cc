@@ -202,47 +202,46 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
 
+	// ------------------------------------------ //
+	// If we succeed in reading the blob, then execute it.
+	// ------------------------------------------ //
+
+#if defined(__ATA_PIO__)
 	Boot::BootFileReader reader_syschk(L"syschk.sys", image_handle);
 	reader_syschk.ReadAll(0);
 
 	Boot::BootThread* syschk_thread = nullptr;
 
-	// ------------------------------------------ //
-	// If we succeed in reading the blob, then execute it.
-	// ------------------------------------------ //
-
 	if (reader_syschk.Blob())
 	{
 		syschk_thread = new Boot::BootThread(reader_syschk.Blob());
-		syschk_thread->SetName("BootZ: System Recovery Check");
-		syschk_thread->Start(handover_hdr, NO);
-	}
+		syschk_thread->SetName("BootZ: System Check");
 
-#if defined(__ATA_PIO__)
-	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
+		Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
-	if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
-	{
-		if (partition_factory.IsPartitionValid() == NO)
+		if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
 		{
-			Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
+			if (partition_factory.IsPartitionValid() == NO)
+			{
+				Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
 
-			root.fFileName[0] = kNeFSRoot[0];
-			root.fFileName[1] = 0;
+				root.fFileName[0] = kNeFSRoot[0];
+				root.fFileName[1] = 0;
 
-			root.fKind = kNeFSCatalogKindDir;
+				root.fKind = kNeFSCatalogKindDir;
 
-			const auto kFSName = "SSD";
+				const auto kFSName = "SSD";
 
-			partition_factory.Format(kFSName, &root, 1);
+				partition_factory.Format(kFSName, &root, 1);
 
-			fb_init();
+				fb_init();
 
-			FB::fb_clear_video();
+				FB::fb_clear_video();
 
-			FBDrawBitMapInRegion(zka_has_disk, NE_HAS_DISK_WIDTH, NE_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_HAS_DISK_HEIGHT) / 2);
+				FBDrawBitMapInRegion(zka_has_disk, NE_HAS_DISK_WIDTH, NE_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_HAS_DISK_HEIGHT) / 2);
 
-			fb_clear();
+				fb_clear();
+			}
 		}
 	}
 #endif
@@ -265,7 +264,6 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 				   handover_hdr->f_FirmwareVendorLen);
 
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
-
 	// Assign to global 'kHandoverHeader'.
 
 	WideChar kernel_path[256U] = L"neoskrnl.exe";
@@ -318,7 +316,24 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	// Finally load the OS kernel.
 	// ---------------------------------------------------- //
 
-	kernel_thread->Start(handover_hdr, YES);
+	if (kernel_thread->Start(handover_hdr, YES) != kEfiOk)
+	{
+		Boot::BootFileReader reader_netboot(L"netboot.sys", image_handle);
+		reader_netboot.ReadAll(0);
 
+		Boot::BootThread* netboot_thread = nullptr;
+
+		// ------------------------------------------ //
+		// If we succeed in reading the blob, then execute it. (That is NetBoot)
+		// ------------------------------------------ //
+
+		if (reader_netboot.Blob())
+		{
+			netboot_thread = new Boot::BootThread(reader_netboot.Blob());
+			netboot_thread->SetName("BootZ: NetBoot");
+			netboot_thread->Start(handover_hdr, YES);
+		}
+	}
+	
 	CANT_REACH();
 }

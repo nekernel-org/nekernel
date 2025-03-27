@@ -10,12 +10,12 @@
     "-fPIC",
     "-fno-rtti",
     "-fno-exceptions",
-    "-Wl,--subsystem=17,--image-base,0x10000000,-e,ModuleMain"
+    "-Wl,--subsystem=17,--image-base,0x1000000,-e,ModuleMain"
   ],
   "cpp_macros": [
     "__NEOSKRNL__",
     "__BOOTZ__",
-    "__BOOTLDR_STANDALONE__",
+    "__BOOTZ_STANDALONE__",
     "__NE_AMD64__",
     "kNetBootVersionHighest=0x0100",
     "kNetBootVersionLowest=0x0100",

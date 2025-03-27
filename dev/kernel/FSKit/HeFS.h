@@ -18,7 +18,7 @@
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (256U)
 
-#define kHeFSMinimumDiskSize (gib_cast(64))
+#define kHeFSMinimumDiskSize (mib_cast(256))
 
 enum
 {

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef HINTKIT_HINT_H
-#define HINTKIT_HINT_H
+#ifndef _NE_COMPILERHINT_H_
+#define _NE_COMPILERHINT_H_
 
 #ifdef __LIBCOMPILER__
 #pragma compiler(hint_manifest)
@@ -22,4 +22,4 @@
 #define _InOut
 #define _StrictInOut
 
-#endif // ifndef HINTKIT_HINT_H
+#endif // ifndef _NE_COMPILERHINT_H_

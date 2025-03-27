@@ -16,13 +16,13 @@ Purpose: System Call Interface.
 /// @brief Types API.
 // ------------------------------------------------------------------------------------------ //
 
-typedef VoidPtr SCIObject;
+typedef VoidPtr Ref;
 
-typedef SCIObject IOObject;
-typedef IOObject  FSObject;
-typedef SCIObject DLLObject;
-typedef SCIObject ThreadObject;
-typedef SCIObject SocketObject;
+typedef Ref IORef;
+typedef Ref FSRef;
+typedef Ref DLLRef;
+typedef Ref ThreadRef;
+typedef Ref SocketRef;
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Dynamic Loader API.
@@ -32,18 +32,18 @@ typedef SCIObject SocketObject;
 /// @param symbol the symbol to look for
 /// @param dll_handle the DLL handle.
 /// @return the proc pointer.
-IMPORT_C SCIObject LdrGetDLLSymbolFromHandle(_Input const Char* symbol, _Input SCIObject dll_handle);
+IMPORT_C Ref LdrGetDLLSymbolFromHandle(_Input const Char* symbol, _Input Ref dll_handle);
 
 /// @brief Open DLL handle.
 /// @param path
 /// @param drv
 /// @return
-IMPORT_C SCIObject LdrOpenDLLHandle(_Input const Char* path, _Input const Char* drive_letter);
+IMPORT_C Ref LdrOpenDLLHandle(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close DLL handle
 /// @param dll_handle
 /// @return
-IMPORT_C Void LdrCloseDLLHandle(_Input SCIObject* dll_handle);
+IMPORT_C UInt32 LdrCloseDLLHandle(_Input Ref* dll_handle);
 
 // ------------------------------------------------------------------------------------------ //
 // File API.
@@ -53,38 +53,38 @@ IMPORT_C Void LdrCloseDLLHandle(_Input SCIObject* dll_handle);
 /// @param fs_path the filesystem path.
 /// @param drive_letter drive name, use NULL to use default drive location.
 /// @return the file descriptor of the file.
-IMPORT_C SCIObject IoOpenFile(const Char* fs_path, const Char* drive_letter);
+IMPORT_C Ref IoOpenFile(const Char* fs_path, const Char* drive_letter);
 
 /// @brief Closes a file and flushes its content.
 /// @param file_desc the file descriptor.
 /// @return Function doesn't return a type.
-IMPORT_C Void IoCloseFile(_Input SCIObject file_desc);
+IMPORT_C Void IoCloseFile(_Input Ref file_desc);
 
 /// @brief Write data to a file.
 /// @param file_desc the file descriptor.
 /// @param out_data the data to write.
 /// @param sz_data the size of the data to write.
 /// @return the number of bytes written.
-IMPORT_C UInt32 IoWriteFile(_Input SCIObject file_desc, _Output VoidPtr out_data, SizeT sz_data);
+IMPORT_C UInt32 IoWriteFile(_Input Ref file_desc, _Output VoidPtr out_data, SizeT sz_data);
 
 /// @brief Read data from a file.
 /// @param file_desc the file descriptor.
 /// @param out_data the data to read.
 /// @param sz_data the size of the data to read.
-IMPORT_C UInt32 IoReadFile(_Input SCIObject file_desc, _Output VoidPtr* out_data, SizeT sz_data);
+IMPORT_C UInt32 IoReadFile(_Input Ref file_desc, _Output VoidPtr* out_data, SizeT sz_data);
 
 /// @brief Rewind the file pointer to the beginning of the file.
 /// @param file_desc the file descriptor.
 /// @return the number of bytes read.
-IMPORT_C UInt64 IoRewindFile(_Input SCIObject file_desc);
+IMPORT_C UInt64 IoRewindFile(_Input Ref file_desc);
 
 /// @brief Tell the current position of the file pointer.
 /// @param file_desc the file descriptor.
 /// @return the current position of the file pointer.
-IMPORT_C UInt64 IoTellFile(_Input SCIObject file_desc);
+IMPORT_C UInt64 IoTellFile(_Input Ref file_desc);
 
 /// @brief Seek file offset from file descriptor.
-IMPORT_C UInt64 IoSeekFile(_Input SCIObject file_desc, UInt64 file_offset);
+IMPORT_C UInt64 IoSeekFile(_Input Ref file_desc, UInt64 file_offset);
 
 // ------------------------------------------------------------------------
 // Process API.
@@ -121,10 +121,10 @@ IMPORT_C VoidPtr MmCreateHeap(_Input SizeT len, _Input UInt32 flags);
 /// @brief Destroys the pointer
 /// @param heap the heap itself.
 /// @return void.
-IMPORT_C Void MmDestroyHeap(_Input VoidPtr heap);
+IMPORT_C SInt32 MmDestroyHeap(_Input VoidPtr heap);
 
 /// @brief Change protection flags of a memory region.
-IMPORT_C Void MmSetHeapFlags(_Input VoidPtr heap, _Input UInt32 flags);
+IMPORT_C SInt32 MmSetHeapFlags(_Input VoidPtr heap, _Input UInt32 flags);
 
 /// @brief Change protection flags of a memory region.
 IMPORT_C UInt32 MmGetHeapFlags(_Input VoidPtr heap);
@@ -159,38 +159,38 @@ IMPORT_C SInt32 ErrGetLastError(Void);
 
 /// @brief Exit the current thread.
 /// @param exit_code the exit code.
-IMPORT_C Void ThrExitCurrentThread(_Input SInt32 exit_code);
+IMPORT_C SInt32 ThrExitCurrentThread(_Input SInt32 exit_code);
 
 /// @brief Exit the main thread.
 /// @param exit_code the exit code.
-IMPORT_C Void ThrExitMainThread(_Input SInt32 exit_code);
+IMPORT_C SInt32 ThrExitMainThread(_Input SInt32 exit_code);
 
 /// @brief Exit a thread.
 /// @param thread the thread to exit.
 /// @param exit_code the exit code.
-IMPORT_C Void ThrExitThread(_Input ThreadObject thread, _Input SInt32 exit_code);
+IMPORT_C SInt32 ThrExitThread(_Input ThreadRef thread, _Input SInt32 exit_code);
 
 /// @brief Thread procedure function type.
-typedef Void (*thread_proc_kind)(int argc, char** argv);
+typedef SInt32 (*thread_proc_kind)(SInt32 argc, Char** argv);
 
 /// @brief Creates a thread.
 /// @param procedure the thread procedure.
 /// @param argument_count number of arguments inside that thread.
 /// @param flags Thread flags.
 /// @return the thread object.
-IMPORT_C ThreadObject ThrCreateThread(thread_proc_kind procedure, SInt32 argument_count, SInt32 flags);
+IMPORT_C ThreadRef ThrCreateThread(thread_proc_kind procedure, SInt32 argument_count, SInt32 flags);
 
 /// @brief Yields the current thread.
 /// @param thread the thread to yield.
-IMPORT_C Void ThrYieldThread(ThreadObject thrd);
+IMPORT_C SInt32 ThrYieldThread(ThreadRef thrd);
 
 /// @brief Joins a thread.
 /// @param thread the thread to join.
-IMPORT_C Void ThrJoinThread(ThreadObject thrd);
+IMPORT_C SInt32 ThrJoinThread(ThreadRef thrd);
 
 /// @brief Detach a thread.
 /// @param thread the thread to detach.
-IMPORT_C Void ThrDetachThread(ThreadObject thrd);
+IMPORT_C SInt32 ThrDetachThread(ThreadRef thrd);
 
 // ------------------------------------------------------------------------
 // @brief Drive Management API.
@@ -215,7 +215,7 @@ IMPORT_C Char* DrvGetDriveLetterFromPath(_Input const Char* path);
 /// @param letter the letter (A..Z).
 /// @return the drive object.
 // ------------------------------------------------------------------------------------------ //
-IMPORT_C SCIObject DrvGetMountedDrive(_Input const Char letter);
+IMPORT_C Ref DrvGetMountedDrive(_Input const Char letter);
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Mount a drive.
@@ -241,7 +241,7 @@ IMPORT_C Void DrvUnmountDrive(_Input const Char letter);
 /// @return the event listener.
 // ------------------------------------------------------------------------------------------ //
 
-IMPORT_C Void EvtAddListener(_Input const Char* event_name, _Input SCIObject listener);
+IMPORT_C Void EvtAddListener(_Input const Char* event_name, _Input Ref listener);
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Remove an event listener.
@@ -250,7 +250,7 @@ IMPORT_C Void EvtAddListener(_Input const Char* event_name, _Input SCIObject lis
 /// @return the event listener.
 // ------------------------------------------------------------------------------------------ //
 
-IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input SCIObject listener);
+IMPORT_C Void EvtRemoveListener(_Input const Char* event_name, _Input Ref listener);
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Dispatch an event.
@@ -267,6 +267,7 @@ IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr 
 
 enum
 {
+	kPowerCodeInvalid,
 	kPowerCodeShutdown,
 	kPowerCodeReboot,
 	kPowerCodeSleep,
@@ -292,24 +293,24 @@ IMPORT_C SInt32 CdCloseTray(Void);
 // Printer API.
 // ------------------------------------------------------------------------------------------ //
 
-IMPORT_C SInt32 PrintOut(IOObject file /* nullptr to direct to stdout */, const Char* fmt, ...);
+IMPORT_C SInt32 PrintOut(IORef file /* nullptr to direct to stdout */, const Char* fmt, ...);
 
-IMPORT_C SInt32 PrintIn(IOObject file /* nullptr to direct to stdout */, const Char* fmt, ...);
+IMPORT_C SInt32 PrintIn(IORef file /* nullptr to direct to stdout */, const Char* fmt, ...);
 
-IMPORT_C IOObject PrintCreate(Void);
+IMPORT_C IORef PrintCreate(Void);
 
-IMPORT_C SInt32 PrintRelease(IOObject);
+IMPORT_C SInt32 PrintRelease(IORef);
 
-IMPORT_C IOObject PrintGet(const Char* path);
+IMPORT_C IORef PrintGet(const Char* path);
 
 // ------------------------------------------------------------------------------------------ //
 // @brief Scheduler/Debug API.
 // ------------------------------------------------------------------------------------------ //
 
-typedef SInt32 AffinityKind;
+typedef SInt32 AffinityRef;
 typedef UInt64 PID;
 
-IMPORT_C SInt32 SchedAffinity(PID, SInt32 req, AffinityKind* local);
+IMPORT_C SInt32 SchedAffinity(PID, SInt32 req, AffinityRef* local);
 
 IMPORT_C SInt32 SchedTrace(PID, SInt32 req, VoidPtr address, VoidPtr data);
 

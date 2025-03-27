@@ -18,7 +18,7 @@ namespace NeOS
 {
 	namespace Indexer
 	{
-		IndexProperty& IndexableProperty::Leak() noexcept
+		Index& IndexableProperty::Leak() noexcept
 		{
 			return fIndex;
 		}

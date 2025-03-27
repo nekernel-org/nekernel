@@ -8,7 +8,7 @@
 #include <BootKit/Protocol.h>
 #include <BootKit/BootKit.h>
 
-#ifdef __BOOTLDR_STANDALONE__
+#ifdef __BOOTZ_STANDALONE__
 
 using namespace Boot;
 
@@ -34,4 +34,4 @@ EXTERN_C void rt_std()
 {
 }
 
-#endif // __BOOTLDR_STANDALONE__
+#endif // __BOOTZ_STANDALONE__

@@ -17,7 +17,7 @@ default.
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <HintKit/CompilerHint.h>
+#include <hint/CompilerHint.h>
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
@@ -31,7 +31,7 @@ default.
 #define kNeFSInvalidCatalog (-1)
 #define kNeFSCatalogNameLen (256)
 
-#define kNeFSMinimumDiskSize (gib_cast(4))
+#define kNeFSMinimumDiskSize (mib_cast(8))
 
 #define kNeFSSectorSz (512)
 

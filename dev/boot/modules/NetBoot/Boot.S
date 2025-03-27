@@ -7,8 +7,10 @@
 ;; * 	========================================================
 ;; */
 
+#ifdef __NE_AMD64__
 .code64
 .intel_syntax noprefix
+#endif
 
 #define kTypeDriver 101
 #define kArchAmd64 122
@@ -18,11 +20,3 @@
 
 .quad kHandoverMagic
 .word kTypeDriver
-
-.text
-
-.extern main
-.global __main
-
-__main:
-    ret

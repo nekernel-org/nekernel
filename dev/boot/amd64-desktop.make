@@ -60,7 +60,7 @@ endif
 
 LD_FLAGS=-e Main --subsystem=10
 
-STANDALONE_MACRO=-D__BOOTLDR_STANDALONE__
+STANDALONE_MACRO=-D__BOOTZ_STANDALONE__
 OBJ=*.o
 
 REM=rm
@@ -74,7 +74,7 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__
 BOOTLOADER=bootz.exe
 KERNEL=neoskrnl.exe
 SYSCHK=syschk.sys
-STARTUP=startup.sys
+NETBOOT=netboot.sys
 SCIKIT=libuser.dylib
 
 .PHONY: invalid-recipe
@@ -90,13 +90,14 @@ all: compile-amd64
 	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTZ.EFI
 	$(COPY) ../kernel/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ./modules/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
+	$(COPY) ./modules/NetBoot/$(NETBOOT) src/Root/$(NETBOOT)
 	$(COPY) ../user/$(SCIKIT) src/Root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
 
 .PHONY: disk
 disk:
 	dd if=/dev/zero of=$(BOOT) bs=30M count=100
-	mformat -i $(BOOT) -F -v "NEOS_ESP"
+	mformat -i $(BOOT) -F -v "NeKernel"
 
 
 ifneq ($(DEBUG_SUPPORT), )

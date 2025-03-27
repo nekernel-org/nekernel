@@ -8,7 +8,7 @@
 #include <BootKit/Protocol.h>
 #include <BootKit/BootKit.h>
 
-#ifdef __BOOTLDR_STANDALONE__
+#ifdef __BOOTZ_STANDALONE__
 EXTERN EfiBootServices* BS;
 
 /// @brief Allocates a new object.
@@ -57,4 +57,4 @@ void operator delete(void* buf, size_t size)
 	BS->FreePool(buf);
 }
 
-#endif // __BOOTLDR_STANDALONE__
+#endif // __BOOTZ_STANDALONE__

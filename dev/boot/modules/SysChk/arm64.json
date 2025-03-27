@@ -17,7 +17,7 @@
   "cpp_macros": [
     "__NEOSKRNL__",
     "__BOOTZ__",
-    "__BOOTLDR_STANDALONE__",
+    "__BOOTZ_STANDALONE__",
     "__NE_ARM64__",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",

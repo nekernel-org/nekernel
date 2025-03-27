@@ -7,7 +7,7 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <HintKit/CompilerHint.h>
+#include <hint/CompilerHint.h>
 #include <NewKit/Defines.h>
 #include <NewKit/ErrorOr.h>
 

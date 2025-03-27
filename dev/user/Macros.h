@@ -14,7 +14,7 @@ Purpose: libsci Macros header.
 /// @brief Macros and Core types of the SCI (System Call Interface).
 /***********************************************************************************/
 
-#include <HintKit/CompilerHint.h>
+#include <hint/CompilerHint.h>
 
 #define ATTRIBUTE(X) __attribute__((X))
 
