@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <SwapKit/SwapDisk.h>
+#include <SwapKit/DiskSwap.h>
 #include <KernelKit/FileMgr.h>
 
 namespace NeOS

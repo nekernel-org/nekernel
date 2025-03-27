@@ -13,7 +13,7 @@
 
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/KPC.h>
-#include <HintsKit/CompilerHint.h>
+#include <HintKit/CompilerHint.h>
 
 namespace NeOS
 {

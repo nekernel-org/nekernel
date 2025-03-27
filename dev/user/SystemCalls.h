@@ -10,7 +10,7 @@ Purpose: System Call Interface.
 #ifndef SCI_SCI_H
 #define SCI_SCI_H
 
-#include <SCIKit/Macros.h>
+#include <user/Macros.h>
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Types API.

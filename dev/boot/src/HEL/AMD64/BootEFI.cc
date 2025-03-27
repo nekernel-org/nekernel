@@ -280,7 +280,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	}
 
 	UInt32 sz_ver = sizeof(UInt64);
-	UInt64 ver = KERNEL_VERSION_BCD;
+	UInt64 ver	  = KERNEL_VERSION_BCD;
 
 	ST->RuntimeServices->GetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
 

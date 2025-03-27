@@ -12,7 +12,7 @@
 
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
-#include <HintsKit/CompilerHint.h>
+#include <HintKit/CompilerHint.h>
 
 /// @file IPC.h
 /// @brief IPC comm. protocol.

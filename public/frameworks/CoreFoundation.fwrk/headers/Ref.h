@@ -8,7 +8,7 @@
 #ifndef _REF_H_
 #define _REF_H_
 
-#include <SCIKit/SystemCalls.h>
+#include <user/SystemCalls.h>
 #include <CoreFoundation.fwrk/headers/Object.h>
 
 namespace CF

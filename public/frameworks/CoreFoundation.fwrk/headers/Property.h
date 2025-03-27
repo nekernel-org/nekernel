@@ -7,7 +7,7 @@
 #ifndef _PROPS_H
 #define _PROPS_H
 
-#include <SCIKit/SystemCalls.h>
+#include <user/SystemCalls.h>
 #include <CoreFoundation.fwrk/headers/Ref.h>
 
 #define kMaxPropLen (256U)

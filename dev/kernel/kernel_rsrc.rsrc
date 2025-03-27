@@ -9,12 +9,12 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "Amlal El Mahrouss."
-	  VALUE "FileDescription", "NeKernel."
+	  VALUE "FileDescription", "NeKernel"
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "neoskrnl"
-      VALUE "LegalCopyright", "(c) 2024 Amlal El Mahrouss, all rights reserved."
+      VALUE "LegalCopyright", "(c) 2024-2025 Amlal El Mahrouss, all rights reserved"
       VALUE "OriginalFilename", "neoskrnl.exe"
-      VALUE "ProductName", "NeKernel."
+      VALUE "ProductName", "NeKernel"
       VALUE "ProductVersion", KERNEL_VERSION
     END
   END

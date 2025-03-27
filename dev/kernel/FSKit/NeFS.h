@@ -17,7 +17,7 @@ default.
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <HintsKit/CompilerHint.h>
+#include <HintKit/CompilerHint.h>
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>

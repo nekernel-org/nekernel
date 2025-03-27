@@ -10,11 +10,11 @@ Purpose: libsci Macros header.
 #pragma once
 
 /***********************************************************************************/
-/// @file SCIKit/Macros.h
-/// @brief Macros and Core types.
+/// @file user/Macros.h
+/// @brief Macros and Core types of the SCI (System Call Interface).
 /***********************************************************************************/
 
-#include <HintsKit/CompilerHint.h>
+#include <HintKit/CompilerHint.h>
 
 #define ATTRIBUTE(X) __attribute__((X))
 

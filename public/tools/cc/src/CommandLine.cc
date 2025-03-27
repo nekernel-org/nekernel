@@ -4,7 +4,7 @@
  * Copyright (c) 2024 Amlal EL Mahrouss
  */
 
-#include <SCIKit/SystemCalls.h>
+#include <user/SystemCalls.h>
 
 /// @brief Placeholder program.
 

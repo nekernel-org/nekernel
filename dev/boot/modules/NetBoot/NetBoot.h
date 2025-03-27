@@ -29,5 +29,5 @@ typedef struct NETBOOT_INTERNET_HEADER
 	NeOS::Char	  PatchTarget[kNetBootNameLen]; /// the target file.
 	NeOS::Boolean EEPROM : 1;					/// does it imply an EEPROM reprogram?
 	NeOS::Boolean Preflight : 1;				/// is it a preflight packet.
-	NeOS::Char	  Data[];						/// non preflight packet has a patch blob for a **PatchTarget**
+	NeOS::Char	  PatchData[];					/// non preflight packet has a patch blob for a **PatchTarget**
 } ATTRIBUTE(packed) NETBOOT_INTERNET_HEADER;

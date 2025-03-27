@@ -1,6 +1,6 @@
 -Idev/kernel
 -Idev/
--Idev/SCIKit
+-Idev/user
 -Idev/boot/
 -Ipublic/tools
 -Ipublic/tools/make_app

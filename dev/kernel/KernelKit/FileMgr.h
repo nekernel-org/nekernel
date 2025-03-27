@@ -30,7 +30,7 @@
 #endif // __FSKIT_INCLUDES_HeFS__
 
 #include <CompilerKit/CompilerKit.h>
-#include <HintsKit/CompilerHint.h>
+#include <HintKit/CompilerHint.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Stream.h>

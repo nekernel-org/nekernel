@@ -75,7 +75,7 @@ BOOTLOADER=bootz.exe
 KERNEL=neoskrnl.exe
 SYSCHK=syschk.sys
 STARTUP=startup.sys
-SCIKIT=libSCIKit.dylib
+SCIKIT=libuser.dylib
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -90,7 +90,7 @@ all: compile-amd64
 	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTZ.EFI
 	$(COPY) ../kernel/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ./modules/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
-	$(COPY) ../SCIKit/$(SCIKIT) src/Root/$(SCIKIT)
+	$(COPY) ../user/$(SCIKIT) src/Root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
 
 .PHONY: disk

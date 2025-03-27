@@ -13,4 +13,4 @@ error:
 
 .PHONY: sci_asm_io_x64
 sci_asm_io_x64:
-	$(ASM) $(FLAGS) libsci+IO.asm -o libsci+IO.o
+	$(ASM) $(FLAGS) SystemCall+IO.asm -o SystemCall+IO.o

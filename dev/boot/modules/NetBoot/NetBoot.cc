@@ -15,7 +15,7 @@ EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 {
 	NETBOOT_INTERNET_HEADER inet{};
 
-	/// TODO: Read Packet from localhost
+	/// TODO: Read packet from JSON file 'netboot.json'
 
 	if (inet.PatchLength < 0)
 	{
@@ -27,7 +27,7 @@ EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 
 	if (!inet.EEPROM)
 	{
-		Boot::BootThread thread(inet.Data);
+		Boot::BootThread thread(inet.PatchData);
 
 		if (thread.IsValid())
 			return thread.Start(handover, YES);
@@ -35,7 +35,9 @@ EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 	else
 	{
 		Boot::BootTextWriter writer;
-		writer.Write("NetBootLauncher: EEPROM flash not available for now.\r");
+		writer.Write("NetBootLauncher: EEPROM flash is not available as of right now.\r");
+
+		/// TODO: Program new firmware to EEPROM (if crc and size matches)
 
 		return kEfiFail; // TODO: Add support for EEPROM firmware update.
 	}

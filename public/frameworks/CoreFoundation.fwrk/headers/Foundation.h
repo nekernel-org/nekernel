@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <SCIKit/SystemCalls.h>
+#include <user/SystemCalls.h>
 
 namespace CF
 {

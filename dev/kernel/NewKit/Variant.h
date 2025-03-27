@@ -9,7 +9,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
 #include <NewKit/Json.h>
-#include <SwapKit/SwapDisk.h>
+#include <SwapKit/DiskSwap.h>
 
 namespace NeOS
 {
@@ -24,6 +24,7 @@ namespace NeOS
 			kJson,
 			kXML,
 			kSwap,
+			kInvalid,
 		};
 
 	public:
