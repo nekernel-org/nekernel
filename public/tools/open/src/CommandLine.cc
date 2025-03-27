@@ -1,7 +1,7 @@
 /*
  * Created on Thu Oct 17 08:00:42 CEST 2024
  *
- * Copyright (c) 2024 Amlal EL Mahrouss
+ * Copyright (c) 2024-2025 Amlal EL Mahrouss
  */
 
 #include <user/SystemCalls.h>
