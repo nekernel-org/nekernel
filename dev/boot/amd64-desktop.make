@@ -74,7 +74,7 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__
 BOOTLOADER=bootz.exe
 KERNEL=neoskrnl.exe
 SYSCHK=syschk.sys
-NETBOOT=netboot.sys
+NETBOOT=bootnet.sys
 SCIKIT=libuser.dylib
 
 .PHONY: invalid-recipe
@@ -90,7 +90,7 @@ all: compile-amd64
 	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTZ.EFI
 	$(COPY) ../kernel/$(KERNEL) src/Root/$(KERNEL)
 	$(COPY) ./modules/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
-	$(COPY) ./modules/NetBoot/$(NETBOOT) src/Root/$(NETBOOT)
+	$(COPY) ./modules/BootNet/$(NETBOOT) src/Root/$(NETBOOT)
 	$(COPY) ../user/$(SCIKIT) src/Root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
 

@@ -1,13 +1,13 @@
 /*
  *	========================================================
  *
- *	NetBoot
+ *	BootNet
  * 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
  *
  * 	========================================================
  */
 
-#include <modules/NetBoot/NetBoot.h>
+#include <modules/BootNet/BootNet.h>
 #include <BootKit/BootKit.h>
 #include <BootKit/BootThread.h>
 
@@ -17,7 +17,7 @@ EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
 
 	memset(&inet, 0, sizeof(NETBOOT_INTERNET_HEADER));
 
-	/// TODO: Read packet from JSON file 'netboot.json'
+	/// TODO: Read packet from JSON file 'bootnet.json'
 
 	if (inet.PatchLength < 1)
 	{

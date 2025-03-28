@@ -310,7 +310,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		Boot::Stop();
 	}
 
-	Boot::BootFileReader reader_netboot(L"netboot.sys", image_handle);
+	Boot::BootFileReader reader_netboot(L"bootnet.sys", image_handle);
 	reader_netboot.ReadAll(0);
 
 	Boot::BootThread* netboot_thread = nullptr;
@@ -324,13 +324,13 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	if (kernel_thread->Start(handover_hdr, YES) != kEfiOk)
 	{
 		// ------------------------------------------ //
-		// If we fail into booting the kernel, then run NetBoot.
+		// If we fail into booting the kernel, then run BootNet.
 		// ------------------------------------------ //
 
 		if (reader_netboot.Blob())
 		{
 			netboot_thread = new Boot::BootThread(reader_netboot.Blob());
-			netboot_thread->SetName("BootZ: NetBoot");
+			netboot_thread->SetName("BootZ: BootNet");
 			netboot_thread->Start(handover_hdr, YES);
 		}
 	}

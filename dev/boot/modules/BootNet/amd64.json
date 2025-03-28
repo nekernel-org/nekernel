@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "../../", "../../../kernel", "../../../", "./"],
   "sources_path": ["*.cc", "*.S", "../../src/HEL/AMD64/*.cc", "../../src/HEL/AMD64/*.S", "../../src/*.cc"],
-  "output_name": "netboot.sys",
+  "output_name": "bootnet.sys",
   "compiler_flags": [
     "-nostdlib",
     "-std=c++20",

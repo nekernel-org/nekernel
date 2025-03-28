@@ -7,4 +7,4 @@
 #pragma once
 
 #include <FirmwareKit/CoreBoot/CoreBoot.h>
-#include <FirmwareKit/CoreBoot/NetBoot.h>
+#include <FirmwareKit/CoreBoot/BootNet.h>
