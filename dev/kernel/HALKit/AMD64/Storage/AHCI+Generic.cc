@@ -81,10 +81,10 @@ STATIC Void drv_compute_disk_ahci() noexcept
 
 	rt_set_memory(identify_data, 0, kSzIdent);
 
-	/// Send AHCI command.
+	/// Send AHCI command for identification.
 	drv_std_input_output_ahci<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
 
-	/// Extract 28-bit LBA.
+	/// Extract 48-bit LBA.
 	kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 
 	/// Show what we got.
@@ -126,7 +126,6 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	if (slot == ~0)
 	{
 		err_global_get() = kErrorDisk;
-
 		return;
 	}
 
@@ -136,15 +135,17 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 		rt_set_memory(buffer, 0, size_buffer);
 	}
 
+	/// prepare command header.
 	volatile HbaCmdHeader* command_header = ((HbaCmdHeader*)(((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
 
+	/// jump to found slot.
 	command_header += slot;
 
 	MUST_PASS(command_header);
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
 	command_header->Write = Write;
-	command_header->Prdtl = (UInt16)((size_buffer - 1) >> 4) + 1;
+	command_header->Prdtl = (UInt16)((size_buffer - 1) / 8);
 
 	HbaCmdTbl* command_table = (HbaCmdTbl*)((VoidPtr)((UInt64)command_header->Ctba));
 
@@ -158,25 +159,19 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	for (; prd_i < (command_header->Prdtl - 1); prd_i++)
 	{
-		command_table->Prdt[prd_i].Dbc	= ((size_buffer / command_header->Prdtl - 1) - 1);
-		command_table->Prdt[prd_i].Dba	= ((UInt32)(UInt64)buffer_phys + (prd_i * command_table->Prdt[prd_i].Dbc));
-		command_table->Prdt[prd_i].Dbau = (((UInt64)(buffer_phys) >> 32) + (prd_i * command_table->Prdt[prd_i].Dbc));
+		command_table->Prdt[prd_i].Dbc	= ((command_header->Prdtl - 1) / 8);
+		command_table->Prdt[prd_i].Dba	= ((UInt32)(UInt64)buffer_phys);
+		command_table->Prdt[prd_i].Dbau = (((UInt64)(buffer_phys) >> 32));
 		command_table->Prdt[prd_i].Ie	= YES;
-	}
 
-	command_table->Prdt[prd_i].Dba	= ((UInt32)(UInt64)buffer_phys + (prd_i * command_table->Prdt[prd_i].Dbc));
-	command_table->Prdt[prd_i].Dbau = (((UInt64)(buffer_phys) >> 32) + (prd_i * command_table->Prdt[prd_i].Dbc));
-	command_table->Prdt[prd_i].Dbc	= ((size_buffer / command_header->Prdtl - 1) - 1);
-	command_table->Prdt[prd_i].Ie	= YES;
+		buffer_phys += command_table->Prdt[prd_i].Dbc;
+	}
 
 	FisRegH2D* h2d_fis = (FisRegH2D*)(&command_table->Cfis);
 
 	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
-	h2d_fis->Command   = Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx;
-
-	if (Identify)
-		h2d_fis->Command = kAHCICmdIdentify;
+	h2d_fis->Command   = Identify ? (kAHCICmdIdentify) : (Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx);
 
 	h2d_fis->Lba0 = (lba)&0xFF;
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
@@ -210,6 +205,12 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 		}
 	}
 
+	/// we should wait again, just in case.
+	while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq))
+	{
+		;
+	}
+
 	if (kSATAHba->Is & kHBAErrTaskFile)
 	{
 		err_global_get() = kErrorDiskIsCorrupted;
@@ -236,6 +237,58 @@ SizeT drv_get_size_ahci()
 /// @brief Enable Host and probe using the IDENTIFY command.
 STATIC Void ahci_enable_and_probe()
 {
+	kSATAHba->Ports[kSATAIndex].Cmd &= ~kHBAPxCmdFre;
+	kSATAHba->Ports[kSATAIndex].Cmd &= ~kHBAPxCmdST;
+
+	while (YES)
+	{
+		if (kSATAHba->Ports[kSATAIndex].Cmd & kHBAPxCmdCR)
+			continue;
+
+		if (kSATAHba->Ports[kSATAIndex].Cmd & kHBAPxCmdFR)
+			continue;
+
+		break;
+	}
+
+	// Command engine stopped, remap the AHCI port.
+
+	auto port = &kSATAHba->Ports[kSATAIndex];
+
+	// Relocate Command List Base.
+
+	constexpr UIntPtr const kAHCIBaseAddress = mib_cast(4);
+
+	port->Clb  = kAHCIBaseAddress + (kSATAIndex << 10);
+	port->Clbu = 0;
+
+	// clean it.
+	rt_set_memory(reinterpret_cast<VoidPtr>(port->Clb), 0, 1024);
+
+	// Relocate Frame Info Structure now.
+
+	port->Fb  = kAHCIBaseAddress + (kSATAPortCnt << 10) + (kSATAIndex << 10);
+	port->Fbu = 0;
+
+	// clean it.
+	rt_set_memory(reinterpret_cast<VoidPtr>(port->Fb), 0, 256);
+
+	volatile HbaCmdHeader* cmd_hdr = reinterpret_cast<volatile HbaCmdHeader*>(port->Clb);
+
+	for (Int32 i = 0; i < kSATAPortCnt; i++)
+	{
+		cmd_hdr[i].Prdtl = 8;
+		cmd_hdr[i].Ctba	 = kAHCIBaseAddress + (40 << 10) + (kSATAPortCnt << 10) + (kSATAIndex << 10);
+		cmd_hdr[i].Ctbau = 0;
+
+		rt_set_memory(reinterpret_cast<VoidPtr>(cmd_hdr[i].Ctba), 0, 256);
+	}
+
+	// Now we are ready.
+
+	kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
+	kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
+
 	if (kSATAHba->Bohc & kHBABohcBiosOwned)
 	{
 		kSATAHba->Bohc |= kHBABohcOSOwned;
@@ -245,15 +298,6 @@ STATIC Void ahci_enable_and_probe()
 			;
 		}
 	}
-
-	// Poll until ready.
-	while (kSATAHba->Ports[kSATAIndex].Cmd & kHBAPxCmdCR)
-	{
-		;
-	}
-
-	kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
-	kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
 
 	drv_compute_disk_ahci();
 }
@@ -377,7 +421,7 @@ namespace NeOS
 
 			err_global_get() = kErrorSuccess;
 
-			drv_std_input_output_ahci<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+			drv_std_input_output_ahci<NO, NO, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
 
 		/// @brief Write AHCI device.
@@ -399,7 +443,7 @@ namespace NeOS
 
 			err_global_get() = kErrorSuccess;
 
-			drv_std_input_output_ahci<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+			drv_std_input_output_ahci<YES, NO, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
 	} // namespace Detail
 
@@ -434,12 +478,12 @@ namespace NeOS
 
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
-	drv_std_input_output_ahci<YES, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
+	drv_std_input_output_ahci<YES, NO, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
 }
 
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
-	drv_std_input_output_ahci<NO, YES, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
+	drv_std_input_output_ahci<NO, NO, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
 }
 
 Bool drv_std_init(UInt16& pi)

@@ -41,7 +41,7 @@ namespace Boot
 {
 	EXTERN void ThrowError(const WideChar* errorCode,
 						   const WideChar* reason) noexcept;
-						   
+
 	class BootTextWriter;
 	class BootFileReader;
 	class BootThread;

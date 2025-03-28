@@ -98,7 +98,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 
 			if (cur_fork.Flags & kNeFSFlagCreated)
 			{
-				kout << "Error: Fork does exists.\r";
+				kout << "Error: Fork does exists, not overwriting this one.\r";
 
 				/// sanity check.
 				if (KStringBuilder::Equals(cur_fork.ForkName, the_fork.ForkName) &&
