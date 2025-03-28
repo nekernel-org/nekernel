@@ -15,7 +15,6 @@
  *
  */
 
-#include "NewKit/Defines.h"
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
