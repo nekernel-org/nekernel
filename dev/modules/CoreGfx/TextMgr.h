@@ -13,7 +13,7 @@
 #define kFontSizeY	  8
 #define kFontNOFChars 128
 
-inline const NeOS::UInt8 kFontBitmap[kFontNOFChars][kFontSizeX] = {
+inline const Kernel::UInt8 kFontBitmap[kFontNOFChars][kFontSizeX] = {
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0000 (nul)
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0001
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0002
@@ -145,10 +145,10 @@ inline const NeOS::UInt8 kFontBitmap[kFontNOFChars][kFontSizeX] = {
 
 };
 
-inline NeOS::Void fb_render_string_for_bitmap(const NeOS::UInt8* bitmap, const NeOS::SizeT& x_sz, const NeOS::SizeT& y_sz, NeOS::Int32& x_dst, NeOS::Int32& y_dst, NeOS::Int32& color)
+inline Kernel::Void fb_render_string_for_bitmap(const Kernel::UInt8* bitmap, const Kernel::SizeT& x_sz, const Kernel::SizeT& y_sz, Kernel::Int32& x_dst, Kernel::Int32& y_dst, Kernel::Int32& color)
 {
-	NeOS::Int32 x, y;
-	NeOS::Int32 set;
+	Kernel::Int32 x, y;
+	Kernel::Int32 set;
 
 	x	= 0;
 	y	= 0;
@@ -168,9 +168,9 @@ inline NeOS::Void fb_render_string_for_bitmap(const NeOS::UInt8* bitmap, const N
 	}
 }
 
-inline NeOS::Void fb_render_string(const NeOS::Char* text, NeOS::Int32 x_dst, NeOS::Int32 y_dst, NeOS::Int32 color)
+inline Kernel::Void fb_render_string(const Kernel::Char* text, Kernel::Int32 x_dst, Kernel::Int32 y_dst, Kernel::Int32 color)
 {
-	for (NeOS::SizeT i = 0; text[i] != 0; ++i)
+	for (Kernel::SizeT i = 0; text[i] != 0; ++i)
 	{
 		fb_render_string_for_bitmap(&kFontBitmap[text[i]][0], kFontSizeX, kFontSizeY, x_dst, y_dst, color);
 		y_dst += kFontSizeY;

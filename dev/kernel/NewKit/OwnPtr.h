@@ -11,7 +11,7 @@
 #include <NewKit/KernelPanic.h>
 #include <NewKit/Ref.h>
 
-namespace NeOS
+namespace Kernel
 {
 	template <typename T>
 	class OwnPtr;
@@ -91,4 +91,4 @@ namespace NeOS
 
 		return ret;
 	}
-} // namespace NeOS
+} // namespace Kernel

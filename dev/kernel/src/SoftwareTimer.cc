@@ -8,7 +8,7 @@
 
 /// @brief SoftwareTimer class, meant to be generic.
 
-using namespace NeOS;
+using namespace Kernel;
 
 SoftwareTimer::SoftwareTimer(Int64 seconds)
 	: fWaitFor(seconds)

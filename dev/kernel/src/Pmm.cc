@@ -15,7 +15,7 @@
 #include <HALKit/AMD64/Processor.h>
 #endif // defined(__NE_AMD64__)
 
-namespace NeOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/// @brief Pmm constructor.
@@ -95,4 +95,4 @@ namespace NeOS
 
 		return true;
 	}
-} // namespace NeOS
+} // namespace Kernel

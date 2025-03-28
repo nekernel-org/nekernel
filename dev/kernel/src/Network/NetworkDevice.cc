@@ -7,7 +7,7 @@
 #include <NetworkKit/NetworkDevice.h>
 #include <NewKit/Utils.h>
 
-namespace NeOS
+namespace Kernel
 {
 	/// \brief Getter for fNetworkName.
 	const Char* NetworkDevice::Name() const
@@ -32,4 +32,4 @@ namespace NeOS
 
 		return YES;
 	}
-} // namespace NeOS
+} // namespace Kernel

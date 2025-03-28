@@ -9,13 +9,13 @@
 
 /// @date 30/01/24
 /// @file: MemoryMgr.h
-/// @brief: heap allocation support.
+/// @brief: Memory allocation support for the NeKernel.
 
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/KPC.h>
 #include <hint/CompilerHint.h>
 
-namespace NeOS
+namespace Kernel
 {
 	/// @brief Declare pointer as free.
 	/// @param heap_ptr the pointer.
@@ -66,7 +66,7 @@ namespace NeOS
 	{
 		if (*cls)
 		{
-			err_global_get() = NeOS::kErrorInvalidData;
+			err_global_get() = Kernel::kErrorInvalidData;
 			return NO;
 		}
 
@@ -82,6 +82,6 @@ namespace NeOS
 		delete *cls;
 		*cls = nullptr;
 	}
-} // namespace NeOS
+} // namespace Kernel
 
 #endif // !INC_KERNEL_HEAP_H

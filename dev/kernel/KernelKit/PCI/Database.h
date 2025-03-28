@@ -8,7 +8,7 @@
 #include <KernelKit/PCI/Device.h>
 #include <NewKit/Defines.h>
 
-namespace NeOS
+namespace Kernel
 {
 	namespace Types
 	{
@@ -35,24 +35,24 @@ namespace NeOS
 			Invalid							  = Unassgined,
 		};
 	} // namespace Types
-} // namespace NeOS
+} // namespace Kernel
 
-inline BOOL operator!=(const NeOS::Types::PciDeviceKind& lhs, NeOS::UChar rhs)
+inline BOOL operator!=(const Kernel::Types::PciDeviceKind& lhs, Kernel::UChar rhs)
 {
-	return rhs != (NeOS::UChar)lhs;
+	return rhs != (Kernel::UChar)lhs;
 }
 
-inline BOOL operator==(const NeOS::Types::PciDeviceKind& lhs, NeOS::UChar rhs)
+inline BOOL operator==(const Kernel::Types::PciDeviceKind& lhs, Kernel::UChar rhs)
 {
-	return rhs == (NeOS::UChar)lhs;
+	return rhs == (Kernel::UChar)lhs;
 }
 
-inline BOOL operator!=(NeOS::UChar lhs, const NeOS::Types::PciDeviceKind& rhs)
+inline BOOL operator!=(Kernel::UChar lhs, const Kernel::Types::PciDeviceKind& rhs)
 {
-	return lhs != (NeOS::UChar)rhs;
+	return lhs != (Kernel::UChar)rhs;
 }
 
-inline BOOL operator==(NeOS::UChar lhs, const NeOS::Types::PciDeviceKind& rhs)
+inline BOOL operator==(Kernel::UChar lhs, const Kernel::Types::PciDeviceKind& rhs)
 {
-	return lhs == (NeOS::UChar)rhs;
+	return lhs == (Kernel::UChar)rhs;
 }

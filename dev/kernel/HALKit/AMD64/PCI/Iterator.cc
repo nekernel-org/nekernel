@@ -6,7 +6,7 @@
 
 #include <KernelKit/PCI/Iterator.h>
 
-namespace NeOS::PCI
+namespace Kernel::PCI
 {
 	Iterator::Iterator(const Types::PciDeviceKind& type)
 	{
@@ -36,4 +36,4 @@ namespace NeOS::PCI
 	{
 		return fDevices[at];
 	}
-} // namespace NeOS::PCI
+} // namespace Kernel::PCI

@@ -10,7 +10,7 @@
 #include <KernelKit/MemoryMgr.h>
 #include <modules/APM/APM.h>
 
-namespace NeOS
+namespace Kernel
 {
 	ACPIFactoryInterface::ACPIFactoryInterface(VoidPtr rsp_ptr)
 		: fRsdp(rsp_ptr), fEntries(0)
@@ -29,4 +29,4 @@ namespace NeOS
 	{
 		apm_send_io_command(kAPMPowerCommandReboot, 0);
 	}
-} // namespace NeOS
+} // namespace Kernel

@@ -6,7 +6,7 @@
 
 namespace CFKit
 {
-	using namespace NeOS;
+	using namespace Kernel;
 
 	/// @brief Finds the PE header inside the blob.
 	inline auto ldr_find_exec_header(DosHeaderPtr ptrDos) -> LDR_EXEC_HEADER_PTR

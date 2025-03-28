@@ -10,7 +10,7 @@
 #include <KernelKit/Timer.h>
 #include <CompilerKit/CompilerKit.h>
 
-namespace NeOS
+namespace Kernel
 {
 	typedef Int64 Semaphore;
-} // namespace NeOS
+} // namespace Kernel

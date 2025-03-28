@@ -16,7 +16,7 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/IDylibObject.h>
 
-namespace NeOS
+namespace Kernel
 {
 	/**
 	 * @brief Shared Library class
@@ -101,6 +101,6 @@ namespace NeOS
 
 	EXTERN_C IDylibRef rtl_init_dylib(UserProcess& header);
 	EXTERN_C Void	   rtl_fini_dylib(UserProcess& header, IDylibRef lib, Bool* successful);
-} // namespace NeOS
+} // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_H__ */

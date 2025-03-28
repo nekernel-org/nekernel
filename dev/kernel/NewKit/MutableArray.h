@@ -38,7 +38,7 @@
 
 // FIXME: this is a shitty algorithm, which is consumer hungry.
 // Remove and occurences of that, and remove that class.
-namespace NeOS
+namespace Kernel
 {
 	template <typename T>
 	class MutableArray;
@@ -149,7 +149,7 @@ namespace NeOS
 		MutableLinkedList<T>* fFirstNode{nullptr};
 
 		/* Number of nodes inside of this dynamic array. */
-		NeOS::SizeT fNodeCount{0};
+		Kernel::SizeT fNodeCount{0};
 
 	private:
 		// don't remove that
@@ -234,6 +234,6 @@ namespace NeOS
 		MutableLinkedList<T>* fFirstNode{nullptr};
 
 		/* Number of nodes inside of this dynamic array. */
-		NeOS::SizeT fNodeCount{0};
+		Kernel::SizeT fNodeCount{0};
 	};
-} // namespace NeOS
+} // namespace Kernel

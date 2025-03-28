@@ -13,7 +13,7 @@
 
 #define kCPUBackendName "ARMv8"
 
-namespace NeOS::HAL
+namespace Kernel::HAL
 {
 	struct PACKED Register64 final
 	{
@@ -81,11 +81,11 @@ namespace NeOS::HAL
 	{
 		asm volatile("wfi");
 	}
-} // namespace NeOS::HAL
+} // namespace Kernel::HAL
 
-inline NeOS::VoidPtr kKernelBitMpStart = nullptr;
-inline NeOS::UIntPtr kKernelBitMpSize  = 0UL;
+inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
+inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
-inline NeOS::VoidPtr kKernelPhysicalStart = nullptr;
+inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
 
 #include <HALKit/ARM64/Paging.h>

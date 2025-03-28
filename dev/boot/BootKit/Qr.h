@@ -965,9 +965,9 @@ namespace qr
 	};
 } // namespace qr
 
-namespace NeOS::Qr
+namespace Kernel::Qr
 {
 	using namespace qr;
-} // namespace NeOS::Qr
+} // namespace Kernel::Qr
 
 #endif // QR_H

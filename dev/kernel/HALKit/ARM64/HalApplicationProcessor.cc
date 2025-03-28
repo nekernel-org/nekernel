@@ -28,7 +28,7 @@
 
 // ================================================================= //
 
-namespace NeOS
+namespace Kernel
 {
 	struct PROCESS_CONTROL_BLOCK final
 	{
@@ -142,4 +142,4 @@ namespace NeOS
 
 		return Detail::kGICEnabled;
 	}
-} // namespace NeOS
+} // namespace Kernel

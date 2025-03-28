@@ -11,7 +11,7 @@
 #include <BootKit/BootKit.h>
 #include <BootKit/BootThread.h>
 
-EXTERN_C Int32 ModuleMain(NeOS::HEL::BootInfoHeader* handover)
+EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 	NETBOOT_INTERNET_HEADER inet{};
 

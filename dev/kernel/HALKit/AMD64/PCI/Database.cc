@@ -6,6 +6,6 @@
 
 #include <KernelKit/PCI/Database.h>
 
-namespace NeOS
+namespace Kernel
 {
 }

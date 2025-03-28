@@ -19,7 +19,7 @@
                 <mxCell id="mspNsT0Gx7HsNPX6GqQO-12" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;GUI System&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/h1&gt;&lt;p&gt;The system works as a set of Predefined controls in C++ for a High-Performance C++ app.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="540" y="235" width="220" height="110" as="geometry"/>
                 </mxCell>
-                <mxCell id="mspNsT0Gx7HsNPX6GqQO-13" value="NeOS subsystem&lt;div&gt;App&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="mspNsT0Gx7HsNPX6GqQO-13" value="Kernel subsystem&lt;div&gt;App&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="55" y="40" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="mspNsT0Gx7HsNPX6GqQO-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.526;entryY=-0.025;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="mspNsT0Gx7HsNPX6GqQO-13" target="mspNsT0Gx7HsNPX6GqQO-3" edge="1">

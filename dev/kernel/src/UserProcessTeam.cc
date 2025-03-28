@@ -11,7 +11,7 @@
 
 #include <KernelKit/UserProcessScheduler.h>
 
-namespace NeOS
+namespace Kernel
 {
 	UserProcessTeam::UserProcessTeam()
 	{
@@ -54,6 +54,6 @@ namespace NeOS
 	{
 		return this->mCurrentProcess;
 	}
-} // namespace NeOS
+} // namespace Kernel
 
 // last rev 05-03-24

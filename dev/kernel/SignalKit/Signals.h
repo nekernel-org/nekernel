@@ -19,7 +19,7 @@
 #define SIGATCH 661
 #define SIGDTCH 662
 
-namespace NeOS
+namespace Kernel
 {
 	typedef UInt32 SignalKind;
 }

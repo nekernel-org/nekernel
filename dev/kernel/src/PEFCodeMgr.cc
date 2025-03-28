@@ -18,7 +18,7 @@
 #define kPefHeapSizeSymbol	"__PEFSizeOfReserveHeap"
 #define kPefNameSymbol		"__PEFProgramName"
 
-namespace NeOS
+namespace Kernel
 {
 	namespace Detail
 	{
@@ -251,11 +251,11 @@ namespace NeOS
 			auto errOrStart = exec.FindStart();
 
 			if (errOrStart.Error() != kErrorSuccess)
-				return kProcessInvalidID;
+				return kSchedInvalidPID;
 
 			auto id = UserProcessScheduler::The().Spawn(reinterpret_cast<const Char*>(exec.FindSymbol(kPefNameSymbol, kPefData)), errOrStart.Leak().Leak(), exec.GetBlob().Leak().Leak());
 
-			if (id != kProcessInvalidID)
+			if (id != kSchedInvalidPID)
 			{
 				UserProcessScheduler::The().CurrentTeam().AsArray()[id].Kind		= process_kind;
 				UserProcessScheduler::The().CurrentTeam().AsArray()[id].StackSize	= *(UIntPtr*)exec.FindSymbol(kPefStackSizeSymbol, kPefData);
@@ -265,4 +265,4 @@ namespace NeOS
 			return id;
 		}
 	} // namespace Utils
-} // namespace NeOS
+} // namespace Kernel

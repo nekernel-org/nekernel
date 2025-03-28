@@ -14,7 +14,7 @@
 
 #define NE_POWER_FACTORY : public PowerFactory
 
-namespace NeOS
+namespace Kernel
 {
 	class PowerFactory;
 
@@ -34,4 +34,4 @@ namespace NeOS
 		};				 // shutdown
 		Void Reboot(){}; // soft-reboot
 	};
-} // namespace NeOS
+} // namespace Kernel

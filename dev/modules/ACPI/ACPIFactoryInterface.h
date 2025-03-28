@@ -12,9 +12,9 @@
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
-#include <modules/Pwr/PowerFactory.h>
+#include <modules/Power/PowerFactory.h>
 
-namespace NeOS
+namespace Kernel
 {
 	class PowerFactory;
 	class ACPIFactoryInterface;
@@ -54,6 +54,6 @@ namespace NeOS
 		SSizeT	fEntries{0UL};	// number of entries, -1 tells that no invalid entries were
 								// found.
 	};
-} // namespace NeOS
+} // namespace Kernel
 
 #endif // !__MOD_ACPI_H__

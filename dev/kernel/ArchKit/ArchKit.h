@@ -28,7 +28,7 @@
 
 #define kKernelMaxSystemCalls (512U)
 
-namespace NeOS
+namespace Kernel
 {
 	inline SSizeT rt_hash_seed(const Char* seed, int mul)
 	{
@@ -67,14 +67,14 @@ namespace NeOS
 	{
 		auto mm_is_bitmap(VoidPtr ptr) -> Bool;
 	}
-} // namespace NeOS
+} // namespace Kernel
 
-typedef NeOS::Void (*rt_syscall_proc)(NeOS::VoidPtr);
+typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 
 struct HalSyscallEntry final
 {
-	NeOS::Int64		fHash;
-	NeOS::Bool		fHooked;
+	Kernel::Int64		fHash;
+	Kernel::Bool		fHooked;
 	rt_syscall_proc fProc;
 
 	operator bool()
@@ -83,12 +83,12 @@ struct HalSyscallEntry final
 	}
 };
 
-inline NeOS::Array<HalSyscallEntry,
+inline Kernel::Array<HalSyscallEntry,
 				   kKernelMaxSystemCalls>
 	kSyscalls;
 
-inline NeOS::Array<HalSyscallEntry,
+inline Kernel::Array<HalSyscallEntry,
 				   kKernelMaxSystemCalls>
 	kKerncalls;
 
-EXTERN_C NeOS::HAL::StackFramePtr mp_get_current_context(NeOS::Int64 pid);
+EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);

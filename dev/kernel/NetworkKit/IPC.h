@@ -25,7 +25,7 @@
 
 #define kIPCHeaderMagic (0x4950434)
 
-namespace NeOS
+namespace Kernel
 {
 	struct IPC_ADDR;
 	struct IPC_MSG;
@@ -86,6 +86,6 @@ namespace NeOS
 	/// @retval true packet is correct.
 	/// @retval false packet is incorrect and process has crashed.
 	Bool ipc_construct_packet(_Output _Input IPC_MSG** pckt_in);
-} // namespace NeOS
+} // namespace Kernel
 
 #endif // INC_IPC_H

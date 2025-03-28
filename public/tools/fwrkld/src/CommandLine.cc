@@ -6,7 +6,7 @@
 
 #include <user/SystemCalls.h>
 
-/// @brief This program loads a code framework into NeOS's memory.
+/// @brief This program loads a code framework into Kernel's memory.
 
 SInt32 main(SInt32 argc, Char* argv[])
 {

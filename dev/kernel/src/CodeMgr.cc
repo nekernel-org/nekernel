@@ -8,7 +8,7 @@
 #include <NewKit/Utils.h>
 #include <KernelKit/UserProcessScheduler.h>
 
-namespace NeOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/// @brief Executes a new process from a function. Kernel code only.
@@ -21,8 +21,8 @@ namespace NeOS
 	{
 		if (!process_name ||
 			*process_name == 0)
-			return kProcessInvalidID;
+			return kSchedInvalidPID;
 
 		return UserProcessScheduler::The().Spawn(process_name, reinterpret_cast<VoidPtr>(main), nullptr);
 	}
-} // namespace NeOS
+} // namespace Kernel

@@ -7,7 +7,7 @@
 #include <HALKit/POWER/Processor.h>
 #include <KernelKit/DebugOutput.h>
 
-using namespace NeOS;
+using namespace Kernel;
 
 /// @brief Writes to COM1.
 /// @param bytes

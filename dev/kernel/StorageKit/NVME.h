@@ -9,7 +9,7 @@
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
 
-namespace NeOS
+namespace Kernel
 {
 	class NVMEDeviceInterface final NE_DEVICE<MountpointInterface*>
 	{
@@ -31,4 +31,4 @@ namespace NeOS
 	private:
 		Void (*fCleanup)(Void) = {nullptr};
 	};
-} // namespace NeOS
+} // namespace Kernel

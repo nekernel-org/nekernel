@@ -6,7 +6,7 @@
 
 #include <StorageKit/AHCI.h>
 
-using namespace NeOS;
+using namespace Kernel;
 
 /// @brief Class constructor
 /// @param Out Drive output

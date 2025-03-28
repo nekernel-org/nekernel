@@ -12,7 +12,7 @@
 #define NEWKIT_VERSION_BCD 0x01100
 
 #ifndef __cplusplus
-#error NeOS compiles with a C++ compiler.
+#error Kernel compiles with a C++ compiler.
 #endif
 
 #if __cplusplus <= 201703L
@@ -28,7 +28,7 @@
 #endif
 
 /// @brief The **Kernel** namespace.
-namespace NeOS
+namespace Kernel
 {
 	using voidPtr = void*;
 	using VoidPtr = void*;
@@ -197,4 +197,4 @@ namespace NeOS
 			return NO;
 		}
 	};
-} // namespace NeOS
+} // namespace Kernel

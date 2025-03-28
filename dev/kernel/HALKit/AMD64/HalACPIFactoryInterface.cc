@@ -10,7 +10,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/MemoryMgr.h>
 
-namespace NeOS
+namespace Kernel
 {
 	namespace Detail
 	{
@@ -119,4 +119,4 @@ namespace NeOS
 					 "jmp reset_wait ; "
 					 ".att_syntax; ");
 	}
-} // namespace NeOS
+} // namespace Kernel

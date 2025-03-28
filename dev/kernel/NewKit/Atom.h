@@ -7,7 +7,7 @@
 
 #include <NewKit/Defines.h>
 
-namespace NeOS
+namespace Kernel
 {
 	template <typename T>
 	class Atom final
@@ -44,4 +44,4 @@ namespace NeOS
 	private:
 		T fArrayOfAtoms;
 	};
-} // namespace NeOS
+} // namespace Kernel

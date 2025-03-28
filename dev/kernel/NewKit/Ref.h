@@ -12,7 +12,7 @@
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/MemoryMgr.h>
 
-namespace NeOS
+namespace Kernel
 {
 	template <typename T>
 	class Ref final
@@ -103,6 +103,6 @@ namespace NeOS
 	private:
 		Ref<T> fRef{nullptr};
 	};
-} // namespace NeOS
+} // namespace Kernel
 
 #endif // ifndef _NEWKIT_REF_H_

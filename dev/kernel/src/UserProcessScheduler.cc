@@ -22,7 +22,7 @@
 
 ///! BUGS: 0
 
-namespace NeOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/// @brief Exit Code global variable.
@@ -623,4 +623,4 @@ namespace NeOS
 	{
 		return mTeam.AsArray().Count() == 0;
 	}
-} // namespace NeOS
+} // namespace Kernel

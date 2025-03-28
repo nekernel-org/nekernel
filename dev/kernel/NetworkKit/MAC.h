@@ -12,7 +12,7 @@
 
 #define kMACAddrLen (12)
 
-namespace NeOS
+namespace Kernel
 {
 	class MacAddressGetter;
 
@@ -33,4 +33,4 @@ namespace NeOS
 		Array<WideChar, kMACAddrLen> fMacAddress;
 	};
 
-} // namespace NeOS
+} // namespace Kernel

@@ -12,7 +12,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
 
-namespace NeOS
+namespace Kernel
 {
 	class PageMgr;
 
@@ -78,4 +78,4 @@ namespace NeOS
 		friend PTEWrapper;
 		friend class Pmm;
 	};
-} // namespace NeOS
+} // namespace Kernel

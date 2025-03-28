@@ -15,7 +15,7 @@
 #define kPCIFuncCount	(8)
 #define kPCIBusCount	(256U)
 
-namespace NeOS::PCI
+namespace Kernel::PCI
 {
 	// model
 	struct DeviceHeader
@@ -56,4 +56,4 @@ namespace NeOS::PCI
 		Detail::BAR BAR4;
 		Detail::BAR BAR5;
 	};
-} // namespace NeOS::PCI
+} // namespace Kernel::PCI

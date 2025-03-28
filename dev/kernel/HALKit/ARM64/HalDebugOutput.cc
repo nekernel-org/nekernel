@@ -9,7 +9,7 @@
 #include <NewKit/Utils.h>
 #include <NewKit/New.h>
 
-namespace NeOS
+namespace Kernel
 {
 	EXTERN_C void ke_io_write(IDeviceObject<const Char*>* self, const Char* bytes)
 	{
@@ -76,8 +76,8 @@ namespace NeOS
 
 	TerminalDevice TerminalDevice::The() noexcept
 	{
-		TerminalDevice out(NeOS::ke_io_write, NeOS::ke_io_read);
+		TerminalDevice out(Kernel::ke_io_write, Kernel::ke_io_read);
 		return out;
 	}
 
-} // namespace NeOS
+} // namespace Kernel

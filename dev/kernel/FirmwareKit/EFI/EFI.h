@@ -13,7 +13,7 @@
 
 #include <NewKit/Defines.h>
 
-using namespace NeOS;
+using namespace Kernel;
 
 /* we always use stdcall in EFI, the pascal way of calling functions. */
 

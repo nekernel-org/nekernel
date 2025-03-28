@@ -7,7 +7,7 @@
 
 ------------------------------------------- */
 
-namespace NeOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/** @brief Free pointer from usage. */
@@ -59,4 +59,4 @@ namespace NeOS
 
 		return No;
 	}
-} // namespace NeOS
+} // namespace Kernel

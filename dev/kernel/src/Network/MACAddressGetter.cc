@@ -6,10 +6,10 @@
 
 #include <NetworkKit/MAC.h>
 
-namespace NeOS
+namespace Kernel
 {
 	Array<WideChar, kMACAddrLen>& MacAddressGetter::AsBytes()
 	{
 		return this->fMacAddress;
 	}
-} // namespace NeOS
+} // namespace Kernel

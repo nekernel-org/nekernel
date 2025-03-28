@@ -10,7 +10,7 @@
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Defines.h>
 
-namespace NeOS
+namespace Kernel
 {
 	template <typename T, SizeT N>
 	class Array final
@@ -62,4 +62,4 @@ namespace NeOS
 	{
 		return Array<ValueType, ARRAY_SIZE(val)>{val};
 	}
-} // namespace NeOS
+} // namespace Kernel

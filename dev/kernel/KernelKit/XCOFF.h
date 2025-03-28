@@ -29,13 +29,13 @@ struct XCoffForkHeader;
 /// @brief XCoff file header, meant for POWER apps.
 typedef struct XCoffFileHeader
 {
-	NeOS::UInt16  fMagic;
-	NeOS::UInt16  fTarget;
-	NeOS::UInt16  fNumSecs;
-	NeOS::UInt32  fTimeDat;
-	NeOS::UIntPtr fSymPtr;
-	NeOS::UInt32  fNumSyms;
-	NeOS::UInt16  fOptHdr; // ?: Number of bytes in optional header
+	Kernel::UInt16  fMagic;
+	Kernel::UInt16  fTarget;
+	Kernel::UInt16  fNumSecs;
+	Kernel::UInt32  fTimeDat;
+	Kernel::UIntPtr fSymPtr;
+	Kernel::UInt32  fNumSyms;
+	Kernel::UInt16  fOptHdr; // ?: Number of bytes in optional header
 } XCoffFileHeader64;
 
 #define kForkNameLen (256U)
@@ -43,9 +43,9 @@ typedef struct XCoffFileHeader
 /// @brief This the executable manifest fork.
 typedef struct XCoffForkHeader
 {
-	NeOS::Char fPropertiesXMLFork[kForkNameLen];
-	NeOS::Char fDynamicLoaderFork[kForkNameLen];
-	NeOS::Char fCodeSignFork[kForkNameLen];
+	Kernel::Char fPropertiesXMLFork[kForkNameLen];
+	Kernel::Char fDynamicLoaderFork[kForkNameLen];
+	Kernel::Char fCodeSignFork[kForkNameLen];
 } XCoffForkHeader;
 
 #endif // ifndef INC_XOCFF_H

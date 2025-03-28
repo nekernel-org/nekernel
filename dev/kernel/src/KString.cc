@@ -10,7 +10,7 @@
 /// @file KString.cc
 /// @brief Kernel String manipulation file.
 
-namespace NeOS
+namespace Kernel
 {
 	Char* KString::Data()
 	{
@@ -215,4 +215,4 @@ namespace NeOS
 
 		return *this;
 	}
-} // namespace NeOS
+} // namespace Kernel

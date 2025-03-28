@@ -56,7 +56,7 @@
 		M, N            \
 	}
 
-namespace NeOS::HAL
+namespace Kernel::HAL
 {
 	struct PACKED PTE_4KB final
 	{
@@ -109,12 +109,12 @@ namespace NeOS::HAL
 
 	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page) -> VoidPtr;
 	auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
-} // namespace NeOS::HAL
+} // namespace Kernel::HAL
 
-namespace NeOS
+namespace Kernel
 {
 	typedef HAL::PTE_4KB PTE;
 	typedef HAL::PDE_4KB PDE;
-} // namespace NeOS
+} // namespace Kernel
 
 EXTERN_C void hal_flush_tlb();

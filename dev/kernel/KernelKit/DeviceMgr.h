@@ -24,11 +24,11 @@
 
 #define kDeviceMgrRootDirPath "/Devices/"
 
-#define NE_DEVICE : public ::NeOS::IDeviceObject
+#define NE_DEVICE : public ::Kernel::IDeviceObject
 
 // Last Rev: Wed, Apr  3, 2024  9:09:41 AM
 
-namespace NeOS
+namespace Kernel
 {
 	template <typename T>
 	class IDeviceObject;
@@ -137,4 +137,4 @@ namespace NeOS
 		kDeviceTypeMediaCtrl, // MM controller
 		kDeviceTypeCount,
 	};
-} // namespace NeOS
+} // namespace Kernel

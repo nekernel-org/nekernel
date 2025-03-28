@@ -20,8 +20,8 @@
 
 #ifdef __ATA_PIO__
 
-using namespace NeOS;
-using namespace NeOS::HAL;
+using namespace Kernel;
+using namespace Kernel::HAL;
 
 /// BUGS: 0
 

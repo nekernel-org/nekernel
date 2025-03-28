@@ -7,7 +7,7 @@
 #include <SwapKit/DiskSwap.h>
 #include <KernelKit/FileMgr.h>
 
-namespace NeOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/// @brief Write memory chunk onto disk.
@@ -64,4 +64,4 @@ namespace NeOS
 
 		return reinterpret_cast<SWAP_DISK_HEADER*>(blob);
 	}
-} // namespace NeOS
+} // namespace Kernel

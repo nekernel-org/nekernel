@@ -11,15 +11,15 @@
 /// @file KPC.h
 /// @brief Kernel Procedure Code.
 
-#define err_local_ok()	 (NeOS::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() == NeOS::kErrorSuccess)
-#define err_local_fail() (NeOS::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() != NeOS::kErrorSuccess)
-#define err_local_get()	 (NeOS::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode())
+#define err_local_ok()	 (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() == Kernel::kErrorSuccess)
+#define err_local_fail() (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() != Kernel::kErrorSuccess)
+#define err_local_get()	 (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode())
 
-#define err_global_ok()	  (NeOS::kErrorLocalNumber == NeOS::kErrorSuccess)
-#define err_global_fail() (NeOS::kErrorLocalNumber != NeOS::kErrorSuccess)
-#define err_global_get()  (NeOS::kErrorLocalNumber)
+#define err_global_ok()	  (Kernel::kErrorLocalNumber == Kernel::kErrorSuccess)
+#define err_global_fail() (Kernel::kErrorLocalNumber != Kernel::kErrorSuccess)
+#define err_global_get()  (Kernel::kErrorLocalNumber)
 
-namespace NeOS
+namespace Kernel
 {
 	typedef Int32 HError;
 
@@ -64,4 +64,4 @@ namespace NeOS
 	/// @param void no params are needed.
 	/// @return if error-free: false, otherwise true.
 	Boolean err_bug_check_raise(Void) noexcept;
-} // namespace NeOS
+} // namespace Kernel

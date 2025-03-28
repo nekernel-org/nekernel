@@ -15,7 +15,7 @@
 ///! @brief Multi processing is needed for multi-tasking operations.
 /***********************************************************************************/
 
-namespace NeOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/// @note Those symbols are needed in order to switch and validate the stack.
@@ -222,4 +222,4 @@ namespace NeOS
 	{
 		return fThreadList.Count();
 	}
-} // namespace NeOS
+} // namespace Kernel

@@ -53,7 +53,7 @@ namespace Boot
 	typedef WideChar CharacterTypeUTF16;
 	typedef Char	 CharacterTypeUTF8;
 
-	using namespace NeOS;
+	using namespace Kernel;
 
 	/**
 	 * @brief BootKit Text Writer class
@@ -86,17 +86,17 @@ namespace Boot
 		BootTextWriter(const BootTextWriter&)			 = default;
 	};
 
-	NeOS::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const NeOS::SizeT len);
+	Kernel::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const Kernel::SizeT len);
 
-	NeOS::SizeT BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const NeOS::SizeT len);
+	Kernel::SizeT BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte, const Kernel::SizeT len);
 
 	/// String length functions.
 
 	/// @brief get string length.
-	NeOS::SizeT BStrLen(const CharacterTypeUTF16* ptr);
+	Kernel::SizeT BStrLen(const CharacterTypeUTF16* ptr);
 
 	/// @brief set memory with custom value.
-	NeOS::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const NeOS::SizeT len);
+	Kernel::SizeT BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 byte, const Kernel::SizeT len);
 
 	/**
 	 * @brief BootKit File Reader class

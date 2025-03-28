@@ -44,7 +44,7 @@
 #define kPefForkKind	kPefMagic
 #define kPefForkKindFAT kPefMagicFat
 
-namespace NeOS
+namespace Kernel
 {
 	enum
 	{
@@ -112,6 +112,6 @@ namespace NeOS
 		kPefZero	 = 0xE,
 		kPefLinkerID = 0x1,
 	};
-} // namespace NeOS
+} // namespace Kernel
 
 #endif /* ifndef KERNELKIT_PEF_H */

@@ -31,7 +31,7 @@
 #define kMaxUserNameLen	 (256U)
 #define kMaxUserTokenLen (256U)
 
-namespace NeOS
+namespace Kernel
 {
 	class User;
 
@@ -90,6 +90,6 @@ namespace NeOS
 		Char		 mUserName[kMaxUserNameLen] = {0};
 		Char		 mUserKey[kMaxUserTokenLen] = {0};
 	};
-} // namespace NeOS
+} // namespace Kernel
 
 #endif /* ifndef INC_USER_H */

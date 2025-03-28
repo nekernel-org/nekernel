@@ -14,7 +14,7 @@
 
 #define NE_DYLIB_OBJECT : public IDylibObject
 
-namespace NeOS
+namespace Kernel
 {
 	/// @brief DLL class object. A handle to a shared library.
 	class IDylibObject
@@ -45,4 +45,4 @@ namespace NeOS
 
 	/// @brief Pure implementation, missing method/function handler.
 	EXTERN_C void __zka_pure_call(void);
-} // namespace NeOS
+} // namespace Kernel

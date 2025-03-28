@@ -16,7 +16,7 @@
 /// @file SwapDisk.h
 /// @brief Virtual memory swap disk.
 
-namespace NeOS
+namespace Kernel
 {
 	struct SWAP_DISK_HEADER;
 
@@ -67,4 +67,4 @@ namespace NeOS
 		SizeT  fBlobSz;
 		UInt8  fBlob[];
 	} PACKED SWAP_DISK_HEADER;
-} // namespace NeOS
+} // namespace Kernel

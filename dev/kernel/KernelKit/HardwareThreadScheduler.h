@@ -16,7 +16,7 @@
 
 #define kMaxAPInsideSched (8U)
 
-namespace NeOS
+namespace Kernel
 {
 	class HardwareThread;
 	class HardwareThreadScheduler;
@@ -144,6 +144,6 @@ namespace NeOS
 	/// @brief makes thread sleep.
 	/// hooks and hangs thread to prevent code from executing.
 	Void mp_hang_thread(HAL::StackFramePtr stack);
-} // namespace NeOS
+} // namespace Kernel
 
 #endif // !__INC_MP_MANAGER_H__

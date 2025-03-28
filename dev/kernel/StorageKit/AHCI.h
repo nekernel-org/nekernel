@@ -10,7 +10,7 @@
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/OwnPtr.h>
 
-namespace NeOS
+namespace Kernel
 {
 	class AHCIDeviceInterface NE_DEVICE<MountpointInterface*>
 	{
@@ -57,4 +57,4 @@ namespace NeOS
 
 	UInt16						 sk_init_ahci_device(BOOL atapi);
 	ErrorOr<AHCIDeviceInterface> sk_acquire_ahci_device(Int32 drv_index);
-} // namespace NeOS
+} // namespace Kernel

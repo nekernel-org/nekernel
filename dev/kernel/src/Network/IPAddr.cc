@@ -7,7 +7,7 @@
 #include <NetworkKit/IP.h>
 #include <NewKit/Utils.h>
 
-namespace NeOS
+namespace Kernel
 {
 	Char* RawIPAddress::Address()
 	{
@@ -126,4 +126,4 @@ namespace NeOS
 
 		return true;
 	}
-} // namespace NeOS
+} // namespace Kernel

@@ -13,22 +13,21 @@
 #include <NewKit/MutableArray.h>
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
-#define kSchedInvalidPID		  (-1)
+#define kSchedInvalidPID		  ((PID)~0)
 #define kSchedProcessLimitPerTeam (32U)
 
 #define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
 #define kSchedMaxStackSz	 mib_cast(8)   /* maximum stack size */
 
-#define kProcessInvalidID (-1)
-#define kProcessNameLen	  (128U)
+#define kSchedNameLen	  (128U)
 
 ////////////////////////////////////////////////////
-// The current date is: Thu 11/28/2024			  //
+// Last revision date is: Fri Mar 28 2025		  //
 ////////////////////////////////////////////////////
 
-namespace NeOS
+namespace Kernel
 {
-	//! @note Forward class declarations.
+	//! @note Forward class declaration.
 
 	class IDylibObject;
 	class UserProcess;
@@ -121,7 +120,7 @@ namespace NeOS
 	};
 
 	using ProcessTime = UInt64;
-	using PID		  = Int64;
+	using PID		  = UInt64;
 
 	/***********************************************************************************/
 	/// @note For User manager, tells where we run the code.
@@ -171,7 +170,7 @@ namespace NeOS
 		NE_COPY_DEFAULT(UserProcess);
 
 	public:
-		Char			   Name[kProcessNameLen] = {"Process"};
+		Char			   Name[kSchedNameLen] = {"Process"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
@@ -368,7 +367,7 @@ namespace NeOS
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;
-} // namespace NeOS
+} // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.h>
 #include <KernelKit/UserProcessScheduler.inl>

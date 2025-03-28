@@ -17,7 +17,7 @@
 // eXtensible Resource Information
 namespace CFKit::XRN
 {
-	using namespace NeOS;
+	using namespace Kernel;
 
 	union GUIDSequence {
 		alignas(8) UShort u8[16];

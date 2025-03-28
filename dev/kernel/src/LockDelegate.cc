@@ -6,7 +6,7 @@
 
 #include <KernelKit/LockDelegate.h>
 
-namespace NeOS
+namespace Kernel
 {
 	/// @note Leave it empty for now.
-} // namespace NeOS
+} // namespace Kernel

@@ -8,7 +8,7 @@
 #include <KernelKit/KPC.h>
 #include <KernelKit/UserProcessScheduler.h>
 
-namespace NeOS
+namespace Kernel
 {
 	bool IPC_ADDR::operator==(const IPC_ADDR& addr) noexcept
 	{
@@ -29,4 +29,4 @@ namespace NeOS
 	{
 		return addr.UserProcessID != this->UserProcessID || addr.UserProcessTeam != this->UserProcessTeam;
 	}
-} // namespace NeOS
+} // namespace Kernel

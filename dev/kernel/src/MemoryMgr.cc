@@ -28,7 +28,7 @@
 #define kMemoryMgrMagic	  (0xD4D75)
 #define kMemoryMgrAlignSz (4)
 
-namespace NeOS
+namespace Kernel
 {
 	/// @brief Implementation details.
 	namespace Detail
@@ -292,4 +292,4 @@ namespace NeOS
 
 		return No;
 	}
-} // namespace NeOS
+} // namespace Kernel

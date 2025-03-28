@@ -9,7 +9,7 @@
 #include <modules/ATA/ATA.h>
 #include <modules/AHCI/AHCI.h>
 
-using namespace NeOS;
+using namespace Kernel;
 
 /// @brief Device type.
 class Device

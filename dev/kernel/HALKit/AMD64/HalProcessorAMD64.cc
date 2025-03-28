@@ -15,7 +15,7 @@
  * @brief Common CPU API.
  */
 
-namespace NeOS::HAL
+namespace Kernel::HAL
 {
 	Void lrt_out8(UInt16 port, UInt8 value)
 	{
@@ -98,4 +98,4 @@ namespace NeOS::HAL
 	{
 		asm volatile("std");
 	}
-} // namespace NeOS::HAL
+} // namespace Kernel::HAL

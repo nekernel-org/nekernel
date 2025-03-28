@@ -21,7 +21,7 @@ EMU=qemu-system-x86_64  -net none
 endif
 
 ifeq ($(NEOS_MODEL), )
-NE_MODEL=-DkMachineModel="\"NeOS\""
+NE_MODEL=-DkMachineModel="\"Kernel\""
 endif
 
 BIOS=OVMF.fd
@@ -61,7 +61,7 @@ endif
 LD_FLAGS=-e Main --subsystem=10
 
 STANDALONE_MACRO=-D__BOOTZ_STANDALONE__
-OBJ=*.o
+OBJ=obj/*.o
 
 REM=rm
 REM_FLAG=-f
@@ -111,6 +111,7 @@ compile-amd64:
 	$(wildcard src/HEL/AMD64/*.cc) \
 	$(wildcard src/HEL/AMD64/*.S) \
 	$(wildcard src/*.cc)
+	mv *.o obj/
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:

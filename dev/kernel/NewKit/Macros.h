@@ -12,41 +12,41 @@
 /***********************************************************************************/
 
 #ifndef KIB
-#define KIB(X) (NeOS::UInt64)((X) / 1024)
+#define KIB(X) (Kernel::UInt64)((X) / 1024)
 #endif
 
 #ifndef kib_cast
-#define kib_cast(X) (NeOS::UInt64)((X)*1024)
+#define kib_cast(X) (Kernel::UInt64)((X)*1024)
 #endif
 
 #ifndef MIB
-#define MIB(X) (NeOS::UInt64)((NeOS::UInt64)KIB(X) / 1024)
+#define MIB(X) (Kernel::UInt64)((Kernel::UInt64)KIB(X) / 1024)
 #endif
 
 #ifndef mib_cast
-#define mib_cast(X) (NeOS::UInt64)((NeOS::UInt64)kib_cast(X) * 1024)
+#define mib_cast(X) (Kernel::UInt64)((Kernel::UInt64)kib_cast(X) * 1024)
 #endif
 
 #ifndef GIB
-#define GIB(X) (NeOS::UInt64)((NeOS::UInt64)MIB(X) / 1024)
+#define GIB(X) (Kernel::UInt64)((Kernel::UInt64)MIB(X) / 1024)
 #endif
 
 #ifndef gib_cast
-#define gib_cast(X) (NeOS::UInt64)((NeOS::UInt64)mib_cast(X) * 1024)
+#define gib_cast(X) (Kernel::UInt64)((Kernel::UInt64)mib_cast(X) * 1024)
 #endif
 
 #ifndef TIB
-#define TIB(X) (NeOS::UInt64)((NeOS::UInt64)GIB(X) / 1024)
+#define TIB(X) (Kernel::UInt64)((Kernel::UInt64)GIB(X) / 1024)
 #endif
 
 #ifndef tib_cast
-#define tib_cast(X) ((NeOS::UInt64)gib_cast(X) * 1024)
+#define tib_cast(X) ((Kernel::UInt64)gib_cast(X) * 1024)
 #endif
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a)              \
 	(((sizeof(a) / sizeof(*(a))) / \
-	  (static_cast<NeOS::Size>(!(sizeof(a) % sizeof(*(a)))))))
+	  (static_cast<Kernel::Size>(!(sizeof(a) % sizeof(*(a)))))))
 #endif
 
 #define DEPRECATED ATTRIBUTE(deprecated)
@@ -119,10 +119,10 @@
 #define CONST const
 
 #define STRINGIFY(X) #X
-#define NE_UNUSED(X) ((NeOS::Void)X)
+#define NE_UNUSED(X) ((Kernel::Void)X)
 
 #ifndef RGB
-#define RGB(R, G, B) (NeOS::UInt32)(R | G << 0x8 | B << 0x10)
+#define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
 #endif // !RGB
 
 #ifdef __NE_AMD64__
@@ -132,9 +132,9 @@
 #endif
 
 #define RTL_ENDIAN(address, value)                            \
-	(((reinterpret_cast<NeOS::Char*>(address)[0]) == (value)) \
-		 ? (NeOS::Endian::kEndianBig)                         \
-		 : (NeOS::Endian::kEndianLittle))
+	(((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) \
+		 ? (Kernel::Endian::kEndianBig)                         \
+		 : (Kernel::Endian::kEndianLittle))
 
 #define Yes true
 #define No	false
@@ -145,7 +145,7 @@
 #define TRUE  true
 #define FALSE false
 
-#define BOOL NeOS::Boolean
+#define BOOL Kernel::Boolean
 
 #ifdef RTL_INIT_OBJECT
 #undef RTL_INIT_OBJECT

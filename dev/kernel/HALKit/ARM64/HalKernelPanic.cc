@@ -18,7 +18,7 @@
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
 
-namespace NeOS
+namespace Kernel
 {
 	/// @brief Dumping factory class.
 	class RecoveryFactory final
@@ -31,7 +31,7 @@ namespace NeOS
 	/// @brief Stops execution of the kernel.
 	/// @param id kernel stop ID.
 	/***********************************************************************************/
-	Void ke_panic(const NeOS::Int32& id, const Char* message)
+	Void ke_panic(const Kernel::Int32& id, const Char* message)
 	{
 		fb_init();
 
@@ -77,4 +77,4 @@ namespace NeOS
 			ke_panic(RUNTIME_CHECK_FAILED, file); // Runtime Check failed
 		}
 	}
-} // namespace NeOS
+} // namespace Kernel

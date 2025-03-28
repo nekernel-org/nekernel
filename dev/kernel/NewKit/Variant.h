@@ -11,7 +11,7 @@
 #include <NewKit/Json.h>
 #include <SwapKit/DiskSwap.h>
 
-namespace NeOS
+namespace Kernel
 {
 	class Variant final
 	{
@@ -77,4 +77,4 @@ namespace NeOS
 		voidPtr		fPtr{nullptr};
 		VariantKind fKind{VariantKind::kNull};
 	};
-} // namespace NeOS
+} // namespace Kernel

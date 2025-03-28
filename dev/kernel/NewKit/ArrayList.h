@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.h>
 
-namespace NeOS
+namespace Kernel
 {
 	template <typename T>
 	class ArrayList final
@@ -60,4 +60,4 @@ namespace NeOS
 	{
 		return ArrayList<ValueType>{val};
 	}
-} // namespace NeOS
+} // namespace Kernel

@@ -7,7 +7,7 @@
 #include <HALKit/AMD64/Processor.h>
 #include <KernelKit/UserProcessScheduler.h>
 
-namespace NeOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/// @brief Unimplemented function (crashes by default)
@@ -37,7 +37,7 @@ namespace NeOS
 	/// Wakes up thread from the hang state.
 	Void mp_wakeup_thread(HAL::StackFrame* stack)
 	{
-		NeOS::UserProcessHelper::StartScheduling();
+		Kernel::UserProcessHelper::StartScheduling();
 	}
 
 	/// @brief makes the thread sleep on a loop.
@@ -49,4 +49,4 @@ namespace NeOS
 			/* Nothing to do, code is spinning */
 		}
 	}
-} // namespace NeOS
+} // namespace Kernel

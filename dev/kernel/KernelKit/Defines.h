@@ -12,4 +12,5 @@
 #define KERNELKIT_VERSION_BCD 0x01020
 
 class UserProcessScheduler;
+class IDylibObject;
 class UserProcess;

@@ -34,26 +34,26 @@ struct HeFS_BOOT_NODE;
 
 struct HeFS_BOOT_NODE final
 {
-	NeOS::Char	 fMagic[kHeFSMagicLen];
-	NeOS::Char	 fPartName[kHeFSPartNameLen];
-	NeOS::UInt32 fVersion;
-	NeOS::UInt64 fBadSectors;
-	NeOS::UInt64 fSectorCount;
-	NeOS::UInt64 fSectorSize;
-	NeOS::UInt32 fChecksum;
-	NeOS::UInt8	 fDriveKind;
-	NeOS::UInt8	 fTextEncoding;
-	NeOS::UInt64 fRootINode;
-	NeOS::UInt64 fRecoveryINode;
+	Kernel::Char	 fMagic[kHeFSMagicLen];
+	Kernel::Char	 fPartName[kHeFSPartNameLen];
+	Kernel::UInt32 fVersion;
+	Kernel::UInt64 fBadSectors;
+	Kernel::UInt64 fSectorCount;
+	Kernel::UInt64 fSectorSize;
+	Kernel::UInt32 fChecksum;
+	Kernel::UInt8	 fDriveKind;
+	Kernel::UInt8	 fTextEncoding;
+	Kernel::UInt64 fRootINode;
+	Kernel::UInt64 fRecoveryINode;
 };
 
 struct HeFS_INDEX_NODE
 {
-	NeOS::Char	 fName[kHeFSFileNameLen];
-	NeOS::UInt32 fFlags;
-	NeOS::UInt16 fKind;
-	NeOS::UInt32 fSize;
-	NeOS::Lba	 fFirstINode;
-	NeOS::Lba	 fLastINode;
-	NeOS::UInt32 fChecksum;
+	Kernel::Char	 fName[kHeFSFileNameLen];
+	Kernel::UInt32 fFlags;
+	Kernel::UInt16 fKind;
+	Kernel::UInt32 fSize;
+	Kernel::Lba	 fFirstINode;
+	Kernel::Lba	 fLastINode;
+	Kernel::UInt32 fChecksum;
 };

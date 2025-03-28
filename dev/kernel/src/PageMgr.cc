@@ -13,7 +13,7 @@
 #include <HALKit/ARM64/Paging.h>
 #endif // ifdef __NE_AMD64__ || defined(__NE_ARM64__)
 
-namespace NeOS
+namespace Kernel
 {
 	PTEWrapper::PTEWrapper(Boolean Rw, Boolean User, Boolean ExecDisable, UIntPtr VirtAddr)
 		: fRw(Rw),
@@ -60,7 +60,7 @@ namespace NeOS
 	PTEWrapper PageMgr::Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz, SizeT Pad)
 	{
 		// Store PTE wrapper right after PTE.
-		VoidPtr ptr = NeOS::HAL::mm_alloc_bitmap(Rw, User, Sz, NO, Pad);
+		VoidPtr ptr = Kernel::HAL::mm_alloc_bitmap(Rw, User, Sz, NO, Pad);
 
 		return PTEWrapper{Rw, User, ExecDisable, reinterpret_cast<UIntPtr>(ptr)};
 	}
@@ -70,7 +70,7 @@ namespace NeOS
 	/// @return If the page bitmap was cleared or not.
 	Bool PageMgr::Free(Ref<PTEWrapper>& wrapper)
 	{
-		if (!NeOS::HAL::mm_free_bitmap((VoidPtr)wrapper.Leak().VirtualAddress()))
+		if (!Kernel::HAL::mm_free_bitmap((VoidPtr)wrapper.Leak().VirtualAddress()))
 			return false;
 
 		return true;
@@ -107,4 +107,4 @@ namespace NeOS
 	{
 		return fExecDisable;
 	}
-} // namespace NeOS
+} // namespace Kernel

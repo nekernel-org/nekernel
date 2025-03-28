@@ -31,15 +31,15 @@
 #endif // !kAlign
 
 EXTERN_C void hal_flush_tlb();
-EXTERN_C void hal_invl_tlb(NeOS::VoidPtr addr);
-EXTERN_C void hal_write_cr3(NeOS::VoidPtr cr3);
-EXTERN_C void hal_write_cr0(NeOS::VoidPtr bit);
+EXTERN_C void hal_invl_tlb(Kernel::VoidPtr addr);
+EXTERN_C void hal_write_cr3(Kernel::VoidPtr cr3);
+EXTERN_C void hal_write_cr0(Kernel::VoidPtr bit);
 
-EXTERN_C NeOS::VoidPtr hal_read_cr0(); // @brief CPU control register.
-EXTERN_C NeOS::VoidPtr hal_read_cr2(); // @brief Fault address.
-EXTERN_C NeOS::VoidPtr hal_read_cr3(); // @brief Page table.
+EXTERN_C Kernel::VoidPtr hal_read_cr0(); // @brief CPU control register.
+EXTERN_C Kernel::VoidPtr hal_read_cr2(); // @brief Fault address.
+EXTERN_C Kernel::VoidPtr hal_read_cr3(); // @brief Page table.
 
-namespace NeOS::HAL
+namespace Kernel::HAL
 {
 	/// @brief Final page entry (Not PML, PDPT)
 	struct PACKED NE_PTE final
@@ -90,10 +90,10 @@ namespace NeOS::HAL
 
 	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, const SizeT pad = 0) -> VoidPtr;
 	auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
-} // namespace NeOS::HAL
+} // namespace Kernel::HAL
 
-namespace NeOS
+namespace Kernel
 {
 	typedef HAL::NE_PTE PTE;
 	typedef HAL::NE_PDE PDE;
-} // namespace NeOS
+} // namespace Kernel

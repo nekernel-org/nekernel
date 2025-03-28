@@ -10,7 +10,7 @@
 #define kDriveSectorSizeSSD		(512U)
 #define kDriveSectorSizeOptical (2048)
 
-namespace NeOS
+namespace Kernel
 {
 	template <typename T>
 	class IDeviceObject;
@@ -19,4 +19,4 @@ namespace NeOS
 	class AHCIDeviceInterface;
 	class ATADeviceInterface;
 	class SCSIDeviceInterface;
-} // namespace NeOS
+} // namespace Kernel

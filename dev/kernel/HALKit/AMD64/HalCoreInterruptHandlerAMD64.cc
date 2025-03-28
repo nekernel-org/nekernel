@@ -13,11 +13,11 @@ STATIC BOOL kIsScheduling = NO;
 
 /// @brief Handle GPF fault.
 /// @param rsp
-EXTERN_C void idt_handle_gpf(NeOS::UIntPtr rsp)
+EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 {
-	auto process = NeOS::UserProcessScheduler::The().CurrentProcess();
+	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-	if (process.Leak().Status != NeOS::ProcessStatusKind::kRunning)
+	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
 
 	kIsScheduling = NO;
@@ -30,18 +30,18 @@ EXTERN_C void idt_handle_gpf(NeOS::UIntPtr rsp)
 
 	kout << "Kernel: SIGKILL status.\r";
 
-	process.Leak().Status = NeOS::ProcessStatusKind::kKilled;
+	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
 }
 
 /// @brief Handle page fault.
 /// @param rsp
-EXTERN_C void idt_handle_pf(NeOS::UIntPtr rsp)
+EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 {
-	auto process = NeOS::UserProcessScheduler::The().CurrentProcess();
+	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-	if (process.Leak().Status != NeOS::ProcessStatusKind::kRunning)
+	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
 
 	kIsScheduling = NO;
@@ -53,20 +53,20 @@ EXTERN_C void idt_handle_pf(NeOS::UIntPtr rsp)
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	process.Leak().Status = NeOS::ProcessStatusKind::kKilled;
+	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
 }
 
-namespace NeOS::Detail
+namespace Kernel::Detail
 {
 	constexpr static Int32 kTimeoutCount = 100000UL;
 }
 
 /// @brief Handle scheduler interrupt.
-EXTERN_C void idt_handle_scheduler(NeOS::UIntPtr rsp)
+EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 {
-	static NeOS::Int64 try_count_before_brute = NeOS::Detail::kTimeoutCount;
+	static Kernel::Int64 try_count_before_brute = Kernel::Detail::kTimeoutCount;
 
 	while (kIsScheduling)
 	{
@@ -76,21 +76,21 @@ EXTERN_C void idt_handle_scheduler(NeOS::UIntPtr rsp)
 			break;
 	}
 
-	try_count_before_brute = NeOS::Detail::kTimeoutCount;
+	try_count_before_brute = Kernel::Detail::kTimeoutCount;
 	kIsScheduling		   = YES;
 
-	NeOS::UserProcessHelper::StartScheduling();
+	Kernel::UserProcessHelper::StartScheduling();
 
 	kIsScheduling = NO;
 }
 
 /// @brief Handle math fault.
 /// @param rsp
-EXTERN_C void idt_handle_math(NeOS::UIntPtr rsp)
+EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 {
-	auto process = NeOS::UserProcessScheduler::The().CurrentProcess();
+	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-	if (process.Leak().Status != NeOS::ProcessStatusKind::kRunning)
+	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
 
 	kIsScheduling = NO;
@@ -103,18 +103,18 @@ EXTERN_C void idt_handle_math(NeOS::UIntPtr rsp)
 
 	kout << "Kernel: SIGKILL status.\r";
 
-	process.Leak().Status = NeOS::ProcessStatusKind::kKilled;
+	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
 }
 
 /// @brief Handle any generic fault.
 /// @param rsp
-EXTERN_C void idt_handle_generic(NeOS::UIntPtr rsp)
+EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 {
-	auto process = NeOS::UserProcessScheduler::The().CurrentProcess();
+	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-	if (process.Leak().Status != NeOS::ProcessStatusKind::kRunning)
+	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 	{
 		kout << "Getting here.\r";
 		return;
@@ -130,16 +130,16 @@ EXTERN_C void idt_handle_generic(NeOS::UIntPtr rsp)
 
 	kout << "Kernel: SIGKILL status.\r";
 
-	process.Leak().Status = NeOS::ProcessStatusKind::kKilled;
+	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
 }
 
-EXTERN_C NeOS::Void idt_handle_breakpoint(NeOS::UIntPtr rip)
+EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 {
-	auto process = NeOS::UserProcessScheduler::The().CurrentProcess();
+	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-	if (process.Leak().Status != NeOS::ProcessStatusKind::kRunning)
+	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 	{
 		kout << "Kernel: SIGTRAP\r";
 
@@ -149,7 +149,7 @@ EXTERN_C NeOS::Void idt_handle_breakpoint(NeOS::UIntPtr rip)
 
 	kIsScheduling = NO;
 
-	kout << "Kernel: Process RIP: " << NeOS::hex_number(rip) << kendl;
+	kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << kendl;
 	kout << "Kernel: SIGTRAP\r";
 
 	process.Leak().ProcessSignal.SignalArg = rip;
@@ -159,16 +159,16 @@ EXTERN_C NeOS::Void idt_handle_breakpoint(NeOS::UIntPtr rip)
 
 	kout << "Kernel: SIGTRAP status.\r";
 
-	process.Leak().Status = NeOS::ProcessStatusKind::kFrozen;
+	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 }
 
 /// @brief Handle #UD fault.
 /// @param rsp
-EXTERN_C void idt_handle_ud(NeOS::UIntPtr rsp)
+EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 {
-	auto process = NeOS::UserProcessScheduler::The().CurrentProcess();
+	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-	if (process.Leak().Status != NeOS::ProcessStatusKind::kRunning)
+	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 		return;
 
 	kIsScheduling = NO;
@@ -181,7 +181,7 @@ EXTERN_C void idt_handle_ud(NeOS::UIntPtr rsp)
 
 	kout << "Kernel: SIGKILL status.\r";
 
-	process.Leak().Status = NeOS::ProcessStatusKind::kKilled;
+	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
 	process.Leak().Crash();
 }
@@ -189,7 +189,7 @@ EXTERN_C void idt_handle_ud(NeOS::UIntPtr rsp)
 /// @brief Enter syscall from assembly.
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C NeOS::Void hal_system_call_enter(NeOS::UIntPtr rcx_syscall_index, NeOS::UIntPtr rdx_syscall_struct)
+EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index, Kernel::UIntPtr rdx_syscall_struct)
 {
 	if (rcx_syscall_index < kSyscalls.Count())
 	{
@@ -199,7 +199,7 @@ EXTERN_C NeOS::Void hal_system_call_enter(NeOS::UIntPtr rcx_syscall_index, NeOS:
 		{
 			if (kSyscalls[rcx_syscall_index].fProc)
 			{
-				(kSyscalls[rcx_syscall_index].fProc)((NeOS::VoidPtr)rdx_syscall_struct);
+				(kSyscalls[rcx_syscall_index].fProc)((Kernel::VoidPtr)rdx_syscall_struct);
 			}
 			else
 			{
@@ -218,7 +218,7 @@ EXTERN_C NeOS::Void hal_system_call_enter(NeOS::UIntPtr rcx_syscall_index, NeOS:
 /// @brief Enter Kernel call from assembly (DDK only).
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C NeOS::Void hal_kernel_call_enter(NeOS::UIntPtr rcx_kerncall_index, NeOS::UIntPtr rdx_kerncall_struct)
+EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, Kernel::UIntPtr rdx_kerncall_struct)
 {
 	if (rcx_kerncall_index < kKerncalls.Count())
 	{
@@ -228,7 +228,7 @@ EXTERN_C NeOS::Void hal_kernel_call_enter(NeOS::UIntPtr rcx_kerncall_index, NeOS
 		{
 			if (kKerncalls[rcx_kerncall_index].fProc)
 			{
-				(kKerncalls[rcx_kerncall_index].fProc)((NeOS::VoidPtr)rdx_kerncall_struct);
+				(kKerncalls[rcx_kerncall_index].fProc)((Kernel::VoidPtr)rdx_kerncall_struct);
 			}
 			else
 			{

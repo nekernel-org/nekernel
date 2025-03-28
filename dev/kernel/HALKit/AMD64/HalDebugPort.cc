@@ -12,7 +12,7 @@
 
 // after that we have start of additional data.
 
-namespace NeOS
+namespace Kernel
 {
 	void rt_debug_listen(DebuggerPortHeader* theHook) noexcept
 	{
@@ -39,4 +39,4 @@ namespace NeOS
 			HAL::rt_wait_400ns();
 		}
 	}
-} // namespace NeOS
+} // namespace Kernel

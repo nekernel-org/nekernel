@@ -9,7 +9,7 @@
 
 #include <NewKit/Defines.h>
 
-namespace NeOS
+namespace Kernel
 {
 	void ke_runtime_check(bool expr, const Char* file, const Char* line);
 }
@@ -34,14 +34,14 @@ namespace NeOS
 #endif
 
 #define __MUST_PASS(EXPR, FILE, LINE) \
-	NeOS::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
+	Kernel::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
 
 #ifdef __DEBUG__
 #define MUST_PASS(EXPR) __MUST_PASS((EXPR), __FILE__, __LINE__)
 #define assert(EXPR)	MUST_PASS(EXPR)
 #else
-#define MUST_PASS(EXPR) (NeOS::Void)(EXPR)
-#define assert(EXPR)	(NeOS::Void)(EXPR)
+#define MUST_PASS(EXPR) (Kernel::Void)(EXPR)
+#define assert(EXPR)	(Kernel::Void)(EXPR)
 #endif
 
 enum RUNTIME_CHECK
@@ -68,7 +68,7 @@ enum RUNTIME_CHECK
 
 typedef enum RUNTIME_CHECK RTL_RUNTIME_CHECK;
 
-namespace NeOS
+namespace Kernel
 {
 	void ke_panic(const Int32& id, const Char* message = nullptr);
-} // namespace NeOS
+} // namespace Kernel

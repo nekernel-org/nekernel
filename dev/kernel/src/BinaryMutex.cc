@@ -7,7 +7,7 @@
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/BinaryMutex.h>
 
-namespace NeOS
+namespace Kernel
 {
 	/***********************************************************************************/
 	/// @brief Unlocks the semaphore.
@@ -71,4 +71,4 @@ namespace NeOS
 
 		return !this->IsLocked();
 	}
-} // namespace NeOS
+} // namespace Kernel

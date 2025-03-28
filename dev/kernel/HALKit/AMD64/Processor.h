@@ -49,7 +49,7 @@ EXTERN_C
 #define kTaskGate	   (0b10001100)
 #define kIDTSelector   (0x08)
 
-namespace NeOS
+namespace Kernel
 {
 	namespace Detail::AMD64
 	{
@@ -64,9 +64,9 @@ namespace NeOS
 			UInt32 Zero; // reserved
 		};
 	} // namespace Detail::AMD64
-} // namespace NeOS
+} // namespace Kernel
 
-namespace NeOS::HAL
+namespace Kernel::HAL
 {
 	/// @brief Memory Manager mapping flags.
 	enum
@@ -312,15 +312,15 @@ namespace NeOS::HAL
 	EXTERN_C Void rt_sti();
 	EXTERN_C Void rt_cld();
 	EXTERN_C Void rt_std();
-} // namespace NeOS::HAL
+} // namespace Kernel::HAL
 
-EXTERN_C NeOS::Void idt_handle_generic(NeOS::UIntPtr rsp);
-EXTERN_C NeOS::Void idt_handle_gpf(NeOS::UIntPtr rsp);
-EXTERN_C NeOS::Void idt_handle_math(NeOS::UIntPtr rsp);
-EXTERN_C NeOS::Void idt_handle_pf(NeOS::UIntPtr rsp);
+EXTERN_C Kernel::Void idt_handle_generic(Kernel::UIntPtr rsp);
+EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp);
+EXTERN_C Kernel::Void idt_handle_math(Kernel::UIntPtr rsp);
+EXTERN_C Kernel::Void idt_handle_pf(Kernel::UIntPtr rsp);
 
-EXTERN_C ATTRIBUTE(naked) NeOS::Void hal_load_idt(NeOS::HAL::Register64 ptr);
-EXTERN_C ATTRIBUTE(naked) NeOS::Void hal_load_gdt(NeOS::HAL::RegisterGDT ptr);
+EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_idt(Kernel::HAL::Register64 ptr);
+EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 
-inline NeOS::VoidPtr kKernelBitMpStart = nullptr;
-inline NeOS::UIntPtr kKernelBitMpSize  = 0UL;
+inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
+inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;

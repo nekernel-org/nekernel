@@ -12,33 +12,33 @@
 #define PCI_BAR_64		 0x04
 #define PCI_BAR_PREFETCH 0x08
 
-NeOS::UInt NE_PCIReadRaw(NeOS::UInt bar, NeOS::UShort bus, NeOS::UShort dev, NeOS::UShort fun)
+Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
-	NeOS::UInt target = 0x80000000 | ((NeOS::UInt)bus << 16) |
-						((NeOS::UInt)dev << 11) | ((NeOS::UInt)fun << 8) |
+	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
+						((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
 						(bar & 0xFC);
 
-	NeOS::HAL::rt_out32((NeOS::UShort)NeOS::PCI::PciConfigKind::ConfigAddress,
+	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
 						target);
 
-	NeOS::HAL::rt_wait_400ns();
+	Kernel::HAL::rt_wait_400ns();
 
-	return NeOS::HAL::rt_in32((NeOS::UShort)NeOS::PCI::PciConfigKind::ConfigData);
+	return Kernel::HAL::rt_in32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
 
-void NE_PCISetCfgTarget(NeOS::UInt bar, NeOS::UShort bus, NeOS::UShort dev, NeOS::UShort fun)
+void NE_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
-	NeOS::UInt target = 0x80000000 | ((NeOS::UInt)bus << 16) |
-						((NeOS::UInt)dev << 11) | ((NeOS::UInt)fun << 8) |
+	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
+						((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
 						(bar & 0xFC);
 
-	NeOS::HAL::rt_out32((NeOS::UShort)NeOS::PCI::PciConfigKind::ConfigAddress,
+	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
 						target);
 
-	NeOS::HAL::rt_wait_400ns();
+	Kernel::HAL::rt_wait_400ns();
 }
 
-namespace NeOS::PCI
+namespace Kernel::PCI
 {
 	Device::Device(UShort bus, UShort device, UShort func, UInt32 bar)
 		: fBus(bus), fDevice(device), fFunction(func), fBar(bar)
@@ -168,4 +168,4 @@ namespace NeOS::PCI
 	{
 		return VendorId() != (UShort)PciConfigKind::Invalid;
 	}
-} // namespace NeOS::PCI
+} // namespace Kernel::PCI

@@ -11,7 +11,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
 
-namespace NeOS
+namespace Kernel
 {
 	template <SizeT Sz>
 	class IOArray final
@@ -66,7 +66,7 @@ namespace NeOS
 
 		return ports;
 	}
-} // namespace NeOS
+} // namespace Kernel
 
 #ifdef __x86_64__
 #include <KernelKit/PCI/IOArray+AMD64.inl>

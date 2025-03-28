@@ -8,7 +8,7 @@
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/MemoryMgr.h>
 
-namespace NeOS
+namespace Kernel
 {
 	STATIC Bool kRaiseOnBugCheck = false;
 
@@ -42,4 +42,4 @@ namespace NeOS
 
 		return No;
 	}
-} // namespace NeOS
+} // namespace Kernel

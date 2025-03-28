@@ -9,7 +9,7 @@
 // @file CRC32.cpp
 // @brief Check sequence implementation.
 
-namespace NeOS
+namespace Kernel
 {
 	/// @brief The CRC32 seed table.
 	UInt32 kCrcTbl[kCrcCnt] = {
@@ -79,4 +79,4 @@ namespace NeOS
 
 		return ~crc;
 	}
-} // namespace NeOS
+} // namespace Kernel

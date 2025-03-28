@@ -17,9 +17,9 @@
 /// @file NVME.h
 /// @brief NVME driver.
 
-#define NE_ALIGN_NVME ATTRIBUTE(aligned(sizeof(NeOS::UInt32)))
+#define NE_ALIGN_NVME ATTRIBUTE(aligned(sizeof(Kernel::UInt32)))
 
-namespace NeOS
+namespace Kernel
 {
 	struct NE_ALIGN_NVME HAL_NVME_BAR_0 final
 	{
@@ -108,6 +108,6 @@ namespace NeOS
 
 		return true;
 	}
-} // namespace NeOS
+} // namespace Kernel
 
 #endif // ifndef __MODULE_NVME_H__

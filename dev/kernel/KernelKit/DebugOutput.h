@@ -25,7 +25,7 @@
 #define kDebugTeam		 43
 #define kDebugEOP		 49
 
-namespace NeOS
+namespace Kernel
 {
 	class TerminalDevice;
 	class DTraceDevice;
@@ -202,12 +202,12 @@ namespace NeOS
 		src = number(num);
 		return src;
 	}
-} // namespace NeOS
+} // namespace Kernel
 
 #ifdef kout
 #undef kout
 #endif // ifdef kout
 
-#define kout NeOS::TerminalDevice::The() << "[NeKernel] *" << __FILE__ << "*: "
+#define kout Kernel::TerminalDevice::The() << "[NeKernel] *" << __FILE__ << "*: "
 
-#define kendl NeOS::TerminalDevice::The() << NeOS::end_line()
+#define kendl Kernel::TerminalDevice::The() << Kernel::end_line()

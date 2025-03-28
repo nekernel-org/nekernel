@@ -21,7 +21,7 @@
 #include <HALKit/ARM64/ApplicationProcessor.h>
 
 EXTERN_C void hal_init_platform(
-	NeOS::HEL::BootInfoHeader* handover_hdr)
+	Kernel::HEL::BootInfoHeader* handover_hdr)
 {
 
 	/************************************************** */
@@ -41,12 +41,12 @@ EXTERN_C void hal_init_platform(
 	/************************************** */
 
 	kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
-	kKernelBitMpStart = reinterpret_cast<NeOS::VoidPtr>(
-		reinterpret_cast<NeOS::UIntPtr>(kHandoverHeader->f_BitMapStart));
+	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
+		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
 	/// @note do initialize the interrupts after it.
 
-	NeOS::mp_initialize_gic();
+	Kernel::mp_initialize_gic();
 
 	while (YES)
 	{

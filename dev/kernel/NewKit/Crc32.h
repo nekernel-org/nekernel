@@ -15,9 +15,9 @@
 
 #define kCrcCnt (256)
 
-namespace NeOS
+namespace Kernel
 {
 	UInt32 ke_calculate_crc32(const Char* crc, Int32 len) noexcept;
-} // namespace NeOS
+} // namespace Kernel
 
 #endif // !CRC32_H

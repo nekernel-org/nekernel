@@ -53,7 +53,7 @@
 #define kSATASubClass	(0x06)
 #define kSATABar5		(0x24)
 
-using namespace NeOS;
+using namespace Kernel;
 
 STATIC PCI::Device kSATADev;
 STATIC HbaMemRef   kSATAHba;
@@ -386,7 +386,7 @@ Bool drv_std_detected_ahci()
 	return kSATADev.DeviceId() != (UShort)PCI::PciConfigKind::Invalid && kSATADev.Bar(kSATABar5) != 0;
 }
 
-namespace NeOS
+namespace Kernel
 {
 	/// @brief Initialize an AHCI device (StorageKit)
 	UInt16 sk_init_ahci_device(BOOL atapi)
@@ -464,7 +464,7 @@ namespace NeOS
 
 		return ErrorOr<AHCIDeviceInterface>(device);
 	}
-} // namespace NeOS
+} // namespace Kernel
 
 // ================================================================================================
 

@@ -13,7 +13,7 @@
 /*     INITIALIZE THE GIC ON CPU.              */
 /************************************************** */
 
-namespace NeOS
+namespace Kernel
 {
-	BOOL mp_initialize_gic(NeOS::Void);
+	BOOL mp_initialize_gic(Kernel::Void);
 }

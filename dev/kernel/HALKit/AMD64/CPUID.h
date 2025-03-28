@@ -15,7 +15,7 @@
 
 #include <NewKit/Defines.h>
 
-namespace NeOS
+namespace Kernel
 {
 
 	enum
@@ -84,4 +84,4 @@ namespace NeOS
 	};
 
 	typedef Int64 CPUID;
-} // namespace NeOS
+} // namespace Kernel

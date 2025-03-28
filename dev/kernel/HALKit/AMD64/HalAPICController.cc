@@ -10,7 +10,7 @@
 #define cIOAPICRegVal (4)
 #define cIOAPICRegReg (0)
 
-namespace NeOS::HAL
+namespace Kernel::HAL
 {
 	APICController::APICController(VoidPtr base)
 		: fApic(base)
@@ -41,4 +41,4 @@ namespace NeOS::HAL
 		io_apic[cIOAPICRegReg] = (reg & 0xFF);
 		io_apic[cIOAPICRegVal] = value;
 	}
-} // namespace NeOS::HAL
+} // namespace Kernel::HAL

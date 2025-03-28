@@ -16,7 +16,7 @@
 
 #include <NewKit/Defines.h>
 
-using namespace NeOS;
+using namespace Kernel;
 
 #define kUSBCommand				 (UInt16)0x0
 #define kUSBStatus				 (UInt16)0x2

@@ -8,7 +8,7 @@
 	Dtor and ctors.
 */
 
-namespace NeOS
+namespace Kernel
 {
 	NetworkDevice::NetworkDevice(void (*out)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
 								 void (*in)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
@@ -29,4 +29,4 @@ namespace NeOS
 		if (fCleanup)
 			fCleanup();
 	}
-} // namespace NeOS
+} // namespace Kernel

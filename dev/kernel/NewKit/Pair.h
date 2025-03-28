@@ -8,7 +8,7 @@
 
 #include <NewKit/Defines.h>
 
-namespace NeOS
+namespace Kernel
 {
 	class Pair;
-} // namespace NeOS
+} // namespace Kernel
