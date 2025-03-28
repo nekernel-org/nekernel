@@ -15,6 +15,7 @@
  *
  */
 
+#include "NewKit/Defines.h"
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
@@ -421,7 +422,7 @@ namespace NeOS
 
 			err_global_get() = kErrorSuccess;
 
-			drv_std_input_output_ahci<NO, NO, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+			drv_std_input_output_ahci<NO, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
 
 		/// @brief Write AHCI device.
@@ -443,7 +444,7 @@ namespace NeOS
 
 			err_global_get() = kErrorSuccess;
 
-			drv_std_input_output_ahci<YES, NO, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
+			drv_std_input_output_ahci<YES, YES, NO>(disk->fPacket.fPacketLba, (UInt8*)disk->fPacket.fPacketContent, kAHCISectorSize, disk->fPacket.fPacketSize);
 		}
 	} // namespace Detail
 
@@ -478,12 +479,12 @@ namespace NeOS
 
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
-	drv_std_input_output_ahci<YES, NO, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
+	drv_std_input_output_ahci<YES, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz, size_buffer);
 }
 
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
-	drv_std_input_output_ahci<NO, NO, NO>(lba, (UInt8*)buffer, sector_sz, size_buffer);
+	drv_std_input_output_ahci<NO, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz, size_buffer);
 }
 
 Bool drv_std_init(UInt16& pi)
