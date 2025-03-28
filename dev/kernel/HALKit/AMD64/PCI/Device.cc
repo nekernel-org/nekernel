@@ -15,11 +15,11 @@
 Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
-						((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
-						(bar & 0xFC);
+						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
+						  (bar & 0xFC);
 
 	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
-						target);
+						  target);
 
 	Kernel::HAL::rt_wait_400ns();
 
@@ -29,11 +29,11 @@ Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort 
 void NE_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
-						((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
-						(bar & 0xFC);
+						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
+						  (bar & 0xFC);
 
 	Kernel::HAL::rt_out32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigAddress,
-						target);
+						  target);
 
 	Kernel::HAL::rt_wait_400ns();
 }

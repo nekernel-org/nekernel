@@ -13,13 +13,13 @@
 
 EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
-	NETBOOT_INTERNET_HEADER inet{};
+	BOOTNET_INTERNET_HEADER inet{};
 
-	memset(&inet, 0, sizeof(NETBOOT_INTERNET_HEADER));
+	memset(&inet, 0, sizeof(BOOTNET_INTERNET_HEADER));
 
 	/// TODO: Read packet from JSON file 'bootnet.json'
 
-	if (inet.PatchLength < 1)
+	if (inet.Length < 1)
 	{
 		Boot::BootTextWriter writer;
 		writer.Write("NetBootLauncher: No executable attached to the packet, aborting.\r");
@@ -27,9 +27,9 @@ EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 		return kEfiFail;
 	}
 
-	if (!inet.EEPROM)
+	if (!inet.ImpliesEEPROM)
 	{
-		Boot::BootThread thread(inet.PatchData);
+		Boot::BootThread thread(inet.Data);
 
 		if (thread.IsValid())
 			return thread.Start(handover, YES);

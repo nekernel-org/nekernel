@@ -15,42 +15,42 @@
 #define err_local_fail() (kLastError != kErrorSuccess)
 #define err_local_get()	 (kLastError)
 
-typedef SInt32 ErrKind;
+typedef SInt32 ErrRef;
 
-inline constexpr ErrKind kErrorSuccess			  = 0;
-inline constexpr ErrKind kErrorExecutable		  = 33;
-inline constexpr ErrKind kErrorExecutableLib	  = 34;
-inline constexpr ErrKind kErrorFileNotFound		  = 35;
-inline constexpr ErrKind kErrorDirectoryNotFound  = 36;
-inline constexpr ErrKind kErrorDiskReadOnly		  = 37;
-inline constexpr ErrKind kErrorDiskIsFull		  = 38;
-inline constexpr ErrKind kErrorProcessFault		  = 39;
-inline constexpr ErrKind kErrorSocketHangUp		  = 40;
-inline constexpr ErrKind kErrorThreadLocalStorage = 41;
-inline constexpr ErrKind kErrorMath				  = 42;
-inline constexpr ErrKind kErrorNoNetwork		  = 43;
-inline constexpr ErrKind kErrorHeapOutOfMemory	  = 44;
-inline constexpr ErrKind kErrorNoSuchDisk		  = 45;
-inline constexpr ErrKind kErrorFileExists		  = 46;
-inline constexpr ErrKind kErrorFormatFailed		  = 47;
-inline constexpr ErrKind kErrorNetworkTimeout	  = 48;
-inline constexpr ErrKind kErrorInternal			  = 49;
-inline constexpr ErrKind kErrorForkAlreadyExists  = 50;
-inline constexpr ErrKind kErrorOutOfTeamSlot	  = 51;
-inline constexpr ErrKind kErrorHeapNotPresent	  = 52;
-inline constexpr ErrKind kErrorNoEntrypoint		  = 53;
-inline constexpr ErrKind kErrorDiskIsCorrupted	  = 54;
-inline constexpr ErrKind kErrorDisk				  = 55;
-inline constexpr ErrKind kErrorInvalidData		  = 56;
-inline constexpr ErrKind kErrorAsync			  = 57;
-inline constexpr ErrKind kErrorNonBlocking		  = 58;
-inline constexpr ErrKind kErrorIPC				  = 59;
-inline constexpr ErrKind kErrorSign				  = 60;
-inline constexpr ErrKind kErrorInvalidCreds		  = 61;
-inline constexpr ErrKind kErrorCDTrayBroken		  = 62;
-inline constexpr ErrKind kErrorUnrecoverableDisk  = 63;
-inline constexpr ErrKind kErrorFileLocked		  = 64;
-inline constexpr ErrKind kErrorUnimplemented	  = -1;
+inline constexpr ErrRef kErrorSuccess			 = 0;
+inline constexpr ErrRef kErrorExecutable		 = 33;
+inline constexpr ErrRef kErrorExecutableLib		 = 34;
+inline constexpr ErrRef kErrorFileNotFound		 = 35;
+inline constexpr ErrRef kErrorDirectoryNotFound	 = 36;
+inline constexpr ErrRef kErrorDiskReadOnly		 = 37;
+inline constexpr ErrRef kErrorDiskIsFull		 = 38;
+inline constexpr ErrRef kErrorProcessFault		 = 39;
+inline constexpr ErrRef kErrorSocketHangUp		 = 40;
+inline constexpr ErrRef kErrorThreadLocalStorage = 41;
+inline constexpr ErrRef kErrorMath				 = 42;
+inline constexpr ErrRef kErrorNoNetwork			 = 43;
+inline constexpr ErrRef kErrorHeapOutOfMemory	 = 44;
+inline constexpr ErrRef kErrorNoSuchDisk		 = 45;
+inline constexpr ErrRef kErrorFileExists		 = 46;
+inline constexpr ErrRef kErrorFormatFailed		 = 47;
+inline constexpr ErrRef kErrorNetworkTimeout	 = 48;
+inline constexpr ErrRef kErrorInternal			 = 49;
+inline constexpr ErrRef kErrorForkAlreadyExists	 = 50;
+inline constexpr ErrRef kErrorOutOfTeamSlot		 = 51;
+inline constexpr ErrRef kErrorHeapNotPresent	 = 52;
+inline constexpr ErrRef kErrorNoEntrypoint		 = 53;
+inline constexpr ErrRef kErrorDiskIsCorrupted	 = 54;
+inline constexpr ErrRef kErrorDisk				 = 55;
+inline constexpr ErrRef kErrorInvalidData		 = 56;
+inline constexpr ErrRef kErrorAsync				 = 57;
+inline constexpr ErrRef kErrorNonBlocking		 = 58;
+inline constexpr ErrRef kErrorIPC				 = 59;
+inline constexpr ErrRef kErrorSign				 = 60;
+inline constexpr ErrRef kErrorInvalidCreds		 = 61;
+inline constexpr ErrRef kErrorCDTrayBroken		 = 62;
+inline constexpr ErrRef kErrorUnrecoverableDisk	 = 63;
+inline constexpr ErrRef kErrorFileLocked		 = 64;
+inline constexpr ErrRef kErrorUnimplemented		 = -1;
 
 /// @brief The last error reported by the system to the process.
-IMPORT_C ErrKind kLastError;
+IMPORT_C ErrRef kLastError;

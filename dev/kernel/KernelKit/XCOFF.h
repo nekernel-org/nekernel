@@ -29,13 +29,13 @@ struct XCoffForkHeader;
 /// @brief XCoff file header, meant for POWER apps.
 typedef struct XCoffFileHeader
 {
-	Kernel::UInt16  fMagic;
-	Kernel::UInt16  fTarget;
-	Kernel::UInt16  fNumSecs;
-	Kernel::UInt32  fTimeDat;
+	Kernel::UInt16	fMagic;
+	Kernel::UInt16	fTarget;
+	Kernel::UInt16	fNumSecs;
+	Kernel::UInt32	fTimeDat;
 	Kernel::UIntPtr fSymPtr;
-	Kernel::UInt32  fNumSyms;
-	Kernel::UInt16  fOptHdr; // ?: Number of bytes in optional header
+	Kernel::UInt32	fNumSyms;
+	Kernel::UInt16	fOptHdr; // ?: Number of bytes in optional header
 } XCoffFileHeader64;
 
 #define kForkNameLen (256U)

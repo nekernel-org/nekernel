@@ -15,7 +15,7 @@
 #define kXRNNil "@{........-....-M...-N...-............}"
 
 // eXtensible Resource Information
-namespace CFKit::XRN
+namespace CF::XRN
 {
 	using namespace Kernel;
 
@@ -57,4 +57,4 @@ namespace CFKit::XRN
 	private:
 		GUIDSequence fUUID;
 	};
-} // namespace CFKit::XRN
+} // namespace CF::XRN

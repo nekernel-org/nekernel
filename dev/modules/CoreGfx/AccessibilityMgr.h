@@ -18,13 +18,13 @@ namespace FB
 	using namespace Kernel;
 
 	/// @brief common User interface class.
-	class UIAccessibilty final
+	class FBAccessibilty final
 	{
-		explicit UIAccessibilty() = default;
-		~UIAccessibilty()		  = default;
+		explicit FBAccessibilty() = default;
+		~FBAccessibilty()		  = default;
 
 	public:
-		NE_COPY_DELETE(UIAccessibilty);
+		NE_COPY_DELETE(FBAccessibilty);
 
 		static Int64 Width() noexcept
 		{

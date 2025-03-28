@@ -15,10 +15,10 @@
 #include <NewKit/Stream.h>
 #include <NewKit/KString.h>
 
-namespace CFKit::XRN::Version1
+namespace CF::XRN::Version1
 {
 	using namespace Kernel;
 
-	Ref<GUIDSequence*>			cf_make_sequence(const ArrayList<UInt32>& seq);
+	Ref<GUIDSequence*>			  cf_make_sequence(const ArrayList<UInt32>& seq);
 	ErrorOr<Ref<Kernel::KString>> cf_try_guid_to_string(Ref<GUIDSequence*>& guid);
-} // namespace CFKit::XRN::Version1
+} // namespace CF::XRN::Version1

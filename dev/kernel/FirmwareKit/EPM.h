@@ -71,7 +71,7 @@ typedef struct EPM_GUID
 	Kernel::UInt32 Data1;
 	Kernel::UInt16 Data2;
 	Kernel::UInt16 Data3;
-	Kernel::UInt8	 Data4[8];
+	Kernel::UInt8  Data4[8];
 } PACKED EPM_GUID;
 
 /**
@@ -80,19 +80,19 @@ typedef struct EPM_GUID
  */
 struct PACKED EPM_PART_BLOCK
 {
-	Kernel::Char	Magic[kEPMMagicLength];
-	Kernel::Char	Name[kEPMNameLength];
-	EPM_GUID	Guid;
+	Kernel::Char  Magic[kEPMMagicLength];
+	Kernel::Char  Name[kEPMNameLength];
+	EPM_GUID	  Guid;
 	Kernel::Int32 Version;
 	Kernel::Int64 NumBlocks;
 	Kernel::Int64 SectorSz;
 	Kernel::Int64 LbaStart; // base offset
-	Kernel::Int64 LbaEnd;	  // end offset
+	Kernel::Int64 LbaEnd;	// end offset
 	Kernel::Int16 Kind;
 	Kernel::Int16 Flags;
 	Kernel::Int32 FsVersion;
-	Kernel::Char	Fs[kEPMFilesystemLength]; /* NeFS, HeFS... */
-	Kernel::Char	Reserved[kEPMReserveLen]; // to fill a full sector.
+	Kernel::Char  Fs[kEPMFilesystemLength]; /* NeFS, HeFS... */
+	Kernel::Char  Reserved[kEPMReserveLen]; // to fill a full sector.
 };
 
 ///! @brief Version kind enum.

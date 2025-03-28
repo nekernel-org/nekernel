@@ -6,7 +6,7 @@
 
 #include <CFKit/Property.h>
 
-namespace CFKit
+namespace CF
 {
 	/***********************************************************************************/
 	/// @brief Destructor.
@@ -42,4 +42,4 @@ namespace CFKit
 	{
 		return fValue;
 	}
-} // namespace CFKit
+} // namespace CF

@@ -41,8 +41,8 @@ namespace Boot
 		if (blob_bytes[0] == kMagMz0 &&
 			blob_bytes[1] == kMagMz1)
 		{
-			LDR_EXEC_HEADER_PTR		header_ptr	   = CFKit::ldr_find_exec_header(blob_bytes);
-			LDR_OPTIONAL_HEADER_PTR opt_header_ptr = CFKit::ldr_find_opt_exec_header(blob_bytes);
+			LDR_EXEC_HEADER_PTR		header_ptr	   = CF::ldr_find_exec_header(blob_bytes);
+			LDR_OPTIONAL_HEADER_PTR opt_header_ptr = CF::ldr_find_opt_exec_header(blob_bytes);
 
 			if (!header_ptr || !opt_header_ptr)
 				return;
@@ -117,19 +117,15 @@ namespace Boot
 						if (handover_struc->HandoverArch != HEL::kArchAMD64)
 						{
 							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
-							::Boot::Stop();
 						}
-#endif
-
-#ifdef __NE_ARM64__
+#elif defined(__NE_ARM64__)
 						if (handover_struc->HandoverArch != HEL::kArchARM64)
 						{
 							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
-							::Boot::Stop();
 						}
 #endif
-						fb_render_string("BootZ: Not an handover header...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
+						fb_render_string("BootZ: Not an handover header...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 						::Boot::Stop();
 					}
 				}
@@ -145,7 +141,7 @@ namespace Boot
 				 blob_bytes[3] == kPefMagic[3])
 		{
 			//  =========================================  //
-			//  PEF executable detected.
+			//  PEF executable has been detected.
 			//  =========================================  //
 
 			fStartAddress = nullptr;

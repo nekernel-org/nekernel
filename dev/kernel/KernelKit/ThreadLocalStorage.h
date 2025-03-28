@@ -28,8 +28,8 @@ struct THREAD_INFORMATION_BLOCK;
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED THREAD_INFORMATION_BLOCK final
 {
-	Kernel::Char	  Cookie[kTLSCookieLen]{0}; //! Thread magic number.
-	Kernel::VoidPtr Record{nullptr};			//! Thread information record.
+	Kernel::Char	Cookie[kTLSCookieLen]{0}; //! Thread magic number.
+	Kernel::VoidPtr Record{nullptr};		  //! Thread information record.
 };
 
 ///! @brief Cookie Sanity check.

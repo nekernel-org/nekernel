@@ -15,7 +15,7 @@
 
 #define kMaxPropLen (256U)
 
-namespace CFKit
+namespace CF
 {
 	using namespace Kernel;
 
@@ -46,11 +46,11 @@ namespace CFKit
 
 	template <SizeT N>
 	using PropertyArray = Array<Property, N>;
-} // namespace CFKit
+} // namespace CF
 
 namespace Kernel
 {
-	using namespace CFKit;
+	using namespace CF;
 }
 
 #endif // !CFKIT_PROPS_H

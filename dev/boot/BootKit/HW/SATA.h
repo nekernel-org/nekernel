@@ -19,7 +19,7 @@ public:
 
 	struct SATATrait final
 	{
-		Kernel::SizeT	  mBase{1024};
+		Kernel::SizeT	mBase{1024};
 		Kernel::Boolean mErr{false};
 		Kernel::Boolean mDetected{false};
 

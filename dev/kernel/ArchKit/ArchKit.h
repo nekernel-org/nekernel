@@ -73,8 +73,8 @@ typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 
 struct HalSyscallEntry final
 {
-	Kernel::Int64		fHash;
-	Kernel::Bool		fHooked;
+	Kernel::Int64	fHash;
+	Kernel::Bool	fHooked;
 	rt_syscall_proc fProc;
 
 	operator bool()
@@ -84,11 +84,11 @@ struct HalSyscallEntry final
 };
 
 inline Kernel::Array<HalSyscallEntry,
-				   kKernelMaxSystemCalls>
+					 kKernelMaxSystemCalls>
 	kSyscalls;
 
 inline Kernel::Array<HalSyscallEntry,
-				   kKernelMaxSystemCalls>
+					 kKernelMaxSystemCalls>
 	kKerncalls;
 
 EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);

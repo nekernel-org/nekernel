@@ -19,7 +19,7 @@
 #define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
 #define kSchedMaxStackSz	 mib_cast(8)   /* maximum stack size */
 
-#define kSchedNameLen	  (128U)
+#define kSchedNameLen (128U)
 
 ////////////////////////////////////////////////////
 // Last revision date is: Fri Mar 28 2025		  //

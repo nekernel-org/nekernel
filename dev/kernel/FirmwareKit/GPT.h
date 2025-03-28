@@ -23,7 +23,7 @@ namespace Kernel
 		Kernel::UInt32 Data1;
 		Kernel::UInt16 Data2;
 		Kernel::UInt16 Data3;
-		Kernel::UInt8	 Data4[8];
+		Kernel::UInt8  Data4[8];
 	} GPT_GUID;
 
 	struct PACKED GPT_PARTITION_TABLE final

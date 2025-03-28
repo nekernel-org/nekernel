@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /**
- * @file ATA-PIO.cc
+ * @file DMA+Generic.cc
  * @author Amlal EL Mahrouss (amlal@nekernel.org)
  * @brief ATA driver (DMA mode).
  * @version 0.1
@@ -32,7 +32,7 @@ STATIC Boolean kATADetected			 = false;
 STATIC Int32   kATADeviceType		 = kATADeviceCount;
 STATIC Char	   kATAData[kATADataLen] = {0};
 STATIC Kernel::PCI::Device kATADevice;
-STATIC Char				 kCurrentDiskModel[50] = {"UNKNOWN DMA DRIVE"};
+STATIC Char				   kCurrentDiskModel[50] = {"UNKNOWN DMA DRIVE"};
 
 Boolean drv_std_wait_io(UInt16 IO)
 {

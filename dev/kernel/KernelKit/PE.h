@@ -42,8 +42,8 @@ typedef struct LDR_EXEC_HEADER final
 typedef struct LDR_OPTIONAL_HEADER final
 {
 	Kernel::UInt16 Magic; // 0x010b - PE32, 0x020b - PE32+ (64 bit)
-	Kernel::UInt8	 MajorLinkerVersion;
-	Kernel::UInt8	 MinorLinkerVersion;
+	Kernel::UInt8  MajorLinkerVersion;
+	Kernel::UInt8  MinorLinkerVersion;
 	Kernel::UInt32 SizeOfCode;
 	Kernel::UInt32 SizeOfInitializedData;
 	Kernel::UInt32 SizeOfUninitializedData;
@@ -75,7 +75,7 @@ typedef struct LDR_OPTIONAL_HEADER final
 
 typedef struct LDR_SECTION_HEADER final
 {
-	Kernel::Char	 Name[8];
+	Kernel::Char   Name[8];
 	Kernel::UInt32 VirtualSize;
 	Kernel::UInt32 VirtualAddress;
 	Kernel::UInt32 SizeOfRawData;

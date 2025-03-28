@@ -6,6 +6,9 @@
 
 #include <CoreFoundation.fwrk/headers/Foundation.h>
 
+/***********************************************************************************/
+/// @brief returns true if the proportions are valid.
+/***********************************************************************************/
 CF::CFRect::operator bool()
 {
 	return width > 0 && height > 0;

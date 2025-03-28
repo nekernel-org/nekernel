@@ -125,7 +125,7 @@ namespace Kernel
 
 				fb_init();
 
-				FBDrawInRegion(fb_get_clear_clr(), FB::UIAccessibilty::Height(), FB::UIAccessibilty::Width(),
+				FBDrawInRegion(fb_get_clear_clr(), FB::FBAccessibilty::Height(), FB::FBAccessibilty::Width(),
 							   0, 0);
 
 				fb_clear();

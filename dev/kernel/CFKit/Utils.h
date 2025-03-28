@@ -4,7 +4,7 @@
 #include <KernelKit/PE.h>
 #include <KernelKit/MSDOS.h>
 
-namespace CFKit
+namespace CF
 {
 	using namespace Kernel;
 
@@ -50,6 +50,6 @@ namespace CFKit
 	{
 		return ldr_find_opt_exec_header((DosHeaderPtr)ptrDos);
 	}
-} // namespace CFKit
+} // namespace CF
 
 #endif // ifndef CFKIT_UTILS_H

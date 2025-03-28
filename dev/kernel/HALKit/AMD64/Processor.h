@@ -323,4 +323,4 @@ EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_idt(Kernel::HAL::Register64 ptr)
 EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
 
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
-inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
+inline Kernel::UIntPtr kKernelBitMpSize	 = 0UL;

@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /**
- * @file PIO.cc
+ * @file PIO+Generic.cc
  * @author Amlal EL Mahrouss (amlal@nekernel.org)
  * @brief ATA driver (PIO mode).
  * @version 0.1

@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /**
- * @file AHCI.cc
+ * @file AHCI+Generic.cc
  * @author Amlal El Mahrouss (amlal@nekernel.org)
  * @brief AHCI driver.
  * @version 0.1
@@ -19,16 +19,13 @@
 #include <KernelKit/DriveMgr.h>
 #include <KernelKit/UserProcessScheduler.h>
 #include <KernelKit/KPC.h>
-
 #include <FirmwareKit/EPM.h>
-
+#include <StorageKit/AHCI.h>
 #include <modules/ATA/ATA.h>
 #include <modules/AHCI/AHCI.h>
 #include <KernelKit/PCI/Iterator.h>
 #include <NewKit/Utils.h>
 #include <KernelKit/LockDelegate.h>
-
-#include <StorageKit/AHCI.h>
 
 #define kHBAErrTaskFile (1 << 30)
 #define kHBAPxCmdST		(0x0001)
@@ -345,8 +342,6 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 
 				if (mem_ahci->Ports[ahci_index].Sig == kSATASignature)
 				{
-					kout << "detect device: /dev/sat" << number(ahci_index) << kendl;
-
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
@@ -356,8 +351,6 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 				}
 				else if (atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig)
 				{
-					kout << "detect device: /dev/atp" << number(ahci_index) << kendl;
-
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
@@ -369,6 +362,8 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 				ports_implemented >>= 1;
 				++ahci_index;
 			}
+
+			err_global_get() = kErrorSuccess;
 
 			return YES;
 		}
@@ -476,38 +471,54 @@ namespace Kernel
 
 #ifdef __AHCI__
 
+////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
 	drv_std_input_output_ahci<YES, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz, size_buffer);
 }
 
+////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 {
 	drv_std_input_output_ahci<NO, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz, size_buffer);
 }
 
+////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////
 Bool drv_std_init(UInt16& pi)
 {
 	BOOL atapi = NO;
 	return drv_std_init_ahci(pi, atapi);
 }
 
+////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////
 Bool drv_std_detected(Void)
 {
 	return drv_std_detected_ahci();
 }
 
-/***
+////////////////////////////////////////////////////
+/**
 	@brief Gets the number of sectors inside the drive.
 	@return Sector size in bytes.
  */
+////////////////////////////////////////////////////
 SizeT drv_get_sector_count()
 {
 	return drv_get_sector_count_ahci();
 }
 
+////////////////////////////////////////////////////
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
+////////////////////////////////////////////////////
 SizeT drv_get_size()
 {
 	return drv_get_size_ahci();

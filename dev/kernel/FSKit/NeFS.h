@@ -143,7 +143,7 @@ struct PACKED NEFS_CATALOG_STRUCT final
 	BOOL ForkOrCatalog : 1 {0};
 
 	Kernel::Char Name[kNeFSCatalogNameLen] = {0};
-	Kernel::Char Mime[kNeFSMimeNameLen]	 = {0};
+	Kernel::Char Mime[kNeFSMimeNameLen]	   = {0};
 
 	/// Catalog flags.
 	Kernel::UInt16 Flags;
@@ -186,7 +186,7 @@ struct PACKED NEFS_FORK_STRUCT final
 {
 	BOOL ForkOrCatalog : 1 {1};
 
-	Kernel::Char ForkName[kNeFSForkNameLen]		= {0};
+	Kernel::Char ForkName[kNeFSForkNameLen]		  = {0};
 	Kernel::Char CatalogName[kNeFSCatalogNameLen] = {0};
 
 	Kernel::Int32 Flags;
@@ -196,8 +196,8 @@ struct PACKED NEFS_FORK_STRUCT final
 	Kernel::Int32 ResourceKind;
 	Kernel::Int32 ResourceFlags;
 
-	Kernel::Lba	DataOffset; // 8 Where to look for this data?
-	Kernel::SizeT DataSize;	/// Data size according using sector count.
+	Kernel::Lba	  DataOffset; // 8 Where to look for this data?
+	Kernel::SizeT DataSize;	  /// Data size according using sector count.
 
 	Kernel::Lba NextSibling;
 	Kernel::Lba PreviousSibling;
@@ -208,13 +208,13 @@ struct PACKED NEFS_FORK_STRUCT final
 /// @brief Partition block type
 struct PACKED NEFS_ROOT_PARTITION_BLOCK final
 {
-	Kernel::Char Ident[kNeFSIdentLen]		   = {0};
+	Kernel::Char Ident[kNeFSIdentLen]		 = {0};
 	Kernel::Char PartitionName[kNeFSPartLen] = {0};
 
 	Kernel::Int32 Flags;
 	Kernel::Int32 Kind;
 
-	Kernel::Lba	StartCatalog;
+	Kernel::Lba	  StartCatalog;
 	Kernel::SizeT CatalogCount;
 
 	Kernel::SizeT DiskSize;

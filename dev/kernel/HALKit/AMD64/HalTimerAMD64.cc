@@ -30,16 +30,16 @@ namespace Kernel::Detail
 {
 	struct HPET_BLOCK : public Kernel::SDT
 	{
-		Kernel::UInt8	 hardware_rev_id;
-		Kernel::UInt8	 comparator_count : 5;
-		Kernel::UInt8	 counter_size : 1;
-		Kernel::UInt8	 reserved : 1;
-		Kernel::UInt8	 legacy_replacement : 1;
+		Kernel::UInt8  hardware_rev_id;
+		Kernel::UInt8  comparator_count : 5;
+		Kernel::UInt8  counter_size : 1;
+		Kernel::UInt8  reserved : 1;
+		Kernel::UInt8  legacy_replacement : 1;
 		Kernel::UInt16 pci_vendor_id;
-		ACPI_ADDRESS address;
-		Kernel::UInt8	 hpet_number;
+		ACPI_ADDRESS   address;
+		Kernel::UInt8  hpet_number;
 		Kernel::UInt16 minimum_tick;
-		Kernel::UInt8	 page_protection;
+		Kernel::UInt8  page_protection;
 	} PACKED;
 } // namespace Kernel::Detail
 
