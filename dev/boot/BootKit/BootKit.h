@@ -37,14 +37,11 @@
 /// Framebuffer helpers.
 /***********************************************************************************/
 
-namespace EFI
+namespace Boot
 {
 	EXTERN void ThrowError(const WideChar* errorCode,
 						   const WideChar* reason) noexcept;
-} // namespace EFI
-
-namespace Boot
-{
+						   
 	class BootTextWriter;
 	class BootFileReader;
 	class BootThread;
@@ -338,7 +335,7 @@ namespace Boot
 			fb_init();
 
 			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
-			EFI::ThrowError(L"Drive-Too-Tiny", L"Can't format a NeFS partition here.");
+			Boot::ThrowError(L"Drive-Too-Tiny", L"Can't format a NeFS partition here.");
 			return false;
 		}
 

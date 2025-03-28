@@ -307,10 +307,15 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		fb_init();
 		FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
 
-		EFI::Stop();
+		Boot::Stop();
 	}
 
-	EFI::ExitBootServices(map_key, image_handle);
+	Boot::BootFileReader reader_netboot(L"netboot.sys", image_handle);
+	reader_netboot.ReadAll(0);
+
+	Boot::BootThread* netboot_thread = nullptr;
+
+	Boot::ExitBootServices(map_key, image_handle);
 
 	// ---------------------------------------------------- //
 	// Finally load the OS kernel.
@@ -318,13 +323,8 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	if (kernel_thread->Start(handover_hdr, YES) != kEfiOk)
 	{
-		Boot::BootFileReader reader_netboot(L"netboot.sys", image_handle);
-		reader_netboot.ReadAll(0);
-
-		Boot::BootThread* netboot_thread = nullptr;
-
 		// ------------------------------------------ //
-		// If we succeed in reading the blob, then execute it. (That is NetBoot)
+		// If we fail into booting the kernel, then run NetBoot.
 		// ------------------------------------------ //
 
 		if (reader_netboot.Blob())
@@ -334,6 +334,6 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 			netboot_thread->Start(handover_hdr, YES);
 		}
 	}
-	
+
 	CANT_REACH();
 }

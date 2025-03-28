@@ -117,7 +117,7 @@ namespace Boot
 						if (handover_struc->HandoverArch != HEL::kArchAMD64)
 						{
 							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
-							::EFI::Stop();
+							::Boot::Stop();
 						}
 #endif
 
@@ -125,12 +125,12 @@ namespace Boot
 						if (handover_struc->HandoverArch != HEL::kArchARM64)
 						{
 							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
-							::EFI::Stop();
+							::Boot::Stop();
 						}
 #endif
 						fb_render_string("BootZ: Not an handover header...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
-						::EFI::Stop();
+						::Boot::Stop();
 					}
 				}
 
@@ -165,7 +165,7 @@ namespace Boot
 	{
 		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> Int32 {
 			fb_render_string("BootZ: Invalid Boot Image...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
-			::EFI::Stop();
+			::Boot::Stop();
 
 			return NO;
 		};

@@ -31,7 +31,7 @@ inline EfiBootServices* BS = nullptr;
 EXTERN_C void rt_cli();
 EXTERN_C void rt_hlt();
 
-namespace EFI
+namespace Boot
 {
 	/// @brief Halt and clear interrupts.
 	/// @return
@@ -79,9 +79,9 @@ Bascially frees everything we have in the EFI side.
 
 		ST->ConOut->OutputString(ST->ConOut, L" ***\r");
 
-		EFI::Stop();
+		Boot::Stop();
 	}
-} // namespace EFI
+} // namespace Boot
 
 inline void InitEFI(EfiSystemTable* SystemTable) noexcept
 {

@@ -154,7 +154,7 @@ Void Boot::BootFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr o
 						   kEfiOk)
 			{
 				mWriter.Write(L"*** error: ").Write(err).Write(L" ***\r");
-				EFI::ThrowError(L"OutOfMemory", L"Out of memory.");
+				Boot::ThrowError(L"OutOfMemory", L"Out of memory.");
 			}
 		}
 		else

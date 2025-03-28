@@ -211,7 +211,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
 
-		EFI::ExitBootServices(map_key, image_handle);
+		Boot::ExitBootServices(map_key, image_handle);
 
 		kernel_thread.Start(handover_hdr, YES);
 	}
