@@ -78,7 +78,7 @@ EXTERN_C void hal_init_platform(
 	};
 
 	// Load memory descriptors.
-	Kernel::HAL::RegisterGDT gdt_reg;
+	Kernel::HAL::Register64 gdt_reg;
 
 	gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
 	gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;

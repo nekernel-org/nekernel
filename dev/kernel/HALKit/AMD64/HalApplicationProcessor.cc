@@ -15,7 +15,7 @@
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 
-#define kApicSignature "APIC"
+#define kAPIC_Signature "APIC"
 
 #define kAPIC_ICR_Low	  0x300
 #define kAPIC_ICR_High	  0x310
@@ -44,7 +44,7 @@ namespace Kernel::HAL
 		HAL::StackFramePtr mFrame;
 	};
 
-	STATIC struct PROCESS_APIC_MADT* kMADTBlock = nullptr;
+	STATIC PROCESS_APIC_MADT* kMADTBlock = nullptr;
 	STATIC Bool						 kSMPAware	= false;
 	STATIC Int64					 kSMPCount	= 0;
 
@@ -203,7 +203,7 @@ namespace Kernel::HAL
 		}
 
 		auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
-		kRawMADT			= hw_and_pow_int.Find(kApicSignature).Leak().Leak();
+		kRawMADT			= hw_and_pow_int.Find(kAPIC_Signature).Leak().Leak();
 
 		kMADTBlock = reinterpret_cast<PROCESS_APIC_MADT*>(kRawMADT);
 		kSMPAware  = NO;

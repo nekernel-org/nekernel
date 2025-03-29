@@ -77,7 +77,7 @@ namespace Kernel::HAL
 	/// @brief Loads the provided Global Descriptor Table.
 	/// @param gdt
 	/// @return
-	Void GDTLoader::Load(RegisterGDT& gdt)
+	Void GDTLoader::Load(Register64& gdt)
 	{
 		hal_load_gdt(gdt);
 	}
@@ -114,13 +114,23 @@ namespace Kernel::HAL
 		rt_sti();
 	}
 
-	void GDTLoader::Load(Ref<RegisterGDT>& gdt)
+	/// @brief Loads the Global Descriptor Table into the CPU.
+	/// @param gdt GDT register wrapped in a ref.
+	void GDTLoader::Load(Ref<Register64>& gdt)
 	{
+		if (!gdt)
+			return;
+
 		GDTLoader::Load(gdt.Leak());
 	}
 
+	/// @brief Loads the IDT, for interupts.
+	/// @param idt IDT register wrapped in a ref.
 	void IDTLoader::Load(Ref<Register64>& idt)
 	{
+		if (!idt)
+			return;
+
 		IDTLoader::Load(idt.Leak());
 	}
 } // namespace Kernel::HAL

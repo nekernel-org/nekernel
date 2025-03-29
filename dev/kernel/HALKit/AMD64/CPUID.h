@@ -15,6 +15,11 @@
 
 #include <NewKit/Defines.h>
 
+EXTERN_C
+{
+#include <cpuid.h>
+}
+
 namespace Kernel
 {
 

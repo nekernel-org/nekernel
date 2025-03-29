@@ -28,12 +28,9 @@
 #define kPIC2Command (0xA0)
 #define kPIC2Data	 (0xA1)
 
-EXTERN_C
-{
-#include <cpuid.h>
-}
-
 #include <HALKit/AMD64/CPUID.h>
+
+#define rtl_nop_op()			 asm volatile("nop")
 
 /// @brief Maximum entries of the interrupt descriptor table.
 #define kKernelIdtSize (0x100)
@@ -80,12 +77,6 @@ namespace Kernel::HAL
 	};
 
 	struct PACKED Register64 final
-	{
-		UShort	Limit;
-		UIntPtr Base;
-	};
-
-	struct PACKED RegisterGDT final
 	{
 		UShort	Limit;
 		UIntPtr Base;
@@ -167,8 +158,8 @@ namespace Kernel::HAL
 	class GDTLoader final
 	{
 	public:
-		static Void Load(RegisterGDT& gdt);
-		static Void Load(Ref<RegisterGDT>& gdt);
+		static Void Load(Register64& gdt);
+		static Void Load(Ref<Register64>& gdt);
 	};
 
 	class IDTLoader final
@@ -230,12 +221,7 @@ namespace Kernel::HAL
 	/// @param msr MSR
 	/// @param lo low byte
 	/// @param hi high byte
-	inline Void hal_set_msr(UInt32 msr, UInt32 lo, UInt32 hi) noexcept
-	{
-		asm volatile("wrmsr"
-					 :
-					 : "a"(lo), "d"(hi), "c"(msr));
-	}
+	Void hal_set_msr(UInt32 msr, UInt32 lo, UInt32 hi) noexcept;
 
 	/// @brief Processor specific namespace.
 	namespace Detail
@@ -320,7 +306,7 @@ EXTERN_C Kernel::Void idt_handle_math(Kernel::UIntPtr rsp);
 EXTERN_C Kernel::Void idt_handle_pf(Kernel::UIntPtr rsp);
 
 EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_idt(Kernel::HAL::Register64 ptr);
-EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_gdt(Kernel::HAL::RegisterGDT ptr);
+EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_gdt(Kernel::HAL::Register64 ptr);
 
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize	 = 0UL;
