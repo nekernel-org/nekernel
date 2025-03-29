@@ -2,6 +2,12 @@
 
 # NeKernel
 
+![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/ahci.yml/badge.svg)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+[![QEMU Tested](https://img.shields.io/badge/QEMU-Tested-success)](#)
+
+## Notice for Documentation:
+
 Use the doxygen command to build documentation.
 <br/>
 A documentation regarding building, and developing for NeKernel is available here: https://amlel-el-mahrouss.github.io/nekernel-docs/
