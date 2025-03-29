@@ -12,7 +12,7 @@
 /// @brief Low level/Ring-3 process scheduler.
 /***********************************************************************************/
 
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDylibObject.h>
 #include <ArchKit/ArchKit.h>

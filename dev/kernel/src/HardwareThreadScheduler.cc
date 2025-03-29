@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <CFKit/Property.h>
 

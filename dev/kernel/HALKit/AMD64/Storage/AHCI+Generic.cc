@@ -17,7 +17,7 @@
 
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/KPC.h>
 #include <FirmwareKit/EPM.h>
 #include <StorageKit/AHCI.h>
@@ -133,9 +133,9 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	}
 
 	/// prepare command header.
-	volatile HbaCmdHeader* command_header = ((HbaCmdHeader*)(((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
+	volatile HbaCmdHeader* command_header = ((volatile HbaCmdHeader*)(((UInt64)kSATAHba->Ports[kSATAIndex].Clb)));
 
-	/// jump to found slot.
+	/// Offset to specific command slot.
 	command_header += slot;
 
 	MUST_PASS(command_header);
@@ -144,9 +144,9 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	command_header->Write = Write;
 	command_header->Prdtl = (UInt16)((size_buffer - 1) / 8);
 
-	HbaCmdTbl* command_table = (HbaCmdTbl*)((VoidPtr)((UInt64)command_header->Ctba));
+	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((VoidPtr)((UInt64)command_header->Ctba));
 
-	rt_set_memory(command_table, 0, sizeof(HbaCmdTbl) + (command_header->Prdtl - 1) * sizeof(HbaPrdtEntry));
+	rt_set_memory((HbaCmdTbl*)command_table, 0, sizeof(HbaCmdTbl) + (command_header->Prdtl - 1) * sizeof(HbaPrdtEntry));
 
 	MUST_PASS(command_table);
 
@@ -154,7 +154,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	UInt16 prd_i = 0;
 
-	for (; prd_i < (command_header->Prdtl - 1); prd_i++)
+	for (; prd_i < (command_header->Prdtl - 1); ++prd_i)
 	{
 		command_table->Prdt[prd_i].Dbc	= ((command_header->Prdtl - 1) / 8);
 		command_table->Prdt[prd_i].Dba	= ((UInt32)(UInt64)buffer_phys);
@@ -164,11 +164,13 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 		buffer_phys += command_table->Prdt[prd_i].Dbc;
 	}
 
-	FisRegH2D* h2d_fis = (FisRegH2D*)(&command_table->Cfis);
+	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)(&command_table->Cfis);
+
+	rt_set_memory((FisRegH2D*)h2d_fis, 0, sizeof(FisRegH2D));
 
 	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
-	h2d_fis->Command   = Identify ? (kAHCICmdIdentify) : (Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx);
+	h2d_fis->Command   = (Identify ? (kAHCICmdIdentify) : (Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx));
 
 	h2d_fis->Lba0 = (lba)&0xFF;
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
@@ -213,6 +215,8 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 		err_global_get() = kErrorDiskIsCorrupted;
 		return;
 	}
+
+	err_global_get() = kErrorSuccess;
 }
 
 /***

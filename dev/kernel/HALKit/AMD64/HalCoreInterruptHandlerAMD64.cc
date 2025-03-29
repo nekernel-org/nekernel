@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <NewKit/KString.h>
 #include <SignalKit/Signals.h>
 

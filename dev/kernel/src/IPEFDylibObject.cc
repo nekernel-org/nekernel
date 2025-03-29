@@ -10,7 +10,7 @@
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/PEF.h>
 #include <KernelKit/IPEFDylibObject.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/ThreadLocalStorage.h>
 #include <NewKit/Defines.h>
 

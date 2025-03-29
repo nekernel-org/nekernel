@@ -6,7 +6,7 @@
 
 #include <KernelKit/CodeMgr.h>
 #include <NewKit/Utils.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 
 namespace Kernel
 {
@@ -17,7 +17,7 @@ namespace Kernel
 	/// @return if the process was started or not.
 	/***********************************************************************************/
 
-	ProcessID rtl_create_process(rtl_main_kind main, const Char* process_name) noexcept
+	ProcessID rtl_create_user_process(rtl_main_kind main, const Char* process_name) noexcept
 	{
 		if (!process_name ||
 			*process_name == 0)

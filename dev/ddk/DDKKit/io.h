@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <ddk/str.h>
+#include <DDKKit/str.h>
 
 /// @brief print character into UART.
 DDK_EXTERN void kputc(const char ch);

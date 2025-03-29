@@ -6,7 +6,7 @@
 
 #include <StorageKit/AHCI.h>
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/CodeMgr.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>

@@ -16,7 +16,7 @@
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 #include <FirmwareKit/EPM.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/User.h>
 
 #endif // ifdef __FSKIT_INCLUDES_HeFS__

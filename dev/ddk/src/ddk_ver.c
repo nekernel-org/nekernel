@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <ddk/ddk.h>
+#include <DDKKit/ddk.h>
 
 #ifndef kDDKVersionHighest
 #define kDDKVersionHighest 1

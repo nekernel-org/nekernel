@@ -13,10 +13,10 @@
 #include <KernelKit/FileMgr.h>
 
 #ifndef INC_PROCESS_SCHEDULER_H
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #endif
 
-#define kPefApplicationMime "application/vnd-zka-executable"
+#define kPefApplicationMime "application/vnd-amlal-executable"
 
 namespace Kernel
 {
@@ -65,7 +65,7 @@ namespace Kernel
 
 	namespace Utils
 	{
-		ProcessID rtl_create_process(PEFLoader& exec, const Int32& procKind) noexcept;
+		ProcessID rtl_create_user_process(PEFLoader& exec, const Int32& procKind) noexcept;
 	} // namespace Utils
 } // namespace Kernel
 

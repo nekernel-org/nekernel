@@ -13,7 +13,7 @@
 #include <KernelKit/PEF.h>
 #include <NewKit/Defines.h>
 #include <KernelKit/PEFCodeMgr.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/IDylibObject.h>
 
 namespace Kernel

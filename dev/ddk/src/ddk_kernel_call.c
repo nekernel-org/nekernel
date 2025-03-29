@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <ddk/ddk.h>
+#include <DDKKit/ddk.h>
 #include <stdarg.h>
 
 /// @brief this is an internal call, do not use it.

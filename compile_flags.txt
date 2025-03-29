@@ -1,12 +1,13 @@
 -Idev/kernel
 -Idev/
 -Idev/user
--Idev/boot/
+-Idev/boot
+-Idev/ddk
 -Ipublic/tools
 -Ipublic/tools/make_app
 -Ipublic/tools/make_fs
 -Ipublic/tools/open
--Ipublic/frameworks/
+-Ipublic/frameworks
 -Idev/boot/BootKit
 -std=c++20
 -D__NE_AMD64__

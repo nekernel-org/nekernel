@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <ddk/ddk.h>
+#include <DDKKit/ddk.h>
 
 /// @brief DDK equivalent of POSIX's string.h
 /// @file str.h

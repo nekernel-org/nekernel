@@ -10,6 +10,6 @@
 #include <KernelKit/IDylibObject.h>
 #include <KernelKit/DebugOutput.h>
 
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 
 using namespace Kernel;

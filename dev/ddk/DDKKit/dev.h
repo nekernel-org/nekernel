@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <ddk/ddk.h>
+#include <DDKKit/ddk.h>
 
 struct _DDK_DEVICE;
 

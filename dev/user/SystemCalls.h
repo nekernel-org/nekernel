@@ -28,19 +28,19 @@ typedef Ref SocketRef;
 /// @brief Dynamic Loader API.
 // ------------------------------------------------------------------------------------------ //
 
-/// @brief Get function which is part of the DLL.
+/// @brief Get function which is part of the Dylib.
 /// @param symbol the symbol to look for
-/// @param dll_handle the DLL handle.
+/// @param dll_handle the Dylib handle.
 /// @return the proc pointer.
 IMPORT_C Ref LdrGetDLLSymbolFromHandle(_Input const Char* symbol, _Input Ref dll_handle);
 
-/// @brief Open DLL handle.
+/// @brief Open Dylib handle.
 /// @param path
 /// @param drv
 /// @return
 IMPORT_C Ref LdrOpenDLLHandle(_Input const Char* path, _Input const Char* drive_letter);
 
-/// @brief Close DLL handle
+/// @brief Close Dylib handle
 /// @param dll_handle
 /// @return
 IMPORT_C UInt32 LdrCloseDLLHandle(_Input Ref* dll_handle);

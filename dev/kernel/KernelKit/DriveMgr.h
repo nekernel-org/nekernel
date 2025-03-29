@@ -7,7 +7,7 @@
 #ifndef INC_DRIVE_MANAGER_H
 #define INC_DRIVE_MANAGER_H
 
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/DeviceMgr.h>

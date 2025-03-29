@@ -2,7 +2,7 @@
 
 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
-	FILE: UserProcessScheduler.inl
+	FILE: ProcessScheduler.inl
 	PURPOSE: Low level/Ring-3 Process scheduler.
 
 ------------------------------------------- */
@@ -21,7 +21,7 @@ namespace Kernel
 
 		if (!this->ProcessMemoryHeap)
 		{
-			kout << "Process Memory is empty.\r";
+			kout << "Process's heap is empty.\r";
 			return No;
 		}
 

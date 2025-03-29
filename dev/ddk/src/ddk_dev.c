@@ -6,8 +6,8 @@
 
 ------------------------------------------- */
 
-#include <ddk/dev.h>
-#include <ddk/str.h>
+#include <DDKKit/dev.h>
+#include <DDKKit/str.h>
 
 /// @brief Open a new binary device from path.
 DDK_EXTERN DDK_DEVICE_PTR open(const char* devicePath)

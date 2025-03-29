@@ -370,7 +370,7 @@ namespace Kernel
 } // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.h>
-#include <KernelKit/UserProcessScheduler.inl>
+#include <KernelKit/ProcessScheduler.inl>
 
 ////////////////////////////////////////////////////
 // END

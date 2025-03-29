@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/BinaryMutex.h>
 
 namespace Kernel

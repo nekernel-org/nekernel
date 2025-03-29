@@ -21,44 +21,44 @@
 
 namespace Kernel
 {
-	typedef Int32 HError;
+	typedef Int32 KPCError;
 
-	inline HError kErrorLocalNumber = 0UL;
+	inline KPCError kErrorLocalNumber = 0UL;
 
-	inline constexpr HError kErrorSuccess			 = 0;
-	inline constexpr HError kErrorExecutable		 = 33;
-	inline constexpr HError kErrorExecutableLib		 = 34;
-	inline constexpr HError kErrorFileNotFound		 = 35;
-	inline constexpr HError kErrorDirectoryNotFound	 = 36;
-	inline constexpr HError kErrorDiskReadOnly		 = 37;
-	inline constexpr HError kErrorDiskIsFull		 = 38;
-	inline constexpr HError kErrorProcessFault		 = 39;
-	inline constexpr HError kErrorSocketHangUp		 = 40;
-	inline constexpr HError kErrorThreadLocalStorage = 41;
-	inline constexpr HError kErrorMath				 = 42;
-	inline constexpr HError kErrorNoNetwork			 = 43;
-	inline constexpr HError kErrorHeapOutOfMemory	 = 44;
-	inline constexpr HError kErrorNoSuchDisk		 = 45;
-	inline constexpr HError kErrorFileExists		 = 46;
-	inline constexpr HError kErrorFormatFailed		 = 47;
-	inline constexpr HError kErrorNetworkTimeout	 = 48;
-	inline constexpr HError kErrorInternal			 = 49;
-	inline constexpr HError kErrorForkAlreadyExists	 = 50;
-	inline constexpr HError kErrorOutOfTeamSlot		 = 51;
-	inline constexpr HError kErrorHeapNotPresent	 = 52;
-	inline constexpr HError kErrorNoEntrypoint		 = 53;
-	inline constexpr HError kErrorDiskIsCorrupted	 = 54;
-	inline constexpr HError kErrorDisk				 = 55;
-	inline constexpr HError kErrorInvalidData		 = 56;
-	inline constexpr HError kErrorAsync				 = 57;
-	inline constexpr HError kErrorNonBlocking		 = 58;
-	inline constexpr HError kErrorIPC				 = 59;
-	inline constexpr HError kErrorSign				 = 60;
-	inline constexpr HError kErrorInvalidCreds		 = 61;
-	inline constexpr HError kErrorCDTrayBroken		 = 62;
-	inline constexpr HError kErrorUnrecoverableDisk	 = 63;
-	inline constexpr HError kErrorFileLocked		 = 64;
-	inline constexpr HError kErrorUnimplemented		 = -1;
+	inline constexpr KPCError kErrorSuccess			   = 0;
+	inline constexpr KPCError kErrorExecutable		   = 33;
+	inline constexpr KPCError kErrorExecutableLib	   = 34;
+	inline constexpr KPCError kErrorFileNotFound	   = 35;
+	inline constexpr KPCError kErrorDirectoryNotFound  = 36;
+	inline constexpr KPCError kErrorDiskReadOnly	   = 37;
+	inline constexpr KPCError kErrorDiskIsFull		   = 38;
+	inline constexpr KPCError kErrorProcessFault	   = 39;
+	inline constexpr KPCError kErrorSocketHangUp	   = 40;
+	inline constexpr KPCError kErrorThreadLocalStorage = 41;
+	inline constexpr KPCError kErrorMath			   = 42;
+	inline constexpr KPCError kErrorNoNetwork		   = 43;
+	inline constexpr KPCError kErrorHeapOutOfMemory	   = 44;
+	inline constexpr KPCError kErrorNoSuchDisk		   = 45;
+	inline constexpr KPCError kErrorFileExists		   = 46;
+	inline constexpr KPCError kErrorFormatFailed	   = 47;
+	inline constexpr KPCError kErrorNetworkTimeout	   = 48;
+	inline constexpr KPCError kErrorInternal		   = 49;
+	inline constexpr KPCError kErrorForkAlreadyExists  = 50;
+	inline constexpr KPCError kErrorOutOfTeamSlot	   = 51;
+	inline constexpr KPCError kErrorHeapNotPresent	   = 52;
+	inline constexpr KPCError kErrorNoEntrypoint	   = 53;
+	inline constexpr KPCError kErrorDiskIsCorrupted	   = 54;
+	inline constexpr KPCError kErrorDisk			   = 55;
+	inline constexpr KPCError kErrorInvalidData		   = 56;
+	inline constexpr KPCError kErrorAsync			   = 57;
+	inline constexpr KPCError kErrorNonBlocking		   = 58;
+	inline constexpr KPCError kErrorIPC				   = 59;
+	inline constexpr KPCError kErrorSign			   = 60;
+	inline constexpr KPCError kErrorInvalidCreds	   = 61;
+	inline constexpr KPCError kErrorCDTrayBroken	   = 62;
+	inline constexpr KPCError kErrorUnrecoverableDisk  = 63;
+	inline constexpr KPCError kErrorFileLocked		   = 64;
+	inline constexpr KPCError kErrorUnimplemented	   = -1;
 
 	/// @brief Does a system wide bug check.
 	/// @param void no params are needed.

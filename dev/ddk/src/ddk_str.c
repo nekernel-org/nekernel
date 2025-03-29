@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <ddk/str.h>
+#include <DDKKit/str.h>
 
 DDK_EXTERN size_t kstrlen(const char* in)
 {

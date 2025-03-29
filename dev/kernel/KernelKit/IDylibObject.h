@@ -16,7 +16,7 @@
 
 namespace Kernel
 {
-	/// @brief DLL class object. A handle to a shared library.
+	/// @brief Dylib class object. A handle to a shared library.
 	class IDylibObject
 	{
 	public:

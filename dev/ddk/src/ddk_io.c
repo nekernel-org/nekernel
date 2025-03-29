@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-#include <ddk/io.h>
+#include <DDKKit/io.h>
 
 DDK_EXTERN void kputc(const char ch)
 {

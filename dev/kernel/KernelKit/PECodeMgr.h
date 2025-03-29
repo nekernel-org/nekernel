@@ -3,7 +3,7 @@
 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
 
 	File: PECodeMgr.h
-	Purpose: PE32+ Code Mgr and DLL mgr.
+	Purpose: PE32+ Code Mgr and Dylib mgr.
 
 	Revision History:
 

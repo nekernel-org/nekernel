@@ -7,7 +7,7 @@
 #include <HALKit/ARM64/Processor.h>
 #include <KernelKit/DebugOutput.h>
 #include <HALKit/ARM64/ApplicationProcessor.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 
 #define GICD_BASE 0x08000000 // Distributor base address
 #define GICC_BASE 0x08010000 // CPU interface base address

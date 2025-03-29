@@ -5,11 +5,11 @@
 ------------------------------------------- */
 
 #include <modules/ACPI/ACPIFactoryInterface.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <HALKit/AMD64/Processor.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/BinaryMutex.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/Timer.h>
 #include <modules/CoreGfx/TextMgr.h>
 #include <NewKit/KernelPanic.h>

@@ -7,7 +7,7 @@
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <NewKit/Defines.h>
 #include <NewKit/KernelPanic.h>
 #include <NewKit/OwnPtr.h>
@@ -246,7 +246,7 @@ namespace Kernel
 
 	namespace Utils
 	{
-		ProcessID rtl_create_process(PEFLoader& exec, const Int32& process_kind) noexcept
+		ProcessID rtl_create_user_process(PEFLoader& exec, const Int32& process_kind) noexcept
 		{
 			auto errOrStart = exec.FindStart();
 

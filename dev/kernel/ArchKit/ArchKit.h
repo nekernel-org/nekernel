@@ -63,10 +63,14 @@ namespace Kernel
 		return *(volatile DataKind*)(base + reg);
 	}
 
+	/// @brief Hardware Abstraction Layer
 	namespace HAL
 	{
+		/// @brief Check whether this pointer is a bitmap object.
+		/// @param ptr argument to verify.
+		/// @param whether successful or not.
 		auto mm_is_bitmap(VoidPtr ptr) -> Bool;
-	}
+	} // namespace HAL
 } // namespace Kernel
 
 typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);

@@ -8,7 +8,7 @@
 //! @brief Allocate resources from the process's heap storage.
 
 #ifndef INC_PROCESS_SCHEDULER_H
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #endif
 
 template <typename T>

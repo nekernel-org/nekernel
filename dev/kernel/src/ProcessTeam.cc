@@ -9,7 +9,7 @@
 /// @brief Process teams implementation.
 /***********************************************************************************/
 
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 
 namespace Kernel
 {

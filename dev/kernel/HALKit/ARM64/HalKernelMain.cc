@@ -10,7 +10,7 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 #include <NewKit/Json.h>
 #include <KernelKit/CodeMgr.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>

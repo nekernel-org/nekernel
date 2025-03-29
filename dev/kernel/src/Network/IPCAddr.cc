@@ -6,7 +6,7 @@
 
 #include <NetworkKit/IPC.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/UserProcessScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
 
 namespace Kernel
 {
