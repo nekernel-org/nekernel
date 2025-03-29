@@ -1,0 +1,20 @@
+name: BootZ CI (ATA PIO)
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Packages
+      run: sudo apt update && sudo apt install mingw-w64 qemu-utils nasm
+    - name: Build BootZ (ATA PIO)
+      run: cd dev/boot && export ATA_PIO_SUPPORT=1 && make -f amd64-ci.make all
+
