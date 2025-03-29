@@ -2,7 +2,8 @@
 
 # NeKernel
 
-![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/ahci.yml/badge.svg)
+![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml/badge.svg)
+![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml/badge.svg)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
 [![QEMU Tested](https://img.shields.io/badge/QEMU-Tested-success)](#)
 
