@@ -12,7 +12,7 @@
 namespace Kernel
 {
 	/// @brief The CRC32 seed table.
-	UInt32 kCrcTbl[kCrcCnt] = {
+	UInt32 kChecksumPolys[kCrcCnt] = {
 		0x00000000L, 0xF26B8303L, 0xE13B70F7L, 0x1350F3F4L, 0xC79A971FL,
 		0x35F1141CL, 0x26A1E7E8L, 0xD4CA64EBL, 0x8AD958CFL, 0x78B2DBCCL,
 		0x6BE22838L, 0x9989AB3BL, 0x4D43CFD0L, 0xBF284CD3L, 0xAC78BF27L,
@@ -67,15 +67,18 @@ namespace Kernel
 		0xAD7D5351L};
 
 	/// @brief Calculate CRC32 of p
-	/// @param p the data to compute.
+	/// @param in the data to compute.
 	/// @param len the length of the data.
-	/// @return CRC32 of **p**.
-	UInt32 ke_calculate_crc32(const Char* p, Int32 len) noexcept
+	/// @return CRC32 of **in**.
+	UInt32 ke_calculate_crc32(const Char* in, Int32 len) noexcept
 	{
+		if (!in || *in == 0)
+			return ~0;
+
 		UInt32 crc = 0xffffffff;
 
-		while (--len > 0)
-			crc = kCrcTbl[((UInt8)crc ^ *(p++))] ^ (crc >> 8);
+		while ((len--) > 0)
+			crc = (crc >> 8) ^ kChecksumPolys[(crc ^ *(in++)) & 0xFF];
 
 		return ~crc;
 	}
