@@ -72,9 +72,9 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__
                         -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT
 
 BOOTLOADER=bootz.exe
-KERNEL=neoskrnl.exe
-SYSCHK=syschk.sys
-NETBOOT=bootnet.sys
+KERNEL=vkrnl.exe
+SYSCHK=chk.sys
+NETBOOT=net.sys
 SCIKIT=libuser.dylib
 
 .PHONY: invalid-recipe
@@ -138,7 +138,7 @@ efi:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=bootz.exe neoskrnl.exe OVMF.fd
+EXECUTABLES=bootz.exe vkrnl.exe OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

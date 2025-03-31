@@ -48,8 +48,8 @@ FLAG_GNU=-fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__NE_ARM64__ -fno-
 				-std=c++20 -DBOOTZ_EPM_SUPPORT -DZBA_USE_FB -D__FSKIT_USE_NEFS__ -D__BOOTZ_STANDALONE__ -D__NEOSKRNL__ -D__BOOTZ__ -D__HAVE_NE_APIS__ -D__NE__ -I../ -I../kernel
 
 BOOT_LOADER=bootz.exe
-KERNEL=neoskrnl.exe
-SYSCHK=syschk.sys
+KERNEL=vkrnl.exe
+SYSCHK=chk.sys
 STARTUP=startup.sys
 
 .PHONY: invalid-recipe
@@ -94,7 +94,7 @@ efi:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGAARCH64_QEMU_EFI.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=bootz.exe neoskrnl.exe OVMF.fd
+EXECUTABLES=bootz.exe vkrnl.exe OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

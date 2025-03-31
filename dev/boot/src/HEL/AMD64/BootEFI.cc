@@ -207,7 +207,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	// ------------------------------------------ //
 
 #if defined(__ATA_PIO__)
-	Boot::BootFileReader reader_syschk(L"syschk.sys", image_handle);
+	Boot::BootFileReader reader_syschk(L"chk.sys", image_handle);
 	reader_syschk.ReadAll(0);
 
 	Boot::BootThread* syschk_thread = nullptr;
@@ -266,7 +266,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 	// Assign to global 'kHandoverHeader'.
 
-	WideChar kernel_path[256U] = L"neoskrnl.exe";
+	WideChar kernel_path[256U] = L"vkrnl.exe";
 	UInt32	 kernel_path_sz	   = 256U;
 
 	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
@@ -310,7 +310,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		Boot::Stop();
 	}
 
-	Boot::BootFileReader reader_netboot(L"bootnet.sys", image_handle);
+	Boot::BootFileReader reader_netboot(L"net.sys", image_handle);
 	reader_netboot.ReadAll(0);
 
 	Boot::BootThread* netboot_thread = nullptr;

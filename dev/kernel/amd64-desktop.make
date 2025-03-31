@@ -37,7 +37,7 @@ LDFLAGS		= -e hal_init_platform --subsystem=17 --image-base 0x4000000
 LDOBJ		= obj/*.obj
 
 # This file is the Kernel, responsible of task, memory, driver, sci, disk and device management.
-KERNEL_IMG		= neoskrnl.exe
+KERNEL_IMG		= vkrnl.exe
 
 .PHONY: error
 error:

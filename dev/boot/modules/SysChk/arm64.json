@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "../../", "../../../kernel", "../../../", "./"],
   "sources_path": ["*.cc", "*.S", "../../src/HEL/ARM64/*.cc", "../../src/HEL/ARM64/*.S", "../../src/*.cc"],
-  "output_name": "syschk.sys",
+  "output_name": "chk.sys",
   "compiler_flags": [
     "-ffreestanding",
     "-nostdlib",
