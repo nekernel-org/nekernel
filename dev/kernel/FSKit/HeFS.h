@@ -41,7 +41,7 @@ struct HeFS_BOOT_NODE final
 	Kernel::UInt64 fSectorCount;
 	Kernel::UInt64 fSectorSize;
 	Kernel::UInt32 fChecksum;
-	Kernel::UInt8  fKind;
+	Kernel::UInt8  fDriveKind;
 	Kernel::UInt8  fTextEncoding;
 	Kernel::UInt64 fRootINode;
 	Kernel::UInt64 fRecoveryINode;
