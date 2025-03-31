@@ -32,7 +32,7 @@ namespace Kernel
 		Void SetPortsImplemented(const UInt16& pi);
 
 		const UInt32& GetIndex();
-		
+
 		Void SetIndex(const UInt32& drv);
 
 	public:

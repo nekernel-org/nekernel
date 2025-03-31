@@ -11,7 +11,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Utils.h>
 
-#define rtl_nop_op()			 asm volatile("mr 0, 0")
+#define rtl_nop_op()	 asm volatile("mr 0, 0")
 #define kHalPPCAlignment __attribute__((aligned(4)))
 
 namespace Kernel::HAL
