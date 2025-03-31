@@ -23,7 +23,7 @@ A documentation regarding building, and developing for NeKernel is available her
 
 ## Notice for Contributors:
 
-- You must mount the contents to the neos_esp.img prior running! Otherwise the emulator won't find a valid ESP.
+- You must mount the contents to the nekernel-esp.img prior running! Otherwise the emulator won't find a valid ESP.
 - Always use `format.sh` before commiting and pushing your code!
 
 ## Quick Install:

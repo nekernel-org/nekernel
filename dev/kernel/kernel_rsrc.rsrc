@@ -13,7 +13,7 @@ BEGIN
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "neoskrnl"
       VALUE "LegalCopyright", "(c) 2024-2025 Amlal El Mahrouss, all rights reserved"
-      VALUE "OriginalFilename", "vkrnl.exe"
+      VALUE "OriginalFilename", "vmkrnl.efi"
       VALUE "ProductName", "NeKernel"
       VALUE "ProductVersion", KERNEL_VERSION
     END

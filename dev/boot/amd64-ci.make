@@ -28,7 +28,7 @@ BIOS=OVMF.fd
 IMG=epm-master-1.img
 IMG_2=epm-master-2.img
 
-BOOT=./src/neos_esp.img
+BOOT=./src/nekernel-esp.img
 
 DISK_DRV  =
 
@@ -71,10 +71,10 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__
 			-DEFI_FUNCTION_WRAPPER -I./ -I../kernel $(DISK_DRV) -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT
 
-BOOTLOADER=bootz.exe
-KERNEL=vkrnl.exe
-SYSCHK=chk.sys
-NETBOOT=net.sys
+BOOTLOADER=bootz.efi
+KERNEL=vmkrnl.efi
+SYSCHK=chk.efi
+BOOTNET=net.efi
 SCIKIT=libuser.dylib
 
 .PHONY: invalid-recipe
@@ -132,7 +132,7 @@ efi:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=bootz.exe vkrnl.exe OVMF.fd
+EXECUTABLES=bootz.efi vmkrnl.efi OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

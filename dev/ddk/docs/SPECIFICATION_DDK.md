@@ -6,7 +6,7 @@
 
 - Programming Language: C/C++
 - Build System: Make/BTB
-- Purpose: Driver Tool Kit, which you link against libddk.sys
+- Purpose: Driver Tool Kit, which you link against ddk.sys
 
 ===================================
 

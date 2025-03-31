@@ -503,7 +503,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 		// Write a new EPM entry.
 
 		constexpr auto kFsName	  = "NeFS";
-		constexpr auto kBlockName = "ZkaOS:";
+		constexpr auto kBlockName = "NeKernel:";
 
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), epm_boot->Fs, rt_string_len(kFsName));
 

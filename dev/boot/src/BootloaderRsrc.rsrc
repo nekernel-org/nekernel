@@ -13,7 +13,7 @@ BEGIN
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "bootz"
       VALUE "LegalCopyright", "Copyright (C) 2024, Amlal El Mahrouss all rights reserved."
-      VALUE "OriginalFilename", "bootz.exe"
+      VALUE "OriginalFilename", "bootz.efi"
       VALUE "ProductName", "bootz"
       VALUE "ProductVersion", BOOTLOADER_VERSION
     END

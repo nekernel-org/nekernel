@@ -20,15 +20,15 @@
 
 // Makes the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "ZkaOS"
+#define kMachineModel "NeKernel"
 #endif // !kMachineModel
 
 #ifndef kExpectedWidth
-#define kExpectedWidth (1280)
+#define kExpectedWidth (800)
 #endif
 
 #ifndef kExpectedHeight
-#define kExpectedHeight (720)
+#define kExpectedHeight (600)
 #endif
 
 /** Graphics related. */
@@ -98,7 +98,12 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 #ifdef ZBA_USE_FB
 	if (!boot_init_fb())
-		return 1; ///! Init the GOP.
+	{
+		Boot::BootTextWriter writer;
+		writer.Write("BootZ: Invalid Framebuffer, can't boot NeKernel.\r");
+
+		CANT_REACH();
+	}
 
 	for (SizeT index_vt = 0; index_vt < sys_table->NumberOfTableEntries;
 		 ++index_vt)
@@ -207,7 +212,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	// ------------------------------------------ //
 
 #if defined(__ATA_PIO__)
-	Boot::BootFileReader reader_syschk(L"chk.sys", image_handle);
+	Boot::BootFileReader reader_syschk(L"chk.efi", image_handle);
 	reader_syschk.ReadAll(0);
 
 	Boot::BootThread* syschk_thread = nullptr;
@@ -266,7 +271,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 	// Assign to global 'kHandoverHeader'.
 
-	WideChar kernel_path[256U] = L"vkrnl.exe";
+	WideChar kernel_path[256U] = L"vmkrnl.efi";
 	UInt32	 kernel_path_sz	   = 256U;
 
 	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
@@ -283,6 +288,15 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	ST->RuntimeServices->GetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
 
 	Boot::BootTextWriter writer;
+
+	if (ver != KERNEL_VERSION_BCD)
+	{
+		ver = KERNEL_VERSION_BCD;
+
+		ST->RuntimeServices->SetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
+		writer.Write("BootZ: Kernel Version Updated: ").Write(ver).Write("\r");
+	}
+
 	writer.Write("BootZ: Kernel Version: ").Write(ver).Write("\r");
 
 	Boot::BootFileReader reader_kernel(kernel_path, image_handle);
@@ -310,16 +324,16 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		Boot::Stop();
 	}
 
-	Boot::BootFileReader reader_netboot(L"net.sys", image_handle);
+	Boot::BootFileReader reader_netboot(L"net.efi", image_handle);
 	reader_netboot.ReadAll(0);
 
 	Boot::BootThread* netboot_thread = nullptr;
 
-	Boot::ExitBootServices(map_key, image_handle);
-
 	// ---------------------------------------------------- //
 	// Finally load the OS kernel.
 	// ---------------------------------------------------- //
+
+	Boot::ExitBootServices(map_key, image_handle);
 
 	if (kernel_thread->Start(handover_hdr, YES) != kEfiOk)
 	{

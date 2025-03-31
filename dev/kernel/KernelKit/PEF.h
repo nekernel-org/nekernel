@@ -32,7 +32,7 @@
 #define kPefLibExt	  ".lib"
 #define kPefObjectExt ".obj"
 #define kPefDebugExt  ".dbg"
-#define kPefDriverExt ".sys"
+#define kPefDriverExt ".efi"
 
 // Kernel System Binary Interface.
 #define kPefAbi (0x5046)

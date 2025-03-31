@@ -20,7 +20,7 @@
 
 // Makes the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "ZkaOS"
+#define kMachineModel "NeKernel"
 #endif // !kMachineModel
 
 #ifndef kExpectedWidth
@@ -196,7 +196,7 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 
 	// Assign to global 'kHandoverHeader'.
 
-	Boot::BootFileReader reader_kernel(L"vkrnl.exe", image_handle);
+	Boot::BootFileReader reader_kernel(L"vmkrnl.efi", image_handle);
 
 	reader_kernel.ReadAll(0);
 
