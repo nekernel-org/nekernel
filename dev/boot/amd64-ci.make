@@ -85,7 +85,7 @@ invalid-recipe:
 # CI doesn't do anything than build.
 .PHONY: all
 all: compile-amd64
-	mkdir -p src/Root/EFI/BOOT
+	mkdir -p src/root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o src/$(BOOTLOADER)
 
 .PHONY: disk

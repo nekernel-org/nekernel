@@ -201,18 +201,10 @@ typedef enum EfiAllocateType
 
 typedef struct EfiMemoryDescriptor
 {
-	///
-	/// Kind of the memory region.
-	/// Kind EFI_MEMORY_TYPE is defined in the
-	/// AllocatePages() function description.
-	///
+	/// @brief Kind of the memory region.
 	UInt32 Kind;
-	///
-	/// Physical address of the first byte in the memory region. PhysicalStart
-	/// must be aligned on a 4 KiB boundary, and must not be above
-	/// 0xfffffffffffff000. Kind EFI_PHYSICAL_ADDRESS is defined in the
-	/// AllocatePages() function description
-	///
+
+	/// @brief Physical address of the first byte in the memory region. PhysicalStart
 	EfiPhysicalAddress PhysicalStart;
 	///
 	/// Virtual address of the first byte in the memory region.

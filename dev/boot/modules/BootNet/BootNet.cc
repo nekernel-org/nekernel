@@ -22,7 +22,7 @@ EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	if (inet.Length < 1)
 	{
 		Boot::BootTextWriter writer;
-		writer.Write("NetBootLauncher: No executable attached to the packet, aborting.\r");
+		writer.Write("BootNetLauncher: No executable attached to the packet, aborting.\r");
 
 		return kEfiFail;
 	}
@@ -39,7 +39,7 @@ EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	else
 	{
 		Boot::BootTextWriter writer;
-		writer.Write("NetBootLauncher: EEPROM flash is not available as of right now.\r");
+		writer.Write("BootNetLauncher: EEPROM flash is not available as of right now.\r");
 
 		/// TODO: Program new firmware to EEPROM (if crc and size matches)
 

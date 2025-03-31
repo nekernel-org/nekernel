@@ -131,7 +131,7 @@ Boot::BootTextWriter& Boot::BootTextWriter::WriteCharacter(CharacterTypeUTF16 c)
 	return *this;
 }
 
-Boot::BootTextWriter& Boot::BootTextWriter::Write(const Long& x)
+Boot::BootTextWriter& Boot::BootTextWriter::Write(const UInt64& x)
 {
 #ifdef __DEBUG__
 	this->_Write(x);
@@ -141,7 +141,7 @@ Boot::BootTextWriter& Boot::BootTextWriter::Write(const Long& x)
 	return *this;
 }
 
-Boot::BootTextWriter& Boot::BootTextWriter::_Write(const Long& x)
+Boot::BootTextWriter& Boot::BootTextWriter::_Write(const UInt64& x)
 {
 #ifdef __DEBUG__
 	UInt64 y = (x > 0 ? x : -x) / 16;

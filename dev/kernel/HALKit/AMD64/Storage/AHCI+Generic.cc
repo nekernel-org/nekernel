@@ -74,8 +74,10 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	const UInt16 kSzIdent = kib_cast(1);
 
 	/// Push it to the stack
-	UInt8 identify_data[kSzIdent] = {0};
+	static UInt8 identify_data[kSzIdent] ATTRIBUTE(aligned(4096)) = {0};
 
+	HAL::mm_map_page((void*)mib_cast(1), (void*)mib_cast(1), HAL::kMMFlagsWr);
+	
 	rt_set_memory(identify_data, 0, kSzIdent);
 
 	/// Send AHCI command for identification.
@@ -140,9 +142,11 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	MUST_PASS(command_header);
 
+	constexpr UInt32 kMaxPRDSize = 0x400000;
+
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
 	command_header->Write = Write;
-	command_header->Prdtl = (UInt16)((size_buffer - 1) / 8);
+	command_header->Prdtl = (UInt16)((size_buffer + kMaxPRDSize - 1) / kMaxPRDSize);
 
 	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((VoidPtr)((UInt64)command_header->Ctba));
 
@@ -150,18 +154,21 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	MUST_PASS(command_table);
 
-	UIntPtr buffer_phys = HAL::hal_get_phys_address(buffer);
+	UIntPtr buffer_phys		= HAL::hal_get_phys_address(buffer);
+	SizeT	bytes_remaining = size_buffer;
+	SizeT	prdt_count		= command_header->Prdtl;
 
-	UInt16 prd_i = 0;
-
-	for (; prd_i < (command_header->Prdtl - 1); ++prd_i)
+	for (UInt16 i = 0; i < prdt_count; ++i)
 	{
-		command_table->Prdt[prd_i].Dbc	= ((command_header->Prdtl - 1) / 8);
-		command_table->Prdt[prd_i].Dba	= ((UInt32)(UInt64)buffer_phys);
-		command_table->Prdt[prd_i].Dbau = (((UInt64)(buffer_phys) >> 32));
-		command_table->Prdt[prd_i].Ie	= YES;
+		UInt32 chunk = (bytes_remaining > kMaxPRDSize) ? kMaxPRDSize : bytes_remaining;
 
-		buffer_phys += command_table->Prdt[prd_i].Dbc;
+		command_table->Prdt[i].Dba	= (UInt32)(buffer_phys & 0xFFFFFFFF);
+		command_table->Prdt[i].Dbau = (UInt32)(buffer_phys >> 32);
+		command_table->Prdt[i].Dbc	= chunk - 1;
+		command_table->Prdt[i].Ie	= 1;
+
+		buffer_phys += chunk;
+		bytes_remaining -= chunk;
 	}
 
 	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)(&command_table->Cfis);
@@ -176,7 +183,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	h2d_fis->Lba1 = (lba >> 8) & 0xFF;
 	h2d_fis->Lba2 = (lba >> 16) & 0xFF;
 
-	h2d_fis->Device = Identify ? 0U : kSATALBAMode;
+	h2d_fis->Device = kSATALBAMode;
 
 	h2d_fis->Lba3 = (lba >> 24) & 0xFF;
 	h2d_fis->Lba4 = (lba >> 32) & 0xFF;
