@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "./"],
   "sources_path": ["src/*.cc", "src/*.o"],
-  "output_name": "libuser.dylib",
+  "output_name": "user.sys",
   "compiler_flags": [
     "-fPIC",
     "-ffreestanding",

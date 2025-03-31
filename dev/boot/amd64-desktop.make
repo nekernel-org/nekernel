@@ -75,7 +75,7 @@ BOOTLOADER=bootz.efi
 KERNEL=vmkrnl.efi
 SYSCHK=chk.efi
 BOOTNET=net.efi
-SCIKIT=libuser.dylib
+SCIKIT=user.sys
 
 .PHONY: invalid-recipe
 invalid-recipe:
