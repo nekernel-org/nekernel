@@ -91,9 +91,9 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 		new HEL::BootInfoHeader();
 
 	UInt32				 map_key		 = 0;
-	UInt32				 size_struct_ptr = sizeof(EfiMemoryDescriptor);
+	UInt32				 size_struct_ptr = 0;
 	EfiMemoryDescriptor* struct_ptr		 = nullptr;
-	UInt32				 sz_desc		 = sizeof(EfiMemoryDescriptor);
+	UInt32				 sz_desc		 = 0;
 	UInt32				 rev_desc		 = 0;
 
 #ifdef ZBA_USE_FB
@@ -176,33 +176,52 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	// format the disk.
 	// ---------------------------------------------------- //
 
-	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
+	Boot::BootTextWriter writer;
 
-	struct_ptr = new EfiMemoryDescriptor[sz_desc];
+	auto ret = BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
-	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
+	if (ret == kEfiFail)
+	{
+		writer.Write("BootZ: GetMemoryMap failed (x1)\r");
+		Boot::Stop();
+	}
 
-	auto kDefaultMemoryMap = 0; // Grab any usable entries.
+	size_struct_ptr += sz_desc * 2;
+	BS->AllocatePool(EfiMemoryType::EfiBootServicesData, size_struct_ptr, reinterpret_cast<VoidPtr*>(&struct_ptr));
+
+	ret = BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
+
+	if (ret == kEfiFail)
+	{
+		writer.Write("BootZ: GetMemoryMap failed (x2)\r");
+		Boot::Stop();
+	}
 
 	//-----------------------------------------------------------//
 	// A simple loop which finds a usable memory region for us.
 	//-----------------------------------------------------------//
 
 	SizeT lookup_index = 0UL;
+	SizeT entry_count = size_struct_ptr / sz_desc;
 
-	for (; struct_ptr[lookup_index].Kind != EfiMemoryType::EfiConventionalMemory; ++lookup_index)
+	for (; lookup_index < entry_count; ++lookup_index)
 	{
-		NE_UNUSED(0);
+		if (struct_ptr[lookup_index].Kind == EfiMemoryType::EfiConventionalMemory)
+			break;
 	}
 
-	kDefaultMemoryMap = lookup_index;
+	if (lookup_index > entry_count)
+	{
+		writer.Write("BootZ: No usable entries.\r");
+		Boot::Stop();
+	}
 
 	//-------------------------------------------------------------//
 	// Update handover file specific table and phyiscal start field.
 	//-------------------------------------------------------------//
 
-	handover_hdr->f_BitMapStart = (VoidPtr)struct_ptr[kDefaultMemoryMap].VirtualStart;			 /* Start of bitmap. */
-	handover_hdr->f_BitMapSize	= struct_ptr[kDefaultMemoryMap].NumberOfPages * sizeof(UIntPtr); /* Size of bitmap. */
+	handover_hdr->f_BitMapStart = (VoidPtr)struct_ptr[lookup_index].VirtualStart;		/* Start of bitmap. */
+	handover_hdr->f_BitMapSize	= struct_ptr[lookup_index].NumberOfPages * kib_cast(4); /* Size of bitmap in bytes. */
 
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
@@ -286,8 +305,6 @@ EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
 	UInt64 ver	  = KERNEL_VERSION_BCD;
 
 	ST->RuntimeServices->GetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
-
-	Boot::BootTextWriter writer;
 
 	if (ver != KERNEL_VERSION_BCD)
 	{

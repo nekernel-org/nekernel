@@ -31,7 +31,7 @@ EMU_FLAGS=-net none -smp 4 -m 8G -cpu max -M virt \
 			-bios $(BIOS) \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-drive \
-			file=fat:rw:src/Root/,index=2,format=raw \
+			file=fat:rw:src/root/,index=2,format=raw \
 		    -no-shutdown -no-reboot -cpu cortex-a72 -device virtio-gpu-pci
 
 LD_FLAGS=-subsystem:efi_application -entry:Main /nodefaultlib
@@ -58,13 +58,13 @@ invalid-recipe:
 
 .PHONY: all
 all: compile
-	mkdir -p src/Root/EFI/BOOT
+	mkdir -p src/root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) /out:src/$(BOOT_LOADER)
-	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/BOOTAA64.EFI
-	$(COPY) src/$(BOOT_LOADER) src/Root/EFI/BOOT/BootZ.EFI
-	$(COPY) ../kernel/$(KERNEL) src/Root/$(KERNEL)
-	$(COPY) ./modules/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
-	$(COPY) src/$(BOOT_LOADER) src/Root/$(BOOT_LOADER)
+	$(COPY) src/$(BOOT_LOADER) src/root/EFI/BOOT/BOOTAA64.EFI
+	$(COPY) src/$(BOOT_LOADER) src/root/EFI/BOOT/BootZ.EFI
+	$(COPY) ../kernel/$(KERNEL) src/root/$(KERNEL)
+	$(COPY) ./modules/SysChk/$(SYSCHK) src/root/$(SYSCHK)
+	$(COPY) src/$(BOOT_LOADER) src/root/$(BOOT_LOADER)
 
 ifneq ($(DEBUG_SUPPORT), )
 DEBUG =  -D__DEBUG__

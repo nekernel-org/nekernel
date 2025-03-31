@@ -84,15 +84,15 @@ invalid-recipe:
 
 .PHONY: all
 all: compile-amd64
-	mkdir -p src/Root/EFI/BOOT
+	mkdir -p src/root/EFI/BOOT
 	$(LD_GNU) $(OBJ) $(LD_FLAGS) -o src/$(BOOTLOADER)
-	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTX64.EFI
-	$(COPY) src/$(BOOTLOADER) src/Root/EFI/BOOT/BOOTZ.EFI
-	$(COPY) ../kernel/$(KERNEL) src/Root/$(KERNEL)
-	$(COPY) ./modules/SysChk/$(SYSCHK) src/Root/$(SYSCHK)
-	$(COPY) ./modules/BootNet/$(BOOTNET) src/Root/$(BOOTNET)
-	$(COPY) ../user/$(SCIKIT) src/Root/$(SCIKIT)
-	$(COPY) src/$(BOOTLOADER) src/Root/$(BOOTLOADER)
+	$(COPY) src/$(BOOTLOADER) src/root/EFI/BOOT/BOOTX64.EFI
+	$(COPY) src/$(BOOTLOADER) src/root/EFI/BOOT/BOOTZ.EFI
+	$(COPY) ../kernel/$(KERNEL) src/root/$(KERNEL)
+	$(COPY) ./modules/SysChk/$(SYSCHK) src/root/$(SYSCHK)
+	$(COPY) ./modules/BootNet/$(BOOTNET) src/root/$(BOOTNET)
+	$(COPY) ../user/$(SCIKIT) src/root/$(SCIKIT)
+	$(COPY) src/$(BOOTLOADER) src/root/$(BOOTLOADER)
 
 .PHONY: disk
 disk:

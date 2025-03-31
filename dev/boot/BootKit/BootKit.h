@@ -61,10 +61,10 @@ namespace Boot
 	 */
 	class BootTextWriter final
 	{
-		BootTextWriter& _Write(const Long& num);
+		BootTextWriter& _Write(const UInt64& num);
 
 	public:
-		BootTextWriter& Write(const Long& num);
+		BootTextWriter& Write(const UInt64& num);
 		BootTextWriter& Write(const Char* str);
 		BootTextWriter& Write(const CharacterTypeUTF16* str);
 		BootTextWriter& WriteCharacter(CharacterTypeUTF16 c);
