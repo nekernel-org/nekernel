@@ -7,7 +7,15 @@
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
 [![QEMU Tested](https://img.shields.io/badge/QEMU-Tested-success)](#)
 
-## Notice for Documentation:
+## Brief:
+
+A kernel for engineers who want a custom solution for their stack, written mostly in C++ it aims to provide a base for other projects/products.
+
+## User Friendly Diagram:
+
+![Diagram](docs/svg/OS_DESIGN.png)
+
+## Notice for Doxygen:
 
 Use the doxygen command to build documentation.
 <br/>
