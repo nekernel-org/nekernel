@@ -1,7 +1,7 @@
 /*
  * Created on Thu Oct 17 08:00:42 CEST 2024
  *
- * Copyright (c) 2024-2025 Amlal EL Mahrouss
+ * Copyright (c) 2024-2025 Amlal El Mahrouss
  */
 
 #include <user/SystemCalls.h>
@@ -23,9 +23,9 @@ SInt32 main(SInt32 argc, Char* argv[])
 		if (MmStrCmp(argv[i], OPEN_APP_HELP_FLAG) == 0)
 		{
 			PrintOut(nullptr, "open: open .app(s) directories.\n");
-			PrintOut(nullptr, "open: © 2024-2025 Amlal EL Mahrouss, All rights reserved.\n");
+			PrintOut(nullptr, "open: © 2024-2025 Amlal El Mahrouss, All rights reserved.\n");
 
-			PrintOut(nullptr, "open: %s: App is being taken as the input (opens a PEF/PE32+/ELF program depending on the CPU architecture).\n", OPEN_APP_APP_FLAG);
+			PrintOut(nullptr, "open: %s: Application is being taken as the input (opens a PEF/PE32+/ELF program depending on the CPU architecture).\n", OPEN_APP_APP_FLAG);
 
 			return EXIT_SUCCESS;
 		}

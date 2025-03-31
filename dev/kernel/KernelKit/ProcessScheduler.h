@@ -1,11 +1,14 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 #ifndef INC_PROCESS_SCHEDULER_H
 #define INC_PROCESS_SCHEDULER_H
+
+/// @brief Process scheduler code and definitions.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/LockDelegate.h>
@@ -27,7 +30,7 @@
 
 namespace Kernel
 {
-	//! @note Forward class declaration.
+	//! @brief Forward declarations.
 
 	class IDylibObject;
 	class UserProcess;

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright Amlal EL Mahrouss.
+	Copyright Amlal El Mahrouss.
 
 ------------------------------------------- */
 

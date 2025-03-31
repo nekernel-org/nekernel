@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2025, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 
 	FILE: DiskImage.h
 	PURPOSE: Disk Imaging framework.

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 	FILE: UserProcessScheduler.cc
 	PURPOSE: Low level/Ring-3 Process scheduler.
@@ -9,7 +9,8 @@
 
 /***********************************************************************************/
 /// @file UserProcessScheduler.cc
-/// @brief Low level/Ring-3 process scheduler.
+/// @brief User/Ring-3 process scheduler.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
 #include <KernelKit/ProcessScheduler.h>

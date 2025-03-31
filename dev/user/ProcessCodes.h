@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -10,6 +10,7 @@
 
 /// @file ProcessCodes.h
 /// @brief Process Codes type and values.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
 
 #define err_local_ok()	 (kLastError == kErrorSuccess)
 #define err_local_fail() (kLastError != kErrorSuccess)

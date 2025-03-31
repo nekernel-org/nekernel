@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file Handover.h
- * @author Amlal EL Mahrouss (amlal@nekernel.org)
+ * @author Amlal El Mahrouss (amlal@nekernel.org)
  * @brief The handover boot protocol.
  * @version 1.15
  * @date 2024-02-23
  *
- * @copyright Copyright (c) 2024, Amlal EL Mahrouss
+ * @copyright Copyright (c) 2024, Amlal El Mahrouss
  *
  */
 

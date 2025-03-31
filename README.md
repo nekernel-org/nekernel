@@ -37,4 +37,4 @@ cd nekernel
 ./debug_ata.sh # Generic ATA PIO target
 ```
 
-###### Copyright (C) 2024-2025 Amlal EL Mahrouss, All rights reserved.
+###### Copyright (C) 2024-2025 Amlal El Mahrouss, All rights reserved.

@@ -1,17 +1,17 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 /**
  * @file DMA+Generic.cc
- * @author Amlal EL Mahrouss (amlal@nekernel.org)
+ * @author Amlal El Mahrouss (amlal@nekernel.org)
  * @brief ATA driver (DMA mode).
  * @version 0.1
  * @date 2024-02-02
  *
- * @copyright Copyright (c) Amlal EL Mahrouss
+ * @copyright Copyright (c) Amlal El Mahrouss
  *
  */
 

@@ -1,11 +1,14 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 	FILE: ProcessScheduler.inl
 	PURPOSE: Low level/Ring-3 Process scheduler.
 
 ------------------------------------------- */
+
+/// @brief Process scheduler inline definitions.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
 
 namespace Kernel
 {

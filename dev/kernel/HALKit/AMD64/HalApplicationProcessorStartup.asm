@@ -2,7 +2,7 @@
 ;; *	========================================================
 ;; *
 ;; *	NeKernel
-;; * 	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+;; * 	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 ;; *
 ;; *    25/03/25: FIX: Fix warning regarding resb being used inside a non-bss area (using no-op instead).
 ;; *

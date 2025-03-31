@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal EL Mahrouss, all rights reserved.
+	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -15,7 +15,7 @@ namespace Firmware::Detail::CoreBoot
 	struct LEHeader;
 
 	/// @brief Linear Executable Header
-	/// @author Amlal EL Mahrouss
+	/// @author Amlal El Mahrouss
 	struct ATTRIBUTE(aligned(4)) LEHeader
 	{
 		const Char	 fMagic[2];		// magic number

@@ -1,4 +1,4 @@
-// (c) Amlal EL Mahrouss
+// (c) Amlal El Mahrouss
 
 #pragma once
 

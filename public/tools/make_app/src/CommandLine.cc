@@ -1,7 +1,7 @@
 /*
  * Created on Thu Oct 17 08:00:42 CEST 2024
  *
- * Copyright (c) 2024-2025 Amlal EL Mahrouss
+ * Copyright (c) 2024-2025 Amlal El Mahrouss
  */
 
 #include <Framework.h>
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 		if (MmStrCmp(argv[i], "-h") == 0)
 		{
 			PrintOut(nullptr, "%s", "make_app: Framework/Application Creation Tool.\n");
-			PrintOut(nullptr, "%s", "make_app: © 2024-2025 Amlal EL Mahrouss, All rights reserved.\n");
+			PrintOut(nullptr, "%s", "make_app: © 2024-2025 Amlal El Mahrouss, All rights reserved.\n");
 
 			PrintOut(nullptr, "%s", "make_app: -a: Application format.\n");
 			PrintOut(nullptr, "%s", "make_app: -s: Steps (Setup pages) format.\n");
