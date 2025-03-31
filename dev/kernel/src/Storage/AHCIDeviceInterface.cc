@@ -34,3 +34,79 @@ const Char* AHCIDeviceInterface::Name() const
 {
 	return "/dev/sda{}";
 }
+
+/// @brief Output operator.
+/// @param Data the disk mountpoint.
+/// @return the class itself after operation.
+AHCIDeviceInterface& AHCIDeviceInterface::operator<<(MountpointInterface* Data)
+{
+	if (!Data)
+		return *this;
+
+	for (SizeT driveCount = 0; driveCount < kDriveMaxCount; ++driveCount)
+	{
+		auto interface = Data->GetAddressOf(driveCount);
+
+		if ((interface) && rt_string_cmp((interface)->fProtocol(), "AHCI", rt_string_len("AHCI")) == 0)
+		{
+			continue;
+		}
+		else if ((interface) &&
+				 rt_string_cmp((interface)->fProtocol(), "AHCI", rt_string_len("AHCI")) != 0)
+		{
+			return *this;
+		}
+	}
+
+	return (AHCIDeviceInterface&)IDeviceObject<MountpointInterface*>::operator<<(
+		Data);
+}
+
+/// @brief Input operator.
+/// @param Data the disk mountpoint.
+/// @return the class itself after operation.
+AHCIDeviceInterface& AHCIDeviceInterface::operator>>(MountpointInterface* Data)
+{
+	if (!Data)
+		return *this;
+
+	for (SizeT driveCount = 0; driveCount < kDriveMaxCount; ++driveCount)
+	{
+		auto interface = Data->GetAddressOf(driveCount);
+
+		// really check if it's ATA.
+		if ((interface) && rt_string_cmp((interface)->fProtocol(), "AHCI", rt_string_len("AHCI")) == 0)
+		{
+			continue;
+		}
+		else if ((interface) &&
+				 rt_string_cmp((interface)->fProtocol(), "AHCI", rt_string_len("AHCI")) != 0)
+		{
+			return *this;
+		}
+	}
+
+	return (AHCIDeviceInterface&)IDeviceObject<MountpointInterface*>::operator>>(
+		Data);
+}
+
+const UInt16& AHCIDeviceInterface::GetPortsImplemented()
+{
+	return this->fPortsImplemented;
+}
+
+Void AHCIDeviceInterface::SetPortsImplemented(const UInt16& pi)
+{
+	MUST_PASS(pi > 0);
+	this->fPortsImplemented = pi;
+}
+
+const UInt32& AHCIDeviceInterface::GetIndex()
+{
+	return this->fDriveIndex;
+}
+
+Void AHCIDeviceInterface::SetIndex(const UInt32& drv)
+{
+	MUST_PASS(MountpointInterface::kDriveIndexInvalid != drv);
+}

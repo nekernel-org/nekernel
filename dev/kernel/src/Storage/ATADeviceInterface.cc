@@ -36,8 +36,8 @@ const Char* ATADeviceInterface::Name() const
 }
 
 /// @brief Output operator.
-/// @param Data
-/// @return
+/// @param Data the disk mountpoint.
+/// @return the class itself after operation.
 ATADeviceInterface& ATADeviceInterface::operator<<(MountpointInterface* Data)
 {
 	if (!Data)
@@ -46,12 +46,13 @@ ATADeviceInterface& ATADeviceInterface::operator<<(MountpointInterface* Data)
 	for (SizeT driveCount = 0; driveCount < kDriveMaxCount; ++driveCount)
 	{
 		auto interface = Data->GetAddressOf(driveCount);
-		if ((interface) && rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) == 0)
+
+		if ((interface) && rt_string_cmp((interface)->fProtocol(), "ATA-", rt_string_len("ATA-")) == 0)
 		{
 			continue;
 		}
 		else if ((interface) &&
-				 rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) != 0)
+				 rt_string_cmp((interface)->fProtocol(), "ATA-", rt_string_len("ATA-")) != 0)
 		{
 			return *this;
 		}
@@ -62,8 +63,8 @@ ATADeviceInterface& ATADeviceInterface::operator<<(MountpointInterface* Data)
 }
 
 /// @brief Input operator.
-/// @param Data
-/// @return
+/// @param Data the disk mountpoint.
+/// @return the class itself after operation.
 ATADeviceInterface& ATADeviceInterface::operator>>(MountpointInterface* Data)
 {
 	if (!Data)
@@ -72,12 +73,14 @@ ATADeviceInterface& ATADeviceInterface::operator>>(MountpointInterface* Data)
 	for (SizeT driveCount = 0; driveCount < kDriveMaxCount; ++driveCount)
 	{
 		auto interface = Data->GetAddressOf(driveCount);
-		if ((interface) && rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) == 0)
+
+		// really check if it's ATA.
+		if ((interface) && rt_string_cmp((interface)->fProtocol(), "ATA-", rt_string_len("ATA-")) == 0)
 		{
 			continue;
 		}
 		else if ((interface) &&
-				 rt_string_cmp((interface)->fDriveKind(), "ATA-", 5) != 0)
+				 rt_string_cmp((interface)->fProtocol(), "ATA-", rt_string_len("ATA-")) != 0)
 		{
 			return *this;
 		}

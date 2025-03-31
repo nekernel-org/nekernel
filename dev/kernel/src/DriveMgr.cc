@@ -148,7 +148,7 @@ namespace Kernel
 		trait.fOutput	 = io_drv_unimplemented;
 		trait.fVerify	 = io_drv_unimplemented;
 		trait.fInit		 = io_drv_unimplemented;
-		trait.fDriveKind = io_drv_kind;
+		trait.fProtocol = io_drv_kind;
 
 		kout << "Construct: " << trait.fName << "\r";
 
@@ -224,7 +224,7 @@ namespace Kernel
 		trait.fOutput	 = io_drv_output;
 		trait.fInput	 = io_drv_input;
 		trait.fInit		 = io_drv_init;
-		trait.fDriveKind = io_drv_kind;
+		trait.fProtocol = io_drv_kind;
 
 		kout << "Detecting partition scheme of: " << trait.fName << ".\r";
 

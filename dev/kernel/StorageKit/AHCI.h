@@ -27,27 +27,17 @@ namespace Kernel
 
 		const Char* Name() const override;
 
-		const UInt16& GetPortsImplemented()
-		{
-			return this->fPortsImplemented;
-		}
+		const UInt16& GetPortsImplemented();
 
-		Void SetPortsImplemented(const UInt16& pi)
-		{
-			MUST_PASS(pi > 0);
-			this->fPortsImplemented = pi;
-		}
+		Void SetPortsImplemented(const UInt16& pi);
 
-		const UInt32& GetIndex()
-		{
-			return this->fDriveIndex;
-		}
+		const UInt32& GetIndex();
+		
+		Void SetIndex(const UInt32& drv);
 
-		Void SetIndex(const UInt32& drv)
-		{
-			MUST_PASS(MountpointInterface::kDriveIndexInvalid != drv);
-			this->fDriveIndex = drv;
-		}
+	public:
+		AHCIDeviceInterface& operator<<(MountpointInterface* Data) override;
+		AHCIDeviceInterface& operator>>(MountpointInterface* Data) override;
 
 	private:
 		Void (*fCleanup)(Void) = {nullptr};

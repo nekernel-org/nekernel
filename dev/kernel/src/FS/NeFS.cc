@@ -598,7 +598,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 
 			drive->fOutput(drive->fPacket);
 
-			kout << "drive kind: " << drive->fDriveKind() << kendl;
+			kout << "drive kind: " << drive->fProtocol() << kendl;
 
 			kout << "partition name: " << part_block->PartitionName << kendl;
 			kout << "start: " << hex_number(part_block->StartCatalog) << kendl;

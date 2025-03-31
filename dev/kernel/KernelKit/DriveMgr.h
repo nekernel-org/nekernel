@@ -72,7 +72,7 @@ namespace Kernel
 		Void (*fOutput)(DrivePacket packet);
 		Void (*fVerify)(DrivePacket packet);
 		Void (*fInit)(DrivePacket packet);
-		const Char* (*fDriveKind)(Void);
+		const Char* (*fProtocol)(Void);
 	};
 
 	///! drive as a device.
