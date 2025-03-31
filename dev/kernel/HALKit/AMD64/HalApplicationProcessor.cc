@@ -45,8 +45,8 @@ namespace Kernel::HAL
 	};
 
 	STATIC PROCESS_APIC_MADT* kMADTBlock = nullptr;
-	STATIC Bool						 kSMPAware	= false;
-	STATIC Int64					 kSMPCount	= 0;
+	STATIC Bool				  kSMPAware	 = false;
+	STATIC Int64			  kSMPCount	 = 0;
 
 	STATIC UIntPtr kApicBaseAddress = 0UL;
 

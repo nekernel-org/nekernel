@@ -30,7 +30,7 @@
 
 #include <HALKit/AMD64/CPUID.h>
 
-#define rtl_nop_op()			 asm volatile("nop")
+#define rtl_nop_op() asm volatile("nop")
 
 /// @brief Maximum entries of the interrupt descriptor table.
 #define kKernelIdtSize (0x100)

@@ -144,10 +144,10 @@ namespace Kernel
 		rt_copy_memory((VoidPtr)kBlankDrive, trait.fName, rt_string_len(kBlankDrive));
 		trait.fKind = kInvalidDrive;
 
-		trait.fInput	 = io_drv_unimplemented;
-		trait.fOutput	 = io_drv_unimplemented;
-		trait.fVerify	 = io_drv_unimplemented;
-		trait.fInit		 = io_drv_unimplemented;
+		trait.fInput	= io_drv_unimplemented;
+		trait.fOutput	= io_drv_unimplemented;
+		trait.fVerify	= io_drv_unimplemented;
+		trait.fInit		= io_drv_unimplemented;
 		trait.fProtocol = io_drv_kind;
 
 		kout << "Construct: " << trait.fName << "\r";
@@ -220,10 +220,10 @@ namespace Kernel
 
 		MUST_PASS(trait.fName[0] != 0);
 
-		trait.fVerify	 = io_drv_unimplemented;
-		trait.fOutput	 = io_drv_output;
-		trait.fInput	 = io_drv_input;
-		trait.fInit		 = io_drv_init;
+		trait.fVerify	= io_drv_unimplemented;
+		trait.fOutput	= io_drv_output;
+		trait.fInput	= io_drv_input;
+		trait.fInit		= io_drv_init;
 		trait.fProtocol = io_drv_kind;
 
 		kout << "Detecting partition scheme of: " << trait.fName << ".\r";

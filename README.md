@@ -7,7 +7,15 @@
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
 [![QEMU Tested](https://img.shields.io/badge/QEMU-Tested-success)](#)
 
-## Notice for Documentation:
+## Brief:
+
+A kernel for engineers who want a custom solution for their stack, written mostly in C++ it aims to provide a base for other projects/products.
+
+## User Friendly Diagram:
+
+![Diagram](docs/svg/OS_DESIGN.png)
+
+## Notice for Doxygen:
 
 Use the doxygen command to build documentation.
 <br/>
@@ -23,18 +31,18 @@ A documentation regarding building, and developing for NeKernel is available her
 
 ## Notice for Contributors:
 
-- You must mount the contents to the nekernel-esp.img prior running! Otherwise the emulator won't find a valid ESP.
-- Always use `format.sh` before commiting and pushing your code!
+- You must mount the contents to the nekernel-esp.img prior running!
+    - It depends mostly on how your platform manages them, so have a look at it.
 
-## Quick Install:
+- Run `format.sh` before commiting, it formats the code according to the .clang-format.
 
-Clone the repository:
+## Getting Started:
 
 ```sh
 git clone git@github.com:amlel-el-mahrouss/nekernel.git
 cd nekernel
 ./setup_amd64.sh
-./debug_ata.sh # Generic ATA PIO target
+./debug_ata_x64.sh # Generic ATA PIO target
 ```
 
 ###### Copyright (C) 2024-2025 Amlal El Mahrouss, All rights reserved.
