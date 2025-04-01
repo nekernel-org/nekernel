@@ -11,6 +11,8 @@
 #include <BootKit/BootKit.h>
 #include <BootKit/BootThread.h>
 
+EfiGUID kEfiIP4ProtoGUID;
+
 EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 	BOOTNET_INTERNET_HEADER inet{};
@@ -22,7 +24,7 @@ EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	if (inet.Length < 1)
 	{
 		Boot::BootTextWriter writer;
-		writer.Write("BootNetLauncher: No executable attached to the packet, aborting.\r");
+		writer.Write("BootNet: No executable attached to the packet, aborting.\r");
 
 		return kEfiFail;
 	}

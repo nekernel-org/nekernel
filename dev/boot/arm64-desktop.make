@@ -27,14 +27,14 @@ IMG=epm-master-1.img
 IMG_2=epm-slave.img
 IMG_3=epm-master-2.img
 
-EMU_FLAGS=-net none -smp 4 -m 8G -cpu max -M virt \
+EMU_FLAGS= -smp 4 -m 8G -cpu max -M virt \
 			-bios $(BIOS) \
 			-drive id=disk,file=$(IMG),format=raw,if=none \
 			-drive \
 			file=fat:rw:src/root/,index=2,format=raw \
 		    -no-shutdown -no-reboot -cpu cortex-a72 -device virtio-gpu-pci
 
-LD_FLAGS=-subsystem:efi_application -entry:Main /nodefaultlib
+LD_FLAGS=-subsystem:efi_application -entry:ModuleMain /nodefaultlib
 
 STANDALONE_MACRO=-D__BOOTZ_STANDALONE__
 OBJ=*.o

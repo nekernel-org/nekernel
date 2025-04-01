@@ -5,7 +5,7 @@
 #include <BootKit/Shared/bit.h>
 
 #include <BootKit/QrPrelude.h>
-#include <modules/CoreGfx/FBMgr.h>
+#include <modules/CoreGfx/CoreGfx.h>
 #include <BootKit/Support.h>
 #include <CompilerKit/Detail.h>
 

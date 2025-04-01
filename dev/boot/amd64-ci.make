@@ -17,7 +17,7 @@ ifneq ($(findstring CYGWIN_NT-10.0,$(shell uname)), )
 EMU=qemu-system-x86_64w.exe
 else
 # this for NT distributions
-EMU=qemu-system-x86_64  -net none
+EMU=qemu-system-x86_64  
 endif
 
 ifeq ($(NEOS_MODEL), )
@@ -49,16 +49,16 @@ DEBUG_MACRO = -D__DEBUG__
 endif
 
 ifeq ($(shell uname), Darwin)
-EMU_FLAGS=-M q35 -net none -smp 4 -m 8G \
+EMU_FLAGS=-M q35  -smp 4 -m 8G \
     -bios $(BIOS) -cdrom $(BOOT) -boot d
 endif
 
 ifneq ($(shell uname), Darwin)
-EMU_FLAGS=-net none -smp 4 -m 8G \
+EMU_FLAGS= -smp 4 -m 8G \
     -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm
 endif
 
-LD_FLAGS=-e Main --subsystem=10
+LD_FLAGS=-e ModuleMain --subsystem=10
 
 STANDALONE_MACRO=-D__BOOTZ_STANDALONE__
 OBJ=obj/*.o

@@ -54,7 +54,7 @@ newos-amd64-epm: clean
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalCommonAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalBootHeader.asm
-	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalUtils.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalUtilsAPI.asm
 	$(MOVEALL)
 
 OBJCOPY=x86_64-w64-mingw32-objcopy

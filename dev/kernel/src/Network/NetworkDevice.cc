@@ -10,25 +10,26 @@
 namespace Kernel
 {
 	/// \brief Getter for fNetworkName.
+	/// \return Network device name.
 	const Char* NetworkDevice::Name() const
 	{
 		return this->fNetworkName;
 	}
 
 	/// \brief Setter for fNetworkName.
-	Boolean NetworkDevice::Name(const Char* devnam)
+	Boolean NetworkDevice::Name(const Char* name)
 	{
-		if (devnam == nullptr)
+		if (name == nullptr)
 			return NO;
 
-		if (*devnam == 0)
+		if (*name == 0)
 			return NO;
 
-		if (rt_string_len(devnam) > cNetworkNameLen)
+		if (rt_string_len(name) > cNetworkNameLen)
 			return NO;
 
-		rt_copy_memory((VoidPtr)devnam,
-					   (VoidPtr)this->fNetworkName, rt_string_len(devnam));
+		rt_copy_memory((VoidPtr)name,
+					   (VoidPtr)this->fNetworkName, rt_string_len(name));
 
 		return YES;
 	}

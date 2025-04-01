@@ -13,7 +13,7 @@
 #include <BootKit/BootKit.h>
 #include <FirmwareKit/Handover.h>
 #include <FirmwareKit/EFI/API.h>
-#include <modules/CoreGfx/TextMgr.h>
+#include <modules/CoreGfx/TextGfx.h>
 
 /// @file BootFileReader
 /// @brief Bootloader File reader.

@@ -11,8 +11,8 @@
 #include <NewKit/KString.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
-#include <modules/CoreGfx/FBMgr.h>
-#include <modules/CoreGfx/TextMgr.h>
+#include <modules/CoreGfx/CoreGfx.h>
+#include <modules/CoreGfx/TextGfx.h>
 #include <NewKit/Utils.h>
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
