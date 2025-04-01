@@ -9,7 +9,7 @@
 
 /***********************************************************************************/
 /// @file UserProcessScheduler.cc
-/// @brief User/Ring-3 process scheduler.
+/// @brief Unprivileged/Ring-3 process scheduler.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
@@ -439,9 +439,9 @@ namespace Kernel
 
 		if (mTeam.mProcessCount < 1)
 		{
-			kout << "UserProcessScheduler::Run(): This team doesn't have any process!\r";
 			return 0UL;
 		}
+
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
 			auto& process = mTeam.AsArray()[process_index];
@@ -453,8 +453,6 @@ namespace Kernel
 				this->CurrentProcess() = process;
 
 				process.PTime = static_cast<Int32>(process.Affinity);
-
-				kout << "Switch to: '" << process.Name << "'.\r";
 
 				// tell helper to find a core to schedule on.
 				BOOL ret = UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,

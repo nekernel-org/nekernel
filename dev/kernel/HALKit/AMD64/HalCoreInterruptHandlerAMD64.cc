@@ -115,10 +115,7 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 	auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
-	{
-		kout << "Getting here.\r";
 		return;
-	}
 
 	kIsScheduling = NO;
 

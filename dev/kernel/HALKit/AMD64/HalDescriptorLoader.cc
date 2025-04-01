@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include <FSKit/NeFS.h>
 #include <ArchKit/ArchKit.h>
 #include <HALKit/AMD64/Processor.h>
 
@@ -108,6 +109,8 @@ namespace Kernel::HAL
 					(kKernelIdtSize);
 
 		hal_load_idt(idt);
+
+		NeFS::fs_init_nefs();
 
 		Detail::hal_enable_pit(kPITTickForScheduler);
 
