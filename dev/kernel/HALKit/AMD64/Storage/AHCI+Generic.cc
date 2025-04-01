@@ -7,7 +7,7 @@
 /**
  * @file AHCI+Generic.cc
  * @author Amlal El Mahrouss (amlal@nekernel.org)
- * @brief AHCI driver.
+ * @brief AHCI Generic driver.
  * @version 0.1
  * @date 2024-02-02
  *
@@ -15,6 +15,7 @@
  *
  */
 
+#include "NewKit/Defines.h"
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
 #include <KernelKit/ProcessScheduler.h>
@@ -56,7 +57,7 @@ STATIC PCI::Device kSATADev;
 STATIC HbaMemRef   kSATAHba;
 STATIC Lba		   kSATASectorCount		 = 0UL;
 STATIC UInt16	   kSATAIndex			 = 0U;
-STATIC Char		   kCurrentDiskModel[50] = {"UNKNOWN AHCI DRIVE"};
+STATIC Char		   kCurrentDiskModel[50] = {"GENERIC SATA"};
 STATIC UInt16	   kSATAPortsImplemented = 0U;
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
@@ -74,11 +75,9 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	const UInt16 kSzIdent = kib_cast(1);
 
 	/// Push it to the stack
-	static UInt8 identify_data[kSzIdent] ATTRIBUTE(aligned(4096)) = {0};
+	UInt8* identify_data ATTRIBUTE(aligned(4096)) = (UInt8*)mib_cast(1);
 
-	HAL::mm_map_page((void*)mib_cast(1), (void*)mib_cast(1), HAL::kMMFlagsWr);
-
-	rt_set_memory(identify_data, 0, kSzIdent);
+	HAL::mm_map_page((VoidPtr)mib_cast(1), (VoidPtr)mib_cast(1), HAL::kMMFlagsWr);
 
 	/// Send AHCI command for identification.
 	drv_std_input_output_ahci<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
@@ -152,7 +151,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	MUST_PASS(command_header);
 
-	constexpr const UInt32 kMaxPRDSize = mib_cast(4);
+	constexpr const UInt32 kMaxPRDSize = kib_cast(4);
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
 	command_header->Write = Write;
@@ -337,8 +336,8 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 		{
 			HbaMem* mem_ahci = (HbaMem*)kSATADev.Bar(kSATABar5);
 
-			kSATADev.EnableMmio((UIntPtr)mem_ahci);
-			kSATADev.BecomeBusMaster((UIntPtr)mem_ahci);
+			kSATADev.EnableMmio();
+			kSATADev.BecomeBusMaster();
 
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;
@@ -473,7 +472,7 @@ namespace Kernel
 	UInt16 sk_init_ahci_device(BOOL atapi)
 	{
 		UInt16 pi = 0;
-		return drv_std_init_ahci(pi, atapi);
+		drv_std_init_ahci(pi, atapi);
 
 		kSATAPortsImplemented = pi;
 

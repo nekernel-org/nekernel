@@ -99,7 +99,7 @@ namespace Kernel::PCI
 
 	UShort Device::InterfaceId()
 	{
-		return (UShort)(NE_PCIReadRaw(0x0, fBus, fDevice, fFunction) >> 16);
+		return (UShort)(NE_PCIReadRaw(0x09, fBus, fDevice, fFunction) >> 16);
 	}
 
 	UChar Device::Class()
@@ -122,25 +122,24 @@ namespace Kernel::PCI
 		return (UChar)(NE_PCIReadRaw(0xC, fBus, fDevice, fFunction) >> 16);
 	}
 
-	void Device::EnableMmio(UInt32 bar_in)
+	void Device::EnableMmio()
 	{
-		UInt32 enable = Read(bar_in, sizeof(UInt32));
-		enable |= (1 << 1);
+		UInt32 command = Read(0x04, sizeof(UInt32));
+		command |= (1 << 1); // Memory Space Enable (bit 1)
 
-		Write(bar_in, enable, sizeof(UInt32));
+		Write(0x04, command, sizeof(UInt32));
 	}
 
-	void Device::BecomeBusMaster(UInt32 bar_in)
+	void Device::BecomeBusMaster()
 	{
-		UInt32 enable = Read(bar_in, sizeof(UInt32));
-		enable |= (1 << 2);
-
-		Write(bar_in, enable, sizeof(UInt32));
+		UInt32 command = Read(0x04, sizeof(UInt32));
+		command |= (1 << 2); // Bus Master Enable (bit 2)
+		Write(0x04, command, sizeof(UInt32));
 	}
 
 	UIntPtr Device::Bar(UInt32 bar_in)
 	{
-		UInt32 bar = NE_PCIReadRaw(bar_in & ~0x03, fBus, fDevice, fFunction);
+		UInt32 bar = NE_PCIReadRaw(bar_in, fBus, fDevice, fFunction);
 
 		if (bar & PCI_BAR_IO)
 			return static_cast<UIntPtr>(bar & ~0x03);
@@ -156,16 +155,12 @@ namespace Kernel::PCI
 
 	UShort Device::Vendor()
 	{
-		UShort vendor = VendorId();
-
-		if (vendor != (UShort)PciConfigKind::Invalid)
-			fDevice = (UShort)Read(0x0, sizeof(UShort));
-
-		return fDevice;
+		UShort vendor = this->VendorId();
+		return vendor;
 	}
 
 	Device::operator bool()
 	{
-		return VendorId() != (UShort)PciConfigKind::Invalid;
+		return this->VendorId() != (UShort)PciConfigKind::Invalid;
 	}
 } // namespace Kernel::PCI

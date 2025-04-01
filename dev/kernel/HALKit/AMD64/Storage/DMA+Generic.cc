@@ -32,7 +32,7 @@ STATIC Boolean kATADetected			 = false;
 STATIC Int32   kATADeviceType		 = kATADeviceCount;
 STATIC Char	   kATAData[kATADataLen] = {0};
 STATIC Kernel::PCI::Device kATADevice;
-STATIC Char				   kCurrentDiskModel[50] = {"UNKNOWN DMA DRIVE"};
+STATIC Char				   kCurrentDiskModel[50] = {"GENERIC DMA"};
 
 Boolean drv_std_wait_io(UInt16 IO)
 {
@@ -73,76 +73,29 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 	{
 		kATADevice = iterator[device_index].Leak(); // And then leak the reference.
 
-		// if SATA and then interface is AHCI...
+		/// IDE interface
 		if (kATADevice.Subclass() == 0x01)
 		{
-			UInt16 IO = Bus;
-
-			drv_std_select(IO);
-
-			// Bus init, NEIN bit.
-			rt_out8(IO + ATA_REG_NEIN, 1);
-
-			// identify until it's good.
-		ATAInit_Retry:
-			auto status_rdy = rt_in8(IO + ATA_REG_STATUS);
-
-			if (status_rdy & ATA_SR_ERR)
-			{
-				return false;
-			}
-
-			if ((status_rdy & ATA_SR_BSY))
-				goto ATAInit_Retry;
-
-			rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
-
-			/// fetch serial info
-			/// model, speed, number of sectors...
-
-			drv_std_wait_io(IO);
-
-			for (SizeT i = 0ul; i < kATADataLen; ++i)
-			{
-				drv_std_wait_io(IO);
-				kATAData[i] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
-				drv_std_wait_io(IO);
-			}
-
-			for (SizeT i = 0; i < 40; i += 2)
-			{
-				kCurrentDiskModel[i * 2]	 = kATAData[27 + i * 2] >> 8;
-				kCurrentDiskModel[i * 2 + 1] = kATAData[27 + i * 2] & 0xFF;
-			}
-
-			kCurrentDiskModel[40] = '\0';
-
-			kout << "Drive Model: " << kCurrentDiskModel << kendl;
-
-			OutBus	  = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
-			OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
-
-			return YES;
+		
+			break;
 		}
 	}
-
-	ke_panic(RUNTIME_CHECK_BOOTSTRAP, "Invalid ATA DMA driver, not detected");
 
 	return NO;
 }
 
 namespace Kernel::Detail
 {
-	struct PRDEntry
+	struct PRDEntry final
 	{
 		UInt32 mAddress;
 		UInt16 mByteCount;
-		UInt16 mFlags;
+		UInt16 mFlags; /// @param PRD flags, set to 0x8000 to indicate end of prd.
 	};
 } // namespace Kernel::Detail
 
 static UIntPtr kReadAddr  = mib_cast(2);
-static UIntPtr kWriteAddr = mib_cast(4);
+static UIntPtr kWriteAddr = mib_cast(2) + kib_cast(64);
 
 Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
 {
