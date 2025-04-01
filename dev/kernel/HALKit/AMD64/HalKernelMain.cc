@@ -94,7 +94,9 @@ EXTERN_C void hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
-	Kernel::NeFS::fs_init_nefs();
+	kEndTim = hal_rdtsc_fn();
+
+	kout << "Boot Time: " << Kernel::number(kEndTim - kStartTim) << kendl;
 
 	Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
@@ -106,12 +108,9 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	kEndTim = hal_rdtsc_fn();
 
-	kout << "Cycles Spent Before Userland: " << Kernel::number(kEndTim - kStartTim) << kendl;
+	kout << "Init Time: " << Kernel::number(kEndTim - kStartTim) << kendl;
 
 	idt_loader.Load(idt_reg);
 
-	while (YES)
-	{
-		continue;
-	}
+	dbg_break_point();
 }

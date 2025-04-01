@@ -210,15 +210,24 @@ namespace Kernel::HAL
 
 		if (kMADTBlock)
 		{
-			SizeT index = 0;
+			SizeT index = 1;
 
 			kSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
+			UInt32 eax, edx;
 			kout << "SMP: Starting APs...\r";
 
-			UInt32 eax, edx;
 			kApicBaseAddress = kMADTBlock->Address;
+
+			constexpr auto kMemoryAPStart = 0x7C000;
+			Char*		   ptr_ap_code	  = reinterpret_cast<Char*>(kMemoryAPStart);
+
+			mm_map_page(ptr_ap_code, ptr_ap_code, kMMFlagsWr);
+
+			SizeT hal_ap_blob_len = hal_ap_blob_end - hal_ap_blob_start;
+
+			rt_copy_memory((Char*)hal_ap_blob_start, ptr_ap_code, hal_ap_blob_len);
 
 			while (Yes)
 			{
@@ -244,7 +253,7 @@ namespace Kernel::HAL
 
 					/// TODO: HAL helper to create an address.
 
-					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)hal_ap_blob_start) >> 12));
+					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)ptr_ap_code) >> 12));
 
 					++kSMPCount;
 					break;

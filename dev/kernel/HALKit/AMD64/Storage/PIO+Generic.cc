@@ -15,7 +15,6 @@
  *
  */
 
-#include "NewKit/Defines.h"
 #include <modules/ATA/ATA.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/DriveMgr.h>
