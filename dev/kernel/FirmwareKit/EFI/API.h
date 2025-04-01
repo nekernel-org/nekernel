@@ -22,7 +22,7 @@ class BootTextWriter;
 #define __BOOTKIT_NO_INCLUDE__ 1
 
 #include <BootKit/BootKit.h>
-#include <modules/CoreGfx/FBMgr.h>
+#include <modules/CoreGfx/CoreGfx.h>
 #endif // ifdef __BOOTZ__
 
 inline EfiSystemTable*	ST = nullptr;

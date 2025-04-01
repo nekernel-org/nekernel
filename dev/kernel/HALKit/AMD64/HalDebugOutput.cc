@@ -8,8 +8,8 @@
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Utils.h>
 #include <NewKit/New.h>
-#include <modules/CoreGfx/FBMgr.h>
-#include <modules/CoreGfx/TextMgr.h>
+#include <modules/CoreGfx/CoreGfx.h>
+#include <modules/CoreGfx/TextGfx.h>
 
 namespace Kernel
 {

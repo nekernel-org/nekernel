@@ -13,7 +13,7 @@
 #include <KernelKit/PE.h>
 #include <KernelKit/MSDOS.h>
 #include <CFKit/Utils.h>
-#include <modules/CoreGfx/TextMgr.h>
+#include <modules/CoreGfx/TextGfx.h>
 
 /// @brief External boot services symbol.
 EXTERN EfiBootServices* BS;

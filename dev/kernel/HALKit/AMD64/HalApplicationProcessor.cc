@@ -11,7 +11,7 @@
 #include <KernelKit/BinaryMutex.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/Timer.h>
-#include <modules/CoreGfx/TextMgr.h>
+#include <modules/CoreGfx/TextGfx.h>
 #include <NewKit/KernelPanic.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 

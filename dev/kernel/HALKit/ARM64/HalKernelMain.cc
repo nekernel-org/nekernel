@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.h>
-#include <modules/CoreGfx/FBMgr.h>
+#include <modules/CoreGfx/CoreGfx.h>
 #include <FirmwareKit/Handover.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/MemoryMgr.h>

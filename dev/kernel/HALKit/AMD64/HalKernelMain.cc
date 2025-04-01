@@ -12,7 +12,7 @@
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <NetworkKit/IPC.h>
 #include <CFKit/Property.h>
-#include <modules/CoreGfx/TextMgr.h>
+#include <modules/CoreGfx/TextGfx.h>
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;

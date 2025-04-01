@@ -9,8 +9,8 @@
 
 #include <NewKit/NewKit.h>
 #include <KernelKit/KPC.h>
-#include <modules/CoreGfx/FBMgr.h>
-#include <modules/CoreGfx/MathMgr.h>
+#include <modules/CoreGfx/CoreGfx.h>
+#include <modules/CoreGfx/MathGfx.h>
 #include <ArchKit/ArchKit.h>
 
 namespace FB

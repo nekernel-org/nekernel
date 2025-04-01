@@ -77,16 +77,26 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	static UInt8 identify_data[kSzIdent] ATTRIBUTE(aligned(4096)) = {0};
 
 	HAL::mm_map_page((void*)mib_cast(1), (void*)mib_cast(1), HAL::kMMFlagsWr);
-	
+
 	rt_set_memory(identify_data, 0, kSzIdent);
 
 	/// Send AHCI command for identification.
 	drv_std_input_output_ahci<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
 
 	/// Extract 48-bit LBA.
-	kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
+
+	UInt64 lba48_sectors = 0;
+	lba48_sectors |= (UInt64)identify_data[100];
+    lba48_sectors |= (UInt64)identify_data[101] << 16;
+    lba48_sectors |= (UInt64)identify_data[102] << 32;
+
+	if (lba48_sectors == 0)
+		kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
+	else
+		kSATASectorCount = lba48_sectors;
 
 	/// Show what we got.
+	
 	kout << "Disk Model: " << kCurrentDiskModel << kendl;
 	kout << "Disk Size: " << number(drv_get_size()) << kendl;
 	kout << "Disk Sector Count: " << number(kSATASectorCount) << kendl;
@@ -142,7 +152,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	MUST_PASS(command_header);
 
-	constexpr UInt32 kMaxPRDSize = 0x400000;
+	constexpr const UInt32 kMaxPRDSize = mib_cast(4);
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
 	command_header->Write = Write;
@@ -392,6 +402,71 @@ Bool drv_std_detected_ahci()
 	return kSATADev.DeviceId() != (UShort)PCI::PciConfigKind::Invalid && kSATADev.Bar(kSATABar5) != 0;
 }
 
+// ================================================================================================
+
+//
+//	This applies only if we compile with AHCI as a default disk driver.
+//
+
+// ================================================================================================
+
+#ifdef __AHCI__
+
+////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////
+Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
+{
+	drv_std_input_output_ahci<YES, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz, size_buffer);
+}
+
+////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////
+Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
+{
+	drv_std_input_output_ahci<NO, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz, size_buffer);
+}
+
+////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////
+Bool drv_std_init(UInt16& pi)
+{
+	BOOL atapi = NO;
+	return drv_std_init_ahci(pi, atapi);
+}
+
+////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////
+Bool drv_std_detected(Void)
+{
+	return drv_std_detected_ahci();
+}
+
+////////////////////////////////////////////////////
+/**
+	@brief Gets the number of sectors inside the drive.
+	@return Sector size in bytes.
+ */
+////////////////////////////////////////////////////
+SizeT drv_get_sector_count()
+{
+	return drv_get_sector_count_ahci();
+}
+
+////////////////////////////////////////////////////
+/// @brief Get the drive size.
+/// @return Disk size in bytes.
+////////////////////////////////////////////////////
+SizeT drv_get_size()
+{
+	return drv_get_size_ahci();
+}
+
+#endif // ifdef __AHCI__
+
 namespace Kernel
 {
 	/// @brief Initialize an AHCI device (StorageKit)
@@ -471,68 +546,3 @@ namespace Kernel
 		return ErrorOr<AHCIDeviceInterface>(device);
 	}
 } // namespace Kernel
-
-// ================================================================================================
-
-//
-//	This applies only if we compile with AHCI as a default disk driver.
-//
-
-// ================================================================================================
-
-#ifdef __AHCI__
-
-////////////////////////////////////////////////////
-///
-////////////////////////////////////////////////////
-Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
-{
-	drv_std_input_output_ahci<YES, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz, size_buffer);
-}
-
-////////////////////////////////////////////////////
-///
-////////////////////////////////////////////////////
-Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
-{
-	drv_std_input_output_ahci<NO, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz, size_buffer);
-}
-
-////////////////////////////////////////////////////
-///
-////////////////////////////////////////////////////
-Bool drv_std_init(UInt16& pi)
-{
-	BOOL atapi = NO;
-	return drv_std_init_ahci(pi, atapi);
-}
-
-////////////////////////////////////////////////////
-///
-////////////////////////////////////////////////////
-Bool drv_std_detected(Void)
-{
-	return drv_std_detected_ahci();
-}
-
-////////////////////////////////////////////////////
-/**
-	@brief Gets the number of sectors inside the drive.
-	@return Sector size in bytes.
- */
-////////////////////////////////////////////////////
-SizeT drv_get_sector_count()
-{
-	return drv_get_sector_count_ahci();
-}
-
-////////////////////////////////////////////////////
-/// @brief Get the drive size.
-/// @return Disk size in bytes.
-////////////////////////////////////////////////////
-SizeT drv_get_size()
-{
-	return drv_get_size_ahci();
-}
-
-#endif // ifdef __AHCI__

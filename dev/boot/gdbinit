@@ -1,3 +1,3 @@
 set disassemble-next-line on
-b Main
+b ModuleMain
 target remote localhost:1234

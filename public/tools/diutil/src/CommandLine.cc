@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
 	// create disk image.
 
-	DI_DISK_IMAGE img{};
+	DI::DI_DISK_IMAGE img{};
 
 	img.disk_sz	  = kDiskSz;
 	img.sector_sz = kDiskSectorSz;
@@ -63,6 +63,6 @@ int main(int argc, char** argv)
 	MmCopyMemory((VoidPtr)img.disk_name, (VoidPtr)kDiskName, kDIDiskNameLen);
 	MmCopyMemory((VoidPtr)img.out_name, (VoidPtr)kOutDisk, kDIDiskNameLen);
 
-	// format disk image.
-	return DIFormatPartitionEPM(img);
+	// format disk image to explicit partition map.
+	return DI::DIFormatPartitionEPM(img);
 }

@@ -22,27 +22,31 @@
 #define kDIDiskNameLen (16)
 #define kDIOutNameLen  (256)
 
-/// @brief Disk Image file structure.
-/// @param disk_name Disk partition name.
-/// @param sector_sz Disk sector_sz.
-/// @param block_cnt Disk block count.
-/// @param disk_sz Disk size.
-/// @param out_name Output file name.
-struct DI_DISK_IMAGE
+namespace DI
 {
-	Char   disk_name[kDIDiskNameLen] = kDIDefaultDiskName;
-	SInt32 sector_sz				 = kDISectorSz;
-	SInt32 block_cnt				 = 0;
-	SizeT  disk_sz					 = kDIMinDiskSz;
-	Char   out_name[kDIOutNameLen]	 = kDIDefaultOutputName;
-};
+	/// @brief Disk Image file structure.
+	/// @param disk_name Disk partition name.
+	/// @param sector_sz Disk sector_sz.
+	/// @param block_cnt Disk block count.
+	/// @param disk_sz Disk size.
+	/// @param out_name Output file name.
+	struct DI_DISK_IMAGE
+	{
+		Char   disk_name[kDIDiskNameLen] = kDIDefaultDiskName;
+		SInt32 sector_sz				 = kDISectorSz;
+		SInt32 block_cnt				 = 0;
+		SizeT  disk_sz					 = kDIMinDiskSz;
+		Char   out_name[kDIOutNameLen]	 = kDIDefaultOutputName;
+	};
 
-/// @brief Format with an EPM partition.
-/// @param img disk image structure.
-/// @return Status code upon completion.
-SInt32 DIFormatPartitionEPM(struct DI_DISK_IMAGE& img) noexcept;
+	/// @brief Format with an EPM partition.
+	/// @param img disk image structure.
+	/// @return Status code upon completion.
+	SInt32 DIFormatPartitionEPM(struct DI_DISK_IMAGE& img) noexcept;
 
-/// @brief NeFS format over EPM.
-/// @param img disk image structure.
-/// @return Status code upon completion.
-SInt32 DIFormatFilesystemNeFS(struct DI_DISK_IMAGE& img) noexcept;
+	/// @brief NeFS format over EPM.
+	/// @param img disk image structure.
+	/// @return Status code upon completion.
+	SInt32 DIFormatFilesystemNeFS(struct DI_DISK_IMAGE& img) noexcept;
+
+} // namespace DI

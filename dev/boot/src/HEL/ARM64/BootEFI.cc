@@ -5,8 +5,8 @@
 ------------------------------------------- */
 
 #include <BootKit/BootKit.h>
-#include <modules/CoreGfx/FBMgr.h>
-#include <modules/CoreGfx/TextMgr.h>
+#include <modules/CoreGfx/CoreGfx.h>
+#include <modules/CoreGfx/TextGfx.h>
 #include <FirmwareKit/EFI.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/Handover.h>
@@ -16,7 +16,7 @@
 #include <NewKit/Macros.h>
 #include <NewKit/Ref.h>
 #include <BootKit/BootThread.h>
-#include <modules/CoreGfx/FBMgr.h>
+#include <modules/CoreGfx/CoreGfx.h>
 
 // Makes the compiler shut up.
 #ifndef kMachineModel
@@ -74,11 +74,11 @@ STATIC Bool boot_init_fb() noexcept
 
 EXTERN EfiBootServices* BS;
 
-/// @brief Main EFI entrypoint.
+/// @brief ModuleMain EFI entrypoint.
 /// @param image_handle Handle of this image.
 /// @param sys_table The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int32 Main(EfiHandlePtr	image_handle,
+EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	image_handle,
 								EfiSystemTable* sys_table)
 {
 	InitEFI(sys_table); ///! Init the EFI library.

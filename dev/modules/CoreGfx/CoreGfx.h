@@ -130,7 +130,7 @@
 #endif // __NE_AMD64__
 
 #ifndef GFX_MGR_ACCESSIBILITY_H
-#include <modules/CoreGfx/AccessibilityMgr.h>
+#include <modules/CoreGfx/CoreAccess.h>
 #endif // ifndef GFX_MGR_ACCESSIBILITY_H
 
 namespace FB

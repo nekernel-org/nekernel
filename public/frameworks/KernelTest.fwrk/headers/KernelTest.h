@@ -6,28 +6,30 @@
 
 #pragma once
 
-#define NE_TEST_VERSION_BCD (0x0001)
-#define NE_TEST_VERSION		"0.0.1"
+#include <NewKit/KernelPanic.h>
 
-#define NE_TEST_FAILURE (1)
+#define KT_TEST_VERSION_BCD (0x0001)
+#define KT_TEST_VERSION		"0.0.1"
 
-#define NE_TEST_SUCCESS (0)
+#define KT_TEST_FAILURE (1)
 
-#define NE_DECL_TEST(NAME, FN)          \
-	class NAME final                    \
+#define KT_TEST_SUCCESS (0)
+
+#define KT_DECL_TEST(NAME, FN)          \
+	class KT_##NAME final                    \
 	{                                   \
 	public:                             \
-		int			Run();              \
+		void			Run();              \
 		const char* ToString();         \
 	};                                  \
-	inline int NAME::Run()              \
+	inline void KT_##NAME::Run()              \
 	{                                   \
-		return FN() == 0;               \
+		MUST_PASS(FN() == true);               \
 	}                                   \
-	inline const char* NAME::ToString() \
+	inline const char* KT_##NAME::ToString() \
 	{                                   \
 		return #FN;                     \
 	}
 
-NE_DECL_TEST(ALWAYS_BREAK, []() -> bool { return false; });
-NE_DECL_TEST(ALWAYS_GOOD, []() -> bool { return true; });
+KT_DECL_TEST(ALWAYS_BREAK, []() -> bool { return false; });
+KT_DECL_TEST(ALWAYS_GOOD, []() -> bool { return true; });
