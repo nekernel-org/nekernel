@@ -83,6 +83,8 @@ namespace Boot
 			auto numPages = opt_header_ptr->SizeOfImage / cPageSize;
 			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
 
+			fStack = new UInt8[mib_cast(16)];
+
 			LDR_SECTION_HEADER_PTR sectPtr = (LDR_SECTION_HEADER_PTR)(((Char*)opt_header_ptr) + header_ptr->SizeOfOptionalHeader);
 
 			constexpr auto sectionForCode	= ".text";
@@ -93,7 +95,19 @@ namespace Boot
 			{
 				LDR_SECTION_HEADER_PTR sect = &sectPtr[sectIndex];
 
-				SetMem((VoidPtr)(loadStartAddress + sect->VirtualAddress), 0, sect->SizeOfRawData);
+				auto sz = sect->VirtualSize;
+
+				if (sect->SizeOfRawData > 0)
+					sz = sect->SizeOfRawData;
+
+				SetMem((VoidPtr)(loadStartAddress + sect->VirtualAddress), 0, sz);
+
+				if (sect->SizeOfRawData > 0)
+				{
+					CopyMem((VoidPtr)(loadStartAddress + sect->VirtualAddress),
+							(VoidPtr)((UIntPtr)fBlob + sect->PointerToRawData),
+							sect->SizeOfRawData);
+				}
 
 				if (StrCmp(sectionForCode, sect->Name) == 0)
 				{
@@ -152,8 +166,6 @@ namespace Boot
 		{
 			writer.Write("BootZ: Invalid Executable.\r");
 		}
-
-		fStack = new UInt8[mib_cast(16)];
 	}
 
 	/// @note handover header has to be valid!
@@ -175,7 +187,10 @@ namespace Boot
 
 		if (own_stack)
 		{
-			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(16) - 1]);
+			UInt8* aligned_stack = &fStack[mib_cast(16)];
+			aligned_stack		 = (UInt8*)((UIntPtr)aligned_stack & ~0xF);
+
+			rt_jump_to_address(fStartAddress, fHandover, aligned_stack);
 		}
 		else
 		{

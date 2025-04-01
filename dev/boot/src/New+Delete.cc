@@ -19,7 +19,7 @@ void* operator new(size_t sz)
 	void* buf = nullptr;
 
 	while (BS->AllocatePool(EfiMemoryType::EfiLoaderData, sz, &buf) != kEfiOk)
-		BS->FreePool(buf);
+		;
 
 	return buf;
 }
@@ -39,6 +39,9 @@ void* operator new[](size_t sz)
 /// @param buf the object.
 void operator delete(void* buf)
 {
+	if (!buf)
+		return;
+	
 	BS->FreePool(buf);
 }
 
@@ -46,6 +49,9 @@ void operator delete(void* buf)
 /// @param buf the object.
 void operator delete[](void* buf)
 {
+	if (!buf)
+		return;
+
 	BS->FreePool(buf);
 }
 
@@ -54,6 +60,9 @@ void operator delete[](void* buf)
 /// @param size it's size.
 void operator delete(void* buf, size_t size)
 {
+	if (!buf)
+		return;
+
 	BS->FreePool(buf);
 }
 

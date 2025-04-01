@@ -75,9 +75,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	const UInt16 kSzIdent = kib_cast(1);
 
 	/// Push it to the stack
-	UInt8* identify_data ATTRIBUTE(aligned(4096)) = (UInt8*)mib_cast(1);
-
-	HAL::mm_map_page((VoidPtr)mib_cast(1), (VoidPtr)mib_cast(1), HAL::kMMFlagsWr);
+	UInt8* identify_data ATTRIBUTE(aligned(4096)) = new UInt8[kSzIdent];
 
 	/// Send AHCI command for identification.
 	drv_std_input_output_ahci<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
@@ -86,19 +84,13 @@ STATIC Void drv_compute_disk_ahci() noexcept
 
 	UInt64 lba48_sectors = 0;
 	lba48_sectors |= (UInt64)identify_data[100];
-    lba48_sectors |= (UInt64)identify_data[101] << 16;
-    lba48_sectors |= (UInt64)identify_data[102] << 32;
+	lba48_sectors |= (UInt64)identify_data[101] << 16;
+	lba48_sectors |= (UInt64)identify_data[102] << 32;
 
 	if (lba48_sectors == 0)
 		kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 	else
 		kSATASectorCount = lba48_sectors;
-
-	/// Show what we got.
-	
-	kout << "Disk Model: " << kCurrentDiskModel << kendl;
-	kout << "Disk Size: " << number(drv_get_size()) << kendl;
-	kout << "Disk Sector Count: " << number(kSATASectorCount) << kendl;
 }
 
 /// @brief Finds a command slot for a HBA port.
@@ -171,6 +163,9 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	{
 		UInt32 chunk = (bytes_remaining > kMaxPRDSize) ? kMaxPRDSize : bytes_remaining;
 
+		if (chunk == 0)
+			break;
+
 		command_table->Prdt[i].Dba	= (UInt32)(buffer_phys & 0xFFFFFFFF);
 		command_table->Prdt[i].Dbau = (UInt32)(buffer_phys >> 32);
 		command_table->Prdt[i].Dbc	= chunk - 1;
@@ -180,7 +175,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 		bytes_remaining -= chunk;
 	}
 
-	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)(&command_table->Cfis);
+	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)(&command_table->Cfis[0]);
 
 	rt_set_memory((FisRegH2D*)h2d_fis, 0, sizeof(FisRegH2D));
 
@@ -274,7 +269,8 @@ STATIC Void ahci_enable_and_probe()
 
 	// Relocate Command List Base.
 
-	constexpr UIntPtr const kAHCIBaseAddress = mib_cast(4);
+	auto const addr				= mm_new_heap(kib_cast(64), YES, NO, 0);
+	auto	   kAHCIBaseAddress = (UIntPtr)addr;
 
 	port->Clb  = kAHCIBaseAddress + (kSATAIndex << 10);
 	port->Clbu = 0;
@@ -299,6 +295,12 @@ STATIC Void ahci_enable_and_probe()
 		cmd_hdr[i].Ctbau = 0;
 
 		rt_set_memory(reinterpret_cast<VoidPtr>(cmd_hdr[i].Ctba), 0, 256);
+	}
+
+	for (UIntPtr offset = 0; offset < kib_cast(64); offset += kib_cast(1))
+	{
+		VoidPtr addr = reinterpret_cast<VoidPtr>(kAHCIBaseAddress + offset);
+		HAL::mm_map_page(addr, addr, HAL::kMMFlagsWr);
 	}
 
 	// Now we are ready.
@@ -367,7 +369,9 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 
 					ahci_enable_and_probe();
 
-					break;
+					err_global_get() = kErrorSuccess;
+
+					return YES;
 				}
 				else if (atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig)
 				{
@@ -376,16 +380,14 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 
 					ahci_enable_and_probe();
 
-					break;
+					err_global_get() = kErrorSuccess;
+
+					return YES;
 				}
 
 				ports_implemented >>= 1;
 				++ahci_index;
 			}
-
-			err_global_get() = kErrorSuccess;
-
-			return YES;
 		}
 	}
 
