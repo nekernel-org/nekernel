@@ -36,16 +36,16 @@ const Char* AHCIDeviceInterface::Name() const
 }
 
 /// @brief Output operator.
-/// @param Data the disk mountpoint.
+/// @param mnt the disk mountpoint.
 /// @return the class itself after operation.
-AHCIDeviceInterface& AHCIDeviceInterface::operator<<(MountpointInterface* Data)
+AHCIDeviceInterface& AHCIDeviceInterface::operator<<(MountpointInterface* mnt)
 {
-	if (!Data)
+	if (!mnt)
 		return *this;
 
 	for (SizeT driveCount = 0; driveCount < kDriveMaxCount; ++driveCount)
 	{
-		auto interface = Data->GetAddressOf(driveCount);
+		auto interface = mnt->GetAddressOf(driveCount);
 
 		if ((interface) && rt_string_cmp((interface)->fProtocol(), "AHCI", rt_string_len("AHCI")) == 0)
 		{
@@ -59,20 +59,20 @@ AHCIDeviceInterface& AHCIDeviceInterface::operator<<(MountpointInterface* Data)
 	}
 
 	return (AHCIDeviceInterface&)IDeviceObject<MountpointInterface*>::operator<<(
-		Data);
+		mnt);
 }
 
 /// @brief Input operator.
-/// @param Data the disk mountpoint.
+/// @param mnt the disk mountpoint.
 /// @return the class itself after operation.
-AHCIDeviceInterface& AHCIDeviceInterface::operator>>(MountpointInterface* Data)
+AHCIDeviceInterface& AHCIDeviceInterface::operator>>(MountpointInterface* mnt)
 {
-	if (!Data)
+	if (!mnt)
 		return *this;
 
 	for (SizeT driveCount = 0; driveCount < kDriveMaxCount; ++driveCount)
 	{
-		auto interface = Data->GetAddressOf(driveCount);
+		auto interface = mnt->GetAddressOf(driveCount);
 
 		// really check if it's ATA.
 		if ((interface) && rt_string_cmp((interface)->fProtocol(), "AHCI", rt_string_len("AHCI")) == 0)
@@ -87,7 +87,7 @@ AHCIDeviceInterface& AHCIDeviceInterface::operator>>(MountpointInterface* Data)
 	}
 
 	return (AHCIDeviceInterface&)IDeviceObject<MountpointInterface*>::operator>>(
-		Data);
+		mnt);
 }
 
 const UInt16& AHCIDeviceInterface::GetPortsImplemented()
@@ -109,4 +109,5 @@ const UInt32& AHCIDeviceInterface::GetIndex()
 Void AHCIDeviceInterface::SetIndex(const UInt32& drv)
 {
 	MUST_PASS(MountpointInterface::kDriveIndexInvalid != drv);
+	this->fDriveIndex = drv;
 }

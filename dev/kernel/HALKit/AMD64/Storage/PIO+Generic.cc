@@ -15,10 +15,11 @@
  *
  */
 
+#include "NewKit/Defines.h"
 #include <modules/ATA/ATA.h>
 #include <ArchKit/ArchKit.h>
-
-#ifdef __ATA_PIO__
+#include <KernelKit/DriveMgr.h>
+#include <StorageKit/ATA.h>
 
 using namespace Kernel;
 using namespace Kernel::HAL;
@@ -30,9 +31,9 @@ using namespace Kernel::HAL;
 STATIC Boolean kATADetected			 = false;
 STATIC Int32   kATADeviceType		 = kATADeviceCount;
 STATIC Char	   kATAData[kATADataLen] = {0};
-STATIC Char	   kCurrentDiskModel[50] = {"UNKNOWN PIO DRIVE"};
+STATIC Char	   kCurrentDiskModel[50] = {"GENERIC PIO"};
 
-Boolean drv_std_wait_io(UInt16 IO)
+static Boolean drv_pio_std_wait_io(UInt16 IO)
 {
 	for (int i = 0; i < 400; i++)
 		rt_in8(IO + ATA_REG_STATUS);
@@ -55,7 +56,7 @@ ATAWaitForIO_Retry2:
 	return true;
 }
 
-Void drv_std_select(UInt16 Bus)
+static Void drv_pio_std_select(UInt16 Bus)
 {
 	if (Bus == ATA_PRIMARY_IO)
 		rt_out8(Bus + ATA_REG_HDDEVSEL, ATA_PRIMARY_SEL);
@@ -63,11 +64,11 @@ Void drv_std_select(UInt16 Bus)
 		rt_out8(Bus + ATA_REG_HDDEVSEL, ATA_SECONDARY_SEL);
 }
 
-Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
+Boolean drv_pio_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 {
 	UInt16 IO = Bus;
 
-	drv_std_select(IO);
+	drv_pio_std_select(IO);
 
 	// Bus init, NEIN bit.
 	rt_out8(IO + ATA_REG_NEIN, 1);
@@ -89,7 +90,7 @@ ATAInit_Retry:
 
 	rt_out8(OutBus + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
-	drv_std_wait_io(IO);
+	drv_pio_std_wait_io(IO);
 
 	/// fetch serial info
 	/// model, speed, number of sectors...
@@ -114,14 +115,14 @@ ATAInit_Retry:
 	return true;
 }
 
-Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
+Void drv_pio_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
 {
 	Lba /= SectorSz;
 
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
-	drv_std_wait_io(IO);
-	drv_std_select(IO);
+	drv_pio_std_wait_io(IO);
+	drv_pio_std_select(IO);
 
 	rt_out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
@@ -136,19 +137,19 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
-		drv_std_wait_io(IO);
+		drv_pio_std_wait_io(IO);
 		Buf[IndexOff] = HAL::rt_in16(IO + ATA_REG_DATA);
 	}
 }
 
-Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
+Void drv_pio_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
 {
 	Lba /= SectorSz;
 
 	UInt8 Command = ((!Master) ? 0xE0 : 0xF0);
 
-	drv_std_wait_io(IO);
-	drv_std_select(IO);
+	drv_pio_std_wait_io(IO);
+	drv_pio_std_select(IO);
 
 	rt_out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
@@ -163,13 +164,13 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 
 	for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff)
 	{
-		drv_std_wait_io(IO);
+		drv_pio_std_wait_io(IO);
 		rt_out16(IO + ATA_REG_DATA, Buf[IndexOff]);
 	}
 }
 
 /// @brief is ATA detected?
-Boolean drv_std_detected(Void)
+Boolean drv_pio_std_detected(Void)
 {
 	return kATADetected;
 }
@@ -177,15 +178,116 @@ Boolean drv_std_detected(Void)
 /***
 	 @brief Getter, gets the number of sectors inside the drive.
  */
-SizeT drv_get_sector_count()
+SizeT drv_pio_get_sector_count()
 {
 	return (kATAData[61] << 16) | kATAData[60];
 }
 
 /// @brief Get the drive size.
-SizeT drv_get_size()
+SizeT drv_pio_get_size()
 {
-	return (drv_get_sector_count()) * kATASectorSize;
+	return (drv_pio_get_sector_count()) * kATASectorSize;
 }
 
-#endif /* ifdef __ATA_PIO__ */
+namespace Kernel
+{
+	/// @brief Initialize an PIO device (StorageKit function)
+	/// @param is_master is the current PIO master?
+	/// @return [io:master] for PIO device.
+	BOOL sk_init_pio_device(BOOL is_master, UInt16& io, UInt8& master)
+	{
+		return drv_pio_std_init(ATA_SECONDARY_IO, is_master, io, master);
+	}
+
+	/// @brief Implementation details namespace.
+	namespace Detail
+	{
+		/// @brief Read PIO device.
+		/// @param self device
+		/// @param mnt mounted disk.
+		STATIC Void sk_io_read_pio(IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt)
+		{
+			ATADeviceInterface* dev = (ATADeviceInterface*)self;
+
+			err_global_get() = kErrorDisk;
+
+			if (!dev)
+				return;
+
+			auto disk = mnt->GetAddressOf(dev->GetIndex());
+
+			if (!disk)
+				return;
+
+			err_global_get() = kErrorSuccess;
+
+			drv_pio_std_read(disk->fPacket.fPacketLba, dev->GetIO(), dev->GetMaster(), (Char*)disk->fPacket.fPacketContent, kATASectorSize, disk->fPacket.fPacketSize);
+		}
+
+		/// @brief Write PIO device.
+		/// @param self device
+		/// @param mnt mounted disk.
+		STATIC Void sk_io_write_pio(IDeviceObject<MountpointInterface*>* self, MountpointInterface* mnt)
+		{
+			ATADeviceInterface* dev = (ATADeviceInterface*)self;
+
+			err_global_get() = kErrorDisk;
+
+			if (!dev)
+				return;
+
+			auto disk = mnt->GetAddressOf(dev->GetIndex());
+
+			if (!disk)
+				return;
+
+			err_global_get() = kErrorSuccess;
+
+			drv_pio_std_write(disk->fPacket.fPacketLba, dev->GetIO(), dev->GetMaster(), (Char*)disk->fPacket.fPacketContent, kATASectorSize, disk->fPacket.fPacketSize);
+		}
+	} // namespace Detail
+
+	/// @brief Acquires a new PIO device with drv_index in mind.
+	/// @param drv_index The drive index to assign.
+	/// @return A wrapped device interface if successful, or error code.
+	ErrorOr<ATADeviceInterface> sk_acquire_pio_device(Int32 drv_index)
+	{
+		/// here we don't check if we probed ATA, since we'd need to grab IO after that.
+		ATADeviceInterface device(Detail::sk_io_read_pio,
+								  Detail::sk_io_write_pio,
+								  nullptr);
+
+		device.SetIndex(drv_index);
+
+		return ErrorOr<ATADeviceInterface>(device);
+	}
+} // namespace Kernel
+
+#ifdef __ATA_PIO__
+
+Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
+{
+	drv_pio_std_read(Lba, IO, Master, Buf, SectorSz, Size);
+}
+
+Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz, SizeT Size)
+{
+	drv_pio_std_write(Lba, IO, Master, Buf, SectorSz, Size);
+}
+
+SizeT drv_get_size()
+{
+	return drv_pio_get_size();
+}
+
+SizeT drv_get_sector_count()
+{
+	return drv_pio_get_sector_count();
+}
+
+Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
+{
+	return drv_pio_std_init(Bus, Drive, OutBus, OutMaster);
+}
+
+#endif

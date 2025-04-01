@@ -89,3 +89,36 @@ ATADeviceInterface& ATADeviceInterface::operator>>(MountpointInterface* Data)
 	return (ATADeviceInterface&)IDeviceObject<MountpointInterface*>::operator>>(
 		Data);
 }
+
+const UInt32& ATADeviceInterface::GetIndex()
+{
+	return this->fDriveIndex;
+}
+
+Void ATADeviceInterface::SetIndex(const UInt32& drv)
+{
+	MUST_PASS(MountpointInterface::kDriveIndexInvalid != drv);
+	this->fDriveIndex = drv;
+}
+
+const UInt16& ATADeviceInterface::GetIO()
+{
+	return this->fIO;
+}
+
+Void ATADeviceInterface::SetIO(const UInt16& drv)
+{
+	MUST_PASS(0xFFFF != drv);
+	this->fIO = drv;
+}
+
+const UInt16& ATADeviceInterface::GetMaster()
+{
+	return this->fIO;
+}
+
+Void ATADeviceInterface::SetMaster(const UInt16& drv)
+{
+	MUST_PASS(0xFFFF != drv);
+	this->fMaster = drv;
+}

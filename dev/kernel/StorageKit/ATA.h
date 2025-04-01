@@ -13,7 +13,7 @@
 
 namespace Kernel
 {
-	/// @brief ATA device interface type.
+	/// @brief ATA device interface class.
 	class ATADeviceInterface : public IDeviceObject<MountpointInterface*>
 	{
 	public:
@@ -33,7 +33,29 @@ namespace Kernel
 
 		const Char* Name() const override;
 
+		const UInt16& GetIO();
+		Void SetIO(const UInt16& io);
+
+		const UInt16& GetMaster();
+		Void SetMaster(const UInt16& master);
+
+		const UInt32& GetIndex();
+		Void SetIndex(const UInt32& drv);
+
 	private:
 		void (*fCleanup)(void) = {nullptr};
+		UInt32 fDriveIndex{0U};
+		UInt16 fIO, fMaster{0U};
+
 	};
+
+	/// @brief Initialize an PIO device (StorageKit function)
+	/// @param is_master is the current PIO master?
+	/// @return [io:master] for PIO device.
+	BOOL sk_init_pio_device(BOOL is_master, UInt16& io, UInt8& master);
+
+	/// @brief Acquires a new PIO device with drv_index in mind.
+	/// @param drv_index The drive index to assign.
+	/// @return A wrapped device interface if successful, or error code.
+	ErrorOr<ATADeviceInterface> sk_acquire_pio_device(Int32 drv_index);
 } // namespace Kernel
