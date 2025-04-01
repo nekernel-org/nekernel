@@ -91,7 +91,7 @@ namespace Kernel::HAL
 		// Lastly, grab the pte entry.
 		NE_PDE* pde_struct = reinterpret_cast<NE_PDE*>(pt_base);
 
-		return pde_struct->fEntries[pt_entry]->PhysicalAddress;
+		return pde_struct->fEntries[pt_index]->PhysicalAddress;
 	}
 
 	/***********************************************************************************/
@@ -106,7 +106,7 @@ namespace Kernel::HAL
 		kout << (pte->User ? "User" : "Not User") << kendl;
 	}
 
-	STATIC Int32 mmi_map_page_table_entry(UInt32 physical_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry);
+	STATIC Int32 mmi_map_page_table_entry(UIntPtr virtual_address, UInt32 physical_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry);
 
 	/***********************************************************************************/
 	/// @brief Maps or allocates a page from virtual_address.
@@ -154,14 +154,14 @@ namespace Kernel::HAL
 		// Lastly, grab the pte entry.
 		NE_PDE* pde_struct = reinterpret_cast<NE_PDE*>(pt_base);
 
-		return mmi_map_page_table_entry((UInt32)(UInt64)physical_address, flags, pde_struct->fEntries[pt_entry], pde_struct);
+		return mmi_map_page_table_entry(reinterpret_cast<UIntPtr>(virtual_address), (UInt32)(UInt64)physical_address, flags, pde_struct->fEntries[pt_entry], pde_struct);
 	}
 
 	/***********************************************************************************/
 	/// @brief Maps flags for a specific pte.
 	/// @internal Internal function.
 	/***********************************************************************************/
-	STATIC Int32 mmi_map_page_table_entry(UInt32 physical_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry)
+	STATIC Int32 mmi_map_page_table_entry(UIntPtr virtual_address, UInt32 physical_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry)
 	{
 		if (!pt_entry)
 			return 1;
@@ -185,7 +185,7 @@ namespace Kernel::HAL
 
 		pt_entry->PhysicalAddress = physical_address;
 
-		hal_invl_tlb(reinterpret_cast<VoidPtr>(pt_entry));
+		hal_invl_tlb(reinterpret_cast<VoidPtr>(virtual_address));
 
 		mmi_page_status(pt_entry);
 
