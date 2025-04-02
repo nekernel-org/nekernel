@@ -98,6 +98,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	kout << "Boot Time: " << Kernel::number(kEndTim - kStartTim) << kendl;
 
+	Kernel::NeFS::fs_init_nefs();
+
 	Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 	Kernel::HAL::Register64 idt_reg;

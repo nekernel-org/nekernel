@@ -34,19 +34,18 @@ namespace Kernel
 		const Char* Name() const override;
 
 		const UInt16& GetIO();
-		Void SetIO(const UInt16& io);
+		Void		  SetIO(const UInt16& io);
 
 		const UInt16& GetMaster();
-		Void SetMaster(const UInt16& master);
+		Void		  SetMaster(const UInt16& master);
 
 		const UInt32& GetIndex();
-		Void SetIndex(const UInt32& drv);
+		Void		  SetIndex(const UInt32& drv);
 
 	private:
 		void (*fCleanup)(void) = {nullptr};
 		UInt32 fDriveIndex{0U};
 		UInt16 fIO, fMaster{0U};
-
 	};
 
 	/// @brief Initialize an PIO device (StorageKit function)

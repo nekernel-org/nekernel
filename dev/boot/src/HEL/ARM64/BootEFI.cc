@@ -78,8 +78,8 @@ EXTERN EfiBootServices* BS;
 /// @param image_handle Handle of this image.
 /// @param sys_table The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	image_handle,
-								EfiSystemTable* sys_table)
+EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
+									  EfiSystemTable* sys_table)
 {
 	InitEFI(sys_table); ///! Init the EFI library.
 

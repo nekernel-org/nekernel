@@ -13,9 +13,13 @@
 
 EfiGUID kEfiIP4ProtoGUID;
 
+STATIC Void bootnet_read_udp_packet(BOOTNET_INTERNET_HEADER&);
+
 EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 	BOOTNET_INTERNET_HEADER inet{};
+
+	bootnet_read_udp_packet(inet);
 
 	memset(&inet, 0, sizeof(BOOTNET_INTERNET_HEADER));
 
@@ -29,7 +33,7 @@ EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 		return kEfiFail;
 	}
 
-	if (!inet.ImpliesEEPROM)
+	if (!inet.ImpliesProgram)
 	{
 		Boot::BootThread thread(inet.Data);
 
@@ -49,4 +53,8 @@ EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	}
 
 	return kEfiFail;
+}
+
+STATIC Void bootnet_read_udp_packet(BOOTNET_INTERNET_HEADER&)
+{
 }

@@ -58,7 +58,8 @@ namespace Kernel
 		T* operator->() const
 		{
 			return fCls;
-		};
+		}
+
 		T* Raw()
 		{
 			return fCls;
@@ -83,7 +84,7 @@ namespace Kernel
 	};
 
 	template <typename T, typename... Args>
-	OwnPtr<T> make_ptr(Args... args)
+	inline OwnPtr<T> mm_make_own_ptr(Args... args)
 	{
 		OwnPtr<T> ret;
 		ret.template New<Args...>(forward(args)...);
