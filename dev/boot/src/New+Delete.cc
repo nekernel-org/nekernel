@@ -41,7 +41,7 @@ void operator delete(void* buf)
 {
 	if (!buf)
 		return;
-	
+
 	BS->FreePool(buf);
 }
 

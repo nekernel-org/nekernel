@@ -7,7 +7,7 @@
 
 #pragma once
 
-// last-rev: 30/01/24
+// last-rev: 02/04/25
 
 #include <CompilerKit/CompilerKit.h>
 #include <NewKit/Defines.h>
@@ -15,9 +15,10 @@
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 
-#define kMaxJsonPath 8196
-#define kJSONLen	 256
-#define kJSONNull	 "[]"
+#define kJSONMaxLen	 (8196)
+#define kJSONLen	 (256)
+#define kJSONNullArr "[]"
+#define kJSONNullObj "{}"
 
 namespace Kernel
 {
@@ -27,9 +28,9 @@ namespace Kernel
 	public:
 		explicit Json()
 		{
-			auto	len = kJSONLen;
+			auto	len = kJSONMaxLen;
 			KString key = KString(len);
-			key += kJSONNull;
+			key += kJSONNullObj;
 
 			this->AsKey()	= key;
 			this->AsValue() = key;
@@ -97,7 +98,7 @@ namespace Kernel
 			SizeT key_len	= 0;
 			SizeT value_len = 0;
 
-			Json type(kMaxJsonPath, kMaxJsonPath);
+			Json type(kJSONMaxLen, kJSONMaxLen);
 
 			for (SizeT i = 1; i < len; ++i)
 			{
@@ -116,6 +117,12 @@ namespace Kernel
 					}
 					else
 					{
+						if (full_array[i] == '\'')
+						{
+							type.AsValue().Data()[value_len] = 0;
+							break;
+						}
+
 						type.AsValue().Data()[value_len] = full_array[i];
 
 						++value_len;
@@ -128,9 +135,16 @@ namespace Kernel
 
 					if (full_array[i] == ':')
 					{
-						probe_value					 = true;
 						type.AsKey().Data()[key_len] = 0;
 						++key_len;
+
+						++i;
+
+						while (full_array[i] == ' ' ||
+							   full_array[i] == '\t')
+							++i;
+
+						probe_value = true;
 					}
 					else
 					{

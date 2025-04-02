@@ -82,8 +82,8 @@ EfiGUID kEfiGlobalNamespaceVarGUID = {
 /// @param image_handle Handle of this image.
 /// @param sys_table The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	image_handle,
-								EfiSystemTable* sys_table)
+EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
+									  EfiSystemTable* sys_table)
 {
 	InitEFI(sys_table); ///! Init the EFI library.
 
@@ -202,7 +202,7 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	image_handle,
 	//-----------------------------------------------------------//
 
 	SizeT lookup_index = 0UL;
-	SizeT entry_count = size_struct_ptr / sz_desc;
+	SizeT entry_count  = size_struct_ptr / sz_desc;
 
 	for (; lookup_index < entry_count; ++lookup_index)
 	{

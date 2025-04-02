@@ -17,7 +17,7 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	/// \brief Page store type.
 	/***********************************************************************************/
-	struct NE_PAGE_STORE final
+	struct PageStore final
 	{
 		struct
 		{
@@ -43,9 +43,9 @@ namespace Kernel::HAL
 			return pte && pte->User;
 		}
 
-		static NE_PAGE_STORE& The()
+		static PageStore& The()
 		{
-			static NE_PAGE_STORE the;
+			static PageStore the;
 			return the;
 		}
 	};
@@ -60,7 +60,7 @@ namespace Kernel::HAL
 
 		UInt64 cr3 = (UInt64)hal_read_cr3();
 
-		NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
+		PageStore& page_store = PageStore::The();
 
 		// Extract the indices from the virtual address
 		UInt64 pml4_index = ((UIntPtr)virtual_address >> 39) & kPmlIndexMask;
@@ -123,7 +123,7 @@ namespace Kernel::HAL
 
 		UInt64 cr3 = (UInt64)hal_read_cr3();
 
-		NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
+		PageStore& page_store = PageStore::The();
 
 		// Extract the indices from the virtual address
 		UInt64 pml4_index = ((UIntPtr)virtual_address >> 39) & kPmlIndexMask;
@@ -189,7 +189,7 @@ namespace Kernel::HAL
 
 		mmi_page_status(pt_entry);
 
-		NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
+		PageStore& page_store = PageStore::The();
 
 		// Update Internal store.
 

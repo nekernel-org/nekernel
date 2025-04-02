@@ -4,6 +4,7 @@
 #include <KernelKit/PE.h>
 #include <KernelKit/MSDOS.h>
 
+/// @brief CFKit
 namespace CF
 {
 	using namespace Kernel;

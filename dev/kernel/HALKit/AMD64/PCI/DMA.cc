@@ -5,6 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/PCI/DMA.h>
+#include <ArchKit/ArchKit.h>
 
 namespace Kernel
 {
@@ -26,37 +27,34 @@ namespace Kernel
 		if (offset == 0)
 			return false;
 
-		kout << "[DMAWrapper::IsIn] Checking offset..\n";
+		kout << "[DMAWrapper::IsIn] Checking offset...\r";
 		return reinterpret_cast<UIntPtr>(this->fAddress) >= offset;
 	}
 
 	bool DMAWrapper::Write(const UIntPtr& bit, const UInt32& offset)
 	{
-		kout << "[DMAWrapper::Read] Checking this->fAddress..\n";
+		kout << "[DMAWrapper::Read] Checking this->fAddress...\r";
 
 		if (!this->fAddress)
 			return false;
 
-		kout << "[DMAWrapper::Write] Writing at address..\n";
+		kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl;
 
-		auto addr =
-			(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(this->fAddress) + offset);
-		*addr = bit;
+		ke_dma_write<UInt32>(reinterpret_cast<UIntPtr>(this->fAddress), offset, bit);
 
 		return true;
 	}
 
 	UIntPtr DMAWrapper::Read(const UInt32& offset)
 	{
-		kout << "[DMAWrapper::Read] Checking this->fAddress..\n";
+		kout << "[DMAWrapper::Read] Checking this->fAddress...\r";
 
 		if (!this->fAddress)
-			return 0;
+			return ~0;
 
-		kout << "[DMAWrapper::Read] Reading this->fAddress..\n";
+		kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl;
 
-		return *(volatile UIntPtr*)(reinterpret_cast<UIntPtr>(this->fAddress) + offset);
-		;
+		return ke_dma_read<UInt32>(reinterpret_cast<UIntPtr>(this->fAddress), offset);
 	}
 
 	UIntPtr DMAWrapper::operator[](const UIntPtr& offset)
@@ -70,7 +68,7 @@ namespace Kernel
 			return {};
 
 		OwnPtr<IOBuf<Char*>> dmaOwnPtr =
-			make_ptr<IOBuf<Char*>, char*>(reinterpret_cast<char*>(dma->fAddress));
+			mm_make_own_ptr<IOBuf<Char*>, char*>(reinterpret_cast<char*>(dma->fAddress));
 
 		if (!dmaOwnPtr)
 			return {};

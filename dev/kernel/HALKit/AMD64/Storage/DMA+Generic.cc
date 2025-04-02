@@ -76,7 +76,7 @@ Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 		/// IDE interface
 		if (kATADevice.Subclass() == 0x01)
 		{
-		
+
 			break;
 		}
 	}

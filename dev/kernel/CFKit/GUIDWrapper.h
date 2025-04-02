@@ -10,11 +10,11 @@
 #include <NewKit/Ref.h>
 #include <NewKit/Stream.h>
 
-/* GUID for C++ Components */
+/* GUID for C++ classes. */
 
 #define kXRNNil "@{........-....-M...-N...-............}"
 
-// eXtensible Resource Information
+/// @brief eXtended Resource Namespace
 namespace CF::XRN
 {
 	using namespace Kernel;
