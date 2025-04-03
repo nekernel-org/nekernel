@@ -27,12 +27,12 @@
 #define kPefNameLen 256U
 
 /* not mandatory, only for non fork based filesystems. */
-#define kPefExt		  ".o"
+#define kPefExt		  ".exec"
 #define kPefDylibExt  ".dylib"
 #define kPefLibExt	  ".lib"
 #define kPefObjectExt ".obj"
 #define kPefDebugExt  ".dbg"
-#define kPefDriverExt ".efi"
+#define kPefDriverExt ".sys"
 
 // Kernel System Binary Interface.
 #define kPefAbi (0x5046)
