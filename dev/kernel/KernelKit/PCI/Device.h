@@ -17,6 +17,7 @@ namespace Kernel::PCI
 		Invalid		  = 0xFFFF,
 	};
 
+	/// @brief Device interface class
 	class Device final
 	{
 	public:
