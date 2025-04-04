@@ -18,6 +18,7 @@ namespace CF
 	class CFGUID;
 	class CFProperty;
 	class CFObject;
+	
 	template <typename T>
 	class CFRef;
 	class CFFont;
@@ -36,7 +37,7 @@ namespace CF
 	typedef SInt32 CFInteger32;
 	typedef SInt64 CFInteger64;
 
-	typedef char	 CFChar8;
+	typedef Char	 CFChar8;
 	typedef char16_t CFChar16;
 
 	struct CFPoint
