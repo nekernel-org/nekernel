@@ -1,4 +1,4 @@
-# boot, libsci, and kernel are owned by amlal@nekernel.org.
+# boot, user, and kernel are owned by amlal@nekernel.org.
 /dev/kernel/ @amlel-el-mahrouss
 /dev/boot/ @amlel-el-mahrouss
 /dev/user/ @amlel-el-mahrouss

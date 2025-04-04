@@ -73,23 +73,18 @@ namespace Boot
 			writer.Write("BootZ: Minor Subsystem Ver: ").Write(opt_header_ptr->MinorSubsystemVersion).Write("\r");
 			writer.Write("BootZ: Magic: ").Write(header_ptr->Signature).Write("\r");
 
-			constexpr auto cPageSize = 512;
-
 			EfiPhysicalAddress loadStartAddress = opt_header_ptr->ImageBase;
 			loadStartAddress += opt_header_ptr->BaseOfData;
 
 			writer.Write("BootZ: Image base: ").Write(loadStartAddress).Write("\r");
 
-			auto numPages = opt_header_ptr->SizeOfImage / cPageSize;
-			BS->AllocatePages(AllocateAddress, EfiLoaderData, numPages, &loadStartAddress);
-
 			fStack = new UInt8[mib_cast(16)];
 
 			LDR_SECTION_HEADER_PTR sectPtr = (LDR_SECTION_HEADER_PTR)(((Char*)opt_header_ptr) + header_ptr->SizeOfOptionalHeader);
 
-			constexpr auto sectionForCode	= ".text";
-			constexpr auto sectionForNewLdr = ".ldr";
-			constexpr auto sectionForBSS	= ".bss";
+			constexpr auto sectionForCode  = ".text";
+			constexpr auto sectionForBootZ = ".ldr";
+			constexpr auto sectionForBSS   = ".bss";
 
 			for (SizeT sectIndex = 0; sectIndex < numSecs; ++sectIndex)
 			{
@@ -114,7 +109,7 @@ namespace Boot
 					fStartAddress = (VoidPtr)((UIntPtr)loadStartAddress + opt_header_ptr->AddressOfEntryPoint);
 					writer.Write("BootZ: Executable entry address: ").Write((UIntPtr)fStartAddress).Write("\r");
 				}
-				else if (StrCmp(sectionForNewLdr, sect->Name) == 0)
+				else if (StrCmp(sectionForBootZ, sect->Name) == 0)
 				{
 					struct HANDOVER_INFORMATION_STUB
 					{
@@ -159,8 +154,9 @@ namespace Boot
 			//  =========================================  //
 
 			fStartAddress = nullptr;
+
 			writer.Write("BootZ: PEF executable detected, won't load it.\r");
-			writer.Write("BootZ: note: PEF executables aren't loadable by default.\r");
+			writer.Write("BootZ: note: PEF executables aren't supported for now.\r");
 		}
 		else
 		{
@@ -187,7 +183,7 @@ namespace Boot
 
 		if (own_stack)
 		{
-			UInt8* aligned_stack = &fStack[mib_cast(16)];
+			UInt8* aligned_stack = &fStack[mib_cast(16) - 1];
 			aligned_stack		 = (UInt8*)((UIntPtr)aligned_stack & ~0xF);
 
 			rt_jump_to_address(fStartAddress, fHandover, aligned_stack);

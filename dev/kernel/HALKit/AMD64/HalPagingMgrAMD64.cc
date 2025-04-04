@@ -91,7 +91,7 @@ namespace Kernel::HAL
 		// Lastly, grab the pte entry.
 		NE_PDE* pde_struct = reinterpret_cast<NE_PDE*>(pt_base);
 
-		return pde_struct->fEntries[pt_index]->PhysicalAddress;
+		return pde_struct->fEntries[pt_entry]->PhysicalAddress;
 	}
 
 	/***********************************************************************************/
