@@ -15,6 +15,7 @@
  *
  */
 
+#include "NewKit/Defines.h"
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
 #include <KernelKit/ProcessScheduler.h>
@@ -71,13 +72,13 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	kSATASectorCount = 0UL;
 
 	/// Normally 512 bytes, but add an additional 512 bytes to make 1 KIB.
-	const UInt16 kSzIdent = kib_cast(1);
+	const UInt16 kSzIdent = 256;
 
 	/// Push it to the stack
-	UInt8* identify_data ATTRIBUTE(aligned(4096)) = new UInt8[kSzIdent];
+	UInt16* identify_data ATTRIBUTE(aligned(4096)) = new UInt16[kSzIdent];
 
 	/// Send AHCI command for identification.
-	drv_std_input_output_ahci<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
+	drv_std_input_output_ahci<NO, YES, YES>(0, (UInt8*)identify_data, kAHCISectorSize, kSzIdent);
 
 	/// Extract 48-bit LBA.
 
@@ -90,6 +91,9 @@ STATIC Void drv_compute_disk_ahci() noexcept
 		kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 	else
 		kSATASectorCount = lba48_sectors;
+
+	delete[] identify_data;
+	identify_data = nullptr;
 }
 
 /// @brief Finds a command slot for a HBA port.
@@ -140,8 +144,10 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	/// Offset to specific command slot.
 	command_header += slot;
 
+	/// check for command header.
 	MUST_PASS(command_header);
 
+	/// 4kb per PRD.
 	constexpr const UInt32 kMaxPRDSize = kib_cast(4);
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);

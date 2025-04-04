@@ -28,11 +28,11 @@ using namespace Kernel::HAL;
 
 /// BUGS: 0
 
-STATIC Boolean kATADetected			 = false;
-STATIC Int32   kATADeviceType		 = kATADeviceCount;
-STATIC Char	   kATAData[kATADataLen] = {0};
+STATIC Boolean kATADetected					 = false;
+STATIC Int32   kATADeviceType				 = kATADeviceCount;
+STATIC UInt16  kATAIdentifyData[kATADataLen] = {0};
 STATIC Kernel::PCI::Device kATADevice;
-STATIC Char				   kCurrentDiskModel[50] = {"GENERIC DMA"};
+STATIC Char				   kATADiskModel[50] = {"GENERIC DMA"};
 
 Boolean drv_std_wait_io(UInt16 IO)
 {
@@ -198,7 +198,7 @@ Boolean drv_std_detected(Void)
 /***********************************************************************************/
 Kernel::SizeT drv_get_sector_count()
 {
-	return (kATAData[61] << 16) | kATAData[60];
+	return (kATAIdentifyData[61] << 16) | kATAIdentifyData[60];
 }
 
 /***********************************************************************************/

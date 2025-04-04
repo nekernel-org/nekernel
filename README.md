@@ -1,6 +1,9 @@
 <!-- Read Me of NeKernel -->
 
-# NeKernel
+<div align="center">
+  <img src="meta/png/nekernel.png" alt="Logo" width="128"/>
+  <h1>NeKernel</h1>
+</div>
 
 ![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml/badge.svg)
 ![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml/badge.svg)
@@ -13,7 +16,9 @@ A kernel for engineers who want a custom solution for their stack, written mostl
 
 ## User Friendly Diagram:
 
-![Diagram](docs/svg/OS_DESIGN.png)
+<div align="center">
+  <img src="docs/svg/OS_DESIGN.png" alt="Diagram"/>
+</div>
 
 ## Notice for Doxygen:
 

@@ -25,12 +25,12 @@ using namespace Kernel::HAL;
 
 /// BUGS: 0
 
-#define kATADataLen 512
+#define kATADataLen 256
 
-STATIC Boolean kATADetected			 = false;
-STATIC Int32   kATADeviceType		 = kATADeviceCount;
-STATIC Char	   kATAData[kATADataLen] = {0};
-STATIC Char	   kCurrentDiskModel[50] = {"GENERIC PIO"};
+STATIC Boolean kATADetected					 = false;
+STATIC Int32   kATADeviceType				 = kATADeviceCount;
+STATIC UInt16  kATAIdentifyData[kATADataLen] = {0};
+STATIC Char	   kATADiskModel[50]			 = {"GENERIC PIO"};
 
 static Boolean drv_pio_std_wait_io(UInt16 IO)
 {
@@ -96,20 +96,18 @@ ATAInit_Retry:
 
 	for (SizeT i = 0ul; i < kATADataLen; ++i)
 	{
-		kATAData[i] = HAL::rt_in16(OutBus + ATA_REG_DATA);
+		kATAIdentifyData[i] = HAL::rt_in16(OutBus + ATA_REG_DATA);
 	}
 
 	for (Int32 i = 0; i < 20; i++)
 	{
-		kCurrentDiskModel[i * 2]	 = kATAData[27 + i] >> 8;
-		kCurrentDiskModel[i * 2 + 1] = kATAData[27 + i + 1] & 0xFF;
+		kATADiskModel[i * 2]	 = (kATAIdentifyData[27 + i] >> 8) & 0xFF;
+		kATADiskModel[i * 2 + 1] = kATAIdentifyData[27 + i] & 0xFF;
 	}
 
-	kCurrentDiskModel[40] = '\0';
+	kATADiskModel[40] = '\0';
 
-	kout << "Detect: /dev/ata0" << kendl;
-
-	kout << "Drive Model: " << kCurrentDiskModel << kendl;
+	kout << "Drive Model: " << kATADiskModel << kendl;
 
 	return true;
 }
@@ -179,7 +177,7 @@ Boolean drv_pio_std_detected(Void)
  */
 SizeT drv_pio_get_sector_count()
 {
-	return (kATAData[61] << 16) | kATAData[60];
+	return (kATAIdentifyData[61] << 16) | kATAIdentifyData[60];
 }
 
 /// @brief Get the drive size.
