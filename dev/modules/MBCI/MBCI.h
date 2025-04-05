@@ -8,7 +8,7 @@
 #define _INC_MODULE_MBCI_H_
 
 #include <NewKit/Defines.h>
-#include <Mod/ACPI/ACPI.h>
+#include <modules/ACPI/ACPI.h>
 
 /**
 - VCC (IN) (OUT for MCU)
