@@ -2,8 +2,8 @@
 
 	Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 
-	FILE: UserProcessScheduler.cc
-	PURPOSE: Low level/Ring-3 Process scheduler.
+	FILE: KernelProcessScheduler.cc
+	PURPOSE: Privileged/Ring-0 process scheduler.
 
 ------------------------------------------- */
 

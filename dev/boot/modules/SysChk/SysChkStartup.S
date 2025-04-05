@@ -20,3 +20,5 @@
 
 .quad kHandoverMagic
 .word kTypeDriver
+.word 0
+.word kArchAmd64

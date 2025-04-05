@@ -15,7 +15,7 @@
 #include <NewKit/Defines.h>
 
 /// @file NVME.h
-/// @brief NVME driver.
+/// @brief Non Volatile Memory.
 
 #define NE_ALIGN_NVME ATTRIBUTE(aligned(sizeof(Kernel::UInt32)))
 
@@ -46,7 +46,7 @@ namespace Kernel
 
 	enum
 	{
-		kInvalidNVME,
+		kInvalidNVME			   = 0xFF,
 		kCreateCompletionQueueNVME = 0x05,
 		kCreateSubmissionQueueNVME = 0x01,
 		kIdentifyNVME			   = 0x06,

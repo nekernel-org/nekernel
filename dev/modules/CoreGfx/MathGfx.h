@@ -11,7 +11,7 @@
 
 namespace UI
 {
-#ifdef NE_GFX_MGR_USE_DOUBLE
+#ifdef NE_CORE_GFX_USE_DOUBLE
 	typedef double fb_real_t;
 #else
 	typedef float fb_real_t;

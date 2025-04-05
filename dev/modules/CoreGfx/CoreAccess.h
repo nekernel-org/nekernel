@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#ifndef GFX_MGR_ACCESSIBILITY_H
-#define GFX_MGR_ACCESSIBILITY_H
+#ifndef CORE_GFX_ACCESSIBILITY_H
+#define CORE_GFX_ACCESSIBILITY_H
 
 #include <NewKit/NewKit.h>
 #include <KernelKit/KPC.h>
@@ -38,4 +38,4 @@ namespace FB
 	};
 } // namespace FB
 
-#endif // !GFX_MGR_ACCESSIBILITY_H_
+#endif // !CORE_GFX_ACCESSIBILITY_H_
