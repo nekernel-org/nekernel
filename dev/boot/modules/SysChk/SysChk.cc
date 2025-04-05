@@ -21,7 +21,7 @@
 #include <BootKit/BootThread.h>
 #include <modules/CoreGfx/CoreGfx.h>
 
-EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
+EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 #ifdef __NE_AMD64__
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;

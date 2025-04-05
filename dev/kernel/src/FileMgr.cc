@@ -7,8 +7,10 @@
 #include <KernelKit/FileMgr.h>
 #include <NewKit/Utils.h>
 
+/***********************************************************************************/
 /// @file FileMgr.cc
 //! @brief File System Manager API.
+/***********************************************************************************/
 
 namespace Kernel
 {

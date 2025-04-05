@@ -129,15 +129,13 @@
 #define FBDrawInRegionA(clr, height, width, base_x, base_y)
 #endif // __NE_AMD64__
 
-#ifndef GFX_MGR_ACCESSIBILITY_H
+#ifndef CORE_GFX_ACCESSIBILITY_H
 #include <modules/CoreGfx/CoreAccess.h>
-#endif // ifndef GFX_MGR_ACCESSIBILITY_H
+#endif // ifndef CORE_GFX_ACCESSIBILITY_H
 
 namespace FB
 {
-	struct FB_CONTROL_BLOCK;
-
-	inline void fb_clear_video() noexcept
+	inline Void fb_clear_video() noexcept
 	{
 		fb_init();
 
@@ -146,5 +144,4 @@ namespace FB
 
 		fb_clear();
 	}
-
 } // namespace FB

@@ -18,7 +18,7 @@ namespace CF
 	class CFGUID;
 	class CFProperty;
 	class CFObject;
-	
+
 	template <typename T>
 	class CFRef;
 	class CFFont;

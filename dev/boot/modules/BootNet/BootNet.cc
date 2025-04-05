@@ -11,11 +11,11 @@
 #include <BootKit/BootKit.h>
 #include <BootKit/BootThread.h>
 
-EfiGUID kEfiIP4ProtoGUID;
+STATIC EfiGUID kEfiIP4ProtoGUID = {};
 
 STATIC Void bootnet_read_udp_packet(BOOTNET_INTERNET_HEADER&);
 
-EXTERN_C Int32 ModuleMain(Kernel::HEL::BootInfoHeader* handover)
+EXTERN_C Int32 BootNetModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 	BOOTNET_INTERNET_HEADER inet{};
 

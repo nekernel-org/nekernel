@@ -108,7 +108,8 @@ namespace Kernel
 		if (!ptr_heap || new_sz < 1)
 			return nullptr;
 
-		kout << "This function is not implemented by NeOSKrnl, please use the BSD's realloc instead.\r";
+		kout << "This function is not implemented by the kernel itself.\r";
+
 		ke_panic(RUNTIME_CHECK_INVALID);
 
 		return nullptr;

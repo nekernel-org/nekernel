@@ -97,7 +97,7 @@ all: compile-amd64
 .PHONY: disk
 disk:
 	dd if=/dev/zero of=$(BOOT) bs=30M count=100
-	mformat -i $(BOOT) -F -v "NeKernel"
+	mformat -i $(BOOT) -F -v "NEKERNEL-ESP"
 
 
 ifneq ($(DEBUG_SUPPORT), )
@@ -151,6 +151,7 @@ help:
 	@echo "=== HELP ==="
 	@echo "epm-img: Format a disk using the Explicit Partition Map."
 	@echo "gpt-img: Format a disk using the Explicit Partition Map."
+	@echo "disk: Format a FAT32 ESP disk."
 	@echo "clean: remove bootloader and files."
 	@echo "bootloader-amd64: Build bootloader. (PC AMD64)"
 	@echo "run-efi-amd64-<ahci, ata>: Run bootloader. (PC AMD64)"

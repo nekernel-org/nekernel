@@ -252,8 +252,11 @@ SizeT drv_get_size_ahci()
 }
 
 /// @brief Enable Host and probe using the IDENTIFY command.
-STATIC Void ahci_enable_and_probe()
+STATIC BOOL ahci_enable_and_probe()
 {
+	if (kSATAHba->Cap == 0x0)
+		return NO;
+
 	kSATAHba->Ports[kSATAIndex].Cmd &= ~kHBAPxCmdFre;
 	kSATAHba->Ports[kSATAIndex].Cmd &= ~kHBAPxCmdST;
 
@@ -324,6 +327,8 @@ STATIC Void ahci_enable_and_probe()
 	}
 
 	drv_compute_disk_ahci();
+
+	return YES;
 }
 
 /// @brief Initializes an AHCI disk.
@@ -372,22 +377,24 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
-					ahci_enable_and_probe();
+					if (ahci_enable_and_probe())
+					{
+						err_global_get() = kErrorSuccess;
 
-					err_global_get() = kErrorSuccess;
-
-					return YES;
+						return YES;
+					}
 				}
 				else if (atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig)
 				{
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
-					ahci_enable_and_probe();
+					if (ahci_enable_and_probe())
+					{
+						err_global_get() = kErrorSuccess;
 
-					err_global_get() = kErrorSuccess;
-
-					return YES;
+						return YES;
+					}
 				}
 
 				ports_implemented >>= 1;

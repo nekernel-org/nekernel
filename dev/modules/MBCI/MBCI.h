@@ -7,8 +7,12 @@
 #ifndef _INC_MODULE_MBCI_H_
 #define _INC_MODULE_MBCI_H_
 
+#include <hint/CompilerHint.h>
 #include <NewKit/Defines.h>
-#include <Mod/ACPI/ACPI.h>
+#include <modules/ACPI/ACPI.h>
+
+/// @file MBCI.h
+/// @brief Mini Bus Controller Interface.
 
 /**
 - VCC (IN) (OUT for MCU)
@@ -22,8 +26,9 @@
  */
 
 #define kMBCIZeroSz (8)
+#define kMBCIESBSz	(64)
 
-namespace NeOS
+namespace Kernel
 {
 	struct IMBCIHost;
 
@@ -53,14 +58,15 @@ namespace NeOS
 		UInt64 BaseAddressRegister;
 		UInt64 BaseAddressRegisterSize;
 		UInt32 CommandIssue;
-		Char   Zero[kMBCIZeroSz];
+		UInt8  Esb[kMBCIESBSz]; // Extended Signature Block
+		UInt8  Zero[kMBCIZeroSz];
 	};
 
 	/// @brief MBCI host flags.
 	enum MBCIHostFlags
 	{
 		kMBCIHostFlagsSupportsNothing,		// Invalid MBCI device.
-		kMBCIHostFlagsSupportsAPM,			// Advanced Power Management.
+		kMBCIHostFlagsSupportsAPM,			// FW's Advanced Power Management.
 		kMBCIHostFlagsSupportsDaisyChain,	// Is daisy chained.
 		kMBCIHostFlagsSupportsHWInterrupts, // Has HW interrupts.
 		kMBCIHostFlagsSupportsDMA,			// Has DMA.
@@ -93,8 +99,33 @@ namespace NeOS
 		kMBCIHostStateCount,
 	};
 
-	/// @brief An AuthKey is a context used to decrpy data from an MBCI packet.
-	typedef UInt64 MBCIAuthKeyType;
-} // namespace NeOS
+	/// @brief An AuthKey is a context used to tokenize data for an MBCI packet.
+	typedef UInt32 MBCIAuthKeyType;
+
+	/// @brief Read Auth key for MBCI host.
+	/// @param host the mbci host to get the key on.
+	/// @return the 24-bit key.
+	inline MBCIAuthKeyType mbci_read_auth_key(_Input volatile struct IMBCIHost* host)
+	{
+		constexpr auto const kChallengeMBCI = 0xdeadbeef;
+
+		host->MMIOTest = kChallengeMBCI;
+
+		if (host->MMIOTest == kChallengeMBCI)
+		{
+			return (host->Esb[kMBCIESBSz - 1] << 16) | (host->Esb[kMBCIESBSz - 2] << 8) | (host->Esb[kMBCIESBSz - 3] & 0xFF);
+		}
+
+		return kChallengeMBCI;
+	}
+
+	inline BOOL mbci_test_mmio(_Input volatile struct IMBCIHost* host)
+	{
+		constexpr auto const kChallengeMBCI = 0xdeadbeef;
+
+		host->MMIOTest = kChallengeMBCI;
+		return host->MMIOTest == kChallengeMBCI;
+	}
+} // namespace Kernel
 
 #endif // ifndef _INC_MODULE_MBCI_H_
