@@ -356,45 +356,30 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 
 			pi = ports_implemented;
 
-			const UInt16 kMaxPortsImplemented = kSATAPortCnt;
+			const UInt16 kSATAMaxPortsImplemented = ports_implemented;
 			const UInt32 kSATASignature		  = kSATASig;
 			const UInt32 kSATAPISignature	  = kSATAPISig;
 			const UInt8	 kSATAPresent		  = 0x03;
 			const UInt8	 kSATAIPMActive		  = 0x01;
 
-			kSATAHba = mem_ahci;
+			if (kSATAMaxPortsImplemented < 1)
+				continue;
 
 			while (ports_implemented)
 			{
 				UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
-				UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
+				UInt8 det = (mem_ahci->Ports[ahci_index].Ssts & 0x0F);
 
 				if (det != kSATAPresent || ipm != kSATAIPMActive)
 					continue;
 
-				if (mem_ahci->Ports[ahci_index].Sig == kSATASignature)
+				if ((mem_ahci->Ports[ahci_index].Sig == kSATASignature) ||
+					(atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig))
 				{
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
-					if (ahci_enable_and_probe())
-					{
-						err_global_get() = kErrorSuccess;
-
-						return YES;
-					}
-				}
-				else if (atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig)
-				{
-					kSATAIndex = ahci_index;
-					kSATAHba   = mem_ahci;
-
-					if (ahci_enable_and_probe())
-					{
-						err_global_get() = kErrorSuccess;
-
-						return YES;
-					}
+					goto success_hba_fetch;
 				}
 
 				ports_implemented >>= 1;
@@ -406,6 +391,14 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 	err_global_get() = kErrorDisk;
 
 	return NO;
+
+success_hba_fetch:
+	if (ahci_enable_and_probe())
+	{
+		err_global_get() = kErrorSuccess;
+
+		return YES;
+	}
 }
 
 /// @brief Checks if an AHCI device is detected.
