@@ -505,12 +505,11 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 		constexpr auto kFsName	  = "NeFS";
 		constexpr auto kBlockName = "NeKernel:";
 
-		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), epm_boot->Fs, rt_string_len(kFsName));
-
 		epm_boot->FsVersion = kNeFSVersionInteger;
 		epm_boot->LbaStart	= start;
 		epm_boot->SectorSz	= kNeFSSectorSz;
 
+		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), epm_boot->Fs, rt_string_len(kFsName));
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), epm_boot->Name, rt_string_len(kBlockName));
 		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epm_boot->Magic, rt_string_len(kEPMMagic));
 
