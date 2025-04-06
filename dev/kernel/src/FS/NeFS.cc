@@ -515,7 +515,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const L
 
 		Lba outEpmLba = kEPMBootBlockLba;
 
-		Char buf[kNeFSSectorSz];
+		Char buf[kNeFSSectorSz] = {0};
 
 		Lba	  prevStart = 0;
 		SizeT cnt		= 0;
