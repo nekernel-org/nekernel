@@ -220,7 +220,7 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 	// Update handover file specific table and phyiscal start field.
 	//-------------------------------------------------------------//
 
-	handover_hdr->f_BitMapStart = (VoidPtr)struct_ptr[lookup_index].VirtualStart;		/* Start of bitmap. */
+	handover_hdr->f_BitMapStart = (VoidPtr)(struct_ptr[lookup_index].VirtualStart);		/* Start of bitmap. */
 	handover_hdr->f_BitMapSize	= struct_ptr[lookup_index].NumberOfPages * kib_cast(4); /* Size of bitmap in bytes. */
 
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;

@@ -89,12 +89,11 @@ namespace Kernel
 #elif defined(__AHCI__)
 		kAHCIPortsImplemented = 0;
 
-		if (!drv_std_init(kAHCIPortsImplemented))
+		if (drv_std_init(kAHCIPortsImplemented))
 		{
-			return;
+			pckt.fPacketGood = YES;
 		}
 
-		pckt.fPacketGood = YES;
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
 	}
 
