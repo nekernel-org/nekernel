@@ -105,23 +105,20 @@ namespace Kernel
 	{
 		return "ATA-PIO";
 	}
-#endif
-#ifdef __ATA_DMA__
+#elif defined(__ATA_DMA__)
 	const Char* io_drv_kind(Void)
 	{
 		return "ATA-DMA";
 	}
-#endif
-#ifdef __AHCI__
+#elif defined( __AHCI__)
 	const Char* io_drv_kind(Void)
 	{
 		return "AHCI";
 	}
-#endif
-#ifdef __NE_MINIMAL_OS__
+#else
 	const Char* io_drv_kind(Void)
 	{
-		return "Not Loaded";
+		return "null";
 	}
 #endif
 
