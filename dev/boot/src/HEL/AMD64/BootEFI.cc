@@ -230,7 +230,6 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 	// If we succeed in reading the blob, then execute it.
 	// ------------------------------------------ //
 
-#if defined(__ATA_PIO__)
 	Boot::BootFileReader reader_syschk(L"chk.efi", image_handle);
 	reader_syschk.ReadAll(0);
 
@@ -241,34 +240,17 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 		syschk_thread = new Boot::BootThread(reader_syschk.Blob());
 		syschk_thread->SetName("BootZ: System Check");
 
-		Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
-
 		if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
 		{
-			if (partition_factory.IsPartitionValid() == NO)
-			{
-				Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor root{};
+			fb_init();
 
-				root.fFileName[0] = kNeFSRoot[0];
-				root.fFileName[1] = 0;
+			FB::fb_clear_video();
 
-				root.fKind = kNeFSCatalogKindDir;
+			FBDrawBitMapInRegion(zka_has_disk, NE_HAS_DISK_WIDTH, NE_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_HAS_DISK_HEIGHT) / 2);
 
-				const auto kFSName = "SSD";
-
-				partition_factory.Format(kFSName, &root, 1);
-
-				fb_init();
-
-				FB::fb_clear_video();
-
-				FBDrawBitMapInRegion(zka_has_disk, NE_HAS_DISK_WIDTH, NE_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_HAS_DISK_HEIGHT) / 2);
-
-				fb_clear();
-			}
+			fb_clear();
 		}
 	}
-#endif
 
 	// ------------------------------------------ //
 	// null these fields, to avoid being reused later.
