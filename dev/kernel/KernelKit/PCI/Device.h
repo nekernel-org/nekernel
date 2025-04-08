@@ -76,6 +76,3 @@ namespace Kernel::PCI
 		UInt32 fBar;
 	};
 } // namespace Kernel::PCI
-
-EXTERN_C void NewOSPCISetCfgTarget(Kernel::UInt bar);
-EXTERN_C Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar);
