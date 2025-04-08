@@ -7,14 +7,15 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/PCI/Device.h>
 
-#define PCI_BAR_IO		 0x01
-#define PCI_BAR_LOWMEM	 0x02
-#define PCI_BAR_64		 0x04
-#define PCI_BAR_PREFETCH 0x08
+#define PCI_BAR_IO		 (0x01)
+#define PCI_BAR_LOWMEM	 (0x02)
+#define PCI_BAR_64		 (0x04)
+#define PCI_BAR_PREFETCH (0x08)
+#define PCI_ENABLE_BIT 	 (0x80000000)
 
-Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
+static Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
-	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
+	Kernel::UInt target = PCI_ENABLE_BIT | ((Kernel::UInt)bus << 16) |
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
 						  (bar & 0xFC);
 
@@ -26,7 +27,7 @@ Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort 
 	return Kernel::HAL::rt_in32((Kernel::UShort)Kernel::PCI::PciConfigKind::ConfigData);
 }
 
-void NE_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
+static Kernel::Void NE_PCISetCfgTarget(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
 	Kernel::UInt target = 0x80000000 | ((Kernel::UInt)bus << 16) |
 						  ((Kernel::UInt)dev << 11) | ((Kernel::UInt)fun << 8) |
@@ -70,20 +71,26 @@ namespace Kernel::PCI
 		NE_PCISetCfgTarget(bar & 0xFC, fBus, fDevice, fFunction);
 
 		if (sz == 4)
-			HAL::rt_out32((UShort)PciConfigKind::ConfigData, (UInt)data);
+		{
+			HAL::rt_out32((UShort)PciConfigKind::ConfigAddress, (UInt)data);
+		}
 		else if (sz == 2)
 		{
 			UInt temp = HAL::rt_in32((UShort)PciConfigKind::ConfigData);
+			
 			temp &= ~(0xFFFF << ((bar & 2) * 8));
 			temp |= (data & 0xFFFF) << ((bar & 2) * 8);
-			HAL::rt_out32((UShort)PciConfigKind::ConfigData, temp);
+
+			HAL::rt_out32((UShort)PciConfigKind::ConfigAddress, temp);
 		}
 		else if (sz == 1)
 		{
 			UInt temp = HAL::rt_in32((UShort)PciConfigKind::ConfigData);
+
 			temp &= ~(0xFF << ((bar & 3) * 8));
 			temp |= (data & 0xFF) << ((bar & 3) * 8);
-			HAL::rt_out32((UShort)PciConfigKind::ConfigData, temp);
+			
+			HAL::rt_out32((UShort)PciConfigKind::ConfigAddress, temp);
 		}
 	}
 

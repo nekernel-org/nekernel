@@ -141,7 +141,15 @@ namespace Kernel
 							return (VoidPtr)ptr_bit_set;
 						}
 
-						base = reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(base) + ((ptr_bit_set[kBitMapMagIdx] != kBitMapMagic) ? (size + pad) : ptr_bit_set[kBitMapSizeIdx]));
+						UIntPtr raw_base = reinterpret_cast<UIntPtr>(base);
+						UIntPtr offset = (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
+										   ? (size + pad)
+										   : ptr_bit_set[kBitMapSizeIdx];
+										   
+						base = reinterpret_cast<VoidPtr>(raw_base + offset);
+
+						if (base == nullptr)
+							return nullptr;
 					}
 
 					return nullptr;
