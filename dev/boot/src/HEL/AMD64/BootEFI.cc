@@ -18,11 +18,6 @@
 #include <BootKit/BootThread.h>
 #include <modules/CoreGfx/CoreGfx.h>
 
-// Makes the compiler shut up.
-#ifndef kMachineModel
-#define kMachineModel "Krnl"
-#endif // !kMachineModel
-
 #ifndef kExpectedWidth
 #define kExpectedWidth (800)
 #endif
@@ -249,6 +244,8 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 			FBDrawBitMapInRegion(zka_has_disk, NE_HAS_DISK_WIDTH, NE_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_HAS_DISK_HEIGHT) / 2);
 
 			fb_clear();
+
+			Boot::Stop();
 		}
 	}
 

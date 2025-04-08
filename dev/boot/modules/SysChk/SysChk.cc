@@ -21,10 +21,26 @@
 #include <BootKit/BootThread.h>
 #include <modules/CoreGfx/CoreGfx.h>
 
+// Makes the compiler shut up.
+#ifndef kMachineModel
+#define kMachineModel "NeKrnl"
+#endif // !kMachineModel
+
 EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 #ifdef __NE_AMD64__
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
+
+	if (partition_factory.IsPartitionValid())
+		return kEfiOk;
+
+	Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor desc{};
+	
+	desc.fFileName[0] = '/';
+	desc.fFileName[1] = 0;
+	desc.fKind = kNeFSCatalogKindDir;
+
+	partition_factory.Format(kMachineModel, &desc, sizeof(Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor));
 
 	if (partition_factory.IsPartitionValid())
 		return kEfiOk;
