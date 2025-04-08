@@ -334,9 +334,6 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 
 	Boot::ExitBootServices(map_key, image_handle);
 
-	handover_hdr->f_BitMapStart = (VoidPtr)((UIntPtr)reader_kernel.Blob() + (UIntPtr)handover_hdr->f_BitMapStart + reader_kernel.Size());
-	handover_hdr->f_BitMapSize -= reader_kernel.Size();
-
 	if (kernel_thread->Start(handover_hdr, YES) != kEfiOk)
 	{
 		// ------------------------------------------ //

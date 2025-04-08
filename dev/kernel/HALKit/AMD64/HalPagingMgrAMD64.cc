@@ -12,86 +12,47 @@
 
 namespace Kernel::HAL
 {
-	typedef UInt32 PageTableIndex;
-
-	/***********************************************************************************/
-	/// \brief Page store type.
-	/***********************************************************************************/
-	struct PageStore final
-	{
-		struct
-		{
-			PDE*	fPde{nullptr};
-			PTE*	fPte{nullptr};
-			VoidPtr fPAddr{nullptr};
-		} fInternalStore;
-
-		Bool fStoreOp{No}; // Store operation is in progress.
-
-		bool IsValidPage(PTE* pte)
-		{
-			return pte && pte->Present;
-		}
-
-		bool IsWRPage(PTE* pte)
-		{
-			return pte && pte->Wr;
-		}
-
-		bool IsUserPage(PTE* pte)
-		{
-			return pte && pte->User;
-		}
-
-		static PageStore& The()
-		{
-			static PageStore the;
-			return the;
-		}
-	};
-
 	/// @brief Go over the Page structure and find the address of *virtual_address*
 
-	UIntPtr hal_get_phys_address(VoidPtr virtual_address)
+	UIntPtr hal_get_phys_address(VoidPtr virt)
 	{
-		// Constants for table index bits
-		const UInt64 kPmlIndexMask = 0x1FFULL; // Mask for PML4, PDPT, PD, PT index (9 bits)
-		const UInt64 kPtIndexMask  = 0xFFFULL; // Mask for page table index (12 bits)
+		const UInt64 vaddr			 = (UInt64)virt;
+		const UInt64 kMask9Bits		 = 0x1FFULL;
+		const UInt64 kPageOffsetMask = 0xFFFULL;
 
-		UInt64 cr3 = (UInt64)hal_read_cr3();
+		UInt64 cr3 = (UInt64)hal_read_cr3() & ~kPageOffsetMask;
 
-		PageStore& page_store = PageStore::The();
+		// Level 4
+		auto   pml4	 = reinterpret_cast<UInt64*>(cr3);
+		UInt64 pml4e = pml4[(vaddr >> 39) & kMask9Bits];
+		if (!(pml4e & 1))
+			return 0;
 
-		// Extract the indices from the virtual address
-		UInt64 pml4_index = ((UIntPtr)virtual_address >> 39) & kPmlIndexMask;
-		UInt64 pdpt_index = ((UIntPtr)virtual_address >> 30) & kPmlIndexMask;
-		UInt64 pd_index	  = ((UIntPtr)virtual_address >> 21) & kPmlIndexMask;
-		UInt64 pt_index	  = ((UIntPtr)virtual_address >> 12) & kPmlIndexMask;
+		// Level 3
+		auto   pdpt	 = reinterpret_cast<UInt64*>(pml4e & ~kPageOffsetMask);
+		UInt64 pdpte = pdpt[(vaddr >> 30) & kMask9Bits];
+		if (!(pdpte & 1))
+			return 0;
 
-		page_store.fStoreOp = Yes;
+		// Level 2
+		auto   pd  = reinterpret_cast<UInt64*>(pdpte & ~kPageOffsetMask);
+		UInt64 pde = pd[(vaddr >> 21) & kMask9Bits];
+		if (!(pde & 1))
+			return 0;
 
-		const auto kPmlEntrySize = 8;
+		// 1 GiB page support
+		if (pde & (1 << 7))
+		{
+			return (pde & ~((1ULL << 30) - 1)) | (vaddr & ((1ULL << 30) - 1));
+		}
 
-		// Read the PML4 entry from memory
-		UInt64 pml4_base  = cr3 & ~kPtIndexMask;					  // CR3 points to the PML4 table base, mask off lower bits
-		UInt64 pml4_entry = (pml4_base + pml4_index * kPmlEntrySize); // Each entry is 8 bytes
+		// Level 1
+		auto   pt  = reinterpret_cast<UInt64*>(pde & ~kPageOffsetMask);
+		UInt64 pte = pt[(vaddr >> 12) & kMask9Bits];
+		if (!(pte & 1))
+			return 0;
 
-		// Read the PDPT entry
-		UInt64 pdpt_base  = pml4_entry & ~kPtIndexMask; // Get the PDPT base physical address
-		UInt64 pdpt_entry = (pdpt_base + pdpt_index * kPmlEntrySize);
-
-		// Read the PD entry
-		UInt64 pd_base	= pdpt_entry & ~kPtIndexMask; // Get the Page Directory base physical address
-		UInt64 pd_entry = (pd_base + pd_index * kPmlEntrySize);
-
-		// Read the PT entry
-		UInt64 pt_base	= pd_entry & ~kPtIndexMask; // Get the Page Table base physical address
-		UInt64 pt_entry = (pt_base + pt_index * kPmlEntrySize);
-
-		// Lastly, grab the pte entry.
-		NE_PDE* pde_struct = reinterpret_cast<NE_PDE*>(pt_base);
-
-		return pde_struct->fEntries[pt_entry]->PhysicalAddress;
+		return (pte & ~kPageOffsetMask) | (vaddr & kPageOffsetMask);
 	}
 
 	/***********************************************************************************/
@@ -117,88 +78,40 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags)
 	{
-		// Constants for table index bits
-		const UInt64 kPmlIndexMask = 0x1FFULL; // Mask for PML4, PDPT, PD, PT index (9 bits)
-		const UInt64 kPtIndexMask  = 0xFFFULL; // Mask for page table index (12 bits)
+		const UInt64	 vaddr	   = (UInt64)virtual_address;
+		constexpr UInt64 kMask9	   = 0x1FF;
+		constexpr UInt64 kPageMask = 0xFFF;
 
-		UInt64 cr3 = (UInt64)hal_read_cr3();
+		UInt64 cr3 = (UIntPtr)hal_read_cr3() & ~kPageMask;
 
-		PageStore& page_store = PageStore::The();
-
-		// Extract the indices from the virtual address
-		UInt64 pml4_index = ((UIntPtr)virtual_address >> 39) & kPmlIndexMask;
-		UInt64 pdpt_index = ((UIntPtr)virtual_address >> 30) & kPmlIndexMask;
-		UInt64 pd_index	  = ((UIntPtr)virtual_address >> 21) & kPmlIndexMask;
-		UInt64 pt_index	  = ((UIntPtr)virtual_address >> 12) & kPmlIndexMask;
-
-		page_store.fStoreOp = Yes;
-
-		const auto kPmlEntrySize = 8;
-
-		// Read the PML4 entry from memory
-		UInt64 pml4_base  = cr3 & ~kPtIndexMask;					  // CR3 points to the PML4 table base, mask off lower bits
-		UInt64 pml4_entry = (pml4_base + pml4_index * kPmlEntrySize); // Each entry is 8 bytes
-
-		// Read the PDPT entry
-		UInt64 pdpt_base  = pml4_entry & ~kPtIndexMask; // Get the PDPT base physical address
-		UInt64 pdpt_entry = (pdpt_base + pdpt_index * kPmlEntrySize);
-
-		// Read the PD entry
-		UInt64 pd_base	= pdpt_entry & ~kPtIndexMask; // Get the Page Directory base physical address
-		UInt64 pd_entry = (pd_base + pd_index * kPmlEntrySize);
-
-		// Read the PT entry
-		UInt64 pt_base	= pd_entry & ~kPtIndexMask; // Get the Page Table base physical address
-		UInt64 pt_entry = (pt_base + pt_index * kPmlEntrySize);
-
-		// Lastly, grab the pte entry.
-		NE_PDE* pde_struct = reinterpret_cast<NE_PDE*>(pt_base);
-
-		return mmi_map_page_table_entry(reinterpret_cast<UIntPtr>(virtual_address), (UInt32)(UInt64)physical_address, flags, pde_struct->fEntries[pt_entry], pde_struct);
-	}
-
-	/***********************************************************************************/
-	/// @brief Maps flags for a specific pte.
-	/// @internal Internal function.
-	/***********************************************************************************/
-	STATIC Int32 mmi_map_page_table_entry(UIntPtr virtual_address, UInt32 physical_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry)
-	{
-		if (!pt_entry)
+		auto   pml4	 = reinterpret_cast<UInt64*>(cr3);
+		UInt64 pml4e = pml4[(vaddr >> 39) & kMask9];
+		if (!(pml4e & 1))
 			return 1;
 
-		pt_entry->Present = true;
+		auto   pdpt	 = reinterpret_cast<UInt64*>(pml4e & ~kPageMask);
+		UInt64 pdpte = pdpt[(vaddr >> 30) & kMask9];
+		if (!(pdpte & 1))
+			return 1;
 
+		auto   pd  = reinterpret_cast<UInt64*>(pdpte & ~kPageMask);
+		UInt64 pde = pd[(vaddr >> 21) & kMask9];
+		if (!(pde & 1))
+			return 1;
+
+		auto	pt	= reinterpret_cast<UInt64*>(pde & ~kPageMask);
+		UInt64& pte = pt[(vaddr >> 12) & kMask9];
+
+		// Set the new PTE
+		pte = (reinterpret_cast<UInt64>(physical_address) & ~0xFFFULL) | 0x01ULL; // Present
 		if (flags & kMMFlagsWr)
-			pt_entry->Wr = true;
-		else if (flags & ~kMMFlagsWr)
-			pt_entry->Wr = false;
-
-		if (flags & kMMFlagsNX)
-			pt_entry->ExecDisable = true;
-		else if (flags & ~kMMFlagsNX)
-			pt_entry->ExecDisable = false;
-
+			pte |= 1 << 1; // Writable
 		if (flags & kMMFlagsUser)
-			pt_entry->User = true;
-		else if (flags & ~kMMFlagsUser)
-			pt_entry->User = false;
+			pte |= 1 << 2; // User
+		if (flags & kMMFlagsNX)
+			pte |= 1ULL << 63; // NX
 
-		pt_entry->PhysicalAddress = physical_address;
-
-		hal_invl_tlb(reinterpret_cast<VoidPtr>(virtual_address));
-
-		mmi_page_status(pt_entry);
-
-		PageStore& page_store = PageStore::The();
-
-		// Update Internal store.
-
-		page_store.fInternalStore.fPde	 = pd_entry;
-		page_store.fInternalStore.fPte	 = pt_entry;
-		page_store.fInternalStore.fPAddr = (VoidPtr)(UIntPtr)physical_address;
-
-		page_store.fStoreOp = No;
-
+		hal_invl_tlb(virtual_address);
 		return 0;
 	}
 } // namespace Kernel::HAL
