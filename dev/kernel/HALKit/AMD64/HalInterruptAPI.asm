@@ -98,7 +98,6 @@ __NE_INT_3:
     out 0x20, al
 
     push rcx
-    mov rcx, rsp
     call idt_handle_generic
     pop rcx
 

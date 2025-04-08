@@ -67,6 +67,22 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept;
 
 STATIC Void drv_compute_disk_ahci() noexcept;
 
+namespace AHCI::Detail
+{
+	template <typename RetType>
+	RetType* ahci_align_address(RetType* address, Int32 alignement)
+	{
+		if (!address)
+			return nullptr;
+
+		UIntPtr addr = (UIntPtr)address;
+
+		UIntPtr aligned_addr = (addr + alignement - 1) & ~alignement - 1;
+
+		return (RetType*)aligned_addr;
+	}
+} // namespace AHCI::Detail
+
 STATIC Void drv_compute_disk_ahci() noexcept
 {
 	kSATASectorCount = 0UL;
@@ -75,7 +91,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	const UInt16 kSzIdent = 256;
 
 	/// Push it to the stack
-	UInt16* identify_data ATTRIBUTE(aligned(4096)) = new UInt16[kSzIdent];
+	UInt16* identify_data ATTRIBUTE(aligned(kib_cast(1))) = AHCI::Detail::ahci_align_address<UInt16>(new UInt16[kSzIdent], kib_cast(1));
 
 	/// Send AHCI command for identification.
 	drv_std_input_output_ahci<NO, YES, YES>(0, (UInt8*)identify_data, kAHCISectorSize, kSzIdent);
@@ -166,7 +182,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	for (UInt16 i = 0; i < prdt_count; ++i)
 	{
-		UInt32 chunk = (bytes_remaining > kMaxPRDSize) ? kMaxPRDSize : bytes_remaining;
+		UInt32 chunk = bytes_remaining / prdt_count;
 
 		if (chunk == 0)
 			break;
@@ -277,8 +293,8 @@ STATIC BOOL ahci_enable_and_probe()
 
 	// Relocate Command List Base.
 
-	auto const addr				= mm_new_heap(kib_cast(64), YES, NO, 0);
-	auto	   kAHCIBaseAddress = (UIntPtr)addr;
+	VoidPtr const kAHCIBasePtr	   = AHCI::Detail::ahci_align_address<Void>(mm_new_heap(kib_cast(64), YES, NO, 0), kib_cast(1));
+	UIntPtr const kAHCIBaseAddress = reinterpret_cast<UIntPtr>(kAHCIBasePtr);
 
 	port->Clb  = kAHCIBaseAddress + (kSATAIndex << 10);
 	port->Clbu = 0;
@@ -288,7 +304,7 @@ STATIC BOOL ahci_enable_and_probe()
 
 	// Relocate Frame Info Structure now.
 
-	port->Fb  = kAHCIBaseAddress + (kSATAPortCnt << 10) + (kSATAIndex << 10);
+	port->Fb  = (UInt32)(UIntPtr)(UIntPtr*)AHCI::Detail::ahci_align_address<UInt32>((UInt32*)(kAHCIBaseAddress + (kSATAPortCnt << 10) + (kSATAIndex << 10)), kib_cast(1));
 	port->Fbu = 0;
 
 	// clean it.
@@ -299,16 +315,10 @@ STATIC BOOL ahci_enable_and_probe()
 	for (Int32 i = 0; i < kSATAPortCnt; i++)
 	{
 		cmd_hdr[i].Prdtl = 8;
-		cmd_hdr[i].Ctba	 = kAHCIBaseAddress + (40 << 10) + (kSATAPortCnt << 10) + (kSATAIndex << 10);
+		cmd_hdr[i].Ctba	 = (UInt32)(UIntPtr)(UIntPtr*)AHCI::Detail::ahci_align_address<UInt32>((UInt32*)(kAHCIBaseAddress + (40 << 10) + (kSATAPortCnt << 10) + (kSATAIndex << 10)), kib_cast(1));
 		cmd_hdr[i].Ctbau = 0;
 
 		rt_set_memory(reinterpret_cast<VoidPtr>(cmd_hdr[i].Ctba), 0, 256);
-	}
-
-	for (UIntPtr offset = 0; offset < kib_cast(64); offset += kib_cast(1))
-	{
-		VoidPtr addr = reinterpret_cast<VoidPtr>(kAHCIBaseAddress + offset);
-		HAL::mm_map_page(addr, addr, HAL::kMMFlagsWr);
 	}
 
 	// Now we are ready.
@@ -356,45 +366,30 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 
 			pi = ports_implemented;
 
-			const UInt16 kMaxPortsImplemented = kSATAPortCnt;
-			const UInt32 kSATASignature		  = kSATASig;
-			const UInt32 kSATAPISignature	  = kSATAPISig;
-			const UInt8	 kSATAPresent		  = 0x03;
-			const UInt8	 kSATAIPMActive		  = 0x01;
+			const UInt16 kSATAMaxPortsImplemented = ports_implemented;
+			const UInt32 kSATASignature			  = kSATASig;
+			const UInt32 kSATAPISignature		  = kSATAPISig;
+			const UInt8	 kSATAPresent			  = 0x03;
+			const UInt8	 kSATAIPMActive			  = 0x01;
 
-			kSATAHba = mem_ahci;
+			if (kSATAMaxPortsImplemented < 1)
+				continue;
 
 			while (ports_implemented)
 			{
 				UInt8 ipm = (mem_ahci->Ports[ahci_index].Ssts >> 8) & 0x0F;
-				UInt8 det = mem_ahci->Ports[ahci_index].Ssts & 0x0F;
+				UInt8 det = (mem_ahci->Ports[ahci_index].Ssts & 0x0F);
 
 				if (det != kSATAPresent || ipm != kSATAIPMActive)
 					continue;
 
-				if (mem_ahci->Ports[ahci_index].Sig == kSATASignature)
+				if ((mem_ahci->Ports[ahci_index].Sig == kSATASignature) ||
+					(atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig))
 				{
 					kSATAIndex = ahci_index;
 					kSATAHba   = mem_ahci;
 
-					if (ahci_enable_and_probe())
-					{
-						err_global_get() = kErrorSuccess;
-
-						return YES;
-					}
-				}
-				else if (atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig)
-				{
-					kSATAIndex = ahci_index;
-					kSATAHba   = mem_ahci;
-
-					if (ahci_enable_and_probe())
-					{
-						err_global_get() = kErrorSuccess;
-
-						return YES;
-					}
+					goto success_hba_fetch;
 				}
 
 				ports_implemented >>= 1;
@@ -404,6 +399,16 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 	}
 
 	err_global_get() = kErrorDisk;
+
+	return NO;
+
+success_hba_fetch:
+	if (ahci_enable_and_probe())
+	{
+		err_global_get() = kErrorSuccess;
+
+		return YES;
+	}
 
 	return NO;
 }
@@ -418,7 +423,7 @@ Bool drv_std_detected_ahci()
 // ================================================================================================
 
 //
-//	This applies only if we compile with AHCI as a default disk driver.
+/// @note This applies only if we compile with AHCI as a default disk driver.
 //
 
 // ================================================================================================

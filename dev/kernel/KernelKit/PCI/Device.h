@@ -24,10 +24,9 @@ namespace Kernel::PCI
 		Device() = default;
 
 	public:
-		explicit Device(UShort bus, UShort device, UShort function, UInt32 bar);
+		Device(UShort bus, UShort device, UShort function, UInt32 bar);
 
 		Device& operator=(const Device&) = default;
-
 		Device(const Device&) = default;
 
 		~Device();
@@ -43,14 +42,14 @@ namespace Kernel::PCI
 		template <typename T>
 		UInt Read(UInt bar)
 		{
-			static_assert(sizeof(T) <= 4, "64-bit PCI addressing is unsupported");
+			static_assert(sizeof(T) <= sizeof(UInt32), "64-bit PCI addressing is unsupported");
 			return Read(bar, sizeof(T));
 		}
 
 		template <typename T>
 		void Write(UInt bar, UIntPtr data)
 		{
-			static_assert(sizeof(T) <= 4, "64-bit PCI addressing is unsupported");
+			static_assert(sizeof(T) <= sizeof(UInt32), "64-bit PCI addressing is unsupported");
 			Write(bar, data, sizeof(T));
 		}
 

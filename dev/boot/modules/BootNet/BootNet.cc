@@ -23,7 +23,7 @@ EXTERN_C Int32 BootNetModuleMain(Kernel::HEL::BootInfoHeader* handover)
 
 	memset(&inet, 0, sizeof(BOOTNET_INTERNET_HEADER));
 
-	/// TODO: Read packet from JSON file 'bootnet.json'
+	/// TODO: Read address from JSON file 'bootnet.json'
 
 	if (inet.Length < 1)
 	{

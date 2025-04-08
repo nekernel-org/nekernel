@@ -49,7 +49,7 @@ DEBUG_MACRO = -D__DEBUG__
 endif
 
 ifeq ($(shell uname), Darwin)
-EMU_FLAGS=-M q35  -smp 4 -m 8G \
+EMU_FLAGS=-M q35 -smp 4 -m 8G \
     -bios $(BIOS) -cdrom $(BOOT) -boot d
 endif
 
