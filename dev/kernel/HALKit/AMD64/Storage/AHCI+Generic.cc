@@ -491,9 +491,9 @@ namespace Kernel
 	UInt16 sk_init_ahci_device(BOOL atapi)
 	{
 		UInt16 pi = 0;
-		drv_std_init_ahci(pi, atapi);
-
-		kSATAPortsImplemented = pi;
+		
+		if (drv_std_init_ahci(pi, atapi))
+			kSATAPortsImplemented = pi;
 
 		return pi;
 	}
