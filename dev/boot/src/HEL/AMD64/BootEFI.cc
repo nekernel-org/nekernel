@@ -165,58 +165,39 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 
 	// Fill handover header now.
 
-	// ---------------------------------------------------- //
-	// The following checks for an exisiting partition
-	// inside the disk, if it doesn't have one,
-	// format the disk.
-	// ---------------------------------------------------- //
-
 	Boot::BootTextWriter writer;
-
-	auto ret = BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
-
-	if (ret == kEfiFail)
-	{
-		writer.Write("BootZ: GetMemoryMap failed (x1)\r");
-		Boot::Stop();
-	}
-
-	size_struct_ptr += sz_desc * 2;
-	BS->AllocatePool(EfiMemoryType::EfiBootServicesData, size_struct_ptr, reinterpret_cast<VoidPtr*>(&struct_ptr));
-
-	ret = BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
-
-	if (ret == kEfiFail)
-	{
-		writer.Write("BootZ: GetMemoryMap failed (x2)\r");
-		Boot::Stop();
-	}
-
-	//-----------------------------------------------------------//
-	// A simple loop which finds a usable memory region for us.
-	//-----------------------------------------------------------//
-
-	SizeT lookup_index = 0UL;
-	SizeT entry_count  = size_struct_ptr / sz_desc;
-
-	for (; lookup_index < entry_count; ++lookup_index)
-	{
-		if (struct_ptr[lookup_index].Kind == EfiMemoryType::EfiConventionalMemory)
-			break;
-	}
-
-	if (lookup_index > entry_count)
-	{
-		writer.Write("BootZ: No usable entries.\r");
-		Boot::Stop();
-	}
 
 	//-------------------------------------------------------------//
 	// Update handover file specific table and phyiscal start field.
 	//-------------------------------------------------------------//
 
-	handover_hdr->f_BitMapStart = (VoidPtr)(struct_ptr[lookup_index].VirtualStart);		/* Start of bitmap. */
-	handover_hdr->f_BitMapSize	= struct_ptr[lookup_index].NumberOfPages * kib_cast(4); /* Size of bitmap in bytes. */
+	handover_hdr->f_BitMapSize = gib_cast(4); /* Size of bitmap in bytes. */
+	Int32 trials			   = 5 * 10000000;
+
+	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
+	{
+		--trials;
+
+		if (!trials)
+		{
+			writer.Write("BootZ: Unable to allocate sufficent memory, trying again with 2GB...\r");
+
+			trials = 3 * 10000000;
+
+			handover_hdr->f_BitMapSize = gib_cast(2); /* Size of bitmap in bytes. */
+
+			while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
+			{
+				--trials;
+
+				if (!trials)
+				{
+					writer.Write("BootZ: Unable to allocate sufficent memory, aborting...\r");
+					Boot::Stop();
+				}
+			}
+		}
+	}
 
 	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
 	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;

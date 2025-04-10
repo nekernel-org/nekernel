@@ -10,13 +10,14 @@
     "-fPIC",
     "-fno-rtti",
     "-fno-exceptions",
-    "-Wl,--subsystem=17,--image-base,0x1000000,-e,SysChkModuleMain"
+    "-Wl,--subsystem=17,--image-base,0x10000000,-e,SysChkModuleMain"
   ],
   "cpp_macros": [
     "__NEOSKRNL__",
     "__BOOTZ__",
     "__BOOTZ_STANDALONE__",
     "__NE_AMD64__",
+    "__AHCI__",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",
     "kChkVersion=0x0100"

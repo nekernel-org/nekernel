@@ -23,12 +23,12 @@
 
 // Makes the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "NeKrnl"
+#define kMachineModel "Ne"
 #endif // !kMachineModel
 
 EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
-#ifdef __NE_AMD64__
+#ifdef __ATA_PIO__
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (partition_factory.IsPartitionValid())
@@ -40,7 +40,7 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	desc.fFileName[1] = 0;
 	desc.fKind		  = kNeFSCatalogKindDir;
 
-	partition_factory.Format(kMachineModel, &desc, sizeof(Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor));
+	partition_factory.Format(kMachineModel, &desc, 1);
 
 	if (partition_factory.IsPartitionValid())
 		return kEfiOk;

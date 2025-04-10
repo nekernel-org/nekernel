@@ -3,22 +3,23 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "../../", "../../../kernel", "../../../", "./"],
   "sources_path": ["*.cc", "*.S", "../../src/HEL/AMD64/*.cc", "../../src/HEL/AMD64/*.S", "../../src/*.cc"],
-  "output_name": "net.efi",
+  "output_name": "chk.efi",
   "compiler_flags": [
     "-nostdlib",
     "-std=c++20",
     "-fPIC",
     "-fno-rtti",
     "-fno-exceptions",
-    "-Wl,--subsystem=17,--image-base,0x10000000,-e,BootNetModuleMain"
+    "-Wl,--subsystem=17,--image-base,0x10000000,-e,SysChkModuleMain"
   ],
   "cpp_macros": [
     "__NEOSKRNL__",
     "__BOOTZ__",
     "__BOOTZ_STANDALONE__",
     "__NE_AMD64__",
-    "kBootNetVersionHighest=0x0100",
-    "kBootNetVersionLowest=0x0100",
-    "kBootNetVersion=0x0100"
+    "__ATA_PIO__",
+    "kChkVersionHighest=0x0100",
+    "kChkVersionLowest=0x0100",
+    "kChkVersion=0x0100"
   ]
 }

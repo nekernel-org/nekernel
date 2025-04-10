@@ -95,9 +95,9 @@ namespace Kernel
 					if (!size)
 						return nullptr;
 
-					constexpr const UInt32 kStartOffset = 0x1000;
+					VoidPtr base = reinterpret_cast<VoidPtr>((UIntPtr)base_ptr);
 
-					VoidPtr base = reinterpret_cast<VoidPtr>(((UIntPtr)base_ptr) + kStartOffset);
+					MUST_PASS(base);
 
 					static SizeT biggest = 0UL;
 
