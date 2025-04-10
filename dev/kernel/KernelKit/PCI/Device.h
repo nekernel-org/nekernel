@@ -27,7 +27,7 @@ namespace Kernel::PCI
 		Device(UShort bus, UShort device, UShort function, UInt32 bar);
 
 		Device& operator=(const Device&) = default;
-		Device(const Device&) = default;
+		Device(const Device&)			 = default;
 
 		~Device();
 

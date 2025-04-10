@@ -12,8 +12,11 @@
 
 namespace Kernel::HAL
 {
-	/// @brief Go over the Page structure and find the address of *virtual_address*
-
+	/***********************************************************************************/
+	/// @brief Gets a physical address from a virtual address.
+	/// @param virt a valid virtual address.
+	/// @return Physical address.
+	/***********************************************************************************/
 	UIntPtr hal_get_phys_address(VoidPtr virt)
 	{
 		const UInt64 vaddr			 = (UInt64)virt;
@@ -25,18 +28,21 @@ namespace Kernel::HAL
 		// Level 4
 		auto   pml4	 = reinterpret_cast<UInt64*>(cr3);
 		UInt64 pml4e = pml4[(vaddr >> 39) & kMask9Bits];
+
 		if (!(pml4e & 1))
 			return 0;
 
 		// Level 3
 		auto   pdpt	 = reinterpret_cast<UInt64*>(pml4e & ~kPageOffsetMask);
 		UInt64 pdpte = pdpt[(vaddr >> 30) & kMask9Bits];
+
 		if (!(pdpte & 1))
 			return 0;
 
 		// Level 2
 		auto   pd  = reinterpret_cast<UInt64*>(pdpte & ~kPageOffsetMask);
 		UInt64 pde = pd[(vaddr >> 21) & kMask9Bits];
+
 		if (!(pde & 1))
 			return 0;
 
@@ -49,6 +55,7 @@ namespace Kernel::HAL
 		// Level 1
 		auto   pt  = reinterpret_cast<UInt64*>(pde & ~kPageOffsetMask);
 		UInt64 pte = pt[(vaddr >> 12) & kMask9Bits];
+
 		if (!(pte & 1))
 			return 0;
 
@@ -86,16 +93,19 @@ namespace Kernel::HAL
 
 		auto   pml4	 = reinterpret_cast<UInt64*>(cr3);
 		UInt64 pml4e = pml4[(vaddr >> 39) & kMask9];
+
 		if (!(pml4e & 1))
 			return 1;
 
 		auto   pdpt	 = reinterpret_cast<UInt64*>(pml4e & ~kPageMask);
 		UInt64 pdpte = pdpt[(vaddr >> 30) & kMask9];
+
 		if (!(pdpte & 1))
 			return 1;
 
 		auto   pd  = reinterpret_cast<UInt64*>(pdpte & ~kPageMask);
 		UInt64 pde = pd[(vaddr >> 21) & kMask9];
+
 		if (!(pde & 1))
 			return 1;
 
@@ -104,10 +114,16 @@ namespace Kernel::HAL
 
 		// Set the new PTE
 		pte = (reinterpret_cast<UInt64>(physical_address) & ~0xFFFULL) | 0x01ULL; // Present
+
+		if (flags & ~kMMFlagsPresent)
+			pte &= ~(0x01ULL); // Not Present
+
 		if (flags & kMMFlagsWr)
 			pte |= 1 << 1; // Writable
+
 		if (flags & kMMFlagsUser)
 			pte |= 1 << 2; // User
+
 		if (flags & kMMFlagsNX)
 			pte |= 1ULL << 63; // NX
 

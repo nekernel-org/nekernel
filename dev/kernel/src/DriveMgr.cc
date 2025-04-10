@@ -110,7 +110,7 @@ namespace Kernel
 	{
 		return "ATA-DMA";
 	}
-#elif defined( __AHCI__)
+#elif defined(__AHCI__)
 	const Char* io_drv_kind(Void)
 	{
 		return "AHCI";

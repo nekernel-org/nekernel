@@ -142,10 +142,10 @@ namespace Kernel
 						}
 
 						UIntPtr raw_base = reinterpret_cast<UIntPtr>(base);
-						UIntPtr offset = (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
-										   ? (size + pad)
-										   : ptr_bit_set[kBitMapSizeIdx];
-										   
+						UIntPtr offset	 = (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic)
+											   ? (size + pad)
+											   : ptr_bit_set[kBitMapSizeIdx];
+
 						base = reinterpret_cast<VoidPtr>(raw_base + offset);
 
 						if (base == nullptr)

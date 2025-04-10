@@ -35,10 +35,10 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 		return kEfiOk;
 
 	Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor desc{};
-	
+
 	desc.fFileName[0] = '/';
 	desc.fFileName[1] = 0;
-	desc.fKind = kNeFSCatalogKindDir;
+	desc.fKind		  = kNeFSCatalogKindDir;
 
 	partition_factory.Format(kMachineModel, &desc, sizeof(Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor));
 

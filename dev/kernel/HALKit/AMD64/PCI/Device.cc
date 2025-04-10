@@ -11,7 +11,7 @@
 #define PCI_BAR_LOWMEM	 (0x02)
 #define PCI_BAR_64		 (0x04)
 #define PCI_BAR_PREFETCH (0x08)
-#define PCI_ENABLE_BIT 	 (0x80000000)
+#define PCI_ENABLE_BIT	 (0x80000000)
 
 static Kernel::UInt NE_PCIReadRaw(Kernel::UInt bar, Kernel::UShort bus, Kernel::UShort dev, Kernel::UShort fun)
 {
@@ -77,7 +77,7 @@ namespace Kernel::PCI
 		else if (sz == 2)
 		{
 			UInt temp = HAL::rt_in32((UShort)PciConfigKind::ConfigData);
-			
+
 			temp &= ~(0xFFFF << ((bar & 2) * 8));
 			temp |= (data & 0xFFFF) << ((bar & 2) * 8);
 
@@ -89,7 +89,7 @@ namespace Kernel::PCI
 
 			temp &= ~(0xFF << ((bar & 3) * 8));
 			temp |= (data & 0xFF) << ((bar & 3) * 8);
-			
+
 			HAL::rt_out32((UShort)PciConfigKind::ConfigAddress, temp);
 		}
 	}
