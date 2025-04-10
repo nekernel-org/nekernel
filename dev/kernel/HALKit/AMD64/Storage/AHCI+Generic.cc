@@ -15,7 +15,6 @@
  *
  */
 
-#include "NewKit/Defines.h"
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
 #include <KernelKit/ProcessScheduler.h>
@@ -70,7 +69,7 @@ STATIC Void drv_compute_disk_ahci() noexcept;
 namespace AHCI::Detail
 {
 	template <typename RetType>
-	RetType* ahci_align_address(RetType* address, Int32 alignement)
+	STATIC RetType* ahci_align_address(RetType* address, Int32 alignement)
 	{
 		if (!address)
 			return nullptr;
@@ -91,7 +90,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	const UInt16 kSzIdent = 256;
 
 	/// Push it to the stack
-	UInt16* identify_data ATTRIBUTE(aligned(kib_cast(1))) = AHCI::Detail::ahci_align_address<UInt16>(new UInt16[kSzIdent], kib_cast(1));
+	UInt16* identify_data = AHCI::Detail::ahci_align_address<UInt16>(new UInt16[kSzIdent], kib_cast(1));
 
 	/// Send AHCI command for identification.
 	drv_std_input_output_ahci<NO, YES, YES>(0, (UInt8*)identify_data, kAHCISectorSize, kSzIdent);
@@ -148,6 +147,10 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 		return;
 	}
 
+	if (size_buffer > mib_cast(4) ||
+		sector_sz > kAHCISectorSize)
+		return;
+
 	if (!Write)
 	{
 		// Zero-memory the buffer field.
@@ -168,9 +171,10 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
 	command_header->Write = Write;
-	command_header->Prdtl = (UInt16)((size_buffer + kMaxPRDSize - 1) / kMaxPRDSize);
+	command_header->Prdtl = 1;
 
-	volatile HbaCmdTbl* command_table = (volatile HbaCmdTbl*)((VoidPtr)((UInt64)command_header->Ctba));
+	auto ctba_phys	   = ((UInt64)command_header->Ctbau << 32) | command_header->Ctba;
+	auto command_table = reinterpret_cast<volatile HbaCmdTbl*>(ctba_phys);
 
 	rt_set_memory((HbaCmdTbl*)command_table, 0, sizeof(HbaCmdTbl) + (command_header->Prdtl - 1) * sizeof(HbaPrdtEntry));
 
@@ -178,27 +182,13 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	UIntPtr buffer_phys		= HAL::hal_get_phys_address(buffer);
 	SizeT	bytes_remaining = size_buffer;
-	SizeT	prdt_count		= command_header->Prdtl;
 
-	for (UInt16 i = 0; i < prdt_count; ++i)
-	{
-		UInt32 chunk = bytes_remaining / prdt_count;
-
-		if (chunk == 0)
-			break;
-
-		command_table->Prdt[i].Dba	= (UInt32)(buffer_phys & 0xFFFFFFFF);
-		command_table->Prdt[i].Dbau = (UInt32)(buffer_phys >> 32);
-		command_table->Prdt[i].Dbc	= chunk - 1;
-		command_table->Prdt[i].Ie	= 1;
-
-		buffer_phys += chunk;
-		bytes_remaining -= chunk;
-	}
+	command_table->Prdt[0].Dba	= (UInt32)(buffer_phys & 0xFFFFFFFF);
+	command_table->Prdt[0].Dbau = (UInt32)(buffer_phys >> 32);
+	command_table->Prdt[0].Dbc	= bytes_remaining - 1;
+	command_table->Prdt[0].Ie	= 1;
 
 	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)(&command_table->Cfis[0]);
-
-	rt_set_memory((FisRegH2D*)h2d_fis, 0, sizeof(FisRegH2D));
 
 	h2d_fis->FisType   = kFISTypeRegH2D;
 	h2d_fis->CmdOrCtrl = CommandOrCTRL;
@@ -217,29 +207,12 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	h2d_fis->CountLow  = (size_buffer)&0xFF;
 	h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
 
-	while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq))
-	{
-		;
-	}
-
 	kSATAHba->Ports[kSATAIndex].Ci = (1 << slot);
 
-	while (YES)
+	for (Int32 i = 0; i < 1000000; ++i)
 	{
 		if (!(kSATAHba->Ports[kSATAIndex].Ci & (1 << slot)))
 			break;
-
-		if (kSATAHba->Is & kHBAErrTaskFile)
-		{
-			err_global_get() = kErrorDiskIsCorrupted;
-			return;
-		}
-	}
-
-	/// we should wait again, just in case.
-	while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq))
-	{
-		;
 	}
 
 	if (kSATAHba->Is & kHBAErrTaskFile)
@@ -285,40 +258,6 @@ STATIC BOOL ahci_enable_and_probe()
 			continue;
 
 		break;
-	}
-
-	// Command engine stopped, remap the AHCI port.
-
-	auto port = &kSATAHba->Ports[kSATAIndex];
-
-	// Relocate Command List Base.
-
-	VoidPtr const kAHCIBasePtr	   = AHCI::Detail::ahci_align_address<Void>(mm_new_heap(kib_cast(64), YES, NO, 0), kib_cast(1));
-	UIntPtr const kAHCIBaseAddress = reinterpret_cast<UIntPtr>(kAHCIBasePtr);
-
-	port->Clb  = kAHCIBaseAddress + (kSATAIndex << 10);
-	port->Clbu = 0;
-
-	// clean it.
-	rt_set_memory(reinterpret_cast<VoidPtr>(port->Clb), 0, 1024);
-
-	// Relocate Frame Info Structure now.
-
-	port->Fb  = (UInt32)(UIntPtr)(UIntPtr*)AHCI::Detail::ahci_align_address<UInt32>((UInt32*)(kAHCIBaseAddress + (kSATAPortCnt << 10) + (kSATAIndex << 10)), kib_cast(1));
-	port->Fbu = 0;
-
-	// clean it.
-	rt_set_memory(reinterpret_cast<VoidPtr>(port->Fb), 0, 256);
-
-	volatile HbaCmdHeader* cmd_hdr = reinterpret_cast<volatile HbaCmdHeader*>(port->Clb);
-
-	for (Int32 i = 0; i < kSATAPortCnt; i++)
-	{
-		cmd_hdr[i].Prdtl = 8;
-		cmd_hdr[i].Ctba	 = (UInt32)(UIntPtr)(UIntPtr*)AHCI::Detail::ahci_align_address<UInt32>((UInt32*)(kAHCIBaseAddress + (40 << 10) + (kSATAPortCnt << 10) + (kSATAIndex << 10)), kib_cast(1));
-		cmd_hdr[i].Ctbau = 0;
-
-		rt_set_memory(reinterpret_cast<VoidPtr>(cmd_hdr[i].Ctba), 0, 256);
 	}
 
 	// Now we are ready.
@@ -491,9 +430,9 @@ namespace Kernel
 	UInt16 sk_init_ahci_device(BOOL atapi)
 	{
 		UInt16 pi = 0;
-		drv_std_init_ahci(pi, atapi);
 
-		kSATAPortsImplemented = pi;
+		if (drv_std_init_ahci(pi, atapi))
+			kSATAPortsImplemented = pi;
 
 		return pi;
 	}

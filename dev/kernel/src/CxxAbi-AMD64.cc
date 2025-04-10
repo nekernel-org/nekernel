@@ -25,6 +25,8 @@ EXTERN_C Kernel::Void __cxa_pure_virtual(void* self)
 
 EXTERN_C void ___chkstk_ms(void)
 {
+	kout << "Stack smashing detected!\r";
+	dbg_break_point();
 }
 
 EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)

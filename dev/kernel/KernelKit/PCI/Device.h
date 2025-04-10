@@ -27,7 +27,7 @@ namespace Kernel::PCI
 		Device(UShort bus, UShort device, UShort function, UInt32 bar);
 
 		Device& operator=(const Device&) = default;
-		Device(const Device&) = default;
+		Device(const Device&)			 = default;
 
 		~Device();
 
@@ -76,6 +76,3 @@ namespace Kernel::PCI
 		UInt32 fBar;
 	};
 } // namespace Kernel::PCI
-
-EXTERN_C void NewOSPCISetCfgTarget(Kernel::UInt bar);
-EXTERN_C Kernel::UInt NewOSPCIReadRaw(Kernel::UInt bar);
