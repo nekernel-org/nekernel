@@ -215,7 +215,7 @@ namespace Boot
 
 		~BDiskFormatFactory() = default;
 
-		NE_COPY_DELETE(BDiskFormatFactory);
+		NE_COPY_DELETE(BDiskFormatFactory)
 
 		/// @brief Format disk using partition name and blob.
 		/// @param Partition part_name the target partition name.

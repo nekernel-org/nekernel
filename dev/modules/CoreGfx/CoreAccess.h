@@ -24,7 +24,7 @@ namespace FB
 		~FBAccessibilty()		  = default;
 
 	public:
-		NE_COPY_DELETE(FBAccessibilty);
+		NE_COPY_DELETE(FBAccessibilty)
 
 		static UInt64 Width() noexcept
 		{
