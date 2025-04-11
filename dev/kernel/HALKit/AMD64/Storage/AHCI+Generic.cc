@@ -87,7 +87,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	kSATASectorCount = 0UL;
 
 	/// Normally 512 bytes, but add an additional 512 bytes to make 1 KIB.
-	const UInt16 kSzIdent = 256;
+	const UInt16 kSzIdent = 512;
 
 	/// Push it to the stack
 	UInt16* identify_data = AHCI::Detail::ahci_align_address<UInt16>(new UInt16[kSzIdent], kib_cast(1));
@@ -186,7 +186,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	command_table->Prdt[0].Dba	= (UInt32)(buffer_phys & 0xFFFFFFFF);
 	command_table->Prdt[0].Dbau = (UInt32)(buffer_phys >> 32);
 	command_table->Prdt[0].Dbc	= bytes_remaining - 1;
-	command_table->Prdt[0].Ie	= 1;
+	command_table->Prdt[0].Ie	= NO;
 
 	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)(&command_table->Cfis[0]);
 
@@ -299,6 +299,8 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 
 			kSATADev.EnableMmio();
 			kSATADev.BecomeBusMaster();
+
+			HAL::mm_map_page((VoidPtr)mem_ahci, (VoidPtr)mem_ahci, HAL::kMMFlagsPresent | HAL::kMMFlagsWr | HAL::kMMFlagsUncached);
 
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;

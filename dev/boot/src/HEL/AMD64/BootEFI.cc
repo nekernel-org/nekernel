@@ -222,7 +222,7 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 
 			FB::fb_clear_video();
 
-			FBDrawBitMapInRegion(zka_has_disk, NE_HAS_DISK_WIDTH, NE_HAS_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_HAS_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_HAS_DISK_HEIGHT) / 2);
+			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
 
 			fb_clear();
 

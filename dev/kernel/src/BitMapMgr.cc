@@ -78,6 +78,8 @@ namespace Kernel
 					if (user)
 						flags |= kMMFlagsUser;
 
+					flags |= HAL::kMMFlagsUncached;
+
 					return flags;
 				}
 
