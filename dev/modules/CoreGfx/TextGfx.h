@@ -170,8 +170,12 @@ inline Kernel::Void fb_render_string_for_bitmap(const Kernel::UInt8* bitmap, con
 
 inline Kernel::Void fb_render_string(const Kernel::Char* text, Kernel::Int32 x_dst, Kernel::Int32 y_dst, Kernel::Int32 color)
 {
+#ifndef __BOOTZ__
 	auto len = Kernel::rt_string_len(text);
-	
+#else
+	auto len = StrLen(text);
+#endif
+
 	for (Kernel::SizeT i = 0; i < len; ++i)
 	{
 		fb_render_string_for_bitmap(&kFontBitmap[(Kernel::UInt8)text[i]][0], kFontSizeX, kFontSizeY, x_dst, y_dst, color);

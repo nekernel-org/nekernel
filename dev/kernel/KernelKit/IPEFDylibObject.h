@@ -29,7 +29,7 @@ namespace Kernel
 		~IPEFDylibObject()		   = default;
 
 	public:
-		NE_COPY_DEFAULT(IPEFDylibObject);
+		NE_COPY_DEFAULT(IPEFDylibObject)
 
 	private:
 		DLL_TRAITS* fMounted{nullptr};

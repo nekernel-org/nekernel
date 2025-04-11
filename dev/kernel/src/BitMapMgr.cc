@@ -37,7 +37,7 @@ namespace Kernel
 				explicit IBitMapProxy() = default;
 				~IBitMapProxy()			= default;
 
-				NE_COPY_DELETE(IBitMapProxy);
+				NE_COPY_DELETE(IBitMapProxy)
 
 				auto IsBitMap(VoidPtr page_ptr) -> Bool
 				{

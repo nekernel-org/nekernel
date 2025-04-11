@@ -23,9 +23,7 @@ ifneq ($(AHCI_SUPPORT), )
 DISK_DRV =  -D__AHCI__
 endif
 
-ifneq ($(DEBUG_SUPPORT), )
 DEBUG_MACRO = -D__DEBUG__
-endif
 
 COPY		= cp
 

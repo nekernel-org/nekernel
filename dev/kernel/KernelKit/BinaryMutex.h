@@ -35,7 +35,7 @@ namespace Kernel
 		bool LockOrWait(UserProcess& process, TimerInterface* timer);
 
 	public:
-		NE_COPY_DEFAULT(BinaryMutex);
+		NE_COPY_DEFAULT(BinaryMutex)
 
 	private:
 		UserProcessRef fLockingProcess;

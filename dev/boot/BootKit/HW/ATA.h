@@ -23,7 +23,7 @@ public:
 	explicit BootDeviceATA() noexcept;
 	~BootDeviceATA() = default;
 
-	NE_COPY_DELETE(BootDeviceATA);
+	NE_COPY_DELETE(BootDeviceATA)
 
 	enum
 	{

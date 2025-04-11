@@ -38,7 +38,7 @@ namespace Kernel
 
 			~IndexableProperty() override = default;
 
-			NE_COPY_DEFAULT(IndexableProperty);
+			NE_COPY_DEFAULT(IndexableProperty)
 
 		public:
 			Index& Leak() noexcept;

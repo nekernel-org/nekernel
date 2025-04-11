@@ -24,7 +24,7 @@ namespace Kernel
 		MacAddressGetter()	= default;
 		~MacAddressGetter() = default;
 
-		NE_COPY_DEFAULT(MacAddressGetter);
+		NE_COPY_DEFAULT(MacAddressGetter)
 
 	public:
 		Array<WideChar, kMACAddrLen>& AsBytes();

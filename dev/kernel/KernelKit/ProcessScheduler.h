@@ -170,7 +170,7 @@ namespace Kernel
 		~UserProcess();
 
 	public:
-		NE_COPY_DEFAULT(UserProcess);
+		NE_COPY_DEFAULT(UserProcess)
 
 	public:
 		Char			   Name[kSchedNameLen] = {"Process"};
@@ -298,7 +298,7 @@ namespace Kernel
 		explicit UserProcessTeam();
 		~UserProcessTeam() = default;
 
-		NE_COPY_DEFAULT(UserProcessTeam);
+		NE_COPY_DEFAULT(UserProcessTeam)
 
 		Array<UserProcess, kSchedProcessLimitPerTeam>& AsArray();
 		Ref<UserProcess>&							   AsRef();

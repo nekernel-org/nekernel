@@ -52,7 +52,7 @@ namespace Kernel
 			return ("TerminalDevice");
 		}
 
-		NE_COPY_DEFAULT(TerminalDevice);
+		NE_COPY_DEFAULT(TerminalDevice)
 
 		STATIC TerminalDevice The() noexcept;
 	};
