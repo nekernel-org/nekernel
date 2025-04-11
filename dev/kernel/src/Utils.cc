@@ -160,7 +160,7 @@ namespace Kernel
 
 	Char rt_to_char(UInt64 base, Int32 limit)
 	{
-		const Char kNumbers[17] = "0123456789ABCDEF";
+		Char kNumbers[17] = "0123456789ABCDEF";
 		return kNumbers[base % limit];
 	}
 
@@ -198,7 +198,7 @@ namespace Kernel
 
 	/// @brief Checks for a string start at the character.
 
-	Char* rt_string_has_char(Char* str, const Char chr)
+	Char* rt_string_has_char(Char* str, Char chr)
 	{
 		while (*str != chr)
 		{

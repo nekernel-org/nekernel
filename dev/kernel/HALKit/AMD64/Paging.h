@@ -41,25 +41,6 @@ EXTERN_C Kernel::VoidPtr hal_read_cr3(); // @brief Page table.
 
 namespace Kernel::HAL
 {
-	/// @brief Final page entry (Not PML, PDPT)
-	struct PACKED NE_PTE final
-	{
-		UInt64 Present : 1;
-		UInt64 Wr : 1;
-		UInt64 User : 1;
-		UInt64 Wt : 1;
-		UInt64 Cache : 1;
-		UInt64 Accessed : 1;
-		UInt64 Dirty : 1;
-		UInt64 MemoryType : 1;
-		UInt64 Global : 1;
-		UInt64 Resvered1 : 3;
-		UInt64 PhysicalAddress : 36;
-		UInt64 Reserved2 : 10;
-		UInt64 ProtectionKey : 5;
-		UInt64 ExecDisable : 1;
-	};
-
 	namespace Detail
 	{
 		enum class ControlRegisterBits
@@ -83,17 +64,13 @@ namespace Kernel::HAL
 		}
 	} // namespace Detail
 
-	struct NE_PDE final
-	{
-		NE_PTE* ALIGN(kPageAlign) fEntries[kPageMax];
-	};
 
-	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, const SizeT pad = 0) -> VoidPtr;
+	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, SizeT pad = 0) -> VoidPtr;
 	auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
 } // namespace Kernel::HAL
 
 namespace Kernel
 {
-	typedef HAL::NE_PTE PTE;
-	typedef HAL::NE_PDE PDE;
+	typedef VoidPtr PTE;
+	typedef VoidPtr PDE;
 } // namespace Kernel

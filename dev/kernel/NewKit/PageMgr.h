@@ -27,7 +27,7 @@ namespace Kernel
 		PTEWrapper(const PTEWrapper&)			 = default;
 
 	public:
-		const UIntPtr VirtualAddress();
+		UIntPtr VirtualAddress();
 
 		Void NoExecute(const bool enable = false);
 		Bool NoExecute();

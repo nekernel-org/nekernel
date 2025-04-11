@@ -48,8 +48,8 @@ public:
 	SizeT GetSectorsCount() noexcept;
 	SizeT GetDiskSize() noexcept;
 
-	BootDeviceATA& Read(Char* Buf, const SizeT& SecCount) override;
-	BootDeviceATA& Write(Char* Buf, const SizeT& SecCount) override;
+	BootDeviceATA& Read(Char* Buf, SizeT SecCount) override;
+	BootDeviceATA& Write(Char* Buf, SizeT SecCount) override;
 
 	ATATrait& Leak() override;
 

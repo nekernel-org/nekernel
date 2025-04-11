@@ -22,7 +22,7 @@ namespace Kernel
 		Array& operator=(const Array&) = default;
 		Array(const Array&)			   = default;
 
-		T& operator[](const SizeT& at)
+		T& operator[](SizeT at)
 		{
 			MUST_PASS(at < this->Count());
 			return fArray[at];
@@ -33,12 +33,12 @@ namespace Kernel
 			return this->Count() > 0;
 		}
 
-		const SizeT Capacity()
+		SizeT Capacity()
 		{
 			return N;
 		}
 
-		const SizeT Count()
+		SizeT Count()
 		{
 			return N;
 		}

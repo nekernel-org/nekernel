@@ -157,7 +157,7 @@ Boot::BootTextWriter& Boot::BootTextWriter::_Write(const UInt64& x)
 		return *this;
 	}
 
-	if (y < 0)
+	if (y == ~0UL)
 		y = -y;
 
 	const char cNumbers[] = "0123456789ABCDEF";

@@ -12,6 +12,41 @@
 
 namespace Kernel::HAL
 {
+	namespace Detail
+	{
+		struct PTE
+		{
+			UInt64 Present : 1;
+			UInt64 Wr : 1;
+			UInt64 User : 1;
+			UInt64 Pwt : 1; // Page-level Write-Through
+			UInt64 Pcd : 1; // Page-level Cache Disable
+			UInt64 Accessed : 1;
+			UInt64 Dirty : 1;
+			UInt64 Pat : 1; // Page Attribute Table (or PS for PDE)
+			UInt64 Global : 1;
+			UInt64 Ignored1 : 3;		 // Available to software
+			UInt64 PhysicalAddress : 40; // Physical page frame address (bits 12–51)
+			UInt64 Ignored2 : 7;		 // More software bits / reserved
+			UInt64 Protection_key : 4;	 // Optional (if PKU enabled)
+			UInt64 Reserved : 1;		 // Usually reserved
+			UInt64 Nx : 1;				 // No Execute
+		};
+	} // namespace Detail
+
+	/***********************************************************************************/
+	/// \brief Retrieve the page status of a PTE.
+	/// \param pte Page Table Entry pointer.
+	/***********************************************************************************/
+	STATIC Void mmi_page_status(Detail::PTE* pte)
+	{
+		(void)(kout << (pte->Present ? "Present" : "Not Present") << kendl);
+		(void)(kout << (pte->Wr ? "W/R" : "Not W/R") << kendl);
+		(void)(kout << (pte->Nx ? "NX" : "Not NX") << kendl);
+		(void)(kout << (pte->User ? "User" : "Not User") << kendl);
+		(void)(kout << (pte->Pcd ? "Not Cached" : "Cached") << kendl);
+	}
+
 	/***********************************************************************************/
 	/// @brief Gets a physical address from a virtual address.
 	/// @param virt a valid virtual address.
@@ -24,6 +59,8 @@ namespace Kernel::HAL
 		const UInt64 kPageOffsetMask = 0xFFFULL;
 
 		UInt64 cr3 = (UInt64)hal_read_cr3() & ~kPageOffsetMask;
+
+		hal_invl_tlb(virt);
 
 		// Level 4
 		auto   pml4	 = reinterpret_cast<UInt64*>(cr3);
@@ -54,27 +91,15 @@ namespace Kernel::HAL
 
 		// Level 1
 		auto   pt  = reinterpret_cast<UInt64*>(pde & ~kPageOffsetMask);
-		UInt64 pte = pt[(vaddr >> 12) & kMask9Bits];
+		Detail::PTE* pte = (Detail::PTE*)pt[(vaddr >> 12) & kMask9Bits];
 
-		if (!(pte & 1))
+		if (!pte->Present)
 			return 0;
 
-		return (pte & ~kPageOffsetMask) | (vaddr & kPageOffsetMask);
-	}
+		mmi_page_status((Detail::PTE*)pte);
 
-	/***********************************************************************************/
-	/// \brief Retrieve the page status of a PTE.
-	/// \param pte Page Table Entry pointer.
-	/***********************************************************************************/
-	STATIC Void mmi_page_status(PTE* pte)
-	{
-		kout << (pte->Present ? "Present" : "Not Present") << kendl;
-		kout << (pte->Wr ? "W/R" : "Not W/R") << kendl;
-		kout << (pte->ExecDisable ? "NX" : "Not NX") << kendl;
-		kout << (pte->User ? "User" : "Not User") << kendl;
+		return pte->PhysicalAddress;
 	}
-
-	STATIC Int32 mmi_map_page_table_entry(UIntPtr virtual_address, UInt32 physical_address, UInt32 flags, NE_PTE* pt_entry, NE_PDE* pd_entry);
 
 	/***********************************************************************************/
 	/// @brief Maps or allocates a page from virtual_address.
@@ -95,39 +120,36 @@ namespace Kernel::HAL
 		UInt64 pml4e = pml4[(vaddr >> 39) & kMask9];
 
 		if (!(pml4e & 1))
-			return 1;
+			return kErrorInvalidData;
 
 		auto   pdpt	 = reinterpret_cast<UInt64*>(pml4e & ~kPageMask);
 		UInt64 pdpte = pdpt[(vaddr >> 30) & kMask9];
 
 		if (!(pdpte & 1))
-			return 1;
+			return kErrorInvalidData;
 
 		auto   pd  = reinterpret_cast<UInt64*>(pdpte & ~kPageMask);
 		UInt64 pde = pd[(vaddr >> 21) & kMask9];
 
 		if (!(pde & 1))
-			return 1;
+			return kErrorInvalidData;
 
-		auto	pt	= reinterpret_cast<UInt64*>(pde & ~kPageMask);
-		UInt64& pte = pt[(vaddr >> 12) & kMask9];
+		UInt64*		 pt	 = reinterpret_cast<UInt64*>(pde & ~kPageMask);
+		Detail::PTE* pte = (Detail::PTE*)pt[(vaddr >> 12) & kMask9];
 
-		// Set the new PTE
-		pte = (reinterpret_cast<UInt64>(physical_address) & ~0xFFFULL) | 0x01ULL; // Present
+		pte->Present = !!(flags & kMMFlagsPresent);
+		pte->Wr = !!(flags & kMMFlagsWr);
+		pte->User = !!(flags & kMMFlagsUser);
+		pte->Nx = !!(flags & kMMFlagsNX);
+		pte->Pcd = !(flags & kMMFlagsUncached);
 
-		if (flags & ~kMMFlagsPresent)
-			pte &= ~(0x01ULL); // Not Present
-
-		if (flags & kMMFlagsWr)
-			pte |= 1 << 1; // Writable
-
-		if (flags & kMMFlagsUser)
-			pte |= 1 << 2; // User
-
-		if (flags & kMMFlagsNX)
-			pte |= 1ULL << 63; // NX
+		if (physical_address)
+			pte->PhysicalAddress = (UIntPtr)physical_address;
 
 		hal_invl_tlb(virtual_address);
-		return 0;
+
+		mmi_page_status(pte);
+
+		return kErrorSuccess;
 	}
 } // namespace Kernel::HAL

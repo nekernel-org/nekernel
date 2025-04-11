@@ -145,10 +145,10 @@ inline const Kernel::UInt8 kFontBitmap[kFontNOFChars][kFontSizeX] = {
 
 };
 
-inline Kernel::Void fb_render_string_for_bitmap(const Kernel::UInt8* bitmap, const Kernel::SizeT& x_sz, const Kernel::SizeT& y_sz, Kernel::Int32& x_dst, Kernel::Int32& y_dst, Kernel::Int32& color)
+inline Kernel::Void fb_render_string_for_bitmap(const Kernel::UInt8* bitmap, const Kernel::SizeT x_sz, const Kernel::SizeT y_sz, Kernel::Int32& x_dst, Kernel::Int32& y_dst, Kernel::Int32& color)
 {
-	Kernel::Int32 x, y;
-	Kernel::Int32 set;
+	Kernel::SizeT x, y;
+	Kernel::SizeT set;
 
 	x	= 0;
 	y	= 0;
@@ -170,9 +170,11 @@ inline Kernel::Void fb_render_string_for_bitmap(const Kernel::UInt8* bitmap, con
 
 inline Kernel::Void fb_render_string(const Kernel::Char* text, Kernel::Int32 x_dst, Kernel::Int32 y_dst, Kernel::Int32 color)
 {
-	for (Kernel::SizeT i = 0; text[i] != 0; ++i)
+	auto len = Kernel::rt_string_len(text);
+	
+	for (Kernel::SizeT i = 0; i < len; ++i)
 	{
-		fb_render_string_for_bitmap(&kFontBitmap[text[i]][0], kFontSizeX, kFontSizeY, x_dst, y_dst, color);
+		fb_render_string_for_bitmap(&kFontBitmap[(Kernel::UInt8)text[i]][0], kFontSizeX, kFontSizeY, x_dst, y_dst, color);
 		y_dst += kFontSizeY;
 	}
 }

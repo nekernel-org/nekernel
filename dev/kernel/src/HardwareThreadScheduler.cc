@@ -87,7 +87,7 @@ namespace Kernel
 		return this->fStack;
 	}
 
-	Void HardwareThread::Busy(const Bool busy) noexcept
+	Void HardwareThread::Busy(Bool busy) noexcept
 	{
 		this->fBusy = busy;
 	}
@@ -174,7 +174,7 @@ namespace Kernel
 	 * @return the reference to the hardware thread.
 	 */
 	/***********************************************************************************/
-	Ref<HardwareThread*> HardwareThreadScheduler::operator[](const SizeT& idx)
+	Ref<HardwareThread*> HardwareThreadScheduler::operator[](SizeT idx)
 	{
 		if (idx == 0)
 		{

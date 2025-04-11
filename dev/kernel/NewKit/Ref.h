@@ -33,8 +33,9 @@ namespace Kernel
 		}
 
 		Ref(T cls)
-			: fClass(&cls)
+			: fClass(nullptr)
 		{
+			fClass = new T(cls);
 		}
 
 		Ref& operator=(T ref)

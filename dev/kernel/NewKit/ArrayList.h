@@ -34,7 +34,7 @@ namespace Kernel
 			return fList;
 		}
 
-		T& operator[](int index) const
+		T& operator[](SizeT index) const
 		{
 			MUST_PASS(index < this->Count());
 			return fList[index];

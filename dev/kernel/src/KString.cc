@@ -100,7 +100,7 @@ namespace Kernel
 			return ("?");
 
 		const Char* boolean_expr = i ? "YES" : "NO";
-		Char*		ret			 = (Char*)RTL_ALLOCA((sizeof(char) * i) ? 4 : 5 + rt_string_len(fmt));
+		Char*		ret			 = (Char*)RTL_ALLOCA(rt_string_len(boolean_expr) + rt_string_len(fmt));
 
 		if (!ret)
 			return ("?");

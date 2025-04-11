@@ -82,7 +82,7 @@ namespace Kernel
 			if (!heap_ptr)
 				return false;
 
-			auto base_heap = ((IntPtr)heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK);
+			IntPtr base_heap = ((IntPtr)heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK);
 
 			/// Add that check in case we're having an integer underflow. ///
 
@@ -120,7 +120,7 @@ namespace Kernel
 	/// @param wr Read Write bit.
 	/// @param user User enable bit.
 	/// @return The newly allocated pointer.
-	_Output VoidPtr mm_new_heap(const SizeT sz, const Bool wr, const Bool user, const SizeT pad_amount)
+	_Output VoidPtr mm_new_heap(SizeT sz, Bool wr, Bool user, SizeT pad_amount)
 	{
 		auto sz_fix = sz;
 
@@ -150,7 +150,7 @@ namespace Kernel
 
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
-		kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl;
+		(void)(kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
 
 		return result;
 	}
@@ -172,7 +172,7 @@ namespace Kernel
 
 		heap_info_ptr->fPage = true;
 
-		kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl;
+		(void)(kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
 
 		return kErrorSuccess;
 	}
@@ -239,7 +239,7 @@ namespace Kernel
 			heap_info_ptr->fMagic	  = 0;
 			heap_info_ptr->fPad		  = 0;
 
-			kout << "Address has been successfully freed: " << hex_number((UIntPtr)heap_info_ptr) << kendl;
+			(void)(kout << "Address has been successfully freed: " << hex_number((UIntPtr)heap_info_ptr) << kendl);
 
 			PTEWrapper		page_wrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pte_address{page_wrapper};

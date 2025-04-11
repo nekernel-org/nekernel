@@ -22,13 +22,13 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 
 	kIsScheduling = NO;
 
-	kout << "Kernel: General Protection Fault.\r";
+	Kernel::kout << "Kernel: General Protection Fault.\r";
 
 	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kout << "Kernel: SIGKILL status.\r";
+	Kernel::kout << "Kernel: SIGKILL status.\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -46,8 +46,8 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 
 	kIsScheduling = NO;
 
-	kout << "Kernel: Page Fault.\r";
-	kout << "Kernel: SIGKILL\r";
+	Kernel::kout << "Kernel: Page Fault.\r";
+	Kernel::kout << "Kernel: SIGKILL\r";
 
 	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
@@ -66,6 +66,8 @@ namespace Kernel::Detail
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp)
 {
+	NE_UNUSED(rsp);
+
 	static Kernel::Int64 try_count_before_brute = Kernel::Detail::kTimeoutCount;
 
 	while (kIsScheduling)
@@ -95,13 +97,13 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 
 	kIsScheduling = NO;
 
-	kout << "Kernel: Math error (division by zero?).\r";
+	Kernel::kout << "Kernel: Math error (division by zero?).\r";
 
 	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kout << "Kernel: SIGKILL status.\r";
+	Kernel::kout << "Kernel: SIGKILL status.\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -119,13 +121,13 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 
 	kIsScheduling = NO;
 
-	kout << "Kernel: Generic Process Fault.\r";
+	Kernel::kout << "Kernel: Generic Process Fault.\r";
 
 	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kout << "Kernel: SIGKILL status.\r";
+	Kernel::kout << "Kernel: SIGKILL status.\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -138,7 +140,7 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 
 	if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning)
 	{
-		kout << "Kernel: SIGTRAP\r";
+		Kernel::kout << "Kernel: SIGTRAP\r";
 
 		while (YES)
 			;
@@ -146,15 +148,15 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 
 	kIsScheduling = NO;
 
-	kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << kendl;
-	kout << "Kernel: SIGTRAP\r";
+	(void)(Kernel::kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
+	Kernel::kout << "Kernel: SIGTRAP\r";
 
 	process.Leak().ProcessSignal.SignalArg = rip;
 	process.Leak().ProcessSignal.SignalID  = SIGTRAP;
 
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kout << "Kernel: SIGTRAP status.\r";
+	Kernel::kout << "Kernel: SIGTRAP status.\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 }
@@ -170,13 +172,13 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 
 	kIsScheduling = NO;
 
-	kout << "Kernel: Undefined Opcode.\r";
+	Kernel::kout << "Kernel: Undefined Opcode.\r";
 
 	process.Leak().ProcessSignal.SignalArg		= rsp;
 	process.Leak().ProcessSignal.SignalID		= SIGKILL;
 	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
 
-	kout << "Kernel: SIGKILL status.\r";
+	Kernel::kout << "Kernel: SIGKILL status.\r";
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -190,7 +192,7 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index, K
 {
 	if (rcx_syscall_index < kSyscalls.Count())
 	{
-		kout << "syscall: Enter Syscall.\r";
+		Kernel::kout << "syscall: Enter Syscall.\r";
 
 		if (kSyscalls[rcx_syscall_index].fHooked)
 		{
@@ -200,15 +202,15 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index, K
 			}
 			else
 			{
-				kout << "syscall: syscall isn't valid at all! (is nullptr)\r";
+				Kernel::kout << "syscall: syscall isn't valid at all! (is nullptr)\r";
 			}
 		}
 		else
 		{
-			kout << "syscall: syscall isn't hooked at all! (is set to false)\r";
+			Kernel::kout << "syscall: syscall isn't hooked at all! (is set to false)\r";
 		}
 
-		kout << "syscall: Exit Syscall.\r";
+		Kernel::kout << "syscall: Exit Syscall.\r";
 	}
 }
 
@@ -219,7 +221,7 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, 
 {
 	if (rcx_kerncall_index < kKerncalls.Count())
 	{
-		kout << "kerncall: Enter Kernel Call List.\r";
+		Kernel::kout << "kerncall: Enter Kernel Call List.\r";
 
 		if (kKerncalls[rcx_kerncall_index].fHooked)
 		{
@@ -229,14 +231,14 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, 
 			}
 			else
 			{
-				kout << "kerncall: Kernel call isn't valid at all! (is nullptr)\r";
+				Kernel::kout << "kerncall: Kernel call isn't valid at all! (is nullptr)\r";
 			}
 		}
 		else
 		{
-			kout << "kerncall: Kernel call isn't hooked at all! (is set to false)\r";
+			Kernel::kout << "kerncall: Kernel call isn't hooked at all! (is set to false)\r";
 		}
 
-		kout << "kerncall: Exit Kernel Call List.\r";
+		Kernel::kout << "kerncall: Exit Kernel Call List.\r";
 	}
 }

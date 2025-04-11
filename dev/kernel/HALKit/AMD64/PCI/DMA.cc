@@ -31,14 +31,14 @@ namespace Kernel
 		return reinterpret_cast<UIntPtr>(this->fAddress) >= offset;
 	}
 
-	bool DMAWrapper::Write(const UIntPtr& bit, const UInt32& offset)
+	bool DMAWrapper::Write(UIntPtr& bit, const UInt32& offset)
 	{
 		kout << "[DMAWrapper::Read] Checking this->fAddress...\r";
 
 		if (!this->fAddress)
 			return false;
 
-		kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl;
+		(void)(kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl);
 
 		ke_dma_write<UInt32>(reinterpret_cast<UIntPtr>(this->fAddress), offset, bit);
 
@@ -52,12 +52,12 @@ namespace Kernel
 		if (!this->fAddress)
 			return ~0;
 
-		kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl;
+		(void)(kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl);
 
-		return ke_dma_read<UInt32>(reinterpret_cast<UIntPtr>(this->fAddress), offset);
+		return (UIntPtr)ke_dma_read<UInt32>(reinterpret_cast<UIntPtr>(this->fAddress), offset);
 	}
 
-	UIntPtr DMAWrapper::operator[](const UIntPtr& offset)
+	UIntPtr DMAWrapper::operator[](UIntPtr& offset)
 	{
 		return this->Read(offset);
 	}

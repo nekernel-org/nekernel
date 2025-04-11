@@ -33,8 +33,7 @@ namespace Kernel
 #undef __MUST_PASS
 #endif
 
-#define __MUST_PASS(EXPR, FILE, LINE) \
-	Kernel::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE))
+#define __MUST_PASS(EXPR, FILE, LINE) Kernel::ke_runtime_check(EXPR, FILE, STRINGIFY(LINE)) 
 
 #ifdef __DEBUG__
 #define MUST_PASS(EXPR) __MUST_PASS((EXPR), __FILE__, __LINE__)

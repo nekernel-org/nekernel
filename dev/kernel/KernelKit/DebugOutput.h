@@ -107,7 +107,7 @@ namespace Kernel
 				return term;
 			}
 
-			if (y < 0)
+			if (y == ~0UL)
 				y = -y;
 
 			const Char kNumbers[11] = "0123456789";
@@ -135,7 +135,7 @@ namespace Kernel
 				return term;
 			}
 
-			if (y < 0)
+			if (y == ~0UL)
 				y = -y;
 
 			const Char kNumbers[17] = "0123456789ABCDEF";
@@ -155,15 +155,6 @@ namespace Kernel
 
 		Detail::_write_number_hex(x, self);
 		self.operator<<("h");
-
-		return self;
-	}
-
-	inline TerminalDevice number(const Char* x)
-	{
-		TerminalDevice self = TerminalDevice::The();
-
-		self << "?";
 
 		return self;
 	}
@@ -208,6 +199,6 @@ namespace Kernel
 #undef kout
 #endif // ifdef kout
 
-#define kout Kernel::TerminalDevice::The()
+#define kout TerminalDevice::The()
 
-#define kendl Kernel::TerminalDevice::The() << Kernel::end_line()
+#define kendl end_line()

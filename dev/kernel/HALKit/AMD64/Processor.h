@@ -68,11 +68,12 @@ namespace Kernel::HAL
 	/// @brief Memory Manager mapping flags.
 	enum
 	{
-		kMMFlagsInvalid = 0 << 0,
-		kMMFlagsPresent = 1 << 0,
-		kMMFlagsWr		= 1 << 1,
-		kMMFlagsUser	= 1 << 2,
-		kMMFlagsNX		= 1 << 3,
+		kMMFlagsInvalid = 1 << 0,
+		kMMFlagsPresent = 1 << 1,
+		kMMFlagsWr		= 1 << 2,
+		kMMFlagsUser	= 1 << 3,
+		kMMFlagsNX		= 1 << 4,
+		kMMFlagsUncached = 1 << 5,
 		kMMFlagsCount	= 4,
 	};
 

@@ -37,7 +37,7 @@ namespace Kernel
 	/// @param wr Read Write bit.
 	/// @param user User enable bit.
 	/// @return The newly allocated pointer, or nullptr.
-	VoidPtr mm_new_heap(const SizeT sz, const Bool wr, const Bool user, const SizeT pad_amount = 0);
+	VoidPtr mm_new_heap(SizeT sz, Bool wr, Bool user, SizeT pad_amount = 0);
 
 	/// @brief Protect the heap with a CRC value.
 	/// @param heap_ptr pointer.

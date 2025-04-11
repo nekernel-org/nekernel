@@ -45,7 +45,7 @@ namespace Kernel
 
 		NE_COPY_DEFAULT(Json);
 
-		const Bool& IsUndefined()
+		Bool& IsUndefined()
 		{
 			return fUndefined;
 		}

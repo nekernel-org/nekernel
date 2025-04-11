@@ -135,8 +135,9 @@ namespace Kernel
 		/// @param type (a1) the data.
 		/// @return a1 as Char*
 		template <typename T>
-		Char* AsBytes(T type) noexcept
+		const Char* AsBytes(T type) noexcept
 		{
+			NE_UNUSED(type);
 			return nullptr;
 		}
 
@@ -180,19 +181,19 @@ namespace Kernel
 		ISchedulable(const ISchedulable&)			 = default;
 
 		/// @brief Is this object only accepting user tasks?
-		virtual const Bool IsUser()
+		virtual Bool IsUser()
 		{
 			return NO;
 		}
 
 		/// @brief Is this object only accepting kernel tasks?
-		virtual const Bool IsKernel()
+		virtual Bool IsKernel()
 		{
 			return NO;
 		}
 
 		/// @brief Is this object offloading to another CPU?
-		virtual const Bool HasMP()
+		virtual Bool HasMP()
 		{
 			return NO;
 		}

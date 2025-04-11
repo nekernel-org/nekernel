@@ -28,7 +28,6 @@ using namespace Kernel::HAL;
 #define kATADataLen 256
 
 STATIC Boolean kATADetected					 = false;
-STATIC Int32   kATADeviceType				 = kATADeviceCount;
 STATIC UInt16  kATAIdentifyData[kATADataLen] = {0};
 STATIC Char	   kATADiskModel[50]			 = {"GENERIC PIO"};
 
@@ -66,6 +65,8 @@ static Void drv_pio_std_select(UInt16 Bus)
 Boolean drv_pio_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 {
 	UInt16 IO = Bus;
+
+	NE_UNUSED(Drive);
 
 	drv_pio_std_select(IO);
 
@@ -107,7 +108,7 @@ ATAInit_Retry:
 
 	kATADiskModel[40] = '\0';
 
-	kout << "Drive Model: " << kATADiskModel << kendl;
+	(void)(kout << "Drive Model: " << kATADiskModel << kendl);
 
 	return true;
 }

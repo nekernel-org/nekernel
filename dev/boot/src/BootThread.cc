@@ -25,7 +25,7 @@ namespace Boot
 	EXTERN_C Int32 rt_jump_to_address(VoidPtr code, HEL::BootInfoHeader* handover, UInt8* stack);
 
 	BootThread::BootThread(VoidPtr blob)
-		: fBlob(blob), fStartAddress(nullptr)
+		: fStartAddress(nullptr), fBlob(blob)
 	{
 		// detect the format.
 		const Char* blob_bytes = reinterpret_cast<char*>(fBlob);
@@ -84,7 +84,6 @@ namespace Boot
 
 			constexpr auto sectionForCode  = ".text";
 			constexpr auto sectionForBootZ = ".ldr";
-			constexpr auto sectionForBSS   = ".bss";
 
 			for (SizeT sectIndex = 0; sectIndex < numSecs; ++sectIndex)
 			{
@@ -168,6 +167,8 @@ namespace Boot
 	Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
 	{
 		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> Int32 {
+			NE_UNUSED(rcx);
+
 			fb_render_string("BootZ: Invalid Boot Image...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
 			::Boot::Stop();
 

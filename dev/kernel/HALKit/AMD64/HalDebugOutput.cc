@@ -65,6 +65,8 @@ namespace Kernel
 
 	EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes)
 	{
+		NE_UNUSED(obj);
+
 #ifdef __DEBUG__
 		Detail::hal_serial_init<Detail::kPort>();
 
@@ -82,7 +84,7 @@ namespace Kernel
 		index = 0;
 		len	  = rt_string_len(bytes, 256U);
 
-		static int x = kFontSizeX, y = kFontSizeY;
+		static SizeT x = kFontSizeX, y = kFontSizeY;
 
 		static BOOL not_important = YES;
 
@@ -123,12 +125,8 @@ namespace Kernel
 			{
 				y = kFontSizeY;
 
-				fb_init();
-
 				FBDrawInRegion(fb_get_clear_clr(), FB::FBAccessibilty::Height(), FB::FBAccessibilty::Width(),
 							   0, 0);
-
-				fb_clear();
 			}
 
 			++index;
@@ -183,7 +181,7 @@ namespace Kernel
 
 	TerminalDevice TerminalDevice::The() noexcept
 	{
-		TerminalDevice out(Kernel::ke_io_write, Kernel::ke_io_read);
+		static TerminalDevice out(Kernel::ke_io_write, Kernel::ke_io_read);
 		return out;
 	}
 

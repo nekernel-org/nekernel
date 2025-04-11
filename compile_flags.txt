@@ -20,3 +20,6 @@
 -D__aarch64__
 -DNE_USE_MBCI_FLASH
 -D__ATA_DMA__
+-Wall
+-Wpedantic
+-Wextra

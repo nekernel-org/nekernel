@@ -19,24 +19,22 @@ Kernel::UIntPtr __dso_handle;
 
 EXTERN_C Kernel::Void __cxa_pure_virtual(void* self)
 {
-	kout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self));
-	kout << ", has unimplemented virtual functions.\r";
+	(void)(Kernel::kout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self)));
+	(void)(Kernel::kout << ", has unimplemented virtual functions.\r");
 }
 
 EXTERN_C void ___chkstk_ms(void)
 {
-	kout << "Stack smashing detected!\r";
+	(void)(Kernel::kout << "Stack smashing detected!\r");
 	dbg_break_point();
 }
 
-EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso)
+EXTERN_C int atexit(void (*f)())
 {
 	if (__atexit_func_count >= kAtExitMacDestructors)
 		return 1;
 
 	__atexit_funcs[__atexit_func_count].destructor_func = f;
-	__atexit_funcs[__atexit_func_count].obj_ptr			= arg;
-	__atexit_funcs[__atexit_func_count].dso_handle		= dso;
 
 	__atexit_func_count++;
 
@@ -52,7 +50,7 @@ EXTERN_C void __cxa_finalize(void* f)
 		{
 			if (__atexit_funcs[i].destructor_func)
 			{
-				(*__atexit_funcs[i].destructor_func)(__atexit_funcs[i].obj_ptr);
+				(*__atexit_funcs[i].destructor_func)();
 			};
 		}
 
@@ -63,7 +61,7 @@ EXTERN_C void __cxa_finalize(void* f)
 	{
 		if (__atexit_funcs[i].destructor_func)
 		{
-			(*__atexit_funcs[i].destructor_func)(__atexit_funcs[i].obj_ptr);
+			(*__atexit_funcs[i].destructor_func)();
 			__atexit_funcs[i].destructor_func = 0;
 		};
 	}

@@ -13,7 +13,7 @@ namespace Kernel
 	}
 
 	template <class T>
-	T* DMAWrapper::Get(const UIntPtr offset)
+	T* DMAWrapper::Get(UIntPtr offset)
 	{
 		return reinterpret_cast<T*>((UIntPtr)this->fAddress + offset);
 	}

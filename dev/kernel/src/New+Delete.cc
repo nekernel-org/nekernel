@@ -48,3 +48,13 @@ void operator delete(void* ptr, size_t sz)
 
 	Kernel::mm_delete_heap(ptr);
 }
+
+void operator delete[](void* ptr, size_t sz)
+{
+	if (ptr == nullptr)
+		return;
+
+	NE_UNUSED(sz);
+
+	Kernel::mm_delete_heap(ptr);
+}

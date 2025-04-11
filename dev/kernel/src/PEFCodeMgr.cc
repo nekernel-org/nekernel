@@ -59,7 +59,7 @@ namespace Kernel
 	/// @param path the filesystem path.
 	/***********************************************************************************/
 	PEFLoader::PEFLoader(const Char* path)
-		: fCachedBlob(nullptr), fBad(false), fFatBinary(false)
+		: fCachedBlob(nullptr), fFatBinary(false), fBad(false)
 	{
 		fFile.New(const_cast<Char*>(path), kRestrictRB);
 		fPath = KStringBuilder::Construct(path).Leak();

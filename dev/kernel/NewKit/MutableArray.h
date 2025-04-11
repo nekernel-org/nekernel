@@ -96,7 +96,7 @@ namespace Kernel
 		}
 
 	public:
-		T operator[](const SizeT& Index) const
+		T operator[](SizeT Index) const
 		{
 			TRY_FIND_NODE(first, fFirstNode);
 			TRY_FIND_NODE(last, fLastNode);
@@ -110,7 +110,7 @@ namespace Kernel
 		}
 
 	public:
-		Boolean Remove(const SizeT& Index)
+		Boolean Remove(SizeT Index)
 		{
 			TRY_REMOVE_NODE(fFirstNode);
 			TRY_REMOVE_NODE(fLastNode);
@@ -200,7 +200,7 @@ namespace Kernel
 		}
 
 	public:
-		Ref<T> operator[](const SizeT& Index) const
+		Ref<T> operator[](SizeT Index) const
 		{
 			TRY_FIND_NODE2(first, fFirstNode);
 			TRY_FIND_NODE2(last, fLastNode);

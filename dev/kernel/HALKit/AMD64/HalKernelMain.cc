@@ -96,7 +96,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
 	kEndTim = hal_rdtsc_fn();
 
-	kout << "Boot Time: " << Kernel::number(kEndTim - kStartTim) << kendl;
+	(void)(Kernel::kout << "Boot Time: " << Kernel::number(kEndTim - kStartTim) << Kernel::kendl);
 
 	Kernel::NeFS::fs_init_nefs();
 
@@ -110,7 +110,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	kEndTim = hal_rdtsc_fn();
 
-	kout << "Init Time: " << Kernel::number(kEndTim - kStartTim) << kendl;
+	(void)(Kernel::kout << "Init Time: " << Kernel::number(kEndTim - kStartTim) << Kernel::kendl);
 
 	idt_loader.Load(idt_reg);
 

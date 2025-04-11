@@ -76,7 +76,7 @@ namespace AHCI::Detail
 
 		UIntPtr addr = (UIntPtr)address;
 
-		UIntPtr aligned_addr = (addr + alignement - 1) & ~alignement - 1;
+		UIntPtr aligned_addr = (addr + alignement - 1) & (~alignement - 1);
 
 		return (RetType*)aligned_addr;
 	}
@@ -87,7 +87,7 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	kSATASectorCount = 0UL;
 
 	/// Normally 512 bytes, but add an additional 512 bytes to make 1 KIB.
-	const UInt16 kSzIdent = 256;
+	const UInt16 kSzIdent = 512;
 
 	/// Push it to the stack
 	UInt16* identify_data = AHCI::Detail::ahci_align_address<UInt16>(new UInt16[kSzIdent], kib_cast(1));
@@ -106,6 +106,8 @@ STATIC Void drv_compute_disk_ahci() noexcept
 		kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 	else
 		kSATASectorCount = lba48_sectors;
+
+	(Void)(kout << "Device: " << kCurrentDiskModel << kendl);
 
 	delete[] identify_data;
 	identify_data = nullptr;
@@ -141,7 +143,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	slot = drv_find_cmd_slot_ahci(&kSATAHba->Ports[kSATAIndex]);
 
-	if (slot == ~0)
+	if (slot == ~0UL)
 	{
 		err_global_get() = kErrorDisk;
 		return;
@@ -166,11 +168,8 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	/// check for command header.
 	MUST_PASS(command_header);
 
-	/// 4kb per PRD.
-	constexpr const UInt32 kMaxPRDSize = kib_cast(4);
-
-	command_header->Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
-	command_header->Write = Write;
+	command_header->Struc.Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
+	command_header->Struc.Write = Write;
 	command_header->Prdtl = 1;
 
 	auto ctba_phys	   = ((UInt64)command_header->Ctbau << 32) | command_header->Ctba;
@@ -186,7 +185,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	command_table->Prdt[0].Dba	= (UInt32)(buffer_phys & 0xFFFFFFFF);
 	command_table->Prdt[0].Dbau = (UInt32)(buffer_phys >> 32);
 	command_table->Prdt[0].Dbc	= bytes_remaining - 1;
-	command_table->Prdt[0].Ie	= 1;
+	command_table->Prdt[0].Ie	= NO;
 
 	volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*)(&command_table->Cfis[0]);
 
@@ -299,6 +298,8 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 
 			kSATADev.EnableMmio();
 			kSATADev.BecomeBusMaster();
+
+			HAL::mm_map_page((VoidPtr)mem_ahci, (VoidPtr)mem_ahci, HAL::kMMFlagsPresent | HAL::kMMFlagsWr | HAL::kMMFlagsUncached);
 
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;

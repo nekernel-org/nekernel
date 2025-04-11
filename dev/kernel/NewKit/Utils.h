@@ -26,5 +26,5 @@ namespace Kernel
 	Int			rt_to_uppercase(Int c);
 	Int			rt_to_lower(Int c);
 	voidPtr		rt_string_in_string(const Char* in, const Char* needle);
-	char*		rt_string_has_char(Char* str, const Char chr);
+	char*		rt_string_has_char(Char* str, Char chr);
 } // namespace Kernel
