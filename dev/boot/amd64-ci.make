@@ -66,7 +66,7 @@ REM_FLAG=-f
 
 FLAG_ASM=-f win64
 FLAG_GNU=-fshort-wchar -Wall -Wpedantic -Wextra -Werror -D__EFI_x86_64__ -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__ \
-			-DEFI_FUNCTION_WRAPPER -I./ -I../kernel $(DISK_DRV) -I../ -c -nostdlib -fno-rtti -fno-exceptions \
+			-DEFI_FUNCTION_WRAPPER -I./ -I../kernel $(DEBUG_MACRO) $(DISK_DRV) -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT
 
 BOOTLOADER=bootz.efi
