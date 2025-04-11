@@ -17,7 +17,7 @@ namespace Kernel
 	/***********************************************************************************/
 
 	template <typename T>
-	Boolean UserProcess::Delete(ErrorOr<T*> ptr, const SizeT& sz)
+	Boolean UserProcess::Delete(ErrorOr<T*> ptr)
 	{
 		if (!ptr)
 			return No;

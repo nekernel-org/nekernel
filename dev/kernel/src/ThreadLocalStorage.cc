@@ -33,7 +33,7 @@ Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr)
 		return false;
 
 	ICodec		encoder;
-	const Char* tib_as_bytes = encoder.AsBytes(tib_ptr);
+	const Char* tib_as_bytes = encoder.AsBytes<THREAD_INFORMATION_BLOCK*>(tib_ptr);
 
 	kout << "TLS: Validating the TIB...\r";
 

@@ -86,10 +86,6 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 		new HEL::BootInfoHeader();
 
 	UInt32				 map_key		 = 0;
-	UInt32				 size_struct_ptr = 0;
-	EfiMemoryDescriptor* struct_ptr		 = nullptr;
-	UInt32				 sz_desc		 = 0;
-	UInt32				 rev_desc		 = 0;
 
 #ifdef ZBA_USE_FB
 	if (!boot_init_fb())

@@ -30,7 +30,7 @@ namespace Kernel
 			rt_set_memory(fData, 0, fDataSz);
 		}
 
-		explicit KString(const SizeT& Sz)
+		explicit KString(SizeT Sz)
 			: fDataSz(Sz)
 		{
 			MUST_PASS(Sz > 1);

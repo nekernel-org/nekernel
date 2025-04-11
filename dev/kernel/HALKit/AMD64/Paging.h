@@ -65,7 +65,7 @@ namespace Kernel::HAL
 	} // namespace Detail
 
 
-	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, const SizeT pad = 0) -> VoidPtr;
+	auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, SizeT pad = 0) -> VoidPtr;
 	auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
 } // namespace Kernel::HAL
 

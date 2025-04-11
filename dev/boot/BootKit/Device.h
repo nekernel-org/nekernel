@@ -28,8 +28,8 @@ public:
 
 	virtual Trait& Leak() = 0;
 
-	virtual Device& Read(Char* Buf, const SizeT& SecCount)	= 0;
-	virtual Device& Write(Char* Buf, const SizeT& SecCount) = 0;
+	virtual Device& Read(Char* Buf, SizeT SecCount)	= 0;
+	virtual Device& Write(Char* Buf, SizeT SecCount) = 0;
 };
 
 typedef Device BootDevice;

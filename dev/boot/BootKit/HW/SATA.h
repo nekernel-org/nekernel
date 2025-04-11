@@ -34,8 +34,8 @@ public:
 		return this->Leak().mDetected;
 	}
 
-	BootDeviceSATA& Read(Kernel::WideChar* Buf, const Kernel::SizeT& SecCount);
-	BootDeviceSATA& Write(Kernel::WideChar* Buf, const Kernel::SizeT& SecCount);
+	BootDeviceSATA& Read(Kernel::WideChar* Buf, const Kernel::SizeT SecCount);
+	BootDeviceSATA& Write(Kernel::WideChar* Buf, const Kernel::SizeT SecCount);
 
 	SATATrait& Leak();
 

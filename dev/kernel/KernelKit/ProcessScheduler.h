@@ -123,7 +123,7 @@ namespace Kernel
 	};
 
 	using ProcessTime = UInt64;
-	using PID		  = UInt64;
+	using PID		  = Int64;
 
 	/***********************************************************************************/
 	/// @note For User manager, tells where we run the code.
@@ -245,7 +245,7 @@ namespace Kernel
 		///! @param pad_amount amount to add after pointer.
 		///! @return A wrapped pointer, or error code.
 		/***********************************************************************************/
-		ErrorOr<VoidPtr> New(const SizeT& sz, const SizeT& pad_amount = 0);
+		ErrorOr<VoidPtr> New(SizeT sz, SizeT pad_amount = 0);
 
 		/***********************************************************************************/
 		///! @brief TLS free.
@@ -253,12 +253,12 @@ namespace Kernel
 		///! @param sz the size of it.
 		/***********************************************************************************/
 		template <typename T>
-		Boolean Delete(ErrorOr<T*> ptr, const SizeT& sz);
+		Boolean Delete(ErrorOr<T*> ptr);
 
 		/***********************************************************************************/
 		///! @brief Wakes up thread.
 		/***********************************************************************************/
-		Void Wake(const Bool wakeup = false);
+		Void Wake(Bool wakeup = false);
 
 	public:
 		/***********************************************************************************/
@@ -337,15 +337,15 @@ namespace Kernel
 
 	public:
 		ProcessID  Spawn(const Char* name, VoidPtr code, VoidPtr image);
-		const Bool Remove(ProcessID process_id);
+		Void Remove(ProcessID process_id);
 
-		const Bool IsUser() override;
-		const Bool IsKernel() override;
-		const Bool HasMP() override;
+		Bool IsUser() override;
+		Bool IsKernel() override;
+		Bool HasMP() override;
 
 	public:
 		Ref<UserProcess>& CurrentProcess();
-		const SizeT		  Run() noexcept;
+		SizeT		  Run() noexcept;
 
 	public:
 		STATIC UserProcessScheduler& The();
@@ -363,7 +363,7 @@ namespace Kernel
 	class UserProcessHelper final
 	{
 	public:
-		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, const PID& new_pid);
+		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, PID new_pid);
 		STATIC Bool CanBeScheduled(const UserProcess& process);
 		STATIC ErrorOr<PID> TheCurrentPID();
 		STATIC SizeT		StartScheduling();
@@ -373,7 +373,7 @@ namespace Kernel
 } // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.h>
-#include <KernelKit/ProcessScheduler.inl>
+#include <KernelKit/UserProcessScheduler.inl>
 
 ////////////////////////////////////////////////////
 // END

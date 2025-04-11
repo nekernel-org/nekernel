@@ -78,7 +78,7 @@ namespace Kernel
 
 	/// @brief Virtual PTE address.
 	/// @return The virtual address of the page.
-	const UIntPtr PTEWrapper::VirtualAddress()
+	UIntPtr PTEWrapper::VirtualAddress()
 	{
 		return (fVirtAddr);
 	}

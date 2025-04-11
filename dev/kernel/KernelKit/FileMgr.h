@@ -210,7 +210,7 @@ namespace Kernel
 		FileStream(const FileStream&);
 
 	public:
-		ErrorOr<Int64> Write(const SizeT offset, const VoidPtr data, SizeT len) noexcept
+		ErrorOr<Int64> Write(SizeT offset, const VoidPtr data, SizeT len) noexcept
 		{
 			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
 				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
@@ -254,13 +254,15 @@ namespace Kernel
 			return ErrorOr<Int64>(kErrorInvalidData);
 		}
 
-		VoidPtr Read(const Char* name, const SizeT sz) noexcept
+		VoidPtr Read(const Char* name, SizeT sz) noexcept
 		{
 			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
 				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
 				this->fFileRestrict != kFileMgrRestrictRead &&
 				this->fFileRestrict != kFileMgrRestrictReadBinary)
 				return nullptr;
+
+			NE_UNUSED(sz);
 
 			auto man = FSClass::GetMounted();
 
@@ -273,7 +275,7 @@ namespace Kernel
 			return nullptr;
 		}
 
-		VoidPtr Read(SizeT offset, const SizeT sz)
+		VoidPtr Read(SizeT offset, SizeT sz)
 		{
 			if (this->fFileRestrict != kFileMgrRestrictReadWrite &&
 				this->fFileRestrict != kFileMgrRestrictReadWriteBinary &&
@@ -345,7 +347,7 @@ namespace Kernel
 												   const Encoding* restrict_type)
 		: fFile(Class::GetMounted()->Open(path, restrict_type))
 	{
-		const SizeT			   kRestrictCount  = kRestrictMax;
+		SizeT			   kRestrictCount  = kRestrictMax;
 		const FileRestrictKind kRestrictList[] = {
 			{
 				.fRestrict = kRestrictR,

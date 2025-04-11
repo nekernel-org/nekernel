@@ -103,7 +103,7 @@ namespace Kernel::HAL
 					UInt32 AcpiID;
 				} LApic;
 			};
-		} List[]; // Records List
+		} List[1]; // Records List
 	};
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -215,7 +215,6 @@ namespace Kernel::HAL
 			kSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
-			UInt32 eax, edx;
 			kout << "SMP: Starting APs...\r";
 
 			kApicBaseAddress = kMADTBlock->Address;
@@ -242,7 +241,7 @@ namespace Kernel::HAL
 						break;
 
 					kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].LAPIC.ProcessorID;
-					kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl;
+					(void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
 
 					// I'll just make the AP start from scratch here.
 
@@ -265,7 +264,7 @@ namespace Kernel::HAL
 				++index;
 			}
 
-			kout << "SMP: number of APs: " << number(kSMPCount) << kendl;
+			(void)(kout << "SMP: number of APs: " << number(kSMPCount) << kendl);
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)

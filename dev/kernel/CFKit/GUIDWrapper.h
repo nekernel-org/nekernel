@@ -20,18 +20,18 @@ namespace CF::XRN
 	using namespace Kernel;
 
 	union GUIDSequence {
-		alignas(8) UShort u8[16];
-		alignas(8) UShort u16[8];
-		alignas(8) UInt u32[4];
-		alignas(8) ULong u64[2];
+		alignas(8) UShort fU8[16];
+		alignas(8) UShort fU16[8];
+		alignas(8) UInt fU32[4];
+		alignas(8) ULong fU64[2];
 
-		struct
+		struct GUID
 		{
 			alignas(8) UInt fMs1;
 			UShort fMs2;
 			UShort fMs3;
 			UChar  fMs4[8];
-		};
+		} fUuid;
 	};
 
 	class GUID final

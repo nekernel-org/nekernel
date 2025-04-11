@@ -83,7 +83,7 @@ namespace Kernel
 		UInt32 OemRev;
 		UInt32 CreatorID;
 		UInt32 CreatorRevision;
-		UInt32 AddressArr[];
+		UInt32 AddressArr[1];
 	};
 } // namespace Kernel
 

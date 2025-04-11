@@ -23,10 +23,9 @@
 
 using namespace Boot;
 
-#define kATADataLen 256
+#define kATADataLen (256)
 
 static Boolean kATADetected			 = false;
-static Int32   kATADeviceType		 = kATADeviceCount;
 static UInt16  kATAData[kATADataLen] = {0};
 
 Boolean boot_ata_detected(Void);
@@ -64,6 +63,8 @@ Void boot_ata_select(UInt16 Bus)
 
 Boolean boot_ata_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster)
 {
+	NE_UNUSED(Drive);
+
 	if (boot_ata_detected())
 		return true;
 
@@ -214,7 +215,7 @@ BootDeviceATA::operator bool()
 	@param Sz Sector size
 	@param Buf buffer
 */
-BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz)
+BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, SizeT SectorSz)
 {
 	if (!boot_ata_detected())
 	{
@@ -238,7 +239,7 @@ BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, const SizeT& SectorSz
 	@param Sz Sector size
 	@param Buf buffer
 */
-BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, const SizeT& SectorSz)
+BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, SizeT SectorSz)
 {
 	if (!boot_ata_detected())
 	{

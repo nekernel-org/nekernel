@@ -16,7 +16,7 @@ namespace Kernel
 	/// @param data the data packet.
 	/// @return Whether the swap was written to disk, or not.
 	/***********************************************************************************/
-	BOOL SwapDiskInterface::Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER* data)
+	BOOL SwapDiskInterface::Write(const Char* fork_name, SizeT fork_name_len, SWAP_DISK_HEADER* data)
 	{
 		if (!fork_name || !fork_name_len)
 			return NO;
@@ -44,7 +44,7 @@ namespace Kernel
 	/// @param data the data packet length.
 	/// @return Whether the swap was fetched to disk, or not.
 	/***********************************************************************************/
-	SWAP_DISK_HEADER* SwapDiskInterface::Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len)
+	SWAP_DISK_HEADER* SwapDiskInterface::Read(const Char* fork_name, SizeT fork_name_len, SizeT data_len)
 	{
 		if (!fork_name || !fork_name_len)
 			return nullptr;

@@ -37,7 +37,7 @@ namespace Kernel
 		/// @param data the data packet.
 		/// @return Whether the swap was written to disk, or not.
 		/***********************************************************************************/
-		BOOL Write(const Char* fork_name, const SizeT fork_name_len, SWAP_DISK_HEADER* data);
+		BOOL Write(const Char* fork_name, SizeT fork_name_len, SWAP_DISK_HEADER* data);
 
 		/***********************************************************************************/
 		/// @brief Read memory chunk from disk.
@@ -46,7 +46,7 @@ namespace Kernel
 		/// @param data the data packet length.
 		/// @return Whether the swap was fetched to disk, or not.
 		/***********************************************************************************/
-		SWAP_DISK_HEADER* Read(const Char* fork_name, const SizeT fork_name_len, const SizeT data_len);
+		SWAP_DISK_HEADER* Read(const Char* fork_name, SizeT fork_name_len, SizeT data_len);
 	};
 
 	/// @brief Swap disk header, containing information about the held virtual memory.
@@ -65,6 +65,6 @@ namespace Kernel
 		UInt64 fProcessID;
 		UInt64 fVirtualAddress;
 		SizeT  fBlobSz;
-		UInt8  fBlob[];
+		UInt8  fBlob[1];
 	} PACKED SWAP_DISK_HEADER;
 } // namespace Kernel

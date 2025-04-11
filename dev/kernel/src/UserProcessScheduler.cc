@@ -58,7 +58,7 @@ namespace Kernel
 		if (this->Status != ProcessStatusKind::kRunning)
 			return;
 
-		kout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << kendl;
+		(void)(kout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << kendl);
 		this->Exit(kErrorProcessFault);
 	}
 
@@ -96,7 +96,7 @@ namespace Kernel
 	/// @param should_wakeup if the program shall wakeup or not.
 	/***********************************************************************************/
 
-	Void UserProcess::Wake(const Bool should_wakeup)
+	Void UserProcess::Wake(Bool should_wakeup)
 	{
 		this->Status =
 			should_wakeup ? ProcessStatusKind::kRunning : ProcessStatusKind::kFrozen;
@@ -106,7 +106,7 @@ namespace Kernel
 	/** @brief Allocate pointer to track list. */
 	/***********************************************************************************/
 
-	ErrorOr<VoidPtr> UserProcess::New(const SizeT& sz, const SizeT& pad_amount)
+	ErrorOr<VoidPtr> UserProcess::New(SizeT sz, SizeT pad_amount)
 	{
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		auto vm_register = hal_read_cr3();
@@ -134,14 +134,12 @@ namespace Kernel
 		else
 		{
 			ProcessMemoryHeapList* entry	  = this->ProcessMemoryHeap;
-			ProcessMemoryHeapList* prev_entry = nullptr;
 
 			while (entry)
 			{
 				if (entry->MemoryEntry == nullptr)
 					break; // chose to break here, when we get an already allocated memory entry for our needs.
 
-				prev_entry = entry;
 				entry	   = entry->MemoryNext;
 			}
 
@@ -341,9 +339,10 @@ namespace Kernel
 		case UserProcess::kExectuableDylibKind: {
 			process.DylibDelegate = rtl_init_dylib(process);
 			MUST_PASS(process.DylibDelegate);
+			break;
 		}
 		default: {
-			kout << "Unknown process kind: " << hex_number(process.Kind) << kendl;
+			(void)(kout << "Unknown process kind: " << hex_number(process.Kind) << kendl);
 			break;
 		}
 		}
@@ -371,8 +370,8 @@ namespace Kernel
 		process.Status	  = ProcessStatusKind::kStarting;
 		process.PTime	  = (UIntPtr)AffinityKind::kStandard;
 
-		kout << "PID: " << number(process.ProcessId) << kendl;
-		kout << "Name: " << process.Name << kendl;
+		(void)(kout << "PID: " << number(process.ProcessId) << kendl);
+		(void)(kout << "Name: " << process.Name << kendl);
 
 		return pid;
 	}
@@ -395,34 +394,28 @@ namespace Kernel
 
 	/***********************************************************************************/
 
-	const Bool UserProcessScheduler::Remove(ProcessID process_id)
+	Void UserProcessScheduler::Remove(ProcessID process_id)
 	{
-		// check if process is within range.
-		if (process_id > mTeam.mProcessList.Count())
-			return No;
-
 		mTeam.mProcessList[process_id].Exit(0);
-
-		return Yes;
 	}
 
 	/// @brief Is it a user scheduler?
 
-	const Bool UserProcessScheduler::IsUser()
+	Bool UserProcessScheduler::IsUser()
 	{
 		return Yes;
 	}
 
 	/// @brief Is it a kernel scheduler?
 
-	const Bool UserProcessScheduler::IsKernel()
+	Bool UserProcessScheduler::IsKernel()
 	{
 		return No;
 	}
 
 	/// @brief Is it a SMP scheduler?
 
-	const Bool UserProcessScheduler::HasMP()
+	Bool UserProcessScheduler::HasMP()
 	{
 		return Yes;
 	}
@@ -432,7 +425,7 @@ namespace Kernel
 	/// @return Process count executed within a team.
 	/***********************************************************************************/
 
-	const SizeT UserProcessScheduler::Run() noexcept
+	SizeT UserProcessScheduler::Run() noexcept
 	{
 		SizeT process_index = 0UL; //! we store this guy to tell the scheduler how many
 								   //! things we have scheduled.
@@ -551,7 +544,7 @@ namespace Kernel
 	 */
 	/***********************************************************************************/
 
-	Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr frame_ptr, const PID& new_pid)
+	Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr frame_ptr, PID new_pid)
 	{
 		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index)
 		{
@@ -567,12 +560,9 @@ namespace Kernel
 
 				if (HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid))
 				{
-					PTime prev_ptime = HardwareThreadScheduler::The()[index].Leak()->fPTime;
-
 					HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 
-					PID prev_pid									 = UserProcessHelper::TheCurrentPID();
-					UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
+					UserProcessHelper::TheCurrentPID().Leak().Leak() = UserProcessHelper::TheCurrentPID();
 
 					return YES;
 				}

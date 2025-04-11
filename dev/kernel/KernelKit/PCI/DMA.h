@@ -49,19 +49,19 @@ namespace Kernel
 		T* operator->();
 
 		template <class T>
-		T* Get(const UIntPtr off = 0);
+		T* Get(UIntPtr off = 0);
 
 	public:
 			 operator bool();
 		bool operator!();
 
 	public:
-		bool	Write(const UIntPtr& bit, const UInt32& offset);
+		bool	Write(UIntPtr& bit, const UInt32& offset);
 		UIntPtr Read(const UInt32& offset);
 		Boolean Check(UIntPtr offset) const;
 
 	public:
-		UIntPtr operator[](const UIntPtr& offset);
+		UIntPtr operator[](UIntPtr& offset);
 
 	private:
 		voidPtr fAddress{nullptr};

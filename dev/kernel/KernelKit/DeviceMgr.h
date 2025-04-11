@@ -22,7 +22,7 @@
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Ref.h>
 
-#define kDeviceMgrRootDirPath "/Devices/"
+#define kDeviceMgrRootDirPath "/dev/"
 
 #define NE_DEVICE : public ::Kernel::IDeviceObject
 
@@ -52,13 +52,13 @@ namespace Kernel
 		IDeviceObject(const IDeviceObject<T>&)			  = default;
 
 	public:
-		virtual IDeviceObject<T>& operator<<(T Data)
+		virtual IDeviceObject<T>& operator<<(T Data) [[maybe_unused]]
 		{
 			fOut(this, Data);
 			return *this;
 		}
 
-		virtual IDeviceObject<T>& operator>>(T Data)
+		virtual IDeviceObject<T>& operator>>(T Data) [[maybe_unused]]
 		{
 			fIn(this, Data);
 			return *this;

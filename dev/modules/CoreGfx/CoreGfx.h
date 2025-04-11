@@ -14,7 +14,7 @@
 
 #define fb_get_clear_clr() fb_color(0x20, 0x20, 0x20)
 
-#define fb_clear() kCGCursor = 0
+#define fb_clear() kCGCursor = 0UL
 
 #ifdef __NE_AMD64__
 /// @brief Performs Alpha drawing on the framebuffer.
@@ -137,11 +137,7 @@ namespace FB
 {
 	inline Void fb_clear_video() noexcept
 	{
-		fb_init();
-
 		FBDrawInRegion(fb_get_clear_clr(), FB::FBAccessibilty::Height(), FB::FBAccessibilty::Width(),
 					   0, 0);
-
-		fb_clear();
 	}
 } // namespace FB

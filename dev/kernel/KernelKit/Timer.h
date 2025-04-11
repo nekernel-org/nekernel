@@ -43,7 +43,7 @@ namespace Kernel
 		BOOL Wait() noexcept override;
 
 	private:
-		IntPtr* fDigitalTimer{nullptr};
+		UIntPtr* fDigitalTimer{nullptr};
 		Int64	fWaitFor{0};
 	};
 
@@ -60,7 +60,7 @@ namespace Kernel
 		BOOL Wait() noexcept override;
 
 	private:
-		IntPtr* fDigitalTimer{nullptr};
+		UIntPtr* fDigitalTimer{nullptr};
 		Int64	fWaitFor{0};
 	};
 

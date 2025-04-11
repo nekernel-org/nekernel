@@ -58,9 +58,6 @@ EXTERN_C size_t strlen(const char* whatToCheck)
 /// @brief strcmp definition in C++.
 EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight)
 {
-	if (!whatToCheck || *whatToCheck == 0)
-		return 0;
-
 	SizeT len = 0;
 
 	while (whatToCheck[len] == whatToCheckRight[len])

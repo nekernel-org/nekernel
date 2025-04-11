@@ -40,11 +40,11 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	STATIC Void mmi_page_status(Detail::PTE* pte)
 	{
-		kout << (pte->Present ? "Present" : "Not Present") << kendl;
-		kout << (pte->Wr ? "W/R" : "Not W/R") << kendl;
-		kout << (pte->Nx ? "NX" : "Not NX") << kendl;
-		kout << (pte->User ? "User" : "Not User") << kendl;
-		kout << (pte->Pcd ? "Not Cached" : "Cached") << kendl;
+		(void)(kout << (pte->Present ? "Present" : "Not Present") << kendl);
+		(void)(kout << (pte->Wr ? "W/R" : "Not W/R") << kendl);
+		(void)(kout << (pte->Nx ? "NX" : "Not NX") << kendl);
+		(void)(kout << (pte->User ? "User" : "Not User") << kendl);
+		(void)(kout << (pte->Pcd ? "Not Cached" : "Cached") << kendl);
 	}
 
 	/***********************************************************************************/
@@ -142,6 +142,9 @@ namespace Kernel::HAL
 		pte->User = !!(flags & kMMFlagsUser);
 		pte->Nx = !!(flags & kMMFlagsNX);
 		pte->Pcd = !(flags & kMMFlagsUncached);
+
+		if (physical_address)
+			pte->PhysicalAddress = (UIntPtr)physical_address;
 
 		hal_invl_tlb(virtual_address);
 

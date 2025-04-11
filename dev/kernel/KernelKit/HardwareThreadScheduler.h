@@ -103,21 +103,21 @@ namespace Kernel
 		HAL::StackFramePtr Leak() noexcept;
 
 	public:
-		Ref<HardwareThread*> operator[](const SizeT& idx);
+		Ref<HardwareThread*> operator[](SizeT idx);
 		bool				 operator!() noexcept;
 							 operator bool() noexcept;
 
-		const Bool IsUser() override
+		Bool IsUser() override
 		{
 			return Yes;
 		}
 
-		const Bool IsKernel() override
+		Bool IsKernel() override
 		{
 			return No;
 		}
 
-		const Bool HasMP() override
+		Bool HasMP() override
 		{
 			return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
 		}

@@ -63,6 +63,21 @@ void operator delete(void* buf, size_t size)
 	if (!buf)
 		return;
 
+	NE_UNUSED(size);
+
+	BS->FreePool(buf);
+}
+
+/// @brief Deletes the object (array specific).
+/// @param buf the object.
+/// @param size it's size.
+void operator delete[](void* buf, size_t size)
+{
+	if (!buf)
+		return;
+
+	NE_UNUSED(size);
+
 	BS->FreePool(buf);
 }
 

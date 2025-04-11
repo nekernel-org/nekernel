@@ -215,7 +215,7 @@ IMPORT_C Char* DrvGetDriveLetterFromPath(_Input const Char* path);
 /// @param letter the letter (A..Z).
 /// @return the drive object.
 // ------------------------------------------------------------------------------------------ //
-IMPORT_C Ref DrvGetMountedDrive(_Input const Char letter);
+IMPORT_C Ref DrvGetMountedDrive(_Input Char letter);
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Mount a drive.
@@ -228,7 +228,7 @@ IMPORT_C Void DrvMountDrive(_Input const Char* path, _Input const Char* letter);
 /// @brief Unmount a drive.
 /// @param letter the letter to unmount.
 // ------------------------------------------------------------------------------------------ //
-IMPORT_C Void DrvUnmountDrive(_Input const Char letter);
+IMPORT_C Void DrvUnmountDrive(_Input Char letter);
 
 // ------------------------------------------------------------------------
 // Event handling API, use to listen to OS specific events.
@@ -283,7 +283,7 @@ IMPORT_C SInt32 PwrSendCode(_Output SInt32& code);
 // CD-ROM API.
 // ------------------------------------------------------------------------------------------ //
 
-IMPORT_C SInt32 CdEjectDrive(_Input const Char drv_letter);
+IMPORT_C SInt32 CdEjectDrive(_Input Char drv_letter);
 
 IMPORT_C SInt32 CdOpenTray(Void);
 

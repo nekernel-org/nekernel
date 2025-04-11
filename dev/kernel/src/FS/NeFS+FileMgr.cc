@@ -92,14 +92,14 @@ namespace Kernel
 
 	/// @brief Gets the separator character.
 	/// @return
-	const Char NeFileSystemHelper::Separator()
+	Char NeFileSystemHelper::Separator()
 	{
 		return kNeFSSeparator;
 	}
 
 	/// @brief Gets the metafile character.
 	/// @return
-	const Char NeFileSystemHelper::MetaFile()
+	Char NeFileSystemHelper::MetaFile()
 	{
 		return kNeFSMetaFilePrefix;
 	}

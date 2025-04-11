@@ -20,7 +20,7 @@ namespace CF
 		CFArray& operator=(const CFArray&) = default;
 		CFArray(const CFArray&)			   = default;
 
-		T& operator[](const SizeT& at)
+		T& operator[](SizeT at)
 		{
 			MUST_PASS(at < this->Count());
 			return fArray[at];
@@ -31,12 +31,12 @@ namespace CF
 			return this->Count() > 0;
 		}
 
-		const SizeT Capacity()
+		SizeT Capacity()
 		{
 			return N;
 		}
 
-		const SizeT Count()
+		SizeT Count()
 		{
 			auto cnt = 0UL;
 

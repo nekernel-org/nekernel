@@ -63,6 +63,8 @@ namespace Kernel
 	/// @return
 	Void io_drv_init(DriveTrait::DrivePacket pckt)
 	{
+		NE_UNUSED(pckt);
+
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
 		kATAMaster = 0;
 		kATAIO	   = 0;
@@ -191,7 +193,7 @@ namespace Kernel
 				}
 				else
 				{
-					kout << "Scheme Found: " << block_struct.Name << kendl;
+					(void)(kout << "Scheme Found: " << block_struct.Name << kendl);
 				}
 			}
 

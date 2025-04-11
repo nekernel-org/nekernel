@@ -42,7 +42,7 @@ inline Kernel::Bool tls_delete_ptr(T* obj) noexcept
 
 	ErrorOr<T*> obj_wrapped{obj};
 
-	return ref_process.Leak().Delete(obj_wrapped, sizeof(T));
+	return ref_process.Leak().Delete(obj_wrapped);
 }
 
 //! @brief Delete process pointer.

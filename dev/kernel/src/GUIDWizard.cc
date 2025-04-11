@@ -26,17 +26,17 @@ namespace CF::XRN::Version1
 
 		Ref<GUIDSequence*> seq_ref{seq};
 
-		seq_ref.Leak()->fMs1	= uuidSeq[0];
-		seq_ref.Leak()->fMs2	= uuidSeq[1];
-		seq_ref.Leak()->fMs3	= uuidSeq[2];
-		seq_ref.Leak()->fMs4[0] = uuidSeq[3];
-		seq_ref.Leak()->fMs4[1] = uuidSeq[4];
-		seq_ref.Leak()->fMs4[2] = uuidSeq[5];
-		seq_ref.Leak()->fMs4[3] = uuidSeq[6];
-		seq_ref.Leak()->fMs4[4] = uuidSeq[7];
-		seq_ref.Leak()->fMs4[5] = uuidSeq[8];
-		seq_ref.Leak()->fMs4[6] = uuidSeq[9];
-		seq_ref.Leak()->fMs4[7] = uuidSeq[10];
+		seq_ref.Leak()->fUuid.fMs1	= uuidSeq[0];
+		seq_ref.Leak()->fUuid.fMs2	= uuidSeq[1];
+		seq_ref.Leak()->fUuid.fMs3	= uuidSeq[2];
+		seq_ref.Leak()->fUuid.fMs4[0] = uuidSeq[3];
+		seq_ref.Leak()->fUuid.fMs4[1] = uuidSeq[4];
+		seq_ref.Leak()->fUuid.fMs4[2] = uuidSeq[5];
+		seq_ref.Leak()->fUuid.fMs4[3] = uuidSeq[6];
+		seq_ref.Leak()->fUuid.fMs4[4] = uuidSeq[7];
+		seq_ref.Leak()->fUuid.fMs4[5] = uuidSeq[8];
+		seq_ref.Leak()->fUuid.fMs4[6] = uuidSeq[9];
+		seq_ref.Leak()->fUuid.fMs4[7] = uuidSeq[10];
 
 		return seq_ref;
 	}
@@ -49,17 +49,17 @@ namespace CF::XRN::Version1
 
 		for (SizeT index = 0; index < 16; ++index)
 		{
-			buf[index] = seq.Leak()->u8[index] + kUUIDAsciiBegin;
+			buf[index] = seq.Leak()->fU8[index] + kUUIDAsciiBegin;
 		}
 
 		for (SizeT index = 16; index < 24; ++index)
 		{
-			buf[index] = seq.Leak()->u16[index] + kUUIDAsciiBegin;
+			buf[index] = seq.Leak()->fU16[index] + kUUIDAsciiBegin;
 		}
 
 		for (SizeT index = 24; index < 28; ++index)
 		{
-			buf[index] = seq.Leak()->u32[index] + kUUIDAsciiBegin;
+			buf[index] = seq.Leak()->fU32[index] + kUUIDAsciiBegin;
 		}
 
 		auto view = KStringBuilder::Construct(buf);

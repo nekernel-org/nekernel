@@ -92,7 +92,7 @@ namespace Kernel
 				/// @param pad additional padding added to **size**
 				/// @return The new free address, or nullptr.
 				/***********************************************************************************/
-				auto FindBitMap(VoidPtr base_ptr, const SizeT size, const Bool wr, const Bool user, const SizeT pad) -> VoidPtr
+				auto FindBitMap(VoidPtr base_ptr, SizeT size, Bool wr, Bool user, SizeT pad) -> VoidPtr
 				{
 					if (!size)
 						return nullptr;
@@ -162,18 +162,18 @@ namespace Kernel
 				{
 					if (!this->IsBitMap(ptr_bit_set))
 					{
-						kout << "Not a BitMap: " << hex_number((UIntPtr)ptr_bit_set) << kendl;
+						(void)(kout << "Not a BitMap: " << hex_number((UIntPtr)ptr_bit_set) << kendl);
 						return;
 					}
 
-					kout << "Magic: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << kendl;
-					kout << "Is Allocated? " << (ptr_bit_set[kBitMapUsedIdx] ? "YES" : "NO") << kendl;
-					kout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << kendl;
-					kout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[kBitMapSizeIdx])) << kendl;
-					kout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[kBitMapSizeIdx])) << kendl;
-					kout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[kBitMapSizeIdx])) << kendl;
-					kout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx])) << kendl;
-					kout << "BitMap Address: " << hex_number((UIntPtr)ptr_bit_set) << kendl;
+					(void)(kout << "Magic: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << kendl);
+					(void)(kout << "Is Allocated? " << (ptr_bit_set[kBitMapUsedIdx] ? "YES" : "NO") << kendl);
+					(void)(kout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << kendl);
+					(void)(kout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
+					(void)(kout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
+					(void)(kout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
+					(void)(kout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
+					(void)(kout << "BitMap Address: " << hex_number((UIntPtr)ptr_bit_set) << kendl);
 				}
 			};
 		} // namespace Detail
@@ -190,15 +190,14 @@ namespace Kernel
 		/// @param user user bit.
 		/// @return a new bitmap allocated pointer.
 		/***********************************************************************************/
-		auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, const SizeT pad) -> VoidPtr
+		auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, SizeT pad) -> VoidPtr
 		{
 			VoidPtr				 ptr_new = nullptr;
 			Detail::IBitMapProxy bitmp;
 
+			NE_UNUSED(is_page);
+
 			ptr_new = bitmp.FindBitMap(kKernelBitMpStart, size, wr, user, pad);
-
-			MUST_PASS(ptr_new);
-
 			return (UIntPtr*)ptr_new;
 		}
 

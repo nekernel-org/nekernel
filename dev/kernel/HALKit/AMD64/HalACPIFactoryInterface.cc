@@ -89,7 +89,6 @@ namespace Kernel
 
 	Bool ACPIFactoryInterface::Shutdown()
 	{
-	failed_to_shutdown:
 		return NO;
 	}
 
@@ -97,7 +96,6 @@ namespace Kernel
 	/// @return nothing it's a reboot.
 	Void ACPIFactoryInterface::Reboot()
 	{
-	failed_to_reboot:
 		asm volatile(".intel_syntax noprefix; "
 					 "rt_reset_hardware:; "
 					 "cli; "

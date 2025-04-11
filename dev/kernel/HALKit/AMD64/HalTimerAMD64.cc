@@ -53,7 +53,7 @@ HardwareTimer::HardwareTimer(Int64 ms)
 	auto hpet = (Detail::HPET_BLOCK*)power.Find("HPET").Leak().Leak();
 	MUST_PASS(hpet);
 
-	fDigitalTimer = (IntPtr*)hpet->address.Address;
+	fDigitalTimer = (UIntPtr*)hpet->address.Address;
 }
 
 HardwareTimer::~HardwareTimer()

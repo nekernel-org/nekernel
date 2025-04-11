@@ -17,26 +17,8 @@ namespace Kernel::HAL
 		STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64
 			kInterruptVectorTable[kKernelIdtSize] = {};
 
-		STATIC void hal_set_irq_mask(UInt8 irql);
-		STATIC void hal_clear_irq_mask(UInt8 irql);
-
-		STATIC Void hal_enable_pit(UInt16 ticks) noexcept
-		{
-			if (ticks == 0)
-				ticks = kPITDefaultTicks;
-
-			// Configure PIT to receieve scheduler interrupts.
-
-			UInt16 kPITCommDivisor = kPITFrequency / ticks; // 100 Hz.
-
-			HAL::rt_out8(kPITControlPort, 0x36);						   // Command to PIT
-			HAL::rt_out8(kPITChannel0Port, kPITCommDivisor & 0xFF);		   // Send low byte
-			HAL::rt_out8(kPITChannel0Port, (kPITCommDivisor >> 8) & 0xFF); // Send high byte
-
-			hal_clear_irq_mask(32);
-		}
-
-		STATIC void hal_set_irq_mask(UInt8 irql)
+#if 0
+		STATIC void hal_set_irq_mask(UInt8 irql) [[maybe_unused]]
 		{
 			UInt16 port;
 			UInt8  value;
@@ -54,8 +36,9 @@ namespace Kernel::HAL
 			value = rt_in8(port) | (1 << irql);
 			rt_out8(port, value);
 		}
+#endif // make gcc shut up
 
-		STATIC void hal_clear_irq_mask(UInt8 irql)
+		STATIC void hal_clear_irq_mask(UInt8 irql) [[maybe_unused]]
 		{
 			UInt16 port;
 			UInt8  value;
@@ -72,6 +55,22 @@ namespace Kernel::HAL
 
 			value = rt_in8(port) & ~(1 << irql);
 			rt_out8(port, value);
+		}
+
+		STATIC Void hal_enable_pit(UInt16 ticks) noexcept
+		{
+			if (ticks == 0)
+				ticks = kPITDefaultTicks;
+
+			// Configure PIT to receieve scheduler interrupts.
+
+			UInt16 kPITCommDivisor = kPITFrequency / ticks; // 100 Hz.
+
+			HAL::rt_out8(kPITControlPort, 0x36);						   // Command to PIT
+			HAL::rt_out8(kPITChannel0Port, kPITCommDivisor & 0xFF);		   // Send low byte
+			HAL::rt_out8(kPITChannel0Port, (kPITCommDivisor >> 8) & 0xFF); // Send high byte
+
+			hal_clear_irq_mask(32);
 		}
 	} // namespace Detail
 

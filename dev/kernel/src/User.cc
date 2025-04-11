@@ -31,7 +31,7 @@ namespace Kernel
 		/// \param password password to hash.
 		/// \return the hashed password
 		////////////////////////////////////////////////////////////
-		const Int32 cred_construct_token(Char* password, const Char* in_password, User* user, SizeT length)
+		Int32 cred_construct_token(Char* password, const Char* in_password, User* user, SizeT length)
 		{
 			if (!password || !user)
 				return 1;
@@ -40,7 +40,7 @@ namespace Kernel
 
 			for (SizeT i_pass = 0UL; i_pass < length; ++i_pass)
 			{
-				const Char cur_chr = in_password[i_pass];
+				Char cur_chr = in_password[i_pass];
 
 				if (cur_chr == 0)
 					break;

@@ -26,12 +26,12 @@ namespace FB
 	public:
 		NE_COPY_DELETE(FBAccessibilty);
 
-		static Int64 Width() noexcept
+		static UInt64 Width() noexcept
 		{
 			return kHandoverHeader->f_GOP.f_Width;
 		}
 
-		static Int64 Height() noexcept
+		static UInt64 Height() noexcept
 		{
 			return kHandoverHeader->f_GOP.f_Height;
 		}

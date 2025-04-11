@@ -13,7 +13,7 @@
 
 struct atexit_func_entry_t
 {
-	void (*destructor_func)(void*);
+	void (*destructor_func)();
 	void* obj_ptr;
 	void* dso_handle;
 };

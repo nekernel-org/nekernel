@@ -13,7 +13,7 @@ using namespace Kernel;
 SoftwareTimer::SoftwareTimer(Int64 seconds)
 	: fWaitFor(seconds)
 {
-	fDigitalTimer = new IntPtr();
+	fDigitalTimer = new UIntPtr();
 	MUST_PASS(fDigitalTimer);
 }
 

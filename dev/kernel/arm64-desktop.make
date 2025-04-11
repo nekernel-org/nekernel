@@ -32,8 +32,8 @@ error:
 
 MOVEALL=./MoveAll.ARM64.sh
 
-.PHONY: newos-arm64-epm
-newos-arm64-epm: clean
+.PHONY: nekernel-arm64-epm
+nekernel-arm64-epm: clean
 	$(CC) $(CCFLAGS) $(DISKDRIVER) $(DEBUG) $(wildcard src/*.cc) \
 	       $(wildcard src/FS/*.cc) $(wildcard HALKit/ARM64/Storage/*.cc) \
 			$(wildcard HALKit/ARM64/PCI/*.cc) $(wildcard src/Network/*.cc) $(wildcard src/Storage/*.cc) \
@@ -49,7 +49,7 @@ link-arm64-epm:
 	$(LD) $(LDFLAGS) $(LDOBJ) /out:$(KERNEL)
 
 .PHONY: all
-all: newos-arm64-epm link-arm64-epm
+all: nekernel-arm64-epm link-arm64-epm
 	@echo "Kernel => OK."
 
 .PHONY: help
@@ -57,7 +57,7 @@ help:
 	@echo "=== HELP ==="
 	@echo "all: Build Kernel and link it."
 	@echo "link-arm64-epm: Link Kernel for EPM based disks."
-	@echo "newos-arm64-epm: Build Kernel for EPM based disks."
+	@echo "nekernel-arm64-epm: Build Kernel for EPM based disks."
 
 .PHONY: clean
 clean:
