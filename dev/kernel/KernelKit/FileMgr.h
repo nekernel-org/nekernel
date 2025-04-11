@@ -87,7 +87,7 @@ namespace Kernel
 		virtual ~IFilesystemMgr() = default;
 
 	public:
-		NE_COPY_DEFAULT(IFilesystemMgr);
+		NE_COPY_DEFAULT(IFilesystemMgr)
 
 	public:
 		/// @brief Mounts a new filesystem into an active state.
@@ -153,7 +153,7 @@ namespace Kernel
 		~NeFileSystemMgr() override;
 
 	public:
-		NE_COPY_DEFAULT(NeFileSystemMgr);
+		NE_COPY_DEFAULT(NeFileSystemMgr)
 
 	public:
 		NodePtr Create(const Char* path) override;

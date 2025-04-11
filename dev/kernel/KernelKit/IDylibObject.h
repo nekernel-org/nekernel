@@ -34,7 +34,7 @@ namespace Kernel
 			}
 		};
 
-		NE_COPY_DEFAULT(IDylibObject);
+		NE_COPY_DEFAULT(IDylibObject)
 
 		virtual DLL_TRAITS** GetAddressOf() = 0;
 		virtual DLL_TRAITS*	 Get()			= 0;

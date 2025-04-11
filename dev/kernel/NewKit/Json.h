@@ -43,7 +43,7 @@ namespace Kernel
 
 		~Json() = default;
 
-		NE_COPY_DEFAULT(Json);
+		NE_COPY_DEFAULT(Json)
 
 		Bool& IsUndefined()
 		{

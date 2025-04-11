@@ -89,7 +89,7 @@ namespace Kernel
 		explicit MountpointInterface() = default;
 		~MountpointInterface()		   = default;
 
-		NE_COPY_DEFAULT(MountpointInterface);
+		NE_COPY_DEFAULT(MountpointInterface)
 
 	public:
 		DriveTrait& A()

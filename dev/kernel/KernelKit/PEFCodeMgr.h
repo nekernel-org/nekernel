@@ -35,7 +35,7 @@ namespace Kernel
 		~PEFLoader() override;
 
 	public:
-		NE_COPY_DEFAULT(PEFLoader);
+		NE_COPY_DEFAULT(PEFLoader)
 
 	public:
 		const Char* Path() override;

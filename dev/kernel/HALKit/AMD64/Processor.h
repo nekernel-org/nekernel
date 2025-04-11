@@ -268,7 +268,7 @@ namespace Kernel::HAL
 		explicit APICController(VoidPtr base);
 		~APICController() = default;
 
-		NE_COPY_DEFAULT(APICController);
+		NE_COPY_DEFAULT(APICController)
 
 	public:
 		UInt32 Read(UInt32 reg) noexcept;

@@ -97,7 +97,7 @@ namespace Kernel
 	public:
 		explicit HardwareThreadScheduler();
 		~HardwareThreadScheduler();
-		NE_COPY_DEFAULT(HardwareThreadScheduler);
+		NE_COPY_DEFAULT(HardwareThreadScheduler)
 
 	public:
 		HAL::StackFramePtr Leak() noexcept;

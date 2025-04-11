@@ -27,7 +27,7 @@ namespace Kernel
 		explicit SwapDiskInterface() = default;
 		~SwapDiskInterface()		 = default;
 
-		NE_COPY_DEFAULT(SwapDiskInterface);
+		NE_COPY_DEFAULT(SwapDiskInterface)
 
 	public:
 		/***********************************************************************************/

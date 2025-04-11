@@ -21,7 +21,7 @@ namespace Kernel
 		~NVMEDeviceInterface() override;
 
 	public:
-		NE_COPY_DEFAULT(NVMEDeviceInterface);
+		NE_COPY_DEFAULT(NVMEDeviceInterface)
 
 		const Char* Name() const override;
 

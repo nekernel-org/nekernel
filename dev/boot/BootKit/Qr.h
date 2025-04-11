@@ -954,7 +954,7 @@ namespace qr
 		explicit QrDelegate() = default;
 		~QrDelegate()		  = default;
 
-		NE_COPY_DEFAULT(QrDelegate);
+		NE_COPY_DEFAULT(QrDelegate)
 
 		/// @brief Draw method delegate.
 		template <int V>
