@@ -44,9 +44,7 @@ ifneq ($(AHCI_SUPPORT), )
 DISK_DRV =  -D__AHCI__
 endif
 
-ifneq ($(DEBUG_SUPPORT), )
 DEBUG_MACRO = -D__DEBUG__
-endif
 
 ifeq ($(shell uname), Darwin)
 EMU_FLAGS=-M q35 -smp 4 -m 8G \
