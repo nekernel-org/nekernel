@@ -19,9 +19,9 @@ EXTERN_C Int32 BootNetModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 	BOOTNET_INTERNET_HEADER inet{};
 
-	bootnet_read_udp_packet(inet);
-
 	memset(&inet, 0, sizeof(BOOTNET_INTERNET_HEADER));
+	
+	bootnet_read_udp_packet(inet);
 
 	/// TODO: Read address from JSON file 'bootnet.json'
 
