@@ -1,0 +1,125 @@
+\documentclass{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{graphicx}
+
+\definecolor{codegray}{gray}{0.95}
+\lstset{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  tabsize=4,
+  language=C++,
+  showstringspaces=false
+}
+
+\title{NeFS: New Extended File System Specification}
+\author{Amlal El Mahrouss}
+\date{2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+NeFS (New Extended File System) is a B-tree-based embedded file system designed to operate over low-level block storage (AHCI/ATA) with a modular architecture. It supports catalogs (like files or directories), forks (similar to macOS data/resource forks), and a formatting mechanism using EPM (Embedded Partition Manager).
+
+\section{Key Components}
+
+\subsection*{Mountpoint and Drive Access}
+\begin{itemize}
+  \item `kMountpoint`: Global mountpoint interface to access drives.
+  \item `DriveTrait`: Interface used to abstract block-level access.
+\end{itemize}
+
+\subsection*{Core Structures}
+\begin{longtable}{|l|p{11cm}|}
+\hline
+\textbf{Structure} & \textbf{Purpose} \\
+\hline
+NEFS\_FORK\_STRUCT & Represents a data fork (stream of bytes attached to a catalog). \\
+\hline
+NEFS\_CATALOG\_STRUCT & Represents metadata of a file or directory, including fork pointers. \\
+\hline
+NEFS\_ROOT\_PARTITION\_BLOCK & Metadata describing a NeFS partition. \\
+\hline
+EPM\_PART\_BLOCK & EPM descriptor for bootable partition support. \\
+\hline
+\end{longtable}
+
+\subsection*{Key Functions}
+
+\begin{itemize}
+  \item \texttt{CreateCatalog()} — Creates a file or directory catalog.
+  \item \texttt{CreateFork()} — Adds a fork to a catalog, with LBA linking.
+  \item \texttt{FindCatalog()} — Finds a catalog by traversing sibling links.
+  \item \texttt{FindFork()} — Locates a fork by name under a catalog.
+  \item \texttt{WriteCatalog()} — Writes a fork's data to the correct offset.
+  \item \texttt{Format()} — Initializes a NeFS + EPM partition on a drive.
+  \item \texttt{ReadCatalog()} — Reads back a fork's data.
+  \item \texttt{RemoveCatalog()} — Marks a catalog as deleted and updates partition metadata.
+\end{itemize}
+
+\section{Design Overview}
+
+\subsection*{Fork Management}
+Forks are chained using `NextSibling` pointers and are scanned linearly to find unallocated entries. Forks contain:
+\begin{itemize}
+  \item Fork name
+  \item Catalog name
+  \item Flags (e.g., created/deleted)
+  \item Data size and offset
+  \item Sibling pointers (Next, Previous)
+\end{itemize}
+
+\subsection*{Catalog Management}
+Catalogs act like files or directories. Each has:
+\begin{itemize}
+  \item Name and type (file/dir)
+  \item Data and resource forks
+  \item Status flags
+  \item Chaining via sibling pointers
+\end{itemize}
+Catalog creation attempts to find a parent first, then finds a free block to allocate the new catalog structure.
+
+\subsection*{Partition Formatting}
+The `Format()` function sets up the NeFS partition and optionally writes an EPM descriptor if bootable. It:
+\begin{enumerate}
+  \item Verifies the drive
+  \item Initializes partition metadata (sector size, catalog start, etc.)
+  \item Writes the root directory
+\end{enumerate}
+
+\section{Error Handling}
+Errors are written to a global error register using `err\_global\_get()`. Common codes include:
+\begin{itemize}
+  \item \texttt{kErrorDiskIsCorrupted}
+  \item \texttt{kErrorFileExists}
+  \item \texttt{kErrorFileNotFound}
+  \item \texttt{kErrorUnimplemented}
+\end{itemize}
+
+\section{Limitations and Notes}
+\begin{itemize}
+  \item No read/write locking or access concurrency.
+  \item Assumes in-memory buffers for fork writing.
+  \item Seek/Tell operations are not implemented — only bulk read/write.
+  \item Supports one mountpoint at a time.
+\end{itemize}
+
+\section{Future Work}
+\begin{itemize}
+  \item Implement streaming I/O with Seek/Tell.
+  \item Support multiple mountpoints or drives.
+  \item Improve metadata journaling and recovery features.
+\end{itemize}
+
+\end{document}
