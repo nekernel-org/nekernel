@@ -7,6 +7,7 @@
 #ifndef INC_PROCESS_SCHEDULER_H
 #define INC_PROCESS_SCHEDULER_H
 
+/// @file ProcessScheduler.h
 /// @brief Process scheduler code and definitions.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 
@@ -16,7 +17,7 @@
 #include <NewKit/MutableArray.h>
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
-#define kSchedInvalidPID		  ((PID)~0)
+#define kSchedInvalidPID		  (-1)
 #define kSchedProcessLimitPerTeam (32U)
 
 #define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
@@ -33,8 +34,8 @@ namespace Kernel
 	//! @brief Forward declarations.
 
 	class IDylibObject;
-	class UserProcess;
-	class UserProcessTeam;
+	class Process;
+	class ProcessTeam;
 	class UserProcessScheduler;
 	class UserProcessHelper;
 
@@ -141,9 +142,9 @@ namespace Kernel
 	/***********************************************************************************/
 	using ImagePtr = VoidPtr;
 
-	struct UserProcessImage final
+	struct ProcessImage final
 	{
-		explicit UserProcessImage() = default;
+		explicit ProcessImage() = default;
 
 		ImagePtr fCode;
 		ImagePtr fBlob;
@@ -160,17 +161,17 @@ namespace Kernel
 	};
 
 	/***********************************************************************************/
-	/// @name UserProcess
-	/// @brief User process class, holds information about the running process/thread.
+	/// @name Process
+	/// @brief Process class, holds information about the running process/thread.
 	/***********************************************************************************/
-	class UserProcess final
+	class Process final
 	{
 	public:
-		explicit UserProcess();
-		~UserProcess();
+		explicit Process();
+		~Process();
 
 	public:
-		NE_COPY_DEFAULT(UserProcess)
+		NE_COPY_DEFAULT(Process)
 
 	public:
 		Char			   Name[kSchedNameLen] = {"Process"};
@@ -180,7 +181,7 @@ namespace Kernel
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatusKind  Status{ProcessStatusKind::kFinished};
 		UInt8*			   StackReserve{nullptr};
-		UserProcessImage   Image{};
+		ProcessImage   Image{};
 		SizeT			   StackSize{kSchedMaxStackSz};
 		IDylibObject*	   DylibDelegate{nullptr};
 		SizeT			   MemoryCursor{0UL};
@@ -197,16 +198,16 @@ namespace Kernel
 			struct ProcessMemoryHeapList* MemoryNext{nullptr};
 		};
 
-		struct UserProcessSignal final
+		struct ProcessSignal final
 		{
 			UIntPtr			  SignalArg;
 			ProcessStatusKind PreviousStatus;
 			UIntPtr			  SignalID;
 		};
 
-		UserProcessSignal	   ProcessSignal;
+		ProcessSignal	   ProcessSignal;
 		ProcessMemoryHeapList* ProcessMemoryHeap{nullptr};
-		UserProcessTeam*	   ProcessParentTeam;
+		ProcessTeam*	   ProcessParentTeam;
 
 		VoidPtr VMRegister{0UL};
 
@@ -292,28 +293,28 @@ namespace Kernel
 
 	/// \brief Processs Team (contains multiple processes inside it.)
 	/// Equivalent to a process batch
-	class UserProcessTeam final
+	class ProcessTeam final
 	{
 	public:
-		explicit UserProcessTeam();
-		~UserProcessTeam() = default;
+		explicit ProcessTeam();
+		~ProcessTeam() = default;
 
-		NE_COPY_DEFAULT(UserProcessTeam)
+		NE_COPY_DEFAULT(ProcessTeam)
 
-		Array<UserProcess, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<UserProcess>&							   AsRef();
+		Array<Process, kSchedProcessLimitPerTeam>& AsArray();
+		Ref<Process>&							   AsRef();
 		ProcessID&									   Id() noexcept;
 
 	public:
-		Array<UserProcess, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<UserProcess>							  mCurrentProcess;
+		Array<Process, kSchedProcessLimitPerTeam> mProcessList;
+		Ref<Process>							  mCurrentProcess;
 		ProcessID									  mTeamId{0};
 		ProcessID									  mProcessCount{0};
 	};
 
-	typedef Array<UserProcess, kSchedProcessLimitPerTeam> UserThreadArray;
+	typedef Array<Process, kSchedProcessLimitPerTeam> UserThreadArray;
 
-	using UserProcessRef = UserProcess&;
+	using UserProcessRef = Process&;
 
 	/***********************************************************************************/
 	/// @brief Process scheduler class.
@@ -333,7 +334,7 @@ namespace Kernel
 		bool operator!();
 
 	public:
-		UserProcessTeam& CurrentTeam();
+		ProcessTeam& CurrentTeam();
 
 	public:
 		ProcessID  Spawn(const Char* name, VoidPtr code, VoidPtr image);
@@ -344,19 +345,19 @@ namespace Kernel
 		Bool HasMP() override;
 
 	public:
-		Ref<UserProcess>& CurrentProcess();
+		Ref<Process>& CurrentProcess();
 		SizeT		  Run() noexcept;
 
 	public:
 		STATIC UserProcessScheduler& The();
 
 	private:
-		UserProcessTeam mTeam{};
+		ProcessTeam mTeam{};
 	};
 
 	/***********************************************************************************/
 	/**
-	 * \brief UserProcess helper class, which contains needed utilities for the scheduler.
+	 * \brief Process helper class, which contains needed utilities for the scheduler.
 	 */
 	/***********************************************************************************/
 
@@ -364,7 +365,7 @@ namespace Kernel
 	{
 	public:
 		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, PID new_pid);
-		STATIC Bool CanBeScheduled(const UserProcess& process);
+		STATIC Bool CanBeScheduled(const Process& process);
 		STATIC ErrorOr<PID> TheCurrentPID();
 		STATIC SizeT		StartScheduling();
 	};

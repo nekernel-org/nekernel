@@ -21,10 +21,10 @@
 #define kPefMagic	 "Joy!"
 #define kPefMagicFat "yoJ!"
 
-#define kPefMagicLen 5
+#define kPefMagicLen (5)
 
-#define kPefVersion 3
-#define kPefNameLen 256U
+#define kPefVersion (3)
+#define kPefNameLen (256U)
 
 /* not mandatory, only for non fork based filesystems. */
 #define kPefExt		  ".exec"
