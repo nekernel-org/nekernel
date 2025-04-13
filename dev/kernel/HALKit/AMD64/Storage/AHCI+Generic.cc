@@ -66,22 +66,6 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept;
 
 STATIC Void drv_compute_disk_ahci() noexcept;
 
-namespace AHCI::Detail
-{
-	template <typename RetType>
-	STATIC RetType* ahci_align_address(RetType* address, Int32 alignement)
-	{
-		if (!address)
-			return nullptr;
-
-		UIntPtr addr = (UIntPtr)address;
-
-		UIntPtr aligned_addr = (addr + alignement - 1) & (~alignement - 1);
-
-		return (RetType*)aligned_addr;
-	}
-} // namespace AHCI::Detail
-
 STATIC Void drv_compute_disk_ahci() noexcept
 {
 	kSATASectorCount = 0UL;
@@ -90,18 +74,18 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	const UInt16 kSzIdent = 512;
 
 	/// Push it to the stack
-	UInt16* identify_data = AHCI::Detail::ahci_align_address<UInt16>(new UInt16[kSzIdent], kib_cast(1));
+	UInt16* identify_data = new UInt16[kSzIdent];
 
 	/// Send AHCI command for identification.
 	drv_std_input_output_ahci<NO, YES, YES>(0, (UInt8*)identify_data, kAHCISectorSize, kSzIdent);
 
 	/// Extract 48-bit LBA.
-
 	UInt64 lba48_sectors = 0;
 	lba48_sectors |= (UInt64)identify_data[100];
 	lba48_sectors |= (UInt64)identify_data[101] << 16;
 	lba48_sectors |= (UInt64)identify_data[102] << 32;
 
+	/// Now verify if lba48
 	if (lba48_sectors == 0)
 		kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
 	else

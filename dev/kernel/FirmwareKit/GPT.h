@@ -10,6 +10,7 @@
 #include <FirmwareKit/EFI/EFI.h>
 
 #define kSectorSizeGPT (512U)
+#define kPartNameGPT (8U)
 
 namespace Kernel
 {
@@ -28,7 +29,7 @@ namespace Kernel
 
 	struct PACKED GPT_PARTITION_TABLE final
 	{
-		Char	 PartitionName[8];
+		Char	 PartitionName[kPartNameGPT];
 		UInt32	 Revision;
 		UInt32	 HeaderSize;
 		UInt32	 ChecksumCRC32;

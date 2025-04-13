@@ -12,9 +12,9 @@
 
 namespace Kernel
 {
-	class UserProcess;
+	class Process;
 
-	typedef UserProcess& UserProcessRef;
+	typedef Process& UserProcessRef;
 
 	/// @brief Access control class, which locks a task until one is done.
 	class BinaryMutex final
@@ -31,8 +31,8 @@ namespace Kernel
 		BOOL WaitForProcess(const Int16& sec) noexcept;
 
 	public:
-		bool Lock(UserProcess& process);
-		bool LockOrWait(UserProcess& process, TimerInterface* timer);
+		bool Lock(Process& process);
+		bool LockOrWait(Process& process, TimerInterface* timer);
 
 	public:
 		NE_COPY_DEFAULT(BinaryMutex)

@@ -13,4 +13,4 @@
 
 class UserProcessScheduler;
 class IDylibObject;
-class UserProcess;
+class Process;

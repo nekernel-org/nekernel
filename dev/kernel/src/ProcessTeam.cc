@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 /***********************************************************************************/
-/// @file UserProcessTeam.cc
+/// @file ProcessTeam.cc
 /// @brief Process teams implementation.
 /***********************************************************************************/
 
@@ -13,11 +13,11 @@
 
 namespace Kernel
 {
-	UserProcessTeam::UserProcessTeam()
+	ProcessTeam::ProcessTeam()
 	{
 		for (SizeT i = 0U; i < this->mProcessList.Count(); ++i)
 		{
-			this->mProcessList[i]		 = UserProcess();
+			this->mProcessList[i]		 = Process();
 			this->mProcessList[i].PTime	 = 0;
 			this->mProcessList[i].Status = ProcessStatusKind::kKilled;
 		}
@@ -26,11 +26,11 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	/// @brief UserProcess list array getter.
+	/// @brief Process list array getter.
 	/// @return The list of process to schedule.
 	/***********************************************************************************/
 
-	Array<UserProcess, kSchedProcessLimitPerTeam>& UserProcessTeam::AsArray()
+	Array<Process, kSchedProcessLimitPerTeam>& ProcessTeam::AsArray()
 	{
 		return this->mProcessList;
 	}
@@ -40,7 +40,7 @@ namespace Kernel
 	/// @return The team's ID.
 	/***********************************************************************************/
 
-	ProcessID& UserProcessTeam::Id() noexcept
+	ProcessID& ProcessTeam::Id() noexcept
 	{
 		return this->mTeamId;
 	}
@@ -50,7 +50,7 @@ namespace Kernel
 	/// @return The current process header.
 	/***********************************************************************************/
 
-	Ref<UserProcess>& UserProcessTeam::AsRef()
+	Ref<Process>& ProcessTeam::AsRef()
 	{
 		return this->mCurrentProcess;
 	}

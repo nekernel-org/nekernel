@@ -52,13 +52,13 @@ namespace Kernel
 		IDeviceObject(const IDeviceObject<T>&)			  = default;
 
 	public:
-		virtual IDeviceObject<T>& operator<<(T Data) [[maybe_unused]]
+		virtual IDeviceObject<T>& operator<<(T Data) 
 		{
 			fOut(this, Data);
 			return *this;
 		}
 
-		virtual IDeviceObject<T>& operator>>(T Data) [[maybe_unused]]
+		virtual IDeviceObject<T>& operator>>(T Data) 
 		{
 			fIn(this, Data);
 			return *this;
@@ -133,6 +133,7 @@ namespace Kernel
 		kDeviceTypeSCSI,
 		kDeviceTypeAHCI,
 		kDeviceTypeMBCI,
+		kDeviceTypeATA,
 		kDeviceTypeUSB,
 		kDeviceTypeMediaCtrl, // MM controller
 		kDeviceTypeCount,
