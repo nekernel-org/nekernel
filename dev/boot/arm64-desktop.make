@@ -34,7 +34,7 @@ EMU_FLAGS= -smp 4 -m 8G -cpu max -M virt \
 			file=fat:rw:src/root/,index=2,format=raw \
 		    -no-shutdown -no-reboot -cpu cortex-a72 -device virtio-gpu-pci
 
-LD_FLAGS=-subsystem:efi_application -entry:ModuleMain /nodefaultlib
+LD_FLAGS=-subsystem:efi_application -entry:BootloaderMain /nodefaultlib
 
 STANDALONE_MACRO=-D__BOOTZ_STANDALONE__
 OBJ=*.o

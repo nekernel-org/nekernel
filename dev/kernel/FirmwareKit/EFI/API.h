@@ -83,7 +83,7 @@ Bascially frees everything we have in the EFI side.
 	}
 } // namespace Boot
 
-inline void InitEFI(EfiSystemTable* SystemTable) noexcept
+inline void fw_init_efi(EfiSystemTable* SystemTable) noexcept
 {
 	if (!SystemTable)
 		return;

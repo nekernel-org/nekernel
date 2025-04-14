@@ -133,14 +133,14 @@ namespace Kernel
 		}
 		else
 		{
-			ProcessMemoryHeapList* entry	  = this->ProcessMemoryHeap;
+			ProcessMemoryHeapList* entry = this->ProcessMemoryHeap;
 
 			while (entry)
 			{
 				if (entry->MemoryEntry == nullptr)
 					break; // chose to break here, when we get an already allocated memory entry for our needs.
 
-				entry	   = entry->MemoryNext;
+				entry = entry->MemoryNext;
 			}
 
 			entry->MemoryNext			   = new ProcessMemoryHeapList();

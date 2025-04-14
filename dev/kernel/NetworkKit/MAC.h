@@ -10,7 +10,7 @@
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
 
-#define kMACAddrLen (12)
+#define kMACAddrLen (32)
 
 namespace Kernel
 {
@@ -27,10 +27,10 @@ namespace Kernel
 		NE_COPY_DEFAULT(MacAddressGetter)
 
 	public:
-		Array<WideChar, kMACAddrLen>& AsBytes();
+		Array<UInt8, kMACAddrLen>& AsBytes();
 
 	private:
-		Array<WideChar, kMACAddrLen> fMacAddress;
+		Array<UInt8, kMACAddrLen> fMacAddress;
 	};
 
 } // namespace Kernel

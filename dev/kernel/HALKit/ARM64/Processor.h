@@ -28,7 +28,8 @@ namespace Kernel::HAL
 		kMMFlagsWr		= 1 << 1,
 		kMMFlagsUser	= 1 << 2,
 		kMMFlagsNX		= 1 << 3,
-		kMMFlagsCount	= 3,
+		kMMFlagsUncached = 1 << 4,
+		kMMFlagsCount	= 4,
 	};
 
 	/// @brief Set a PTE from pd_base.
@@ -37,6 +38,8 @@ namespace Kernel::HAL
 	/// @param flags the flags to put on the page.
 	/// @return Status code of page manip.
 	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags);
+
+	EXTERN_C UIntPtr hal_get_phys_address(VoidPtr virtual_address);
 
 	typedef UIntPtr	   Reg;
 	typedef Register64 Register;

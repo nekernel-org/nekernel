@@ -21,9 +21,15 @@ using namespace Kernel;
 #define EFI_API __attribute__((ms_abi))
 #endif // ifndef EPI_API
 
+#ifndef EPIAPI
+#define EFIAPI __attribute__((ms_abi))
+#endif // ifndef EPIAPI
+
 #define IN
 #define OUT
 #define OPTIONAL
+
+#define EFI_STATUS EfiStatusType
 
 #define EFI_FINAL final
 
@@ -285,6 +291,24 @@ typedef struct EfiTableHeader
 		}                                                  \
 	}
 
+#define EFI_SIMPLE_NETWORK_PROTOCOL_GUID                   \
+	{                                                      \
+		0xA19832B9, 0xAC25, 0x11D3,                        \
+		{                                                  \
+			0x9A, 0x2D, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d \
+		}                                                  \
+	}
+
+#define EFI_SIMPLE_NETWORK_PROTOCOL_REVISION 0x00010000
+
+#define EFI_IP4_PROTOCOL_GUID                              \
+	{                                                      \
+		0x41d94cd2, 0x35b6, 0x455a,                        \
+		{                                                  \
+			0x82, 0x58, 0xd4, 0xe5, 0x13, 0x34, 0xaa, 0xdd \
+		}                                                  \
+	}
+
 #define EFI_LOADED_IMAGE_PROTOCOL_REVISION 0x1000
 
 #define EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID               \
@@ -329,6 +353,91 @@ enum
 	kPixelBltOnly,
 	kPixelFormatMax
 };
+
+struct EFI_SIMPLE_NETWORK_PROTOCOL;
+
+typedef EFI_STATUS(EFI_API* EFI_SIMPLE_NETWORK_START)(
+	IN EFI_SIMPLE_NETWORK_PROTOCOL* This);
+
+typedef EFI_STATUS(EFI_API* EFI_SIMPLE_NETWORK_STOP)(
+	IN EFI_SIMPLE_NETWORK_PROTOCOL* This);
+
+typedef EFI_STATUS(EFI_API* EFI_SIMPLE_NETWORK_INITIALIZE)(
+	IN EFI_SIMPLE_NETWORK_PROTOCOL* This,
+	IN UInt32 ExtraRxBufferSize		OPTIONAL,
+	IN UInt32 ExtraTxBufferSize		OPTIONAL);
+
+typedef EFI_STATUS(EFIAPI* EFI_SIMPLE_NETWORK_RESET)(
+	IN EFI_SIMPLE_NETWORK_PROTOCOL* This,
+	IN Boolean						ExtendedVerification);
+
+typedef EFI_STATUS(EFIAPI* EFI_SIMPLE_NETWORK_SHUTDOWN)(
+	IN EFI_SIMPLE_NETWORK_PROTOCOL* This);
+
+typedef UInt8 EfiMacAddress[32];
+
+#define MAX_MCAST_FILTER_CNT 16
+
+typedef struct
+{
+	UInt32			State;
+	UInt32			HwAddressSize;
+	UInt32			MediaHeaderSize;
+	UInt32			MaxPacketSize;
+	UInt32			NvRamSize;
+	UInt32			NvRamAccessSize;
+	UInt32			ReceiveFilterMask;
+	UInt32			ReceiveFilterSetting;
+	UInt32			MaxMCastFilterCount;
+	UInt32			MCastFilterCount;
+	EfiMacAddress MCastFilter[MAX_MCAST_FILTER_CNT];
+	EfiMacAddress CurrentAddress;
+	EfiMacAddress BroadcastAddress;
+	EfiMacAddress PermanentAddress;
+	UInt8			IfType;
+	BOOL			MacAddressChangeable;
+	BOOL			MultipleTxSupported;
+	BOOL			MediaPresentSupported;
+	BOOL			MediaPresent;
+} EFI_SIMPLE_NETWORK_MODE;
+
+typedef EFI_STATUS(EFIAPI* EFI_SIMPLE_NETWORK_TRANSMIT)(
+	IN EFI_SIMPLE_NETWORK_PROTOCOL* This,
+	IN UInt32						HeaderSize,
+	IN UInt32						BufferSize,
+	IN Void* Buffer,
+	IN EfiMacAddress* SrcAddr OPTIONAL,
+	IN EfiMacAddress* DestAddr OPTIONAL,
+	IN UInt16* Protocol OPTIONAL);
+
+typedef EFI_STATUS(EFIAPI* EFI_SIMPLE_NETWORK_RECEIVE)(
+	IN EFI_SIMPLE_NETWORK_PROTOCOL* This,
+	OUT UInt32* HeaderSize OPTIONAL,
+	IN OUT UInt32* BufferSize,
+	OUT Void* Buffer,
+	OUT EfiMacAddress* SrcAddr OPTIONAL,
+	OUT EfiMacAddress* DestAddr OPTIONAL,
+	OUT UInt16* Protocol OPTIONAL);
+
+typedef struct EFI_SIMPLE_NETWORK_PROTOCOL
+{
+	UInt64						  Revision;
+	EFI_SIMPLE_NETWORK_START	  Start;
+	EFI_SIMPLE_NETWORK_STOP		  Stop;
+	EFI_SIMPLE_NETWORK_INITIALIZE Initialize;
+	EFI_SIMPLE_NETWORK_RESET	  Reset;
+	EFI_SIMPLE_NETWORK_SHUTDOWN	  Shutdown;
+	VoidPtr						  ReceiveFilters;
+	VoidPtr						  StationAddress;
+	VoidPtr						  Statistics;
+	VoidPtr						  MCastIpToMac;
+	VoidPtr						  NvData;
+	VoidPtr						  GetStatus;
+	EFI_SIMPLE_NETWORK_TRANSMIT	  Transmit;
+	EFI_SIMPLE_NETWORK_RECEIVE	  Receive;
+	VoidPtr						  WaitForPacket;
+	EFI_SIMPLE_NETWORK_MODE*	  Mode;
+} EFI_SIMPLE_NETWORK_PROTOCOL;
 
 typedef struct EfiBitmask
 {

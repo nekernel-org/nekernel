@@ -58,7 +58,7 @@ EMU_FLAGS= -smp 4 -m 8G \
     -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm
 endif
 
-LD_FLAGS=-e ModuleMain --subsystem=10
+LD_FLAGS=-e BootloaderMain --subsystem=10
 
 STANDALONE_MACRO=-D__BOOTZ_STANDALONE__
 OBJ=obj/*.o

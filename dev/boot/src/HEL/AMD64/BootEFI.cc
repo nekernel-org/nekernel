@@ -73,19 +73,19 @@ STATIC Bool boot_init_fb() noexcept
 EfiGUID kEfiGlobalNamespaceVarGUID = {
 	0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
 
-/// @brief ModuleMain EFI entrypoint.
+/// @brief BootloaderMain EFI entrypoint.
 /// @param image_handle Handle of this image.
 /// @param sys_table The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
-									  EfiSystemTable* sys_table)
+EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
+										  EfiSystemTable* sys_table)
 {
-	InitEFI(sys_table); ///! Init the EFI library.
+	fw_init_efi(sys_table); ///! Init the EFI library.
 
 	HEL::BootInfoHeader* handover_hdr =
 		new HEL::BootInfoHeader();
 
-	UInt32				 map_key		 = 0;
+	UInt32 map_key = 0;
 
 #ifdef ZBA_USE_FB
 	if (!boot_init_fb())
@@ -163,12 +163,10 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 
 	Boot::BootTextWriter writer;
 
-	//-------------------------------------------------------------//
-	// Update handover file specific table and phyiscal start field.
-	//-------------------------------------------------------------//
+	handover_hdr->f_BitMapStart = nullptr;			 /* Start of bitmap. */
+	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* Size of bitmap in bytes. */
 
-	handover_hdr->f_BitMapSize = gib_cast(4); /* Size of bitmap in bytes. */
-	Int32 trials			   = 5 * 10000000;
+	Int32 trials = 5 * 10000000;
 
 	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
 	{
@@ -180,7 +178,7 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 
 			trials = 3 * 10000000;
 
-			handover_hdr->f_BitMapSize = gib_cast(2); /* Size of bitmap in bytes. */
+			handover_hdr->f_BitMapSize = kHandoverBitMapSz / 2; /* Size of bitmap in bytes. */
 
 			while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
 			{
@@ -221,8 +219,6 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
 
 			fb_clear();
-
-			Boot::Stop();
 		}
 	}
 
@@ -288,6 +284,7 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 		kernel_thread->SetName("BootZ: Kernel");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
+		handover_hdr->f_KernelSz	= reader_kernel.Size();
 	}
 	else
 	{
@@ -296,6 +293,8 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 
 		Boot::Stop();
 	}
+
+	// Fallback to bootnet, if not PXE.
 
 	Boot::BootFileReader reader_netboot(L"net.efi", image_handle);
 	reader_netboot.ReadAll(0);

@@ -29,9 +29,10 @@ STATIC Kernel::Void hal_init_scheduler_team()
 
 STATIC Kernel::UInt64 hal_rdtsc_fn()
 {
-	Kernel::UInt32 lo, hi;
-	__asm__ volatile("rdtsc"
-					 : "=a"(lo), "=d"(hi));
+	Kernel::UInt32 lo = 0, hi = 0;
+
+	asm volatile("rdtsc"
+				 : "=a"(lo), "=d"(hi));
 
 	return ((Kernel::UInt64)hi << 32) | lo;
 }

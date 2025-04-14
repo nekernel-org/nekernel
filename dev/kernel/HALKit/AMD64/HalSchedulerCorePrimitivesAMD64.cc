@@ -46,7 +46,7 @@ namespace Kernel
 	Void mp_hang_thread(HAL::StackFrame* stack)
 	{
 		NE_UNUSED(stack);
-		
+
 		while (Yes)
 		{
 			/* Nothing to do, code is spinning */

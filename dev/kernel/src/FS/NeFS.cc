@@ -145,7 +145,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 
 		/// log what we have now.
 		(void)(kout << "Fork offset is at: " << hex_number(the_fork.DataOffset)
-			 << kendl);
+					<< kendl);
 
 		(void)(kout << "Wrote fork metadata at: " << hex_number(lba) << kendl);
 
@@ -735,7 +735,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
 
 	drive.fInput(drive.fPacket);
 
-	auto	   start_catalog_lba = kNeFSCatalogStartAddress;
+	auto start_catalog_lba = kNeFSCatalogStartAddress;
 
 	if (!KStringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()) && local_search)
 	{
@@ -966,7 +966,7 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NEFS_CATALOG_STRUCT* cata
 
 	NE_UNUSED(dataSz);
 
-	Lba	 dataForkLba  = (!is_rsrc_fork) ? catalog->DataFork : catalog->ResourceFork;
+	Lba dataForkLba = (!is_rsrc_fork) ? catalog->DataFork : catalog->ResourceFork;
 
 	NEFS_FORK_STRUCT* fs_buf = new NEFS_FORK_STRUCT();
 	auto&			  drive	 = kMountpoint.A();
@@ -1030,7 +1030,7 @@ bool NeFileSystemParser::Seek(_Input _Output NEFS_CATALOG_STRUCT* catalog, SizeT
 SizeT NeFileSystemParser::Tell(_Input _Output NEFS_CATALOG_STRUCT* catalog)
 {
 	NE_UNUSED(catalog);
-	
+
 	err_global_get() = kErrorUnimplemented;
 	return 0;
 }

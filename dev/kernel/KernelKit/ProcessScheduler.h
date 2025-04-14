@@ -181,7 +181,7 @@ namespace Kernel
 		AffinityKind	   Affinity{AffinityKind::kStandard};
 		ProcessStatusKind  Status{ProcessStatusKind::kFinished};
 		UInt8*			   StackReserve{nullptr};
-		ProcessImage   Image{};
+		ProcessImage	   Image{};
 		SizeT			   StackSize{kSchedMaxStackSz};
 		IDylibObject*	   DylibDelegate{nullptr};
 		SizeT			   MemoryCursor{0UL};
@@ -205,9 +205,9 @@ namespace Kernel
 			UIntPtr			  SignalID;
 		};
 
-		ProcessSignal	   ProcessSignal;
+		ProcessSignal		   ProcessSignal;
 		ProcessMemoryHeapList* ProcessMemoryHeap{nullptr};
-		ProcessTeam*	   ProcessParentTeam;
+		ProcessTeam*		   ProcessParentTeam;
 
 		VoidPtr VMRegister{0UL};
 
@@ -303,13 +303,13 @@ namespace Kernel
 
 		Array<Process, kSchedProcessLimitPerTeam>& AsArray();
 		Ref<Process>&							   AsRef();
-		ProcessID&									   Id() noexcept;
+		ProcessID&								   Id() noexcept;
 
 	public:
 		Array<Process, kSchedProcessLimitPerTeam> mProcessList;
 		Ref<Process>							  mCurrentProcess;
-		ProcessID									  mTeamId{0};
-		ProcessID									  mProcessCount{0};
+		ProcessID								  mTeamId{0};
+		ProcessID								  mProcessCount{0};
 	};
 
 	typedef Array<Process, kSchedProcessLimitPerTeam> UserThreadArray;
@@ -337,8 +337,8 @@ namespace Kernel
 		ProcessTeam& CurrentTeam();
 
 	public:
-		ProcessID  Spawn(const Char* name, VoidPtr code, VoidPtr image);
-		Void Remove(ProcessID process_id);
+		ProcessID Spawn(const Char* name, VoidPtr code, VoidPtr image);
+		Void	  Remove(ProcessID process_id);
 
 		Bool IsUser() override;
 		Bool IsKernel() override;

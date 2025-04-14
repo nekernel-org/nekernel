@@ -52,13 +52,13 @@ namespace Kernel
 		IDeviceObject(const IDeviceObject<T>&)			  = default;
 
 	public:
-		virtual IDeviceObject<T>& operator<<(T Data) 
+		virtual IDeviceObject<T>& operator<<(T Data)
 		{
 			fOut(this, Data);
 			return *this;
 		}
 
-		virtual IDeviceObject<T>& operator>>(T Data) 
+		virtual IDeviceObject<T>& operator>>(T Data)
 		{
 			fIn(this, Data);
 			return *this;
