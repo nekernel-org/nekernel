@@ -10,7 +10,7 @@
     "-fPIC",
     "-fno-rtti",
     "-fno-exceptions",
-    "-Wl,--subsystem=17,--image-base,0x10000000,-e,SysChkModuleMain"
+    "-Wl,--subsystem=17,--image-base,0x4000000,-e,SysChkModuleMain"
   ],
   "cpp_macros": [
     "__NEOSKRNL__",
