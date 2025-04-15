@@ -27,7 +27,7 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
 	return dest;
 }
 
-/// @brief Fill memory region with **value**.
+/// @brief Fill memory region **dest** with **value**.
 IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt8 value)
 {
 	if (!len ||

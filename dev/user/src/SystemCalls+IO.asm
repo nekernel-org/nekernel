@@ -9,6 +9,8 @@
 
 [bits 64]
 
+;; @brief Syscall dispatch, also taking note the Microsoft's calling convention to translate it to NeKernel's ABI.
+
 section .text
 
 global sci_syscall_arg_1
