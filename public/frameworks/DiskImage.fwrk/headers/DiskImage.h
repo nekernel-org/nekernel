@@ -10,7 +10,6 @@
 #pragma once
 
 #include <user/SystemCalls.h>
-#include <NewKit/Defines.h>
 
 #define kDISectorSz			 (512)
 #define kDIMinDiskSz		 mib_cast(1)
