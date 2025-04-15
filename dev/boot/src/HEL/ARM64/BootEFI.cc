@@ -19,11 +19,11 @@
 #include <modules/CoreGfx/CoreGfx.h>
 
 #ifndef kExpectedWidth
-#define kExpectedWidth (1920)
+#define kExpectedWidth (800)
 #endif
 
 #ifndef kExpectedHeight
-#define kExpectedHeight (1080)
+#define kExpectedHeight (600)
 #endif
 
 /** Graphics related. */
@@ -82,10 +82,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 		new HEL::BootInfoHeader();
 
 	UInt32				 map_key		 = 0;
-	UInt32				 size_struct_ptr = sizeof(EfiMemoryDescriptor);
-	EfiMemoryDescriptor* struct_ptr		 = nullptr;
-	UInt32				 sz_desc		 = sizeof(EfiMemoryDescriptor);
-	UInt32				 rev_desc		 = 0;
 
 #ifdef ZBA_USE_FB
 	if (!boot_init_fb())
