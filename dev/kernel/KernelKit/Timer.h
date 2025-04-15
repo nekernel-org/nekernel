@@ -50,7 +50,7 @@ namespace Kernel
 	class HardwareTimer final : public TimerInterface
 	{
 	public:
-		explicit HardwareTimer(Int64 seconds);
+		explicit HardwareTimer(UInt64 seconds);
 		~HardwareTimer() override;
 
 	public:

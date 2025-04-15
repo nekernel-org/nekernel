@@ -13,6 +13,7 @@
 #include <NetworkKit/IPC.h>
 #include <CFKit/Property.h>
 #include <modules/CoreGfx/TextGfx.h>
+#include <KernelKit/Timer.h>
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
@@ -83,8 +84,6 @@ EXTERN_C void hal_init_platform(
 
 	gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
 	gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
-
-	FB::fb_clear_video();
 
 	//! GDT will load hal_read_init after it successfully loads the segments.
 	Kernel::HAL::GDTLoader gdt_loader;

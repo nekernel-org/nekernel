@@ -82,18 +82,25 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 {
 	fw_init_efi(sys_table); ///! Init the EFI library.
 
+	fb_init();
+
 	HEL::BootInfoHeader* handover_hdr =
 		new HEL::BootInfoHeader();
 
-	UInt32 map_key = 0;
+	UInt32				 map_key		 = 0;
+	UInt32				 size_struct_ptr = sizeof(EfiMemoryDescriptor);
+	EfiMemoryDescriptor* struct_ptr		 = nullptr;
+	UInt32				 sz_desc		 = sizeof(EfiMemoryDescriptor);
+	UInt32				 rev_desc		 = 0;
 
-#ifdef ZBA_USE_FB
+	Boot::BootTextWriter writer;
+
+	writer.Write("BootZ: NeKernel Loader.\r");
+
 	if (!boot_init_fb())
 	{
-		Boot::BootTextWriter writer;
 		writer.Write("BootZ: Invalid Framebuffer, can't boot NeKernel.\r");
-
-		CANT_REACH();
+		Boot::Stop();
 	}
 
 	for (SizeT index_vt = 0; index_vt < sys_table->NumberOfTableEntries;
@@ -123,7 +130,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 	handover_hdr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
 	handover_hdr->f_GOP.f_PixelFormat  = kGop->Mode->Info->PixelFormat;
 	handover_hdr->f_GOP.f_Size		   = kGop->Mode->FrameBufferSize;
-#endif // ZBA_USE_FB
 
 	// ------------------------------------------- //
 	// Grab MP services, extended to runtime.	   //
@@ -138,13 +144,9 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	kHandoverHeader = handover_hdr;
 
-	fb_init();
-
 	FB::fb_clear_video();
 
 	FBDrawBitMapInRegion(zka_disk, NE_DISK_WIDTH, NE_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_DISK_HEIGHT) / 2);
-
-	fb_clear();
 
 	UInt32 cnt_enabled	= 0;
 	UInt32 cnt_disabled = 0;
@@ -161,12 +163,12 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	// Fill handover header now.
 
-	Boot::BootTextWriter writer;
-
 	handover_hdr->f_BitMapStart = nullptr;			 /* Start of bitmap. */
 	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* Size of bitmap in bytes. */
 
 	Int32 trials = 5 * 10000000;
+
+	writer.Write("BootZ: Allocating sufficent memory, trying with 4GB...\r");
 
 	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
 	{
@@ -212,22 +214,16 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 		if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
 		{
-			fb_init();
-
 			FB::fb_clear_video();
-
 			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
-
-			fb_clear();
 		}
 	}
 
-	// ------------------------------------------ //
-	// null these fields, to avoid being reused later.
-	// ------------------------------------------ //
+	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
-	handover_hdr->f_FirmwareCustomTables[0] = nullptr;
-	handover_hdr->f_FirmwareCustomTables[1] = nullptr;
+	struct_ptr = new EfiMemoryDescriptor[sz_desc];
+
+	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
@@ -263,10 +259,12 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 		ver = KERNEL_VERSION_BCD;
 
 		ST->RuntimeServices->SetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
-		writer.Write("BootZ: Kernel Version Updated: ").Write(ver).Write("\r");
+		writer.Write("BootZ: Kernel Version has been updated: ").Write(ver).Write("\r");
 	}
 
 	writer.Write("BootZ: Kernel Version: ").Write(ver).Write("\r");
+
+	// Fallback to bootnet, if not PXE.
 
 	Boot::BootFileReader reader_kernel(kernel_path, image_handle);
 
@@ -280,46 +278,32 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	if (reader_kernel.Blob())
 	{
+		// ------------------------------------------ //
+		// null these fields, to avoid being reused later.
+		// ------------------------------------------ //
+
+		handover_hdr->f_FirmwareCustomTables[0] = nullptr;
+		handover_hdr->f_FirmwareCustomTables[1] = nullptr;
+
 		kernel_thread = new Boot::BootThread(reader_kernel.Blob());
 		kernel_thread->SetName("BootZ: Kernel");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
 		handover_hdr->f_KernelSz	= reader_kernel.Size();
-	}
-	else
-	{
-		fb_init();
-		FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
 
-		Boot::Stop();
-	}
+		Boot::ExitBootServices(map_key, image_handle);
 
-	// Fallback to bootnet, if not PXE.
+		return kernel_thread->Start(handover_hdr, NO);
+	}
 
 	Boot::BootFileReader reader_netboot(L"net.efi", image_handle);
 	reader_netboot.ReadAll(0);
 
-	Boot::BootThread* netboot_thread = nullptr;
+	if (!reader_netboot.Blob())
+		return kEfiFail;
 
-	// ---------------------------------------------------- //
-	// Finally load the OS kernel.
-	// ---------------------------------------------------- //
+	Boot::BootThread* netboot_thread = new Boot::BootThread(reader_netboot.Blob());
+	netboot_thread->SetName("BootZ: BootNet");
 
-	Boot::ExitBootServices(map_key, image_handle);
-
-	if (kernel_thread->Start(handover_hdr, YES) != kEfiOk)
-	{
-		// ------------------------------------------ //
-		// If we fail into booting the kernel, then run BootNet.
-		// ------------------------------------------ //
-
-		if (reader_netboot.Blob())
-		{
-			netboot_thread = new Boot::BootThread(reader_netboot.Blob());
-			netboot_thread->SetName("BootZ: BootNet");
-			netboot_thread->Start(handover_hdr, YES);
-		}
-	}
-
-	CANT_REACH();
+	return netboot_thread->Start(handover_hdr, NO);
 }

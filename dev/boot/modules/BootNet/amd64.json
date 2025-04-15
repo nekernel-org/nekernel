@@ -7,7 +7,6 @@
   "compiler_flags": [
     "-nostdlib",
     "-std=c++20",
-    "-fPIC",
     "-fno-rtti",
     "-fno-exceptions",
     "-Wl,--subsystem=17,--image-base,0x4000000,-e,BootNetModuleMain"
