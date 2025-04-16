@@ -46,7 +46,7 @@ A documentation regarding building, and developing for NeKernel is available her
 ```sh
 git clone git@github.com:amlel-el-mahrouss/nekernel.git
 cd nekernel
-./setup_amd64.sh
+./setup_x64.sh
 ./debug_ata_x64.sh # Generic ATA PIO target
 ```
 

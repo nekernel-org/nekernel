@@ -14,6 +14,7 @@ namespace Kernel::HAL
 {
 	namespace Detail
 	{
+		/// @brief Page Table Entry for AMD64.
 		struct PTE
 		{
 			UInt64 Present : 1;
@@ -28,7 +29,7 @@ namespace Kernel::HAL
 			UInt64 Ignored1 : 3;		 // Available to software
 			UInt64 PhysicalAddress : 40; // Physical page frame address (bits 12–51)
 			UInt64 Ignored2 : 7;		 // More software bits / reserved
-			UInt64 Protection_key : 4;	 // Optional (if PKU enabled)
+			UInt64 ProtectionKey : 4;	 // Optional (if PKU enabled)
 			UInt64 Reserved : 1;		 // Usually reserved
 			UInt64 Nx : 1;				 // No Execute
 		};
@@ -45,6 +46,9 @@ namespace Kernel::HAL
 		(void)(kout << (pte->Nx ? "NX" : "Not NX") << kendl);
 		(void)(kout << (pte->User ? "User" : "Not User") << kendl);
 		(void)(kout << (pte->Pcd ? "Not Cached" : "Cached") << kendl);
+		(void)(kout << (pte->Accessed ? "Accessed" : "Not Accessed") << kendl);
+		(void)(kout << hex_number(pte->PhysicalAddress) << kendl);
+		(void)(kout << (pte->ProtectionKey ? "Protected" : "Not Protected/PKU Disabled") << kendl);
 	}
 
 	/***********************************************************************************/
@@ -54,31 +58,29 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	UIntPtr hal_get_phys_address(VoidPtr virt)
 	{
-		const UInt64 vaddr			 = (UInt64)virt;
+		const UInt64 kVMAddr		 = (UInt64)virt;
 		const UInt64 kMask9Bits		 = 0x1FFULL;
 		const UInt64 kPageOffsetMask = 0xFFFULL;
 
 		UInt64 cr3 = (UInt64)hal_read_cr3() & ~kPageOffsetMask;
 
-		hal_invl_tlb(virt);
-
 		// Level 4
 		auto   pml4	 = reinterpret_cast<UInt64*>(cr3);
-		UInt64 pml4e = pml4[(vaddr >> 39) & kMask9Bits];
+		UInt64 pml4e = pml4[(kVMAddr >> 39) & kMask9Bits];
 
 		if (!(pml4e & 1))
 			return 0;
 
 		// Level 3
 		auto   pdpt	 = reinterpret_cast<UInt64*>(pml4e & ~kPageOffsetMask);
-		UInt64 pdpte = pdpt[(vaddr >> 30) & kMask9Bits];
+		UInt64 pdpte = pdpt[(kVMAddr >> 30) & kMask9Bits];
 
 		if (!(pdpte & 1))
 			return 0;
 
 		// Level 2
 		auto   pd  = reinterpret_cast<UInt64*>(pdpte & ~kPageOffsetMask);
-		UInt64 pde = pd[(vaddr >> 21) & kMask9Bits];
+		UInt64 pde = pd[(kVMAddr >> 21) & kMask9Bits];
 
 		if (!(pde & 1))
 			return 0;
@@ -86,12 +88,12 @@ namespace Kernel::HAL
 		// 1 GiB page support
 		if (pde & (1 << 7))
 		{
-			return (pde & ~((1ULL << 30) - 1)) | (vaddr & ((1ULL << 30) - 1));
+			return (pde & ~((1ULL << 30) - 1)) | (kVMAddr & ((1ULL << 30) - 1));
 		}
 
 		// Level 1
-		auto   pt  = reinterpret_cast<UInt64*>(pde & ~kPageOffsetMask);
-		Detail::PTE* pte = (Detail::PTE*)pt[(vaddr >> 12) & kMask9Bits];
+		auto		 pt	 = reinterpret_cast<UInt64*>(pde & ~kPageOffsetMask);
+		Detail::PTE* pte = (Detail::PTE*)pt[(kVMAddr >> 12) & kMask9Bits];
 
 		if (!pte->Present)
 			return 0;
@@ -110,45 +112,43 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags)
 	{
-		const UInt64	 vaddr	   = (UInt64)virtual_address;
+		const UInt64	 kVMAddr   = (UInt64)virtual_address;
 		constexpr UInt64 kMask9	   = 0x1FF;
 		constexpr UInt64 kPageMask = 0xFFF;
 
 		UInt64 cr3 = (UIntPtr)hal_read_cr3() & ~kPageMask;
 
 		auto   pml4	 = reinterpret_cast<UInt64*>(cr3);
-		UInt64 pml4e = pml4[(vaddr >> 39) & kMask9];
+		UInt64 pml4e = pml4[(kVMAddr >> 39) & kMask9];
 
 		if (!(pml4e & 1))
 			return kErrorInvalidData;
 
-		auto   pdpt	 = reinterpret_cast<UInt64*>(pml4e & ~kPageMask);
-		UInt64 pdpte = pdpt[(vaddr >> 30) & kMask9];
+		UInt64* pdpt  = reinterpret_cast<UInt64*>(pml4e & ~kPageMask);
+		UInt64	pdpte = pdpt[(kVMAddr >> 30) & kMask9];
 
 		if (!(pdpte & 1))
 			return kErrorInvalidData;
 
-		auto   pd  = reinterpret_cast<UInt64*>(pdpte & ~kPageMask);
-		UInt64 pde = pd[(vaddr >> 21) & kMask9];
+		UInt64* pd	= reinterpret_cast<UInt64*>(pdpte & ~kPageMask);
+		UInt64	pde = pd[(kVMAddr >> 21) & kMask9];
 
 		if (!(pde & 1))
 			return kErrorInvalidData;
 
 		UInt64*		 pt	 = reinterpret_cast<UInt64*>(pde & ~kPageMask);
-		Detail::PTE* pte = (Detail::PTE*)pt[(vaddr >> 12) & kMask9];
+		Detail::PTE* pte = (Detail::PTE*)pt[(kVMAddr >> 12) & kMask9];
 
-		pte->Present = !!(flags & kMMFlagsPresent);
-		pte->Wr = !!(flags & kMMFlagsWr);
-		pte->User = !!(flags & kMMFlagsUser);
-		pte->Nx = !!(flags & kMMFlagsNX);
-		pte->Pcd = !(flags & kMMFlagsUncached);
-
-		if (physical_address)
-			pte->PhysicalAddress = (UIntPtr)physical_address;
-
-		hal_invl_tlb(virtual_address);
+		pte->Present		 = !!(flags & kMMFlagsPresent);
+		pte->Wr				 = !!(flags & kMMFlagsWr);
+		pte->User			 = !!(flags & kMMFlagsUser);
+		pte->Nx				 = !!(flags & kMMFlagsNX);
+		pte->Pcd			 = !(flags & kMMFlagsUncached);
+		pte->PhysicalAddress = (UIntPtr)(physical_address);
 
 		mmi_page_status(pte);
+
+		hal_invl_tlb(virtual_address);
 
 		return kErrorSuccess;
 	}

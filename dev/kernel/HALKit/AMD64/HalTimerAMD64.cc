@@ -45,7 +45,7 @@ namespace Kernel::Detail
 
 using namespace Kernel;
 
-HardwareTimer::HardwareTimer(Int64 ms)
+HardwareTimer::HardwareTimer(UInt64 ms)
 	: fWaitFor(ms)
 {
 	auto power = PowerFactoryInterface(kHandoverHeader->f_HardwareTables.f_VendorPtr);

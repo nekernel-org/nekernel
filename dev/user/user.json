@@ -5,7 +5,6 @@
   "sources_path": ["src/*.cc", "src/*.o"],
   "output_name": "user.sys",
   "compiler_flags": [
-    "-fPIC",
     "-ffreestanding",
     "-shared",
     "-fno-rtti",

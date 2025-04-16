@@ -24,12 +24,12 @@ namespace Firmware::Detail::CoreBoot
 		const UInt32 fStartAddress; // start address (master/slave(s) thread)
 
 #ifdef NE_IS_EXTENDED_COREBOOT
-		UIntPtr fMasterStructure;		   // master structure for MP/PM and device tree and such. (ARM)
+		UIntPtr fMasterStructure;		 // master structure for MP/PM and device tree and such. (ARM)
 		UIntPtr fMasterStructureVersion; // master structure version.
 #endif
 
 #ifdef NE_IS_MBCI_COREBOOT
-		UIntPtr fMBCIStructure;		 // MBCI structure for MBCI (ARM)
+		UIntPtr fMBCIStructure;		   // MBCI structure for MBCI (ARM)
 		UIntPtr fMBCIStructureVersion; // MBCI structure version.
 #endif
 	};

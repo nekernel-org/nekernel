@@ -336,8 +336,8 @@ namespace Kernel
 	public:
 		STATIC const Char* Root();
 		STATIC const Char* UpDir();
-		STATIC Char  Separator();
-		STATIC Char  MetaFile();
+		STATIC Char		   Separator();
+		STATIC Char		   MetaFile();
 	};
 
 	/// @brief Journal class for NeFS.

@@ -90,11 +90,11 @@ namespace Kernel
 			(*pckt_in)->IpcEndianess  = static_cast<UInt8>(endianess);
 			(*pckt_in)->IpcPacketSize = sizeof(IPC_MSG);
 
-			(*pckt_in)->IpcTo.UserProcessID	  = 0;
-			(*pckt_in)->IpcTo.ProcessTeam = 0;
+			(*pckt_in)->IpcTo.UserProcessID = 0;
+			(*pckt_in)->IpcTo.ProcessTeam	= 0;
 
-			(*pckt_in)->IpcFrom.UserProcessID	= 0;
-			(*pckt_in)->IpcFrom.ProcessTeam = 0;
+			(*pckt_in)->IpcFrom.UserProcessID = 0;
+			(*pckt_in)->IpcFrom.ProcessTeam	  = 0;
 
 			return Yes;
 		}

@@ -1,6 +1,6 @@
 ##################################################
 # (c) Amlal El Mahrouss, all rights reserved.
-# This is the bootloader makefile.
+# This file is for user.sys's syscall stubs.
 ##################################################
 
 ASM=nasm
@@ -13,4 +13,4 @@ error:
 
 .PHONY: sci_asm_io_x64
 sci_asm_io_x64:
-	$(ASM) $(FLAGS) SystemCall+IO.asm -o SystemCall+IO.o
+	$(ASM) $(FLAGS) SystemCalls+IO.asm -o SystemCalls+IO.asm.o

@@ -11,7 +11,7 @@
     "-fno-rtti",
     "-fno-exceptions",
     "-fuse-ld=lld",
-    "-Wl,-subsystem:efi_application,-entry:ModuleMain",
+    "-Wl,-subsystem:efi_application,-entry:BootloaderMain",
     "-target aarch64-unknown-windows"
   ],
   "cpp_macros": [

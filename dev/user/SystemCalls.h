@@ -322,14 +322,17 @@ IMPORT_C SInt32 SchedBreakPoint(Void);
 // @brief Filesystem API.
 // ------------------------------------------------------------------------------------------ //
 
-IMPORT_C BOOL FsCopy(const char* path, const char* dst);
-IMPORT_C BOOL FsMove(const char* path, const char* dst);
+IMPORT_C BOOL FsCopy(const Char* path, const Char* dst);
 
-IMPORT_C BOOL FsExists(const char* path);
+IMPORT_C BOOL FsMove(const Char* path, const Char* dst);
 
-IMPORT_C BOOL FsCreateDir(const char* path);
-IMPORT_C BOOL FsCreateFile(const char* path);
-IMPORT_C BOOL FsCreateAlias(const char* path, const char* from);
+IMPORT_C BOOL FsExists(const Char* path);
+
+IMPORT_C BOOL FsCreateDir(const Char* path);
+
+IMPORT_C BOOL FsCreateFile(const Char* path);
+
+IMPORT_C BOOL FsCreateAlias(const Char* path, const Char* from);
 
 // ------------------------------------------------------------------------------------------ //
 // @brief Format API.
@@ -337,6 +340,6 @@ IMPORT_C BOOL FsCreateAlias(const char* path, const char* from);
 
 IMPORT_C Char* StrFmt(const Char* fmt, ...);
 
-IMPORT_C UInt64 MathToNumber(const Char* in, const Char** endp, const SInt16 base);
+IMPORT_C UInt64 StrMathToNumber(const Char* in, const Char** endp, const SInt16 base);
 
 #endif // ifndef SCI_SCI_H

@@ -29,5 +29,5 @@ typedef struct BOOTNET_INTERNET_HEADER
 	Kernel::Char	Target[kBootNetNameLen]; /// the target file.
 	Kernel::Boolean ImpliesProgram : 1;		 /// does it imply an EEPROM reprogram?
 	Kernel::Boolean Preflight : 1;			 /// is it a preflight packet.
-	Kernel::Char	Data[];					 /// non preflight packet has a patch blob for a **PatchTarget**
+	Kernel::Char	Data[1];				 /// non preflight packet has a patch blob for a **PatchTarget**
 } ATTRIBUTE(packed) BOOTNET_INTERNET_HEADER;

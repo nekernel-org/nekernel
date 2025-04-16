@@ -18,17 +18,12 @@
 #include <BootKit/BootThread.h>
 #include <modules/CoreGfx/CoreGfx.h>
 
-// Makes the compiler shut up.
-#ifndef kMachineModel
-#define kMachineModel "NeKernel"
-#endif // !kMachineModel
-
 #ifndef kExpectedWidth
-#define kExpectedWidth (1920)
+#define kExpectedWidth (800)
 #endif
 
 #ifndef kExpectedHeight
-#define kExpectedHeight (1080)
+#define kExpectedHeight (600)
 #endif
 
 /** Graphics related. */
@@ -74,23 +69,19 @@ STATIC Bool boot_init_fb() noexcept
 
 EXTERN EfiBootServices* BS;
 
-/// @brief ModuleMain EFI entrypoint.
+/// @brief BootloaderMain EFI entrypoint.
 /// @param image_handle Handle of this image.
 /// @param sys_table The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
-									  EfiSystemTable* sys_table)
+EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
+										  EfiSystemTable* sys_table)
 {
-	InitEFI(sys_table); ///! Init the EFI library.
+	fw_init_efi(sys_table); ///! Init the EFI library.
 
 	HEL::BootInfoHeader* handover_hdr =
 		new HEL::BootInfoHeader();
 
 	UInt32				 map_key		 = 0;
-	UInt32				 size_struct_ptr = sizeof(EfiMemoryDescriptor);
-	EfiMemoryDescriptor* struct_ptr		 = nullptr;
-	UInt32				 sz_desc		 = sizeof(EfiMemoryDescriptor);
-	UInt32				 rev_desc		 = 0;
 
 #ifdef ZBA_USE_FB
 	if (!boot_init_fb())
@@ -133,9 +124,9 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 	EfiMpServicesProtocol* mp	   = nullptr;
 
 	BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
-
 	handover_hdr->f_HardwareTables.f_MpPtr = reinterpret_cast<VoidPtr>(mp);
 
+	// Assign to global 'kHandoverHeader'.
 	kHandoverHeader = handover_hdr;
 
 	fb_init();
@@ -160,18 +151,59 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 	}
 
 	//-------------------------------------------------------------//
-	// Update handover file specific table and phyiscal start field.
+	// Allocate heap.
 	//-------------------------------------------------------------//
 
+	Boot::BootTextWriter writer;
+
 	handover_hdr->f_BitMapStart = nullptr;			 /* Start of bitmap. */
-	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* Size of bitmap. */
+	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* Size of bitmap in bytes. */
+	Int32 trials				= 5 * 10000000;
 
 	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
 	{
-		if (handover_hdr->f_BitMapStart)
+		--trials;
+
+		if (!trials)
 		{
-			BS->FreePool(handover_hdr->f_BitMapStart);
-			handover_hdr->f_BitMapStart = nullptr;
+			writer.Write("BootZ: Unable to allocate sufficent memory, trying again with 2GB...\r");
+
+			trials = 3 * 10000000;
+
+			handover_hdr->f_BitMapSize = kHandoverBitMapSz / 2; /* Size of bitmap in bytes. */
+
+			while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
+			{
+				--trials;
+
+				if (!trials)
+				{
+					writer.Write("BootZ: Unable to allocate sufficent memory, aborting...\r");
+					Boot::Stop();
+				}
+			}
+		}
+	}
+
+	Boot::BootFileReader reader_syschk(L"chk.efi", image_handle);
+	reader_syschk.ReadAll(0);
+
+	Boot::BootThread* syschk_thread = nullptr;
+
+	if (reader_syschk.Blob())
+	{
+		syschk_thread = new Boot::BootThread(reader_syschk.Blob());
+		syschk_thread->SetName("BootZ: System Check");
+
+		if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
+		{
+			fb_init();
+
+			FB::fb_clear_video();
+
+			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
+
+			fb_clear();
 		}
 	}
 
@@ -194,8 +226,6 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
-	// Assign to global 'kHandoverHeader'.
-
 	Boot::BootFileReader reader_kernel(L"vmkrnl.efi", image_handle);
 
 	reader_kernel.ReadAll(0);
@@ -207,9 +237,10 @@ EFI_EXTERN_C EFI_API Int32 ModuleMain(EfiHandlePtr	  image_handle,
 	if (reader_kernel.Blob())
 	{
 		auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
-		kernel_thread.SetName("BootZ: MicroKernel.");
+		kernel_thread.SetName("BootZ: Kernel.");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
+		handover_hdr->f_KernelSz	= reader_kernel.Size();
 
 		Boot::ExitBootServices(map_key, image_handle);
 

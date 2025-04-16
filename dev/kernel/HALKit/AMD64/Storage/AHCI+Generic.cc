@@ -152,9 +152,9 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 	/// check for command header.
 	MUST_PASS(command_header);
 
-	command_header->Struc.Cfl	  = sizeof(FisRegH2D) / sizeof(UInt32);
+	command_header->Struc.Cfl	= sizeof(FisRegH2D) / sizeof(UInt32);
 	command_header->Struc.Write = Write;
-	command_header->Prdtl = 1;
+	command_header->Prdtl		= 8;
 
 	auto ctba_phys	   = ((UInt64)command_header->Ctbau << 32) | command_header->Ctba;
 	auto command_table = reinterpret_cast<volatile HbaCmdTbl*>(ctba_phys);

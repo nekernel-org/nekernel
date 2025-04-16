@@ -26,9 +26,9 @@ namespace CF::XRN::Version1
 
 		Ref<GUIDSequence*> seq_ref{seq};
 
-		seq_ref.Leak()->fUuid.fMs1	= uuidSeq[0];
-		seq_ref.Leak()->fUuid.fMs2	= uuidSeq[1];
-		seq_ref.Leak()->fUuid.fMs3	= uuidSeq[2];
+		seq_ref.Leak()->fUuid.fMs1	  = uuidSeq[0];
+		seq_ref.Leak()->fUuid.fMs2	  = uuidSeq[1];
+		seq_ref.Leak()->fUuid.fMs3	  = uuidSeq[2];
 		seq_ref.Leak()->fUuid.fMs4[0] = uuidSeq[3];
 		seq_ref.Leak()->fUuid.fMs4[1] = uuidSeq[4];
 		seq_ref.Leak()->fUuid.fMs4[2] = uuidSeq[5];

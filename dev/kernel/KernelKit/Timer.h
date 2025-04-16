@@ -44,13 +44,13 @@ namespace Kernel
 
 	private:
 		UIntPtr* fDigitalTimer{nullptr};
-		Int64	fWaitFor{0};
+		Int64	 fWaitFor{0};
 	};
 
 	class HardwareTimer final : public TimerInterface
 	{
 	public:
-		explicit HardwareTimer(Int64 seconds);
+		explicit HardwareTimer(UInt64 seconds);
 		~HardwareTimer() override;
 
 	public:
@@ -61,7 +61,7 @@ namespace Kernel
 
 	private:
 		UIntPtr* fDigitalTimer{nullptr};
-		Int64	fWaitFor{0};
+		Int64	 fWaitFor{0};
 	};
 
 	inline Int64 rtl_ms(Int64 time)

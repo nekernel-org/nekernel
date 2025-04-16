@@ -58,7 +58,7 @@ EMU_FLAGS= -smp 4 -m 8G \
     -bios $(BIOS) -M q35 -cdrom $(BOOT) -boot d -accel kvm
 endif
 
-LD_FLAGS=-e ModuleMain --subsystem=10
+LD_FLAGS=-e BootloaderMain --subsystem=10
 
 STANDALONE_MACRO=-D__BOOTZ_STANDALONE__
 OBJ=obj/*.o
@@ -96,7 +96,7 @@ all: compile-amd64
 
 .PHONY: disk
 disk:
-	dd if=/dev/zero of=$(BOOT) bs=30M count=100
+	dd if=/dev/zero of=$(BOOT) bs=7M count=100
 	mformat -i $(BOOT) -F -v "NEKERNEL-ESP"
 
 
@@ -128,7 +128,7 @@ run-efi-amd64-ata-dma:
 .PHONY: run-efi-amd64-ata
 run-efi-amd64-ata: run-efi-amd64-ata-dma
 
-# img_2 is the rescue disk. img is the bootable disk, as provided by the Zeta specs.
+# img_2 is the rescue disk. img is the bootable disk, as provided by the NeKernel specs.
 .PHONY: epm-img
 epm-img:
 	qemu-img create -f raw $(IMG) 4G

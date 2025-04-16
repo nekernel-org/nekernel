@@ -10,7 +10,7 @@
 #include <FirmwareKit/EFI/EFI.h>
 
 #define kSectorSizeGPT (512U)
-#define kPartNameGPT (8U)
+#define kPartNameGPT   (8U)
 
 namespace Kernel
 {

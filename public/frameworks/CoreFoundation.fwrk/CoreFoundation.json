@@ -5,7 +5,6 @@
     "sources_path": ["src/*.cc"],
     "output_name": "./dist/libCoreFoundation.dylib",
     "compiler_flags": [
-      "-fPIC",
       "-ffreestanding",
       "-shared",
       "-fno-rtti",

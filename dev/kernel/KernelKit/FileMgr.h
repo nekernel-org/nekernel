@@ -347,7 +347,7 @@ namespace Kernel
 												   const Encoding* restrict_type)
 		: fFile(Class::GetMounted()->Open(path, restrict_type))
 	{
-		SizeT			   kRestrictCount  = kRestrictMax;
+		SizeT				   kRestrictCount  = kRestrictMax;
 		const FileRestrictKind kRestrictList[] = {
 			{
 				.fRestrict = kRestrictR,

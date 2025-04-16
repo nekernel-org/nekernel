@@ -28,7 +28,7 @@ public:
 
 	virtual Trait& Leak() = 0;
 
-	virtual Device& Read(Char* Buf, SizeT SecCount)	= 0;
+	virtual Device& Read(Char* Buf, SizeT SecCount)	 = 0;
 	virtual Device& Write(Char* Buf, SizeT SecCount) = 0;
 };
 

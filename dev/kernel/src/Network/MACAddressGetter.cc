@@ -8,7 +8,7 @@
 
 namespace Kernel
 {
-	Array<WideChar, kMACAddrLen>& MacAddressGetter::AsBytes()
+	Array<UInt8, kMACAddrLen>& MacAddressGetter::AsBytes()
 	{
 		return this->fMacAddress;
 	}
