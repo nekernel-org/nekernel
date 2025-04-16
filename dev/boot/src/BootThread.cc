@@ -166,40 +166,18 @@ namespace Boot
 	/// @note handover header has to be valid!
 	Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
 	{
-		HEL::HandoverProc err_fn = [](HEL::BootInfoHeader* rcx) -> Int32 {
-			NE_UNUSED(rcx);
-
-			fb_render_string("BootZ: Invalid Boot Image...", 50, 10, RGB(0xFF, 0xFF, 0xFF));
-			::Boot::Stop();
-
-			return NO;
-		};
-
-		if (!fStartAddress)
-		{
-			err_fn(handover);
-		}
-
 		fHandover = handover;
 
 		if (own_stack)
 		{
-			UInt8* aligned_stack = &fStack[mib_cast(16) - 1];
-			aligned_stack		 = (UInt8*)((UIntPtr)aligned_stack & ~0xF);
-
-			rt_jump_to_address(fStartAddress, fHandover, aligned_stack);
+			return rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(16) - 1]);
 		}
 		else
 		{
-			if (fStack)
-				delete[] fStack;
-
-			fStack = nullptr;
-
 			return reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
 		}
 
-		return kEfiOk;
+		return kEfiFail;
 	}
 
 	const Char* BootThread::GetName()

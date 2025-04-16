@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "modules/CoreGfx/CoreGfx.h"
 #include <StorageKit/AHCI.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/ProcessScheduler.h>
@@ -14,6 +15,10 @@
 #include <CFKit/Property.h>
 #include <modules/CoreGfx/TextGfx.h>
 #include <KernelKit/Timer.h>
+
+#include <FirmwareKit/EFI/API.h>
+#include <FirmwareKit/EFI/EFI.h>
+
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
@@ -28,31 +33,24 @@ STATIC Kernel::Void hal_init_scheduler_team()
 	}
 }
 
-STATIC Kernel::UInt64 hal_rdtsc_fn()
-{
-	Kernel::UInt32 lo = 0, hi = 0;
-
-	asm volatile("rdtsc"
-				 : "=a"(lo), "=d"(hi));
-
-	return ((Kernel::UInt64)hi << 32) | lo;
-}
-
-STATIC Kernel::UInt64 kStartTim, kEndTim;
-
 /// @brief Kernel init procedure.
-EXTERN_C void hal_init_platform(
+EXTERN_C Int32 hal_init_platform(
 	Kernel::HEL::BootInfoHeader* handover_hdr)
 {
-	kStartTim = hal_rdtsc_fn();
+	if (handover_hdr->f_Magic != kHandoverMagic &&
+		handover_hdr->f_Version != kHandoverVersion)
+	{
+		return kEfiFail;
+	}
+
+	FB::fb_clear_video();
+
+	(Void)(Kernel::kout << "Welcome to NeKernel.\r");
+
+	fw_init_efi((EfiSystemTable*)handover_hdr->f_FirmwareCustomTables[1]);
+	Boot::ExitBootServices(handover_hdr->f_EFIImageKey, handover_hdr->f_EFIImage);
 
 	kHandoverHeader = handover_hdr;
-
-	if (kHandoverHeader->f_Magic != kHandoverMagic &&
-		kHandoverHeader->f_Version != kHandoverVersion)
-	{
-		return;
-	}
 
 	hal_init_scheduler_team();
 
@@ -85,32 +83,23 @@ EXTERN_C void hal_init_platform(
 	gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
 	gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
 
-	//! GDT will load hal_read_init after it successfully loads the segments.
-	Kernel::HAL::GDTLoader gdt_loader;
-	gdt_loader.Load(gdt_reg);
-
-	Kernel::ke_panic(RUNTIME_CHECK_BOOTSTRAP);
-}
-
-EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
-{
-	kEndTim = hal_rdtsc_fn();
-
-	(void)(Kernel::kout << "Boot Time: " << Kernel::number(kEndTim - kStartTim) << Kernel::kendl);
-
 	Kernel::NeFS::fs_init_nefs();
 
 	Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	Kernel::HAL::Register64 idt_reg;
+	//! GDT will load hal_read_init after it successfully loads the segments.
+	Kernel::HAL::GDTLoader gdt_loader;
+	gdt_loader.Load(gdt_reg);
 
+	return kEfiFail;
+}
+
+EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
+{
+	Kernel::HAL::Register64 idt_reg;
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
 
 	Kernel::HAL::IDTLoader idt_loader;
-
-	kEndTim = hal_rdtsc_fn();
-
-	(void)(Kernel::kout << "Init Time: " << Kernel::number(kEndTim - kStartTim) << Kernel::kendl);
 
 	idt_loader.Load(idt_reg);
 

@@ -82,8 +82,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 {
 	fw_init_efi(sys_table); ///! Init the EFI library.
 
-	fb_init();
-
 	HEL::BootInfoHeader* handover_hdr =
 		new HEL::BootInfoHeader();
 
@@ -146,7 +144,9 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	FB::fb_clear_video();
 
+	fb_init();
 	FBDrawBitMapInRegion(zka_disk, NE_DISK_WIDTH, NE_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_DISK_HEIGHT) / 2);
+	fb_clear();
 
 	UInt32 cnt_enabled	= 0;
 	UInt32 cnt_disabled = 0;
@@ -221,10 +221,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
-	struct_ptr = new EfiMemoryDescriptor[sz_desc];
-
-	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
-
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
 	handover_hdr->f_Magic	= kHandoverMagic;
@@ -259,18 +255,16 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 		ver = KERNEL_VERSION_BCD;
 
 		ST->RuntimeServices->SetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
-		writer.Write("BootZ: Kernel Version has been updated: ").Write(ver).Write("\r");
+		writer.Write("BootZ: version has been updated: ").Write(ver).Write("\r");
 	}
 
-	writer.Write("BootZ: Kernel Version: ").Write(ver).Write("\r");
+	writer.Write("BootZ: version: ").Write(ver).Write("\r");
 
-	// Fallback to bootnet, if not PXE.
+	// boot to kernel, if not netboot this.
 
 	Boot::BootFileReader reader_kernel(kernel_path, image_handle);
 
 	reader_kernel.ReadAll(0);
-
-	Boot::BootThread* kernel_thread = nullptr;
 
 	// ------------------------------------------ //
 	// If we succeed in reading the blob, then execute it.
@@ -282,18 +276,14 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 		// null these fields, to avoid being reused later.
 		// ------------------------------------------ //
 
-		handover_hdr->f_FirmwareCustomTables[0] = nullptr;
-		handover_hdr->f_FirmwareCustomTables[1] = nullptr;
+		auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
 
-		kernel_thread = new Boot::BootThread(reader_kernel.Blob());
-		kernel_thread->SetName("BootZ: Kernel");
+		kernel_thread.SetName("BootZ: Kernel");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
 		handover_hdr->f_KernelSz	= reader_kernel.Size();
 
-		Boot::ExitBootServices(map_key, image_handle);
-
-		return kernel_thread->Start(handover_hdr, NO);
+		kernel_thread.Start(handover_hdr, YES);
 	}
 
 	Boot::BootFileReader reader_netboot(L"net.efi", image_handle);
@@ -302,8 +292,8 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 	if (!reader_netboot.Blob())
 		return kEfiFail;
 
-	Boot::BootThread* netboot_thread = new Boot::BootThread(reader_netboot.Blob());
-	netboot_thread->SetName("BootZ: BootNet");
+	auto netboot_thread = Boot::BootThread(reader_netboot.Blob());
+	netboot_thread.SetName("BootZ: BootNet");
 
-	return netboot_thread->Start(handover_hdr, NO);
+	return netboot_thread.Start(handover_hdr, NO);
 }
