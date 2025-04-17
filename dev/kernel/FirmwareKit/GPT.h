@@ -9,7 +9,7 @@
 #include <NewKit/Defines.h>
 #include <FirmwareKit/EFI/EFI.h>
 
-#define kSectorAlignGPT_Part (420U)
+#define kSectorAlignGPT_PartTbl (420U)
 #define kSectorAlignGPT_PartEntry (72U)
 #define kPartNameGPT   (8U)
 
@@ -44,7 +44,7 @@ namespace Kernel
 		UInt32	 NumPartitionEntries;
 		UInt32	 SizeOfEntries;
 		UInt32	 CRC32PartEntry;
-		UInt8	 Reserved2[kSectorAlignGPT_Part];
+		UInt8	 Reserved2[kSectorAlignGPT_PartTbl];
 	};
 
 	struct PACKED GPT_PARTITION_ENTRY

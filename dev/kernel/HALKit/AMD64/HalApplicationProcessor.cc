@@ -191,7 +191,7 @@ namespace Kernel::HAL
 	/// @brief Fetch and enable SMP scheduler.
 	/// @param vendor_ptr SMP containing structure.
 	/***********************************************************************************/
-	Void mp_get_cores(VoidPtr vendor_ptr) noexcept
+	Void mp_init_cores(VoidPtr vendor_ptr) noexcept
 	{
 		if (!vendor_ptr)
 			return;

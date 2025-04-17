@@ -43,14 +43,14 @@ EXTERN_C Int32 hal_init_platform(
 		return kEfiFail;
 	}
 
+	kHandoverHeader = handover_hdr;
+
 	FB::fb_clear_video();
 
 	(Void)(Kernel::kout << "Welcome to NeKernel.\r");
 
 	fw_init_efi((EfiSystemTable*)handover_hdr->f_FirmwareCustomTables[1]);
-	Boot::ExitBootServices(handover_hdr->f_EFIImageKey, handover_hdr->f_EFIImage);
-
-	kHandoverHeader = handover_hdr;
+	Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey, handover_hdr->f_HardwareTables.f_ImageHandle);
 
 	hal_init_scheduler_team();
 
@@ -83,10 +83,6 @@ EXTERN_C Int32 hal_init_platform(
 	gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
 	gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
 
-	Kernel::NeFS::fs_init_nefs();
-
-	Kernel::HAL::mp_get_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-
 	//! GDT will load hal_read_init after it successfully loads the segments.
 	Kernel::HAL::GDTLoader gdt_loader;
 	gdt_loader.Load(gdt_reg);
@@ -96,6 +92,10 @@ EXTERN_C Int32 hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
+	Kernel::NeFS::fs_init_nefs();
+
+	Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+
 	Kernel::HAL::Register64 idt_reg;
 	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
 

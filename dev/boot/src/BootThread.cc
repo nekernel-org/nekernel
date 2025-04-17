@@ -80,6 +80,12 @@ namespace Boot
 
 			fStack = new UInt8[mib_cast(16)];
 
+			if (!fStack)
+			{
+				writer.Write("BootZ: Unable to allocate stack.\r");
+				return;
+			}
+
 			LDR_SECTION_HEADER_PTR sectPtr = (LDR_SECTION_HEADER_PTR)(((Char*)opt_header_ptr) + header_ptr->SizeOfOptionalHeader);
 
 			constexpr auto sectionForCode  = ".text";
@@ -167,6 +173,21 @@ namespace Boot
 	Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack)
 	{
 		fHandover = handover;
+
+		if (!fStartAddress)
+		{
+			return kEfiFail;
+		}
+
+		if (!fHandover)
+		{
+			return kEfiFail;
+		}
+
+		BootTextWriter writer;
+
+		writer.Write("BootZ: Starting: ").Write(fBlobName).Write("\r");
+		writer.Write("BootZ: Handover address: ").Write((UIntPtr)fHandover).Write("\r");
 
 		if (own_stack)
 		{

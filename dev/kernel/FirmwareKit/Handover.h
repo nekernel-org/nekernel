@@ -71,11 +71,6 @@ namespace Kernel::HEL
 		WideChar f_FirmwareVendorName[32];
 		SizeT	 f_FirmwareVendorLen;
 
-#ifdef __NE_AMD64__
-		UInt32    f_EFIImageKey;
-		EfiHandlePtr f_EFIImage;
-#endif
-
 		VoidPtr f_FirmwareCustomTables[2]; // On EFI 0: BS 1: ST
 
 		struct
@@ -84,6 +79,8 @@ namespace Kernel::HEL
 			VoidPtr f_VendorPtr;
 			VoidPtr f_MpPtr;
 			Bool	f_MultiProcessingEnabled;
+			UInt32    f_ImageKey;
+			EfiHandlePtr f_ImageHandle;
 		} f_HardwareTables;
 
 		struct
