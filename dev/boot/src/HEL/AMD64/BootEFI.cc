@@ -226,6 +226,9 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 	handover_hdr->f_Magic	= kHandoverMagic;
 	handover_hdr->f_Version = kHandoverVersion;
 
+	handover_hdr->f_EFIImageKey	= map_key;
+	handover_hdr->f_EFIImage = image_handle;
+
 	// Provide fimware vendor name.
 
 	Boot::BCopyMem(handover_hdr->f_FirmwareVendorName, sys_table->FirmwareVendor,

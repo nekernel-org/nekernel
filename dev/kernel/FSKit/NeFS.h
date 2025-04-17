@@ -135,9 +135,10 @@ enum
 	kNeFSStatusLocked,
 	kNeFSStatusError,
 	kNeFSStatusInvalid,
+	kNeFSStatusCount,
 };
 
-/// @brief Catalog type.
+/// @brief Catalog record type.
 struct PACKED NEFS_CATALOG_STRUCT final
 {
 	BOOL ForkOrCatalog : 1 {0};

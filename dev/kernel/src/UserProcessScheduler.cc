@@ -255,7 +255,7 @@ namespace Kernel
 		this->StackFrame   = nullptr;
 		this->StackReserve = nullptr;
 
-		if (this->Kind == kExectuableDylibKind)
+		if (this->Kind == kExecutableDylibKind)
 		{
 			Bool success = false;
 
@@ -325,6 +325,8 @@ namespace Kernel
 			return kErrorProcessFault;
 		}
 
+		rt_set_memory(process.StackFrame, 0, sizeof(HAL::StackFrame));
+
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		flags = HAL::kMMFlagsPresent;
 		flags |= HAL::kMMFlagsWr;
@@ -336,9 +338,12 @@ namespace Kernel
 		// React according to process kind.
 		switch (process.Kind)
 		{
-		case Process::kExectuableDylibKind: {
+		case Process::kExecutableDylibKind: {
 			process.DylibDelegate = rtl_init_dylib(process);
 			MUST_PASS(process.DylibDelegate);
+			break;
+		}
+		case Process::kExecutableKind: {
 			break;
 		}
 		default: {
@@ -348,13 +353,14 @@ namespace Kernel
 		}
 
 		process.StackReserve = new UInt8[process.StackSize];
-		rt_set_memory(process.StackReserve, 0, process.StackSize);
 
 		if (!process.StackReserve)
 		{
 			process.Crash();
 			return kErrorProcessFault;
 		}
+
+		rt_set_memory(process.StackReserve, 0, process.StackSize);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		flags = HAL::kMMFlagsPresent;

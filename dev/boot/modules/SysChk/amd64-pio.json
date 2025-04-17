@@ -17,6 +17,7 @@
     "__BOOTZ_STANDALONE__",
     "__NE_AMD64__",
     "__ATA_PIO__",
+    "BOOTZ_EPM_SUPPORT",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",
     "kChkVersion=0x0100"

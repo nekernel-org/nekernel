@@ -5,6 +5,3 @@
 ------------------------------------------- */
 
 #pragma once
-
-#include <KernelKit/UserProcessScheduler.h>
-#include <KernelKit/KernelProcessScheduler.h>

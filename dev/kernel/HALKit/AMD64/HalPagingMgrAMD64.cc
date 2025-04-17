@@ -143,7 +143,7 @@ namespace Kernel::HAL
 		pte->Wr				 = !!(flags & kMMFlagsWr);
 		pte->User			 = !!(flags & kMMFlagsUser);
 		pte->Nx				 = !!(flags & kMMFlagsNX);
-		pte->Pcd			 = !(flags & kMMFlagsUncached);
+		pte->Pcd			 = !(flags & kMMFlagsPCD);
 		pte->PhysicalAddress = (UIntPtr)(physical_address);
 
 		mmi_page_status(pte);
