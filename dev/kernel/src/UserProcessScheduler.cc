@@ -325,6 +325,8 @@ namespace Kernel
 			return kErrorProcessFault;
 		}
 
+		rt_set_memory(process.StackFrame, 0, sizeof(HAL::StackFrame));
+
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		flags = HAL::kMMFlagsPresent;
 		flags |= HAL::kMMFlagsWr;
@@ -351,13 +353,14 @@ namespace Kernel
 		}
 
 		process.StackReserve = new UInt8[process.StackSize];
-		rt_set_memory(process.StackReserve, 0, process.StackSize);
 
 		if (!process.StackReserve)
 		{
 			process.Crash();
 			return kErrorProcessFault;
 		}
+
+		rt_set_memory(process.StackReserve, 0, process.StackSize);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		flags = HAL::kMMFlagsPresent;

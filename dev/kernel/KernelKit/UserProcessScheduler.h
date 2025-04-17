@@ -1,0 +1,383 @@
+/* -------------------------------------------
+
+	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+
+------------------------------------------- */
+
+#ifndef INC_PROCESS_SCHEDULER_H
+#define INC_PROCESS_SCHEDULER_H
+
+/// @file ProcessScheduler.h
+/// @brief Process scheduler code and definitions.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+
+#include <ArchKit/ArchKit.h>
+#include <KernelKit/LockDelegate.h>
+#include <KernelKit/User.h>
+#include <NewKit/MutableArray.h>
+
+#define kSchedMinMicroTime		  (AffinityKind::kStandard)
+#define kSchedInvalidPID		  (-1)
+#define kSchedProcessLimitPerTeam (32U)
+
+#define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
+#define kSchedMaxStackSz	 mib_cast(8)   /* maximum stack size */
+
+#define kSchedNameLen (128U)
+
+////////////////////////////////////////////////////
+// Last revision date is: Fri Mar 28 2025		  //
+////////////////////////////////////////////////////
+
+namespace Kernel
+{
+	//! @brief Forward declarations.
+
+	class IDylibObject;
+	class Process;
+	class ProcessTeam;
+	class UserProcessScheduler;
+	class UserProcessHelper;
+
+	typedef UInt64 PTime;
+
+	/***********************************************************************************/
+	//! @brief Local Process identifier.
+	/***********************************************************************************/
+	typedef Int64 ProcessID;
+
+	/***********************************************************************************/
+	//! @brief Local Process status enum.
+	/***********************************************************************************/
+	enum class ProcessStatusKind : Int32
+	{
+		kInvalid,
+		kStarting,
+		kRunning,
+		kKilled,
+		kFrozen,
+		kFinished,
+		kCount,
+	};
+
+	/***********************************************************************************/
+	//! @brief Affinity is the amount of nano-seconds this process is going to run.
+	/***********************************************************************************/
+	enum class AffinityKind : Int32
+	{
+		kRealTime	  = 500,
+		kVeryHigh	  = 250,
+		kHigh		  = 200,
+		kStandard	  = 1000,
+		kLowUsage	  = 1500,
+		kVeryLowUsage = 2000,
+	};
+
+	/***********************************************************************************/
+	//! Operators for AffinityKind
+	/***********************************************************************************/
+
+	inline bool operator<(AffinityKind lhs, AffinityKind rhs)
+	{
+		Int32 lhs_int = static_cast<Int>(lhs);
+		Int32 rhs_int = static_cast<Int>(rhs);
+
+		return lhs_int < rhs_int;
+	}
+
+	inline bool operator>(AffinityKind lhs, AffinityKind rhs)
+	{
+		Int32 lhs_int = static_cast<Int>(lhs);
+		Int32 rhs_int = static_cast<Int>(rhs);
+
+		return lhs_int > rhs_int;
+	}
+
+	inline bool operator<=(AffinityKind lhs, AffinityKind rhs)
+	{
+		Int32 lhs_int = static_cast<Int>(lhs);
+		Int32 rhs_int = static_cast<Int>(rhs);
+
+		return lhs_int <= rhs_int;
+	}
+
+	inline bool operator>=(AffinityKind lhs, AffinityKind rhs)
+	{
+		Int32 lhs_int = static_cast<Int>(lhs);
+		Int32 rhs_int = static_cast<Int>(rhs);
+
+		return lhs_int >= rhs_int;
+	}
+
+	/***********************************************************************************/
+	/// @brief Subsystem enum type.
+	/***********************************************************************************/
+
+	enum class ProcessSubsystem : Int32
+	{
+		kProcessSubsystemSecurity = 100,
+		kProcessSubsystemApplication,
+		kProcessSubsystemService,
+		kProcessSubsystemDriver,
+		kProcessSubsystemInvalid = 256U,
+		kProcessSubsystemCount	 = 4,
+	};
+
+	using ProcessTime = UInt64;
+	using PID		  = Int64;
+
+	/***********************************************************************************/
+	/// @note For User manager, tells where we run the code.
+	/***********************************************************************************/
+	enum class ProcessLevelRing : Int32
+	{
+		kRingStdUser   = 1,
+		kRingSuperUser = 2,
+		kRingGuestUser = 5,
+		kRingCount	   = 5,
+	};
+
+	/***********************************************************************************/
+	/// @brief Helper type to describe a code image.
+	/***********************************************************************************/
+	using ImagePtr = VoidPtr;
+
+	struct ProcessImage final
+	{
+		explicit ProcessImage() = default;
+
+		ImagePtr fCode;
+		ImagePtr fBlob;
+
+		Bool HasCode()
+		{
+			return this->fCode != nullptr;
+		}
+
+		Bool HasImage()
+		{
+			return this->fBlob != nullptr;
+		}
+	};
+
+	/***********************************************************************************/
+	/// @name Process
+	/// @brief Process class, holds information about the running process/thread.
+	/***********************************************************************************/
+	class Process final
+	{
+	public:
+		explicit Process();
+		~Process();
+
+	public:
+		NE_COPY_DEFAULT(Process)
+
+	public:
+		Char			   Name[kSchedNameLen] = {"Process"};
+		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
+		User*			   Owner{nullptr};
+		HAL::StackFramePtr StackFrame{nullptr};
+		AffinityKind	   Affinity{AffinityKind::kStandard};
+		ProcessStatusKind  Status{ProcessStatusKind::kFinished};
+		UInt8*			   StackReserve{nullptr};
+		ProcessImage	   Image{};
+		SizeT			   StackSize{kSchedMaxStackSz};
+		IDylibObject*	   DylibDelegate{nullptr};
+		SizeT			   MemoryCursor{0UL};
+		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
+		SizeT			   UsedMemory{0UL};
+
+		struct ProcessMemoryHeapList final
+		{
+			VoidPtr MemoryEntry{nullptr};
+			SizeT	MemoryEntrySize{0UL};
+			SizeT	MemoryEntryPad{0UL};
+
+			struct ProcessMemoryHeapList* MemoryPrev{nullptr};
+			struct ProcessMemoryHeapList* MemoryNext{nullptr};
+		};
+
+		struct ProcessSignal final
+		{
+			UIntPtr			  SignalArg;
+			ProcessStatusKind PreviousStatus;
+			UIntPtr			  SignalID;
+		};
+
+		ProcessSignal		   ProcessSignal;
+		ProcessMemoryHeapList* ProcessMemoryHeap{nullptr};
+		ProcessTeam*		   ProcessParentTeam;
+
+		VoidPtr VMRegister{0UL};
+
+		enum
+		{
+			kInvalidExecutableKind,
+			kExecutableKind,
+			kExecutableDylibKind,
+			kExecutableKindCount,
+		};
+
+		ProcessTime PTime{0}; //! @brief Process allocated tine.
+
+		PID	  ProcessId{kSchedInvalidPID};
+		Int32 Kind{kExecutableKind};
+
+	public:
+		/***********************************************************************************/
+		//! @brief boolean operator, check status.
+		/***********************************************************************************/
+		operator bool();
+
+		/***********************************************************************************/
+		///! @brief Crashes the app, exits with code ~0.
+		/***********************************************************************************/
+		Void Crash();
+
+		/***********************************************************************************/
+		///! @brief Exits the app.
+		/***********************************************************************************/
+		Void Exit(const Int32& exit_code = 0);
+
+		/***********************************************************************************/
+		///! @brief TLS allocate.
+		///! @param sz size of data structure.
+		///! @param pad_amount amount to add after pointer.
+		///! @return A wrapped pointer, or error code.
+		/***********************************************************************************/
+		ErrorOr<VoidPtr> New(SizeT sz, SizeT pad_amount = 0);
+
+		/***********************************************************************************/
+		///! @brief TLS free.
+		///! @param ptr the pointer to free.
+		///! @param sz the size of it.
+		/***********************************************************************************/
+		template <typename T>
+		Boolean Delete(ErrorOr<T*> ptr);
+
+		/***********************************************************************************/
+		///! @brief Wakes up thread.
+		/***********************************************************************************/
+		Void Wake(Bool wakeup = false);
+
+	public:
+		/***********************************************************************************/
+		//! @brief Gets the local exit code.
+		/***********************************************************************************/
+		const UInt32& GetExitCode() noexcept;
+
+		/***********************************************************************************/
+		///! @brief Get the process's name
+		///! @example 'C Runtime Library'
+		/***********************************************************************************/
+		const Char* GetName() noexcept;
+
+		/***********************************************************************************/
+		//! @brief return local error code of process.
+		//! @return Int32 local error code.
+		/***********************************************************************************/
+		Int32& GetLocalCode() noexcept;
+
+		const User*				 GetOwner() noexcept;
+		const ProcessStatusKind& GetStatus() noexcept;
+		const AffinityKind&		 GetAffinity() noexcept;
+
+	private:
+		UInt32 fLastExitCode{0};
+		Int32  fLocalCode{0};
+
+		friend UserProcessScheduler;
+		friend UserProcessHelper;
+	};
+
+	/// \brief Processs Team (contains multiple processes inside it.)
+	/// Equivalent to a process batch
+	class ProcessTeam final
+	{
+	public:
+		explicit ProcessTeam();
+		~ProcessTeam() = default;
+
+		NE_COPY_DEFAULT(ProcessTeam)
+
+		Array<Process, kSchedProcessLimitPerTeam>& AsArray();
+		Ref<Process>&							   AsRef();
+		ProcessID&								   Id() noexcept;
+
+	public:
+		Array<Process, kSchedProcessLimitPerTeam> mProcessList;
+		Ref<Process>							  mCurrentProcess;
+		ProcessID								  mTeamId{0};
+		ProcessID								  mProcessCount{0};
+	};
+
+	typedef Array<Process, kSchedProcessLimitPerTeam> UserThreadArray;
+
+	using UserProcessRef = Process&;
+
+	/***********************************************************************************/
+	/// @brief Process scheduler class.
+	/// The main class which you call to schedule user processes.
+	/***********************************************************************************/
+	class UserProcessScheduler final : public ISchedulable
+	{
+		friend class UserProcessHelper;
+
+	public:
+		explicit UserProcessScheduler()	 = default;
+		~UserProcessScheduler() override = default;
+
+		NE_COPY_DEFAULT(UserProcessScheduler)
+
+			 operator bool();
+		bool operator!();
+
+	public:
+		ProcessTeam& CurrentTeam();
+
+	public:
+		ProcessID Spawn(const Char* name, VoidPtr code, VoidPtr image);
+		Void	  Remove(ProcessID process_id);
+
+		Bool IsUser() override;
+		Bool IsKernel() override;
+		Bool HasMP() override;
+
+	public:
+		Ref<Process>& CurrentProcess();
+		SizeT		  Run() noexcept;
+
+	public:
+		STATIC UserProcessScheduler& The();
+
+	private:
+		ProcessTeam mTeam{};
+	};
+
+	/***********************************************************************************/
+	/**
+	 * \brief Process helper class, which contains needed utilities for the scheduler.
+	 */
+	/***********************************************************************************/
+
+	class UserProcessHelper final
+	{
+	public:
+		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, PID new_pid);
+		STATIC Bool CanBeScheduled(const Process& process);
+		STATIC ErrorOr<PID> TheCurrentPID();
+		STATIC SizeT		StartScheduling();
+	};
+
+	const UInt32& sched_get_exit_code(void) noexcept;
+} // namespace Kernel
+
+#include <KernelKit/ThreadLocalStorage.h>
+#include <KernelKit/UserProcessScheduler.inl>
+
+////////////////////////////////////////////////////
+// END
+////////////////////////////////////////////////////
+
+#endif /* ifndef INC_PROCESS_SCHEDULER_H */
