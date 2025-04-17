@@ -109,8 +109,6 @@ namespace Kernel::HAL
 
 		hal_load_idt(idt);
 
-		NeFS::fs_init_nefs();
-
 		Detail::hal_enable_pit(kPITTickForScheduler);
 
 		rt_sti();
