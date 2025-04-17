@@ -20,19 +20,30 @@
 
 #define kHeFSMinimumDiskSize (mib_cast(256))
 
-enum
-{
-	kHeFSInvalidDrive,
-	kHeFSHDDDrive,
-	kHeFSSSDDrive,
-	kHeFSMassStorageDrive,
-	kHeFSSCSIDrive,
-	kHeFSDriveCount,
-};
-
 struct HeFS_BOOT_NODE;
 
-struct HeFS_BOOT_NODE final
+enum
+{
+	kHeFSHardDrive		   = 0xC0, // Hard Drive
+	kHeFSSolidStateDrive   = 0xC1, // Solid State Drive
+	kHeFSOpticalDrive	   = 0x0C, // Blu-Ray/DVD
+	kHeFSMassStorageDevice = 0xCC, // USB
+	kHeFSScsiDrive		   = 0xC4, // SCSI Hard Drive
+	kHeFSFlashDrive		   = 0xC6,
+	kHeFSUnknown		   = 0xFF, // Unknown device.
+	kHeFSDriveCount		   = 7,
+};
+
+enum
+{
+	kHeFSStatusUnlocked = 0x18,
+	kHeFSStatusLocked,
+	kHeFSStatusError,
+	kHeFSStatusInvalid,
+	kHeFSStatusCount,
+};
+
+struct PACKED HeFS_BOOT_NODE final
 {
 	Kernel::Char   fMagic[kHeFSMagicLen];
 	Kernel::Char   fPartName[kHeFSPartNameLen];
@@ -47,7 +58,7 @@ struct HeFS_BOOT_NODE final
 	Kernel::UInt64 fRecoveryINode;
 };
 
-struct HeFS_INDEX_NODE
+struct PACKED HeFS_INDEX_NODE
 {
 	Kernel::Char   fName[kHeFSFileNameLen];
 	Kernel::UInt32 fFlags;

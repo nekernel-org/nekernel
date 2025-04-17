@@ -255,7 +255,7 @@ namespace Kernel
 		this->StackFrame   = nullptr;
 		this->StackReserve = nullptr;
 
-		if (this->Kind == kExectuableDylibKind)
+		if (this->Kind == kExecutableDylibKind)
 		{
 			Bool success = false;
 
@@ -336,9 +336,12 @@ namespace Kernel
 		// React according to process kind.
 		switch (process.Kind)
 		{
-		case Process::kExectuableDylibKind: {
+		case Process::kExecutableDylibKind: {
 			process.DylibDelegate = rtl_init_dylib(process);
 			MUST_PASS(process.DylibDelegate);
+			break;
+		}
+		case Process::kExecutableKind: {
 			break;
 		}
 		default: {

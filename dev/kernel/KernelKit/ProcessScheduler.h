@@ -214,15 +214,15 @@ namespace Kernel
 		enum
 		{
 			kInvalidExecutableKind,
-			kExectuableKind,
-			kExectuableDylibKind,
-			kExectuableKindCount,
+			kExecutableKind,
+			kExecutableDylibKind,
+			kExecutableKindCount,
 		};
 
 		ProcessTime PTime{0}; //! @brief Process allocated tine.
 
 		PID	  ProcessId{kSchedInvalidPID};
-		Int32 Kind{kExectuableKind};
+		Int32 Kind{kExecutableKind};
 
 	public:
 		/***********************************************************************************/

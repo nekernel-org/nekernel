@@ -283,7 +283,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 			kSATADev.EnableMmio();
 			kSATADev.BecomeBusMaster();
 
-			HAL::mm_map_page((VoidPtr)mem_ahci, (VoidPtr)mem_ahci, HAL::kMMFlagsPresent | HAL::kMMFlagsWr | HAL::kMMFlagsUncached);
+			HAL::mm_map_page((VoidPtr)mem_ahci, (VoidPtr)mem_ahci, HAL::kMMFlagsPresent | HAL::kMMFlagsWr | HAL::kMMFlagsPCD);
 
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;

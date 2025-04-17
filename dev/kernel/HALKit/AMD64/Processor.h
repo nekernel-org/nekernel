@@ -73,7 +73,7 @@ namespace Kernel::HAL
 		kMMFlagsWr		 = 1 << 2,
 		kMMFlagsUser	 = 1 << 3,
 		kMMFlagsNX		 = 1 << 4,
-		kMMFlagsUncached = 1 << 5,
+		kMMFlagsPCD = 1 << 5,
 		kMMFlagsCount	 = 4,
 	};
 

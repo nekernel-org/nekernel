@@ -210,23 +210,14 @@ namespace Kernel::HAL
 
 		if (kMADTBlock)
 		{
-			SizeT index = 1;
+			SizeT index = 1UL;
 
 			kSMPInterrupt = 0;
 			kSMPCount	  = 0;
 
-			kout << "SMP: Starting APs...\r";
+			kout << "SMP: Registering APIC IDs...\r";
 
 			kApicBaseAddress = kMADTBlock->Address;
-
-			constexpr auto kMemoryAPStart = 0x7C000;
-			Char*		   ptr_ap_code	  = reinterpret_cast<Char*>(kMemoryAPStart);
-
-			mm_map_page(ptr_ap_code, ptr_ap_code, kMMFlagsWr);
-
-			SizeT hal_ap_blob_len = hal_ap_blob_end - hal_ap_blob_start;
-
-			rt_copy_memory((Char*)hal_ap_blob_start, ptr_ap_code, hal_ap_blob_len);
 
 			while (Yes)
 			{
@@ -241,18 +232,7 @@ namespace Kernel::HAL
 						break;
 
 					kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].LAPIC.ProcessorID;
-					(void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
-
-					// I'll just make the AP start from scratch here.
-
-					hal_send_start_ipi(kApicBaseAddress, kAPICLocales[kSMPCount]);
-
-					HardwareTimer timer(Kernel::rtl_ms(10));
-					timer.Wait();
-
-					/// TODO: HAL helper to create an address.
-
-					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)ptr_ap_code) >> 12));
+					(Void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
 
 					++kSMPCount;
 					break;
@@ -264,7 +244,7 @@ namespace Kernel::HAL
 				++index;
 			}
 
-			(void)(kout << "SMP: number of APs: " << number(kSMPCount) << kendl);
+			(Void)(kout << "SMP: Number of IDs: " << number(kSMPCount) << kendl);
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)
