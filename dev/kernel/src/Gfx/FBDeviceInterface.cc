@@ -29,6 +29,13 @@ FBDeviceInterface& FBDeviceInterface::operator<<(FBDevicePacket* pckt)
 	if (!pckt)
 		return *this;
 
+	if (pckt->fHeight == 0 || pckt->fWidth == 0)
+		return *this;
+
+	if (pckt->fX > kHandoverHeader->f_GOP.f_Width ||
+		pckt->fY > kHandoverHeader->f_GOP.f_Height)
+		return *this;
+
 	FBDrawInRegion(pckt->fColor, pckt->fHeight, pckt->fWidth, pckt->fY, pckt->fX);
 
 	return *this;
@@ -40,6 +47,10 @@ FBDeviceInterface& FBDeviceInterface::operator<<(FBDevicePacket* pckt)
 FBDeviceInterface& FBDeviceInterface::operator>>(FBDevicePacket* pckt)
 {
 	if (!pckt)
+		return *this;
+
+	if (pckt->fX > kHandoverHeader->f_GOP.f_Width ||
+		pckt->fY > kHandoverHeader->f_GOP.f_Height)
 		return *this;
 
 	pckt->fColor = *(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +
