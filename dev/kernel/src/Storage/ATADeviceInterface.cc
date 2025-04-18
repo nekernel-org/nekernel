@@ -14,19 +14,13 @@ using namespace Kernel;
 /// @param Cleanup Drive cleanup.
 ATADeviceInterface::ATADeviceInterface(
 	void (*Out)(IDeviceObject*, MountpointInterface* outpacket),
-	void (*In)(IDeviceObject*, MountpointInterface* inpacket),
-	void (*Cleanup)(void))
-	: IDeviceObject(Out, In), fCleanup(Cleanup)
+	void (*In)(IDeviceObject*, MountpointInterface* inpacket))
+	: IDeviceObject(Out, In)
 {
 }
 
 /// @brief Class desctructor
-ATADeviceInterface::~ATADeviceInterface()
-{
-	MUST_PASS(fCleanup);
-	if (fCleanup)
-		fCleanup();
-}
+ATADeviceInterface::~ATADeviceInterface() = default;
 
 /// @brief Returns the name of the device interface.
 /// @return it's name as a string.

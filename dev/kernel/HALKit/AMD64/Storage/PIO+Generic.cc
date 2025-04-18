@@ -252,8 +252,7 @@ namespace Kernel
 	{
 		/// here we don't check if we probed ATA, since we'd need to grab IO after that.
 		ATADeviceInterface device(Detail::sk_io_read_pio,
-								  Detail::sk_io_write_pio,
-								  nullptr);
+								  Detail::sk_io_write_pio);
 
 		device.SetIndex(drv_index);
 

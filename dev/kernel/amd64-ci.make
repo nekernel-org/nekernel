@@ -48,7 +48,7 @@ WINDRES=x86_64-w64-mingw32-windres
 .PHONY: nekernel-amd64-epm
 nekernel-amd64-epm: clean
 	$(WINDRES) kernel_rsrc.rsrc -O coff -o kernel_rsrc.obj
-	$(CXX) $(CCFLAGS) $(DISK_DRV) $(DEBUG_MACRO) $(wildcard src/*.cc) $(wildcard HALKit/AMD64/PCI/*.cc) $(wildcard src/Network/*.cc) $(wildcard src/Storage/*.cc) $(wildcard src/FS/*.cc) $(wildcard HALKit/AMD64/Storage/*.cc)	$(wildcard HALKit/AMD64/*.cc) $(wildcard src/Swap/*.cc) $(wildcard HALKit/AMD64/*.s)
+	$(CXX) $(CCFLAGS) $(DISK_DRV) $(DEBUG_MACRO) $(wildcard src/*.cc) $(wildcard src/Gfx/*.cc) $(wildcard HALKit/AMD64/PCI/*.cc) $(wildcard src/Network/*.cc) $(wildcard src/Storage/*.cc) $(wildcard src/FS/*.cc) $(wildcard HALKit/AMD64/Storage/*.cc)	$(wildcard HALKit/AMD64/*.cc) $(wildcard src/Swap/*.cc) $(wildcard HALKit/AMD64/*.s)
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalCommonAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalBootHeader.asm

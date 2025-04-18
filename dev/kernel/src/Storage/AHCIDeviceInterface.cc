@@ -13,20 +13,13 @@ using namespace Kernel;
 /// @param In  Drive input
 /// @param Cleanup Drive cleanup.
 AHCIDeviceInterface::AHCIDeviceInterface(void (*out)(IDeviceObject* self, MountpointInterface* outpacket),
-										 void (*in)(IDeviceObject* self, MountpointInterface* inpacket),
-										 void (*cleanup)(void))
-	: IDeviceObject(out, in), fCleanup(cleanup)
+										 void (*in)(IDeviceObject* self, MountpointInterface* inpacket))
+	: IDeviceObject(out, in)
 {
 }
 
 /// @brief Class desctructor
-AHCIDeviceInterface::~AHCIDeviceInterface()
-{
-	MUST_PASS(fCleanup);
-
-	if (fCleanup)
-		fCleanup();
-}
+AHCIDeviceInterface::~AHCIDeviceInterface() = default;
 
 /// @brief Returns the name of the device interface.
 /// @return it's name as a string.

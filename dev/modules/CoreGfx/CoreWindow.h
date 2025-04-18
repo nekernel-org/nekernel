@@ -1,3 +1,13 @@
+/* -------------------------------------------
+
+	Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
+
+------------------------------------------- */
+
+/// @note this file is experimental and not used yet.
+/// @file CoreWindow.h
+/// @brief Core window drawing functions.
+
 #pragma once
 
 #include <modules/CoreGfx/CoreGfx.h>

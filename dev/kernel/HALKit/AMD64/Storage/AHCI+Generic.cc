@@ -479,8 +479,7 @@ namespace Kernel
 			return ErrorOr<AHCIDeviceInterface>(kErrorDisk);
 
 		AHCIDeviceInterface device(Detail::sk_io_read_ahci,
-								   Detail::sk_io_write_ahci,
-								   nullptr);
+								   Detail::sk_io_write_ahci);
 
 		device.SetPortsImplemented(kSATAPortsImplemented);
 		device.SetIndex(drv_index);

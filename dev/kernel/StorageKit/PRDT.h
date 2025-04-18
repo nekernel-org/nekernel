@@ -15,7 +15,7 @@
 namespace Kernel
 {
 	/// @brief Tranfer information about PRD.
-	enum kPRDTTransfer
+	enum
 	{
 		kPRDTTransferInProgress,
 		kPRDTTransferIsDone,
@@ -23,7 +23,7 @@ namespace Kernel
 	};
 
 	/// @brief Physical Region Descriptor Table.
-	struct PRDT
+	struct PRDT final
 	{
 		UInt32 fPhysAddress;
 		UInt32 fSectorCount;
