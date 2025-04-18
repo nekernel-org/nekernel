@@ -11,6 +11,8 @@
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
+#include <KernelKit/User.h>
+#include <NewKit/Crc32.h>
 
 /// @file HeFS.h
 /// @brief HeFS filesystem support.
@@ -110,7 +112,7 @@ struct PACKED HeFS_INDEX_NODE final
 	Kernel::UInt32	  fFlags;
 	Kernel::UInt16	  fKind;
 	Kernel::UInt32	  fSize;
-	Kernel::UInt32	  fChecksum;
+	Kernel::UInt32	  fChecksum, fRecoverChecksum, fBlockChecksum, fLinkChecksum;
 
 	ATime		   fCreated, fAccessed, fModified, fDeleted;
 	Kernel::UInt32 fUID, fGID;
@@ -136,7 +138,7 @@ struct PACKED HeFS_INDEX_NODE_DIRECTORY final
 	Kernel::UInt32 fFlags;
 	Kernel::UInt16 fKind;
 	Kernel::UInt32 fSize;
-	Kernel::UInt32 fChecksum;
+	Kernel::UInt32 fChecksum, fIndexNodeChecksum;
 
 	ATime		   fCreated, fAccessed, fModified, fDeleted;
 	Kernel::UInt32 fUID, fGID;
