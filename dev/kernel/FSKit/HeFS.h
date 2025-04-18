@@ -77,7 +77,7 @@ inline constexpr UInt16 kHeFSFileKindCount		  = 0x08;
 
 /// @brief HeFS blocks are array containing sparse blocks of data.
 /// @details The blocks are used to store the data of a file. Each block is a pointer to a block of data on the disk.
-inline constexpr UInt16 fHeFSBlockCount = 0x06;
+inline constexpr UInt16 kHeFSBlockCount = 0x06;
 
 struct PACKED HeFS_BOOT_NODE final
 {
@@ -118,14 +118,14 @@ struct PACKED HeFS_INDEX_NODE final
 	Kernel::UInt32 fUID, fGID;
 	Kernel::UInt32 fMode;
 
-	Kernel::UInt64 fBlockLinkStart[fHeFSBlockCount];
-	Kernel::UInt64 fBlockLinkEnd[fHeFSBlockCount];
+	Kernel::UInt64 fBlockLinkStart[kHeFSBlockCount];
+	Kernel::UInt64 fBlockLinkEnd[kHeFSBlockCount];
 
-	Kernel::UInt64 fBlockStart[fHeFSBlockCount];
-	Kernel::UInt64 fBlockEnd[fHeFSBlockCount];
+	Kernel::UInt64 fBlockStart[kHeFSBlockCount];
+	Kernel::UInt64 fBlockEnd[kHeFSBlockCount];
 
-	Kernel::UInt64 fBlockRecoveryStart[fHeFSBlockCount];
-	Kernel::UInt64 fBlockRecoveryEnd[fHeFSBlockCount];
+	Kernel::UInt64 fBlockRecoveryStart[kHeFSBlockCount];
+	Kernel::UInt64 fBlockRecoveryEnd[kHeFSBlockCount];
 	
 	/// @brief Red-black tree pointers.
 	Kernel::Lba fNext, fPrev, fChild, fParent;
@@ -144,8 +144,8 @@ struct PACKED HeFS_INDEX_NODE_DIRECTORY final
 	Kernel::UInt32 fUID, fGID;
 	Kernel::UInt32 fMode;
 
-	Kernel::UInt64 fIndexNodeStart[fHeFSBlockCount];
-	Kernel::UInt64 fIndexNodeEnd[fHeFSBlockCount];
+	Kernel::UInt64 fIndexNodeStart[kHeFSBlockCount];
+	Kernel::UInt64 fIndexNodeEnd[kHeFSBlockCount];
 
 	/// @brief Red-black tree pointers.
 	Kernel::Lba fNext, fPrev, fChild, fParent;
