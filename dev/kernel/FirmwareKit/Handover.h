@@ -75,11 +75,11 @@ namespace Kernel::HEL
 
 		struct
 		{
-			VoidPtr f_SmBios;
-			VoidPtr f_VendorPtr;
-			VoidPtr f_MpPtr;
-			Bool	f_MultiProcessingEnabled;
-			UInt32    f_ImageKey;
+			VoidPtr		 f_SmBios;
+			VoidPtr		 f_VendorPtr;
+			VoidPtr		 f_MpPtr;
+			Bool		 f_MultiProcessingEnabled;
+			UInt32		 f_ImageKey;
 			EfiHandlePtr f_ImageHandle;
 		} f_HardwareTables;
 
@@ -98,9 +98,9 @@ namespace Kernel::HEL
 
 	enum
 	{
-		kHandoverSpecificKind,
-		kHandoverSpecificAttrib,
-		kHandoverSpecificMemoryEfi,
+		kHandoverTableBS,
+		kHandoverTableST,
+		kHandoverTableCount,
 	};
 
 	/// @brief Alias of bootloader main type.

@@ -380,25 +380,25 @@ typedef UInt8 EfiMacAddress[32];
 
 typedef struct
 {
-	UInt32			State;
-	UInt32			HwAddressSize;
-	UInt32			MediaHeaderSize;
-	UInt32			MaxPacketSize;
-	UInt32			NvRamSize;
-	UInt32			NvRamAccessSize;
-	UInt32			ReceiveFilterMask;
-	UInt32			ReceiveFilterSetting;
-	UInt32			MaxMCastFilterCount;
-	UInt32			MCastFilterCount;
+	UInt32		  State;
+	UInt32		  HwAddressSize;
+	UInt32		  MediaHeaderSize;
+	UInt32		  MaxPacketSize;
+	UInt32		  NvRamSize;
+	UInt32		  NvRamAccessSize;
+	UInt32		  ReceiveFilterMask;
+	UInt32		  ReceiveFilterSetting;
+	UInt32		  MaxMCastFilterCount;
+	UInt32		  MCastFilterCount;
 	EfiMacAddress MCastFilter[MAX_MCAST_FILTER_CNT];
 	EfiMacAddress CurrentAddress;
 	EfiMacAddress BroadcastAddress;
 	EfiMacAddress PermanentAddress;
-	UInt8			IfType;
-	BOOL			MacAddressChangeable;
-	BOOL			MultipleTxSupported;
-	BOOL			MediaPresentSupported;
-	BOOL			MediaPresent;
+	UInt8		  IfType;
+	BOOL		  MacAddressChangeable;
+	BOOL		  MultipleTxSupported;
+	BOOL		  MediaPresentSupported;
+	BOOL		  MediaPresent;
 } EFI_SIMPLE_NETWORK_MODE;
 
 typedef EFI_STATUS(EFIAPI* EFI_SIMPLE_NETWORK_TRANSMIT)(

@@ -226,7 +226,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 	handover_hdr->f_Magic	= kHandoverMagic;
 	handover_hdr->f_Version = kHandoverVersion;
 
-	handover_hdr->f_HardwareTables.f_ImageKey	= map_key;
+	handover_hdr->f_HardwareTables.f_ImageKey	 = map_key;
 	handover_hdr->f_HardwareTables.f_ImageHandle = image_handle;
 
 	// Provide fimware vendor name.

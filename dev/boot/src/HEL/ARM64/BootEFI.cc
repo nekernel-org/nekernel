@@ -81,7 +81,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 	HEL::BootInfoHeader* handover_hdr =
 		new HEL::BootInfoHeader();
 
-	UInt32				 map_key		 = 0;
+	UInt32 map_key = 0;
 
 #ifdef ZBA_USE_FB
 	if (!boot_init_fb())

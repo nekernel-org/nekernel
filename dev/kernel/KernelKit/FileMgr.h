@@ -21,13 +21,9 @@
 #ifndef INC_FILEMGR_H
 #define INC_FILEMGR_H
 
-#ifdef __FSKIT_INCLUDES_NEFS__
-#include <FSKit/NeFS.h>
-#endif // __FSKIT_INCLUDES_NEFS__
-
-#ifdef __FSKIT_INCLUDES_HeFS__
+#include <FSKit/Ext2.h>
 #include <FSKit/HeFS.h>
-#endif // __FSKIT_INCLUDES_HeFS__
+#include <FSKit/NeFS.h>
 
 #include <CompilerKit/CompilerKit.h>
 #include <hint/CompilerHint.h>
@@ -55,7 +51,7 @@
 	@note Refer to first enum.
 */
 #define kFileOpsCount	 (4U)
-#define kFileMimeGeneric "n-application-kind/all"
+#define kFileMimeGeneric "ne-application-kind/all"
 
 /** @brief invalid position. (n-pos) */
 #define kNPos (SizeT)(-1);

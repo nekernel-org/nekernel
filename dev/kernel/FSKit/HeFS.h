@@ -6,7 +6,11 @@
 
 #pragma once
 
+#include <CompilerKit/CompilerKit.h>
+#include <hint/CompilerHint.h>
+#include <KernelKit/DriveMgr.h>
 #include <NewKit/Defines.h>
+#include <NewKit/KString.h>
 
 /// @file HeFS.h
 /// @brief HeFS filesystem support.
@@ -18,9 +22,10 @@
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (256U)
 
-#define kHeFSMinimumDiskSize (mib_cast(256))
+#define kHeFSMinimumDiskSize (gib_cast(4))
 
 struct HeFS_BOOT_NODE;
+struct HeFS_INDEX_NODE;
 
 enum
 {

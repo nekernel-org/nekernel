@@ -12,15 +12,21 @@
 #define kStepsExtension ".stp"
 #define kStepsStrLen	(256U)
 
+#define kStepsMagic	   " pls"
+#define kStepsMagicLen (4U)
+#define kStepsVersion  (0x0100)
+
+#define kStepsMime "ne-application-kind/steps"
+
 struct STEPS_COMMON_RECORD final
 {
-	SInt32 setup_magic;
-	Char   setup_name[kStepsStrLen];
-	Char   setup_company[kStepsStrLen];
-	Char   setup_author[kStepsStrLen];
-	SInt32 setup_version;
-	SInt32 setup_pages;
-	SInt32 setup_check_page, setup_eula_page;
+	Char   magic[kStepsMagicLen];
+	Char   name[kStepsStrLen];
+	Char   company[kStepsStrLen];
+	Char   author[kStepsStrLen];
+	SInt32 version;
+	SInt32 pages;
+	SInt32 check_page, eula_page;
 };
 
 #endif // ifndef APPS_STEPS_H

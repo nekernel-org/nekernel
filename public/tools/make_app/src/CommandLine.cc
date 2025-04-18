@@ -7,9 +7,15 @@
 #include <Framework.h>
 #include <Steps.h>
 
+#include <user/ProcessCodes.h>
+
 #include <CoreFoundation.fwrk/headers/Array.h>
 
-/// @brief This program makes a framework directory for NeKernel OS.
+/// @brief This program makes a framework/app/steps directory for NeKernel OS.
+
+static Char* kStepsName	   = "Steps";
+static Char* kStepsAuthor  = "John Doe";
+static Char* kStepsCompany = "Company, Inc";
 
 int main(int argc, char* argv[])
 {
@@ -28,7 +34,25 @@ int main(int argc, char* argv[])
 			PrintOut(nullptr, "%s", "make_app: -s: Steps (Setup pages) format.\n");
 			PrintOut(nullptr, "%s", "make_app: -f: Framework format.\n");
 
-			return EXIT_SUCCESS;
+			return kErrorSuccess;
+		}
+
+		if (MmStrCmp(argv[i], "--author") == 0)
+		{
+			MmCopyMemory(kStepsAuthor, const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
+			continue;
+		}
+
+		if (MmStrCmp(argv[i], "--company") == 0)
+		{
+			MmCopyMemory(kStepsCompany, const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
+			continue;
+		}
+
+		if (MmStrCmp(argv[i], "--name") == 0)
+		{
+			MmCopyMemory(kStepsName, const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
+			continue;
 		}
 
 		if (MmStrCmp(argv[i], "-a") == 0)
@@ -63,13 +87,17 @@ int main(int argc, char* argv[])
 
 			auto handle = IoOpenFile(StrFmt("{}{}{}{}", path, kRootDirectory, "_setup", kStepsExtension), nullptr);
 
-			struct STEPS_COMMON_RECORD record
-			{
-				0
-			};
+			struct STEPS_COMMON_RECORD record;
 
-			record.setup_magic	 = 0xAABB;
-			record.setup_version = 1;
+			MmFillMemory(&record, sizeof(STEPS_COMMON_RECORD), 0);
+
+			MmCopyMemory(record.name, const_cast<Char*>(kStepsName), kStepsStrLen);
+			MmCopyMemory(record.author, const_cast<Char*>(kStepsAuthor), kStepsStrLen);
+			MmCopyMemory(record.company, const_cast<Char*>(kStepsCompany), kStepsStrLen);
+
+			MmCopyMemory(record.magic, const_cast<Char*>(kStepsMagic), kStepsMagicLen);
+
+			record.version = kStepsVersion;
 
 			IoWriteFile(handle, (void*)&record, sizeof(STEPS_COMMON_RECORD));
 			IoCloseFile(handle);
@@ -84,8 +112,8 @@ int main(int argc, char* argv[])
 			FsCopy(path, StrFmt("{}{}", path, file));
 		}
 
-		return EXIT_SUCCESS;
+		return kErrorSuccess;
 	}
 
-	return EXIT_FAILURE;
+	return kErrorInternal;
 }

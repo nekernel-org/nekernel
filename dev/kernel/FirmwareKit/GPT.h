@@ -9,9 +9,9 @@
 #include <NewKit/Defines.h>
 #include <FirmwareKit/EFI/EFI.h>
 
-#define kSectorAlignGPT_PartTbl (420U)
+#define kSectorAlignGPT_PartTbl	  (420U)
 #define kSectorAlignGPT_PartEntry (72U)
-#define kPartNameGPT   (8U)
+#define kPartNameGPT			  (8U)
 
 namespace Kernel
 {
