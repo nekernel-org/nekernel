@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <GfxKit/Gfx.h>
+#include <GfxKit/FB.h>
 
 using namespace Kernel;
 
