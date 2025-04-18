@@ -15,9 +15,6 @@
 #include <FirmwareKit/EPM.h>
 #include <CompilerKit/Version.h>
 #include <modules/CoreGfx/CoreGfx.h>
-#include <BootKit/Rsrc/zka_disk.rsrc>
-#include <BootKit/Rsrc/zka_no_disk.rsrc>
-#include <BootKit/Rsrc/zka_has_disk.rsrc>
 
 /// include NeFS header and Support header as well.
 
@@ -332,9 +329,6 @@ namespace Boot
 
 		if (fDiskDev.GetDiskSize() < kMinimumDiskSize)
 		{
-			fb_init();
-
-			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
 			Boot::ThrowError(L"Drive-Too-Tiny", L"Can't format a NeFS partition here.");
 			return false;
 		}

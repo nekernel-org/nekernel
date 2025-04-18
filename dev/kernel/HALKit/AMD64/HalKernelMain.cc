@@ -14,7 +14,7 @@
 #include <CFKit/Property.h>
 #include <modules/CoreGfx/TextGfx.h>
 #include <KernelKit/Timer.h>
-
+#include <modules/CoreGfx/CoreWindow.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/EFI/EFI.h>
 
@@ -44,8 +44,6 @@ EXTERN_C Int32 hal_init_platform(
 	kHandoverHeader = handover_hdr;
 
 	FB::fb_clear_video();
-
-	(Void)(Kernel::kout << "Welcome to NeKernel.\r");
 
 	fw_init_efi((EfiSystemTable*)handover_hdr->f_FirmwareCustomTables[1]);
 	Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey, handover_hdr->f_HardwareTables.f_ImageHandle);
