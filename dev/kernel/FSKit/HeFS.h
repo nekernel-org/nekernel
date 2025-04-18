@@ -20,12 +20,13 @@
 #define kHeFSMagicLen (8)
 
 #define kHeFSFileNameLen (256U)
-#define kHeFSPartNameLen (256U)
+#define kHeFSPartNameLen (128U)
 
 #define kHeFSMinimumDiskSize (gib_cast(4))
 
 struct HeFS_BOOT_NODE;
 struct HeFS_INDEX_NODE;
+struct HeFS_INDEX_NODE_DIRECTORY;
 
 enum
 {
@@ -48,28 +49,102 @@ enum
 	kHeFSStatusCount,
 };
 
-struct PACKED HeFS_BOOT_NODE final
+enum
 {
-	Kernel::Char   fMagic[kHeFSMagicLen];
-	Kernel::Char   fPartName[kHeFSPartNameLen];
-	Kernel::UInt32 fVersion;
-	Kernel::UInt64 fBadSectors;
-	Kernel::UInt64 fSectorCount;
-	Kernel::UInt64 fSectorSize;
-	Kernel::UInt32 fChecksum;
-	Kernel::UInt8  fDriveKind;
-	Kernel::UInt8  fTextEncoding;
-	Kernel::UInt64 fRootINode;
-	Kernel::UInt64 fRecoveryINode;
+	kHeFSEncodingUTF8 = 0x00,
+	kHeFSEncodingUTF16,
+	kHeFSEncodingUTF32,
+	kHeFSEncodingUTF16BE,
+	kHeFSEncodingUTF16LE,
+	kHeFSEncodingUTF32BE,
+	kHeFSEncodingUTF32LE,
+	kHeFSEncodingUTF8BE,
+	kHeFSEncodingUTF8LE,
+	kHeFSEncodingCount,
 };
 
-struct PACKED HeFS_INDEX_NODE
+inline constexpr UInt16 kHeFSFileKindRegular	  = 0x00;
+inline constexpr UInt16 kHeFSFileKindDirectory	  = 0x01;
+inline constexpr UInt16 kHeFSFileKindBlock		  = 0x02;
+inline constexpr UInt16 kHeFSFileKindCharacter	  = 0x03;
+inline constexpr UInt16 kHeFSFileKindFIFO		  = 0x04;
+inline constexpr UInt16 kHeFSFileKindSocket		  = 0x05;
+inline constexpr UInt16 kHeFSFileKindSymbolicLink = 0x06;
+inline constexpr UInt16 kHeFSFileKindUnknown	  = 0x07;
+inline constexpr UInt16 kHeFSFileKindCount		  = 0x08;
+
+/// @brief HeFS blocks are array containing sparse blocks of data.
+/// @details The blocks are used to store the data of a file. Each block is a pointer to a block of data on the disk.
+inline constexpr UInt16 fHeFSBlockCount = 0x06;
+
+struct PACKED HeFS_BOOT_NODE final
 {
-	Kernel::Char   fName[kHeFSFileNameLen];
+	Kernel::Char	  fMagic[kHeFSMagicLen];
+	Kernel::Utf16Char fVolName[kHeFSPartNameLen];
+	Kernel::UInt32	  fVersion;
+	Kernel::UInt64	  fBadSectors;
+	Kernel::UInt64	  fSectorCount;
+	Kernel::UInt64	  fSectorSize;
+	Kernel::UInt32	  fChecksum;
+	Kernel::UInt8	  fDriveKind;
+	Kernel::UInt8	  fEncoding;
+	Kernel::UInt64	  fStartIND;
+	Kernel::UInt64	  fEndIND;
+	Kernel::UInt64	  fINodeCount;
+	Kernel::UInt64	  fDiskSize;
+	Kernel::UInt16	  fDiskStatus;
+	Kernel::UInt16	  fDiskFlags;
+	Kernel::UInt16	  fVID; // virtual identification number within an EPM disk.
+};
+
+/// @brief Access time type.
+/// @details Used to keep track of the INode, INodeDir allocation status.
+typedef Kernel::UInt64 ATime;
+
+inline constexpr ATime kHeFSTimeInvalid	= 0x0000000000000000;
+inline constexpr ATime kHeFSTimeMax	= 0xFFFFFFFFFFFFFFFF;
+
+struct PACKED HeFS_INDEX_NODE final
+{
+	Kernel::Utf16Char fName[kHeFSFileNameLen];
+	Kernel::UInt32	  fFlags;
+	Kernel::UInt16	  fKind;
+	Kernel::UInt32	  fSize;
+	Kernel::UInt32	  fChecksum;
+
+	ATime		   fCreated, fAccessed, fModified, fDeleted;
+	Kernel::UInt32 fUID, fGID;
+	Kernel::UInt32 fMode;
+
+	Kernel::UInt64 fBlockLinkStart[fHeFSBlockCount];
+	Kernel::UInt64 fBlockLinkEnd[fHeFSBlockCount];
+
+	Kernel::UInt64 fBlockStart[fHeFSBlockCount];
+	Kernel::UInt64 fBlockEnd[fHeFSBlockCount];
+
+	Kernel::UInt64 fBlockRecoveryStart[fHeFSBlockCount];
+	Kernel::UInt64 fBlockRecoveryEnd[fHeFSBlockCount];
+	
+	/// @brief Red-black tree pointers.
+	Kernel::Lba fNext, fPrev, fChild, fParent;
+};
+
+struct PACKED HeFS_INDEX_NODE_DIRECTORY final
+{
+	Kernel::Utf16Char fName[kHeFSFileNameLen];
+
 	Kernel::UInt32 fFlags;
 	Kernel::UInt16 fKind;
 	Kernel::UInt32 fSize;
-	Kernel::Lba	   fFirstINode;
-	Kernel::Lba	   fLastINode;
 	Kernel::UInt32 fChecksum;
+
+	ATime		   fCreated, fAccessed, fModified, fDeleted;
+	Kernel::UInt32 fUID, fGID;
+	Kernel::UInt32 fMode;
+
+	Kernel::UInt64 fIndexNodeStart[fHeFSBlockCount];
+	Kernel::UInt64 fIndexNodeEnd[fHeFSBlockCount];
+
+	/// @brief Red-black tree pointers.
+	Kernel::Lba fNext, fPrev, fChild, fParent;
 };
