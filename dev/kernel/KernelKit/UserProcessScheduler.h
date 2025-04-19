@@ -7,8 +7,8 @@
 #ifndef INC_PROCESS_SCHEDULER_H
 #define INC_PROCESS_SCHEDULER_H
 
-/// @file ProcessScheduler.h
-/// @brief Process scheduler code and definitions.
+/// @file UserProcessScheduler.h
+/// @brief User Process scheduler code and definitions.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 
 #include <ArchKit/ArchKit.h>
