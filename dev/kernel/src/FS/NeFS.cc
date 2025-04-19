@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "NewKit/Macros.h"
 #ifdef __FSKIT_INCLUDES_NEFS__
 
 #include <FSKit/NeFS.h>
@@ -454,10 +455,22 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 	return nullptr;
 }
 
+_Output Bool NeFileSystemParser::FormatGPT(_Input _Output DriveTrait* drive, _Input const Lba end_lba, _Input const Int32 flags, const Char* part_name)
+{
+	NE_UNUSED(drive);
+	NE_UNUSED(end_lba);
+	NE_UNUSED(flags);
+	NE_UNUSED(part_name);
+	
+	(void)(kout << "FormatGPT: Not implemented yet.\r");
+
+	return NO;
+}
+
 /// @brief Make a EPM+NeFS drive out of the disk.
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see err_global_get().
-bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
+bool NeFileSystemParser::FormatEPM(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name)
 {
 	if (*part_name == 0 ||
 		endLba == 0)

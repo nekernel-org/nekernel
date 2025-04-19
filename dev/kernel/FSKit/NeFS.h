@@ -321,7 +321,9 @@ namespace Kernel
 		/// @brief Make a EPM+NeFS drive out of the disk.
 		/// @param drive The drive to write on.
 		/// @return If it was sucessful, see err_local_get().
-		_Output Bool Format(_Input _Output DriveTrait* drive, _Input const Lba endLba, _Input const Int32 flags, const Char* part_name);
+		_Output Bool FormatEPM(_Input _Output DriveTrait* drive, _Input const Lba end_lba, _Input const Int32 flags, const Char* part_name);
+
+		_Output Bool FormatGPT(_Input _Output DriveTrait* drive, _Input const Lba end_lba, _Input const Int32 flags, const Char* part_name);
 
 	public:
 		UInt32 mDriveIndex{kNeFSSubDriveA};
