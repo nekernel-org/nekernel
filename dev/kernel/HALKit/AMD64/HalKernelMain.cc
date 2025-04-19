@@ -14,7 +14,6 @@
 #include <CFKit/Property.h>
 #include <modules/CoreGfx/TextGfx.h>
 #include <KernelKit/Timer.h>
-#include <modules/CoreGfx/CoreWindow.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/EFI/EFI.h>
 
