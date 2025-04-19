@@ -74,10 +74,10 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	const UInt16 kSzIdent = 512;
 
 	/// Push it to the stack
-	UInt16* identify_data = new UInt16[kSzIdent];
+	UInt8* identify_data = new UInt8[kSzIdent];
 
 	/// Send AHCI command for identification.
-	drv_std_input_output_ahci<NO, YES, YES>(0, (UInt8*)identify_data, kAHCISectorSize, kSzIdent);
+	drv_std_input_output_ahci<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
 
 	/// Extract 48-bit LBA.
 	UInt64 lba48_sectors = 0;
@@ -91,7 +91,16 @@ STATIC Void drv_compute_disk_ahci() noexcept
 	else
 		kSATASectorCount = lba48_sectors;
 
-	(Void)(kout << "Device: " << kCurrentDiskModel << kendl);
+	for (Int32 i = 0; i < 20; i++)
+	{
+		kCurrentDiskModel[i * 2]	 = (identify_data[27 + i] >> 8) & 0xFF;
+		kCurrentDiskModel[i * 2 + 1] = identify_data[27 + i] & 0xFF;
+	}
+
+	kCurrentDiskModel[40] = '\0';
+
+	(Void)(kout << "SATA Sector Count: " << hex_number(kSATASectorCount) << kendl);
+	(Void)(kout << "SATA Disk Model: " << kCurrentDiskModel << kendl);
 
 	delete[] identify_data;
 	identify_data = nullptr;
@@ -102,17 +111,15 @@ STATIC Void drv_compute_disk_ahci() noexcept
 /// @return The slot, or ~0.
 STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept
 {
-	UInt32 slots = (port->Sact | port->Ci);
+	UInt32 slots = port->Sact | port->Ci;
 
-	for (Int32 i = 0; i < kSATAPortCnt; ++i)
+	for (Int32 i = 0; i < kSATAPortCnt; ++i) // AHCI supports up to 32 slots
 	{
-		if ((slots & 1) == 0)
+		if ((slots & (1U << i)) == 0)
 			return i;
-
-		slots >>= 1;
 	}
 
-	return ~0;
+	return -1; // no free slot found
 }
 
 /// @brief Send an AHCI command, according to the template parameters.
@@ -158,8 +165,6 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
 	auto ctba_phys	   = ((UInt64)command_header->Ctbau << 32) | command_header->Ctba;
 	auto command_table = reinterpret_cast<volatile HbaCmdTbl*>(ctba_phys);
-
-	rt_set_memory((HbaCmdTbl*)command_table, 0, sizeof(HbaCmdTbl) + (command_header->Prdtl - 1) * sizeof(HbaPrdtEntry));
 
 	MUST_PASS(command_table);
 
@@ -278,12 +283,12 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 		if (kSATADev.Subclass() == kSATASubClass &&
 			kSATADev.ProgIf() == kSATAProgIfAHCI)
 		{
-			HbaMem* mem_ahci = (HbaMem*)kSATADev.Bar(kSATABar5);
-
 			kSATADev.EnableMmio();
 			kSATADev.BecomeBusMaster();
 
-			HAL::mm_map_page((VoidPtr)mem_ahci, (VoidPtr)mem_ahci, HAL::kMMFlagsPresent | HAL::kMMFlagsWr | HAL::kMMFlagsPCD);
+			HbaMem* mem_ahci	  = (HbaMem*)kSATADev.Bar(kSATABar5);
+
+			HAL::mm_map_page((VoidPtr)mem_ahci, (VoidPtr)mem_ahci, HAL::kMMFlagsPresent | HAL::kMMFlagsWr | HAL::kMMFlagsPCD | HAL::kMMFlagsPwt);
 
 			UInt32 ports_implemented = mem_ahci->Pi;
 			UInt16 ahci_index		 = 0;

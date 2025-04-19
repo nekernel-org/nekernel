@@ -74,6 +74,7 @@ namespace Kernel::HAL
 		kMMFlagsUser	= 1 << 3,
 		kMMFlagsNX		= 1 << 4,
 		kMMFlagsPCD		= 1 << 5,
+		kMMFlagsPwt		= 1 << 6,
 		kMMFlagsCount	= 4,
 	};
 
