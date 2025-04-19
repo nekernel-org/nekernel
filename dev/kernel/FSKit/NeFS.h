@@ -329,7 +329,7 @@ namespace Kernel
 
 	///
 	/// \name NeFileSystemHelper
-	/// \brief Filesystem helper and utils.
+	/// \brief Filesystem helper class.
 	///
 
 	class NeFileSystemHelper final
@@ -352,11 +352,11 @@ namespace Kernel
 		{
 			if (!stamp)
 			{
-				kout << "Invalid: Journal Stamp, using default name.\r";
+				kout << "Invalid: Journal stamp, using default name.\r";
 				return;
 			}
 
-			(void)(kout << "Info: Journal stamp: " << stamp << kendl);
+			(Void)(kout << "Info: Journal stamp: " << stamp << kendl);
 			rt_copy_memory((VoidPtr)stamp, this->mStamp, rt_string_len(stamp));
 		}
 
@@ -428,7 +428,7 @@ namespace Kernel
 			if (!parser->CreateFork(new_fork))
 				return NO;
 
-			(void)(kout << "XML Commited: " << xml_data << "\r\nTo Journal Fork: " << journal_name << kendl);
+			(void)(kout << "XML commit: " << xml_data << " to fork: " << journal_name << kendl);
 
 			auto ret = parser->WriteCatalog(new_fork.CatalogName, YES, xml_data, rt_string_len(xml_data), new_fork.ForkName);
 
