@@ -16,7 +16,8 @@
     "__BOOTZ__",
     "__BOOTZ_STANDALONE__",
     "__NE_AMD64__",
-    "__AHCI__",
+    "__ATA_PIO__",
+    "BOOTZ_GPT_SUPPORT",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",
     "kChkVersion=0x0100"

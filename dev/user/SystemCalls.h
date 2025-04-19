@@ -60,6 +60,10 @@ IMPORT_C Ref IoOpenFile(const Char* fs_path, const Char* drive_letter);
 /// @return Function doesn't return a type.
 IMPORT_C Void IoCloseFile(_Input Ref file_desc);
 
+/// @brief Gets the file mime (if any)
+/// @param file_desc the file descriptor.
+IMPORT_C const Char* IoMimeFile(_Input Ref file_desc);
+
 /// @brief Write data to a file.
 /// @param file_desc the file descriptor.
 /// @param out_data the data to write.

@@ -18,8 +18,7 @@ namespace Kernel
 	{
 	public:
 		explicit ATADeviceInterface(void (*Out)(IDeviceObject*, MountpointInterface* outpacket),
-									void (*In)(IDeviceObject*, MountpointInterface* inpacket),
-									void (*Cleanup)(void));
+									void (*In)(IDeviceObject*, MountpointInterface* inpacket));
 
 		virtual ~ATADeviceInterface();
 
@@ -43,7 +42,6 @@ namespace Kernel
 		Void		  SetIndex(const UInt32& drv);
 
 	private:
-		void (*fCleanup)(void) = {nullptr};
 		UInt32 fDriveIndex{0U};
 		UInt16 fIO, fMaster{0U};
 	};

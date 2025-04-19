@@ -122,7 +122,7 @@
 #define NE_UNUSED(X) ((Kernel::Void)X)
 
 #ifndef RGB
-#define RGB(R, G, B) (Kernel::UInt32)(R | G << 0x8 | B << 0x10)
+#define RGB(R, G, B) ((Kernel::UInt32)((0xFF << 24) | ((R) << 16) | ((G) << 8) | (B)))
 #endif // !RGB
 
 #ifdef __NE_AMD64__

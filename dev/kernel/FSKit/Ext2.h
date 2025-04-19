@@ -6,31 +6,35 @@
 
 #pragma once
 
+#include <CompilerKit/CompilerKit.h>
+#include <hint/CompilerHint.h>
+#include <KernelKit/DriveMgr.h>
 #include <NewKit/Defines.h>
+#include <NewKit/KString.h>
 
 /// @file Ext2.h
 /// @brief EXT2 filesystem structures and constants.
 
-#define kExt2FSMagic              (0xEF53)
-#define kExt2FSMaxFileNameLen     (255U)
-#define kExt2FSSuperblockOffset   (1024)
-#define kExt2FSRootInodeNumber    (2)
+#define kExt2FSMagic			(0xEF53)
+#define kExt2FSMaxFileNameLen	(255U)
+#define kExt2FSSuperblockOffset (1024)
+#define kExt2FSRootInodeNumber	(2)
 
-#define kExt2FSInodeSize          (128U)
-#define kExt2FSBlockSizeBase      (1024U)
+#define kExt2FSInodeSize	 (128U)
+#define kExt2FSBlockSizeBase (1024U)
 
-#define kExt2FSRev0               (0)
-#define kExt2FSRev1               (1)
+#define kExt2FSRev0 (0)
+#define kExt2FSRev1 (1)
 
 enum
 {
-	kExt2FileTypeUnknown = 0,
-	kExt2FileTypeRegular = 1,
-	kExt2FileTypeDirectory = 2,
-	kExt2FileTypeCharDevice = 3,
-	kExt2FileTypeBlockDevice = 4,
-	kExt2FileTypeFIFO = 5,
-	kExt2FileTypeSocket = 6,
+	kExt2FileTypeUnknown	  = 0,
+	kExt2FileTypeRegular	  = 1,
+	kExt2FileTypeDirectory	  = 2,
+	kExt2FileTypeCharDevice	  = 3,
+	kExt2FileTypeBlockDevice  = 4,
+	kExt2FileTypeFIFO		  = 5,
+	kExt2FileTypeSocket		  = 6,
 	kExt2FileTypeSymbolicLink = 7
 };
 
@@ -91,7 +95,7 @@ struct PACKED EXT2_SUPER_BLOCK final
 	Kernel::UInt32 fDefaultMountOpts;
 	Kernel::UInt32 fFirstMetaBlockGroup;
 
-	Kernel::UInt8  fReserved[760]; // Padding to make 1024 bytes
+	Kernel::UInt8 fReserved[760]; // Padding to make 1024 bytes
 };
 
 struct PACKED EXT2_INODE final
@@ -113,10 +117,10 @@ struct PACKED EXT2_INODE final
 
 	Kernel::UInt32 fGeneration;
 	Kernel::UInt32 fFileACL;
-	Kernel::UInt32 fDirACL;  // Only for revision 1+
+	Kernel::UInt32 fDirACL; // Only for revision 1+
 	Kernel::UInt32 fFragmentAddr;
 
-	Kernel::UInt8  fOSD2[12];
+	Kernel::UInt8 fOSD2[12];
 };
 
 struct PACKED EXT2_DIR_ENTRY final

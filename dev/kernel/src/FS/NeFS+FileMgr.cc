@@ -4,11 +4,11 @@
 
 ------------------------------------------- */
 
-#include <KernelKit/FileMgr.h>
-#include <KernelKit/MemoryMgr.h>
-
 #ifndef __NE_MINIMAL_OS__
 #ifdef __FSKIT_INCLUDES_NEFS__
+
+#include <KernelKit/FileMgr.h>
+#include <KernelKit/MemoryMgr.h>
 
 /// @brief NeFS File manager.
 /// BUGS: 0

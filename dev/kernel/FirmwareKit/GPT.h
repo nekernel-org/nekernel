@@ -9,9 +9,11 @@
 #include <NewKit/Defines.h>
 #include <FirmwareKit/EFI/EFI.h>
 
-#define kSectorAlignGPT_PartTbl (420U)
+#define kSectorAlignGPT_PartTbl	  (420U)
 #define kSectorAlignGPT_PartEntry (72U)
-#define kPartNameGPT   (8U)
+#define kMagicLenGPT			  (8U)
+#define kMagicGPT			  ("EFI PART") // "EFI PART"
+#define kGPTPartitionTableLBA (512U + sizeof(GPT_PARTITION_TABLE))
 
 namespace Kernel
 {
@@ -30,10 +32,10 @@ namespace Kernel
 
 	struct PACKED GPT_PARTITION_TABLE final
 	{
-		Char	 PartitionName[kPartNameGPT];
+		Char	 Signature[kMagicLenGPT];
 		UInt32	 Revision;
 		UInt32	 HeaderSize;
-		UInt32	 ChecksumCRC32;
+		UInt32	 CRC32;
 		UInt32	 Reserved1;
 		UInt64	 LBAHeader;
 		UInt64	 LBAAltHeader;

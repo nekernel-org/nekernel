@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-#include "modules/CoreGfx/CoreGfx.h"
 #include <StorageKit/AHCI.h>
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/ProcessScheduler.h>
@@ -15,16 +14,15 @@
 #include <CFKit/Property.h>
 #include <modules/CoreGfx/TextGfx.h>
 #include <KernelKit/Timer.h>
-
+#include <modules/CoreGfx/CoreWindow.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/EFI/EFI.h>
-
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
 EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
 
-STATIC Kernel::Void hal_init_scheduler_team()
+STATIC Kernel::Void hal_pre_init_scheduler()
 {
 	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
@@ -47,12 +45,8 @@ EXTERN_C Int32 hal_init_platform(
 
 	FB::fb_clear_video();
 
-	(Void)(Kernel::kout << "Welcome to NeKernel.\r");
-
 	fw_init_efi((EfiSystemTable*)handover_hdr->f_FirmwareCustomTables[1]);
 	Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey, handover_hdr->f_HardwareTables.f_ImageHandle);
-
-	hal_init_scheduler_team();
 
 	/************************************** */
 	/*     INITIALIZE BIT MAP.              */
@@ -92,6 +86,8 @@ EXTERN_C Int32 hal_init_platform(
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 {
+	hal_pre_init_scheduler();
+
 	Kernel::NeFS::fs_init_nefs();
 
 	Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
@@ -103,5 +99,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	idt_loader.Load(idt_reg);
 
-	dbg_break_point();
+	while (YES)
+	{
+		;
+	}
 }

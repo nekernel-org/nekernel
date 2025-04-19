@@ -12,12 +12,14 @@
 
 namespace Kernel
 {
+	/// @brief AHCIDeviceInterface class
+	/// @details This class is used to send and receive data from the AHCI device.
+	/// @note The class is derived from the IDeviceObject class.
 	class AHCIDeviceInterface NE_DEVICE<MountpointInterface*>
 	{
 	public:
 		explicit AHCIDeviceInterface(void (*out)(IDeviceObject* self, MountpointInterface* out),
-									 void (*in)(IDeviceObject* self, MountpointInterface* in),
-									 void (*cleanup)(void));
+									 void (*in)(IDeviceObject* self, MountpointInterface* in));
 
 		virtual ~AHCIDeviceInterface() override;
 
@@ -40,7 +42,6 @@ namespace Kernel
 		AHCIDeviceInterface& operator>>(MountpointInterface* Data) override;
 
 	private:
-		Void (*fCleanup)(Void) = {nullptr};
 		UInt16 fPortsImplemented{0U};
 		UInt32 fDriveIndex{0U};
 	};

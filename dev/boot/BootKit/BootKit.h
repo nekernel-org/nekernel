@@ -15,9 +15,6 @@
 #include <FirmwareKit/EPM.h>
 #include <CompilerKit/Version.h>
 #include <modules/CoreGfx/CoreGfx.h>
-#include <BootKit/Rsrc/zka_disk.rsrc>
-#include <BootKit/Rsrc/zka_no_disk.rsrc>
-#include <BootKit/Rsrc/zka_has_disk.rsrc>
 
 /// include NeFS header and Support header as well.
 
@@ -301,7 +298,7 @@ namespace Boot
 
 			fDiskDev.Write((Char*)&catalogKind, sizeof(NEFS_CATALOG_STRUCT));
 
-			writer.Write(L"BootZ: Wrote directory: ").Write(blob->fFileName).Write(L"\r");
+			writer.Write(L"BootZ: wrote root directory: ").Write(blob->fFileName).Write(L"\r");
 
 			return true;
 		}
@@ -332,9 +329,6 @@ namespace Boot
 
 		if (fDiskDev.GetDiskSize() < kMinimumDiskSize)
 		{
-			fb_init();
-
-			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
 			Boot::ThrowError(L"Drive-Too-Tiny", L"Can't format a NeFS partition here.");
 			return false;
 		}
@@ -355,10 +349,12 @@ namespace Boot
 		part.DiskSize	  = fDiskDev.GetDiskSize();
 		part.Flags		  = kNeFSPartitionTypeBoot | kNeFSPartitionTypeStandard;
 
+#if defined(BOOTZ_EPM_SUPPORT)
 		fDiskDev.Leak().mBase = kNeFSRootCatalogStartAddress;
 		fDiskDev.Leak().mSize = sizeof(NEFS_ROOT_PARTITION_BLOCK);
 
 		fDiskDev.Write((Char*)&part, sizeof(NEFS_ROOT_PARTITION_BLOCK));
+#endif // defined(BOOTZ_EPM_SUPPORT)
 
 		BootTextWriter writer;
 
@@ -369,13 +365,11 @@ namespace Boot
 		writer << "BootZ: Free sectors: " << part.FreeSectors << "\r";
 		writer << "BootZ: Sector size: " << part.SectorSize << "\r";
 
-#ifdef BOOTZ_EPM_SUPPORT
+#if defined(BOOTZ_EPM_SUPPORT)
 		EPM_PART_BLOCK epm_boot{0};
 
 		const auto kFsName	  = "NeFS";
 		const auto kBlockName = "OS";
-
-		CopyMem(epm_boot.Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), StrLen(kFsName));
 
 		epm_boot.FsVersion = kNeFSVersionInteger;
 		epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
@@ -384,6 +378,13 @@ namespace Boot
 		epm_boot.Kind	   = kEPMNeKernel;
 		epm_boot.NumBlocks = part.CatalogCount;
 
+		epm_boot.Guid.Data1 = 0x00000000;
+		epm_boot.Guid.Data2 = 0x0000;
+		epm_boot.Guid.Data3 = 0x0000;
+
+		SetMem(epm_boot.Guid.Data4, 0, 8);
+
+		CopyMem(epm_boot.Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), StrLen(kFsName));
 		CopyMem(epm_boot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), StrLen(kBlockName));
 		CopyMem(epm_boot.Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), StrLen(kEPMMagic));
 
@@ -392,7 +393,69 @@ namespace Boot
 
 		fDiskDev.Write((Char*)&epm_boot, sizeof(EPM_PART_BLOCK));
 
-		writer.Write(L"BootZ: Drive has been formatted Successfully.\r");
+		writer.Write(L"BootZ: Drive is EPM formatted.\r");
+#elif defined(BOOTZ_GPT_SUPPORT)
+		const auto kBlockName = "NeFS_OS";
+
+		GPT_PARTITION_TABLE gpt_part{0};
+
+		CopyMem(gpt_part.Signature, reinterpret_cast<VoidPtr>(const_cast<Char*>(kMagicGPT)), StrLen(kMagicGPT));
+
+		gpt_part.Revision	= 0x00010000;
+		gpt_part.HeaderSize = sizeof(GPT_PARTITION_TABLE);
+
+		gpt_part.CRC32 = 0x00000000;
+
+		gpt_part.Reserved1	   = 0x00000000;
+		gpt_part.LBAHeader	   = 0x00000000;
+		gpt_part.LBAAltHeader  = 0x00000000;
+		gpt_part.FirstGPTEntry = 0x00000000;
+		gpt_part.LastGPTEntry  = 0x00000000;
+		gpt_part.Guid.Data1	   = 0x00000000;
+		gpt_part.Guid.Data2	   = 0x0000;
+		gpt_part.Guid.Data3	   = 0x0000;
+
+		gpt_part.Revision = 0x00010000;
+
+		SetMem(gpt_part.Guid.Data4, 0, 8);
+
+		gpt_part.StartingLBA		 = 0x00000000;
+		gpt_part.NumPartitionEntries = 0x00000000;
+		gpt_part.SizeOfEntries		 = 0x00000000;
+		gpt_part.CRC32PartEntry		 = 0x00000000;
+
+		SetMem(gpt_part.Reserved2, 0, kSectorAlignGPT_PartTbl);
+
+		fDiskDev.Leak().mBase = kGPTPartitionTableLBA; // always always resies at zero block.
+		fDiskDev.Leak().mSize = sizeof(EPM_PART_BLOCK);
+
+		fDiskDev.Write((Char*)&gpt_part, sizeof(GPT_PARTITION_TABLE));
+
+		GPT_PARTITION_ENTRY gpt_part_entry{0};
+
+		gpt_part_entry.StartLBA	  = kNeFSRootCatalogStartAddress;
+		gpt_part_entry.EndLBA	  = fDiskDev.GetDiskSize();
+		gpt_part_entry.Attributes = 0x00000000;
+
+		gpt_part_entry.PartitionTypeGUID.Data1 = 0x00000000;
+		gpt_part_entry.PartitionTypeGUID.Data2 = 0x0000;
+		gpt_part_entry.PartitionTypeGUID.Data3 = 0x0000;
+
+		CopyMem(gpt_part_entry.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), StrLen(kBlockName));
+
+		SetMem(gpt_part_entry.PartitionTypeGUID.Data4, 0, 8);
+
+		fDiskDev.Leak().mBase = kGPTPartitionTableLBA + sizeof(GPT_PARTITION_TABLE);
+		fDiskDev.Leak().mSize = sizeof(GPT_PARTITION_ENTRY);
+		fDiskDev.Write((Char*)&gpt_part_entry, sizeof(GPT_PARTITION_ENTRY));
+
+		fDiskDev.Leak().mBase = gpt_part_entry.StartLBA;
+		fDiskDev.Leak().mSize = sizeof(NEFS_ROOT_PARTITION_BLOCK);
+
+		fDiskDev.Write((Char*)&part, sizeof(NEFS_ROOT_PARTITION_BLOCK));
+
+		writer.Write(L"BootZ: Drive is GPT formatted.\r");
+
 #endif
 
 		return YES;

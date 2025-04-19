@@ -12,7 +12,7 @@
 #include <BootKit/BootKit.h>
 #include <BootKit/BootThread.h>
 
-STATIC EfiGUID kEfiSimpleProtoGUID = EFI_SIMPLE_NETWORK_PROTOCOL_GUID;
+STATIC EfiGUID kEfiSimpleProtoGUID				 = EFI_SIMPLE_NETWORK_PROTOCOL_GUID;
 STATIC EFI_SIMPLE_NETWORK_PROTOCOL* kEfiProtocol = nullptr;
 
 STATIC Void bootnet_read_ip_packet(BOOTNET_INTERNET_HEADER);

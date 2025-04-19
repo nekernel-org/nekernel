@@ -8,6 +8,7 @@
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Utils.h>
 #include <FirmwareKit/EPM.h>
+#include <FirmwareKit/GPT.h>
 #include <modules/ATA/ATA.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/NVME/NVME.h>
@@ -170,12 +171,12 @@ namespace Kernel
 
 			trait.fInput(trait.fPacket);
 
-			if (rt_string_cmp(((EPM_PART_BLOCK*)trait.fPacket.fPacketContent)->Magic, kEPMMagic, kEPMMagicLength) == 0)
+			if (rt_string_cmp(block_struct.Magic, kEPMMagic, kEPMMagicLength) == 0)
 			{
 				trait.fPacket.fPacketReadOnly = NO;
 				trait.fKind					  = kMassStorageDrive | kEPMDrive;
 
-				kout << "Disk is EPM.\r";
+				kout << "Disk is EPM formatted.\r";
 
 				trait.fSectorSz = block_struct.SectorSz;
 				trait.fLbaEnd	= block_struct.LbaEnd;
@@ -183,17 +184,34 @@ namespace Kernel
 			}
 			else
 			{
-				trait.fPacket.fPacketReadOnly = YES;
-				trait.fKind					  = kMassStorageDrive | kUnformattedDrive | kReadOnlyDrive;
+				GPT_PARTITION_TABLE gpt_struct;
 
-				if (block_struct.Name[0] == 0 ||
-					!rt_is_alnum(block_struct.Name[0]))
+				trait.fPacket.fPacketLba	 = kEPMBootBlockLba;
+				trait.fPacket.fPacketSize	 = sizeof(GPT_PARTITION_TABLE);
+				trait.fPacket.fPacketContent = &gpt_struct;
+
+				rt_copy_memory((VoidPtr) "fs/detect-packet", trait.fPacket.fPacketMime,
+							   rt_string_len("fs/detect-packet"));
+
+				trait.fInput(trait.fPacket);
+
+				if (rt_string_cmp(gpt_struct.Signature, kMagicGPT, kMagicLenGPT) == 0)
 				{
-					kout << "Disk partition is empty (Read Only)\r";
+					trait.fPacket.fPacketReadOnly = NO;
+					trait.fKind					  = kMassStorageDrive | kGPTDrive;
+
+					kout << "Disk is GPT formatted.\r";
+
+					trait.fSectorSz = gpt_struct.SizeOfEntries;
+					trait.fLbaEnd	= gpt_struct.LastGPTEntry;
+					trait.fLbaStart = gpt_struct.FirstGPTEntry;
 				}
 				else
 				{
-					(void)(kout << "Scheme Found: " << block_struct.Name << kendl);
+					kout << "Disk is unformatted.\r";
+
+					trait.fPacket.fPacketReadOnly = YES;
+					trait.fKind					  = kMassStorageDrive | kUnformattedDrive | kReadOnlyDrive;
 				}
 			}
 
@@ -212,7 +230,7 @@ namespace Kernel
 	{
 		DriveTrait trait;
 
-		constexpr auto kMainDrive = "/media/sda/";
+		constexpr auto kMainDrive = "/media/main/";
 
 		rt_copy_memory((VoidPtr)kMainDrive, trait.fName, rt_string_len(kMainDrive));
 

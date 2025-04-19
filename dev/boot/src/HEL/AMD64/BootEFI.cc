@@ -144,10 +144,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	FB::fb_clear_video();
 
-	fb_init();
-	FBDrawBitMapInRegion(zka_disk, NE_DISK_WIDTH, NE_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_DISK_HEIGHT) / 2);
-	fb_clear();
-
 	UInt32 cnt_enabled	= 0;
 	UInt32 cnt_disabled = 0;
 
@@ -212,11 +208,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 		syschk_thread = new Boot::BootThread(reader_syschk.Blob());
 		syschk_thread->SetName("BootZ: System Check");
 
-		if (syschk_thread->Start(handover_hdr, NO) != kEfiOk)
-		{
-			FB::fb_clear_video();
-			FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT, (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2, (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
-		}
+		syschk_thread->Start(handover_hdr, NO);
 	}
 
 	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
@@ -226,7 +218,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 	handover_hdr->f_Magic	= kHandoverMagic;
 	handover_hdr->f_Version = kHandoverVersion;
 
-	handover_hdr->f_HardwareTables.f_ImageKey	= map_key;
+	handover_hdr->f_HardwareTables.f_ImageKey	 = map_key;
 	handover_hdr->f_HardwareTables.f_ImageHandle = image_handle;
 
 	// Provide fimware vendor name.
