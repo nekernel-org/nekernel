@@ -36,7 +36,7 @@ FBDeviceInterface& FBDeviceInterface::operator<<(FBDevicePacket* pckt)
 		pckt->fY > kHandoverHeader->f_GOP.f_Height)
 		return *this;
 
-	FBDrawInRegion(pckt->fColor, pckt->fHeight, pckt->fWidth, pckt->fY, pckt->fX);
+	this->fOut(this, pckt);
 
 	return *this;
 }
@@ -53,10 +53,7 @@ FBDeviceInterface& FBDeviceInterface::operator>>(FBDevicePacket* pckt)
 		pckt->fY > kHandoverHeader->f_GOP.f_Height)
 		return *this;
 
-	pckt->fColor = *(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +
-										4 * kHandoverHeader->f_GOP.f_PixelPerLine *
-											pckt->fX +
-										4 * pckt->fY)));
+	this->fIn(this, pckt);
 
 	return *this;
 }

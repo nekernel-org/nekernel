@@ -143,12 +143,13 @@ namespace Kernel::HAL
 		pte->Wr				 = !!(flags & kMMFlagsWr);
 		pte->User			 = !!(flags & kMMFlagsUser);
 		pte->Nx				 = !!(flags & kMMFlagsNX);
-		pte->Pcd			 = !(flags & kMMFlagsPCD);
-		pte->PhysicalAddress = (UIntPtr)(physical_address);
-
-		mmi_page_status(pte);
+		pte->Pcd			 = !!(flags & kMMFlagsPCD);
+		pte->Pwt			 = !!(flags & kMMFlagsPwt);
+		pte->PhysicalAddress = ((UIntPtr)(physical_address));
 
 		hal_invl_tlb(virtual_address);
+
+		mmi_page_status(pte);
 
 		return kErrorSuccess;
 	}

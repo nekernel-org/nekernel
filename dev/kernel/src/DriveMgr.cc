@@ -96,7 +96,6 @@ namespace Kernel
 		{
 			pckt.fPacketGood = YES;
 		}
-
 #endif // if defined(__ATA_PIO__) || defined (__ATA_DMA__)
 	}
 

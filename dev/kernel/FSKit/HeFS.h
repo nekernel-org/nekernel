@@ -79,24 +79,29 @@ inline constexpr UInt16 kHeFSFileKindCount		  = 0x08;
 /// @details The blocks are used to store the data of a file. Each block is a pointer to a block of data on the disk.
 inline constexpr UInt16 kHeFSBlockCount = 0x10;
 
+inline constexpr UInt16 kHeFSInvalidVID = 0xFFFF;
+
+/// @brief HeFS Boot node.
+/// @details Acts like a superblock, it contains the information about the filesystem.
+/// @note The boot node is the first block of the filesystem.
 struct PACKED HeFS_BOOT_NODE final
 {
-	Kernel::Char	  fMagic[kHeFSMagicLen];
-	Kernel::Utf16Char fVolName[kHeFSPartNameLen];
-	Kernel::UInt32	  fVersion;
-	Kernel::UInt64	  fBadSectors;
-	Kernel::UInt64	  fSectorCount;
-	Kernel::UInt64	  fSectorSize;
-	Kernel::UInt32	  fChecksum;
-	Kernel::UInt8	  fDriveKind;
-	Kernel::UInt8	  fEncoding;
-	Kernel::UInt64	  fStartIND;
-	Kernel::UInt64	  fEndIND;
-	Kernel::UInt64	  fINodeCount;
-	Kernel::UInt64	  fDiskSize;
-	Kernel::UInt16	  fDiskStatus;
-	Kernel::UInt16	  fDiskFlags;
-	Kernel::UInt16	  fVID; // virtual identification number within an EPM disk.
+	Kernel::Char	  fMagic[kHeFSMagicLen];	  /// @brief Magic number of the filesystem.
+	Kernel::Utf16Char fVolName[kHeFSPartNameLen]; /// @brief Volume name.
+	Kernel::UInt32	  fVersion;					  /// @brief Version of the filesystem.
+	Kernel::UInt64	  fBadSectors;				  /// @brief Number of bad sectors in the filesystem.
+	Kernel::UInt64	  fSectorCount;				  /// @brief Number of sectors in the filesystem.
+	Kernel::UInt64	  fSectorSize;				  /// @brief Size of the sector.
+	Kernel::UInt32	  fChecksum;				  /// @brief Checksum of the boot node.
+	Kernel::UInt8	  fDriveKind;				  /// @brief Kind of the drive. (Hard Drive, Solid State Drive, Optical Drive, etc).
+	Kernel::UInt8	  fEncoding;				  /// @brief Encoding of the filesystem. (UTF-8, UTF-16, etc).
+	Kernel::UInt64	  fStartIND;				  /// @brief Start of the INode tree.
+	Kernel::UInt64	  fEndIND;					  /// @brief End of the INode tree.
+	Kernel::UInt64	  fINDCount;				  /// @brief Number of leafs in the INode tree.
+	Kernel::UInt64	  fDiskSize;				  /// @brief Size of the disk. (Could be a virtual size, that is not the real size of the disk.)
+	Kernel::UInt16	  fDiskStatus;				  /// @brief Status of the disk. (locked, unlocked, error, invalid).
+	Kernel::UInt16	  fDiskFlags;				  /// @brief Flags of the disk. (read-only, read-write, etc).
+	Kernel::UInt16	  fVID;						  /// @brief Virtual Identification Number within an EPM disk. (0xFFFF if not used).
 };
 
 /// @brief Access time type.
@@ -112,27 +117,26 @@ inline constexpr ATime kHeFSTimeMax		= 0xFFFFFFFFFFFFFFFF;
 /// @note The index node is used to store the file information of a file.
 struct PACKED HeFS_INDEX_NODE final
 {
-	Kernel::Utf16Char fName[kHeFSFileNameLen];
-	Kernel::UInt32	  fFlags;
-	Kernel::UInt16	  fKind;
-	Kernel::UInt32	  fSize;
-	Kernel::UInt32	  fChecksum, fRecoverChecksum, fBlockChecksum, fLinkChecksum;
+	Kernel::Utf16Char fName[kHeFSFileNameLen];									  /// @brief File name.
+	Kernel::UInt32	  fFlags;													  /// @brief File flags.
+	Kernel::UInt16	  fKind;													  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket, Symbolic Link, Unknown).
+	Kernel::UInt32	  fSize;													  /// @brief File size.
+	Kernel::UInt32	  fChecksum, fRecoverChecksum, fBlockChecksum, fLinkChecksum; /// @brief Checksum of the file, recovery checksum, block checksum, link checksum.
 
-	ATime		   fCreated, fAccessed, fModified, fDeleted;
-	Kernel::UInt32 fUID, fGID;
-	Kernel::UInt32 fMode;
+	ATime		   fCreated, fAccessed, fModified, fDeleted; /// @brief File timestamps.
+	Kernel::UInt32 fUID, fGID;								 /// @brief User ID and Group ID of the file.
+	Kernel::UInt32 fMode;									 /// @brief File mode. (read, write, execute, etc).
 
-	Kernel::UInt64 fBlockLinkStart[kHeFSBlockCount];
-	Kernel::UInt64 fBlockLinkEnd[kHeFSBlockCount];
+	Kernel::UInt64 fBlockLinkStart[kHeFSBlockCount]; /// @brief Start of the block link.
+	Kernel::UInt64 fBlockLinkEnd[kHeFSBlockCount];	 /// @brief End of the block link.
 
-	Kernel::UInt64 fBlockStart[kHeFSBlockCount];
-	Kernel::UInt64 fBlockEnd[kHeFSBlockCount];
+	Kernel::UInt64 fBlockStart[kHeFSBlockCount]; /// @brief Start of the block.
+	Kernel::UInt64 fBlockEnd[kHeFSBlockCount];	 /// @brief End of the block.
 
-	Kernel::UInt64 fBlockRecoveryStart[kHeFSBlockCount];
-	Kernel::UInt64 fBlockRecoveryEnd[kHeFSBlockCount];
+	Kernel::UInt64 fBlockRecoveryStart[kHeFSBlockCount]; /// @brief Start of the block recovery.
+	Kernel::UInt64 fBlockRecoveryEnd[kHeFSBlockCount];	 /// @brief End of the block recovery.
 
-	/// @brief Red-black tree pointers.
-	Kernel::Lba fNext, fPrev, fChild, fParent;
+	Kernel::Lba fNext, fPrev, fChild, fParent; /// @brief Red-black tree pointers.
 };
 
 /// @brief HeFS directory node.
@@ -140,22 +144,21 @@ struct PACKED HeFS_INDEX_NODE final
 /// @note The directory node is a special type of INode that contains the directory entries.
 struct PACKED HeFS_INDEX_NODE_DIRECTORY final
 {
-	Kernel::Utf16Char fName[kHeFSFileNameLen];
+	Kernel::Utf16Char fName[kHeFSFileNameLen]; /// @brief Directory name.
 
-	Kernel::UInt32 fFlags;
-	Kernel::UInt16 fKind;
-	Kernel::UInt32 fSize;
-	Kernel::UInt32 fChecksum, fIndexNodeChecksum;
+	Kernel::UInt32 fFlags;						  /// @brief File flags.
+	Kernel::UInt16 fKind;						  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket, Symbolic Link, Unknown).
+	Kernel::UInt32 fSize;						  /// @brief Size of the directory.
+	Kernel::UInt32 fChecksum, fIndexNodeChecksum; /// @brief Checksum of the file, index node checksum.
 
-	ATime		   fCreated, fAccessed, fModified, fDeleted;
-	Kernel::UInt32 fUID, fGID;
-	Kernel::UInt32 fMode;
+	ATime		   fCreated, fAccessed, fModified, fDeleted; /// @brief File timestamps.
+	Kernel::UInt32 fUID, fGID;								 /// @brief User ID and Group ID of the file.
+	Kernel::UInt32 fMode;									 /// @brief File mode. (read, write, execute, etc).
 
-	Kernel::UInt64 fIndexNodeStart[kHeFSBlockCount];
-	Kernel::UInt64 fIndexNodeEnd[kHeFSBlockCount];
+	Kernel::UInt64 fIndexNodeStart[kHeFSBlockCount]; /// @brief Start of the index node.
+	Kernel::UInt64 fIndexNodeEnd[kHeFSBlockCount];	 /// @brief End of the index node.
 
-	/// @brief Red-black tree pointers.
-	Kernel::Lba fNext, fPrev, fChild, fParent;
+	Kernel::Lba fNext, fPrev, fChild, fParent; /// @brief Red-black tree pointers.
 };
 
 namespace Kernel::Detail
@@ -166,7 +169,7 @@ namespace Kernel::Detail
 	/// @note The year is stored in the upper 32 bits of the ATime value.
 	inline UInt32 hefs_year_get(ATime raw_atime) noexcept
 	{
-		return (raw_atime & 0x00000000FFFFFFFF) >> 32;
+		return (raw_atime) >> 32;
 	}
 
 	/// @brief HeFS get month from ATime.
@@ -175,7 +178,7 @@ namespace Kernel::Detail
 	/// @note The month is stored in the upper 24 bits of the ATime value.
 	inline UInt32 hefs_month_get(ATime raw_atime) noexcept
 	{
-		return (raw_atime & 0x00000000FFFFFFFF) >> 24;
+		return (raw_atime) >> 24;
 	}
 
 	/// @brief HeFS get day from ATime.
@@ -184,7 +187,7 @@ namespace Kernel::Detail
 	/// @note The day is stored in the upper 16 bits of the ATime value.
 	inline UInt32 hefs_day_get(ATime raw_atime) noexcept
 	{
-		return (raw_atime & 0x00000000FFFFFFFF) >> 16;
+		return (raw_atime) >> 16;
 	}
 
 	/// @brief HeFS get hour from ATime.
@@ -193,7 +196,7 @@ namespace Kernel::Detail
 	/// @note The hour is stored in the upper 8 bits of the ATime value.
 	inline UInt32 hefs_hour_get(ATime raw_atime) noexcept
 	{
-		return (raw_atime & 0x00000000FFFFFFFF) >> 8;
+		return (raw_atime) >> 8;
 	}
 
 	/// @brief HeFS get minute from ATime.
@@ -202,12 +205,166 @@ namespace Kernel::Detail
 	/// @note The minute is stored in the lower 8 bits of the ATime value.
 	inline UInt32 hefs_minute_get(ATime raw_atime) noexcept
 	{
-		return (raw_atime & 0x00000000FFFFFFFF);
+		return (raw_atime)&0xFF;
 	}
 
-	inline constexpr UInt32 kHeFSBaseYear = 1970;
-	inline constexpr UInt32 kHeFSBaseMonth = 1;
-	inline constexpr UInt32 kHeFSBaseDay = 1;
-	inline constexpr UInt32 kHeFSBaseHour = 0;
+	inline constexpr UInt32 kHeFSBaseYear	= 1970;
+	inline constexpr UInt32 kHeFSBaseMonth	= 1;
+	inline constexpr UInt32 kHeFSBaseDay	= 1;
+	inline constexpr UInt32 kHeFSBaseHour	= 0;
 	inline constexpr UInt32 kHeFSBaseMinute = 0;
+
+	inline const Char* hefs_status_to_string(UInt16 status) noexcept
+	{
+		switch (status)
+		{
+		case kHeFSStatusUnlocked:
+			return "Unlocked";
+		case kHeFSStatusLocked:
+			return "Locked";
+		case kHeFSStatusError:
+			return "Error";
+		case kHeFSStatusInvalid:
+			return "Invalid";
+		default:
+			return "Unknown";
+		}
+	}
+
+	inline const Char* hefs_drive_kind_to_string(UInt8 kind) noexcept
+	{
+		switch (kind)
+		{
+		case kHeFSHardDrive:
+			return "Hard Drive";
+		case kHeFSSolidStateDrive:
+			return "Solid State Drive";
+		case kHeFSOpticalDrive:
+			return "Optical Drive";
+		case kHeFSMassStorageDevice:
+			return "Mass Storage Device";
+		case kHeFSScsiDrive:
+			return "SCSI/SAS Drive";
+		case kHeFSFlashDrive:
+			return "Flash Drive";
+		case kHeFSUnknown:
+			return "Unknown";
+		default:
+			return "Unknown";
+		}
+	}
+
+	inline const Char* hefs_encoding_to_string(UInt8 encoding) noexcept
+	{
+		switch (encoding)
+		{
+		case kHeFSEncodingUTF8:
+			return "UTF-8";
+		case kHeFSEncodingUTF16:
+			return "UTF-16";
+		case kHeFSEncodingUTF32:
+			return "UTF-32";
+		case kHeFSEncodingUTF16BE:
+			return "UTF-16BE";
+		case kHeFSEncodingUTF16LE:
+			return "UTF-16LE";
+		case kHeFSEncodingUTF32BE:
+			return "UTF-32BE";
+		case kHeFSEncodingUTF32LE:
+			return "UTF-32LE";
+		case kHeFSEncodingUTF8BE:
+			return "UTF-8BE";
+		case kHeFSEncodingUTF8LE:
+			return "UTF-8LE";
+		default:
+			return "Unknown";
+		}
+	}
+
+	inline const Char* hefs_file_kind_to_string(UInt16 kind) noexcept
+	{
+		switch (kind)
+		{
+		case kHeFSFileKindRegular:
+			return "Regular File";
+		case kHeFSFileKindDirectory:
+			return "Directory";
+		case kHeFSFileKindBlock:
+			return "Block Device";
+		case kHeFSFileKindCharacter:
+			return "Character Device";
+		case kHeFSFileKindFIFO:
+			return "FIFO";
+		case kHeFSFileKindSocket:
+			return "Socket";
+		case kHeFSFileKindSymbolicLink:
+			return "Symbolic Link";
+		case kHeFSFileKindUnknown:
+			return "Unknown";
+		default:
+			return "Unknown";
+		}
+	}
+
+	inline const Char* hefs_file_flags_to_string(UInt32 flags) noexcept
+	{
+		switch (flags)
+		{
+		case 0x00:
+			return "No Flags";
+		case 0x01:
+			return "Read Only";
+		case 0x02:
+			return "Hidden";
+		case 0x04:
+			return "System";
+		case 0x08:
+			return "Archive";
+		case 0x10:
+			return "Device";
+		default:
+			return "Unknown";
+		}
+	}
+
+	inline Lba hefs_get_block_size(Lba block_size) noexcept
+	{
+		return block_size * kHeFSBlockCount;
+	}
+
+	inline Lba hefs_get_block_count(Lba block_size, Lba block_count) noexcept
+	{
+		return block_size / block_count;
+	}
 } // namespace Kernel::Detail
+
+namespace Kernel
+{
+	class HeFSFileSystemParser final
+	{
+	public:
+		HeFSFileSystemParser()	= default;
+		~HeFSFileSystemParser() = default;
+
+	public:
+		HeFSFileSystemParser(const HeFSFileSystemParser&) = delete;
+		HeFSFileSystemParser& operator=(const HeFSFileSystemParser&) = delete;
+
+		HeFSFileSystemParser(HeFSFileSystemParser&&) = delete;
+		HeFSFileSystemParser& operator=(HeFSFileSystemParser&&) = delete;
+
+	public:
+		/// @brief Make a EPM+HeFS drive out of the disk.
+		/// @param drive The drive to write on.
+		/// @return If it was sucessful, see err_local_get().
+		_Output Bool FormatEPM(_Input _Output DriveTrait* drive, _Input const Lba end_lba, _Input const Int32 flags, const Char* part_name);
+
+		/// @brief Make a GPT+HeFS drive out of the disk.
+		/// @param drive The drive to write on.
+		/// @return If it was sucessful, see err_local_get().
+		_Output Bool FormatGPT(_Input _Output DriveTrait* drive, _Input const Lba end_lba, _Input const Int32 flags, const Char* part_name);
+
+	public:
+		UInt32 mDriveIndex{MountpointInterface::kDriveIndexA}; /// @brief Drive index.
+	};
+} // namespace Kernel
