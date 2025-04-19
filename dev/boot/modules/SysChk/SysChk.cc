@@ -30,7 +30,7 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
 	NE_UNUSED(handover);
 
-#ifdef __ATA_PIO__
+#if defined(__ATA_PIO__)
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (partition_factory.IsPartitionValid())

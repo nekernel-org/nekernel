@@ -7,5 +7,6 @@
 #pragma once
 
 #include <FirmwareKit/EFI/EFI.h>
+#include <FirmwareKit/GPT.h>
 
 /// @note this header is used to reference the EFI/EFI.h
