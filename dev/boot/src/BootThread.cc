@@ -124,8 +124,7 @@ namespace Boot
 						UInt32 HandoverArch;
 					}* handover_struc = (struct HANDOVER_INFORMATION_STUB*)((UIntPtr)fBlob + sect->PointerToRawData);
 
-					if (handover_struc->HandoverMagic != kHandoverMagic &&
-						handover_struc->HandoverType != HEL::kTypeKernel)
+					if (handover_struc->HandoverMagic != kHandoverMagic)
 					{
 #ifdef __NE_AMD64__
 						if (handover_struc->HandoverArch != HEL::kArchAMD64)
