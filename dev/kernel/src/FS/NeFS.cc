@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-#include "NewKit/Macros.h"
 #ifdef __FSKIT_INCLUDES_NEFS__
 
 #include <FSKit/NeFS.h>

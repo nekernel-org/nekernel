@@ -340,18 +340,20 @@ namespace Kernel::Detail
 
 namespace Kernel
 {
-	class HeFSFileSystemParser final
+	/// @brief HeFS filesystem parser class.
+	/// @details This class is used to parse the HeFS filesystem.
+	class HeFileSystemParser final
 	{
 	public:
-		HeFSFileSystemParser()	= default;
-		~HeFSFileSystemParser() = default;
+		HeFileSystemParser()	= default;
+		~HeFileSystemParser() = default;
 
 	public:
-		HeFSFileSystemParser(const HeFSFileSystemParser&) = delete;
-		HeFSFileSystemParser& operator=(const HeFSFileSystemParser&) = delete;
+		HeFileSystemParser(const HeFileSystemParser&) = delete;
+		HeFileSystemParser& operator=(const HeFileSystemParser&) = delete;
 
-		HeFSFileSystemParser(HeFSFileSystemParser&&) = delete;
-		HeFSFileSystemParser& operator=(HeFSFileSystemParser&&) = delete;
+		HeFileSystemParser(HeFileSystemParser&&) = delete;
+		HeFileSystemParser& operator=(HeFileSystemParser&&) = delete;
 
 	public:
 		/// @brief Make a EPM+HeFS drive out of the disk.

@@ -268,7 +268,9 @@ namespace Kernel
 		~NeFileSystemParser()		  = default;
 
 	public:
-		NE_COPY_DEFAULT(NeFileSystemParser)
+		NE_COPY_DELETE(NeFileSystemParser)
+
+		NE_MOVE_DELETE(NeFileSystemParser)
 
 	public:
 		/// @brief Creates a new fork inside the NeFS  partition.
