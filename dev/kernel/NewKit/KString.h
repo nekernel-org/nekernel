@@ -89,6 +89,7 @@ namespace Kernel
 		static const Char*		FromBool(const Char* fmt, bool n);
 		static const Char*		Format(const Char* fmt, const Char* from);
 		static bool				Equals(const Char* lhs, const Char* rhs);
+		static bool				Equals(const Utf16Char* lhs, const Utf16Char* rhs);
 		static bool				Equals(const WideChar* lhs, const WideChar* rhs);
 	};
 } // namespace Kernel

@@ -143,6 +143,18 @@ namespace Kernel
 		return true;
 	}
 
+	/// @note This is unsafe!!!
+	bool KStringBuilder::Equals(const Utf16Char* lhs, const Utf16Char* rhs)
+	{
+		for (Size index = 0; index[rhs] != 0; ++index)
+		{
+			if (rhs[index] != lhs[index])
+				return false;
+		}
+
+		return true;
+	}
+
 	bool KStringBuilder::Equals(const WideChar* lhs, const WideChar* rhs)
 	{
 		for (Size index = 0; rhs[index] != 0; ++index)

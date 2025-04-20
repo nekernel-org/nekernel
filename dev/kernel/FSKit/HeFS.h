@@ -327,14 +327,9 @@ namespace Kernel::Detail
 		}
 	}
 
-	inline Lba hefs_get_block_size(Lba block_size) noexcept
+	inline SizeT hefs_get_block_size(SizeT block_size) noexcept
 	{
 		return block_size * kHeFSBlockCount;
-	}
-
-	inline Lba hefs_get_block_count(Lba block_size, Lba block_count) noexcept
-	{
-		return block_size / block_count;
 	}
 } // namespace Kernel::Detail
 

@@ -8,7 +8,6 @@
 
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
-#include <modules/Flash/Flash.h>
 #include <FSKit/Ext2.h>
 #include <KernelKit/KPC.h>
 #include <NewKit/Crc32.h>
