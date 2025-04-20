@@ -5,14 +5,10 @@
 ------------------------------------------- */
 
 #include <user/SystemCalls.h>
+#include <user/Opts.h>
 
 /// @file SystemCalls.cc
-/// @brief Source file for the memory functions of the libsci.
-
-IMPORT_C VoidPtr sci_syscall_arg_1(SizeT id);
-IMPORT_C VoidPtr sci_syscall_arg_2(SizeT id, VoidPtr arg1);
-IMPORT_C VoidPtr sci_syscall_arg_3(SizeT id, VoidPtr arg1, VoidPtr arg3);
-IMPORT_C VoidPtr sci_syscall_arg_4(SizeT id, VoidPtr arg1, VoidPtr arg3, VoidPtr arg4);
+/// @brief Source file for the memory functions of the user.sys.
 
 /// @brief Copy memory region.
 IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len)
@@ -32,6 +28,7 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
 	return dest;
 }
 
+/// @brief Get string length.
 IMPORT_C SInt64 MmStrLen(const Char* in)
 {
 	if (!in)
@@ -88,4 +85,29 @@ IMPORT_C UInt64 IoTellFile(_Input Ref desc)
 {
 	auto ret = (UInt64*)sci_syscall_arg_2(4, reinterpret_cast<VoidPtr>(desc));
 	return *ret;
+}
+
+/// @brief Print to the file descriptor.
+/// @param desc the file descriptor.
+IMPORT_C SInt32 PrintOut(_Input IORef desc, const char* fmt, ...)
+{
+	va_list args;
+
+	va_start(args, fmt);
+
+	auto ret = (UInt64*)sci_syscall_arg_4(5, reinterpret_cast<VoidPtr>(desc),
+										  reinterpret_cast<VoidPtr>(const_cast<Char*>(fmt)), args);
+
+	va_end(args);
+
+	return *ret;
+}
+
+IMPORT_C Void _rtl_assert(Bool expr, const Char* origin)
+{
+	if (!expr)
+	{
+		PrintOut(nullptr, "Assertion failed: %s\r", origin);
+		PrintOut(nullptr, "Origin: %s\r", origin);
+	}
 }

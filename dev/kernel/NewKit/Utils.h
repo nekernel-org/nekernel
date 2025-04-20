@@ -18,6 +18,7 @@ namespace Kernel
 	Int			rt_string_cmp(const Char* src, const Char* cmp, Size len);
 	const Char* rt_alloc_string(const Char* text);
 	Size		rt_string_len(const Char* str);
+	Size		wrt_string_len(const Utf16Char* str);
 	Size		rt_string_len(const Char* str, SizeT _len);
 	Boolean		rt_to_string(Char* str_out, UInt64 base, Int32 limit);
 	Boolean		rt_is_newln(Char chr);

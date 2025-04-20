@@ -146,7 +146,7 @@ namespace Kernel
 	/// @note This is unsafe!!!
 	bool KStringBuilder::Equals(const Utf16Char* lhs, const Utf16Char* rhs)
 	{
-		for (Size index = 0; index[rhs] != 0; ++index)
+		for (Size index = 0; index < wrt_string_len(rhs); ++index)
 		{
 			if (rhs[index] != lhs[index])
 				return false;

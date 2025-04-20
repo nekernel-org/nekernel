@@ -26,9 +26,9 @@
 
 #define kHeFSMinimumDiskSize (gib_cast(4))
 
-struct HeFS_BOOT_NODE;
-struct HeFS_INDEX_NODE;
-struct HeFS_INDEX_NODE_DIRECTORY;
+struct HEFS_BOOT_NODE;
+struct HEFS_INDEX_NODE;
+struct HEFS_INDEX_NODE_DIRECTORY;
 
 enum
 {
@@ -84,7 +84,7 @@ inline constexpr UInt16 kHeFSInvalidVID = 0xFFFF;
 /// @brief HeFS Boot node.
 /// @details Acts like a superblock, it contains the information about the filesystem.
 /// @note The boot node is the first block of the filesystem.
-struct PACKED HeFS_BOOT_NODE final
+struct PACKED HEFS_BOOT_NODE final
 {
 	Kernel::Char	  fMagic[kHeFSMagicLen];	  /// @brief Magic number of the filesystem.
 	Kernel::Utf16Char fVolName[kHeFSPartNameLen]; /// @brief Volume name.
@@ -115,7 +115,7 @@ inline constexpr ATime kHeFSTimeMax		= 0xFFFFFFFFFFFFFFFF;
 /// @details This structure is used to store the file information of a file.
 /// @note The index node is a special type of INode that contains the file information.
 /// @note The index node is used to store the file information of a file.
-struct PACKED HeFS_INDEX_NODE final
+struct PACKED HEFS_INDEX_NODE final
 {
 	Kernel::Utf16Char fName[kHeFSFileNameLen];									  /// @brief File name.
 	Kernel::UInt32	  fFlags;													  /// @brief File flags.
@@ -147,7 +147,7 @@ enum
 /// @brief HeFS directory node.
 /// @details This structure is used to store the directory information of a file.
 /// @note The directory node is a special type of INode that contains the directory entries.
-struct PACKED HeFS_INDEX_NODE_DIRECTORY final
+struct PACKED HEFS_INDEX_NODE_DIRECTORY final
 {
 	Kernel::Utf16Char fName[kHeFSFileNameLen]; /// @brief Directory name.
 

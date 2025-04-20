@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef __FSKIT_INCLUDES_HeFS__
+#ifdef __FSKIT_INCLUDES_HEFS__
 
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
@@ -22,12 +22,12 @@ namespace Kernel
 {
 	namespace Detail
 	{
-		STATIC HeFS_INDEX_NODE* hefs_get_index_node(HeFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
+		STATIC HEFS_INDEX_NODE* hefs_get_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
 		{
 			if (root)
 			{
-				HeFS_INDEX_NODE*		   node = new HeFS_INDEX_NODE();
-				HeFS_INDEX_NODE_DIRECTORY* dir	= new HeFS_INDEX_NODE_DIRECTORY();
+				HEFS_INDEX_NODE*		   node = new HEFS_INDEX_NODE();
+				HEFS_INDEX_NODE_DIRECTORY* dir	= new HEFS_INDEX_NODE_DIRECTORY();
 
 				if (!node)
 				{
@@ -45,7 +45,7 @@ namespace Kernel
 					if (hop_watch++ > 100)
 					{
 						kout << "Error: Hop watch exceeded.\r";
-						
+
 						break;
 					}
 
@@ -56,7 +56,7 @@ namespace Kernel
 					}
 
 					mnt->fPacket.fPacketLba		= start;
-					mnt->fPacket.fPacketSize	= sizeof(HeFS_INDEX_NODE_DIRECTORY);
+					mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
 					mnt->fPacket.fPacketContent = dir;
 
 					mnt->fInput(mnt->fPacket);
@@ -81,7 +81,7 @@ namespace Kernel
 								if (dir->fIndexNodeStart[inode_index] != 0)
 								{
 									mnt->fPacket.fPacketLba		= dir->fIndexNodeStart[inode_index];
-									mnt->fPacket.fPacketSize	= sizeof(HeFS_INDEX_NODE);
+									mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
 									mnt->fPacket.fPacketContent = node;
 
 									mnt->fInput(mnt->fPacket);
@@ -103,7 +103,7 @@ namespace Kernel
 								else if (dir->fIndexNodeEnd[inode_index] != 0)
 								{
 									mnt->fPacket.fPacketLba		= dir->fIndexNodeEnd[inode_index];
-									mnt->fPacket.fPacketSize	= sizeof(HeFS_INDEX_NODE);
+									mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
 									mnt->fPacket.fPacketContent = node;
 
 									mnt->fInput(mnt->fPacket);
@@ -151,4 +151,7 @@ namespace Kernel
 	} // namespace Detail
 } // namespace Kernel
 
-#endif // ifdef __FSKIT_INCLUDES_HeFS__
+/// @note HeFS will allocate inodes and ind in advance, to avoid having to allocate them in real-time.
+/// @note This is certainly take longer to format a disk with it, but worth-it in the long run.
+
+#endif // ifdef __FSKIT_INCLUDES_HEFS__
