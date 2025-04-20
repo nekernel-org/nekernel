@@ -135,8 +135,13 @@ struct PACKED HeFS_INDEX_NODE final
 
 	Kernel::UInt64 fBlockRecoveryStart[kHeFSBlockCount]; /// @brief Start of the block recovery.
 	Kernel::UInt64 fBlockRecoveryEnd[kHeFSBlockCount];	 /// @brief End of the block recovery.
+};
 
-	Kernel::Lba fNext, fPrev, fChild, fParent; /// @brief Red-black tree pointers.
+enum
+{
+	kHeFSRed = 100,
+	kHeFSBlack,
+	kHeFSColorCount,
 };
 
 /// @brief HeFS directory node.
@@ -158,6 +163,7 @@ struct PACKED HeFS_INDEX_NODE_DIRECTORY final
 	Kernel::UInt64 fIndexNodeStart[kHeFSBlockCount]; /// @brief Start of the index node.
 	Kernel::UInt64 fIndexNodeEnd[kHeFSBlockCount];	 /// @brief End of the index node.
 
+	Kernel::UInt8 fColor; /// @brief Color of the node. (Red or Black).
 	Kernel::Lba fNext, fPrev, fChild, fParent; /// @brief Red-black tree pointers.
 };
 
