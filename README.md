@@ -24,7 +24,7 @@ A kernel for engineers who want a custom solution for their stack, written mostl
 
 Use the doxygen command to build documentation.
 <br/>
-A documentation regarding building, and developing for NeKernel is available here: https://amlel-el-mahrouss.github.io/nekernel-docs/
+A documentation for NeKernel is available here: https://nekernel-org.github.io/docs/
 
 ## Requirements:
 
