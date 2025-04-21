@@ -13,7 +13,6 @@
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
-#include "FirmwareKit/Handover.h"
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDylibObject.h>
