@@ -13,6 +13,7 @@
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
+#include "FirmwareKit/Handover.h"
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDylibObject.h>
@@ -58,8 +59,8 @@ namespace Kernel
 		if (this->Status != ProcessStatusKind::kRunning)
 			return;
 
-		(void)(kout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << kendl);
-		this->Exit(kErrorProcessFault);
+		(void)(kout << this->Name << ": crashed, error id: " << number(-kErrorProcessFault) << kendl);
+		this->Exit(-kErrorProcessFault);
 	}
 
 	/***********************************************************************************/
@@ -285,11 +286,21 @@ namespace Kernel
 
 	ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr image)
 	{
+		if (!name || !code)
+		{
+			return -kErrorProcessFault;
+		}
+
+		if (*name == 0)
+		{
+			return -kErrorProcessFault;
+		}
+
 		ProcessID pid = this->mTeam.mProcessCount;
 
 		if (pid > kSchedProcessLimitPerTeam)
 		{
-			return kErrorProcessFault;
+			return -kErrorProcessFault;
 		}
 
 		++this->mTeam.mProcessCount;
@@ -299,7 +310,14 @@ namespace Kernel
 		process.Image.fCode = code;
 		process.Image.fBlob = image;
 
-		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, rt_string_len(name));
+		SizeT len = rt_string_len(name);
+
+		if (len > kSchedNameLen)
+		{
+			return -kErrorProcessFault;
+		}
+
+		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, len);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		process.VMRegister = new PDE();
@@ -307,7 +325,7 @@ namespace Kernel
 		if (!process.VMRegister)
 		{
 			process.Crash();
-			return kErrorProcessFault;
+			return -kErrorProcessFault;
 		}
 
 		UInt32 flags = HAL::kMMFlagsPresent;
@@ -322,7 +340,7 @@ namespace Kernel
 		if (!process.StackFrame)
 		{
 			process.Crash();
-			return kErrorProcessFault;
+			return -kErrorProcessFault;
 		}
 
 		rt_set_memory(process.StackFrame, 0, sizeof(HAL::StackFrame));
@@ -357,7 +375,7 @@ namespace Kernel
 		if (!process.StackReserve)
 		{
 			process.Crash();
-			return kErrorProcessFault;
+			return -kErrorProcessFault;
 		}
 
 		rt_set_memory(process.StackReserve, 0, process.StackSize);
@@ -402,6 +420,16 @@ namespace Kernel
 
 	Void UserProcessScheduler::Remove(ProcessID process_id)
 	{
+		if (process_id < 0 || process_id >= kSchedProcessLimitPerTeam)
+		{
+			return;
+		}
+
+		if (this->mTeam.mProcessList[process_id].Status == ProcessStatusKind::kInvalid)
+		{
+			return;
+		}
+		
 		mTeam.mProcessList[process_id].Exit(0);
 	}
 
@@ -423,7 +451,8 @@ namespace Kernel
 
 	Bool UserProcessScheduler::HasMP()
 	{
-		return Yes;
+		MUST_PASS(kHandoverHeader);
+		return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
 	}
 
 	/***********************************************************************************/
@@ -497,7 +526,7 @@ namespace Kernel
 	ErrorOr<PID> UserProcessHelper::TheCurrentPID()
 	{
 		if (!kProcessScheduler.CurrentProcess())
-			return ErrorOr<PID>{kErrorProcessFault};
+			return ErrorOr<PID>{-kErrorProcessFault};
 
 		kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
 		return ErrorOr<PID>{kProcessScheduler.CurrentProcess().Leak().ProcessId};
