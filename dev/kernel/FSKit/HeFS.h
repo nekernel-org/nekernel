@@ -163,8 +163,8 @@ struct PACKED HEFS_INDEX_NODE_DIRECTORY final
 	Kernel::UInt64 fIndexNodeStart[kHeFSBlockCount]; /// @brief Start of the index node.
 	Kernel::UInt64 fIndexNodeEnd[kHeFSBlockCount];	 /// @brief End of the index node.
 
-	Kernel::UInt8 fColor; /// @brief Color of the node. (Red or Black).
-	Kernel::Lba fNext, fPrev, fChild, fParent; /// @brief Red-black tree pointers.
+	Kernel::UInt8 fColor;						 /// @brief Color of the node. (Red or Black).
+	Kernel::Lba	  fNext, fPrev, fChild, fParent; /// @brief Red-black tree pointers.
 };
 
 namespace Kernel::Detail
@@ -346,7 +346,7 @@ namespace Kernel
 	class HeFileSystemParser final
 	{
 	public:
-		HeFileSystemParser()	= default;
+		HeFileSystemParser()  = default;
 		~HeFileSystemParser() = default;
 
 	public:

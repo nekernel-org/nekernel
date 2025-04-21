@@ -141,11 +141,22 @@ namespace Kernel
 
 					start = dir->fNext;
 
-					if (start == 0)
-						start = dir->fChild;
-
-					if (start == 0)
-						start = dir->fParent;
+					if (dir->fColor == kHeFSBlack)
+					{
+						if (dir->fParent != 0)
+							start = dir->fParent;
+					}
+					else
+					{
+						if (dir->fChild != 0)
+							start = dir->fChild;
+						else if (dir->fNext != 0)
+							start = dir->fNext;
+						else if (dir->fPrev != 0)
+							start = dir->fPrev;
+						else
+							start = dir->fParent;
+					}
 				}
 
 				delete dir;
@@ -173,7 +184,7 @@ namespace Kernel
 			NE_UNUSED(mnt);
 			NE_UNUSED(parent_dir_name);
 			NE_UNUSED(node);
-			
+
 			return NO;
 		}
 	} // namespace Detail

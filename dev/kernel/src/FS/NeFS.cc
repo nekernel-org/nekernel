@@ -460,7 +460,7 @@ _Output Bool NeFileSystemParser::FormatGPT(_Input _Output DriveTrait* drive, _In
 	NE_UNUSED(end_lba);
 	NE_UNUSED(flags);
 	NE_UNUSED(part_name);
-	
+
 	(void)(kout << "FormatGPT: Not implemented yet.\r");
 
 	return NO;

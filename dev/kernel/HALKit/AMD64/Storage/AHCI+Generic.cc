@@ -286,7 +286,7 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi)
 			kSATADev.EnableMmio();
 			kSATADev.BecomeBusMaster();
 
-			HbaMem* mem_ahci	  = (HbaMem*)kSATADev.Bar(kSATABar5);
+			HbaMem* mem_ahci = (HbaMem*)kSATADev.Bar(kSATABar5);
 
 			HAL::mm_map_page((VoidPtr)mem_ahci, (VoidPtr)mem_ahci, HAL::kMMFlagsPresent | HAL::kMMFlagsWr | HAL::kMMFlagsPCD | HAL::kMMFlagsPwt);
 

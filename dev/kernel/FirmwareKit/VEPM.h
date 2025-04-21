@@ -11,6 +11,4 @@
 
 /// @brief The Virtual Explicit Partition Map scheme extension.
 
-
-
 #endif // FIRMWAREKIT_VEPM_H

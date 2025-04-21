@@ -428,7 +428,7 @@ namespace Kernel
 		{
 			return;
 		}
-		
+
 		mTeam.mProcessList[process_id].Exit(0);
 	}
 

@@ -19,9 +19,9 @@
 #ifdef __NE_AMD64__
 /// @brief Performs Alpha drawing on the framebuffer.
 #define FBDrawBitMapInRegionA(reg_ptr, height, width, base_x, base_y)        \
-	for (Kernel::UInt32 i = base_x; i < (width + base_x); ++i)                \
+	for (Kernel::UInt32 i = base_x; i < (width + base_x); ++i)               \
 	{                                                                        \
-		for (Kernel::UInt32 u = base_y; u < (height + base_y); ++u)           \
+		for (Kernel::UInt32 u = base_y; u < (height + base_y); ++u)          \
 		{                                                                    \
 			*(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 								 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
@@ -34,9 +34,9 @@
 
 /// @brief Performs drawing on the framebuffer.
 #define FBDrawBitMapInRegion(reg_ptr, height, width, base_x, base_y)         \
-	for (Kernel::UInt32 i = base_x; i < (width + base_x); ++i)                \
+	for (Kernel::UInt32 i = base_x; i < (width + base_x); ++i)               \
 	{                                                                        \
-		for (Kernel::UInt32 u = base_y; u < (height + base_y); ++u)           \
+		for (Kernel::UInt32 u = base_y; u < (height + base_y); ++u)          \
 		{                                                                    \
 			*(((Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 								 4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
@@ -48,9 +48,9 @@
 	}
 
 #define FBDrawBitMapInRegionToRgn(_Rgn, reg_ptr, height, width, base_x, base_y) \
-	for (Kernel::UInt32 i = base_x; i < (width + base_x); ++i)                   \
+	for (Kernel::UInt32 i = base_x; i < (width + base_x); ++i)                  \
 	{                                                                           \
-		for (Kernel::UInt32 u = base_y; u < (height + base_y); ++u)              \
+		for (Kernel::UInt32 u = base_y; u < (height + base_y); ++u)             \
 		{                                                                       \
 			*(((Kernel::UInt32*)(_Rgn +                                         \
 								 4 * kHandoverHeader->f_GOP.f_PixelPerLine *    \
@@ -63,9 +63,9 @@
 
 /// @brief Cleans a resource.
 #define FBClearRegion(height, width, base_x, base_y)                                  \
-	for (Kernel::UInt32 i = base_x; i < (width + base_x); ++i)                         \
+	for (Kernel::UInt32 i = base_x; i < (width + base_x); ++i)                        \
 	{                                                                                 \
-		for (Kernel::UInt32 u = base_y; u < (height + base_y); ++u)                    \
+		for (Kernel::UInt32 u = base_y; u < (height + base_y); ++u)                   \
 		{                                                                             \
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
@@ -76,9 +76,9 @@
 
 /// @brief Draws inside a zone.
 #define FBDrawInRegion(clr, height, width, base_x, base_y)                            \
-	for (Kernel::UInt32 x_base = base_x; x_base < (width + base_x); ++x_base)          \
+	for (Kernel::UInt32 x_base = base_x; x_base < (width + base_x); ++x_base)         \
 	{                                                                                 \
-		for (Kernel::UInt32 y_base = base_y; y_base < (height + base_y); ++y_base)     \
+		for (Kernel::UInt32 y_base = base_y; y_base < (height + base_y); ++y_base)    \
 		{                                                                             \
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
@@ -89,9 +89,9 @@
 
 /// @brief Draws inside a zone.
 #define FBDrawInRegionToRgn(_Rgn, clr, height, width, base_x, base_y)                 \
-	for (Kernel::UInt32 x_base = base_x; x_base < (width + base_x); ++x_base)          \
+	for (Kernel::UInt32 x_base = base_x; x_base < (width + base_x); ++x_base)         \
 	{                                                                                 \
-		for (Kernel::UInt32 y_base = base_y; y_base < (height + base_y); ++y_base)     \
+		for (Kernel::UInt32 y_base = base_y; y_base < (height + base_y); ++y_base)    \
 		{                                                                             \
 			*(((volatile Kernel::UInt32*)(_Rgn +                                      \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \
@@ -102,9 +102,9 @@
 	}
 
 #define FBDrawInRegionA(clr, height, width, base_x, base_y)                           \
-	for (Kernel::UInt32 x_base = base_x; x_base < (width + base_x); ++x_base)          \
+	for (Kernel::UInt32 x_base = base_x; x_base < (width + base_x); ++x_base)         \
 	{                                                                                 \
-		for (Kernel::UInt32 y_base = base_y; y_base < (height + base_y); ++y_base)     \
+		for (Kernel::UInt32 y_base = base_y; y_base < (height + base_y); ++y_base)    \
 		{                                                                             \
 			*(((volatile Kernel::UInt32*)(kHandoverHeader->f_GOP.f_The +              \
 										  4 * kHandoverHeader->f_GOP.f_PixelPerLine * \

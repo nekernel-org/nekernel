@@ -12,8 +12,8 @@
 #define kSectorAlignGPT_PartTbl	  (420U)
 #define kSectorAlignGPT_PartEntry (72U)
 #define kMagicLenGPT			  (8U)
-#define kMagicGPT			  ("EFI PART") // "EFI PART"
-#define kGPTPartitionTableLBA (512U + sizeof(GPT_PARTITION_TABLE))
+#define kMagicGPT				  ("EFI PART") // "EFI PART"
+#define kGPTPartitionTableLBA	  (512U + sizeof(GPT_PARTITION_TABLE))
 
 namespace Kernel
 {

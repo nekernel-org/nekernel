@@ -42,7 +42,7 @@ namespace Kernel
 
 		return len;
 	}
-	
+
 	Size rt_string_len(const Char* ptr)
 	{
 		SizeT cnt{0};
