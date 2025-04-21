@@ -17,7 +17,6 @@ def copy_to_fat(image_path, source_dir):
 
     try:
         files_to_copy = glob.glob(os.path.join(source_dir, "*"))
-
         # Now build the command
         command = ["mcopy", "-spom", "-i", image_path] + files_to_copy + ["::"]
         subprocess.run(command, check=True)
@@ -35,7 +34,7 @@ def copy_to_fat(image_path, source_dir):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python3 copy_to_fat32.py <fat32_image> <source_directory>")
+        print("Usage: mk_img.py <fat32_image> <source_directory>")
         sys.exit(1)
 
     image_path = sys.argv[1]

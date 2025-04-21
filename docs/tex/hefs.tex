@@ -1,32 +1,123 @@
 \documentclass{article}
-\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{amsmath}
-\usepackage{hyperref}
-\usepackage{longtable}
-\usepackage{titlesec}
-\usepackage{fancyhdr}
-\usepackage{caption}
 \usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{longtable}
 
-\definecolor{codegray}{gray}{0.95}
-\lstset{
-  backgroundcolor=\color{codegray},
+\definecolor{lightgray}{gray}{0.95}
+
+\lstdefinestyle{cstyle}{
+  language=C++,
+  backgroundcolor=\color{lightgray},
   basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{orange},
+  numbers=left,
+  numberstyle=\tiny,
   breaklines=true,
   frame=single,
-  tabsize=4,
-  language=C++,
   showstringspaces=false
 }
 
-\title{HeFS: High-Throughput Extended File System Specification}
+\title{HeFS (Hierarchical Embedded File System) Specification}
 \author{Amlal El Mahrouss}
-\date{2025}
+\date{2024–2025}
 
 \begin{document}
 
 \maketitle
+
+\section{Overview}
+HeFS is a custom filesystem developed as part of the NeKernel project. It offers a journaling-like inode tree structure using red-black tree-inspired navigation for directories. Designed for robust use in desktop and server workloads, it supports various encoding modes and drive types.
+
+\section{Boot Node Structure}
+\begin{longtable}{|l|l|p{8cm}|}
+\hline
+\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\hline
+\verb|fMagic| & \verb|char[8]| & Filesystem magic ("  HeFS") \\
+\verb|fVolName| & \verb|Utf16Char[128]| & Volume name \\
+\verb|fVersion| & \verb|UInt32| & Filesystem version (e.g., 0x0100) \\
+\verb|fSectorCount| & \verb|UInt64| & Total sector count \\
+\verb|fSectorSize| & \verb|UInt64| & Size of each sector \\
+\verb|fDriveKind| & \verb|UInt8| & Type of drive (e.g., HDD, SSD, USB) \\
+\verb|fEncoding| & \verb|UInt8| & Encoding mode (UTF-8, UTF-16, etc.) \\
+\verb|fStartIND| & \verb|UInt64| & Starting LBA of inode tree \\
+\verb|fEndIND| & \verb|UInt64| & Ending LBA of inode tree \\
+\verb|fChecksum| & \verb|UInt32| & CRC32 of boot node \\
+\verb|fDiskSize| & \verb|UInt64| & Logical size of the disk \\
+\hline
+\end{longtable}
+
+\section{File Types and Flags}
+\subsection*{File Kinds}
+\begin{itemize}[label=--]
+    \item \verb|0x00| — Regular File
+    \item \verb|0x01| — Directory
+    \item \verb|0x02| — Block Device
+    \item \verb|0x03| — Character Device
+    \item \verb|0x04| — FIFO
+    \item \verb|0x05| — Socket
+    \item \verb|0x06| — Symbolic Link
+\end{itemize}
+
+\subsection*{Drive Types}
+\begin{itemize}[label=--]
+    \item \verb|0xC0| — Hard Drive
+    \item \verb|0xC1| — SSD
+    \item \verb|0xCC| — Mass Storage Device (USB)
+\end{itemize}
+
+\section{Index Node Structure}
+The inode tree allows for fast access and recovery via dual start/end block mappings and timestamped metadata.
+
+\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE structure}]
+struct HEFS_INDEX_NODE {
+    Utf16Char fName[256];
+    UInt32    fFlags;
+    UInt16    fKind;
+    UInt32    fSize;
+    UInt32    fChecksum, fRecoverChecksum, fBlockChecksum, fLinkChecksum;
+    ATime     fCreated, fAccessed, fModified, fDeleted;
+    UInt32    fUID, fGID;
+    UInt32    fMode;
+    UInt64    fBlockLinkStart[16], fBlockLinkEnd[16];
+    UInt64    fBlockStart[16], fBlockEnd[16];
+    UInt64    fBlockRecoveryStart[16], fBlockRecoveryEnd[16];
+};
+\end{lstlisting}
+
+\section{Directory Node Structure}
+Each directory is a red-black tree node with child and sibling pointers.
+
+\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY structure}]
+struct HEFS_INDEX_NODE_DIRECTORY {
+    Utf16Char fName[256];
+    UInt32 fFlags;
+    UInt16 fKind;
+    UInt32 fSize;
+    UInt32 fChecksum, fIndexNodeChecksum;
+    ATime  fCreated, fAccessed, fModified, fDeleted;
+    UInt32 fUID, fGID;
+    UInt32 fMode;
+    UInt64 fIndexNodeStart[16], fIndexNodeEnd[16];
+    UInt8  fColor;
+    Lba    fNext, fPrev, fChild, fParent;
+};
+\end{lstlisting}
+
+\section{Future Work}
+Planned extensions include:
+\begin{itemize}
+    \item Journaling recovery logic
+    \item Advanced permission flags
+    \item Logical volume management support
+    \item Cross-filesystem linking (EPM integration)
+\end{itemize}
 
 \end{document}

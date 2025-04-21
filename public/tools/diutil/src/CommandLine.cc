@@ -9,12 +9,12 @@
 
 #include <DiskImage.fwrk/headers/DiskImage.h>
 
-static const Char kDiskName[kDIDiskNameLen] = "Disk";
-static SInt32	  kDiskSectorSz				= 512;
+static const Char kDiskName[kDIDiskNameLen] = "DISK";
+static SInt32	  kDiskSectorSz				= kDISectorSz;
 static SizeT	  kDiskSz					= gib_cast(4);
 static const Char kOutDisk[kDIOutNameLen]	= "disk.eimg";
 
-/// @brief Filesystem tool entrypoint.
+/// @brief Disk Utility entrypoint.
 int main(int argc, char** argv)
 {
 	for (SInt32 arg = 0; arg < argc; ++arg)

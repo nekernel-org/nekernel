@@ -15,6 +15,7 @@
 #include <NewKit/KString.h>
 #include <NewKit/Utils.h>
 #include <FirmwareKit/EPM.h>
+#include <FirmwareKit/GPT.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/User.h>
 
@@ -22,7 +23,30 @@ namespace Kernel
 {
 	namespace Detail
 	{
-		STATIC HEFS_INDEX_NODE* hefs_get_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
+		/// @brief Forward declarations of internal functions.
+
+		/// @brief Get the index node of a file or directory.
+		/// @param root The root node of the filesystem.
+		/// @param mnt The drive to read from.
+		/// @param dir_name The name of the directory.
+		/// @param file_name The name of the file.
+		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
+		STATIC HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept;
+
+		/// @brief Allocate a new index node.
+		/// @param root The root node of the filesystem.
+		/// @param mnt The drive to read from.
+		/// @param parent_dir_name The name of the parent directory.
+		/// @return Status, see err_global_get().
+		STATIC BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept;
+
+		/// @brief Get the index node of a file or directory.
+		/// @param root The root node of the filesystem.
+		/// @param mnt The drive to read from.
+		/// @param dir_name The name of the directory.
+		/// @param file_name The name of the file.
+		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
+		STATIC HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
 		{
 			if (root)
 			{
@@ -42,10 +66,9 @@ namespace Kernel
 
 				while (start != end)
 				{
-					if (hop_watch++ > 100)
+					if (hop_watch > 100)
 					{
-						kout << "Error: Hop watch exceeded.\r";
-
+						kout << "Error: Hop watch exceeded, filesystem is stalling.\r";
 						break;
 					}
 
@@ -66,8 +89,10 @@ namespace Kernel
 						delete node;
 						delete dir;
 
-						err_global_get() = kErrorFileNotFound;
+						dir	 = nullptr;
+						node = nullptr;
 
+						err_global_get() = kErrorFileNotFound;
 
 						return nullptr;
 					}
@@ -78,9 +103,10 @@ namespace Kernel
 						{
 							for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; ++inode_index)
 							{
-								if (dir->fIndexNodeStart[inode_index] != 0)
+								if (dir->fIndexNodeStart[inode_index] != 0 ||
+									dir->fIndexNodeEnd[inode_index] != 0)
 								{
-									mnt->fPacket.fPacketLba		= dir->fIndexNodeStart[inode_index];
+									mnt->fPacket.fPacketLba		= (!dir->fIndexNodeStart[inode_index]) ? dir->fIndexNodeEnd[inode_index] : dir->fIndexNodeStart[inode_index];
 									mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
 									mnt->fPacket.fPacketContent = node;
 
@@ -91,35 +117,22 @@ namespace Kernel
 										if (KStringBuilder::Equals(file_name, node->fName) && node->fKind == kind)
 										{
 											delete dir;
+											dir = nullptr;
 
 											return node;
 										}
 									}
 									else
 									{
-										break;
-									}
-								}
-								else if (dir->fIndexNodeEnd[inode_index] != 0)
-								{
-									mnt->fPacket.fPacketLba		= dir->fIndexNodeEnd[inode_index];
-									mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
-									mnt->fPacket.fPacketContent = node;
+										err_global_get() = kErrorDiskIsCorrupted;
 
-									mnt->fInput(mnt->fPacket);
+										delete dir;
+										delete node;
 
-									if (mnt->fPacket.fPacketGood)
-									{
-										if (KStringBuilder::Equals(file_name, node->fName) && node->fKind == kind)
-										{
-											delete dir;
+										dir	 = nullptr;
+										node = nullptr;
 
-											return node;
-										}
-									}
-									else
-									{
-										break;
+										return nullptr;
 									}
 								}
 							}
@@ -147,6 +160,21 @@ namespace Kernel
 			err_global_get() = kErrorFileNotFound;
 
 			return nullptr;
+		}
+
+		/// @brief Allocate a new index node.
+		/// @param root The root node of the filesystem.
+		/// @param mnt The drive to read from.
+		/// @param parent_dir_name The name of the parent directory.
+		/// @return Status, see err_global_get().
+		STATIC BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept
+		{
+			NE_UNUSED(root);
+			NE_UNUSED(mnt);
+			NE_UNUSED(parent_dir_name);
+			NE_UNUSED(node);
+			
+			return NO;
 		}
 	} // namespace Detail
 } // namespace Kernel
