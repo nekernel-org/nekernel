@@ -11,7 +11,7 @@
 #include <CompilerKit/CompilerKit.h>
 
 #define kSwapBlockMaxSize (mib_cast(16))
-#define kSwapPageFile	  "/boot/pagefile.efi"
+#define kSwapPageFile	  "/boot/pagefile.sys"
 
 /// @file SwapDisk.h
 /// @brief Virtual memory swap disk.
