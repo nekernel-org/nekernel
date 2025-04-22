@@ -7,9 +7,9 @@
 #include <BootKit/Platform.h>
 #include <BootKit/Protocol.h>
 #include <BootKit/BootKit.h>
+#include <FirmwareKit/EFI/API.h>
 
 #ifdef __BOOTZ_STANDALONE__
-EXTERN EfiBootServices* BS;
 
 /// @brief Allocates a new object.
 /// @param sz the size.

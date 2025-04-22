@@ -90,12 +90,6 @@ inline void fw_init_efi(EfiSystemTable* SystemTable) noexcept
 
 	ST = SystemTable;
 	BS = ST->BootServices;
-
-	ST->ConOut->ClearScreen(SystemTable->ConOut);
-	ST->ConOut->SetAttribute(SystemTable->ConOut, kEFIYellow);
-
-	ST->BootServices->SetWatchdogTimer(0, 0, 0, nullptr);
-	ST->ConOut->EnableCursor(ST->ConOut, false);
 }
 
 #ifdef __BOOTZ__

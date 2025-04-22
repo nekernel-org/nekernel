@@ -338,7 +338,7 @@ namespace Boot
 			return false;
 		}
 
-		NEFS_ROOT_PARTITION_BLOCK part{0};
+		NEFS_ROOT_PARTITION_BLOCK part{};
 
 		CopyMem(part.Ident, kNeFSIdent, kNeFSIdentLen - 1);
 		CopyMem(part.PartitionName, part_name, StrLen(part_name));
@@ -364,7 +364,7 @@ namespace Boot
 		writer << "BootZ: Sector size: " << part.SectorSize << "\r";
 
 #if defined(BOOTZ_EPM_SUPPORT)
-		EPM_PART_BLOCK epm_boot{0};
+		EPM_PART_BLOCK epm_boot{};
 
 		const auto kFsName	  = "NeFS";
 		const auto kBlockName = "OS (EPM)";
@@ -394,7 +394,7 @@ namespace Boot
 
 		writer.Write(L"BootZ: Drive is EPM formatted.\r");
 #elif defined(BOOTZ_GPT_SUPPORT) || defined(BOOTZ_VEPM_SUPPORT)
-		GPT_PARTITION_TABLE gpt_part{0};
+		GPT_PARTITION_TABLE gpt_part{};
 
 		CopyMem(gpt_part.Signature, reinterpret_cast<VoidPtr>(const_cast<Char*>(kMagicGPT)), StrLen(kMagicGPT));
 
@@ -436,7 +436,7 @@ namespace Boot
 #if defined(BOOTZ_VEPM_SUPPORT)
 		const auto kBlockName = "OS (VEPM)";
 
-		GPT_PARTITION_ENTRY gpt_part_entry{0};
+		GPT_PARTITION_ENTRY gpt_part_entry{};
 
 		gpt_part_entry.StartLBA = kNeFSRootCatalogStartAddress;
 		gpt_part_entry.EndLBA = fDiskDev.GetDiskSize();
@@ -454,7 +454,7 @@ namespace Boot
 		fDiskDev.Leak().mSize = sizeof(GPT_PARTITION_ENTRY);
 		fDiskDev.Write((Char*)&gpt_part_entry, sizeof(GPT_PARTITION_ENTRY));
 
-		EPM_PART_BLOCK epm_boot{0};
+		EPM_PART_BLOCK epm_boot{};
 
 		const auto kFsName = "NeFS";
 

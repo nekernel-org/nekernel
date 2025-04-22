@@ -18,13 +18,10 @@
 #include <BootKit/BootThread.h>
 #include <modules/CoreGfx/CoreGfx.h>
 
-#ifndef kExpectedWidth
-#define kExpectedWidth (800)
-#endif
-
-#ifndef kExpectedHeight
-#define kExpectedHeight (600)
-#endif
+// Makes the compiler shut up.
+#ifndef kMachineModel
+#define kMachineModel "OS"
+#endif // !kMachineModel
 
 /** Graphics related. */
 
@@ -35,9 +32,6 @@ STATIC EfiGUID					  kGopGuid;
 /** Related to jumping to the reset vector. */
 
 EXTERN_C Void rt_reset_hardware();
-
-/** Boot Services symbol. */
-EXTERN EfiBootServices* BS;
 
 /**
 	@brief Finds and stores the GOP object.
@@ -52,22 +46,7 @@ STATIC Bool boot_init_fb() noexcept
 
 	kGopStride = 4;
 
-	for (SizeT i = 0; i < kGop->Mode->MaxMode; ++i)
-	{
-		EfiGraphicsOutputProtocolModeInformation* infoPtr = nullptr;
-		UInt32									  sz	  = 0U;
-
-		kGop->QueryMode(kGop, i, &sz, &infoPtr);
-
-		if (infoPtr->HorizontalResolution == kExpectedWidth &&
-			infoPtr->VerticalResolution == kExpectedHeight)
-		{
-			kGop->SetMode(kGop, i);
-			return Yes;
-		}
-	}
-
-	return No;
+	return Yes;
 }
 
 EfiGUID kEfiGlobalNamespaceVarGUID = {
@@ -82,6 +61,12 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 {
 	fw_init_efi(sys_table); ///! Init the EFI library.
 
+	ST->ConOut->ClearScreen(sys_table->ConOut);
+	ST->ConOut->SetAttribute(sys_table->ConOut, kEFIYellow);
+
+	ST->BootServices->SetWatchdogTimer(0, 0, 0, nullptr);
+	ST->ConOut->EnableCursor(ST->ConOut, false);
+
 	HEL::BootInfoHeader* handover_hdr =
 		new HEL::BootInfoHeader();
 
@@ -93,11 +78,9 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	Boot::BootTextWriter writer;
 
-	writer.Write("BootZ: NeKernel Loader.\r");
-
 	if (!boot_init_fb())
 	{
-		writer.Write("BootZ: Invalid Framebuffer, can't boot NeKernel.\r");
+		writer.Write("BootZ: Invalid Framebuffer, can't boot to NeKernel.\r");
 		Boot::Stop();
 	}
 
@@ -164,6 +147,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	Int32 trials = 5 * 10000000;
 
+	writer.Write("BootZ: Welcome to BootZ.\r");
 	writer.Write("BootZ: Allocating sufficent memory, trying 4GB...\r");
 
 	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
@@ -206,7 +190,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 	if (reader_syschk.Blob())
 	{
 		syschk_thread = new Boot::BootThread(reader_syschk.Blob());
-		syschk_thread->SetName("BootZ: System Check");
+		syschk_thread->SetName("BootZ\\System Check");
 
 		syschk_thread->Start(handover_hdr, NO);
 	}
@@ -274,7 +258,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 		auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
 
-		kernel_thread.SetName("BootZ: NeKernel");
+		kernel_thread.SetName("BootZ\\NeKernel");
 
 		handover_hdr->f_KernelImage = reader_kernel.Blob();
 		handover_hdr->f_KernelSz	= reader_kernel.Size();
@@ -289,7 +273,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 		return kEfiFail;
 
 	auto netboot_thread = Boot::BootThread(reader_netboot.Blob());
-	netboot_thread.SetName("BootZ: BootNet");
+	netboot_thread.SetName("BootZ\\BootNet");
 
 	return netboot_thread.Start(handover_hdr, NO);
 }

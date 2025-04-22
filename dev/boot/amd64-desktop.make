@@ -67,9 +67,9 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -Wall -Wpedantic -Wextra -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__ \
+FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -Wall -Wpedantic -Wextra -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__ -DBOOTZ_VEPM_SUPPORT \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../kernel $(DISK_DRV) -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT -Wl,--disable-reloc-section
+                        -std=c++20 -DBOOTZ_GPT_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT -Wl,--disable-reloc-section
 
 BOOTLOADER=bootz.efi
 KERNEL=krnl.efi

@@ -33,12 +33,10 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 #if defined(__ATA_PIO__)
 	fw_init_efi((EfiSystemTable*)handover->f_FirmwareCustomTables[1]);
 
-	Boot::BootTextWriter writer;
-
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (partition_factory.IsPartitionValid())
-		return kEfiOk;
+		return kEfiFail;
 
 	Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor desc{};
 
@@ -47,8 +45,6 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	desc.fKind		  = kNeFSCatalogKindDir;
 
 	partition_factory.Format(kMachineModel, &desc, 1);
-
-	writer.Write(L"BootZ: Partition formatted.\r");
 
 	if (partition_factory.IsPartitionValid())
 		return kEfiOk;
