@@ -129,16 +129,16 @@ namespace Boot
 #ifdef __NE_AMD64__
 						if (handover_struc->HandoverArch != HEL::kArchAMD64)
 						{
-							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+							writer.Write("BootZ: Not an handover header, bad CPU...\r");
 						}
 #elif defined(__NE_ARM64__)
 						if (handover_struc->HandoverArch != HEL::kArchARM64)
 						{
-							fb_render_string("BootZ: Not an handover header, bad CPU...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+							writer.Write("BootZ: Not an handover header, bad CPU...\r");
 						}
 #endif
 
-						fb_render_string("BootZ: Not an handover header...", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+						writer.Write("BootZ: Not an handover header...\r");
 						::Boot::Stop();
 					}
 				}
@@ -190,10 +190,24 @@ namespace Boot
 
 		if (own_stack)
 		{
-			return rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(16) - 1]);
+			writer.Write("BootZ: Using own stack.\r");
+			writer.Write("BootZ: Stack address: ").Write((UIntPtr)&fStack[mib_cast(16) - 1]).Write("\r");
+			writer.Write("BootZ: Stack size: ").Write(mib_cast(16)).Write("\r");
+
+			rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(16) - 1]);
+			
+			return kEfiOk;
 		}
 		else
 		{
+			delete[] fStack;
+			fStack = nullptr;
+			// we don't need the stack anymore.
+
+			BootTextWriter writer;
+
+			writer.Write("BootZ: Using EFI stack.\r");
+
 			return reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
 		}
 

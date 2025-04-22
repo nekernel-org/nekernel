@@ -23,7 +23,7 @@
 
 // Makes the compiler shut up.
 #ifndef kMachineModel
-#define kMachineModel "Ne"
+#define kMachineModel "OS"
 #endif // !kMachineModel
 
 EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
@@ -31,6 +31,8 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	NE_UNUSED(handover);
 
 #if defined(__ATA_PIO__)
+	Boot::BootTextWriter writer;
+
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (partition_factory.IsPartitionValid())
@@ -43,6 +45,8 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	desc.fKind		  = kNeFSCatalogKindDir;
 
 	partition_factory.Format(kMachineModel, &desc, 1);
+
+	writer.Write(L"BootZ: Partition formatted.\r");
 
 	if (partition_factory.IsPartitionValid())
 		return kEfiOk;

@@ -80,8 +80,8 @@ typedef struct EPM_GUID
  */
 struct PACKED EPM_PART_BLOCK
 {
-	Kernel::Char  Magic[kEPMMagicLength];
-	Kernel::Char  Name[kEPMNameLength];
+	Kernel::Char  Magic[kEPMMagicLength] = {0};
+	Kernel::Char  Name[kEPMNameLength] = {0};
 	EPM_GUID	  Guid;
 	Kernel::Int32 Version;
 	Kernel::Int64 NumBlocks;
@@ -106,6 +106,13 @@ enum
 	kEPMBSD		  = 0x9f, /// @brief Berkeley Soft. Distribution
 	kEPMNeKernel  = 0x1f, /// @brief NeKernel.
 	kEPMInvalidOS = 0xff,
+};
+
+inline EPM_GUID kEPMNilGuid = {
+    0x0U,              
+    0x0U,                  
+    0x0U,                  
+    { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
 };
 
 #endif // ifndef FIRMWAREKIT_EPM_H

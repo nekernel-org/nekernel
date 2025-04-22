@@ -39,7 +39,7 @@ namespace Kernel
 		/// Storage flags, combine with types.
 		kReadOnlyDrive	  = 0x10, // Read only drive
 		kEPMDrive		  = 0x11, // Explicit Partition Map.
-		kEPTDrive		  = 0x12, // ESP w/ EPM partition.
+		kVEPMDrive		  = 0x12, // ESP w/ EPM partition.
 		kMBRDrive		  = 0x13, // PC classic partition scheme
 		kGPTDrive		  = 0x14, // PC new partition scheme
 		kUnformattedDrive = 0x15,

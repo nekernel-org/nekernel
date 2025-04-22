@@ -31,14 +31,14 @@ namespace Kernel
 		/// @param dir_name The name of the directory.
 		/// @param file_name The name of the file.
 		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
-		STATIC HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept;
+		STATIC ATTRIBUTE(unused) HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept;
 
 		/// @brief Allocate a new index node.
 		/// @param root The root node of the filesystem.
 		/// @param mnt The drive to read from.
 		/// @param parent_dir_name The name of the parent directory.
 		/// @return Status, see err_global_get().
-		STATIC BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept;
+		STATIC ATTRIBUTE(unused) BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept;
 
 		/// @brief Get the index node of a file or directory.
 		/// @param root The root node of the filesystem.
@@ -46,7 +46,7 @@ namespace Kernel
 		/// @param dir_name The name of the directory.
 		/// @param file_name The name of the file.
 		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
-		STATIC HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
+		STATIC ATTRIBUTE(unused) HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
 		{
 			if (root)
 			{
@@ -178,7 +178,7 @@ namespace Kernel
 		/// @param mnt The drive to read from.
 		/// @param parent_dir_name The name of the parent directory.
 		/// @return Status, see err_global_get().
-		STATIC BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept
+		STATIC ATTRIBUTE(unused) BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept
 		{
 			NE_UNUSED(root);
 			NE_UNUSED(mnt);

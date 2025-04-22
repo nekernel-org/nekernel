@@ -226,7 +226,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
-	Boot::BootFileReader reader_kernel(L"vmkrnl.efi", image_handle);
+	Boot::BootFileReader reader_kernel(L"krnl.efi", image_handle);
 
 	reader_kernel.ReadAll(0);
 

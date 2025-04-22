@@ -115,7 +115,7 @@ inline constexpr ATime kHeFSTimeMax		= 0xFFFFFFFFFFFFFFFF;
 /// @details This structure is used to store the file information of a file.
 /// @note The index node is a special type of INode that contains the file information.
 /// @note The index node is used to store the file information of a file.
-struct PACKED HEFS_INDEX_NODE final
+struct PACKED ALIGN(8) HEFS_INDEX_NODE final
 {
 	Kernel::Utf16Char fName[kHeFSFileNameLen];									  /// @brief File name.
 	Kernel::UInt32	  fFlags;													  /// @brief File flags.
@@ -147,7 +147,7 @@ enum
 /// @brief HeFS directory node.
 /// @details This structure is used to store the directory information of a file.
 /// @note The directory node is a special type of INode that contains the directory entries.
-struct PACKED HEFS_INDEX_NODE_DIRECTORY final
+struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final
 {
 	Kernel::Utf16Char fName[kHeFSFileNameLen]; /// @brief Directory name.
 

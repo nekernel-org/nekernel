@@ -17,7 +17,8 @@
     "__BOOTZ_STANDALONE__",
     "__NE_AMD64__",
     "__AHCI__",
-    "BOOTZ_GPT_SUPPORT",
+    "__NE_VEPM__",
+    "BOOTZ_VEPM_SUPPORT",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",
     "kChkVersion=0x0100"

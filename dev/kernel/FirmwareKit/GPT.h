@@ -17,18 +17,8 @@
 
 namespace Kernel
 {
-	struct GPT_GUID;
 	struct GPT_PARTITION_TABLE;
 	struct GPT_PARTITION_ENTRY;
-
-	/// @brief GPT GUID structure.
-	typedef struct GPT_GUID
-	{
-		Kernel::UInt32 Data1;
-		Kernel::UInt16 Data2;
-		Kernel::UInt16 Data3;
-		Kernel::UInt8  Data4[8];
-	} GPT_GUID;
 
 	struct PACKED GPT_PARTITION_TABLE final
 	{
@@ -41,7 +31,7 @@ namespace Kernel
 		UInt64	 LBAAltHeader;
 		UInt64	 FirstGPTEntry;
 		UInt64	 LastGPTEntry;
-		GPT_GUID Guid;
+		EfiGUID Guid;
 		UInt64	 StartingLBA;
 		UInt32	 NumPartitionEntries;
 		UInt32	 SizeOfEntries;
@@ -51,8 +41,8 @@ namespace Kernel
 
 	struct PACKED GPT_PARTITION_ENTRY
 	{
-		GPT_GUID PartitionTypeGUID;
-		GPT_GUID UniquePartitionGUID;
+		EfiGUID PartitionTypeGUID;
+		EfiGUID UniquePartitionGUID;
 		UInt64	 StartLBA;
 		UInt64	 EndLBA;
 		UInt64	 Attributes;

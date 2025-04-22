@@ -229,7 +229,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 	// Assign to global 'kHandoverHeader'.
 
-	WideChar kernel_path[256U] = L"vmkrnl.efi";
+	WideChar kernel_path[256U] = L"krnl.efi";
 	UInt32	 kernel_path_sz	   = 256U;
 
 	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
