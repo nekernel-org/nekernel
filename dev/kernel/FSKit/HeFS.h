@@ -17,7 +17,7 @@
 /// @file HeFS.h
 /// @brief HeFS filesystem support.
 
-#define kHeFSVersion  (0x0100)
+#define kHeFSVersion  (0x0101)
 #define kHeFSMagic	  "  HeFS"
 #define kHeFSMagicLen (8)
 
@@ -102,6 +102,10 @@ struct PACKED HEFS_BOOT_NODE final
 	Kernel::UInt16	  fDiskStatus;				  /// @brief Status of the disk. (locked, unlocked, error, invalid).
 	Kernel::UInt16	  fDiskFlags;				  /// @brief Flags of the disk. (read-only, read-write, etc).
 	Kernel::UInt16	  fVID;						  /// @brief Virtual Identification Number within an EPM disk. (0xFFFF if not used).
+	Kernel::UInt64	  fReserved;				  /// @brief Reserved for future use.
+	Kernel::UInt64	  fReserved2;				  /// @brief Reserved for future use.
+	Kernel::UInt64	  fReserved3;				  /// @brief Reserved for future use.
+	Kernel::UInt64	  fReserved4;				  /// @brief Reserved for future use.
 };
 
 /// @brief Access time type.
@@ -160,6 +164,10 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final
 	Kernel::UInt32 fUID, fGID;								 /// @brief User ID and Group ID of the file.
 	Kernel::UInt32 fMode;									 /// @brief File mode. (read, write, execute, etc).
 
+	/// @note These slices are organized as:
+	/// [0] = OFFSET
+	/// [1] = SIZE
+	/// @note Thus the += 2 when iterating over them.
 	Kernel::UInt64 fIndexNodeStart[kHeFSBlockCount]; /// @brief Start of the index node.
 	Kernel::UInt64 fIndexNodeEnd[kHeFSBlockCount];	 /// @brief End of the index node.
 

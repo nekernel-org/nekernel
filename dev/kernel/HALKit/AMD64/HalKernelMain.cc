@@ -98,8 +98,23 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	idt_loader.Load(idt_reg);
 
+	auto constexpr kSchedTeamSwitchMS = 200U; /// @brief Team switch time in milliseconds.
+
+	Kernel::HardwareTimer timer(rtl_ms(kSchedTeamSwitchMS));
+
+	SizeT i = 0U;
+
 	while (YES)
 	{
-		;
+		timer.Wait();
+
+		UserProcessScheduler::The().SwitchTeam(kTeams[i]);
+
+		++i;
+	
+		if (i > kSchedTeamCount)
+		{
+			i = 0U;
+		}
 	}
 }

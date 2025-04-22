@@ -35,7 +35,7 @@ namespace Kernel
 	/// @brief External reference of the thread scheduler.
 	/***********************************************************************************/
 
-	STATIC UserProcessScheduler kProcessScheduler;
+	STATIC UserProcessScheduler kScheduler;
 
 	Process::Process()	= default;
 	Process::~Process() = default;
@@ -406,7 +406,7 @@ namespace Kernel
 
 	UserProcessScheduler& UserProcessScheduler::The()
 	{
-		return kProcessScheduler;
+		return kScheduler;
 	}
 
 	/***********************************************************************************/
@@ -512,7 +512,22 @@ namespace Kernel
 		return mTeam;
 	}
 
-	/// @internal
+	/***********************************************************************************/
+	/// @brief Switches the current team.
+	/// @param team the new team to switch to.
+	/// @retval true team was switched.
+	/// @retval false team was not switched.
+	/***********************************************************************************/
+
+	BOOL UserProcessScheduler::SwitchTeam(ProcessTeam& team)
+	{
+		if (team.AsArray().Count() < 1)
+			return No;
+
+		kScheduler.mTeam = team;
+
+		return Yes;
+	}
 
 	/// @brief Gets current running process.
 	/// @return
@@ -525,11 +540,11 @@ namespace Kernel
 	/// @return Process ID integer.
 	ErrorOr<PID> UserProcessHelper::TheCurrentPID()
 	{
-		if (!kProcessScheduler.CurrentProcess())
+		if (!kScheduler.CurrentProcess())
 			return ErrorOr<PID>{-kErrorProcessFault};
 
 		kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-		return ErrorOr<PID>{kProcessScheduler.CurrentProcess().Leak().ProcessId};
+		return ErrorOr<PID>{kScheduler.CurrentProcess().Leak().ProcessId};
 	}
 
 	/// @brief Check if process can be schedulded.
@@ -568,7 +583,7 @@ namespace Kernel
 
 	SizeT UserProcessHelper::StartScheduling()
 	{
-		return kProcessScheduler.Run();
+		return kScheduler.Run();
 	}
 
 	/***********************************************************************************/

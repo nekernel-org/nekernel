@@ -253,7 +253,7 @@ namespace Kernel
 					{
 						if (KStringBuilder::Equals(dir_name, dir->fName))
 						{
-							for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; ++inode_index)
+							for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; inode_index += 2)
 							{
 								if (dir->fIndexNodeStart[inode_index] != 0 ||
 									dir->fIndexNodeEnd[inode_index] != 0)
@@ -345,7 +345,7 @@ namespace Kernel
 
 					if (KStringBuilder::Equals(dir->fName, parent_dir_name))
 					{
-						for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; ++inode_index)
+						for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; inode_index += 2)
 						{
 							if (dir->fIndexNodeStart[inode_index] != 0 ||
 								dir->fIndexNodeEnd[inode_index] != 0)

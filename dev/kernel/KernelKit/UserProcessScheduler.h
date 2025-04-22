@@ -19,6 +19,7 @@
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
 #define kSchedInvalidPID		  (-1)
 #define kSchedProcessLimitPerTeam (32U)
+#define kSchedTeamCount (512)
 
 #define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
 #define kSchedMaxStackSz	 mib_cast(8)   /* maximum stack size */
@@ -328,13 +329,15 @@ namespace Kernel
 		explicit UserProcessScheduler()	 = default;
 		~UserProcessScheduler() override = default;
 
-		NE_COPY_DEFAULT(UserProcessScheduler)
+		NE_COPY_DELETE(UserProcessScheduler)
+		NE_MOVE_DELETE(UserProcessScheduler)
 
 			 operator bool();
 		bool operator!();
 
 	public:
 		ProcessTeam& CurrentTeam();
+		BOOL		 SwitchTeam(ProcessTeam& team);
 
 	public:
 		ProcessID Spawn(const Char* name, VoidPtr code, VoidPtr image);
@@ -371,6 +374,10 @@ namespace Kernel
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;
+
+	inline Kernel::Array<ProcessTeam,
+						 kSchedTeamCount>
+		kTeams;
 } // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.h>

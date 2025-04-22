@@ -26,7 +26,7 @@
 #error !!! unknown architecture !!!
 #endif
 
-#define kKernelMaxSystemCalls (512U)
+#define kMaxDispatchCallCount (512U)
 
 namespace Kernel
 {
@@ -88,11 +88,11 @@ struct HalSyscallEntry final
 };
 
 inline Kernel::Array<HalSyscallEntry,
-					 kKernelMaxSystemCalls>
-	kSyscalls;
+					 kMaxDispatchCallCount>
+	kSysCalls;
 
 inline Kernel::Array<HalSyscallEntry,
-					 kKernelMaxSystemCalls>
-	kKerncalls;
+					 kMaxDispatchCallCount>
+	kKernCalls;
 
 EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);

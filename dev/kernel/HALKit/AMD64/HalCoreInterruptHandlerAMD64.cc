@@ -190,15 +190,15 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 /// @return nothing.
 EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index, Kernel::UIntPtr rdx_syscall_struct)
 {
-	if (rcx_syscall_index < kSyscalls.Count())
+	if (rcx_syscall_index < kSysCalls.Count())
 	{
 		Kernel::kout << "syscall: Enter Syscall.\r";
 
-		if (kSyscalls[rcx_syscall_index].fHooked)
+		if (kSysCalls[rcx_syscall_index].fHooked)
 		{
-			if (kSyscalls[rcx_syscall_index].fProc)
+			if (kSysCalls[rcx_syscall_index].fProc)
 			{
-				(kSyscalls[rcx_syscall_index].fProc)((Kernel::VoidPtr)rdx_syscall_struct);
+				(kSysCalls[rcx_syscall_index].fProc)((Kernel::VoidPtr)rdx_syscall_struct);
 			}
 			else
 			{
@@ -219,15 +219,15 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index, K
 /// @return nothing.
 EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index, Kernel::UIntPtr rdx_kerncall_struct)
 {
-	if (rcx_kerncall_index < kKerncalls.Count())
+	if (rcx_kerncall_index < kKernCalls.Count())
 	{
 		Kernel::kout << "kerncall: Enter Kernel Call List.\r";
 
-		if (kKerncalls[rcx_kerncall_index].fHooked)
+		if (kKernCalls[rcx_kerncall_index].fHooked)
 		{
-			if (kKerncalls[rcx_kerncall_index].fProc)
+			if (kKernCalls[rcx_kerncall_index].fProc)
 			{
-				(kKerncalls[rcx_kerncall_index].fProc)((Kernel::VoidPtr)rdx_kerncall_struct);
+				(kKernCalls[rcx_kerncall_index].fProc)((Kernel::VoidPtr)rdx_kerncall_struct);
 			}
 			else
 			{
