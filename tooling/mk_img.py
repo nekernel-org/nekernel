@@ -18,7 +18,7 @@ def copy_to_fat(image_path, source_dir):
     try:
         files_to_copy = glob.glob(os.path.join(source_dir, "*"))
         # Now build the command
-        command = ["mcopy", "-spom", "-i", image_path] + files_to_copy + ["::"]
+        command = ["mcopy", "-spm", "-i", image_path] + files_to_copy + ["::"]
         subprocess.run(command, check=True)
         
         print(f"Successfully copied contents of '{source_dir}' into '{image_path}'")
