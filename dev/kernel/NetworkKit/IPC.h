@@ -34,7 +34,7 @@ namespace Kernel
 	struct PACKED IPC_ADDR final
 	{
 		UInt64 UserProcessID;
-		UInt64 ProcessTeam;
+		UInt64 UserProcessTeam;
 
 		////////////////////////////////////
 		// some operators.

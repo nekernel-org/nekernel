@@ -14,7 +14,7 @@ namespace Kernel
 	/// @param
 	/***********************************************************************************/
 
-	EXTERN_C Void __zka_pure_call(Process* process)
+	EXTERN_C Void __zka_pure_call(UserProcess* process)
 	{
 		if (process)
 			process->Crash();

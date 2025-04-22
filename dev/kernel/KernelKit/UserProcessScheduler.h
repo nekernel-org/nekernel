@@ -8,18 +8,19 @@
 #define INC_PROCESS_SCHEDULER_H
 
 /// @file UserProcessScheduler.h
-/// @brief User Process scheduler code and definitions.
+/// @brief User UserProcess scheduler code and definitions.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/LockDelegate.h>
 #include <KernelKit/User.h>
 #include <NewKit/MutableArray.h>
+#include <KernelKit/ProcessSchedulerCore.h>
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
 #define kSchedInvalidPID		  (-1)
 #define kSchedProcessLimitPerTeam (32U)
-#define kSchedTeamCount (512)
+#define kSchedTeamCount (512U)
 
 #define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
 #define kSchedMaxStackSz	 mib_cast(8)   /* maximum stack size */
@@ -35,147 +36,24 @@ namespace Kernel
 	//! @brief Forward declarations.
 
 	class IDylibObject;
-	class Process;
-	class ProcessTeam;
 	class UserProcessScheduler;
 	class UserProcessHelper;
 
-	typedef UInt64 PTime;
-
 	/***********************************************************************************/
-	//! @brief Local Process identifier.
+	/// @name UserProcess
+	/// @brief UserProcess class, holds information about the running process/thread.
 	/***********************************************************************************/
-	typedef Int64 ProcessID;
-
-	/***********************************************************************************/
-	//! @brief Local Process status enum.
-	/***********************************************************************************/
-	enum class ProcessStatusKind : Int32
-	{
-		kInvalid,
-		kStarting,
-		kRunning,
-		kKilled,
-		kFrozen,
-		kFinished,
-		kCount,
-	};
-
-	/***********************************************************************************/
-	//! @brief Affinity is the amount of nano-seconds this process is going to run.
-	/***********************************************************************************/
-	enum class AffinityKind : Int32
-	{
-		kRealTime	  = 500,
-		kVeryHigh	  = 250,
-		kHigh		  = 200,
-		kStandard	  = 1000,
-		kLowUsage	  = 1500,
-		kVeryLowUsage = 2000,
-	};
-
-	/***********************************************************************************/
-	//! Operators for AffinityKind
-	/***********************************************************************************/
-
-	inline bool operator<(AffinityKind lhs, AffinityKind rhs)
-	{
-		Int32 lhs_int = static_cast<Int>(lhs);
-		Int32 rhs_int = static_cast<Int>(rhs);
-
-		return lhs_int < rhs_int;
-	}
-
-	inline bool operator>(AffinityKind lhs, AffinityKind rhs)
-	{
-		Int32 lhs_int = static_cast<Int>(lhs);
-		Int32 rhs_int = static_cast<Int>(rhs);
-
-		return lhs_int > rhs_int;
-	}
-
-	inline bool operator<=(AffinityKind lhs, AffinityKind rhs)
-	{
-		Int32 lhs_int = static_cast<Int>(lhs);
-		Int32 rhs_int = static_cast<Int>(rhs);
-
-		return lhs_int <= rhs_int;
-	}
-
-	inline bool operator>=(AffinityKind lhs, AffinityKind rhs)
-	{
-		Int32 lhs_int = static_cast<Int>(lhs);
-		Int32 rhs_int = static_cast<Int>(rhs);
-
-		return lhs_int >= rhs_int;
-	}
-
-	/***********************************************************************************/
-	/// @brief Subsystem enum type.
-	/***********************************************************************************/
-
-	enum class ProcessSubsystem : Int32
-	{
-		kProcessSubsystemSecurity = 100,
-		kProcessSubsystemApplication,
-		kProcessSubsystemService,
-		kProcessSubsystemDriver,
-		kProcessSubsystemInvalid = 256U,
-		kProcessSubsystemCount	 = 4,
-	};
-
-	using ProcessTime = UInt64;
-	using PID		  = Int64;
-
-	/***********************************************************************************/
-	/// @note For User manager, tells where we run the code.
-	/***********************************************************************************/
-	enum class ProcessLevelRing : Int32
-	{
-		kRingStdUser   = 1,
-		kRingSuperUser = 2,
-		kRingGuestUser = 5,
-		kRingCount	   = 5,
-	};
-
-	/***********************************************************************************/
-	/// @brief Helper type to describe a code image.
-	/***********************************************************************************/
-	using ImagePtr = VoidPtr;
-
-	struct ProcessImage final
-	{
-		explicit ProcessImage() = default;
-
-		ImagePtr fCode;
-		ImagePtr fBlob;
-
-		Bool HasCode()
-		{
-			return this->fCode != nullptr;
-		}
-
-		Bool HasImage()
-		{
-			return this->fBlob != nullptr;
-		}
-	};
-
-	/***********************************************************************************/
-	/// @name Process
-	/// @brief Process class, holds information about the running process/thread.
-	/***********************************************************************************/
-	class Process final
+	class UserProcess final
 	{
 	public:
-		explicit Process();
-		~Process();
+		explicit UserProcess();
+		~UserProcess();
 
 	public:
-		NE_COPY_DEFAULT(Process)
+		NE_COPY_DEFAULT(UserProcess)
 
 	public:
-		Char			   Name[kSchedNameLen] = {"Process"};
+		Char			   Name[kSchedNameLen] = {"UserProcess"};
 		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
@@ -208,7 +86,7 @@ namespace Kernel
 
 		ProcessSignal		   ProcessSignal;
 		ProcessMemoryHeapList* ProcessMemoryHeap{nullptr};
-		ProcessTeam*		   ProcessParentTeam;
+		UserProcessTeam*		   ProcessParentTeam;
 
 		VoidPtr VMRegister{0UL};
 
@@ -220,7 +98,7 @@ namespace Kernel
 			kExecutableKindCount,
 		};
 
-		ProcessTime PTime{0}; //! @brief Process allocated tine.
+		ProcessTime PTime{0}; //! @brief UserProcess allocated tine.
 
 		PID	  ProcessId{kSchedInvalidPID};
 		Int32 Kind{kExecutableKind};
@@ -294,31 +172,31 @@ namespace Kernel
 
 	/// \brief Processs Team (contains multiple processes inside it.)
 	/// Equivalent to a process batch
-	class ProcessTeam final
+	class UserProcessTeam final
 	{
 	public:
-		explicit ProcessTeam();
-		~ProcessTeam() = default;
+		explicit UserProcessTeam();
+		~UserProcessTeam() = default;
 
-		NE_COPY_DEFAULT(ProcessTeam)
+		NE_COPY_DEFAULT(UserProcessTeam)
 
-		Array<Process, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<Process>&							   AsRef();
+		Array<UserProcess, kSchedProcessLimitPerTeam>& AsArray();
+		Ref<UserProcess>&							   AsRef();
 		ProcessID&								   Id() noexcept;
 
 	public:
-		Array<Process, kSchedProcessLimitPerTeam> mProcessList;
-		Ref<Process>							  mCurrentProcess;
+		Array<UserProcess, kSchedProcessLimitPerTeam> mProcessList;
+		Ref<UserProcess>							  mCurrentProcess;
 		ProcessID								  mTeamId{0};
 		ProcessID								  mProcessCount{0};
 	};
 
-	typedef Array<Process, kSchedProcessLimitPerTeam> UserThreadArray;
+	typedef Array<UserProcess, kSchedProcessLimitPerTeam> UserThreadArray;
 
-	using UserProcessRef = Process&;
+	using UserProcessRef = UserProcess&;
 
 	/***********************************************************************************/
-	/// @brief Process scheduler class.
+	/// @brief UserProcess scheduler class.
 	/// The main class which you call to schedule user processes.
 	/***********************************************************************************/
 	class UserProcessScheduler final : public ISchedulable
@@ -336,8 +214,8 @@ namespace Kernel
 		bool operator!();
 
 	public:
-		ProcessTeam& CurrentTeam();
-		BOOL		 SwitchTeam(ProcessTeam& team);
+		UserProcessTeam& CurrentTeam();
+		BOOL		 SwitchTeam(UserProcessTeam& team);
 
 	public:
 		ProcessID Spawn(const Char* name, VoidPtr code, VoidPtr image);
@@ -348,19 +226,19 @@ namespace Kernel
 		Bool HasMP() override;
 
 	public:
-		Ref<Process>& CurrentProcess();
+		Ref<UserProcess>& CurrentProcess();
 		SizeT		  Run() noexcept;
 
 	public:
 		STATIC UserProcessScheduler& The();
 
 	private:
-		ProcessTeam mTeam{};
+		UserProcessTeam mTeam{};
 	};
 
 	/***********************************************************************************/
 	/**
-	 * \brief Process helper class, which contains needed utilities for the scheduler.
+	 * \brief UserProcess helper class, which contains needed utilities for the scheduler.
 	 */
 	/***********************************************************************************/
 
@@ -368,7 +246,7 @@ namespace Kernel
 	{
 	public:
 		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, PID new_pid);
-		STATIC Bool CanBeScheduled(const Process& process);
+		STATIC Bool CanBeScheduled(const UserProcess& process);
 		STATIC ErrorOr<PID> TheCurrentPID();
 		STATIC SizeT		StartScheduling();
 	};

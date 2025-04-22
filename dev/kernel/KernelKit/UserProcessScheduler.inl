@@ -3,12 +3,13 @@
 	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 	FILE: UserProcessScheduler.inl
-	PURPOSE: Low level/Ring-3 Process scheduler.
+	PURPOSE: Low level/Ring-3 UserProcess scheduler.
 
 ------------------------------------------- */
 
-/// @brief Process scheduler inline definitions.
+/// @brief UserProcess scheduler inline definitions.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
+/// @date Tue Apr 22 22:01:07 CEST 2025
 
 namespace Kernel
 {
@@ -17,14 +18,14 @@ namespace Kernel
 	/***********************************************************************************/
 
 	template <typename T>
-	Boolean Process::Delete(ErrorOr<T*> ptr)
+	Boolean UserProcess::Delete(ErrorOr<T*> ptr)
 	{
 		if (!ptr)
 			return No;
 
 		if (!this->ProcessMemoryHeap)
 		{
-			kout << "Process's heap is empty.\r";
+			kout << "UserProcess's heap is empty.\r";
 			return No;
 		}
 

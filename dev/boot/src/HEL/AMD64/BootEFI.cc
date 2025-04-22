@@ -164,7 +164,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
 
 	Int32 trials = 5 * 10000000;
 
-	writer.Write("BootZ: Allocating sufficent memory, trying with 4GB...\r");
+	writer.Write("BootZ: Allocating sufficent memory, trying 4GB...\r");
 
 	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
 	{

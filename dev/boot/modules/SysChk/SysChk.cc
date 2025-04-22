@@ -31,6 +31,8 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 	NE_UNUSED(handover);
 
 #if defined(__ATA_PIO__)
+	fw_init_efi((EfiSystemTable*)handover->f_FirmwareCustomTables[1]);
+
 	Boot::BootTextWriter writer;
 
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
