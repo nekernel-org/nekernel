@@ -21,6 +21,8 @@ EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
 EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
 
+STATIC Kernel::Array<ProcessTeam, kSchedTeamCount> kTeams;
+
 STATIC Kernel::Void hal_pre_init_scheduler()
 {
 	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
@@ -111,7 +113,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 		UserProcessScheduler::The().SwitchTeam(kTeams[i]);
 
 		++i;
-	
+
 		if (i > kSchedTeamCount)
 		{
 			i = 0U;

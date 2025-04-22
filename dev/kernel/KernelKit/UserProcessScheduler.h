@@ -374,10 +374,6 @@ namespace Kernel
 	};
 
 	const UInt32& sched_get_exit_code(void) noexcept;
-
-	inline Kernel::Array<ProcessTeam,
-						 kSchedTeamCount>
-		kTeams;
 } // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.h>
