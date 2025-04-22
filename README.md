@@ -1,9 +1,10 @@
 <!-- Read Me of NeKernel -->
 
 <div align="center">
-  <img src="meta/png/nekernel.png" alt="Logo" width="128"/>
-  <h1>NeKernel</h1>
+  <img src="meta/png/nekernel.png" alt="Logo" width="256"/>
 </div>
+
+<br/>
 
 ![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml/badge.svg)
 ![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml/badge.svg)
