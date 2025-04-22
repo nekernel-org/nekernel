@@ -104,8 +104,9 @@ namespace Kernel
 
 			if (!grand_parent)
 			{
-				delete grand_parent;
+				delete parent;
 				kout << "Error: Failed to allocate memory for index node.\r";
+
 				return;
 			}
 
@@ -147,38 +148,42 @@ namespace Kernel
 		/***********************************************************************************/
 		STATIC ATTRIBUTE(unused) Void hefsi_rotate_right(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt)
 		{
-			if (dir->fChild || dir->fNext || dir->fPrev)
+			HEFS_INDEX_NODE_DIRECTORY* parent = new HEFS_INDEX_NODE_DIRECTORY();
+
+			if (!parent)
 			{
-				HEFS_INDEX_NODE_DIRECTORY* parent = new HEFS_INDEX_NODE_DIRECTORY();
+				kout << "Error: Failed to allocate memory for index node.\r";
 
-				mnt->fPacket.fPacketLba		= dir->fParent;
-				mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
-				mnt->fPacket.fPacketContent = parent;
-
-				mnt->fInput(mnt->fPacket);
-
-				parent->fParent = dir->fParent;
-				dir->fParent	= parent->fParent;
-				dir->fNext		= parent->fChild;
-				parent->fChild	= start;
-
-				mnt->fPacket.fPacketLba		= dir->fParent;
-				mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
-				mnt->fPacket.fPacketContent = parent;
-
-				mnt->fOutput(mnt->fPacket);
-
-				delete parent;
-				parent = nullptr;
-
-				dir->fColor = kHeFSBlack;
-
-				mnt->fPacket.fPacketLba		= start;
-				mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
-				mnt->fPacket.fPacketContent = dir;
-
-				mnt->fOutput(mnt->fPacket);
+				return;
 			}
+
+			mnt->fPacket.fPacketLba		= dir->fParent;
+			mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+			mnt->fPacket.fPacketContent = parent;
+
+			mnt->fInput(mnt->fPacket);
+
+			parent->fParent = dir->fParent;
+			dir->fParent	= parent->fParent;
+			dir->fNext		= parent->fChild;
+			parent->fChild	= start;
+
+			mnt->fPacket.fPacketLba		= dir->fParent;
+			mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+			mnt->fPacket.fPacketContent = parent;
+
+			mnt->fOutput(mnt->fPacket);
+
+			delete parent;
+			parent = nullptr;
+
+			dir->fColor = kHeFSBlack;
+
+			mnt->fPacket.fPacketLba		= start;
+			mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+			mnt->fPacket.fPacketContent = dir;
+
+			mnt->fOutput(mnt->fPacket);
 		}
 
 		/// @brief Get the index node of a file or directory.
@@ -402,7 +407,7 @@ namespace Kernel
 						mnt->fPacket.fPacketLba		= start;
 						mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
 						mnt->fPacket.fPacketContent = dir;
-						
+
 						mnt->fOutput(mnt->fPacket);
 					}
 
