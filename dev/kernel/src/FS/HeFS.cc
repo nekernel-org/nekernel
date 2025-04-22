@@ -25,6 +25,13 @@ namespace Kernel
 	{
 		/// @brief Forward declarations of internal functions.
 
+		/// @brief Traverse the RB-Tree of the filesystem.
+		/// @param dir The directory to traverse.
+		/// @param start The starting point of the traversal.
+		/// @note This function is used to traverse the RB-Tree of the filesystem.
+		/// @internal Internal filesystem use only.
+		STATIC ATTRIBUTE(unused) Void hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start);
+
 		/// @brief Get the index node of a file or directory.
 		/// @param root The root node of the filesystem.
 		/// @param mnt The drive to read from.
@@ -35,10 +42,144 @@ namespace Kernel
 
 		/// @brief Allocate a new index node.
 		/// @param root The root node of the filesystem.
-		/// @param mnt The drive to read from.
+		/// @param mnt The drive to read/write from.
 		/// @param parent_dir_name The name of the parent directory.
 		/// @return Status, see err_global_get().
 		STATIC ATTRIBUTE(unused) BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept;
+
+		/// @brief Balance RB-Tree of the filesystem.
+		/// @param root The root node of the filesystem.
+		/// @param mnt The drive to read/write from.
+		/// @return Status, see err_global_get().
+		STATIC ATTRIBUTE(unused) BOOL hefsi_balance_filesystem(HEFS_BOOT_NODE* root, DriveTrait* mnt);
+
+		/// @brief Traverse the RB-Tree of the filesystem.
+		/// @param dir The directory to traverse.
+		/// @param start The starting point of the traversal.
+		/// @note This function is used to traverse the RB-Tree of the filesystem.
+		/// @internal Internal filesystem use only.
+		STATIC ATTRIBUTE(unused) Void hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start)
+		{
+			start = dir->fNext;
+
+			if (dir->fColor == kHeFSBlack)
+			{
+				if (dir->fParent != 0)
+					start = dir->fParent;
+			}
+			else
+			{
+				if (dir->fChild != 0)
+					start = dir->fChild;
+				else if (dir->fNext != 0)
+					start = dir->fNext;
+				else if (dir->fPrev != 0)
+					start = dir->fPrev;
+				else
+					start = dir->fParent;
+			}
+		}
+
+		/***********************************************************************************/
+		/// @brief Rotate the RB-Tree to the left.
+		/// @internal
+		/***********************************************************************************/
+		STATIC ATTRIBUTE(unused) Void hefsi_rotate_left(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt)
+		{
+			HEFS_INDEX_NODE_DIRECTORY* parent = new HEFS_INDEX_NODE_DIRECTORY();
+
+			if (!parent)
+			{
+				kout << "Error: Failed to allocate memory for index node.\r";
+				return;
+			}
+
+			mnt->fPacket.fPacketLba		= dir->fParent;
+			mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+			mnt->fPacket.fPacketContent = parent;
+
+			mnt->fInput(mnt->fPacket);
+
+			HEFS_INDEX_NODE_DIRECTORY* grand_parent = new HEFS_INDEX_NODE_DIRECTORY();
+
+			if (!grand_parent)
+			{
+				delete grand_parent;
+				kout << "Error: Failed to allocate memory for index node.\r";
+				return;
+			}
+
+			mnt->fPacket.fPacketLba		= parent->fParent;
+			mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+			mnt->fPacket.fPacketContent = grand_parent;
+
+			mnt->fInput(mnt->fPacket);
+
+			dir->fParent	= parent->fParent;
+			parent->fParent = start;
+			parent->fNext	= dir->fChild;
+			dir->fChild		= dir->fParent;
+
+			mnt->fPacket.fPacketLba		= parent->fParent;
+			mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+			mnt->fPacket.fPacketContent = grand_parent;
+
+			mnt->fOutput(mnt->fPacket);
+
+			mnt->fPacket.fPacketLba		= dir->fParent;
+			mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+			mnt->fPacket.fPacketContent = parent;
+
+			mnt->fOutput(mnt->fPacket);
+
+			delete parent;
+			parent = nullptr;
+
+			delete grand_parent;
+			grand_parent = nullptr;
+
+			dir->fColor = kHeFSBlack;
+		}
+
+		/***********************************************************************************/
+		/// @brief Rotate the RB-Tree to the right.
+		/// @internal
+		/***********************************************************************************/
+		STATIC ATTRIBUTE(unused) Void hefsi_rotate_right(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt)
+		{
+			if (dir->fChild || dir->fNext || dir->fPrev)
+			{
+				HEFS_INDEX_NODE_DIRECTORY* parent = new HEFS_INDEX_NODE_DIRECTORY();
+
+				mnt->fPacket.fPacketLba		= dir->fParent;
+				mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+				mnt->fPacket.fPacketContent = parent;
+
+				mnt->fInput(mnt->fPacket);
+
+				parent->fParent = dir->fParent;
+				dir->fParent	= parent->fParent;
+				dir->fNext		= parent->fChild;
+				parent->fChild	= start;
+
+				mnt->fPacket.fPacketLba		= dir->fParent;
+				mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+				mnt->fPacket.fPacketContent = parent;
+
+				mnt->fOutput(mnt->fPacket);
+
+				delete parent;
+				parent = nullptr;
+
+				dir->fColor = kHeFSBlack;
+
+				mnt->fPacket.fPacketLba		= start;
+				mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+				mnt->fPacket.fPacketContent = dir;
+
+				mnt->fOutput(mnt->fPacket);
+			}
+		}
 
 		/// @brief Get the index node of a file or directory.
 		/// @param root The root node of the filesystem.
@@ -48,7 +189,7 @@ namespace Kernel
 		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
 		STATIC ATTRIBUTE(unused) HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
 		{
-			if (root)
+			if (root && mnt)
 			{
 				HEFS_INDEX_NODE*		   node = new HEFS_INDEX_NODE();
 				HEFS_INDEX_NODE_DIRECTORY* dir	= new HEFS_INDEX_NODE_DIRECTORY();
@@ -64,8 +205,14 @@ namespace Kernel
 
 				auto hop_watch = 0;
 
-				while (start != end)
+				while (YES)
 				{
+					if (start > end)
+					{
+						kout << "Error: Invalid start/end values.\r";
+						break;
+					}
+
 					if (hop_watch > 100)
 					{
 						kout << "Error: Hop watch exceeded, filesystem is stalling.\r";
@@ -139,24 +286,7 @@ namespace Kernel
 						}
 					}
 
-					start = dir->fNext;
-
-					if (dir->fColor == kHeFSBlack)
-					{
-						if (dir->fParent != 0)
-							start = dir->fParent;
-					}
-					else
-					{
-						if (dir->fChild != 0)
-							start = dir->fChild;
-						else if (dir->fNext != 0)
-							start = dir->fNext;
-						else if (dir->fPrev != 0)
-							start = dir->fPrev;
-						else
-							start = dir->fParent;
-					}
+					hefsi_traverse_tree(dir, start);
 				}
 
 				delete dir;
@@ -180,10 +310,191 @@ namespace Kernel
 		/// @return Status, see err_global_get().
 		STATIC ATTRIBUTE(unused) BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept
 		{
-			NE_UNUSED(root);
-			NE_UNUSED(mnt);
-			NE_UNUSED(parent_dir_name);
-			NE_UNUSED(node);
+			if (root && mnt)
+			{
+				HEFS_INDEX_NODE_DIRECTORY* dir = new HEFS_INDEX_NODE_DIRECTORY();
+
+				auto start = root->fStartIND;
+
+				auto hop_watch = 0;
+
+				while (YES)
+				{
+					if (hop_watch > 100)
+					{
+						kout << "Error: Hop watch exceeded, filesystem is stalling.\r";
+						break;
+					}
+
+					if (start == 0)
+					{
+						++hop_watch;
+						start = root->fStartIND;
+					}
+
+					mnt->fPacket.fPacketLba		= start;
+					mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+					mnt->fPacket.fPacketContent = dir;
+
+					mnt->fInput(mnt->fPacket);
+
+					if (KStringBuilder::Equals(dir->fName, parent_dir_name))
+					{
+						for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; ++inode_index)
+						{
+							if (dir->fIndexNodeStart[inode_index] != 0 ||
+								dir->fIndexNodeEnd[inode_index] != 0)
+							{
+								mnt->fPacket.fPacketLba		= (!dir->fIndexNodeStart[inode_index]) ? dir->fIndexNodeEnd[inode_index] : dir->fIndexNodeStart[inode_index];
+								mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
+								mnt->fPacket.fPacketContent = node;
+
+								mnt->fOutput(mnt->fPacket);
+
+								if (mnt->fPacket.fPacketGood)
+								{
+									delete dir;
+									dir = nullptr;
+
+									return YES;
+								}
+							}
+						}
+					}
+
+					hefsi_traverse_tree(dir, start);
+				}
+
+				delete dir;
+				dir = nullptr;
+
+				return YES;
+			}
+
+			return NO;
+		}
+
+		/// @brief Balance RB-Tree of the filesystem.
+		/// @param root The root node of the filesystem.
+		/// @param mnt The drive to read/write from.
+		/// @return Status, see err_global_get().
+		STATIC ATTRIBUTE(unused) BOOL hefsi_balance_filesystem(HEFS_BOOT_NODE* root, DriveTrait* mnt)
+		{
+			if (root && mnt)
+			{
+				HEFS_INDEX_NODE_DIRECTORY* dir		  = new HEFS_INDEX_NODE_DIRECTORY();
+				HEFS_INDEX_NODE_DIRECTORY* dir_parent = new HEFS_INDEX_NODE_DIRECTORY();
+
+				auto start = root->fStartIND;
+
+				while (YES)
+				{
+					mnt->fPacket.fPacketLba		= start;
+					mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+					mnt->fPacket.fPacketContent = dir;
+
+					mnt->fInput(mnt->fPacket);
+
+					if (start == root->fStartIND)
+					{
+						dir->fColor = kHeFSBlack;
+
+						mnt->fPacket.fPacketLba		= start;
+						mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+						mnt->fPacket.fPacketContent = dir;
+						
+						mnt->fOutput(mnt->fPacket);
+					}
+
+					mnt->fPacket.fPacketLba		= dir->fParent;
+					mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+					mnt->fPacket.fPacketContent = dir_parent;
+
+					mnt->fInput(mnt->fPacket);
+
+					if (dir_parent->fColor != kHeFSRed)
+					{
+						delete dir_parent;
+						delete dir;
+
+						dir		   = nullptr;
+						dir_parent = nullptr;
+
+						err_global_get() = kErrorDiskIsCorrupted;
+
+						return NO;
+					}
+
+					if (!mnt->fPacket.fPacketGood)
+					{
+						delete dir;
+						dir = nullptr;
+
+						err_global_get() = kErrorDiskIsCorrupted;
+
+						return NO;
+					}
+
+					HEFS_INDEX_NODE_DIRECTORY dir_uncle{};
+
+					mnt->fPacket.fPacketLba		= dir_parent->fNext;
+					mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+					mnt->fPacket.fPacketContent = &dir_uncle;
+
+					mnt->fInput(mnt->fPacket);
+
+					if (dir_uncle.fColor == kHeFSRed)
+					{
+						dir_parent->fColor = kHeFSBlack;
+						dir_uncle.fColor   = kHeFSBlack;
+
+						mnt->fPacket.fPacketLba		= dir->fParent;
+						mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+						mnt->fPacket.fPacketContent = dir_parent;
+
+						mnt->fOutput(mnt->fPacket);
+
+						mnt->fPacket.fPacketLba		= dir_uncle.fParent;
+						mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+						mnt->fPacket.fPacketContent = &dir_uncle;
+
+						mnt->fOutput(mnt->fPacket);
+
+						hefsi_traverse_tree(dir, start);
+						continue;
+					}
+					else
+					{
+						if (dir_parent->fNext == start)
+						{
+							hefsi_rotate_left(dir, start, mnt);
+							hefsi_traverse_tree(dir, start);
+
+							continue;
+						}
+
+						dir_parent->fColor = kHeFSBlack;
+
+						mnt->fPacket.fPacketLba		= dir->fParent;
+						mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+						mnt->fPacket.fPacketContent = dir_parent;
+
+						mnt->fOutput(mnt->fPacket);
+
+						hefsi_rotate_right(dir, start, mnt);
+						hefsi_traverse_tree(dir, start);
+
+						continue;
+					}
+
+					hefsi_traverse_tree(dir, start);
+				}
+
+				delete dir;
+				dir = nullptr;
+
+				return YES;
+			}
 
 			return NO;
 		}

@@ -230,8 +230,11 @@ namespace Kernel
 			memory_heap_list = next;
 		}
 
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		//! Free the memory's page directory.
-		HAL::mm_free_bitmap(this->VMRegister);
+		if (this->VMRegister)
+			HAL::mm_free_bitmap(this->VMRegister);
+#endif
 
 		//! Delete image if not done already.
 		if (this->Image.fCode && mm_is_valid_heap(this->Image.fCode))
@@ -273,8 +276,6 @@ namespace Kernel
 		this->Status	= ProcessStatusKind::kFinished;
 
 		--this->ProcessParentTeam->mProcessCount;
-
-		delete this;
 	}
 
 	/***********************************************************************************/
