@@ -27,7 +27,7 @@ STATIC Kernel::Void hal_pre_init_scheduler()
 {
 	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
-		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		  = Kernel::UserProcess();
+		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		  = Kernel::USER_PROCESS();
 		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i].Status = Kernel::ProcessStatusKind::kKilled;
 	}
 }

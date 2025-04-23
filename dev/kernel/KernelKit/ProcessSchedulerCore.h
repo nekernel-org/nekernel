@@ -7,11 +7,12 @@
 #pragma once
 
 #include <NewKit/Defines.h>
+#include <NewKit/ErrorOr.h>
 
 namespace Kernel
 {
-	class UserProcess;
-    class KernelProcess;
+	class USER_PROCESS;
+	class KERNEL_PROCESS;
 	class UserProcessTeam;
 
 	/***********************************************************************************/
@@ -117,9 +118,9 @@ namespace Kernel
 	/***********************************************************************************/
 	using ImagePtr = VoidPtr;
 
-	struct ProcessImage final
+	struct PROCESS_IMAGE final
 	{
-		explicit ProcessImage() = default;
+		explicit PROCESS_IMAGE() = default;
 
 		ImagePtr fCode;
 		ImagePtr fBlob;
@@ -132,6 +133,26 @@ namespace Kernel
 		Bool HasImage()
 		{
 			return this->fBlob != nullptr;
+		}
+
+		ErrorOr<ImagePtr> Leak()
+		{
+			if (this->fCode)
+			{
+				return ErrorOr<ImagePtr>{this->fCode};
+			}
+
+			return ErrorOr<ImagePtr>{nullptr};
+		}
+
+		ErrorOr<ImagePtr> LeakBlob()
+		{
+			if (this->fBlob)
+			{
+				return ErrorOr<ImagePtr>{this->fBlob};
+			}
+
+			return ErrorOr<ImagePtr>{nullptr};
 		}
 	};
 } // namespace Kernel

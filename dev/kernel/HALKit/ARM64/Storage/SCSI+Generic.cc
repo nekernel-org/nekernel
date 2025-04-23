@@ -4,10 +4,10 @@
 
 ------------------------------------------- */
 
-#pragma once
-
 #include <modules/SCSI/SCSI.h>
 
-namespace Kernel
-{
-} // namespace Kernel
+using namespace Kernel;
+
+///! @brief ATAPI SCSI packet.
+const ATTRIBUTE(unused) scsi_packet_type_12 kCDRomPacketTemplate = {0x43, 0, 1, 0, 0, 0,
+																	0, 12, 0x40, 0, 0};

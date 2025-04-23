@@ -16,7 +16,7 @@ namespace Kernel
 	/// @param data the data packet.
 	/// @return Whether the swap was written to disk, or not.
 	/***********************************************************************************/
-	BOOL SwapDiskInterface::Write(const Char* fork_name, SizeT fork_name_len, SWAP_DISK_HEADER* data)
+	BOOL DiskSwapInterface::Write(const Char* fork_name, SizeT fork_name_len, SWAP_DISK_HEADER* data)
 	{
 		if (!fork_name || !fork_name_len)
 			return NO;
@@ -27,9 +27,9 @@ namespace Kernel
 		if (!data)
 			return NO;
 
-		FileStream file(kSwapPageFile, "wb");
+		FileStream file(kSwapPageFilePath, kRestrictWRB);
 
-		auto ret = file.Write(fork_name, data, sizeof(SWAP_DISK_HEADER) + data->fBlobSz);
+		ErrorOr<Int64> ret = file.Write(fork_name, data, sizeof(SWAP_DISK_HEADER) + data->fBlobSz);
 
 		if (ret.Error())
 			return NO;
@@ -44,7 +44,7 @@ namespace Kernel
 	/// @param data the data packet length.
 	/// @return Whether the swap was fetched to disk, or not.
 	/***********************************************************************************/
-	SWAP_DISK_HEADER* SwapDiskInterface::Read(const Char* fork_name, SizeT fork_name_len, SizeT data_len)
+	SWAP_DISK_HEADER* DiskSwapInterface::Read(const Char* fork_name, SizeT fork_name_len, SizeT data_len)
 	{
 		if (!fork_name || !fork_name_len)
 			return nullptr;
@@ -58,7 +58,7 @@ namespace Kernel
 		if (data_len == 0)
 			return nullptr;
 
-		FileStream file(kSwapPageFile, "rb");
+		FileStream file(kSwapPageFilePath, kRestrictRB);
 
 		VoidPtr blob = file.Read(fork_name, sizeof(SWAP_DISK_HEADER) + data_len);
 

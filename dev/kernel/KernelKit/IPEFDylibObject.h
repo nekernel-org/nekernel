@@ -99,8 +99,8 @@ namespace Kernel
 
 	typedef IPEFDylibObject* IDylibRef;
 
-	EXTERN_C IDylibRef rtl_init_dylib(UserProcess& header);
-	EXTERN_C Void	   rtl_fini_dylib(UserProcess& header, IDylibRef lib, Bool* successful);
+	EXTERN_C IDylibRef rtl_init_dylib(USER_PROCESS& header);
+	EXTERN_C Void	   rtl_fini_dylib(USER_PROCESS& header, IDylibRef lib, Bool* successful);
 } // namespace Kernel
 
 #endif /* ifndef __KERNELKIT_SHARED_OBJECT_H__ */

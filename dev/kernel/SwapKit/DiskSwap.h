@@ -9,9 +9,10 @@
 
 #include <NewKit/Defines.h>
 #include <CompilerKit/CompilerKit.h>
+#include <hint/CompilerHint.h>
 
 #define kSwapBlockMaxSize (mib_cast(16))
-#define kSwapPageFile	  "/boot/pagefile.sys"
+#define kSwapPageFilePath "/boot/pagefile.sys"
 
 /// @file SwapDisk.h
 /// @brief Virtual memory swap disk.
@@ -19,15 +20,18 @@
 namespace Kernel
 {
 	struct SWAP_DISK_HEADER;
+	class DiskSwapInterface;
 
 	/// @brief Virtual memory interface to swap memory chunks onto disk.
-	class SwapDiskInterface final
+	/// @note The class only supports the NeFS as of right now, as it is using forks to write data into disk.
+	class DiskSwapInterface final
 	{
 	public:
-		explicit SwapDiskInterface() = default;
-		~SwapDiskInterface()		 = default;
+		explicit DiskSwapInterface() = default;
+		~DiskSwapInterface()		 = default;
 
-		NE_COPY_DEFAULT(SwapDiskInterface)
+		NE_COPY_DELETE(DiskSwapInterface)
+		NE_MOVE_DELETE(DiskSwapInterface)
 
 	public:
 		/***********************************************************************************/
@@ -46,7 +50,7 @@ namespace Kernel
 		/// @param data the data packet length.
 		/// @return Whether the swap was fetched to disk, or not.
 		/***********************************************************************************/
-		SWAP_DISK_HEADER* Read(const Char* fork_name, SizeT fork_name_len, SizeT data_len);
+		_Output SWAP_DISK_HEADER* Read(const Char* fork_name, SizeT fork_name_len, SizeT data_len);
 	};
 
 	/// @brief Swap disk header, containing information about the held virtual memory.

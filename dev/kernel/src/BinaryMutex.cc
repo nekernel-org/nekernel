@@ -16,7 +16,7 @@ namespace Kernel
 	{
 		if (fLockingProcess)
 		{
-			fLockingProcess		   = UserProcess();
+			fLockingProcess		   = USER_PROCESS();
 			fLockingProcess.Status = ProcessStatusKind::kFrozen;
 			return Yes;
 		}
@@ -27,7 +27,7 @@ namespace Kernel
 	/***********************************************************************************/
 	/// @brief Locks process in the semaphore.
 	/***********************************************************************************/
-	Bool BinaryMutex::Lock(UserProcess& process)
+	Bool BinaryMutex::Lock(USER_PROCESS& process)
 	{
 		if (!process || fLockingProcess)
 			return No;
@@ -48,7 +48,7 @@ namespace Kernel
 	/***********************************************************************************/
 	/// @brief Try lock or wait.
 	/***********************************************************************************/
-	Bool BinaryMutex::LockOrWait(UserProcess& process, TimerInterface* timer)
+	Bool BinaryMutex::LockOrWait(USER_PROCESS& process, TimerInterface* timer)
 	{
 		if (timer == nullptr)
 			return No;

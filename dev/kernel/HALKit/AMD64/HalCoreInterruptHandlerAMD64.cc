@@ -24,9 +24,9 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp)
 
 	Kernel::kout << "Kernel: General Protection Fault.\r";
 
-	process.Leak().ProcessSignal.SignalArg		= rsp;
-	process.Leak().ProcessSignal.SignalID		= SIGKILL;
-	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+	process.Leak().Signal.SignalArg		 = rsp;
+	process.Leak().Signal.SignalID		 = SIGKILL;
+	process.Leak().Signal.PreviousStatus = process.Leak().Status;
 
 	Kernel::kout << "Kernel: SIGKILL status.\r";
 
@@ -49,9 +49,9 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp)
 	Kernel::kout << "Kernel: Page Fault.\r";
 	Kernel::kout << "Kernel: SIGKILL\r";
 
-	process.Leak().ProcessSignal.SignalArg		= rsp;
-	process.Leak().ProcessSignal.SignalID		= SIGKILL;
-	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+	process.Leak().Signal.SignalArg		 = rsp;
+	process.Leak().Signal.SignalID		 = SIGKILL;
+	process.Leak().Signal.PreviousStatus = process.Leak().Status;
 
 	process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
@@ -99,9 +99,9 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp)
 
 	Kernel::kout << "Kernel: Math error (division by zero?).\r";
 
-	process.Leak().ProcessSignal.SignalArg		= rsp;
-	process.Leak().ProcessSignal.SignalID		= SIGKILL;
-	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+	process.Leak().Signal.SignalArg		 = rsp;
+	process.Leak().Signal.SignalID		 = SIGKILL;
+	process.Leak().Signal.PreviousStatus = process.Leak().Status;
 
 	Kernel::kout << "Kernel: SIGKILL status.\r";
 
@@ -123,9 +123,9 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp)
 
 	Kernel::kout << "Kernel: Generic Process Fault.\r";
 
-	process.Leak().ProcessSignal.SignalArg		= rsp;
-	process.Leak().ProcessSignal.SignalID		= SIGKILL;
-	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+	process.Leak().Signal.SignalArg		 = rsp;
+	process.Leak().Signal.SignalID		 = SIGKILL;
+	process.Leak().Signal.PreviousStatus = process.Leak().Status;
 
 	Kernel::kout << "Kernel: SIGKILL status.\r";
 
@@ -151,10 +151,10 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 	(void)(Kernel::kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
 	Kernel::kout << "Kernel: SIGTRAP\r";
 
-	process.Leak().ProcessSignal.SignalArg = rip;
-	process.Leak().ProcessSignal.SignalID  = SIGTRAP;
+	process.Leak().Signal.SignalArg = rip;
+	process.Leak().Signal.SignalID	= SIGTRAP;
 
-	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+	process.Leak().Signal.PreviousStatus = process.Leak().Status;
 
 	Kernel::kout << "Kernel: SIGTRAP status.\r";
 
@@ -174,9 +174,9 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp)
 
 	Kernel::kout << "Kernel: Undefined Opcode.\r";
 
-	process.Leak().ProcessSignal.SignalArg		= rsp;
-	process.Leak().ProcessSignal.SignalID		= SIGKILL;
-	process.Leak().ProcessSignal.PreviousStatus = process.Leak().Status;
+	process.Leak().Signal.SignalArg		 = rsp;
+	process.Leak().Signal.SignalID		 = SIGKILL;
+	process.Leak().Signal.PreviousStatus = process.Leak().Status;
 
 	Kernel::kout << "Kernel: SIGKILL status.\r";
 

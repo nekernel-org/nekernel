@@ -40,8 +40,8 @@
 #define kRestrictR	 "r"
 #define kRestrictRB	 "rb"
 #define kRestrictW	 "w"
-#define kRestrictWB	 "rw"
-#define kRestrictRWB "rwb"
+#define kRestrictWR	 "rw"
+#define kRestrictWRB "rwb"
 
 #define kRestrictMax (5U)
 
@@ -354,7 +354,7 @@ namespace Kernel
 				.fMappedTo = kFileMgrRestrictReadBinary,
 			},
 			{
-				.fRestrict = kRestrictRWB,
+				.fRestrict = kRestrictWRB,
 				.fMappedTo = kFileMgrRestrictReadWriteBinary,
 			},
 			{
@@ -362,7 +362,7 @@ namespace Kernel
 				.fMappedTo = kFileMgrRestrictWrite,
 			},
 			{
-				.fRestrict = kRestrictWB,
+				.fRestrict = kRestrictWR,
 				.fMappedTo = kFileMgrRestrictReadWrite,
 			}};
 

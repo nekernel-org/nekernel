@@ -9,7 +9,13 @@
 #include <NewKit/Defines.h>
 
 /// @file SCSI.h
-/// @brief Serial SCSI driver.
+/// @brief Small Computer System Interface device.
 
-template <int PacketBitLen>
-using scsi_packet_type = Kernel::UInt16[PacketBitLen];
+namespace Kernel
+{
+	template <int PacketBitLen>
+	using scsi_packet_type	  = Kernel::UInt16[PacketBitLen];
+	using scsi_packet_type_12 = scsi_packet_type<12>;
+
+	extern const scsi_packet_type<12> kCDRomPacketTemplate;
+} // namespace Kernel
