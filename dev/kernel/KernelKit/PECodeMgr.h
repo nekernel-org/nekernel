@@ -22,3 +22,58 @@
 #include <KernelKit/PE.h>
 #include <NewKit/ErrorOr.h>
 #include <NewKit/KString.h>
+#include <KernelKit/FileMgr.h>
+#include <KernelKit/LoaderInterface.h>
+
+#ifndef INC_PROCESS_SCHEDULER_H
+#include <KernelKit/ProcessScheduler.h>
+#endif
+
+#define kPefApplicationMime "application/vnd-portable-executable"
+
+namespace Kernel
+{
+	///
+	/// \name PE32Loader
+	/// \brief PE32+ loader class.
+	///
+	class PE32Loader : public LoaderInterface
+	{
+	private:
+		explicit PE32Loader() = delete;
+
+	public:
+		explicit PE32Loader(const VoidPtr blob);
+		explicit PE32Loader(const Char* path);
+		~PE32Loader() override;
+
+	public:
+		NE_COPY_DEFAULT(PE32Loader)
+
+	public:
+		const Char* Path() override;
+		const Char* AsString() override;
+		const Char* MIME() override;
+
+	public:
+		ErrorOr<VoidPtr> FindStart() override;
+		VoidPtr			 FindSymbol(const Char* name, Int32 kind) override;
+		ErrorOr<VoidPtr> GetBlob() override;
+
+	public:
+		bool IsLoaded() noexcept;
+
+	private:
+#ifdef __FSKIT_INCLUDES_NEFS__
+		OwnPtr<FileStream<Char, NeFileSystemMgr>> fFile;
+#elif defined(__FSKIT_INCLUDES_HEFS__)
+		OwnPtr<FileStream<Char, HeFileSystemMgr>> fFile;
+#else
+		OwnPtr<FileStream<Char>> fFile;
+#endif // __FSKIT_INCLUDES_NEFS__
+
+		Ref<KString> fPath;
+		VoidPtr		 fCachedBlob;
+		bool		 fBad;
+	};
+} // namespace Kernel

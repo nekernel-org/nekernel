@@ -3,7 +3,7 @@
 	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 	FILE: UserProcessScheduler.cc
-	PURPOSE: Low level/Ring-3 USER_PROCESS scheduler.
+	PURPOSE: Low level/Ring-3 process scheduler.
 
 ------------------------------------------- */
 
@@ -262,7 +262,7 @@ namespace Kernel
 		{
 			Bool success = false;
 
-			rtl_fini_dylib(*this, reinterpret_cast<IPEFDylibObject*>(this->DylibDelegate), &success);
+			rtl_fini_dylib_pef(*this, reinterpret_cast<IPEFDylibObject*>(this->DylibDelegate), &success);
 
 			if (!success)
 			{
@@ -357,7 +357,7 @@ namespace Kernel
 		switch (process.Kind)
 		{
 		case USER_PROCESS::kExecutableDylibKind: {
-			process.DylibDelegate = rtl_init_dylib(process);
+			process.DylibDelegate = rtl_init_dylib_pef(process);
 			MUST_PASS(process.DylibDelegate);
 			break;
 		}

@@ -3,11 +3,11 @@
 	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 	FILE: UserProcessScheduler.inl
-	PURPOSE: Low level/Ring-3 USER_PROCESS scheduler.
+	PURPOSE: Low level/Ring-3 process scheduler.
 
 ------------------------------------------- */
 
-/// @brief USER_PROCESS scheduler inline definitions.
+/// @brief USER_PROCESS inline definitions.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /// @date Tue Apr 22 22:01:07 CEST 2025
 
@@ -57,7 +57,7 @@ namespace Kernel
 			entry = entry->MemoryNext;
 		}
 
-		kout << "Invalid Pointer: Trying to free a pointer which doesn't exist.\r";
+		kout << "USER_PROCESS: Trying to free a pointer which doesn't exist.\r";
 
 		this->Crash();
 

@@ -15,7 +15,7 @@
 #include <KernelKit/LockDelegate.h>
 #include <KernelKit/User.h>
 #include <NewKit/MutableArray.h>
-#include <KernelKit/ProcessSchedulerCore.h>
+#include <KernelKit/CoreProcessScheduler.h>
 
 #define kSchedMinMicroTime		  (AffinityKind::kStandard)
 #define kSchedInvalidPID		  (-1)

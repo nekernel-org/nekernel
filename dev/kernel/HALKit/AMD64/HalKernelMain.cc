@@ -25,7 +25,7 @@ STATIC Kernel::Void hal_pre_init_scheduler() noexcept
 {
 	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
-		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		  = Kernel::USER_PROCESS();
+		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i] = Kernel::USER_PROCESS();
 	}
 }
 

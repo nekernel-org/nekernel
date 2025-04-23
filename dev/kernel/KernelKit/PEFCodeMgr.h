@@ -16,7 +16,7 @@
 #include <KernelKit/ProcessScheduler.h>
 #endif
 
-#define kPefApplicationMime "application/vnd-amlal-executable"
+#define kPefApplicationMime "application/vnd-nekernel-executable"
 
 namespace Kernel
 {
@@ -53,6 +53,8 @@ namespace Kernel
 	private:
 #ifdef __FSKIT_INCLUDES_NEFS__
 		OwnPtr<FileStream<Char, NeFileSystemMgr>> fFile;
+#elif defined(__FSKIT_INCLUDES_HEFS__)
+		OwnPtr<FileStream<Char, HeFileSystemMgr>> fFile;
 #else
 		OwnPtr<FileStream<Char>> fFile;
 #endif // __FSKIT_INCLUDES_NEFS__

@@ -10,8 +10,9 @@
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DriveMgr.h>
 
-#define kIndexerCatalogNameLength 256U
-#define kIndexerClaimed			  0xCF
+#define kIndexerCatalogNameLength (256U)
+#define kIndexerClaimed			  (0xCF)
+#define kIndexerUnclaimed		  (0xCA)
 
 namespace Kernel
 {

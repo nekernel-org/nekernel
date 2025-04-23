@@ -81,6 +81,13 @@ inline constexpr UInt16 kHeFSBlockCount = 0x10;
 
 inline constexpr UInt16 kHeFSInvalidVID = 0xFFFF;
 
+namespace Kernel
+{
+	/// @brief Access time type.
+	/// @details Used to keep track of the INode, INodeDir allocation status.
+	typedef UInt64 ATime;
+} // namespace Kernel
+
 /// @brief HeFS Boot node.
 /// @details Acts like a superblock, it contains the information about the filesystem.
 /// @note The boot node is the first block of the filesystem.
@@ -108,12 +115,8 @@ struct PACKED HEFS_BOOT_NODE final
 	Kernel::UInt64	  fReserved4;				  /// @brief Reserved for future use.
 };
 
-/// @brief Access time type.
-/// @details Used to keep track of the INode, INodeDir allocation status.
-typedef Kernel::UInt64 ATime;
-
-inline constexpr ATime kHeFSTimeInvalid = 0x0000000000000000;
-inline constexpr ATime kHeFSTimeMax		= 0xFFFFFFFFFFFFFFFF;
+inline constexpr Kernel::ATime kHeFSTimeInvalid = 0x0000000000000000;
+inline constexpr Kernel::ATime kHeFSTimeMax		= 0xFFFFFFFFFFFFFFFF;
 
 /// @brief HeFS index node.
 /// @details This structure is used to store the file information of a file.
@@ -127,7 +130,7 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE final
 	Kernel::UInt32	  fSize;													  /// @brief File size.
 	Kernel::UInt32	  fChecksum, fRecoverChecksum, fBlockChecksum, fLinkChecksum; /// @brief Checksum of the file, recovery checksum, block checksum, link checksum.
 
-	ATime		   fCreated, fAccessed, fModified, fDeleted; /// @brief File timestamps.
+	Kernel::ATime  fCreated, fAccessed, fModified, fDeleted; /// @brief File timestamps.
 	Kernel::UInt32 fUID, fGID;								 /// @brief User ID and Group ID of the file.
 	Kernel::UInt32 fMode;									 /// @brief File mode. (read, write, execute, etc).
 
@@ -160,7 +163,7 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final
 	Kernel::UInt32 fSize;						  /// @brief Size of the directory.
 	Kernel::UInt32 fChecksum, fIndexNodeChecksum; /// @brief Checksum of the file, index node checksum.
 
-	ATime		   fCreated, fAccessed, fModified, fDeleted; /// @brief File timestamps.
+	Kernel::ATime  fCreated, fAccessed, fModified, fDeleted; /// @brief File timestamps.
 	Kernel::UInt32 fUID, fGID;								 /// @brief User ID and Group ID of the file.
 	Kernel::UInt32 fMode;									 /// @brief File mode. (read, write, execute, etc).
 
@@ -177,47 +180,47 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final
 
 namespace Kernel::Detail
 {
-	/// @brief HeFS get year from ATime.
-	/// @param raw_atime the raw ATime value.
+	/// @brief HeFS get year from Kernel::ATime.
+	/// @param raw_atime the raw Kernel::ATime value.
 	/// @return the year value.
-	/// @note The year is stored in the upper 32 bits of the ATime value.
-	inline UInt32 hefs_year_get(ATime raw_atime) noexcept
+	/// @note The year is stored in the upper 32 bits of the Kernel::ATime value.
+	inline UInt32 hefs_year_get(Kernel::ATime raw_atime) noexcept
 	{
 		return (raw_atime) >> 32;
 	}
 
-	/// @brief HeFS get month from ATime.
-	/// @param raw_atime the raw ATime value.
+	/// @brief HeFS get month from Kernel::ATime.
+	/// @param raw_atime the raw Kernel::ATime value.
 	/// @return the month value.
-	/// @note The month is stored in the upper 24 bits of the ATime value.
-	inline UInt32 hefs_month_get(ATime raw_atime) noexcept
+	/// @note The month is stored in the upper 24 bits of the Kernel::ATime value.
+	inline UInt32 hefs_month_get(Kernel::ATime raw_atime) noexcept
 	{
 		return (raw_atime) >> 24;
 	}
 
-	/// @brief HeFS get day from ATime.
-	/// @param raw_atime the raw ATime value.
+	/// @brief HeFS get day from Kernel::ATime.
+	/// @param raw_atime the raw Kernel::ATime value.
 	/// @return the day value.
-	/// @note The day is stored in the upper 16 bits of the ATime value.
-	inline UInt32 hefs_day_get(ATime raw_atime) noexcept
+	/// @note The day is stored in the upper 16 bits of the Kernel::ATime value.
+	inline UInt32 hefs_day_get(Kernel::ATime raw_atime) noexcept
 	{
 		return (raw_atime) >> 16;
 	}
 
-	/// @brief HeFS get hour from ATime.
-	/// @param raw_atime the raw ATime value.
+	/// @brief HeFS get hour from Kernel::ATime.
+	/// @param raw_atime the raw Kernel::ATime value.
 	/// @return the hour value.
-	/// @note The hour is stored in the upper 8 bits of the ATime value.
-	inline UInt32 hefs_hour_get(ATime raw_atime) noexcept
+	/// @note The hour is stored in the upper 8 bits of the Kernel::ATime value.
+	inline UInt32 hefs_hour_get(Kernel::ATime raw_atime) noexcept
 	{
 		return (raw_atime) >> 8;
 	}
 
-	/// @brief HeFS get minute from ATime.
-	/// @param raw_atime the raw ATime value.
+	/// @brief HeFS get minute from Kernel::ATime.
+	/// @param raw_atime the raw Kernel::ATime value.
 	/// @return the minute value.
-	/// @note The minute is stored in the lower 8 bits of the ATime value.
-	inline UInt32 hefs_minute_get(ATime raw_atime) noexcept
+	/// @note The minute is stored in the lower 8 bits of the Kernel::ATime value.
+	inline UInt32 hefs_minute_get(Kernel::ATime raw_atime) noexcept
 	{
 		return (raw_atime)&0xFF;
 	}
@@ -262,7 +265,6 @@ namespace Kernel::Detail
 		case kHeFSFlashDrive:
 			return "Flash Drive";
 		case kHeFSUnknown:
-			return "Unknown";
 		default:
 			return "Unknown";
 		}
@@ -314,7 +316,6 @@ namespace Kernel::Detail
 		case kHeFSFileKindSymbolicLink:
 			return "Symbolic Link";
 		case kHeFSFileKindUnknown:
-			return "Unknown";
 		default:
 			return "Unknown";
 		}
@@ -376,6 +377,6 @@ namespace Kernel
 		_Output Bool FormatGPT(_Input _Output DriveTrait* drive, _Input const Lba end_lba, _Input const Int32 flags, const Char* part_name);
 
 	public:
-		UInt32 mDriveIndex{MountpointInterface::kDriveIndexA}; /// @brief Drive index.
+		UInt32 mDriveIndex{MountpointInterface::kDriveIndexA}; /// @brief The drive index which this filesystem is mounted on.
 	};
 } // namespace Kernel

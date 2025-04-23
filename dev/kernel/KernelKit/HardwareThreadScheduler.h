@@ -57,12 +57,12 @@ namespace Kernel
 		operator bool();
 
 	public:
-		void Wake(const bool wakeup = false) noexcept;
-		void Busy(const bool busy = false) noexcept;
+		void Wake(const BOOL wakeup = false) noexcept;
+		void Busy(const BOOL busy = false) noexcept;
 
 	public:
-		bool Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid);
-		bool IsWakeup() noexcept;
+		BOOL Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid);
+		BOOL IsWakeup() noexcept;
 
 	public:
 		HAL::StackFramePtr StackFrame() noexcept;

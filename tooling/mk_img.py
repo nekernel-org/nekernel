@@ -17,11 +17,15 @@ def copy_to_fat(image_path, source_dir):
 
     try:
         files_to_copy = glob.glob(os.path.join(source_dir, "*"))
-        # Now build the command
+        
+        if not files_to_copy:
+            print(f"Warning: No files found in {source_dir}. Nothing to copy.")
+            return
+        
         command = ["mcopy", "-spm", "-i", image_path] + files_to_copy + ["::"]
         subprocess.run(command, check=True)
         
-        print(f"Successfully copied contents of '{source_dir}' into '{image_path}'")
+        print(f"Info: Successfully copied contents of '{source_dir}' into '{image_path}'")
     except FileNotFoundError:
         print("Error: mcopy is not installed. Please install mtools.")
         sys.exit(1)
@@ -29,7 +33,7 @@ def copy_to_fat(image_path, source_dir):
         print(f"Error: mcopy failed with error code {e.returncode}.")
         sys.exit(1)
     except Exception as e:
-        print(f"mcopy failed: {e}")
+        print(f"Error: mcopy: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

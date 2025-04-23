@@ -123,3 +123,5 @@ IMPORT_C void _rtl_assert(Bool expr, const Char* origin);
 #ifndef tib_cast
 #define tib_cast(X) ((UInt64)gib_cast(X) * 1024)
 #endif
+
+#define SCI_UNUSED(X) ((void)X)

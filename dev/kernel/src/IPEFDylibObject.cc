@@ -18,13 +18,13 @@
 
  Revision History:
 
-	01/02/24: Reworked dll ABI, expect a rtl_init_dylib and
- rtl_fini_dylib (amlel) 
+	01/02/24: Reworked dll ABI, expect a rtl_init_dylib_pef and
+ rtl_fini_dylib_pef (amlel) 
  
  	15/02/24: Breaking changes, changed the name of the
  routines. (amlel)
 
-	07/28/24: Replace rt_library_free with rtl_fini_dylib
+	07/28/24: Replace rt_library_free with rtl_fini_dylib_pef
 
 	10/8/24: FIX: Fix log comment.
 
@@ -41,7 +41,7 @@ using namespace Kernel;
 /** @brief Library initializer. */
 /***********************************************************************************/
 
-EXTERN_C IDylibRef rtl_init_dylib(USER_PROCESS& process)
+EXTERN_C IDylibRef rtl_init_dylib_pef(USER_PROCESS& process)
 {
 	IDylibRef dll_obj = tls_new_class<IPEFDylibObject>();
 
@@ -91,7 +91,7 @@ EXTERN_C IDylibRef rtl_init_dylib(USER_PROCESS& process)
 /** @param successful Reports if successful or not. */
 /***********************************************************************************/
 
-EXTERN_C Void rtl_fini_dylib(USER_PROCESS& process, IDylibRef dll_obj, BOOL* successful)
+EXTERN_C Void rtl_fini_dylib_pef(USER_PROCESS& process, IDylibRef dll_obj, BOOL* successful)
 {
 	MUST_PASS(successful);
 

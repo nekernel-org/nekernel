@@ -16,16 +16,13 @@
 
 #include <NewKit/Defines.h>
 
-#define kPeSignature 0x00004550
+#define kPeSignature (0x00004550)
 
-#define kPeDLLBase 0x4000000
-#define kPeEXEBase 0x1000000
+#define kPeMagic32 (0x010b)
+#define kPeMagic64 (0x020b)
 
-#define kPeMagic32 0x010b
-#define kPeMagic64 0x020b
-
-#define kPeMachineAMD64 0x8664
-#define kPeMachineARM64 0xaa64
+#define kPeMachineAMD64 (0x8664)
+#define kPeMachineARM64 (0xaa64)
 
 typedef struct LDR_EXEC_HEADER final
 {

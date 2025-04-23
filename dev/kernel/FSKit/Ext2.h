@@ -26,6 +26,7 @@
 #define kExt2FSRev0 (0)
 #define kExt2FSRev1 (1)
 
+/// @brief EXT2's file types.
 enum
 {
 	kExt2FileTypeUnknown	  = 0,
@@ -38,6 +39,7 @@ enum
 	kExt2FileTypeSymbolicLink = 7
 };
 
+/// @brief The super block structure, located at LBA 1024.
 struct PACKED EXT2_SUPER_BLOCK final
 {
 	Kernel::UInt32 fInodeCount;
