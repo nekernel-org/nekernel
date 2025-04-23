@@ -118,6 +118,9 @@ namespace Kernel
 	/***********************************************************************************/
 	using ImagePtr = VoidPtr;
 
+	/***********************************************************************************/
+	/// @brief Helper class to contain a process's image and blob.
+	/***********************************************************************************/
 	struct PROCESS_IMAGE final
 	{
 		explicit PROCESS_IMAGE() = default;
@@ -142,7 +145,7 @@ namespace Kernel
 				return ErrorOr<ImagePtr>{this->fCode};
 			}
 
-			return ErrorOr<ImagePtr>{nullptr};
+			return ErrorOr<ImagePtr>{kErrorInvalidData};
 		}
 
 		ErrorOr<ImagePtr> LeakBlob()
@@ -152,7 +155,7 @@ namespace Kernel
 				return ErrorOr<ImagePtr>{this->fBlob};
 			}
 
-			return ErrorOr<ImagePtr>{nullptr};
+			return ErrorOr<ImagePtr>{kErrorInvalidData};
 		}
 	};
 } // namespace Kernel

@@ -429,7 +429,7 @@ namespace Boot
 		SetMem(gpt_part.Reserved2, 0, kSectorAlignGPT_PartTbl);
 
 		fDiskDev.Leak().mBase = kGPTPartitionTableLBA; // always always resies at zero block.
-		fDiskDev.Leak().mSize = sizeof(EPM_PART_BLOCK);
+		fDiskDev.Leak().mSize = sizeof(GPT_PARTITION_TABLE);
 
 		fDiskDev.Write((Char*)&gpt_part, sizeof(GPT_PARTITION_TABLE));
 
@@ -449,10 +449,6 @@ namespace Boot
 		CopyMem(gpt_part_entry.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), StrLen(kBlockName));
 
 		SetMem(gpt_part_entry.PartitionTypeGUID.Data4, 0, 8);
-
-		fDiskDev.Leak().mBase = kGPTPartitionTableLBA + sizeof(GPT_PARTITION_TABLE);
-		fDiskDev.Leak().mSize = sizeof(GPT_PARTITION_ENTRY);
-		fDiskDev.Write((Char*)&gpt_part_entry, sizeof(GPT_PARTITION_ENTRY));
 
 		EPM_PART_BLOCK epm_boot{};
 
