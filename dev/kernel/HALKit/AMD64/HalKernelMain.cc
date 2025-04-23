@@ -18,17 +18,14 @@
 #include <FirmwareKit/EFI/EFI.h>
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
-EXTERN_C Kernel::VoidPtr mp_user_switch_proc;
-EXTERN_C Kernel::Char mp_user_switch_proc_stack_begin[];
 
 STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
 
-STATIC Kernel::Void hal_pre_init_scheduler()
+STATIC Kernel::Void hal_pre_init_scheduler() noexcept
 {
 	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
 	{
 		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i]		  = Kernel::USER_PROCESS();
-		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i].Status = Kernel::ProcessStatusKind::kKilled;
 	}
 }
 
