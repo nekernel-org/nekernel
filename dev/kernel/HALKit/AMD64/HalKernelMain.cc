@@ -44,6 +44,7 @@ EXTERN_C Int32 hal_init_platform(
 	FB::fb_clear_video();
 
 	fw_init_efi((EfiSystemTable*)handover_hdr->f_FirmwareCustomTables[1]);
+
 	Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey, handover_hdr->f_HardwareTables.f_ImageHandle);
 
 	/************************************** */
@@ -101,19 +102,21 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	Kernel::HardwareTimer timer(rtl_ms(kSchedTeamSwitchMS));
 
-	SizeT i = 0U;
+	SizeT team_index = 0U;
 
+	/// @brief This just loops over the teams and switches between them.
+	/// @details Not even round-robin, just a simple loop in this boot core we're at.
 	while (YES)
 	{
 		timer.Wait();
 
-		UserProcessScheduler::The().SwitchTeam(kTeams[i]);
+		UserProcessScheduler::The().SwitchTeam(kTeams[team_index]);
 
-		++i;
+		++team_index;
 
-		if (i > kSchedTeamCount)
+		if (team_index > kSchedTeamCount)
 		{
-			i = 0U;
+			team_index = 0U;
 		}
 	}
 }
