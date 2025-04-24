@@ -26,6 +26,8 @@
 
 #define kHeFSMinimumDiskSize (gib_cast(4))
 
+#define kHeFSDefaultVoluneName "HeFS Volume"
+
 struct HEFS_BOOT_NODE;
 struct HEFS_INDEX_NODE;
 struct HEFS_INDEX_NODE_DIRECTORY;

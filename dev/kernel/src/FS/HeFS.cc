@@ -30,7 +30,7 @@ namespace Kernel
 		/// @param start The starting point of the traversal.
 		/// @note This function is used to traverse the RB-Tree of the filesystem.
 		/// @internal Internal filesystem use only.
-		STATIC ATTRIBUTE(unused) Void hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start);
+		STATIC ATTRIBUTE(unused) _Output Void hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start);
 
 		/// @brief Get the index node of a file or directory.
 		/// @param root The root node of the filesystem.
@@ -38,36 +38,36 @@ namespace Kernel
 		/// @param dir_name The name of the directory.
 		/// @param file_name The name of the file.
 		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
-		STATIC ATTRIBUTE(unused) HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept;
+		STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept;
 
 		/// @brief Allocate a new index node.
 		/// @param root The root node of the filesystem.
 		/// @param mnt The drive to read/write from.
 		/// @param parent_dir_name The name of the parent directory.
 		/// @return Status, see err_global_get().
-		STATIC ATTRIBUTE(unused) BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept;
+		STATIC ATTRIBUTE(unused) _Output BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept;
 
 		/// @brief Balance RB-Tree of the filesystem.
 		/// @param root The root node of the filesystem.
 		/// @param mnt The drive to read/write from.
 		/// @return Status, see err_global_get().
-		STATIC ATTRIBUTE(unused) BOOL hefsi_balance_filesystem(HEFS_BOOT_NODE* root, DriveTrait* mnt);
+		STATIC ATTRIBUTE(unused) _Output BOOL hefsi_balance_filesystem(HEFS_BOOT_NODE* root, DriveTrait* mnt);
 
 		/// @brief Traverse the RB-Tree of the filesystem.
 		/// @param dir The directory to traverse.
 		/// @param start The starting point of the traversal.
 		/// @note This function is used to traverse the RB-Tree of the filesystem.
 		/// @internal Internal filesystem use only.
-		STATIC ATTRIBUTE(unused) Void hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start)
+		STATIC ATTRIBUTE(unused) _Output Void hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start)
 		{
 			start = dir->fNext;
 
-			if (dir->fColor == kHeFSBlack)
+			if (dir->fColor == kHeFSBlack && start == 0)
 			{
 				if (dir->fParent != 0)
 					start = dir->fParent;
 			}
-			else
+			else if (dir->fColor == kHeFSRed && start == 0)
 			{
 				if (dir->fChild != 0)
 					start = dir->fChild;
@@ -84,7 +84,7 @@ namespace Kernel
 		/// @brief Rotate the RB-Tree to the left.
 		/// @internal
 		/***********************************************************************************/
-		STATIC ATTRIBUTE(unused) Void hefsi_rotate_left(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt)
+		STATIC ATTRIBUTE(unused) _Output Void hefsi_rotate_left(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt)
 		{
 			HEFS_INDEX_NODE_DIRECTORY* parent = new HEFS_INDEX_NODE_DIRECTORY();
 
@@ -146,7 +146,7 @@ namespace Kernel
 		/// @brief Rotate the RB-Tree to the right.
 		/// @internal
 		/***********************************************************************************/
-		STATIC ATTRIBUTE(unused) Void hefsi_rotate_right(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt)
+		STATIC ATTRIBUTE(unused) _Output Void hefsi_rotate_right(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt)
 		{
 			HEFS_INDEX_NODE_DIRECTORY* parent = new HEFS_INDEX_NODE_DIRECTORY();
 
@@ -192,7 +192,7 @@ namespace Kernel
 		/// @param dir_name The name of the directory.
 		/// @param file_name The name of the file.
 		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
-		STATIC ATTRIBUTE(unused) HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
+		STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
 		{
 			if (root && mnt)
 			{
@@ -313,7 +313,7 @@ namespace Kernel
 		/// @param mnt The drive to read from.
 		/// @param parent_dir_name The name of the parent directory.
 		/// @return Status, see err_global_get().
-		STATIC ATTRIBUTE(unused) BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept
+		STATIC ATTRIBUTE(unused) _Output BOOL hefs_allocate_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* parent_dir_name, HEFS_INDEX_NODE* node) noexcept
 		{
 			if (root && mnt)
 			{
@@ -383,7 +383,7 @@ namespace Kernel
 		/// @param root The root node of the filesystem.
 		/// @param mnt The drive to read/write from.
 		/// @return Status, see err_global_get().
-		STATIC ATTRIBUTE(unused) BOOL hefsi_balance_filesystem(HEFS_BOOT_NODE* root, DriveTrait* mnt)
+		STATIC ATTRIBUTE(unused) _Output BOOL hefsi_balance_filesystem(HEFS_BOOT_NODE* root, DriveTrait* mnt)
 		{
 			if (root && mnt)
 			{
@@ -399,6 +399,16 @@ namespace Kernel
 					mnt->fPacket.fPacketContent = dir;
 
 					mnt->fInput(mnt->fPacket);
+
+					if (!mnt->fPacket.fPacketGood)
+					{
+						delete dir;
+						dir = nullptr;
+
+						err_global_get() = kErrorDiskIsCorrupted;
+
+						return NO;
+					}
 
 					if (start == root->fStartIND)
 					{
@@ -416,19 +426,6 @@ namespace Kernel
 					mnt->fPacket.fPacketContent = dir_parent;
 
 					mnt->fInput(mnt->fPacket);
-
-					if (dir_parent->fColor != kHeFSRed)
-					{
-						delete dir_parent;
-						delete dir;
-
-						dir		   = nullptr;
-						dir_parent = nullptr;
-
-						err_global_get() = kErrorDiskIsCorrupted;
-
-						return NO;
-					}
 
 					if (!mnt->fPacket.fPacketGood)
 					{
@@ -448,6 +445,16 @@ namespace Kernel
 
 					mnt->fInput(mnt->fPacket);
 
+					if (!mnt->fPacket.fPacketGood)
+					{
+						delete dir;
+						dir = nullptr;
+
+						err_global_get() = kErrorDiskIsCorrupted;
+
+						return NO;
+					}
+
 					if (dir_uncle.fColor == kHeFSRed)
 					{
 						dir_parent->fColor = kHeFSBlack;
@@ -465,7 +472,18 @@ namespace Kernel
 
 						mnt->fOutput(mnt->fPacket);
 
+						if (!mnt->fPacket.fPacketGood)
+						{
+							delete dir;
+							dir = nullptr;
+
+							err_global_get() = kErrorDiskIsCorrupted;
+
+							return NO;
+						}
+
 						hefsi_traverse_tree(dir, start);
+
 						continue;
 					}
 					else
@@ -485,6 +503,16 @@ namespace Kernel
 						mnt->fPacket.fPacketContent = dir_parent;
 
 						mnt->fOutput(mnt->fPacket);
+
+						if (!mnt->fPacket.fPacketGood)
+						{
+							delete dir;
+							dir = nullptr;
+
+							err_global_get() = kErrorDiskIsCorrupted;
+
+							return NO;
+						}
 
 						hefsi_rotate_right(dir, start, mnt);
 						hefsi_traverse_tree(dir, start);
@@ -508,5 +536,34 @@ namespace Kernel
 
 /// @note HeFS will allocate inodes and ind in advance, to avoid having to allocate them in real-time.
 /// @note This is certainly take longer to format a disk with it, but worth-it in the long run.
+
+namespace Kernel
+{
+	/// @brief Make a EPM+HeFS drive out of the disk.
+	/// @param drive The drive to write on.
+	/// @return If it was sucessful, see err_local_get().
+	_Output Bool HeFileSystemParser::FormatEPM(_Input _Output DriveTrait* drive, _Input const Lba end_lba, _Input const Int32 flags, const Char* part_name)
+	{
+		NE_UNUSED(drive);
+		NE_UNUSED(end_lba);
+		NE_UNUSED(flags);
+		NE_UNUSED(part_name);
+		
+		return NO;
+	}
+
+	/// @brief Make a EPM+HeFS drive out of the disk.
+	/// @param drive The drive to write on.
+	/// @return If it was sucessful, see err_local_get().
+	_Output Bool HeFileSystemParser::FormatGPT(_Input _Output DriveTrait* drive, _Input const Lba end_lba, _Input const Int32 flags, const Char* part_name)
+	{
+		NE_UNUSED(drive);
+		NE_UNUSED(end_lba);
+		NE_UNUSED(flags);
+		NE_UNUSED(part_name);
+		
+		return NO;
+	}
+} // namespace Kernel
 
 #endif // ifdef __FSKIT_INCLUDES_HEFS__

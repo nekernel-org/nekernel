@@ -29,7 +29,7 @@
 #include <KernelKit/ProcessScheduler.h>
 #endif
 
-#define kPefApplicationMime "application/vnd-portable-executable"
+#define kPeApplicationMime "application/vnd-portable-executable"
 
 namespace Kernel
 {
