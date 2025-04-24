@@ -266,10 +266,6 @@ namespace Kernel
 				MUST_PASS(mm_delete_heap(memory_heap_list->MemoryEntry));
 			}
 
-#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-			hal_write_cr3(pd);
-#endif
-
 			auto next = memory_heap_list->MemoryNext;
 
 			mm_delete_heap(memory_heap_list);
@@ -303,6 +299,10 @@ namespace Kernel
 #endif
 
 		sched_free_heap_tree(memory_heap_list);
+
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+		hal_write_cr3(pd);
+#endif
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		//! Free the memory's page directory.
