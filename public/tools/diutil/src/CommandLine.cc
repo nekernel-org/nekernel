@@ -9,40 +9,40 @@
 
 #include <DiskImage.fwrk/headers/DiskImage.h>
 
-static const Char kDiskName[kDIDiskNameLen] = "DISK";
+static const Char kDiskName[kDIDiskNameLen] = "Empty Disk";
 static SInt32	  kDiskSectorSz				= kDISectorSz;
 static SizeT	  kDiskSz					= gib_cast(4);
 static const Char kOutDisk[kDIOutNameLen]	= "disk.eimg";
 
 /// @brief Disk Utility entrypoint.
-int main(int argc, char** argv)
+SInt32 _NeMain(SInt32 argc, Char** argv)
 {
 	for (SInt32 arg = 0; arg < argc; ++arg)
 	{
 		const Char* arg_s = argv[arg];
 
-		if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "--disk-output-name", MmStrLen("--disk-output-name") == 0))
+		if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "-diutil-output-name", MmStrLen("-diutil-output-name") == 0))
 		{
 			if ((arg + 1) < argc)
 			{
 				MmCopyMemory((VoidPtr)kOutDisk, argv[arg + 1], kDIDiskNameLen);
 			}
 		}
-		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "--disk-output-size", MmStrLen("--disk-output-size") == 0))
+		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "-diutil-output-size", MmStrLen("-diutil-output-size") == 0))
 		{
 			if ((arg + 1) < argc)
 			{
 				kDiskSz = StrMathToNumber(argv[arg + 1], nullptr, 10);
 			}
 		}
-		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "--disk-sector-size", MmStrLen("--disk-sector-size") == 0))
+		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "-diutil-sector-size", MmStrLen("-diutil-sector-size") == 0))
 		{
 			if ((arg + 1) < argc)
 			{
 				kDiskSectorSz = StrMathToNumber(argv[arg + 1], nullptr, 10);
 			}
 		}
-		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "--disk-part-name", MmStrLen("--disk-part-name") == 0))
+		else if (MmCmpMemory((VoidPtr)arg_s, (VoidPtr) "-diutil-part-name", MmStrLen("-diutil-part-name") == 0))
 		{
 			if ((arg + 1) < argc)
 			{
@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-	// create disk image.
+	// create disk image, by appending an EPM partition to it.
 
 	DI::DI_DISK_IMAGE img{};
 

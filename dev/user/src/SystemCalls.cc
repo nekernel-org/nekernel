@@ -103,6 +103,7 @@ IMPORT_C SInt32 PrintOut(_Input IORef desc, const char* fmt, ...)
 	return *ret;
 }
 
+/// @internal
 IMPORT_C Void _rtl_assert(Bool expr, const Char* origin)
 {
 	if (!expr)

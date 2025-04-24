@@ -59,7 +59,7 @@ def create_directory_structure(base_path, project_name):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: mk_app.py <project_name>")
+        print("Usage: mk_fwrk.py <project_name>")
         sys.exit(1)
 
     base_path = os.getcwd()  # Use the current working directory as the base path

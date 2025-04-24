@@ -40,6 +40,7 @@
 #define kPefBaseOrigin (0x40000000)
 
 #define kPefStart "__ImageStart"
+#define kPefMainSymbol "_NeMain"
 
 #define kPefForkKind	kPefMagic
 #define kPefForkKindFAT kPefMagicFat

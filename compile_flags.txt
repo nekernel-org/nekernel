@@ -4,8 +4,12 @@
 -Idev/boot
 -Idev/ddk
 -Ipublic/tools
--Ipublic/tools/make_app
--Ipublic/tools/make_fs
+-Ipublic/tools/mk.app
+-Ipublic/tools/mk.fwrk
+-Ipublic/tools/mk.hefs
+-Ipublic/tools/mk.nefs
+-Ipublic/tools/ld.dyn
+-Ipublic/tools/ld.fwrk
 -Ipublic/tools/open
 -Ipublic/frameworks
 -Idev/boot/BootKit

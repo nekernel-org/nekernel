@@ -13,45 +13,45 @@
 
 /// @brief This program makes a framework/app/steps directory for NeKernel OS.
 
-static Char* kStepsName	   = "Steps";
-static Char* kStepsAuthor  = "John Doe";
-static Char* kStepsCompany = "Company, Inc";
+static const Char* kStepsName	   = "Steps";
+static const Char* kStepsAuthor  = "John Doe";
+static const Char* kStepsCompany = "Company, Inc";
 
-int main(int argc, char* argv[])
+SInt32 _NeMain(SInt32 argc, Char* argv[])
 {
 	CF::CFArray<const char*, 256U> files;
 
 	auto ext = kFKExtension;
 
-	for (SizeT i = 2UL; i < argc; ++i)
+	for (SInt32 i = 2UL; i < argc; ++i)
 	{
 		if (MmStrCmp(argv[i], "-h") == 0)
 		{
 			PrintOut(nullptr, "%s", "make_app: Framework/Application Creation Tool.\n");
 			PrintOut(nullptr, "%s", "make_app: © 2024-2025 Amlal El Mahrouss, All rights reserved.\n");
 
-			PrintOut(nullptr, "%s", "make_app: -a: Application format.\n");
-			PrintOut(nullptr, "%s", "make_app: -s: Steps (Setup pages) format.\n");
-			PrintOut(nullptr, "%s", "make_app: -f: Framework format.\n");
+			PrintOut(nullptr, "%s", "make_app: -a: Application Directory.\n");
+			PrintOut(nullptr, "%s", "make_app: -s: Steps (Setup pages) Directory.\n");
+			PrintOut(nullptr, "%s", "make_app: -f: Framework Directory.\n");
 
 			return kErrorSuccess;
 		}
 
 		if (MmStrCmp(argv[i], "--author") == 0)
 		{
-			MmCopyMemory(kStepsAuthor, const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
+			MmCopyMemory(const_cast<Char*>(kStepsAuthor), const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
 			continue;
 		}
 
 		if (MmStrCmp(argv[i], "--company") == 0)
 		{
-			MmCopyMemory(kStepsCompany, const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
+			MmCopyMemory(const_cast<Char*>(kStepsCompany), const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
 			continue;
 		}
 
 		if (MmStrCmp(argv[i], "--name") == 0)
 		{
-			MmCopyMemory(kStepsName, const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
+			MmCopyMemory(const_cast<Char*>(kStepsName), const_cast<Char*>(argv[i + 1]), MmStrLen(argv[i + 1]));
 			continue;
 		}
 
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 			handle = nullptr;
 		}
 
-		for (SInt32 i = 0; i < files.Count(); ++i)
+		for (auto i = 0UL; i < files.Count(); ++i)
 		{
 			auto& file = files[i];
 

@@ -40,7 +40,7 @@ namespace CF
 		{
 			auto cnt = 0UL;
 
-			for (auto i = 0; i < N; ++i)
+			for (auto i = 0UL; i < N; ++i)
 			{
 				if (fArray[i])
 					++cnt;

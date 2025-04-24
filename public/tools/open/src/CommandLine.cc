@@ -13,19 +13,19 @@
 #define OPEN_APP_HELP_FLAG "-h"
 #define OPEN_APP_BASE_PATH "/app/"
 
-SInt32 main(SInt32 argc, Char* argv[])
+SInt32 _NeMain(SInt32 argc, Char* argv[])
 {
 	if (argc == 1)
 		return EXIT_FAILURE;
 
-	for (SizeT i = 1UL; i < argc; ++i)
+	PrintOut(nullptr, "open: Open Loader.\n");
+	PrintOut(nullptr, "open: © 2024-2025 Amlal El Mahrouss, All rights reserved.\n");
+
+	for (SInt32 i = 1U; i < argc; ++i)
 	{
 		if (MmStrCmp(argv[i], OPEN_APP_HELP_FLAG) == 0)
 		{
-			PrintOut(nullptr, "open: open .app(s) directories.\n");
-			PrintOut(nullptr, "open: © 2024-2025 Amlal El Mahrouss, All rights reserved.\n");
-
-			PrintOut(nullptr, "open: %s: Application is being taken as the input (opens a PEF/PE32+/ELF program depending on the CPU architecture).\n", OPEN_APP_APP_FLAG);
+			PrintOut(nullptr, "open: %s: Application is being taken as the input (opens a PEF/PE32+ program depending on the CPU architecture).\n", OPEN_APP_APP_FLAG);
 
 			return EXIT_SUCCESS;
 		}
