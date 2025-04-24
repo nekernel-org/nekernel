@@ -13,7 +13,9 @@
 
 #define kBootNetNameLen (256U)
 
-/// @brief the internet header is used to download updates OTA.
+/// @brief Netboot Internet Header
+/// Consists of 4 magic characters, and a set of fields describing the current patch that's being sent (if m_preflight = 0)
+/// @note Can be used to patch ROMs too (if ImpliesProgram = 1)
 typedef struct BOOTNET_INTERNET_HEADER
 {
 	Kernel::Char NB1; /// magic char 1 'N'
@@ -24,7 +26,7 @@ typedef struct BOOTNET_INTERNET_HEADER
 	Kernel::Char	Name[kBootNetNameLen];	 /// example: Modjo
 	Kernel::Int32	Length;					 /// the patch length.
 	Kernel::Char	Target[kBootNetNameLen]; /// the target file.
-	Kernel::Boolean ImpliesProgram : 1;		 /// does it imply an EEPROM program?
+	Kernel::Boolean ImpliesProgram : 1;		 /// does it imply reprogramming?
 	Kernel::Boolean Preflight : 1;			 /// is it a preflight packet.
 	Kernel::Char	Data[1];				 /// non preflight packet has a patch blob for a **PatchTarget**
-} ATTRIBUTE(packed) BOOTNET_INTERNET_HEADER;
+} BOOTNET_INTERNET_HEADER;
