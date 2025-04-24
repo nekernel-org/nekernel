@@ -23,13 +23,13 @@ namespace Kernel
 		if (!ptr)
 			return No;
 
-		if (!this->ProcessMemoryHeap)
+		if (!this->HeapTree)
 		{
 			kout << "USER_PROCESS's heap is empty.\r";
 			return No;
 		}
 
-		USER_HEAP_LIST* entry = this->ProcessMemoryHeap;
+		USER_HEAP_TREE* entry = this->HeapTree;
 
 		while (entry != nullptr)
 		{

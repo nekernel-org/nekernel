@@ -67,26 +67,39 @@ namespace Kernel
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 		SizeT			   UsedMemory{0UL};
 
-		struct USER_HEAP_LIST final
+		struct USER_HEAP_TREE final
 		{
 			VoidPtr MemoryEntry{nullptr};
 			SizeT	MemoryEntrySize{0UL};
 			SizeT	MemoryEntryPad{0UL};
 
-			struct USER_HEAP_LIST* MemoryPrev{nullptr};
-			struct USER_HEAP_LIST* MemoryNext{nullptr};
+			enum
+			{
+				kInvalidMemory = 0,
+				kRedMemory = 100,
+				kBlackMemory = 101,
+				kCountMemory = 2,
+			};
+
+			Int32 MemoryColor{kBlackMemory};
+
+			struct USER_HEAP_TREE* MemoryParent{nullptr};
+			struct USER_HEAP_TREE* MemoryChild{nullptr};
+
+			struct USER_HEAP_TREE* MemoryPrev{nullptr};
+			struct USER_HEAP_TREE* MemoryNext{nullptr};
 		};
 
 		struct USER_PROCESS_SIGNAL final
 		{
 			UIntPtr			  SignalArg;
-			ProcessStatusKind PreviousStatus;
+			ProcessStatusKind Status;
 			UIntPtr			  SignalID;
 		};
 
 		USER_PROCESS_SIGNAL Signal;
-		USER_HEAP_LIST*		ProcessMemoryHeap{nullptr};
-		UserProcessTeam*	ProcessParentTeam;
+		USER_HEAP_TREE*		HeapTree{nullptr};
+		UserProcessTeam*	ParentTeam;
 
 		VoidPtr VMRegister{0UL};
 

@@ -121,21 +121,21 @@ namespace Kernel
 		auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
 #endif
 
-		if (!this->ProcessMemoryHeap)
+		if (!this->HeapTree)
 		{
-			this->ProcessMemoryHeap = new USER_HEAP_LIST();
+			this->HeapTree = new USER_HEAP_TREE();
 
-			this->ProcessMemoryHeap->MemoryEntryPad	 = pad_amount;
-			this->ProcessMemoryHeap->MemoryEntrySize = sz;
+			this->HeapTree->MemoryEntryPad	 = pad_amount;
+			this->HeapTree->MemoryEntrySize = sz;
 
-			this->ProcessMemoryHeap->MemoryEntry = ptr;
+			this->HeapTree->MemoryEntry = ptr;
 
-			this->ProcessMemoryHeap->MemoryPrev = nullptr;
-			this->ProcessMemoryHeap->MemoryNext = nullptr;
+			this->HeapTree->MemoryPrev = nullptr;
+			this->HeapTree->MemoryNext = nullptr;
 		}
 		else
 		{
-			USER_HEAP_LIST* entry = this->ProcessMemoryHeap;
+			USER_HEAP_TREE* entry = this->HeapTree;
 
 			while (entry)
 			{
@@ -145,8 +145,10 @@ namespace Kernel
 				entry = entry->MemoryNext;
 			}
 
-			entry->MemoryNext			   = new USER_HEAP_LIST();
+			entry->MemoryNext			   = new USER_HEAP_TREE();
 			entry->MemoryNext->MemoryEntry = ptr;
+			entry->MemoryEntrySize = sz;
+			entry->MemoryEntryPad = pad_amount;
 
 			entry->MemoryNext->MemoryPrev = entry;
 			entry->MemoryNext->MemoryNext = nullptr;
@@ -206,7 +208,7 @@ namespace Kernel
 
 		kLastExitCode = exit_code;
 
-		auto memory_heap_list = this->ProcessMemoryHeap;
+		auto memory_heap_list = this->HeapTree;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		auto pd = hal_read_cr3();
@@ -277,7 +279,7 @@ namespace Kernel
 		this->ProcessId = 0UL;
 		this->Status	= ProcessStatusKind::kFinished;
 
-		--this->ProcessParentTeam->mProcessCount;
+		--this->ParentTeam->mProcessCount;
 	}
 
 	/***********************************************************************************/
@@ -390,7 +392,7 @@ namespace Kernel
 		HAL::mm_map_page((VoidPtr)process.StackReserve, process.StackReserve, flags);
 #endif // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
-		process.ProcessParentTeam = &mTeam;
+		process.ParentTeam = &mTeam;
 
 		process.ProcessId = pid;
 		process.Status	  = ProcessStatusKind::kStarting;

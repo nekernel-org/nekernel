@@ -48,7 +48,30 @@ EXTERN_C void hal_init_platform(
 
 	Kernel::mp_initialize_gic();
 
+	/// after the scheduler runs, we must look over teams, every 5000s in order to schedule every process according to their affinity fairly.
+
+	auto constexpr kSchedTeamSwitchMS = 5U; /// @brief Team switch time in milliseconds.
+
+	Kernel::HardwareTimer timer(rtl_milliseconds(kSchedTeamSwitchMS));
+
+	STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
+
+	SizeT team_index = 0U;
+
+	/// @brief This just loops over the teams and switches between them.
+	/// @details Not even round-robin, just a simple loop in this boot core we're at.
 	while (YES)
 	{
+		if (team_index > (kSchedTeamCount - 1))
+		{
+			team_index = 0U;
+		}
+
+		while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]))
+			;
+
+		timer.Wait();
+
+		++team_index;
 	}
 }
