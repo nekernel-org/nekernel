@@ -67,6 +67,7 @@ namespace Kernel
 		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
 		SizeT			   UsedMemory{0UL};
 
+		/// @brief Allocation tracker structure.
 		struct USER_HEAP_TREE final
 		{
 			VoidPtr MemoryEntry{nullptr};

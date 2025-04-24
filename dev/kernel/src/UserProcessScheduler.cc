@@ -108,7 +108,7 @@ namespace Kernel
 	/** @brief Allocate pointer to heap tree. */
 	/***********************************************************************************/
 
-	USER_PROCESS::USER_HEAP_TREE* sched_try_go_upper_heap_tree(USER_PROCESS::USER_HEAP_TREE* tree)
+	STATIC USER_PROCESS::USER_HEAP_TREE* sched_try_go_upper_heap_tree(USER_PROCESS::USER_HEAP_TREE* tree)
 	{
 		if (tree)
 		{
@@ -175,7 +175,8 @@ namespace Kernel
 
 				if (entry->MemoryNext)
 				{
-					entry = entry->MemoryNext;
+					is_parent = NO;
+					entry	  = entry->MemoryNext;
 				}
 				else if (entry->MemoryChild)
 				{
@@ -190,24 +191,24 @@ namespace Kernel
 			}
 
 			if (!entry)
-				entry			   = new USER_HEAP_TREE();
+				entry = new USER_HEAP_TREE();
 
-			entry->MemoryEntry = ptr;
-			entry->MemoryEntrySize		   = sz;
-			entry->MemoryEntryPad		   = pad_amount;
+			entry->MemoryEntry	   = ptr;
+			entry->MemoryEntrySize = sz;
+			entry->MemoryEntryPad  = pad_amount;
 
 			if (is_parent)
 			{
-				entry->MemoryParent = prev_entry;
-				prev_entry->MemoryChild				= entry;
+				entry->MemoryParent		= prev_entry;
+				prev_entry->MemoryChild = entry;
 
 				prev_entry->MemoryColor = USER_HEAP_TREE::kBlackMemory;
-				entry->MemoryColor = USER_HEAP_TREE::kRedMemory;
+				entry->MemoryColor		= USER_HEAP_TREE::kRedMemory;
 			}
 			else
 			{
 				prev_entry->MemoryNext = entry;
-				entry->MemoryPrev = prev_entry;
+				entry->MemoryPrev	   = prev_entry;
 			}
 		}
 
@@ -252,6 +253,35 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
+	/** @brief Free heap tree. */
+	/***********************************************************************************/
+
+	STATIC Void sched_free_heap_tree(USER_PROCESS::USER_HEAP_TREE* memory_heap_list)
+	{
+		// Deleting memory lists. Make sure to free all of them.
+		while (memory_heap_list)
+		{
+			if (memory_heap_list->MemoryEntry)
+			{
+				MUST_PASS(mm_delete_heap(memory_heap_list->MemoryEntry));
+			}
+
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+			hal_write_cr3(pd);
+#endif
+
+			auto next = memory_heap_list->MemoryNext;
+
+			mm_delete_heap(memory_heap_list);
+
+			if (memory_heap_list->MemoryChild)
+				sched_free_heap_tree(memory_heap_list->MemoryChild);
+
+			memory_heap_list = next;
+		}
+	}
+
+	/***********************************************************************************/
 	/**
 	@brief Exit process method.
 	@param exit_code The process's exit code.
@@ -272,24 +302,7 @@ namespace Kernel
 		hal_write_cr3(this->VMRegister);
 #endif
 
-		// Deleting memory lists. Make sure to free all of them.
-		while (memory_heap_list)
-		{
-			if (memory_heap_list->MemoryEntry)
-			{
-				MUST_PASS(mm_delete_heap(memory_heap_list->MemoryEntry));
-			}
-
-#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-			hal_write_cr3(pd);
-#endif
-
-			auto next = memory_heap_list->MemoryNext;
-
-			mm_delete_heap(memory_heap_list);
-
-			memory_heap_list = next;
-		}
+		sched_free_heap_tree(memory_heap_list);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		//! Free the memory's page directory.
