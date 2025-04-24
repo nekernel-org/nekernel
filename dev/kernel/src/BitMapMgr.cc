@@ -16,7 +16,6 @@
 #include <NewKit/KernelPanic.h>
 
 #define kBitMapMagic   (0x10210U)
-#define kBitMapPadSize (mib_cast(16))
 
 #define kBitMapMagIdx  (0U)
 #define kBitMapSizeIdx (1U)

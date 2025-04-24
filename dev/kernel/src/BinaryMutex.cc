@@ -10,7 +10,7 @@
 namespace Kernel
 {
 	/***********************************************************************************/
-	/// @brief Unlocks the semaphore.
+	/// @brief Unlocks the binary mutex.
 	/***********************************************************************************/
 	Bool BinaryMutex::Unlock() noexcept
 	{
@@ -18,6 +18,7 @@ namespace Kernel
 		{
 			fLockingProcess		   = USER_PROCESS();
 			fLockingProcess.Status = ProcessStatusKind::kFrozen;
+
 			return Yes;
 		}
 
@@ -25,14 +26,14 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	/// @brief Locks process in the semaphore.
+	/// @brief Locks process in the binary mutex.
 	/***********************************************************************************/
 	Bool BinaryMutex::Lock(USER_PROCESS& process)
 	{
-		if (!process || fLockingProcess)
+		if (!process || this->IsLocked())
 			return No;
 
-		fLockingProcess = process;
+		this->fLockingProcess = process;
 
 		return Yes;
 	}
@@ -42,7 +43,7 @@ namespace Kernel
 	/***********************************************************************************/
 	Bool BinaryMutex::IsLocked() const
 	{
-		return fLockingProcess.Status == ProcessStatusKind::kRunning;
+		return this->fLockingProcess.Status == ProcessStatusKind::kRunning;
 	}
 
 	/***********************************************************************************/
