@@ -31,8 +31,10 @@ namespace Kernel
 
 	STATIC UInt32 kLastExitCode = 0U;
 
+	STATIC BOOL kCurrentlySwitching = No;
+
 	/***********************************************************************************/
-	/// @brief External reference of the thread scheduler.
+	/// @brief Scheduler itself.
 	/***********************************************************************************/
 
 	STATIC UserProcessScheduler kScheduler;
@@ -470,6 +472,8 @@ namespace Kernel
 			return 0UL;
 		}
 
+		kCurrentlySwitching = Yes;
+
 		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
 		{
 			auto& process = mTeam.AsArray()[process_index];
@@ -502,6 +506,8 @@ namespace Kernel
 			}
 		}
 
+		kCurrentlySwitching = No;
+
 		return process_index;
 	}
 
@@ -522,6 +528,9 @@ namespace Kernel
 	BOOL UserProcessScheduler::SwitchTeam(UserProcessTeam& team)
 	{
 		if (team.AsArray().Count() < 1)
+			return No;
+
+		if (kCurrentlySwitching)
 			return No;
 
 		kScheduler.mTeam = team;

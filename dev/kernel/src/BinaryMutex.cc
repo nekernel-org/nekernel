@@ -67,7 +67,7 @@ namespace Kernel
 	/***********************************************************************************/
 	BOOL BinaryMutex::WaitForProcess(const Int16& sec) noexcept
 	{
-		HardwareTimer hw_timer(rtl_seconds(sec));
+		HardwareTimer hw_timer(rtl_milliseconds(sec));
 		hw_timer.Wait();
 
 		return !this->IsLocked();

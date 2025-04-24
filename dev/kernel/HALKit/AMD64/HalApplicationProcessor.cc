@@ -219,17 +219,9 @@ namespace Kernel::HAL
 
 			kApicBaseAddress = kMADTBlock->Address;
 
-			constexpr auto kMemoryAPStart = 0x7C000;
-			Char*		   ptr_ap_code	  = reinterpret_cast<Char*>(kMemoryAPStart);
-
-			mm_map_page(ptr_ap_code, ptr_ap_code, kMMFlagsWr | kMMFlagsPCD);
-
-			SizeT hal_ap_blob_len = hal_ap_blob_end - hal_ap_blob_start;
-
-			rt_copy_memory((Char*)hal_ap_blob_start, ptr_ap_code, hal_ap_blob_len);
-
 			while (Yes)
 			{
+				/// @note Anything bigger than x2APIC type doesn't exist.
 				if (kMADTBlock->List[index].Type > 9 ||
 					kSMPCount > kSchedProcessLimitPerTeam)
 					break;
@@ -243,17 +235,6 @@ namespace Kernel::HAL
 					kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].LAPIC.ProcessorID;
 					(void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
 
-					// I'll just make the AP start from scratch here.
-
-					hal_send_start_ipi(kApicBaseAddress, kAPICLocales[kSMPCount]);
-
-					HardwareTimer timer(Kernel::rtl_ms(10));
-					timer.Wait();
-
-					/// TODO: HAL helper to create an address.
-
-					hal_send_sipi(kApicBaseAddress, kAPICLocales[kSMPCount], (UInt8)(((UIntPtr)ptr_ap_code) >> 12));
-
 					++kSMPCount;
 					break;
 				}
@@ -264,7 +245,7 @@ namespace Kernel::HAL
 				++index;
 			}
 
-			(void)(kout << "SMP: number of APs: " << number(kSMPCount) << kendl);
+			(void)(kout << "SMP: Number of APs: " << number(kSMPCount) << kendl);
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)

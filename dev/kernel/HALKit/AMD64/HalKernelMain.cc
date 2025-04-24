@@ -19,8 +19,6 @@
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
-STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
-
 STATIC Kernel::Void hal_pre_init_scheduler() noexcept
 {
 	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
@@ -98,11 +96,13 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	idt_loader.Load(idt_reg);
 
-	/// after the scheduler runs, we must look over teams, every 200ms in order to schedule every process according to their affinity fairly.
+	/// after the scheduler runs, we must look over teams, every 5000s in order to schedule every process according to their affinity fairly.
 
-	auto constexpr kSchedTeamSwitchMS = 200U; /// @brief Team switch time in milliseconds.
+	auto constexpr kSchedTeamSwitchMS = 5U; /// @brief Team switch time in milliseconds.
 
-	Kernel::HardwareTimer timer(rtl_ms(kSchedTeamSwitchMS));
+	Kernel::HardwareTimer timer(rtl_milliseconds(kSchedTeamSwitchMS));
+
+	STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
 
 	SizeT team_index = 0U;
 
@@ -110,15 +110,16 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 	/// @details Not even round-robin, just a simple loop in this boot core we're at.
 	while (YES)
 	{
-		timer.Wait();
-
-		UserProcessScheduler::The().SwitchTeam(kTeams[team_index]);
-
-		++team_index;
-
-		if (team_index > kSchedTeamCount)
+		if (team_index > (kSchedTeamCount - 1))
 		{
 			team_index = 0U;
 		}
+
+		while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]))
+			;
+
+		timer.Wait();
+
+		++team_index;
 	}
 }

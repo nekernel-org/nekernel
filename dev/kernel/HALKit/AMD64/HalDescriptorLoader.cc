@@ -107,9 +107,9 @@ namespace Kernel::HAL
 		idt.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) *
 					(kKernelIdtSize);
 
-		hal_load_idt(idt);
-
 		Detail::hal_enable_pit(kPITTickForScheduler);
+
+		hal_load_idt(idt);
 
 		rt_sti();
 	}

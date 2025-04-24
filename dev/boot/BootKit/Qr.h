@@ -957,8 +957,8 @@ namespace qr
 		NE_COPY_DEFAULT(QrDelegate)
 
 		/// @brief Draw method delegate.
-		template <int V>
-		bool draw(Qr<V>& subject, int x, int y) noexcept
+		template <Int32 V>
+		bool draw(Qr<V>& subject, Int32 x, Int32 y) noexcept
 		{
 			return subject.draw(x, y);
 		}

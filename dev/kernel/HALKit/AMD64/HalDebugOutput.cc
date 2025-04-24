@@ -121,6 +121,11 @@ namespace Kernel
 
 			x += kFontSizeX;
 
+			if (x > kHandoverHeader->f_GOP.f_Width)
+			{
+				x = kFontSizeX;
+			}
+
 			if (y > kHandoverHeader->f_GOP.f_Height)
 			{
 				y = kFontSizeY;

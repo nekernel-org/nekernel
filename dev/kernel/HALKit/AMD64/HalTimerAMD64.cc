@@ -17,10 +17,10 @@
 
 // timer slot 0
 
-#define cHPETCounterRegValue   (0x00)
-#define cHPETConfigRegValue	   (0x20)
-#define cHPETCompRegValue	   (0x24)
-#define cHPETInterruptRegValue (0x2C)
+#define kHPETCounterRegValue   (0x00)
+#define kHPETConfigRegValue	   (0x20)
+#define kHPETCompRegValue	   (0x24)
+#define kHPETInterruptRegValue (0x2C)
 
 ///! BUGS: 0
 ///! @file HalTimer.cc
@@ -53,7 +53,19 @@ HardwareTimer::HardwareTimer(UInt64 ms)
 	auto hpet = (Detail::HPET_BLOCK*)power.Find("HPET").Leak().Leak();
 	MUST_PASS(hpet);
 
-	fDigitalTimer = (UIntPtr*)hpet->address.Address;
+	fDigitalTimer = (UInt8*)hpet->address.Address;
+
+	if (hpet->page_protection)
+	{
+		HAL::mm_map_page((VoidPtr)fDigitalTimer, (VoidPtr)fDigitalTimer, HAL::kMMFlagsWr | HAL::kMMFlagsPCD | HAL::kMMFlagsPwt);
+	}
+
+	// if not enabled yet.
+	if (!(*((volatile UInt64*)((UInt8*)fDigitalTimer + kHPETConfigRegValue)) & (1 << 0)))
+	{
+		*((volatile UInt64*)((UInt8*)fDigitalTimer + kHPETConfigRegValue)) = *((volatile UInt64*)((UInt8*)fDigitalTimer + kHPETConfigRegValue)) | (1 << 0); // enable timer
+		*((volatile UInt64*)((UInt8*)fDigitalTimer + kHPETConfigRegValue)) = *((volatile UInt64*)((UInt8*)fDigitalTimer + kHPETConfigRegValue)) | (1 << 3); // one shot conf
+	}
 }
 
 HardwareTimer::~HardwareTimer()
@@ -62,25 +74,28 @@ HardwareTimer::~HardwareTimer()
 	fWaitFor	  = 0;
 }
 
+/***********************************************************************************/
+/// @brief Wait for the timer to stop spinning.
+/***********************************************************************************/
+
 BOOL HardwareTimer::Wait() noexcept
 {
 	if (fWaitFor < 1)
 		return NO;
 
-	// if not enabled yet.
-	if (!(*(fDigitalTimer + cHPETConfigRegValue) & (1 << 0)))
-	{
-		*(fDigitalTimer + cHPETConfigRegValue) |= (1 << 0); // enable it
-		*(fDigitalTimer + cHPETConfigRegValue) |= (1 << 3); // one shot conf
-	}
+	UInt64 hpet_cap				 = *((volatile UInt64*)(fDigitalTimer + kHPETCounterRegValue));
+	UInt64 femtoseconds_per_tick = (hpet_cap >> 32);
 
-	UInt64 ticks = fWaitFor / ((*(fDigitalTimer) >> 32) & __UINT32_MAX__);
-	UInt64 prev	 = *(fDigitalTimer + cHPETCounterRegValue);
+	if (femtoseconds_per_tick == 0)
+		return NO;
 
-	prev += ticks;
+	volatile UInt64* timer = (volatile UInt64*)(fDigitalTimer + kHPETCounterRegValue);
 
-	while (*(fDigitalTimer + cHPETCounterRegValue) < (ticks))
-		;
+	UInt64 now	= *timer;
+	UInt64 prev = now + (fWaitFor / femtoseconds_per_tick);
+
+	while (*timer < (prev))
+		asm volatile("pause");
 
 	return YES;
 }
