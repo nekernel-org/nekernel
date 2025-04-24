@@ -98,6 +98,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
 
 	idt_loader.Load(idt_reg);
 
+	/// after the scheduler runs, we must look over teams, every 200ms in order to schedule every process according to their affinity fairly.
+
 	auto constexpr kSchedTeamSwitchMS = 200U; /// @brief Team switch time in milliseconds.
 
 	Kernel::HardwareTimer timer(rtl_ms(kSchedTeamSwitchMS));

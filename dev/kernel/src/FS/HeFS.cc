@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "NewKit/Defines.h"
 #ifdef __FSKIT_INCLUDES_HEFS__
 
 #include <modules/AHCI/AHCI.h>
@@ -38,7 +39,15 @@ namespace Kernel
 		/// @param dir_name The name of the directory.
 		/// @param file_name The name of the file.
 		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
-		STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept;
+		STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind, SizeT* cnt) noexcept;
+
+		/// @brief Get the index node size.
+		/// @param root The root node of the filesystem.
+		/// @param mnt The drive to read from.
+		/// @param dir_name The name of the directory.
+		/// @param file_name The name of the file.
+		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
+		STATIC ATTRIBUTE(unused) _Output SizeT hefs_fetch_index_node_size(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept;
 
 		/// @brief Allocate a new index node.
 		/// @param root The root node of the filesystem.
@@ -186,16 +195,125 @@ namespace Kernel
 			mnt->fOutput(mnt->fPacket);
 		}
 
+		/// @brief Get the index node size.
+		/// @param root The root node of the filesystem.
+		/// @param mnt The drive to read from.
+		/// @param dir_name The name of the directory.
+		/// @param file_name The name of the file.
+		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
+		STATIC ATTRIBUTE(unused) _Output SizeT hefs_fetch_index_node_size(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
+		{
+			if (root && mnt)
+			{
+				HEFS_INDEX_NODE*		   node = new HEFS_INDEX_NODE();
+				HEFS_INDEX_NODE_DIRECTORY* dir	= new HEFS_INDEX_NODE_DIRECTORY();
+
+				SizeT sz = 0UL;
+
+				auto start = root->fStartIND;
+				auto end   = root->fEndIND;
+
+				auto hop_watch = 0;
+
+				while (YES)
+				{
+					if (start > end)
+					{
+						kout << "Error: Invalid start/end values.\r";
+						break;
+					}
+
+					if (hop_watch > 100)
+					{
+						kout << "Error: Hop watch exceeded, filesystem is stalling.\r";
+						break;
+					}
+
+					if (start == 0)
+					{
+						++hop_watch;
+						start = root->fStartIND;
+					}
+
+					mnt->fPacket.fPacketLba		= start;
+					mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+					mnt->fPacket.fPacketContent = dir;
+
+					mnt->fInput(mnt->fPacket);
+
+					if (!mnt->fPacket.fPacketGood)
+					{
+						delete node;
+						delete dir;
+
+						dir	 = nullptr;
+						node = nullptr;
+
+						err_global_get() = kErrorFileNotFound;
+
+						return 0;
+					}
+
+					if (dir->fKind == kHeFSFileKindDirectory)
+					{
+						if (KStringBuilder::Equals(dir_name, dir->fName) ||
+							KStringBuilder::Equals(dir_name, kHeFSSearchAllStr))
+						{
+							for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; inode_index += 2)
+							{
+								if (dir->fIndexNodeStart[inode_index])
+								{
+									mnt->fPacket.fPacketLba		= dir->fIndexNodeStart[inode_index];
+									mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
+									mnt->fPacket.fPacketContent = node;
+									mnt->fInput(mnt->fPacket);
+								}
+								else if (dir->fIndexNodeEnd[inode_index])
+								{
+									mnt->fPacket.fPacketLba		= dir->fIndexNodeEnd[inode_index];
+									mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
+									mnt->fPacket.fPacketContent = node;
+									mnt->fInput(mnt->fPacket);
+								}
+
+								if (KStringBuilder::Equals(file_name, node->fName) && node->fKind == kind)
+								{
+									if (node->fKind == kHeFSFileKindDirectory)
+									{
+										sz += hefs_fetch_index_node_size(root, mnt, dir_name, file_name, kind);
+									}
+									else
+									{
+										sz = node->fSize;
+									}
+
+									return sz;
+								}
+							}
+						}
+					}
+				}
+
+				err_global_get() = kErrorSuccess;
+				return sz;
+			}
+
+			err_global_get() = kErrorFileNotFound;
+			return 0;
+		}
+
 		/// @brief Get the index node of a file or directory.
 		/// @param root The root node of the filesystem.
 		/// @param mnt The drive to read from.
 		/// @param dir_name The name of the directory.
 		/// @param file_name The name of the file.
 		/// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic link, unknown).
-		STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind) noexcept
+		STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefs_fetch_index_node(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name, const Utf16Char* file_name, UInt8 kind, SizeT* cnt) noexcept
 		{
 			if (root && mnt)
 			{
+				HEFS_INDEX_NODE* node_arr = new HEFS_INDEX_NODE[*cnt];
+
 				HEFS_INDEX_NODE*		   node = new HEFS_INDEX_NODE();
 				HEFS_INDEX_NODE_DIRECTORY* dir	= new HEFS_INDEX_NODE_DIRECTORY();
 
@@ -207,6 +325,8 @@ namespace Kernel
 
 				auto start = root->fStartIND;
 				auto end   = root->fEndIND;
+
+				auto start_cnt = 0UL;
 
 				auto hop_watch = 0;
 
@@ -251,7 +371,8 @@ namespace Kernel
 
 					if (dir->fKind == kHeFSFileKindDirectory)
 					{
-						if (KStringBuilder::Equals(dir_name, dir->fName))
+						if (KStringBuilder::Equals(dir_name, dir->fName) ||
+							KStringBuilder::Equals(dir_name, kHeFSSearchAllStr))
 						{
 							for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; inode_index += 2)
 							{
@@ -271,7 +392,14 @@ namespace Kernel
 											delete dir;
 											dir = nullptr;
 
-											return node;
+											node_arr[start_cnt] = *node;
+											++start_cnt;
+
+											if (start_cnt > *cnt)
+											{
+												delete node;
+												return node_arr;
+											}
 										}
 									}
 									else
@@ -280,9 +408,11 @@ namespace Kernel
 
 										delete dir;
 										delete node;
+										delete[] node_arr;
 
-										dir	 = nullptr;
-										node = nullptr;
+										dir		 = nullptr;
+										node	 = nullptr;
+										node_arr = nullptr;
 
 										return nullptr;
 									}
@@ -296,9 +426,11 @@ namespace Kernel
 
 				delete dir;
 				delete node;
+				delete[] node_arr;
 
-				dir	 = nullptr;
-				node = nullptr;
+				dir		 = nullptr;
+				node	 = nullptr;
+				node_arr = nullptr;
 			}
 
 			kout << "Error: Failed to find index node.\r";
@@ -350,18 +482,32 @@ namespace Kernel
 							if (dir->fIndexNodeStart[inode_index] != 0 ||
 								dir->fIndexNodeEnd[inode_index] != 0)
 							{
-								mnt->fPacket.fPacketLba		= (!dir->fIndexNodeStart[inode_index]) ? dir->fIndexNodeEnd[inode_index] : dir->fIndexNodeStart[inode_index];
+								HEFS_INDEX_NODE prev_node;
+
+								auto lba = (!dir->fIndexNodeStart[inode_index]) ? dir->fIndexNodeEnd[inode_index] : dir->fIndexNodeStart[inode_index];
+
+								mnt->fPacket.fPacketLba		= lba;
 								mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
-								mnt->fPacket.fPacketContent = node;
+								mnt->fPacket.fPacketContent = &prev_node;
 
-								mnt->fOutput(mnt->fPacket);
+								mnt->fInput(mnt->fPacket);
 
-								if (mnt->fPacket.fPacketGood)
+								if (prev_node.fDeleted > 0 &&
+									!prev_node.fAccessed)
 								{
-									delete dir;
-									dir = nullptr;
+									mnt->fPacket.fPacketLba		= lba;
+									mnt->fPacket.fPacketSize	= sizeof(HEFS_INDEX_NODE);
+									mnt->fPacket.fPacketContent = node;
 
-									return YES;
+									mnt->fOutput(mnt->fPacket);
+
+									if (mnt->fPacket.fPacketGood)
+									{
+										delete dir;
+										dir = nullptr;
+
+										return YES;
+									}
 								}
 							}
 						}
@@ -548,7 +694,7 @@ namespace Kernel
 		NE_UNUSED(end_lba);
 		NE_UNUSED(flags);
 		NE_UNUSED(part_name);
-		
+
 		return NO;
 	}
 
@@ -561,7 +707,7 @@ namespace Kernel
 		NE_UNUSED(end_lba);
 		NE_UNUSED(flags);
 		NE_UNUSED(part_name);
-		
+
 		return NO;
 	}
 } // namespace Kernel

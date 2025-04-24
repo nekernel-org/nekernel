@@ -111,13 +111,41 @@ struct HEFS_INDEX_NODE_DIRECTORY {
 };
 \end{lstlisting}
 
+\section{Filesystem Design}
+
+HeFS is designed to be robust and efficient, with a focus on:
+\begin{itemize}
+    \item Fast access to files and directories
+    \item Efficient use of disk space
+    \item Support for large files and directories
+    \item Compatibility with various drive types
+    \item Easy recovery from errors
+    \item Support for advanced features like journaling and permissions
+\end{itemize}
+
+The filesystem uses a red-black tree structure for directories, allowing for efficient insertion, deletion, and searching of files. 
+Each file and directory is represented by an index node directory, which contains metadata such as timestamps, permissions, and checksums.
+
+The index node directory itself contains index nodes, which are the actual data structures that store file and directory information.
+The filesystem also includes a boot node, which contains information about the filesystem itself, such as the magic number, version, and size.
+
+The filesystem is designed to be extensible, allowing for future enhancements and features to be added without breaking compatibility with existing data.
+
+\section{Minimum Requirements}
+
+HeFS requires at least 4GB of free space on the drive to function properly.
+It is recommended to have more than 8GB of free space for optimal performance. 
+The filesystem is designed to work with various drive types, including hard drives, SSDs, and USB mass storage devices.
+
+But that really depends on what you do with the filesystem.
+
 \section{Future Work}
 Planned extensions include:
 \begin{itemize}
     \item Journaling recovery logic
     \item Advanced permission flags
     \item Logical volume management support
-    \item Cross-filesystem linking (EPM integration)
+    \item Cross-filesystem linking (EPM, and GPT integration)
 \end{itemize}
 
 \end{document}

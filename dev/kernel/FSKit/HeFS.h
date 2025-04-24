@@ -26,7 +26,9 @@
 
 #define kHeFSMinimumDiskSize (gib_cast(4))
 
-#define kHeFSDefaultVoluneName "HeFS Volume"
+#define kHeFSDefaultVoluneName u"HeFS Volume"
+
+#define kHeFSSearchAllStr u"*"
 
 struct HEFS_BOOT_NODE;
 struct HEFS_INDEX_NODE;
@@ -162,7 +164,7 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final
 
 	Kernel::UInt32 fFlags;						  /// @brief File flags.
 	Kernel::UInt16 fKind;						  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket, Symbolic Link, Unknown).
-	Kernel::UInt32 fSize;						  /// @brief Size of the directory.
+	Kernel::UInt32 fEntryCount;						  /// @brief Entry Count of this directory inode.
 	Kernel::UInt32 fChecksum, fIndexNodeChecksum; /// @brief Checksum of the file, index node checksum.
 
 	Kernel::ATime  fCreated, fAccessed, fModified, fDeleted; /// @brief File timestamps.
@@ -342,11 +344,6 @@ namespace Kernel::Detail
 		default:
 			return "Unknown";
 		}
-	}
-
-	inline SizeT hefs_get_block_size(SizeT block_size) noexcept
-	{
-		return block_size * kHeFSBlockCount;
 	}
 } // namespace Kernel::Detail
 
