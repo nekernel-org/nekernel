@@ -58,7 +58,7 @@ namespace Kernel
 		User*			   Owner{nullptr};
 		HAL::StackFramePtr StackFrame{nullptr};
 		AffinityKind	   Affinity{AffinityKind::kStandard};
-		ProcessStatusKind  Status{ProcessStatusKind::kFinished};
+		ProcessStatusKind  Status{ProcessStatusKind::kKilled};
 		UInt8*			   StackReserve{nullptr};
 		PROCESS_IMAGE	   Image{};
 		SizeT			   StackSize{kSchedMaxStackSz};
