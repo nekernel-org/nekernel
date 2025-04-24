@@ -105,11 +105,33 @@ namespace Kernel
 	}
 
 	/***********************************************************************************/
-	/** @brief Allocate pointer to track list. */
+	/** @brief Allocate pointer to heap tree. */
+	/***********************************************************************************/
+
+	USER_PROCESS::USER_HEAP_TREE* sched_try_go_upper_heap_tree(USER_PROCESS::USER_HEAP_TREE* tree)
+	{
+		if (tree)
+		{
+			tree = tree->MemoryNext;
+
+			if (!tree)
+			{
+				return nullptr;
+			}
+		}
+
+		return tree;
+	}
+
+	/***********************************************************************************/
+	/** @brief Allocate pointer to heap tree. */
 	/***********************************************************************************/
 
 	ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount)
 	{
+		if (this->UsedMemory > kSchedMaxMemoryLimit)
+			return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
+
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 		auto vm_register = hal_read_cr3();
 		hal_write_cr3(this->VMRegister);
@@ -125,33 +147,68 @@ namespace Kernel
 		{
 			this->HeapTree = new USER_HEAP_TREE();
 
-			this->HeapTree->MemoryEntryPad	 = pad_amount;
+			this->HeapTree->MemoryColor = USER_HEAP_TREE::kBlackMemory;
+
+			this->HeapTree->MemoryEntryPad	= pad_amount;
 			this->HeapTree->MemoryEntrySize = sz;
 
 			this->HeapTree->MemoryEntry = ptr;
 
-			this->HeapTree->MemoryPrev = nullptr;
-			this->HeapTree->MemoryNext = nullptr;
+			this->HeapTree->MemoryPrev	 = nullptr;
+			this->HeapTree->MemoryNext	 = nullptr;
+			this->HeapTree->MemoryParent = nullptr;
+			this->HeapTree->MemoryChild	 = nullptr;
 		}
 		else
 		{
-			USER_HEAP_TREE* entry = this->HeapTree;
+			USER_HEAP_TREE* entry	   = this->HeapTree;
+			USER_HEAP_TREE* prev_entry = entry;
+
+			BOOL is_parent = NO;
 
 			while (entry)
 			{
-				if (entry->MemoryEntry == nullptr)
-					break; // chose to break here, when we get an already allocated memory entry for our needs.
+				if (entry->MemoryEntrySize < 1)
+					break;
 
-				entry = entry->MemoryNext;
+				prev_entry = entry;
+
+				if (entry->MemoryNext)
+				{
+					entry = entry->MemoryNext;
+				}
+				else if (entry->MemoryChild)
+				{
+					entry	  = entry->MemoryChild;
+					is_parent = YES;
+				}
+				else
+				{
+					entry = entry->MemoryParent;
+					entry = sched_try_go_upper_heap_tree(entry);
+				}
 			}
 
-			entry->MemoryNext			   = new USER_HEAP_TREE();
-			entry->MemoryNext->MemoryEntry = ptr;
-			entry->MemoryEntrySize = sz;
-			entry->MemoryEntryPad = pad_amount;
+			if (!entry)
+				entry			   = new USER_HEAP_TREE();
 
-			entry->MemoryNext->MemoryPrev = entry;
-			entry->MemoryNext->MemoryNext = nullptr;
+			entry->MemoryEntry = ptr;
+			entry->MemoryEntrySize		   = sz;
+			entry->MemoryEntryPad		   = pad_amount;
+
+			if (is_parent)
+			{
+				entry->MemoryParent = prev_entry;
+				prev_entry->MemoryChild				= entry;
+
+				prev_entry->MemoryColor = USER_HEAP_TREE::kBlackMemory;
+				entry->MemoryColor = USER_HEAP_TREE::kRedMemory;
+			}
+			else
+			{
+				prev_entry->MemoryNext = entry;
+				entry->MemoryPrev = prev_entry;
+			}
 		}
 
 		this->UsedMemory += sz;

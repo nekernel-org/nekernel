@@ -108,7 +108,7 @@ namespace Kernel
 		if (!ptr_heap || new_sz < 1)
 			return nullptr;
 
-		kout << "This function is not implemented by the kernel itself.\r";
+		kout << "This function is not implemented by the kernel yet.\r";
 
 		ke_panic(RUNTIME_CHECK_INVALID);
 
@@ -129,8 +129,8 @@ namespace Kernel
 
 		sz_fix += sizeof(Detail::MM_INFORMATION_BLOCK);
 
-		PageMgr heap_mgr;
-		auto	wrapper = heap_mgr.Request(wr, user, No, sz_fix, pad_amount);
+		PageMgr page_mgr;
+		auto	wrapper = page_mgr.Request(wr, user, No, sz_fix, pad_amount);
 
 		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
 			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
@@ -244,8 +244,8 @@ namespace Kernel
 			PTEWrapper		page_wrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pte_address{page_wrapper};
 
-			PageMgr heap_mgr;
-			heap_mgr.Free(pte_address);
+			PageMgr page_mgr;
+			page_mgr.Free(pte_address);
 
 			return kErrorSuccess;
 		}

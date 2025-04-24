@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-#include "NewKit/Defines.h"
 #ifdef __FSKIT_INCLUDES_HEFS__
 
 #include <modules/AHCI/AHCI.h>
