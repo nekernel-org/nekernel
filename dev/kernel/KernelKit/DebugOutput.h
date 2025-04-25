@@ -177,7 +177,7 @@ namespace Kernel
 		return self;
 	}
 
-	constexpr SizeT kDebugTypeLen = 256U;
+	inline constexpr SizeT kDebugTypeLen = 256U;
 
 	typedef Char rt_debug_type[kDebugTypeLen];
 
