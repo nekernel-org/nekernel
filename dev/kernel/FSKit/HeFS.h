@@ -100,7 +100,7 @@ struct PACKED HEFS_BOOT_NODE final {
   Kernel::UInt64    fSectorCount;                /// @brief Number of sectors in the filesystem.
   Kernel::UInt64    fSectorSize;                 /// @brief Size of the sector.
   Kernel::UInt32    fChecksum;                   /// @brief Checksum of the boot node.
-  Kernel::UInt8 fDriveKind;  /// @brief Kind of the drive. (Hard Drive, Solid State Drive, Optical
+  Kernel::UInt8 fDiskKind;   /// @brief Kind of the drive. (Hard Drive, Solid State Drive, Optical
                              /// Drive, etc).
   Kernel::UInt8  fEncoding;  /// @brief Encoding of the filesystem. (UTF-8, UTF-16, etc).
   Kernel::UInt64 fStartIND;  /// @brief Start of the INode tree.
@@ -332,7 +332,7 @@ inline const Char* hefs_file_flags_to_string(UInt32 flags) noexcept {
 }
 }  // namespace Kernel::Detail
 
-namespace Kernel {
+namespace Kernel::HeFS {
 /// @brief HeFS filesystem parser class.
 /// @details This class is used to parse the HeFS filesystem.
 class HeFileSystemParser final {
@@ -351,17 +351,13 @@ class HeFileSystemParser final {
   /// @brief Make a EPM+HeFS drive out of the disk.
   /// @param drive The drive to write on.
   /// @return If it was sucessful, see err_local_get().
-  _Output Bool FormatEPM(_Input _Output DriveTrait* drive, _Input const Lba end_lba,
-                         _Input const Int32 flags, const Char* part_name);
-
-  /// @brief Make a GPT+HeFS drive out of the disk.
-  /// @param drive The drive to write on.
-  /// @return If it was sucessful, see err_local_get().
-  _Output Bool FormatGPT(_Input _Output DriveTrait* drive, _Input const Lba end_lba,
-                         _Input const Int32 flags, const Char* part_name);
+  _Output Bool Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
+                      const Utf16Char* part_name);
 
  public:
   UInt32 mDriveIndex{MountpointInterface::kDriveIndexA};  /// @brief The drive index which this
                                                           /// filesystem is mounted on.
 };
-}  // namespace Kernel
+
+Boolean fs_init_hefs(Void) noexcept;
+}  // namespace Kernel::HeFS

@@ -275,8 +275,6 @@ class BDiskFormatFactory final {
 
 /// @brief Format disk with a specific partition scheme.
 /// @param part_name partition Name
-/// @param blob blos.
-/// @param blob_sz n blobs (n *  sizeof(blob_struct)).
 /// @retval True disk has been formatted.
 /// @retval False failed to format.
 template <typename BootDev>
@@ -292,42 +290,17 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
     return false;
   }
 
-  NEFS_ROOT_PARTITION_BLOCK part{};
-
-  CopyMem(part.Ident, kNeFSIdent, kNeFSIdentLen - 1);
-  CopyMem(part.PartitionName, part_name, StrLen(part_name));
-
-  part.Version      = kNeFSVersionInteger;
-  part.CatalogCount = blob_sz;
-  part.Kind         = BootDev::kSectorSize;
-  part.SectorSize   = kATASectorSize;
-  part.FreeCatalog  = fDiskDev.GetSectorsCount() / sizeof(NEFS_CATALOG_STRUCT);
-  part.SectorCount  = fDiskDev.GetSectorsCount();
-  part.FreeSectors  = fDiskDev.GetSectorsCount();
-  part.StartCatalog = kNeFSCatalogStartAddress;
-  part.DiskSize     = fDiskDev.GetDiskSize();
-  part.Flags        = kNeFSPartitionTypeBoot | kNeFSPartitionTypeStandard;
-
-  BootTextWriter writer;
-
-  writer << "BootZ: Partition name: " << part.PartitionName << "\r";
-  writer << "BootZ: Start: " << part.StartCatalog << "\r";
-  writer << "BootZ: Number of catalogs: " << part.CatalogCount << "\r";
-  writer << "BootZ: Free catalog: " << part.FreeCatalog << "\r";
-  writer << "BootZ: Free sectors: " << part.FreeSectors << "\r";
-  writer << "BootZ: Sector size: " << part.SectorSize << "\r";
-
   EPM_PART_BLOCK epm_boot{};
 
-  const auto kFsName    = "NeFS";
+  const auto kFsName    = "HeFS";
   const auto kBlockName = "OS (EPM)";
 
   epm_boot.FsVersion = kNeFSVersionInteger;
   epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
   epm_boot.LbaEnd    = fDiskDev.GetDiskSize();
-  epm_boot.SectorSz  = part.SectorSize;
+  epm_boot.SectorSz  = BootDev::kSectorSize;
   epm_boot.Kind      = kEPMNeKernel;
-  epm_boot.NumBlocks = part.CatalogCount;
+  epm_boot.NumBlocks = 1;
 
   epm_boot.Guid = kEPMNilGuid;
 
@@ -342,11 +315,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
 
   fDiskDev.Write((Char*) &epm_boot, sizeof(EPM_PART_BLOCK));
 
-  fDiskDev.Leak().mBase = kNeFSRootCatalogStartAddress;
-  fDiskDev.Leak().mSize = sizeof(NEFS_ROOT_PARTITION_BLOCK);
-
-  fDiskDev.Write((Char*) &part, sizeof(NEFS_ROOT_PARTITION_BLOCK));
-
+  BootTextWriter writer;
   writer.Write(L"BootZ: Drive is EPM formatted.\r");
 #elif defined(BOOTZ_VEPM_SUPPORT)
   NE_UNUSED(part_name);

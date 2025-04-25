@@ -415,25 +415,14 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
   return nullptr;
 }
 
-_Output Bool NeFileSystemParser::FormatGPT(_Input _Output DriveTrait* drive,
-                                           _Input const Lba end_lba, _Input const Int32 flags,
-                                           const Char* part_name) {
-  NE_UNUSED(drive);
-  NE_UNUSED(end_lba);
-  NE_UNUSED(flags);
-  NE_UNUSED(part_name);
-
-  (Void)(kout << "FormatGPT: Not implemented yet.\r");
-
-  return NO;
-}
-
 /// @brief Make a EPM+NeFS drive out of the disk.
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see err_global_get().
-bool NeFileSystemParser::FormatEPM(_Input _Output DriveTrait* drive, _Input const Lba endLba,
-                                   _Input const Int32 flags, const Char* part_name) {
-  if (*part_name == 0 || endLba == 0) return false;
+bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
+                                const Char* part_name) {
+  if (*part_name == 0) return false;
+
+  NE_UNUSED(flags);
 
   // verify disk.
   drive->fVerify(drive->fPacket);
@@ -449,7 +438,7 @@ bool NeFileSystemParser::FormatEPM(_Input _Output DriveTrait* drive, _Input cons
 
   Char fs_buf[sizeof(NEFS_ROOT_PARTITION_BLOCK)] = {0};
 
-  Lba start = kNeFSRootCatalogStartAddress;
+  Lba start = drive->fLbaStart;
 
   drive->fPacket.fPacketContent = fs_buf;
   drive->fPacket.fPacketSize    = sizeof(NEFS_ROOT_PARTITION_BLOCK);
@@ -457,129 +446,48 @@ bool NeFileSystemParser::FormatEPM(_Input _Output DriveTrait* drive, _Input cons
 
   drive->fInput(drive->fPacket);
 
-  if (flags & kNeFSPartitionTypeBoot) {
-    // make it bootable when needed.
-    Char buf_epm[kNeFSSectorSz] = {0};
+  NEFS_ROOT_PARTITION_BLOCK* part_block = (NEFS_ROOT_PARTITION_BLOCK*) fs_buf;
 
-    EPM_PART_BLOCK* epm_boot = (EPM_PART_BLOCK*) buf_epm;
+  const auto kNeFSUntitledHD = part_name;
 
-    // Write a new EPM entry.
+  rt_copy_memory((VoidPtr) kNeFSIdent, (VoidPtr) part_block->Ident, kNeFSIdentLen);
 
-    constexpr auto kFsName    = "NeFS";
-    constexpr auto kBlockName = "NeKernel:";
+  rt_copy_memory((VoidPtr) kNeFSUntitledHD, (VoidPtr) part_block->PartitionName,
+                 rt_string_len(kNeFSUntitledHD));
 
-    epm_boot->FsVersion = kNeFSVersionInteger;
-    epm_boot->LbaStart  = start;
-    epm_boot->SectorSz  = kNeFSSectorSz;
+  SizeT sectorCount = drv_get_sector_count();
+  SizeT diskSize    = drv_get_size();
 
-    rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), epm_boot->Fs,
-                   rt_string_len(kFsName));
-    rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)), epm_boot->Name,
-                   rt_string_len(kBlockName));
-    rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)), epm_boot->Magic,
-                   rt_string_len(kEPMMagic));
+  part_block->Version = kNeFSVersionInteger;
 
-    Lba outEpmLba = kEPMBootBlockLba;
+  part_block->Kind         = kNeFSPartitionTypeStandard;
+  part_block->StartCatalog = start + sizeof(NEFS_ROOT_PARTITION_BLOCK);
+  part_block->Flags        = 0UL;
+  part_block->CatalogCount = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
+  part_block->FreeSectors  = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
+  part_block->SectorCount  = sectorCount;
+  part_block->DiskSize     = diskSize;
+  part_block->FreeCatalog  = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
 
-    Char buf[kNeFSSectorSz] = {0};
+  drive->fPacket.fPacketContent = fs_buf;
+  drive->fPacket.fPacketSize    = sizeof(NEFS_ROOT_PARTITION_BLOCK);
+  drive->fPacket.fPacketLba     = start;
 
-    Lba   prevStart = 0;
-    SizeT cnt       = 0;
+  drive->fOutput(drive->fPacket);
 
-    while (drive->fPacket.fPacketGood) {
-      drive->fPacket.fPacketContent = buf;
-      drive->fPacket.fPacketSize    = sizeof(EPM_PART_BLOCK);
-      drive->fPacket.fPacketLba     = outEpmLba;
+  (Void)(kout << "drive kind: " << drive->fProtocol() << kendl);
 
-      drive->fInput(drive->fPacket);
+  (Void)(kout << "partition name: " << part_block->PartitionName << kendl);
+  (Void)(kout << "start: " << hex_number(part_block->StartCatalog) << kendl);
+  (Void)(kout << "number of catalogs: " << hex_number(part_block->CatalogCount) << kendl);
+  (Void)(kout << "free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
+  (Void)(kout << "free sectors: " << hex_number(part_block->FreeSectors) << kendl);
+  (Void)(kout << "sector size: " << hex_number(part_block->SectorSize) << kendl);
 
-      if (buf[0] == 0) {
-        epm_boot->LbaStart = prevStart;
+  // write the root catalog.
+  this->CreateCatalog(kNeFSRoot, 0, kNeFSCatalogKindDir);
 
-        if (epm_boot->LbaStart) epm_boot->LbaStart = outEpmLba;
-
-        epm_boot->LbaEnd    = endLba;
-        epm_boot->NumBlocks = cnt;
-
-        drive->fPacket.fPacketContent = buf_epm;
-        drive->fPacket.fPacketSize    = sizeof(EPM_PART_BLOCK);
-        drive->fPacket.fPacketLba     = outEpmLba;
-
-        drive->fOutput(drive->fPacket);
-
-        break;
-      } else {
-        prevStart = ((EPM_PART_BLOCK*) buf)->LbaStart + ((EPM_PART_BLOCK*) buf)->LbaEnd;
-      }
-
-      outEpmLba += sizeof(EPM_PART_BLOCK);
-      ++cnt;
-    }
-  }
-
-  // disk isnt faulty and data has been fetched.
-  while (drive->fPacket.fPacketGood) {
-    NEFS_ROOT_PARTITION_BLOCK* part_block = (NEFS_ROOT_PARTITION_BLOCK*) fs_buf;
-
-    // check for an empty partition here.
-    if (part_block->PartitionName[0] == 0 &&
-        rt_string_cmp(part_block->Ident, kNeFSIdent, kNeFSIdentLen)) {
-      // partition is free and valid.
-
-      part_block->Version = kNeFSVersionInteger;
-
-      const auto kNeFSUntitledHD = part_name;
-
-      rt_copy_memory((VoidPtr) kNeFSIdent, (VoidPtr) part_block->Ident, kNeFSIdentLen);
-
-      rt_copy_memory((VoidPtr) kNeFSUntitledHD, (VoidPtr) part_block->PartitionName,
-                     rt_string_len(kNeFSUntitledHD));
-
-      SizeT sectorCount = drv_get_sector_count();
-      SizeT diskSize    = drv_get_size();
-
-      part_block->Kind         = kNeFSPartitionTypeStandard;
-      part_block->StartCatalog = kNeFSCatalogStartAddress;
-      part_block->Flags        = kNeFSPartitionTypeStandard;
-      part_block->CatalogCount = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
-      part_block->FreeSectors  = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
-      part_block->SectorCount  = sectorCount;
-      part_block->DiskSize     = diskSize;
-      part_block->FreeCatalog  = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
-
-      drive->fPacket.fPacketContent = fs_buf;
-      drive->fPacket.fPacketSize    = sizeof(NEFS_ROOT_PARTITION_BLOCK);
-      drive->fPacket.fPacketLba     = kNeFSRootCatalogStartAddress;
-
-      drive->fOutput(drive->fPacket);
-
-      (Void)(kout << "drive kind: " << drive->fProtocol() << kendl);
-
-      (Void)(kout << "partition name: " << part_block->PartitionName << kendl);
-      (Void)(kout << "start: " << hex_number(part_block->StartCatalog) << kendl);
-      (Void)(kout << "number of catalogs: " << hex_number(part_block->CatalogCount) << kendl);
-      (Void)(kout << "free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
-      (Void)(kout << "free sectors: " << hex_number(part_block->FreeSectors) << kendl);
-      (Void)(kout << "sector size: " << hex_number(part_block->SectorSize) << kendl);
-
-      // write the root catalog.
-      this->CreateCatalog(kNeFSRoot, 0, kNeFSCatalogKindDir);
-
-      return true;
-    }
-
-    kout << "partition block already exists.\r";
-
-    start += part_block->DiskSize;
-
-    drive->fPacket.fPacketContent = fs_buf;
-    drive->fPacket.fPacketSize    = sizeof(NEFS_ROOT_PARTITION_BLOCK);
-    drive->fPacket.fPacketLba     = start;
-
-    drive->fInput(drive->fPacket);
-  }
-
-  return false;
+  return true;
 }
 
 /// @brief Writes the data fork into a specific catalog.
@@ -970,6 +878,9 @@ Boolean fs_init_nefs(Void) noexcept {
 
   if (kMountpoint.A().fPacket.fPacketReadOnly == YES)
     ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main filesystem cannot be mounted.");
+
+  NeFileSystemParser parser;
+  parser.Format(&kMountpoint.A(), 0, kNeFSVolumeName);
 
   return YES;
 }

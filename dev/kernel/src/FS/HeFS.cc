@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+#include "NewKit/Defines.h"
 #ifdef __FSKIT_INCLUDES_HEFS__
 
 #include <FSKit/HeFS.h>
@@ -636,34 +637,95 @@ namespace Detail {
 /// real-time.
 /// @note This is certainly take longer to format a disk with it, but worth-it in the long run.
 
-namespace Kernel {
+namespace Kernel::HeFS {
 /// @brief Make a EPM+HeFS drive out of the disk.
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see err_local_get().
-_Output Bool HeFileSystemParser::FormatEPM(_Input _Output DriveTrait* drive,
-                                           _Input const Lba end_lba, _Input const Int32 flags,
-                                           const Char* part_name) {
+_Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
+                                        const Utf16Char* part_name) {
   NE_UNUSED(drive);
-  NE_UNUSED(end_lba);
   NE_UNUSED(flags);
   NE_UNUSED(part_name);
 
-  return NO;
+  // verify disk.
+  drive->fVerify(drive->fPacket);
+  
+  // if disk isn't good, then error out.
+  if (false == drive->fPacket.fPacketGood) {
+    err_global_get() = kErrorDiskIsCorrupted;
+    return false;
+  }
+
+
+  HEFS_BOOT_NODE* root = new HEFS_BOOT_NODE();
+
+  if (!root) {
+    kout << "Error: Failed to allocate memory for boot node.\r";
+    return NO;
+  }
+
+  rt_set_memory(root, 0, sizeof(HEFS_BOOT_NODE));
+
+  rt_copy_memory((VoidPtr) "fs/hefs-packet", drive->fPacket.fPacketMime,
+                 rt_string_len("fs/hefs-packet"));
+
+  wrt_copy_memory((VoidPtr) part_name, root->fVolName, wrt_string_len(part_name));
+  rt_copy_memory((VoidPtr) kHeFSMagic, root->fMagic, sizeof(kHeFSMagic));
+
+  root->fBadSectors = 0;
+
+  root->fSectorCount = drv_get_sector_count();
+
+  root->fSectorSize = drive->fSectorSz;
+
+  root->fStartIND = drive->fLbaStart + sizeof(HEFS_BOOT_NODE);
+  root->fEndIND   = drive->fLbaEnd;
+
+  root->fINDCount = root->fEndIND - root->fStartIND;
+
+  root->fDiskSize   = drv_get_size();
+  root->fDiskStatus = kHeFSStatusUnlocked;
+
+  root->fDiskFlags = flags;
+
+  if (drive->fKind & kMassStorageDrive) {
+  } else if (drive->fKind & kHeFSOpticalDrive) {
+    root->fDiskKind = kHeFSOpticalDrive;
+  } else {
+    root->fDiskKind = kHeFSUnknown;
+  }
+
+  root->fReserved  = 0;
+  root->fReserved2 = 0;
+  root->fReserved3 = 0;
+  root->fReserved4 = 0;
+
+  root->fChecksum = 0;
+
+  root->fVID = kHeFSInvalidVID;
+
+  drive->fPacket.fPacketLba     = drive->fLbaStart;
+  drive->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
+  drive->fPacket.fPacketContent = root;
+
+  drive->fOutput(drive->fPacket);
+
+  return YES;
 }
 
-/// @brief Make a EPM+HeFS drive out of the disk.
-/// @param drive The drive to write on.
-/// @return If it was sucessful, see err_local_get().
-_Output Bool HeFileSystemParser::FormatGPT(_Input _Output DriveTrait* drive,
-                                           _Input const Lba end_lba, _Input const Int32 flags,
-                                           const Char* part_name) {
-  NE_UNUSED(drive);
-  NE_UNUSED(end_lba);
-  NE_UNUSED(flags);
-  NE_UNUSED(part_name);
+Boolean fs_init_hefs(Void) noexcept {
+  kout << "Creating main disk...\r";
 
-  return NO;
+  auto drv = io_construct_main_drive();
+
+  if (drv.fPacket.fPacketReadOnly == YES)
+    ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main filesystem cannot be mounted.");
+
+  HeFileSystemParser parser;
+  parser.Format(&drv, kHeFSEncodingUTF16, kHeFSDefaultVoluneName);
+
+  return YES;
 }
-}  // namespace Kernel
+}  // namespace Kernel::HeFS
 
 #endif  // ifdef __FSKIT_INCLUDES_HEFS__

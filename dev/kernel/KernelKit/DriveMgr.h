@@ -62,7 +62,7 @@ struct DriveTrait final {
   } fPacket;
 
   Lba   fLbaStart{0}, fLbaEnd{0};
-  SizeT fSectorSz{512};
+  SizeT fSectorSz{kDriveSectorSz};
 
   Void (*fInput)(DrivePacket packet);
   Void (*fOutput)(DrivePacket packet);

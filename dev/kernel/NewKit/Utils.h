@@ -17,7 +17,6 @@ void        rt_zero_memory(voidPtr pointer, Size len);
 Int         rt_string_cmp(const Char* src, const Char* cmp, Size len);
 const Char* rt_alloc_string(const Char* text);
 Size        rt_string_len(const Char* str);
-Size        wrt_string_len(const Utf16Char* str);
 Size        rt_string_len(const Char* str, SizeT _len);
 Boolean     rt_to_string(Char* str_out, UInt64 base, Int32 limit);
 Boolean     rt_is_newln(Char chr);
@@ -27,4 +26,7 @@ Int         rt_to_uppercase(Int c);
 Int         rt_to_lower(Int c);
 voidPtr     rt_string_in_string(const Char* in, const Char* needle);
 char*       rt_string_has_char(Char* str, Char chr);
+
+Int  wrt_copy_memory(const voidPtr src, voidPtr dst, Size len);
+Size wrt_string_len(const Utf16Char* str);
 }  // namespace Kernel
