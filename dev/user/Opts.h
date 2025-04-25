@@ -4,6 +4,9 @@
 
 ------------------------------------------- */
 
+#pragma once
+
+#include <user/SystemCalls.h>
 #include <cstdarg>
 
 IMPORT_C VoidPtr sci_syscall_arg_1(SizeT id);
