@@ -26,7 +26,9 @@ namespace Kernel
 	typedef struct HAL_HARDWARE_THREAD
 	{
 		Kernel::UIntPtr fStartAddress;
-		Kernel::UInt8	fPrivleged : 1;
+		Kernel::UIntPtr fStackPtr;
+		Kernel::UIntPtr fFramePtr;
+		Kernel::UInt8	fPrivileged : 1;
 		Kernel::UInt32	fPageMemoryFlags;
 		hal_ap_kind		fIdentNumber;
 	} HAL_HARDWARE_THREAD;

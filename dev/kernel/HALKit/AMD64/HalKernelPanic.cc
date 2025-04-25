@@ -33,9 +33,9 @@ namespace Kernel
 	/***********************************************************************************/
 	Void ke_panic(const Kernel::Int32& id, const Char* message)
 	{
-		(void)(kout << "Kernel_Panic_MSG: " << message << kendl);
-		(void)(kout << "Kernel_Panic_ID: " << hex_number(id) << kendl);
-		(void)(kout << "Kernel_Panic_CR2: " << hex_number((UIntPtr)hal_read_cr2()) << kendl);
+		(Void)(kout << "Kernel_Panic_MSG: " << message << kendl);
+		(Void)(kout << "Kernel_Panic_ID: " << hex_number(id) << kendl);
+		(Void)(kout << "Kernel_Panic_CR2: " << hex_number((UIntPtr)hal_read_cr2()) << kendl);
 
 		RecoveryFactory::Recover();
 	}
@@ -52,8 +52,8 @@ namespace Kernel
 	{
 		if (!expr)
 		{
-			(void)(kout << "Kernel_Panic_File: " << file << kendl);
-			(void)(kout << "Kernel_Panic_Line: " << line << kendl);
+			(Void)(kout << "Kernel_Panic_File: " << file << kendl);
+			(Void)(kout << "Kernel_Panic_Line: " << line << kendl);
 
 			ke_panic(RUNTIME_CHECK_FAILED, file); // Runtime Check failed
 		}

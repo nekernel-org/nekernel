@@ -161,18 +161,18 @@ namespace Kernel
 				{
 					if (!this->IsBitMap(ptr_bit_set))
 					{
-						(void)(kout << "Not a BitMap: " << hex_number((UIntPtr)ptr_bit_set) << kendl);
+						(Void)(kout << "Not a BitMap: " << hex_number((UIntPtr)ptr_bit_set) << kendl);
 						return;
 					}
 
-					(void)(kout << "Magic: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << kendl);
-					(void)(kout << "Is Allocated? " << (ptr_bit_set[kBitMapUsedIdx] ? "YES" : "NO") << kendl);
-					(void)(kout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << kendl);
-					(void)(kout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
-					(void)(kout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
-					(void)(kout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
-					(void)(kout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
-					(void)(kout << "BitMap Address: " << hex_number((UIntPtr)ptr_bit_set) << kendl);
+					(Void)(kout << "Magic: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << kendl);
+					(Void)(kout << "Is Allocated? " << (ptr_bit_set[kBitMapUsedIdx] ? "YES" : "NO") << kendl);
+					(Void)(kout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << kendl);
+					(Void)(kout << "Size of BitMap (KIB): " << number(KIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
+					(Void)(kout << "Size of BitMap (MIB): " << number(MIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
+					(Void)(kout << "Size of BitMap (GIB): " << number(GIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
+					(Void)(kout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx])) << kendl);
+					(Void)(kout << "BitMap Address: " << hex_number((UIntPtr)ptr_bit_set) << kendl);
 				}
 			};
 		} // namespace Detail

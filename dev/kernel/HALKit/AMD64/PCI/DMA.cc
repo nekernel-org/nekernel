@@ -38,7 +38,7 @@ namespace Kernel
 		if (!this->fAddress)
 			return false;
 
-		(void)(kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl);
+		(Void)(kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl);
 
 		ke_dma_write<UInt32>(reinterpret_cast<UIntPtr>(this->fAddress), offset, bit);
 
@@ -52,7 +52,7 @@ namespace Kernel
 		if (!this->fAddress)
 			return ~0;
 
-		(void)(kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl);
+		(Void)(kout << "[DMAWrapper::Write] Writing at address: " << hex_number(reinterpret_cast<UIntPtr>(this->fAddress) + offset) << kendl);
 
 		return (UIntPtr)ke_dma_read<UInt32>(reinterpret_cast<UIntPtr>(this->fAddress), offset);
 	}

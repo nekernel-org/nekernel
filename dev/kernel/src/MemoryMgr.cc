@@ -150,7 +150,7 @@ namespace Kernel
 
 		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
-		(void)(kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
+		(Void)(kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
 
 		return result;
 	}
@@ -172,7 +172,7 @@ namespace Kernel
 
 		heap_info_ptr->fPage = true;
 
-		(void)(kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
+		(Void)(kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
 
 		return kErrorSuccess;
 	}
@@ -239,7 +239,7 @@ namespace Kernel
 			heap_info_ptr->fMagic	  = 0;
 			heap_info_ptr->fPad		  = 0;
 
-			(void)(kout << "Address has been successfully freed: " << hex_number((UIntPtr)heap_info_ptr) << kendl);
+			(Void)(kout << "Address has been successfully freed: " << hex_number((UIntPtr)heap_info_ptr) << kendl);
 
 			PTEWrapper		page_wrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
 			Ref<PTEWrapper> pte_address{page_wrapper};

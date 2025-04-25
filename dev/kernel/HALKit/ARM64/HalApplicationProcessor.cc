@@ -93,7 +93,7 @@ namespace Kernel
 
 				const UInt16 kInterruptScheduler = 0x20;
 
-				(void)(kout << "Handling interrupt for AP: " << interrupt << kendl);
+				(Void)(kout << "Handling interrupt for AP: " << interrupt << kendl);
 
 				switch (interrupt)
 				{

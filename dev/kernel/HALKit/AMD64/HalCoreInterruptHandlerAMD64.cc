@@ -148,7 +148,7 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip)
 
 	kIsScheduling = NO;
 
-	(void)(Kernel::kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
+	(Void)(Kernel::kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
 	Kernel::kout << "Kernel: SIGTRAP\r";
 
 	process.Leak().Signal.SignalArg = rip;

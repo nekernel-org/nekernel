@@ -190,22 +190,22 @@ namespace Boot
 
 		if (own_stack)
 		{
-			writer.Write("BootZ: Using own stack.\r");
+			writer.Write("BootZ: Using it's own stack.\r");
 			writer.Write("BootZ: Stack address: ").Write((UIntPtr)&fStack[mib_cast(16) - 1]).Write("\r");
 			writer.Write("BootZ: Stack size: ").Write(mib_cast(16)).Write("\r");
 
 			auto ret = rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(16) - 1]);
+
+			// we don't need the stack anymore.
+
+			delete[] fStack;
+			fStack = nullptr;
+
 			return ret;
 		}
 		else
 		{
-			delete[] fStack;
-			fStack = nullptr;
-			// we don't need the stack anymore.
-
-			BootTextWriter writer;
-
-			writer.Write("BootZ: Using EFI stack.\r");
+			writer.Write("BootZ: Using Bootloader's stack.\r");
 
 			return reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
 		}

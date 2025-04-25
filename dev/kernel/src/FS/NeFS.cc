@@ -73,7 +73,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 
 		Lba lba = catalog->DataFork;
 
-		(void)(kout << "Fork LBA: " << hex_number(lba) << kendl);
+		(Void)(kout << "Fork LBA: " << hex_number(lba) << kendl);
 
 		if (lba < kNeFSCatalogStartAddress)
 			return NO;
@@ -94,7 +94,7 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 
 			drv.fInput(drv.fPacket);
 
-			(void)(kout << "Next fork: " << hex_number(cur_fork.NextSibling) << kendl);
+			(Void)(kout << "Next fork: " << hex_number(cur_fork.NextSibling) << kendl);
 
 			if (cur_fork.Flags & kNeFSFlagCreated)
 			{
@@ -144,10 +144,10 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork)
 		fs_ifs_write(&kMountpoint, drv, MountpointInterface::kDriveIndexA);
 
 		/// log what we have now.
-		(void)(kout << "Fork offset is at: " << hex_number(the_fork.DataOffset)
+		(Void)(kout << "Fork offset is at: " << hex_number(the_fork.DataOffset)
 					<< kendl);
 
-		(void)(kout << "Wrote fork metadata at: " << hex_number(lba) << kendl);
+		(Void)(kout << "Wrote fork metadata at: " << hex_number(lba) << kendl);
 
 		return YES;
 	}
@@ -461,7 +461,7 @@ _Output Bool NeFileSystemParser::FormatGPT(_Input _Output DriveTrait* drive, _In
 	NE_UNUSED(flags);
 	NE_UNUSED(part_name);
 
-	(void)(kout << "FormatGPT: Not implemented yet.\r");
+	(Void)(kout << "FormatGPT: Not implemented yet.\r");
 
 	return NO;
 }
@@ -600,14 +600,14 @@ bool NeFileSystemParser::FormatEPM(_Input _Output DriveTrait* drive, _Input cons
 
 			drive->fOutput(drive->fPacket);
 
-			(void)(kout << "drive kind: " << drive->fProtocol() << kendl);
+			(Void)(kout << "drive kind: " << drive->fProtocol() << kendl);
 
-			(void)(kout << "partition name: " << part_block->PartitionName << kendl);
-			(void)(kout << "start: " << hex_number(part_block->StartCatalog) << kendl);
-			(void)(kout << "number of catalogs: " << hex_number(part_block->CatalogCount) << kendl);
-			(void)(kout << "free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
-			(void)(kout << "free sectors: " << hex_number(part_block->FreeSectors) << kendl);
-			(void)(kout << "sector size: " << hex_number(part_block->SectorSize) << kendl);
+			(Void)(kout << "partition name: " << part_block->PartitionName << kendl);
+			(Void)(kout << "start: " << hex_number(part_block->StartCatalog) << kendl);
+			(Void)(kout << "number of catalogs: " << hex_number(part_block->CatalogCount) << kendl);
+			(Void)(kout << "free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
+			(Void)(kout << "free sectors: " << hex_number(part_block->FreeSectors) << kendl);
+			(Void)(kout << "sector size: " << hex_number(part_block->SectorSize) << kendl);
 
 			// write the root catalog.
 			this->CreateCatalog(kNeFSRoot, 0, kNeFSCatalogKindDir);
@@ -666,7 +666,7 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 	NEFS_FORK_STRUCT* fork_data_input = new NEFS_FORK_STRUCT();
 	NEFS_FORK_STRUCT  prev_fork{};
 
-	(void)(kout << hex_number(startFork) << kendl);
+	(Void)(kout << hex_number(startFork) << kendl);
 
 	// sanity check of the fork position as the condition to run the loop.
 	while (startFork >= kNeFSCatalogStartAddress)
@@ -677,13 +677,13 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 
 		drive.fInput(drive.fPacket);
 
-		(void)(kout << hex_number(fork_data_input->DataSize) << kendl);
-		(void)(kout << hex_number(size_of_data) << kendl);
-		(void)(kout << hex_number(fork_data_input->Flags) << kendl);
-		(void)(kout << fork_name << kendl);
-		(void)(kout << fork_data_input->ForkName << kendl);
-		(void)(kout << fork_data_input->CatalogName << kendl);
-		(void)(kout << catalog_name << kendl);
+		(Void)(kout << hex_number(fork_data_input->DataSize) << kendl);
+		(Void)(kout << hex_number(size_of_data) << kendl);
+		(Void)(kout << hex_number(fork_data_input->Flags) << kendl);
+		(Void)(kout << fork_name << kendl);
+		(Void)(kout << fork_data_input->ForkName << kendl);
+		(Void)(kout << fork_data_input->CatalogName << kendl);
+		(Void)(kout << catalog_name << kendl);
 
 		if ((fork_data_input->Flags & kNeFSFlagCreated) &&
 			KStringBuilder::Equals(fork_data_input->ForkName, fork_name) &&
@@ -698,11 +698,11 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 			drive.fPacket.fPacketSize	 = size_of_data;
 			drive.fPacket.fPacketLba	 = fork_data_input->DataOffset;
 
-			(void)(kout << "data offset: " << hex_number(fork_data_input->DataOffset) << kendl);
+			(Void)(kout << "data offset: " << hex_number(fork_data_input->DataOffset) << kendl);
 
 			drive.fOutput(drive.fPacket);
 
-			(void)(kout << "wrote data at offset: " << hex_number(fork_data_input->DataOffset) << kendl);
+			(Void)(kout << "wrote data at offset: " << hex_number(fork_data_input->DataOffset) << kendl);
 
 			delete fork_data_input;
 			delete[] buf;
@@ -841,8 +841,8 @@ kNeFSSearchThroughCatalogList:
 				goto NeFSContinueSearch;
 			}
 
-			(void)(kout << "Found available catalog at: " << hex_number(start_catalog_lba) << kendl);
-			(void)(kout << "Found available catalog at: " << temporary_catalog.Name << kendl);
+			(Void)(kout << "Found available catalog at: " << hex_number(start_catalog_lba) << kendl);
+			(Void)(kout << "Found available catalog at: " << temporary_catalog.Name << kendl);
 
 			NEFS_CATALOG_STRUCT* catalog_ptr = new NEFS_CATALOG_STRUCT();
 			rt_copy_memory(&temporary_catalog, catalog_ptr, sizeof(NEFS_CATALOG_STRUCT));
@@ -998,8 +998,8 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NEFS_CATALOG_STRUCT* cata
 
 		fs_fork_data = fs_buf;
 
-		(void)(kout << "ForkName: " << fs_fork_data->ForkName << kendl);
-		(void)(kout << "CatalogName: " << fs_fork_data->CatalogName << kendl);
+		(Void)(kout << "ForkName: " << fs_fork_data->ForkName << kendl);
+		(Void)(kout << "CatalogName: " << fs_fork_data->CatalogName << kendl);
 
 		if (KStringBuilder::Equals(forkName, fs_fork_data->ForkName) &&
 			KStringBuilder::Equals(catalog->Name, fs_fork_data->CatalogName))

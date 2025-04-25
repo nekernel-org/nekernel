@@ -60,7 +60,7 @@ namespace Kernel
 		if (this->Status != ProcessStatusKind::kRunning)
 			return;
 
-		(void)(kout << this->Name << ": crashed, error id: " << number(-kErrorProcessFault) << kendl);
+		(Void)(kout << this->Name << ": crashed, error id: " << number(-kErrorProcessFault) << kendl);
 		this->Exit(-kErrorProcessFault);
 	}
 
@@ -439,7 +439,7 @@ namespace Kernel
 			break;
 		}
 		default: {
-			(void)(kout << "Unknown process kind: " << hex_number(process.Kind) << kendl);
+			(Void)(kout << "Unknown process kind: " << hex_number(process.Kind) << kendl);
 			break;
 		}
 		}
@@ -468,8 +468,8 @@ namespace Kernel
 		process.Status	  = ProcessStatusKind::kStarting;
 		process.PTime	  = (UIntPtr)AffinityKind::kStandard;
 
-		(void)(kout << "PID: " << number(process.ProcessId) << kendl);
-		(void)(kout << "Name: " << process.Name << kendl);
+		(Void)(kout << "PID: " << number(process.ProcessId) << kendl);
+		(Void)(kout << "Name: " << process.Name << kendl);
 
 		return pid;
 	}

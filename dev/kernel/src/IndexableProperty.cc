@@ -50,7 +50,7 @@ namespace Kernel
 				indexer.AddFlag(kIndexerClaimed);
 				rt_copy_memory((VoidPtr)indexer.Leak().Path, (VoidPtr)filename, filenameLen);
 
-				(void)(kout << "FSKit: Indexed new file: " << filename << kendl);
+				(Void)(kout << "FSKit: Indexed new file: " << filename << kendl);
 			}
 		}
 	} // namespace Indexer

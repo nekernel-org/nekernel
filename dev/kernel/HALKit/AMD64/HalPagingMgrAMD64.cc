@@ -41,14 +41,14 @@ namespace Kernel::HAL
 	/***********************************************************************************/
 	STATIC Void mmi_page_status(Detail::PTE* pte)
 	{
-		(void)(kout << (pte->Present ? "Present" : "Not Present") << kendl);
-		(void)(kout << (pte->Wr ? "W/R" : "Not W/R") << kendl);
-		(void)(kout << (pte->Nx ? "NX" : "Not NX") << kendl);
-		(void)(kout << (pte->User ? "User" : "Not User") << kendl);
-		(void)(kout << (pte->Pcd ? "Not Cached" : "Cached") << kendl);
-		(void)(kout << (pte->Accessed ? "Accessed" : "Not Accessed") << kendl);
-		(void)(kout << hex_number(pte->PhysicalAddress) << kendl);
-		(void)(kout << (pte->ProtectionKey ? "Protected" : "Not Protected/PKU Disabled") << kendl);
+		(Void)(kout << (pte->Present ? "Present" : "Not Present") << kendl);
+		(Void)(kout << (pte->Wr ? "W/R" : "Not W/R") << kendl);
+		(Void)(kout << (pte->Nx ? "NX" : "Not NX") << kendl);
+		(Void)(kout << (pte->User ? "User" : "Not User") << kendl);
+		(Void)(kout << (pte->Pcd ? "Not Cached" : "Cached") << kendl);
+		(Void)(kout << (pte->Accessed ? "Accessed" : "Not Accessed") << kendl);
+		(Void)(kout << hex_number(pte->PhysicalAddress) << kendl);
+		(Void)(kout << (pte->ProtectionKey ? "Protected" : "Not Protected/PKU Disabled") << kendl);
 	}
 
 	/***********************************************************************************/

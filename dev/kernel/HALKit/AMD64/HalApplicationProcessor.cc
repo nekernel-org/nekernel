@@ -36,15 +36,17 @@
 
 namespace Kernel::HAL
 {
-	struct PROCESS_APIC_MADT;
-	struct PROCESS_CONTROL_BLOCK;
+	struct HAL_APIC_MADT;
+	struct HAL_HARDWARE_THREAD;
 
-	struct PROCESS_CONTROL_BLOCK final
+	struct HAL_HARDWARE_THREAD final
 	{
-		HAL::StackFramePtr mFrame;
+		HAL::StackFramePtr mFramePtr;
+		ProcessID mProcessID{0};
+		UInt8 mCoreID{0};
 	};
 
-	STATIC PROCESS_APIC_MADT* kMADTBlock = nullptr;
+	STATIC HAL_APIC_MADT* kMADTBlock = nullptr;
 	STATIC Bool				  kSMPAware	 = false;
 	STATIC Int64			  kSMPCount	 = 0;
 
@@ -55,7 +57,7 @@ namespace Kernel::HAL
 	STATIC VoidPtr kRawMADT								   = nullptr;
 
 	/// @brief Multiple APIC Descriptor Table.
-	struct PROCESS_APIC_MADT final SDT_OBJECT
+	struct HAL_APIC_MADT final SDT_OBJECT
 	{
 		UInt32 Address; // Madt address
 		UInt8  Flags;	// Madt flags
@@ -65,8 +67,8 @@ namespace Kernel::HAL
 			UInt8 Type;
 			UInt8 Len;
 
-			union {
-				struct
+			union APIC {
+				struct IOAPIC
 				{
 					UInt8  IoID;
 					UInt8  Zero;
@@ -74,7 +76,7 @@ namespace Kernel::HAL
 					UInt32 GISBase;
 				} IOAPIC;
 
-				struct
+				struct LAPIC_NMI
 				{
 					UInt8  Source;
 					UInt8  IRQSource;
@@ -82,27 +84,27 @@ namespace Kernel::HAL
 					UInt16 Flags;
 				} LApicNMI;
 
-				struct
+				struct LAPIC
 				{
 					UInt8  ProcessorID;
 					UInt16 Flags;
 					UInt8  LINT;
 				} LAPIC;
 
-				struct
+				struct LAPIC_OVERRIDE
 				{
 					UInt16 Reserved;
 					UInt64 Address;
 				} LApicOverride;
 
-				struct
+				struct LAPIC_X2
 				{
 					UInt16 Reserved;
 					UInt32 x2APICID;
 					UInt32 Flags;
 					UInt32 AcpiID;
-				} LApic;
-			};
+				} LocalApicX2;
+			} Apic;
 		} List[1]; // Records List
 	};
 
@@ -145,12 +147,13 @@ namespace Kernel::HAL
 		}
 	}
 
-	STATIC PROCESS_CONTROL_BLOCK kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
+	STATIC HAL_HARDWARE_THREAD kHWThread[kSchedProcessLimitPerTeam] = {{}};
 
 	EXTERN_C HAL::StackFramePtr mp_get_current_context(Int64 pid)
 	{
 		const auto process_index = pid % kSchedProcessLimitPerTeam;
-		return kProcessBlocks[process_index].mFrame;
+
+		return kHWThread[process_index].mFramePtr;
 	}
 
 	EXTERN_C BOOL mp_register_process(HAL::StackFramePtr stack_frame, ProcessID pid)
@@ -159,11 +162,12 @@ namespace Kernel::HAL
 
 		const auto process_index = pid % kSchedProcessLimitPerTeam;
 
-		kProcessBlocks[process_index].mFrame = stack_frame;
+		kHWThread[process_index].mFramePtr = stack_frame;
+		kHWThread[process_index].mProcessID = pid;
 
-		auto first_id = kAPICLocales[0];
+		kHWThread[process_index].mCoreID = kAPICLocales[0];
 
-		hal_send_sipi(kApicBaseAddress, first_id, (UInt8)(((UIntPtr)stack_frame->BP) >> 12));
+		hal_send_sipi(kApicBaseAddress, kHWThread[process_index].mCoreID, (UInt8)(((UIntPtr)stack_frame->BP) >> 12));
 
 		return YES;
 	}
@@ -205,7 +209,7 @@ namespace Kernel::HAL
 		auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
 		kRawMADT			= hw_and_pow_int.Find(kAPIC_Signature).Leak().Leak();
 
-		kMADTBlock = reinterpret_cast<PROCESS_APIC_MADT*>(kRawMADT);
+		kMADTBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
 		kSMPAware  = NO;
 
 		if (kMADTBlock)
@@ -229,11 +233,11 @@ namespace Kernel::HAL
 				switch (kMADTBlock->List[index].Type)
 				{
 				case 0x00: {
-					if (kMADTBlock->List[kSMPCount].LAPIC.ProcessorID < 1)
+					if (kMADTBlock->List[kSMPCount].Apic.LAPIC.ProcessorID < 1)
 						break;
 
-					kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].LAPIC.ProcessorID;
-					(void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
+					kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].Apic.LAPIC.ProcessorID;
+					(Void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
 
 					++kSMPCount;
 					break;
@@ -245,7 +249,7 @@ namespace Kernel::HAL
 				++index;
 			}
 
-			(void)(kout << "SMP: Number of APs: " << number(kSMPCount) << kendl);
+			(Void)(kout << "SMP: Number of APs: " << number(kSMPCount) << kendl);
 
 			// Kernel is now SMP aware.
 			// That means that the scheduler is now available (on MP Kernels)

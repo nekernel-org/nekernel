@@ -432,7 +432,7 @@ namespace Kernel
 			if (!parser->CreateFork(new_fork))
 				return NO;
 
-			(void)(kout << "XML commit: " << xml_data << " to fork: " << journal_name << kendl);
+			(Void)(kout << "XML commit: " << xml_data << " to fork: " << journal_name << kendl);
 
 			auto ret = parser->WriteCatalog(new_fork.CatalogName, YES, xml_data, rt_string_len(xml_data), new_fork.ForkName);
 

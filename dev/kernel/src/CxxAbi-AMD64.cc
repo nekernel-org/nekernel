@@ -19,13 +19,13 @@ Kernel::UIntPtr __dso_handle;
 
 EXTERN_C Kernel::Void __cxa_pure_virtual(void* self)
 {
-	(void)(Kernel::kout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self)));
-	(void)(Kernel::kout << ", has unimplemented virtual functions.\r");
+	(Kernel::Void)(Kernel::kout << "object: " << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self)));
+	(Kernel::Void)(Kernel::kout << ", has unimplemented virtual functions.\r");
 }
 
 EXTERN_C void ___chkstk_ms(void)
 {
-	(void)(Kernel::kout << "Stack smashing detected!\r");
+	(Kernel::Void)(Kernel::kout << "Stack smashing detected!\r");
 	dbg_break_point();
 }
 

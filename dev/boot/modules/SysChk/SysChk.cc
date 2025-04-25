@@ -28,29 +28,18 @@
 
 EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover)
 {
-	NE_UNUSED(handover);
-
 #if defined(__ATA_PIO__)
 	fw_init_efi((EfiSystemTable*)handover->f_FirmwareCustomTables[1]);
 
 	Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
 
 	if (partition_factory.IsPartitionValid())
-		return kEfiFail;
-
-	Boot::BDiskFormatFactory<BootDeviceATA>::BFileDescriptor desc{};
-
-	desc.fFileName[0] = '/';
-	desc.fFileName[1] = 0;
-	desc.fKind		  = kNeFSCatalogKindDir;
-
-	partition_factory.Format(kMachineModel, &desc, 1);
-
-	if (partition_factory.IsPartitionValid())
 		return kEfiOk;
 
-	return kEfiFail;
+	return partition_factory.Format(kMachineModel) == YES;
 #else
+	NE_UNUSED(handover);
+
 	return kEfiOk;
 #endif
 }

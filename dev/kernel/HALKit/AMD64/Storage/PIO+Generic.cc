@@ -108,7 +108,7 @@ ATAInit_Retry:
 
 	kATADiskModel[40] = '\0';
 
-	(void)(kout << "Drive Model: " << kATADiskModel << kendl);
+	(Void)(kout << "Drive Model: " << kATADiskModel << kendl);
 
 	return true;
 }
