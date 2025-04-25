@@ -33,7 +33,7 @@ A documentation for NeKernel is available here: https://nekernel-org.github.io/d
 - [CLANG](https://clang.llvm.org/)
 - [NASM](https://nasm.us/)
 - [GIT](https://git-scm.com/)
-- [BTB](https://github.com/amlel-el-mahrouss/btb)
+- [BTB](https://github.com/nekernel-org/btb)
 
 ## Notice for Contributors:
 
@@ -45,7 +45,7 @@ A documentation for NeKernel is available here: https://nekernel-org.github.io/d
 ## Getting Started:
 
 ```sh
-git clone git@github.com:amlel-el-mahrouss/nekernel.git
+git clone git@github.com:nekernel-org/nekernel.git
 cd nekernel
 ./setup_x64.sh
 ./debug_ata_x64.sh # Generic ATA PIO target

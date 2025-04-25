@@ -649,13 +649,12 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   // verify disk.
   drive->fVerify(drive->fPacket);
-  
+
   // if disk isn't good, then error out.
   if (false == drive->fPacket.fPacketGood) {
     err_global_get() = kErrorDiskIsCorrupted;
     return false;
   }
-
 
   HEFS_BOOT_NODE* root = new HEFS_BOOT_NODE();
 
