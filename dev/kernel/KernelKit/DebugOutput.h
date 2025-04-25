@@ -11,16 +11,14 @@
 #include <NewKit/OwnPtr.h>
 #include <NewKit/Stream.h>
 
-#define kDebugMaxPorts 56
-
 #define kDebugUnboundPort 0x0FEED
 
-#define kDebugMag0 'Z'
+#define kDebugMag0 'K'
 #define kDebugMag1 'D'
 #define kDebugMag2 'B'
 #define kDebugMag3 'G'
 
-#define kDebugSourceFile 0
+#define kDebugSourceFile 23
 #define kDebugLine		 33
 #define kDebugTeam		 43
 #define kDebugEOP		 49
@@ -184,8 +182,8 @@ namespace Kernel
 	class DebuggerPortHeader final
 	{
 	public:
-		Int16 fPort[kDebugMaxPorts];
-		Int16 fPortCnt;
+		Int16 fPort;
+		Int16 fPortBsy;
 	};
 
 	inline TerminalDevice& operator<<(TerminalDevice& src, const Long& num)
