@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -12,43 +12,37 @@
 //! @brief File System Manager API.
 /***********************************************************************************/
 
-namespace Kernel
-{
-	STATIC IFilesystemMgr* kMountedFilesystem = nullptr;
+namespace Kernel {
+STATIC IFilesystemMgr* kMountedFilesystem = nullptr;
 
-	/// @brief FilesystemMgr getter.
-	/// @return The mounted filesystem.
-	_Output IFilesystemMgr* IFilesystemMgr::GetMounted()
-	{
-		return kMountedFilesystem;
-	}
+/// @brief FilesystemMgr getter.
+/// @return The mounted filesystem.
+_Output IFilesystemMgr* IFilesystemMgr::GetMounted() {
+  return kMountedFilesystem;
+}
 
-	/// @brief Unmount filesystem.
-	/// @return The unmounted filesystem.
-	_Output IFilesystemMgr* IFilesystemMgr::Unmount()
-	{
-		if (kMountedFilesystem)
-		{
-			auto mount		   = kMountedFilesystem;
-			kMountedFilesystem = nullptr;
+/// @brief Unmount filesystem.
+/// @return The unmounted filesystem.
+_Output IFilesystemMgr* IFilesystemMgr::Unmount() {
+  if (kMountedFilesystem) {
+    auto mount         = kMountedFilesystem;
+    kMountedFilesystem = nullptr;
 
-			return mount;
-		}
+    return mount;
+  }
 
-		return nullptr;
-	}
+  return nullptr;
+}
 
-	/// @brief Mount filesystem.
-	/// @param mount_ptr The filesystem to mount.
-	/// @return if it succeeded true, otherwise false.
-	_Output Bool IFilesystemMgr::Mount(_Input IFilesystemMgr* mount_ptr)
-	{
-		if (mount_ptr != nullptr)
-		{
-			kMountedFilesystem = mount_ptr;
-			return Yes;
-		}
+/// @brief Mount filesystem.
+/// @param mount_ptr The filesystem to mount.
+/// @return if it succeeded true, otherwise false.
+_Output Bool IFilesystemMgr::Mount(_Input IFilesystemMgr* mount_ptr) {
+  if (mount_ptr != nullptr) {
+    kMountedFilesystem = mount_ptr;
+    return Yes;
+  }
 
-		return No;
-	}
-} // namespace Kernel
+  return No;
+}
+}  // namespace Kernel

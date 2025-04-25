@@ -1,7 +1,7 @@
 
 /* -------------------------------------------
 
-	Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -9,12 +9,10 @@
 
 #include <CoreFoundation.fwrk/headers/Object.h>
 
-namespace CF
-{
-	class CFString;
+namespace CF {
+class CFString;
 
-	class CFString final CF_OBJECT
-	{
-	public:
-	};
-} // namespace CF
+class CFString final CF_OBJECT {
+ public:
+};
+}  // namespace CF

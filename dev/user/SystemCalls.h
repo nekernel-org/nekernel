@@ -94,7 +94,8 @@ IMPORT_C UInt64 IoSeekFile(_Input Ref file_desc, UInt64 file_offset);
 // Process API.
 // ------------------------------------------------------------------------
 
-/// @brief Spawns a Thread Information Block and Global Information Block inside the current process.
+/// @brief Spawns a Thread Information Block and Global Information Block inside the current
+/// process.
 /// @param process_id Target Process ID, must be valid.
 /// @return > 0 error ocurred or already present, = 0 success.
 IMPORT_C UInt32 RtlSpawnIB(UIntPtr process_id);
@@ -102,7 +103,8 @@ IMPORT_C UInt32 RtlSpawnIB(UIntPtr process_id);
 /// @brief Spawns a process with a unique pid (stored as UIntPtr).
 /// @param process_path process filesystem path.
 /// @return > 0 process was created.
-IMPORT_C UIntPtr RtlSpawnProcess(const Char* process_path, SizeT argc, Char** argv, Char** envp, SizeT envp_len);
+IMPORT_C UIntPtr RtlSpawnProcess(const Char* process_path, SizeT argc, Char** argv, Char** envp,
+                                 SizeT envp_len);
 
 /// @brief Exits a process with an exit_code.
 /// @return if it has succeeded true, otherwise false.
@@ -269,14 +271,13 @@ IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr 
 // Power API.
 // ------------------------------------------------------------------------------------------ //
 
-enum
-{
-	kPowerCodeInvalid,
-	kPowerCodeShutdown,
-	kPowerCodeReboot,
-	kPowerCodeSleep,
-	kPowerCodeWake,
-	kPowerCodeCount,
+enum {
+  kPowerCodeInvalid,
+  kPowerCodeShutdown,
+  kPowerCodeReboot,
+  kPowerCodeSleep,
+  kPowerCodeWake,
+  kPowerCodeCount,
 };
 
 IMPORT_C SInt32 PwrReadCode(_Output SInt32& code);
@@ -346,4 +347,4 @@ IMPORT_C Char* StrFmt(const Char* fmt, ...);
 
 IMPORT_C UInt64 StrMathToNumber(const Char* in, const Char** endp, const SInt16 base);
 
-#endif // ifndef SCI_SCI_H
+#endif  // ifndef SCI_SCI_H

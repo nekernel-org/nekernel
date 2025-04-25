@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-	File: PECodeMgr.h
-	Purpose: PE32+ Code Mgr and Dylib mgr.
+  File: PECodeMgr.h
+  Purpose: PE32+ Code Mgr and Dylib mgr.
 
-	Revision History:
+  Revision History:
 
-	12/02/24: Added file (amlel)
+  12/02/24: Added file (amlel)
 
 ------------------------------------------- */
 
@@ -19,11 +19,11 @@
 
 ////////////////////////////////////////////////////
 
+#include <KernelKit/FileMgr.h>
+#include <KernelKit/LoaderInterface.h>
 #include <KernelKit/PE.h>
 #include <NewKit/ErrorOr.h>
 #include <NewKit/KString.h>
-#include <KernelKit/FileMgr.h>
-#include <KernelKit/LoaderInterface.h>
 
 #ifndef INC_PROCESS_SCHEDULER_H
 #include <KernelKit/ProcessScheduler.h>
@@ -31,49 +31,47 @@
 
 #define kPeApplicationMime "application/vnd-portable-executable"
 
-namespace Kernel
-{
-	///
-	/// \name PE32Loader
-	/// \brief PE32+ loader class.
-	///
-	class PE32Loader : public LoaderInterface
-	{
-	private:
-		explicit PE32Loader() = delete;
+namespace Kernel {
+///
+/// \name PE32Loader
+/// \brief PE32+ loader class.
+///
+class PE32Loader : public LoaderInterface {
+ private:
+  explicit PE32Loader() = delete;
 
-	public:
-		explicit PE32Loader(const VoidPtr blob);
-		explicit PE32Loader(const Char* path);
-		~PE32Loader() override;
+ public:
+  explicit PE32Loader(const VoidPtr blob);
+  explicit PE32Loader(const Char* path);
+  ~PE32Loader() override;
 
-	public:
-		NE_COPY_DEFAULT(PE32Loader)
+ public:
+  NE_COPY_DEFAULT(PE32Loader)
 
-	public:
-		const Char* Path() override;
-		const Char* AsString() override;
-		const Char* MIME() override;
+ public:
+  const Char* Path() override;
+  const Char* AsString() override;
+  const Char* MIME() override;
 
-	public:
-		ErrorOr<VoidPtr> FindStart() override;
-		VoidPtr			 FindSymbol(const Char* name, Int32 kind) override;
-		ErrorOr<VoidPtr> GetBlob() override;
+ public:
+  ErrorOr<VoidPtr> FindStart() override;
+  VoidPtr          FindSymbol(const Char* name, Int32 kind) override;
+  ErrorOr<VoidPtr> GetBlob() override;
 
-	public:
-		bool IsLoaded() noexcept;
+ public:
+  bool IsLoaded() noexcept;
 
-	private:
+ private:
 #ifdef __FSKIT_INCLUDES_NEFS__
-		OwnPtr<FileStream<Char, NeFileSystemMgr>> fFile;
+  OwnPtr<FileStream<Char, NeFileSystemMgr>> fFile;
 #elif defined(__FSKIT_INCLUDES_HEFS__)
-		OwnPtr<FileStream<Char, HeFileSystemMgr>> fFile;
+  OwnPtr<FileStream<Char, HeFileSystemMgr>> fFile;
 #else
-		OwnPtr<FileStream<Char>> fFile;
-#endif // __FSKIT_INCLUDES_NEFS__
+  OwnPtr<FileStream<Char>> fFile;
+#endif  // __FSKIT_INCLUDES_NEFS__
 
-		Ref<KString> fPath;
-		VoidPtr		 fCachedBlob;
-		bool		 fBad;
-	};
-} // namespace Kernel
+  Ref<KString> fPath;
+  VoidPtr      fCachedBlob;
+  bool         fBad;
+};
+}  // namespace Kernel

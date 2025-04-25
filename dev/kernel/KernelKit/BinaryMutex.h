@@ -1,41 +1,39 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 #pragma once
 
-#include <NewKit/Defines.h>
-#include <KernelKit/Timer.h>
 #include <CompilerKit/CompilerKit.h>
+#include <KernelKit/Timer.h>
+#include <NewKit/Defines.h>
 
-namespace Kernel
-{
-	class USER_PROCESS;
+namespace Kernel {
+class USER_PROCESS;
 
-	/// @brief Access control class, which locks a task until one is done.
-	class BinaryMutex final
-	{
-	public:
-		explicit BinaryMutex() = default;
-		~BinaryMutex()		   = default;
+/// @brief Access control class, which locks a task until one is done.
+class BinaryMutex final {
+ public:
+  explicit BinaryMutex() = default;
+  ~BinaryMutex()         = default;
 
-	public:
-		bool IsLocked() const;
-		bool Unlock() noexcept;
+ public:
+  bool IsLocked() const;
+  bool Unlock() noexcept;
 
-	public:
-		BOOL WaitForProcess(const Int16& sec) noexcept;
+ public:
+  BOOL WaitForProcess(const Int16& sec) noexcept;
 
-	public:
-		bool Lock(USER_PROCESS& process);
-		bool LockOrWait(USER_PROCESS& process, TimerInterface* timer);
+ public:
+  bool Lock(USER_PROCESS& process);
+  bool LockOrWait(USER_PROCESS& process, TimerInterface* timer);
 
-	public:
-		NE_COPY_DEFAULT(BinaryMutex)
+ public:
+  NE_COPY_DEFAULT(BinaryMutex)
 
-	private:
-		USER_PROCESS fLockingProcess;
-	};
-} // namespace Kernel
+ private:
+  USER_PROCESS fLockingProcess;
+};
+}  // namespace Kernel

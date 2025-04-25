@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -15,6 +15,6 @@
  *
  */
 
+#include <BootKit/HW/SATA.h>
 #include <BootKit/Platform.h>
 #include <BootKit/Protocol.h>
-#include <BootKit/HW/SATA.h>

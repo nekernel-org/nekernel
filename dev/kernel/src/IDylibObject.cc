@@ -7,7 +7,7 @@
  *  ========================================================
  */
 
-#include <KernelKit/IDylibObject.h>
 #include <KernelKit/DebugOutput.h>
+#include <KernelKit/IDylibObject.h>
 
 using namespace Kernel;

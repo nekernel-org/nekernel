@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 #pragma once
@@ -11,18 +11,16 @@
 
 #define kAtExitMacDestructors (128)
 
-struct atexit_func_entry_t
-{
-	void (*destructor_func)();
-	void* obj_ptr;
-	void* dso_handle;
+struct atexit_func_entry_t {
+  void (*destructor_func)();
+  void* obj_ptr;
+  void* dso_handle;
 };
 
 typedef unsigned uarch_t;
 
-namespace cxxabiv1
-{
-	typedef void* __guard;
+namespace cxxabiv1 {
+typedef void* __guard;
 }
 
-#endif // __GNUC__
+#endif  // __GNUC__

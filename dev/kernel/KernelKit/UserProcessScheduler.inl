@@ -1,9 +1,9 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-	FILE: UserProcessScheduler.inl
-	PURPOSE: Low level/Ring-3 process scheduler.
+  FILE: UserProcessScheduler.inl
+  PURPOSE: Low level/Ring-3 process scheduler.
 
 ------------------------------------------- */
 
@@ -11,56 +11,50 @@
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /// @date Tue Apr 22 22:01:07 CEST 2025
 
-namespace Kernel
-{
-	/***********************************************************************************/
-	/** @brief Free pointer from usage. */
-	/***********************************************************************************/
+namespace Kernel {
+/***********************************************************************************/
+/** @brief Free pointer from usage. */
+/***********************************************************************************/
 
-	template <typename T>
-	Boolean USER_PROCESS::Delete(ErrorOr<T*> ptr)
-	{
-		if (!ptr)
-			return No;
+template <typename T>
+Boolean USER_PROCESS::Delete(ErrorOr<T*> ptr) {
+  if (!ptr) return No;
 
-		if (!this->HeapTree)
-		{
-			kout << "USER_PROCESS's heap is empty.\r";
-			return No;
-		}
+  if (!this->HeapTree) {
+    kout << "USER_PROCESS's heap is empty.\r";
+    return No;
+  }
 
-		USER_HEAP_TREE* entry = this->HeapTree;
+  USER_HEAP_TREE* entry = this->HeapTree;
 
-		while (entry != nullptr)
-		{
-			if (entry->MemoryEntry == ptr.Leak().Leak())
-			{
-				this->UsedMemory -= entry->MemoryEntrySize;
+  while (entry != nullptr) {
+    if (entry->MemoryEntry == ptr.Leak().Leak()) {
+      this->UsedMemory -= entry->MemoryEntrySize;
 
 #ifdef __NE_AMD64__
-				auto pd = hal_read_cr3();
+      auto pd = hal_read_cr3();
 
-				hal_write_cr3(this->VMRegister);
+      hal_write_cr3(this->VMRegister);
 
-				auto ret = mm_delete_heap(entry->MemoryEntry);
+      auto ret = mm_delete_heap(entry->MemoryEntry);
 
-				hal_write_cr3(pd);
+      hal_write_cr3(pd);
 
-				return ret == kErrorSuccess;
+      return ret == kErrorSuccess;
 #else
-				Bool ret = mm_delete_heap(ptr.Leak().Leak());
+      Bool ret = mm_delete_heap(ptr.Leak().Leak());
 
-				return ret == kErrorSuccess;
+      return ret == kErrorSuccess;
 #endif
-			}
+    }
 
-			entry = entry->MemoryNext;
-		}
+    entry = entry->MemoryNext;
+  }
 
-		kout << "USER_PROCESS: Trying to free a pointer which doesn't exist.\r";
+  kout << "USER_PROCESS: Trying to free a pointer which doesn't exist.\r";
 
-		this->Crash();
+  this->Crash();
 
-		return No;
-	}
-} // namespace Kernel
+  return No;
+}
+}  // namespace Kernel

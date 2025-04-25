@@ -1,125 +1,143 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
-#include <StorageKit/AHCI.h>
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/ProcessScheduler.h>
-#include <KernelKit/HardwareThreadScheduler.h>
-#include <KernelKit/CodeMgr.h>
-#include <modules/ACPI/ACPIFactoryInterface.h>
-#include <NetworkKit/IPC.h>
 #include <CFKit/Property.h>
-#include <modules/CoreGfx/TextGfx.h>
-#include <KernelKit/Timer.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/EFI/EFI.h>
+#include <KernelKit/CodeMgr.h>
+#include <KernelKit/HardwareThreadScheduler.h>
+#include <KernelKit/ProcessScheduler.h>
+#include <KernelKit/Timer.h>
+#include <NetworkKit/IPC.h>
+#include <StorageKit/AHCI.h>
+#include <modules/ACPI/ACPIFactoryInterface.h>
+#include <modules/CoreGfx/TextGfx.h>
 
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
-STATIC Kernel::Void hal_pre_init_scheduler() noexcept
-{
-	for (Kernel::SizeT i = 0U; i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i)
-	{
-		Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i] = Kernel::USER_PROCESS();
-	}
+STATIC Kernel::Void hal_pre_init_scheduler() noexcept {
+  for (Kernel::SizeT i = 0U;
+       i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i) {
+    Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i] = Kernel::USER_PROCESS();
+  }
 }
 
 /// @brief Kernel init procedure.
-EXTERN_C Int32 hal_init_platform(
-	Kernel::HEL::BootInfoHeader* handover_hdr)
-{
-	if (handover_hdr->f_Magic != kHandoverMagic &&
-		handover_hdr->f_Version != kHandoverVersion)
-	{
-		return kEfiFail;
-	}
+EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
+  if (handover_hdr->f_Magic != kHandoverMagic && handover_hdr->f_Version != kHandoverVersion) {
+    return kEfiFail;
+  }
 
-	kHandoverHeader = handover_hdr;
+  kHandoverHeader = handover_hdr;
 
-	FB::fb_clear_video();
+  FB::fb_clear_video();
 
-	fw_init_efi((EfiSystemTable*)handover_hdr->f_FirmwareCustomTables[1]);
+  fw_init_efi((EfiSystemTable*) handover_hdr->f_FirmwareCustomTables[1]);
 
-	Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey, handover_hdr->f_HardwareTables.f_ImageHandle);
+  Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
+                         handover_hdr->f_HardwareTables.f_ImageHandle);
 
-	/************************************** */
-	/*     INITIALIZE BIT MAP.              */
-	/************************************** */
+  /************************************** */
+  /*     INITIALIZE BIT MAP.              */
+  /************************************** */
 
-	kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
-	kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
-		reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
+  kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
+  kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
+      reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
-	/************************************** */
-	/*     INITIALIZE GDT AND SEGMENTS. */
-	/************************************** */
+  /************************************** */
+  /*     INITIALIZE GDT AND SEGMENTS. */
+  /************************************** */
 
-	STATIC CONST auto kGDTEntriesCount = 6;
+  STATIC CONST auto kGDTEntriesCount = 6;
 
-	/* GDT, mostly descriptors for user and kernel segments. */
-	STATIC Kernel::HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
-		{.fLimitLow = 0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x00, .fFlags = 0x00, .fBaseHigh = 0},   // Null entry
-		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x9A, .fFlags = 0xAF, .fBaseHigh = 0}, // Kernel code
-		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0x92, .fFlags = 0xCF, .fBaseHigh = 0}, // Kernel data
-		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xFA, .fFlags = 0xAF, .fBaseHigh = 0}, // User code
-		{.fLimitLow = 0x0, .fBaseLow = 0, .fBaseMid = 0, .fAccessByte = 0xF2, .fFlags = 0xCF, .fBaseHigh = 0}, // User data
-	};
+  /* GDT, mostly descriptors for user and kernel segments. */
+  STATIC Kernel::HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
+      {.fLimitLow   = 0,
+       .fBaseLow    = 0,
+       .fBaseMid    = 0,
+       .fAccessByte = 0x00,
+       .fFlags      = 0x00,
+       .fBaseHigh   = 0},  // Null entry
+      {.fLimitLow   = 0x0,
+       .fBaseLow    = 0,
+       .fBaseMid    = 0,
+       .fAccessByte = 0x9A,
+       .fFlags      = 0xAF,
+       .fBaseHigh   = 0},  // Kernel code
+      {.fLimitLow   = 0x0,
+       .fBaseLow    = 0,
+       .fBaseMid    = 0,
+       .fAccessByte = 0x92,
+       .fFlags      = 0xCF,
+       .fBaseHigh   = 0},  // Kernel data
+      {.fLimitLow   = 0x0,
+       .fBaseLow    = 0,
+       .fBaseMid    = 0,
+       .fAccessByte = 0xFA,
+       .fFlags      = 0xAF,
+       .fBaseHigh   = 0},  // User code
+      {.fLimitLow   = 0x0,
+       .fBaseLow    = 0,
+       .fBaseMid    = 0,
+       .fAccessByte = 0xF2,
+       .fFlags      = 0xCF,
+       .fBaseHigh   = 0},  // User data
+  };
 
-	// Load memory descriptors.
-	Kernel::HAL::Register64 gdt_reg;
+  // Load memory descriptors.
+  Kernel::HAL::Register64 gdt_reg;
 
-	gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
-	gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
+  gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
+  gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
 
-	//! GDT will load hal_read_init after it successfully loads the segments.
-	Kernel::HAL::GDTLoader gdt_loader;
-	gdt_loader.Load(gdt_reg);
+  //! GDT will load hal_read_init after it successfully loads the segments.
+  Kernel::HAL::GDTLoader gdt_loader;
+  gdt_loader.Load(gdt_reg);
 
-	return kEfiFail;
+  return kEfiFail;
 }
 
-EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept
-{
-	hal_pre_init_scheduler();
+EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
+  hal_pre_init_scheduler();
 
-	Kernel::NeFS::fs_init_nefs();
+  Kernel::NeFS::fs_init_nefs();
 
-	Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+  Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-	Kernel::HAL::Register64 idt_reg;
-	idt_reg.Base = (Kernel::UIntPtr)kInterruptVectorTable;
+  Kernel::HAL::Register64 idt_reg;
+  idt_reg.Base = (Kernel::UIntPtr) kInterruptVectorTable;
 
-	Kernel::HAL::IDTLoader idt_loader;
+  Kernel::HAL::IDTLoader idt_loader;
 
-	idt_loader.Load(idt_reg);
+  idt_loader.Load(idt_reg);
 
-	/// after the scheduler runs, we must look over teams, every 5000s in order to schedule every process according to their affinity fairly.
+  /// after the scheduler runs, we must look over teams, every 5000s in order to schedule every
+  /// process according to their affinity fairly.
 
-	auto constexpr kSchedTeamSwitchMS = 5U; /// @brief Team switch time in milliseconds.
+  auto constexpr kSchedTeamSwitchMS = 5U;  /// @brief Team switch time in milliseconds.
 
-	Kernel::HardwareTimer timer(rtl_milliseconds(kSchedTeamSwitchMS));
+  Kernel::HardwareTimer timer(rtl_milliseconds(kSchedTeamSwitchMS));
 
-	STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
+  STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
 
-	SizeT team_index = 0U;
+  SizeT team_index = 0U;
 
-	/// @brief This just loops over the teams and switches between them.
-	/// @details Not even round-robin, just a simple loop in this boot core we're at.
-	while (YES)
-	{
-		if (team_index > (kSchedTeamCount - 1))
-		{
-			team_index = 0U;
-		}
+  /// @brief This just loops over the teams and switches between them.
+  /// @details Not even round-robin, just a simple loop in this boot core we're at.
+  while (YES) {
+    if (team_index > (kSchedTeamCount - 1)) {
+      team_index = 0U;
+    }
 
-		while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]))
-			;
+    while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]));
 
-		timer.Wait();
+    timer.Wait();
 
-		++team_index;
-	}
+    ++team_index;
+  }
 }

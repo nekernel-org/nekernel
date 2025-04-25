@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -12,53 +12,47 @@
 #endif
 
 template <typename T>
-inline T* tls_new_ptr(void) noexcept
-{
-	using namespace Kernel;
+inline T* tls_new_ptr(void) noexcept {
+  using namespace Kernel;
 
-	auto ref_process = UserProcessScheduler::The().CurrentProcess();
-	MUST_PASS(ref_process);
+  auto ref_process = UserProcessScheduler::The().CurrentProcess();
+  MUST_PASS(ref_process);
 
-	auto pointer = ref_process.Leak().New(sizeof(T));
+  auto pointer = ref_process.Leak().New(sizeof(T));
 
-	if (pointer.Error())
-		return nullptr;
+  if (pointer.Error()) return nullptr;
 
-	return reinterpret_cast<T*>(pointer.Leak().Leak());
+  return reinterpret_cast<T*>(pointer.Leak().Leak());
 }
 
 //! @brief Delete process pointer.
 //! @param obj The pointer to delete.
 template <typename T>
-inline Kernel::Bool tls_delete_ptr(T* obj) noexcept
-{
-	using namespace Kernel;
+inline Kernel::Bool tls_delete_ptr(T* obj) noexcept {
+  using namespace Kernel;
 
-	if (!obj)
-		return No;
+  if (!obj) return No;
 
-	auto ref_process = UserProcessScheduler::The().CurrentProcess();
-	MUST_PASS(ref_process);
+  auto ref_process = UserProcessScheduler::The().CurrentProcess();
+  MUST_PASS(ref_process);
 
-	ErrorOr<T*> obj_wrapped{obj};
+  ErrorOr<T*> obj_wrapped{obj};
 
-	return ref_process.Leak().Delete(obj_wrapped);
+  return ref_process.Leak().Delete(obj_wrapped);
 }
 
 //! @brief Delete process pointer.
 //! @param obj The pointer to delete.
 template <typename T>
-inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T> obj) noexcept
-{
-	return tls_delete_ptr(obj.Leak());
+inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T> obj) noexcept {
+  return tls_delete_ptr(obj.Leak());
 }
 
 //! @brief Delete process pointer.
 //! @param obj The pointer to delete.
 template <typename T>
-inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T*> obj) noexcept
-{
-	return tls_delete_ptr(obj->Leak());
+inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T*> obj) noexcept {
+  return tls_delete_ptr(obj->Leak());
 }
 
 /// @brief Allocate a C++ class, and then call the constructor of it.
@@ -67,19 +61,17 @@ inline Kernel::Bool tls_delete_ptr(Kernel::ErrorOr<T*> obj) noexcept
 /// @param args arguments list.
 /// @return Class instance.
 template <typename T, typename... Args>
-T* tls_new_class(Args&&... args)
-{
-	using namespace Kernel;
+T* tls_new_class(Args&&... args) {
+  using namespace Kernel;
 
-	T* obj = tls_new_ptr<T>();
+  T* obj = tls_new_ptr<T>();
 
-	if (obj)
-	{
-		*obj = T(forward(args)...);
-		return obj;
-	}
+  if (obj) {
+    *obj = T(forward(args)...);
+    return obj;
+  }
 
-	return nullptr;
+  return nullptr;
 }
 
 /// @brief Delete a C++ class (call constructor first.)
@@ -87,13 +79,11 @@ T* tls_new_class(Args&&... args)
 /// @param obj
 /// @return
 template <typename T>
-inline Kernel::Bool tls_delete_class(T* obj)
-{
-	using namespace Kernel;
+inline Kernel::Bool tls_delete_class(T* obj) {
+  using namespace Kernel;
 
-	if (!obj)
-		return No;
+  if (!obj) return No;
 
-	obj->~T();
-	return tls_delete_ptr(obj);
+  obj->~T();
+  return tls_delete_ptr(obj);
 }

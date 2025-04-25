@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -8,83 +8,76 @@
 #define __ACPI__
 
 /**
-	https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
+  https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
 */
 
 #include <NewKit/Defines.h>
 
 #define SDT_OBJECT : public Kernel::SDT
 
-namespace Kernel
-{
-	class PACKED SDT
-	{
-	public:
-		Char   Signature[4];
-		UInt32 Length;
-		UInt8  Revision;
-		Char   Checksum;
-		Char   OemId[6];
-		Char   OemTableId[8];
-		UInt32 OemRev;
-		UInt32 CreatorID;
-		UInt32 CreatorRevision;
-	};
+namespace Kernel {
+class PACKED SDT {
+ public:
+  Char   Signature[4];
+  UInt32 Length;
+  UInt8  Revision;
+  Char   Checksum;
+  Char   OemId[6];
+  Char   OemTableId[8];
+  UInt32 OemRev;
+  UInt32 CreatorID;
+  UInt32 CreatorRevision;
+};
 
-	class PACKED RSDP : public SDT
-	{
-	public:
-		UInt32	RsdtAddress;
-		UIntPtr XsdtAddress;
-		UInt8	ExtendedChecksum;
-		UInt8	Reserved0[3];
-	};
+class PACKED RSDP : public SDT {
+ public:
+  UInt32  RsdtAddress;
+  UIntPtr XsdtAddress;
+  UInt8   ExtendedChecksum;
+  UInt8   Reserved0[3];
+};
 
-	class PACKED ConfigHeader
-	{
-	public:
-		UInt64 BaseAddress;
-		UInt16 PciSegGroup;
-		UInt8  StartBus;
-		UInt8  EndBus;
-		UInt32 Reserved;
-	};
+class PACKED ConfigHeader {
+ public:
+  UInt64 BaseAddress;
+  UInt16 PciSegGroup;
+  UInt8  StartBus;
+  UInt8  EndBus;
+  UInt32 Reserved;
+};
 
-	enum ACPI_ADDRESS_SPACE_KIND : UInt8
-	{
-		eSystemMemory = 0,
-		eSystemIO	  = 1,
-		ePci		  = 2,
-		eController	  = 3,
-		eSmBus		  = 4,
-		eCount		  = 5,
-		eInvalid	  = 0xFF,
-	};
+enum ACPI_ADDRESS_SPACE_KIND : UInt8 {
+  eSystemMemory = 0,
+  eSystemIO     = 1,
+  ePci          = 2,
+  eController   = 3,
+  eSmBus        = 4,
+  eCount        = 5,
+  eInvalid      = 0xFF,
+};
 
-	class PACKED ACPI_ADDRESS final
-	{
-	public:
-		UInt8	AddressSpaceId;
-		UInt8	RegisterBitWidth;
-		UInt8	RegisterBitOffset;
-		UInt8	Reserved;
-		UIntPtr Address;
-	};
+class PACKED ACPI_ADDRESS final {
+ public:
+  UInt8   AddressSpaceId;
+  UInt8   RegisterBitWidth;
+  UInt8   RegisterBitOffset;
+  UInt8   Reserved;
+  UIntPtr Address;
+};
 
-	class PACKED RSDT final
-	{
-	public:
-		Char   Signature[4];
-		UInt32 Length;
-		UInt8  Revision;
-		Char   Checksum;
-		Char   OemId[6];
-		Char   OemTableId[8];
-		UInt32 OemRev;
-		UInt32 CreatorID;
-		UInt32 CreatorRevision;
-		UInt32 AddressArr[1];
-	};
-} // namespace Kernel
+class PACKED RSDT final {
+ public:
+  Char   Signature[4];
+  UInt32 Length;
+  UInt8  Revision;
+  Char   Checksum;
+  Char   OemId[6];
+  Char   OemTableId[8];
+  UInt32 OemRev;
+  UInt32 CreatorID;
+  UInt32 CreatorRevision;
+  UInt32 AddressArr[1];
+};
+}  // namespace Kernel
 
-#endif // !__ACPI__
+#endif  // !__ACPI__

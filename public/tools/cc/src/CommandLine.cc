@@ -8,8 +8,8 @@
 
 /// @brief Placeholder program.
 
-SInt32 main(SInt32 argc, Char* argv[])
-{
-	PrintOut(nullptr, "cc: A C++ compiler to be installed.\rcc: This program is present as a placeholder.");
-	return EXIT_FAILURE;
+SInt32 main(SInt32 argc, Char* argv[]) {
+  PrintOut(nullptr,
+           "cc: A C++ compiler to be installed.\rcc: This program is present as a placeholder.");
+  return EXIT_FAILURE;
 }

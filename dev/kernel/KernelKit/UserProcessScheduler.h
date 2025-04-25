@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -12,18 +12,18 @@
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 
 #include <ArchKit/ArchKit.h>
+#include <KernelKit/CoreProcessScheduler.h>
 #include <KernelKit/LockDelegate.h>
 #include <KernelKit/User.h>
 #include <NewKit/MutableArray.h>
-#include <KernelKit/CoreProcessScheduler.h>
 
-#define kSchedMinMicroTime		  (AffinityKind::kStandard)
-#define kSchedInvalidPID		  (-1)
+#define kSchedMinMicroTime (AffinityKind::kStandard)
+#define kSchedInvalidPID (-1)
 #define kSchedProcessLimitPerTeam (32U)
-#define kSchedTeamCount			  (256U)
+#define kSchedTeamCount (256U)
 
 #define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
-#define kSchedMaxStackSz	 mib_cast(8)   /* maximum stack size */
+#define kSchedMaxStackSz mib_cast(8)       /* maximum stack size */
 
 #define kSchedNameLen (128U)
 
@@ -31,240 +31,232 @@
 // Last revision date is: Fri Mar 28 2025		  //
 ////////////////////////////////////////////////////
 
-namespace Kernel
-{
-	//! @brief Forward declarations.
+namespace Kernel {
+//! @brief Forward declarations.
 
-	class IDylibObject;
-	class UserProcessScheduler;
-	class UserProcessHelper;
+class IDylibObject;
+class UserProcessScheduler;
+class UserProcessHelper;
 
-	/***********************************************************************************/
-	/// @name USER_PROCESS
-	/// @brief USER_PROCESS class, holds information about the running process/thread.
-	/***********************************************************************************/
-	class USER_PROCESS final
-	{
-	public:
-		explicit USER_PROCESS();
-		~USER_PROCESS();
+/***********************************************************************************/
+/// @name USER_PROCESS
+/// @brief USER_PROCESS class, holds information about the running process/thread.
+/***********************************************************************************/
+class USER_PROCESS final {
+ public:
+  explicit USER_PROCESS();
+  ~USER_PROCESS();
 
-	public:
-		NE_COPY_DEFAULT(USER_PROCESS)
+ public:
+  NE_COPY_DEFAULT(USER_PROCESS)
 
-	public:
-		Char			   Name[kSchedNameLen] = {"USER_PROCESS"};
-		ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
-		User*			   Owner{nullptr};
-		HAL::StackFramePtr StackFrame{nullptr};
-		AffinityKind	   Affinity{AffinityKind::kStandard};
-		ProcessStatusKind  Status{ProcessStatusKind::kKilled};
-		UInt8*			   StackReserve{nullptr};
-		PROCESS_IMAGE	   Image{};
-		SizeT			   StackSize{kSchedMaxStackSz};
-		IDylibObject*	   DylibDelegate{nullptr};
-		SizeT			   MemoryCursor{0UL};
-		SizeT			   MemoryLimit{kSchedMaxMemoryLimit};
-		SizeT			   UsedMemory{0UL};
+ public:
+  Char               Name[kSchedNameLen] = {"USER_PROCESS"};
+  ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
+  User*              Owner{nullptr};
+  HAL::StackFramePtr StackFrame{nullptr};
+  AffinityKind       Affinity{AffinityKind::kStandard};
+  ProcessStatusKind  Status{ProcessStatusKind::kKilled};
+  UInt8*             StackReserve{nullptr};
+  PROCESS_IMAGE      Image{};
+  SizeT              StackSize{kSchedMaxStackSz};
+  IDylibObject*      DylibDelegate{nullptr};
+  SizeT              MemoryCursor{0UL};
+  SizeT              MemoryLimit{kSchedMaxMemoryLimit};
+  SizeT              UsedMemory{0UL};
 
-		/// @brief Allocation tracker structure.
-		struct USER_HEAP_TREE final
-		{
-			VoidPtr MemoryEntry{nullptr};
-			SizeT	MemoryEntrySize{0UL};
-			SizeT	MemoryEntryPad{0UL};
+  /// @brief Allocation tracker structure.
+  struct USER_HEAP_TREE final {
+    VoidPtr MemoryEntry{nullptr};
+    SizeT   MemoryEntrySize{0UL};
+    SizeT   MemoryEntryPad{0UL};
 
-			enum
-			{
-				kInvalidMemory = 0,
-				kRedMemory = 100,
-				kBlackMemory = 101,
-				kCountMemory = 2,
-			};
+    enum {
+      kInvalidMemory = 0,
+      kRedMemory     = 100,
+      kBlackMemory   = 101,
+      kCountMemory   = 2,
+    };
 
-			Int32 MemoryColor{kBlackMemory};
+    Int32 MemoryColor{kBlackMemory};
 
-			struct USER_HEAP_TREE* MemoryParent{nullptr};
-			struct USER_HEAP_TREE* MemoryChild{nullptr};
+    struct USER_HEAP_TREE* MemoryParent{nullptr};
+    struct USER_HEAP_TREE* MemoryChild{nullptr};
 
-			struct USER_HEAP_TREE* MemoryPrev{nullptr};
-			struct USER_HEAP_TREE* MemoryNext{nullptr};
-		};
+    struct USER_HEAP_TREE* MemoryPrev{nullptr};
+    struct USER_HEAP_TREE* MemoryNext{nullptr};
+  };
 
-		struct USER_PROCESS_SIGNAL final
-		{
-			UIntPtr			  SignalArg;
-			ProcessStatusKind Status;
-			UIntPtr			  SignalID;
-		};
+  struct USER_PROCESS_SIGNAL final {
+    UIntPtr           SignalArg;
+    ProcessStatusKind Status;
+    UIntPtr           SignalID;
+  };
 
-		USER_PROCESS_SIGNAL Signal;
-		USER_HEAP_TREE*		HeapTree{nullptr};
-		UserProcessTeam*	ParentTeam;
+  USER_PROCESS_SIGNAL Signal;
+  USER_HEAP_TREE*     HeapTree{nullptr};
+  UserProcessTeam*    ParentTeam;
 
-		VoidPtr VMRegister{0UL};
+  VoidPtr VMRegister{0UL};
 
-		enum
-		{
-			kInvalidExecutableKind,
-			kExecutableKind,
-			kExecutableDylibKind,
-			kExecutableKindCount,
-		};
+  enum {
+    kInvalidExecutableKind,
+    kExecutableKind,
+    kExecutableDylibKind,
+    kExecutableKindCount,
+  };
 
-		ProcessTime PTime{0}; //! @brief USER_PROCESS allocated tine.
+  ProcessTime PTime{0};  //! @brief USER_PROCESS allocated tine.
 
-		PID	  ProcessId{kSchedInvalidPID};
-		Int32 Kind{kExecutableKind};
+  PID   ProcessId{kSchedInvalidPID};
+  Int32 Kind{kExecutableKind};
 
-	public:
-		/***********************************************************************************/
-		//! @brief boolean operator, check status.
-		/***********************************************************************************/
-		operator bool();
+ public:
+  /***********************************************************************************/
+  //! @brief boolean operator, check status.
+  /***********************************************************************************/
+  operator bool();
 
-		/***********************************************************************************/
-		///! @brief Crashes the app, exits with code ~0.
-		/***********************************************************************************/
-		Void Crash();
+  /***********************************************************************************/
+  ///! @brief Crashes the app, exits with code ~0.
+  /***********************************************************************************/
+  Void Crash();
 
-		/***********************************************************************************/
-		///! @brief Exits the app.
-		/***********************************************************************************/
-		Void Exit(const Int32& exit_code = 0);
+  /***********************************************************************************/
+  ///! @brief Exits the app.
+  /***********************************************************************************/
+  Void Exit(const Int32& exit_code = 0);
 
-		/***********************************************************************************/
-		///! @brief TLS allocate.
-		///! @param sz size of data structure.
-		///! @param pad_amount amount to add after pointer.
-		///! @return A wrapped pointer, or error code.
-		/***********************************************************************************/
-		ErrorOr<VoidPtr> New(SizeT sz, SizeT pad_amount = 0);
+  /***********************************************************************************/
+  ///! @brief TLS allocate.
+  ///! @param sz size of data structure.
+  ///! @param pad_amount amount to add after pointer.
+  ///! @return A wrapped pointer, or error code.
+  /***********************************************************************************/
+  ErrorOr<VoidPtr> New(SizeT sz, SizeT pad_amount = 0);
 
-		/***********************************************************************************/
-		///! @brief TLS free.
-		///! @param ptr the pointer to free.
-		///! @param sz the size of it.
-		/***********************************************************************************/
-		template <typename T>
-		Boolean Delete(ErrorOr<T*> ptr);
+  /***********************************************************************************/
+  ///! @brief TLS free.
+  ///! @param ptr the pointer to free.
+  ///! @param sz the size of it.
+  /***********************************************************************************/
+  template <typename T>
+  Boolean Delete(ErrorOr<T*> ptr);
 
-		/***********************************************************************************/
-		///! @brief Wakes up thread.
-		/***********************************************************************************/
-		Void Wake(Bool wakeup = false);
+  /***********************************************************************************/
+  ///! @brief Wakes up thread.
+  /***********************************************************************************/
+  Void Wake(Bool wakeup = false);
 
-	public:
-		/***********************************************************************************/
-		//! @brief Gets the local exit code.
-		/***********************************************************************************/
-		const UInt32& GetExitCode() noexcept;
+ public:
+  /***********************************************************************************/
+  //! @brief Gets the local exit code.
+  /***********************************************************************************/
+  const UInt32& GetExitCode() noexcept;
 
-		/***********************************************************************************/
-		///! @brief Get the process's name
-		///! @example 'C Runtime Library'
-		/***********************************************************************************/
-		const Char* GetName() noexcept;
+  /***********************************************************************************/
+  ///! @brief Get the process's name
+  ///! @example 'C Runtime Library'
+  /***********************************************************************************/
+  const Char* GetName() noexcept;
 
-		/***********************************************************************************/
-		//! @brief return local error code of process.
-		//! @return Int32 local error code.
-		/***********************************************************************************/
-		Int32& GetLocalCode() noexcept;
+  /***********************************************************************************/
+  //! @brief return local error code of process.
+  //! @return Int32 local error code.
+  /***********************************************************************************/
+  Int32& GetLocalCode() noexcept;
 
-		const User*				 GetOwner() noexcept;
-		const ProcessStatusKind& GetStatus() noexcept;
-		const AffinityKind&		 GetAffinity() noexcept;
+  const User*              GetOwner() noexcept;
+  const ProcessStatusKind& GetStatus() noexcept;
+  const AffinityKind&      GetAffinity() noexcept;
 
-	private:
-		UInt32 fLastExitCode{0};
-		Int32  fLocalCode{0};
+ private:
+  UInt32 fLastExitCode{0};
+  Int32  fLocalCode{0};
 
-		friend UserProcessScheduler;
-		friend UserProcessHelper;
-	};
+  friend UserProcessScheduler;
+  friend UserProcessHelper;
+};
 
-	typedef Array<USER_PROCESS, kSchedProcessLimitPerTeam> USER_PROCESS_ARRAY;
+typedef Array<USER_PROCESS, kSchedProcessLimitPerTeam> USER_PROCESS_ARRAY;
 
-	/// \brief Processs Team (contains multiple processes inside it.)
-	/// Equivalent to a process batch
-	class UserProcessTeam final
-	{
-	public:
-		explicit UserProcessTeam();
-		~UserProcessTeam() = default;
+/// \brief Processs Team (contains multiple processes inside it.)
+/// Equivalent to a process batch
+class UserProcessTeam final {
+ public:
+  explicit UserProcessTeam();
+  ~UserProcessTeam() = default;
 
-		NE_COPY_DEFAULT(UserProcessTeam)
+  NE_COPY_DEFAULT(UserProcessTeam)
 
-		Array<USER_PROCESS, kSchedProcessLimitPerTeam>& AsArray();
-		Ref<USER_PROCESS>&								AsRef();
-		ProcessID&										Id() noexcept;
+  Array<USER_PROCESS, kSchedProcessLimitPerTeam>& AsArray();
+  Ref<USER_PROCESS>&                              AsRef();
+  ProcessID&                                      Id() noexcept;
 
-	public:
-		USER_PROCESS_ARRAY mProcessList;
-		Ref<USER_PROCESS>  mCurrentProcess;
-		ProcessID		   mTeamId{0};
-		ProcessID		   mProcessCount{0};
-	};
+ public:
+  USER_PROCESS_ARRAY mProcessList;
+  Ref<USER_PROCESS>  mCurrentProcess;
+  ProcessID          mTeamId{0};
+  ProcessID          mProcessCount{0};
+};
 
-	/***********************************************************************************/
-	/// @brief USER_PROCESS scheduler class.
-	/// The main class which you call to schedule user processes.
-	/***********************************************************************************/
-	class UserProcessScheduler final : public ISchedulable
-	{
-		friend class UserProcessHelper;
+/***********************************************************************************/
+/// @brief USER_PROCESS scheduler class.
+/// The main class which you call to schedule user processes.
+/***********************************************************************************/
+class UserProcessScheduler final : public ISchedulable {
+  friend class UserProcessHelper;
 
-	public:
-		explicit UserProcessScheduler()	 = default;
-		~UserProcessScheduler() override = default;
+ public:
+  explicit UserProcessScheduler()  = default;
+  ~UserProcessScheduler() override = default;
 
-		NE_COPY_DELETE(UserProcessScheduler)
-		NE_MOVE_DELETE(UserProcessScheduler)
+  NE_COPY_DELETE(UserProcessScheduler)
+  NE_MOVE_DELETE(UserProcessScheduler)
 
-			 operator bool();
-		bool operator!();
+  operator bool();
+  bool operator!();
 
-	public:
-		UserProcessTeam& CurrentTeam();
-		BOOL			 SwitchTeam(UserProcessTeam& team);
+ public:
+  UserProcessTeam& CurrentTeam();
+  BOOL             SwitchTeam(UserProcessTeam& team);
 
-	public:
-		ProcessID Spawn(const Char* name, VoidPtr code, VoidPtr image);
-		Void	  Remove(ProcessID process_id);
+ public:
+  ProcessID Spawn(const Char* name, VoidPtr code, VoidPtr image);
+  Void      Remove(ProcessID process_id);
 
-		Bool IsUser() override;
-		Bool IsKernel() override;
-		Bool HasMP() override;
+  Bool IsUser() override;
+  Bool IsKernel() override;
+  Bool HasMP() override;
 
-	public:
-		Ref<USER_PROCESS>& CurrentProcess();
-		SizeT			   Run() noexcept;
+ public:
+  Ref<USER_PROCESS>& CurrentProcess();
+  SizeT              Run() noexcept;
 
-	public:
-		STATIC UserProcessScheduler& The();
+ public:
+  STATIC UserProcessScheduler& The();
 
-	private:
-		UserProcessTeam mTeam{};
-	};
+ private:
+  UserProcessTeam mTeam{};
+};
 
-	/***********************************************************************************/
-	/**
-	 * \brief USER_PROCESS helper class, which contains needed utilities for the scheduler.
-	 */
-	/***********************************************************************************/
+/***********************************************************************************/
+/**
+ * \brief USER_PROCESS helper class, which contains needed utilities for the scheduler.
+ */
+/***********************************************************************************/
 
-	class UserProcessHelper final
-	{
-	public:
-		STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr, PID new_pid);
-		STATIC Bool CanBeScheduled(const USER_PROCESS& process);
-		STATIC ErrorOr<PID> TheCurrentPID();
-		STATIC SizeT		StartScheduling();
-	};
+class UserProcessHelper final {
+ public:
+  STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr,
+                     PID new_pid);
+  STATIC Bool CanBeScheduled(const USER_PROCESS& process);
+  STATIC ErrorOr<PID> TheCurrentPID();
+  STATIC SizeT        StartScheduling();
+};
 
-	const UInt32& sched_get_exit_code(void) noexcept;
-} // namespace Kernel
+const UInt32& sched_get_exit_code(void) noexcept;
+}  // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.h>
 #include <KernelKit/UserProcessScheduler.inl>

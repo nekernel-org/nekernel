@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -8,6 +8,4 @@
 
 #include <modules/SCSI/SCSI.h>
 
-namespace Kernel
-{
-} // namespace Kernel
+namespace Kernel {}  // namespace Kernel

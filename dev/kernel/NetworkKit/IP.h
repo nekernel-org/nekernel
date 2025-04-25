@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -8,76 +8,69 @@
 
 #include <KernelKit/DebugOutput.h>
 #include <NewKit/Defines.h>
-#include <NewKit/Ref.h>
 #include <NewKit/KString.h>
+#include <NewKit/Ref.h>
 
-namespace Kernel
-{
-	class RawIPAddress6;
-	class RawIPAddress;
-	class IPFactory;
+namespace Kernel {
+class RawIPAddress6;
+class RawIPAddress;
+class IPFactory;
 
-	class RawIPAddress final
-	{
-	private:
-		explicit RawIPAddress(char bytes[4]);
-		~RawIPAddress() = default;
+class RawIPAddress final {
+ private:
+  explicit RawIPAddress(char bytes[4]);
+  ~RawIPAddress() = default;
 
-		RawIPAddress& operator=(const RawIPAddress&) = delete;
-		RawIPAddress(const RawIPAddress&)			 = default;
+  RawIPAddress& operator=(const RawIPAddress&) = delete;
+  RawIPAddress(const RawIPAddress&)            = default;
 
-	public:
-		Char* Address();
+ public:
+  Char* Address();
 
-		Char& operator[](const Size& index);
+  Char& operator[](const Size& index);
 
-		BOOL operator==(const RawIPAddress& ipv6);
-		BOOL operator!=(const RawIPAddress& ipv6);
+  BOOL operator==(const RawIPAddress& ipv6);
+  BOOL operator!=(const RawIPAddress& ipv6);
 
-	private:
-		Char fAddr[4];
+ private:
+  Char fAddr[4];
 
-		friend IPFactory; // it is the one creating these addresses, thus this
-						  // is why the constructors are private.
-	};
+  friend IPFactory;  // it is the one creating these addresses, thus this
+                     // is why the constructors are private.
+};
 
-	/**
-	 * @brief IPv6 address.
-	 */
-	class RawIPAddress6 final
-	{
-	private:
-		explicit RawIPAddress6(char Bytes[8]);
-		~RawIPAddress6() = default;
+/**
+ * @brief IPv6 address.
+ */
+class RawIPAddress6 final {
+ private:
+  explicit RawIPAddress6(char Bytes[8]);
+  ~RawIPAddress6() = default;
 
-		RawIPAddress6& operator=(const RawIPAddress6&) = delete;
-		RawIPAddress6(const RawIPAddress6&)			   = default;
+  RawIPAddress6& operator=(const RawIPAddress6&) = delete;
+  RawIPAddress6(const RawIPAddress6&)            = default;
 
-	public:
-		char* Address()
-		{
-			return fAddr;
-		}
+ public:
+  char* Address() { return fAddr; }
 
-		char& operator[](const Size& index);
+  char& operator[](const Size& index);
 
-		bool operator==(const RawIPAddress6& ipv6);
-		bool operator!=(const RawIPAddress6& ipv6);
+  bool operator==(const RawIPAddress6& ipv6);
+  bool operator!=(const RawIPAddress6& ipv6);
 
-	private:
-		char fAddr[8];
+ private:
+  char fAddr[8];
 
-		friend IPFactory;
-	};
+  friend IPFactory;
+};
 
-	/**
-	 * @brief IP Creation helpers
-	 */
-	class IPFactory final
-	{
-	public:
-		static ErrorOr<KString> ToKString(Ref<RawIPAddress6>& ipv6);
-		static ErrorOr<KString> ToKString(Ref<RawIPAddress>& ipv4);
-		static bool				IpCheckVersion4(const Char* ip);
-	};
-} // namespace Kernel
+/**
+ * @brief IP Creation helpers
+ */
+class IPFactory final {
+ public:
+  static ErrorOr<KString> ToKString(Ref<RawIPAddress6>& ipv6);
+  static ErrorOr<KString> ToKString(Ref<RawIPAddress>& ipv4);
+  static bool             IpCheckVersion4(const Char* ip);
+};
+}  // namespace Kernel

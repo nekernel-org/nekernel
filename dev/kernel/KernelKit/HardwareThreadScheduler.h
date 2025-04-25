@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -16,134 +16,121 @@
 
 #define kMaxAPInsideSched (8U)
 
-namespace Kernel
-{
-	class HardwareThread;
-	class HardwareThreadScheduler;
+namespace Kernel {
+class HardwareThread;
+class HardwareThreadScheduler;
 
-	using ThreadID = UInt32;
+using ThreadID = UInt32;
 
-	enum ThreadKind
-	{
-		kAPInvalid,
-		kAPSystemReserved, // System reserved thread, well user can't use it
-		kAPStandard,	   // user thread, cannot be used by Kernel
-		kAPRealTime,	   // fallback thread, cannot be used by user if not clear or
-						   // used by Kernel.
-		kAPBoot,		   // The core we booted from, the mama.
-		kAPCount,
-	};
+enum ThreadKind {
+  kAPInvalid,
+  kAPSystemReserved,  // System reserved thread, well user can't use it
+  kAPStandard,        // user thread, cannot be used by Kernel
+  kAPRealTime,        // fallback thread, cannot be used by user if not clear or
+                      // used by Kernel.
+  kAPBoot,            // The core we booted from, the mama.
+  kAPCount,
+};
 
-	typedef enum ThreadKind ThreadKind;
-	typedef ThreadID		ThreadID;
+typedef enum ThreadKind ThreadKind;
+typedef ThreadID        ThreadID;
 
-	/***********************************************************************************/
-	///
-	/// \name HardwareThread
-	/// \brief Abstraction over the CPU's core, used to run processes or threads.
-	///
-	/***********************************************************************************/
+/***********************************************************************************/
+///
+/// \name HardwareThread
+/// \brief Abstraction over the CPU's core, used to run processes or threads.
+///
+/***********************************************************************************/
 
-	class HardwareThread final
-	{
-	public:
-		explicit HardwareThread();
-		~HardwareThread();
+class HardwareThread final {
+ public:
+  explicit HardwareThread();
+  ~HardwareThread();
 
-	public:
-		NE_COPY_DEFAULT(HardwareThread)
+ public:
+  NE_COPY_DEFAULT(HardwareThread)
 
-	public:
-		operator bool();
+ public:
+  operator bool();
 
-	public:
-		void Wake(const BOOL wakeup = false) noexcept;
-		void Busy(const BOOL busy = false) noexcept;
+ public:
+  void Wake(const BOOL wakeup = false) noexcept;
+  void Busy(const BOOL busy = false) noexcept;
 
-	public:
-		BOOL Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid);
-		BOOL IsWakeup() noexcept;
+ public:
+  BOOL Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid);
+  BOOL IsWakeup() noexcept;
 
-	public:
-		HAL::StackFramePtr StackFrame() noexcept;
-		const ThreadKind&  Kind() noexcept;
-		bool			   IsBusy() noexcept;
-		const ThreadID&	   ID() noexcept;
+ public:
+  HAL::StackFramePtr StackFrame() noexcept;
+  const ThreadKind&  Kind() noexcept;
+  bool               IsBusy() noexcept;
+  const ThreadID&    ID() noexcept;
 
-	private:
-		HAL::StackFramePtr fStack{nullptr};
-		ThreadKind		   fKind{ThreadKind::kAPStandard};
-		ThreadID		   fID{0};
-		ThreadID		   fPID{0};
-		Bool			   fWakeup{NO};
-		Bool			   fBusy{NO};
-		UInt64			   fPTime{0};
+ private:
+  HAL::StackFramePtr fStack{nullptr};
+  ThreadKind         fKind{ThreadKind::kAPStandard};
+  ThreadID           fID{0};
+  ThreadID           fPID{0};
+  Bool               fWakeup{NO};
+  Bool               fBusy{NO};
+  UInt64             fPTime{0};
 
-	private:
-		friend class HardwareThreadScheduler;
-		friend class UserProcessHelper;
-	};
+ private:
+  friend class HardwareThreadScheduler;
+  friend class UserProcessHelper;
+};
 
-	///
-	/// \name HardwareThreadScheduler
-	/// \brief Class to manage the thread scheduling.
-	///
+///
+/// \name HardwareThreadScheduler
+/// \brief Class to manage the thread scheduling.
+///
 
-	class HardwareThreadScheduler final : public ISchedulable
-	{
-	private:
-		friend class UserProcessHelper;
+class HardwareThreadScheduler final : public ISchedulable {
+ private:
+  friend class UserProcessHelper;
 
-	public:
-		explicit HardwareThreadScheduler();
-		~HardwareThreadScheduler();
-		NE_COPY_DEFAULT(HardwareThreadScheduler)
+ public:
+  explicit HardwareThreadScheduler();
+  ~HardwareThreadScheduler();
+  NE_COPY_DEFAULT(HardwareThreadScheduler)
 
-	public:
-		HAL::StackFramePtr Leak() noexcept;
+ public:
+  HAL::StackFramePtr Leak() noexcept;
 
-	public:
-		Ref<HardwareThread*> operator[](SizeT idx);
-		bool				 operator!() noexcept;
-							 operator bool() noexcept;
+ public:
+  Ref<HardwareThread*> operator[](SizeT idx);
+  bool                 operator!() noexcept;
+  operator bool() noexcept;
 
-		Bool IsUser() override
-		{
-			return Yes;
-		}
+  Bool IsUser() override { return Yes; }
 
-		Bool IsKernel() override
-		{
-			return No;
-		}
+  Bool IsKernel() override { return No; }
 
-		Bool HasMP() override
-		{
-			return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
-		}
+  Bool HasMP() override { return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled; }
 
-	public:
-		/// @brief Shared instance of the MP Mgr.
-		/// @return the reference to the mp manager class.
-		STATIC HardwareThreadScheduler& The();
+ public:
+  /// @brief Shared instance of the MP Mgr.
+  /// @return the reference to the mp manager class.
+  STATIC HardwareThreadScheduler& The();
 
-	public:
-		/// @brief Returns the amount of threads present in the system.
-		/// @returns SizeT the amount of cores present.
-		SizeT Capacity() noexcept;
+ public:
+  /// @brief Returns the amount of threads present in the system.
+  /// @returns SizeT the amount of cores present.
+  SizeT Capacity() noexcept;
 
-	private:
-		Array<HardwareThread, kMaxAPInsideSched> fThreadList;
-		ThreadID								 fCurrentThread{0};
-	};
+ private:
+  Array<HardwareThread, kMaxAPInsideSched> fThreadList;
+  ThreadID                                 fCurrentThread{0};
+};
 
-	/// @brief wakes up thread.
-	/// wakes up thread from hang.
-	Void mp_wakeup_thread(HAL::StackFramePtr stack);
+/// @brief wakes up thread.
+/// wakes up thread from hang.
+Void mp_wakeup_thread(HAL::StackFramePtr stack);
 
-	/// @brief makes thread sleep.
-	/// hooks and hangs thread to prevent code from executing.
-	Void mp_hang_thread(HAL::StackFramePtr stack);
-} // namespace Kernel
+/// @brief makes thread sleep.
+/// hooks and hangs thread to prevent code from executing.
+Void mp_hang_thread(HAL::StackFramePtr stack);
+}  // namespace Kernel
 
-#endif // !__INC_MP_MANAGER_H__
+#endif  // !__INC_MP_MANAGER_H__

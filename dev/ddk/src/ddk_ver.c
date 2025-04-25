@@ -1,8 +1,8 @@
 /* -------------------------------------------
 
-	Copyright Amlal El Mahrouss.
+  Copyright Amlal El Mahrouss.
 
-	Purpose: DDK version symbols.
+  Purpose: DDK version symbols.
 
 ------------------------------------------- */
 
@@ -10,16 +10,16 @@
 
 #ifndef kDDKVersionHighest
 #define kDDKVersionHighest 1
-#endif // !kDDKVersionHighest
+#endif  // !kDDKVersionHighest
 
 #ifndef kDDKVersionLowest
 #define kDDKVersionLowest 1
-#endif // !kDDKVersionLowest
+#endif  // !kDDKVersionLowest
 
 #ifndef kDDKVersion
 #define kDDKVersion 1
-#endif // !kDDKVersion
+#endif  // !kDDKVersion
 
 int32_t kApiVersionHighest = kDDKVersionHighest;
 int32_t kApiVersionLowest  = kDDKVersionLowest;
-int32_t kApiVersion		   = kDDKVersion;
+int32_t kApiVersion        = kDDKVersion;

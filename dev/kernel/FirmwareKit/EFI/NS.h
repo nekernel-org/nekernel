@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -8,13 +8,11 @@
 
 #include <NewKit/Defines.h>
 
-namespace Firmware::Detail::EFI
-{
-	using namespace Kernel;
+namespace Firmware::Detail::EFI {
+using namespace Kernel;
 
-	EXTERN_C
-	{
+EXTERN_C {
 #include <FirmwareKit/EFI/EFI.h>
-	}
+}
 
-} // namespace Firmware::Detail::EFI
+}  // namespace Firmware::Detail::EFI

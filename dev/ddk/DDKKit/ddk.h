@@ -1,36 +1,36 @@
 /* -------------------------------------------
 
-	Copyright Amlal El Mahrouss.
+  Copyright Amlal El Mahrouss.
 
-	FILE: ddk.h
-	PURPOSE: DDK Driver model base header.
+  FILE: ddk.h
+  PURPOSE: DDK Driver model base header.
 
 ------------------------------------------- */
 
 #pragma once
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #if defined(__cplusplus)
-#define BOOL	   bool
-#define YES		   true
-#define NO		   false
+#define BOOL bool
+#define YES true
+#define NO false
 #define DDK_EXTERN extern "C" __declspec(dllexport)
-#define nil		   nullptr
+#define nil nullptr
 #undef NULL
-#define NULL	  0
+#define NULL 0
 #define DDK_FINAL final
 #else
-#define BOOL	   char
-#define YES		   1
-#define NO		   0
+#define BOOL char
+#define YES 1
+#define NO 0
 #define DDK_EXTERN extern __declspec(dllexport)
-#define nil		   ((void*)0)
+#define nil ((void*) 0)
 #undef NULL
-#define NULL ((void*)0)
+#define NULL ((void*) 0)
 #define DDK_FINAL
-#endif // defined(__cplusplus)
+#endif  // defined(__cplusplus)
 
 #ifndef __DDK__
 #undef DDK_EXTERN
@@ -45,26 +45,24 @@
 
 #ifndef __NEOSKRNL__
 #error !!! Do not include header in EL0/Ring 3 mode !!!
-#endif // __MINOSKRNL__
+#endif  // __MINOSKRNL__
 
 struct DDK_STATUS_STRUCT;
 struct DDK_OBJECT_MANIFEST;
 
 /// \brief Object handle manifest.
-struct DDK_OBJECT_MANIFEST DDK_FINAL
-{
-	char*	p_name;
-	int32_t p_kind;
-	void*	p_object;
+struct DDK_OBJECT_MANIFEST DDK_FINAL {
+  char*   p_name;
+  int32_t p_kind;
+  void*   p_object;
 };
 
 /// \brief DDK status ping structure.
-struct DDK_STATUS_STRUCT DDK_FINAL
-{
-	int32_t s_action_id;
-	int32_t s_issuer_id;
-	int32_t s_group_id;
-	void*	s_object;
+struct DDK_STATUS_STRUCT DDK_FINAL {
+  int32_t s_action_id;
+  int32_t s_issuer_id;
+  int32_t s_group_id;
+  void*   s_object;
 };
 
 /// @brief Call Kernel procedure.

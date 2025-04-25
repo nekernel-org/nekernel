@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -19,7 +19,6 @@
 #define SIGATCH 661
 #define SIGDTCH 662
 
-namespace Kernel
-{
-	typedef UInt32 SignalKind;
+namespace Kernel {
+typedef UInt32 SignalKind;
 }

@@ -1,8 +1,8 @@
 /* -------------------------------------------
 
-	Copyright Amlal El Mahrouss.
+  Copyright Amlal El Mahrouss.
 
-	Purpose: DDK Strings.
+  Purpose: DDK Strings.
 
 ------------------------------------------- */
 
@@ -14,4 +14,4 @@
 /// @file str.h
 
 DDK_EXTERN size_t kstrlen(const char* in);
-DDK_EXTERN int	  kstrncpy(char* dst, const char* src, size_t len);
+DDK_EXTERN int    kstrncpy(char* dst, const char* src, size_t len);

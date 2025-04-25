@@ -1,93 +1,84 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 #pragma once
 
+#include <FirmwareKit/Handover.h>
 #include <NewKit/Array.h>
 #include <NewKit/Defines.h>
 #include <NewKit/Utils.h>
-#include <FirmwareKit/Handover.h>
 
 #define kCPUBackendName "ARMv8"
 
-namespace Kernel::HAL
-{
-	struct PACKED Register64 final
-	{
-		UShort	Limit;
-		UIntPtr Base;
-	};
+namespace Kernel::HAL {
+struct PACKED Register64 final {
+  UShort  Limit;
+  UIntPtr Base;
+};
 
-	/// @brief Memory Manager mapping flags.
-	enum
-	{
-		kMMFlagsPresent = 1 << 0,
-		kMMFlagsWr		= 1 << 1,
-		kMMFlagsUser	= 1 << 2,
-		kMMFlagsNX		= 1 << 3,
-		kMMFlagsPCD		= 1 << 4,
-		kMMFlagsCount	= 4,
-	};
+/// @brief Memory Manager mapping flags.
+enum {
+  kMMFlagsPresent = 1 << 0,
+  kMMFlagsWr      = 1 << 1,
+  kMMFlagsUser    = 1 << 2,
+  kMMFlagsNX      = 1 << 3,
+  kMMFlagsPCD     = 1 << 4,
+  kMMFlagsCount   = 4,
+};
 
-	/// @brief Set a PTE from pd_base.
-	/// @param virt_addr a valid virtual address.
-	/// @param phys_addr point to physical address.
-	/// @param flags the flags to put on the page.
-	/// @return Status code of page manip.
-	EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags);
+/// @brief Set a PTE from pd_base.
+/// @param virt_addr a valid virtual address.
+/// @param phys_addr point to physical address.
+/// @param flags the flags to put on the page.
+/// @return Status code of page manip.
+EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags);
 
-	EXTERN_C UIntPtr hal_get_phys_address(VoidPtr virtual_address);
+EXTERN_C UIntPtr hal_get_phys_address(VoidPtr virtual_address);
 
-	typedef UIntPtr	   Reg;
-	typedef Register64 Register;
+typedef UIntPtr    Reg;
+typedef Register64 Register;
 
-	/// @note let's keep the same name as AMD64 HAL.
-	struct PACKED StackFrame final
-	{
-		Reg R8{0};
-		Reg R9{0};
-		Reg R10{0};
-		Reg R11{0};
-		Reg R12{0};
-		Reg R13{0};
-		Reg R14{0};
-		Reg R15{0};
-		Reg SP{0};
-		Reg BP{0};
-	};
+/// @note let's keep the same name as AMD64 HAL.
+struct PACKED StackFrame final {
+  Reg R8{0};
+  Reg R9{0};
+  Reg R10{0};
+  Reg R11{0};
+  Reg R12{0};
+  Reg R13{0};
+  Reg R14{0};
+  Reg R15{0};
+  Reg SP{0};
+  Reg BP{0};
+};
 
-	typedef StackFrame* StackFramePtr;
+typedef StackFrame* StackFramePtr;
 
-	inline Void rt_halt() noexcept
-	{
-		while (Yes)
-		{
-		}
-	}
+inline Void rt_halt() noexcept {
+  while (Yes) {
+  }
+}
 
-	template <typename DataKind>
-	inline void hal_dma_write(UIntPtr address, DataKind value)
-	{
-		*reinterpret_cast<volatile DataKind*>(address) = value;
-	}
+template <typename DataKind>
+inline void hal_dma_write(UIntPtr address, DataKind value) {
+  *reinterpret_cast<volatile DataKind*>(address) = value;
+}
 
-	template <typename DataKind>
-	inline DataKind hal_dma_read(UIntPtr address)
-	{
-		return *reinterpret_cast<volatile DataKind*>(address);
-	}
+template <typename DataKind>
+inline DataKind hal_dma_read(UIntPtr address) {
+  return *reinterpret_cast<volatile DataKind*>(address);
+}
 
-	inline Void hal_wfi(Void)
-	{
-		asm volatile("wfi");
-	}
-} // namespace Kernel::HAL
+inline Void hal_wfi(Void) {
+  asm volatile("wfi");
+}
+}  // namespace Kernel::HAL
 
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
-inline Kernel::UIntPtr kKernelBitMpSize	 = 0UL;
+inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
 inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
 

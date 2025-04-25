@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-	File: AP.h
-	Purpose: RISC-V hardware threads.
+  File: AP.h
+  Purpose: RISC-V hardware threads.
 
-	Revision History:
+  Revision History:
 
-	30/01/24: Added file (amlel)
+  30/01/24: Added file (amlel)
 
 ------------------------------------------- */
 
@@ -15,23 +15,21 @@
 
 #include <NewKit/Defines.h>
 
-namespace Kernel
-{
-	typedef Int64 hal_ap_kind;
+namespace Kernel {
+typedef Int64 hal_ap_kind;
 
-	typedef struct HAL_HARDWARE_THREAD
-	{
-		Kernel::UIntPtr fStartAddress;
-		Kernel::UIntPtr fStackPtr;
-		Kernel::UIntPtr fFramePtr;
-		Kernel::UInt8	fPrivileged : 1;
-		Kernel::UInt32	fPageMemoryFlags;
-		hal_ap_kind		fIdentNumber;
-	} HAL_HARDWARE_THREAD;
+typedef struct HAL_HARDWARE_THREAD {
+  Kernel::UIntPtr fStartAddress;
+  Kernel::UIntPtr fStackPtr;
+  Kernel::UIntPtr fFramePtr;
+  Kernel::UInt8   fPrivileged : 1;
+  Kernel::UInt32  fPageMemoryFlags;
+  hal_ap_kind     fIdentNumber;
+} HAL_HARDWARE_THREAD;
 
-	/// @brief Set PC to specific hart.
-	/// @param hart the hart
-	/// @param epc the pc.
-	/// @return
-	EXTERN_C Kernel::Void hal_set_pc_to_hart(HAL_HARDWARE_THREAD* hart, Kernel::VoidPtr epc);
-} // namespace Kernel
+/// @brief Set PC to specific hart.
+/// @param hart the hart
+/// @param epc the pc.
+/// @return
+EXTERN_C Kernel::Void hal_set_pc_to_hart(HAL_HARDWARE_THREAD* hart, Kernel::VoidPtr epc);
+}  // namespace Kernel

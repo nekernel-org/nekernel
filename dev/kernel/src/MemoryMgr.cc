@@ -1,296 +1,274 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
+#include <ArchKit/ArchKit.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
 #include <NewKit/Crc32.h>
 #include <NewKit/PageMgr.h>
 #include <NewKit/Utils.h>
-#include <ArchKit/ArchKit.h>
 
 /* -------------------------------------------
 
  Revision History:
-	10/8/24: FIX: Fix useless long name, alongside a new WR (WriteRead) field.
-	20/10/24: FIX: Fix mm_new_ and mm_delete_ APIs inside MemoryMgr.h header. (amlal)
-  	27/01/25: REFACTOR: Reworked code as the memory manager.
-	25/03/25: REFACTOR: Refactor MemoryMgr code and log freed address location.
+  10/8/24: FIX: Fix useless long name, alongside a new WR (WriteRead) field.
+  20/10/24: FIX: Fix mm_new_ and mm_delete_ APIs inside MemoryMgr.h header. (amlal)
+    27/01/25: REFACTOR: Reworked code as the memory manager.
+  25/03/25: REFACTOR: Refactor MemoryMgr code and log freed address location.
 
  ------------------------------------------- */
 
 //! @file MemoryMgr.cc
 //! @brief Heap algorithm that serves as the main memory manager.
 
-#define kMemoryMgrMagic	  (0xD4D75)
+#define kMemoryMgrMagic (0xD4D75)
 #define kMemoryMgrAlignSz (4)
 
-namespace Kernel
-{
-	/// @brief Implementation details.
-	namespace Detail
-	{
-		struct PACKED MM_INFORMATION_BLOCK;
+namespace Kernel {
+/// @brief Implementation details.
+namespace Detail {
+  struct PACKED MM_INFORMATION_BLOCK;
 
-		/// @brief Kernel heap information block.
-		/// Located before the address bytes.
-		/// | HIB |  CLASS/STRUCT/DATA TYPES... |
-		struct PACKED MM_INFORMATION_BLOCK final
-		{
-			///! @brief 32-bit value which contains the magic number of the heap.
-			UInt32 fMagic : 24;
+  /// @brief Kernel heap information block.
+  /// Located before the address bytes.
+  /// | HIB |  CLASS/STRUCT/DATA TYPES... |
+  struct PACKED MM_INFORMATION_BLOCK final {
+    ///! @brief 32-bit value which contains the magic number of the heap.
+    UInt32 fMagic : 24;
 
-			///! @brief Is the heap present?
-			UInt8 fPresent : 1;
+    ///! @brief Is the heap present?
+    UInt8 fPresent : 1;
 
-			/// @brief Is this value writable?
-			UInt8 fWriteRead : 1;
+    /// @brief Is this value writable?
+    UInt8 fWriteRead : 1;
 
-			/// @brief Is this value owned by the user?
-			UInt8 fUser : 1;
+    /// @brief Is this value owned by the user?
+    UInt8 fUser : 1;
 
-			/// @brief Is this a page pointer?
-			UInt8 fPage : 1;
+    /// @brief Is this a page pointer?
+    UInt8 fPage : 1;
 
-			/// @brief 32-bit CRC checksum.
-			UInt32 fCRC32;
+    /// @brief 32-bit CRC checksum.
+    UInt32 fCRC32;
 
-			/// @brief 64-bit Allocation flags.
-			UInt16 fFlags;
+    /// @brief 64-bit Allocation flags.
+    UInt16 fFlags;
 
-			/// @brief 64-bit pointer size.
-			SizeT fSize;
+    /// @brief 64-bit pointer size.
+    SizeT fSize;
 
-			/// @brief 64-bit target offset pointer.
-			UIntPtr fOffset;
+    /// @brief 64-bit target offset pointer.
+    UIntPtr fOffset;
 
-			/// @brief Padding.
-			UInt32 fPad;
+    /// @brief Padding.
+    UInt32 fPad;
 
-			/// @brief Padding bytes for header.
-			UInt8 fPadding[kMemoryMgrAlignSz];
-		};
+    /// @brief Padding bytes for header.
+    UInt8 fPadding[kMemoryMgrAlignSz];
+  };
 
-		/// @brief Check for heap address validity.
-		/// @param heap_ptr The address_ptr to check.
-		/// @return Bool if the pointer is valid or not.
-		_Output auto mm_check_heap_address(VoidPtr heap_ptr) -> Bool
-		{
-			if (!heap_ptr)
-				return false;
+  /// @brief Check for heap address validity.
+  /// @param heap_ptr The address_ptr to check.
+  /// @return Bool if the pointer is valid or not.
+  _Output auto mm_check_heap_address(VoidPtr heap_ptr) -> Bool {
+    if (!heap_ptr) return false;
 
-			IntPtr base_heap = ((IntPtr)heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK);
+    IntPtr base_heap = ((IntPtr) heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK);
 
-			/// Add that check in case we're having an integer underflow. ///
+    /// Add that check in case we're having an integer underflow. ///
 
-			if (base_heap < 0)
-			{
-				return false;
-			}
+    if (base_heap < 0) {
+      return false;
+    }
 
-			return true;
-		}
+    return true;
+  }
 
-		typedef MM_INFORMATION_BLOCK* MM_INFORMATION_BLOCK_PTR;
-	} // namespace Detail
+  typedef MM_INFORMATION_BLOCK* MM_INFORMATION_BLOCK_PTR;
+}  // namespace Detail
 
-	/// @brief Declare a new size for ptr_heap.
-	/// @param ptr_heap the pointer.
-	/// @return Newly allocated heap header.
-	_Output auto mm_realloc_heap(VoidPtr ptr_heap, SizeT new_sz) -> VoidPtr
-	{
-		if (Detail::mm_check_heap_address(ptr_heap) == No)
-			return nullptr;
+/// @brief Declare a new size for ptr_heap.
+/// @param ptr_heap the pointer.
+/// @return Newly allocated heap header.
+_Output auto mm_realloc_heap(VoidPtr ptr_heap, SizeT new_sz) -> VoidPtr {
+  if (Detail::mm_check_heap_address(ptr_heap) == No) return nullptr;
 
-		if (!ptr_heap || new_sz < 1)
-			return nullptr;
+  if (!ptr_heap || new_sz < 1) return nullptr;
 
-		kout << "This function is not implemented by the kernel yet.\r";
+  kout << "This function is not implemented by the kernel yet.\r";
 
-		ke_panic(RUNTIME_CHECK_INVALID);
+  ke_panic(RUNTIME_CHECK_INVALID);
 
-		return nullptr;
-	}
+  return nullptr;
+}
 
-	/// @brief Allocate chunk of memory.
-	/// @param sz Size of pointer
-	/// @param wr Read Write bit.
-	/// @param user User enable bit.
-	/// @return The newly allocated pointer.
-	_Output VoidPtr mm_new_heap(SizeT sz, Bool wr, Bool user, SizeT pad_amount)
-	{
-		auto sz_fix = sz;
+/// @brief Allocate chunk of memory.
+/// @param sz Size of pointer
+/// @param wr Read Write bit.
+/// @param user User enable bit.
+/// @return The newly allocated pointer.
+_Output VoidPtr mm_new_heap(SizeT sz, Bool wr, Bool user, SizeT pad_amount) {
+  auto sz_fix = sz;
 
-		if (sz_fix == 0)
-			return nullptr;
+  if (sz_fix == 0) return nullptr;
 
-		sz_fix += sizeof(Detail::MM_INFORMATION_BLOCK);
+  sz_fix += sizeof(Detail::MM_INFORMATION_BLOCK);
 
-		PageMgr page_mgr;
-		auto	wrapper = page_mgr.Request(wr, user, No, sz_fix, pad_amount);
+  PageMgr page_mgr;
+  auto    wrapper = page_mgr.Request(wr, user, No, sz_fix, pad_amount);
 
-		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
-				wrapper.VirtualAddress() + sizeof(Detail::MM_INFORMATION_BLOCK));
+  Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+      reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(wrapper.VirtualAddress() +
+                                                         sizeof(Detail::MM_INFORMATION_BLOCK));
 
-		heap_info_ptr->fSize	  = sz_fix;
-		heap_info_ptr->fMagic	  = kMemoryMgrMagic;
-		heap_info_ptr->fCRC32	  = 0; // dont fill it for now.
-		heap_info_ptr->fOffset	  = reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::MM_INFORMATION_BLOCK);
-		heap_info_ptr->fPage	  = No;
-		heap_info_ptr->fWriteRead = wr;
-		heap_info_ptr->fUser	  = user;
-		heap_info_ptr->fPresent	  = Yes;
-		heap_info_ptr->fPad		  = pad_amount;
+  heap_info_ptr->fSize  = sz_fix;
+  heap_info_ptr->fMagic = kMemoryMgrMagic;
+  heap_info_ptr->fCRC32 = 0;  // dont fill it for now.
+  heap_info_ptr->fOffset =
+      reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::MM_INFORMATION_BLOCK);
+  heap_info_ptr->fPage      = No;
+  heap_info_ptr->fWriteRead = wr;
+  heap_info_ptr->fUser      = user;
+  heap_info_ptr->fPresent   = Yes;
+  heap_info_ptr->fPad       = pad_amount;
 
-		rt_set_memory(heap_info_ptr->fPadding, 0, kMemoryMgrAlignSz);
+  rt_set_memory(heap_info_ptr->fPadding, 0, kMemoryMgrAlignSz);
 
-		auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
+  auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
-		(Void)(kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
+  (Void)(kout << "Registered heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr))
+              << kendl);
 
-		return result;
-	}
+  return result;
+}
 
-	/// @brief Makes a page heap.
-	/// @param heap_ptr the pointer to make a page heap.
-	/// @return kErrorSuccess if successful, otherwise an error code.
-	_Output Int32 mm_make_page(VoidPtr heap_ptr)
-	{
-		if (Detail::mm_check_heap_address(heap_ptr) == No)
-			return kErrorHeapNotPresent;
+/// @brief Makes a page heap.
+/// @param heap_ptr the pointer to make a page heap.
+/// @return kErrorSuccess if successful, otherwise an error code.
+_Output Int32 mm_make_page(VoidPtr heap_ptr) {
+  if (Detail::mm_check_heap_address(heap_ptr) == No) return kErrorHeapNotPresent;
 
-		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heap_ptr - sizeof(Detail::MM_INFORMATION_BLOCK));
+  Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+      reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>((UIntPtr) heap_ptr -
+                                                         sizeof(Detail::MM_INFORMATION_BLOCK));
 
-		if (!heap_info_ptr)
-			return kErrorHeapNotPresent;
+  if (!heap_info_ptr) return kErrorHeapNotPresent;
 
-		heap_info_ptr->fPage = true;
+  heap_info_ptr->fPage = true;
 
-		(Void)(kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
+  (Void)(kout << "Registered page address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr))
+              << kendl);
 
-		return kErrorSuccess;
-	}
+  return kErrorSuccess;
+}
 
-	/// @brief Overwrites and set the flags of a heap header.
-	/// @param heap_ptr the pointer to update.
-	/// @param flags the flags to set.
-	_Output Int32 mm_make_flags(VoidPtr heap_ptr, UInt64 flags)
-	{
-		if (Detail::mm_check_heap_address(heap_ptr) == No)
-			return kErrorHeapNotPresent;
+/// @brief Overwrites and set the flags of a heap header.
+/// @param heap_ptr the pointer to update.
+/// @param flags the flags to set.
+_Output Int32 mm_make_flags(VoidPtr heap_ptr, UInt64 flags) {
+  if (Detail::mm_check_heap_address(heap_ptr) == No) return kErrorHeapNotPresent;
 
-		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heap_ptr - sizeof(Detail::MM_INFORMATION_BLOCK));
+  Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+      reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>((UIntPtr) heap_ptr -
+                                                         sizeof(Detail::MM_INFORMATION_BLOCK));
 
-		if (!heap_info_ptr)
-			return kErrorHeapNotPresent;
+  if (!heap_info_ptr) return kErrorHeapNotPresent;
 
-		heap_info_ptr->fFlags = flags;
+  heap_info_ptr->fFlags = flags;
 
-		return kErrorSuccess;
-	}
+  return kErrorSuccess;
+}
 
-	/// @brief Gets the flags of a heap header.
-	/// @param heap_ptr the pointer to get.
-	_Output UInt64 mm_get_flags(VoidPtr heap_ptr)
-	{
-		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)heap_ptr - sizeof(Detail::MM_INFORMATION_BLOCK));
+/// @brief Gets the flags of a heap header.
+/// @param heap_ptr the pointer to get.
+_Output UInt64 mm_get_flags(VoidPtr heap_ptr) {
+  Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+      reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>((UIntPtr) heap_ptr -
+                                                         sizeof(Detail::MM_INFORMATION_BLOCK));
 
-		if (!heap_info_ptr)
-			return kErrorHeapNotPresent;
+  if (!heap_info_ptr) return kErrorHeapNotPresent;
 
-		return heap_info_ptr->fFlags;
-	}
+  return heap_info_ptr->fFlags;
+}
 
-	/// @brief Declare pointer as free.
-	/// @param heap_ptr the pointer.
-	/// @return
-	_Output Int32 mm_delete_heap(VoidPtr heap_ptr)
-	{
-		if (Detail::mm_check_heap_address(heap_ptr) == No)
-			return kErrorHeapNotPresent;
+/// @brief Declare pointer as free.
+/// @param heap_ptr the pointer.
+/// @return
+_Output Int32 mm_delete_heap(VoidPtr heap_ptr) {
+  if (Detail::mm_check_heap_address(heap_ptr) == No) return kErrorHeapNotPresent;
 
-		Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
-			reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
-				(UIntPtr)(heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
+  Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+      reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>((UIntPtr) (heap_ptr) -
+                                                         sizeof(Detail::MM_INFORMATION_BLOCK));
 
-		if (heap_info_ptr && heap_info_ptr->fMagic == kMemoryMgrMagic)
-		{
-			if (!heap_info_ptr->fPresent)
-			{
-				return kErrorHeapNotPresent;
-			}
+  if (heap_info_ptr && heap_info_ptr->fMagic == kMemoryMgrMagic) {
+    if (!heap_info_ptr->fPresent) {
+      return kErrorHeapNotPresent;
+    }
 
-			heap_info_ptr->fSize	  = 0UL;
-			heap_info_ptr->fPresent	  = No;
-			heap_info_ptr->fOffset	  = 0;
-			heap_info_ptr->fCRC32	  = 0;
-			heap_info_ptr->fWriteRead = No;
-			heap_info_ptr->fUser	  = No;
-			heap_info_ptr->fMagic	  = 0;
-			heap_info_ptr->fPad		  = 0;
+    heap_info_ptr->fSize      = 0UL;
+    heap_info_ptr->fPresent   = No;
+    heap_info_ptr->fOffset    = 0;
+    heap_info_ptr->fCRC32     = 0;
+    heap_info_ptr->fWriteRead = No;
+    heap_info_ptr->fUser      = No;
+    heap_info_ptr->fMagic     = 0;
+    heap_info_ptr->fPad       = 0;
 
-			(Void)(kout << "Address has been successfully freed: " << hex_number((UIntPtr)heap_info_ptr) << kendl);
+    (Void)(kout << "Address has been successfully freed: " << hex_number((UIntPtr) heap_info_ptr)
+                << kendl);
 
-			PTEWrapper		page_wrapper(No, No, No, reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
-			Ref<PTEWrapper> pte_address{page_wrapper};
+    PTEWrapper page_wrapper(
+        No, No, No,
+        reinterpret_cast<UIntPtr>(heap_info_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
+    Ref<PTEWrapper> pte_address{page_wrapper};
 
-			PageMgr page_mgr;
-			page_mgr.Free(pte_address);
+    PageMgr page_mgr;
+    page_mgr.Free(pte_address);
 
-			return kErrorSuccess;
-		}
+    return kErrorSuccess;
+  }
 
-		return kErrorInternal;
-	}
+  return kErrorInternal;
+}
 
-	/// @brief Check if pointer is a valid Kernel pointer.
-	/// @param heap_ptr the pointer
-	/// @return if it exists.
-	_Output Boolean mm_is_valid_heap(VoidPtr heap_ptr)
-	{
-		if (heap_ptr && HAL::mm_is_bitmap(heap_ptr))
-		{
-			Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
-				reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)(heap_ptr) - sizeof(Detail::MM_INFORMATION_BLOCK));
+/// @brief Check if pointer is a valid Kernel pointer.
+/// @param heap_ptr the pointer
+/// @return if it exists.
+_Output Boolean mm_is_valid_heap(VoidPtr heap_ptr) {
+  if (heap_ptr && HAL::mm_is_bitmap(heap_ptr)) {
+    Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+        reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>((UIntPtr) (heap_ptr) -
+                                                           sizeof(Detail::MM_INFORMATION_BLOCK));
 
-			return (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kMemoryMgrMagic);
-		}
+    return (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kMemoryMgrMagic);
+  }
 
-		return No;
-	}
+  return No;
+}
 
-	/// @brief Protect the heap with a CRC value.
-	/// @param heap_ptr HIB pointer.
-	/// @return if it valid: point has crc now., otherwise fail.
-	_Output Boolean mm_protect_heap(VoidPtr heap_ptr)
-	{
-		if (heap_ptr)
-		{
-			Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
-				reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>(
-					(UIntPtr)heap_ptr - sizeof(Detail::MM_INFORMATION_BLOCK));
+/// @brief Protect the heap with a CRC value.
+/// @param heap_ptr HIB pointer.
+/// @return if it valid: point has crc now., otherwise fail.
+_Output Boolean mm_protect_heap(VoidPtr heap_ptr) {
+  if (heap_ptr) {
+    Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
+        reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>((UIntPtr) heap_ptr -
+                                                           sizeof(Detail::MM_INFORMATION_BLOCK));
 
-			/// if valid, present and is heap header, then compute crc32
-			if (heap_info_ptr && heap_info_ptr->fPresent && kMemoryMgrMagic == heap_info_ptr->fMagic)
-			{
-				heap_info_ptr->fCRC32 =
-					ke_calculate_crc32((Char*)heap_info_ptr->fOffset, heap_info_ptr->fSize);
+    /// if valid, present and is heap header, then compute crc32
+    if (heap_info_ptr && heap_info_ptr->fPresent && kMemoryMgrMagic == heap_info_ptr->fMagic) {
+      heap_info_ptr->fCRC32 =
+          ke_calculate_crc32((Char*) heap_info_ptr->fOffset, heap_info_ptr->fSize);
 
-				return Yes;
-			}
-		}
+      return Yes;
+    }
+  }
 
-		return No;
-	}
-} // namespace Kernel
+  return No;
+}
+}  // namespace Kernel

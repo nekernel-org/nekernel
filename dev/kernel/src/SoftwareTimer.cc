@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -10,30 +10,24 @@
 
 using namespace Kernel;
 
-SoftwareTimer::SoftwareTimer(Int64 seconds)
-	: fWaitFor(seconds)
-{
-	fDigitalTimer = new UIntPtr();
-	MUST_PASS(fDigitalTimer);
+SoftwareTimer::SoftwareTimer(Int64 seconds) : fWaitFor(seconds) {
+  fDigitalTimer = new UIntPtr();
+  MUST_PASS(fDigitalTimer);
 }
 
-SoftwareTimer::~SoftwareTimer()
-{
-	delete fDigitalTimer;
-	fDigitalTimer = nullptr;
+SoftwareTimer::~SoftwareTimer() {
+  delete fDigitalTimer;
+  fDigitalTimer = nullptr;
 
-	fWaitFor = 0;
+  fWaitFor = 0;
 }
 
-BOOL SoftwareTimer::Wait() noexcept
-{
-	if (fWaitFor < 1)
-		return NO;
+BOOL SoftwareTimer::Wait() noexcept {
+  if (fWaitFor < 1) return NO;
 
-	while (*fDigitalTimer < (*fDigitalTimer + fWaitFor))
-	{
-		++(*fDigitalTimer);
-	}
+  while (*fDigitalTimer < (*fDigitalTimer + fWaitFor)) {
+    ++(*fDigitalTimer);
+  }
 
-	return YES;
+  return YES;
 }
