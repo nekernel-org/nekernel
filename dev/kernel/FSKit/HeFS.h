@@ -28,6 +28,9 @@
 
 #define kHeFSDefaultVoluneName u"HeFS Volume"
 
+#define kHeFSDIMBootDir u"boot-x/dir"
+#define kHeFSDIMBootFile u"boot-x/file"
+
 #define kHeFSSearchAllStr u"*"
 
 struct HEFS_BOOT_NODE;
@@ -63,6 +66,7 @@ enum {
   kHeFSEncodingUTF32LE,
   kHeFSEncodingUTF8BE,
   kHeFSEncodingUTF8LE,
+  kHeFSEncodingBinary,
   kHeFSEncodingCount,
 };
 
@@ -135,6 +139,10 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE final {
       fLinkChecksum;  /// @brief Checksum of the file, recovery checksum, block checksum, link
                       /// checksum.
 
+  Kernel::Utf16Char fMime[kHeFSFileNameLen];  /// @brief File mime type.
+
+  Kernel::Boolean fSymLink;  /// @brief Is this a symbolic link? (if yes, the fName is the path to the file and blocklinkstart and end contains it's inodes.)
+
   Kernel::ATime  fCreated, fAccessed, fModified, fDeleted;  /// @brief File timestamps.
   Kernel::UInt32 fUID, fGID;  /// @brief User ID and Group ID of the file.
   Kernel::UInt32 fMode;       /// @brief File mode. (read, write, execute, etc).
@@ -167,6 +175,8 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final {
   Kernel::UInt32 fEntryCount;  /// @brief Entry Count of this directory inode.
   Kernel::UInt32 fChecksum,
       fIndexNodeChecksum;  /// @brief Checksum of the file, index node checksum.
+
+  Kernel::Utf16Char fDim[kHeFSFileNameLen];  /// @brief Directiory Immatriculation magic.
 
   Kernel::ATime  fCreated, fAccessed, fModified, fDeleted;  /// @brief File timestamps and allocation status.
   Kernel::UInt32 fUID, fGID;  /// @brief User ID and Group ID of the file.

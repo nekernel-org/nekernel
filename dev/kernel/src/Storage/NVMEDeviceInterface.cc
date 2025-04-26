@@ -18,6 +18,6 @@ NVMEDeviceInterface::~NVMEDeviceInterface() {
 }
 
 const Char* NVMEDeviceInterface::Name() const {
-  return ("/dev/nvme{}");
+  return ("/devices/nvme{}");
 }
 }  // namespace Kernel

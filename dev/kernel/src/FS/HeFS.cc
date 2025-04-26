@@ -756,7 +756,7 @@ namespace Kernel::HeFS {
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see err_local_get().
 _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
-                                        const Utf16Char* part_name) {
+                                        _Input const Utf16Char* part_name) {
   NE_UNUSED(drive);
   NE_UNUSED(flags);
   NE_UNUSED(part_name);
@@ -775,6 +775,34 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   if (!root) {
     kout << "Error: Failed to allocate memory for boot node.\r";
     return NO;
+  }
+
+  rt_set_memory(root, 0, sizeof(HEFS_BOOT_NODE));
+
+  drive->fPacket.fPacketLba     = drive->fLbaStart;
+  drive->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
+  drive->fPacket.fPacketContent = root;
+
+  drive->fInput(drive->fPacket);
+
+  if (!drive->fPacket.fPacketGood) {
+    delete root;
+    root = nullptr;
+
+    err_global_get() = kErrorDiskIsCorrupted;
+
+    return NO;
+  }
+
+  // Check if the disk is already formatted.
+
+  if (KStringBuilder::Equals(root->fMagic, kHeFSMagic)) {
+    delete root;
+    root = nullptr;
+
+    err_global_get() = kErrorSuccess;
+
+    return YES;
   }
 
   rt_set_memory(root, 0, sizeof(HEFS_BOOT_NODE));
@@ -836,9 +864,10 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   rt_set_memory(root_dir, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
   wrt_copy_memory((VoidPtr) u"/", root_dir->fName, wrt_string_len(u"/"));
+  wrt_copy_memory((VoidPtr) kHeFSDIMBootDir, root_dir->fDim, wrt_string_len(kHeFSDIMBootDir));
 
   root_dir->fKind   = kHeFSFileKindDirectory;
-  root_dir->fColor  = kHeFSBlack;
+  root_dir->fColor  = kHeFSBlack; // Every RB-Tree root starts black. (a condition of the algorithm)
   root_dir->fParent = 0;  // No parent (it's the real root)
   root_dir->fChild  = 0;  // No children yet
   root_dir->fNext   = 0;  // No next
@@ -857,6 +886,19 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   root     = nullptr;
   root_dir = nullptr;
+
+  // Create the directories, something UNIX inspired but more explicit and forward looking.
+
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/boot");
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/netdevices");
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/binaries");
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/users");
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/config");
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/config/xml");
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/config/json");
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/devices");
+  this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/media");
+  this->CreateFile(drive, kHeFSEncodingBinary, u"/", u"mk.hefs");
 
   if (drive->fPacket.fPacketGood) return YES;
 
@@ -1036,7 +1078,7 @@ _Output Bool HeFileSystemParser::CreateFile(_Input DriveTrait* drive, _Input con
 }
 
 Boolean fs_init_hefs(Void) noexcept {
-  kout << "Creating main disk...\r";
+  kout << "Creating main disk with HeFS in it...\r";
 
   auto drv = io_construct_main_drive();
 
@@ -1046,9 +1088,6 @@ Boolean fs_init_hefs(Void) noexcept {
   HeFileSystemParser parser;
 
   parser.Format(&drv, kHeFSEncodingUTF16, kHeFSDefaultVoluneName);
-
-  parser.CreateDirectory(&drv, kHeFSEncodingUTF16, u"boot");
-  parser.CreateFile(&drv, kHeFSEncodingUTF16, u"boot", u".hefs");
 
   return YES;
 }

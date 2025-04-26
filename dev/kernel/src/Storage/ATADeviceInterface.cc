@@ -22,7 +22,7 @@ ATADeviceInterface::~ATADeviceInterface() = default;
 /// @brief Returns the name of the device interface.
 /// @return it's name as a string.
 const Char* ATADeviceInterface::Name() const {
-  return "/dev/hda{}";
+  return "/devices/hda{}";
 }
 
 /// @brief Output operator.

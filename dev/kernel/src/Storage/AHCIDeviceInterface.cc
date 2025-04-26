@@ -24,7 +24,7 @@ AHCIDeviceInterface::~AHCIDeviceInterface() = default;
 /// @brief Returns the name of the device interface.
 /// @return it's name as a string.
 const Char* AHCIDeviceInterface::Name() const {
-  return "/dev/sda{}";
+  return "/devices/sda{}";
 }
 
 /// @brief Output operator.

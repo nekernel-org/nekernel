@@ -22,7 +22,7 @@
 #include <NewKit/ErrorOr.h>
 #include <NewKit/Ref.h>
 
-#define kDeviceMgrRootDirPath "/dev/"
+#define kDeviceMgrRootDirPath "/devices/"
 
 #define NE_DEVICE : public ::Kernel::IDeviceObject
 
@@ -58,7 +58,7 @@ class IDeviceObject {
     return *this;
   }
 
-  virtual const char* Name() const { return "/dev/null"; }
+  virtual const char* Name() const { return "/devices/null"; }
 
   operator bool() { return fOut && fIn; }
 

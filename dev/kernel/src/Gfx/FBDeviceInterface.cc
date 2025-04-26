@@ -27,9 +27,6 @@ FBDeviceInterface& FBDeviceInterface::operator<<(FBDevicePacket* pckt) {
 
   if (pckt->fHeight == 0 || pckt->fWidth == 0) return *this;
 
-  if (pckt->fX > kHandoverHeader->f_GOP.f_Width || pckt->fY > kHandoverHeader->f_GOP.f_Height)
-    return *this;
-
   this->fOut(this, pckt);
 
   return *this;
@@ -40,10 +37,7 @@ FBDeviceInterface& FBDeviceInterface::operator<<(FBDevicePacket* pckt) {
 /// @return the class itself after operation.
 FBDeviceInterface& FBDeviceInterface::operator>>(FBDevicePacket* pckt) {
   if (!pckt) return *this;
-
-  if (pckt->fX > kHandoverHeader->f_GOP.f_Width || pckt->fY > kHandoverHeader->f_GOP.f_Height)
-    return *this;
-
+  
   this->fIn(this, pckt);
 
   return *this;
@@ -52,5 +46,5 @@ FBDeviceInterface& FBDeviceInterface::operator>>(FBDevicePacket* pckt) {
 /// @brief Returns the name of the device interface.
 /// @return it's name as a string.
 const Char* FBDeviceInterface::Name() const {
-  return "/dev/fb{}";
+  return "/devices/fb{}";
 }

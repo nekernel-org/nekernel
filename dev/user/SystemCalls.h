@@ -60,6 +60,16 @@ IMPORT_C Ref IoOpenFile(const Char* fs_path, const Char* drive_letter);
 /// @return Function doesn't return a type.
 IMPORT_C Void IoCloseFile(_Input Ref file_desc);
 
+/// @brief I/O control (ioctl) on a file.
+/// @param file_desc the file descriptor.
+/// @param ioctl_code the ioctl code.
+/// @param in_data the input data.
+/// @param out_data the output data.
+/// @return the number of bytes written.
+/// @note This function is used to control the file descriptor, introduced for HeFS.
+IMPORT_C SInt32 IoCTLFile(_Input Ref file_desc, _Input UInt32 ioctl_code, _Input VoidPtr in_data,
+                      _Output VoidPtr out_data);
+
 /// @brief Gets the file mime (if any)
 /// @param file_desc the file descriptor.
 IMPORT_C const Char* IoMimeFile(_Input Ref file_desc);

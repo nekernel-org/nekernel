@@ -25,7 +25,7 @@ STATIC UInt8  kATAMaster = 0U;
 #endif
 
 #if defined(__AHCI__)
-STATIC UInt16 kAHCIPortsImplemented = 0UL;
+STATIC UInt16 kAHCIPortsImplemented [[maybe_unused]] = 0UL;
 #endif
 
 /// @brief reads from an ATA drive.
