@@ -71,6 +71,10 @@ struct DriveTrait final {
   const Char* (*fProtocol)(Void);
 };
 
+namespace Detail {
+  Void io_detect_drive(DriveTrait& trait);
+}
+
 ///! drive as a device.
 typedef DriveTrait* DriveTraitPtr;
 

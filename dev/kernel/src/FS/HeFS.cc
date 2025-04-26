@@ -90,6 +90,14 @@ namespace Detail {
       else
         start = dir->fParent;
     }
+
+    if (start == 0) {
+      kout << "Errror: Something went terribly wrong when traversing the RB-Tree.\r";
+      
+      ke_panic(RUNTIME_CHECK_FILESYSTEM, "RB-Tree traversal failed, critical filesystem error!");
+      
+      return;
+    }
   }
 
   /***********************************************************************************/
@@ -782,7 +790,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   root->fStartIND = drive->fLbaStart + sizeof(HEFS_BOOT_NODE);
   root->fEndIND   = drive->fLbaEnd;
 
-  root->fINDCount = root->fEndIND - root->fStartIND;
+  root->fINDCount = 0;
 
   root->fDiskSize   = drv_get_size();
   root->fDiskStatus = kHeFSStatusUnlocked;
@@ -811,8 +819,40 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   drive->fOutput(drive->fPacket);
 
+  if (!drive->fPacket.fPacketGood) {
+    delete root;
+    root = nullptr;
+
+    err_global_get() = kErrorDiskIsCorrupted;
+
+    return NO;
+  }
+
+  HEFS_INDEX_NODE_DIRECTORY* root_dir = new HEFS_INDEX_NODE_DIRECTORY();
+  rt_set_memory(root_dir, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+
+  wrt_copy_memory((VoidPtr) u"/", root_dir->fName, wrt_string_len(u"/"));
+
+  root_dir->fKind   = kHeFSFileKindDirectory;
+  root_dir->fColor  = kHeFSBlack;
+  root_dir->fParent = 0;  // No parent (it's the real root)
+  root_dir->fChild  = 0;  // No children yet
+  root_dir->fNext   = 0;  // No next
+  root_dir->fPrev   = 0;  // No previous
+
+  root_dir->fEntryCount = 0;
+
+  drive->fPacket.fPacketLba     = root->fStartIND;
+  drive->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+  drive->fPacket.fPacketContent = root_dir;
+
+  drive->fOutput(drive->fPacket);
+
+  delete root_dir;
   delete root;
-  root = nullptr;
+
+  root     = nullptr;
+  root_dir = nullptr;
 
   if (drive->fPacket.fPacketGood) return YES;
 
@@ -827,7 +867,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 /// @param dir The directory to create the file in.
 /// @return If it was sucessful, see err_local_get().
 _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
-                             const Utf16Char* dir) {
+                                                 const Utf16Char* dir) {
   NE_UNUSED(drive);
   NE_UNUSED(flags);
   NE_UNUSED(dir);
@@ -881,9 +921,15 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
   dirent->fDeleted    = 0;
   dirent->fModified   = 0;
   dirent->fEntryCount = 0;
-  dirent->fKind       = kHeFSFileKindDirectory;
-  dirent->fFlags      = flags;
-  dirent->fChecksum   = 0;
+
+  dirent->fParent = 0;  // No parent (it's the real root)
+  dirent->fChild  = 0;  // No children yet
+  dirent->fNext   = 0;  // No next
+  dirent->fPrev   = 0;  // No previous
+
+  dirent->fKind     = kHeFSFileKindDirectory;
+  dirent->fFlags    = flags;
+  dirent->fChecksum = 0;
 
   if (Detail::hefs_allocate_index_directory_node(root, drive, dirent)) {
     delete dirent;
@@ -994,10 +1040,13 @@ Boolean fs_init_hefs(Void) noexcept {
     ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main filesystem cannot be mounted.");
 
   HeFileSystemParser parser;
+
   parser.Format(&drv, kHeFSEncodingUTF16, kHeFSDefaultVoluneName);
 
-  parser.CreateDirectory(&drv, kHeFSEncodingUTF16, u"/");
-  parser.CreateFile(&drv, kHeFSEncodingUTF16, u"/", u"boot.log");
+  Kernel::Detail::io_detect_drive(drv);
+
+  parser.CreateDirectory(&drv, kHeFSEncodingUTF16, u"boot");
+  parser.CreateFile(&drv, kHeFSEncodingUTF16, u"boot", u".hefs");
 
   return YES;
 }

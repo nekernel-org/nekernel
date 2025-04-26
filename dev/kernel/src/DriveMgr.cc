@@ -191,6 +191,10 @@ namespace Detail {
 
         trait.fPacket.fPacketReadOnly = YES;
         trait.fKind                   = kMassStorageDrive | kUnformattedDrive | kReadOnlyDrive;
+
+        trait.fSectorSz = 512;
+        trait.fLbaEnd   = drv_get_sector_count() - 1;
+        trait.fLbaStart = 0x400;
       }
     }
 

@@ -297,7 +297,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
 
   epm_boot.FsVersion = kNeFSVersionInteger;
   epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
-  epm_boot.LbaEnd    = fDiskDev.GetDiskSize();
+  epm_boot.LbaEnd    = fDiskDev.GetDiskSize() - 1;
   epm_boot.SectorSz  = BootDev::kSectorSize;
   epm_boot.Kind      = kEPMNeKernel;
   epm_boot.NumBlocks = 1;
