@@ -295,8 +295,8 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
   const auto kFsName    = "HeFS";
   const auto kBlockName = "OS (EPM)";
 
-  epm_boot.FsVersion = kNeFSVersionInteger;
-  epm_boot.LbaStart  = kNeFSRootCatalogStartAddress;
+  epm_boot.FsVersion = 0;
+  epm_boot.LbaStart  = 1024;
   epm_boot.LbaEnd    = fDiskDev.GetDiskSize() - 1;
   epm_boot.SectorSz  = BootDev::kSectorSize;
   epm_boot.Kind      = kEPMNeKernel;

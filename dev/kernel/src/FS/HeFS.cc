@@ -29,7 +29,7 @@ namespace Detail {
   /// @note This function is used to traverse the RB-Tree of the filesystem.
   /// @internal Internal filesystem use only.
   STATIC ATTRIBUTE(unused) _Output Void
-      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start);
+      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, HEFS_BOOT_NODE* boot, Lba& start);
 
   /// @brief Get the index node of a file or directory.
   /// @param root The root node of the filesystem.
@@ -75,7 +75,13 @@ namespace Detail {
   /// @note This function is used to traverse the RB-Tree of the filesystem.
   /// @internal Internal filesystem use only.
   STATIC ATTRIBUTE(unused) _Output Void
-      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start) {
+      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, HEFS_BOOT_NODE* node, Lba& start) {
+    NE_UNUSED(node);
+
+    if (!dir) {
+      ke_panic(RUNTIME_CHECK_FILESYSTEM, "Error: Invalid directory node in RB-Tree traversal.\r");
+    }
+
     start = dir->fNext;
 
     if (dir->fColor == kHeFSBlack && start == 0) {
@@ -92,10 +98,8 @@ namespace Detail {
     }
 
     if (start == 0) {
-      kout << "Errror: Something went terribly wrong when traversing the RB-Tree.\r";
-      
-      ke_panic(RUNTIME_CHECK_FILESYSTEM, "RB-Tree traversal failed, critical filesystem error!");
-      
+      ke_panic(RUNTIME_CHECK_FILESYSTEM, "Error: Invalid start value in RB-Tree traversal.\r");
+
       return;
     }
   }
@@ -330,7 +334,7 @@ namespace Detail {
           return YES;
         }
 
-        hefsi_traverse_tree(parent, start);
+        hefsi_traverse_tree(parent, root, start);
       }
 
       return YES;
@@ -388,7 +392,7 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, start);
+        hefsi_traverse_tree(dir, root, start);
       }
 
       err_global_get() = kErrorSuccess;
@@ -505,7 +509,7 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, start);
+        hefsi_traverse_tree(dir, root, start);
       }
 
       delete dir;
@@ -588,7 +592,7 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, start);
+        hefsi_traverse_tree(dir, root, start);
       }
 
       delete dir;
@@ -695,13 +699,13 @@ namespace Detail {
             return NO;
           }
 
-          hefsi_traverse_tree(dir, start);
+          hefsi_traverse_tree(dir, root, start);
 
           continue;
         } else {
           if (dir_parent->fNext == start) {
             hefsi_rotate_left(dir, start, mnt);
-            hefsi_traverse_tree(dir, start);
+            hefsi_traverse_tree(dir, root, start);
 
             continue;
           }
@@ -724,12 +728,12 @@ namespace Detail {
           }
 
           hefsi_rotate_right(dir, start, mnt);
-          hefsi_traverse_tree(dir, start);
+          hefsi_traverse_tree(dir, root, start);
 
           continue;
         }
 
-        hefsi_traverse_tree(dir, start);
+        hefsi_traverse_tree(dir, root, start);
       }
 
       delete dir;
@@ -787,7 +791,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   root->fSectorSize = drive->fSectorSz;
 
-  root->fStartIND = drive->fLbaStart + sizeof(HEFS_BOOT_NODE);
+  root->fStartIND = drive->fLbaStart + sizeof(HEFS_BOOT_NODE) + sizeof(HEFS_BOOT_NODE);
   root->fEndIND   = drive->fLbaEnd;
 
   root->fINDCount = 0;
@@ -842,8 +846,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   root_dir->fEntryCount = 0;
 
-  drive->fPacket.fPacketLba     = root->fStartIND;
-  drive->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+  drive->fPacket.fPacketLba  = drive->fLbaStart + sizeof(HEFS_BOOT_NODE) + sizeof(HEFS_BOOT_NODE);
+  drive->fPacket.fPacketSize = sizeof(HEFS_INDEX_NODE_DIRECTORY);
   drive->fPacket.fPacketContent = root_dir;
 
   drive->fOutput(drive->fPacket);
@@ -1042,8 +1046,6 @@ Boolean fs_init_hefs(Void) noexcept {
   HeFileSystemParser parser;
 
   parser.Format(&drv, kHeFSEncodingUTF16, kHeFSDefaultVoluneName);
-
-  Kernel::Detail::io_detect_drive(drv);
 
   parser.CreateDirectory(&drv, kHeFSEncodingUTF16, u"boot");
   parser.CreateFile(&drv, kHeFSEncodingUTF16, u"boot", u".hefs");
