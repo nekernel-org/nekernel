@@ -115,12 +115,18 @@ using ImagePtr = VoidPtr;
 struct PROCESS_IMAGE final {
   explicit PROCESS_IMAGE() = default;
 
+private:
+  friend USER_PROCESS;
+  friend KERNEL_PROCESS;
+  friend class UserProcessScheduler;
+
   ImagePtr fCode;
   ImagePtr fBlob;
 
-  Bool HasCode() { return this->fCode != nullptr; }
+public:
+  Bool HasCode() const { return this->fCode != nullptr; }
 
-  Bool HasImage() { return this->fBlob != nullptr; }
+  Bool HasImage() const { return this->fBlob != nullptr; }
 
   ErrorOr<ImagePtr> Leak() {
     if (this->fCode) {

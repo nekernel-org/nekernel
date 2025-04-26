@@ -60,7 +60,7 @@ EXTERN_C IDylibRef rtl_init_dylib_pef(USER_PROCESS& process) {
     return nullptr;
   }
 
-  dll_obj->Get()->ImageObject = process.Image.fBlob;
+  dll_obj->Get()->ImageObject = process.Image.LeakBlob().Leak().Leak();
 
   if (!dll_obj->Get()->ImageObject) {
     delete dll_obj->Get();

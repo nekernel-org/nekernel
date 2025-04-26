@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-#include "NewKit/Defines.h"
 #ifdef __FSKIT_INCLUDES_HEFS__
 
 #include <FSKit/HeFS.h>
@@ -287,6 +286,109 @@ namespace Detail {
 
     err_global_get() = kErrorFileNotFound;
     return 0;
+  }
+
+  STATIC _Output BOOL hefs_allocate_index_directory_node(HEFS_BOOT_NODE* root, DriveTrait* mnt,
+                                                         HEFS_INDEX_NODE_DIRECTORY* dir) noexcept {
+    if (root && mnt) {
+      HEFS_INDEX_NODE_DIRECTORY* parent = new HEFS_INDEX_NODE_DIRECTORY();
+
+      if (!parent) {
+        kout << "Error: Failed to allocate memory for index node.\r";
+        return NO;
+      }
+
+      auto start = root->fStartIND;
+
+      while (YES) {
+        mnt->fPacket.fPacketLba     = start;
+        mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+        mnt->fPacket.fPacketContent = parent;
+
+        mnt->fInput(mnt->fPacket);
+
+        if (!mnt->fPacket.fPacketGood) {
+          delete parent;
+          return NO;
+        }
+
+        if (parent->fDeleted) {
+          mnt->fPacket.fPacketLba     = start;
+          mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+          mnt->fPacket.fPacketContent = dir;
+
+          mnt->fOutput(mnt->fPacket);
+
+          return YES;
+        }
+
+        hefsi_traverse_tree(parent, start);
+      }
+
+      return YES;
+    }
+
+    err_global_get() = kErrorFileNotFound;
+    return NO;
+  }
+
+  STATIC _Output HEFS_INDEX_NODE_DIRECTORY* hefs_fetch_index_node_directory(
+      HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf16Char* dir_name) {
+    if (root && mnt) {
+      HEFS_INDEX_NODE_DIRECTORY* dir = new HEFS_INDEX_NODE_DIRECTORY();
+
+      auto start = root->fStartIND;
+      auto end   = root->fEndIND;
+
+      auto hop_watch = 0;
+
+      while (YES) {
+        if (start > end) {
+          kout << "Error: Invalid start/end values.\r";
+          break;
+        }
+
+        if (hop_watch > 100) {
+          kout << "Error: Hop watch exceeded, filesystem is stalling.\r";
+          break;
+        }
+
+        if (start == 0) {
+          ++hop_watch;
+          start = root->fStartIND;
+        }
+
+        mnt->fPacket.fPacketLba     = start;
+        mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+        mnt->fPacket.fPacketContent = dir;
+
+        mnt->fInput(mnt->fPacket);
+
+        if (!mnt->fPacket.fPacketGood) {
+          delete dir;
+
+          dir = nullptr;
+
+          err_global_get() = kErrorFileNotFound;
+
+          return nullptr;
+        }
+
+        if (dir->fKind == kHeFSFileKindDirectory) {
+          if (KStringBuilder::Equals(dir_name, dir->fName)) {
+            return dir;
+          }
+        }
+
+        hefsi_traverse_tree(dir, start);
+      }
+
+      err_global_get() = kErrorSuccess;
+      return dir;
+    }
+
+    err_global_get() = kErrorFileNotFound;
+    return nullptr;
   }
 
   /// @brief Get the index node of a file or directory.
@@ -709,7 +811,178 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   drive->fOutput(drive->fPacket);
 
-  return YES;
+  delete root;
+  root = nullptr;
+
+  if (drive->fPacket.fPacketGood) return YES;
+
+  err_global_get() = kErrorDiskIsCorrupted;
+
+  return NO;
+}
+
+/// @brief Create a new directory on the disk.
+/// @param drive The drive to write on.
+/// @param flags The flags to use.
+/// @param dir The directory to create the file in.
+/// @return If it was sucessful, see err_local_get().
+_Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
+                             const Utf16Char* dir) {
+  NE_UNUSED(drive);
+  NE_UNUSED(flags);
+  NE_UNUSED(dir);
+
+  HEFS_BOOT_NODE*  root = new HEFS_BOOT_NODE();
+  HEFS_INDEX_NODE* node = new HEFS_INDEX_NODE();
+
+  if (!root || !node) {
+    kout << "Error: Failed to allocate memory for boot node.\r";
+
+    if (node) delete node;
+    if (root) delete root;
+
+    return NO;
+  }
+
+  rt_set_memory(root, 0, sizeof(HEFS_BOOT_NODE));
+  rt_set_memory(node, 0, sizeof(HEFS_INDEX_NODE));
+
+  rt_copy_memory((VoidPtr) "fs/hefs-packet", drive->fPacket.fPacketMime,
+                 rt_string_len("fs/hefs-packet"));
+
+  drive->fPacket.fPacketLba     = drive->fLbaStart;
+  drive->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
+  drive->fPacket.fPacketContent = root;
+
+  drive->fInput(drive->fPacket);
+
+  auto dirent = Detail::hefs_fetch_index_node_directory(root, drive, dir);
+
+  if (dirent) {
+    kout << "Error: Directory already exists.\r";
+
+    delete dirent;
+    dirent = nullptr;
+
+    delete node;
+    delete root;
+
+    return NO;
+  }
+
+  dirent = new HEFS_INDEX_NODE_DIRECTORY();
+
+  rt_set_memory(dirent, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+
+  wrt_copy_memory((VoidPtr) dir, dirent->fName, wrt_string_len(dir));
+
+  dirent->fAccessed   = 0;
+  dirent->fCreated    = 0;
+  dirent->fDeleted    = 0;
+  dirent->fModified   = 0;
+  dirent->fEntryCount = 0;
+  dirent->fKind       = kHeFSFileKindDirectory;
+  dirent->fFlags      = flags;
+  dirent->fChecksum   = 0;
+
+  if (Detail::hefs_allocate_index_directory_node(root, drive, dirent)) {
+    delete dirent;
+    dirent = nullptr;
+
+    delete node;
+    delete root;
+
+    return YES;
+  }
+
+  delete dirent;
+  dirent = nullptr;
+
+  delete node;
+  delete root;
+
+  return NO;
+}
+
+/// @brief Create a new file on the disk.
+/// @param drive The drive to write on.
+/// @param flags The flags to use.
+/// @param dir The directory to create the file in.
+/// @param name The name of the file.
+/// @return If it was sucessful, see err_local_get().
+_Output Bool HeFileSystemParser::CreateFile(_Input DriveTrait* drive, _Input const Int32 flags,
+                                            const Utf16Char* dir, const Utf16Char* name) {
+  NE_UNUSED(drive);
+  NE_UNUSED(flags);
+  NE_UNUSED(dir);
+  NE_UNUSED(name);
+
+  HEFS_BOOT_NODE*  root = new HEFS_BOOT_NODE();
+  HEFS_INDEX_NODE* node = new HEFS_INDEX_NODE();
+
+  if (!root || !node) {
+    kout << "Error: Failed to allocate memory for boot node.\r";
+
+    if (node) delete node;
+    if (root) delete root;
+
+    return NO;
+  }
+
+  rt_set_memory(root, 0, sizeof(HEFS_BOOT_NODE));
+  rt_set_memory(node, 0, sizeof(HEFS_INDEX_NODE));
+
+  rt_copy_memory((VoidPtr) "fs/hefs-packet", drive->fPacket.fPacketMime,
+                 rt_string_len("fs/hefs-packet"));
+
+  drive->fPacket.fPacketLba     = drive->fLbaStart;
+  drive->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
+  drive->fPacket.fPacketContent = root;
+
+  drive->fInput(drive->fPacket);
+
+  auto dirent = Detail::hefs_fetch_index_node_directory(root, drive, dir);
+
+  if (!dirent) {
+    kout << "Error: Directory not found.\r";
+
+    delete node;
+    delete root;
+
+    return NO;
+  }
+
+  delete dirent;
+  dirent = nullptr;
+
+  if (KStringBuilder::Equals(name, kHeFSSearchAllStr)) {
+    kout << "Error: Invalid file name.\r";
+
+    delete node;
+    delete root;
+
+    return NO;
+  }
+
+  node->fAccessed = 0;
+  node->fCreated  = 0;
+  node->fDeleted  = 0;
+  node->fModified = 0;
+  node->fSize     = 0;
+  node->fKind     = kHeFSFileKindRegular;
+  node->fFlags    = flags;
+  node->fChecksum = 0;
+
+  wrt_copy_memory((VoidPtr) name, node->fName, wrt_string_len(name));
+
+  if (Detail::hefs_allocate_index_node(root, drive, dir, node)) {
+    delete node;
+    delete root;
+
+    return YES;
+  }
+
+  return NO;
 }
 
 Boolean fs_init_hefs(Void) noexcept {
@@ -722,6 +995,9 @@ Boolean fs_init_hefs(Void) noexcept {
 
   HeFileSystemParser parser;
   parser.Format(&drv, kHeFSEncodingUTF16, kHeFSDefaultVoluneName);
+
+  parser.CreateDirectory(&drv, kHeFSEncodingUTF16, u"/");
+  parser.CreateFile(&drv, kHeFSEncodingUTF16, u"/", u"boot.log");
 
   return YES;
 }

@@ -168,7 +168,7 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final {
   Kernel::UInt32 fChecksum,
       fIndexNodeChecksum;  /// @brief Checksum of the file, index node checksum.
 
-  Kernel::ATime  fCreated, fAccessed, fModified, fDeleted;  /// @brief File timestamps.
+  Kernel::ATime  fCreated, fAccessed, fModified, fDeleted;  /// @brief File timestamps and allocation status.
   Kernel::UInt32 fUID, fGID;  /// @brief User ID and Group ID of the file.
   Kernel::UInt32 fMode;       /// @brief File mode. (read, write, execute, etc).
 
@@ -353,6 +353,11 @@ class HeFileSystemParser final {
   /// @return If it was sucessful, see err_local_get().
   _Output Bool Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
                       const Utf16Char* part_name);
+
+  _Output Bool CreateDirectory(_Input DriveTrait* drive, _Input const Int32 flags, const Utf16Char* dir);
+
+  _Output Bool CreateFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf16Char* dir,
+                          const Utf16Char* name);
 
  public:
   UInt32 mDriveIndex{MountpointInterface::kDriveIndexA};  /// @brief The drive index which this

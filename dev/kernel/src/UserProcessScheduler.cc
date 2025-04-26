@@ -498,7 +498,7 @@ SizeT UserProcessScheduler::Run() noexcept {
       process.PTime = static_cast<Int32>(process.Affinity);
 
       // tell helper to find a core to schedule on.
-      BOOL ret = UserProcessHelper::Switch(process.Image.fCode,
+      BOOL ret = UserProcessHelper::Switch(process.Image.Leak().Leak().Leak(),
                                            &process.StackReserve[process.StackSize - 1],
                                            process.StackFrame, process.ProcessId);
 
@@ -570,7 +570,7 @@ Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
 
   if (process.Status == ProcessStatusKind::kInvalid) return No;
 
-  if (!process.Image.fCode) return No;
+  if (!process.Image.HasCode()) return No;
 
   if (!process.Name[0]) return No;
 
