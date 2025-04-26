@@ -78,29 +78,20 @@ namespace Detail {
       hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, HEFS_BOOT_NODE* node, Lba& start) {
     NE_UNUSED(node);
 
-    if (!dir) {
-      ke_panic(RUNTIME_CHECK_FILESYSTEM, "Error: Invalid directory node in RB-Tree traversal.\r");
+    if (!dir || !node) {
+      ke_panic(RUNTIME_CHECK_FILESYSTEM, "Error: Invalid directory node/boot_node in RB-Tree traversal.");
     }
 
-    start = dir->fNext;
-
-    if (dir->fColor == kHeFSBlack && start == 0) {
-      if (dir->fParent != 0) start = dir->fParent;
-    } else if (dir->fColor == kHeFSRed && start == 0) {
-      if (dir->fChild != 0)
-        start = dir->fChild;
-      else if (dir->fNext != 0)
-        start = dir->fNext;
-      else if (dir->fPrev != 0)
-        start = dir->fPrev;
-      else
-        start = dir->fParent;
-    }
-
-    if (start == 0) {
-      ke_panic(RUNTIME_CHECK_FILESYSTEM, "Error: Invalid start value in RB-Tree traversal.\r");
-
-      return;
+    if (dir->fChild != 0) {
+      start = dir->fChild;
+    } else if (dir->fNext != 0) {
+      start = dir->fNext;
+    } else if (dir->fParent != 0) {
+      start = dir->fParent;
+    } else if (dir->fPrev != 0) {
+      start = dir->fPrev;
+    } else {
+      start = node->fStartIND;
     }
   }
 
@@ -324,12 +315,15 @@ namespace Detail {
           return NO;
         }
 
-        if (parent->fDeleted) {
+        if (parent->fDeleted ||
+          !parent->fCreated) {
           mnt->fPacket.fPacketLba     = start;
           mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
           mnt->fPacket.fPacketContent = dir;
 
           mnt->fOutput(mnt->fPacket);
+
+          hefsi_balance_filesystem(root, mnt);
 
           return YES;
         }
@@ -866,20 +860,22 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   wrt_copy_memory((VoidPtr) u"/", root_dir->fName, wrt_string_len(u"/"));
   wrt_copy_memory((VoidPtr) kHeFSDIMBootDir, root_dir->fDim, wrt_string_len(kHeFSDIMBootDir));
 
-  root_dir->fKind   = kHeFSFileKindDirectory;
-  root_dir->fColor  = kHeFSBlack; // Every RB-Tree root starts black. (a condition of the algorithm)
-  root_dir->fParent = 0;  // No parent (it's the real root)
-  root_dir->fChild  = 0;  // No children yet
-  root_dir->fNext   = 0;  // No next
-  root_dir->fPrev   = 0;  // No previous
+  root_dir->fKind  = kHeFSFileKindDirectory;
+  root_dir->fColor = kHeFSBlack;  // Every RB-Tree root starts black. (a condition of the algorithm)
+  root_dir->fParent = root->fStartIND;  // No parent (it's the real root)
+  root_dir->fChild  = root->fEndIND;    // No children yet
+  root_dir->fNext   = 0;                // No next
+  root_dir->fPrev   = 0;                // No previous
 
-  root_dir->fEntryCount = 0;
+  root_dir->fEntryCount = 1;
 
   drive->fPacket.fPacketLba  = drive->fLbaStart + sizeof(HEFS_BOOT_NODE) + sizeof(HEFS_BOOT_NODE);
   drive->fPacket.fPacketSize = sizeof(HEFS_INDEX_NODE_DIRECTORY);
   drive->fPacket.fPacketContent = root_dir;
 
   drive->fOutput(drive->fPacket);
+
+  Detail::hefsi_balance_filesystem(root, drive);
 
   delete root_dir;
   delete root;
@@ -942,6 +938,8 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
 
   drive->fInput(drive->fPacket);
 
+  Detail::hefsi_balance_filesystem(root, drive);
+  
   auto dirent = Detail::hefs_fetch_index_node_directory(root, drive, dir);
 
   if (dirent) {
@@ -963,19 +961,21 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
   wrt_copy_memory((VoidPtr) dir, dirent->fName, wrt_string_len(dir));
 
   dirent->fAccessed   = 0;
-  dirent->fCreated    = 0;
+  dirent->fCreated    = 0;  /// TODO: Add the current time.
   dirent->fDeleted    = 0;
   dirent->fModified   = 0;
   dirent->fEntryCount = 0;
 
-  dirent->fParent = 0;  // No parent (it's the real root)
-  dirent->fChild  = 0;  // No children yet
-  dirent->fNext   = 0;  // No next
-  dirent->fPrev   = 0;  // No previous
+  dirent->fParent = root->fStartIND;  // No parent (it's the real root)
+  dirent->fChild  = root->fEndIND;    // No children yet
+  dirent->fNext   = 0;                // No next
+  dirent->fPrev   = 0;                // No previous
 
   dirent->fKind     = kHeFSFileKindDirectory;
   dirent->fFlags    = flags;
   dirent->fChecksum = 0;
+
+  dirent->fEntryCount = 1;
 
   if (Detail::hefs_allocate_index_directory_node(root, drive, dirent)) {
     delete dirent;
@@ -1033,6 +1033,8 @@ _Output Bool HeFileSystemParser::CreateFile(_Input DriveTrait* drive, _Input con
 
   drive->fInput(drive->fPacket);
 
+  Detail::hefsi_balance_filesystem(root, drive);
+
   auto dirent = Detail::hefs_fetch_index_node_directory(root, drive, dir);
 
   if (!dirent) {
@@ -1077,6 +1079,8 @@ _Output Bool HeFileSystemParser::CreateFile(_Input DriveTrait* drive, _Input con
   return NO;
 }
 
+/// @brief Initialize the HeFS filesystem.
+/// @return To check its status, see err_local_get().
 Boolean fs_init_hefs(Void) noexcept {
   kout << "Creating main disk with HeFS in it...\r";
 

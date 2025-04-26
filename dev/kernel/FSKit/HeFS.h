@@ -29,7 +29,10 @@
 #define kHeFSDefaultVoluneName u"HeFS Volume"
 
 #define kHeFSDIMBootDir u"boot-x/dir"
-#define kHeFSDIMBootFile u"boot-x/file"
+#define kHeFSMIMEBootFile u"boot-x/file"
+
+#define kHeFSDIMSystemDir u"system-x/dir"
+#define kHeFSMIMESystemFile u"system-x/file"
 
 #define kHeFSSearchAllStr u"*"
 
@@ -123,7 +126,7 @@ struct PACKED HEFS_BOOT_NODE final {
 };
 
 inline constexpr Kernel::ATime kHeFSTimeInvalid = 0x0000000000000000;
-inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF;
+inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 
 /// @brief HeFS index node.
 /// @details This structure is used to store the file information of a file.
