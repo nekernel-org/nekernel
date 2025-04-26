@@ -141,8 +141,8 @@
 
 #define BOOL Kernel::Boolean
 
-#ifdef rtl_init_object
-#undef rtl_init_object
-#endif  // ifdef rtl_init_object
+#ifdef RTL_INIT_OBJECT
+#undef RTL_INIT_OBJECT
+#endif  // ifdef RTL_INIT_OBJECT
 
-#define rtl_init_object(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
+#define RTL_INIT_OBJECT(OBJ, TYPE, ...) TYPE OBJ = TYPE(__VA_ARGS__)
