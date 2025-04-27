@@ -33,6 +33,10 @@ namespace Kernel {
 inline UInt8* kDmaPoolPtr = (UInt8*) DMA_POOL_START;
 
 inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
+  if (!size) {
+    return nullptr;
+  }
+
   UIntPtr addr = (UIntPtr) kDmaPoolPtr;
 
   addr = (addr + (align - 1)) & ~(align - 1);  // Align up
@@ -47,12 +51,23 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
   return (VoidPtr) addr;
 }
 
+inline Void rtl_dma_free(SizeT size) {
+  if (!size)
+    return;
+
+  kDmaPoolPtr = (UInt8*) (kDmaPoolPtr - size);
+}
+
 inline Void rtl_dma_flush(Void* ptr, SizeT size_buffer) {
+  if (ptr > (Void*)(DMA_POOL_START + DMA_POOL_SIZE))
+  {
+    return;
+  }
+
   for (SizeT i = 0; i < size_buffer; ++i) {
     asm volatile("clflush (%0)" : : "r"((UInt8*) ptr + i) : "memory");
   }
   asm volatile("mfence" ::: "memory");
 }
 }  // namespace Kernel
-#else
 #endif

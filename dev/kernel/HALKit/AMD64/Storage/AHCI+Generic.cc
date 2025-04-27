@@ -220,10 +220,14 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   if (kSATAHba->Is & kHBAErrTaskFile) {
     kout << "AHCI Task File Error during I/O.\r";
+    
+    rtl_dma_free(size_buffer);
     err_global_get() = kErrorDiskIsCorrupted;
     return;
   } else {
     rt_copy_memory(ptr, buffer, size_buffer);
+    rtl_dma_free(size_buffer);
+
     err_global_get() = kErrorSuccess;
   }
 }
