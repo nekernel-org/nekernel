@@ -27,6 +27,6 @@ Int         rt_to_lower(Int c);
 voidPtr     rt_string_in_string(const Char* in, const Char* needle);
 char*       rt_string_has_char(Char* str, Char chr);
 
-Int  wrt_copy_memory(const voidPtr src, voidPtr dst, Size len);
-Size wrt_string_len(const Utf16Char* str);
+Int  urt_copy_memory(const voidPtr src, voidPtr dst, Size len);
+Size urt_string_len(const Utf8Char* str);
 }  // namespace Kernel

@@ -262,7 +262,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
   const auto kBlockName = "OS (EPM)";
 
   epm_boot.FsVersion = 0;
-  epm_boot.LbaStart  = 1024;
+  epm_boot.LbaStart  = sizeof(EPM_PART_BLOCK);
   epm_boot.LbaEnd    = fDiskDev.GetDiskSize() - 1;
   epm_boot.SectorSz  = BootDev::kSectorSize;
   epm_boot.Kind      = kEPMNeKernel;

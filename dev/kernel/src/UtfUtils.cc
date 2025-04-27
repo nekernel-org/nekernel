@@ -7,7 +7,7 @@
 #include <NewKit/Utils.h>
 
 namespace Kernel {
-Size wrt_string_len(const Utf16Char* str) {
+Size urt_string_len(const Utf8Char* str) {
   SizeT len{0};
 
   while (str[len] != u'\0') ++len;
@@ -15,9 +15,9 @@ Size wrt_string_len(const Utf16Char* str) {
   return len;
 }
 
-Int wrt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
-  Utf16Char* srcChr  = reinterpret_cast<Utf16Char*>(src);
-  Utf16Char* dstChar = reinterpret_cast<Utf16Char*>(dst);
+Int urt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
+  Utf8Char* srcChr  = reinterpret_cast<Utf8Char*>(src);
+  Utf8Char* dstChar = reinterpret_cast<Utf8Char*>(dst);
 
   Size index = 0;
 

@@ -112,8 +112,8 @@ bool KStringBuilder::Equals(const Char* lhs, const Char* rhs) {
 }
 
 /// @note This is unsafe!!!
-bool KStringBuilder::Equals(const Utf16Char* lhs, const Utf16Char* rhs) {
-  for (Size index = 0; index < wrt_string_len(rhs); ++index) {
+bool KStringBuilder::Equals(const Utf8Char* lhs, const Utf8Char* rhs) {
+  for (Size index = 0; index < urt_string_len(rhs); ++index) {
     if (rhs[index] != lhs[index]) return false;
   }
 

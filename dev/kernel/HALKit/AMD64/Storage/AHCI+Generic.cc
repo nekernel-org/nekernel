@@ -162,7 +162,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   SizeT   prdt_index      = 0;
   UIntPtr buffer_phys     = (UIntPtr) ptr;
 
-  while (bytes_remaining > 0 && prdt_index < 8) {
+  while (bytes_remaining > 0) {
     SizeT chunk_size = bytes_remaining;
 
     if (chunk_size > kib_cast(32)) chunk_size = kib_cast(32);
@@ -234,9 +234,11 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
     err_global_get() = kErrorDiskIsCorrupted;
     return;
   } else {
-    rtl_dma_flush(ptr, size_buffer);
-    rt_copy_memory(ptr, buffer, size_buffer);
-    rtl_dma_flush(ptr, size_buffer);
+    if (!Write) {
+      rtl_dma_flush(ptr, size_buffer);
+      rt_copy_memory(ptr, buffer, size_buffer);
+      rtl_dma_flush(ptr, size_buffer);
+    }
 
     rtl_dma_free(size_buffer);
 
@@ -424,7 +426,7 @@ Bool drv_std_detected_ahci() {
 ///
 ////////////////////////////////////////////////////
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer) {
-  drv_std_input_output_ahci<YES, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz,
+  drv_std_input_output_ahci<YES, YES, NO>(lba / sector_sz, reinterpret_cast<UInt8*>(buffer), sector_sz,
                                           size_buffer);
 }
 
@@ -432,7 +434,7 @@ Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 ///
 ////////////////////////////////////////////////////
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer) {
-  drv_std_input_output_ahci<NO, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz,
+  drv_std_input_output_ahci<NO, YES, NO>(lba / sector_sz, reinterpret_cast<UInt8*>(buffer), sector_sz,
                                          size_buffer);
 }
 
@@ -499,7 +501,7 @@ namespace Detail {
 
     err_global_get() = kErrorSuccess;
 
-    drv_std_input_output_ahci<NO, YES, NO>(disk->fPacket.fPacketLba,
+    drv_std_input_output_ahci<NO, YES, NO>(disk->fPacket.fPacketLba / kAHCISectorSize,
                                            (UInt8*) disk->fPacket.fPacketContent, kAHCISectorSize,
                                            disk->fPacket.fPacketSize);
   }
@@ -521,7 +523,7 @@ namespace Detail {
 
     err_global_get() = kErrorSuccess;
 
-    drv_std_input_output_ahci<YES, YES, NO>(disk->fPacket.fPacketLba,
+    drv_std_input_output_ahci<YES, YES, NO>(disk->fPacket.fPacketLba / kAHCISectorSize,
                                             (UInt8*) disk->fPacket.fPacketContent, kAHCISectorSize,
                                             disk->fPacket.fPacketSize);
   }

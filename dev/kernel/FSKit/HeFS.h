@@ -26,15 +26,15 @@
 
 #define kHeFSMinimumDiskSize (gib_cast(4))
 
-#define kHeFSDefaultVoluneName u"HeFS Volume"
+#define kHeFSDefaultVoluneName u8"HeFS Volume"
 
-#define kHeFSDIMBootDir u"boot-x/dir"
-#define kHeFSMIMEBootFile u"boot-x/file"
+#define kHeFSDIMBootDir u8"boot-x/dir"
+#define kHeFSMIMEBootFile u8"boot-x/file"
 
-#define kHeFSDIMSystemDir u"system-x/dir"
-#define kHeFSMIMESystemFile u"system-x/file"
+#define kHeFSDIMSystemDir u8"system-x/dir"
+#define kHeFSMIMESystemFile u8"system-x/file"
 
-#define kHeFSSearchAllStr u"*"
+#define kHeFSSearchAllStr u8"*"
 
 struct HEFS_BOOT_NODE;
 struct HEFS_INDEX_NODE;
@@ -102,7 +102,7 @@ typedef UInt64 ATime;
 /// @note The boot node is the first block of the filesystem.
 struct PACKED HEFS_BOOT_NODE final {
   Kernel::Char      fMagic[kHeFSMagicLen];       /// @brief Magic number of the filesystem.
-  Kernel::Utf16Char fVolName[kHeFSPartNameLen];  /// @brief Volume name.
+  Kernel::Utf8Char fVolName[kHeFSPartNameLen];  /// @brief Volume name.
   Kernel::UInt32    fVersion;                    /// @brief Version of the filesystem.
   Kernel::UInt64    fBadSectors;                 /// @brief Number of bad sectors in the filesystem.
   Kernel::UInt64    fSectorCount;                /// @brief Number of sectors in the filesystem.
@@ -124,6 +124,7 @@ struct PACKED HEFS_BOOT_NODE final {
   Kernel::UInt64 fReserved2;  /// @brief Reserved for future use.
   Kernel::UInt64 fReserved3;  /// @brief Reserved for future use.
   Kernel::UInt64 fReserved4;  /// @brief Reserved for future use.
+  Kernel::Char fPad[272];
 };
 
 inline constexpr Kernel::ATime kHeFSTimeInvalid = 0x0000000000000000;
@@ -134,16 +135,12 @@ inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 /// @note The index node is a special type of INode that contains the file information.
 /// @note The index node is used to store the file information of a file.
 struct PACKED ALIGN(8) HEFS_INDEX_NODE final {
-  Kernel::Utf16Char fName[kHeFSFileNameLen];  /// @brief File name.
+  Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief File name.
   Kernel::UInt32    fFlags;                   /// @brief File flags.
   Kernel::UInt16 fKind;  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
                          /// Symbolic Link, Unknown).
   Kernel::UInt32 fSize;  /// @brief File size.
-  Kernel::UInt32 fChecksum, fRecoverChecksum, fBlockChecksum,
-      fLinkChecksum;  /// @brief Checksum of the file, recovery checksum, block checksum, link
-                      /// checksum.
-
-  Kernel::Utf16Char fMime[kHeFSFileNameLen];  /// @brief File mime type.
+  Kernel::UInt32 fChecksum; /// @brief Checksum.
 
   Kernel::Boolean fSymLink;  /// @brief Is this a symbolic link? (if yes, the fName is the path to
                              /// the file and blocklinkstart and end contains it's inodes.)
@@ -152,14 +149,9 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE final {
   Kernel::UInt32 fUID, fGID;  /// @brief User ID and Group ID of the file.
   Kernel::UInt32 fMode;       /// @brief File mode. (read, write, execute, etc).
 
-  Kernel::UInt64 fBlockLinkStart[kHeFSBlockCount];  /// @brief Start of the block link.
-  Kernel::UInt64 fBlockLinkEnd[kHeFSBlockCount];    /// @brief End of the block link.
+  Kernel::UInt64 fBlock[kHeFSBlockCount];  /// @brief block slice.
 
-  Kernel::UInt64 fBlockStart[kHeFSBlockCount];  /// @brief Start of the block.
-  Kernel::UInt64 fBlockEnd[kHeFSBlockCount];    /// @brief End of the block.
-
-  Kernel::UInt64 fBlockRecoveryStart[kHeFSBlockCount];  /// @brief Start of the block recovery.
-  Kernel::UInt64 fBlockRecoveryEnd[kHeFSBlockCount];    /// @brief End of the block recovery.
+  Kernel::Char fPad[62];
 };
 
 enum {
@@ -173,7 +165,7 @@ enum {
 /// @details This structure is used to store the directory information of a file.
 /// @note The directory node is a special type of INode that contains the directory entries.
 struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final {
-  Kernel::Utf16Char fName[kHeFSFileNameLen];  /// @brief Directory name.
+  Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief Directory name.
 
   Kernel::UInt32 fFlags;  /// @brief File flags.
   Kernel::UInt16 fKind;   /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
@@ -181,8 +173,6 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final {
   Kernel::UInt32 fEntryCount;  /// @brief Entry Count of this directory inode.
   Kernel::UInt32 fChecksum,
       fIndexNodeChecksum;  /// @brief Checksum of the file, index node checksum.
-
-  Kernel::Utf16Char fDim[kHeFSFileNameLen];  /// @brief Directiory Immatriculation magic.
 
   Kernel::ATime fCreated, fAccessed, fModified,
       fDeleted;               /// @brief File timestamps and allocation status.
@@ -193,11 +183,12 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final {
   /// [0] = OFFSET
   /// [1] = SIZE
   /// @note Thus the += 2 when iterating over them.
-  Kernel::UInt64 fIndexNodeStart[kHeFSBlockCount];  /// @brief Start of the index node.
-  Kernel::UInt64 fIndexNodeEnd[kHeFSBlockCount];    /// @brief End of the index node.
+  Kernel::UInt64 fIndexNode[kHeFSBlockCount];  /// @brief Start of the index node.
 
   Kernel::UInt8 fColor;                         /// @brief Color of the node. (Red or Black).
   Kernel::Lba   fNext, fPrev, fChild, fParent;  /// @brief Red-black tree pointers.
+
+  Kernel::Char fPad[32];
 };
 
 namespace Kernel::Detail {
@@ -369,13 +360,13 @@ class HeFileSystemParser final {
   /// @param drive The drive to write on.
   /// @return If it was sucessful, see err_local_get().
   _Output Bool Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
-                      const Utf16Char* part_name);
+                      const Utf8Char* part_name);
 
   _Output Bool CreateDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
-                               const Utf16Char* dir);
+                               const Utf8Char* dir);
 
-  _Output Bool CreateFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf16Char* dir,
-                          const Utf16Char* name);
+  _Output Bool CreateFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                          const Utf8Char* name);
 
  public:
   UInt32 mDriveIndex{MountpointInterface::kDriveIndexA};  /// @brief The drive index which this

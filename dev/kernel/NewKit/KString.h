@@ -12,14 +12,14 @@
 #include <NewKit/KernelPanic.h>
 #include <NewKit/Utils.h>
 
-#define cMinimumStringSize 8196
+#define kMinimumStringSize (8196U)
 
 namespace Kernel {
 /// @brief Kernel string class, not dynamic.
 class KString final {
  public:
   explicit KString() {
-    fDataSz = cMinimumStringSize;
+    fDataSz = kMinimumStringSize;
 
     fData = new Char[fDataSz];
     MUST_PASS(fData);
@@ -70,12 +70,13 @@ class KString final {
   friend class KStringBuilder;
 };
 
-struct KStringBuilder final {
+class KStringBuilder final {
+public:
   static ErrorOr<KString> Construct(const Char* data);
   static const Char*      FromBool(const Char* fmt, bool n);
   static const Char*      Format(const Char* fmt, const Char* from);
   static bool             Equals(const Char* lhs, const Char* rhs);
-  static bool             Equals(const Utf16Char* lhs, const Utf16Char* rhs);
+  static bool             Equals(const Utf8Char* lhs, const Utf8Char* rhs);
   static bool             Equals(const WideChar* lhs, const WideChar* rhs);
 };
 }  // namespace Kernel

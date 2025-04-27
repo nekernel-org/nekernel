@@ -52,7 +52,7 @@ BootDeviceSATA& BootDeviceSATA::Read(CharacterTypeUTF8* Buf, SizeT SectorSz) {
   NE_UNUSED(Buf);
   NE_UNUSED(SectorSz);
 
-  drv_std_read(mTrait.mBase, Buf, SectorSz, mTrait.mSize);
+  drv_std_read(mTrait.mBase / SectorSz, Buf, SectorSz, mTrait.mSize);
 
   return *this;
 }
@@ -66,7 +66,7 @@ BootDeviceSATA& BootDeviceSATA::Write(CharacterTypeUTF8* Buf, SizeT SectorSz) {
   NE_UNUSED(Buf);
   NE_UNUSED(SectorSz);
 
-  drv_std_write(mTrait.mBase, Buf, SectorSz, mTrait.mSize);
+  drv_std_write(mTrait.mBase / SectorSz, Buf, SectorSz, mTrait.mSize);
 
   return *this;
 }

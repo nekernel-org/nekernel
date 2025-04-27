@@ -36,7 +36,5 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover) {
 #endif
   if (partition_factory.IsPartitionValid()) return kEfiOk;
 
-  auto ret = partition_factory.Format(kMachineModel) == YES;
-
-  return ret;
+  return partition_factory.Format(kMachineModel);
 }
