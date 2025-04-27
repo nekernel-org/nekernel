@@ -17,6 +17,7 @@
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
 
+#ifndef __NE_MODULAR_KERNEL_COMPONENTS__
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
 STATIC Kernel::Void hal_pre_init_scheduler() noexcept {
@@ -105,7 +106,9 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
   hal_pre_init_scheduler();
 
+#if defined(__FSKIT_INCLUDES_HEFS__)
   Kernel::HeFS::fs_init_hefs();
+#endif
 
   Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
@@ -141,3 +144,4 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
     ++team_index;
   }
 }
+#endif // ifndef __NE_MODULAR_KERNEL_COMPONENTS__

@@ -170,7 +170,7 @@ EXTERN_C UInt8  rt_in8(UInt16 port);
 EXTERN_C UInt16 In16(UInt16 port);
 EXTERN_C UInt32 rt_in32(UInt16 port);
 
-EXTERN_C void rt_hlt();
+EXTERN_C void rt_halt();
 EXTERN_C void rt_cli();
 EXTERN_C void rt_sti();
 EXTERN_C void rt_cld();
@@ -256,16 +256,6 @@ class BDiskFormatFactory final {
 template <typename BootDev>
 inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
 #if defined(BOOTZ_EPM_SUPPORT)
-  /// @note A catalog roughly equal to a sector in NeFS terms.
-  constexpr auto kMinimumDiskSize = kNeFSMinimumDiskSize;  // at minimum.
-
-  /// @note also look at EPM headers, for free part blocks. (only applies if EPM or vEPM is used)
-
-  if (fDiskDev.GetDiskSize() < kMinimumDiskSize) {
-    Boot::ThrowError(L"Drive-Too-Tiny", L"Can't format a EPM partition here.");
-    return false;
-  }
-
   EPM_PART_BLOCK epm_boot{};
 
   const auto kFsName    = "HeFS";

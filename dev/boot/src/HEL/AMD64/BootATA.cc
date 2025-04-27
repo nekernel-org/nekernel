@@ -19,11 +19,11 @@
 #include <BootKit/HW/ATA.h>
 #include <FirmwareKit/EFI.h>
 
+#define kATADataLen (256)
+
 /// bugs: 0
 
 using namespace Boot;
-
-#define kATADataLen (256)
 
 static Boolean kATADetected          = false;
 static UInt16  kATAData[kATADataLen] = {0};

@@ -18,3 +18,65 @@
 #include <BootKit/HW/SATA.h>
 #include <BootKit/Platform.h>
 #include <BootKit/Protocol.h>
+
+#include <BootKit/BootKit.h>
+#include <FirmwareKit/EFI.h>
+
+#if defined(__AHCI__) && defined(__SYSCHK__)
+
+using namespace Boot;
+
+/***
+ *
+ *
+ * @brief SATA Device class.
+ *
+ *
+ */
+
+/**
+ * @brief ATA Device constructor.
+ * @param void none.
+ */
+BootDeviceSATA::BootDeviceSATA() noexcept {
+  UInt16 pi = 0u;
+  drv_std_init(pi);
+}
+
+/**
+  @brief Read Buf from disk
+  @param Sz Sector size
+  @param Buf buffer
+*/
+BootDeviceSATA& BootDeviceSATA::Read(CharacterTypeUTF8* Buf, SizeT SectorSz) {
+  NE_UNUSED(Buf);
+  NE_UNUSED(SectorSz);
+
+  drv_std_read(mTrait.mBase, Buf, SectorSz, mTrait.mSize);
+
+  return *this;
+}
+
+/**
+  @brief Write Buf into disk
+  @param Sz Sector size
+  @param Buf buffer
+*/
+BootDeviceSATA& BootDeviceSATA::Write(CharacterTypeUTF8* Buf, SizeT SectorSz) {
+  NE_UNUSED(Buf);
+  NE_UNUSED(SectorSz);
+
+  drv_std_write(mTrait.mBase, Buf, SectorSz, mTrait.mSize);
+
+  return *this;
+}
+
+/**
+ * @brief ATA trait getter.
+ * @return BootDeviceSATA::ATATrait& the drive config.
+ */
+BootDeviceSATA::SATATrait& BootDeviceSATA::Leak() {
+  return mTrait;
+}
+
+#endif

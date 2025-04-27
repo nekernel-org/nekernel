@@ -737,7 +737,7 @@ namespace Detail {
 
         auto old_start = start;
         hefsi_traverse_tree(dir, root, start);
-        
+
         if (start == 0 || start == old_start) break;
       }
 
@@ -824,7 +824,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   root->fSectorSize = drive->fSectorSz;
 
-  root->fStartIND = drive->fLbaStart + sizeof(HEFS_BOOT_NODE) + sizeof(HEFS_BOOT_NODE);
+  root->fStartIND = drive->fLbaStart + sizeof(HEFS_BOOT_NODE);
   root->fEndIND   = drive->fLbaEnd;
 
   root->fINDCount = 0;
@@ -870,7 +870,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   /// @note this allocates 4 ind at format.
   SizeT cnt = 4UL;
 
-  Lba next = drive->fLbaStart + sizeof(HEFS_BOOT_NODE) + sizeof(HEFS_BOOT_NODE);
+  Lba next = root->fStartIND + sizeof(HEFS_BOOT_NODE);
 
   HEFS_INDEX_NODE_DIRECTORY* index_node = new HEFS_INDEX_NODE_DIRECTORY();
 
@@ -889,11 +889,11 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
     index_node->fChecksum          = 0;
     index_node->fIndexNodeChecksum = 0;
 
-    index_node->fUID   = 0;
-    index_node->fGID   = 0;
-    index_node->fMode  = 0;
+    index_node->fUID  = 0;
+    index_node->fGID  = 0;
+    index_node->fMode = 0;
 
-    index_node->fColor = kHeFSBlack;
+    index_node->fColor  = kHeFSBlack;
     index_node->fChild  = 0;
     index_node->fParent = 0;
     index_node->fNext   = 0;

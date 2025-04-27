@@ -33,7 +33,7 @@
     "__NE_AMD64__",
     "__ATA_PIO__",
     "__NE_VEPM__",
-    "BOOTZ_VEPM_SUPPORT",
+    "BOOTZ_GPT_SUPPORT",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",
     "kChkVersion=0x0100"

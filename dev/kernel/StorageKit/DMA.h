@@ -52,15 +52,13 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
 }
 
 inline Void rtl_dma_free(SizeT size) {
-  if (!size)
-    return;
+  if (!size) return;
 
   kDmaPoolPtr = (UInt8*) (kDmaPoolPtr - size);
 }
 
 inline Void rtl_dma_flush(Void* ptr, SizeT size_buffer) {
-  if (ptr > (Void*)(DMA_POOL_START + DMA_POOL_SIZE))
-  {
+  if (ptr > (Void*) (DMA_POOL_START + DMA_POOL_SIZE)) {
     return;
   }
 

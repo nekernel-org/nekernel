@@ -179,6 +179,8 @@ Char* rt_string_has_char(Char* str, Char chr) {
 }
 }  // namespace Kernel
 
+////// @note These symbols were written to satisfy gcc, clang and other compiler complaints.
+
 EXTERN_C void* memset(void* dst, int c, long long unsigned int len) {
   return Kernel::rt_set_memory(dst, c, len);
 }
@@ -187,3 +189,8 @@ EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len) {
   Kernel::rt_copy_memory(const_cast<void*>(src), dst, len);
   return dst;
 }
+
+EXTERN_C Kernel::Int32 strcmp(const char* dst, const char* src) {
+  return Kernel::rt_string_cmp(dst, src, Kernel::rt_string_len(dst));
+}
+

@@ -12,7 +12,7 @@
 
 using namespace Boot;
 
-EXTERN_C void rt_hlt() {
+EXTERN_C void rt_halt() {
   while (Yes);
 }
 

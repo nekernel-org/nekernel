@@ -15,26 +15,20 @@ namespace Detail {
   STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64 kInterruptVectorTable[kKernelIdtSize] =
       {};
 
-#if 0
-		STATIC void hal_set_irq_mask(UInt8 irql) [[maybe_unused]]
-		{
-			UInt16 port;
-			UInt8  value;
+  STATIC ATTRIBUTE(unused) void hal_set_irq_mask(UInt8 irql) [[maybe_unused]] {
+    UInt16 port;
+    UInt8  value;
 
-			if (irql < 8)
-			{
-				port = kPICData;
-			}
-			else
-			{
-				port = kPIC2Data;
-				irql -= 8;
-			}
+    if (irql < 8) {
+      port = kPICData;
+    } else {
+      port = kPIC2Data;
+      irql -= 8;
+    }
 
-			value = rt_in8(port) | (1 << irql);
-			rt_out8(port, value);
-		}
-#endif  // make gcc shut up
+    value = rt_in8(port) | (1 << irql);
+    rt_out8(port, value);
+  }
 
   STATIC void hal_clear_irq_mask(UInt8 irql) [[maybe_unused]] {
     UInt16 port;
@@ -70,7 +64,9 @@ namespace Detail {
 /// @param gdt
 /// @return
 Void GDTLoader::Load(Register64& gdt) {
+#ifndef __NE_MODULAR_KERNEL_COMPONENTS__
   hal_load_gdt(gdt);
+#endif  // __NE_MODULAR_KERNEL_COMPONENTS__
 }
 
 Void IDTLoader::Load(Register64& idt) {
@@ -98,7 +94,9 @@ Void IDTLoader::Load(Register64& idt) {
 
   Detail::hal_enable_pit(kPITTickForScheduler);
 
+#ifndef __NE_MODULAR_KERNEL_COMPONENTS__
   hal_load_idt(idt);
+#endif  // __NE_MODULAR_KERNEL_COMPONENTS__
 
   rt_sti();
 }

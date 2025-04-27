@@ -28,11 +28,11 @@ using namespace Kernel::HAL;
 
 /// BUGS: 0
 
-STATIC Boolean kATADetected                  = false;
-STATIC Int32   kATADeviceType                = kATADeviceCount;
-STATIC UInt16  kATAIdentifyData[kATADataLen] = {0};
+STATIC Boolean              kATADetected                  = false;
+STATIC Int32 kATADeviceType ATTRIBUTE(unused)             = kATADeviceCount;
+STATIC UInt16               kATAIdentifyData[kATADataLen] = {0};
 STATIC Kernel::PCI::Device kATADevice;
-STATIC Char                kATADiskModel[50] = {"GENERIC DMA"};
+STATIC Char                kATADiskModel[50] ATTRIBUTE(unused) = {"GENERIC DMA"};
 
 Boolean drv_std_wait_io(UInt16 IO) {
   for (int i = 0; i < 400; i++) rt_in8(IO + ATA_REG_STATUS);
@@ -60,6 +60,11 @@ Void drv_std_select(UInt16 Bus) {
 }
 
 Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster) {
+  NE_UNUSED(Bus);
+  NE_UNUSED(Drive);
+  NE_UNUSED(OutBus);
+  NE_UNUSED(OutMaster);
+
   PCI::Iterator iterator(Types::PciDeviceKind::MassStorageController);
 
   for (SizeT device_index = 0; device_index < NE_BUS_COUNT; ++device_index) {

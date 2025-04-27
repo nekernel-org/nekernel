@@ -13,7 +13,7 @@
 
 using namespace Boot;
 
-EXTERN_C void rt_hlt() {
+EXTERN_C void rt_halt() {
   asm volatile("hlt");
 }
 
@@ -31,14 +31,6 @@ EXTERN_C void rt_cld() {
 
 EXTERN_C void rt_std() {
   asm volatile("std");
-}
-
-#else
-
-#include <HALKit/AMD64/Processor.h>
-
-void rt_hlt() {
-  Kernel::HAL::rt_halt();
 }
 
 #endif  // __BOOTZ_STANDALONE__

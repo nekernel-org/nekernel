@@ -55,11 +55,11 @@ using namespace Kernel;
 
 STATIC PCI::Device kSATADev;
 STATIC HbaMemRef   kSATAHba;
-STATIC Lba         kSATASectorCount                                 = 0UL;
-STATIC UInt16      kSATAIndex                                       = 0U;
-STATIC Char        kCurrentDiskModel[50]                            = {"GENERIC SATA"};
-STATIC UInt16      kSATAPortsImplemented                            = 0U;
-STATIC             ALIGN(4096) UInt8 kIdentifyData[kAHCISectorSize] = {0};
+STATIC Lba         kSATASectorCount                                        = 0UL;
+STATIC UInt16      kSATAIndex                                              = 0U;
+STATIC Char        kCurrentDiskModel[50]                                   = {"GENERIC SATA"};
+STATIC UInt16      kSATAPortsImplemented                                   = 0U;
+STATIC             ALIGN(kib_cast(4)) UInt8 kIdentifyData[kAHCISectorSize] = {0};
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz,
@@ -153,6 +153,10 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   VoidPtr ptr = Kernel::rtl_dma_alloc(size_buffer, 4096);
 
+  if (Write) {
+    Kernel::rt_copy_memory(buffer, ptr, size_buffer);
+  }
+
   // Build the PRDT
   SizeT   bytes_remaining = size_buffer;
   SizeT   prdt_index      = 0;
@@ -160,8 +164,8 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   while (bytes_remaining > 0 && prdt_index < 8) {
     SizeT chunk_size = bytes_remaining;
-    if (chunk_size > 8 * 1024)  // AHCI recommends ~8 KiB per PRDT
-      chunk_size = 8 * 1024;
+
+    if (chunk_size > kib_cast(32)) chunk_size = kib_cast(32);
 
     command_table->Prdt[prdt_index].Dba  = (UInt32) (buffer_phys & 0xFFFFFFFF);
     command_table->Prdt[prdt_index].Dbau = (UInt32) (buffer_phys >> 32);
@@ -170,12 +174,16 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
     buffer_phys += chunk_size;
     bytes_remaining -= chunk_size;
+
     ++prdt_index;
   }
+
+  command_table->Prdt[prdt_index - 1].Ie = YES;
 
   if (bytes_remaining > 0) {
     kout << "Warning: AHCI PRDT overflow, cannot map full buffer.\r";
     err_global_get() = kErrorDisk;
+
     return;
   }
 
@@ -197,9 +205,10 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   h2d_fis->Lba4 = (lba >> 32) & 0xFF;
   h2d_fis->Lba5 = (lba >> 40) & 0xFF;
 
+  h2d_fis->Device = 0;
+
   if (Identify) {
-    h2d_fis->Device    = 0;  // DO NOT set LBAMODE flag
-    h2d_fis->CountLow  = 1;  // IDENTIFY always transfers 1 sector
+    h2d_fis->CountLow  = 1;
     h2d_fis->CountHigh = 0;
   } else {
     h2d_fis->Device    = kSATALBAMode;
@@ -220,12 +229,15 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   if (kSATAHba->Is & kHBAErrTaskFile) {
     kout << "AHCI Task File Error during I/O.\r";
-    
+
     rtl_dma_free(size_buffer);
     err_global_get() = kErrorDiskIsCorrupted;
     return;
   } else {
+    rtl_dma_flush(ptr, size_buffer);
     rt_copy_memory(ptr, buffer, size_buffer);
+    rtl_dma_flush(ptr, size_buffer);
+
     rtl_dma_free(size_buffer);
 
     err_global_get() = kErrorSuccess;
@@ -289,11 +301,11 @@ STATIC Bool drv_init_command_structures_ahci() {
 
   UIntPtr clb_phys = HAL::hal_get_phys_address(clb_mem);
 
-  kSATAHba->Ports[kSATAIndex].Clb  = (UInt32)(clb_phys & 0xFFFFFFFF);
-  kSATAHba->Ports[kSATAIndex].Clbu = (UInt32)(clb_phys >> 32);
+  kSATAHba->Ports[kSATAIndex].Clb  = (UInt32) (clb_phys & 0xFFFFFFFF);
+  kSATAHba->Ports[kSATAIndex].Clbu = (UInt32) (clb_phys >> 32);
 
   // Clear it
-  rt_set_memory(clb_mem, 0, 4096);
+  rt_set_memory(clb_mem, 0, kib_cast(4));
 
   // For each command slot (up to 32)
   volatile HbaCmdHeader* header = (volatile HbaCmdHeader*) clb_mem;
@@ -302,15 +314,15 @@ STATIC Bool drv_init_command_structures_ahci() {
     // Allocate 4KiB for Command Table
     VoidPtr ct_mem = Kernel::rtl_dma_alloc(4096, 128);
     if (!ct_mem) {
-      kout << "Failed to allocate CTB memory for slot " << hex_number(i);
+      (Void)(kout << "Failed to allocate CTB memory for slot " << hex_number(i));
       kout << "!\r";
       return NO;
     }
 
     UIntPtr ct_phys = HAL::hal_get_phys_address(ct_mem);
 
-    header[i].Ctba  = (UInt32)(ct_phys & 0xFFFFFFFF);
-    header[i].Ctbau = (UInt32)(ct_phys >> 32);
+    header[i].Ctba  = (UInt32) (ct_phys & 0xFFFFFFFF);
+    header[i].Ctbau = (UInt32) (ct_phys >> 32);
 
     // Clear the command table
     rt_set_memory((VoidPtr) ct_mem, 0, 4096);
@@ -318,7 +330,6 @@ STATIC Bool drv_init_command_structures_ahci() {
 
   return YES;
 }
-
 
 /// @brief Initializes an AHCI disk.
 /// @param pi the amount of ports that have been detected.

@@ -9,6 +9,7 @@
 
 #include <BootKit/BootKit.h>
 #include <BootKit/BootThread.h>
+#include <BootKit/HW/SATA.h>
 #include <FirmwareKit/EFI.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/Handover.h>
@@ -26,17 +27,16 @@
 #endif  // !kMachineModel
 
 EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover) {
-#if defined(__ATA_PIO__)
   fw_init_efi((EfiSystemTable*) handover->f_FirmwareCustomTables[1]);
 
+#if defined(__ATA_PIO__)
   Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;
-
+#elif defined(__AHCI__)
+  Boot::BDiskFormatFactory<BootDeviceSATA> partition_factory;
+#endif
   if (partition_factory.IsPartitionValid()) return kEfiOk;
 
-  return partition_factory.Format(kMachineModel) == YES;
-#else
-  NE_UNUSED(handover);
+  auto ret = partition_factory.Format(kMachineModel) == YES;
 
-  return kEfiOk;
-#endif
+  return ret;
 }

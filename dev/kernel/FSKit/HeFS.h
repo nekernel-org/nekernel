@@ -164,7 +164,7 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE final {
 
 enum {
   kHeFSInvalidColor = 0,
-  kHeFSRed = 100,
+  kHeFSRed          = 100,
   kHeFSBlack,
   kHeFSColorCount,
 };

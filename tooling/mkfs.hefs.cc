@@ -115,14 +115,13 @@ int main(int argc, char** argv) {
   auto cnt = end_ind / sizeof(mkfs::hefs::IndexNodeDirectory);
 
   auto start = bootNode.startIND;
-  auto prev = start;
+  auto prev  = start;
 
   // Pre-allocate index node directory tree
   for (size_t i = 0; i < cnt; ++i) {
     mkfs::hefs::IndexNodeDirectory indexNode{};
 
-    std::memcpy(indexNode.name, u"/",
-                std::u16string(u"/").size() * sizeof(char16_t));
+    std::memcpy(indexNode.name, u"/", std::u16string(u"/").size() * sizeof(char16_t));
 
     indexNode.flags   = mkfs::hefs::kHeFSEncodingUTF16;
     indexNode.kind    = mkfs::hefs::kHeFSFileKindDirectory;

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <BootKit/BootKit.h>
 #include <CompilerKit/CompilerKit.h>
 #include <modules/AHCI/AHCI.h>
 
@@ -20,14 +21,19 @@ class BootDeviceSATA final {
     Kernel::SizeT   mBase{1024};
     Kernel::Boolean mErr{false};
     Kernel::Boolean mDetected{false};
+    Kernel::SizeT   mSize{0};
 
     operator bool() { return !this->mErr; }
   };
 
   operator bool() { return this->Leak().mDetected; }
 
-  BootDeviceSATA& Read(Kernel::WideChar* Buf, const Kernel::SizeT SecCount);
-  BootDeviceSATA& Write(Kernel::WideChar* Buf, const Kernel::SizeT SecCount);
+  SizeT GetDiskSize() { return drv_get_size(); }
+
+  constexpr static auto kSectorSize = kAHCISectorSize;
+
+  BootDeviceSATA& Read(Boot::CharacterTypeUTF8* Buf, const Kernel::SizeT SecCount);
+  BootDeviceSATA& Write(Boot::CharacterTypeUTF8* Buf, const Kernel::SizeT SecCount);
 
   SATATrait& Leak();
 

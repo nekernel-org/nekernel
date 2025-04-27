@@ -29,7 +29,7 @@ inline EfiSystemTable*  ST = nullptr;
 inline EfiBootServices* BS = nullptr;
 
 EXTERN_C void rt_cli();
-EXTERN_C void rt_hlt();
+EXTERN_C void rt_halt();
 
 namespace Boot {
 /// @brief Halt and clear interrupts.
@@ -37,7 +37,7 @@ namespace Boot {
 inline Void Stop() noexcept {
   while (YES) {
     rt_cli();
-    rt_hlt();
+    rt_halt();
   }
 }
 

@@ -10,7 +10,13 @@
     "../../src/HEL/AMD64/BootAPI.S",
     "../../src/BootTextWriter.cc",
     "../../src/BootSupport.cc",
-    "../../src/New+Delete.cc"
+    "../../src/New+Delete.cc",
+    "../../../kernel/HALKit/AMD64/PCI/*.cc",
+    "../../../kernel/HALKit/AMD64/Storage/*.cc",
+    "../../../kernel/src/Storage/*.cc",
+    "../../../kernel/HALKit/AMD64/*.cc",
+    "../../../kernel/HALKit/AMD64/*.s",
+    "../../../kernel/src/*.cc"
   ],
   "output_name": "chk.efi",
   "compiler_flags": [
@@ -22,12 +28,11 @@
   ],
   "cpp_macros": [
     "__NEOSKRNL__",
-    "__BOOTZ__",
-    "__BOOTZ_STANDALONE__",
     "__NE_AMD64__",
     "__AHCI__",
-    "__NE_VEPM__",
-    "BOOTZ_VEPM_SUPPORT",
+    "__SYSCHK__",
+    "BOOTZ_GPT_SUPPORT",
+    "__NE_MODULAR_KERNEL_COMPONENTS__",
     "kChkVersionHighest=0x0100",
     "kChkVersionLowest=0x0100",
     "kChkVersion=0x0100"
