@@ -8,7 +8,7 @@
 
 #define kDriveSectorSizeHDD (512U)
 #define kDriveSectorSizeSSD (512U)
-#define kDriveSectorSizeOptical (2048)
+#define kDriveSectorSizeOptical (2048U)
 
 namespace Kernel {
 template <typename T>

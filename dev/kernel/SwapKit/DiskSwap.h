@@ -68,5 +68,5 @@ typedef struct SWAP_DISK_HEADER {
   UInt64 fVirtualAddress;
   SizeT  fBlobSz;
   UInt8  fBlob[1];
-} PACKED SWAP_DISK_HEADER;
+} PACKED ALIGN(8) SWAP_DISK_HEADER;
 }  // namespace Kernel

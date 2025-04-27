@@ -24,7 +24,7 @@
 #include <KernelKit/ProcessScheduler.h>
 #include <NewKit/Utils.h>
 #include <StorageKit/AHCI.h>
-#include <StorageKit/DMA.h>
+#include <StorageKit/DmaPool.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 
@@ -151,10 +151,10 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
       (volatile HbaCmdTbl*) (((UInt64) command_header->Ctbau << 32) | command_header->Ctba);
   rt_set_memory((VoidPtr) command_table, 0, sizeof(HbaCmdTbl));
 
-  VoidPtr ptr = Kernel::rtl_dma_alloc(size_buffer, 4096);
+  VoidPtr ptr = rtl_dma_alloc(size_buffer, 4096);
 
   if (Write) {
-    Kernel::rt_copy_memory(buffer, ptr, size_buffer);
+    rt_copy_memory(buffer, ptr, size_buffer);
   }
 
   // Build the PRDT
@@ -293,7 +293,7 @@ STATIC BOOL ahci_enable_and_probe() {
 
 STATIC Bool drv_init_command_structures_ahci() {
   // Allocate 4KiB for Command List (32 headers)
-  VoidPtr clb_mem = Kernel::rtl_dma_alloc(4096, 1024);
+  VoidPtr clb_mem = rtl_dma_alloc(4096, 1024);
   if (!clb_mem) {
     kout << "Failed to allocate CLB memory!\r";
     return NO;
@@ -312,7 +312,7 @@ STATIC Bool drv_init_command_structures_ahci() {
 
   for (Int32 i = 0; i < 32; ++i) {
     // Allocate 4KiB for Command Table
-    VoidPtr ct_mem = Kernel::rtl_dma_alloc(4096, 128);
+    VoidPtr ct_mem = rtl_dma_alloc(4096, 128);
     if (!ct_mem) {
       (Void)(kout << "Failed to allocate CTB memory for slot " << hex_number(i));
       kout << "!\r";

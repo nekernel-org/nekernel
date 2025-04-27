@@ -10,7 +10,7 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/MemoryMgr.h>
 
-/// @brief NeFS File manager.
+/// @brief NeFS File System Manager.
 /// BUGS: 0
 
 namespace Kernel {
@@ -42,28 +42,28 @@ bool NeFileSystemMgr::Remove(_Input const Char* path) {
 /// @param path The filename path.
 /// @return The Node pointer.
 NodePtr NeFileSystemMgr::Create(_Input const Char* path) {
-  return node_cast(mParser->CreateCatalog(path));
+  return rtl_node_cast(mParser->CreateCatalog(path));
 }
 
 /// @brief Creates a node with is a directory.
 /// @param path The filename path.
 /// @return The Node pointer.
 NodePtr NeFileSystemMgr::CreateDirectory(const Char* path) {
-  return node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindDir));
+  return rtl_node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindDir));
 }
 
 /// @brief Creates a node with is a alias.
 /// @param path The filename path.
 /// @return The Node pointer.
 NodePtr NeFileSystemMgr::CreateAlias(const Char* path) {
-  return node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindAlias));
+  return rtl_node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindAlias));
 }
 
 /// @brief Creates a node with is a page file.
 /// @param path The filename path.
 /// @return The Node pointer.
 NodePtr NeFileSystemMgr::CreateSwapFile(const Char* path) {
-  return node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindPage));
+  return rtl_node_cast(mParser->CreateCatalog(path, 0, kNeFSCatalogKindPage));
 }
 
 /// @brief Gets the root directory.
@@ -101,7 +101,7 @@ _Output NodePtr NeFileSystemMgr::Open(_Input const Char* path, _Input const Char
 
   auto catalog = mParser->GetCatalog(path);
 
-  return node_cast(catalog);
+  return rtl_node_cast(catalog);
 }
 
 /// @brief Writes to a catalog's fork.
@@ -177,7 +177,7 @@ _Output Bool NeFileSystemMgr::Seek(NodePtr node, SizeT off) {
 /// @retval false always returns this, it is unimplemented.
 
 _Output SizeT NeFileSystemMgr::Tell(NodePtr node) {
-  if (!node) return kNPos;
+  if (!node) return kFileMgrNPos;
 
   return mParser->Tell(reinterpret_cast<NEFS_CATALOG_STRUCT*>(node));
 }

@@ -173,7 +173,7 @@ namespace Kernel {
 /// @brief Initialize an PIO device (StorageKit function)
 /// @param is_master is the current PIO master?
 /// @return [io:master] for PIO device.
-BOOL sk_init_pio_device(BOOL is_master, UInt16& io, UInt8& master) {
+BOOL sk_init_ata_device(BOOL is_master, UInt16& io, UInt8& master) {
   return drv_pio_std_init(ATA_SECONDARY_IO, is_master, io, master);
 }
 
@@ -225,7 +225,7 @@ namespace Detail {
 /// @brief Acquires a new PIO device with drv_index in mind.
 /// @param drv_index The drive index to assign.
 /// @return A wrapped device interface if successful, or error code.
-ErrorOr<ATADeviceInterface> sk_acquire_pio_device(Int32 drv_index) {
+ErrorOr<ATADeviceInterface> sk_acquire_ata_device(Int32 drv_index) {
   /// here we don't check if we probed ATA, since we'd need to grab IO after that.
   ATADeviceInterface device(Detail::sk_io_read_pio, Detail::sk_io_write_pio);
 

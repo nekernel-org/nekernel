@@ -23,15 +23,18 @@
 #pragma once
 
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/Defines.h>
 
 #ifdef __NE_AMD64__
-#define DMA_POOL_START (0x1000000)
-#define DMA_POOL_SIZE (0x1000000)
+#define NE_DMA_POOL_START (0x1000000)
+#define NE_DMA_POOL_SIZE (0x1000000)
 
 namespace Kernel {
-inline UInt8* kDmaPoolPtr = (UInt8*) DMA_POOL_START;
+/// @brief DMA pool base pointer, here we're sure that AHCI or whatever tricky standard sees it.
+inline UInt8* kDmaPoolPtr = (UInt8*) NE_DMA_POOL_START;
 
+/// @brief allocate from the rtl_dma_alloc system.
+/// @param size the size of the chunk to allocate.
+/// @param align alignement of pointer.
 inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
   if (!size) {
     return nullptr;
@@ -39,9 +42,10 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
 
   UIntPtr addr = (UIntPtr) kDmaPoolPtr;
 
-  addr = (addr + (align - 1)) & ~(align - 1);  // Align up
+  /// here we just align the address according to a `align` variable, i'd rather be a power of two really.
+  addr = (addr + (align - 1)) & ~(align - 1);
 
-  if (addr + size >= DMA_POOL_START + DMA_POOL_SIZE) {
+  if ((addr + size) >= (NE_DMA_POOL_START + NE_DMA_POOL_SIZE)) {
     kout << "DMA Pool exhausted!\r";
 
     return nullptr;
@@ -57,14 +61,19 @@ inline Void rtl_dma_free(SizeT size) {
   kDmaPoolPtr = (UInt8*) (kDmaPoolPtr - size);
 }
 
-inline Void rtl_dma_flush(Void* ptr, SizeT size_buffer) {
-  if (ptr > (Void*) (DMA_POOL_START + DMA_POOL_SIZE)) {
+inline Void rtl_dma_flush(VoidPtr ptr, SizeT size_buffer) {
+  if (ptr > (Void*) (NE_DMA_POOL_START + NE_DMA_POOL_SIZE)) {
+    return;
+  }
+
+  if (!ptr) {
     return;
   }
 
   for (SizeT i = 0; i < size_buffer; ++i) {
     asm volatile("clflush (%0)" : : "r"((UInt8*) ptr + i) : "memory");
   }
+
   asm volatile("mfence" ::: "memory");
 }
 }  // namespace Kernel

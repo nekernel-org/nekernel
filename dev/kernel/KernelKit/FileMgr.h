@@ -21,6 +21,7 @@
 #ifndef INC_FILEMGR_H
 #define INC_FILEMGR_H
 
+//! Include filesystems that neoskrnl supports.
 #include <FSKit/Ext2.h>
 #include <FSKit/HeFS.h>
 #include <FSKit/NeFS.h>
@@ -35,7 +36,7 @@
 #include <hint/CompilerHint.h>
 
 /// @brief Filesystem manager, abstraction over mounted filesystem.
-/// Works like the VFS or IFS.
+/// Works like the VFS or IFS subsystem.
 
 #define kRestrictR "r"
 #define kRestrictRB "rb"
@@ -45,7 +46,7 @@
 
 #define kRestrictMax (5U)
 
-#define node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)
+#define rtl_node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)
 
 /**
   @note Refer to first enum.
@@ -54,16 +55,17 @@
 #define kFileMimeGeneric "ne-application-kind/all"
 
 /** @brief invalid position. (n-pos) */
-#define kNPos (SizeT)(-1);
+#define kFileMgrNPos (~0UL)
 
 namespace Kernel {
 enum {
+  kFileIOInvalid = 0,
   kFileWriteAll   = 100,
   kFileReadAll    = 101,
   kFileReadChunk  = 102,
   kFileWriteChunk = 103,
   kFileIOCnt      = (kFileWriteChunk - kFileWriteAll) + 1,
-  // file flags
+  // File flags (HFS+, NeFS specific)
   kFileFlagRsrc = 104,
   kFileFlagData = 105,
 };
