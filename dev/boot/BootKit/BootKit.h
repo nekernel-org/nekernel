@@ -262,7 +262,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
   /// @note also look at EPM headers, for free part blocks. (only applies if EPM or vEPM is used)
 
   if (fDiskDev.GetDiskSize() < kMinimumDiskSize) {
-    Boot::ThrowError(L"Drive-Too-Tiny", L"Can't format a NeFS partition here.");
+    Boot::ThrowError(L"Drive-Too-Tiny", L"Can't format a EPM partition here.");
     return false;
   }
 

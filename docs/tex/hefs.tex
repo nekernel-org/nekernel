@@ -24,16 +24,16 @@
   showstringspaces=false
 }
 
-\title{HeFS (Hierarchical Embedded File System) Specification}
+\title{HeFS (High-Throughput Extended File System) Specification}
 \author{Amlal El Mahrouss}
-\date{2024–2025}
+\date{2024--2025}
 
 \begin{document}
 
 \maketitle
 
 \section{Overview}
-HeFS is a custom filesystem developed as part of the NeKernel project. It offers a journaling-like inode tree structure using red-black tree-inspired navigation for directories. Designed for robust use in desktop and server workloads, it supports various encoding modes and drive types.
+HeFS is a custom filesystem developed as part of the NeKernel project. It offers a journaling-like inode tree structure using red-black tree-inspired navigation for directories. Designed for robust use in desktop, server, and embedded environments, it supports various encoding modes and drive types.
 
 \section{Boot Node Structure}
 \begin{longtable}{|l|l|p{8cm}|}
@@ -42,39 +42,48 @@ HeFS is a custom filesystem developed as part of the NeKernel project. It offers
 \hline
 \verb|fMagic| & \verb|char[8]| & Filesystem magic ("  HeFS") \\
 \verb|fVolName| & \verb|Utf16Char[128]| & Volume name \\
-\verb|fVersion| & \verb|UInt32| & Filesystem version (e.g., 0x0100) \\
+\verb|fVersion| & \verb|UInt32| & Filesystem version (e.g., 0x0101) \\
+\verb|fBadSectors| & \verb|UInt64| & Number of bad sectors detected \\
 \verb|fSectorCount| & \verb|UInt64| & Total sector count \\
 \verb|fSectorSize| & \verb|UInt64| & Size of each sector \\
+\verb|fChecksum| & \verb|UInt32| & CRC32 checksum of the boot node \\
 \verb|fDiskKind| & \verb|UInt8| & Type of drive (e.g., HDD, SSD, USB) \\
 \verb|fEncoding| & \verb|UInt8| & Encoding mode (UTF-8, UTF-16, etc.) \\
 \verb|fStartIND| & \verb|UInt64| & Starting LBA of inode tree \\
 \verb|fEndIND| & \verb|UInt64| & Ending LBA of inode tree \\
-\verb|fChecksum| & \verb|UInt32| & CRC32 of boot node \\
+\verb|fINDCount| & \verb|UInt64| & Number of directory nodes allocated \\
 \verb|fDiskSize| & \verb|UInt64| & Logical size of the disk \\
+\verb|fDiskStatus| & \verb|UInt16| & Status of the disk (e.g., unlocked, locked) \\
+\verb|fDiskFlags| & \verb|UInt16| & Disk flags (e.g., read-only) \\
+\verb|fVID| & \verb|UInt16| & Virtual ID (EPM integration) \\
 \hline
 \end{longtable}
 
 \section{File Types and Flags}
 \subsection*{File Kinds}
 \begin{itemize}[label=--]
-    \item \verb|0x00| — Regular File
-    \item \verb|0x01| — Directory
-    \item \verb|0x02| — Block Device
-    \item \verb|0x03| — Character Device
-    \item \verb|0x04| — FIFO
-    \item \verb|0x05| — Socket
-    \item \verb|0x06| — Symbolic Link
+    \item \verb|0x00| --- Regular File
+    \item \verb|0x01| --- Directory
+    \item \verb|0x02| --- Block Device
+    \item \verb|0x03| --- Character Device
+    \item \verb|0x04| --- FIFO
+    \item \verb|0x05| --- Socket
+    \item \verb|0x06| --- Symbolic Link
+    \item \verb|0x07| --- Unknown
 \end{itemize}
 
 \subsection*{Drive Types}
 \begin{itemize}[label=--]
-    \item \verb|0xC0| — Hard Drive
-    \item \verb|0xC1| — SSD
-    \item \verb|0xCC| — Mass Storage Device (USB)
+    \item \verb|0xC0| --- Hard Drive
+    \item \verb|0xC1| --- Solid State Drive
+    \item \verb|0x0C| --- Optical Drive
+    \item \verb|0xCC| --- USB Mass Storage
+    \item \verb|0xC4| --- SCSI/SAS Drive
+    \item \verb|0xC6| --- Flash Drive
 \end{itemize}
 
 \section{Index Node Structure}
-The inode tree allows for fast access and recovery via dual start/end block mappings and timestamped metadata.
+Files are stored through block links, offering native recovery fields and MIME type support.
 
 \begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE structure}]
 struct HEFS_INDEX_NODE {
@@ -83,6 +92,8 @@ struct HEFS_INDEX_NODE {
     UInt16    fKind;
     UInt32    fSize;
     UInt32    fChecksum, fRecoverChecksum, fBlockChecksum, fLinkChecksum;
+    Utf16Char fMime[256];
+    Boolean   fSymLink;
     ATime     fCreated, fAccessed, fModified, fDeleted;
     UInt32    fUID, fGID;
     UInt32    fMode;
@@ -93,59 +104,50 @@ struct HEFS_INDEX_NODE {
 \end{lstlisting}
 
 \section{Directory Node Structure}
-Each directory is a red-black tree node with child and sibling pointers.
+Directories are organized into a red-black tree for efficient balancing.
 
 \begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY structure}]
 struct HEFS_INDEX_NODE_DIRECTORY {
     Utf16Char fName[256];
-    UInt32 fFlags;
-    UInt16 fKind;
-    UInt32 fSize;
-    UInt32 fChecksum, fIndexNodeChecksum;
-    ATime  fCreated, fAccessed, fModified, fDeleted;
-    UInt32 fUID, fGID;
-    UInt32 fMode;
-    UInt64 fIndexNodeStart[16], fIndexNodeEnd[16];
-    UInt8  fColor;
-    Lba    fNext, fPrev, fChild, fParent;
+    UInt32    fFlags;
+    UInt16    fKind;
+    UInt32    fEntryCount;
+    UInt32    fChecksum, fIndexNodeChecksum;
+    Utf16Char fDim[256];
+    ATime     fCreated, fAccessed, fModified, fDeleted;
+    UInt32    fUID, fGID;
+    UInt32    fMode;
+    UInt64    fIndexNodeStart[16], fIndexNodeEnd[16];
+    UInt8     fColor;
+    Lba       fNext, fPrev, fChild, fParent;
 };
 \end{lstlisting}
 
 \section{Filesystem Design}
 
-HeFS is designed to be robust and efficient, with a focus on:
+HeFS is designed with the following objectives:
 \begin{itemize}
-    \item Fast access to files and directories
-    \item Efficient use of disk space
-    \item Support for large files and directories
-    \item Compatibility with various drive types
-    \item Easy recovery from errors
-    \item Support for advanced features like journaling and permissions
+    \item Red-black tree navigation for efficient directory balancing
+    \item Journaling fields for block-level recovery
+    \item Multi-encoding support: UTF-8, UTF-16, UTF-32
+    \item Advanced MIME type support
+    \item Redundant fields (checksums, recovery inodes) for crash resistance
+    \item Extensible for future LVM (Logical Volume Management) and network filesystem support
 \end{itemize}
-
-The filesystem uses a red-black tree structure for directories, allowing for efficient insertion, deletion, and searching of files. 
-Each file and directory is represented by an index node directory, which contains metadata such as timestamps, permissions, and checksums.
-
-The index node directory itself contains index nodes, which are the actual data structures that store file and directory information.
-The filesystem also includes a boot node, which contains information about the filesystem itself, such as the magic number, version, and size.
-
-The filesystem is designed to be extensible, allowing for future enhancements and features to be added without breaking compatibility with existing data.
 
 \section{Minimum Requirements}
 
-HeFS requires at least 4GB of free space on the drive to function properly.
-It is recommended to have more than 8GB of free space for optimal performance. 
-The filesystem is designed to work with various drive types, including hard drives, SSDs, and USB mass storage devices.
-
-But that really depends on what you do with the filesystem.
+HeFS expects a minimum disk size of 4GB. Optimal performance is achieved with 8GB or more.
+Supports: HDDs, SSDs, USB mass storage, SCSI/SAS, optical drives.
 
 \section{Future Work}
-Planned extensions include:
+Planned enhancements include:
 \begin{itemize}
-    \item Journaling recovery logic
-    \item Advanced permission flags
-    \item Logical volume management support
-    \item Cross-filesystem linking (EPM, and GPT integration)
+    \item Full journaling implementation (recovery on crash)
+    \item Advanced ACLs (Access Control Lists) and permissions
+    \item Logical Volume Management (LVM) integration
+    \item Backup Superblock and dual-boot sectors
+    \item Online filesystem checking and self-healing algorithms
 \end{itemize}
 
 \end{document}

@@ -24,6 +24,7 @@
 #include <KernelKit/ProcessScheduler.h>
 #include <NewKit/Utils.h>
 #include <StorageKit/AHCI.h>
+#include <StorageKit/DMA.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 
@@ -54,10 +55,11 @@ using namespace Kernel;
 
 STATIC PCI::Device kSATADev;
 STATIC HbaMemRef   kSATAHba;
-STATIC Lba         kSATASectorCount      = 0UL;
-STATIC UInt16      kSATAIndex            = 0U;
-STATIC Char        kCurrentDiskModel[50] = {"GENERIC SATA"};
-STATIC UInt16      kSATAPortsImplemented = 0U;
+STATIC Lba         kSATASectorCount                                 = 0UL;
+STATIC UInt16      kSATAIndex                                       = 0U;
+STATIC Char        kCurrentDiskModel[50]                            = {"GENERIC SATA"};
+STATIC UInt16      kSATAPortsImplemented                            = 0U;
+STATIC             ALIGN(4096) UInt8 kIdentifyData[kAHCISectorSize] = {0};
 
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz,
@@ -67,42 +69,37 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept;
 
 STATIC Void drv_compute_disk_ahci() noexcept;
 
+/// @brief Identify device and read LBA info, Disk OEM vendor...
 STATIC Void drv_compute_disk_ahci() noexcept {
   kSATASectorCount = 0UL;
 
-  /// Normally 512 bytes, but add an additional 512 bytes to make 1 KIB.
-  const UInt16 kSzIdent = 512;
+  rt_set_memory(kIdentifyData, 0, kAHCISectorSize);
 
-  /// Push it to the stack
-  UInt8* identify_data = new UInt8[kSzIdent];
+  drv_std_input_output_ahci<NO, YES, YES>(0, kIdentifyData, kAHCISectorSize, kAHCISectorSize);
 
-  /// Send AHCI command for identification.
-  drv_std_input_output_ahci<NO, YES, YES>(0, identify_data, kAHCISectorSize, kSzIdent);
+  // --> Reinterpret the 512-byte buffer as an array of 256 UInt16 words
+  UInt16* identify_words = reinterpret_cast<UInt16*>(kIdentifyData);
 
   /// Extract 48-bit LBA.
-  UInt64 lba48_sectors = 0;
-  lba48_sectors |= (UInt64) identify_data[100];
-  lba48_sectors |= (UInt64) identify_data[101] << 16;
-  lba48_sectors |= (UInt64) identify_data[102] << 32;
+  UInt64 lba48_sectors = 0UL;
+  lba48_sectors |= (UInt64) identify_words[100];
+  lba48_sectors |= (UInt64) identify_words[101] << 16;
+  lba48_sectors |= (UInt64) identify_words[102] << 32;
 
-  /// Now verify if lba48
   if (lba48_sectors == 0)
-    kSATASectorCount = (identify_data[61] << 16) | identify_data[60];
+    kSATASectorCount = (identify_words[61] << 16) | identify_words[60];
   else
     kSATASectorCount = lba48_sectors;
 
   for (Int32 i = 0; i < 20; i++) {
-    kCurrentDiskModel[i * 2]     = (identify_data[27 + i] >> 8) & 0xFF;
-    kCurrentDiskModel[i * 2 + 1] = identify_data[27 + i] & 0xFF;
+    kCurrentDiskModel[i * 2]     = (identify_words[27 + i] >> 8) & 0xFF;
+    kCurrentDiskModel[i * 2 + 1] = identify_words[27 + i] & 0xFF;
   }
 
   kCurrentDiskModel[40] = '\0';
 
   (Void)(kout << "SATA Sector Count: " << hex_number(kSATASectorCount) << kendl);
   (Void)(kout << "SATA Disk Model: " << kCurrentDiskModel << kendl);
-
-  delete[] identify_data;
-  identify_data = nullptr;
 }
 
 /// @brief Finds a command slot for a HBA port.
@@ -127,81 +124,108 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept {
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz,
                                       SizeT size_buffer) noexcept {
-  UIntPtr slot = 0UL;
+  NE_UNUSED(sector_sz);
 
-  slot = drv_find_cmd_slot_ahci(&kSATAHba->Ports[kSATAIndex]);
-
-  if (slot == ~0UL) {
+  if (!buffer || size_buffer == 0) {
+    kout << "Invalid buffer for AHCI I/O.\r";
     err_global_get() = kErrorDisk;
     return;
   }
 
-  if (size_buffer > mib_cast(4) || sector_sz > kAHCISectorSize) return;
+  UIntPtr slot = drv_find_cmd_slot_ahci(&kSATAHba->Ports[kSATAIndex]);
 
-  if (!Write) {
-    // Zero-memory the buffer field.
-    rt_set_memory(buffer, 0, size_buffer);
+  if (slot == ~0UL) {
+    kout << "No free command slot!\r";
+    err_global_get() = kErrorDisk;
+    return;
   }
 
-  /// prepare command header.
   volatile HbaCmdHeader* command_header =
-      ((volatile HbaCmdHeader*) (((UInt64) kSATAHba->Ports[kSATAIndex].Clb)));
-
-  /// Offset to specific command slot.
+      (volatile HbaCmdHeader*) ((UInt64) kSATAHba->Ports[kSATAIndex].Clb);
   command_header += slot;
 
-  /// check for command header.
   MUST_PASS(command_header);
 
+  // Clear old command table memory
+  volatile HbaCmdTbl* command_table =
+      (volatile HbaCmdTbl*) (((UInt64) command_header->Ctbau << 32) | command_header->Ctba);
+  rt_set_memory((VoidPtr) command_table, 0, sizeof(HbaCmdTbl));
+
+  VoidPtr ptr = Kernel::rtl_dma_alloc(size_buffer, 4096);
+
+  // Build the PRDT
+  SizeT   bytes_remaining = size_buffer;
+  SizeT   prdt_index      = 0;
+  UIntPtr buffer_phys     = (UIntPtr) ptr;
+
+  while (bytes_remaining > 0 && prdt_index < 8) {
+    SizeT chunk_size = bytes_remaining;
+    if (chunk_size > 8 * 1024)  // AHCI recommends ~8 KiB per PRDT
+      chunk_size = 8 * 1024;
+
+    command_table->Prdt[prdt_index].Dba  = (UInt32) (buffer_phys & 0xFFFFFFFF);
+    command_table->Prdt[prdt_index].Dbau = (UInt32) (buffer_phys >> 32);
+    command_table->Prdt[prdt_index].Dbc  = (UInt32) (chunk_size - 1);
+    command_table->Prdt[prdt_index].Ie   = NO;
+
+    buffer_phys += chunk_size;
+    bytes_remaining -= chunk_size;
+    ++prdt_index;
+  }
+
+  if (bytes_remaining > 0) {
+    kout << "Warning: AHCI PRDT overflow, cannot map full buffer.\r";
+    err_global_get() = kErrorDisk;
+    return;
+  }
+
+  command_header->Prdtl       = prdt_index;
   command_header->Struc.Cfl   = sizeof(FisRegH2D) / sizeof(UInt32);
   command_header->Struc.Write = Write;
-  command_header->Prdtl       = 8;
-
-  auto ctba_phys     = ((UInt64) command_header->Ctbau << 32) | command_header->Ctba;
-  auto command_table = reinterpret_cast<volatile HbaCmdTbl*>(ctba_phys);
-
-  MUST_PASS(command_table);
-
-  UIntPtr buffer_phys     = HAL::hal_get_phys_address(buffer);
-  SizeT   bytes_remaining = size_buffer;
-
-  command_table->Prdt[0].Dba  = (UInt32) (buffer_phys & 0xFFFFFFFF);
-  command_table->Prdt[0].Dbau = (UInt32) (buffer_phys >> 32);
-  command_table->Prdt[0].Dbc  = bytes_remaining - 1;
-  command_table->Prdt[0].Ie   = NO;
 
   volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*) (&command_table->Cfis[0]);
 
   h2d_fis->FisType   = kFISTypeRegH2D;
   h2d_fis->CmdOrCtrl = CommandOrCTRL;
   h2d_fis->Command =
-      (Identify ? (kAHCICmdIdentify) : (Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx));
+      (Identify ? kAHCICmdIdentify : (Write ? kAHCICmdWriteDmaEx : kAHCICmdReadDmaEx));
 
-  h2d_fis->Lba0 = (lba) & 0xFF;
+  h2d_fis->Lba0 = (lba >> 0) & 0xFF;
   h2d_fis->Lba1 = (lba >> 8) & 0xFF;
   h2d_fis->Lba2 = (lba >> 16) & 0xFF;
-
-  h2d_fis->Device = kSATALBAMode;
-
   h2d_fis->Lba3 = (lba >> 24) & 0xFF;
   h2d_fis->Lba4 = (lba >> 32) & 0xFF;
   h2d_fis->Lba5 = (lba >> 40) & 0xFF;
 
-  h2d_fis->CountLow  = (size_buffer) & 0xFF;
-  h2d_fis->CountHigh = (size_buffer >> 8) & 0xFF;
+  if (Identify) {
+    h2d_fis->Device    = 0;  // DO NOT set LBAMODE flag
+    h2d_fis->CountLow  = 1;  // IDENTIFY always transfers 1 sector
+    h2d_fis->CountHigh = 0;
+  } else {
+    h2d_fis->Device    = kSATALBAMode;
+    h2d_fis->CountLow  = (size_buffer / kAHCISectorSize) & 0xFF;
+    h2d_fis->CountHigh = ((size_buffer / kAHCISectorSize) >> 8) & 0xFF;
+  }
 
+  rtl_dma_flush(ptr, size_buffer);
+
+  // Issue command
   kSATAHba->Ports[kSATAIndex].Ci = (1 << slot);
 
-  for (Int32 i = 0; i < 1000000; ++i) {
+  while (YES) {
     if (!(kSATAHba->Ports[kSATAIndex].Ci & (1 << slot))) break;
   }
 
+  rtl_dma_flush(ptr, size_buffer);
+
   if (kSATAHba->Is & kHBAErrTaskFile) {
+    kout << "AHCI Task File Error during I/O.\r";
     err_global_get() = kErrorDiskIsCorrupted;
     return;
+  } else {
+    rt_copy_memory(ptr, buffer, size_buffer);
+    err_global_get() = kErrorSuccess;
   }
-
-  err_global_get() = kErrorSuccess;
 }
 
 /***
@@ -251,6 +275,47 @@ STATIC BOOL ahci_enable_and_probe() {
   return YES;
 }
 
+STATIC Bool drv_init_command_structures_ahci() {
+  // Allocate 4KiB for Command List (32 headers)
+  VoidPtr clb_mem = Kernel::rtl_dma_alloc(4096, 1024);
+  if (!clb_mem) {
+    kout << "Failed to allocate CLB memory!\r";
+    return NO;
+  }
+
+  UIntPtr clb_phys = HAL::hal_get_phys_address(clb_mem);
+
+  kSATAHba->Ports[kSATAIndex].Clb  = (UInt32)(clb_phys & 0xFFFFFFFF);
+  kSATAHba->Ports[kSATAIndex].Clbu = (UInt32)(clb_phys >> 32);
+
+  // Clear it
+  rt_set_memory(clb_mem, 0, 4096);
+
+  // For each command slot (up to 32)
+  volatile HbaCmdHeader* header = (volatile HbaCmdHeader*) clb_mem;
+
+  for (Int32 i = 0; i < 32; ++i) {
+    // Allocate 4KiB for Command Table
+    VoidPtr ct_mem = Kernel::rtl_dma_alloc(4096, 128);
+    if (!ct_mem) {
+      kout << "Failed to allocate CTB memory for slot " << hex_number(i);
+      kout << "!\r";
+      return NO;
+    }
+
+    UIntPtr ct_phys = HAL::hal_get_phys_address(ct_mem);
+
+    header[i].Ctba  = (UInt32)(ct_phys & 0xFFFFFFFF);
+    header[i].Ctbau = (UInt32)(ct_phys >> 32);
+
+    // Clear the command table
+    rt_set_memory((VoidPtr) ct_mem, 0, 4096);
+  }
+
+  return YES;
+}
+
+
 /// @brief Initializes an AHCI disk.
 /// @param pi the amount of ports that have been detected.
 /// @param atapi reference value, tells whether we should detect ATAPI instead of SATA.
@@ -294,6 +359,11 @@ STATIC Bool drv_std_init_ahci(UInt16& pi, BOOL& atapi) {
             (atapi && kSATAPISignature == mem_ahci->Ports[ahci_index].Sig)) {
           kSATAIndex = ahci_index;
           kSATAHba   = mem_ahci;
+
+          if (!drv_init_command_structures_ahci()) {
+            err_global_get() = kErrorDisk;
+            return NO;
+          }
 
           goto success_hba_fetch;
         }

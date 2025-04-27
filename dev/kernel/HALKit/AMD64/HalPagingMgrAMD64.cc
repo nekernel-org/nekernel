@@ -90,7 +90,7 @@ UIntPtr hal_get_phys_address(VoidPtr virt) {
 
   mmi_page_status((Detail::PTE*) pte);
 
-  return pte->PhysicalAddress;
+  return (pte->PhysicalAddress << 12) | (kVMAddr & 0xFFF);
 }
 
 /***********************************************************************************/
@@ -125,15 +125,20 @@ EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UI
   UInt64*      pt  = reinterpret_cast<UInt64*>(pde & ~kPageMask);
   Detail::PTE* pte = (Detail::PTE*) pt[(kVMAddr >> 12) & kMask9];
 
-  pte->Present         = !!(flags & kMMFlagsPresent);
-  pte->Wr              = !!(flags & kMMFlagsWr);
-  pte->User            = !!(flags & kMMFlagsUser);
-  pte->Nx              = !!(flags & kMMFlagsNX);
-  pte->Pcd             = !!(flags & kMMFlagsPCD);
-  pte->Pwt             = !!(flags & kMMFlagsPwt);
-  pte->PhysicalAddress = ((UIntPtr) (physical_address));
+  pte->Present = !!(flags & kMMFlagsPresent);
+  pte->Wr      = !!(flags & kMMFlagsWr);
+  pte->User    = !!(flags & kMMFlagsUser);
+  pte->Nx      = !!(flags & kMMFlagsNX);
+  pte->Pcd     = !!(flags & kMMFlagsPCD);
+  pte->Pwt     = !!(flags & kMMFlagsPwt);
+
+  pte->PhysicalAddress = ((UIntPtr) (physical_address)) >> 12;
 
   hal_invl_tlb(virtual_address);
+
+  asm volatile("clflush (%0)" : : "r"(virtual_address) : "memory");
+
+  asm volatile("mfence" ::: "memory");
 
   mmi_page_status(pte);
 

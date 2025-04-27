@@ -39,6 +39,7 @@
 struct HEFS_BOOT_NODE;
 struct HEFS_INDEX_NODE;
 struct HEFS_INDEX_NODE_DIRECTORY;
+struct HEFS_JOURNAL_NODE;
 
 enum {
   kHeFSHardDrive         = 0xC0,  // Hard Drive
@@ -162,6 +163,7 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE final {
 };
 
 enum {
+  kHeFSInvalidColor = 0,
   kHeFSRed = 100,
   kHeFSBlack,
   kHeFSColorCount,

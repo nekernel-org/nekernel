@@ -62,8 +62,6 @@ namespace HAL {
 
         if (user) flags |= kMMFlagsUser;
 
-        flags |= HAL::kMMFlagsPCD;
-
         return flags;
       }
 

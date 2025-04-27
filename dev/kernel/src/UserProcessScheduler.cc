@@ -108,11 +108,13 @@ STATIC USER_PROCESS::USER_HEAP_TREE* sched_try_go_upper_heap_tree(
   tree = tree->MemoryParent;
 
   if (tree) {
-    tree = tree->MemoryParent;
+    auto tree_tmp = tree->MemoryNext;
 
-    if (!tree) {
-      return nullptr;
+    if (!tree_tmp) {
+      return tree;
     }
+
+    return tree_tmp;
   }
 
   return tree;
