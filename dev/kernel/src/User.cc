@@ -29,20 +29,20 @@ namespace Detail {
   /// \param password password to hash.
   /// \return the hashed password
   ////////////////////////////////////////////////////////////
-  Int32 cred_construct_token(Char* password, const Char* in_password, User* user, SizeT length) {
+  Int32 user_standard_token_generator(Char* password, const Char* in_password, User* user,
+                                      SizeT length) {
     if (!password || !user) return 1;
+    if (*password == 0) return 1;
 
-    kout << "cred_construct_token: Hashing user password...\r";
+    kout << "user_standard_token_generator: Hashing user password...\r";
 
     for (SizeT i_pass = 0UL; i_pass < length; ++i_pass) {
       Char cur_chr = in_password[i_pass];
 
-      if (cur_chr == 0) break;
-
       password[i_pass] = cur_chr | (user->IsStdUser() ? kStdUserType : kSuperUserType);
     }
 
-    kout << "cred_construct_token: Hashed user password.\r";
+    kout << "user_standard_token_generator: Hashed user password.\r";
 
     return 0;
   }
@@ -84,7 +84,7 @@ Bool User::Save(const UserPublicKey password_to_fill) noexcept {
 
   rt_copy_memory((VoidPtr) password_to_fill, password, len);
 
-  if (!Detail::cred_construct_token(password, password_to_fill, this, len)) {
+  if (!Detail::user_standard_token_generator(password, password_to_fill, this, len)) {
     delete[] password;
     password = nullptr;
 
@@ -116,7 +116,7 @@ Bool User::Matches(const UserPublicKey password_to_fill) noexcept {
 
   rt_copy_memory((VoidPtr) password_to_fill, password, len);
 
-  if (!Detail::cred_construct_token(password, password_to_fill, this, len)) {
+  if (!Detail::user_standard_token_generator(password, password_to_fill, this, len)) {
     delete[] password;
     password = nullptr;
 

@@ -35,14 +35,14 @@ typedef Ref SocketRef;
 IMPORT_C Ref LdrGetDLLSymbolFromHandle(_Input const Char* symbol, _Input Ref dll_handle);
 
 /// @brief Open Dylib handle.
-/// @param path
-/// @param drv
-/// @return
+/// @param path dll path.
+/// @param drv driver letter.
+/// @return a dylib ref.
 IMPORT_C Ref LdrOpenDLLHandle(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close Dylib handle
-/// @param dll_handle
-/// @return
+/// @param dll_handle the dylib ref.
+/// @return whether it closed or not.
 IMPORT_C UInt32 LdrCloseDLLHandle(_Input Ref* dll_handle);
 
 // ------------------------------------------------------------------------------------------ //
@@ -67,14 +67,19 @@ IMPORT_C Void IoCloseFile(_Input Ref file_desc);
 /// @param out_data the output data.
 /// @return the number of bytes written.
 /// @note This function is used to control the file descriptor, introduced for HeFS.
-IMPORT_C SInt32 IoCTLFile(_Input Ref file_desc, _Input UInt32 ioctl_code, _Input VoidPtr in_data,
-                      _Output VoidPtr out_data);
+IMPORT_C SInt32 IoCtrlFile(_Input Ref file_desc, _Input UInt32 ioctl_code, _Input VoidPtr in_data,
+                           _Output VoidPtr out_data);
 
 /// @brief Gets the file mime (if any)
 /// @param file_desc the file descriptor.
 IMPORT_C const Char* IoMimeFile(_Input Ref file_desc);
 
-/// @brief Write data to a file.
+/// @brief Gets the dir DIM.
+/// @param dir_desc directory descriptor.
+/// @note only works in HeFS, will return nil-x/nil if used on any other filesystem.
+IMPORT_C const Char* IoDimFile(_Input Ref dir_desc);
+
+/// @brief Write data to a file ref
 /// @param file_desc the file descriptor.
 /// @param out_data the data to write.
 /// @param sz_data the size of the data to write.

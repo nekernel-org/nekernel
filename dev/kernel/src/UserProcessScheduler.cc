@@ -101,8 +101,14 @@ Void USER_PROCESS::Wake(Bool should_wakeup) {
 
 STATIC USER_PROCESS::USER_HEAP_TREE* sched_try_go_upper_heap_tree(
     USER_PROCESS::USER_HEAP_TREE* tree) {
+  if (!tree) {
+    return nullptr;
+  }
+
+  tree = tree->MemoryParent;
+
   if (tree) {
-    tree = tree->MemoryNext;
+    tree = tree->MemoryParent;
 
     if (!tree) {
       return nullptr;
@@ -162,7 +168,6 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
         entry     = entry->MemoryChild;
         is_parent = YES;
       } else {
-        entry = entry->MemoryParent;
         entry = sched_try_go_upper_heap_tree(entry);
       }
     }

@@ -79,7 +79,8 @@ namespace Detail {
     NE_UNUSED(node);
 
     if (!dir || !node) {
-      ke_panic(RUNTIME_CHECK_FILESYSTEM, "Error: Invalid directory node/boot_node in RB-Tree traversal.");
+      ke_panic(RUNTIME_CHECK_FILESYSTEM,
+               "Error: Invalid directory node/boot_node in RB-Tree traversal.");
     }
 
     if (dir->fChild != 0) {
@@ -315,8 +316,7 @@ namespace Detail {
           return NO;
         }
 
-        if (parent->fDeleted ||
-          !parent->fCreated) {
+        if (parent->fDeleted || !parent->fCreated) {
           mnt->fPacket.fPacketLba     = start;
           mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
           mnt->fPacket.fPacketContent = dir;
@@ -790,13 +790,20 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   // Check if the disk is already formatted.
 
-  if (KStringBuilder::Equals(root->fMagic, kHeFSMagic)) {
+  if (KStringBuilder::Equals(root->fMagic, kHeFSMagic) && root->fVersion == kHeFSVersion) {
     delete root;
     root = nullptr;
 
     err_global_get() = kErrorSuccess;
 
     return YES;
+  } else if (root->fVersion != kHeFSVersion) {
+    delete root;
+    root = nullptr;
+
+    err_global_get() = kErrorUnrecoverableDisk;
+
+    return NO;
   }
 
   rt_set_memory(root, 0, sizeof(HEFS_BOOT_NODE));
@@ -834,6 +841,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   root->fReserved2 = 0;
   root->fReserved3 = 0;
   root->fReserved4 = 0;
+
+  root->fVersion = kHeFSVersion;
 
   root->fChecksum = 0;
 
@@ -939,7 +948,7 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
   drive->fInput(drive->fPacket);
 
   Detail::hefsi_balance_filesystem(root, drive);
-  
+
   auto dirent = Detail::hefs_fetch_index_node_directory(root, drive, dir);
 
   if (dirent) {
@@ -1067,6 +1076,9 @@ _Output Bool HeFileSystemParser::CreateFile(_Input DriveTrait* drive, _Input con
   node->fFlags    = flags;
   node->fChecksum = 0;
 
+  node->fGID = 0;
+  node->fUID = 0;
+
   wrt_copy_memory((VoidPtr) name, node->fName, wrt_string_len(name));
 
   if (Detail::hefs_allocate_index_node(root, drive, dir, node)) {
@@ -1076,18 +1088,21 @@ _Output Bool HeFileSystemParser::CreateFile(_Input DriveTrait* drive, _Input con
     return YES;
   }
 
+  delete node;
+  delete root;
+
   return NO;
 }
 
 /// @brief Initialize the HeFS filesystem.
 /// @return To check its status, see err_local_get().
 Boolean fs_init_hefs(Void) noexcept {
-  kout << "Creating main disk with HeFS in it...\r";
+  kout << "Creating HeFS disk...\r";
 
   auto drv = io_construct_main_drive();
 
   if (drv.fPacket.fPacketReadOnly == YES)
-    ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main filesystem cannot be mounted.");
+    ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main disk cannot be mounted.");
 
   HeFileSystemParser parser;
 

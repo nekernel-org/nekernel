@@ -877,7 +877,7 @@ Boolean fs_init_nefs(Void) noexcept {
   kMountpoint.A() = io_construct_main_drive();
 
   if (kMountpoint.A().fPacket.fPacketReadOnly == YES)
-    ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main filesystem cannot be mounted.");
+    ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main disk cannot be mounted.");
 
   NeFileSystemParser parser;
   parser.Format(&kMountpoint.A(), 0, kNeFSVolumeName);

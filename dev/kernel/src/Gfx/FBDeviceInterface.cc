@@ -37,7 +37,7 @@ FBDeviceInterface& FBDeviceInterface::operator<<(FBDevicePacket* pckt) {
 /// @return the class itself after operation.
 FBDeviceInterface& FBDeviceInterface::operator>>(FBDevicePacket* pckt) {
   if (!pckt) return *this;
-  
+
   this->fIn(this, pckt);
 
   return *this;

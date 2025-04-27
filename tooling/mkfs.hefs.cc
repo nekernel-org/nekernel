@@ -11,7 +11,7 @@
 #include <string>
 
 /// @internal
-namespace detail {
+namespace mkfs::detail {
 /// @brief Helper function to get the option value from command line arguments.
 template <typename CharType>
 static std::basic_string<CharType> get_option(const std::basic_string<CharType>& args,
@@ -26,7 +26,7 @@ static std::basic_string<CharType> get_option(const std::basic_string<CharType>&
 
   return std::basic_string<CharType>{};
 }
-}  // namespace detail
+}  // namespace mkfs::detail
 
 static size_t         kDiskSize   = 1024 * 1024 * 1024 * 4UL;
 static uint16_t       kVersion    = kHeFSVersion;
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     std::cerr << "mkfs.hefs: Usage: mkfs.hefs -L <label> -s <sector_size> -p <part_start> -e "
                  "<part_end> -S <disk_size> -o <output_device>"
               << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   std::string    args;
@@ -49,27 +49,24 @@ int main(int argc, char** argv) {
     args += argv[i];
     args += " ";
 
-    
     std::string str = argv[i];
 
-    for (auto& ch : str)
-    {
+    for (auto& ch : str) {
       args_wide.push_back(ch);
     }
 
     args_wide += u" ";
   }
 
-  auto output_device = detail::get_option<char>(args, "-o");
+  auto output_device = mkfs::detail::get_option<char>(args, "-o");
 
-  kSectorSize = std::strtol(detail::get_option<char>(args, "-s").data(), nullptr, 10);
-  kLabel      = detail::get_option<char16_t>(args_wide, u"-L");
+  kSectorSize = std::strtol(mkfs::detail::get_option<char>(args, "-s").data(), nullptr, 10);
+  kLabel      = mkfs::detail::get_option<char16_t>(args_wide, u"-L");
 
-  if (kLabel.empty())
-    kLabel = kHeFSDefaultVoluneName;
+  if (kLabel.empty()) kLabel = kHeFSDefaultVoluneName;
 
-  kDiskSize =
-      std::strtol(detail::get_option<char>(args, "-S").data(), nullptr, 10) * 1024 * 1024 * 1024;
+  kDiskSize = std::strtol(mkfs::detail::get_option<char>(args, "-S").data(), nullptr, 10) * 1024 *
+              1024 * 1024;
 
   if (kDiskSize == 0) {
     std::cerr << "mkfs.hefs: Error: Invalid size specified." << std::endl;
@@ -87,10 +84,10 @@ int main(int argc, char** argv) {
   // create a boot node, and then allocate a index node directory tree.
   mkfs::hefs::BootNode bootNode{{}, {}, 0, 0, 0, 0, 0, 0, 0, 0};
 
-  auto start_ind = std::strtol(detail::get_option<char>(args, "-p").data(), nullptr, 10);
+  auto start_ind = std::strtol(mkfs::detail::get_option<char>(args, "-p").data(), nullptr, 10);
   start_ind += sizeof(mkfs::hefs::BootNode);
 
-  auto end_ind = std::strtol(detail::get_option<char>(args, "-e").data(), nullptr, 10);
+  auto end_ind = std::strtol(mkfs::detail::get_option<char>(args, "-e").data(), nullptr, 10);
 
   bootNode.version    = kVersion;
   bootNode.diskKind   = mkfs::hefs::kHeFSHardDrive;
@@ -104,7 +101,7 @@ int main(int argc, char** argv) {
   std::memcpy(bootNode.magic, kHeFSMagic, kHeFSMagicLen);
   std::memcpy(bootNode.volumeName, kLabel.data(), kLabel.size() * sizeof(char16_t));
 
-  filesystem.seekp(std::strtol(detail::get_option<char>(args, "-p").data(), nullptr, 10));
+  filesystem.seekp(std::strtol(mkfs::detail::get_option<char>(args, "-p").data(), nullptr, 10));
   filesystem.write(reinterpret_cast<const char*>(&bootNode), sizeof(mkfs::hefs::BootNode));
 
   if (!filesystem.good()) {
@@ -121,7 +118,8 @@ int main(int argc, char** argv) {
   for (size_t i = 0; i < cnt; ++i) {
     mkfs::hefs::IndexNodeDirectory indexNode{};
 
-    std::memcpy(indexNode.name, u"$UNALLOCATED$", std::u16string(u"$UNALLOCATED$").size() * sizeof(char16_t));
+    std::memcpy(indexNode.name, u"$UNALLOCATED$",
+                std::u16string(u"$UNALLOCATED$").size() * sizeof(char16_t));
 
     indexNode.flags   = 0;
     indexNode.kind    = mkfs::hefs::kHeFSFileKindDirectory;
@@ -152,14 +150,14 @@ int main(int argc, char** argv) {
     if (!filesystem.good()) {
       std::cerr << "mkfs.hefs: Error: Unable to write index node to output_device " << output_device
                 << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   filesystem.flush();
   filesystem.close();
 
-  std::cout << "mkfs.hefs: HeFS filesystem created on " << output_device << std::endl;
+  std::cout << "mkfs.hefs: HeFS filesystem created in output_device " << output_device << std::endl;
 
   return EXIT_SUCCESS;
 }

@@ -23,6 +23,8 @@ typedef struct _DDK_DEVICE DDK_FINAL {
   void (*d_wait)(void);                             // write to device.
   struct _DDK_DEVICE* (*d_open)(const char* path);  // open device.
   void (*d_close)(struct _DDK_DEVICE* dev);         // close device.
+  void (*d_seek)(struct _DDK_DEVICE* dev, size_t off);
+  size_t (*d_tell)(struct _DDK_DEVICE* dev);
 } DDK_DEVICE, *DDK_DEVICE_PTR;
 
 /// @brief Open a new device from path.

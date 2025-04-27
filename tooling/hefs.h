@@ -26,8 +26,6 @@
 #define kHeFSDIMSystemDir u"system-x/dir"
 #define kHeFSMIMESystemFile u"system-x/file"
 
-#define kHeFSSearchAllStr u"*"
-
 namespace mkfs::hefs {
 enum {
   kHeFSHardDrive         = 0xC0,  // Hard Drive

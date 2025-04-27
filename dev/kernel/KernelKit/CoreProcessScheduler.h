@@ -115,7 +115,7 @@ using ImagePtr = VoidPtr;
 struct PROCESS_IMAGE final {
   explicit PROCESS_IMAGE() = default;
 
-private:
+ private:
   friend USER_PROCESS;
   friend KERNEL_PROCESS;
   friend class UserProcessScheduler;
@@ -123,7 +123,7 @@ private:
   ImagePtr fCode;
   ImagePtr fBlob;
 
-public:
+ public:
   Bool HasCode() const { return this->fCode != nullptr; }
 
   Bool HasImage() const { return this->fBlob != nullptr; }
