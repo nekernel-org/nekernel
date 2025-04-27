@@ -295,9 +295,9 @@ namespace Detail {
   STATIC _Output BOOL hefs_allocate_index_directory_node(HEFS_BOOT_NODE* root, DriveTrait* mnt,
                                                          HEFS_INDEX_NODE_DIRECTORY* dir) noexcept {
     if (root && mnt) {
-      HEFS_INDEX_NODE_DIRECTORY* parent = new HEFS_INDEX_NODE_DIRECTORY();
+      HEFS_INDEX_NODE_DIRECTORY* tmpdir = new HEFS_INDEX_NODE_DIRECTORY();
 
-      if (!parent) {
+      if (!tmpdir) {
         kout << "Error: Failed to allocate memory for index node.\r";
         return NO;
       }
@@ -307,28 +307,31 @@ namespace Detail {
       while (YES) {
         mnt->fPacket.fPacketLba     = start;
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-        mnt->fPacket.fPacketContent = parent;
+        mnt->fPacket.fPacketContent = tmpdir;
 
         mnt->fInput(mnt->fPacket);
 
         if (!mnt->fPacket.fPacketGood) {
-          delete parent;
+          delete tmpdir;
           return NO;
         }
 
-        if (parent->fDeleted || !parent->fCreated) {
+        if (tmpdir->fDeleted || !tmpdir->fCreated) {
+          dir->fChild = tmpdir->fChild;
+          dir->fParent = tmpdir->fParent;
+          dir->fNext = tmpdir->fNext;
+          dir->fPrev = tmpdir->fPrev;
+
           mnt->fPacket.fPacketLba     = start;
           mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
           mnt->fPacket.fPacketContent = dir;
 
           mnt->fOutput(mnt->fPacket);
 
-          hefsi_balance_filesystem(root, mnt);
-
           return YES;
         }
 
-        hefsi_traverse_tree(parent, root, start);
+        hefsi_traverse_tree(tmpdir, root, start);
       }
 
       return YES;
@@ -382,6 +385,7 @@ namespace Detail {
 
         if (dir->fKind == kHeFSFileKindDirectory) {
           if (KStringBuilder::Equals(dir_name, dir->fName)) {
+            err_global_get() = kErrorSuccess;
             return dir;
           }
         }
@@ -389,8 +393,8 @@ namespace Detail {
         hefsi_traverse_tree(dir, root, start);
       }
 
-      err_global_get() = kErrorSuccess;
-      return dir;
+      delete dir;
+      dir = nullptr;
     }
 
     err_global_get() = kErrorFileNotFound;
@@ -611,6 +615,9 @@ namespace Detail {
       auto start = root->fStartIND;
 
       while (YES) {
+        if (start > root->fEndIND)
+          break;
+
         mnt->fPacket.fPacketLba     = start;
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
         mnt->fPacket.fPacketContent = dir;
@@ -797,13 +804,6 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
     err_global_get() = kErrorSuccess;
 
     return YES;
-  } else if (root->fVersion != kHeFSVersion) {
-    delete root;
-    root = nullptr;
-
-    err_global_get() = kErrorUnrecoverableDisk;
-
-    return NO;
   }
 
   rt_set_memory(root, 0, sizeof(HEFS_BOOT_NODE));
@@ -816,7 +816,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   root->fBadSectors = 0;
 
-  root->fSectorCount = drv_get_sector_count();
+  root->fSectorCount = drv_get_sector_count() - 1;
 
   root->fSectorSize = drive->fSectorSz;
 
@@ -852,6 +852,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   drive->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
   drive->fPacket.fPacketContent = root;
 
+  HEFS_BOOT_NODE root_cpy = *root;
+
   drive->fOutput(drive->fPacket);
 
   if (!drive->fPacket.fPacketGood) {
@@ -863,34 +865,47 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
     return NO;
   }
 
-  HEFS_INDEX_NODE_DIRECTORY* root_dir = new HEFS_INDEX_NODE_DIRECTORY();
-  rt_set_memory(root_dir, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+  SizeT cnt = kHeFSBlockCount;
 
-  wrt_copy_memory((VoidPtr) u"/", root_dir->fName, wrt_string_len(u"/"));
-  wrt_copy_memory((VoidPtr) kHeFSDIMBootDir, root_dir->fDim, wrt_string_len(kHeFSDIMBootDir));
+  Lba next = root_cpy.fStartIND;
+  Lba prev = next;
 
-  root_dir->fKind  = kHeFSFileKindDirectory;
-  root_dir->fColor = kHeFSBlack;  // Every RB-Tree root starts black. (a condition of the algorithm)
-  root_dir->fParent = root->fStartIND;  // No parent (it's the real root)
-  root_dir->fChild  = root->fEndIND;    // No children yet
-  root_dir->fNext   = 0;                // No next
-  root_dir->fPrev   = 0;                // No previous
+  HEFS_INDEX_NODE_DIRECTORY* index_node = new HEFS_INDEX_NODE_DIRECTORY();
+  
+  // Pre-allocate index node directory tree
+  for (SizeT i = 0; i < cnt; ++i) {
+    rt_set_memory(index_node, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+    wrt_copy_memory((VoidPtr) u"/$", index_node->fName, wrt_string_len(u"/$"));
 
-  root_dir->fEntryCount = 1;
+    index_node->fFlags   = flags;
+    index_node->fKind    = kHeFSFileKindDirectory;
 
-  drive->fPacket.fPacketLba  = drive->fLbaStart + sizeof(HEFS_BOOT_NODE) + sizeof(HEFS_BOOT_NODE);
-  drive->fPacket.fPacketSize = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-  drive->fPacket.fPacketContent = root_dir;
+    index_node->fDeleted = kHeFSTimeMax;
 
-  drive->fOutput(drive->fPacket);
+    index_node->fEntryCount = 1;
 
-  Detail::hefsi_balance_filesystem(root, drive);
+    index_node->fChecksum          = 0;
+    index_node->fIndexNodeChecksum = 0;
 
-  delete root_dir;
-  delete root;
+    index_node->fUID   = 0;
+    index_node->fGID   = 0;
+    index_node->fMode  = 0;
+    index_node->fColor = kHeFSBlack;
 
-  root     = nullptr;
-  root_dir = nullptr;
+    index_node->fParent = next;
+    index_node->fChild  = 0;
+    index_node->fNext = next + sizeof(HEFS_INDEX_NODE_DIRECTORY);
+    index_node->fPrev = prev;
+
+    drive->fPacket.fPacketLba  = next;
+    drive->fPacket.fPacketSize = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+    drive->fPacket.fPacketContent = index_node;
+
+    prev = next;
+    next += sizeof(HEFS_INDEX_NODE_DIRECTORY);
+
+    drive->fOutput(drive->fPacket);
+  }
 
   // Create the directories, something UNIX inspired but more explicit and forward looking.
 
@@ -903,7 +918,10 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/config/json");
   this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/devices");
   this->CreateDirectory(drive, kHeFSEncodingUTF16, u"/media");
-  this->CreateFile(drive, kHeFSEncodingBinary, u"/", u"mk.hefs");
+  this->CreateFile(drive, kHeFSEncodingBinary, u"/", u".hefs");
+
+  delete root;
+  root     = nullptr;
 
   if (drive->fPacket.fPacketGood) return YES;
 

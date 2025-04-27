@@ -66,6 +66,12 @@ constexpr std::size_t kHeFSBlockCount = 16;
 // Types
 using ATime = std::uint64_t;
 
+enum {
+  kHeFSRed = 100,
+  kHeFSBlack,
+  kHeFSColorCount,
+};
+
 inline constexpr uint16_t kHeFSFileKindRegular      = 0x00;
 inline constexpr uint16_t kHeFSFileKindDirectory    = 0x01;
 inline constexpr uint16_t kHeFSFileKindBlock        = 0x02;

@@ -212,7 +212,7 @@ class BDiskFormatFactory final {
 
     fDiskDev.Read((Char*) &buf_epm, sizeof(EPM_PART_BLOCK));
 
-    if (StrCmp(buf_epm.Magic, kEPMMagic)) {
+    if (StrCmp(buf_epm.Magic, kEPMMagic) > 0) {
       return false;
     }
 
@@ -220,32 +220,8 @@ class BDiskFormatFactory final {
       return false;
     }
 
-    fDiskDev.Leak().mBase = (kNeFSRootCatalogStartAddress);
-    fDiskDev.Leak().mSize = sizeof(NEFS_ROOT_PARTITION_BLOCK);
-
-    Char buf[sizeof(NEFS_ROOT_PARTITION_BLOCK)] = {0};
-
-    fDiskDev.Read(buf, sizeof(NEFS_ROOT_PARTITION_BLOCK));
-
-    NEFS_ROOT_PARTITION_BLOCK* blockPart = reinterpret_cast<NEFS_ROOT_PARTITION_BLOCK*>(buf);
-
     BootTextWriter writer;
-
-    for (SizeT indexMag = 0UL; indexMag < kNeFSIdentLen; ++indexMag) {
-      if (blockPart->Ident[indexMag] != kNeFSIdent[indexMag]) return false;
-    }
-
-    if (blockPart->DiskSize != this->fDiskDev.GetDiskSize() || blockPart->DiskSize < 1 ||
-        blockPart->SectorSize != BootDev::kSectorSize ||
-        blockPart->Version != kNeFSVersionInteger || blockPart->StartCatalog == 0) {
-      return false;
-    } else if (blockPart->PartitionName[0] == 0) {
-      return false;
-    }
-
-    writer.Write(L"BootZ: NeFS Partition: ")
-        .Write(blockPart->PartitionName)
-        .Write(L" is healthy.\r");
+    writer.Write("BootZ: EPM Partition found.\r");
 
     return true;
 #else

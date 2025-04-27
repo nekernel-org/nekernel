@@ -4,15 +4,13 @@
 
 ------------------------------------------- */
 
-#include <ArchKit/ArchKit.h>
-
 #ifdef __NE_AMD64__
 #include <HALKit/AMD64/Paging.h>
 #elif defined(__NE_ARM64__)
 #include <HALKit/ARM64/Paging.h>
 #endif
 
-#include <NewKit/Defines.h>
+#include <ArchKit/ArchKit.h>
 #include <NewKit/KernelPanic.h>
 
 #define kBitMapMagic (0x10210U)

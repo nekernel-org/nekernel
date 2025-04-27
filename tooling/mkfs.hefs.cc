@@ -114,14 +114,17 @@ int main(int argc, char** argv) {
 
   auto cnt = end_ind / sizeof(mkfs::hefs::IndexNodeDirectory);
 
+  auto start = bootNode.startIND;
+  auto prev = start;
+
   // Pre-allocate index node directory tree
   for (size_t i = 0; i < cnt; ++i) {
     mkfs::hefs::IndexNodeDirectory indexNode{};
 
-    std::memcpy(indexNode.name, u"$UNALLOCATED$",
-                std::u16string(u"$UNALLOCATED$").size() * sizeof(char16_t));
+    std::memcpy(indexNode.name, u"/",
+                std::u16string(u"/").size() * sizeof(char16_t));
 
-    indexNode.flags   = 0;
+    indexNode.flags   = mkfs::hefs::kHeFSEncodingUTF16;
     indexNode.kind    = mkfs::hefs::kHeFSFileKindDirectory;
     indexNode.deleted = mkfs::hefs::kHeFSTimeMax;
 
@@ -133,16 +136,16 @@ int main(int argc, char** argv) {
     indexNode.uid   = 0;
     indexNode.gid   = 0;
     indexNode.mode  = 0;
-    indexNode.color = 0;
-    indexNode.next  = 0;
-    indexNode.prev  = 0;
-    indexNode.child = 0;
+    indexNode.color = mkfs::hefs::kHeFSBlack;
 
     indexNode.parent = bootNode.startIND;
     indexNode.child  = bootNode.endIND;
 
-    indexNode.next = 0;
-    indexNode.prev = 0;
+    indexNode.next = start + sizeof(mkfs::hefs::IndexNodeDirectory);
+    indexNode.prev = prev;
+
+    prev = start;
+    start += sizeof(mkfs::hefs::IndexNodeDirectory);
 
     filesystem.write(reinterpret_cast<const char*>(&indexNode),
                      sizeof(mkfs::hefs::IndexNodeDirectory));

@@ -137,7 +137,7 @@ Void drv_pio_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT Sec
 
   rt_out8(IO + ATA_REG_HDDEVSEL, (Command) | (((Lba) >> 24) & 0x0F));
 
-  rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + (SectorSz)) / SectorSz));
+  rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
   rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
