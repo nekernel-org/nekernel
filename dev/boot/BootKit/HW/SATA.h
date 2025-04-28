@@ -28,7 +28,7 @@ class BootDeviceSATA final {
 
   operator bool() { return this->Leak().mDetected; }
 
-  SizeT GetDiskSize() { return drv_get_size(); }
+  SizeT GetDiskSize() { return drv_std_get_size(); }
 
   constexpr static auto kSectorSize = kAHCISectorSize;
 

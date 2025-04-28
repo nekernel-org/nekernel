@@ -59,7 +59,7 @@
 
 namespace Kernel {
 enum {
-  kFileIOInvalid = 0,
+  kFileIOInvalid  = 0,
   kFileWriteAll   = 100,
   kFileReadAll    = 101,
   kFileReadChunk  = 102,

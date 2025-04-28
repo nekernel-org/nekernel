@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-  Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -16,17 +16,11 @@
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (128U)
 
-#define kHeFSMinimumDiskSize (gib_cast(4))
-
-#define kHeFSDefaultVoluneName u"HeFS Volume"
-
-#define kHeFSDIMBootDir u"boot-x/dir"
-#define kHeFSMIMEBootFile u"boot-x/file"
-
-#define kHeFSDIMSystemDir u"system-x/dir"
-#define kHeFSMIMESystemFile u"system-x/file"
+#define kHeFSDefaultVoluneName u8"HeFS Volume"
 
 namespace mkfs::hefs {
+
+// Drive kinds
 enum {
   kHeFSHardDrive         = 0xC0,  // Hard Drive
   kHeFSSolidStateDrive   = 0xC1,  // Solid State Drive
@@ -38,6 +32,7 @@ enum {
   kHeFSDriveCount        = 7,
 };
 
+// Disk status
 enum {
   kHeFSStatusUnlocked = 0x18,
   kHeFSStatusLocked,
@@ -46,6 +41,7 @@ enum {
   kHeFSStatusCount,
 };
 
+// Encodings
 enum {
   kHeFSEncodingUTF8 = 0x00,
   kHeFSEncodingUTF16,
@@ -60,18 +56,13 @@ enum {
   kHeFSEncodingCount,
 };
 
-// Constants
+// Block constants
 constexpr std::size_t kHeFSBlockCount = 16;
 
-// Types
+// Time type
 using ATime = std::uint64_t;
 
-enum {
-  kHeFSRed = 100,
-  kHeFSBlack,
-  kHeFSColorCount,
-};
-
+// File kinds
 inline constexpr uint16_t kHeFSFileKindRegular      = 0x00;
 inline constexpr uint16_t kHeFSFileKindDirectory    = 0x01;
 inline constexpr uint16_t kHeFSFileKindBlock        = 0x02;
@@ -82,14 +73,22 @@ inline constexpr uint16_t kHeFSFileKindSymbolicLink = 0x06;
 inline constexpr uint16_t kHeFSFileKindUnknown      = 0x07;
 inline constexpr uint16_t kHeFSFileKindCount        = 0x08;
 
-// Basic Time Constants
+// Red-black tree colors
+enum {
+  kHeFSInvalidColor = 0,
+  kHeFSRed          = 100,
+  kHeFSBlack,
+  kHeFSColorCount,
+};
+
+// Time constants
 inline constexpr ATime kHeFSTimeInvalid = 0x0000000000000000;
 inline constexpr ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 
-// Boot Node (Superblock Equivalent)
+// Boot Node
 struct alignas(8) BootNode {
   char          magic[kHeFSMagicLen]{};
-  char16_t      volumeName[kHeFSPartNameLen]{};
+  char8_t       volumeName[kHeFSPartNameLen]{};
   std::uint32_t version{};
   std::uint64_t badSectors{};
   std::uint64_t sectorCount{};
@@ -108,19 +107,16 @@ struct alignas(8) BootNode {
   std::uint64_t reserved2{};
   std::uint64_t reserved3{};
   std::uint64_t reserved4{};
+  char          pad[272]{};
 };
 
-// File Node (Index Node)
+// Index Node
 struct alignas(8) IndexNode {
-  char16_t      name[kHeFSFileNameLen]{};
+  char8_t       name[kHeFSFileNameLen]{};
   std::uint32_t flags{};
   std::uint16_t kind{};
   std::uint32_t size{};
   std::uint32_t checksum{};
-  std::uint32_t recoverChecksum{};
-  std::uint32_t blockChecksum{};
-  std::uint32_t linkChecksum{};
-  char16_t      mime[kHeFSFileNameLen]{};
   bool          symbolicLink{false};
   ATime         created{};
   ATime         accessed{};
@@ -129,23 +125,18 @@ struct alignas(8) IndexNode {
   std::uint32_t uid{};
   std::uint32_t gid{};
   std::uint32_t mode{};
-  std::uint64_t blockLinkStart[kHeFSBlockCount]{};
-  std::uint64_t blockLinkEnd[kHeFSBlockCount]{};
-  std::uint64_t blockStart[kHeFSBlockCount]{};
-  std::uint64_t blockEnd[kHeFSBlockCount]{};
-  std::uint64_t blockRecoveryStart[kHeFSBlockCount]{};
-  std::uint64_t blockRecoveryEnd[kHeFSBlockCount]{};
+  std::uint64_t block[kHeFSBlockCount]{};
+  char          pad[62]{};
 };
 
-// Directory Node (Red-Black Tree Node)
+// Index Node Directory (Red-Black Tree Node)
 struct alignas(8) IndexNodeDirectory {
-  char16_t      name[kHeFSFileNameLen]{};
+  char8_t       name[kHeFSFileNameLen]{};
   std::uint32_t flags{};
   std::uint16_t kind{};
   std::uint32_t entryCount{};
   std::uint32_t checksum{};
   std::uint32_t indexNodeChecksum{};
-  char16_t      dim[kHeFSFileNameLen]{};
   ATime         created{};
   ATime         accessed{};
   ATime         modified{};
@@ -153,13 +144,13 @@ struct alignas(8) IndexNodeDirectory {
   std::uint32_t uid{};
   std::uint32_t gid{};
   std::uint32_t mode{};
-  std::uint64_t indexNodeStart[kHeFSBlockCount]{};
-  std::uint64_t indexNodeEnd[kHeFSBlockCount]{};
+  std::uint64_t indexNode[kHeFSBlockCount]{};
   std::uint8_t  color{};
   std::uint64_t next{};
   std::uint64_t prev{};
   std::uint64_t child{};
   std::uint64_t parent{};
+  char          pad[32]{};
 };
 
 }  // namespace mkfs::hefs

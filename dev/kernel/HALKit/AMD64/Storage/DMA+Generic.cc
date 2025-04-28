@@ -183,15 +183,15 @@ Boolean drv_std_detected(Void) {
   @return Number of sectors, or zero.
 */
 /***********************************************************************************/
-Kernel::SizeT drv_get_sector_count() {
+Kernel::SizeT drv_std_get_sector_count() {
   return (kATAIdentifyData[61] << 16) | kATAIdentifyData[60];
 }
 
 /***********************************************************************************/
 /// @brief Get the size of the current drive.
 /***********************************************************************************/
-Kernel::SizeT drv_get_size() {
-  return (drv_get_sector_count()) * kATASectorSize;
+Kernel::SizeT drv_std_get_size() {
+  return (drv_std_get_sector_count()) * kATASectorSize;
 }
 
 #endif /* ifdef __ATA_DMA__ */

@@ -28,12 +28,6 @@
 
 #define kHeFSDefaultVoluneName u8"HeFS Volume"
 
-#define kHeFSDIMBootDir u8"boot-x/dir"
-#define kHeFSMIMEBootFile u8"boot-x/file"
-
-#define kHeFSDIMSystemDir u8"system-x/dir"
-#define kHeFSMIMESystemFile u8"system-x/file"
-
 #define kHeFSSearchAllStr u8"*"
 
 struct HEFS_BOOT_NODE;
@@ -101,19 +95,19 @@ typedef UInt64 ATime;
 /// @details Acts like a superblock, it contains the information about the filesystem.
 /// @note The boot node is the first block of the filesystem.
 struct PACKED HEFS_BOOT_NODE final {
-  Kernel::Char      fMagic[kHeFSMagicLen];       /// @brief Magic number of the filesystem.
+  Kernel::Char     fMagic[kHeFSMagicLen];       /// @brief Magic number of the filesystem.
   Kernel::Utf8Char fVolName[kHeFSPartNameLen];  /// @brief Volume name.
-  Kernel::UInt32    fVersion;                    /// @brief Version of the filesystem.
-  Kernel::UInt64    fBadSectors;                 /// @brief Number of bad sectors in the filesystem.
-  Kernel::UInt64    fSectorCount;                /// @brief Number of sectors in the filesystem.
-  Kernel::UInt64    fSectorSize;                 /// @brief Size of the sector.
-  Kernel::UInt32    fChecksum;                   /// @brief Checksum of the boot node.
-  Kernel::UInt8 fDiskKind;   /// @brief Kind of the drive. (Hard Drive, Solid State Drive, Optical
-                             /// Drive, etc).
-  Kernel::UInt8  fEncoding;  /// @brief Encoding of the filesystem. (UTF-8, UTF-16, etc).
-  Kernel::UInt64 fStartIND;  /// @brief Start of the INode tree.
-  Kernel::UInt64 fEndIND;    /// @brief End of the INode tree.
-  Kernel::UInt64 fINDCount;  /// @brief Number of leafs in the INode tree.
+  Kernel::UInt32   fVersion;                    /// @brief Version of the filesystem.
+  Kernel::UInt64   fBadSectors;                 /// @brief Number of bad sectors in the filesystem.
+  Kernel::UInt64   fSectorCount;                /// @brief Number of sectors in the filesystem.
+  Kernel::UInt64   fSectorSize;                 /// @brief Size of the sector.
+  Kernel::UInt32   fChecksum;                   /// @brief Checksum of the boot node.
+  Kernel::UInt8    fDiskKind;  /// @brief Kind of the drive. (Hard Drive, Solid State Drive, Optical
+                               /// Drive, etc).
+  Kernel::UInt8  fEncoding;    /// @brief Encoding of the filesystem. (UTF-8, UTF-16, etc).
+  Kernel::UInt64 fStartIND;    /// @brief Start of the INode tree.
+  Kernel::UInt64 fEndIND;      /// @brief End of the INode tree.
+  Kernel::UInt64 fINDCount;    /// @brief Number of leafs in the INode tree.
   Kernel::UInt64 fDiskSize;  /// @brief Size of the disk. (Could be a virtual size, that is not the
                              /// real size of the disk.)
   Kernel::UInt16 fDiskStatus;  /// @brief Status of the disk. (locked, unlocked, error, invalid).
@@ -124,7 +118,7 @@ struct PACKED HEFS_BOOT_NODE final {
   Kernel::UInt64 fReserved2;  /// @brief Reserved for future use.
   Kernel::UInt64 fReserved3;  /// @brief Reserved for future use.
   Kernel::UInt64 fReserved4;  /// @brief Reserved for future use.
-  Kernel::Char fPad[272];
+  Kernel::Char   fPad[272];
 };
 
 inline constexpr Kernel::ATime kHeFSTimeInvalid = 0x0000000000000000;
@@ -136,11 +130,11 @@ inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 /// @note The index node is used to store the file information of a file.
 struct PACKED ALIGN(8) HEFS_INDEX_NODE final {
   Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief File name.
-  Kernel::UInt32    fFlags;                   /// @brief File flags.
+  Kernel::UInt32   fFlags;                   /// @brief File flags.
   Kernel::UInt16 fKind;  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
                          /// Symbolic Link, Unknown).
   Kernel::UInt32 fSize;  /// @brief File size.
-  Kernel::UInt32 fChecksum; /// @brief Checksum.
+  Kernel::UInt32 fChecksum;  /// @brief Checksum.
 
   Kernel::Boolean fSymLink;  /// @brief Is this a symbolic link? (if yes, the fName is the path to
                              /// the file and blocklinkstart and end contains it's inodes.)

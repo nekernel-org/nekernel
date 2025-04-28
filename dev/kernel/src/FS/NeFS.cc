@@ -32,12 +32,12 @@ using namespace Kernel;
 /***********************************************************************************/
 /// @brief get sector count.
 /***********************************************************************************/
-Kernel::SizeT drv_get_sector_count();
+Kernel::SizeT drv_std_get_sector_count();
 
 /***********************************************************************************/
 /// @brief get device size.
 /***********************************************************************************/
-Kernel::SizeT drv_get_size();
+Kernel::SizeT drv_std_get_size();
 
 #endif
 
@@ -455,8 +455,8 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   rt_copy_memory((VoidPtr) kNeFSUntitledHD, (VoidPtr) part_block->PartitionName,
                  rt_string_len(kNeFSUntitledHD));
 
-  SizeT sectorCount = drv_get_sector_count();
-  SizeT diskSize    = drv_get_size();
+  SizeT sectorCount = drv_std_get_sector_count();
+  SizeT diskSize    = drv_std_get_size();
 
   part_block->Version = kNeFSVersionInteger;
 

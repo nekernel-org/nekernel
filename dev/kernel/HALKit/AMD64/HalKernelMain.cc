@@ -142,4 +142,4 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
     ++team_index;
   }
 }
-#endif // ifndef __NE_MODULAR_KERNEL_COMPONENTS__
+#endif  // ifndef __NE_MODULAR_KERNEL_COMPONENTS__

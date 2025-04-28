@@ -28,10 +28,10 @@ static std::basic_string<CharType> get_option(const std::basic_string<CharType>&
 }
 }  // namespace mkfs::detail
 
-static size_t         kDiskSize   = 1024 * 1024 * 1024 * 4UL;
-static uint16_t       kVersion    = kHeFSVersion;
-static std::u16string kLabel      = kHeFSDefaultVoluneName;
-static size_t         kSectorSize = 512;
+static size_t        kDiskSize   = 1024 * 1024 * 1024 * 4UL;
+static uint16_t      kVersion    = kHeFSVersion;
+static std::u8string kLabel      = kHeFSDefaultVoluneName;
+static size_t        kSectorSize = 512;
 
 int main(int argc, char** argv) {
   if (argc < 2) {
@@ -42,8 +42,8 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  std::string    args;
-  std::u16string args_wide;
+  std::string   args;
+  std::u8string args_wide;
 
   for (int i = 1; i < argc; ++i) {
     args += argv[i];
@@ -55,13 +55,13 @@ int main(int argc, char** argv) {
       args_wide.push_back(ch);
     }
 
-    args_wide += u" ";
+    args_wide += u8" ";
   }
 
   auto output_device = mkfs::detail::get_option<char>(args, "-o");
 
   kSectorSize = std::strtol(mkfs::detail::get_option<char>(args, "-s").data(), nullptr, 10);
-  kLabel      = mkfs::detail::get_option<char16_t>(args_wide, u"-L");
+  kLabel      = mkfs::detail::get_option<char8_t>(args_wide, u8"-L");
 
   if (kLabel.empty()) kLabel = kHeFSDefaultVoluneName;
 
@@ -91,14 +91,14 @@ int main(int argc, char** argv) {
 
   bootNode.version    = kVersion;
   bootNode.diskKind   = mkfs::hefs::kHeFSHardDrive;
-  bootNode.encoding   = mkfs::hefs::kHeFSEncodingUTF16;
+  bootNode.encoding   = mkfs::hefs::kHeFSEncodingUTF8;
   bootNode.diskSize   = kDiskSize;
   bootNode.sectorSize = kSectorSize;
   bootNode.startIND   = start_ind;
   bootNode.endIND     = end_ind;
   bootNode.diskStatus = mkfs::hefs::kHeFSStatusUnlocked;
 
-  std::memcpy(bootNode.magic, kHeFSMagic, kHeFSMagicLen);
+  std::memcpy(bootNode.magic, kHeFSMagic, kHeFSMagicLen - 1);
   std::memcpy(bootNode.volumeName, kLabel.data(), kLabel.size() * sizeof(char16_t));
 
   filesystem.seekp(std::strtol(mkfs::detail::get_option<char>(args, "-p").data(), nullptr, 10));
@@ -121,9 +121,9 @@ int main(int argc, char** argv) {
   for (size_t i = 0; i < cnt; ++i) {
     mkfs::hefs::IndexNodeDirectory indexNode{};
 
-    std::memcpy(indexNode.name, u"/", std::u16string(u"/").size() * sizeof(char16_t));
+    std::memcpy(indexNode.name, u8"/", std::u8string(u8"/").size() * sizeof(char16_t));
 
-    indexNode.flags   = mkfs::hefs::kHeFSEncodingUTF16;
+    indexNode.flags   = mkfs::hefs::kHeFSEncodingUTF8;
     indexNode.kind    = mkfs::hefs::kHeFSFileKindDirectory;
     indexNode.deleted = mkfs::hefs::kHeFSTimeMax;
 

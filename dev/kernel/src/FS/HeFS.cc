@@ -756,13 +756,19 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   NE_UNUSED(flags);
   NE_UNUSED(part_name);
 
-  // verify disk.
+  // Verify Disk.
   drive->fVerify(drive->fPacket);
 
   // if disk isn't good, then error out.
   if (false == drive->fPacket.fPacketGood) {
     err_global_get() = kErrorDiskIsCorrupted;
     return false;
+  }
+
+  if (drv_std_get_size() < kHeFSMinimumDiskSize) {
+    err_global_get() = kErrorDiskIsTooTiny;
+    kout << "Error: Failed to allocate memory for boot node.\r";
+    return NO;
   }
 
   HEFS_BOOT_NODE* root = new HEFS_BOOT_NODE();
@@ -806,11 +812,11 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
                  rt_string_len("fs/hefs-packet"));
 
   urt_copy_memory((VoidPtr) part_name, root->fVolName, urt_string_len(part_name));
-  rt_copy_memory((VoidPtr) kHeFSMagic, root->fMagic, sizeof(kHeFSMagic));
+  rt_copy_memory((VoidPtr) kHeFSMagic, root->fMagic, kHeFSMagicLen - 1);
 
   root->fBadSectors = 0;
 
-  root->fSectorCount = drv_get_sector_count();
+  root->fSectorCount = drv_std_get_sector_count();
 
   root->fSectorSize = drive->fSectorSz;
 
@@ -821,7 +827,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   root->fINDCount = 0;
 
-  root->fDiskSize   = drv_get_size();
+  root->fDiskSize   = drv_std_get_size();
   root->fDiskStatus = kHeFSStatusUnlocked;
 
   root->fDiskFlags = flags;
@@ -844,6 +850,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   root->fVID = kHeFSInvalidVID;
 
+  root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
+
   drive->fPacket.fPacketLba     = start;
   drive->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
   drive->fPacket.fPacketContent = root;
@@ -861,51 +869,54 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   start = root->fStartIND;
 
-  constexpr  SizeT kHeFSPreallocateCount = 16UL;
+  constexpr SizeT kHeFSPreallocateCount = 0x10UL;
 
-  HEFS_INDEX_NODE_DIRECTORY* index_node = new HEFS_INDEX_NODE_DIRECTORY();
+  HEFS_INDEX_NODE_DIRECTORY* dir = new HEFS_INDEX_NODE_DIRECTORY();
 
   // Pre-allocate index node directory tree
   for (SizeT i = 0; i < kHeFSPreallocateCount; ++i) {
-    rt_set_memory(index_node, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-    urt_copy_memory((VoidPtr) u8"?", index_node->fName, urt_string_len(u8"?"));
+    rt_set_memory(dir, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+    urt_copy_memory((VoidPtr) u8".deleted", dir->fName, urt_string_len(u8".deleted"));
 
-    index_node->fFlags = flags;
-    index_node->fKind  = kHeFSFileKindDirectory;
+    dir->fFlags = flags;
+    dir->fKind  = kHeFSFileKindDirectory;
 
-    index_node->fDeleted = kHeFSTimeMax;
+    dir->fDeleted = kHeFSTimeMax;  /// TODO: Add current time.
 
-    index_node->fEntryCount = 1;
+    dir->fEntryCount = 0;
 
-    index_node->fChecksum          = 0;
-    index_node->fIndexNodeChecksum = 0;
+    dir->fIndexNodeChecksum = 0;
 
-    index_node->fUID  = 0;
-    index_node->fGID  = 0;
-    index_node->fMode = 0;
+    dir->fUID  = 0;
+    dir->fGID  = 0;
+    dir->fMode = 0;
 
-    index_node->fColor  = kHeFSBlack;
-    index_node->fChild  = 0;
-    index_node->fParent = 0;
-    index_node->fNext   = 0;
-    index_node->fPrev   = 0;
+    dir->fColor  = kHeFSBlack;
+    dir->fChild  = 0;
+    dir->fParent = 0;
+    dir->fNext   = 0;
+    dir->fPrev   = 0;
+
+    dir->fChecksum = ke_calculate_crc32((Char*) dir, sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
     drive->fPacket.fPacketLba     = start;
     drive->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    drive->fPacket.fPacketContent = index_node;
+    drive->fPacket.fPacketContent = dir;
 
     start += sizeof(HEFS_INDEX_NODE_DIRECTORY);
 
     drive->fOutput(drive->fPacket);
   }
 
-  delete index_node;
-  index_node = nullptr;
+  delete dir;
+  dir = nullptr;
 
   delete root;
   root = nullptr;
 
   Detail::hefsi_balance_filesystem(root, drive);
+
+  err_global_get() = kErrorSuccess;
 
   if (drive->fPacket.fPacketGood) return YES;
 
@@ -953,7 +964,7 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
 
   Detail::hefsi_balance_filesystem(root, drive);
 
-  auto dirent = new HEFS_INDEX_NODE_DIRECTORY();
+  HEFS_INDEX_NODE_DIRECTORY* dirent = new HEFS_INDEX_NODE_DIRECTORY();
 
   rt_set_memory(dirent, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
@@ -969,7 +980,7 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
   dirent->fFlags    = flags;
   dirent->fChecksum = 0;
 
-  dirent->fEntryCount = 1;
+  dirent->fEntryCount = 0;
 
   if (Detail::hefs_allocate_index_directory_node(root, drive, dirent)) {
     delete dirent;
@@ -1093,7 +1104,7 @@ Boolean fs_init_hefs(Void) noexcept {
 
   HeFileSystemParser parser;
 
-  parser.Format(&drv, kHeFSEncodingUTF16, kHeFSDefaultVoluneName);
+  parser.Format(&drv, kHeFSEncodingUTF8, kHeFSDefaultVoluneName);
 
   return YES;
 }

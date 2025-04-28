@@ -10,5 +10,5 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/MemoryMgr.h>
 
-#endif // ifdef __FSKIT_INCLUDES_HEFS__
-#endif // ifndef __NE_MINIMAL_OS__
+#endif  // ifdef __FSKIT_INCLUDES_HEFS__
+#endif  // ifndef __NE_MINIMAL_OS__

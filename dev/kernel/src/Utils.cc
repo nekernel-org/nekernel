@@ -193,4 +193,3 @@ EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len) {
 EXTERN_C Kernel::Int32 strcmp(const char* dst, const char* src) {
   return Kernel::rt_string_cmp(dst, src, Kernel::rt_string_len(dst));
 }
-

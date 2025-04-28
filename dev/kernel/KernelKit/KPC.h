@@ -61,7 +61,11 @@ inline constexpr KPCError kErrorInvalidCreds       = 61;
 inline constexpr KPCError kErrorCDTrayBroken       = 62;
 inline constexpr KPCError kErrorUnrecoverableDisk  = 63;
 inline constexpr KPCError kErrorFileLocked         = 64;
-inline constexpr KPCError kErrorUnimplemented      = -1;
+inline constexpr KPCError kErrorDiskIsTooTiny      = 65;
+/// Kernel errors.
+inline constexpr KPCError kErrorDmaExhausted = 101;
+/// Generic errors.
+inline constexpr KPCError kErrorUnimplemented = -1;
 
 /// @brief Does a system wide bug check.
 /// @param void no params are needed.

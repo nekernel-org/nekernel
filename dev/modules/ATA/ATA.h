@@ -149,9 +149,9 @@ Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::UInt16 io, Kernel::UInt8 
                            Kernel::Char* buf, Kernel::SizeT sec_sz, Kernel::SizeT buf_sz);
 
 /// @brief get sector count.
-Kernel::SizeT drv_get_sector_count();
+Kernel::SizeT drv_std_get_sector_count();
 
 /// @brief get device size.
-Kernel::SizeT drv_get_size();
+Kernel::SizeT drv_std_get_size();
 
 #endif  // ifdef __NEOSKRNL__

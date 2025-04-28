@@ -349,10 +349,10 @@ Kernel::Void drv_std_write(Kernel::UInt64 lba, Kernel::Char* buf, Kernel::SizeT 
                            Kernel::SizeT buf_sz);
 
 /// @brief Gets the sector count from AHCI disk.
-Kernel::SizeT drv_get_sector_count();
+Kernel::SizeT drv_std_get_sector_count();
 
 /// @brief Gets the AHCI disk size.
-Kernel::SizeT drv_get_size();
+Kernel::SizeT drv_std_get_size();
 
 /// @brief Checks if the drive has completed the command.
 Kernel::Bool drv_is_ready(void);

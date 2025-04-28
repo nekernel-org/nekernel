@@ -71,7 +71,7 @@ class KString final {
 };
 
 class KStringBuilder final {
-public:
+ public:
   static ErrorOr<KString> Construct(const Char* data);
   static const Char*      FromBool(const Char* fmt, bool n);
   static const Char*      Format(const Char* fmt, const Char* from);

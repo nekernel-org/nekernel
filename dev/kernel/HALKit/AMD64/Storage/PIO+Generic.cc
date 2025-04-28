@@ -245,11 +245,11 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
   drv_pio_std_write(Lba, IO, Master, Buf, SectorSz, Size);
 }
 
-SizeT drv_get_size() {
+SizeT drv_std_get_size() {
   return drv_pio_get_size();
 }
 
-SizeT drv_get_sector_count() {
+SizeT drv_std_get_sector_count() {
   return drv_pio_get_sector_count();
 }
 

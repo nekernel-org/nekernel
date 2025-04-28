@@ -272,6 +272,8 @@ EXTERN_C Void rt_cli();
 EXTERN_C Void rt_sti();
 EXTERN_C Void rt_cld();
 EXTERN_C Void rt_std();
+
+EXTERN_C Int32 mm_memory_fence(VoidPtr virtual_address);
 }  // namespace Kernel::HAL
 
 EXTERN_C Kernel::Void idt_handle_generic(Kernel::UIntPtr rsp);

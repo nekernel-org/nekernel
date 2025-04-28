@@ -23,6 +23,7 @@
 #pragma once
 
 #include <KernelKit/DebugOutput.h>
+#include "NewKit/Defines.h"
 
 #ifdef __NE_AMD64__
 #define NE_DMA_POOL_START (0x1000000)
@@ -30,11 +31,14 @@
 
 namespace Kernel {
 /// @brief DMA pool base pointer, here we're sure that AHCI or whatever tricky standard sees it.
-inline UInt8* kDmaPoolPtr = (UInt8*) NE_DMA_POOL_START;
+inline UInt8*       kDmaPoolPtr = (UInt8*) NE_DMA_POOL_START;
+inline const UInt8* kDmaPoolEnd = (UInt8*) (NE_DMA_POOL_START + NE_DMA_POOL_SIZE);
 
+/***********************************************************************************/
 /// @brief allocate from the rtl_dma_alloc system.
 /// @param size the size of the chunk to allocate.
 /// @param align alignement of pointer.
+/***********************************************************************************/
 inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
   if (!size) {
     return nullptr;
@@ -42,11 +46,14 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
 
   UIntPtr addr = (UIntPtr) kDmaPoolPtr;
 
-  /// here we just align the address according to a `align` variable, i'd rather be a power of two really.
+  /// here we just align the address according to a `align` variable, i'd rather be a power of two
+  /// really.
   addr = (addr + (align - 1)) & ~(align - 1);
 
-  if ((addr + size) >= (NE_DMA_POOL_START + NE_DMA_POOL_SIZE)) {
-    kout << "DMA Pool exhausted!\r";
+  if ((addr + size) >= reinterpret_cast<UIntPtr>(kDmaPoolEnd)) {
+    kout << "DMA Pool is exhausted!\r";
+
+    err_global_get() = kErrorDmaExhausted;
 
     return nullptr;
   }
@@ -55,12 +62,18 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
   return (VoidPtr) addr;
 }
 
+/***********************************************************************************/
+/// @brief Free DMA pointer.
+/***********************************************************************************/
 inline Void rtl_dma_free(SizeT size) {
   if (!size) return;
 
   kDmaPoolPtr = (UInt8*) (kDmaPoolPtr - size);
 }
 
+/***********************************************************************************/
+/// @brief Flush DMA pointer.
+/***********************************************************************************/
 inline Void rtl_dma_flush(VoidPtr ptr, SizeT size_buffer) {
   if (ptr > (Void*) (NE_DMA_POOL_START + NE_DMA_POOL_SIZE)) {
     return;

@@ -94,6 +94,18 @@ UIntPtr hal_get_phys_address(VoidPtr virt) {
 }
 
 /***********************************************************************************/
+/// @brief clflush+mfence helper function.
+/***********************************************************************************/
+EXTERN_C Int32 mm_memory_fence(VoidPtr virtual_address) {
+  if (!virtual_address || !hal_get_phys_address(virtual_address)) return kErrorInvalidData;
+
+  asm volatile("clflush (%0)" : : "r"(virtual_address) : "memory");
+  asm volatile("mfence" ::: "memory");
+
+  return kErrorSuccess;
+}
+
+/***********************************************************************************/
 /// @brief Maps or allocates a page from virtual_address.
 /// @param virtual_address a valid virtual address.
 /// @param phys_addr point to physical address.
@@ -136,9 +148,7 @@ EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UI
 
   hal_invl_tlb(virtual_address);
 
-  asm volatile("clflush (%0)" : : "r"(virtual_address) : "memory");
-
-  asm volatile("mfence" ::: "memory");
+  mm_memory_fence(virtual_address);
 
   mmi_page_status(pte);
 

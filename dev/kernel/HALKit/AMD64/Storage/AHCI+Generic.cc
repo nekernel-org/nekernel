@@ -257,7 +257,7 @@ SizeT drv_get_sector_count_ahci() {
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
 SizeT drv_get_size_ahci() {
-  return drv_get_sector_count() * kAHCISectorSize;
+  return drv_std_get_sector_count() * kAHCISectorSize;
 }
 
 /// @brief Enable Host and probe using the IDENTIFY command.
@@ -426,16 +426,16 @@ Bool drv_std_detected_ahci() {
 ///
 ////////////////////////////////////////////////////
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer) {
-  drv_std_input_output_ahci<YES, YES, NO>(lba / sector_sz, reinterpret_cast<UInt8*>(buffer), sector_sz,
-                                          size_buffer);
+  drv_std_input_output_ahci<YES, YES, NO>(lba / sector_sz, reinterpret_cast<UInt8*>(buffer),
+                                          sector_sz, size_buffer);
 }
 
 ////////////////////////////////////////////////////
 ///
 ////////////////////////////////////////////////////
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer) {
-  drv_std_input_output_ahci<NO, YES, NO>(lba / sector_sz, reinterpret_cast<UInt8*>(buffer), sector_sz,
-                                         size_buffer);
+  drv_std_input_output_ahci<NO, YES, NO>(lba / sector_sz, reinterpret_cast<UInt8*>(buffer),
+                                         sector_sz, size_buffer);
 }
 
 ////////////////////////////////////////////////////
@@ -459,7 +459,7 @@ Bool drv_std_detected(Void) {
   @return Sector size in bytes.
  */
 ////////////////////////////////////////////////////
-SizeT drv_get_sector_count() {
+SizeT drv_std_get_sector_count() {
   return drv_get_sector_count_ahci();
 }
 
@@ -467,7 +467,7 @@ SizeT drv_get_sector_count() {
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
 ////////////////////////////////////////////////////
-SizeT drv_get_size() {
+SizeT drv_std_get_size() {
   return drv_get_size_ahci();
 }
 

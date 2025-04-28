@@ -193,7 +193,7 @@ namespace Detail {
         trait.fKind                   = kMassStorageDrive | kUnformattedDrive | kReadOnlyDrive;
 
         trait.fSectorSz = 512;
-        trait.fLbaEnd   = drv_get_sector_count() - 1;
+        trait.fLbaEnd   = drv_std_get_sector_count() - 1;
         trait.fLbaStart = 0x400;
       }
     }
