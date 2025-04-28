@@ -108,17 +108,18 @@ struct PACKED HEFS_BOOT_NODE final {
                                /// Drive, etc).
   Kernel::UInt8  fEncoding;    /// @brief Encoding of the filesystem. (UTF-8, UTF-16, etc).
   Kernel::UInt64 fStartIND;    /// @brief Start of the INode tree.
-  Kernel::UInt64 fEndIND;      /// @brief End of the INode tree. it is used to track down the last ind offset.
-  Kernel::UInt64 fINDCount;    /// @brief Number of leafs in the INode tree.
+  Kernel::UInt64
+      fEndIND;  /// @brief End of the INode tree. it is used to track down the last ind offset.
+  Kernel::UInt64 fINDCount;  /// @brief Number of leafs in the INode tree.
   Kernel::UInt64 fDiskSize;  /// @brief Size of the disk. (Could be a virtual size, that is not the
                              /// real size of the disk.)
   Kernel::UInt16 fDiskStatus;  /// @brief Status of the disk. (locked, unlocked, error, invalid).
   Kernel::UInt16 fDiskFlags;   /// @brief Flags of the disk. (read-only, read-write, etc).
   Kernel::UInt16
       fVID;  /// @brief Virtual Identification Number within an EPM disk. (0xFFFF if not used).
-  Kernel::UInt64 fStartIN;   /// @brief Reserved for future use.
-  Kernel::UInt64 fEndIN;  /// @brief Reserved for future use.
-  Kernel::UInt64 fReserved;  /// @brief Reserved for future use.
+  Kernel::UInt64 fStartIN;    /// @brief Reserved for future use.
+  Kernel::UInt64 fEndIN;      /// @brief Reserved for future use.
+  Kernel::UInt64 fReserved;   /// @brief Reserved for future use.
   Kernel::UInt64 fReserved1;  /// @brief Reserved for future use.
   Kernel::Char   fPad[272];
 };
