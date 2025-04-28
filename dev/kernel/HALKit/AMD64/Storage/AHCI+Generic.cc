@@ -196,8 +196,8 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   }
 
   command_header->Prdtl       = prdt_index;
-  command_header->Struc.Cfl   = sizeof(FisRegH2D) / sizeof(UInt32);
-  command_header->Struc.Write = Write;
+  command_header->HbaFlags.Struct.Cfl   = sizeof(FisRegH2D) / sizeof(UInt32);
+  command_header->HbaFlags.Struct.Write = Write;
 
   volatile FisRegH2D* h2d_fis = (volatile FisRegH2D*) (&command_table->Cfis[0]);
 

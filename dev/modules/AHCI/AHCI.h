@@ -262,8 +262,8 @@ typedef HbaMem* HbaMemRef;
 
 typedef struct HbaCmdHeader final {
   // DW0
-  union {
-    struct {
+  union HbaFlags {
+    struct HbaFlags_ {
       Kernel::UInt8 Cfl : 5;           // Command FIS length in DWORDS, 2 ~ 16
       Kernel::UInt8 Atapi : 1;         // ATAPI
       Kernel::UInt8 Write : 1;         // Write, 1: H2D, 0: D2H
@@ -274,10 +274,10 @@ typedef struct HbaCmdHeader final {
       Kernel::UInt8 Clear : 1;      // Clear busy upon R_OK
       Kernel::UInt8 Reserved0 : 1;  // Reserved
       Kernel::UInt8 Pmp : 4;        // Port multiplier port
-    } Struc;
+    } Struct;
 
     Kernel::UInt16 Flags;
-  };
+  } HbaFlags;
 
   Kernel::UInt16 Prdtl;  // Physical region descriptor table length in entries
   Kernel::UInt32 Prdbc;  // Physical region descriptor byte count transferred
