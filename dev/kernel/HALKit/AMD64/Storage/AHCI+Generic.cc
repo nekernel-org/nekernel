@@ -22,25 +22,26 @@
 #include <KernelKit/LockDelegate.h>
 #include <KernelKit/PCI/Iterator.h>
 #include <KernelKit/ProcessScheduler.h>
+#include <KernelKit/Timer.h>
 #include <NewKit/Utils.h>
 #include <StorageKit/AHCI.h>
 #include <StorageKit/DmaPool.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 
-#define kHBAErrTaskFile (1 << 30)
-#define kHBAPxCmdST (0x0001)
-#define kHBAPxCmdFre (0x0010)
-#define kHBAPxCmdFR (0x4000)
-#define kHBAPxCmdCR (0x8000)
+#define kSATAErrTaskFile (1 << 30)
+#define kSATAPxCmdST (0x0001)
+#define kSATAPxCmdFre (0x0010)
+#define kSATAPxCmdFR (0x4000)
+#define kSATAPxCmdCR (0x8000)
 
 #define kSATALBAMode (1 << 6)
 
 #define kSATASRBsy (0x80)
 #define kSATASRDrq (0x08)
 
-#define kHBABohcBiosOwned (1 << 0)
-#define kHBABohcOSOwned (1 << 1)
+#define kSATABohcBiosOwned (1 << 0)
+#define kSATABohcOSOwned (1 << 1)
 
 #define kSATAPortCnt (0x20)
 
@@ -53,6 +54,7 @@
 
 using namespace Kernel;
 
+STATIC HardwareTimer kSATATimer(rtl_milliseconds(5));
 STATIC PCI::Device kSATADev;
 STATIC HbaMemRef   kSATAHba;
 STATIC Lba         kSATASectorCount                                        = 0UL;
@@ -126,6 +128,8 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
                                       SizeT size_buffer) noexcept {
   NE_UNUSED(sector_sz);
 
+  lba /= sector_sz;
+
   if (!buffer || size_buffer == 0) {
     kout << "Invalid buffer for AHCI I/O.\r";
     err_global_get() = kErrorDisk;
@@ -153,9 +157,13 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   VoidPtr ptr = rtl_dma_alloc(size_buffer, 4096);
 
+  rtl_dma_flush(ptr, size_buffer);
+
   if (Write) {
     rt_copy_memory(buffer, ptr, size_buffer);
   }
+
+  rtl_dma_flush(ptr, size_buffer);
 
   // Build the PRDT
   SizeT   bytes_remaining = size_buffer;
@@ -227,7 +235,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   rtl_dma_flush(ptr, size_buffer);
 
-  if (kSATAHba->Is & kHBAErrTaskFile) {
+  if (kSATAHba->Is & kSATAErrTaskFile) {
     kout << "AHCI Task File Error during I/O.\r";
 
     rtl_dma_free(size_buffer);
@@ -264,26 +272,26 @@ SizeT drv_get_size_ahci() {
 STATIC BOOL ahci_enable_and_probe() {
   if (kSATAHba->Cap == 0x0) return NO;
 
-  kSATAHba->Ports[kSATAIndex].Cmd &= ~kHBAPxCmdFre;
-  kSATAHba->Ports[kSATAIndex].Cmd &= ~kHBAPxCmdST;
+  kSATAHba->Ports[kSATAIndex].Cmd &= ~kSATAPxCmdFre;
+  kSATAHba->Ports[kSATAIndex].Cmd &= ~kSATAPxCmdST;
 
   while (YES) {
-    if (kSATAHba->Ports[kSATAIndex].Cmd & kHBAPxCmdCR) continue;
+    if (kSATAHba->Ports[kSATAIndex].Cmd & kSATAPxCmdCR) continue;
 
-    if (kSATAHba->Ports[kSATAIndex].Cmd & kHBAPxCmdFR) continue;
+    if (kSATAHba->Ports[kSATAIndex].Cmd & kSATAPxCmdFR) continue;
 
     break;
   }
 
   // Now we are ready.
 
-  kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdFre;
-  kSATAHba->Ports[kSATAIndex].Cmd |= kHBAPxCmdST;
+  kSATAHba->Ports[kSATAIndex].Cmd |= kSATAPxCmdFre;
+  kSATAHba->Ports[kSATAIndex].Cmd |= kSATAPxCmdST;
 
-  if (kSATAHba->Bohc & kHBABohcBiosOwned) {
-    kSATAHba->Bohc |= kHBABohcOSOwned;
+  if (kSATAHba->Bohc & kSATABohcBiosOwned) {
+    kSATAHba->Bohc |= kSATABohcOSOwned;
 
-    while (kSATAHba->Bohc & kHBABohcBiosOwned) {
+    while (kSATAHba->Bohc & kSATABohcBiosOwned) {
       ;
     }
   }
@@ -426,7 +434,7 @@ Bool drv_std_detected_ahci() {
 ///
 ////////////////////////////////////////////////////
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer) {
-  drv_std_input_output_ahci<YES, YES, NO>(lba / sector_sz, reinterpret_cast<UInt8*>(buffer),
+  drv_std_input_output_ahci<YES, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer),
                                           sector_sz, size_buffer);
 }
 
@@ -434,7 +442,7 @@ Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer)
 ///
 ////////////////////////////////////////////////////
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer) {
-  drv_std_input_output_ahci<NO, YES, NO>(lba / sector_sz, reinterpret_cast<UInt8*>(buffer),
+  drv_std_input_output_ahci<NO, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer),
                                          sector_sz, size_buffer);
 }
 

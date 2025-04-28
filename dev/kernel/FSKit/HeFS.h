@@ -28,6 +28,8 @@
 
 #define kHeFSDefaultVoluneName u8"HeFS Volume"
 
+#define kHeFSINDStartLBA (sizeof(HEFS_BOOT_NODE))
+
 #define kHeFSSearchAllStr u8"*"
 
 struct HEFS_BOOT_NODE;

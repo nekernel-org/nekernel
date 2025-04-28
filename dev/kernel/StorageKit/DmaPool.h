@@ -23,7 +23,6 @@
 #pragma once
 
 #include <KernelKit/DebugOutput.h>
-#include "NewKit/Defines.h"
 
 #ifdef __NE_AMD64__
 #define NE_DMA_POOL_START (0x1000000)
