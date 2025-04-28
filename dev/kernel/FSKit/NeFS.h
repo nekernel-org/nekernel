@@ -108,7 +108,7 @@ default.
 #define kNeFSFlagCreated (71)
 
 #define kNeFSMimeNameLen (200)
-#define kNeFSForkNameLen (200)
+#define kNeFSForkNameLen (199)
 
 #define kNeFSFrameworkExt ".fwrk/"
 #define kNeFSStepsExt ".step/"
@@ -200,8 +200,6 @@ struct PACKED NEFS_FORK_STRUCT final {
 
   Kernel::Lba NextSibling;
   Kernel::Lba PreviousSibling;
-
-  Kernel::Char Pad[2] = {0};
 };
 
 /// @brief Partition block type

@@ -248,6 +248,14 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
       rtl_dma_flush(ptr, size_buffer);
     }
 
+    if ((kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq)) == 0) {
+      goto ahci_io_end;
+    } else {
+      kout << "Warning: Disk still busy after command completion!\r";
+      while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq));
+    }
+
+  ahci_io_end:
     rtl_dma_free(size_buffer);
 
     err_global_get() = kErrorSuccess;
@@ -434,16 +442,16 @@ Bool drv_std_detected_ahci() {
 ///
 ////////////////////////////////////////////////////
 Void drv_std_write(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer) {
-  drv_std_input_output_ahci<YES, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer),
-                                          sector_sz, size_buffer);
+  drv_std_input_output_ahci<YES, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz,
+                                          size_buffer);
 }
 
 ////////////////////////////////////////////////////
 ///
 ////////////////////////////////////////////////////
 Void drv_std_read(UInt64 lba, Char* buffer, SizeT sector_sz, SizeT size_buffer) {
-  drv_std_input_output_ahci<NO, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer),
-                                         sector_sz, size_buffer);
+  drv_std_input_output_ahci<NO, YES, NO>(lba, reinterpret_cast<UInt8*>(buffer), sector_sz,
+                                         size_buffer);
 }
 
 ////////////////////////////////////////////////////
