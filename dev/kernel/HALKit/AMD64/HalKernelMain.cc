@@ -106,7 +106,11 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
   hal_pre_init_scheduler();
 
+#ifdef __FSKIT_INCLUDES_HEFS__
   Kernel::HeFS::fs_init_hefs();
+#elif defined(__FSKIT_INCLUDES_NEFS__)
+  Kernel::NeFS::fs_init_nefs();
+#endif
 
   Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
