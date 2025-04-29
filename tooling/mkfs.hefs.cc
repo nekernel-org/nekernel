@@ -112,50 +112,6 @@ int main(int argc, char** argv) {
 
   filesystem.seekp(bootNode.startIND);
 
-  auto cnt = end_ind / sizeof(mkfs::hefs::IndexNodeDirectory);
-
-  auto start = bootNode.startIND;
-  auto prev  = start;
-
-  // Pre-allocate index node directory tree
-  for (size_t i = 0; i < cnt; ++i) {
-    mkfs::hefs::IndexNodeDirectory indexNode{};
-
-    std::memcpy(indexNode.name, u8"/", std::u8string(u8"/").size() * sizeof(char16_t));
-
-    indexNode.flags   = mkfs::hefs::kHeFSEncodingUTF8;
-    indexNode.kind    = mkfs::hefs::kHeFSFileKindDirectory;
-    indexNode.deleted = mkfs::hefs::kHeFSTimeMax;
-
-    indexNode.entryCount = 1;
-
-    indexNode.checksum          = 0;
-    indexNode.indexNodeChecksum = 0;
-
-    indexNode.uid   = 0;
-    indexNode.gid   = 0;
-    indexNode.mode  = 0;
-    indexNode.color = mkfs::hefs::kHeFSBlack;
-
-    indexNode.parent = bootNode.startIND;
-    indexNode.child  = bootNode.endIND;
-
-    indexNode.next = start + sizeof(mkfs::hefs::IndexNodeDirectory);
-    indexNode.prev = prev;
-
-    prev = start;
-    start += sizeof(mkfs::hefs::IndexNodeDirectory);
-
-    filesystem.write(reinterpret_cast<const char*>(&indexNode),
-                     sizeof(mkfs::hefs::IndexNodeDirectory));
-
-    if (!filesystem.good()) {
-      std::cerr << "mkfs.hefs: Error: Unable to write index node to output_device " << output_device
-                << std::endl;
-      return EXIT_FAILURE;
-    }
-  }
-
   filesystem.flush();
   filesystem.close();
 
