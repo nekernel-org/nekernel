@@ -13,15 +13,15 @@
 
 namespace Kernel {
 enum CommStatus : UInt16 {
-  kStateInvalid = 0x64,
+  kStateInvalid  = 0x64,
   kStateReady    = 0xCF,
   kStateTransmit = 0xFC,
   kStateCnt      = 3
 };
 
 namespace Detail {
-  constexpr ATTRIBUTE(unused) const UInt16 kPort  = 0x3F8;
-  STATIC ATTRIBUTE(unused) UInt16          kState = kStateInvalid;
+  constexpr ATTRIBUTE(unused) const UInt16 kPort = 0x3F8;
+  STATIC ATTRIBUTE(unused) UInt16 kState         = kStateInvalid;
 
   /// @brief Init COM1.
   /// @return

@@ -64,10 +64,10 @@ struct DriveTrait final {
   Lba   fLbaStart{0}, fLbaEnd{0};
   SizeT fSectorSz{kDriveSectorSz};
 
-  Void (*fInput)(DrivePacket packet);
-  Void (*fOutput)(DrivePacket packet);
-  Void (*fVerify)(DrivePacket packet);
-  Void (*fInit)(DrivePacket packet);
+  Void (*fInput)(DrivePacket& packet);
+  Void (*fOutput)(DrivePacket& packet);
+  Void (*fVerify)(DrivePacket& packet);
+  Void (*fInit)(DrivePacket& packet);
   const Char* (*fProtocol)(Void);
 };
 

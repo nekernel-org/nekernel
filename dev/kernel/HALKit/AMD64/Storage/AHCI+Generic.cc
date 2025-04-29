@@ -130,6 +130,11 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   lba /= sector_sz;
 
+  if (lba > kSATASectorCount) {
+    err_global_get() = kErrorDisk;
+    return;
+  }
+
   if (!buffer || size_buffer == 0) {
     kout << "Invalid buffer for AHCI I/O.\r";
     err_global_get() = kErrorDisk;
@@ -146,7 +151,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   volatile HbaCmdHeader* command_header =
       (volatile HbaCmdHeader*) ((UInt64) kSATAHba->Ports[kSATAIndex].Clb);
-      
+
   command_header += slot;
 
   MUST_PASS(command_header);
@@ -196,7 +201,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
     return;
   }
 
-  command_header->Prdtl       = prdt_index;
+  command_header->Prdtl                 = prdt_index;
   command_header->HbaFlags.Struct.Cfl   = sizeof(FisRegH2D) / sizeof(UInt32);
   command_header->HbaFlags.Struct.Write = Write;
 
@@ -241,6 +246,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
     rtl_dma_free(size_buffer);
     err_global_get() = kErrorDiskIsCorrupted;
+
     return;
   } else {
     if (!Write) {

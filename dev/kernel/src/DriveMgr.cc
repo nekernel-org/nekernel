@@ -31,9 +31,11 @@ STATIC UInt16 kAHCIPortsImplemented [[maybe_unused]] = 0UL;
 /// @brief reads from an ATA drive.
 /// @param pckt Packet structure (fPacketContent must be non null)
 /// @return
-Void io_drv_input(DriveTrait::DrivePacket pckt) {
+Void io_drv_input(DriveTrait::DrivePacket& pckt) {
 #ifdef __AHCI__
   drv_std_read(pckt.fPacketLba, (Char*) pckt.fPacketContent, kAHCISectorSize, pckt.fPacketSize);
+
+  if (err_global_get() != kErrorSuccess) pckt.fPacketGood = NO;
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
   drv_std_read(pckt.fPacketLba, kATAIO, kATAMaster, (Char*) pckt.fPacketContent, kATASectorSize,
                pckt.fPacketSize);
@@ -43,7 +45,7 @@ Void io_drv_input(DriveTrait::DrivePacket pckt) {
 /// @brief Writes to an ATA drive.
 /// @param pckt the packet to write.
 /// @return
-Void io_drv_output(DriveTrait::DrivePacket pckt) {
+Void io_drv_output(DriveTrait::DrivePacket& pckt) {
   if (pckt.fPacketReadOnly) {
     pckt.fPacketGood = NO;
     return;
@@ -51,6 +53,8 @@ Void io_drv_output(DriveTrait::DrivePacket pckt) {
 
 #ifdef __AHCI__
   drv_std_write(pckt.fPacketLba, (Char*) pckt.fPacketContent, kAHCISectorSize, pckt.fPacketSize);
+
+  if (err_global_get() != kErrorSuccess) pckt.fPacketGood = NO;
 #elif defined(__ATA_PIO__) || defined(__ATA_DMA__)
   drv_std_write(pckt.fPacketLba, kATAIO, kATAMaster, (Char*) pckt.fPacketContent, kATASectorSize,
                 pckt.fPacketSize);
@@ -60,7 +64,7 @@ Void io_drv_output(DriveTrait::DrivePacket pckt) {
 /// @brief Executes a disk check on the ATA drive.
 /// @param pckt the packet to read.
 /// @return
-Void io_drv_init(DriveTrait::DrivePacket pckt) {
+Void io_drv_init(DriveTrait::DrivePacket& pckt) {
   NE_UNUSED(pckt);
 
 #if defined(__ATA_PIO__) || defined(__ATA_DMA__)
@@ -116,7 +120,7 @@ const Char* io_drv_kind(Void) {
 
 /// @brief Unimplemented drive function.
 /// @param pckt the packet to read.
-Void io_drv_unimplemented(DriveTrait::DrivePacket pckt) noexcept {
+Void io_drv_unimplemented(DriveTrait::DrivePacket& pckt) noexcept {
   NE_UNUSED(pckt);
 }
 
