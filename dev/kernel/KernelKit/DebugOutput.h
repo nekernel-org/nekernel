@@ -10,6 +10,7 @@
 #include <KernelKit/DeviceMgr.h>
 #include <NewKit/OwnPtr.h>
 #include <NewKit/Stream.h>
+#include <NewKit/Utils.h>
 
 #define kDebugUnboundPort 0x0FEED
 
@@ -26,6 +27,8 @@
 namespace Kernel {
 class TerminalDevice;
 class DTraceDevice;
+class DebugDevice;
+class Utf8TerminalDevice;
 
 inline TerminalDevice end_line();
 inline TerminalDevice number(const Long& x);
@@ -49,10 +52,34 @@ class TerminalDevice final NE_DEVICE<const Char*> {
   STATIC TerminalDevice The() noexcept;
 };
 
+class Utf8TerminalDevice final NE_DEVICE<const Utf8Char*> {
+ public:
+  Utf8TerminalDevice(void (*print)(IDeviceObject*, const Utf8Char*),
+                     void (*gets)(IDeviceObject*, const Utf8Char*))
+      : IDeviceObject<const Utf8Char*>(print, gets) {}
+
+  ~Utf8TerminalDevice() override;
+
+  /// @brief returns device name (terminal name)
+  /// @return string type (const Char*)
+  const Char* Name() const override { return ("Utf8TerminalDevice"); }
+
+  NE_COPY_DEFAULT(Utf8TerminalDevice)
+
+  STATIC Utf8TerminalDevice The() noexcept;
+};
+
 inline TerminalDevice end_line() {
   TerminalDevice self = TerminalDevice::The();
 
   self.operator<<("\r");
+  return self;
+}
+
+inline Utf8TerminalDevice utf_end_line() {
+  Utf8TerminalDevice self = Utf8TerminalDevice::The();
+
+  self.operator<<(u8"\r");
   return self;
 }
 
@@ -175,4 +202,20 @@ inline TerminalDevice& operator<<(TerminalDevice& src, const Long& num) {
 
 #define kout TerminalDevice::The()
 
+#ifdef kendl
+#undef kendl
+#endif  // ifdef kendl
+
 #define kendl end_line()
+
+#ifdef kout8
+#undef kout8
+#endif  // ifdef kout8
+
+#define kout8 Utf8TerminalDevice::The()
+
+#ifdef kendl8
+#undef kendl8
+#endif  // ifdef kendl8
+
+#define kendl8 utf_end_line()

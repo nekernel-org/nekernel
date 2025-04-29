@@ -275,8 +275,6 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 
   auto& drive = kMountpoint.A();
 
-  constexpr auto kNeFSCatalogPadding = 4;
-
   if (catalog && catalog->Kind == kNeFSCatalogKindFile) {
     kout << "Parent is a file.\r";
     delete catalog;
@@ -357,7 +355,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
     // Allocate catalog now...
     // ========================== //
     if ((temporary_catalog.Flags & kNeFSFlagCreated) == 0) {
-      child_catalog->NextSibling = start_free + (sizeof(NEFS_CATALOG_STRUCT) * kNeFSCatalogPadding);
+      child_catalog->NextSibling = start_free + sizeof(NEFS_CATALOG_STRUCT);
 
       drive.fPacket.fPacketContent = &temporary_catalog;
       drive.fPacket.fPacketSize    = sizeof(NEFS_CATALOG_STRUCT);
@@ -402,7 +400,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
       return child_catalog;
     }
 
-    start_free = start_free + (sizeof(NEFS_CATALOG_STRUCT) * kNeFSCatalogPadding);
+    start_free = start_free + sizeof(NEFS_CATALOG_STRUCT);
 
     drive.fPacket.fPacketContent = &temporary_catalog;
     drive.fPacket.fPacketSize    = sizeof(NEFS_CATALOG_STRUCT);
@@ -461,7 +459,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   part_block->Version = kNeFSVersionInteger;
 
   part_block->Kind         = kNeFSPartitionTypeStandard;
-  part_block->StartCatalog = start + sizeof(NEFS_ROOT_PARTITION_BLOCK);
+  part_block->StartCatalog = start + sizeof(NEFS_CATALOG_STRUCT);
   part_block->Flags        = 0UL;
   part_block->CatalogCount = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
   part_block->FreeSectors  = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
@@ -475,14 +473,14 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
 
   drive->fOutput(drive->fPacket);
 
-  (Void)(kout << "drive kind: " << drive->fProtocol() << kendl);
+  (Void)(kout << "Drive kind: " << drive->fProtocol() << kendl);
 
-  (Void)(kout << "partition name: " << part_block->PartitionName << kendl);
-  (Void)(kout << "start: " << hex_number(part_block->StartCatalog) << kendl);
-  (Void)(kout << "number of catalogs: " << hex_number(part_block->CatalogCount) << kendl);
-  (Void)(kout << "free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
-  (Void)(kout << "free sectors: " << hex_number(part_block->FreeSectors) << kendl);
-  (Void)(kout << "sector size: " << hex_number(part_block->SectorSize) << kendl);
+  (Void)(kout << "Partition name: " << part_block->PartitionName << kendl);
+  (Void)(kout << "Start: " << hex_number(part_block->StartCatalog) << kendl);
+  (Void)(kout << "Number of catalogs: " << hex_number(part_block->CatalogCount) << kendl);
+  (Void)(kout << "Free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
+  (Void)(kout << "Free sectors: " << hex_number(part_block->FreeSectors) << kendl);
+  (Void)(kout << "Sector size: " << hex_number(part_block->SectorSize) << kendl);
 
   // write the root catalog.
   this->CreateCatalog(kNeFSRoot, 0, kNeFSCatalogKindDir);

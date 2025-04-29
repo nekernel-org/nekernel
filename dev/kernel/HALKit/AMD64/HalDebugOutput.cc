@@ -13,19 +13,19 @@
 
 namespace Kernel {
 enum CommStatus : UInt16 {
-  kStateInvalid,
+  kStateInvalid = 0x64,
   kStateReady    = 0xCF,
   kStateTransmit = 0xFC,
   kStateCnt      = 3
 };
 
 namespace Detail {
-  constexpr const UInt16 kPort  = 0x3F8;
-  static UInt16          kState = kStateInvalid;
+  constexpr ATTRIBUTE(unused) const UInt16 kPort  = 0x3F8;
+  STATIC ATTRIBUTE(unused) UInt16          kState = kStateInvalid;
 
   /// @brief Init COM1.
   /// @return
-  template <Int16 PORT>
+  template <UInt16 PORT>
   bool hal_serial_init() noexcept {
     if (kState == kStateReady || kState == kStateTransmit) return true;
 
@@ -58,6 +58,7 @@ namespace Detail {
 TerminalDevice::~TerminalDevice() = default;
 
 EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
+  NE_UNUSED(bytes);
   NE_UNUSED(obj);
 
 #ifdef __DEBUG__
@@ -127,6 +128,8 @@ EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
 }
 
 EXTERN_C void ke_io_read(IDeviceObject<const Char*>*, const Char* bytes) {
+  NE_UNUSED(bytes);
+
 #ifdef __DEBUG__
   Detail::hal_serial_init<Detail::kPort>();
 
@@ -164,6 +167,26 @@ EXTERN_C void ke_io_read(IDeviceObject<const Char*>*, const Char* bytes) {
 
 TerminalDevice TerminalDevice::The() noexcept {
   TerminalDevice out(Kernel::ke_io_write, Kernel::ke_io_read);
+  return out;
+}
+
+Utf8TerminalDevice::~Utf8TerminalDevice() = default;
+
+STATIC Void ke_io_write_utf(IDeviceObject<const Utf8Char*>*, const Utf8Char* str) {
+  auto len = urt_string_len(str);
+
+  for (auto size = 0ul; size < len; ++size) {
+    Char buf[2];
+    buf[0] = str[size];
+    buf[1] = 0;
+
+    Kernel::ke_io_write(nullptr, buf);
+  }
+}
+
+Utf8TerminalDevice Utf8TerminalDevice::The() noexcept {
+  Utf8TerminalDevice out(Kernel::ke_io_write_utf,
+                         [](IDeviceObject<const Utf8Char*>*, const Utf8Char*) -> Void {});
   return out;
 }
 

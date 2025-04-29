@@ -146,6 +146,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   volatile HbaCmdHeader* command_header =
       (volatile HbaCmdHeader*) ((UInt64) kSATAHba->Ports[kSATAIndex].Clb);
+      
   command_header += slot;
 
   MUST_PASS(command_header);

@@ -28,7 +28,7 @@
 
 #define kHeFSDefaultVoluneName u8"HeFS Volume"
 
-#define kHeFSINDStartLBA (sizeof(HEFS_BOOT_NODE))
+#define kHeFSINDStartOffset (sizeof(HEFS_INDEX_NODE_DIRECTORY))
 
 #define kHeFSSearchAllStr u8"*"
 
@@ -131,7 +131,7 @@ inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 /// @details This structure is used to store the file information of a file.
 /// @note The index node is a special type of INode that contains the file information.
 /// @note The index node is used to store the file information of a file.
-struct PACKED ALIGN(8) HEFS_INDEX_NODE final {
+struct PACKED HEFS_INDEX_NODE final {
   Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief File name.
   Kernel::UInt32   fFlags;                   /// @brief File flags.
   Kernel::UInt16 fKind;  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
@@ -148,7 +148,7 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE final {
 
   Kernel::UInt64 fBlock[kHeFSBlockCount];  /// @brief block slice.
 
-  Kernel::Char fPad[62];
+  Kernel::Char fPad[69];
 };
 
 enum {
@@ -161,7 +161,7 @@ enum {
 /// @brief HeFS directory node.
 /// @details This structure is used to store the directory information of a file.
 /// @note The directory node is a special type of INode that contains the directory entries.
-struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final {
+struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
   Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief Directory name.
 
   Kernel::UInt32 fFlags;  /// @brief File flags.
@@ -185,7 +185,7 @@ struct PACKED ALIGN(8) HEFS_INDEX_NODE_DIRECTORY final {
   Kernel::UInt8 fColor;                         /// @brief Color of the node. (Red or Black).
   Kernel::Lba   fNext, fPrev, fChild, fParent;  /// @brief Red-black tree pointers.
 
-  Kernel::Char fPad[32];
+  Kernel::Char fPad[33];
 };
 
 namespace Kernel::Detail {

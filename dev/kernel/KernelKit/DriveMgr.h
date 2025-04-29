@@ -156,14 +156,18 @@ namespace Detect {
   Void io_detect_drive(DriveTrait& trait);
 }
 
-/// @brief Read from newfs disk.
+Void io_drv_input(DriveTrait::DrivePacket pckt);
+
+Void io_drv_output(DriveTrait::DrivePacket pckt);
+
+/// @brief Read from IFS disk.
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return
 Int32 fs_ifs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
 
-/// @brief Write to ifs disk.
+/// @brief Write to IFS disk.
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
