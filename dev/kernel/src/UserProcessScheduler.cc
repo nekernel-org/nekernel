@@ -20,8 +20,6 @@
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <NewKit/KString.h>
-#include "KernelKit/CoreProcessScheduler.h"
-#include "NewKit/Defines.h"
 
 ///! BUGS: 0
 
@@ -130,7 +128,7 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
   if (this->UsedMemory > kSchedMaxMemoryLimit) return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-  auto vm_register = hal_read_cr3();
+  auto vm_register = kKernelCR3;
   hal_write_cr3(this->VMRegister);
 
   auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
@@ -267,7 +265,7 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
   auto memory_heap_list = this->HeapTree;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-  auto pd = hal_read_cr3();
+  auto pd = kKernelCR3;
   hal_write_cr3(this->VMRegister);
 #endif
 

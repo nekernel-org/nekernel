@@ -24,7 +24,7 @@
 // Makes the compiler shut up.
 #ifndef kMachineModel
 #define kMachineModel "OS"
-#endif // !kMachineModel
+#endif  // !kMachineModel
 
 EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover) {
   fw_init_efi((EfiSystemTable*) handover->f_FirmwareCustomTables[1]);

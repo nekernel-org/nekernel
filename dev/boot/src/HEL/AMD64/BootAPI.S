@@ -52,7 +52,7 @@ reset_wait:
 .global boot_read_cr3
 
 boot_read_cr3:
-    mov rax, rax
+    mov rax, cr3
     ret
 
 boot_write_cr3:

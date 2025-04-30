@@ -20,8 +20,8 @@
 #include <FirmwareKit/EFI/EFI.h>
 #include <NewKit/Defines.h>
 
-#define kHandoverMagic 0xBADCC
-#define kHandoverVersion 0x0117
+#define kHandoverMagic (0xBADCC)
+#define kHandoverVersion (0x0117)
 
 /* Initial bitmap pointer location and size. */
 #define kHandoverBitMapSz (gib_cast(4))

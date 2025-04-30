@@ -32,6 +32,8 @@ STATIC EfiGUID                    kGopGuid;
 
 EXTERN_C Void rt_reset_hardware();
 
+EXTERN_C Kernel::VoidPtr boot_read_cr3();  // @brief Page directory inside cr3 register.
+
 /**
   @brief Finds and stores the GOP object.
 */
@@ -173,7 +175,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
 
   if (reader_syschk.Blob()) {
     syschk_thread = new Boot::BootThread(reader_syschk.Blob());
-    syschk_thread->SetName("BootZ/SysChk");
+    syschk_thread->SetName("SysChk");
 
     syschk_thread->Start(handover_hdr, NO);
   }
@@ -236,13 +238,11 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // ------------------------------------------ //
 
   if (reader_kernel.Blob()) {
-    // ------------------------------------------ //
-    // null these fields, to avoid being reused later.
-    // ------------------------------------------ //
+    handover_hdr->f_PageStart = boot_read_cr3();
 
     auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
 
-    kernel_thread.SetName("BootZ/NeKernel");
+    kernel_thread.SetName("NeKernel");
 
     handover_hdr->f_KernelImage = reader_kernel.Blob();
     handover_hdr->f_KernelSz    = reader_kernel.Size();
@@ -256,7 +256,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   if (!reader_netboot.Blob()) return kEfiFail;
 
   auto netboot_thread = Boot::BootThread(reader_netboot.Blob());
-  netboot_thread.SetName("BootZ/BootNet");
+  netboot_thread.SetName("BootNet");
 
   return netboot_thread.Start(handover_hdr, NO);
 }

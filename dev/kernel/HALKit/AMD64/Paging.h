@@ -37,7 +37,7 @@ EXTERN_C void hal_write_cr0(Kernel::VoidPtr bit);
 
 EXTERN_C Kernel::VoidPtr hal_read_cr0();  // @brief CPU control register.
 EXTERN_C Kernel::VoidPtr hal_read_cr2();  // @brief Fault address.
-EXTERN_C Kernel::VoidPtr hal_read_cr3();  // @brief Page table.
+EXTERN_C Kernel::VoidPtr hal_read_cr3();  // @brief Page directory inside cr3 register.
 
 namespace Kernel::HAL {
 namespace Detail {

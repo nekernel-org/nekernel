@@ -27,7 +27,8 @@ STATIC Kernel::Void hal_pre_init_scheduler() noexcept {
   }
 }
 
-/// @brief Kernel init procedure.
+/// @brief Kernel init function.
+/// @param handover_hdr Handover boot header.
 EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   if (handover_hdr->f_Magic != kHandoverMagic && handover_hdr->f_Version != kHandoverVersion) {
     return kEfiFail;
@@ -41,6 +42,10 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
                          handover_hdr->f_HardwareTables.f_ImageHandle);
+
+  kKernelCR3 = kHandoverHeader->f_PageStart;
+
+  hal_write_cr3(kKernelCR3);
 
   /************************************** */
   /*     INITIALIZE BIT MAP.              */
