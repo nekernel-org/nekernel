@@ -263,7 +263,7 @@ namespace Detail {
           break;
         }
 
-        if ((!tmpdir->fCreated && tmpdir->fDeleted)) {
+        if ((!tmpdir->fCreated && tmpdir->fDeleted) || *tmpdir->fName == 0) {
           HEFS_INDEX_NODE_DIRECTORY* dirent =
               (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
@@ -296,15 +296,15 @@ namespace Detail {
           }
 
           if (dirent->fNext == 0) {
-            dirent->fNext = start + sizeof(HEFS_INDEX_NODE_DIRECTORY);
+            dirent->fNext = tmp + sizeof(HEFS_INDEX_NODE_DIRECTORY);
           }
 
-          if (tmpdir->fParent == 0) {
-            tmpdir->fParent = root->fStartIND;
+          if (dirent->fParent == 0) {
+            dirent->fParent = root->fStartIND;
           }
 
           if (tmpdir->fChild == 0) {
-            auto child = root->fEndIND;
+            auto child = dirent->fNext + sizeof(HEFS_INDEX_NODE_DIRECTORY);
 
             HEFS_INDEX_NODE_DIRECTORY* tmpend =
                 (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
@@ -316,11 +316,11 @@ namespace Detail {
 
               mnt->fInput(mnt->fPacket);
 
-              if ((!tmpend->fCreated && tmpend->fDeleted)) {
+              if ((!tmpend->fCreated && tmpend->fDeleted) || *tmpdir->fName == 0) {
                 break;
               }
 
-              child -= sizeof(HEFS_INDEX_NODE_DIRECTORY);
+              child += sizeof(HEFS_INDEX_NODE_DIRECTORY);
               if (child < root->fStartIND || child > root->fEndIND) break;
             }
 
@@ -787,43 +787,6 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   drive->fPacket.fPacketContent = root;
 
   drive->fOutput(drive->fPacket);
-
-  HEFS_INDEX_NODE_DIRECTORY* dir =
-      (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
-
-  MUST_PASS(dir);
-
-  urt_copy_memory((VoidPtr) u8"\0", dir->fName, urt_string_len(u8"\0"));
-
-  dir->fFlags = flags;
-  dir->fKind  = kHeFSFileKindDirectory;
-
-  dir->fCreated    = 0;
-  dir->fDeleted    = 1;
-  dir->fEntryCount = 0;
-
-  dir->fIndexNodeChecksum = 0;
-
-  dir->fUID  = 0;
-  dir->fGID  = 0;
-  dir->fMode = 0;
-
-  dir->fColor = kHeFSBlack;
-
-  dir->fChild  = 0;
-  dir->fParent = 0;
-  dir->fNext   = 0;
-  dir->fPrev   = 0;
-
-  dir->fChecksum = ke_calculate_crc32((Char*) dir, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-  drive->fPacket.fPacketLba     = root->fStartIND;
-  drive->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-  drive->fPacket.fPacketContent = dir;
-
-  drive->fOutput(drive->fPacket);
-
-  mm_delete_heap(dir);
 
   (Void)(kout << "Drive kind: " << drive->fProtocol() << kendl);
   (Void)(kout8 << u8"Partition name: " << root->fVolName << kendl8);
