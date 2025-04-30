@@ -106,7 +106,8 @@ class USER_PROCESS final {
     kExecutableKindCount,
   };
 
-  ProcessTime PTime{0};  //! @brief USER_PROCESS allocated tine.
+  ProcessTime PTime{0};  //! @brief Process allocated tine.
+  ProcessTime RTime{0};  //! @brief Process Run time
 
   PID   ProcessId{kSchedInvalidPID};
   Int32 Kind{kExecutableKind};

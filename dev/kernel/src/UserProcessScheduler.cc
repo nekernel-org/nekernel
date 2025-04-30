@@ -20,6 +20,8 @@
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <NewKit/KString.h>
+#include "KernelKit/CoreProcessScheduler.h"
+#include "NewKit/Defines.h"
 
 ///! BUGS: 0
 
@@ -424,6 +426,7 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
   process.ProcessId = pid;
   process.Status    = ProcessStatusKind::kStarting;
   process.PTime     = (UIntPtr) AffinityKind::kStandard;
+  process.RTime     = 0;
 
   (Void)(kout << "PID: " << number(process.ProcessId) << kendl);
   (Void)(kout << "Name: " << process.Name << kendl);
@@ -510,13 +513,36 @@ SizeT UserProcessScheduler::Run() noexcept {
                                            process.StackFrame, process.ProcessId);
 
       if (!ret) {
-        if (process.Affinity == AffinityKind::kRealTime) continue;
-
         kout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
-
         process.Crash();
       }
     } else {
+      if (process.ProcessId == this->CurrentProcess().Leak().ProcessId) {
+        if (process.PTime < process.RTime) {
+          if (process.RTime < (Int32) AffinityKind::kRealTime)
+            process.PTime = (Int32) AffinityKind::kVeryLowUsage;
+          else if (process.RTime < (Int32) AffinityKind::kVeryHigh)
+            process.PTime = (Int32) AffinityKind::kLowUsage;
+          else if (process.RTime < (Int32) AffinityKind::kHigh)
+            process.PTime = (Int32) AffinityKind::kStandard;
+          else if (process.RTime < (Int32) AffinityKind::kStandard)
+            process.PTime = (Int32) AffinityKind::kHigh;
+
+          process.RTime = static_cast<Int32>(process.Affinity);
+
+          BOOL ret = UserProcessHelper::Switch(process.Image.Leak().Leak().Leak(),
+                                               &process.StackReserve[process.StackSize - 1],
+                                               process.StackFrame, process.ProcessId);
+
+          if (!ret) {
+            kout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
+            process.Crash();
+          }
+        } else {
+          ++process.RTime;
+        }
+      }
+
       --process.PTime;
     }
   }
