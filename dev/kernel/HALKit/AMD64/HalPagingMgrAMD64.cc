@@ -37,14 +37,18 @@ namespace Detail {
 /// \param pte Page Table Entry pointer.
 /***********************************************************************************/
 STATIC Void mmi_page_status(Detail::PTE* pte) {
+  NE_UNUSED(pte);
+
+#ifdef __NE_VERBOSE_BITMAP__
   (Void)(kout << (pte->Present ? "Present" : "Not Present") << kendl);
   (Void)(kout << (pte->Wr ? "W/R" : "Not W/R") << kendl);
   (Void)(kout << (pte->Nx ? "NX" : "Not NX") << kendl);
   (Void)(kout << (pte->User ? "User" : "Not User") << kendl);
   (Void)(kout << (pte->Pcd ? "Not Cached" : "Cached") << kendl);
   (Void)(kout << (pte->Accessed ? "Accessed" : "Not Accessed") << kendl);
-  (Void)(kout << hex_number(pte->PhysicalAddress) << kendl);
   (Void)(kout << (pte->ProtectionKey ? "Protected" : "Not Protected/PKU Disabled") << kendl);
+  (Void)(kout << "Physical Address: " << hex_number(pte->PhysicalAddress) << kendl);
+#endif
 }
 
 /***********************************************************************************/

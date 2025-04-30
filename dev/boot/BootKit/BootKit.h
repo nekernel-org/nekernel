@@ -225,16 +225,16 @@ class BDiskFormatFactory final {
 
     return true;
 #else
-    GPT_PARTITION_TABLE gpt_part{};
+    GPT_PARTITION_TABLE* gpt_part = (GPT_PARTITION_TABLE*) RTL_ALLOCA(sizeof(GPT_PARTITION_TABLE));
 
     fDiskDev.Leak().mBase = (kGPTPartitionTableLBA);
     fDiskDev.Leak().mSize = sizeof(GPT_PARTITION_TABLE);
 
-    fDiskDev.Read((Char*) &gpt_part, sizeof(GPT_PARTITION_TABLE));
+    fDiskDev.Read((Char*) gpt_part, sizeof(GPT_PARTITION_TABLE));
 
     BootTextWriter writer;
 
-    if (StrCmp(gpt_part.Signature, kMagicGPT) == 0) {
+    if (StrCmp(gpt_part->Signature, kMagicGPT) == 0) {
       writer.Write("BootZ: GPT Partition found.\r");
       return true;
     }
@@ -256,74 +256,76 @@ class BDiskFormatFactory final {
 template <typename BootDev>
 inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
 #if defined(BOOTZ_EPM_SUPPORT)
-  EPM_PART_BLOCK epm_boot{};
+  EPM_PART_BLOCK* epm_boot = (EPM_PART_BLOCK*) RTL_ALLOCA(sizeof(EPM_PART_BLOCK));
 
   const auto kFsName    = "HeFS";
   const auto kBlockName = "OS (EPM)";
 
-  epm_boot.FsVersion = 0;
-  epm_boot.LbaStart  = sizeof(EPM_PART_BLOCK);
-  epm_boot.LbaEnd    = fDiskDev.GetDiskSize() - 1;
-  epm_boot.SectorSz  = BootDev::kSectorSize;
-  epm_boot.Kind      = kEPMNeKernel;
-  epm_boot.NumBlocks = 1;
+  epm_boot->FsVersion = 0;
+  epm_boot->LbaStart  = sizeof(EPM_PART_BLOCK);
+  epm_boot->LbaEnd    = fDiskDev.GetDiskSize() - 1;
+  epm_boot->SectorSz  = BootDev::kSectorSize;
+  epm_boot->Kind      = kEPMNeKernel;
+  epm_boot->NumBlocks = 1;
 
-  epm_boot.Guid = kEPMNilGuid;
+  epm_boot->Guid = kEPMNilGuid;
 
-  CopyMem(epm_boot.Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), StrLen(kFsName));
-  CopyMem(epm_boot.Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)),
+  CopyMem(epm_boot->Fs, reinterpret_cast<VoidPtr>(const_cast<Char*>(kFsName)), StrLen(kFsName));
+  CopyMem(epm_boot->Name, reinterpret_cast<VoidPtr>(const_cast<Char*>(kBlockName)),
           StrLen(kBlockName));
-  CopyMem(epm_boot.Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)),
+  CopyMem(epm_boot->Magic, reinterpret_cast<VoidPtr>(const_cast<Char*>(kEPMMagic)),
           StrLen(kEPMMagic));
 
   fDiskDev.Leak().mBase = kEPMBootBlockLba;  // always always resies at zero block.
   fDiskDev.Leak().mSize = sizeof(EPM_PART_BLOCK);
 
-  fDiskDev.Write((Char*) &epm_boot, sizeof(EPM_PART_BLOCK));
+  fDiskDev.Write((Char*) epm_boot, sizeof(EPM_PART_BLOCK));
 
   BootTextWriter writer;
   writer.Write(L"BootZ: Drive is EPM formatted.\r");
-#elif defined(BOOTZ_VEPM_SUPPORT)
+#elif defined(BOOTZ_GPT_SUPPORT)
   NE_UNUSED(part_name);
 
-  GPT_PARTITION_TABLE gpt_part{};
+  GPT_PARTITION_TABLE* gpt_part = (GPT_PARTITION_TABLE*) RTL_ALLOCA(sizeof(GPT_PARTITION_TABLE));
 
-  CopyMem(gpt_part.Signature, reinterpret_cast<VoidPtr>(const_cast<Char*>(kMagicGPT)),
+  CopyMem(gpt_part->Signature, reinterpret_cast<VoidPtr>(const_cast<Char*>(kMagicGPT)),
           StrLen(kMagicGPT));
 
-  gpt_part.Revision   = 0x00010000;
-  gpt_part.HeaderSize = sizeof(GPT_PARTITION_TABLE);
+  gpt_part->Revision   = 0x00010000;
+  gpt_part->HeaderSize = sizeof(GPT_PARTITION_TABLE);
 
-  gpt_part.CRC32 = 0x00000000;
+  gpt_part->CRC32 = 0x00000000;
 
-  gpt_part.Reserved1     = 0x00000000;
-  gpt_part.LBAHeader     = 0x00000000;
-  gpt_part.LBAAltHeader  = 0x00000000;
-  gpt_part.FirstGPTEntry = 0x00000000;
-  gpt_part.LastGPTEntry  = 0x00000000;
+  gpt_part->Reserved1     = 0x00000000;
+  gpt_part->LBAHeader     = 0x00000000;
+  gpt_part->LBAAltHeader  = 0x00000000;
+  gpt_part->FirstGPTEntry = 0x00000000;
+  gpt_part->LastGPTEntry  = 0x00000000;
 
-  gpt_part.Guid.Data1 = 0x00000000;
-  gpt_part.Guid.Data2 = 0x0000;
-  gpt_part.Guid.Data3 = 0x0000;
+  gpt_part->Guid.Data1 = 0x00000000;
+  gpt_part->Guid.Data2 = 0x0000;
+  gpt_part->Guid.Data3 = 0x0000;
 
-  SetMem(gpt_part.Guid.Data4, 0, 8);
+  SetMem(gpt_part->Guid.Data4, 0, 8);
 
-  gpt_part.Revision = 0x00010000;
+  gpt_part->Revision = 0x00010000;
 
-  gpt_part.StartingLBA         = 0x00000000;
-  gpt_part.NumPartitionEntries = 0x00000000;
-  gpt_part.SizeOfEntries       = 0x00000000;
-  gpt_part.CRC32PartEntry      = 0x00000000;
+  gpt_part->StartingLBA         = 0x00000000;
+  gpt_part->NumPartitionEntries = 0x00000000;
+  gpt_part->SizeOfEntries       = 0x00000000;
+  gpt_part->CRC32PartEntry      = 0x00000000;
 
-  SetMem(gpt_part.Reserved2, 0, kSectorAlignGPT_PartTbl);
+  SetMem(gpt_part->Reserved2, 0, kSectorAlignGPT_PartTbl);
 
   fDiskDev.Leak().mBase = kGPTPartitionTableLBA;  // always always resies at zero block.
   fDiskDev.Leak().mSize = sizeof(GPT_PARTITION_TABLE);
 
-  fDiskDev.Write((Char*) &gpt_part, sizeof(GPT_PARTITION_TABLE));
+  fDiskDev.Write((Char*) gpt_part, sizeof(GPT_PARTITION_TABLE));
 
   BootTextWriter writer;
   writer.Write(L"BootZ: Drive is GPT formatted.\r");
+#else
+  NE_UNUSED(part_name);
 #endif
 
   return YES;

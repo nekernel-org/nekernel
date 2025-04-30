@@ -88,6 +88,7 @@ namespace Detail {
     } else {
       if (hop_watch) {
         err_global_get() = kErrorDisk;
+        return;
       }
 
       start += kHeFSINDStartOffset;
@@ -100,12 +101,13 @@ namespace Detail {
   /// @brief Rotate the RB-Tree to the left.
   /// @internal
   /***********************************************************************************/
-  STATIC ATTRIBUTE(unused) _Output Void
-      hefsi_rotate_left(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt) {
+  STATIC ATTRIBUTE(unused) _Output Void hefsi_rotate_tree(Lba& start, DriveTrait* mnt, Bool left) {
+    if (!start || !mnt) return;
+
     HEFS_INDEX_NODE_DIRECTORY* parent =
         (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
-    mnt->fPacket.fPacketLba     = dir->fParent;
+    mnt->fPacket.fPacketLba     = start;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
     mnt->fPacket.fPacketContent = parent;
 
@@ -120,12 +122,19 @@ namespace Detail {
 
     mnt->fInput(mnt->fPacket);
 
-    dir->fParent    = parent->fParent;
-    parent->fParent = start;
-    parent->fNext   = dir->fChild;
-    dir->fChild     = dir->fParent;
+    if (parent->fParent == 0) return;
 
-    if (parent->fParent == 0 || dir->fParent == 0) return;
+    HEFS_INDEX_NODE_DIRECTORY* cousin =
+        (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
+
+    mnt->fPacket.fPacketLba     = left ? grand_parent->fPrev : grand_parent->fNext;
+    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+    mnt->fPacket.fPacketContent = cousin;
+
+    mnt->fInput(mnt->fPacket);
+
+    parent->fParent = cousin->fParent;
+    cousin->fChild  = start;
 
     mnt->fPacket.fPacketLba     = parent->fParent;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
@@ -133,50 +142,13 @@ namespace Detail {
 
     mnt->fOutput(mnt->fPacket);
 
-    mnt->fPacket.fPacketLba     = dir->fParent;
-    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = parent;
-
-    mnt->fOutput(mnt->fPacket);
-
-    kout << "Rotate tree to left.\r";
-  }
-
-  /***********************************************************************************/
-  /// @brief Rotate the RB-Tree to the right.
-  /// @internal
-  /***********************************************************************************/
-  STATIC ATTRIBUTE(unused) _Output Void
-      hefsi_rotate_right(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start, DriveTrait* mnt) {
-    HEFS_INDEX_NODE_DIRECTORY* parent =
-        (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-    mnt->fPacket.fPacketLba     = dir->fParent;
-    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = parent;
-
-    mnt->fInput(mnt->fPacket);
-
-    parent->fParent = dir->fParent;
-    dir->fParent    = parent->fParent;
-    dir->fNext      = parent->fChild;
-    parent->fChild  = start;
-
-    mnt->fPacket.fPacketLba     = dir->fParent;
-    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = parent;
-
-    mnt->fOutput(mnt->fPacket);
-
-    dir->fColor = kHeFSBlack;
-
     mnt->fPacket.fPacketLba     = start;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = dir;
+    mnt->fPacket.fPacketContent = parent;
 
     mnt->fOutput(mnt->fPacket);
 
-    kout << "Rotate tree to right.\r";
+    kout << "Rotate tree has been done.\r";
   }
 
   /// @brief Get the index node size.
@@ -243,7 +215,7 @@ namespace Detail {
   }
 
   /// @brief Alllocate IND for boot node->
-  STATIC _Output BOOL hefsi_allocate_index_directory_node(HEFS_BOOT_NODE* root, DriveTrait* mnt,
+  STATIC _Output BOOL hefsi_allocate_index_node_directory(HEFS_BOOT_NODE* root, DriveTrait* mnt,
                                                           const Utf8Char* dir_name,
                                                           UInt16          flags) noexcept {
     if (urt_string_len(dir_name) >= kHeFSFileNameLen) {
@@ -286,23 +258,24 @@ namespace Detail {
           dirent->fFlags    = flags;
           dirent->fChecksum = 0;
 
-          dirent->fChecksum = ke_calculate_crc32((Char*) dirent, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
           dirent->fEntryCount = 0;
 
-          dirent->fNext = tmpdir->fNext;
-          dirent->fPrev = tmpdir->fPrev;
+          dirent->fNext   = tmpdir->fNext;
+          dirent->fPrev   = tmpdir->fPrev;
+          dirent->fParent = tmpdir->fParent;
+          dirent->fChild  = tmpdir->fChild;
+          dirent->fColor = tmpdir->fColor;
+
+          if (dirent->fColor < kHeFSRed) {
+            dirent->fColor = kHeFSBlack;
+          }
 
           if (dirent->fPrev == 0) {
             dirent->fPrev = root->fStartIND;
           }
 
           if (dirent->fNext == 0) {
-            if (start < root->fEndIND) {
-              dirent->fNext = start + sizeof(HEFS_INDEX_NODE_DIRECTORY);
-            } else {
-              dirent->fNext = 0;
-            }
+            dirent->fNext = start + sizeof(HEFS_INDEX_NODE_DIRECTORY);
           }
 
           if (tmpdir->fParent == 0) {
@@ -334,15 +307,14 @@ namespace Detail {
             dirent->fChild = child;
 
             if (child > root->fEndIND) dirent->fChild = root->fEndIND;
-          } else {
-            dirent->fColor = tmpdir->fColor;
-            dirent->fChild = tmpdir->fChild;
           }
 
           for (SizeT index = 0UL; index < (kHeFSBlockCount * 2); index += 2) {
             dirent->fIndexNode[index]     = root->fStartIN;
             dirent->fIndexNode[index + 1] = 0UL;
           }
+
+          dirent->fChecksum = ke_calculate_crc32((Char*) dirent, sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
           mnt->fPacket.fPacketLba     = start;
           mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
@@ -647,7 +619,7 @@ namespace Detail {
           continue;
         } else {
           if (dir_parent->fNext == start) {
-            hefsi_rotate_left(dir_parent, start, mnt);
+            hefsi_rotate_tree(start, mnt, YES);
             hefsi_traverse_tree(dir_parent, start, YES);
 
             if (start > root->fEndIND || start == 0) break;
@@ -669,7 +641,7 @@ namespace Detail {
             return NO;
           }
 
-          hefsi_rotate_right(dir, start, mnt);
+          hefsi_rotate_tree(start, mnt, NO);
         }
 
         hefsi_traverse_tree(dir, start, YES);
@@ -760,10 +732,10 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   root->fStartIND = drive->fLbaStart + kHeFSINDStartOffset;
   root->fEndIND   = root->fStartIND + dir_max;
 
-  root->fStartIN = root->fEndIND - kHeFSINDStartOffset;
+  root->fStartIN = root->fEndIND + kHeFSINDStartOffset;
   root->fEndIN   = root->fStartIN + inode_max;
 
-  constexpr SizeT kHeFSPreallocateCount = 0x2UL;
+  constexpr SizeT kHeFSPreallocateCount = 0x7UL;
 
   root->fINDCount = kHeFSPreallocateCount;
 
@@ -807,8 +779,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   }
 
   const Utf8Char* kFileMap[kHeFSPreallocateCount] = {
-      u8"/",
-      u8"/boot",
+      u8"/", u8"/boot", u8"/system", u8"/network", u8"/devices", u8"/media", u8"/vm",
   };
 
   for (SizeT i = 0; i < kHeFSPreallocateCount; ++i) {
@@ -858,7 +829,7 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
 
   urt_copy_memory((VoidPtr) dir, name, urt_string_len(dir) + 1);
 
-  if (Detail::hefsi_allocate_index_directory_node(root, drive, name, flags)) {
+  if (Detail::hefsi_allocate_index_node_directory(root, drive, name, flags)) {
     mm_delete_heap((VoidPtr) root);
     delete[] name;
     return YES;
@@ -898,7 +869,7 @@ _Output Bool HeFileSystemParser::CreateFile(_Input DriveTrait* drive, _Input con
 
   drive->fInput(drive->fPacket);
 
-  Detail::hefsi_fetch_index_node_directory(root, drive, dir);
+  if (!Detail::hefsi_fetch_index_node_directory(root, drive, dir)->fCreated) return NO;
 
   if (KStringBuilder::Equals(name, kHeFSSearchAllStr)) {
     kout << "Error: Invalid file name.\r";

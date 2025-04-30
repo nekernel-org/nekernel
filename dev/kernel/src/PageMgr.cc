@@ -30,9 +30,9 @@ PTEWrapper::~PTEWrapper() = default;
 /// @brief Flush virtual address.
 /// @param VirtAddr
 Void PageMgr::FlushTLB() {
-#ifndef __NE_MINIMAL_OS__
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   hal_flush_tlb();
-#endif  // !__NE_MINIMAL_OS__
+#endif  // !__NE_VIRTUAL_MEMORY_SUPPORT__
 }
 
 /// @brief Reclaim freed page.
