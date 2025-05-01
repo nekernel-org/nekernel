@@ -6,9 +6,9 @@
 
 #pragma once
 
+#include <tooling/rang.h>
 #include <iostream>
 #include <string>
-#include <tooling/rang.h>
 
 /// @internal
 namespace mkfs {
@@ -28,9 +28,9 @@ inline std::basic_string<CharType> get_option(const std::basic_string<CharType>&
 }
 
 inline auto console_out() -> std::ostream& {
-    std::ostream& conout = std::cout;
-    conout << rang::fg::red << "mkfs: " << rang::style::reset;
+  std::ostream& conout = std::cout;
+  conout << rang::fg::red << "mkfs: " << rang::style::reset;
 
-    return conout;
+  return conout;
 }
 }  // namespace mkfs

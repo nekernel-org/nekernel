@@ -16,10 +16,8 @@ static size_t        kSectorSize = 512;
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    mkfs::console_out() << 
-        "hefs: Usage: mkfs.hefs -L <label> -s <sector_size> -p <part_start> -e " <<
-        "<part_end> -S <disk_size> -o <output_device>"
-        << std::endl;
+    mkfs::console_out() << "hefs: Usage: mkfs.hefs -L <label> -s <sector_size> -p <part_start> -e "
+                        << "<part_end> -S <disk_size> -o <output_device>" << std::endl;
 
     return EXIT_FAILURE;
   }
@@ -51,8 +49,8 @@ int main(int argc, char** argv) {
       std::strtol(mkfs::get_option<char>(args, "-S").data(), nullptr, 10) * 1024 * 1024 * 1024;
 
   if (kDiskSize == 0) {
-    mkfs::console_out() << "hefs: Error: Unable to deduce future disk size for output_device: " << output_device
-    << std::endl;
+    mkfs::console_out() << "hefs: Error: Unable to deduce future disk size for output_device: "
+                        << output_device << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -61,7 +59,7 @@ int main(int argc, char** argv) {
 
   if (!filesystem.good()) {
     mkfs::console_out() << "hefs: Info: Unable to open output_device: " << output_device
-    << std::endl;
+                        << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -92,7 +90,7 @@ int main(int argc, char** argv) {
 
   if (!filesystem.good()) {
     mkfs::console_out() << "hefs: Error: Unable to write FS to output_device: " << output_device
-                      << std::endl;
+                        << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -101,8 +99,7 @@ int main(int argc, char** argv) {
   filesystem.flush();
   filesystem.close();
 
-  mkfs::console_out() << "hefs: Info: Wrote FS to output_device: " << output_device
-  << std::endl;
+  mkfs::console_out() << "hefs: Info: Wrote FS to output_device: " << output_device << std::endl;
 
   return EXIT_SUCCESS;
 }

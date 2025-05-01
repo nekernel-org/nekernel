@@ -490,8 +490,7 @@ SizeT UserProcessScheduler::Run() noexcept {
     return 0UL;
   }
 
-  if (kCurrentlySwitching)
-    return 0UL;
+  if (kCurrentlySwitching) return 0UL;
 
   kCurrentlySwitching = Yes;
 
@@ -503,7 +502,6 @@ SizeT UserProcessScheduler::Run() noexcept {
 
     //! Check if the process needs to be run.
     if (UserProcessHelper::CanBeScheduled(process)) {
-
       if (process.StackSize > kSchedMaxStackSz) {
         kout << "The process: " << process.Name << ", has not a valid stack size! Crashing it...\r";
         process.Crash();

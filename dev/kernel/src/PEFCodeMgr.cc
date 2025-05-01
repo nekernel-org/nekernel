@@ -246,8 +246,8 @@ namespace Utils {
         stacksym = ErrorOr<VoidPtr>{(VoidPtr) new UIntPtr(kSchedMaxStackSz)};
       }
 
-      if ((*(volatile UIntPtr*)stacksym.Leak().Leak()) > kSchedMaxStackSz) {
-        *(volatile UIntPtr*)stacksym.Leak().Leak() = kSchedMaxStackSz;
+      if ((*(volatile UIntPtr*) stacksym.Leak().Leak()) > kSchedMaxStackSz) {
+        *(volatile UIntPtr*) stacksym.Leak().Leak() = kSchedMaxStackSz;
       }
 
       UserProcessScheduler::The().CurrentTeam().AsArray()[id].Kind = process_kind;

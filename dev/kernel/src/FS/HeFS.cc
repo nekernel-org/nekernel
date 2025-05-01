@@ -29,7 +29,8 @@ namespace Detail {
   /// @note This function is used to traverse the RB-Tree of the filesystem.
   /// @internal Internal filesystem use only.
   STATIC ATTRIBUTE(unused) _Output Void
-      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start);
+      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, DriveTrait* mnt, const Lba& start_ind,
+                          Lba& start, const BOOL alloc_in_mind = NO);
 
   /// @brief Get the index node of a file or directory.
   /// @param root The root node of the filesystem.
@@ -74,19 +75,52 @@ namespace Detail {
   /// @param start The starting point of the traversal.
   /// @note This function is used to traverse the RB-Tree of the filesystem.
   /// @internal Internal filesystem use only.
-  STATIC ATTRIBUTE(unused) _Output Void
-      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, Lba& start) {
-    if (dir->fNext != 0) {
-      start = dir->fNext;
-    } else if (dir->fPrev != 0) {
-      start = dir->fPrev;
-    } else {
-      if (dir->fParent != 0) {
-        start = dir->fParent;
+  STATIC ATTRIBUTE(unused) Void
+      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, DriveTrait* mnt, const Lba& ind_start,
+                          Lba& start, const BOOL alloc_in_mind) {
+    if (!mnt || !dir) return;
+
+    BOOL check_is_good = NO;
+
+    while (YES) {
+      mnt->fPacket.fPacketLba     = start;
+      mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+      mnt->fPacket.fPacketContent = dir;
+      mnt->fInput(mnt->fPacket);
+
+      if (dir->fNext != 0) {
+        if (check_is_good) break;
+
+        start = dir->fNext;
+
+        check_is_good = YES;
+        continue;
       } else if (dir->fPrev != 0) {
-        start = dir->fPrev;
+        if (check_is_good) break;
+
+        start         = dir->fPrev;
+        check_is_good = YES;
+        continue;
       } else {
-        start += kHeFSINDStartOffset;
+        if (dir->fParent != 0) {
+          if (check_is_good) break;
+
+          start         = dir->fParent;
+          check_is_good = YES;
+          continue;
+        } else if (dir->fPrev != 0) {
+          if (check_is_good) break;
+
+          start         = dir->fPrev;
+          check_is_good = YES;
+          continue;
+        } else {
+          if (!alloc_in_mind) break;
+
+          if (start < 1) start = ind_start;
+
+          start += kHeFSINDStartOffset;
+        }
       }
     }
 
@@ -320,13 +354,13 @@ namespace Detail {
               }
 
               child += sizeof(HEFS_INDEX_NODE_DIRECTORY);
-              if (child < root->fStartIND || child > root->fEndIND) break;
+              if (child > root->fEndIND) break;
             }
 
             dirent->fColor = kHeFSRed;
             dirent->fChild = child;
 
-            if (child > root->fEndIND) dirent->fChild = root->fEndIND;
+            if (child > root->fEndIND) dirent->fChild = root->fStartIND;
           }
 
           for (SizeT index = 0UL; index < (kHeFSSliceCount * 2); index += 2) {
@@ -358,7 +392,7 @@ namespace Detail {
           return YES;
         }
 
-        hefsi_traverse_tree(tmpdir, start);
+        hefsi_traverse_tree(tmpdir, mnt, root->fStartIND, start, YES);
         if (start > root->fEndIND || start == 0) break;
       }
 
@@ -404,7 +438,7 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, start);
+        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
         if (start > root->fEndIND || start == 0) break;
       }
     }
@@ -493,7 +527,7 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, start);
+        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
         if (start > root->fEndIND || start == 0) break;
       }
     }
@@ -544,7 +578,7 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, start);
+        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
         if (start > root->fEndIND || start == 0) break;
       }
 
@@ -632,7 +666,7 @@ namespace Detail {
 
         if (dir_parent->fNext == start) {
           hefsi_rotate_tree(start, mnt, YES);
-          hefsi_traverse_tree(dir_parent, start);
+          hefsi_traverse_tree(dir_parent, mnt, root->fStartIND, start);
 
           if (start > root->fEndIND || start == 0) break;
 
@@ -658,7 +692,7 @@ namespace Detail {
 
         hefsi_rotate_tree(start, mnt, NO);
 
-        hefsi_traverse_tree(dir, start);
+        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
         if (start > root->fEndIND || start == 0) break;
       }
 
@@ -750,7 +784,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   const SizeT dir_max   = max_lba / 20;  // 20% for directory metadata
   const SizeT inode_max = max_lba / 10;  // 10% for inodes
 
-  root->fStartIND = drive->fLbaStart + kHeFSINDStartOffset;
+  root->fStartIND = drive->fLbaStart + kHeFSINDStartOffset + sizeof(HEFS_BOOT_NODE);
   root->fEndIND   = root->fStartIND + dir_max;
 
   root->fStartIN = root->fEndIND + kHeFSINDStartOffset;
@@ -799,7 +833,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
     return NO;
   }
 
-  const Utf8Char* kFileMap[kHeFSPreallocateCount] = {
+  const Utf8Char kFileMap[kHeFSPreallocateCount][kHeFSFileNameLen] = {
       u8"/", u8"/boot", u8"/system", u8"/network", u8"/devices", u8"/media", u8"/vm",
   };
 
@@ -847,7 +881,9 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
   urt_copy_memory((VoidPtr) dir, name, urt_string_len(dir) + 1);
 
   if (Detail::hefsi_allocate_index_node_directory(root, drive, name, flags)) {
-    Detail::hefsi_balance_filesystem(root, drive);
+    // todo: make it smarter for high-throughput.
+    if (root->fINDCount > 1024) Detail::hefsi_balance_filesystem(root, drive);
+
     mm_delete_heap((VoidPtr) root);
     delete[] name;
     return YES;
