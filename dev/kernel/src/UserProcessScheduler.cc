@@ -486,20 +486,30 @@ Bool UserProcessScheduler::HasMP() {
 /***********************************************************************************/
 
 SizeT UserProcessScheduler::Run() noexcept {
-  SizeT process_index = 0UL;  //! we store this guy to tell the scheduler how many
-                              //! things we have scheduled.
-
   if (mTeam.mProcessCount < 1) {
     return 0UL;
   }
 
+  if (kCurrentlySwitching)
+    return 0UL;
+
   kCurrentlySwitching = Yes;
+
+  SizeT process_index = 0UL;  //! we store this guy to tell the scheduler how many
+                              //! things we have scheduled.
 
   for (; process_index < mTeam.AsArray().Capacity(); ++process_index) {
     auto& process = mTeam.AsArray()[process_index];
 
-    //! check if the process needs to be run.
+    //! Check if the process needs to be run.
     if (UserProcessHelper::CanBeScheduled(process)) {
+
+      if (process.StackSize > kSchedMaxStackSz) {
+        kout << "The process: " << process.Name << ", has not a valid stack size! Crashing it...\r";
+        process.Crash();
+        continue;
+      }
+
       // Set current process header.
       this->CurrentProcess() = process;
 

@@ -12,6 +12,7 @@
 #include <NewKit/KString.h>
 #include <NewKit/KernelPanic.h>
 #include <NewKit/OwnPtr.h>
+#include "KernelKit/UserProcessScheduler.h"
 
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
@@ -242,7 +243,11 @@ namespace Utils {
       auto stacksym = exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 
       if (!symname) {
-        stacksym = ErrorOr<VoidPtr>{(VoidPtr) new UIntPtr(mib_cast(16))};
+        stacksym = ErrorOr<VoidPtr>{(VoidPtr) new UIntPtr(kSchedMaxStackSz)};
+      }
+
+      if ((*(volatile UIntPtr*)stacksym.Leak().Leak()) > kSchedMaxStackSz) {
+        *(volatile UIntPtr*)stacksym.Leak().Leak() = kSchedMaxStackSz;
       }
 
       UserProcessScheduler::The().CurrentTeam().AsArray()[id].Kind = process_kind;
