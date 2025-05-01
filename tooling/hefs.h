@@ -83,7 +83,7 @@ inline constexpr ATime kHeFSTimeInvalid = 0x0000000000000000;
 inline constexpr ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 
 // Boot Node
-struct alignas(8) BootNode {
+struct __attribute__((packed)) BootNode {
   char          magic[kHeFSMagicLen]{};
   char8_t       volumeName[kHeFSPartNameLen]{};
   std::uint32_t version{};
