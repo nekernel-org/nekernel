@@ -148,6 +148,7 @@ class BootFileReader final {
 
 typedef UInt8* BlobType;
 
+/// @brief Bootloader Version String.
 class BVersionString final {
  public:
   static const CharacterTypeUTF8* The() { return BOOTLOADER_VERSION; }

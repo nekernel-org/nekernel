@@ -825,8 +825,6 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
                                                  const Utf8Char* dir) {
   HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_heap(sizeof(HEFS_BOOT_NODE), Yes, No);
 
-  kout << "CreateDirectory...\r";
-
   rt_copy_memory((VoidPtr) "fs/hefs-packet", drive->fPacket.fPacketMime,
                  rt_string_len("fs/hefs-packet"));
 
@@ -870,15 +868,8 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
 /// @return If it was sucessful, see err_local_get().
 _Output Bool HeFileSystemParser::CreateFile(_Input DriveTrait* drive, _Input const Int32 flags,
                                             const Utf8Char* dir, const Utf8Char* name) {
-  NE_UNUSED(drive);
-  NE_UNUSED(flags);
-  NE_UNUSED(dir);
-  NE_UNUSED(name);
-
   HEFS_INDEX_NODE* node = (HEFS_INDEX_NODE*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE));
   HEFS_BOOT_NODE*  root = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
-
-  kout << "CreateFile...\r";
 
   rt_copy_memory((VoidPtr) "fs/hefs-packet", drive->fPacket.fPacketMime,
                  rt_string_len("fs/hefs-packet"));

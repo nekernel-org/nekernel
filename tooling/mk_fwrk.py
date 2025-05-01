@@ -9,6 +9,9 @@ def create_directory_structure(base_path, project_name):
     # Define the directory structure
     structure = {
         project_name: {
+            "dist": {
+                ".keep": None
+            },
             "src": {
                 ".keep": None
             },
@@ -39,7 +42,7 @@ def create_directory_structure(base_path, project_name):
     # Create the JSON file
     diutil_json_path = os.path.join(base_path, project_name, f"{project_name}.json")
     manifest = {
-        "compiler_path": "g++",
+        "compiler_path": "clang++",
         "compiler_std": "c++20",
         "headers_path": ["./", "../../../dev/kernel", "../../../public/frameworks/", "../../../dev/", "./"],
         "sources_path": [
@@ -47,9 +50,9 @@ def create_directory_structure(base_path, project_name):
         ],
         "output_name": f"./dist/{project_name}",
         "cpp_macros": [
-            "kSampleVersion=0x0100",
-            "kSampleVersionHighest=0x0100",
-            "kSampleVersionLowest=0x0100",
+            "kSampleFWVersion=0x0100",
+            "kSampleFWVersionHighest=0x0100",
+            "kSampleFWVersionLowest=0x0100",
             "__NE_SDK__"
         ]
     }
@@ -60,8 +63,9 @@ def create_directory_structure(base_path, project_name):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: mk_fwrk.py <project_name>")
-        sys.exit(1)
+        sys.exit(os.EX_CONFIG)
 
     base_path = os.getcwd()  # Use the current working directory as the base path
     create_directory_structure(base_path, sys.argv[1])
-    print("Ne application created successfully.")
+    
+    print("NeKernel framework created successfully.")
