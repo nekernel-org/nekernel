@@ -15,6 +15,8 @@
  *
  */
 
+#if 0
+
 #include <BootKit/BootKit.h>
 #include <BootKit/HW/ATA.h>
 #include <FirmwareKit/EFI.h>
@@ -81,24 +83,24 @@ ATAInit_Retry:
 
   if ((status_rdy & ATA_SR_BSY)) goto ATAInit_Retry;
 
+  boot_ata_select(IO);
+
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
   /// fetch serial info
   /// model, speed, number of sectors...
 
-  boot_ata_wait_io(IO);
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
 
   for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
-    kATAData[indexData] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
+    kATAData[indexData] = rt_in16(IO + ATA_REG_DATA);
   }
 
   OutBus = (Bus == ATA_PRIMARY_IO) ? BootDeviceATA::kPrimary : BootDeviceATA::kSecondary;
 
   OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
-  // Why? the current disk driver writes whole word instead of a single byte (expected btw) so i'm
-  // planning to finish +Next drivers for 0.0.3
-  return NO;
+  return true;
 }
 
 Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, SizeT SectorSz,
@@ -121,11 +123,15 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, 
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  boot_ata_wait_io(IO);
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
 
-  for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+  for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     boot_ata_wait_io(IO);
-    Buf[IndexOff] = Kernel::HAL::rt_in16(IO + ATA_REG_DATA);
+
+    auto in = rt_in16(IO + ATA_REG_DATA);
+
+    Buf[IndexOff]     = in & 0xFF;
+    Buf[IndexOff + 1] = (in >> 8) & 0xFF;
     boot_ata_wait_io(IO);
   }
 }
@@ -150,11 +156,17 @@ Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf,
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  boot_ata_wait_io(IO);
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
 
-  for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+  for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     boot_ata_wait_io(IO);
-    rt_out16(IO + ATA_REG_DATA, Buf[IndexOff]);
+
+    UInt8  low    = (UInt8) Buf[IndexOff];
+    UInt8  high   = (IndexOff + 1 < Size) ? (UInt8) Buf[IndexOff + 1] : 0;
+    UInt16 packed = (high << 8) | low;
+
+    rt_out16(IO + ATA_REG_DATA, packed);
+
     boot_ata_wait_io(IO);
   }
 
@@ -254,3 +266,5 @@ SizeT BootDeviceATA::GetSectorsCount() noexcept {
 SizeT BootDeviceATA::GetDiskSize() noexcept {
   return this->GetSectorsCount() * BootDeviceATA::kSectorSize;
 }
+
+#endif

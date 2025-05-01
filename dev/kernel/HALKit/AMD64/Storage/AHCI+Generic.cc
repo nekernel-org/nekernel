@@ -71,7 +71,9 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept;
 
 STATIC Void drv_compute_disk_ahci() noexcept;
 
-/// @brief Identify device and read LBA info, Disk OEM vendor...
+/***********************************************************************************/
+/// @brief Identify device and read LBA info, Disk OEM vendor.
+/***********************************************************************************/
 STATIC Void drv_compute_disk_ahci() noexcept {
   kSATASectorCount = 0UL;
 
@@ -104,9 +106,11 @@ STATIC Void drv_compute_disk_ahci() noexcept {
   (Void)(kout << "SATA Disk Model: " << kCurrentDiskModel << kendl);
 }
 
+/***********************************************************************************/
 /// @brief Finds a command slot for a HBA port.
 /// @param port The port to search on.
-/// @return The slot, or ~0.
+/// @return The slot, or -1.
+/***********************************************************************************/
 STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept {
   UInt32 slots = port->Sact | port->Ci;
 
@@ -118,11 +122,13 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept {
   return -1;  // no free slot found
 }
 
+/***********************************************************************************/
 /// @brief Send an AHCI command, according to the template parameters.
 /// @param lba Logical Block Address to look for.
 /// @param buffer The data buffer to transfer.
 /// @param sector_sz The disk's sector size (unused)
 /// @param size_buffer The size of the **buffer** parameter.
+/***********************************************************************************/
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz,
                                       SizeT size_buffer) noexcept {
