@@ -40,13 +40,14 @@ STATIC Void mmi_page_status(Detail::PTE* pte) {
   NE_UNUSED(pte);
 
 #ifdef __NE_VERBOSE_BITMAP__
-  (Void)(kout << (pte->Present ? "Present" : "Not Present") << kendl);
-  (Void)(kout << (pte->Wr ? "W/R" : "Not W/R") << kendl);
-  (Void)(kout << (pte->Nx ? "NX" : "Not NX") << kendl);
-  (Void)(kout << (pte->User ? "User" : "Not User") << kendl);
-  (Void)(kout << (pte->Pcd ? "Not Cached" : "Cached") << kendl);
-  (Void)(kout << (pte->Accessed ? "Accessed" : "Not Accessed") << kendl);
-  (Void)(kout << (pte->ProtectionKey ? "Protected" : "Not Protected/PKU Disabled") << kendl);
+  (Void)(kout << "Flag: " << (pte->Present ? "Present" : "Not Present") << kendl);
+  (Void)(kout << "Flag: " << (pte->Wr ? "W/R" : "Not W/R") << kendl);
+  (Void)(kout << "Flag: " << (pte->Nx ? "NX" : "Not NX") << kendl);
+  (Void)(kout << "Flag: " << pte->User ? "User" : "Not User") << kendl);
+  (Void)(kout << "Flag: " << (pte->Pcd ? "Not Cached" : "Cached") << kendl);
+  (Void)(kout << "Flag: " << (pte->Accessed ? "Accessed" : "Not Accessed") << kendl);
+  (Void)(kout << "Flag: " << (pte->ProtectionKey ? "Protected" : "Not Protected/PKU Disabled")
+              << kendl);
   (Void)(kout << "Physical Address: " << hex_number(pte->PhysicalAddress) << kendl);
 #endif
 }
@@ -56,7 +57,7 @@ STATIC Void mmi_page_status(Detail::PTE* pte) {
 /// @param virt a valid virtual address.
 /// @return Physical address.
 /***********************************************************************************/
-UIntPtr hal_get_phys_address(VoidPtr virt) {
+UIntPtr mm_get_phys_address(VoidPtr virt) {
   const UInt64 kVMAddr         = (UInt64) virt;
   const UInt64 kMask9Bits      = 0x1FFULL;
   const UInt64 kPageOffsetMask = 0xFFFULL;
@@ -101,7 +102,7 @@ UIntPtr hal_get_phys_address(VoidPtr virt) {
 /// @brief clflush+mfence helper function.
 /***********************************************************************************/
 EXTERN_C Int32 mm_memory_fence(VoidPtr virtual_address) {
-  if (!virtual_address || !hal_get_phys_address(virtual_address)) return kErrorInvalidData;
+  if (!virtual_address || !mm_get_phys_address(virtual_address)) return kErrorInvalidData;
 
   asm volatile("clflush (%0)" : : "r"(virtual_address) : "memory");
   asm volatile("mfence" ::: "memory");
@@ -117,6 +118,8 @@ EXTERN_C Int32 mm_memory_fence(VoidPtr virtual_address) {
 /// @return Status code of page manipulation process.
 /***********************************************************************************/
 EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags) {
+  if (physical_address == 0) return kErrorInvalidData;
+
   const UInt64     kVMAddr   = (UInt64) virtual_address;
   constexpr UInt64 kMask9    = 0x1FF;
   constexpr UInt64 kPageMask = 0xFFF;

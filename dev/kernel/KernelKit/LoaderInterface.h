@@ -27,6 +27,6 @@ class LoaderInterface {
   virtual _Output const Char*      MIME()                                                 = 0;
   virtual _Output const Char*      Path()                                                 = 0;
   virtual _Output ErrorOr<VoidPtr> FindStart()                                            = 0;
-  virtual _Output VoidPtr          FindSymbol(_Input const Char* name, _Input Int32 kind) = 0;
+  virtual _Output ErrorOr<VoidPtr> FindSymbol(_Input const Char* name, _Input Int32 kind) = 0;
 };
 }  // namespace Kernel

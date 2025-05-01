@@ -62,7 +62,7 @@ class IPEFDylibObject final NE_DYLIB_OBJECT {
     if (symbol_name == nullptr || *symbol_name == 0) return nullptr;
     if (len > kPathLen || len < 1) return nullptr;
 
-    auto ret = reinterpret_cast<SymbolType>(fLoader->FindSymbol(symbol_name, kind));
+    auto ret = reinterpret_cast<SymbolType>(fLoader->FindSymbol(symbol_name, kind).Leak().Leak());
 
     if (!ret) {
       if (kind == kPefCode) return (VoidPtr) &__zka_pure_call;

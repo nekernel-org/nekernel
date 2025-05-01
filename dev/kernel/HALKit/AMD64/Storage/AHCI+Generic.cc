@@ -324,7 +324,7 @@ STATIC Bool drv_init_command_structures_ahci() {
     return NO;
   }
 
-  UIntPtr clb_phys = HAL::hal_get_phys_address(clb_mem);
+  UIntPtr clb_phys = HAL::mm_get_phys_address(clb_mem);
 
   kSATAHba->Ports[kSATAIndex].Clb  = (UInt32) (clb_phys & 0xFFFFFFFF);
   kSATAHba->Ports[kSATAIndex].Clbu = (UInt32) (clb_phys >> 32);
@@ -344,7 +344,7 @@ STATIC Bool drv_init_command_structures_ahci() {
       return NO;
     }
 
-    UIntPtr ct_phys = HAL::hal_get_phys_address(ct_mem);
+    UIntPtr ct_phys = HAL::mm_get_phys_address(ct_mem);
 
     header[i].Ctba  = (UInt32) (ct_phys & 0xFFFFFFFF);
     header[i].Ctbau = (UInt32) (ct_phys >> 32);

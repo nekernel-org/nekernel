@@ -36,7 +36,7 @@ enum {
 /// @return Status code of page manip.
 EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags);
 
-EXTERN_C UIntPtr hal_get_phys_address(VoidPtr virtual_address);
+EXTERN_C UIntPtr mm_get_phys_address(VoidPtr virtual_address);
 
 typedef UIntPtr    Reg;
 typedef Register64 Register;

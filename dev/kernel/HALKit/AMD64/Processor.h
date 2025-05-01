@@ -179,7 +179,7 @@ inline Bool hal_has_msr() noexcept {
   return edx & (1 << 5);
 }
 
-UIntPtr hal_get_phys_address(VoidPtr virtual_address);
+UIntPtr mm_get_phys_address(VoidPtr virtual_address);
 
 /***********************************************************************************/
 /// @brief Get Model specific register inside core.

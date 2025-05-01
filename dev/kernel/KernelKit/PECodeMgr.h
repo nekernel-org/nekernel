@@ -55,7 +55,7 @@ class PE32Loader : public LoaderInterface {
 
  public:
   ErrorOr<VoidPtr> FindStart() override;
-  VoidPtr          FindSymbol(const Char* name, Int32 kind) override;
+  ErrorOr<VoidPtr> FindSymbol(const Char* name, Int32 kind) override;
   ErrorOr<VoidPtr> GetBlob() override;
 
  public:

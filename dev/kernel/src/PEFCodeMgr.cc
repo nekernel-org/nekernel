@@ -80,7 +80,7 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
 
   if (fCachedBlob) mm_delete_heap(fCachedBlob);
 
-  kout << "PEFLoader: warn: Executable format error!\r";
+  kout << "PEFLoader: Warning: Executable format error!\r";
 
   fCachedBlob = nullptr;
 }
@@ -99,43 +99,44 @@ PEFLoader::~PEFLoader() {
 /// @param name name of symbol.
 /// @param kind kind of symbol we want.
 /***********************************************************************************/
-VoidPtr PEFLoader::FindSymbol(const Char* name, Int32 kind) {
-  if (!fCachedBlob || fBad || !name) return nullptr;
+ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
+  if (!fCachedBlob || fBad || !name) return ErrorOr<VoidPtr>{kErrorInvalidData};
 
   PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-  auto blob = fFile->Read(name, mib_cast(16));
+  auto blob = fFile->Read(name, sizeof(PEFCommandHeader));
 
   PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(blob);
 
-  constexpr auto cMangleCharacter  = '$';
-  const Char*    cContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
+  constexpr auto kMangleCharacter  = '$';
+  const Char*    kContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
 
   ErrorOr<KString> error_or_symbol;
 
   switch (kind) {
     case kPefCode: {
-      error_or_symbol = KStringBuilder::Construct(cContainerKinds[0]);  // code symbol.
+      error_or_symbol = KStringBuilder::Construct(kContainerKinds[0]);  // code symbol.
       break;
     }
     case kPefData: {
-      error_or_symbol = KStringBuilder::Construct(cContainerKinds[1]);  // data symbol.
+      error_or_symbol = KStringBuilder::Construct(kContainerKinds[1]);  // data symbol.
       break;
     }
     case kPefZero: {
-      error_or_symbol = KStringBuilder::Construct(cContainerKinds[2]);  // block starting symbol.
+      error_or_symbol = KStringBuilder::Construct(kContainerKinds[2]);  // block starting symbol.
       break;
     }
     default:
-      return nullptr;  // prevent that from the kernel's mode perspective, let that happen if it
-                       // were a user process.
+      return ErrorOr<VoidPtr>{kErrorInvalidData};
+      ;  // prevent that from the kernel's mode perspective, let that happen if it
+         // were a user process.
   }
 
   Char* unconst_symbol = const_cast<Char*>(name);
 
   for (SizeT i = 0UL; i < rt_string_len(unconst_symbol, kPefNameLen); ++i) {
     if (unconst_symbol[i] == ' ') {
-      unconst_symbol[i] = cMangleCharacter;
+      unconst_symbol[i] = kMangleCharacter;
     }
   }
 
@@ -147,7 +148,7 @@ VoidPtr PEFLoader::FindSymbol(const Char* name, Int32 kind) {
         if (container_header->Cpu != Detail::ldr_get_platform()) {
           if (!this->fFatBinary) {
             mm_delete_heap(blob);
-            return nullptr;
+            return ErrorOr<VoidPtr>{kErrorInvalidData};
           }
         }
 
@@ -157,27 +158,36 @@ VoidPtr PEFLoader::FindSymbol(const Char* name, Int32 kind) {
                        container_header->Size);
         mm_delete_heap(blob);
 
-        kout << "PEFLoader: INFO: Load stub: " << container_header->Name << "!\r";
+        kout << "PEFLoader: Information: Loaded stub: " << container_header->Name << "!\r";
 
-        return container_blob_value;
+        auto ret = HAL::mm_map_page((VoidPtr) container_header->VMAddress,
+                                    (VoidPtr) HAL::mm_get_phys_address(container_blob_value),
+                                    HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+
+        if (ret != kErrorSuccess) {
+          mm_delete_heap(container_blob_value);
+          return ErrorOr<VoidPtr>{kErrorInvalidData};
+        }
+
+        return ErrorOr<VoidPtr>{container_blob_value};
       }
     }
   }
 
   mm_delete_heap(blob);
-  return nullptr;
+  return ErrorOr<VoidPtr>{kErrorInvalidData};
 }
 
 /// @brief Finds the executable entrypoint.
 /// @return
 ErrorOr<VoidPtr> PEFLoader::FindStart() {
-  if (auto sym = this->FindSymbol(kPefStart, kPefCode); sym) return ErrorOr<VoidPtr>(sym);
+  if (auto sym = this->FindSymbol(kPefStart, kPefCode); sym) return sym;
 
   return ErrorOr<VoidPtr>(kErrorExecutable);
 }
 
 /// @brief Tells if the executable is loaded or not.
-/// @return
+/// @return Whether it's not bad and is cached.
 bool PEFLoader::IsLoaded() noexcept {
   return !fBad && fCachedBlob;
 }
@@ -188,17 +198,17 @@ const Char* PEFLoader::Path() {
 
 const Char* PEFLoader::AsString() {
 #ifdef __32x0__
-  return "32x0 PEF executable.";
+  return "32x0 PEF.";
 #elif defined(__64x0__)
-  return "64x0 PEF executable.";
+  return "64x0 PEF.";
 #elif defined(__x86_64__)
-  return "x86_64 PEF executable.";
+  return "x86_64 PEF.";
 #elif defined(__aarch64__)
-  return "AARCH64 PEF executable.";
+  return "AARCH64 PEF.";
 #elif defined(__powerpc64__)
-  return "POWER64 PEF executable.";
+  return "POWER64 PEF.";
 #else
-  return "???? PEF executable.";
+  return "???? PEF.";
 #endif  // __32x0__ || __64x0__ || __x86_64__ || __powerpc64__
 }
 
@@ -216,16 +226,30 @@ namespace Utils {
 
     if (errOrStart.Error() != kErrorSuccess) return kSchedInvalidPID;
 
-    auto id = UserProcessScheduler::The().Spawn(
-        reinterpret_cast<const Char*>(exec.FindSymbol(kPefNameSymbol, kPefData)),
-        errOrStart.Leak().Leak(), exec.GetBlob().Leak().Leak());
+    auto symname = exec.FindSymbol(kPefNameSymbol, kPefData);
+
+    if (!symname) {
+      symname = ErrorOr<VoidPtr>{(VoidPtr) rt_alloc_string("USER_PROCESS")};
+    }
+
+    auto id =
+        UserProcessScheduler::The().Spawn(reinterpret_cast<const Char*>(symname.Leak().Leak()),
+                                          errOrStart.Leak().Leak(), exec.GetBlob().Leak().Leak());
+
+    mm_delete_heap(symname.Leak().Leak());
 
     if (id != kSchedInvalidPID) {
+      auto stacksym = exec.FindSymbol(kPefStackSizeSymbol, kPefData);
+
+      if (!symname) {
+        stacksym = ErrorOr<VoidPtr>{(VoidPtr) new UIntPtr(mib_cast(16))};
+      }
+
       UserProcessScheduler::The().CurrentTeam().AsArray()[id].Kind = process_kind;
       UserProcessScheduler::The().CurrentTeam().AsArray()[id].StackSize =
-          *(UIntPtr*) exec.FindSymbol(kPefStackSizeSymbol, kPefData);
-      UserProcessScheduler::The().CurrentTeam().AsArray()[id].MemoryLimit =
-          *(UIntPtr*) exec.FindSymbol(kPefHeapSizeSymbol, kPefData);
+          *(UIntPtr*) stacksym.Leak().Leak();
+
+      mm_delete_heap(stacksym.Leak().Leak());
     }
 
     return id;
