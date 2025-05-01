@@ -204,7 +204,7 @@ namespace Detail {
         if (dir->fKind == kHeFSFileKindDirectory) {
           if (KStringBuilder::Equals(dir_name, dir->fName) ||
               KStringBuilder::Equals(dir_name, kHeFSSearchAllStr)) {
-            for (SizeT inode_index = 0UL; inode_index < kHeFSBlockCount; inode_index += 2) {
+            for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; inode_index += 2) {
               mnt->fPacket.fPacketLba     = dir->fIndexNode[inode_index];
               mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
               mnt->fPacket.fPacketContent = node;
@@ -329,7 +329,7 @@ namespace Detail {
             if (child > root->fEndIND) dirent->fChild = root->fEndIND;
           }
 
-          for (SizeT index = 0UL; index < (kHeFSBlockCount * 2); index += 2) {
+          for (SizeT index = 0UL; index < (kHeFSSliceCount * 2); index += 2) {
             dirent->fIndexNode[index]     = root->fStartIN;
             dirent->fIndexNode[index + 1] = 0UL;
           }
@@ -459,7 +459,7 @@ namespace Detail {
                 dir->fChecksum)
               ke_panic(RUNTIME_CHECK_FILESYSTEM, "CRC32 failure on HeFS IND!");
 
-            for (SizeT inode_index = 0UL; inode_index < (kHeFSBlockCount * 2); inode_index += 2) {
+            for (SizeT inode_index = 0UL; inode_index < (kHeFSSliceCount * 2); inode_index += 2) {
               if (dir->fIndexNode[inode_index] != 0) {
                 mnt->fPacket.fPacketLba     = dir->fIndexNode[inode_index];
                 mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
@@ -527,7 +527,7 @@ namespace Detail {
         mnt->fInput(mnt->fPacket);
 
         if (KStringBuilder::Equals(dir->fName, parent_dir_name)) {
-          for (SizeT inode_index = 0UL; inode_index < (kHeFSBlockCount * 2); inode_index += 2) {
+          for (SizeT inode_index = 0UL; inode_index < (kHeFSSliceCount * 2); inode_index += 2) {
             if (dir->fIndexNode[inode_index] != 0) {
               auto lba = dir->fIndexNode[inode_index];
 

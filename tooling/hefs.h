@@ -56,9 +56,6 @@ enum {
   kHeFSEncodingCount,
 };
 
-// Block constants
-constexpr std::size_t kHeFSBlockCount = 16;
-
 // Time type
 using ATime = std::uint64_t;
 
@@ -103,54 +100,10 @@ struct alignas(8) BootNode {
   std::uint16_t diskStatus{};
   std::uint16_t diskFlags{};
   std::uint16_t vid{};
-  std::uint64_t reserved{};
-  std::uint64_t reserved2{};
+  std::uint64_t startIN{};
+  std::uint64_t endIN{};
   std::uint64_t reserved3{};
   std::uint64_t reserved4{};
   char          pad[272]{};
 };
-
-// Index Node
-struct alignas(8) IndexNode {
-  char8_t       name[kHeFSFileNameLen]{};
-  std::uint32_t flags{};
-  std::uint16_t kind{};
-  std::uint32_t size{};
-  std::uint32_t checksum{};
-  bool          symbolicLink{false};
-  ATime         created{};
-  ATime         accessed{};
-  ATime         modified{};
-  ATime         deleted{};
-  std::uint32_t uid{};
-  std::uint32_t gid{};
-  std::uint32_t mode{};
-  std::uint64_t block[kHeFSBlockCount]{};
-  char          pad[62]{};
-};
-
-// Index Node Directory (Red-Black Tree Node)
-struct alignas(8) IndexNodeDirectory {
-  char8_t       name[kHeFSFileNameLen]{};
-  std::uint32_t flags{};
-  std::uint16_t kind{};
-  std::uint32_t entryCount{};
-  std::uint32_t checksum{};
-  std::uint32_t indexNodeChecksum{};
-  ATime         created{};
-  ATime         accessed{};
-  ATime         modified{};
-  ATime         deleted{};
-  std::uint32_t uid{};
-  std::uint32_t gid{};
-  std::uint32_t mode{};
-  std::uint64_t indexNode[kHeFSBlockCount]{};
-  std::uint8_t  color{};
-  std::uint64_t next{};
-  std::uint64_t prev{};
-  std::uint64_t child{};
-  std::uint64_t parent{};
-  char          pad[32]{};
-};
-
 }  // namespace mkfs::hefs

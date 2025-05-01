@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
   bootNode.sectorSize = kSectorSize;
   bootNode.startIND   = start_ind;
   bootNode.endIND     = end_ind;
+  bootNode.indCount = 0UL;
   bootNode.diskStatus = mkfs::hefs::kHeFSStatusUnlocked;
 
   std::memcpy(bootNode.magic, kHeFSMagic, kHeFSMagicLen - 1);

@@ -83,7 +83,7 @@ HeFS is a custom filesystem developed as part of the NeKernel project. It offers
 \end{itemize}
 
 \section{Index Node Structure}
-Files are stored through block links, offering native recovery fields and MIME type support.
+Files are stored through slice links, offering native recovery fields and MIME type support.
 
 \begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE structure}]
 struct HEFS_INDEX_NODE {
@@ -128,9 +128,9 @@ struct HEFS_INDEX_NODE_DIRECTORY {
 HeFS is designed with the following objectives:
 \begin{itemize}
     \item Red-black tree navigation for efficient directory balancing
-    \item Journaling fields for block-level recovery
+    \item Journaling fields for slice-level recovery
     \item Multi-encoding support: UTF-8, UTF-16, UTF-32
-    \item Advanced MIME type support
+    \item Advanced MIME type support (Feature has been scrapped)
     \item Redundant fields (checksums, recovery inodes) for crash resistance
     \item Extensible for future LVM (Logical Volume Management) and network filesystem support
 \end{itemize}
@@ -146,7 +146,7 @@ Planned enhancements include:
     \item Full journaling implementation (recovery on crash)
     \item Advanced ACLs (Access Control Lists) and permissions
     \item Logical Volume Management (LVM) integration
-    \item Backup Superblock and dual-boot sectors
+    \item Backup boot node and dual-boot sectors
     \item Online filesystem checking and self-healing algorithms
 \end{itemize}
 

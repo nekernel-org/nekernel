@@ -83,7 +83,7 @@ inline constexpr UInt16 kHeFSFileKindCount        = 0x08;
 /// @brief HeFS blocks are array containing sparse blocks of data.
 /// @details The blocks are used to store the data of a file. Each block is a pointer to a block of
 /// data on the disk.
-inline constexpr UInt16 kHeFSBlockCount = 0x10;
+inline constexpr UInt16 kHeFSSliceCount = 0x10;
 
 inline constexpr UInt16 kHeFSInvalidVID = 0xFFFF;
 
@@ -146,7 +146,7 @@ struct PACKED HEFS_INDEX_NODE final {
   Kernel::UInt32 fUID, fGID;  /// @brief User ID and Group ID of the file.
   Kernel::UInt32 fMode;       /// @brief File mode. (read, write, execute, etc).
 
-  Kernel::UInt64 fBlock[kHeFSBlockCount];  /// @brief block slice.
+  Kernel::UInt64 fBlock[kHeFSSliceCount];  /// @brief block slice.
 
   Kernel::Char fPad[69];
 };
@@ -180,7 +180,7 @@ struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
   /// [0] = OFFSET
   /// [1] = SIZE
   /// @note Thus the += 2 when iterating over them.
-  Kernel::UInt64 fIndexNode[kHeFSBlockCount];  /// @brief Start of the index node.
+  Kernel::UInt64 fIndexNode[kHeFSSliceCount];  /// @brief Start of the index node.
 
   Kernel::UInt8 fColor;                         /// @brief Color of the node. (Red or Black).
   Kernel::Lba   fNext, fPrev, fChild, fParent;  /// @brief Red-black tree pointers.

@@ -23,7 +23,7 @@
 
 #define kPefMagicLen (5)
 
-#define kPefVersion (3)
+#define kPefVersion (4)
 #define kPefNameLen (256U)
 
 /* not mandatory, only for non fork based filesystems. */
@@ -59,7 +59,7 @@ enum {
 };
 
 enum {
-  kPefSubArchAMD,
+  kPefSubArchAMD = 200,
   kPefSubArchIntel,
   kPefSubArchARM,
   kPefSubArchGeneric,
@@ -67,7 +67,7 @@ enum {
 };
 
 enum {
-  kPefKindExec   = 1, /* .o */
+  kPefKindExec   = 1, /* .exec */
   kPefKindDylib  = 2, /* .dylib */
   kPefKindObject = 4, /* .obj */
   kPefKindDebug  = 5, /* .dbg */
@@ -86,6 +86,7 @@ typedef struct PEFContainer final {
   UIntPtr Start;
   SizeT   HdrSz; /* Size of header */
   SizeT   Count; /* container header count */
+  UInt32  Checksum;
 } PACKED PEFContainer;
 
 /* First PEFCommandHeader starts after PEFContainer */
@@ -97,6 +98,7 @@ typedef struct PEFCommandHeader final {
   UInt32  Flags;             /* container flags */
   UInt16  Kind;              /* container kind */
   UIntPtr Offset;            /* content offset */
+  UIntPtr  VMAddress;         /* VM offset */
   SizeT   Size;              /* content Size */
 } PACKED PEFCommandHeader;
 
