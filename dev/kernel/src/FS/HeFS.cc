@@ -88,6 +88,12 @@ namespace Detail {
       mnt->fPacket.fPacketContent = dir;
       mnt->fInput(mnt->fPacket);
 
+      if (!mnt->fPacket.fPacketGood)
+        break;
+
+      if (*dir->fName != 0 && alloc_in_mind)
+        break;
+
       if (dir->fNext != 0) {
         if (check_is_good) break;
 
@@ -117,14 +123,21 @@ namespace Detail {
         } else {
           if (!alloc_in_mind) break;
 
-          if (start < 1) start = ind_start;
+          if (start == 0) {
+            start = ind_start;
+            continue;
+          }
 
           start += kHeFSINDStartOffset;
+          break;
         }
       }
     }
 
-    kout << "Traversing RB-Tree...\r";
+    if (*dir->fName != 0 && alloc_in_mind)
+      start += sizeof(HEFS_INDEX_NODE_DIRECTORY);
+
+    kout << "LBA_" << number(start) << kendl;
   }
 
   /***********************************************************************************/
@@ -279,22 +292,23 @@ namespace Detail {
       HEFS_INDEX_NODE_DIRECTORY* tmpdir =
           (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
-      auto start = root->fStartIND;
+      auto start         = root->fStartIND;
+      auto prev_location = start;
 
       MUST_PASS(root->fStartIND > mnt->fLbaStart);
 
       while (YES) {
         auto tmp = start;
 
-        mnt->fPacket.fPacketLba     = start;
+        if (start)
+          mnt->fPacket.fPacketLba = start;
+        else
+          mnt->fPacket.fPacketLba = prev_location + sizeof(HEFS_INDEX_NODE_DIRECTORY);
+
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
         mnt->fPacket.fPacketContent = tmpdir;
 
         mnt->fInput(mnt->fPacket);
-
-        if (!mnt->fPacket.fPacketGood) {
-          break;
-        }
 
         if ((!tmpdir->fCreated && tmpdir->fDeleted) || *tmpdir->fName == 0) {
           HEFS_INDEX_NODE_DIRECTORY* dirent =
@@ -392,8 +406,10 @@ namespace Detail {
           return YES;
         }
 
+        prev_location = start;
+
         hefsi_traverse_tree(tmpdir, mnt, root->fStartIND, start, YES);
-        if (start > root->fEndIND || start == 0) break;
+        if (start > root->fEndIND) break;
       }
 
       err_global_get() = kErrorDisk;
@@ -794,7 +810,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   root->fINDCount = 0;
 
-  root->fDiskSize   = drv_std_get_size();
+  // let's lie here.
+  root->fDiskSize   = drive->fLbaEnd;
   root->fDiskStatus = kHeFSStatusUnlocked;
 
   root->fDiskFlags = flags;
@@ -833,7 +850,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
     return NO;
   }
 
-  const Utf8Char kFileMap[kHeFSPreallocateCount][kHeFSFileNameLen] = {
+  const Utf8Char* kFileMap[kHeFSPreallocateCount] = {
       u8"/", u8"/boot", u8"/system", u8"/network", u8"/devices", u8"/media", u8"/vm",
   };
 
@@ -882,7 +899,7 @@ _Output Bool HeFileSystemParser::CreateDirectory(_Input DriveTrait* drive, _Inpu
 
   if (Detail::hefsi_allocate_index_node_directory(root, drive, name, flags)) {
     // todo: make it smarter for high-throughput.
-    if (root->fINDCount > 1024) Detail::hefsi_balance_filesystem(root, drive);
+    Detail::hefsi_balance_filesystem(root, drive);
 
     mm_delete_heap((VoidPtr) root);
     delete[] name;
@@ -955,7 +972,7 @@ Boolean fs_init_hefs(Void) noexcept {
   kMountPoint = io_construct_main_drive();
 
   if (kMountPoint.fPacket.fPacketReadOnly == YES)
-    ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main disk cannot be mounted.");
+    ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main disk cannot be mounted (read-only media).");
 
   HeFileSystemParser parser;
 
