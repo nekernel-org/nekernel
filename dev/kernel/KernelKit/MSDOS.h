@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-	File: MSDOS.h
-	Purpose: MS-DOS header for Kernel.
+  File: MSDOS.h
+  Purpose: MS-DOS header for Kernel.
 
-	Revision History:
+  Revision History:
 
-	30/01/24: Added file (amlel)
+  30/01/24: Added file (amlel)
 
 ------------------------------------------- */
 
@@ -26,27 +26,26 @@
 typedef Kernel::UInt32 DosWord;
 typedef Kernel::Long   DosLong;
 
-typedef struct _DosHeader
-{
-	Kernel::UInt8 eMagic[2];
-	DosWord		  eMagLen;
-	DosWord		  ePagesCount;
-	DosWord		  eCrlc;
-	DosWord		  eCParHdr;
-	DosWord		  eMinAlloc;
-	DosWord		  eMaxAlloc;
-	DosWord		  eStackSeg;
-	DosWord		  eStackPtr;
-	DosWord		  eChksum;
-	DosWord		  eIp;
-	DosWord		  eCs;
-	DosWord		  eLfarlc;
-	DosWord		  eOvno;
-	DosWord		  eRes[4];
-	DosWord		  eOemid;
-	DosWord		  eOeminfo;
-	DosWord		  eRes2[10];
-	DosLong		  eLfanew;
+typedef struct _DosHeader {
+  Kernel::UInt8 eMagic[2];
+  DosWord       eMagLen;
+  DosWord       ePagesCount;
+  DosWord       eCrlc;
+  DosWord       eCParHdr;
+  DosWord       eMinAlloc;
+  DosWord       eMaxAlloc;
+  DosWord       eStackSeg;
+  DosWord       eStackPtr;
+  DosWord       eChksum;
+  DosWord       eIp;
+  DosWord       eCs;
+  DosWord       eLfarlc;
+  DosWord       eOvno;
+  DosWord       eRes[4];
+  DosWord       eOemid;
+  DosWord       eOeminfo;
+  DosWord       eRes2[10];
+  DosLong       eLfanew;
 } DosHeader, *DosHeaderPtr;
 
 #endif /* ifndef __MSDOS_EXEC__ */

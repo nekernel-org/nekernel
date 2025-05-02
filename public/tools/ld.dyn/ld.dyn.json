@@ -1,0 +1,12 @@
+{
+  "compiler_path": "x86_64-w64-mingw32-g++",
+  "compiler_std": "c++20",
+  "headers_path": ["./", "../../../dev"],
+  "sources_path": ["src/CommandLine.cc"],
+  "output_name": "./dist/ld.dyn",
+  "cpp_macros": [
+    "kLDVersion=0x0100",
+    "kLDVersionHighest=0x0100",
+    "kLDVersionLowest=0x0100"
+  ]
+}

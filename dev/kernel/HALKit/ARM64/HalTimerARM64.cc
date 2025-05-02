@@ -1,13 +1,13 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-	File: HalTimer.cc
-	Purpose: HAL timer
+  File: HalTimer.cc
+  Purpose: HAL timer
 
-	Revision History:
+  Revision History:
 
-	07/07/24: Added file (amlel)
+  07/07/24: Added file (amlel)
 
 ------------------------------------------- */
 

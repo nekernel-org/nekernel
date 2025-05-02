@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -13,7 +13,6 @@
 using namespace Kernel;
 
 /// @brief Unimplemented as it is an interface.
-BOOL TimerInterface::Wait() noexcept
-{
-	return NO;
+BOOL TimerInterface::Wait() noexcept {
+  return NO;
 }

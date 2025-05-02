@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -10,5 +10,5 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/MemoryMgr.h>
 
-#endif // ifdef __FSKIT_INCLUDES_EXT2__
-#endif // ifndef __NE_MINIMAL_OS__
+#endif  // ifdef __FSKIT_INCLUDES_EXT2__
+#endif  // ifndef __NE_MINIMAL_OS__

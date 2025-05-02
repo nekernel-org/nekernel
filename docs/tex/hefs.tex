@@ -1,32 +1,157 @@
 \documentclass{article}
-\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{amsmath}
-\usepackage{hyperref}
-\usepackage{longtable}
-\usepackage{titlesec}
-\usepackage{fancyhdr}
-\usepackage{caption}
 \usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{longtable}
 
-\definecolor{codegray}{gray}{0.95}
-\lstset{
-  backgroundcolor=\color{codegray},
+\definecolor{lightgray}{gray}{0.95}
+
+\lstdefinestyle{cstyle}{
+  language=C++,
+  backgroundcolor=\color{lightgray},
   basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{orange},
+  numbers=left,
+  numberstyle=\tiny,
   breaklines=true,
   frame=single,
-  tabsize=4,
-  language=C++,
   showstringspaces=false
 }
 
-\title{HeFS: High-Throughput Extended File System Specification}
+\title{HeFS (High-Throughput Extended File System) Specification}
 \author{Amlal El Mahrouss}
-\date{2025}
+\date{2024-2025}
 
 \begin{document}
 
 \maketitle
+
+\section{Overview}
+HeFS is a high-throughput filesystem designed for NeKernel. It implements a robust directory structure based on red-black trees, uses slice-linked blocks for file storage, and includes CRC32-based integrity checks. Designed for desktop, server, and embedded contexts, it prioritizes performance, corruption recovery, and extensibility.
+
+\section{Boot Node Structure}
+\begin{longtable}{|l|l|p{8cm}|}
+\hline
+\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\hline
+\verb|fMagic| & \verb|char[8]| & Filesystem magic ("  HeFS") \\
+\verb|fVolName| & \verb|Utf8Char[128]| & Volume name \\
+\verb|fVersion| & \verb|UInt32| & Filesystem version (e.g., 0x0101) \\
+\verb|fBadSectors| & \verb|UInt64| & Number of bad sectors detected \\
+\verb|fSectorCount| & \verb|UInt64| & Total sector count \\
+\verb|fSectorSize| & \verb|UInt64| & Size of each sector \\
+\verb|fChecksum| & \verb|UInt32| & CRC32 checksum of the boot node \\
+\verb|fDiskKind| & \verb|UInt8| & Type of drive (e.g., HDD, SSD, USB) \\
+\verb|fEncoding| & \verb|UInt8| & Encoding mode (UTF-8, UTF-16, etc.) \\
+\verb|fStartIND| & \verb|UInt64| & Starting LBA of inode directory region \\
+\verb|fEndIND| & \verb|UInt64| & Ending LBA of inode directory region \\
+\verb|fINDCount| & \verb|UInt64| & Number of directory nodes allocated \\
+\verb|fDiskSize| & \verb|UInt64| & Logical size of the disk \\
+\verb|fDiskStatus| & \verb|UInt16| & Status of the disk (e.g., unlocked, locked) \\
+\verb|fDiskFlags| & \verb|UInt16| & Disk flags (e.g., read-only) \\
+\verb|fVID| & \verb|UInt16| & Virtual ID (for EPM integration) \\
+\hline
+\end{longtable}
+
+\section{File Types and Flags}
+\subsection*{File Kinds}
+\begin{itemize}[label=--]
+    \item \verb|0x00| --- Regular File
+    \item \verb|0x01| --- Directory
+    \item \verb|0x02| --- Block Device
+    \item \verb|0x03| --- Character Device
+    \item \verb|0x04| --- FIFO
+    \item \verb|0x05| --- Socket
+    \item \verb|0x06| --- Symbolic Link
+    \item \verb|0x07| --- Unknown
+\end{itemize}
+
+\subsection*{Drive Types}
+\begin{itemize}[label=--]
+    \item \verb|0xC0| --- Hard Drive
+    \item \verb|0xC1| --- Solid State Drive
+    \item \verb|0x0C| --- Optical Drive
+    \item \verb|0xCC| --- USB Mass Storage
+    \item \verb|0xC4| --- SCSI/SAS Drive
+    \item \verb|0xC6| --- Flash Drive
+\end{itemize}
+
+\section{Index Node Structure}
+The `HEFS\_INDEX\_NODE` represents a file and is constrained to 512 bytes to match hardware sector boundaries. It uses a fixed set of block pointers (slices) and CRC32 checks for data integrity. Only the local file name is stored in `fName`.
+
+\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE (Fits 512B)}]
+struct HEFS_INDEX_NODE {
+    Utf8Char fName[256];        // Local file name
+    UInt32   fFlags;
+    UInt16   fKind;
+    UInt32   fSize;
+    UInt32   fChecksum;
+
+    Boolean  fSymLink;
+    ATime    fCreated, fAccessed, fModified, fDeleted;
+    UInt32   fUID, fGID;
+    UInt32   fMode;
+
+    UInt64   fBlock[16];        // Data block slices (start-only)
+    Char     fPad[69];          // Padding to reach 512B
+};
+\end{lstlisting}
+
+\section{Directory Node Structure}
+Directories form a red-black tree. Each node (IND) can hold up to 16 index node references and links to its parent, siblings, and children via LBAs.
+
+\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY}]
+struct HEFS_INDEX_NODE_DIRECTORY {
+    Utf8Char fName[256];        // Directory name (not full path)
+    UInt32   fFlags;
+    UInt16   fKind;
+    UInt32   fEntryCount;
+    UInt32   fChecksum, fIndexNodeChecksum;
+
+    ATime    fCreated, fAccessed, fModified, fDeleted;
+    UInt32   fUID, fGID;
+    UInt32   fMode;
+
+    UInt64   fIndexNode[16];    // Inode LBA references
+
+    UInt8    fColor;            // Red/Black tree color
+    Lba      fNext, fPrev, fChild, fParent;
+
+    Char     fPad[33];
+};
+\end{lstlisting}
+
+\section{Design Characteristics}
+
+\begin{itemize}
+    \item Red-black tree traversal for directory balancing
+    \item One-sector (512B) inode design for efficient I/O
+    \item Slice-linked file storage (fixed 16 slots)
+    \item CRC32 for boot node, inode, and directory integrity
+    \item Preallocated directory inodes to avoid runtime fragmentation
+\end{itemize}
+
+\section{Minimum Requirements}
+
+\begin{itemize}
+    \item Minimum disk size: 16MB
+    \item Recommended size: 8GB or more
+    \item Supported media: HDD, SSD, USB, SCSI, Flash, Optical
+\end{itemize}
+
+\section{Future Work}
+\begin{itemize}
+    \item Journaling layer for recovery
+    \item Extended access control and ACL support
+    \item Logical Volume Management (LVM)
+    \item Dual boot node layout for redundancy
+    \item Self-healing and online fsck tools
+\end{itemize}
 
 \end{document}

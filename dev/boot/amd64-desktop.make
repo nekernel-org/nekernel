@@ -67,12 +67,12 @@ REM=rm
 REM_FLAG=-f
 
 FLAG_ASM=-f win64
-FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -Wall -Wpedantic -Wextra -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__ \
+FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -Wall -Wpedantic -Wextra -mno-red-zone -D__NEOSKRNL__ -D__BOOTZ__ -DBOOTZ_VEPM_SUPPORT \
 			-DEFI_FUNCTION_WRAPPER -I./ -I../kernel $(DISK_DRV) -I../ -c -nostdlib -fno-rtti -fno-exceptions \
-                        -std=c++20 -DBOOTZ_GPT_SUPPORT -DBOOTZ_EPM_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT -Wl,--disable-reloc-section
+                        -std=c++20 -DBOOTZ_GPT_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT -Wl,--disable-reloc-section
 
 BOOTLOADER=bootz.efi
-KERNEL=vmkrnl.efi
+KERNEL=krnl.efi
 SYSCHK=chk.efi
 BOOTNET=net.efi
 SCIKIT=user.sys
@@ -97,7 +97,7 @@ all: compile-amd64
 .PHONY: disk
 disk:
 	dd if=/dev/zero of=$(BOOT) bs=7M count=100
-	mformat -i $(BOOT) -F -v "NEKERNEL-ESP"
+	mformat -i $(BOOT) -F -v "ESP"
 
 
 ifneq ($(DEBUG_SUPPORT), )
@@ -131,14 +131,14 @@ run-efi-amd64-ata: run-efi-amd64-ata-dma
 # img_2 is the rescue disk. img is the bootable disk, as provided by the NeKernel specs.
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f raw $(IMG) 4G
+	qemu-img create -f raw $(IMG) 1G
 
 .PHONY: efi
 efi:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=bootz.efi vmkrnl.efi OVMF.fd
+EXECUTABLES=bootz.efi krnl.efi OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

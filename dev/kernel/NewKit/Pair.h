@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -8,7 +8,6 @@
 
 #include <NewKit/Defines.h>
 
-namespace Kernel
-{
-	class Pair;
-} // namespace Kernel
+namespace Kernel {
+class Pair;
+}  // namespace Kernel

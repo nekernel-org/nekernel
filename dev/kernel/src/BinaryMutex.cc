@@ -1,74 +1,66 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/BinaryMutex.h>
+#include <KernelKit/ProcessScheduler.h>
 
-namespace Kernel
-{
-	/***********************************************************************************/
-	/// @brief Unlocks the semaphore.
-	/***********************************************************************************/
-	Bool BinaryMutex::Unlock() noexcept
-	{
-		if (fLockingProcess)
-		{
-			fLockingProcess		   = Process();
-			fLockingProcess.Status = ProcessStatusKind::kFrozen;
-			return Yes;
-		}
+namespace Kernel {
+/***********************************************************************************/
+/// @brief Unlocks the binary mutex.
+/***********************************************************************************/
+Bool BinaryMutex::Unlock() noexcept {
+  if (fLockingProcess) {
+    fLockingProcess        = USER_PROCESS();
+    fLockingProcess.Status = ProcessStatusKind::kFrozen;
 
-		return No;
-	}
+    return Yes;
+  }
 
-	/***********************************************************************************/
-	/// @brief Locks process in the semaphore.
-	/***********************************************************************************/
-	Bool BinaryMutex::Lock(Process& process)
-	{
-		if (!process || fLockingProcess)
-			return No;
+  return No;
+}
 
-		fLockingProcess = process;
+/***********************************************************************************/
+/// @brief Locks process in the binary mutex.
+/***********************************************************************************/
+Bool BinaryMutex::Lock(USER_PROCESS& process) {
+  if (!process || this->IsLocked()) return No;
 
-		return Yes;
-	}
+  this->fLockingProcess = process;
 
-	/***********************************************************************************/
-	/// @brief Checks if process is locked.
-	/***********************************************************************************/
-	Bool BinaryMutex::IsLocked() const
-	{
-		return fLockingProcess.Status == ProcessStatusKind::kRunning;
-	}
+  return Yes;
+}
 
-	/***********************************************************************************/
-	/// @brief Try lock or wait.
-	/***********************************************************************************/
-	Bool BinaryMutex::LockOrWait(Process& process, TimerInterface* timer)
-	{
-		if (timer == nullptr)
-			return No;
+/***********************************************************************************/
+/// @brief Checks if process is locked.
+/***********************************************************************************/
+Bool BinaryMutex::IsLocked() const {
+  return this->fLockingProcess.Status == ProcessStatusKind::kRunning;
+}
 
-		this->Lock(process);
+/***********************************************************************************/
+/// @brief Try lock or wait.
+/***********************************************************************************/
+Bool BinaryMutex::LockOrWait(USER_PROCESS& process, TimerInterface* timer) {
+  if (timer == nullptr) return No;
 
-		timer->Wait();
+  this->Lock(process);
 
-		return this->Lock(process);
-	}
+  timer->Wait();
 
-	/***********************************************************************************/
-	/// @brief Wait for process **sec** until we check if it's free.
-	/// @param sec seconds.
-	/***********************************************************************************/
-	BOOL BinaryMutex::WaitForProcess(const Int16& sec) noexcept
-	{
-		HardwareTimer hw_timer(rtl_seconds(sec));
-		hw_timer.Wait();
+  return this->Lock(process);
+}
 
-		return !this->IsLocked();
-	}
-} // namespace Kernel
+/***********************************************************************************/
+/// @brief Wait for process **sec** until we check if it's free.
+/// @param sec seconds.
+/***********************************************************************************/
+BOOL BinaryMutex::WaitForProcess(const Int16& sec) noexcept {
+  HardwareTimer hw_timer(rtl_milliseconds(sec));
+  hw_timer.Wait();
+
+  return !this->IsLocked();
+}
+}  // namespace Kernel

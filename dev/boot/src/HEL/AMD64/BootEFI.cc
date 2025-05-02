@@ -1,12 +1,11 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 #include <BootKit/BootKit.h>
-#include <modules/CoreGfx/CoreGfx.h>
-#include <modules/CoreGfx/TextGfx.h>
+#include <BootKit/BootThread.h>
 #include <FirmwareKit/EFI.h>
 #include <FirmwareKit/EFI/API.h>
 #include <FirmwareKit/Handover.h>
@@ -15,281 +14,250 @@
 #include <KernelKit/PEF.h>
 #include <NewKit/Macros.h>
 #include <NewKit/Ref.h>
-#include <BootKit/BootThread.h>
 #include <modules/CoreGfx/CoreGfx.h>
+#include <modules/CoreGfx/TextGfx.h>
 
-#ifndef kExpectedWidth
-#define kExpectedWidth (800)
-#endif
-
-#ifndef kExpectedHeight
-#define kExpectedHeight (600)
-#endif
+// Makes the compiler shut up.
+#ifndef kMachineModel
+#define kMachineModel "OS"
+#endif  // !kMachineModel
 
 /** Graphics related. */
 
-STATIC EfiGraphicsOutputProtocol* kGop		 = nullptr;
-STATIC UInt16					  kGopStride = 0U;
-STATIC EfiGUID					  kGopGuid;
+STATIC EfiGraphicsOutputProtocol* kGop       = nullptr;
+STATIC UInt16                     kGopStride = 0U;
+STATIC EfiGUID                    kGopGuid;
 
 /** Related to jumping to the reset vector. */
 
 EXTERN_C Void rt_reset_hardware();
 
-/** Boot Services symbol. */
-EXTERN EfiBootServices* BS;
+EXTERN_C Kernel::VoidPtr boot_read_cr3();  // @brief Page directory inside cr3 register.
 
 /**
-	@brief Finds and stores the GOP object.
+  @brief Finds and stores the GOP object.
 */
-STATIC Bool boot_init_fb() noexcept
-{
-	kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
-	kGop	 = nullptr;
+STATIC Bool boot_init_fb() noexcept {
+  kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  kGop     = nullptr;
 
-	if (BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*)&kGop) != kEfiOk)
-		return No;
+  if (BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*) &kGop) != kEfiOk) return No;
 
-	kGopStride = 4;
+  kGopStride = 4;
 
-	for (SizeT i = 0; i < kGop->Mode->MaxMode; ++i)
-	{
-		EfiGraphicsOutputProtocolModeInformation* infoPtr = nullptr;
-		UInt32									  sz	  = 0U;
-
-		kGop->QueryMode(kGop, i, &sz, &infoPtr);
-
-		if (infoPtr->HorizontalResolution == kExpectedWidth &&
-			infoPtr->VerticalResolution == kExpectedHeight)
-		{
-			kGop->SetMode(kGop, i);
-			return Yes;
-		}
-	}
-
-	return No;
+  return Yes;
 }
 
 EfiGUID kEfiGlobalNamespaceVarGUID = {
-	0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
+    0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
 
 /// @brief BootloaderMain EFI entrypoint.
 /// @param image_handle Handle of this image.
 /// @param sys_table The system table of it.
 /// @return nothing, never returns.
-EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr	  image_handle,
-										  EfiSystemTable* sys_table)
-{
-	fw_init_efi(sys_table); ///! Init the EFI library.
+EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTable* sys_table) {
+  fw_init_efi(sys_table);  ///! Init the EFI library.
 
-	HEL::BootInfoHeader* handover_hdr =
-		new HEL::BootInfoHeader();
+  ST->ConOut->ClearScreen(sys_table->ConOut);
+  ST->ConOut->SetAttribute(sys_table->ConOut, kEFIYellow);
 
-	UInt32				 map_key		 = 0;
-	UInt32				 size_struct_ptr = sizeof(EfiMemoryDescriptor);
-	EfiMemoryDescriptor* struct_ptr		 = nullptr;
-	UInt32				 sz_desc		 = sizeof(EfiMemoryDescriptor);
-	UInt32				 rev_desc		 = 0;
+  ST->BootServices->SetWatchdogTimer(0, 0, 0, nullptr);
+  ST->ConOut->EnableCursor(ST->ConOut, false);
 
-	Boot::BootTextWriter writer;
+  HEL::BootInfoHeader* handover_hdr = new HEL::BootInfoHeader();
 
-	writer.Write("BootZ: NeKernel Loader.\r");
+  UInt32               map_key         = 0;
+  UInt32               size_struct_ptr = sizeof(EfiMemoryDescriptor);
+  EfiMemoryDescriptor* struct_ptr      = nullptr;
+  UInt32               sz_desc         = sizeof(EfiMemoryDescriptor);
+  UInt32               rev_desc        = 0;
 
-	if (!boot_init_fb())
-	{
-		writer.Write("BootZ: Invalid Framebuffer, can't boot NeKernel.\r");
-		Boot::Stop();
-	}
+  Boot::BootTextWriter writer;
 
-	for (SizeT index_vt = 0; index_vt < sys_table->NumberOfTableEntries;
-		 ++index_vt)
-	{
-		Char* vendor_table = reinterpret_cast<Char*>(
-			sys_table->ConfigurationTable[index_vt].VendorTable);
+  if (!boot_init_fb()) {
+    writer.Write("BootZ: Invalid Framebuffer, can't boot to NeKernel.\r");
+    Boot::Stop();
+  }
 
-		// ACPI's 'RSD PTR', which contains the ACPI SDT (MADT, FACP...)
-		if (vendor_table[0] == 'R' && vendor_table[1] == 'S' &&
-			vendor_table[2] == 'D' && vendor_table[3] == ' ' &&
-			vendor_table[4] == 'P' && vendor_table[5] == 'T' &&
-			vendor_table[6] == 'R' && vendor_table[7] == ' ')
-		{
-			handover_hdr->f_HardwareTables.f_VendorPtr = (VoidPtr)vendor_table;
-			break;
-		}
-	}
+  for (SizeT index_vt = 0; index_vt < sys_table->NumberOfTableEntries; ++index_vt) {
+    Char* vendor_table =
+        reinterpret_cast<Char*>(sys_table->ConfigurationTable[index_vt].VendorTable);
 
-	// ------------------------------------------ //
-	// draw background color.
-	// ------------------------------------------ //
+    // ACPI's 'RSD PTR', which contains the ACPI SDT (MADT, FACP...)
+    if (vendor_table[0] == 'R' && vendor_table[1] == 'S' && vendor_table[2] == 'D' &&
+        vendor_table[3] == ' ' && vendor_table[4] == 'P' && vendor_table[5] == 'T' &&
+        vendor_table[6] == 'R' && vendor_table[7] == ' ') {
+      handover_hdr->f_HardwareTables.f_VendorPtr = (VoidPtr) vendor_table;
+      break;
+    }
+  }
 
-	handover_hdr->f_GOP.f_The		   = kGop->Mode->FrameBufferBase;
-	handover_hdr->f_GOP.f_Width		   = kGop->Mode->Info->VerticalResolution;
-	handover_hdr->f_GOP.f_Height	   = kGop->Mode->Info->HorizontalResolution;
-	handover_hdr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
-	handover_hdr->f_GOP.f_PixelFormat  = kGop->Mode->Info->PixelFormat;
-	handover_hdr->f_GOP.f_Size		   = kGop->Mode->FrameBufferSize;
+  // ------------------------------------------ //
+  // draw background color.
+  // ------------------------------------------ //
 
-	// ------------------------------------------- //
-	// Grab MP services, extended to runtime.	   //
-	// ------------------------------------------- //
+  handover_hdr->f_GOP.f_The          = kGop->Mode->FrameBufferBase;
+  handover_hdr->f_GOP.f_Width        = kGop->Mode->Info->VerticalResolution;
+  handover_hdr->f_GOP.f_Height       = kGop->Mode->Info->HorizontalResolution;
+  handover_hdr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
+  handover_hdr->f_GOP.f_PixelFormat  = kGop->Mode->Info->PixelFormat;
+  handover_hdr->f_GOP.f_Size         = kGop->Mode->FrameBufferSize;
 
-	EfiGUID				   guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
-	EfiMpServicesProtocol* mp	   = nullptr;
+  // ------------------------------------------- //
+  // Grab MP services, extended to runtime.	   //
+  // ------------------------------------------- //
 
-	BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
+  EfiGUID                guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
+  EfiMpServicesProtocol* mp      = nullptr;
 
-	handover_hdr->f_HardwareTables.f_MpPtr = reinterpret_cast<VoidPtr>(mp);
+  BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
 
-	kHandoverHeader = handover_hdr;
+  handover_hdr->f_HardwareTables.f_MpPtr = reinterpret_cast<VoidPtr>(mp);
 
-	FB::fb_clear_video();
+  kHandoverHeader = handover_hdr;
 
-	UInt32 cnt_enabled	= 0;
-	UInt32 cnt_disabled = 0;
+  FB::fb_clear_video();
 
-	if (mp)
-	{
-		mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
-		handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
-	}
-	else
-	{
-		handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = NO;
-	}
+  UInt32 cnt_enabled  = 0;
+  UInt32 cnt_disabled = 0;
 
-	// Fill handover header now.
+  if (mp) {
+    mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
+    handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
+  } else {
+    handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = NO;
+  }
 
-	handover_hdr->f_BitMapStart = nullptr;			 /* Start of bitmap. */
-	handover_hdr->f_BitMapSize	= kHandoverBitMapSz; /* Size of bitmap in bytes. */
+  // Fill handover header now.
 
-	Int32 trials = 5 * 10000000;
+  handover_hdr->f_BitMapStart = nullptr;           /* Start of bitmap. */
+  handover_hdr->f_BitMapSize  = kHandoverBitMapSz; /* Size of bitmap in bytes. */
 
-	writer.Write("BootZ: Allocating sufficent memory, trying with 4GB...\r");
+  Int32 trials = 5 * 10000000;
 
-	while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
-	{
-		--trials;
+  writer.Write("BootZ: Welcome to BootZ.\r");
+  writer.Write("BootZ: Allocating sufficent memory, trying 4GB...\r");
 
-		if (!trials)
-		{
-			writer.Write("BootZ: Unable to allocate sufficent memory, trying again with 2GB...\r");
+  while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize,
+                          &handover_hdr->f_BitMapStart) != kEfiOk) {
+    --trials;
 
-			trials = 3 * 10000000;
+    if (!trials) {
+      writer.Write("BootZ: Unable to allocate sufficent memory, trying again with 2GB...\r");
 
-			handover_hdr->f_BitMapSize = kHandoverBitMapSz / 2; /* Size of bitmap in bytes. */
+      trials = 3 * 10000000;
 
-			while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize, &handover_hdr->f_BitMapStart) != kEfiOk)
-			{
-				--trials;
+      handover_hdr->f_BitMapSize = kHandoverBitMapSz / 2; /* Size of bitmap in bytes. */
 
-				if (!trials)
-				{
-					writer.Write("BootZ: Unable to allocate sufficent memory, aborting...\r");
-					Boot::Stop();
-				}
-			}
-		}
-	}
+      while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize,
+                              &handover_hdr->f_BitMapStart) != kEfiOk) {
+        --trials;
 
-	handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr)BS;
-	handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr)ST;
+        if (!trials) {
+          writer.Write("BootZ: Unable to allocate sufficent memory, aborting...\r");
+          Boot::Stop();
+        }
+      }
+    }
+  }
 
-	// ------------------------------------------ //
-	// If we succeed in reading the blob, then execute it.
-	// ------------------------------------------ //
+  handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr) BS;
+  handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr) ST;
 
-	Boot::BootFileReader reader_syschk(L"chk.efi", image_handle);
-	reader_syschk.ReadAll(0);
+  // ------------------------------------------ //
+  // If we succeed in reading the blob, then execute it.
+  // ------------------------------------------ //
 
-	Boot::BootThread* syschk_thread = nullptr;
+  Boot::BootFileReader reader_syschk(L"chk.efi", image_handle);
+  reader_syschk.ReadAll(0);
 
-	if (reader_syschk.Blob())
-	{
-		syschk_thread = new Boot::BootThread(reader_syschk.Blob());
-		syschk_thread->SetName("BootZ: System Check");
+  Boot::BootThread* syschk_thread = nullptr;
 
-		syschk_thread->Start(handover_hdr, NO);
-	}
+  if (reader_syschk.Blob()) {
+    syschk_thread = new Boot::BootThread(reader_syschk.Blob());
+    syschk_thread->SetName("SysChk");
 
-	BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
+    syschk_thread->Start(handover_hdr, NO);
+  }
 
-	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
+  BS->GetMemoryMap(&size_struct_ptr, struct_ptr, &map_key, &sz_desc, &rev_desc);
 
-	handover_hdr->f_Magic	= kHandoverMagic;
-	handover_hdr->f_Version = kHandoverVersion;
+  handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
-	handover_hdr->f_HardwareTables.f_ImageKey	 = map_key;
-	handover_hdr->f_HardwareTables.f_ImageHandle = image_handle;
+  handover_hdr->f_Magic   = kHandoverMagic;
+  handover_hdr->f_Version = kHandoverVersion;
 
-	// Provide fimware vendor name.
+  handover_hdr->f_HardwareTables.f_ImageKey    = map_key;
+  handover_hdr->f_HardwareTables.f_ImageHandle = image_handle;
 
-	Boot::BCopyMem(handover_hdr->f_FirmwareVendorName, sys_table->FirmwareVendor,
-				   handover_hdr->f_FirmwareVendorLen);
+  // Provide fimware vendor name.
 
-	handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
-	// Assign to global 'kHandoverHeader'.
+  Boot::BCopyMem(handover_hdr->f_FirmwareVendorName, sys_table->FirmwareVendor,
+                 handover_hdr->f_FirmwareVendorLen);
 
-	WideChar kernel_path[256U] = L"vmkrnl.efi";
-	UInt32	 kernel_path_sz	   = 256U;
+  handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
+  // Assign to global 'kHandoverHeader'.
 
-	if (ST->RuntimeServices->GetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, nullptr, &kernel_path_sz, kernel_path) != kEfiOk)
-	{
-		/// access attributes (in order)
-		/// EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
-		UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
+  WideChar kernel_path[256U] = L"krnl.efi";
+  UInt32   kernel_path_sz    = StrLen("krnl.efi");
 
-		ST->RuntimeServices->SetVariable(L"/props/boot_path", kEfiGlobalNamespaceVarGUID, &attr, &kernel_path_sz, kernel_path);
-	}
+  if (ST->RuntimeServices->GetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, nullptr,
+                                       &kernel_path_sz, kernel_path) != kEfiOk) {
+    /// access attributes (in order)
+    /// EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
+    UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
 
-	UInt32 sz_ver = sizeof(UInt64);
-	UInt64 ver	  = KERNEL_VERSION_BCD;
+    ST->RuntimeServices->SetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, &attr,
+                                     &kernel_path_sz, kernel_path);
+  }
 
-	ST->RuntimeServices->GetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
+  UInt32 sz_ver = sizeof(UInt64);
+  UInt64 ver    = KERNEL_VERSION_BCD;
 
-	if (ver != KERNEL_VERSION_BCD)
-	{
-		ver = KERNEL_VERSION_BCD;
+  ST->RuntimeServices->GetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver,
+                                   &ver);
 
-		ST->RuntimeServices->SetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr, &sz_ver, &ver);
-		writer.Write("BootZ: version has been updated: ").Write(ver).Write("\r");
-	}
+  if (ver < KERNEL_VERSION_BCD) {
+    ver = KERNEL_VERSION_BCD;
 
-	writer.Write("BootZ: version: ").Write(ver).Write("\r");
+    ST->RuntimeServices->SetVariable(L"/props/kern_ver", kEfiGlobalNamespaceVarGUID, nullptr,
+                                     &sz_ver, &ver);
 
-	// boot to kernel, if not netboot this.
+    writer.Write("BootZ: Version has been updated: ").Write(ver).Write("\r");
+  } else {
+    writer.Write("BootZ: Version: ").Write(ver).Write("\r");
+  }
 
-	Boot::BootFileReader reader_kernel(kernel_path, image_handle);
+  // boot to kernel, if not bootnet this.
 
-	reader_kernel.ReadAll(0);
+  Boot::BootFileReader reader_kernel(kernel_path, image_handle);
 
-	// ------------------------------------------ //
-	// If we succeed in reading the blob, then execute it.
-	// ------------------------------------------ //
+  reader_kernel.ReadAll(0);
 
-	if (reader_kernel.Blob())
-	{
-		// ------------------------------------------ //
-		// null these fields, to avoid being reused later.
-		// ------------------------------------------ //
+  // ------------------------------------------ //
+  // If we succeed in reading the blob, then execute it.
+  // ------------------------------------------ //
 
-		auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
+  if (reader_kernel.Blob()) {
+    handover_hdr->f_PageStart = boot_read_cr3();
 
-		kernel_thread.SetName("BootZ: NeKernel");
+    auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
 
-		handover_hdr->f_KernelImage = reader_kernel.Blob();
-		handover_hdr->f_KernelSz	= reader_kernel.Size();
+    kernel_thread.SetName("NeKernel");
 
-		kernel_thread.Start(handover_hdr, YES);
-	}
+    handover_hdr->f_KernelImage = reader_kernel.Blob();
+    handover_hdr->f_KernelSz    = reader_kernel.Size();
 
-	Boot::BootFileReader reader_netboot(L"net.efi", image_handle);
-	reader_netboot.ReadAll(0);
+    kernel_thread.Start(handover_hdr, YES);
+  }
 
-	if (!reader_netboot.Blob())
-		return kEfiFail;
+  Boot::BootFileReader reader_netboot(L"net.efi", image_handle);
+  reader_netboot.ReadAll(0);
 
-	auto netboot_thread = Boot::BootThread(reader_netboot.Blob());
-	netboot_thread.SetName("BootZ: BootNet");
+  if (!reader_netboot.Blob()) return kEfiFail;
 
-	return netboot_thread.Start(handover_hdr, NO);
+  auto netboot_thread = Boot::BootThread(reader_netboot.Blob());
+  netboot_thread.SetName("BootNet");
+
+  return netboot_thread.Start(handover_hdr, NO);
 }

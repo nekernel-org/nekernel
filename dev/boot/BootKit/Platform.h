@@ -1,14 +1,14 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 #pragma once
 
 /**
-	@file Platform.h
-	@brief Platform specific code.
+  @file Platform.h
+  @brief Platform specific code.
 */
 
 #ifdef __x86_64__
@@ -21,7 +21,7 @@
 #ifndef EXTERN_C
 #define EXTERN_C extern
 #endif
-#endif // __cplusplus
+#endif  // __cplusplus
 
 EXTERN_C void rt_halt();
 EXTERN_C void rt_cli();

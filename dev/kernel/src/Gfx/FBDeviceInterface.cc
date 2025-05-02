@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -13,10 +13,8 @@ using namespace Kernel;
 /// @param In  Drive input
 /// @param Cleanup Drive cleanup.
 FBDeviceInterface::FBDeviceInterface(void (*out)(IDeviceObject* self, FBDevicePacket* outpacket),
-									 void (*in)(IDeviceObject* self, FBDevicePacket* inpacket))
-	: IDeviceObject(out, in)
-{
-}
+                                     void (*in)(IDeviceObject* self, FBDevicePacket* inpacket))
+    : IDeviceObject(out, in) {}
 
 /// @brief Class desctructor
 FBDeviceInterface::~FBDeviceInterface() = default;
@@ -24,43 +22,29 @@ FBDeviceInterface::~FBDeviceInterface() = default;
 /// @brief Output operator.
 /// @param mnt the disk mountpoint.
 /// @return the class itself after operation.
-FBDeviceInterface& FBDeviceInterface::operator<<(FBDevicePacket* pckt)
-{
-	if (!pckt)
-		return *this;
+FBDeviceInterface& FBDeviceInterface::operator<<(FBDevicePacket* pckt) {
+  if (!pckt) return *this;
 
-	if (pckt->fHeight == 0 || pckt->fWidth == 0)
-		return *this;
+  if (pckt->fHeight == 0 || pckt->fWidth == 0) return *this;
 
-	if (pckt->fX > kHandoverHeader->f_GOP.f_Width ||
-		pckt->fY > kHandoverHeader->f_GOP.f_Height)
-		return *this;
+  this->fOut(this, pckt);
 
-	this->fOut(this, pckt);
-
-	return *this;
+  return *this;
 }
 
 /// @brief Input operator.
 /// @param mnt the disk mountpoint.
 /// @return the class itself after operation.
-FBDeviceInterface& FBDeviceInterface::operator>>(FBDevicePacket* pckt)
-{
-	if (!pckt)
-		return *this;
+FBDeviceInterface& FBDeviceInterface::operator>>(FBDevicePacket* pckt) {
+  if (!pckt) return *this;
 
-	if (pckt->fX > kHandoverHeader->f_GOP.f_Width ||
-		pckt->fY > kHandoverHeader->f_GOP.f_Height)
-		return *this;
+  this->fIn(this, pckt);
 
-	this->fIn(this, pckt);
-
-	return *this;
+  return *this;
 }
 
 /// @brief Returns the name of the device interface.
 /// @return it's name as a string.
-const Char* FBDeviceInterface::Name() const
-{
-	return "/dev/fb{}";
+const Char* FBDeviceInterface::Name() const {
+  return "/devices/fb{}";
 }

@@ -1,18 +1,18 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-	File: FileReader.cc
-	Purpose: New Boot FileReader,
-	Read complete file and store it in a buffer.
+  File: FileReader.cc
+  Purpose: New Boot FileReader,
+  Read complete file and store it in a buffer.
 
 ------------------------------------------- */
 
+#include <BootKit/BootKit.h>
 #include <BootKit/Platform.h>
 #include <BootKit/Protocol.h>
-#include <BootKit/BootKit.h>
-#include <FirmwareKit/Handover.h>
 #include <FirmwareKit/EFI/API.h>
+#include <FirmwareKit/Handover.h>
 #include <modules/CoreGfx/TextGfx.h>
 
 /// @file BootFileReader
@@ -29,178 +29,149 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /***
-	@brief File Reader constructor.
+  @brief File Reader constructor.
 */
-Boot::BootFileReader::BootFileReader(const CharacterTypeUTF16* path,
-									 EfiHandlePtr			   ImageHandle)
-{
-	if (path != nullptr)
-	{
-		SizeT index = 0UL;
-		for (; path[index] != L'\0'; ++index)
-		{
-			mPath[index] = path[index];
-		}
+Boot::BootFileReader::BootFileReader(const CharacterTypeUTF16* path, EfiHandlePtr ImageHandle) {
+  if (path != nullptr) {
+    SizeT index = 0UL;
+    for (; path[index] != L'\0'; ++index) {
+      mPath[index] = path[index];
+    }
 
-		mPath[index] = 0;
-	}
+    mPath[index] = 0;
+  }
 
-	/// Load protocols with their GUIDs.
+  /// Load protocols with their GUIDs.
 
-	EfiGUID guidEfp = EfiGUID(EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID);
+  EfiGUID guidEfp = EfiGUID(EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID);
 
-	EfiSimpleFilesystemProtocol* efp = nullptr;
+  EfiSimpleFilesystemProtocol* efp = nullptr;
 
-	EfiLoadImageProtocol* img	  = nullptr;
-	EfiGUID				  guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
+  EfiLoadImageProtocol* img     = nullptr;
+  EfiGUID               guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
-	if (BS->HandleProtocol(ImageHandle, &guidImg, (void**)&img) != kEfiOk)
-	{
-		mWriter.Write(L"BootZ: Handle-Protocol: No-Such-Protocol").Write(L"\r");
-		this->mErrorCode = kNotSupported;
-	}
+  if (BS->HandleProtocol(ImageHandle, &guidImg, (void**) &img) != kEfiOk) {
+    mWriter.Write(L"BootZ: Handle-Protocol: No-Such-Protocol").Write(L"\r");
+    this->mErrorCode = kNotSupported;
+  }
 
-	if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**)&efp) != kEfiOk)
-	{
-		mWriter.Write(L"BootZ: Handle-Protocol: No-Such-Protocol").Write(L"\r");
-		this->mErrorCode = kNotSupported;
-		return;
-	}
+  if (BS->HandleProtocol(img->DeviceHandle, &guidEfp, (void**) &efp) != kEfiOk) {
+    mWriter.Write(L"BootZ: Handle-Protocol: No-Such-Protocol").Write(L"\r");
+    this->mErrorCode = kNotSupported;
+    return;
+  }
 
-	/// Start doing disk I/O
+  /// Start doing disk I/O
 
-	if (efp->OpenVolume(efp, &mRootFs) != kEfiOk)
-	{
-		mWriter.Write(L"BootZ: Fetch-Protocol: No-Such-Volume").Write(L"\r");
-		this->mErrorCode = kNotSupported;
-		return;
-	}
+  if (efp->OpenVolume(efp, &mRootFs) != kEfiOk) {
+    mWriter.Write(L"BootZ: Fetch-Protocol: No-Such-Volume").Write(L"\r");
+    this->mErrorCode = kNotSupported;
+    return;
+  }
 
-	EfiFileProtocol* fileFs = nullptr;
+  EfiFileProtocol* fileFs = nullptr;
 
-	if (mRootFs->Open(mRootFs, &fileFs, mPath, kEFIFileRead, kEFIReadOnly) !=
-		kEfiOk)
-	{
-		mWriter.Write(L"BootZ: Fetch-Protocol: No-Such-Path: ")
-			.Write(mPath)
-			.Write(L"\r");
-		this->mErrorCode = kNotSupported;
+  if (mRootFs->Open(mRootFs, &fileFs, mPath, kEFIFileRead, kEFIReadOnly) != kEfiOk) {
+    mWriter.Write(L"BootZ: Fetch-Protocol: No-Such-Path: ").Write(mPath).Write(L"\r");
+    this->mErrorCode = kNotSupported;
 
-		fb_render_string("BootZ: PLEASE RECOVER YOUR MINKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
+    fb_render_string("BootZ: PLEASE RECOVER YOUR MINKRNL INSTALL.", 40, 10, RGB(0xFF, 0xFF, 0xFF));
 
-		mRootFs->Close(mRootFs);
+    mRootFs->Close(mRootFs);
 
-		return;
-	}
+    return;
+  }
 
-	mSizeFile  = 0;
-	mFile	   = fileFs;
-	mErrorCode = kOperationOkay;
+  mSizeFile  = 0;
+  mFile      = fileFs;
+  mErrorCode = kOperationOkay;
 }
 
-Boot::BootFileReader::~BootFileReader()
-{
-	if (this->mFile)
-	{
-		this->mFile->Close(this->mFile);
-		this->mFile = nullptr;
-	}
+Boot::BootFileReader::~BootFileReader() {
+  if (this->mFile) {
+    this->mFile->Close(this->mFile);
+    this->mFile = nullptr;
+  }
 
-	if (this->mRootFs)
-	{
-		this->mRootFs->Close(this->mRootFs);
-		this->mRootFs = nullptr;
-	}
+  if (this->mRootFs) {
+    this->mRootFs->Close(this->mRootFs);
+    this->mRootFs = nullptr;
+  }
 
-	if (this->mBlob)
-	{
-		BS->FreePool(this->mBlob);
-		this->mBlob = nullptr;
-	}
+  if (this->mBlob) {
+    BS->FreePool(this->mBlob);
+    this->mBlob = nullptr;
+  }
 
-	BSetMem(this->mPath, 0, kPathLen);
+  BSetMem(this->mPath, 0, kPathLen);
 }
 
 /**
-	@brief Reads all of the file into a buffer.
-	@param **readUntil** size of file
-	@param **chunkToRead** chunk to read each time.
+  @brief Reads all of the file into a buffer.
+  @param **readUntil** size of file
+  @param **chunkToRead** chunk to read each time.
 */
-Void Boot::BootFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_address)
-{
-	UInt32 szInfo = sizeof(EfiFileInfo);
+Void Boot::BootFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr out_address) {
+  UInt32 szInfo = sizeof(EfiFileInfo);
 
-	EfiFileInfo newPtrInfo{};
+  EfiFileInfo newPtrInfo{};
 
-	EfiGUID kFileInfoGUID = EFI_FILE_INFO_GUID;
+  EfiGUID kFileInfoGUID = EFI_FILE_INFO_GUID;
 
-	if (mFile->GetInfo(mFile, &kFileInfoGUID, &szInfo, &newPtrInfo) == kEfiOk)
-	{
-		readUntil = newPtrInfo.FileSize;
-		mWriter.Write(L"BootZ: File size: ").Write(readUntil).Write("\r");
-	}
+  if (mFile->GetInfo(mFile, &kFileInfoGUID, &szInfo, &newPtrInfo) == kEfiOk) {
+    readUntil = newPtrInfo.FileSize;
+    mWriter.Write(L"BootZ: File size: ").Write(readUntil).Write("\r");
+  }
 
-	if (readUntil == 0)
-	{
-		mErrorCode = kNotSupported;
-		return;
-	}
+  if (readUntil == 0) {
+    mErrorCode = kNotSupported;
+    return;
+  }
 
-	if (mBlob == nullptr)
-	{
-		if (!out_address)
-		{
-			if (auto err = BS->AllocatePool(EfiLoaderCode, readUntil, (VoidPtr*)&mBlob) !=
-						   kEfiOk)
-			{
-				mWriter.Write(L"*** error: ").Write(err).Write(L" ***\r");
-				Boot::ThrowError(L"OutOfMemory", L"Out of memory.");
-			}
-		}
-		else
-		{
-			mBlob = (VoidPtr)out_address;
-		}
-	}
+  if (mBlob == nullptr) {
+    if (!out_address) {
+      if (auto err = BS->AllocatePool(EfiLoaderCode, readUntil, (VoidPtr*) &mBlob) != kEfiOk) {
+        mWriter.Write(L"*** error: ").Write(err).Write(L" ***\r");
+        Boot::ThrowError(L"OutOfMemory", L"Out of memory.");
+      }
+    } else {
+      mBlob = (VoidPtr) out_address;
+    }
+  }
 
-	mWriter.Write(L"*** Bytes to read: ").Write(readUntil).Write(L" ***\r");
+  mWriter.Write(L"*** Bytes to read: ").Write(readUntil).Write(L" ***\r");
 
-	UInt64 bufSize = chunkToRead;
-	UInt64 szCnt   = 0UL;
+  UInt64 bufSize = chunkToRead;
+  UInt64 szCnt   = 0UL;
 
-	while (szCnt < readUntil)
-	{
-		auto res = mFile->Read(mFile, &bufSize, (VoidPtr)(&((Char*)mBlob)[szCnt]));
+  while (szCnt < readUntil) {
+    auto res = mFile->Read(mFile, &bufSize, (VoidPtr) (&((Char*) mBlob)[szCnt]));
 
-		szCnt += bufSize;
+    szCnt += bufSize;
 
-		if (res == kBufferTooSmall)
-		{
-			bufSize = chunkToRead;
-		}
-	}
+    if (res == kBufferTooSmall) {
+      bufSize = chunkToRead;
+    }
+  }
 
-	mSizeFile  = szCnt;
-	mErrorCode = kOperationOkay;
+  mSizeFile  = szCnt;
+  mErrorCode = kOperationOkay;
 }
 
 /// @brief error code getter.
 /// @return the error code.
-Int32& Boot::BootFileReader::Error()
-{
-	return mErrorCode;
+Int32& Boot::BootFileReader::Error() {
+  return mErrorCode;
 }
 
 /// @brief blob getter.
 /// @return the blob.
-VoidPtr Boot::BootFileReader::Blob()
-{
-	return mBlob;
+VoidPtr Boot::BootFileReader::Blob() {
+  return mBlob;
 }
 
 /// @breif Size getter.
 /// @return the size of the file.
-UInt64& Boot::BootFileReader::Size()
-{
-	return mSizeFile;
+UInt64& Boot::BootFileReader::Size() {
+  return mSizeFile;
 }

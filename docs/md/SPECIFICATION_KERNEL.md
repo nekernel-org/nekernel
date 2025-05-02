@@ -24,7 +24,7 @@
 - TLS (Thread Local Storage) support.
 - BinaryMutex, Locks, Timers.
 - Canary mechanisms.
-- Dynamic Sys.
+- Dynamic Loader.
 - Cross Platform.
 - Permission Selectors.
 
@@ -50,6 +50,8 @@
 - RunTime -> rt_copy_mem
 - Hal -> hal_foo_bar
 - Class methods -> Class::FooBar
+
+Internals function shall be formated as such: (hali, rtli, rti...)
 
 ===================================
 

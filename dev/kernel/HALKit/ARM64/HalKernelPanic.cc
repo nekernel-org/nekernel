@@ -1,80 +1,74 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
-#include <NewKit/KernelPanic.h>
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/Timer.h>
-#include <KernelKit/DebugOutput.h>
-#include <NewKit/KString.h>
 #include <FirmwareKit/Handover.h>
+#include <KernelKit/DebugOutput.h>
 #include <KernelKit/FileMgr.h>
+#include <KernelKit/Timer.h>
+#include <NewKit/KString.h>
+#include <NewKit/KernelPanic.h>
+#include <NewKit/Utils.h>
 #include <modules/CoreGfx/CoreGfx.h>
 #include <modules/CoreGfx/TextGfx.h>
-#include <NewKit/Utils.h>
 
 /* Each error code is attributed with an ID, which will prompt a string onto the
  * screen. Wait for debugger... */
 
-namespace Kernel
-{
-	/// @brief Dumping factory class.
-	class RecoveryFactory final
-	{
-	public:
-		STATIC Void Recover() noexcept;
-	};
+namespace Kernel {
+/// @brief Dumping factory class.
+class RecoveryFactory final {
+ public:
+  STATIC Void Recover() noexcept;
+};
 
-	/***********************************************************************************/
-	/// @brief Stops execution of the kernel.
-	/// @param id kernel stop ID.
-	/***********************************************************************************/
-	Void ke_panic(const Kernel::Int32& id, const Char* message)
-	{
-		fb_init();
+/***********************************************************************************/
+/// @brief Stops execution of the kernel.
+/// @param id kernel stop ID.
+/***********************************************************************************/
+Void ke_panic(const Kernel::Int32& id, const Char* message) {
+  fb_init();
 
-		auto panic_text = RGB(0xff, 0xff, 0xff);
+  auto panic_text = RGB(0xff, 0xff, 0xff);
 
-		auto y = 10;
-		auto x = 10;
+  auto y = 10;
+  auto x = 10;
 
-		Char* message_apicid = new Char[128];
-		rt_set_memory(message_apicid, 0, 128);
+  Char* message_apicid = new Char[128];
+  rt_set_memory(message_apicid, 0, 128);
 
-		rt_copy_memory((VoidPtr) "panic id: ", message_apicid, rt_string_len("panic id: "));
-		rt_to_string(message_apicid + rt_string_len("panic id: "), (UIntPtr)id, 10);
+  rt_copy_memory((VoidPtr) "panic id: ", message_apicid, rt_string_len("panic id: "));
+  rt_to_string(message_apicid + rt_string_len("panic id: "), (UIntPtr) id, 10);
 
-		fb_render_string(message_apicid, y, x, panic_text);
+  fb_render_string(message_apicid, y, x, panic_text);
 
-		y += 10;
+  y += 10;
 
-		fb_render_string((message ? message : "message: panic raised, going nowhere after this!"), y, x, panic_text);
+  fb_render_string((message ? message : "message: panic raised, going nowhere after this!"), y, x,
+                   panic_text);
 
-		y += 10;
+  y += 10;
 
-		fb_clear();
+  fb_clear();
 
-		RecoveryFactory::Recover();
-	}
+  RecoveryFactory::Recover();
+}
 
-	Void RecoveryFactory::Recover() noexcept
-	{
-		while (YES)
-		{
-			HAL::rt_halt();
-		}
-	}
+Void RecoveryFactory::Recover() noexcept {
+  while (YES) {
+    HAL::rt_halt();
+  }
+}
 
-	void ke_runtime_check(bool expr, const Char* file, const Char* line)
-	{
-		if (!expr)
-		{
-			(void)(kout << "FAILED: FILE: " << file << kendl);
-			(void)(kout << "FAILED: LINE: " << line << kendl);
+void ke_runtime_check(bool expr, const Char* file, const Char* line) {
+  if (!expr) {
+    (Void)(kout << "FAILED: FILE: " << file << kendl);
+    (Void)(kout << "FAILED: LINE: " << line << kendl);
 
-			ke_panic(RUNTIME_CHECK_FAILED, file); // Runtime Check failed
-		}
-	}
-} // namespace Kernel
+    ke_panic(RUNTIME_CHECK_FAILED, file);  // Runtime Check failed
+  }
+}
+}  // namespace Kernel

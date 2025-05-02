@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -26,10 +26,9 @@ struct THREAD_INFORMATION_BLOCK;
 
 /// @brief Thread Information Block.
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
-struct PACKED THREAD_INFORMATION_BLOCK final
-{
-	Kernel::Char	Cookie[kTLSCookieLen]{0}; //! Thread magic number.
-	Kernel::VoidPtr Record{nullptr};		  //! Thread information record.
+struct PACKED THREAD_INFORMATION_BLOCK final {
+  Kernel::Char    Cookie[kTLSCookieLen]{0};  //! Thread magic number.
+  Kernel::VoidPtr Record{nullptr};           //! Thread information record.
 };
 
 ///! @brief Cookie Sanity check.

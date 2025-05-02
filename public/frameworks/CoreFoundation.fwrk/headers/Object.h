@@ -1,7 +1,7 @@
 
 /* -------------------------------------------
 
-	Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -11,16 +11,14 @@
 
 #define CF_OBJECT : public CF::CFObject
 
-namespace CF
-{
-	class CFObject;
+namespace CF {
+class CFObject;
 
-	class CFObject
-	{
-	public:
-		explicit CFObject() = default;
-		virtual ~CFObject() = default;
+class CFObject {
+ public:
+  explicit CFObject() = default;
+  virtual ~CFObject() = default;
 
-		SCI_COPY_DEFAULT(CFObject);
-	};
-} // namespace CF
+  SCI_COPY_DEFAULT(CFObject);
+};
+}  // namespace CF

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -13,31 +13,29 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
 
-#define NE_BUS_COUNT	  (256)
-#define NE_DEVICE_COUNT	  (33)
+#define NE_BUS_COUNT (256)
+#define NE_DEVICE_COUNT (33)
 #define NE_FUNCTION_COUNT (8)
 
-namespace Kernel::PCI
-{
-	class Iterator final
-	{
-	public:
-		Iterator() = delete;
+namespace Kernel::PCI {
+class Iterator final {
+ public:
+  Iterator() = delete;
 
-	public:
-		explicit Iterator(const Types::PciDeviceKind& deviceType);
+ public:
+  explicit Iterator(const Types::PciDeviceKind& deviceType);
 
-		Iterator& operator=(const Iterator&) = default;
-		Iterator(const Iterator&)			 = default;
+  Iterator& operator=(const Iterator&) = default;
+  Iterator(const Iterator&)            = default;
 
-		~Iterator();
+  ~Iterator();
 
-	public:
-		Ref<PCI::Device> operator[](const Size& sz);
+ public:
+  Ref<PCI::Device> operator[](const Size& sz);
 
-	private:
-		Array<PCI::Device, NE_BUS_COUNT> fDevices;
-	};
-} // namespace Kernel::PCI
+ private:
+  Array<PCI::Device, NE_BUS_COUNT> fDevices;
+};
+}  // namespace Kernel::PCI
 
-#endif // __PCI_ITERATOR_H__
+#endif  // __PCI_ITERATOR_H__

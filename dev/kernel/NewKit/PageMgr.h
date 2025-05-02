@@ -3,7 +3,7 @@
 
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -12,70 +12,65 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Ref.h>
 
-namespace Kernel
-{
-	class PageMgr;
+namespace Kernel {
+class PageMgr;
 
-	class PTEWrapper final
-	{
-	public:
-		explicit PTEWrapper(Boolean Rw = false, Boolean User = false, Boolean ExecDisable = false, UIntPtr Address = 0);
+class PTEWrapper final {
+ public:
+  explicit PTEWrapper(Boolean Rw = false, Boolean User = false, Boolean ExecDisable = false,
+                      UIntPtr Address = 0);
 
-		~PTEWrapper();
+  ~PTEWrapper();
 
-		PTEWrapper& operator=(const PTEWrapper&) = default;
-		PTEWrapper(const PTEWrapper&)			 = default;
+  PTEWrapper& operator=(const PTEWrapper&) = default;
+  PTEWrapper(const PTEWrapper&)            = default;
 
-	public:
-		UIntPtr VirtualAddress();
+ public:
+  UIntPtr VirtualAddress();
 
-		Void NoExecute(const bool enable = false);
-		Bool NoExecute();
+  Void NoExecute(const bool enable = false);
+  Bool NoExecute();
 
-		operator bool()
-		{
-			return fVirtAddr;
-		}
+  operator bool() { return fVirtAddr; }
 
-		bool Reclaim();
-		bool Shareable();
-		bool Present();
-		bool Access();
+  bool Reclaim();
+  bool Shareable();
+  bool Present();
+  bool Access();
 
-	private:
-		Boolean fRw;
-		Boolean fUser;
-		Boolean fExecDisable;
-		UIntPtr fVirtAddr;
-		Boolean fCache;
-		Boolean fShareable;
-		Boolean fWt;
-		Boolean fPresent;
-		Boolean fAccessed;
+ private:
+  Boolean fRw;
+  Boolean fUser;
+  Boolean fExecDisable;
+  UIntPtr fVirtAddr;
+  Boolean fCache;
+  Boolean fShareable;
+  Boolean fWt;
+  Boolean fPresent;
+  Boolean fAccessed;
 
-	private:
-		friend class PageMgr;
-		friend class Pmm;
-	};
+ private:
+  friend class PageMgr;
+  friend class Pmm;
+};
 
-	struct PageMgr final
-	{
-	public:
-		PageMgr()  = default;
-		~PageMgr() = default;
+struct PageMgr final {
+ public:
+  PageMgr()  = default;
+  ~PageMgr() = default;
 
-		PageMgr& operator=(const PageMgr&) = default;
-		PageMgr(const PageMgr&)			   = default;
+  PageMgr& operator=(const PageMgr&) = default;
+  PageMgr(const PageMgr&)            = default;
 
-	public:
-		PTEWrapper Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz, SizeT Pad);
-		bool	   Free(Ref<PTEWrapper>& wrapper);
+ public:
+  PTEWrapper Request(Boolean Rw, Boolean User, Boolean ExecDisable, SizeT Sz, SizeT Pad);
+  bool       Free(Ref<PTEWrapper>& wrapper);
 
-	private:
-		void FlushTLB();
+ private:
+  void FlushTLB();
 
-	private:
-		friend PTEWrapper;
-		friend class Pmm;
-	};
-} // namespace Kernel
+ private:
+  friend PTEWrapper;
+  friend class Pmm;
+};
+}  // namespace Kernel

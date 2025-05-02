@@ -1,9 +1,9 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-	FILE: UserProcessScheduler.cc
-	PURPOSE: Low level/Ring-3 Process scheduler.
+  FILE: UserProcessScheduler.cc
+  PURPOSE: Low level/Ring-3 process scheduler.
 
 ------------------------------------------- */
 
@@ -13,609 +13,695 @@
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
-#include <KernelKit/ProcessScheduler.h>
+#include <ArchKit/ArchKit.h>
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDylibObject.h>
-#include <ArchKit/ArchKit.h>
-#include <KernelKit/MemoryMgr.h>
-#include <NewKit/KString.h>
 #include <KernelKit/KPC.h>
+#include <KernelKit/MemoryMgr.h>
+#include <KernelKit/ProcessScheduler.h>
+#include <NewKit/KString.h>
 
 ///! BUGS: 0
 
-namespace Kernel
-{
-	/***********************************************************************************/
-	/// @brief Exit Code global variable.
-	/***********************************************************************************/
+namespace Kernel {
+/***********************************************************************************/
+/// @brief Exit Code global variable.
+/***********************************************************************************/
 
-	STATIC UInt32 kLastExitCode = 0U;
+STATIC UInt32 kLastExitCode = 0U;
 
-	/***********************************************************************************/
-	/// @brief External reference of the thread scheduler.
-	/***********************************************************************************/
+STATIC BOOL kCurrentlySwitching = No;
 
-	STATIC UserProcessScheduler kProcessScheduler;
+/***********************************************************************************/
+/// @brief Scheduler itself.
+/***********************************************************************************/
 
-	Process::Process()	= default;
-	Process::~Process() = default;
+STATIC UserProcessScheduler kScheduler;
 
-	/// @brief Gets the last exit code.
-	/// @note Not thread-safe.
-	/// @return Int32 the last exit code.
+USER_PROCESS::USER_PROCESS()  = default;
+USER_PROCESS::~USER_PROCESS() = default;
 
-	const UInt32& sched_get_exit_code(void) noexcept
-	{
-		return kLastExitCode;
-	}
+/// @brief Gets the last exit code.
+/// @note Not thread-safe.
+/// @return Int32 the last exit code.
 
-	/***********************************************************************************/
-	/// @brief Crashes the current process.
-	/***********************************************************************************/
+const UInt32& sched_get_exit_code(void) noexcept {
+  return kLastExitCode;
+}
 
-	Void Process::Crash()
-	{
-		if (this->Status != ProcessStatusKind::kRunning)
-			return;
+/***********************************************************************************/
+/// @brief Crashes the current process.
+/***********************************************************************************/
 
-		(void)(kout << this->Name << ": crashed, error id: " << number(kErrorProcessFault) << kendl);
-		this->Exit(kErrorProcessFault);
-	}
+Void USER_PROCESS::Crash() {
+  if (this->Status != ProcessStatusKind::kRunning) return;
 
-	/***********************************************************************************/
-	/// @brief boolean operator, check status.
-	/***********************************************************************************/
+  (Void)(kout << this->Name << ": crashed, error id: " << number(-kErrorProcessFault) << kendl);
+  this->Exit(-kErrorProcessFault);
+}
 
-	Process::operator bool()
-	{
-		return this->Status == ProcessStatusKind::kRunning;
-	}
+/***********************************************************************************/
+/// @brief boolean operator, check status.
+/***********************************************************************************/
 
-	/***********************************************************************************/
-	/// @brief Gets the local last exit code.
-	/// @note Not thread-safe.
-	/// @return Int32 the last exit code.
-	/***********************************************************************************/
+USER_PROCESS::operator bool() {
+  return this->Status == ProcessStatusKind::kRunning;
+}
 
-	const UInt32& Process::GetExitCode() noexcept
-	{
-		return this->fLastExitCode;
-	}
+/***********************************************************************************/
+/// @brief Gets the local last exit code.
+/// @note Not thread-safe.
+/// @return Int32 the last exit code.
+/***********************************************************************************/
 
-	/***********************************************************************************/
-	/// @brief Error code variable getter.
-	/***********************************************************************************/
+const UInt32& USER_PROCESS::GetExitCode() noexcept {
+  return this->fLastExitCode;
+}
 
-	Int32& Process::GetLocalCode() noexcept
-	{
-		return this->fLocalCode;
-	}
+/***********************************************************************************/
+/// @brief Error code variable getter.
+/***********************************************************************************/
 
-	/***********************************************************************************/
-	/// @brief Wakes process header.
-	/// @param should_wakeup if the program shall wakeup or not.
-	/***********************************************************************************/
+Int32& USER_PROCESS::GetLocalCode() noexcept {
+  return this->fLocalCode;
+}
 
-	Void Process::Wake(Bool should_wakeup)
-	{
-		this->Status =
-			should_wakeup ? ProcessStatusKind::kRunning : ProcessStatusKind::kFrozen;
-	}
+/***********************************************************************************/
+/// @brief Wakes process header.
+/// @param should_wakeup if the program shall wakeup or not.
+/***********************************************************************************/
 
-	/***********************************************************************************/
-	/** @brief Allocate pointer to track list. */
-	/***********************************************************************************/
+Void USER_PROCESS::Wake(Bool should_wakeup) {
+  this->Status = should_wakeup ? ProcessStatusKind::kRunning : ProcessStatusKind::kFrozen;
+}
 
-	ErrorOr<VoidPtr> Process::New(SizeT sz, SizeT pad_amount)
-	{
+/***********************************************************************************/
+/** @brief Allocate pointer to heap tree. */
+/***********************************************************************************/
+
+STATIC USER_PROCESS::USER_HEAP_TREE* sched_try_go_upper_heap_tree(
+    USER_PROCESS::USER_HEAP_TREE* tree) {
+  if (!tree) {
+    return nullptr;
+  }
+
+  tree = tree->MemoryParent;
+
+  if (tree) {
+    auto tree_tmp = tree->MemoryNext;
+
+    if (!tree_tmp) {
+      return tree;
+    }
+
+    return tree_tmp;
+  }
+
+  return tree;
+}
+
+/***********************************************************************************/
+/** @brief Allocate pointer to heap tree. */
+/***********************************************************************************/
+
+ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
+  if (this->UsedMemory > kSchedMaxMemoryLimit) return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
+
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-		auto vm_register = hal_read_cr3();
-		hal_write_cr3(this->VMRegister);
+  auto vm_register = kKernelCR3;
+  hal_write_cr3(this->VMRegister);
 
-		auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
+  auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
 
-		hal_write_cr3(vm_register);
+  hal_write_cr3(vm_register);
 #else
-		auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
+  auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
 #endif
 
-		if (!this->ProcessMemoryHeap)
-		{
-			this->ProcessMemoryHeap = new ProcessMemoryHeapList();
+  if (!this->HeapTree) {
+    this->HeapTree = new USER_HEAP_TREE();
 
-			this->ProcessMemoryHeap->MemoryEntryPad	 = pad_amount;
-			this->ProcessMemoryHeap->MemoryEntrySize = sz;
+    this->HeapTree->MemoryColor = USER_HEAP_TREE::kBlackMemory;
 
-			this->ProcessMemoryHeap->MemoryEntry = ptr;
+    this->HeapTree->MemoryEntryPad  = pad_amount;
+    this->HeapTree->MemoryEntrySize = sz;
 
-			this->ProcessMemoryHeap->MemoryPrev = nullptr;
-			this->ProcessMemoryHeap->MemoryNext = nullptr;
-		}
-		else
-		{
-			ProcessMemoryHeapList* entry = this->ProcessMemoryHeap;
+    this->HeapTree->MemoryEntry = ptr;
 
-			while (entry)
-			{
-				if (entry->MemoryEntry == nullptr)
-					break; // chose to break here, when we get an already allocated memory entry for our needs.
+    this->HeapTree->MemoryPrev   = nullptr;
+    this->HeapTree->MemoryNext   = nullptr;
+    this->HeapTree->MemoryParent = nullptr;
+    this->HeapTree->MemoryChild  = nullptr;
+  } else {
+    USER_HEAP_TREE* entry      = this->HeapTree;
+    USER_HEAP_TREE* prev_entry = entry;
 
-				entry = entry->MemoryNext;
-			}
+    BOOL is_parent = NO;
 
-			entry->MemoryNext			   = new ProcessMemoryHeapList();
-			entry->MemoryNext->MemoryEntry = ptr;
+    while (entry) {
+      if (entry->MemoryEntrySize < 1) break;
 
-			entry->MemoryNext->MemoryPrev = entry;
-			entry->MemoryNext->MemoryNext = nullptr;
-		}
+      prev_entry = entry;
 
-		this->UsedMemory += sz;
+      if (entry->MemoryNext) {
+        is_parent = NO;
+        entry     = entry->MemoryNext;
+      } else if (entry->MemoryChild) {
+        entry     = entry->MemoryChild;
+        is_parent = YES;
+      } else {
+        entry = sched_try_go_upper_heap_tree(entry);
+      }
+    }
 
-		return ErrorOr<VoidPtr>(ptr);
-	}
+    if (!entry) entry = new USER_HEAP_TREE();
 
-	/***********************************************************************************/
-	/// @brief Gets the name of the current process.
-	/***********************************************************************************/
+    entry->MemoryEntry     = ptr;
+    entry->MemoryEntrySize = sz;
+    entry->MemoryEntryPad  = pad_amount;
 
-	const Char* Process::GetName() noexcept
-	{
-		return this->Name;
-	}
+    if (is_parent) {
+      entry->MemoryParent     = prev_entry;
+      prev_entry->MemoryChild = entry;
 
-	/***********************************************************************************/
-	/// @brief Gets the owner of the process.
-	/***********************************************************************************/
+      prev_entry->MemoryColor = USER_HEAP_TREE::kBlackMemory;
+      entry->MemoryColor      = USER_HEAP_TREE::kRedMemory;
+    } else {
+      prev_entry->MemoryNext = entry;
+      entry->MemoryPrev      = prev_entry;
+    }
+  }
 
-	const User* Process::GetOwner() noexcept
-	{
-		return this->Owner;
-	}
+  this->UsedMemory += sz;
 
-	/// @brief Process status getter.
-	const ProcessStatusKind& Process::GetStatus() noexcept
-	{
-		return this->Status;
-	}
+  return ErrorOr<VoidPtr>(ptr);
+}
 
-	/***********************************************************************************/
-	/**
-	@brief Affinity is the time slot allowed for the process.
-	*/
-	/***********************************************************************************/
+/***********************************************************************************/
+/// @brief Gets the name of the current process.
+/***********************************************************************************/
 
-	const AffinityKind& Process::GetAffinity() noexcept
-	{
-		return this->Affinity;
-	}
+const Char* USER_PROCESS::GetName() noexcept {
+  return this->Name;
+}
 
-	/***********************************************************************************/
-	/**
-	@brief Exit process method.
-	@param exit_code The process's exit code.
-	*/
-	/***********************************************************************************/
+/***********************************************************************************/
+/// @brief Gets the owner of the process.
+/***********************************************************************************/
 
-	Void Process::Exit(const Int32& exit_code)
-	{
-		this->Status		= exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
-		this->fLastExitCode = exit_code;
+const User* USER_PROCESS::GetOwner() noexcept {
+  return this->Owner;
+}
 
-		kLastExitCode = exit_code;
+/// @brief USER_PROCESS status getter.
+const ProcessStatusKind& USER_PROCESS::GetStatus() noexcept {
+  return this->Status;
+}
 
-		auto memory_heap_list = this->ProcessMemoryHeap;
+/***********************************************************************************/
+/**
+@brief Affinity is the time slot allowed for the process.
+*/
+/***********************************************************************************/
+
+const AffinityKind& USER_PROCESS::GetAffinity() noexcept {
+  return this->Affinity;
+}
+
+/***********************************************************************************/
+/** @brief Free heap tree. */
+/***********************************************************************************/
+
+STATIC Void sched_free_heap_tree(USER_PROCESS::USER_HEAP_TREE* memory_heap_list) {
+  // Deleting memory lists. Make sure to free all of them.
+  while (memory_heap_list) {
+    if (memory_heap_list->MemoryEntry) {
+      MUST_PASS(mm_delete_heap(memory_heap_list->MemoryEntry));
+    }
+
+    auto next = memory_heap_list->MemoryNext;
+
+    mm_delete_heap(memory_heap_list);
+
+    if (memory_heap_list->MemoryChild) sched_free_heap_tree(memory_heap_list->MemoryChild);
+
+    memory_heap_list = next;
+  }
+}
+
+/***********************************************************************************/
+/**
+@brief Exit process method.
+@param exit_code The process's exit code.
+*/
+/***********************************************************************************/
+
+Void USER_PROCESS::Exit(const Int32& exit_code) {
+  this->Status        = exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
+  this->fLastExitCode = exit_code;
+
+  kLastExitCode = exit_code;
+
+  auto memory_heap_list = this->HeapTree;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-		auto pd = hal_read_cr3();
-		hal_write_cr3(this->VMRegister);
+  auto pd = kKernelCR3;
+  hal_write_cr3(this->VMRegister);
 #endif
 
-		// Deleting memory lists. Make sure to free all of them.
-		while (memory_heap_list)
-		{
-			if (memory_heap_list->MemoryEntry)
-			{
-				MUST_PASS(mm_delete_heap(memory_heap_list->MemoryEntry));
-			}
+  sched_free_heap_tree(memory_heap_list);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-			hal_write_cr3(pd);
+  hal_write_cr3(pd);
 #endif
 
-			auto next = memory_heap_list->MemoryNext;
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+  //! Free the memory's page directory.
+  if (this->VMRegister) HAL::mm_free_bitmap(this->VMRegister);
+#endif
 
-			mm_delete_heap(memory_heap_list);
+  //! Delete image if not done already.
+  if (this->Image.fCode && mm_is_valid_heap(this->Image.fCode)) mm_delete_heap(this->Image.fCode);
 
-			memory_heap_list = next;
-		}
+  //! Delete blob too.
+  if (this->Image.fBlob && mm_is_valid_heap(this->Image.fBlob)) mm_delete_heap(this->Image.fBlob);
 
-		//! Free the memory's page directory.
-		HAL::mm_free_bitmap(this->VMRegister);
+  //! Delete stack frame.
+  if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
+    mm_delete_heap((VoidPtr) this->StackFrame);
 
-		//! Delete image if not done already.
-		if (this->Image.fCode && mm_is_valid_heap(this->Image.fCode))
-			mm_delete_heap(this->Image.fCode);
+  //! Delete stack reserve.
+  if (this->StackReserve && mm_is_valid_heap(this->StackReserve))
+    mm_delete_heap(reinterpret_cast<VoidPtr>(this->StackReserve));
 
-		//! Delete blob too.
-		if (this->Image.fBlob && mm_is_valid_heap(this->Image.fBlob))
-			mm_delete_heap(this->Image.fBlob);
+  //! Avoid use after free.
+  this->Image.fBlob  = nullptr;
+  this->Image.fCode  = nullptr;
+  this->StackFrame   = nullptr;
+  this->StackReserve = nullptr;
 
-		//! Delete stack frame.
-		if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
-			mm_delete_heap((VoidPtr)this->StackFrame);
+  if (this->Kind == kExecutableDylibKind) {
+    Bool success = false;
 
-		//! Delete stack reserve.
-		if (this->StackReserve && mm_is_valid_heap(this->StackReserve))
-			mm_delete_heap(reinterpret_cast<VoidPtr>(this->StackReserve));
+    rtl_fini_dylib_pef(*this, reinterpret_cast<IPEFDylibObject*>(this->DylibDelegate), &success);
 
-		//! Avoid use after free.
-		this->Image.fBlob  = nullptr;
-		this->Image.fCode  = nullptr;
-		this->StackFrame   = nullptr;
-		this->StackReserve = nullptr;
+    if (!success) {
+      ke_panic(RUNTIME_CHECK_PROCESS);
+    }
 
-		if (this->Kind == kExecutableDylibKind)
-		{
-			Bool success = false;
+    this->DylibDelegate = nullptr;
+  }
 
-			rtl_fini_dylib(*this, reinterpret_cast<IPEFDylibObject*>(this->DylibDelegate), &success);
+  this->ProcessId = 0UL;
+  this->Status    = ProcessStatusKind::kFinished;
 
-			if (!success)
-			{
-				ke_panic(RUNTIME_CHECK_PROCESS);
-			}
+  --this->ParentTeam->mProcessCount;
+}
 
-			this->DylibDelegate = nullptr;
-		}
+/***********************************************************************************/
+/// @brief Add process to team.
+/// @param process the process *Ref* class.
+/// @return the process index inside the team.
+/***********************************************************************************/
 
-		this->ProcessId = 0UL;
-		this->Status	= ProcessStatusKind::kFinished;
+ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr image) {
+  if (!name || !code) {
+    return -kErrorProcessFault;
+  }
 
-		--this->ProcessParentTeam->mProcessCount;
+  if (*name == 0) {
+    return -kErrorProcessFault;
+  }
 
-		delete this;
-	}
+  ProcessID pid = this->mTeam.mProcessCount;
 
-	/***********************************************************************************/
-	/// @brief Add process to team.
-	/// @param process the process *Ref* class.
-	/// @return the process index inside the team.
-	/***********************************************************************************/
+  if (pid > kSchedProcessLimitPerTeam) {
+    return -kErrorProcessFault;
+  }
 
-	ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr image)
-	{
-		ProcessID pid = this->mTeam.mProcessCount;
+  ++this->mTeam.mProcessCount;
 
-		if (pid > kSchedProcessLimitPerTeam)
-		{
-			return kErrorProcessFault;
-		}
+  USER_PROCESS& process = this->mTeam.mProcessList[pid];
 
-		++this->mTeam.mProcessCount;
+  process.Image.fCode = code;
+  process.Image.fBlob = image;
 
-		Process& process = this->mTeam.mProcessList[pid];
+  SizeT len = rt_string_len(name);
 
-		process.Image.fCode = code;
-		process.Image.fBlob = image;
+  if (len > kSchedNameLen) {
+    return -kErrorProcessFault;
+  }
 
-		rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, rt_string_len(name));
+  rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, len);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-		process.VMRegister = new PDE();
+  process.VMRegister = new PDE();
 
-		if (!process.VMRegister)
-		{
-			process.Crash();
-			return kErrorProcessFault;
-		}
+  if (!process.VMRegister) {
+    process.Crash();
+    return -kErrorProcessFault;
+  }
 
-		UInt32 flags = HAL::kMMFlagsPresent;
-		flags |= HAL::kMMFlagsWr;
-		flags |= HAL::kMMFlagsUser;
+  UInt32 flags = HAL::kMMFlagsPresent;
+  flags |= HAL::kMMFlagsWr;
+  flags |= HAL::kMMFlagsUser;
 
-		HAL::mm_map_page((VoidPtr)process.VMRegister, process.VMRegister, flags);
-#endif // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+  HAL::mm_map_page((VoidPtr) process.VMRegister, process.VMRegister, flags);
+#endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
-		process.StackFrame = new HAL::StackFrame();
+  process.StackFrame = new HAL::StackFrame();
 
-		if (!process.StackFrame)
-		{
-			process.Crash();
-			return kErrorProcessFault;
-		}
+  if (!process.StackFrame) {
+    process.Crash();
+    return -kErrorProcessFault;
+  }
 
-		rt_set_memory(process.StackFrame, 0, sizeof(HAL::StackFrame));
+  rt_set_memory(process.StackFrame, 0, sizeof(HAL::StackFrame));
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-		flags = HAL::kMMFlagsPresent;
-		flags |= HAL::kMMFlagsWr;
-		flags |= HAL::kMMFlagsUser;
+  flags = HAL::kMMFlagsPresent;
+  flags |= HAL::kMMFlagsWr;
+  flags |= HAL::kMMFlagsUser;
 
-		HAL::mm_map_page((VoidPtr)process.StackFrame, process.StackFrame, flags);
-#endif // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+  HAL::mm_map_page((VoidPtr) process.StackFrame, process.StackFrame, flags);
+#endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
-		// React according to process kind.
-		switch (process.Kind)
-		{
-		case Process::kExecutableDylibKind: {
-			process.DylibDelegate = rtl_init_dylib(process);
-			MUST_PASS(process.DylibDelegate);
-			break;
-		}
-		case Process::kExecutableKind: {
-			break;
-		}
-		default: {
-			(void)(kout << "Unknown process kind: " << hex_number(process.Kind) << kendl);
-			break;
-		}
-		}
+  // React according to process kind.
+  switch (process.Kind) {
+    case USER_PROCESS::kExecutableDylibKind: {
+      process.DylibDelegate = rtl_init_dylib_pef(process);
+      MUST_PASS(process.DylibDelegate);
+      break;
+    }
+    case USER_PROCESS::kExecutableKind: {
+      break;
+    }
+    default: {
+      (Void)(kout << "Unknown process kind: " << hex_number(process.Kind) << kendl);
+      break;
+    }
+  }
 
-		process.StackReserve = new UInt8[process.StackSize];
+  process.StackReserve = new UInt8[process.StackSize];
 
-		if (!process.StackReserve)
-		{
-			process.Crash();
-			return kErrorProcessFault;
-		}
+  if (!process.StackReserve) {
+    process.Crash();
+    return -kErrorProcessFault;
+  }
 
-		rt_set_memory(process.StackReserve, 0, process.StackSize);
+  rt_set_memory(process.StackReserve, 0, process.StackSize);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-		flags = HAL::kMMFlagsPresent;
-		flags |= HAL::kMMFlagsWr;
-		flags |= HAL::kMMFlagsUser;
+  flags = HAL::kMMFlagsPresent;
+  flags |= HAL::kMMFlagsWr;
+  flags |= HAL::kMMFlagsUser;
 
-		HAL::mm_map_page((VoidPtr)process.StackReserve, process.StackReserve, flags);
-#endif // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+  HAL::mm_map_page((VoidPtr) process.StackReserve, process.StackReserve, flags);
+#endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
-		process.ProcessParentTeam = &mTeam;
+  process.ParentTeam = &mTeam;
 
-		process.ProcessId = pid;
-		process.Status	  = ProcessStatusKind::kStarting;
-		process.PTime	  = (UIntPtr)AffinityKind::kStandard;
+  process.ProcessId = pid;
+  process.Status    = ProcessStatusKind::kStarting;
+  process.PTime     = (UIntPtr) AffinityKind::kStandard;
+  process.RTime     = 0;
 
-		(void)(kout << "PID: " << number(process.ProcessId) << kendl);
-		(void)(kout << "Name: " << process.Name << kendl);
+  (Void)(kout << "PID: " << number(process.ProcessId) << kendl);
+  (Void)(kout << "Name: " << process.Name << kendl);
 
-		return pid;
-	}
+  return pid;
+}
 
-	/***********************************************************************************/
-	/// @brief Retrieves the singleton of the process scheduler.
-	/***********************************************************************************/
+/***********************************************************************************/
+/// @brief Retrieves the singleton of the process scheduler.
+/***********************************************************************************/
 
-	UserProcessScheduler& UserProcessScheduler::The()
-	{
-		return kProcessScheduler;
-	}
+UserProcessScheduler& UserProcessScheduler::The() {
+  return kScheduler;
+}
 
-	/***********************************************************************************/
+/***********************************************************************************/
 
-	/// @brief Remove process from the team.
-	/// @param process_id process slot inside team.
-	/// @retval true process was removed.
-	/// @retval false process doesn't exist in team.
+/// @brief Remove process from the team.
+/// @param process_id process slot inside team.
+/// @retval true process was removed.
+/// @retval false process doesn't exist in team.
 
-	/***********************************************************************************/
+/***********************************************************************************/
 
-	Void UserProcessScheduler::Remove(ProcessID process_id)
-	{
-		mTeam.mProcessList[process_id].Exit(0);
-	}
+Void UserProcessScheduler::Remove(ProcessID process_id) {
+  if (process_id < 0 || process_id >= kSchedProcessLimitPerTeam) {
+    return;
+  }
 
-	/// @brief Is it a user scheduler?
+  if (this->mTeam.mProcessList[process_id].Status == ProcessStatusKind::kInvalid) {
+    return;
+  }
 
-	Bool UserProcessScheduler::IsUser()
-	{
-		return Yes;
-	}
+  mTeam.mProcessList[process_id].Exit(0);
+}
 
-	/// @brief Is it a kernel scheduler?
+/// @brief Is it a user scheduler?
 
-	Bool UserProcessScheduler::IsKernel()
-	{
-		return No;
-	}
+Bool UserProcessScheduler::IsUser() {
+  return Yes;
+}
 
-	/// @brief Is it a SMP scheduler?
+/// @brief Is it a kernel scheduler?
 
-	Bool UserProcessScheduler::HasMP()
-	{
-		return Yes;
-	}
+Bool UserProcessScheduler::IsKernel() {
+  return No;
+}
 
-	/***********************************************************************************/
-	/// @brief Run User scheduler object.
-	/// @return Process count executed within a team.
-	/***********************************************************************************/
+/// @brief Is it a SMP scheduler?
 
-	SizeT UserProcessScheduler::Run() noexcept
-	{
-		SizeT process_index = 0UL; //! we store this guy to tell the scheduler how many
-								   //! things we have scheduled.
+Bool UserProcessScheduler::HasMP() {
+  MUST_PASS(kHandoverHeader);
+  return kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled;
+}
 
-		if (mTeam.mProcessCount < 1)
-		{
-			return 0UL;
-		}
+/***********************************************************************************/
+/// @brief Run User scheduler object.
+/// @return USER_PROCESS count executed within a team.
+/***********************************************************************************/
 
-		for (; process_index < mTeam.AsArray().Capacity(); ++process_index)
-		{
-			auto& process = mTeam.AsArray()[process_index];
+SizeT UserProcessScheduler::Run() noexcept {
+  if (mTeam.mProcessCount < 1) {
+    return 0UL;
+  }
 
-			//! check if the process needs to be run.
-			if (UserProcessHelper::CanBeScheduled(process))
-			{
-				// Set current process header.
-				this->CurrentProcess() = process;
+  if (kCurrentlySwitching) return 0UL;
 
-				process.PTime = static_cast<Int32>(process.Affinity);
+  kCurrentlySwitching = Yes;
 
-				// tell helper to find a core to schedule on.
-				BOOL ret = UserProcessHelper::Switch(process.Image.fCode, &process.StackReserve[process.StackSize - 1], process.StackFrame,
-													 process.ProcessId);
+  SizeT process_index = 0UL;  //! we store this guy to tell the scheduler how many
+                              //! things we have scheduled.
 
-				if (!ret)
-				{
-					if (process.Affinity == AffinityKind::kRealTime)
-						continue;
+  for (; process_index < mTeam.AsArray().Capacity(); ++process_index) {
+    auto& process = mTeam.AsArray()[process_index];
 
-					kout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
+    //! Check if the process needs to be run.
+    if (UserProcessHelper::CanBeScheduled(process)) {
+      if (process.StackSize > kSchedMaxStackSz) {
+        kout << "The process: " << process.Name << ", has not a valid stack size! Crashing it...\r";
+        process.Crash();
+        continue;
+      }
 
-					process.Crash();
-				}
-			}
-			else
-			{
-				--process.PTime;
-			}
-		}
+      // Set current process header.
+      this->CurrentProcess() = process;
 
-		return process_index;
-	}
+      process.PTime = static_cast<Int32>(process.Affinity);
 
-	/// @brief Gets the current scheduled team.
-	/// @return
-	ProcessTeam& UserProcessScheduler::CurrentTeam()
-	{
-		return mTeam;
-	}
+      // tell helper to find a core to schedule on.
+      BOOL ret = UserProcessHelper::Switch(process.Image.Leak().Leak().Leak(),
+                                           &process.StackReserve[process.StackSize - 1],
+                                           process.StackFrame, process.ProcessId);
 
-	/// @internal
+      if (!ret) {
+        kout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
+        process.Crash();
+      }
+    } else {
+      if (process.ProcessId == this->CurrentProcess().Leak().ProcessId) {
+        if (process.PTime < process.RTime) {
+          if (process.RTime < (Int32) AffinityKind::kRealTime)
+            process.PTime = (Int32) AffinityKind::kVeryLowUsage;
+          else if (process.RTime < (Int32) AffinityKind::kVeryHigh)
+            process.PTime = (Int32) AffinityKind::kLowUsage;
+          else if (process.RTime < (Int32) AffinityKind::kHigh)
+            process.PTime = (Int32) AffinityKind::kStandard;
+          else if (process.RTime < (Int32) AffinityKind::kStandard)
+            process.PTime = (Int32) AffinityKind::kHigh;
 
-	/// @brief Gets current running process.
-	/// @return
-	Ref<Process>& UserProcessScheduler::CurrentProcess()
-	{
-		return mTeam.AsRef();
-	}
+          process.RTime = static_cast<Int32>(process.Affinity);
 
-	/// @brief Current proccess id getter.
-	/// @return Process ID integer.
-	ErrorOr<PID> UserProcessHelper::TheCurrentPID()
-	{
-		if (!kProcessScheduler.CurrentProcess())
-			return ErrorOr<PID>{kErrorProcessFault};
+          BOOL ret = UserProcessHelper::Switch(process.Image.Leak().Leak().Leak(),
+                                               &process.StackReserve[process.StackSize - 1],
+                                               process.StackFrame, process.ProcessId);
 
-		kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-		return ErrorOr<PID>{kProcessScheduler.CurrentProcess().Leak().ProcessId};
-	}
+          if (!ret) {
+            kout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
+            process.Crash();
+          }
+        } else {
+          ++process.RTime;
+        }
+      }
 
-	/// @brief Check if process can be schedulded.
-	/// @param process the process reference.
-	/// @retval true can be schedulded.
-	/// @retval false cannot be schedulded.
-	Bool UserProcessHelper::CanBeScheduled(const Process& process)
-	{
-		if (process.Status == ProcessStatusKind::kKilled ||
-			process.Status == ProcessStatusKind::kFinished ||
-			process.Status == ProcessStatusKind::kStarting ||
-			process.Status == ProcessStatusKind::kFrozen)
-			return No;
+      --process.PTime;
+    }
+  }
 
-		if (process.Status == ProcessStatusKind::kInvalid)
-			return No;
+  kCurrentlySwitching = No;
 
-		if (!process.Image.fCode)
-			return No;
+  return process_index;
+}
 
-		if (!process.Name[0])
-			return No;
+/// @brief Gets the current scheduled team.
+/// @return
+UserProcessTeam& UserProcessScheduler::CurrentTeam() {
+  return mTeam;
+}
 
-		// real time processes shouldn't wait that much.
-		if (process.Affinity == AffinityKind::kRealTime)
-			return Yes;
+/***********************************************************************************/
+/// @brief Switches the current team.
+/// @param team the new team to switch to.
+/// @retval true team was switched.
+/// @retval false team was not switched.
+/***********************************************************************************/
 
-		return process.PTime < 1;
-	}
+BOOL UserProcessScheduler::SwitchTeam(UserProcessTeam& team) {
+  if (team.AsArray().Count() < 1) return No;
 
-	/***********************************************************************************/
-	/**
-	 * @brief Start scheduling current AP.
-	 */
-	/***********************************************************************************/
+  if (kCurrentlySwitching) return No;
 
-	SizeT UserProcessHelper::StartScheduling()
-	{
-		return kProcessScheduler.Run();
-	}
+  kScheduler.mTeam = team;
 
-	/***********************************************************************************/
-	/**
-	 * \brief Does a context switch in a CPU.
-	 * \param the_stack the stackframe of the running app.
-	 * \param new_pid the process's PID.
-	 */
-	/***********************************************************************************/
+  return Yes;
+}
 
-	Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr frame_ptr, PID new_pid)
-	{
-		for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index)
-		{
-			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPInvalid ||
-				HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPBoot)
-				continue;
+/// @brief Gets current running process.
+/// @return
+Ref<USER_PROCESS>& UserProcessScheduler::CurrentProcess() {
+  return mTeam.AsRef();
+}
 
-			// A fallback is a special core for real-time tasks which needs immediate execution.
-			if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPRealTime)
-			{
-				if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity != AffinityKind::kRealTime)
-					continue;
+/// @brief Current proccess id getter.
+/// @return USER_PROCESS ID integer.
+ErrorOr<PID> UserProcessHelper::TheCurrentPID() {
+  if (!kScheduler.CurrentProcess()) return ErrorOr<PID>{-kErrorProcessFault};
 
-				if (HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid))
-				{
-					HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
+  kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
+  return ErrorOr<PID>{kScheduler.CurrentProcess().Leak().ProcessId};
+}
 
-					UserProcessHelper::TheCurrentPID().Leak().Leak() = UserProcessHelper::TheCurrentPID();
+/// @brief Check if process can be schedulded.
+/// @param process the process reference.
+/// @retval true can be schedulded.
+/// @retval false cannot be schedulded.
+Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
+  if (process.Status == ProcessStatusKind::kKilled ||
+      process.Status == ProcessStatusKind::kFinished ||
+      process.Status == ProcessStatusKind::kStarting ||
+      process.Status == ProcessStatusKind::kFrozen)
+    return No;
 
-					return YES;
-				}
+  if (process.Status == ProcessStatusKind::kInvalid) return No;
 
-				continue;
-			}
+  if (!process.Image.HasCode()) return No;
 
-			if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity == AffinityKind::kRealTime)
-				continue;
+  if (!process.Name[0]) return No;
 
-			////////////////////////////////////////////////////////////
-			///	Prepare task switch.								 ///
-			////////////////////////////////////////////////////////////
+  // real time processes shouldn't wait that much.
+  if (process.Affinity == AffinityKind::kRealTime) return Yes;
 
-			Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid);
+  return process.PTime < 1;
+}
 
-			////////////////////////////////////////////////////////////
-			///	Rollback on fail.    								 ///
-			////////////////////////////////////////////////////////////
+/***********************************************************************************/
+/**
+ * @brief Start scheduling current AP.
+ */
+/***********************************************************************************/
 
-			if (!ret)
-				continue;
+SizeT UserProcessHelper::StartScheduling() {
+  return kScheduler.Run();
+}
 
-			UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
+/***********************************************************************************/
+/**
+ * \brief Does a context switch in a CPU.
+ * \param the_stack the stackframe of the running app.
+ * \param new_pid the process's PID.
+ */
+/***********************************************************************************/
 
-			HardwareThreadScheduler::The()[index].Leak()->fPTime = UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
-			HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
+Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr frame_ptr,
+                               PID new_pid) {
+  for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
+    if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPInvalid ||
+        HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPBoot)
+      continue;
 
-			return Yes;
-		}
+    // A fallback is a special core for real-time tasks which needs immediate execution.
+    if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPRealTime) {
+      if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity !=
+          AffinityKind::kRealTime)
+        continue;
 
-		return No;
-	}
+      if (HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid)) {
+        HardwareThreadScheduler::The()[index].Leak()->fPTime =
+            UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 
-	////////////////////////////////////////////////////////////
-	/// @brief this checks if any process is on the team.
-	////////////////////////////////////////////////////////////
-	UserProcessScheduler::operator bool()
-	{
-		return mTeam.AsArray().Count() > 0;
-	}
+        UserProcessHelper::TheCurrentPID().Leak().Leak() = UserProcessHelper::TheCurrentPID();
 
-	////////////////////////////////////////////////////////////
-	/// @brief this checks if no process is on the team.
-	////////////////////////////////////////////////////////////
-	Bool UserProcessScheduler::operator!()
-	{
-		return mTeam.AsArray().Count() == 0;
-	}
-} // namespace Kernel
+        return YES;
+      }
+
+      continue;
+    }
+
+    if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity ==
+        AffinityKind::kRealTime)
+      continue;
+
+    ////////////////////////////////////////////////////////////
+    ///	Prepare task switch.								 ///
+    ////////////////////////////////////////////////////////////
+
+    Bool ret =
+        HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid);
+
+    ////////////////////////////////////////////////////////////
+    ///	Rollback on fail.    								 ///
+    ////////////////////////////////////////////////////////////
+
+    if (!ret) continue;
+
+    UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
+
+    HardwareThreadScheduler::The()[index].Leak()->fPTime =
+        UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
+    HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
+
+    return Yes;
+  }
+
+  return No;
+}
+
+////////////////////////////////////////////////////////////
+/// @brief this checks if any process is on the team.
+////////////////////////////////////////////////////////////
+UserProcessScheduler::operator bool() {
+  return mTeam.AsArray().Count() > 0;
+}
+
+////////////////////////////////////////////////////////////
+/// @brief this checks if no process is on the team.
+////////////////////////////////////////////////////////////
+Bool UserProcessScheduler::operator!() {
+  return mTeam.AsArray().Count() == 0;
+}
+}  // namespace Kernel

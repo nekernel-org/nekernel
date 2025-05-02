@@ -1,16 +1,15 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
 #pragma once
 
-#include <NewKit/Defines.h>
-#include <KernelKit/Timer.h>
 #include <CompilerKit/CompilerKit.h>
+#include <KernelKit/Timer.h>
+#include <NewKit/Defines.h>
 
-namespace Kernel
-{
-	typedef Int64 Semaphore;
-} // namespace Kernel
+namespace Kernel {
+typedef Int64 Semaphore;
+}  // namespace Kernel

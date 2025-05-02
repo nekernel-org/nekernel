@@ -1,9 +1,9 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved..
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved..
 
-	File: LTE.h.
-	Purpose: LTE protocol classes.
+  File: LTE.h.
+  Purpose: LTE protocol classes.
 
 ------------------------------------------- */
 
@@ -13,4 +13,4 @@
 #include <NewKit/Defines.h>
 #include <NewKit/KString.h>
 
-#endif // ifndef _INC_NETWORK_LTE_H_
+#endif  // ifndef _INC_NETWORK_LTE_H_

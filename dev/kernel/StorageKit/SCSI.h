@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -8,4 +8,4 @@
 
 #include <modules/SCSI/SCSI.h>
 
-extern const scsi_packet_type<12> kCDRomPacketTemplate;
+namespace Kernel {}  // namespace Kernel

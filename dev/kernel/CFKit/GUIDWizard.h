@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -11,14 +11,13 @@
 #include <NewKit/ArrayList.h>
 #include <NewKit/Defines.h>
 #include <NewKit/ErrorOr.h>
+#include <NewKit/KString.h>
 #include <NewKit/Ref.h>
 #include <NewKit/Stream.h>
-#include <NewKit/KString.h>
 
-namespace CF::XRN::Version1
-{
-	using namespace Kernel;
+namespace CF::XRN::Version1 {
+using namespace Kernel;
 
-	Ref<GUIDSequence*>			  cf_make_sequence(const ArrayList<UInt32>& seq);
-	ErrorOr<Ref<Kernel::KString>> cf_try_guid_to_string(Ref<GUIDSequence*>& guid);
-} // namespace CF::XRN::Version1
+Ref<GUIDSequence*>            cf_make_sequence(const ArrayList<UInt32>& seq);
+ErrorOr<Ref<Kernel::KString>> cf_try_guid_to_string(Ref<GUIDSequence*>& guid);
+}  // namespace CF::XRN::Version1

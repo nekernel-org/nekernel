@@ -1,54 +1,49 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-	File: IO-Impl-AMD64.h
-	Purpose: I/O for AMD64.
+  File: IO-Impl-AMD64.h
+  Purpose: I/O for AMD64.
 
-	Revision History:
+  Revision History:
 
-	30/01/24: Add file. (amlel)
-	02/02/24: Update I/O routines. (amlel)
+  30/01/24: Add file. (amlel)
+  02/02/24: Update I/O routines. (amlel)
 
 ------------------------------------------- */
 
-namespace Kernel
-{
-	template <SizeT Sz>
-	template <typename T>
-	T IOArray<Sz>::In(SizeT index)
-	{
-		switch (sizeof(T))
-		{
+namespace Kernel {
+template <SizeT Sz>
+template <typename T>
+T IOArray<Sz>::In(SizeT index) {
+  switch (sizeof(T)) {
 #ifdef __NE_AMD64__
-		case 4:
-			return HAL::rt_in32(fPorts[index].Leak());
-		case 2:
-			return HAL::rt_in16(fPorts[index].Leak());
-		case 1:
-			return HAL::rt_in8(fPorts[index].Leak());
+    case 4:
+      return HAL::rt_in32(fPorts[index].Leak());
+    case 2:
+      return HAL::rt_in16(fPorts[index].Leak());
+    case 1:
+      return HAL::rt_in8(fPorts[index].Leak());
 #endif
-		default:
-			return 0xFFFF;
-		}
-	}
+    default:
+      return 0xFFFF;
+  }
+}
 
-	template <SizeT Sz>
-	template <typename T>
-	void IOArray<Sz>::Out(SizeT index, T value)
-	{
-		switch (sizeof(T))
-		{
+template <SizeT Sz>
+template <typename T>
+void IOArray<Sz>::Out(SizeT index, T value) {
+  switch (sizeof(T)) {
 #ifdef __NE_AMD64__
-		case 4:
-			HAL::rt_out32(fPorts[index].Leak(), value);
-		case 2:
-			HAL::rt_out16(fPorts[index].Leak(), value);
-		case 1:
-			HAL::rt_out8(fPorts[index].Leak(), value);
+    case 4:
+      HAL::rt_out32(fPorts[index].Leak(), value);
+    case 2:
+      HAL::rt_out16(fPorts[index].Leak(), value);
+    case 1:
+      HAL::rt_out8(fPorts[index].Leak(), value);
 #endif
-		default:
-			break;
-		}
-	}
-} // namespace Kernel
+    default:
+      break;
+  }
+}
+}  // namespace Kernel

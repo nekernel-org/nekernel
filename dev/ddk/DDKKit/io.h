@@ -1,8 +1,8 @@
 /* -------------------------------------------
 
-	Copyright Amlal El Mahrouss.
+  Copyright Amlal El Mahrouss.
 
-	Purpose: DDK Text I/O.
+  Purpose: DDK Text I/O.
 
 ------------------------------------------- */
 

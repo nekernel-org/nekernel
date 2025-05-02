@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -22,4 +22,4 @@
 #define _InOut
 #define _StrictInOut
 
-#endif // ifndef _NE_COMPILERHINT_H_
+#endif  // ifndef _NE_COMPILERHINT_H_

@@ -1,9 +1,10 @@
 <!-- Read Me of NeKernel -->
 
 <div align="center">
-  <img src="meta/png/nekernel.png" alt="Logo" width="128"/>
-  <h1>NeKernel</h1>
+  <img src="meta/png/nekernel.png" alt="Logo" width="256"/>
 </div>
+
+<br/>
 
 ![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml/badge.svg)
 ![CI](https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml/badge.svg)
@@ -24,7 +25,7 @@ A kernel for engineers who want a custom solution for their stack, written mostl
 
 Use the doxygen command to build documentation.
 <br/>
-A documentation regarding building, and developing for NeKernel is available here: https://amlel-el-mahrouss.github.io/nekernel-docs/
+A documentation for NeKernel is available here: https://nekernel-org.github.io/docs/
 
 ## Requirements:
 
@@ -32,7 +33,7 @@ A documentation regarding building, and developing for NeKernel is available her
 - [CLANG](https://clang.llvm.org/)
 - [NASM](https://nasm.us/)
 - [GIT](https://git-scm.com/)
-- [BTB](https://github.com/amlel-el-mahrouss/btb)
+- [BTB](https://github.com/nekernel-org/btb)
 
 ## Notice for Contributors:
 
@@ -44,7 +45,7 @@ A documentation regarding building, and developing for NeKernel is available her
 ## Getting Started:
 
 ```sh
-git clone git@github.com:amlel-el-mahrouss/nekernel.git
+git clone git@github.com:nekernel-org/nekernel.git
 cd nekernel
 ./setup_x64.sh
 ./debug_ata_x64.sh # Generic ATA PIO target

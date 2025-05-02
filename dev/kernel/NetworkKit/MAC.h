@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -12,25 +12,23 @@
 
 #define kMACAddrLen (32)
 
-namespace Kernel
-{
-	class MacAddressGetter;
+namespace Kernel {
+class MacAddressGetter;
 
-	/// \brief This retrieves the MAC address of the device.
-	/// \note Listens for the current NIC.
-	class MacAddressGetter final
-	{
-	public:
-		MacAddressGetter()	= default;
-		~MacAddressGetter() = default;
+/// \brief This retrieves the MAC address of the device.
+/// \note Listens for the current NIC.
+class MacAddressGetter final {
+ public:
+  MacAddressGetter()  = default;
+  ~MacAddressGetter() = default;
 
-		NE_COPY_DEFAULT(MacAddressGetter)
+  NE_COPY_DEFAULT(MacAddressGetter)
 
-	public:
-		Array<UInt8, kMACAddrLen>& AsBytes();
+ public:
+  Array<UInt8, kMACAddrLen>& AsBytes();
 
-	private:
-		Array<UInt8, kMACAddrLen> fMacAddress;
-	};
+ private:
+  Array<UInt8, kMACAddrLen> fMacAddress;
+};
 
-} // namespace Kernel
+}  // namespace Kernel

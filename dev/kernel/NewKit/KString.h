@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -9,86 +9,74 @@
 #include <CompilerKit/CompilerKit.h>
 #include <NewKit/Defines.h>
 #include <NewKit/ErrorOr.h>
-#include <NewKit/Utils.h>
 #include <NewKit/KernelPanic.h>
+#include <NewKit/Utils.h>
 
-#define cMinimumStringSize 8196
+#define kMinimumStringSize (8196U)
 
-namespace Kernel
-{
-	/// @brief Kernel string class, not dynamic.
-	class KString final
-	{
-	public:
-		explicit KString()
-		{
-			fDataSz = cMinimumStringSize;
+namespace Kernel {
+/// @brief Kernel string class, not dynamic.
+class KString final {
+ public:
+  explicit KString() {
+    fDataSz = kMinimumStringSize;
 
-			fData = new Char[fDataSz];
-			MUST_PASS(fData);
+    fData = new Char[fDataSz];
+    MUST_PASS(fData);
 
-			rt_set_memory(fData, 0, fDataSz);
-		}
+    rt_set_memory(fData, 0, fDataSz);
+  }
 
-		explicit KString(SizeT Sz)
-			: fDataSz(Sz)
-		{
-			MUST_PASS(Sz > 1);
+  explicit KString(SizeT Sz) : fDataSz(Sz) {
+    MUST_PASS(Sz > 1);
 
-			fData = new Char[Sz];
-			MUST_PASS(fData);
+    fData = new Char[Sz];
+    MUST_PASS(fData);
 
-			rt_set_memory(fData, 0, Sz);
-		}
+    rt_set_memory(fData, 0, Sz);
+  }
 
-		~KString()
-		{
-			if (fData)
-			{
-				delete[] fData;
-				fData = nullptr;
-			}
-		}
+  ~KString() {
+    if (fData) {
+      delete[] fData;
+      fData = nullptr;
+    }
+  }
 
-		NE_COPY_DEFAULT(KString)
+  NE_COPY_DEFAULT(KString)
 
-		Char*		Data();
-		const Char* CData() const;
-		Size		Length() const;
+  Char*       Data();
+  const Char* CData() const;
+  Size        Length() const;
 
-		bool operator==(const Char* rhs) const;
-		bool operator!=(const Char* rhs) const;
+  bool operator==(const Char* rhs) const;
+  bool operator!=(const Char* rhs) const;
 
-		bool operator==(const KString& rhs) const;
-		bool operator!=(const KString& rhs) const;
+  bool operator==(const KString& rhs) const;
+  bool operator!=(const KString& rhs) const;
 
-		KString& operator+=(const Char* rhs);
-		KString& operator+=(const KString& rhs);
+  KString& operator+=(const Char* rhs);
+  KString& operator+=(const KString& rhs);
 
-		operator bool()
-		{
-			return fData;
-		}
+  operator bool() { return fData; }
 
-		bool operator!()
-		{
-			return fData;
-		}
+  bool operator!() { return fData; }
 
-	private:
-		Char* fData{nullptr};
-		Size  fDataSz{0};
-		Size  fCur{0};
+ private:
+  Char* fData{nullptr};
+  Size  fDataSz{0};
+  Size  fCur{0};
 
-		friend class KStringBuilder;
-	};
+  friend class KStringBuilder;
+};
 
-	struct KStringBuilder final
-	{
-		static ErrorOr<KString> Construct(const Char* data);
-		static const Char*		FromBool(const Char* fmt, bool n);
-		static const Char*		Format(const Char* fmt, const Char* from);
-		static bool				Equals(const Char* lhs, const Char* rhs);
-		static bool				Equals(const WideChar* lhs, const WideChar* rhs);
-	};
-} // namespace Kernel
+class KStringBuilder final {
+ public:
+  static ErrorOr<KString> Construct(const Char* data);
+  static const Char*      FromBool(const Char* fmt, bool n);
+  static const Char*      Format(const Char* fmt, const Char* from);
+  static bool             Equals(const Char* lhs, const Char* rhs);
+  static bool             Equals(const Utf8Char* lhs, const Utf8Char* rhs);
+  static bool             Equals(const WideChar* lhs, const WideChar* rhs);
+};
+}  // namespace Kernel

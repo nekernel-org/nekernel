@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -13,8 +13,8 @@
 #include <FirmwareKit/Handover.h>
 
 #ifdef __NE_AMD64__
-#include <HALKit/AMD64/Paging.h>
 #include <HALKit/AMD64/Hypervisor.h>
+#include <HALKit/AMD64/Paging.h>
 #include <HALKit/AMD64/Processor.h>
 #elif defined(__NE_POWER64__)
 #include <HALKit/POWER/Processor.h>
@@ -26,73 +26,59 @@
 #error !!! unknown architecture !!!
 #endif
 
-#define kKernelMaxSystemCalls (512U)
+#define kMaxDispatchCallCount (512U)
 
-namespace Kernel
-{
-	inline SSizeT rt_hash_seed(const Char* seed, int mul)
-	{
-		SSizeT hash = 0;
+namespace Kernel {
+inline SSizeT rt_hash_seed(const Char* seed, int mul) {
+  SSizeT hash = 0;
 
-		for (SSizeT idx = 0; seed[idx] != 0; ++idx)
-		{
-			hash += seed[idx];
-			hash ^= mul;
-		}
+  for (SSizeT idx = 0; seed[idx] != 0; ++idx) {
+    hash += seed[idx];
+    hash ^= mul;
+  }
 
-		return hash;
-	}
+  return hash;
+}
 
-	/// @brief write to mapped memory register
-	/// @param base the base address.
-	/// @param reg the register.
-	/// @param value the write to write on it.
-	template <typename DataKind>
-	inline Void ke_dma_write(UIntPtr base, DataKind reg, DataKind value) noexcept
-	{
-		*(volatile DataKind*)(base + reg) = value;
-	}
+/// @brief write to mapped memory register
+/// @param base the base address.
+/// @param reg the register.
+/// @param value the write to write on it.
+template <typename DataKind>
+inline Void ke_dma_write(UIntPtr base, DataKind reg, DataKind value) noexcept {
+  *(volatile DataKind*) (base + reg) = value;
+}
 
-	/// @brief read from mapped memory register.
-	/// @param base base address
-	/// @param reg the register.
-	/// @return the value inside the register.
-	template <typename DataKind>
-	inline UInt32 ke_dma_read(UIntPtr base, DataKind reg) noexcept
-	{
-		return *(volatile DataKind*)(base + reg);
-	}
+/// @brief read from mapped memory register.
+/// @param base base address
+/// @param reg the register.
+/// @return the value inside the register.
+template <typename DataKind>
+inline UInt32 ke_dma_read(UIntPtr base, DataKind reg) noexcept {
+  return *(volatile DataKind*) (base + reg);
+}
 
-	/// @brief Hardware Abstraction Layer
-	namespace HAL
-	{
-		/// @brief Check whether this pointer is a bitmap object.
-		/// @param ptr argument to verify.
-		/// @param whether successful or not.
-		auto mm_is_bitmap(VoidPtr ptr) -> Bool;
-	} // namespace HAL
-} // namespace Kernel
+/// @brief Hardware Abstraction Layer
+namespace HAL {
+  /// @brief Check whether this pointer is a bitmap object.
+  /// @param ptr argument to verify.
+  /// @param whether successful or not.
+  auto mm_is_bitmap(VoidPtr ptr) -> Bool;
+}  // namespace HAL
+}  // namespace Kernel
 
 typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 
-struct HalSyscallEntry final
-{
-	Kernel::Int64	fHash;
-	Kernel::Bool	fHooked;
-	rt_syscall_proc fProc;
+struct HalSyscallEntry final {
+  Kernel::Int64   fHash;
+  Kernel::Bool    fHooked;
+  rt_syscall_proc fProc;
 
-	operator bool()
-	{
-		return fHooked;
-	}
+  operator bool() { return fHooked; }
 };
 
-inline Kernel::Array<HalSyscallEntry,
-					 kKernelMaxSystemCalls>
-	kSyscalls;
+inline Kernel::Array<HalSyscallEntry, kMaxDispatchCallCount> kSysCalls;
 
-inline Kernel::Array<HalSyscallEntry,
-					 kKernelMaxSystemCalls>
-	kKerncalls;
+inline Kernel::Array<HalSyscallEntry, kMaxDispatchCallCount> kKernCalls;
 
 EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);

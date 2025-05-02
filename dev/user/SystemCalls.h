@@ -35,14 +35,14 @@ typedef Ref SocketRef;
 IMPORT_C Ref LdrGetDLLSymbolFromHandle(_Input const Char* symbol, _Input Ref dll_handle);
 
 /// @brief Open Dylib handle.
-/// @param path
-/// @param drv
-/// @return
+/// @param path dll path.
+/// @param drv driver letter.
+/// @return a dylib ref.
 IMPORT_C Ref LdrOpenDLLHandle(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close Dylib handle
-/// @param dll_handle
-/// @return
+/// @param dll_handle the dylib ref.
+/// @return whether it closed or not.
 IMPORT_C UInt32 LdrCloseDLLHandle(_Input Ref* dll_handle);
 
 // ------------------------------------------------------------------------------------------ //
@@ -60,11 +60,26 @@ IMPORT_C Ref IoOpenFile(const Char* fs_path, const Char* drive_letter);
 /// @return Function doesn't return a type.
 IMPORT_C Void IoCloseFile(_Input Ref file_desc);
 
+/// @brief I/O control (ioctl) on a file.
+/// @param file_desc the file descriptor.
+/// @param ioctl_code the ioctl code.
+/// @param in_data the input data.
+/// @param out_data the output data.
+/// @return the number of bytes written.
+/// @note This function is used to control the file descriptor, introduced for HeFS.
+IMPORT_C SInt32 IoCtrlFile(_Input Ref file_desc, _Input UInt32 ioctl_code, _Input VoidPtr in_data,
+                           _Output VoidPtr out_data);
+
 /// @brief Gets the file mime (if any)
 /// @param file_desc the file descriptor.
 IMPORT_C const Char* IoMimeFile(_Input Ref file_desc);
 
-/// @brief Write data to a file.
+/// @brief Gets the dir DIM.
+/// @param dir_desc directory descriptor.
+/// @note only works in HeFS, will return nil-x/nil if used on any other filesystem.
+IMPORT_C const Char* IoDimFile(_Input Ref dir_desc);
+
+/// @brief Write data to a file ref
 /// @param file_desc the file descriptor.
 /// @param out_data the data to write.
 /// @param sz_data the size of the data to write.
@@ -94,7 +109,8 @@ IMPORT_C UInt64 IoSeekFile(_Input Ref file_desc, UInt64 file_offset);
 // Process API.
 // ------------------------------------------------------------------------
 
-/// @brief Spawns a Thread Information Block and Global Information Block inside the current process.
+/// @brief Spawns a Thread Information Block and Global Information Block inside the current
+/// process.
 /// @param process_id Target Process ID, must be valid.
 /// @return > 0 error ocurred or already present, = 0 success.
 IMPORT_C UInt32 RtlSpawnIB(UIntPtr process_id);
@@ -102,7 +118,8 @@ IMPORT_C UInt32 RtlSpawnIB(UIntPtr process_id);
 /// @brief Spawns a process with a unique pid (stored as UIntPtr).
 /// @param process_path process filesystem path.
 /// @return > 0 process was created.
-IMPORT_C UIntPtr RtlSpawnProcess(const Char* process_path, SizeT argc, Char** argv, Char** envp, SizeT envp_len);
+IMPORT_C UIntPtr RtlSpawnProcess(const Char* process_path, SizeT argc, Char** argv, Char** envp,
+                                 SizeT envp_len);
 
 /// @brief Exits a process with an exit_code.
 /// @return if it has succeeded true, otherwise false.
@@ -269,14 +286,13 @@ IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr 
 // Power API.
 // ------------------------------------------------------------------------------------------ //
 
-enum
-{
-	kPowerCodeInvalid,
-	kPowerCodeShutdown,
-	kPowerCodeReboot,
-	kPowerCodeSleep,
-	kPowerCodeWake,
-	kPowerCodeCount,
+enum {
+  kPowerCodeInvalid,
+  kPowerCodeShutdown,
+  kPowerCodeReboot,
+  kPowerCodeSleep,
+  kPowerCodeWake,
+  kPowerCodeCount,
 };
 
 IMPORT_C SInt32 PwrReadCode(_Output SInt32& code);
@@ -346,4 +362,4 @@ IMPORT_C Char* StrFmt(const Char* fmt, ...);
 
 IMPORT_C UInt64 StrMathToNumber(const Char* in, const Char** endp, const SInt16 base);
 
-#endif // ifndef SCI_SCI_H
+#endif  // ifndef SCI_SCI_H
