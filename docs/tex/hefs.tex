@@ -33,7 +33,7 @@
 \maketitle
 
 \section{Overview}
-HeFS is a custom filesystem developed as part of the NeKernel project. It offers a journaling-like inode tree structure using red-black tree-inspired navigation for directories. Designed for robust use in desktop, server, and embedded environments, it supports various encoding modes and drive types.
+HeFS is a high-throughput filesystem designed for NeKernel. It implements a robust directory structure based on red-black trees, uses slice-linked blocks for file storage, and includes CRC32-based integrity checks. Designed for desktop, server, and embedded contexts, it prioritizes performance, corruption recovery, and extensibility.
 
 \section{Boot Node Structure}
 \begin{longtable}{|l|l|p{8cm}|}
@@ -41,7 +41,7 @@ HeFS is a custom filesystem developed as part of the NeKernel project. It offers
 \textbf{Field} & \textbf{Type} & \textbf{Description} \\
 \hline
 \verb|fMagic| & \verb|char[8]| & Filesystem magic ("  HeFS") \\
-\verb|fVolName| & \verb|Utf16Char[128]| & Volume name \\
+\verb|fVolName| & \verb|Utf8Char[128]| & Volume name \\
 \verb|fVersion| & \verb|UInt32| & Filesystem version (e.g., 0x0101) \\
 \verb|fBadSectors| & \verb|UInt64| & Number of bad sectors detected \\
 \verb|fSectorCount| & \verb|UInt64| & Total sector count \\
@@ -49,13 +49,13 @@ HeFS is a custom filesystem developed as part of the NeKernel project. It offers
 \verb|fChecksum| & \verb|UInt32| & CRC32 checksum of the boot node \\
 \verb|fDiskKind| & \verb|UInt8| & Type of drive (e.g., HDD, SSD, USB) \\
 \verb|fEncoding| & \verb|UInt8| & Encoding mode (UTF-8, UTF-16, etc.) \\
-\verb|fStartIND| & \verb|UInt64| & Starting LBA of inode tree \\
-\verb|fEndIND| & \verb|UInt64| & Ending LBA of inode tree \\
+\verb|fStartIND| & \verb|UInt64| & Starting LBA of inode directory region \\
+\verb|fEndIND| & \verb|UInt64| & Ending LBA of inode directory region \\
 \verb|fINDCount| & \verb|UInt64| & Number of directory nodes allocated \\
 \verb|fDiskSize| & \verb|UInt64| & Logical size of the disk \\
 \verb|fDiskStatus| & \verb|UInt16| & Status of the disk (e.g., unlocked, locked) \\
 \verb|fDiskFlags| & \verb|UInt16| & Disk flags (e.g., read-only) \\
-\verb|fVID| & \verb|UInt16| & Virtual ID (EPM integration) \\
+\verb|fVID| & \verb|UInt16| & Virtual ID (for EPM integration) \\
 \hline
 \end{longtable}
 
@@ -83,71 +83,75 @@ HeFS is a custom filesystem developed as part of the NeKernel project. It offers
 \end{itemize}
 
 \section{Index Node Structure}
-Files are stored through slice links, offering native recovery fields and MIME type support.
+The `HEFS\_INDEX\_NODE` represents a file and is constrained to 512 bytes to match hardware sector boundaries. It uses a fixed set of block pointers (slices) and CRC32 checks for data integrity. Only the local file name is stored in `fName`.
 
-\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE structure}]
+\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE (Fits 512B)}]
 struct HEFS_INDEX_NODE {
-    Utf16Char fName[256];
-    UInt32    fFlags;
-    UInt16    fKind;
-    UInt32    fSize;
-    UInt32    fChecksum, fRecoverChecksum, fBlockChecksum, fLinkChecksum;
-    Utf16Char fMime[256];
-    Boolean   fSymLink;
-    ATime     fCreated, fAccessed, fModified, fDeleted;
-    UInt32    fUID, fGID;
-    UInt32    fMode;
-    UInt64    fBlockLinkStart[16], fBlockLinkEnd[16];
-    UInt64    fBlockStart[16], fBlockEnd[16];
-    UInt64    fBlockRecoveryStart[16], fBlockRecoveryEnd[16];
+    Utf8Char fName[256];        // Local file name
+    UInt32   fFlags;
+    UInt16   fKind;
+    UInt32   fSize;
+    UInt32   fChecksum;
+
+    Boolean  fSymLink;
+    ATime    fCreated, fAccessed, fModified, fDeleted;
+    UInt32   fUID, fGID;
+    UInt32   fMode;
+
+    UInt64   fBlock[16];        // Data block slices (start-only)
+    Char     fPad[69];          // Padding to reach 512B
 };
 \end{lstlisting}
 
 \section{Directory Node Structure}
-Directories are organized into a red-black tree for efficient balancing.
+Directories form a red-black tree. Each node (IND) can hold up to 16 index node references and links to its parent, siblings, and children via LBAs.
 
-\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY structure}]
+\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY}]
 struct HEFS_INDEX_NODE_DIRECTORY {
-    Utf16Char fName[256];
-    UInt32    fFlags;
-    UInt16    fKind;
-    UInt32    fEntryCount;
-    UInt32    fChecksum, fIndexNodeChecksum;
-    Utf16Char fDim[256];
-    ATime     fCreated, fAccessed, fModified, fDeleted;
-    UInt32    fUID, fGID;
-    UInt32    fMode;
-    UInt64    fIndexNodeStart[16], fIndexNodeEnd[16];
-    UInt8     fColor;
-    Lba       fNext, fPrev, fChild, fParent;
+    Utf8Char fName[256];        // Directory name (not full path)
+    UInt32   fFlags;
+    UInt16   fKind;
+    UInt32   fEntryCount;
+    UInt32   fChecksum, fIndexNodeChecksum;
+
+    ATime    fCreated, fAccessed, fModified, fDeleted;
+    UInt32   fUID, fGID;
+    UInt32   fMode;
+
+    UInt64   fIndexNode[16];    // Inode LBA references
+
+    UInt8    fColor;            // Red/Black tree color
+    Lba      fNext, fPrev, fChild, fParent;
+
+    Char     fPad[33];
 };
 \end{lstlisting}
 
-\section{Filesystem Design}
+\section{Design Characteristics}
 
-HeFS is designed with the following objectives:
 \begin{itemize}
-    \item Red-black tree navigation for efficient directory balancing
-    \item Journaling fields for slice-level recovery
-    \item Multi-encoding support: UTF-8, UTF-16, UTF-32
-    \item Advanced MIME type support (Feature has been scrapped)
-    \item Redundant fields (checksums, recovery inodes) for crash resistance
-    \item Extensible for future LVM (Logical Volume Management) and network filesystem support
+    \item Red-black tree traversal for directory balancing
+    \item One-sector (512B) inode design for efficient I/O
+    \item Slice-linked file storage (fixed 16 slots)
+    \item CRC32 for boot node, inode, and directory integrity
+    \item Preallocated directory inodes to avoid runtime fragmentation
 \end{itemize}
 
 \section{Minimum Requirements}
 
-HeFS expects a minimum disk size of 16MB. Optimal performance is aimed to be achieved with 8GB or more.
-Supports: HDDs, SSDs, USB mass storage, SCSI/SAS, optical drives.
+\begin{itemize}
+    \item Minimum disk size: 16MB
+    \item Recommended size: 8GB or more
+    \item Supported media: HDD, SSD, USB, SCSI, Flash, Optical
+\end{itemize}
 
 \section{Future Work}
-Planned enhancements include:
 \begin{itemize}
-    \item Full journaling implementation (recovery on crash)
-    \item Advanced ACLs (Access Control Lists) and permissions
-    \item Logical Volume Management (LVM) integration
-    \item Backup boot node and dual-boot sectors
-    \item Online filesystem checking and self-healing algorithms
+    \item Journaling layer for recovery
+    \item Extended access control and ACL support
+    \item Logical Volume Management (LVM)
+    \item Dual boot node layout for redundancy
+    \item Self-healing and online fsck tools
 \end{itemize}
 
 \end{document}

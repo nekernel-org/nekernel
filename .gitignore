@@ -17,6 +17,9 @@ xcuserdata/
 public/tools/*/dist/*
 public/frameworks/*/dist/*
 
+*.pdf
+*.aux
+
 neoskrnl/neoskrnl.xcodeproj/project.xcworkspace/xcshareddata/
 
 tooling/dist/mkfs.hefs

@@ -397,7 +397,7 @@ namespace Detail {
               hefsi_traverse_tree(tmpend, mnt, root->fStartIND, child_first, YES);
             }
           }
-
+          
           dirent->fNext   = tmpdir->fNext;
           dirent->fPrev   = tmpdir->fPrev;
           dirent->fParent = tmpdir->fParent;
