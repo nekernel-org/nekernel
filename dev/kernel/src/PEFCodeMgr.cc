@@ -12,7 +12,6 @@
 #include <NewKit/KString.h>
 #include <NewKit/KernelPanic.h>
 #include <NewKit/OwnPtr.h>
-#include "KernelKit/UserProcessScheduler.h"
 
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
