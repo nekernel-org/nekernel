@@ -397,7 +397,7 @@ namespace Detail {
               hefsi_traverse_tree(tmpend, mnt, root->fStartIND, child_first, YES);
             }
           }
-          
+
           dirent->fNext   = tmpdir->fNext;
           dirent->fPrev   = tmpdir->fPrev;
           dirent->fParent = tmpdir->fParent;
@@ -915,7 +915,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   drive->fOutput(drive->fPacket);
 
   (Void)(kout << "Drive kind: " << drive->fProtocol() << kendl);
-  (Void)(kout8 << u8"Partition name: " << root->fVolName << kendl8);
+  (Void)(kout8 << u8"Volume name: " << root->fVolName << kendl8);
   (Void)(kout << "Start IND: " << hex_number(root->fStartIND) << kendl);
   (Void)(kout << "Number of IND: " << hex_number(root->fINDCount) << kendl);
   (Void)(kout << "Sector size: " << hex_number(root->fSectorSize) << kendl);

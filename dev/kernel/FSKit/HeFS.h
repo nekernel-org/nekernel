@@ -358,21 +358,20 @@ class HeFileSystemParser final {
   /// @return If it was sucessful, see err_local_get().
   _Output Bool Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
                       const Utf8Char* part_name);
- 
+
   _Output Bool CreateDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
-    const Utf8Char* dir, const Utf8Char* parent_dir);
+                               const Utf8Char* dir, const Utf8Char* parent_dir);
 
-    
   _Output Bool RemoveDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
-    const Utf8Char* dir, const Utf8Char* parent_dir);
+                               const Utf8Char* dir, const Utf8Char* parent_dir);
 
-  _Output Bool CreateFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir, const Utf8Char* namespase,
-                          const Utf8Char* name);
+  _Output Bool CreateFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                          const Utf8Char* namespase, const Utf8Char* name);
 
  private:
- 
- _Output Bool DirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
-  const Utf8Char* dir, const Utf8Char* parent, const BOOL delete_or_create);
+  _Output Bool DirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
+                             const Utf8Char* dir, const Utf8Char* parent,
+                             const BOOL delete_or_create);
 
   UInt32 mDriveIndex{MountpointInterface::kDriveIndexA};  /// @brief The drive index which this
                                                           /// filesystem is mounted on.

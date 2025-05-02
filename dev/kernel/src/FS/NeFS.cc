@@ -462,10 +462,10 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   part_block->StartCatalog = start + sizeof(NEFS_CATALOG_STRUCT);
   part_block->Flags        = 0UL;
   part_block->CatalogCount = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
-  part_block->FreeSectors  = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
+  part_block->FreeSectors  = sectorCount / sizeof(NEFS_CATALOG_STRUCT) - 1;
   part_block->SectorCount  = sectorCount;
   part_block->DiskSize     = diskSize;
-  part_block->FreeCatalog  = sectorCount / sizeof(NEFS_CATALOG_STRUCT);
+  part_block->FreeCatalog  = sectorCount / sizeof(NEFS_CATALOG_STRUCT) - 1;
 
   drive->fPacket.fPacketContent = fs_buf;
   drive->fPacket.fPacketSize    = sizeof(NEFS_ROOT_PARTITION_BLOCK);
@@ -474,16 +474,32 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   drive->fOutput(drive->fPacket);
 
   (Void)(kout << "Drive kind: " << drive->fProtocol() << kendl);
-
   (Void)(kout << "Partition name: " << part_block->PartitionName << kendl);
-  (Void)(kout << "Start: " << hex_number(part_block->StartCatalog) << kendl);
+  (Void)(kout << "Start catalog: " << hex_number(part_block->StartCatalog) << kendl);
   (Void)(kout << "Number of catalogs: " << hex_number(part_block->CatalogCount) << kendl);
   (Void)(kout << "Free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
   (Void)(kout << "Free sectors: " << hex_number(part_block->FreeSectors) << kendl);
   (Void)(kout << "Sector size: " << hex_number(part_block->SectorSize) << kendl);
 
-  // write the root catalog.
-  this->CreateCatalog(kNeFSRoot, 0, kNeFSCatalogKindDir);
+  NEFS_CATALOG_STRUCT root{};
+
+  rt_set_memory(&root, 0, sizeof(NEFS_CATALOG_STRUCT));
+
+  root.PrevSibling = part_block->StartCatalog;
+  root.NextSibling = 0UL;
+
+  root.Kind = kNeFSCatalogKindDir;
+  root.Flags |= kNeFSFlagCreated;
+  root.CatalogFlags |= kNeFSStatusUnlocked;
+
+  root.Name[0] = '/';
+  root.Name[1] = 0;
+
+  drive->fPacket.fPacketLba     = part_block->StartCatalog;
+  drive->fPacket.fPacketSize    = sizeof(NEFS_CATALOG_STRUCT);
+  drive->fPacket.fPacketContent = &root;
+
+  drive->fOutput(drive->fPacket);
 
   return true;
 }
@@ -546,16 +562,27 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
         KStringBuilder::Equals(fork_data_input->CatalogName, catalog_name) &&
         fork_data_input->DataSize == size_of_data) {
       // ===================================================== //
-      // Store the blob now.
+      // Store the blob now, into chunks.
       // ===================================================== //
 
-      drive.fPacket.fPacketContent = buf;
-      drive.fPacket.fPacketSize    = size_of_data;
-      drive.fPacket.fPacketLba     = fork_data_input->DataOffset;
+      auto cnt        = size_of_data / kNeFSSectorSz;
+      auto cnter      = 0UL;
+      auto compute_sz = kNeFSSectorSz;
 
-      (Void)(kout << "data offset: " << hex_number(fork_data_input->DataOffset) << kendl);
+      if (cnt < 1) break;
 
-      drive.fOutput(drive.fPacket);
+      while (compute_sz) {
+        drive.fPacket.fPacketContent = buf + (cnter * kNeFSSectorSz);
+        drive.fPacket.fPacketSize    = compute_sz;
+        drive.fPacket.fPacketLba     = fork_data_input->DataOffset;
+
+        (Void)(kout << "data offset: " << hex_number(cnt * kNeFSSectorSz) << kendl);
+
+        drive.fOutput(drive.fPacket);
+
+        compute_sz /= (size_of_data / cnt);
+        ++cnter;
+      }
 
       (Void)(kout << "wrote data at offset: " << hex_number(fork_data_input->DataOffset) << kendl);
 

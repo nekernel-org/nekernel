@@ -135,7 +135,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 
   STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
 
-  SizeT team_index = 0U;
+  static SizeT team_index = 0U;
 
   /// @brief This just loops over the teams and switches between them.
   /// @details Not even round-robin, just a simple loop in this boot core we're at.
