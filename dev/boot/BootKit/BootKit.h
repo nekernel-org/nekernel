@@ -259,7 +259,7 @@ inline Boolean BDiskFormatFactory<BootDev>::Format(const Char* part_name) {
 #if defined(BOOTZ_EPM_SUPPORT)
   EPM_PART_BLOCK* epm_boot = (EPM_PART_BLOCK*) RTL_ALLOCA(sizeof(EPM_PART_BLOCK));
 
-  const auto kFsName    = "HeFS";
+  const auto kFsName    = "NeKernel";
   const auto kBlockName = "OS (EPM)";
 
   epm_boot->FsVersion = 0;

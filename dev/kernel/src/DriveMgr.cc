@@ -51,6 +51,12 @@ Void io_drv_output(DriveTrait::DrivePacket& pckt) {
     return;
   }
 
+  // nothing starts before 512 anyways, even an EPM partition.
+  if (!pckt.fPacketReadOnly && pckt.fPacketLba == 0) {
+    pckt.fPacketGood = NO;
+    return;
+  }
+
 #ifdef __AHCI__
   drv_std_write(pckt.fPacketLba, (Char*) pckt.fPacketContent, kAHCISectorSize, pckt.fPacketSize);
 

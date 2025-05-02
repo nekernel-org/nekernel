@@ -28,7 +28,7 @@
 
 #define kHeFSDefaultVoluneName u8"HeFS Volume"
 
-#define kHeFSINDStartOffset (sizeof(HEFS_INDEX_NODE_DIRECTORY))
+#define kHeFSINDStartOffset (sizeof(HEFS_INDEX_NODE_DIRECTORY) + sizeof(HEFS_BOOT_NODE))
 
 #define kHeFSSearchAllStr u8"*"
 
@@ -366,9 +366,16 @@ class HeFileSystemParser final {
                                const Utf8Char* dir, const Utf8Char* parent_dir);
 
   _Output Bool CreateFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                          const Utf8Char* namespase, const Utf8Char* name);
+                          const Utf8Char* parent_dir_fmt, const Utf8Char* name);
+
+  _Output Bool DeleteFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                          const Utf8Char* parent_dir_fmt, const Utf8Char* name);
 
  private:
+  _Output Bool FileCtl_(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                        const Utf8Char* parent_dir_fmt, const Utf8Char* name,
+                        const BOOL delete_or_create);
+
   _Output Bool DirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
                              const Utf8Char* dir, const Utf8Char* parent,
                              const BOOL delete_or_create);
