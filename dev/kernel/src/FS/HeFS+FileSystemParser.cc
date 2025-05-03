@@ -80,14 +80,17 @@ namespace Detail {
                                               const Utf8Char* dir_name, UInt16 flags,
                                               const BOOL delete_or_create);
 
-  UInt64 hefsi_hash_64(const Utf8Char* name) {
+  /// @brief Simple algorithm to hash directory entries for INDs.
+  /// @param path the directory path.
+  /// @return The hashed path.
+  STATIC UInt64 hefsi_hash_64(const Utf8Char* path) {
     const UInt64 FNV_OFFSET_BASIS = 0x811C9DC5;
     const UInt64 FNV_PRIME        = 0x01000193;
 
     UInt64 hash = FNV_OFFSET_BASIS;
 
-    while (*name) {
-      hash ^= (Utf8Char) (*name++);
+    while (*path) {
+      hash ^= (Utf8Char) (*path++);
       hash *= FNV_PRIME;
     }
 
@@ -342,7 +345,8 @@ namespace Detail {
         if (!delete_or_create) {
           expr = (!tmpdir->fCreated && tmpdir->fDeleted) || tmpdir->fHashName == 0;
         } else {
-          expr = tmpdir->fCreated && !tmpdir->fDeleted && hefsi_hash_64(dir_name) == tmpdir->fHashName;
+          expr =
+              tmpdir->fCreated && !tmpdir->fDeleted && hefsi_hash_64(dir_name) == tmpdir->fHashName;
         }
 
         if (expr) {
@@ -351,7 +355,7 @@ namespace Detail {
 
           rt_set_memory(dirent, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
-          dirent->fHashName = delete_or_create ? 0UL : hefsi_hash_64(dir_name);
+          dirent->fHashName   = delete_or_create ? 0UL : hefsi_hash_64(dir_name);
           dirent->fAccessed   = 0UL;
           dirent->fCreated    = delete_or_create ? 0UL : 1UL;
           dirent->fDeleted    = delete_or_create ? 1UL : 0UL;
