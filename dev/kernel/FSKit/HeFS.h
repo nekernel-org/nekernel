@@ -17,7 +17,7 @@
 /// @file HeFS.h
 /// @brief HeFS filesystem support.
 
-#define kHeFSVersion (0x0101)
+#define kHeFSVersion (0x0102)
 #define kHeFSMagic "  HeFS"
 #define kHeFSMagicLen (8)
 
@@ -162,7 +162,7 @@ enum {
 /// @details This structure is used to store the directory information of a file.
 /// @note The directory node is a special type of INode that contains the directory entries.
 struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
-  Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief Directory name.
+  Kernel::UInt64 fHashName;  /// @brief Directory name.
 
   Kernel::UInt32 fFlags;  /// @brief File flags.
   Kernel::UInt16 fKind;   /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
@@ -185,7 +185,7 @@ struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
   Kernel::UInt8 fColor;                         /// @brief Color of the node. (Red or Black).
   Kernel::Lba   fNext, fPrev, fChild, fParent;  /// @brief Red-black tree pointers.
 
-  Kernel::Char fPad[33];
+  Kernel::Char fPad[281];
 };
 
 namespace Kernel::Detail {
@@ -359,30 +359,37 @@ class HeFileSystemParser final {
   _Output Bool Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
                       const Utf8Char* part_name);
 
-  _Output Bool CreateDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
-                               const Utf8Char* dir, const Utf8Char* parent_dir);
+  _Output Bool CreateINodeDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
+                                    const Utf8Char* dir);
 
-  _Output Bool RemoveDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
-                               const Utf8Char* dir, const Utf8Char* parent_dir);
+  _Output Bool RemoveINodeDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
+                                    const Utf8Char* dir);
 
-  _Output Bool CreateFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                          const Utf8Char* parent_dir_fmt, const Utf8Char* name);
+  _Output Bool CreateINode(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                           const Utf8Char* name);
 
-  _Output Bool DeleteFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                          const Utf8Char* parent_dir_fmt, const Utf8Char* name);
+  _Output Bool DeleteINode(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                           const Utf8Char* name);
+
+  _Output Bool WriteINode(_Input DriveTrait* drive, VoidPtr block, SizeT block_sz,
+                          const Utf8Char* dir, const Utf8Char* name);
+
+  _Output Bool ReadINode(_Input DriveTrait* drive, VoidPtr block, SizeT block_sz,
+                         const Utf8Char* dir, const Utf8Char* name);
 
  private:
-  _Output Bool FileCtl_(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                        const Utf8Char* parent_dir_fmt, const Utf8Char* name,
-                        const BOOL delete_or_create);
+  _Output Bool INodeCtl_(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                         const Utf8Char* name, const BOOL delete_or_create);
 
-  _Output Bool DirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
-                             const Utf8Char* dir, const Utf8Char* parent,
-                             const BOOL delete_or_create);
+  _Output Bool INodeDirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
+                                  const Utf8Char* dir,
+                                  const BOOL delete_or_create);
 
   UInt32 mDriveIndex{MountpointInterface::kDriveIndexA};  /// @brief The drive index which this
                                                           /// filesystem is mounted on.
 };
 
-Boolean fs_init_hefs(Void) noexcept;
+/// @brief Initialize HeFS inside the main disk.
+/// @return Whether it successfuly formated it or not.
+Boolean fs_init_hefs(Void);
 }  // namespace Kernel::HeFS

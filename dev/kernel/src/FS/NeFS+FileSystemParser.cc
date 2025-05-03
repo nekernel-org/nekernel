@@ -240,22 +240,18 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
     return nullptr;
   }
 
-  Char parent_name[kNeFSCatalogNameLen] = {0};
+  Char* parent_name = (Char*)mm_new_heap(sizeof(Char) * rt_string_len(name), Yes, No);
 
-  for (SizeT indexName = 0UL; indexName < rt_string_len(name); ++indexName) {
-    parent_name[indexName] = name[indexName];
+  /// Locate parent catalog, to then allocate right after it.
+
+  for (SizeT index_fill = 0; index_fill < rt_string_len(name); ++index_fill) {
+    parent_name[index_fill] = name[index_fill];
   }
 
   if (*parent_name == 0) {
     kout << "Parent name is NUL.\r";
     err_global_get() = kErrorFileNotFound;
     return nullptr;
-  }
-
-  /// Locate parent catalog, to then allocate right after it.
-
-  for (SizeT index_fill = 0; index_fill < rt_string_len(name); ++index_fill) {
-    parent_name[index_fill] = name[index_fill];
   }
 
   SizeT index_reverse_copy = rt_string_len(parent_name);
@@ -272,6 +268,8 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
   }
 
   NEFS_CATALOG_STRUCT* catalog = this->FindCatalog(parent_name, out_lba);
+
+  mm_delete_heap(parent_name);
 
   auto& drive = kMountpoint.A();
 

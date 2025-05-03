@@ -42,7 +42,7 @@ HeFS is a high-throughput filesystem designed for NeKernel. It implements a robu
 \hline
 \verb|fMagic| & \verb|char[8]| & Filesystem magic ("  HeFS") \\
 \verb|fVolName| & \verb|Utf8Char[128]| & Volume name \\
-\verb|fVersion| & \verb|UInt32| & Filesystem version (e.g., 0x0101) \\
+\verb|fVersion| & \verb|UInt32| & Filesystem version (e.g., 0x0102) \\
 \verb|fBadSectors| & \verb|UInt64| & Number of bad sectors detected \\
 \verb|fSectorCount| & \verb|UInt64| & Total sector count \\
 \verb|fSectorSize| & \verb|UInt64| & Size of each sector \\
@@ -108,7 +108,7 @@ Directories form a red-black tree. Each node (IND) can hold up to 16 index node 
 
 \begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY}]
 struct HEFS_INDEX_NODE_DIRECTORY {
-    Utf8Char fName[256];        // Directory name (not full path)
+    UInt64   fHashName;        // Directory name as hash
     UInt32   fFlags;
     UInt16   fKind;
     UInt32   fEntryCount;
@@ -123,7 +123,7 @@ struct HEFS_INDEX_NODE_DIRECTORY {
     UInt8    fColor;            // Red/Black tree color
     Lba      fNext, fPrev, fChild, fParent;
 
-    Char     fPad[33];
+    Char     fPad[281];
 };
 \end{lstlisting}
 
