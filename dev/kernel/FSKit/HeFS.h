@@ -133,7 +133,7 @@ inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 /// @note The index node is used to store the file information of a file.
 struct PACKED HEFS_INDEX_NODE final {
   Kernel::UInt64 fHashPath;  /// @brief File name.
-  Kernel::UInt32   fFlags;                   /// @brief File flags.
+  Kernel::UInt32 fFlags;     /// @brief File flags.
   Kernel::UInt16 fKind;  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
                          /// Symbolic Link, Unknown).
   Kernel::UInt32 fSize;  /// @brief File size.
@@ -168,7 +168,7 @@ struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
   Kernel::UInt16 fKind;   /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
                           /// Symbolic Link, Unknown).
   Kernel::UInt32 fEntryCount;  /// @brief Entry Count of this directory inode.
-  Kernel::UInt32 fChecksum;  /// @brief Checksum of the file, index node checksum.
+  Kernel::UInt32 fChecksum;    /// @brief Checksum of the file, index node checksum.
 
   Kernel::ATime fCreated, fAccessed, fModified,
       fDeleted;               /// @brief File timestamps and allocation status.
@@ -381,8 +381,7 @@ class HeFileSystemParser final {
                          const Utf8Char* name, const BOOL delete_or_create);
 
   _Output Bool INodeDirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
-                                  const Utf8Char* dir,
-                                  const BOOL delete_or_create);
+                                  const Utf8Char* dir, const BOOL delete_or_create);
 
   UInt32 mDriveIndex{MountpointInterface::kDriveIndexA};  /// @brief The drive index which this
                                                           /// filesystem is mounted on.

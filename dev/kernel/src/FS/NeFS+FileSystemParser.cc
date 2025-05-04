@@ -240,7 +240,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
     return nullptr;
   }
 
-  Char* parent_name = (Char*)mm_new_heap(sizeof(Char) * rt_string_len(name), Yes, No);
+  Char* parent_name = (Char*) mm_new_heap(sizeof(Char) * rt_string_len(name), Yes, No);
 
   /// Locate parent catalog, to then allocate right after it.
 

@@ -38,7 +38,7 @@ typedef Int64 ProcessID;
 //! @brief Local Process status enum.
 /***********************************************************************************/
 enum class ProcessStatusKind : Int32 {
-  kInvalid = 0,
+  kInvalid  = 0,
   kStarting = 100,
   kRunning,
   kKilled,
