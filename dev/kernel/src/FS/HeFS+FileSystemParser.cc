@@ -90,8 +90,8 @@ namespace Detail {
   /// @param path the directory path.
   /// @return The hashed path.
   STATIC UInt64 hefsi_hash_64(const Utf8Char* path) {
-    const UInt64 FNV_OFFSET_BASIS = 0x811C9DC5;
-    const UInt64 FNV_PRIME        = 0x01000193;
+    const UInt64 FNV_OFFSET_BASIS = 0xcbf29ce484222325ULL;
+    const UInt64 FNV_PRIME        = 0x100000001b3ULL;
 
     UInt64 hash = FNV_OFFSET_BASIS;
 
