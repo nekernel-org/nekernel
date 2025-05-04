@@ -132,7 +132,7 @@ inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 /// @note The index node is a special type of INode that contains the file information.
 /// @note The index node is used to store the file information of a file.
 struct PACKED HEFS_INDEX_NODE final {
-  Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief File name.
+  Kernel::UInt64 fHashPath;  /// @brief File name.
   Kernel::UInt32   fFlags;                   /// @brief File flags.
   Kernel::UInt16 fKind;  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
                          /// Symbolic Link, Unknown).
@@ -146,9 +146,9 @@ struct PACKED HEFS_INDEX_NODE final {
   Kernel::UInt32 fUID, fGID;  /// @brief User ID and Group ID of the file.
   Kernel::UInt32 fMode;       /// @brief File mode. (read, write, execute, etc).
 
-  Kernel::UInt64 fBlock[kHeFSSliceCount];  /// @brief block slice.
+  Kernel::UInt64 fSlices[kHeFSSliceCount];  /// @brief block slice.
 
-  Kernel::Char fPad[69];
+  Kernel::Char fPad[317];
 };
 
 enum {
@@ -162,14 +162,13 @@ enum {
 /// @details This structure is used to store the directory information of a file.
 /// @note The directory node is a special type of INode that contains the directory entries.
 struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
-  Kernel::UInt64 fHashName;  /// @brief Directory name.
+  Kernel::UInt64 fHashPath;  /// @brief Directory name.
 
   Kernel::UInt32 fFlags;  /// @brief File flags.
   Kernel::UInt16 fKind;   /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
                           /// Symbolic Link, Unknown).
   Kernel::UInt32 fEntryCount;  /// @brief Entry Count of this directory inode.
-  Kernel::UInt32 fChecksum,
-      fIndexNodeChecksum;  /// @brief Checksum of the file, index node checksum.
+  Kernel::UInt32 fChecksum;  /// @brief Checksum of the file, index node checksum.
 
   Kernel::ATime fCreated, fAccessed, fModified,
       fDeleted;               /// @brief File timestamps and allocation status.
@@ -180,12 +179,12 @@ struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
   /// [0] = OFFSET
   /// [1] = SIZE
   /// @note Thus the += 2 when iterating over them.
-  Kernel::UInt64 fIndexNode[kHeFSSliceCount];  /// @brief Start of the index node.
+  Kernel::UInt64 fINSlices[kHeFSSliceCount];  /// @brief Start of the index node.
 
   Kernel::UInt8 fColor;                         /// @brief Color of the node. (Red or Black).
   Kernel::Lba   fNext, fPrev, fChild, fParent;  /// @brief Red-black tree pointers.
 
-  Kernel::Char fPad[281];
+  Kernel::Char fPad[285];
 };
 
 namespace Kernel::Detail {

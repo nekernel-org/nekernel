@@ -80,6 +80,12 @@ namespace Detail {
                                               const Utf8Char* dir_name, UInt16 flags,
                                               const BOOL delete_or_create);
 
+  STATIC UInt64 hefsi_to_big_endian_64(UInt64 val) {
+    return ((val >> 56) & 0x00000000000000FFULL) | ((val >> 40) & 0x000000000000FF00ULL) |
+           ((val >> 24) & 0x0000000000FF0000ULL) | ((val >> 8) & 0x00000000FF000000ULL) |
+           ((val << 8) & 0x000000FF00000000ULL) | ((val << 24) & 0x0000FF0000000000ULL) |
+           ((val << 40) & 0x00FF000000000000ULL) | ((val << 56) & 0xFF00000000000000ULL);
+  }
   /// @brief Simple algorithm to hash directory entries for INDs.
   /// @param path the directory path.
   /// @return The hashed path.
@@ -94,7 +100,7 @@ namespace Detail {
       hash *= FNV_PRIME;
     }
 
-    return hash;
+    return hefsi_to_big_endian_64(hash);
   }
 
   /// @brief Traverse the RB-Tree of the filesystem.
@@ -272,15 +278,15 @@ namespace Detail {
         }
 
         if (dir->fKind == kHeFSFileKindDirectory) {
-          if (hefsi_hash_64(dir_name) == dir->fHashName ||
+          if (hefsi_hash_64(dir_name) == dir->fHashPath ||
               KStringBuilder::Equals(dir_name, kHeFSSearchAllStr)) {
             for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; inode_index += 2) {
-              mnt->fPacket.fPacketLba     = dir->fIndexNode[inode_index];
+              mnt->fPacket.fPacketLba     = dir->fINSlices[inode_index];
               mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
               mnt->fPacket.fPacketContent = node;
               mnt->fInput(mnt->fPacket);
 
-              if (KStringBuilder::Equals(file_name, node->fName) && node->fKind == kind) {
+              if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind) {
                 if (node->fKind == kHeFSFileKindDirectory) {
                   sz += hefsi_fetch_index_node_size(root, mnt, dir_name, file_name, kind);
                 } else {
@@ -290,6 +296,8 @@ namespace Detail {
                 return sz;
               }
             }
+          } else if (dir->fHashPath == 0) {
+            break;
           }
         }
       }
@@ -343,10 +351,10 @@ namespace Detail {
         BOOL expr = NO;
 
         if (!delete_or_create) {
-          expr = (!tmpdir->fCreated && tmpdir->fDeleted) || tmpdir->fHashName == 0;
+          expr = (!tmpdir->fCreated && tmpdir->fDeleted) || tmpdir->fHashPath == 0;
         } else {
           expr =
-              tmpdir->fCreated && !tmpdir->fDeleted && hefsi_hash_64(dir_name) == tmpdir->fHashName;
+              tmpdir->fCreated && !tmpdir->fDeleted && hefsi_hash_64(dir_name) == tmpdir->fHashPath;
         }
 
         if (expr) {
@@ -355,7 +363,7 @@ namespace Detail {
 
           rt_set_memory(dirent, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
-          dirent->fHashName   = delete_or_create ? 0UL : hefsi_hash_64(dir_name);
+          dirent->fHashPath   = delete_or_create ? 0UL : hefsi_hash_64(dir_name);
           dirent->fAccessed   = 0UL;
           dirent->fCreated    = delete_or_create ? 0UL : 1UL;
           dirent->fDeleted    = delete_or_create ? 1UL : 0UL;
@@ -401,7 +409,7 @@ namespace Detail {
 
               mnt->fInput(mnt->fPacket);
 
-              if ((!tmpend->fCreated && tmpend->fDeleted) || tmpend->fHashName == 0) {
+              if ((!tmpend->fCreated && tmpend->fDeleted) || tmpend->fHashPath == 0) {
                 start = child_first;
                 break;
               }
@@ -445,7 +453,7 @@ namespace Detail {
 
               mnt->fInput(mnt->fPacket);
 
-              if ((!tmpend->fCreated && tmpend->fDeleted) || tmpdir->fHashName == 0) {
+              if ((!tmpend->fCreated && tmpend->fDeleted) || tmpdir->fHashPath == 0) {
                 break;
               }
 
@@ -460,7 +468,7 @@ namespace Detail {
           }
 
           for (SizeT index = 0UL; index < kHeFSSliceCount; ++index) {
-            dirent->fIndexNode[index] = 0;
+            dirent->fINSlices[index] = 0;
           }
 
           dirent->fChecksum = ke_calculate_crc32((Char*) dirent, sizeof(HEFS_INDEX_NODE_DIRECTORY));
@@ -546,19 +554,19 @@ namespace Detail {
         }
 
         if (dir->fKind == kHeFSFileKindDirectory) {
-          if (hefsi_hash_64(dir_name) == dir->fHashName ||
+          if (hefsi_hash_64(dir_name) == dir->fHashPath ||
               KStringBuilder::Equals(dir_name, kHeFSSearchAllStr)) {
             if (ke_calculate_crc32((Char*) dir, sizeof(HEFS_INDEX_NODE_DIRECTORY)) !=
                 dir->fChecksum)
               ke_panic(RUNTIME_CHECK_FILESYSTEM, "CRC32 failure on HeFS IND!");
 
             for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; ++inode_index) {
-              if (dir->fIndexNode[inode_index] != 0) {
+              if (dir->fINSlices[inode_index] != 0) {
                 if (mnt->fPacket.fPacketGood) {
                   if (ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE)) != node->fChecksum)
                     ke_panic(RUNTIME_CHECK_FILESYSTEM, "CRC32 failure on HeFS IND!");
 
-                  if (KStringBuilder::Equals(file_name, node->fName) && node->fKind == kind) {
+                  if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind) {
                     node_arr[start_cnt] = *node;
                     ++start_cnt;
 
@@ -577,6 +585,8 @@ namespace Detail {
                 }
               }
             }
+          } else if (dir->fHashPath == 0) {
+            break;
           }
         }
 
@@ -606,10 +616,7 @@ namespace Detail {
       HEFS_INDEX_NODE_DIRECTORY* dir =
           (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
-      Utf8Char file_name[kHeFSFileNameLen] = {0};
-
-      urt_copy_memory(node->fName, file_name, urt_string_len(node->fName) + 1);
-
+      auto hash_file = node->fHashPath;
       while (YES) {
         mnt->fPacket.fPacketLba     = start;
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
@@ -618,12 +625,12 @@ namespace Detail {
         mnt->fInput(mnt->fPacket);
 
         (Void)(kout << hex_number(hefsi_hash_64(dir_name)) << kendl);
-        (Void)(kout << hex_number(dir->fHashName) << kendl);
+        (Void)(kout << hex_number(dir->fHashPath) << kendl);
 
-        if (hefsi_hash_64(dir_name) == dir->fHashName) {
+        if (hefsi_hash_64(dir_name) == dir->fHashPath) {
           for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; ++inode_index) {
-            if (dir->fIndexNode[inode_index] == 0 && !delete_or_create) {
-              dir->fIndexNode[inode_index] = root->fStartIN;
+            if (dir->fINSlices[inode_index] == 0 && !delete_or_create) {
+              dir->fINSlices[inode_index] = root->fStartIN;
 
               root->fStartIN += sizeof(HEFS_INDEX_NODE);
 
@@ -642,7 +649,7 @@ namespace Detail {
 
               mnt->fOutput(mnt->fPacket);
 
-              auto lba = dir->fIndexNode[inode_index];
+              auto lba = dir->fINSlices[inode_index];
 
               mnt->fPacket.fPacketLba     = lba;
               mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
@@ -657,8 +664,8 @@ namespace Detail {
               }
 
               return NO;
-            } else if (dir->fIndexNode[inode_index] != 0 && delete_or_create) {
-              auto lba = dir->fIndexNode[inode_index];
+            } else if (dir->fINSlices[inode_index] != 0 && delete_or_create) {
+              auto lba = dir->fINSlices[inode_index];
 
               HEFS_INDEX_NODE tmp_node{};
 
@@ -668,7 +675,7 @@ namespace Detail {
 
               mnt->fInput(mnt->fPacket);
 
-              if (!KStringBuilder::Equals(tmp_node.fName, file_name)) {
+              if (tmp_node.fHashPath != hash_file) {
                 continue;
               }
 
@@ -686,7 +693,7 @@ namespace Detail {
 
               mnt->fOutput(mnt->fPacket);
 
-              dir->fIndexNode[inode_index] = 0;
+              dir->fINSlices[inode_index] = 0;
 
               if (dir->fEntryCount) --dir->fEntryCount;
 
@@ -851,11 +858,7 @@ namespace Kernel::HeFS {
 /// @param drive The drive to write on.
 /// @return If it was sucessful, see err_local_get().
 _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
-                                        _Input const Utf8Char* part_name) {
-  NE_UNUSED(drive);
-  NE_UNUSED(flags);
-  NE_UNUSED(part_name);
-
+                                        _Input const Utf8Char* vol_name) {
   // Verify Disk.
   drive->fVerify(drive->fPacket);
 
@@ -888,6 +891,12 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   // Check if the disk is already formatted.
 
   if (KStringBuilder::Equals(root->fMagic, kHeFSMagic) && root->fVersion == kHeFSVersion) {
+    if (ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE)) != root->fChecksum &&
+        root->fChecksum > 0) {
+      err_global_get() = kErrorDiskIsCorrupted;
+      return NO;
+    }
+
     err_global_get() = kErrorSuccess;
     return YES;
   }
@@ -901,7 +910,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
   rt_copy_memory((VoidPtr) "fs/hefs-packet", drive->fPacket.fPacketMime,
                  rt_string_len("fs/hefs-packet"));
 
-  urt_copy_memory((VoidPtr) part_name, root->fVolName, urt_string_len(part_name) + 1);
+  urt_copy_memory((VoidPtr) vol_name, root->fVolName, urt_string_len(vol_name) + 1);
   rt_copy_memory((VoidPtr) kHeFSMagic, root->fMagic, kHeFSMagicLen - 1);
 
   if (drive->fLbaStart > drive->fLbaEnd) {
@@ -1104,8 +1113,7 @@ _Output Bool HeFileSystemParser::INodeCtl_(_Input DriveTrait* drive, _Input cons
   node->fChecksum = ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE));
   node->fGID      = 0;
   node->fUID      = 0;
-
-  urt_copy_memory((VoidPtr) name, node->fName, urt_string_len(name) + 1);
+  node->fHashPath = Detail::hefsi_hash_64(name);
 
   if (Detail::hefsi_update_in_status(root, drive, dir, node, delete_or_create)) {
     mm_delete_heap((VoidPtr) node);
@@ -1137,6 +1145,7 @@ Boolean fs_init_hefs(Void) {
   parser.Format(&kMountPoint, kHeFSEncodingUTF8, kHeFSDefaultVoluneName);
 
   parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8"pagefile.sys");
+  parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8"pagefile.sys-2");
 
   return YES;
 }

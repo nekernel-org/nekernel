@@ -87,7 +87,7 @@ The `HEFS\_INDEX\_NODE` represents a file and is constrained to 512 bytes to mat
 
 \begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE (Fits 512B)}]
 struct HEFS_INDEX_NODE {
-    Utf8Char fName[256];        // Local file name
+    UInt64fHashPath;        // Local file name
     UInt32   fFlags;
     UInt16   fKind;
     UInt32   fSize;
@@ -98,8 +98,8 @@ struct HEFS_INDEX_NODE {
     UInt32   fUID, fGID;
     UInt32   fMode;
 
-    UInt64   fBlock[16];        // Data block slices (start-only)
-    Char     fPad[69];          // Padding to reach 512B
+    UInt64   fSlices[16];        // Data block slices (start-only)
+    Char     fPad[317];          // Padding to reach 512B
 };
 \end{lstlisting}
 
@@ -108,22 +108,22 @@ Directories form a red-black tree. Each node (IND) can hold up to 16 index node 
 
 \begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY}]
 struct HEFS_INDEX_NODE_DIRECTORY {
-    UInt64   fHashName;        // Directory name as hash
+    UInt64  fHashPath;        // Directory name as hash
     UInt32   fFlags;
     UInt16   fKind;
     UInt32   fEntryCount;
-    UInt32   fChecksum, fIndexNodeChecksum;
+    UInt32   fChecksum;
 
     ATime    fCreated, fAccessed, fModified, fDeleted;
     UInt32   fUID, fGID;
     UInt32   fMode;
 
-    UInt64   fIndexNode[16];    // Inode LBA references
+    UInt64   fINSlices[16];    // Inode LBA references
 
     UInt8    fColor;            // Red/Black tree color
     Lba      fNext, fPrev, fChild, fParent;
 
-    Char     fPad[281];
+    Char     fPad[285];
 };
 \end{lstlisting}
 
