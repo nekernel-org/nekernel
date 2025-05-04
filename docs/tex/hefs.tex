@@ -87,7 +87,7 @@ The `HEFS\_INDEX\_NODE` represents a file and is constrained to 512 bytes to mat
 
 \begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE (Fits 512B)}]
 struct HEFS_INDEX_NODE {
-    UInt64fHashPath;        // Local file name
+    UInt64   fHashPath;        // Local file name, hashed.
     UInt32   fFlags;
     UInt16   fKind;
     UInt32   fSize;
@@ -108,7 +108,7 @@ Directories form a red-black tree. Each node (IND) can hold up to 16 index node 
 
 \begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY}]
 struct HEFS_INDEX_NODE_DIRECTORY {
-    UInt64  fHashPath;        // Directory name as hash
+    UInt64   fHashPath;        // Directory path as hash
     UInt32   fFlags;
     UInt16   fKind;
     UInt32   fEntryCount;
