@@ -30,6 +30,7 @@ class RecoveryFactory final {
 /// @param id kernel stop ID.
 /***********************************************************************************/
 Void ke_panic(const Kernel::Int32& id, const Char* message) {
+  (Void)(kout << "*** STOP ***\r");
   (Void)(kout << "Kernel_Panic_MSG: " << message << kendl);
   (Void)(kout << "Kernel_Panic_ID: " << hex_number(id) << kendl);
   (Void)(kout << "Kernel_Panic_CR2: " << hex_number((UIntPtr) hal_read_cr2()) << kendl);

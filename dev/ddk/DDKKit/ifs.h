@@ -14,3 +14,5 @@
 struct DDK_IFS_MANIFEST;
 
 /// @brief IFS hooks to plug into the FileMgr.
+/// why? because we don't need to implement filesystem on the kernel directly.
+

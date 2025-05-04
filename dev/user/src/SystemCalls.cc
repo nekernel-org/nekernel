@@ -8,9 +8,8 @@
 #include <user/SystemCalls.h>
 
 /// @file SystemCalls.cc
-/// @brief Source file for the memory functions of the user.sys.
+/// @brief Source file for the memory functions/syscalls for user.sys
 
-/// @brief Copy memory region.
 IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len) {
   if (!len || !dest || !src) {
     return nullptr;
@@ -23,7 +22,6 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
   return dest;
 }
 
-/// @brief Get string length.
 IMPORT_C SInt64 MmStrLen(const Char* in) {
   if (!in) return 0;
 
@@ -36,7 +34,6 @@ IMPORT_C SInt64 MmStrLen(const Char* in) {
   return len;
 }
 
-/// @brief Fill memory region **dest** with **value**.
 IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt8 value) {
   if (!len || !dest) {
     return nullptr;
@@ -48,6 +45,13 @@ IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt
 
   return dest;
 }
+
+//-----------------------------------------------------------------------------------------------------------//
+/// @brief Systems Calls implementation.
+/// @internal
+//-----------------------------------------------------------------------------------------------------------//
+
+constexpr auto kInvalidSyscall = 0UL;
 
 IMPORT_C Ref IoOpenFile(_Input const Char* path, _Input const Char* drv_letter) {
   return sci_syscall_arg_3(1, reinterpret_cast<VoidPtr>(const_cast<Char*>(path)),
@@ -71,8 +75,6 @@ IMPORT_C UInt64 IoTellFile(_Input Ref desc) {
   return *ret;
 }
 
-/// @brief Print to the file descriptor.
-/// @param desc the file descriptor.
 IMPORT_C SInt32 PrintOut(_Input IORef desc, const char* fmt, ...) {
   va_list args;
 
@@ -86,7 +88,6 @@ IMPORT_C SInt32 PrintOut(_Input IORef desc, const char* fmt, ...) {
   return *ret;
 }
 
-/// @internal
 IMPORT_C Void _rtl_assert(Bool expr, const Char* origin) {
   if (!expr) {
     PrintOut(nullptr, "Assertion failed: %s\r", origin);
