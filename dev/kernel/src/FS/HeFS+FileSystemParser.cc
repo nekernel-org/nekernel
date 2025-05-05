@@ -173,7 +173,7 @@ namespace Detail {
   /// @brief Rotate the RB-Tree to the left or right.
   /// @internal
   /***********************************************************************************/
-  STATIC ATTRIBUTE(unused) _Output Void hefsi_rotate_tree(Lba& start, DriveTrait* mnt, Bool left) {
+  STATIC ATTRIBUTE(unused) _Output Void hefsi_rotate_tree(Lba& start, DriveTrait* mnt) {
     if (!start || !mnt) return;
 
     HEFS_INDEX_NODE_DIRECTORY* cur =
@@ -768,7 +768,7 @@ namespace Detail {
 
         if (dir->fColor == kHeFSBlack && dir->fChild != 0) {
           dir->fColor = kHeFSRed;
-          hefsi_rotate_tree(start, mnt, NO);
+          hefsi_rotate_tree(start, mnt);
         } else if (dir->fColor == kHeFSBlack && dir->fChild == 0) {
           dir->fColor = kHeFSBlack;
 
@@ -1132,6 +1132,7 @@ Boolean fs_init_hefs(Void) {
 
   parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8"pagefile.sys");
   parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8"pagefile.sys-2");
+  parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/network", u8".socket");
 
   return YES;
 }
