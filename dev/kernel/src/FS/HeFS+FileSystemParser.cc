@@ -210,7 +210,7 @@ namespace Detail {
 
     mnt->fPacket.fPacketLba     = cousin->fChild;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = cousin;
+    mnt->fPacket.fPacketContent = cousin_child;
 
     mnt->fInput(mnt->fPacket);
 
@@ -236,13 +236,26 @@ namespace Detail {
 
     mnt->fOutput(mnt->fPacket);
 
+    
+    mnt->fPacket.fPacketLba     = left ? grand_parent->fPrev : grand_parent->fNext;
+    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+    mnt->fPacket.fPacketContent = cousin;
+
+    mnt->fOutput(mnt->fPacket);
+
+    mnt->fPacket.fPacketLba     = cousin->fChild;
+    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+    mnt->fPacket.fPacketContent = cousin_child;
+
+    mnt->fOutput(mnt->fPacket);
+
     mnt->fPacket.fPacketLba     = start;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
     mnt->fPacket.fPacketContent = parent;
 
     mnt->fOutput(mnt->fPacket);
 
-    kout << "Rotate tree has been done.\r";
+    kout << "RB-Tree has been rotated.\r";
   }
 
   /// @brief Get the index node size.
@@ -623,6 +636,8 @@ namespace Detail {
         mnt->fPacket.fPacketContent = dir;
 
         mnt->fInput(mnt->fPacket);
+
+        kout8 << dir_name << u8"\r";
 
         (Void)(kout << hex_number(hefsi_hash_64(dir_name)) << kendl);
         (Void)(kout << hex_number(dir->fHashPath) << kendl);
@@ -1073,11 +1088,21 @@ _Output Bool HeFileSystemParser::INodeCtl_(_Input DriveTrait* drive, _Input cons
                                            const BOOL delete_or_create) {
   HEFS_INDEX_NODE* node = (HEFS_INDEX_NODE*) mm_new_heap(sizeof(HEFS_INDEX_NODE), Yes, No);
 
+  if (!node) {
+    err_global_get() = kErrorInvalidData;
+    return NO;
+  }
+
   rt_set_memory(node, 0, sizeof(HEFS_INDEX_NODE));
 
   HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
 
-  MUST_PASS(root && node);
+  if (!root) {
+    mm_delete_heap((VoidPtr) node);
+    err_global_get() = kErrorInvalidData;
+
+    return NO;
+  }
 
   rt_copy_memory((VoidPtr) "fs/hefs-packet", drive->fPacket.fPacketMime,
                  rt_string_len("fs/hefs-packet"));
@@ -1088,11 +1113,18 @@ _Output Bool HeFileSystemParser::INodeCtl_(_Input DriveTrait* drive, _Input cons
 
   drive->fInput(drive->fPacket);
 
-  if (KStringBuilder::Equals(name, kHeFSSearchAllStr)) {
+  if (KStringBuilder::Equals(dir, kHeFSSearchAllStr)) {
     kout << "Error: Invalid file name.\r";
 
     err_global_get() = kErrorInvalidData;
     return NO;
+  }
+
+  for (SizeT i_name = 0UL; i_name < urt_string_len(name); ++i_name) {
+    if (name[i_name] == u'/') {
+      err_global_get() = kErrorInvalidData;
+      return NO;
+    }
   }
 
   if (KStringBuilder::Equals(dir, kHeFSSearchAllStr)) {

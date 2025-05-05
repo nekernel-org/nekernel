@@ -25,6 +25,9 @@ class BootTextWriter;
 inline EfiSystemTable*  ST = nullptr;
 inline EfiBootServices* BS = nullptr;
 
+EXTERN_C void rt_cli();
+EXTERN_C void rt_halt();
+
 namespace Boot {
 /// @brief Halt and clear interrut flag on x86.
 /// @return
