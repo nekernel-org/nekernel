@@ -467,7 +467,7 @@ namespace Detail {
           }
 
           for (SizeT index = 0UL; index < kHeFSSliceCount; ++index) {
-            dirent->fINSlices[index] = 0;
+            dirent->fINSlices[index] = 0UL;
           }
 
           dirent->fChecksum = ke_calculate_crc32((Char*) dirent, sizeof(HEFS_INDEX_NODE_DIRECTORY));
@@ -608,7 +608,7 @@ namespace Detail {
 
     auto start = root->fStartIND;
 
-    if (start >= root->fEndIND) return NO;
+    if (start > root->fEndIND) return NO;
     if (root->fStartIN > root->fEndIN) return NO;
 
     if (mnt) {
@@ -616,6 +616,7 @@ namespace Detail {
           (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
       auto hash_file = node->fHashPath;
+
       while (YES) {
         mnt->fPacket.fPacketLba     = start;
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
@@ -660,11 +661,7 @@ namespace Detail {
 
               mm_delete_heap(dir);
 
-              if (mnt->fPacket.fPacketGood) {
-                return YES;
-              }
-
-              return NO;
+              return YES;
             } else if (dir->fINSlices[inode_index] != 0 && delete_or_create) {
               auto lba = dir->fINSlices[inode_index];
 
@@ -675,6 +672,12 @@ namespace Detail {
               mnt->fPacket.fPacketContent = &tmp_node;
 
               mnt->fInput(mnt->fPacket);
+
+              kout8 << u8"HashPath: ";
+              (Void)(kout << hex_number(tmp_node.fHashPath) << kendl);
+
+              kout8 << u8"HashPath: ";
+              (Void)(kout << hex_number(hash_file) << kendl);
 
               if (tmp_node.fHashPath != hash_file) {
                 continue;
@@ -707,12 +710,8 @@ namespace Detail {
               mnt->fOutput(mnt->fPacket);
 
               mm_delete_heap(dir);
-
-              if (mnt->fPacket.fPacketGood) {
-                return YES;
-              }
-
-              return NO;
+              
+              return YES;
             }
           }
         }
@@ -1034,7 +1033,7 @@ _Output Bool HeFileSystemParser::INodeCtl_(_Input DriveTrait* drive, _Input cons
     return NO;
   }
 
-  if (urt_string_len(dir) >= kHeFSFileNameLen) {
+  if (urt_string_len(dir) > kHeFSFileNameLen) {
     err_global_get() = kErrorDisk;
     return NO;
   }
@@ -1111,6 +1110,7 @@ _Output Bool HeFileSystemParser::INodeCtl_(_Input DriveTrait* drive, _Input cons
 
   mm_delete_heap((VoidPtr) node);
   err_global_get() = kErrorDirectoryNotFound;
+
   return NO;
 }
 
@@ -1130,9 +1130,10 @@ Boolean fs_init_hefs(Void) {
 
   parser.Format(&kMountPoint, kHeFSEncodingUTF8, kHeFSDefaultVoluneName);
 
-  parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8"pagefile.sys");
-  parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8"pagefile.sys-2");
-  parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/network", u8".socket");
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8".filetest"));
+  MUST_PASS(parser.DeleteINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8".filetest"));
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/network", u8".filetest"));
+  MUST_PASS(parser.DeleteINode(&kMountPoint, kHeFSEncodingBinary, u8"/network", u8".filetest"));
 
   return YES;
 }
