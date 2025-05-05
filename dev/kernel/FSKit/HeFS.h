@@ -17,7 +17,7 @@
 /// @file HeFS.h
 /// @brief HeFS filesystem support.
 
-#define kHeFSVersion (0x0101)
+#define kHeFSVersion (0x0103)
 #define kHeFSMagic "  HeFS"
 #define kHeFSMagicLen (8)
 
@@ -37,7 +37,7 @@ struct HEFS_INDEX_NODE;
 struct HEFS_INDEX_NODE_DIRECTORY;
 struct HEFS_JOURNAL_NODE;
 
-enum {
+enum : UInt8 {
   kHeFSHardDrive         = 0xC0,  // Hard Drive
   kHeFSSolidStateDrive   = 0xC1,  // Solid State Drive
   kHeFSOpticalDrive      = 0x0C,  // Blu-Ray/DVD
@@ -48,7 +48,7 @@ enum {
   kHeFSDriveCount        = 7,
 };
 
-enum {
+enum : UInt8 {
   kHeFSStatusUnlocked = 0x18,
   kHeFSStatusLocked,
   kHeFSStatusError,
@@ -56,18 +56,25 @@ enum {
   kHeFSStatusCount,
 };
 
-enum {
-  kHeFSEncodingUTF8 = 0x00,
-  kHeFSEncodingUTF16,
-  kHeFSEncodingUTF32,
-  kHeFSEncodingUTF16BE,
-  kHeFSEncodingUTF16LE,
-  kHeFSEncodingUTF32BE,
-  kHeFSEncodingUTF32LE,
-  kHeFSEncodingUTF8BE,
-  kHeFSEncodingUTF8LE,
-  kHeFSEncodingBinary,
-  kHeFSEncodingCount,
+enum : UInt16 {
+  kHeFSEncodingFlagsUTF8 = 0x50,
+  kHeFSEncodingFlagsUTF16,
+  kHeFSEncodingFlagsUTF32,
+  kHeFSEncodingFlagsUTF16BE,
+  kHeFSEncodingFlagsUTF16LE,
+  kHeFSEncodingFlagsUTF32BE,
+  kHeFSEncodingFlagsUTF32LE,
+  kHeFSEncodingFlagsUTF8BE,
+  kHeFSEncodingFlagsUTF8LE,
+  kHeFSEncodingFlagsBinary,
+  kHeFSEncodingFlagsCount = 11,
+  kHeFSFlagsNone          = 0,
+  kHeFSFlagsReadOnly      = 0x100,
+  kHeFSFlagsHidden,
+  kHeFSFlagsSystem,
+  kHeFSFlagsArchive,
+  kHeFSFlagsDevice,
+  kHeFSFlagsCount = 5
 };
 
 inline constexpr UInt16 kHeFSFileKindRegular      = 0x00;
@@ -107,10 +114,9 @@ struct PACKED HEFS_BOOT_NODE final {
   Kernel::UInt8    fDiskKind;  /// @brief Kind of the drive. (Hard Drive, Solid State Drive, Optical
                                /// Drive, etc).
   Kernel::UInt8  fEncoding;    /// @brief Encoding of the filesystem. (UTF-8, UTF-16, etc).
-  Kernel::UInt64 fStartIND;    /// @brief Start of the INode tree.
-  Kernel::UInt64
-      fEndIND;  /// @brief End of the INode tree. it is used to track down the last ind offset.
-  Kernel::UInt64 fINDCount;  /// @brief Number of leafs in the INode tree.
+  Kernel::UInt64 fStartIND;    /// @brief Start of the INode directory tree.
+  Kernel::UInt64 fEndIND;      /// @brief End of the INode directory tree.
+  Kernel::UInt64 fINDCount;    /// @brief Number of leafs in the INode tree.
   Kernel::UInt64 fDiskSize;  /// @brief Size of the disk. (Could be a virtual size, that is not the
                              /// real size of the disk.)
   Kernel::UInt16 fDiskStatus;  /// @brief Status of the disk. (locked, unlocked, error, invalid).
@@ -132,8 +138,8 @@ inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 /// @note The index node is a special type of INode that contains the file information.
 /// @note The index node is used to store the file information of a file.
 struct PACKED HEFS_INDEX_NODE final {
-  Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief File name.
-  Kernel::UInt32   fFlags;                   /// @brief File flags.
+  Kernel::UInt64 fHashPath;  /// @brief File name.
+  Kernel::UInt32 fFlags;     /// @brief File flags.
   Kernel::UInt16 fKind;  /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
                          /// Symbolic Link, Unknown).
   Kernel::UInt32 fSize;  /// @brief File size.
@@ -146,9 +152,16 @@ struct PACKED HEFS_INDEX_NODE final {
   Kernel::UInt32 fUID, fGID;  /// @brief User ID and Group ID of the file.
   Kernel::UInt32 fMode;       /// @brief File mode. (read, write, execute, etc).
 
-  Kernel::UInt64 fBlock[kHeFSSliceCount];  /// @brief block slice.
+  /// @brief Extents system by using blocks
+  /// @details Using an offset to ask fBase, and fLength to compute each slice's length.
+  Kernel::UInt64 fOffsetSlices;
 
-  Kernel::Char fPad[69];
+  struct {
+    Kernel::UInt32 fBase;
+    Kernel::UInt32 fLength;
+  } fSlices[kHeFSSliceCount];  /// @brief block slice
+
+  Kernel::Char fPad[309];
 };
 
 enum {
@@ -162,14 +175,13 @@ enum {
 /// @details This structure is used to store the directory information of a file.
 /// @note The directory node is a special type of INode that contains the directory entries.
 struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
-  Kernel::Utf8Char fName[kHeFSFileNameLen];  /// @brief Directory name.
+  Kernel::UInt64 fHashPath;  /// @brief Directory path as FNV hash.
 
   Kernel::UInt32 fFlags;  /// @brief File flags.
   Kernel::UInt16 fKind;   /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
                           /// Symbolic Link, Unknown).
   Kernel::UInt32 fEntryCount;  /// @brief Entry Count of this directory inode.
-  Kernel::UInt32 fChecksum,
-      fIndexNodeChecksum;  /// @brief Checksum of the file, index node checksum.
+  Kernel::UInt32 fChecksum;    /// @brief Checksum of the file, index node checksum.
 
   Kernel::ATime fCreated, fAccessed, fModified,
       fDeleted;               /// @brief File timestamps and allocation status.
@@ -180,12 +192,12 @@ struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
   /// [0] = OFFSET
   /// [1] = SIZE
   /// @note Thus the += 2 when iterating over them.
-  Kernel::UInt64 fIndexNode[kHeFSSliceCount];  /// @brief Start of the index node.
+  Kernel::UInt64 fINSlices[kHeFSSliceCount];  /// @brief Start of the index node.
 
   Kernel::UInt8 fColor;                         /// @brief Color of the node. (Red or Black).
   Kernel::Lba   fNext, fPrev, fChild, fParent;  /// @brief Red-black tree pointers.
 
-  Kernel::Char fPad[33];
+  Kernel::Char fPad[285];
 };
 
 namespace Kernel::Detail {
@@ -272,23 +284,23 @@ inline const Char* hefs_drive_kind_to_string(UInt8 kind) noexcept {
 
 inline const Char* hefs_encoding_to_string(UInt8 encoding) noexcept {
   switch (encoding) {
-    case kHeFSEncodingUTF8:
+    case kHeFSEncodingFlagsUTF8:
       return "UTF-8";
-    case kHeFSEncodingUTF16:
+    case kHeFSEncodingFlagsUTF16:
       return "UTF-16";
-    case kHeFSEncodingUTF32:
+    case kHeFSEncodingFlagsUTF32:
       return "UTF-32";
-    case kHeFSEncodingUTF16BE:
+    case kHeFSEncodingFlagsUTF16BE:
       return "UTF-16BE";
-    case kHeFSEncodingUTF16LE:
+    case kHeFSEncodingFlagsUTF16LE:
       return "UTF-16LE";
-    case kHeFSEncodingUTF32BE:
+    case kHeFSEncodingFlagsUTF32BE:
       return "UTF-32BE";
-    case kHeFSEncodingUTF32LE:
+    case kHeFSEncodingFlagsUTF32LE:
       return "UTF-32LE";
-    case kHeFSEncodingUTF8BE:
+    case kHeFSEncodingFlagsUTF8BE:
       return "UTF-8BE";
-    case kHeFSEncodingUTF8LE:
+    case kHeFSEncodingFlagsUTF8LE:
       return "UTF-8LE";
     default:
       return "Unknown";
@@ -319,17 +331,17 @@ inline const Char* hefs_file_kind_to_string(UInt16 kind) noexcept {
 
 inline const Char* hefs_file_flags_to_string(UInt32 flags) noexcept {
   switch (flags) {
-    case 0x00:
+    case kHeFSFlagsNone:
       return "No Flags";
-    case 0x01:
+    case kHeFSFlagsReadOnly:
       return "Read Only";
-    case 0x02:
+    case kHeFSFlagsHidden:
       return "Hidden";
-    case 0x04:
+    case kHeFSFlagsSystem:
       return "System";
-    case 0x08:
+    case kHeFSFlagsArchive:
       return "Archive";
-    case 0x10:
+    case kHeFSFlagsDevice:
       return "Device";
     default:
       return "Unknown";
@@ -359,30 +371,33 @@ class HeFileSystemParser final {
   _Output Bool Format(_Input _Output DriveTrait* drive, _Input const Int32 flags,
                       const Utf8Char* part_name);
 
-  _Output Bool CreateDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
-                               const Utf8Char* dir, const Utf8Char* parent_dir);
+  _Output Bool CreateINodeDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
+                                    const Utf8Char* dir);
 
-  _Output Bool RemoveDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
-                               const Utf8Char* dir, const Utf8Char* parent_dir);
+  _Output Bool RemoveINodeDirectory(_Input DriveTrait* drive, _Input const Int32 flags,
+                                    const Utf8Char* dir);
 
-  _Output Bool CreateFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                          const Utf8Char* parent_dir_fmt, const Utf8Char* name);
+  _Output Bool CreateINode(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                           const Utf8Char* name);
 
-  _Output Bool DeleteFile(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                          const Utf8Char* parent_dir_fmt, const Utf8Char* name);
+  _Output Bool DeleteINode(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                           const Utf8Char* name);
+
+  _Output Bool WriteINode(_Input DriveTrait* drive, VoidPtr block, SizeT block_sz,
+                          const Utf8Char* dir, const Utf8Char* name);
+
+  _Output Bool ReadINode(_Input DriveTrait* drive, VoidPtr block, SizeT block_sz,
+                         const Utf8Char* dir, const Utf8Char* name);
 
  private:
-  _Output Bool FileCtl_(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                        const Utf8Char* parent_dir_fmt, const Utf8Char* name,
-                        const BOOL delete_or_create);
+  _Output Bool INodeCtl_(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
+                         const Utf8Char* name, const BOOL delete_or_create);
 
-  _Output Bool DirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
-                             const Utf8Char* dir, const Utf8Char* parent,
-                             const BOOL delete_or_create);
-
-  UInt32 mDriveIndex{MountpointInterface::kDriveIndexA};  /// @brief The drive index which this
-                                                          /// filesystem is mounted on.
+  _Output Bool INodeDirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
+                                  const Utf8Char* dir, const BOOL delete_or_create);
 };
 
-Boolean fs_init_hefs(Void) noexcept;
+/// @brief Initialize HeFS inside the main disk.
+/// @return Whether it successfuly formated it or not.
+Boolean fs_init_hefs(Void);
 }  // namespace Kernel::HeFS

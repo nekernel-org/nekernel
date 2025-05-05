@@ -37,9 +37,6 @@ A documentation for NeKernel is available here: https://nekernel-org.github.io/d
 
 ## Notice for Contributors:
 
-- You must mount the contents to the nekernel-esp.img prior running!
-    - It depends mostly on how your platform manages them, so have a look at it.
-
 - Run `format.sh` before commiting, it formats the code according to the .clang-format.
 
 ## Getting Started:

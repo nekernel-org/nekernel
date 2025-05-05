@@ -26,7 +26,7 @@
 //! @brief Heap algorithm that serves as the main memory manager.
 
 #define kMemoryMgrMagic (0xD4D75)
-#define kMemoryMgrAlignSz (4)
+#define kMemoryMgrAlignSz (4U)
 
 namespace Kernel {
 /// @brief Implementation details.

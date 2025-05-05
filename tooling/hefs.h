@@ -43,17 +43,17 @@ enum {
 
 // Encodings
 enum {
-  kHeFSEncodingUTF8 = 0x00,
-  kHeFSEncodingUTF16,
-  kHeFSEncodingUTF32,
-  kHeFSEncodingUTF16BE,
-  kHeFSEncodingUTF16LE,
-  kHeFSEncodingUTF32BE,
-  kHeFSEncodingUTF32LE,
-  kHeFSEncodingUTF8BE,
-  kHeFSEncodingUTF8LE,
-  kHeFSEncodingBinary,
-  kHeFSEncodingCount,
+  kHeFSEncodingFlagsUTF8 = 0x00,
+  kHeFSEncodingFlagsUTF16,
+  kHeFSEncodingFlagsUTF32,
+  kHeFSEncodingFlagsUTF16BE,
+  kHeFSEncodingFlagsUTF16LE,
+  kHeFSEncodingFlagsUTF32BE,
+  kHeFSEncodingFlagsUTF32LE,
+  kHeFSEncodingFlagsUTF8BE,
+  kHeFSEncodingFlagsUTF8LE,
+  kHeFSEncodingFlagsBinary,
+  kHeFSEncodingFlagsCount,
 };
 
 // Time type

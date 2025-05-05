@@ -30,7 +30,9 @@ struct NE_PAGE_STORE final {
 };
 
 /// \brief Retrieve the page status of a PTE.
-STATIC Void mmi_page_status(PTE* pte) {}
+STATIC Void mmi_page_status(PTE* pte) {
+  NE_UNUSED(pte);
+}
 
 STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE* pt_entry);
 
@@ -40,7 +42,7 @@ STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE
 /// @param flags the flags to put on the page.
 /// @return Status code of page manipulation process.
 EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags) {
-  if (!virtual_address || !flags) return 0;
+  if (!virtual_address || !flags) return kErrorSuccess;
 
   NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
 
@@ -54,7 +56,7 @@ EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UI
                                     page_store.fInternalStore.fPte);
   }
 
-  return 1;
+  return kErrorSuccess;
 }
 
 /// @brief Maps flags for a specific pte.
@@ -62,7 +64,7 @@ EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UI
 STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE* pt_entry) {
   NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
 
-  // Update internal store.
+  // Update internal store, and tlbi the virtual address.
 
   page_store.fInternalStore.fPde   = nullptr;
   page_store.fInternalStore.fPte   = pt_entry;
@@ -70,6 +72,6 @@ STATIC Int32 mmi_map_page_table_entry(VoidPtr virtual_address, UInt32 flags, PTE
 
   page_store.fStoreOp = No;
 
-  return 0;
+  return kErrorSuccess;
 }
 }  // namespace Kernel::HAL

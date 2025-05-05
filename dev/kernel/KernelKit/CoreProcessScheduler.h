@@ -23,7 +23,7 @@ enum class ProcessSubsystem : Int32 {
   kProcessSubsystemApplication,
   kProcessSubsystemService,
   kProcessSubsystemDriver,
-  kProcessSubsystemInvalid = 256U,
+  kProcessSubsystemInvalid = 0xFFFFFFF,
   kProcessSubsystemCount   = 4,
 };
 
@@ -38,13 +38,13 @@ typedef Int64 ProcessID;
 //! @brief Local Process status enum.
 /***********************************************************************************/
 enum class ProcessStatusKind : Int32 {
-  kInvalid,
-  kStarting,
+  kInvalid  = 0,
+  kStarting = 100,
   kRunning,
   kKilled,
   kFrozen,
   kFinished,
-  kCount,
+  kCount = 6,
 };
 
 /***********************************************************************************/

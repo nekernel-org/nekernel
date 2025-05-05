@@ -30,29 +30,10 @@ class RecoveryFactory final {
 /// @param id kernel stop ID.
 /***********************************************************************************/
 Void ke_panic(const Kernel::Int32& id, const Char* message) {
-  fb_init();
-
-  auto panic_text = RGB(0xff, 0xff, 0xff);
-
-  auto y = 10;
-  auto x = 10;
-
-  Char* message_apicid = new Char[128];
-  rt_set_memory(message_apicid, 0, 128);
-
-  rt_copy_memory((VoidPtr) "panic id: ", message_apicid, rt_string_len("panic id: "));
-  rt_to_string(message_apicid + rt_string_len("panic id: "), (UIntPtr) id, 10);
-
-  fb_render_string(message_apicid, y, x, panic_text);
-
-  y += 10;
-
-  fb_render_string((message ? message : "message: panic raised, going nowhere after this!"), y, x,
-                   panic_text);
-
-  y += 10;
-
-  fb_clear();
+  (Void)(kout << "*** STOP ***\r");
+  (Void)(kout << "Kernel_Panic_MSG: " << message << kendl);
+  (Void)(kout << "Kernel_Panic_ID: " << hex_number(id) << kendl);
+  (Void)(kout << "Kernel_Panic_CR2: " << hex_number((UIntPtr) hal_read_cr2()) << kendl);
 
   RecoveryFactory::Recover();
 }

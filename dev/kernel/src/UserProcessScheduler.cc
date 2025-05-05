@@ -97,6 +97,7 @@ Void USER_PROCESS::Wake(Bool should_wakeup) {
 
 /***********************************************************************************/
 /** @brief Allocate pointer to heap tree. */
+/** @param tree The tree to calibrate */
 /***********************************************************************************/
 
 STATIC USER_PROCESS::USER_HEAP_TREE* sched_try_go_upper_heap_tree(
@@ -141,12 +142,12 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
   if (!this->HeapTree) {
     this->HeapTree = new USER_HEAP_TREE();
 
-    this->HeapTree->MemoryColor = USER_HEAP_TREE::kBlackMemory;
-
     this->HeapTree->MemoryEntryPad  = pad_amount;
     this->HeapTree->MemoryEntrySize = sz;
 
     this->HeapTree->MemoryEntry = ptr;
+
+    this->HeapTree->MemoryColor = USER_HEAP_TREE::kBlackMemory;
 
     this->HeapTree->MemoryPrev   = nullptr;
     this->HeapTree->MemoryNext   = nullptr;
@@ -163,32 +164,41 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
 
       prev_entry = entry;
 
-      if (entry->MemoryNext) {
-        is_parent = NO;
-        entry     = entry->MemoryNext;
-      } else if (entry->MemoryChild) {
+      if (entry->MemoryColor == USER_HEAP_TREE::kBlackMemory) break;
+
+      if (entry->MemoryChild && entry->MemoryChild->MemoryEntrySize > 0 &&
+          entry->MemoryChild->MemoryEntrySize == sz) {
         entry     = entry->MemoryChild;
         is_parent = YES;
+      } else if (entry->MemoryNext && entry->MemoryChild->MemoryEntrySize > 0 &&
+                 entry->MemoryNext->MemoryEntrySize == sz) {
+        is_parent = NO;
+        entry     = entry->MemoryNext;
       } else {
         entry = sched_try_go_upper_heap_tree(entry);
+        if (entry && entry->MemoryColor == USER_HEAP_TREE::kBlackMemory) break;
       }
     }
 
-    if (!entry) entry = new USER_HEAP_TREE();
+    auto new_entry = new USER_HEAP_TREE();
 
-    entry->MemoryEntry     = ptr;
-    entry->MemoryEntrySize = sz;
-    entry->MemoryEntryPad  = pad_amount;
+    new_entry->MemoryEntry     = ptr;
+    new_entry->MemoryEntrySize = sz;
+    new_entry->MemoryEntryPad  = pad_amount;
+    new_entry->MemoryParent    = entry;
+    new_entry->MemoryChild     = nullptr;
+    new_entry->MemoryNext      = nullptr;
+    new_entry->MemoryPrev      = nullptr;
+
+    new_entry->MemoryColor  = USER_HEAP_TREE::kBlackMemory;
+    prev_entry->MemoryColor = USER_HEAP_TREE::kRedMemory;
 
     if (is_parent) {
-      entry->MemoryParent     = prev_entry;
-      prev_entry->MemoryChild = entry;
-
-      prev_entry->MemoryColor = USER_HEAP_TREE::kBlackMemory;
-      entry->MemoryColor      = USER_HEAP_TREE::kRedMemory;
+      prev_entry->MemoryChild = new_entry;
+      new_entry->MemoryParent = prev_entry;
     } else {
-      prev_entry->MemoryNext = entry;
-      entry->MemoryPrev      = prev_entry;
+      prev_entry->MemoryNext = new_entry;
+      new_entry->MemoryPrev  = prev_entry;
     }
   }
 

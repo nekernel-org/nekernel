@@ -12,9 +12,6 @@
 #include <KernelKit/MSDOS.h>
 #include <KernelKit/PE.h>
 
-#define kNeWebsiteMacro "https://aker.com/help"
-#define kNeKernelSubsystem (StrLen(kNeWebsiteMacro))
-
 #ifdef __BOOTZ__
 // forward decl.
 class BootTextWriter;
@@ -32,7 +29,7 @@ EXTERN_C void rt_cli();
 EXTERN_C void rt_halt();
 
 namespace Boot {
-/// @brief Halt and clear interrupts.
+/// @brief Halt and clear interrut flag on x86.
 /// @return
 inline Void Stop() noexcept {
   while (YES) {
