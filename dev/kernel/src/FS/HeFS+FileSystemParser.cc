@@ -236,7 +236,6 @@ namespace Detail {
 
     mnt->fOutput(mnt->fPacket);
 
-    
     mnt->fPacket.fPacketLba     = left ? grand_parent->fPrev : grand_parent->fNext;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
     mnt->fPacket.fPacketContent = cousin;
@@ -333,11 +332,6 @@ namespace Detail {
   STATIC _Output BOOL hefsi_update_ind_status(HEFS_BOOT_NODE* root, DriveTrait* mnt,
                                               const Utf8Char* dir_name, UInt16 flags,
                                               const BOOL delete_or_create) {
-    if (urt_string_len(dir_name) >= kHeFSFileNameLen) {
-      err_global_get() = kErrorDisk;
-      return NO;
-    }
-
     if (mnt) {
       HEFS_INDEX_NODE_DIRECTORY* tmpdir =
           (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
@@ -752,13 +746,11 @@ namespace Detail {
     if (mnt) {
       HEFS_INDEX_NODE_DIRECTORY* dir =
           (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
-      HEFS_INDEX_NODE_DIRECTORY* parent_dir =
-          (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
       auto start = root->fStartIND;
 
       while (YES) {
-        if (start == 0) break;
+        if (start == 0 || start > root->fEndIND) break;
 
         mnt->fPacket.fPacketLba     = start;
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
@@ -792,73 +784,16 @@ namespace Detail {
           mnt->fOutput(mnt->fPacket);
         }
 
-        mnt->fPacket.fPacketLba     = dir->fParent;
-        mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-        mnt->fPacket.fPacketContent = parent_dir;
-
-        mnt->fInput(mnt->fPacket);
-
-        if (!mnt->fPacket.fPacketGood) {
-          err_global_get() = kErrorDiskIsCorrupted;
-
-          return NO;
-        }
-
-        HEFS_INDEX_NODE_DIRECTORY* dir_uncle =
-            (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-        mnt->fPacket.fPacketLba     = parent_dir->fNext;
-        mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-        mnt->fPacket.fPacketContent = dir_uncle;
-
-        mnt->fInput(mnt->fPacket);
-
-        if (!mnt->fPacket.fPacketGood) {
-          err_global_get() = kErrorDiskIsCorrupted;
-
-          return NO;
-        }
-
-        if (parent_dir->fNext == start) {
-          hefsi_rotate_tree(start, mnt, YES);
-          hefsi_traverse_tree(parent_dir, mnt, root->fStartIND, start);
-
-          if (start > root->fEndIND || start == 0) break;
-
-          continue;
-        }
-
-        parent_dir->fColor = kHeFSBlack;
-
-        parent_dir->fChecksum =
-            ke_calculate_crc32((Char*) parent_dir, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-        if (dir->fParent == 0) {
-          hefsi_traverse_tree(dir, mnt, root->fStartIND, start, YES);
-          continue;
-        }
-
-        mnt->fPacket.fPacketLba     = dir->fParent;
-        mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-        mnt->fPacket.fPacketContent = parent_dir;
-
-        mnt->fOutput(mnt->fPacket);
-
-        if (!mnt->fPacket.fPacketGood) {
-          err_global_get() = kErrorDiskIsCorrupted;
-
-          return NO;
-        }
-
         hefsi_rotate_tree(start, mnt, NO);
 
-        hefsi_traverse_tree(dir, mnt, root->fStartIND, start, YES);
-        if (start > root->fEndIND || start == 0) break;
+        hefsi_traverse_tree(dir, mnt, root->fStartIND, start, NO);
       }
 
+      err_global_get() = kErrorSuccess;
       return YES;
     }
 
+    err_global_get() = kErrorDisk;
     return NO;
   }
 }  // namespace Detail
@@ -1016,6 +951,11 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 _Output Bool HeFileSystemParser::INodeDirectoryCtl_(_Input DriveTrait* drive,
                                                     _Input const Int32 flags, const Utf8Char* dir,
                                                     const BOOL delete_or_create) {
+  if (urt_string_len(dir) > kHeFSFileNameLen) {
+    err_global_get() = kErrorDisk;
+    return NO;
+  }
+
   HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_heap(sizeof(HEFS_BOOT_NODE), Yes, No);
 
   rt_copy_memory((VoidPtr) "fs/hefs-packet", drive->fPacket.fPacketMime,
@@ -1086,6 +1026,16 @@ _Output Bool HeFileSystemParser::CreateINode(_Input DriveTrait* drive, _Input co
 _Output Bool HeFileSystemParser::INodeCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
                                            const Utf8Char* dir, const Utf8Char* name,
                                            const BOOL delete_or_create) {
+  if (urt_string_len(name) > kHeFSFileNameLen) {
+    err_global_get() = kErrorDisk;
+    return NO;
+  }
+
+  if (urt_string_len(dir) >= kHeFSFileNameLen) {
+    err_global_get() = kErrorDisk;
+    return NO;
+  }
+
   HEFS_INDEX_NODE* node = (HEFS_INDEX_NODE*) mm_new_heap(sizeof(HEFS_INDEX_NODE), Yes, No);
 
   if (!node) {
@@ -1151,6 +1101,7 @@ _Output Bool HeFileSystemParser::INodeCtl_(_Input DriveTrait* drive, _Input cons
     mm_delete_heap((VoidPtr) node);
 
     Detail::hefsi_balance_ind(root, drive);
+
     err_global_get() = kErrorSuccess;
     return YES;
   }
