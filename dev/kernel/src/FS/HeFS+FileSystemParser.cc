@@ -23,15 +23,18 @@ namespace Kernel {
 namespace Detail {
   /// @brief Forward declarations of internal functions.
 
+  /***********************************************************************************/
   /// @brief Traverse the RB-Tree of the filesystem.
   /// @param dir The directory to traverse.
   /// @param start The starting point of the traversal.
   /// @note This function is used to traverse the RB-Tree of the filesystem.
   /// @internal Internal filesystem use only.
+  /***********************************************************************************/
   STATIC ATTRIBUTE(unused) _Output Void
       hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, DriveTrait* mnt, const Lba& start_ind,
                           Lba& start, const BOOL try_new = NO);
 
+  /***********************************************************************************/
   /// @brief Get the index node of a file or directory.
   /// @param root The root node of the filesystem.
   /// @param mnt The drive to read from.
@@ -39,34 +42,30 @@ namespace Detail {
   /// @param file_name The name of the file.
   /// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic
   /// link, unknown).
-  STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefsi_fetch_index_node(
-      HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf8Char* dir_name, const Utf8Char* file_name,
-      UInt8 kind, SizeT* cnt);
+  /***********************************************************************************/
+  STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefsi_fetch_in(HEFS_BOOT_NODE* root,
+                                                                   DriveTrait*     mnt,
+                                                                   const Utf8Char* dir_name,
+                                                                   const Utf8Char* file_name,
+                                                                   UInt8 kind, SizeT* cnt);
 
-  /// @brief Get the index node size.
-  /// @param root The root node of the filesystem.
-  /// @param mnt The drive to read from.
-  /// @param dir_name The name of the directory.
-  /// @param file_name The name of the file.
-  /// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic
-  /// link, unknown).
-  STATIC ATTRIBUTE(unused) _Output SizeT
-      hefsi_fetch_index_node_size(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf8Char* dir_name,
-                                  const Utf8Char* file_name, UInt8 kind);
-
+  /***********************************************************************************/
   /// @brief Allocate a new index node->
   /// @param root The root node of the filesystem.
   /// @param mnt The drive to read/write from.
   /// @param dir_name The name of the parent directory.
   /// @return Status, see err_global_get().
+  /***********************************************************************************/
   STATIC ATTRIBUTE(unused) _Output BOOL
       hefsi_update_in_status(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf8Char* dir_name,
                              HEFS_INDEX_NODE* node, const BOOL create_or_delete);
 
+  /***********************************************************************************/
   /// @brief Balance RB-Tree of the filesystem.
   /// @param root The root node of the filesystem.
   /// @param mnt The drive to read/write from.
   /// @return Status, see err_global_get().
+  /***********************************************************************************/
   STATIC ATTRIBUTE(unused) _Output BOOL hefsi_balance_ind(HEFS_BOOT_NODE* root, DriveTrait* mnt);
 
   /// @brief Alllocate IND from boot node.
@@ -251,71 +250,6 @@ namespace Detail {
     mnt->fOutput(mnt->fPacket);
 
     kout << "RB-Tree has been rotated.\r";
-  }
-
-  /// @brief Get the index node size.
-  /// @param root The root node of the filesystem.
-  /// @param mnt The drive to read from.
-  /// @param dir_name The name of the directory.
-  /// @param file_name The name of the file.
-  /// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic
-  /// link, unknown).
-  STATIC ATTRIBUTE(unused) _Output SizeT
-      hefsi_fetch_index_node_size(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf8Char* dir_name,
-                                  const Utf8Char* file_name, UInt8 kind) {
-    if (mnt) {
-      HEFS_INDEX_NODE*           node = (HEFS_INDEX_NODE*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE));
-      HEFS_INDEX_NODE_DIRECTORY* dir =
-          (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-      SizeT sz = 0UL;
-
-      auto start = root->fStartIND;
-
-      while (YES) {
-        mnt->fPacket.fPacketLba     = start;
-        mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-        mnt->fPacket.fPacketContent = dir;
-
-        mnt->fInput(mnt->fPacket);
-
-        if (!mnt->fPacket.fPacketGood) {
-          err_global_get() = kErrorFileNotFound;
-
-          return 0;
-        }
-
-        if (dir->fKind == kHeFSFileKindDirectory) {
-          if (hefsi_hash_64(dir_name) == dir->fHashPath ||
-              KStringBuilder::Equals(dir_name, kHeFSSearchAllStr)) {
-            for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; inode_index += 2) {
-              mnt->fPacket.fPacketLba     = dir->fINSlices[inode_index];
-              mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
-              mnt->fPacket.fPacketContent = node;
-              mnt->fInput(mnt->fPacket);
-
-              if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind) {
-                if (node->fKind == kHeFSFileKindDirectory) {
-                  sz += hefsi_fetch_index_node_size(root, mnt, dir_name, file_name, kind);
-                } else {
-                  sz = node->fSize;
-                }
-
-                return sz;
-              }
-            }
-          } else if (dir->fHashPath == 0) {
-            break;
-          }
-        }
-      }
-
-      err_global_get() = kErrorSuccess;
-      return sz;
-    }
-
-    err_global_get() = kErrorFileNotFound;
-    return 0;
   }
 
   /// @brief Alllocate IND from boot node.
@@ -520,9 +454,11 @@ namespace Detail {
   /// @param file_name The name of the file.
   /// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic
   /// link, unknown).
-  STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefsi_fetch_index_node(
-      HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf8Char* dir_name, const Utf8Char* file_name,
-      UInt8 kind, SizeT* cnt) {
+  STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefsi_fetch_in(HEFS_BOOT_NODE* root,
+                                                                   DriveTrait*     mnt,
+                                                                   const Utf8Char* dir_name,
+                                                                   const Utf8Char* file_name,
+                                                                   UInt8 kind, SizeT* cnt) {
     if (mnt) {
       HEFS_INDEX_NODE* node_arr = new HEFS_INDEX_NODE[*cnt];
 
@@ -535,6 +471,9 @@ namespace Detail {
           (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
       auto start = root->fStartIND;
+
+      if (start > root->fEndIND) return nullptr;
+      if (root->fStartIN > root->fEndIN) return nullptr;
 
       auto start_cnt = 0UL;
 
@@ -557,30 +496,21 @@ namespace Detail {
               KStringBuilder::Equals(dir_name, kHeFSSearchAllStr)) {
             if (ke_calculate_crc32((Char*) dir, sizeof(HEFS_INDEX_NODE_DIRECTORY)) !=
                 dir->fChecksum)
-              ke_panic(RUNTIME_CHECK_FILESYSTEM, "CRC32 failure on HeFS IND!");
+              ke_panic(RUNTIME_CHECK_FILESYSTEM, "CRC32 checksum failed on HeFS IND!");
 
             for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; ++inode_index) {
               if (dir->fINSlices[inode_index] != 0) {
-                if (mnt->fPacket.fPacketGood) {
-                  if (ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE)) != node->fChecksum)
-                    ke_panic(RUNTIME_CHECK_FILESYSTEM, "CRC32 failure on HeFS IND!");
+                if (ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE)) != node->fChecksum)
+                  ke_panic(RUNTIME_CHECK_FILESYSTEM, "CRC32 failure on HeFS IND!");
 
-                  if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind) {
-                    node_arr[start_cnt] = *node;
-                    ++start_cnt;
+                if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind) {
+                  node_arr[start_cnt] = *node;
+                  ++start_cnt;
 
-                    if (start_cnt > *cnt) {
-                      return node_arr;
-                    }
+                  if (start_cnt > *cnt) {
+                    err_global_get() = kErrorSuccess;
+                    return node_arr;
                   }
-                } else {
-                  err_global_get() = kErrorDiskIsCorrupted;
-
-                  delete[] node_arr;
-
-                  node_arr = nullptr;
-
-                  return nullptr;
                 }
               }
             }
@@ -592,6 +522,9 @@ namespace Detail {
         hefsi_traverse_tree(dir, mnt, root->fStartIND, start, YES);
         if (start > root->fEndIND || start == 0) break;
       }
+
+      err_global_get() = kErrorSuccess;
+      return node_arr;
     }
 
     kout << "Error: Failed to find index node->\r";
@@ -710,7 +643,7 @@ namespace Detail {
               mnt->fOutput(mnt->fPacket);
 
               mm_delete_heap(dir);
-              
+
               return YES;
             }
           }
@@ -921,11 +854,12 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
 
   drive->fOutput(drive->fPacket);
 
-  (Void)(kout << "Drive kind: " << drive->fProtocol() << kendl);
-  (Void)(kout8 << u8"Volume name: " << root->fVolName << kendl8);
+  (Void)(kout << "Protocol: " << drive->fProtocol() << kendl);
+  (Void)(kout8 << u8"Volume Name: " << root->fVolName << kendl8);
   (Void)(kout << "Start IND: " << hex_number(root->fStartIND) << kendl);
   (Void)(kout << "Number of IND: " << hex_number(root->fINDCount) << kendl);
-  (Void)(kout << "Sector size: " << hex_number(root->fSectorSize) << kendl);
+  (Void)(kout << "Sector Size: " << hex_number(root->fSectorSize) << kendl);
+  (Void)(kout << "Drive Kind:" << Detail::hefs_drive_kind_to_string(root->fDiskKind) << kendl);
 
   if (!drive->fPacket.fPacketGood) {
     err_global_get() = kErrorDiskIsCorrupted;
@@ -937,7 +871,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input
                                                      u8"/network", u8"/devices", u8"/media"};
 
   for (SizeT i = 0; i < kHeFSPreallocateCount; ++i) {
-    this->CreateINodeDirectory(drive, kHeFSEncodingUTF8, kFileMap[i]);
+    this->CreateINodeDirectory(drive, kHeFSEncodingFlagsUTF8, kFileMap[i]);
   }
 
   err_global_get() = kErrorSuccess;
@@ -1128,12 +1062,16 @@ Boolean fs_init_hefs(Void) {
 
   HeFileSystemParser parser;
 
-  parser.Format(&kMountPoint, kHeFSEncodingUTF8, kHeFSDefaultVoluneName);
+  parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVoluneName);
 
-  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8".filetest"));
-  MUST_PASS(parser.DeleteINode(&kMountPoint, kHeFSEncodingBinary, u8"/boot", u8".filetest"));
-  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingBinary, u8"/network", u8".filetest"));
-  MUST_PASS(parser.DeleteINode(&kMountPoint, kHeFSEncodingBinary, u8"/network", u8".filetest"));
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
+                               u8"/boot", u8".filetest"));
+  MUST_PASS(parser.DeleteINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
+                               u8"/boot", u8".filetest"));
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
+                               u8"/network", u8".filetest"));
+  MUST_PASS(parser.DeleteINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
+                               u8"/network", u8".filetest"));
 
   return YES;
 }

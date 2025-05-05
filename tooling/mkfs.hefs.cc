@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
 
   bootNode.version    = kVersion;
   bootNode.diskKind   = mkfs::hefs::kHeFSHardDrive;
-  bootNode.encoding   = mkfs::hefs::kHeFSEncodingUTF8;
+  bootNode.encoding   = mkfs::hefs::kHeFSEncodingFlagsUTF8;
   bootNode.diskSize   = kDiskSize;
   bootNode.sectorSize = kSectorSize;
   bootNode.startIND   = start_ind;

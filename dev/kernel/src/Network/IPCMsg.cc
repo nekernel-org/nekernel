@@ -9,8 +9,10 @@
 #include <NetworkKit/IPC.h>
 
 namespace Kernel {
+/***********************************************************************************/
 /// @internal internal use for IPC system only.
 /// @brief The internal sanitize function.
+/***********************************************************************************/
 Bool ipc_int_sanitize_packet(IPC_MSG* pckt) {
   auto endian = RTL_ENDIAN(pckt, ((Char*) pckt)[0]);
 
@@ -45,9 +47,11 @@ ipc_check_failed:
   return false;
 }
 
+/***********************************************************************************/
 /// @brief Sanitize packet function
 /// @retval true packet is correct.
 /// @retval false packet is incorrect and process has crashed.
+/***********************************************************************************/
 Bool ipc_sanitize_packet(IPC_MSG* pckt) {
   if (!pckt || !ipc_int_sanitize_packet(pckt)) {
     return false;
@@ -56,9 +60,11 @@ Bool ipc_sanitize_packet(IPC_MSG* pckt) {
   return true;
 }
 
+/***********************************************************************************/
 /// @brief Construct packet function
 /// @retval true packet is correct.
 /// @retval false packet is incorrect and process has crashed.
+/***********************************************************************************/
 Bool ipc_construct_packet(_Output IPC_MSG** pckt_in) {
   // don't act if it's not even valid.
   if (!pckt_in) return false;
@@ -87,9 +93,11 @@ Bool ipc_construct_packet(_Output IPC_MSG** pckt_in) {
   return No;
 }
 
+/***********************************************************************************/
 /// @brief Pass message from **src** to **target**
 /// @param src Source message.
 /// @param target Target message.
+/***********************************************************************************/
 Bool IPC_MSG::Pass(IPC_MSG* src, IPC_MSG* target) noexcept {
   if (src && target && (target != src)) {
     if (src->IpcMsgSz > target->IpcMsgSz) return No;

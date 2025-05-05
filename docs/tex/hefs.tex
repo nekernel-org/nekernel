@@ -1,157 +1,151 @@
 \documentclass{article}
-\usepackage[a4paper, margin=1in]{geometry}
-\usepackage{amsmath, amssymb}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage{graphicx}
-\usepackage{enumitem}
-\usepackage{caption}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
 \usepackage{longtable}
-
-\definecolor{lightgray}{gray}{0.95}
-
-\lstdefinestyle{cstyle}{
-  language=C++,
-  backgroundcolor=\color{lightgray},
-  basicstyle=\ttfamily\small,
-  keywordstyle=\color{blue},
-  commentstyle=\color{green!60!black},
-  stringstyle=\color{orange},
-  numbers=left,
-  numberstyle=\tiny,
-  breaklines=true,
-  frame=single,
-  showstringspaces=false
-}
-
-\title{HeFS (High-Throughput Extended File System) Specification}
+\usepackage{listings}
+\geometry{margin=1in}
+\title{HeFS Filesystem Specification (v0x0103)}
 \author{Amlal El Mahrouss}
-\date{2024-2025}
+\date{2025}
 
 \begin{document}
 
 \maketitle
 
 \section{Overview}
-HeFS is a high-throughput filesystem designed for NeKernel. It implements a robust directory structure based on red-black trees, uses slice-linked blocks for file storage, and includes CRC32-based integrity checks. Designed for desktop, server, and embedded contexts, it prioritizes performance, corruption recovery, and extensibility.
+The High-throughput Extended File System (HeFS) is a custom filesystem tailored for performance, structure, and compact representation. It uses red-black trees for directory indexing, sparse block slicing for file layout, and fixed-size metadata structures optimized for 512-byte sector alignment.
 
-\section{Boot Node Structure}
-\begin{longtable}{|l|l|p{8cm}|}
+\section{Constants and Macros}
+\begin{longtable}{|l|l|}
 \hline
-\textbf{Field} & \textbf{Type} & \textbf{Description} \\
+\textbf{Name} & \textbf{Value / Description} \\
 \hline
-\verb|fMagic| & \verb|char[8]| & Filesystem magic ("  HeFS") \\
-\verb|fVolName| & \verb|Utf8Char[128]| & Volume name \\
-\verb|fVersion| & \verb|UInt32| & Filesystem version (e.g., 0x0102) \\
-\verb|fBadSectors| & \verb|UInt64| & Number of bad sectors detected \\
-\verb|fSectorCount| & \verb|UInt64| & Total sector count \\
-\verb|fSectorSize| & \verb|UInt64| & Size of each sector \\
-\verb|fChecksum| & \verb|UInt32| & CRC32 checksum of the boot node \\
-\verb|fDiskKind| & \verb|UInt8| & Type of drive (e.g., HDD, SSD, USB) \\
-\verb|fEncoding| & \verb|UInt8| & Encoding mode (UTF-8, UTF-16, etc.) \\
-\verb|fStartIND| & \verb|UInt64| & Starting LBA of inode directory region \\
-\verb|fEndIND| & \verb|UInt64| & Ending LBA of inode directory region \\
-\verb|fINDCount| & \verb|UInt64| & Number of directory nodes allocated \\
-\verb|fDiskSize| & \verb|UInt64| & Logical size of the disk \\
-\verb|fDiskStatus| & \verb|UInt16| & Status of the disk (e.g., unlocked, locked) \\
-\verb|fDiskFlags| & \verb|UInt16| & Disk flags (e.g., read-only) \\
-\verb|fVID| & \verb|UInt16| & Virtual ID (for EPM integration) \\
+\texttt{kHeFSVersion} & 0x0103 \\
+\texttt{kHeFSMagic} & "  HeFS" (8-byte magic identifier) \\
+\texttt{kHeFSFileNameLen} & 256 characters \\
+\texttt{kHeFSPartNameLen} & 128 characters \\
+\texttt{kHeFSMinimumDiskSize} & 16 MiB \\
+\texttt{kHeFSDefaultVoluneName} & "HeFS Volume" \\
+\texttt{kHeFSINDStartOffset} & Offset after boot + dir nodes \\
+\texttt{kHeFSSearchAllStr} & "\*" (wildcard string) \\
 \hline
 \end{longtable}
 
-\section{File Types and Flags}
-\subsection*{File Kinds}
-\begin{itemize}[label=--]
-    \item \verb|0x00| --- Regular File
-    \item \verb|0x01| --- Directory
-    \item \verb|0x02| --- Block Device
-    \item \verb|0x03| --- Character Device
-    \item \verb|0x04| --- FIFO
-    \item \verb|0x05| --- Socket
-    \item \verb|0x06| --- Symbolic Link
-    \item \verb|0x07| --- Unknown
+\section{Disk and File Metadata Enums}
+
+\subsection{Drive Kind (\texttt{UInt8})}
+\begin{itemize}
+\item 0xC0: Hard Drive
+\item 0xC1: Solid State Drive
+\item 0x0C: Optical Drive
+\item 0xCC: USB Mass Storage
+\item 0xC4: SCSI Drive
+\item 0xC6: Flash Drive
+\item 0xFF: Unknown
 \end{itemize}
 
-\subsection*{Drive Types}
-\begin{itemize}[label=--]
-    \item \verb|0xC0| --- Hard Drive
-    \item \verb|0xC1| --- Solid State Drive
-    \item \verb|0x0C| --- Optical Drive
-    \item \verb|0xCC| --- USB Mass Storage
-    \item \verb|0xC4| --- SCSI/SAS Drive
-    \item \verb|0xC6| --- Flash Drive
+\subsection{Disk Status (\texttt{UInt8})}
+\begin{itemize}
+\item 0x18: Unlocked
+\item 0x19: Locked
+\item 0x1A: Error
+\item 0x1B: Invalid
 \end{itemize}
 
-\section{Index Node Structure}
-The `HEFS\_INDEX\_NODE` represents a file and is constrained to 512 bytes to match hardware sector boundaries. It uses a fixed set of block pointers (slices) and CRC32 checks for data integrity. Only the local file name is stored in `fName`.
+\subsection{Encoding Flags (\texttt{UInt16})}
+\begin{itemize}
+\item UTF-8, UTF-16, UTF-32, Binary (with endianness variants)
+\end{itemize}
 
-\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE (Fits 512B)}]
-struct HEFS_INDEX_NODE {
-    UInt64   fHashPath;        // Local file name, hashed.
-    UInt32   fFlags;
-    UInt16   fKind;
-    UInt32   fSize;
-    UInt32   fChecksum;
+\subsection{File Kinds (\texttt{UInt16})}
+\begin{itemize}
+\item 0x00: Regular File
+\item 0x01: Directory
+\item 0x02: Block Device
+\item 0x03: Character Device
+\item 0x04: FIFO
+\item 0x05: Socket
+\item 0x06: Symbolic Link
+\item 0x07: Unknown
+\end{itemize}
 
-    Boolean  fSymLink;
-    ATime    fCreated, fAccessed, fModified, fDeleted;
-    UInt32   fUID, fGID;
-    UInt32   fMode;
+\subsection{File Flags (\texttt{UInt32})}
+\begin{itemize}
+\item ReadOnly, Hidden, System, Archive, Device
+\end{itemize}
 
-    UInt64   fSlices[16];        // Data block slices (start-only)
-    Char     fPad[317];          // Padding to reach 512B
-};
-\end{lstlisting}
+\section{Structures}
 
-\section{Directory Node Structure}
-Directories form a red-black tree. Each node (IND) can hold up to 16 index node references and links to its parent, siblings, and children via LBAs.
-
-\begin{lstlisting}[style=cstyle, caption={HEFS\_INDEX\_NODE\_DIRECTORY}]
-struct HEFS_INDEX_NODE_DIRECTORY {
-    UInt64   fHashPath;        // Directory path as hash
-    UInt32   fFlags;
-    UInt16   fKind;
-    UInt32   fEntryCount;
-    UInt32   fChecksum;
-
-    ATime    fCreated, fAccessed, fModified, fDeleted;
-    UInt32   fUID, fGID;
-    UInt32   fMode;
-
-    UInt64   fINSlices[16];    // Inode LBA references
-
-    UInt8    fColor;            // Red/Black tree color
-    Lba      fNext, fPrev, fChild, fParent;
-
-    Char     fPad[285];
-};
-\end{lstlisting}
-
-\section{Design Characteristics}
+\subsection{HEFS\_BOOT\_NODE}
+Acts as the superblock.
 
 \begin{itemize}
-    \item Red-black tree traversal for directory balancing
-    \item One-sector (512B) inode design for efficient I/O
-    \item Slice-linked file storage (fixed 16 slots)
-    \item CRC32 for boot node, inode, and directory integrity
-    \item Preallocated directory inodes to avoid runtime fragmentation
+  \item \texttt{fMagic}, \texttt{fVolName}, \texttt{fVersion}, \texttt{fChecksum}
+  \item Sector and disk geometry: \texttt{fSectorCount}, \texttt{fSectorSize}, \texttt{fBadSectors}
+  \item Drive info: \texttt{fDiskKind}, \texttt{fEncoding}, \texttt{fDiskStatus}, \texttt{fDiskFlags}, \texttt{fVID}
+  \item Tree layout: \texttt{fStartIND}, \texttt{fEndIND}, \texttt{fINDCount}
+  \item Reserved: \texttt{fStartIN}, \texttt{fEndIN}, \texttt{fReserved}, \texttt{fReserved1}
 \end{itemize}
 
-\section{Minimum Requirements}
+\subsection{HEFS\_INDEX\_NODE}
+Contains file metadata and block layout.
 
 \begin{itemize}
-    \item Minimum disk size: 16MB
-    \item Recommended size: 8GB or more
-    \item Supported media: HDD, SSD, USB, SCSI, Flash, Optical
+  \item \texttt{fHashPath}, \texttt{fFlags}, \texttt{fKind}, \texttt{fSize}, \texttt{fChecksum}
+  \item Symbolic link: \texttt{fSymLink}
+  \item Time: \texttt{fCreated}, \texttt{fAccessed}, \texttt{fModified}, \texttt{fDeleted}
+  \item Ownership: \texttt{fUID}, \texttt{fGID}, \texttt{fMode}
+  \item Block data: \texttt{fOffsetSlices}, \texttt{fSlices[kHeFSSliceCount]} as (base, length) pairs
 \end{itemize}
 
-\section{Future Work}
+\subsection{HEFS\_INDEX\_NODE\_DIRECTORY}
+Red-black tree based directory node.
+
 \begin{itemize}
-    \item Journaling layer for recovery
-    \item Extended access control and ACL support
-    \item Logical Volume Management (LVM)
-    \item Dual boot node layout for redundancy
-    \item Self-healing and online fsck tools
+  \item \texttt{fHashPath}, \texttt{fFlags}, \texttt{fKind}, \texttt{fEntryCount}, \texttt{fChecksum}
+  \item Time and ownership same as inode
+  \item \texttt{fINSlices[kHeFSSliceCount]} for storing child inodes
+  \item Tree links: \texttt{fColor}, \texttt{fNext}, \texttt{fPrev}, \texttt{fChild}, \texttt{fParent}
 \end{itemize}
+
+\section{Timestamp Layout (ATime)}
+
+\texttt{ATime} is a 64-bit timestamp with the following structure:
+
+\begin{itemize}
+  \item Bits 63-32: Year
+  \item Bits 31-24: Month
+  \item Bits 23-16: Day
+  \item Bits 15-8: Hour
+  \item Bits 7-0: Minute
+\end{itemize}
+
+Constants:
+\begin{itemize}
+  \item \texttt{kHeFSTimeInvalid = 0x0}
+  \item \texttt{kHeFSTimeMax = 0xFFFFFFFFFFFFFFFF - 1}
+\end{itemize}
+
+\section{Filesystem API}
+
+Provided by \texttt{Kernel::HeFS::HeFileSystemParser}.
+
+\begin{itemize}
+  \item \texttt{Format(drive, flags, name)} - Format drive with HeFS
+  \item \texttt{CreateINodeDirectory(drive, flags, dir)}
+  \item \texttt{RemoveINodeDirectory(drive, flags, dir)}
+  \item \texttt{CreateINode(drive, flags, dir, name)}
+  \item \texttt{DeleteINode(drive, flags, dir, name)}
+  \item \texttt{WriteINode(drive, block, size, dir, name)}
+  \item \texttt{ReadINode(drive, block, size, dir, name)}
+\end{itemize}
+
+Internal helpers:
+\begin{itemize}
+  \item \texttt{INodeCtl\_}, \texttt{INodeDirectoryCtl\_}
+\end{itemize}
+
+\section{Conclusion}
+HeFS provides a modern and compact approach to high-performance file storage. Its use of red-black trees, fixed-size metadata, slice-based sparse files, and minimal overhead makes it a strong candidate for embedded and performance-sensitive use cases.
 
 \end{document}
