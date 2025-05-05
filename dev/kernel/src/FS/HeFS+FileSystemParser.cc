@@ -170,87 +170,83 @@ namespace Detail {
   }
 
   /***********************************************************************************/
-  /// @brief Rotate the RB-Tree to the left.
+  /// @brief Rotate the RB-Tree to the left or right.
   /// @internal
   /***********************************************************************************/
   STATIC ATTRIBUTE(unused) _Output Void hefsi_rotate_tree(Lba& start, DriveTrait* mnt, Bool left) {
     if (!start || !mnt) return;
 
-    HEFS_INDEX_NODE_DIRECTORY* parent =
+    HEFS_INDEX_NODE_DIRECTORY* cur =
         (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
     mnt->fPacket.fPacketLba     = start;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = parent;
+    mnt->fPacket.fPacketContent = cur;
 
     mnt->fInput(mnt->fPacket);
 
-    HEFS_INDEX_NODE_DIRECTORY* grand_parent =
+    if (cur->fHashPath == 0) return;
+
+    HEFS_INDEX_NODE_DIRECTORY* sibling =
         (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
-    mnt->fPacket.fPacketLba     = parent->fParent;
+    mnt->fPacket.fPacketLba     = cur->fPrev;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = grand_parent;
+    mnt->fPacket.fPacketContent = sibling;
 
     mnt->fInput(mnt->fPacket);
 
-    if (parent->fParent == 0) return;
+    if (sibling->fHashPath == 0) return;
 
-    HEFS_INDEX_NODE_DIRECTORY* cousin =
-        (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
+    auto child_sibling = sibling->fChild;
+    auto child_cur     = cur->fChild;
 
-    mnt->fPacket.fPacketLba     = left ? grand_parent->fPrev : grand_parent->fNext;
+    cur->fChild     = child_sibling;
+    sibling->fChild = child_cur;
+
+    sibling->fChecksum = ke_calculate_crc32((Char*) sibling, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+    cur->fChecksum     = ke_calculate_crc32((Char*) cur, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+
+    mnt->fPacket.fPacketLba     = cur->fParent;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = cousin;
-
-    mnt->fInput(mnt->fPacket);
-
-    HEFS_INDEX_NODE_DIRECTORY* cousin_child =
-        (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-    mnt->fPacket.fPacketLba     = cousin->fChild;
-    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = cousin_child;
-
-    mnt->fInput(mnt->fPacket);
-
-    grand_parent->fChild  = cousin->fChild;
-    cousin_child->fParent = parent->fParent;
-
-    parent->fParent = cousin->fParent;
-    cousin->fChild  = start;
-
-    cousin_child->fChecksum =
-        ke_calculate_crc32((Char*) cousin_child, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-    grand_parent->fChecksum =
-        ke_calculate_crc32((Char*) grand_parent, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-    parent->fChecksum = ke_calculate_crc32((Char*) parent, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-    cousin->fChecksum = ke_calculate_crc32((Char*) cousin, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-    mnt->fPacket.fPacketLba     = parent->fParent;
-    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = grand_parent;
-
-    mnt->fOutput(mnt->fPacket);
-
-    mnt->fPacket.fPacketLba     = left ? grand_parent->fPrev : grand_parent->fNext;
-    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = cousin;
-
-    mnt->fOutput(mnt->fPacket);
-
-    mnt->fPacket.fPacketLba     = cousin->fChild;
-    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = cousin_child;
+    mnt->fPacket.fPacketContent = sibling;
 
     mnt->fOutput(mnt->fPacket);
 
     mnt->fPacket.fPacketLba     = start;
     mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-    mnt->fPacket.fPacketContent = parent;
+    mnt->fPacket.fPacketContent = cur;
+
+    mnt->fOutput(mnt->fPacket);
+
+    HEFS_INDEX_NODE_DIRECTORY* sibling_child =
+        (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
+
+    mnt->fPacket.fPacketLba     = child_sibling;
+    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+    mnt->fPacket.fPacketContent = sibling_child;
+
+    mnt->fInput(mnt->fPacket);
+
+    sibling_child->fParent = cur->fParent;
+
+    sibling_child->fChecksum =
+        ke_calculate_crc32((Char*) sibling, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+
+    mnt->fOutput(mnt->fPacket);
+
+    HEFS_INDEX_NODE_DIRECTORY* cur_child =
+        (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
+
+    mnt->fPacket.fPacketLba     = child_cur;
+    mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+    mnt->fPacket.fPacketContent = cur_child;
+
+    mnt->fInput(mnt->fPacket);
+
+    cur_child->fParent = start;
+
+    cur_child->fChecksum = ke_calculate_crc32((Char*) sibling, sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
     mnt->fOutput(mnt->fPacket);
 
@@ -431,16 +427,12 @@ namespace Detail {
           dirent->fChild  = tmpdir->fChild;
           dirent->fColor  = tmpdir->fColor;
 
-          if (dirent->fColor < kHeFSRed) {
-            dirent->fColor = kHeFSBlack;
+          if (dirent->fColor == 0) {
+            dirent->fColor = dirent->fNext ? kHeFSRed : kHeFSBlack;
           }
 
           if (dirent->fPrev == 0) {
             dirent->fPrev = root->fStartIND;
-          }
-
-          if (dirent->fNext == 0) {
-            dirent->fNext = prev_start + sizeof(HEFS_INDEX_NODE_DIRECTORY);
           }
 
           if (dirent->fParent == 0) {
@@ -764,16 +756,6 @@ namespace Detail {
           return NO;
         }
 
-        if (ke_calculate_crc32((Char*) dir, sizeof(HEFS_INDEX_NODE_DIRECTORY)) != dir->fChecksum) {
-          dir->fChecksum = ke_calculate_crc32((Char*) dir, sizeof(HEFS_INDEX_NODE_DIRECTORY));
-
-          mnt->fPacket.fPacketLba     = start;
-          mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-          mnt->fPacket.fPacketContent = dir;
-
-          mnt->fOutput(mnt->fPacket);
-        }
-
         if (start == root->fStartIND) {
           dir->fColor = kHeFSBlack;
 
@@ -784,7 +766,28 @@ namespace Detail {
           mnt->fOutput(mnt->fPacket);
         }
 
-        hefsi_rotate_tree(start, mnt, NO);
+        if (dir->fColor == kHeFSBlack && dir->fChild != 0) {
+          dir->fColor = kHeFSRed;
+          hefsi_rotate_tree(start, mnt, NO);
+        } else if (dir->fColor == kHeFSBlack && dir->fChild == 0) {
+          dir->fColor = kHeFSBlack;
+
+          mnt->fPacket.fPacketLba     = start;
+          mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+          mnt->fPacket.fPacketContent = dir;
+
+          mnt->fOutput(mnt->fPacket);
+        }
+
+        if (ke_calculate_crc32((Char*) dir, sizeof(HEFS_INDEX_NODE_DIRECTORY)) != dir->fChecksum) {
+          dir->fChecksum = ke_calculate_crc32((Char*) dir, sizeof(HEFS_INDEX_NODE_DIRECTORY));
+
+          mnt->fPacket.fPacketLba     = start;
+          mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
+          mnt->fPacket.fPacketContent = dir;
+
+          mnt->fOutput(mnt->fPacket);
+        }
 
         hefsi_traverse_tree(dir, mnt, root->fStartIND, start, NO);
       }
