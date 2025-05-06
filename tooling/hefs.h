@@ -16,7 +16,7 @@
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (128U)
 
-#define kHeFSDefaultVoluneName u8"HeFS Volume"
+#define kHeFSDefaultVolumeName u8"HeFS Volume"
 
 namespace mkfs::hefs {
 

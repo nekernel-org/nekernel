@@ -11,7 +11,7 @@
 
 static size_t        kDiskSize   = 1024 * 1024 * 1024 * 4UL;
 static uint16_t      kVersion    = kHeFSVersion;
-static std::u8string kLabel      = kHeFSDefaultVoluneName;
+static std::u8string kLabel      = kHeFSDefaultVolumeName;
 static size_t        kSectorSize = 512;
 
 int main(int argc, char** argv) {
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
   kSectorSize = std::strtol(mkfs::get_option<char>(args, "-s").data(), nullptr, 10);
   kLabel      = mkfs::get_option<char8_t>(args_wide, u8"-L");
 
-  if (kLabel.empty()) kLabel = kHeFSDefaultVoluneName;
+  if (kLabel.empty()) kLabel = kHeFSDefaultVolumeName;
 
   kDiskSize =
       std::strtol(mkfs::get_option<char>(args, "-S").data(), nullptr, 10) * 1024 * 1024 * 1024;

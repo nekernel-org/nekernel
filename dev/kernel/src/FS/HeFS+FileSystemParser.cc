@@ -1166,7 +1166,7 @@ Boolean fs_init_hefs(Void) {
 
   HeFileSystemParser parser;
 
-  parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVoluneName);
+  parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVolumeName);
 
   MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
                                u8"/boot", u8"ジェット警察.txt", kHeFSFileKindRegular));

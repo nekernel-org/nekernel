@@ -27,7 +27,7 @@
 
 #define kHeFSMinimumDiskSize (gib_cast(1))
 
-#define kHeFSDefaultVoluneName u8"HeFS Volume"
+#define kHeFSDefaultVolumeName u8"HeFS Volume"
 
 #define kHeFSINDStartOffset (sizeof(HEFS_INDEX_NODE_DIRECTORY) + sizeof(HEFS_BOOT_NODE))
 
