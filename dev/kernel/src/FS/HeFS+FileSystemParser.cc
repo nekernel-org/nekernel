@@ -1020,10 +1020,11 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
 
   if (!nodes) return NO;
 
+  SizeT sz_out    = 0;
+  
   for (SizeT i = 0UL; i < cnt; ++i) {
     auto& start     = nodes[i];
     SizeT cnt_slice = 0;
-    SizeT sz_out    = 0;
 
     while (cnt_slice < kHeFSSliceCount) {
       struct HEFS_INODE_SLICE& slice = start.fSlices[cnt_slice];
