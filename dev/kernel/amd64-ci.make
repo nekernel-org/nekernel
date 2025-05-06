@@ -5,7 +5,7 @@
 
 CXX			= x86_64-w64-mingw32-g++
 LD			= x86_64-w64-mingw32-ld
-CCFLAGS		= -fshort-wchar -c -D__NE_AMD64__ -Werror -Wall -Wpedantic -Wextra -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__NE_SUPPORT_NX__ -O0 -I../vendor -D__FSKIT_INCLUDES_NEFS__ -D__NEOSKRNL__ -D__HAVE_NE_APIS__ -D__FREESTANDING__ -D__NE_VIRTUAL_MEMORY_SUPPORT__ -D__NE_AUTO_FORMAT__ -D__NE__ -I./ -I../ -I../boot
+CCFLAGS		= -fshort-wchar -c -D__NE_AMD64__ -D__NE_VEPM__ -Werror -Wall -Wpedantic -Wextra -mno-red-zone -fno-rtti -fno-exceptions -std=c++20 -D__NE_SUPPORT_NX__ -O0 -I../vendor -D__FSKIT_INCLUDES_NEFS__ -D__NEOSKRNL__ -D__HAVE_NE_APIS__ -D__FREESTANDING__ -D__NE_VIRTUAL_MEMORY_SUPPORT__ -D__NE_AUTO_FORMAT__ -D__NE__ -I./ -I../ -I../boot
 
 ASM 		= nasm
 
