@@ -21,10 +21,11 @@
 #define kHeFSMagic "  HeFS"
 #define kHeFSMagicLen (8)
 
+#define kHeFSBlockLen (512U)
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (128U)
 
-#define kHeFSMinimumDiskSize (mib_cast(16))
+#define kHeFSMinimumDiskSize (gib_cast(1))
 
 #define kHeFSDefaultVoluneName u8"HeFS Volume"
 
@@ -36,6 +37,7 @@ struct HEFS_BOOT_NODE;
 struct HEFS_INDEX_NODE;
 struct HEFS_INDEX_NODE_DIRECTORY;
 struct HEFS_JOURNAL_NODE;
+struct HEFS_INODE_SLICE;
 
 enum : UInt8 {
   kHeFSHardDrive         = 0xC0,  // Hard Drive
@@ -123,15 +125,20 @@ struct PACKED HEFS_BOOT_NODE final {
   Kernel::UInt16 fDiskFlags;   /// @brief Flags of the disk. (read-only, read-write, etc).
   Kernel::UInt16
       fVID;  /// @brief Virtual Identification Number within an EPM disk. (0xFFFF if not used).
-  Kernel::UInt64 fStartIN;    /// @brief Reserved for future use.
-  Kernel::UInt64 fEndIN;      /// @brief Reserved for future use.
-  Kernel::UInt64 fReserved;   /// @brief Reserved for future use.
-  Kernel::UInt64 fReserved1;  /// @brief Reserved for future use.
+  Kernel::UInt64 fStartIN;     /// @brief Reserved for future use.
+  Kernel::UInt64 fEndIN;       /// @brief Reserved for future use.
+  Kernel::UInt64 fStartBlock;  /// @brief Reserved for future use.
+  Kernel::UInt64 fEndBlock;    /// @brief Reserved for future use.
   Kernel::Char   fPad[272];
 };
 
 inline constexpr Kernel::ATime kHeFSTimeInvalid = 0x0000000000000000;
 inline constexpr Kernel::ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
+
+struct PACKED HEFS_INODE_SLICE {
+  Kernel::UInt32 fBase;
+  Kernel::UInt32 fLength;
+};
 
 /// @brief HeFS index node.
 /// @details This structure is used to store the file information of a file.
@@ -156,10 +163,7 @@ struct PACKED HEFS_INDEX_NODE final {
   /// @details Using an offset to ask fBase, and fLength to compute each slice's length.
   Kernel::UInt64 fOffsetSlices;
 
-  struct {
-    Kernel::UInt32 fBase;
-    Kernel::UInt32 fLength;
-  } fSlices[kHeFSSliceCount];  /// @brief block slice
+  HEFS_INODE_SLICE fSlices[kHeFSSliceCount];  /// @brief block slice
 
   Kernel::Char fPad[309];
 };
@@ -378,23 +382,22 @@ class HeFileSystemParser final {
                                     const Utf8Char* dir);
 
   _Output Bool CreateINode(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                           const Utf8Char* name);
+                           const Utf8Char* name, const UInt8 kind);
 
   _Output Bool DeleteINode(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                           const Utf8Char* name);
+                           const Utf8Char* name, const UInt8 kind);
 
-  _Output Bool WriteINode(_Input DriveTrait* drive, VoidPtr block, SizeT block_sz,
-                          const Utf8Char* dir, const Utf8Char* name);
-
-  _Output Bool ReadINode(_Input DriveTrait* drive, VoidPtr block, SizeT block_sz,
-                         const Utf8Char* dir, const Utf8Char* name);
+  _Output Bool INodeManip(_Input DriveTrait* drive, VoidPtr block, SizeT block_sz,
+                          const Utf8Char* dir, const UInt8 kind, const Utf8Char* name,
+                          const BOOL in);
 
  private:
-  _Output Bool INodeCtl_(_Input DriveTrait* drive, _Input const Int32 flags, const Utf8Char* dir,
-                         const Utf8Char* name, const BOOL delete_or_create);
+  _Output Bool INodeCtlManip(_Input DriveTrait* drive, _Input const Int32 flags,
+                             const Utf8Char* dir, const Utf8Char* name, const BOOL delete_or_create,
+                             const UInt8 kind);
 
-  _Output Bool INodeDirectoryCtl_(_Input DriveTrait* drive, _Input const Int32 flags,
-                                  const Utf8Char* dir, const BOOL delete_or_create);
+  _Output Bool INodeDirectoryCtlManip(_Input DriveTrait* drive, _Input const Int32 flags,
+                                      const Utf8Char* dir, const BOOL delete_or_create);
 };
 
 /// @brief Initialize HeFS inside the main disk.
