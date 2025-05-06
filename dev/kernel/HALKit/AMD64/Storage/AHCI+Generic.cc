@@ -132,11 +132,16 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept {
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz,
                                       SizeT size_buffer) noexcept {
-  NE_UNUSED(sector_sz);
+  if (sector_sz == 0) {
+    kout << "Invalid sector size.\r";
+    err_global_get() = kErrorDisk;
+    return;
+  }
 
   lba /= sector_sz;
 
   if (lba > kSATASectorCount) {
+    kout << "Out of range LBA.\r";
     err_global_get() = kErrorDisk;
     return;
   }
@@ -165,6 +170,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   // Clear old command table memory
   volatile HbaCmdTbl* command_table =
       (volatile HbaCmdTbl*) (((UInt64) command_header->Ctbau << 32) | command_header->Ctba);
+
   rt_set_memory((VoidPtr) command_table, 0, sizeof(HbaCmdTbl));
 
   VoidPtr ptr = rtl_dma_alloc(size_buffer, 4096);
@@ -270,7 +276,6 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   ahci_io_end:
     rtl_dma_free(size_buffer);
-
     err_global_get() = kErrorSuccess;
   }
 }
