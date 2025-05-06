@@ -156,7 +156,7 @@ namespace Detail {
             continue;
           }
 
-          start += kHeFSINDStartOffset;
+          start += sizeof(HEFS_INDEX_NODE_DIRECTORY);
           break;
         }
       }
@@ -560,8 +560,6 @@ namespace Detail {
           for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; ++inode_index) {
             if (dir->fINSlices[inode_index] == 0 && !delete_or_create) {
               dir->fINSlices[inode_index] = root->fStartIN;
-
-              mnt->fOutput(mnt->fPacket);
 
               ++dir->fEntryCount;
 
@@ -1021,7 +1019,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
   if (!nodes) return NO;
 
   SizeT sz_out    = 0;
-  
+
   for (SizeT i = 0UL; i < cnt; ++i) {
     auto& start     = nodes[i];
     SizeT cnt_slice = 0;
