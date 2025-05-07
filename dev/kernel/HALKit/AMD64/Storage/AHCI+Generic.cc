@@ -154,10 +154,18 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   UIntPtr slot = drv_find_cmd_slot_ahci(&kSATAHba->Ports[kSATAIndex]);
 
-  if (slot == ~0UL) {
-    kout << "No free command slot!\r";
-    err_global_get() = kErrorDisk;
-    return;
+  UInt16 timeout = 0;
+
+  while (slot == ~0UL) {
+    kout << "No free command slot found, AHCI disk is busy!\r";
+
+    if (timeout > 0x1000) {
+      err_global_get() = kErrorDisk;
+      return;
+    }
+
+    slot = drv_find_cmd_slot_ahci(&kSATAHba->Ports[kSATAIndex]);
+    ++timeout;
   }
 
   volatile HbaCmdHeader* command_header =
@@ -173,7 +181,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   rt_set_memory((VoidPtr) command_table, 0, sizeof(HbaCmdTbl));
 
-  VoidPtr ptr = rtl_dma_alloc(size_buffer, 4096);
+  VoidPtr ptr = rtl_dma_alloc(size_buffer, kib_cast(4));
 
   rtl_dma_flush(ptr, size_buffer);
 

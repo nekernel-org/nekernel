@@ -514,9 +514,13 @@ namespace Detail {
         if (start > root->fEndIND) break;
       }
 
-      node_arr[start_cnt + 1].fDeleted = 1UL;
       err_global_get()                 = kErrorSuccess;
       delete dir;
+
+      if (start_cnt == 0) {
+        delete[] node_arr;
+        node_arr = nullptr;
+      }
 
       return node_arr;
     }
@@ -577,7 +581,7 @@ namespace Detail {
 
               node->fOffsetSlices = root->fStartBlock;
 
-              auto offset = 0;
+              auto offset = kHeFSBlockLen;
 
               SizeT cnt = 0ULL;
 
@@ -1031,6 +1035,10 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
       mnt->fPacket.fPacketSize    = kHeFSBlockLen;
       mnt->fPacket.fPacketContent = block;
 
+      if (mnt->fPacket.fPacketLba > root->fEndBlock) {
+        goto inode_manip_fail;
+      }
+
       in ? mnt->fInput(mnt->fPacket) : mnt->fOutput(mnt->fPacket);
 
       sz_out += kHeFSBlockLen;
@@ -1049,6 +1057,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     }
   }
 
+inode_manip_fail:
   delete[] nodes;
   return NO;
 }
@@ -1174,7 +1183,7 @@ Boolean fs_init_hefs(Void) {
   Utf8Char contents_1[kHeFSBlockLen] = u8"ロケットにはジエットエンジン\r";
 
   MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
-                              kHeFSFileKindRegular, u8"ジェット警察.txt", NO));
+                              kHeFSFileKindRegular, u8"ジェット警察.txt", YES));
 
   return YES;
 }

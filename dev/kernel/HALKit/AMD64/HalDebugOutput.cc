@@ -57,6 +57,54 @@ namespace Detail {
 
 TerminalDevice::~TerminalDevice() = default;
 
+EXTERN_C void ke_utf_io_write(IDeviceObject<const Utf8Char*>* obj, const Utf8Char* bytes) {
+  NE_UNUSED(bytes);
+  NE_UNUSED(obj);
+
+#ifdef __DEBUG__
+  Detail::hal_serial_init<Detail::kPort>();
+
+  if (!bytes || Detail::kState != kStateReady) return;
+
+  if (*bytes == 0) return;
+
+  Detail::kState = kStateTransmit;
+
+  SizeT index = 0;
+  SizeT len   = 0;
+
+  index = 0;
+  len   = urt_string_len(bytes);
+
+  static BOOL not_important = YES;
+
+  while (index < len) {
+    if (bytes[index] == '\r') HAL::rt_out8(Detail::kPort, '\r');
+
+    HAL::rt_out8(Detail::kPort, bytes[index] == '\r' ? '\n' : bytes[index]);
+
+    char tmp_str[2];
+    tmp_str[0] = bytes[index];
+    tmp_str[1] = 0;
+
+    if (bytes[index] == '*') {
+      if (not_important)
+        not_important = NO;
+      else
+        not_important = YES;
+
+      ++index;
+
+      continue;
+    }
+
+    ++index;
+  }
+
+  Detail::kState = kStateReady;
+#endif  // __DEBUG__
+}
+
 EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
   NE_UNUSED(bytes);
   NE_UNUSED(obj);
@@ -74,7 +122,7 @@ EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
   SizeT len   = 0;
 
   index = 0;
-  len   = rt_string_len(bytes, 256U);
+  len   = rt_string_len(bytes);
 
   static SizeT x = kFontSizeX, y = kFontSizeY;
 
@@ -172,20 +220,8 @@ TerminalDevice TerminalDevice::The() noexcept {
 
 Utf8TerminalDevice::~Utf8TerminalDevice() = default;
 
-STATIC Void ke_io_write_utf(IDeviceObject<const Utf8Char*>*, const Utf8Char* str) {
-  auto len = urt_string_len(str);
-
-  for (auto size = 0ul; size < len; ++size) {
-    Char buf[2];
-    buf[0] = str[size];
-    buf[1] = 0;
-
-    Kernel::ke_io_write(nullptr, buf);
-  }
-}
-
 Utf8TerminalDevice Utf8TerminalDevice::The() noexcept {
-  Utf8TerminalDevice out(Kernel::ke_io_write_utf,
+  Utf8TerminalDevice out(Kernel::ke_utf_io_write,
                          [](IDeviceObject<const Utf8Char*>*, const Utf8Char*) -> Void {});
   return out;
 }

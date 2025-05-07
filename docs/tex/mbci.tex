@@ -33,7 +33,7 @@ The MBCI bus interface includes the following signal lines:
 \subsection*{IMBCIHost Structure}
 
 \begin{lstlisting}[language=C++,basicstyle=\ttfamily\footnotesize]
-struct IMBCIHost {
+volatile struct IMBCIHost {
   UInt32 Magic;
   UInt32 HostId;
   UInt16 VendorId;
