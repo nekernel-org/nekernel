@@ -110,7 +110,7 @@ Red-black tree based directory node.
 
 \section{Timestamp Layout (ATime)}
 
-\texttt{ATime} is a 64-bit timestamp with the following structure:
+\texttt{ATime} is a 64-bit timestamp, and allocation status tracker with the following structure:
 
 \begin{itemize}
   \item Bits 63-32: Year
@@ -134,15 +134,14 @@ Provided by \texttt{Kernel::HeFS::HeFileSystemParser}.
   \item \texttt{Format(drive, flags, name)} - Format drive with HeFS
   \item \texttt{CreateINodeDirectory(drive, flags, dir)}
   \item \texttt{RemoveINodeDirectory(drive, flags, dir)}
-  \item \texttt{CreateINode(drive, flags, dir, name)}
-  \item \texttt{DeleteINode(drive, flags, dir, name)}
-  \item \texttt{WriteINode(drive, block, size, dir, name)}
-  \item \texttt{ReadINode(drive, block, size, dir, name)}
+  \item \texttt{CreateINode(drive, flags, dir, name, kind)}
+  \item \texttt{DeleteINode(drive, flags, dir, name, kind)}
+  \item \texttt{INodeManip(drive, block, size, dir, kind, name, in)}
 \end{itemize}
 
 Internal helpers:
 \begin{itemize}
-  \item \texttt{INodeCtl\_}, \texttt{INodeDirectoryCtl\_}
+  \item \texttt{INodeCtlManip}, \texttt{INodeDirectoryCtlManip}
 \end{itemize}
 
 \section{Conclusion}
