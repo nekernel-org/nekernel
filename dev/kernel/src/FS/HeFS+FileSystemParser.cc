@@ -1018,7 +1018,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
 
   if (!nodes) return NO;
 
-  SizeT sz_out    = 0;
+  SizeT sz_out = 0;
 
   for (SizeT i = 0UL; i < cnt; ++i) {
     auto& start     = nodes[i];
