@@ -22,9 +22,11 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 \hline
 \texttt{kHeFSVersion} & 0x0103 \\
 \texttt{kHeFSMagic} & "  HeFS" (8-byte magic identifier) \\
+\texttt{kHeFSMagicLen} & 8 \\
+\texttt{kHeFSBlockLen} & 512 bytes \\
 \texttt{kHeFSFileNameLen} & 256 characters \\
 \texttt{kHeFSPartNameLen} & 128 characters \\
-\texttt{kHeFSMinimumDiskSize} & 16 MiB \\
+\texttt{kHeFSMinimumDiskSize} & 1 GiB \\
 \texttt{kHeFSDefaultVolumeName} & "HeFS Volume" \\
 \texttt{kHeFSINDStartOffset} & Offset after boot + dir nodes \\
 \texttt{kHeFSSearchAllStr} & "\*" (wildcard string) \\
@@ -54,7 +56,16 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 
 \subsection{Encoding Flags (\texttt{UInt16})}
 \begin{itemize}
-\item UTF-8, UTF-16, UTF-32, Binary (with endianness variants)
+\item UTF-8
+\item UTF-16
+\item UTF-32
+\item UTF-16BE
+\item UTF-16LE
+\item UTF-32BE
+\item UTF-32LE
+\item UTF-8BE
+\item UTF-8LE
+\item Binary
 \end{itemize}
 
 \subsection{File Kinds (\texttt{UInt16})}
@@ -71,7 +82,12 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 
 \subsection{File Flags (\texttt{UInt32})}
 \begin{itemize}
-\item ReadOnly, Hidden, System, Archive, Device
+\item 0x000: None
+\item 0x100: ReadOnly
+\item 0x101: Hidden
+\item 0x102: System
+\item 0x103: Archive
+\item 0x104: Device
 \end{itemize}
 
 \section{Structures}
@@ -84,7 +100,7 @@ Acts as the superblock.
   \item Sector and disk geometry: \texttt{fSectorCount}, \texttt{fSectorSize}, \texttt{fBadSectors}
   \item Drive info: \texttt{fDiskKind}, \texttt{fEncoding}, \texttt{fDiskStatus}, \texttt{fDiskFlags}, \texttt{fVID}
   \item Tree layout: \texttt{fStartIND}, \texttt{fEndIND}, \texttt{fINDCount}
-  \item Reserved: \texttt{fStartIN}, \texttt{fEndIN}, \texttt{fReserved}, \texttt{fReserved1}
+  \item Reserved: \texttt{fStartIN}, \texttt{fEndIN}, \texttt{fStartBlock}, \texttt{fEndBlock}
 \end{itemize}
 
 \subsection{HEFS\_INDEX\_NODE}
@@ -92,7 +108,7 @@ Contains file metadata and block layout.
 
 \begin{itemize}
   \item \texttt{fHashPath}, \texttt{fFlags}, \texttt{fKind}, \texttt{fSize}, \texttt{fChecksum}
-  \item Symbolic link: \texttt{fSymLink}
+  \item \texttt{fSymLink} - if set, \texttt{fHashPath} represents the symlink target
   \item Time: \texttt{fCreated}, \texttt{fAccessed}, \texttt{fModified}, \texttt{fDeleted}
   \item Ownership: \texttt{fUID}, \texttt{fGID}, \texttt{fMode}
   \item Block data: \texttt{fOffsetSlices}, \texttt{fSlices[kHeFSSliceCount]} as (base, length) pairs
@@ -104,13 +120,13 @@ Red-black tree based directory node.
 \begin{itemize}
   \item \texttt{fHashPath}, \texttt{fFlags}, \texttt{fKind}, \texttt{fEntryCount}, \texttt{fChecksum}
   \item Time and ownership same as inode
-  \item \texttt{fINSlices[kHeFSSliceCount]} for storing child inodes
+  \item \texttt{fINSlices[kHeFSSliceCount]} for storing child inode links
   \item Tree links: \texttt{fColor}, \texttt{fNext}, \texttt{fPrev}, \texttt{fChild}, \texttt{fParent}
 \end{itemize}
 
 \section{Timestamp Layout (ATime)}
 
-\texttt{ATime} is a 64-bit timestamp, and allocation status tracker with the following structure:
+\texttt{ATime} is a 64-bit timestamp and allocation status tracker with the following structure:
 
 \begin{itemize}
   \item Bits 63-32: Year

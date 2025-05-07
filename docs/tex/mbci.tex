@@ -14,7 +14,7 @@
 \maketitle
 
 \section{Overview}
-The Mini Bus Controller Interface (MBCI) is a standardized memory-mapped I/O bus specification designed for use in embedded systems and operating system kernels. It provides an extensible framework for managing hardware devices via a shared bus using memory-mapped registers.
+The Mini Bus Controller Interface (MBCI) is a standardized memory-mapped I/O bus specification designed for use in embedded systems and operating system kernels. It provides an extensible framework for managing hardware devices via a shared bus using memory-mapped registers. It is designed to remain abstract and platform-agnostic, leaving platform-specific interrupt and address logic to the HAL.
 
 \section{Signal Lines}
 The MBCI bus interface includes the following signal lines:
@@ -95,20 +95,23 @@ volatile struct IMBCIHost {
   \item \texttt{kMBCIHostStateDmaStart}
   \item \texttt{kMBCIHostStateDmaEnd}
   \item \texttt{kMBCIHostStateFail}
+  \item \texttt{kMBCIHostStateCount}
 \end{itemize}
 
 \section{Functions}
 
-\subsection*{Auth Key Reader}
-Reads the 24-bit auth key encoded in the last three bytes of the Extended Signature Block:
+\subsection*{MMIO Test}
+Tests if MMIO is accessible by writing and checking a challenge value. Times out if the bus does not respond.
+
 \begin{lstlisting}[language=C++,basicstyle=\ttfamily\footnotesize]
-inline MBCIAuthKeyType mbci_read_auth_key(volatile IMBCIHost* host);
+inline BOOL busi_test_mmio(struct IMBCIHost* host, const UInt32 test);
 \end{lstlisting}
 
-\subsection*{MMIO Test}
-Tests if MMIO is accessible by writing and reading a challenge value.
+\subsection*{Auth Key Reader}
+Reads the 24-bit auth key encoded in the last three bytes of the Extended Signature Block after verifying MMIO test success:
+
 \begin{lstlisting}[language=C++,basicstyle=\ttfamily\footnotesize]
-inline BOOL mbci_test_mmio(volatile IMBCIHost* host);
+inline MBCIAuthKeyType mbci_read_auth_key(struct IMBCIHost* host);
 \end{lstlisting}
 
 \end{document}
