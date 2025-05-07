@@ -99,7 +99,14 @@ typedef UInt32 MBCIAuthKeyType;
 /// @internal
 inline BOOL busi_test_mmio(_Input volatile struct IMBCIHost* host, const UInt32 test) {
   host->MMIOTest = test;
-  while (host->MMIOTest == test);
+  UInt16 timeout = 0UL;
+  
+  while (host->MMIOTest == test) {
+    ++timeout;
+
+    if (timeout > 0x1000)
+      return NO;
+  }
 
   return host->MMIOTest == 0;
 }
