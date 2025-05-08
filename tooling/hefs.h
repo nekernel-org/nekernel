@@ -102,8 +102,8 @@ struct __attribute__((packed)) BootNode {
   std::uint16_t vid{};
   std::uint64_t startIN{};
   std::uint64_t endIN{};
-  std::uint64_t reserved3{};
-  std::uint64_t reserved4{};
+  std::uint64_t startBlock{};
+  std::uint64_t endBlock{};
   char          pad[272]{};
 };
 }  // namespace mkfs::hefs

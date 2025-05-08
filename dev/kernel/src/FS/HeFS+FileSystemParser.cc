@@ -459,7 +459,7 @@ namespace Detail {
                                                                    const Utf8Char* dir_name,
                                                                    const Utf8Char* file_name,
                                                                    UInt8 kind, SizeT* cnt) {
-    if (mnt) {
+    if (mnt && cnt) {
       auto start = root->fStartIND;
 
       if (start > root->fEndIND) return nullptr;
@@ -514,7 +514,7 @@ namespace Detail {
         if (start > root->fEndIND) break;
       }
 
-      err_global_get()                 = kErrorSuccess;
+      err_global_get() = kErrorSuccess;
       delete dir;
 
       if (start_cnt == 0) {
@@ -535,7 +535,7 @@ namespace Detail {
   STATIC ATTRIBUTE(unused) _Output BOOL
       hefsi_update_in_status(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf8Char* dir_name,
                              HEFS_INDEX_NODE* node, BOOL delete_or_create) {
-    if (!root) return NO;
+    if (!root || !mnt) return NO;
 
     auto start = root->fStartIND;
 
@@ -554,8 +554,6 @@ namespace Detail {
         mnt->fPacket.fPacketContent = dir;
 
         mnt->fInput(mnt->fPacket);
-
-        kout8 << dir_name << u8"\r";
 
         (Void)(kout << hex_number(hefsi_hash_64(dir_name)) << kendl);
         (Void)(kout << hex_number(dir->fHashPath) << kendl);
@@ -621,12 +619,6 @@ namespace Detail {
 
               mnt->fInput(mnt->fPacket);
 
-              kout8 << u8"HashPath: ";
-              (Void)(kout << hex_number(tmp_node.fHashPath) << kendl);
-
-              kout8 << u8"HashPath: ";
-              (Void)(kout << hex_number(hash_file) << kendl);
-
               if (tmp_node.fHashPath != hash_file) {
                 continue;
               }
@@ -690,7 +682,7 @@ namespace Detail {
       auto start = root->fStartIND;
 
       while (YES) {
-        if (start == 0 || start > root->fEndIND) break;
+        if (start == 0UL || start > root->fEndIND) break;
 
         mnt->fPacket.fPacketLba     = start;
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
@@ -714,10 +706,10 @@ namespace Detail {
           mnt->fOutput(mnt->fPacket);
         }
 
-        if (dir->fColor == kHeFSBlack && dir->fChild != 0) {
+        if (dir->fColor == kHeFSBlack && dir->fChild != 0UL) {
           dir->fColor = kHeFSRed;
           hefsi_rotate_tree(start, mnt);
-        } else if (dir->fColor == kHeFSBlack && dir->fChild == 0) {
+        } else if (dir->fColor == kHeFSBlack && dir->fChild == 0UL) {
           dir->fColor = kHeFSBlack;
 
           mnt->fPacket.fPacketLba     = start;

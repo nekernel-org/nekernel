@@ -125,10 +125,10 @@ struct PACKED HEFS_BOOT_NODE final {
   Kernel::UInt16 fDiskFlags;   /// @brief Flags of the disk. (read-only, read-write, etc).
   Kernel::UInt16
       fVID;  /// @brief Virtual Identification Number within an EPM disk. (0xFFFF if not used).
-  Kernel::UInt64 fStartIN;     /// @brief Reserved for future use.
-  Kernel::UInt64 fEndIN;       /// @brief Reserved for future use.
-  Kernel::UInt64 fStartBlock;  /// @brief Reserved for future use.
-  Kernel::UInt64 fEndBlock;    /// @brief Reserved for future use.
+  Kernel::UInt64 fStartIN;     /// @brief Start INodes range
+  Kernel::UInt64 fEndIN;       /// @brief End INodes range
+  Kernel::UInt64 fStartBlock;  /// @brief Start Blocks range
+  Kernel::UInt64 fEndBlock;    /// @brief End Blocks range
   Kernel::Char   fPad[272];
 };
 

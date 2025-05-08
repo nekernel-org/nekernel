@@ -100,12 +100,11 @@ typedef UInt32 MBCIAuthKeyType;
 inline BOOL busi_test_mmio(_Input struct IMBCIHost* host, _Input const UInt32 test) {
   host->MMIOTest = test;
   UInt16 timeout = 0UL;
-  
+
   while (host->MMIOTest == test) {
     ++timeout;
 
-    if (timeout > 0x1000)
-      return NO;
+    if (timeout > 0x1000) return NO;
   }
 
   return host->MMIOTest == 0;
