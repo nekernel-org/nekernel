@@ -422,6 +422,8 @@ namespace Detail {
           else
             --root->fINDCount;
 
+          root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
+
           mnt->fPacket.fPacketLba     = mnt->fLbaStart;
           mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
           mnt->fPacket.fPacketContent = root;
@@ -584,9 +586,9 @@ namespace Detail {
               SizeT cnt = 0ULL;
 
               while (cnt < kHeFSSliceCount) {
-                HEFS_INODE_SLICE& slice = node->fSlices[cnt];
-                slice.fBase             = offset;
-                slice.fLength           = kHeFSBlockLen;
+                HEFS_SLICE_NODE& slice = node->fSlices[cnt];
+                slice.fBase            = offset;
+                slice.fLength          = kHeFSBlockLen;
                 offset += kHeFSBlockLen;
 
                 ++cnt;
@@ -601,9 +603,13 @@ namespace Detail {
               root->fStartIN += sizeof(HEFS_INDEX_NODE);
               root->fStartBlock += (kHeFSSliceCount * kHeFSBlockLen);
 
+              root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
+
               mnt->fPacket.fPacketLba     = mnt->fLbaStart;
               mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
               mnt->fPacket.fPacketContent = root;
+
+              mnt->fOutput(mnt->fPacket);
 
               mm_delete_heap(dir);
 
@@ -625,6 +631,8 @@ namespace Detail {
 
               root->fStartIN -= sizeof(HEFS_INDEX_NODE);
               root->fStartBlock -= (kHeFSSliceCount * kHeFSBlockLen);
+
+              root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
 
               mnt->fPacket.fPacketLba     = mnt->fLbaStart;
               mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
@@ -1004,10 +1012,8 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
 
   if (!KStringBuilder::Equals(root->fMagic, kHeFSMagic) || root->fVersion != kHeFSVersion) {
     err_global_get() = kErrorDisk;
-    return YES;
+    return NO;
   }
-
-  if (root->fStartBlock > root->fEndBlock) return NO;
 
   SizeT cnt   = block_sz / sizeof(HEFS_INDEX_NODE);
   auto  nodes = Detail::hefsi_fetch_in(root, mnt, dir, name, kind, &cnt);
@@ -1021,7 +1027,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     SizeT cnt_slice = 0;
 
     while (cnt_slice < kHeFSSliceCount) {
-      struct HEFS_INODE_SLICE& slice = start.fSlices[cnt_slice];
+      HEFS_SLICE_NODE& slice = start.fSlices[cnt_slice];
 
       mnt->fPacket.fPacketLba     = slice.fBase + start.fOffsetSlices;
       mnt->fPacket.fPacketSize    = kHeFSBlockLen;
@@ -1173,6 +1179,9 @@ Boolean fs_init_hefs(Void) {
                                u8"/boot", u8"ジェット警察.txt", kHeFSFileKindRegular));
 
   Utf8Char contents_1[kHeFSBlockLen] = u8"ロケットにはジエットエンジン\r";
+
+  MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
+                              kHeFSFileKindRegular, u8"ジェット警察.txt", NO));
 
   MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
                               kHeFSFileKindRegular, u8"ジェット警察.txt", YES));

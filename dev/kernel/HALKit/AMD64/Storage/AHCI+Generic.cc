@@ -71,6 +71,10 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept;
 
 STATIC Void drv_compute_disk_ahci() noexcept;
 
+STATIC SizeT drv_get_size_ahci();
+
+STATIC SizeT drv_get_sector_count_ahci();
+
 /***********************************************************************************/
 /// @brief Identify device and read LBA info, Disk OEM vendor.
 /***********************************************************************************/
@@ -292,13 +296,13 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   @brief Gets the number of sectors inside the drive.
   @return Sector size in bytes.
  */
-SizeT drv_get_sector_count_ahci() {
+STATIC SizeT drv_get_sector_count_ahci() {
   return kSATASectorCount;
 }
 
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
-SizeT drv_get_size_ahci() {
+STATIC SizeT drv_get_size_ahci() {
   return drv_std_get_sector_count() * kAHCISectorSize;
 }
 
