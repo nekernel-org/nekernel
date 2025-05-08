@@ -16,10 +16,11 @@ static size_t        kSectorSize = 512;
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    mkfs::console_out() << "hefs: usage: mkfs.hefs -L <label> -s <sector_size> -b <ind_start> -e "
-                        << "<ind_end> -bs <block_start> -be <block_end> -is <in_start> -ie <in_end> "
-                           "-S <disk_size> -o <output_device>"
-                        << "\n";
+    mkfs::console_out()
+        << "hefs: usage: mkfs.hefs -L <label> -s <sector_size> -b <ind_start> -e "
+        << "<ind_end> -bs <block_start> -be <block_end> -is <in_start> -ie <in_end> "
+           "-S <disk_size> -o <output_device>"
+        << "\n";
     return EXIT_FAILURE;
   }
 
@@ -63,8 +64,7 @@ int main(int argc, char** argv) {
   std::ofstream output_device(output_path, std::ios::binary);
 
   if (!output_device.good()) {
-    mkfs::console_out() << "hefs: error: Unable to open output_device: " << output_path
-                        << "\n";
+    mkfs::console_out() << "hefs: error: Unable to open output_device: " << output_path << "\n";
     return EXIT_FAILURE;
   }
 
@@ -114,8 +114,7 @@ int main(int argc, char** argv) {
   output_device.flush();
   output_device.close();
 
-  mkfs::console_out() << "hefs: info: Wrote filesystem to output_device: " << output_path
-                      << "\n";
+  mkfs::console_out() << "hefs: info: Wrote filesystem to output_device: " << output_path << "\n";
 
   return EXIT_SUCCESS;
 }

@@ -76,27 +76,10 @@ EXTERN_C void ke_utf_io_write(IDeviceObject<const Utf8Char*>* obj, const Utf8Cha
   index = 0;
   len   = urt_string_len(bytes);
 
-  static BOOL not_important = YES;
-
   while (index < len) {
     if (bytes[index] == '\r') HAL::rt_out8(Detail::kPort, '\r');
 
     HAL::rt_out8(Detail::kPort, bytes[index] == '\r' ? '\n' : bytes[index]);
-
-    char tmp_str[2];
-    tmp_str[0] = bytes[index];
-    tmp_str[1] = 0;
-
-    if (bytes[index] == '*') {
-      if (not_important)
-        not_important = NO;
-      else
-        not_important = YES;
-
-      ++index;
-
-      continue;
-    }
 
     ++index;
   }
@@ -124,9 +107,8 @@ EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
   index = 0;
   len   = rt_string_len(bytes);
 
-  static SizeT x = kFontSizeX, y = kFontSizeY;
-
-  static BOOL not_important = YES;
+  STATIC SizeT x = kFontSizeX, y = kFontSizeY;
+  STATIC BOOL  not_important = YES;
 
   while (index < len) {
     if (bytes[index] == '\r') HAL::rt_out8(Detail::kPort, '\r');
@@ -148,7 +130,7 @@ EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
       continue;
     }
 
-    fb_render_string(tmp_str, y, x, not_important ? RGB(0xff, 0xff, 0xff) : RGB(0x00, 0x00, 0xff));
+    fb_render_string(tmp_str, y, x, not_important ? RGB(0xff, 0xff, 0xff) : RGB(0xff, 0x00, 0x00));
 
     if (bytes[index] == '\r') {
       y += kFontSizeY;
