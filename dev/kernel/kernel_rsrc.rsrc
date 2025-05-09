@@ -8,7 +8,7 @@ BEGIN
   BEGIN
     BLOCK "080904E4"
     BEGIN
-      VALUE "CompanyName", "Amlal El Mahrouss."
+      VALUE "CompanyName", "Amlal El Mahrouss"
 	  VALUE "FileDescription", "NeKernel"
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "neoskrnl"

@@ -1037,14 +1037,14 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
         goto inode_manip_fail;
       }
 
-      in ? mnt->fInput(mnt->fPacket) : mnt->fOutput(mnt->fPacket);
-
-      sz_out += kHeFSBlockLen;
-
       if (!in) {
+        mnt->fOutput(mnt->fPacket);
         delete[] nodes;
         return YES;
       } else {
+        mnt->fInput(mnt->fPacket);
+        sz_out += kHeFSBlockLen;
+
         if (sz_out >= block_sz) {
           delete[] nodes;
           return YES;

@@ -33,9 +33,9 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 \hline
 \end{longtable}
 
-\section{Disk and File Metadata Enums}
+\section{Disk and File Metadata Enums}\label{sec:disk-and-file-metadata-enums}
 
-\subsection{Drive Kind (\texttt{UInt8})}
+\subsection{Drive Kind (\texttt{UInt8})}\label{subsec:drive-kind-(texttt{uint8})}
 \begin{itemize}
 \item 0xC0: Hard Drive
 \item 0xC1: Solid State Drive
@@ -46,7 +46,7 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 \item 0xFF: Unknown
 \end{itemize}
 
-\subsection{Disk Status (\texttt{UInt8})}
+\subsection{Disk Status (\texttt{UInt8})}\label{subsec:disk-status-(texttt{uint8})}
 \begin{itemize}
 \item 0x18: Unlocked
 \item 0x19: Locked
@@ -54,7 +54,7 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 \item 0x1B: Invalid
 \end{itemize}
 
-\subsection{Encoding Flags (\texttt{UInt16})}
+\subsection{Encoding Flags (\texttt{UInt16})}\label{subsec:encoding-flags-(texttt{uint16})}
 \begin{itemize}
 \item UTF-8
 \item UTF-16
@@ -68,7 +68,7 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 \item Binary
 \end{itemize}
 
-\subsection{File Kinds (\texttt{UInt16})}
+\subsection{File Kinds (\texttt{UInt16})}\label{subsec:file-kinds-(texttt{uint16})}
 \begin{itemize}
 \item 0x00: Regular File
 \item 0x01: Directory
@@ -80,7 +80,7 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 \item 0x07: Unknown
 \end{itemize}
 
-\subsection{File Flags (\texttt{UInt32})}
+\subsection{File Flags (\texttt{UInt32})}\label{subsec:file-flags-(texttt{uint32})}
 \begin{itemize}
 \item 0x000: None
 \item 0x100: ReadOnly
@@ -90,9 +90,9 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 \item 0x104: Device
 \end{itemize}
 
-\section{Structures}
+\section{Structures}\label{sec:structures}
 
-\subsection{HEFS\_BOOT\_NODE}
+\subsection{HEFS\_BOOT\_NODE}\label{subsec:hefs_boot_node}
 Acts as the superblock.
 
 \begin{itemize}
@@ -103,7 +103,7 @@ Acts as the superblock.
   \item Reserved: \texttt{fStartIN}, \texttt{fEndIN}, \texttt{fStartBlock}, \texttt{fEndBlock}
 \end{itemize}
 
-\subsection{HEFS\_INDEX\_NODE}
+\subsection{HEFS\_INDEX\_NODE}\label{subsec:hefs_index_node}
 Contains file metadata and block layout.
 
 \begin{itemize}
@@ -114,7 +114,7 @@ Contains file metadata and block layout.
   \item Block data: \texttt{fOffsetSlices}, \texttt{fSlices[kHeFSSliceCount]} as (base, length) pairs
 \end{itemize}
 
-\subsection{HEFS\_INDEX\_NODE\_DIRECTORY}
+\subsection{HEFS\_INDEX\_NODE\_DIRECTORY}\label{subsec:hefs_index_node_directory}
 Red-black tree based directory node.
 
 \begin{itemize}
@@ -124,7 +124,7 @@ Red-black tree based directory node.
   \item Tree links: \texttt{fColor}, \texttt{fNext}, \texttt{fPrev}, \texttt{fChild}, \texttt{fParent}
 \end{itemize}
 
-\section{Timestamp Layout (ATime)}
+\section{Timestamp Layout (ATime)}\label{sec:timestamp-layout-(atime)}
 
 \texttt{ATime} is a 64-bit timestamp and allocation status tracker with the following structure:
 
@@ -142,7 +142,7 @@ Constants:
   \item \texttt{kHeFSTimeMax = 0xFFFFFFFFFFFFFFFF - 1}
 \end{itemize}
 
-\section{Filesystem API}
+\section{Filesystem API}\label{sec:filesystem-api}
 
 Provided by \texttt{Kernel::HeFS::HeFileSystemParser}.
 
@@ -161,6 +161,7 @@ Internal helpers:
 \end{itemize}
 
 \section{Conclusion}
-HeFS provides a modern and compact approach to high-performance file storage. Its use of red-black trees, fixed-size metadata, slice-based sparse files, and minimal overhead makes it a strong candidate for embedded and performance-sensitive use cases.
+HeFS provides a modern and compact approach to high-performance file storage.
+Its use of red-black trees, fixed-size metadata, slice-based sparse files, and minimal overhead makes it a strong candidate for embedded and performance-sensitive use cases.
 
 \end{document}

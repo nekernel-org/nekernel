@@ -9,11 +9,20 @@
 #include <cstdlib>
 #include <fstream>
 
-static size_t        kDiskSize   = 1024 * 1024 * 1024 * 4UL;
+namespace detail {
+/// @interal
+/// @brief GB equation formula.
+static constexpr size_t gib_cast(uint32_t gb) {
+  return ((1024 ^ 3) * gb);
+}
+}  // namespace detail
+
+static size_t        kDiskSize   = detail::gib_cast(4UL);
 static uint16_t      kVersion    = kHeFSVersion;
 static std::u8string kLabel      = kHeFSDefaultVolumeName;
 static size_t        kSectorSize = 512;
 
+/// @brief Entrypoint of tool.
 int main(int argc, char** argv) {
   if (argc < 2) {
     mkfs::console_out()

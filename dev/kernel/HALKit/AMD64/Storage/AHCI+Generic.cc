@@ -160,10 +160,12 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   UInt16 timeout = 0;
 
+  constexpr static UInt16 kTimeout = 0x7000;
+
   while (slot == ~0UL) {
     kout << "No free command slot found, AHCI disk is busy!\r";
 
-    if (timeout > 0x1000) {
+    if (timeout > kTimeout) {
       err_global_get() = kErrorDisk;
       return;
     }
@@ -183,6 +185,8 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   volatile HbaCmdTbl* command_table =
       (volatile HbaCmdTbl*) (((UInt64) command_header->Ctbau << 32) | command_header->Ctba);
 
+  MUST_PASS(command_table);
+
   rt_set_memory((VoidPtr) command_table, 0, sizeof(HbaCmdTbl));
 
   VoidPtr ptr = rtl_dma_alloc(size_buffer, kib_cast(4));
@@ -195,7 +199,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   rtl_dma_flush(ptr, size_buffer);
 
-  // Build the PRDT
+  // Build the PRD table.
   SizeT   bytes_remaining = size_buffer;
   SizeT   prdt_index      = 0;
   UIntPtr buffer_phys     = (UIntPtr) ptr;
@@ -216,11 +220,13 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
     ++prdt_index;
   }
 
+  // Mark the last PRD entry, for the FIS to process the table.
   command_table->Prdt[prdt_index - 1].Ie = YES;
 
   if (bytes_remaining > 0) {
     kout << "Warning: AHCI PRDT overflow, cannot map full buffer.\r";
     err_global_get() = kErrorDisk;
+    rtl_dma_free(size_buffer);
 
     return;
   }

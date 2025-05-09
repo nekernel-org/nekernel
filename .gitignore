@@ -22,7 +22,8 @@ public/frameworks/*/dist/*
 
 neoskrnl/neoskrnl.xcodeproj/project.xcworkspace/xcshareddata/
 
-tooling/dist/mkfs.hefs
+tooling/dist/mkfs.*
+tooling/dist/fsck.*
 
 html/
 latex/

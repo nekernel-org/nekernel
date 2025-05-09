@@ -3,7 +3,7 @@
   Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
   FILE: UserProcessScheduler.cc
-  PURPOSE: Low level/Ring-3 process scheduler.
+  PURPOSE: Low-Privilege/Ring-3 process scheduler.
 
 ------------------------------------------- */
 
@@ -14,12 +14,13 @@
 /***********************************************************************************/
 
 #include <ArchKit/ArchKit.h>
+#include <NewKit/KString.h>
+
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDylibObject.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <NewKit/KString.h>
 
 ///! BUGS: 0
 
