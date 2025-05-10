@@ -32,7 +32,7 @@ namespace Detail {
   /***********************************************************************************/
   STATIC ATTRIBUTE(unused) _Output Void
       hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, DriveTrait* mnt, const Lba& start_ind,
-                          Lba& start, const BOOL try_new = NO);
+                          Lba& start);
 
   /***********************************************************************************/
   /// @brief Get the index node of a file or directory.
@@ -107,9 +107,8 @@ namespace Detail {
   /// @param start The starting point of the traversal.
   /// @note This function is used to traverse the RB-Tree of the filesystem.
   /// @internal Internal filesystem use only.
-  STATIC ATTRIBUTE(unused) Void
-      hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, DriveTrait* mnt, const Lba& ind_start,
-                          Lba& start, const BOOL try_new) {
+  STATIC ATTRIBUTE(unused) Void hefsi_traverse_tree(HEFS_INDEX_NODE_DIRECTORY* dir, DriveTrait* mnt,
+                                                    const Lba& ind_start, Lba& start) {
     if (!mnt || !dir) return;
 
     BOOL check_is_good = NO;
@@ -149,8 +148,6 @@ namespace Detail {
           check_is_good = YES;
           continue;
         } else {
-          if (!try_new) break;
-
           if (start == 0) {
             start = ind_start;
             continue;
@@ -162,10 +159,8 @@ namespace Detail {
       }
     }
 
-    if (try_new) start += sizeof(HEFS_INDEX_NODE_DIRECTORY);
+    start += sizeof(HEFS_INDEX_NODE_DIRECTORY);
     if (start == 0) start = ind_start;
-
-    (Void)(kout << "LBA_" << hex_number(start) << kendl);
   }
 
   /***********************************************************************************/
@@ -351,7 +346,7 @@ namespace Detail {
                 break;
               }
 
-              hefsi_traverse_tree(tmpend, mnt, root->fStartIND, child_first, YES);
+              hefsi_traverse_tree(tmpend, mnt, root->fStartIND, child_first);
             }
           }
 
@@ -435,8 +430,8 @@ namespace Detail {
 
         prev_location = start;
 
-        hefsi_traverse_tree(tmpdir, mnt, root->fStartIND, start, YES);
-        if (start > root->fEndIND) break;
+        hefsi_traverse_tree(tmpdir, mnt, root->fStartIND, start);
+        if (start > root->fEndIND || start == 0) break;
       }
 
       err_global_get() = kErrorDisk;
@@ -504,6 +499,7 @@ namespace Detail {
                   err_global_get() = kErrorSuccess;
 
                   delete dir;
+                  dir = nullptr;
 
                   return node_arr;
                 }
@@ -512,8 +508,8 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, mnt, root->fStartIND, start, YES);
-        if (start > root->fEndIND) break;
+        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
+        if (start > root->fEndIND || start == 0) break;
       }
 
       err_global_get() = kErrorSuccess;
@@ -586,9 +582,8 @@ namespace Detail {
               SizeT cnt = 0ULL;
 
               while (cnt < kHeFSSliceCount) {
-                HEFS_SLICE_NODE& slice = node->fSlices[cnt];
-                slice.fBase            = offset;
-                slice.fLength          = kHeFSBlockLen;
+                node->fSlices[cnt].fBase   = offset;
+                node->fSlices[cnt].fLength = kHeFSBlockLen;
                 offset += kHeFSBlockLen;
 
                 ++cnt;
@@ -601,7 +596,7 @@ namespace Detail {
               mnt->fOutput(mnt->fPacket);
 
               root->fStartIN += sizeof(HEFS_INDEX_NODE);
-              root->fStartBlock += (kHeFSSliceCount * kHeFSBlockLen);
+              root->fStartBlock += kHeFSBlockLen;
 
               root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
 
@@ -665,7 +660,7 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, mnt, root->fStartIND, start, YES);
+        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
         if (start > root->fEndIND || start == 0) break;
       }
 
@@ -737,7 +732,7 @@ namespace Detail {
           mnt->fOutput(mnt->fPacket);
         }
 
-        hefsi_traverse_tree(dir, mnt, root->fStartIND, start, NO);
+        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
       }
 
       err_global_get() = kErrorSuccess;
@@ -827,23 +822,26 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
 
   MUST_PASS(root->fSectorSize);
 
-  const SizeT max_lba = mnt->fLbaEnd / root->fSectorSize;
+  /// @note all HeFS strucutres are equal to 512, so here it's fine, unless fSectoSize is 2048.
+  const SizeT max_lba = (mnt->fLbaEnd / 4) / root->fSectorSize;
 
-  const SizeT dir_max   = max_lba / 20;  // 20% for directory metadata
-  const SizeT inode_max = max_lba / 20;  // 10% for inodes
+  const SizeT dir_max   = max_lba / 30;   // 20% for directory inodes
+  const SizeT inode_max = max_lba / 60;  // 30% for inodes
 
   root->fStartIND = mnt->fLbaStart + kHeFSINDStartOffset;
   root->fEndIND   = root->fStartIND + dir_max;
 
-  root->fStartIN = root->fEndIND + sizeof(HEFS_INDEX_NODE_DIRECTORY);
+  root->fStartIN = root->fEndIND;
   root->fEndIN   = root->fStartIN + inode_max;
 
-  constexpr SizeT kHeFSPreallocateCount = 0x6UL;
+  root->fStartBlock = root->fEndIN;
+  root->fEndBlock   = mnt->fLbaEnd;
+
+  constexpr const SizeT kHeFSPreallocateCount = 0x6UL;
 
   root->fINDCount = 0;
 
-  // let's lie here.
-  root->fDiskSize   = mnt->fLbaEnd;
+  root->fDiskSize   = drv_std_get_size();
   root->fDiskStatus = kHeFSStatusUnlocked;
 
   root->fDiskFlags = flags;
@@ -855,9 +853,6 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   } else {
     root->fDiskKind = kHeFSUnknown;
   }
-
-  root->fStartBlock = root->fEndIN + sizeof(HEFS_INDEX_NODE);
-  root->fEndBlock   = mnt->fLbaEnd;
 
   root->fVersion = kHeFSVersion;
 
@@ -1015,48 +1010,32 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     return NO;
   }
 
-  SizeT cnt   = block_sz / sizeof(HEFS_INDEX_NODE);
+  SizeT cnt   = block_sz / sizeof(HEFS_INDEX_NODE) + 1;
   auto  nodes = Detail::hefsi_fetch_in(root, mnt, dir, name, kind, &cnt);
 
   if (!nodes) return NO;
-
-  SizeT sz_out = 0;
 
   for (SizeT i = 0UL; i < cnt; ++i) {
     auto& start     = nodes[i];
     SizeT cnt_slice = 0;
 
-    while (cnt_slice < kHeFSSliceCount) {
-      HEFS_SLICE_NODE& slice = start.fSlices[cnt_slice];
+    mnt->fPacket.fPacketLba     = start.fOffsetSlices;
+    mnt->fPacket.fPacketSize    = kHeFSBlockLen;
+    mnt->fPacket.fPacketContent = block;
 
-      mnt->fPacket.fPacketLba     = slice.fBase + start.fOffsetSlices;
-      mnt->fPacket.fPacketSize    = kHeFSBlockLen;
-      mnt->fPacket.fPacketContent = block;
-
-      if (mnt->fPacket.fPacketLba > root->fEndBlock) {
-        goto inode_manip_fail;
-      }
-
-      if (!in) {
-        mnt->fOutput(mnt->fPacket);
-        delete[] nodes;
-        return YES;
-      } else {
-        mnt->fInput(mnt->fPacket);
-        sz_out += kHeFSBlockLen;
-
-        if (sz_out >= block_sz) {
-          delete[] nodes;
-          return YES;
-        }
-      }
-
-      ++cnt_slice;
+    if (in) {
+      mnt->fInput(mnt->fPacket);
+    } else {
+      mnt->fOutput(mnt->fPacket);
     }
+
+    delete[] nodes;
+    return mnt->fPacket.fPacketGood == YES;
   }
 
-inode_manip_fail:
   delete[] nodes;
+  nodes = nullptr;
+
   return NO;
 }
 

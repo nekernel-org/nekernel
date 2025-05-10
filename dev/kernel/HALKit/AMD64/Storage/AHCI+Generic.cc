@@ -144,12 +144,6 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   lba /= sector_sz;
 
-  if (lba > kSATASectorCount) {
-    kout << "Out of range LBA.\r";
-    err_global_get() = kErrorDisk;
-    return;
-  }
-
   if (!buffer || size_buffer == 0) {
     kout << "Invalid buffer for AHCI I/O.\r";
     err_global_get() = kErrorDisk;
@@ -160,12 +154,12 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   UInt16 timeout = 0;
 
-  constexpr static UInt16 kTimeout = 0x7000;
+  constexpr static UInt16 kTimeout = 0x8000;
 
   while (slot == ~0UL) {
-    kout << "No free command slot found, AHCI disk is busy!\r";
-
     if (timeout > kTimeout) {
+      kout << "No free command slot found, AHCI disk is busy!\r";
+
       err_global_get() = kErrorDisk;
       return;
     }
@@ -265,7 +259,18 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   // Issue command
   kSATAHba->Ports[kSATAIndex].Ci = (1 << slot);
 
+  timeout = 0UL;
+
   while (YES) {
+    if (timeout > kTimeout) {
+      kout << "Disk hangup!\r";
+
+      err_global_get() = kErrorDisk;
+      return;
+    }
+
+    ++timeout;
+
     if (!(kSATAHba->Ports[kSATAIndex].Ci & (1 << slot))) break;
   }
 
