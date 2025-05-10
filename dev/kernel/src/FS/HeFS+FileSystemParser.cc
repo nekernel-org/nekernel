@@ -995,7 +995,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     (Void)(kout << hex_number(start->fOffsetSliceLow) << kendl);
 
     if (start->fOffsetSliceLow) {
-      mnt->fPacket.fPacketLba     = start->fOffsetSliceLow | start->fOffsetSliceHigh << 32;
+      mnt->fPacket.fPacketLba     = start->fOffsetSliceLow | (UInt64) start->fOffsetSliceHigh << 32;
       mnt->fPacket.fPacketSize    = block_sz;
       mnt->fPacket.fPacketContent = block;
 
@@ -1127,8 +1127,8 @@ Boolean fs_init_hefs(Void) {
 
   parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVolumeName);
 
-  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly, u8"/boot",
-                               u8"bootinfo.cfg", kHeFSFileKindRegular));
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
+                               u8"/boot", u8"bootinfo.cfg", kHeFSFileKindRegular));
 
   Utf8Char contents_1[kHeFSBlockLen] = {0};
 
@@ -1137,7 +1137,7 @@ Boolean fs_init_hefs(Void) {
   MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot", u8"bootinfo.cfg",
                               kHeFSFileKindRegular, YES));
 
-  kout8 << text << kendl8;
+  kout8 << contents_1 << kendl8;
 
   return YES;
 }
