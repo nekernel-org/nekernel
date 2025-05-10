@@ -34,8 +34,8 @@ class BootDeviceSATA final {
 
   constexpr static auto kSectorSize = kAHCISectorSize;
 
-  BootDeviceSATA& Read(Boot::CharacterTypeUTF8* Buf, const Kernel::SizeT SecCount);
-  BootDeviceSATA& Write(Boot::CharacterTypeUTF8* Buf, const Kernel::SizeT SecCount);
+  BootDeviceSATA& Read(Boot::CharacterTypeASCII* Buf, const Kernel::SizeT SecCount);
+  BootDeviceSATA& Write(Boot::CharacterTypeASCII* Buf, const Kernel::SizeT SecCount);
 
   SATATrait& Leak();
 

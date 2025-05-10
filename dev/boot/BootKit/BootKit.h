@@ -40,7 +40,7 @@
 /***********************************************************************************/
 
 namespace Boot {
-EXTERN void ThrowError(const WideChar* errorCode, const WideChar* reason) noexcept;
+void ThrowError(const WideChar* errorCode, const WideChar* reason) noexcept;
 
 class BootTextWriter;
 class BootFileReader;
@@ -51,7 +51,8 @@ typedef Char* PEFImagePtr;
 typedef Char* PEImagePtr;
 
 typedef WideChar CharacterTypeUTF16;
-typedef Char     CharacterTypeUTF8;
+typedef Char     CharacterTypeASCII;
+typedef char8_t  CharacterTypeUTF8;
 
 using namespace Kernel;
 
@@ -86,7 +87,7 @@ class BootTextWriter final {
 
 Kernel::SizeT BCopyMem(CharacterTypeUTF16* dest, CharacterTypeUTF16* src, const Kernel::SizeT len);
 
-Kernel::SizeT BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte,
+Kernel::SizeT BSetMem(CharacterTypeASCII* src, const CharacterTypeASCII byte,
                       const Kernel::SizeT len);
 
 /// String length functions.
@@ -151,7 +152,7 @@ typedef UInt8* BlobType;
 /// @brief Bootloader Version String.
 class BVersionString final {
  public:
-  static const CharacterTypeUTF8* The() { return BOOTLOADER_VERSION; }
+  static const CharacterTypeASCII* The() { return BOOTLOADER_VERSION; }
 };
 
 /***********************************************************************************/

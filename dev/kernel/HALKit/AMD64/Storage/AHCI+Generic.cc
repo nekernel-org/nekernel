@@ -264,8 +264,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   while (YES) {
     if (timeout > kTimeout) {
       kout << "Disk hangup!\r";
-
-      err_global_get() = kErrorDisk;
+      kSATAHba->Ports[kSATAIndex].Ci = 0;
       return;
     }
 

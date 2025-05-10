@@ -15,6 +15,16 @@ Size urt_string_len(const Utf8Char* str) {
   return len;
 }
 
+Void urt_set_memory(const voidPtr src, UInt32 dst, Size len) {
+  Utf8Char* srcChr = reinterpret_cast<Utf8Char*>(src);
+  Size      index  = 0;
+
+  while (index < len) {
+    srcChr[index] = dst;
+    ++index;
+  }
+}
+
 Int urt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
   Utf8Char* srcChr  = reinterpret_cast<Utf8Char*>(src);
   Utf8Char* dstChar = reinterpret_cast<Utf8Char*>(dst);

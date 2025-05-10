@@ -198,8 +198,7 @@ struct PACKED HEFS_INDEX_NODE_DIRECTORY final {
   UInt64 fHashPath;  /// @brief Directory path as FNV hash.
 
   UInt32 fFlags;       /// @brief File flags.
-  UInt16 fKind;        /// @brief File kind. (Regular, Directory, Block, Character, FIFO, Socket,
-                       /// Symbolic Link, Unknown).
+  UInt16 fReserved;    /// @note Reserved for future use.
   UInt32 fEntryCount;  /// @brief Entry Count of this directory inode.
   UInt32 fChecksum;    /// @brief Checksum of the file, index node checksum.
 
@@ -405,8 +404,8 @@ class HeFileSystemParser final {
                            const Utf8Char* name, const UInt8 kind);
 
   _Output Bool INodeManip(_Input DriveTrait* drive, VoidPtr block, SizeT block_sz,
-                          const Utf8Char* dir, const UInt8 kind, const Utf8Char* name,
-                          const BOOL in);
+                          const Utf8Char* dir, const Utf8Char* name, const UInt8 kind,
+                          const BOOL input);
 
  private:
   _Output Bool INodeCtlManip(_Input DriveTrait* drive, _Input const Int32 flags,

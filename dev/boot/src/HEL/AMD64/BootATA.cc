@@ -101,7 +101,7 @@ ATAInit_Retry:
   return NO;
 }
 
-Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, SizeT SectorSz,
+Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeASCII* Buf, SizeT SectorSz,
                    SizeT Size) {
   Lba /= SectorSz;
 
@@ -130,7 +130,7 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, 
   }
 }
 
-Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeUTF8* Buf, SizeT SectorSz,
+Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeASCII* Buf, SizeT SectorSz,
                     SizeT Size) {
   Lba /= SectorSz;
 
@@ -196,7 +196,7 @@ BootDeviceATA::operator bool() {
   @param Sz Sector size
   @param Buf buffer
 */
-BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, SizeT SectorSz) {
+BootDeviceATA& BootDeviceATA::Read(CharacterTypeASCII* Buf, SizeT SectorSz) {
   if (!boot_ata_detected()) {
     Leak().mErr = true;
     return *this;
@@ -217,7 +217,7 @@ BootDeviceATA& BootDeviceATA::Read(CharacterTypeUTF8* Buf, SizeT SectorSz) {
   @param Sz Sector size
   @param Buf buffer
 */
-BootDeviceATA& BootDeviceATA::Write(CharacterTypeUTF8* Buf, SizeT SectorSz) {
+BootDeviceATA& BootDeviceATA::Write(CharacterTypeASCII* Buf, SizeT SectorSz) {
   if (!boot_ata_detected()) {
     Leak().mErr = true;
     return *this;

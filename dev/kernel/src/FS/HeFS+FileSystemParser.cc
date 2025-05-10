@@ -47,7 +47,7 @@ namespace Detail {
                                                                    DriveTrait*     mnt,
                                                                    const Utf8Char* dir_name,
                                                                    const Utf8Char* file_name,
-                                                                   UInt8 kind, SizeT* cnt);
+                                                                   UInt8           kind);
 
   /***********************************************************************************/
   /// @brief Allocate a new index node->
@@ -111,40 +111,41 @@ namespace Detail {
                                                     const Lba& ind_start, Lba& start) {
     if (!mnt || !dir) return;
 
-    BOOL check_is_good = NO;
+    BOOL                       check_is_good = NO;
+    HEFS_INDEX_NODE_DIRECTORY* dir_tmp       = new HEFS_INDEX_NODE_DIRECTORY();
 
     while (YES) {
       mnt->fPacket.fPacketLba     = start;
       mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
-      mnt->fPacket.fPacketContent = dir;
+      mnt->fPacket.fPacketContent = dir_tmp;
       mnt->fInput(mnt->fPacket);
 
       if (!mnt->fPacket.fPacketGood) break;
 
-      if (dir->fNext != 0) {
+      if (dir_tmp->fNext != 0) {
         if (check_is_good) break;
 
-        start = dir->fNext;
+        start = dir_tmp->fNext;
 
         check_is_good = YES;
         continue;
-      } else if (dir->fPrev != 0) {
+      } else if (dir_tmp->fPrev != 0) {
         if (check_is_good) break;
 
-        start         = dir->fPrev;
+        start         = dir_tmp->fPrev;
         check_is_good = YES;
         continue;
       } else {
-        if (dir->fParent != 0) {
+        if (dir_tmp->fParent != 0) {
           if (check_is_good) break;
 
-          start         = dir->fParent;
+          start         = dir_tmp->fParent;
           check_is_good = YES;
           continue;
-        } else if (dir->fPrev != 0) {
+        } else if (dir_tmp->fPrev != 0) {
           if (check_is_good) break;
 
-          start         = dir->fPrev;
+          start         = dir_tmp->fPrev;
           check_is_good = YES;
           continue;
         } else {
@@ -158,6 +159,8 @@ namespace Detail {
         }
       }
     }
+
+    delete dir_tmp;
 
     start += sizeof(HEFS_INDEX_NODE_DIRECTORY);
     if (start == 0) start = ind_start;
@@ -302,7 +305,7 @@ namespace Detail {
           dirent->fModified   = 0UL;
           dirent->fEntryCount = 0UL;
 
-          dirent->fKind     = kHeFSFileKindDirectory;
+          dirent->fReserved = 0;
           dirent->fFlags    = flags;
           dirent->fChecksum = 0;
 
@@ -455,20 +458,13 @@ namespace Detail {
                                                                    DriveTrait*     mnt,
                                                                    const Utf8Char* dir_name,
                                                                    const Utf8Char* file_name,
-                                                                   UInt8 kind, SizeT* cnt) {
-    if (mnt && cnt) {
+                                                                   UInt8           kind) {
+    if (mnt) {
       if (root->fStartIND > root->fEndIND) return nullptr;
       if (root->fStartIN > root->fEndIN) return nullptr;
 
-      auto start = root->fStartIND;
-
-      auto start_cnt = 0UL;
-
-      HEFS_INDEX_NODE* node_arr = new HEFS_INDEX_NODE[*cnt];
-
-      if (!node_arr) {
-        return nullptr;
-      }
+      auto             start = root->fStartIND;
+      HEFS_INDEX_NODE* node  = new HEFS_INDEX_NODE();
 
       HEFS_INDEX_NODE_DIRECTORY* dir =
           (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
@@ -480,57 +476,37 @@ namespace Detail {
 
         mnt->fInput(mnt->fPacket);
 
-        if (hefsi_hash_64(dir_name) == dir->fHashPath && dir->fKind == kHeFSFileKindDirectory) {
-          HEFS_INDEX_NODE* node = new HEFS_INDEX_NODE();
+        (Void)(kout << hex_number(hefsi_hash_64(dir_name)) << kendl);
+        (Void)(kout << hex_number(dir->fHashPath) << kendl);
 
+        if (hefsi_hash_64(dir_name) == dir->fHashPath) {
           for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; ++inode_index) {
-            if (dir->fINSlices[inode_index] != 0) {
-              mnt->fPacket.fPacketLba     = dir->fINSlices[inode_index];
-              mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
-              mnt->fPacket.fPacketContent = node;
+            mnt->fPacket.fPacketLba     = dir->fINSlices[inode_index];
+            mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
+            mnt->fPacket.fPacketContent = node;
 
-              mnt->fInput(mnt->fPacket);
+            mnt->fInput(mnt->fPacket);
 
-              if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind &&
-                  ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE)) == node->fChecksum) {
-                node_arr[start_cnt] = *node;
-                ++start_cnt;
+            (Void)(kout << hex_number(hefsi_hash_64(file_name)) << kendl);
+            (Void)(kout << hex_number(node->fHashPath) << kendl);
 
-                if (start_cnt > *cnt) {
-                  err_global_get() = kErrorSuccess;
-
-                  delete node;
-                  node = nullptr;
-
-                  delete dir;
-                  dir = nullptr;
-
-                  return node_arr;
-                }
-              }
+            if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind) {
+              return node;
             }
           }
-
-          delete node;
-          node = nullptr;
         }
 
         hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
-        if (start > root->fEndIND || start == 0) break;
       }
 
-      err_global_get() = kErrorSuccess;
+      delete node;
+      node = nullptr;
+
       delete dir;
-
-      if (start_cnt == 0) {
-        delete[] node_arr;
-        node_arr = nullptr;
-      }
-
-      return node_arr;
+      dir = nullptr;
     }
 
-    kout << "Error: Failed to find index node->\r";
+    kout << "Error: Failed to find IN.\r";
 
     err_global_get() = kErrorFileNotFound;
 
@@ -580,13 +556,8 @@ namespace Detail {
 
               auto lba = dir->fINSlices[inode_index];
 
-              if (root->fStartBlock > (1ULL << 21)) {
-                node->fOffsetSliceLow  = (UInt32) (root->fStartBlock & 0xFFFFFFFF);
-                node->fOffsetSliceHigh = (UInt32) (root->fStartBlock >> 32);
-              } else {
-                node->fOffsetSliceLow  = (UInt32) root->fStartBlock;
-                node->fOffsetSliceHigh = 0UL;
-              }
+              node->fOffsetSliceLow  = (UInt32) (root->fStartBlock);
+              node->fOffsetSliceHigh = (UInt32) (root->fStartBlock >> 32);
 
               node->fChecksum = ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE));
 
@@ -982,8 +953,8 @@ _Output Bool HeFileSystemParser::CreateINode(_Input DriveTrait* mnt, _Input cons
 }
 
 _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr block, SizeT block_sz,
-                                            const Utf8Char* dir, const UInt8 kind,
-                                            const Utf8Char* name, const BOOL in) {
+                                            const Utf8Char* dir, const Utf8Char* name,
+                                            const UInt8 kind, const BOOL in) {
   if (urt_string_len(dir) > kHeFSFileNameLen) {
     err_global_get() = kErrorDisk;
     return NO;
@@ -1011,43 +982,34 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
   mnt->fInput(mnt->fPacket);
 
   if (!KStringBuilder::Equals(root->fMagic, kHeFSMagic) || root->fVersion != kHeFSVersion) {
+    (Void)(kout << "Invalid Boot Node, HeFS partition is invalid." << kendl);
+    mm_delete_heap((VoidPtr) root);
     err_global_get() = kErrorDisk;
     return NO;
   }
 
-  SizeT cnt   = block_sz / sizeof(HEFS_INDEX_NODE) + 1;
-  auto  nodes = Detail::hefsi_fetch_in(root, mnt, dir, name, kind, &cnt);
+  auto start = Detail::hefsi_fetch_in(root, mnt, dir, name, kind);
 
-  if (!nodes) return NO;
+  if (start) {
+    (Void)(kout << hex_number(start->fHashPath) << kendl);
+    (Void)(kout << hex_number(start->fOffsetSliceLow) << kendl);
 
-  for (SizeT i = 0UL; i < cnt; ++i) {
-    auto& start = nodes[i];
+    if (start->fOffsetSliceLow) {
+      mnt->fPacket.fPacketLba     = start->fOffsetSliceLow | start->fOffsetSliceHigh << 32;
+      mnt->fPacket.fPacketSize    = block_sz;
+      mnt->fPacket.fPacketContent = block;
 
-    kout << hex_number(start.fHashPath) << kendl;
-    kout << hex_number(start.fOffsetSliceLow) << kendl;
-
-    if (!start.fHashPath || !start.fOffsetSliceLow) continue;
-
-    mnt->fPacket.fPacketLba     = start.fOffsetSliceLow + start.fOffsetSliceHigh;
-    mnt->fPacket.fPacketSize    = kHeFSBlockLen;
-    mnt->fPacket.fPacketContent = block;
-
-    if (in) {
-      mnt->fInput(mnt->fPacket);
-    } else {
-      mnt->fOutput(mnt->fPacket);
+      if (in) {
+        mnt->fInput(mnt->fPacket);
+      } else {
+        mnt->fOutput(mnt->fPacket);
+      }
     }
-
-    mm_delete_heap((VoidPtr) root);
-    delete[] nodes;
-    return mnt->fPacket.fPacketGood == YES;
   }
 
-  delete[] nodes;
-  nodes = nullptr;
-
   mm_delete_heap((VoidPtr) root);
-  return NO;
+  delete start;
+  return YES;
 }
 
 /// @brief Create a new file on the disk.
@@ -1165,16 +1127,17 @@ Boolean fs_init_hefs(Void) {
 
   parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVolumeName);
 
-  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
-                               u8"/boot", u8"ジェット警察.txt", kHeFSFileKindRegular));
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly, u8"/boot",
+                               u8"bootinfo.cfg", kHeFSFileKindRegular));
 
-  Utf8Char contents_1[kHeFSBlockLen] = {u8"ロケットにはジエットエンジン\r\0"};
+  Utf8Char contents_1[kHeFSBlockLen] = {0};
 
-  MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
-                              kHeFSFileKindRegular, u8"ジェット警察.txt", NO));
+  urt_set_memory(contents_1, 0, kHeFSBlockLen);
 
-  MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
-                              kHeFSFileKindRegular, u8"ジェット警察.txt", YES));
+  MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot", u8"bootinfo.cfg",
+                              kHeFSFileKindRegular, YES));
+
+  kout8 << text << kendl8;
 
   return YES;
 }

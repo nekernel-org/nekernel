@@ -1,4 +1,4 @@
-# /props/kern_ver
+# The `/props/kern_ver` NVRAM variable
 
 The `/props/kern_ver` variable is used to track NeKernel's current version in a BCD format.
 
