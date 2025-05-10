@@ -111,7 +111,7 @@ Contains file metadata and block layout.
   \item \texttt{fSymLink} - if set, \texttt{fHashPath} represents the symlink target
   \item Time: \texttt{fCreated}, \texttt{fAccessed}, \texttt{fModified}, \texttt{fDeleted}
   \item Ownership: \texttt{fUID}, \texttt{fGID}, \texttt{fMode}
-  \item Block data: \texttt{fOffsetSlices}, \texttt{fSlices[kHeFSSliceCount]} as (base, length) pairs
+  \item Block data: \texttt{fOffsetSliceLow}, \texttt{fSlices[kHeFSSliceCount]} as (base, length) pairs
 \end{itemize}
 
 \subsection{HEFS\_INDEX\_NODE\_DIRECTORY}\label{subsec:hefs_index_node_directory}

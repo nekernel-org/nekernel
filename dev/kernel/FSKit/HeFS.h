@@ -175,7 +175,8 @@ struct PACKED HEFS_INDEX_NODE final {
 
   /// @brief Extents system by using blocks
   /// @details Using an offset to ask fBase, and fLength to compute each slice's length.
-  UInt64 fOffsetSlices;
+  UInt32 fOffsetSliceLow;
+  UInt32 fOffsetSliceHigh;
 
   HEFS_SLICE_NODE fSlices[kHeFSSliceCount];  /// @brief block slice, unused as of current HeFS.
 

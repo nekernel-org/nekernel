@@ -575,7 +575,13 @@ namespace Detail {
 
               node->fChecksum = ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE));
 
-              node->fOffsetSlices = root->fStartBlock;
+              if (root->fStartBlock > (1ULL << 21)) {
+                node->fOffsetSliceLow  = (UInt32) (root->fStartBlock & 0xFFFFFFFF);
+                node->fOffsetSliceHigh = (UInt32) (root->fStartBlock >> 32);
+              } else {
+                node->fOffsetSliceLow  = root->fStartBlock;
+                node->fOffsetSliceHigh = 0UL;
+              }
 
               auto offset = kHeFSBlockLen;
 
@@ -624,8 +630,11 @@ namespace Detail {
                 continue;
               }
 
+              node->fOffsetSliceLow  = 0;
+              node->fOffsetSliceHigh = 0;
+
               root->fStartIN -= sizeof(HEFS_INDEX_NODE);
-              root->fStartBlock -= (kHeFSSliceCount * kHeFSBlockLen);
+              root->fStartBlock -= kHeFSBlockLen;
 
               root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
 
@@ -823,9 +832,9 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   MUST_PASS(root->fSectorSize);
 
   /// @note all HeFS strucutres are equal to 512, so here it's fine, unless fSectoSize is 2048.
-  const SizeT max_lba = (mnt->fLbaEnd / 4) / root->fSectorSize;
+  const SizeT max_lba = (mnt->fLbaEnd) / root->fSectorSize;
 
-  const SizeT dir_max   = max_lba / 30;   // 20% for directory inodes
+  const SizeT dir_max   = max_lba / 30;  // 20% for directory inodes
   const SizeT inode_max = max_lba / 60;  // 30% for inodes
 
   root->fStartIND = mnt->fLbaStart + kHeFSINDStartOffset;
@@ -835,7 +844,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   root->fEndIN   = root->fStartIN + inode_max;
 
   root->fStartBlock = root->fEndIN;
-  root->fEndBlock   = mnt->fLbaEnd;
+  root->fEndBlock   = drv_std_get_size();
 
   constexpr const SizeT kHeFSPreallocateCount = 0x6UL;
 
@@ -872,6 +881,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   (Void)(kout << "End IND: " << hex_number(root->fEndIND) << kendl);
   (Void)(kout << "Start IN: " << hex_number(root->fStartIN) << kendl);
   (Void)(kout << "End IN: " << hex_number(root->fEndIN) << kendl);
+  (Void)(kout << "Start Block: " << hex_number(root->fStartBlock) << kendl);
+  (Void)(kout << "End Block: " << hex_number(root->fEndBlock) << kendl);
   (Void)(kout << "Number of IND: " << hex_number(root->fINDCount) << kendl);
   (Void)(kout << "Sector Size: " << hex_number(root->fSectorSize) << kendl);
   (Void)(kout << "Drive Kind: " << Detail::hefs_drive_kind_to_string(root->fDiskKind) << kendl);
@@ -989,7 +1000,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     return NO;
   }
 
-  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
+  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_heap(sizeof(HEFS_BOOT_NODE), Yes, No);
 
   if (!root) {
     err_global_get() = kErrorInvalidData;
@@ -1016,10 +1027,14 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
   if (!nodes) return NO;
 
   for (SizeT i = 0UL; i < cnt; ++i) {
-    auto& start     = nodes[i];
-    SizeT cnt_slice = 0;
+    auto& start = nodes[i];
 
-    mnt->fPacket.fPacketLba     = start.fOffsetSlices;
+    kout << hex_number(start.fHashPath) << kendl;
+    kout << hex_number(start.fOffsetSliceLow) << kendl;
+
+    if (!start.fHashPath || !start.fOffsetSliceLow) continue;
+
+    mnt->fPacket.fPacketLba     = start.fOffsetSliceLow + start.fOffsetSliceHigh;
     mnt->fPacket.fPacketSize    = kHeFSBlockLen;
     mnt->fPacket.fPacketContent = block;
 
@@ -1029,6 +1044,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
       mnt->fOutput(mnt->fPacket);
     }
 
+    mm_delete_heap((VoidPtr) root);
     delete[] nodes;
     return mnt->fPacket.fPacketGood == YES;
   }
@@ -1036,6 +1052,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
   delete[] nodes;
   nodes = nullptr;
 
+  mm_delete_heap((VoidPtr) root);
   return NO;
 }
 

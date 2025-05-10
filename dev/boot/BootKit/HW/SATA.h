@@ -10,6 +10,8 @@
 #include <CompilerKit/CompilerKit.h>
 #include <modules/AHCI/AHCI.h>
 
+#define kAHCISectorSz (4096)
+
 class BootDeviceSATA final {
  public:
   explicit BootDeviceSATA() noexcept;
@@ -40,5 +42,3 @@ class BootDeviceSATA final {
  private:
   SATATrait mTrait;
 };
-
-#define kAHCISectorSz 4096
