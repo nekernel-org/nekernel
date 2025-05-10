@@ -457,14 +457,14 @@ namespace Detail {
                                                                    const Utf8Char* file_name,
                                                                    UInt8 kind, SizeT* cnt) {
     if (mnt && cnt) {
-      auto start = root->fStartIND;
-
-      if (start > root->fEndIND) return nullptr;
+      if (root->fStartIND > root->fEndIND) return nullptr;
       if (root->fStartIN > root->fEndIN) return nullptr;
+
+      auto start = root->fStartIND;
 
       auto start_cnt = 0UL;
 
-      HEFS_INDEX_NODE* node_arr = new HEFS_INDEX_NODE[*cnt + 1];
+      HEFS_INDEX_NODE* node_arr = new HEFS_INDEX_NODE[*cnt];
 
       if (!node_arr) {
         return nullptr;
@@ -481,22 +481,26 @@ namespace Detail {
         mnt->fInput(mnt->fPacket);
 
         if (hefsi_hash_64(dir_name) == dir->fHashPath && dir->fKind == kHeFSFileKindDirectory) {
+          HEFS_INDEX_NODE* node = new HEFS_INDEX_NODE();
+
           for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; ++inode_index) {
             if (dir->fINSlices[inode_index] != 0) {
-              HEFS_INDEX_NODE* node = (HEFS_INDEX_NODE*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE));
-
               mnt->fPacket.fPacketLba     = dir->fINSlices[inode_index];
               mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
               mnt->fPacket.fPacketContent = node;
 
               mnt->fInput(mnt->fPacket);
 
-              if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind) {
+              if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind &&
+                  ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE)) == node->fChecksum) {
                 node_arr[start_cnt] = *node;
                 ++start_cnt;
 
                 if (start_cnt > *cnt) {
                   err_global_get() = kErrorSuccess;
+
+                  delete node;
+                  node = nullptr;
 
                   delete dir;
                   dir = nullptr;
@@ -506,6 +510,9 @@ namespace Detail {
               }
             }
           }
+
+          delete node;
+          node = nullptr;
         }
 
         hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
@@ -573,27 +580,15 @@ namespace Detail {
 
               auto lba = dir->fINSlices[inode_index];
 
-              node->fChecksum = ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE));
-
               if (root->fStartBlock > (1ULL << 21)) {
                 node->fOffsetSliceLow  = (UInt32) (root->fStartBlock & 0xFFFFFFFF);
                 node->fOffsetSliceHigh = (UInt32) (root->fStartBlock >> 32);
               } else {
-                node->fOffsetSliceLow  = root->fStartBlock;
+                node->fOffsetSliceLow  = (UInt32) root->fStartBlock;
                 node->fOffsetSliceHigh = 0UL;
               }
 
-              auto offset = kHeFSBlockLen;
-
-              SizeT cnt = 0ULL;
-
-              while (cnt < kHeFSSliceCount) {
-                node->fSlices[cnt].fBase   = offset;
-                node->fSlices[cnt].fLength = kHeFSBlockLen;
-                offset += kHeFSBlockLen;
-
-                ++cnt;
-              }
+              node->fChecksum = ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE));
 
               mnt->fPacket.fPacketLba     = lba;
               mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE);
@@ -832,10 +827,10 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   MUST_PASS(root->fSectorSize);
 
   /// @note all HeFS strucutres are equal to 512, so here it's fine, unless fSectoSize is 2048.
-  const SizeT max_lba = (mnt->fLbaEnd) / root->fSectorSize;
+  const SizeT max_lba = drv_std_get_size() / root->fSectorSize;
 
-  const SizeT dir_max   = max_lba / 30;  // 20% for directory inodes
-  const SizeT inode_max = max_lba / 60;  // 30% for inodes
+  const SizeT dir_max   = max_lba / 5;  // 20% for directory inodes
+  const SizeT inode_max = max_lba / 3;  // 30% for inodes
 
   root->fStartIND = mnt->fLbaStart + kHeFSINDStartOffset;
   root->fEndIND   = root->fStartIND + dir_max;
@@ -845,8 +840,6 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
 
   root->fStartBlock = root->fEndIN;
   root->fEndBlock   = drv_std_get_size();
-
-  constexpr const SizeT kHeFSPreallocateCount = 0x6UL;
 
   root->fINDCount = 0;
 
@@ -889,9 +882,10 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
 
   if (!mnt->fPacket.fPacketGood) {
     err_global_get() = kErrorDiskIsCorrupted;
-
     return NO;
   }
+
+  constexpr const SizeT kHeFSPreallocateCount = 0x6UL;
 
   const Utf8Char* kFileMap[kHeFSPreallocateCount] = {u8"/",        u8"/boot",    u8"/system",
                                                      u8"/network", u8"/devices", u8"/media"};
@@ -1135,7 +1129,7 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
   node->fSize     = 0;
   node->fKind     = kind;
   node->fFlags    = flags;
-  node->fChecksum = ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE));
+  node->fChecksum = 0;
   node->fGID      = 0;
   node->fUID      = 0;
   node->fHashPath = Detail::hefsi_hash_64(name);
@@ -1174,7 +1168,7 @@ Boolean fs_init_hefs(Void) {
   MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
                                u8"/boot", u8"ジェット警察.txt", kHeFSFileKindRegular));
 
-  Utf8Char contents_1[kHeFSBlockLen] = u8"ロケットにはジエットエンジン\r";
+  Utf8Char contents_1[kHeFSBlockLen] = {u8"ロケットにはジエットエンジン\r\0"};
 
   MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
                               kHeFSFileKindRegular, u8"ジェット警察.txt", NO));

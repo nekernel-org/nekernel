@@ -178,6 +178,7 @@ struct PACKED HEFS_INDEX_NODE final {
   UInt32 fOffsetSliceLow;
   UInt32 fOffsetSliceHigh;
 
+  ATTRIBUTE(deprecated)
   HEFS_SLICE_NODE fSlices[kHeFSSliceCount];  /// @brief block slice, unused as of current HeFS.
 
   Char fPad[309];
