@@ -800,8 +800,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   /// @note all HeFS strucutres are equal to 512, so here it's fine, unless fSectoSize is 2048.
   const SizeT max_lba = drv_std_get_size() / root->fSectorSize;
 
-  const SizeT dir_max   = max_lba / 5;  // 20% for directory inodes
-  const SizeT inode_max = max_lba / 3;  // 30% for inodes
+  const SizeT dir_max   = max_lba / 20;  // 20% for directory inodes
+  const SizeT inode_max = max_lba / 30;  // 30% for inodes
 
   root->fStartIND = mnt->fLbaStart + kHeFSINDStartOffset;
   root->fEndIND   = root->fStartIND + dir_max;
@@ -954,7 +954,7 @@ _Output Bool HeFileSystemParser::CreateINode(_Input DriveTrait* mnt, _Input cons
 
 _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr block, SizeT block_sz,
                                             const Utf8Char* dir, const Utf8Char* name,
-                                            const UInt8 kind, const BOOL in) {
+                                            const UInt8 kind, const BOOL is_input) {
   if (urt_string_len(dir) > kHeFSFileNameLen) {
     err_global_get() = kErrorDisk;
     return NO;
@@ -999,7 +999,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
       mnt->fPacket.fPacketSize    = block_sz;
       mnt->fPacket.fPacketContent = block;
 
-      if (in) {
+      if (is_input) {
         mnt->fInput(mnt->fPacket);
       } else {
         mnt->fOutput(mnt->fPacket);
@@ -1137,7 +1137,26 @@ Boolean fs_init_hefs(Void) {
   MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot", u8"bootinfo.cfg",
                               kHeFSFileKindRegular, YES));
 
-  kout8 << contents_1 << kendl8;
+  if (*contents_1 != u'\0') {
+    (Void)(kout << "/boot/bootinfo.cfg:" << kendl);
+    (Void)(kout8 << contents_1 << kendl8);
+  } else {
+    auto src =
+      u8"[boot]\r"
+      u8"path=bootz.efi\r"
+      u8"name=BootZ\r"
+      u8"[kernel]\r"
+      u8"path=krnl.efi\r"
+      u8"name=NeKernel\r"
+      u8"[chk]\r"
+      u8"path=chk.efi\r"
+      u8"name=SysChk\r";
+    
+    urt_copy_memory((VoidPtr) src, contents_1, urt_string_len(src));
+    
+    MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
+                                u8"bootinfo.cfg", kHeFSFileKindRegular, NO));
+  }
 
   return YES;
 }

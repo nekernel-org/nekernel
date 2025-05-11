@@ -10,7 +10,7 @@ namespace Kernel {
 Size urt_string_len(const Utf8Char* str) {
   SizeT len{0};
 
-  while (str[len] != u'\0') ++len;
+  while (str[len] != u8'\0') ++len;
 
   return len;
 }

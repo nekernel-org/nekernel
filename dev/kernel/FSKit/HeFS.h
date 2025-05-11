@@ -25,7 +25,7 @@
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (128U)
 
-#define kHeFSMinimumDiskSize (gib_cast(1))
+#define kHeFSMinimumDiskSize (gib_cast(8))
 
 #define kHeFSDefaultVolumeName u8"HeFS Volume"
 
@@ -38,7 +38,6 @@ struct HEFS_BOOT_NODE;
 struct HEFS_INDEX_NODE;
 struct HEFS_INDEX_NODE_DIRECTORY;
 struct HEFS_JOURNAL_NODE;
-struct HEFS_SLICE_NODE;
 
 enum : UInt8 {
   kHeFSHardDrive         = 0xC0,  // Hard Drive
@@ -135,12 +134,6 @@ struct PACKED HEFS_BOOT_NODE final {
 inline constexpr ATime kHeFSTimeInvalid = 0x0000000000000000;
 inline constexpr ATime kHeFSTimeMax     = 0xFFFFFFFFFFFFFFFF - 1;
 
-/// @brief INode Slice structure, organized like a range container.
-struct PACKED HEFS_SLICE_NODE {
-  UInt32 fBase;
-  UInt32 fLength;
-};
-
 /// @brief Journal Node structure
 /// @param fHashPath target hash path
 /// @param fStatus target status
@@ -178,10 +171,7 @@ struct PACKED HEFS_INDEX_NODE final {
   UInt32 fOffsetSliceLow;
   UInt32 fOffsetSliceHigh;
 
-  ATTRIBUTE(deprecated)
-  HEFS_SLICE_NODE fSlices[kHeFSSliceCount];  /// @brief block slice, unused as of current HeFS.
-
-  Char fPad[309];
+  Char fPad[437];
 };
 
 enum {
