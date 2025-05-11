@@ -128,7 +128,8 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
   if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
     Kernel::kout << "Kernel: SIGTRAP\r";
 
-    while (YES);
+    while (YES)
+      ;
   }
 
   kIsScheduling = NO;

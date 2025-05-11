@@ -46,7 +46,7 @@ class DMAWrapper final {
   T* Get(UIntPtr off = 0);
 
  public:
-  operator bool();
+       operator bool();
   bool operator!();
 
  public:

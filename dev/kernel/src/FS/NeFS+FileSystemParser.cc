@@ -150,8 +150,8 @@ _Output BOOL NeFileSystemParser::CreateFork(_Input NEFS_FORK_STRUCT& the_fork) {
 /// @return the newly found fork.
 /***********************************************************************************/
 _Output NEFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NEFS_CATALOG_STRUCT* catalog,
-                                                       _Input const Char*          name,
-                                                       _Input Boolean              is_data) {
+                                                       _Input const Char* name,
+                                                       _Input Boolean     is_data) {
   auto&             drive    = kMountpoint.A();
   NEFS_FORK_STRUCT* the_fork = nullptr;
 
@@ -209,7 +209,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 /// @param kind the catalog kind.
 /// @return catalog pointer.
 /***********************************************************************************/
-_Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char*  name,
+_Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char* name,
                                                                _Input const Int32& flags,
                                                                _Input const Int32& kind) {
   kout << "CreateCatalog(*...*)\r";

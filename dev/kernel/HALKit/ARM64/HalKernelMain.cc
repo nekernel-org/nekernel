@@ -62,7 +62,8 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
       team_index = 0U;
     }
 
-    while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]));
+    while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]))
+      ;
 
     timer.Wait();
 

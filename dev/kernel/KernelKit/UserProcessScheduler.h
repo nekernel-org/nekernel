@@ -215,7 +215,7 @@ class UserProcessScheduler final : public ISchedulable {
   NE_COPY_DELETE(UserProcessScheduler)
   NE_MOVE_DELETE(UserProcessScheduler)
 
-  operator bool();
+       operator bool();
   bool operator!();
 
  public:

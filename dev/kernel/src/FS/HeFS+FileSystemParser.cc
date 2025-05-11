@@ -470,6 +470,16 @@ namespace Detail {
           (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
       while (YES) {
+        if (err_global_get() == kErrorDiskIsCorrupted) {
+          delete dir;
+          dir = nullptr;
+
+          delete node;
+          node = nullptr;
+
+          return nullptr;
+        }
+
         mnt->fPacket.fPacketLba     = start;
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
         mnt->fPacket.fPacketContent = dir;
@@ -491,12 +501,16 @@ namespace Detail {
             (Void)(kout << hex_number(node->fHashPath) << kendl);
 
             if (hefsi_hash_64(file_name) == node->fHashPath && node->fKind == kind) {
+              delete dir;
+              dir = nullptr;
+
               return node;
             }
           }
         }
 
         hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
+        if (start == root->fStartIND || start == 0) break;
       }
 
       delete node;
@@ -800,8 +814,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   /// @note all HeFS strucutres are equal to 512, so here it's fine, unless fSectoSize is 2048.
   const SizeT max_lba = drv_std_get_size() / root->fSectorSize;
 
-  const SizeT dir_max   = max_lba / 20;  // 20% for directory inodes
-  const SizeT inode_max = max_lba / 30;  // 30% for inodes
+  const SizeT dir_max   = max_lba / 5;  // 5% for directory inodes
+  const SizeT inode_max = max_lba / 5;  // 5% for inodes
 
   root->fStartIND = mnt->fLbaStart + kHeFSINDStartOffset;
   root->fEndIND   = root->fStartIND + dir_max;
@@ -995,13 +1009,29 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     (Void)(kout << hex_number(start->fOffsetSliceLow) << kendl);
 
     if (start->fOffsetSliceLow) {
-      mnt->fPacket.fPacketLba     = start->fOffsetSliceLow | (UInt64) start->fOffsetSliceHigh << 32;
-      mnt->fPacket.fPacketSize    = block_sz;
+      mnt->fPacket.fPacketLba  = ((UInt64) start->fOffsetSliceHigh << 32) | start->fOffsetSliceLow;
+      mnt->fPacket.fPacketSize = block_sz;
       mnt->fPacket.fPacketContent = block;
+
+      if (mnt->fPacket.fPacketLba > root->fEndBlock) {
+        kout << "Error: Filesystem is full.\r";
+        mm_delete_heap((VoidPtr) root);
+        delete start;
+        return NO;
+      }
 
       if (is_input) {
         mnt->fInput(mnt->fPacket);
       } else {
+        if (start->fFlags & kHeFSFlagsReadOnly) {
+          mm_delete_heap((VoidPtr) root);
+          delete start;
+
+          kout << "Error: File is read-only\r";
+
+          return NO;
+        }
+
         mnt->fOutput(mnt->fPacket);
       }
     }
@@ -1127,35 +1157,47 @@ Boolean fs_init_hefs(Void) {
 
   parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVolumeName);
 
-  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsBinary | kHeFSFlagsReadOnly,
-                               u8"/boot", u8"bootinfo.cfg", kHeFSFileKindRegular));
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsUTF8, u8"/boot", u8"bootinfo.cfg~0",
+                               kHeFSFileKindRegular));
+
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsUTF8, u8"/boot", u8"bootinfo.cfg~1",
+                               kHeFSFileKindRegular));
+
+  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsUTF8, u8"/boot", u8"bootinfo.cfg~2",
+                               kHeFSFileKindRegular));
 
   Utf8Char contents_1[kHeFSBlockLen] = {0};
 
   urt_set_memory(contents_1, 0, kHeFSBlockLen);
 
-  MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot", u8"bootinfo.cfg",
-                              kHeFSFileKindRegular, YES));
+  MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
+                              u8"bootinfo.cfg~0", kHeFSFileKindRegular, YES));
 
   if (*contents_1 != u'\0') {
-    (Void)(kout << "/boot/bootinfo.cfg:" << kendl);
+    (Void)(kout << "/boot/bootinfo.cfg~0:" << kendl);
     (Void)(kout8 << contents_1 << kendl8);
+
+    MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
+                                u8"bootinfo.cfg~1", kHeFSFileKindRegular, YES));
+
+    MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
+                                u8"bootinfo.cfg~2", kHeFSFileKindRegular, YES));
   } else {
     auto src =
-      u8"[boot]\r"
-      u8"path=bootz.efi\r"
-      u8"name=BootZ\r"
-      u8"[kernel]\r"
-      u8"path=krnl.efi\r"
-      u8"name=NeKernel\r"
-      u8"[chk]\r"
-      u8"path=chk.efi\r"
-      u8"name=SysChk\r";
-    
+        u8"[boot]\r"
+        u8"path=bootz.efi\r"
+        u8"name=BootZ\r"
+        u8"[kernel]\r"
+        u8"path=krnl.efi\r"
+        u8"name=NeKernel\r"
+        u8"[chk]\r"
+        u8"path=chk.efi\r"
+        u8"name=SysChk\r";
+
     urt_copy_memory((VoidPtr) src, contents_1, urt_string_len(src));
-    
+
     MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
-                                u8"bootinfo.cfg", kHeFSFileKindRegular, NO));
+                                u8"bootinfo.cfg~0", kHeFSFileKindRegular, NO));
   }
 
   return YES;

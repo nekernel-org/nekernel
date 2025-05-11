@@ -39,7 +39,8 @@ namespace Detail {
   STATIC BOOL kGICEnabled = NO;
 
   STATIC void mp_hang_fn(void) {
-    while (YES);
+    while (YES)
+      ;
 
     dbg_break_point();
   }

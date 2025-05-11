@@ -27,6 +27,6 @@ class PowerFactory {
 
  public:
   Bool Shutdown() { return NO; };  // shutdown
-  Void Reboot() {};                // soft-reboot
+  Void Reboot(){};                 // soft-reboot
 };
 }  // namespace Kernel
