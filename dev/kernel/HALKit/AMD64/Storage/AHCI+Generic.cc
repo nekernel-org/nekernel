@@ -306,13 +306,13 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   @brief Gets the number of sectors inside the drive.
   @return Sector size in bytes.
  */
-STATIC SizeT drv_get_sector_count_ahci() {
+STATIC ATTRIBUTE(unused) SizeT drv_get_sector_count_ahci() {
   return kSATASectorCount;
 }
 
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
-STATIC SizeT drv_get_size_ahci() {
+STATIC ATTRIBUTE(unused) SizeT drv_get_size_ahci() {
   return drv_std_get_sector_count() * kAHCISectorSize;
 }
 
