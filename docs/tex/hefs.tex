@@ -111,7 +111,7 @@ Contains file metadata and block layout.
   \item \texttt{fSymLink} - if set, \texttt{fHashPath} represents the symlink target
   \item Time: \texttt{fCreated}, \texttt{fAccessed}, \texttt{fModified}, \texttt{fDeleted}
   \item Ownership: \texttt{fUID}, \texttt{fGID}, \texttt{fMode}
-  \item Block data: \texttt{fOffsetSliceLow}, \texttt{fSlices[kHeFSSliceCount]} as (base, length) pairs
+  \item Block data: \texttt{fOffsetSliceLow}, \texttt{fOffsetSliceHigh}
 \end{itemize}
 
 \subsection{HEFS\_INDEX\_NODE\_DIRECTORY}\label{subsec:hefs_index_node_directory}
@@ -121,7 +121,14 @@ Red-black tree based directory node.
   \item \texttt{fHashPath}, \texttt{fFlags}, \texttt{fKind}, \texttt{fEntryCount}, \texttt{fChecksum}
   \item Time and ownership same as inode
   \item \texttt{fINSlices[kHeFSSliceCount]} for storing child inode links
-  \item Tree links: \texttt{fColor}, \texttt{fNext}, \texttt{fPrev}, \texttt{fChild}, \texttt{fParent}
+\item RB-Tree Fields:
+\begin{itemize}
+  \item \texttt{fColor}: Red or Black
+  \item \texttt{fNext}/\texttt{fPrev}: Sibling pointers
+  \item \texttt{fChild}: Left or right child (implementation-defined)
+  \item \texttt{fParent}: Parent node
+\end{itemize}
+
 \end{itemize}
 
 \section{Timestamp Layout (ATime)}\label{sec:timestamp-layout-(atime)}
