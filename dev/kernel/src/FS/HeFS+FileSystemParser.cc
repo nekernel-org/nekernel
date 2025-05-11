@@ -489,6 +489,8 @@ namespace Detail {
         (Void)(kout << hex_number(hefsi_hash_64(dir_name)) << kendl);
         (Void)(kout << hex_number(dir->fHashPath) << kendl);
 
+        if (dir->fHashPath == 0) break;
+
         if (hefsi_hash_64(dir_name) == dir->fHashPath) {
           for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; ++inode_index) {
             mnt->fPacket.fPacketLba     = dir->fINSlices[inode_index];
@@ -510,7 +512,7 @@ namespace Detail {
         }
 
         hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
-        if (start == root->fStartIND || start == 0) break;
+        if (start == root->fStartIND || start == root->fStartIND) break;
       }
 
       delete node;
@@ -536,6 +538,8 @@ namespace Detail {
 
     if (start > root->fEndIND) return NO;
     if (root->fStartIN > root->fEndIN) return NO;
+    ;
+    if (root->fStartBlock > root->fEndBlock) return NO;
 
     if (mnt) {
       HEFS_INDEX_NODE_DIRECTORY* dir =
@@ -754,8 +758,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   }
 
   if (drv_std_get_size() < kHeFSMinimumDiskSize) {
-    err_global_get() = kErrorDiskIsTooTiny;
-    kout << "Error: Failed to allocate memory for boot node->\r";
+    kout << "HeFS requires at least 128 GiB." << kendl;
+    err_global_get() = kErrorDisk;
     return NO;
   }
 
@@ -812,10 +816,10 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   MUST_PASS(root->fSectorSize);
 
   /// @note all HeFS strucutres are equal to 512, so here it's fine, unless fSectoSize is 2048.
-  const SizeT max_lba = drv_std_get_size() / root->fSectorSize;
+  const SizeT max_lba = (drv_std_get_size()) / root->fSectorSize;
 
-  const SizeT dir_max   = max_lba / 5;  // 5% for directory inodes
-  const SizeT inode_max = max_lba / 5;  // 5% for inodes
+  const SizeT dir_max   = max_lba / 300;  // 5% for directory inodes
+  const SizeT inode_max = max_lba / 400;  // 5% for inodes
 
   root->fStartIND = mnt->fLbaStart + kHeFSINDStartOffset;
   root->fEndIND   = root->fStartIND + dir_max;
@@ -1008,17 +1012,10 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     (Void)(kout << hex_number(start->fHashPath) << kendl);
     (Void)(kout << hex_number(start->fOffsetSliceLow) << kendl);
 
-    if (start->fOffsetSliceLow) {
+    if (start->fOffsetSliceLow && start->fHashPath) {
       mnt->fPacket.fPacketLba  = ((UInt64) start->fOffsetSliceHigh << 32) | start->fOffsetSliceLow;
       mnt->fPacket.fPacketSize = block_sz;
       mnt->fPacket.fPacketContent = block;
-
-      if (mnt->fPacket.fPacketLba > root->fEndBlock) {
-        kout << "Error: Filesystem is full.\r";
-        mm_delete_heap((VoidPtr) root);
-        delete start;
-        return NO;
-      }
 
       if (is_input) {
         mnt->fInput(mnt->fPacket);
@@ -1156,49 +1153,6 @@ Boolean fs_init_hefs(Void) {
   HeFileSystemParser parser;
 
   parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVolumeName);
-
-  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsUTF8, u8"/boot", u8"bootinfo.cfg~0",
-                               kHeFSFileKindRegular));
-
-  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsUTF8, u8"/boot", u8"bootinfo.cfg~1",
-                               kHeFSFileKindRegular));
-
-  MUST_PASS(parser.CreateINode(&kMountPoint, kHeFSEncodingFlagsUTF8, u8"/boot", u8"bootinfo.cfg~2",
-                               kHeFSFileKindRegular));
-
-  Utf8Char contents_1[kHeFSBlockLen] = {0};
-
-  urt_set_memory(contents_1, 0, kHeFSBlockLen);
-
-  MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
-                              u8"bootinfo.cfg~0", kHeFSFileKindRegular, YES));
-
-  if (*contents_1 != u'\0') {
-    (Void)(kout << "/boot/bootinfo.cfg~0:" << kendl);
-    (Void)(kout8 << contents_1 << kendl8);
-
-    MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
-                                u8"bootinfo.cfg~1", kHeFSFileKindRegular, YES));
-
-    MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
-                                u8"bootinfo.cfg~2", kHeFSFileKindRegular, YES));
-  } else {
-    auto src =
-        u8"[boot]\r"
-        u8"path=bootz.efi\r"
-        u8"name=BootZ\r"
-        u8"[kernel]\r"
-        u8"path=krnl.efi\r"
-        u8"name=NeKernel\r"
-        u8"[chk]\r"
-        u8"path=chk.efi\r"
-        u8"name=SysChk\r";
-
-    urt_copy_memory((VoidPtr) src, contents_1, urt_string_len(src));
-
-    MUST_PASS(parser.INodeManip(&kMountPoint, contents_1, kHeFSBlockLen, u8"/boot",
-                                u8"bootinfo.cfg~0", kHeFSFileKindRegular, NO));
-  }
 
   return YES;
 }
