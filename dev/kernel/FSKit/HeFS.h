@@ -25,7 +25,7 @@
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (128U)
 
-#define kHeFSMinimumDiskSize (gib_cast(8))
+#define kHeFSMinimumDiskSize (gib_cast(128))
 
 #define kHeFSDefaultVolumeName u8"HeFS Volume"
 
