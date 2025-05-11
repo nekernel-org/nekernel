@@ -8,7 +8,7 @@
 #define INC_PROCESS_SCHEDULER_H
 
 /// @file UserProcessScheduler.h
-/// @brief User USER_PROCESS scheduler code and definitions.
+/// @brief User Process Scheduler header file.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 
 #include <ArchKit/ArchKit.h>

@@ -2,16 +2,16 @@
 
   Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 
-  FILE: KernelProcessScheduler.cc
-  PURPOSE: Privileged/Ring-0 process scheduler.
+  FILE: KernelTaskScheduler.cc
+  PURPOSE: Kernel Task scheduler.
 
 ------------------------------------------- */
 
-#include <KernelKit/ProcessScheduler.h>
+#include <KernelKit/KernelTaskScheduler.h>
 
 /***********************************************************************************/
-/// @file KernelProcessScheduler.cc
-/// @brief Privileged/Ring-0 process scheduler.
+/// @file KernelTaskScheduler.cc
+/// @brief Kernel Task scheduler.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 

@@ -62,7 +62,7 @@ Kernel::SizeT Boot::BSetMem(CharacterTypeUTF16* src, const CharacterTypeUTF16 by
   return cnt;
 }
 
-Kernel::SizeT Boot::BSetMem(CharacterTypeUTF8* src, const CharacterTypeUTF8 byte,
+Kernel::SizeT Boot::BSetMem(CharacterTypeASCII* src, const CharacterTypeASCII byte,
                             const Kernel::SizeT len) {
   if (!src) return 0;
 

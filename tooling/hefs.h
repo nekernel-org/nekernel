@@ -16,7 +16,7 @@
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (128U)
 
-#define kHeFSDefaultVoluneName u8"HeFS Volume"
+#define kHeFSDefaultVolumeName u8"HeFS Volume"
 
 namespace mkfs::hefs {
 
@@ -102,8 +102,8 @@ struct __attribute__((packed)) BootNode {
   std::uint16_t vid{};
   std::uint64_t startIN{};
   std::uint64_t endIN{};
-  std::uint64_t reserved3{};
-  std::uint64_t reserved4{};
+  std::uint64_t startBlock{};
+  std::uint64_t endBlock{};
   char          pad[272]{};
 };
 }  // namespace mkfs::hefs

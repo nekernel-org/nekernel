@@ -12,7 +12,7 @@ namespace Kernel {
 /// @brief Unlocks the binary mutex.
 /***********************************************************************************/
 Bool BinaryMutex::Unlock() noexcept {
-  if (fLockingProcess) {
+  if (fLockingProcess.Status == ProcessStatusKind::kRunning) {
     fLockingProcess        = USER_PROCESS();
     fLockingProcess.Status = ProcessStatusKind::kFrozen;
 

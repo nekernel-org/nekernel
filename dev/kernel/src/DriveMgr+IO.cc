@@ -17,10 +17,10 @@
  *
  *************************************************************/
 
-/// Useful macros.
+/// Useful macros regarding the IFS.
 
-#define rtl_nefs_write(DRV, TRAITS, MP) (MP->DRV()).fOutput(TRAITS)
-#define rtl_nefs_read(DRV, TRAITS, MP) (MP->DRV()).fInput(TRAITS)
+#define fsi_ifs_write(DRV, TRAITS, MP) (MP->DRV()).fOutput(TRAITS)
+#define fsi_ifs_read(DRV, TRAITS, MP) (MP->DRV()).fInput(TRAITS)
 
 namespace Kernel {
 /// @brief Read from newfs disk.
@@ -35,19 +35,19 @@ Int32 fs_ifs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex
 
   switch (DrvIndex) {
     case MountpointInterface::kDriveIndexA: {
-      rtl_nefs_read(A, DrvTrait.fPacket, Mnt);
+      fsi_ifs_read(A, DrvTrait.fPacket, Mnt);
       break;
     }
     case MountpointInterface::kDriveIndexB: {
-      rtl_nefs_read(B, DrvTrait.fPacket, Mnt);
+      fsi_ifs_read(B, DrvTrait.fPacket, Mnt);
       break;
     }
     case MountpointInterface::kDriveIndexC: {
-      rtl_nefs_read(C, DrvTrait.fPacket, Mnt);
+      fsi_ifs_read(C, DrvTrait.fPacket, Mnt);
       break;
     }
     case MountpointInterface::kDriveIndexD: {
-      rtl_nefs_read(D, DrvTrait.fPacket, Mnt);
+      fsi_ifs_read(D, DrvTrait.fPacket, Mnt);
       break;
     }
   }
@@ -67,19 +67,19 @@ Int32 fs_ifs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInde
 
   switch (DrvIndex) {
     case MountpointInterface::kDriveIndexA: {
-      rtl_nefs_write(A, DrvTrait.fPacket, Mnt);
+      fsi_ifs_write(A, DrvTrait.fPacket, Mnt);
       break;
     }
     case MountpointInterface::kDriveIndexB: {
-      rtl_nefs_write(B, DrvTrait.fPacket, Mnt);
+      fsi_ifs_write(B, DrvTrait.fPacket, Mnt);
       break;
     }
     case MountpointInterface::kDriveIndexC: {
-      rtl_nefs_write(C, DrvTrait.fPacket, Mnt);
+      fsi_ifs_write(C, DrvTrait.fPacket, Mnt);
       break;
     }
     case MountpointInterface::kDriveIndexD: {
-      rtl_nefs_write(D, DrvTrait.fPacket, Mnt);
+      fsi_ifs_write(D, DrvTrait.fPacket, Mnt);
       break;
     }
   }

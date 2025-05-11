@@ -131,7 +131,7 @@ run-efi-amd64-ata: run-efi-amd64-ata-dma
 # img_2 is the rescue disk. img is the bootable disk, as provided by the NeKernel specs.
 .PHONY: epm-img
 epm-img:
-	qemu-img create -f raw $(IMG) 1G
+	qemu-img create -f raw $(IMG) 8G
 
 .PHONY: efi
 efi:

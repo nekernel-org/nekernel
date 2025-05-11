@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <FirmwareKit/EPM.h>
 #include <FirmwareKit/GPT.h>
+#include <FirmwareKit/VEPM.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/DriveMgr.h>
 #include <NewKit/Utils.h>

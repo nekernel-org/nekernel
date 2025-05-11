@@ -39,7 +39,7 @@ enum {
 };
 
 /// @brief MBCI Host header.
-struct PACKED IMBCIHost final {
+volatile struct PACKED IMBCIHost final {
   UInt32 Magic;
   UInt32 HostId;
   UInt16 VendorId;
@@ -96,27 +96,30 @@ enum MBCIHostState {
 /// @brief An AuthKey is a context used to tokenize data for an MBCI packet.
 typedef UInt32 MBCIAuthKeyType;
 
+/// @internal
+inline BOOL busi_test_mmio(_Input struct IMBCIHost* host, _Input const UInt32 test) {
+  host->MMIOTest = test;
+  UInt16 timeout = 0UL;
+
+  while (host->MMIOTest == test) {
+    ++timeout;
+
+    if (timeout > 0x1000) return NO;
+  }
+
+  return host->MMIOTest == 0;
+}
+
 /// @brief Read Auth key for MBCI host.
 /// @param host the mbci host to get the key on.
 /// @return the 24-bit key.
-inline MBCIAuthKeyType mbci_read_auth_key(_Input volatile struct IMBCIHost* host) {
-  constexpr auto const kChallengeMBCI = 0xdeadbeef;
+inline MBCIAuthKeyType mbci_read_auth_key(_Input struct IMBCIHost* host) {
+  auto const kChallengeMBCI = 0x1;  // MBCI Challenge test
 
-  host->MMIOTest = kChallengeMBCI;
+  if (!busi_test_mmio(host, kChallengeMBCI)) return ~0;
 
-  if (host->MMIOTest == kChallengeMBCI) {
-    return (host->Esb[kMBCIESBSz - 1] << 16) | (host->Esb[kMBCIESBSz - 2] << 8) |
-           (host->Esb[kMBCIESBSz - 3] & 0xFF);
-  }
-
-  return kChallengeMBCI;
-}
-
-inline BOOL mbci_test_mmio(_Input volatile struct IMBCIHost* host) {
-  constexpr auto const kChallengeMBCI = 0xdeadbeef;
-
-  host->MMIOTest = kChallengeMBCI;
-  return host->MMIOTest == kChallengeMBCI;
+  return (host->Esb[kMBCIESBSz - 1] << 16) | (host->Esb[kMBCIESBSz - 2] << 8) |
+         (host->Esb[kMBCIESBSz - 3] & 0xFF);
 }
 }  // namespace Kernel
 

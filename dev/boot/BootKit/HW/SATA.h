@@ -10,6 +10,8 @@
 #include <CompilerKit/CompilerKit.h>
 #include <modules/AHCI/AHCI.h>
 
+#define kAHCISectorSz (4096)
+
 class BootDeviceSATA final {
  public:
   explicit BootDeviceSATA() noexcept;
@@ -32,13 +34,11 @@ class BootDeviceSATA final {
 
   constexpr static auto kSectorSize = kAHCISectorSize;
 
-  BootDeviceSATA& Read(Boot::CharacterTypeUTF8* Buf, const Kernel::SizeT SecCount);
-  BootDeviceSATA& Write(Boot::CharacterTypeUTF8* Buf, const Kernel::SizeT SecCount);
+  BootDeviceSATA& Read(Boot::CharacterTypeASCII* Buf, const Kernel::SizeT SecCount);
+  BootDeviceSATA& Write(Boot::CharacterTypeASCII* Buf, const Kernel::SizeT SecCount);
 
   SATATrait& Leak();
 
  private:
   SATATrait mTrait;
 };
-
-#define kAHCISectorSz 4096

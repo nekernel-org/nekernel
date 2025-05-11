@@ -6,5 +6,5 @@
 
 #pragma once
 
-#include <KernelKit/KernelProcessScheduler.h>
+#include <KernelKit/KernelTaskScheduler.h>
 #include <KernelKit/UserProcessScheduler.h>

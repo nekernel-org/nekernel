@@ -17,11 +17,6 @@
 #include <modules/CoreGfx/CoreGfx.h>
 #include <modules/CoreGfx/TextGfx.h>
 
-// Makes the compiler shut up.
-#ifndef kMachineModel
-#define kMachineModel "OS"
-#endif  // !kMachineModel
-
 /** Graphics related. */
 
 STATIC EfiGraphicsOutputProtocol* kGop       = nullptr;
@@ -136,14 +131,14 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   Int32 trials = 5 * 10000000;
 
   writer.Write("BootZ: Welcome to BootZ.\r");
-  writer.Write("BootZ: Allocating sufficent memory, trying 4GB...\r");
+  writer.Write("BootZ: Allocating sufficient memory, trying 4GB...\r");
 
   while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize,
                           &handover_hdr->f_BitMapStart) != kEfiOk) {
     --trials;
 
     if (!trials) {
-      writer.Write("BootZ: Unable to allocate sufficent memory, trying again with 2GB...\r");
+      writer.Write("BootZ: Unable to allocate sufficient memory, trying again with 2GB...\r");
 
       trials = 3 * 10000000;
 

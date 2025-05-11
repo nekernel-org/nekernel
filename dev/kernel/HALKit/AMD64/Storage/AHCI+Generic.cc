@@ -71,6 +71,10 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept;
 
 STATIC Void drv_compute_disk_ahci() noexcept;
 
+STATIC SizeT drv_get_size_ahci();
+
+STATIC SizeT drv_get_sector_count_ahci();
+
 /***********************************************************************************/
 /// @brief Identify device and read LBA info, Disk OEM vendor.
 /***********************************************************************************/
@@ -132,14 +136,13 @@ STATIC Int32 drv_find_cmd_slot_ahci(HbaPort* port) noexcept {
 template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz,
                                       SizeT size_buffer) noexcept {
-  NE_UNUSED(sector_sz);
-
-  lba /= sector_sz;
-
-  if (lba > kSATASectorCount) {
+  if (sector_sz == 0) {
+    kout << "Invalid sector size.\r";
     err_global_get() = kErrorDisk;
     return;
   }
+
+  lba /= sector_sz;
 
   if (!buffer || size_buffer == 0) {
     kout << "Invalid buffer for AHCI I/O.\r";
@@ -149,10 +152,20 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   UIntPtr slot = drv_find_cmd_slot_ahci(&kSATAHba->Ports[kSATAIndex]);
 
-  if (slot == ~0UL) {
-    kout << "No free command slot!\r";
-    err_global_get() = kErrorDisk;
-    return;
+  UInt16 timeout = 0;
+
+  constexpr static UInt16 kTimeout = 0x8000;
+
+  while (slot == ~0UL) {
+    if (timeout > kTimeout) {
+      kout << "No free command slot found, AHCI disk is busy!\r";
+
+      err_global_get() = kErrorDisk;
+      return;
+    }
+
+    slot = drv_find_cmd_slot_ahci(&kSATAHba->Ports[kSATAIndex]);
+    ++timeout;
   }
 
   volatile HbaCmdHeader* command_header =
@@ -165,9 +178,12 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   // Clear old command table memory
   volatile HbaCmdTbl* command_table =
       (volatile HbaCmdTbl*) (((UInt64) command_header->Ctbau << 32) | command_header->Ctba);
+
+  MUST_PASS(command_table);
+
   rt_set_memory((VoidPtr) command_table, 0, sizeof(HbaCmdTbl));
 
-  VoidPtr ptr = rtl_dma_alloc(size_buffer, 4096);
+  VoidPtr ptr = rtl_dma_alloc(size_buffer, kib_cast(4));
 
   rtl_dma_flush(ptr, size_buffer);
 
@@ -177,7 +193,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   rtl_dma_flush(ptr, size_buffer);
 
-  // Build the PRDT
+  // Build the PRD table.
   SizeT   bytes_remaining = size_buffer;
   SizeT   prdt_index      = 0;
   UIntPtr buffer_phys     = (UIntPtr) ptr;
@@ -198,11 +214,13 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
     ++prdt_index;
   }
 
+  // Mark the last PRD entry, for the FIS to process the table.
   command_table->Prdt[prdt_index - 1].Ie = YES;
 
   if (bytes_remaining > 0) {
     kout << "Warning: AHCI PRDT overflow, cannot map full buffer.\r";
     err_global_get() = kErrorDisk;
+    rtl_dma_free(size_buffer);
 
     return;
   }
@@ -241,7 +259,17 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   // Issue command
   kSATAHba->Ports[kSATAIndex].Ci = (1 << slot);
 
+  timeout = 0UL;
+
   while (YES) {
+    if (timeout > kTimeout) {
+      kout << "Disk hangup!\r";
+      kSATAHba->Ports[kSATAIndex].Ci = 0;
+      return;
+    }
+
+    ++timeout;
+
     if (!(kSATAHba->Ports[kSATAIndex].Ci & (1 << slot))) break;
   }
 
@@ -270,7 +298,6 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   ahci_io_end:
     rtl_dma_free(size_buffer);
-
     err_global_get() = kErrorSuccess;
   }
 }
@@ -279,13 +306,13 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   @brief Gets the number of sectors inside the drive.
   @return Sector size in bytes.
  */
-SizeT drv_get_sector_count_ahci() {
+STATIC ATTRIBUTE(unused) SizeT drv_get_sector_count_ahci() {
   return kSATASectorCount;
 }
 
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
-SizeT drv_get_size_ahci() {
+STATIC ATTRIBUTE(unused) SizeT drv_get_size_ahci() {
   return drv_std_get_sector_count() * kAHCISectorSize;
 }
 

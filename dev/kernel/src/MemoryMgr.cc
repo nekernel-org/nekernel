@@ -219,7 +219,7 @@ _Output Int32 mm_delete_heap(VoidPtr heap_ptr) {
     heap_info_ptr->fMagic     = 0;
     heap_info_ptr->fPad       = 0;
 
-    (Void)(kout << "Address has been successfully freed: " << hex_number((UIntPtr) heap_info_ptr)
+    (Void)(kout << "Freed heap address: " << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr))
                 << kendl);
 
     PTEWrapper page_wrapper(

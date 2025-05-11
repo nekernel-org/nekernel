@@ -5,11 +5,16 @@
 ------------------------------------------- */
 
 #include <tooling/hefs.h>
+#include <tooling/mkfs.h>
 #include <cstdlib>
 
 int main(int argc, char** argv) {
-  (void) (argc);
-  (void) (argv);
+  if (argc < 2) {
+    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs i <input_device>" << "\n";
+    return EXIT_FAILURE;
+  }
 
-  return EXIT_FAILURE;
+  (void) argv;
+
+  return EXIT_SUCCESS;
 }

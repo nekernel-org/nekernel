@@ -1,0 +1,117 @@
+
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{xcolor}
+\geometry{margin=1in}
+\title{MBCI: Mini Bus Controller Interface Specification}
+\author{Amlal El Mahrouss}
+\date{2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+The Mini Bus Controller Interface (MBCI) is a standardized memory-mapped I/O bus specification designed for use in embedded systems and operating system kernels. It provides an extensible framework for managing hardware devices via a shared bus using memory-mapped registers. It is designed to remain abstract and platform-agnostic, leaving platform-specific interrupt and address logic to the HAL.
+
+\section{Signal Lines}
+The MBCI bus interface includes the following signal lines:
+
+\begin{itemize}
+  \item \textbf{VCC} (IN) – Power supply (OUT for MCU)
+  \item \textbf{CLK} (IN) – Clock line (OUT for MCU)
+  \item \textbf{ACK} (BI) – Acknowledge line containing packet frame
+  \item \textbf{D0-, D1-} (IN) – Host interface packet input
+  \item \textbf{D0+, D1+} (OUT) – Host interface packet output
+  \item \textbf{GND} (IN) – Ground line (OUT for MCU)
+\end{itemize}
+
+\section{Host Structure}
+
+\subsection*{IMBCIHost Structure}
+
+\begin{lstlisting}[language=C++,basicstyle=\ttfamily\footnotesize]
+volatile struct IMBCIHost {
+  UInt32 Magic;
+  UInt32 HostId;
+  UInt16 VendorId;
+  UInt16 DeviceId;
+  UInt8  MemoryType;
+  UInt16 HostType;
+  UInt16 HostFlags;
+  UInt8  Error;
+  UInt32 MMIOTest;
+  UInt16 State;
+  UInt8  Status;
+  UInt8  InterruptEnable;
+  UInt64 BaseAddressRegister;
+  UInt64 BaseAddressRegisterSize;
+  UInt32 CommandIssue;
+  UInt8  Esb[64];  // Extended Signature Block
+  UInt8  Zero[8];
+};
+\end{lstlisting}
+
+\section{Enumerations}
+
+\subsection*{Device Speeds}
+\begin{itemize}
+  \item \texttt{kMBCISpeedDeviceInvalid}
+  \item \texttt{kMBCILowSpeedDevice}
+  \item \texttt{kMBCIHighSpeedDevice}
+\end{itemize}
+
+\subsection*{Host Flags}
+\begin{itemize}
+  \item \texttt{kMBCIHostFlagsSupportsNothing}
+  \item \texttt{kMBCIHostFlagsSupportsAPM}
+  \item \texttt{kMBCIHostFlagsSupportsDaisyChain}
+  \item \texttt{kMBCIHostFlagsSupportsHWInterrupts}
+  \item \texttt{kMBCIHostFlagsSupportsDMA}
+  \item \texttt{kMBCIHostFlagsExtended}
+\end{itemize}
+
+\subsection*{Host Types}
+\begin{itemize}
+  \item \texttt{kMBCIHostKindHardDisk}
+  \item \texttt{kMBCIHostKindOpticalDisk}
+  \item \texttt{kMBCIHostKindKeyboardLow}
+  \item \texttt{kMBCIHostKindMouseLow}
+  \item \texttt{kMBCIHostKindMouseHigh}
+  \item \texttt{kMBCIHostKindKeyboardHigh}
+  \item \texttt{kMBCIHostKindNetworkInterface}
+  \item \texttt{kMBCIHostKindDaisyChain}
+  \item \texttt{kMBCIHostKindStartExtended}
+\end{itemize}
+
+\subsection*{Host State}
+\begin{itemize}
+  \item \texttt{kMBCIHostStateInvalid}
+  \item \texttt{kMBCIHostStateReset}
+  \item \texttt{kMBCIHostStateSuccess}
+  \item \texttt{kMBCIHostStateReady}
+  \item \texttt{kMBCIHostStateDmaStart}
+  \item \texttt{kMBCIHostStateDmaEnd}
+  \item \texttt{kMBCIHostStateFail}
+  \item \texttt{kMBCIHostStateCount}
+\end{itemize}
+
+\section{Functions}
+
+\subsection*{MMIO Test}
+Tests if MMIO is accessible by writing and checking a challenge value. Times out if the bus does not respond.
+
+\begin{lstlisting}[language=C++,basicstyle=\ttfamily\footnotesize]
+inline BOOL busi_test_mmio(struct IMBCIHost* host, const UInt32 test);
+\end{lstlisting}
+
+\subsection*{Auth Key Reader}
+Reads the 24-bit auth key encoded in the last three bytes of the Extended Signature Block after verifying MMIO test success:
+
+\begin{lstlisting}[language=C++,basicstyle=\ttfamily\footnotesize]
+inline MBCIAuthKeyType mbci_read_auth_key(struct IMBCIHost* host);
+\end{lstlisting}
+
+\end{document}

@@ -13,7 +13,8 @@ def create_directory_structure(base_path, project_name):
                 ".keep": None
             },
             "src": {
-                ".keep": None
+                ".keep": None,
+                "CommandLine.cc": None,
             },
             "vendor": {
                 ".keep": None
@@ -40,7 +41,8 @@ def create_directory_structure(base_path, project_name):
     create_structure(base_path, structure)
 
     # Create the JSON file
-    diutil_json_path = os.path.join(base_path, project_name, f"{project_name}.json")
+    proj_json_path = os.path.join(base_path, project_name, f"{project_name}.json")
+
     manifest = {
         "compiler_path": "clang++",
         "compiler_std": "c++20",
@@ -57,8 +59,15 @@ def create_directory_structure(base_path, project_name):
         ]
     }
     
-    with open(diutil_json_path, 'w') as json_file:
+    with open(proj_json_path, 'w') as json_file:
         json.dump(manifest, json_file, indent=4)
+
+    proj_cpp_path = os.path.join(base_path, project_name, f"src/CommandLine.cc")
+
+    cpp_file = "#include <user/SystemCalls.h>\n\nSInt32 _NeMain(SInt32 argc, Char* argv[]) {\n\treturn EXIT_FAILURE;\n}"
+
+    with open(proj_cpp_path, 'w') as cpp_file_io:
+        cpp_file_io.write(cpp_file)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
