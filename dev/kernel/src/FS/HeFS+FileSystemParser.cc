@@ -758,7 +758,7 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   }
 
   if (drv_std_get_size() < kHeFSMinimumDiskSize) {
-    kout << "HeFS requires at least 128 GiB." << kendl;
+    (Void)(kout << "HeFS requires at least 128 GiB of free space." << kendl);
     err_global_get() = kErrorDisk;
     return NO;
   }
