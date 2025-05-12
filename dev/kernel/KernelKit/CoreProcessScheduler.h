@@ -9,9 +9,19 @@
 #include <NewKit/Defines.h>
 #include <NewKit/ErrorOr.h>
 
+#define kSchedMinMicroTime (AffinityKind::kStandard)
+#define kSchedInvalidPID (-1)
+#define kSchedProcessLimitPerTeam (32U)
+#define kSchedTeamCount (256U)
+
+#define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
+#define kSchedMaxStackSz mib_cast(8)       /* maximum stack size */
+
+#define kSchedNameLen (128U)
+
 namespace Kernel {
 class USER_PROCESS;
-class KERNEL_PROCESS;
+class KERNEL_TASK;
 class UserProcessTeam;
 
 /***********************************************************************************/
@@ -117,7 +127,8 @@ struct PROCESS_IMAGE final {
 
  private:
   friend USER_PROCESS;
-  friend KERNEL_PROCESS;
+  friend KERNEL_TASK;
+
   friend class UserProcessScheduler;
 
   ImagePtr fCode;

@@ -17,16 +17,6 @@
 #include <KernelKit/User.h>
 #include <NewKit/MutableArray.h>
 
-#define kSchedMinMicroTime (AffinityKind::kStandard)
-#define kSchedInvalidPID (-1)
-#define kSchedProcessLimitPerTeam (32U)
-#define kSchedTeamCount (256U)
-
-#define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
-#define kSchedMaxStackSz mib_cast(8)       /* maximum stack size */
-
-#define kSchedNameLen (128U)
-
 ////////////////////////////////////////////////////
 // Last revision date is: Fri Mar 28 2025		  //
 ////////////////////////////////////////////////////

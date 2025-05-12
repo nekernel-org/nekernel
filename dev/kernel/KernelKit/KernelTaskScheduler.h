@@ -13,3 +13,16 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/CoreProcessScheduler.h>
 #include <KernelKit/LockDelegate.h>
+
+namespace Kernel {
+struct KERNEL_TASK;
+
+struct KERNEL_TASK final {
+  Char               Name[kSchedNameLen] = {"KERNEL_TASK"};
+  ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
+  HAL::StackFramePtr StackFrame{nullptr};
+  UInt8*             StackReserve{nullptr};
+  SizeT              StackSize{kSchedMaxStackSz};
+  PROCESS_IMAGE      Image{};
+};
+}  // namespace Kernel
