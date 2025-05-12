@@ -46,7 +46,8 @@ EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UI
 
   NE_PAGE_STORE& page_store = NE_PAGE_STORE::The();
 
-  while (page_store.fStoreOp);
+  while (page_store.fStoreOp)
+    ;
 
   page_store.fStoreOp = Yes;
 

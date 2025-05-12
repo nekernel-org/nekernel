@@ -264,7 +264,9 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   while (YES) {
     if (timeout > kTimeout) {
       kout << "Disk hangup!\r";
-      kSATAHba->Ports[kSATAIndex].Ci = 0;
+      err_global_get() = kErrorDiskIsCorrupted;
+      rtl_dma_free(size_buffer);
+
       return;
     }
 
@@ -293,7 +295,8 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
       goto ahci_io_end;
     } else {
       kout << "Warning: Disk still busy after command completion!\r";
-      while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq));
+      while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq))
+        ;
     }
 
   ahci_io_end:

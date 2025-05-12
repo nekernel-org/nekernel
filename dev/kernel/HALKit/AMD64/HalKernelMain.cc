@@ -146,7 +146,8 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 
     kTeams[team_index].Id() = team_index;
 
-    while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]));
+    while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]))
+      ;
 
     timer.Wait();
 

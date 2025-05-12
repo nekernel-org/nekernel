@@ -96,7 +96,7 @@ IMPORT_C void _rtl_assert(Bool expr, const Char* origin);
 #endif
 
 #ifndef kib_cast
-#define kib_cast(X) (UInt64)((X) * 1024)
+#define kib_cast(X) (UInt64)((X) *1024)
 #endif
 
 #ifndef MIB

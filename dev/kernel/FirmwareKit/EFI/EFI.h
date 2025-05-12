@@ -57,7 +57,7 @@ typedef Char16 EfiChar16Type;
 /// @brief Core Handle Kind
 /// Self is like NT's Win32 HANDLE type.
 typedef struct EfiHandle {
-}* EfiHandlePtr;
+} * EfiHandlePtr;
 
 /* UEFI uses wide characters by default. */
 typedef WideChar EfiCharType;
@@ -239,85 +239,63 @@ typedef struct EfiTableHeader {
   UInt32 Reserved;
 } EfiTableHeader;
 
-#define EFI_ACPI_TABLE_PROTOCOL_GUID                 \
-  {                                                  \
-    0xffe06bdd, 0x6107, 0x46a6, {                    \
-      0x7b, 0xb2, 0x5a, 0x9c, 0x7e, 0xc5, 0x27, 0x5c \
-    }                                                \
+#define EFI_ACPI_TABLE_PROTOCOL_GUID                                               \
+  {                                                                                \
+    0xffe06bdd, 0x6107, 0x46a6, { 0x7b, 0xb2, 0x5a, 0x9c, 0x7e, 0xc5, 0x27, 0x5c } \
   }
 
-#define EFI_LOAD_FILE_PROTOCOL_GUID                  \
-  {                                                  \
-    0x56EC3091, 0x954C, 0x11d2, {                    \
-      0x8e, 0x3f, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
-    }                                                \
+#define EFI_LOAD_FILE_PROTOCOL_GUID                                                \
+  {                                                                                \
+    0x56EC3091, 0x954C, 0x11d2, { 0x8e, 0x3f, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
-#define EFI_LOAD_FILE2_PROTOCOL_GUID                 \
-  {                                                  \
-    0x4006c0c1, 0xfcb3, 0x403e, {                    \
-      0x99, 0x6d, 0x4a, 0x6c, 0x87, 0x24, 0xe0, 0x6d \
-    }                                                \
+#define EFI_LOAD_FILE2_PROTOCOL_GUID                                               \
+  {                                                                                \
+    0x4006c0c1, 0xfcb3, 0x403e, { 0x99, 0x6d, 0x4a, 0x6c, 0x87, 0x24, 0xe0, 0x6d } \
   }
 
-#define EFI_LOADED_IMAGE_PROTOCOL_GUID               \
-  {                                                  \
-    0x5B1B31A1, 0x9562, 0x11d2, {                    \
-      0x8E, 0x3F, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B \
-    }                                                \
+#define EFI_LOADED_IMAGE_PROTOCOL_GUID                                             \
+  {                                                                                \
+    0x5B1B31A1, 0x9562, 0x11d2, { 0x8E, 0x3F, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B } \
   }
 
-#define EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID            \
-  {                                                  \
-    0x9042a9de, 0x23dc, 0x4a38, {                    \
-      0x96, 0xfb, 0x7a, 0xde, 0xd0, 0x80, 0x51, 0x6a \
-    }                                                \
+#define EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID                                          \
+  {                                                                                \
+    0x9042a9de, 0x23dc, 0x4a38, { 0x96, 0xfb, 0x7a, 0xde, 0xd0, 0x80, 0x51, 0x6a } \
   }
 
-#define EFI_SIMPLE_NETWORK_PROTOCOL_GUID             \
-  {                                                  \
-    0xA19832B9, 0xAC25, 0x11D3, {                    \
-      0x9A, 0x2D, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d \
-    }                                                \
+#define EFI_SIMPLE_NETWORK_PROTOCOL_GUID                                           \
+  {                                                                                \
+    0xA19832B9, 0xAC25, 0x11D3, { 0x9A, 0x2D, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
   }
 
 #define EFI_SIMPLE_NETWORK_PROTOCOL_REVISION 0x00010000
 
-#define EFI_IP4_PROTOCOL_GUID                        \
-  {                                                  \
-    0x41d94cd2, 0x35b6, 0x455a, {                    \
-      0x82, 0x58, 0xd4, 0xe5, 0x13, 0x34, 0xaa, 0xdd \
-    }                                                \
+#define EFI_IP4_PROTOCOL_GUID                                                      \
+  {                                                                                \
+    0x41d94cd2, 0x35b6, 0x455a, { 0x82, 0x58, 0xd4, 0xe5, 0x13, 0x34, 0xaa, 0xdd } \
   }
 
 #define EFI_LOADED_IMAGE_PROTOCOL_REVISION 0x1000
 
-#define EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID         \
-  {                                                  \
-    0x0964e5b22, 0x6459, 0x11d2, {                   \
-      0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
-    }                                                \
+#define EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID                                        \
+  {                                                                                 \
+    0x0964e5b22, 0x6459, 0x11d2, { 0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
-#define EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL_GUID   \
-  {                                                  \
-    0xbc62157e, 0x3e33, 0x4fec, {                    \
-      0x99, 0x20, 0x2d, 0x3b, 0x36, 0xd7, 0x50, 0xdf \
-    }                                                \
+#define EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL_GUID                                 \
+  {                                                                                \
+    0xbc62157e, 0x3e33, 0x4fec, { 0x99, 0x20, 0x2d, 0x3b, 0x36, 0xd7, 0x50, 0xdf } \
   }
 
-#define EFI_DEVICE_PATH_PROTOCOL_GUID               \
-  {                                                 \
-    0x9576e91, 0x6d3f, 0x11d2, {                    \
-      0x8e, 0x39, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
-    }                                               \
+#define EFI_DEVICE_PATH_PROTOCOL_GUID                                            \
+  {                                                                              \
+    0x9576e91, 0x6d3f, 0x11d2, { 0x8e, 0x39, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
-#define EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID         \
-  {                                                  \
-    0x0964e5b22, 0x6459, 0x11d2, {                   \
-      0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
-    }                                                \
+#define EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID                                        \
+  {                                                                                 \
+    0x0964e5b22, 0x6459, 0x11d2, { 0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
 typedef UInt64(EfiImageUnload)(EfiHandlePtr ImageHandle);
@@ -373,17 +351,17 @@ typedef struct {
 
 typedef EFI_STATUS(EFIAPI* EFI_SIMPLE_NETWORK_TRANSMIT)(IN EFI_SIMPLE_NETWORK_PROTOCOL* This,
                                                         IN UInt32 HeaderSize, IN UInt32 BufferSize,
-                                                        IN Void*                   Buffer,
-                                                        IN EfiMacAddress* SrcAddr  OPTIONAL,
+                                                        IN Void* Buffer,
+                                                        IN EfiMacAddress* SrcAddr OPTIONAL,
                                                         IN EfiMacAddress* DestAddr OPTIONAL,
-                                                        IN UInt16* Protocol        OPTIONAL);
+                                                        IN UInt16* Protocol OPTIONAL);
 
 typedef EFI_STATUS(EFIAPI* EFI_SIMPLE_NETWORK_RECEIVE)(IN EFI_SIMPLE_NETWORK_PROTOCOL* This,
-                                                       OUT UInt32* HeaderSize          OPTIONAL,
+                                                       OUT UInt32* HeaderSize OPTIONAL,
                                                        IN OUT UInt32* BufferSize, OUT Void* Buffer,
-                                                       OUT EfiMacAddress* SrcAddr  OPTIONAL,
+                                                       OUT EfiMacAddress* SrcAddr OPTIONAL,
                                                        OUT EfiMacAddress* DestAddr OPTIONAL,
-                                                       OUT UInt16* Protocol        OPTIONAL);
+                                                       OUT UInt16* Protocol OPTIONAL);
 
 typedef struct EFI_SIMPLE_NETWORK_PROTOCOL {
   UInt64                        Revision;
@@ -528,11 +506,9 @@ typedef struct EfiGUID EFI_FINAL {
  * Protocol stuff...
  */
 
-#define EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID          \
-  {                                                  \
-    0x387477c1, 0x69c7, 0x11d2, {                    \
-      0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
-    }                                                \
+#define EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID                                        \
+  {                                                                                \
+    0x387477c1, 0x69c7, 0x11d2, { 0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
 /** some helpers */
@@ -631,7 +607,7 @@ typedef struct {
 } EfiInputKey;
 
 typedef EfiStatusType(EFI_API* EfiInputReadKey)(IN EfiSimpleTextInputProtocol* This,
-                                                OUT EfiInputKey*               Key);
+                                                OUT EfiInputKey* Key);
 
 typedef EfiStatusType(EFI_API* EfiInputReset)(IN EfiSimpleTextInputProtocol* This,
                                               IN Boolean                     ExtendedChk);
@@ -689,7 +665,7 @@ typedef struct EfiSystemTable {
   struct {
     EfiGUID VendorGUID;
     VoidPtr VendorTable;
-  }* ConfigurationTable;
+  } * ConfigurationTable;
 } EfiSystemTable;
 
 #define kEfiOk 0
@@ -750,11 +726,9 @@ enum {
 
 #define EFI_EXTRA_DESCRIPTOR_SIZE 8
 
-#define EFI_MP_SERVICES_PROTOCOL_GUID                \
-  {                                                  \
-    0x3fdda605, 0xa76e, 0x4f46, {                    \
-      0xad, 0x29, 0x12, 0xf4, 0x53, 0x1b, 0x3d, 0x08 \
-    }                                                \
+#define EFI_MP_SERVICES_PROTOCOL_GUID                                              \
+  {                                                                                \
+    0x3fdda605, 0xa76e, 0x4f46, { 0xad, 0x29, 0x12, 0xf4, 0x53, 0x1b, 0x3d, 0x08 } \
   }
 
 #define PROCESSOR_AS_BSP_BIT 0x00000001
@@ -851,11 +825,9 @@ typedef struct EfiTime {
   UInt8  Pad2;
 } EfiTime;
 
-#define EFI_FILE_INFO_GUID                           \
-  {                                                  \
-    0x09576e92, 0x6d3f, 0x11d2, {                    \
-      0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b \
-    }                                                \
+#define EFI_FILE_INFO_GUID                                                         \
+  {                                                                                \
+    0x09576e92, 0x6d3f, 0x11d2, { 0x8e, 0x39, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b } \
   }
 
 struct EfiFileInfo EFI_FINAL {
@@ -924,8 +896,8 @@ typedef EfiStatusType EFI_API (*EfiMpServicesStartupThisAP)(
     IN Void* ProcedureArgument OPTIONAL, OUT Boolean* Finished OPTIONAL);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesDisableThisAP)(IN struct _EfiMpServicesProtocol* Self,
-                                                            IN UInt32             ProcessorNumber,
-                                                            IN Boolean            EnableAP,
+                                                            IN UInt32  ProcessorNumber,
+                                                            IN Boolean EnableAP,
                                                             IN UInt32* HealthFlag OPTIONAL);
 
 typedef EfiStatusType EFI_API (*EfiMpServicesWhoAmI)(IN struct _EfiMpServicesProtocol* Self,

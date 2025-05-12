@@ -25,7 +25,7 @@
 #define kHeFSFileNameLen (256U)
 #define kHeFSPartNameLen (128U)
 
-#define kHeFSMinimumDiskSize (gib_cast(8))
+#define kHeFSMinimumDiskSize (gib_cast(128))
 
 #define kHeFSDefaultVolumeName u8"HeFS Volume"
 
@@ -147,6 +147,17 @@ struct PACKED HEFS_JOURNAL_NODE {
   UInt8  fPad[487];
 };
 
+/// @brief This enum defines the opcode of the journal, here mentioned as 'kinds'
+enum HeFSJournalKind : UInt8 {
+  kJournalKindInvalid  = 0x00,
+  kJournalKindWrite    = 0x01,
+  kJournalKindRename   = 0x02,
+  kJournalKindDelete   = 0x03,
+  kJournalKindFlagEdit = 0x04,
+  kJournalKindCreate   = 0x05,
+  kJournalKindCount,
+};
+
 /// @brief HeFS index node.
 /// @details This structure is used to store the file information of a file.
 /// @note The index node is a special type of INode that contains the file information.
@@ -248,7 +259,7 @@ inline UInt32 hefs_hour_get(ATime raw_atime) noexcept {
 /// @return the minute value.
 /// @note The minute is stored in the lower 8 bits of the ATime value.
 inline UInt32 hefs_minute_get(ATime raw_atime) noexcept {
-  return (raw_atime) & 0xFF;
+  return (raw_atime) &0xFF;
 }
 
 inline constexpr UInt32 kHeFSBaseYear   = 1970;
@@ -368,10 +379,10 @@ class HeFileSystemParser final {
   ~HeFileSystemParser() = default;
 
  public:
-  HeFileSystemParser(const HeFileSystemParser&)            = delete;
+  HeFileSystemParser(const HeFileSystemParser&) = delete;
   HeFileSystemParser& operator=(const HeFileSystemParser&) = delete;
 
-  HeFileSystemParser(HeFileSystemParser&&)            = delete;
+  HeFileSystemParser(HeFileSystemParser&&) = delete;
   HeFileSystemParser& operator=(HeFileSystemParser&&) = delete;
 
  public:

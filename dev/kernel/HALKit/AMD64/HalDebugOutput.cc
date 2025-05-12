@@ -57,6 +57,8 @@ namespace Detail {
 
 TerminalDevice::~TerminalDevice() = default;
 
+STATIC SizeT kX = kFontSizeX, kY = kFontSizeY;
+
 EXTERN_C void ke_utf_io_write(IDeviceObject<const Utf8Char*>* obj, const Utf8Char* bytes) {
   NE_UNUSED(bytes);
   NE_UNUSED(obj);
@@ -76,10 +78,35 @@ EXTERN_C void ke_utf_io_write(IDeviceObject<const Utf8Char*>* obj, const Utf8Cha
   index = 0;
   len   = urt_string_len(bytes);
 
+  Char tmp_str[2];
+
   while (index < len) {
     if (bytes[index] == '\r') HAL::rt_out8(Detail::kPort, '\r');
 
     HAL::rt_out8(Detail::kPort, bytes[index] == '\r' ? '\n' : bytes[index]);
+
+    tmp_str[0] = (bytes[index] > 127) ? '?' : bytes[index];
+    tmp_str[1] = 0;
+
+    fb_render_string(tmp_str, kY, kX, RGB(0xff, 0xff, 0xff));
+
+    if (bytes[index] == '\r') {
+      kY += kFontSizeY;
+      kX = kFontSizeX;
+    }
+
+    kX += kFontSizeX;
+
+    if (kX > kHandoverHeader->f_GOP.f_Width) {
+      kX = kFontSizeX;
+    }
+
+    if (kY > kHandoverHeader->f_GOP.f_Height) {
+      kY = kFontSizeY;
+
+      FBDrawInRegion(fb_get_clear_clr(), FB::FBAccessibilty::Height(), FB::FBAccessibilty::Width(),
+                     0, 0);
+    }
 
     ++index;
   }
@@ -107,32 +134,31 @@ EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
   index = 0;
   len   = rt_string_len(bytes);
 
-  STATIC SizeT x = kFontSizeX, y = kFontSizeY;
+  Char tmp_str[2];
 
   while (index < len) {
     if (bytes[index] == '\r') HAL::rt_out8(Detail::kPort, '\r');
 
     HAL::rt_out8(Detail::kPort, bytes[index] == '\r' ? '\n' : bytes[index]);
 
-    char tmp_str[2];
     tmp_str[0] = bytes[index];
     tmp_str[1] = 0;
 
-    fb_render_string(tmp_str, y, x, RGB(0xff, 0xff, 0xff));
+    fb_render_string(tmp_str, kY, kX, RGB(0xff, 0xff, 0xff));
 
     if (bytes[index] == '\r') {
-      y += kFontSizeY;
-      x = kFontSizeX;
+      kY += kFontSizeY;
+      kX = kFontSizeX;
     }
 
-    x += kFontSizeX;
+    kX += kFontSizeX;
 
-    if (x > kHandoverHeader->f_GOP.f_Width) {
-      x = kFontSizeX;
+    if (kX > kHandoverHeader->f_GOP.f_Width) {
+      kX = kFontSizeX;
     }
 
-    if (y > kHandoverHeader->f_GOP.f_Height) {
-      y = kFontSizeY;
+    if (kY > kHandoverHeader->f_GOP.f_Height) {
+      kY = kFontSizeY;
 
       FBDrawInRegion(fb_get_clear_clr(), FB::FBAccessibilty::Height(), FB::FBAccessibilty::Width(),
                      0, 0);
