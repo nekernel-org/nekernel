@@ -98,7 +98,7 @@ __NE_INT_3:
     out 0x20, al
 
     push rcx
-    call idt_handle_generic
+    call idt_handle_breakpoint
     pop rcx
 
     std

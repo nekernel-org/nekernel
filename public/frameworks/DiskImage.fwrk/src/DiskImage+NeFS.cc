@@ -12,7 +12,7 @@
 #include <FSKit/NeFS.h>
 #include <FirmwareKit/EPM.h>
 
-/// @brief NeFS format over EPM.
+/// @brief format NeFS over an EPM disk.
 /// @param img disk image structure.
 /// @return Status code upon completion.
 SInt32 DI::DIFormatFilesystemNeFS(struct DI_DISK_IMAGE& img) noexcept {

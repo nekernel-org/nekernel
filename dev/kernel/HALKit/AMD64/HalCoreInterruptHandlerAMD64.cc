@@ -16,7 +16,9 @@ STATIC BOOL kIsScheduling = NO;
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) return;
+  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
+    MUST_PASS(NO);
+  }
 
   kIsScheduling = NO;
 
@@ -38,7 +40,9 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) return;
+  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
+    MUST_PASS(NO);
+  }
 
   kIsScheduling = NO;
 
@@ -83,7 +87,9 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) return;
+  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
+    MUST_PASS(NO);
+  }
 
   kIsScheduling = NO;
 
@@ -105,7 +111,9 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) return;
+  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
+    MUST_PASS(NO);
+  }
 
   kIsScheduling = NO;
 
@@ -126,10 +134,12 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
+    (Void)(Kernel::kout << "Kernel: Kernel RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
     Kernel::kout << "Kernel: SIGTRAP\r";
 
-    while (YES)
-      ;
+    kIsScheduling = NO;
+
+    while (YES);
   }
 
   kIsScheduling = NO;
@@ -152,7 +162,9 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) return;
+  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
+    MUST_PASS(NO);
+  }
 
   kIsScheduling = NO;
 

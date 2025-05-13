@@ -101,16 +101,15 @@ Void USER_PROCESS::Wake(Bool should_wakeup) {
 /** @param tree The tree to calibrate */
 /***********************************************************************************/
 
-STATIC USER_PROCESS::USER_HEAP_TREE* sched_try_go_upper_heap_tree(
-    USER_PROCESS::USER_HEAP_TREE* tree) {
+STATIC PROCESS_HEAP_TREE<VoidPtr>* sched_try_go_upper_heap_tree(PROCESS_HEAP_TREE<VoidPtr>* tree) {
   if (!tree) {
     return nullptr;
   }
 
-  tree = tree->MemoryParent;
+  tree = tree->Parent;
 
   if (tree) {
-    auto tree_tmp = tree->MemoryNext;
+    auto tree_tmp = tree->Next;
 
     if (!tree_tmp) {
       return tree;
@@ -141,65 +140,63 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
 #endif
 
   if (!this->HeapTree) {
-    this->HeapTree = new USER_HEAP_TREE();
+    this->HeapTree = new PROCESS_HEAP_TREE<VoidPtr>();
 
-    this->HeapTree->MemoryEntryPad  = pad_amount;
-    this->HeapTree->MemoryEntrySize = sz;
+    this->HeapTree->EntryPad  = pad_amount;
+    this->HeapTree->EntrySize = sz;
 
-    this->HeapTree->MemoryEntry = ptr;
+    this->HeapTree->Entry = ptr;
 
-    this->HeapTree->MemoryColor = USER_HEAP_TREE::kBlackMemory;
+    this->HeapTree->Color = kBlackTreeKind;
 
-    this->HeapTree->MemoryPrev   = nullptr;
-    this->HeapTree->MemoryNext   = nullptr;
-    this->HeapTree->MemoryParent = nullptr;
-    this->HeapTree->MemoryChild  = nullptr;
+    this->HeapTree->Prev   = nullptr;
+    this->HeapTree->Next   = nullptr;
+    this->HeapTree->Parent = nullptr;
+    this->HeapTree->Child  = nullptr;
   } else {
-    USER_HEAP_TREE* entry      = this->HeapTree;
-    USER_HEAP_TREE* prev_entry = entry;
+    PROCESS_HEAP_TREE<VoidPtr>* entry      = this->HeapTree;
+    PROCESS_HEAP_TREE<VoidPtr>* prev_entry = entry;
 
     BOOL is_parent = NO;
 
     while (entry) {
-      if (entry->MemoryEntrySize < 1) break;
+      if (entry->EntrySize < 1) break;
 
       prev_entry = entry;
 
-      if (entry->MemoryColor == USER_HEAP_TREE::kBlackMemory) break;
+      if (entry->Color == kBlackTreeKind) break;
 
-      if (entry->MemoryChild && entry->MemoryChild->MemoryEntrySize > 0 &&
-          entry->MemoryChild->MemoryEntrySize == sz) {
-        entry     = entry->MemoryChild;
+      if (entry->Child && entry->Child->EntrySize > 0 && entry->Child->EntrySize == sz) {
+        entry     = entry->Child;
         is_parent = YES;
-      } else if (entry->MemoryNext && entry->MemoryChild->MemoryEntrySize > 0 &&
-                 entry->MemoryNext->MemoryEntrySize == sz) {
+      } else if (entry->Next && entry->Child->EntrySize > 0 && entry->Next->EntrySize == sz) {
         is_parent = NO;
-        entry     = entry->MemoryNext;
+        entry     = entry->Next;
       } else {
         entry = sched_try_go_upper_heap_tree(entry);
-        if (entry && entry->MemoryColor == USER_HEAP_TREE::kBlackMemory) break;
+        if (entry && entry->Color == kBlackTreeKind) break;
       }
     }
 
-    auto new_entry = new USER_HEAP_TREE();
+    auto new_entry = new PROCESS_HEAP_TREE<VoidPtr>();
 
-    new_entry->MemoryEntry     = ptr;
-    new_entry->MemoryEntrySize = sz;
-    new_entry->MemoryEntryPad  = pad_amount;
-    new_entry->MemoryParent    = entry;
-    new_entry->MemoryChild     = nullptr;
-    new_entry->MemoryNext      = nullptr;
-    new_entry->MemoryPrev      = nullptr;
+    new_entry->Entry     = ptr;
+    new_entry->EntrySize = sz;
+    new_entry->EntryPad  = pad_amount;
+    new_entry->Parent    = entry;
+    new_entry->Child     = nullptr;
+    new_entry->Next      = nullptr;
+    new_entry->Prev      = nullptr;
 
-    new_entry->MemoryColor  = USER_HEAP_TREE::kBlackMemory;
-    prev_entry->MemoryColor = USER_HEAP_TREE::kRedMemory;
+    new_entry->Color  = kBlackTreeKind;
+    prev_entry->Color = kRedTreeKind;
 
     if (is_parent) {
-      prev_entry->MemoryChild = new_entry;
-      new_entry->MemoryParent = prev_entry;
+      prev_entry->Child = new_entry;
+      new_entry->Parent = prev_entry;
     } else {
-      prev_entry->MemoryNext = new_entry;
-      new_entry->MemoryPrev  = prev_entry;
+      prev_entry->Next = new_entry;
+      new_entry->Prev  = prev_entry;
     }
   }
 
@@ -243,18 +240,18 @@ const AffinityKind& USER_PROCESS::GetAffinity() noexcept {
 /** @brief Free heap tree. */
 /***********************************************************************************/
 
-STATIC Void sched_free_heap_tree(USER_PROCESS::USER_HEAP_TREE* memory_heap_list) {
+STATIC Void sched_free_heap_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_heap_list) {
   // Deleting memory lists. Make sure to free all of them.
   while (memory_heap_list) {
-    if (memory_heap_list->MemoryEntry) {
-      MUST_PASS(mm_delete_heap(memory_heap_list->MemoryEntry));
+    if (memory_heap_list->Entry) {
+      MUST_PASS(mm_delete_heap(memory_heap_list->Entry));
     }
 
-    auto next = memory_heap_list->MemoryNext;
+    auto next = memory_heap_list->Next;
 
     mm_delete_heap(memory_heap_list);
 
-    if (memory_heap_list->MemoryChild) sched_free_heap_tree(memory_heap_list->MemoryChild);
+    if (memory_heap_list->Child) sched_free_heap_tree(memory_heap_list->Child);
 
     memory_heap_list = next;
   }

@@ -55,37 +55,16 @@ class USER_PROCESS final {
   SizeT              MemoryLimit{kSchedMaxMemoryLimit};
   SizeT              UsedMemory{0UL};
 
-  /// @brief Allocation tracker structure.
-  struct USER_HEAP_TREE final {
-    VoidPtr MemoryEntry{nullptr};
-    SizeT   MemoryEntrySize{0UL};
-    SizeT   MemoryEntryPad{0UL};
-
-    enum {
-      kInvalidMemory = 0,
-      kRedMemory     = 100,
-      kBlackMemory   = 101,
-      kCountMemory   = 2,
-    };
-
-    Int32 MemoryColor{kBlackMemory};
-
-    struct USER_HEAP_TREE* MemoryParent{nullptr};
-    struct USER_HEAP_TREE* MemoryChild{nullptr};
-
-    struct USER_HEAP_TREE* MemoryPrev{nullptr};
-    struct USER_HEAP_TREE* MemoryNext{nullptr};
-  };
-
   struct USER_PROCESS_SIGNAL final {
     UIntPtr           SignalArg;
     ProcessStatusKind Status;
     UIntPtr           SignalID;
   };
 
-  USER_PROCESS_SIGNAL Signal;
-  USER_HEAP_TREE*     HeapTree{nullptr};
-  UserProcessTeam*    ParentTeam;
+  USER_PROCESS_SIGNAL         Signal;
+  PROCESS_FILE_TREE<UInt32*>* FileTree{nullptr};
+  PROCESS_HEAP_TREE<VoidPtr>* HeapTree{nullptr};
+  UserProcessTeam*            ParentTeam;
 
   VoidPtr VMRegister{0UL};
 
@@ -205,6 +184,7 @@ class UserProcessScheduler final : public ISchedulable {
   NE_COPY_DELETE(UserProcessScheduler)
   NE_MOVE_DELETE(UserProcessScheduler)
 
+ public:
        operator bool();
   bool operator!();
 

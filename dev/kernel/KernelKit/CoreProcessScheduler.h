@@ -24,6 +24,65 @@ class USER_PROCESS;
 class KERNEL_TASK;
 class UserProcessTeam;
 
+enum {
+  kInvalidTreeKind = 0U,
+  kRedTreeKind     = 100U,
+  kBlackTreeKind   = 101U,
+  kTreeKindCount   = 2U,
+};
+
+template <typename T>
+struct PROCESS_HEAP_TREE {
+  static constexpr auto kPtr = true;
+  static constexpr auto kFD  = false;
+
+  T     Entry{nullptr};
+  SizeT EntrySize{0UL};
+  SizeT EntryPad{0UL};
+
+  UInt32 Color{kBlackTreeKind};
+
+  struct PROCESS_HEAP_TREE<T>* Parent {
+    nullptr
+  };
+  struct PROCESS_HEAP_TREE<T>* Child {
+    nullptr
+  };
+
+  struct PROCESS_HEAP_TREE<T>* Prev {
+    nullptr
+  };
+  struct PROCESS_HEAP_TREE<T>* Next {
+    nullptr
+  };
+};
+
+template <typename T>
+struct PROCESS_FILE_TREE {
+  static constexpr auto kPtr = false;
+  static constexpr auto kFD  = true;
+
+  T     Entry{nullptr};
+  SizeT EntrySize{0UL};
+  SizeT EntryPad{0UL};
+
+  UInt32 Color{kBlackTreeKind};
+
+  struct PROCESS_FILE_TREE<T>* Parent {
+    nullptr
+  };
+  struct PROCESS_FILE_TREE<T>* Child {
+    nullptr
+  };
+
+  struct PROCESS_FILE_TREE<T>* Prev {
+    nullptr
+  };
+  struct PROCESS_FILE_TREE<T>* Next {
+    nullptr
+  };
+};
+
 /***********************************************************************************/
 /// @brief Subsystem enum type.
 /***********************************************************************************/

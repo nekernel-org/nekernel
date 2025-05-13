@@ -126,32 +126,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 
   idt_loader.Load(idt_reg);
 
-  /// after the scheduler runs, we must look over teams, every 5000s in order to schedule every
-  /// process according to their affinity fairly.
-
-  auto constexpr kSchedTeamSwitchMS = 5U;  /// @brief Team switch time in milliseconds.
-
-  Kernel::HardwareTimer timer(rtl_milliseconds(kSchedTeamSwitchMS));
-
-  STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
-
-  static SizeT team_index = 0U;
-
-  /// @brief This just loops over the teams and switches between them.
-  /// @details Not even round-robin, just a simple loop in this boot core we're at.
-  while (YES) {
-    if (team_index > (kSchedTeamCount - 1)) {
-      team_index = 0U;
-    }
-
-    kTeams[team_index].Id() = team_index;
-
-    while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]))
-      ;
-
-    timer.Wait();
-
-    ++team_index;
-  }
+  dbg_break_point();
 }
 #endif  // ifndef __NE_MODULAR_KERNEL_COMPONENTS__
