@@ -7,8 +7,8 @@ Purpose: System Call Interface.
 
 ------------------------------------------- */
 
-#ifndef SCI_SCI_H
-#define SCI_SCI_H
+#ifndef SCI_SYSTEM_CALLS_H
+#define SCI_SYSTEM_CALLS_H
 
 #include <user/Macros.h>
 
@@ -362,4 +362,4 @@ IMPORT_C Char* StrFmt(const Char* fmt, ...);
 
 IMPORT_C UInt64 StrMathToNumber(const Char* in, const Char** endp, const SInt16 base);
 
-#endif  // ifndef SCI_SCI_H
+#endif  // ifndef SCI_SYSTEM_CALLS_H

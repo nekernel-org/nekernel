@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-  Copyright Amlal El Mahrouss.
+  Copyright 2025 Amlal El Mahrouss, all right reserved.
 
   FILE: ifs.h
   PURPOSE: IFS model base header.

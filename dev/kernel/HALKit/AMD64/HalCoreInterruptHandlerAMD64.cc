@@ -139,7 +139,8 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
 
     kIsScheduling = NO;
 
-    while (YES);
+    while (YES)
+      ;
   }
 
   kIsScheduling = NO;

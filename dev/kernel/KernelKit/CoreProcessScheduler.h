@@ -22,7 +22,14 @@
 namespace Kernel {
 class USER_PROCESS;
 class KERNEL_TASK;
+class UserProcessScheduler;
 class UserProcessTeam;
+
+template <typename T>
+struct PROCESS_HEAP_TREE;
+
+template <typename T>
+struct PROCESS_FILE_TREE;
 
 enum {
   kInvalidTreeKind = 0U,
