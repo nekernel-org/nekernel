@@ -11,7 +11,12 @@
 
 #include <user/SystemCalls.h>
 
+#ifndef __DISK_IMAGE_CDROM__
 #define kDISectorSz (512)
+#else
+#define kDISectorSz (2048)
+#endif  // __DISK_IMAGE_CDROM__
+
 #define kDIMinDiskSz mib_cast(1)
 #define kDIDefaultOutputName "disk.eimg"
 #define kDIDefaultDiskName "Disk"
