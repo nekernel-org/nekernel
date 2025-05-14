@@ -15,7 +15,7 @@
 /// @brief format HeFS over an EPM disk.
 /// @param img disk image structure.
 /// @return Status code upon completion.
-SInt32 DI::DIFormatFilesystemNeFS(struct DI_DISK_IMAGE& img) noexcept {
+SInt32 DI::DIFormatFilesystemHeFS(struct DI_DISK_IMAGE& img) noexcept {
   if (!img.sector_sz || (img.sector_sz % 512 != 0)) return kDIFailureStatus;
 
   if (*img.out_name == 0 || *img.disk_name == 0) return kDIFailureStatus;
