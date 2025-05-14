@@ -444,6 +444,8 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
 
   NEFS_ROOT_PARTITION_BLOCK* part_block = (NEFS_ROOT_PARTITION_BLOCK*) fs_buf;
 
+  if (rt_string_cmp(kNeFSIdent, part_block->Ident, kNeFSIdentLen) == 0) return true;
+
   const auto kNeFSUntitledHD = part_name;
 
   rt_copy_memory((VoidPtr) kNeFSIdent, (VoidPtr) part_block->Ident, kNeFSIdentLen);
@@ -463,6 +465,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   part_block->FreeSectors  = sectorCount / sizeof(NEFS_CATALOG_STRUCT) - 1;
   part_block->SectorCount  = sectorCount;
   part_block->DiskSize     = diskSize;
+  part_block->SectorSize   = drive->fSectorSz;
   part_block->FreeCatalog  = sectorCount / sizeof(NEFS_CATALOG_STRUCT) - 1;
 
   drive->fPacket.fPacketContent = fs_buf;
@@ -478,26 +481,6 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   (Void)(kout << "Free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
   (Void)(kout << "Free sectors: " << hex_number(part_block->FreeSectors) << kendl);
   (Void)(kout << "Sector size: " << hex_number(part_block->SectorSize) << kendl);
-
-  NEFS_CATALOG_STRUCT root{};
-
-  rt_set_memory(&root, 0, sizeof(NEFS_CATALOG_STRUCT));
-
-  root.PrevSibling = part_block->StartCatalog;
-  root.NextSibling = 0UL;
-
-  root.Kind = kNeFSCatalogKindDir;
-  root.Flags |= kNeFSFlagCreated;
-  root.CatalogFlags |= kNeFSStatusUnlocked;
-
-  root.Name[0] = '/';
-  root.Name[1] = 0;
-
-  drive->fPacket.fPacketLba     = part_block->StartCatalog;
-  drive->fPacket.fPacketSize    = sizeof(NEFS_CATALOG_STRUCT);
-  drive->fPacket.fPacketContent = &root;
-
-  drive->fOutput(drive->fPacket);
 
   return true;
 }

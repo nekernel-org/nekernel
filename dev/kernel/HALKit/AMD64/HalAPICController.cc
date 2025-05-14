@@ -7,8 +7,8 @@
 #include <HALKit/AMD64/Processor.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 
-#define cIOAPICRegVal (4)
-#define cIOAPICRegReg (0)
+#define kIOAPICRegVal (4)
+#define kIOAPICRegReg (0)
 
 namespace Kernel::HAL {
 APICController::APICController(VoidPtr base) : fApic(base) {}
@@ -19,9 +19,9 @@ UInt32 APICController::Read(UInt32 reg) noexcept {
   MUST_PASS(this->fApic);
 
   UInt32 volatile* io_apic = (UInt32 volatile*) this->fApic;
-  io_apic[cIOAPICRegReg]   = (reg & 0xFF);
+  io_apic[kIOAPICRegReg]   = (reg & 0xFF);
 
-  return io_apic[cIOAPICRegVal];
+  return io_apic[kIOAPICRegVal];
 }
 
 /// @brief Write to APIC controller.
@@ -32,7 +32,7 @@ Void APICController::Write(UInt32 reg, UInt32 value) noexcept {
 
   UInt32 volatile* io_apic = (UInt32 volatile*) this->fApic;
 
-  io_apic[cIOAPICRegReg] = (reg & 0xFF);
-  io_apic[cIOAPICRegVal] = value;
+  io_apic[kIOAPICRegReg] = (reg & 0xFF);
+  io_apic[kIOAPICRegVal] = value;
 }
 }  // namespace Kernel::HAL

@@ -14,11 +14,12 @@
 
 namespace Kernel {
 enum class DmaKind {
-  PCI,  // Bus mastering is required to be turned on. Basiaclly a request
+  PCI = 10,  // Bus mastering is required to be turned on. Basiaclly a request
   // control system. 64-Bit access depends on the PAE bit and the device
   // (if Double Address Cycle is available)
   ISA,  // Four DMA channels 0-3; 8 bit transfers and only a megabyte of RAM.
-  Invalid,
+  Count   = 2,
+  Invalid = 0,
 };
 
 class DMAWrapper final {

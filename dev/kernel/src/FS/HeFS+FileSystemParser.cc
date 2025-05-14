@@ -742,7 +742,7 @@ namespace Detail {
 /// real-time.
 /// @note This is certainly take longer to format a disk with it, but worth-it in the long run.
 
-namespace Kernel::HeFS {
+namespace Kernel {
 /// @brief Make a EPM+HeFS mnt out of the disk.
 /// @param mnt The mnt to write on.
 /// @return If it was sucessful, see err_local_get().
@@ -1142,7 +1142,7 @@ STATIC DriveTrait kMountPoint;
 
 /// @brief Initialize the HeFS filesystem.
 /// @return To check its status, see err_local_get().
-Boolean fs_init_hefs(Void) {
+Boolean HeFS::fs_init_hefs(Void) noexcept {
   kout << "Creating HeFS disk...\r";
 
   kMountPoint = io_construct_main_drive();
@@ -1152,10 +1152,8 @@ Boolean fs_init_hefs(Void) {
 
   HeFileSystemParser parser;
 
-  parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVolumeName);
-
-  return YES;
+  return parser.Format(&kMountPoint, kHeFSEncodingFlagsUTF8, kHeFSDefaultVolumeName);
 }
-}  // namespace Kernel::HeFS
+}  // namespace Kernel
 
 #endif  // ifdef __FSKIT_INCLUDES_HEFS__

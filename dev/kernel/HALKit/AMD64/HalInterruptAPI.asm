@@ -257,7 +257,24 @@ IntNormal 36
 IntNormal 37
 IntNormal 38
 IntNormal 39
-IntNormal 40
+
+[extern rtl_rtl8139_interrupt_handler]
+
+__NE_INT_40:
+    cld
+
+    mov al, 0x20
+    out 0xA0, al
+    out 0x20, al
+
+    push rax
+    mov rcx, rsp
+    call rtl_rtl8139_interrupt_handler
+    pop rax
+
+    std
+
+    o64 iret
 
 IntNormal 41
 

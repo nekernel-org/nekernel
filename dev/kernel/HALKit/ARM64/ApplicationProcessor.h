@@ -10,7 +10,8 @@
 #include <NewKit/Defines.h>
 
 /************************************************** */
-/*     INITIALIZE THE GIC ON CPU.              */
+/*     INITIALIZE THE GIC ON THE CURRENT CORE.      */
+/*     WITH AN EXECUTION LEVEL IN MIND.             */
 /************************************************** */
 
 namespace Kernel {

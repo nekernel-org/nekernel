@@ -36,7 +36,7 @@
 #include <hint/CompilerHint.h>
 
 /// @brief Filesystem manager, abstraction over mounted filesystem.
-/// Works like the VFS or IFS subsystem.
+/// Works like an VFS (Virtual File System) or IFS subsystem on NT/OS 2.
 
 #define kRestrictR "r"
 #define kRestrictRB "rb"
@@ -175,6 +175,52 @@ class NeFileSystemMgr final : public IFilesystemMgr {
 };
 
 #endif  // ifdef __FSKIT_INCLUDES_NEFS__
+
+#ifdef __FSKIT_INCLUDES_HEFS__
+/**
+ * @brief Based of IFilesystemMgr, takes care of managing NeFS
+ * disks.
+ */
+class HeFileSystemMgr final : public IFilesystemMgr {
+ public:
+  explicit HeFileSystemMgr();
+  ~HeFileSystemMgr() override;
+
+ public:
+  NE_COPY_DEFAULT(HeFileSystemMgr)
+
+ public:
+  NodePtr Create(const Char* path) override;
+  NodePtr CreateAlias(const Char* path) override;
+  NodePtr CreateDirectory(const Char* path) override;
+  NodePtr CreateSwapFile(const Char* path) override;
+
+ public:
+  bool    Remove(_Input const Char* path) override;
+  NodePtr Open(_Input const Char* path, _Input const Char* r) override;
+  Void    Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags,
+                _Input SizeT sz) override;
+  VoidPtr Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT sz) override;
+  bool    Seek(_Input NodePtr node, _Input SizeT off) override;
+  SizeT   Tell(_Input NodePtr node) override;
+  bool    Rewind(_Input NodePtr node) override;
+
+  Void Write(_Input const Char* name, _Input NodePtr node, _Input VoidPtr data, _Input Int32 flags,
+             _Input SizeT size) override;
+
+  _Output VoidPtr Read(_Input const Char* name, _Input NodePtr node, _Input Int32 flags,
+                       _Input SizeT sz) override;
+
+ public:
+  /// @brief Get NeFS parser class.
+  /// @return The filesystem parser class.
+  HeFileSystemParser* GetParser() noexcept;
+
+ private:
+  HeFileSystemParser* mParser{nullptr};
+};
+
+#endif  // ifdef __FSKIT_INCLUDES_HEFS__
 
 /**
  * FileStream class.

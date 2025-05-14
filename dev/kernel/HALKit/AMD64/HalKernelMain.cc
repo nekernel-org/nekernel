@@ -20,13 +20,6 @@
 #ifndef __NE_MODULAR_KERNEL_COMPONENTS__
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
-STATIC Kernel::Void hal_pre_init_scheduler() noexcept {
-  for (Kernel::SizeT i = 0U;
-       i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i) {
-    Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i] = Kernel::USER_PROCESS();
-  }
-}
-
 /// @brief Kernel init function.
 /// @param handover_hdr Handover boot header.
 EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
@@ -109,10 +102,11 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 }
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
-  hal_pre_init_scheduler();
-
 #ifdef __FSKIT_INCLUDES_HEFS__
-  Kernel::HeFS::fs_init_hefs();
+  if (!Kernel::HeFS::fs_init_hefs()) {
+    // Fallback to NeFS, if HeFS doesn't work here.
+    Kernel::NeFS::fs_init_nefs();
+  }
 #elif defined(__FSKIT_INCLUDES_NEFS__)
   Kernel::NeFS::fs_init_nefs();
 #endif
