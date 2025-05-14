@@ -19,7 +19,7 @@ struct KERNEL_TASK;
 
 struct KERNEL_TASK final {
   Char               Name[kSchedNameLen] = {"KERNEL_TASK"};
-  ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
+  ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemDriver};
   HAL::StackFramePtr StackFrame{nullptr};
   UInt8*             StackReserve{nullptr};
   SizeT              StackSize{kSchedMaxStackSz};

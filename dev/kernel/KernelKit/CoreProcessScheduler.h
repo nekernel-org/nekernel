@@ -22,6 +22,7 @@
 namespace Kernel {
 class USER_PROCESS;
 class KERNEL_TASK;
+class KernelTaskScheduler;
 class UserProcessScheduler;
 class UserProcessTeam;
 
@@ -96,7 +97,7 @@ struct PROCESS_FILE_TREE {
 
 enum class ProcessSubsystem : Int32 {
   kProcessSubsystemSecurity = 100,
-  kProcessSubsystemApplication,
+  kProcessSubsystemUser,
   kProcessSubsystemService,
   kProcessSubsystemDriver,
   kProcessSubsystemInvalid = 0xFFFFFFF,

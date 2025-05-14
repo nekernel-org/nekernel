@@ -33,7 +33,7 @@ typedef void (*rtl_dtor_kind)(void);
 /// accessible.
 /// @param main the start of the process.
 /// @return The team's process id.
-ProcessID rtl_create_kernel_process(rtl_main_kind main, const Char* process_name) noexcept;
+ProcessID rtl_create_kernel_process(rtl_main_kind main, const Char* task_name) noexcept;
 
 /// @brief Executes a new process from a function. User code only.
 /// @note This sets up a new stack, anything on the main function that calls the Kernel will not be

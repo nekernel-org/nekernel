@@ -42,7 +42,7 @@ class USER_PROCESS final {
 
  public:
   Char               Name[kSchedNameLen] = {"USER_PROCESS"};
-  ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
+  ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemUser};
   User*              Owner{nullptr};
   HAL::StackFramePtr StackFrame{nullptr};
   AffinityKind       Affinity{AffinityKind::kStandard};
@@ -56,9 +56,9 @@ class USER_PROCESS final {
   SizeT              UsedMemory{0UL};
 
   struct USER_PROCESS_SIGNAL final {
-    UIntPtr           SignalArg;
-    ProcessStatusKind Status;
-    UIntPtr           SignalID;
+    UIntPtr           SignalArg{0};
+    ProcessStatusKind Status{ProcessStatusKind::kKilled};
+    UIntPtr           SignalID{0};
   };
 
   USER_PROCESS_SIGNAL         Signal;
