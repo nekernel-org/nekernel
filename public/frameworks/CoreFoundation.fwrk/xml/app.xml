@@ -1,3 +1,3 @@
 <PropertyList/>
-<PLEntry Type="MLString" Name="LibraryName" Len="255" Value="CoreFoundation" />
+<PLEntry Type="CFString" Name="LibraryName" Len="255" Value="CoreFoundation" />
 <PLEntry Type="BOOL" Name="CacheLibs" Value="YES" />

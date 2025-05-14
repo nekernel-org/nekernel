@@ -76,6 +76,7 @@ KERNEL=krnl.efi
 SYSCHK=chk.efi
 BOOTNET=net.efi
 SCIKIT=user.sys
+DDK=ddk.sys
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -93,6 +94,7 @@ all: compile-amd64
 	$(COPY) ./modules/BootNet/$(BOOTNET) src/root/$(BOOTNET)
 	$(COPY) ../user/$(SCIKIT) src/root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/root/$(BOOTLOADER)
+	$(COPY) ../ddk/$(DDK) src/root/$(DDK)
 
 .PHONY: disk
 disk:

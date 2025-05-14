@@ -12,14 +12,17 @@ def create_directory_structure(base_path_fwrk, project_file_name, project_name):
     # Define the directory structure
     structure = {
         project_name: {
+            "headers": {
+                ".keep": None
+            },
             "dist": {
                 ".keep": None
             },
             "src": {
                 ".keep": None,
-                "CommandLine.cc": None,
+                "DylibMain.cc": None,
             },
-            "vendor": {
+            "xml": {
                 ".keep": None
             },
             ".keep": None,
@@ -65,12 +68,18 @@ def create_directory_structure(base_path_fwrk, project_file_name, project_name):
     with open(proj_json_path, 'w') as json_file:
         json.dump(manifest, json_file, indent=4)
 
-    proj_cpp_path = os.path.join(base_path_fwrk, project_name, f"src/CommandLine.cc")
+    proj_cpp_path = os.path.join(base_path_fwrk, project_name, f"src/DylibMain.cc")
 
     cpp_file = "#include <user/SystemCalls.h>\n\nSInt32 _DylibAttach(SInt32 argc, Char* argv[]) {\n\treturn EXIT_FAILURE;\n}"
 
     with open(proj_cpp_path, 'w') as cpp_file_io:
         cpp_file_io.write(cpp_file)
+
+    xml_blob = f"<PropertyList>\n<PLEntry Type=\"CFString\" Name=\"LibraryName\" Len=\"{len(project_name)}\" Value=\"{project_name}\" /></PropertyList>"
+    proj_xml_path = os.path.join(base_path_fwrk, project_name, f"xml/app.xml")
+
+    with open(proj_xml_path, 'w') as cpp_file_io:
+        cpp_file_io.write(xml_blob)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -80,4 +89,4 @@ if __name__ == "__main__":
     base_path = os.getcwd()  # Use the current working directory as the base path
     create_directory_structure(base_path, sys.argv[1], sys.argv[1] + '.fwrk')
 
-    print("NeKernel Framework created successfully.")
+    print("Info: Framework created successfully.")

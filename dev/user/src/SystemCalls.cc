@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <user/Opts.h>
+#include <user/SciCalls.h>
 #include <user/SystemCalls.h>
 
 /// @file SystemCalls.cc
@@ -63,15 +63,15 @@ IMPORT_C Void IoCloseFile(_Input Ref desc) {
 }
 
 IMPORT_C UInt64 IoSeekFile(_Input Ref desc, _Input UInt64 off) {
-  auto ret = (UInt64*) sci_syscall_arg_3(3, reinterpret_cast<VoidPtr>(desc),
-                                         reinterpret_cast<VoidPtr>(&off));
+  auto ret = (volatile UInt64*) sci_syscall_arg_3(3, reinterpret_cast<VoidPtr>(desc),
+                                                  reinterpret_cast<VoidPtr>(&off));
 
   MUST_PASS((*ret) != ~0UL);
   return *ret;
 }
 
 IMPORT_C UInt64 IoTellFile(_Input Ref desc) {
-  auto ret = (UInt64*) sci_syscall_arg_2(4, reinterpret_cast<VoidPtr>(desc));
+  auto ret = (volatile UInt64*) sci_syscall_arg_2(4, reinterpret_cast<VoidPtr>(desc));
   return *ret;
 }
 
@@ -80,8 +80,8 @@ IMPORT_C SInt32 PrintOut(_Input IORef desc, const char* fmt, ...) {
 
   va_start(args, fmt);
 
-  auto ret = (UInt64*) sci_syscall_arg_4(5, reinterpret_cast<VoidPtr>(desc),
-                                         reinterpret_cast<VoidPtr>(const_cast<Char*>(fmt)), args);
+  auto ret = (volatile UInt64*) sci_syscall_arg_4(
+      5, reinterpret_cast<VoidPtr>(desc), reinterpret_cast<VoidPtr>(const_cast<Char*>(fmt)), args);
 
   va_end(args);
 

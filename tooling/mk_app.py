@@ -77,4 +77,4 @@ if __name__ == "__main__":
     base_path = os.getcwd()  # Use the current working directory as the base path
     create_directory_structure(base_path, sys.argv[1])
     
-    print("NeKernel Application created successfully.")
+    print("Info: Application created successfully.")
