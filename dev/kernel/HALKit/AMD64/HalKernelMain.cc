@@ -120,17 +120,16 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
   Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 #ifdef __FSKIT_INCLUDES_HEFS__
-  if (!Kernel::HeFS::fs_init_hefs()) {
-    // Fallback to NeFS, if HeFS doesn't work here.
-    Kernel::NeFS::fs_init_nefs();
+  if (Kernel::HeFS::fs_init_hefs()) {
+    goto hal_spin_kernel;
   }
-#elif defined(__FSKIT_INCLUDES_NEFS__)
+#endif
   if (!Kernel::NeFS::fs_init_nefs()) {
     kout << "NeFS cannot be formated on the disk. Aborting\r";
     dbg_break_point();
   }
-#endif
 
+hal_spin_kernel:
   while (YES)
     ;
 }

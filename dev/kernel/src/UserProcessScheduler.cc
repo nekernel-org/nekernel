@@ -495,9 +495,6 @@ SizeT UserProcessScheduler::Run() noexcept {
 
       this->CurrentProcess() = process;
 
-      process.PTime = static_cast<Int32>(process.Affinity);
-      process.RTime = 0UL;
-
       // tell helper to find a core to schedule on, otherwise run on this core directly.
       if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
         if (process.ProcessId == this->CurrentProcess().Leak().ProcessId &&
@@ -510,7 +507,9 @@ SizeT UserProcessScheduler::Run() noexcept {
             else if (process.RTime < (Int32) AffinityKind::kStandard)
               process.PTime = (Int32) AffinityKind::kHigh;
 
+            process.PTime = static_cast<Int32>(process.Affinity);
             process.RTime = 0UL;
+
           } else {
             ++process.RTime;
           }
