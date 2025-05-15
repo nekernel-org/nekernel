@@ -195,9 +195,9 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     return;
   }
 
-  auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
-  kRawMADT            = hw_and_pow_int.Find(APIC_Signature).Leak().Leak();
+  PowerFactoryInterface hw_and_pow_int{vendor_ptr};
 
+  kRawMADT   = hw_and_pow_int.Find(APIC_Signature).Leak().Leak();
   kMADTBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
   kSMPAware  = NO;
 
@@ -208,6 +208,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     kSMPCount     = 0;
 
     UInt32 lo = 0, hi = 0;
+
     hal_get_msr(0x1B, &lo, &hi);
     UInt64 apic_base = ((UInt64) hi << 32) | lo;
 
@@ -228,17 +229,20 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
 
     // LAPIC timer setup
     *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_DIV) = 0b0011;  // Divide by 16
+
     *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_LVT) =
         32 | (1 << 17);  // Vector 32, periodic
+
     *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_INITCNT) =
         1000000;  // Init count (e.g., ~100Hz)
 
     constexpr const auto kSMPCountMax = kMaxAPInsideSched;
 
     while (Yes) {
-      /// @note Anything bigger than x2APIC type doesn't exist.
+      // @note Don't probe greater than what the APMgr expects.
       if (kSMPCount > kSMPCountMax) break;
 
+      /// @note Anything bigger than x2APIC type doesn't exist.
       if (kMADTBlock->List[index].Type > 9) {
         ++index;
         continue;
