@@ -16,10 +16,6 @@ STATIC BOOL kIsScheduling = NO;
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
-    MUST_PASS(NO);
-  }
-
   kIsScheduling = NO;
 
   Kernel::kout << "Kernel: General Protection Fault.\r";
@@ -40,10 +36,6 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
-    MUST_PASS(NO);
-  }
-
   kIsScheduling = NO;
 
   Kernel::kout << "Kernel: Page Fault.\r";
@@ -58,27 +50,14 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   process.Leak().Crash();
 }
 
-namespace Kernel::Detail {
-constexpr static Int32 kTimeoutCount = 100000UL;
-}
-
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
   NE_UNUSED(rsp);
 
-  static Kernel::Int64 try_count_before_brute = Kernel::Detail::kTimeoutCount;
+  Kernel::kout << "Kernel: Scheduler interrupt.\r";
 
-  while (kIsScheduling) {
-    --try_count_before_brute;
-
-    if (try_count_before_brute < 1) break;
-  }
-
-  try_count_before_brute = Kernel::Detail::kTimeoutCount;
-  kIsScheduling          = YES;
-
+  kIsScheduling = YES;
   Kernel::UserProcessHelper::StartScheduling();
-
   kIsScheduling = NO;
 }
 
@@ -86,10 +65,6 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
-
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
-    MUST_PASS(NO);
-  }
 
   kIsScheduling = NO;
 
@@ -110,10 +85,6 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
-
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
-    MUST_PASS(NO);
-  }
 
   kIsScheduling = NO;
 
@@ -162,10 +133,6 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
-
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
-    MUST_PASS(NO);
-  }
 
   kIsScheduling = NO;
 

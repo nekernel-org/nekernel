@@ -152,10 +152,13 @@ EXTERN_C BOOL mp_register_process(HAL::StackFramePtr stack_frame, ProcessID pid)
 
   kHWThread[process_index].mCoreID = kAPICLocales[0];
 
-  hal_send_sipi(kApicBaseAddress, kHWThread[process_index].mCoreID,
-                (UInt8) (((UIntPtr) stack_frame->BP) >> 12));
+  if (mp_is_smp()) {
+    /// TODO:
 
-  return YES;
+    return YES;
+  }
+
+  return NO;
 }
 
 /***********************************************************************************/
@@ -195,44 +198,36 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
   kSMPAware  = NO;
 
   if (kMADTBlock) {
-    SizeT index = 1;
+    SizeT index = 0;
 
     kSMPInterrupt = 0;
     kSMPCount     = 0;
 
-    kout << "SMP: Starting APs...\r";
-
     kApicBaseAddress = kMADTBlock->Address;
+
+    constexpr const auto kSMPCountMax = kMaxAPInsideSched;
 
     while (Yes) {
       /// @note Anything bigger than x2APIC type doesn't exist.
-      if (kMADTBlock->List[index].Type > 9 || kSMPCount > kSchedProcessLimitPerTeam) break;
+      if (kSMPCount > kSMPCountMax) break;
 
-      switch (kMADTBlock->List[index].Type) {
-        case 0x00: {
-          if (kMADTBlock->List[kSMPCount].Apic.LAPIC.ProcessorID < 1) break;
-
-          kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].Apic.LAPIC.ProcessorID;
-          (Void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
-
-          ++kSMPCount;
-          break;
-        }
-        default:
-          break;
+      if (kMADTBlock->List[index].Type > 9) {
+        ++index;
+        continue;
       }
+
+      kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].Apic.LAPIC.ProcessorID;
+      (Void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
+
+      ++kSMPCount;
 
       ++index;
     }
-
-    (Void)(kout << "SMP: Number of APs: " << number(kSMPCount) << kendl);
 
     // Kernel is now SMP aware.
     // That means that the scheduler is now available (on MP Kernels)
 
     kSMPAware = true;
-
-    /// TODO: Notify Boot AP that it must start.
   }
 }
 }  // namespace Kernel::HAL

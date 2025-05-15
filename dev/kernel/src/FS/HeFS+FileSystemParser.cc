@@ -262,7 +262,7 @@ namespace Detail {
                                               const BOOL delete_or_create) {
     if (mnt) {
       HEFS_INDEX_NODE_DIRECTORY* tmpdir =
-          (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
+          (HEFS_INDEX_NODE_DIRECTORY*) mm_new_ptr(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
       auto start           = root->fStartIND;
       auto prev_location   = start;
@@ -294,7 +294,7 @@ namespace Detail {
 
         if (expr) {
           HEFS_INDEX_NODE_DIRECTORY* dirent =
-              (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
+              (HEFS_INDEX_NODE_DIRECTORY*) mm_new_ptr(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
           rt_set_memory(dirent, 0, sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
@@ -412,8 +412,8 @@ namespace Detail {
 
           err_global_get() = kErrorSuccess;
 
-          mm_delete_heap(dirent);
-          mm_delete_heap(tmpdir);
+          mm_delete_ptr(dirent);
+          mm_delete_ptr(tmpdir);
 
           if (!delete_or_create)
             ++root->fINDCount;
@@ -438,7 +438,7 @@ namespace Detail {
       }
 
       err_global_get() = kErrorDisk;
-      mm_delete_heap(tmpdir);
+      mm_delete_ptr(tmpdir);
 
       return NO;
     }
@@ -467,7 +467,7 @@ namespace Detail {
       HEFS_INDEX_NODE* node  = new HEFS_INDEX_NODE();
 
       HEFS_INDEX_NODE_DIRECTORY* dir =
-          (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
+          (HEFS_INDEX_NODE_DIRECTORY*) mm_new_ptr(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
       while (YES) {
         if (err_global_get() == kErrorDiskIsCorrupted) {
@@ -543,7 +543,7 @@ namespace Detail {
 
     if (mnt) {
       HEFS_INDEX_NODE_DIRECTORY* dir =
-          (HEFS_INDEX_NODE_DIRECTORY*) mm_new_heap(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
+          (HEFS_INDEX_NODE_DIRECTORY*) mm_new_ptr(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
       auto hash_file = node->fHashPath;
 
@@ -596,7 +596,7 @@ namespace Detail {
 
               mnt->fOutput(mnt->fPacket);
 
-              mm_delete_heap(dir);
+              mm_delete_ptr(dir);
 
               return YES;
             } else if (dir->fINSlices[inode_index] != 0 && delete_or_create) {
@@ -646,7 +646,7 @@ namespace Detail {
 
               mnt->fOutput(mnt->fPacket);
 
-              mm_delete_heap(dir);
+              mm_delete_ptr(dir);
 
               return YES;
             }
@@ -657,7 +657,7 @@ namespace Detail {
         if (start > root->fEndIND || start == 0) break;
       }
 
-      mm_delete_heap(dir);
+      mm_delete_ptr(dir);
       err_global_get() = kErrorFileNotFound;
       return NO;
     }
@@ -902,7 +902,7 @@ _Output Bool HeFileSystemParser::INodeDirectoryCtlManip(_Input DriveTrait* mnt,
     return NO;
   }
 
-  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_heap(sizeof(HEFS_BOOT_NODE), Yes, No);
+  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_ptr(sizeof(HEFS_BOOT_NODE), Yes, No);
 
   rt_copy_memory((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
                  rt_string_len("fs/hefs-packet"));
@@ -938,11 +938,11 @@ _Output Bool HeFileSystemParser::INodeDirectoryCtlManip(_Input DriveTrait* mnt,
     // todo: make it smarter for high-throughput.
     Detail::hefsi_balance_ind(root, mnt);
 
-    mm_delete_heap((VoidPtr) root);
+    mm_delete_ptr((VoidPtr) root);
     return YES;
   }
 
-  mm_delete_heap((VoidPtr) root);
+  mm_delete_ptr((VoidPtr) root);
   return NO;
 }
 
@@ -983,7 +983,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     return NO;
   }
 
-  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_heap(sizeof(HEFS_BOOT_NODE), Yes, No);
+  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_ptr(sizeof(HEFS_BOOT_NODE), Yes, No);
 
   if (!root) {
     err_global_get() = kErrorInvalidData;
@@ -1001,7 +1001,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
 
   if (!KStringBuilder::Equals(root->fMagic, kHeFSMagic) || root->fVersion != kHeFSVersion) {
     (Void)(kout << "Invalid Boot Node, HeFS partition is invalid." << kendl);
-    mm_delete_heap((VoidPtr) root);
+    mm_delete_ptr((VoidPtr) root);
     err_global_get() = kErrorDisk;
     return NO;
   }
@@ -1021,7 +1021,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
         mnt->fInput(mnt->fPacket);
       } else {
         if (start->fFlags & kHeFSFlagsReadOnly) {
-          mm_delete_heap((VoidPtr) root);
+          mm_delete_ptr((VoidPtr) root);
           delete start;
 
           kout << "Error: File is read-only\r";
@@ -1034,7 +1034,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     }
   }
 
-  mm_delete_heap((VoidPtr) root);
+  mm_delete_ptr((VoidPtr) root);
   delete start;
   return YES;
 }
@@ -1058,7 +1058,7 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
     return NO;
   }
 
-  HEFS_INDEX_NODE* node = (HEFS_INDEX_NODE*) mm_new_heap(sizeof(HEFS_INDEX_NODE), Yes, No);
+  HEFS_INDEX_NODE* node = (HEFS_INDEX_NODE*) mm_new_ptr(sizeof(HEFS_INDEX_NODE), Yes, No);
 
   if (!node) {
     err_global_get() = kErrorInvalidData;
@@ -1070,7 +1070,7 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
   HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
 
   if (!root) {
-    mm_delete_heap((VoidPtr) node);
+    mm_delete_ptr((VoidPtr) node);
     err_global_get() = kErrorInvalidData;
 
     return NO;
@@ -1124,7 +1124,7 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
   node->fHashPath = Detail::hefsi_hash_64(name);
 
   if (Detail::hefsi_update_in_status(root, mnt, dir, node, delete_or_create)) {
-    mm_delete_heap((VoidPtr) node);
+    mm_delete_ptr((VoidPtr) node);
 
     Detail::hefsi_balance_ind(root, mnt);
 
@@ -1132,7 +1132,7 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
     return YES;
   }
 
-  mm_delete_heap((VoidPtr) node);
+  mm_delete_ptr((VoidPtr) node);
   err_global_get() = kErrorDirectoryNotFound;
 
   return NO;

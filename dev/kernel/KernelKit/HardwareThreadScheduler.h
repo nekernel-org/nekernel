@@ -14,7 +14,7 @@
 /// @note Last Rev Sun 28 Jul CET 2024
 /// @note Last Rev Thu, Aug  1, 2024  9:07:38 AM
 
-#define kMaxAPInsideSched (8U)
+#define kMaxAPInsideSched (4U)
 
 namespace Kernel {
 class HardwareThread;
@@ -58,14 +58,14 @@ class HardwareThread final {
   void Busy(const BOOL busy = false) noexcept;
 
  public:
-  BOOL Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid);
+  BOOL Switch(HAL::StackFramePtr frame, const ThreadID& pid);
   BOOL IsWakeup() noexcept;
 
  public:
   HAL::StackFramePtr StackFrame() noexcept;
-  const ThreadKind&  Kind() noexcept;
-  bool               IsBusy() noexcept;
-  const ThreadID&    ID() noexcept;
+  ThreadKind&        Kind() noexcept;
+  BOOL               IsBusy() noexcept;
+  ThreadID&          ID() noexcept;
 
  private:
   HAL::StackFramePtr fStack{nullptr};

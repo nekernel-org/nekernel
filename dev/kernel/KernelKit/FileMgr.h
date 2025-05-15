@@ -385,13 +385,13 @@ inline FileStream<Encoding, Class>::FileStream(const Encoding* path, const Encod
     }
   }
 
-  kout << "new file: " << path << ".\r";
+  kout << "FileMgr: New file at: " << path << ".\r";
 }
 
 /// @brief destructor of the file stream.
 template <typename Encoding, typename Class>
 inline FileStream<Encoding, Class>::~FileStream() {
-  mm_delete_heap(fFile);
+  mm_delete_ptr(fFile);
 }
 }  // namespace Kernel
 

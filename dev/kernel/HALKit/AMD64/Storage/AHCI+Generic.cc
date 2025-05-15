@@ -15,6 +15,7 @@
  *
  */
 
+#include <DmaKit/DmaPool.h>
 #include <FirmwareKit/EPM.h>
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
@@ -25,7 +26,6 @@
 #include <KernelKit/Timer.h>
 #include <NewKit/Utils.h>
 #include <StorageKit/AHCI.h>
-#include <StorageKit/DmaPool.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 

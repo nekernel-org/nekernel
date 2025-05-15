@@ -41,14 +41,14 @@ HardwareThread::~HardwareThread() = default;
 /***********************************************************************************/
 //! @brief returns the id of the thread.
 /***********************************************************************************/
-const ThreadID& HardwareThread::ID() noexcept {
+ThreadID& HardwareThread::ID() noexcept {
   return fID;
 }
 
 /***********************************************************************************/
 //! @brief returns the kind of thread we have.
 /***********************************************************************************/
-const ThreadKind& HardwareThread::Kind() noexcept {
+ThreadKind& HardwareThread::Kind() noexcept {
   return fKind;
 }
 
@@ -104,15 +104,9 @@ Void HardwareThread::Wake(const bool wakeup) noexcept {
 /// @retval true stack was changed, code is running.
 /// @retval false stack is invalid, previous code is running.
 /***********************************************************************************/
-Bool HardwareThread::Switch(VoidPtr image_ptr, Ptr8 stack_ptr, HAL::StackFramePtr frame,
-                            const ThreadID& pid) {
-  if (this->IsBusy()) return NO;
-
+Bool HardwareThread::Switch(HAL::StackFramePtr frame, const ThreadID& pid) {
   this->fStack = frame;
   this->fPID   = pid;
-
-  this->fStack->BP = reinterpret_cast<UIntPtr>(image_ptr);
-  this->fStack->SP = reinterpret_cast<UIntPtr>(stack_ptr);
 
   Bool ret = mp_register_process(fStack, this->fPID);
 

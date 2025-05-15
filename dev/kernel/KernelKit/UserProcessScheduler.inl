@@ -36,13 +36,13 @@ Boolean USER_PROCESS::Delete(ErrorOr<T*> ptr) {
 
       hal_write_cr3(this->VMRegister);
 
-      auto ret = mm_delete_heap(entry->Entry);
+      auto ret = mm_delete_ptr(entry->Entry);
 
       hal_write_cr3(pd);
 
       return ret == kErrorSuccess;
 #else
-      Bool ret = mm_delete_heap(ptr.Leak().Leak());
+      Bool ret = mm_delete_ptr(ptr.Leak().Leak());
 
       return ret == kErrorSuccess;
 #endif

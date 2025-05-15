@@ -47,7 +47,7 @@ class USER_PROCESS final {
   HAL::StackFramePtr StackFrame{nullptr};
   AffinityKind       Affinity{AffinityKind::kStandard};
   ProcessStatusKind  Status{ProcessStatusKind::kKilled};
-  UInt8*             StackReserve{nullptr};
+  UInt8              StackReserve[kSchedMaxStackSz];
   PROCESS_IMAGE      Image{};
   SizeT              StackSize{kSchedMaxStackSz};
   IDylibObject*      DylibDelegate{nullptr};
@@ -91,6 +91,8 @@ class USER_PROCESS final {
   ///! @brief Crashes the app, exits with code ~0.
   /***********************************************************************************/
   Void Crash();
+
+  Bool SpawnDylib();
 
   /***********************************************************************************/
   ///! @brief Exits the app.
@@ -219,8 +221,7 @@ class UserProcessScheduler final : public ISchedulable {
 
 class UserProcessHelper final {
  public:
-  STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr,
-                     PID new_pid);
+  STATIC Bool Switch(HAL::StackFramePtr frame_ptr, PID new_pid);
   STATIC Bool CanBeScheduled(const USER_PROCESS& process);
   STATIC ErrorOr<PID> TheCurrentPID();
   STATIC SizeT        StartScheduling();

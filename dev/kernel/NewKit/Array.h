@@ -20,10 +20,7 @@ class Array final {
   Array& operator=(const Array&) = default;
   Array(const Array&)            = default;
 
-  T& operator[](SizeT at) {
-    MUST_PASS(at < this->Count());
-    return fArray[at];
-  }
+  T& operator[](SizeT at) { return fArray[at]; }
 
   Boolean Empty() { return this->Count() > 0; }
 

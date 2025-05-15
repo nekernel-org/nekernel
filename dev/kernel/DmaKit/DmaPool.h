@@ -22,16 +22,17 @@
 
 #pragma once
 
+#include <HALKit/AMD64/Processor.h>
 #include <KernelKit/DebugOutput.h>
 
 #ifdef __NE_AMD64__
-#define NE_DMA_POOL_START (0x1000000)
-#define NE_DMA_POOL_SIZE (0x1000000)
+#define kNeDMAPoolStart (0x1000000)
+#define kNeDMAPoolSize (0x1000000)
 
 namespace Kernel {
 /// @brief DMA pool base pointer, here we're sure that AHCI or whatever tricky standard sees it.
-inline UInt8*       kDmaPoolPtr = (UInt8*) NE_DMA_POOL_START;
-inline const UInt8* kDmaPoolEnd = (UInt8*) (NE_DMA_POOL_START + NE_DMA_POOL_SIZE);
+inline UInt8*       kDmaPoolPtr = (UInt8*) kNeDMAPoolStart;
+inline const UInt8* kDmaPoolEnd = (UInt8*) (kNeDMAPoolStart + kNeDMAPoolSize);
 
 /***********************************************************************************/
 /// @brief allocate from the rtl_dma_alloc system.
@@ -74,19 +75,17 @@ inline Void rtl_dma_free(SizeT size) {
 /// @brief Flush DMA pointer.
 /***********************************************************************************/
 inline Void rtl_dma_flush(VoidPtr ptr, SizeT size_buffer) {
-  if (ptr > (Void*) (NE_DMA_POOL_START + NE_DMA_POOL_SIZE)) {
+  if (ptr > kDmaPoolEnd) {
     return;
   }
 
-  if (!ptr) {
+  if (!ptr || ptr < (UInt8*) kNeDMAPoolStart) {
     return;
   }
 
-  for (SizeT i = 0; i < size_buffer; ++i) {
-    asm volatile("clflush (%0)" : : "r"((UInt8*) ptr + i) : "memory");
+  for (SizeT buf_idx = 0UL; buf_idx < size_buffer; ++buf_idx) {
+    HAL::mm_memory_fence((VoidPtr) ((UInt8*) ptr + buf_idx));
   }
-
-  asm volatile("mfence" ::: "memory");
 }
 }  // namespace Kernel
 #endif

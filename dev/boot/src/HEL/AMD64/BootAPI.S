@@ -5,6 +5,16 @@
 
 .intel_syntax noprefix
 
+.global hal_load_idt
+
+hal_load_idt:
+    ret
+
+.global sched_jump_to_task
+
+sched_jump_to_task:
+    ret
+
 /**
  @brief this function setups a stack and then jumps to
  a function */

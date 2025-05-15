@@ -19,7 +19,7 @@ class Ref final {
   Ref() = default;
 
   ~Ref() {
-    if (mm_is_valid_heap(fClass)) delete fClass;
+    if (mm_is_valid_ptr(fClass)) delete fClass;
   }
 
  public:

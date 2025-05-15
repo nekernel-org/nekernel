@@ -15,7 +15,7 @@
 #define kSchedTeamCount (256U)
 
 #define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
-#define kSchedMaxStackSz mib_cast(8)       /* maximum stack size */
+#define kSchedMaxStackSz (kib_cast(8))     /* maximum stack size */
 
 #define kSchedNameLen (128U)
 

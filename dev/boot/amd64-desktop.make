@@ -49,7 +49,7 @@ DEBUG_MACRO = -D__DEBUG__
 endif
 
 ifeq ($(shell uname), Darwin)
-EMU_FLAGS=-M q35  -smp 4 -m 8G \
+EMU_FLAGS=-M q35 -smp 4 -m 8G \
     -bios $(BIOS) -cdrom $(BOOT) -boot d
 endif
 
@@ -117,7 +117,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -d int -hda $(IMG) -s -S -trace ahci_* -boot menu=on
+	$(EMU) $(EMU_FLAGS) -serial stdio -hda $(IMG) -s -S -boot menu=on
 
 .PHONY: run-efi-amd64-ata-pio
 run-efi-amd64-ata-pio:

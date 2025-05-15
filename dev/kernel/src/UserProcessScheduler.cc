@@ -25,13 +25,13 @@
 ///! BUGS: 0
 
 namespace Kernel {
+EXTERN_C Void sched_jump_to_task(HAL::StackFramePtr stack_frame);
+
 /***********************************************************************************/
 /// @brief Exit Code global variable.
 /***********************************************************************************/
 
 STATIC UInt32 kLastExitCode = 0U;
-
-STATIC BOOL kCurrentlySwitching = No;
 
 /***********************************************************************************/
 /// @brief Scheduler itself.
@@ -101,7 +101,7 @@ Void USER_PROCESS::Wake(Bool should_wakeup) {
 /** @param tree The tree to calibrate */
 /***********************************************************************************/
 
-STATIC PROCESS_HEAP_TREE<VoidPtr>* sched_try_go_upper_heap_tree(PROCESS_HEAP_TREE<VoidPtr>* tree) {
+STATIC PROCESS_HEAP_TREE<VoidPtr>* sched_try_go_upper_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* tree) {
   if (!tree) {
     return nullptr;
   }
@@ -132,11 +132,11 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
   auto vm_register = kKernelCR3;
   hal_write_cr3(this->VMRegister);
 
-  auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
+  auto ptr = mm_new_ptr(sz, Yes, Yes, pad_amount);
 
   hal_write_cr3(vm_register);
 #else
-  auto ptr = mm_new_heap(sz, Yes, Yes, pad_amount);
+  auto ptr           = mm_new_ptr(sz, Yes, Yes, pad_amount);
 #endif
 
   if (!this->HeapTree) {
@@ -173,7 +173,7 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
         is_parent = NO;
         entry     = entry->Next;
       } else {
-        entry = sched_try_go_upper_heap_tree(entry);
+        entry = sched_try_go_upper_ptr_tree(entry);
         if (entry && entry->Color == kBlackTreeKind) break;
       }
     }
@@ -240,20 +240,20 @@ const AffinityKind& USER_PROCESS::GetAffinity() noexcept {
 /** @brief Free heap tree. */
 /***********************************************************************************/
 
-STATIC Void sched_free_heap_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_heap_list) {
+STATIC Void sched_free_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_ptr_list) {
   // Deleting memory lists. Make sure to free all of them.
-  while (memory_heap_list) {
-    if (memory_heap_list->Entry) {
-      MUST_PASS(mm_delete_heap(memory_heap_list->Entry));
+  while (memory_ptr_list) {
+    if (memory_ptr_list->Entry) {
+      MUST_PASS(mm_delete_ptr(memory_ptr_list->Entry));
     }
 
-    auto next = memory_heap_list->Next;
+    auto next = memory_ptr_list->Next;
 
-    mm_delete_heap(memory_heap_list);
+    mm_delete_ptr(memory_ptr_list);
 
-    if (memory_heap_list->Child) sched_free_heap_tree(memory_heap_list->Child);
+    if (memory_ptr_list->Child) sched_free_ptr_tree(memory_ptr_list->Child);
 
-    memory_heap_list = next;
+    memory_ptr_list = next;
   }
 }
 
@@ -270,14 +270,14 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 
   kLastExitCode = exit_code;
 
-  auto memory_heap_list = this->HeapTree;
+  auto memory_ptr_list = this->HeapTree;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   auto pd = kKernelCR3;
   hal_write_cr3(this->VMRegister);
 #endif
 
-  sched_free_heap_tree(memory_heap_list);
+  sched_free_ptr_tree(memory_ptr_list);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   hal_write_cr3(pd);
@@ -289,24 +289,19 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 #endif
 
   //! Delete image if not done already.
-  if (this->Image.fCode && mm_is_valid_heap(this->Image.fCode)) mm_delete_heap(this->Image.fCode);
+  if (this->Image.fCode && mm_is_valid_ptr(this->Image.fCode)) mm_delete_ptr(this->Image.fCode);
 
   //! Delete blob too.
-  if (this->Image.fBlob && mm_is_valid_heap(this->Image.fBlob)) mm_delete_heap(this->Image.fBlob);
+  if (this->Image.fBlob && mm_is_valid_ptr(this->Image.fBlob)) mm_delete_ptr(this->Image.fBlob);
 
   //! Delete stack frame.
-  if (this->StackFrame && mm_is_valid_heap(this->StackFrame))
-    mm_delete_heap((VoidPtr) this->StackFrame);
-
-  //! Delete stack reserve.
-  if (this->StackReserve && mm_is_valid_heap(this->StackReserve))
-    mm_delete_heap(reinterpret_cast<VoidPtr>(this->StackReserve));
+  if (this->StackFrame && mm_is_valid_ptr(this->StackFrame))
+    mm_delete_ptr((VoidPtr) this->StackFrame);
 
   //! Avoid use after free.
-  this->Image.fBlob  = nullptr;
-  this->Image.fCode  = nullptr;
-  this->StackFrame   = nullptr;
-  this->StackReserve = nullptr;
+  this->Image.fBlob = nullptr;
+  this->Image.fCode = nullptr;
+  this->StackFrame  = nullptr;
 
   if (this->Kind == kExecutableDylibKind) {
     Bool success = false;
@@ -324,6 +319,34 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
   this->Status    = ProcessStatusKind::kFinished;
 
   --this->ParentTeam->mProcessCount;
+}
+
+/***********************************************************************************/
+/// @brief Add dylib to process.
+/***********************************************************************************/
+
+Bool USER_PROCESS::SpawnDylib() {
+  // React according to process kind.
+  switch (this->Kind) {
+    case USER_PROCESS::kExecutableDylibKind: {
+      this->DylibDelegate = rtl_init_dylib_pef(*this);
+
+      if (!this->DylibDelegate) {
+        this->Crash();
+        return NO;
+      }
+
+      return YES;
+    }
+    case USER_PROCESS::kExecutableKind: {
+      return NO;
+    }
+    default: {
+      (Void)(kout << "Unknown process kind: " << hex_number(this->Kind) << kendl);
+      this->Crash();
+      return NO;
+    }
+  }
 }
 
 /***********************************************************************************/
@@ -363,18 +386,9 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
   rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, len);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-  process.VMRegister = new PDE();
-
-  if (!process.VMRegister) {
-    process.Crash();
-    return -kErrorProcessFault;
-  }
-
-  UInt32 flags = HAL::kMMFlagsPresent;
-  flags |= HAL::kMMFlagsWr;
-  flags |= HAL::kMMFlagsUser;
-
-  HAL::mm_map_page((VoidPtr) process.VMRegister, process.VMRegister, flags);
+  process.VMRegister = kKernelCR3;
+#else
+  process.VMRegister = 0UL;
 #endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
   process.StackFrame = new HAL::StackFrame();
@@ -386,52 +400,17 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
 
   rt_set_memory(process.StackFrame, 0, sizeof(HAL::StackFrame));
 
-#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-  flags = HAL::kMMFlagsPresent;
-  flags |= HAL::kMMFlagsWr;
-  flags |= HAL::kMMFlagsUser;
+  process.StackFrame->BP = reinterpret_cast<UIntPtr>(code);
 
-  HAL::mm_map_page((VoidPtr) process.StackFrame, process.StackFrame, flags);
-#endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-
-  // React according to process kind.
-  switch (process.Kind) {
-    case USER_PROCESS::kExecutableDylibKind: {
-      process.DylibDelegate = rtl_init_dylib_pef(process);
-      MUST_PASS(process.DylibDelegate);
-      break;
-    }
-    case USER_PROCESS::kExecutableKind: {
-      break;
-    }
-    default: {
-      (Void)(kout << "Unknown process kind: " << hex_number(process.Kind) << kendl);
-      break;
-    }
-  }
-
-  process.StackReserve = new UInt8[process.StackSize];
-
-  if (!process.StackReserve) {
-    process.Crash();
-    return -kErrorProcessFault;
-  }
+  process.StackSize = kSchedMaxStackSz;
 
   rt_set_memory(process.StackReserve, 0, process.StackSize);
-
-#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-  flags = HAL::kMMFlagsPresent;
-  flags |= HAL::kMMFlagsWr;
-  flags |= HAL::kMMFlagsUser;
-
-  HAL::mm_map_page((VoidPtr) process.StackReserve, process.StackReserve, flags);
-#endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
   process.ParentTeam = &mTeam;
 
   process.ProcessId = pid;
-  process.Status    = ProcessStatusKind::kStarting;
-  process.PTime     = (UIntPtr) AffinityKind::kStandard;
+  process.Status    = ProcessStatusKind::kRunning;
+  process.PTime     = 0;
   process.RTime     = 0;
 
   (Void)(kout << "PID: " << number(process.ProcessId) << kendl);
@@ -498,10 +477,6 @@ SizeT UserProcessScheduler::Run() noexcept {
     return 0UL;
   }
 
-  if (kCurrentlySwitching) return 0UL;
-
-  kCurrentlySwitching = Yes;
-
   SizeT process_index = 0UL;  //! we store this guy to tell the scheduler how many
                               //! things we have scheduled.
 
@@ -516,52 +491,37 @@ SizeT UserProcessScheduler::Run() noexcept {
         continue;
       }
 
-      // Set current process header.
+      kout << "The process: " << process.Name << " is being scheduled to run...\r";
+
       this->CurrentProcess() = process;
 
       process.PTime = static_cast<Int32>(process.Affinity);
+      process.RTime = 0UL;
 
-      // tell helper to find a core to schedule on.
-      BOOL ret = UserProcessHelper::Switch(process.Image.Leak().Leak().Leak(),
-                                           &process.StackReserve[process.StackSize - 1],
-                                           process.StackFrame, process.ProcessId);
-
-      if (!ret) {
-        kout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
-        process.Crash();
+      // tell helper to find a core to schedule on, otherwise run on this core directly.
+      if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
+        sched_jump_to_task(process.StackFrame);
       }
-    } else {
-      if (process.ProcessId == this->CurrentProcess().Leak().ProcessId) {
+
+      if (process.ProcessId == this->CurrentProcess().Leak().ProcessId &&
+          process.PTime > (Int32) AffinityKind::kStandard) {
         if (process.PTime < process.RTime) {
-          if (process.RTime < (Int32) AffinityKind::kRealTime)
-            process.PTime = (Int32) AffinityKind::kVeryLowUsage;
-          else if (process.RTime < (Int32) AffinityKind::kVeryHigh)
+          if (process.RTime < (Int32) AffinityKind::kVeryHigh)
             process.PTime = (Int32) AffinityKind::kLowUsage;
           else if (process.RTime < (Int32) AffinityKind::kHigh)
             process.PTime = (Int32) AffinityKind::kStandard;
           else if (process.RTime < (Int32) AffinityKind::kStandard)
             process.PTime = (Int32) AffinityKind::kHigh;
 
-          process.RTime = static_cast<Int32>(process.Affinity);
-
-          BOOL ret = UserProcessHelper::Switch(process.Image.Leak().Leak().Leak(),
-                                               &process.StackReserve[process.StackSize - 1],
-                                               process.StackFrame, process.ProcessId);
-
-          if (!ret) {
-            kout << "The process: " << process.Name << ", is not valid! Crashing it...\r";
-            process.Crash();
-          }
+          process.RTime = 0UL;
         } else {
           ++process.RTime;
         }
       }
-
+    } else {
       --process.PTime;
     }
   }
-
-  kCurrentlySwitching = No;
 
   return process_index;
 }
@@ -581,8 +541,6 @@ UserProcessTeam& UserProcessScheduler::CurrentTeam() {
 
 BOOL UserProcessScheduler::SwitchTeam(UserProcessTeam& team) {
   if (team.AsArray().Count() < 1) return No;
-
-  if (kCurrentlySwitching) return No;
 
   kScheduler.mTeam = team;
 
@@ -617,8 +575,6 @@ Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
 
   if (process.Status == ProcessStatusKind::kInvalid) return No;
 
-  if (!process.Image.HasCode()) return No;
-
   if (!process.Name[0]) return No;
 
   // real time processes shouldn't wait that much.
@@ -645,8 +601,7 @@ SizeT UserProcessHelper::StartScheduling() {
  */
 /***********************************************************************************/
 
-Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr frame_ptr,
-                               PID new_pid) {
+Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
   for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
     if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPInvalid ||
         HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPBoot)
@@ -658,13 +613,13 @@ Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr f
           AffinityKind::kRealTime)
         continue;
 
-      if (HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid)) {
+      if (HardwareThreadScheduler::The()[index].Leak()->Switch(frame_ptr, new_pid)) {
         HardwareThreadScheduler::The()[index].Leak()->fPTime =
             UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
 
         UserProcessHelper::TheCurrentPID().Leak().Leak() = UserProcessHelper::TheCurrentPID();
 
-        return YES;
+        break;
       }
 
       continue;
@@ -678,8 +633,7 @@ Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr f
     ///	Prepare task switch.								 ///
     ////////////////////////////////////////////////////////////
 
-    Bool ret =
-        HardwareThreadScheduler::The()[index].Leak()->Switch(image, stack, frame_ptr, new_pid);
+    Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(frame_ptr, new_pid);
 
     ////////////////////////////////////////////////////////////
     ///	Rollback on fail.    								 ///
@@ -693,10 +647,10 @@ Bool UserProcessHelper::Switch(VoidPtr image, UInt8* stack, HAL::StackFramePtr f
         UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
     HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
 
-    return Yes;
+    return YES;
   }
 
-  return No;
+  return NO;
 }
 
 ////////////////////////////////////////////////////////////

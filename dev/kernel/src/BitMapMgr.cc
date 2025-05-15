@@ -169,7 +169,7 @@ namespace HAL {
     VoidPtr              ptr_new = nullptr;
     Detail::IBitMapProxy bitmp;
 
-    NE_UNUSED(is_page);
+    if (is_page) return nullptr;
 
     ptr_new = bitmp.FindBitMap(kKernelBitMpStart, size, wr, user, pad);
     return (UIntPtr*) ptr_new;

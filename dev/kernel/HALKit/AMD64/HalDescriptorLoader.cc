@@ -8,56 +8,10 @@
 #include <FSKit/NeFS.h>
 #include <HALKit/AMD64/Processor.h>
 
-#define kPITDefaultTicks (1000U)
-
 namespace Kernel::HAL {
 namespace Detail {
   STATIC ::Kernel::Detail::AMD64::InterruptDescriptorAMD64 kInterruptVectorTable[kKernelIdtSize] =
       {};
-
-  STATIC ATTRIBUTE(unused) void hal_set_irq_mask(UInt8 irql) [[maybe_unused]] {
-    UInt16 port;
-    UInt8  value;
-
-    if (irql < 8) {
-      port = kPICData;
-    } else {
-      port = kPIC2Data;
-      irql -= 8;
-    }
-
-    value = rt_in8(port) | (1 << irql);
-    rt_out8(port, value);
-  }
-
-  STATIC void hal_clear_irq_mask(UInt8 irql) [[maybe_unused]] {
-    UInt16 port;
-    UInt8  value;
-
-    if (irql < 8) {
-      port = kPICData;
-    } else {
-      port = kPIC2Data;
-      irql -= 8;
-    }
-
-    value = rt_in8(port) & ~(1 << irql);
-    rt_out8(port, value);
-  }
-
-  STATIC Void hal_enable_pit(UInt16 ticks) noexcept {
-    if (ticks == 0) ticks = kPITDefaultTicks;
-
-    // Configure PIT to receieve scheduler interrupts.
-
-    UInt16 kPITCommDivisor = kPITFrequency / ticks;  // 100 Hz.
-
-    HAL::rt_out8(kPITControlPort, 0x36);                            // Command to PIT
-    HAL::rt_out8(kPITChannel0Port, kPITCommDivisor & 0xFF);         // Send low byte
-    HAL::rt_out8(kPITChannel0Port, (kPITCommDivisor >> 8) & 0xFF);  // Send high byte
-
-    hal_clear_irq_mask(32);
-  }
 }  // namespace Detail
 
 /// @brief Loads the provided Global Descriptor Table.
@@ -71,8 +25,6 @@ Void GDTLoader::Load(Register64& gdt) {
 
 Void IDTLoader::Load(Register64& idt) {
   rt_cli();
-
-  const Int16 kPITTickForScheduler = kPITDefaultTicks;
 
   volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**) idt.Base;
 
@@ -92,12 +44,7 @@ Void IDTLoader::Load(Register64& idt) {
   idt.Base  = (UIntPtr) &Detail::kInterruptVectorTable[0];
   idt.Limit = sizeof(::Kernel::Detail::AMD64::InterruptDescriptorAMD64) * (kKernelIdtSize);
 
-  Detail::hal_enable_pit(kPITTickForScheduler);
-
-#ifndef __NE_MODULAR_KERNEL_COMPONENTS__
   hal_load_idt(idt);
-#endif  // __NE_MODULAR_KERNEL_COMPONENTS__
-
   rt_sti();
 }
 

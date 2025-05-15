@@ -16,7 +16,7 @@
 DDK_EXTERN void* kalloc(size_t sz) {
   if (!sz) ++sz;
 
-  void* ptr = ke_call("mm_new_heap", 1, &sz, sizeof(size_t));
+  void* ptr = ke_call("mm_new_ptr", 1, &sz, sizeof(size_t));
 
   return ptr;
 }
@@ -28,5 +28,5 @@ DDK_EXTERN void* kalloc(size_t sz) {
 DDK_EXTERN void kfree(void* ptr) {
   if (!ptr) return;
 
-  ke_call("mm_delete_heap", 1, ptr, 0);
+  ke_call("mm_delete_ptr", 1, ptr, 0);
 }

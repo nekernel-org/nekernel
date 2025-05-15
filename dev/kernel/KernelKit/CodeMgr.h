@@ -20,7 +20,7 @@
 
 namespace Kernel {
 /// @brief Main process entrypoint.
-typedef void (*rtl_main_kind)(SizeT argc, Char** argv, Char** envp, SizeT envp_len);
+typedef void (*rtl_main_kind)(void);
 
 /// @brief C++ Constructor entrypoint.
 typedef void (*rtl_ctor_kind)(void);

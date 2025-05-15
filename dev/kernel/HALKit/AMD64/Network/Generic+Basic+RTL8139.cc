@@ -4,8 +4,8 @@ Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
+#include <DmaKit/DmaPool.h>
 #include <HALKit/AMD64/Processor.h>
-#include <StorageKit/DmaPool.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 
 using namespace Kernel;
@@ -14,7 +14,7 @@ using namespace Kernel::HAL;
 STATIC UInt16 kIOBase = 0xFFFF;
 
 STATIC UInt32                 kRXOffset     = 0UL;
-STATIC constexpr const UInt32 kRxBufferSize = 8192 + 16 + 1500;
+STATIC constexpr CONST UInt32 kRxBufferSize = 8192 + 16 + 1500;
 
 STATIC BOOL kTXEnabled = NO;
 

@@ -27,6 +27,8 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
     return kEfiFail;
   }
 
+  Kernel::HAL::rt_sti();
+
   kHandoverHeader = handover_hdr;
 
   FB::fb_clear_video();
@@ -54,7 +56,7 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   STATIC CONST auto kGDTEntriesCount = 6;
 
-  /* GDT, mostly descriptors for user and kernel segments. */
+  /* The GDT, mostly descriptors for user and kernel segments. */
   STATIC Kernel::HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
       {.fLimitLow   = 0,
        .fBaseLow    = 0,
@@ -101,6 +103,13 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   return kEfiFail;
 }
 
+EXTERN_C Kernel::Void rtl_ne_task(Kernel::Void) {
+  kout << "Hello, world!\r";
+  dbg_break_point();
+}
+
+EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp);
+
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 #ifdef __FSKIT_INCLUDES_HEFS__
   if (!Kernel::HeFS::fs_init_hefs()) {
@@ -108,18 +117,24 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
     Kernel::NeFS::fs_init_nefs();
   }
 #elif defined(__FSKIT_INCLUDES_NEFS__)
-  Kernel::NeFS::fs_init_nefs();
+  if (!Kernel::NeFS::fs_init_nefs()) {
+    kout << "NeFS cannot be formated on the disk. Aborting\r";
+    dbg_break_point();
+  }
 #endif
+
+  Kernel::rtl_create_user_process(rtl_ne_task, "NeTask");
 
   Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
   Kernel::HAL::Register64 idt_reg;
-  idt_reg.Base = (Kernel::UIntPtr) kInterruptVectorTable;
+  idt_reg.Base = reinterpret_cast<Kernel::UIntPtr>(kInterruptVectorTable);
 
   Kernel::HAL::IDTLoader idt_loader;
 
   idt_loader.Load(idt_reg);
 
-  dbg_break_point();
+  while (YES)
+    ;
 }
 #endif  // ifndef __NE_MODULAR_KERNEL_COMPONENTS__
