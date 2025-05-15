@@ -25,6 +25,6 @@ EXTERN_C Void __zka_pure_call(USER_PROCESS* process) {
 EXTERN_C Bool hal_check_stack(HAL::StackFramePtr stack_ptr) {
   if (!stack_ptr) return No;
 
-  return stack_ptr->SP != 0 && stack_ptr->BP != 0;
+  return stack_ptr->SP != 0 && stack_ptr->IP != 0;
 }
 }  // namespace Kernel

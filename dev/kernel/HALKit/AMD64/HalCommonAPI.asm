@@ -79,4 +79,32 @@ mp_system_call_handler:
 
     o64 sysret
 
-[bits 16]
+
+section .text
+
+global sched_jump_to_task
+
+;; Jump to the task from its stack frame.
+sched_jump_to_task:
+    push rbp
+    mov  rbp, rsp
+
+    mov  r8, [rcx + 0x10]
+    mov  r9, [rcx + 0x18]
+    mov r10, [rcx + 0x20]
+    mov r11, [rcx + 0x28]
+    mov r12, [rcx + 0x30]
+    mov r13, [rcx + 0x38]
+    mov r14, [rcx + 0x40]
+    mov r15, [rcx + 0x48]
+
+    mov rax, [rcx + 0x00]
+    mov rsp, [rcx + 0x08]  ; SP
+
+    jmp rax
+
+global rtl_ne_task
+
+rtl_ne_task:
+    jmp $
+    ret

@@ -103,14 +103,22 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   return kEfiFail;
 }
 
-EXTERN_C Kernel::Void rtl_ne_task(Kernel::Void) {
-  kout << "Hello, world!\r";
-  dbg_break_point();
-}
-
-EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp);
+EXTERN_C void rtl_ne_task(void);
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
+  Kernel::rtl_create_user_process(rtl_ne_task, "NeTask");
+  Kernel::rtl_create_user_process(rtl_ne_task, "NeTask#2");
+  Kernel::rtl_create_user_process(rtl_ne_task, "NeTask#3");
+
+  Kernel::HAL::Register64 idt_reg;
+  idt_reg.Base = reinterpret_cast<Kernel::UIntPtr>(kInterruptVectorTable);
+
+  Kernel::HAL::IDTLoader idt_loader;
+
+  idt_loader.Load(idt_reg);
+
+  Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+
 #ifdef __FSKIT_INCLUDES_HEFS__
   if (!Kernel::HeFS::fs_init_hefs()) {
     // Fallback to NeFS, if HeFS doesn't work here.
@@ -122,17 +130,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
     dbg_break_point();
   }
 #endif
-
-  Kernel::rtl_create_user_process(rtl_ne_task, "NeTask");
-
-  Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-
-  Kernel::HAL::Register64 idt_reg;
-  idt_reg.Base = reinterpret_cast<Kernel::UIntPtr>(kInterruptVectorTable);
-
-  Kernel::HAL::IDTLoader idt_loader;
-
-  idt_loader.Load(idt_reg);
 
   while (YES)
     ;

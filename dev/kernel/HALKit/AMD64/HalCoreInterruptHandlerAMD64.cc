@@ -11,6 +11,8 @@
 
 STATIC BOOL kIsScheduling = NO;
 
+EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip);
+
 /// @brief Handle GPF fault.
 /// @param rsp
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
@@ -103,16 +105,6 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
   auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
-
-  if (process.Leak().Status != Kernel::ProcessStatusKind::kRunning) {
-    (Void)(Kernel::kout << "Kernel: Kernel RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
-    Kernel::kout << "Kernel: SIGTRAP\r";
-
-    kIsScheduling = NO;
-
-    while (YES)
-      ;
-  }
 
   kIsScheduling = NO;
 

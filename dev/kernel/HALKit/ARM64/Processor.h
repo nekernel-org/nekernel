@@ -42,17 +42,17 @@ typedef UIntPtr    Reg;
 typedef Register64 Register;
 
 /// @note let's keep the same name as AMD64 HAL.
-struct PACKED StackFrame final {
-  Reg R8{0};
-  Reg R9{0};
-  Reg R10{0};
-  Reg R11{0};
-  Reg R12{0};
-  Reg R13{0};
-  Reg R14{0};
-  Reg R15{0};
-  Reg SP{0};
-  Reg BP{0};
+struct PACKED StackFrame {
+  Reg IP;
+  Reg SP;
+  Reg R8;
+  Reg R9;
+  Reg R10;
+  Reg R11;
+  Reg R12;
+  Reg R13;
+  Reg R14;
+  Reg R15;
 };
 
 typedef StackFrame* StackFramePtr;

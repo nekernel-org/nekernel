@@ -83,18 +83,17 @@ using Reg         = RawRegister;
 using InterruptId = UInt16; /* For each element in the IVT */
 
 /// @brief Stack frame (as retrieved from assembly.)
-struct PACKED StackFrame final {
-  RawRegister R8{0};
-  RawRegister R9{0};
-  RawRegister R10{0};
-  RawRegister FS{0};
-  RawRegister R12{0};
-  RawRegister R13{0};
-  RawRegister R14{0};
-  RawRegister R15{0};
-  RawRegister GS{0};
-  RawRegister SP{0};
-  RawRegister BP{0};
+struct PACKED StackFrame {
+  Reg IP;
+  Reg SP;
+  Reg R8;
+  Reg R9;
+  Reg R10;
+  Reg R11;
+  Reg R12;
+  Reg R13;
+  Reg R14;
+  Reg R15;
 };
 
 typedef StackFrame* StackFramePtr;
@@ -187,13 +186,7 @@ UIntPtr mm_get_phys_address(VoidPtr virtual_address);
 /// @param lo low byte
 /// @param hi high byte
 /***********************************************************************************/
-inline UInt32 hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept {
-  if (!lo || !hi) return 0;
-
-  asm volatile("rdmsr" : "=a"(*lo), "=d"(*hi) : "c"(msr));
-
-  return *lo + *hi;
-}
+Void hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept;
 
 /// @brief Set Model-specific register.
 /// @param msr MSR

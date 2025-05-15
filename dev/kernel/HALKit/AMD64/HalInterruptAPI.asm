@@ -232,17 +232,15 @@ IntExp    30
 IntNormal 31
 
 [extern idt_handle_scheduler]
+[extern kApicBaseAddress]
 
 __NE_INT_32:
-    cld
-    
     push rax
     mov rcx, rsp
     call idt_handle_scheduler
     pop rax
 
-    mov al, 0x20
-    out 0x20, al
+    mov dword [kApicBaseAddress+0xB0], 0
 
     o64 iret
 
@@ -413,12 +411,3 @@ kInterruptVectorTable:
         dq __NE_INT_%+i
     %assign i i+1
     %endrep
-
-section .text
-
-global sched_jump_to_task
-
-;; Jump to the task from its stack frame.
-sched_jump_to_task:
-    mov rsp, rcx
-    ret

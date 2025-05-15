@@ -37,8 +37,6 @@ STATIC UInt32 kLastExitCode = 0U;
 /// @brief Scheduler itself.
 /***********************************************************************************/
 
-STATIC UserProcessScheduler kScheduler;
-
 USER_PROCESS::USER_PROCESS()  = default;
 USER_PROCESS::~USER_PROCESS() = default;
 
@@ -400,7 +398,8 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
 
   rt_set_memory(process.StackFrame, 0, sizeof(HAL::StackFrame));
 
-  process.StackFrame->BP = reinterpret_cast<UIntPtr>(code);
+  process.StackFrame->IP = reinterpret_cast<UIntPtr>(code);
+  process.StackFrame->SP = reinterpret_cast<UIntPtr>(&process.StackReserve[0] + process.StackSize);
 
   process.StackSize = kSchedMaxStackSz;
 
@@ -424,6 +423,7 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
 /***********************************************************************************/
 
 UserProcessScheduler& UserProcessScheduler::The() {
+  STATIC UserProcessScheduler kScheduler;
   return kScheduler;
 }
 
@@ -491,7 +491,7 @@ SizeT UserProcessScheduler::Run() noexcept {
         continue;
       }
 
-      kout << "The process: " << process.Name << " is being scheduled to run...\r";
+      kout << process.Name << " is being scheduled to run...\r";
 
       this->CurrentProcess() = process;
 
@@ -500,25 +500,24 @@ SizeT UserProcessScheduler::Run() noexcept {
 
       // tell helper to find a core to schedule on, otherwise run on this core directly.
       if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
-        sched_jump_to_task(process.StackFrame);
-      }
+        if (process.ProcessId == this->CurrentProcess().Leak().ProcessId &&
+            process.PTime > (Int32) AffinityKind::kStandard) {
+          if (process.PTime < process.RTime) {
+            if (process.RTime < (Int32) AffinityKind::kVeryHigh)
+              process.PTime = (Int32) AffinityKind::kLowUsage;
+            else if (process.RTime < (Int32) AffinityKind::kHigh)
+              process.PTime = (Int32) AffinityKind::kStandard;
+            else if (process.RTime < (Int32) AffinityKind::kStandard)
+              process.PTime = (Int32) AffinityKind::kHigh;
 
-      if (process.ProcessId == this->CurrentProcess().Leak().ProcessId &&
-          process.PTime > (Int32) AffinityKind::kStandard) {
-        if (process.PTime < process.RTime) {
-          if (process.RTime < (Int32) AffinityKind::kVeryHigh)
-            process.PTime = (Int32) AffinityKind::kLowUsage;
-          else if (process.RTime < (Int32) AffinityKind::kHigh)
-            process.PTime = (Int32) AffinityKind::kStandard;
-          else if (process.RTime < (Int32) AffinityKind::kStandard)
-            process.PTime = (Int32) AffinityKind::kHigh;
-
-          process.RTime = 0UL;
-        } else {
-          ++process.RTime;
+            process.RTime = 0UL;
+          } else {
+            ++process.RTime;
+          }
         }
       }
     } else {
+      kout << process.Name << " won't be scheduled to run...\r";
       --process.PTime;
     }
   }
@@ -542,7 +541,7 @@ UserProcessTeam& UserProcessScheduler::CurrentTeam() {
 BOOL UserProcessScheduler::SwitchTeam(UserProcessTeam& team) {
   if (team.AsArray().Count() < 1) return No;
 
-  kScheduler.mTeam = team;
+  UserProcessScheduler::The().mTeam = team;
 
   return Yes;
 }
@@ -556,10 +555,10 @@ Ref<USER_PROCESS>& UserProcessScheduler::CurrentProcess() {
 /// @brief Current proccess id getter.
 /// @return USER_PROCESS ID integer.
 ErrorOr<PID> UserProcessHelper::TheCurrentPID() {
-  if (!kScheduler.CurrentProcess()) return ErrorOr<PID>{-kErrorProcessFault};
+  if (!UserProcessScheduler::The().CurrentProcess()) return ErrorOr<PID>{-kErrorProcessFault};
 
   kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-  return ErrorOr<PID>{kScheduler.CurrentProcess().Leak().ProcessId};
+  return ErrorOr<PID>{UserProcessScheduler::The().CurrentProcess().Leak().ProcessId};
 }
 
 /// @brief Check if process can be schedulded.
@@ -590,7 +589,7 @@ Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
 /***********************************************************************************/
 
 SizeT UserProcessHelper::StartScheduling() {
-  return kScheduler.Run();
+  return UserProcessScheduler::The().Run();
 }
 
 /***********************************************************************************/

@@ -16,6 +16,11 @@
  */
 
 namespace Kernel::HAL {
+Void hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept {
+  if (!lo || !hi) return;
+  asm volatile("rdmsr" : "=a"(*lo), "=d"(*hi) : "c"(msr));
+}
+
 Void hal_set_msr(UInt32 msr, UInt32 lo, UInt32 hi) noexcept {
   asm volatile("wrmsr" : : "a"(lo), "d"(hi), "c"(msr));
 }

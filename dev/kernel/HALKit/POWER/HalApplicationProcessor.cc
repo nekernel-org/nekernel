@@ -22,7 +22,7 @@ void mp_wakeup_thread(HAL::StackFramePtr stack) {
   if (!stack) return;
 
   hal_set_pc_to_hart(reinterpret_cast<HAL_HARDWARE_THREAD*>(stack->R15),
-                     reinterpret_cast<VoidPtr>(stack->BP));
+                     reinterpret_cast<VoidPtr>(stack->IP));
 }
 
 /// @brief makes thread sleep.

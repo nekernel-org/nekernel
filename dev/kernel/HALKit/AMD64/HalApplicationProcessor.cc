@@ -14,16 +14,21 @@
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
 
-#define kAPIC_Signature "APIC"
+#define APIC_Signature "APIC"
 
-#define kAPIC_ICR_Low 0x300
-#define kAPIC_ICR_High 0x310
-#define kAPIC_SIPI_Vector 0x00500
-#define kAPIC_EIPI_Vector 0x00400
+#define APIC_ICR_Low 0x300
+#define APIC_ICR_High 0x310
+#define APIC_SIPI_Vector 0x00500
+#define APIC_EIPI_Vector 0x00400
 
-#define kAPIC_BASE_MSR 0x1B
-#define kAPIC_BASE_MSR_BSP 0x100
-#define kAPIC_BASE_MSR_ENABLE 0x800
+#define LAPIC_REG_TIMER_LVT 0x320
+#define LAPIC_REG_TIMER_INITCNT 0x380
+#define LAPIC_REG_TIMER_CURRCNT 0x390
+#define LAPIC_REG_TIMER_DIV 0x3E0
+
+#define APIC_BASE_MSR 0x1B
+#define APIC_BASE_MSR_BSP 0x100
+#define APIC_BASE_MSR_ENABLE 0x800
 
 /// @note: _hal_switch_context is internal
 
@@ -47,7 +52,7 @@ STATIC HAL_APIC_MADT* kMADTBlock = nullptr;
 STATIC Bool           kSMPAware  = false;
 STATIC Int64          kSMPCount  = 0;
 
-STATIC UIntPtr kApicBaseAddress = 0UL;
+EXTERN_C UIntPtr kApicBaseAddress = 0UL;
 
 STATIC Int32   kSMPInterrupt                           = 0;
 STATIC UInt64  kAPICLocales[kSchedProcessLimitPerTeam] = {0};
@@ -109,10 +114,10 @@ struct HAL_APIC_MADT final SDT_OBJECT {
 /***********************************************************************************/
 
 Void hal_send_start_ipi(UInt32 target, UInt32 apic_id) {
-  Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, apic_id << 24);
-  Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low, 0x00000500 | 0x00004000 | 0x00000000);
+  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_High, apic_id << 24);
+  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_Low, 0x00000500 | 0x00004000 | 0x00000000);
 
-  while (Kernel::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000) {
+  while (Kernel::ke_dma_read<UInt32>(target, APIC_ICR_Low) & 0x1000) {
     ;
   }
 }
@@ -125,11 +130,10 @@ Void hal_send_start_ipi(UInt32 target, UInt32 apic_id) {
 /// @return
 /***********************************************************************************/
 Void hal_send_sipi(UInt32 target, UInt32 apic_id, UInt8 vector) {
-  Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_High, apic_id << 24);
-  Kernel::ke_dma_write<UInt32>(target, kAPIC_ICR_Low,
-                               0x00000600 | 0x00004000 | 0x00000000 | vector);
+  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_High, apic_id << 24);
+  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_Low, 0x00000600 | 0x00004000 | 0x00000000 | vector);
 
-  while (Kernel::ke_dma_read<UInt32>(target, kAPIC_ICR_Low) & 0x1000) {
+  while (Kernel::ke_dma_read<UInt32>(target, APIC_ICR_Low) & 0x1000) {
     NE_UNUSED(0);
   }
 }
@@ -192,7 +196,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
   }
 
   auto hw_and_pow_int = PowerFactoryInterface(vendor_ptr);
-  kRawMADT            = hw_and_pow_int.Find(kAPIC_Signature).Leak().Leak();
+  kRawMADT            = hw_and_pow_int.Find(APIC_Signature).Leak().Leak();
 
   kMADTBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
   kSMPAware  = NO;
@@ -203,7 +207,31 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     kSMPInterrupt = 0;
     kSMPCount     = 0;
 
-    kApicBaseAddress = kMADTBlock->Address;
+    UInt32 lo = 0, hi = 0;
+    hal_get_msr(0x1B, &lo, &hi);
+    UInt64 apic_base = ((UInt64) hi << 32) | lo;
+
+    apic_base |= 0x800;  // enable bit
+
+    lo = apic_base & 0xFFFFFFFF;
+    hi = apic_base >> 32;
+
+    hal_set_msr(0x1B, lo, hi);
+
+    kApicBaseAddress = apic_base & 0xFFFFF000;
+
+    // Allow LAPIC to forward interrupts (TPR = 0)
+    *(volatile UInt32*) (kApicBaseAddress + 0x80) = 0;
+
+    // Set Spurious Interrupt Vector and enable LAPIC (bit 8)
+    *(volatile UInt32*) (kApicBaseAddress + 0xF0) = 0x1FF;  // vector = 0xFF, enable bit = 1 << 8
+
+    // LAPIC timer setup
+    *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_DIV) = 0b0011;  // Divide by 16
+    *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_LVT) =
+        32 | (1 << 17);  // Vector 32, periodic
+    *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_INITCNT) =
+        1000000;  // Init count (e.g., ~100Hz)
 
     constexpr const auto kSMPCountMax = kMaxAPInsideSched;
 
@@ -224,10 +252,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
       ++index;
     }
 
-    // Kernel is now SMP aware.
-    // That means that the scheduler is now available (on MP Kernels)
-
-    kSMPAware = true;
+    kSMPAware = kSMPCount > 1;
   }
 }
 }  // namespace Kernel::HAL

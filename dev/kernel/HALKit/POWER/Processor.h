@@ -28,7 +28,7 @@ struct PACKED StackFrame final {
   Reg R14{0};
   Reg R15{0};
   Reg SP{0};
-  Reg BP{0};
+  Reg IP{0};
 };
 
 typedef StackFrame* StackFramePtr;
