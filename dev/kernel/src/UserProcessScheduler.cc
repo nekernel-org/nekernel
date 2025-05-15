@@ -491,7 +491,7 @@ SizeT UserProcessScheduler::Run() noexcept {
         continue;
       }
 
-      kout << process.Name << " is being scheduled to run...\r";
+      kout << ((*process.Name) ? process.Name : "USER_PROCESS") << " will be scheduled...\r";
 
       this->CurrentProcess() = process;
 
@@ -499,17 +499,21 @@ SizeT UserProcessScheduler::Run() noexcept {
 
       if (process.PTime < process.RTime) {
         if (process.RTime < (Int32) AffinityKind::kVeryHigh)
-          process.PTime = (Int32) AffinityKind::kLowUsage;
+          process.RTime = (Int32) AffinityKind::kLowUsage;
         else if (process.RTime < (Int32) AffinityKind::kHigh)
-          process.PTime = (Int32) AffinityKind::kStandard;
+          process.RTime = (Int32) AffinityKind::kStandard;
         else if (process.RTime < (Int32) AffinityKind::kStandard)
-          process.PTime = (Int32) AffinityKind::kHigh;
+          process.RTime = (Int32) AffinityKind::kHigh;
+
+        process.PTime += process.RTime;
         process.RTime = 0UL;
-      } else {
-        ++process.RTime;
+      }
+
+      if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
+        continue;
       }
     } else {
-      kout << process.Name << " won't be scheduled to run...\r";
+      ++process.RTime;
       --process.PTime;
     }
   }

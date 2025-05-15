@@ -105,6 +105,8 @@ Void HardwareThread::Wake(const bool wakeup) noexcept {
 /// @retval false stack is invalid, previous code is running.
 /***********************************************************************************/
 Bool HardwareThread::Switch(HAL::StackFramePtr frame, const ThreadID& pid) {
+  if (this->IsBusy()) return NO;
+
   this->fStack = frame;
   this->fPID   = pid;
 

@@ -164,7 +164,6 @@ __NE_INT_8:
     cld
 
     mov al, 0x20
-    out 0xA0, al
     out 0x20, al
 
     push rcx
@@ -185,7 +184,6 @@ __NE_INT_13:
     cld
 
     mov al, 0x20
-    out 0xA0, al
     out 0x20, al
 
     push rcx
@@ -200,7 +198,6 @@ __NE_INT_14:
     cld
 
     mov al, 0x20
-    out 0xA0, al
     out 0x20, al
 
     push rcx
@@ -235,12 +232,15 @@ IntNormal 31
 [extern kApicBaseAddress]
 
 __NE_INT_32:
+    mov al, 0x20
+    out 0x20, al
+
+    mov dword [kApicBaseAddress+0xB0], 0
+
     push rax
     mov rcx, rsp
     call idt_handle_scheduler
     pop rax
-
-    mov dword [kApicBaseAddress+0xB0], 0
 
     o64 iret
 

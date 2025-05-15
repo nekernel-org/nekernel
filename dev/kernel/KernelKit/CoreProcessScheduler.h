@@ -128,8 +128,8 @@ enum class ProcessStatusKind : Int32 {
 //! @brief Affinity is the amount of nano-seconds this process is going to run.
 /***********************************************************************************/
 enum class AffinityKind : Int32 {
-  kRealTime     = 500,
-  kVeryHigh     = 250,
+  kRealTime     = 50,
+  kVeryHigh     = 150,
   kHigh         = 200,
   kStandard     = 1000,
   kLowUsage     = 1500,

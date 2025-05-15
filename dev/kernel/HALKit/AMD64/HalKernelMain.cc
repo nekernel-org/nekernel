@@ -106,9 +106,9 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 EXTERN_C void rtl_ne_task(void);
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
-  Kernel::rtl_create_user_process(rtl_ne_task, "NeTask");
-  Kernel::rtl_create_user_process(rtl_ne_task, "NeTask#2");
-  Kernel::rtl_create_user_process(rtl_ne_task, "NeTask#3");
+  Kernel::rtl_create_user_process(rtl_ne_task, "MGMTCTL");
+  Kernel::rtl_create_user_process(rtl_ne_task, "LAUNCHCTL");
+  Kernel::rtl_create_user_process(rtl_ne_task, "SECURITYCTL");
 
   Kernel::HAL::Register64 idt_reg;
   idt_reg.Base = reinterpret_cast<Kernel::UIntPtr>(kInterruptVectorTable);

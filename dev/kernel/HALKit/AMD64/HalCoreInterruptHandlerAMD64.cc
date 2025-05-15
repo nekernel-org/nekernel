@@ -9,16 +9,12 @@
 #include <NewKit/KString.h>
 #include <SignalKit/Signals.h>
 
-STATIC BOOL kIsScheduling = NO;
-
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip);
 
 /// @brief Handle GPF fault.
 /// @param rsp
 EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
-  auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
-
-  kIsScheduling = NO;
+  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   Kernel::kout << "Kernel: General Protection Fault.\r";
 
@@ -36,9 +32,7 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
 /// @brief Handle page fault.
 /// @param rsp
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
-  auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
-
-  kIsScheduling = NO;
+  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   Kernel::kout << "Kernel: Page Fault.\r";
   Kernel::kout << "Kernel: SIGKILL\r";
@@ -55,20 +49,13 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
   NE_UNUSED(rsp);
-
-  Kernel::kout << "Kernel: Scheduler interrupt.\r";
-
-  kIsScheduling = YES;
   Kernel::UserProcessHelper::StartScheduling();
-  kIsScheduling = NO;
 }
 
 /// @brief Handle math fault.
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
-  auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
-
-  kIsScheduling = NO;
+  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   Kernel::kout << "Kernel: Math error (division by zero?).\r";
 
@@ -86,11 +73,10 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
-  auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
+  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  kIsScheduling = NO;
-
-  Kernel::kout << "Kernel: Generic Process Fault.\r";
+  (Void)(Kernel::kout << "Kernel: Process RSP: " << Kernel::hex_number(rsp) << Kernel::kendl);
+  Kernel::kout << "Kernel: Access Process Fault.\r";
 
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
@@ -104,11 +90,10 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
-  auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
-
-  kIsScheduling = NO;
+  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   (Void)(Kernel::kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
+
   Kernel::kout << "Kernel: SIGTRAP\r";
 
   process.Leak().Signal.SignalArg = rip;
@@ -124,9 +109,9 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
 /// @brief Handle #UD fault.
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
-  auto process = Kernel::UserProcessScheduler::The().CurrentProcess();
+  NE_UNUSED(rsp);
 
-  kIsScheduling = NO;
+  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   Kernel::kout << "Kernel: Undefined Opcode.\r";
 
