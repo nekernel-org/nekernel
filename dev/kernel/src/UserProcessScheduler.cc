@@ -495,25 +495,18 @@ SizeT UserProcessScheduler::Run() noexcept {
 
       this->CurrentProcess() = process;
 
-      // tell helper to find a core to schedule on, otherwise run on this core directly.
-      if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
-        if (process.ProcessId == this->CurrentProcess().Leak().ProcessId &&
-            process.PTime > (Int32) AffinityKind::kStandard) {
-          if (process.PTime < process.RTime) {
-            if (process.RTime < (Int32) AffinityKind::kVeryHigh)
-              process.PTime = (Int32) AffinityKind::kLowUsage;
-            else if (process.RTime < (Int32) AffinityKind::kHigh)
-              process.PTime = (Int32) AffinityKind::kStandard;
-            else if (process.RTime < (Int32) AffinityKind::kStandard)
-              process.PTime = (Int32) AffinityKind::kHigh;
+      process.PTime = static_cast<Int32>(process.Affinity);
 
-            process.PTime = static_cast<Int32>(process.Affinity);
-            process.RTime = 0UL;
-
-          } else {
-            ++process.RTime;
-          }
-        }
+      if (process.PTime < process.RTime) {
+        if (process.RTime < (Int32) AffinityKind::kVeryHigh)
+          process.PTime = (Int32) AffinityKind::kLowUsage;
+        else if (process.RTime < (Int32) AffinityKind::kHigh)
+          process.PTime = (Int32) AffinityKind::kStandard;
+        else if (process.RTime < (Int32) AffinityKind::kStandard)
+          process.PTime = (Int32) AffinityKind::kHigh;
+        process.RTime = 0UL;
+      } else {
+        ++process.RTime;
       }
     } else {
       kout << process.Name << " won't be scheduled to run...\r";
