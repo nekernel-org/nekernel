@@ -81,30 +81,13 @@ struct LAPIC final {
 ///////////////////////////////////////////////////////////////////////////////////////
 
 /***********************************************************************************/
-/// @brief Send IPI command to APIC.
-/// @param apic_id programmable interrupt controller id.
-/// @param vector vector interrupt.
-/// @param target target APIC adress.
-/// @return
-/***********************************************************************************/
-
-Void hal_send_start_ipi(UInt32 target, UInt32 apic_id) {
-  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_HIGH, apic_id << 24);
-  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_LOW, 0x00000500 | 0x00004000 | 0x00000000);
-
-  while (Kernel::ke_dma_read<UInt32>(target, APIC_ICR_LOW) & 0x1000) {
-    ;
-  }
-}
-
-/***********************************************************************************/
 /// @brief Send end IPI for CPU.
 /// @param apic_id
 /// @param vector
 /// @param target
 /// @return
 /***********************************************************************************/
-Void hal_send_sipi(UInt32 target, UInt32 apic_id, UInt8 vector) {
+Void hal_send_ipi_msg(UInt32 target, UInt32 apic_id, UInt8 vector) {
   Kernel::ke_dma_write<UInt32>(target, APIC_ICR_HIGH, apic_id << 24);
   Kernel::ke_dma_write<UInt32>(target, APIC_ICR_LOW, 0x00000600 | 0x00004000 | 0x00000000 | vector);
 
@@ -202,13 +185,10 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     controller.Write(LAPIC_REG_TIMER_LVT, 32 | (1 << 17));
     controller.Write(LAPIC_REG_TIMER_INITCNT, 1000000);
 
-    const UIntPtr trampoline_phys = 0x7c00;
+    UInt8* trampoline_phys = (UInt8*) 0x7c00;
 
-    HAL::mm_map_page((VoidPtr)trampoline_phys, (VoidPtr)trampoline_phys, HAL::kMMFlagsWr | HAL::kMMFlagsPresent);
-
-    const SizeT len = AP_BLOB_SIZE; /// AP blob size.
-
-    rt_copy_memory(hal_ap_blob_start, reinterpret_cast<VoidPtr>(trampoline_phys), len);
+    *trampoline_phys       = 0xcd;
+    *(trampoline_phys + 1) = 0x00;
 
     volatile UInt8* entry_ptr = reinterpret_cast<volatile UInt8*>(kMADTBlock->List);
     volatile UInt8* end_ptr   = ((UInt8*) kMADTBlock) + kMADTBlock->Length;
@@ -229,9 +209,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
 
           kout << "LAPIC type, also is on...\r";
 
-          hal_send_start_ipi(kApicBaseAddress, entry_struct->ProcessorID);
-          hal_send_sipi(kApicBaseAddress, entry_struct->ProcessorID, trampoline_phys >> 12);
-
+          hal_send_ipi_msg(kApicBaseAddress, entry_struct->ProcessorID, 0x7c);
         } else {
           kout << "LAPIC type, also is not on...\r";
         }

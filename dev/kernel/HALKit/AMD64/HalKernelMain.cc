@@ -111,7 +111,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
   Kernel::rtl_create_user_process(rtl_ne_task, "SecSrv");
 
   Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
-  
+
   Kernel::HAL::Register64 idt_reg;
   idt_reg.Base = reinterpret_cast<Kernel::UIntPtr>(kInterruptVectorTable);
 

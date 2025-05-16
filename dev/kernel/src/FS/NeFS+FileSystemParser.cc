@@ -886,7 +886,7 @@ Boolean fs_init_nefs(Void) noexcept {
     ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main disk cannot be mounted.");
 
   NeFileSystemParser parser;
-  
+
   return parser.Format(&kMountpoint.A(), 0, kNeFSVolumeName);
 }
 }  // namespace Kernel::NeFS

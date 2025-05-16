@@ -13,20 +13,37 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip);
 
 EXTERN_C Kernel::UIntPtr kApicBaseAddress;
 
+STATIC BOOL kIsRunning = NO;
+
+/// @brief Notify APIC and PIC that we're done with the interrupt.
+/// @note
+STATIC void hal_idt_send_eoi(UInt8 vector) {
+  ((volatile UInt32*) kApicBaseAddress)[0xB0 / 4] = 0;
+
+  if (vector >= 0x20 && vector <= 0x2F) {
+    if (vector >= 0x28) {
+      Kernel::HAL::rt_out8(0xA0, 0x20);
+    }
+    Kernel::HAL::rt_out8(0x20, 0x20);
+  }
+
+  kIsRunning = NO;
+}
+
 /// @brief Handle GPF fault.
 /// @param rsp
 EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp) {
+  hal_idt_send_eoi(13);
+
   auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
-  Kernel::kout << "Kernel: General Protection Fault.\r";
+  Kernel::kout << "Kernel: General Access Fault.\r";
 
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
 
   Kernel::kout << "Kernel: SIGKILL status.\r";
-
-  process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
   process.Leak().Crash();
 
@@ -36,6 +53,8 @@ EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp) {
 /// @brief Handle page fault.
 /// @param rsp
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
+  hal_idt_send_eoi(14);
+
   auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   Kernel::kout << "Kernel: Page Fault.\r";
@@ -45,8 +64,6 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
 
-  process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
-
   process.Leak().Crash();
 
   dbg_break_point();
@@ -54,17 +71,24 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
 
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
-  ((volatile UInt32*) kApicBaseAddress)[0xB0] = 0;
+  hal_idt_send_eoi(32);
 
-  Kernel::HAL::rt_out8(0x20, 0x20);
+  while (kIsRunning)
+    ;
+
+  kIsRunning = YES;
 
   NE_UNUSED(rsp);
   Kernel::UserProcessHelper::StartScheduling();
+
+  kIsRunning = NO;
 }
 
 /// @brief Handle math fault.
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
+  hal_idt_send_eoi(8);
+
   auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   Kernel::kout << "Kernel: Math error (division by zero?).\r";
@@ -75,8 +99,6 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 
   Kernel::kout << "Kernel: SIGKILL status.\r";
 
-  process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
-
   process.Leak().Crash();
 
   dbg_break_point();
@@ -85,6 +107,8 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
+  hal_idt_send_eoi(30);
+
   auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   (Void)(Kernel::kout << "Kernel: Process RSP: " << Kernel::hex_number(rsp) << Kernel::kendl);
@@ -96,14 +120,14 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
 
   Kernel::kout << "Kernel: SIGKILL status.\r";
 
-  process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
-
   process.Leak().Crash();
 
   dbg_break_point();
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
+  hal_idt_send_eoi(3);
+
   auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   (Void)(Kernel::kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
@@ -125,6 +149,8 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
 /// @brief Handle #UD fault.
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
+  hal_idt_send_eoi(6);
+
   NE_UNUSED(rsp);
 
   auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
@@ -137,8 +163,6 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
 
   Kernel::kout << "Kernel: SIGKILL status.\r";
 
-  process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
-
   process.Leak().Crash();
 
   dbg_break_point();
@@ -149,6 +173,8 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
 /// @return nothing.
 EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index,
                                             Kernel::UIntPtr rdx_syscall_struct) {
+  hal_idt_send_eoi(50);
+
   if (rcx_syscall_index < kSysCalls.Count()) {
     Kernel::kout << "syscall: Enter Syscall.\r";
 
@@ -171,6 +197,8 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index,
 /// @return nothing.
 EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index,
                                             Kernel::UIntPtr rdx_kerncall_struct) {
+  hal_idt_send_eoi(51);
+
   if (rcx_kerncall_index < kKernCalls.Count()) {
     Kernel::kout << "kerncall: Enter Kernel Call List.\r";
 

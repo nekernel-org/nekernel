@@ -20,6 +20,8 @@ __NE_INT_%1:
 
     std
 
+    add rsp, 8
+
     o64 iret
 %endmacro
 
@@ -30,6 +32,8 @@ __NE_INT_%1:
 
     std
     
+    add rsp, 8
+
     o64 iret
 %endmacro
 
@@ -45,29 +49,24 @@ extern ke_io_write
 extern idt_handle_ud
 extern idt_handle_generic
 extern idt_handle_breakpoint
+extern idt_handle_math
 
 section .text
 
 __NE_INT_0:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
     call idt_handle_generic
     pop rcx
     
     std
 
+    add rsp, 8
+
     o64 iret
 
 __NE_INT_1:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
     call idt_handle_generic
     pop rcx
@@ -78,39 +77,31 @@ __NE_INT_1:
 
 __NE_INT_2:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
     call idt_handle_generic
     pop rcx
 
     std
+
+    add rsp, 8
 
     o64 iret
 
 ;; @brief Triggers a breakpoint and freeze the process. RIP is also fetched.
 __NE_INT_3:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
     call idt_handle_breakpoint
     pop rcx
 
     std
 
+    add rsp, 8
+
     o64 iret
 
 __NE_INT_4:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
 
     push rcx
     call idt_handle_generic
@@ -118,44 +109,40 @@ __NE_INT_4:
 
     std
 
+    add rsp, 8
+
     o64 iret
 
 __NE_INT_5:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
     std
+
+    add rsp, 8
 
     o64 iret
 
 ;; Invalid opcode interrupt
 __NE_INT_6:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
     call idt_handle_ud
     pop rcx
 
     std
 
+    add rsp, 8
+
     o64 iret
 
 __NE_INT_7:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
     call idt_handle_generic
     pop rcx
 
     std
+
+    add rsp, 8
 
     o64 iret
 
@@ -163,14 +150,13 @@ __NE_INT_7:
 __NE_INT_8:
     cld
 
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
-    call idt_handle_generic
+    call idt_handle_math
     pop rcx
 
     std
+
+    add rsp, 8
 
     o64 iret
 
@@ -183,28 +169,25 @@ IntExp 12
 __NE_INT_13:
     cld
 
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
     call idt_handle_gpf
     pop rcx
 
     std
     
+    add rsp, 8
+
     o64 iret
 
 __NE_INT_14:
     cld
-
-    mov al, 0x20
-    out 0x20, al
-
     push rcx
     call idt_handle_pf
     pop rcx
 
     std
+
+    add rsp, 8
 
     o64 iret
 
@@ -232,10 +215,16 @@ IntNormal 31
 [extern kApicBaseAddress]
 
 __NE_INT_32:
+    cld
+
     push rax
     mov rcx, rsp
     call idt_handle_scheduler
     pop rax
+
+    std
+
+    add rsp, 8
 
     o64 iret
 
@@ -253,16 +242,14 @@ IntNormal 39
 __NE_INT_40:
     cld
 
-    mov al, 0x20
-    out 0xA0, al
-    out 0x20, al
-
     push rax
     mov rcx, rsp
     call rtl_rtl8139_interrupt_handler
     pop rax
 
     std
+
+    add rsp, 8
 
     o64 iret
 
@@ -283,10 +270,6 @@ IntNormal 49
 __NE_INT_50:
     cld
 
-    mov al, 0x20
-    out 0xA0, al
-    out 0x20, al
-
     push rax
     mov rax, hal_system_call_enter
 
@@ -302,10 +285,6 @@ __NE_INT_50:
 
 __NE_INT_51:
     cld
-
-    mov al, 0x20
-    out 0xA0, al
-    out 0x20, al
 
     push rax
     mov rax, hal_kernel_call_enter

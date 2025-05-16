@@ -268,6 +268,8 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 
   kLastExitCode = exit_code;
 
+  --this->ParentTeam->mProcessCount;
+
   auto memory_ptr_list = this->HeapTree;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
@@ -483,6 +485,8 @@ SizeT UserProcessScheduler::Run() noexcept {
   for (; process_index < mTeam.AsArray().Capacity(); ++process_index) {
     auto& process = mTeam.AsArray()[process_index];
 
+    if (this->CurrentProcess() == process) continue;
+
     //! Check if the process needs to be run.
     if (UserProcessHelper::CanBeScheduled(process)) {
       if (process.StackSize > kSchedMaxStackSz) {
@@ -492,8 +496,6 @@ SizeT UserProcessScheduler::Run() noexcept {
       }
 
       kout << ((*process.Name) ? process.Name : "USER_PROCESS") << " will be scheduled...\r";
-
-      this->CurrentProcess() = process;
 
       process.PTime = static_cast<Int32>(process.Affinity);
 
@@ -509,9 +511,13 @@ SizeT UserProcessScheduler::Run() noexcept {
         process.RTime = 0UL;
       }
 
+      this->CurrentProcess() = process;
+
       if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
-        continue;
+        break;
       }
+
+      break;
     } else {
       ++process.RTime;
       --process.PTime;
@@ -537,7 +543,7 @@ UserProcessTeam& UserProcessScheduler::CurrentTeam() {
 BOOL UserProcessScheduler::SwitchTeam(UserProcessTeam& team) {
   if (team.AsArray().Count() < 1) return No;
 
-  UserProcessScheduler::The().mTeam = team;
+  this->mTeam = team;
 
   return Yes;
 }
@@ -562,13 +568,7 @@ ErrorOr<PID> UserProcessHelper::TheCurrentPID() {
 /// @retval true can be schedulded.
 /// @retval false cannot be schedulded.
 Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
-  if (process.Status == ProcessStatusKind::kKilled ||
-      process.Status == ProcessStatusKind::kFinished ||
-      process.Status == ProcessStatusKind::kStarting ||
-      process.Status == ProcessStatusKind::kFrozen)
-    return No;
-
-  if (process.Status == ProcessStatusKind::kInvalid) return No;
+  if (process.Status != ProcessStatusKind::kRunning) return No;
 
   if (!process.Name[0]) return No;
 
