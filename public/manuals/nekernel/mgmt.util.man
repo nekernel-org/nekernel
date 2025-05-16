@@ -1,20 +1,32 @@
-Title: mgmt - Management utility command.
-Command: mgmt <OPTIONS>
+NAME
+    mgmt — Management utility command
 
-Body:
+SYNOPSIS
+    mgmt [OPTIONS]
 
-The management command serves as the main scheduling and management utility of System One.
+DESCRIPTION
+    The `mgmt` command provides scheduling, execution, and remote orchestration 
+    capabilities within the System One operating environment. It serves as the 
+    main task and maintenance utility for NeKernel deployments.
 
-Usages include but not limited to:
+    Usages include, but are not limited to:
+        - Schedule scripts or tasks for future execution.
+        - Verify device or filesystem integrity.
+        - Manage and automate remote NeKernel machines.
 
-- Run certain scripts at X time.
-- Verify a device/filesystem integrity.
-- Manage and automate other NeKernel machines.
+OPTIONS
+    -s, --script <FILE>       Script to execute
+    -t, --time <HH:MMAM/PM>   Time to run the script
+    -d, --day <DAY>           Day of the week (e.g., Mon, Tue, Wed)
+    -m, --month <MONTH>       Month (e.g., Jan, Feb, Mar)
+    -y, --year <YYYY>         Year to schedule task
+    -r, --remote <ADDRESS>    Remote machine to manage (optional)
+    -v, --verify              Run integrity checks only
+    -h, --help                Display this help message
 
-Example:
+EXAMPLES
+    mgmt -s pgp-update.script -t 2:30PM -d Wed -m Apr -y 2026
+        Schedules `pgp-update.script` to run at 2:30PM on Wednesday, April 2026.
 
-mgmt -s -t 2:30PM -d Wed -m Apr -y 2026 -s pgp-update.script
-
-Release:
-
-System One NeKernel
+RELEASE
+    System One — NeKernel
