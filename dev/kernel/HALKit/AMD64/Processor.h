@@ -19,6 +19,8 @@
 #include <NewKit/Defines.h>
 #include <NewKit/Utils.h>
 
+#include <HALKit/AMD64/CPUID.h>
+
 #define kPITControlPort (0x43)
 #define kPITChannel0Port (0x40)
 #define kPITFrequency (1193180)
@@ -28,7 +30,8 @@
 #define kPIC2Command (0xA0)
 #define kPIC2Data (0xA1)
 
-#include <HALKit/AMD64/CPUID.h>
+#define kIOAPICRegVal (4)
+#define kIOAPICRegReg (0)
 
 #define rtl_nop_op() asm volatile("nop")
 
@@ -229,16 +232,16 @@ namespace Detail {
   };
 }  // namespace Detail
 
-class APICController final {
+class LAPICDmaWrapper final {
  public:
-  explicit APICController(VoidPtr base);
-  ~APICController() = default;
+  explicit LAPICDmaWrapper(VoidPtr base);
+  ~LAPICDmaWrapper();
 
-  NE_COPY_DEFAULT(APICController)
+  NE_COPY_DEFAULT(LAPICDmaWrapper)
 
  public:
-  UInt32 Read(UInt32 reg) noexcept;
-  Void   Write(UInt32 reg, UInt32 value) noexcept;
+  UInt32 Read(UInt16 reg) noexcept;
+  Void   Write(UInt16 reg, UInt32 value) noexcept;
 
  private:
   VoidPtr fApic{nullptr};

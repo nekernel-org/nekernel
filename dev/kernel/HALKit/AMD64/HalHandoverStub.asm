@@ -4,8 +4,6 @@
 ;; *	NeKernel
 ;; * 	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 ;; *
-;; *    25/03/25: Rename HalBootHeader.asm to HalBootHeader.asm, expose struct symbols; remove unused external symbol.
-;; *
 ;; * 	========================================================
 ;; */
 

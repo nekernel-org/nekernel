@@ -106,18 +106,18 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 EXTERN_C void rtl_ne_task(void);
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
-  Kernel::rtl_create_user_process(rtl_ne_task, "MGMTCTL");
-  Kernel::rtl_create_user_process(rtl_ne_task, "LAUNCHCTL");
-  Kernel::rtl_create_user_process(rtl_ne_task, "SECURITYCTL");
+  Kernel::rtl_create_user_process(rtl_ne_task, "MgmtSrv");
+  Kernel::rtl_create_user_process(rtl_ne_task, "LaunchSrv");
+  Kernel::rtl_create_user_process(rtl_ne_task, "SecSrv");
 
+  Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+  
   Kernel::HAL::Register64 idt_reg;
   idt_reg.Base = reinterpret_cast<Kernel::UIntPtr>(kInterruptVectorTable);
 
   Kernel::HAL::IDTLoader idt_loader;
 
   idt_loader.Load(idt_reg);
-
-  Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 #ifdef __FSKIT_INCLUDES_HEFS__
   if (Kernel::HeFS::fs_init_hefs()) {

@@ -232,11 +232,6 @@ IntNormal 31
 [extern kApicBaseAddress]
 
 __NE_INT_32:
-    mov al, 0x20
-    out 0x20, al
-
-    mov dword [kApicBaseAddress+0xB0], 0
-
     push rax
     mov rcx, rsp
     call idt_handle_scheduler
@@ -411,3 +406,6 @@ kInterruptVectorTable:
         dq __NE_INT_%+i
     %assign i i+1
     %endrep
+
+kApicBaseAddress:
+    dq 0

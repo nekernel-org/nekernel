@@ -16,6 +16,7 @@ UserProcessTeam::UserProcessTeam() {
   for (SizeT i = 0U; i < this->mProcessList.Count(); ++i) {
     this->mProcessList[i]        = USER_PROCESS();
     this->mProcessList[i].PTime  = 0;
+    this->mProcessList[i].RTime  = 0;
     this->mProcessList[i].Status = ProcessStatusKind::kKilled;
   }
 

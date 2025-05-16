@@ -13,18 +13,23 @@
 #include <NewKit/KernelPanic.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
+#include "NewKit/Defines.h"
 
 #define APIC_Signature "APIC"
 
-#define APIC_ICR_Low 0x300
-#define APIC_ICR_High 0x310
-#define APIC_SIPI_Vector 0x00500
-#define APIC_EIPI_Vector 0x00400
+#define AP_BLOB_SIZE 126
+
+#define APIC_ICR_LOW 0x300
+#define APIC_ICR_HIGH 0x310
+#define APIC_SIPI_VEC 0x00500
+#define APIC_EIPI_VEC 0x00400
 
 #define LAPIC_REG_TIMER_LVT 0x320
 #define LAPIC_REG_TIMER_INITCNT 0x380
 #define LAPIC_REG_TIMER_CURRCNT 0x390
 #define LAPIC_REG_TIMER_DIV 0x3E0
+#define LAPIC_REG_ENABLE 0x80
+#define LAPIC_REG_SPURIOUS 0xF0
 
 #define APIC_BASE_MSR 0x1B
 #define APIC_BASE_MSR_BSP 0x100
@@ -52,7 +57,7 @@ STATIC HAL_APIC_MADT* kMADTBlock = nullptr;
 STATIC Bool           kSMPAware  = false;
 STATIC Int64          kSMPCount  = 0;
 
-EXTERN_C UIntPtr kApicBaseAddress = 0UL;
+EXTERN_C UIntPtr kApicBaseAddress;
 
 STATIC Int32   kSMPInterrupt                           = 0;
 STATIC UInt64  kAPICLocales[kSchedProcessLimitPerTeam] = {0};
@@ -61,46 +66,16 @@ STATIC VoidPtr kRawMADT                                = nullptr;
 /// @brief Multiple APIC Descriptor Table.
 struct HAL_APIC_MADT final SDT_OBJECT {
   UInt32 Address;  // Madt address
-  UInt8  Flags;    // Madt flags
+  UInt32 Flags;    // Madt flags
+  UInt8  List[1];  // Records List
+};
 
-  struct {
-    UInt8 Type;
-    UInt8 Len;
-
-    union APIC {
-      struct IOAPIC {
-        UInt8  IoID;
-        UInt8  Zero;
-        UInt32 IoAddress;
-        UInt32 GISBase;
-      } IOAPIC;
-
-      struct LAPIC_NMI {
-        UInt8  Source;
-        UInt8  IRQSource;
-        UInt32 GSI;
-        UInt16 Flags;
-      } LApicNMI;
-
-      struct LAPIC {
-        UInt8  ProcessorID;
-        UInt16 Flags;
-        UInt8  LINT;
-      } LAPIC;
-
-      struct LAPIC_OVERRIDE {
-        UInt16 Reserved;
-        UInt64 Address;
-      } LApicOverride;
-
-      struct LAPIC_X2 {
-        UInt16 Reserved;
-        UInt32 x2APICID;
-        UInt32 Flags;
-        UInt32 AcpiID;
-      } LocalApicX2;
-    } Apic;
-  } List[1];  // Records List
+struct LAPIC final {
+  UInt8  Type;
+  UInt8  Length;
+  UInt8  ProcessorID;
+  UInt8  APICID;
+  UInt32 Flags;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -114,10 +89,10 @@ struct HAL_APIC_MADT final SDT_OBJECT {
 /***********************************************************************************/
 
 Void hal_send_start_ipi(UInt32 target, UInt32 apic_id) {
-  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_High, apic_id << 24);
-  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_Low, 0x00000500 | 0x00004000 | 0x00000000);
+  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_HIGH, apic_id << 24);
+  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_LOW, 0x00000500 | 0x00004000 | 0x00000000);
 
-  while (Kernel::ke_dma_read<UInt32>(target, APIC_ICR_Low) & 0x1000) {
+  while (Kernel::ke_dma_read<UInt32>(target, APIC_ICR_LOW) & 0x1000) {
     ;
   }
 }
@@ -130,10 +105,10 @@ Void hal_send_start_ipi(UInt32 target, UInt32 apic_id) {
 /// @return
 /***********************************************************************************/
 Void hal_send_sipi(UInt32 target, UInt32 apic_id, UInt8 vector) {
-  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_High, apic_id << 24);
-  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_Low, 0x00000600 | 0x00004000 | 0x00000000 | vector);
+  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_HIGH, apic_id << 24);
+  Kernel::ke_dma_write<UInt32>(target, APIC_ICR_LOW, 0x00000600 | 0x00004000 | 0x00000000 | vector);
 
-  while (Kernel::ke_dma_read<UInt32>(target, APIC_ICR_Low) & 0x1000) {
+  while (Kernel::ke_dma_read<UInt32>(target, APIC_ICR_LOW) & 0x1000) {
     NE_UNUSED(0);
   }
 }
@@ -202,8 +177,6 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
   kSMPAware  = NO;
 
   if (kMADTBlock) {
-    SizeT index = 0;
-
     kSMPInterrupt = 0;
     kSMPCount     = 0;
 
@@ -221,39 +194,52 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
 
     kApicBaseAddress = apic_base & 0xFFFFF000;
 
-    // Allow LAPIC to forward interrupts (TPR = 0)
-    *(volatile UInt32*) (kApicBaseAddress + 0x80) = 0;
+    LAPICDmaWrapper controller{(VoidPtr) kApicBaseAddress};
 
-    // Set Spurious Interrupt Vector and enable LAPIC (bit 8)
-    *(volatile UInt32*) (kApicBaseAddress + 0xF0) = 0x1FF;  // vector = 0xFF, enable bit = 1 << 8
+    controller.Write(LAPIC_REG_ENABLE, 0);
+    controller.Write(LAPIC_REG_SPURIOUS, 0x1FF);  // Enable bit, spurious interrupt vector register.
+    controller.Write(LAPIC_REG_TIMER_DIV, 0b0011);
+    controller.Write(LAPIC_REG_TIMER_LVT, 32 | (1 << 17));
+    controller.Write(LAPIC_REG_TIMER_INITCNT, 1000000);
 
-    // LAPIC timer setup
-    *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_DIV) = 0b0011;  // Divide by 16
+    const UIntPtr trampoline_phys = 0x8000;
 
-    *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_LVT) =
-        32 | (1 << 17);  // Vector 32, periodic
+    HAL::mm_map_page((VoidPtr)trampoline_phys, (VoidPtr)trampoline_phys, HAL::kMMFlagsWr | HAL::kMMFlagsPresent);
 
-    *(volatile UInt32*) (kApicBaseAddress + LAPIC_REG_TIMER_INITCNT) =
-        1000000;  // Init count (e.g., ~100Hz)
+    const SizeT len = AP_BLOB_SIZE; /// AP blob size.
 
-    constexpr const auto kSMPCountMax = kMaxAPInsideSched;
+    rt_copy_memory(hal_ap_blob_start, reinterpret_cast<VoidPtr>(trampoline_phys), len);
 
-    while (Yes) {
-      // @note Don't probe greater than what the APMgr expects.
-      if (kSMPCount > kSMPCountMax) break;
+    volatile UInt8* entry_ptr = reinterpret_cast<volatile UInt8*>(kMADTBlock->List);
+    volatile UInt8* end_ptr   = ((UInt8*) kMADTBlock) + kMADTBlock->Length;
 
-      /// @note Anything bigger than x2APIC type doesn't exist.
-      if (kMADTBlock->List[index].Type > 9) {
-        ++index;
-        continue;
+    while (entry_ptr < end_ptr) {
+      UInt8 type   = *entry_ptr;
+      UInt8 length = *(entry_ptr + 1);
+
+      // Avoid infinite loop on bad APIC tables.
+      if (length < 2) break;
+
+      if (type == 0) {
+        volatile LAPIC* entry_struct = (volatile LAPIC*) entry_ptr;
+
+        if (entry_struct->Flags & 0x1) {
+          kAPICLocales[kSMPCount] = entry_struct->ProcessorID;
+          ++kSMPCount;
+
+          kout << "LAPIC type, also is on...\r";
+
+          hal_send_start_ipi(kApicBaseAddress, entry_struct->ProcessorID);
+          hal_send_sipi(kApicBaseAddress, entry_struct->ProcessorID, trampoline_phys >> 12);
+
+        } else {
+          kout << "LAPIC type, also is not on...\r";
+        }
+      } else {
+        kout << "Unknown APIC type...\r";
       }
 
-      kAPICLocales[kSMPCount] = kMADTBlock->List[kSMPCount].Apic.LAPIC.ProcessorID;
-      (Void)(kout << "SMP: APIC ID: " << number(kAPICLocales[kSMPCount]) << kendl);
-
-      ++kSMPCount;
-
-      ++index;
+      entry_ptr += length;
     }
 
     kSMPAware = kSMPCount > 1;

@@ -10,7 +10,7 @@
 ;; */
 
 [bits 16]
-[org 0x7c000]
+[org 0x8000]
 
 hal_ap_start:
     mov ax, 0x0      
@@ -61,19 +61,15 @@ hal_ap_64bit_entry:
     mov fs, ax
     mov gs, ax
     mov ss, ax
-    mov rsp, [hal_ap_64bit_entry_stack_end]
+    
+    mov rsp, rbx
 
     push 0x33
-    push qword [hal_ap_64bit_entry_loop]      
+    lea rax, [hal_ap_64bit_entry_loop]
+    push rax
     o64 pushf
-    push rsp
-    push 0x33
 
     o64 iret
 
 hal_ap_64bit_entry_loop:
     jmp $
-
-hal_ap_64bit_entry_stack:
-    times 8196*2 nop
-hal_ap_64bit_entry_stack_end:

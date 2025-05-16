@@ -53,7 +53,7 @@ nekernel-amd64-epm: clean
 	$(CXX) $(CCFLAGS) $(DISK_DRV) $(DEBUG_MACRO) $(wildcard src/*.cc) $(wildcard src/Gfx/*.cc) $(wildcard HALKit/AMD64/Network/*.cc) $(wildcard HALKit/AMD64/PCI/*.cc) $(wildcard src/Network/*.cc) $(wildcard src/Storage/*.cc) $(wildcard src/FS/*.cc) $(wildcard HALKit/AMD64/Storage/*.cc)	$(wildcard HALKit/AMD64/*.cc) $(wildcard src/Swap/*.cc) $(wildcard HALKit/AMD64/*.s)
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalInterruptAPI.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalCommonAPI.asm
-	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalBootHeader.asm
+	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalHandoverStub.asm
 	$(ASM) $(ASMFLAGS) HALKit/AMD64/HalUtilsAPI.asm
 	$(MOVEALL)
 

@@ -11,9 +11,11 @@
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip);
 
+EXTERN_C Kernel::UIntPtr kApicBaseAddress;
+
 /// @brief Handle GPF fault.
 /// @param rsp
-EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
+EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp) {
   auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
 
   Kernel::kout << "Kernel: General Protection Fault.\r";
@@ -27,6 +29,8 @@ EXTERN_C void idt_handle_gpf(Kernel::UIntPtr rsp) {
   process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
   process.Leak().Crash();
+
+  dbg_break_point();
 }
 
 /// @brief Handle page fault.
@@ -44,10 +48,16 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
   process.Leak().Crash();
+
+  dbg_break_point();
 }
 
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
+  ((volatile UInt32*) kApicBaseAddress)[0xB0] = 0;
+
+  Kernel::HAL::rt_out8(0x20, 0x20);
+
   NE_UNUSED(rsp);
   Kernel::UserProcessHelper::StartScheduling();
 }
@@ -68,6 +78,8 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
   process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
   process.Leak().Crash();
+
+  dbg_break_point();
 }
 
 /// @brief Handle any generic fault.
@@ -87,6 +99,8 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
   process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
   process.Leak().Crash();
+
+  dbg_break_point();
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
@@ -104,6 +118,8 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
   Kernel::kout << "Kernel: SIGTRAP status.\r";
 
   process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
+
+  idt_handle_scheduler(rip);
 }
 
 /// @brief Handle #UD fault.
@@ -124,6 +140,8 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
   process.Leak().Status = Kernel::ProcessStatusKind::kKilled;
 
   process.Leak().Crash();
+
+  dbg_break_point();
 }
 
 /// @brief Enter syscall from assembly.
