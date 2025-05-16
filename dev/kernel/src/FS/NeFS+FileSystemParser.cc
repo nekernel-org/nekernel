@@ -878,7 +878,7 @@ namespace Kernel::NeFS {
 /// @brief Construct NeFS drives.
 /***********************************************************************************/
 Boolean fs_init_nefs(Void) noexcept {
-  kout << "Creating main disk...\r";
+  kout << "Creating HeFS disk...\r";
 
   kMountpoint.A() = io_construct_main_drive();
 
@@ -886,9 +886,8 @@ Boolean fs_init_nefs(Void) noexcept {
     ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main disk cannot be mounted.");
 
   NeFileSystemParser parser;
-  parser.Format(&kMountpoint.A(), 0, kNeFSVolumeName);
-
-  return YES;
+  
+  return parser.Format(&kMountpoint.A(), 0, kNeFSVolumeName);
 }
 }  // namespace Kernel::NeFS
 

@@ -1,0 +1,20 @@
+Title: mgmt - Management utility command.
+Command: mgmt <OPTIONS>
+
+Body:
+
+The management command serves as the main scheduling and management utility of System One.
+
+Usages include but not limited to:
+
+- Run certain scripts at X time.
+- Verify a device/filesystem integrity.
+- Manage and automate other NeKernel machines.
+
+Example:
+
+mgmt -s -t 2:30PM -d Wed -m Apr -y 2026 -s pgp-update.script
+
+Release:
+
+System One NeKernel

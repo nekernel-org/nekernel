@@ -22,11 +22,11 @@
 
 ///! We got the Super, Standard (%s format) and Guest user,
 ///! all are used to make authorization operations on the OS.
-#define kSuperUser "OS AUTHORITY/SUPER/%s"
+#define kSuperUser "OS AUTHORITY/MGMT/%s"
 #define kGuestUser "OS AUTHORITY/GUEST/%s"
 #define kStdUser "OS AUTHORITY/STD/%s"
 
-#define kUsersDir "/user/"
+#define kUsersDir "/users/"
 
 #define kMaxUserNameLen (256U)
 #define kMaxUserTokenLen (256U)
@@ -45,7 +45,7 @@ enum class UserRingKind {
 typedef Char* UserPublicKey;
 typedef Char  UserPublicKeyType;
 
-/// @brief User class.
+/// @brief System User class.
 class User final {
  public:
   User() = delete;
@@ -80,12 +80,12 @@ class User final {
 
   /// @brief Checks if a password matches the **password**.
   /// @param password the password to check.
-  Bool Matches(const UserPublicKey password) noexcept;
+  Bool Login(const UserPublicKey password) noexcept;
 
  private:
   UserRingKind mUserRing{UserRingKind::kRingStdUser};
   Char         mUserName[kMaxUserNameLen] = {0};
-  Char         mUserKey[kMaxUserTokenLen] = {0};
+  UInt64       mUserFNV{0UL};
 };
 }  // namespace Kernel
 
