@@ -15,7 +15,7 @@
 #include <modules/CoreGfx/TextGfx.h>
 #include "NewKit/Defines.h"
 
-#define APIC_Signature "APIC"
+#define APIC_MAG "APIC"
 
 #define AP_BLOB_SIZE 126
 
@@ -172,7 +172,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
 
   PowerFactoryInterface hw_and_pow_int{vendor_ptr};
 
-  kRawMADT   = hw_and_pow_int.Find(APIC_Signature).Leak().Leak();
+  kRawMADT   = hw_and_pow_int.Find(APIC_MAG).Leak().Leak();
   kMADTBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
   kSMPAware  = NO;
 
@@ -202,7 +202,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     controller.Write(LAPIC_REG_TIMER_LVT, 32 | (1 << 17));
     controller.Write(LAPIC_REG_TIMER_INITCNT, 1000000);
 
-    const UIntPtr trampoline_phys = 0x8000;
+    const UIntPtr trampoline_phys = 0x7c00;
 
     HAL::mm_map_page((VoidPtr)trampoline_phys, (VoidPtr)trampoline_phys, HAL::kMMFlagsWr | HAL::kMMFlagsPresent);
 

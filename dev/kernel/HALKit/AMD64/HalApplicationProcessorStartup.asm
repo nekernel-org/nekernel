@@ -10,7 +10,7 @@
 ;; */
 
 [bits 16]
-[org 0x8000]
+[org 0x7c00]
 
 hal_ap_start:
     mov ax, 0x0      
