@@ -76,7 +76,8 @@ class USER_PROCESS final {
   };
 
   ProcessTime PTime{0};  //! @brief Process allocated tine.
-  ProcessTime RTime{0};  //! @brief Process Run time
+  ProcessTime RTime{0};  //! @brief Process run time.
+  ProcessTime UTime{0};  //! #brief Process used time.
 
   PID   ProcessId{kSchedInvalidPID};
   Int32 Kind{kExecutableKind};
@@ -191,7 +192,7 @@ class UserProcessScheduler final : public ISchedulable {
   bool operator!();
 
  public:
-  UserProcessTeam& CurrentTeam();
+  UserProcessTeam& TheCurrentTeam();
   BOOL             SwitchTeam(UserProcessTeam& team);
 
  public:
@@ -203,7 +204,7 @@ class UserProcessScheduler final : public ISchedulable {
   Bool HasMP() override;
 
  public:
-  Ref<USER_PROCESS>& CurrentProcess();
+  Ref<USER_PROCESS>& TheCurrentProcess();
   SizeT              Run() noexcept;
 
  public:

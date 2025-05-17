@@ -35,7 +35,12 @@ STATIC void hal_idt_send_eoi(UInt8 vector) {
 EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp) {
   hal_idt_send_eoi(13);
 
-  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
+  auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
+      process.Leak().Signal.SignalID == SIGTRAP) {
+    dbg_break_point();
+  }
 
   Kernel::kout << "Kernel: General Access Fault.\r";
 
@@ -55,7 +60,12 @@ EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp) {
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   hal_idt_send_eoi(14);
 
-  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
+  auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
+      process.Leak().Signal.SignalID == SIGTRAP) {
+    dbg_break_point();
+  }
 
   Kernel::kout << "Kernel: Page Fault.\r";
   Kernel::kout << "Kernel: SIGKILL\r";
@@ -89,7 +99,12 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
   hal_idt_send_eoi(8);
 
-  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
+  auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
+      process.Leak().Signal.SignalID == SIGTRAP) {
+    dbg_break_point();
+  }
 
   Kernel::kout << "Kernel: Math error (division by zero?).\r";
 
@@ -109,7 +124,12 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
   hal_idt_send_eoi(30);
 
-  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
+  auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
+      process.Leak().Signal.SignalID == SIGTRAP) {
+    dbg_break_point();
+  }
 
   (Void)(Kernel::kout << "Kernel: Process RSP: " << Kernel::hex_number(rsp) << Kernel::kendl);
   Kernel::kout << "Kernel: Access Process Fault.\r";
@@ -128,7 +148,12 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
   hal_idt_send_eoi(3);
 
-  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
+  auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
+      process.Leak().Signal.SignalID == SIGTRAP) {
+    dbg_break_point();
+  }
 
   (Void)(Kernel::kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
 
@@ -153,7 +178,12 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
 
   NE_UNUSED(rsp);
 
-  auto& process = Kernel::UserProcessScheduler::The().CurrentProcess();
+  auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
+      process.Leak().Signal.SignalID == SIGTRAP) {
+    dbg_break_point();
+  }
 
   Kernel::kout << "Kernel: Undefined Opcode.\r";
 

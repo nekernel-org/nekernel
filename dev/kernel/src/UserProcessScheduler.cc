@@ -14,13 +14,13 @@
 /***********************************************************************************/
 
 #include <ArchKit/ArchKit.h>
-#include <NewKit/KString.h>
-
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/IPEFDylibObject.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/ProcessScheduler.h>
+#include <NewKit/KString.h>
+#include <SignalKit/Signals.h>
 
 ///! BUGS: 0
 
@@ -479,18 +479,23 @@ SizeT UserProcessScheduler::Run() noexcept {
     return 0UL;
   }
 
+  auto& process = this->TheCurrentProcess().Leak();
+
+  //! Increase the usage time of the process.
+  if (process.UTime < process.PTime) {
+    ++process.UTime;
+  }
+
   SizeT process_index = 0UL;  //! we store this guy to tell the scheduler how many
                               //! things we have scheduled.
 
   for (; process_index < mTeam.AsArray().Capacity(); ++process_index) {
     auto& process = mTeam.AsArray()[process_index];
 
-    if (this->CurrentProcess() == process) continue;
-
     //! Check if the process needs to be run.
     if (UserProcessHelper::CanBeScheduled(process)) {
       if (process.StackSize > kSchedMaxStackSz) {
-        kout << "The process: " << process.Name << ", has not a valid stack size! Crashing it...\r";
+        kout << "Process: " << process.Name << ", has not a valid stack size! Crashing it...\r";
         process.Crash();
         continue;
       }
@@ -511,13 +516,14 @@ SizeT UserProcessScheduler::Run() noexcept {
         process.RTime = 0UL;
       }
 
-      this->CurrentProcess() = process;
-
       if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
         break;
       }
 
-      break;
+      mTeam.AsArray()[this->TheCurrentProcess().Leak().ProcessId] =
+          this->TheCurrentProcess().Leak();
+
+      this->TheCurrentProcess() = process;
     } else {
       ++process.RTime;
       --process.PTime;
@@ -529,7 +535,7 @@ SizeT UserProcessScheduler::Run() noexcept {
 
 /// @brief Gets the current scheduled team.
 /// @return
-UserProcessTeam& UserProcessScheduler::CurrentTeam() {
+UserProcessTeam& UserProcessScheduler::TheCurrentTeam() {
   return mTeam;
 }
 
@@ -550,17 +556,17 @@ BOOL UserProcessScheduler::SwitchTeam(UserProcessTeam& team) {
 
 /// @brief Gets current running process.
 /// @return
-Ref<USER_PROCESS>& UserProcessScheduler::CurrentProcess() {
+Ref<USER_PROCESS>& UserProcessScheduler::TheCurrentProcess() {
   return mTeam.AsRef();
 }
 
 /// @brief Current proccess id getter.
 /// @return USER_PROCESS ID integer.
 ErrorOr<PID> UserProcessHelper::TheCurrentPID() {
-  if (!UserProcessScheduler::The().CurrentProcess()) return ErrorOr<PID>{-kErrorProcessFault};
+  if (!UserProcessScheduler::The().TheCurrentProcess()) return ErrorOr<PID>{-kErrorProcessFault};
 
   kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-  return ErrorOr<PID>{UserProcessScheduler::The().CurrentProcess().Leak().ProcessId};
+  return ErrorOr<PID>{UserProcessScheduler::The().TheCurrentProcess().Leak().ProcessId};
 }
 
 /// @brief Check if process can be schedulded.
@@ -575,12 +581,17 @@ Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
   // real time processes shouldn't wait that much.
   if (process.Affinity == AffinityKind::kRealTime) return Yes;
 
+  if (process.Signal.SignalID == SIGKILL || process.Signal.SignalID == SIGABRT ||
+      process.Signal.SignalID == SIGTRAP) {
+    return No;
+  }
+
   return process.PTime < 1;
 }
 
 /***********************************************************************************/
 /**
- * @brief Start scheduling current AP.
+ * @brief Start scheduling the current team.
  */
 /***********************************************************************************/
 
@@ -604,13 +615,13 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
 
     // A fallback is a special core for real-time tasks which needs immediate execution.
     if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPRealTime) {
-      if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity !=
+      if (UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].Affinity !=
           AffinityKind::kRealTime)
         continue;
 
       if (HardwareThreadScheduler::The()[index].Leak()->Switch(frame_ptr, new_pid)) {
         HardwareThreadScheduler::The()[index].Leak()->fPTime =
-            UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
+            UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].PTime;
 
         UserProcessHelper::TheCurrentPID().Leak().Leak() = UserProcessHelper::TheCurrentPID();
 
@@ -620,7 +631,7 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
       continue;
     }
 
-    if (UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].Affinity ==
+    if (UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].Affinity ==
         AffinityKind::kRealTime)
       continue;
 
@@ -639,7 +650,7 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
     UserProcessHelper::TheCurrentPID().Leak().Leak() = new_pid;
 
     HardwareThreadScheduler::The()[index].Leak()->fPTime =
-        UserProcessScheduler::The().CurrentTeam().AsArray()[new_pid].PTime;
+        UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].PTime;
     HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
 
     return YES;
