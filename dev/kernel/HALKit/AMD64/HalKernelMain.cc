@@ -110,6 +110,18 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 
   Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
+#ifdef __FSKIT_INCLUDES_HEFS__
+  if (Kernel::HeFS::fs_init_hefs()) {
+    goto hal_spin_kernel;
+  }
+#endif
+
+  if (!Kernel::NeFS::fs_init_nefs()) {
+    kout << "NeFS cannot be formated on the disk. Aborting\r";
+    dbg_break_point();
+  }
+
+hal_spin_kernel:
   Kernel::HAL::Register64 idt_reg;
   idt_reg.Base = reinterpret_cast<Kernel::UIntPtr>(kInterruptVectorTable);
 
@@ -117,17 +129,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 
   idt_loader.Load(idt_reg);
 
-#ifdef __FSKIT_INCLUDES_HEFS__
-  if (Kernel::HeFS::fs_init_hefs()) {
-    goto hal_spin_kernel;
-  }
-#endif
-  if (!Kernel::NeFS::fs_init_nefs()) {
-    kout << "NeFS cannot be formated on the disk. Aborting\r";
-    dbg_break_point();
-  }
-
-hal_spin_kernel:
   while (YES)
     ;
 }

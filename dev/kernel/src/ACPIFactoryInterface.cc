@@ -14,13 +14,12 @@ namespace Kernel {
 ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
   MUST_PASS(this->fRsdp);
 
-  if (!signature) return ErrorOr<voidPtr>{-1};
-
-  if (*signature == 0) return ErrorOr<voidPtr>{-1};
+  if (!signature) return ErrorOr<voidPtr>{nullptr};
+  if (*signature == 0) return ErrorOr<voidPtr>{nullptr};
 
   RSDP* rsp_ptr = reinterpret_cast<RSDP*>(this->fRsdp);
 
-  if (rsp_ptr->Revision <= 1) return ErrorOr<voidPtr>{-1};
+  if (rsp_ptr->Revision < 1) return ErrorOr<voidPtr>{nullptr};
 
   RSDT* xsdt = reinterpret_cast<RSDT*>(rsp_ptr->RsdtAddress);
 

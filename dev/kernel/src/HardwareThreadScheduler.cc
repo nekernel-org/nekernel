@@ -158,12 +158,8 @@ HAL::StackFramePtr HardwareThreadScheduler::Leak() noexcept {
  */
 /***********************************************************************************/
 Ref<HardwareThread*> HardwareThreadScheduler::operator[](SizeT idx) {
-  if (idx == 0) {
-    if (fThreadList[idx].Kind() != kAPSystemReserved) {
-      fThreadList[idx].fKind = kAPBoot;
-    }
-  } else if (idx >= kMaxAPInsideSched) {
-    static HardwareThread* kFakeThread = nullptr;
+  if (idx >= kMaxAPInsideSched) {
+    STATIC HardwareThread* kFakeThread = nullptr;
     return {kFakeThread};
   }
 

@@ -37,6 +37,9 @@ EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp) {
 
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
 
+  if (!process) {
+    ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "General Access Fault.");
+  }
   if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
       process.Leak().Signal.SignalID == SIGTRAP) {
     dbg_break_point();
@@ -61,6 +64,10 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   hal_idt_send_eoi(14);
 
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (!process) {
+    ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "Access Fault.");
+  }
 
   if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
       process.Leak().Signal.SignalID == SIGTRAP) {
@@ -101,6 +108,9 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
 
+  if (!process) {
+    ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "Math Fault.");
+  }
   if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
       process.Leak().Signal.SignalID == SIGTRAP) {
     dbg_break_point();
@@ -126,6 +136,10 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
 
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
 
+  if (!process) {
+    ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "Generic Fault.");
+  }
+
   if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
       process.Leak().Signal.SignalID == SIGTRAP) {
     dbg_break_point();
@@ -146,9 +160,14 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
-  hal_idt_send_eoi(3);
-
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (!process) {
+    while (YES)
+      ;
+  }
+
+  hal_idt_send_eoi(3);
 
   if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
       process.Leak().Signal.SignalID == SIGTRAP) {
@@ -167,8 +186,6 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
   Kernel::kout << "Kernel: SIGTRAP status.\r";
 
   process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
-
-  idt_handle_scheduler(rip);
 }
 
 /// @brief Handle #UD fault.
@@ -179,6 +196,11 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
   NE_UNUSED(rsp);
 
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+
+  if (!process) {
+    while (YES)
+      ;
+  }
 
   if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
       process.Leak().Signal.SignalID == SIGTRAP) {

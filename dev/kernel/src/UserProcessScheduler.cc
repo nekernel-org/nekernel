@@ -494,37 +494,28 @@ SizeT UserProcessScheduler::Run() noexcept {
 
     //! Check if the process needs to be run.
     if (UserProcessHelper::CanBeScheduled(process)) {
-      if (process.StackSize > kSchedMaxStackSz) {
-        kout << "Process: " << process.Name << ", has not a valid stack size! Crashing it...\r";
-        process.Crash();
-        continue;
-      }
-
       kout << ((*process.Name) ? process.Name : "USER_PROCESS") << " will be scheduled...\r";
 
       process.PTime = static_cast<Int32>(process.Affinity);
 
-      if (process.PTime < process.RTime) {
+      if (process.PTime < process.RTime && AffinityKind::kRealTime != process.Affinity) {
         if (process.RTime < (Int32) AffinityKind::kVeryHigh)
-          process.RTime = (Int32) AffinityKind::kLowUsage;
+          process.RTime = (Int32) AffinityKind::kLowUsage / 2;
         else if (process.RTime < (Int32) AffinityKind::kHigh)
-          process.RTime = (Int32) AffinityKind::kStandard;
+          process.RTime = (Int32) AffinityKind::kStandard / 3;
         else if (process.RTime < (Int32) AffinityKind::kStandard)
-          process.RTime = (Int32) AffinityKind::kHigh;
+          process.RTime = (Int32) AffinityKind::kHigh / 4;
 
-        process.PTime += process.RTime;
+        process.PTime -= process.RTime;
         process.RTime = 0UL;
       }
 
       if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
-        break;
+        continue;
       }
-
-      mTeam.AsArray()[this->TheCurrentProcess().Leak().ProcessId] =
-          this->TheCurrentProcess().Leak();
-
-      this->TheCurrentProcess() = process;
     } else {
+      kout << ((*process.Name) ? process.Name : "USER_PROCESS") << " will be scheduled later...\r";
+
       ++process.RTime;
       --process.PTime;
     }
@@ -575,14 +566,13 @@ ErrorOr<PID> UserProcessHelper::TheCurrentPID() {
 /// @retval false cannot be schedulded.
 Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
   if (process.Status != ProcessStatusKind::kRunning) return No;
-
+  if (process.StackSize > kSchedMaxStackSz) return No;
   if (!process.Name[0]) return No;
 
   // real time processes shouldn't wait that much.
   if (process.Affinity == AffinityKind::kRealTime) return Yes;
 
-  if (process.Signal.SignalID == SIGKILL || process.Signal.SignalID == SIGABRT ||
-      process.Signal.SignalID == SIGTRAP) {
+  if (process.Signal.SignalID == SIGTRAP) {
     return No;
   }
 
@@ -625,7 +615,10 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
 
         UserProcessHelper::TheCurrentPID().Leak().Leak() = UserProcessHelper::TheCurrentPID();
 
-        break;
+        UserProcessScheduler::The().TheCurrentProcess() =
+            UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid];
+
+        return YES;
       }
 
       continue;
@@ -652,6 +645,9 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
     HardwareThreadScheduler::The()[index].Leak()->fPTime =
         UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].PTime;
     HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
+
+    UserProcessScheduler::The().TheCurrentProcess() =
+        UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid];
 
     return YES;
   }

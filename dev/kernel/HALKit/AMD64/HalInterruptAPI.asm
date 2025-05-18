@@ -224,8 +224,6 @@ __NE_INT_32:
 
     std
 
-    add rsp, 8
-
     o64 iret
 
 IntNormal 33

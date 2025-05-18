@@ -17,6 +17,8 @@
 
 // timer slot 0
 
+#define kHPETSignature ("HPET")
+
 #define kHPETCounterRegValue (0x00)
 #define kHPETConfigRegValue (0x20)
 #define kHPETCompRegValue (0x24)
@@ -46,7 +48,7 @@ using namespace Kernel;
 HardwareTimer::HardwareTimer(UInt64 ms) : fWaitFor(ms) {
   auto power = PowerFactoryInterface(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
-  auto hpet = (Detail::HPET_BLOCK*) power.Find("HPET").Leak().Leak();
+  auto hpet = (Detail::HPET_BLOCK*) power.Find(kHPETSignature).Leak().Leak();
   MUST_PASS(hpet);
 
   fDigitalTimer = (UInt8*) hpet->address.Address;
