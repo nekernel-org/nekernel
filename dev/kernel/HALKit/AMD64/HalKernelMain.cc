@@ -103,12 +103,10 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   return kEfiFail;
 }
 
-EXTERN_C void rtl_ne_task(void);
-
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
-  Kernel::rtl_create_user_process(rtl_ne_task, "MgmtSrv");
-  Kernel::rtl_create_user_process(rtl_ne_task, "LaunchSrv");
-  Kernel::rtl_create_user_process(rtl_ne_task, "SecSrv");
+  Kernel::rtl_create_user_process(sched_idle_task, "MgmtSrv");    //! Mgmt command server.
+  Kernel::rtl_create_user_process(sched_idle_task, "LaunchSrv");  //! launchd
+  Kernel::rtl_create_user_process(sched_idle_task, "SecSrv");     //! Login Server
 
   Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 

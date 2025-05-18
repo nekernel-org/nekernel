@@ -99,12 +99,13 @@ sched_jump_to_task:
     mov r15, [rcx + 0x48]
 
     mov rax, [rcx + 0x00]
-    mov rsp, [rcx + 0x08]  ; SP
+    mov rsp, [rcx + 0x08]
 
     jmp rax
+    int 3 ;; Never continue here.
 
-global rtl_ne_task
+global sched_idle_task
 
-rtl_ne_task:
+sched_idle_task:
     jmp $
     ret

@@ -20,11 +20,11 @@ STATIC BOOL kIsRunning = NO;
 STATIC void hal_idt_send_eoi(UInt8 vector) {
   ((volatile UInt32*) kApicBaseAddress)[0xB0 / 4] = 0;
 
-  if (vector >= 0x20 && vector <= 0x2F) {
+  if (vector >= kPICCommand && vector <= 0x2F) {
     if (vector >= 0x28) {
-      Kernel::HAL::rt_out8(0xA0, 0x20);
+      Kernel::HAL::rt_out8(kPIC2Command, kPICCommand);
     }
-    Kernel::HAL::rt_out8(0x20, 0x20);
+    Kernel::HAL::rt_out8(kPICCommand, kPICCommand);
   }
 
   kIsRunning = NO;

@@ -19,6 +19,8 @@
 
 #define kSchedNameLen (128U)
 
+EXTERN_C void sched_idle_task(void);
+
 namespace Kernel {
 class USER_PROCESS;
 class KERNEL_TASK;
