@@ -243,7 +243,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
     handover_hdr->f_KernelImage = reader_kernel.Blob();
     handover_hdr->f_KernelSz    = reader_kernel.Size();
 
-    kernel_thread.Start(handover_hdr, YES);
+    kernel_thread.Start(handover_hdr, NO);
   }
 
   Boot::BootFileReader reader_netboot(L"net.efi", image_handle);

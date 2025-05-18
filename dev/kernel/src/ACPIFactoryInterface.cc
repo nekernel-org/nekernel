@@ -10,16 +10,18 @@
 #include <modules/ACPI/ACPIFactoryInterface.h>
 
 namespace Kernel {
+constexpr STATIC const auto kMinACPIVer = 1;
+
 /// @brief Finds a descriptor table inside ACPI XSDT.
 ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
   MUST_PASS(this->fRsdp);
 
-  if (!signature) return ErrorOr<voidPtr>{nullptr};
-  if (*signature == 0) return ErrorOr<voidPtr>{nullptr};
+  if (!signature) return ErrorOr<voidPtr>{-kErrorInvalidData};
+  if (*signature == 0) return ErrorOr<voidPtr>{-kErrorInvalidData};
 
   RSDP* rsp_ptr = reinterpret_cast<RSDP*>(this->fRsdp);
 
-  if (rsp_ptr->Revision < 1) return ErrorOr<voidPtr>{nullptr};
+  if (rsp_ptr->Revision < kMinACPIVer) return ErrorOr<voidPtr>{-kErrorInvalidData};
 
   RSDT* xsdt = reinterpret_cast<RSDT*>(rsp_ptr->RsdtAddress);
 

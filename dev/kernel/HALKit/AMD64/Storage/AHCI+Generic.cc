@@ -54,7 +54,6 @@
 
 using namespace Kernel;
 
-STATIC HardwareTimer kSATATimer(rtl_milliseconds(5));
 STATIC PCI::Device kSATADev;
 STATIC HbaMemRef   kSATAHba;
 STATIC Lba         kSATASectorCount                                        = 0UL;

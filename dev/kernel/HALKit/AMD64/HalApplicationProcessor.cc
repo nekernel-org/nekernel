@@ -44,6 +44,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 namespace Kernel::HAL {
+EXTERN_C Void sched_jump_to_task(HAL::StackFramePtr stack_frame);
+
 struct HAL_APIC_MADT;
 struct HAL_HARDWARE_THREAD;
 
@@ -59,9 +61,9 @@ STATIC Int64          kSMPCount  = 0;
 
 EXTERN_C UIntPtr kApicBaseAddress;
 
-STATIC Int32   kSMPInterrupt                           = 0;
-STATIC UInt64  kAPICLocales[kSchedProcessLimitPerTeam] = {0};
-STATIC VoidPtr kRawMADT                                = nullptr;
+STATIC Int32   kSMPInterrupt                   = 0;
+STATIC UInt64  kAPICLocales[kMaxAPInsideSched] = {0};
+STATIC VoidPtr kRawMADT                        = nullptr;
 
 /// @brief Multiple APIC Descriptor Table.
 struct HAL_APIC_MADT final SDT_OBJECT {
@@ -105,17 +107,11 @@ EXTERN_C HAL::StackFramePtr mp_get_current_context(Int64 pid) {
 }
 
 EXTERN_C BOOL mp_register_process(HAL::StackFramePtr stack_frame, ProcessID pid) {
-  MUST_PASS(stack_frame);
-
-  const auto process_index = pid % kSchedProcessLimitPerTeam;
-
-  kHWThread[process_index].mFramePtr  = stack_frame;
-  kHWThread[process_index].mProcessID = pid;
-
-  kHWThread[process_index].mCoreID = kAPICLocales[0];
+  if (pid > kSMPCount) return NO;
 
   if (mp_is_smp()) {
-    /// TODO:
+    kHWThread[pid].mFramePtr  = stack_frame;
+    kHWThread[pid].mProcessID = pid;
 
     return YES;
   }

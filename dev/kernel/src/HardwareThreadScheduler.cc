@@ -104,15 +104,12 @@ Void HardwareThread::Wake(const bool wakeup) noexcept {
 /// @retval true stack was changed, code is running.
 /// @retval false stack is invalid, previous code is running.
 /***********************************************************************************/
-Bool HardwareThread::Switch(HAL::StackFramePtr frame, const ThreadID& pid) {
+Bool HardwareThread::Switch(HAL::StackFramePtr frame) {
   if (this->IsBusy()) return NO;
 
   this->fStack = frame;
-  this->fPID   = pid;
 
   Bool ret = mp_register_process(fStack, this->fPID);
-
-  if (ret) this->Busy(YES);
 
   return ret;
 }
@@ -159,9 +156,11 @@ HAL::StackFramePtr HardwareThreadScheduler::Leak() noexcept {
 /***********************************************************************************/
 Ref<HardwareThread*> HardwareThreadScheduler::operator[](SizeT idx) {
   if (idx >= kMaxAPInsideSched) {
-    STATIC HardwareThread* kFakeThread = nullptr;
+    HardwareThread* kFakeThread = nullptr;
     return {kFakeThread};
   }
+
+  fThreadList[idx].fPID = idx;
 
   return &fThreadList[idx];
 }

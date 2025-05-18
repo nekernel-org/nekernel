@@ -25,8 +25,6 @@
 ///! BUGS: 0
 
 namespace Kernel {
-EXTERN_C Void sched_jump_to_task(HAL::StackFramePtr stack_frame);
-
 /***********************************************************************************/
 /// @brief Exit Code global variable.
 /***********************************************************************************/
@@ -598,41 +596,24 @@ SizeT UserProcessHelper::StartScheduling() {
 /***********************************************************************************/
 
 Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
+  (Void)(kout << "IP: " << hex_number(frame_ptr->IP) << kendl);
+
   for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
+    if (!HardwareThreadScheduler::The()[index].Leak()) continue;
+
     if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPInvalid ||
         HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPBoot)
       continue;
 
-    // A fallback is a special core for real-time tasks which needs immediate execution.
-    if (HardwareThreadScheduler::The()[index].Leak()->Kind() == kAPRealTime) {
-      if (UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].Affinity !=
-          AffinityKind::kRealTime)
-        continue;
-
-      if (HardwareThreadScheduler::The()[index].Leak()->Switch(frame_ptr, new_pid)) {
-        HardwareThreadScheduler::The()[index].Leak()->fPTime =
-            UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].PTime;
-
-        UserProcessHelper::TheCurrentPID().Leak().Leak() = UserProcessHelper::TheCurrentPID();
-
-        UserProcessScheduler::The().TheCurrentProcess() =
-            UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid];
-
-        return YES;
-      }
-
-      continue;
-    }
-
-    if (UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].Affinity ==
-        AffinityKind::kRealTime)
-      continue;
+    (Void)(kout << "AP_" << hex_number(index) << kendl);
 
     ////////////////////////////////////////////////////////////
     ///	Prepare task switch.								 ///
     ////////////////////////////////////////////////////////////
 
-    Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(frame_ptr, new_pid);
+    HardwareThreadScheduler::The()[index].Leak()->Busy(YES);
+    Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(frame_ptr);
+    HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
 
     ////////////////////////////////////////////////////////////
     ///	Rollback on fail.    								 ///
@@ -651,6 +632,8 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
 
     return YES;
   }
+
+  kout << "Couldn't find a suitable core for the current process!\r";
 
   return NO;
 }

@@ -23,7 +23,7 @@ class HardwareThreadScheduler;
 using ThreadID = UInt32;
 
 enum ThreadKind {
-  kAPInvalid,
+  kAPInvalid        = 0,
   kAPSystemReserved = 100,  // System reserved thread, well user can't use it
   kAPStandard,              // user thread, cannot be used by Kernel
   kAPRealTime,              // fallback thread, cannot be used by user if not clear or
@@ -58,7 +58,7 @@ class HardwareThread final {
   void Busy(const BOOL busy = false) noexcept;
 
  public:
-  BOOL Switch(HAL::StackFramePtr frame, const ThreadID& pid);
+  BOOL Switch(HAL::StackFramePtr frame);
   BOOL IsWakeup() noexcept;
 
  public:

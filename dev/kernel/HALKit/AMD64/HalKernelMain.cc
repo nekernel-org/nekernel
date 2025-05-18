@@ -104,28 +104,34 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 }
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
-  Kernel::rtl_create_user_process(sched_idle_task, "MgmtSrv");    //! Mgmt command server.
-  Kernel::rtl_create_user_process(sched_idle_task, "LaunchSrv");  //! launchd
-  Kernel::rtl_create_user_process(sched_idle_task, "SecSrv");     //! Login Server
+  using namespace Kernel;
 
-  Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+  for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
+    HardwareThreadScheduler::The()[index].Leak()->Kind() = ThreadKind::kAPStandard;
+  }
+
+  rtl_create_user_process(sched_idle_task, "MgmtSrv");    //! Mgmt command server.
+  rtl_create_user_process(sched_idle_task, "LaunchSrv");  //! launchd
+  rtl_create_user_process(sched_idle_task, "SecSrv");     //! Login Server
+
+  HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 #ifdef __FSKIT_INCLUDES_HEFS__
-  if (Kernel::HeFS::fs_init_hefs()) {
+  if (HeFS::fs_init_hefs()) {
     goto hal_spin_kernel;
   }
 #endif
 
-  if (!Kernel::NeFS::fs_init_nefs()) {
+  if (!NeFS::fs_init_nefs()) {
     kout << "NeFS cannot be formated on the disk. Aborting\r";
     dbg_break_point();
   }
 
 hal_spin_kernel:
-  Kernel::HAL::Register64 idt_reg;
-  idt_reg.Base = reinterpret_cast<Kernel::UIntPtr>(kInterruptVectorTable);
+  HAL::Register64 idt_reg;
+  idt_reg.Base = reinterpret_cast<UIntPtr>(kInterruptVectorTable);
 
-  Kernel::HAL::IDTLoader idt_loader;
+  HAL::IDTLoader idt_loader;
 
   idt_loader.Load(idt_reg);
 
