@@ -1,6 +1,13 @@
 .global rt_jump_to_address
 .global rt_reset_hardware
 
+.data
+
+.global kApicBaseAddress
+
+kApicBaseAddress:
+    .long 0
+
 .text
 
 .intel_syntax noprefix
