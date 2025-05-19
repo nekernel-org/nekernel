@@ -7,7 +7,9 @@
 #include <HALKit/ARM64/ApplicationProcessor.h>
 #include <HALKit/ARM64/Processor.h>
 #include <KernelKit/DebugOutput.h>
+#include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/ProcessScheduler.h>
+#include <KernelKit/Timer.h>
 
 #define GICD_BASE 0x08000000  // Distributor base address
 #define GICC_BASE 0x08010000  // CPU interface base address
@@ -29,11 +31,12 @@
 // ================================================================= //
 
 namespace Kernel {
-struct PROCESS_CONTROL_BLOCK final {
+struct HAL_HARDWARE_THREAD final {
   HAL::StackFramePtr mFrame;
+  ProcessID          mThreadID{0};
 };
 
-STATIC PROCESS_CONTROL_BLOCK kProcessBlocks[kSchedProcessLimitPerTeam] = {0};
+STATIC HAL_HARDWARE_THREAD kHWThread[kMaxAPInsideSched] = {{nullptr}};
 
 namespace Detail {
   STATIC BOOL kGICEnabled = NO;
@@ -86,7 +89,7 @@ namespace Detail {
 
       const UInt16 kInterruptScheduler = 0x20;
 
-      (Void)(kout << "Handling interrupt for AP: " << interrupt << kendl);
+      (Void)(kout << "SMP: AP: " << hex_number(interrupt) << kendl);
 
       switch (interrupt) {
         case kInterruptScheduler: {
@@ -108,23 +111,32 @@ namespace Detail {
   }
 }  // namespace Detail
 
-EXTERN_C HAL::StackFramePtr mp_get_current_context(ProcessID pid) {
-  return kProcessBlocks[pid % kSchedProcessLimitPerTeam].mFrame;
+EXTERN_C HAL::StackFramePtr mp_get_current_context(ProcessID thrdid) {
+  return kHWThread[thrdid].mFrame;
 }
 
-EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame, ProcessID pid) {
-  MUST_PASS(stack_frame);
+EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame, ProcessID thrdid) {
+  MUST_PASS(Detail::kGICEnabled);
 
-  const auto process_index = pid % kSchedProcessLimitPerTeam;
+  if (!stack_frame) return NO;
+  if (thrdid > kMaxAPInsideSched) return NO;
 
-  kProcessBlocks[process_index].mFrame = stack_frame;
+  const auto process_index = thrdid;
+
+  kHWThread[process_index].mFrame    = stack_frame;
+  kHWThread[process_index].mThreadID = thrdid;
+
+  STATIC HardwareTimer timer{rtl_milliseconds(1000)};
+  timer.Wait();
+
+  HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
 
   return YES;
 }
 
 /// @internal
 /// @brief Initialize the Global Interrupt Controller.
-BOOL mp_initialize_gic(Void) {
+Void mp_init_cores(Void) noexcept {
   if (!Detail::kGICEnabled) {
     Detail::kGICEnabled = YES;
     Detail::mp_setup_gic_el0();

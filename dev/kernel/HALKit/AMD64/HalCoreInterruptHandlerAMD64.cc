@@ -54,8 +54,6 @@ EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp) {
   Kernel::kout << "Kernel: SIGKILL status.\r";
 
   process.Leak().Crash();
-
-  dbg_break_point();
 }
 
 /// @brief Handle page fault.
@@ -82,8 +80,6 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   process.Leak().Signal.Status    = process.Leak().Status;
 
   process.Leak().Crash();
-
-  dbg_break_point();
 }
 
 /// @brief Handle scheduler interrupt.
@@ -125,8 +121,6 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
   Kernel::kout << "Kernel: SIGKILL status.\r";
 
   process.Leak().Crash();
-
-  dbg_break_point();
 }
 
 /// @brief Handle any generic fault.
@@ -155,8 +149,6 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
   Kernel::kout << "Kernel: SIGKILL status.\r";
 
   process.Leak().Crash();
-
-  dbg_break_point();
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
@@ -216,8 +208,6 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
   Kernel::kout << "Kernel: SIGKILL status.\r";
 
   process.Leak().Crash();
-
-  dbg_break_point();
 }
 
 /// @brief Enter syscall from assembly.

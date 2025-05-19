@@ -93,21 +93,6 @@ namespace Detail {
 
 STATIC PageMgr kPageMgr;
 
-/// @brief Declare a new size for ptr_ptr.
-/// @param ptr_ptr the pointer.
-/// @return Newly allocated heap header.
-_Output auto mm_realloc_ptr(VoidPtr ptr_ptr, SizeT new_sz) -> VoidPtr {
-  if (Detail::mm_check_ptr_address(ptr_ptr) == No) return nullptr;
-
-  if (!ptr_ptr || new_sz < 1) return nullptr;
-
-  kout << "MemoryMgr: This function is not implemented by the kernel yet.\r";
-
-  ke_panic(RUNTIME_CHECK_INVALID);
-
-  return nullptr;
-}
-
 /// @brief Allocate chunk of memory.
 /// @param sz Size of pointer
 /// @param wr Read Write bit.

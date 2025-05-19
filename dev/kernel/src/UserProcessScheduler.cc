@@ -492,28 +492,24 @@ SizeT UserProcessScheduler::Run() noexcept {
 
     //! Check if the process needs to be run.
     if (UserProcessHelper::CanBeScheduled(process)) {
-      kout << ((*process.Name) ? process.Name : "USER_PROCESS") << " will be scheduled...\r";
+      kout << process.Name << " will be scheduled...\r";
 
-      process.PTime = static_cast<Int32>(process.Affinity);
+      if (UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
+        process.PTime = static_cast<Int32>(process.Affinity);
 
-      if (process.PTime < process.RTime && AffinityKind::kRealTime != process.Affinity) {
-        if (process.RTime < (Int32) AffinityKind::kVeryHigh)
-          process.RTime = (Int32) AffinityKind::kLowUsage / 2;
-        else if (process.RTime < (Int32) AffinityKind::kHigh)
-          process.RTime = (Int32) AffinityKind::kStandard / 3;
-        else if (process.RTime < (Int32) AffinityKind::kStandard)
-          process.RTime = (Int32) AffinityKind::kHigh / 4;
+        if (process.PTime < process.RTime && AffinityKind::kRealTime != process.Affinity) {
+          if (process.RTime < (Int32) AffinityKind::kVeryHigh)
+            process.RTime = (Int32) AffinityKind::kLowUsage / 2;
+          else if (process.RTime < (Int32) AffinityKind::kHigh)
+            process.RTime = (Int32) AffinityKind::kStandard / 3;
+          else if (process.RTime < (Int32) AffinityKind::kStandard)
+            process.RTime = (Int32) AffinityKind::kHigh / 4;
 
-        process.PTime -= process.RTime;
-        process.RTime = 0UL;
-      }
-
-      if (!UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
-        continue;
+          process.PTime -= process.RTime;
+          process.RTime = 0UL;
+        }
       }
     } else {
-      kout << ((*process.Name) ? process.Name : "USER_PROCESS") << " will be scheduled later...\r";
-
       ++process.RTime;
       --process.PTime;
     }
@@ -607,13 +603,19 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
 
     (Void)(kout << "AP_" << hex_number(index) << kendl);
 
+    if (HardwareThreadScheduler::The()[index].Leak()->IsBusy()) {
+      (Void)(kout << "AP_" << hex_number(index));
+      kout << " is busy\r";
+      continue;
+    }
+
     ////////////////////////////////////////////////////////////
     ///	Prepare task switch.								 ///
     ////////////////////////////////////////////////////////////
 
     HardwareThreadScheduler::The()[index].Leak()->Busy(YES);
+
     Bool ret = HardwareThreadScheduler::The()[index].Leak()->Switch(frame_ptr);
-    HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
 
     ////////////////////////////////////////////////////////////
     ///	Rollback on fail.    								 ///
@@ -642,13 +644,23 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
 /// @brief this checks if any process is on the team.
 ////////////////////////////////////////////////////////////
 UserProcessScheduler::operator bool() {
-  return mTeam.AsArray().Count() > 0;
+  for (auto process_index = 0UL; process_index < mTeam.AsArray().Count(); ++process_index) {
+    auto& process = mTeam.AsArray()[process_index];
+    if (UserProcessHelper::CanBeScheduled(process)) return true;
+  }
+
+  return false;
 }
 
 ////////////////////////////////////////////////////////////
 /// @brief this checks if no process is on the team.
 ////////////////////////////////////////////////////////////
 Bool UserProcessScheduler::operator!() {
-  return mTeam.AsArray().Count() == 0;
+  for (auto process_index = 0UL; process_index < mTeam.AsArray().Count(); ++process_index) {
+    auto& process = mTeam.AsArray()[process_index];
+    if (UserProcessHelper::CanBeScheduled(process)) return false;
+  }
+
+  return true;
 }
 }  // namespace Kernel

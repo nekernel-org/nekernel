@@ -51,8 +51,7 @@ struct HAL_HARDWARE_THREAD;
 
 struct HAL_HARDWARE_THREAD final {
   HAL::StackFramePtr mFramePtr;
-  ProcessID          mProcessID{0};
-  UInt8              mCoreID{0};
+  ProcessID          mThreadID{0};
 };
 
 STATIC HAL_APIC_MADT* kMADTBlock = nullptr;
@@ -100,18 +99,24 @@ Void hal_send_ipi_msg(UInt32 target, UInt32 apic_id, UInt8 vector) {
 
 STATIC HAL_HARDWARE_THREAD kHWThread[kSchedProcessLimitPerTeam] = {{}};
 
-EXTERN_C HAL::StackFramePtr mp_get_current_context(Int64 pid) {
-  const auto process_index = pid % kSchedProcessLimitPerTeam;
+EXTERN_C HAL::StackFramePtr mp_get_current_context(Int64 thrdid) {
+  const auto process_index = thrdid % kSchedProcessLimitPerTeam;
 
   return kHWThread[process_index].mFramePtr;
 }
 
-EXTERN_C BOOL mp_register_process(HAL::StackFramePtr stack_frame, ProcessID pid) {
-  if (pid > kSMPCount) return NO;
+EXTERN_C BOOL mp_register_process(HAL::StackFramePtr stack_frame, ProcessID thrdid) {
+  if (thrdid > kSMPCount) return NO;
 
   if (mp_is_smp()) {
-    kHWThread[pid].mFramePtr  = stack_frame;
-    kHWThread[pid].mProcessID = pid;
+    kHWThread[thrdid].mFramePtr = stack_frame;
+    kHWThread[thrdid].mThreadID = thrdid;
+
+    STATIC HardwareTimer timer{rtl_milliseconds(1000)};
+
+    timer.Wait();
+
+    HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
 
     return YES;
   }
@@ -151,7 +156,14 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
 
   PowerFactoryInterface hw_and_pow_int{vendor_ptr};
 
-  kRawMADT   = hw_and_pow_int.Find(APIC_MAG).Leak().Leak();
+  auto pwr = hw_and_pow_int.Find(APIC_MAG);
+
+  if (pwr.HasError()) {
+    kSMPAware = NO;
+    return;
+  }
+
+  kRawMADT   = pwr.Leak().Leak();
   kMADTBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
   kSMPAware  = NO;
 
@@ -181,11 +193,6 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     controller.Write(LAPIC_REG_TIMER_LVT, 32 | (1 << 17));
     controller.Write(LAPIC_REG_TIMER_INITCNT, 1000000);
 
-    UInt8* trampoline_phys = (UInt8*) 0x7c00;
-
-    *trampoline_phys       = 0xcd;
-    *(trampoline_phys + 1) = 0x00;
-
     volatile UInt8* entry_ptr = reinterpret_cast<volatile UInt8*>(kMADTBlock->List);
     volatile UInt8* end_ptr   = ((UInt8*) kMADTBlock) + kMADTBlock->Length;
 
@@ -203,14 +210,15 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
           kAPICLocales[kSMPCount] = entry_struct->ProcessorID;
           ++kSMPCount;
 
-          kout << "LAPIC type, also is on...\r";
+          kout << "Kind: LAPIC: ON\r";
 
+          // 0x7c00, as recommended by the Intel SDM.
           hal_send_ipi_msg(kApicBaseAddress, entry_struct->ProcessorID, 0x7c);
         } else {
-          kout << "LAPIC type, also is not on...\r";
+          kout << "Kind: LAPIC: OFF\r";
         }
       } else {
-        kout << "Unknown APIC type...\r";
+        kout << "Kind: UNKNOWN: ?\r";
       }
 
       entry_ptr += length;

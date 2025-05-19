@@ -60,16 +60,16 @@ class HardwareTimer final : public TimerInterface {
   Int64           fWaitFor{0};
 };
 
-inline Int64 rtl_microseconds(Int64 time) {
-  if (time < 0) return 0;
+inline UInt64 rtl_microseconds(UInt64 time) {
+  if (time < 1) return 0;
 
   // TODO: nanoseconds maybe?
-  return kTimeUnit * time;
+  return time / kTimeUnit;
 }
 
-inline Int64 rtl_milliseconds(Int64 time) {
-  if (time < 0) return 0;
+inline UInt64 rtl_milliseconds(UInt64 time) {
+  if (time < 1) return 0;
 
-  return kTimeUnit * kTimeUnit * time;
+  return time;
 }
 }  // namespace Kernel

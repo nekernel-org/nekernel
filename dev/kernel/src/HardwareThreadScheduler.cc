@@ -57,19 +57,6 @@ ThreadKind& HardwareThread::Kind() noexcept {
 //! @return whether the thread is busy or not.
 /***********************************************************************************/
 Bool HardwareThread::IsBusy() noexcept {
-  STATIC Int64    busy_timer = 0U;
-  constexpr Int64 kTimeoutMax =
-      0x1000000;  // an arbitrary value used to tell if the timeout hasn't been reached yet.
-
-  if (fBusy && (busy_timer > kTimeoutMax)) {
-    busy_timer = 0U;
-    fBusy      = No;
-
-    return No;
-  }
-
-  ++busy_timer;
-
   return fBusy;
 }
 
@@ -105,8 +92,6 @@ Void HardwareThread::Wake(const bool wakeup) noexcept {
 /// @retval false stack is invalid, previous code is running.
 /***********************************************************************************/
 Bool HardwareThread::Switch(HAL::StackFramePtr frame) {
-  if (this->IsBusy()) return NO;
-
   this->fStack = frame;
 
   Bool ret = mp_register_process(fStack, this->fPID);

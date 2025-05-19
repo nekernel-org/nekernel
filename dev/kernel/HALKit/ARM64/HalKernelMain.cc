@@ -7,9 +7,11 @@
 #include <ArchKit/ArchKit.h>
 #include <CFKit/Property.h>
 #include <FirmwareKit/Handover.h>
+#include <HALKit/ARM64/ApplicationProcessor.h>
 #include <HALKit/ARM64/Processor.h>
 #include <KernelKit/CodeMgr.h>
 #include <KernelKit/FileMgr.h>
+#include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/ProcessScheduler.h>
@@ -18,9 +20,10 @@
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/CoreGfx.h>
 
-#include <HALKit/ARM64/ApplicationProcessor.h>
-
+#ifndef __NE_MODULAR_KERNEL_COMPONENTS__
 EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
+  using namespace Kernel;
+
   /************************************************** */
   /*     INITIALIZE AND VALIDATE HEADER.              */
   /************************************************** */
@@ -32,6 +35,15 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
     return;
   }
 
+  FB::fb_clear_video();
+
+#ifdef __NE_ARM64_EFI__
+  fw_init_efi((EfiSystemTable*) handover_hdr->f_FirmwareCustomTables[1]);
+
+  Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
+                         handover_hdr->f_HardwareTables.f_ImageHandle);
+#endif
+
   /************************************** */
   /*     INITIALIZE BIT MAP.              */
   /************************************** */
@@ -42,31 +54,24 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   /// @note do initialize the interrupts after it.
 
-  Kernel::mp_initialize_gic();
-
-  /// after the scheduler runs, we must look over teams, every 5000s in order to schedule every
-  /// process according to their affinity fairly.
-
-  auto constexpr kSchedTeamSwitchMS = 5U;  /// @brief Team switch time in milliseconds.
-
-  Kernel::HardwareTimer timer(rtl_milliseconds(kSchedTeamSwitchMS));
-
-  STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
-
-  SizeT team_index = 0U;
-
-  /// @brief This just loops over the teams and switches between them.
-  /// @details Not even round-robin, just a simple loop in this boot core we're at.
-  while (YES) {
-    if (team_index > (kSchedTeamCount - 1)) {
-      team_index = 0U;
-    }
-
-    while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]))
-      ;
-
-    timer.Wait();
-
-    ++team_index;
+  for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
+    HardwareThreadScheduler::The()[index].Leak()->Kind() = ThreadKind::kAPStandard;
+    HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
   }
+
+  for (SizeT index = 0UL; index < UserProcessScheduler::The().TheCurrentTeam().AsArray().Count();
+       ++index) {
+    UserProcessScheduler::The().TheCurrentTeam().AsArray()[index].Status =
+        ProcessStatusKind::kInvalid;
+  }
+
+  rtl_create_user_process(sched_idle_task, "MgmtSrv");    //! Mgmt command server.
+  rtl_create_user_process(sched_idle_task, "LaunchSrv");  //! launchd
+  rtl_create_user_process(sched_idle_task, "SecSrv");     //! Login Server
+
+  Kernel::mp_init_cores();
+
+  while (YES)
+    ;
 }
+#endif

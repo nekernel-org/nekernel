@@ -15,5 +15,5 @@
 /************************************************** */
 
 namespace Kernel {
-BOOL mp_initialize_gic(Kernel::Void);
+Void mp_init_cores(Void) noexcept;
 }

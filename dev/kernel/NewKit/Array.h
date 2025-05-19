@@ -26,7 +26,10 @@ class Array final {
 
   SizeT Capacity() { return N; }
 
-  SizeT Count() { return N; }
+  SizeT Count() {
+    const static SizeT kArrCnt = N;
+    return kArrCnt;  // avoid constexpr error.
+  }
 
   const T* CData() { return fArray; }
 

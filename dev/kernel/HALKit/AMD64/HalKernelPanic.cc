@@ -31,6 +31,7 @@ class RecoveryFactory final {
 /***********************************************************************************/
 Void ke_panic(const Kernel::Int32& id, const Char* message) {
   (Void)(kout << "*** STOP ***\r");
+
   (Void)(kout << "Kernel_Panic_MSG: " << message << kendl);
   (Void)(kout << "Kernel_Panic_ID: " << hex_number(id) << kendl);
   (Void)(kout << "Kernel_Panic_CR2: " << hex_number((UIntPtr) hal_read_cr2()) << kendl);
@@ -46,8 +47,10 @@ Void RecoveryFactory::Recover() noexcept {
 
 void ke_runtime_check(bool expr, const Char* file, const Char* line) {
   if (!expr) {
-    (Void)(kout << "Kernel_Panic_File: " << file << kendl);
-    (Void)(kout << "Kernel_Panic_Line: " << line << kendl);
+    (Void)(kout << "*** CHECK ***\r");
+
+    (Void)(kout << "Kernel_Panic_FILE: " << file << kendl);
+    (Void)(kout << "Kernel_Panic_LINE: " << line << kendl);
 
     ke_panic(RUNTIME_CHECK_FAILED, file);  // Runtime Check failed
   }

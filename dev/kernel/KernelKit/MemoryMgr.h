@@ -21,11 +21,6 @@ namespace Kernel {
 /// @return a status code regarding the deallocation.
 Int32 mm_delete_ptr(VoidPtr heap_ptr);
 
-/// @brief Declare a new size for heap_ptr.
-/// @param heap_ptr the pointer.
-/// @return unsupported always returns nullptr.
-VoidPtr mm_realloc_ptr(VoidPtr heap_ptr, SizeT new_sz);
-
 /// @brief Check if pointer is a valid Kernel pointer.
 /// @param heap_ptr the pointer
 /// @return if it exists it returns true.
