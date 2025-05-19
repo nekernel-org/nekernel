@@ -27,7 +27,7 @@
 #endif  // !kMachineModel
 
 EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover) {
-  fw_init_efi((EfiSystemTable*) handover->f_FirmwareCustomTables[1]);
+  fw_init_efi((EfiSystemTable*) handover->f_FirmwareCustomTables[Kernel::HEL::kHandoverTableST]);
 
 #if defined(__ATA_PIO__)
   Boot::BDiskFormatFactory<BootDeviceATA> partition_factory;

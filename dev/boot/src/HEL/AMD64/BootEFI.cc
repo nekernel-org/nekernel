@@ -156,8 +156,8 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
     }
   }
 
-  handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr) BS;
-  handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr) ST;
+  handover_hdr->f_FirmwareCustomTables[Kernel::HEL::kHandoverTableBS] = (VoidPtr) BS;
+  handover_hdr->f_FirmwareCustomTables[Kernel::HEL::kHandoverTableST] = (VoidPtr) ST;
 
   // ------------------------------------------ //
   // If we succeed in reading the blob, then execute it.
