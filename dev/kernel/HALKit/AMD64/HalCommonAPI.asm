@@ -84,10 +84,15 @@ section .text
 
 global sched_jump_to_task
 
-;; Jump to the task from its stack frame.
 sched_jump_to_task:
     push rbp
     mov  rbp, rsp
+
+    mov ax, 0x20
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
 
     mov  r8, [rcx + 0x10]
     mov  r9, [rcx + 0x18]
@@ -101,7 +106,7 @@ sched_jump_to_task:
     mov rax, [rcx + 0x00]
     mov rsp, [rcx + 0x08]
 
-    jmp rax
+    o64 sysret
     int 3 ;; Never continue here.
 
 global sched_idle_task

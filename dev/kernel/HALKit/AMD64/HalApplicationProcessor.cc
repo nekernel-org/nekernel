@@ -112,11 +112,9 @@ EXTERN_C BOOL mp_register_process(HAL::StackFramePtr stack_frame, ProcessID thrd
     kHWThread[thrdid].mFramePtr = stack_frame;
     kHWThread[thrdid].mThreadID = thrdid;
 
-    STATIC HardwareTimer timer{rtl_milliseconds(1000)};
-
-    timer.Wait();
-
     HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
+
+    sched_jump_to_task(stack_frame);
 
     return YES;
   }

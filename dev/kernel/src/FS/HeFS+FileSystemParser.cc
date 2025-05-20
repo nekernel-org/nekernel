@@ -36,14 +36,14 @@ namespace Detail {
 
   /***********************************************************************************/
   /// @brief Get the index node of a file or directory.
-  /// @param root The root node of the filesystem.
+  /// @param boot The boot node of the filesystem.
   /// @param mnt The mnt to read from.
   /// @param dir_name The name of the directory.
   /// @param file_name The name of the file.
   /// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic
   /// link, unknown).
   /***********************************************************************************/
-  STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefsi_fetch_in(HEFS_BOOT_NODE* root,
+  STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefsi_fetch_in(HEFS_BOOT_NODE* boot,
                                                                    DriveTrait*     mnt,
                                                                    const Utf8Char* dir_name,
                                                                    const Utf8Char* file_name,
@@ -51,31 +51,31 @@ namespace Detail {
 
   /***********************************************************************************/
   /// @brief Allocate a new index node->
-  /// @param root The root node of the filesystem.
+  /// @param boot The boot node of the filesystem.
   /// @param mnt The mnt to read/write from.
   /// @param dir_name The name of the parent directory.
   /// @return Status, see err_global_get().
   /***********************************************************************************/
   STATIC ATTRIBUTE(unused) _Output BOOL
-      hefsi_update_in_status(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf8Char* dir_name,
+      hefsi_update_in_status(HEFS_BOOT_NODE* boot, DriveTrait* mnt, const Utf8Char* dir_name,
                              HEFS_INDEX_NODE* node, const BOOL create_or_delete);
 
   /***********************************************************************************/
   /// @brief Balance RB-Tree of the filesystem.
-  /// @param root The root node of the filesystem.
+  /// @param boot The boot node of the filesystem.
   /// @param mnt The mnt to read/write from.
   /// @return Status, see err_global_get().
   /***********************************************************************************/
-  STATIC ATTRIBUTE(unused) _Output BOOL hefsi_balance_ind(HEFS_BOOT_NODE* root, DriveTrait* mnt);
+  STATIC ATTRIBUTE(unused) _Output BOOL hefsi_balance_ind(HEFS_BOOT_NODE* boot, DriveTrait* mnt);
 
   /// @brief Alllocate IND from boot node.
-  /// @param root The root node of the filesystem.
+  /// @param boot The boot node of the filesystem.
   /// @param mnt The mnt to read from.
   /// @param dir_name The name of the directory.
   /// @param dir_name The parent of the directory.
   /// @param flags Directory flags.
   /// @param delete_or_create Delete or create directory.
-  STATIC _Output BOOL hefsi_update_ind_status(HEFS_BOOT_NODE* root, DriveTrait* mnt,
+  STATIC _Output BOOL hefsi_update_ind_status(HEFS_BOOT_NODE* boot, DriveTrait* mnt,
                                               const Utf8Char* dir_name, UInt16 flags,
                                               const BOOL delete_or_create);
 
@@ -251,24 +251,24 @@ namespace Detail {
   }
 
   /// @brief Alllocate IND from boot node.
-  /// @param root The root node of the filesystem.
+  /// @param boot The boot node of the filesystem.
   /// @param mnt The mnt to read from.
   /// @param dir_name The name of the directory.
   /// @param dir_name The parent of the directory.
   /// @param flags Directory flags.
   /// @param delete_or_create Delete or create directory.
-  STATIC _Output BOOL hefsi_update_ind_status(HEFS_BOOT_NODE* root, DriveTrait* mnt,
+  STATIC _Output BOOL hefsi_update_ind_status(HEFS_BOOT_NODE* boot, DriveTrait* mnt,
                                               const Utf8Char* dir_name, UInt16 flags,
                                               const BOOL delete_or_create) {
     if (mnt) {
       HEFS_INDEX_NODE_DIRECTORY* tmpdir =
           (HEFS_INDEX_NODE_DIRECTORY*) mm_new_ptr(sizeof(HEFS_INDEX_NODE_DIRECTORY), Yes, No);
 
-      auto start           = root->fStartIND;
+      auto start           = boot->fStartIND;
       auto prev_location   = start;
       auto parent_location = 0UL;
 
-      MUST_PASS(root->fStartIND > mnt->fLbaStart);
+      MUST_PASS(boot->fStartIND > mnt->fLbaStart);
 
       while (YES) {
         auto prev_start = start;
@@ -323,7 +323,7 @@ namespace Detail {
 
             if (tmpend->fChecksum !=
                 ke_calculate_crc32((Char*) tmpend, sizeof(HEFS_INDEX_NODE_DIRECTORY)))
-              ke_panic(RUNTIME_CHECK_FILESYSTEM, "Bad CRC32");
+              ke_panic(RUNTIME_CHECK_FILESYSTEM, "Bad CRC32 value, aborting.");
 
             if (delete_or_create)
               --tmpend->fEntryCount;
@@ -349,7 +349,7 @@ namespace Detail {
                 break;
               }
 
-              hefsi_traverse_tree(tmpend, mnt, root->fStartIND, child_first);
+              hefsi_traverse_tree(tmpend, mnt, boot->fStartIND, child_first);
             }
           }
 
@@ -364,11 +364,11 @@ namespace Detail {
           }
 
           if (dirent->fPrev == 0) {
-            dirent->fPrev = root->fStartIND;
+            dirent->fPrev = boot->fStartIND;
           }
 
           if (dirent->fParent == 0) {
-            dirent->fParent = root->fStartIND;
+            dirent->fParent = boot->fStartIND;
           }
 
           if (tmpdir->fChild == 0) {
@@ -389,13 +389,13 @@ namespace Detail {
               }
 
               child += sizeof(HEFS_INDEX_NODE_DIRECTORY);
-              if (child > root->fEndIND) break;
+              if (child > boot->fEndIND) break;
             }
 
             dirent->fColor = kHeFSRed;
             dirent->fChild = child;
 
-            if (child > root->fEndIND) dirent->fChild = root->fStartIND;
+            if (child > boot->fEndIND) dirent->fChild = boot->fStartIND;
           }
 
           for (SizeT index = 0UL; index < kHeFSSliceCount; ++index) {
@@ -416,15 +416,15 @@ namespace Detail {
           mm_delete_ptr(tmpdir);
 
           if (!delete_or_create)
-            ++root->fINDCount;
+            ++boot->fINDCount;
           else
-            --root->fINDCount;
+            --boot->fINDCount;
 
-          root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
+          boot->fChecksum = ke_calculate_crc32((Char*) boot, sizeof(HEFS_BOOT_NODE));
 
           mnt->fPacket.fPacketLba     = mnt->fLbaStart;
           mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
-          mnt->fPacket.fPacketContent = root;
+          mnt->fPacket.fPacketContent = boot;
 
           mnt->fOutput(mnt->fPacket);
 
@@ -433,8 +433,8 @@ namespace Detail {
 
         prev_location = start;
 
-        hefsi_traverse_tree(tmpdir, mnt, root->fStartIND, start);
-        if (start > root->fEndIND || start == 0) break;
+        hefsi_traverse_tree(tmpdir, mnt, boot->fStartIND, start);
+        if (start > boot->fEndIND || start == 0) break;
       }
 
       err_global_get() = kErrorDisk;
@@ -448,22 +448,22 @@ namespace Detail {
   }
 
   /// @brief Get the index node of a file or directory.
-  /// @param root The root node of the filesystem.
+  /// @param boot The boot node of the filesystem.
   /// @param mnt The mnt to read from.
   /// @param dir_name The name of the directory.
   /// @param file_name The name of the file.
   /// @param kind The kind of the file (regular, directory, block, character, FIFO, socket, symbolic
   /// link, unknown).
-  STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefsi_fetch_in(HEFS_BOOT_NODE* root,
+  STATIC ATTRIBUTE(unused) _Output HEFS_INDEX_NODE* hefsi_fetch_in(HEFS_BOOT_NODE* boot,
                                                                    DriveTrait*     mnt,
                                                                    const Utf8Char* dir_name,
                                                                    const Utf8Char* file_name,
                                                                    UInt8           kind) {
     if (mnt) {
-      if (root->fStartIND > root->fEndIND) return nullptr;
-      if (root->fStartIN > root->fEndIN) return nullptr;
+      if (boot->fStartIND > boot->fEndIND) return nullptr;
+      if (boot->fStartIN > boot->fEndIN) return nullptr;
 
-      auto             start = root->fStartIND;
+      auto             start = boot->fStartIND;
       HEFS_INDEX_NODE* node  = new HEFS_INDEX_NODE();
 
       HEFS_INDEX_NODE_DIRECTORY* dir =
@@ -511,8 +511,8 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
-        if (start == root->fStartIND || start == root->fStartIND) break;
+        hefsi_traverse_tree(dir, mnt, boot->fStartIND, start);
+        if (start == boot->fStartIND || start == boot->fStartIND) break;
       }
 
       delete node;
@@ -530,16 +530,16 @@ namespace Detail {
   }
 
   STATIC ATTRIBUTE(unused) _Output BOOL
-      hefsi_update_in_status(HEFS_BOOT_NODE* root, DriveTrait* mnt, const Utf8Char* dir_name,
+      hefsi_update_in_status(HEFS_BOOT_NODE* boot, DriveTrait* mnt, const Utf8Char* dir_name,
                              HEFS_INDEX_NODE* node, BOOL delete_or_create) {
-    if (!root || !mnt) return NO;
+    if (!boot || !mnt) return NO;
 
-    auto start = root->fStartIND;
+    auto start = boot->fStartIND;
 
-    if (start > root->fEndIND) return NO;
-    if (root->fStartIN > root->fEndIN) return NO;
+    if (start > boot->fEndIND) return NO;
+    if (boot->fStartIN > boot->fEndIN) return NO;
     ;
-    if (root->fStartBlock > root->fEndBlock) return NO;
+    if (boot->fStartBlock > boot->fEndBlock) return NO;
 
     if (mnt) {
       HEFS_INDEX_NODE_DIRECTORY* dir =
@@ -560,7 +560,7 @@ namespace Detail {
         if (hefsi_hash_64(dir_name) == dir->fHashPath) {
           for (SizeT inode_index = 0UL; inode_index < kHeFSSliceCount; ++inode_index) {
             if (dir->fINSlices[inode_index] == 0 && !delete_or_create) {
-              dir->fINSlices[inode_index] = root->fStartIN;
+              dir->fINSlices[inode_index] = boot->fStartIN;
 
               ++dir->fEntryCount;
 
@@ -574,8 +574,8 @@ namespace Detail {
 
               auto lba = dir->fINSlices[inode_index];
 
-              node->fOffsetSliceLow  = (UInt32) (root->fStartBlock);
-              node->fOffsetSliceHigh = (UInt32) (root->fStartBlock >> 32);
+              node->fOffsetSliceLow  = (UInt32) (boot->fStartBlock);
+              node->fOffsetSliceHigh = (UInt32) (boot->fStartBlock >> 32);
 
               node->fChecksum = ke_calculate_crc32((Char*) node, sizeof(HEFS_INDEX_NODE));
 
@@ -585,14 +585,14 @@ namespace Detail {
 
               mnt->fOutput(mnt->fPacket);
 
-              root->fStartIN += sizeof(HEFS_INDEX_NODE);
-              root->fStartBlock += kHeFSBlockLen;
+              boot->fStartIN += sizeof(HEFS_INDEX_NODE);
+              boot->fStartBlock += kHeFSBlockLen;
 
-              root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
+              boot->fChecksum = ke_calculate_crc32((Char*) boot, sizeof(HEFS_BOOT_NODE));
 
               mnt->fPacket.fPacketLba     = mnt->fLbaStart;
               mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
-              mnt->fPacket.fPacketContent = root;
+              mnt->fPacket.fPacketContent = boot;
 
               mnt->fOutput(mnt->fPacket);
 
@@ -617,14 +617,14 @@ namespace Detail {
               node->fOffsetSliceLow  = 0;
               node->fOffsetSliceHigh = 0;
 
-              root->fStartIN -= sizeof(HEFS_INDEX_NODE);
-              root->fStartBlock -= kHeFSBlockLen;
+              boot->fStartIN -= sizeof(HEFS_INDEX_NODE);
+              boot->fStartBlock -= kHeFSBlockLen;
 
-              root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
+              boot->fChecksum = ke_calculate_crc32((Char*) boot, sizeof(HEFS_BOOT_NODE));
 
               mnt->fPacket.fPacketLba     = mnt->fLbaStart;
               mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
-              mnt->fPacket.fPacketContent = root;
+              mnt->fPacket.fPacketContent = boot;
 
               mnt->fOutput(mnt->fPacket);
 
@@ -653,8 +653,8 @@ namespace Detail {
           }
         }
 
-        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
-        if (start > root->fEndIND || start == 0) break;
+        hefsi_traverse_tree(dir, mnt, boot->fStartIND, start);
+        if (start > boot->fEndIND || start == 0) break;
       }
 
       mm_delete_ptr(dir);
@@ -667,18 +667,18 @@ namespace Detail {
   }
 
   /// @brief Balance RB-Tree of the filesystem.
-  /// @param root The root node of the filesystem.
+  /// @param boot The boot node of the filesystem.
   /// @param mnt The mnt to read/write from.
   /// @return Status, see err_global_get().
-  STATIC ATTRIBUTE(unused) _Output BOOL hefsi_balance_ind(HEFS_BOOT_NODE* root, DriveTrait* mnt) {
+  STATIC ATTRIBUTE(unused) _Output BOOL hefsi_balance_ind(HEFS_BOOT_NODE* boot, DriveTrait* mnt) {
     if (mnt) {
       HEFS_INDEX_NODE_DIRECTORY* dir =
           (HEFS_INDEX_NODE_DIRECTORY*) RTL_ALLOCA(sizeof(HEFS_INDEX_NODE_DIRECTORY));
 
-      auto start = root->fStartIND;
+      auto start = boot->fStartIND;
 
       while (YES) {
-        if (start == 0UL || start > root->fEndIND) break;
+        if (start == 0UL || start > boot->fEndIND) break;
 
         mnt->fPacket.fPacketLba     = start;
         mnt->fPacket.fPacketSize    = sizeof(HEFS_INDEX_NODE_DIRECTORY);
@@ -692,7 +692,7 @@ namespace Detail {
           return NO;
         }
 
-        if (start == root->fStartIND) {
+        if (start == boot->fStartIND) {
           dir->fColor = kHeFSBlack;
 
           mnt->fPacket.fPacketLba     = start;
@@ -725,7 +725,7 @@ namespace Detail {
           mnt->fOutput(mnt->fPacket);
         }
 
-        hefsi_traverse_tree(dir, mnt, root->fStartIND, start);
+        hefsi_traverse_tree(dir, mnt, boot->fStartIND, start);
       }
 
       err_global_get() = kErrorSuccess;
@@ -763,11 +763,11 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
     return NO;
   }
 
-  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
+  HEFS_BOOT_NODE* boot = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
 
   mnt->fPacket.fPacketLba     = mnt->fLbaStart;
   mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
-  mnt->fPacket.fPacketContent = root;
+  mnt->fPacket.fPacketContent = boot;
 
   mnt->fInput(mnt->fPacket);
 
@@ -779,9 +779,9 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
 
   // Check if the disk is already formatted.
 
-  if (KStringBuilder::Equals(root->fMagic, kHeFSMagic) && root->fVersion == kHeFSVersion) {
-    if (ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE)) != root->fChecksum &&
-        root->fChecksum > 0) {
+  if (KStringBuilder::Equals(boot->fMagic, kHeFSMagic) && boot->fVersion == kHeFSVersion) {
+    if (ke_calculate_crc32((Char*) boot, sizeof(HEFS_BOOT_NODE)) != boot->fChecksum &&
+        boot->fChecksum > 0) {
       err_global_get() = kErrorDiskIsCorrupted;
       return NO;
     }
@@ -790,8 +790,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
     return YES;
   }
 
-  if (ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE)) != root->fChecksum &&
-      root->fChecksum > 0) {
+  if (ke_calculate_crc32((Char*) boot, sizeof(HEFS_BOOT_NODE)) != boot->fChecksum &&
+      boot->fChecksum > 0) {
     err_global_get() = kErrorDiskIsCorrupted;
     return NO;
   }
@@ -799,8 +799,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   rt_copy_memory((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
                  rt_string_len("fs/hefs-packet"));
 
-  urt_copy_memory((VoidPtr) vol_name, root->fVolName, urt_string_len(vol_name) + 1);
-  rt_copy_memory((VoidPtr) kHeFSMagic, root->fMagic, kHeFSMagicLen - 1);
+  urt_copy_memory((VoidPtr) vol_name, boot->fVolName, urt_string_len(vol_name) + 1);
+  rt_copy_memory((VoidPtr) kHeFSMagic, boot->fMagic, kHeFSMagicLen - 1);
 
   if (mnt->fLbaStart > mnt->fLbaEnd) {
     err_global_get() = kErrorDiskIsCorrupted;
@@ -808,66 +808,66 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
     return NO;
   }
 
-  root->fBadSectors = 0;
+  boot->fBadSectors = 0;
 
-  root->fSectorCount = drv_std_get_sector_count();
-  root->fSectorSize  = mnt->fSectorSz;
+  boot->fSectorCount = drv_std_get_sector_count();
+  boot->fSectorSize  = mnt->fSectorSz;
 
-  MUST_PASS(root->fSectorSize);
+  MUST_PASS(boot->fSectorSize);
 
   /// @note all HeFS strucutres are equal to 512, so here it's fine, unless fSectoSize is 2048.
-  const SizeT max_lba = (drv_std_get_size()) / root->fSectorSize;
+  const SizeT max_lba = (drv_std_get_size()) / boot->fSectorSize;
 
   const SizeT dir_max   = max_lba / 300;  // 5% for directory inodes
   const SizeT inode_max = max_lba / 400;  // 5% for inodes
 
-  root->fStartIND = mnt->fLbaStart + kHeFSINDStartOffset;
-  root->fEndIND   = root->fStartIND + dir_max;
+  boot->fStartIND = mnt->fLbaStart + kHeFSINDStartOffset;
+  boot->fEndIND   = boot->fStartIND + dir_max;
 
-  root->fStartIN = root->fEndIND;
-  root->fEndIN   = root->fStartIN + inode_max;
+  boot->fStartIN = boot->fEndIND;
+  boot->fEndIN   = boot->fStartIN + inode_max;
 
-  root->fStartBlock = root->fEndIN;
-  root->fEndBlock   = drv_std_get_size();
+  boot->fStartBlock = boot->fEndIN;
+  boot->fEndBlock   = drv_std_get_size();
 
-  root->fINDCount = 0;
+  boot->fINDCount = 0;
 
-  root->fDiskSize   = drv_std_get_size();
-  root->fDiskStatus = kHeFSStatusUnlocked;
+  boot->fDiskSize   = drv_std_get_size();
+  boot->fDiskStatus = kHeFSStatusUnlocked;
 
-  root->fDiskFlags = flags;
+  boot->fDiskFlags = flags;
 
   if (mnt->fKind & kMassStorageDrive) {
-    root->fDiskKind = kHeFSMassStorageDevice;
+    boot->fDiskKind = kHeFSMassStorageDevice;
   } else if (mnt->fKind & kHeFSOpticalDrive) {
-    root->fDiskKind = kHeFSOpticalDrive;
+    boot->fDiskKind = kHeFSOpticalDrive;
   } else {
-    root->fDiskKind = kHeFSUnknown;
+    boot->fDiskKind = kHeFSUnknown;
   }
 
-  root->fVersion = kHeFSVersion;
+  boot->fVersion = kHeFSVersion;
 
-  root->fVID = kHeFSInvalidVID;
+  boot->fVID = kHeFSInvalidVID;
 
-  root->fChecksum = ke_calculate_crc32((Char*) root, sizeof(HEFS_BOOT_NODE));
+  boot->fChecksum = ke_calculate_crc32((Char*) boot, sizeof(HEFS_BOOT_NODE));
 
   mnt->fPacket.fPacketLba     = mnt->fLbaStart;
   mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
-  mnt->fPacket.fPacketContent = root;
+  mnt->fPacket.fPacketContent = boot;
 
   mnt->fOutput(mnt->fPacket);
 
   (Void)(kout << "Protocol: " << mnt->fProtocol() << kendl);
-  (Void)(kout8 << u8"Volume Name: " << root->fVolName << kendl8);
-  (Void)(kout << "Start IND: " << hex_number(root->fStartIND) << kendl);
-  (Void)(kout << "End IND: " << hex_number(root->fEndIND) << kendl);
-  (Void)(kout << "Start IN: " << hex_number(root->fStartIN) << kendl);
-  (Void)(kout << "End IN: " << hex_number(root->fEndIN) << kendl);
-  (Void)(kout << "Start Block: " << hex_number(root->fStartBlock) << kendl);
-  (Void)(kout << "End Block: " << hex_number(root->fEndBlock) << kendl);
-  (Void)(kout << "Number of IND: " << hex_number(root->fINDCount) << kendl);
-  (Void)(kout << "Sector Size: " << hex_number(root->fSectorSize) << kendl);
-  (Void)(kout << "Drive Kind: " << Detail::hefs_drive_kind_to_string(root->fDiskKind) << kendl);
+  (Void)(kout8 << u8"Volume Name: " << boot->fVolName << kendl8);
+  (Void)(kout << "Start IND: " << hex_number(boot->fStartIND) << kendl);
+  (Void)(kout << "End IND: " << hex_number(boot->fEndIND) << kendl);
+  (Void)(kout << "Start IN: " << hex_number(boot->fStartIN) << kendl);
+  (Void)(kout << "End IN: " << hex_number(boot->fEndIN) << kendl);
+  (Void)(kout << "Start Block: " << hex_number(boot->fStartBlock) << kendl);
+  (Void)(kout << "End Block: " << hex_number(boot->fEndBlock) << kendl);
+  (Void)(kout << "Number of IND: " << hex_number(boot->fINDCount) << kendl);
+  (Void)(kout << "Sector Size: " << hex_number(boot->fSectorSize) << kendl);
+  (Void)(kout << "Drive Kind: " << Detail::hefs_drive_kind_to_string(boot->fDiskKind) << kendl);
 
   if (!mnt->fPacket.fPacketGood) {
     err_global_get() = kErrorDiskIsCorrupted;
@@ -902,23 +902,23 @@ _Output Bool HeFileSystemParser::INodeDirectoryCtlManip(_Input DriveTrait* mnt,
     return NO;
   }
 
-  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_ptr(sizeof(HEFS_BOOT_NODE), Yes, No);
+  HEFS_BOOT_NODE* boot = (HEFS_BOOT_NODE*) mm_new_ptr(sizeof(HEFS_BOOT_NODE), Yes, No);
 
   rt_copy_memory((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
                  rt_string_len("fs/hefs-packet"));
 
   mnt->fPacket.fPacketLba     = mnt->fLbaStart;
   mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
-  mnt->fPacket.fPacketContent = root;
+  mnt->fPacket.fPacketContent = boot;
 
   mnt->fInput(mnt->fPacket);
 
-  if (!KStringBuilder::Equals(root->fMagic, kHeFSMagic) || root->fVersion != kHeFSVersion) {
+  if (!KStringBuilder::Equals(boot->fMagic, kHeFSMagic) || boot->fVersion != kHeFSVersion) {
     err_global_get() = kErrorDisk;
     return YES;
   }
 
-  if (!KStringBuilder::Equals(root->fMagic, kHeFSMagic) || root->fVersion != kHeFSVersion) {
+  if (!KStringBuilder::Equals(boot->fMagic, kHeFSMagic) || boot->fVersion != kHeFSVersion) {
     err_global_get() = kErrorDiskIsCorrupted;
 
     kout << "Invalid Boot Node, this can't continue!\r";
@@ -934,15 +934,15 @@ _Output Bool HeFileSystemParser::INodeDirectoryCtlManip(_Input DriveTrait* mnt,
     return NO;
   }
 
-  if (Detail::hefsi_update_ind_status(root, mnt, dir, flags, delete_or_create)) {
+  if (Detail::hefsi_update_ind_status(boot, mnt, dir, flags, delete_or_create)) {
     // todo: make it smarter for high-throughput.
-    Detail::hefsi_balance_ind(root, mnt);
+    Detail::hefsi_balance_ind(boot, mnt);
 
-    mm_delete_ptr((VoidPtr) root);
+    mm_delete_ptr((VoidPtr) boot);
     return YES;
   }
 
-  mm_delete_ptr((VoidPtr) root);
+  mm_delete_ptr((VoidPtr) boot);
   return NO;
 }
 
@@ -983,9 +983,9 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     return NO;
   }
 
-  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) mm_new_ptr(sizeof(HEFS_BOOT_NODE), Yes, No);
+  HEFS_BOOT_NODE* boot = (HEFS_BOOT_NODE*) mm_new_ptr(sizeof(HEFS_BOOT_NODE), Yes, No);
 
-  if (!root) {
+  if (!boot) {
     err_global_get() = kErrorInvalidData;
     return NO;
   }
@@ -995,18 +995,18 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
 
   mnt->fPacket.fPacketLba     = mnt->fLbaStart;
   mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
-  mnt->fPacket.fPacketContent = root;
+  mnt->fPacket.fPacketContent = boot;
 
   mnt->fInput(mnt->fPacket);
 
-  if (!KStringBuilder::Equals(root->fMagic, kHeFSMagic) || root->fVersion != kHeFSVersion) {
+  if (!KStringBuilder::Equals(boot->fMagic, kHeFSMagic) || boot->fVersion != kHeFSVersion) {
     (Void)(kout << "Invalid Boot Node, HeFS partition is invalid." << kendl);
-    mm_delete_ptr((VoidPtr) root);
+    mm_delete_ptr((VoidPtr) boot);
     err_global_get() = kErrorDisk;
     return NO;
   }
 
-  auto start = Detail::hefsi_fetch_in(root, mnt, dir, name, kind);
+  auto start = Detail::hefsi_fetch_in(boot, mnt, dir, name, kind);
 
   if (start) {
     (Void)(kout << hex_number(start->fHashPath) << kendl);
@@ -1021,7 +1021,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
         mnt->fInput(mnt->fPacket);
       } else {
         if (start->fFlags & kHeFSFlagsReadOnly) {
-          mm_delete_ptr((VoidPtr) root);
+          mm_delete_ptr((VoidPtr) boot);
           delete start;
 
           kout << "Error: File is read-only\r";
@@ -1034,7 +1034,7 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     }
   }
 
-  mm_delete_ptr((VoidPtr) root);
+  mm_delete_ptr((VoidPtr) boot);
   delete start;
   return YES;
 }
@@ -1067,9 +1067,9 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
 
   rt_set_memory(node, 0, sizeof(HEFS_INDEX_NODE));
 
-  HEFS_BOOT_NODE* root = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
+  HEFS_BOOT_NODE* boot = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
 
-  if (!root) {
+  if (!boot) {
     mm_delete_ptr((VoidPtr) node);
     err_global_get() = kErrorInvalidData;
 
@@ -1081,11 +1081,11 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
 
   mnt->fPacket.fPacketLba     = mnt->fLbaStart;
   mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
-  mnt->fPacket.fPacketContent = root;
+  mnt->fPacket.fPacketContent = boot;
 
   mnt->fInput(mnt->fPacket);
 
-  if (!KStringBuilder::Equals(root->fMagic, kHeFSMagic) || root->fVersion != kHeFSVersion) {
+  if (!KStringBuilder::Equals(boot->fMagic, kHeFSMagic) || boot->fVersion != kHeFSVersion) {
     err_global_get() = kErrorDisk;
     return YES;
   }
@@ -1112,8 +1112,8 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
   }
 
   node->fAccessed = 0;
-  node->fCreated  = delete_or_create ? 0UL : 1UL;
-  node->fDeleted  = delete_or_create ? 1UL : 0UL;
+  node->fCreated  = delete_or_create ? NO : YES;
+  node->fDeleted  = delete_or_create ? 1UL : NO;
   node->fModified = 0;
   node->fSize     = 0;
   node->fKind     = kind;
@@ -1123,10 +1123,10 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
   node->fUID      = 0;
   node->fHashPath = Detail::hefsi_hash_64(name);
 
-  if (Detail::hefsi_update_in_status(root, mnt, dir, node, delete_or_create)) {
+  if (Detail::hefsi_update_in_status(boot, mnt, dir, node, delete_or_create)) {
     mm_delete_ptr((VoidPtr) node);
 
-    Detail::hefsi_balance_ind(root, mnt);
+    Detail::hefsi_balance_ind(boot, mnt);
 
     err_global_get() = kErrorSuccess;
     return YES;
