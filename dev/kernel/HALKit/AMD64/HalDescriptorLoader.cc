@@ -24,6 +24,7 @@ Void GDTLoader::Load(Register64& gdt) {
 }
 
 Void IDTLoader::Load(Register64& idt) {
+#ifndef __NE_MODULAR_KERNEL_COMPONENTS__
   rt_cli();
 
   volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**) idt.Base;
@@ -46,6 +47,9 @@ Void IDTLoader::Load(Register64& idt) {
 
   hal_load_idt(idt);
   rt_sti();
+#endif // __NE_MODULAR_KERNEL_COMPONENTS__
+
+  return;
 }
 
 /// @brief Loads the Global Descriptor Table into the CPU.
