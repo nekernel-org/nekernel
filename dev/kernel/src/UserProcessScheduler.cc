@@ -21,6 +21,7 @@
 #include <KernelKit/ProcessScheduler.h>
 #include <NewKit/KString.h>
 #include <SignalKit/Signals.h>
+#include "NewKit/Macros.h"
 
 ///! BUGS: 0
 
@@ -125,7 +126,7 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
   if (this->UsedMemory > kSchedMaxMemoryLimit) return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-  auto vm_register = kKernelCR3;
+  auto vm_register = kKernelVM;
   hal_write_cr3(this->VMRegister);
 
   auto ptr = mm_new_ptr(sz, Yes, Yes, pad_amount);
@@ -271,7 +272,7 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
   auto memory_ptr_list = this->HeapTree;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-  auto pd = kKernelCR3;
+  auto pd = kKernelVM;
   hal_write_cr3(this->VMRegister);
 #endif
 
@@ -384,7 +385,7 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
   rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, len);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
-  process.VMRegister = kKernelCR3;
+  process.VMRegister = kKernelVM;
 #else
   process.VMRegister = 0UL;
 #endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
@@ -400,6 +401,15 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
 
   process.StackFrame->IP = reinterpret_cast<UIntPtr>(code);
   process.StackFrame->SP = reinterpret_cast<UIntPtr>(&process.StackReserve[0] + process.StackSize);
+
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+  HAL::mm_map_page((VoidPtr) process.StackFrame->IP,
+                   (VoidPtr) HAL::mm_get_phys_address((VoidPtr) process.StackFrame->IP),
+                   HAL::kMMFlagsUser | HAL::kMMFlagsPresent);
+  HAL::mm_map_page((VoidPtr) process.StackFrame->SP,
+                   (VoidPtr) HAL::mm_get_phys_address((VoidPtr) process.StackFrame->SP),
+                   HAL::kMMFlagsUser | HAL::kMMFlagsPresent);
+#endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
   process.StackSize = kSchedMaxStackSz;
 
@@ -493,6 +503,8 @@ SizeT UserProcessScheduler::Run() noexcept {
     //! Check if the process needs to be run.
     if (UserProcessHelper::CanBeScheduled(process)) {
       kout << process.Name << " will be scheduled...\r";
+
+      this->TheCurrentProcess() = process;
 
       if (UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
         process.PTime = static_cast<Int32>(process.Affinity);
@@ -606,6 +618,7 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
     if (HardwareThreadScheduler::The()[index].Leak()->IsBusy()) {
       (Void)(kout << "AP_" << hex_number(index));
       kout << " is busy\r";
+
       continue;
     }
 
@@ -627,10 +640,6 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
 
     HardwareThreadScheduler::The()[index].Leak()->fPTime =
         UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].PTime;
-    HardwareThreadScheduler::The()[index].Leak()->Wake(YES);
-
-    UserProcessScheduler::The().TheCurrentProcess() =
-        UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid];
 
     return YES;
   }

@@ -20,8 +20,6 @@ __NE_INT_%1:
 
     std
 
-    add rsp, 8
-
     o64 iret
 %endmacro
 
@@ -61,8 +59,6 @@ __NE_INT_0:
     
     std
 
-    add rsp, 8
-
     o64 iret
 
 __NE_INT_1:
@@ -83,8 +79,6 @@ __NE_INT_2:
 
     std
 
-    add rsp, 8
-
     o64 iret
 
 ;; @brief Triggers a breakpoint and freeze the process. RIP is also fetched.
@@ -95,8 +89,6 @@ __NE_INT_3:
     pop rcx
 
     std
-
-    add rsp, 8
 
     o64 iret
 
@@ -109,15 +101,11 @@ __NE_INT_4:
 
     std
 
-    add rsp, 8
-
     o64 iret
 
 __NE_INT_5:
     cld
     std
-
-    add rsp, 8
 
     o64 iret
 
@@ -130,8 +118,6 @@ __NE_INT_6:
 
     std
 
-    add rsp, 8
-
     o64 iret
 
 __NE_INT_7:
@@ -141,8 +127,6 @@ __NE_INT_7:
     pop rcx
 
     std
-
-    add rsp, 8
 
     o64 iret
 
@@ -155,8 +139,6 @@ __NE_INT_8:
     pop rcx
 
     std
-
-    add rsp, 8
 
     o64 iret
 
@@ -186,8 +168,6 @@ __NE_INT_14:
     pop rcx
 
     std
-
-    add rsp, 8
 
     o64 iret
 
@@ -246,8 +226,6 @@ __NE_INT_40:
     pop rax
 
     std
-
-    add rsp, 8
 
     o64 iret
 

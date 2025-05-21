@@ -56,6 +56,8 @@ extern hal_system_call_enter
 global mp_system_call_handler
 
 mp_system_call_handler:
+    push rbp
+    mov  rbp, rsp
 
     push r8
     push r9
@@ -77,7 +79,9 @@ mp_system_call_handler:
     pop r9
     pop r8
 
-    o64 sysret
+    pop rbp
+
+    o64 iret
 
 
 section .text
@@ -88,11 +92,39 @@ sched_jump_to_task:
     push rbp
     mov  rbp, rsp
 
-    mov ax, 0x20
+    mov ax, 0x30
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
+
+    mov ax, 0x18
+    ltr ax
+
+    push 0x30
+    mov rdx, [rcx + 0x08]
+    push rdx
+    o64 pushf
+    push 0x28
+    mov rdx, [rcx + 0x00]
+    push rdx
+
+    call sched_recover_registers
+
+    o64 iret
+
+global sched_idle_task
+
+sched_idle_task:
+    mov ax, cs
+    and ax, 3
+
+    jmp $
+    ret
+
+sched_recover_registers:
+    push rbp
+    mov  rbp, rsp
 
     mov  r8, [rcx + 0x10]
     mov  r9, [rcx + 0x18]
@@ -103,14 +135,6 @@ sched_jump_to_task:
     mov r14, [rcx + 0x40]
     mov r15, [rcx + 0x48]
 
-    mov rax, [rcx + 0x00]
-    mov rsp, [rcx + 0x08]
+    pop rbp
 
-    o64 sysret
-    int 3 ;; Never continue here.
-
-global sched_idle_task
-
-sched_idle_task:
-    jmp $
     ret

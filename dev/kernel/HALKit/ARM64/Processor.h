@@ -72,8 +72,6 @@ inline Void hal_wfi(Void) {
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
-inline Kernel::VoidPtr kKernelPDE = nullptr;
-
 #include <HALKit/ARM64/Paging.h>
 
 #endif  // __NE_ARM64__

@@ -77,8 +77,14 @@ struct HalSyscallEntry final {
   operator bool() { return fHooked; }
 };
 
+EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);
+
 inline Kernel::Array<HalSyscallEntry, kMaxDispatchCallCount> kSysCalls;
 
 inline Kernel::Array<HalSyscallEntry, kMaxDispatchCallCount> kKernCalls;
 
-EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+
+inline Kernel::VoidPtr kKernelVM = nullptr;
+
+#endif  // __NE_VIRTUAL_MEMORY_SUPPORT__

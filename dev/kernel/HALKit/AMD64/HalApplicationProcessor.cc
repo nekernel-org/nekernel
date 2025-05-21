@@ -113,27 +113,17 @@ EXTERN_C HAL::StackFramePtr mp_get_current_context(Int64 thrdid) {
 /// @param thrdid The thread ID.
 /***********************************************************************************/
 
-EXTERN_C BOOL mp_register_process(HAL::StackFramePtr stack_frame, ProcessID thrdid) {
+EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ProcessID thrdid) {
   if (thrdid > kSMPCount) return NO;
 
-  if (!mp_is_smp()) {
-    if (stack_frame) {
-      kHWThread[thrdid].mFramePtr = stack_frame;
-      kHWThread[thrdid].mThreadID = thrdid;
-      HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
+  kHWThread[thrdid].mFramePtr = stack_frame;
+  kHWThread[thrdid].mThreadID = thrdid;
 
-      sched_jump_to_task(stack_frame);
+  HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
 
-      return YES;
-    }
-  } else {
-    kHWThread[thrdid].mFramePtr = stack_frame;
-    kHWThread[thrdid].mThreadID = thrdid;
+  sched_jump_to_task(stack_frame);
 
-    return YES;
-  }
-
-  return NO;
+  return YES;
 }
 
 /***********************************************************************************/

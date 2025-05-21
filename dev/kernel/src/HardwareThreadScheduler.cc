@@ -21,7 +21,7 @@ namespace Kernel {
 /***********************************************************************************/
 
 EXTERN_C Bool hal_check_stack(HAL::StackFramePtr frame);
-EXTERN_C Bool mp_register_process(HAL::StackFramePtr frame, ProcessID pid);
+EXTERN_C Bool mp_register_task(HAL::StackFramePtr frame, ProcessID pid);
 
 STATIC HardwareThreadScheduler kHardwareThreadScheduler;
 
@@ -94,7 +94,7 @@ Void HardwareThread::Wake(const bool wakeup) noexcept {
 Bool HardwareThread::Switch(HAL::StackFramePtr frame) {
   this->fStack = frame;
 
-  Bool ret = mp_register_process(fStack, this->fPID);
+  Bool ret = mp_register_task(fStack, this->fPID);
 
   return ret;
 }

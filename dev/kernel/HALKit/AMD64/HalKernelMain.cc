@@ -38,9 +38,9 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
                          handover_hdr->f_HardwareTables.f_ImageHandle);
 
-  kKernelCR3 = kHandoverHeader->f_PageStart;
+  kKernelVM = kHandoverHeader->f_PageStart;
 
-  hal_write_cr3(kKernelCR3);
+  hal_write_cr3(kKernelVM);
 
   /************************************** */
   /*     INITIALIZE BIT MAP.              */
@@ -54,7 +54,12 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   /*     INITIALIZE GDT AND SEGMENTS. */
   /************************************** */
 
-  STATIC CONST auto kGDTEntriesCount = 6;
+  STATIC CONST auto kGDTEntriesCount = 8;
+
+  STATIC HAL::Detail::NE_TSS kKernelTSS{};
+
+  kKernelTSS.fRsp0 = (UInt64) kHandoverHeader->f_StackTop;
+  kKernelTSS.fIopb = sizeof(HAL::Detail::NE_TSS);
 
   /* The GDT, mostly descriptors for user and kernel segments. */
   STATIC Kernel::HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
@@ -76,6 +81,8 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
        .fAccessByte = 0x92,
        .fFlags      = 0xCF,
        .fBaseHigh   = 0},  // Kernel data
+      {},                // TSS data low
+      {},                // TSS data high
       {.fLimitLow   = 0x0,
        .fBaseLow    = 0,
        .fBaseMid    = 0,
@@ -89,6 +96,20 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
        .fFlags      = 0xCF,
        .fBaseHigh   = 0},  // User data
   };
+
+  kGDTArray[3].fLimitLow   = sizeof(HAL::Detail::NE_TSS) - 1;
+  kGDTArray[3].fBaseLow    = ((UIntPtr) &kKernelTSS) & 0xFFFF;
+  kGDTArray[3].fBaseMid    = (((UIntPtr) &kKernelTSS) >> 16) & 0xFF;
+  kGDTArray[3].fAccessByte = 0x89;  // Present, type 9 = 64-bit available TSS
+  kGDTArray[3].fFlags      = 0x20 | ((((UIntPtr) &kKernelTSS) >> 24) & 0x0F);
+  kGDTArray[3].fBaseHigh   = (((UIntPtr) &kKernelTSS) >> 24) & 0xFF;
+
+  kGDTArray[4].fLimitLow   = ((UIntPtr) &kKernelTSS >> 32) & 0xFFFF;
+  kGDTArray[4].fBaseLow    = 0;
+  kGDTArray[4].fBaseMid    = 0;
+  kGDTArray[4].fAccessByte = 0;
+  kGDTArray[4].fFlags      = 0;
+  kGDTArray[4].fBaseHigh   = 0;
 
   // Load memory descriptors.
   Kernel::HAL::Register64 gdt_reg;

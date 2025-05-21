@@ -16,7 +16,7 @@
 
 namespace Kernel {
 class KERNEL_TASK final {
-public:
+ public:
   Char               Name[kSchedNameLen] = {"KERNEL_TASK"};
   ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemDriver};
   HAL::StackFramePtr StackFrame{nullptr};

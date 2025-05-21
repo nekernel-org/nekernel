@@ -113,7 +113,7 @@ EXTERN_C HAL::StackFramePtr mp_get_current_context(ProcessID thrdid) {
 /// @param thrdid The thread ID.
 /***********************************************************************************/
 
-EXTERN_C Bool mp_register_process(HAL::StackFramePtr stack_frame, ProcessID thrdid) {
+EXTERN_C Bool mp_register_task(HAL::StackFramePtr stack_frame, ProcessID thrdid) {
   MUST_PASS(Detail::kGICEnabled);
 
   if (!stack_frame) return NO;

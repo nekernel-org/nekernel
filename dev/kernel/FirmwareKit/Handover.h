@@ -63,6 +63,8 @@ struct BootInfoHeader final {
   SizeT   f_KernelSz;
   VoidPtr f_StartupImage;
   SizeT   f_StartupSz;
+  VoidPtr f_StackTop;
+  SizeT   f_StackSz;
 
   WideChar f_FirmwareVendorName[32];
   SizeT    f_FirmwareVendorLen;
