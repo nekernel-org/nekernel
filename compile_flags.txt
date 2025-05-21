@@ -21,7 +21,6 @@
 -D__NE_ED__
 -xc++
 -D__AHCI__
--D__aarch64__
 -DNE_USE_MBCI_FLASH
 -D__ATA_DMA__
 -Wall

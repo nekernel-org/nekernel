@@ -14,5 +14,3 @@ btb ddk.json
 cd ../boot
 make -f amd64-desktop.make efi
 make -f amd64-desktop.make epm-img
-cd ../../dev/kernel/HALKit/AMD64
-./make_ap_blob.sh

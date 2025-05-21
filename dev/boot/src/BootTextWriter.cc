@@ -24,6 +24,8 @@
 @brief puts wrapper over EFI ConOut.
 */
 Boot::BootTextWriter& Boot::BootTextWriter::Write(const CharacterTypeUTF16* str) {
+  NE_UNUSED(str);
+
 #ifdef __DEBUG__
   if (!str || *str == 0) return *this;
 
@@ -50,6 +52,8 @@ Boot::BootTextWriter& Boot::BootTextWriter::Write(const CharacterTypeUTF16* str)
 /// @brief UTF-8 equivalent of Write (UTF-16).
 /// @param str the input string.
 Boot::BootTextWriter& Boot::BootTextWriter::Write(const Char* str) {
+  NE_UNUSED(str);
+
 #ifdef __DEBUG__
   if (!str || *str == 0) return *this;
 
@@ -74,6 +78,8 @@ Boot::BootTextWriter& Boot::BootTextWriter::Write(const Char* str) {
 }
 
 Boot::BootTextWriter& Boot::BootTextWriter::Write(const UChar* str) {
+  NE_UNUSED(str);
+
 #ifdef __DEBUG__
   if (!str || *str == 0) return *this;
 
@@ -101,6 +107,8 @@ Boot::BootTextWriter& Boot::BootTextWriter::Write(const UChar* str) {
 @brief putc wrapper over EFI ConOut.
 */
 Boot::BootTextWriter& Boot::BootTextWriter::WriteCharacter(CharacterTypeUTF16 c) {
+  NE_UNUSED(c);
+
 #ifdef __DEBUG__
   EfiCharType str[2];
 
@@ -113,6 +121,8 @@ Boot::BootTextWriter& Boot::BootTextWriter::WriteCharacter(CharacterTypeUTF16 c)
 }
 
 Boot::BootTextWriter& Boot::BootTextWriter::Write(const UInt64& x) {
+  NE_UNUSED(x);
+
 #ifdef __DEBUG__
   this->_Write(x);
   this->Write("h");
@@ -122,6 +132,8 @@ Boot::BootTextWriter& Boot::BootTextWriter::Write(const UInt64& x) {
 }
 
 Boot::BootTextWriter& Boot::BootTextWriter::_Write(const UInt64& x) {
+  NE_UNUSED(x);
+
 #ifdef __DEBUG__
   UInt64 y = (x > 0 ? x : -x) / 16;
   UInt64 h = (x > 0 ? x : -x) % 16;
@@ -136,9 +148,9 @@ Boot::BootTextWriter& Boot::BootTextWriter::_Write(const UInt64& x) {
 
   if (y == ~0UL) y = -y;
 
-  const char cNumbers[] = "0123456789ABCDEF";
+  const char kNumberList[] = "0123456789ABCDEF";
 
-  this->WriteCharacter(cNumbers[h]);
+  this->WriteCharacter(kNumberList[h]);
 #endif  // ifdef __DEBUG__
 
   return *this;

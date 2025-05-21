@@ -6,6 +6,8 @@
 
 #pragma once
 
+#ifdef __NE_AMD64__
+
 /** ---------------------------------------------------
 
   * THIS FILE CONTAINS CODE FOR X86_64 PAGING.
@@ -85,3 +87,5 @@ struct PDE {
   ATTRIBUTE(aligned(kib_cast(4))) PTE fPTE[512];
 };
 }  // namespace Kernel
+
+#endif  // __NE_AMD64__

@@ -15,9 +15,8 @@
 #include <KernelKit/LockDelegate.h>
 
 namespace Kernel {
-struct KERNEL_TASK;
-
-struct KERNEL_TASK final {
+class KERNEL_TASK final {
+public:
   Char               Name[kSchedNameLen] = {"KERNEL_TASK"};
   ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemDriver};
   HAL::StackFramePtr StackFrame{nullptr};

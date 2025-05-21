@@ -12,3 +12,4 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.h>
+#include <KernelKit/Timer.h>

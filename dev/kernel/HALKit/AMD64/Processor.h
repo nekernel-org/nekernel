@@ -13,6 +13,8 @@
 
 #pragma once
 
+#ifdef __NE_AMD64__
+
 #include <FirmwareKit/Handover.h>
 #include <HALKit/AMD64/Paging.h>
 #include <NewKit/Array.h>
@@ -73,7 +75,7 @@ enum {
   kMMFlagsNX      = 1 << 4,
   kMMFlagsPCD     = 1 << 5,
   kMMFlagsPwt     = 1 << 6,
-  kMMFlagsCount   = 4,
+  kMMFlagsCount   = 6,
 };
 
 struct PACKED Register64 final {
@@ -284,3 +286,5 @@ inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
 inline Kernel::VoidPtr kKernelCR3 = nullptr;
+
+#endif  // __NE_AMD64__ */

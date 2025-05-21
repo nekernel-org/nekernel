@@ -34,6 +34,7 @@ EXTERN_C Int32 SysChkModuleMain(Kernel::HEL::BootInfoHeader* handover) {
 #elif defined(__AHCI__)
   Boot::BDiskFormatFactory<BootDeviceSATA> partition_factory;
 #endif
+
   if (partition_factory.IsPartitionValid()) return kEfiOk;
 
   return partition_factory.Format(kMachineModel);

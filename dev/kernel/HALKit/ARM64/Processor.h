@@ -6,12 +6,14 @@
 
 #pragma once
 
+#ifdef __NE_ARM64__
+
 #include <FirmwareKit/Handover.h>
 #include <NewKit/Array.h>
 #include <NewKit/Defines.h>
 #include <NewKit/Utils.h>
 
-#define kCPUBackendName "ARMv8"
+#define kCPUBackendName "aarch64"
 
 namespace Kernel::HAL {
 struct PACKED Register64 final {
@@ -21,11 +23,11 @@ struct PACKED Register64 final {
 
 /// @brief Memory Manager mapping flags.
 enum {
-  kMMFlagsPresent = 1 << 0,
-  kMMFlagsWr      = 1 << 1,
-  kMMFlagsUser    = 1 << 2,
-  kMMFlagsNX      = 1 << 3,
-  kMMFlagsPCD     = 1 << 4,
+  kMMFlagsInvalid = 1 << 0,
+  kMMFlagsPresent = 1 << 1,
+  kMMFlagsWr      = 1 << 2,
+  kMMFlagsUser    = 1 << 3,
+  kMMFlagsNX      = 1 << 4,
   kMMFlagsCount   = 4,
 };
 
@@ -62,16 +64,6 @@ inline Void rt_halt() noexcept {
   }
 }
 
-template <typename DataKind>
-inline void hal_dma_write(UIntPtr address, DataKind value) {
-  *reinterpret_cast<volatile DataKind*>(address) = value;
-}
-
-template <typename DataKind>
-inline DataKind hal_dma_read(UIntPtr address) {
-  return *reinterpret_cast<volatile DataKind*>(address);
-}
-
 inline Void hal_wfi(Void) {
   asm volatile("wfi");
 }
@@ -80,6 +72,8 @@ inline Void hal_wfi(Void) {
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
-inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
+inline Kernel::VoidPtr kKernelPDE = nullptr;
 
 #include <HALKit/ARM64/Paging.h>
+
+#endif  // __NE_ARM64__
