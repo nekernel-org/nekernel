@@ -2,6 +2,8 @@
 -Idev/
 -Idev/user
 -Idev/boot
+-Idev/system_sdk
+-Idev/generic_kits
 -Idev/ddk
 -Ipublic/tools
 -Ipublic/tools/mk.app

@@ -61,8 +61,10 @@ struct BootInfoHeader final {
 
   VoidPtr f_KernelImage;
   SizeT   f_KernelSz;
-  VoidPtr f_StartupImage;
-  SizeT   f_StartupSz;
+  
+  VoidPtr f_LibSystemImage;
+  SizeT   f_LibSystemSz;
+
   VoidPtr f_StackTop;
   SizeT   f_StackSz;
 

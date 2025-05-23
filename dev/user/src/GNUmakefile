@@ -1,6 +1,6 @@
 ##################################################
 # (c) Amlal El Mahrouss, all rights reserved.
-# This file is for user.sys's syscall stubs.
+# This file is for libSystem.sys's syscall stubs.
 ##################################################
 
 ASM=nasm
@@ -13,4 +13,4 @@ error:
 
 .PHONY: sci_asm_io_x64
 sci_asm_io_x64:
-	$(ASM) $(FLAGS) SystemCalls+IO.asm -o SystemCalls+IO.asm.o
+	$(ASM) $(FLAGS) SystemCalls+IO.asm -o SystemCalls+IO.stub.obj

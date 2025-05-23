@@ -19,17 +19,31 @@ global sci_syscall_arg_3
 global sci_syscall_arg_4
 
 sci_syscall_arg_1:
+    push rbp
+    mov rbp, rsp
+
     mov r8, rcx
     syscall
+
+    pop rbp
+
     ret
 
 sci_syscall_arg_2:
+    push rbp
+    mov rbp, rsp
+
     mov r8, rcx
     mov r9, rdx
     syscall
+    pop rbp
+
     ret
 
 sci_syscall_arg_3:
+    push rbp
+    mov rbp, rsp
+
     mov rbx, r8
 
     mov r8, rcx
@@ -37,9 +51,14 @@ sci_syscall_arg_3:
     mov r10, rbx
 
     syscall
+    pop rbp
+
     ret
 
 sci_syscall_arg_4:
+    push rbp
+    mov rbp, rsp
+
     mov rbx, r8
     mov rax, r9
 
@@ -49,4 +68,6 @@ sci_syscall_arg_4:
     mov r11, rax
 
     syscall
+    pop rbp
+
     ret

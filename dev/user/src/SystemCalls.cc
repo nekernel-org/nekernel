@@ -4,11 +4,11 @@
 
 ------------------------------------------- */
 
-#include <user/SciCalls.h>
+#include <user/AsmProc.h>
 #include <user/SystemCalls.h>
 
 /// @file SystemCalls.cc
-/// @brief Source file for the memory functions/syscalls for user.sys
+/// @brief Source file for the memory functions/syscalls for libSystem.sys
 
 IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len) {
   if (!len || !dest || !src) {
@@ -50,8 +50,6 @@ IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt
 /// @brief Systems Calls implementation.
 /// @internal
 //-----------------------------------------------------------------------------------------------------------//
-
-constexpr auto kInvalidSyscall = 0UL;
 
 IMPORT_C Ref IoOpenFile(_Input const Char* path, _Input const Char* drv_letter) {
   return sci_syscall_arg_3(1, reinterpret_cast<VoidPtr>(const_cast<Char*>(path)),

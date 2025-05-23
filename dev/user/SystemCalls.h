@@ -112,7 +112,7 @@ IMPORT_C UInt64 IoSeekFile(_Input Ref file_desc, UInt64 file_offset);
 /// @brief Spawns a Thread Information Block and Global Information Block inside the current
 /// process.
 /// @param process_id Target Process ID, must be valid.
-/// @return > 0 error ocurred or already present, = 0 success.
+/// @return > 0 error occurred or already present, = 0 success.
 IMPORT_C UInt32 RtlSpawnIB(UIntPtr process_id);
 
 /// @brief Spawns a process with a unique pid (stored as UIntPtr).
@@ -124,10 +124,6 @@ IMPORT_C UIntPtr RtlSpawnProcess(const Char* process_path, SizeT argc, Char** ar
 /// @brief Exits a process with an exit_code.
 /// @return if it has succeeded true, otherwise false.
 IMPORT_C Bool RtlExitProcess(UIntPtr handle, UIntPtr exit_code);
-
-/// @brief Get current PID of process.
-/// @return Current process ID.
-IMPORT_C UIntPtr RtlCurrentPID(Void);
 
 // ------------------------------------------------------------------------
 // Memory Manager API.
@@ -192,14 +188,15 @@ IMPORT_C SInt32 ThrExitMainThread(_Input SInt32 exit_code);
 IMPORT_C SInt32 ThrExitThread(_Input ThreadRef thread, _Input SInt32 exit_code);
 
 /// @brief Thread procedure function type.
-typedef SInt32 (*thread_proc_kind)(SInt32 argc, Char** argv);
+typedef SInt32 (*ThrProcKind)(SInt32 argc, Char** argv);
 
 /// @brief Creates a thread.
 /// @param procedure the thread procedure.
 /// @param argument_count number of arguments inside that thread.
 /// @param flags Thread flags.
 /// @return the thread object.
-IMPORT_C ThreadRef ThrCreateThread(thread_proc_kind procedure, SInt32 argument_count, SInt32 flags);
+IMPORT_C ThreadRef ThrCreateThread(const Char* thread_name, ThrProcKind procedure,
+                                   SInt32 argument_count, SInt32 flags);
 
 /// @brief Yields the current thread.
 /// @param thread the thread to yield.
@@ -287,8 +284,8 @@ IMPORT_C VoidPtr EvtDispatchEvent(_Input const Char* event_name, _Input VoidPtr 
 // ------------------------------------------------------------------------------------------ //
 
 enum {
-  kPowerCodeInvalid,
-  kPowerCodeShutdown,
+  kPowerCodeInvalid  = 0,
+  kPowerCodeShutdown = 12,
   kPowerCodeReboot,
   kPowerCodeSleep,
   kPowerCodeWake,
@@ -328,15 +325,21 @@ IMPORT_C IORef PrintGet(const Char* path);
 // ------------------------------------------------------------------------------------------ //
 
 typedef SInt32 AffinityRef;
-typedef UInt64 PID;
+typedef UInt64 ProcessRef;
 
-IMPORT_C SInt32 SchedAffinity(PID, SInt32 req, AffinityRef* local);
+IMPORT_C SInt32 SchedSetAffinity(ProcessRef, SInt32 req, AffinityRef* local);
 
-IMPORT_C SInt32 SchedTrace(PID, SInt32 req, VoidPtr address, VoidPtr data);
+IMPORT_C SInt32 SchedGetAffinity(ProcessRef, AffinityRef* local);
 
-IMPORT_C SInt32 SchedKill(PID, SInt32 req);
+IMPORT_C SInt32 SchedFireSignal(ProcessRef, SInt32 req);
 
-IMPORT_C SInt32 SchedBreakPoint(Void);
+IMPORT_C SInt32 SchedReadMemory(ProcessRef, SInt32 address, SInt32 data);
+
+IMPORT_C SInt32 SchedWriteMemory(ProcessRef, SInt32 address, SInt32 data);
+
+/// @brief Get current ProcessRef of process.
+/// @return Current process ID.
+IMPORT_C UIntPtr RtlCurrentPID(Void);
 
 // ------------------------------------------------------------------------------------------ //
 // @brief Filesystem API.
@@ -355,7 +358,7 @@ IMPORT_C BOOL FsCreateFile(const Char* path);
 IMPORT_C BOOL FsCreateAlias(const Char* path, const Char* from);
 
 // ------------------------------------------------------------------------------------------ //
-// @brief Format API.
+// @brief String API.
 // ------------------------------------------------------------------------------------------ //
 
 IMPORT_C Char* StrFmt(const Char* fmt, ...);

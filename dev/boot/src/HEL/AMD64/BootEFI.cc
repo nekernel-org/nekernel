@@ -226,7 +226,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // boot to kernel, if not bootnet this.
 
   Boot::BootFileReader reader_kernel(kernel_path, image_handle);
-
   reader_kernel.ReadAll(0);
 
   // ------------------------------------------ //
