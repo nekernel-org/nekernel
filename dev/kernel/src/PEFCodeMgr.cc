@@ -8,10 +8,10 @@
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
-#include <NewKit/KernelPanic.h>
-#include <NewKit/OwnPtr.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
+#include <NeKit/KernelPanic.h>
+#include <NeKit/OwnPtr.h>
 
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"

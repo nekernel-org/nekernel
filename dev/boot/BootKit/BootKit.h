@@ -24,7 +24,7 @@
 /// Include other APIs.
 /***********************************************************************************/
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 #include <modules/ATA/ATA.h>
 
 #include <FirmwareKit/EFI.h>

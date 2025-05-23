@@ -6,7 +6,7 @@
 
 #include <KernelKit/CodeMgr.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Utils.h>
 
 namespace Kernel {
 /***********************************************************************************/

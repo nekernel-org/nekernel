@@ -10,10 +10,10 @@
 // last-rev: 02/04/25
 
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
-#include <NewKit/Stream.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
+#include <NeKit/Stream.h>
+#include <NeKit/Utils.h>
 
 #define kJSONMaxLen (8196)
 #define kJSONLen (256)

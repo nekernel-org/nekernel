@@ -16,7 +16,7 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/LoaderInterface.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define kPefMagic "Joy!"
 #define kPefMagicFat "yoJ!"

@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Ref.h>
 
 namespace Kernel {
 class PageMgr;

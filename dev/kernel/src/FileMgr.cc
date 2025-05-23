@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/FileMgr.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Utils.h>
 
 /***********************************************************************************/
 /// @file FileMgr.cc

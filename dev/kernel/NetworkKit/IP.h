@@ -7,9 +7,9 @@
 #pragma once
 
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
+#include <NeKit/Ref.h>
 
 namespace Kernel {
 class RawIPAddress6;

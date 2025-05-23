@@ -24,7 +24,7 @@
 #include <KernelKit/PCI/Iterator.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/Timer.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Utils.h>
 #include <StorageKit/AHCI.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>

@@ -12,9 +12,9 @@
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
+#include <NeKit/Ref.h>
 
 #define kDriveMaxCount (4U)
 #define kDriveSectorSz (512U)

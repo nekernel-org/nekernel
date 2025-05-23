@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 namespace Kernel {
 void ke_runtime_check(bool expr, const Char* file, const Char* line);

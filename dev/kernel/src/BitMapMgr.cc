@@ -11,7 +11,7 @@
 #endif
 
 #include <ArchKit/ArchKit.h>
-#include <NewKit/KernelPanic.h>
+#include <NeKit/KernelPanic.h>
 
 #define kBitMapMagic (0x10210U)
 

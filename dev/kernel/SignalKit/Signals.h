@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define SIGKILL 0
 #define SIGPAUS 1

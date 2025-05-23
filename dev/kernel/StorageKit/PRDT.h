@@ -8,7 +8,7 @@
 
 #include <KernelKit/PCI/DMA.h>
 #include <KernelKit/PCI/Iterator.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Ref.h>
 
 #define kPrdtTransferSize (sizeof(Kernel::UShort))
 

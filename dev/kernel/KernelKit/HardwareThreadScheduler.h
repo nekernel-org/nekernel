@@ -9,7 +9,7 @@
 
 #include <ArchKit/ArchKit.h>
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Ref.h>
 
 /// @note Last Rev Sun 28 Jul CET 2024
 /// @note Last Rev Thu, Aug  1, 2024  9:07:38 AM

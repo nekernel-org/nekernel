@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/ArrayList.h>
+#include <NeKit/ArrayList.h>

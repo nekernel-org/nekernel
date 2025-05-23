@@ -8,7 +8,7 @@
 #include <FirmwareKit/VEPM.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/DriveMgr.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Utils.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 #include <modules/NVME/NVME.h>

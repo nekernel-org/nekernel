@@ -17,8 +17,8 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/KPC.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
 
 ///! We got the Super, Standard (%s format) and Guest user,
 ///! all are used to make authorization operations on the OS.

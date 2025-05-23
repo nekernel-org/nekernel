@@ -9,9 +9,9 @@
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DriveMgr.h>
 #include <KernelKit/User.h>
-#include <NewKit/Crc32.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
+#include <NeKit/Crc32.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
 #include <hint/CompilerHint.h>
 
 /// @file HeFS.h

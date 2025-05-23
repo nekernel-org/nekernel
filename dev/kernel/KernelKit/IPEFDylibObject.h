@@ -14,7 +14,7 @@
 #include <KernelKit/PEF.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 namespace Kernel {
 /**

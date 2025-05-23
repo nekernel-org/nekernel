@@ -12,7 +12,7 @@
 /// @brief: Memory allocation support for the NeKernel.
 
 #include <KernelKit/KPC.h>
-#include <NewKit/KernelPanic.h>
+#include <NeKit/KernelPanic.h>
 #include <hint/CompilerHint.h>
 
 namespace Kernel {

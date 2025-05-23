@@ -27,7 +27,7 @@ Void IDTLoader::Load(Register64& idt) {
 #ifndef __NE_MODULAR_KERNEL_COMPONENTS__
   rt_cli();
 
-  volatile ::Kernel::UIntPtr** ptr_ivt = (volatile ::Kernel::UIntPtr**) idt.Base;
+  volatile UIntPtr** ptr_ivt = (volatile UIntPtr**) idt.Base;
 
   for (SizeT idt_indx = 0; idt_indx < kKernelIdtSize; ++idt_indx) {
     Detail::kInterruptVectorTable[idt_indx].Selector       = kIDTSelector;
@@ -47,7 +47,7 @@ Void IDTLoader::Load(Register64& idt) {
 
   hal_load_idt(idt);
   rt_sti();
-#endif // __NE_MODULAR_KERNEL_COMPONENTS__
+#endif  // __NE_MODULAR_KERNEL_COMPONENTS__
 
   return;
 }

@@ -6,8 +6,8 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <FSKit/IndexableProperty.h>
-#include <NewKit/MutableArray.h>
-#include <NewKit/Utils.h>
+#include <NeKit/MutableArray.h>
+#include <NeKit/Utils.h>
 
 /// @brief File indexer API for fast path access.
 /// BUGS: 0

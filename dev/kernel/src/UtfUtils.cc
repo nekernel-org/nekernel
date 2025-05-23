@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Utils.h>
+#include <NeKit/Utils.h>
 
 namespace Kernel {
 Size urt_string_len(const Utf8Char* str) {

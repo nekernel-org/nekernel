@@ -10,7 +10,7 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define NE_DYLIB_OBJECT : public IDylibObject
 

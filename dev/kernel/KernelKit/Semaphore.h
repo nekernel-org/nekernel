@@ -8,7 +8,7 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/Timer.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 namespace Kernel {
 typedef Int64 Semaphore;

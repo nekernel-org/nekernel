@@ -15,8 +15,8 @@
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/ProcessScheduler.h>
+#include <NeKit/Json.h>
 #include <NetworkKit/IPC.h>
-#include <NewKit/Json.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/CoreGfx.h>
 

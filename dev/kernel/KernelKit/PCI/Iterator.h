@@ -9,9 +9,9 @@
 
 #include <KernelKit/PCI/Database.h>
 #include <KernelKit/PCI/Device.h>
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Ref.h>
 
 #define NE_BUS_COUNT (256)
 #define NE_DEVICE_COUNT (33)

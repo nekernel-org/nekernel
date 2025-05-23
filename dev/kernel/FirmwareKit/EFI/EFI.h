@@ -11,7 +11,7 @@
 @brief Implementation of the main EFI protocols.
 */
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 using namespace Kernel;
 

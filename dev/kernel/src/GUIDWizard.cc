@@ -10,7 +10,7 @@
 ------------------------------------------- */
 
 #include <CFKit/GUIDWizard.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Ref.h>
 
 // begin of ascii 'readable' characters. (A, C, C, 1, 2)
 #define kUUIDAsciiBegin 47

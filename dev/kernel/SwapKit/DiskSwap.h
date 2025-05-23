@@ -8,7 +8,7 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 #include <hint/CompilerHint.h>
 
 #define kSwapBlockMaxSize (mib_cast(16))

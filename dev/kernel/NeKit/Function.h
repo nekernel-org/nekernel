@@ -1,7 +1,15 @@
-#ifndef _INC_FUNCTION_H__
-#define _INC_FUNCTION_H__
+/* -------------------------------------------
 
-#include <NewKit/Defines.h>
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+
+------------------------------------------- */
+
+
+#ifndef _INC_FUNCTION_H_
+#define _INC_FUNCTION_H_
+
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
 
 namespace Kernel {
 template <typename T, typename... Args>
@@ -18,12 +26,12 @@ class Function final {
   Function(const Function&)            = default;
 
   template <typename... XArgs>
-  T operator()(Args... args) {
+  T operator()(Args&&... args) {
     return fFn(args...);
   }
 
   template <typename... XArgs>
-  T Call(Args... args) {
+  T Call(Args&&... args) {
     return fFn(args...);
   }
 
@@ -35,6 +43,9 @@ class Function final {
   T(*fFn)
   (Args... args);
 };
+
+template <typename T, typename... Args>
+using FunctionOr = ErrorOr<Function<T, Args...>>;
 }  // namespace Kernel
 
 #endif  // !_INC_FUNCTION_H__

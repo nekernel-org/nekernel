@@ -6,13 +6,13 @@
 
 #pragma once
 
-#include <NewKit/KernelPanic.h>
+#include <NeKit/KernelPanic.h>
 
 /// @brief Kernel Test Framework.
 /// @file KernelTest.h
 
 #define KT_TEST_VERSION_BCD (0x0001)
-#define KT_TEST_VERSION "0.0.1"
+#define KT_TEST_VERSION "v0.0.1-kerneltest"
 
 #define KT_TEST_FAILURE (1)
 

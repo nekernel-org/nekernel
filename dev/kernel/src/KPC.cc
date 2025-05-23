@@ -6,7 +6,7 @@
 
 #include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
-#include <NewKit/KernelPanic.h>
+#include <NeKit/KernelPanic.h>
 
 namespace Kernel {
 STATIC Bool kRaiseOnBugCheck = false;

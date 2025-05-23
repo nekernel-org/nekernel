@@ -7,10 +7,10 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Defines.h>
-#include <NewKit/ErrorOr.h>
-#include <NewKit/KernelPanic.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
+#include <NeKit/KernelPanic.h>
+#include <NeKit/Utils.h>
 
 #define kMinimumStringSize (8196U)
 

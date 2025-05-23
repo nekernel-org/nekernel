@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
 
 #define kMACAddrLen (32)
 

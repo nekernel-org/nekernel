@@ -14,7 +14,7 @@
 #include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/User.h>
-#include <NewKit/KernelPanic.h>
+#include <NeKit/KernelPanic.h>
 
 #define kStdUserType (0xEE)
 #define kSuperUserType (0xEF)

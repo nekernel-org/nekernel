@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 #include <modules/ACPI/ACPI.h>
 
 /// @file AHCI.h

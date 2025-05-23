@@ -11,7 +11,7 @@
 #ifndef CRC32_H
 #define CRC32_H
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define kCrcCnt (256)
 

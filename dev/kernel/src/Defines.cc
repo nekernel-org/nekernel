@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>

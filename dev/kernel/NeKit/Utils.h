@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 namespace Kernel {
 Int         rt_copy_memory(const voidPtr src, voidPtr dst, Size len);

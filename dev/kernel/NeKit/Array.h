@@ -7,8 +7,8 @@
 #pragma once
 
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/Defines.h>
-#include <NewKit/ErrorOr.h>
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
 
 namespace Kernel {
 template <typename T, SizeT N>

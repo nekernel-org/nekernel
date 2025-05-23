@@ -22,8 +22,8 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/LoaderInterface.h>
 #include <KernelKit/PE.h>
-#include <NewKit/ErrorOr.h>
-#include <NewKit/KString.h>
+#include <NeKit/ErrorOr.h>
+#include <NeKit/KString.h>
 
 #ifndef INC_PROCESS_SCHEDULER_H
 #include <KernelKit/ProcessScheduler.h>

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 using namespace Kernel;
 

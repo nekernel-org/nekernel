@@ -5,7 +5,7 @@
 ------------------------------------------- */
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #ifndef __TOOLCHAINKIT__
 

@@ -6,7 +6,7 @@
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/MemoryMgr.h>
-#include <NewKit/KString.h>
+#include <NeKit/KString.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 
 namespace Kernel {

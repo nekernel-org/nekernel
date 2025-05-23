@@ -19,9 +19,9 @@
 #include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <NewKit/KString.h>
+#include <NeKit/KString.h>
 #include <SignalKit/Signals.h>
-#include "NewKit/Macros.h"
+#include "NeKit/Macros.h"
 
 ///! BUGS: 0
 

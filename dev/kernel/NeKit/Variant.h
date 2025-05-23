@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
-#include <NewKit/Json.h>
-#include <NewKit/KString.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Json.h>
+#include <NeKit/KString.h>
 #include <SwapKit/DiskSwap.h>
 
 namespace Kernel {

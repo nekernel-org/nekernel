@@ -12,7 +12,7 @@
 #ifndef __MODULE_NVME_H__
 #define __MODULE_NVME_H__
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 /// @file NVME.h
 /// @brief Non Volatile Memory.

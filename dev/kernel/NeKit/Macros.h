@@ -7,7 +7,7 @@
 #pragma once
 
 /***********************************************************************************/
-/// @file NewKit/Macros.h
+/// @file NeKit/Macros.h
 /// @brief Core Types and Macros.
 /***********************************************************************************/
 
@@ -123,7 +123,7 @@
 #ifdef __NE_AMD64__
 #define dbg_break_point() asm volatile("int $3")
 #else
-#define dbg_break_point() ((void) 0)
+#define dbg_break_point() ((Kernel::Void) 0)
 #endif
 
 #define RTL_ENDIAN(address, value)                                                           \

@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
-#include <NewKit/KernelPanic.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KernelPanic.h>
+#include <NeKit/Ref.h>
 
 namespace Kernel {
 template <typename T>

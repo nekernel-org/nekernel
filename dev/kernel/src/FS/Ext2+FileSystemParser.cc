@@ -11,10 +11,10 @@
 #include <KernelKit/KPC.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/User.h>
-#include <NewKit/Crc32.h>
-#include <NewKit/KString.h>
-#include <NewKit/KernelPanic.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Crc32.h>
+#include <NeKit/KString.h>
+#include <NeKit/KernelPanic.h>
+#include <NeKit/Utils.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 

@@ -8,9 +8,9 @@
 #define __MOD_ACPI_H__
 
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/Defines.h>
-#include <NewKit/ErrorOr.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
+#include <NeKit/Ref.h>
 #include <modules/ACPI/ACPI.h>
 #include <modules/Power/PowerFactory.h>
 

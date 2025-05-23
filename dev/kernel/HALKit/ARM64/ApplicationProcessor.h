@@ -7,7 +7,7 @@
 #pragma once
 
 #include <HALKit/ARM64/Processor.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 /************************************************** */
 /*     INITIALIZE THE GIC ON THE CURRENT CORE.      */

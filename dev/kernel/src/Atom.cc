@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Atom.h>
+#include <NeKit/Atom.h>
 
 // @file Atom.cpp
 // @brief Atomic primitives

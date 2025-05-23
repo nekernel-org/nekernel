@@ -28,7 +28,7 @@
 #include <KernelKit/HardwareThreadScheduler.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/Timer.h>
-#include <NewKit/KernelPanic.h>
+#include <NeKit/KernelPanic.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
 

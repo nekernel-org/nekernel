@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 namespace Kernel {
 template <typename T>

@@ -8,9 +8,9 @@
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
-#include <NewKit/Crc32.h>
-#include <NewKit/PageMgr.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Crc32.h>
+#include <NeKit/PageMgr.h>
+#include <NeKit/Utils.h>
 
 /* -------------------------------------------
 

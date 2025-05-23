@@ -8,7 +8,7 @@
 
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
-#include <NewKit/OwnPtr.h>
+#include <NeKit/OwnPtr.h>
 
 namespace Kernel {
 /// @brief AHCIDeviceInterface class

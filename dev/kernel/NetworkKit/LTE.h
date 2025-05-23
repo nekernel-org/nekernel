@@ -10,7 +10,7 @@
 #ifndef _INC_NETWORK_LTE_H_
 #define _INC_NETWORK_LTE_H_
 
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
 
 #endif  // ifndef _INC_NETWORK_LTE_H_

@@ -6,11 +6,14 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
-#define KERNELKIT_VERSION "0.0.1"
+#define KERNELKIT_VERSION "0.0.1-kernelkit"
 #define KERNELKIT_VERSION_BCD 0x0001
 
+namespace Kernel {
 class UserProcessScheduler;
 class IDylibObject;
-class Process;
+class USER_PROCESS;
+class KERNEL_TASK;
+}  // namespace Kernel

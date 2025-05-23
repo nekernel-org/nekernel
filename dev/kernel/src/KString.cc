@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <NewKit/KString.h>
-#include <NewKit/Utils.h>
+#include <NeKit/KString.h>
+#include <NeKit/Utils.h>
 
 /// @file KString.cc
 /// @brief Kernel String manipulation file.

@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <NewKit/PageMgr.h>
-#include <NewKit/Ref.h>
+#include <NeKit/PageMgr.h>
+#include <NeKit/Ref.h>
 
 namespace Kernel {
 class Pmm;

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
+#include <NeKit/Utils.h>
 #include <NetworkKit/NetworkDevice.h>
-#include <NewKit/Utils.h>
 
 namespace Kernel {
 /// \brief Getter for fNetworkName.

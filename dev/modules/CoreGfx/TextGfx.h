@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 #include <modules/CoreGfx/CoreGfx.h>
 
 #define kFontSizeX 8

@@ -6,8 +6,8 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
 
 #define TRY_FIND_NODE(NAME, NODE)                 \
   auto* NAME = NODE;                              \

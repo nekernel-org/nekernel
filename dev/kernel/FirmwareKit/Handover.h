@@ -18,7 +18,7 @@
 #pragma once
 
 #include <FirmwareKit/EFI/EFI.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define kHandoverMagic (0xBADCC)
 #define kHandoverVersion (0x0117)

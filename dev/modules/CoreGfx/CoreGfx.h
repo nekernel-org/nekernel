@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define fb_init() Kernel::UInt32 kCGCursor = 0
 

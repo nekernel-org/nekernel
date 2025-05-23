@@ -9,4 +9,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Stream.h>
+#include <NeKit/Stream.h>

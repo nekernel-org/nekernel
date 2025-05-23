@@ -9,7 +9,7 @@
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/UserProcessScheduler.h>
-#include <NewKit/CxxAbi.h>
+#include <NeKit/CxxAbi.h>
 
 atexit_func_entry_t __atexit_funcs[kAtExitMacDestructors];
 

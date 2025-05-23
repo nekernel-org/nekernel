@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Utils.h>
+#include <NeKit/Utils.h>
 
 namespace Kernel {
 Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size) {

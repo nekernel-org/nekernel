@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Variant.h>
+#include <NeKit/Variant.h>
 
 namespace Kernel {
 const Char* Variant::ToString() {

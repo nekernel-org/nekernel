@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
-#include <NewKit/ErrorOr.h>
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
 
 #define kSchedMinMicroTime (AffinityKind::kStandard)
 #define kSchedInvalidPID (-1)

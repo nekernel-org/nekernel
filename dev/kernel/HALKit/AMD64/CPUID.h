@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 EXTERN_C {
 #include <cpuid.h>

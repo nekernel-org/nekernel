@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/Function.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Function.h>
 
 #include <FirmwareKit/Handover.h>
 

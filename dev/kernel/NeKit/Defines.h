@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Macros.h>
+#include <NeKit/Macros.h>
 
 #define NEWKIT_VERSION_STR "0.0.1"
 #define NEWKIT_VERSION_BCD 0x0001

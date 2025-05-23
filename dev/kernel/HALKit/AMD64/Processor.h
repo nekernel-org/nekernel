@@ -17,9 +17,9 @@
 
 #include <FirmwareKit/Handover.h>
 #include <HALKit/AMD64/Paging.h>
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Utils.h>
 
 #include <HALKit/AMD64/CPUID.h>
 

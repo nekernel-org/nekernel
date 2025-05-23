@@ -19,8 +19,8 @@
 /* @file KernelKit/DeviceMgr.h */
 /* @brief Device abstraction and I/O buffer. */
 
-#include <NewKit/ErrorOr.h>
-#include <NewKit/Ref.h>
+#include <NeKit/ErrorOr.h>
+#include <NeKit/Ref.h>
 
 #define kDeviceMgrRootDirPath "/devices/"
 

@@ -15,7 +15,7 @@
 #include <KernelKit/CoreProcessScheduler.h>
 #include <KernelKit/LockDelegate.h>
 #include <KernelKit/User.h>
-#include <NewKit/MutableArray.h>
+#include <NeKit/MutableArray.h>
 
 ////////////////////////////////////////////////////
 // Last revision date is: Fri Mar 28 2025		  //

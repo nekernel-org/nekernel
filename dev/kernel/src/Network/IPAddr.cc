@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
+#include <NeKit/Utils.h>
 #include <NetworkKit/IP.h>
-#include <NewKit/Utils.h>
 
 namespace Kernel {
 Char* RawIPAddress::Address() {

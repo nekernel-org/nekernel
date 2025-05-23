@@ -9,8 +9,8 @@
 #define _NEWKIT_REF_H_
 
 #include <KernelKit/MemoryMgr.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KernelPanic.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KernelPanic.h>
 
 namespace Kernel {
 template <typename T>

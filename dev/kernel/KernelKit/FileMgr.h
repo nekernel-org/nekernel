@@ -30,9 +30,9 @@
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/MemoryMgr.h>
-#include <NewKit/ErrorOr.h>
-#include <NewKit/Ref.h>
-#include <NewKit/Stream.h>
+#include <NeKit/ErrorOr.h>
+#include <NeKit/Ref.h>
+#include <NeKit/Stream.h>
 #include <hint/CompilerHint.h>
 
 /// @brief Filesystem manager, abstraction over mounted filesystem.

@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/MemoryMgr.h>
-#include <NewKit/New.h>
+#include <NeKit/New.h>
 
 void* operator new[](size_t sz) {
   if (sz == 0) ++sz;

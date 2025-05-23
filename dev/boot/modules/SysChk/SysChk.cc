@@ -16,8 +16,8 @@
 #include <KernelKit/MSDOS.h>
 #include <KernelKit/PE.h>
 #include <KernelKit/PEF.h>
-#include <NewKit/Macros.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Macros.h>
+#include <NeKit/Ref.h>
 #include <modules/CoreGfx/CoreGfx.h>
 #include <modules/CoreGfx/TextGfx.h>
 

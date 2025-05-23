@@ -8,9 +8,9 @@
 
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/PCI/Device.h>
-#include <NewKit/Array.h>
-#include <NewKit/OwnPtr.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Array.h>
+#include <NeKit/OwnPtr.h>
+#include <NeKit/Ref.h>
 
 namespace Kernel {
 enum class DmaKind {

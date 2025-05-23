@@ -18,8 +18,8 @@ default.
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DriveMgr.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
 #include <hint/CompilerHint.h>
 
 /**

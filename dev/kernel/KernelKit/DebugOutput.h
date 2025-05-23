@@ -8,9 +8,9 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DeviceMgr.h>
-#include <NewKit/OwnPtr.h>
-#include <NewKit/Stream.h>
-#include <NewKit/Utils.h>
+#include <NeKit/OwnPtr.h>
+#include <NeKit/Stream.h>
+#include <NeKit/Utils.h>
 
 #define kDebugUnboundPort 0x0FEED
 
