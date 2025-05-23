@@ -23,6 +23,10 @@ typedef Ref FSRef;
 typedef Ref DLLRef;
 typedef Ref ThreadRef;
 typedef Ref SocketRef;
+typedef Ref NetworkRef;
+typedef Ref MutexRef;
+typedef Ref EventRef;
+typedef Ref SemaphoreRef;
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Dynamic Loader API.

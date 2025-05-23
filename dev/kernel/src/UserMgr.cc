@@ -13,7 +13,7 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/User.h>
+#include <KernelKit/UserMgr.h>
 #include <NeKit/KernelPanic.h>
 
 #define kStdUserType (0xEE)

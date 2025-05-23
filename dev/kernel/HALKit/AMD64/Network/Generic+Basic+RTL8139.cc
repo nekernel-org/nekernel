@@ -21,6 +21,10 @@ STATIC BOOL kTXEnabled = NO;
 STATIC UInt8* kRXUpperLayer = nullptr;
 STATIC UInt8* kRxBuffer     = nullptr;
 
+/***********************************************************************************/
+///@brief RTL8139 Init routine.
+/***********************************************************************************/
+
 EXTERN_C Void rtl_init_nic_rtl8139(UInt16 io_base) noexcept {
   if (kTXEnabled) return;
 
@@ -42,7 +46,10 @@ EXTERN_C Void rtl_init_nic_rtl8139(UInt16 io_base) noexcept {
     if (timeout > 0x1000) break;
   }
 
-  MUST_PASS(timeout <= 0x1000);
+  if (timeout <= 0x1000) {
+    ke_panic(RUNTIME_CHECK_BAD_BEHAVIOR, "RTL8139: Reset failed");
+    return;
+  }
 
   rt_out32(io_base + 0x30, (UInt32) (UIntPtr) kRxBuffer);
 
@@ -50,11 +57,15 @@ EXTERN_C Void rtl_init_nic_rtl8139(UInt16 io_base) noexcept {
 
   rt_out32(io_base + 0x44, 0xf | (1 << 7));
 
-  // Enable IRQ.
   rt_out16(io_base + 0x3C, 0x0005);
 
   kTXEnabled = YES;
 }
+
+/***********************************************************************************/
+/// @brief RTL8139 I/O interrupt handler.
+/// @note This function is called when the device interrupts to retrieve network data.
+/***********************************************************************************/
 
 EXTERN_C void rtl_rtl8139_interrupt_handler() {
   if (kIOBase == 0xFFFF) return;
@@ -78,4 +89,15 @@ EXTERN_C void rtl_rtl8139_interrupt_handler() {
   if (!(status & 0x04)) {
     err_global_get() = kErrorNoNetwork;
   }
+}
+
+/***********************************************************************************/
+/// @brief RTL8139 get upper layer function
+/// @return the upper layer.
+/// @retval nullptr if no upper layer is set.
+/// @retval pointer to the upper layer if set.
+/***********************************************************************************/
+
+EXTERN_C UInt8* rtl_rtl8139_get_upper_layer() {
+  return kRXUpperLayer;
 }

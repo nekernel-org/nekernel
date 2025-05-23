@@ -8,6 +8,10 @@
   Dtor and ctors.
 */
 
+#ifndef __INC_NETWORK_DEVICE_H__
+#include <NetworkKit/NetworkDevice.h>
+#endif  // __INC_NETWORK_DEVICE_H__
+
 namespace Kernel {
 inline NetworkDevice::NetworkDevice(void (*out)(IDeviceObject<NetworkDeviceCommand>*,
                                                 NetworkDeviceCommand),
@@ -21,8 +25,6 @@ inline NetworkDevice::NetworkDevice(void (*out)(IDeviceObject<NetworkDeviceComma
 }
 
 inline NetworkDevice::~NetworkDevice() {
-  MUST_PASS(fCleanup);
-
   kout << "NetworkDevice cleanup.\r";
 
   if (fCleanup) fCleanup();

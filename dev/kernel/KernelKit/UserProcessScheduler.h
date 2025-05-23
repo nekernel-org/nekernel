@@ -14,7 +14,7 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/CoreProcessScheduler.h>
 #include <KernelKit/LockDelegate.h>
-#include <KernelKit/User.h>
+#include <KernelKit/UserMgr.h>
 #include <NeKit/MutableArray.h>
 
 ////////////////////////////////////////////////////

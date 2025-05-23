@@ -23,7 +23,7 @@ class NetworkDevice final : public IDeviceObject<NetworkDeviceCommand> {
  public:
   NetworkDevice(void (*out)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
                 void (*in)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
-                void (*onCleanup)(void) = nullptr);
+                void (*cleanup)(void) = nullptr);
 
   ~NetworkDevice() override;
 
@@ -36,10 +36,9 @@ class NetworkDevice final : public IDeviceObject<NetworkDeviceCommand> {
   Boolean     Name(const Char* newStr);
 
  private:
-  static constexpr auto cNetworkNameLen = 512;
+  static constexpr auto kNetworkNameLen = 512;
 
   Void (*fCleanup)(void);
-  Char fNetworkName[cNetworkNameLen];
 };
 
 struct NetworkDeviceCommand final {

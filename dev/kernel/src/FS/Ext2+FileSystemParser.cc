@@ -10,7 +10,7 @@
 #include <FirmwareKit/EPM.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <KernelKit/User.h>
+#include <KernelKit/UserMgr.h>
 #include <NeKit/Crc32.h>
 #include <NeKit/KString.h>
 #include <NeKit/KernelPanic.h>
