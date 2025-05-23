@@ -8,7 +8,7 @@
 #ifdef __FSKIT_INCLUDES_NEFS__
 
 #include <KernelKit/FileMgr.h>
-#include <KernelKit/MemoryMgr.h>
+#include <KernelKit/HeapMgr.h>
 
 /// @brief NeFS File System Manager.
 /// BUGS: 0

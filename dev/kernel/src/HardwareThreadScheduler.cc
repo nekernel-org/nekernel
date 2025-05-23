@@ -92,11 +92,16 @@ Void HardwareThread::Wake(const bool wakeup) noexcept {
 /// @retval false stack is invalid, previous code is running.
 /***********************************************************************************/
 Bool HardwareThread::Switch(HAL::StackFramePtr frame) {
+  if (!frame) {
+    return NO;
+  }
+
+  if (!hal_check_stack(frame)) {
+    return NO;
+  }
+
   this->fStack = frame;
-
-  Bool ret = mp_register_task(fStack, this->fPID);
-
-  return ret;
+  return mp_register_task(fStack, this->fID);
 }
 
 /***********************************************************************************/
@@ -144,8 +149,6 @@ Ref<HardwareThread*> HardwareThreadScheduler::operator[](SizeT idx) {
     HardwareThread* kFakeThread = nullptr;
     return {kFakeThread};
   }
-
-  fThreadList[idx].fPID = idx;
 
   return &fThreadList[idx];
 }

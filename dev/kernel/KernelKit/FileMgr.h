@@ -28,8 +28,8 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DebugOutput.h>
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/MemoryMgr.h>
 #include <NeKit/ErrorOr.h>
 #include <NeKit/Ref.h>
 #include <NeKit/Stream.h>
@@ -324,7 +324,7 @@ class FileStream final {
   Char* MIME() noexcept { return const_cast<Char*>(fMime); }
 
   enum {
-    kFileMgrRestrictRead,
+    kFileMgrRestrictRead = 100,
     kFileMgrRestrictReadBinary,
     kFileMgrRestrictWrite,
     kFileMgrRestrictWriteBinary,
@@ -338,7 +338,8 @@ class FileStream final {
   const Char* fMime{kFileMimeGeneric};
 };
 
-using FileStreamUTF8  = FileStream<Char>;
+using FileStreamASCII = FileStream<Char>;
+using FileStreamUTF8  = FileStream<Utf8Char>;
 using FileStreamUTF16 = FileStream<WideChar>;
 
 typedef UInt64 CursorType;
@@ -346,7 +347,7 @@ typedef UInt64 CursorType;
 inline static const auto kRestrictStrLen = 8U;
 
 /// @brief restrict information about the file descriptor.
-struct FileRestrictKind final {
+struct FILEMGR_RESTRICT final {
   Char  fRestrict[kRestrictStrLen];
   Int32 fMappedTo;
 };
@@ -356,7 +357,7 @@ template <typename Encoding, typename Class>
 inline FileStream<Encoding, Class>::FileStream(const Encoding* path, const Encoding* restrict_type)
     : fFile(Class::GetMounted()->Open(path, restrict_type)) {
   SizeT                  kRestrictCount  = kRestrictMax;
-  const FileRestrictKind kRestrictList[] = {{
+  const FILEMGR_RESTRICT kRestrictList[] = {{
                                                 .fRestrict = kRestrictR,
                                                 .fMappedTo = kFileMgrRestrictRead,
                                             },

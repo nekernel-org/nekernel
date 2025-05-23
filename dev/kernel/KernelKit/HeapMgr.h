@@ -8,7 +8,7 @@
 #define INC_KERNEL_HEAP_H
 
 /// @date 30/01/24
-/// @file: MemoryMgr.h
+/// @file: HeapMgr.h
 /// @brief: Memory allocation support for the NeKernel.
 
 #include <KernelKit/KPC.h>
@@ -51,28 +51,8 @@ Int32 mm_make_ptr_flags(VoidPtr heap_ptr, UInt64 flags);
 /// @brief Gets the flags of a heap header.
 /// @param heap_ptr the pointer to get.
 UInt64 mm_get_ptr_flags(VoidPtr heap_ptr);
-
-/// @brief Allocate C++ class.
-/// @param cls The class to allocate.
-/// @param args The args to pass.
-template <typename T, typename... Args>
-inline BOOL mm_new_class(_Input _Output T** cls, _Input Args&&... args) {
-  if (*cls) {
-    err_global_get() = Kernel::kErrorInvalidData;
-    return NO;
-  }
-
-  *cls = new T(move(args)...);
-  return *cls;
-}
-
-/// @brief Delete and nullify C++ class.
-/// @param cls The class to delete.
-template <typename T>
-inline Void mm_delete_class(_Input _Output T** cls) {
-  delete *cls;
-  *cls = nullptr;
-}
 }  // namespace Kernel
+
+#include <KernelKit/HeapMgr.inl>
 
 #endif  // !INC_KERNEL_HEAP_H

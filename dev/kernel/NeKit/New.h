@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <KernelKit/MemoryMgr.h>
+#include <KernelKit/HeapMgr.h>
 
 /// @note compatible with tk too.
 typedef __SIZE_TYPE__ size_t;

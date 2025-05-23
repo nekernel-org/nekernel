@@ -8,7 +8,7 @@
 #ifdef __FSKIT_INCLUDES_HEFS__
 
 #include <KernelKit/FileMgr.h>
-#include <KernelKit/MemoryMgr.h>
+#include <KernelKit/HeapMgr.h>
 
 #endif  // ifdef __FSKIT_INCLUDES_HEFS__
 #endif  // ifndef __NE_MINIMAL_OS__

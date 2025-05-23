@@ -136,7 +136,6 @@ namespace HAL {
           return;
         }
 
-#ifdef __NE_VERBOSE_BITMAP__
         (Void)(kout << "Magic: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << kendl);
         (Void)(kout << "Is Allocated? " << (ptr_bit_set[kBitMapUsedIdx] ? "YES" : "NO") << kendl);
         (Void)(kout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << kendl);
@@ -149,7 +148,6 @@ namespace HAL {
         (Void)(kout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx]))
                     << kendl);
         (Void)(kout << "BitMap Address: " << hex_number((UIntPtr) ptr_bit_set) << kendl);
-#endif
       }
     };
   }  // namespace Detail
@@ -172,7 +170,13 @@ namespace HAL {
     if (is_page) return nullptr;
 
     ptr_new = bitmp.FindBitMap(kKernelBitMpStart, size, wr, user, pad);
-    return (UIntPtr*) ptr_new;
+
+    if (!ptr_new) {
+      ke_panic(RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM, "Out of memory bitmap");
+      return nullptr;
+    }
+
+    return ptr_new;
   }
 
   /***********************************************************************************/

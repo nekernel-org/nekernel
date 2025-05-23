@@ -1,6 +1,18 @@
-# The `/props/kern_ver` NVRAM variable
+# `/props/kern_ver` — NVRAM EFI Variable
 
 The `/props/kern_ver` variable is used to track NeKernel's current version in a BCD format.
 
-- Use it to track the current's NeKernel version, in order to adapt your drivers to it.
-- It is also useful to keep track of it, for other purposes (bug tracking, development of new features)
+## 🛠 Reason
+
+- It is also used for:
+    - Bug tracking and system patching.
+    - Version and compatibility checking.
+
+## 🧪 Usage
+
+N/A
+
+## © License
+
+    Copyright (C) 2025,
+    Amlal El Mahrouss – All rights reserved.

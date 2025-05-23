@@ -129,6 +129,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 
   for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
     HardwareThreadScheduler::The()[index].Leak()->Kind() = ThreadKind::kAPStandard;
+    HardwareThreadScheduler::The()[index].Leak()->ID()   = index;
     HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
   }
 

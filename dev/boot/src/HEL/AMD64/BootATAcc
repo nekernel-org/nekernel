@@ -15,8 +15,6 @@
  *
  */
 
-#if 0
-
 #include <BootKit/BootKit.h>
 #include <BootKit/HW/ATA.h>
 #include <FirmwareKit/EFI.h>
@@ -266,5 +264,3 @@ SizeT BootDeviceATA::GetSectorsCount() noexcept {
 SizeT BootDeviceATA::GetDiskSize() noexcept {
   return this->GetSectorsCount() * BootDeviceATA::kSectorSize;
 }
-
-#endif

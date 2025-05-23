@@ -33,30 +33,23 @@ STATIC void hal_idt_send_eoi(UInt8 vector) {
 /// @brief Handle GPF fault.
 /// @param rsp
 EXTERN_C Kernel::Void idt_handle_gpf(Kernel::UIntPtr rsp) {
-  hal_idt_send_eoi(13);
-
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+  process.Leak().Crash();
 
-  Kernel::kout << "Kernel: General Access Fault.\r";
+  hal_idt_send_eoi(13);
 
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
-
-  Kernel::kout << "Kernel: SIGKILL status.\r";
-
-  process.Leak().Crash();
 }
 
 /// @brief Handle page fault.
 /// @param rsp
 EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
-  hal_idt_send_eoi(14);
-
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+  process.Leak().Crash();
 
-  Kernel::kout << "Kernel: Page Fault.\r";
-  Kernel::kout << "Kernel: SIGKILL\r";
+  hal_idt_send_eoi(14);
 
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
@@ -87,13 +80,9 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
 
-  Kernel::kout << "Kernel: Math error (division by zero?).\r";
-
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
-
-  Kernel::kout << "Kernel: SIGKILL status.\r";
 
   process.Leak().Crash();
 }
@@ -101,12 +90,12 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
 /// @brief Handle any generic fault.
 /// @param rsp
 EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
+  auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+  process.Leak().Crash();
+
   hal_idt_send_eoi(30);
 
-  auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
-
-  (Void)(Kernel::kout << "Kernel: Process RSP: " << Kernel::hex_number(rsp) << Kernel::kendl);
-  Kernel::kout << "Kernel: Access Process Fault.\r";
+  Kernel::kout << "Kernel: Generic Process Fault.\r";
 
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
@@ -118,20 +107,15 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
-  hal_idt_send_eoi(3);
-
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+  process.Leak().Crash();
 
-  (Void)(Kernel::kout << "Kernel: Process RIP: " << Kernel::hex_number(rip) << Kernel::kendl);
-
-  Kernel::kout << "Kernel: SIGTRAP\r";
+  hal_idt_send_eoi(3);
 
   process.Leak().Signal.SignalArg = rip;
   process.Leak().Signal.SignalID  = SIGTRAP;
 
   process.Leak().Signal.Status = process.Leak().Status;
-
-  Kernel::kout << "Kernel: SIGTRAP status.\r";
 
   process.Leak().Status = Kernel::ProcessStatusKind::kFrozen;
 }
@@ -139,24 +123,14 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
 /// @brief Handle #UD fault.
 /// @param rsp
 EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
-  hal_idt_send_eoi(6);
-
-  NE_UNUSED(rsp);
-
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+  process.Leak().Crash();
 
-  if (process.Leak().Signal.SignalID == SIGKILL || process.Leak().Signal.SignalID == SIGABRT ||
-      process.Leak().Signal.SignalID == SIGTRAP) {
-    dbg_break_point();
-  }
-
-  Kernel::kout << "Kernel: Undefined Opcode.\r";
+  hal_idt_send_eoi(6);
 
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
-
-  Kernel::kout << "Kernel: SIGKILL status.\r";
 
   process.Leak().Crash();
 }
@@ -169,19 +143,11 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index,
   hal_idt_send_eoi(50);
 
   if (rcx_syscall_index < kSysCalls.Count()) {
-    Kernel::kout << "syscall: Enter Syscall.\r";
-
     if (kSysCalls[rcx_syscall_index].fHooked) {
       if (kSysCalls[rcx_syscall_index].fProc) {
         (kSysCalls[rcx_syscall_index].fProc)((Kernel::VoidPtr) rdx_syscall_struct);
-      } else {
-        Kernel::kout << "syscall: syscall isn't valid at all! (is nullptr)\r";
       }
-    } else {
-      Kernel::kout << "syscall: syscall isn't hooked at all! (is set to false)\r";
     }
-
-    Kernel::kout << "syscall: Exit Syscall.\r";
   }
 }
 
@@ -193,18 +159,10 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index,
   hal_idt_send_eoi(51);
 
   if (rcx_kerncall_index < kKernCalls.Count()) {
-    Kernel::kout << "kerncall: Enter Kernel Call List.\r";
-
     if (kKernCalls[rcx_kerncall_index].fHooked) {
       if (kKernCalls[rcx_kerncall_index].fProc) {
         (kKernCalls[rcx_kerncall_index].fProc)((Kernel::VoidPtr) rdx_kerncall_struct);
-      } else {
-        Kernel::kout << "kerncall: Kernel call isn't valid at all! (is nullptr)\r";
       }
-    } else {
-      Kernel::kout << "kerncall: Kernel call isn't hooked at all! (is set to false)\r";
     }
-
-    Kernel::kout << "kerncall: Exit Kernel Call List.\r";
   }
 }

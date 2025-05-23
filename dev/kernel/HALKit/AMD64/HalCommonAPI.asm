@@ -116,9 +116,6 @@ sched_jump_to_task:
 global sched_idle_task
 
 sched_idle_task:
-    mov ax, cs
-    and ax, 3
-
     jmp $
     ret
 

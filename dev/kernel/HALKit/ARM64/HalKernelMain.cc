@@ -12,7 +12,7 @@
 #include <KernelKit/CodeMgr.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/HardwareThreadScheduler.h>
-#include <KernelKit/MemoryMgr.h>
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <NeKit/Json.h>

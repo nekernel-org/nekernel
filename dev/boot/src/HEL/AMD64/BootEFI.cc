@@ -196,16 +196,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   WideChar kernel_path[256U] = L"krnl.efi";
   UInt32   kernel_path_sz    = StrLen("krnl.efi");
 
-  if (ST->RuntimeServices->GetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, nullptr,
-                                       &kernel_path_sz, kernel_path) != kEfiOk) {
-    /// access attributes (in order)
-    /// EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
-    UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
-
-    ST->RuntimeServices->SetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, &attr,
-                                     &kernel_path_sz, kernel_path);
-  }
-
   UInt32 sz_ver = sizeof(UInt64);
   UInt64 ver    = KERNEL_VERSION_BCD;
 
@@ -219,6 +209,16 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
                                      &sz_ver, &ver);
 
     writer.Write("BootZ: Version has been updated: ").Write(ver).Write("\r");
+
+    if (ST->RuntimeServices->GetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, nullptr,
+                                         &kernel_path_sz, kernel_path) != kEfiOk) {
+      /// access attributes (in order)
+      /// EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
+      UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
+
+      ST->RuntimeServices->SetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, &attr,
+                                       &kernel_path_sz, kernel_path);
+    }
   } else {
     writer.Write("BootZ: Version: ").Write(ver).Write("\r");
   }

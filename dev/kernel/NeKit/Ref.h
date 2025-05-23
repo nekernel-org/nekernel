@@ -8,7 +8,7 @@
 #ifndef _NEWKIT_REF_H_
 #define _NEWKIT_REF_H_
 
-#include <KernelKit/MemoryMgr.h>
+#include <KernelKit/HeapMgr.h>
 #include <NeKit/Defines.h>
 #include <NeKit/KernelPanic.h>
 

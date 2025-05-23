@@ -15,9 +15,9 @@
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/HardwareThreadScheduler.h>
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/IPEFDylibObject.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/MemoryMgr.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <NeKit/KString.h>
 #include <SignalKit/Signals.h>
@@ -487,13 +487,6 @@ SizeT UserProcessScheduler::Run() noexcept {
     return 0UL;
   }
 
-  auto& process = this->TheCurrentProcess().Leak();
-
-  //! Increase the usage time of the process.
-  if (process.UTime < process.PTime) {
-    ++process.UTime;
-  }
-
   SizeT process_index = 0UL;  //! we store this guy to tell the scheduler how many
                               //! things we have scheduled.
 
@@ -502,7 +495,12 @@ SizeT UserProcessScheduler::Run() noexcept {
 
     //! Check if the process needs to be run.
     if (UserProcessHelper::CanBeScheduled(process)) {
-      kout << process.Name << " will be scheduled...\r";
+      kout << process.Name << " will be run...\r";
+
+      //! Increase the usage time of the process.
+      if (process.UTime < process.PTime) {
+        ++process.UTime;
+      }
 
       this->TheCurrentProcess() = process;
 
@@ -622,6 +620,9 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
       continue;
     }
 
+    (Void)(kout << "AP_" << hex_number(index));
+    kout << " is now trying to run a new task!\r";
+
     ////////////////////////////////////////////////////////////
     ///	Prepare task switch.								 ///
     ////////////////////////////////////////////////////////////
@@ -640,6 +641,9 @@ Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
 
     HardwareThreadScheduler::The()[index].Leak()->fPTime =
         UserProcessScheduler::The().TheCurrentTeam().AsArray()[new_pid].PTime;
+
+    (Void)(kout << "AP_" << hex_number(index));
+    kout << " is now running a new task!\r";
 
     return YES;
   }

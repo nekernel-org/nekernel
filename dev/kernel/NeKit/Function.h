@@ -4,7 +4,6 @@
 
 ------------------------------------------- */
 
-
 #ifndef _INC_FUNCTION_H_
 #define _INC_FUNCTION_H_
 

@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/MemoryMgr.h>
 #include <NeKit/KernelPanic.h>
 
 namespace Kernel {

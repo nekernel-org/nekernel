@@ -6,8 +6,8 @@
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/DebugOutput.h>
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/MemoryMgr.h>
 #include <NeKit/Crc32.h>
 #include <NeKit/PageMgr.h>
 #include <NeKit/Utils.h>
@@ -16,14 +16,14 @@
 
  Revision History:
   10/8/24: FIX: Fix useless long name, alongside a new WR (WriteRead) field.
-  20/10/24: FIX: Fix mm_new_ and mm_delete_ APIs inside MemoryMgr.h header. (amlal)
+  20/10/24: FIX: Fix mm_new_ and mm_delete_ APIs inside HeapMgr.h header. (amlal)
     27/01/25: REFACTOR: Reworked code as the memory manager.
-  25/03/25: REFACTOR: Refactor MemoryMgr code and log freed address location.
+  25/03/25: REFACTOR: Refactor HeapMgr code and log freed address location.
 
  ------------------------------------------- */
 
-//! @file MemoryMgr.cc
-//! @brief Heap algorithm that serves as the main memory manager.
+//! @file HeapMgr.cc
+//! @brief Heap system that serves as the main memory manager.
 
 #define kMemoryMgrMagic (0xD4D75)
 #define kMemoryMgrAlignSz (4U)
@@ -126,7 +126,7 @@ _Output VoidPtr mm_new_ptr(SizeT sz, Bool wr, Bool user, SizeT pad_amount) {
 
   auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
-  (Void)(kout << "MemoryMgr: Registered heap address: "
+  (Void)(kout << "HeapMgr: Registered heap address: "
               << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
 
   return result;
@@ -146,7 +146,7 @@ _Output Int32 mm_make_page(VoidPtr heap_ptr) {
 
   heap_info_ptr->fPage = true;
 
-  (Void)(kout << "MemoryMgr: Registered page from heap address: "
+  (Void)(kout << "HeapMgr: Registered page from heap address: "
               << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
 
   return kErrorSuccess;
@@ -205,7 +205,7 @@ _Output Int32 mm_delete_ptr(VoidPtr heap_ptr) {
     heap_info_ptr->fMagic     = 0;
     heap_info_ptr->fPad       = 0;
 
-    (Void)(kout << "MemoryMgr: Freed heap address: "
+    (Void)(kout << "HeapMgr: Freed heap address: "
                 << hex_number(reinterpret_cast<UIntPtr>(heap_info_ptr)) << kendl);
 
     PTEWrapper page_wrapper(

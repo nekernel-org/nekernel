@@ -15,8 +15,6 @@
  *
  */
 
-#if 0
-
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/DriveMgr.h>
 #include <StorageKit/ATA.h>
@@ -85,8 +83,8 @@ ATAInit_Retry:
 
   rt_out8(OutBus + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
-
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
 
   /// fetch serial info
   /// model, speed, number of sectors...
@@ -119,21 +117,22 @@ Void drv_pio_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT Sect
 
   rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
-  rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+  rt_out8(IO + ATA_REG_LBA0, (Lba) &0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
   rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
 
   for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     drv_pio_std_wait_io(IO);
 
     auto in = rt_in16(IO + ATA_REG_DATA);
 
-    Buf[IndexOff] = in & 0xFF;
+    Buf[IndexOff]     = in & 0xFF;
     Buf[IndexOff + 1] = (in >> 8) & 0xFF;
   }
 }
@@ -150,22 +149,23 @@ Void drv_pio_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT Sec
 
   rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
-  rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+  rt_out8(IO + ATA_REG_LBA0, (Lba) &0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
   rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
 
   for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     drv_pio_std_wait_io(IO);
 
-    UInt8 low = (UInt8)Buf[IndexOff];
-    UInt8 high = (IndexOff + 1 < Size) ? (UInt8)Buf[IndexOff + 1] : 0;
+    UInt8  low    = (UInt8) Buf[IndexOff];
+    UInt8  high   = (IndexOff + 1 < Size) ? (UInt8) Buf[IndexOff + 1] : 0;
     UInt16 packed = (high << 8) | low;
-    
+
     rt_out16(IO + ATA_REG_DATA, packed);
   }
 }
@@ -274,7 +274,5 @@ SizeT drv_std_get_sector_count() {
 Boolean drv_std_init(UInt16 Bus, UInt8 Drive, UInt16& OutBus, UInt8& OutMaster) {
   return drv_pio_std_init(Bus, Drive, OutBus, OutMaster);
 }
-
-#endif
 
 #endif

@@ -71,7 +71,6 @@ class HardwareThread final {
   HAL::StackFramePtr fStack{nullptr};
   ThreadKind         fKind{ThreadKind::kAPStandard};
   ThreadID           fID{0};
-  ThreadID           fPID{0};
   Bool               fWakeup{NO};
   Bool               fBusy{NO};
   UInt64             fPTime{0};

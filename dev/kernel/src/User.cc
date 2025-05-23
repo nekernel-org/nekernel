@@ -11,8 +11,8 @@
  */
 
 #include <KernelKit/FileMgr.h>
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/MemoryMgr.h>
 #include <KernelKit/User.h>
 #include <NeKit/KernelPanic.h>
 

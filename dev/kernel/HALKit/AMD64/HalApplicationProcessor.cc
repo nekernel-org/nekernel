@@ -121,8 +121,6 @@ EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ProcessID thrdid)
 
   HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
 
-  sched_jump_to_task(stack_frame);
-
   return YES;
 }
 
