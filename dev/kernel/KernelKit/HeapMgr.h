@@ -19,7 +19,7 @@ namespace Kernel {
 /// @brief Declare pointer as free.
 /// @param heap_ptr the pointer.
 /// @return a status code regarding the deallocation.
-Int32 mm_delete_ptr(VoidPtr heap_ptr);
+Int32 mm_free_ptr(VoidPtr heap_ptr);
 
 /// @brief Check if pointer is a valid Kernel pointer.
 /// @param heap_ptr the pointer
@@ -31,7 +31,7 @@ Boolean mm_is_valid_ptr(VoidPtr heap_ptr);
 /// @param wr Read Write bit.
 /// @param user User enable bit.
 /// @return The newly allocated pointer, or nullptr.
-VoidPtr mm_new_ptr(SizeT sz, Bool wr, Bool user, SizeT pad_amount = 0);
+VoidPtr mm_alloc_ptr(SizeT sz, Bool wr, Bool user, SizeT pad_amount = 0);
 
 /// @brief Protect the heap with a CRC value.
 /// @param heap_ptr pointer.

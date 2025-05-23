@@ -129,11 +129,11 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
   auto vm_register = kKernelVM;
   hal_write_cr3(this->VMRegister);
 
-  auto ptr = mm_new_ptr(sz, Yes, Yes, pad_amount);
+  auto ptr = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
 
   hal_write_cr3(vm_register);
 #else
-  auto ptr           = mm_new_ptr(sz, Yes, Yes, pad_amount);
+  auto ptr           = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
 #endif
 
   if (!this->HeapTree) {
@@ -241,12 +241,12 @@ STATIC Void sched_free_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_ptr_list) {
   // Deleting memory lists. Make sure to free all of them.
   while (memory_ptr_list) {
     if (memory_ptr_list->Entry) {
-      MUST_PASS(mm_delete_ptr(memory_ptr_list->Entry));
+      MUST_PASS(mm_free_ptr(memory_ptr_list->Entry));
     }
 
     auto next = memory_ptr_list->Next;
 
-    mm_delete_ptr(memory_ptr_list);
+    mm_free_ptr(memory_ptr_list);
 
     if (memory_ptr_list->Child) sched_free_ptr_tree(memory_ptr_list->Child);
 
@@ -288,14 +288,14 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 #endif
 
   //! Delete image if not done already.
-  if (this->Image.fCode && mm_is_valid_ptr(this->Image.fCode)) mm_delete_ptr(this->Image.fCode);
+  if (this->Image.fCode && mm_is_valid_ptr(this->Image.fCode)) mm_free_ptr(this->Image.fCode);
 
   //! Delete blob too.
-  if (this->Image.fBlob && mm_is_valid_ptr(this->Image.fBlob)) mm_delete_ptr(this->Image.fBlob);
+  if (this->Image.fBlob && mm_is_valid_ptr(this->Image.fBlob)) mm_free_ptr(this->Image.fBlob);
 
   //! Delete stack frame.
   if (this->StackFrame && mm_is_valid_ptr(this->StackFrame))
-    mm_delete_ptr((VoidPtr) this->StackFrame);
+    mm_free_ptr((VoidPtr) this->StackFrame);
 
   //! Avoid use after free.
   this->Image.fBlob = nullptr;

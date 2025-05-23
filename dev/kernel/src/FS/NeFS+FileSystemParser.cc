@@ -240,7 +240,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
     return nullptr;
   }
 
-  Char* parent_name = (Char*) mm_new_ptr(sizeof(Char) * rt_string_len(name), Yes, No);
+  Char* parent_name = (Char*) mm_alloc_ptr(sizeof(Char) * rt_string_len(name), Yes, No);
 
   /// Locate parent catalog, to then allocate right after it.
 
@@ -269,7 +269,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 
   NEFS_CATALOG_STRUCT* catalog = this->FindCatalog(parent_name, out_lba);
 
-  mm_delete_ptr(parent_name);
+  mm_free_ptr(parent_name);
 
   auto& drive = kMountpoint.A();
 

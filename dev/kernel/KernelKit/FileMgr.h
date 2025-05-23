@@ -392,7 +392,7 @@ inline FileStream<Encoding, Class>::FileStream(const Encoding* path, const Encod
 /// @brief destructor of the file stream.
 template <typename Encoding, typename Class>
 inline FileStream<Encoding, Class>::~FileStream() {
-  mm_delete_ptr(fFile);
+  mm_free_ptr(fFile);
 }
 }  // namespace Kernel
 
