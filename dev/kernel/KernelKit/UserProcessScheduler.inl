@@ -11,13 +11,17 @@
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /// @date Tue Apr 22 22:01:07 CEST 2025
 
+#ifndef INC_PROCESS_SCHEDULER_H
+#include <KernelKit/UserProcessScheduler.h>
+#endif  // INC_PROCESS_SCHEDULER_H
+
 namespace Kernel {
 /***********************************************************************************/
 /** @brief Free pointer from usage. */
 /***********************************************************************************/
 
 template <typename T>
-Boolean USER_PROCESS::Delete(ErrorOr<T*> ptr) {
+BOOL USER_PROCESS::Delete(ErrorOr<T*> ptr) {
   if (!ptr) return No;
 
   if (!this->HeapTree) {

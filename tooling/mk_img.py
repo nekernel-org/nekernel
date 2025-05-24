@@ -30,7 +30,7 @@ def copy_to_fat(image_path, source_dir):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: mk_img.py <fat32_image> <source_directory>")
+        print("HELP: mk_img.py <fat32_image> <source_directory>")
         sys.exit(1)
 
     image_path = sys.argv[1]
@@ -38,4 +38,4 @@ if __name__ == "__main__":
 
     copy_to_fat(image_path, source_dir)
 
-    print("Info: image created successfully.")
+    print("INFO: Image created successfully.")

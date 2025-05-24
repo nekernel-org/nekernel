@@ -331,19 +331,17 @@ IMPORT_C IORef PrintGet(const Char* path);
 typedef SInt32 AffinityRef;
 typedef UInt64 ProcessRef;
 
-IMPORT_C SInt32 SchedSetAffinity(ProcessRef, SInt32 req, AffinityRef* local);
+IMPORT_C SInt32 SchedSetAffinity(_Input ProcessRef, SInt32 req, _Input AffinityRef*);
 
-IMPORT_C SInt32 SchedGetAffinity(ProcessRef, AffinityRef* local);
+IMPORT_C SInt32 SchedGetAffinity(_Input ProcessRef, _InOut AffinityRef*);
 
-IMPORT_C SInt32 SchedFireSignal(ProcessRef, SInt32 req);
+IMPORT_C SInt32 SchedFireSignal(_Input ProcessRef, SInt32);
 
-IMPORT_C SInt32 SchedReadMemory(ProcessRef, SInt32 address, SInt32 data);
+IMPORT_C SInt32 SchedReadMemory(_Input ProcessRef, SInt32, SInt32);
 
-IMPORT_C SInt32 SchedWriteMemory(ProcessRef, SInt32 address, SInt32 data);
+IMPORT_C SInt32 SchedWriteMemory(_Input ProcessRef, SInt32, SInt32);
 
-/// @brief Get current ProcessRef of process.
-/// @return Current process ID.
-IMPORT_C UIntPtr RtlCurrentPID(Void);
+IMPORT_C UIntPtr SchedGetCurrentProcessID(Void);
 
 // ------------------------------------------------------------------------------------------ //
 // @brief Filesystem API.

@@ -19,15 +19,13 @@ STATIC BOOL kIsRunning = NO;
 /// @note
 STATIC void hal_idt_send_eoi(UInt8 vector) {
   ((volatile UInt32*) kApicBaseAddress)[0xB0 / 4] = 0;
-
+  
   if (vector >= kPICCommand && vector <= 0x2F) {
     if (vector >= 0x28) {
       Kernel::HAL::rt_out8(kPIC2Command, kPICCommand);
     }
     Kernel::HAL::rt_out8(kPICCommand, kPICCommand);
   }
-
-  kIsRunning = NO;
 }
 
 /// @brief Handle GPF fault.
@@ -58,6 +56,8 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
 
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
+  NE_UNUSED(rsp);
+  
   hal_idt_send_eoi(32);
 
   while (kIsRunning)
@@ -65,7 +65,6 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
 
   kIsRunning = YES;
 
-  NE_UNUSED(rsp);
   Kernel::UserProcessHelper::StartScheduling();
 
   kIsRunning = NO;
@@ -82,7 +81,6 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
-
 }
 
 /// @brief Handle any generic fault.

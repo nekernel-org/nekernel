@@ -1,15 +1,13 @@
 ;; /*
 ;; *	========================================================
 ;; *
-;; *	user/src/SystemCalls+IO.asm
+;; *	libSystem/src/SystemCalls+IO.asm
 ;; * 	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 ;; *
 ;; * 	========================================================
 ;; */
 
 [bits 64]
-
-;; @brief Syscall dispatch, also taking note the Microsoft's calling convention to translate it to NeKernel's ABI.
 
 section .text
 
@@ -44,8 +42,6 @@ sci_syscall_arg_3:
     push rbp
     mov rbp, rsp
 
-    mov rbx, r8
-
     mov r8, rcx
     mov r9, rdx
     mov r10, rbx
@@ -58,9 +54,6 @@ sci_syscall_arg_3:
 sci_syscall_arg_4:
     push rbp
     mov rbp, rsp
-
-    mov rbx, r8
-    mov rax, r9
 
     mov r8, rcx
     mov r9, rdx

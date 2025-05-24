@@ -11,15 +11,16 @@ Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 using namespace Kernel;
 using namespace Kernel::HAL;
 
-STATIC UInt16 kIOBase = 0xFFFF;
-
-STATIC UInt32                 kRXOffset     = 0UL;
-STATIC constexpr CONST UInt32 kRxBufferSize = 8192 + 16 + 1500;
+STATIC UInt16 kRTLIOBase = 0xFFFF;
 
 STATIC BOOL kTXEnabled = NO;
 
+STATIC UInt32 kRXOffset = 0UL;
+
+STATIC constexpr CONST UInt32 kRXBufferSize = 8192 + 16 + 1500;
+
 STATIC UInt8* kRXUpperLayer = nullptr;
-STATIC UInt8* kRxBuffer     = nullptr;
+STATIC UInt8* kRXBuffer     = nullptr;
 
 /***********************************************************************************/
 ///@brief RTL8139 Init routine.
@@ -28,12 +29,13 @@ STATIC UInt8* kRxBuffer     = nullptr;
 EXTERN_C Void rtl_init_nic_rtl8139(UInt16 io_base) noexcept {
   if (kTXEnabled) return;
 
-  kIOBase = io_base;
-  MUST_PASS(io_base);
+  kRTLIOBase = io_base;
 
-  kRxBuffer = (UInt8*) rtl_dma_alloc(sizeof(UInt8) * kRxBufferSize, 0);
+  MUST_PASS(io_base != 0xFFFF);
 
-  MUST_PASS(kRxBuffer);
+  kRXBuffer = reinterpret_cast<UInt8*>(rtl_dma_alloc(sizeof(UInt8) * kRXBufferSize, 0));
+
+  MUST_PASS(kRXBuffer);
 
   /// Reset first.
 
@@ -51,11 +53,11 @@ EXTERN_C Void rtl_init_nic_rtl8139(UInt16 io_base) noexcept {
     return;
   }
 
-  rt_out32(io_base + 0x30, (UInt32) (UIntPtr) kRxBuffer);
+  rt_out32(io_base + 0x30, (UInt32) (UIntPtr) kRXBuffer);
 
   rt_out8(io_base + 0x37, 0x0C);
 
-  rt_out32(io_base + 0x44, 0xf | (1 << 7));
+  rt_out32(io_base + 0x44, 0xF | (1 << 7));
 
   rt_out16(io_base + 0x3C, 0x0005);
 
@@ -68,21 +70,30 @@ EXTERN_C Void rtl_init_nic_rtl8139(UInt16 io_base) noexcept {
 /***********************************************************************************/
 
 EXTERN_C void rtl_rtl8139_interrupt_handler() {
-  if (kIOBase == 0xFFFF) return;
+  if (kRTLIOBase == 0xFFFF) return;
 
-  UInt16 status = rt_in16(kIOBase + 0x3E);
-  rt_out16(kIOBase + 0x3E, status);
+  UInt16 status = rt_in16(kRTLIOBase + 0x3E);
+  rt_out16(kRTLIOBase + 0x3E, status);
 
   if (status & 0x01) {
-    while ((rt_in8(kIOBase + 0x37) & 0x01) == 0) {
-      UInt32          offset = kRXOffset % kRxBufferSize;
-      volatile UInt8* packet = kRxBuffer + offset + 4;
-      UInt16          len    = *(UInt16*) (kRxBuffer + offset + 2);
+    // While we receive data.
+    while ((rt_in8(kRTLIOBase + 0x37) & 0x01) == 0) {
+      // We grab an offset from the RX buffer.
+      UInt32          offset = kRXOffset % kRXBufferSize;
 
-      kRXUpperLayer[offset + 4] = *packet;
+      // If the offset is too high, we reset it.
+      if (offset >= (kRXBufferSize - 16)) {
+        kRXOffset = 0UL;
+        offset    = 0UL;
+      }
 
-      kRXOffset += len + 4;
-      rt_out16(kIOBase + 0x38, (UInt16) (kRXOffset - 16));
+      volatile UInt8* packet = kRXBuffer + offset + 4;
+      UInt16          len    = *(UInt16*) (kRXBuffer + offset + 2);
+
+      kRXUpperLayer[(offset + 4)] = *packet;
+      kRXOffset += (len + 4);
+
+      rt_out16(kRTLIOBase + 0x38, (UInt16) (kRXOffset - 16));
     }
   }
 

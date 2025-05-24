@@ -251,6 +251,8 @@ __NE_INT_50:
 
     mov rcx, r8
     mov rdx, r9
+    mov r8, r10
+    mov r9, r11
 
     call rax
     pop rax
@@ -267,6 +269,8 @@ __NE_INT_51:
 
     mov rcx, r8
     mov rdx, r9
+    mov r8, r10
+    mov r9, r11
 
     call rax
     pop rax
