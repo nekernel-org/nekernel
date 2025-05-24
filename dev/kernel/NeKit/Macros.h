@@ -121,10 +121,13 @@
 #endif  // !RGB
 
 #ifdef __NE_AMD64__
-#define dbg_break_point() asm volatile("int $3")
+#define DBG_TRAP() asm volatile("int $3")
 #else
-#define dbg_break_point() ((Kernel::Void) 0)
+#define DBG_TRAP() ((Kernel::Void) 0)
 #endif
+
+#define LIKELY(ARG) ((ARG) ? MUST_PASS(NO) : ((Kernel::Void) 0))
+#define UNLIKELY(ARG) LIKELY(!(ARG))
 
 #define RTL_ENDIAN(address, value)                                                           \
   (((reinterpret_cast<Kernel::Char*>(address)[0]) == (value)) ? (Kernel::Endian::kEndianBig) \

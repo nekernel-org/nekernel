@@ -153,7 +153,7 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 
   if (!NeFS::fs_init_nefs()) {
     kout << "NeFS cannot be formated on the disk. Aborting\r";
-    dbg_break_point();
+    DBG_TRAP();
   }
 
 hal_spin_kernel:

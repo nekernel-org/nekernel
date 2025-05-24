@@ -20,7 +20,7 @@ Boolean NetworkDevice::Name(const Char* name) {
 
   if (*name == 0) return NO;
 
-  if (rt_string_len(name) > kNetworkNameLen) return NO;
+  if (rt_string_len(name) > rt_string_len(this->Name())) return NO;
 
   rt_copy_memory((VoidPtr) name, (VoidPtr) this->Name(), rt_string_len(this->Name()));
 

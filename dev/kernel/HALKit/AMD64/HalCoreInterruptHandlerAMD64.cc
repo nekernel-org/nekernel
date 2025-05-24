@@ -54,8 +54,6 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
-
-  process.Leak().Crash();
 }
 
 /// @brief Handle scheduler interrupt.
@@ -76,15 +74,15 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
 /// @brief Handle math fault.
 /// @param rsp
 EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
-  hal_idt_send_eoi(8);
-
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
+  process.Leak().Crash();
+
+  hal_idt_send_eoi(8);
 
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
 
-  process.Leak().Crash();
 }
 
 /// @brief Handle any generic fault.
@@ -102,13 +100,10 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
   process.Leak().Signal.Status    = process.Leak().Status;
 
   Kernel::kout << "Kernel: SIGKILL status.\r";
-
-  process.Leak().Crash();
 }
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
   auto& process = Kernel::UserProcessScheduler::The().TheCurrentProcess();
-  process.Leak().Crash();
 
   hal_idt_send_eoi(3);
 
@@ -131,8 +126,6 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
   process.Leak().Signal.SignalArg = rsp;
   process.Leak().Signal.SignalID  = SIGKILL;
   process.Leak().Signal.Status    = process.Leak().Status;
-
-  process.Leak().Crash();
 }
 
 /// @brief Enter syscall from assembly.

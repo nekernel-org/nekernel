@@ -36,8 +36,6 @@ class NetworkDevice final : public IDeviceObject<NetworkDeviceCommand> {
   Boolean     Name(const Char* newStr);
 
  private:
-  static constexpr auto kNetworkNameLen = 512;
-
   Void (*fCleanup)(void);
 };
 
