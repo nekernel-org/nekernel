@@ -24,6 +24,12 @@ struct ZXD_EXEC_HEADER {
   UInt32 fCRC32;
   UInt32 fAssigneeSignature;
   UInt32 fIssuerSingature;
+  UIntPtr fExecOffset;
+  SizeT fExecSize;
+  UIntPtr fStubOffset;
+  SizeT fStubSize;
+  SizeT fStubAlign;
+  SizeT fStubCount;
 };
 
 /// @brief ZXD stub header
