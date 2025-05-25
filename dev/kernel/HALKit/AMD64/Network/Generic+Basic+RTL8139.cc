@@ -79,7 +79,7 @@ EXTERN_C void rtl_rtl8139_interrupt_handler() {
     // While we receive data.
     while ((rt_in8(kRTLIOBase + 0x37) & 0x01) == 0) {
       // We grab an offset from the RX buffer.
-      UInt32          offset = kRXOffset % kRXBufferSize;
+      UInt32 offset = kRXOffset % kRXBufferSize;
 
       // If the offset is too high, we reset it.
       if (offset >= (kRXBufferSize - 16)) {

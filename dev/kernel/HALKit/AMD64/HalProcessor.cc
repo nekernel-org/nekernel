@@ -16,6 +16,15 @@
  */
 
 namespace Kernel::HAL {
+inline Bool hal_has_msr() noexcept {
+  static UInt32 eax, unused, edx;  // eax, edx
+
+  __get_cpuid(1, &eax, &unused, &unused, &edx);
+
+  // edx returns the flag for MSR (which is 1 shifted to 5.)
+  return edx & (1 << 5);
+}
+
 Void hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept {
   if (!lo || !hi) return;
   asm volatile("rdmsr" : "=a"(*lo), "=d"(*hi) : "c"(msr));

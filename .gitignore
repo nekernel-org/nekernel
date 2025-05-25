@@ -20,6 +20,9 @@ public/frameworks/*/dist/*
 *.pdf
 *.aux
 
+ne_kernel
+ne_bootz
+
 neoskrnl/neoskrnl.xcodeproj/project.xcworkspace/xcshareddata/
 
 tooling/dist/mkfs.*

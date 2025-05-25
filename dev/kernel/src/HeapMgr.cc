@@ -25,8 +25,8 @@
 //! @file HeapMgr.cc
 //! @brief Heap system that serves as the main memory manager.
 
-#define kMemoryMgrMagic (0xD4D75)
-#define kMemoryMgrAlignSz (4U)
+#define kHeapMgrMagic (0xD4D75)
+#define kHeapMgrAlignSz (4U)
 
 namespace Kernel {
 /// @brief Implementation details.
@@ -68,7 +68,7 @@ namespace Detail {
     UInt32 fPad;
 
     /// @brief Padding bytes for header.
-    UInt8 fPadding[kMemoryMgrAlignSz];
+    UInt8 fPadding[kHeapMgrAlignSz];
   };
 
   /// @brief Check for heap address validity.
@@ -112,7 +112,7 @@ _Output VoidPtr mm_alloc_ptr(SizeT sz, Bool wr, Bool user, SizeT pad_amount) {
                                                          sizeof(Detail::MM_INFORMATION_BLOCK));
 
   heap_info_ptr->fSize  = sz_fix;
-  heap_info_ptr->fMagic = kMemoryMgrMagic;
+  heap_info_ptr->fMagic = kHeapMgrMagic;
   heap_info_ptr->fCRC32 = 0U;  // dont fill it for now.
   heap_info_ptr->fOffset =
       reinterpret_cast<UIntPtr>(heap_info_ptr) + sizeof(Detail::MM_INFORMATION_BLOCK);
@@ -122,7 +122,7 @@ _Output VoidPtr mm_alloc_ptr(SizeT sz, Bool wr, Bool user, SizeT pad_amount) {
   heap_info_ptr->fPresent   = Yes;
   heap_info_ptr->fPad       = pad_amount;
 
-  rt_set_memory(heap_info_ptr->fPadding, 0, kMemoryMgrAlignSz);
+  rt_set_memory(heap_info_ptr->fPadding, 0, kHeapMgrAlignSz);
 
   auto result = reinterpret_cast<VoidPtr>(heap_info_ptr->fOffset);
 
@@ -191,7 +191,7 @@ _Output Int32 mm_free_ptr(VoidPtr heap_ptr) {
       reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>((UIntPtr) (heap_ptr) -
                                                          sizeof(Detail::MM_INFORMATION_BLOCK));
 
-  if (heap_info_ptr && heap_info_ptr->fMagic == kMemoryMgrMagic) {
+  if (heap_info_ptr && heap_info_ptr->fMagic == kHeapMgrMagic) {
     if (!heap_info_ptr->fPresent) {
       return kErrorHeapNotPresent;
     }
@@ -231,7 +231,7 @@ _Output Boolean mm_is_valid_ptr(VoidPtr heap_ptr) {
         reinterpret_cast<Detail::MM_INFORMATION_BLOCK_PTR>((UIntPtr) (heap_ptr) -
                                                            sizeof(Detail::MM_INFORMATION_BLOCK));
 
-    return (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kMemoryMgrMagic);
+    return (heap_info_ptr && heap_info_ptr->fPresent && heap_info_ptr->fMagic == kHeapMgrMagic);
   }
 
   return No;
@@ -247,7 +247,7 @@ _Output Boolean mm_protect_ptr(VoidPtr heap_ptr) {
                                                            sizeof(Detail::MM_INFORMATION_BLOCK));
 
     /// if valid, present and is heap header, then compute crc32
-    if (heap_info_ptr && heap_info_ptr->fPresent && kMemoryMgrMagic == heap_info_ptr->fMagic) {
+    if (heap_info_ptr && heap_info_ptr->fPresent && kHeapMgrMagic == heap_info_ptr->fMagic) {
       heap_info_ptr->fCRC32 =
           ke_calculate_crc32((Char*) heap_info_ptr->fOffset, heap_info_ptr->fSize);
 

@@ -193,8 +193,8 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
   // Assign to global 'kHandoverHeader'.
 
-  WideChar kernel_path[256U] = L"krnl.efi";
-  UInt32   kernel_path_sz    = StrLen("krnl.efi");
+  WideChar kernel_path[256U] = L"ne_kernel";
+  UInt32   kernel_path_sz    = StrLen("ne_kernel");
 
   UInt32 sz_ver = sizeof(UInt64);
   UInt64 ver    = KERNEL_VERSION_BCD;

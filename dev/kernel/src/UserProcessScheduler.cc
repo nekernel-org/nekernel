@@ -403,10 +403,10 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   HAL::mm_map_page((VoidPtr) process.StackFrame->IP,
-                   (VoidPtr) HAL::mm_get_phys_address((VoidPtr) process.StackFrame->IP),
+                   (VoidPtr) HAL::mm_get_page_addr((VoidPtr) process.StackFrame->IP),
                    HAL::kMMFlagsUser | HAL::kMMFlagsPresent);
   HAL::mm_map_page((VoidPtr) process.StackFrame->SP,
-                   (VoidPtr) HAL::mm_get_phys_address((VoidPtr) process.StackFrame->SP),
+                   (VoidPtr) HAL::mm_get_page_addr((VoidPtr) process.StackFrame->SP),
                    HAL::kMMFlagsUser | HAL::kMMFlagsPresent);
 #endif  // ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 

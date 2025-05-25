@@ -18,11 +18,11 @@ SInt32 _NeMain(SInt32 argc, Char* argv[]) {
       return EXIT_FAILURE;
     }
 
-	SInt32 bytes = 64; // Simulated response size
-	SInt32 time = 100 + (i * 10); // Simulated response time
-	SInt32 ttl = 64;
+    SInt32 bytes = 64;              // Simulated response size
+    SInt32 time  = 100 + (i * 10);  // Simulated response time
+    SInt32 ttl   = 64;
 
-	PrintOut(nullptr, "Reply from %s: bytes=%i time=%ims TTL=%i\n", argv[1], bytes, time, ttl);
+    PrintOut(nullptr, "Reply from %s: bytes=%i time=%ims TTL=%i\n", argv[1], bytes, time, ttl);
   }
 
   return EXIT_SUCCESS;

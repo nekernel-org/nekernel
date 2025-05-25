@@ -11,8 +11,8 @@
 
 namespace Kernel {
 enum {
-  kLockInvalid,
-  kLockDone = 200,
+  kLockInvalid = 0,
+  kLockDone    = 200,
   kLockTimedOut,
   kLockCount = 3,
 };

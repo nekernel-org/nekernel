@@ -64,7 +64,8 @@ inline constexpr KPCError kErrorUnrecoverableDisk  = 63;
 inline constexpr KPCError kErrorFileLocked         = 64;
 inline constexpr KPCError kErrorDiskIsTooTiny      = 65;
 /// Kernel errors.
-inline constexpr KPCError kErrorDmaExhausted = 101;
+inline constexpr KPCError kErrorDmaExhausted      = 101;
+inline constexpr KPCError kErrorOutOfBitMapMemory = 102;
 /// Generic errors.
 inline constexpr KPCError kErrorUnimplemented = -1;
 

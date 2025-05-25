@@ -146,17 +146,19 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
   HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 #ifdef __FSKIT_INCLUDES_HEFS__
-  if (HeFS::fs_init_hefs()) {
-    goto hal_spin_kernel;
+  if (!HeFS::fs_init_hefs()) {
+    kout << "HeFS cannot be formated on disk. Aborting\r";
+    DBG_TRAP();
   }
 #endif
 
+#ifdef __FSKIT_INCLUDES_NEFS__
   if (!NeFS::fs_init_nefs()) {
-    kout << "NeFS cannot be formated on the disk. Aborting\r";
+    kout << "NeFS cannot be formated on disk. Aborting\r";
     DBG_TRAP();
   }
+#endif
 
-hal_spin_kernel:
   HAL::Register64 idt_reg;
   idt_reg.Base = reinterpret_cast<UIntPtr>(kInterruptVectorTable);
 

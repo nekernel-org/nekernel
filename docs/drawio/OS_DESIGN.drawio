@@ -8,37 +8,37 @@
                     <mxGeometry x="240" y="340" width="360" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="ifhO3zQZNW-sXvZMTmu8-3" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;Applications &amp;amp; Dynamically Linked Libraries (Ring 3, EL0)&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="240" y="240" width="360" height="35" as="geometry"/>
+                    <mxGeometry x="240" y="240" width="180" height="35" as="geometry"/>
                 </mxCell>
                 <mxCell id="ifhO3zQZNW-sXvZMTmu8-13" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;NeKernel MP Kernel, DDK, and Drivers (Ring 0, EL1)&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="240" y="450" width="360" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;SCI and DDK Kernel Calls (Ring 0 / Ring 2, EL0 to EL1 Transitions)&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="4" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;SCI and DDK calls (Ring 0 / Ring 2, EL0 to EL1 Transitions)&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="240" y="380" width="360" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="5" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;HAL&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="404.5" y="525" width="195.5" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="6" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;Kernel Kits&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="240" y="525" width="154.5" height="60" as="geometry"/>
+                <mxCell id="6" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;NeKernel&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="525" width="250" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;BootZ Bootloader and Handover&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="240" y="600" width="360" height="60" as="geometry"/>
+                <mxCell id="7" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;BootZ Bootloader and Handover Protocol&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="600" width="460" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="9" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;Firmware (EFI, NeKernel.org&#39;s FW)&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="240" y="670" width="357.75" height="60" as="geometry"/>
+                    <mxGeometry x="140" y="670" width="460" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="Privileged" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="660" y="460" width="60" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="11" value="User" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="660" y="300" width="60" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="12" value="Driver" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="660" y="380" width="60" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="13" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;System SDK Stable API&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="13" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;System SDK Stable API&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="238.88" y="290" width="360" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;Services (Ring 3, EL0)&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="430" y="240" width="170" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;Hypr86&lt;/b&gt;&lt;/p&gt;&lt;p class=&quot;p1&quot;&gt;&lt;b&gt;Virtual Machine&lt;/b&gt;&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="140" y="240" width="90" height="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;NeKernel&lt;/h1&gt;&lt;p&gt;This shows how NeKernel is&lt;/p&gt;&lt;p&gt;designed, some parts here are&lt;/p&gt;&lt;p&gt;not present yet, such as Hypr86.&lt;/p&gt;&lt;p&gt;This diagram was made for the&lt;/p&gt;&lt;p&gt;developers to understand NeKernel better.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="630" y="240" width="180" height="190" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

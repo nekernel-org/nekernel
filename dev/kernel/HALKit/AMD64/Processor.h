@@ -174,16 +174,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept;
 /// @retval true it does exists.
 /// @retval false it doesn't.
 /***********************************************************************************/
-inline Bool hal_has_msr() noexcept {
-  static UInt32 eax, unused, edx;  // eax, edx
-
-  __get_cpuid(1, &eax, &unused, &unused, &edx);
-
-  // edx returns the flag for MSR (which is 1 shifted to 5.)
-  return edx & (1 << 5);
-}
-
-UIntPtr mm_get_phys_address(VoidPtr virtual_address);
+Bool hal_has_msr() noexcept;
 
 /***********************************************************************************/
 /// @brief Get Model specific register inside core.
@@ -270,6 +261,8 @@ EXTERN_C Void rt_cli();
 EXTERN_C Void rt_sti();
 EXTERN_C Void rt_cld();
 EXTERN_C Void rt_std();
+
+EXTERN_C UIntPtr mm_get_page_addr(VoidPtr virtual_address);
 
 EXTERN_C Int32 mm_memory_fence(VoidPtr virtual_address);
 }  // namespace Kernel::HAL

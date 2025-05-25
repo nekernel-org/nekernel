@@ -13,7 +13,7 @@ BEGIN
       VALUE "FileVersion", KERNEL_VERSION
 	  VALUE "InternalName", "krnl"
       VALUE "LegalCopyright", "(c) 2024-2025 Amlal El Mahrouss, all rights reserved."
-      VALUE "OriginalFilename", "krnl.efi"
+      VALUE "OriginalFilename", "ne_kernel"
       VALUE "ProductName", "NeKernel"
       VALUE "ProductVersion", KERNEL_VERSION
     END

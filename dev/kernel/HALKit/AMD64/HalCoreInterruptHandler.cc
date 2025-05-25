@@ -19,7 +19,7 @@ STATIC BOOL kIsRunning = NO;
 /// @note
 STATIC void hal_idt_send_eoi(UInt8 vector) {
   ((volatile UInt32*) kApicBaseAddress)[0xB0 / 4] = 0;
-  
+
   if (vector >= kPICCommand && vector <= 0x2F) {
     if (vector >= 0x28) {
       Kernel::HAL::rt_out8(kPIC2Command, kPICCommand);
@@ -57,7 +57,7 @@ EXTERN_C void idt_handle_pf(Kernel::UIntPtr rsp) {
 /// @brief Handle scheduler interrupt.
 EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
   NE_UNUSED(rsp);
-  
+
   hal_idt_send_eoi(32);
 
   while (kIsRunning)

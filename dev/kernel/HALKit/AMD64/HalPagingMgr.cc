@@ -57,7 +57,7 @@ STATIC Void mmi_page_status(Detail::PTE* pte) {
 /// @param virt a valid virtual address.
 /// @return Physical address.
 /***********************************************************************************/
-UIntPtr mm_get_phys_address(VoidPtr virt) {
+EXTERN_C UIntPtr mm_get_page_addr(VoidPtr virt) {
   const UInt64 kVMAddr         = (UInt64) virt;
   const UInt64 kMask9Bits      = 0x1FFULL;
   const UInt64 kPageOffsetMask = 0xFFFULL;
@@ -102,7 +102,7 @@ UIntPtr mm_get_phys_address(VoidPtr virt) {
 /// @brief clflush+mfence helper function.
 /***********************************************************************************/
 EXTERN_C Int32 mm_memory_fence(VoidPtr virtual_address) {
-  if (!virtual_address || !mm_get_phys_address(virtual_address)) return kErrorInvalidData;
+  if (!virtual_address || !mm_get_page_addr(virtual_address)) return kErrorInvalidData;
 
   asm volatile("clflush (%0)" : : "r"(virtual_address) : "memory");
   asm volatile("mfence" ::: "memory");

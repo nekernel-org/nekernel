@@ -128,6 +128,7 @@ EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ProcessID thrdid)
 /// @brief Is the current config SMP aware?
 /// @return True if YES, False if not.
 /***********************************************************************************/
+
 Bool mp_is_smp(Void) noexcept {
   return kSMPAware;
 }
