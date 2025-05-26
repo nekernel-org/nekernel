@@ -126,6 +126,7 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   auto vm_register = kKernelVM;
+
   hal_write_cr3(this->VMRegister);
 
   auto ptr = mm_alloc_ptr(sz, Yes, Yes, pad_amount);

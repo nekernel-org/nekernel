@@ -23,6 +23,8 @@
 
 #define drv_sector_cnt(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
 
+#define kDriveHiddenPrefix '~'
+
 namespace Kernel {
 enum {
   kInvalidDrive = -1,
@@ -159,20 +161,6 @@ namespace Detect {
 Void io_drv_input(DriveTrait::DrivePacket pckt);
 
 Void io_drv_output(DriveTrait::DrivePacket pckt);
-
-/// @brief Read from IFS disk.
-/// @param Mnt mounted interface.
-/// @param DrvTrait drive info
-/// @param DrvIndex drive index.
-/// @return
-Int32 fs_ifs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
-
-/// @brief Write to IFS disk.
-/// @param Mnt mounted interface.
-/// @param DrvTrait drive info
-/// @param DrvIndex drive index.
-/// @return
-Int32 fs_ifs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex);
 }  // namespace Kernel
 
 #endif /* ifndef INC_DRIVE_MANAGER_H */

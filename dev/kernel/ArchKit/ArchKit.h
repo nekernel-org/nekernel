@@ -77,8 +77,6 @@ struct HalSyscallEntry final {
   operator bool() { return fHooked; }
 };
 
-EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_task(Kernel::Int64 pid);
-
 inline Kernel::Array<HalSyscallEntry, kMaxDispatchCallCount> kSysCalls;
 
 inline Kernel::Array<HalSyscallEntry, kMaxDispatchCallCount> kKernCalls;

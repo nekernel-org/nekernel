@@ -20,7 +20,7 @@ typedef VoidPtr Ref;
 
 typedef Ref IORef;
 typedef Ref FSRef;
-typedef Ref DLLRef;
+typedef Ref DylibRef;
 typedef Ref ThreadRef;
 typedef Ref SocketRef;
 typedef Ref NetworkRef;
@@ -36,18 +36,18 @@ typedef Ref SemaphoreRef;
 /// @param symbol the symbol to look for
 /// @param dll_handle the Dylib handle.
 /// @return the proc pointer.
-IMPORT_C Ref LdrGetDLLSymbolFromHandle(_Input const Char* symbol, _Input Ref dll_handle);
+IMPORT_C Ref LdrGetDylibSymbolFromHandle(_Input const Char* symbol, _Input Ref dll_handle);
 
 /// @brief Open Dylib handle.
 /// @param path dll path.
 /// @param drv driver letter.
 /// @return a dylib ref.
-IMPORT_C Ref LdrOpenDLLHandle(_Input const Char* path, _Input const Char* drive_letter);
+IMPORT_C Ref LdrOpenDylibHandle(_Input const Char* path, _Input const Char* drive_letter);
 
 /// @brief Close Dylib handle
 /// @param dll_handle the dylib ref.
 /// @return whether it closed or not.
-IMPORT_C UInt32 LdrCloseDLLHandle(_Input Ref* dll_handle);
+IMPORT_C UInt32 LdrCloseDylibHandle(_Input Ref* dll_handle);
 
 // ------------------------------------------------------------------------------------------ //
 // File API.
@@ -360,7 +360,17 @@ IMPORT_C BOOL FsCreateFile(const Char* path);
 IMPORT_C BOOL FsCreateAlias(const Char* path, const Char* from);
 
 // ------------------------------------------------------------------------------------------ //
-// @brief String API.
+// @brief Installable Filesystem API.
+// ------------------------------------------------------------------------------------------ //
+
+IMPORT_C BOOL IfsMount(const Char* path, const Char* drive_letter);
+
+IMPORT_C BOOL IfsUnmount(const Char* drive_letter);
+
+IMPORT_C BOOL IfsIsMounted(const Char* drive_letter);
+
+// ------------------------------------------------------------------------------------------ //
+// @brief String Manip API.
 // ------------------------------------------------------------------------------------------ //
 
 IMPORT_C Char* StrFmt(const Char* fmt, ...);

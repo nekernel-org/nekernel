@@ -9,9 +9,9 @@
 
 /*************************************************************
  *
- * File: DriveMgr+IO.cc
+ * File: IFS.cc
  * Purpose: Filesystem to mountpoint interface.
- * Date: 3/26/24
+ * Date: 05/26/2025
  *
  * Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
  *
@@ -23,13 +23,13 @@
 #define fsi_ifs_read(DRV, TRAITS, MP) (MP->DRV()).fInput(TRAITS)
 
 namespace Kernel {
-/// @brief Read from newfs disk.
+/// @brief Read from fs disk.
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return
 Int32 fs_ifs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
-  if (!Mnt) return 1;
+  if (!Mnt) return kErrorDisk;
 
   DrvTrait.fPacket.fPacketGood = false;
 
@@ -52,16 +52,16 @@ Int32 fs_ifs_read(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex
     }
   }
 
-  return DrvTrait.fPacket.fPacketGood;
+  return DrvTrait.fPacket.fPacketGood ? kErrorSuccess : kErrorDisk;
 }
 
-/// @brief Write to newfs disk.
+/// @brief Write to fs disk.
 /// @param Mnt mounted interface.
 /// @param DrvTrait drive info
 /// @param DrvIndex drive index.
 /// @return
 Int32 fs_ifs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvIndex) {
-  if (!Mnt) return 1;
+  if (!Mnt) return kErrorDisk;
 
   DrvTrait.fPacket.fPacketGood = false;
 
@@ -84,6 +84,6 @@ Int32 fs_ifs_write(MountpointInterface* Mnt, DriveTrait& DrvTrait, Int32 DrvInde
     }
   }
 
-  return DrvTrait.fPacket.fPacketGood;
+  return DrvTrait.fPacket.fPacketGood ? kErrorSuccess : kErrorDisk;
 }
 }  // namespace Kernel

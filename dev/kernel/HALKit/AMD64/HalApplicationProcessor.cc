@@ -101,7 +101,7 @@ Void hal_send_ipi_msg(UInt32 target, UInt32 apic_id, UInt8 vector) {
 /// @param thrdid The thread ID.
 /***********************************************************************************/
 
-EXTERN_C HAL::StackFramePtr mp_get_current_task(Int64 thrdid) {
+EXTERN_C HAL::StackFramePtr mp_get_current_task(ThreadID thrdid) {
   if (thrdid > kSMPCount) return nullptr;
   return kHWThread[thrdid].mFramePtr;
 }
@@ -112,7 +112,7 @@ EXTERN_C HAL::StackFramePtr mp_get_current_task(Int64 thrdid) {
 /// @param thrdid The thread ID.
 /***********************************************************************************/
 
-EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ProcessID thrdid) {
+EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ThreadID thrdid) {
   if (thrdid > kSMPCount) return NO;
   if (!stack_frame) return NO;
 

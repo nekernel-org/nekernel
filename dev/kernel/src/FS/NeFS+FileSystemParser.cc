@@ -10,6 +10,7 @@
 #include <FirmwareKit/EPM.h>
 
 #include <KernelKit/DriveMgr.h>
+#include <KernelKit/IFS.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/UserMgr.h>

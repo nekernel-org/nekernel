@@ -23,10 +23,10 @@ namespace Kernel {
 typedef void (*rtl_main_kind)(void);
 
 /// @brief C++ Constructor entrypoint.
-typedef void (*rtl_ctor_kind)(void);
+typedef void (*rtl_cxx_ctor_kind)(void);
 
 /// @brief C++ Destructor entrypoint.
-typedef void (*rtl_dtor_kind)(void);
+typedef void (*rtl_cxx_dtor_kind)(void);
 
 /// @brief Executes a new process from a function. Kernel code only.
 /// @note This sets up a new stack, anything on the main function that calls the Kernel will not be
