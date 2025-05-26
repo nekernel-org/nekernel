@@ -114,11 +114,14 @@ EXTERN_C HAL::StackFramePtr mp_get_current_task(Int64 thrdid) {
 
 EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ProcessID thrdid) {
   if (thrdid > kSMPCount) return NO;
+  if (!stack_frame) return NO;
 
   kHWThread[thrdid].mFramePtr = stack_frame;
   kHWThread[thrdid].mThreadID = thrdid;
 
   HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
+
+  sched_jump_to_task(kHWThread[thrdid].mFramePtr);
 
   return YES;
 }
