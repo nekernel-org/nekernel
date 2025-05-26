@@ -102,10 +102,8 @@ Void hal_send_ipi_msg(UInt32 target, UInt32 apic_id, UInt8 vector) {
 /***********************************************************************************/
 
 EXTERN_C HAL::StackFramePtr mp_get_current_task(Int64 thrdid) {
-  const auto process_index = thrdid;
   if (thrdid > kSMPCount) return nullptr;
-
-  return kHWThread[process_index].mFramePtr;
+  return kHWThread[thrdid].mFramePtr;
 }
 
 /***********************************************************************************/
