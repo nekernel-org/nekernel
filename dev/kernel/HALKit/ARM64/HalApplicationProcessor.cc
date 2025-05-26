@@ -103,7 +103,7 @@ namespace Detail {
 /// @param thrdid The thread ID.
 /***********************************************************************************/
 
-EXTERN_C HAL::StackFramePtr mp_get_current_context(ProcessID thrdid) {
+EXTERN_C HAL::StackFramePtr mp_get_current_task(ProcessID thrdid) {
   return kHWThread[thrdid].mFramePtr;
 }
 
