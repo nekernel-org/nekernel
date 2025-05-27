@@ -5,3 +5,5 @@
 ------------------------------------------- */
 
 #include <KernelKit/DeviceMgr.h>
+
+namespace Kernel {}  // namespace Kernel

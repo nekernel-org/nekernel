@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-  Copyright (C) 2024-2025, Amlal El Mahrouss Labs, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss , all rights reserved.
 
   File: FileMgr.h
   Purpose: Kernel file manager.
@@ -52,6 +52,7 @@
   @note Refer to first enum.
 */
 #define kFileOpsCount (4U)
+
 #define kFileMimeGeneric "ne-application-kind/all"
 
 /** @brief invalid position. (n-pos) */
@@ -344,7 +345,7 @@ using FileStreamUTF16 = FileStream<WideChar>;
 
 typedef UInt64 CursorType;
 
-inline static const auto kRestrictStrLen = 8U;
+inline STATIC const auto kRestrictStrLen = 8U;
 
 /// @brief restrict information about the file descriptor.
 struct FILEMGR_RESTRICT final {
@@ -386,7 +387,7 @@ inline FileStream<Encoding, Class>::FileStream(const Encoding* path, const Encod
     }
   }
 
-  kout << "FileMgr: New file at: " << path << ".\r";
+  kout << "FileMgr: Open file at: " << path << ".\r";
 }
 
 /// @brief destructor of the file stream.

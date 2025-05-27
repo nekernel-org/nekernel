@@ -117,7 +117,6 @@ EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ThreadID thrdid) 
   if (!stack_frame) return NO;
 
   kHWThread[thrdid].mFramePtr = stack_frame;
-  kHWThread[thrdid].mThreadID = thrdid;
 
   HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
 
@@ -165,17 +164,18 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     kSMPInterrupt = 0;
     kSMPCount     = 0;
 
-    UInt32 lo = 0, hi = 0;
+    UInt32 lo = 0U, hi = 0U;
 
-    hal_get_msr(0x1B, &lo, &hi);
+    hal_get_msr(APIC_BASE_MSR, &lo, &hi);
+
     UInt64 apic_base = ((UInt64) hi << 32) | lo;
 
-    apic_base |= 0x800;  // enable bit
+    apic_base |= APIC_BASE_MSR_ENABLE;  // Enable APIC.
 
     lo = apic_base & 0xFFFFFFFF;
     hi = apic_base >> 32;
 
-    hal_set_msr(0x1B, lo, hi);
+    hal_set_msr(APIC_BASE_MSR, lo, hi);
 
     kApicBaseAddress = apic_base & 0xFFFFF000;
 
@@ -184,7 +184,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     controller.Write(LAPIC_REG_ENABLE, 0);
     controller.Write(LAPIC_REG_SPURIOUS, 0x1FF);  // Enable bit, spurious interrupt vector register.
     controller.Write(LAPIC_REG_TIMER_DIV, 0b0011);
-    controller.Write(LAPIC_REG_TIMER_LVT, 32 | (1 << 17));
+    controller.Write(LAPIC_REG_TIMER_LVT, 0x20 | (1 << 17));
     controller.Write(LAPIC_REG_TIMER_INITCNT, 1000000);
 
     volatile UInt8* entry_ptr = reinterpret_cast<volatile UInt8*>(kMADTBlock->List);
@@ -202,6 +202,8 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
 
         if (entry_struct->Flags & 0x1) {
           kAPICLocales[kSMPCount] = entry_struct->ProcessorID;
+          kHWThread[kSMPCount].mThreadID = kAPICLocales[kSMPCount];
+          
           ++kSMPCount;
 
           kout << "Kind: LAPIC: ON\r";
@@ -212,7 +214,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
           kout << "Kind: LAPIC: OFF\r";
         }
       } else {
-        kout << "Kind: UNKNOWN: ?\r";
+        kout << "Kind: UNKNOWN\r";
       }
 
       entry_ptr += length;

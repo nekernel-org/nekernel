@@ -8,8 +8,8 @@
 
  Revision History:
 
-   31/01/24: Add kDeviceCnt (amlel)
-    15/11/24: Add NE_DEVICE macro, to inherit from device object.
+  31/01/24: Add kDeviceCnt (amlel)
+  15/11/24: Add NE_DEVICE macro, to inherit from device object.
 
  ------------------------------------------- */
 
@@ -26,11 +26,14 @@
 
 #define NE_DEVICE : public ::Kernel::IDeviceObject
 
-// Last Rev: Wed, Apr  3, 2024  9:09:41 AM
+// Last Rev: Wed, May  27, 2025  6:22 PM
 
 namespace Kernel {
 template <typename T>
 class IDeviceObject;
+
+template <typename T>
+class IOBuf;
 
 /***********************************************************************************/
 /// @brief Device contract interface, represents an HW device.
@@ -103,7 +106,8 @@ class IOBuf final {
 
 ///! @brief Device enum types.
 enum {
-  kDeviceTypeIDE,
+  kDeviceTypeInvalid = 0,
+  kDeviceTypeIDE     = 100,
   kDeviceTypeEthernet,
   kDeviceTypeWiFi,
   kDeviceTypeFW,
@@ -114,7 +118,10 @@ enum {
   kDeviceTypeMBCI,
   kDeviceTypeATA,
   kDeviceTypeUSB,
-  kDeviceTypeMediaCtrl,  // MM controller
+  kDeviceTypeAPM,  // Adv. Pwr. Mgmt.
+  kDeviceTypePCI,
+  kDeviceTypeVGA,
+  kDeviceTypeGPU,
   kDeviceTypeCount,
 };
 }  // namespace Kernel

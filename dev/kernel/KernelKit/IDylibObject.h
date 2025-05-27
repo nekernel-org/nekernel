@@ -15,26 +15,29 @@
 #define NE_DYLIB_OBJECT : public IDylibObject
 
 namespace Kernel {
+class IDylibObject;
+
 /// @brief Dylib class object. A handle to a shared library.
 class IDylibObject {
  public:
   explicit IDylibObject() = default;
   virtual ~IDylibObject() = default;
 
-  struct DLL_TRAITS final {
+  struct DylibTraits final {
     VoidPtr ImageObject{nullptr};
     VoidPtr ImageEntrypointOffset{nullptr};
 
-    Bool IsValid() { return ImageObject && ImageEntrypointOffset; }
+    VoidPtr Image() const { return ImageObject; }
+    Bool    IsValid() const { return ImageObject && ImageEntrypointOffset; }
   };
 
   NE_COPY_DEFAULT(IDylibObject)
 
-  virtual DLL_TRAITS** GetAddressOf() = 0;
-  virtual DLL_TRAITS*  Get()          = 0;
+  virtual DylibTraits** GetAddressOf() = 0;
+  virtual DylibTraits*  Get()          = 0;
 
-  virtual Void Mount(DLL_TRAITS* to_mount) = 0;
-  virtual Void Unmount()                   = 0;
+  virtual Void Mount(DylibTraits* to_mount) = 0;
+  virtual Void Unmount()                    = 0;
 };
 
 /// @brief Pure implementation, missing method/function handler.

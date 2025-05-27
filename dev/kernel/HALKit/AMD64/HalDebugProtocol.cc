@@ -13,8 +13,4 @@
 
 // after that we have start of additional data.
 
-namespace Kernel {
-Void rt_debug_listen(KernelDebugHeader* the_hdr) noexcept {
-  NE_UNUSED(the_hdr);
-}
-}  // namespace Kernel
+namespace Kernel {}  // namespace Kernel

@@ -23,11 +23,13 @@ EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 /// @brief Kernel init function.
 /// @param handover_hdr Handover boot header.
 EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
+  using namespace Kernel;
+
   if (handover_hdr->f_Magic != kHandoverMagic && handover_hdr->f_Version != kHandoverVersion) {
     return kEfiFail;
   }
 
-  Kernel::HAL::rt_sti();
+  HAL::rt_sti();
 
   kHandoverHeader = handover_hdr;
 
@@ -46,9 +48,9 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   /*     INITIALIZE BIT MAP.              */
   /************************************** */
 
-  kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
-  kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
-      reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
+  kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
+  kKernelBitMpStart =
+      reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(kHandoverHeader->f_BitMapStart));
 
   /************************************** */
   /*     INITIALIZE GDT AND SEGMENTS. */
@@ -62,7 +64,7 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   kKernelTSS.fIopb = sizeof(HAL::Detail::NE_TSS);
 
   /* The GDT, mostly descriptors for user and kernel segments. */
-  STATIC Kernel::HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
+  STATIC HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
       {.fLimitLow   = 0,
        .fBaseLow    = 0,
        .fBaseMid    = 0,
@@ -112,13 +114,13 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   kGDTArray[4].fBaseHigh   = 0;
 
   // Load memory descriptors.
-  Kernel::HAL::Register64 gdt_reg;
+  HAL::Register64 gdt_reg;
 
-  gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
-  gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
+  gdt_reg.Base  = reinterpret_cast<UIntPtr>(kGDTArray);
+  gdt_reg.Limit = (sizeof(HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
 
   //! GDT will load hal_read_init after it successfully loads the segments.
-  Kernel::HAL::GDTLoader gdt_loader;
+  HAL::GDTLoader gdt_loader;
   gdt_loader.Load(gdt_reg);
 
   return kEfiFail;

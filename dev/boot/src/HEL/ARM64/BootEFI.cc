@@ -29,7 +29,7 @@
 
 STATIC EfiGraphicsOutputProtocol* kGop       = nullptr;
 STATIC UInt16                     kGopStride = 0U;
-STATIC EfiGUID                    kGopGuid;
+STATIC EFI_GUID                    kGopGuid;
 
 EXTERN_C Void rt_reset_hardware();
 
@@ -39,7 +39,7 @@ EXTERN EfiBootServices* BS;
   @brief Finds and stores the GOP object.
 */
 STATIC Bool boot_init_fb() noexcept {
-  kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  kGopGuid = EFI_GUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
   kGop     = nullptr;
 
   if (BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*) &kGop) != kEfiOk) return No;
@@ -107,7 +107,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // Grab MP services, extended to runtime.	   //
   // ------------------------------------------- //
 
-  EfiGUID                guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
+  EFI_GUID                guid_mp = EFI_GUID(EFI_MP_SERVICES_PROTOCOL_GUID);
   EfiMpServicesProtocol* mp      = nullptr;
 
   BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));

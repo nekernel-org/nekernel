@@ -25,6 +25,7 @@
 -D__AHCI__
 -DNE_USE_MBCI_FLASH
 -D__ATA_DMA__
+-D__NE_VEPM__
 -Wall
 -Wpedantic
 -Wextra

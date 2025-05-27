@@ -21,7 +21,7 @@
 
 STATIC EfiGraphicsOutputProtocol* kGop       = nullptr;
 STATIC UInt16                     kGopStride = 0U;
-STATIC EfiGUID                    kGopGuid;
+STATIC EFI_GUID                    kGopGuid;
 
 /** Related to jumping to the reset vector. */
 
@@ -33,7 +33,7 @@ EXTERN_C Kernel::VoidPtr boot_read_cr3();  // @brief Page directory inside cr3 r
   @brief Finds and stores the GOP object.
 */
 STATIC Bool boot_init_fb() noexcept {
-  kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  kGopGuid = EFI_GUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
   kGop     = nullptr;
 
   if (BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*) &kGop) != kEfiOk) return No;
@@ -43,7 +43,7 @@ STATIC Bool boot_init_fb() noexcept {
   return Yes;
 }
 
-EfiGUID kEfiGlobalNamespaceVarGUID = {
+EFI_GUID kEfiGlobalNamespaceVarGUID = {
     0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
 
 /// @brief BootloaderMain EFI entrypoint.
@@ -102,7 +102,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // Grab MP services, extended to runtime.	   //
   // ------------------------------------------- //
 
-  EfiGUID                guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
+  EFI_GUID                guid_mp = EFI_GUID(EFI_MP_SERVICES_PROTOCOL_GUID);
   EfiMpServicesProtocol* mp      = nullptr;
 
   BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));

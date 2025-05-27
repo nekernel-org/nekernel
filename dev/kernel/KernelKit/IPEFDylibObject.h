@@ -30,15 +30,15 @@ class IPEFDylibObject final NE_DYLIB_OBJECT {
   NE_COPY_DEFAULT(IPEFDylibObject)
 
  private:
-  DLL_TRAITS* fMounted{nullptr};
+  DylibTraits* fMounted{nullptr};
 
  public:
-  DLL_TRAITS** GetAddressOf() { return &fMounted; }
+  DylibTraits** GetAddressOf() { return &fMounted; }
 
-  DLL_TRAITS* Get() { return fMounted; }
+  DylibTraits* Get() { return fMounted; }
 
  public:
-  void Mount(DLL_TRAITS* to_mount) {
+  void Mount(DylibTraits* to_mount) {
     if (!to_mount || !to_mount->ImageObject) return;
 
     fMounted = to_mount;
