@@ -1,5 +1,5 @@
 # boot, user, and kernel are owned by amlal@nekernel.org.
 /dev/kernel/ @amlel-el-mahrouss
 /dev/boot/ @amlel-el-mahrouss
-/dev/user/ @amlel-el-mahrouss
+/dev/libSystem/ @amlel-el-mahrouss
 # some other parts (tooling, frameworks) need ownership too.

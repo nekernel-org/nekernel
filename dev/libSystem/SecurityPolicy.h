@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <user/SystemCalls.h>
+#include <libSystem/System.h>
 
 /// @file SecurityPolicy.h
 /// @brief Hardened Security Policy, used to restrict access to certain system calls.

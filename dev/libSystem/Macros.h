@@ -10,7 +10,7 @@ Purpose: libsci Macros header.
 #pragma once
 
 /***********************************************************************************/
-/// @file user/Macros.h
+/// @file libSystem/Macros.h
 /// @brief Macros and Core types of the SCI (System Call Interface).
 /***********************************************************************************/
 

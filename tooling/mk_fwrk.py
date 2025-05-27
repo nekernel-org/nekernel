@@ -70,7 +70,7 @@ def create_directory_structure(base_path_fwrk, project_file_name, project_name):
 
     proj_cpp_path = os.path.join(base_path_fwrk, project_name, f"src/DylibMain.cc")
 
-    cpp_file = "#include <user/SystemCalls.h>\n\nSInt32 _DylibAttach(SInt32 argc, Char* argv[]) {\n\treturn EXIT_FAILURE;\n}"
+    cpp_file = "#include <libSystem/System.h>\n\nSInt32 _DylibAttach(SInt32 argc, Char* argv[]) {\n\treturn EXIT_FAILURE;\n}"
 
     with open(proj_cpp_path, 'w') as cpp_file_io:
         cpp_file_io.write(cpp_file)

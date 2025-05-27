@@ -92,7 +92,7 @@ all: compile-amd64
 	$(COPY) ../kernel/$(KERNEL) src/root/$(KERNEL)
 	$(COPY) ./modules/SysChk/$(SYSCHK) src/root/$(SYSCHK)
 	$(COPY) ./modules/BootNet/$(BOOTNET) src/root/$(BOOTNET)
-	$(COPY) ../user/$(SCIKIT) src/root/$(SCIKIT)
+	$(COPY) ../libSystem/$(SCIKIT) src/root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/root/$(BOOTLOADER)
 	$(COPY) ../ddk/$(DDK) src/root/$(DDK)
 

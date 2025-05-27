@@ -9,7 +9,7 @@
 #define _REF_H_
 
 #include <CoreFoundation.fwrk/headers/Object.h>
-#include <user/SystemCalls.h>
+#include <libSystem/System.h>
 
 namespace CF {
 template <typename T>

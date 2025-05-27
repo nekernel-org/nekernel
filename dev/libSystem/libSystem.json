@@ -13,8 +13,8 @@
     "-Wl,--subsystem=17"
   ],
   "cpp_macros": [
-    "kSCIVersion=0x0100",
-    "kSCIVersionHighest=0x0100",
-    "kSCIVersionLowest=0x0100"
+    "kLibSystemVersion=0x0100",
+    "kLibSystemVersionHighest=0x0100",
+    "kLibSystemVersionLowest=0x0100"
   ]
 }

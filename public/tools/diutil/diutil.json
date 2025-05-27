@@ -2,7 +2,7 @@
   "compiler_path": "x86_64-w64-mingw32-g++",
   "compiler_std": "c++20",
   "headers_path": ["./", "../../../dev/kernel", "../../../public/frameworks/", "../../../dev/", "./"],
-  "sources_path": ["src/CommandLine.cc", "../../../public/frameworks/DiskImage.fwrk/src/*.cc", "../../../dev/user/src/*.cc"],
+  "sources_path": ["src/CommandLine.cc", "../../../public/frameworks/DiskImage.fwrk/src/*.cc", "../../../dev/libSystem/src/*.cc"],
   "output_name": "./dist/diutil",
   "cpp_macros": [
     "kDUTILVersion=0x0100",

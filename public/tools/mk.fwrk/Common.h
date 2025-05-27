@@ -7,6 +7,6 @@
 #define APPS_COMMON_H
 
 #include <CoreFoundation.fwrk/headers/Foundation.h>
-#include <user/SystemCalls.h>
+#include <libSystem/System.h>
 
 #endif  // APPS_COMMON_H

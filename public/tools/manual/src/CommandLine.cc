@@ -1,4 +1,4 @@
-#include <user/SystemCalls.h>
+#include <libSystem/System.h>
 
 SInt32 _NeMain(SInt32 argc, Char* argv[]) {
   SCI_UNUSED(argc);

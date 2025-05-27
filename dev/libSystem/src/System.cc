@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <user/AsmProc.h>
-#include <user/SystemCalls.h>
+#include <libSystem/AsmProc.h>
+#include <libSystem/System.h>
 
 /// @file SystemCalls.cc
 /// @brief Source file for the memory functions/syscalls for libSystem.sys

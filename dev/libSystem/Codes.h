@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <user/Macros.h>
+#include <libSystem/Macros.h>
 
-/// @file ProcessCodes.h
+/// @file Codes.h
 /// @brief Process Codes type and values.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 

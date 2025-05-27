@@ -11,7 +11,7 @@
 
  Revision History:
 
- 04/03/25: Set users directory as /user/ instead of /usr/
+ 04/03/25: Set users directory as /libSystem/ instead of /usr/
 
  ------------------------------------------- */
 

@@ -8,7 +8,7 @@ cd dev/user
 cd src
 make sci_asm_io_x64
 cd ..
-btb user.json
+btb libSystem.json
 cd ../ddk
 btb ddk.json
 cd ../boot

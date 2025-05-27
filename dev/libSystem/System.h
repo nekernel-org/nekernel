@@ -2,7 +2,7 @@
 
 Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 
-File: SystemCalls.h
+File: System.h
 Purpose: System Call Interface.
 
 ------------------------------------------- */
@@ -10,13 +10,18 @@ Purpose: System Call Interface.
 #ifndef SCI_SYSTEM_CALLS_H
 #define SCI_SYSTEM_CALLS_H
 
-#include <user/Macros.h>
+#include <libSystem/Macros.h>
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Types API.
 // ------------------------------------------------------------------------------------------ //
 
-typedef VoidPtr Ref;
+struct RefType {
+  UInt32  __hash;
+  VoidPtr __self;
+};
+
+typedef RefType* Ref;
 
 typedef Ref IORef;
 typedef Ref FSRef;
