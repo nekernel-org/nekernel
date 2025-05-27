@@ -43,7 +43,7 @@ class X64Chrono : public ChronoInterface {
     fStop  = 0;
   }
 
-  UInt64 GetElapsedTime() const override { return fStart - fStop; }
+  UInt64 GetElapsedTime() const override { return fStop - fStart; }
 
  private:
   UInt64 fStart = 0;
