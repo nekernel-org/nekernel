@@ -46,7 +46,7 @@ Int32 mm_make_page(VoidPtr heap_ptr);
 /// @brief Overwrites and set the flags of a heap header.
 /// @param heap_ptr the pointer to update.
 /// @param flags the flags to set.
-Int32 mm_make_ptr_flags(VoidPtr heap_ptr, UInt64 flags);
+Int32 mm_set_ptr_flags(VoidPtr heap_ptr, UInt64 flags);
 
 /// @brief Gets the flags of a heap header.
 /// @param heap_ptr the pointer to get.

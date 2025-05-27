@@ -155,7 +155,7 @@ _Output Int32 mm_make_page(VoidPtr heap_ptr) {
 /// @brief Overwrites and set the flags of a heap header.
 /// @param heap_ptr the pointer to update.
 /// @param flags the flags to set.
-_Output Int32 mm_make_ptr_flags(VoidPtr heap_ptr, UInt64 flags) {
+_Output Int32 mm_set_ptr_flags(VoidPtr heap_ptr, UInt64 flags) {
   if (Detail::mm_check_ptr_address(heap_ptr) == No) return kErrorHeapNotPresent;
 
   Detail::MM_INFORMATION_BLOCK_PTR heap_info_ptr =
