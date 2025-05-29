@@ -7,8 +7,8 @@ Purpose: System Call Interface.
 
 ------------------------------------------- */
 
-#ifndef SCI_SYSTEM_CALLS_H
-#define SCI_SYSTEM_CALLS_H
+#ifndef LIBSYS_SYSTEM_CALLS_H
+#define LIBSYS_SYSTEM_CALLS_H
 
 #include <libSystem/Macros.h>
 
@@ -16,12 +16,12 @@ Purpose: System Call Interface.
 /// @brief Types API.
 // ------------------------------------------------------------------------------------------ //
 
-struct RefType {
-  UInt32  __hash;
-  VoidPtr __self;
+struct REF_TYPE {
+  UInt64  __hash; /// @brief Hash of the syscall
+  VoidPtr __self; /// @brief Syscall self value.
 };
 
-typedef RefType* Ref;
+typedef REF_TYPE* Ref;
 
 typedef Ref IORef;
 typedef Ref FSRef;
@@ -382,4 +382,4 @@ IMPORT_C Char* StrFmt(const Char* fmt, ...);
 
 IMPORT_C UInt64 StrMathToNumber(const Char* in, const Char** endp, const SInt16 base);
 
-#endif  // ifndef SCI_SYSTEM_CALLS_H
+#endif  // ifndef LIBSYS_SYSTEM_CALLS_H

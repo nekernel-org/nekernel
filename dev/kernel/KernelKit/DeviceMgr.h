@@ -41,6 +41,8 @@ class IOBuf;
 template <typename T>
 class IDeviceObject {
  public:
+  IDeviceObject() = default;
+  
   explicit IDeviceObject(void (*Out)(IDeviceObject<T>*, T), void (*In)(IDeviceObject<T>*, T))
       : fOut(Out), fIn(In) {}
 

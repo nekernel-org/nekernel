@@ -8,5 +8,8 @@
 
 #include <libSystem/System.h>
 
-/// @file SecurityPolicy.h
-/// @brief Hardened Security Policy, used to restrict access to certain system calls.
+/// @file Jail.h
+/// @brief NeKernel Jail System
+
+struct JAIL_INFO;
+struct JAIL;

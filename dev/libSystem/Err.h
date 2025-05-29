@@ -8,7 +8,7 @@
 
 #include <libSystem/Macros.h>
 
-/// @file Codes.h
+/// @file Err.h
 /// @brief Process Codes type and values.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 

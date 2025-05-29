@@ -9,8 +9,8 @@
 /// @brief Placeholder program.
 
 SInt32 _NeMain(SInt32 argc, Char* argv[]) {
-  SCI_UNUSED(argc);
-  SCI_UNUSED(argv);
+  LIBSYS_UNUSED(argc);
+  LIBSYS_UNUSED(argv);
 
   return EXIT_FAILURE;
 }

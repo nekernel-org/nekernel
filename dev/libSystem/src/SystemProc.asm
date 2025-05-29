@@ -11,12 +11,12 @@
 
 section .text
 
-global sci_syscall_arg_1
-global sci_syscall_arg_2
-global sci_syscall_arg_3
-global sci_syscall_arg_4
+global libsys_syscall_arg_1
+global libsys_syscall_arg_2
+global libsys_syscall_arg_3
+global libsys_syscall_arg_4
 
-sci_syscall_arg_1:
+libsys_syscall_arg_1:
     push rbp
     mov rbp, rsp
 
@@ -27,7 +27,7 @@ sci_syscall_arg_1:
 
     ret
 
-sci_syscall_arg_2:
+libsys_syscall_arg_2:
     push rbp
     mov rbp, rsp
 
@@ -38,7 +38,7 @@ sci_syscall_arg_2:
 
     ret
 
-sci_syscall_arg_3:
+libsys_syscall_arg_3:
     push rbp
     mov rbp, rsp
 
@@ -51,7 +51,7 @@ sci_syscall_arg_3:
 
     ret
 
-sci_syscall_arg_4:
+libsys_syscall_arg_4:
     push rbp
     mov rbp, rsp
 

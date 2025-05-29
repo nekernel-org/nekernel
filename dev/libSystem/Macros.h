@@ -64,19 +64,19 @@ typedef char             Char;
 typedef decltype(nullptr) nullPtr;
 typedef nullPtr           NullPtr;
 
-#define SCI_COPY_DELETE(KLASS)             \
+#define LIBSYS_COPY_DELETE(KLASS)             \
   KLASS& operator=(const KLASS&) = delete; \
   KLASS(const KLASS&)            = delete;
 
-#define SCI_COPY_DEFAULT(KLASS)             \
+#define LIBSYS_COPY_DEFAULT(KLASS)             \
   KLASS& operator=(const KLASS&) = default; \
   KLASS(const KLASS&)            = default;
 
-#define SCI_MOVE_DELETE(KLASS)        \
+#define LIBSYS_MOVE_DELETE(KLASS)        \
   KLASS& operator=(KLASS&&) = delete; \
   KLASS(KLASS&&)            = delete;
 
-#define SCI_MOVE_DEFAULT(KLASS)        \
+#define LIBSYS_MOVE_DEFAULT(KLASS)        \
   KLASS& operator=(KLASS&&) = default; \
   KLASS(KLASS&&)            = default;
 
@@ -123,4 +123,4 @@ IMPORT_C void _rtl_assert(Bool expr, const Char* origin);
 #define tib_cast(X) ((UInt64) gib_cast(X) * 1024)
 #endif
 
-#define SCI_UNUSED(X) ((void) X)
+#define LIBSYS_UNUSED(X) ((void) X)

@@ -19,6 +19,6 @@ class CFObject {
   explicit CFObject() = default;
   virtual ~CFObject() = default;
 
-  SCI_COPY_DEFAULT(CFObject);
+  LIBSYS_COPY_DEFAULT(CFObject);
 };
 }  // namespace CF
