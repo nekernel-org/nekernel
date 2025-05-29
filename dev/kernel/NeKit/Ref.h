@@ -25,11 +25,9 @@ class Ref final {
  public:
   Ref(T* cls) : fClass(cls) {}
 
-  Ref(T cls) : fClass(nullptr) { fClass = new T(cls); }
+  Ref(T cls) : fClass(nullptr) { fClass = &cls; }
 
   Ref& operator=(T ref) {
-    if (!fClass) return *this;
-
     fClass = &ref;
     return *this;
   }

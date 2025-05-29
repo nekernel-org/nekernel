@@ -38,14 +38,14 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
   addr = (addr + (align - 1)) & ~(align - 1);
 
   if ((addr + size) >= reinterpret_cast<UIntPtr>(kDmaPoolEnd)) {
-    kout << "DMA Pool is exhausted!\r";
-
     err_global_get() = kErrorDmaExhausted;
-
     return nullptr;
   }
 
   kDmaPoolPtr = (UInt8*) (addr + size);
+
+  HAL::mm_memory_fence((VoidPtr)addr);
+
   return (VoidPtr) addr;
 }
 
@@ -55,7 +55,16 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
 inline Void rtl_dma_free(SizeT size) {
   if (!size) return;
 
-  kDmaPoolPtr = (UInt8*) (kDmaPoolPtr - size);
+  auto ptr = (UInt8*) (kDmaPoolPtr - size);
+
+  if (!ptr || ptr < (UInt8*) kNeDMAPoolStart) {
+    err_global_get() = kErrorDmaExhausted;
+    return;
+  }
+
+  kDmaPoolPtr = ptr;
+
+  HAL::mm_memory_fence(ptr);
 }
 
 /***********************************************************************************/
@@ -67,6 +76,7 @@ inline Void rtl_dma_flush(VoidPtr ptr, SizeT size_buffer) {
   }
 
   if (!ptr || ptr < (UInt8*) kNeDMAPoolStart) {
+    err_global_get() = kErrorDmaExhausted;
     return;
   }
 
