@@ -21,7 +21,7 @@ namespace Kernel {
 /***********************************************************************************/
 
 EXTERN_C Bool hal_check_stack(HAL::StackFramePtr frame);
-EXTERN_C Bool mp_register_process(HAL::StackFramePtr frame, ProcessID pid);
+EXTERN_C Bool mp_register_task(HAL::StackFramePtr frame, ProcessID pid);
 
 STATIC HardwareThreadScheduler kHardwareThreadScheduler;
 
@@ -41,14 +41,14 @@ HardwareThread::~HardwareThread() = default;
 /***********************************************************************************/
 //! @brief returns the id of the thread.
 /***********************************************************************************/
-const ThreadID& HardwareThread::ID() noexcept {
+ThreadID& HardwareThread::ID() noexcept {
   return fID;
 }
 
 /***********************************************************************************/
 //! @brief returns the kind of thread we have.
 /***********************************************************************************/
-const ThreadKind& HardwareThread::Kind() noexcept {
+ThreadKind& HardwareThread::Kind() noexcept {
   return fKind;
 }
 
@@ -57,19 +57,6 @@ const ThreadKind& HardwareThread::Kind() noexcept {
 //! @return whether the thread is busy or not.
 /***********************************************************************************/
 Bool HardwareThread::IsBusy() noexcept {
-  STATIC Int64    busy_timer = 0U;
-  constexpr Int64 kTimeoutMax =
-      0x1000000;  // an arbitrary value used to tell if the timeout hasn't been reached yet.
-
-  if (fBusy && (busy_timer > kTimeoutMax)) {
-    busy_timer = 0U;
-    fBusy      = No;
-
-    return No;
-  }
-
-  ++busy_timer;
-
   return fBusy;
 }
 
@@ -104,21 +91,17 @@ Void HardwareThread::Wake(const bool wakeup) noexcept {
 /// @retval true stack was changed, code is running.
 /// @retval false stack is invalid, previous code is running.
 /***********************************************************************************/
-Bool HardwareThread::Switch(VoidPtr image_ptr, Ptr8 stack_ptr, HAL::StackFramePtr frame,
-                            const ThreadID& pid) {
-  if (this->IsBusy()) return NO;
+Bool HardwareThread::Switch(HAL::StackFramePtr frame) {
+  if (!frame) {
+    return NO;
+  }
+
+  if (!hal_check_stack(frame)) {
+    return NO;
+  }
 
   this->fStack = frame;
-  this->fPID   = pid;
-
-  this->fStack->BP = reinterpret_cast<UIntPtr>(image_ptr);
-  this->fStack->SP = reinterpret_cast<UIntPtr>(stack_ptr);
-
-  Bool ret = mp_register_process(fStack, this->fPID);
-
-  if (ret) this->Busy(YES);
-
-  return ret;
+  return mp_register_task(fStack, this->fID);
 }
 
 /***********************************************************************************/
@@ -162,12 +145,8 @@ HAL::StackFramePtr HardwareThreadScheduler::Leak() noexcept {
  */
 /***********************************************************************************/
 Ref<HardwareThread*> HardwareThreadScheduler::operator[](SizeT idx) {
-  if (idx == 0) {
-    if (fThreadList[idx].Kind() != kAPSystemReserved) {
-      fThreadList[idx].fKind = kAPBoot;
-    }
-  } else if (idx >= kMaxAPInsideSched) {
-    static HardwareThread* kFakeThread = nullptr;
+  if (idx >= kMaxAPInsideSched) {
+    HardwareThread* kFakeThread = nullptr;
     return {kFakeThread};
   }
 

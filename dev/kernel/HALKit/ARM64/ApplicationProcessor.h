@@ -7,12 +7,13 @@
 #pragma once
 
 #include <HALKit/ARM64/Processor.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 /************************************************** */
-/*     INITIALIZE THE GIC ON CPU.              */
+/*     INITIALIZE THE GIC ON THE CURRENT CORE.      */
+/*     WITH AN EXECUTION LEVEL IN MIND.             */
 /************************************************** */
 
 namespace Kernel {
-BOOL mp_initialize_gic(Kernel::Void);
+Void mp_init_cores(Void) noexcept;
 }

@@ -9,7 +9,7 @@
 /// @file Support.h
 /// @brief Purpose of this file is to help port libs into the bootloader.
 
-#ifndef __aarch64__
+#ifndef __NE_ARM64__
 #include <string.h>
 #endif
 
@@ -38,7 +38,9 @@ EXTERN_C int strcmp(const char* whatToCheck, const char* whatToCheckRight);
 
 #else
 
+#ifndef __NE_ARM64__
 #include <string.h>
+#endif
 
 #endif  // __BOOTZ__
 

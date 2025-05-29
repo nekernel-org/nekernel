@@ -9,12 +9,12 @@
 
 #include <ArchKit/ArchKit.h>
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Ref.h>
 
 /// @note Last Rev Sun 28 Jul CET 2024
 /// @note Last Rev Thu, Aug  1, 2024  9:07:38 AM
 
-#define kMaxAPInsideSched (8U)
+#define kMaxAPInsideSched (4U)
 
 namespace Kernel {
 class HardwareThread;
@@ -23,12 +23,12 @@ class HardwareThreadScheduler;
 using ThreadID = UInt32;
 
 enum ThreadKind {
-  kAPInvalid,
-  kAPSystemReserved,  // System reserved thread, well user can't use it
-  kAPStandard,        // user thread, cannot be used by Kernel
-  kAPRealTime,        // fallback thread, cannot be used by user if not clear or
-                      // used by Kernel.
-  kAPBoot,            // The core we booted from, the mama.
+  kAPInvalid        = 0,
+  kAPSystemReserved = 100,  // System reserved thread, well user can't use it
+  kAPStandard,              // user thread, cannot be used by Kernel
+  kAPRealTime,              // fallback thread, cannot be used by user if not clear or
+                            // used by Kernel.
+  kAPBoot,                  // The core we booted from, the mama.
   kAPCount,
 };
 
@@ -58,20 +58,19 @@ class HardwareThread final {
   void Busy(const BOOL busy = false) noexcept;
 
  public:
-  BOOL Switch(VoidPtr image, Ptr8 stack_ptr, HAL::StackFramePtr frame, const ThreadID& pid);
+  BOOL Switch(HAL::StackFramePtr frame);
   BOOL IsWakeup() noexcept;
 
  public:
   HAL::StackFramePtr StackFrame() noexcept;
-  const ThreadKind&  Kind() noexcept;
-  bool               IsBusy() noexcept;
-  const ThreadID&    ID() noexcept;
+  ThreadKind&        Kind() noexcept;
+  BOOL               IsBusy() noexcept;
+  ThreadID&          ID() noexcept;
 
  private:
   HAL::StackFramePtr fStack{nullptr};
   ThreadKind         fKind{ThreadKind::kAPStandard};
   ThreadID           fID{0};
-  ThreadID           fPID{0};
   Bool               fWakeup{NO};
   Bool               fBusy{NO};
   UInt64             fPTime{0};

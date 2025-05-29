@@ -10,13 +10,14 @@
 #include <FirmwareKit/EPM.h>
 
 #include <KernelKit/DriveMgr.h>
+#include <KernelKit/IFS.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <KernelKit/User.h>
-#include <NewKit/Crc32.h>
-#include <NewKit/KString.h>
-#include <NewKit/KernelPanic.h>
-#include <NewKit/Utils.h>
+#include <KernelKit/UserMgr.h>
+#include <NeKit/Crc32.h>
+#include <NeKit/KString.h>
+#include <NeKit/KernelPanic.h>
+#include <NeKit/Utils.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 
@@ -240,7 +241,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
     return nullptr;
   }
 
-  Char* parent_name = (Char*) mm_new_heap(sizeof(Char) * rt_string_len(name), Yes, No);
+  Char* parent_name = (Char*) mm_alloc_ptr(sizeof(Char) * rt_string_len(name), Yes, No);
 
   /// Locate parent catalog, to then allocate right after it.
 
@@ -269,7 +270,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 
   NEFS_CATALOG_STRUCT* catalog = this->FindCatalog(parent_name, out_lba);
 
-  mm_delete_heap(parent_name);
+  mm_free_ptr(parent_name);
 
   auto& drive = kMountpoint.A();
 
@@ -444,6 +445,8 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
 
   NEFS_ROOT_PARTITION_BLOCK* part_block = (NEFS_ROOT_PARTITION_BLOCK*) fs_buf;
 
+  if (rt_string_cmp(kNeFSIdent, part_block->Ident, kNeFSIdentLen) == 0) return true;
+
   const auto kNeFSUntitledHD = part_name;
 
   rt_copy_memory((VoidPtr) kNeFSIdent, (VoidPtr) part_block->Ident, kNeFSIdentLen);
@@ -463,6 +466,7 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   part_block->FreeSectors  = sectorCount / sizeof(NEFS_CATALOG_STRUCT) - 1;
   part_block->SectorCount  = sectorCount;
   part_block->DiskSize     = diskSize;
+  part_block->SectorSize   = drive->fSectorSz;
   part_block->FreeCatalog  = sectorCount / sizeof(NEFS_CATALOG_STRUCT) - 1;
 
   drive->fPacket.fPacketContent = fs_buf;
@@ -478,26 +482,6 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   (Void)(kout << "Free catalog: " << hex_number(part_block->FreeCatalog) << kendl);
   (Void)(kout << "Free sectors: " << hex_number(part_block->FreeSectors) << kendl);
   (Void)(kout << "Sector size: " << hex_number(part_block->SectorSize) << kendl);
-
-  NEFS_CATALOG_STRUCT root{};
-
-  rt_set_memory(&root, 0, sizeof(NEFS_CATALOG_STRUCT));
-
-  root.PrevSibling = part_block->StartCatalog;
-  root.NextSibling = 0UL;
-
-  root.Kind = kNeFSCatalogKindDir;
-  root.Flags |= kNeFSFlagCreated;
-  root.CatalogFlags |= kNeFSStatusUnlocked;
-
-  root.Name[0] = '/';
-  root.Name[1] = 0;
-
-  drive->fPacket.fPacketLba     = part_block->StartCatalog;
-  drive->fPacket.fPacketSize    = sizeof(NEFS_CATALOG_STRUCT);
-  drive->fPacket.fPacketContent = &root;
-
-  drive->fOutput(drive->fPacket);
 
   return true;
 }
@@ -895,7 +879,7 @@ namespace Kernel::NeFS {
 /// @brief Construct NeFS drives.
 /***********************************************************************************/
 Boolean fs_init_nefs(Void) noexcept {
-  kout << "Creating main disk...\r";
+  kout << "Creating HeFS disk...\r";
 
   kMountpoint.A() = io_construct_main_drive();
 
@@ -903,9 +887,8 @@ Boolean fs_init_nefs(Void) noexcept {
     ke_panic(RUNTIME_CHECK_FILESYSTEM, "Main disk cannot be mounted.");
 
   NeFileSystemParser parser;
-  parser.Format(&kMountpoint.A(), 0, kNeFSVolumeName);
 
-  return YES;
+  return parser.Format(&kMountpoint.A(), 0, kNeFSVolumeName);
 }
 }  // namespace Kernel::NeFS
 

@@ -1,0 +1,34 @@
+.TH LD64 1 "LibCompiler" "January 2025" "NeKernel Manual"
+.SH NAME
+.B cxxdrv
+\- AE 64-bit C++ compiler for NeKernel
+
+.SH SYNOPSIS
+.B cxxdrv %OPTIONS% %INPUT_FILES%
+
+.SH DESCRIPTION
+.B cxxdrv
+is the dedicated compiler used by NeKernel, it compiles to the AE object format.
+
+.SH OPTIONS
+.TP
+.B -output <file>
+Specify the output file.
+
+.SH USAGE EXAMPLES
+.TP
+.B Generate object file from the main.cpp unit.
+.B cxxdrv main.cpp
+
+.SH EXIT STATUS
+.TP
+0  Successful compilation.
+.TP
+1  Error encountered during compilation of the C++ unit(s).
+
+.SH SEE ALSO
+.BR cxxdrv (7), asm (7)
+
+.SH AUTHOR
+Amlal El Mahrouss
+

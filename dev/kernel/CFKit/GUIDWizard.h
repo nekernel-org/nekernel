@@ -7,13 +7,13 @@
 #pragma once
 
 #include <CFKit/GUIDWrapper.h>
-#include <NewKit/Array.h>
-#include <NewKit/ArrayList.h>
-#include <NewKit/Defines.h>
-#include <NewKit/ErrorOr.h>
-#include <NewKit/KString.h>
-#include <NewKit/Ref.h>
-#include <NewKit/Stream.h>
+#include <NeKit/Array.h>
+#include <NeKit/ArrayList.h>
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
+#include <NeKit/KString.h>
+#include <NeKit/Ref.h>
+#include <NeKit/Stream.h>
 
 namespace CF::XRN::Version1 {
 using namespace Kernel;

@@ -15,7 +15,7 @@ template <typename T>
 inline T* tls_new_ptr(void) noexcept {
   using namespace Kernel;
 
-  auto ref_process = UserProcessScheduler::The().CurrentProcess();
+  auto ref_process = UserProcessScheduler::The().TheCurrentProcess();
   MUST_PASS(ref_process);
 
   auto pointer = ref_process.Leak().New(sizeof(T));
@@ -33,7 +33,7 @@ inline Kernel::Bool tls_delete_ptr(T* obj) noexcept {
 
   if (!obj) return No;
 
-  auto ref_process = UserProcessScheduler::The().CurrentProcess();
+  auto ref_process = UserProcessScheduler::The().TheCurrentProcess();
   MUST_PASS(ref_process);
 
   ErrorOr<T*> obj_wrapped{obj};

@@ -7,8 +7,8 @@
 #ifndef KERNELKIT_TLS_H
 #define KERNELKIT_TLS_H
 
-#include <NewKit/Defines.h>
-#include <NewKit/ErrorOr.h>
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
 
 ///! @brief Thread Local Storage for neoskrnl.
 

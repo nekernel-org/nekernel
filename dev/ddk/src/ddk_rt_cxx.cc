@@ -9,17 +9,17 @@
 #include <DDKKit/ddk.h>
 
 void* operator new(size_t sz) {
-  return kalloc(sz);
+  return ::kalloc(sz);
 }
 
 void operator delete(void* ptr) {
-  kfree(ptr);
+  ::kfree(ptr);
 }
 
 void* operator new[](size_t sz) {
-  return kalloc(sz);
+  return ::kalloc(sz);
 }
 
 void operator delete[](void* ptr) {
-  kfree(ptr);
+  ::kfree(ptr);
 }

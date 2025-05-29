@@ -9,9 +9,9 @@
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/Timer.h>
-#include <NewKit/KString.h>
-#include <NewKit/KernelPanic.h>
-#include <NewKit/Utils.h>
+#include <NeKit/KString.h>
+#include <NeKit/KernelPanic.h>
+#include <NeKit/Utils.h>
 #include <modules/CoreGfx/CoreGfx.h>
 #include <modules/CoreGfx/TextGfx.h>
 

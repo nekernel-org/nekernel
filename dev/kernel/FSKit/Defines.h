@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define FSKIT_VERSION "1.0.0"
 #define FSKIT_VERSION_BCD 0x0100

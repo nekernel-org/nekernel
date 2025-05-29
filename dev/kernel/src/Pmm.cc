@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/Pmm.h>
+#include <NeKit/Pmm.h>
 
 #if defined(__NE_ARM64__)
 #include <HALKit/ARM64/Processor.h>

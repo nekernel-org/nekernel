@@ -12,7 +12,9 @@
 
 ------------------------------------------------------- */
 
-#include <NewKit/Defines.h>
+#ifdef __NE_ARM64__
+
+#include <NeKit/Defines.h>
 
 #ifndef kPageMax
 #define kPageMax (0x200)
@@ -101,3 +103,5 @@ typedef HAL::PDE_4KB PDE;
 }  // namespace Kernel
 
 EXTERN_C void hal_flush_tlb();
+
+#endif  // __NE_ARM64__

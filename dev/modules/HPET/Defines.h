@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 #include <modules/ACPI/ACPI.h>
 
 namespace Kernel {

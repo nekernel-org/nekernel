@@ -49,7 +49,7 @@ DEBUG_MACRO = -D__DEBUG__
 endif
 
 ifeq ($(shell uname), Darwin)
-EMU_FLAGS=-M q35  -smp 4 -m 8G \
+EMU_FLAGS=-M q35 -smp 4 -m 8G \
     -bios $(BIOS) -cdrom $(BOOT) -boot d
 endif
 
@@ -71,11 +71,12 @@ FLAG_GNU=-fshort-wchar -D__EFI_x86_64__ -Wall -Wpedantic -Wextra -mno-red-zone -
 			-DEFI_FUNCTION_WRAPPER -I./ -I../kernel $(DISK_DRV) -I../ -c -nostdlib -fno-rtti -fno-exceptions \
                         -std=c++20 -DBOOTZ_GPT_SUPPORT -D__HAVE_NE_APIS__ -DZBA_USE_FB -D__NE_AMD64__ -D__NE__ -DNE_AUTO_FORMAT -Wl,--disable-reloc-section
 
-BOOTLOADER=bootz.efi
-KERNEL=krnl.efi
+BOOTLOADER=ne_bootz
+KERNEL=ne_kernel
 SYSCHK=chk.efi
 BOOTNET=net.efi
-SCIKIT=user.sys
+SCIKIT=libSystem.sys
+DDK=ddk.sys
 
 .PHONY: invalid-recipe
 invalid-recipe:
@@ -91,8 +92,9 @@ all: compile-amd64
 	$(COPY) ../kernel/$(KERNEL) src/root/$(KERNEL)
 	$(COPY) ./modules/SysChk/$(SYSCHK) src/root/$(SYSCHK)
 	$(COPY) ./modules/BootNet/$(BOOTNET) src/root/$(BOOTNET)
-	$(COPY) ../user/$(SCIKIT) src/root/$(SCIKIT)
+	$(COPY) ../libSystem/$(SCIKIT) src/root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/root/$(BOOTLOADER)
+	$(COPY) ../ddk/$(DDK) src/root/$(DDK)
 
 .PHONY: disk
 disk:
@@ -115,7 +117,7 @@ compile-amd64:
 
 .PHONY: run-efi-amd64-ahci
 run-efi-amd64-ahci:
-	$(EMU) $(EMU_FLAGS) -d int -hda $(IMG) -s -S -trace ahci_* -boot menu=on
+	$(EMU) $(EMU_FLAGS) -monitor stdio -hda $(IMG) -s -S -boot menu=on
 
 .PHONY: run-efi-amd64-ata-pio
 run-efi-amd64-ata-pio:
@@ -138,7 +140,7 @@ efi:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGX64_OVMF.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=bootz.efi krnl.efi OVMF.fd
+EXECUTABLES=ne_bootz ne_kernel OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

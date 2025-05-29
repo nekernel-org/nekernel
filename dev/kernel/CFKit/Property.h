@@ -8,10 +8,10 @@
 #define CFKIT_PROPS_H
 
 #include <CFKit/GUIDWrapper.h>
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/Function.h>
-#include <NewKit/KString.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Function.h>
+#include <NeKit/KString.h>
 
 #define kMaxPropLen (256U)
 

@@ -5,13 +5,13 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.h>
-#include <KernelKit/MemoryMgr.h>
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
 #include <KernelKit/ProcessScheduler.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
-#include <NewKit/KernelPanic.h>
-#include <NewKit/OwnPtr.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
+#include <NeKit/KernelPanic.h>
+#include <NeKit/OwnPtr.h>
 
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
@@ -78,7 +78,7 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
 
   fBad = true;
 
-  if (fCachedBlob) mm_delete_heap(fCachedBlob);
+  if (fCachedBlob) mm_free_ptr(fCachedBlob);
 
   kout << "PEFLoader: Warning: Executable format error!\r";
 
@@ -89,7 +89,7 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
 /// @brief PEF destructor.
 /***********************************************************************************/
 PEFLoader::~PEFLoader() {
-  if (fCachedBlob) mm_delete_heap(fCachedBlob);
+  if (fCachedBlob) mm_free_ptr(fCachedBlob);
 
   fFile.Delete();
 }
@@ -147,7 +147,7 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
       if (container_header->Kind == kind) {
         if (container_header->Cpu != Detail::ldr_get_platform()) {
           if (!this->fFatBinary) {
-            mm_delete_heap(blob);
+            mm_free_ptr(blob);
             return ErrorOr<VoidPtr>{kErrorInvalidData};
           }
         }
@@ -156,16 +156,16 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
         rt_copy_memory((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
                        container_header->Size);
-        mm_delete_heap(blob);
+        mm_free_ptr(blob);
 
         kout << "PEFLoader: Information: Loaded stub: " << container_header->Name << "!\r";
 
         auto ret = HAL::mm_map_page((VoidPtr) container_header->VMAddress,
-                                    (VoidPtr) HAL::mm_get_phys_address(container_blob_value),
+                                    (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
                                     HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
 
         if (ret != kErrorSuccess) {
-          mm_delete_heap(container_blob_value);
+          mm_free_ptr(container_blob_value);
           return ErrorOr<VoidPtr>{kErrorInvalidData};
         }
 
@@ -174,7 +174,7 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
     }
   }
 
-  mm_delete_heap(blob);
+  mm_free_ptr(blob);
   return ErrorOr<VoidPtr>{kErrorInvalidData};
 }
 
@@ -236,7 +236,7 @@ namespace Utils {
         UserProcessScheduler::The().Spawn(reinterpret_cast<const Char*>(symname.Leak().Leak()),
                                           errOrStart.Leak().Leak(), exec.GetBlob().Leak().Leak());
 
-    mm_delete_heap(symname.Leak().Leak());
+    mm_free_ptr(symname.Leak().Leak());
 
     if (id != kSchedInvalidPID) {
       auto stacksym = exec.FindSymbol(kPefStackSizeSymbol, kPefData);
@@ -249,11 +249,11 @@ namespace Utils {
         *(volatile UIntPtr*) stacksym.Leak().Leak() = kSchedMaxStackSz;
       }
 
-      UserProcessScheduler::The().CurrentTeam().AsArray()[id].Kind = process_kind;
-      UserProcessScheduler::The().CurrentTeam().AsArray()[id].StackSize =
+      UserProcessScheduler::The().TheCurrentTeam().AsArray()[id].Kind = process_kind;
+      UserProcessScheduler::The().TheCurrentTeam().AsArray()[id].StackSize =
           *(UIntPtr*) stacksym.Leak().Leak();
 
-      mm_delete_heap(stacksym.Leak().Leak());
+      mm_free_ptr(stacksym.Leak().Leak());
     }
 
     return id;

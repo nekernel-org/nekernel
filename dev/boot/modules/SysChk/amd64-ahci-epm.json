@@ -14,6 +14,7 @@
     "../../../kernel/HALKit/AMD64/PCI/*.cc",
     "../../../kernel/HALKit/AMD64/Storage/*.cc",
     "../../../kernel/src/Storage/*.cc",
+    "../../../kernel/src/Network/*.cc",
     "../../../kernel/HALKit/AMD64/*.cc",
     "../../../kernel/HALKit/AMD64/*.s",
     "../../../kernel/src/*.cc"

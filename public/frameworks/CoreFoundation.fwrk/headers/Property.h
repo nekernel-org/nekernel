@@ -8,7 +8,7 @@
 #define _PROPS_H
 
 #include <CoreFoundation.fwrk/headers/Ref.h>
-#include <user/SystemCalls.h>
+#include <libSystem/System.h>
 
 #define kMaxPropLen (256U)
 

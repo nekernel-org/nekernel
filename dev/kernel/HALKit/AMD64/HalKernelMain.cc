@@ -14,25 +14,23 @@
 #include <KernelKit/Timer.h>
 #include <NetworkKit/IPC.h>
 #include <StorageKit/AHCI.h>
+#include <generic_kits/BenchKit/X64Chrono.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
 
 #ifndef __NE_MODULAR_KERNEL_COMPONENTS__
 EXTERN_C Kernel::VoidPtr kInterruptVectorTable[];
 
-STATIC Kernel::Void hal_pre_init_scheduler() noexcept {
-  for (Kernel::SizeT i = 0U;
-       i < Kernel::UserProcessScheduler::The().CurrentTeam().AsArray().Count(); ++i) {
-    Kernel::UserProcessScheduler::The().CurrentTeam().AsArray()[i] = Kernel::USER_PROCESS();
-  }
-}
-
 /// @brief Kernel init function.
 /// @param handover_hdr Handover boot header.
 EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
+  using namespace Kernel;
+
   if (handover_hdr->f_Magic != kHandoverMagic && handover_hdr->f_Version != kHandoverVersion) {
     return kEfiFail;
   }
+
+  HAL::rt_sti();
 
   kHandoverHeader = handover_hdr;
 
@@ -43,26 +41,31 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
                          handover_hdr->f_HardwareTables.f_ImageHandle);
 
-  kKernelCR3 = kHandoverHeader->f_PageStart;
+  kKernelVM = kHandoverHeader->f_PageStart;
 
-  hal_write_cr3(kKernelCR3);
+  hal_write_cr3(kKernelVM);
 
   /************************************** */
   /*     INITIALIZE BIT MAP.              */
   /************************************** */
 
-  kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
-  kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
-      reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
+  kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
+  kKernelBitMpStart =
+      reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(kHandoverHeader->f_BitMapStart));
 
   /************************************** */
   /*     INITIALIZE GDT AND SEGMENTS. */
   /************************************** */
 
-  STATIC CONST auto kGDTEntriesCount = 6;
+  STATIC CONST auto kGDTEntriesCount = 8;
 
-  /* GDT, mostly descriptors for user and kernel segments. */
-  STATIC Kernel::HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
+  STATIC HAL::Detail::NE_TSS kKernelTSS{};
+
+  kKernelTSS.fRsp0 = (UInt64) kHandoverHeader->f_StackTop;
+  kKernelTSS.fIopb = sizeof(HAL::Detail::NE_TSS);
+
+  /* The GDT, mostly descriptors for user and kernel segments. */
+  STATIC HAL::Detail::NE_GDT_ENTRY ALIGN(0x08) kGDTArray[kGDTEntriesCount] = {
       {.fLimitLow   = 0,
        .fBaseLow    = 0,
        .fBaseMid    = 0,
@@ -81,6 +84,8 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
        .fAccessByte = 0x92,
        .fFlags      = 0xCF,
        .fBaseHigh   = 0},  // Kernel data
+      {},                // TSS data low
+      {},                // TSS data high
       {.fLimitLow   = 0x0,
        .fBaseLow    = 0,
        .fBaseMid    = 0,
@@ -95,63 +100,70 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
        .fBaseHigh   = 0},  // User data
   };
 
-  // Load memory descriptors.
-  Kernel::HAL::Register64 gdt_reg;
+  kGDTArray[3].fLimitLow   = sizeof(HAL::Detail::NE_TSS) - 1;
+  kGDTArray[3].fBaseLow    = ((UIntPtr) &kKernelTSS) & 0xFFFF;
+  kGDTArray[3].fBaseMid    = (((UIntPtr) &kKernelTSS) >> 16) & 0xFF;
+  kGDTArray[3].fAccessByte = 0x89;  // Present, type 9 = 64-bit available TSS
+  kGDTArray[3].fFlags      = 0x20 | ((((UIntPtr) &kKernelTSS) >> 24) & 0x0F);
+  kGDTArray[3].fBaseHigh   = (((UIntPtr) &kKernelTSS) >> 24) & 0xFF;
 
-  gdt_reg.Base  = reinterpret_cast<Kernel::UIntPtr>(kGDTArray);
-  gdt_reg.Limit = (sizeof(Kernel::HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
+  kGDTArray[4].fLimitLow   = ((UIntPtr) &kKernelTSS >> 32) & 0xFFFF;
+  kGDTArray[4].fBaseLow    = 0;
+  kGDTArray[4].fBaseMid    = 0;
+  kGDTArray[4].fAccessByte = 0;
+  kGDTArray[4].fFlags      = 0;
+  kGDTArray[4].fBaseHigh   = 0;
+
+  // Load memory descriptors.
+  HAL::Register64 gdt_reg;
+
+  gdt_reg.Base  = reinterpret_cast<UIntPtr>(kGDTArray);
+  gdt_reg.Limit = (sizeof(HAL::Detail::NE_GDT_ENTRY) * kGDTEntriesCount) - 1;
 
   //! GDT will load hal_read_init after it successfully loads the segments.
-  Kernel::HAL::GDTLoader gdt_loader;
+  HAL::GDTLoader gdt_loader;
   gdt_loader.Load(gdt_reg);
 
   return kEfiFail;
 }
 
 EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
-  hal_pre_init_scheduler();
+  using namespace Kernel;
+
+  for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
+    HardwareThreadScheduler::The()[index].Leak()->Kind() = ThreadKind::kAPStandard;
+    HardwareThreadScheduler::The()[index].Leak()->ID()   = index;
+    HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
+  }
+
+  for (SizeT index = 0UL; index < UserProcessScheduler::The().TheCurrentTeam().AsArray().Count();
+       ++index) {
+    UserProcessScheduler::The().TheCurrentTeam().AsArray()[index].Status =
+        ProcessStatusKind::kInvalid;
+  }
+
+  rtl_create_user_process(sched_idle_task, "MgmtSrv");    //! Mgmt command server.
+  rtl_create_user_process(sched_idle_task, "LaunchSrv");  //! launchd
+  rtl_create_user_process(sched_idle_task, "SecSrv");     //! Login Server
+
+  HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 #ifdef __FSKIT_INCLUDES_HEFS__
-  Kernel::HeFS::fs_init_hefs();
-#elif defined(__FSKIT_INCLUDES_NEFS__)
-  Kernel::NeFS::fs_init_nefs();
+  HeFS::fs_init_hefs();
 #endif
 
-  Kernel::HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
+#ifdef __FSKIT_INCLUDES_NEFS__
+  NeFS::fs_init_nefs();
+#endif
 
-  Kernel::HAL::Register64 idt_reg;
-  idt_reg.Base = (Kernel::UIntPtr) kInterruptVectorTable;
+  HAL::Register64 idt_reg;
+  idt_reg.Base = reinterpret_cast<UIntPtr>(kInterruptVectorTable);
 
-  Kernel::HAL::IDTLoader idt_loader;
+  HAL::IDTLoader idt_loader;
 
   idt_loader.Load(idt_reg);
 
-  /// after the scheduler runs, we must look over teams, every 5000s in order to schedule every
-  /// process according to their affinity fairly.
-
-  auto constexpr kSchedTeamSwitchMS = 5U;  /// @brief Team switch time in milliseconds.
-
-  Kernel::HardwareTimer timer(rtl_milliseconds(kSchedTeamSwitchMS));
-
-  STATIC Kernel::Array<UserProcessTeam, kSchedTeamCount> kTeams;
-
-  static SizeT team_index = 0U;
-
-  /// @brief This just loops over the teams and switches between them.
-  /// @details Not even round-robin, just a simple loop in this boot core we're at.
-  while (YES) {
-    if (team_index > (kSchedTeamCount - 1)) {
-      team_index = 0U;
-    }
-
-    kTeams[team_index].Id() = team_index;
-
-    while (!UserProcessScheduler::The().SwitchTeam(kTeams[team_index]))
-      ;
-
-    timer.Wait();
-
-    ++team_index;
-  }
+  while (YES)
+    ;
 }
 #endif  // ifndef __NE_MODULAR_KERNEL_COMPONENTS__

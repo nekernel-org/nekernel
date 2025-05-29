@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Utils.h>
 
 #define rtl_nop_op() asm volatile("mr 0, 0")
 #define kHalPPCAlignment __attribute__((aligned(4)))
@@ -28,7 +28,7 @@ struct PACKED StackFrame final {
   Reg R14{0};
   Reg R15{0};
   Reg SP{0};
-  Reg BP{0};
+  Reg IP{0};
 };
 
 typedef StackFrame* StackFramePtr;

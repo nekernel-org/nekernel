@@ -11,7 +11,7 @@
 @brief Implementation of the main EFI protocols.
 */
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 using namespace Kernel;
 
@@ -42,7 +42,7 @@ struct EfiDevicePathProtocol;
 struct EfiBootServices;
 struct EfiMemoryDescriptor;
 struct EfiSystemTable;
-struct EfiGUID;
+struct EFI_GUID;
 struct EfiFileDevicePathProtocol;
 struct EfiHandle;
 struct EfiGraphicsOutputProtocol;
@@ -85,9 +85,9 @@ typedef UInt64(EFI_API* EfiCopyMem)(VoidPtr DstBuf, VoidPtr SrcBuf, SizeT Length
 
 typedef UInt64(EFI_API* EfiSetMem)(VoidPtr DstBuf, Char Byte, SizeT Length);
 
-typedef UInt64(EFI_API* EfiHandleProtocol)(EfiHandlePtr Handle, EfiGUID* Guid, VoidPtr* Device);
+typedef UInt64(EFI_API* EfiHandleProtocol)(EfiHandlePtr Handle, EFI_GUID* Guid, VoidPtr* Device);
 
-typedef UInt64(EFI_API* EfiLocateDevicePath)(EfiGUID* Protocol, EfiDevicePathProtocol** DevicePath,
+typedef UInt64(EFI_API* EfiLocateDevicePath)(EFI_GUID* Protocol, EfiDevicePathProtocol** DevicePath,
                                              EfiHandlePtr Device);
 
 typedef UInt64(EFI_API* EfiStartImage)(EfiHandlePtr Handle, VoidPtr ArgsSize, VoidPtr ArgsPtr);
@@ -495,12 +495,12 @@ typedef UInt64(EFI_API* EfiGetMemoryMap)(UInt32* MapSize, EfiMemoryDescriptor* D
 /**
  * @brief GUID type, something you can also find in CFKit.
  */
-typedef struct EfiGUID EFI_FINAL {
+typedef struct EFI_GUID EFI_FINAL {
   UInt32 Data1;
   UInt16 Data2;
   UInt16 Data3;
   UInt8  Data4[8];
-} EfiGUID;
+} EFI_GUID;
 
 /***
  * Protocol stuff...
@@ -519,10 +519,10 @@ typedef struct EfiGUID EFI_FINAL {
 #define EFI_OPEN_PROTOCOL_BY_DRIVER 0x00000010
 #define EFI_OPEN_PROTOCOL_EXCLUSIVE 0x00000020
 
-typedef UInt64(EFI_API* EfiLocateProtocol)(EfiGUID* Protocol, VoidPtr Registration,
+typedef UInt64(EFI_API* EfiLocateProtocol)(EFI_GUID* Protocol, VoidPtr Registration,
                                            VoidPtr* Interface);
 
-typedef UInt64(EFI_API* EfiOpenProtocol)(EfiHandlePtr Handle, EfiGUID* Guid, VoidPtr* Interface,
+typedef UInt64(EFI_API* EfiOpenProtocol)(EfiHandlePtr Handle, EFI_GUID* Guid, VoidPtr* Interface,
                                          EfiHandlePtr AgentHandle, EfiHandlePtr ControllerHandle,
                                          UInt32 Attributes);
 
@@ -633,10 +633,10 @@ struct EfiSimpleFilesystemProtocol {
 typedef struct EfiRuntimeServices {
   EfiTableHeader SystemTable;
   VoidPtr GetTime, SetTime, GetWakeupTime, SetWakeupTime, SetVirtualAddressMap, ConvertPointer;
-  UInt64(EFI_API* GetVariable)(const WideChar* Name, EfiGUID VendorGUID, UInt32* Attributes,
+  UInt64(EFI_API* GetVariable)(const WideChar* Name, EFI_GUID VendorGUID, UInt32* Attributes,
                                UInt32* DataSize, VoidPtr Data);
   VoidPtr GetNextVariable;
-  UInt64(EFI_API* SetVariable)(const WideChar* Name, EfiGUID VendorGUID, UInt32* Attributes,
+  UInt64(EFI_API* SetVariable)(const WideChar* Name, EFI_GUID VendorGUID, UInt32* Attributes,
                                UInt32* DataSize, VoidPtr Data);
   VoidPtr GetNextHighMonotonicCount;
   VoidPtr ResetSystem;
@@ -663,7 +663,7 @@ typedef struct EfiSystemTable {
   UInt64                       NumberOfTableEntries;
   /// The configuration table (contains the RSD PTR entry.)
   struct {
-    EfiGUID VendorGUID;
+    EFI_GUID VendorGUID;
     VoidPtr VendorTable;
   } * ConfigurationTable;
 } EfiSystemTable;
@@ -792,9 +792,9 @@ typedef struct EfiFileProtocol {
 
   EfiStatusType(EFI_API* SetPosition)(EfiFileProtocol* Self, UInt64* Position);
 
-  EfiStatusType(EFI_API* GetInfo)(struct EfiFileProtocol*, struct EfiGUID*, UInt32*, void*);
+  EfiStatusType(EFI_API* GetInfo)(struct EfiFileProtocol*, struct EFI_GUID*, UInt32*, void*);
 
-  EfiStatusType(EFI_API* SetInfo)(struct EfiFileProtocol*, struct EfiGUID*, UInt32*, void*);
+  EfiStatusType(EFI_API* SetInfo)(struct EfiFileProtocol*, struct EFI_GUID*, UInt32*, void*);
 
   EfiStatusType(EFI_API* Flush)(EfiFileProtocol*);
 

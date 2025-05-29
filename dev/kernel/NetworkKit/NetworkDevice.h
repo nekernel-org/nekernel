@@ -19,11 +19,11 @@ class NetworkDevice;
 /**
  * \brief Network device interface, establishes a connection to the NIC.
  */
-class NetworkDevice final : public IDeviceObject<NetworkDeviceCommand> {
+class NetworkDevice final NE_DEVICE<NetworkDeviceCommand> {
  public:
   NetworkDevice(void (*out)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
                 void (*in)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
-                void (*onCleanup)(void) = nullptr);
+                void (*cleanup)(void) = nullptr);
 
   ~NetworkDevice() override;
 
@@ -36,10 +36,7 @@ class NetworkDevice final : public IDeviceObject<NetworkDeviceCommand> {
   Boolean     Name(const Char* newStr);
 
  private:
-  static constexpr auto cNetworkNameLen = 512;
-
   Void (*fCleanup)(void);
-  Char fNetworkName[cNetworkNameLen];
 };
 
 struct NetworkDeviceCommand final {
@@ -70,6 +67,12 @@ using GSMNetworkDevice = NetworkDevice;
 
 /// @brief Bluetooth device.
 using BTNetworkDevice = NetworkDevice;
+
+/// @brief Printer device.
+using PrinterNetworkDevice = NetworkDevice;
+
+/// @brief Debug device.
+using DBGNetworkDevice = NetworkDevice;
 
 /// @brief LTE device.
 using LTENetworkDevice = NetworkDevice;

@@ -8,8 +8,8 @@
 
 #include <KernelKit/DeviceMgr.h>
 #include <KernelKit/DriveMgr.h>
-#include <NewKit/OwnPtr.h>
-#include <NewKit/Utils.h>
+#include <NeKit/OwnPtr.h>
+#include <NeKit/Utils.h>
 
 namespace Kernel {
 /// @brief ATA device interface class.

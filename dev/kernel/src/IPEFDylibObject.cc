@@ -12,7 +12,7 @@
 #include <KernelKit/PEF.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/ThreadLocalStorage.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 /* -------------------------------------------
 
@@ -49,7 +49,7 @@ EXTERN_C IDylibRef rtl_init_dylib_pef(USER_PROCESS& process) {
     return nullptr;
   }
 
-  dll_obj->Mount(new IPEFDylibObject::DLL_TRAITS());
+  dll_obj->Mount(new IPEFDylibObject::DylibTraits());
 
   if (!dll_obj->Get()) {
     tls_delete_class(dll_obj);

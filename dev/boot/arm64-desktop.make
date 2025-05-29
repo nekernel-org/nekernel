@@ -47,8 +47,8 @@ FLAG_GNU=-fshort-wchar -c -ffreestanding -MMD -mno-red-zone -D__NE_ARM64__ -fno-
 			 -target aarch64-unknown-windows \
 				-std=c++20 -DBOOTZ_EPM_SUPPORT -DZBA_USE_FB -D__FSKIT_USE_NEFS__ -D__BOOTZ_STANDALONE__ -D__NEOSKRNL__ -D__BOOTZ__ -D__HAVE_NE_APIS__ -D__NE__ -I../ -I../kernel
 
-BOOT_LOADER=bootz.efi
-KERNEL=krnl.efi
+BOOT_LOADER=ne_bootz
+KERNEL=ne_kernel
 SYSCHK=chk.efi
 STARTUP=startup.efi
 
@@ -94,7 +94,7 @@ efi:
 	$(HTTP_GET) https://retrage.github.io/edk2-nightly/bin/DEBUGAARCH64_QEMU_EFI.fd -O OVMF.fd
 
 BINS=*.bin
-EXECUTABLES=bootz.efi krnl.efi OVMF.fd
+EXECUTABLES=ne_bootz ne_kernel OVMF.fd
 
 TARGETS=$(REM_FLAG) $(OBJ) $(BIN) $(IMG) $(IMG_2) $(EXECUTABLES)
 

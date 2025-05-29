@@ -9,9 +9,14 @@
 
 #pragma once
 
-#include <user/SystemCalls.h>
+#include <libSystem/System.h>
 
+#ifndef __DISK_IMAGE_CDROM__
 #define kDISectorSz (512)
+#else
+#define kDISectorSz (2048)
+#endif  // __DISK_IMAGE_CDROM__
+
 #define kDIMinDiskSz mib_cast(1)
 #define kDIDefaultOutputName "disk.eimg"
 #define kDIDefaultDiskName "Disk"
@@ -45,5 +50,10 @@ SInt32 DIFormatPartitionEPM(struct DI_DISK_IMAGE& img) noexcept;
 /// @param img disk image structure.
 /// @return Status code upon completion.
 SInt32 DIFormatFilesystemNeFS(struct DI_DISK_IMAGE& img) noexcept;
+
+/// @brief HeFS format over EPM.
+/// @param img disk image structure.
+/// @return Status code upon completion.
+SInt32 DIFormatFilesystemHeFS(struct DI_DISK_IMAGE& img) noexcept;
 
 }  // namespace DI

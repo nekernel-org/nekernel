@@ -12,8 +12,8 @@
 #include <KernelKit/MSDOS.h>
 #include <KernelKit/PE.h>
 #include <KernelKit/PEF.h>
-#include <NewKit/Macros.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Macros.h>
+#include <NeKit/Ref.h>
 #include <modules/CoreGfx/CoreGfx.h>
 #include <modules/CoreGfx/TextGfx.h>
 
@@ -21,7 +21,7 @@
 
 STATIC EfiGraphicsOutputProtocol* kGop       = nullptr;
 STATIC UInt16                     kGopStride = 0U;
-STATIC EfiGUID                    kGopGuid;
+STATIC EFI_GUID                    kGopGuid;
 
 /** Related to jumping to the reset vector. */
 
@@ -33,7 +33,7 @@ EXTERN_C Kernel::VoidPtr boot_read_cr3();  // @brief Page directory inside cr3 r
   @brief Finds and stores the GOP object.
 */
 STATIC Bool boot_init_fb() noexcept {
-  kGopGuid = EfiGUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
+  kGopGuid = EFI_GUID(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID);
   kGop     = nullptr;
 
   if (BS->LocateProtocol(&kGopGuid, nullptr, (VoidPtr*) &kGop) != kEfiOk) return No;
@@ -43,7 +43,7 @@ STATIC Bool boot_init_fb() noexcept {
   return Yes;
 }
 
-EfiGUID kEfiGlobalNamespaceVarGUID = {
+EFI_GUID kEfiGlobalNamespaceVarGUID = {
     0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
 
 /// @brief BootloaderMain EFI entrypoint.
@@ -102,7 +102,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // Grab MP services, extended to runtime.	   //
   // ------------------------------------------- //
 
-  EfiGUID                guid_mp = EfiGUID(EFI_MP_SERVICES_PROTOCOL_GUID);
+  EFI_GUID                guid_mp = EFI_GUID(EFI_MP_SERVICES_PROTOCOL_GUID);
   EfiMpServicesProtocol* mp      = nullptr;
 
   BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
@@ -156,8 +156,8 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
     }
   }
 
-  handover_hdr->f_FirmwareCustomTables[0] = (VoidPtr) BS;
-  handover_hdr->f_FirmwareCustomTables[1] = (VoidPtr) ST;
+  handover_hdr->f_FirmwareCustomTables[Kernel::HEL::kHandoverTableBS] = (VoidPtr) BS;
+  handover_hdr->f_FirmwareCustomTables[Kernel::HEL::kHandoverTableST] = (VoidPtr) ST;
 
   // ------------------------------------------ //
   // If we succeed in reading the blob, then execute it.
@@ -193,18 +193,8 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
   // Assign to global 'kHandoverHeader'.
 
-  WideChar kernel_path[256U] = L"krnl.efi";
-  UInt32   kernel_path_sz    = StrLen("krnl.efi");
-
-  if (ST->RuntimeServices->GetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, nullptr,
-                                       &kernel_path_sz, kernel_path) != kEfiOk) {
-    /// access attributes (in order)
-    /// EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
-    UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
-
-    ST->RuntimeServices->SetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, &attr,
-                                     &kernel_path_sz, kernel_path);
-  }
+  WideChar kernel_path[256U] = L"ne_kernel";
+  UInt32   kernel_path_sz    = StrLen("ne_kernel");
 
   UInt32 sz_ver = sizeof(UInt64);
   UInt64 ver    = KERNEL_VERSION_BCD;
@@ -219,6 +209,16 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
                                      &sz_ver, &ver);
 
     writer.Write("BootZ: Version has been updated: ").Write(ver).Write("\r");
+
+    if (ST->RuntimeServices->GetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, nullptr,
+                                         &kernel_path_sz, kernel_path) != kEfiOk) {
+      /// access attributes (in order)
+      /// EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS
+      UInt32 attr = 0x00000001 | 0x00000002 | 0x00000004;
+
+      ST->RuntimeServices->SetVariable(L"/props/kernel_path", kEfiGlobalNamespaceVarGUID, &attr,
+                                       &kernel_path_sz, kernel_path);
+    }
   } else {
     writer.Write("BootZ: Version: ").Write(ver).Write("\r");
   }
@@ -226,7 +226,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // boot to kernel, if not bootnet this.
 
   Boot::BootFileReader reader_kernel(kernel_path, image_handle);
-
   reader_kernel.ReadAll(0);
 
   // ------------------------------------------ //

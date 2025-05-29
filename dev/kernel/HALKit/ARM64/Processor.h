@@ -6,12 +6,14 @@
 
 #pragma once
 
-#include <FirmwareKit/Handover.h>
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/Utils.h>
+#ifdef __NE_ARM64__
 
-#define kCPUBackendName "ARMv8"
+#include <FirmwareKit/Handover.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Utils.h>
+
+#define kCPUBackendName "aarch64"
 
 namespace Kernel::HAL {
 struct PACKED Register64 final {
@@ -21,11 +23,11 @@ struct PACKED Register64 final {
 
 /// @brief Memory Manager mapping flags.
 enum {
-  kMMFlagsPresent = 1 << 0,
-  kMMFlagsWr      = 1 << 1,
-  kMMFlagsUser    = 1 << 2,
-  kMMFlagsNX      = 1 << 3,
-  kMMFlagsPCD     = 1 << 4,
+  kMMFlagsInvalid = 1 << 0,
+  kMMFlagsPresent = 1 << 1,
+  kMMFlagsWr      = 1 << 2,
+  kMMFlagsUser    = 1 << 3,
+  kMMFlagsNX      = 1 << 4,
   kMMFlagsCount   = 4,
 };
 
@@ -36,23 +38,23 @@ enum {
 /// @return Status code of page manip.
 EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags);
 
-EXTERN_C UIntPtr mm_get_phys_address(VoidPtr virtual_address);
+EXTERN_C UIntPtr mm_get_page_addr(VoidPtr virtual_address);
 
 typedef UIntPtr    Reg;
 typedef Register64 Register;
 
 /// @note let's keep the same name as AMD64 HAL.
-struct PACKED StackFrame final {
-  Reg R8{0};
-  Reg R9{0};
-  Reg R10{0};
-  Reg R11{0};
-  Reg R12{0};
-  Reg R13{0};
-  Reg R14{0};
-  Reg R15{0};
-  Reg SP{0};
-  Reg BP{0};
+struct PACKED StackFrame {
+  Reg IP;
+  Reg SP;
+  Reg R8;
+  Reg R9;
+  Reg R10;
+  Reg R11;
+  Reg R12;
+  Reg R13;
+  Reg R14;
+  Reg R15;
 };
 
 typedef StackFrame* StackFramePtr;
@@ -60,16 +62,6 @@ typedef StackFrame* StackFramePtr;
 inline Void rt_halt() noexcept {
   while (Yes) {
   }
-}
-
-template <typename DataKind>
-inline void hal_dma_write(UIntPtr address, DataKind value) {
-  *reinterpret_cast<volatile DataKind*>(address) = value;
-}
-
-template <typename DataKind>
-inline DataKind hal_dma_read(UIntPtr address) {
-  return *reinterpret_cast<volatile DataKind*>(address);
 }
 
 inline Void hal_wfi(Void) {
@@ -80,6 +72,6 @@ inline Void hal_wfi(Void) {
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
-inline Kernel::VoidPtr kKernelPhysicalStart = nullptr;
-
 #include <HALKit/ARM64/Paging.h>
+
+#endif  // __NE_ARM64__

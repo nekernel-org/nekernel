@@ -7,7 +7,7 @@
 #pragma once
 
 #include <FirmwareKit/EFI/EFI.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define kSectorAlignGPT_PartTbl (420U)
 #define kSectorAlignGPT_PartEntry (72U)
@@ -29,7 +29,7 @@ struct PACKED GPT_PARTITION_TABLE final {
   UInt64  LBAAltHeader;
   UInt64  FirstGPTEntry;
   UInt64  LastGPTEntry;
-  EfiGUID Guid;
+  EFI_GUID Guid;
   UInt64  StartingLBA;
   UInt32  NumPartitionEntries;
   UInt32  SizeOfEntries;
@@ -38,8 +38,8 @@ struct PACKED GPT_PARTITION_TABLE final {
 };
 
 struct PACKED GPT_PARTITION_ENTRY {
-  EfiGUID PartitionTypeGUID;
-  EfiGUID UniquePartitionGUID;
+  EFI_GUID PartitionTypeGUID;
+  EFI_GUID UniquePartitionGUID;
   UInt64  StartLBA;
   UInt64  EndLBA;
   UInt64  Attributes;

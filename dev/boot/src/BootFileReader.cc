@@ -43,12 +43,12 @@ Boot::BootFileReader::BootFileReader(const CharacterTypeUTF16* path, EfiHandlePt
 
   /// Load protocols with their GUIDs.
 
-  EfiGUID guidEfp = EfiGUID(EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID);
+  EFI_GUID guidEfp = EFI_GUID(EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID);
 
   EfiSimpleFilesystemProtocol* efp = nullptr;
 
   EfiLoadImageProtocol* img     = nullptr;
-  EfiGUID               guidImg = EfiGUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
+  EFI_GUID               guidImg = EFI_GUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
   if (BS->HandleProtocol(ImageHandle, &guidImg, (void**) &img) != kEfiOk) {
     mWriter.Write(L"BootZ: Handle-Protocol: No-Such-Protocol").Write(L"\r");
@@ -116,7 +116,7 @@ Void Boot::BootFileReader::ReadAll(SizeT readUntil, SizeT chunkToRead, UIntPtr o
 
   EfiFileInfo newPtrInfo{};
 
-  EfiGUID kFileInfoGUID = EFI_FILE_INFO_GUID;
+  EFI_GUID kFileInfoGUID = EFI_FILE_INFO_GUID;
 
   if (mFile->GetInfo(mFile, &kFileInfoGUID, &szInfo, &newPtrInfo) == kEfiOk) {
     readUntil = newPtrInfo.FileSize;

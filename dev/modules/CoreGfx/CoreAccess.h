@@ -9,7 +9,7 @@
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/KPC.h>
-#include <NewKit/NewKit.h>
+#include <NeKit/NeKit.h>
 #include <modules/CoreGfx/CoreGfx.h>
 #include <modules/CoreGfx/MathGfx.h>
 

@@ -11,7 +11,7 @@
 #endif
 
 #include <ArchKit/ArchKit.h>
-#include <NewKit/KernelPanic.h>
+#include <NeKit/KernelPanic.h>
 
 #define kBitMapMagic (0x10210U)
 
@@ -22,6 +22,8 @@
 namespace Kernel {
 namespace HAL {
   namespace Detail {
+    STATIC SizeT kBitMapCursor = 0UL;
+
     /***********************************************************************************/
     /// \brief Proxy Interface to manage a bitmap allocator.
     /***********************************************************************************/
@@ -47,6 +49,8 @@ namespace HAL {
 
         UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(page_ptr);
 
+        kBitMapCursor += ptr_bit_set[kBitMapSizeIdx];
+
         ptr_bit_set[kBitMapMagIdx]  = kBitMapMagic;
         ptr_bit_set[kBitMapUsedIdx] = No;
 
@@ -59,7 +63,6 @@ namespace HAL {
         UInt32 flags = kMMFlagsPresent;
 
         if (wr) flags |= kMMFlagsWr;
-
         if (user) flags |= kMMFlagsUser;
 
         return flags;
@@ -77,11 +80,18 @@ namespace HAL {
       auto FindBitMap(VoidPtr base_ptr, SizeT size, Bool wr, Bool user, SizeT pad) -> VoidPtr {
         if (!size) return nullptr;
 
+        if (kBitMapCursor > kKernelBitMpSize) {
+          err_global_get() = kErrorOutOfBitMapMemory;
+
+          (Void)(kout << "Bitmap limit reached, can't allocate more bitmaps." << kendl);
+          return nullptr;
+        }
+
         VoidPtr base = reinterpret_cast<VoidPtr>((UIntPtr) base_ptr);
 
         MUST_PASS(base);
 
-        static SizeT biggest = 0UL;
+        STATIC SizeT biggest = 0UL;
 
         while (YES) {
           UIntPtr* ptr_bit_set = reinterpret_cast<UIntPtr*>(base);
@@ -99,6 +109,8 @@ namespace HAL {
 
               if (biggest < (size + pad)) biggest = size + pad;
 
+              kBitMapCursor += size + pad;
+
               return (VoidPtr) ptr_bit_set;
             }
           } else if (ptr_bit_set[kBitMapMagIdx] != kBitMapMagic) {
@@ -112,6 +124,8 @@ namespace HAL {
             mm_map_page(ptr_bit_set, ptr_bit_set, flags);
 
             if (biggest < (size + pad)) biggest = (size + pad);
+
+            kBitMapCursor += size + pad;
 
             return (VoidPtr) ptr_bit_set;
           }
@@ -136,7 +150,6 @@ namespace HAL {
           return;
         }
 
-#ifdef __NE_VERBOSE_BITMAP__
         (Void)(kout << "Magic: " << hex_number(ptr_bit_set[kBitMapMagIdx]) << kendl);
         (Void)(kout << "Is Allocated? " << (ptr_bit_set[kBitMapUsedIdx] ? "YES" : "NO") << kendl);
         (Void)(kout << "Size of BitMap (B): " << number(ptr_bit_set[kBitMapSizeIdx]) << kendl);
@@ -149,7 +162,6 @@ namespace HAL {
         (Void)(kout << "Size of BitMap (TIB): " << number(TIB(ptr_bit_set[kBitMapSizeIdx]))
                     << kendl);
         (Void)(kout << "BitMap Address: " << hex_number((UIntPtr) ptr_bit_set) << kendl);
-#endif
       }
     };
   }  // namespace Detail
@@ -169,10 +181,16 @@ namespace HAL {
     VoidPtr              ptr_new = nullptr;
     Detail::IBitMapProxy bitmp;
 
-    NE_UNUSED(is_page);
+    if (is_page) return nullptr;
 
     ptr_new = bitmp.FindBitMap(kKernelBitMpStart, size, wr, user, pad);
-    return (UIntPtr*) ptr_new;
+
+    if (!ptr_new) {
+      ke_panic(RUNTIME_CHECK_VIRTUAL_OUT_OF_MEM, "Out of memory bitmap");
+      return nullptr;
+    }
+
+    return ptr_new;
   }
 
   /***********************************************************************************/

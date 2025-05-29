@@ -6,8 +6,8 @@
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/New.h>
-#include <NewKit/Utils.h>
+#include <NeKit/New.h>
+#include <NeKit/Utils.h>
 #include <modules/CoreGfx/CoreGfx.h>
 #include <modules/CoreGfx/TextGfx.h>
 

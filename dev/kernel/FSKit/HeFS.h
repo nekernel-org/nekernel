@@ -8,10 +8,10 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DriveMgr.h>
-#include <KernelKit/User.h>
-#include <NewKit/Crc32.h>
-#include <NewKit/Defines.h>
-#include <NewKit/KString.h>
+#include <KernelKit/UserMgr.h>
+#include <NeKit/Crc32.h>
+#include <NeKit/Defines.h>
+#include <NeKit/KString.h>
 #include <hint/CompilerHint.h>
 
 /// @file HeFS.h
@@ -370,7 +370,7 @@ inline const Char* hefs_file_flags_to_string(UInt32 flags) noexcept {
 }
 }  // namespace Kernel::Detail
 
-namespace Kernel::HeFS {
+namespace Kernel {
 /// @brief HeFS filesystem parser class.
 /// @details This class is used to parse the HeFS filesystem.
 class HeFileSystemParser final {
@@ -417,7 +417,10 @@ class HeFileSystemParser final {
                                       const Utf8Char* dir, const BOOL delete_or_create);
 };
 
-/// @brief Initialize HeFS inside the main disk.
-/// @return Whether it successfuly formated it or not.
-Boolean fs_init_hefs(Void);
-}  // namespace Kernel::HeFS
+namespace HeFS {
+
+  /// @brief Initialize HeFS inside the main disk.
+  /// @return Whether it successfuly formated it or not.
+  Boolean fs_init_hefs(Void) noexcept;
+}  // namespace HeFS
+}  // namespace Kernel

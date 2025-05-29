@@ -12,7 +12,7 @@
 
 /// @brief The Virtual Explicit Partition Map scheme extension.
 
-#ifdef __NE_VEPM__
+#if defined(__NE_VEPM__)
 #ifdef kEPMMagic
 #undef kEPMMagic
 #endif  // kEPMMagic
@@ -26,7 +26,7 @@ inline EPM_GUID kVEPMGuidEPM = {
 
 /// @brief VEPM GUID.
 /// @note This is the GUID used to identify a VEPM partition (EFI version)
-inline EfiGUID kVEPMGuidEFI = {
+inline EFI_GUID kVEPMGuidEFI = {
     0x9a1b3f2e, 0x4c3f, 0x4d52, {0xa7, 0x83, 0x9c, 0x21, 0x7b, 0x5e, 0x4d, 0xac}};
 
 #define kVEPMGuidStr "9a1b3f2e-4c3f-4d52-a783-9c217b5e4dac"

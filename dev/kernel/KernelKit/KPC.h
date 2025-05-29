@@ -6,18 +6,19 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 /// @file KPC.h
 /// @brief Kernel Procedure Code.
 
-#define err_local_ok()                                                           \
-  (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() == \
+#define err_local_ok()                                                              \
+  (Kernel::UserProcessScheduler::The().TheCurrentProcess().Leak().GetLocalCode() == \
    Kernel::kErrorSuccess)
-#define err_local_fail()                                                         \
-  (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode() != \
+#define err_local_fail()                                                            \
+  (Kernel::UserProcessScheduler::The().TheCurrentProcess().Leak().GetLocalCode() != \
    Kernel::kErrorSuccess)
-#define err_local_get() (Kernel::UserProcessScheduler::The().CurrentProcess().Leak().GetLocalCode())
+#define err_local_get() \
+  (Kernel::UserProcessScheduler::The().TheCurrentProcess().Leak().GetLocalCode())
 
 #define err_global_ok() (Kernel::kErrorLocalNumber == Kernel::kErrorSuccess)
 #define err_global_fail() (Kernel::kErrorLocalNumber != Kernel::kErrorSuccess)
@@ -62,8 +63,8 @@ inline constexpr KPCError kErrorCDTrayBroken       = 62;
 inline constexpr KPCError kErrorUnrecoverableDisk  = 63;
 inline constexpr KPCError kErrorFileLocked         = 64;
 inline constexpr KPCError kErrorDiskIsTooTiny      = 65;
-/// Kernel errors.
-inline constexpr KPCError kErrorDmaExhausted = 101;
+inline constexpr KPCError kErrorDmaExhausted       = 66;
+inline constexpr KPCError kErrorOutOfBitMapMemory  = 67;
 /// Generic errors.
 inline constexpr KPCError kErrorUnimplemented = -1;
 

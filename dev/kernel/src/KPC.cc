@@ -4,9 +4,9 @@
 
 ------------------------------------------- */
 
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/MemoryMgr.h>
-#include <NewKit/KernelPanic.h>
+#include <NeKit/KernelPanic.h>
 
 namespace Kernel {
 STATIC Bool kRaiseOnBugCheck = false;
@@ -19,7 +19,7 @@ Boolean err_bug_check_raise(Void) noexcept {
 
   if (ptr == nullptr) goto bug_check_fail;
 
-  if (!mm_is_valid_heap(ptr)) goto bug_check_fail;
+  if (!mm_is_valid_ptr(ptr)) goto bug_check_fail;
 
   delete[] ptr;
 

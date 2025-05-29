@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/Array.h>
+#include <NeKit/Array.h>

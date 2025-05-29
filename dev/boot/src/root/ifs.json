@@ -1,0 +1,10 @@
+{
+    "type": "IFS",
+    "sys": [
+        "/~drivers/fat32.sys",
+        "/~drivers/ntfs.sys",
+        "/~drivers/ext4.sys",
+        "/~drivers/iso9660.sys",
+        "/~drivers/nfs4.sys"
+    ]
+}

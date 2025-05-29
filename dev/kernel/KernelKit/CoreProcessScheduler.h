@@ -6,13 +6,92 @@
 
 #pragma once
 
-#include <NewKit/Defines.h>
-#include <NewKit/ErrorOr.h>
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
+
+#define kSchedMinMicroTime (AffinityKind::kStandard)
+#define kSchedInvalidPID (-1)
+#define kSchedProcessLimitPerTeam (32U)
+#define kSchedTeamCount (256U)
+
+#define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
+#define kSchedMaxStackSz (kib_cast(8))     /* maximum stack size */
+
+#define kSchedNameLen (128U)
+
+EXTERN_C void sched_idle_task(void);
 
 namespace Kernel {
 class USER_PROCESS;
-class KERNEL_PROCESS;
+class KERNEL_TASK;
+class KernelTaskScheduler;
+class UserProcessScheduler;
 class UserProcessTeam;
+
+template <typename T>
+struct PROCESS_HEAP_TREE;
+
+template <typename T>
+struct PROCESS_FILE_TREE;
+
+enum {
+  kInvalidTreeKind = 0U,
+  kRedTreeKind     = 100U,
+  kBlackTreeKind   = 101U,
+  kTreeKindCount   = 2U,
+};
+
+template <typename T>
+struct PROCESS_HEAP_TREE {
+  static constexpr auto kPtr = true;
+  static constexpr auto kFD  = false;
+
+  T     Entry{nullptr};
+  SizeT EntrySize{0UL};
+  SizeT EntryPad{0UL};
+
+  UInt32 Color{kBlackTreeKind};
+
+  struct PROCESS_HEAP_TREE<T>* Parent {
+    nullptr
+  };
+  struct PROCESS_HEAP_TREE<T>* Child {
+    nullptr
+  };
+
+  struct PROCESS_HEAP_TREE<T>* Prev {
+    nullptr
+  };
+  struct PROCESS_HEAP_TREE<T>* Next {
+    nullptr
+  };
+};
+
+template <typename T>
+struct PROCESS_FILE_TREE {
+  static constexpr auto kPtr = false;
+  static constexpr auto kFD  = true;
+
+  T     Entry{nullptr};
+  SizeT EntrySize{0UL};
+  SizeT EntryPad{0UL};
+
+  UInt32 Color{kBlackTreeKind};
+
+  struct PROCESS_FILE_TREE<T>* Parent {
+    nullptr
+  };
+  struct PROCESS_FILE_TREE<T>* Child {
+    nullptr
+  };
+
+  struct PROCESS_FILE_TREE<T>* Prev {
+    nullptr
+  };
+  struct PROCESS_FILE_TREE<T>* Next {
+    nullptr
+  };
+};
 
 /***********************************************************************************/
 /// @brief Subsystem enum type.
@@ -20,7 +99,7 @@ class UserProcessTeam;
 
 enum class ProcessSubsystem : Int32 {
   kProcessSubsystemSecurity = 100,
-  kProcessSubsystemApplication,
+  kProcessSubsystemUser,
   kProcessSubsystemService,
   kProcessSubsystemDriver,
   kProcessSubsystemInvalid = 0xFFFFFFF,
@@ -51,8 +130,8 @@ enum class ProcessStatusKind : Int32 {
 //! @brief Affinity is the amount of nano-seconds this process is going to run.
 /***********************************************************************************/
 enum class AffinityKind : Int32 {
-  kRealTime     = 500,
-  kVeryHigh     = 250,
+  kRealTime     = 50,
+  kVeryHigh     = 150,
   kHigh         = 200,
   kStandard     = 1000,
   kLowUsage     = 1500,
@@ -117,7 +196,8 @@ struct PROCESS_IMAGE final {
 
  private:
   friend USER_PROCESS;
-  friend KERNEL_PROCESS;
+  friend KERNEL_TASK;
+
   friend class UserProcessScheduler;
 
   ImagePtr fCode;

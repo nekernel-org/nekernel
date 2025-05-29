@@ -7,8 +7,8 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Defines.h>
-#include <NewKit/ErrorOr.h>
+#include <NeKit/Defines.h>
+#include <NeKit/ErrorOr.h>
 #include <hint/CompilerHint.h>
 
 namespace Kernel {

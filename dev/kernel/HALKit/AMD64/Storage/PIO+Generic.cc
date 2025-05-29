@@ -49,7 +49,7 @@ ATAWaitForIO_Retry2:
   return true;
 }
 
-static Void drv_pio_std_select(UInt16 Bus) {
+STATIC Void drv_pio_std_select(UInt16 Bus) {
   if (Bus == ATA_PRIMARY_IO)
     rt_out8(Bus + ATA_REG_HDDEVSEL, ATA_PRIMARY_SEL);
   else
@@ -79,15 +79,18 @@ ATAInit_Retry:
   OutBus    = (Bus == ATA_PRIMARY_IO) ? ATA_PRIMARY_IO : ATA_SECONDARY_IO;
   OutMaster = (Bus == ATA_PRIMARY_IO) ? ATA_MASTER : ATA_SLAVE;
 
+  drv_pio_std_select(IO);
+
   rt_out8(OutBus + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
-  drv_pio_std_wait_io(IO);
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
 
   /// fetch serial info
   /// model, speed, number of sectors...
 
   for (SizeT i = 0ul; i < kATADataLen; ++i) {
-    kATAIdentifyData[i] = HAL::rt_in16(OutBus + ATA_REG_DATA);
+    kATAIdentifyData[i] = rt_in16(OutBus + ATA_REG_DATA);
   }
 
   for (Int32 i = 0; i < 20; i++) {
@@ -98,10 +101,6 @@ ATAInit_Retry:
   kATADiskModel[40] = '\0';
 
   (Void)(kout << "Drive Model: " << kATADiskModel << kendl);
-
-  // Why? the current disk driver writes whole word instead of a single byte (expected btw) so i'm
-  // planning to finish +Next drivers for 0.0.3
-  ke_panic(RUNTIME_CHECK_INVALID, "PIO driver is currently being reworked.");
 
   return true;
 }
@@ -125,9 +124,16 @@ Void drv_pio_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT Sect
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
+
+  for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     drv_pio_std_wait_io(IO);
-    Buf[IndexOff] = HAL::rt_in16(IO + ATA_REG_DATA);
+
+    auto in = rt_in16(IO + ATA_REG_DATA);
+
+    Buf[IndexOff]     = in & 0xFF;
+    Buf[IndexOff + 1] = (in >> 8) & 0xFF;
   }
 }
 
@@ -150,9 +156,17 @@ Void drv_pio_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT Sec
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  for (SizeT IndexOff = 0; IndexOff < Size; ++IndexOff) {
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
+
+  for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     drv_pio_std_wait_io(IO);
-    rt_out16(IO + ATA_REG_DATA, Buf[IndexOff]);
+
+    UInt8  low    = (UInt8) Buf[IndexOff];
+    UInt8  high   = (IndexOff + 1 < Size) ? (UInt8) Buf[IndexOff + 1] : 0;
+    UInt16 packed = (high << 8) | low;
+
+    rt_out16(IO + ATA_REG_DATA, packed);
   }
 }
 

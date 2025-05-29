@@ -2,6 +2,8 @@
 -Idev/
 -Idev/user
 -Idev/boot
+-Idev/system_sdk
+-Idev/generic_kits
 -Idev/ddk
 -Ipublic/tools
 -Ipublic/tools/mk.app
@@ -21,9 +23,9 @@
 -D__NE_ED__
 -xc++
 -D__AHCI__
--D__aarch64__
 -DNE_USE_MBCI_FLASH
 -D__ATA_DMA__
+-D__NE_VEPM__
 -Wall
 -Wpedantic
 -Wextra

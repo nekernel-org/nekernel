@@ -14,18 +14,8 @@
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/CoreProcessScheduler.h>
 #include <KernelKit/LockDelegate.h>
-#include <KernelKit/User.h>
-#include <NewKit/MutableArray.h>
-
-#define kSchedMinMicroTime (AffinityKind::kStandard)
-#define kSchedInvalidPID (-1)
-#define kSchedProcessLimitPerTeam (32U)
-#define kSchedTeamCount (256U)
-
-#define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
-#define kSchedMaxStackSz mib_cast(8)       /* maximum stack size */
-
-#define kSchedNameLen (128U)
+#include <KernelKit/UserMgr.h>
+#include <NeKit/MutableArray.h>
 
 ////////////////////////////////////////////////////
 // Last revision date is: Fri Mar 28 2025		  //
@@ -52,12 +42,12 @@ class USER_PROCESS final {
 
  public:
   Char               Name[kSchedNameLen] = {"USER_PROCESS"};
-  ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemInvalid};
+  ProcessSubsystem   SubSystem{ProcessSubsystem::kProcessSubsystemUser};
   User*              Owner{nullptr};
   HAL::StackFramePtr StackFrame{nullptr};
   AffinityKind       Affinity{AffinityKind::kStandard};
   ProcessStatusKind  Status{ProcessStatusKind::kKilled};
-  UInt8*             StackReserve{nullptr};
+  UInt8              StackReserve[kSchedMaxStackSz];
   PROCESS_IMAGE      Image{};
   SizeT              StackSize{kSchedMaxStackSz};
   IDylibObject*      DylibDelegate{nullptr};
@@ -65,37 +55,16 @@ class USER_PROCESS final {
   SizeT              MemoryLimit{kSchedMaxMemoryLimit};
   SizeT              UsedMemory{0UL};
 
-  /// @brief Allocation tracker structure.
-  struct USER_HEAP_TREE final {
-    VoidPtr MemoryEntry{nullptr};
-    SizeT   MemoryEntrySize{0UL};
-    SizeT   MemoryEntryPad{0UL};
-
-    enum {
-      kInvalidMemory = 0,
-      kRedMemory     = 100,
-      kBlackMemory   = 101,
-      kCountMemory   = 2,
-    };
-
-    Int32 MemoryColor{kBlackMemory};
-
-    struct USER_HEAP_TREE* MemoryParent{nullptr};
-    struct USER_HEAP_TREE* MemoryChild{nullptr};
-
-    struct USER_HEAP_TREE* MemoryPrev{nullptr};
-    struct USER_HEAP_TREE* MemoryNext{nullptr};
-  };
-
   struct USER_PROCESS_SIGNAL final {
-    UIntPtr           SignalArg;
-    ProcessStatusKind Status;
-    UIntPtr           SignalID;
+    UIntPtr           SignalArg{0};
+    ProcessStatusKind Status{ProcessStatusKind::kKilled};
+    UIntPtr           SignalID{0};
   };
 
-  USER_PROCESS_SIGNAL Signal;
-  USER_HEAP_TREE*     HeapTree{nullptr};
-  UserProcessTeam*    ParentTeam;
+  USER_PROCESS_SIGNAL         Signal;
+  PROCESS_FILE_TREE<UInt32*>* FileTree{nullptr};
+  PROCESS_HEAP_TREE<VoidPtr>* HeapTree{nullptr};
+  UserProcessTeam*            ParentTeam;
 
   VoidPtr VMRegister{0UL};
 
@@ -107,7 +76,8 @@ class USER_PROCESS final {
   };
 
   ProcessTime PTime{0};  //! @brief Process allocated tine.
-  ProcessTime RTime{0};  //! @brief Process Run time
+  ProcessTime RTime{0};  //! @brief Process run time.
+  ProcessTime UTime{0};  //! #brief Process used time.
 
   PID   ProcessId{kSchedInvalidPID};
   Int32 Kind{kExecutableKind};
@@ -122,6 +92,8 @@ class USER_PROCESS final {
   ///! @brief Crashes the app, exits with code ~0.
   /***********************************************************************************/
   Void Crash();
+
+  Bool SpawnDylib();
 
   /***********************************************************************************/
   ///! @brief Exits the app.
@@ -215,11 +187,12 @@ class UserProcessScheduler final : public ISchedulable {
   NE_COPY_DELETE(UserProcessScheduler)
   NE_MOVE_DELETE(UserProcessScheduler)
 
+ public:
        operator bool();
   bool operator!();
 
  public:
-  UserProcessTeam& CurrentTeam();
+  UserProcessTeam& TheCurrentTeam();
   BOOL             SwitchTeam(UserProcessTeam& team);
 
  public:
@@ -231,7 +204,7 @@ class UserProcessScheduler final : public ISchedulable {
   Bool HasMP() override;
 
  public:
-  Ref<USER_PROCESS>& CurrentProcess();
+  Ref<USER_PROCESS>& TheCurrentProcess();
   SizeT              Run() noexcept;
 
  public:
@@ -249,8 +222,7 @@ class UserProcessScheduler final : public ISchedulable {
 
 class UserProcessHelper final {
  public:
-  STATIC Bool Switch(VoidPtr image_ptr, UInt8* stack_ptr, HAL::StackFramePtr frame_ptr,
-                     PID new_pid);
+  STATIC Bool Switch(HAL::StackFramePtr frame_ptr, PID new_pid);
   STATIC Bool CanBeScheduled(const USER_PROCESS& process);
   STATIC ErrorOr<PID> TheCurrentPID();
   STATIC SizeT        StartScheduling();

@@ -175,6 +175,9 @@ Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack) {
     writer.Write("BootZ: Stack address: ").Write((UIntPtr) &fStack[mib_cast(16) - 1]).Write("\r");
     writer.Write("BootZ: Stack size: ").Write(mib_cast(16)).Write("\r");
 
+    fHandover->f_StackTop = &fStack[mib_cast(16) - 1];
+    fHandover->f_StackSz  = mib_cast(16);
+
     auto ret = rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(16) - 1]);
 
     // we don't need the stack anymore.

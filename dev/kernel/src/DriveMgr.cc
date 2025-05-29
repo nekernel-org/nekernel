@@ -8,7 +8,7 @@
 #include <FirmwareKit/VEPM.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/DriveMgr.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Utils.h>
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 #include <modules/NVME/NVME.h>
@@ -146,7 +146,7 @@ DriveTrait io_construct_blank_drive() noexcept {
   trait.fInit     = io_drv_unimplemented;
   trait.fProtocol = io_drv_kind;
 
-  kout << "Construct: " << trait.fName << "\r";
+  kout << "DriveMgr: Construct: " << trait.fName << "\r";
 
   return trait;
 }
@@ -170,7 +170,7 @@ namespace Detail {
       trait.fPacket.fPacketReadOnly = NO;
       trait.fKind                   = kMassStorageDrive | kEPMDrive;
 
-      kout << "Disk is EPM formatted.\r";
+      kout << "DriveMgr: Disk is EPM formatted.\r";
 
       trait.fSectorSz = block_struct.SectorSz;
       trait.fLbaEnd   = block_struct.LbaEnd;
@@ -191,13 +191,13 @@ namespace Detail {
         trait.fPacket.fPacketReadOnly = NO;
         trait.fKind                   = kMassStorageDrive | kGPTDrive;
 
-        kout << "Disk is GPT formatted.\r";
+        kout << "DriveMgr: Disk is GPT formatted.\r";
 
         trait.fSectorSz = gpt_struct.SizeOfEntries;
         trait.fLbaEnd   = gpt_struct.LastGPTEntry;
         trait.fLbaStart = gpt_struct.FirstGPTEntry;
       } else {
-        kout << "Disk is unformatted.\r";
+        kout << "DriveMgr: Disk is unformatted.\r";
 
         trait.fPacket.fPacketReadOnly = YES;
         trait.fKind                   = kMassStorageDrive | kUnformattedDrive | kReadOnlyDrive;
@@ -233,7 +233,7 @@ DriveTrait io_construct_main_drive() noexcept {
   trait.fInit     = io_drv_init;
   trait.fProtocol = io_drv_kind;
 
-  kout << "Detecting partition scheme of: " << trait.fName << ".\r";
+  kout << "DriveMgr: Detecting partition scheme of: " << trait.fName << ".\r";
 
   Detail::io_detect_drive(trait);
 

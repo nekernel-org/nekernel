@@ -8,9 +8,9 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DeviceMgr.h>
-#include <NewKit/OwnPtr.h>
-#include <NewKit/Stream.h>
-#include <NewKit/Utils.h>
+#include <NeKit/OwnPtr.h>
+#include <NeKit/Stream.h>
+#include <NeKit/Utils.h>
 
 #define kDebugUnboundPort 0x0FEED
 
@@ -158,8 +158,8 @@ namespace Detail {
 inline TerminalDevice hex_number(const Long& x) {
   TerminalDevice self = TerminalDevice::The();
 
+  self << "0x";
   Detail::_write_number_hex(x, self);
-  self.operator<<("h");
 
   return self;
 }
@@ -184,10 +184,12 @@ inline constexpr SizeT kDebugTypeLen = 256U;
 
 typedef Char rt_debug_type[kDebugTypeLen];
 
-class DebuggerPortHeader final {
+/// @brief KDBG's packet header.
+class KernelDebugHeader final {
  public:
-  Int16 fPort;
-  Int16 fPortBsy;
+  Int16         fPort;
+  Int16         fPortKind;
+  rt_debug_type fPortBlob;
 };
 
 inline TerminalDevice& operator<<(TerminalDevice& src, const Long& num) {

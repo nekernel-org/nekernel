@@ -6,8 +6,8 @@
 
 #include <ArchKit/ArchKit.h>
 #include <HALKit/AMD64/Processor.h>
-#include <KernelKit/MemoryMgr.h>
-#include <NewKit/KString.h>
+#include <KernelKit/HeapMgr.h>
+#include <NeKit/KString.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 
 namespace Kernel {

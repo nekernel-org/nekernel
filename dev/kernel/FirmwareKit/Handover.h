@@ -18,7 +18,7 @@
 #pragma once
 
 #include <FirmwareKit/EFI/EFI.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define kHandoverMagic (0xBADCC)
 #define kHandoverVersion (0x0117)
@@ -61,8 +61,12 @@ struct BootInfoHeader final {
 
   VoidPtr f_KernelImage;
   SizeT   f_KernelSz;
-  VoidPtr f_StartupImage;
-  SizeT   f_StartupSz;
+
+  VoidPtr f_LibSystemImage;
+  SizeT   f_LibSystemSz;
+
+  VoidPtr f_StackTop;
+  SizeT   f_StackSz;
 
   WideChar f_FirmwareVendorName[32];
   SizeT    f_FirmwareVendorLen;

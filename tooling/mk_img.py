@@ -24,21 +24,13 @@ def copy_to_fat(image_path, source_dir):
         
         command = ["mcopy", "-spm", "-i", image_path] + files_to_copy + ["::"]
         subprocess.run(command, check=True)
-        
-        print(f"Info: Successfully copied contents of '{source_dir}' into '{image_path}'")
-    except FileNotFoundError:
-        print("Error: mcopy is not installed. Please install mtools.")
-        sys.exit(1)
-    except subprocess.CalledProcessError as e:
-        print(f"Error: mcopy failed with error code {e.returncode}.")
-        sys.exit(1)
     except Exception as e:
         print(f"Error: failed: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: mk_img.py <fat32_image> <source_directory>")
+        print("HELP: mk_img.py <fat32_image> <source_directory>")
         sys.exit(1)
 
     image_path = sys.argv[1]
@@ -46,4 +38,4 @@ if __name__ == "__main__":
 
     copy_to_fat(image_path, source_dir)
 
-    print("NeKernel image created successfully.")
+    print("INFO: Image created successfully.")

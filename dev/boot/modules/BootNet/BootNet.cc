@@ -12,14 +12,14 @@
 #include <FirmwareKit/EFI/API.h>
 #include <modules/BootNet/BootNet.h>
 
-STATIC EfiGUID kEfiSimpleProtoGUID               = EFI_SIMPLE_NETWORK_PROTOCOL_GUID;
+STATIC EFI_GUID kEfiSimpleProtoGUID               = EFI_SIMPLE_NETWORK_PROTOCOL_GUID;
 STATIC EFI_SIMPLE_NETWORK_PROTOCOL* kEfiProtocol = nullptr;
 
 STATIC Void bootnet_read_ip_packet(BOOTNET_INTERNET_HEADER   inet,
                                    BOOTNET_INTERNET_HEADER** inet_out);
 
 EXTERN_C Int32 BootNetModuleMain(Kernel::HEL::BootInfoHeader* handover) {
-  fw_init_efi((EfiSystemTable*) handover->f_FirmwareCustomTables[1]);
+  fw_init_efi((EfiSystemTable*) handover->f_FirmwareCustomTables[Kernel::HEL::kHandoverTableST]);
 
   Boot::BootTextWriter writer;
 

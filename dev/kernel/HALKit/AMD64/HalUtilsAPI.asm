@@ -22,5 +22,3 @@ rt_install_tib:
 	ret
 
 ;; //////////////////////////////////////////////////// ;;
-
-[extern kApicMadtAddressesCount]

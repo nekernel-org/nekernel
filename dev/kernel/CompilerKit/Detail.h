@@ -7,7 +7,7 @@
 #pragma once
 
 #ifdef __NEOSKRNL__
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 #endif  // ifdef __NEOSKRNL__
 
 #define NE_COPY_DELETE(KLASS)              \

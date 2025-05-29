@@ -11,7 +11,7 @@
   https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
 */
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #define SDT_OBJECT : public Kernel::SDT
 

@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/Function.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Function.h>
 
 #include <FirmwareKit/Handover.h>
 
@@ -29,8 +29,8 @@
 #define kMaxDispatchCallCount (512U)
 
 namespace Kernel {
-inline SSizeT rt_hash_seed(const Char* seed, int mul) {
-  SSizeT hash = 0;
+inline SizeT rt_hash_seed(const Char* seed, UInt32 mul) {
+  SizeT hash = 0;
 
   for (SSizeT idx = 0; seed[idx] != 0; ++idx) {
     hash += seed[idx];
@@ -69,7 +69,7 @@ namespace HAL {
 
 typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 
-struct HalSyscallEntry final {
+struct HAL_DISPATCH_ENTRY final {
   Kernel::Int64   fHash;
   Kernel::Bool    fHooked;
   rt_syscall_proc fProc;
@@ -77,8 +77,12 @@ struct HalSyscallEntry final {
   operator bool() { return fHooked; }
 };
 
-inline Kernel::Array<HalSyscallEntry, kMaxDispatchCallCount> kSysCalls;
+inline Kernel::Array<HAL_DISPATCH_ENTRY, kMaxDispatchCallCount> kSysCalls;
 
-inline Kernel::Array<HalSyscallEntry, kMaxDispatchCallCount> kKernCalls;
+inline Kernel::Array<HAL_DISPATCH_ENTRY, kMaxDispatchCallCount> kKernCalls;
 
-EXTERN_C Kernel::HAL::StackFramePtr mp_get_current_context(Kernel::Int64 pid);
+#ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
+
+inline Kernel::VoidPtr kKernelVM = nullptr;
+
+#endif  // __NE_VIRTUAL_MEMORY_SUPPORT__

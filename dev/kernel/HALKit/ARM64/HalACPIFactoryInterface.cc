@@ -5,8 +5,8 @@
 ------------------------------------------- */
 
 #include <ArchKit/ArchKit.h>
-#include <KernelKit/MemoryMgr.h>
-#include <NewKit/KString.h>
+#include <KernelKit/HeapMgr.h>
+#include <NeKit/KString.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/APM/APM.h>
 

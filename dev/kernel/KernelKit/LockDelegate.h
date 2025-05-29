@@ -6,13 +6,13 @@
 
 #pragma once
 
-#include <NewKit/Atom.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Atom.h>
+#include <NeKit/Defines.h>
 
 namespace Kernel {
 enum {
-  kLockInvalid,
-  kLockDone = 200,
+  kLockInvalid = 0,
+  kLockDone    = 200,
   kLockTimedOut,
   kLockCount = 3,
 };

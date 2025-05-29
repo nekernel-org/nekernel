@@ -7,9 +7,9 @@
 #pragma once
 
 #include <ArchKit/ArchKit.h>
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/Ref.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Ref.h>
 
 namespace Kernel {
 template <SizeT Sz>

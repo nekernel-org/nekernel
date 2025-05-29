@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/OwnPtr.h>
+#include <NeKit/OwnPtr.h>

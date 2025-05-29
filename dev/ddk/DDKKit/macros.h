@@ -45,4 +45,4 @@
 
 #ifndef __NEOSKRNL__
 #error !!! Do not include header in EL0/Ring 3 mode !!!
-#endif  // __MINOSKRNL__
+#endif  // __NEOSKRNL__

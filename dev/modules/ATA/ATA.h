@@ -14,7 +14,7 @@
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 ///! Status register
 #define ATA_SR_BSY 0x80

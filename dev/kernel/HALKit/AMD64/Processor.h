@@ -13,11 +13,15 @@
 
 #pragma once
 
+#ifdef __NE_AMD64__
+
 #include <FirmwareKit/Handover.h>
 #include <HALKit/AMD64/Paging.h>
-#include <NewKit/Array.h>
-#include <NewKit/Defines.h>
-#include <NewKit/Utils.h>
+#include <NeKit/Array.h>
+#include <NeKit/Defines.h>
+#include <NeKit/Utils.h>
+
+#include <HALKit/AMD64/CPUID.h>
 
 #define kPITControlPort (0x43)
 #define kPITChannel0Port (0x40)
@@ -28,7 +32,8 @@
 #define kPIC2Command (0xA0)
 #define kPIC2Data (0xA1)
 
-#include <HALKit/AMD64/CPUID.h>
+#define kIOAPICRegVal (4)
+#define kIOAPICRegReg (0)
 
 #define rtl_nop_op() asm volatile("nop")
 
@@ -70,7 +75,7 @@ enum {
   kMMFlagsNX      = 1 << 4,
   kMMFlagsPCD     = 1 << 5,
   kMMFlagsPwt     = 1 << 6,
-  kMMFlagsCount   = 4,
+  kMMFlagsCount   = 6,
 };
 
 struct PACKED Register64 final {
@@ -83,18 +88,17 @@ using Reg         = RawRegister;
 using InterruptId = UInt16; /* For each element in the IVT */
 
 /// @brief Stack frame (as retrieved from assembly.)
-struct PACKED StackFrame final {
-  RawRegister R8{0};
-  RawRegister R9{0};
-  RawRegister R10{0};
-  RawRegister FS{0};
-  RawRegister R12{0};
-  RawRegister R13{0};
-  RawRegister R14{0};
-  RawRegister R15{0};
-  RawRegister GS{0};
-  RawRegister SP{0};
-  RawRegister BP{0};
+struct PACKED StackFrame {
+  Reg IP;
+  Reg SP;
+  Reg R8;
+  Reg R9;
+  Reg R10;
+  Reg R11;
+  Reg R12;
+  Reg R13;
+  Reg R14;
+  Reg R15;
 };
 
 typedef StackFrame* StackFramePtr;
@@ -170,16 +174,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept;
 /// @retval true it does exists.
 /// @retval false it doesn't.
 /***********************************************************************************/
-inline Bool hal_has_msr() noexcept {
-  static UInt32 eax, unused, edx;  // eax, edx
-
-  __get_cpuid(1, &eax, &unused, &unused, &edx);
-
-  // edx returns the flag for MSR (which is 1 shifted to 5.)
-  return edx & (1 << 5);
-}
-
-UIntPtr mm_get_phys_address(VoidPtr virtual_address);
+Bool hal_has_msr() noexcept;
 
 /***********************************************************************************/
 /// @brief Get Model specific register inside core.
@@ -187,13 +182,7 @@ UIntPtr mm_get_phys_address(VoidPtr virtual_address);
 /// @param lo low byte
 /// @param hi high byte
 /***********************************************************************************/
-inline UInt32 hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept {
-  if (!lo || !hi) return 0;
-
-  asm volatile("rdmsr" : "=a"(*lo), "=d"(*hi) : "c"(msr));
-
-  return *lo + *hi;
-}
+Void hal_get_msr(UInt32 msr, UInt32* lo, UInt32* hi) noexcept;
 
 /// @brief Set Model-specific register.
 /// @param msr MSR
@@ -236,16 +225,16 @@ namespace Detail {
   };
 }  // namespace Detail
 
-class APICController final {
+class LAPICDmaWrapper final {
  public:
-  explicit APICController(VoidPtr base);
-  ~APICController() = default;
+  explicit LAPICDmaWrapper(VoidPtr base);
+  ~LAPICDmaWrapper();
 
-  NE_COPY_DEFAULT(APICController)
+  NE_COPY_DEFAULT(LAPICDmaWrapper)
 
  public:
-  UInt32 Read(UInt32 reg) noexcept;
-  Void   Write(UInt32 reg, UInt32 value) noexcept;
+  UInt32 Read(UInt16 reg) noexcept;
+  Void   Write(UInt16 reg, UInt32 value) noexcept;
 
  private:
   VoidPtr fApic{nullptr};
@@ -273,6 +262,8 @@ EXTERN_C Void rt_sti();
 EXTERN_C Void rt_cld();
 EXTERN_C Void rt_std();
 
+EXTERN_C UIntPtr mm_get_page_addr(VoidPtr virtual_address);
+
 EXTERN_C Int32 mm_memory_fence(VoidPtr virtual_address);
 }  // namespace Kernel::HAL
 
@@ -287,4 +278,4 @@ EXTERN_C ATTRIBUTE(naked) Kernel::Void hal_load_gdt(Kernel::HAL::Register64 ptr)
 inline Kernel::VoidPtr kKernelBitMpStart = nullptr;
 inline Kernel::UIntPtr kKernelBitMpSize  = 0UL;
 
-inline Kernel::VoidPtr kKernelCR3 = nullptr;
+#endif  // __NE_AMD64__ */

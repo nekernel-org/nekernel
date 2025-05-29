@@ -6,13 +6,15 @@
 
 #pragma once
 
+#ifdef __NE_AMD64__
+
 /** ---------------------------------------------------
 
   * THIS FILE CONTAINS CODE FOR X86_64 PAGING.
 
 ------------------------------------------------------- */
 
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 
 #ifndef kPageMax
 #define kPageMax (0x200)
@@ -63,6 +65,27 @@ auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
 }  // namespace Kernel::HAL
 
 namespace Kernel {
-typedef VoidPtr PTE;
-typedef VoidPtr PDE;
+struct PTE {
+  UInt64 Present : 1;
+  UInt64 Wr : 1;
+  UInt64 User : 1;
+  UInt64 Pwt : 1;  // Page-level Write-Through
+  UInt64 Pcd : 1;  // Page-level Cache Disable
+  UInt64 Accessed : 1;
+  UInt64 Dirty : 1;
+  UInt64 Pat : 1;  // Page Attribute Table (or PS for PDE)
+  UInt64 Global : 1;
+  UInt64 Ignored1 : 3;          // Available to software
+  UInt64 PhysicalAddress : 40;  // Physical page frame address (bits 12–51)
+  UInt64 Ignored2 : 7;          // More software bits / reserved
+  UInt64 ProtectionKey : 4;     // Optional (if PKU enabled)
+  UInt64 Reserved : 1;          // Usually reserved
+  UInt64 Nx : 1;                // No Execute
+};
+
+struct PDE {
+  ATTRIBUTE(aligned(kib_cast(4))) PTE fPTE[512];
+};
 }  // namespace Kernel
+
+#endif  // __NE_AMD64__

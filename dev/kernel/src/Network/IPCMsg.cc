@@ -101,7 +101,6 @@ Bool ipc_construct_packet(_Output IPC_MSG** pckt_in) {
 Bool IPC_MSG::Pass(IPC_MSG* src, IPC_MSG* target) noexcept {
   if (src && target && (target != src)) {
     if (src->IpcMsgSz > target->IpcMsgSz) return No;
-
     if (target->IpcMsgSz > src->IpcMsgSz) return No;
 
     rt_copy_memory(src->IpcData, target->IpcData, src->IpcMsgSz);

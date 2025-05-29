@@ -10,7 +10,7 @@
 #include <CFKit/Property.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/ThreadLocalStorage.h>
-#include <NewKit/KString.h>
+#include <NeKit/KString.h>
 
 /***********************************************************************************/
 /// @bugs: 0

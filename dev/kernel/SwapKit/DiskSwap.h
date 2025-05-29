@@ -1,14 +1,14 @@
 
 /* -------------------------------------------
 
-  Copyright (C) 2024-2025 Amlal El Mahrouss Labs, all rights reserved.
+  Copyright (C) 2024-2025 Amlal El Mahrouss , all rights reserved.
 
 ------------------------------------------- */
 
 #pragma once
 
 #include <CompilerKit/CompilerKit.h>
-#include <NewKit/Defines.h>
+#include <NeKit/Defines.h>
 #include <hint/CompilerHint.h>
 
 #define kSwapBlockMaxSize (mib_cast(16))

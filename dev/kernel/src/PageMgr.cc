@@ -5,7 +5,7 @@
 ------------------------------------------- */
 
 #include <KernelKit/DebugOutput.h>
-#include <NewKit/PageMgr.h>
+#include <NeKit/PageMgr.h>
 
 #ifdef __NE_AMD64__
 #include <HALKit/AMD64/Paging.h>

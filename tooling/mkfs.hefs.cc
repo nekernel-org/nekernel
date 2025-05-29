@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
   kLabel      = mkfs::get_option<char8_t>(args_wide, u8"-L");
 
   if (!kSectorSize) {
-    mkfs::console_out() << "hefs: error: Sector size size is zero.\n";
+    mkfs::console_out() << "hefs: error: Sector size size is set to zero.\n";
     return EXIT_FAILURE;
   }
 
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
       std::strtol(mkfs::get_option<char>(args, "-S").data(), nullptr, 10) * 1024 * 1024 * 1024;
 
   if (!kDiskSize) {
-    mkfs::console_out() << "hefs: error: Disk size is zero.\n";
+    mkfs::console_out() << "hefs: error: Disk size is set to zero.\n";
     return EXIT_FAILURE;
   }
 

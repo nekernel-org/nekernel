@@ -8,7 +8,8 @@
 
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/KPC.h>
-#include <NewKit/CxxAbi.h>
+#include <KernelKit/UserProcessScheduler.h>
+#include <NeKit/CxxAbi.h>
 
 atexit_func_entry_t __atexit_funcs[kAtExitMacDestructors];
 
@@ -23,10 +24,7 @@ EXTERN_C Kernel::Void __cxa_pure_virtual(void* self) {
   (Kernel::Void)(Kernel::kout << ", has unimplemented virtual functions.\r");
 }
 
-EXTERN_C void ___chkstk_ms(void) {
-  (Kernel::Void)(Kernel::kout << "Stack smashing detected!\r");
-  dbg_break_point();
-}
+EXTERN_C void ___chkstk_ms(void) {}
 
 EXTERN_C int atexit(void (*f)()) {
   if (__atexit_func_count >= kAtExitMacDestructors) return 1;

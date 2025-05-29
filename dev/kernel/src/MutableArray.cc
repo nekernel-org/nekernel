@@ -4,4 +4,4 @@
 
 ------------------------------------------- */
 
-#include <NewKit/MutableArray.h>
+#include <NeKit/MutableArray.h>

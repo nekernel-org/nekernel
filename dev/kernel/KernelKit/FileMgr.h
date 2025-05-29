@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-  Copyright (C) 2024-2025, Amlal El Mahrouss Labs, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss , all rights reserved.
 
   File: FileMgr.h
   Purpose: Kernel file manager.
@@ -28,15 +28,15 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DebugOutput.h>
+#include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/MemoryMgr.h>
-#include <NewKit/ErrorOr.h>
-#include <NewKit/Ref.h>
-#include <NewKit/Stream.h>
+#include <NeKit/ErrorOr.h>
+#include <NeKit/Ref.h>
+#include <NeKit/Stream.h>
 #include <hint/CompilerHint.h>
 
 /// @brief Filesystem manager, abstraction over mounted filesystem.
-/// Works like the VFS or IFS subsystem.
+/// Works like an VFS (Virtual File System) or IFS subsystem on NT/OS 2.
 
 #define kRestrictR "r"
 #define kRestrictRB "rb"
@@ -52,6 +52,7 @@
   @note Refer to first enum.
 */
 #define kFileOpsCount (4U)
+
 #define kFileMimeGeneric "ne-application-kind/all"
 
 /** @brief invalid position. (n-pos) */
@@ -176,6 +177,52 @@ class NeFileSystemMgr final : public IFilesystemMgr {
 
 #endif  // ifdef __FSKIT_INCLUDES_NEFS__
 
+#ifdef __FSKIT_INCLUDES_HEFS__
+/**
+ * @brief Based of IFilesystemMgr, takes care of managing NeFS
+ * disks.
+ */
+class HeFileSystemMgr final : public IFilesystemMgr {
+ public:
+  explicit HeFileSystemMgr();
+  ~HeFileSystemMgr() override;
+
+ public:
+  NE_COPY_DEFAULT(HeFileSystemMgr)
+
+ public:
+  NodePtr Create(const Char* path) override;
+  NodePtr CreateAlias(const Char* path) override;
+  NodePtr CreateDirectory(const Char* path) override;
+  NodePtr CreateSwapFile(const Char* path) override;
+
+ public:
+  bool    Remove(_Input const Char* path) override;
+  NodePtr Open(_Input const Char* path, _Input const Char* r) override;
+  Void    Write(_Input NodePtr node, _Input VoidPtr data, _Input Int32 flags,
+                _Input SizeT sz) override;
+  VoidPtr Read(_Input NodePtr node, _Input Int32 flags, _Input SizeT sz) override;
+  bool    Seek(_Input NodePtr node, _Input SizeT off) override;
+  SizeT   Tell(_Input NodePtr node) override;
+  bool    Rewind(_Input NodePtr node) override;
+
+  Void Write(_Input const Char* name, _Input NodePtr node, _Input VoidPtr data, _Input Int32 flags,
+             _Input SizeT size) override;
+
+  _Output VoidPtr Read(_Input const Char* name, _Input NodePtr node, _Input Int32 flags,
+                       _Input SizeT sz) override;
+
+ public:
+  /// @brief Get NeFS parser class.
+  /// @return The filesystem parser class.
+  HeFileSystemParser* GetParser() noexcept;
+
+ private:
+  HeFileSystemParser* mParser{nullptr};
+};
+
+#endif  // ifdef __FSKIT_INCLUDES_HEFS__
+
 /**
  * FileStream class.
  * @tparam Encoding file encoding (char, wchar_t...)
@@ -278,7 +325,7 @@ class FileStream final {
   Char* MIME() noexcept { return const_cast<Char*>(fMime); }
 
   enum {
-    kFileMgrRestrictRead,
+    kFileMgrRestrictRead = 100,
     kFileMgrRestrictReadBinary,
     kFileMgrRestrictWrite,
     kFileMgrRestrictWriteBinary,
@@ -292,15 +339,16 @@ class FileStream final {
   const Char* fMime{kFileMimeGeneric};
 };
 
-using FileStreamUTF8  = FileStream<Char>;
+using FileStreamASCII = FileStream<Char>;
+using FileStreamUTF8  = FileStream<Utf8Char>;
 using FileStreamUTF16 = FileStream<WideChar>;
 
 typedef UInt64 CursorType;
 
-inline static const auto kRestrictStrLen = 8U;
+inline STATIC const auto kRestrictStrLen = 8U;
 
 /// @brief restrict information about the file descriptor.
-struct FileRestrictKind final {
+struct FILEMGR_RESTRICT final {
   Char  fRestrict[kRestrictStrLen];
   Int32 fMappedTo;
 };
@@ -310,7 +358,7 @@ template <typename Encoding, typename Class>
 inline FileStream<Encoding, Class>::FileStream(const Encoding* path, const Encoding* restrict_type)
     : fFile(Class::GetMounted()->Open(path, restrict_type)) {
   SizeT                  kRestrictCount  = kRestrictMax;
-  const FileRestrictKind kRestrictList[] = {{
+  const FILEMGR_RESTRICT kRestrictList[] = {{
                                                 .fRestrict = kRestrictR,
                                                 .fMappedTo = kFileMgrRestrictRead,
                                             },
@@ -339,13 +387,13 @@ inline FileStream<Encoding, Class>::FileStream(const Encoding* path, const Encod
     }
   }
 
-  kout << "new file: " << path << ".\r";
+  kout << "FileMgr: Open file at: " << path << ".\r";
 }
 
 /// @brief destructor of the file stream.
 template <typename Encoding, typename Class>
 inline FileStream<Encoding, Class>::~FileStream() {
-  mm_delete_heap(fFile);
+  mm_free_ptr(fFile);
 }
 }  // namespace Kernel
 
