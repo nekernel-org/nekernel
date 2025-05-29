@@ -72,7 +72,7 @@ USER_PROCESS::operator bool() {
 /***********************************************************************************/
 
 const UInt32& USER_PROCESS::GetExitCode() noexcept {
-  return this->fLastExitCode;
+  return this->LastExitCode;
 }
 
 /***********************************************************************************/
@@ -80,7 +80,7 @@ const UInt32& USER_PROCESS::GetExitCode() noexcept {
 /***********************************************************************************/
 
 Int32& USER_PROCESS::GetLocalCode() noexcept {
-  return this->fLocalCode;
+  return this->LocalCode;
 }
 
 /***********************************************************************************/
@@ -263,7 +263,8 @@ STATIC Void sched_free_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_ptr_list) {
 
 Void USER_PROCESS::Exit(const Int32& exit_code) {
   this->Status        = exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
-  this->fLastExitCode = exit_code;
+  this->LastExitCode = exit_code;
+  this->UTime         = 0;
 
   kLastExitCode = exit_code;
 

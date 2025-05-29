@@ -144,8 +144,8 @@ class USER_PROCESS final {
   const AffinityKind&      GetAffinity() noexcept;
 
  private:
-  UInt32 fLastExitCode{0};
-  Int32  fLocalCode{0};
+  UInt32 LastExitCode{0};
+  KPCError  LocalCode{0};
 
   friend UserProcessScheduler;
   friend UserProcessHelper;

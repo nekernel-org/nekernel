@@ -130,7 +130,7 @@ enum class ProcessStatusKind : Int32 {
 //! @brief Affinity is the amount of nano-seconds this process is going to run.
 /***********************************************************************************/
 enum class AffinityKind : Int32 {
-  kRealTime     = 50,
+  kRealTime     = 100,
   kVeryHigh     = 150,
   kHigh         = 200,
   kStandard     = 1000,
@@ -208,7 +208,7 @@ struct PROCESS_IMAGE final {
 
   Bool HasImage() const { return this->fBlob != nullptr; }
 
-  ErrorOr<ImagePtr> Leak() {
+  ErrorOr<ImagePtr> LeakImage() {
     if (this->fCode) {
       return ErrorOr<ImagePtr>{this->fCode};
     }
