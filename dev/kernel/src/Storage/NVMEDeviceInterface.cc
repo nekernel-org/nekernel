@@ -7,11 +7,11 @@
 #include <StorageKit/NVME.h>
 
 namespace Kernel {
-NVMEDeviceInterface::NVMEDeviceInterface(void (*out)(IDeviceObject*,
+NVMEDeviceInterface::NVMEDeviceInterface(void (*out)(DeviceInterface*,
                                                      MountpointInterface* outpacket),
-                                         void (*in)(IDeviceObject*, MountpointInterface* inpacket),
+                                         void (*in)(DeviceInterface*, MountpointInterface* inpacket),
                                          void (*cleanup)(void))
-    : IDeviceObject(out, in), fCleanup(cleanup) {}
+    : DeviceInterface(out, in), fCleanup(cleanup) {}
 
 NVMEDeviceInterface::~NVMEDeviceInterface() {
   if (fCleanup) fCleanup();

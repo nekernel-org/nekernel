@@ -31,10 +31,6 @@ namespace Kernel {
 
 STATIC UInt32 kLastExitCode = 0U;
 
-/***********************************************************************************/
-/// @brief Scheduler itself.
-/***********************************************************************************/
-
 USER_PROCESS::USER_PROCESS()  = default;
 USER_PROCESS::~USER_PROCESS() = default;
 

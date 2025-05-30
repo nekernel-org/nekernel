@@ -10,7 +10,7 @@
 #include <NeKit/Utils.h>
 
 namespace Kernel {
-EXTERN_C void ke_io_write(IDeviceObject<const Char*>* self, const Char* bytes) {
+EXTERN_C void ke_io_write(DeviceInterface<const Char*>* self, const Char* bytes) {
 #ifdef __DEBUG__
   if (*bytes == 0) return;
 
@@ -33,7 +33,7 @@ EXTERN_C void ke_io_write(IDeviceObject<const Char*>* self, const Char* bytes) {
 
 TerminalDevice::~TerminalDevice() = default;
 
-EXTERN_C void ke_io_read(IDeviceObject<const Char*>* self, const Char* bytes) {
+EXTERN_C void ke_io_read(DeviceInterface<const Char*>* self, const Char* bytes) {
 #ifdef __DEBUG__
   SizeT index = 0;
 

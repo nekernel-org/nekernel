@@ -59,7 +59,7 @@ TerminalDevice::~TerminalDevice() = default;
 
 STATIC SizeT kX = kFontSizeX, kY = kFontSizeY;
 
-EXTERN_C void ke_utf_io_write(IDeviceObject<const Utf8Char*>* obj, const Utf8Char* bytes) {
+EXTERN_C void ke_utf_io_write(DeviceInterface<const Utf8Char*>* obj, const Utf8Char* bytes) {
   NE_UNUSED(bytes);
   NE_UNUSED(obj);
 
@@ -115,7 +115,7 @@ EXTERN_C void ke_utf_io_write(IDeviceObject<const Utf8Char*>* obj, const Utf8Cha
 #endif  // __DEBUG__
 }
 
-EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
+EXTERN_C void ke_io_write(DeviceInterface<const Char*>* obj, const Char* bytes) {
   NE_UNUSED(bytes);
   NE_UNUSED(obj);
 
@@ -171,7 +171,7 @@ EXTERN_C void ke_io_write(IDeviceObject<const Char*>* obj, const Char* bytes) {
 #endif  // __DEBUG__
 }
 
-EXTERN_C void ke_io_read(IDeviceObject<const Char*>*, const Char* bytes) {
+EXTERN_C void ke_io_read(DeviceInterface<const Char*>*, const Char* bytes) {
   NE_UNUSED(bytes);
 
 #ifdef __DEBUG__
@@ -218,7 +218,7 @@ Utf8TerminalDevice::~Utf8TerminalDevice() = default;
 
 Utf8TerminalDevice Utf8TerminalDevice::The() noexcept {
   Utf8TerminalDevice out(Kernel::ke_utf_io_write,
-                         [](IDeviceObject<const Utf8Char*>*, const Utf8Char*) -> Void {});
+                         [](DeviceInterface<const Utf8Char*>*, const Utf8Char*) -> Void {});
   return out;
 }
 
