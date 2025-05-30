@@ -8,17 +8,17 @@
 #ifndef _NEWKIT_REF_H_
 #define _NEWKIT_REF_H_
 
+#include <CompilerKit/CompilerKit.h>
 #include <KernelKit/HeapMgr.h>
 #include <NeKit/Defines.h>
 #include <NeKit/KernelPanic.h>
-#include <CompilerKit/CompilerKit.h>
 
 namespace Kernel {
 template <typename T>
 class Ref final {
  public:
   explicit Ref() = default;
-  ~Ref() = default;
+  ~Ref()         = default;
 
  public:
   Ref(T* cls) : fClass(*cls) {}

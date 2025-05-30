@@ -47,8 +47,9 @@ IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt
 }
 
 IMPORT_C Ref IoOpenFile(_Input const Char* path, _Input const Char* drv_letter) {
-  return (Ref)libsys_syscall_arg_3(SYSCALL_HASH('IoOpenFile'), reinterpret_cast<VoidPtr>(const_cast<Char*>(path)),
-                           reinterpret_cast<VoidPtr>(const_cast<Char*>(drv_letter)));
+  return (Ref) libsys_syscall_arg_3(SYSCALL_HASH('IoOpenFile'),
+                                    reinterpret_cast<VoidPtr>(const_cast<Char*>(path)),
+                                    reinterpret_cast<VoidPtr>(const_cast<Char*>(drv_letter)));
 }
 
 IMPORT_C Void IoCloseFile(_Input Ref desc) {
@@ -56,15 +57,16 @@ IMPORT_C Void IoCloseFile(_Input Ref desc) {
 }
 
 IMPORT_C UInt64 IoSeekFile(_Input Ref desc, _Input UInt64 off) {
-  auto ret = (volatile UInt64*) libsys_syscall_arg_3(SYSCALL_HASH('IoSeekFile'), reinterpret_cast<VoidPtr>(desc),
-                                                  reinterpret_cast<VoidPtr>(&off));
+  auto ret = (volatile UInt64*) libsys_syscall_arg_3(
+      SYSCALL_HASH('IoSeekFile'), reinterpret_cast<VoidPtr>(desc), reinterpret_cast<VoidPtr>(&off));
 
   MUST_PASS((*ret) != ~0UL);
   return *ret;
 }
 
 IMPORT_C UInt64 IoTellFile(_Input Ref desc) {
-  auto ret = (volatile UInt64*) libsys_syscall_arg_2(SYSCALL_HASH('IoTellFile'), reinterpret_cast<VoidPtr>(desc));
+  auto ret = (volatile UInt64*) libsys_syscall_arg_2(SYSCALL_HASH('IoTellFile'),
+                                                     reinterpret_cast<VoidPtr>(desc));
   return *ret;
 }
 
@@ -74,7 +76,8 @@ IMPORT_C SInt32 PrintOut(_Input IORef desc, const char* fmt, ...) {
   va_start(args, fmt);
 
   auto ret = (volatile UInt64*) libsys_syscall_arg_4(
-      SYSCALL_HASH('PrintOut'), reinterpret_cast<VoidPtr>(desc), reinterpret_cast<VoidPtr>(const_cast<Char*>(fmt)), args);
+      SYSCALL_HASH('PrintOut'), reinterpret_cast<VoidPtr>(desc),
+      reinterpret_cast<VoidPtr>(const_cast<Char*>(fmt)), args);
 
   va_end(args);
 

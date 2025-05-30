@@ -12,9 +12,9 @@ using namespace Kernel;
 /// @param Out Drive output
 /// @param In  Drive input
 /// @param Cleanup Drive cleanup.
-AHCIDeviceInterface::AHCIDeviceInterface(void (*out)(DeviceInterface*       self,
+AHCIDeviceInterface::AHCIDeviceInterface(void (*out)(DeviceInterface*     self,
                                                      MountpointInterface* outpacket),
-                                         void (*in)(DeviceInterface*       self,
+                                         void (*in)(DeviceInterface*     self,
                                                     MountpointInterface* inpacket))
     : DeviceInterface(out, in) {}
 

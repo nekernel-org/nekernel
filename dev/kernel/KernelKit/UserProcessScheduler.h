@@ -125,7 +125,7 @@ class USER_PROCESS final {
   /***********************************************************************************/
   //! @brief Gets the local exit code.
   /***********************************************************************************/
-  const UInt32& GetExitCode() noexcept;
+  KPCError& GetExitCode() noexcept;
 
   /***********************************************************************************/
   ///! @brief Get the process's name
@@ -137,21 +137,22 @@ class USER_PROCESS final {
   //! @brief return local error code of process.
   //! @return Int32 local error code.
   /***********************************************************************************/
-  Int32& GetLocalCode() noexcept;
+  KPCError& GetLocalCode() noexcept;
 
   const User*              GetOwner() noexcept;
   const ProcessStatusKind& GetStatus() noexcept;
   const AffinityKind&      GetAffinity() noexcept;
 
  private:
-  UInt32 LastExitCode{0};
-  KPCError  LocalCode{0};
+  KPCError LastExitCode{0};
+  KPCError LocalCode{0};
 
   friend UserProcessScheduler;
   friend UserProcessHelper;
 };
 
 typedef Array<USER_PROCESS, kSchedProcessLimitPerTeam> USER_PROCESS_ARRAY;
+typedef Ref<USER_PROCESS>                              USER_PROCESS_REF;
 
 /// \brief Processs Team (contains multiple processes inside it.)
 /// Equivalent to a process batch
@@ -168,9 +169,9 @@ class UserProcessTeam final {
 
  public:
   USER_PROCESS_ARRAY mProcessList;
-  Ref<USER_PROCESS>  mCurrentProcess;
+  USER_PROCESS_REF   mCurrentProcess;
   ProcessID          mTeamId{0};
-  ProcessID          mProcessCount{0};
+  ProcessID          mProcessCur{0};
 };
 
 /***********************************************************************************/
@@ -204,8 +205,8 @@ class UserProcessScheduler final : public ISchedulable {
   Bool HasMP() override;
 
  public:
-  Ref<USER_PROCESS>& TheCurrentProcess();
-  SizeT              Run() noexcept;
+  USER_PROCESS_REF& TheCurrentProcess();
+  SizeT             Run() noexcept;
 
  public:
   STATIC UserProcessScheduler& The();

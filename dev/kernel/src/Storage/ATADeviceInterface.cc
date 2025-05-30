@@ -12,7 +12,8 @@ using namespace Kernel;
 /// @param Out Drive output
 /// @param In  Drive input
 /// @param Cleanup Drive cleanup.
-ATADeviceInterface::ATADeviceInterface(void (*Out)(DeviceInterface*, MountpointInterface* outpacket),
+ATADeviceInterface::ATADeviceInterface(void (*Out)(DeviceInterface*,
+                                                   MountpointInterface* outpacket),
                                        void (*In)(DeviceInterface*, MountpointInterface* inpacket))
     : DeviceInterface(Out, In) {}
 

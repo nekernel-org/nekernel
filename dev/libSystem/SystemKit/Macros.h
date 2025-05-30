@@ -64,19 +64,19 @@ typedef char             Char;
 typedef decltype(nullptr) nullPtr;
 typedef nullPtr           NullPtr;
 
-#define LIBSYS_COPY_DELETE(KLASS)             \
+#define LIBSYS_COPY_DELETE(KLASS)          \
   KLASS& operator=(const KLASS&) = delete; \
   KLASS(const KLASS&)            = delete;
 
-#define LIBSYS_COPY_DEFAULT(KLASS)             \
+#define LIBSYS_COPY_DEFAULT(KLASS)          \
   KLASS& operator=(const KLASS&) = default; \
   KLASS(const KLASS&)            = default;
 
-#define LIBSYS_MOVE_DELETE(KLASS)        \
+#define LIBSYS_MOVE_DELETE(KLASS)     \
   KLASS& operator=(KLASS&&) = delete; \
   KLASS(KLASS&&)            = delete;
 
-#define LIBSYS_MOVE_DEFAULT(KLASS)        \
+#define LIBSYS_MOVE_DEFAULT(KLASS)     \
   KLASS& operator=(KLASS&&) = default; \
   KLASS(KLASS&&)            = default;
 

@@ -48,7 +48,7 @@ Boot::BootFileReader::BootFileReader(const CharacterTypeUTF16* path, EfiHandlePt
   EfiSimpleFilesystemProtocol* efp = nullptr;
 
   EfiLoadImageProtocol* img     = nullptr;
-  EFI_GUID               guidImg = EFI_GUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
+  EFI_GUID              guidImg = EFI_GUID(EFI_LOADED_IMAGE_PROTOCOL_GUID);
 
   if (BS->HandleProtocol(ImageHandle, &guidImg, (void**) &img) != kEfiOk) {
     mWriter.Write(L"BootZ: Handle-Protocol: No-Such-Protocol").Write(L"\r");

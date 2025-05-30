@@ -21,7 +21,7 @@ UserProcessTeam::UserProcessTeam() {
     this->mProcessList[i].ParentTeam = this;
   }
 
-  this->mProcessCount = 0UL;
+  this->mProcessCur = 0UL;
 }
 
 /***********************************************************************************/

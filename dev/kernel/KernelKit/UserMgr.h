@@ -34,11 +34,11 @@
 namespace Kernel {
 class User;
 
-enum class UserRingKind {
+enum class UserRingKind : Int32 {
   kRingInvalid   = 0,
-  kRingStdUser   = 1,
-  kRingSuperUser = 2,
-  kRingGuestUser = 5,
+  kRingStdUser   = 444,
+  kRingSuperUser = 666,
+  kRingGuestUser = 777,
   kRingCount     = 3,
 };
 

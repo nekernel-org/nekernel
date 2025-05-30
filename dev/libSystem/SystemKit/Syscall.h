@@ -10,8 +10,8 @@
 #include <cstdarg>
 
 #ifndef SYSCALL_HASH
-#define SYSCALL_HASH(str) (UInt64)str
-#endif // !SYSCALL_HASH
+#define SYSCALL_HASH(str) (UInt64) str
+#endif  // !SYSCALL_HASH
 
 IMPORT_C VoidPtr libsys_syscall_arg_1(SizeT id);
 IMPORT_C VoidPtr libsys_syscall_arg_2(SizeT id, VoidPtr arg1);

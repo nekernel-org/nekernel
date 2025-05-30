@@ -42,7 +42,7 @@ template <typename T>
 class DeviceInterface {
  public:
   DeviceInterface() = default;
-  
+
   explicit DeviceInterface(void (*Out)(DeviceInterface<T>*, T), void (*In)(DeviceInterface<T>*, T))
       : fOut(Out), fIn(In) {}
 

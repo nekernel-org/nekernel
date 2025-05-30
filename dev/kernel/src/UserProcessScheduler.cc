@@ -67,7 +67,7 @@ USER_PROCESS::operator bool() {
 /// @return Int32 the last exit code.
 /***********************************************************************************/
 
-const UInt32& USER_PROCESS::GetExitCode() noexcept {
+KPCError& USER_PROCESS::GetExitCode() noexcept {
   return this->LastExitCode;
 }
 
@@ -75,7 +75,7 @@ const UInt32& USER_PROCESS::GetExitCode() noexcept {
 /// @brief Error code variable getter.
 /***********************************************************************************/
 
-Int32& USER_PROCESS::GetLocalCode() noexcept {
+KPCError& USER_PROCESS::GetLocalCode() noexcept {
   return this->LocalCode;
 }
 
@@ -258,13 +258,13 @@ STATIC Void sched_free_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_ptr_list) {
 /***********************************************************************************/
 
 Void USER_PROCESS::Exit(const Int32& exit_code) {
-  this->Status        = exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
+  this->Status       = exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
   this->LastExitCode = exit_code;
-  this->UTime         = 0;
+  this->UTime        = 0;
 
   kLastExitCode = exit_code;
 
-  --this->ParentTeam->mProcessCount;
+  --this->ParentTeam->mProcessCur;
 
   auto memory_ptr_list = this->HeapTree;
 
@@ -314,7 +314,7 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
   this->ProcessId = 0UL;
   this->Status    = ProcessStatusKind::kFinished;
 
-  --this->ParentTeam->mProcessCount;
+  --this->ParentTeam->mProcessCur;
 }
 
 /***********************************************************************************/
@@ -360,13 +360,13 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
     return -kErrorProcessFault;
   }
 
-  ProcessID pid = this->mTeam.mProcessCount;
+  ProcessID pid = this->mTeam.mProcessCur;
 
   if (pid > kSchedProcessLimitPerTeam) {
     return -kErrorProcessFault;
   }
 
-  ++this->mTeam.mProcessCount;
+  ++this->mTeam.mProcessCur;
 
   USER_PROCESS& process = this->mTeam.mProcessList[pid];
 
@@ -480,7 +480,7 @@ Bool UserProcessScheduler::HasMP() {
 /***********************************************************************************/
 
 SizeT UserProcessScheduler::Run() noexcept {
-  if (mTeam.mProcessCount < 1) {
+  if (mTeam.mProcessCur < 1) {
     return 0UL;
   }
 

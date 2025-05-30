@@ -17,8 +17,8 @@ Purpose: System Call Interface.
 // ------------------------------------------------------------------------------------------ //
 
 struct REF_TYPE {
-  UInt64  __hash; /// @brief Hash of the syscall
-  VoidPtr __self; /// @brief Syscall self value.
+  UInt64  __hash;  /// @brief Hash of the syscall
+  VoidPtr __self;  /// @brief Syscall self value.
 };
 
 typedef REF_TYPE* Ref;

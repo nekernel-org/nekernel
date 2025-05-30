@@ -15,7 +15,7 @@ class X64Chrono;
 struct X64ChronoTraits;
 
 struct X64ChronoTraits {
-private:
+ private:
   STATIC UInt64 TickImpl_(void) {
     UInt64 a = 0, d = 0;
     __asm__ volatile("rdtsc" : "=a"(a), "=d"(d));
