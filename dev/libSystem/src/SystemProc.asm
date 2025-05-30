@@ -21,7 +21,8 @@ libsys_syscall_arg_1:
     mov rbp, rsp
 
     mov r8, rcx
-    syscall
+
+    int 50
 
     pop rbp
 
@@ -33,7 +34,9 @@ libsys_syscall_arg_2:
 
     mov r8, rcx
     mov r9, rdx
-    syscall
+    
+    int 50
+
     pop rbp
 
     ret
@@ -46,7 +49,8 @@ libsys_syscall_arg_3:
     mov r9, rdx
     mov r10, rbx
 
-    syscall
+    int 50
+
     pop rbp
 
     ret
@@ -60,7 +64,8 @@ libsys_syscall_arg_4:
     mov r10, rbx
     mov r11, rax
 
-    syscall
+    int 50
+
     pop rbp
 
     ret

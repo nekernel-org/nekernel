@@ -82,8 +82,6 @@ typedef nullPtr           NullPtr;
 
 #endif
 
-IMPORT_C void _rtl_assert(Bool expr, const Char* origin);
-
 #define MUST_PASS(X) _rtl_assert(X, __FILE__)
 
 #ifndef ARRAY_SIZE
@@ -124,3 +122,5 @@ IMPORT_C void _rtl_assert(Bool expr, const Char* origin);
 #endif
 
 #define LIBSYS_UNUSED(X) ((void) X)
+
+IMPORT_C void _rtl_assert(Bool expr, const Char* origin);

@@ -504,6 +504,7 @@ SizeT UserProcessScheduler::Run() noexcept {
       if (UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
         process.PTime = static_cast<Int32>(process.Affinity);
 
+        // We add a bigger cooldown according to the RTime and affinity here.
         if (process.PTime < process.RTime && AffinityKind::kRealTime != process.Affinity) {
           if (process.RTime < (Int32) AffinityKind::kVeryHigh)
             process.RTime = (Int32) AffinityKind::kLowUsage / 2;

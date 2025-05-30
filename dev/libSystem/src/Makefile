@@ -13,4 +13,4 @@ error:
 
 .PHONY: libsys_asm_io_x64
 libsys_asm_io_x64:
-	$(ASM) $(FLAGS) SystemProc.asm -o SystemProc.asm.obj
+	$(ASM) $(FLAGS) SystemProc.asm -o SystemProc.stub.obj

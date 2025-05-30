@@ -4,7 +4,7 @@
  * Copyright (c) 2025 Amlal El Mahrouss
  */
 
-#include <libSystem/System.h>
+#include <libSystem/SystemKit/System.h>
 
 /// @brief Placeholder program.
 

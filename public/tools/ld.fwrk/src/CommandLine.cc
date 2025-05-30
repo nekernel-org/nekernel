@@ -4,7 +4,7 @@
  * Copyright (c) 2024-2025 Amlal El Mahrouss
  */
 
-#include <libSystem/System.h>
+#include <libSystem/SystemKit/System.h>
 
 /// @brief This program loads a code framework into Kernel's memory.
 

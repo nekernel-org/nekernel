@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <libSystem/Syscall.h>
-#include <libSystem/System.h>
+#include <libSystem/SystemKit/Syscall.h>
+#include <libSystem/SystemKit/System.h>
 
 /// @file SystemAPI.cc
 /// @brief System wide API for NeKernel.

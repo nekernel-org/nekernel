@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <libSystem/System.h>
+#include <libSystem/SystemKit/System.h>
 
 #ifndef __DISK_IMAGE_CDROM__
 #define kDISectorSz (512)

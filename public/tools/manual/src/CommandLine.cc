@@ -1,4 +1,4 @@
-#include <libSystem/System.h>
+#include <libSystem/SystemKit/System.h>
 
 SInt32 _NeMain(SInt32 argc, Char* argv[]) {
   LIBSYS_UNUSED(argc);

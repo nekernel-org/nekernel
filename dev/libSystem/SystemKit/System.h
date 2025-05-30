@@ -10,7 +10,7 @@ Purpose: System Call Interface.
 #ifndef LIBSYS_SYSTEM_CALLS_H
 #define LIBSYS_SYSTEM_CALLS_H
 
-#include <libSystem/Macros.h>
+#include <libSystem/SystemKit/Macros.h>
 
 // ------------------------------------------------------------------------------------------ //
 /// @brief Types API.
