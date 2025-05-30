@@ -4,7 +4,7 @@
 # 03/25/25: Add 'disk' build step.
 # 04/05/25: Improve and fix script.
 
-cd dev/user
+cd dev/libSystem
 cd src
 make libsys_asm_io_x64
 cd ..
