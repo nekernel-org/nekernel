@@ -444,7 +444,7 @@ UserProcessScheduler& UserProcessScheduler::The() {
 /***********************************************************************************/
 
 Void UserProcessScheduler::Remove(ProcessID process_id) {
-  if (process_id < 0 || process_id >= kSchedProcessLimitPerTeam) {
+  if (process_id < 0 || process_id > kSchedProcessLimitPerTeam) {
     return;
   }
 
