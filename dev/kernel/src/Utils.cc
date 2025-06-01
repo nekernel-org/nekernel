@@ -80,8 +80,6 @@ Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
     ++index;
   }
 
-  dstChar[index] = 0;
-
   return index;
 }
 
