@@ -55,9 +55,10 @@ static std::string build_args(int argc, char** argv) {
 int main(int argc, char** argv) {
     if (argc < 2) {
         mkfs::console_out()
-            << "hefs: usage: mkfs.hefs -L <label> -s <sector_size> -b <ind_start> -e <ind_end> "
-               "-bs <block_start> -be <block_end> -is <in_start> -ie <in_end> "
-               "-S <disk_size_GB> -o <output_device>\n";
+            << "hefs: usage: mkfs.hefs -L=<label> -s=<sector_size> -b=<ind_start> -e=<ind_end> "
+               "-bs=<block_start> -be=<block_end> -is=<in_start> -ie=<in_end> "
+               "-S=<disk_size_GB> -o=<output_device>\n";
+
         return EXIT_FAILURE;
     }
 
