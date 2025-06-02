@@ -7,187 +7,183 @@
 #include <NeKit/Utils.h>
 
 namespace Kernel {
+
+STATIC Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
+STATIC voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
+
 Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size) {
-  Int32 counter = 0;
-
-  for (Size index = 0; index < size; ++index) {
-    if (src[index] != cmp[index]) ++counter;
+  for (Size i = 0; i < size; ++i) {
+    if (src[i] != cmp[i])
+      return static_cast<Int32>(src[i]) - static_cast<Int32>(cmp[i]);
   }
-
-  return counter;
+  return 0;
 }
 
-Void rt_zero_memory(voidPtr pointer, Size len) {
-  rt_set_memory(pointer, 0, len);
-}
-
-SizeT rt_string_len(const Char* str, SizeT _len) {
-  SizeT len{0};
-
-  do {
-    if (len > _len) {
-      return _len;
-    }
-
+SizeT rt_string_len(const Char* str, SizeT max_len) {
+  SizeT len = 0;
+  while (len < max_len && str[len] != '\0')
     ++len;
-  } while (str[len] != '\0');
-
   return len;
 }
 
 Size rt_string_len(const Char* ptr) {
-  SizeT cnt{0};
-
-  while (ptr[cnt] != 0) ++cnt;
-
+  Size cnt = 0;
+  while (ptr[cnt] != '\0')
+    ++cnt;
   return cnt;
 }
 
-voidPtr rt_set_memory(voidPtr src, UInt32 value, Size len) {
-  UInt32* start = reinterpret_cast<UInt32*>(src);
-
-  while (len) {
-    *start = value;
-    ++start;
-    --len;
-  }
-
-  return (voidPtr) start;
-}
-
-Int rt_move_memory(const voidPtr src, voidPtr dst, Size len) {
-  Char* srcChr  = reinterpret_cast<Char*>(src);
-  Char* dstChar = reinterpret_cast<Char*>(dst);
-  SizeT index   = 0;
-
-  while (index < len) {
-    dstChar[index] = srcChr[index];
-    srcChr[index]  = 0;
-
-    ++index;
-  }
-
-  return 0;
-}
-
-Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
-  char* srcChr  = reinterpret_cast<char*>(src);
-  char* dstChar = reinterpret_cast<char*>(dst);
-  Size  index   = 0;
-
-  while (index < len) {
-    dstChar[index] = srcChr[index];
-    ++index;
-  }
-
-  return index;
-}
-
 const Char* rt_alloc_string(const Char* src) {
-  const Char* string = new Char[rt_string_len(src) + 1];
+  SizeT slen = rt_string_len(src);
+  Char* buffer = new Char[slen + 1];
+  if (!buffer) return nullptr;
 
-  if (!string) return nullptr;
-
-  voidPtr v_src = reinterpret_cast<voidPtr>(const_cast<char*>(src));
-  voidPtr v_dst = reinterpret_cast<voidPtr>(const_cast<char*>(string));
-
-  rt_copy_memory(v_src, v_dst, rt_string_len(src) + 1);
-
-  return string;
-}
-
-Int32 rt_to_uppercase(Int32 character) {
-  if (character >= 'a' && character <= 'z') return character - 0x20;
-
-  return character;
-}
-
-Int32 rt_is_alnum(Int32 character) {
-  return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') ||
-         (character >= '0' && character <= '9');
-}
-
-Int32 rt_to_lower(Int32 character) {
-  if (character >= 'A' && character <= 'Z') return character + 0x20;
-
-  return character;
-}
-
-Boolean rt_is_space(Char chr) {
-  return chr == ' ';
-}
-
-Boolean rt_is_newln(Char chr) {
-  return chr == '\n';
-}
-
-VoidPtr rt_string_in_string(const Char* in, const Char* needle) {
-  for (SizeT i = 0; i < rt_string_len(in); ++i) {
-    if (rt_string_cmp(in + i, needle, rt_string_len(needle)) == 0)
-      return reinterpret_cast<voidPtr>(const_cast<char*>(in + i));
+  if (rt_copy_memory_safe(reinterpret_cast<voidPtr>(const_cast<Char*>(src)),
+                          reinterpret_cast<voidPtr>(buffer),
+                          slen,
+                          slen + 1) < 0) {
+    delete[] buffer;
+    return nullptr;
   }
 
-  return nullptr;
+  buffer[slen] = '\0';
+  return buffer;
 }
 
-Char rt_to_char(UInt64 base, Int32 limit) {
-  Char kNumbers[17] = "0123456789ABCDEF";
-  return kNumbers[base % limit];
-}
-
-Bool rt_to_string(Char* str, UInt64 base, Int32 limit) {
-#ifdef __NE_AMD64__
-  auto i = 0;
-
-  auto final_number = base;
-
-  auto mult  = 1;
-  auto elems = 0L;
-
-  base /= 10;
-
-  while (base > 0) {
-    elems++;
-    mult *= 10;
-    base /= 10;
+STATIC Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size) {
+  if (!src || !dst || len > dst_size) {
+    if (dst && dst_size) {
+      rt_set_memory_safe(dst, 0, dst_size, dst_size);
+    }
+    return -1;
   }
-
-  while (elems > -1) {
-    final_number = (final_number % mult) * 10 + final_number / mult;
-    str[i]       = rt_to_char(final_number, limit);
-
-    --elems;
-    ++i;
-  }
-#endif
-
-  return YES;
+  auto s = reinterpret_cast<const unsigned char*>(src);
+  auto d = reinterpret_cast<unsigned char*>(dst);
+  for (Size i = 0; i < len; ++i)
+    d[i] = s[i];
+  return static_cast<Int>(len);
 }
 
-/// @brief Checks for a string start at the character.
-
-Char* rt_string_has_char(Char* str, Char chr) {
-  while (*str != chr) {
-    ++str;
-
-    if (*str == 0) return nullptr;
-  }
-
-  return str;
-}
-}  // namespace Kernel
-
-////// @note These symbols were written to satisfy gcc, clang and other compiler complaints.
-
-EXTERN_C void* memset(void* dst, int c, long long unsigned int len) {
-  return Kernel::rt_set_memory(dst, c, len);
-}
-
-EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len) {
-  Kernel::rt_copy_memory(const_cast<void*>(src), dst, len);
+STATIC voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size) {
+  if (!dst || len > dst_size) return nullptr;
+  auto p = reinterpret_cast<unsigned char*>(dst);
+  unsigned char v = static_cast<unsigned char>(value & 0xFF);
+  for (Size i = 0; i < len; ++i)
+    p[i] = v;
   return dst;
 }
 
-EXTERN_C Kernel::Int32 strcmp(const char* dst, const char* src) {
-  return Kernel::rt_string_cmp(dst, src, Kernel::rt_string_len(dst));
+Void rt_zero_memory(voidPtr pointer, Size len) {
+  rt_set_memory_safe(pointer, 0, len, len);
 }
+
+
+[[deprecated("Use rt_set_memory_safe instead")]]
+voidPtr rt_set_memory(voidPtr src, UInt32 value, Size len) {
+  if (!src) return nullptr;
+  auto p = reinterpret_cast<unsigned char*>(src);
+  unsigned char v = static_cast<unsigned char>(value & 0xFF);
+  for (Size i = 0; i < len; ++i)
+    p[i] = v;
+  return src;
+}
+
+[[deprecated("Use rt_copy_memory_safe instead")]]
+Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
+  if (!src || !dst) return -1;
+  auto s = reinterpret_cast<const unsigned char*>(src);
+  auto d = reinterpret_cast<unsigned char*>(dst);
+  for (Size i = 0; i < len; ++i)
+    d[i] = s[i];
+  return static_cast<Int>(len);
+}
+
+
+Int32 rt_to_uppercase(Int32 ch) {
+  return (ch >= 'a' && ch <= 'z') ? ch - 0x20 : ch;
+}
+
+Int32 rt_to_lower(Int32 ch) {
+  return (ch >= 'A' && ch <= 'Z') ? ch + 0x20 : ch;
+}
+
+Int32 rt_is_alnum(Int32 ch) {
+  return (ch >= 'a' && ch <= 'z') ||
+         (ch >= 'A' && ch <= 'Z') ||
+         (ch >= '0' && ch <= '9');
+}
+
+Boolean rt_is_space(Char ch) {
+  return ch == ' ';
+}
+
+Boolean rt_is_newln(Char ch) {
+  return ch == '\n';
+}
+
+Char rt_to_char(UInt64 value, Int32 base) {
+  static constexpr Char kDigits[] = "0123456789ABCDEF";
+  return kDigits[value % base];
+}
+
+Bool rt_to_string(Char* str, UInt64 value, Int32 base) {
+#ifdef __NE_AMD64__
+  Int i = 0;
+  do {
+    str[i++] = rt_to_char(value, base);
+    value /= base;
+  } while (value);
+  str[i] = '\0';
+  // in-place
+  for (Int j = 0; j < i / 2; ++j) {
+    Char tmp = str[j];
+    str[j] = str[i - j - 1];
+    str[i - j - 1] = tmp;
+  }
+#endif
+  return true;
+}
+
+
+VoidPtr rt_string_in_string(const Char* haystack, const Char* needle) {
+  SizeT needle_len = rt_string_len(needle);
+  SizeT hay_len = rt_string_len(haystack);
+
+  if (needle_len > hay_len) return nullptr;
+  for (SizeT i = 0; i <= hay_len - needle_len; ++i) {
+    if (rt_string_cmp(haystack + i, needle, needle_len) == 0) {
+      return reinterpret_cast<voidPtr>(const_cast<Char*>(haystack + i));
+    }
+  }
+  return nullptr;
+}
+
+Char* rt_string_has_char(Char* str, Char ch) {
+  while (*str && *str != ch) ++str;
+  return (*str == ch) ? str : nullptr;
+}
+
+Int32 rt_strcmp(const Char* a, const Char* b) {
+  Size i = 0;
+  while (a[i] != '\0' && b[i] != '\0' && a[i] == b[i]) {
+    ++i;
+  }
+  return static_cast<Int32>(static_cast<unsigned char>(a[i]) -
+                            static_cast<unsigned char>(b[i]));
+}
+
+  // @uses the deprecated version callers should ensure 'len' is valid.
+extern "C" void* memset(void* dst, int c, long long unsigned int len) {
+  return Kernel::rt_set_memory(dst, c, static_cast<Size>(len));
+}
+
+extern "C" void* memcpy(void* dst, const void* src, long long unsigned int len) {
+  Kernel::rt_copy_memory(const_cast<void*>(src), dst, static_cast<Size>(len));
+  return dst;
+}
+
+extern "C" Kernel::Int32 strcmp(const char* a, const char* b) {
+  return Kernel::rt_strcmp(a, b);
+}
+
+}  
