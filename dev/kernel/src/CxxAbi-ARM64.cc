@@ -19,7 +19,7 @@ Kernel::UIntPtr __dso_handle;
 
 EXTERN_C void __chkstk(void) {}
 
-EXTERN_C int atexit(void (*f)(void*), void* arg, void* dso) {
+EXTERN_C int atexit(void (*f)(), void* arg, void* dso) {
   if (__atexit_func_count >= kAtExitMacDestructors) return 1;
 
   __atexit_funcs[__atexit_func_count].destructor_func = f;
@@ -36,7 +36,8 @@ EXTERN_C void __cxa_finalize(void* f) {
   if (!f) {
     while (i--) {
       if (__atexit_funcs[i].destructor_func) {
-        (*__atexit_funcs[i].destructor_func)(__atexit_funcs[i].obj_ptr);
+        (*__atexit_funcs[i].destructor_func)();
+      __atexit_funcs[i].destructor_func = 0;
       };
     }
 
@@ -45,7 +46,7 @@ EXTERN_C void __cxa_finalize(void* f) {
 
   while (i--) {
     if (__atexit_funcs[i].destructor_func) {
-      (*__atexit_funcs[i].destructor_func)(__atexit_funcs[i].obj_ptr);
+      (*__atexit_funcs[i].destructor_func)();
       __atexit_funcs[i].destructor_func = 0;
     };
   }
