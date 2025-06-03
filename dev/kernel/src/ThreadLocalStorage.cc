@@ -15,7 +15,7 @@
 /***********************************************************************************/
 /// @bugs: 0
 /// @file ThreadLocalStorage.cc
-/// @brief Process Thread Local Storage.
+/// @brief NeKernel Thread Local Storage.
 /***********************************************************************************/
 
 using namespace Kernel;
@@ -27,15 +27,10 @@ using namespace Kernel;
  */
 
 Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr) {
-  if (!tib_ptr || !tib_ptr->Record) return false;
+  if (!tib_ptr) return false;
 
-  ICodec      encoder;
-  const Char* tib_as_bytes = encoder.AsBytes<THREAD_INFORMATION_BLOCK*>(tib_ptr);
-
-  kout << "TLS: Validating the TIB...\r";
-
-  return tib_as_bytes[kCookieMag0Idx] == kCookieMag0 &&
-         tib_as_bytes[kCookieMag1Idx] == kCookieMag1 && tib_as_bytes[kCookieMag2Idx] == kCookieMag2;
+  return tib_ptr->Cookie[kCookieMag0Idx] == kCookieMag0 &&
+         tib_ptr->Cookie[kCookieMag1Idx] == kCookieMag1 && tib_ptr->Cookie[kCookieMag2Idx] == kCookieMag2;
 }
 
 /**
@@ -51,11 +46,5 @@ EXTERN_C Bool tls_check_syscall_impl(Kernel::VoidPtr tib_ptr) noexcept {
 
   THREAD_INFORMATION_BLOCK* tib = reinterpret_cast<THREAD_INFORMATION_BLOCK*>(tib_ptr);
 
-  if (!tls_check_tib(tib)) {
-    kout << "TLS: Failed because of an invalid TIB...\r";
-    return No;
-  }
-
-  kout << "TLS Pass.\r";
-  return Yes;
+  return tls_check_tib(tib);
 }
