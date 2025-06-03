@@ -20,8 +20,8 @@
 #include <NeKit/Defines.h>
 #include <NeKit/KString.h>
 
-///! We got the Super, Standard (%s format) and Guest user,
-///! all are used to make authorization operations on the OS.
+///! We got the MGMT, STD (%s format) and GUEST users,
+///! all are used to make authorized operations.
 #define kSuperUser "OS AUTHORITY/MGMT/%s"
 #define kGuestUser "OS AUTHORITY/GUEST/%s"
 #define kStdUser "OS AUTHORITY/STD/%s"

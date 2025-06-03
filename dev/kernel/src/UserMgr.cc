@@ -4,8 +4,8 @@
  *  	NeKernel
  * 		Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
  *
- *		File: User.cc
- * 		Purpose: User class, used to provide authentication and security.
+ *		File: UserMgr.cc
+ * 		Purpose: User Manager, used to provide authentication and security.
  *
  * 	========================================================
  */

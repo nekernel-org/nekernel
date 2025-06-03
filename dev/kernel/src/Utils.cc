@@ -57,8 +57,8 @@ STATIC Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size ds
     }
     return -1;
   }
-  auto s = reinterpret_cast<const unsigned char*>(src);
-  auto d = reinterpret_cast<unsigned char*>(dst);
+  auto s = reinterpret_cast<const UInt8*>(src);
+  auto d = reinterpret_cast<UInt8*>(dst);
   for (Size i = 0; i < len; ++i)
     d[i] = s[i];
   return static_cast<Int>(len);
@@ -66,8 +66,8 @@ STATIC Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size ds
 
 STATIC voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size) {
   if (!dst || len > dst_size) return nullptr;
-  auto p = reinterpret_cast<unsigned char*>(dst);
-  unsigned char v = static_cast<unsigned char>(value & 0xFF);
+  auto p = reinterpret_cast<UInt8*>(dst);
+  UInt8 v = static_cast<UInt8>(value & 0xFF);
   for (Size i = 0; i < len; ++i)
     p[i] = v;
   return dst;
@@ -77,24 +77,29 @@ Void rt_zero_memory(voidPtr pointer, Size len) {
   rt_set_memory_safe(pointer, 0, len, len);
 }
 
-
+#ifdef __NE_ENFORCE_DEPRECATED_WARNINGS
 [[deprecated("Use rt_set_memory_safe instead")]]
+#endif
 voidPtr rt_set_memory(voidPtr src, UInt32 value, Size len) {
   if (!src) return nullptr;
-  auto p = reinterpret_cast<unsigned char*>(src);
-  unsigned char v = static_cast<unsigned char>(value & 0xFF);
+  auto p = reinterpret_cast<UInt8*>(src);
+  UInt8 v = static_cast<UInt8>(value & 0xFF);
   for (Size i = 0; i < len; ++i)
     p[i] = v;
   return src;
 }
 
+#ifdef __NE_ENFORCE_DEPRECATED_WARNINGS
 [[deprecated("Use rt_copy_memory_safe instead")]]
+#endif
 Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
   if (!src || !dst) return -1;
-  auto s = reinterpret_cast<const unsigned char*>(src);
-  auto d = reinterpret_cast<unsigned char*>(dst);
+  auto s = reinterpret_cast<const UInt8*>(src);
+  auto d = reinterpret_cast<UInt8*>(dst);
+
   for (Size i = 0; i < len; ++i)
     d[i] = s[i];
+
   return static_cast<Int>(len);
 }
 
@@ -168,8 +173,8 @@ Int32 rt_strcmp(const Char* a, const Char* b) {
   while (a[i] != '\0' && b[i] != '\0' && a[i] == b[i]) {
     ++i;
   }
-  return static_cast<Int32>(static_cast<unsigned char>(a[i]) -
-                            static_cast<unsigned char>(b[i]));
+  return static_cast<Int32>(static_cast<UInt8>(a[i]) -
+                            static_cast<UInt8>(b[i]));
 }
 
   // @uses the deprecated version callers should ensure 'len' is valid.

@@ -128,7 +128,7 @@ run-efi-amd64-ata-dma:
 	$(EMU) $(EMU_FLAGS) -device piix4-ide,id=ide -drive id=disk,file=$(IMG),format=raw,if=none -device ide-hd,drive=disk,bus=ide.0 -s -S -boot menu=on
 
 .PHONY: run-efi-amd64-ata
-run-efi-amd64-ata: run-efi-amd64-ata-dma
+run-efi-amd64-ata: run-efi-amd64-ata-pio
 
 # img_2 is the rescue disk. img is the bootable disk, as provided by the NeKernel specs.
 .PHONY: epm-img
