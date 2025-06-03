@@ -120,7 +120,9 @@ EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ThreadID thrdid) 
 
   HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
 
-  sched_jump_to_task(kHWThread[thrdid].mFramePtr);
+  if (!kSMPAware) {
+    sched_jump_to_task(kHWThread[thrdid].mFramePtr);
+  }
 
   return YES;
 }
@@ -201,9 +203,9 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
         volatile LAPIC* entry_struct = (volatile LAPIC*) entry_ptr;
 
         if (entry_struct->Flags & 0x1) {
-          kAPICLocales[kSMPCount] = entry_struct->ProcessorID;
+          kAPICLocales[kSMPCount]        = entry_struct->ProcessorID;
           kHWThread[kSMPCount].mThreadID = kAPICLocales[kSMPCount];
-          
+
           ++kSMPCount;
 
           kout << "Kind: LAPIC: ON\r";

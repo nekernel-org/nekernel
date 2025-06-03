@@ -7,123 +7,227 @@
 #include <tooling/hefs.h>
 #include <tooling/mkfs.h>
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
+#include <limits>
+#include <algorithm>
 
 namespace detail {
-/// @interal
-/// @brief GB equation formula.
+/// @internal
+/// @brief GB‐to‐byte conversion (use multiplication, not XOR).
 static constexpr size_t gib_cast(uint32_t gb) {
-  return ((1024 ^ 3) * gb);
+    return static_cast<size_t>(gb) * 1024ULL * 1024ULL * 1024ULL;
 }
 }  // namespace detail
 
 static size_t        kDiskSize   = detail::gib_cast(4UL);
 static uint16_t      kVersion    = kHeFSVersion;
-static std::u8string kLabel      = kHeFSDefaultVolumeName;
+static std::u8string kLabel;             
 static size_t        kSectorSize = 512;
 
-/// @brief Entrypoint of tool.
+static bool parse_decimal(const std::string& opt, unsigned long long& out) {
+    if (opt.empty()) return false;
+    char* endptr = nullptr;
+    unsigned long long val = std::strtoull(opt.c_str(), &endptr, 10);
+    if (endptr == opt.c_str() || *endptr != '\0') return false;
+    out = val;
+    return true;
+}
+
+static bool parse_signed(const std::string& opt, long& out, int base = 10) {
+    if (opt.empty()) return false;
+    char* endptr = nullptr;
+    long val = std::strtol(opt.c_str(), &endptr, base);
+    if (endptr == opt.c_str() || *endptr != '\0' || val < 0) return false;
+    out = val;
+    return true;
+}
+
+static std::string build_args(int argc, char** argv) {
+    std::string combined;
+    for (int i = 1; i < argc; ++i) {
+        combined += argv[i];
+        combined += ' ';
+    }
+    return combined;
+}
+
 int main(int argc, char** argv) {
-  if (argc < 2) {
-    mkfs::console_out()
-        << "hefs: usage: mkfs.hefs -L <label> -s <sector_size> -b <ind_start> -e "
-        << "<ind_end> -bs <block_start> -be <block_end> -is <in_start> -ie <in_end> "
-           "-S <disk_size> -o <output_device>"
-        << "\n";
-    return EXIT_FAILURE;
-  }
+    if (argc < 2) {
+        mkfs::console_out()
+            << "hefs: usage: mkfs.hefs -L=<label> -s=<sector_size> -b=<ind_start> -e=<ind_end> "
+               "-bs=<block_start> -be=<block_end> -is=<in_start> -ie=<in_end> "
+               "-S=<disk_size_GB> -o=<output_device>\n";
 
-  std::string   args;
-  std::u8string args_wide;
-
-  for (int i = 1; i < argc; ++i) {
-    args += argv[i];
-    args += " ";
-
-    std::string str = argv[i];
-
-    for (auto& ch : str) {
-      args_wide.push_back(ch);
+        return EXIT_FAILURE;
     }
 
-    args_wide += u8" ";
-  }
+    std::string args = build_args(argc, argv);
 
-  auto output_path = mkfs::get_option<char>(args, "-o");
+    auto output_path = mkfs::get_option<char>(args, "-o");
+    if (output_path.empty()) {
+        mkfs::console_out() << "hefs: error: Missing -o <output_device> argument.\n";
+        return EXIT_FAILURE;
+    }
 
-  kSectorSize = std::strtol(mkfs::get_option<char>(args, "-s").data(), nullptr, 10);
-  kLabel      = mkfs::get_option<char8_t>(args_wide, u8"-L");
+    auto opt_s = mkfs::get_option<char>(args, "-s");
+    long parsed_s = 0;
+    if (!parse_signed(opt_s, parsed_s, 10) || parsed_s == 0) {
+        mkfs::console_out()
+            << "hefs: error: Invalid sector size \"" << opt_s
+            << "\". Must be a positive integer.\n";
+        return EXIT_FAILURE;
+    }
 
-  if (!kSectorSize) {
-    mkfs::console_out() << "hefs: error: Sector size size is set to zero.\n";
-    return EXIT_FAILURE;
-  }
+    if ((parsed_s & (parsed_s - 1)) != 0) {
+        mkfs::console_out()
+            << "hefs: error: Sector size \"" << parsed_s
+            << "\" is not a power of two.\n";
+        return EXIT_FAILURE;
+    }
+    kSectorSize = static_cast<size_t>(parsed_s);
 
-  if (kLabel.empty()) kLabel = kHeFSDefaultVolumeName;
+    auto opt_L = mkfs::get_option<char>(args, "-L");
+    if (!opt_L.empty()) {
+        kLabel.clear();
+        for (char c : opt_L) kLabel.push_back(static_cast<char8_t>(c));
+    } else {
+        kLabel.clear();
+        for (size_t i = 0; i < kHeFSPartNameLen && kHeFSDefaultVolumeName[i] != u'\0'; ++i) {
+            kLabel.push_back(static_cast<char8_t>(kHeFSDefaultVolumeName[i]));
+        }
+    }
 
-  kDiskSize =
-      std::strtol(mkfs::get_option<char>(args, "-S").data(), nullptr, 10) * 1024 * 1024 * 1024;
+    auto opt_S = mkfs::get_option<char>(args, "-S");
+    unsigned long long gb = 0;
+    if (!parse_decimal(opt_S, gb) || gb == 0ULL) {
+        mkfs::console_out()
+            << "hefs: error: Invalid disk size \"" << opt_S
+            << "\". Must be a positive integer.\n";
+        return EXIT_FAILURE;
+    }
+    unsigned long long max_gb =
+        std::numeric_limits<uint64_t>::max() / (1024ULL * 1024ULL * 1024ULL);
+    if (gb > max_gb) {
+        mkfs::console_out()
+            << "hefs: error: Disk size \"" << gb << "GB\" is too large.\n";
+        return EXIT_FAILURE;
+    }
+    kDiskSize = static_cast<size_t>(gb * 1024ULL * 1024ULL * 1024ULL);
 
-  if (!kDiskSize) {
-    mkfs::console_out() << "hefs: error: Disk size is set to zero.\n";
-    return EXIT_FAILURE;
-  }
+    auto opt_b  = mkfs::get_option<char>(args, "-b");
+    auto opt_e  = mkfs::get_option<char>(args, "-e");
+    auto opt_bs = mkfs::get_option<char>(args, "-bs");
+    auto opt_be = mkfs::get_option<char>(args, "-be");
+    auto opt_is = mkfs::get_option<char>(args, "-is");
+    auto opt_ie = mkfs::get_option<char>(args, "-ie");
 
-  // Open the output_device
-  std::ofstream output_device(output_path, std::ios::binary);
+    long start_ind   = 0, end_ind    = 0;
+    long start_block = 0, end_block  = 0;
+    long start_in    = 0, end_in     = 0;
 
-  if (!output_device.good()) {
-    mkfs::console_out() << "hefs: error: Unable to open output_device: " << output_path << "\n";
-    return EXIT_FAILURE;
-  }
+    if (!parse_signed(opt_b, start_ind, 16)) {
+        mkfs::console_out() << "hefs: error: Invalid -b <hex> argument.\n";
+        return EXIT_FAILURE;
+    }
+    if (!parse_signed(opt_e, end_ind, 16) || end_ind <= start_ind) {
+        mkfs::console_out()
+            << "hefs: error: Invalid or out-of-range -e <hex> argument.\n";
+        return EXIT_FAILURE;
+    }
+    if (!parse_signed(opt_bs, start_block, 16)) {
+        mkfs::console_out() << "hefs: error: Invalid -bs <hex> argument.\n";
+        return EXIT_FAILURE;
+    }
+    if (!parse_signed(opt_be, end_block, 16) || end_block <= start_block) {
+        mkfs::console_out()
+            << "hefs: error: Invalid or out-of-range -be <hex> argument.\n";
+        return EXIT_FAILURE;
+    }
+    if (!parse_signed(opt_is, start_in, 16)) {
+        mkfs::console_out() << "hefs: error: Invalid -is <hex> argument.\n";
+        return EXIT_FAILURE;
+    }
+    if (!parse_signed(opt_ie, end_in, 16) || end_in <= start_in) {
+        mkfs::console_out()
+            << "hefs: error: Invalid or out-of-range -ie <hex> argument.\n";
+        return EXIT_FAILURE;
+    }
 
-  // create a boot node, and then allocate a index node directory tree.
-  mkfs::hefs::BootNode boot_node{{}, {}, 0, 0, 0, 0, 0, 0, 0, 0};
+    if (static_cast<size_t>(end_block) * kSectorSize > kDiskSize ||
+        static_cast<size_t>(end_ind)           > kDiskSize ||
+        static_cast<size_t>(end_in)            > kDiskSize) {
+        mkfs::console_out() << "hefs: error: One or more ranges exceed disk size.\n";
+        return EXIT_FAILURE;
+    }
 
-  auto start_ind = std::strtol(mkfs::get_option<char>(args, "-b").data(), nullptr, 16);
+    std::ofstream output_device(output_path, std::ios::binary);
+    if (!output_device.good()) {
+        mkfs::console_out()
+            << "hefs: error: Unable to open output device: " << output_path << "\n";
+        return EXIT_FAILURE;
+    }
 
-  start_ind += sizeof(mkfs::hefs::BootNode);
+    mkfs::hefs::BootNode boot_node;
+    std::memset(&boot_node, 0, sizeof(boot_node));
 
-  auto end_ind = std::strtol(mkfs::get_option<char>(args, "-e").data(), nullptr, 16);
+    boot_node.version    = kVersion;
+    boot_node.diskKind   = mkfs::hefs::kHeFSHardDrive;
+    boot_node.encoding   = mkfs::hefs::kHeFSEncodingFlagsUTF8;
+    boot_node.diskSize   = kDiskSize;
+    boot_node.sectorSize = kSectorSize;
+    boot_node.startIND   = static_cast<size_t>(start_ind) + sizeof(mkfs::hefs::BootNode);
+    boot_node.endIND     = static_cast<size_t>(end_ind);
+    boot_node.startIN    = static_cast<size_t>(start_in);
+    boot_node.endIN      = static_cast<size_t>(end_in);
+    boot_node.startBlock = static_cast<size_t>(start_block);
+    boot_node.endBlock   = static_cast<size_t>(end_block);
+    boot_node.indCount   = 0UL;
+    boot_node.diskStatus = mkfs::hefs::kHeFSStatusUnlocked;
 
-  auto start_block = std::strtol(mkfs::get_option<char>(args, "-bs").data(), nullptr, 16);
-  auto end_block   = std::strtol(mkfs::get_option<char>(args, "-be").data(), nullptr, 16);
+    static_assert(sizeof(boot_node.magic) >= kHeFSMagicLen,
+                  "BootNode::magic too small to hold kHeFSMagicLen");
+    std::memset(boot_node.magic, 0, sizeof(boot_node.magic));
+    size_t magic_copy =
+        (sizeof(boot_node.magic) < kHeFSMagicLen - 1)
+            ? sizeof(boot_node.magic)
+            : (kHeFSMagicLen - 1);
+    std::memcpy(boot_node.magic, kHeFSMagic, magic_copy);
+    boot_node.magic[magic_copy] = 0;
 
-  auto start_in = std::strtol(mkfs::get_option<char>(args, "-is").data(), nullptr, 16);
-  auto end_in   = std::strtol(mkfs::get_option<char>(args, "-ie").data(), nullptr, 16);
+    constexpr size_t vol_slots = kHeFSPartNameLen;
+    std::memset(boot_node.volumeName, 0, sizeof(boot_node.volumeName));
+    size_t label_units = std::min(kLabel.size(), vol_slots - 1);
+    for (size_t i = 0; i < label_units; ++i) {
+        boot_node.volumeName[i] = static_cast<char16_t>(kLabel[i]);
+    }
+    boot_node.volumeName[label_units] = 0;
 
-  boot_node.version    = kVersion;
-  boot_node.diskKind   = mkfs::hefs::kHeFSHardDrive;
-  boot_node.encoding   = mkfs::hefs::kHeFSEncodingFlagsUTF8;
-  boot_node.diskSize   = kDiskSize;
-  boot_node.sectorSize = kSectorSize;
-  boot_node.startIND   = start_ind;
-  boot_node.endIND     = end_ind;
-  boot_node.startIN    = start_in;
-  boot_node.endIN      = end_in;
-  boot_node.startBlock = start_block;
-  boot_node.endBlock   = end_block;
-  boot_node.indCount   = 0UL;
-  boot_node.diskStatus = mkfs::hefs::kHeFSStatusUnlocked;
+    output_device.seekp(static_cast<std::streamoff>(start_ind));
+    if (!output_device.good()) {
+        mkfs::console_out() << "hefs: error: Failed seek to index start.\n";
+        return EXIT_FAILURE;
+    }
 
-  std::memcpy(boot_node.magic, kHeFSMagic, kHeFSMagicLen - 1);
-  std::memcpy(boot_node.volumeName, kLabel.data(), kLabel.size() * sizeof(char16_t));
+    output_device.write(reinterpret_cast<const char*>(&boot_node),
+                        sizeof(boot_node));
+    if (!output_device.good()) {
+        mkfs::console_out()
+            << "hefs: error: Unable to write BootNode to output device: "
+            << output_path << "\n";
+        return EXIT_FAILURE;
+    }
 
-  output_device.seekp(std::strtol(mkfs::get_option<char>(args, "-b").data(), nullptr, 16));
-  output_device.write(reinterpret_cast<const char*>(&boot_node), sizeof(mkfs::hefs::BootNode));
+    output_device.seekp(static_cast<std::streamoff>(boot_node.startIND));
+    if (!output_device.good()) {
+        mkfs::console_out() << "hefs: error: Failed seek to startIND.\n";
+        return EXIT_FAILURE;
+    }
 
-  if (!output_device.good()) {
-    mkfs::console_out() << "hefs: error: Unable to write filesystem to output_device: "
-                        << output_path << "\n";
-    return EXIT_FAILURE;
-  }
+    output_device.flush();
+    output_device.close();
 
-  output_device.seekp(boot_node.startIND);
-
-  output_device.flush();
-  output_device.close();
-
-  mkfs::console_out() << "hefs: info: Wrote filesystem to output_device: " << output_path << "\n";
-
-  return EXIT_SUCCESS;
+    mkfs::console_out()
+        << "hefs: info: Wrote filesystem to output device: " << output_path << "\n";
+    return EXIT_SUCCESS;
 }

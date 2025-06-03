@@ -4,15 +4,15 @@
  * Copyright (c) 2024-2025 Amlal El Mahrouss
  */
 
-#include <libSystem/System.h>
+#include <libSystem/SystemKit/System.h>
 
 /// @brief Library loader.
 
 #define DYNLIB_FLAG "-dyn"
 
 SInt32 _NeMain(SInt32 argc, Char* argv[]) {
-  SCI_UNUSED(argc);
-  SCI_UNUSED(argv);
+  LIBSYS_UNUSED(argc);
+  LIBSYS_UNUSED(argv);
 
   PrintOut(nullptr, "%s", "ld.dyn: Dynamic Loader.\n");
   PrintOut(nullptr, "%s", "ld.dyn: © 2024-2025 Amlal El Mahrouss, All rights reserved.\n");

@@ -44,7 +44,7 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
 
   kDmaPoolPtr = (UInt8*) (addr + size);
 
-  HAL::mm_memory_fence((VoidPtr)addr);
+  HAL::mm_memory_fence((VoidPtr) addr);
 
   return (VoidPtr) addr;
 }

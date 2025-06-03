@@ -1,7 +1,7 @@
-#include <libSystem/System.h>
+#include <libSystem/SystemKit/System.h>
 
 SInt32 _NeMain(SInt32 argc, Char* argv[]) {
-  SCI_UNUSED(argc);
+  LIBSYS_UNUSED(argc);
 
   if (argc < 2) {
     PrintOut(nullptr, "HELP: ping <hostname>\n");

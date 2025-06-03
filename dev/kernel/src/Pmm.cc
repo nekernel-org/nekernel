@@ -35,7 +35,7 @@ Ref<PTEWrapper> Pmm::RequestPage(Boolean user, Boolean readWrite) {
 
   if (pt.fPresent) {
     kout << "[PMM]: Allocation failed.\r";
-    return {};
+    return {pt};
   }
 
   return Ref<PTEWrapper>(pt);

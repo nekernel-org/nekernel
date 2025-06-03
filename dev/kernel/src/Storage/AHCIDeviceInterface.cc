@@ -12,11 +12,11 @@ using namespace Kernel;
 /// @param Out Drive output
 /// @param In  Drive input
 /// @param Cleanup Drive cleanup.
-AHCIDeviceInterface::AHCIDeviceInterface(void (*out)(IDeviceObject*       self,
+AHCIDeviceInterface::AHCIDeviceInterface(void (*out)(DeviceInterface*     self,
                                                      MountpointInterface* outpacket),
-                                         void (*in)(IDeviceObject*       self,
+                                         void (*in)(DeviceInterface*     self,
                                                     MountpointInterface* inpacket))
-    : IDeviceObject(out, in) {}
+    : DeviceInterface(out, in) {}
 
 /// @brief Class desctructor
 AHCIDeviceInterface::~AHCIDeviceInterface() = default;
@@ -45,7 +45,7 @@ AHCIDeviceInterface& AHCIDeviceInterface::operator<<(MountpointInterface* mnt) {
     }
   }
 
-  return (AHCIDeviceInterface&) IDeviceObject<MountpointInterface*>::operator<<(mnt);
+  return (AHCIDeviceInterface&) DeviceInterface<MountpointInterface*>::operator<<(mnt);
 }
 
 /// @brief Input operator.
@@ -67,7 +67,7 @@ AHCIDeviceInterface& AHCIDeviceInterface::operator>>(MountpointInterface* mnt) {
     }
   }
 
-  return (AHCIDeviceInterface&) IDeviceObject<MountpointInterface*>::operator>>(mnt);
+  return (AHCIDeviceInterface&) DeviceInterface<MountpointInterface*>::operator>>(mnt);
 }
 
 const UInt16& AHCIDeviceInterface::GetPortsImplemented() {

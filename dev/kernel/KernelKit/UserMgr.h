@@ -20,8 +20,8 @@
 #include <NeKit/Defines.h>
 #include <NeKit/KString.h>
 
-///! We got the Super, Standard (%s format) and Guest user,
-///! all are used to make authorization operations on the OS.
+///! We got the MGMT, STD (%s format) and GUEST users,
+///! all are used to make authorized operations.
 #define kSuperUser "OS AUTHORITY/MGMT/%s"
 #define kGuestUser "OS AUTHORITY/GUEST/%s"
 #define kStdUser "OS AUTHORITY/STD/%s"
@@ -34,11 +34,11 @@
 namespace Kernel {
 class User;
 
-enum class UserRingKind {
+enum class UserRingKind : Int32 {
   kRingInvalid   = 0,
-  kRingStdUser   = 1,
-  kRingSuperUser = 2,
-  kRingGuestUser = 5,
+  kRingStdUser   = 444,
+  kRingSuperUser = 666,
+  kRingGuestUser = 777,
   kRingCount     = 3,
 };
 

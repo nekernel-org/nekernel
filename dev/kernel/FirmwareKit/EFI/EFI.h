@@ -664,7 +664,7 @@ typedef struct EfiSystemTable {
   /// The configuration table (contains the RSD PTR entry.)
   struct {
     EFI_GUID VendorGUID;
-    VoidPtr VendorTable;
+    VoidPtr  VendorTable;
   } * ConfigurationTable;
 } EfiSystemTable;
 

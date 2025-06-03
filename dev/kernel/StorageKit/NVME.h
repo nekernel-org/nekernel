@@ -12,8 +12,8 @@
 namespace Kernel {
 class NVMEDeviceInterface final NE_DEVICE<MountpointInterface*> {
  public:
-  explicit NVMEDeviceInterface(Void (*out)(IDeviceObject*, MountpointInterface* out_packet),
-                               Void (*in)(IDeviceObject*, MountpointInterface* in_packet),
+  explicit NVMEDeviceInterface(Void (*out)(DeviceInterface*, MountpointInterface* out_packet),
+                               Void (*in)(DeviceInterface*, MountpointInterface* in_packet),
                                Void (*cleanup)(Void));
 
   ~NVMEDeviceInterface() override;

@@ -8,6 +8,7 @@
 #ifndef _NEWKIT_REF_H_
 #define _NEWKIT_REF_H_
 
+#include <CompilerKit/CompilerKit.h>
 #include <KernelKit/HeapMgr.h>
 #include <NeKit/Defines.h>
 #include <NeKit/KernelPanic.h>
@@ -16,41 +17,33 @@ namespace Kernel {
 template <typename T>
 class Ref final {
  public:
-  Ref() = default;
-
-  ~Ref() {
-    if (mm_is_valid_ptr(fClass)) delete fClass;
-  }
+  explicit Ref() = default;
+  ~Ref()         = default;
 
  public:
-  Ref(T* cls) : fClass(cls) {}
-
-  Ref(T cls) : fClass(nullptr) { fClass = &cls; }
+  Ref(T* cls) : fClass(*cls) {}
+  Ref(T cls) : fClass(cls) {}
 
   Ref& operator=(T ref) {
-    fClass = &ref;
+    fClass = ref;
     return *this;
   }
 
+  NE_COPY_DEFAULT(Ref);
+
  public:
-  T operator->() const {
-    MUST_PASS(*fClass);
-    return *fClass;
-  }
+  T operator->() const { return fClass; }
 
-  T& Leak() noexcept { return *fClass; }
+  T& Leak() noexcept { return fClass; }
 
-  T& TryLeak() const noexcept {
-    MUST_PASS(*fClass);
-    return *fClass;
-  }
+  T& TryLeak() const noexcept { return fClass; }
 
-  T operator*() { return *fClass; }
+  T operator*() { return fClass; }
 
-  operator bool() noexcept { return fClass; }
+  operator bool() noexcept { return true; }
 
  private:
-  T* fClass{nullptr};
+  T fClass;
 };
 
 template <typename T>
@@ -70,7 +63,7 @@ class NonNullRef final {
   NonNullRef(const NonNullRef<T>& ref)            = default;
 
  private:
-  Ref<T> fRef{nullptr};
+  Ref<T> fRef{};
 };
 }  // namespace Kernel
 

@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025, Amlal El Mahrouss/Symphony Corp, all rights reserved.
 
 ------------------------------------------- */
 
@@ -74,7 +74,7 @@ ATAInit_Retry:
   auto status_rdy = rt_in8(IO + ATA_REG_STATUS);
 
   if (status_rdy & ATA_SR_ERR) {
-    writer.Write(L"BootZ: ATA: Not an IDE based drive.\r");
+    writer.Write(L"VMBoot: ATA: Not an IDE based drive.\r");
 
     return false;
   }

@@ -18,13 +18,13 @@ using ErrorT = UInt;
 template <typename T>
 class ErrorOr final {
  public:
-  ErrorOr()  = default;
-  ~ErrorOr() = default;
+  explicit ErrorOr() = default;
+  ~ErrorOr()         = default;
 
  public:
-  explicit ErrorOr(Int32 err) : mId(err) {}
+  explicit ErrorOr(Int32 err) : mRef((T*) RTL_ALLOCA(sizeof(T))), mId(err) {}
 
-  explicit ErrorOr(nullPtr Null) {}
+  explicit ErrorOr(nullPtr) {}
 
   explicit ErrorOr(T* Class) : mRef(Class) {}
 
@@ -48,7 +48,7 @@ class ErrorOr final {
 
  private:
   Ref<T> mRef;
-  UInt32 mId{0};
+  Int32  mId{0};
 };
 
 using ErrorOrAny = ErrorOr<voidPtr>;

@@ -5,5 +5,5 @@
 .global hal_flush_tlb
 
 hal_flush_tlb:
-    tlbi
+    tlbi vmalle1
     ret

@@ -31,10 +31,6 @@ namespace Kernel {
 
 STATIC UInt32 kLastExitCode = 0U;
 
-/***********************************************************************************/
-/// @brief Scheduler itself.
-/***********************************************************************************/
-
 USER_PROCESS::USER_PROCESS()  = default;
 USER_PROCESS::~USER_PROCESS() = default;
 
@@ -71,16 +67,16 @@ USER_PROCESS::operator bool() {
 /// @return Int32 the last exit code.
 /***********************************************************************************/
 
-const UInt32& USER_PROCESS::GetExitCode() noexcept {
-  return this->fLastExitCode;
+KPCError& USER_PROCESS::GetExitCode() noexcept {
+  return this->LastExitCode;
 }
 
 /***********************************************************************************/
 /// @brief Error code variable getter.
 /***********************************************************************************/
 
-Int32& USER_PROCESS::GetLocalCode() noexcept {
-  return this->fLocalCode;
+KPCError& USER_PROCESS::GetLocalCode() noexcept {
+  return this->LocalCode;
 }
 
 /***********************************************************************************/
@@ -262,12 +258,13 @@ STATIC Void sched_free_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_ptr_list) {
 /***********************************************************************************/
 
 Void USER_PROCESS::Exit(const Int32& exit_code) {
-  this->Status        = exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
-  this->fLastExitCode = exit_code;
+  this->Status       = exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
+  this->LastExitCode = exit_code;
+  this->UTime        = 0;
 
   kLastExitCode = exit_code;
 
-  --this->ParentTeam->mProcessCount;
+  --this->ParentTeam->mProcessCur;
 
   auto memory_ptr_list = this->HeapTree;
 
@@ -317,7 +314,7 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
   this->ProcessId = 0UL;
   this->Status    = ProcessStatusKind::kFinished;
 
-  --this->ParentTeam->mProcessCount;
+  --this->ParentTeam->mProcessCur;
 }
 
 /***********************************************************************************/
@@ -363,13 +360,13 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
     return -kErrorProcessFault;
   }
 
-  ProcessID pid = this->mTeam.mProcessCount;
+  ProcessID pid = this->mTeam.mProcessCur;
 
   if (pid > kSchedProcessLimitPerTeam) {
     return -kErrorProcessFault;
   }
 
-  ++this->mTeam.mProcessCount;
+  ++this->mTeam.mProcessCur;
 
   USER_PROCESS& process = this->mTeam.mProcessList[pid];
 
@@ -447,7 +444,7 @@ UserProcessScheduler& UserProcessScheduler::The() {
 /***********************************************************************************/
 
 Void UserProcessScheduler::Remove(ProcessID process_id) {
-  if (process_id < 0 || process_id >= kSchedProcessLimitPerTeam) {
+  if (process_id < 0 || process_id > kSchedProcessLimitPerTeam) {
     return;
   }
 
@@ -483,7 +480,7 @@ Bool UserProcessScheduler::HasMP() {
 /***********************************************************************************/
 
 SizeT UserProcessScheduler::Run() noexcept {
-  if (mTeam.mProcessCount < 1) {
+  if (mTeam.mProcessCur < 1) {
     return 0UL;
   }
 
@@ -507,6 +504,7 @@ SizeT UserProcessScheduler::Run() noexcept {
       if (UserProcessHelper::Switch(process.StackFrame, process.ProcessId)) {
         process.PTime = static_cast<Int32>(process.Affinity);
 
+        // We add a bigger cooldown according to the RTime and affinity here.
         if (process.PTime < process.RTime && AffinityKind::kRealTime != process.Affinity) {
           if (process.RTime < (Int32) AffinityKind::kVeryHigh)
             process.RTime = (Int32) AffinityKind::kLowUsage / 2;

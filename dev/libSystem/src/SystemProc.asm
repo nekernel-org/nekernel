@@ -11,34 +11,37 @@
 
 section .text
 
-global sci_syscall_arg_1
-global sci_syscall_arg_2
-global sci_syscall_arg_3
-global sci_syscall_arg_4
+global libsys_syscall_arg_1
+global libsys_syscall_arg_2
+global libsys_syscall_arg_3
+global libsys_syscall_arg_4
 
-sci_syscall_arg_1:
+libsys_syscall_arg_1:
     push rbp
     mov rbp, rsp
 
     mov r8, rcx
-    syscall
+
+    int 50
 
     pop rbp
 
     ret
 
-sci_syscall_arg_2:
+libsys_syscall_arg_2:
     push rbp
     mov rbp, rsp
 
     mov r8, rcx
     mov r9, rdx
-    syscall
+    
+    int 50
+
     pop rbp
 
     ret
 
-sci_syscall_arg_3:
+libsys_syscall_arg_3:
     push rbp
     mov rbp, rsp
 
@@ -46,12 +49,13 @@ sci_syscall_arg_3:
     mov r9, rdx
     mov r10, rbx
 
-    syscall
+    int 50
+
     pop rbp
 
     ret
 
-sci_syscall_arg_4:
+libsys_syscall_arg_4:
     push rbp
     mov rbp, rsp
 
@@ -60,7 +64,8 @@ sci_syscall_arg_4:
     mov r10, rbx
     mov r11, rax
 
-    syscall
+    int 50
+
     pop rbp
 
     ret

@@ -64,7 +64,7 @@ bool KString::operator!=(const Char* rhs) const {
 }
 
 ErrorOr<KString> KStringBuilder::Construct(const Char* data) {
-  if (!data || *data == 0) return {};
+  if (!data || *data == 0) return ErrorOr<KString>(new KString(0));
 
   KString* view = new KString(rt_string_len(data));
   (*view) += data;

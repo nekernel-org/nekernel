@@ -21,8 +21,8 @@ class NetworkDevice;
  */
 class NetworkDevice final NE_DEVICE<NetworkDeviceCommand> {
  public:
-  NetworkDevice(void (*out)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
-                void (*in)(IDeviceObject<NetworkDeviceCommand>*, NetworkDeviceCommand),
+  NetworkDevice(void (*out)(DeviceInterface<NetworkDeviceCommand>*, NetworkDeviceCommand),
+                void (*in)(DeviceInterface<NetworkDeviceCommand>*, NetworkDeviceCommand),
                 void (*cleanup)(void) = nullptr);
 
   ~NetworkDevice() override;

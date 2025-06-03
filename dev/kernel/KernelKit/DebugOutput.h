@@ -37,9 +37,9 @@ inline TerminalDevice hex_number(const Long& x);
 // @brief Emulates a VT100 terminal.
 class TerminalDevice final NE_DEVICE<const Char*> {
  public:
-  TerminalDevice(void (*print)(IDeviceObject*, const Char*),
-                 void (*gets)(IDeviceObject*, const Char*))
-      : IDeviceObject<const Char*>(print, gets) {}
+  TerminalDevice(void (*print)(DeviceInterface*, const Char*),
+                 void (*gets)(DeviceInterface*, const Char*))
+      : DeviceInterface<const Char*>(print, gets) {}
 
   ~TerminalDevice() override;
 
@@ -54,9 +54,9 @@ class TerminalDevice final NE_DEVICE<const Char*> {
 
 class Utf8TerminalDevice final NE_DEVICE<const Utf8Char*> {
  public:
-  Utf8TerminalDevice(void (*print)(IDeviceObject*, const Utf8Char*),
-                     void (*gets)(IDeviceObject*, const Utf8Char*))
-      : IDeviceObject<const Utf8Char*>(print, gets) {}
+  Utf8TerminalDevice(void (*print)(DeviceInterface*, const Utf8Char*),
+                     void (*gets)(DeviceInterface*, const Utf8Char*))
+      : DeviceInterface<const Utf8Char*>(print, gets) {}
 
   ~Utf8TerminalDevice() override;
 

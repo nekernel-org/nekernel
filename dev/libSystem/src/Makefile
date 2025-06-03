@@ -9,8 +9,8 @@ FLAGS=-f win64
 .PHONY: error
 error:
 	@echo "==> Invalid rule."
-	@echo "==> Use sci_asm_io_<arch> instead."
+	@echo "==> Use libsys_asm_io_<arch> instead."
 
-.PHONY: sci_asm_io_x64
-sci_asm_io_x64:
-	$(ASM) $(FLAGS) SystemCalls+IO.asm -o SystemCalls+IO.stub.obj
+.PHONY: libsys_asm_io_x64
+libsys_asm_io_x64:
+	$(ASM) $(FLAGS) SystemProc.asm -o SystemProc.stub.obj

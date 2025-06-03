@@ -20,29 +20,29 @@ struct GPT_PARTITION_TABLE;
 struct GPT_PARTITION_ENTRY;
 
 struct PACKED GPT_PARTITION_TABLE final {
-  Char    Signature[kMagicLenGPT];
-  UInt32  Revision;
-  UInt32  HeaderSize;
-  UInt32  CRC32;
-  UInt32  Reserved1;
-  UInt64  LBAHeader;
-  UInt64  LBAAltHeader;
-  UInt64  FirstGPTEntry;
-  UInt64  LastGPTEntry;
+  Char     Signature[kMagicLenGPT];
+  UInt32   Revision;
+  UInt32   HeaderSize;
+  UInt32   CRC32;
+  UInt32   Reserved1;
+  UInt64   LBAHeader;
+  UInt64   LBAAltHeader;
+  UInt64   FirstGPTEntry;
+  UInt64   LastGPTEntry;
   EFI_GUID Guid;
-  UInt64  StartingLBA;
-  UInt32  NumPartitionEntries;
-  UInt32  SizeOfEntries;
-  UInt32  CRC32PartEntry;
-  UInt8   Reserved2[kSectorAlignGPT_PartTbl];
+  UInt64   StartingLBA;
+  UInt32   NumPartitionEntries;
+  UInt32   SizeOfEntries;
+  UInt32   CRC32PartEntry;
+  UInt8    Reserved2[kSectorAlignGPT_PartTbl];
 };
 
 struct PACKED GPT_PARTITION_ENTRY {
   EFI_GUID PartitionTypeGUID;
   EFI_GUID UniquePartitionGUID;
-  UInt64  StartLBA;
-  UInt64  EndLBA;
-  UInt64  Attributes;
-  UInt8   Name[kSectorAlignGPT_PartEntry];
+  UInt64   StartLBA;
+  UInt64   EndLBA;
+  UInt64   Attributes;
+  UInt8    Name[kSectorAlignGPT_PartEntry];
 };
 }  // namespace Kernel

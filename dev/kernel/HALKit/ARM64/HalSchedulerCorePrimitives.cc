@@ -22,7 +22,7 @@ EXTERN_C Void __zka_pure_call(USER_PROCESS* process) {
 /// @param stack_ptr the frame pointer.
 /***********************************************************************************/
 
-EXTERN_C Bool hal_check_stack(HAL::StackFramePtr stack_ptr) {
+EXTERN_C Bool hal_check_task(HAL::StackFramePtr stack_ptr) {
   if (!stack_ptr) return No;
 
   return stack_ptr->SP != 0 && stack_ptr->IP != 0;

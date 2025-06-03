@@ -13,10 +13,10 @@
 
 namespace Kernel {
 /// @brief ATA device interface class.
-class ATADeviceInterface : public IDeviceObject<MountpointInterface*> {
+class ATADeviceInterface : public DeviceInterface<MountpointInterface*> {
  public:
-  explicit ATADeviceInterface(void (*Out)(IDeviceObject*, MountpointInterface* outpacket),
-                              void (*In)(IDeviceObject*, MountpointInterface* inpacket));
+  explicit ATADeviceInterface(void (*Out)(DeviceInterface*, MountpointInterface* outpacket),
+                              void (*In)(DeviceInterface*, MountpointInterface* inpacket));
 
   virtual ~ATADeviceInterface();
 

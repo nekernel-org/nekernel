@@ -4,13 +4,13 @@
  * Copyright (c) 2024-2025 Amlal El Mahrouss
  */
 
-#include <libSystem/System.h>
+#include <libSystem/SystemKit/System.h>
 
 /// @brief This program loads a code framework into Kernel's memory.
 
 SInt32 _NeMain(SInt32 argc, Char* argv[]) {
-  SCI_UNUSED(argc);
-  SCI_UNUSED(argv);
+  LIBSYS_UNUSED(argc);
+  LIBSYS_UNUSED(argv);
 
   PrintOut(nullptr, "%s", "ld.fwrk: Framework Loader.\n");
   PrintOut(nullptr, "%s", "ld.fwrk: © 2024-2025 Amlal El Mahrouss, All rights reserved.\n");

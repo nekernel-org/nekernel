@@ -3,7 +3,7 @@
     "compiler_std": "c++20",
     "headers_path": ["../", "./", "../../../dev", "../../../dev/kernel"],
     "sources_path": ["src/*.cc"],
-    "output_name": "./dist/libDiskImage.dylib",
+    "output_name": "./dist/libDiskImage.fwrk.dylib",
     "compiler_flags": [
       "-ffreestanding",
       "-shared",
