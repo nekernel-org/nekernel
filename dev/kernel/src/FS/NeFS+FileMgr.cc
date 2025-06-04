@@ -250,13 +250,18 @@ _Output NeFileSystemParser* NeFileSystemMgr::GetParser() noexcept {
 static inline bool is_valid_nefs_catalog(NodePtr node) {
     if (!node) return false;
     auto cat = reinterpret_cast<NEFS_CATALOG_STRUCT*>(node);
-    if (cat->Kind < 0 || cat->Kind > 3) return false;
+    switch (cat->Kind) {
+        case kNeFSCatalogKindFile:
+        case kNeFSCatalogKindDir:
+        case kNeFSCatalogKindAlias:
+        case kNeFSCatalogKindPage:
+            break;
+        default:
+            return false;
+    }
     bool null_found = false;
     for (int i = 0; i < kNeFSCatalogNameLen; ++i) {
-        if (cat->Name[i] == 0) {
-            null_found = true;
-            break;
-        }
+        if (cat->Name[i] == 0) { null_found = true; break; }
     }
     if (!null_found) return false;
     return true;
