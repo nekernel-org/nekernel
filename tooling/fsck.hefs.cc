@@ -15,5 +15,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
+  (void)(argv);
+
   return EXIT_SUCCESS;
 }
