@@ -30,7 +30,8 @@ Boolean tls_check_tib(THREAD_INFORMATION_BLOCK* tib_ptr) {
   if (!tib_ptr) return false;
 
   return tib_ptr->Cookie[kCookieMag0Idx] == kCookieMag0 &&
-         tib_ptr->Cookie[kCookieMag1Idx] == kCookieMag1 && tib_ptr->Cookie[kCookieMag2Idx] == kCookieMag2;
+         tib_ptr->Cookie[kCookieMag1Idx] == kCookieMag1 &&
+         tib_ptr->Cookie[kCookieMag2Idx] == kCookieMag2;
 }
 
 /**

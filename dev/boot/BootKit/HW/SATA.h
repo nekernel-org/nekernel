@@ -19,7 +19,7 @@ class BootDeviceSATA final {
 
   NE_COPY_DEFAULT(BootDeviceSATA)
 
-  struct SATATrait final : public Device::Trait  {
+  struct SATATrait final : public Device::Trait {
     Kernel::Boolean mErr{false};
     Kernel::Boolean mDetected{false};
 

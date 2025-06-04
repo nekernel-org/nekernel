@@ -28,7 +28,7 @@ struct THREAD_INFORMATION_BLOCK;
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED THREAD_INFORMATION_BLOCK final {
   Kernel::Char    Cookie[kTLSCookieLen]{0};  //! Thread Magic Number.
-  Kernel::VoidPtr UserData{nullptr};           //! Thread Information Record (User defined canary structure)
+  Kernel::VoidPtr UserData{nullptr};  //! Thread Information Record (User defined canary structure)
 };
 
 ///! @brief Cookie Sanity check.

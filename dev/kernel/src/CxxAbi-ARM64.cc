@@ -37,7 +37,7 @@ EXTERN_C void __cxa_finalize(void* f) {
     while (i--) {
       if (__atexit_funcs[i].destructor_func) {
         (*__atexit_funcs[i].destructor_func)();
-      __atexit_funcs[i].destructor_func = 0;
+        __atexit_funcs[i].destructor_func = 0;
       };
     }
 
