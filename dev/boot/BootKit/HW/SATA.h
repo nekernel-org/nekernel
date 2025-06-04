@@ -10,7 +10,7 @@
 #include <CompilerKit/CompilerKit.h>
 #include <modules/AHCI/AHCI.h>
 
-#define kAHCISectorSz (4096)
+#define kAHCISectorSz (512)
 
 class BootDeviceSATA final {
  public:
@@ -19,11 +19,9 @@ class BootDeviceSATA final {
 
   NE_COPY_DEFAULT(BootDeviceSATA)
 
-  struct SATATrait final {
-    Kernel::SizeT   mBase{1024};
+  struct SATATrait final : public Device::Trait  {
     Kernel::Boolean mErr{false};
     Kernel::Boolean mDetected{false};
-    Kernel::SizeT   mSize{0};
 
     operator bool() { return !this->mErr; }
   };
