@@ -116,16 +116,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // Assign to global 'kHandoverHeader'.
   kHandoverHeader = handover_hdr;
 
-  fb_init();
-
-  FB::fb_clear_video();
-
-  FBDrawBitMapInRegion(zka_disk, NE_DISK_WIDTH, NE_DISK_HEIGHT,
-                       (kHandoverHeader->f_GOP.f_Width - NE_DISK_WIDTH) / 2,
-                       (kHandoverHeader->f_GOP.f_Height - NE_DISK_HEIGHT) / 2);
-
-  fb_clear();
-
   UInt32 cnt_enabled  = 0;
   UInt32 cnt_disabled = 0;
 
@@ -169,28 +159,6 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
     }
   }
 
-  Boot::BootFileReader reader_syschk(L"chk.efi", image_handle);
-  reader_syschk.ReadAll(0);
-
-  Boot::BootThread* syschk_thread = nullptr;
-
-  if (reader_syschk.Blob()) {
-    syschk_thread = new Boot::BootThread(reader_syschk.Blob());
-    syschk_thread->SetName("BootZ: System Check");
-
-    if (syschk_thread->Start(handover_hdr, NO) != kEfiOk) {
-      fb_init();
-
-      FB::fb_clear_video();
-
-      FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT,
-                           (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2,
-                           (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
-
-      fb_clear();
-    }
-  }
-
   // ------------------------------------------ //
   // null these fields, to avoid being reused later.
   // ------------------------------------------ //
@@ -220,12 +188,10 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
 
   if (reader_kernel.Blob()) {
     auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
-    kernel_thread.SetName("BootZ: Kernel.");
+    kernel_thread.SetName("Kernel Task");
 
     handover_hdr->f_KernelImage = reader_kernel.Blob();
     handover_hdr->f_KernelSz    = reader_kernel.Size();
-
-    Boot::ExitBootServices(map_key, image_handle);
 
     kernel_thread.Start(handover_hdr, YES);
   }
