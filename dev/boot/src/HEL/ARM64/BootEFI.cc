@@ -188,7 +188,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
 
   if (reader_kernel.Blob()) {
     auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
-    kernel_thread.SetName("Kernel Task");
+    kernel_thread.SetName("NeKernel");
 
     handover_hdr->f_KernelImage = reader_kernel.Blob();
     handover_hdr->f_KernelSz    = reader_kernel.Size();
