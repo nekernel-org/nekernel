@@ -6,6 +6,7 @@
 
 #include <ArchKit/ArchKit.h>
 #include <KernelKit/ProcessScheduler.h>
+#include <KernelKit/UserMgr.h>
 #include <NeKit/KString.h>
 #include <SignalKit/Signals.h>
 
@@ -133,6 +134,8 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index,
                                             Kernel::UIntPtr rdx_syscall_struct) {
   hal_idt_send_eoi(50);
 
+  if (!Kernel::kCurrentUser) return;
+
   if (rcx_syscall_index < kSysCalls.Count()) {
     if (kSysCalls[rcx_syscall_index].fHooked) {
       if (kSysCalls[rcx_syscall_index].fProc) {
@@ -148,6 +151,10 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index,
 EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index,
                                             Kernel::UIntPtr rdx_kerncall_struct) {
   hal_idt_send_eoi(51);
+
+  if (!Kernel::kRootUser) return;
+  if (Kernel::kCurrentUser != Kernel::kRootUser) return;
+  if (!Kernel::kCurrentUser->IsSuperUser()) return;
 
   if (rcx_kerncall_index < kKernCalls.Count()) {
     if (kKernCalls[rcx_kerncall_index].fHooked) {

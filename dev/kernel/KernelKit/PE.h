@@ -44,8 +44,7 @@ typedef struct LDR_OPTIONAL_HEADER final {
   Kernel::UInt32 SizeOfUninitializedData;
   Kernel::UInt32 AddressOfEntryPoint;
   Kernel::UInt32 BaseOfCode;
-  Kernel::UInt32 BaseOfData;
-  Kernel::UInt32 ImageBase;
+  Kernel::UInt64 ImageBase;
   Kernel::UInt32 SectionAlignment;
   Kernel::UInt32 FileAlignment;
   Kernel::UInt16 MajorOperatingSystemVersion;
