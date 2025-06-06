@@ -108,7 +108,7 @@ endif
 
 .PHONY: compile-amd64
 compile-amd64:
-	$(WINDRES) src/BootloaderRsrc.rsrc -O coff -o BootloaderRsrc.o
+	$(WINDRES) src/boot_rsrc.rsrc -O coff -o boot_rsrc.o
 	$(CC_GNU) $(NE_MODEL) $(STANDALONE_MACRO) $(FLAG_GNU) $(DEBUG) \
 	$(wildcard src/HEL/AMD64/*.cc) \
 	$(wildcard src/HEL/AMD64/*.S) \

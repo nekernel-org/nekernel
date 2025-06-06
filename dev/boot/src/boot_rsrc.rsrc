@@ -12,7 +12,7 @@ BEGIN
       VALUE "FileDescription", "NeKernel OS Loader."
       VALUE "FileVersion", BOOTLOADER_VERSION
       VALUE "InternalName", "bootz"
-      VALUE "LegalCopyright", "Copyright (C) 2024, Amlal El Mahrouss all rights reserved."
+      VALUE "LegalCopyright", "Copyright (C) 2024-2025, Amlal El Mahrouss all rights reserved."
       VALUE "OriginalFilename", "ne_bootz"
       VALUE "ProductName", "bootz"
       VALUE "ProductVersion", BOOTLOADER_VERSION

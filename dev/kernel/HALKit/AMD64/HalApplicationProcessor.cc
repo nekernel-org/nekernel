@@ -216,7 +216,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
           kout << "Kind: LAPIC: OFF\r";
         }
       } else {
-        kout << "Kind: UNKNOWN\r";
+        kout << "Kind: UNKNOWN: OFF\r";
       }
 
       entry_ptr += length;

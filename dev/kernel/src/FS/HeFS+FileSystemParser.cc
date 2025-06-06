@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2024-2025 Amlal El Mahrouss, all rights reserved.
 
 ------------------------------------------- */
 
@@ -758,8 +758,8 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
   }
 
   if (drv_std_get_size() < kHeFSMinimumDiskSize) {
-    (Void)(kout << "HeFS recommends at least 128 GiB of free space." << kendl);
-    (Void)(kout << "The OS will still try to format a HeFS disk here." << kendl);
+    (Void)(kout << "OpenHeFS recommends at least 128 GiB of free space." << kendl);
+    (Void)(kout << "The OS will still try to format a HeFS disk here anyway, don't expect perfect geometry." << kendl);
   }
 
   HEFS_BOOT_NODE* boot = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
@@ -1142,7 +1142,7 @@ STATIC DriveTrait kMountPoint;
 /// @brief Initialize the HeFS filesystem.
 /// @return To check its status, see err_local_get().
 Boolean HeFS::fs_init_hefs(Void) noexcept {
-  kout << "Creating HeFS disk...\r";
+  kout << "Verifying disk...\r";
 
   kMountPoint = io_construct_main_drive();
 
