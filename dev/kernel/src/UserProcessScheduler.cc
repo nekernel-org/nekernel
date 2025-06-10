@@ -25,22 +25,12 @@
 ///! BUGS: 0
 
 namespace Kernel {
-/***********************************************************************************/
-/// @brief Exit Code global variable.
-/***********************************************************************************/
-
-STATIC UInt32 kLastExitCode = 0U;
-
 USER_PROCESS::USER_PROCESS()  = default;
 USER_PROCESS::~USER_PROCESS() = default;
 
 /// @brief Gets the last exit code.
 /// @note Not thread-safe.
 /// @return Int32 the last exit code.
-
-const UInt32& sched_get_exit_code(void) noexcept {
-  return kLastExitCode;
-}
 
 /***********************************************************************************/
 /// @brief Crashes the current process.
@@ -135,6 +125,11 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
   if (!this->HeapTree) {
     this->HeapTree = new PROCESS_HEAP_TREE<VoidPtr>();
 
+    if (!this->HeapTree) {
+      this->Crash();
+      return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
+    }
+
     this->HeapTree->EntryPad  = pad_amount;
     this->HeapTree->EntrySize = sz;
 
@@ -172,6 +167,11 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
     }
 
     auto new_entry = new PROCESS_HEAP_TREE<VoidPtr>();
+
+    if (!new_entry) {
+      this->Crash();
+      return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
+    }
 
     new_entry->Entry     = ptr;
     new_entry->EntrySize = sz;
@@ -262,8 +262,6 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
   this->LastExitCode = exit_code;
   this->UTime        = 0;
 
-  kLastExitCode = exit_code;
-
   --this->ParentTeam->mProcessCur;
 
   auto memory_ptr_list = this->HeapTree;
@@ -322,7 +320,7 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 /***********************************************************************************/
 
 Bool USER_PROCESS::SpawnDylib() {
-  // React according to process kind.
+  // React according to the process's kind.
   switch (this->Kind) {
     case USER_PROCESS::kExecutableDylibKind: {
       this->DylibDelegate = rtl_init_dylib_pef(*this);
@@ -338,11 +336,15 @@ Bool USER_PROCESS::SpawnDylib() {
       return NO;
     }
     default: {
-      (Void)(kout << "Unknown process kind: " << hex_number(this->Kind) << kendl);
-      this->Crash();
-      return NO;
+      break;
     }
   }
+
+  (Void)(kout << "Unknown process kind: " << hex_number(this->Kind) << kendl);
+  this->Crash();
+  return NO;
+
+  return NO;
 }
 
 /***********************************************************************************/
@@ -507,11 +509,11 @@ SizeT UserProcessScheduler::Run() noexcept {
         // We add a bigger cooldown according to the RTime and affinity here.
         if (process.PTime < process.RTime && AffinityKind::kRealTime != process.Affinity) {
           if (process.RTime < (Int32) AffinityKind::kVeryHigh)
-            process.RTime = (Int32) AffinityKind::kLowUsage / 2;
+            process.RTime += (Int32) AffinityKind::kLowUsage;
           else if (process.RTime < (Int32) AffinityKind::kHigh)
-            process.RTime = (Int32) AffinityKind::kStandard / 3;
+            process.RTime += (Int32) AffinityKind::kStandard;
           else if (process.RTime < (Int32) AffinityKind::kStandard)
-            process.RTime = (Int32) AffinityKind::kHigh / 4;
+            process.RTime += (Int32) AffinityKind::kHigh;
 
           process.PTime -= process.RTime;
           process.RTime = 0UL;

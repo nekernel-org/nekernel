@@ -228,8 +228,6 @@ class UserProcessHelper final {
   STATIC ErrorOr<PID> TheCurrentPID();
   STATIC SizeT        StartScheduling();
 };
-
-const UInt32& sched_get_exit_code(void) noexcept;
 }  // namespace Kernel
 
 #include <KernelKit/ThreadLocalStorage.h>
