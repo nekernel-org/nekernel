@@ -156,15 +156,15 @@ BootThread::BootThread(VoidPtr blob) : fStartAddress(nullptr), fBlob(blob) {
 
 /// @note handover header has to be valid!
 Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack) {
-  fHandover = handover;
-
   if (!fStartAddress) {
     return kEfiFail;
   }
 
-  if (!fHandover) {
+  if (!handover) {
     return kEfiFail;
   }
+
+  fHandover = handover;
 
   BootTextWriter writer;
 
