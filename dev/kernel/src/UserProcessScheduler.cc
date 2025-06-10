@@ -242,10 +242,13 @@ STATIC Void sched_free_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_ptr_list) {
 
     auto next = memory_ptr_list->Next;
 
+    if (next->Child) sched_free_ptr_tree(next->Child);
+
+    memory_ptr_list->Child = nullptr;
+
     mm_free_ptr(memory_ptr_list);
 
-    if (memory_ptr_list->Child) sched_free_ptr_tree(memory_ptr_list->Child);
-
+    memory_ptr_list = nullptr;
     memory_ptr_list = next;
   }
 }
@@ -262,16 +265,13 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
   this->LastExitCode = exit_code;
   this->UTime        = 0;
 
-  --this->ParentTeam->mProcessCur;
-
-  auto memory_ptr_list = this->HeapTree;
-
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   auto pd = kKernelVM;
   hal_write_cr3(this->VMRegister);
 #endif
 
-  sched_free_ptr_tree(memory_ptr_list);
+  sched_free_ptr_tree(this->HeapTree);
+  this->HeapTree = nullptr;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   hal_write_cr3(pd);
