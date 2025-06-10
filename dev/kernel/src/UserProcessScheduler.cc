@@ -152,12 +152,10 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
 
       prev_entry = entry;
 
-      if (entry->Color == kBlackTreeKind) break;
-
       if (entry->Child && entry->Child->EntrySize > 0 && entry->Child->EntrySize == sz) {
         entry     = entry->Child;
         is_parent = YES;
-      } else if (entry->Next && entry->Child->EntrySize > 0 && entry->Next->EntrySize == sz) {
+      } else if (entry->Next && entry->Next->EntrySize > 0 && entry->Next->EntrySize == sz) {
         is_parent = NO;
         entry     = entry->Next;
       } else {
