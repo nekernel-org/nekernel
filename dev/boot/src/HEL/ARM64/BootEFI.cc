@@ -129,16 +129,17 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
 
   kHandoverHeader->f_BitMapStart = nullptr;           /* Start of bitmap. */
   kHandoverHeader->f_BitMapSize  = kHandoverBitMapSz; /* Size of bitmap in bytes. */
-  Int32 trials                = 5 * 10000000;
+  
+  UInt16 trials                = 5;
 
   while (BS->AllocatePool(EfiLoaderData, kHandoverHeader->f_BitMapSize,
                           &kHandoverHeader->f_BitMapStart) != kEfiOk) {
     --trials;
 
     if (!trials) {
-      writer.Write("BootZ: Unable to allocate sufficent memory, trying again with 2GB...\r");
+      writer.Write("BootZ: Unable to allocate sufficient memory, trying again with 2GB...\r");
 
-      trials = 3 * 10000000;
+      trials = 3;
 
       kHandoverHeader->f_BitMapSize = kHandoverBitMapSz / 2; /* Size of bitmap in bytes. */
 
@@ -147,7 +148,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
         --trials;
 
         if (!trials) {
-          writer.Write("BootZ: Unable to allocate sufficent memory, aborting...\r");
+          writer.Write("BootZ: Unable to allocate sufficient memory, aborting...\r");
           Boot::Stop();
         }
       }
