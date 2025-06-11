@@ -43,7 +43,7 @@ enum {
 
 // Encodings
 enum {
-  kHeFSEncodingFlagsUTF8 = 0x200,
+  kHeFSEncodingFlagsUTF8 = 0x50,
   kHeFSEncodingFlagsUTF16,
   kHeFSEncodingFlagsUTF32,
   kHeFSEncodingFlagsUTF16BE,
