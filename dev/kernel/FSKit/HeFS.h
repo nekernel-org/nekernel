@@ -59,7 +59,7 @@ enum : UInt8 {
 };
 
 enum : UInt16 {
-  kHeFSEncodingFlagsUTF8 = 0x200,
+  kHeFSEncodingFlagsUTF8 = 0x50,
   kHeFSEncodingFlagsUTF16,
   kHeFSEncodingFlagsUTF32,
   kHeFSEncodingFlagsUTF16BE,
