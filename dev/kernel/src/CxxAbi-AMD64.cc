@@ -24,7 +24,14 @@ EXTERN_C Kernel::Void __cxa_pure_virtual(void* self) {
   (Kernel::Void)(Kernel::kout << ", has unimplemented virtual functions.\r");
 }
 
-EXTERN_C void ___chkstk_ms(void) {}
+EXTERN_C void ___chkstk_ms(PtrDiff frame_size) {
+  char* sp;
+  asm volatile("mov %%rsp, %0" : "=r"(sp));
+
+  for (PtrDiff offset = kPageSize; offset < frame_size; offset += kPageSize) {
+    sp[-offset] = 0;
+  }
+}
 
 EXTERN_C int atexit(void (*f)()) {
   if (__atexit_func_count >= kAtExitMacDestructors) return 1;
