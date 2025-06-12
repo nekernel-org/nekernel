@@ -1,6 +1,6 @@
 ##################################################
 # (c) Amlal El Mahrouss, all rights reserved.
-# This file is for libSystem.sys's syscall stubs.
+# This file is for libSystem.dll's syscall stubs.
 ##################################################
 
 ASM=nasm

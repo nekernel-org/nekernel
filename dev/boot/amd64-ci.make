@@ -73,7 +73,7 @@ BOOTLOADER=ne_bootz
 KERNEL=ne_kernel
 SYSCHK=chk.efi
 BOOTNET=net.efi
-SCIKIT=libSystem.sys
+SCIKIT=libSystem.dll
 
 .PHONY: invalid-recipe
 invalid-recipe:

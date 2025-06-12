@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "./"],
   "sources_path": ["src/*.cc", "src/*.stub.obj"],
-  "output_name": "libSystem.sys",
+  "output_name": "libSystem.dll",
   "compiler_flags": [
     "-ffreestanding",
     "-shared",
