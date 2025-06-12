@@ -48,7 +48,7 @@ EXTERN_C Int32 BootNetModuleMain(Kernel::HEL::BootInfoHeader* handover) {
     writer.Write("BootNet: The version clashes, not good.\r");
     return kEfiFail;
   }
-  
+
   if (!inet_out->ImpliesProgram) {
     Boot::BootThread thread(inet_out->Data);
 

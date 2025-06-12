@@ -18,11 +18,11 @@
 /// sent (if m_preflight = 0)
 /// @note Can be used to patch ROMs too (if ImpliesProgram = 1)
 typedef struct BOOTNET_INTERNET_HEADER {
-  Kernel::Char NB1;  /// magic char 1 'O'
-  Kernel::Char NB2;  /// magic char 2 'N'
-  Kernel::Char NB3;  /// magic char 3 'E'
-  Kernel::Char NB4;  /// magic char 4 'T'
-  Kernel::UInt16 Version;
+  Kernel::Char    NB1;  /// magic char 1 'O'
+  Kernel::Char    NB2;  /// magic char 2 'N'
+  Kernel::Char    NB3;  /// magic char 3 'E'
+  Kernel::Char    NB4;  /// magic char 4 'T'
+  Kernel::UInt16  Version;
   Kernel::Char    Name[kBootNetNameLen];    /// example: Modjo
   Kernel::Int32   Length;                   /// the patch length.
   Kernel::Char    Target[kBootNetNameLen];  /// the target file.

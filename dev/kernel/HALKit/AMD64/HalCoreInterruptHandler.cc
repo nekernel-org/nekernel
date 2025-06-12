@@ -127,39 +127,39 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
   process.Leak().Signal.Status    = process.Leak().Status;
 }
 
-/// @brief Enter syscall from assembly.
+/// @brief Enter syscall from assembly (libSystem only)
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_syscall_index,
-                                            Kernel::UIntPtr rdx_syscall_struct) {
+EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_hash,
+                                            Kernel::UIntPtr rdx_syscall_arg) {
   hal_idt_send_eoi(50);
 
   if (!Kernel::kCurrentUser) return;
 
-  if (rcx_syscall_index < kSysCalls.Count()) {
-    if (kSysCalls[rcx_syscall_index].fHooked) {
-      if (kSysCalls[rcx_syscall_index].fProc) {
-        (kSysCalls[rcx_syscall_index].fProc)((Kernel::VoidPtr) rdx_syscall_struct);
+  for (SizeT i = 0UL; i < kMaxDispatchCallCount; ++i) {
+    if (kSysCalls[i].fHooked && rcx_hash == kSysCalls[i].fHash) {
+      if (kSysCalls[i].fProc) {
+        (kSysCalls[i].fProc)((Kernel::VoidPtr) rdx_syscall_arg);
       }
     }
   }
 }
 
-/// @brief Enter Kernel call from assembly (DDK only).
+/// @brief Enter Kernel call from assembly (libDDK only).
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_kerncall_index,
-                                            Kernel::UIntPtr rdx_kerncall_struct) {
+EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_hash,
+                                            Kernel::UIntPtr rdx_kerncall_arg) {
   hal_idt_send_eoi(51);
 
   if (!Kernel::kRootUser) return;
   if (Kernel::kCurrentUser != Kernel::kRootUser) return;
   if (!Kernel::kCurrentUser->IsSuperUser()) return;
 
-  if (rcx_kerncall_index < kKernCalls.Count()) {
-    if (kKernCalls[rcx_kerncall_index].fHooked) {
-      if (kKernCalls[rcx_kerncall_index].fProc) {
-        (kKernCalls[rcx_kerncall_index].fProc)((Kernel::VoidPtr) rdx_kerncall_struct);
+  for (SizeT i = 0UL; i < kMaxDispatchCallCount; ++i) {
+    if (kKernCalls[i].fHooked && rcx_hash == kKernCalls[rcx_hash].fHash) {
+      if (kKernCalls[i].fProc) {
+        (kKernCalls[i].fProc)((Kernel::VoidPtr) rdx_kerncall_arg);
       }
     }
   }

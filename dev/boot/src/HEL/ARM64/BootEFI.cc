@@ -129,8 +129,8 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
 
   kHandoverHeader->f_BitMapStart = nullptr;           /* Start of bitmap. */
   kHandoverHeader->f_BitMapSize  = kHandoverBitMapSz; /* Size of bitmap in bytes. */
-  
-  UInt16 trials                = 5;
+
+  UInt16 trials = 5;
 
   while (BS->AllocatePool(EfiLoaderData, kHandoverHeader->f_BitMapSize,
                           &kHandoverHeader->f_BitMapStart) != kEfiOk) {

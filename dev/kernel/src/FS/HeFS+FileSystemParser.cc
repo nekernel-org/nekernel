@@ -759,7 +759,10 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
 
   if (drv_std_get_size() < kHeFSMinimumDiskSize) {
     (Void)(kout << "OpenHeFS recommends at least 128 GiB of free space." << kendl);
-    (Void)(kout << "The OS will still try to format a HeFS disk here anyway, don't expect perfect geometry." << kendl);
+    (Void)(
+        kout
+        << "The OS will still try to format a HeFS disk here anyway, don't expect perfect geometry."
+        << kendl);
   }
 
   HEFS_BOOT_NODE* boot = (HEFS_BOOT_NODE*) RTL_ALLOCA(sizeof(HEFS_BOOT_NODE));
