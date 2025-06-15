@@ -18,6 +18,6 @@
     "__NE_AMD64__",
     "kBootNetVersionHighest=0x0100",
     "kBootNetVersionLowest=0x0100",
-    "kBootNetVersion=0x0100"
+    "kBootNetEFIVersion=0x0100"
   ]
 }

@@ -45,8 +45,8 @@ Void RecoveryFactory::Recover() noexcept {
 
 void ke_runtime_check(bool expr, const Char* file, const Char* line) {
   if (!expr) {
-    (Void)(kout << "FAILED: FILE: " << file << kendl);
-    (Void)(kout << "FAILED: LINE: " << line << kendl);
+    (Void)(kout << "Kernel_Panic_FILE: " << file << kendl);
+    (Void)(kout << "Kernel_Panic_LINE: " << line << kendl);
 
     ke_panic(RUNTIME_CHECK_FAILED, file);  // Runtime Check failed
   }

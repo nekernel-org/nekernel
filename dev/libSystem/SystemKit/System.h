@@ -309,15 +309,19 @@ IMPORT_C SInt32 PwrSendCode(_Output SInt32& code);
 // CD-ROM API.
 // ------------------------------------------------------------------------------------------ //
 
-IMPORT_C SInt32 CdEjectDrive(_Input Char drv_letter);
+#define kCDDevicePath "/devices/dvd{}"
 
-IMPORT_C SInt32 CdOpenTray(Void);
+IMPORT_C IORef CdOpenTray(Void);
+
+IMPORT_C SInt32 CdEjectDrive(_Input IORef cdrom);
 
 IMPORT_C SInt32 CdCloseTray(Void);
 
 // ------------------------------------------------------------------------------------------ //
-// Printer API.
+// TTY API.
 // ------------------------------------------------------------------------------------------ //
+
+#define kPrintDevicePath "/devices/tty{}"
 
 IMPORT_C SInt32 PrintOut(IORef file /* nullptr to direct to stdout */, const Char* fmt, ...);
 

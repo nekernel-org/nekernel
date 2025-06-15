@@ -87,6 +87,9 @@ class User final {
   Char         mUserName[kMaxUserNameLen] = {0};
   UInt64       mUserFNV{0UL};
 };
+
+inline User* kCurrentUser = nullptr;
+inline User* kRootUser    = nullptr;
 }  // namespace Kernel
 
 #endif /* ifndef INC_USER_H */

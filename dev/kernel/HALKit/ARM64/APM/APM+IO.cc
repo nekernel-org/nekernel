@@ -9,11 +9,11 @@
 
 using namespace Kernel;
 
-/// @brief Send APM command to it's space.
+/// @brief Send APM command to it's IO space.
 /// @param base_dma the IO base port.
 /// @param cmd the command.
 /// @return status code.
-EXTERN_C Int32 apm_send_io_command(UInt16 cmd, APMPowerCmd value) {
+EXTERN_C Int32 apm_send_io_command(UInt16 cmd) {
   switch (cmd) {
     case kAPMPowerCommandReboot: {
       asm volatile(

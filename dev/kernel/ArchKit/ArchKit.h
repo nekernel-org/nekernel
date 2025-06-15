@@ -70,7 +70,7 @@ namespace HAL {
 typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 
 struct HAL_DISPATCH_ENTRY final {
-  Kernel::Int64   fHash;
+  Kernel::UInt64  fHash;
   Kernel::Bool    fHooked;
   rt_syscall_proc fProc;
 

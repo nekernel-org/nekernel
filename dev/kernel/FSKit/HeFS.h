@@ -47,7 +47,7 @@ enum : UInt8 {
   kHeFSScsiDrive         = 0xC4,  // SCSI Hard Drive
   kHeFSFlashDrive        = 0xC6,
   kHeFSUnknown           = 0xFF,  // Unknown device.
-  kHeFSDriveCount        = 7,
+  kHeFSDriveCount        = 8,
 };
 
 enum : UInt8 {
@@ -76,7 +76,7 @@ enum : UInt16 {
   kHeFSFlagsSystem,
   kHeFSFlagsArchive,
   kHeFSFlagsDevice,
-  kHeFSFlagsCount = 5
+  kHeFSFlagsCount = 7
 };
 
 inline constexpr UInt16 kHeFSFileKindRegular      = 0x00;

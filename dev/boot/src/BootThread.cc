@@ -15,6 +15,8 @@
 #include <KernelKit/PEF.h>
 #include <modules/CoreGfx/TextGfx.h>
 
+#define kBootThreadSz mib_cast(16)
+
 /// @brief External boot services symbol.
 EXTERN EfiBootServices* BS;
 
@@ -67,11 +69,10 @@ BootThread::BootThread(VoidPtr blob) : fStartAddress(nullptr), fBlob(blob) {
     writer.Write("BootZ: Magic: ").Write(header_ptr->Signature).Write("\r");
 
     EfiPhysicalAddress loadStartAddress = opt_header_ptr->ImageBase;
-    loadStartAddress += opt_header_ptr->BaseOfData;
 
-    writer.Write("BootZ: Image base: ").Write(loadStartAddress).Write("\r");
+    writer.Write("BootZ: Image-Base: ").Write(loadStartAddress).Write("\r");
 
-    fStack = new UInt8[mib_cast(16)];
+    fStack = new UInt8[kBootThreadSz];
 
     if (!fStack) {
       writer.Write("BootZ: Unable to allocate stack.\r");
@@ -155,15 +156,15 @@ BootThread::BootThread(VoidPtr blob) : fStartAddress(nullptr), fBlob(blob) {
 
 /// @note handover header has to be valid!
 Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack) {
-  fHandover = handover;
-
   if (!fStartAddress) {
     return kEfiFail;
   }
 
-  if (!fHandover) {
+  if (!handover) {
     return kEfiFail;
   }
+
+  fHandover = handover;
 
   BootTextWriter writer;
 
@@ -172,13 +173,13 @@ Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack) {
 
   if (own_stack) {
     writer.Write("BootZ: Using it's own stack.\r");
-    writer.Write("BootZ: Stack address: ").Write((UIntPtr) &fStack[mib_cast(16) - 1]).Write("\r");
-    writer.Write("BootZ: Stack size: ").Write(mib_cast(16)).Write("\r");
+    writer.Write("BootZ: Stack address: ").Write((UIntPtr) &fStack[kBootThreadSz - 1]).Write("\r");
+    writer.Write("BootZ: Stack size: ").Write(kBootThreadSz).Write("\r");
 
-    fHandover->f_StackTop = &fStack[mib_cast(16) - 1];
-    fHandover->f_StackSz  = mib_cast(16);
+    fHandover->f_StackTop = &fStack[kBootThreadSz - 1];
+    fHandover->f_StackSz  = kBootThreadSz;
 
-    auto ret = rt_jump_to_address(fStartAddress, fHandover, &fStack[mib_cast(16) - 1]);
+    auto ret = rt_jump_to_address(fStartAddress, fHandover, &fStack[kBootThreadSz - 1]);
 
     // we don't need the stack anymore.
 
@@ -187,7 +188,7 @@ Int32 BootThread::Start(HEL::BootInfoHeader* handover, Bool own_stack) {
 
     return ret;
   } else {
-    writer.Write("BootZ: Using Bootloader's stack.\r");
+    writer.Write("BootZ: Using the bootloader's stack.\r");
 
     return reinterpret_cast<HEL::HandoverProc>(fStartAddress)(fHandover);
   }

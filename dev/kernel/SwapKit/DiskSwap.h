@@ -35,21 +35,21 @@ class DiskSwapInterface final {
  public:
   /***********************************************************************************/
   /// @brief Write memory chunk onto disk.
-  /// @param fork_name The swap name to recognize this memory region.
-  /// @param fork_name_len length of fork name.
+  /// @param name The swap name to recognize this memory region.
+  /// @param name_len length of fork name.
   /// @param data the data packet.
   /// @return Whether the swap was written to disk, or not.
   /***********************************************************************************/
-  BOOL Write(const Char* fork_name, SizeT fork_name_len, SWAP_DISK_HEADER* data);
+  BOOL Write(const Char* name, SizeT name_len, SWAP_DISK_HEADER* data);
 
   /***********************************************************************************/
   /// @brief Read memory chunk from disk.
-  /// @param fork_name The swap name to recognize this memory region.
-  /// @param fork_name_len length of fork name.
+  /// @param name The swap name to recognize this memory region.
+  /// @param name_len length of fork name.
   /// @param data the data packet length.
   /// @return Whether the swap was fetched to disk, or not.
   /***********************************************************************************/
-  _Output SWAP_DISK_HEADER* Read(const Char* fork_name, SizeT fork_name_len, SizeT data_len);
+  _Output SWAP_DISK_HEADER* Read(const Char* name, SizeT name_len, SizeT data_len);
 };
 
 /// @brief Swap disk header, containing information about the held virtual memory.

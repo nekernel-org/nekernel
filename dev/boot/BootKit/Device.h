@@ -20,8 +20,8 @@ class Device {
   NE_MOVE_DEFAULT(Device)
 
   struct Trait {
-    SizeT mBase{1024};
-    SizeT mSize{1024};
+    SizeT mBase{0};
+    SizeT mSize{0};
   };
 
   virtual Trait& Leak() = 0;

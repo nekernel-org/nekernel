@@ -44,11 +44,16 @@ EXTERN_C Int32 BootNetModuleMain(Kernel::HEL::BootInfoHeader* handover) {
     return kEfiFail;
   }
 
+  if (inet_out->Version != kBootNetVersion) {
+    writer.Write("BootNet: The version clashes, not good.\r");
+    return kEfiFail;
+  }
+
   if (!inet_out->ImpliesProgram) {
     Boot::BootThread thread(inet_out->Data);
 
     if (thread.IsValid()) {
-      writer.Write("BootNet: Running kernel...\r");
+      writer.Write("BootNet: Running NeKernel...\r");
       return thread.Start(handover, YES);
     }
 
@@ -57,7 +62,7 @@ EXTERN_C Int32 BootNetModuleMain(Kernel::HEL::BootInfoHeader* handover) {
     constexpr auto kROMSize = 0x200;
 
     if (inet_out->Length > kROMSize) {
-      writer.Write("BootNet: Not within 512K.\r");
+      writer.Write("BootNet: Not within 512K, won't flash EEPROM.\r");
       return kEfiFail;
     }
 

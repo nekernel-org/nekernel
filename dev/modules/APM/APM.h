@@ -21,15 +21,9 @@ enum {
   kAPMPowerCommandReboot   = 0x08,
 };
 
-/// @brief Send a APM command into it's own DMA space.
-/// @param base_dma the DMA base address.
-/// @param cmd the command.
-/// @return status code.
-EXTERN_C Int32 apm_send_dma_command(Ptr64 register_addr, APMPowerCmd value);
-
 /// @brief Send a APM command into it's own IO space.
 /// @param base_dma the IO base port.
 /// @param cmd the command.
 /// @return status code.
-EXTERN_C Int32 apm_send_io_command(UInt16 cmd, APMPowerCmd value);
+EXTERN_C Int32 apm_send_io_command(UInt16 cmd);
 }  // namespace Kernel

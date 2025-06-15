@@ -71,12 +71,10 @@ EXTERN EfiBootServices* BS;
 EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTable* sys_table) {
   fw_init_efi(sys_table);  ///! Init the EFI library.
 
-  HEL::BootInfoHeader* handover_hdr = new HEL::BootInfoHeader();
-
-  UInt32 map_key = 0;
+  kHandoverHeader = new HEL::BootInfoHeader();
 
 #ifdef ZBA_USE_FB
-  if (!boot_init_fb()) return 1;  ///! Init the GOP.
+  if (!boot_init_fb()) return kEfiFail;  ///! Init the GOP.
 
   for (SizeT index_vt = 0; index_vt < sys_table->NumberOfTableEntries; ++index_vt) {
     Char* vendor_table =
@@ -86,7 +84,7 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
     if (vendor_table[0] == 'R' && vendor_table[1] == 'S' && vendor_table[2] == 'D' &&
         vendor_table[3] == ' ' && vendor_table[4] == 'P' && vendor_table[5] == 'T' &&
         vendor_table[6] == 'R' && vendor_table[7] == ' ') {
-      handover_hdr->f_HardwareTables.f_VendorPtr = (VoidPtr) vendor_table;
+      kHandoverHeader->f_HardwareTables.f_VendorPtr = (VoidPtr) vendor_table;
       break;
     }
   }
@@ -95,12 +93,12 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // draw background color.
   // ------------------------------------------ //
 
-  handover_hdr->f_GOP.f_The          = kGop->Mode->FrameBufferBase;
-  handover_hdr->f_GOP.f_Width        = kGop->Mode->Info->VerticalResolution;
-  handover_hdr->f_GOP.f_Height       = kGop->Mode->Info->HorizontalResolution;
-  handover_hdr->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
-  handover_hdr->f_GOP.f_PixelFormat  = kGop->Mode->Info->PixelFormat;
-  handover_hdr->f_GOP.f_Size         = kGop->Mode->FrameBufferSize;
+  kHandoverHeader->f_GOP.f_The          = kGop->Mode->FrameBufferBase;
+  kHandoverHeader->f_GOP.f_Width        = kGop->Mode->Info->VerticalResolution;
+  kHandoverHeader->f_GOP.f_Height       = kGop->Mode->Info->HorizontalResolution;
+  kHandoverHeader->f_GOP.f_PixelPerLine = kGop->Mode->Info->PixelsPerScanLine;
+  kHandoverHeader->f_GOP.f_PixelFormat  = kGop->Mode->Info->PixelFormat;
+  kHandoverHeader->f_GOP.f_Size         = kGop->Mode->FrameBufferSize;
 #endif  // ZBA_USE_FB
 
   // ------------------------------------------- //
@@ -111,29 +109,16 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   EfiMpServicesProtocol* mp      = nullptr;
 
   BS->LocateProtocol(&guid_mp, nullptr, reinterpret_cast<VoidPtr*>(&mp));
-  handover_hdr->f_HardwareTables.f_MpPtr = reinterpret_cast<VoidPtr>(mp);
-
-  // Assign to global 'kHandoverHeader'.
-  kHandoverHeader = handover_hdr;
-
-  fb_init();
-
-  FB::fb_clear_video();
-
-  FBDrawBitMapInRegion(zka_disk, NE_DISK_WIDTH, NE_DISK_HEIGHT,
-                       (kHandoverHeader->f_GOP.f_Width - NE_DISK_WIDTH) / 2,
-                       (kHandoverHeader->f_GOP.f_Height - NE_DISK_HEIGHT) / 2);
-
-  fb_clear();
+  kHandoverHeader->f_HardwareTables.f_MpPtr = reinterpret_cast<VoidPtr>(mp);
 
   UInt32 cnt_enabled  = 0;
   UInt32 cnt_disabled = 0;
 
   if (mp) {
     mp->GetNumberOfProcessors(mp, &cnt_disabled, &cnt_enabled);
-    handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
+    kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled = cnt_enabled > 1;
   } else {
-    handover_hdr->f_HardwareTables.f_MultiProcessingEnabled = NO;
+    kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled = NO;
   }
 
   //-------------------------------------------------------------//
@@ -142,52 +127,31 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
 
   Boot::BootTextWriter writer;
 
-  handover_hdr->f_BitMapStart = nullptr;           /* Start of bitmap. */
-  handover_hdr->f_BitMapSize  = kHandoverBitMapSz; /* Size of bitmap in bytes. */
-  Int32 trials                = 5 * 10000000;
+  kHandoverHeader->f_BitMapStart = nullptr;           /* Start of bitmap. */
+  kHandoverHeader->f_BitMapSize  = kHandoverBitMapSz; /* Size of bitmap in bytes. */
 
-  while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize,
-                          &handover_hdr->f_BitMapStart) != kEfiOk) {
+  UInt16 trials = 5;
+
+  while (BS->AllocatePool(EfiLoaderData, kHandoverHeader->f_BitMapSize,
+                          &kHandoverHeader->f_BitMapStart) != kEfiOk) {
     --trials;
 
     if (!trials) {
-      writer.Write("BootZ: Unable to allocate sufficent memory, trying again with 2GB...\r");
+      writer.Write("BootZ: Unable to allocate sufficient memory, trying again with 2GB...\r");
 
-      trials = 3 * 10000000;
+      trials = 3;
 
-      handover_hdr->f_BitMapSize = kHandoverBitMapSz / 2; /* Size of bitmap in bytes. */
+      kHandoverHeader->f_BitMapSize = kHandoverBitMapSz / 2; /* Size of bitmap in bytes. */
 
-      while (BS->AllocatePool(EfiLoaderData, handover_hdr->f_BitMapSize,
-                              &handover_hdr->f_BitMapStart) != kEfiOk) {
+      while (BS->AllocatePool(EfiLoaderData, kHandoverHeader->f_BitMapSize,
+                              &kHandoverHeader->f_BitMapStart) != kEfiOk) {
         --trials;
 
         if (!trials) {
-          writer.Write("BootZ: Unable to allocate sufficent memory, aborting...\r");
+          writer.Write("BootZ: Unable to allocate sufficient memory, aborting...\r");
           Boot::Stop();
         }
       }
-    }
-  }
-
-  Boot::BootFileReader reader_syschk(L"chk.efi", image_handle);
-  reader_syschk.ReadAll(0);
-
-  Boot::BootThread* syschk_thread = nullptr;
-
-  if (reader_syschk.Blob()) {
-    syschk_thread = new Boot::BootThread(reader_syschk.Blob());
-    syschk_thread->SetName("BootZ: System Check");
-
-    if (syschk_thread->Start(handover_hdr, NO) != kEfiOk) {
-      fb_init();
-
-      FB::fb_clear_video();
-
-      FBDrawBitMapInRegion(zka_no_disk, NE_NO_DISK_WIDTH, NE_NO_DISK_HEIGHT,
-                           (kHandoverHeader->f_GOP.f_Width - NE_NO_DISK_WIDTH) / 2,
-                           (kHandoverHeader->f_GOP.f_Height - NE_NO_DISK_HEIGHT) / 2);
-
-      fb_clear();
     }
   }
 
@@ -195,20 +159,20 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
   // null these fields, to avoid being reused later.
   // ------------------------------------------ //
 
-  handover_hdr->f_FirmwareCustomTables[0] = nullptr;
-  handover_hdr->f_FirmwareCustomTables[1] = nullptr;
+  kHandoverHeader->f_FirmwareCustomTables[0] = nullptr;
+  kHandoverHeader->f_FirmwareCustomTables[1] = nullptr;
 
-  handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
+  kHandoverHeader->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
-  handover_hdr->f_Magic   = kHandoverMagic;
-  handover_hdr->f_Version = kHandoverVersion;
+  kHandoverHeader->f_Magic   = kHandoverMagic;
+  kHandoverHeader->f_Version = kHandoverVersion;
 
   // Provide fimware vendor name.
 
-  Boot::BCopyMem(handover_hdr->f_FirmwareVendorName, sys_table->FirmwareVendor,
-                 handover_hdr->f_FirmwareVendorLen);
+  Boot::BCopyMem(kHandoverHeader->f_FirmwareVendorName, sys_table->FirmwareVendor,
+                 kHandoverHeader->f_FirmwareVendorLen);
 
-  handover_hdr->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
+  kHandoverHeader->f_FirmwareVendorLen = Boot::BStrLen(sys_table->FirmwareVendor);
 
   Boot::BootFileReader reader_kernel(L"ne_kernel", image_handle);
 
@@ -220,14 +184,12 @@ EFI_EXTERN_C EFI_API Int32 BootloaderMain(EfiHandlePtr image_handle, EfiSystemTa
 
   if (reader_kernel.Blob()) {
     auto kernel_thread = Boot::BootThread(reader_kernel.Blob());
-    kernel_thread.SetName("BootZ: Kernel.");
+    kernel_thread.SetName("NeKernel");
 
-    handover_hdr->f_KernelImage = reader_kernel.Blob();
-    handover_hdr->f_KernelSz    = reader_kernel.Size();
+    kHandoverHeader->f_KernelImage = reader_kernel.Blob();
+    kHandoverHeader->f_KernelSz    = reader_kernel.Size();
 
-    Boot::ExitBootServices(map_key, image_handle);
-
-    kernel_thread.Start(handover_hdr, YES);
+    kernel_thread.Start(kHandoverHeader, YES);
   }
 
   CANT_REACH();

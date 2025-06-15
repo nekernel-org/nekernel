@@ -56,8 +56,8 @@ inline Array<UShort, Sz> make_ports(UShort base) {
 }
 }  // namespace Kernel
 
-#ifdef __x86_64__
+#ifdef __NE_AMD64__
 #include <KernelKit/PCI/IOArray+AMD64.inl>
 #else
 #error Please provide platform specific code for the I/O
-#endif  // ifdef __x86_64__
+#endif  // ifdef __NE_AMD64__

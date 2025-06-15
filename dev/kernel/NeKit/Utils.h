@@ -10,6 +10,8 @@
 #include <NeKit/Defines.h>
 
 namespace Kernel {
+/// ASCII API
+
 Int         rt_copy_memory(const voidPtr src, voidPtr dst, Size len);
 Int         rt_move_memory(const voidPtr src, voidPtr dst, Size len);
 voidPtr     rt_set_memory(voidPtr dst, UInt32 val, Size len);
@@ -26,6 +28,8 @@ Int         rt_to_uppercase(Int c);
 Int         rt_to_lower(Int c);
 voidPtr     rt_string_in_string(const Char* in, const Char* needle);
 char*       rt_string_has_char(Char* str, Char chr);
+
+/// UNICODE API
 
 Int  urt_string_cmp(const Char* src, const Char* cmp, Size len);
 Void urt_set_memory(const voidPtr src, UInt32 dst, Size len);

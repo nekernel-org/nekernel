@@ -29,7 +29,7 @@ enum {
   kHeFSScsiDrive         = 0xC4,  // SCSI Hard Drive
   kHeFSFlashDrive        = 0xC6,
   kHeFSUnknown           = 0xFF,  // Unknown device.
-  kHeFSDriveCount        = 7,
+  kHeFSDriveCount        = 8,
 };
 
 // Disk status
@@ -43,7 +43,7 @@ enum {
 
 // Encodings
 enum {
-  kHeFSEncodingFlagsUTF8 = 0x00,
+  kHeFSEncodingFlagsUTF8 = 0x50,
   kHeFSEncodingFlagsUTF16,
   kHeFSEncodingFlagsUTF32,
   kHeFSEncodingFlagsUTF16BE,
@@ -53,9 +53,15 @@ enum {
   kHeFSEncodingFlagsUTF8BE,
   kHeFSEncodingFlagsUTF8LE,
   kHeFSEncodingFlagsBinary,
-  kHeFSEncodingFlagsCount,
+  kHeFSEncodingFlagsCount = 11,
+  kHeFSFlagsNone          = 0,
+  kHeFSFlagsReadOnly      = 0x100,
+  kHeFSFlagsHidden,
+  kHeFSFlagsSystem,
+  kHeFSFlagsArchive,
+  kHeFSFlagsDevice,
+  kHeFSFlagsCount = 7
 };
-
 // Time type
 using ATime = std::uint64_t;
 
