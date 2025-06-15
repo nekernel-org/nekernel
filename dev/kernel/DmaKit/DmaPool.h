@@ -9,13 +9,15 @@
 
 #pragma once
 
-#include <HALKit/AMD64/Processor.h>
 #include <KernelKit/DebugOutput.h>
 
 #ifdef __NE_AMD64__
+#include <HALKit/AMD64/Processor.h>
 #define kNeDMAPoolStart (0x1000000)
 #define kNeDMAPoolSize (0x1000000)
 #elif defined(__NE_ARM64__)
+#include <HALKit/ARM64/Processor.h>
+
 /// @todo what reference offset shall we use?
 #define kNeDMAPoolStart (0x1000000)
 #define kNeDMAPoolSize (0x1000000)
