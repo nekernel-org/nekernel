@@ -51,7 +51,7 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
   /// really.
   addr = (addr + (align - 1)) & ~(align - 1);
 
-  if ((addr + size) >= reinterpret_cast<UIntPtr>(kDmaPoolEnd)) {
+  if ((addr + size) > reinterpret_cast<UIntPtr>(kDmaPoolEnd)) {
     err_global_get() = kErrorDmaExhausted;
     return nullptr;
   }
