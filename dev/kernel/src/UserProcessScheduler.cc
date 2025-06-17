@@ -314,7 +314,7 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 }
 
 /***********************************************************************************/
-/// @brief Add dylib to process.
+/// @brief Add dylib to the process object.
 /***********************************************************************************/
 
 Bool USER_PROCESS::SpawnDylib() {
@@ -340,7 +340,6 @@ Bool USER_PROCESS::SpawnDylib() {
 
   (Void)(kout << "Unknown process kind: " << hex_number(this->Kind) << kendl);
   this->Crash();
-  return NO;
 
   return NO;
 }

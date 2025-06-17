@@ -156,26 +156,18 @@ Char* rt_string_has_char(Char* str, Char ch) {
   return (*str == ch) ? str : nullptr;
 }
 
-Int32 rt_strcmp(const Char* a, const Char* b) {
-  Size i = 0;
-  while (a[i] != '\0' && b[i] != '\0' && a[i] == b[i]) {
-    ++i;
-  }
-  return static_cast<Int32>(static_cast<UInt8>(a[i]) - static_cast<UInt8>(b[i]));
-}
-
 // @uses the deprecated version callers should ensure 'len' is valid.
-extern "C" void* memset(void* dst, int c, long long unsigned int len) {
+EXTERN_C void* memset(void* dst, int c, long long unsigned int len) {
   return Kernel::rt_set_memory(dst, c, static_cast<Size>(len));
 }
 
-extern "C" void* memcpy(void* dst, const void* src, long long unsigned int len) {
+EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len) {
   Kernel::rt_copy_memory(const_cast<void*>(src), dst, static_cast<Size>(len));
   return dst;
 }
 
-extern "C" Kernel::Int32 strcmp(const char* a, const char* b) {
-  return Kernel::rt_strcmp(a, b);
+EXTERN_C Kernel::Int32 strcmp(const char* a, const char* b) {
+  return Kernel::rt_string_cmp(a, b, rt_string_len(a));
 }
 
 }  // namespace Kernel

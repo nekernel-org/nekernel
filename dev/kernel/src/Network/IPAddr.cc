@@ -89,18 +89,22 @@ bool IPFactory::IpCheckVersion4(const Char* ip) {
   if (!ip) return NO;
 
   Int32 cnter = 0;
+  Int32 dot_cnter = 0;
 
   for (SizeT base = 0; base < rt_string_len(ip); ++base) {
     if (ip[base] == '.') {
       cnter = 0;
+      ++dot_cnter;
     } else {
-      if (!rt_is_alnum(ip[base])) return false;
-      if (cnter == 3) return false;
+      if (!rt_is_alnum(ip[base])) return NO;
+      if (cnter == 3) return NO;
 
       ++cnter;
     }
   }
 
-  return true;
+  if (dot_cnter != 3) return NO;
+
+  return YES;
 }
 }  // namespace Kernel
