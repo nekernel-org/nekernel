@@ -152,10 +152,10 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
           }
         }
 
-        Char* container_blob_value = new Char[container_header->Size];
+        Char* container_blob_value = new Char[container_header->VMSize];
 
         rt_copy_memory((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
-                       container_header->Size);
+                       container_header->VMSize);
         mm_free_ptr(blob);
 
         kout << "PEFLoader: Information: Loaded stub: " << container_header->Name << "!\r";

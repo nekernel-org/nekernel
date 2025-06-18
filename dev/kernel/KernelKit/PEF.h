@@ -18,12 +18,12 @@
 #include <KernelKit/LoaderInterface.h>
 #include <NeKit/Defines.h>
 
-#define kPefMagic "Joy!"
-#define kPefMagicFat "yoJ!"
+#define kPefMagic "Open"
+#define kPefMagicFat "nepO"
 
 #define kPefMagicLen (5)
 
-#define kPefVersion (4)
+#define kPefVersion (0x0500)
 #define kPefNameLen (256U)
 
 /* not mandatory, only for non fork based filesystems. */
@@ -59,10 +59,10 @@ enum {
 };
 
 enum {
+  kPefSubArchGeneric,
   kPefSubArchAMD = 200,
   kPefSubArchIntel,
   kPefSubArchARM,
-  kPefSubArchGeneric,
   kPefSubArchIBM,
 };
 
@@ -98,15 +98,17 @@ typedef struct PEFCommandHeader final {
   UInt32  Flags;             /* container flags */
   UInt16  Kind;              /* container kind */
   UIntPtr Offset;            /* content offset */
-  UIntPtr VMAddress;         /* VM offset */
-  SizeT   Size;              /* content Size */
+  UIntPtr VMAddress;         /* Virtual Address */
+  SizeT   VMSize;            /* Virtual Size */
 } PACKED PEFCommandHeader;
 
 enum {
+  kPefInvalid  = 0x0,
   kPefCode     = 0xC,
   kPefData     = 0xD,
   kPefZero     = 0xE,
   kPefLinkerID = 0x1,
+  kPefCount    = 4,
 };
 }  // namespace Kernel
 
