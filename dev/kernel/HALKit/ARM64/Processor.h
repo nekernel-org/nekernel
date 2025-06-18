@@ -36,7 +36,8 @@ enum {
 /// @param phys_addr point to physical address.
 /// @param flags the flags to put on the page.
 /// @return Status code of page manip.
-EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags);
+EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags,
+                           UInt32 level = 2);
 
 EXTERN_C UIntPtr mm_get_page_addr(VoidPtr virtual_address);
 

@@ -43,7 +43,8 @@ EXTERN_C UIntPtr mm_get_page_addr(VoidPtr virtual_address) {
 /// @param phys_addr point to physical address.
 /// @param flags the flags to put on the page.
 /// @return Status code of page manipulation process.
-EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags) {
+EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags,
+                           UInt32 level) {
   if (!virtual_address || !flags || !physical_address) return kErrorInvalidData;
 
   UInt64 ttbr0_val = 0;
@@ -65,6 +66,21 @@ EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UI
 
   l3_table[l3_idx] = (reinterpret_cast<UInt64>(physical_address) & ~0xFFFUL) | flags;
 
-  return kErrorSuccess;
+  switch (level) {
+    case 2: {
+      l3_table[l3_idx] = (reinterpret_cast<UInt64>(physical_address) & ~0xFFFUL) | flags;
+      return kErrorSuccess;
+    }
+    case 1: {
+      l1_table[l1_idx] = (reinterpret_cast<UInt64>(physical_address) & ~0xFFFUL) | flags;
+      return kErrorSuccess;
+    }
+    case 0: {
+      l1_table[l1_idx] = (reinterpret_cast<UInt64>(physical_address) & ~0xFFFUL) | flags;
+      return kErrorSuccess;
+    }
+  }
+
+  return kErrorInvalidData;
 }
 }  // namespace Kernel::HAL
