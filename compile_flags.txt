@@ -19,6 +19,7 @@
 -I./
 -std=c++20
 -D__NE_AMD64__
+-D__NE_ARM64__
 -D__NEOSKRNL__
 -D__NE_ED__
 -xc++
