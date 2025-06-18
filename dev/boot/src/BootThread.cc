@@ -105,6 +105,8 @@ BootThread::BootThread(VoidPtr blob) : fStartAddress(nullptr), fBlob(blob) {
         writer.Write("BootZ: Executable entry address: ")
             .Write((UIntPtr) fStartAddress)
             .Write("\r");
+
+        /// @note .text region shall be marked as executable on ARM.
       } else if (StrCmp(sectionForBootZ, sect->Name) == 0) {
         struct HANDOVER_INFORMATION_STUB {
           UInt64 HandoverMagic;
