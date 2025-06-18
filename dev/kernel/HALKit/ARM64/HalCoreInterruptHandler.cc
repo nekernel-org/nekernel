@@ -11,16 +11,16 @@
 #include <SignalKit/Signals.h>
 
 EXTERN_C Kernel::Void int_handle_breakpoint(Kernel::UIntPtr rip);
- EXTERN_C BOOL mp_handle_gic_interrupt_el0(Void);
+EXTERN_C BOOL         mp_handle_gic_interrupt_el0(Void);
 
-EXTERN_C BOOL kEndOfInterrupt;
+EXTERN_C BOOL  kEndOfInterrupt;
 EXTERN_C UInt8 kEndOfInterruptVector;
 
 STATIC BOOL kIsRunning = NO;
 
 /// @note This is managed by the system software.
 STATIC void hal_int_send_eoi(UInt8 vector) {
-  kEndOfInterrupt = YES;
+  kEndOfInterrupt       = YES;
   kEndOfInterruptVector = vector;
 }
 

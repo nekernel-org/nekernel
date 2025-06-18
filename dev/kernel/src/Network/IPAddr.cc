@@ -88,7 +88,7 @@ ErrorOr<KString> IPFactory::ToKString(Ref<RawIPAddress>& ipv4) {
 bool IPFactory::IpCheckVersion4(const Char* ip) {
   if (!ip) return NO;
 
-  Int32 cnter = 0;
+  Int32 cnter     = 0;
   Int32 dot_cnter = 0;
 
   for (SizeT base = 0; base < rt_string_len(ip); ++base) {
