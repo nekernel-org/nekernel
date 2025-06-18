@@ -180,7 +180,7 @@ enum class ProcessLevelRing : Int32 {
   kRingStdUser   = 1,
   kRingSuperUser = 2,
   kRingGuestUser = 5,
-  kRingCount     = 5,
+  kRingCount     = 3,
 };
 
 /***********************************************************************************/
