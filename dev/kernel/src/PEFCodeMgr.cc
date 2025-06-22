@@ -1,3 +1,5 @@
+#define __NE_AMD64__
+
 /* -------------------------------------------
 
   Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
@@ -12,6 +14,10 @@
 #include <NeKit/KString.h>
 #include <NeKit/KernelPanic.h>
 #include <NeKit/OwnPtr.h>
+#include <NeKit/Utils.h>
+#include <HALKit/AMD64/Processor.h>
+
+using namespace Kernel::HAL;
 
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
@@ -154,15 +160,15 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
         Char* container_blob_value = new Char[container_header->VMSize];
 
-        rt_copy_memory((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
-                       container_header->VMSize);
+        rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
+                       container_header->VMSize, container_header->VMSize);
         mm_free_ptr(blob);
 
         kout << "PEFLoader: Information: Loaded stub: " << container_header->Name << "!\r";
 
-        auto ret = HAL::mm_map_page((VoidPtr) container_header->VMAddress,
-                                    (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
-                                    HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+        auto ret = mm_map_page((VoidPtr) container_header->VMAddress,
+                                    (VoidPtr) mm_get_page_addr(container_blob_value),
+                                    kMMFlagsPresent | kMMFlagsUser);
 
         if (ret != kErrorSuccess) {
           mm_free_ptr(container_blob_value);
