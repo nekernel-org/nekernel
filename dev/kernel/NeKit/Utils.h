@@ -1,4 +1,3 @@
-
 /* -------------------------------------------
 
   Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
@@ -28,6 +27,10 @@ Int         rt_to_uppercase(Int c);
 Int         rt_to_lower(Int c);
 voidPtr     rt_string_in_string(const Char* in, const Char* needle);
 char*       rt_string_has_char(Char* str, Char chr);
+
+// Safe memory functions
+Int     rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
+voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
 
 /// UNICODE API
 
