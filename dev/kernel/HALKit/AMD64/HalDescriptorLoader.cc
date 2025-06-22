@@ -32,7 +32,7 @@ Void IDTLoader::Load(Register64& idt) {
   for (SizeT idt_indx = 0; idt_indx < kKernelIdtSize; ++idt_indx) {
     Detail::kInterruptVectorTable[idt_indx].Selector       = kIDTSelector;
     Detail::kInterruptVectorTable[idt_indx].Ist            = 0;
-    Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kInterruptGate;
+    Detail::kInterruptVectorTable[idt_indx].TypeAttributes = kKernelInterruptId ? kUserInterruptGate : kInterruptGate;
     Detail::kInterruptVectorTable[idt_indx].OffsetLow      = ((UIntPtr) ptr_ivt[idt_indx] & 0xFFFF);
     Detail::kInterruptVectorTable[idt_indx].OffsetMid =
         (((UIntPtr) ptr_ivt[idt_indx] >> 16) & 0xFFFF);
