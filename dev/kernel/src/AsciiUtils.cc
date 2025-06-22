@@ -8,8 +8,8 @@
 
 namespace Kernel {
 
-STATIC Int     rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
-STATIC voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
+Int     rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
+voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
 
 Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size) {
   for (Size i = 0; i < size; ++i) {
@@ -45,7 +45,7 @@ const Char* rt_alloc_string(const Char* src) {
   return buffer;
 }
 
-STATIC Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size) {
+Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size) {
   if (!src || !dst || len > dst_size) {
     if (dst && dst_size) {
       rt_set_memory_safe(dst, 0, dst_size, dst_size);
@@ -58,7 +58,7 @@ STATIC Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size ds
   return static_cast<Int>(len);
 }
 
-STATIC voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size) {
+voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size) {
   if (!dst || len > dst_size) return nullptr;
   auto  p = reinterpret_cast<UInt8*>(dst);
   UInt8 v = static_cast<UInt8>(value & 0xFF);
