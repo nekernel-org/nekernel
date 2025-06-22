@@ -22,7 +22,6 @@
 #include <NeKit/KString.h>
 #include <SignalKit/Signals.h>
 #include <NeKit/Utils.h>
-#include <HALKit/AMD64/Processor.h>
 
 ///! BUGS: 0
 
