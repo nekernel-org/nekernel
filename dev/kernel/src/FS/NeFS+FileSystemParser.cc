@@ -167,8 +167,8 @@ _Output NEFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NEFS_CATALOG_STRUC
     drive.fPacket.fPacketSize    = sizeof(NEFS_FORK_STRUCT);
     drive.fPacket.fPacketContent = reinterpret_cast<VoidPtr>(&local_buf);
 
-    rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
-                   rt_string_len("fs/nefs-packet"));
+    rt_copy_memory_safe((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+                   rt_string_len("fs/nefs-packet"), sizeof(drive.fPacket.fPacketMime));
 
     if (auto res = fs_ifs_read(&kMountpoint, drive, this->mDriveIndex); res) {
       switch (res) {
@@ -190,7 +190,7 @@ _Output NEFS_FORK_STRUCT* NeFileSystemParser::FindFork(_Input NEFS_CATALOG_STRUC
     if (KStringBuilder::Equals(local_buf.ForkName, name) &&
         KStringBuilder::Equals(local_buf.CatalogName, catalog->Name)) {
       auto result = new NEFS_FORK_STRUCT();
-      rt_copy_memory(&local_buf, result, sizeof(NEFS_FORK_STRUCT));
+      rt_copy_memory_safe(&local_buf, result, sizeof(NEFS_FORK_STRUCT), sizeof(NEFS_FORK_STRUCT));
       return result;
     }
 
@@ -249,7 +249,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
   }
 
   Char* parent_name = (Char*) mm_alloc_ptr(nameLen + 1, Yes, No);
-  rt_copy_memory(const_cast<Char*>(name), parent_name, nameLen + 1);
+  rt_copy_memory_safe(const_cast<Char*>(name), parent_name, nameLen + 1, nameLen + 1);
 
   if (nameLen < 2) {
     mm_free_ptr(parent_name);
@@ -312,13 +312,13 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
   --i;
   if (kind == kNeFSCatalogKindDir) --i;
   while (name[i] != '/') --i;
-  rt_copy_memory((VoidPtr) (name + i), (VoidPtr) child_catalog->Name, rt_string_len(name) - i);
+  rt_copy_memory_safe((VoidPtr) (name + i), (VoidPtr) child_catalog->Name, rt_string_len(name) - i, kNeFSCatalogNameLen);
 
   NEFS_CATALOG_STRUCT temporary_catalog{};
   Lba                 start_free = out_lba;
 
-  rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
-                 rt_string_len("fs/nefs-packet"));
+  rt_copy_memory_safe((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+                 rt_string_len("fs/nefs-packet"), sizeof(drive.fPacket.fPacketMime));
 
   Char buf_part_block[sizeof(NEFS_ROOT_PARTITION_BLOCK)] = {0};
   drive.fPacket.fPacketContent = reinterpret_cast<VoidPtr>(buf_part_block);
@@ -380,13 +380,13 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::CreateCatalog(_Input const Char
 
       delete catalog;
       NEFS_CATALOG_STRUCT* found_catalog = new NEFS_CATALOG_STRUCT();
-      rt_copy_memory(&temporary_catalog, found_catalog, sizeof(NEFS_CATALOG_STRUCT));
+      rt_copy_memory_safe(&temporary_catalog, found_catalog, sizeof(NEFS_CATALOG_STRUCT), sizeof(NEFS_CATALOG_STRUCT));
 
       delete child_catalog;
       return found_catalog;
     } else if ((temporary_catalog.Flags & kNeFSFlagCreated) &&
                KStringBuilder::Equals(temporary_catalog.Name, name)) {
-      rt_copy_memory(&temporary_catalog, child_catalog, sizeof(NEFS_CATALOG_STRUCT));
+      rt_copy_memory_safe(&temporary_catalog, child_catalog, sizeof(NEFS_CATALOG_STRUCT), sizeof(NEFS_CATALOG_STRUCT));
       delete catalog;
       return child_catalog;
     }
@@ -411,8 +411,8 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
 
   // verify disk.
   drive->fVerify(drive->fPacket);
-  rt_copy_memory((VoidPtr) "fs/nefs-packet", drive->fPacket.fPacketMime,
-                 rt_string_len("fs/nefs-packet"));
+  rt_copy_memory_safe((VoidPtr) "fs/nefs-packet", drive->fPacket.fPacketMime,
+                 rt_string_len("fs/nefs-packet"), sizeof(drive->fPacket.fPacketMime));
   if (!drive->fPacket.fPacketGood) {
     err_global_get() = kErrorDiskIsCorrupted;
     return false;
@@ -430,9 +430,9 @@ bool NeFileSystemParser::Format(_Input _Output DriveTrait* drive, _Input const I
   if (rt_string_cmp(kNeFSIdent, part_block->Ident, kNeFSIdentLen) == 0) return true;
 
   const auto kNeFSUntitledHD = part_name;
-  rt_copy_memory((VoidPtr) kNeFSIdent, (VoidPtr) part_block->Ident, kNeFSIdentLen);
-  rt_copy_memory((VoidPtr) kNeFSUntitledHD, (VoidPtr) part_block->PartitionName,
-                 rt_string_len(kNeFSUntitledHD));
+  rt_copy_memory_safe((VoidPtr) kNeFSIdent, (VoidPtr) part_block->Ident, kNeFSIdentLen, sizeof(part_block->Ident));
+  rt_copy_memory_safe((VoidPtr) kNeFSUntitledHD, (VoidPtr) part_block->PartitionName,
+                 rt_string_len(kNeFSUntitledHD), sizeof(part_block->PartitionName));
 
   SizeT sectorCount    = drv_std_get_sector_count();
   SizeT sectorSize     = drive->fSectorSz;
@@ -513,9 +513,9 @@ bool NeFileSystemParser::WriteCatalog(_Input const Char* catalog_name, Bool is_r
 
   auto buf = new UInt8[size_of_data];
   rt_set_memory(buf, 0, size_of_data);
-  rt_copy_memory(data, buf, size_of_data);
-  rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
-                 rt_string_len("fs/nefs-packet"));
+  rt_copy_memory_safe(data, buf, size_of_data, size_of_data);
+  rt_copy_memory_safe((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+                 rt_string_len("fs/nefs-packet"), sizeof(drive.fPacket.fPacketMime));
 
   NEFS_FORK_STRUCT* fork_data_input = new NEFS_FORK_STRUCT();
   NEFS_FORK_STRUCT  prev_fork{};
@@ -577,8 +577,8 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
   NEFS_ROOT_PARTITION_BLOCK part{};
   auto&                     drive = kMountpoint.A();
 
-  rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
-                 rt_string_len("fs/nefs-packet"));
+  rt_copy_memory_safe((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+                 rt_string_len("fs/nefs-packet"), sizeof(drive.fPacket.fPacketMime));
   drive.fPacket.fPacketContent = reinterpret_cast<VoidPtr>(&part);
   drive.fPacket.fPacketSize    = sizeof(NEFS_ROOT_PARTITION_BLOCK);
   drive.fPacket.fPacketLba     = kNeFSRootCatalogStartAddress;
@@ -607,7 +607,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
           return nullptr;
         }
         NEFS_CATALOG_STRUCT* catalog_ptr = new NEFS_CATALOG_STRUCT();
-        rt_copy_memory(&tmp, catalog_ptr, sizeof(NEFS_CATALOG_STRUCT));
+        rt_copy_memory_safe(&tmp, catalog_ptr, sizeof(NEFS_CATALOG_STRUCT), sizeof(NEFS_CATALOG_STRUCT));
         out_lba = cursor;
         return catalog_ptr;
       }
@@ -619,7 +619,7 @@ _Output NEFS_CATALOG_STRUCT* NeFileSystemParser::FindCatalog(_Input const Char* 
   if (!KStringBuilder::Equals(catalog_name, NeFileSystemHelper::Root()) && local_search) {
     Char  parent_name[kNeFSCatalogNameLen] = {0};
     SizeT nameLen                          = rt_string_len(catalog_name);
-    rt_copy_memory(const_cast<Char*>(catalog_name), parent_name, nameLen + 1);
+    rt_copy_memory_safe(const_cast<Char*>(catalog_name), parent_name, nameLen + 1, kNeFSCatalogNameLen);
 
     SizeT indexReverseCopy = nameLen - 1;
     if (parent_name[indexReverseCopy] == NeFileSystemHelper::Separator()) {
@@ -727,8 +727,8 @@ _Output Boolean NeFileSystemParser::RemoveCatalog(_Input const Char* catalog_nam
     catalog->Flags &= (~kNeFSFlagCreated);
     catalog->Flags |= kNeFSFlagDeleted;
 
-    rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
-                   rt_string_len("fs/nefs-packet"));
+    rt_copy_memory_safe((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+                   rt_string_len("fs/nefs-packet"), sizeof(drive.fPacket.fPacketMime));
     drive.fPacket.fPacketLba     = out_lba;
     drive.fPacket.fPacketSize    = sizeof(NEFS_CATALOG_STRUCT);
     drive.fPacket.fPacketContent = reinterpret_cast<VoidPtr>(catalog);
@@ -795,8 +795,8 @@ VoidPtr NeFileSystemParser::ReadCatalog(_Input _Output NEFS_CATALOG_STRUCT* cata
   }
 
   auto* fs_buf = new NEFS_FORK_STRUCT();
-  rt_copy_memory((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
-                 rt_string_len("fs/nefs-packet"));
+  rt_copy_memory_safe((VoidPtr) "fs/nefs-packet", drive.fPacket.fPacketMime,
+                 rt_string_len("fs/nefs-packet"), sizeof(drive.fPacket.fPacketMime));
 
   NEFS_FORK_STRUCT* fs_fork_data = nullptr;
   while (dataForkLba >= kNeFSCatalogStartAddress) {
