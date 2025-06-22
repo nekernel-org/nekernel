@@ -77,9 +77,20 @@ struct HAL_DISPATCH_ENTRY final {
   operator bool() { return fHooked; }
 };
 
+
+typedef Kernel::Void (*rt_kerncall_proc)(Kernel::SizeT, Kernel::VoidPtr, Kernel::SizeT);
+
+struct HAL_KERNEL_DISPATCH_ENTRY final {
+  Kernel::UInt64  fHash;
+  Kernel::Bool    fHooked;
+  rt_kerncall_proc fProc;
+
+  operator bool() { return fHooked; }
+};
+
 inline Kernel::Array<HAL_DISPATCH_ENTRY, kMaxDispatchCallCount> kSysCalls;
 
-inline Kernel::Array<HAL_DISPATCH_ENTRY, kMaxDispatchCallCount> kKernCalls;
+inline Kernel::Array<HAL_KERNEL_DISPATCH_ENTRY, kMaxDispatchCallCount> kKernCalls;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 

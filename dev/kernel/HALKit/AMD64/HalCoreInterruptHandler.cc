@@ -149,7 +149,7 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_hash,
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
 EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_hash,
-                                            Kernel::UIntPtr rdx_kerncall_arg) {
+                                            Kernel::SizeT cnt, Kernel::UIntPtr arg, Kernel::SizeT sz) {
   hal_idt_send_eoi(51);
 
   if (!Kernel::kRootUser) return;
@@ -159,7 +159,7 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_hash,
   for (SizeT i = 0UL; i < kMaxDispatchCallCount; ++i) {
     if (kKernCalls[i].fHooked && rcx_hash == kKernCalls[rcx_hash].fHash) {
       if (kKernCalls[i].fProc) {
-        (kKernCalls[i].fProc)((Kernel::VoidPtr) rdx_kerncall_arg);
+        (kKernCalls[i].fProc)(cnt, (Kernel::VoidPtr) arg, sz);
       }
     }
   }
