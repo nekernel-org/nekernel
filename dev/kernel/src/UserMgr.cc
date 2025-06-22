@@ -16,7 +16,7 @@
 #include <KernelKit/UserMgr.h>
 #include <NeKit/KernelPanic.h>
 #include <NeKit/KString.h>
-#include <NeKit/ThreadLocalStorage.h>
+#include <KernelKit/ThreadLocalStorage.h>
 #include <NeKit/Utils.h>
 
 #define kStdUserType (0xEE)
