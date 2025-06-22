@@ -165,9 +165,9 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
         kout << "PEFLoader: Information: Loaded stub: " << container_header->Name << "!\r";
 
-        auto ret = mm_map_page((VoidPtr) container_header->VMAddress,
-                                    (VoidPtr) mm_get_page_addr(container_blob_value),
-                                    kMMFlagsPresent | kMMFlagsUser);
+        auto ret = HAL::mm_map_page((VoidPtr) container_header->VMAddress,
+                                    (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
+                                    HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
 
         if (ret != kErrorSuccess) {
           mm_free_ptr(container_blob_value);
