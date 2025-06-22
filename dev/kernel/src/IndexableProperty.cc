@@ -7,6 +7,8 @@
 #include <CompilerKit/CompilerKit.h>
 #include <FSKit/IndexableProperty.h>
 #include <NeKit/MutableArray.h>
+#include <NeKit/KString.h>
+#include <NeKit/KernelPanic.h>
 #include <NeKit/Utils.h>
 
 /// @brief File indexer API for fast path access.
@@ -32,7 +34,7 @@ namespace Indexer {
   Void fs_index_file(const Char* filename, SizeT filenameLen, IndexableProperty& indexer) {
     if (!indexer.HasFlag(kIndexerClaimed)) {
       indexer.AddFlag(kIndexerClaimed);
-      rt_copy_memory((VoidPtr) indexer.Leak().Path, (VoidPtr) filename, filenameLen);
+      rt_copy_memory_safe(reinterpret_cast<VoidPtr>(const_cast<Char*>(filename)), (VoidPtr) indexer.Leak().Path, filenameLen, kIndexerCatalogNameLength);
 
       (Void)(kout << "FSKit: Indexed new file: " << filename << kendl);
     }
