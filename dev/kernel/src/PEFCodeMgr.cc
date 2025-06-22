@@ -1,11 +1,3 @@
-#define __NE_AMD64__
-
-/* -------------------------------------------
-
-  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
-
-------------------------------------------- */
-
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/HeapMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
@@ -15,9 +7,7 @@
 #include <NeKit/KernelPanic.h>
 #include <NeKit/OwnPtr.h>
 #include <NeKit/Utils.h>
-#include <HALKit/AMD64/Processor.h>
-
-using namespace Kernel::HAL;
+#include <ArchKit/ArchKit.h>
 
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
