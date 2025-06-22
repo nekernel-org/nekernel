@@ -798,11 +798,11 @@ _Output Bool HeFileSystemParser::Format(_Input _Output DriveTrait* mnt, _Input c
     return NO;
   }
 
-  rt_copy_memory((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
-                 rt_string_len("fs/hefs-packet"));
+  rt_copy_memory_safe((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
+                     rt_string_len("fs/hefs-packet"), sizeof(mnt->fPacket.fPacketMime));
 
   urt_copy_memory((VoidPtr) vol_name, boot->fVolName, urt_string_len(vol_name) + 1);
-  rt_copy_memory((VoidPtr) kHeFSMagic, boot->fMagic, kHeFSMagicLen - 1);
+  rt_copy_memory_safe((VoidPtr) kHeFSMagic, boot->fMagic, kHeFSMagicLen - 1, sizeof(boot->fMagic));
 
   if (mnt->fLbaStart > mnt->fLbaEnd) {
     err_global_get() = kErrorDiskIsCorrupted;
@@ -906,8 +906,8 @@ _Output Bool HeFileSystemParser::INodeDirectoryCtlManip(_Input DriveTrait* mnt,
 
   HEFS_BOOT_NODE* boot = (HEFS_BOOT_NODE*) mm_alloc_ptr(sizeof(HEFS_BOOT_NODE), Yes, No);
 
-  rt_copy_memory((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
-                 rt_string_len("fs/hefs-packet"));
+  rt_copy_memory_safe((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
+                     rt_string_len("fs/hefs-packet"), sizeof(mnt->fPacket.fPacketMime));
 
   mnt->fPacket.fPacketLba     = mnt->fLbaStart;
   mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
@@ -992,8 +992,8 @@ _Output Bool HeFileSystemParser::INodeManip(_Input DriveTrait* mnt, VoidPtr bloc
     return NO;
   }
 
-  rt_copy_memory((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
-                 rt_string_len("fs/hefs-packet"));
+  rt_copy_memory_safe((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
+                     rt_string_len("fs/hefs-packet"), sizeof(mnt->fPacket.fPacketMime));
 
   mnt->fPacket.fPacketLba     = mnt->fLbaStart;
   mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
@@ -1078,8 +1078,8 @@ _Output Bool HeFileSystemParser::INodeCtlManip(_Input DriveTrait* mnt, _Input co
     return NO;
   }
 
-  rt_copy_memory((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
-                 rt_string_len("fs/hefs-packet"));
+  rt_copy_memory_safe((VoidPtr) "fs/hefs-packet", mnt->fPacket.fPacketMime,
+                     rt_string_len("fs/hefs-packet"), sizeof(mnt->fPacket.fPacketMime));
 
   mnt->fPacket.fPacketLba     = mnt->fLbaStart;
   mnt->fPacket.fPacketSize    = sizeof(HEFS_BOOT_NODE);
