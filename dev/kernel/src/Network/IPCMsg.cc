@@ -103,7 +103,7 @@ Bool IPC_MSG::Pass(IPC_MSG* src, IPC_MSG* target) noexcept {
     if (src->IpcMsgSz > target->IpcMsgSz) return No;
     if (target->IpcMsgSz > src->IpcMsgSz) return No;
 
-    rt_copy_memory(src->IpcData, target->IpcData, src->IpcMsgSz);
+    rt_copy_memory_safe(src->IpcData, target->IpcData, src->IpcMsgSz, kIPCMsgSize);
 
     return Yes;
   }
