@@ -1,3 +1,12 @@
+
+/* -------------------------------------------
+
+  Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2025, Amlal El Mahrouss & NeKernel contributors, all rights reserved.
+
+------------------------------------------- */
+
+
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/HeapMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
