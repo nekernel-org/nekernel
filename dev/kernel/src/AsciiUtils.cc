@@ -161,7 +161,8 @@ EXTERN_C void* memset(void* dst, int c, long long unsigned int len) {
 }
 
 EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len) {
-  Kernel::rt_copy_memory_safe(const_cast<void*>(src), dst, static_cast<Size>(len), static_cast<Size>(len));
+  Kernel::rt_copy_memory_safe(const_cast<void*>(src), dst, static_cast<Size>(len),
+                              static_cast<Size>(len));
   return dst;
 }
 

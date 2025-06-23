@@ -13,10 +13,10 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
-#include <KernelKit/UserMgr.h>
-#include <NeKit/KernelPanic.h>
-#include <NeKit/KString.h>
 #include <KernelKit/ThreadLocalStorage.h>
+#include <KernelKit/UserMgr.h>
+#include <NeKit/KString.h>
+#include <NeKit/KernelPanic.h>
 #include <NeKit/Utils.h>
 
 #define kStdUserType (0xEE)
@@ -59,14 +59,16 @@ namespace Detail {
 ////////////////////////////////////////////////////////////
 User::User(const Int32& sel, const Char* user_name) : mUserRing((UserRingKind) sel) {
   MUST_PASS(sel >= 0);
-  rt_copy_memory_safe((VoidPtr) user_name, this->mUserName, rt_string_len(user_name), kMaxUserNameLen);
+  rt_copy_memory_safe((VoidPtr) user_name, this->mUserName, rt_string_len(user_name),
+                      kMaxUserNameLen);
 }
 
 ////////////////////////////////////////////////////////////
 /// @brief User ring constructor.
 ////////////////////////////////////////////////////////////
 User::User(const UserRingKind& ring_kind, const Char* user_name) : mUserRing(ring_kind) {
-  rt_copy_memory_safe((VoidPtr) user_name, this->mUserName, rt_string_len(user_name), kMaxUserNameLen);
+  rt_copy_memory_safe((VoidPtr) user_name, this->mUserName, rt_string_len(user_name),
+                      kMaxUserNameLen);
 }
 
 ////////////////////////////////////////////////////////////

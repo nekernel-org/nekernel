@@ -6,7 +6,7 @@
 
 ------------------------------------------- */
 
-
+#include <ArchKit/ArchKit.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/HeapMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
@@ -16,7 +16,6 @@
 #include <NeKit/KernelPanic.h>
 #include <NeKit/OwnPtr.h>
 #include <NeKit/Utils.h>
-#include <ArchKit/ArchKit.h>
 
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
@@ -159,8 +158,9 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
         Char* container_blob_value = new Char[container_header->VMSize];
 
-        rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
-                       container_header->VMSize, container_header->VMSize);
+        rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)),
+                            container_blob_value, container_header->VMSize,
+                            container_header->VMSize);
         mm_free_ptr(blob);
 
         kout << "PEFLoader: Information: Loaded stub: " << container_header->Name << "!\r";

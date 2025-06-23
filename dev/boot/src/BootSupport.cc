@@ -18,13 +18,14 @@
 /// @param dst destination pointer.
 /// @param byte value to fill in.
 /// @param len length of of src.
-EXTERN_C VoidPtr memnset(void* dst, int byte, long long unsigned int len, long long unsigned int dst_size) {
+EXTERN_C VoidPtr memnset(void* dst, int byte, long long unsigned int len,
+                         long long unsigned int dst_size) {
   if (!dst || len > dst_size) {
     // For now, we return nullptr or an error status.
     return nullptr;
   }
-  unsigned char* p = (unsigned char*)dst; 
-  unsigned char val = (unsigned char)byte;
+  unsigned char* p   = (unsigned char*) dst;
+  unsigned char  val = (unsigned char) byte;
   for (size_t i = 0UL; i < len; ++i) {
     p[i] = val;
   }
@@ -35,13 +36,14 @@ EXTERN_C VoidPtr memnset(void* dst, int byte, long long unsigned int len, long l
 /// @param dst destination pointer.
 /// @param  src source pointer.
 /// @param len length of of src.
-EXTERN_C VoidPtr memncpy(void* dst, const void* src, long long unsigned int len, long long unsigned int dst_size) {
+EXTERN_C VoidPtr memncpy(void* dst, const void* src, long long unsigned int len,
+                         long long unsigned int dst_size) {
   if (!dst || !src || len > dst_size) {
     // Similar to memset, this is a critical failure.
     return nullptr;
   }
-  unsigned char* d = (unsigned char*)dst; 
-  const unsigned char* s = (const unsigned char*)src;
+  unsigned char*       d = (unsigned char*) dst;
+  const unsigned char* s = (const unsigned char*) src;
   for (size_t i = 0UL; i < len; ++i) {
     d[i] = s[i];
   }
@@ -67,7 +69,7 @@ EXTERN_C int strncmp(const char* whatToCheck, const char* whatToCheckRight, size
   if (i == max_len) {
     return 0;
   }
-  return (unsigned char)whatToCheck[i] - (unsigned char)whatToCheckRight[i];
+  return (unsigned char) whatToCheck[i] - (unsigned char) whatToCheckRight[i];
 }
 
 /// @brief something specific to the Microsoft's ABI, When the stack grows too big.

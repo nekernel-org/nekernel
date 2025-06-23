@@ -20,8 +20,8 @@
 #include <KernelKit/KPC.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <NeKit/KString.h>
-#include <SignalKit/Signals.h>
 #include <NeKit/Utils.h>
+#include <SignalKit/Signals.h>
 
 ///! BUGS: 0
 
@@ -379,7 +379,8 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
     return -kErrorProcessFault;
   }
 
-  rt_copy_memory_safe(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, len, kSchedNameLen);
+  rt_copy_memory_safe(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, len,
+                      kSchedNameLen);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   process.VMRegister = kKernelVM;
