@@ -156,13 +156,12 @@ Char* rt_string_has_char(Char* str, Char ch) {
   return (*str == ch) ? str : nullptr;
 }
 
-// @uses the deprecated version callers should ensure 'len' is valid.
 EXTERN_C void* memset(void* dst, int c, long long unsigned int len) {
-  return Kernel::rt_set_memory(dst, c, static_cast<Size>(len));
+  return Kernel::rt_set_memory_safe(dst, c, static_cast<Size>(len), static_cast<Size>(len));
 }
 
 EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len) {
-  Kernel::rt_copy_memory(const_cast<void*>(src), dst, static_cast<Size>(len));
+  Kernel::rt_copy_memory_safe(const_cast<void*>(src), dst, static_cast<Size>(len), static_cast<Size>(len));
   return dst;
 }
 
