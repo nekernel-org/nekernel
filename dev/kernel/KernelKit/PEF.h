@@ -54,7 +54,7 @@ enum {
   kPefArch32x0, /* 32x0. ISA */
   kPefArchPowerPC,
   kPefArchARM64,
-  kPefArchCount   = (kPefArchPowerPC - kPefArchIntel86S) + 1,
+  kPefArchCount   = (kPefArchARM64 - kPefArchIntel86S) + 1,
   kPefArchInvalid = 0xFF,
 };
 
