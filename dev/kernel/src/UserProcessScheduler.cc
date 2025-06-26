@@ -22,6 +22,7 @@
 #include <NeKit/KString.h>
 #include <NeKit/Utils.h>
 #include <SignalKit/Signals.h>
+#include "KernelKit/CoreProcessScheduler.h"
 
 ///! BUGS: 0
 
@@ -40,8 +41,9 @@ USER_PROCESS::~USER_PROCESS() = default;
 Void USER_PROCESS::Crash() {
   if (this->Status != ProcessStatusKind::kRunning) return;
 
+  this->Status = ProcessStatusKind::kKilled;
+
   (Void)(kout << this->Name << ": crashed, error id: " << number(-kErrorProcessFault) << kendl);
-  this->Exit(-kErrorProcessFault);
 }
 
 /***********************************************************************************/
