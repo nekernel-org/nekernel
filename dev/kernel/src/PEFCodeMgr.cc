@@ -246,7 +246,7 @@ namespace Utils {
     if (id != kSchedInvalidPID) {
       auto stacksym = exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 
-      if (!symname) {
+      if (!stacksym) {
         stacksym = ErrorOr<VoidPtr>{(VoidPtr) new UIntPtr(kSchedMaxStackSz)};
       }
 
