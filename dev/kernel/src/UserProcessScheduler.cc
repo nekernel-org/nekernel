@@ -22,7 +22,6 @@
 #include <NeKit/KString.h>
 #include <NeKit/Utils.h>
 #include <SignalKit/Signals.h>
-#include "KernelKit/CoreProcessScheduler.h"
 
 ///! BUGS: 0
 
