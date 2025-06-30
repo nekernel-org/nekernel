@@ -246,23 +246,23 @@ const AffinityKind& USER_PROCESS::GetAffinity() noexcept {
 /***********************************************************************************/
 
 template <typename T>
-STATIC Void sched_free_ptr_tree(T* memory_ptr_list) {
+STATIC Void sched_free_ptr_tree(T* tree) {
   // Deleting memory lists. Make sure to free all of them.
-  while (memory_ptr_list) {
-    if (memory_ptr_list->Entry) {
-      MUST_PASS(mm_free_ptr(memory_ptr_list->Entry));
+  while (tree) {
+    if (tree->Entry) {
+      MUST_PASS(mm_free_ptr(tree->Entry));
     }
 
-    auto next = memory_ptr_list->Next;
+    auto next = tree->Next;
 
     if (next->Child) sched_free_ptr_tree(next->Child);
 
-    memory_ptr_list->Child = nullptr;
+    tree->Child = nullptr;
 
-    mm_free_ptr(memory_ptr_list);
+    mm_free_ptr(tree);
 
-    memory_ptr_list = nullptr;
-    memory_ptr_list = next;
+    tree = nullptr;
+    tree = next;
   }
 }
 
