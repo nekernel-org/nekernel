@@ -86,7 +86,7 @@ Void USER_PROCESS::Wake(Bool should_wakeup) {
 /***********************************************************************************/
 
 template <typename T>
-STATIC PROCESS_HEAP_TREE<VoidPtr>* sched_try_go_upper_ptr_tree(T* tree) {
+STATIC T* sched_try_go_upper_ptr_tree(T* tree) {
   if (!tree) {
     return nullptr;
   }
