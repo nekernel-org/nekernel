@@ -12,7 +12,7 @@
 #include <NeKit/Stream.h>
 #include <NeKit/Utils.h>
 
-#define kDebugUnboundPort 0x0FEED
+#define kDebugPort (51820U)
 
 #define kDebugMag0 'K'
 #define kDebugMag1 'D'
@@ -27,7 +27,7 @@
 namespace Kernel {
 class TerminalDevice;
 class DTraceDevice;
-class DebugDevice;
+class NeDebugDevice;
 class Utf8TerminalDevice;
 
 inline TerminalDevice end_line();
@@ -183,14 +183,6 @@ inline TerminalDevice get_console_in(Char* buf) {
 inline constexpr SizeT kDebugTypeLen = 256U;
 
 typedef Char rt_debug_type[kDebugTypeLen];
-
-/// @brief KDBG's packet header.
-class KernelDebugHeader final {
- public:
-  Int16         fPort;
-  Int16         fPortKind;
-  rt_debug_type fPortBlob;
-};
 
 inline TerminalDevice& operator<<(TerminalDevice& src, const Long& num) {
   src = number(num);

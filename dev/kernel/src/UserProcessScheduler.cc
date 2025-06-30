@@ -124,6 +124,17 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
   auto ptr           = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
 #endif
 
+  if (!this->FileTree) {
+    this->FileTree = new PROCESS_FILE_TREE<VoidPtr>();
+
+    if (!this->FileTree) {
+      this->Crash();
+      return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
+    }
+
+    /// @todo File Tree allocation and dispose methods (amlal)
+  }
+
   if (!this->HeapTree) {
     this->HeapTree = new PROCESS_HEAP_TREE<VoidPtr>();
 
