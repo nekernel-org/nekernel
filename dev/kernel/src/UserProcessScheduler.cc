@@ -85,7 +85,8 @@ Void USER_PROCESS::Wake(Bool should_wakeup) {
 /** @param tree The tree to calibrate */
 /***********************************************************************************/
 
-STATIC PROCESS_HEAP_TREE<VoidPtr>* sched_try_go_upper_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* tree) {
+template <typename T>
+STATIC PROCESS_HEAP_TREE<VoidPtr>* sched_try_go_upper_ptr_tree(T* tree) {
   if (!tree) {
     return nullptr;
   }
