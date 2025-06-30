@@ -244,7 +244,8 @@ const AffinityKind& USER_PROCESS::GetAffinity() noexcept {
 /** @brief Free heap tree. */
 /***********************************************************************************/
 
-STATIC Void sched_free_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_ptr_list) {
+template <typename T>
+STATIC Void sched_free_ptr_tree(T* memory_ptr_list) {
   // Deleting memory lists. Make sure to free all of them.
   while (memory_ptr_list) {
     if (memory_ptr_list->Entry) {
@@ -283,6 +284,9 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 
   sched_free_ptr_tree(this->HeapTree);
   this->HeapTree = nullptr;
+
+  sched_free_ptr_tree(this->FileTree);
+  this->FileTree = nullptr;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   hal_write_cr3(pd);
