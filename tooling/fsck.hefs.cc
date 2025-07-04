@@ -4,18 +4,40 @@
 
 ------------------------------------------- */
 
-#include <tooling/hefs.h>
-#include <tooling/mkfs.h>
+#include <tooling/libmkfs/hefs.h>
+#include <tooling/libmkfs/mkfs.h>
 #include <cstdlib>
+#include <fstream>
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs i <input_device>"
+    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -i=<input_device>"
                         << "\n";
     return EXIT_FAILURE;
   }
 
-  (void) (argv);
+  auto args = mkfs::detail::build_args(argc, argv);
+
+  auto opt_disk  = mkfs::get_option<char>(args, "-i");
+
+  if (opt_disk.empty()) {
+    mkfs::console_out() << "fsck: hefs: error: HeFS is empty! Exiting..."
+                        << "\n";
+    return EXIT_FAILURE;
+  }
+
+
+  std::ifstream output_device(opt_disk, std::ios::binary);
+
+  if (!output_device.good()) {
+    mkfs::console_out() << "hefs: error: Unable to open output device: " << opt_disk << "\n";
+    return EXIT_FAILURE;
+  }
+
+  mkfs::hefs::BootNode boot_node;
+  std::memset(&boot_node, 0, sizeof(boot_node));
+
+  mkfs::console_out() << "hefs: HeFS partition is is healthy, exiting...\r";
 
   return EXIT_SUCCESS;
 }

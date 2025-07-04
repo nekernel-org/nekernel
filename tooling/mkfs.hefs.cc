@@ -4,53 +4,18 @@
 
 ------------------------------------------- */
 
-#include <tooling/hefs.h>
-#include <tooling/mkfs.h>
+#include <tooling/libmkfs/hefs.h>
+#include <tooling/libmkfs/mkfs.h>
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <limits>
 
-namespace detail {
-/// @internal
-/// @brief GB‐to‐byte conversion (use multiplication, not XOR).
-static constexpr size_t gib_cast(uint32_t gb) {
-  return static_cast<size_t>(gb) * 1024ULL * 1024ULL * 1024ULL;
-}
-}  // namespace detail
-
-static size_t        kDiskSize = detail::gib_cast(4UL);
+static size_t        kDiskSize = mkfs::detail::gib_cast(4UL);
 static uint16_t      kVersion  = kHeFSVersion;
 static std::u8string kLabel;
 static size_t        kSectorSize = 512;
-
-static bool parse_decimal(const std::string& opt, unsigned long long& out) {
-  if (opt.empty()) return false;
-  char*              endptr = nullptr;
-  unsigned long long val    = std::strtoull(opt.c_str(), &endptr, 10);
-  if (endptr == opt.c_str() || *endptr != '\0') return false;
-  out = val;
-  return true;
-}
-
-static bool parse_signed(const std::string& opt, long& out, int base = 10) {
-  if (opt.empty()) return false;
-  char* endptr = nullptr;
-  long  val    = std::strtol(opt.c_str(), &endptr, base);
-  if (endptr == opt.c_str() || *endptr != '\0' || val < 0) return false;
-  out = val;
-  return true;
-}
-
-static std::string build_args(int argc, char** argv) {
-  std::string combined;
-  for (int i = 1; i < argc; ++i) {
-    combined += argv[i];
-    combined += ' ';
-  }
-  return combined;
-}
 
 int main(int argc, char** argv) {
   if (argc < 2) {
@@ -62,7 +27,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  std::string args = build_args(argc, argv);
+  std::string args = mkfs::detail::build_args(argc, argv);
 
   auto output_path = mkfs::get_option<char>(args, "-o");
   if (output_path.empty()) {
@@ -72,7 +37,7 @@ int main(int argc, char** argv) {
 
   auto opt_s    = mkfs::get_option<char>(args, "-s");
   long parsed_s = 0;
-  if (!parse_signed(opt_s, parsed_s, 10) || parsed_s == 0) {
+  if (!mkfs::detail::parse_signed(opt_s, parsed_s, 10) || parsed_s == 0) {
     mkfs::console_out() << "hefs: error: Invalid sector size \"" << opt_s
                         << "\". Must be a positive integer.\n";
     return EXIT_FAILURE;
@@ -98,7 +63,7 @@ int main(int argc, char** argv) {
 
   auto               opt_S = mkfs::get_option<char>(args, "-S");
   unsigned long long gb    = 0;
-  if (!parse_decimal(opt_S, gb) || gb == 0ULL) {
+  if (!mkfs::detail::parse_decimal(opt_S, gb) || gb == 0ULL) {
     mkfs::console_out() << "hefs: error: Invalid disk size \"" << opt_S
                         << "\". Must be a positive integer.\n";
     return EXIT_FAILURE;
@@ -121,27 +86,27 @@ int main(int argc, char** argv) {
   long start_block = 0, end_block = 0;
   long start_in = 0, end_in = 0;
 
-  if (!parse_signed(opt_b, start_ind, 16)) {
+  if (!mkfs::detail::parse_signed(opt_b, start_ind, 16)) {
     mkfs::console_out() << "hefs: error: Invalid -b <hex> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!parse_signed(opt_e, end_ind, 16) || end_ind <= start_ind) {
+  if (!mkfs::detail::parse_signed(opt_e, end_ind, 16) || end_ind <= start_ind) {
     mkfs::console_out() << "hefs: error: Invalid or out-of-range -e <hex> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!parse_signed(opt_bs, start_block, 16)) {
+  if (!mkfs::detail::parse_signed(opt_bs, start_block, 16)) {
     mkfs::console_out() << "hefs: error: Invalid -bs <hex> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!parse_signed(opt_be, end_block, 16) || end_block <= start_block) {
+  if (!mkfs::detail::parse_signed(opt_be, end_block, 16) || end_block <= start_block) {
     mkfs::console_out() << "hefs: error: Invalid or out-of-range -be <hex> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!parse_signed(opt_is, start_in, 16)) {
+  if (!mkfs::detail::parse_signed(opt_is, start_in, 16)) {
     mkfs::console_out() << "hefs: error: Invalid -is <hex> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!parse_signed(opt_ie, end_in, 16) || end_in <= start_in) {
+  if (!mkfs::detail::parse_signed(opt_ie, end_in, 16) || end_in <= start_in) {
     mkfs::console_out() << "hefs: error: Invalid or out-of-range -ie <hex> argument.\n";
     return EXIT_FAILURE;
   }
@@ -153,6 +118,7 @@ int main(int argc, char** argv) {
   }
 
   std::ofstream output_device(output_path, std::ios::binary);
+
   if (!output_device.good()) {
     mkfs::console_out() << "hefs: error: Unable to open output device: " << output_path << "\n";
     return EXIT_FAILURE;
