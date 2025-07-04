@@ -3,7 +3,7 @@
 -Idev/user
 -Idev/boot
 -Idev/system_sdk
--Idev/generic_kits
+-Idev/misc
 -Idev/ddk
 -Ipublic/tools
 -Ipublic/tools/mk.app

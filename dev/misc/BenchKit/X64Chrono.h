@@ -6,7 +6,7 @@ Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 
 #pragma once
 
-#include <generic_kits/BenchKit/Chrono.h>
+#include <misc/BenchKit/Chrono.h>
 
 #if defined(__NE_AMD64__)
 

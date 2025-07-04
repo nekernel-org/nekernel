@@ -203,17 +203,17 @@ const Char* PEFLoader::Path() {
 
 const Char* PEFLoader::AsString() {
 #ifdef __32x0__
-  return "32x0 PEF.";
+  return "32x0 PEF";
 #elif defined(__64x0__)
-  return "64x0 PEF.";
+  return "64x0 PEF";
 #elif defined(__x86_64__)
-  return "x86_64 PEF.";
+  return "x86_64 PEF";
 #elif defined(__aarch64__)
-  return "AARCH64 PEF.";
+  return "AARCH64 PEF";
 #elif defined(__powerpc64__)
-  return "POWER64 PEF.";
+  return "POWER64 PEF";
 #else
-  return "???? PEF.";
+  return "???? PEF";
 #endif  // __32x0__ || __64x0__ || __x86_64__ || __powerpc64__
 }
 
