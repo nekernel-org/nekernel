@@ -4,6 +4,7 @@
 
   File: FileMgr.h
   Purpose: Kernel file manager.
+  Author: Amlal El Mahrouss (amlal@nekernel.org)
 
 ------------------------------------------- */
 
@@ -65,10 +66,10 @@ enum {
   kFileReadAll    = 101,
   kFileReadChunk  = 102,
   kFileWriteChunk = 103,
-  kFileIOCnt      = (kFileWriteChunk - kFileWriteAll) + 1,
   // File flags (HFS+, NeFS specific)
   kFileFlagRsrc = 104,
   kFileFlagData = 105,
+  kFileIOCnt    = (kFileFlagData - kFileWriteAll) + 1,
 };
 
 typedef VoidPtr NodePtr;

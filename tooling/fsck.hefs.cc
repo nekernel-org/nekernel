@@ -18,14 +18,13 @@ int main(int argc, char** argv) {
 
   auto args = mkfs::detail::build_args(argc, argv);
 
-  auto opt_disk  = mkfs::get_option<char>(args, "-i");
+  auto opt_disk = mkfs::get_option<char>(args, "-i");
 
   if (opt_disk.empty()) {
     mkfs::console_out() << "fsck: hefs: error: HeFS is empty! Exiting..."
                         << "\n";
     return EXIT_FAILURE;
   }
-
 
   std::ifstream output_device(opt_disk, std::ios::binary);
 
@@ -36,6 +35,11 @@ int main(int argc, char** argv) {
 
   mkfs::hefs::BootNode boot_node;
   std::memset(&boot_node, 0, sizeof(boot_node));
+
+  if (strncmp(boot_node.magic, kHeFSMagic, kHeFSMagicLen) != 0) {
+    mkfs::console_out() << "hefs: error: Device is not an HeFS disk: " << opt_disk << "\n";
+    return EXIT_FAILURE;
+  }
 
   mkfs::console_out() << "hefs: HeFS partition is is healthy, exiting...\r";
 

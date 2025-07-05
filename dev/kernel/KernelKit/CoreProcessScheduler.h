@@ -9,6 +9,10 @@
 #include <NeKit/Defines.h>
 #include <NeKit/ErrorOr.h>
 
+/// @file CoreProcessScheduler.h
+/// @brief Core Process Scheduler header file.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+
 #define kSchedMinMicroTime (AffinityKind::kStandard)
 #define kSchedInvalidPID (-1)
 #define kSchedProcessLimitPerTeam (32U)
