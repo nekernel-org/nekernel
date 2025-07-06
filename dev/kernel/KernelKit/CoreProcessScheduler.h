@@ -42,7 +42,7 @@ enum {
   kInvalidTreeKind = 0U,
   kRedTreeKind     = 100U,
   kBlackTreeKind   = 101U,
-  kTreeKindCount   = 2U,
+  kTreeKindCount   = 3U,
 };
 
 template <typename T>
