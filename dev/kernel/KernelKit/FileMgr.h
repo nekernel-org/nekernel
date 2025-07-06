@@ -395,6 +395,7 @@ inline FileStream<Encoding, Class>::FileStream(const Encoding* path, const Encod
 template <typename Encoding, typename Class>
 inline FileStream<Encoding, Class>::~FileStream() {
   mm_free_ptr(fFile);
+  fFile = nullptr;
 }
 }  // namespace Kernel
 
