@@ -285,12 +285,10 @@ class FileStream final {
         this->fFileRestrict != kFileMgrRestrictReadBinary)
       return nullptr;
 
-    NE_UNUSED(sz);
-
     auto man = FSClass::GetMounted();
 
     if (man) {
-      VoidPtr ret = man->Read(name, fFile, kFileReadAll, 0);
+      VoidPtr ret = man->Read(name, fFile, kFileReadAll, sz);
       return ret;
     }
 
