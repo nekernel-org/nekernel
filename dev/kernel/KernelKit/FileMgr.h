@@ -49,11 +49,6 @@
 
 #define rtl_node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)
 
-/**
-  @note Refer to first enum.
-*/
-#define kFileOpsCount (4U)
-
 #define kFileMimeGeneric "ne-application-kind/all"
 
 /** @brief invalid position. (n-pos) */
