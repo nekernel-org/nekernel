@@ -12,22 +12,22 @@
 
 ///! @brief Thread Local Storage for neoskrnl.
 
-#define kCookieMag0Idx 0
-#define kCookieMag1Idx 1
-#define kCookieMag2Idx 2
+#define kCookieMag0Idx (0U)
+#define kCookieMag1Idx (1U)
+#define kCookieMag2Idx (2U)
 
 #define kCookieMag0 'Z'
 #define kCookieMag1 'K'
 #define kCookieMag2 'A'
 
-#define kTLSCookieLen (3U)
+#define kCookieMagLen (3U)
 
 struct THREAD_INFORMATION_BLOCK;
 
 /// @brief Thread Information Block.
 /// Located in GS on AMD64, other architectures have their own stuff. (64x0, 32x0, ARM64)
 struct PACKED THREAD_INFORMATION_BLOCK final {
-  Kernel::Char    Cookie[kTLSCookieLen]{0};  //! Thread Magic Number.
+  Kernel::Char    Cookie[kCookieMagLen]{0};  //! Thread Magic Number.
   Kernel::VoidPtr UserData{nullptr};  //! Thread Information Record (User defined canary structure)
 };
 
