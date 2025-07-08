@@ -7,6 +7,7 @@
 /***********************************************************************************/
 /// @file UserProcessTeam.cc
 /// @brief Process teams implementation.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
 #include <KernelKit/UserProcessScheduler.h>

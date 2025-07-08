@@ -17,6 +17,10 @@
 #include <NeKit/OwnPtr.h>
 #include <NeKit/Utils.h>
 
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+/// @brief PEF backend for the Code Manager.
+/// @file PEFCodeMgr.cc
+
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
 #define kPefHeapSizeSymbol "__PEFSizeOfReserveHeap"
@@ -61,9 +65,10 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
   fFile.New(const_cast<Char*>(path), kRestrictRB);
   fPath = KStringBuilder::Construct(path).Leak();
 
-  auto kPefHeader = "PEF_CONTAINER";
+  constexpr auto kPefHeader = "PEF_CONTAINER";
 
-  fCachedBlob = fFile->Read(kPefHeader, mib_cast(16));
+  /// @note zero here means that the FileMgr will read every container header inside the file. 
+  fCachedBlob = fFile->Read(kPefHeader, 0UL);
 
   PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 

@@ -34,14 +34,20 @@ int main(int argc, char** argv) {
   }
 
   mkfs::hefs::BootNode boot_node;
+  
   std::memset(&boot_node, 0, sizeof(boot_node));
 
-  if (strncmp(boot_node.magic, kHeFSMagic, kHeFSMagicLen) != 0) {
+  if (strncmp(boot_node.magic, kHeFSMagic, kHeFSMagicLen) != 0 || boot_node.sectorCount < 1 ||
+      boot_node.sectorSize < kMkFsSectorSz) {
     mkfs::console_out() << "hefs: error: Device is not an HeFS disk: " << opt_disk << "\n";
     return EXIT_FAILURE;
   }
 
-  mkfs::console_out() << "hefs: HeFS partition is is healthy, exiting...\r";
+  if (boot_node.badSectors >= kMkFsMaxBadSectors) {
+    mkfs::console_out() << "hefs: error: HeFS disk has too much bad sectors: " << opt_disk << "\n";
+    return EXIT_FAILURE;
+  }
 
+  mkfs::console_out() << "hefs: HeFS partition is is healthy, exiting...\r";
   return EXIT_SUCCESS;
 }

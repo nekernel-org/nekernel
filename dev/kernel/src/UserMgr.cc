@@ -33,8 +33,8 @@ namespace Detail {
   /// \return the hashed password
   ////////////////////////////////////////////////////////////
   STATIC UInt64 user_fnv_generator(const Char* password, User* user) {
-    if (!password || !user) return 1;
-    if (*password == 0) return 1;
+    if (!password || !user) return 0;
+    if (*password == 0) return 0;
 
     kout << "user_fnv_generator: Hashing user password...\r";
 
@@ -50,7 +50,7 @@ namespace Detail {
 
     kout << "user_fnv_generator: Hashed user password.\r";
 
-    return 0;
+    return hash;
   }
 }  // namespace Detail
 

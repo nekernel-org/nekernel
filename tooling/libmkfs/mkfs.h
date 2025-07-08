@@ -10,6 +10,9 @@
 #include <iostream>
 #include <string>
 
+#define kMkFsSectorSz (512U)
+#define kMkFsMaxBadSectors (128U)
+
 /// @internal
 namespace mkfs {
 

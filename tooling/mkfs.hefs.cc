@@ -150,12 +150,16 @@ int main(int argc, char** argv) {
   boot_node.magic[magic_copy] = 0;
 
   constexpr size_t vol_slots = kHeFSPartNameLen;
+  
   std::memset(boot_node.volumeName, 0, sizeof(boot_node.volumeName));
+  
   size_t label_units = std::min(kLabel.size(), vol_slots - 1);
+
   for (size_t i = 0; i < label_units; ++i) {
-    boot_node.volumeName[i] = static_cast<char16_t>(kLabel[i]);
+    boot_node.volumeName[i] = static_cast<char8_t>(kLabel[i]);
   }
-  boot_node.volumeName[label_units] = 0;
+  
+  boot_node.volumeName[label_units] = 0U;
 
   output_device.seekp(static_cast<std::streamoff>(start_ind));
   if (!output_device.good()) {
