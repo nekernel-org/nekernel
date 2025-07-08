@@ -10,15 +10,15 @@
 #include <NeKit/Defines.h>
 #include <NeKit/ErrorOr.h>
 
-///! @brief Thread Local Storage for neoskrnl.
+///! @brief Thread Local Storage for NeKernel.
 
 #define kCookieMag0Idx (0U)
 #define kCookieMag1Idx (1U)
 #define kCookieMag2Idx (2U)
 
-#define kCookieMag0 'Z'
+#define kCookieMag0 'N'
 #define kCookieMag1 'K'
-#define kCookieMag2 'A'
+#define kCookieMag2 'O'
 
 #define kCookieMagLen (3U)
 

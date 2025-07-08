@@ -22,7 +22,7 @@
 #ifndef INC_FILEMGR_H
 #define INC_FILEMGR_H
 
-//! Include filesystems that neoskrnl supports.
+//! Include filesystems that NeKernel supports.
 #include <FSKit/Ext2.h>
 #include <FSKit/HeFS.h>
 #include <FSKit/NeFS.h>

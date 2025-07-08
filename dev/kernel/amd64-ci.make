@@ -1,6 +1,6 @@
 ##################################################
 # (c) Amlal El Mahrouss, all rights reserved.
-# This is the neoskrnl's makefile.
+# This is the NeKernel's makefile.
 ##################################################
 
 CXX			= x86_64-w64-mingw32-g++
