@@ -18,7 +18,7 @@
 #define kSchedProcessLimitPerTeam (32U)
 #define kSchedTeamCount (256U)
 
-#define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
+#define kSchedMaxMemoryLimit (gib_cast(128)) /* max physical memory limit */
 #define kSchedMaxStackSz (kib_cast(8))     /* maximum stack size */
 
 #define kSchedNameLen (128U)
@@ -48,7 +48,7 @@ enum {
 template <typename T>
 struct PROCESS_HEAP_TREE {
   static constexpr auto kPtr = true;
-  static constexpr auto kFD  = false;
+  static constexpr auto kFile  = false;
 
   T     Entry{nullptr};
   SizeT EntrySize{0UL};
@@ -74,7 +74,7 @@ struct PROCESS_HEAP_TREE {
 template <typename T>
 struct PROCESS_FILE_TREE {
   static constexpr auto kPtr = false;
-  static constexpr auto kFD  = true;
+  static constexpr auto kFile  = true;
 
   T     Entry{nullptr};
   SizeT EntrySize{0UL};
