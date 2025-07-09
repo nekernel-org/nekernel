@@ -39,6 +39,7 @@ struct DI_DISK_IMAGE {
   SInt32 block_cnt                 = 0;
   SizeT  disk_sz                   = kDIMinDiskSz;
   Char   out_name[kDIOutNameLen]   = kDIDefaultOutputName;
+  SInt32 fs_version                = 0UL;
 };
 
 /// @brief Format with an EPM partition.
