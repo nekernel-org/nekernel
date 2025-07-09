@@ -107,7 +107,7 @@ STATIC T* sched_try_go_upper_ptr_tree(T* tree) {
 }
 
 /***********************************************************************************/
-/** @brief Allocate pointer to heap tree. */
+/** @brief Allocate pointer to heap/file tree. */
 /***********************************************************************************/
 
 ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
