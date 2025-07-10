@@ -15,6 +15,8 @@ IMPORT_C VoidPtr libsys_syscall_arg_3(SizeT id, VoidPtr arg1, VoidPtr arg3);
 IMPORT_C VoidPtr libsys_syscall_arg_4(SizeT id, VoidPtr arg1, VoidPtr arg3, VoidPtr arg4);
 
 inline UInt64 libsys_hash_64(const Char* path) {
+  if (!path || *path == 0) return 0;
+
   const UInt64 FNV_OFFSET_BASIS = 0xcbf29ce484222325ULL;
   const UInt64 FNV_PRIME        = 0x100000001b3ULL;
 
