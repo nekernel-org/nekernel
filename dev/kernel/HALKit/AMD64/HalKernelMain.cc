@@ -42,8 +42,11 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
                          handover_hdr->f_HardwareTables.f_ImageHandle);
 
   kKernelVM = kHandoverHeader->f_PageStart;
-
-  MUST_PASS(kKernelVM);
+  
+  if (!kKernelVM) {
+    MUST_PASS(kKernelVM);
+    return kEfiFail;
+  }
 
   hal_write_cr3(kKernelVM);
 
