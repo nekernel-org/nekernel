@@ -180,9 +180,9 @@ inline TerminalDevice get_console_in(Char* buf) {
   return self;
 }
 
-inline constexpr SizeT kDebugTypeLen = 256U;
+inline constexpr SizeT kDebugCmdLen = 256U;
 
-typedef Char rt_debug_type[kDebugTypeLen];
+typedef Char rt_debug_cmd[kDebugCmdLen];
 
 inline TerminalDevice& operator<<(TerminalDevice& src, const Long& num) {
   src = number(num);
