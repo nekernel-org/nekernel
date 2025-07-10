@@ -15,7 +15,8 @@
 
 /***********************************************************************************/
 /// @file DriveMgr.cc
-/// @brief Drive Manager of kernel.
+/// @brief Drive Manager of NeKernel.
+///! @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
 namespace Kernel {

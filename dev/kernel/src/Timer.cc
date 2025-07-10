@@ -9,6 +9,7 @@
 ///! BUGS: 0
 ///! @file Timer.cc
 ///! @brief Software Timer implementation
+///! @author Amlal El Mahrouss (amlal@nekernel.org)
 
 using namespace Kernel;
 

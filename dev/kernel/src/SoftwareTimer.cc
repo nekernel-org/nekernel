@@ -7,6 +7,7 @@
 #include <KernelKit/Timer.h>
 
 /// @brief SoftwareTimer class, meant to be generic.
+///! @author Amlal El Mahrouss (amlal@nekernel.org)
 
 using namespace Kernel;
 
