@@ -19,6 +19,8 @@
 #define kBitMapSizeIdx (1U)
 #define kBitMapUsedIdx (2U)
 
+///! @author Amlal El Mahrouss (amlal@nekernel.org)
+
 namespace Kernel {
 namespace HAL {
   namespace Detail {
