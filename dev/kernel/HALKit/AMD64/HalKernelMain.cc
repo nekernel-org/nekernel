@@ -43,6 +43,8 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   kKernelVM = kHandoverHeader->f_PageStart;
 
+  MUST_PASS(kKernelVM);
+
   hal_write_cr3(kKernelVM);
 
   /************************************** */
