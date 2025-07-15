@@ -7,8 +7,8 @@
     <b>Modern, Modular, and Secure Microkernel for Next-Generation Systems</b>
   </p>
   <p>
-    <a href="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml"><img src="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml/badge.svg" alt="CI"></a>
-    <a href="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml"><img src="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml/badge.svg" alt="CI"></a>
+    <a href="https://github.com/nekernel-org/nekernel/actions/workflows/boot-pio.yml"><img src="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml/badge.svg" alt="CI"></a>
+    <a href="https://github.com/nekernel-org/nekernel/actions/workflows/kernel-ahci.yml"><img src="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml/badge.svg" alt="CI"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License"></a>
     <img src="https://img.shields.io/badge/QEMU-Tested-success" alt="QEMU Tested">
   </p>
@@ -49,10 +49,10 @@
 ## Getting Started
 
 ### **Requirements**
-- [MINGW-W64](https://www.mingw-w64.org/) (cross-compiling)
-- [CLANG](https://clang.llvm.org/)
+- [MinGW](https://www.mingw-w64.org/) (cross-compiling)
+- [Clang](https://clang.llvm.org/)
 - [NASM](https://nasm.us/)
-- [BTB](https://github.com/nekernel-org/btb) (build system)
+- [NeBuild](https://github.com/nekernel-org/btb) (build system)
 
 ### **Build & Run**
 
@@ -88,7 +88,7 @@ cd nekernel
 
 ## Documentation
 
-- [API Reference (Doxygen)](https://nekernel-org.github.io/docs/)
+- [API Reference (Doxygen)](https://nekernel-org.github.io/doc/)
 - [Filesystem Specifications](docs/tex/)
 
 ---
