@@ -4,10 +4,9 @@
 
 ------------------------------------------- */
 
-#ifdef __NE_ARM64__
-
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/KPC.h>
+#include <KernelKit/UserProcessScheduler.h>
 #include <NeKit/CxxAbi.h>
 
 atexit_func_entry_t __atexit_funcs[kAtExitMacDestructors];
@@ -17,14 +16,25 @@ uarch_t __atexit_func_count;
 /// @brief dynamic shared object Handle.
 Kernel::UIntPtr __dso_handle;
 
-EXTERN_C void __chkstk(void) {}
+EXTERN_C Kernel::Void __cxa_pure_virtual(void* self) {
+  (Kernel::Void)(Kernel::kout << "object: "
+                              << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self)));
+  (Kernel::Void)(Kernel::kout << ", has unimplemented virtual functions.\r");
+}
 
-EXTERN_C int atexit(void (*f)(), void* arg, void* dso) {
+EXTERN_C void ___chkstk_ms(PtrDiff frame_size) {
+  char* sp;
+  asm volatile("mov %%rsp, %0" : "=r"(sp));
+
+  for (PtrDiff offset = kPageSize; offset < frame_size; offset += kPageSize) {
+    sp[-offset] = 0;
+  }
+}
+
+EXTERN_C int atexit(void (*f)()) {
   if (__atexit_func_count >= kAtExitMacDestructors) return 1;
 
   __atexit_funcs[__atexit_func_count].destructor_func = f;
-  __atexit_funcs[__atexit_func_count].obj_ptr         = arg;
-  __atexit_funcs[__atexit_func_count].dso_handle      = dso;
 
   __atexit_func_count++;
 
@@ -37,7 +47,6 @@ EXTERN_C void __cxa_finalize(void* f) {
     while (i--) {
       if (__atexit_funcs[i].destructor_func) {
         (*__atexit_funcs[i].destructor_func)();
-        __atexit_funcs[i].destructor_func = 0;
       };
     }
 
@@ -67,25 +76,3 @@ EXTERN_C void __cxa_guard_abort(__guard* g) {
   (void) g;
 }
 }  // namespace cxxabiv1
-
-EXTERN_C Kernel::Void _purecall(void* self) {
-  (Kernel::Void)(Kernel::kout << "object: "
-                              << Kernel::number(reinterpret_cast<Kernel::UIntPtr>(self)));
-  (Kernel::Void)(Kernel::kout << ", has unimplemented virtual functions.\r");
-}
-
-EXTERN_C Kernel::Void _Init_thread_footer(Kernel::Int* thread_obj) {
-  NE_UNUSED(thread_obj);
-}
-
-EXTERN_C Kernel::Void _Init_thread_epoch(Kernel::Void) {
-  NE_UNUSED(0);
-}
-
-EXTERN_C Kernel::Void _Init_thread_header(Kernel::Int* thread_obj) {
-  NE_UNUSED(0);
-}
-
-EXTERN_C Kernel::Int _tls_index = 0UL;
-
-#endif  // ifdef __NE_ARM64__

@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  if (boot_node.badSectors >= kMkFsMaxBadSectors) {
+  if (boot_node.badSectors > kMkFsMaxBadSectors) {
     mkfs::console_out() << "hefs: error: HeFS disk has too much bad sectors: " << opt_disk << "\n";
     return EXIT_FAILURE;
   }

@@ -52,7 +52,7 @@
 - [MinGW](https://www.mingw-w64.org/) (cross-compiling)
 - [Clang](https://clang.llvm.org/)
 - [NASM](https://nasm.us/)
-- [NeBuild](https://github.com/nekernel-org/btb) (build system)
+- [NeBuild](https://github.com/nekernel-org/nebuild) (build system)
 
 ### **Build & Run**
 

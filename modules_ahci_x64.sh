@@ -5,7 +5,7 @@
 # 04/05/25: Improve and fix script.
 
 cd dev/boot/modules/SysChk
-btb amd64-ahci-epm.json
+nebuild amd64-ahci-epm.json
 cd ../
 cd BootNet
-btb amd64.json
+nebuild amd64.json
