@@ -62,6 +62,7 @@ enum {
   kHeFSFlagsDevice,
   kHeFSFlagsCount = 7
 };
+
 // Time type
 using ATime = std::uint64_t;
 
