@@ -6,8 +6,7 @@
 
 #pragma once
 
-#include <modules/CoreGfx/CoreGfx.h>
-#include <modules/CoreGfx/TextGfx.h>
+#include <KernelKit/DeviceMgr.h>
 
 namespace Kernel {
 class FBDeviceInterface;

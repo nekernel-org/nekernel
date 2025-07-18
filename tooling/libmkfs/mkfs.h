@@ -7,6 +7,7 @@
 #pragma once
 
 #include <tooling/rang.h>
+#include <sstream>
 #include <iostream>
 #include <string>
 
@@ -19,11 +20,11 @@ namespace mkfs {
 namespace detail {
   /// @internal
   /// @brief GB‐to‐byte conversion (use multiplication, not XOR).
-  static constexpr size_t gib_cast(uint32_t gb) {
+  inline constexpr size_t gib_cast(uint32_t gb) {
     return static_cast<size_t>(gb) * 1024ULL * 1024ULL * 1024ULL;
   }
 
-  static bool parse_decimal(const std::string& opt, unsigned long long& out) {
+  inline bool parse_decimal(const std::string& opt, unsigned long long& out) {
     if (opt.empty()) return false;
     char*              endptr = nullptr;
     unsigned long long val    = std::strtoull(opt.c_str(), &endptr, 10);
@@ -32,7 +33,7 @@ namespace detail {
     return true;
   }
 
-  static bool parse_signed(const std::string& opt, long& out, int base = 10) {
+  inline bool parse_signed(const std::string& opt, long& out, int base = 10) {
     if (opt.empty()) return false;
     char* endptr = nullptr;
     long  val    = std::strtol(opt.c_str(), &endptr, base);
@@ -41,7 +42,7 @@ namespace detail {
     return true;
   }
 
-  static std::string build_args(int argc, char** argv) {
+  inline std::string build_args(int argc, char** argv) {
     std::string combined;
     for (int i = 1; i < argc; ++i) {
       combined += argv[i];
