@@ -136,7 +136,7 @@ template <BOOL Write, BOOL CommandOrCTRL, BOOL Identify>
 STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz,
                                       SizeT size_buffer) noexcept {
   if (sector_sz == 0) {
-    kout << "Invalid sector size.\r";
+    kout << "ahci: Invalid sector size.\r";
     err_global_get() = kErrorDisk;
     return;
   }
@@ -144,7 +144,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   lba /= sector_sz;
 
   if (!buffer || size_buffer == 0) {
-    kout << "Invalid buffer for AHCI I/O.\r";
+    kout << "ahci: Invalid buffer for AHCI I/O.\r";
     err_global_get() = kErrorDisk;
     return;
   }
@@ -157,7 +157,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   while (slot == ~0UL) {
     if (timeout > kTimeout) {
-      kout << "No free command slot found, AHCI disk is busy!\r";
+      kout << "ahci: No free command slot found, AHCI disk is busy!\r";
 
       err_global_get() = kErrorDisk;
       return;
@@ -217,7 +217,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   command_table->Prdt[prdt_index - 1].Ie = YES;
 
   if (bytes_remaining > 0) {
-    kout << "Warning: AHCI PRDT overflow, cannot map full buffer.\r";
+    kout << "ahci: AHCI PRDT overflow, cannot map full buffer.\r";
     err_global_get() = kErrorDisk;
     rtl_dma_free(size_buffer);
 
@@ -262,7 +262,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
 
   while (YES) {
     if (timeout > kTimeout) {
-      kout << "Disk hangup!\r";
+      kout << "ahci: disk-hangup, corrupted-disk.\r";
       err_global_get() = kErrorDiskIsCorrupted;
       rtl_dma_free(size_buffer);
 
@@ -277,7 +277,7 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   rtl_dma_flush(ptr, size_buffer);
 
   if (kSATAHba->Is & kSATAErrTaskFile) {
-    kout << "AHCI Task File Error during I/O.\r";
+    kout << "ahci: Task File Error during I/O.\r";
 
     rtl_dma_free(size_buffer);
     err_global_get() = kErrorDiskIsCorrupted;
@@ -293,9 +293,8 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
     if ((kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq)) == 0) {
       goto ahci_io_end;
     } else {
-      kout << "Warning: Disk still busy after command completion!\r";
-      while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq))
-        ;
+      kout << "ahci: Disk still busy after command completion!\r";
+      while (kSATAHba->Ports[kSATAIndex].Tfd & (kSATASRBsy | kSATASRDrq));
     }
 
   ahci_io_end:
@@ -308,13 +307,15 @@ STATIC Void drv_std_input_output_ahci(UInt64 lba, UInt8* buffer, SizeT sector_sz
   @brief Gets the number of sectors inside the drive.
   @return Sector size in bytes.
  */
-STATIC ATTRIBUTE(unused) SizeT drv_get_sector_count_ahci() {
+STATIC ATTRIBUTE(unused)
+SizeT  drv_get_sector_count_ahci() {
   return kSATASectorCount;
 }
 
 /// @brief Get the drive size.
 /// @return Disk size in bytes.
-STATIC ATTRIBUTE(unused) SizeT drv_get_size_ahci() {
+STATIC ATTRIBUTE(unused)
+SizeT  drv_get_size_ahci() {
   return drv_std_get_sector_count() * kAHCISectorSize;
 }
 

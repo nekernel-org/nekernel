@@ -45,15 +45,15 @@ struct HAL_APIC_MADT;
 struct HAL_HARDWARE_THREAD;
 
 struct HAL_HARDWARE_THREAD final {
-  HAL::StackFramePtr mFramePtr;
-  ProcessID          mThreadID{0};
+  StackFramePtr mFramePtr;
+  ProcessID     mThreadID{0};
 };
 
-EXTERN_C Void sched_jump_to_task(HAL::StackFramePtr stack_frame);
+EXTERN_C Void sched_jump_to_task(StackFramePtr stack_frame);
 
-STATIC HAL_APIC_MADT* kMADTBlock = nullptr;
-STATIC Bool           kSMPAware  = false;
-STATIC Int64          kSMPCount  = 0;
+STATIC HAL_APIC_MADT* kSMPBlock = nullptr;
+STATIC Bool           kSMPAware = false;
+STATIC Int64          kSMPCount = 0;
 
 EXTERN_C UIntPtr kApicBaseAddress;
 
@@ -160,11 +160,11 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     return;
   }
 
-  kRawMADT   = pwr.Leak().Leak();
-  kMADTBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
-  kSMPAware  = NO;
+  kRawMADT  = pwr.Leak().Leak();
+  kSMPBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
+  kSMPAware = NO;
 
-  if (kMADTBlock) {
+  if (kSMPBlock) {
     kSMPInterrupt = 0;
     kSMPCount     = 0;
 
@@ -191,8 +191,8 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     controller.Write(LAPIC_REG_TIMER_LVT, 0x20 | (1 << 17));
     controller.Write(LAPIC_REG_TIMER_INITCNT, 1000000);
 
-    volatile UInt8* entry_ptr = reinterpret_cast<volatile UInt8*>(kMADTBlock->List);
-    volatile UInt8* end_ptr   = ((UInt8*) kMADTBlock) + kMADTBlock->Length;
+    volatile UInt8* entry_ptr = reinterpret_cast<volatile UInt8*>(kSMPBlock->List);
+    volatile UInt8* end_ptr   = ((UInt8*) kSMPBlock) + kSMPBlock->Length;
 
     while (entry_ptr < end_ptr) {
       UInt8 type   = *entry_ptr;

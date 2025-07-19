@@ -122,19 +122,8 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
 
   hal_write_cr3(vm_register);
 #else
-  auto ptr           = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
+  auto ptr = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
 #endif
-
-  if (!this->FileTree) {
-    this->FileTree = new PROCESS_FILE_TREE<VoidPtr>();
-
-    if (!this->FileTree) {
-      this->Crash();
-      return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
-    }
-
-    /// @todo File Tree allocation and dispose methods (amlal)
-  }
 
   if (!this->HeapTree) {
     this->HeapTree = new PROCESS_HEAP_TREE<VoidPtr>();
@@ -335,7 +324,7 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 /// @brief Add dylib to the process object.
 /***********************************************************************************/
 
-Bool USER_PROCESS::SpawnDylib() {
+Bool USER_PROCESS::InitDylib() {
   // React according to the process's kind.
   switch (this->Kind) {
     case USER_PROCESS::kExecutableDylibKind: {
@@ -436,6 +425,17 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
   process.Status    = ProcessStatusKind::kRunning;
   process.PTime     = 0;
   process.RTime     = 0;
+
+  if (!process.FileTree) {
+    process.FileTree = new PROCESS_FILE_TREE<VoidPtr>();
+
+    if (!process.FileTree) {
+      process.Crash();
+      return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
+    }
+
+    /// @todo File Tree allocation and dispose methods (amlal)
+  }
 
   (Void)(kout << "PID: " << number(process.ProcessId) << kendl);
   (Void)(kout << "Name: " << process.Name << kendl);

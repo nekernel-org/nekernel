@@ -96,7 +96,7 @@ class USER_PROCESS final {
   /***********************************************************************************/
   ///! @brief Spawns a dynamic library handle if dylib.
   /***********************************************************************************/
-  Bool SpawnDylib();
+  Bool InitDylib();
 
   /***********************************************************************************/
   ///! @brief Exits the app.
@@ -192,7 +192,7 @@ class UserProcessScheduler final : public ISchedulable {
   NE_MOVE_DELETE(UserProcessScheduler)
 
  public:
-       operator bool();
+  operator bool();
   bool operator!();
 
  public:
