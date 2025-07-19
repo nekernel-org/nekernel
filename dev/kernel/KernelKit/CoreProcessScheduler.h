@@ -47,8 +47,9 @@ enum {
 
 template <typename T>
 struct PROCESS_HEAP_TREE {
-  static constexpr auto kPtr = true;
+  static constexpr auto kHeap = true;
   static constexpr auto kFile  = false;
+  static constexpr auto kSpecial  = false;
 
   T     Entry{nullptr};
   SizeT EntrySize{0UL};
@@ -73,8 +74,9 @@ struct PROCESS_HEAP_TREE {
 
 template <typename T>
 struct PROCESS_FILE_TREE {
-  static constexpr auto kPtr = false;
+  static constexpr auto kHeap = false;
   static constexpr auto kFile  = true;
+  static constexpr auto kSpecial  = false;
 
   T     Entry{nullptr};
   SizeT EntrySize{0UL};

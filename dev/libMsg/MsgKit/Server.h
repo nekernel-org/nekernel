@@ -29,8 +29,10 @@ struct LIBMSG_EXPR final {
   LIBMSG_EXPR* l_child{nullptr};
 };
 
-typedef Void (*libmsg_func_t)(LIBMSG_EXPR* arg);
+/// @brief Function type for LibMSG lisp.
+typedef Void (*libmsg_func_t)(LIBMSG_EXPR* self, VoidPtr arg, SizeT arg_size);
 
 IMPORT_C Void   libmsg_init_library(libmsg_func_t* funcs, SizeT cnt);
-IMPORT_C UInt32 libmsg_eval_library(struct LIBMSG_EXPR* head);
 IMPORT_C UInt32 libmsg_close_library(Void);
+
+IMPORT_C UInt32 libmsg_eval_expr(struct LIBMSG_EXPR* head);
