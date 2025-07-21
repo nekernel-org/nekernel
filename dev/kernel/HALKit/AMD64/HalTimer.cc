@@ -62,7 +62,7 @@ HardwareTimer::HardwareTimer(UInt64 ms) : fWaitFor(ms) {
   if (!(*((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) & (1 << 0))) {
     *((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) =
         *((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) | (1 << 0) |
-        (1 << 3);  // enable timer
+        (1 << 3);  // enable timer & one shot conf
   }
 }
 
