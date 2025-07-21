@@ -61,11 +61,8 @@ HardwareTimer::HardwareTimer(UInt64 ms) : fWaitFor(ms) {
   // if not enabled yet.
   if (!(*((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) & (1 << 0))) {
     *((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) =
-        *((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) |
-        (1 << 0);  // enable timer
-    *((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) =
-        *((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) |
-        (1 << 3);  // one shot conf
+        *((volatile UInt64*) ((UInt8*) fDigitalTimer + kHPETConfigRegValue)) | (1 << 0) |
+        (1 << 3);  // enable timer
   }
 }
 
@@ -80,18 +77,21 @@ HardwareTimer::~HardwareTimer() {
 
 BOOL HardwareTimer::Wait() noexcept {
   if (fWaitFor < 1) return NO;
+  if (fWaitFor > 1'000'000) return NO;  // max 1000s = 16 minutes
 
-  UInt64 hpet_cap              = *((volatile UInt64*) (fDigitalTimer + kHPETCounterRegValue));
+  UInt64 hpet_cap              = *((volatile UInt64*) (fDigitalTimer));
   UInt64 femtoseconds_per_tick = (hpet_cap >> 32);
 
   if (femtoseconds_per_tick == 0) return NO;
 
   volatile UInt64* timer = (volatile UInt64*) (fDigitalTimer + kHPETCounterRegValue);
 
-  UInt64 now  = *timer;
-  UInt64 prev = now + (fWaitFor / femtoseconds_per_tick);
+  UInt64 now = *timer;
 
-  while (*timer < (prev)) asm volatile("pause");
+  UInt64 fs_wait = fWaitFor * 1'000'000'000'000ULL;
+  UInt64 stop_at = now + (fs_wait / femtoseconds_per_tick);
+
+  while (*timer < (stop_at)) asm volatile("pause");
 
   return YES;
 }
