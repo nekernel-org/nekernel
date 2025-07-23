@@ -102,7 +102,7 @@ inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* con
     }
   }
 
-  err_global_get() = kErrorNetworkTimeout;
+  err_global_get() = kErrorTimeout;
 
   return FALSE;  // Failed to acquire semaphore
 }
