@@ -33,7 +33,7 @@ typedef UInt64 Semaphore[kSemaphoreCount];
 
 /// @brief Checks if the semaphore is valid.
 inline BOOL rtl_sem_is_valid(const Semaphore& sem, UInt64 owner = 0) {
-  return sem[kSemaphoreOwnerIndex] == owner && sem[kSemaphoreCountIndex] > 0;
+  return sem[kSemaphoreOwnerIndex] == owner && sem[kSemaphoreCountIndex] >= 0;
 }
 
 /// @brief Releases the semaphore, resetting its owner and count.
