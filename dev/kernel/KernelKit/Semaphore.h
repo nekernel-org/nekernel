@@ -19,13 +19,21 @@
 
 #define kSemaphoreCount (2)
 
+#define kSemaphoreIncremenntOwner(sem) \
+  (sem[kSemaphoreOwnerIndex]++)
+
+
+#define kSemaphoreDecrementOwner(sem) \
+  (sem[kSemaphoreOwnerIndex]--)
+
+
 namespace Kernel {
 /// @brief Semaphore structure used for synchronization.
 typedef UInt64 Semaphore[kSemaphoreCount];
 
 /// @brief Checks if the semaphore is valid.
-inline BOOL rtl_sem_is_valid(const Semaphore& sem) {
-  return sem[kSemaphoreOwnerIndex] != 0 || sem[kSemaphoreCountIndex] > 0;
+inline BOOL rtl_sem_is_valid(const Semaphore& sem, UInt64 owner = 0) {
+  return sem[kSemaphoreOwnerIndex] != owner || sem[kSemaphoreCountIndex] > 0;
 }
 
 /// @brief Releases the semaphore, resetting its owner and count.
@@ -42,9 +50,10 @@ inline BOOL rtl_sem_release(Semaphore& sem) {
 /// @param sem
 /// @param owner
 /// @return
-inline BOOL rtl_sem_init(Semaphore& sem, Int64 owner) {
-  if (!owner || sem[kSemaphoreOwnerIndex] > 0) {
-    return FALSE;
+inline BOOL rtl_sem_acquire(Semaphore& sem, UInt64 owner) {
+  if (!owner) {
+    err_global_get() = kErrorInvalidData;
+    return FALSE;  // Invalid owner
   }
 
   sem[kSemaphoreOwnerIndex] = owner;
@@ -57,8 +66,8 @@ inline BOOL rtl_sem_init(Semaphore& sem, Int64 owner) {
 /// @param sem
 /// @param timeout
 /// @return
-inline BOOL rtl_sem_wait(Semaphore& sem, Int64 timeout) {
-  if (!rtl_sem_is_valid(sem)) {
+inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* condition = nullptr) {
+  if (!rtl_sem_is_valid(sem, owner)) {
     return FALSE;
   }
 
@@ -68,7 +77,7 @@ inline BOOL rtl_sem_wait(Semaphore& sem, Int64 timeout) {
     return FALSE;
   }
 
-  if (sem[kSemaphoreCountIndex] > 0) {
+  if (!condition || *condition) {
     err_global_get() = kErrorSuccess;
     sem[kSemaphoreCountIndex]--;
 
@@ -76,13 +85,15 @@ inline BOOL rtl_sem_wait(Semaphore& sem, Int64 timeout) {
   }
 
   HardwareTimer timer(timeout);
-  timer.Wait();
-  
-  if (sem[kSemaphoreCountIndex] > 0) {
-    err_global_get() = kErrorSuccess;
-    sem[kSemaphoreCountIndex]--;
+  BOOL          ret = timer.Wait();
 
-    return TRUE;
+  if (ret) {
+    if (!condition || *condition) {
+      err_global_get() = kErrorSuccess;
+      sem[kSemaphoreCountIndex]--;
+
+      return TRUE;
+    }
   }
 
   err_global_get() = kErrorNetworkTimeout;
