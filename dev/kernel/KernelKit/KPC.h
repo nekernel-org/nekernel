@@ -65,7 +65,8 @@ inline constexpr KPCError kErrorFileLocked         = 64;
 inline constexpr KPCError kErrorDiskIsTooTiny      = 65;
 inline constexpr KPCError kErrorDmaExhausted       = 66;
 inline constexpr KPCError kErrorOutOfBitMapMemory  = 67;
-inline constexpr KPCError kErrorTimeout     = 68;
+inline constexpr KPCError kErrorTimeout            = 68;
+inline constexpr KPCError kErrorAccessDenied       = 69;
 /// Generic errors.
 inline constexpr KPCError kErrorUnimplemented = -1;
 

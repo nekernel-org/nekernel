@@ -75,7 +75,7 @@ inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* con
 
   if (!condition || *condition) {
     if (sem[kSemaphoreCountIndex] == 0) {
-      err_global_get() = kErrorTimeout;
+      err_global_get() = kErrorAccessDenied;
       return FALSE;
     }
 
@@ -91,7 +91,7 @@ inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* con
   if (ret) {
     if (!condition || *condition) {
       if (sem[kSemaphoreCountIndex] == 0) {
-        err_global_get() = kErrorTimeout;
+        err_global_get() = kErrorAccessDenied;
         return FALSE;
       }
 
