@@ -29,4 +29,4 @@ EXAMPLES
         Schedules `pgp-update.script` to run at 2:30PM on Wednesday, April 2026.
 
 RELEASE
-    System One — NeKernel
+    v1.0.0 — NeKernel.org
