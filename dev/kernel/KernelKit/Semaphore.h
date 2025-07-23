@@ -68,14 +68,14 @@ inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* con
   }
 
   if (timeout <= 0) {
-    err_global_get() = kErrorNetworkTimeout;
+    err_global_get() = kErrorTimeout;
 
     return FALSE;
   }
 
   if (!condition || *condition) {
     if (sem[kSemaphoreCountIndex] == 0) {
-      err_global_get() = kErrorNetworkTimeout;
+      err_global_get() = kErrorTimeout;
       return FALSE;
     }
 
@@ -91,7 +91,7 @@ inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* con
   if (ret) {
     if (!condition || *condition) {
       if (sem[kSemaphoreCountIndex] == 0) {
-        err_global_get() = kErrorNetworkTimeout;
+        err_global_get() = kErrorTimeout;
         return FALSE;
       }
 
