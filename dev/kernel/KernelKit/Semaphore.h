@@ -99,5 +99,5 @@ inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* con
   err_global_get() = kErrorNetworkTimeout;
 
   return FALSE;  // Failed to acquire semaphore
-}  // namespace Kernel
+}
 }  // namespace Kernel
