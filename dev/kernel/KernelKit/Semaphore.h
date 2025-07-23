@@ -19,13 +19,9 @@
 
 #define kSemaphoreCount (2)
 
-#define kSemaphoreIncrementOwner(sem) \
-  (sem[kSemaphoreOwnerIndex]++)
+#define kSemaphoreIncrementOwner(sem) (sem[kSemaphoreOwnerIndex]++)
 
-
-#define kSemaphoreDecrementOwner(sem) \
-  (sem[kSemaphoreOwnerIndex]--)
-
+#define kSemaphoreDecrementOwner(sem) (sem[kSemaphoreOwnerIndex]--)
 
 namespace Kernel {
 /// @brief Semaphore structure used for synchronization.
@@ -68,6 +64,11 @@ inline BOOL rtl_sem_acquire(Semaphore& sem, UInt64 owner) {
 /// @return
 inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* condition = nullptr) {
   if (!rtl_sem_is_valid(sem, owner)) {
+    return FALSE;
+  }
+
+  if (sem[kSemaphoreCountIndex] <= 0) {
+    err_global_get() = kErrorNetworkTimeout;
     return FALSE;
   }
 
