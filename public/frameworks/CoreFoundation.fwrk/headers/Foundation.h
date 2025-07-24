@@ -25,7 +25,7 @@ struct CFPoint;
 struct CFRect;
 struct CFColor;
 
-#ifndef __LP64__
+#ifndef __CF_64BIT__
 typedef SInt32 CFInteger;
 typedef float  CFReal;
 #else

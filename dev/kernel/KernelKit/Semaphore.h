@@ -14,27 +14,27 @@
 #include <KernelKit/Timer.h>
 #include <NeKit/Defines.h>
 
-#define kSemaphoreOwnerIndex (0)
-#define kSemaphoreCountIndex (1)
+#define kSemaphoreOwnerIndex (0U)
+#define kSemaphoreCountIndex (1U)
 
-#define kSemaphoreCount (2)
+#define kSemaphoreCount (2U)
 
 #define kSemaphoreIncrementOwner(sem) (sem[kSemaphoreOwnerIndex]++)
 #define kSemaphoreDecrementOwner(sem) (sem[kSemaphoreOwnerIndex]--)
 
 namespace Kernel {
 /// @brief Semaphore structure used for synchronization.
-typedef UInt64 Semaphore[kSemaphoreCount];
+typedef UInt64 SemaphoreArr[kSemaphoreCount];
 
 /// @brief Checks if the semaphore is valid.
-inline BOOL rtl_sem_is_valid(const Semaphore& sem, UInt64 owner = 0) {
+inline BOOL rtl_sem_is_valid(const SemaphoreArr& sem, UInt64 owner = 0) {
   return sem[kSemaphoreOwnerIndex] == owner && sem[kSemaphoreCountIndex] >= 0;
 }
 
 /// @brief Releases the semaphore, resetting its owner and count.
 /// @param sem
 /// @return
-inline BOOL rtl_sem_release(Semaphore& sem) {
+inline BOOL rtl_sem_release(SemaphoreArr& sem) {
   sem[kSemaphoreOwnerIndex] = 0;
   sem[kSemaphoreCountIndex] = 0;
 
@@ -45,7 +45,7 @@ inline BOOL rtl_sem_release(Semaphore& sem) {
 /// @param sem
 /// @param owner
 /// @return
-inline BOOL rtl_sem_acquire(Semaphore& sem, UInt64 owner) {
+inline BOOL rtl_sem_acquire(SemaphoreArr& sem, UInt64 owner) {
   if (!owner) {
     err_global_get() = kErrorInvalidData;
     return FALSE;  // Invalid owner
@@ -61,7 +61,7 @@ inline BOOL rtl_sem_acquire(Semaphore& sem, UInt64 owner) {
 /// @param sem
 /// @param timeout
 /// @return
-inline BOOL rtl_sem_wait(Semaphore& sem, UInt64 owner, UInt64 timeout, BOOL* condition = nullptr) {
+inline BOOL rtl_sem_wait(SemaphoreArr& sem, UInt64 owner, UInt64 timeout, BOOL* condition = nullptr) {
   if (!rtl_sem_is_valid(sem, owner)) {
     return FALSE;
   }
