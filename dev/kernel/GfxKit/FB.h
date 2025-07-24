@@ -46,7 +46,7 @@ class FBDeviceInterface NE_DEVICE<FBDevicePacket*> {
   const Char* Name() const override;
 
  public:
-  FBDeviceInterface& operator<<(FBDevicePacket* Data) override;
-  FBDeviceInterface& operator>>(FBDevicePacket* Data) override;
+  FBDeviceInterface& operator<<(FBDevicePacket* dat) override;
+  FBDeviceInterface& operator>>(FBDevicePacket* dat) override;
 };
 }  // namespace Kernel

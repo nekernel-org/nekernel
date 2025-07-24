@@ -20,7 +20,6 @@
 #define kSemaphoreCount (2)
 
 #define kSemaphoreIncrementOwner(sem) (sem[kSemaphoreOwnerIndex]++)
-
 #define kSemaphoreDecrementOwner(sem) (sem[kSemaphoreOwnerIndex]--)
 
 namespace Kernel {
