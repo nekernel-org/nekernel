@@ -16,6 +16,7 @@ static size_t        kDiskSize = mkfs::detail::gib_cast(4UL);
 static uint16_t      kVersion  = kHeFSVersion;
 static std::u8string kLabel;
 static size_t        kSectorSize = 512;
+static uint16_t      kNumericalBase = 10;
 
 int main(int argc, char** argv) {
   if (argc < 2) {
@@ -37,7 +38,7 @@ int main(int argc, char** argv) {
 
   auto opt_s    = mkfs::get_option<char>(args, "-s");
   long parsed_s = 0;
-  if (!mkfs::detail::parse_signed(opt_s, parsed_s, 10) || parsed_s == 0) {
+  if (!mkfs::detail::parse_signed(opt_s, parsed_s, kNumericalBase) || parsed_s == 0) {
     mkfs::console_out() << "hefs: error: Invalid sector size \"" << opt_s
                         << "\". Must be a positive integer.\n";
     return EXIT_FAILURE;
@@ -86,28 +87,33 @@ int main(int argc, char** argv) {
   long start_block = 0, end_block = 0;
   long start_in = 0, end_in = 0;
 
-  if (!mkfs::detail::parse_signed(opt_b, start_ind, 16)) {
-    mkfs::console_out() << "hefs: error: Invalid -b <hex> argument.\n";
+  if (!mkfs::detail::parse_signed(opt_b, start_ind, kNumericalBase)) {
+    mkfs::console_out() << "hefs: error: Invalid -b <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!mkfs::detail::parse_signed(opt_e, end_ind, 16) || end_ind <= start_ind) {
-    mkfs::console_out() << "hefs: error: Invalid or out-of-range -e <hex> argument.\n";
+  
+  if (!mkfs::detail::parse_signed(opt_e, end_ind, kNumericalBase) || end_ind <= start_ind) {
+    mkfs::console_out() << "hefs: error: Invalid or out-of-range -e <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!mkfs::detail::parse_signed(opt_bs, start_block, 16)) {
-    mkfs::console_out() << "hefs: error: Invalid -bs <hex> argument.\n";
+  
+  if (!mkfs::detail::parse_signed(opt_bs, start_block, kNumericalBase)) {
+    mkfs::console_out() << "hefs: error: Invalid -bs <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!mkfs::detail::parse_signed(opt_be, end_block, 16) || end_block <= start_block) {
-    mkfs::console_out() << "hefs: error: Invalid or out-of-range -be <hex> argument.\n";
+  
+  if (!mkfs::detail::parse_signed(opt_be, end_block, kNumericalBase) || end_block <= start_block) {
+    mkfs::console_out() << "hefs: error: Invalid or out-of-range -be <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!mkfs::detail::parse_signed(opt_is, start_in, 16)) {
-    mkfs::console_out() << "hefs: error: Invalid -is <hex> argument.\n";
+  
+  if (!mkfs::detail::parse_signed(opt_is, start_in, kNumericalBase)) {
+    mkfs::console_out() << "hefs: error: Invalid -is <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  if (!mkfs::detail::parse_signed(opt_ie, end_in, 16) || end_in <= start_in) {
-    mkfs::console_out() << "hefs: error: Invalid or out-of-range -ie <hex> argument.\n";
+
+  if (!mkfs::detail::parse_signed(opt_ie, end_in, kNumericalBase) || end_in <= start_in) {
+    mkfs::console_out() << "hefs: error: Invalid or out-of-range -ie <dec> argument.\n";
     return EXIT_FAILURE;
   }
 
@@ -132,6 +138,7 @@ int main(int argc, char** argv) {
   boot_node.encoding   = mkfs::hefs::kHeFSEncodingFlagsUTF8;
   boot_node.diskSize   = kDiskSize;
   boot_node.sectorSize = kSectorSize;
+  boot_node.sectorCount = kDiskSize / kSectorSize;
   boot_node.startIND   = static_cast<size_t>(start_ind) + sizeof(mkfs::hefs::BootNode);
   boot_node.endIND     = static_cast<size_t>(end_ind);
   boot_node.startIN    = static_cast<size_t>(start_in);
@@ -143,6 +150,7 @@ int main(int argc, char** argv) {
 
   static_assert(sizeof(boot_node.magic) >= kHeFSMagicLen,
                 "BootNode::magic too small to hold kHeFSMagicLen");
+                
   std::memset(boot_node.magic, 0, sizeof(boot_node.magic));
   size_t magic_copy =
       (sizeof(boot_node.magic) < kHeFSMagicLen - 1) ? sizeof(boot_node.magic) : (kHeFSMagicLen - 1);
@@ -184,5 +192,6 @@ int main(int argc, char** argv) {
   output_device.close();
 
   mkfs::console_out() << "hefs: info: Wrote filesystem to output device: " << output_path << "\n";
+
   return EXIT_SUCCESS;
 }

@@ -34,10 +34,17 @@ namespace detail {
   }
 
   inline bool parse_signed(const std::string& opt, long& out, int base = 10) {
-    if (opt.empty()) return false;
+    out = 0L;
+    
+    if (opt.empty()) return true;
+
     char* endptr = nullptr;
     long  val    = std::strtol(opt.c_str(), &endptr, base);
-    if (endptr == opt.c_str() || *endptr != '\0' || val < 0) return false;
+    auto err = errno;
+    
+    if (err == ERANGE || err == EINVAL) return false;
+    if (endptr == opt.c_str() || *endptr != '\0') return false;
+
     out = val;
     return true;
   }

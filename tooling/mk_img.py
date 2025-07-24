@@ -4,7 +4,7 @@
 import os
 import sys
 import subprocess
-import glob
+import glob as file_glob
 
 def copy_to_fat(image_path, source_dir):
     if not os.path.isfile(image_path):
@@ -16,11 +16,11 @@ def copy_to_fat(image_path, source_dir):
         sys.exit(1)
 
     try:
-        files_to_copy = glob.glob(os.path.join(source_dir, "*"))
-        
+        files_to_copy = file_glob.glob(os.path.join(source_dir, "*"))
+
         if not files_to_copy:
-            print(f"Warning: No files found in {source_dir}. Nothing to copy.")
-            return
+            print(f"Warning: No files found in {source_dir}, nothing to copy.")
+            sys.exit(1)
         
         command = ["mcopy", "-spm", "-i", image_path] + files_to_copy + ["::"]
         subprocess.run(command, check=True)
