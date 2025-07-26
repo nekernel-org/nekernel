@@ -1,3 +1,9 @@
+/* -------------------------------------------
+
+  Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
+
+------------------------------------------- */
+
 #include <public/frameworks/KernelTest.fwrk/headers/KernelTest.h>
 
 EXTERN_C Kernel::Void KT_TestBreak()
