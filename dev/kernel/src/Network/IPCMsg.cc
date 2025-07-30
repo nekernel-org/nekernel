@@ -87,6 +87,8 @@ Bool ipc_construct_packet(_Output IPC_MSG** pckt_in) {
     (*pckt_in)->IpcFrom.UserProcessID   = 0;
     (*pckt_in)->IpcFrom.UserProcessTeam = 0;
 
+    (*pckt_in)->IpcLock = kIPCLockFree;
+
     return Yes;
   }
 
@@ -103,7 +105,19 @@ Bool IPC_MSG::Pass(IPC_MSG* src, IPC_MSG* target) noexcept {
     if (src->IpcMsgSz > target->IpcMsgSz) return No;
     if (target->IpcMsgSz > src->IpcMsgSz) return No;
 
+    UInt32 timeout = 0U;
+
+    while ((target->IpcLock % kIPCLockUsed) != 0) {
+      if (timeout > 100000U) {
+        return No;
+      }
+    }
+
+    ++target->IpcLock;
+
     rt_copy_memory_safe(src->IpcData, target->IpcData, src->IpcMsgSz, kIPCMsgSize);
+
+    --target->IpcLock;
 
     return Yes;
   }
