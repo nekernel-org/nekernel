@@ -8,14 +8,14 @@
 
 #include <NeKit/Defines.h>
 
-namespace Firmware::Detail::CoreBoot {
+namespace Firmware::Detail::NeBoot {
 using namespace Kernel;
 
-struct COREBOOT_LINEAR_EXEC;
+struct NEBOOT_LINEAR_EXEC;
 
 /// @brief Linear Executable Header
 /// @author Amlal El Mahrouss
-struct ATTRIBUTE(aligned(4)) COREBOOT_LINEAR_EXEC {
+struct ATTRIBUTE(aligned(4)) NEBOOT_LINEAR_EXEC {
   const Char   fMagic[2];      // magic number
   const Char   fName[10];      // operating system name
   const UInt32 fRevision;      // firmware revision
@@ -31,4 +31,4 @@ struct ATTRIBUTE(aligned(4)) COREBOOT_LINEAR_EXEC {
   UIntPtr fMBCIStructureVersion;  // MBCI structure version.
 #endif
 };
-}  // namespace Firmware::Detail::CoreBoot
+}  // namespace Firmware::Detail::NeBoot

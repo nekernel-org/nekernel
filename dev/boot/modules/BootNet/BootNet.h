@@ -9,4 +9,4 @@
 
 #pragma once
 
-#include <FirmwareKit/CoreBoot/BootNet.h>
+#include <FirmwareKit/NeBoot/BootNet.h>

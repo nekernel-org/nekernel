@@ -6,5 +6,5 @@
 
 #pragma once
 
-#include <FirmwareKit/CoreBoot/BootNet.h>
-#include <FirmwareKit/CoreBoot/CoreBoot.h>
+#include <FirmwareKit/NeBoot/BootNet.h>
+#include <FirmwareKit/NeBoot/NeBoot.h>

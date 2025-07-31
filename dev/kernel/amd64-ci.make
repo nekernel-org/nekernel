@@ -42,7 +42,7 @@ error:
 	@echo "=== ERROR ==="
 	@echo "=> Use a specific target."
 
-MOVEALL=./MoveAll.X64.sh
+MOVEALL=./move-all-x64.sh
 WINDRES=x86_64-w64-mingw32-windres
 
 .PHONY: nekernel-amd64-epm
