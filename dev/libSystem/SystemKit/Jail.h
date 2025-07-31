@@ -9,6 +9,7 @@
 #include <libSystem/SystemKit/System.h>
 
 /// @file Jail.h
+/// @author Amlal El Mahrouss
 /// @brief NeKernel Jail System, part of OpenEnclave.
 
 struct JAIL_INFO;
