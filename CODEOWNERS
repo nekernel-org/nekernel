@@ -2,6 +2,6 @@
 /dev/kernel/ @amlel-el-mahrouss
 /dev/boot/ @amlel-el-mahrouss
 /dev/ddk/ @amlel-el-mahrouss
-/dev/libMsg/ @amlel-el-mahrouss
-/dev/libSystem/ @amlel-el-mahrouss
+/dev/libMsg/ @0xf00sec
+/dev/libSystem/ @0xf00sec
 # some other parts (tooling, frameworks) need ownership too.
