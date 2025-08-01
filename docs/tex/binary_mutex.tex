@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\title{The BinaryMutex Pattern}
+\author{Amlal El Mahrouss}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Context}
+
+The BinaryMutex is a core component of NeKernel (NeKernel/VMKernel) based systems.
+
+The pattern excludes other acquirers to own the USER\_PROCESS that is currently being hold.
+
+Thus the acquiree is the USER\_PROCESS itself
+
+\section{Use Cases}
+
+\begin{verbatim}
+BinaryMutex mux;
+mux.Lock(process);
+
+// Say we want to interact with the process itself on this thread, 
+we can then make sure that no race condition happens by using:
+constexpr auto kSecondsMax = 5;
+mux.WaitForProcess(kSecondsMax); 
+\end{verbatim}
+
+\section{Implementation}
+
+The source implementation consists of:
+
+\begin{verbatim}
+class BinaryMutex final {
+ public:
+  explicit BinaryMutex() = default;
+  ~BinaryMutex()         = default;
+
+ public:
+  bool IsLocked() const;
+  bool Unlock() noexcept;
+
+ public:
+  BOOL WaitForProcess(const UInt32& sec) noexcept;
+
+ public:
+  bool Lock(USER_PROCESS* process);
+  bool LockOrWait(USER_PROCESS* process, TimerInterface* timer);
+
+ public:
+  NE_COPY_DEFAULT(BinaryMutex)
+
+ private:
+  USER_PROCESS* fLockingProcess;
+};
+\end{verbatim}
+
+\section{Conclusion}
+
+This pattern is useful for systems that need to make sure that a process isn't tampered by concurrent usages. Thus its existence in VMKernel and NeKernel.
+
+\end{document}
