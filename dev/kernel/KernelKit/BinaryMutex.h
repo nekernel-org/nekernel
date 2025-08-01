@@ -34,6 +34,6 @@ class BinaryMutex final {
   NE_COPY_DEFAULT(BinaryMutex)
 
  private:
-  USER_PROCESS* fLockingProcess;
+  USER_PROCESS* fLockingProcess{nullptr};
 };
 }  // namespace Kernel
