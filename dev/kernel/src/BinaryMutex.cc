@@ -13,9 +13,8 @@ namespace Kernel {
 /***********************************************************************************/
 
 Bool BinaryMutex::Unlock() noexcept {
-  if (fLockingProcess.Status == ProcessStatusKind::kRunning) {
-    fLockingProcess        = USER_PROCESS();
-    fLockingProcess.Status = ProcessStatusKind::kFrozen;
+  if (fLockingProcess->Status == ProcessStatusKind::kRunning) {
+    fLockingProcess        = nullptr;
 
     return Yes;
   }
@@ -27,7 +26,7 @@ Bool BinaryMutex::Unlock() noexcept {
 /// @brief Locks process in the binary mutex.
 /***********************************************************************************/
 
-Bool BinaryMutex::Lock(USER_PROCESS& process) {
+Bool BinaryMutex::Lock(USER_PROCESS* process) {
   if (!process || this->IsLocked()) return No;
 
   this->fLockingProcess = process;
@@ -40,14 +39,14 @@ Bool BinaryMutex::Lock(USER_PROCESS& process) {
 /***********************************************************************************/
 
 Bool BinaryMutex::IsLocked() const {
-  return this->fLockingProcess.Status == ProcessStatusKind::kRunning;
+  return this->fLockingProcess->Status == ProcessStatusKind::kRunning;
 }
 
 /***********************************************************************************/
 /// @brief Try lock or wait.
 /***********************************************************************************/
 
-Bool BinaryMutex::LockOrWait(USER_PROCESS& process, TimerInterface* timer) {
+Bool BinaryMutex::LockOrWait(USER_PROCESS* process, TimerInterface* timer) {
   if (timer == nullptr) return No;
 
   this->Lock(process);
@@ -62,7 +61,7 @@ Bool BinaryMutex::LockOrWait(USER_PROCESS& process, TimerInterface* timer) {
 /// @param sec seconds.
 /***********************************************************************************/
 
-BOOL BinaryMutex::WaitForProcess(const Int16& sec) noexcept {
+BOOL BinaryMutex::WaitForProcess(const UInt32& sec) noexcept {
   HardwareTimer hw_timer(rtl_milliseconds(sec));
   hw_timer.Wait();
 
