@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{hyperref}
+
+\title{The CoreProcessScheduler (CPS) architecture}
+\author{Amlal El Mahrouss}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+{The CoreProcessScheduler is a concept of NeKernel based systems governs how the scheduling backend, and policy of the kernel works, it is the common gateway for schedulers inside NeKernel.}
+
+\section{Overview}
+
+{The CoreProcessScheduler (now referred as CPS) serves as the intermediate foundal between the scheduler backend and kernel.} {It takes care of process life-cycle management, team-based process grouping, and affinity-based CPU based allocation to mention the least.}
+
+\section{The Affinity System}
+
+{Processes are given CPU time affinity hints using an affinity kind type, these hints help the scheduler run or adjust the current process.}
+
+\subsection{Sample Code}
+
+{The following sample is C++ code.} {The smaller the value, the more critical the process.}
+
+\begin{verbatim}
+enum class AffinityKind : Int32 {
+  kRealTime     = 100,
+  kVeryHigh     = 150,
+  kHigh         = 200,
+  kStandard     = 1000,
+  kLowUsage     = 1500,
+  kVeryLowUsage = 2000,
+};
+\end{verbatim}
+
+\section{The Team System}
+
+{The team container has process metadata for the backend to run on. It holds methods and fields for backend specific operations.} {One implementation of such team is the UserProcessTeam object inside NeKernel.}
+
+\subsection{Sample Code}
+
+{The following sample is C++ code.} {This is the UserProcessTeam from NeKernel}
+
+\begin{verbatim}
+class UserProcessTeam final {
+ public:
+  explicit UserProcessTeam();
+  ~UserProcessTeam() = default;
+
+  NE_COPY_DEFAULT(UserProcessTeam)
+
+  Array<USER_PROCESS, kSchedProcessLimitPerTeam>& AsArray();
+  Ref<USER_PROCESS>&                              AsRef();
+  ProcessID&                                      Id() noexcept;
+
+ public:
+  USER_PROCESS_ARRAY mProcessList;
+  USER_PROCESS_REF   mCurrentProcess;
+  ProcessID          mTeamId{0};
+  ProcessID          mProcessCur{0};
+};
+
+\end{verbatim}
+
+\section{Conclusion}
+
+{Meanwhile the scheduler backend (such as the UserProcessScheduler) takes care of user process scheduling and fairness, the CPS architecture itself is the foundation for those systems (such as KernelTaskScheduler, or HardwareThreadScheduler)}
+
+\section{Links}
+
+{NeKernel.org}: \href{https://nekernel.org}{NeKernel.org}
+\newline
+{NeKernel}: \href{https://github.com/nekernel-org/nekernel}{NeKernel}
+\newline
+{SNU Systems}: \href{https://snu.systems}{SNU.Systems}
+
+\end{document}
