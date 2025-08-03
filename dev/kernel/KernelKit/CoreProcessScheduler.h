@@ -90,6 +90,7 @@ struct PROCESS_FILE_TREE {
   struct PROCESS_FILE_TREE<T>* Parent {
     nullptr
   };
+
   struct PROCESS_FILE_TREE<T>* Child {
     nullptr
   };
@@ -97,6 +98,7 @@ struct PROCESS_FILE_TREE {
   struct PROCESS_FILE_TREE<T>* Prev {
     nullptr
   };
+  
   struct PROCESS_FILE_TREE<T>* Next {
     nullptr
   };
@@ -114,8 +116,6 @@ enum class ProcessSubsystem : Int32 {
   kProcessSubsystemInvalid = 0xFFFFFFF,
   kProcessSubsystemCount   = 4,
 };
-
-typedef UInt64 PTime;
 
 /***********************************************************************************/
 //! @brief Local Process identifier.
@@ -179,7 +179,8 @@ inline bool operator>=(AffinityKind lhs, AffinityKind rhs) {
   return lhs_int >= rhs_int;
 }
 
-using ProcessTime = UInt64;
+using PTime       = UInt64;
+using ProcessTime = PTime;
 using PID         = Int64;
 
 /***********************************************************************************/
@@ -209,8 +210,8 @@ struct PROCESS_IMAGE final {
 
   friend class UserProcessScheduler;
 
-  ImagePtr fCode;
-  ImagePtr fBlob;
+  ImagePtr fCode{};
+  ImagePtr fBlob{};
 
  public:
   Bool HasCode() const { return this->fCode != nullptr; }
