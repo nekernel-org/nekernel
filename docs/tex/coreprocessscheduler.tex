@@ -1,0 +1,139 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{hyperref}
+
+\title{CoreProcessScheduler}
+\author{Amlal El Mahrouss}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Abstract}
+
+{The CoreProcessScheduler governs how the scheduling backend and policy of the kernel works, It is the common gateway for schedulers inside NeKernel based systems.}
+
+\section{Overview}
+
+{The CoreProcessScheduler (now referred as CPS) serves as the intermediate foundal between the scheduler backend and kernel.} {It takes care of process life-cycle management, team-based process grouping, and affinity-based CPU based allocation to mention the least.}
+
+\section{The Affinity System}
+
+{Processes are given CPU time affinity hints using an affinity kind type, these hints help the scheduler run or adjust the current process.}
+
+\subsection{Sample Code \#1}
+
+{The following sample is C++ code.} {The smaller the value, the more critical the process.}
+
+\begin{verbatim}
+enum class AffinityKind : Int32 {
+  kRealTime     = 100,
+  kVeryHigh     = 150,
+  kHigh         = 200,
+  kStandard     = 1000,
+  kLowUsage     = 1500,
+  kVeryLowUsage = 2000,
+};
+\end{verbatim}
+
+\section{The Team System}
+
+{The team system holds process metadata for the backend scheduler to run on. It holds methods and fields for backend specific operations.} {One implementation of such team is the UserProcessTeam object inside NeKernel.}
+
+\subsection{Sample Code \#2}
+
+{The following sample is used to hold team metadata.} {This is part of the NeKernel source tree.}
+
+\begin{verbatim}
+class UserProcessTeam final {
+ public:
+  explicit UserProcessTeam();
+  ~UserProcessTeam() = default;
+
+  NE_COPY_DEFAULT(UserProcessTeam)
+
+  Array<USER_PROCESS, kSchedProcessLimitPerTeam>& AsArray();
+  Ref<USER_PROCESS>&                              AsRef();
+  ProcessID&                                      Id() noexcept;
+
+ public:
+  USER_PROCESS_ARRAY mProcessList;
+  USER_PROCESS_REF   mCurrentProcess;
+  ProcessID          mTeamId{0};
+  ProcessID          mProcessCur{0};
+};
+
+\end{verbatim}
+
+\section{The Process Image System}
+
+{The process image container is a design pattern made to contain process data and metadata, its purpose comes from the lack of mainstream operating systems of such ability to hold metadata.}
+
+\newline{}
+
+{This approach helps separate concerns and give modularity to the system, as the image and process structure are not mixed together.}
+
+\subsection{Sample Code \#3}
+
+{The following sample is a C++ container used to hold process data and metadata.} {This is part of the NeKernel source tree.}
+
+\begin{verbatim}
+struct PROCESS_IMAGE final {
+  explicit PROCESS_IMAGE() = default;
+
+ private:
+  friend USER_PROCESS;
+  friend KERNEL_TASK;
+
+  friend class UserProcessScheduler;
+
+  ImagePtr fCode;
+  ImagePtr fBlob;
+
+ public:
+  Bool HasCode() const { return this->fCode != nullptr; }
+
+  Bool HasImage() const { return this->fBlob != nullptr; }
+
+  ErrorOr<ImagePtr> LeakImage() {
+    if (this->fCode) {
+      return ErrorOr<ImagePtr>{this->fCode};
+    }
+
+    return ErrorOr<ImagePtr>{kErrorInvalidData};
+  }
+
+  ErrorOr<ImagePtr> LeakBlob() {
+    if (this->fBlob) {
+      return ErrorOr<ImagePtr>{this->fBlob};
+    }
+
+    return ErrorOr<ImagePtr>{kErrorInvalidData};
+  }
+};
+
+\end{verbatim}
+
+\section{Conclusion}
+
+{The CoreProcessScheduler is a piece of systems design with robust design and useful cases, although useful in desktop/server cases, It may not be suited for every other tasks.}
+
+{And while one scheduler backend (such as the UserProcessScheduler) takes care of user process scheduling and fairness, the CoreProcessScheduler takes care of the foundation for those systems.}
+
+\section{References}
+
+{Here are the reference material on this paper:}
+
+{NeKernel}: \href{https://github.com/nekernel-org/nekernel}{NeKernel}
+
+{CoreProcessScheduler}: \href{https://github.com/nekernel-org/nekernel/blob/dev/dev/kernel/KernelKit/CoreProcessScheduler.h}{CoreProcessScheduler}
+
+\section{Hyperlinks}
+
+{NeKernel.org}: \href{https://nekernel.org}{NeKernel.org}
+\newline
+\newline
+{SNU Systems}: \href{https://snu.systems}{SNU.Systems}
+
+\end{document}

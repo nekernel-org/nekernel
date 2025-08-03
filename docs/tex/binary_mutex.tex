@@ -1,7 +1,7 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
 
-\title{The BinaryMutex Pattern}
+\title{BinaryMutex}
 \author{Amlal El Mahrouss}
 \date{\today}
 
@@ -9,15 +9,11 @@
 
 \maketitle
 
-\section{Context}
+\section{Abstract}
 
-The BinaryMutex is a core component of NeKernel (NeKernel/VMKernel) based systems.
+{The BinaryMutex is a core component of NeKernel (NeKernel/VMKernel) based systems. The pattern excludes other acquirers to own the USER\_PROCESS that is currently being hold. Thus the acquiree is the USER\_PROCESS itself}
 
-The pattern excludes other acquirers to own the USER\_PROCESS that is currently being hold.
-
-Thus the acquiree is the USER\_PROCESS itself
-
-\section{Use Cases}
+\section{Use Case \#1: Process lock for atomic data retrival}
 
 \begin{verbatim}
 BinaryMutex mux;
@@ -26,7 +22,9 @@ mux.Lock(process);
 // Say we want to interact with the process itself on this thread, 
 we can then make sure that no race condition happens by using:
 constexpr auto kSecondsMax = 5;
-mux.WaitForProcess(kSecondsMax); 
+mux.WaitForProcess(kSecondsMax);
+
+process.DoFoo();
 \end{verbatim}
 
 \section{Implementation}
