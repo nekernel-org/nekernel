@@ -153,28 +153,28 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
   error_or_symbol.Leak().Leak() += name;
 
   for (SizeT index = 0; index < container->Count; ++index) {
-    if (KStringBuilder::Equals(container_header->Name, error_or_symbol.Leak().Leak().CData())) {
-      if (container_header->Kind == kind) {
-        if (container_header->Cpu != Detail::ldr_get_platform()) {
+    if (KStringBuilder::Equals(container_header[index].Name, error_or_symbol.Leak().Leak().CData())) {
+      if (container_header[index].Kind == kind) {
+        if (container_header[index].Cpu != Detail::ldr_get_platform()) {
           if (!this->fFatBinary) {
             mm_free_ptr(blob);
             return ErrorOr<VoidPtr>{kErrorInvalidData};
           }
         }
 
-        Char* container_blob_value = new Char[container_header->VMSize];
+        Char* container_blob_value = new Char[container_header[index].VMSize];
 
         rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)),
-                            container_blob_value, container_header->VMSize,
-                            container_header->VMSize);
+                            container_blob_value, container_header[index].VMSize,
+                            container_header[index].VMSize);
 
         mm_free_ptr(blob);
 
-        kout << "PEFLoader: info: Loaded stub: " << container_header->Name << "!\r";
+        kout << "PEFLoader: info: Loaded stub: " << container_header[index].Name << "!\r";
 
         auto ret = false;
-        for (SizeT i_vm{}; i_vm < container_header->VMSize; ++i_vm) {
-          ret = HAL::mm_map_page((VoidPtr) (container_header->VMAddress + i_vm),
+        for (SizeT i_vm{}; i_vm < container_header[index].VMSize; ++i_vm) {
+          ret = HAL::mm_map_page((VoidPtr) (container_header[index].VMAddress + i_vm),
                                  (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
                                  HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
 
