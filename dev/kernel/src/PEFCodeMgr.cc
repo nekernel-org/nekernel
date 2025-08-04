@@ -171,10 +171,11 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
         kout << "PEFLoader: info: Loaded stub: " << container_header->Name << "!\r";
 
+        auto ret = false;
         for (SizeT i_vm{}; i_vm < container_header->VMSize; ++i_vm) {
-          auto ret = HAL::mm_map_page((VoidPtr) (container_header->VMAddress + i_vm),
-                                      (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
-                                      HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+          ret = HAL::mm_map_page((VoidPtr) (container_header->VMAddress + i_vm),
+                                 (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
+                                 HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
 
           if (ret != kErrorSuccess) {
             delete[] container_blob_value;
