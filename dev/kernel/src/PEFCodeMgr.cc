@@ -67,7 +67,7 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
 
   constexpr auto kPefHeader = "PEF_CONTAINER";
 
-  /// @note zero here means that the FileMgr will read every container header inside the file. 
+  /// @note zero here means that the FileMgr will read every container header inside the file.
   fCachedBlob = fFile->Read(kPefHeader, 0UL);
 
   PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
@@ -166,17 +166,20 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
         rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)),
                             container_blob_value, container_header->VMSize,
                             container_header->VMSize);
+
         mm_free_ptr(blob);
 
-        kout << "PEFLoader: Information: Loaded stub: " << container_header->Name << "!\r";
+        kout << "PEFLoader: info: Loaded stub: " << container_header->Name << "!\r";
 
-        auto ret = HAL::mm_map_page((VoidPtr) container_header->VMAddress,
-                                    (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
-                                    HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+        for (SizeT i_vm{}; i_vm < container_header->VMSize; ++i_vm) {
+          auto ret = HAL::mm_map_page((VoidPtr) (container_header->VMAddress + i_vm),
+                                      (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
+                                      HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
 
-        if (ret != kErrorSuccess) {
-          mm_free_ptr(container_blob_value);
-          return ErrorOr<VoidPtr>{kErrorInvalidData};
+          if (ret != kErrorSuccess) {
+            delete[] container_blob_value;
+            return ErrorOr<VoidPtr>{kErrorInvalidData};
+          }
         }
 
         return ErrorOr<VoidPtr>{container_blob_value};
