@@ -77,10 +77,11 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
       container->Magic[3] == kPefMagic[3] && container->Magic[4] == kPefMagic[4] &&
       container->Abi == kPefAbi) {
     return;
-  } else if (container->Magic[4] == kPefMagic[0] && container->Magic[3] == kPefMagic[1] &&
-             container->Magic[2] == kPefMagic[2] && container->Magic[1] == kPefMagic[3] &&
-             container->Magic[0] == kPefMagic[4] && container->Abi == kPefAbi) {
-    /// This is a fat binary.
+  } else if (container->Cpu == Detail::ldr_get_platform() && container->Magic[0] == kPefMagicFat[0] &&
+      container->Magic[1] == kPefMagicFat[1] && container->Magic[2] == kPefMagicFat[2] &&
+      container->Magic[3] == kPefMagicFat[3] && container->Magic[4] == kPefMagicFat[4] &&
+      container->Abi == kPefAbi) {
+    /// This is a fat binary, treat it as such.
     this->fFatBinary = true;
     return;
   }
@@ -89,7 +90,7 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
 
   if (fCachedBlob) mm_free_ptr(fCachedBlob);
 
-  kout << "PEFLoader: Warning: Executable format error!\r";
+  kout << "PEFLoader: warning: Executable format error!\r";
 
   fCachedBlob = nullptr;
 }
