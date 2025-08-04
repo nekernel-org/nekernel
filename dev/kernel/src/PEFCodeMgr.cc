@@ -148,6 +148,7 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
   }
 
   error_or_symbol.Leak().Leak() += name;
+
   if (KStringBuilder::Equals(container_header->Name, error_or_symbol.Leak().Leak().CData())) {
     if (container_header->Kind == kind) {
       if (container_header->Cpu != Detail::ldr_get_platform()) {
@@ -166,9 +167,8 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
       kout << "PEFLoader: info: Loaded stub: " << container_header->Name << "!\r";
 
-      auto ret = 0;
-
-      auto pages_count = (container_header->VMSize + kPageSize - 1) / kPageSize;
+      Int32 ret = 0;
+      SizeT pages_count = (container_header->VMSize + kPageSize - 1) / kPageSize;
 
       for (SizeT i_vm{}; i_vm < pages_count; ++i_vm) {
         ret = HAL::mm_map_page((VoidPtr) (container_header->VMAddress + (i_vm * kPageSize)),
@@ -243,7 +243,7 @@ namespace Utils {
       symname = ErrorOr<VoidPtr>{(VoidPtr) rt_alloc_string("USER_PROCESS")};
     }
 
-    auto id =
+    ProcessID id =
         UserProcessScheduler::The().Spawn(reinterpret_cast<const Char*>(symname.Leak().Leak()),
                                           errOrStart.Leak().Leak(), exec.GetBlob().Leak().Leak());
 

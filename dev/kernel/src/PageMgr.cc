@@ -47,7 +47,7 @@ Bool PTEWrapper::Reclaim() {
 }
 
 /// @brief Request a PTE.
-/// @param Rw r/w?
+/// @param Rw Is it read write? or is it read only?
 /// @param User user mode?
 /// @param ExecDisable disable execution on page?
 /// @return
