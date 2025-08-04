@@ -16,7 +16,6 @@
 #include <NeKit/KernelPanic.h>
 #include <NeKit/OwnPtr.h>
 #include <NeKit/Utils.h>
-#include "HALKit/AMD64/Paging.h"
 
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /// @brief PEF backend for the Code Manager.
@@ -136,8 +135,8 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
     }
     default:
       return ErrorOr<VoidPtr>{kErrorInvalidData};
-      ;  // prevent that from the kernel's mode perspective, let that happen if it
-         // were a user process.
+      // prevent that from the kernel's mode perspective, let that happen if it
+      // were a user process.
   }
 
   Char* unconst_symbol = const_cast<Char*>(name);
