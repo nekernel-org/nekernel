@@ -123,6 +123,10 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
   if (!container_header || container_header->VMSize < 1 || container_header->VMAddress == 0)
     return ErrorOr<VoidPtr>{kErrorInvalidData};
 
+  if (container_header->Cpu != container->Cpu) {
+    return ErrorOr<VoidPtr>{kErrorInvalidData};
+  }
+
   const auto  kMangleCharacter  = '$';
   const Char* kContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
 
