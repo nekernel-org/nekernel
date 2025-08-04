@@ -16,6 +16,7 @@
 #include <NeKit/KernelPanic.h>
 #include <NeKit/OwnPtr.h>
 #include <NeKit/Utils.h>
+#include "HALKit/AMD64/Paging.h"
 
 /// @author Amlal El Mahrouss (amlal@nekernel.org)
 /// @brief PEF backend for the Code Manager.
@@ -173,7 +174,10 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
         kout << "PEFLoader: info: Loaded stub: " << container_header[index].Name << "!\r";
 
         auto ret = false;
-        for (SizeT i_vm{}; i_vm < container_header[index].VMSize; ++i_vm) {
+
+        auto pages_count = (container_header[index].VMSize + kPageSize - 1) / kPageSize;
+
+        for (SizeT i_vm{}; i_vm < pages_count; ++i_vm) {
           ret = HAL::mm_map_page((VoidPtr) (container_header[index].VMAddress + i_vm),
                                  (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
                                  HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
