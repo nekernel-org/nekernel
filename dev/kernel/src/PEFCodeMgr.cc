@@ -78,10 +78,9 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
       container->Magic[3] == kPefMagic[3] && container->Magic[4] == kPefMagic[4] &&
       container->Abi == kPefAbi) {
     return;
-  } else if (container->Magic[0] == kPefMagicFat[0] &&
-      container->Magic[1] == kPefMagicFat[1] && container->Magic[2] == kPefMagicFat[2] &&
-      container->Magic[3] == kPefMagicFat[3] && container->Magic[4] == kPefMagicFat[4] &&
-      container->Abi == kPefAbi) {
+  } else if (container->Magic[0] == kPefMagicFat[0] && container->Magic[1] == kPefMagicFat[1] &&
+             container->Magic[2] == kPefMagicFat[2] && container->Magic[3] == kPefMagicFat[3] &&
+             container->Magic[4] == kPefMagicFat[4] && container->Abi == kPefAbi) {
     /// This is a fat binary, treat it as such.
     this->fFatBinary = true;
     return;
@@ -111,9 +110,7 @@ PEFLoader::~PEFLoader() {
 /// @param kind kind of symbol we want.
 /***********************************************************************************/
 ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
-  if (!fCachedBlob || fBad || !name) return ErrorOr<VoidPtr>{kErrorInvalidData};
-
-  PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
+  if (fBad || !name) return ErrorOr<VoidPtr>{kErrorInvalidData};
 
   auto blob = fFile->Read(name, sizeof(PEFCommandHeader));
 
@@ -152,44 +149,40 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
   }
 
   error_or_symbol.Leak().Leak() += name;
-
-  for (SizeT index = 0; index < container->Count; ++index) {
-    if (KStringBuilder::Equals(container_header[index].Name, error_or_symbol.Leak().Leak().CData())) {
-      if (container_header[index].Kind == kind) {
-        if (container_header[index].Cpu != Detail::ldr_get_platform()) {
-          if (!this->fFatBinary) {
-            mm_free_ptr(blob);
-            return ErrorOr<VoidPtr>{kErrorInvalidData};
-          }
+  if (KStringBuilder::Equals(container_header->Name, error_or_symbol.Leak().Leak().CData())) {
+    if (container_header->Kind == kind) {
+      if (container_header->Cpu != Detail::ldr_get_platform()) {
+        if (!this->fFatBinary) {
+          mm_free_ptr(blob);
+          return ErrorOr<VoidPtr>{kErrorInvalidData};
         }
-
-        Char* container_blob_value = new Char[container_header[index].VMSize];
-
-        rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)),
-                            container_blob_value, container_header[index].VMSize,
-                            container_header[index].VMSize);
-
-        mm_free_ptr(blob);
-
-        kout << "PEFLoader: info: Loaded stub: " << container_header[index].Name << "!\r";
-
-        auto ret = 0;
-
-        auto pages_count = (container_header[index].VMSize + kPageSize - 1) / kPageSize;
-
-        for (SizeT i_vm{}; i_vm < pages_count; ++i_vm) {
-          ret = HAL::mm_map_page((VoidPtr) (container_header[index].VMAddress + (i_vm * kPageSize)),
-                                 (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
-                                 HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
-
-          if (ret != kErrorSuccess) {
-            delete[] container_blob_value;
-            return ErrorOr<VoidPtr>{kErrorInvalidData};
-          }
-        }
-
-        return ErrorOr<VoidPtr>{container_blob_value};
       }
+
+      Char* container_blob_value = new Char[container_header->VMSize];
+
+      rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
+                          container_header->VMSize, container_header->VMSize);
+
+      mm_free_ptr(blob);
+
+      kout << "PEFLoader: info: Loaded stub: " << container_header->Name << "!\r";
+
+      auto ret = 0;
+
+      auto pages_count = (container_header->VMSize + kPageSize - 1) / kPageSize;
+
+      for (SizeT i_vm{}; i_vm < pages_count; ++i_vm) {
+        ret = HAL::mm_map_page((VoidPtr) (container_header->VMAddress + (i_vm * kPageSize)),
+                               (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
+                               HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+
+        if (ret != kErrorSuccess) {
+          delete[] container_blob_value;
+          return ErrorOr<VoidPtr>{kErrorInvalidData};
+        }
+      }
+
+      return ErrorOr<VoidPtr>{container_blob_value};
     }
   }
 

@@ -63,8 +63,8 @@ class PEFLoader : public LoaderInterface {
 
   Ref<KString> fPath;
   VoidPtr      fCachedBlob;
-  bool         fFatBinary;
-  bool         fBad;
+  BOOL         fFatBinary{};
+  BOOL         fBad{};
 };
 
 namespace Utils {
