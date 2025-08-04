@@ -109,14 +109,22 @@ PEFLoader::~PEFLoader() {
 /// @param kind kind of symbol we want.
 /***********************************************************************************/
 ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
-  if (fBad || !name) return ErrorOr<VoidPtr>{kErrorInvalidData};
+  if (!fCachedBlob || fBad || !name) return ErrorOr<VoidPtr>{kErrorInvalidData};
 
   auto blob = fFile->Read(name, sizeof(PEFCommandHeader));
 
+  PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
+
+  if (!container) return ErrorOr<VoidPtr>{kErrorInvalidData};
+  if (container->Cpu != Detail::ldr_get_platform()) return ErrorOr<VoidPtr>{kErrorInvalidData};
+
   PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(blob);
 
-  constexpr auto kMangleCharacter  = '$';
-  const Char*    kContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
+  if (!container_header || container_header->VMSize < 1 || container_header->VMAddress == 0)
+    return ErrorOr<VoidPtr>{kErrorInvalidData};
+
+  const auto  kMangleCharacter  = '$';
+  const Char* kContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
 
   ErrorOr<KString> error_or_symbol;
 
@@ -154,6 +162,8 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
       if (container_header->Cpu != Detail::ldr_get_platform()) {
         if (!this->fFatBinary) {
           mm_free_ptr(blob);
+          blob = nullptr;
+
           return ErrorOr<VoidPtr>{kErrorInvalidData};
         }
       }
@@ -167,13 +177,14 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
       kout << "PEFLoader: info: Loaded stub: " << container_header->Name << "!\r";
 
-      Int32 ret = 0;
+      Int32 ret         = 0;
       SizeT pages_count = (container_header->VMSize + kPageSize - 1) / kPageSize;
 
       for (SizeT i_vm{}; i_vm < pages_count; ++i_vm) {
-        ret = HAL::mm_map_page((VoidPtr) (container_header->VMAddress + (i_vm * kPageSize)),
-                               (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
-                               HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+        ret = HAL::mm_map_page(
+            (VoidPtr) (container_header->VMAddress + (i_vm * kPageSize)),
+            (VoidPtr) (HAL::mm_get_page_addr(container_blob_value) + (i_vm * kPageSize)),
+            HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
 
         if (ret != kErrorSuccess) {
           delete[] container_blob_value;
