@@ -78,7 +78,7 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
       container->Magic[3] == kPefMagic[3] && container->Magic[4] == kPefMagic[4] &&
       container->Abi == kPefAbi) {
     return;
-  } else if (container->Cpu == Detail::ldr_get_platform() && container->Magic[0] == kPefMagicFat[0] &&
+  } else if (container->Magic[0] == kPefMagicFat[0] &&
       container->Magic[1] == kPefMagicFat[1] && container->Magic[2] == kPefMagicFat[2] &&
       container->Magic[3] == kPefMagicFat[3] && container->Magic[4] == kPefMagicFat[4] &&
       container->Abi == kPefAbi) {
@@ -173,12 +173,12 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
         kout << "PEFLoader: info: Loaded stub: " << container_header[index].Name << "!\r";
 
-        auto ret = false;
+        auto ret = 0;
 
         auto pages_count = (container_header[index].VMSize + kPageSize - 1) / kPageSize;
 
         for (SizeT i_vm{}; i_vm < pages_count; ++i_vm) {
-          ret = HAL::mm_map_page((VoidPtr) (container_header[index].VMAddress + i_vm),
+          ret = HAL::mm_map_page((VoidPtr) (container_header[index].VMAddress + (i_vm * kPageSize)),
                                  (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
                                  HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
 
