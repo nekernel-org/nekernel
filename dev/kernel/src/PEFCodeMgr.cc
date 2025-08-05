@@ -72,24 +72,25 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
 
   PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-  if (container->Cpu == Detail::ldr_get_platform() && container->Magic[0] == kPefMagic[0] &&
-      container->Magic[1] == kPefMagic[1] && container->Magic[2] == kPefMagic[2] &&
-      container->Magic[3] == kPefMagic[3] && container->Magic[4] == kPefMagic[4] &&
-      container->Abi == kPefAbi) {
-    return;
-  } else if (container->Magic[0] == kPefMagicFat[0] && container->Magic[1] == kPefMagicFat[1] &&
-             container->Magic[2] == kPefMagicFat[2] && container->Magic[3] == kPefMagicFat[3] &&
-             container->Magic[4] == kPefMagicFat[4] && container->Abi == kPefAbi) {
-    /// This is a fat binary, treat it as such.
-    this->fFatBinary = true;
-    return;
+  if (container->Abi == kPefAbi) {
+    if (container->Cpu == Detail::ldr_get_platform() && container->Magic[0] == kPefMagic[0] &&
+        container->Magic[1] == kPefMagic[1] && container->Magic[2] == kPefMagic[2] &&
+        container->Magic[3] == kPefMagic[3] && container->Magic[4] == kPefMagic[4]) {
+      return;
+    } else if (container->Magic[0] == kPefMagicFat[0] && container->Magic[1] == kPefMagicFat[1] &&
+               container->Magic[2] == kPefMagicFat[2] && container->Magic[3] == kPefMagicFat[3] &&
+               container->Magic[4] == kPefMagicFat[4]) {
+      /// This is a fat binary, treat it as such.
+      this->fFatBinary = true;
+      return;
+    }
   }
 
   fBad = true;
 
   if (fCachedBlob) mm_free_ptr(fCachedBlob);
 
-  kout << "PEFLoader: warning: Executable format error!\r";
+  kout << "PEFLoader: warning: exec format error!\r";
 
   fCachedBlob = nullptr;
 }
@@ -113,17 +114,19 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
   auto blob = fFile->Read(name, sizeof(PEFCommandHeader));
 
+  if (!blob) return ErrorOr<VoidPtr>{kErrorInvalidData};
+
   PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
   if (!container) return ErrorOr<VoidPtr>{kErrorInvalidData};
-  if (container->Cpu != Detail::ldr_get_platform()) return ErrorOr<VoidPtr>{kErrorInvalidData};
 
-  PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(blob);
+  PEFCommandHeader* command_header = reinterpret_cast<PEFCommandHeader*>(blob);
 
-  if (!container_header || container_header->VMSize < 1 || container_header->VMAddress == 0)
+  if (command_header->VMSize < 1 || command_header->VMAddress == 0)
     return ErrorOr<VoidPtr>{kErrorInvalidData};
 
-  if (container_header->Cpu != container->Cpu) {
+  /// fat binary check.
+  if (command_header->Cpu != container->Cpu && !this->fFatBinary) {
     return ErrorOr<VoidPtr>{kErrorInvalidData};
   }
 
@@ -161,9 +164,9 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
   error_or_symbol.Leak().Leak() += name;
 
-  if (KStringBuilder::Equals(container_header->Name, error_or_symbol.Leak().Leak().CData())) {
-    if (container_header->Kind == kind) {
-      if (container_header->Cpu != Detail::ldr_get_platform()) {
+  if (KStringBuilder::Equals(command_header->Name, error_or_symbol.Leak().Leak().CData())) {
+    if (command_header->Kind == kind) {
+      if (command_header->Cpu != Detail::ldr_get_platform()) {
         if (!this->fFatBinary) {
           mm_free_ptr(blob);
           blob = nullptr;
@@ -172,26 +175,34 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
         }
       }
 
-      Char* container_blob_value = new Char[container_header->VMSize];
+      Char* container_blob_value = new Char[command_header->VMSize];
 
       rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
-                          container_header->VMSize, container_header->VMSize);
+                          command_header->VMSize, command_header->VMSize);
 
       mm_free_ptr(blob);
 
-      kout << "PEFLoader: info: Loaded stub: " << container_header->Name << "!\r";
+      kout << "PEFLoader: info: Loaded stub: " << command_header->Name << "!\r";
 
       Int32 ret         = 0;
-      SizeT pages_count = (container_header->VMSize + kPageSize - 1) / kPageSize;
+      SizeT pages_count = (command_header->VMSize + kPageSize - 1) / kPageSize;
 
       for (SizeT i_vm{}; i_vm < pages_count; ++i_vm) {
         ret = HAL::mm_map_page(
-            (VoidPtr) (container_header->VMAddress + (i_vm * kPageSize)),
+            (VoidPtr) (command_header->VMAddress + (i_vm * kPageSize)),
             (VoidPtr) (HAL::mm_get_page_addr(container_blob_value) + (i_vm * kPageSize)),
             HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
 
         if (ret != kErrorSuccess) {
+          /// We set the VMAddress to nullptr, if the mapping fail here.
+          for (SizeT i_vm_unmap{}; i_vm_unmap < i_vm; ++i_vm_unmap) {
+            ret = HAL::mm_map_page((VoidPtr) (command_header->VMAddress + (i_vm * kPageSize)),
+                                   nullptr, HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+          }
+
           delete[] container_blob_value;
+          container_blob_value = nullptr;
+
           return ErrorOr<VoidPtr>{kErrorInvalidData};
         }
       }
