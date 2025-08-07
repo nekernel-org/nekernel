@@ -1,4 +1,3 @@
-
 /* -------------------------------------------
 
   Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
@@ -31,7 +30,7 @@ namespace Detail {
   /***********************************************************************************/
   /// @brief Get the PEF platform signature according to the compiled architecture.
   /***********************************************************************************/
-  UInt32 ldr_get_platform(void) noexcept {
+  static UInt32 ldr_get_platform(void) noexcept {
 #if defined(__NE_32X0__)
     return kPefArch32x0;
 #elif defined(__NE_64X0__)
