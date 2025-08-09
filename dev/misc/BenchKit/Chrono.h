@@ -10,6 +10,11 @@ Copyright (C) 2025, Amlal El Mahrouss, all rights reserved.
 #include <CompilerKit/CompilerKit.h>
 #include <NeKit/Defines.h>
 
+/// @author Amlal El Mahrouss
+/// @brief BenchKit Chrono contract.
+
+#define BENCHKIT_INTERFACE : public ::Kernel::ChronoInterface
+
 namespace Kernel {
 class ChronoInterface;
 

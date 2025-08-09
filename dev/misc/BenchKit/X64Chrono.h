@@ -14,11 +14,13 @@ namespace Kernel {
 class X64Chrono;
 struct X64ChronoTraits;
 
+/// @brief BenchKit chrono logic for x64.
 struct X64ChronoTraits {
  private:
   STATIC UInt64 TickImpl_(void) {
     UInt64 a = 0, d = 0;
-    __asm__ volatile("rdtsc" : "=a"(a), "=d"(d));
+    
+    asm volatile("rdtsc" : "=a"(a), "=d"(d));
     return (d << 32) | a;
   }
 
@@ -26,7 +28,7 @@ struct X64ChronoTraits {
 };
 
 /// @brief X86_64 hardware chrono implementation using the `rdtsc` instruction.
-class X64Chrono : public ChronoInterface {
+class X64Chrono BENCHKIT_INTERFACE {
  public:
   X64Chrono()           = default;
   ~X64Chrono() override = default;
@@ -34,11 +36,11 @@ class X64Chrono : public ChronoInterface {
   NE_COPY_DEFAULT(X64Chrono);
 
  public:
-  void Start() override { fStart = X64ChronoTraits::TickImpl_(); }
+  Void Start() override { fStart = X64ChronoTraits::TickImpl_(); }
 
-  void Stop() override { fStop = X64ChronoTraits::TickImpl_(); }
+  Void Stop() override { fStop = X64ChronoTraits::TickImpl_(); }
 
-  void Reset() override {
+  Void Reset() override {
     fStart = 0;
     fStop  = 0;
   }
@@ -46,8 +48,8 @@ class X64Chrono : public ChronoInterface {
   UInt64 GetElapsedTime() const override { return fStop - fStart; }
 
  private:
-  UInt64 fStart = 0;
-  UInt64 fStop  = 0;
+  UInt64 fStart{};
+  UInt64 fStop{};
 };
 }  // namespace Kernel
 

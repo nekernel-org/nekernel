@@ -4,4 +4,4 @@
 /dev/ddk/ @amlel-el-mahrouss
 /dev/libMsg/ @0xf00sec
 /dev/libSystem/ @0xf00sec
-# some other parts (tooling, frameworks) need ownership too.
+# some other parts (tools, frameworks) need ownership too.

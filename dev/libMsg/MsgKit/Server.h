@@ -12,6 +12,9 @@
 #include <libSystem/SystemKit/System.h>
 #endif
 
+/// @author Amlal El Mahrouss
+/// @brief libMsg LISP system.
+
 struct LIBMSG_EXPR;
 
 /// @brief an expression chain of LibMSG.
@@ -34,5 +37,4 @@ typedef Void (*libmsg_func_t)(LIBMSG_EXPR* self, VoidPtr arg, SizeT arg_size);
 
 IMPORT_C Void   libmsg_init_library(libmsg_func_t* funcs, SizeT cnt);
 IMPORT_C UInt32 libmsg_close_library(Void);
-
 IMPORT_C UInt32 libmsg_eval_expr(struct LIBMSG_EXPR* head);

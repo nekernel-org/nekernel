@@ -4,8 +4,8 @@
 
 ------------------------------------------- */
 
-#include <tooling/libmkfs/hefs.h>
-#include <tooling/libmkfs/mkfs.h>
+#include <tools/libmkfs/hefs.h>
+#include <tools/libmkfs/mkfs.h>
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
