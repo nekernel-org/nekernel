@@ -28,7 +28,7 @@ typedef UInt64 SemaphoreArr[kSemaphoreCount];
 
 /// @brief Checks if the semaphore is valid.
 inline BOOL rtl_sem_is_valid(const SemaphoreArr& sem, UInt64 owner = 0) {
-  return sem[kSemaphoreOwnerIndex] == owner && sem[kSemaphoreCountIndex] >= 0;
+  return sem[kSemaphoreOwnerIndex] == owner && sem[kSemaphoreCountIndex] > 0;
 }
 
 /// @brief Releases the semaphore, resetting its owner and count.
@@ -61,7 +61,8 @@ inline BOOL rtl_sem_acquire(SemaphoreArr& sem, UInt64 owner) {
 /// @param sem
 /// @param timeout
 /// @return
-inline BOOL rtl_sem_wait(SemaphoreArr& sem, UInt64 owner, UInt64 timeout, BOOL* condition = nullptr) {
+inline BOOL rtl_sem_wait(SemaphoreArr& sem, UInt64 owner, UInt64 timeout,
+                         BOOL* condition = nullptr) {
   if (!rtl_sem_is_valid(sem, owner)) {
     return FALSE;
   }

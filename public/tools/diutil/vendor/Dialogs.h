@@ -175,7 +175,7 @@ namespace internal {
 #elif __EMSCRIPTEN__
     void start(int exit_code);
 #else
-    void  start_process(std::vector<std::string> const& command);
+    void start_process(std::vector<std::string> const& command);
 #endif
 
     ~executor();
@@ -490,10 +490,10 @@ inline settings::settings(bool resync) {
 #if _WIN32
   flags(flag::is_vista) = internal::is_vista();
 #elif !__APPLE__
-  flags(flag::has_zenity) = check_program("zenity");
+  flags(flag::has_zenity)     = check_program("zenity");
   flags(flag::has_matedialog) = check_program("matedialog");
-  flags(flag::has_qarma) = check_program("qarma");
-  flags(flag::has_kdialog) = check_program("kdialog");
+  flags(flag::has_qarma)      = check_program("qarma");
+  flags(flag::has_kdialog)    = check_program("kdialog");
 
   // If multiple helpers are available, try to default to the best one
   if (flags(flag::has_zenity) && flags(flag::has_kdialog)) {
@@ -540,7 +540,7 @@ inline bool settings::check_program(std::string const& program) {
   (void) program;
   return false;
 #else
-  int exit_code = -1;
+  int                exit_code = -1;
   internal::executor async;
   async.start_process({"/bin/sh", "-c", "which " + program});
   async.result(&exit_code);
@@ -604,7 +604,7 @@ inline std::string path::home() {
   if (size_max != -1) len = size_t(size_max);
 #endif
   std::vector<char> buf(len);
-  struct passwd pwd, *result;
+  struct passwd     pwd, *result;
   if (getpwuid_r(getuid(), &pwd, buf.data(), buf.size(), &result) == 0) return result->pw_dir;
 #endif
   return "/";
@@ -717,7 +717,7 @@ inline void internal::executor::start_process(std::vector<std::string> const& co
   }
 
   close(in[1]);
-  m_fd = out[0];
+  m_fd       = out[0];
   auto flags = fcntl(m_fd, F_GETFL);
   fcntl(m_fd, F_SETFL, flags | O_NONBLOCK);
 
@@ -753,7 +753,7 @@ inline bool internal::executor::ready(int timeout /* = default_wait_timeout */) 
   // FIXME: do something
   (void) timeout;
 #else
-  char buf[BUFSIZ];
+  char    buf[BUFSIZ];
   ssize_t received = read(m_fd, buf, BUFSIZ);  // Flawfinder: ignore
   if (received > 0) {
     m_stdout += std::string(buf, received);
@@ -764,7 +764,7 @@ inline bool internal::executor::ready(int timeout /* = default_wait_timeout */) 
   // (this happens when the calling application handles or ignores SIG_CHLD) and results in
   // waitpid() failing with ECHILD. Otherwise we assume the child is running and we sleep for
   // a little while.
-  int status;
+  int   status;
   pid_t child = waitpid(m_pid, &status, WNOHANG);
   if (child != m_pid && (child >= 0 || errno != ECHILD)) {
     // FIXME: this happens almost always at first iteration
@@ -782,8 +782,7 @@ inline bool internal::executor::ready(int timeout /* = default_wait_timeout */) 
 
 inline void internal::executor::stop() {
   // Loop until the user closes the dialog
-  while (!ready())
-    ;
+  while (!ready());
 }
 
 // dll implementation
@@ -879,11 +878,11 @@ inline std::vector<std::string> internal::dialog::desktop_helper() const {
 #if __APPLE__
   return {"osascript"};
 #else
-  return {flags(flag::has_zenity) ? "zenity"
+  return {flags(flag::has_zenity)       ? "zenity"
           : flags(flag::has_matedialog) ? "matedialog"
-          : flags(flag::has_qarma) ? "qarma"
-          : flags(flag::has_kdialog) ? "kdialog"
-                                     : "echo"};
+          : flags(flag::has_qarma)      ? "qarma"
+          : flags(flag::has_kdialog)    ? "kdialog"
+                                        : "echo"};
 #endif
 }
 
@@ -1125,9 +1124,9 @@ inline internal::file_dialog::file_dialog(type in_type, std::string const& title
       // Split the pattern list to check whether "*" is in there; if it
       // is, we have to disable filters because there is no mechanism in
       // OS X for the user to override the filter.
-      std::regex sep("\\s+");
-      std::string filter_list;
-      bool has_filter = true;
+      std::regex                 sep("\\s+");
+      std::string                filter_list;
+      bool                       has_filter = true;
       std::sregex_token_iterator iter(patterns.begin(), patterns.end(), sep, -1);
       std::sregex_token_iterator end;
       for (; iter != end; ++iter) {
@@ -1236,7 +1235,7 @@ inline std::vector<std::string> internal::file_dialog::vector_result() {
   return m_vector_result;
 #else
   std::vector<std::string> ret;
-  auto result = m_async->result();
+  auto                     result = m_async->result();
   for (;;) {
     // Split result along newline characters
     auto i = result.find('\n');
@@ -1569,7 +1568,7 @@ inline message::message(std::string const& title, std::string const& text,
         if_cancel = button::ok;
         break;
     }
-    m_mappings[1] = if_cancel;
+    m_mappings[1]   = if_cancel;
     m_mappings[256] = if_cancel;  // XXX: I think this was never correct
     script += " with icon ";
     switch (_icon) {
@@ -1656,7 +1655,7 @@ inline message::message(std::string const& title, std::string const& text,
       if (_choice == choice::yes_no_cancel) flag += "cancel";
       command.push_back(flag);
       if (_choice == choice::yes_no || _choice == choice::yes_no_cancel) {
-        m_mappings[0] = button::yes;
+        m_mappings[0]   = button::yes;
         m_mappings[256] = button::no;
       }
     }

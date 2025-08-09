@@ -73,8 +73,7 @@ Void rt_zero_memory(voidPtr pointer, Size len) {
 #ifdef __NE_ENFORCE_DEPRECATED_WARNINGS
 [[deprecated("Use rt_set_memory_safe instead")]]
 #endif
-voidPtr
-rt_set_memory(voidPtr src, UInt32 value, Size len) {
+voidPtr rt_set_memory(voidPtr src, UInt32 value, Size len) {
   if (!src) return nullptr;
   auto  p = reinterpret_cast<UInt8*>(src);
   UInt8 v = static_cast<UInt8>(value & 0xFF);

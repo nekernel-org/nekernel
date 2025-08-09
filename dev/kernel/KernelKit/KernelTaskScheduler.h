@@ -29,8 +29,9 @@ class KERNEL_TASK final {
   UInt8*             StackReserve{nullptr};
   SizeT              StackSize{kSchedMaxStackSz};
   PROCESS_IMAGE      Image{};
-  /// @brief a KID is a Kernel Identification Descriptor, it is used to find a task running within the kernel.
-  KID                Kid{0};
+  /// @brief a KID is a Kernel Identification Descriptor, it is used to find a task running within
+  /// the kernel.
+  KID Kid{0};
 };
 
 /// @brief Equivalent of UserProcessHelper, but for kernel tasks.

@@ -15,7 +15,7 @@
 static size_t        kDiskSize = mkfs::detail::gib_cast(4UL);
 static uint16_t      kVersion  = kHeFSVersion;
 static std::u8string kLabel;
-static size_t        kSectorSize = 512;
+static size_t        kSectorSize    = 512;
 static uint16_t      kNumericalBase = 10;
 
 int main(int argc, char** argv) {
@@ -91,22 +91,22 @@ int main(int argc, char** argv) {
     mkfs::console_out() << "hefs: error: Invalid -b <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  
+
   if (!mkfs::detail::parse_signed(opt_e, end_ind, kNumericalBase) || end_ind <= start_ind) {
     mkfs::console_out() << "hefs: error: Invalid or out-of-range -e <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  
+
   if (!mkfs::detail::parse_signed(opt_bs, start_block, kNumericalBase)) {
     mkfs::console_out() << "hefs: error: Invalid -bs <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  
+
   if (!mkfs::detail::parse_signed(opt_be, end_block, kNumericalBase) || end_block <= start_block) {
     mkfs::console_out() << "hefs: error: Invalid or out-of-range -be <dec> argument.\n";
     return EXIT_FAILURE;
   }
-  
+
   if (!mkfs::detail::parse_signed(opt_is, start_in, kNumericalBase)) {
     mkfs::console_out() << "hefs: error: Invalid -is <dec> argument.\n";
     return EXIT_FAILURE;
@@ -133,24 +133,24 @@ int main(int argc, char** argv) {
   mkfs::hefs::BootNode boot_node;
   std::memset(&boot_node, 0, sizeof(boot_node));
 
-  boot_node.version    = kVersion;
-  boot_node.diskKind   = mkfs::hefs::kHeFSHardDrive;
-  boot_node.encoding   = mkfs::hefs::kHeFSEncodingFlagsUTF8;
-  boot_node.diskSize   = kDiskSize;
-  boot_node.sectorSize = kSectorSize;
+  boot_node.version     = kVersion;
+  boot_node.diskKind    = mkfs::hefs::kHeFSHardDrive;
+  boot_node.encoding    = mkfs::hefs::kHeFSEncodingFlagsUTF8;
+  boot_node.diskSize    = kDiskSize;
+  boot_node.sectorSize  = kSectorSize;
   boot_node.sectorCount = kDiskSize / kSectorSize;
-  boot_node.startIND   = static_cast<size_t>(start_ind) + sizeof(mkfs::hefs::BootNode);
-  boot_node.endIND     = static_cast<size_t>(end_ind);
-  boot_node.startIN    = static_cast<size_t>(start_in);
-  boot_node.endIN      = static_cast<size_t>(end_in);
-  boot_node.startBlock = static_cast<size_t>(start_block);
-  boot_node.endBlock   = static_cast<size_t>(end_block);
-  boot_node.indCount   = 0UL;
-  boot_node.diskStatus = mkfs::hefs::kHeFSStatusUnlocked;
+  boot_node.startIND    = static_cast<size_t>(start_ind) + sizeof(mkfs::hefs::BootNode);
+  boot_node.endIND      = static_cast<size_t>(end_ind);
+  boot_node.startIN     = static_cast<size_t>(start_in);
+  boot_node.endIN       = static_cast<size_t>(end_in);
+  boot_node.startBlock  = static_cast<size_t>(start_block);
+  boot_node.endBlock    = static_cast<size_t>(end_block);
+  boot_node.indCount    = 0UL;
+  boot_node.diskStatus  = mkfs::hefs::kHeFSStatusUnlocked;
 
   static_assert(sizeof(boot_node.magic) >= kHeFSMagicLen,
                 "BootNode::magic too small to hold kHeFSMagicLen");
-                
+
   std::memset(boot_node.magic, 0, sizeof(boot_node.magic));
   size_t magic_copy =
       (sizeof(boot_node.magic) < kHeFSMagicLen - 1) ? sizeof(boot_node.magic) : (kHeFSMagicLen - 1);
@@ -158,15 +158,15 @@ int main(int argc, char** argv) {
   boot_node.magic[magic_copy] = 0;
 
   constexpr size_t vol_slots = kHeFSPartNameLen;
-  
+
   std::memset(boot_node.volumeName, 0, sizeof(boot_node.volumeName));
-  
+
   size_t label_units = std::min(kLabel.size(), vol_slots - 1);
 
   for (size_t i = 0; i < label_units; ++i) {
     boot_node.volumeName[i] = static_cast<char8_t>(kLabel[i]);
   }
-  
+
   boot_node.volumeName[label_units] = 0U;
 
   output_device.seekp(static_cast<std::streamoff>(start_ind));

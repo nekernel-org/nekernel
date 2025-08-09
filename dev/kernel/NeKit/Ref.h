@@ -29,7 +29,7 @@ class Ref final {
     return *this;
   }
 
-  NE_COPY_DEFAULT(Ref);
+  NE_COPY_DEFAULT(Ref)
 
  public:
   T operator->() const { return fClass; }

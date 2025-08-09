@@ -9,12 +9,11 @@
 #include <cstdlib>
 #include <fstream>
 
-static uint16_t      kNumericalBase = 10;
+static uint16_t kNumericalBase = 10;
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -i=<input_device>"
-                        << "\n";
+    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -i=<input_device>" << "\n";
     return EXIT_FAILURE;
   }
 
@@ -25,8 +24,7 @@ int main(int argc, char** argv) {
   auto origin = mkfs::get_option<char>(args, "-o");
 
   if (opt_disk.empty()) {
-    mkfs::console_out() << "fsck: hefs: error: HeFS is empty! Exiting..."
-                        << "\n";
+    mkfs::console_out() << "fsck: hefs: error: HeFS is empty! Exiting..." << "\n";
     return EXIT_FAILURE;
   }
 
@@ -54,7 +52,7 @@ int main(int argc, char** argv) {
   mkfs::hefs::BootNode boot_node;
 
   std::memset(&boot_node, 0, sizeof(boot_node));
-  
+
   output_device.read(reinterpret_cast<char*>(&boot_node), sizeof(boot_node));
 
   if (strncmp(boot_node.magic, kHeFSMagic, kHeFSMagicLen) != 0 || boot_node.sectorCount < 1 ||

@@ -24,13 +24,17 @@ class ChronoInterface {
   ChronoInterface()          = default;
   virtual ~ChronoInterface() = default;
 
-  NE_COPY_DEFAULT(ChronoInterface);
+  NE_COPY_DEFAULT(ChronoInterface)
 
-  virtual void   Start()                = 0;
-  virtual void   Stop()                 = 0;
-  virtual void   Reset()                = 0;
+  virtual Void   Start()                = 0;
+  virtual Void   Stop()                 = 0;
+  virtual Void   Reset()                = 0;
   virtual UInt64 GetElapsedTime() const = 0;
 };
 }  // namespace Kernel
+
+namespace BenchKit {
+using namespace Kernel;
+}
 
 #endif  // BENCHKIT_CHRONO_H
