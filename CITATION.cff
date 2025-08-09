@@ -1,0 +1,25 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: NeKernel.org Operating System Kernel
+message: The Operating System Kernel of NeKernel.org
+type: software
+authors:
+  - given-names: Amlal
+    family-names: El Mahrouss
+    email: aelmahrouss@acm.org
+identifiers:
+  - type: url
+    value: 'https://nekernel.org'
+    description: NeKernel's website.
+repository-code: 'https://github.com/nekernel-org/nekernel'
+url: 'https://nekernel.org'
+abstract: >-
+  This is NeKernel.org's Operating System Kernel, authored
+  by Amlal El Mahrouss.
+keywords:
+  - kernel
+  - operating-system
+  - cpp
+license: GPL-3.0

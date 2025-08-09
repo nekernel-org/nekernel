@@ -38,7 +38,7 @@ SInt32 DI::DIFormatPartitionEPM(struct DI_DISK_IMAGE& img) noexcept {
   if (!handle) return kDIFailureStatus;
 
   ::IoWriteFile(handle, (Char*) &block, sizeof(struct ::EPM_PART_BLOCK));
-  
+
   ::IoCloseFile(handle);
 
   handle = nullptr;

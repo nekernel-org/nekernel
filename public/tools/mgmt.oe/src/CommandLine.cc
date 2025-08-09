@@ -22,7 +22,8 @@ SInt32 _NeMain(SInt32 argc, Char* argv[]) {
 
   ::PrintOut(nullptr, "%s", "mgmt.oe: OpenEnclave Management Tool.");
 
-  /// @note JailGetCurrent returns client as nullptr if we're not that client (we'll not be able to access the jail then)
+  /// @note JailGetCurrent returns client as nullptr if we're not that client (we'll not be able to
+  /// access the jail then)
   if (kJailSrv->fClient == nullptr) return EXIT_FAILURE;
 
   return EXIT_FAILURE;

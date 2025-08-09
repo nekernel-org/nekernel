@@ -85,4 +85,3 @@ EXTERN_C Kernel::Void _Init_thread_header(Kernel::Int* thread_obj) {
 }
 
 EXTERN_C Kernel::Int _tls_index = 0UL;
-

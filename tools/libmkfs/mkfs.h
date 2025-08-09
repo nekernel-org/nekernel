@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <tooling/rang.h>
-#include <sstream>
+#include <tools/rang.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #define kMkFsSectorSz (512U)
@@ -35,13 +35,13 @@ namespace detail {
 
   inline bool parse_signed(const std::string& opt, long& out, int base = 10) {
     out = 0L;
-    
+
     if (opt.empty()) return true;
 
     char* endptr = nullptr;
     long  val    = std::strtol(opt.c_str(), &endptr, base);
-    auto err = errno;
-    
+    auto  err    = errno;
+
     if (err == ERANGE || err == EINVAL) return false;
     if (endptr == opt.c_str() || *endptr != '\0') return false;
 

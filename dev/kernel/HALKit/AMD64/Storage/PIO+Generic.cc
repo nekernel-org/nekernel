@@ -83,8 +83,7 @@ ATAInit_Retry:
 
   rt_out8(OutBus + ATA_REG_COMMAND, ATA_CMD_IDENTIFY);
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
-    ;
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
 
   /// fetch serial info
   /// model, speed, number of sectors...
@@ -117,15 +116,14 @@ Void drv_pio_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT Sect
 
   rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
-  rt_out8(IO + ATA_REG_LBA0, (Lba) &0xFF);
+  rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
   rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
-    ;
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
 
   for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     drv_pio_std_wait_io(IO);
@@ -149,15 +147,14 @@ Void drv_pio_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT Sec
 
   rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
-  rt_out8(IO + ATA_REG_LBA0, (Lba) &0xFF);
+  rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
   rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
-    ;
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
 
   for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     drv_pio_std_wait_io(IO);

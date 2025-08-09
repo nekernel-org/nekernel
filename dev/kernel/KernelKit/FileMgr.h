@@ -22,7 +22,6 @@
 #ifndef INC_FILEMGR_H
 #define INC_FILEMGR_H
 
-
 /// @file FileMgr.h
 /// @brief File Manager.
 /// @author Amlal El Mahrouss (amlal@nekernel.org)

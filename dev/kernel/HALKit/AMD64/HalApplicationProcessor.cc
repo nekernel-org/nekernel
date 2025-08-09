@@ -116,7 +116,7 @@ EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ThreadID thrdid) 
   if (!stack_frame) return NO;
 
   if (thrdid > kSMPCount) return NO;
-  
+
   if (!kSMPAware) {
     sched_jump_to_task(kHWThread[thrdid].mFramePtr);
 

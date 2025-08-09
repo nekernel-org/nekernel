@@ -42,7 +42,7 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
                          handover_hdr->f_HardwareTables.f_ImageHandle);
 
   kKernelVM = kHandoverHeader->f_PageStart;
-  
+
   if (!kKernelVM) {
     MUST_PASS(kKernelVM);
     return kEfiFail;
@@ -168,7 +168,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 
   idt_loader.Load(idt_reg);
 
-  while (YES)
-    ;
+  while (YES);
 }
 #endif  // ifndef __NE_MODULAR_KERNEL_COMPONENTS__

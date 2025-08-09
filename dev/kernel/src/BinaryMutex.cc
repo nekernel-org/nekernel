@@ -14,7 +14,7 @@ namespace Kernel {
 
 Bool BinaryMutex::Unlock() noexcept {
   if (fLockingProcess->Status == ProcessStatusKind::kRunning) {
-    fLockingProcess        = nullptr;
+    fLockingProcess = nullptr;
 
     return Yes;
   }

@@ -18,14 +18,18 @@
 
 #define KT_TEST_SUCCESS (0)
 
-#define KT_DECL_TEST(NAME, FN)                                     \
-  class KT_##NAME final {                                          \
-   public:                                                         \
-    Kernel::Void        Run();                                             \
-    const Kernel::Char* ToString();                                        \
-  };                                                               \
-  inline Kernel::Void        KT_##NAME::Run() { MUST_PASS(FN() == true); } \
-  inline const Kernel::Char* KT_##NAME::ToString() { return #FN; }
+#define KT_DECL_TEST(NAME, FN)                       \
+  class KT_##NAME final {                            \
+   public:                                           \
+    Kernel::Void        Run();                       \
+    const Kernel::Char* ToString();                  \
+  };                                                 \
+  inline Kernel::Void KT_##NAME::Run() {             \
+    MUST_PASS(FN() == true);                         \
+  }                                                  \
+  inline const Kernel::Char* KT_##NAME::ToString() { \
+    return #FN;                                      \
+  }
 
 KT_DECL_TEST(ALWAYS_BREAK, []() -> bool { return false; });
 KT_DECL_TEST(ALWAYS_GOOD, []() -> bool { return true; });

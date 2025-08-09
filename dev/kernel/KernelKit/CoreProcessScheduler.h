@@ -98,7 +98,7 @@ struct PROCESS_FILE_TREE {
   struct PROCESS_FILE_TREE<T>* Prev {
     nullptr
   };
-  
+
   struct PROCESS_FILE_TREE<T>* Next {
     nullptr
   };

@@ -86,7 +86,9 @@ namespace Detail {
     PageEnable          = 31,
   };
 
-  inline UInt8 control_register_cast(ControlRegisterBits reg) { return static_cast<UInt8>(reg); }
+  inline UInt8 control_register_cast(ControlRegisterBits reg) {
+    return static_cast<UInt8>(reg);
+  }
 }  // namespace Detail
 
 struct PDE_4KB final {

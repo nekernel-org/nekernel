@@ -15,7 +15,7 @@
 -Ipublic/tools/open
 -Ipublic/frameworks
 -Idev/boot/BootKit
--Itooling/
+-Itools/
 -I./
 -std=c++20
 -D__NE_AMD64__
