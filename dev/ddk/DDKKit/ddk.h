@@ -40,7 +40,7 @@ DDK_EXTERN void* ke_call(const char* name, int32_t cnt, void* dat, size_t sz);
 /// @brief add a system call.
 /// @param slot system call slot id.
 /// @param slotFn, syscall slot.
-DDK_EXTERN void ke_add_syscall(const int32_t slot, void (*slotFn)(void* a0));
+DDK_EXTERN void ke_set_syscall(const int32_t slot, void (*slotFn)(void* a0));
 
 /// @brief Allocates an heap ptr.
 /// @param sz size of the allocated struct/type.
@@ -65,10 +65,10 @@ DDK_EXTERN struct DDK_OBJECT_MANIFEST* ke_get_obj(const int slot, const char* na
 DDK_EXTERN void* ke_set_obj(const int32_t slot, const struct DDK_OBJECT_MANIFEST* ddk_pr);
 
 /// @brief The highest API version of the DDK.
-DDK_EXTERN int32_t kApiVersionHighest;
+DDK_EXTERN uint32_t kApiVersionHighest;
 
 /// @brief The lowest API version of the DDK.
-DDK_EXTERN int32_t kApiVersionLowest;
+DDK_EXTERN uint32_t kApiVersionLowest;
 
 /// @brief API version in BCD.
-DDK_EXTERN int32_t kApiVersion;
+DDK_EXTERN uint32_t kApiVersion;

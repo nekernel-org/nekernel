@@ -29,8 +29,8 @@ DDK_EXTERN void* ke_call(const char* name, int32_t cnt, void* data, size_t sz) {
 /// @brief Add system call.
 /// @param slot system call slot
 /// @param slotFn, syscall slot.
-DDK_EXTERN void ke_add_syscall(const int slot, void (*slotFn)(void* a0)) {
-  ke_call("ke_add_syscall", slot, slotFn, 1);
+DDK_EXTERN void ke_set_syscall(const int slot, void (*slotFn)(void* a0)) {
+  ke_call("ke_set_syscall", slot, slotFn, 1);
 }
 
 /// @brief Get a Kernel object.
@@ -39,7 +39,7 @@ DDK_EXTERN void ke_add_syscall(const int slot, void (*slotFn)(void* a0)) {
 /// @return Object manifest.
 DDK_EXTERN struct DDK_OBJECT_MANIFEST* ke_get_obj(const int slot, const char* name) {
   struct DDK_OBJECT_MANIFEST* manifest =
-      (struct DDK_OBJECT_MANIFEST*) ke_call("cf_get_kobj", slot, (void*) name, 1);
+      (struct DDK_OBJECT_MANIFEST*) ke_call("cfkit_get_kobj", slot, (void*) name, 1);
 
   if (!manifest) return nil;
 
@@ -52,5 +52,5 @@ DDK_EXTERN struct DDK_OBJECT_MANIFEST* ke_get_obj(const int slot, const char* na
 /// @param ddk_pr pointer to a object's DDK_OBJECT_MANIFEST.
 /// @return property's object.
 DDK_EXTERN void* ke_set_obj(const int slot, const struct DDK_OBJECT_MANIFEST* ddk_pr) {
-  return ke_call("cf_set_kobj", slot, (void*) ddk_pr, 1);
+  return ke_call("cfkit_set_kobj", slot, (void*) ddk_pr, 1);
 }
