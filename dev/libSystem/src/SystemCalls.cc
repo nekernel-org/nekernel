@@ -53,7 +53,7 @@ IMPORT_C Ref IoOpenFile(_Input const Char* path, _Input const Char* drv_letter) 
 }
 
 IMPORT_C Void IoCloseFile(_Input Ref desc) {
-  libsys_syscall_arg_2(2, desc);
+  libsys_syscall_arg_2(SYSCALL_HASH("IoCloseFile"), desc);
 }
 
 IMPORT_C UInt64 IoSeekFile(_Input Ref desc, _Input UInt64 off) {
