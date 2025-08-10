@@ -20,6 +20,6 @@
 #define kDDKVersion 1
 #endif  // !kDDKVersion
 
-int32_t kApiVersionHighest = kDDKVersionHighest;
-int32_t kApiVersionLowest  = kDDKVersionLowest;
-int32_t kApiVersion        = kDDKVersion;
+uint32_t kApiVersionHighest = kDDKVersionHighest;
+uint32_t kApiVersionLowest  = kDDKVersionLowest;
+uint32_t kApiVersion        = kDDKVersion;

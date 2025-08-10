@@ -16,7 +16,7 @@
 #define kCrcCnt (256)
 
 namespace Kernel {
-UInt32 ke_calculate_crc32(const Char* crc, Int32 len) noexcept;
+UInt32 ke_calculate_crc32(const VoidPtr crc, Int32 len) noexcept;
 }  // namespace Kernel
 
 #endif  // !CRC32_H

@@ -33,7 +33,7 @@ class X64Chrono BENCHKIT_INTERFACE {
   X64Chrono()           = default;
   ~X64Chrono() override = default;
 
-  NE_COPY_DEFAULT(X64Chrono);
+  NE_COPY_DEFAULT(X64Chrono)
 
  public:
   Void Start() override { fStart = X64ChronoTraits::TickImpl_(); }
