@@ -4,19 +4,28 @@
 
 ------------------------------------------- */
 
+#include <libSystem/SystemKit/Err.h>
 #include <libSystem/SystemKit/Syscall.h>
 #include <libSystem/SystemKit/System.h>
 
 namespace Detail {
-  template<typename T>
-  inline VoidPtr safe_void_cast(const T* ptr) {
-    return const_cast<VoidPtr>(static_cast<const VoidPtr>(ptr));
+template <typename T>
+static VoidPtr safe_void_cast(const T* ptr) {
+  _rtl_assert(ptr, "safe void cast failed!");
+  return static_cast<VoidPtr>(const_cast<T*>(ptr));
+}
+}  // namespace Detail
+
+IMPORT_C Void _rtl_assert(Bool expr, const Char* origin) {
+  if (!expr) {
+    PrintOut(nullptr, "Assertion failed: %s\r", origin);
+    libsys_syscall_arg_1(SYSCALL_HASH("_rtl_debug_break"));
   }
 }
 
 // memmove-style copy
 IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len) {
-  // handles overlap, prefers 64-bit word copies when aligned 
+  // handles overlap, prefers 64-bit word copies when aligned
   if (!len || !dest || !src) return nullptr;
 
   auto s = static_cast<const UInt8*>(src);
@@ -27,15 +36,13 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
   // decide direction
   if (d > s && d < s + len) {
     const UInt8* rs = s + len;
-    UInt8* rd = d + len;
+    UInt8*       rd = d + len;
 
     // try 64-bit aligned backward copy
-    if (len >= sizeof(UInt64) &&
-        (reinterpret_cast<UIntPtr>(rs) % sizeof(UInt64) == 0) &&
+    if (len >= sizeof(UInt64) && (reinterpret_cast<UIntPtr>(rs) % sizeof(UInt64) == 0) &&
         (reinterpret_cast<UIntPtr>(rd) % sizeof(UInt64) == 0)) {
-
-      auto rsw = reinterpret_cast<const UInt64*>(rs);
-      auto rdw = reinterpret_cast<UInt64*>(rd);
+      auto  rsw   = reinterpret_cast<const UInt64*>(rs);
+      auto  rdw   = reinterpret_cast<UInt64*>(rd);
       SizeT words = len / sizeof(UInt64);
 
       for (SizeT i = 0; i < words; ++i) {
@@ -54,19 +61,17 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
     }
   } else {
     // try 64-bit aligned forward copy
-    if (len >= sizeof(UInt64) &&
-        (reinterpret_cast<UIntPtr>(s) % sizeof(UInt64) == 0) &&
+    if (len >= sizeof(UInt64) && (reinterpret_cast<UIntPtr>(s) % sizeof(UInt64) == 0) &&
         (reinterpret_cast<UIntPtr>(d) % sizeof(UInt64) == 0)) {
-
-      auto sw = reinterpret_cast<const UInt64*>(s);
-      auto dw = reinterpret_cast<UInt64*>(d);
+      auto  sw    = reinterpret_cast<const UInt64*>(s);
+      auto  dw    = reinterpret_cast<UInt64*>(d);
       SizeT words = len / sizeof(UInt64);
 
       for (SizeT i = 0; i < words; ++i) {
         dw[i] = sw[i];
       }
 
-      SizeT rem = len % sizeof(UInt64);
+      SizeT       rem    = len % sizeof(UInt64);
       const SizeT offset = words * sizeof(UInt64);
       for (SizeT i = 0; i < rem; ++i) {
         d[offset + i] = s[offset + i];
@@ -100,14 +105,14 @@ IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt
     pattern |= (pattern << 16);
     pattern |= (pattern << 32);
 
-    auto dw = reinterpret_cast<UInt64*>(d);
+    auto  dw    = reinterpret_cast<UInt64*>(d);
     SizeT words = len / sizeof(UInt64);
 
     for (SizeT i = 0; i < words; ++i) {
       dw[i] = pattern;
     }
 
-    SizeT rem = len % sizeof(UInt64);
+    SizeT       rem    = len % sizeof(UInt64);
     const SizeT offset = words * sizeof(UInt64);
     for (SizeT i = 0; i < rem; ++i) {
       d[offset + i] = value;
@@ -120,10 +125,9 @@ IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt
 }
 
 IMPORT_C Ref IoOpenFile(_Input const Char* path, _Input const Char* drv_letter) {
-  return static_cast<Ref>(libsys_syscall_arg_3(
-      SYSCALL_HASH("IoOpenFile"),
-      Detail::safe_void_cast(path),
-      Detail::safe_void_cast(drv_letter)));
+  return static_cast<Ref>(libsys_syscall_arg_3(SYSCALL_HASH("IoOpenFile"),
+                                               Detail::safe_void_cast(path),
+                                               Detail::safe_void_cast(drv_letter)));
 }
 
 IMPORT_C Void IoCloseFile(_Input Ref desc) {
@@ -131,50 +135,39 @@ IMPORT_C Void IoCloseFile(_Input Ref desc) {
 }
 
 IMPORT_C UInt64 IoSeekFile(_Input Ref desc, _Input UInt64 off) {
-  auto ret_ptr = libsys_syscall_arg_3(
-      SYSCALL_HASH("IoSeekFile"),
-      static_cast<VoidPtr>(desc),
-      reinterpret_cast<VoidPtr>(&off));
+  auto ret_ptr = libsys_syscall_arg_3(SYSCALL_HASH("IoSeekFile"), static_cast<VoidPtr>(desc),
+                                      reinterpret_cast<VoidPtr>(&off));
 
   if (!ret_ptr) return ~0UL;
 
-  auto ret = static_cast<volatile UInt64*>(ret_ptr);
+  auto   ret    = static_cast<volatile UInt64*>(ret_ptr);
   UInt64 result = *ret;
   MUST_PASS(result != ~0UL);
   return result;
 }
 
 IMPORT_C UInt64 IoTellFile(_Input Ref desc) {
-  auto ret_ptr = libsys_syscall_arg_2(SYSCALL_HASH("IoTellFile"),
-                                      static_cast<VoidPtr>(desc));
+  auto ret_ptr = libsys_syscall_arg_2(SYSCALL_HASH("IoTellFile"), static_cast<VoidPtr>(desc));
   if (!ret_ptr) return ~0UL;
   auto ret = static_cast<volatile UInt64*>(ret_ptr);
   return *ret;
 }
 
-IMPORT_C SInt32 PrintOut(_Input IORef desc, const char* fmt, ...) {
-  constexpr SizeT BUF_SZ = 1024;
-  char buf[BUF_SZ];
-
+IMPORT_C SInt32 PrintOut(_Input IORef desc, const Char* fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  int needed = vsnprintf(buf, BUF_SZ, fmt, args);
+
+  auto buf = StrFmt(fmt, args);
+
   va_end(args);
 
-  // if truncated, `needed` >= BUF_SZ; we still send truncated buffer
-  auto ret_ptr = libsys_syscall_arg_3(
-      SYSCALL_HASH("PrintOut"),
-      static_cast<VoidPtr>(desc),
-      Detail::safe_void_cast(buf));
+  // if truncated, `needed` >= kBufferSz; we still send truncated buffer
+  auto ret_ptr = libsys_syscall_arg_3(SYSCALL_HASH("PrintOut"), static_cast<VoidPtr>(desc),
+                                      Detail::safe_void_cast(buf));
 
-  if (!ret_ptr) return -1;
+  if (!ret_ptr) return -kErrorInvalidData;
+
   auto ret = static_cast<const volatile SInt32*>(ret_ptr);
-  return *ret;
-}
 
-IMPORT_C Void _rtl_assert(Bool expr, const Char* origin) {
-  if (!expr) {
-    PrintOut(nullptr, "Assertion failed: %s\r", origin);
-    libsys_syscall_arg_1(SYSCALL_HASH("_rtl_debug_break"));
-  }
+  return *ret;
 }
