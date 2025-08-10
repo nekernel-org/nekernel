@@ -49,10 +49,12 @@ UInt32 kChecksumPolys[kCrcCnt] = {
 /// @param in the data to compute.
 /// @param len the length of the data.
 /// @return CRC32 of **in**.
-UInt32 ke_calculate_crc32(const Char* in, Int32 len) noexcept {
-  if (!in || *in == 0) return ~0;
+UInt32 ke_calculate_crc32(const VoidPtr inp, Int32 len) noexcept {
+  if (!inp) return ~0;
 
   UInt32 crc = 0xffffffff;
+
+  Char* in = static_cast<Char*>(inp);
 
   while ((len--) > 0) crc = (crc >> 8) ^ kChecksumPolys[(crc ^ *(in++)) & 0xFF];
 
