@@ -13,7 +13,7 @@ static uint16_t kNumericalBase = 10;
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -i=<input_device>" << "\n";
+    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -i=<input_device> -o=<origin>" << "\n";
     return EXIT_FAILURE;
   }
 

@@ -42,8 +42,8 @@ inline BOOL rtl_sem_release(SemaphoreArr& sem) {
 }
 
 /// @brief Initializes the semaphore with an owner and a count of zero.
-/// @param sem
-/// @param owner
+/// @param sem the semaphore array to use.
+/// @param owner the owner to set, could be anything identifitable.
 /// @return
 inline BOOL rtl_sem_acquire(SemaphoreArr& sem, UInt64 owner) {
   if (!owner) {
@@ -60,6 +60,7 @@ inline BOOL rtl_sem_acquire(SemaphoreArr& sem, UInt64 owner) {
 /// @brief Waits for the semaphore to be available, blocking until it is.
 /// @param sem
 /// @param timeout
+/// @param condition condition pointer.
 /// @return
 inline BOOL rtl_sem_wait(SemaphoreArr& sem, UInt64 owner, UInt64 timeout,
                          BOOL* condition = nullptr) {
