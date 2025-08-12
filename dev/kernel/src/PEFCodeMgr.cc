@@ -71,7 +71,9 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
 
   PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-  if (container->Abi == kPefAbi) {
+  if (container->Abi == kPefAbi &&
+      container->Count >=
+          3) { /* if same ABI, AND: .text, .bss, .data (or at least similar) exists */
     if (container->Cpu == Detail::ldr_get_platform() && container->Magic[0] == kPefMagic[0] &&
         container->Magic[1] == kPefMagic[1] && container->Magic[2] == kPefMagic[2] &&
         container->Magic[3] == kPefMagic[3] && container->Magic[4] == kPefMagic[4]) {
