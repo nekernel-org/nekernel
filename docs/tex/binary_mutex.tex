@@ -13,7 +13,9 @@
 
 {The BinaryMutex is a core component of NeKernel (NeKernel/VMKernel) based systems. The pattern excludes other acquirers to own the USER\_PROCESS that is currently being hold. Thus the acquiree is the USER\_PROCESS itself}
 
-\section{Use Case \#1: Process lock for atomic data retrival}
+\section{Overview}
+
+{The BinaryMutex comes from the need to make sure that no race conditions occurs in kernel code. Most of those race conditions happens in process handling code. Thus the design of the BinaryMutex (which holds a process handle to it)}
 
 \begin{verbatim}
 BinaryMutex mux;
@@ -22,14 +24,16 @@ mux.Lock(process);
 // Say we want to interact with the process itself on this thread, 
 we can then make sure that no race condition happens by using:
 constexpr auto kSecondsMax = 5;
-mux.WaitForProcess(kSecondsMax);
+while (mux.WaitForProcess(kSecondsMax));
+
+// finally do our task now.
 
 process.DoFoo();
 \end{verbatim}
 
 \section{Implementation}
 
-The source implementation consists of:
+The source implementation consists of this simple C++ class:
 
 \begin{verbatim}
 class BinaryMutex final {
@@ -58,6 +62,15 @@ class BinaryMutex final {
 
 \section{Conclusion}
 
-This pattern is useful for systems that need to make sure that a process isn't tampered by concurrent usages. Thus its existence in VMKernel and NeKernel.
+{This design pattern is useful for systems that need to make sure that a process isn't tampered by concurrent usages.
+Thus its existence in VMKernel and NeKernel.}
+
+\section{References}
+
+{NeKernel}: \href{https://github.com/nekernel-org/nekernel}{NeKernel}
+
+{VMKernel}: \href{https://snu.systems/specs/vmkernel}{VMKernel}
+
+{BinaryMutex}: \href{https://github.com/nekernel-org/nekernel/blob/dev/dev/kernel/KernelKit/BinaryMutex.h}{BinaryMutex}
 
 \end{document}
