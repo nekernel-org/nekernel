@@ -66,11 +66,14 @@ EXTERN_C BOOL rtl_init_nic_rtl8139(UInt16 io_base) noexcept {
 
 /***********************************************************************************/
 /// @brief RTL8139 I/O interrupt handler.
+/// @param rsp stack pointer.
 /// @note This function is called when the device interrupts to retrieve network data.
 /***********************************************************************************/
 
 EXTERN_C Void rtl_rtl8139_interrupt_handler(UIntPtr rsp) {
-  if (kRTLIOBase == 0xFFFF) return;
+  if (kRTLIOBase == 0xFFFF || kRTLIOBase == 0) return;
+
+  NE_UNUSED(rsp);
 
   UInt16 status = rt_in16(kRTLIOBase + 0x3E);
   rt_out16(kRTLIOBase + 0x3E, status);
