@@ -3,7 +3,7 @@
  compiler: gnu
  */
 
-.globl ke_call_dispatch
+.globl __ke_call_dispatch
 
 .text
 
@@ -13,7 +13,7 @@
 #if defined(__DDK_AMD64__)
 
 /* args rcx, rdx, r8, r9 */
-ke_call_dispatch:
+__ke_call_dispatch:
     int $0x33
     ret
 

@@ -32,10 +32,9 @@
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
 
-/// @note: _hal_switch_context is internal
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
+/// @note: _hal_switch_context is internal.
 /// @brief The **HAL** namespace.
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -70,6 +69,7 @@ struct HAL_APIC_MADT final SDT_OBJECT {
   UInt8  List[1];  // Records List
 };
 
+/// @brief Local APIC Descriptor Table.
 struct LAPIC final {
   UInt8  Type;
   UInt8  Length;

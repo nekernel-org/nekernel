@@ -2,11 +2,11 @@
 
   Copyright Amlal El Mahrouss.
 
-  Purpose: DDK version symbols.
+  Purpose: DDK version system.
 
 ------------------------------------------- */
 
-#include <DDKKit/ddk.h>
+#include <DriverKit/ddk.h>
 
 #ifndef kDDKVersionHighest
 #define kDDKVersionHighest 1

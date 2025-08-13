@@ -29,7 +29,6 @@
 #define kNeDMABestAlign (8)
 #endif
 
-
 namespace Kernel {
 /// @brief DMA pool base pointer, here we're sure that AHCI or whatever tricky standard sees it.
 inline UInt8*       kDmaPoolPtr = (UInt8*) kNeDMAPoolStart;

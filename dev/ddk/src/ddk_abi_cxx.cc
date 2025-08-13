@@ -1,12 +1,14 @@
 /* -------------------------------------------
 
+  DDK
   Copyright Amlal El Mahrouss.
 
-  Purpose: DDK C++ runtime.
+  Author: Amlal El Mahrouss
+  Purpose: DDK C++ ABI.
 
 ------------------------------------------- */
 
-#include <DDKKit/ddk.h>
+#include <DriverKit/ddk.h>
 
 void* operator new(size_t sz) {
   return ::kalloc(sz);

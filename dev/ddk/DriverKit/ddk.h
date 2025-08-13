@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <DDKKit/macros.h>
+#include <DriverKit/macros.h>
 
 struct DDK_STATUS_STRUCT;
 struct DDK_OBJECT_MANIFEST;
@@ -35,7 +35,7 @@ struct DDK_STATUS_STRUCT DDK_FINAL {
 /// @param dat data argument pointer.
 /// @param sz sz of whole data argument pointer.
 /// @return result of call
-DDK_EXTERN void* ke_call(const char* name, int32_t cnt, void* dat, size_t sz);
+DDK_EXTERN void* ke_call_dispatch(const char* name, int32_t cnt, void* dat, size_t sz);
 
 /// @brief add a system call.
 /// @param slot system call slot id.

@@ -6,14 +6,14 @@
 
 ------------------------------------------- */
 
-#include <DDKKit/dev.h>
-#include <DDKKit/str.h>
+#include <DriverKit/dev.h>
+#include <DriverKit/str.h>
 
 /// @brief Open a new binary device from path.
 DDK_EXTERN DDK_DEVICE_PTR open(const char* devicePath) {
   if (!devicePath) return nil;
 
-  return ke_call("dk_open_dev", 1, (void*) devicePath, kstrlen(devicePath));
+  return ke_call_dispatch("dk_open_dev", 1, (void*) devicePath, kstrlen(devicePath));
 }
 
 /// @brief Close any device.
@@ -21,6 +21,6 @@ DDK_EXTERN DDK_DEVICE_PTR open(const char* devicePath) {
 DDK_EXTERN BOOL close(DDK_DEVICE_PTR device) {
   if (!device) return NO;
 
-  ke_call("dk_close_dev", 1, device, sizeof(DDK_DEVICE));
+  ke_call_dispatch("dk_close_dev", 1, device, sizeof(DDK_DEVICE));
   return YES;
 }
