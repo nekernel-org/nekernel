@@ -12,8 +12,27 @@
 #include <stdarg.h>
 
 /// @brief this is an internal call, do not use it.
-DDK_EXTERN ATTRIBUTE(naked) void* __ke_call_dispatch(const char* name, int32_t cnt, void* data,
-                                                   size_t sz);
+DDK_EXTERN ATTRIBUTE(naked) void* __ke_call_dispatch(const int32_t name, int32_t cnt, void* data,
+                                                     size_t sz);
+/// @brief This function hashes the path into a FNV symbol.
+/// @param path the path to hash.
+/// @retval 0 symbol wasn't hashed.
+/// @retval > 0 hashed symbol.
+static uint64_t ddk_fnv_64(const char* path) {
+  if (path == nil || *path == 0) return 0;
+
+  const uint64_t kFnvOffsetBase = 0xcbf29ce484222325ULL;
+  const uint64_t kFnvPrime64    = 0x100000001b3ULL;
+
+  uint64_t hash = kFnvOffsetBase;
+
+  while (*path) {
+    hash ^= (char) (*path++);
+    hash *= kFnvPrime64;
+  }
+
+  return hash;
+}
 
 /// @brief Interrupt Kernel and call it's RPC.
 /// @param name RPC name
@@ -24,7 +43,7 @@ DDK_EXTERN ATTRIBUTE(naked) void* __ke_call_dispatch(const char* name, int32_t c
 /// @retval nil Kernel call failed, call KernelLastError(void)
 DDK_EXTERN void* ke_call_dispatch(const char* name, int32_t cnt, void* data, size_t sz) {
   if (name == nil || *name == 0 || data == nil || cnt == 0) return nil;
-  return __ke_call_dispatch(name, cnt, data, sz);
+  return __ke_call_dispatch(ddk_fnv_64(name), cnt, data, sz);
 }
 
 /// @brief Add system call.
