@@ -16,7 +16,7 @@ DDK_EXTERN ATTRIBUTE(naked) void* __ke_call_dispatch(const char* name, int32_t c
                                                    size_t sz);
 
 /// @brief Interrupt Kernel and call it's RPC.
-/// @param KernelRpcName RPC name
+/// @param name RPC name
 /// @param cnt number of elements in **data** pointer.
 /// @param data data pointer.
 /// @param sz The size of the whole data pointer.
