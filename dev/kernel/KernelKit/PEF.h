@@ -11,8 +11,8 @@
 
 ------------------------------------------- */
 
-#ifndef KERNELKIT_PEF_H
-#define KERNELKIT_PEF_H
+#ifndef __KERNELKIT_PEF_H__
+#define __KERNELKIT_PEF_H__
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/LoaderInterface.h>
@@ -113,4 +113,4 @@ enum {
 };
 }  // namespace Kernel
 
-#endif /* ifndef KERNELKIT_PEF_H */
+#endif /* ifndef __KERNELKIT_PEF_H__ */
