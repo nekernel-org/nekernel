@@ -8,8 +8,8 @@
 
 namespace Kernel {
 
-STATIC Int     rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
-STATIC voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
+Int     rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
+voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
 
 Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size) {
   for (Size i = 0; i < size; ++i) {
@@ -45,7 +45,7 @@ const Char* rt_alloc_string(const Char* src) {
   return buffer;
 }
 
-STATIC Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size) {
+Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size) {
   if (!src || !dst || len > dst_size) {
     if (dst && dst_size) {
       rt_set_memory_safe(dst, 0, dst_size, dst_size);
@@ -58,7 +58,7 @@ STATIC Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size ds
   return static_cast<Int>(len);
 }
 
-STATIC voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size) {
+voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size) {
   if (!dst || len > dst_size) return nullptr;
   auto  p = reinterpret_cast<UInt8*>(dst);
   UInt8 v = static_cast<UInt8>(value & 0xFF);
@@ -73,8 +73,7 @@ Void rt_zero_memory(voidPtr pointer, Size len) {
 #ifdef __NE_ENFORCE_DEPRECATED_WARNINGS
 [[deprecated("Use rt_set_memory_safe instead")]]
 #endif
-voidPtr
-rt_set_memory(voidPtr src, UInt32 value, Size len) {
+voidPtr rt_set_memory(voidPtr src, UInt32 value, Size len) {
   if (!src) return nullptr;
   auto  p = reinterpret_cast<UInt8*>(src);
   UInt8 v = static_cast<UInt8>(value & 0xFF);
@@ -156,26 +155,18 @@ Char* rt_string_has_char(Char* str, Char ch) {
   return (*str == ch) ? str : nullptr;
 }
 
-Int32 rt_strcmp(const Char* a, const Char* b) {
-  Size i = 0;
-  while (a[i] != '\0' && b[i] != '\0' && a[i] == b[i]) {
-    ++i;
-  }
-  return static_cast<Int32>(static_cast<UInt8>(a[i]) - static_cast<UInt8>(b[i]));
+EXTERN_C void* memset(void* dst, int c, long long unsigned int len) {
+  return Kernel::rt_set_memory_safe(dst, c, static_cast<Size>(len), static_cast<Size>(len));
 }
 
-// @uses the deprecated version callers should ensure 'len' is valid.
-extern "C" void* memset(void* dst, int c, long long unsigned int len) {
-  return Kernel::rt_set_memory(dst, c, static_cast<Size>(len));
-}
-
-extern "C" void* memcpy(void* dst, const void* src, long long unsigned int len) {
-  Kernel::rt_copy_memory(const_cast<void*>(src), dst, static_cast<Size>(len));
+EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len) {
+  Kernel::rt_copy_memory_safe(const_cast<void*>(src), dst, static_cast<Size>(len),
+                              static_cast<Size>(len));
   return dst;
 }
 
-extern "C" Kernel::Int32 strcmp(const char* a, const char* b) {
-  return Kernel::rt_strcmp(a, b);
+EXTERN_C Kernel::Int32 strcmp(const char* a, const char* b) {
+  return Kernel::rt_string_cmp(a, b, rt_string_len(a));
 }
 
 }  // namespace Kernel

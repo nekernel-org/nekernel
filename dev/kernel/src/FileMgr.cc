@@ -10,6 +10,7 @@
 /***********************************************************************************/
 /// @file FileMgr.cc
 //! @brief File System Manager API.
+///! @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
 namespace Kernel {

@@ -6,6 +6,8 @@
 
 #include <CompilerKit/CompilerKit.h>
 #include <FSKit/IndexableProperty.h>
+#include <NeKit/KString.h>
+#include <NeKit/KernelPanic.h>
 #include <NeKit/MutableArray.h>
 #include <NeKit/Utils.h>
 
@@ -16,13 +18,21 @@
 
 namespace Kernel {
 namespace Indexer {
-  Index& IndexableProperty::Leak() noexcept { return fIndex; }
+  Index& IndexableProperty::Leak() noexcept {
+    return fIndex;
+  }
 
-  Void IndexableProperty::AddFlag(Int16 flag) { fFlags |= flag; }
+  Void IndexableProperty::AddFlag(Int16 flag) {
+    fFlags |= flag;
+  }
 
-  Void IndexableProperty::RemoveFlag(Int16 flag) { fFlags &= flag; }
+  Void IndexableProperty::RemoveFlag(Int16 flag) {
+    fFlags &= flag;
+  }
 
-  Int16 IndexableProperty::HasFlag(Int16 flag) { return fFlags & flag; }
+  Int16 IndexableProperty::HasFlag(Int16 flag) {
+    return fFlags & flag;
+  }
 
   /// @brief Index a file into the indexer instance.
   /// @param filename filesystem path to access.
@@ -32,7 +42,8 @@ namespace Indexer {
   Void fs_index_file(const Char* filename, SizeT filenameLen, IndexableProperty& indexer) {
     if (!indexer.HasFlag(kIndexerClaimed)) {
       indexer.AddFlag(kIndexerClaimed);
-      rt_copy_memory((VoidPtr) indexer.Leak().Path, (VoidPtr) filename, filenameLen);
+      rt_copy_memory_safe(reinterpret_cast<VoidPtr>(const_cast<Char*>(filename)),
+                          (VoidPtr) indexer.Leak().Path, filenameLen, kIndexerCatalogNameLength);
 
       (Void)(kout << "FSKit: Indexed new file: " << filename << kendl);
     }

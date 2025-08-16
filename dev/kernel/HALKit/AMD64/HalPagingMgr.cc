@@ -117,8 +117,11 @@ EXTERN_C Int32 mm_memory_fence(VoidPtr virtual_address) {
 /// @param flags the flags to put on the page.
 /// @return Status code of page manipulation process.
 /***********************************************************************************/
-EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags) {
+EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags,
+                           UInt32 level) {
   if (physical_address == 0) return kErrorInvalidData;
+
+  NE_UNUSED(level);  /// @todo support PML4, and PDPT levels.
 
   const UInt64     kVMAddr   = (UInt64) virtual_address;
   constexpr UInt64 kMask9    = 0x1FF;

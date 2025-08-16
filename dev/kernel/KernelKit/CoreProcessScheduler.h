@@ -9,13 +9,17 @@
 #include <NeKit/Defines.h>
 #include <NeKit/ErrorOr.h>
 
+/// @file CoreProcessScheduler.h
+/// @brief Core Process Scheduler header file.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+
 #define kSchedMinMicroTime (AffinityKind::kStandard)
 #define kSchedInvalidPID (-1)
 #define kSchedProcessLimitPerTeam (32U)
 #define kSchedTeamCount (256U)
 
-#define kSchedMaxMemoryLimit gib_cast(128) /* max physical memory limit */
-#define kSchedMaxStackSz (kib_cast(8))     /* maximum stack size */
+#define kSchedMaxMemoryLimit (gib_cast(128)) /* max physical memory limit */
+#define kSchedMaxStackSz (kib_cast(8))       /* maximum stack size */
 
 #define kSchedNameLen (128U)
 
@@ -32,19 +36,23 @@ template <typename T>
 struct PROCESS_HEAP_TREE;
 
 template <typename T>
+struct PROCESS_SPECIAL_TREE;
+
+template <typename T>
 struct PROCESS_FILE_TREE;
 
 enum {
   kInvalidTreeKind = 0U,
   kRedTreeKind     = 100U,
   kBlackTreeKind   = 101U,
-  kTreeKindCount   = 2U,
+  kTreeKindCount   = 3U,
 };
 
 template <typename T>
 struct PROCESS_HEAP_TREE {
-  static constexpr auto kPtr = true;
-  static constexpr auto kFD  = false;
+  static constexpr auto kHeap    = true;
+  static constexpr auto kFile    = false;
+  static constexpr auto kSpecial = false;
 
   T     Entry{nullptr};
   SizeT EntrySize{0UL};
@@ -69,8 +77,9 @@ struct PROCESS_HEAP_TREE {
 
 template <typename T>
 struct PROCESS_FILE_TREE {
-  static constexpr auto kPtr = false;
-  static constexpr auto kFD  = true;
+  static constexpr auto kHeap    = false;
+  static constexpr auto kFile    = true;
+  static constexpr auto kSpecial = false;
 
   T     Entry{nullptr};
   SizeT EntrySize{0UL};
@@ -81,6 +90,7 @@ struct PROCESS_FILE_TREE {
   struct PROCESS_FILE_TREE<T>* Parent {
     nullptr
   };
+
   struct PROCESS_FILE_TREE<T>* Child {
     nullptr
   };
@@ -88,6 +98,7 @@ struct PROCESS_FILE_TREE {
   struct PROCESS_FILE_TREE<T>* Prev {
     nullptr
   };
+
   struct PROCESS_FILE_TREE<T>* Next {
     nullptr
   };
@@ -105,8 +116,6 @@ enum class ProcessSubsystem : Int32 {
   kProcessSubsystemInvalid = 0xFFFFFFF,
   kProcessSubsystemCount   = 4,
 };
-
-typedef UInt64 PTime;
 
 /***********************************************************************************/
 //! @brief Local Process identifier.
@@ -170,7 +179,8 @@ inline bool operator>=(AffinityKind lhs, AffinityKind rhs) {
   return lhs_int >= rhs_int;
 }
 
-using ProcessTime = UInt64;
+using PTime       = UInt64;
+using ProcessTime = PTime;
 using PID         = Int64;
 
 /***********************************************************************************/
@@ -180,7 +190,7 @@ enum class ProcessLevelRing : Int32 {
   kRingStdUser   = 1,
   kRingSuperUser = 2,
   kRingGuestUser = 5,
-  kRingCount     = 5,
+  kRingCount     = 3,
 };
 
 /***********************************************************************************/
@@ -200,8 +210,8 @@ struct PROCESS_IMAGE final {
 
   friend class UserProcessScheduler;
 
-  ImagePtr fCode;
-  ImagePtr fBlob;
+  ImagePtr fCode{};
+  ImagePtr fBlob{};
 
  public:
   Bool HasCode() const { return this->fCode != nullptr; }

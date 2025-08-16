@@ -5,7 +5,7 @@
 ===================================
 
 - Programming Language: C/C++
-- Build System: Make/BTB
+- Build System: Make/NeBuild
 - Purpose: Driver Tool Kit, which you link against ddk.sys
 
 ===================================

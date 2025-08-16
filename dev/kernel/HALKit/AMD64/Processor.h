@@ -47,6 +47,7 @@
 #define IsLevelTriggered(FLG) (FLG & 8)
 
 #define kInterruptGate (0x8E)
+#define kUserInterruptGate (0xEE)
 #define kTrapGate (0xEF)
 #define kTaskGate (0b10001100)
 #define kIDTSelector (0x08)
@@ -245,7 +246,8 @@ class LAPICDmaWrapper final {
 /// @param phys_addr point to physical address.
 /// @param flags the flags to put on the page.
 /// @return Status code of page manip.
-EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags);
+EXTERN_C Int32 mm_map_page(VoidPtr virtual_address, VoidPtr physical_address, UInt32 flags,
+                           UInt32 level = 2);
 
 EXTERN_C UInt8  rt_in8(UInt16 port);
 EXTERN_C UInt16 rt_in16(UInt16 port);

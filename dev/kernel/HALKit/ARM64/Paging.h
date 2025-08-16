@@ -86,14 +86,16 @@ namespace Detail {
     PageEnable          = 31,
   };
 
-  inline UInt8 control_register_cast(ControlRegisterBits reg) { return static_cast<UInt8>(reg); }
+  inline UInt8 control_register_cast(ControlRegisterBits reg) {
+    return static_cast<UInt8>(reg);
+  }
 }  // namespace Detail
 
 struct PDE_4KB final {
   PTE_4KB ALIGN(kPageAlign) fEntries[kPageMax];
 };
 
-auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page) -> VoidPtr;
+auto mm_alloc_bitmap(Boolean wr, Boolean user, SizeT size, Bool is_page, SizeT pad = 0) -> VoidPtr;
 auto mm_free_bitmap(VoidPtr page_ptr) -> Bool;
 }  // namespace Kernel::HAL
 

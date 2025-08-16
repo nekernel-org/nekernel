@@ -23,7 +23,11 @@
 #define kNeDMAPoolSize (0x1000000)
 #endif
 
+#ifdef __GNUC__
 #define kNeDMABestAlign __BIGGEST_ALIGNMENT__
+#else
+#define kNeDMABestAlign (8)
+#endif
 
 namespace Kernel {
 /// @brief DMA pool base pointer, here we're sure that AHCI or whatever tricky standard sees it.
@@ -37,7 +41,7 @@ inline const UInt8* kDmaPoolEnd = (UInt8*) (kNeDMAPoolStart + kNeDMAPoolSize);
 /***********************************************************************************/
 inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
   if (!size) {
-    return nullptr;
+    ++size;
   }
 
   /// Check alignement according to architecture.
@@ -69,7 +73,7 @@ inline VoidPtr rtl_dma_alloc(SizeT size, SizeT align) {
 inline Void rtl_dma_free(SizeT size) {
   if (!size) return;
 
-  auto ptr = (UInt8*) (kDmaPoolPtr - size);
+  auto ptr = (kDmaPoolPtr - size);
 
   if (!ptr || ptr < (UInt8*) kNeDMAPoolStart) {
     err_global_get() = kErrorDmaExhausted;

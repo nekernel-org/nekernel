@@ -50,7 +50,7 @@ class OwnPtr final {
 
   Ref<T> AsRef() { return Ref<T>(fCls); }
 
-       operator bool() { return fCls; }
+  operator bool() { return fCls; }
   bool operator!() { return !fCls; }
 
  private:

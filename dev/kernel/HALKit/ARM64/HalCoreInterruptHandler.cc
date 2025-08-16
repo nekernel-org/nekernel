@@ -11,16 +11,16 @@
 #include <SignalKit/Signals.h>
 
 EXTERN_C Kernel::Void int_handle_breakpoint(Kernel::UIntPtr rip);
- EXTERN_C BOOL mp_handle_gic_interrupt_el0(Void);
+EXTERN_C BOOL         mp_handle_gic_interrupt_el0(Void);
 
-EXTERN_C BOOL kEndOfInterrupt;
+EXTERN_C BOOL  kEndOfInterrupt;
 EXTERN_C UInt8 kEndOfInterruptVector;
 
 STATIC BOOL kIsRunning = NO;
 
 /// @note This is managed by the system software.
 STATIC void hal_int_send_eoi(UInt8 vector) {
-  kEndOfInterrupt = YES;
+  kEndOfInterrupt       = YES;
   kEndOfInterruptVector = vector;
 }
 
@@ -56,8 +56,7 @@ EXTERN_C void int_handle_scheduler(Kernel::UIntPtr rsp) {
 
   hal_int_send_eoi(32);
 
-  while (kIsRunning)
-    ;
+  while (kIsRunning);
 
   kIsRunning = YES;
 
@@ -143,10 +142,8 @@ EXTERN_C Kernel::Void hal_system_call_enter(Kernel::UIntPtr rcx_hash,
 /// @brief Enter Kernel call from assembly (libDDK only).
 /// @param stack the stack pushed from assembly routine.
 /// @return nothing.
-EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_hash,
-                                            Kernel::UIntPtr rdx_kerncall_arg) {
-  hal_int_send_eoi(51);
-
+EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_hash, Kernel::SizeT cnt,
+                                            Kernel::UIntPtr arg, Kernel::SizeT sz) {
   if (!Kernel::kRootUser) return;
   if (Kernel::kCurrentUser != Kernel::kRootUser) return;
   if (!Kernel::kCurrentUser->IsSuperUser()) return;
@@ -154,7 +151,7 @@ EXTERN_C Kernel::Void hal_kernel_call_enter(Kernel::UIntPtr rcx_hash,
   for (SizeT i = 0UL; i < kMaxDispatchCallCount; ++i) {
     if (kKernCalls[i].fHooked && rcx_hash == kKernCalls[rcx_hash].fHash) {
       if (kKernCalls[i].fProc) {
-        (kKernCalls[i].fProc)((Kernel::VoidPtr) rdx_kerncall_arg);
+        (kKernCalls[i].fProc)(cnt, (Kernel::VoidPtr) arg, sz);
       }
     }
   }

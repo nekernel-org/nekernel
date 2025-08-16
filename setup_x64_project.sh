@@ -8,9 +8,9 @@ cd dev/libSystem
 cd src
 make libsys_asm_io_x64
 cd ..
-btb libSystem.json
+nebuild libSystem.json
 cd ../ddk
-btb ddk.json
+nebuild ddk.json
 cd ../boot
 make -f amd64-desktop.make efi
 make -f amd64-desktop.make epm-img

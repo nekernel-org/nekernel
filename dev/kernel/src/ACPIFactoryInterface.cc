@@ -10,12 +10,11 @@
 #include <modules/ACPI/ACPIFactoryInterface.h>
 
 namespace Kernel {
-constexpr STATIC const auto kMinACPIVer = 1;
+constexpr STATIC const auto kMinACPIVer = 1U;
 
 /// @brief Finds a descriptor table inside ACPI XSDT.
 ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
-  MUST_PASS(this->fRsdp);
-
+  if (this->fRsdp) return ErrorOr<voidPtr>{kErrorInvalidData};
   if (!signature) return ErrorOr<voidPtr>{-kErrorInvalidData};
   if (*signature == 0) return ErrorOr<voidPtr>{-kErrorInvalidData};
 
@@ -33,7 +32,7 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
   if (num < 1) {
     /// stop here, we should have entries...
     ke_panic(RUNTIME_CHECK_ACPI);
-    return ErrorOr<voidPtr>{-1};
+    return ErrorOr<voidPtr>{-kErrorInvalidData};
   }
 
   this->fEntries = num;
@@ -62,7 +61,7 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
     }
   }
 
-  return ErrorOr<voidPtr>{-1};
+  return ErrorOr<voidPtr>{-kErrorInvalidData};
 }
 
 /***

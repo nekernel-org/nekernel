@@ -4,7 +4,7 @@
 
 ------------------------------------------- */
 
-#ifdef __NE_COREBOOT__
+#ifdef __NE_NEBOOT__
 
 .section .boot_hdr
 .align 4
@@ -37,4 +37,4 @@ bootloader_start:
     bl      bootloader_main             
     ret                                 
 
-#endif // __NE_COREBOOT__
+#endif // __NE_NEBOOT__

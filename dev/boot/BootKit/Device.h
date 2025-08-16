@@ -9,8 +9,7 @@
 #include <modules/AHCI/AHCI.h>
 #include <modules/ATA/ATA.h>
 
-using namespace Kernel;
-
+namespace Kernel {
 /// @brief Device type.
 class Device {
  public:
@@ -33,3 +32,4 @@ class Device {
 typedef Device BootDevice;
 typedef Device NetworkDevice;
 typedef Device DiskDevice;
+}  // namespace Kernel

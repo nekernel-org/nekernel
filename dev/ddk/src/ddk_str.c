@@ -2,11 +2,11 @@
 
   Copyright Amlal El Mahrouss.
 
-  Purpose: DDK Strings.
+  Purpose: DDK String API.
 
 ------------------------------------------- */
 
-#include <DDKKit/str.h>
+#include <DriverKit/str.h>
 
 DDK_EXTERN size_t kstrlen(const char* in) {
   if (in == nil) return 0;

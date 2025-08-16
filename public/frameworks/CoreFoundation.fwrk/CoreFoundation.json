@@ -15,7 +15,8 @@
       "kCFVersion=0x0100",
       "kCFVersionHighest=0x0100",
       "kCFVersionLowest=0x0100",
-      "__NE_AMD64__"
+      "__NE_AMD64__",
+      "__CF_64BIT__"
     ]
   }
   

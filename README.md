@@ -7,8 +7,8 @@
     <b>Modern, Modular, and Secure Microkernel for Next-Generation Systems</b>
   </p>
   <p>
-    <a href="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml"><img src="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml/badge.svg" alt="CI"></a>
-    <a href="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml"><img src="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml/badge.svg" alt="CI"></a>
+    <a href="https://github.com/nekernel-org/nekernel/actions/workflows/boot-pio.yml"><img src="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/boot-pio.yml/badge.svg" alt="CI"></a>
+    <a href="https://github.com/nekernel-org/nekernel/actions/workflows/kernel-ahci.yml"><img src="https://github.com/amlel-el-mahrouss/nekernel/actions/workflows/kernel-ahci.yml/badge.svg" alt="CI"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License"></a>
     <img src="https://img.shields.io/badge/QEMU-Tested-success" alt="QEMU Tested">
   </p>
@@ -18,7 +18,7 @@
 
 ## Overview
 
-**NeKernel** is a modern, multi-platform microkernel designed for security, modularity, and performance. It features a custom VFS, advanced memory management, a flexible DDK (Driver Development Kit), and robust userland tooling. NeKernel is built for research, education, and next-generation OS development.
+**NeKernel** is a modern, multi-platform microkernel designed for security, modularity, and performance. It features a custom VFS, advanced memory management, a flexible DDK (Driver Development Kit), and robust userland tools. NeKernel is built for research, education, and next-generation OS development.
 
 ---
 
@@ -36,9 +36,9 @@
 
 - **System Call Interface**: low-level syscall ABI, with a stable high-level SDK for user applications. System calls are routed through a syscall manager and abstracted by `libSystem`.
 
-- **Security and Robustness**: kernel and tooling (bounds checks, safe memory copy/set, error codes). Kernel panics and error reporting for critical failures. No dynamic code loading in kernel space.
+- **Security and Robustness**: kernel and tools (bounds checks, safe memory copy/set, error codes). Kernel panics and error reporting for critical failures. No dynamic code loading in kernel space.
 
-- **Documentation and Specs**: Full LaTeX specifications for HeFS and NeFS, with on-disk structure diagrams and API documentation. Markdown docs for tooling and usage.
+- **Documentation and Specs**: Full LaTeX specifications for HeFS and NeFS, with on-disk structure diagrams and API documentation. Markdown docs for tools and usage.
 
 - **Cross-Platform Boot Support**: Bootloader and platform code for AMD64 and ARM64, with handover and hardware abstraction layers.
 
@@ -49,10 +49,10 @@
 ## Getting Started
 
 ### **Requirements**
-- [MINGW-W64](https://www.mingw-w64.org/) (cross-compiling)
-- [CLANG](https://clang.llvm.org/)
+- [MinGW](https://www.mingw-w64.org/) (cross-compiling)
+- [Clang](https://clang.llvm.org/)
 - [NASM](https://nasm.us/)
-- [BTB](https://github.com/nekernel-org/btb) (build system)
+- [NeBuild](https://github.com/nekernel-org/nebuild) (build system)
 
 ### **Build & Run**
 
@@ -88,7 +88,7 @@ cd nekernel
 
 ## Documentation
 
-- [API Reference (Doxygen)](https://nekernel-org.github.io/docs/)
+- [API Reference (Doxygen)](https://nekernel-org.github.io/doc/)
 - [Filesystem Specifications](docs/tex/)
 
 ---

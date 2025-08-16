@@ -1,9 +1,11 @@
 /* -------------------------------------------
 
   Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
+  Copyright (C) 2025, Amlal El Mahrouss & NeKernel contributors, all rights reserved.
 
 ------------------------------------------- */
 
+#include <ArchKit/ArchKit.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/HeapMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
@@ -12,6 +14,11 @@
 #include <NeKit/KString.h>
 #include <NeKit/KernelPanic.h>
 #include <NeKit/OwnPtr.h>
+#include <NeKit/Utils.h>
+
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+/// @brief PEF backend for the Code Manager.
+/// @file PEFCodeMgr.cc
 
 /// @brief PEF stack size symbol.
 #define kPefStackSizeSymbol "__PEFSizeOfReserveStack"
@@ -23,7 +30,7 @@ namespace Detail {
   /***********************************************************************************/
   /// @brief Get the PEF platform signature according to the compiled architecture.
   /***********************************************************************************/
-  UInt32 ldr_get_platform(void) noexcept {
+  static UInt32 ldr_get_platform(void) noexcept {
 #if defined(__NE_32X0__)
     return kPefArch32x0;
 #elif defined(__NE_64X0__)
@@ -57,30 +64,34 @@ PEFLoader::PEFLoader(const Char* path) : fCachedBlob(nullptr), fFatBinary(false)
   fFile.New(const_cast<Char*>(path), kRestrictRB);
   fPath = KStringBuilder::Construct(path).Leak();
 
-  auto kPefHeader = "PEF_CONTAINER";
+  constexpr auto kPefHeader = "PEF_CONTAINER";
 
-  fCachedBlob = fFile->Read(kPefHeader, mib_cast(16));
+  /// @note zero here means that the FileMgr will read every container header inside the file.
+  fCachedBlob = fFile->Read(kPefHeader, 0UL);
 
   PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
 
-  if (container->Cpu == Detail::ldr_get_platform() && container->Magic[0] == kPefMagic[0] &&
-      container->Magic[1] == kPefMagic[1] && container->Magic[2] == kPefMagic[2] &&
-      container->Magic[3] == kPefMagic[3] && container->Magic[4] == kPefMagic[4] &&
-      container->Abi == kPefAbi) {
-    return;
-  } else if (container->Magic[4] == kPefMagic[0] && container->Magic[3] == kPefMagic[1] &&
-             container->Magic[2] == kPefMagic[2] && container->Magic[1] == kPefMagic[3] &&
-             container->Magic[0] == kPefMagic[4] && container->Abi == kPefAbi) {
-    /// This is a fat binary.
-    this->fFatBinary = true;
-    return;
+  if (container->Abi == kPefAbi &&
+      container->Count >=
+          3) { /* if same ABI, AND: .text, .bss, .data (or at least similar) exists */
+    if (container->Cpu == Detail::ldr_get_platform() && container->Magic[0] == kPefMagic[0] &&
+        container->Magic[1] == kPefMagic[1] && container->Magic[2] == kPefMagic[2] &&
+        container->Magic[3] == kPefMagic[3] && container->Magic[4] == kPefMagic[4]) {
+      return;
+    } else if (container->Magic[0] == kPefMagicFat[0] && container->Magic[1] == kPefMagicFat[1] &&
+               container->Magic[2] == kPefMagicFat[2] && container->Magic[3] == kPefMagicFat[3] &&
+               container->Magic[4] == kPefMagicFat[4]) {
+      /// This is a fat binary, treat it as such.
+      this->fFatBinary = true;
+      return;
+    }
   }
 
   fBad = true;
 
   if (fCachedBlob) mm_free_ptr(fCachedBlob);
 
-  kout << "PEFLoader: Warning: Executable format error!\r";
+  kout << "PEFLoader: warning: exec format error!\r";
 
   fCachedBlob = nullptr;
 }
@@ -102,14 +113,26 @@ PEFLoader::~PEFLoader() {
 ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
   if (!fCachedBlob || fBad || !name) return ErrorOr<VoidPtr>{kErrorInvalidData};
 
-  PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
-
   auto blob = fFile->Read(name, sizeof(PEFCommandHeader));
 
-  PEFCommandHeader* container_header = reinterpret_cast<PEFCommandHeader*>(blob);
+  if (!blob) return ErrorOr<VoidPtr>{kErrorInvalidData};
 
-  constexpr auto kMangleCharacter  = '$';
-  const Char*    kContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
+  PEFContainer* container = reinterpret_cast<PEFContainer*>(fCachedBlob);
+
+  if (!container) return ErrorOr<VoidPtr>{kErrorInvalidData};
+
+  PEFCommandHeader* command_header = reinterpret_cast<PEFCommandHeader*>(blob);
+
+  if (command_header->VMSize < 1 || command_header->VMAddress == 0)
+    return ErrorOr<VoidPtr>{kErrorInvalidData};
+
+  /// fat binary check.
+  if (command_header->Cpu != container->Cpu && !this->fFatBinary) {
+    return ErrorOr<VoidPtr>{kErrorInvalidData};
+  }
+
+  const auto  kMangleCharacter  = '$';
+  const Char* kContainerKinds[] = {".code64", ".data64", ".zero64", nullptr};
 
   ErrorOr<KString> error_or_symbol;
 
@@ -128,8 +151,8 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
     }
     default:
       return ErrorOr<VoidPtr>{kErrorInvalidData};
-      ;  // prevent that from the kernel's mode perspective, let that happen if it
-         // were a user process.
+      // prevent that from the kernel's mode perspective, let that happen if it
+      // were a user process.
   }
 
   Char* unconst_symbol = const_cast<Char*>(name);
@@ -142,35 +165,50 @@ ErrorOr<VoidPtr> PEFLoader::FindSymbol(const Char* name, Int32 kind) {
 
   error_or_symbol.Leak().Leak() += name;
 
-  for (SizeT index = 0; index < container->Count; ++index) {
-    if (KStringBuilder::Equals(container_header->Name, error_or_symbol.Leak().Leak().CData())) {
-      if (container_header->Kind == kind) {
-        if (container_header->Cpu != Detail::ldr_get_platform()) {
-          if (!this->fFatBinary) {
-            mm_free_ptr(blob);
-            return ErrorOr<VoidPtr>{kErrorInvalidData};
-          }
-        }
+  if (KStringBuilder::Equals(command_header->Name, error_or_symbol.Leak().Leak().CData())) {
+    if (command_header->Kind == kind) {
+      if (command_header->Cpu != Detail::ldr_get_platform()) {
+        if (!this->fFatBinary) {
+          mm_free_ptr(blob);
+          blob = nullptr;
 
-        Char* container_blob_value = new Char[container_header->Size];
-
-        rt_copy_memory((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
-                       container_header->Size);
-        mm_free_ptr(blob);
-
-        kout << "PEFLoader: Information: Loaded stub: " << container_header->Name << "!\r";
-
-        auto ret = HAL::mm_map_page((VoidPtr) container_header->VMAddress,
-                                    (VoidPtr) HAL::mm_get_page_addr(container_blob_value),
-                                    HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
-
-        if (ret != kErrorSuccess) {
-          mm_free_ptr(container_blob_value);
           return ErrorOr<VoidPtr>{kErrorInvalidData};
         }
-
-        return ErrorOr<VoidPtr>{container_blob_value};
       }
+
+      Char* container_blob_value = new Char[command_header->VMSize];
+
+      rt_copy_memory_safe((VoidPtr) ((Char*) blob + sizeof(PEFCommandHeader)), container_blob_value,
+                          command_header->VMSize, command_header->VMSize);
+
+      mm_free_ptr(blob);
+
+      kout << "PEFLoader: info: Loaded stub: " << command_header->Name << "!\r";
+
+      Int32 ret         = 0;
+      SizeT pages_count = (command_header->VMSize + kPageSize - 1) / kPageSize;
+
+      for (SizeT i_vm{}; i_vm < pages_count; ++i_vm) {
+        ret = HAL::mm_map_page(
+            (VoidPtr) (command_header->VMAddress + (i_vm * kPageSize)),
+            (VoidPtr) (HAL::mm_get_page_addr(container_blob_value) + (i_vm * kPageSize)),
+            HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+
+        if (ret != kErrorSuccess) {
+          /// We set the VMAddress to nullptr, if the mapping fail here.
+          for (SizeT i_vm_unmap{}; i_vm_unmap < i_vm; ++i_vm_unmap) {
+            ret = HAL::mm_map_page((VoidPtr) (command_header->VMAddress + (i_vm * kPageSize)),
+                                   nullptr, HAL::kMMFlagsPresent | HAL::kMMFlagsUser);
+          }
+
+          delete[] container_blob_value;
+          container_blob_value = nullptr;
+
+          return ErrorOr<VoidPtr>{kErrorInvalidData};
+        }
+      }
+
+      return ErrorOr<VoidPtr>{container_blob_value};
     }
   }
 
@@ -198,17 +236,17 @@ const Char* PEFLoader::Path() {
 
 const Char* PEFLoader::AsString() {
 #ifdef __32x0__
-  return "32x0 PEF.";
+  return "32x0 PEF";
 #elif defined(__64x0__)
-  return "64x0 PEF.";
+  return "64x0 PEF";
 #elif defined(__x86_64__)
-  return "x86_64 PEF.";
+  return "x86_64 PEF";
 #elif defined(__aarch64__)
-  return "AARCH64 PEF.";
+  return "AARCH64 PEF";
 #elif defined(__powerpc64__)
-  return "POWER64 PEF.";
+  return "POWER64 PEF";
 #else
-  return "???? PEF.";
+  return "???? PEF";
 #endif  // __32x0__ || __64x0__ || __x86_64__ || __powerpc64__
 }
 
@@ -232,7 +270,7 @@ namespace Utils {
       symname = ErrorOr<VoidPtr>{(VoidPtr) rt_alloc_string("USER_PROCESS")};
     }
 
-    auto id =
+    ProcessID id =
         UserProcessScheduler::The().Spawn(reinterpret_cast<const Char*>(symname.Leak().Leak()),
                                           errOrStart.Leak().Leak(), exec.GetBlob().Leak().Leak());
 
@@ -241,7 +279,7 @@ namespace Utils {
     if (id != kSchedInvalidPID) {
       auto stacksym = exec.FindSymbol(kPefStackSizeSymbol, kPefData);
 
-      if (!symname) {
+      if (!stacksym) {
         stacksym = ErrorOr<VoidPtr>{(VoidPtr) new UIntPtr(kSchedMaxStackSz)};
       }
 

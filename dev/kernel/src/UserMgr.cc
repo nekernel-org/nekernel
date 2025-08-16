@@ -13,8 +13,11 @@
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/HeapMgr.h>
 #include <KernelKit/KPC.h>
+#include <KernelKit/ThreadLocalStorage.h>
 #include <KernelKit/UserMgr.h>
+#include <NeKit/KString.h>
 #include <NeKit/KernelPanic.h>
+#include <NeKit/Utils.h>
 
 #define kStdUserType (0xEE)
 #define kSuperUserType (0xEF)
@@ -30,8 +33,8 @@ namespace Detail {
   /// \return the hashed password
   ////////////////////////////////////////////////////////////
   STATIC UInt64 user_fnv_generator(const Char* password, User* user) {
-    if (!password || !user) return 1;
-    if (*password == 0) return 1;
+    if (!password || !user) return 0;
+    if (*password == 0) return 0;
 
     kout << "user_fnv_generator: Hashing user password...\r";
 
@@ -47,7 +50,7 @@ namespace Detail {
 
     kout << "user_fnv_generator: Hashed user password.\r";
 
-    return 0;
+    return hash;
   }
 }  // namespace Detail
 
@@ -56,14 +59,16 @@ namespace Detail {
 ////////////////////////////////////////////////////////////
 User::User(const Int32& sel, const Char* user_name) : mUserRing((UserRingKind) sel) {
   MUST_PASS(sel >= 0);
-  rt_copy_memory((VoidPtr) user_name, this->mUserName, rt_string_len(user_name));
+  rt_copy_memory_safe((VoidPtr) user_name, this->mUserName, rt_string_len(user_name),
+                      kMaxUserNameLen);
 }
 
 ////////////////////////////////////////////////////////////
 /// @brief User ring constructor.
 ////////////////////////////////////////////////////////////
 User::User(const UserRingKind& ring_kind, const Char* user_name) : mUserRing(ring_kind) {
-  rt_copy_memory((VoidPtr) user_name, this->mUserName, rt_string_len(user_name));
+  rt_copy_memory_safe((VoidPtr) user_name, this->mUserName, rt_string_len(user_name),
+                      kMaxUserNameLen);
 }
 
 ////////////////////////////////////////////////////////////

@@ -100,7 +100,7 @@ class HardwareThreadScheduler final : public ISchedulable {
  public:
   Ref<HardwareThread*> operator[](SizeT idx);
   bool                 operator!() noexcept;
-                       operator bool() noexcept;
+  operator bool() noexcept;
 
   Bool IsUser() override { return Yes; }
 

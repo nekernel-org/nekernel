@@ -18,6 +18,10 @@
 #include <KernelKit/PECodeMgr.h>
 #include <KernelKit/PEFCodeMgr.h>
 
+/// @file CodeMgr.h
+/// @brief Code Manager header file.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+
 namespace Kernel {
 /// @brief Main process entrypoint.
 typedef void (*rtl_main_kind)(void);

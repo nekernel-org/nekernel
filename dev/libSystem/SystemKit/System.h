@@ -12,6 +12,10 @@ Purpose: System Call Interface.
 
 #include <libSystem/SystemKit/Macros.h>
 
+/// @brief TTY device path.
+#define kPrintDevicePath "/devices/tty{}"
+#define kCDDevicePath "/devices/dvd{}"
+
 // ------------------------------------------------------------------------------------------ //
 /// @brief Types API.
 // ------------------------------------------------------------------------------------------ //
@@ -309,8 +313,6 @@ IMPORT_C SInt32 PwrSendCode(_Output SInt32& code);
 // CD-ROM API.
 // ------------------------------------------------------------------------------------------ //
 
-#define kCDDevicePath "/devices/dvd{}"
-
 IMPORT_C IORef CdOpenTray(Void);
 
 IMPORT_C SInt32 CdEjectDrive(_Input IORef cdrom);
@@ -320,8 +322,6 @@ IMPORT_C SInt32 CdCloseTray(Void);
 // ------------------------------------------------------------------------------------------ //
 // TTY API.
 // ------------------------------------------------------------------------------------------ //
-
-#define kPrintDevicePath "/devices/tty{}"
 
 IMPORT_C SInt32 PrintOut(IORef file /* nullptr to direct to stdout */, const Char* fmt, ...);
 

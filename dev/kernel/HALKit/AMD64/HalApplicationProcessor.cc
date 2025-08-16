@@ -32,10 +32,9 @@
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
 
-/// @note: _hal_switch_context is internal
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
+/// @note: _hal_switch_context is internal.
 /// @brief The **HAL** namespace.
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -45,15 +44,15 @@ struct HAL_APIC_MADT;
 struct HAL_HARDWARE_THREAD;
 
 struct HAL_HARDWARE_THREAD final {
-  HAL::StackFramePtr mFramePtr;
-  ProcessID          mThreadID{0};
+  StackFramePtr mFramePtr;
+  ProcessID     mThreadID{0};
 };
 
-EXTERN_C Void sched_jump_to_task(HAL::StackFramePtr stack_frame);
+EXTERN_C Void sched_jump_to_task(StackFramePtr stack_frame);
 
-STATIC HAL_APIC_MADT* kMADTBlock = nullptr;
-STATIC Bool           kSMPAware  = false;
-STATIC Int64          kSMPCount  = 0;
+STATIC HAL_APIC_MADT* kSMPBlock = nullptr;
+STATIC Bool           kSMPAware = false;
+STATIC Int64          kSMPCount = 0;
 
 EXTERN_C UIntPtr kApicBaseAddress;
 
@@ -70,6 +69,7 @@ struct HAL_APIC_MADT final SDT_OBJECT {
   UInt8  List[1];  // Records List
 };
 
+/// @brief Local APIC Descriptor Table.
 struct LAPIC final {
   UInt8  Type;
   UInt8  Length;
@@ -113,16 +113,18 @@ EXTERN_C HAL::StackFramePtr mp_get_current_task(ThreadID thrdid) {
 /***********************************************************************************/
 
 EXTERN_C BOOL mp_register_task(HAL::StackFramePtr stack_frame, ThreadID thrdid) {
-  if (thrdid > kSMPCount) return NO;
   if (!stack_frame) return NO;
 
-  kHWThread[thrdid].mFramePtr = stack_frame;
-
-  HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
+  if (thrdid > kSMPCount) return NO;
 
   if (!kSMPAware) {
     sched_jump_to_task(kHWThread[thrdid].mFramePtr);
+
+    return YES;
   }
+
+  HardwareThreadScheduler::The()[thrdid].Leak()->Busy(NO);
+  kHWThread[thrdid].mFramePtr = stack_frame;
 
   return YES;
 }
@@ -158,11 +160,11 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     return;
   }
 
-  kRawMADT   = pwr.Leak().Leak();
-  kMADTBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
-  kSMPAware  = NO;
+  kRawMADT  = pwr.Leak().Leak();
+  kSMPBlock = reinterpret_cast<HAL_APIC_MADT*>(kRawMADT);
+  kSMPAware = NO;
 
-  if (kMADTBlock) {
+  if (kSMPBlock) {
     kSMPInterrupt = 0;
     kSMPCount     = 0;
 
@@ -189,8 +191,8 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
     controller.Write(LAPIC_REG_TIMER_LVT, 0x20 | (1 << 17));
     controller.Write(LAPIC_REG_TIMER_INITCNT, 1000000);
 
-    volatile UInt8* entry_ptr = reinterpret_cast<volatile UInt8*>(kMADTBlock->List);
-    volatile UInt8* end_ptr   = ((UInt8*) kMADTBlock) + kMADTBlock->Length;
+    volatile UInt8* entry_ptr = reinterpret_cast<volatile UInt8*>(kSMPBlock->List);
+    volatile UInt8* end_ptr   = ((UInt8*) kSMPBlock) + kSMPBlock->Length;
 
     while (entry_ptr < end_ptr) {
       UInt8 type   = *entry_ptr;

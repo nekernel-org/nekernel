@@ -6,6 +6,8 @@
 
 #include <NeKit/Utils.h>
 
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+
 namespace Kernel {
 Size urt_string_len(const Utf8Char* str) {
   SizeT len{0};

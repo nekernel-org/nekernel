@@ -20,6 +20,7 @@
 #include <KernelKit/KPC.h>
 #include <KernelKit/ProcessScheduler.h>
 #include <NeKit/KString.h>
+#include <NeKit/Utils.h>
 #include <SignalKit/Signals.h>
 
 ///! BUGS: 0
@@ -39,8 +40,9 @@ USER_PROCESS::~USER_PROCESS() = default;
 Void USER_PROCESS::Crash() {
   if (this->Status != ProcessStatusKind::kRunning) return;
 
+  this->Status = ProcessStatusKind::kKilled;
+
   (Void)(kout << this->Name << ": crashed, error id: " << number(-kErrorProcessFault) << kendl);
-  this->Exit(-kErrorProcessFault);
 }
 
 /***********************************************************************************/
@@ -83,7 +85,8 @@ Void USER_PROCESS::Wake(Bool should_wakeup) {
 /** @param tree The tree to calibrate */
 /***********************************************************************************/
 
-STATIC PROCESS_HEAP_TREE<VoidPtr>* sched_try_go_upper_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* tree) {
+template <typename T>
+STATIC T* sched_try_go_upper_ptr_tree(T* tree) {
   if (!tree) {
     return nullptr;
   }
@@ -104,7 +107,7 @@ STATIC PROCESS_HEAP_TREE<VoidPtr>* sched_try_go_upper_ptr_tree(PROCESS_HEAP_TREE
 }
 
 /***********************************************************************************/
-/** @brief Allocate pointer to heap tree. */
+/** @brief Allocate pointer to heap/file tree. */
 /***********************************************************************************/
 
 ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
@@ -119,7 +122,7 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
 
   hal_write_cr3(vm_register);
 #else
-  auto ptr           = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
+  auto ptr = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
 #endif
 
   if (!this->HeapTree) {
@@ -231,23 +234,24 @@ const AffinityKind& USER_PROCESS::GetAffinity() noexcept {
 /** @brief Free heap tree. */
 /***********************************************************************************/
 
-STATIC Void sched_free_ptr_tree(PROCESS_HEAP_TREE<VoidPtr>* memory_ptr_list) {
+template <typename T>
+STATIC Void sched_free_ptr_tree(T* tree) {
   // Deleting memory lists. Make sure to free all of them.
-  while (memory_ptr_list) {
-    if (memory_ptr_list->Entry) {
-      MUST_PASS(mm_free_ptr(memory_ptr_list->Entry));
+  while (tree) {
+    if (tree->Entry) {
+      MUST_PASS(mm_free_ptr(tree->Entry));
     }
 
-    auto next = memory_ptr_list->Next;
+    auto next = tree->Next;
 
     if (next->Child) sched_free_ptr_tree(next->Child);
 
-    memory_ptr_list->Child = nullptr;
+    tree->Child = nullptr;
 
-    mm_free_ptr(memory_ptr_list);
+    mm_free_ptr(tree);
 
-    memory_ptr_list = nullptr;
-    memory_ptr_list = next;
+    tree = nullptr;
+    tree = next;
   }
 }
 
@@ -270,6 +274,9 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 
   sched_free_ptr_tree(this->HeapTree);
   this->HeapTree = nullptr;
+
+  sched_free_ptr_tree(this->FileTree);
+  this->FileTree = nullptr;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   hal_write_cr3(pd);
@@ -314,10 +321,10 @@ Void USER_PROCESS::Exit(const Int32& exit_code) {
 }
 
 /***********************************************************************************/
-/// @brief Add dylib to process.
+/// @brief Add dylib to the process object.
 /***********************************************************************************/
 
-Bool USER_PROCESS::SpawnDylib() {
+Bool USER_PROCESS::InitDylib() {
   // React according to the process's kind.
   switch (this->Kind) {
     case USER_PROCESS::kExecutableDylibKind: {
@@ -340,7 +347,6 @@ Bool USER_PROCESS::SpawnDylib() {
 
   (Void)(kout << "Unknown process kind: " << hex_number(this->Kind) << kendl);
   this->Crash();
-  return NO;
 
   return NO;
 }
@@ -379,7 +385,8 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
     return -kErrorProcessFault;
   }
 
-  rt_copy_memory(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, len);
+  rt_copy_memory_safe(reinterpret_cast<VoidPtr>(const_cast<Char*>(name)), process.Name, len,
+                      kSchedNameLen);
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   process.VMRegister = kKernelVM;
@@ -418,6 +425,17 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
   process.Status    = ProcessStatusKind::kRunning;
   process.PTime     = 0;
   process.RTime     = 0;
+
+  if (!process.FileTree) {
+    process.FileTree = new PROCESS_FILE_TREE<VoidPtr>();
+
+    if (!process.FileTree) {
+      process.Crash();
+      return ErrorOr<VoidPtr>(-kErrorHeapOutOfMemory);
+    }
+
+    /// @todo File Tree allocation and dispose methods (amlal)
+  }
 
   (Void)(kout << "PID: " << number(process.ProcessId) << kendl);
   (Void)(kout << "Name: " << process.Name << kendl);

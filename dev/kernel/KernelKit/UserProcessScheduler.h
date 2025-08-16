@@ -62,7 +62,7 @@ class USER_PROCESS final {
   };
 
   USER_PROCESS_SIGNAL         Signal;
-  PROCESS_FILE_TREE<UInt32*>* FileTree{nullptr};
+  PROCESS_FILE_TREE<VoidPtr>* FileTree{nullptr};
   PROCESS_HEAP_TREE<VoidPtr>* HeapTree{nullptr};
   UserProcessTeam*            ParentTeam;
 
@@ -93,7 +93,10 @@ class USER_PROCESS final {
   /***********************************************************************************/
   Void Crash();
 
-  Bool SpawnDylib();
+  /***********************************************************************************/
+  ///! @brief Spawns a dynamic library handle if dylib.
+  /***********************************************************************************/
+  Bool InitDylib();
 
   /***********************************************************************************/
   ///! @brief Exits the app.
@@ -189,7 +192,7 @@ class UserProcessScheduler final : public ISchedulable {
   NE_MOVE_DELETE(UserProcessScheduler)
 
  public:
-       operator bool();
+  operator bool();
   bool operator!();
 
  public:

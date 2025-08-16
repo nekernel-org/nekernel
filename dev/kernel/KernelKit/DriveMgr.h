@@ -7,6 +7,10 @@
 #ifndef INC_DRIVE_MANAGER_H
 #define INC_DRIVE_MANAGER_H
 
+/// @file DriveMgr.h
+/// @brief Drive Manager.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/DebugOutput.h>
 #include <KernelKit/DeviceMgr.h>

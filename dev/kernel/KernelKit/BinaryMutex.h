@@ -24,16 +24,16 @@ class BinaryMutex final {
   bool Unlock() noexcept;
 
  public:
-  BOOL WaitForProcess(const Int16& sec) noexcept;
+  BOOL WaitForProcess(const UInt32& sec) noexcept;
 
  public:
-  bool Lock(USER_PROCESS& process);
-  bool LockOrWait(USER_PROCESS& process, TimerInterface* timer);
+  bool Lock(USER_PROCESS* process);
+  bool LockOrWait(USER_PROCESS* process, TimerInterface* timer);
 
  public:
   NE_COPY_DEFAULT(BinaryMutex)
 
  private:
-  USER_PROCESS& fLockingProcess;
+  USER_PROCESS* fLockingProcess{nullptr};
 };
 }  // namespace Kernel

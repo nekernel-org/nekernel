@@ -97,11 +97,13 @@ struct PACKED EPM_PART_BLOCK {
 ///! @brief Use in boot block version field.
 
 enum {
-  kEPMInvalid   = 0x00,
-  kEPMGeneric   = 0xcf,  /// @brief Generic OS
-  kEPMLinux     = 0x8f,  /// @brief Linux on EPM
-  kEPMBSD       = 0x9f,  /// @brief Berkeley Soft. Distribution
-  kEPMNeKernel  = 0x1f,  /// @brief NeKernel.
+  kEPMInvalid  = 0x00,
+  kEPMGeneric  = 0xcf,  /// @brief Generic OS
+  kEPMLinux    = 0x8f,  /// @brief Linux on EPM.
+  kEPMBSD      = 0x9f,  /// @brief BSD on EPM.
+  kEPMNeKernel = 0x1f,  /// @brief NeKernel.
+  kEPMVMKernel = 0x2f,  /// @brief VMKernel.
+  /// @note ... the rest is reserved for future OSes.
   kEPMInvalidOS = 0xff,
 };
 

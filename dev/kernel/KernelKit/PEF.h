@@ -11,19 +11,19 @@
 
 ------------------------------------------- */
 
-#ifndef KERNELKIT_PEF_H
-#define KERNELKIT_PEF_H
+#ifndef __KERNELKIT_PEF_H__
+#define __KERNELKIT_PEF_H__
 
 #include <CompilerKit/CompilerKit.h>
 #include <KernelKit/LoaderInterface.h>
 #include <NeKit/Defines.h>
 
-#define kPefMagic "Joy!"
-#define kPefMagicFat "yoJ!"
+#define kPefMagic "Open"
+#define kPefMagicFat "nepO"
 
 #define kPefMagicLen (5)
 
-#define kPefVersion (4)
+#define kPefVersion (0x0500)
 #define kPefNameLen (256U)
 
 /* not mandatory, only for non fork based filesystems. */
@@ -54,15 +54,15 @@ enum {
   kPefArch32x0, /* 32x0. ISA */
   kPefArchPowerPC,
   kPefArchARM64,
-  kPefArchCount   = (kPefArchPowerPC - kPefArchIntel86S) + 1,
+  kPefArchCount   = (kPefArchARM64 - kPefArchIntel86S) + 1,
   kPefArchInvalid = 0xFF,
 };
 
 enum {
+  kPefSubArchGeneric,
   kPefSubArchAMD = 200,
   kPefSubArchIntel,
   kPefSubArchARM,
-  kPefSubArchGeneric,
   kPefSubArchIBM,
 };
 
@@ -98,16 +98,19 @@ typedef struct PEFCommandHeader final {
   UInt32  Flags;             /* container flags */
   UInt16  Kind;              /* container kind */
   UIntPtr Offset;            /* content offset */
-  UIntPtr VMAddress;         /* VM offset */
-  SizeT   Size;              /* content Size */
+  SizeT   OffsetSize;        /* offset size (physical size inside the file) */
+  UIntPtr VMAddress;         /* Virtual Address */
+  SizeT   VMSize;            /* Virtual Size */
 } PACKED PEFCommandHeader;
 
 enum {
+  kPefInvalid  = 0x0,
   kPefCode     = 0xC,
   kPefData     = 0xD,
   kPefZero     = 0xE,
   kPefLinkerID = 0x1,
+  kPefCount    = 4,
 };
 }  // namespace Kernel
 
-#endif /* ifndef KERNELKIT_PEF_H */
+#endif /* ifndef __KERNELKIT_PEF_H__ */

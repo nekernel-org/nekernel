@@ -3,7 +3,7 @@
 ===================================
 
 - **Programming Language**: C / C++
-- **Build System**: Make / BTB (Build the Build)
+- **Build System**: Make / NeBuild 
 - **Purpose**: System Call Interface (SCI) for NeKernel
 
 ===================================

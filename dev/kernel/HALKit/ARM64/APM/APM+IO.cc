@@ -9,7 +9,7 @@
 
 using namespace Kernel;
 
-/// @brief Send APM command to it's IO space.
+/// @brief Send APM command to its IO space.
 /// @param base_dma the IO base port.
 /// @param cmd the command.
 /// @return status code.

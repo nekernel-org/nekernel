@@ -57,6 +57,12 @@ enum {
 
 constexpr inline auto kIPCMsgSize = 6094U;
 
+enum {
+  kIPCLockInvalid,
+  kIPCLockFree = 1,
+  kIPCLockUsed = 2,
+};
+
 /// @brief IPC connection header, message cannot be greater than 6K.
 typedef struct IPC_MSG final {
   UInt32   IpcHeaderMagic;  // cRemoteHeaderMagic
@@ -68,7 +74,7 @@ typedef struct IPC_MSG final {
   UInt32   IpcMsg;
   UInt32   IpcMsgSz;
   UInt8    IpcData[kIPCMsgSize];
-
+  UInt32   IpcLock;
   /// @brief Passes the message to target, could be anything, HTTP packet, JSON or whatever.
   static Bool Pass(IPC_MSG* self, IPC_MSG* target) noexcept;
 } PACKED IPC_MSG;

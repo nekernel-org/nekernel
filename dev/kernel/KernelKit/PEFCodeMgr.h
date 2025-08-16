@@ -7,6 +7,10 @@
 #ifndef _INC_CODE_MANAGER_PEF_H_
 #define _INC_CODE_MANAGER_PEF_H_
 
+/// @file PEFCodeMgr.h
+/// @brief PEF Code Manager header file.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+
 #include <KernelKit/FileMgr.h>
 #include <KernelKit/PEF.h>
 #include <NeKit/ErrorOr.h>
@@ -59,8 +63,8 @@ class PEFLoader : public LoaderInterface {
 
   Ref<KString> fPath;
   VoidPtr      fCachedBlob;
-  bool         fFatBinary;
-  bool         fBad;
+  BOOL         fFatBinary{};
+  BOOL         fBad{};
 };
 
 namespace Utils {

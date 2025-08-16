@@ -4,6 +4,7 @@
 
   File: FileMgr.h
   Purpose: Kernel file manager.
+  Author: Amlal El Mahrouss (amlal@nekernel.org)
 
 ------------------------------------------- */
 
@@ -21,7 +22,11 @@
 #ifndef INC_FILEMGR_H
 #define INC_FILEMGR_H
 
-//! Include filesystems that neoskrnl supports.
+/// @file FileMgr.h
+/// @brief File Manager.
+/// @author Amlal El Mahrouss (amlal@nekernel.org)
+
+//! Include filesystems that NeKernel supports.
 #include <FSKit/Ext2.h>
 #include <FSKit/HeFS.h>
 #include <FSKit/NeFS.h>
@@ -48,11 +53,6 @@
 
 #define rtl_node_cast(PTR) reinterpret_cast<Kernel::NodePtr>(PTR)
 
-/**
-  @note Refer to first enum.
-*/
-#define kFileOpsCount (4U)
-
 #define kFileMimeGeneric "ne-application-kind/all"
 
 /** @brief invalid position. (n-pos) */
@@ -65,10 +65,10 @@ enum {
   kFileReadAll    = 101,
   kFileReadChunk  = 102,
   kFileWriteChunk = 103,
-  kFileIOCnt      = (kFileWriteChunk - kFileWriteAll) + 1,
   // File flags (HFS+, NeFS specific)
   kFileFlagRsrc = 104,
   kFileFlagData = 105,
+  kFileIOCnt    = (kFileFlagData - kFileWriteAll) + 1,
 };
 
 typedef VoidPtr NodePtr;
@@ -284,12 +284,10 @@ class FileStream final {
         this->fFileRestrict != kFileMgrRestrictReadBinary)
       return nullptr;
 
-    NE_UNUSED(sz);
-
     auto man = FSClass::GetMounted();
 
     if (man) {
-      VoidPtr ret = man->Read(name, fFile, kFileReadAll, 0);
+      VoidPtr ret = man->Read(name, fFile, kFileReadAll, sz);
       return ret;
     }
 
@@ -394,6 +392,7 @@ inline FileStream<Encoding, Class>::FileStream(const Encoding* path, const Encod
 template <typename Encoding, typename Class>
 inline FileStream<Encoding, Class>::~FileStream() {
   mm_free_ptr(fFile);
+  fFile = nullptr;
 }
 }  // namespace Kernel
 

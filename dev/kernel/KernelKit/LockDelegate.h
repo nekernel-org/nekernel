@@ -11,10 +11,10 @@
 
 namespace Kernel {
 enum {
-  kLockInvalid = 0,
-  kLockDone    = 200,
-  kLockTimedOut,
-  kLockCount = 3,
+  kLockInvalid  = 0,
+  kLockDone     = 200,
+  kLockTimedOut = 300,
+  kLockCount    = 3,
 };
 
 /// @brief Lock condition pointer.

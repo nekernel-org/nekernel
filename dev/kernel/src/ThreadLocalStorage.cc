@@ -16,6 +16,7 @@
 /// @bugs: 0
 /// @file ThreadLocalStorage.cc
 /// @brief NeKernel Thread Local Storage.
+///! @author Amlal El Mahrouss (amlal@nekernel.org)
 /***********************************************************************************/
 
 using namespace Kernel;

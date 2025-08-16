@@ -30,7 +30,7 @@ error:
 	@echo "=== ERROR ==="
 	@echo "=> Use a specific target."
 
-MOVEALL=./MoveAll.ARM64.sh
+MOVEALL=./move-all-aarch64.sh
 
 .PHONY: nekernel-arm64-epm
 nekernel-arm64-epm: clean

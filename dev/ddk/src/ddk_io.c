@@ -6,14 +6,14 @@
 
 ------------------------------------------- */
 
-#include <DDKKit/io.h>
+#include <DriverKit/io.h>
 
 DDK_EXTERN void kputc(const char ch) {
   char assembled[2] = {0};
   assembled[0]      = ch;
   assembled[1]      = 0;
 
-  ke_call("ke_put_string", 1, assembled, 1);
+  ke_call_dispatch("ke_put_string", 1, assembled, 1);
 }
 
 /// @brief print string to UART.
