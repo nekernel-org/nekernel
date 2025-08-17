@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage{graphicx}
+
+\title{NeKernel: The SMP Subsystem}
+\author{Amlal El Mahrouss}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Abstract}
+
+{NeKernel is a hybrid based operating system kernel written in modern C++ (C++17/C++20). It features a bootloader, kernel, tools, libraries, and frameworks. This document is about the SMP subsystem of NeKernel}
+
+\section{Design Overview}
+
+ne\_kernel is designed with SMP by default. Although it may fallback under classic preemptive round-robin scheduling when unavailable - NeKernel runs best on a SMP based machine. The subsystem goes from the HardwareThreadScheduler to the Hardware Abstraction Layer's Application Processors API.
+
+\subsection{HardwareThreadScheduler (HTS)}
+
+HardwareThreadScheduler's main purpose is to make cores all busy with a StackFrame. That StackFrame contains program information (instruction, stack pointers) each task is fairly assigned to a core to then be run by the Application Processors API.
+
+\subsection{Application Processors (AP)}
+
+Application Processors (now referred as AP) is the API taking care of multi-core scheduling, very platform dependent (thus its presence on the HAL) it is designed to run tasks passed from the HardwareThreadScheduler system.
+
+\end{document}
