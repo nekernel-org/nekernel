@@ -1,7 +1,7 @@
 ;; /*
 ;; *	========================================================
 ;; *
-;; *	libSystem/src/SystemCalls+IO.asm
+;; *	libSystem/src/SystemProc.asm
 ;; * 	Copyright (C) 2024-2025, Amlal El Mahrouss, all rights reserved.
 ;; *
 ;; * 	========================================================
@@ -22,6 +22,8 @@ libsys_syscall_arg_1:
 
     mov r8, rcx
 
+    xor rax, rax
+
     int 50
 
     pop rbp
@@ -34,7 +36,9 @@ libsys_syscall_arg_2:
 
     mov r8, rcx
     mov r9, rdx
-    
+
+    xor rax, rax
+
     int 50
 
     pop rbp
@@ -49,6 +53,8 @@ libsys_syscall_arg_3:
     mov r9, rdx
     mov r10, rbx
 
+    xor rax, rax
+
     int 50
 
     pop rbp
@@ -59,10 +65,14 @@ libsys_syscall_arg_4:
     push rbp
     mov rbp, rsp
 
+    mov rax, r8
+
     mov r8, rcx
     mov r9, rdx
     mov r10, rbx
     mov r11, rax
+
+    xor rax, rax
 
     int 50
 
