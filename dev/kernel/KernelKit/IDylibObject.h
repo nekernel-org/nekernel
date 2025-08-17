@@ -41,5 +41,5 @@ class IDylibObject {
 };
 
 /// @brief Pure implementation, missing method/function handler.
-EXTERN_C void __zka_pure_call(void);
+EXTERN_C void __ne_pure_call(void);
 }  // namespace Kernel
