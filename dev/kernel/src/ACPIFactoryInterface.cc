@@ -82,7 +82,7 @@ bool ACPIFactoryInterface::Checksum(const Char* checksum, SSizeT len) {
 }
 
 ErrorOr<voidPtr> ACPIFactoryInterface::operator[](const Char* signature) {
-  if (!singature) return <voidPtr>{-kErrorInvalidData};
+  if (!signature) return ErrorOr<voidPtr>{-kErrorInvalidData};
   return this->Find(signature);
 }
 }  // namespace Kernel
