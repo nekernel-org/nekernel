@@ -7,22 +7,26 @@
 
 \begin{document}
 
-\maketitle
+    \maketitle
 
-\section{Abstract}
+    \section{Abstract}
 
-{NeKernel is a hybrid based operating system kernel written in modern C++ (C++17/C++20). It features a bootloader, kernel, tools, libraries, and frameworks. This document is about the SMP subsystem of NeKernel}
+    {NeKernel is a hybrid based operating system kernel written in modern C++ (C++17/C++20). It features a bootloader, kernel, tools, libraries, and frameworks. This document is about the SMP subsystem of the kernel.}
 
-\section{Design Overview}
+    \section{Design Overview}
 
-ne\_kernel is designed with SMP by default. Although it may fallback under classic preemptive round-robin scheduling when unavailable - NeKernel runs best on a SMP based machine. The subsystem goes from the HardwareThreadScheduler to the Hardware Abstraction Layer's Application Processors API.
+    {NeKernel is designed with SMP by default. Although it may fallback under classic preemptive round-robin scheduling when unavailable - NeKernel runs best on a SMP based machine. The subsystem goes from the HardwareThreadScheduler to the Hardware Abstraction Layer's Application Processor API.}
 
-\subsection{HardwareThreadScheduler (HTS)}
+    \section{The SMP Subsystem}
 
-HardwareThreadScheduler's main purpose is to make cores all busy with a StackFrame. That StackFrame contains program information (instruction, stack pointers) each task is fairly assigned to a core to then be run by the Application Processors API.
+    {The SMP subsystem consist of the HTS (HardwareThreadScheduler) and AP (Application Processor) APIs. Those systems are made to handle SMP tasks inside NeKernel.}
 
-\subsection{Application Processors (AP)}
+    \subsection{Higher Level: HardwareThreadScheduler (HTS)}
 
-Application Processors (now referred as AP) is the API taking care of multi-core scheduling, very platform dependent (thus its presence on the HAL) it is designed to run tasks passed from the HardwareThreadScheduler system.
+    {HTS's main purpose is to make cores all busy with a StackFrame object. That object contains program registers such as the stack pointer and instruction pointer. Each task is fairly assigned to then be run by the AP's mp\_register\_task function.}
+
+    \subsection{Lower Level: Application Processor (AP) API}
+
+    {Application Processors (now referred as AP) is the API taking care of multi-core scheduling, very platform dependent (thus its presence on the HAL) it is designed to run tasks passed from the HTS.}
 
 \end{document}

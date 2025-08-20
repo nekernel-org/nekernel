@@ -1,5 +1,5 @@
 {
-    "compiler_path": "g++",
+    "compiler_path": "clang++",
     "compiler_std": "c++20",
     "headers_path": [
         "../"
@@ -9,8 +9,8 @@
     ],
     "output_name": "./dist/mkfs.hefs",
     "cpp_macros": [
-        "kMKFSHEFSVersion=0x0100",
-        "kMKFSHEFSVersionHighest=0x0100",
-        "kMKFSHEFSVersionLowest=0x0100"
+        "kMkfsHeFSVersion=0x0100",
+        "kMkfsHeFSVersionHighest=0x0100",
+        "kMkfsHeFSVersionLowest=0x0100"
     ]
 }
