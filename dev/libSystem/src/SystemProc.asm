@@ -24,7 +24,7 @@ libsys_syscall_arg_1:
 
     xor rax, rax
 
-    int 50
+    syscall
 
     pop rbp
 
@@ -39,7 +39,7 @@ libsys_syscall_arg_2:
 
     xor rax, rax
 
-    int 50
+    syscall
 
     pop rbp
 
@@ -55,7 +55,7 @@ libsys_syscall_arg_3:
 
     xor rax, rax
 
-    int 50
+    syscall
 
     pop rbp
 
@@ -74,7 +74,7 @@ libsys_syscall_arg_4:
 
     xor rax, rax
 
-    int 50
+    syscall
 
     pop rbp
 
