@@ -91,14 +91,14 @@ namespace Detail {
   STATIC UInt64 hefsi_hash_64(const Utf8Char* path) {
     if (!path || *path == 0) return 0;
 
-    const UInt64 FNV_OFFSET_BASIS = 0xcbf29ce484222325ULL;
-    const UInt64 FNV_PRIME        = 0x100000001b3ULL;
+    const UInt64 kFnvBaseOffset  = 0xcbf29ce484222325ULL;
+    const UInt64 kFnvPrimeNumber = 0x100000001b3ULL;
 
-    UInt64 hash = FNV_OFFSET_BASIS;
+    UInt64 hash = kFnvBaseOffset;
 
     while (*path) {
       hash ^= (Utf8Char) (*path++);
-      hash *= FNV_PRIME;
+      hash *= kFnvPrimeNumber;
     }
 
     return hefsi_to_big_endian_64(hash);

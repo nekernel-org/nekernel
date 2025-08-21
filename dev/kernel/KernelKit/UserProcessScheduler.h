@@ -48,7 +48,7 @@ class USER_PROCESS final {
   AffinityKind       Affinity{AffinityKind::kStandard};
   ProcessStatusKind  Status{ProcessStatusKind::kKilled};
   UInt8              StackReserve[kSchedMaxStackSz];
-  ProcessImage      Image{};
+  ProcessImage       Image{};
   SizeT              StackSize{kSchedMaxStackSz};
   IDylibObject*      DylibDelegate{nullptr};
   SizeT              MemoryCursor{0UL};

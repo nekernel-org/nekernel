@@ -19,22 +19,22 @@ inline void rt_string_append(Char* lhs, const Char* rhs, Int32 cur) {
   }
 }
 
-template<>
+template <>
 inline Char* BasicKString<>::Data() {
   return this->fData;
 }
 
-template<>
+template <>
 inline const Char* BasicKString<>::CData() const {
   return const_cast<const Char*>(this->fData);
 }
 
-template<>
+template <>
 inline SizeT BasicKString<>::Length() const {
   return this->fDataSz;
 }
 
-template<>
+template <>
 inline bool BasicKString<>::operator==(const BasicKString<>& rhs) const {
   if (rhs.Length() != this->Length()) return false;
 
@@ -45,7 +45,7 @@ inline bool BasicKString<>::operator==(const BasicKString<>& rhs) const {
   return true;
 }
 
-template<>
+template <>
 inline bool BasicKString<>::operator==(const Char* rhs) const {
   if (rt_string_len(rhs) != this->Length()) return false;
 
@@ -56,7 +56,7 @@ inline bool BasicKString<>::operator==(const Char* rhs) const {
   return true;
 }
 
-template<>
+template <>
 inline bool BasicKString<>::operator!=(const BasicKString<>& rhs) const {
   if (rhs.Length() != this->Length()) return false;
 
@@ -67,7 +67,7 @@ inline bool BasicKString<>::operator!=(const BasicKString<>& rhs) const {
   return true;
 }
 
-template<>
+template <>
 inline bool BasicKString<>::operator!=(const Char* rhs) const {
   if (rt_string_len(rhs) != this->Length()) return false;
 
@@ -78,7 +78,7 @@ inline bool BasicKString<>::operator!=(const Char* rhs) const {
   return true;
 }
 
-template<>
+template <>
 inline BasicKString<>& BasicKString<>::operator+=(const BasicKString<>& rhs) {
   if (rt_string_len(rhs.fData) > this->Length()) return *this;
 
@@ -88,7 +88,7 @@ inline BasicKString<>& BasicKString<>::operator+=(const BasicKString<>& rhs) {
   return *this;
 }
 
-template<>
+template <>
 inline BasicKString<>& BasicKString<>::operator+=(const Char* rhs) {
   rt_string_append(this->fData, const_cast<Char*>(rhs), this->fCur);
   this->fCur += rt_string_len(const_cast<Char*>(rhs));

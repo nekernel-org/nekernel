@@ -25,7 +25,7 @@ namespace Kernel {
 class Json final {
  public:
   explicit Json() {
-    auto    len = kJSONMaxLen;
+    auto           len = kJSONMaxLen;
     BasicKString<> key = KString(len);
     key += kJSONNullObj;
 
@@ -42,7 +42,7 @@ class Json final {
   Bool& IsUndefined() { return fUndefined; }
 
  private:
-  Bool    fUndefined;  // is this instance undefined?
+  Bool           fUndefined;  // is this instance undefined?
   BasicKString<> fKey;
   BasicKString<> fValue;
 
