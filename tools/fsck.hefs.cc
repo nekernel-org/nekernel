@@ -14,7 +14,8 @@ static uint16_t kNumericalBase = 10;
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -in=<input_device> -org=<origin>" << "\n";
+    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -in=<input_device> -org=<origin>"
+                        << "\n";
     return EXIT_FAILURE;
   }
 
@@ -25,7 +26,8 @@ int main(int argc, char** argv) {
   auto origin = mkfs::get_option<char>(args, "-org");
 
   if (opt_disk.empty()) {
-    mkfs::console_out() << "fsck: hefs: error: HeFS partition is empty! Exiting..." << "\n";
+    mkfs::console_out() << "fsck: hefs: error: HeFS partition is empty! Exiting..."
+                        << "\n";
     return EXIT_FAILURE;
   }
 

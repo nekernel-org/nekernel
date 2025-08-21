@@ -201,14 +201,15 @@ using ImagePtr = VoidPtr;
 /***********************************************************************************/
 /// @brief Helper class to contain a process's image and blob.
 /***********************************************************************************/
-struct PROCESS_IMAGE final {
-  explicit PROCESS_IMAGE() = default;
+struct ProcessImage final {
+  explicit ProcessImage() = default;
 
  private:
   friend USER_PROCESS;
   friend KERNEL_TASK;
 
   friend class UserProcessScheduler;
+  friend class KernelTaskHelper;
 
   ImagePtr fCode{};
   ImagePtr fBlob{};

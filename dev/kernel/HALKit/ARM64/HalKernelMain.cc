@@ -71,6 +71,7 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   Kernel::mp_init_cores();
 
-  while (YES);
+  while (YES)
+    ;
 }
 #endif

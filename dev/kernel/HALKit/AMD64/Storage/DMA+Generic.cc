@@ -105,7 +105,7 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
   rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz - 1) / SectorSz));
 
-  rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+  rt_out8(IO + ATA_REG_LBA0, (Lba) &0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
   rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
@@ -123,7 +123,8 @@ Void drv_std_read(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorSz
 
   rt_out8(kATADevice.Bar(0x20) + 0x00, 0x09);  // Start DMA engine
 
-  while (rt_in8(kATADevice.Bar(0x20) + ATA_REG_STATUS) & 0x01);
+  while (rt_in8(kATADevice.Bar(0x20) + ATA_REG_STATUS) & 0x01)
+    ;
 
   rt_out8(kATADevice.Bar(0x20) + 0x00, 0x00);  // Stop DMA engine
 
@@ -146,7 +147,7 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 
   rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + (SectorSz - 1)) / SectorSz));
 
-  rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+  rt_out8(IO + ATA_REG_LBA0, (Lba) &0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
   rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
@@ -162,7 +163,8 @@ Void drv_std_write(UInt64 Lba, UInt16 IO, UInt8 Master, Char* Buf, SizeT SectorS
 
   rt_out8(IO + 0x00, 0x09);  // Start DMA engine
 
-  while (rt_in8(kATADevice.Bar(0x20) + ATA_REG_STATUS) & 0x01);
+  while (rt_in8(kATADevice.Bar(0x20) + ATA_REG_STATUS) & 0x01)
+    ;
 
   rt_out8(kATADevice.Bar(0x20) + 0x00, 0x00);  // Stop DMA engine
 

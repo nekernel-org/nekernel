@@ -88,7 +88,8 @@ ATAInit_Retry:
   /// fetch serial info
   /// model, speed, number of sectors...
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
 
   for (SizeT indexData = 0ul; indexData < kATADataLen; ++indexData) {
     kATAData[indexData] = rt_in16(IO + ATA_REG_DATA);
@@ -114,14 +115,15 @@ Void boot_ata_read(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeASCII* Buf,
 
   rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + SectorSz) / SectorSz));
 
-  rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+  rt_out8(IO + ATA_REG_LBA0, (Lba) &0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
   rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
 
   for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     boot_ata_wait_io(IO);
@@ -147,14 +149,15 @@ Void boot_ata_write(UInt64 Lba, UInt16 IO, UInt8 Master, CharacterTypeASCII* Buf
 
   rt_out8(IO + ATA_REG_SEC_COUNT0, ((Size + (SectorSz)) / SectorSz));
 
-  rt_out8(IO + ATA_REG_LBA0, (Lba) & 0xFF);
+  rt_out8(IO + ATA_REG_LBA0, (Lba) &0xFF);
   rt_out8(IO + ATA_REG_LBA1, (Lba) >> 8);
   rt_out8(IO + ATA_REG_LBA2, (Lba) >> 16);
   rt_out8(IO + ATA_REG_LBA3, (Lba) >> 24);
 
   rt_out8(IO + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
 
-  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ));
+  while (!(rt_in8(IO + ATA_REG_STATUS) & ATA_SR_DRQ))
+    ;
 
   for (SizeT IndexOff = 0; IndexOff < Size; IndexOff += 2) {
     boot_ata_wait_io(IO);

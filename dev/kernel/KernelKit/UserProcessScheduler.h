@@ -48,7 +48,7 @@ class USER_PROCESS final {
   AffinityKind       Affinity{AffinityKind::kStandard};
   ProcessStatusKind  Status{ProcessStatusKind::kKilled};
   UInt8              StackReserve[kSchedMaxStackSz];
-  PROCESS_IMAGE      Image{};
+  ProcessImage      Image{};
   SizeT              StackSize{kSchedMaxStackSz};
   IDylibObject*      DylibDelegate{nullptr};
   SizeT              MemoryCursor{0UL};
@@ -192,7 +192,7 @@ class UserProcessScheduler final : public ISchedulable {
   NE_MOVE_DELETE(UserProcessScheduler)
 
  public:
-  operator bool();
+       operator bool();
   bool operator!();
 
  public:
