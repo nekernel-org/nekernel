@@ -32,9 +32,9 @@ class Property {
   Property& operator=(const Property&) = default;
   Property(const Property&)            = default;
 
-  BOOL        StringEquals(KString& name);
+  BOOL        StringEquals(BasicKString<>& name);
   PropertyId& GetValue();
-  KString&    GetKey();
+  BasicKString<>&    GetKey();
 
  private:
   KString        fName{kMaxPropLen};

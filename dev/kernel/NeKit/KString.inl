@@ -4,26 +4,38 @@
 
 ------------------------------------------- */
 
-#include <NeKit/KString.h>
 #include <NeKit/Utils.h>
 
-/// @file KString.cc
+/// @file BasicKString<>.cc
 /// @brief Kernel String manipulation file.
 
 namespace Kernel {
-Char* KString::Data() {
+inline void rt_string_append(Char* lhs, const Char* rhs, Int32 cur) {
+  SizeT sz_rhs = rt_string_len(rhs);
+  SizeT rhs_i  = 0;
+
+  for (; rhs_i < sz_rhs; ++rhs_i) {
+    lhs[rhs_i + cur] = rhs[rhs_i];
+  }
+}
+
+template<>
+inline Char* BasicKString<>::Data() {
   return this->fData;
 }
 
-const Char* KString::CData() const {
+template<>
+inline const Char* BasicKString<>::CData() const {
   return const_cast<const Char*>(this->fData);
 }
 
-Size KString::Length() const {
+template<>
+inline SizeT BasicKString<>::Length() const {
   return this->fDataSz;
 }
 
-bool KString::operator==(const KString& rhs) const {
+template<>
+inline bool BasicKString<>::operator==(const BasicKString<>& rhs) const {
   if (rhs.Length() != this->Length()) return false;
 
   for (Size index = 0; index < this->Length(); ++index) {
@@ -33,7 +45,8 @@ bool KString::operator==(const KString& rhs) const {
   return true;
 }
 
-bool KString::operator==(const Char* rhs) const {
+template<>
+inline bool BasicKString<>::operator==(const Char* rhs) const {
   if (rt_string_len(rhs) != this->Length()) return false;
 
   for (Size index = 0; index < rt_string_len(rhs); ++index) {
@@ -43,7 +56,8 @@ bool KString::operator==(const Char* rhs) const {
   return true;
 }
 
-bool KString::operator!=(const KString& rhs) const {
+template<>
+inline bool BasicKString<>::operator!=(const BasicKString<>& rhs) const {
   if (rhs.Length() != this->Length()) return false;
 
   for (Size index = 0; index < rhs.Length(); ++index) {
@@ -53,7 +67,8 @@ bool KString::operator!=(const KString& rhs) const {
   return true;
 }
 
-bool KString::operator!=(const Char* rhs) const {
+template<>
+inline bool BasicKString<>::operator!=(const Char* rhs) const {
   if (rt_string_len(rhs) != this->Length()) return false;
 
   for (Size index = 0; index < rt_string_len(rhs); ++index) {
@@ -63,16 +78,34 @@ bool KString::operator!=(const Char* rhs) const {
   return true;
 }
 
-ErrorOr<KString> KStringBuilder::Construct(const Char* data) {
-  if (!data || *data == 0) return ErrorOr<KString>(new KString(0));
+template<>
+inline BasicKString<>& BasicKString<>::operator+=(const BasicKString<>& rhs) {
+  if (rt_string_len(rhs.fData) > this->Length()) return *this;
 
-  KString* view = new KString(rt_string_len(data));
-  (*view) += data;
+  rt_string_append(this->fData, const_cast<Char*>(rhs.fData), this->fCur);
+  this->fCur += rt_string_len(const_cast<Char*>(rhs.fData));
 
-  return ErrorOr<KString>(*view);
+  return *this;
 }
 
-const Char* KStringBuilder::FromBool(const Char* fmt, bool i) {
+template<>
+inline BasicKString<>& BasicKString<>::operator+=(const Char* rhs) {
+  rt_string_append(this->fData, const_cast<Char*>(rhs), this->fCur);
+  this->fCur += rt_string_len(const_cast<Char*>(rhs));
+
+  return *this;
+}
+
+inline ErrorOr<BasicKString<>> KStringBuilder::Construct(const Char* data) {
+  if (!data || *data == 0) return ErrorOr<BasicKString<>>(new BasicKString<>(0));
+
+  BasicKString<>* view = new BasicKString<>(rt_string_len(data));
+  (*view) += data;
+
+  return ErrorOr<BasicKString<>>(*view);
+}
+
+inline const Char* KStringBuilder::FromBool(const Char* fmt, bool i) {
   if (!fmt) return ("?");
 
   const Char* boolean_expr = i ? "YES" : "NO";
@@ -101,7 +134,7 @@ const Char* KStringBuilder::FromBool(const Char* fmt, bool i) {
   return ret;
 }
 
-bool KStringBuilder::Equals(const Char* lhs, const Char* rhs) {
+inline bool KStringBuilder::Equals(const Char* lhs, const Char* rhs) {
   if (rt_string_len(rhs) != rt_string_len(lhs)) return false;
 
   for (Size index = 0; index < rt_string_len(rhs); ++index) {
@@ -111,16 +144,9 @@ bool KStringBuilder::Equals(const Char* lhs, const Char* rhs) {
   return true;
 }
 
-/// @note This is unsafe!!!
-bool KStringBuilder::Equals(const Utf8Char* lhs, const Utf8Char* rhs) {
-  for (Size index = 0; index < urt_string_len(rhs); ++index) {
-    if (rhs[index] != lhs[index]) return false;
-  }
+inline bool KStringBuilder::Equals(const Utf8Char* lhs, const Utf8Char* rhs) {
+  if (urt_string_len(rhs) != urt_string_len(lhs)) return false;
 
-  return true;
-}
-
-bool KStringBuilder::Equals(const WideChar* lhs, const WideChar* rhs) {
   for (Size index = 0; rhs[index] != 0; ++index) {
     if (rhs[index] != lhs[index]) return false;
   }
@@ -128,7 +154,7 @@ bool KStringBuilder::Equals(const WideChar* lhs, const WideChar* rhs) {
   return true;
 }
 
-const Char* KStringBuilder::Format(const Char* fmt, const Char* fmt2) {
+inline const Char* KStringBuilder::Format(const Char* fmt, const Char* fmt2) {
   if (!fmt || !fmt2) return ("?");
 
   Char* ret = (Char*) RTL_ALLOCA(sizeof(char) * (rt_string_len(fmt2) + rt_string_len(fmt)));
@@ -151,30 +177,5 @@ const Char* KStringBuilder::Format(const Char* fmt, const Char* fmt2) {
   }
 
   return ret;
-}
-
-STATIC void rt_string_append(Char* lhs, const Char* rhs, Int32 cur) {
-  SizeT sz_rhs = rt_string_len(rhs);
-  SizeT rhs_i  = 0;
-
-  for (; rhs_i < sz_rhs; ++rhs_i) {
-    lhs[rhs_i + cur] = rhs[rhs_i];
-  }
-}
-
-KString& KString::operator+=(const Char* rhs) {
-  rt_string_append(this->fData, rhs, this->fCur);
-  this->fCur += rt_string_len(rhs);
-
-  return *this;
-}
-
-KString& KString::operator+=(const KString& rhs) {
-  if (rt_string_len(rhs.fData) > this->Length()) return *this;
-
-  rt_string_append(this->fData, const_cast<Char*>(rhs.fData), this->fCur);
-  this->fCur += rt_string_len(const_cast<Char*>(rhs.fData));
-
-  return *this;
 }
 }  // namespace Kernel

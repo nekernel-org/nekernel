@@ -26,7 +26,7 @@ class Json final {
  public:
   explicit Json() {
     auto    len = kJSONMaxLen;
-    KString key = KString(len);
+    BasicKString<> key = KString(len);
     key += kJSONNullObj;
 
     this->AsKey()   = key;
@@ -43,17 +43,17 @@ class Json final {
 
  private:
   Bool    fUndefined;  // is this instance undefined?
-  KString fKey;
-  KString fValue;
+  BasicKString<> fKey;
+  BasicKString<> fValue;
 
  public:
   /// @brief returns the key of the json
   /// @return the key as string view.
-  KString& AsKey() { return fKey; }
+  BasicKString<>& AsKey() { return fKey; }
 
   /// @brief returns the value of the json.
   /// @return the key as string view.
-  KString& AsValue() { return fValue; }
+  BasicKString<>& AsValue() { return fValue; }
 
   static Json kNull;
 };
