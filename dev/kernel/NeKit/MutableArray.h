@@ -9,21 +9,21 @@
 #include <NeKit/Array.h>
 #include <NeKit/Defines.h>
 
-#define TRY_FIND_NODE(NAME, NODE)                 \
+#define RTL_TRY_FIND_NODE(NAME, NODE)             \
   auto* NAME = NODE;                              \
   while (NAME) {                                  \
     if (NAME->fIndex == Index) return NAME->fVal; \
     NAME = NAME->fNext;                           \
   }
 
-#define TRY_FIND_NODE2(NAME, NODE)                        \
+#define RTL_TRY_FIND_NODE2(NAME, NODE)                    \
   auto* NAME = NODE;                                      \
   while (NAME) {                                          \
     if (NAME->fIndex == Index) return Ref<T>{NAME->fVal}; \
     NAME = NAME->fNext;                                   \
   }
 
-#define TRY_REMOVE_NODE(NODE)          \
+#define RTL_TRY_REMOVE_NODE(NODE)      \
   if (NODE && NODE->fIndex == Index) { \
     NODE->fUsed  = false;              \
     NODE->fIndex = 0;                  \
@@ -31,7 +31,7 @@
     return true;                       \
   }
 
-// FIXME: this is a shitty algorithm, which is consumer hungry.
+// FIXME: this is a shitty algorithm, because it is memory heavy.
 // Remove and occurences of that, and remove that class.
 namespace Kernel {
 template <typename T>
@@ -81,8 +81,8 @@ class NullableMutableArray {
 
  public:
   T operator[](SizeT Index) const {
-    TRY_FIND_NODE(first, fFirstNode);
-    TRY_FIND_NODE(last, fLastNode);
+    RTL_TRY_FIND_NODE(first, fFirstNode);
+    RTL_TRY_FIND_NODE(last, fLastNode);
 
     return _PlaceHolderValue;
   }
@@ -91,8 +91,8 @@ class NullableMutableArray {
 
  public:
   Boolean Remove(SizeT Index) {
-    TRY_REMOVE_NODE(fFirstNode);
-    TRY_REMOVE_NODE(fLastNode);
+    RTL_TRY_REMOVE_NODE(fFirstNode);
+    RTL_TRY_REMOVE_NODE(fLastNode);
 
     return false;
   }
@@ -172,8 +172,8 @@ class MutableArray : public NullableMutableArray<voidPtr, nullptr> {
 
  public:
   Ref<T> operator[](SizeT Index) const {
-    TRY_FIND_NODE2(first, fFirstNode);
-    TRY_FIND_NODE2(last, fLastNode);
+    RTL_TRY_FIND_NODE2(first, fFirstNode);
+    RTL_TRY_FIND_NODE2(last, fLastNode);
 
     return {};
   }

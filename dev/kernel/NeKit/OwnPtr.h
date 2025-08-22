@@ -61,7 +61,6 @@ template <typename T, typename... Args>
 inline OwnPtr<T> mm_make_own_ptr(Args... args) {
   OwnPtr<T> ret;
   ret.template New<Args...>(forward(args)...);
-  MUST_PASS(ret);
 
   return ret;
 }

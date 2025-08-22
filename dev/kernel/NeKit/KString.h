@@ -73,7 +73,8 @@ class BasicKString final {
   friend class KStringBuilder;
 };
 
-using KString = BasicKString<>;
+using KString   = BasicKString<>;
+using KStringOr = ErrorOr<KString>;
 
 class KStringBuilder final {
  public:
