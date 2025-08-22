@@ -34,7 +34,7 @@ voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
 
 /// UNICODE API
 
-Int  urt_string_cmp(const Char* src, const Char* cmp, Size len);
+Int  urt_string_cmp(const Utf8Char* src, const Utf8Char* cmp, Size len);
 Void urt_set_memory(const voidPtr src, UInt32 dst, Size len);
 Int  urt_copy_memory(const voidPtr src, voidPtr dst, Size len);
 Size urt_string_len(const Utf8Char* str);
