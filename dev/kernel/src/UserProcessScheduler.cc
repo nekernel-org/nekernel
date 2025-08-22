@@ -265,7 +265,6 @@ STATIC Void sched_free_ptr_tree(T* tree) {
 Void USER_PROCESS::Exit(const Int32& exit_code) {
   this->Status       = exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
   this->LastExitCode = exit_code;
-  this->UTime        = 0;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   auto pd = kKernelVM;
@@ -424,6 +423,7 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
   process.ProcessId = pid;
   process.Status    = ProcessStatusKind::kRunning;
   process.PTime     = 0;
+  process.UTime     = 0;
   process.RTime     = 0;
 
   if (!process.FileTree) {
