@@ -207,8 +207,8 @@ struct ProcessImage final {
   friend USER_PROCESS;
   friend KERNEL_TASK;
 
-  friend class UserProcessScheduler;
-  friend class KernelTaskScheduler;
+  friend UserProcessScheduler;
+  friend KernelTaskScheduler;
 
   ImagePtr fCode{};
   ImagePtr fBlob{};
