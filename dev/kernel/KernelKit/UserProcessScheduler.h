@@ -79,7 +79,7 @@ class USER_PROCESS final {
   ProcessTime RTime{0};  //! @brief Process run time.
   ProcessTime UTime{0};  //! #brief Process used time.
 
-  PID   ProcessId{kSchedInvalidPID};
+  ProcessID   ProcessId{kSchedInvalidPID};
   Int32 Kind{kExecutableKind};
 
  public:
@@ -226,9 +226,9 @@ class UserProcessScheduler final : public ISchedulable {
 
 class UserProcessHelper final {
  public:
-  STATIC Bool Switch(HAL::StackFramePtr frame_ptr, PID new_pid);
+  STATIC Bool Switch(HAL::StackFramePtr frame_ptr, ProcessID new_pid);
   STATIC Bool CanBeScheduled(const USER_PROCESS& process);
-  STATIC ErrorOr<PID> TheCurrentPID();
+  STATIC ErrorOr<ProcessID> TheCurrentPID();
   STATIC SizeT        StartScheduling();
 };
 }  // namespace Kernel

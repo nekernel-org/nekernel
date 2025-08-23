@@ -17,7 +17,7 @@
 namespace Kernel {
 class KernelTaskHelper;
 
-typedef PID KID;
+typedef ProcessID KID;
 
 /// @brief Equivalent of USER_PROCESS, but for kernel tasks.
 /// @author Amlal
@@ -38,9 +38,9 @@ class KERNEL_TASK final {
 /// @author Amlal
 class KernelTaskHelper final {
  public:
-  STATIC Bool Switch(HAL::StackFramePtr frame_ptr, PID new_kid);
+  STATIC Bool Switch(HAL::StackFramePtr frame_ptr, ProcessID new_kid);
   STATIC Bool CanBeScheduled(const KERNEL_TASK& process);
-  STATIC ErrorOr<PID> TheCurrentKID();
+  STATIC ErrorOr<ProcessID> TheCurrentKID();
   STATIC SizeT        StartScheduling();
 };
 }  // namespace Kernel
