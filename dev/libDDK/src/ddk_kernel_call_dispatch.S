@@ -14,7 +14,13 @@
 
 /* args rcx, rdx, r8, r9 */
 __ke_call_dispatch:
-    int $0x33
+    pushq rbp
+    movq rbp, rsp
+
+    syscall
+
+    popq rbp
+
     ret
 
 #elif defined(__DDK_POWER64__)

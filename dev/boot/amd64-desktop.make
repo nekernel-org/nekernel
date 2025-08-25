@@ -94,7 +94,7 @@ all: compile-amd64
 	$(COPY) ./modules/BootNet/$(BOOTNET) src/root/$(BOOTNET)
 	$(COPY) ../libSystem/$(SCIKIT) src/root/$(SCIKIT)
 	$(COPY) src/$(BOOTLOADER) src/root/$(BOOTLOADER)
-	$(COPY) ../ddk/$(DDK) src/root/$(DDK)
+	$(COPY) ../libDDK/$(DDK) src/root/$(DDK)
 
 .PHONY: disk
 disk:
