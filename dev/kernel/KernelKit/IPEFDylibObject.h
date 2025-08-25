@@ -7,8 +7,8 @@
  *      ========================================================
  */
 
-#ifndef __KERNELKIT_SHARED_OBJECT_H__
-#define __KERNELKIT_SHARED_OBJECT_H__
+#ifndef __KERNELKIT_PEF_SHARED_OBJECT_H__
+#define __KERNELKIT_PEF_SHARED_OBJECT_H__
 
 #include <KernelKit/IDylibObject.h>
 #include <KernelKit/PEF.h>
@@ -38,7 +38,7 @@ class IPEFDylibObject final NE_DYLIB_OBJECT {
   DylibTraits* Get() { return fMounted; }
 
  public:
-  void Mount(DylibTraits* to_mount) {
+  void Mount(DylibTraits* to_mount) noexcept {
     if (!to_mount || !to_mount->ImageObject) return;
 
     fMounted = to_mount;
@@ -53,19 +53,19 @@ class IPEFDylibObject final NE_DYLIB_OBJECT {
     }
   }
 
-  void Unmount() {
+  void Unmount() noexcept {
     if (fMounted) fMounted = nullptr;
   };
 
   template <typename SymbolType>
-  SymbolType Load(const Char* symbol_name, SizeT len, Int32 kind) {
+  SymbolType Load(const Char* symbol_name, const SizeT& len, const UInt32& kind) {
     if (symbol_name == nullptr || *symbol_name == 0) return nullptr;
     if (len > kPathLen || len < 1) return nullptr;
 
     auto ret = reinterpret_cast<SymbolType>(fLoader->FindSymbol(symbol_name, kind).Leak().Leak());
 
     if (!ret) {
-      if (kind == kPefCode) return (VoidPtr) &__zka_pure_call;
+      if (kind == kPefCode) return (VoidPtr) &__ne_pure_call;
 
       return nullptr;
     }
@@ -83,4 +83,4 @@ EXTERN_C IDylibRef rtl_init_dylib_pef(USER_PROCESS& header);
 EXTERN_C Void      rtl_fini_dylib_pef(USER_PROCESS& header, IDylibRef lib, Bool* successful);
 }  // namespace Kernel
 
-#endif /* ifndef __KERNELKIT_SHARED_OBJECT_H__ */
+#endif /* ifndef __KERNELKIT_PEF_SHARED_OBJECT_H__ */

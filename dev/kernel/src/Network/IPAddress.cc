@@ -91,11 +91,14 @@ bool IPFactory::IpCheckVersion4(const Char* ip) {
   Int32 cnter     = 0;
   Int32 dot_cnter = 0;
 
+  constexpr const auto kIP4DotCharacter = '.';
+
   for (SizeT base = 0; base < rt_string_len(ip); ++base) {
-    if (ip[base] == '.') {
+    if (ip[base] == kIP4DotCharacter) {
       cnter = 0;
       ++dot_cnter;
     } else {
+      if (ip[base] > '5' || ip[base] < '0') return NO;
       if (!rt_is_alnum(ip[base])) return NO;
       if (cnter == 3) return NO;
 

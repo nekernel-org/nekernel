@@ -10,7 +10,8 @@
 
 namespace Kernel::Detail {
 STATIC void mp_hang_fn(void) {
-  while (YES);
+  while (YES)
+    ;
 }
 }  // namespace Kernel::Detail
 

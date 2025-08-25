@@ -71,7 +71,7 @@ cd nekernel
 
 - `dev/kernel/` — Core kernel source (scheduling, memory, VFS, drivers)
 - `dev/boot/` — Bootloader, platform bring-up, and early system code
-- `dev/ddk/` — Driver Development Kit (DDK) and sample drivers
+- `dev/libDDK/` — Driver Development Kit (DDK) and sample drivers
 - `dev/libSystem/` — Userland system call interface and runtime
 - `public/tools/` — CLI tools (mkfs, fsck, open, manual, etc.)
 - `public/frameworks/` — Userland frameworks (CoreFoundation, DiskImage, etc.)

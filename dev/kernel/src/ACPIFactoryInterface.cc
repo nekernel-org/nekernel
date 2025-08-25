@@ -70,11 +70,11 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
 @param len the length of it.
 */
 bool ACPIFactoryInterface::Checksum(const Char* checksum, SSizeT len) {
-  if (len == 0) return 1;
+  if (len == 0 || !checksum) return false;
 
-  char chr = 0;
+  Char chr = 0;
 
-  for (int index = 0; index < len; ++index) {
+  for (SSizeT index = 0L; index < len; ++index) {
     chr += checksum[index];
   }
 
@@ -82,6 +82,7 @@ bool ACPIFactoryInterface::Checksum(const Char* checksum, SSizeT len) {
 }
 
 ErrorOr<voidPtr> ACPIFactoryInterface::operator[](const Char* signature) {
+  if (!signature) return ErrorOr<voidPtr>{-kErrorInvalidData};
   return this->Find(signature);
 }
 }  // namespace Kernel

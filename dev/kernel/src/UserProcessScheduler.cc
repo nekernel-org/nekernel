@@ -122,7 +122,7 @@ ErrorOr<VoidPtr> USER_PROCESS::New(SizeT sz, SizeT pad_amount) {
 
   hal_write_cr3(vm_register);
 #else
-  auto ptr = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
+  auto ptr           = mm_alloc_ptr(sz, Yes, Yes, pad_amount);
 #endif
 
   if (!this->HeapTree) {
@@ -265,7 +265,6 @@ STATIC Void sched_free_ptr_tree(T* tree) {
 Void USER_PROCESS::Exit(const Int32& exit_code) {
   this->Status       = exit_code > 0 ? ProcessStatusKind::kKilled : ProcessStatusKind::kFrozen;
   this->LastExitCode = exit_code;
-  this->UTime        = 0;
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
   auto pd = kKernelVM;
@@ -424,6 +423,7 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
   process.ProcessId = pid;
   process.Status    = ProcessStatusKind::kRunning;
   process.PTime     = 0;
+  process.UTime     = 0;
   process.RTime     = 0;
 
   if (!process.FileTree) {
@@ -437,7 +437,7 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
     /// @todo File Tree allocation and dispose methods (amlal)
   }
 
-  (Void)(kout << "PID: " << number(process.ProcessId) << kendl);
+  (Void)(kout << "ProcessID: " << number(process.ProcessId) << kendl);
   (Void)(kout << "Name: " << process.Name << kendl);
 
   return pid;
@@ -573,11 +573,11 @@ Ref<USER_PROCESS>& UserProcessScheduler::TheCurrentProcess() {
 
 /// @brief Current proccess id getter.
 /// @return USER_PROCESS ID integer.
-ErrorOr<PID> UserProcessHelper::TheCurrentPID() {
-  if (!UserProcessScheduler::The().TheCurrentProcess()) return ErrorOr<PID>{-kErrorProcessFault};
+ErrorOr<ProcessID> UserProcessHelper::TheCurrentPID() {
+  if (!UserProcessScheduler::The().TheCurrentProcess()) return ErrorOr<ProcessID>{-kErrorProcessFault};
 
   kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
-  return ErrorOr<PID>{UserProcessScheduler::The().TheCurrentProcess().Leak().ProcessId};
+  return ErrorOr<ProcessID>{UserProcessScheduler::The().TheCurrentProcess().Leak().ProcessId};
 }
 
 /// @brief Check if process can be schedulded.
@@ -613,11 +613,11 @@ SizeT UserProcessHelper::StartScheduling() {
 /**
  * \brief Does a context switch in a CPU.
  * \param the_stack the stackframe of the running app.
- * \param new_pid the process's PID.
+ * \param new_pid the process's ProcessID.
  */
 /***********************************************************************************/
 
-Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, PID new_pid) {
+Bool UserProcessHelper::Switch(HAL::StackFramePtr frame_ptr, ProcessID new_pid) {
   (Void)(kout << "IP: " << hex_number(frame_ptr->IP) << kendl);
 
   for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {

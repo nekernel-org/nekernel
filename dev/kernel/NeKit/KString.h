@@ -16,10 +16,11 @@
 
 namespace Kernel {
 /// @brief Kernel string class, not dynamic.
-class KString final {
+template <SizeT MinSz = kMinimumStringSize>
+class BasicKString final {
  public:
-  explicit KString() {
-    fDataSz = kMinimumStringSize;
+  explicit BasicKString() {
+    fDataSz = MinSz;
 
     fData = new Char[fDataSz];
     MUST_PASS(fData);
@@ -27,7 +28,7 @@ class KString final {
     rt_set_memory(fData, 0, fDataSz);
   }
 
-  explicit KString(SizeT Sz) : fDataSz(Sz) {
+  explicit BasicKString(SizeT Sz) : fDataSz(Sz) {
     MUST_PASS(Sz > 1);
 
     fData = new Char[Sz];
@@ -36,14 +37,14 @@ class KString final {
     rt_set_memory(fData, 0, Sz);
   }
 
-  ~KString() {
+  ~BasicKString() {
     if (fData) {
       delete[] fData;
       fData = nullptr;
     }
   }
 
-  NE_COPY_DEFAULT(KString)
+  NE_COPY_DEFAULT(BasicKString)
 
   Char*       Data();
   const Char* CData() const;
@@ -52,11 +53,13 @@ class KString final {
   bool operator==(const Char* rhs) const;
   bool operator!=(const Char* rhs) const;
 
-  bool operator==(const KString& rhs) const;
-  bool operator!=(const KString& rhs) const;
+  bool operator==(const BasicKString<>& rhs) const;
+  bool operator!=(const BasicKString<>& rhs) const;
 
-  KString& operator+=(const Char* rhs);
-  KString& operator+=(const KString& rhs);
+  BasicKString<>& operator+=(const Char* rhs);
+  BasicKString<>& operator+=(const BasicKString<>& rhs);
+
+  operator const char*() { return fData; }
 
   operator bool() { return fData; }
 
@@ -70,6 +73,9 @@ class KString final {
   friend class KStringBuilder;
 };
 
+using KString   = BasicKString<>;
+using KStringOr = ErrorOr<KString>;
+
 class KStringBuilder final {
  public:
   static ErrorOr<KString> Construct(const Char* data);
@@ -77,6 +83,7 @@ class KStringBuilder final {
   static const Char*      Format(const Char* fmt, const Char* from);
   static bool             Equals(const Char* lhs, const Char* rhs);
   static bool             Equals(const Utf8Char* lhs, const Utf8Char* rhs);
-  static bool             Equals(const WideChar* lhs, const WideChar* rhs);
 };
 }  // namespace Kernel
+
+#include <NeKit/KString.inl>

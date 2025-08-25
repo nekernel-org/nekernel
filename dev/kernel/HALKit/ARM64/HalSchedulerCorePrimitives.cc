@@ -10,10 +10,10 @@
 namespace Kernel {
 /***********************************************************************************/
 /// @brief Unimplemented function (crashes by default)
-/// @param void
+/// @param process The process handle.
 /***********************************************************************************/
 
-EXTERN_C Void __zka_pure_call(USER_PROCESS* process) {
+EXTERN_C Void __ne_pure_call(USER_PROCESS* process) {
   if (process) process->Crash();
 }
 

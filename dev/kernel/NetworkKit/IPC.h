@@ -20,7 +20,7 @@
 /// IA separator.
 #define kIPCRemoteSeparator ":"
 
-/// Interchange address, consists of PID:TEAM.
+/// Interchange address, consists of ProcessID:TEAM.
 #define kIPCRemoteInvalid "00:00"
 
 #define kIPCHeaderMagic (0x4950434)

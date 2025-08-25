@@ -9,29 +9,32 @@
 #include <cstdlib>
 #include <fstream>
 
+/// @note decimal base.
 static uint16_t kNumericalBase = 10;
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -i=<input_device> -o=<origin>" << "\n";
+    mkfs::console_out() << "fsck: hefs: usage: fsck.hefs -in=<input_device> -org=<origin>"
+                        << "\n";
     return EXIT_FAILURE;
   }
 
   auto args = mkfs::detail::build_args(argc, argv);
 
-  auto opt_disk = mkfs::get_option<char>(args, "-i");
+  auto opt_disk = mkfs::get_option<char>(args, "-in");
 
-  auto origin = mkfs::get_option<char>(args, "-o");
+  auto origin = mkfs::get_option<char>(args, "-org");
 
   if (opt_disk.empty()) {
-    mkfs::console_out() << "fsck: hefs: error: HeFS is empty! Exiting..." << "\n";
+    mkfs::console_out() << "fsck: hefs: error: HeFS partition is empty! Exiting..."
+                        << "\n";
     return EXIT_FAILURE;
   }
 
   auto out_origin = 0L;
 
   if (!mkfs::detail::parse_signed(origin, out_origin, kNumericalBase)) {
-    mkfs::console_out() << "hefs: error: Invalid -o <dec> argument.\n";
+    mkfs::console_out() << "hefs: error: Invalid -org=<dec> argument.\n";
     return EXIT_FAILURE;
   }
 
@@ -49,9 +52,8 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  mkfs::hefs::BootNode boot_node;
-
-  std::memset(&boot_node, 0, sizeof(boot_node));
+  // @note use modern intializer list here to empty out the fields according to the struct layout.
+  mkfs::hefs::BootNode boot_node{};
 
   output_device.read(reinterpret_cast<char*>(&boot_node), sizeof(boot_node));
 
@@ -66,7 +68,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  mkfs::console_out() << "hefs: HeFS partition is is healthy, exiting...\n";
+  mkfs::console_out() << "hefs: HeFS partition is healthy, exiting...\n";
 
   output_device.close();
 

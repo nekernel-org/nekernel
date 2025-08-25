@@ -17,7 +17,8 @@
 void* operator new(size_t sz) {
   void* buf = nullptr;
 
-  while (BS->AllocatePool(EfiMemoryType::EfiLoaderData, sz, &buf) != kEfiOk);
+  while (BS->AllocatePool(EfiMemoryType::EfiLoaderData, sz, &buf) != kEfiOk)
+    ;
 
   return buf;
 }

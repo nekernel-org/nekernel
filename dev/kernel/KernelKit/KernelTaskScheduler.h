@@ -17,7 +17,7 @@
 namespace Kernel {
 class KernelTaskHelper;
 
-typedef PID KID;
+typedef ProcessID KID;
 
 /// @brief Equivalent of USER_PROCESS, but for kernel tasks.
 /// @author Amlal
@@ -28,7 +28,7 @@ class KERNEL_TASK final {
   HAL::StackFramePtr StackFrame{nullptr};
   UInt8*             StackReserve{nullptr};
   SizeT              StackSize{kSchedMaxStackSz};
-  PROCESS_IMAGE      Image{};
+  ProcessImage       Image{};
   /// @brief a KID is a Kernel Identification Descriptor, it is used to find a task running within
   /// the kernel.
   KID Kid{0};
@@ -38,9 +38,9 @@ class KERNEL_TASK final {
 /// @author Amlal
 class KernelTaskHelper final {
  public:
-  STATIC Bool Switch(HAL::StackFramePtr frame_ptr, PID new_kid);
+  STATIC Bool Switch(HAL::StackFramePtr frame_ptr, ProcessID new_kid);
   STATIC Bool CanBeScheduled(const KERNEL_TASK& process);
-  STATIC ErrorOr<PID> TheCurrentKID();
+  STATIC ErrorOr<ProcessID> TheCurrentKID();
   STATIC SizeT        StartScheduling();
 };
 }  // namespace Kernel

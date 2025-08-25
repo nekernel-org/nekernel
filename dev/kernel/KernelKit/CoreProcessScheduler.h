@@ -118,11 +118,6 @@ enum class ProcessSubsystem : Int32 {
 };
 
 /***********************************************************************************/
-//! @brief Local Process identifier.
-/***********************************************************************************/
-typedef Int64 ProcessID;
-
-/***********************************************************************************/
 //! @brief Local Process status enum.
 /***********************************************************************************/
 enum class ProcessStatusKind : Int32 {
@@ -181,7 +176,11 @@ inline bool operator>=(AffinityKind lhs, AffinityKind rhs) {
 
 using PTime       = UInt64;
 using ProcessTime = PTime;
-using PID         = Int64;
+
+/***********************************************************************************/
+//! @brief Local Process identifier.
+/***********************************************************************************/
+using ProcessID = Int64;
 
 /***********************************************************************************/
 /// @note For User manager, tells where we run the code.
@@ -201,14 +200,15 @@ using ImagePtr = VoidPtr;
 /***********************************************************************************/
 /// @brief Helper class to contain a process's image and blob.
 /***********************************************************************************/
-struct PROCESS_IMAGE final {
-  explicit PROCESS_IMAGE() = default;
+struct ProcessImage final {
+  explicit ProcessImage() = default;
 
  private:
   friend USER_PROCESS;
   friend KERNEL_TASK;
 
-  friend class UserProcessScheduler;
+  friend UserProcessScheduler;
+  friend KernelTaskScheduler;
 
   ImagePtr fCode{};
   ImagePtr fBlob{};

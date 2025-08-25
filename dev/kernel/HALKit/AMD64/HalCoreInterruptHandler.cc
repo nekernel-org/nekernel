@@ -61,7 +61,8 @@ EXTERN_C void idt_handle_scheduler(Kernel::UIntPtr rsp) {
 
   hal_idt_send_eoi(32);
 
-  while (kIsRunning);
+  while (kIsRunning)
+    ;
 
   kIsRunning = YES;
 

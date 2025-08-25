@@ -105,10 +105,12 @@ Bool IPC_MSG::Pass(IPC_MSG* src, IPC_MSG* target) noexcept {
     if (src->IpcMsgSz > target->IpcMsgSz) return No;
     if (target->IpcMsgSz > src->IpcMsgSz) return No;
 
-    UInt32 timeout = 0U;
+    auto timeout = 0U;
+
+    const auto kLimitTimeout = 1000000U;
 
     while ((target->IpcLock % kIPCLockUsed) != 0) {
-      if (timeout > 100000U) {
+      if (timeout > kLimitTimeout) {
         return No;
       }
     }

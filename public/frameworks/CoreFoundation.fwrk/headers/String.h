@@ -17,7 +17,7 @@ class CFString final CF_OBJECT {
   CFString()  = default;
   ~CFString() = default;
 
-  CFString(const CFString&)            = delete;
+  CFString(const CFString&) = delete;
   CFString& operator=(const CFString&) = delete;
 };
 }  // namespace CF

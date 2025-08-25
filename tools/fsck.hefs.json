@@ -1,5 +1,5 @@
 {
-    "compiler_path": "g++",
+    "compiler_path": "clang++",
     "compiler_std": "c++20",
     "headers_path": [
         "../"
@@ -9,8 +9,8 @@
     ],
     "output_name": "./dist/fsck.hefs",
     "cpp_macros": [
-        "kFSCKHEFSVersion=0x0100",
-        "kFSCKHEFSVersionHighest=0x0100",
-        "kFSCKHEFSVersionLowest=0x0100"
+        "kFsckHeFSVersion=0x0100",
+        "kFsckHeFSVersionHighest=0x0100",
+        "kFsckHeFSVersionLowest=0x0100"
     ]
 }

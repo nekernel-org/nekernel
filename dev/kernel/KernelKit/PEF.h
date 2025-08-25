@@ -59,19 +59,20 @@ enum {
 };
 
 enum {
-  kPefSubArchGeneric,
-  kPefSubArchAMD = 200,
+  kPefSubArchGeneric = 0,
+  kPefSubArchAMD     = 200,
   kPefSubArchIntel,
   kPefSubArchARM,
   kPefSubArchIBM,
 };
 
 enum {
-  kPefKindExec   = 1, /* .exec */
-  kPefKindDylib  = 2, /* .dylib */
-  kPefKindObject = 4, /* .obj */
-  kPefKindDebug  = 5, /* .dbg */
-  kPefKindDriver = 6,
+  kPefKindInvalid = 0,
+  kPefKindExec    = 1, /* .exec */
+  kPefKindDylib   = 2, /* .dylib */
+  kPefKindObject  = 4, /* .obj */
+  kPefKindDebug   = 5, /* .dbg */
+  kPefKindDriver  = 6,
   kPefKindCount,
 };
 
