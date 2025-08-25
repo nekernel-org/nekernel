@@ -12,14 +12,16 @@
 
 #if defined(__DDK_AMD64__)
 
+  .intel_syntax noprefix
+
 /* args rcx, rdx, r8, r9 */
 __ke_call_dispatch:
-    pushq rbp
-    movq rbp, rsp
+    push rbp
+    mov rbp, rsp
 
     syscall
 
-    popq rbp
+    pop rbp
 
     ret
 
