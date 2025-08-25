@@ -33,7 +33,7 @@ struct LIBMSG_EXPR final {
 };
 
 /// @brief Function type for LibMSG lisp.
-typedef Void (*libmsg_func_t)(LIBMSG_EXPR* self, VoidPtr arg, SizeT arg_size);
+typedef Void (*libmsg_func_t)(struct LIBMSG_EXPR* self, VoidPtr arg, SizeT arg_size);
 
 IMPORT_C Void   libmsg_init_library(libmsg_func_t* funcs, SizeT cnt);
 IMPORT_C UInt32 libmsg_close_library(Void);
