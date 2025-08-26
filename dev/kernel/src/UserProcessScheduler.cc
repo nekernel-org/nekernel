@@ -574,7 +574,8 @@ Ref<USER_PROCESS>& UserProcessScheduler::TheCurrentProcess() {
 /// @brief Current proccess id getter.
 /// @return USER_PROCESS ID integer.
 ErrorOr<ProcessID> UserProcessHelper::TheCurrentPID() {
-  if (!UserProcessScheduler::The().TheCurrentProcess()) return ErrorOr<ProcessID>{-kErrorProcessFault};
+  if (!UserProcessScheduler::The().TheCurrentProcess())
+    return ErrorOr<ProcessID>{-kErrorProcessFault};
 
   kout << "UserProcessHelper::TheCurrentPID: Leaking ProcessId...\r";
   return ErrorOr<ProcessID>{UserProcessScheduler::The().TheCurrentProcess().Leak().ProcessId};

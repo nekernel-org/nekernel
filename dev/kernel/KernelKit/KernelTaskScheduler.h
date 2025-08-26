@@ -41,6 +41,6 @@ class KernelTaskHelper final {
   STATIC Bool Switch(HAL::StackFramePtr frame_ptr, ProcessID new_kid);
   STATIC Bool CanBeScheduled(const KERNEL_TASK& process);
   STATIC ErrorOr<ProcessID> TheCurrentKID();
-  STATIC SizeT        StartScheduling();
+  STATIC SizeT              StartScheduling();
 };
 }  // namespace Kernel
