@@ -93,7 +93,7 @@ The High-throughput Extended File System (HeFS) is a custom filesystem tailored 
 \section{Structures}\label{sec:structures}
 
 \subsection{HEFS\_BOOT\_NODE}\label{subsec:hefs_boot_node}
-Acts as the superblock.
+Acts as the superblock of the filesystem, provides necessary information about the disk and the filesystem itself.
 
 \begin{itemize}
   \item \texttt{fMagic}, \texttt{fVolName}, \texttt{fVersion}, \texttt{fChecksum}
