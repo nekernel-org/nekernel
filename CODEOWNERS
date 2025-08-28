@@ -5,3 +5,5 @@
 /dev/libMsg/ @0xf00sec
 /dev/libSystem/ @0xf00sec
 # some other parts (tools, frameworks) need ownership too.
+/public/ @amlel-el-mahrouss
+/tools/ @0xf00sec

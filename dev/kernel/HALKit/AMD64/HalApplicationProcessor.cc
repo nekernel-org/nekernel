@@ -4,6 +4,7 @@
 
 ------------------------------------------- */
 
+/// Different than the MADT, might be confusing to some.
 #define APIC_MAG "APIC"
 
 #define APIC_ICR_LOW 0x300
@@ -145,6 +146,7 @@ Bool mp_is_smp(Void) noexcept {
 
 Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
   if (!vendor_ptr) return;
+  if (!kHandoverHeader) return;
 
   if (!kHandoverHeader->f_HardwareTables.f_MultiProcessingEnabled) {
     kSMPAware = NO;
