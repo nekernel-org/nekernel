@@ -20,5 +20,7 @@ class CFObject {
   virtual ~CFObject() = default;
 
   LIBSYS_COPY_DEFAULT(CFObject);
+
+  virtual const Char* Name() { return "[\"CFObject\"];"; }
 };
 }  // namespace CF
