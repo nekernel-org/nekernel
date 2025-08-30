@@ -12,18 +12,6 @@
 #include <NeKit/Stream.h>
 #include <NeKit/Utils.h>
 
-#define kDebugPort (51820U)
-
-#define kDebugMag0 'K'
-#define kDebugMag1 'D'
-#define kDebugMag2 'B'
-#define kDebugMag3 'G'
-
-#define kDebugSourceFile 23
-#define kDebugLine 33
-#define kDebugTeam 43
-#define kDebugEOP 49
-
 namespace Kernel {
 class TerminalDevice;
 class DTraceDevice;
@@ -179,6 +167,10 @@ inline TerminalDevice get_console_in(Char* buf) {
 
   return self;
 }
+
+inline constexpr auto kDebugPort    = 51820;
+inline constexpr auto kDebugMagic   = "VMK1.0.0;";
+inline constexpr auto kDebugVersion = 0x0100;
 
 inline constexpr SizeT kDebugCmdLen = 256U;
 
