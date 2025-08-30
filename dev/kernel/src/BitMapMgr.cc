@@ -24,8 +24,6 @@
 namespace Kernel {
 namespace HAL {
   namespace Detail {
-    STATIC SizeT kBitMapCursor = 0UL;
-
     /***********************************************************************************/
     /// \brief Proxy Interface to manage a bitmap allocator.
     /***********************************************************************************/

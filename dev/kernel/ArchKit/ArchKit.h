@@ -93,6 +93,8 @@ inline Kernel::Array<HAL_KERNEL_DISPATCH_ENTRY, kMaxDispatchCallCount> kKernCall
 
 #ifdef __NE_VIRTUAL_MEMORY_SUPPORT__
 
-inline Kernel::VoidPtr kKernelVM = nullptr;
+inline Kernel::VoidPtr kKernelVM     = nullptr;
 
 #endif  // __NE_VIRTUAL_MEMORY_SUPPORT__
+
+inline Kernel::SizeT   kBitMapCursor = 0UL;
