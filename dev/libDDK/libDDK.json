@@ -3,7 +3,7 @@
   "compiler_std": "c++20",
   "headers_path": ["../", "./"],
   "sources_path": ["src/*.c", "src/*.cc", "src/*.S"],
-  "output_name": "ddk.sys",
+  "output_name": "libDDK.dll",
   "compiler_flags": [
     "-ffreestanding",
     "-shared",

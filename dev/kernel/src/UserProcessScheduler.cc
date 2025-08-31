@@ -21,7 +21,7 @@
 #include <KernelKit/ProcessScheduler.h>
 #include <NeKit/KString.h>
 #include <NeKit/Utils.h>
-#include <SignalKit/Signals.h>
+#include <SignalKit/SignalGen.h>
 
 ///! BUGS: 0
 
@@ -593,7 +593,7 @@ Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
   // real time processes shouldn't wait that much.
   if (process.Affinity == AffinityKind::kRealTime) return Yes;
 
-  if (process.Signal.SignalID == SIGTRAP) {
+  if (process.Signal.SignalID == sig_generate_unique<SIGTRAP>()) {
     return No;
   }
 
