@@ -14,7 +14,7 @@
 #include <KernelKit/Timer.h>
 #include <NetworkKit/IPC.h>
 #include <StorageKit/AHCI.h>
-#include <misc/BenchKit/X64Chrono.h>
+#include <misc/BenchKit/HWChronometer.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
 
