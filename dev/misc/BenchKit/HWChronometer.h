@@ -43,7 +43,7 @@ template <typename ChronoTraits>
 class HWChrono BENCHKIT_INTERFACE {
  public:
   HWChrono()           = default;
-  ~HWChrono() override = default;
+  virtual ~HWChrono() override = default;
 
   NE_COPY_DEFAULT(HWChrono)
 
