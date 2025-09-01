@@ -32,7 +32,7 @@ inline static constexpr auto kUserSignalSeed = 0x0895034fUL;
 inline static constexpr auto kKernelSignalSeed = 0x0895034f9fUL;
 
 /// @brief Generate signal from **Sig**
-template <rt_signal_kind Sig, SizeT Seed = kKernelSignalSeed>
+template <rt_signal_kind Sig, SizeT Seed = kUserSignalSeed>
 inline rt_signal_kind sig_generate_unique() {
   static_assert(Sig > 0, "Signal is zero (invalid)");
   return Sig ^ Seed;
@@ -42,7 +42,7 @@ inline rt_signal_kind sig_generate_unique() {
 template <typename Seed>
 inline BOOL sig_matches_seed(const rt_signal_kind& sig) {
   static_assert(sig > 0, "Signal is zero (invalid)");
-  return (sig & Seed) > 0;
+  return (sig & 0xFF000000) == (Seed & 0xFF000000);
 }
 
 /// @brief Validate signal from **sig**
