@@ -42,7 +42,7 @@ struct HWChronoTraits final {
 template <typename ChronoTraits>
 class HWChrono BENCHKIT_INTERFACE {
  public:
-  HWChrono()           = default;
+  HWChrono()                   = default;
   virtual ~HWChrono() override = default;
 
   NE_COPY_DEFAULT(HWChrono)
