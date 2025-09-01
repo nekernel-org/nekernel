@@ -39,9 +39,8 @@ inline rt_signal_kind sig_generate_unique() {
 }
 
 /// @brief Checks if the signal matches the seed (user_seed or kernel_seed)
-template <typename Seed>
-inline BOOL sig_matches_seed(const rt_signal_kind& sig) {
-  static_assert(sig > 0, "Signal is zero (invalid)");
+template <SizeT Seed>
+inline BOOL sig_matches_seed(rt_signal_kind sig) {
   return (sig & 0xFF000000) == (Seed & 0xFF000000);
 }
 
