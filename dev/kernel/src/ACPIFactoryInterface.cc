@@ -14,7 +14,7 @@ constexpr STATIC const auto kMinACPIVer = 1U;
 
 /// @brief Finds a descriptor table inside ACPI XSDT.
 ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
-  if (this->fRsdp) return ErrorOr<voidPtr>{kErrorInvalidData};
+  if (this->fRsdp) return ErrorOr<voidPtr>{-kErrorInvalidData};
   if (!signature) return ErrorOr<voidPtr>{-kErrorInvalidData};
   if (*signature == 0) return ErrorOr<voidPtr>{-kErrorInvalidData};
 
@@ -42,7 +42,7 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
   (Void)(kout << "ACPI: Signature: " << xsdt->Signature << kendl);
   (Void)(kout << "ACPI: Address of XSDT: " << hex_number((UIntPtr) xsdt) << kendl);
 
-  const short cAcpiSignatureLength = 4;
+  static constexpr const UInt16 cAcpiSignatureLength = 4U;
 
   for (Size index = 0; index < this->fEntries; ++index) {
     SDT* sdt = reinterpret_cast<SDT*>(xsdt->AddressArr[index]);
@@ -50,7 +50,7 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
     (Void)(kout << "ACPI: Checksum: " << number(sdt->Checksum) << kendl);
     (Void)(kout << "ACPI: Revision: " << number(sdt->Revision) << kendl);
 
-    for (short signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index) {
+    for (UInt16 signature_index = 0; signature_index < cAcpiSignatureLength; ++signature_index) {
       if (sdt->Signature[signature_index] != signature[signature_index]) break;
 
       if (signature_index == (cAcpiSignatureLength - 1)) {

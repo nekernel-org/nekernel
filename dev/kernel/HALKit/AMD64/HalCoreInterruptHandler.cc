@@ -8,7 +8,7 @@
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/UserMgr.h>
 #include <NeKit/KString.h>
-#include <SignalKit/Signals.h>
+#include <SignalKit/SignalGen.h>
 
 EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip);
 
@@ -80,8 +80,9 @@ EXTERN_C void idt_handle_math(Kernel::UIntPtr rsp) {
   hal_idt_send_eoi(8);
 
   process.Leak().Signal.SignalArg = rsp;
-  process.Leak().Signal.SignalID  = SIGKILL;
-  process.Leak().Signal.Status    = process.Leak().Status;
+  process.Leak().Signal.SignalID  = sig_generate_unique<SIGKILL>();
+  ;
+  process.Leak().Signal.Status = process.Leak().Status;
 }
 
 /// @brief Handle any generic fault.
@@ -95,8 +96,9 @@ EXTERN_C void idt_handle_generic(Kernel::UIntPtr rsp) {
   Kernel::kout << "Kernel: Generic Process Fault.\r";
 
   process.Leak().Signal.SignalArg = rsp;
-  process.Leak().Signal.SignalID  = SIGKILL;
-  process.Leak().Signal.Status    = process.Leak().Status;
+  process.Leak().Signal.SignalID  = sig_generate_unique<SIGSEG>();
+  ;
+  process.Leak().Signal.Status = process.Leak().Status;
 
   Kernel::kout << "Kernel: SIGKILL status.\r";
 }
@@ -107,7 +109,7 @@ EXTERN_C Kernel::Void idt_handle_breakpoint(Kernel::UIntPtr rip) {
   hal_idt_send_eoi(3);
 
   process.Leak().Signal.SignalArg = rip;
-  process.Leak().Signal.SignalID  = SIGTRAP;
+  process.Leak().Signal.SignalID  = sig_generate_unique<SIGTRAP>();
 
   process.Leak().Signal.Status = process.Leak().Status;
 
@@ -123,7 +125,7 @@ EXTERN_C void idt_handle_ud(Kernel::UIntPtr rsp) {
   hal_idt_send_eoi(6);
 
   process.Leak().Signal.SignalArg = rsp;
-  process.Leak().Signal.SignalID  = SIGKILL;
+  process.Leak().Signal.SignalID  = sig_generate_unique<SIGKILL>();
   process.Leak().Signal.Status    = process.Leak().Status;
 }
 

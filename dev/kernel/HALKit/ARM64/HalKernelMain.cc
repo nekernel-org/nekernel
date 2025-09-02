@@ -37,6 +37,8 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   FB::fb_clear_video();
 
+  kBitMapCursor = 0UL;
+
 #ifdef __NE_ARM64_EFI__
   fw_init_efi((EfiSystemTable*) handover_hdr->f_FirmwareCustomTables[1]);
 

@@ -14,5 +14,5 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install Packages
-      run: sudo apt update && sudo apt install mingw-w64 qemu-utils nasm
+      run: sudo apt update && sudo apt install mingw-w64 qemu-utils nasm && ./kernel_ci_x64.sh
       

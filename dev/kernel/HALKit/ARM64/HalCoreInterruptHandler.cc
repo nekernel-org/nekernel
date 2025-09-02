@@ -8,7 +8,7 @@
 #include <KernelKit/ProcessScheduler.h>
 #include <KernelKit/UserMgr.h>
 #include <NeKit/KString.h>
-#include <SignalKit/Signals.h>
+#include <SignalKit/SignalGen.h>
 
 EXTERN_C Kernel::Void int_handle_breakpoint(Kernel::UIntPtr rip);
 EXTERN_C BOOL         mp_handle_gic_interrupt_el0(Void);

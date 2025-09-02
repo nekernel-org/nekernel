@@ -69,6 +69,7 @@ namespace HAL {
 
 typedef Kernel::Void (*rt_syscall_proc)(Kernel::VoidPtr);
 
+/// @brief System Call Dispatch.
 struct HAL_DISPATCH_ENTRY final {
   Kernel::UInt64  fHash;
   Kernel::Bool    fHooked;
@@ -79,6 +80,7 @@ struct HAL_DISPATCH_ENTRY final {
 
 typedef Kernel::Void (*rt_kerncall_proc)(Kernel::SizeT, Kernel::VoidPtr, Kernel::SizeT);
 
+/// @brief Kernel Call Dispatch.
 struct HAL_KERNEL_DISPATCH_ENTRY final {
   Kernel::UInt64   fHash;
   Kernel::Bool     fHooked;
@@ -96,3 +98,5 @@ inline Kernel::Array<HAL_KERNEL_DISPATCH_ENTRY, kMaxDispatchCallCount> kKernCall
 inline Kernel::VoidPtr kKernelVM = nullptr;
 
 #endif  // __NE_VIRTUAL_MEMORY_SUPPORT__
+
+inline Kernel::SizeT kBitMapCursor = 0UL;

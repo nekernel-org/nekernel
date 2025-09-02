@@ -14,7 +14,7 @@
 #include <KernelKit/Timer.h>
 #include <NetworkKit/IPC.h>
 #include <StorageKit/AHCI.h>
-#include <misc/BenchKit/X64Chrono.h>
+#include <misc/BenchKit/HWChronometer.h>
 #include <modules/ACPI/ACPIFactoryInterface.h>
 #include <modules/CoreGfx/TextGfx.h>
 
@@ -41,7 +41,8 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
                          handover_hdr->f_HardwareTables.f_ImageHandle);
 
-  kKernelVM = kHandoverHeader->f_PageStart;
+  kBitMapCursor = 0UL;
+  kKernelVM     = kHandoverHeader->f_PageStart;
 
   if (!kKernelVM) {
     MUST_PASS(kKernelVM);

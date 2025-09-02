@@ -8,7 +8,7 @@
 #define __BITMANIP_H__
 
 /// File: BitManip.h
-/// Purpose: Bit manipulation helpers, based on coreboot-dev.
+/// Purpose: Bit manipulation helpers, based on neboot-dev.
 
 #define bk_set_bit(X, O) X = (1 << O) | X
 #define bk_clear_bit(X, O) X = ~(1 << O) & X
