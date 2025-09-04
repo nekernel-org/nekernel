@@ -40,7 +40,6 @@ enum {
     kExt2FileTypeSymbolicLink = 7
 };
 
-/// Superblock (1024 bytes offset)
 struct PACKED EXT2_SUPER_BLOCK final {
     Kernel::UInt32 fInodeCount;
     Kernel::UInt32 fBlockCount;
