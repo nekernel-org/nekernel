@@ -182,29 +182,29 @@ enum class AffinityKind : Int32 {
 /***********************************************************************************/
 
 inline bool operator<(AffinityKind lhs, AffinityKind rhs) {
-  Int32 lhs_int = static_cast<Int>(lhs);
-  Int32 rhs_int = static_cast<Int>(rhs);
+  Int32 lhs_int = static_cast<Int32>(lhs);
+  Int32 rhs_int = static_cast<Int32>(rhs);
 
   return lhs_int < rhs_int;
 }
 
 inline bool operator>(AffinityKind lhs, AffinityKind rhs) {
-  Int32 lhs_int = static_cast<Int>(lhs);
-  Int32 rhs_int = static_cast<Int>(rhs);
+  Int32 lhs_int = static_cast<Int32>(lhs);
+  Int32 rhs_int = static_cast<Int32>(rhs);
 
   return lhs_int > rhs_int;
 }
 
 inline bool operator<=(AffinityKind lhs, AffinityKind rhs) {
   Int32 lhs_int = static_cast<Int>(lhs);
-  Int32 rhs_int = static_cast<Int>(rhs);
+  Int32 rhs_int = static_cast<Int32>(rhs);
 
   return lhs_int <= rhs_int;
 }
 
 inline bool operator>=(AffinityKind lhs, AffinityKind rhs) {
-  Int32 lhs_int = static_cast<Int>(lhs);
-  Int32 rhs_int = static_cast<Int>(rhs);
+  Int32 lhs_int = static_cast<Int32>(lhs);
+  Int32 rhs_int = static_cast<Int32>(rhs);
 
   return lhs_int >= rhs_int;
 }
@@ -213,7 +213,7 @@ using PTime       = UInt64;
 using ProcessTime = PTime;
 
 /***********************************************************************************/
-//! @brief Local Process identifier.
+//! @brief Local Process Identifier type.
 /***********************************************************************************/
 using ProcessID = Int64;
 
