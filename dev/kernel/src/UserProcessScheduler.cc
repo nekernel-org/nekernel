@@ -587,6 +587,7 @@ ErrorOr<ProcessID> UserProcessHelper::TheCurrentPID() {
 /// @retval false cannot be schedulded.
 Bool UserProcessHelper::CanBeScheduled(const USER_PROCESS& process) {
   if (process.Status != ProcessStatusKind::kRunning) return No;
+  if (process.Affinity == AffinityKind::kInvalid) return No;
   if (process.StackSize > kSchedMaxStackSz) return No;
   if (!process.Name[0]) return No;
 

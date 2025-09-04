@@ -104,6 +104,40 @@ struct PROCESS_FILE_TREE {
   };
 };
 
+using ProcessCtx = UInt32;
+
+template <typename T>
+struct PROCESS_SPECIAL_TREE {
+  static constexpr auto kHeap    = false;
+  static constexpr auto kFile    = false;
+  static constexpr auto kSpecial = true;
+
+  T     Entry{nullptr};
+  SizeT EntrySize{0UL};
+  SizeT EntryPad{0UL};
+
+  /// @brief a context is where the resource comes from.
+  ProcessCtx EntryContext{0UL};  // could be a socket, printer, device...
+
+  UInt32 Color{kBlackTreeKind};
+
+  struct PROCESS_SPECIAL_TREE<T>* Parent {
+    nullptr
+  };
+
+  struct PROCESS_SPECIAL_TREE<T>* Child {
+    nullptr
+  };
+
+  struct PROCESS_SPECIAL_TREE<T>* Prev {
+    nullptr
+  };
+
+  struct PROCESS_SPECIAL_TREE<T>* Next {
+    nullptr
+  };
+};
+
 /***********************************************************************************/
 /// @brief Subsystem enum type.
 /***********************************************************************************/
@@ -113,8 +147,8 @@ enum class ProcessSubsystem : Int32 {
   kProcessSubsystemUser,
   kProcessSubsystemService,
   kProcessSubsystemDriver,
+  kProcessSubsystemCount   = kProcessSubsystemDriver - kProcessSubsystemSecurity + 1,
   kProcessSubsystemInvalid = 0xFFFFFFF,
-  kProcessSubsystemCount   = 4,
 };
 
 /***********************************************************************************/
@@ -127,13 +161,14 @@ enum class ProcessStatusKind : Int32 {
   kKilled,
   kFrozen,
   kFinished,
-  kCount = 6,
+  kCount = kFinished - kStarting + 1,
 };
 
 /***********************************************************************************/
 //! @brief Affinity is the amount of nano-seconds this process is going to run.
 /***********************************************************************************/
 enum class AffinityKind : Int32 {
+  kInvalid      = 0,
   kRealTime     = 100,
   kVeryHigh     = 150,
   kHigh         = 200,
@@ -147,29 +182,29 @@ enum class AffinityKind : Int32 {
 /***********************************************************************************/
 
 inline bool operator<(AffinityKind lhs, AffinityKind rhs) {
-  Int32 lhs_int = static_cast<Int>(lhs);
-  Int32 rhs_int = static_cast<Int>(rhs);
+  Int32 lhs_int = static_cast<Int32>(lhs);
+  Int32 rhs_int = static_cast<Int32>(rhs);
 
   return lhs_int < rhs_int;
 }
 
 inline bool operator>(AffinityKind lhs, AffinityKind rhs) {
-  Int32 lhs_int = static_cast<Int>(lhs);
-  Int32 rhs_int = static_cast<Int>(rhs);
+  Int32 lhs_int = static_cast<Int32>(lhs);
+  Int32 rhs_int = static_cast<Int32>(rhs);
 
   return lhs_int > rhs_int;
 }
 
 inline bool operator<=(AffinityKind lhs, AffinityKind rhs) {
   Int32 lhs_int = static_cast<Int>(lhs);
-  Int32 rhs_int = static_cast<Int>(rhs);
+  Int32 rhs_int = static_cast<Int32>(rhs);
 
   return lhs_int <= rhs_int;
 }
 
 inline bool operator>=(AffinityKind lhs, AffinityKind rhs) {
-  Int32 lhs_int = static_cast<Int>(lhs);
-  Int32 rhs_int = static_cast<Int>(rhs);
+  Int32 lhs_int = static_cast<Int32>(lhs);
+  Int32 rhs_int = static_cast<Int32>(rhs);
 
   return lhs_int >= rhs_int;
 }
@@ -178,7 +213,7 @@ using PTime       = UInt64;
 using ProcessTime = PTime;
 
 /***********************************************************************************/
-//! @brief Local Process identifier.
+//! @brief Local Process Identifier type.
 /***********************************************************************************/
 using ProcessID = Int64;
 
