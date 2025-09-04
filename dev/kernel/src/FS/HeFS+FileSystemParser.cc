@@ -88,7 +88,8 @@ namespace Detail {
   /// @brief Simple algorithm to hash directory entries for INDs.
   /// @param path the directory path.
   /// @return The hashed path.
-  STATIC UInt64 hefsi_hash_64(const Utf8Char* path) {
+  template <typename CharT = Utf8Char>
+  STATIC UInt64 hefsi_hash_64(const CharT* path) {
     if (!path || *path == 0) return 0;
 
     const UInt64 kFnvBaseOffset  = 0xcbf29ce484222325ULL;
@@ -97,7 +98,7 @@ namespace Detail {
     UInt64 hash = kFnvBaseOffset;
 
     while (*path) {
-      hash ^= (Utf8Char) (*path++);
+      hash ^= (CharT) (*path++);
       hash *= kFnvPrimeNumber;
     }
 

@@ -14,9 +14,6 @@ xcuserdata/
 */xcuserdata/*
 *.xcworkspacedata
 
-public/tools/*/dist/*
-public/frameworks/*/dist/*
-
 *.pdf
 *.aux
 

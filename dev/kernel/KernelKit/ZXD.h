@@ -15,6 +15,12 @@ namespace Kernel {
 struct ZXD_EXEC_HEADER;
 struct ZXD_STUB_HEADER;
 
+enum ZXD_FLAGS {
+  kZXDFlagsInvalid,
+  kZXDFlagsDriver,
+  kZXDFlagsCount,
+};
+
 /// @brief ZXD executable header
 /// @details This header is used to identify ZXD executable files.
 struct PACKED ZXD_EXEC_HEADER {
@@ -41,4 +47,7 @@ struct PACKED ZXD_STUB_HEADER {
   UInt32 fStubOffset;
   UInt32 fStubCRC32;
 };
+
+using ZXD_EXEC_HEADER_PTR = ZXD_EXEC_HEADER*;
+using ZXD_STUB_HEADER_PTR = ZXD_STUB_HEADER*;
 }  // namespace Kernel
