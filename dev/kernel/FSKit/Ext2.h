@@ -138,7 +138,6 @@ struct Ext2Node {
     Kernel::UInt32 cursor{0}; 
 };
 
-struct Ext2Context;
 class Ext2FileSystemMgr;
 
 } // namespace Ext2
