@@ -9,11 +9,11 @@
 
 .section .ldr
 
-  ;; MAGIC
+  ;; // MAGIC
 .quad 0xDAB4
-  ;; VERSION (1.0.0)
+  ;; // VERSION (1.0.0)
 .word 100
-  ;; CPU (ARM64)
+  ;; // CPU (ARM64)
 .word 0
-  ;; TYPE (KERNEL)
+  ;; // TYPE (KERNEL)
 .word 122
