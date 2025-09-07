@@ -1,6 +1,6 @@
 /* -------------------------------------------
 
-  Copyright Amlal El Mahrouss.
+  Copyright Amlal El Mahrouss 2025, all rights reserved.
 
   FILE: ddk.h
   PURPOSE: DDK Driver model base header.
@@ -28,6 +28,8 @@ struct DDK_STATUS_STRUCT DDK_FINAL {
   int32_t                     s_group_id;
   struct DDK_OBJECT_MANIFEST* s_object;
 };
+
+typedef void* ptr_t;
 
 /// @brief Call Kernel procedure.
 /// @param name the procedure name.

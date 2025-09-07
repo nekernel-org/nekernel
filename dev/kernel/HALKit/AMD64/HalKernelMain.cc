@@ -148,10 +148,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
         ProcessStatusKind::kInvalid;
   }
 
-  rtl_create_user_process(sched_idle_task, "MgmtSrv");    //! Mgmt command server.
-  rtl_create_user_process(sched_idle_task, "LaunchSrv");  //! launchd
-  rtl_create_user_process(sched_idle_task, "SecSrv");     //! Login Server
-
   HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
 #ifdef __FSKIT_INCLUDES_HEFS__

@@ -67,10 +67,6 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
         ProcessStatusKind::kInvalid;
   }
 
-  rtl_create_user_process(sched_idle_task, "MgmtSrv");    //! Mgmt command server.
-  rtl_create_user_process(sched_idle_task, "LaunchSrv");  //! launchd
-  rtl_create_user_process(sched_idle_task, "SecSrv");     //! Login Server
-
   Kernel::mp_init_cores();
 
   while (YES)
