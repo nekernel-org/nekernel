@@ -88,7 +88,7 @@ struct LAPIC final {
 /// @param target
 /// @return
 /***********************************************************************************/
-Void hal_send_ipi_msg(UInt32 target, UInt32 apic_id, UInt8 vector) {
+EXTERN_C Void hal_send_ipi_msg(UInt32 target, UInt32 apic_id, UInt8 vector) {
   Kernel::ke_dma_write<UInt32>(target, APIC_ICR_HIGH, apic_id << 24);
   Kernel::ke_dma_write<UInt32>(target, APIC_ICR_LOW, 0x00000600 | 0x00004000 | 0x00000000 | vector);
 
@@ -200,10 +200,7 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
       UInt8 type   = *entry_ptr;
       UInt8 length = *(entry_ptr + 1);
 
-      // Avoid infinite loop on bad APIC tables.
-      if (length < 2) break;
-
-      if (type == 0) {
+      if (type == 0 && length == sizeof(struct LAPIC)) {
         volatile LAPIC* entry_struct = (volatile LAPIC*) entry_ptr;
 
         if (entry_struct->Flags & 0x1) {
@@ -212,15 +209,15 @@ Void mp_init_cores(VoidPtr vendor_ptr) noexcept {
 
           ++kSMPCount;
 
-          kout << "Kind: LAPIC: ON\r";
+          kout << "AP: kind: LAPIC: ON.\r";
 
           // 0x7c00, as recommended by the Intel SDM.
           hal_send_ipi_msg(kApicBaseAddress, entry_struct->ProcessorID, 0x7c);
         } else {
-          kout << "Kind: LAPIC: OFF\r";
+          kout << "AP: kind: LAPIC: OFF.\r";
         }
       } else {
-        kout << "Kind: UNKNOWN: OFF\r";
+        kout << "AP: kind: UNKNOWN: OFF.\r";
       }
 
       entry_ptr += length;

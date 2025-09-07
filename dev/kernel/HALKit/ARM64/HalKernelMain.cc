@@ -37,8 +37,6 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   FB::fb_clear_video();
 
-  kBitMapCursor = 0UL;
-
 #ifdef __NE_ARM64_EFI__
   fw_init_efi((EfiSystemTable*) handover_hdr->f_FirmwareCustomTables[1]);
 
@@ -50,22 +48,12 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   /*     INITIALIZE BIT MAP.              */
   /************************************** */
 
+  kBitMapCursor = 0UL;
   kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
   kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
       reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));
 
   /// @note do initialize the interrupts after it.
-
-  for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
-    HardwareThreadScheduler::The()[index].Leak()->Kind() = ThreadKind::kAPStandard;
-    HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
-  }
-
-  for (SizeT index = 0UL; index < UserProcessScheduler::The().TheCurrentTeam().AsArray().Count();
-       ++index) {
-    UserProcessScheduler::The().TheCurrentTeam().AsArray()[index].Status =
-        ProcessStatusKind::kInvalid;
-  }
 
   Kernel::mp_init_cores();
 
