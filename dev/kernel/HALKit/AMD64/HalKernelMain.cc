@@ -32,8 +32,6 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   HAL::rt_sti();
 
-  FB::fb_clear_video();
-
   fw_init_efi((EfiSystemTable*) handover_hdr->f_FirmwareCustomTables[1]);
 
   Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
@@ -120,6 +118,8 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   kGDTArray[4].fFlags      = 0;
   kGDTArray[4].fBaseHigh   = 0;
 
+  FB::fb_clear_video();
+  
   // Load memory descriptors.
   HAL::Register64 gdt_reg;
 

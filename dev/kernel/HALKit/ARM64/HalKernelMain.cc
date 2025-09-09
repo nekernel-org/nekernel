@@ -35,14 +35,14 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
     return;
   }
 
-  FB::fb_clear_video();
-
 #ifdef __NE_ARM64_EFI__
   fw_init_efi((EfiSystemTable*) handover_hdr->f_FirmwareCustomTables[1]);
 
   Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
                          handover_hdr->f_HardwareTables.f_ImageHandle);
 #endif
+
+  FB::fb_clear_video();
 
   /************************************** */
   /*     INITIALIZE BIT MAP.              */
