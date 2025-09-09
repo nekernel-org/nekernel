@@ -8,33 +8,32 @@
 #include <NeKit/KernelPanic.h>
 #include <NeKit/Utils.h>
 
-namespace Ext2 {
-
+namespace Kernel::Ext2 {
 /// @brief Context for an EXT2 filesystem on a given drive
-struct Context {
+struct Ext2Context {
   Kernel::DriveTrait* drive{nullptr};
   EXT2_SUPER_BLOCK*   superblock{nullptr};
 
   /// @brief context with a drive
-  explicit Context(Kernel::DriveTrait* drv) : drive(drv) {}
+  Ext2Context(Kernel::DriveTrait* drv) : drive(drv) {}
 
   /// @brief Clean up
-  ~Context() {
+  ~Ext2Context() {
     if (superblock) {
       Kernel::mm_free_ptr(superblock);
       superblock = nullptr;
     }
   }
 
-  Context(const Context&) = delete;
-  Context& operator=(const Context&) = delete;
+  Ext2Context(const Ext2Context&) = delete;
+  Ext2Context& operator=(const Ext2Context&) = delete;
 
-  Context(Context&& other) noexcept : drive(other.drive), superblock(other.superblock) {
+  Ext2Context(Ext2Context&& other) noexcept : drive(other.drive), superblock(other.superblock) {
     other.drive      = nullptr;
     other.superblock = nullptr;
   }
 
-  Context& operator=(Context&& other) noexcept {
+  Ext2Context& operator=(Ext2Context&& other) noexcept {
     if (this != &other) {
       if (superblock) {
         Kernel::mm_free_ptr(superblock);
@@ -47,11 +46,17 @@ struct Context {
     return *this;
   }
 
-  inline Kernel::UInt32 BlockSize() const {
+  Kernel::SizeT LeakBlockSize() const {
     if (!superblock) return kExt2FSBlockSizeBase;
     return kExt2FSBlockSizeBase << superblock->fLogBlockSize;
   }
+
+  BOOL operator bool() { return superblock != nullptr; }
 };
+
+/// ======================================================================= ///
+/// IFS FUNCTIONS
+/// ======================================================================= ///
 
 inline bool ext2_read_block(Kernel::DriveTrait* drv, Kernel::UInt32 lba, void* buffer,
                             Kernel::UInt32 size) {
@@ -62,6 +67,7 @@ inline bool ext2_read_block(Kernel::DriveTrait* drv, Kernel::UInt32 lba, void* b
   pkt.fPacketSize    = size;
   pkt.fPacketLba     = lba;
   drv->fInput(pkt);
+
   return pkt.fPacketGood;
 }
 
@@ -77,14 +83,14 @@ inline bool ext2_write_block(Kernel::DriveTrait* drv, Kernel::UInt32 lba, const 
   return pkt.fPacketGood;
 }
 
-// Load superblock
-inline Kernel::ErrorOr<EXT2_SUPER_BLOCK*> ext2_load_superblock(Context* ctx) {
+inline Kernel::ErrorOr<EXT2_SUPER_BLOCK*> ext2_load_superblock(Ext2Context* ctx) {
   if (!ctx || !ctx->drive) return Kernel::ErrorOr<EXT2_SUPER_BLOCK*>(Kernel::kErrorInvalidData);
 
   auto buf = Kernel::mm_alloc_ptr(sizeof(EXT2_SUPER_BLOCK), true, false);
   if (!buf) return Kernel::ErrorOr<EXT2_SUPER_BLOCK*>(Kernel::kErrorHeapOutOfMemory);
 
   Kernel::UInt32 blockLba = kExt2FSSuperblockOffset / ctx->drive->fSectorSz;
+
   if (!ext2_read_block(ctx->drive, blockLba, buf, sizeof(EXT2_SUPER_BLOCK))) {
     Kernel::mm_free_ptr(buf);
     return Kernel::ErrorOr<EXT2_SUPER_BLOCK*>(Kernel::kErrorDisk);
@@ -101,7 +107,7 @@ inline Kernel::ErrorOr<EXT2_SUPER_BLOCK*> ext2_load_superblock(Context* ctx) {
 }
 
 // Load inode
-inline Kernel::ErrorOr<Ext2Node*> ext2_load_inode(Context* ctx, Kernel::UInt32 inodeNumber) {
+inline Kernel::ErrorOr<Ext2Node*> ext2_load_inode(Ext2Context* ctx, Kernel::UInt32 inodeNumber) {
   if (!ctx || !ctx->superblock) return Kernel::ErrorOr<Ext2Node*>(Kernel::kErrorInvalidData);
 
   auto nodePtr = Kernel::mm_alloc_ptr(sizeof(Ext2Node), true, false);
@@ -127,9 +133,8 @@ inline Kernel::ErrorOr<Ext2Node*> ext2_load_inode(Context* ctx, Kernel::UInt32 i
   return Kernel::ErrorOr<Ext2Node*>(ext2Node);
 }
 
-inline Kernel::UInt32 inode_offset(const Context* ctx, Kernel::UInt32 inodeNumber) {
+inline Kernel::UInt32 inode_offset(const Ext2Context* ctx, Kernel::UInt32 inodeNumber) {
   if (!ctx || !ctx->superblock) return 0;
   return ((inodeNumber - 1) % ctx->superblock->fInodesPerGroup) * ctx->superblock->fInodeSize;
 }
-
-}  // namespace Ext2
+}  // namespace Kernel::Ext2

@@ -48,7 +48,7 @@ EXTERN_C void hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   /*     INITIALIZE BIT MAP.              */
   /************************************** */
 
-  kBitMapCursor = 0UL;
+  kBitMapCursor     = 0UL;
   kKernelBitMpSize  = kHandoverHeader->f_BitMapSize;
   kKernelBitMpStart = reinterpret_cast<Kernel::VoidPtr>(
       reinterpret_cast<Kernel::UIntPtr>(kHandoverHeader->f_BitMapStart));

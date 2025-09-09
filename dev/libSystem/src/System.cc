@@ -40,6 +40,12 @@ IMPORT_C UInt64 libsys_hash_64(const Char* path) {
   return hash;
 }
 
+IMPORT_C Char* StrFmt(const Char* fmt, ...) {
+  if (!fmt || *fmt == 0) return const_cast<Char*>("(null)");
+
+  return const_cast<Char*>("");
+}
+
 // memmove-style copy
 IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input SizeT len) {
   // handles overlap, prefers 64-bit word copies when aligned
@@ -58,8 +64,9 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
     // try 64-bit aligned backward copy
     if (len >= sizeof(UInt64) && (reinterpret_cast<UIntPtr>(rs) % sizeof(UInt64) == 0) &&
         (reinterpret_cast<UIntPtr>(rd) % sizeof(UInt64) == 0)) {
-      auto  rsw   = reinterpret_cast<const UInt64*>(rs);
-      auto  rdw   = reinterpret_cast<UInt64*>(rd);
+      auto rsw = reinterpret_cast<const UInt64*>(rs);
+      auto rdw = reinterpret_cast<UInt64*>(rd);
+
       SizeT words = len / sizeof(UInt64);
 
       for (SizeT i = 0; i < words; ++i) {
@@ -105,9 +112,11 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
 
 IMPORT_C SInt64 MmStrLen(const Char* in) {
   // strlen via pointer walk
-  if (!in) return 0;
+  if (!in) return -kErrorInvalidData;
+
   const Char* p = in;
   while (*p) ++p;
+
   return static_cast<SInt64>(p - in);
 }
 

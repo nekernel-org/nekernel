@@ -119,7 +119,7 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   kGDTArray[4].fBaseHigh   = 0;
 
   FB::fb_clear_video();
-  
+
   // Load memory descriptors.
   HAL::Register64 gdt_reg;
 
