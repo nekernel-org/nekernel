@@ -7,7 +7,8 @@
  .text
 
 .extern nelaunch_startup_fn
-
+.globl _NeMain
+  
 _NeMain:
   push %rbp
   movq %rsp, %rbp
