@@ -5,11 +5,12 @@
    ------------------------------------------- */
 
 #include <LaunchKit/LaunchKit.h>
+#include <libSystem/SystemKit/Err.h>
 
 SInt32 _NeMain(Void) {
-  PrintOut(nullptr, "%s", "NeKernel Launcher\n");
+  /// @todo Start LaunchServices.fwrk services, make the launcher manageable too (via mgmt.launch)
 
-  /// @todo Start LaunchServices.fwrk, make the launcher manageable too (via mgmt.launch)
+  NELAUNCH_INFO("Starting services...");
 
   return kErrorSuccess;
 }

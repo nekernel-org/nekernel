@@ -137,6 +137,9 @@ local.properties
 # Locally stored "Eclipse launch configurations"
 # *.launch
 
+# NeKernel Launch
+ne_launch
+
 # PyDev specific (Python IDE for Eclipse)
 *.pydevproject
 
