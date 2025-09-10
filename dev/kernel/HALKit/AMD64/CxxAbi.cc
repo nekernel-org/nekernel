@@ -62,17 +62,18 @@ EXTERN_C void __cxa_finalize(void* f) {
 }
 
 namespace cxxabiv1 {
-EXTERN_C int __cxa_guard_acquire(__guard* g) {
-  (void) g;
+EXTERN_C int __cxa_guard_acquire(__guard g) {
+  if ((*g & 1) || (*g && 2)) return 1;
+  *g |= 2;
   return 0;
 }
 
-EXTERN_C int __cxa_guard_release(__guard* g) {
-  *(char*) g = 1;
-  return 0;
+EXTERN_C void __cxa_guard_release(__guard g) {
+  *g |= 1;
+  *g &= 2;
 }
 
-EXTERN_C void __cxa_guard_abort(__guard* g) {
-  (void) g;
+EXTERN_C void __cxa_guard_abort(__guard g) {
+  *g &= ~2;
 }
 }  // namespace cxxabiv1
