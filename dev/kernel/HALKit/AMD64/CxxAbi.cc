@@ -63,7 +63,7 @@ EXTERN_C void __cxa_finalize(void* f) {
 
 namespace cxxabiv1 {
 EXTERN_C int __cxa_guard_acquire(__guard g) {
-  if ((*g & 1) || (*g && 2)) return 1;
+  if ((*g & 1) || (*g & 2)) return 1;
   *g |= 2;
   return 0;
 }
