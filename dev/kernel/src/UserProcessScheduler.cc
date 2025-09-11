@@ -438,7 +438,7 @@ ProcessID UserProcessScheduler::Spawn(const Char* name, VoidPtr code, VoidPtr im
   }
 
   (Void)(kout << "ProcessID: " << number(process.ProcessId) << kendl);
-  (Void)(kout << "Name: " << process.Name << kendl);
+  (Void)(kout << "ProcesName: " << process.Name << kendl);
 
   return pid;
 }

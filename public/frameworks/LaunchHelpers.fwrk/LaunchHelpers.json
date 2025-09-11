@@ -1,0 +1,19 @@
+{
+    "compiler_path": "clang++",
+    "compiler_std": "c++20",
+    "headers_path": [
+        "./",
+        "../../../dev/kernel",
+        "../../../public/frameworks/",
+        "../../../dev/",
+        "./"
+    ],
+    "sources_path": [],
+    "output_name": "./dist/libLaunchHelpers.fwrk.dylib",
+    "cpp_macros": [
+        "kSampleFWVersion=0x0100",
+        "kSampleFWVersionHighest=0x0100",
+        "kSampleFWVersionLowest=0x0100",
+        "__NE_SDK__"
+    ]
+}

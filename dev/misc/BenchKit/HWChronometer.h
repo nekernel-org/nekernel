@@ -14,7 +14,7 @@ struct HWChronoTraits;
 template <typename ChronoTraits = HWChronoTraits>
 class HWChrono;
 
-/// @brief BenchKit chrono logic for x64.
+/// @brief BenchKit chrono logic for x64/ARM64.
 struct HWChronoTraits final {
  private:
   STATIC UInt64 TickImpl_(void) {

@@ -7,20 +7,38 @@
 #include <libSystem/SystemKit/Err.h>
 #include <libSystem/SystemKit/Syscall.h>
 #include <libSystem/SystemKit/System.h>
+#include <libSystem/SystemKit/Verify.h>
 
-namespace Detail {
-template <typename T>
-static VoidPtr safe_void_cast(const T* ptr) {
-  _rtl_assert(ptr, "safe void cast failed!");
-  return static_cast<VoidPtr>(const_cast<T*>(ptr));
-}
-}  // namespace Detail
+using namespace LibSystem;
 
 IMPORT_C Void _rtl_assert(Bool expr, const Char* origin) {
   if (!expr) {
     PrintOut(nullptr, "Assertion failed: %s\r", origin);
     libsys_syscall_arg_1(SYSCALL_HASH("_rtl_debug_break"));
   }
+}
+
+/// @note this uses the FNV 64-bit variant.
+IMPORT_C UInt64 libsys_hash_64(const Char* path) {
+  if (!path || *path == 0) return 0;
+
+  const UInt64 kFNVSeed  = 0xcbf29ce484222325ULL;
+  const UInt64 kFNVPrime = 0x100000001b3ULL;
+
+  UInt64 hash = kFNVSeed;
+
+  while (*path) {
+    hash ^= (Char) (*path++);
+    hash *= kFNVPrime;
+  }
+
+  return hash;
+}
+
+IMPORT_C Char* StrFmt(const Char* fmt, ...) {
+  if (!fmt || *fmt == 0) return const_cast<Char*>("(null)");
+
+  return const_cast<Char*>("");
 }
 
 // memmove-style copy
@@ -41,8 +59,9 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
     // try 64-bit aligned backward copy
     if (len >= sizeof(UInt64) && (reinterpret_cast<UIntPtr>(rs) % sizeof(UInt64) == 0) &&
         (reinterpret_cast<UIntPtr>(rd) % sizeof(UInt64) == 0)) {
-      auto  rsw   = reinterpret_cast<const UInt64*>(rs);
-      auto  rdw   = reinterpret_cast<UInt64*>(rd);
+      auto rsw = reinterpret_cast<const UInt64*>(rs);
+      auto rdw = reinterpret_cast<UInt64*>(rd);
+
       SizeT words = len / sizeof(UInt64);
 
       for (SizeT i = 0; i < words; ++i) {
@@ -88,9 +107,11 @@ IMPORT_C VoidPtr MmCopyMemory(_Input VoidPtr dest, _Input VoidPtr src, _Input Si
 
 IMPORT_C SInt64 MmStrLen(const Char* in) {
   // strlen via pointer walk
-  if (!in) return 0;
+  if (!in) return -kErrorInvalidData;
+
   const Char* p = in;
   while (*p) ++p;
+
   return static_cast<SInt64>(p - in);
 }
 
@@ -125,9 +146,8 @@ IMPORT_C VoidPtr MmFillMemory(_Input VoidPtr dest, _Input SizeT len, _Input UInt
 }
 
 IMPORT_C Ref IoOpenFile(_Input const Char* path, _Input const Char* drv_letter) {
-  return static_cast<Ref>(libsys_syscall_arg_3(SYSCALL_HASH("IoOpenFile"),
-                                               Detail::safe_void_cast(path),
-                                               Detail::safe_void_cast(drv_letter)));
+  return static_cast<Ref>(libsys_syscall_arg_3(
+      SYSCALL_HASH("IoOpenFile"), Detail::sys_safe_cast(path), Detail::sys_safe_cast(drv_letter)));
 }
 
 IMPORT_C Void IoCloseFile(_Input Ref desc) {
@@ -163,7 +183,7 @@ IMPORT_C SInt32 PrintOut(_Input IORef desc, const Char* fmt, ...) {
 
   // if truncated, `needed` >= kBufferSz; we still send truncated buffer
   auto ret_ptr = libsys_syscall_arg_3(SYSCALL_HASH("PrintOut"), static_cast<VoidPtr>(desc),
-                                      Detail::safe_void_cast(buf));
+                                      Detail::sys_safe_cast(buf));
 
   if (!ret_ptr) return -kErrorInvalidData;
 

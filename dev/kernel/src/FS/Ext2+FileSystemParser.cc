@@ -6,7 +6,7 @@
 
 #ifdef __FSKIT_INCLUDES_EXT2__
 
-#include <FSKit/Ext2.h>
+#include <FSKit/Ext2+IFS.h>
 #include <FirmwareKit/EPM.h>
 #include <KernelKit/KPC.h>
 #include <KernelKit/ProcessScheduler.h>
