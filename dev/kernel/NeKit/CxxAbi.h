@@ -20,7 +20,7 @@ struct atexit_func_entry_t {
 typedef Kernel::UInt32 uarch_t;
 
 namespace cxxabiv1 {
-  typedef Kernel::SizeT* __guard;
+typedef Kernel::SizeT* __guard;
 }
 
 #endif  // __GNUC__
