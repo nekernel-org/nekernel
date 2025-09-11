@@ -15,7 +15,7 @@ namespace LibSystem::Detail {
 /// @author 0xf00sec, and Amlal El Mahrouss
 /// @brief safe cast operator.
 template <typename T, typename R = VoidPtr>
-static R sys_safe_cast(const T* ptr) {
+inline R sys_safe_cast(const T* ptr) {
   _rtl_assert(ptr, "safe cast failed!");
   return static_cast<R>(const_cast<T*>(ptr));
 }
@@ -33,7 +33,7 @@ struct must_cast_traits<T, T> {
 /// @author Amlal El Mahrouss
 /// @brief Safe constexpr cast.
 template <typename T, typename R>
-constexpr R* sys_constexpr_cast(T* ptr) {
+inline constexpr R* sys_constexpr_cast(T* ptr) {
   static_assert(must_cast_traits<T, R>::value, "constexpr cast failed! types are a mismatch!");
   return static_cast<R*>(ptr);
 }
