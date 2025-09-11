@@ -7,7 +7,7 @@
 
 #include <NeKit/Defines.h>
 
-#ifndef __TOOLCHAINKIT__
+#ifndef __NECTI__
 
 #define kAtExitMacDestructors (128)
 
@@ -23,4 +23,4 @@ namespace cxxabiv1 {
 typedef Kernel::SizeT* __guard;
 }
 
-#endif  // __GNUC__
+#endif  // !__NECTI__
