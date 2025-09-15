@@ -37,7 +37,7 @@ Int32 urt_string_cmp(const Utf8Char* src, const Utf8Char* cmp, Size size) {
   return counter;
 }
 
-Int urt_copy_memory(const VoidPtr src, VoidPtr dst, Size len) {
+Int32 urt_copy_memory(const VoidPtr src, VoidPtr dst, Size len) {
   Utf8Char* srcChr  = reinterpret_cast<Utf8Char*>(src);
   Utf8Char* dstChar = reinterpret_cast<Utf8Char*>(dst);
 

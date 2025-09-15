@@ -45,7 +45,7 @@ const Char* rt_alloc_string(const Char* src) {
   return buffer;
 }
 
-Int rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size) {
+Int32 rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size) {
   if (!src || !dst || len > dst_size) {
     if (dst && dst_size) {
       rt_set_memory_safe(dst, 0, dst_size, dst_size);
@@ -85,7 +85,7 @@ rt_set_memory(voidPtr src, UInt32 value, Size len) {
 #ifdef __NE_ENFORCE_DEPRECATED_WARNINGS
 [[deprecated("Use rt_copy_memory_safe instead")]]
 #endif
-Int rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
+Int32 rt_copy_memory(const voidPtr src, voidPtr dst, Size len) {
   if (!src || !dst) return -1;
   auto s = reinterpret_cast<const UInt8*>(src);
   auto d = reinterpret_cast<UInt8*>(dst);
@@ -135,7 +135,7 @@ Bool rt_to_string(Char* str, UInt64 value, Int32 base) {
     str[i - j - 1] = tmp;
   }
 #endif
-  return true;
+  return false;
 }
 
 VoidPtr rt_string_in_string(const Char* haystack, const Char* needle) {
@@ -166,7 +166,7 @@ EXTERN_C void* memcpy(void* dst, const void* src, long long unsigned int len) {
   return dst;
 }
 
-EXTERN_C Kernel::Int32 strcmp(const char* a, const char* b) {
+EXTERN_C Int32 strcmp(const char* a, const char* b) {
   return Kernel::rt_string_cmp(a, b, rt_string_len(a));
 }
 
