@@ -8,7 +8,7 @@
 
 namespace Kernel {
 
-Int     rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
+Int32     rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
 voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
 
 Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size) {
