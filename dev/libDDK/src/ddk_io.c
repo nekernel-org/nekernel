@@ -1,7 +1,9 @@
 /* -------------------------------------------
 
-  Copyright Amlal El Mahrouss.
+  libDDK.
+  Copyright 2025 - Amlal El Mahrouss and NeKernel contributors.
 
+  File: ddk_io.c
   Purpose: DDK Text I/O.
 
 ------------------------------------------- */
@@ -9,6 +11,8 @@
 #include <DriverKit/io.h>
 
 DDK_EXTERN void kputc(const char ch) {
+  if (!ch) return;
+
   char assembled[2] = {0};
   assembled[0]      = ch;
   assembled[1]      = 0;
@@ -19,7 +23,7 @@ DDK_EXTERN void kputc(const char ch) {
 /// @brief print string to UART.
 /// @param message UART to transmit.
 DDK_EXTERN void kprint(const char* message) {
-  if (!message) return;
+  if (nil == message) return;
   if (*message == 0) return;
 
   size_t index = 0;

@@ -8,7 +8,7 @@
 
 namespace Kernel {
 
-Int32     rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
+Int32   rt_copy_memory_safe(const voidPtr src, voidPtr dst, Size len, Size dst_size);
 voidPtr rt_set_memory_safe(voidPtr dst, UInt32 value, Size len, Size dst_size);
 
 Int32 rt_string_cmp(const Char* src, const Char* cmp, Size size) {
@@ -134,11 +134,15 @@ Bool rt_to_string(Char* str, UInt64 value, Int32 base) {
     str[j]         = str[i - j - 1];
     str[i - j - 1] = tmp;
   }
+
+  return YES;
 #endif
-  return false;
+  return NO;
 }
 
 VoidPtr rt_string_in_string(const Char* haystack, const Char* needle) {
+  if (!haystack || !needle) return nullptr;
+
   SizeT needle_len = rt_string_len(needle);
   SizeT hay_len    = rt_string_len(haystack);
 
@@ -152,6 +156,7 @@ VoidPtr rt_string_in_string(const Char* haystack, const Char* needle) {
 }
 
 Char* rt_string_has_char(Char* str, Char ch) {
+  if (!str) return nullptr;
   while (*str && *str != ch) ++str;
   return (*str == ch) ? str : nullptr;
 }
