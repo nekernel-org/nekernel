@@ -21,10 +21,11 @@ __ke_call_dispatch:
     push rbp
     mov rbp, rsp
 
+  /* registers have already been pushed. */
+
     int kKernelCallTrapId
 
     pop rbp
-
     ret
 
 #elif defined(__DDK_POWER64__)

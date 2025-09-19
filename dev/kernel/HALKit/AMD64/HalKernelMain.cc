@@ -32,17 +32,14 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
 
   HAL::rt_sti();
 
-  kHandoverHeader = handover_hdr;
-
-  FB::fb_clear_video();
-
   fw_init_efi((EfiSystemTable*) handover_hdr->f_FirmwareCustomTables[1]);
 
   Boot::ExitBootServices(handover_hdr->f_HardwareTables.f_ImageKey,
                          handover_hdr->f_HardwareTables.f_ImageHandle);
 
-  kBitMapCursor = 0UL;
-  kKernelVM     = kHandoverHeader->f_PageStart;
+  kHandoverHeader = handover_hdr;
+
+  kKernelVM = kHandoverHeader->f_PageStart;
 
   if (!kKernelVM) {
     MUST_PASS(kKernelVM);
@@ -55,6 +52,7 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   /*     INITIALIZE BIT MAP.              */
   /************************************** */
 
+  kBitMapCursor    = 0UL;
   kKernelBitMpSize = kHandoverHeader->f_BitMapSize;
   kKernelBitMpStart =
       reinterpret_cast<VoidPtr>(reinterpret_cast<UIntPtr>(kHandoverHeader->f_BitMapStart));
@@ -120,6 +118,8 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   kGDTArray[4].fFlags      = 0;
   kGDTArray[4].fBaseHigh   = 0;
 
+  FB::fb_clear_video();
+
   // Load memory descriptors.
   HAL::Register64 gdt_reg;
 
@@ -133,24 +133,14 @@ EXTERN_C Int32 hal_init_platform(Kernel::HEL::BootInfoHeader* handover_hdr) {
   return kEfiFail;
 }
 
-EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
+EXTERN_C Kernel::Void hal_real_init(Kernel::Void) {
   using namespace Kernel;
 
-  for (SizeT index = 0UL; index < HardwareThreadScheduler::The().Capacity(); ++index) {
-    HardwareThreadScheduler::The()[index].Leak()->Kind() = ThreadKind::kAPStandard;
-    HardwareThreadScheduler::The()[index].Leak()->ID()   = index;
-    HardwareThreadScheduler::The()[index].Leak()->Busy(NO);
-  }
+  HAL::Register64 idt_reg;
+  idt_reg.Base = reinterpret_cast<UIntPtr>(kInterruptVectorTable);
 
-  for (SizeT index = 0UL; index < UserProcessScheduler::The().TheCurrentTeam().AsArray().Count();
-       ++index) {
-    UserProcessScheduler::The().TheCurrentTeam().AsArray()[index].Status =
-        ProcessStatusKind::kInvalid;
-  }
-
-  rtl_create_user_process(sched_idle_task, "MgmtSrv");    //! Mgmt command server.
-  rtl_create_user_process(sched_idle_task, "LaunchSrv");  //! launchd
-  rtl_create_user_process(sched_idle_task, "SecSrv");     //! Login Server
+  HAL::IDTLoader idt_loader;
+  idt_loader.Load(idt_reg);
 
   HAL::mp_init_cores(kHandoverHeader->f_HardwareTables.f_VendorPtr);
 
@@ -161,13 +151,6 @@ EXTERN_C Kernel::Void hal_real_init(Kernel::Void) noexcept {
 #ifdef __FSKIT_INCLUDES_NEFS__
   NeFS::fs_init_nefs();
 #endif
-
-  HAL::Register64 idt_reg;
-  idt_reg.Base = reinterpret_cast<UIntPtr>(kInterruptVectorTable);
-
-  HAL::IDTLoader idt_loader;
-
-  idt_loader.Load(idt_reg);
 
   while (YES)
     ;

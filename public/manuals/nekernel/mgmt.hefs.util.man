@@ -1,0 +1,34 @@
+NAME
+    mgmt.hefs — HeFS Management utility command
+
+SYNOPSIS
+    mgmt.hefs [OPTIONS]
+
+DESCRIPTION
+    The `mgmt.hefs` command provides scheduling, execution, and remote orchestration
+    of a HeFS volume inside a System One environement. One might use this tool to
+    create, edit, and remove volumes from a disk.
+
+    Usages include, but are not limited to:
+        - Schedule scripts or tasks for future execution.
+        - Verify device or filesystem integrity.
+        - Manage and automate remote NeKernel machines.
+
+OPTIONS
+    -v, --volume <DEVICE>     Device input
+    -c, --create              Create HeFS volume
+    -x, --xml    <PLIST>      Pass PropertyList to volume creation tool.
+    -t, --time <HH:MMAM/PM>   Time to run the script
+    -d, --day <DAY>           Day of the week (e.g., Mon, Tue, Wed)
+    -m, --month <MONTH>       Month (e.g., Jan, Feb, Mar)
+    -y, --year <YYYY>         Year to schedule task
+    -r, --remote <ADDRESS>    Remote machine to manage (optional)
+    -v, --verify              Run integrity checks only
+    -h, --help                Display this help message
+
+EXAMPLES
+    mgmt.hefs -v /devices/disks0p0 -t 2:30PM -d Wed -m Apr -y 2026 --xml /xml/hefs.pxml
+        Schedules `/xml/hefs.pxml` to run at 2:30PM on Wednesday, April 2026.
+
+RELEASE
+    v1.0.0 — NeKernel.org

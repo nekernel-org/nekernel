@@ -88,7 +88,7 @@ cd nekernel
 
 ## Documentation
 
-- [API Reference (Doxygen)](https://nekernel-org.github.io/doc/)
+- [OpenKnowledge](https://docs.nekernel.org/)
 - [Filesystem Specifications](docs/tex/)
 
 ---

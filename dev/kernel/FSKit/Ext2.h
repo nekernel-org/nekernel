@@ -13,20 +13,22 @@
 #include <hint/CompilerHint.h>
 
 /// @file Ext2.h
-/// @brief EXT2 filesystem structures and constants.
+/// @brief EXT2 filesystem structures, constants, and base wrappers.
 
+namespace Ext2 {
+
+/// EXT2 Constants
 #define kExt2FSMagic (0xEF53)
 #define kExt2FSMaxFileNameLen (255U)
 #define kExt2FSSuperblockOffset (1024)
 #define kExt2FSRootInodeNumber (2)
-
 #define kExt2FSInodeSize (128U)
 #define kExt2FSBlockSizeBase (1024U)
 
 #define kExt2FSRev0 (0)
 #define kExt2FSRev1 (1)
 
-/// @brief EXT2's file types.
+/// EXT2 file types
 enum {
   kExt2FileTypeUnknown      = 0,
   kExt2FileTypeRegular      = 1,
@@ -38,7 +40,6 @@ enum {
   kExt2FileTypeSymbolicLink = 7
 };
 
-/// @brief The super block structure, located at LBA 1024.
 struct PACKED EXT2_SUPER_BLOCK final {
   Kernel::UInt32 fInodeCount;
   Kernel::UInt32 fBlockCount;
@@ -55,7 +56,7 @@ struct PACKED EXT2_SUPER_BLOCK final {
   Kernel::UInt32 fWriteTime;
   Kernel::UInt16 fMountCount;
   Kernel::UInt16 fMaxMountCount;
-  Kernel::UInt16 fMagic;  // should be 0xEF53
+  Kernel::UInt16 fMagic;
   Kernel::UInt16 fState;
   Kernel::UInt16 fErrors;
   Kernel::UInt16 fMinorRevision;
@@ -78,7 +79,6 @@ struct PACKED EXT2_SUPER_BLOCK final {
   Kernel::Char   fLastMounted[64];
   Kernel::UInt32 fAlgoBitmap;
 
-  // Optional journal fields and padding
   Kernel::UInt8  fPreallocBlocks;
   Kernel::UInt8  fPreallocDirBlocks;
   Kernel::UInt16 fReservedGDTBlocks;
@@ -112,22 +112,32 @@ struct PACKED EXT2_INODE final {
   Kernel::UInt32 fFlags;
   Kernel::UInt32 fOSD1;
 
-  Kernel::UInt32
-      fBlock[15];  // 0-11: direct, 12: indirect, 13: double indirect, 14: triple indirect
+  Kernel::UInt32 fBlock[15];  // direct 0-11, indirect 12, double 13, triple 14
 
   Kernel::UInt32 fGeneration;
   Kernel::UInt32 fFileACL;
-  Kernel::UInt32 fDirACL;  // Only for revision 1+
+  Kernel::UInt32 fDirACL;
   Kernel::UInt32 fFragmentAddr;
 
   Kernel::UInt8 fOSD2[12];
 };
 
+/// Directory entry
 struct PACKED EXT2_DIR_ENTRY final {
   Kernel::UInt32 fInode;
   Kernel::UInt16 fRecordLength;
   Kernel::UInt8  fNameLength;
   Kernel::UInt8  fFileType;
-  Kernel::Char
-      fName[kExt2FSMaxFileNameLen];  // null-terminated, not fixed-length in actual on-disk layout
+  Kernel::Char   fName[kExt2FSMaxFileNameLen];
 };
+
+/// VFS usage
+struct Ext2Node {
+  Kernel::UInt32 inodeNumber;
+  EXT2_INODE     inode;
+  Kernel::UInt32 cursor{0};
+};
+
+class Ext2FileSystemMgr;
+
+}  // namespace Ext2

@@ -7,7 +7,7 @@
 
 #include <NeKit/Defines.h>
 
-#ifndef __TOOLCHAINKIT__
+#ifndef __NECTI__
 
 #define kAtExitMacDestructors (128)
 
@@ -17,10 +17,10 @@ struct atexit_func_entry_t {
   void* dso_handle;
 };
 
-typedef unsigned uarch_t;
+typedef Kernel::UInt32 uarch_t;
 
 namespace cxxabiv1 {
-typedef void* __guard;
+typedef Kernel::SizeT* __guard;
 }
 
-#endif  // __GNUC__
+#endif  // !__NECTI__

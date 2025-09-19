@@ -70,7 +70,7 @@ ErrorOr<voidPtr> ACPIFactoryInterface::Find(const Char* signature) {
 @param len the length of it.
 */
 bool ACPIFactoryInterface::Checksum(const Char* checksum, SSizeT len) {
-  if (len == 0 || !checksum) return false;
+  if (len == 0 || !checksum) return NO;
 
   Char chr = 0;
 

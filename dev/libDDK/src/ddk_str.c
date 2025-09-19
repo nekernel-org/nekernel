@@ -23,6 +23,8 @@ DDK_EXTERN size_t kstrlen(const char* in) {
 }
 
 DDK_EXTERN int kstrncpy(char* dst, const char* src, size_t len) {
+  if (nil == dst || nil == src) return 0;
+
   size_t index = 0;
 
   while (index != len) {
