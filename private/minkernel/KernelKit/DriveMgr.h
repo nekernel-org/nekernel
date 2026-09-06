@@ -24,9 +24,13 @@
 #define kDriveInvalidID (-1)
 #define kDriveNameLen (32)
 
+#ifndef drv_sector_cnt
 #define drv_sector_cnt(SIZE, SECTOR_SZ) (((SIZE) + (SECTOR_SZ)) / (SECTOR_SZ))
+#endif
 
+#ifndef kDriveHiddenPrefix
 #define kDriveHiddenPrefix '~'
+#endif
 
 namespace Ne::Kernel {
 enum {
@@ -97,11 +101,9 @@ class IMountpoint final {
 
  public:
   DriveTrait& A() { return mA; }
-
   DriveTrait& B() { return mB; }
 
   DriveTrait& C() { return mC; }
-
   DriveTrait& D() { return mD; }
 
   enum {
