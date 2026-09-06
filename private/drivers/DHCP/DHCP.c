@@ -16,7 +16,6 @@ struct DHCP_PRIV_HDR;
 
 /// @note Output file name is DHCP.sys
 
-DDK_EXTERN Void KDriverMain(Void)
-{
+DDK_EXTERN Void KDriverMain(Void) {
   return;
 }
